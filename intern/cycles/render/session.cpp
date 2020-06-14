@@ -436,6 +436,12 @@ bool Session::acquire_tile(RenderTile &rtile, Device *tile_device, uint tile_typ
     /* Reset copy state, since buffer contents change after the tile was acquired */
     buffers->map_neighbor_copied = false;
 
+    /* This hack ensures that the copy in 'MultiDevice::map_neighbor_tiles' accounts
+     * for the buffer resolution divider. */
+    buffers->buffer.data_width = (buffers->params.width * buffers->params.get_passes_size()) /
+                                 tile_manager.state.resolution_divider;
+    buffers->buffer.data_height = buffers->params.height / tile_manager.state.resolution_divider;
+
     return true;
   }
 
@@ -827,7 +833,7 @@ bool Session::load_kernels(bool lock_scene)
         message = "Failed loading render kernel, see console for errors";
 
       progress.set_error(message);
-      progress.set_status("Error", message);
+      progress.set_status(message);
       progress.set_update();
       return false;
     }
@@ -866,7 +872,7 @@ void Session::run()
 
   /* progress update */
   if (progress.get_cancel())
-    progress.set_status("Cancel", progress.get_cancel_message());
+    progress.set_status(progress.get_cancel_message());
   else
     progress.set_update();
 }
@@ -1122,13 +1128,6 @@ bool Session::render_need_denoise(bool &delayed)
 
   /* Do not denoise until the sample at which denoising should start is reached. */
   if (tile_manager.state.sample < params.denoising_start_sample) {
-    return false;
-  }
-
-  /* Cannot denoise with resolution divider and separate denoising devices.
-   * It breaks the copy in 'MultiDevice::map_neighbor_tiles' (which operates on
-   * the full buffer dimensions and not the scaled ones). */
-  if (!params.device.denoising_devices.empty() && tile_manager.state.resolution_divider > 1) {
     return false;
   }
 

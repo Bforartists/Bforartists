@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <memory>
 
-namespace BLI {
+namespace blender {
 
 template<typename T> class Optional {
  private:
@@ -37,16 +37,6 @@ template<typename T> class Optional {
   bool m_set;
 
  public:
-  static Optional FromPointer(const T *ptr)
-  {
-    if (ptr == nullptr) {
-      return Optional();
-    }
-    else {
-      return Optional(*ptr);
-    }
-  }
-
   Optional() : m_set(false)
   {
   }
@@ -131,7 +121,7 @@ template<typename T> class Optional {
       this->value() = value;
     }
     else {
-      new (this->value_ptr()) T(value);
+      new ((void *)this->value_ptr()) T(value);
       m_set = true;
     }
   }
@@ -142,7 +132,7 @@ template<typename T> class Optional {
       this->value() = std::move(value);
     }
     else {
-      new (this->value_ptr()) T(std::move(value));
+      new ((void *)this->value_ptr()) T(std::move(value));
       m_set = true;
     }
   }
@@ -150,14 +140,14 @@ template<typename T> class Optional {
   void set_new(const T &value)
   {
     BLI_assert(!m_set);
-    new (this->value_ptr()) T(value);
+    new ((void *)this->value_ptr()) T(value);
     m_set = true;
   }
 
   void set_new(T &&value)
   {
     BLI_assert(!m_set);
-    new (this->value_ptr()) T(std::move(value));
+    new ((void *)this->value_ptr()) T(std::move(value));
     m_set = true;
   }
 
@@ -194,6 +184,6 @@ template<typename T> class Optional {
   }
 };
 
-} /* namespace BLI */
+} /* namespace blender */
 
 #endif /* __BLI_OPTIONAL_HH__ */

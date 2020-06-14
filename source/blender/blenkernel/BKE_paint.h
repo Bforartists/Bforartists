@@ -24,6 +24,7 @@
  * \ingroup bke
  */
 
+#include "BLI_ghash.h"
 #include "BLI_utildefines.h"
 #include "DNA_object_enums.h"
 
@@ -239,7 +240,7 @@ typedef struct SculptPoseIKChainSegment {
   float initial_orig[3];
   float initial_head[3];
   float len;
-  float scale;
+  float scale[3];
   float rot[4];
   float *weights;
 
@@ -268,6 +269,7 @@ typedef struct SculptClothLengthConstraint {
 typedef struct SculptClothSimulation {
   SculptClothLengthConstraint *length_constraints;
   int tot_length_constraints;
+  GSet *created_length_constraints;
   int capacity_length_constraints;
   float *length_constraint_tweak;
 
@@ -315,6 +317,8 @@ typedef struct SculptSession {
   /* Mesh Face Sets */
   /* Total number of polys of the base mesh. */
   int totfaces;
+  /* Face sets store its visibility in the sign of the integer, using the absolute value as the
+   * Face Set ID. Positive IDs are visible, negative IDs are hidden. */
   int *face_sets;
 
   /* BMesh for dynamic topology sculpting */

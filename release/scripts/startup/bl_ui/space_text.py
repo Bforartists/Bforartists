@@ -44,7 +44,7 @@ class TEXT_HT_header(Header):
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new",
                         unlink="text.unlink", open="text.open")
-                
+
         if text:
             text_name = text.name
             is_osl = text_name.endswith((".osl", ".oso"))
@@ -58,7 +58,7 @@ class TEXT_HT_header(Header):
                 row = layout.row()
                 row.active = is_syntax_highlight_supported
                 row.operator("text.run_script", text="", icon='PLAY')
-                
+
                 row = layout.row()
                 row.active = text_name.endswith(".py")
                 row.prop(text, "use_module")
@@ -131,7 +131,7 @@ class TEXT_MT_editor_menus(Menu):
 
         layout.menu("TEXT_MT_text")
         layout.menu("TEXT_MT_view")
-        
+
         if text:
             layout.menu("TEXT_MT_edit")
             layout.menu("TEXT_MT_format")
@@ -156,9 +156,9 @@ class TEXT_PT_properties(Panel):
         layout.use_property_split = True
 
         flow = layout.column_flow()
-        
+
         flow.prop(st, "font_size")
-        flow.prop(st, "tab_width")      
+        flow.prop(st, "tab_width")
 
         text = st.text
         if text:
@@ -167,7 +167,7 @@ class TEXT_PT_properties(Panel):
         flow.prop(st, "show_margin")
         flow.use_property_split = True
         if st.show_margin:
-            
+
             col = flow.column()
             col.active = st.show_margin
             col.prop(st, "margin_column")
@@ -224,8 +224,8 @@ class TEXT_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
-        
-        
+
+
 #Redraw timer sub menu - Debug stuff
 class TEXT_MT_redraw_timer(Menu):
     bl_label = "Redraw Timer"
@@ -268,15 +268,15 @@ class TEXT_MT_text(Menu):
         layout.separator()
 
         layout.menu("TEXT_MT_templates")
-            
+
         layout.separator()
-        
+
         layout.menu("TEXT_MT_redraw_timer", icon='TIME') #Redraw timer sub menu - Debug stuff
         layout.operator("wm.debug_menu", icon='DEBUG') # debug menu
         layout.operator("script.reload", icon='FILE_REFRESH') # Reload all python scripts. Mainly meant for the UI scripts.
 
         layout.separator()
-        
+
         layout.operator("screen.spacedata_cleanup", icon = "APPTEMPLATE")
         layout.operator("wm.memory_statistics", icon = "SYSTEM")
 
