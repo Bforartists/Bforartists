@@ -51,6 +51,7 @@ class CUDADevice : public Device {
   size_t map_host_used;
   size_t map_host_limit;
   int can_map_host;
+  int pitch_alignment;
   int cuDevId;
   int cuDevArchitecture;
   bool first_error;
@@ -99,17 +100,15 @@ class CUDADevice : public Device {
 
   virtual BVHLayoutMask get_bvh_layout_mask() const;
 
-  void cuda_error_documentation();
-
-  bool cuda_error_(CUresult result, const string &stmt);
-
-  void cuda_error_message(const string &message);
+  void set_error(const string &error) override;
 
   CUDADevice(DeviceInfo &info, Stats &stats, Profiler &profiler, bool background_);
 
   virtual ~CUDADevice();
 
   bool support_device(const DeviceRequestedFeatures & /*requested_features*/);
+
+  bool check_peer_access(Device *peer_device);
 
   bool use_adaptive_compilation();
 

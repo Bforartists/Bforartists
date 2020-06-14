@@ -39,6 +39,7 @@
 #include "BKE_lib_id.h"
 #include "BKE_lib_query.h"
 #include "BKE_mesh.h"
+#include "BKE_mesh_wrapper.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
 #include "BKE_texture.h"
@@ -425,7 +426,7 @@ static void position_panel_draw(const bContext *C, Panel *panel)
   uiItemR(layout, &ptr, "start_position_object", 0, IFACE_("Object"), ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
-  uiItemR(col, &ptr, "start_position_x", 0, "Start position X", ICON_NONE);
+  uiItemR(col, &ptr, "start_position_x", 0, "Start Position X", ICON_NONE);
   uiItemR(col, &ptr, "start_position_y", 0, "Y", ICON_NONE);
 }
 
