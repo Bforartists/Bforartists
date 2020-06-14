@@ -1041,7 +1041,6 @@ class _defs_edit_curve:
                 sub.prop(cps, "corner_angle", text="")
                 layout.separator()
 
-
             col = layout.column(align=True)
             col.prop(cps, "radius_taper_start", text="Taper Start", slider=True)
             col.prop(cps, "radius_taper_end", text="End", slider=True)
@@ -1050,7 +1049,8 @@ class _defs_edit_curve:
             col.prop(cps, "radius_max", text="Max")
             col.prop(cps, "use_pressure_radius")
 
-            layout.separator()
+            if region_type != 'TOOL_HEADER' or cps.depth_mode == 'SURFACE':
+                layout.separator()
 
             if region_type != 'TOOL_HEADER':
                 row = layout.row()
@@ -1063,7 +1063,6 @@ class _defs_edit_curve:
                 if cps.use_stroke_endpoints:
                     colsub = layout.column(align=True)
                     colsub.prop(cps, "surface_plane")
-
 
         return dict(
             idname="builtin.draw",

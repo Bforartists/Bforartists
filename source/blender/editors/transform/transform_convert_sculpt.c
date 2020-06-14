@@ -29,6 +29,8 @@
 #include "BKE_paint.h"
 #include "BKE_report.h"
 
+#include "ED_sculpt.h"
+
 #include "transform.h"
 #include "transform_convert.h"
 
@@ -37,7 +39,7 @@
  *
  * \{ */
 
-void createTransSculpt(TransInfo *t)
+void createTransSculpt(bContext *C, TransInfo *t)
 {
   TransData *td;
 
@@ -97,6 +99,33 @@ void createTransSculpt(TransInfo *t)
   copy_m3_m3(td->smtx, obmat_inv);
   copy_m3_m4(td->mtx, ob->obmat);
   copy_m3_m4(td->axismtx, ob->obmat);
+
+  BLI_assert(!(t->options & CTX_PAINT_CURVE));
+  ED_sculpt_init_transform(C);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Recalc Data object
+ *
+ * \{ */
+
+void recalcData_sculpt(TransInfo *t)
+{
+  ED_sculpt_update_modal_transform(t->context);
+}
+
+void special_aftertrans_update__sculpt(bContext *C, TransInfo *t)
+{
+  Scene *scene = t->scene;
+  if (ID_IS_LINKED(scene)) {
+    /* `ED_sculpt_init_transform` was not called in this case. */
+    return;
+  }
+
+  BLI_assert(!(t->options & CTX_PAINT_CURVE));
+  ED_sculpt_end_transform(C);
 }
 
 /** \} */
