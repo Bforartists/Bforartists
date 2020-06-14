@@ -135,8 +135,10 @@ BVHLayoutMask CUDADevice::get_bvh_layout_mask() const
   return BVH_LAYOUT_BVH2;
 }
 
-void CUDADevice::cuda_error_documentation()
+void CUDADevice::set_error(const string &error)
 {
+  Device::set_error(error);
+
   if (first_error) {
     fprintf(stderr, "\nRefer to the Cycles GPU rendering documentation for possible solutions:\n");
     fprintf(stderr,
@@ -148,41 +150,12 @@ void CUDADevice::cuda_error_documentation()
 #  define cuda_assert(stmt) \
     { \
       CUresult result = stmt; \
-\
       if (result != CUDA_SUCCESS) { \
-        string message = string_printf( \
-            "CUDA error: %s in %s, line %d", cuewErrorString(result), #stmt, __LINE__); \
-        if (error_msg == "") \
-          error_msg = message; \
-        fprintf(stderr, "%s\n", message.c_str()); \
-        /*cuda_abort();*/ \
-        cuda_error_documentation(); \
+        const char *name = cuewErrorString(result); \
+        set_error(string_printf("%s in %s (device_cuda_impl.cpp:%d)", name, #stmt, __LINE__)); \
       } \
     } \
     (void)0
-
-bool CUDADevice::cuda_error_(CUresult result, const string &stmt)
-{
-  if (result == CUDA_SUCCESS)
-    return false;
-
-  string message = string_printf("CUDA error at %s: %s", stmt.c_str(), cuewErrorString(result));
-  if (error_msg == "")
-    error_msg = message;
-  fprintf(stderr, "%s\n", message.c_str());
-  cuda_error_documentation();
-  return true;
-}
-
-#  define cuda_error(stmt) cuda_error_(stmt, #  stmt)
-
-void CUDADevice::cuda_error_message(const string &message)
-{
-  if (error_msg == "")
-    error_msg = message;
-  fprintf(stderr, "%s\n", message.c_str());
-  cuda_error_documentation();
-}
 
 CUDADevice::CUDADevice(DeviceInfo &info, Stats &stats, Profiler &profiler, bool background_)
     : Device(info, stats, profiler, background_), texture_info(this, "__texture_info", MEM_GLOBAL)
@@ -207,22 +180,33 @@ CUDADevice::CUDADevice(DeviceInfo &info, Stats &stats, Profiler &profiler, bool 
   map_host_limit = 0;
   map_host_used = 0;
   can_map_host = 0;
+  pitch_alignment = 0;
 
   functions.loaded = false;
 
   /* Intialize CUDA. */
-  if (cuda_error(cuInit(0)))
+  CUresult result = cuInit(0);
+  if (result != CUDA_SUCCESS) {
+    set_error(string_printf("Failed to initialize CUDA runtime (%s)", cuewErrorString(result)));
     return;
+  }
 
   /* Setup device and context. */
-  if (cuda_error(cuDeviceGet(&cuDevice, cuDevId)))
+  result = cuDeviceGet(&cuDevice, cuDevId);
+  if (result != CUDA_SUCCESS) {
+    set_error(string_printf("Failed to get CUDA device handle from ordinal (%s)",
+                            cuewErrorString(result)));
     return;
+  }
 
   /* CU_CTX_MAP_HOST for mapping host memory when out of device memory.
    * CU_CTX_LMEM_RESIZE_TO_MAX for reserving local memory ahead of render,
    * so we can predict which memory to map to host. */
   cuda_assert(
       cuDeviceGetAttribute(&can_map_host, CU_DEVICE_ATTRIBUTE_CAN_MAP_HOST_MEMORY, cuDevice));
+
+  cuda_assert(cuDeviceGetAttribute(
+      &pitch_alignment, CU_DEVICE_ATTRIBUTE_TEXTURE_PITCH_ALIGNMENT, cuDevice));
 
   unsigned int ctx_flags = CU_CTX_LMEM_RESIZE_TO_MAX;
   if (can_map_host) {
@@ -231,8 +215,6 @@ CUDADevice::CUDADevice(DeviceInfo &info, Stats &stats, Profiler &profiler, bool 
   }
 
   /* Create context. */
-  CUresult result;
-
   if (background) {
     result = cuCtxCreate(&cuContext, ctx_flags, cuDevice);
   }
@@ -245,8 +227,10 @@ CUDADevice::CUDADevice(DeviceInfo &info, Stats &stats, Profiler &profiler, bool 
     }
   }
 
-  if (cuda_error_(result, "cuCtxCreate"))
+  if (result != CUDA_SUCCESS) {
+    set_error(string_printf("Failed to create CUDA context (%s)", cuewErrorString(result)));
     return;
+  }
 
   int major, minor;
   cuDeviceGetAttribute(&major, CU_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY_MAJOR, cuDevId);
@@ -276,11 +260,58 @@ bool CUDADevice::support_device(const DeviceRequestedFeatures & /*requested_feat
 
   /* We only support sm_30 and above */
   if (major < 3) {
-    cuda_error_message(
-        string_printf("CUDA device supported only with compute capability 3.0 or up, found %d.%d.",
-                      major,
-                      minor));
+    set_error(string_printf(
+        "CUDA backend requires compute capability 3.0 or up, but found %d.%d.", major, minor));
     return false;
+  }
+
+  return true;
+}
+
+bool CUDADevice::check_peer_access(Device *peer_device)
+{
+  if (peer_device == this) {
+    return false;
+  }
+  if (peer_device->info.type != DEVICE_CUDA && peer_device->info.type != DEVICE_OPTIX) {
+    return false;
+  }
+
+  CUDADevice *const peer_device_cuda = static_cast<CUDADevice *>(peer_device);
+
+  int can_access = 0;
+  cuda_assert(cuDeviceCanAccessPeer(&can_access, cuDevice, peer_device_cuda->cuDevice));
+  if (can_access == 0) {
+    return false;
+  }
+
+  // Ensure array access over the link is possible as well (for 3D textures)
+  cuda_assert(cuDeviceGetP2PAttribute(&can_access,
+                                      CU_DEVICE_P2P_ATTRIBUTE_ARRAY_ACCESS_ACCESS_SUPPORTED,
+                                      cuDevice,
+                                      peer_device_cuda->cuDevice));
+  if (can_access == 0) {
+    return false;
+  }
+
+  // Enable peer access in both directions
+  {
+    const CUDAContextScope scope(this);
+    CUresult result = cuCtxEnablePeerAccess(peer_device_cuda->cuContext, 0);
+    if (result != CUDA_SUCCESS) {
+      set_error(string_printf("Failed to enable peer access on CUDA context (%s)",
+                              cuewErrorString(result)));
+      return false;
+    }
+  }
+  {
+    const CUDAContextScope scope(peer_device_cuda);
+    CUresult result = cuCtxEnablePeerAccess(cuContext, 0);
+    if (result != CUDA_SUCCESS) {
+      set_error(string_printf("Failed to enable peer access on CUDA context (%s)",
+                              cuewErrorString(result)));
+      return false;
+    }
   }
 
   return true;
@@ -385,14 +416,14 @@ string CUDADevice::compile_kernel(const DeviceRequestedFeatures &requested_featu
 #  ifdef _WIN32
   if (!use_adaptive_compilation() && have_precompiled_kernels()) {
     if (major < 3) {
-      cuda_error_message(
-          string_printf("CUDA device requires compute capability 3.0 or up, "
-                        "found %d.%d. Your GPU is not supported.",
+      set_error(
+          string_printf("CUDA backend requires compute capability 3.0 or up, but found %d.%d. "
+                        "Your GPU is not supported.",
                         major,
                         minor));
     }
     else {
-      cuda_error_message(
+      set_error(
           string_printf("CUDA binary kernel for this graphics card compute "
                         "capability (%d.%d) not found.",
                         major,
@@ -405,7 +436,7 @@ string CUDADevice::compile_kernel(const DeviceRequestedFeatures &requested_featu
   /* Compile. */
   const char *const nvcc = cuewCompilerPath();
   if (nvcc == NULL) {
-    cuda_error_message(
+    set_error(
         "CUDA nvcc compiler not found. "
         "Install CUDA toolkit in default location.");
     return string();
@@ -457,7 +488,7 @@ string CUDADevice::compile_kernel(const DeviceRequestedFeatures &requested_featu
   command = "call " + command;
 #  endif
   if (system(command.c_str()) != 0) {
-    cuda_error_message(
+    set_error(
         "Failed to execute compilation command, "
         "see console for details.");
     return string();
@@ -465,7 +496,7 @@ string CUDADevice::compile_kernel(const DeviceRequestedFeatures &requested_featu
 
   /* Verify if compilation succeeded */
   if (!path_exists(cubin)) {
-    cuda_error_message(
+    set_error(
         "CUDA kernel compilation failed, "
         "see console for details.");
     return string();
@@ -518,16 +549,19 @@ bool CUDADevice::load_kernels(const DeviceRequestedFeatures &requested_features)
   else
     result = CUDA_ERROR_FILE_NOT_FOUND;
 
-  if (cuda_error_(result, "cuModuleLoad"))
-    cuda_error_message(string_printf("Failed loading CUDA kernel %s.", cubin.c_str()));
+  if (result != CUDA_SUCCESS)
+    set_error(string_printf(
+        "Failed to load CUDA kernel from '%s' (%s)", cubin.c_str(), cuewErrorString(result)));
 
   if (path_read_text(filter_cubin, cubin_data))
     result = cuModuleLoadData(&cuFilterModule, cubin_data.c_str());
   else
     result = CUDA_ERROR_FILE_NOT_FOUND;
 
-  if (cuda_error_(result, "cuModuleLoad"))
-    cuda_error_message(string_printf("Failed loading CUDA kernel %s.", filter_cubin.c_str()));
+  if (result != CUDA_SUCCESS)
+    set_error(string_printf("Failed to load CUDA kernel from '%s' (%s)",
+                            filter_cubin.c_str(),
+                            cuewErrorString(result)));
 
   if (result == CUDA_SUCCESS) {
     reserve_local_memory(requested_features);
@@ -674,6 +708,12 @@ void CUDADevice::load_texture_info()
 
 void CUDADevice::move_textures_to_host(size_t size, bool for_texture)
 {
+  /* Break out of recursive call, which can happen when moving memory on a multi device. */
+  static bool any_device_moving_textures_to_host = false;
+  if (any_device_moving_textures_to_host) {
+    return;
+  }
+
   /* Signal to reallocate textures in host memory only. */
   move_texture_to_host = true;
 
@@ -687,17 +727,18 @@ void CUDADevice::move_textures_to_host(size_t size, bool for_texture)
       device_memory &mem = *pair.first;
       CUDAMem *cmem = &pair.second;
 
+      /* Can only move textures allocated on this device (and not those from peer devices).
+       * And need to ignore memory that is already on the host. */
+      if (!mem.is_resident(this) || cmem->use_mapped_host) {
+        continue;
+      }
+
       bool is_texture = (mem.type == MEM_TEXTURE || mem.type == MEM_GLOBAL) &&
                         (&mem != &texture_info);
       bool is_image = is_texture && (mem.data_height > 1);
 
       /* Can't move this type of memory. */
       if (!is_texture || cmem->array) {
-        continue;
-      }
-
-      /* Already in host memory. */
-      if (cmem->use_mapped_host) {
         continue;
       }
 
@@ -723,26 +764,30 @@ void CUDADevice::move_textures_to_host(size_t size, bool for_texture)
       static thread_mutex move_mutex;
       thread_scoped_lock lock(move_mutex);
 
-      /* Preserve the original device pointer, in case of multi device
-       * we can't change it because the pointer mapping would break. */
-      device_ptr prev_pointer = max_mem->device_pointer;
-      size_t prev_size = max_mem->device_size;
+      any_device_moving_textures_to_host = true;
 
-      mem_copy_to(*max_mem);
+      /* Potentially need to call back into multi device, so pointer mapping
+       * and peer devices are updated. This is also necessary since the device
+       * pointer may just be a key here, so cannot be accessed and freed directly.
+       * Unfortunately it does mean that memory is reallocated on all other
+       * devices as well, which is potentially dangerous when still in use (since
+       * a thread rendering on another devices would only be caught in this mutex
+       * if it so happens to do an allocation at the same time as well. */
+      max_mem->device_copy_to();
       size = (max_size >= size) ? 0 : size - max_size;
 
-      max_mem->device_pointer = prev_pointer;
-      max_mem->device_size = prev_size;
+      any_device_moving_textures_to_host = false;
     }
     else {
       break;
     }
   }
 
+  /* Unset flag before texture info is reloaded, since it should stay in device memory. */
+  move_texture_to_host = false;
+
   /* Update texture info array with new pointers. */
   load_texture_info();
-
-  move_texture_to_host = false;
 }
 
 CUDADevice::CUDAMem *CUDADevice::generic_alloc(device_memory &mem, size_t pitch_padding)
@@ -808,14 +853,11 @@ CUDADevice::CUDAMem *CUDADevice::generic_alloc(device_memory &mem, size_t pitch_
       map_host_used += size;
       status = " in host memory";
     }
-    else {
-      status = " failed, out of host memory";
-    }
   }
 
   if (mem_alloc_result != CUDA_SUCCESS) {
     status = " failed, out of device and host memory";
-    cuda_assert(mem_alloc_result);
+    set_error("System is out of GPU and shared host memory");
   }
 
   if (mem.name) {
@@ -906,7 +948,7 @@ void CUDADevice::generic_free(device_memory &mem)
     }
     else {
       /* Free device memory. */
-      cuMemFree(mem.device_pointer);
+      cuda_assert(cuMemFree(mem.device_pointer));
     }
 
     stats.mem_free(mem.device_size);
@@ -1032,18 +1074,17 @@ void CUDADevice::const_copy_to(const char *name, void *host, size_t size)
 
 void CUDADevice::global_alloc(device_memory &mem)
 {
-  CUDAContextScope scope(this);
-
-  generic_alloc(mem);
-  generic_copy_to(mem);
+  if (mem.is_resident(this)) {
+    generic_alloc(mem);
+    generic_copy_to(mem);
+  }
 
   const_copy_to(mem.name, &mem.device_pointer, sizeof(mem.device_pointer));
 }
 
 void CUDADevice::global_free(device_memory &mem)
 {
-  if (mem.device_pointer) {
-    CUDAContextScope scope(this);
+  if (mem.is_resident(this) && mem.device_pointer) {
     generic_free(mem);
   }
 }
@@ -1112,7 +1153,19 @@ void CUDADevice::tex_alloc(device_texture &mem)
   size_t src_pitch = mem.data_width * dsize * mem.data_elements;
   size_t dst_pitch = src_pitch;
 
-  if (mem.data_depth > 1) {
+  if (!mem.is_resident(this)) {
+    cmem = &cuda_mem_map[&mem];
+    cmem->texobject = 0;
+
+    if (mem.data_depth > 1) {
+      array_3d = (CUarray)mem.device_pointer;
+      cmem->array = array_3d;
+    }
+    else if (mem.data_height > 0) {
+      dst_pitch = align_up(src_pitch, pitch_alignment);
+    }
+  }
+  else if (mem.data_depth > 1) {
     /* 3D texture using array, there is no API for linear memory. */
     CUDA_ARRAY3D_DESCRIPTOR desc;
 
@@ -1156,10 +1209,7 @@ void CUDADevice::tex_alloc(device_texture &mem)
   }
   else if (mem.data_height > 0) {
     /* 2D texture, using pitch aligned linear memory. */
-    int alignment = 0;
-    cuda_assert(
-        cuDeviceGetAttribute(&alignment, CU_DEVICE_ATTRIBUTE_TEXTURE_PITCH_ALIGNMENT, cuDevice));
-    dst_pitch = align_up(src_pitch, alignment);
+    dst_pitch = align_up(src_pitch, pitch_alignment);
     size_t dst_size = dst_pitch * mem.data_height;
 
     cmem = generic_alloc(mem, dst_size - mem.memory_size());
@@ -1251,7 +1301,11 @@ void CUDADevice::tex_free(device_texture &mem)
       cuTexObjectDestroy(cmem.texobject);
     }
 
-    if (cmem.array) {
+    if (!mem.is_resident(this)) {
+      /* Do not free memory here, since it was allocated on a different device. */
+      cuda_mem_map.erase(cuda_mem_map.find(&mem));
+    }
+    else if (cmem.array) {
       /* Free array. */
       cuArrayDestroy(cmem.array);
       stats.mem_free(mem.device_size);
@@ -2391,14 +2445,10 @@ void CUDADevice::task_cancel()
 #  define cuda_assert(stmt) \
     { \
       CUresult result = stmt; \
-\
       if (result != CUDA_SUCCESS) { \
-        string message = string_printf("CUDA error: %s in %s", cuewErrorString(result), #stmt); \
-        if (device->error_msg == "") \
-          device->error_msg = message; \
-        fprintf(stderr, "%s\n", message.c_str()); \
-        /*cuda_abort();*/ \
-        device->cuda_error_documentation(); \
+        const char *name = cuewErrorString(result); \
+        device->set_error( \
+            string_printf("%s in %s (device_cuda_impl.cpp:%d)", name, #stmt, __LINE__)); \
       } \
     } \
     (void)0
@@ -2580,14 +2630,15 @@ bool CUDASplitKernel::enqueue_split_kernel_data_init(const KernelDimensions &dim
 SplitKernelFunction *CUDASplitKernel::get_split_kernel_function(const string &kernel_name,
                                                                 const DeviceRequestedFeatures &)
 {
-  CUDAContextScope scope(device);
-  CUfunction func;
+  const CUDAContextScope scope(device);
 
-  cuda_assert(
-      cuModuleGetFunction(&func, device->cuModule, (string("kernel_cuda_") + kernel_name).data()));
-  if (device->have_error()) {
-    device->cuda_error_message(
-        string_printf("kernel \"kernel_cuda_%s\" not found in module", kernel_name.data()));
+  CUfunction func;
+  const CUresult result = cuModuleGetFunction(
+      &func, device->cuModule, (string("kernel_cuda_") + kernel_name).data());
+  if (result != CUDA_SUCCESS) {
+    device->set_error(string_printf("Could not find kernel \"kernel_cuda_%s\" in module (%s)",
+                                    kernel_name.data(),
+                                    cuewErrorString(result)));
     return NULL;
   }
 

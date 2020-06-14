@@ -279,7 +279,7 @@ bool ui_searchbox_apply(uiBut *but, ARegion *region)
     const char *name = data->items.names[data->active];
     const char *name_sep = data->use_sep ? strrchr(name, UI_SEP_CHAR) : NULL;
 
-    BLI_strncpy(but->editstr, name, name_sep ? (name_sep - name) : data->items.maxstrlen);
+    BLI_strncpy(but->editstr, name, name_sep ? (name_sep - name) + 1 : data->items.maxstrlen);
 
     but->func_arg2 = data->items.pointers[data->active];
 
@@ -555,6 +555,7 @@ static void ui_searchbox_region_draw_cb(const bContext *C, ARegion *region)
         char *name = data->items.names[a];
         int icon = data->items.icons[a];
         char *name_sep_test = NULL;
+        const bool use_sep_char = data->use_sep || (state & UI_BUT_HAS_SEP_CHAR);
 
         ui_searchbox_butrect(&rect, data, a);
 
@@ -563,7 +564,7 @@ static void ui_searchbox_region_draw_cb(const bContext *C, ARegion *region)
             !(name_sep_test = strstr(data->items.names[a], data->sep_string))) {
 
           /* Simple menu item. */
-          ui_draw_menu_item(&data->fstyle, &rect, name, icon, state, data->use_sep, NULL);
+          ui_draw_menu_item(&data->fstyle, &rect, name, icon, state, use_sep_char, NULL);
         }
         else {
           /* Split menu item, faded text before the separator. */
@@ -590,7 +591,7 @@ static void ui_searchbox_region_draw_cb(const bContext *C, ARegion *region)
 
           /* The previous menu item draws the active selection. */
           ui_draw_menu_item(
-              &data->fstyle, &rect, name_sep, icon, state & ~UI_ACTIVE, data->use_sep, NULL);
+              &data->fstyle, &rect, name_sep, icon, state & ~UI_ACTIVE, use_sep_char, NULL);
         }
       }
       /* indicate more */

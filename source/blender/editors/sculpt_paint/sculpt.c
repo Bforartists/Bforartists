@@ -7533,7 +7533,7 @@ static void SCULPT_OT_symmetrize(wmOperatorType *ot)
                 0.001f,
                 0.0f,
                 FLT_MAX,
-                "Merge Limit",
+                "Merge Distance",
                 "Distance within which symmetrical vertices are merged",
                 0.0f,
                 1.0f);
@@ -7907,4 +7907,5 @@ void ED_operatortypes_sculpt(void)
   WM_operatortype_append(SCULPT_OT_face_sets_randomize_colors);
   WM_operatortype_append(SCULPT_OT_face_sets_init);
   WM_operatortype_append(SCULPT_OT_cloth_filter);
+  WM_operatortype_append(SCULPT_OT_face_sets_edit);
 }

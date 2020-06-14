@@ -182,17 +182,6 @@ class SEQUENCER_MT_editor_menus(Menu):
             layout.menu("SEQUENCER_MT_strip")
 
 
-class SEQUENCER_MT_view_toggle(Menu):
-    bl_label = "View Type"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("sequencer.view_toggle").type = 'SEQUENCER'
-        layout.operator("sequencer.view_toggle").type = 'PREVIEW'
-        layout.operator("sequencer.view_toggle").type = 'SEQUENCER_PREVIEW'
-
-
 class SEQUENCER_MT_view_cache(Menu):
     bl_label = "Cache"
 
@@ -331,6 +320,20 @@ class SEQUENCER_MT_view(Menu):
         props = layout.operator("render.opengl", text="Sequence Render Animation", icon='RENDER_ANIMATION')
         props.animation = True
         props.sequencer = True
+
+        layout.separator()
+
+        # Note that the context is needed for the shortcut to display properly.
+        layout.operator_context = 'INVOKE_REGION_PREVIEW' if is_preview else 'INVOKE_REGION_WIN'
+        props = layout.operator(
+            "wm.context_toggle_enum",
+            text="Toggle Sequencer/Preview",
+            icon='SEQ_SEQUENCER' if is_preview else 'SEQ_PREVIEW',
+        )
+        props.data_path = "space_data.view_type"
+        props.value_1 = 'SEQUENCER'
+        props.value_2 = 'PREVIEW'
+        layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
 
@@ -2266,7 +2269,6 @@ classes = (
     SEQUENCER_MT_view,
     SEQUENCER_MT_export,
     SEQUENCER_MT_view_cache,
-    SEQUENCER_MT_view_toggle,
     SEQUENCER_MT_preview_zoom,
     SEQUENCER_MT_proxy,
     SEQUENCER_MT_select_handle,
