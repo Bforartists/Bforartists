@@ -2084,7 +2084,7 @@ keyconfig_data = \
     ("wm.call_menu",
      {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
-      [("name", 'VIEW3D_MT_edit_text_context_menu'),
+      [("name", 'VIEW3D_MT_edit_font_context_menu'),
        ],
       },
      ),
