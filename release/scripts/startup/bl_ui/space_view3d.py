@@ -5678,7 +5678,7 @@ class VIEW3D_MT_edit_font_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("font.select_all")
+        layout.operator("font.select_all", icon = "SELECT_ALL")
 
         layout.separator()
 
