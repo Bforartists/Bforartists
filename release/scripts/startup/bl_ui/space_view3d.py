@@ -5466,7 +5466,7 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
 
         # Add
         layout.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES')
-        layout.operator("curve.extrude_move", icon = 'EXTRUDE_REGION')
+        layout.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
         layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
         layout.operator("curve.duplicate_move", icon = "DUPLICATE")
 
