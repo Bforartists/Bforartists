@@ -2806,20 +2806,20 @@ class VIEW3D_MT_object(Menu):
                         break
 
             if is_eevee and not emission_node:
-                props = layout.operator("wm.context_modal_mouse", text="Energy", icon = "LIGHT_STRENGTH")
+                props = layout.operator("wm.context_modal_mouse", text="Power", icon = "LIGHT_STRENGTH")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.energy"
-                props.header_text = "Light Energy: %.3f"
+                props.header_text = "Light Power: %.3f"
 
             if emission_node is not None:
-                props = layout.operator("wm.context_modal_mouse", text="Energy", icon = "LIGHT_STRENGTH")
+                props = layout.operator("wm.context_modal_mouse", text="Power", icon = "LIGHT_STRENGTH")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = (
                     "data.node_tree"
                     ".nodes[\"" + emission_node.name + "\"]"
                     ".inputs[\"Strength\"].default_value"
                 )
-                props.header_text = "Light Energy: %.3f"
+                props.header_text = "Light Power: %.3f"
                 props.input_scale = 0.1
 
             if light.type == 'AREA':
