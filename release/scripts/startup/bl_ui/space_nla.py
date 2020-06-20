@@ -318,7 +318,6 @@ class NLA_MT_add(Menu):
 
         layout.separator()
         layout.operator("nla.selected_objects_add", icon = "ADD_SELECTED")
-        layout.operator_menu_enum("nla.fmodifier_add", "type",)
 
 
 class NLA_MT_edit_transform(Menu):
