@@ -39,7 +39,7 @@ class ANIM_OT_switch_editors_in_nla(bpy.types.Operator):
         return {'FINISHED'}
 
 ##########################################
-		
+
 
 class NLA_HT_header(Header):
     bl_space_type = 'NLA_EDITOR'
@@ -53,14 +53,14 @@ class NLA_HT_header(Header):
 
         ########################### Switch between the editors
 
-        # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py    
+        # bfa - The tabs to switch between the four animation editors. The classes are in space_dopesheet.py
         row = layout.row(align=True)
-        
+
         row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')
         row.operator("wm.switch_editor_to_graph", text="", icon='GRAPH')
         row.operator("wm.switch_editor_to_driver", text="", icon='DRIVER')
         row.operator("wm.switch_editor_in_nla", text="", icon='NLA_ACTIVE')
-        
+
         ###########################
 
         NLA_MT_editor_menus.draw_collapsible(context, layout)
@@ -135,7 +135,7 @@ class NLA_MT_view(Menu):
         layout.operator("nla.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        
+
         layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
         layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
         layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
@@ -161,7 +161,7 @@ class NLA_PT_view_marker_options(Panel):
         tool_settings = context.tool_settings
 
         layout.prop(tool_settings, "lock_markers")
-        
+
 
 class NLA_PT_view_view_options(Panel):
     bl_label = "View Options"
@@ -175,20 +175,21 @@ class NLA_PT_view_view_options(Panel):
         st = context.space_data
 
         layout.separator()
-       
-        layout.prop(st, "show_marker_lines")
-        
+
+        layout.prop(st, "show_markers")
+        layout.prop(st, "show_local_markers")
+
         layout.separator()
 
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
-        
+
         layout.separator()
 
         layout.prop(st, "show_strip_curves")
         layout.prop(st, "show_local_markers")
         layout.prop(st, "use_realtime_update")
-        
+
 
 
 # Workaround to separate the tooltips
