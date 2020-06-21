@@ -65,6 +65,7 @@
 #include "BKE_effect.h"
 #include "BKE_font.h"
 #include "BKE_gpencil_curve.h"
+#include "BKE_gpencil_geom.h"
 #include "BKE_hair.h"
 #include "BKE_key.h"
 #include "BKE_lattice.h"
@@ -95,6 +96,8 @@
 #include "RNA_access.h"
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
+
+#include "UI_interface.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -857,7 +860,7 @@ static int object_metaball_add_exec(bContext *C, wmOperator *op)
    * we want to pass in 1 so other values such as resolution are scaled by 1.0. */
   dia = RNA_float_get(op->ptr, "radius") / 2;
 
-  ED_mball_add_primitive(C, obedit, mat, dia, RNA_enum_get(op->ptr, "type"));
+  ED_mball_add_primitive(C, obedit, newob, mat, dia, RNA_enum_get(op->ptr, "type"));
 
   /* userdef */
   if (newob && !enter_editmode) {
@@ -2129,11 +2132,11 @@ void OBJECT_OT_duplicates_make_real(wmOperatorType *ot)
 static const EnumPropertyItem convert_target_items[] = {
     {OB_CURVE, "CURVE", ICON_OUTLINER_OB_CURVE, "Curve from Mesh/Text", ""},
     {OB_MESH, "MESH", ICON_OUTLINER_OB_MESH, "Mesh from Curve/Meta/Surf/Text", ""},
-    {OB_GPENCIL, "GPENCIL", ICON_OUTLINER_OB_GREASEPENCIL, "Grease Pencil from Curve", ""},
+    {OB_GPENCIL, "GPENCIL", ICON_OUTLINER_OB_GREASEPENCIL, "Grease Pencil from Curve/Mesh", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
-static void convert_ensure_curve_cache(Depsgraph *depsgraph, Scene *scene, Object *ob)
+static void object_data_convert_ensure_curve_cache(Depsgraph *depsgraph, Scene *scene, Object *ob)
 {
   if (ob->runtime.curve_cache == NULL) {
     /* Force creation. This is normally not needed but on operator
@@ -2152,7 +2155,7 @@ static void convert_ensure_curve_cache(Depsgraph *depsgraph, Scene *scene, Objec
   }
 }
 
-static void curvetomesh(Main *bmain, Depsgraph *depsgraph, Object *ob)
+static void object_data_convert_curve_to_mesh(Main *bmain, Depsgraph *depsgraph, Object *ob)
 {
   Object *object_eval = DEG_get_evaluated_object(depsgraph, ob);
   Curve *curve = ob->data;
@@ -2185,7 +2188,7 @@ static void curvetomesh(Main *bmain, Depsgraph *depsgraph, Object *ob)
   }
 }
 
-static bool convert_poll(bContext *C)
+static bool object_convert_poll(bContext *C)
 {
   Scene *scene = CTX_data_scene(C);
   Base *base_act = CTX_data_active_base(C);
@@ -2195,7 +2198,7 @@ static bool convert_poll(bContext *C)
           (base_act->flag & BASE_SELECTED) && !ID_IS_LINKED(obact));
 }
 
-/* Helper for convert_exec */
+/* Helper for object_convert_exec */
 static Base *duplibase_for_convert(
     Main *bmain, Depsgraph *depsgraph, Scene *scene, ViewLayer *view_layer, Base *base, Object *ob)
 {
@@ -2230,7 +2233,7 @@ static Base *duplibase_for_convert(
    * time we need to duplicate an object to convert it. Even worse, this is not 100% correct, since
    * we do not yet have duplicated obdata.
    * However, that is a safe solution for now. Proper, longer-term solution is to refactor
-   * convert_exec to:
+   * object_convert_exec to:
    *  - duplicate all data it needs to in a first loop.
    *  - do a single update.
    *  - convert data in a second loop. */
@@ -2248,7 +2251,7 @@ static Base *duplibase_for_convert(
   return basen;
 }
 
-static int convert_exec(bContext *C, wmOperator *op)
+static int object_convert_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
@@ -2261,9 +2264,16 @@ static int convert_exec(bContext *C, wmOperator *op)
   Nurb *nu;
   MetaBall *mb;
   Mesh *me;
-  Object *gpencil_ob = NULL;
+  Object *ob_gpencil = NULL;
   const short target = RNA_enum_get(op->ptr, "target");
   bool keep_original = RNA_boolean_get(op->ptr, "keep_original");
+
+  const float angle = RNA_float_get(op->ptr, "angle");
+  const int thickness = RNA_int_get(op->ptr, "thickness");
+  const bool use_seams = RNA_boolean_get(op->ptr, "seams");
+  const bool use_faces = RNA_boolean_get(op->ptr, "faces");
+  const float offset = RNA_float_get(op->ptr, "offset");
+
   int a, mballConverted = 0;
   bool gpencilConverted = false;
 
@@ -2375,6 +2385,54 @@ static int convert_exec(bContext *C, wmOperator *op)
         ED_rigidbody_object_remove(bmain, scene, newob);
       }
     }
+    else if (ob->type == OB_MESH && target == OB_GPENCIL) {
+      ob->flag |= OB_DONE;
+
+      /* Create a new grease pencil object and copy transformations. */
+      ushort local_view_bits = (v3d && v3d->localvd) ? v3d->local_view_uuid : 0;
+      float loc[3], size[3], rot[3][3], eul[3];
+      float matrix[4][4];
+      mat4_to_loc_rot_size(loc, rot, size, ob->obmat);
+      mat3_to_eul(eul, rot);
+
+      ob_gpencil = ED_gpencil_add_object(C, loc, local_view_bits);
+      copy_v3_v3(ob_gpencil->loc, loc);
+      copy_v3_v3(ob_gpencil->rot, eul);
+      copy_v3_v3(ob_gpencil->scale, size);
+      unit_m4(matrix);
+      /* Set object in 3D mode. */
+      bGPdata *gpd = (bGPdata *)ob_gpencil->data;
+      gpd->draw_mode = GP_DRAWMODE_3D;
+
+      BKE_gpencil_convert_mesh(bmain,
+                               depsgraph,
+                               scene,
+                               ob_gpencil,
+                               ob,
+                               angle,
+                               thickness,
+                               offset,
+                               matrix,
+                               0,
+                               use_seams,
+                               use_faces);
+      gpencilConverted = true;
+
+      /* Remove unused materials. */
+      int actcol = ob_gpencil->actcol;
+      for (int slot = 1; slot <= ob_gpencil->totcol; slot++) {
+        while (slot <= ob_gpencil->totcol &&
+               !BKE_object_material_slot_used(ob_gpencil->data, slot)) {
+          ob_gpencil->actcol = slot;
+          BKE_object_material_slot_remove(CTX_data_main(C), ob_gpencil);
+
+          if (actcol >= slot) {
+            actcol--;
+          }
+        }
+      }
+      ob_gpencil->actcol = actcol;
+    }
     else if (ob->type == OB_MESH) {
       ob->flag |= OB_DONE;
 
@@ -2470,7 +2528,7 @@ static int convert_exec(bContext *C, wmOperator *op)
       if (target == OB_MESH) {
         /* No assumption should be made that the resulting objects is a mesh, as conversion can
          * fail. */
-        curvetomesh(bmain, depsgraph, newob);
+        object_data_convert_curve_to_mesh(bmain, depsgraph, newob);
         /* meshes doesn't use displist */
         BKE_object_free_curve_cache(newob);
       }
@@ -2495,7 +2553,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 
         /* No assumption should be made that the resulting objects is a mesh, as conversion can
          * fail. */
-        curvetomesh(bmain, depsgraph, newob);
+        object_data_convert_curve_to_mesh(bmain, depsgraph, newob);
         /* meshes doesn't use displist */
         BKE_object_free_curve_cache(newob);
       }
@@ -2509,10 +2567,10 @@ static int convert_exec(bContext *C, wmOperator *op)
            * Nurbs Surface are not supported.
            */
           ushort local_view_bits = (v3d && v3d->localvd) ? v3d->local_view_uuid : 0;
-          gpencil_ob = ED_gpencil_add_object(C, ob->loc, local_view_bits);
-          copy_v3_v3(gpencil_ob->rot, ob->rot);
-          copy_v3_v3(gpencil_ob->scale, ob->scale);
-          BKE_gpencil_convert_curve(bmain, scene, gpencil_ob, ob, false, false, true);
+          ob_gpencil = ED_gpencil_add_object(C, ob->loc, local_view_bits);
+          copy_v3_v3(ob_gpencil->rot, ob->rot);
+          copy_v3_v3(ob_gpencil->scale, ob->scale);
+          BKE_gpencil_convert_curve(bmain, scene, ob_gpencil, ob, false, false, true);
           gpencilConverted = true;
         }
       }
@@ -2549,7 +2607,7 @@ static int convert_exec(bContext *C, wmOperator *op)
           }
         }
 
-        convert_ensure_curve_cache(depsgraph, scene, baseob);
+        object_data_convert_ensure_curve_cache(depsgraph, scene, baseob);
         BKE_mesh_from_metaball(&baseob->runtime.curve_cache->disp, newob->data);
 
         if (obact->type == OB_MBALL) {
@@ -2618,12 +2676,12 @@ static int convert_exec(bContext *C, wmOperator *op)
       }
       FOREACH_SCENE_OBJECT_END;
     }
-    /* Remove curves converted to Grease Pencil object. */
+    /* Remove curves and meshes converted to Grease Pencil object. */
     if (gpencilConverted) {
-      FOREACH_SCENE_OBJECT_BEGIN (scene, ob_curve) {
-        if (ob_curve->type == OB_CURVE) {
-          if (ob_curve->flag & OB_DONE) {
-            ED_object_base_free_and_unlink(bmain, scene, ob_curve);
+      FOREACH_SCENE_OBJECT_BEGIN (scene, ob_delete) {
+        if ((ob_delete->type == OB_CURVE) || (ob_delete->type == OB_MESH)) {
+          if (ob_delete->flag & OB_DONE) {
+            ED_object_base_free_and_unlink(bmain, scene, ob_delete);
           }
         }
       }
@@ -2652,8 +2710,28 @@ static int convert_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static void object_convert_ui(bContext *UNUSED(C), wmOperator *op)
+{
+  uiLayout *layout = op->layout;
+  PointerRNA ptr;
+
+  RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
+  uiItemR(layout, &ptr, "target", 0, NULL, ICON_NONE);
+  uiItemR(layout, &ptr, "keep_original", 0, NULL, ICON_NONE);
+
+  if (RNA_enum_get(&ptr, "target") == OB_GPENCIL) {
+    uiItemR(layout, &ptr, "thickness", 0, NULL, ICON_NONE);
+    uiItemR(layout, &ptr, "angle", 0, NULL, ICON_NONE);
+    uiItemR(layout, &ptr, "offset", 0, NULL, ICON_NONE);
+    uiItemR(layout, &ptr, "seams", 0, NULL, ICON_NONE);
+    uiItemR(layout, &ptr, "faces", 0, NULL, ICON_NONE);
+  }
+}
+
 void OBJECT_OT_convert(wmOperatorType *ot)
 {
+  PropertyRNA *prop;
+
   /* identifiers */
   ot->name = "Convert to";
   ot->description = "Convert selected objects to another type";
@@ -2661,8 +2739,9 @@ void OBJECT_OT_convert(wmOperatorType *ot)
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;
-  ot->exec = convert_exec;
-  ot->poll = convert_poll;
+  ot->exec = object_convert_exec;
+  ot->poll = object_convert_poll;
+  ot->ui = object_convert_ui;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -2675,6 +2754,31 @@ void OBJECT_OT_convert(wmOperatorType *ot)
                   0,
                   "Keep Original",
                   "Keep original objects instead of replacing them");
+
+  prop = RNA_def_float_rotation(ot->srna,
+                                "angle",
+                                0,
+                                NULL,
+                                DEG2RADF(0.0f),
+                                DEG2RADF(180.0f),
+                                "Threshold Angle",
+                                "Threshold to determine ends of the strokes",
+                                DEG2RADF(0.0f),
+                                DEG2RADF(180.0f));
+  RNA_def_property_float_default(prop, DEG2RADF(70.0f));
+
+  RNA_def_int(ot->srna, "thickness", 5, 1, 100, "Thickness", "", 1, 100);
+  RNA_def_boolean(ot->srna, "seams", 0, "Only Seam Edges", "Convert only seam edges");
+  RNA_def_boolean(ot->srna, "faces", 1, "Export Faces", "Export faces as filled strokes");
+  RNA_def_float_distance(ot->srna,
+                         "offset",
+                         0.01f,
+                         0.0,
+                         OBJECT_ADD_SIZE_MAXF,
+                         "Stroke Offset",
+                         "Offset strokes from fill",
+                         0.0,
+                         100.00);
 }
 
 /** \} */
@@ -2693,8 +2797,12 @@ void OBJECT_OT_convert(wmOperatorType *ot)
 /* used below, assumes id.new is correct */
 /* leaves selection of base/object unaltered */
 /* Does set ID->newid pointers. */
-static Base *object_add_duplicate_internal(
-    Main *bmain, Scene *scene, ViewLayer *view_layer, Object *ob, int dupflag)
+static Base *object_add_duplicate_internal(Main *bmain,
+                                           Scene *scene,
+                                           ViewLayer *view_layer,
+                                           Object *ob,
+                                           const eDupli_ID_Flags dupflag,
+                                           const eLibIDDuplicateFlags duplicate_options)
 {
   Base *base, *basen = NULL;
   Object *obn;
@@ -2703,7 +2811,7 @@ static Base *object_add_duplicate_internal(
     /* nothing? */
   }
   else {
-    obn = ID_NEW_SET(ob, BKE_object_duplicate(bmain, ob, dupflag));
+    obn = ID_NEW_SET(ob, BKE_object_duplicate(bmain, ob, dupflag, duplicate_options));
     DEG_id_tag_update(&obn->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY);
 
     base = BKE_view_layer_base_find(view_layer, ob);
@@ -2742,12 +2850,13 @@ static Base *object_add_duplicate_internal(
  * note: caller must do DAG_relations_tag_update(bmain);
  *       this is not done automatic since we may duplicate many objects in a batch */
 Base *ED_object_add_duplicate(
-    Main *bmain, Scene *scene, ViewLayer *view_layer, Base *base, int dupflag)
+    Main *bmain, Scene *scene, ViewLayer *view_layer, Base *base, const eDupli_ID_Flags dupflag)
 {
   Base *basen;
   Object *ob;
 
-  basen = object_add_duplicate_internal(bmain, scene, view_layer, base->object, dupflag);
+  basen = object_add_duplicate_internal(
+      bmain, scene, view_layer, base->object, dupflag, LIB_ID_DUPLICATE_IS_SUBPROCESS);
   if (basen == NULL) {
     return NULL;
   }
@@ -2775,10 +2884,11 @@ static int duplicate_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const bool linked = RNA_boolean_get(op->ptr, "linked");
-  int dupflag = (linked) ? 0 : U.dupflag;
+  const eDupli_ID_Flags dupflag = (linked) ? 0 : (eDupli_ID_Flags)U.dupflag;
 
   CTX_DATA_BEGIN (C, Base *, base, selected_bases) {
-    Base *basen = object_add_duplicate_internal(bmain, scene, view_layer, base->object, dupflag);
+    Base *basen = object_add_duplicate_internal(
+        bmain, scene, view_layer, base->object, dupflag, 0);
 
     /* note that this is safe to do with this context iterator,
      * the list is made in advance */
@@ -2849,7 +2959,7 @@ void OBJECT_OT_duplicate(wmOperatorType *ot)
  * Use for drag & drop.
  * \{ */
 
-static int add_named_exec(bContext *C, wmOperator *op)
+static int object_add_named_exec(bContext *C, wmOperator *op)
 {
   wmWindow *win = CTX_wm_window(C);
   const wmEvent *event = win ? win->eventstate : NULL;
@@ -2859,7 +2969,7 @@ static int add_named_exec(bContext *C, wmOperator *op)
   Base *basen;
   Object *ob;
   const bool linked = RNA_boolean_get(op->ptr, "linked");
-  int dupflag = (linked) ? 0 : U.dupflag;
+  const eDupli_ID_Flags dupflag = (linked) ? 0 : (eDupli_ID_Flags)U.dupflag;
   char name[MAX_ID_NAME - 2];
 
   /* find object, create fake base */
@@ -2872,7 +2982,7 @@ static int add_named_exec(bContext *C, wmOperator *op)
   }
 
   /* prepare dupli */
-  basen = object_add_duplicate_internal(bmain, scene, view_layer, ob, dupflag);
+  basen = object_add_duplicate_internal(bmain, scene, view_layer, ob, dupflag, 0);
 
   if (basen == NULL) {
     BKE_report(op->reports, RPT_ERROR, "Object could not be duplicated");
@@ -2912,7 +3022,7 @@ void OBJECT_OT_add_named(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_add_named";
 
   /* api callbacks */
-  ot->exec = add_named_exec;
+  ot->exec = object_add_named_exec;
   ot->poll = ED_operator_objectmode;
 
   /* flags */
@@ -2933,7 +3043,7 @@ void OBJECT_OT_add_named(wmOperatorType *ot)
  *
  * \{ */
 
-static bool join_poll(bContext *C)
+static bool object_join_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
 
@@ -2949,7 +3059,7 @@ static bool join_poll(bContext *C)
   }
 }
 
-static int join_exec(bContext *C, wmOperator *op)
+static int object_join_exec(bContext *C, wmOperator *op)
 {
   Object *ob = CTX_data_active_object(C);
 
@@ -2970,13 +3080,13 @@ static int join_exec(bContext *C, wmOperator *op)
   }
 
   if (ob->type == OB_MESH) {
-    return join_mesh_exec(C, op);
+    return ED_mesh_join_objects_exec(C, op);
   }
   else if (ELEM(ob->type, OB_CURVE, OB_SURF)) {
-    return join_curve_exec(C, op);
+    return ED_curve_join_objects_exec(C, op);
   }
   else if (ob->type == OB_ARMATURE) {
-    return join_armature_exec(C, op);
+    return ED_armature_join_objects_exec(C, op);
   }
   else if (ob->type == OB_GPENCIL) {
     return ED_gpencil_join_objects_exec(C, op);
@@ -2993,8 +3103,8 @@ void OBJECT_OT_join(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_join";
 
   /* api callbacks */
-  ot->exec = join_exec;
-  ot->poll = join_poll;
+  ot->exec = object_join_exec;
+  ot->poll = object_join_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -3037,7 +3147,7 @@ static int join_shapes_exec(bContext *C, wmOperator *op)
   }
 
   if (ob->type == OB_MESH) {
-    return join_mesh_shapes_exec(C, op);
+    return ED_mesh_shapes_join_objects_exec(C, op);
   }
 
   return OPERATOR_CANCELLED;

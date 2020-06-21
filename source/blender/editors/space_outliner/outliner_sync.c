@@ -392,7 +392,6 @@ void ED_outliner_select_sync_from_outliner(bContext *C, SpaceOutliner *soops)
 }
 
 static void outliner_select_sync_from_object(ViewLayer *view_layer,
-                                             SpaceOutliner *soops,
                                              Object *obact,
                                              TreeElement *te,
                                              TreeStoreElem *tselem)
@@ -403,7 +402,7 @@ static void outliner_select_sync_from_object(ViewLayer *view_layer,
   const bool is_selected = (base != NULL) && ((base->flag & BASE_SELECTED) != 0);
 
   if (base && (ob == obact)) {
-    outliner_element_activate(soops, tselem);
+    tselem->flag |= TSE_ACTIVE;
   }
   else {
     tselem->flag &= ~TSE_ACTIVE;
@@ -417,15 +416,14 @@ static void outliner_select_sync_from_object(ViewLayer *view_layer,
   }
 }
 
-static void outliner_select_sync_from_edit_bone(SpaceOutliner *soops,
-                                                EditBone *ebone_active,
+static void outliner_select_sync_from_edit_bone(EditBone *ebone_active,
                                                 TreeElement *te,
                                                 TreeStoreElem *tselem)
 {
   EditBone *ebone = (EditBone *)te->directdata;
 
   if (ebone == ebone_active) {
-    outliner_element_activate(soops, tselem);
+    tselem->flag |= TSE_ACTIVE;
   }
   else {
     tselem->flag &= ~TSE_ACTIVE;
@@ -439,8 +437,7 @@ static void outliner_select_sync_from_edit_bone(SpaceOutliner *soops,
   }
 }
 
-static void outliner_select_sync_from_pose_bone(SpaceOutliner *soops,
-                                                bPoseChannel *pchan_active,
+static void outliner_select_sync_from_pose_bone(bPoseChannel *pchan_active,
                                                 TreeElement *te,
                                                 TreeStoreElem *tselem)
 {
@@ -448,7 +445,7 @@ static void outliner_select_sync_from_pose_bone(SpaceOutliner *soops,
   Bone *bone = pchan->bone;
 
   if (pchan == pchan_active) {
-    outliner_element_activate(soops, tselem);
+    tselem->flag |= TSE_ACTIVE;
   }
   else {
     tselem->flag &= ~TSE_ACTIVE;
@@ -462,14 +459,12 @@ static void outliner_select_sync_from_pose_bone(SpaceOutliner *soops,
   }
 }
 
-static void outliner_select_sync_from_sequence(SpaceOutliner *soops,
-                                               Sequence *sequence_active,
-                                               TreeStoreElem *tselem)
+static void outliner_select_sync_from_sequence(Sequence *sequence_active, TreeStoreElem *tselem)
 {
   Sequence *seq = (Sequence *)tselem->id;
 
   if (seq == sequence_active) {
-    outliner_element_activate(soops, tselem);
+    tselem->flag |= TSE_ACTIVE;
   }
   else {
     tselem->flag &= ~TSE_ACTIVE;
@@ -506,26 +501,26 @@ static void outliner_sync_selection_to_outliner(ViewLayer *view_layer,
 
     if (tselem->type == 0 && te->idcode == ID_OB) {
       if (sync_types->object) {
-        outliner_select_sync_from_object(view_layer, soops, active_data->object, te, tselem);
+        outliner_select_sync_from_object(view_layer, active_data->object, te, tselem);
       }
     }
     else if (tselem->type == TSE_EBONE) {
       if (sync_types->edit_bone) {
-        outliner_select_sync_from_edit_bone(soops, active_data->edit_bone, te, tselem);
+        outliner_select_sync_from_edit_bone(active_data->edit_bone, te, tselem);
       }
     }
     else if (tselem->type == TSE_POSE_CHANNEL) {
       if (sync_types->pose_bone) {
-        outliner_select_sync_from_pose_bone(soops, active_data->pose_channel, te, tselem);
+        outliner_select_sync_from_pose_bone(active_data->pose_channel, te, tselem);
       }
     }
     else if (tselem->type == TSE_SEQUENCE) {
       if (sync_types->sequence) {
-        outliner_select_sync_from_sequence(soops, active_data->sequence, tselem);
+        outliner_select_sync_from_sequence(active_data->sequence, tselem);
       }
     }
     else {
-      tselem->flag &= ~TSE_SELECTED;
+      tselem->flag &= ~(TSE_SELECTED | TSE_ACTIVE);
     }
 
     /* Sync subtree elements */
