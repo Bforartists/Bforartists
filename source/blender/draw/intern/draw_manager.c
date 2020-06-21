@@ -132,11 +132,17 @@ static void drw_task_graph_init(void)
 {
   BLI_assert(DST.task_graph == NULL);
   DST.task_graph = BLI_task_graph_create();
+  DST.delayed_extraction = BLI_gset_ptr_new(__func__);
 }
 
 static void drw_task_graph_deinit(void)
 {
   BLI_task_graph_work_and_wait(DST.task_graph);
+
+  BLI_gset_free(DST.delayed_extraction, (void (*)(void *key))drw_batch_cache_generate_requested);
+  DST.delayed_extraction = NULL;
+  BLI_task_graph_work_and_wait(DST.task_graph);
+
   BLI_task_graph_free(DST.task_graph);
   DST.task_graph = NULL;
 }
@@ -1486,6 +1492,7 @@ void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
     drw_duplidata_free();
     drw_engines_cache_finish();
 
+    drw_task_graph_deinit();
     DRW_render_instance_buffer_finish();
 
 #ifdef USE_PROFILE
@@ -1494,7 +1501,6 @@ void DRW_draw_render_loop_ex(struct Depsgraph *depsgraph,
 #endif
   }
 
-  drw_task_graph_deinit();
   DRW_stats_begin();
 
   GPU_framebuffer_bind(DST.default_framebuffer);
@@ -1629,13 +1635,6 @@ bool DRW_render_check_grease_pencil(Depsgraph *depsgraph)
   return false;
 }
 
-static void drw_view_reset(void)
-{
-  DST.view_default = NULL;
-  DST.view_active = NULL;
-  DST.view_previous = NULL;
-}
-
 static void DRW_render_gpencil_to_image(RenderEngine *engine,
                                         struct RenderLayer *render_layer,
                                         const rcti *rect)
@@ -1713,7 +1712,7 @@ void DRW_render_gpencil(struct RenderEngine *engine, struct Depsgraph *depsgraph
   for (RenderView *render_view = render_result->views.first; render_view != NULL;
        render_view = render_view->next) {
     RE_SetActiveRenderView(render, render_view->name);
-    drw_view_reset();
+    DRW_view_reset();
     DST.buffer_finish_called = false;
     DRW_render_gpencil_to_image(engine, render_layer, &render_rect);
   }
@@ -1821,7 +1820,7 @@ void DRW_render_to_image(RenderEngine *engine, struct Depsgraph *depsgraph)
   for (RenderView *render_view = render_result->views.first; render_view != NULL;
        render_view = render_view->next) {
     RE_SetActiveRenderView(render, render_view->name);
-    drw_view_reset();
+    DRW_view_reset();
     engine_type->draw_engine->render_to_image(data, engine, render_layer, &render_rect);
     DST.buffer_finish_called = false;
   }
@@ -2292,9 +2291,9 @@ static void drw_draw_depth_loop_imp(struct Depsgraph *depsgraph,
     drw_duplidata_free();
     drw_engines_cache_finish();
 
+    drw_task_graph_deinit();
     DRW_render_instance_buffer_finish();
   }
-  drw_task_graph_deinit();
 
   /* Start Drawing */
   DRW_state_reset();
@@ -2368,6 +2367,17 @@ void DRW_draw_depth_loop_gpencil(struct Depsgraph *depsgraph,
 
 void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d, const rcti *rect)
 {
+  SELECTID_Context *sel_ctx = DRW_select_engine_context_get();
+  GPUViewport *viewport = WM_draw_region_get_viewport(region);
+  if (!viewport) {
+    /* Selection engine requires a viewport.
+     * TODO (germano): This should be done internally in the engine. */
+    sel_ctx->is_dirty = true;
+    sel_ctx->objects_drawn_len = 0;
+    sel_ctx->index_drawn_len = 1;
+    return;
+  }
+
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_evaluated_view_layer(depsgraph);
 
@@ -2388,14 +2398,13 @@ void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d, cons
   drw_context_state_init();
 
   /* Setup viewport */
-  DST.viewport = WM_draw_region_get_viewport(region);
+  DST.viewport = viewport;
   drw_viewport_var_init();
 
   /* Update ubos */
   DRW_globals_update();
 
   /* Init Select Engine */
-  struct SELECTID_Context *sel_ctx = DRW_select_engine_context_get();
   sel_ctx->last_rect = *rect;
 
   use_drw_engine(&draw_engine_select_type);
@@ -2411,6 +2420,7 @@ void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d, cons
 
     drw_engines_cache_finish();
 
+    drw_task_graph_deinit();
 #if 0 /* This is a workaround to a nasty bug that seems to be a nasty driver bug. (See T69377) */
     DRW_render_instance_buffer_finish();
 #else
@@ -2419,7 +2429,6 @@ void DRW_draw_select_id(Depsgraph *depsgraph, ARegion *region, View3D *v3d, cons
     drw_resource_buffer_finish(DST.vmempool);
 #endif
   }
-  drw_task_graph_deinit();
 
   /* Start Drawing */
   DRW_state_reset();

@@ -84,12 +84,24 @@ TreeElement *outliner_find_item_at_y(const SpaceOutliner *soops,
         /* co_y is inside this element */
         return te_iter;
       }
-      else if (TSELEM_OPEN(te_iter->store_elem, soops)) {
-        /* co_y is lower than current element, possibly inside children */
-        TreeElement *te_sub = outliner_find_item_at_y(soops, &te_iter->subtree, view_co_y);
-        if (te_sub) {
-          return te_sub;
-        }
+
+      if (BLI_listbase_is_empty(&te_iter->subtree) || !TSELEM_OPEN(TREESTORE(te_iter), soops)) {
+        /* No need for recursion. */
+        continue;
+      }
+
+      /* If the coordinate is lower than the next element, we can continue with that one and skip
+       * recursion too. */
+      const TreeElement *te_next = te_iter->next;
+      if (te_next && (view_co_y < (te_next->ys + UI_UNIT_Y))) {
+        continue;
+      }
+
+      /* co_y is lower than current element (but not lower than the next one), possibly inside
+       * children */
+      TreeElement *te_sub = outliner_find_item_at_y(soops, &te_iter->subtree, view_co_y);
+      if (te_sub) {
+        return te_sub;
       }
     }
   }
@@ -256,7 +268,7 @@ TreeElement *outliner_find_editbone(ListBase *lb, const EditBone *ebone)
   return NULL;
 }
 
-ID *outliner_search_back(TreeElement *te, short idcode)
+TreeElement *outliner_search_back_te(TreeElement *te, short idcode)
 {
   TreeStoreElem *tselem;
   te = te->parent;
@@ -264,9 +276,22 @@ ID *outliner_search_back(TreeElement *te, short idcode)
   while (te) {
     tselem = TREESTORE(te);
     if (tselem->type == 0 && te->idcode == idcode) {
-      return tselem->id;
+      return te;
     }
     te = te->parent;
+  }
+  return NULL;
+}
+
+ID *outliner_search_back(TreeElement *te, short idcode)
+{
+  TreeElement *search_te;
+  TreeStoreElem *tselem;
+
+  search_te = outliner_search_back_te(te, idcode);
+  if (search_te) {
+    tselem = TREESTORE(search_te);
+    return tselem->id;
   }
   return NULL;
 }

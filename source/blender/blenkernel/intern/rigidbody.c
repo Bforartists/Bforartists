@@ -1348,9 +1348,10 @@ void BKE_rigidbody_main_collection_object_add(Main *bmain, Collection *collectio
 /* ************************************** */
 /* Utilities API */
 
-/* Get RigidBody world for the given scene, creating one if needed
+/**
+ * Get RigidBody world for the given scene, creating one if needed
  *
- * \param scene: Scene to find active Rigid Body world for
+ * \param scene: Scene to find active Rigid Body world for.
  */
 RigidBodyWorld *BKE_rigidbody_get_world(Scene *scene)
 {
@@ -1646,7 +1647,7 @@ static void rigidbody_update_sim_ob(
       /* Calculate net force of effectors, and apply to sim object:
        * - we use 'central force' since apply force requires a "relative position"
        *   which we don't have... */
-      BKE_effectors_apply(effectors, NULL, effector_weights, &epoint, eff_force, NULL);
+      BKE_effectors_apply(effectors, NULL, effector_weights, &epoint, eff_force, NULL, NULL);
       if (G.f & G_DEBUG) {
         printf("\tapplying force (%f,%f,%f) to '%s'\n",
                eff_force[0],

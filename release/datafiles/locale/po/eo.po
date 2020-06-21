@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 09:45:22\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,34 +108,6 @@ msgstr "Objekto Modo"
 msgctxt "Operator"
 msgid "Recover Last Session"
 msgstr "Restaŭri lasta kunsido"
-
-
-msgid "UV Axis:"
-msgstr "Montri Z Axis"
-
-
-msgctxt "Operator"
-msgid "Recenter"
-msgstr "Freŝaj"
-
-
-msgctxt "Operator"
-msgid "Set X Axis"
-msgstr "Montri X Axis"
-
-
-msgctxt "Operator"
-msgid "Interpolation Mode"
-msgstr "Interago:"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Nova"
-
-
-msgid "Not supported in sculpt mode"
-msgstr "Ne estas subtenata en skulptaĵo modo"
 
 
 msgctxt "Scene"

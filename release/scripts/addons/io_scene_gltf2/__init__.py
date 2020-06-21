@@ -15,7 +15,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 3, 16),
+    "version": (1, 3, 21),
     'blender': (2, 90, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -352,7 +352,6 @@ class ExportGLTF2_Base:
     def invoke(self, context, event):
         settings = context.scene.get(self.scene_key)
         self.will_save_settings = False
-        self.has_active_extenions = False
         if settings:
             try:
                 for (k, v) in settings.items():
@@ -375,10 +374,10 @@ class ExportGLTF2_Base:
             try:
                 if hasattr(sys.modules[addon_name], 'glTF2ExportUserExtension') or hasattr(sys.modules[addon_name], 'glTF2ExportUserExtensions'):
                     extension_panel_unregister_functors.append(sys.modules[addon_name].register_panel())
-                    self.has_active_extenions = True
             except Exception:
                 pass
 
+        self.has_active_extenions = len(extension_panel_unregister_functors) > 0
         return ExportHelper.invoke(self, context, event)
 
     def save_settings(self, context):

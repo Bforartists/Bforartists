@@ -1049,7 +1049,6 @@ class UrlPopupDialog(bpy.types.Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        self.bl_label = 'ahoj'
         wm = context.window_manager
 
         return wm.invoke_props_dialog(self)

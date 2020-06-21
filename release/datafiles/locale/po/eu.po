@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 09:45:22\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -301,16 +301,16 @@ msgid "Material"
 msgstr "Materiala"
 
 
+msgid "Value"
+msgstr "Balioa"
+
+
 msgid "Curve"
 msgstr "Kurba"
 
 
 msgid "Look"
 msgstr "Ikusi"
-
-
-msgid "Value"
-msgstr "Balioa"
 
 
 msgid "Active"
@@ -685,6 +685,16 @@ msgstr "(Dokumentatu gabeko operadorea)"
 msgctxt "Operator"
 msgid "Set Origin"
 msgstr "Jatorria Ezarri"
+
+
+msgctxt "Operator"
+msgid "Zoom In"
+msgstr "Zoom Gehiago"
+
+
+msgctxt "Operator"
+msgid "Zoom Out"
+msgstr "Zoom Gutxiago"
 
 
 msgid "Clear text by type"
@@ -1714,16 +1724,6 @@ msgstr "Orria"
 
 
 msgctxt "Operator"
-msgid "Zoom In"
-msgstr "Zoom Gehiago"
-
-
-msgctxt "Operator"
-msgid "Zoom Out"
-msgstr "Zoom Gutxiago"
-
-
-msgctxt "Operator"
 msgid "Local View"
 msgstr "Bista Lokala"
 
@@ -1965,180 +1965,6 @@ msgid "Animation"
 msgstr "Animazioa"
 
 
-msgid "AO"
-msgstr "Inguruneko Oklusioa"
-
-
-msgid "Detail"
-msgstr "Xehetasuna"
-
-
-msgid "Priority"
-msgstr "Lehentasuna"
-
-
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Garbitu"
-
-
-msgid "Refraction"
-msgstr "Errefrakzioa"
-
-
-msgctxt "Operator"
-msgid "Clear After"
-msgstr "Ondoren Garbitu"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Aurretik Garbitu"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Berria"
-
-
-msgctxt "Operator"
-msgid "Open..."
-msgstr "Ireki..."
-
-
-msgctxt "Operator"
-msgid "Save As..."
-msgstr "Gorde honela..."
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Ezabatu..."
-
-
-msgctxt "Operator"
-msgid "Scene..."
-msgstr "Eszena"
-
-
-msgctxt "Operator"
-msgid "Color"
-msgstr "Kolorea"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Testua"
-
-
-msgctxt "Operator"
-msgid "One Object"
-msgstr "Objektu bat"
-
-
-msgctxt "Operator"
-msgid "One Object Per Line"
-msgstr "Objektu bat lerroko"
-
-
-msgid "Text: External"
-msgstr "Testua: Kanpokoa"
-
-
-msgid "Text: Internal"
-msgstr "Testua: Barnekoa"
-
-
-msgctxt "Operator"
-msgid "Quit"
-msgstr "Irten"
-
-
-msgctxt "Operator"
-msgid "Render Animation"
-msgstr "Animazioa"
-
-
-msgctxt "Operator"
-msgid "Save Copy..."
-msgstr "Kopia gorde..."
-
-
-msgctxt "Operator"
-msgid "Render Image"
-msgstr "Irudia Renderizatu"
-
-
-msgctxt "Operator"
-msgid "Manual"
-msgstr "Eskuliburua"
-
-
-msgctxt "Operator"
-msgid "Developer Community"
-msgstr "Garatzaileen Komunitatea"
-
-
-msgctxt "Operator"
-msgid "Report a Bug"
-msgstr "Akats baten berri eman"
-
-
-msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "Plane"
-msgstr "Planoa"
-
-
-msgctxt "Operator"
-msgid "Cube"
-msgstr "Kuboa"
-
-
-msgctxt "Operator"
-msgid "UV Sphere"
-msgstr "UV Esfera"
-
-
-msgctxt "Operator"
-msgid "Ico Sphere"
-msgstr "Iko Esfera"
-
-
-msgctxt "Operator"
-msgid "Cylinder"
-msgstr "Zilindroa"
-
-
-msgctxt "Operator"
-msgid "Cone"
-msgstr "Konoa"
-
-
-msgctxt "Operator"
-msgid "Torus"
-msgstr "Torua"
-
-
-msgctxt "Operator"
-msgid "Grid"
-msgstr "Sarea"
-
-
-msgctxt "Operator"
-msgid "Empty"
-msgstr "Hutsa"
-
-
-msgctxt "Operator"
-msgid "Speaker"
-msgstr "Bozgorailua"
-
-
 msgid "Reset"
 msgstr "Berhasieratu"
 
@@ -2325,18 +2151,6 @@ msgid "Font not packed"
 msgstr "Letra-mota paketatugabea"
 
 
-msgid "Cannot execute boolean operation"
-msgstr "Ezin da eragiketa boolearra exekutatu"
-
-
-msgid "Edges changed from %d to %d"
-msgstr "Izkinak aldatu dira, %d -tik %d -ra"
-
-
-msgid "The system did not find a solution"
-msgstr "Sistemak ez du irtenbiderik aurkitu"
-
-
 msgid "Fac"
 msgstr "Fak"
 
@@ -2407,6 +2221,10 @@ msgstr "Graduak"
 
 msgid "Val"
 msgstr "Balioa"
+
+
+msgid "AO"
+msgstr "Inguruneko Oklusioa"
 
 
 msgid "Temperature"
@@ -2515,6 +2333,10 @@ msgstr "Lerroaren Altuera"
 
 msgid "Reflection"
 msgstr "Islapena"
+
+
+msgid "Detail"
+msgstr "Xehetasuna"
 
 
 msgid "Detail Scale"

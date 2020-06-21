@@ -228,11 +228,12 @@ void OVERLAY_armature_cache_init(OVERLAY_Data *vedata)
     {
       format = formats->instance_extra;
 
-      sh = OVERLAY_shader_armature_degrees_of_freedom();
+      sh = OVERLAY_shader_armature_degrees_of_freedom_wire();
       grp = DRW_shgroup_create(sh, armature_ps);
       DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       cb->dof_lines = BUF_INSTANCE(grp, format, DRW_cache_bone_dof_lines_get());
 
+      sh = OVERLAY_shader_armature_degrees_of_freedom_solid();
       grp = DRW_shgroup_create(sh, armature_transp_ps);
       DRW_shgroup_uniform_block(grp, "globalsBlock", G_draw.block_ubo);
       cb->dof_sphere = BUF_INSTANCE(grp, format, DRW_cache_bone_dof_sphere_get());
@@ -510,7 +511,7 @@ static void drw_shgroup_bone_envelope(ArmatureDrawContext *ctx,
 /* Custom (geometry) */
 
 extern void drw_batch_cache_validate(Object *custom);
-extern void drw_batch_cache_generate_requested(Object *custom);
+extern void drw_batch_cache_generate_requested_delayed(Object *custom);
 
 BLI_INLINE DRWCallBuffer *custom_bone_instance_shgroup(ArmatureDrawContext *ctx,
                                                        DRWShadingGroup *grp,
@@ -567,7 +568,7 @@ static void drw_shgroup_bone_custom_solid(ArmatureDrawContext *ctx,
   }
 
   /* TODO(fclem) needs to be moved elsewhere. */
-  drw_batch_cache_generate_requested(custom);
+  drw_batch_cache_generate_requested_delayed(custom);
 }
 
 static void drw_shgroup_bone_custom_wire(ArmatureDrawContext *ctx,
@@ -591,7 +592,7 @@ static void drw_shgroup_bone_custom_wire(ArmatureDrawContext *ctx,
   }
 
   /* TODO(fclem) needs to be moved elsewhere. */
-  drw_batch_cache_generate_requested(custom);
+  drw_batch_cache_generate_requested_delayed(custom);
 }
 
 static void drw_shgroup_bone_custom_empty(ArmatureDrawContext *ctx,

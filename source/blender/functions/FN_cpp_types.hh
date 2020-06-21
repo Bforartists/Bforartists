@@ -27,7 +27,7 @@
 #include "FN_cpp_type.hh"
 
 namespace blender {
-namespace FN {
+namespace fn {
 
 extern const CPPType &CPPType_bool;
 
@@ -44,7 +44,7 @@ extern const CPPType &CPPType_Color4b;
 
 extern const CPPType &CPPType_string;
 
-}  // namespace FN
+}  // namespace fn
 }  // namespace blender
 
 #endif /* __FN_CPP_TYPES_HH__ */
