@@ -78,10 +78,6 @@ set(FREEGLUT_VERSION 3.0.0)
 set(FREEGLUT_URI http://pilotfiber.dl.sourceforge.net/project/freeglut/freeglut/${FREEGLUT_VERSION}/freeglut-${FREEGLUT_VERSION}.tar.gz)
 set(FREEGLUT_HASH 90c3ca4dd9d51cf32276bc5344ec9754)
 
-set(HDF5_VERSION 1.8.17)
-set(HDF5_URI https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-${HDF5_VERSION}/src/hdf5-${HDF5_VERSION}.tar.gz)
-set(HDF5_HASH 7d572f8f3b798a628b8245af0391a0ca)
-
 set(ALEMBIC_VERSION 1.7.12)
 set(ALEMBIC_URI https://github.com/alembic/alembic/archive/${ALEMBIC_VERSION}.tar.gz)
 set(ALEMBIC_MD5 e2b3777f23c5c09481a008cc6f0f8a40)
@@ -192,8 +188,8 @@ set(OPUS_VERSION 1.3.1)
 set(OPUS_URI https://archive.mozilla.org/pub/opus/opus-${OPUS_VERSION}.tar.gz)
 set(OPUS_HASH 65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d)
 
-set(X264_URI https://code.videolan.org/videolan/x264/-/archive/master/x264-33f9e1474613f59392be5ab6a7e7abf60fa63622.tar.gz)
-set(X264_HASH 300dfb5b6c35722516f168868ce9419252a9e9eb77a05d82c9cede925b691bd6)
+set(X264_URI https://code.videolan.org/videolan/x264/-/archive/33f9e1474613f59392be5ab6a7e7abf60fa63622/x264-33f9e1474613f59392be5ab6a7e7abf60fa63622.tar.gz)
+set(X264_HASH 5456450ee1ae02cd2328be3157367a232a0ab73315e8c8f80dab80469524f525)
 
 set(XVIDCORE_VERSION 1.3.7)
 set(XVIDCORE_URI https://downloads.xvid.com/downloads/xvidcore-${XVIDCORE_VERSION}.tar.gz)
@@ -297,9 +293,9 @@ set(EMBREE_VERSION 3.10.0)
 set(EMBREE_URI https://github.com/embree/embree/archive/v${EMBREE_VERSION}.zip)
 set(EMBREE_HASH 4bbe29e7eaa46417efc75fc5f1e8eb87)
 
-set(USD_VERSION 20.02)
+set(USD_VERSION 20.05)
 set(USD_URI https://github.com/PixarAnimationStudios/USD/archive/v${USD_VERSION}.tar.gz)
-set(USD_HASH 8901815f01469a7f4496bd60315a9d10)
+set(USD_HASH 6d679e739e7f65725d9c029e37dda9fc)
 
 set(OIDN_VERSION 1.0.0)
 set(OIDN_URI https://github.com/OpenImageDenoise/oidn/releases/download/v${OIDN_VERSION}/oidn-${OIDN_VERSION}.src.zip)
