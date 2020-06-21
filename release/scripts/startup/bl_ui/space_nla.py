@@ -187,7 +187,6 @@ class NLA_PT_view_view_options(Panel):
         layout.separator()
 
         layout.prop(st, "show_strip_curves")
-        layout.prop(st, "show_local_markers")
         layout.prop(st, "use_realtime_update")
 
 
