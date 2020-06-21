@@ -21,8 +21,10 @@ if "bpy" in locals():
     from importlib import reload
 
     paths = reload(paths)
+    rerequests = reload(rerequests)
+
 else:
-    from blenderkit import paths
+    from blenderkit import paths, rerequests
 
 import bpy
 from mathutils import Vector

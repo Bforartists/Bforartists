@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 09:45:22\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -398,6 +398,10 @@ msgid "Material"
 msgstr "Bahan"
 
 
+msgid "Value"
+msgstr "Nilai"
+
+
 msgid "Background Image"
 msgstr "Gambar Latar"
 
@@ -484,10 +488,6 @@ msgstr "Partikel"
 
 msgid "View Transform"
 msgstr "Orientasi Transformasi"
-
-
-msgid "Value"
-msgstr "Nilai"
 
 
 msgctxt "Text"
@@ -757,10 +757,6 @@ msgstr "Bahan"
 
 msgid "UV map name"
 msgstr "Nama file"
-
-
-msgid "Smoke Flow"
-msgstr "Tekstur"
 
 
 msgid "Group"
@@ -1291,6 +1287,10 @@ msgid "ID Name"
 msgstr "Nama"
 
 
+msgid "Simulation"
+msgstr "lokasi"
+
+
 msgid "Edit Quality"
 msgstr "Modus Sunting"
 
@@ -1655,10 +1655,6 @@ msgid "Operator registry"
 msgstr "Kamera"
 
 
-msgid "Simulation"
-msgstr "lokasi"
-
-
 msgid "Reiteration"
 msgstr "lokasi"
 
@@ -1917,10 +1913,6 @@ msgid "New"
 msgstr "Baru"
 
 
-msgid "Cast Type"
-msgstr "Tipe"
-
-
 msgid "Use Transform"
 msgstr "Orientasi Transformasi"
 
@@ -2112,10 +2104,6 @@ msgstr "Acak"
 
 msgid "Use Channel"
 msgstr "Saluran"
-
-
-msgid "Mask VGroup"
-msgstr "Grup"
 
 
 msgid "Group Add"
@@ -2643,6 +2631,10 @@ msgid "Bottom up"
 msgstr "Bawah"
 
 
+msgid "Int"
+msgstr "Informasi"
+
+
 msgid "Label Font Size"
 msgstr "Huruf:"
 
@@ -2761,10 +2753,6 @@ msgstr "Ubah-bentuk Vektor"
 
 msgid "Texture Node"
 msgstr "Tekstur"
-
-
-msgid "Int"
-msgstr "Informasi"
 
 
 msgid "Use Node Format"
@@ -3412,12 +3400,12 @@ msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "View Zoom In"
+msgid "Zoom In"
 msgstr "Perbesar"
 
 
 msgctxt "Operator"
-msgid "View Zoom Out"
+msgid "Zoom Out"
 msgstr "Perkecil"
 
 
@@ -5891,11 +5879,6 @@ msgstr "Data Objek"
 
 
 msgctxt "Operator"
-msgid "Find Set Selected"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
 msgid "Make Internal"
 msgstr "Internet:"
 
@@ -5917,11 +5900,6 @@ msgstr "Konsol Python"
 msgctxt "Operator"
 msgid "Replace"
 msgstr "Warna"
-
-
-msgctxt "Operator"
-msgid "Replace Set Selected"
-msgstr "Data Objek"
 
 
 msgctxt "Operator"
@@ -6143,10 +6121,6 @@ msgid "Stored Operation Mode"
 msgstr "lokasi"
 
 
-msgid "Use Subsurf Modifier"
-msgstr "Modus Pahat"
-
-
 msgctxt "Operator"
 msgid "Reset View"
 msgstr "Tampilan 3D"
@@ -6160,16 +6134,6 @@ msgstr "Tampilan 3D"
 msgctxt "Operator"
 msgid "Zoom 2D View"
 msgstr "Tampilan 3D"
-
-
-msgctxt "Operator"
-msgid "Zoom In"
-msgstr "Perbesar"
-
-
-msgctxt "Operator"
-msgid "Zoom Out"
-msgstr "Perkecil"
 
 
 msgctxt "Operator"
@@ -6245,11 +6209,6 @@ msgstr "Semua Tampilan"
 
 msgid "View selected for all regions"
 msgstr "Hapus Titik"
-
-
-msgctxt "Operator"
-msgid "View Camera Center"
-msgstr "Kamera"
 
 
 msgctxt "Operator"
@@ -7053,726 +7012,6 @@ msgid "Use Unified Weight"
 msgstr "Partikel"
 
 
-msgid "Mesh Light"
-msgstr "Orientasi Transformasi"
-
-
-msgid "Tiles X"
-msgstr "Ukurang"
-
-
-msgid "Persistent Images"
-msgstr "Induk"
-
-
-msgid "Tool Tips:"
-msgstr "Alat"
-
-
-msgctxt "Operator"
-msgid "Reset Settings"
-msgstr "Partikel"
-
-
-msgctxt "Operator"
-msgid "Deselect All"
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
-msgid "Invert Selection"
-msgstr "Seleksi"
-
-
-msgid "To"
-msgstr "Atas"
-
-
-msgctxt "Operator"
-msgid "Update Paths"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "Animate Path"
-msgstr "Data Animasi"
-
-
-msgid "To Action:"
-msgstr "lokasi"
-
-
-msgid "Action Range:"
-msgstr "lokasi"
-
-
-msgctxt "Operator"
-msgid "Remove"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Add Image"
-msgstr "Tambah Gambar"
-
-
-msgctxt "Operator"
-msgid "Assign to Active Group"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Remove from Active Group"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Remove Active Group"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Remove All Groups"
-msgstr "Warna Standar"
-
-
-msgid "Axis Mapping:"
-msgstr "Bahaya:"
-
-
-msgid "Forward/Up Axis:"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
-msgid "Delete Higher"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Apply Base"
-msgstr "Setujui"
-
-
-msgctxt "Operator"
-msgid "Create Armature"
-msgstr "Tambah Gambar"
-
-
-msgid "Selected Vertices:"
-msgstr "Warna Standar"
-
-
-msgid "UV Axis:"
-msgstr "Kiri"
-
-
-msgid "Layer:"
-msgstr "Lapisan"
-
-
-msgid "Render:"
-msgstr "Situs Blender"
-
-
-msgctxt "Operator"
-msgid "Mark Loose"
-msgstr "lokasi"
-
-
-msgctxt "Operator"
-msgid "Clear Loose"
-msgstr "lokasi"
-
-
-msgid "Priority"
-msgstr "Prioritas"
-
-
-msgctxt "Operator"
-msgid "Cursor to Selected"
-msgstr "lokasi"
-
-
-msgctxt "Operator"
-msgid "Poly"
-msgstr "Putar"
-
-
-msgctxt "Operator"
-msgid "Parent"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Scale Feather"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Hide Unselected"
-msgstr "Modus Sunting"
-
-
-msgid "Strand Shape"
-msgstr "Partikel"
-
-
-msgid "Use Particle's Radius"
-msgstr "Partikel"
-
-
-msgctxt "Operator"
-msgid "Remove Brush"
-msgstr "Setel Ulang"
-
-
-msgid "Bounciness"
-msgstr "Suara"
-
-
-msgid "Track:"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
-msgid "Build Proxy"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
-msgid "Set Floor"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Set X Axis"
-msgstr "Kiri"
-
-
-msgctxt "Operator"
-msgid "Set Y Axis"
-msgstr "Kiri"
-
-
-msgctxt "Operator"
-msgid "Set Wall"
-msgstr "Adegan"
-
-
-msgctxt "Operator"
-msgid "Inverse"
-msgstr "Partikel"
-
-
-msgctxt "Operator"
-msgid "Enable Markers"
-msgstr "Matikan"
-
-
-msgctxt "Operator"
-msgid "Unlock Tracks"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Before Current Frame"
-msgstr "Setelah Ini"
-
-
-msgctxt "Operator"
-msgid "After Current Frame"
-msgstr "Setelah Ini"
-
-
-msgctxt "Operator"
-msgid "Keyframe Type"
-msgstr "Tipe"
-
-
-msgctxt "Operator"
-msgid "Handle Type"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Interpolation Mode"
-msgstr "Internet:"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Belakang"
-
-
-msgctxt "Operator"
-msgid "More"
-msgstr "Modus"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Baru"
-
-
-msgctxt "Operator"
-msgid "Edit Externally"
-msgstr "Penyunting Gambar"
-
-
-msgctxt "Operator"
-msgid "Invert Red Channel"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Invert Green Channel"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Invert Blue Channel"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Invert Alpha Channel"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Clear Seam"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Vertex"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Pack"
-msgstr "Belakang"
-
-
-msgctxt "Operator"
-msgid "X Axis"
-msgstr "Kiri"
-
-
-msgctxt "Operator"
-msgid "Y Axis"
-msgstr "Kiri"
-
-
-msgctxt "Operator"
-msgid "Remove from Frame"
-msgstr "Grup"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Kiri"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Kanan"
-
-
-msgctxt "Operator"
-msgid "Grouped"
-msgstr "Grup"
-
-
-msgctxt "Operator"
-msgid "Sound"
-msgstr "Suara"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Scene..."
-msgstr "Adegan"
-
-
-msgctxt "Operator"
-msgid "Color"
-msgstr "Warna"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Teks"
-
-
-msgid "Show Grease Pencil"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Atas"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Bawah"
-
-
-msgctxt "Operator"
-msgid "One Object"
-msgstr "Sunting Objek"
-
-
-msgctxt "Operator"
-msgid "Duplicate Marker"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Render Animation"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Back to Previous"
-msgstr "Gambar Latar"
-
-
-msgctxt "Operator"
-msgid "Blender Website"
-msgstr "Situs Blender"
-
-
-msgctxt "Operator"
-msgid "Render Image"
-msgstr "Gambar"
-
-
-msgid "F-Curve Visibility"
-msgstr "Penampakan"
-
-
-msgid "Description:"
-msgstr "Penjelasan"
-
-
-msgid "description"
-msgstr "penjelasan"
-
-
-msgid "location"
-msgstr "lokasi"
-
-
-msgid "Author:"
-msgstr "Pembuat:"
-
-
-msgid "author"
-msgstr "pembuat:"
-
-
-msgid "Version:"
-msgstr "Versi"
-
-
-msgid "Warning:"
-msgstr "Bahaya:"
-
-
-msgid "Internet:"
-msgstr "Internet:"
-
-
-msgid "Preferences:"
-msgstr "Pengaturan Pengguna"
-
-
-msgctxt "Operator"
-msgid "Cursor to Active"
-msgstr "lokasi"
-
-
-msgctxt "Operator"
-msgid "Active Camera"
-msgstr "Bahan"
-
-
-msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Depan"
-
-
-msgctxt "Operator"
-msgid "Select Pattern..."
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
-msgid "Constraint Target"
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
-msgid "Linked"
-msgstr "Konsol Python"
-
-
-msgctxt "Operator"
-msgid "Plane"
-msgstr "Kamera"
-
-
-msgctxt "Operator"
-msgid "UV Sphere"
-msgstr "Tambah Gambar"
-
-
-msgctxt "Operator"
-msgid "Cylinder"
-msgstr "Tambah Gambar"
-
-
-msgctxt "Operator"
-msgid "Cone"
-msgstr "Tulang"
-
-
-msgctxt "Operator"
-msgid "Bezier"
-msgstr "Tambah Gambar"
-
-
-msgctxt "Operator"
-msgid "Speaker"
-msgstr "Tambah Gambar"
-
-
-msgctxt "Operator"
-msgid "Make Proxy..."
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Insert Keyframe..."
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Delete Keyframes..."
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Clear Keyframes..."
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Bake Action..."
-msgstr "lokasi"
-
-
-msgctxt "Operator"
-msgid "Change Shape"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Origin"
-msgstr "Induk"
-
-
-msgctxt "Operator"
-msgid "Object"
-msgstr "Objek"
-
-
-msgctxt "Operator"
-msgid "Object & Data"
-msgstr "Data Objek"
-
-
-msgctxt "Operator"
-msgid "Object Animation"
-msgstr "Modus Objek"
-
-
-msgctxt "Operator"
-msgid "Limit Total"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Show Bounding Box"
-msgstr "Suara"
-
-
-msgctxt "Operator"
-msgid "Hide Bounding Box"
-msgstr "Suara"
-
-
-msgctxt "Operator"
-msgid "Hide Masked"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Invert Mask"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Fill Mask"
-msgstr "Modus Sunting"
-
-
-msgctxt "Operator"
-msgid "Clear Mask"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Location"
-msgstr "Lokasi"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotasi"
-
-
-msgctxt "Operator"
-msgid "Sharp Edges"
-msgstr "Semua Tampilan"
-
-
-msgctxt "Operator"
-msgid "Make"
-msgstr "Buat"
-
-
-msgctxt "Operator"
-msgid "View Selected"
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
-msgid "Move Texture Space"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Scale Texture Space"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Align to Transform Orientation"
-msgstr "Orientasi Transformasi"
-
-
-msgctxt "Operator"
-msgid "Non Manifold"
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Data Objek"
-
-
-msgctxt "Operator"
-msgid "Hook to Selected Object Bone"
-msgstr "Modus Sunting"
-
-
-msgctxt "Operator"
-msgid "Transfer Weights"
-msgstr "Orientasi Transformasi"
-
-
-msgctxt "Operator"
-msgid "On Selected Markers"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "Orientasi Transformasi"
-
-
-msgctxt "Operator"
-msgid "Set Roll"
-msgstr "Adegan"
-
-
-msgctxt "Operator"
-msgid "Assign to Group"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Remove from All"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Jarak"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Ukurang"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Ukurang"
-
-
-msgctxt "Operator"
-msgid "Quick Edit"
-msgstr "Sunting Cepat"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Setujui"
-
-
-msgid "Cannot build springs"
-msgstr "Induk"
-
-
 msgid "Cannot bake non-'image sequence' formats"
 msgstr "Orientasi Transformasi"
 
@@ -8029,6 +7268,11 @@ msgstr "Hapus Titik"
 
 msgid "Stop this job"
 msgstr "Hentikan Perintah"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Setujui"
 
 
 msgctxt "Scene"
@@ -8444,6 +7688,10 @@ msgid "Add Input"
 msgstr "Adegan"
 
 
+msgid "Layer:"
+msgstr "Lapisan"
+
+
 msgid "Master"
 msgstr "lokasi"
 
@@ -8568,6 +7816,11 @@ msgid "UV Vertex"
 msgstr "Warna Standar"
 
 
+msgctxt "Operator"
+msgid "Clear Seam"
+msgstr "Hapus"
+
+
 msgid "Keying set path could not be removed"
 msgstr "Tekstur"
 
@@ -8604,10 +7857,6 @@ msgid "Modify"
 msgstr "Sunting Objek"
 
 
-msgid "Simulate"
-msgstr "lokasi"
-
-
 msgid "Unable to create new strip"
 msgstr "Tidak dapat membuka dokumen"
 
@@ -8624,8 +7873,8 @@ msgid "Bad vertex index in list"
 msgstr "Gambar Latar"
 
 
-msgid "Cannot execute boolean operation"
-msgstr "lokasi"
+msgid "To"
+msgstr "Atas"
 
 
 msgid "Determinator"

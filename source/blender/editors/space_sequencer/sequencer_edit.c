@@ -227,11 +227,11 @@ static void seq_proxy_build_job(const bContext *C, ReportList *reports)
 
     selected = true;
     if (!(seq->flag & SEQ_USE_PROXY)) {
-      BKE_reportf(reports, RPT_WARNING, "Proxy is not enabled for %s, skipping.", seq->name);
+      BKE_reportf(reports, RPT_WARNING, "Proxy is not enabled for %s, skipping", seq->name);
       continue;
     }
     else if (seq->strip->proxy->build_size_flags == 0) {
-      BKE_reportf(reports, RPT_WARNING, "Resolution is not selected for %s, skipping.", seq->name);
+      BKE_reportf(reports, RPT_WARNING, "Resolution is not selected for %s, skipping", seq->name);
       continue;
     }
 
@@ -239,13 +239,13 @@ static void seq_proxy_build_job(const bContext *C, ReportList *reports)
         pj->main, pj->depsgraph, pj->scene, seq, file_list, &pj->queue);
 
     if (!success && (seq->strip->proxy->build_flags & SEQ_PROXY_SKIP_EXISTING) != 0) {
-      BKE_reportf(reports, RPT_WARNING, "Overwrite is not checked for %s, skipping.", seq->name);
+      BKE_reportf(reports, RPT_WARNING, "Overwrite is not checked for %s, skipping", seq->name);
     }
   }
   SEQ_END;
 
   if (!selected) {
-    BKE_reportf(reports, RPT_WARNING, "Select movie or image strips.");
+    BKE_reportf(reports, RPT_WARNING, "Select movie or image strips");
     return;
   }
 
@@ -675,6 +675,14 @@ int seq_effect_find_selected(Scene *scene,
   *r_selseq1 = seq1;
   *r_selseq2 = seq2;
   *r_selseq3 = seq3;
+
+  /* TODO(Richard): This function needs some refactoring, this is just quick hack for T73828. */
+  if (BKE_sequence_effect_get_num_inputs(type) < 3) {
+    *r_selseq3 = NULL;
+  }
+  if (BKE_sequence_effect_get_num_inputs(type) < 2) {
+    *r_selseq2 = NULL;
+  }
 
   return 1;
 }
@@ -1406,14 +1414,21 @@ static int sequencer_snap_exec(bContext *C, wmOperator *op)
         BKE_sequence_base_shuffle(ed->seqbasep, seq, scene);
       }
     }
-    else if (seq->type & SEQ_TYPE_EFFECT) {
+  }
+
+  /* Recalculate bounds of effect strips. */
+  for (seq = ed->seqbasep->first; seq; seq = seq->next) {
+    if (seq->type & SEQ_TYPE_EFFECT) {
       if (seq->seq1 && (seq->seq1->flag & SELECT)) {
+        BKE_sequencer_offset_animdata(scene, seq, (snap_frame - seq->startdisp));
         BKE_sequence_calc(scene, seq);
       }
       else if (seq->seq2 && (seq->seq2->flag & SELECT)) {
+        BKE_sequencer_offset_animdata(scene, seq, (snap_frame - seq->startdisp));
         BKE_sequence_calc(scene, seq);
       }
       else if (seq->seq3 && (seq->seq3->flag & SELECT)) {
+        BKE_sequencer_offset_animdata(scene, seq, (snap_frame - seq->startdisp));
         BKE_sequence_calc(scene, seq);
       }
     }
@@ -2220,6 +2235,11 @@ static int sequencer_reassign_inputs_exec(bContext *C, wmOperator *op)
   Scene *scene = CTX_data_scene(C);
   Sequence *seq1, *seq2, *seq3, *last_seq = BKE_sequencer_active_get(scene);
   const char *error_msg;
+
+  if (BKE_sequence_effect_get_num_inputs(last_seq->type) != 0) {
+    BKE_report(op->reports, RPT_ERROR, "Cannot reassign inputs: strip has no inputs");
+    return OPERATOR_CANCELLED;
+  }
 
   if (!seq_effect_find_selected(
           scene, last_seq, last_seq->type, &seq1, &seq2, &seq3, &error_msg)) {

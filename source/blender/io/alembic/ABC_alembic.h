@@ -13,13 +13,11 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
+#pragma once
 
 /** \file
  * \ingroup balembic
  */
-
-#ifndef __ABC_ALEMBIC_H__
-#define __ABC_ALEMBIC_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,11 +32,6 @@ struct Scene;
 struct bContext;
 
 typedef struct AbcArchiveHandle AbcArchiveHandle;
-
-enum {
-  ABC_ARCHIVE_OGAWA = 0,
-  ABC_ARCHIVE_HDF5 = 1,
-};
 
 int ABC_get_version(void);
 
@@ -67,8 +60,6 @@ struct AlembicExportParams {
   bool triangulate;
   bool export_hair;
   bool export_particles;
-
-  unsigned int compression_type : 1;
 
   /* See MOD_TRIANGULATE_NGON_xxx and MOD_TRIANGULATE_QUAD_xxx
    * in DNA_modifier_types.h */
@@ -140,5 +131,3 @@ struct CacheReader *CacheReader_open_alembic_object(struct AbcArchiveHandle *han
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __ABC_ALEMBIC_H__ */

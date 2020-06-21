@@ -313,7 +313,7 @@ def basic_force_field_settings_ui(self, field):
     else:
         col.prop(field, "flow")
 
-    col = layout.column(align=True)
+    col = col.column(align=True)
     col.label( text = "Affect")
     col.use_property_split = False
     row = col.row()
@@ -352,6 +352,7 @@ def basic_force_field_settings_ui(self, field):
     row.use_property_split = False  
     row.prop(field, "use_absorption")
     row.prop_decorator(field, "use_absorption")
+    col.prop(field, "wind_factor")
 
 
 def basic_force_field_falloff_ui(self, field):
