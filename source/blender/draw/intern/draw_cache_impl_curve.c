@@ -47,6 +47,7 @@
 
 #include "draw_cache_impl.h" /* own include */
 
+/* See: edit_curve_point_vert.glsl for duplicate includes. */
 #define SELECT 1
 #define ACTIVE_NURB 1 << 2
 #define BEZIER_HANDLE 1 << 3
@@ -698,7 +699,9 @@ static char beztriple_vflag_get(CurveRenderData *rdata,
   SET_FLAG_FROM_TEST(vflag, (v_idx == rdata->actvert && nu_id == rdata->actnu), VFLAG_VERT_ACTIVE);
   SET_FLAG_FROM_TEST(vflag, (nu_id == rdata->actnu), ACTIVE_NURB);
   SET_FLAG_FROM_TEST(vflag, handle_point, BEZIER_HANDLE);
-  SET_FLAG_FROM_TEST(vflag, handle_selected, VFLAG_HANDLE_SELECTED);
+  SET_FLAG_FROM_TEST(vflag, handle_selected, VFLAG_VERT_SELECTED_BEZT_HANDLE);
+  /* Setting flags that overlap with will cause the color id not to work properly. */
+  BLI_assert((vflag >> COLOR_SHIFT) == 0);
   /* handle color id */
   vflag |= col_id << COLOR_SHIFT;
   return vflag;
@@ -711,6 +714,8 @@ static char bpoint_vflag_get(CurveRenderData *rdata, char flag, int v_idx, int n
   SET_FLAG_FROM_TEST(vflag, (v_idx == rdata->actvert && nu_id == rdata->actnu), VFLAG_VERT_ACTIVE);
   SET_FLAG_FROM_TEST(vflag, (nu_id == rdata->actnu), ACTIVE_NURB);
   SET_FLAG_FROM_TEST(vflag, ((u % 2) == 0), EVEN_U_BIT);
+  /* Setting flags that overlap with will cause the color id not to work properly. */
+  BLI_assert((vflag >> COLOR_SHIFT) == 0);
   vflag |= COLOR_NURB_ULINE_ID << COLOR_SHIFT;
   return vflag;
 }
@@ -896,6 +901,16 @@ GPUBatch **DRW_curve_batch_cache_get_surface_shaded(struct Curve *cu,
     DRW_batch_request(&cache->surf_per_mat[i]);
   }
   return cache->surf_per_mat;
+}
+
+GPUVertBuf *DRW_curve_batch_cache_pos_vertbuf_get(struct Curve *cu)
+{
+  CurveBatchCache *cache = curve_batch_cache_get(cu);
+  /* Request surface to trigger the vbo filling. Otherwise it may do nothing. */
+  DRW_batch_request(&cache->batch.surfaces);
+
+  DRW_vbo_request(NULL, &cache->ordered.loop_pos_nor);
+  return cache->ordered.loop_pos_nor;
 }
 
 GPUBatch *DRW_curve_batch_cache_get_wireframes_face(Curve *cu)

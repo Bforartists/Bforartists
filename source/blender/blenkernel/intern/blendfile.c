@@ -655,7 +655,13 @@ bool BKE_blendfile_userdef_write(const char *filepath, ReportList *reports)
   Main *mainb = MEM_callocN(sizeof(Main), "empty main");
   bool ok = false;
 
-  if (BLO_write_file(mainb, filepath, G_FILE_USERPREFS, reports, NULL)) {
+  if (BLO_write_file(mainb,
+                     filepath,
+                     0,
+                     &(const struct BlendFileWriteParams){
+                         .use_userdef = true,
+                     },
+                     reports)) {
     ok = true;
   }
 
@@ -777,7 +783,7 @@ WorkspaceConfigFileData *BKE_blendfile_workspace_config_read(const char *filepat
 
 bool BKE_blendfile_workspace_config_write(Main *bmain, const char *filepath, ReportList *reports)
 {
-  int fileflags = G.fileflags & ~(G_FILE_NO_UI | G_FILE_HISTORY);
+  const int fileflags = G.fileflags & ~G_FILE_NO_UI;
   bool retval = false;
 
   BKE_blendfile_write_partial_begin(bmain);
@@ -786,7 +792,8 @@ bool BKE_blendfile_workspace_config_write(Main *bmain, const char *filepath, Rep
     BKE_blendfile_write_partial_tag_ID(&workspace->id, true);
   }
 
-  if (BKE_blendfile_write_partial(bmain, filepath, fileflags, reports)) {
+  if (BKE_blendfile_write_partial(
+          bmain, filepath, fileflags, BLO_WRITE_PATH_REMAP_NONE, reports)) {
     retval = true;
   }
 
@@ -838,11 +845,13 @@ static void blendfile_write_partial_cb(void *UNUSED(handle), Main *UNUSED(bmain)
 }
 
 /**
+ * \param remap_mode: Choose the kind of path remapping or none #eBLO_FilePathRemap.
  * \return Success.
  */
 bool BKE_blendfile_write_partial(Main *bmain_src,
                                  const char *filepath,
                                  const int write_flags,
+                                 const int remap_mode,
                                  ReportList *reports)
 {
   Main *bmain_dst = MEM_callocN(sizeof(Main), "copybuffer");
@@ -884,12 +893,18 @@ bool BKE_blendfile_write_partial(Main *bmain_src,
    * This happens because id_sort_by_name does not take into account
    * string case or the library name, so the order is not strictly
    * defined for two linked data-blocks with the same name! */
-  if (write_flags & G_FILE_RELATIVE_REMAP) {
+  if (remap_mode != BLO_WRITE_PATH_REMAP_NONE) {
     path_list_backup = BKE_bpath_list_backup(bmain_dst, path_list_flag);
   }
 
   /* save the buffer */
-  retval = BLO_write_file(bmain_dst, filepath, write_flags, reports, NULL);
+  retval = BLO_write_file(bmain_dst,
+                          filepath,
+                          write_flags,
+                          &(const struct BlendFileWriteParams){
+                              .remap_mode = remap_mode,
+                          },
+                          reports);
 
   if (path_list_backup) {
     BKE_bpath_list_restore(bmain_dst, path_list_flag, path_list_backup);

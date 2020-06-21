@@ -57,6 +57,7 @@ import math
 import time
 # import logging
 import bpy
+import pathlib
 
 from bpy.app.handlers import persistent
 import bpy.utils.previews
@@ -1391,6 +1392,27 @@ class BlenderKitSceneSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
         update=search.search_update
     )
 
+def fix_subdir(self, context):
+    '''Fixes project subdicrectory settings if people input invalid path.'''
+
+    # pp = pathlib.PurePath(self.project_subdir)
+    pp = self.project_subdir[:]
+    pp = pp.replace('\\','')
+    pp = pp.replace('/','')
+    pp = pp.replace(':','')
+    pp = '//' + pp
+    if self.project_subdir != pp:
+        self.project_subdir = pp
+
+        title = "Fixed to relative path"
+        message = "This path should be always realative.\n" \
+                  " It's a directory BlenderKit creates where your .blend is \n " \
+                  "and uses it for storing assets."
+
+        def draw_message(self, context):
+            ui_panels.label_multiline(self.layout, text=message, icon='NONE', width=400)
+
+        bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
 
 class BlenderKitAddonPreferences(AddonPreferences):
     # this must match the addon name, use '__package__'
@@ -1469,8 +1491,9 @@ class BlenderKitAddonPreferences(AddonPreferences):
     project_subdir: StringProperty(
         name="Project Assets Subdirectory",
         description="where data will be stored for individual projects",
-        subtype='DIR_PATH',
+        # subtype='DIR_PATH',
         default="//assets",
+        update = fix_subdir
     )
 
     directory_behaviour: EnumProperty(

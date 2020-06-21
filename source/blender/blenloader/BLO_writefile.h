@@ -30,11 +30,37 @@ struct Main;
 struct MemFile;
 struct ReportList;
 
+/**
+ * Adjust paths when saving (kept unless #G_FILE_SAVE_COPY is set).
+ */
+typedef enum eBLO_WritePathRemap {
+  /** No path manipulation. */
+  BLO_WRITE_PATH_REMAP_NONE = 0,
+  /** Remap existing relative paths (default). */
+  BLO_WRITE_PATH_REMAP_RELATIVE = 1,
+  /** Remap paths making all paths relative to the new location. */
+  BLO_WRITE_PATH_REMAP_RELATIVE_ALL = 2,
+  /** Make all paths absolute. */
+  BLO_WRITE_PATH_REMAP_ABSOLUTE = 3,
+} eBLO_WritePathRemap;
+
+/** Similar to #BlendFileReadParams. */
+struct BlendFileWriteParams {
+  eBLO_WritePathRemap remap_mode;
+  /** Save `.blend1`, `.blend2`... etc. */
+  uint use_save_versions : 1;
+  /** On write, restore paths after editing them (see #BLO_WRITE_PATH_REMAP_RELATIVE). */
+  uint use_save_as_copy : 1;
+  uint use_userdef : 1;
+  const struct BlendThumbnail *thumb;
+};
+
 extern bool BLO_write_file(struct Main *mainvar,
                            const char *filepath,
-                           int write_flags,
-                           struct ReportList *reports,
-                           const struct BlendThumbnail *thumb);
+                           const int write_flags,
+                           const struct BlendFileWriteParams *params,
+                           struct ReportList *reports);
+
 extern bool BLO_write_file_mem(struct Main *mainvar,
                                struct MemFile *compare,
                                struct MemFile *current,

@@ -270,7 +270,7 @@ static void joined_armature_fix_links(
 }
 
 /* join armature exec is exported for use in object->join objects operator... */
-int join_armature_exec(bContext *C, wmOperator *op)
+int ED_armature_join_objects_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
@@ -754,7 +754,7 @@ static void bone_connect_to_new_parent(ListBase *edbo,
   float offset[3];
 
   if ((selbone->parent) && (selbone->flag & BONE_CONNECTED)) {
-    selbone->parent->flag &= ~(BONE_TIPSEL);
+    selbone->parent->flag &= ~BONE_TIPSEL;
   }
 
   /* make actbone the parent of selbone */
@@ -956,7 +956,7 @@ static void editbone_clear_parent(EditBone *ebone, int mode)
 {
   if (ebone->parent) {
     /* for nice selection */
-    ebone->parent->flag &= ~(BONE_TIPSEL);
+    ebone->parent->flag &= ~BONE_TIPSEL;
   }
 
   if (mode == 1) {

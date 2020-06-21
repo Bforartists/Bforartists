@@ -194,7 +194,7 @@ class SelectHierarchy(Operator):
             for obj in selected_objects:
                 parent = obj.parent
 
-                if parent:
+                if parent and parent.visible_get():
                     if obj_act == obj:
                         act_new = parent
 
@@ -202,11 +202,12 @@ class SelectHierarchy(Operator):
 
         else:
             for obj in selected_objects:
-                select_new.extend(obj.children)
+                select_new.extend([child for child in obj.children if child.visible_get()])
 
             if select_new:
                 select_new.sort(key=lambda obj_iter: obj_iter.name)
                 act_new = select_new[0]
+
 
         # don't edit any object settings above this
         if select_new:
@@ -237,7 +238,7 @@ class SubdivisionSet(Operator):
     )
     relative: BoolProperty(
         name="Relative",
-        description=("Apply the subsurf level as an offset "
+        description=("Apply the subdivision surface level as an offset "
                      "relative to the current level"),
         default=False,
     )
