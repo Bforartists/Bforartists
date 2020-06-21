@@ -40,6 +40,7 @@
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
+#include "BLI_task.h"
 #include "BLI_utildefines.h"
 
 #include "RNA_access.h"
@@ -310,7 +311,8 @@ BLI_INLINE IDOverrideLibraryRuntime *override_library_rna_path_mapping_ensure(
     IDOverrideLibrary *override)
 {
   if (override->runtime == NULL) {
-    override->runtime = BLI_ghash_new(BLI_ghashutil_strhash_p, BLI_ghashutil_strcmp, __func__);
+    override->runtime = BLI_ghash_new(
+        BLI_ghashutil_strhash_p_murmur, BLI_ghashutil_strcmp, __func__);
     for (IDOverrideLibraryProperty *op = override->properties.first; op != NULL; op = op->next) {
       BLI_ghash_insert(override->runtime, op->rna_path, op);
     }
@@ -649,6 +651,7 @@ bool BKE_lib_override_library_status_check_local(Main *bmain, ID *local)
                                    &rnaptr_local,
                                    &rnaptr_reference,
                                    NULL,
+                                   0,
                                    local->override_library,
                                    RNA_OVERRIDE_COMPARE_IGNORE_NON_OVERRIDABLE |
                                        RNA_OVERRIDE_COMPARE_IGNORE_OVERRIDDEN,
@@ -712,6 +715,7 @@ bool BKE_lib_override_library_status_check_reference(Main *bmain, ID *local)
                                    &rnaptr_local,
                                    &rnaptr_reference,
                                    NULL,
+                                   0,
                                    local->override_library,
                                    RNA_OVERRIDE_COMPARE_IGNORE_OVERRIDDEN,
                                    NULL)) {
@@ -735,9 +739,7 @@ bool BKE_lib_override_library_status_check_reference(Main *bmain, ID *local)
  * Generating diff values and applying overrides are much cheaper.
  *
  * \return true if new overriding op was created, or some local data was reset. */
-bool BKE_lib_override_library_operations_create(Main *bmain,
-                                                ID *local,
-                                                const bool UNUSED(force_auto))
+bool BKE_lib_override_library_operations_create(Main *bmain, ID *local)
 {
   BLI_assert(local->override_library != NULL);
   const bool is_template = (local->override_library->reference == NULL);
@@ -771,6 +773,7 @@ bool BKE_lib_override_library_operations_create(Main *bmain,
                                 &rnaptr_local,
                                 &rnaptr_reference,
                                 NULL,
+                                0,
                                 local->override_library,
                                 RNA_OVERRIDE_COMPARE_CREATE | RNA_OVERRIDE_COMPARE_RESTORE,
                                 &report_flags);
@@ -792,10 +795,22 @@ bool BKE_lib_override_library_operations_create(Main *bmain,
   return ret;
 }
 
+static void lib_override_library_operations_create_cb(TaskPool *__restrict pool, void *taskdata)
+{
+  Main *bmain = BLI_task_pool_user_data(pool);
+  ID *id = taskdata;
+
+  BKE_lib_override_library_operations_create(bmain, id);
+}
+
 /** Check all overrides from given \a bmain and create/update overriding operations as needed. */
 void BKE_lib_override_library_main_operations_create(Main *bmain, const bool force_auto)
 {
   ID *id;
+
+#ifdef DEBUG_OVERRIDE_TIMEIT
+  TIMEIT_START_AVERAGED(BKE_lib_override_library_main_operations_create);
+#endif
 
   /* When force-auto is set, we also remove all unused existing override properties & operations.
    */
@@ -803,18 +818,28 @@ void BKE_lib_override_library_main_operations_create(Main *bmain, const bool for
     BKE_lib_override_library_main_tag(bmain, IDOVERRIDE_LIBRARY_TAG_UNUSED, true);
   }
 
+  TaskPool *task_pool = BLI_task_pool_create(bmain, TASK_PRIORITY_HIGH);
+
   FOREACH_MAIN_ID_BEGIN (bmain, id) {
     if ((ID_IS_OVERRIDE_LIBRARY(id) && force_auto) ||
         (id->tag & LIB_TAG_OVERRIDE_LIBRARY_AUTOREFRESH)) {
-      BKE_lib_override_library_operations_create(bmain, id, force_auto);
+      BLI_task_pool_push(task_pool, lib_override_library_operations_create_cb, id, false, NULL);
       id->tag &= ~LIB_TAG_OVERRIDE_LIBRARY_AUTOREFRESH;
     }
   }
   FOREACH_MAIN_ID_END;
 
+  BLI_task_pool_work_and_wait(task_pool);
+
+  BLI_task_pool_free(task_pool);
+
   if (force_auto) {
     BKE_lib_override_library_main_unused_cleanup(bmain);
   }
+
+#ifdef DEBUG_OVERRIDE_TIMEIT
+  TIMEIT_END_AVERAGED(BKE_lib_override_library_main_operations_create);
+#endif
 }
 
 /** Set or clear given tag in all operations as unused in that override property data. */
@@ -1038,7 +1063,7 @@ ID *BKE_lib_override_library_operations_store_start(Main *bmain,
   }
 
   /* Forcefully ensure we know about all needed override operations. */
-  BKE_lib_override_library_operations_create(bmain, local, false);
+  BKE_lib_override_library_operations_create(bmain, local);
 
   ID *storage_id;
 #ifdef DEBUG_OVERRIDE_TIMEIT

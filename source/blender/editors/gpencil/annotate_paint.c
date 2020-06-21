@@ -381,10 +381,11 @@ static void gp_stroke_convertcoords(tGPsdata *p, const float mval[2], float out[
   }
 }
 
-/* Apply smooth to buffer while drawing
+/**
+ * Apply smooth to buffer while drawing
  * to smooth point C, use 2 before (A, B) and current point (D):
  *
- *   A----B-----C------D
+ * `A----B-----C------D`
  *
  * \param p: Temp data
  * \param inf: Influence factor
@@ -2053,7 +2054,7 @@ static void annotation_draw_apply_event(
   /* Key to toggle stabilization. */
   if (event->shift > 0 && p->paintmode == GP_PAINTMODE_DRAW) {
     /* Using permanent stabilization, shift will deactivate the flag. */
-    if (p->flags & (GP_PAINTFLAG_USE_STABILIZER)) {
+    if (p->flags & GP_PAINTFLAG_USE_STABILIZER) {
       if (p->flags & GP_PAINTFLAG_USE_STABILIZER_TEMP) {
         gpencil_draw_toggle_stabilizer_cursor(p, false);
         p->flags &= ~GP_PAINTFLAG_USE_STABILIZER_TEMP;
@@ -2850,7 +2851,7 @@ void GPENCIL_OT_annotate(wmOperatorType *ot)
                      0,
                      200,
                      "Stabilizer Stroke Radius",
-                     "Minimun distance from last point before stroke continues",
+                     "Minimum distance from last point before stroke continues",
                      1,
                      100);
   RNA_def_property_subtype(prop, PROP_PIXEL);

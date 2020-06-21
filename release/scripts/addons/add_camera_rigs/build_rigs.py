@@ -24,8 +24,9 @@ from rna_prop_ui import rna_idprop_ui_prop_get
 from math import pi
 
 from .create_widgets import (create_root_widget,
-                             create_camera_widget, create_aim_widget,
-                             create_circle_widget, create_corner_widget)
+                             create_camera_widget, create_camera_offset_widget,
+                             create_aim_widget, create_circle_widget,
+                             create_corner_widget)
 
 
 def create_prop_driver(rig, cam, prop_from, prop_to):
@@ -66,10 +67,22 @@ def create_dolly_bones(rig):
     ctrl.tail = (0.0, 1.0, 1.7)
     ctrl.show_wire = True
 
+    ctrl_offset = bones.new("Camera_offset")
+    ctrl_offset.head = (0.0, 0.0, 1.7)
+    ctrl_offset.tail = (0.0, 1.0, 1.7)
+    ctrl_offset.show_wire = True
+
     # Setup hierarchy
     ctrl.parent = root
+    ctrl_offset.parent = ctrl
     ctrl_aim.parent = root
     ctrl_aim_child.parent = ctrl_aim
+
+    # Jump into object mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+    pose_bones = rig.pose.bones
+    # Lock the relevant scale channels of the Camera_offset bone
+    pose_bones["Camera_offset"].lock_scale = (True,) * 3
 
 
 def create_crane_bones(rig):
@@ -95,6 +108,10 @@ def create_crane_bones(rig):
     ctrl.head = (0.0, 1.0, 1.7)
     ctrl.tail = (0.0, 2.0, 1.7)
 
+    ctrl_offset = bones.new("Camera_offset")
+    ctrl_offset.head = (0.0, 1.0, 1.7)
+    ctrl_offset.tail = (0.0, 2.0, 1.7)
+
     arm = bones.new("Crane_arm")
     arm.head = (0.0, 0.0, 1.7)
     arm.tail = (0.0, 1.0, 1.7)
@@ -105,6 +122,7 @@ def create_crane_bones(rig):
 
     # Setup hierarchy
     ctrl.parent = arm
+    ctrl_offset.parent = ctrl
     ctrl.use_inherit_rotation = False
     ctrl.use_inherit_scale = False
     ctrl.show_wire = True
@@ -123,9 +141,10 @@ def create_crane_bones(rig):
     # Lock the relevant loc, rot and scale
     pose_bones["Crane_arm"].lock_rotation = (False, True, False)
     pose_bones["Crane_arm"].lock_scale = (True, False, True)
-    pose_bones["Crane_height"].lock_location = (True, True, True)
-    pose_bones["Crane_height"].lock_rotation = (True, True, True)
+    pose_bones["Crane_height"].lock_location = (True,) * 3
+    pose_bones["Crane_height"].lock_rotation = (True,) * 3
     pose_bones["Crane_height"].lock_scale = (True, False, True)
+    pose_bones["Camera_offset"].lock_scale = (True,) * 3
 
 
 def setup_3d_rig(rig, cam):
@@ -148,14 +167,16 @@ def setup_3d_rig(rig, cam):
     # Build the widgets
     root_widget = create_root_widget("Camera_Root")
     camera_widget = create_camera_widget("Camera")
+    camera_offset_widget = create_camera_offset_widget("Camera_offset")
     aim_widget = create_aim_widget("Aim")
 
     # Add the custom bone shapes
     pose_bones["Root"].custom_shape = root_widget
     pose_bones["Aim"].custom_shape = aim_widget
     pose_bones["Camera"].custom_shape = camera_widget
+    pose_bones["Camera_offset"].custom_shape = camera_offset_widget
 
-    # Set the "At" field to the shape mecanism
+    # Set the "Override Transform" field to the mechanism position
     pose_bones["Aim"].custom_shape_transform = pose_bones["Aim_shape_rotation-MCH"]
 
     # Add constraints to bones
@@ -243,7 +264,8 @@ def create_2d_bones(context, rig, cam):
     driver = center_drivers[1].driver
     driver.type = 'SCRIPTED'
 
-    driver.expression = '({distance_x} - (left_x-right_x))*(res_y/res_x)/2 + (left_y + right_y)/2'.format(distance_x=corner_distance_x)
+    driver.expression = '({distance_x} - (left_x-right_x))*(res_y/res_x)/2 + (left_y + right_y)/2'.format(
+        distance_x=corner_distance_x)
 
     for direction in ('x', 'y'):
         for corner in ('left', 'right'):
@@ -324,7 +346,8 @@ def create_2d_bones(context, rig, cam):
 
     # Focal length driver
     driver = cam.data.driver_add('lens').driver
-    driver.expression = 'abs({distance_z} - (left_z + right_z)/2 + cam_z) * 36 / frame_width'.format(distance_z=corner_distance_z)
+    driver.expression = 'abs({distance_z} - (left_z + right_z)/2 + cam_z) * 36 / frame_width'.format(
+        distance_z=corner_distance_z)
 
     var = driver.variables.new()
     var.name = 'frame_width'
@@ -369,7 +392,8 @@ def create_2d_bones(context, rig, cam):
     # Shift driver X
     driver = cam.data.driver_add('shift_x').driver
 
-    driver.expression = 'rotation_shift * (((left_x + right_x)/2 - cam_x) * lens / abs({distance_z} - (left_z + right_z)/2 + cam_z) / 36)'.format(distance_z=corner_distance_z)
+    driver.expression = 'rotation_shift * (((left_x + right_x)/2 - cam_x) * lens / abs({distance_z} - (left_z + right_z)/2 + cam_z) / 36)'.format(
+        distance_z=corner_distance_z)
 
     var = driver.variables.new()
     var.name = 'rotation_shift'
@@ -405,7 +429,8 @@ def create_2d_bones(context, rig, cam):
     # Shift driver Y
     driver = cam.data.driver_add('shift_y').driver
 
-    driver.expression = 'rotation_shift * -(({distance_y} - (left_y + right_y)/2 + cam_y) * lens / abs({distance_z} - (left_z + right_z)/2 + cam_z) / 36 - (res_y/res_x)/2)'.format(distance_y=corner_distance_y, distance_z=corner_distance_z)
+    driver.expression = 'rotation_shift * -(({distance_y} - (left_y + right_y)/2 + cam_y) * lens / abs({distance_z} - (left_z + right_z)/2 + cam_z) / 36 - (res_y/res_x)/2)'.format(
+        distance_y=corner_distance_y, distance_z=corner_distance_z)
 
     var = driver.variables.new()
     var.name = 'rotation_shift'
@@ -478,7 +503,10 @@ def build_camera_rig(context, mode):
     cam.location = (0.0, -1.0, 0.0)  # Move the camera to the correct position
     cam.parent = rig
     cam.parent_type = "BONE"
-    cam.parent_bone = "Camera"
+    if mode == "2D":
+        cam.parent_bone = "Camera"
+    else:
+        cam.parent_bone = "Camera_offset"
 
     # Change display to BBone: it just looks nicer
     rig.data.display_type = 'BBONE'

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 09:45:22\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -670,20 +670,12 @@ msgid "Active Bone"
 msgstr "Aktywna Kość"
 
 
-msgid "Bake Pixel"
-msgstr "Wylicz piksel"
-
-
 msgid "Bake Data"
 msgstr "Wylicz dane"
 
 
 msgid "Cage Extrusion"
 msgstr "Wytłaczanie klatki (cage extrusion)"
-
-
-msgid "Distance to use for the inward ray cast when using selected to active"
-msgstr "Odległość używana przy wewnętrznym rzutowaniu promieni gdy używany jest 'zaznaczony do aktywnego'"
 
 
 msgid "Cage Object"
@@ -1874,6 +1866,18 @@ msgid "Iterations"
 msgstr "Iteracje"
 
 
+msgid "Hue"
+msgstr "Odcień"
+
+
+msgid "Saturation"
+msgstr "Nasycenie"
+
+
+msgid "Value"
+msgstr "Wartość"
+
+
 msgid "Background Image"
 msgstr "Obrazek tła"
 
@@ -2712,18 +2716,6 @@ msgstr "Różnica"
 
 msgid "Divide"
 msgstr "Dzielenie"
-
-
-msgid "Hue"
-msgstr "Odcień"
-
-
-msgid "Saturation"
-msgstr "Nasycenie"
-
-
-msgid "Value"
-msgstr "Wartość"
 
 
 msgid "Brightness"
@@ -5363,10 +5355,6 @@ msgid "Editbone Matrix"
 msgstr "Macierz edycji kości"
 
 
-msgid "Matrix combining loc/rot of the bone (head position, direction and roll), in armature space (WARNING: does not include/support bone's length/size)"
-msgstr "Macierz zawierająca położenie/rotację kości (położenie głowy, kierunek i obrót) w przestrzeni danych szkieletu (uwaga: nie zawiera długości/rozmiaru kości)"
-
-
 msgid "Parent edit bone (in same Armature)"
 msgstr "Edytuj kość nadrzędną (w tym samym szkielecie)"
 
@@ -5473,14 +5461,6 @@ msgstr "Magnetyczny"
 
 msgid "Magnetic effector weight"
 msgstr "Waga oddziaływania magnetycznego"
-
-
-msgid "Smoke Flow"
-msgstr "Przepływ dymu"
-
-
-msgid "Smoke Flow effector weight"
-msgstr "Siła efektora określającego przepływ dymu"
 
 
 msgid "Texture effector weight"
@@ -6829,61 +6809,6 @@ msgid "Unknown"
 msgstr "Nieznany"
 
 
-msgid "To"
-msgstr "Do"
-
-
-msgctxt "Operator"
-msgid "Remove"
-msgstr "Usuń"
-
-
-msgid "Layer:"
-msgstr "Warstwa:"
-
-
-msgid "Detail"
-msgstr "Szczegóły"
-
-
-msgid "Priority"
-msgstr "Priorytet"
-
-
-msgid "Unpack"
-msgstr "Rozpakuj"
-
-
-msgid "File: %s"
-msgstr "Plik: %s"
-
-
-msgctxt "Operator"
-msgid "Quit"
-msgstr "Wyjdź"
-
-
-msgctxt "Operator"
-msgid "Flat"
-msgstr "Płaskie"
-
-
-msgid "Null cloth object"
-msgstr "Zerowy obiekt tkanina"
-
-
-msgid "Out of memory on allocating clmd->clothObject"
-msgstr "Brak pamięci do alokacji clmd->clothObject->clothObject"
-
-
-msgid "Cannot build springs"
-msgstr "Nie można zbudować sprężyn"
-
-
-msgid "Out of memory on allocating clmd->clothObject->verts"
-msgstr "Brak pamięci do alokacji clmd->clothObject->verts"
-
-
 msgid "Const"
 msgstr "Stała"
 
@@ -7707,10 +7632,6 @@ msgid "Bone Heat Weighting: failed to find solution for one or more bones"
 msgstr "Ważenie Ciepłoty Kości: Znalezienie rozwiązania dla jednej lub więcej kości nie powiodło się"
 
 
-msgid "Failed to find bind solution (increase precision?)"
-msgstr "Znalezienie rozwiązania dla uwiązania nie powiodło się (Zwiększyć precyzję?)"
-
-
 msgid "Cannot pose libdata"
 msgstr "Nie można ustawiać póz danych biblioteki"
 
@@ -8194,12 +8115,12 @@ msgid "ID-Block:"
 msgstr "Blok ID:"
 
 
-msgid "%s parent deform"
-msgstr "%s zniekształcenie rodzicem"
+msgid "No Properties"
+msgstr "Brak Właściwości"
 
 
-msgid "Make Real"
-msgstr "Utwórz prawdziwy"
+msgid "Reset"
+msgstr "Zresetuj"
 
 
 msgid "Pos"
@@ -8226,14 +8147,6 @@ msgid "Reset Curve"
 msgstr "Resetuj krzywą"
 
 
-msgid "Reset"
-msgstr "Zresetuj"
-
-
-msgid "No Properties"
-msgstr "Brak Właściwości"
-
-
 msgid "Anim Player"
 msgstr "Odtwarzacz Animacji"
 
@@ -8246,12 +8159,8 @@ msgid "Packed File, click to unpack"
 msgstr "Plik spakowany, kliknij by rozpakować"
 
 
-msgid "Convert virtual modifier to a real modifier"
-msgstr "Przekształć modyfikator wirtualny na prawdziwy"
-
-
-msgid "This modifier can only be applied on splines' points"
-msgstr "Ten modyfikator może być zaaplikowany wyłącznie na punktach splajnów"
+msgid "Reset operator defaults"
+msgstr "Resetuj domyślne dla operatora"
 
 
 msgid "Proxy Protected"
@@ -8296,10 +8205,6 @@ msgstr "Podwójne kliknięcie by zmienić nazwę"
 
 msgid "Hide filtering options"
 msgstr "Ukryj opcje filtrowania"
-
-
-msgid "Reset operator defaults"
-msgstr "Resetuj domyślne dla operatora"
 
 
 msgid "Stop this job"
@@ -8420,11 +8325,6 @@ msgstr "Przeglądaj dane krzywej malowania do powiązania"
 
 msgid "Browse ID data to be linked"
 msgstr "Przeglądaj dane ID do powiązania"
-
-
-msgctxt "Operator"
-msgid "Apply as Shape Key"
-msgstr "Zaaplikuj jako klucz kształtu"
 
 
 msgctxt "Scene"
@@ -9032,10 +8932,6 @@ msgid "Bone already has an IK constraint"
 msgstr "Kość posiada już ogranicznik IK"
 
 
-msgid "Context missing 'constraint'"
-msgstr "W kontekście brakuje 'ogranicznika'"
-
-
 msgid "Context missing active object"
 msgstr "W kontekście brakuje aktywnego obiektu"
 
@@ -9552,32 +9448,8 @@ msgid "Fa:%d "
 msgstr "Fa:%d "
 
 
-msgid "Ha:%d "
-msgstr "Ha:%d "
-
-
-msgid "St:%d "
-msgstr "St:%d "
-
-
-msgid "| Mem:%.2fM (%.2fM, Peak %.2fM) "
-msgstr "| Pamięć:%.2fM (%.2fM, Szczyt: %.2fM) "
-
-
 msgid "| Mem:%.2fM, Peak: %.2fM "
 msgstr "| Pamięć:%.2fM, Szczyt: %.2fM "
-
-
-msgid "Field %d "
-msgstr "Półpole %d "
-
-
-msgid "Blur %d "
-msgstr "Rozmycie %d "
-
-
-msgid "| Full Sample %d "
-msgstr "| Pełne próbkowanie %d "
 
 
 msgid "Cannot write a single file with an animation format selected"
@@ -9928,6 +9800,10 @@ msgid "Frame: - / %d"
 msgstr "Klatka: - / %d"
 
 
+msgid "File: %s"
+msgstr "Plik: %s"
+
+
 msgid "unsupported movie clip format"
 msgstr "Format klipu filmowego nie obsługiwany"
 
@@ -10244,6 +10120,10 @@ msgid "Unpack %d Files"
 msgstr "Rozpakuj %d plików"
 
 
+msgid "Unpack"
+msgstr "Rozpakuj"
+
+
 msgid "No packed files to unpack"
 msgstr "Brak spakowanych plików do rozpakowania"
 
@@ -10258,26 +10138,6 @@ msgstr "Nie można ustanowić ścieżki względnej przy niezapisanym pliku blend
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Nie można ustanowić ścieżki absolutnej przy niezapisanym pliku blend"
-
-
-msgid "(Key) "
-msgstr "(Klucz) "
-
-
-msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
-msgstr "Wierzch:%s%s | Krawęd:%s%s | Ściany:%s/%s | Trójk:%s"
-
-
-msgid "Verts:%s/%s | Bones:%s/%s"
-msgstr "Wierzch:%s%s | Kości:%s%s"
-
-
-msgid "Verts:%s/%s"
-msgstr "Wierzch:%s/%s"
-
-
-msgid "Sync Length"
-msgstr "Sync Długość"
 
 
 msgid "Now"
@@ -10410,6 +10270,10 @@ msgstr "Ścieżka bazowa"
 
 msgid "Add Input"
 msgstr "Dodaj Wejście"
+
+
+msgid "Layer:"
+msgstr "Warstwa:"
 
 
 msgid "File Subpath:"
@@ -10939,26 +10803,6 @@ msgid "along local Z"
 msgstr "wzdłuż lokalnej Z"
 
 
-msgid "global"
-msgstr "globalna"
-
-
-msgid "local"
-msgstr "lokalna"
-
-
-msgid "normal"
-msgstr "normal"
-
-
-msgid "view"
-msgstr "widok"
-
-
-msgid "gimbal"
-msgstr "gimbal"
-
-
 msgid " along Y axis"
 msgstr " wzdłuż osi Y"
 
@@ -11273,6 +11117,26 @@ msgstr "Ślizganie Wierzchołka: "
 
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "Utworzenie parametru 'użyj' ('use') dla Orientacji prawidłowe tylko w kontekście 3DView"
+
+
+msgid "global"
+msgstr "globalna"
+
+
+msgid "gimbal"
+msgstr "gimbal"
+
+
+msgid "normal"
+msgstr "normal"
+
+
+msgid "local"
+msgstr "lokalna"
+
+
+msgid "view"
+msgstr "widok"
 
 
 msgctxt "Scene"
@@ -11673,10 +11537,6 @@ msgid "Modify"
 msgstr "Modyfikuj"
 
 
-msgid "Simulate"
-msgstr "Symuluj"
-
-
 msgid "Unable to create new strip"
 msgstr "Utworzenie nowego paska niemożliwe"
 
@@ -11958,64 +11818,8 @@ msgid "KeyConfig '%s' cannot be removed"
 msgstr "KeyConfig '%s' niemożlwe do usunięcia"
 
 
-msgid "Cannot execute boolean operation"
-msgstr "Operacja boolean nie powiodła się"
-
-
-msgid "You are using a rather high poly as source or destination, computation might be slow"
-msgstr "Używasz źródła lub celu o dość dużej gęstości, spodziewany długi czas kalkulacji"
-
-
-msgid "Modifier requires more than 3 input faces"
-msgstr "Modyfikator wymaga więcej niż 3 ściany źródłowe"
-
-
-msgid "Vertices changed from %d to %d"
-msgstr "Wierzchołki zmienione z %d na %d"
-
-
-msgid "Edges changed from %d to %d"
-msgstr "Krawędzie zmienione z %d na %d"
-
-
-msgid "The system did not find a solution"
-msgstr "System nie znalazł rozwiązania"
-
-
-msgid "'Integrate' only valid for Mesh objects"
-msgstr "'Zintegruj' możliwe tylko dla obiektów typu Siatka"
-
-
-msgid "'Integrate' original mesh vertex mismatch"
-msgstr "'Zintegruj' oryginalną siatkę niezgodność wierzchołków"
-
-
-msgid "'Integrate' requires faces"
-msgstr "'Zintegruj' wymaga ścian"
-
-
-msgid "Cannot get mesh from cage object"
-msgstr "Nie udało się uzyskać siatki z obiektu klatki"
-
-
-msgid "Verts changed from %d to %d"
-msgstr "Wierzchołki zmienione z %d na %d"
-
-
-msgid "Cage verts changed from %d to %d"
-msgstr "Wierzchołki klatki zmienione z %d na %d"
-
-
-msgid "Bind data missing"
-msgstr "Brak danych bindowania"
-
-
-msgid "Invalid target settings"
-msgstr "Nieprawidłowe ustawienia celu"
-
-
-msgid "Hull error"
-msgstr "Błąd hull"
+msgid "To"
+msgstr "Do"
 
 
 msgid "Convertor"
@@ -12266,6 +12070,10 @@ msgid "Row Height"
 msgstr "Wysokość rzędu"
 
 
+msgid "Detail"
+msgstr "Szczegóły"
+
+
 msgid "Detail Scale"
 msgstr "Skala szczegółów"
 
@@ -12320,14 +12128,6 @@ msgstr ""
 
 msgid "Unknown py-exception, could not convert"
 msgstr "Nieznana py-exception, przetworzenie nie powiodło się"
-
-
-msgid "Fra:%d Mem:%.2fM (%.2fM, Peak %.2fM) "
-msgstr "Fra:%d Mem:%.2fM (%.2fM, Peak %.2fM) "
-
-
-msgid "Sce: %s Ve:%d Fa:%d Ha:%d La:%d"
-msgstr "Sce: %s Ve:%d Fa:%d Ha:%d La:%d"
 
 
 msgid "Sce: %s Ve:%d Fa:%d La:%d"

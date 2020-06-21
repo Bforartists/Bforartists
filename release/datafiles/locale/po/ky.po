@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.83.0 Beta (b'c204e3348c85')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 09:45:22\n"
+"POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -305,6 +305,10 @@ msgid "Material"
 msgstr "Материал"
 
 
+msgid "Value"
+msgstr "Мааниси"
+
+
 msgid "Background Image"
 msgstr "Фон сүрөтү"
 
@@ -435,10 +439,6 @@ msgstr "Айырма"
 
 msgid "Divide"
 msgstr "Бөлүү"
-
-
-msgid "Value"
-msgstr "Мааниси"
 
 
 msgid "B-Spline"
@@ -1810,6 +1810,16 @@ msgid "Copy Color"
 msgstr "Түсүн көчүрүү"
 
 
+msgctxt "Operator"
+msgid "Zoom In"
+msgstr "Чоңойтуу"
+
+
+msgctxt "Operator"
+msgid "Zoom Out"
+msgstr "Кичирейтүү"
+
+
 msgid "History"
 msgstr "Тарых"
 
@@ -2690,16 +2700,6 @@ msgstr "Түшүрүү"
 
 
 msgctxt "Operator"
-msgid "Zoom In"
-msgstr "Чоңойтуу"
-
-
-msgctxt "Operator"
-msgid "Zoom Out"
-msgstr "Кичирейтүү"
-
-
-msgctxt "Operator"
 msgid "Remove Background Image"
 msgstr "Фон сүрөтүн өчүрүү"
 
@@ -3320,488 +3320,6 @@ msgid "Animation"
 msgstr "Анимация"
 
 
-msgid "AO"
-msgstr "AO"
-
-
-msgctxt "Operator"
-msgid "Volume"
-msgstr "Көлөм"
-
-
-msgctxt "Operator"
-msgid "Reset Settings"
-msgstr "Ырастоолорду түшүрүү"
-
-
-msgctxt "Operator"
-msgid "Statistics"
-msgstr "Статистика"
-
-
-msgid "[{}]: \"{}\" ({})"
-msgstr "[{}]: \"{}\" ({})"
-
-
-msgctxt "Operator"
-msgid "Edit"
-msgstr "Оңдоо"
-
-
-msgid "To"
-msgstr "Кимге"
-
-
-msgid "Location:"
-msgstr "Жайгашкан жери:"
-
-
-msgid "Scale:"
-msgstr "Масштаб:"
-
-
-msgid "Source:"
-msgstr "Булагы:"
-
-
-msgid "X:"
-msgstr "X:"
-
-
-msgid "Y:"
-msgstr "Y:"
-
-
-msgid "Z:"
-msgstr "Z:"
-
-
-msgid " %s    X"
-msgstr " %s    X"
-
-
-msgid " %s    Y"
-msgstr " %s    Y"
-
-
-msgid " %s    Z"
-msgstr " %s    Z"
-
-
-msgctxt "Operator"
-msgid "Remove"
-msgstr "Өчүрүү"
-
-
-msgctxt "Operator"
-msgid "Add Image"
-msgstr "Сүрөттү кошуу"
-
-
-msgid "Object:"
-msgstr "Объект:"
-
-
-msgid "Texture:"
-msgstr "Текстура:"
-
-
-msgid "Direction:"
-msgstr "Багыт:"
-
-
-msgid "Mode:"
-msgstr "Режим:"
-
-
-msgid "Options:"
-msgstr "Опциялар:"
-
-
-msgid "Textures:"
-msgstr "Текстуралар:"
-
-
-msgid "Distance:"
-msgstr "Аралыгы:"
-
-
-msgid "Settings:"
-msgstr "Ырастоолор:"
-
-
-msgid "Draw:"
-msgstr "Тартуу:"
-
-
-msgid "Transform:"
-msgstr "Өзгөртүү:"
-
-
-msgctxt "Operator"
-msgid "Clear"
-msgstr "Тазалоо"
-
-
-msgctxt "Operator"
-msgid "All"
-msgstr "Баары"
-
-
-msgctxt "Operator"
-msgid "Force Field"
-msgstr "Кубат талаасы"
-
-
-msgid "Calculate"
-msgstr "Эсептөө"
-
-
-msgid "%s: %s"
-msgstr "%s: %s"
-
-
-msgctxt "Operator"
-msgid "Clear After"
-msgstr "Кийинкисин тазалоо"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Чейинкисин тазалоо"
-
-
-msgctxt "Operator"
-msgid "Floor"
-msgstr "Пол"
-
-
-msgctxt "Operator"
-msgid "Wall"
-msgstr "Дубал"
-
-
-msgctxt "Operator"
-msgid "Back"
-msgstr "Артынан"
-
-
-msgctxt "Operator"
-msgid "New"
-msgstr "Жаңы"
-
-
-msgctxt "Operator"
-msgid "Open..."
-msgstr "Ачуу..."
-
-
-msgctxt "Operator"
-msgid "Save As..."
-msgstr "Ат коюп сактоо..."
-
-
-msgctxt "Operator"
-msgid "Vertex"
-msgstr "Чоку"
-
-
-msgctxt "Operator"
-msgid "Edge"
-msgstr "Кыр"
-
-
-msgctxt "Operator"
-msgid "Face"
-msgstr "Каптал"
-
-
-msgctxt "Operator"
-msgid "Island"
-msgstr "Арал"
-
-
-msgid "Image*"
-msgstr "Сүрөт*"
-
-
-msgid "Gamma:"
-msgstr "Гамма:"
-
-
-msgctxt "Operator"
-msgid "Left"
-msgstr "Солдон"
-
-
-msgctxt "Operator"
-msgid "Right"
-msgstr "Оңдон"
-
-
-msgctxt "Operator"
-msgid "Movie"
-msgstr "Тасма"
-
-
-msgctxt "Operator"
-msgid "Sound"
-msgstr "Үн"
-
-
-msgctxt "Operator"
-msgid "Delete..."
-msgstr "Өчүрүү..."
-
-
-msgctxt "Operator"
-msgid "Scene..."
-msgstr "Сахна..."
-
-
-msgctxt "Operator"
-msgid "Color"
-msgstr "Түс"
-
-
-msgctxt "Operator"
-msgid "Text"
-msgstr "Текст"
-
-
-msgctxt "Operator"
-msgid "Subtract"
-msgstr "Алуу"
-
-
-msgctxt "Operator"
-msgid "Multiply"
-msgstr "Көбөйтүү"
-
-
-msgctxt "Operator"
-msgid "Top"
-msgstr "Үстүнөн"
-
-
-msgctxt "Operator"
-msgid "Bottom"
-msgstr "Астынан"
-
-
-msgctxt "Operator"
-msgid "Quit"
-msgstr "Чыгуу"
-
-
-msgctxt "Operator"
-msgid "Save Copy..."
-msgstr "Көчүрмөсүн сактоо..."
-
-
-msgctxt "Operator"
-msgid "Manual"
-msgstr "Колдонмо"
-
-
-msgctxt "Operator"
-msgid "Developer Community"
-msgstr "Иштетүүчүлөр коомдоштугу"
-
-
-msgctxt "Operator"
-msgid "Python API Reference"
-msgstr "Python API маалымдамасы"
-
-
-msgctxt "Operator"
-msgid "Report a Bug"
-msgstr "Ката жөнүндө маалымдоо"
-
-
-msgid "Anti-aliasing"
-msgstr "Тегиздөө"
-
-
-msgid "New Data"
-msgstr "Жаңы маалыматтар"
-
-
-msgid "Description:"
-msgstr "Баяндамасы:"
-
-
-msgid "description"
-msgstr "баяндама"
-
-
-msgid "location"
-msgstr "жайгашкан жери"
-
-
-msgid "File:"
-msgstr "Файлы:"
-
-
-msgid "Author:"
-msgstr "Автору:"
-
-
-msgid "author"
-msgstr "автор"
-
-
-msgid "Version:"
-msgstr "Версиясы:"
-
-
-msgid "Internet:"
-msgstr "Интернет:"
-
-
-msgctxt "Operator"
-msgid "Documentation"
-msgstr "Документация"
-
-
-msgid "Error (see console)"
-msgstr "Ката (консолду караңыз)"
-
-
-msgctxt "Operator"
-msgid "Active Camera"
-msgstr "Активдүү камера"
-
-
-msgctxt "Operator"
-msgid "Camera"
-msgstr "Камера"
-
-
-msgctxt "Operator"
-msgid "Front"
-msgstr "Алдынан"
-
-
-msgctxt "Operator"
-msgid "Plane"
-msgstr "Тегиздик"
-
-
-msgctxt "Operator"
-msgid "Cube"
-msgstr "Куб"
-
-
-msgctxt "Operator"
-msgid "UV Sphere"
-msgstr "UV-сфера"
-
-
-msgctxt "Operator"
-msgid "Cylinder"
-msgstr "Цилиндр"
-
-
-msgctxt "Operator"
-msgid "Cone"
-msgstr "Конус"
-
-
-msgctxt "Operator"
-msgid "Torus"
-msgstr "Тор"
-
-
-msgctxt "Operator"
-msgid "Grid"
-msgstr "Тор сызык"
-
-
-msgctxt "Operator"
-msgid "Monkey"
-msgstr "Маймыл"
-
-
-msgctxt "Operator"
-msgid "Bezier"
-msgstr "Безье"
-
-
-msgctxt "Operator"
-msgid "Nurbs Curve"
-msgstr "Nurbs ийриси"
-
-
-msgctxt "Operator"
-msgid "Nurbs Circle"
-msgstr "Nurbs тегереги"
-
-
-msgctxt "Operator"
-msgid "Path"
-msgstr "Жол"
-
-
-msgctxt "Operator"
-msgid "Single Bone"
-msgstr "Бир сөөк"
-
-
-msgctxt "Operator"
-msgid "Empty"
-msgstr "Боштук"
-
-
-msgctxt "Operator"
-msgid "Speaker"
-msgstr "Үн булагы"
-
-
-msgctxt "Operator"
-msgid "Insert Keyframe..."
-msgstr "Ачкыч кадрын кошуу..."
-
-
-msgctxt "Operator"
-msgid "Change Shape"
-msgstr "Калыбын өзгөртүү"
-
-
-msgctxt "Operator"
-msgid "Origin"
-msgstr "Таяныч чекити"
-
-
-msgctxt "Operator"
-msgid "Flat"
-msgstr "Жалпак"
-
-
-msgctxt "Operator"
-msgid "Calculate"
-msgstr "Эсептөө"
-
-
-msgctxt "Operator"
-msgid "Lattice"
-msgstr "Решётка"
-
-
-msgid "X-Ray"
-msgstr "Рентген"
-
-
-msgctxt "Operator"
-msgid "Quick Edit"
-msgstr "Тез оңдоо"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Колдонуу"
-
-
 msgctxt "Curve"
 msgid "Surface"
 msgstr "Бет"
@@ -3825,6 +3343,11 @@ msgstr "Чоңойтуу"
 
 msgid "Zoom out"
 msgstr "Кичирейтүү"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Колдонуу"
 
 
 msgctxt "Scene"
@@ -3935,6 +3458,10 @@ msgstr "Жаңы"
 msgctxt "FreestyleLineStyle"
 msgid "New"
 msgstr "Жаңы"
+
+
+msgid "Options:"
+msgstr "Опциялар:"
 
 
 msgctxt "Mesh"
@@ -4050,6 +3577,14 @@ msgid "OK"
 msgstr "ООБА"
 
 
+msgid "X:"
+msgstr "X:"
+
+
+msgid "Y:"
+msgstr "Y:"
+
+
 msgid "File path"
 msgstr "Файлга жол"
 
@@ -4086,10 +3621,6 @@ msgid " + Z"
 msgstr " + Z"
 
 
-msgid "(Key) "
-msgstr "(Ачкыч) "
-
-
 msgid "Path:"
 msgstr "Жолу:"
 
@@ -4121,6 +3652,10 @@ msgstr "Чоку:"
 
 msgid "Median:"
 msgstr "Медиана:"
+
+
+msgid "Z:"
+msgstr "Z:"
 
 
 msgid "W:"
@@ -4156,13 +3691,17 @@ msgid "Modify"
 msgstr "Өзгөртүү"
 
 
-msgid "Simulate"
-msgstr "Моделдөө"
-
-
 msgctxt "Armature"
 msgid "Group"
 msgstr "Топ"
+
+
+msgid "To"
+msgstr "Кимге"
+
+
+msgid "AO"
+msgstr "AO"
 
 
 msgid "Anisotropy"

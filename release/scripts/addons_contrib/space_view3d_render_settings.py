@@ -135,7 +135,7 @@ class SetAllSubsurfRenderLevels(bpy.types.Operator):
 
 class SyncAllSubsurfRenderLevels(bpy.types.Operator):
     bl_idname = "render.sync_all_subsurf_render_levels"
-    bl_label = "Sync All Subsurf Levels"
+    bl_label = "Sync All Subdivision Levels"
     bl_description = "sync_all_subsurf_render_levels"
     bl_options = {'REGISTER', 'UNDO'}
 

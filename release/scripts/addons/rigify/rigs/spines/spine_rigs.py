@@ -129,6 +129,20 @@ class BaseSpineRig(TweakChainRig):
         create_cube_widget(self.obj, master, radius=0.5)
 
     ####################################################
+    # ORG bones
+
+    @stage.parent_bones
+    def parent_org_chain(self):
+        ctrl = self.bones.ctrl
+        org = self.bones.org
+        for tweak, org in zip(ctrl.tweak, org):
+            self.set_bone_parent(org, tweak)
+
+    def rig_org_bone(self, i, org, tweak, next_tweak):
+        # For spine rigs, these constraints go on the deform bones. See T74483#902192.
+        pass
+
+    ####################################################
     # Tweak bones
 
     @stage.configure_bones
@@ -139,6 +153,18 @@ class BaseSpineRig(TweakChainRig):
 
     ####################################################
     # Deform bones
+
+    @stage.rig_bones
+    def rig_deform_chain(self):
+        tweaks = self.bones.ctrl.tweak
+        for args in zip(count(0), self.bones.deform, tweaks, tweaks[1:]):
+            self.rig_deform_bone(*args)
+
+    def rig_deform_bone(self, i, deform, tweak, next_tweak):
+        self.make_constraint(deform, 'COPY_TRANSFORMS', tweak)
+        if next_tweak:
+            self.make_constraint(deform, 'DAMPED_TRACK', next_tweak)
+            self.make_constraint(deform, 'STRETCH_TO', next_tweak)
 
     @stage.configure_bones
     def configure_bbone_chain(self):
