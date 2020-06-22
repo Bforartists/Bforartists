@@ -1208,7 +1208,7 @@ void buttons_context_draw(const bContext *C, uiLayout *layout)
                          0,
                          0,
                          0,
-                         TIP_("Follow context or keep fixed data-block displayed"));
+                         TIP_("Context Pin\nFollow context or keep fixed data-block displayed"));
   UI_but_flag_disable(but, UI_BUT_UNDO); /* skip undo on screen buttons */
   UI_but_func_set(but, pin_cb, NULL, NULL);
 }
