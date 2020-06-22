@@ -277,7 +277,7 @@ class ExecutePreset(Operator):
 
 
 class AddPresetRender(AddPresetBase, Operator):
-    """Add Render Preset\nAdd or remove a Render Preset"""
+    """Add or remove a Render Preset"""
     bl_idname = "render.preset_add"
     bl_label = "Add Render Preset"
     preset_menu = "RENDER_PT_presets"
