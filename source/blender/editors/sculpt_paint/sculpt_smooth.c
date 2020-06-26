@@ -226,6 +226,26 @@ float SCULPT_neighbor_mask_average(SculptSession *ss, int index)
   }
 }
 
+void SCULPT_neighbor_color_average(SculptSession *ss, float result[4], int index)
+{
+  float avg[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+  int total = 0;
+
+  SculptVertexNeighborIter ni;
+  SCULPT_VERTEX_NEIGHBORS_ITER_BEGIN (ss, index, ni) {
+    add_v4_v4(avg, SCULPT_vertex_color_get(ss, ni.index));
+    total++;
+  }
+  SCULPT_VERTEX_NEIGHBORS_ITER_END(ni);
+
+  if (total > 0) {
+    mul_v4_v4fl(result, avg, 1.0f / (float)total);
+  }
+  else {
+    copy_v4_v4(result, SCULPT_vertex_color_get(ss, index));
+  }
+}
+
 static void do_smooth_brush_mesh_task_cb_ex(void *__restrict userdata,
                                             const int n,
                                             const TaskParallelTLS *__restrict tls)
@@ -525,10 +545,15 @@ static void SCULPT_do_surface_smooth_brush_laplacian_task_cb_ex(
   {
     SCULPT_orig_vert_data_update(&orig_data, &vd);
     if (sculpt_brush_test_sq_fn(&test, vd.co)) {
-      const float fade =
-          bstrength *
-          SCULPT_brush_strength_factor(
-              ss, brush, vd.co, sqrtf(test.dist), vd.no, vd.fno, 0.0f, vd.index, thread_id);
+      const float fade = bstrength * SCULPT_brush_strength_factor(ss,
+                                                                  brush,
+                                                                  vd.co,
+                                                                  sqrtf(test.dist),
+                                                                  vd.no,
+                                                                  vd.fno,
+                                                                  vd.mask ? *vd.mask : 0.0f,
+                                                                  vd.index,
+                                                                  thread_id);
 
       float disp[3];
       SCULPT_surface_smooth_laplacian_step(ss,
@@ -566,10 +591,15 @@ static void SCULPT_do_surface_smooth_brush_displace_task_cb_ex(
   BKE_pbvh_vertex_iter_begin(ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE)
   {
     if (sculpt_brush_test_sq_fn(&test, vd.co)) {
-      const float fade =
-          bstrength *
-          SCULPT_brush_strength_factor(
-              ss, brush, vd.co, sqrtf(test.dist), vd.no, vd.fno, 0.0f, vd.index, thread_id);
+      const float fade = bstrength * SCULPT_brush_strength_factor(ss,
+                                                                  brush,
+                                                                  vd.co,
+                                                                  sqrtf(test.dist),
+                                                                  vd.no,
+                                                                  vd.fno,
+                                                                  vd.mask ? *vd.mask : 0.0f,
+                                                                  vd.index,
+                                                                  thread_id);
       SCULPT_surface_smooth_displace_step(
           ss, vd.co, ss->cache->surface_smooth_laplacian_disp, vd.index, beta, fade);
     }

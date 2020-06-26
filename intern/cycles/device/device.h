@@ -83,6 +83,7 @@ class DeviceInfo {
   bool use_split_kernel;             /* Use split or mega kernel. */
   bool has_profiling;                /* Supports runtime collection of profiling info. */
   bool has_peer_memory;              /* GPU has P2P access to memory of another GPU. */
+  DenoiserTypeMask denoisers;        /* Supported denoiser types. */
   int cpu_threads;
   vector<DeviceInfo> multi_devices;
   vector<DeviceInfo> denoising_devices;
@@ -101,6 +102,7 @@ class DeviceInfo {
     use_split_kernel = false;
     has_profiling = false;
     has_peer_memory = false;
+    denoisers = DENOISER_NONE;
   }
 
   bool operator==(const DeviceInfo &info)
@@ -110,6 +112,9 @@ class DeviceInfo {
            (type == info.type && num == info.num && description == info.description));
     return id == info.id;
   }
+
+  /* Add additional devices needed for the specified denoiser. */
+  void add_denoising_devices(DenoiserType denoiser_type);
 };
 
 class DeviceRequestedFeatures {
@@ -132,6 +137,7 @@ class DeviceRequestedFeatures {
 
   /* BVH/sampling kernel features. */
   bool use_hair;
+  bool use_hair_thick;
   bool use_object_motion;
   bool use_camera_motion;
 
@@ -178,6 +184,7 @@ class DeviceRequestedFeatures {
     max_nodes_group = 0;
     nodes_features = 0;
     use_hair = false;
+    use_hair_thick = false;
     use_object_motion = false;
     use_camera_motion = false;
     use_baking = false;
@@ -200,6 +207,7 @@ class DeviceRequestedFeatures {
              max_nodes_group == requested_features.max_nodes_group &&
              nodes_features == requested_features.nodes_features &&
              use_hair == requested_features.use_hair &&
+             use_hair_thick == requested_features.use_hair_thick &&
              use_object_motion == requested_features.use_object_motion &&
              use_camera_motion == requested_features.use_camera_motion &&
              use_baking == requested_features.use_baking &&
@@ -319,7 +327,8 @@ class Device {
   virtual void mem_free_sub_ptr(device_ptr /*ptr*/){};
 
  public:
-  virtual ~Device();
+  /* noexcept needed to silence TBB warning. */
+  virtual ~Device() noexcept(false);
 
   /* info */
   DeviceInfo info;
