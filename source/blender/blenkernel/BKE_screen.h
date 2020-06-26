@@ -142,6 +142,8 @@ typedef struct ARegionType {
   void (*exit)(struct wmWindowManager *wm, struct ARegion *region);
   /* draw entirely, view changes should be handled here */
   void (*draw)(const struct bContext *C, struct ARegion *region);
+  /* Handler to draw overlays. This handler is called every draw loop. */
+  void (*draw_overlay)(const struct bContext *C, struct ARegion *region);
   /* optional, compute button layout before drawing for dynamic size */
   void (*layout)(const struct bContext *C, struct ARegion *region);
   /* snap the size of the region (can be NULL for no snapping). */
@@ -211,7 +213,7 @@ typedef struct PanelType {
   char context[BKE_ST_MAXNAME];   /* for buttons window */
   char category[BKE_ST_MAXNAME];  /* for category tabs */
   char owner_id[BKE_ST_MAXNAME];  /* for work-spaces to selectively show. */
-  char parent_id[BKE_ST_MAXNAME]; /* parent idname for subpanels */
+  char parent_id[BKE_ST_MAXNAME]; /* parent idname for sub-panels */
   short space_type;
   short region_type;
   /* For popovers, 0 for default. */

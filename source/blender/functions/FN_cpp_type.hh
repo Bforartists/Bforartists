@@ -21,7 +21,7 @@
  * \ingroup functions
  *
  * The CPPType class is the core of the runtime-type-system used by the functions system. An
- * instance of this class can represent any C++ type, that is default-constructable, destructable,
+ * instance of this class can represent any C++ type, that is default-constructible, destructible,
  * movable and copyable. Therefore it also works for all C types. This restrictions might need to
  * be removed in the future, but for now every required type has these properties.
  *
@@ -725,6 +725,8 @@ static std::unique_ptr<const CPPType> create_cpp_type(StringRef name, const T &d
   const blender::fn::CPPType &CPPType_##IDENTIFIER = *CPPTYPE_##IDENTIFIER##_owner; \
   template<> const blender::fn::CPPType &blender::fn::CPPType::get<TYPE_NAME>() \
   { \
+    /* This can happen when trying to access a CPPType during static storage initialization. */ \
+    BLI_assert(CPPTYPE_##IDENTIFIER##_owner.get() != nullptr); \
     return CPPType_##IDENTIFIER; \
   }
 

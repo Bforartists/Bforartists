@@ -1924,6 +1924,9 @@ struct View2DScrollers {
   /* focus bubbles */
   int vert_min, vert_max; /* vertical scrollbar */
   int hor_min, hor_max;   /* horizontal scrollbar */
+
+  /* These values are written into, even if we don't use them. */
+  rcti _hor, _vert;
 };
 
 /* quick enum for vsm->zone (scroller handles) */
@@ -2013,7 +2016,7 @@ static void scroller_activate_init(bContext *C,
                                    const char in_scroller)
 {
   v2dScrollerMove *vsm;
-  View2DScrollers *scrollers;
+  View2DScrollers scrollers;
   ARegion *region = CTX_wm_region(C);
   View2D *v2d = &region->v2d;
   rctf tot_cur_union;
@@ -2034,7 +2037,7 @@ static void scroller_activate_init(bContext *C,
   /* 'zone' depends on where mouse is relative to bubble
    * - zooming must be allowed on this axis, otherwise, default to pan
    */
-  scrollers = UI_view2d_scrollers_calc(v2d, NULL);
+  UI_view2d_scrollers_calc(v2d, NULL, &scrollers);
 
   /* Use a union of 'cur' & 'tot' in case the current view is far outside 'tot'. In this cases
    * moving the scroll bars has far too little effect and the view can get stuck T31476. */
@@ -2051,15 +2054,15 @@ static void scroller_activate_init(bContext *C,
 
     /* get 'zone' (i.e. which part of scroller is activated) */
     vsm->zone = mouse_in_scroller_handle(
-        event->mval[0], v2d->hor.xmin, v2d->hor.xmax, scrollers->hor_min, scrollers->hor_max);
+        event->mval[0], v2d->hor.xmin, v2d->hor.xmax, scrollers.hor_min, scrollers.hor_max);
 
     if ((v2d->keepzoom & V2D_LOCKZOOM_X) && ELEM(vsm->zone, SCROLLHANDLE_MIN, SCROLLHANDLE_MAX)) {
       /* default to scroll, as handles not usable */
       vsm->zone = SCROLLHANDLE_BAR;
     }
 
-    vsm->scrollbarwidth = scrollers->hor_max - scrollers->hor_min;
-    vsm->scrollbar_orig = ((scrollers->hor_max + scrollers->hor_min) / 2) + region->winrct.xmin;
+    vsm->scrollbarwidth = scrollers.hor_max - scrollers.hor_min;
+    vsm->scrollbar_orig = ((scrollers.hor_max + scrollers.hor_min) / 2) + region->winrct.xmin;
   }
   else {
     /* vertical scroller - calculate adjustment factor first */
@@ -2071,18 +2074,17 @@ static void scroller_activate_init(bContext *C,
 
     /* get 'zone' (i.e. which part of scroller is activated) */
     vsm->zone = mouse_in_scroller_handle(
-        event->mval[1], v2d->vert.ymin, v2d->vert.ymax, scrollers->vert_min, scrollers->vert_max);
+        event->mval[1], v2d->vert.ymin, v2d->vert.ymax, scrollers.vert_min, scrollers.vert_max);
 
     if ((v2d->keepzoom & V2D_LOCKZOOM_Y) && ELEM(vsm->zone, SCROLLHANDLE_MIN, SCROLLHANDLE_MAX)) {
       /* default to scroll, as handles not usable */
       vsm->zone = SCROLLHANDLE_BAR;
     }
 
-    vsm->scrollbarwidth = scrollers->vert_max - scrollers->vert_min;
-    vsm->scrollbar_orig = ((scrollers->vert_max + scrollers->vert_min) / 2) + region->winrct.ymin;
+    vsm->scrollbarwidth = scrollers.vert_max - scrollers.vert_min;
+    vsm->scrollbar_orig = ((scrollers.vert_max + scrollers.vert_min) / 2) + region->winrct.ymin;
   }
 
-  UI_view2d_scrollers_free(scrollers);
   ED_region_tag_redraw_no_rebuild(region);
 }
 

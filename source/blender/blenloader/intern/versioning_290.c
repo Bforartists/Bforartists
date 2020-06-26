@@ -269,7 +269,7 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
   {
     /* Keep this block, even when empty. */
 
-    /* Transition to saving expansion for all of a modifier's subpanels. */
+    /* Transition to saving expansion for all of a modifier's sub-panels. */
     if (!DNA_struct_elem_find(fd->filesdna, "ModifierData", "short", "ui_expand_flag")) {
       for (Object *object = bmain->objects.first; object != NULL; object = object->id.next) {
         LISTBASE_FOREACH (ModifierData *, md, &object->modifiers) {
@@ -291,7 +291,13 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    /* Transition to saving expansion for all of a constraint's subpanels. */
+    if (!DNA_struct_elem_find(fd->filesdna, "SceneEEVEE", "int", "motion_blur_steps")) {
+      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+        scene->eevee.motion_blur_steps = 1;
+      }
+    }
+
+    /* Transition to saving expansion for all of a constraint's sub-panels. */
     if (!DNA_struct_elem_find(fd->filesdna, "bConstraint", "short", "ui_expand_flag")) {
       for (Object *object = bmain->objects.first; object != NULL; object = object->id.next) {
         LISTBASE_FOREACH (bConstraint *, con, &object->constraints) {
@@ -305,7 +311,7 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    /* Transition to saving expansion for all of grease pencil modifier's subpanels. */
+    /* Transition to saving expansion for all of grease pencil modifier's sub-panels. */
     if (!DNA_struct_elem_find(fd->filesdna, "GpencilModifierData", "short", "ui_expand_flag")) {
       for (Object *object = bmain->objects.first; object != NULL; object = object->id.next) {
         LISTBASE_FOREACH (GpencilModifierData *, md, &object->greasepencil_modifiers) {
@@ -319,7 +325,7 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    /* Transition to saving expansion for all of an effect's subpanels. */
+    /* Transition to saving expansion for all of an effect's sub-panels. */
     if (!DNA_struct_elem_find(fd->filesdna, "ShaderFxData", "short", "ui_expand_flag")) {
       for (Object *object = bmain->objects.first; object != NULL; object = object->id.next) {
         LISTBASE_FOREACH (ShaderFxData *, fx, &object->shader_fx) {
@@ -329,6 +335,20 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
           else {
             fx->ui_expand_flag = 0;
           }
+        }
+      }
+    }
+  }
+
+  /* Refactor bevel profile type to use an enum. */
+  if (!DNA_struct_elem_find(fd->filesdna, "BevelModifierData", "short", "profile_type")) {
+    for (Object *object = bmain->objects.first; object != NULL; object = object->id.next) {
+      LISTBASE_FOREACH (ModifierData *, md, &object->modifiers) {
+        if (md->type == eModifierType_Bevel) {
+          BevelModifierData *bmd = (BevelModifierData *)md;
+          bool use_custom_profile = bmd->flags & MOD_BEVEL_CUSTOM_PROFILE_DEPRECATED;
+          bmd->profile_type = use_custom_profile ? MOD_BEVEL_PROFILE_CUSTOM :
+                                                   MOD_BEVEL_PROFILE_SUPERELLIPSE;
         }
       }
     }
