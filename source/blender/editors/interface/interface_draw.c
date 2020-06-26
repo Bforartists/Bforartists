@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "DNA_color_types.h"
+#include "DNA_curve_types.h"
 #include "DNA_curveprofile_types.h"
 #include "DNA_movieclip_types.h"
 #include "DNA_screen_types.h"
@@ -118,51 +119,53 @@ void UI_draw_roundbox_aa(
     bool filled, float minx, float miny, float maxx, float maxy, float rad, const float color[4])
 {
   uiWidgetBaseParameters widget_params = {
-      .recti.xmin = minx,
-      .recti.ymin = miny,
-      .recti.xmax = maxx,
-      .recti.ymax = maxy,
+      .recti.xmin = minx + U.pixelsize,
+      .recti.ymin = miny + U.pixelsize,
+      .recti.xmax = maxx - U.pixelsize,
+      .recti.ymax = maxy - U.pixelsize,
+      .rect.xmin = minx,
+      .rect.ymin = miny,
+      .rect.xmax = maxx,
+      .rect.ymax = maxy,
       .radi = rad,
+      .rad = rad,
       .round_corners[0] = (roundboxtype & UI_CNR_BOTTOM_LEFT) ? 1.0f : 0.0f,
       .round_corners[1] = (roundboxtype & UI_CNR_BOTTOM_RIGHT) ? 1.0f : 0.0f,
       .round_corners[2] = (roundboxtype & UI_CNR_TOP_RIGHT) ? 1.0f : 0.0f,
       .round_corners[3] = (roundboxtype & UI_CNR_TOP_LEFT) ? 1.0f : 0.0f,
-      .color_inner1[0] = color[0],
-      .color_inner2[0] = color[0],
-      .color_inner1[1] = color[1],
-      .color_inner2[1] = color[1],
-      .color_inner1[2] = color[2],
-      .color_inner2[2] = color[2],
-      .color_inner1[3] = color[3],
-      .color_inner2[3] = color[3],
+      .color_inner1[0] = filled ? color[0] : 0.0f,
+      .color_inner1[1] = filled ? color[1] : 0.0f,
+      .color_inner1[2] = filled ? color[2] : 0.0f,
+      .color_inner1[3] = filled ? color[3] : 0.0f,
+      .color_inner2[0] = filled ? color[0] : 0.0f,
+      .color_inner2[1] = filled ? color[1] : 0.0f,
+      .color_inner2[2] = filled ? color[2] : 0.0f,
+      .color_inner2[3] = filled ? color[3] : 0.0f,
+      .color_outline[0] = color[0],
+      .color_outline[1] = color[1],
+      .color_outline[2] = color[2],
+      .color_outline[3] = color[3],
       .alpha_discard = 1.0f,
   };
 
+  /* XXX this is to emulate previous behavior of semitransparent fills but that's was a side effect
+   * of the previous AA method. Better fix the callers. */
+  if (filled) {
+    widget_params.color_inner1[3] *= 0.65f;
+    widget_params.color_inner2[3] *= 0.65f;
+    widget_params.color_outline[3] *= 0.65f;
+  }
+
+  /* WATCH: This is assuming the ModelViewProjectionMatrix is area pixel space.
+   * If it has been scaled, then it's no longer valid. */
+
+  GPUBatch *batch = ui_batch_roundbox_widget_get();
+  GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_WIDGET_BASE);
+  GPU_batch_uniform_4fv_array(batch, "parameters", 11, (float *)&widget_params);
+
   GPU_blend(true);
 
-  if (filled) {
-    /* plain antialiased filled box */
-    widget_params.color_inner1[3] *= 0.125f;
-    widget_params.color_inner2[3] *= 0.125f;
-
-    /* WATCH: This is assuming the ModelViewProjectionMatrix is area pixel space.
-     * If it has been scaled, then it's no longer valid. */
-    GPUBatch *batch = ui_batch_roundbox_get(filled, true);
-    GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_WIDGET_BASE);
-    GPU_batch_uniform_4fv_array(batch, "parameters", 11, (float *)&widget_params);
-    GPU_batch_draw(batch);
-  }
-  else {
-    /* plain antialiased unfilled box */
-    GPU_line_smooth(true);
-
-    GPUBatch *batch = ui_batch_roundbox_get(filled, false);
-    GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_WIDGET_BASE);
-    GPU_batch_uniform_4fv_array(batch, "parameters", 11, (float *)&widget_params);
-    GPU_batch_draw(batch);
-
-    GPU_line_smooth(false);
-  }
+  GPU_batch_draw(batch);
 
   GPU_blend(false);
 }
@@ -251,32 +254,49 @@ void UI_draw_roundbox_4fv(
   immEnd();
   immUnbindProgram();
 #endif
-
   uiWidgetBaseParameters widget_params = {
-      .recti.xmin = minx,
-      .recti.ymin = miny,
-      .recti.xmax = maxx,
-      .recti.ymax = maxy,
+      .recti.xmin = minx + U.pixelsize,
+      .recti.ymin = miny + U.pixelsize,
+      .recti.xmax = maxx - U.pixelsize,
+      .recti.ymax = maxy - U.pixelsize,
+      .rect.xmin = minx,
+      .rect.ymin = miny,
+      .rect.xmax = maxx,
+      .rect.ymax = maxy,
       .radi = rad,
+      .rad = rad,
       .round_corners[0] = (roundboxtype & UI_CNR_BOTTOM_LEFT) ? 1.0f : 0.0f,
       .round_corners[1] = (roundboxtype & UI_CNR_BOTTOM_RIGHT) ? 1.0f : 0.0f,
       .round_corners[2] = (roundboxtype & UI_CNR_TOP_RIGHT) ? 1.0f : 0.0f,
       .round_corners[3] = (roundboxtype & UI_CNR_TOP_LEFT) ? 1.0f : 0.0f,
-      .color_inner1[0] = col[0],
-      .color_inner2[0] = col[0],
-      .color_inner1[1] = col[1],
-      .color_inner2[1] = col[1],
-      .color_inner1[2] = col[2],
-      .color_inner2[2] = col[2],
-      .color_inner1[3] = col[3],
-      .color_inner2[3] = col[3],
+      .color_inner1[0] = filled ? col[0] : 0.0f,
+      .color_inner1[1] = filled ? col[1] : 0.0f,
+      .color_inner1[2] = filled ? col[2] : 0.0f,
+      .color_inner1[3] = filled ? col[3] : 0.0f,
+      .color_inner2[0] = filled ? col[0] : 0.0f,
+      .color_inner2[1] = filled ? col[1] : 0.0f,
+      .color_inner2[2] = filled ? col[2] : 0.0f,
+      .color_inner2[3] = filled ? col[3] : 0.0f,
+      .color_outline[0] = col[0],
+      .color_outline[1] = col[1],
+      .color_outline[2] = col[2],
+      .color_outline[3] = col[3],
       .alpha_discard = 1.0f,
   };
+  /* Exactly the same as UI_draw_roundbox_aa but does not do the legacy transparency. */
 
-  GPUBatch *batch = ui_batch_roundbox_get(filled, false);
+  /* WATCH: This is assuming the ModelViewProjectionMatrix is area pixel space.
+   * If it has been scaled, then it's no longer valid. */
+
+  GPUBatch *batch = ui_batch_roundbox_widget_get();
   GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_WIDGET_BASE);
   GPU_batch_uniform_4fv_array(batch, "parameters", 11, (float *)&widget_params);
+
+  GPU_blend(true);
+
   GPU_batch_draw(batch);
+
+  GPU_blend(false);
 }
 
 #if 0
@@ -427,32 +447,46 @@ void UI_draw_roundbox_shade_x(bool filled,
   immEnd();
   immUnbindProgram();
 #endif
-
   uiWidgetBaseParameters widget_params = {
-      .recti.xmin = minx,
-      .recti.ymin = miny,
-      .recti.xmax = maxx,
-      .recti.ymax = maxy,
+      .recti.xmin = minx + U.pixelsize,
+      .recti.ymin = miny + U.pixelsize,
+      .recti.xmax = maxx - U.pixelsize,
+      .recti.ymax = maxy - U.pixelsize,
+      .rect.xmin = minx,
+      .rect.ymin = miny,
+      .rect.xmax = maxx,
+      .rect.ymax = maxy,
       .radi = rad,
+      .rad = rad,
       .round_corners[0] = (roundboxtype & UI_CNR_BOTTOM_LEFT) ? 1.0f : 0.0f,
       .round_corners[1] = (roundboxtype & UI_CNR_BOTTOM_RIGHT) ? 1.0f : 0.0f,
       .round_corners[2] = (roundboxtype & UI_CNR_TOP_RIGHT) ? 1.0f : 0.0f,
       .round_corners[3] = (roundboxtype & UI_CNR_TOP_LEFT) ? 1.0f : 0.0f,
-      .color_inner1[0] = min_ff(1.0f, col[0] + shadetop),
-      .color_inner2[0] = max_ff(0.0f, col[0] + shadedown),
-      .color_inner1[1] = min_ff(1.0f, col[1] + shadetop),
-      .color_inner2[1] = max_ff(0.0f, col[1] + shadedown),
-      .color_inner1[2] = min_ff(1.0f, col[2] + shadetop),
-      .color_inner2[2] = max_ff(0.0f, col[2] + shadedown),
-      .color_inner1[3] = 1.0f,
-      .color_inner2[3] = 1.0f,
+      .color_inner1[0] = !filled ? 0.0f : min_ff(1.0f, col[0] + shadetop),
+      .color_inner1[1] = !filled ? 0.0f : min_ff(1.0f, col[1] + shadetop),
+      .color_inner1[2] = !filled ? 0.0f : min_ff(1.0f, col[2] + shadetop),
+      .color_inner1[3] = !filled ? 0.0f : 1.0f,
+      .color_inner2[0] = !filled ? 0.0f : max_ff(0.0f, col[0] + shadedown),
+      .color_inner2[1] = !filled ? 0.0f : max_ff(0.0f, col[1] + shadedown),
+      .color_inner2[2] = !filled ? 0.0f : max_ff(0.0f, col[2] + shadedown),
+      .color_inner2[3] = !filled ? 0.0f : 1.0f,
+      /* TODO: non-filled box don't have gradients. Just use middle color. */
+      .color_outline[0] = clamp_f(col[0] + shadetop + shadedown, 0.0f, 1.0f),
+      .color_outline[1] = clamp_f(col[1] + shadetop + shadedown, 0.0f, 1.0f),
+      .color_outline[2] = clamp_f(col[2] + shadetop + shadedown, 0.0f, 1.0f),
+      .color_outline[3] = clamp_f(col[3] + shadetop + shadedown, 0.0f, 1.0f),
+      .shade_dir = 1.0f,
       .alpha_discard = 1.0f,
   };
 
-  GPUBatch *batch = ui_batch_roundbox_get(filled, false);
+  GPU_blend(true);
+
+  GPUBatch *batch = ui_batch_roundbox_widget_get();
   GPU_batch_program_set_builtin(batch, GPU_SHADER_2D_WIDGET_BASE);
   GPU_batch_uniform_4fv_array(batch, "parameters", 11, (float *)&widget_params);
   GPU_batch_draw(batch);
+
+  GPU_blend(false);
 }
 
 #if 0  /* unused */
@@ -2131,7 +2165,19 @@ void ui_draw_but_CURVE(ARegion *region, uiBut *but, const uiWidgetColors *wcol, 
   immUnbindProgram();
 }
 
-/** Used to draw a curve profile widget. Somewhat similar to ui_draw_but_CURVE */
+/**
+ * Helper for #ui_draw_but_CURVEPROFILE. Used to tell whether to draw a control point's handles.
+ */
+static bool point_draw_handles(CurveProfilePoint *point)
+{
+  return (point->flag & PROF_SELECT &&
+          (ELEM(point->h1, HD_FREE, HD_ALIGN) || ELEM(point->h2, HD_FREE, HD_ALIGN))) ||
+         ELEM(point->flag, PROF_H1_SELECT, PROF_H2_SELECT);
+}
+
+/**
+ *  Draws the curve profile widget. Somewhat similar to ui_draw_but_CURVE.
+ */
 void ui_draw_but_CURVEPROFILE(ARegion *region,
                               uiBut *but,
                               const uiWidgetColors *wcol,
@@ -2147,18 +2193,18 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
     profile = (CurveProfile *)but->poin;
   }
 
-  /* Calculate offset and zoom */
+  /* Calculate offset and zoom. */
   float zoomx = (BLI_rcti_size_x(rect) - 2.0f) / BLI_rctf_size_x(&profile->view_rect);
   float zoomy = (BLI_rcti_size_y(rect) - 2.0f) / BLI_rctf_size_y(&profile->view_rect);
   float offsx = profile->view_rect.xmin - (1.0f / zoomx);
   float offsy = profile->view_rect.ymin - (1.0f / zoomy);
 
-  /* Exit early if too narrow */
+  /* Exit early if too narrow. */
   if (zoomx == 0.0f) {
     return;
   }
 
-  /* Test needed because path can draw outside of boundary */
+  /* Test needed because path can draw outside of boundary. */
   int scissor[4];
   GPU_scissor_get_i(scissor);
   rcti scissor_new = {
@@ -2180,7 +2226,7 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
   uint pos = GPU_vertformat_attr_add(format, "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
   immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
-  /* Backdrop */
+  /* Draw the backdrop. */
   float color_backdrop[4] = {0, 0, 0, 1};
   if (profile->flag & PROF_USE_CLIP) {
     gl_shaded_color_get_fl((uchar *)wcol->inner, -20, color_backdrop);
@@ -2199,33 +2245,33 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
     immRectf(pos, rect->xmin, rect->ymin, rect->xmax, rect->ymax);
   }
 
-  /* 0.25 step grid */
+  /* 0.25 step grid. */
   gl_shaded_color((uchar *)wcol->inner, -16);
   ui_draw_but_curve_grid(pos, rect, zoomx, zoomy, offsx, offsy, 0.25f);
-  /* 1.0 step grid */
+  /* 1.0 step grid. */
   gl_shaded_color((uchar *)wcol->inner, -24);
   ui_draw_but_curve_grid(pos, rect, zoomx, zoomy, offsx, offsy, 1.0f);
 
-  /* Draw the path's fill */
+  /* Draw the path's fill. */
   if (profile->table == NULL) {
-    BKE_curveprofile_update(profile, false);
+    BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
   }
   CurveProfilePoint *pts = profile->table;
-  /* Also add the last points on the right and bottom edges to close off the fill polygon */
+  /* Also add the last points on the right and bottom edges to close off the fill polygon. */
   bool add_left_tri = profile->view_rect.xmin < 0.0f;
   bool add_bottom_tri = profile->view_rect.ymin < 0.0f;
   uint tot_points = (uint)PROF_N_TABLE(profile->path_len) + 1 + add_left_tri + add_bottom_tri;
   uint tot_triangles = tot_points - 2;
 
-  /* Create array of the positions of the table's points */
+  /* Create array of the positions of the table's points. */
   float(*table_coords)[2] = MEM_mallocN(sizeof(*table_coords) * tot_points, "table x coords");
   for (i = 0; i < (uint)PROF_N_TABLE(profile->path_len);
-       i++) { /* Only add the points from the table here */
+       i++) { /* Only add the points from the table here. */
     table_coords[i][0] = pts[i].x;
     table_coords[i][1] = pts[i].y;
   }
   if (add_left_tri && add_bottom_tri) {
-    /* Add left side, bottom left corner, and bottom side points */
+    /* Add left side, bottom left corner, and bottom side points. */
     table_coords[tot_points - 3][0] = profile->view_rect.xmin;
     table_coords[tot_points - 3][1] = 1.0f;
     table_coords[tot_points - 2][0] = profile->view_rect.xmin;
@@ -2234,30 +2280,30 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
     table_coords[tot_points - 1][1] = profile->view_rect.ymin;
   }
   else if (add_left_tri) {
-    /* Add the left side and bottom left corner points */
+    /* Add the left side and bottom left corner points. */
     table_coords[tot_points - 2][0] = profile->view_rect.xmin;
     table_coords[tot_points - 2][1] = 1.0f;
     table_coords[tot_points - 1][0] = profile->view_rect.xmin;
     table_coords[tot_points - 1][1] = 0.0f;
   }
   else if (add_bottom_tri) {
-    /* Add the bottom side and bottom left corner points */
+    /* Add the bottom side and bottom left corner points. */
     table_coords[tot_points - 2][0] = 0.0f;
     table_coords[tot_points - 2][1] = profile->view_rect.ymin;
     table_coords[tot_points - 1][0] = 1.0f;
     table_coords[tot_points - 1][1] = profile->view_rect.ymin;
   }
   else {
-    /* Just add the bottom corner point. Side points would be redundant anyway */
+    /* Just add the bottom corner point. Side points would be redundant anyway. */
     table_coords[tot_points - 1][0] = 0.0f;
     table_coords[tot_points - 1][1] = 0.0f;
   }
 
-  /* Calculate the table point indices of the triangles for the profile's fill */
+  /* Calculate the table point indices of the triangles for the profile's fill. */
   uint(*tri_indices)[3] = MEM_mallocN(sizeof(*tri_indices) * tot_triangles, "return tri indices");
   BLI_polyfill_calc(table_coords, tot_points, -1, tri_indices);
 
-  /* Draw the triangles for the profile fill */
+  /* Draw the triangles for the profile fill. */
   immUniformColor3ubvAlpha((const uchar *)wcol->item, 128);
   GPU_blend(true);
   GPU_polygon_smooth(false);
@@ -2273,7 +2319,7 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
   immEnd();
   MEM_freeN(tri_indices);
 
-  /* Draw the profile's path so the edge stands out a bit */
+  /* Draw the profile's path so the edge stands out a bit. */
   tot_points -= (add_left_tri + add_left_tri);
   GPU_line_width(1.0f);
   immUniformColor3ubvAlpha((const uchar *)wcol->item, 255);
@@ -2285,8 +2331,43 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
     immVertex2f(pos, fx, fy);
   }
   immEnd();
-  immUnbindProgram();
   MEM_freeN(table_coords);
+
+  /* Draw the handles for the selected control points. */
+  pts = profile->path;
+  tot_points = (uint)profile->path_len;
+  int selected_free_points = 0;
+  for (i = 0; i < tot_points; i++) {
+    if (point_draw_handles(&pts[i])) {
+      selected_free_points++;
+    }
+  }
+  /* Draw the lines to the handles from the points. */
+  if (selected_free_points > 0) {
+    GPU_line_width(1.0f);
+    gl_shaded_color((uchar *)wcol->inner, -24);
+    GPU_line_smooth(true);
+    immBegin(GPU_PRIM_LINES, selected_free_points * 4);
+    float ptx, pty;
+    for (i = 0; i < tot_points; i++) {
+      if (point_draw_handles(&pts[i])) {
+        ptx = rect->xmin + zoomx * (pts[i].x - offsx);
+        pty = rect->ymin + zoomy * (pts[i].y - offsy);
+
+        fx = rect->xmin + zoomx * (pts[i].h1_loc[0] - offsx);
+        fy = rect->ymin + zoomy * (pts[i].h1_loc[1] - offsy);
+        immVertex2f(pos, ptx, pty);
+        immVertex2f(pos, fx, fy);
+
+        fx = rect->xmin + zoomx * (pts[i].h2_loc[0] - offsx);
+        fy = rect->ymin + zoomy * (pts[i].h2_loc[1] - offsy);
+        immVertex2f(pos, ptx, pty);
+        immVertex2f(pos, fx, fy);
+      }
+    }
+    immEnd();
+  }
+  immUnbindProgram();
 
   /* New GPU instructions for control points and sampled points. */
   format = immVertexFormat();
@@ -2311,8 +2392,6 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
   }
 
   /* Draw the control points. */
-  pts = profile->path;
-  tot_points = (uint)profile->path_len;
   GPU_line_smooth(false);
   GPU_blend(false);
   GPU_point_size(max_ff(3.0f, min_ff(UI_DPI_FAC / but->block->aspect * 5.0f, 5.0f)));
@@ -2324,6 +2403,28 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
     immVertex2f(pos, fx, fy);
   }
   immEnd();
+
+  /* Draw the handle points. */
+  if (selected_free_points > 0) {
+    GPU_line_smooth(false);
+    GPU_blend(false);
+    GPU_point_size(max_ff(2.0f, min_ff(UI_DPI_FAC / but->block->aspect * 4.0f, 4.0f)));
+    immBegin(GPU_PRIM_POINTS, selected_free_points * 2);
+    for (i = 0; i < tot_points; i++) {
+      if (point_draw_handles(&pts[i])) {
+        fx = rect->xmin + zoomx * (pts[i].h1_loc[0] - offsx);
+        fy = rect->ymin + zoomy * (pts[i].h1_loc[1] - offsy);
+        immAttr4fv(col, (pts[i].flag & PROF_H1_SELECT) ? color_vert_select : color_vert);
+        immVertex2f(pos, fx, fy);
+
+        fx = rect->xmin + zoomx * (pts[i].h2_loc[0] - offsx);
+        fy = rect->ymin + zoomy * (pts[i].h2_loc[1] - offsy);
+        immAttr4fv(col, (pts[i].flag & PROF_H2_SELECT) ? color_vert_select : color_vert);
+        immVertex2f(pos, fx, fy);
+      }
+    }
+    immEnd();
+  }
 
   /* Draw the sampled points in addition to the control points if they have been created */
   pts = profile->segments;
@@ -2339,7 +2440,6 @@ void ui_draw_but_CURVEPROFILE(ARegion *region,
     }
     immEnd();
   }
-
   immUnbindProgram();
 
   /* restore scissortest */
@@ -2678,7 +2778,6 @@ void ui_draw_dropshadow(
   GPU_batch_draw(batch);
 
   /* outline emphasis */
-  GPU_line_smooth(true);
   float color[4] = {0.0f, 0.0f, 0.0f, 0.4f};
   UI_draw_roundbox_4fv(false,
                        rct->xmin - 0.5f,
@@ -2687,7 +2786,6 @@ void ui_draw_dropshadow(
                        rct->ymax + 0.5f,
                        radius + 0.5f,
                        color);
-  GPU_line_smooth(false);
 
   GPU_blend(false);
 }

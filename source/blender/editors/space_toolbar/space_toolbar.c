@@ -87,7 +87,6 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *region)
 	/* draw entirely, view changes should be handled here */
   /*SpaceToolbar *stoolbar = CTX_wm_space_toolbar(C);*/ /*bfa - commented out. variable not needed yet*/
 	View2D *v2d = &region->v2d;
-	View2DScrollers *scrollers;
 
 	/* clear and setup matrix */
 	UI_ThemeClearColor(TH_BACK);
@@ -99,10 +98,8 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *region)
 	/* reset view matrix */
 	UI_view2d_view_restore(C);
 
-	/* scrollers */
-  scrollers = UI_view2d_scrollers_calc(v2d, NULL);
-  UI_view2d_scrollers_draw(v2d, scrollers);
-  UI_view2d_scrollers_free(scrollers);
+  /* scrollers */
+  UI_view2d_scrollers_draw(v2d, NULL);
 	
 }
 
