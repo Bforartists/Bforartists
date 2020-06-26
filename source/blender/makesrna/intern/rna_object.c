@@ -234,10 +234,8 @@ const EnumPropertyItem rna_enum_object_type_items[] = {
     OBTYPE_CU_SURF,
     {OB_MBALL, "META", 0, "Meta", ""},
     OBTYPE_CU_FONT,
-#ifdef WITH_NEW_OBJECT_TYPES
     {OB_HAIR, "HAIR", 0, "Hair", ""},
     {OB_POINTCLOUD, "POINTCLOUD", 0, "PointCloud", ""},
-#endif
     {OB_VOLUME, "VOLUME", 0, "Volume", ""},
     {0, "", 0, NULL, NULL},
     {OB_ARMATURE, "ARMATURE", 0, "Armature", ""},
@@ -565,12 +563,10 @@ static StructRNA *rna_Object_data_typef(PointerRNA *ptr)
       return &RNA_LightProbe;
     case OB_GPENCIL:
       return &RNA_GreasePencil;
-#  ifdef WITH_NEW_OBJECT_TYPES
     case OB_HAIR:
       return &RNA_Hair;
     case OB_POINTCLOUD:
       return &RNA_PointCloud;
-#  endif
     case OB_VOLUME:
       return &RNA_Volume;
     default:
@@ -1501,6 +1497,17 @@ static void rna_Object_constraints_move(
   WM_main_add_notifier(NC_OBJECT | ND_CONSTRAINT, object);
 }
 
+static bConstraint *rna_Object_constraints_copy(Object *object, Main *bmain, PointerRNA *con_ptr)
+{
+  bConstraint *con = con_ptr->data;
+  bConstraint *new_con = BKE_constraint_copy_for_object(object, con);
+
+  ED_object_constraint_tag_update(bmain, object, new_con);
+  WM_main_add_notifier(NC_OBJECT | ND_CONSTRAINT | NA_ADDED, object);
+
+  return new_con;
+}
+
 bool rna_Object_constraints_override_apply(Main *UNUSED(bmain),
                                            PointerRNA *ptr_dst,
                                            PointerRNA *ptr_src,
@@ -2221,6 +2228,21 @@ static void rna_def_object_constraints(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   parm = RNA_def_int(func, "to_index", -1, INT_MIN, INT_MAX, "To Index", "Target index", 0, 10000);
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+
+  func = RNA_def_function(srna, "copy", "rna_Object_constraints_copy");
+  RNA_def_function_ui_description(func, "Add a new constraint that is a copy of the given one");
+  RNA_def_function_flag(func, FUNC_USE_MAIN);
+  /* constraint to copy */
+  parm = RNA_def_pointer(func,
+                         "constraint",
+                         "Constraint",
+                         "",
+                         "Constraint to copy - may belong to a different object");
+  RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+  RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
+  /* return type */
+  parm = RNA_def_pointer(func, "new_constraint", "Constraint", "", "New constraint");
+  RNA_def_function_return(func, parm);
 }
 
 /* object.modifiers */
