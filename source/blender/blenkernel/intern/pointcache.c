@@ -1062,7 +1062,7 @@ static int ptcache_smoke_openvdb_write(struct OpenVDBWriter *writer, void *smoke
   FluidModifierData *mmd = (FluidModifierData *)smoke_v;
   FluidDomainSettings *mds = mmd->domain;
 
-  OpenVDBWriter_set_flags(writer, mds->openvdb_comp, (mds->data_depth == 16));
+  OpenVDBWriter_set_flags(writer, mds->openvdb_compression, (mds->openvdb_data_depth == 16));
 
   OpenVDBWriter_add_meta_int(writer, "blender/smoke/active_fields", mds->active_fields);
   OpenVDBWriter_add_meta_v3_int(writer, "blender/smoke/resolution", mds->res);
@@ -2190,7 +2190,7 @@ static int ptcache_path(PTCacheID *pid, char *filename)
 {
   Library *lib = (pid->ob) ? pid->ob->id.lib : NULL;
   const char *blendfilename = (lib && (pid->cache->flag & PTCACHE_IGNORE_LIBPATH) == 0) ?
-                                  lib->filepath :
+                                  lib->filepath_abs :
                                   BKE_main_blendfile_path_from_global();
   size_t i;
 

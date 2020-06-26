@@ -55,8 +55,7 @@ enum_displacement_methods = (
 
 enum_bvh_layouts = (
     ('BVH2', "BVH2", "", 1),
-    ('BVH4', "BVH4", "", 2),
-    ('BVH8', "BVH8", "", 4),
+    ('EMBREE', "Embree", "", 4),
 )
 
 enum_bvh_types = (
@@ -78,20 +77,9 @@ enum_panorama_types = (
     ('MIRRORBALL', "Mirror Ball", "Uses the mirror ball mapping"),
 )
 
-enum_curve_primitives = (
-    ('TRIANGLES', "Triangles", "Create triangle geometry around strands"),
-    ('LINE_SEGMENTS', "Line Segments", "Use line segment primitives"),
-    ('CURVE_SEGMENTS', "Curve Segments", "Use segmented cardinal curve primitives"),
-)
-
-enum_triangle_curves = (
-    ('CAMERA_TRIANGLES', "Planes", "Create individual triangles forming planes that face camera"),
-    ('TESSELLATED_TRIANGLES', "Tessellated", "Create mesh surrounding each strand"),
-)
-
 enum_curve_shape = (
-    ('RIBBONS', "Ribbons", "Ignore thickness of each strand"),
-    ('THICK', "Thick", "Use thickness of strand when rendering"),
+    ('RIBBONS', "Rounded Ribbons", "Render hair as flat ribbon with rounded normals, for fast rendering"),
+    ('THICK', "3D Curves", "Render hair as 3D curve, for accurate results when viewing hair close up"),
 )
 
 enum_tile_order = (
@@ -194,10 +182,36 @@ enum_aov_types = (
     ('COLOR', "Color", "Write a Color pass", 1),
 )
 
-enum_viewport_denoising = (
-    ('NONE', "None", "Disable viewport denoising", 0),
-    ('OPTIX', "OptiX AI-Accelerated", "Use the OptiX denoiser running on the GPU (requires at least one compatible OptiX device)", 1),
-)
+def enum_openimagedenoise_denoiser(self, context):
+    if _cycles.with_openimagedenoise:
+        return [('OPENIMAGEDENOISE', "OpenImageDenoise", "Use Intel OpenImageDenoise AI denoiser running on the CPU", 4)]
+    return []
+
+def enum_optix_denoiser(self, context):
+    if not context or bool(context.preferences.addons[__package__].preferences.get_devices_for_type('OPTIX')):
+        return [('OPTIX', "OptiX", "Use the OptiX AI denoiser with GPU acceleration, only available on NVIDIA GPUs", 2)]
+    return []
+
+def enum_preview_denoiser(self, context):
+    optix_items = enum_optix_denoiser(self, context)
+    oidn_items = enum_openimagedenoise_denoiser(self, context)
+
+    if len(optix_items):
+        auto_label = "Fastest (Optix)"
+    elif len(oidn_items):
+        auto_label = "Fastest (OpenImageDenoise)"
+    else:
+        auto_label = "None"
+
+    items = [('AUTO', auto_label, "Use the fastest available denoiser for viewport rendering", 0)]
+    items += optix_items
+    items += oidn_items
+    return items
+
+def enum_denoiser(self, context):
+    items = [('NLM', "NLM", "Cycles native non-local means denoiser, running on any compute device", 1)]
+    items += enum_optix_denoiser(self, context)
+    return items
 
 enum_denoising_optix_input_passes = (
     ('RGB', "Color", "Use only color as input", 1),
@@ -236,11 +250,29 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         description="Pause all viewport preview renders",
         default=False,
     )
-    preview_denoising: EnumProperty(
-        name="Viewport Denoising",
-        description="Denoise the image after each preview update with the selected denoiser engine",
-        items=enum_viewport_denoising,
-        default='NONE',
+
+    use_denoising: BoolProperty(
+        name="Use Denoising",
+        description="Denoise the rendered image",
+        default=False,
+    )
+    use_preview_denoising: BoolProperty(
+        name="Use Viewport Denoising",
+        description="Denoise the image in the 3D viewport",
+        default=False,
+    )
+
+    denoiser: EnumProperty(
+        name="Denoiser",
+        description="Denoise the image with the selected denoiser",
+        items=enum_denoiser,
+        default=1,
+    )
+    preview_denoiser: EnumProperty(
+        name="Viewport Denoiser",
+        description="Denoise the image after each preview update with the selected denoiser",
+        items=enum_preview_denoiser,
+        default=0,
     )
 
     use_square_samples: BoolProperty(
@@ -256,7 +288,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         default=128,
     )
     preview_samples: IntProperty(
-        name="Preview Samples",
+        name="Viewport Samples",
         description="Number of samples to render in the viewport, unlimited if 0",
         min=0, max=(1 << 24),
         default=32,
@@ -476,7 +508,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         subtype='PIXEL'
     )
     preview_dicing_rate: FloatProperty(
-        name="Preview Dicing Rate",
+        name="Viewport Dicing Rate",
         description="Size of a micropolygon in pixels during preview render",
         min=0.1, max=1000.0, soft_min=0.5,
         default=8.0,
@@ -628,11 +660,6 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         description="Choose between faster updates, or faster render",
         items=enum_bvh_types,
         default='DYNAMIC_BVH',
-    )
-    use_bvh_embree: BoolProperty(
-        name="Use Embree",
-        description="Use Embree as ray accelerator",
-        default=False,
     )
     debug_use_spatial_splits: BoolProperty(
         name="Use Spatial Splits",
@@ -786,7 +813,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     debug_bvh_layout: EnumProperty(
         name="BVH Layout",
         items=enum_bvh_layouts,
-        default='BVH8',
+        default='EMBREE',
     )
     debug_use_cpu_split_kernel: BoolProperty(name="Split Kernel", default=False)
 
@@ -1241,39 +1268,17 @@ class CyclesObjectSettings(bpy.types.PropertyGroup):
 
 class CyclesCurveRenderSettings(bpy.types.PropertyGroup):
 
-    primitive: EnumProperty(
-        name="Primitive",
-        description="Type of primitive used for hair rendering",
-        items=enum_curve_primitives,
-        default='LINE_SEGMENTS',
-    )
     shape: EnumProperty(
         name="Shape",
         description="Form of hair",
         items=enum_curve_shape,
-        default='THICK',
-    )
-    cull_backfacing: BoolProperty(
-        name="Cull Back-faces",
-        description="Do not test the back-face of each strand",
-        default=True,
-    )
-    use_curves: BoolProperty(
-        name="Use Cycles Hair Rendering",
-        description="Activate Cycles hair rendering for particle system",
-        default=True,
-    )
-    resolution: IntProperty(
-        name="Resolution",
-        description="Resolution of generated mesh",
-        min=3, max=64,
-        default=3,
+        default='RIBBONS',
     )
     subdivisions: IntProperty(
         name="Subdivisions",
         description="Number of subdivisions used in Cardinal curve intersection (power of 2)",
         min=0, max=24,
-        default=4,
+        default=2,
     )
 
     @classmethod
@@ -1369,7 +1374,7 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
     use_denoising: BoolProperty(
         name="Use Denoising",
         description="Denoise the rendered image",
-        default=False,
+        default=True,
         update=update_render_passes,
     )
     denoising_diffuse_direct: BoolProperty(
@@ -1439,12 +1444,6 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
         default=0,
     )
 
-    use_optix_denoising: BoolProperty(
-        name="OptiX AI-Accelerated",
-        description="Use the OptiX denoiser to denoise the rendered image",
-        default=False,
-        update=update_render_passes,
-    )
     denoising_optix_input_passes: EnumProperty(
         name="Input Passes",
         description="Passes handed over to the OptiX denoiser (this can have different effects on the denoised image)",

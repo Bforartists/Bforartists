@@ -64,7 +64,7 @@ typedef struct ShaderFxData {
   int type, mode;
   int stackindex;
   short flag;
-  /* Expansion for shader effect panels and subpanels. */
+  /* Expansion for shader effect panels and sub-panels. */
   short ui_expand_flag;
   /** MAX_NAME. */
   char name[64];
@@ -171,6 +171,10 @@ typedef struct PixelShaderFxData {
   float rgba[4];
   ShaderFxData_Runtime runtime;
 } PixelShaderFxData;
+
+typedef enum ePixelShaderFx_Flag {
+  FX_PIXEL_FILTER_NEAREST = (1 << 0),
+} ePixelShaderFx_Flag;
 
 typedef struct RimShaderFxData {
   ShaderFxData shaderfx;

@@ -246,7 +246,7 @@ class OptiXDevice : public CUDADevice {
   ~OptiXDevice()
   {
     // Stop processing any more tasks
-    task_pool.stop();
+    task_pool.cancel();
 
     // Make CUDA context current
     const CUDAContextScope scope(cuContext);
@@ -428,11 +428,20 @@ class OptiXDevice : public CUDADevice {
     group_descs[PG_HITS].hitgroup.entryFunctionNameAH = "__anyhit__kernel_optix_shadow_all_hit";
 
     if (requested_features.use_hair) {
-      // Add curve intersection programs
       group_descs[PG_HITD].hitgroup.moduleIS = optix_module;
-      group_descs[PG_HITD].hitgroup.entryFunctionNameIS = "__intersection__curve";
       group_descs[PG_HITS].hitgroup.moduleIS = optix_module;
-      group_descs[PG_HITS].hitgroup.entryFunctionNameIS = "__intersection__curve";
+
+      // Add curve intersection programs
+      if (requested_features.use_hair_thick) {
+        // Slower programs for thick hair since that also slows down ribbons.
+        // Ideally this should not be needed.
+        group_descs[PG_HITD].hitgroup.entryFunctionNameIS = "__intersection__curve_all";
+        group_descs[PG_HITS].hitgroup.entryFunctionNameIS = "__intersection__curve_all";
+      }
+      else {
+        group_descs[PG_HITD].hitgroup.entryFunctionNameIS = "__intersection__curve_ribbon";
+        group_descs[PG_HITS].hitgroup.entryFunctionNameIS = "__intersection__curve_ribbon";
+      }
     }
 
     if (requested_features.use_subsurface || requested_features.use_shader_raytrace) {
@@ -712,7 +721,7 @@ class OptiXDevice : public CUDADevice {
     const CUDAContextScope scope(cuContext);
 
     // Choose between OptiX and NLM denoising
-    if (task.denoising_use_optix) {
+    if (task.denoising.type == DENOISER_OPTIX) {
       // Map neighboring tiles onto this device, indices are as following:
       // Where index 4 is the center tile and index 9 is the target for the result.
       //   0 1 2
@@ -1436,21 +1445,21 @@ class OptiXDevice : public CUDADevice {
       KernelData *const data = (KernelData *)host;
       *(OptixTraversableHandle *)&data->bvh.scene = tlas_handle;
 
-      update_launch_params(name, offsetof(KernelParams, data), host, size);
+      update_launch_params(offsetof(KernelParams, data), host, size);
       return;
     }
 
     // Update data storage pointers in launch parameters
 #  define KERNEL_TEX(data_type, tex_name) \
     if (strcmp(name, #tex_name) == 0) { \
-      update_launch_params(name, offsetof(KernelParams, tex_name), host, size); \
+      update_launch_params(offsetof(KernelParams, tex_name), host, size); \
       return; \
     }
 #  include "kernel/kernel_textures.h"
 #  undef KERNEL_TEX
   }
 
-  void update_launch_params(const char *name, size_t offset, void *data, size_t data_size)
+  void update_launch_params(size_t offset, void *data, size_t data_size)
   {
     const CUDAContextScope scope(cuContext);
 
@@ -1463,15 +1472,6 @@ class OptiXDevice : public CUDADevice {
 
   void task_add(DeviceTask &task) override
   {
-    struct OptiXDeviceTask : public DeviceTask {
-      OptiXDeviceTask(OptiXDevice *device, DeviceTask &task, int task_index) : DeviceTask(task)
-      {
-        // Using task index parameter instead of thread index, since number of CUDA streams may
-        // differ from number of threads
-        run = function_bind(&OptiXDevice::thread_run, device, *this, task_index);
-      }
-    };
-
     // Upload texture information to device if it has changed since last launch
     load_texture_info();
 
@@ -1483,7 +1483,10 @@ class OptiXDevice : public CUDADevice {
 
     if (task.type == DeviceTask::DENOISE_BUFFER) {
       // Execute denoising in a single thread (e.g. to avoid race conditions during creation)
-      task_pool.push(new OptiXDeviceTask(this, task, 0));
+      task_pool.push([=] {
+        DeviceTask task_copy = task;
+        thread_run(task_copy, 0);
+      });
       return;
     }
 
@@ -1493,8 +1496,15 @@ class OptiXDevice : public CUDADevice {
 
     // Queue tasks in internal task pool
     int task_index = 0;
-    for (DeviceTask &task : tasks)
-      task_pool.push(new OptiXDeviceTask(this, task, task_index++));
+    for (DeviceTask &task : tasks) {
+      task_pool.push([=] {
+        // Using task index parameter instead of thread index, since number of CUDA streams may
+        // differ from number of threads
+        DeviceTask task_copy = task;
+        thread_run(task_copy, task_index);
+      });
+      task_index++;
+    }
   }
 
   void task_wait() override
@@ -1551,6 +1561,7 @@ void device_optix_info(const vector<DeviceInfo> &cuda_devices, vector<DeviceInfo
 
     info.type = DEVICE_OPTIX;
     info.id += "_OptiX";
+    info.denoisers |= DENOISER_OPTIX;
 
     devices.push_back(info);
   }
