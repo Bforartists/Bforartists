@@ -321,14 +321,6 @@ mark_as_advanced(WITH_SYSTEM_GLOG)
 # Freestyle
 option(WITH_FREESTYLE     "Enable Freestyle (advanced edges rendering)" ON)
 
-# New object types
-option(WITH_NEW_OBJECT_TYPES "Enable new hair and pointcloud objects (use for development only, don't save in files)" OFF)
-mark_as_advanced(WITH_NEW_OBJECT_TYPES)
-
-# New simulation data block
-option(WITH_NEW_SIMULATION_TYPE "Enable simulation data block (use for development only, don't save in files)" OFF)
-mark_as_advanced(WITH_NEW_SIMULATION_TYPE)
-
 # Misc
 if(WIN32)
   option(WITH_INPUT_IME "Enable Input Method Editor (IME) for complex Asian character input" ON)
@@ -370,7 +362,7 @@ option(WITH_CYCLES                  "Enable Cycles Render Engine" ON)
 option(WITH_CYCLES_STANDALONE       "Build Cycles standalone application" OFF)
 option(WITH_CYCLES_STANDALONE_GUI   "Build Cycles standalone with GUI" OFF)
 option(WITH_CYCLES_OSL              "Build Cycles with OSL support" ON)
-option(WITH_CYCLES_EMBREE           "Build Cycles with Embree support" OFF)
+option(WITH_CYCLES_EMBREE           "Build Cycles with Embree support" ON)
 option(WITH_CYCLES_CUDA_BINARIES    "Build Cycles CUDA binaries" OFF)
 option(WITH_CYCLES_CUBIN_COMPILER   "Build cubins with nvrtc based compiler instead of nvcc" OFF)
 option(WITH_CYCLES_CUDA_BUILD_SERIAL "Build cubins one after another (useful on machines with limited RAM)" OFF)
@@ -654,6 +646,7 @@ if(WITH_BOOST AND NOT (WITH_CYCLES OR WITH_OPENIMAGEIO OR WITH_INTERNATIONAL OR
   set(WITH_BOOST OFF)
 endif()
 
+set_and_warn_dependency(WITH_TBB WITH_CYCLES            OFF)
 set_and_warn_dependency(WITH_TBB WITH_USD               OFF)
 set_and_warn_dependency(WITH_TBB WITH_OPENIMAGEDENOISE  OFF)
 set_and_warn_dependency(WITH_TBB WITH_OPENVDB           OFF)

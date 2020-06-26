@@ -49,6 +49,8 @@
 
 #include "RNA_access.h"
 
+#include "BLO_read_write.h"
+
 #include "DEG_depsgraph_query.h"
 
 #include "bmesh.h"
@@ -249,7 +251,7 @@ static void panel_draw(const bContext *C, Panel *panel)
   uiItemR(col, &ptr, "use_deform_preserve_volume", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "use_multi_modifier", 0, NULL, ICON_NONE);
 
-  col = uiLayoutColumnWithHeading(layout, true, "Bind to");
+  col = uiLayoutColumnWithHeading(layout, true, IFACE_("Bind to"));
   uiItemR(col, &ptr, "use_vertex_groups", 0, IFACE_("Vertex Groups"), ICON_NONE);
   uiItemR(col, &ptr, "use_bone_envelopes", 0, IFACE_("Bone Envelopes"), ICON_NONE);
 
@@ -259,6 +261,13 @@ static void panel_draw(const bContext *C, Panel *panel)
 static void panelRegister(ARegionType *region_type)
 {
   modifier_panel_register(region_type, eModifierType_Armature, panel_draw);
+}
+
+static void blendRead(BlendDataReader *UNUSED(reader), ModifierData *md)
+{
+  ArmatureModifierData *amd = (ArmatureModifierData *)md;
+
+  amd->vert_coords_prev = NULL;
 }
 
 ModifierTypeInfo modifierType_Armature = {
@@ -293,5 +302,5 @@ ModifierTypeInfo modifierType_Armature = {
     /* freeRuntimeData */ NULL,
     /* panelRegister */ panelRegister,
     /* blendWrite */ NULL,
-    /* blendRead */ NULL,
+    /* blendRead */ blendRead,
 };

@@ -75,18 +75,8 @@ static void eevee_create_shader_subsurface(void)
   MEM_freeN(frag_str);
 }
 
-void EEVEE_subsurface_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
+void EEVEE_subsurface_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data *UNUSED(vedata))
 {
-  EEVEE_CommonUniformBuffer *common_data = &sldata->common_data;
-  EEVEE_StorageList *stl = vedata->stl;
-  EEVEE_EffectsInfo *effects = stl->effects;
-
-  const DRWContextState *draw_ctx = DRW_context_state_get();
-  const Scene *scene_eval = DEG_get_evaluated_scene(draw_ctx->depsgraph);
-
-  effects->sss_sample_count = 1 + scene_eval->eevee.sss_samples * 2;
-  effects->sss_surface_count = 0;
-  common_data->sss_jitter_threshold = scene_eval->eevee.sss_jitter_threshold;
 }
 
 void EEVEE_subsurface_draw_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
@@ -197,21 +187,30 @@ void EEVEE_subsurface_output_init(EEVEE_ViewLayerData *UNUSED(sldata),
    * already higher than one. This is noticeable when loading a file that has the diffuse light
    * pass in look dev mode active. `texture_created` will make sure that newly created textures
    * are cleared. */
-  if (DRW_state_is_image_render() || effects->taa_current_sample == 1 || texture_created) {
+  if (effects->taa_current_sample == 1 || texture_created) {
     float clear[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     GPU_framebuffer_bind(fbl->sss_accum_fb);
     GPU_framebuffer_clear_color(fbl->sss_accum_fb, clear);
   }
 }
 
-void EEVEE_subsurface_cache_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data *vedata)
+void EEVEE_subsurface_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 {
+  EEVEE_CommonUniformBuffer *common_data = &sldata->common_data;
+  EEVEE_EffectsInfo *effects = vedata->stl->effects;
   EEVEE_PassList *psl = vedata->psl;
+
+  const DRWContextState *draw_ctx = DRW_context_state_get();
+  const Scene *scene_eval = DEG_get_evaluated_scene(draw_ctx->depsgraph);
 
   /* Shaders */
   if (!e_data.sss_sh[0]) {
     eevee_create_shader_subsurface();
   }
+
+  effects->sss_sample_count = 1 + scene_eval->eevee.sss_samples * 2;
+  effects->sss_surface_count = 0;
+  common_data->sss_jitter_threshold = scene_eval->eevee.sss_jitter_threshold;
 
   /** Screen Space SubSurface Scattering overview
    * TODO

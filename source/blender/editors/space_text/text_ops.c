@@ -370,7 +370,7 @@ static int text_open_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(e
 {
   Main *bmain = CTX_data_main(C);
   Text *text = CTX_data_edit_text(C);
-  const char *path = (text && text->name) ? text->name : BKE_main_blendfile_path(bmain);
+  const char *path = (text && text->filepath) ? text->filepath : BKE_main_blendfile_path(bmain);
 
   if (RNA_struct_property_is_set(op->ptr, "filepath")) {
     return text_open_exec(C, op);
@@ -427,6 +427,13 @@ static int text_reload_exec(bContext *C, wmOperator *op)
   const int orig_top = st->top;
   const int orig_curl = BLI_findindex(&text->lines, text->curl);
   const int orig_curc = text->curc;
+
+  /* Don't make this part of 'poll', since 'Alt-R' will type 'R',
+   * if poll checks for the filename. */
+  if (text->filepath == NULL) {
+    BKE_report(op->reports, RPT_ERROR, "This text has not been saved");
+    return OPERATOR_CANCELLED;
+  }
 
   if (!BKE_text_reload(text)) {
     BKE_report(op->reports, RPT_ERROR, "Could not reopen file");
@@ -536,10 +543,7 @@ static int text_make_internal_exec(bContext *C, wmOperator *UNUSED(op))
 
   text->flags |= TXT_ISMEM | TXT_ISDIRTY;
 
-  if (text->name) {
-    MEM_freeN(text->name);
-    text->name = NULL;
-  }
+  MEM_SAFE_FREE(text->filepath);
 
   text_update_cursor_moved(C);
   WM_event_add_notifier(C, NC_TEXT | NA_EDITED, text);
@@ -576,7 +580,7 @@ static bool text_save_poll(bContext *C)
     return 0;
   }
 
-  return (text->name != NULL && !(text->flags & TXT_ISMEM));
+  return (text->filepath != NULL && !(text->flags & TXT_ISMEM));
 }
 
 static void txt_write_file(Main *bmain, Text *text, ReportList *reports)
@@ -586,7 +590,7 @@ static void txt_write_file(Main *bmain, Text *text, ReportList *reports)
   BLI_stat_t st;
   char filepath[FILE_MAX];
 
-  BLI_strncpy(filepath, text->name, FILE_MAX);
+  BLI_strncpy(filepath, text->filepath, FILE_MAX);
   BLI_path_abs(filepath, BKE_main_blendfile_path(bmain));
 
   fp = BLI_fopen(filepath, "w");
@@ -669,10 +673,10 @@ static int text_save_as_exec(bContext *C, wmOperator *op)
 
   RNA_string_get(op->ptr, "filepath", str);
 
-  if (text->name) {
-    MEM_freeN(text->name);
+  if (text->filepath) {
+    MEM_freeN(text->filepath);
   }
-  text->name = BLI_strdup(str);
+  text->filepath = BLI_strdup(str);
   text->flags &= ~TXT_ISMEM;
 
   txt_write_file(bmain, text, op->reports);
@@ -693,8 +697,8 @@ static int text_save_as_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSE
     return text_save_as_exec(C, op);
   }
 
-  if (text->name) {
-    str = text->name;
+  if (text->filepath) {
+    str = text->filepath;
   }
   else if (text->flags & TXT_ISMEM) {
     str = text->id.name + 2;
@@ -3621,9 +3625,57 @@ void TEXT_OT_find(wmOperatorType *ot)
 /** \name Replace Operator
  * \{ */
 
+static int text_replace_all(bContext *C)
+{
+  SpaceText *st = CTX_wm_space_text(C);
+  Text *text = st->text;
+  const int flags = st->flags;
+  int found = 0;
+
+  if (!st->findstr[0]) {
+    return OPERATOR_CANCELLED;
+  }
+
+  const int orig_curl = BLI_findindex(&text->lines, text->curl);
+  const int orig_curc = text->curc;
+  bool has_sel = txt_has_sel(text);
+
+  txt_move_toline(text, 0, false);
+
+  found = txt_find_string(text, st->findstr, 0, flags & ST_MATCH_CASE);
+  if (found) {
+    ED_text_undo_push_init(C);
+
+    do {
+      txt_insert_buf(text, st->replacestr);
+      if (text->curl && text->curl->format) {
+        MEM_freeN(text->curl->format);
+        text->curl->format = NULL;
+      }
+      found = txt_find_string(text, st->findstr, 0, flags & ST_MATCH_CASE);
+    } while (found);
+
+    WM_event_add_notifier(C, NC_TEXT | NA_EDITED, text);
+    text_drawcache_tag_update(CTX_wm_space_text(C), 1);
+  }
+  else {
+    /* Restore position */
+    txt_move_to(text, orig_curl, orig_curc, has_sel);
+    return OPERATOR_CANCELLED;
+  }
+
+  return OPERATOR_FINISHED;
+}
+
 static int text_replace_exec(bContext *C, wmOperator *op)
 {
-  return text_find_and_replace(C, op, TEXT_REPLACE);
+  bool replace_all = RNA_boolean_get(op->ptr, "all");
+  if (replace_all) {
+    return text_replace_all(C);
+  }
+  else {
+    return text_find_and_replace(C, op, TEXT_REPLACE);
+  }
 }
 
 void TEXT_OT_replace(wmOperatorType *ot)
@@ -3639,6 +3691,11 @@ void TEXT_OT_replace(wmOperatorType *ot)
 
   /* flags */
   ot->flag = OPTYPE_UNDO;
+
+  /* properties */
+  PropertyRNA *prop;
+  prop = RNA_def_boolean(ot->srna, "all", false, "Replace all", "Replace all occurrences");
+  RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 }
 
 /** \} */

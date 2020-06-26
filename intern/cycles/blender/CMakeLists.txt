@@ -92,10 +92,6 @@ if(WITH_MOD_FLUID)
   add_definitions(-DWITH_FLUID)
 endif()
 
-if(WITH_NEW_OBJECT_TYPES)
-  add_definitions(-DWITH_NEW_OBJECT_TYPES)
-endif()
-
 if(WITH_OPENVDB)
   add_definitions(-DWITH_OPENVDB ${OPENVDB_DEFINITIONS})
   list(APPEND INC_SYS
@@ -103,6 +99,13 @@ if(WITH_OPENVDB)
   )
   list(APPEND LIB
     ${OPENVDB_LIBRARIES}
+  )
+endif()
+
+if(WITH_OPENIMAGEDENOISE)
+  add_definitions(-DWITH_OPENIMAGEDENOISE)
+  list(APPEND INC_SYS
+    ${OPENIMAGEDENOISE_INCLUDE_DIRS}
   )
 endif()
 
