@@ -270,22 +270,6 @@ class OUTLINER_MT_collection_visibility(Menu):
         layout.operator("outliner.collection_show_inside", text="Show All Inside", icon="HIDE_OFF")
         layout.operator("outliner.collection_hide_inside", text="Hide All Inside", icon="HIDE_ON")
 
-class OUTLINER_MT_collection_view_layer(Menu):
-    bl_label = "View Layer"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("outliner.collection_exclude_set", icon = "HIDE_ON")
-        layout.operator("outliner.collection_exclude_clear", icon = "HIDE_OFF")
-
-        if context.engine == 'CYCLES':
-            layout.operator("outliner.collection_indirect_only_set", icon = "INDIRECT_ONLY_ON")
-            layout.operator("outliner.collection_indirect_only_clear", icon = "INDIRECT_ONLY_OFF")
-
-            layout.operator("outliner.collection_holdout_set", icon = "HOLDOUT_ON")
-            layout.operator("outliner.collection_holdout_clear", icon = "HOLDOUT_OFF")
-
 
 class OUTLINER_MT_collection(Menu):
     bl_label = "Collection"
@@ -323,10 +307,6 @@ class OUTLINER_MT_collection(Menu):
         layout.separator()
 
         layout.menu("OUTLINER_MT_collection_visibility")
-
-        if space.display_mode == 'VIEW_LAYER':
-            layout.separator()
-            layout.menu("OUTLINER_MT_collection_view_layer", icon='RENDERLAYERS')
 
         layout.separator()
 
@@ -512,7 +492,6 @@ classes = (
     OUTLINER_MT_collection,
     OUTLINER_MT_collection_new,
     OUTLINER_MT_collection_visibility,
-    OUTLINER_MT_collection_view_layer,
     OUTLINER_MT_object,
     OUTLINER_PT_filter,
 )
