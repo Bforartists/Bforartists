@@ -418,7 +418,11 @@ class SCENE_PT_rigid_body_world_settings(RigidBodySubPanel, Panel):
 
             col = flow.column()
             col.active = rbw.enabled
-            col.prop(rbw, "use_split_impulse")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(rbw, "use_split_impulse")
+            row.prop_decorator(rbw, "use_split_impulse")
+            row.use_property_split = True
 
             col = col.column()
             col.prop(rbw, "steps_per_second", text="Steps Per Second")
