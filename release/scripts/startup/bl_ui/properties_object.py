@@ -408,9 +408,10 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         layout = self.layout
         ob = context.object
 
-        layout.use_property_split = False
-        layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
-        layout.use_property_split = True
+# bfa - we turn the selectable on or off in the outliner. Not in a hidden panel.
+#        layout.use_property_split = False
+#        layout.prop(ob, "hide_select", text="Selectable", toggle=False, invert_checkbox=True)
+#        layout.use_property_split = True
 
         col = layout.column(align = True)
         col.label(text = "Show in")
@@ -424,12 +425,14 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         row = col.row()
         row.use_property_split = False
         row.separator()
-        row.prop(ob, "hide_render", toggle=False, invert_checkbox=True)
+        row.prop(ob, "hide_render", text = "Renders", toggle=False, invert_checkbox=True)
         row.prop_decorator(ob, "hide_render")
 
         if context.object.type == 'GPENCIL':
-
-            layout.label(text = "Grease Pencil")
+            
+            col = layout.column(align = True)
+            col.label(text = "Grease Pencil")
+            
             row = col.row()
             row.separator()
             row.use_property_split = False
