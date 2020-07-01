@@ -1517,7 +1517,7 @@ class WM_OT_properties_add(Operator):
 
 
 class WM_OT_properties_context_change(Operator):
-    """Jump to a different tab inside the properties editor"""
+    """Change Context\nJump to a different tab inside the properties editor"""
     bl_idname = "wm.properties_context_change"
     bl_label = ""
     bl_options = {'INTERNAL'}
