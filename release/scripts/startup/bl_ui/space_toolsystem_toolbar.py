@@ -777,26 +777,35 @@ class _defs_edit_mesh:
                     layout.prop(props, "profile", text="Miter Shape", slider=True)
 
                 col = layout.column()
+                col.use_property_split = False
                 col.prop(props, "vertex_only")
                 col.prop(props, "clamp_overlap")
                 col.prop(props, "loop_slide")
                 col.prop(props, "harden_normals")
 
-                col = layout.column(heading="Mark")
-                col.prop(props, "mark_seam", text="Seam")
-                col.prop(props, "mark_sharp", text="Sharp")
+                col = layout.column( align=True)
+                col.label(text = "Mark")
+                col.use_property_split = False
+                row = col.row()
+                row.separator()
+                row.prop(props, "mark_seam", text="Seam")
+                row = col.row()
+                row.separator()
+                row.prop(props, "mark_sharp", text="Sharp")
 
                 layout.use_property_split = True
                 layout.prop(props, "material")
 
                 layout.prop(props, "miter_outer", text="Outer Miter")
                 layout.prop(props, "miter_inner", text="Inner Miter")
+                
                 if props.miter_inner == 'ARC':
                     layout.prop(props, "spread")
 
                 layout.use_property_split = False
                 if props.profile_type == 'CUSTOM':
                     tool_settings = context.tool_settings
+                    layout.separator()
                     layout.template_curveprofile(tool_settings, "custom_bevel_profile_preset")
 
         return dict(
