@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -3166,6 +3166,10 @@ msgid "Polygons"
 msgstr "ﯼﺍ ﻪﺷﻮﮔ"
 
 
+msgid "All vertex colors"
+msgstr "ﺱﻮﺋﺭ ﻡﺎﻤﺗ"
+
+
 msgid "Skin Vertices"
 msgstr "ﺱﻮﺋﺭ ﻂﻘﻓ"
 
@@ -3212,10 +3216,6 @@ msgstr "UV ﺖﻓﺎﺑ"
 
 msgid "UV Loop Layers"
 msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
-
-
-msgid "All vertex colors"
-msgstr "ﺱﻮﺋﺭ ﻡﺎﻤﺗ"
 
 
 msgid "Meta elements"
@@ -6229,6 +6229,10 @@ msgid "Musgrave Texture"
 msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 
+msgid "Air"
+msgstr "ﺍﻮﻫ"
+
+
 msgid "Sun Direction"
 msgstr "ﺪﯿﺷﺭﻮﺧ ﺖﻬﺟ"
 
@@ -7391,10 +7395,6 @@ msgstr "ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ/ﺏﺎﺨﺘﻧﺍ"
 
 
 msgid "Select all control points linked to already selected ones"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﯽﺷ ﻭﺩ ﻦﯿﺑ ﺮﯿﺴﻣ ﻦﯾﺮﺗ ﻩﺎﺗﻮﮐ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Select control points directly linked to already selected ones"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﯽﺷ ﻭﺩ ﻦﯿﺑ ﺮﯿﺴﻣ ﻦﯾﺮﺗ ﻩﺎﺗﻮﮐ ﺏﺎﺨﺘﻧﺍ"
 
 
@@ -12192,22 +12192,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "X ﻞﺤﻣ ﻥﺩﺮﮐ ﻥﻭﺭﺍﻭ"
 
 
-msgid "Line Segments"
-msgstr "ﺎﻫ‌ﺶﺨﺑ ﻑﺬﺣ"
-
-
-msgid "Curve Segments"
-msgstr "ﺎﻫ‌ﺶﺨﺑ ﻑﺬﺣ"
-
-
-msgid "Resolution of generated mesh"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "ﺭﺪﻧﺭ ﯼﺍﺮﺑ CPU ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
-
-
 msgid "Diffuse Direct"
 msgstr "ﺕﻭﺎﻔﺗ"
 
@@ -12298,10 +12282,6 @@ msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ ﯼﺎﻫ‌ﻪﻧﻮﻤﻧ"
 
 msgid "Pause Preview"
 msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ ﺚﮑﻣ"
-
-
-msgid "Preview Samples"
-msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ ﯼﺎﻫ‌ﻪﻧﻮﻤﻧ"
 
 
 msgid "Start Resolution"
@@ -13630,11 +13610,6 @@ msgid "Browse ID data to be linked"
 msgstr "ﻥﺩﺮﮐ‌ﮏﻨﯿﻟ ﯼﺍﺮﺑ ﯼﺩ−ﯼﺁ ﻩٔﺩﺍﺩ ﺶﻨﯾﺰﮔ"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "ﻝﺎﻤﻋﺍ"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "ﺪﯾﺪﺟ"
@@ -13930,10 +13905,6 @@ msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ ﻢﯾﺮﻓ ﺎﺑ ﺎﻫ ﮎﺮﺗِ"
 
 msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "ﺎﯾﻮﭘ"
-
-
-msgid "Air"
-msgstr "ﺍﻮﻫ"
 
 
 msgid "Scene has no camera"
@@ -14420,6 +14391,11 @@ msgstr "ﺱﺃﺭ"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "ﺯﺭﺩ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "ﻝﺎﻤﻋﺍ"
 
 
 msgid "Keying set path could not be removed"

@@ -21,17 +21,14 @@
 import bpy
 import re
 import time
-import traceback
-import sys
 from rna_prop_ui import rna_idprop_ui_prop_get
 
-from .utils.errors import MetarigError
 from .utils.bones import new_bone
 from .utils.layers import ORG_LAYER, MCH_LAYER, DEF_LAYER, ROOT_LAYER
 from .utils.naming import ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_original_name
 from .utils.widgets import WGT_PREFIX
 from .utils.widgets_special import create_root_widget
-from .utils.misc import copy_attributes, gamma_correct, select_object
+from .utils.misc import gamma_correct, select_object
 from .utils.collections import ensure_widget_collection, list_layer_collections, filter_layer_collections_by_object
 
 from . import base_generate

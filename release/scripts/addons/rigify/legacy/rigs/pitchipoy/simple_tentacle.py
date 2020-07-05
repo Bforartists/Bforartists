@@ -1,10 +1,9 @@
 import bpy
 from ...utils    import copy_bone
 from ...utils    import strip_org, make_deformer_name, connected_children_names
-from ...utils    import make_mechanism_name, put_bone, create_sphere_widget
-from ...utils    import create_widget, create_circle_widget
+from ...utils    import put_bone, create_sphere_widget
+from ...utils    import create_circle_widget
 from ...utils    import MetarigError
-from rna_prop_ui import rna_idprop_ui_prop_get
 
 class Rig:
 

@@ -526,8 +526,11 @@ static void viewRedrawPost(bContext *C, TransInfo *t)
     }
 
     /* redraw UV editor */
-    if (ELEM(t->mode, TFM_VERT_SLIDE, TFM_EDGE_SLIDE) &&
-        (t->settings->uvcalc_flag & UVCALC_TRANSFORM_CORRECT)) {
+    const char uvcalc_correct_flag = ELEM(t->mode, TFM_VERT_SLIDE, TFM_EDGE_SLIDE) ?
+                                         UVCALC_TRANSFORM_CORRECT_SLIDE :
+                                         UVCALC_TRANSFORM_CORRECT;
+
+    if ((t->data_type == TC_MESH_VERTS) && (t->settings->uvcalc_flag & uvcalc_correct_flag)) {
       WM_event_add_notifier(C, NC_GEOM | ND_DATA, NULL);
     }
 
@@ -670,10 +673,10 @@ static bool transform_modal_item_poll(const wmOperator *op, int value)
       if (t->spacetype != SPACE_VIEW3D) {
         return false;
       }
-      else if ((t->tsnap.mode & ~(SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)) == 0) {
+      if ((t->tsnap.mode & ~(SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)) == 0) {
         return false;
       }
-      else if (!validSnap(t)) {
+      if (!validSnap(t)) {
         return false;
       }
       break;
@@ -1414,9 +1417,7 @@ int transformEvent(TransInfo *t, const wmEvent *event)
   if (handled || t->redraw) {
     return 0;
   }
-  else {
-    return OPERATOR_PASS_THROUGH;
-  }
+  return OPERATOR_PASS_THROUGH;
 }
 
 bool calculateTransformCenter(bContext *C, int centerMode, float cent3d[3], float cent2d[2])
@@ -1591,17 +1592,24 @@ static void drawTransformPixel(const struct bContext *C, ARegion *region, void *
 void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 {
   ToolSettings *ts = CTX_data_tool_settings(C);
-  int proportional = 0;
   PropertyRNA *prop;
 
   if (!(t->con.mode & CON_APPLY) && (t->flag & T_MODAL) &&
       ELEM(t->mode, TFM_TRANSLATION, TFM_RESIZE)) {
     /* When redoing these modes the first time, it's more convenient to save
-     * the Global orientation. */
-    mul_m3_v3(t->spacemtx, t->values_final);
-    unit_m3(t->spacemtx);
+     * in the Global orientation. */
+    if (t->mode == TFM_TRANSLATION) {
+      mul_m3_v3(t->spacemtx, t->values_final);
+    }
+    else {
+      float tmat[3][3], sizemat[3][3];
+      size_to_mat3(sizemat, t->values_final);
+      mul_m3_m3m3(tmat, t->spacemtx, sizemat);
+      mat3_to_size(t->values_final, tmat);
+    }
 
     BLI_assert(t->orient_curr == 0);
+    unit_m3(t->spacemtx);
     t->orient[0].type = V3D_ORIENT_GLOBAL;
   }
 
@@ -1619,15 +1627,17 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
     }
   }
 
+  bool use_prop_edit = false;
+  int prop_edit_flag = 0;
   if (t->flag & T_PROP_EDIT_ALL) {
     if (t->flag & T_PROP_EDIT) {
-      proportional |= PROP_EDIT_USE;
+      use_prop_edit = true;
     }
     if (t->flag & T_PROP_CONNECTED) {
-      proportional |= PROP_EDIT_CONNECTED;
+      prop_edit_flag |= PROP_EDIT_CONNECTED;
     }
     if (t->flag & T_PROP_PROJECTED) {
-      proportional |= PROP_EDIT_PROJECTED;
+      prop_edit_flag |= PROP_EDIT_PROJECTED;
     }
   }
 
@@ -1639,20 +1649,27 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
     if (!(t->options & CTX_NO_PET)) {
       if ((prop = RNA_struct_find_property(op->ptr, "use_proportional_edit")) &&
           !RNA_property_is_set(op->ptr, prop)) {
+        const Object *obact = OBACT(t->view_layer);
+
         if (t->spacetype == SPACE_GRAPH) {
-          ts->proportional_fcurve = proportional;
+          ts->proportional_fcurve = use_prop_edit;
         }
         else if (t->spacetype == SPACE_ACTION) {
-          ts->proportional_action = proportional;
-        }
-        else if (t->obedit_type != -1) {
-          ts->proportional_edit = proportional;
+          ts->proportional_action = use_prop_edit;
         }
         else if (t->options & CTX_MASK) {
-          ts->proportional_mask = proportional != 0;
+          ts->proportional_mask = use_prop_edit;
         }
-        else if ((t->options & CTX_CURSOR) == 0) {
-          ts->proportional_objects = proportional != 0;
+        else if (obact && obact->mode == OB_MODE_OBJECT) {
+          ts->proportional_objects = use_prop_edit;
+        }
+        else {
+          if (use_prop_edit) {
+            ts->proportional_edit |= PROP_EDIT_USE;
+          }
+          else {
+            ts->proportional_edit &= ~PROP_EDIT_USE;
+          }
         }
       }
 
@@ -1685,9 +1702,9 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
   }
 
   if ((prop = RNA_struct_find_property(op->ptr, "use_proportional_edit"))) {
-    RNA_property_boolean_set(op->ptr, prop, proportional & PROP_EDIT_USE);
-    RNA_boolean_set(op->ptr, "use_proportional_connected", proportional & PROP_EDIT_CONNECTED);
-    RNA_boolean_set(op->ptr, "use_proportional_projected", proportional & PROP_EDIT_PROJECTED);
+    RNA_property_boolean_set(op->ptr, prop, use_prop_edit);
+    RNA_boolean_set(op->ptr, "use_proportional_connected", prop_edit_flag & PROP_EDIT_CONNECTED);
+    RNA_boolean_set(op->ptr, "use_proportional_projected", prop_edit_flag & PROP_EDIT_PROJECTED);
     RNA_enum_set(op->ptr, "proportional_edit_falloff", t->prop_mode);
     RNA_float_set(op->ptr, "proportional_size", t->prop_size);
   }
@@ -1768,7 +1785,7 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 
   if ((prop = RNA_struct_find_property(op->ptr, "correct_uv"))) {
     RNA_property_boolean_set(
-        op->ptr, prop, (t->settings->uvcalc_flag & UVCALC_TRANSFORM_CORRECT) != 0);
+        op->ptr, prop, (t->settings->uvcalc_flag & UVCALC_TRANSFORM_CORRECT_SLIDE) != 0);
   }
 }
 

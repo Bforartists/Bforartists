@@ -124,7 +124,7 @@ set(SRC
   intern/task_pool.cc
   intern/task_range.cc
   intern/task_scheduler.cc
-  intern/threads.c
+  intern/threads.cc
   intern/time.c
   intern/timecode.c
   intern/timeit.cc
@@ -225,7 +225,6 @@ set(SRC
   BLI_memory_utils.hh
   BLI_mempool.h
   BLI_noise.h
-  BLI_optional.hh
   BLI_path_util.h
   BLI_polyfill_2d.h
   BLI_polyfill_2d_beautify.h

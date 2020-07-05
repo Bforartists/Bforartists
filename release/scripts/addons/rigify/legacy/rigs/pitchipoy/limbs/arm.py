@@ -18,10 +18,8 @@
 
 # <pep8 compliant>
 import bpy
-from ....utils       import MetarigError
-from ....utils       import create_widget, copy_bone
-from ....utils       import strip_org
-from .limb_utils     import *
+from ....utils       import copy_bone
+from .limb_utils     import get_bone_name, make_constraint
 from ..super_widgets import create_hand_widget
 
 from .....utils.mechanism import make_property

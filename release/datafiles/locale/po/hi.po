@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1513,10 +1513,6 @@ msgid "Start"
 msgstr "प्रारंभ"
 
 
-msgid "Final"
-msgstr "समाप्तिम"
-
-
 msgid "Red"
 msgstr "लाल"
 
@@ -1561,12 +1557,20 @@ msgid "Full Sample"
 msgstr "पूर्ण नमूना"
 
 
+msgid "Final"
+msgstr "समाप्तिम"
+
+
 msgid "Radius"
 msgstr "त्रिज्या"
 
 
 msgid "Time"
 msgstr "समय"
+
+
+msgid "Half"
+msgstr "अर्ध"
 
 
 msgid "Number"
@@ -1980,10 +1984,6 @@ msgstr "आयाम"
 
 msgid "Extrude"
 msgstr "बिहर्वेधन"
-
-
-msgid "Half"
-msgstr "अर्ध"
 
 
 msgid "Path Length"
@@ -3454,6 +3454,10 @@ msgid "Projection"
 msgstr "प्रक्षेपण"
 
 
+msgid "Air"
+msgstr "वायु"
+
+
 msgid "At"
 msgstr "पर"
 
@@ -3927,6 +3931,10 @@ msgid "Italic"
 msgstr "तिर्यगक्षर"
 
 
+msgid "Side"
+msgstr "किनारा"
+
+
 msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "तैलीय पेंसिल में परिवर्तित"
@@ -3934,10 +3942,6 @@ msgstr "तैलीय पेंसिल में परिवर्तित
 
 msgid "Limit"
 msgstr "सीमा"
-
-
-msgid "Side"
-msgstr "किनारा"
 
 
 msgid "Highest frequency"
@@ -4020,7 +4024,6 @@ msgid "Shrink/Fatten"
 msgstr "सिकोड़ें/मोटा करें"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "क्षेत्र बिहर्वेधन"
 
@@ -4029,6 +4032,7 @@ msgid "Extrude region of faces"
 msgstr "फलक का क्षेत्र बिहर्वेधन"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "क्षेत्र बिहर्वेधन"
 
@@ -4989,14 +4993,6 @@ msgstr "विरोधी"
 
 msgid "Duplicate Particle"
 msgstr "अनुकृति कण"
-
-
-msgid "Djv"
-msgstr "डीजेवी"
-
-
-msgid "rv"
-msgstr "आर. वी."
 
 
 msgid "Image Editor"
@@ -5983,21 +5979,12 @@ msgid "Pos"
 msgstr "पीओएस"
 
 
-msgid "File Path:"
-msgstr "संचिका पथ:"
-
-
 msgid "Delete points"
 msgstr "बिंदु मिटाएँ"
 
 
 msgid "Stop animation playback"
 msgstr "अनुप्राणन चलाएँ रोकें"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "लागू करें"
 
 
 msgctxt "Scene"
@@ -6177,10 +6164,6 @@ msgid "Bake failed: invalid canvas"
 msgstr "भर्जन में विफल: अमान्य चित्रपटी"
 
 
-msgid "Air"
-msgstr "वायु"
-
-
 msgid "Acrylic"
 msgstr "एक्रिलिक"
 
@@ -6339,6 +6322,10 @@ msgstr "कोई सक्रिय प्रतिबिंबक नहीं
 
 msgid "OK"
 msgstr "ठीक है"
+
+
+msgid "File Path:"
+msgstr "संचिका पथ:"
 
 
 msgid "Position:"
@@ -6565,6 +6552,11 @@ msgstr "रिक्त स्थान"
 
 msgid "Overwrite %s"
 msgstr "अधिलेखित करें %s"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "लागू करें"
 
 
 msgctxt "Key"

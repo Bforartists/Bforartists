@@ -19,12 +19,10 @@
 # <pep8 compliant>
 
 import bpy
-import re
 import json
 
 from itertools import count
 
-from ...utils.errors import MetarigError
 from ...utils.bones import put_bone, flip_bone, align_chain_x_axis, set_bone_widget_transform
 from ...utils.naming import make_derived_name
 from ...utils.widgets import create_widget

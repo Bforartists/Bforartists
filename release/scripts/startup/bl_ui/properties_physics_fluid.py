@@ -217,7 +217,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
                     note.label(icon='INFO', text="Unbaked Guides: Bake Guides or disable them")
 
                 split = layout.split()
-                split.enabled = note_flag
+                split.enabled = note_flag and ob.mode == 'OBJECT'
 
                 bake_incomplete = (domain.cache_frame_pause_data < domain.cache_frame_end)
                 if domain.cache_resumable and domain.has_cache_baked_data and not domain.is_cache_baking_data and bake_incomplete:
@@ -718,6 +718,7 @@ class PHYSICS_PT_noise(PhysicButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
 
+        ob = context.object
         domain = context.fluid.domain_settings
         layout.active = domain.use_noise
 
@@ -749,7 +750,7 @@ class PHYSICS_PT_noise(PhysicButtonsPanel, Panel):
                 note.label(icon='INFO', text="Unbaked Data: Bake Data first")
 
             split = layout.split()
-            split.enabled = domain.has_cache_baked_data and note_flag
+            split.enabled = domain.has_cache_baked_data and note_flag and ob.mode == 'OBJECT'
 
             bake_incomplete = (domain.cache_frame_pause_noise < domain.cache_frame_end)
             if domain.has_cache_baked_noise and not domain.is_cache_baking_noise and bake_incomplete:
@@ -790,6 +791,7 @@ class PHYSICS_PT_mesh(PhysicButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
 
+        ob = context.object
         domain = context.fluid.domain_settings
         layout.active = domain.use_mesh
 
@@ -834,7 +836,7 @@ class PHYSICS_PT_mesh(PhysicButtonsPanel, Panel):
                 note.label(icon='INFO', text="Unbaked Data: Bake Data first")
 
             split = layout.split()
-            split.enabled = domain.has_cache_baked_data and note_flag
+            split.enabled = domain.has_cache_baked_data and note_flag and ob.mode == 'OBJECT'
 
             bake_incomplete = (domain.cache_frame_pause_mesh < domain.cache_frame_end)
             if domain.has_cache_baked_mesh and not domain.is_cache_baking_mesh and bake_incomplete:
@@ -868,6 +870,7 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
 
+        ob = context.object
         domain = context.fluid.domain_settings
 
         is_baking_any = domain.is_cache_baking_any
@@ -955,6 +958,7 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
             split = layout.split()
             split.enabled = (
                 note_flag and
+                ob.mode == 'OBJECT' and
                 domain.has_cache_baked_data and
                 (domain.use_spray_particles or
                  domain.use_bubble_particles or
@@ -1133,6 +1137,7 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
+        ob = context.object
         md = context.fluid
         domain = context.fluid.domain_settings
 
@@ -1149,22 +1154,22 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
 
         col = flow.column()
-        col.prop(domain, "cache_type", expand=False)
-        col.enabled = not is_baking_any
-
-        col.separator()
-
         row = col.row()
-        col = row.column(align=True)
-        col.prop(domain, "cache_frame_start", text="Frame Start")
-        col.prop(domain, "cache_frame_end", text="End")
-        row.enabled = not is_baking_any
+        row = row.column(align=True)
+        row.prop(domain, "cache_frame_start", text="Frame Start")
+        row.prop(domain, "cache_frame_end", text="End")
+        row = col.row()
+        row.enabled = domain.cache_type in {'MODULAR', 'ALL'}
+        row.prop(domain, "cache_frame_offset", text="Offset")
 
         col.separator()
 
         col = flow.column()
-        col.enabled = not is_baking_any and not has_baked_data
-        col.prop(domain, "cache_resumable", text="Is Resumable")
+        col.prop(domain, "cache_type", expand=False)
+
+        row = col.row()
+        row.enabled = not is_baking_any and not has_baked_data
+        row.prop(domain, "cache_resumable", text="Is Resumable")
 
         row = col.row()
         row.enabled = not is_baking_any and not has_baked_data
@@ -1179,6 +1184,7 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
 
             col.separator()
             split = layout.split()
+            split.enabled = ob.mode == 'OBJECT'
 
             bake_incomplete = (domain.cache_frame_pause_data < domain.cache_frame_end)
             if domain.cache_resumable and domain.has_cache_baked_data and not domain.is_cache_baking_data and bake_incomplete:

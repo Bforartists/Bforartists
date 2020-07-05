@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -516,6 +516,10 @@ msgid "Time"
 msgstr "Tijd"
 
 
+msgid "Half"
+msgstr "Half"
+
+
 msgid "Delete"
 msgstr "Verwijder"
 
@@ -716,10 +720,6 @@ msgstr "Dimensie"
 
 msgid "Extrude"
 msgstr "Uitrekken"
-
-
-msgid "Half"
-msgstr "Half"
 
 
 msgid "Fill Caps"

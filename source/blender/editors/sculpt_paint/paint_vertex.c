@@ -137,13 +137,11 @@ static float view_angle_limits_apply_falloff(const struct NormalAnglePrecalc *a,
     /* outsize the normal limit */
     return false;
   }
-  else if (angle_cos < a->angle_inner__cos) {
+  if (angle_cos < a->angle_inner__cos) {
     *mask_p *= (a->angle - acosf(angle_cos)) / a->angle_range;
     return true;
   }
-  else {
-    return true;
-  }
+  return true;
 }
 
 static bool vwpaint_use_normal(const VPaint *vp)
@@ -405,12 +403,10 @@ static float wpaint_clamp_monotonic(float oldval, float curval, float newval)
   if (newval < oldval) {
     return MIN2(newval, curval);
   }
-  else if (newval > oldval) {
+  if (newval > oldval) {
     return MAX2(newval, curval);
   }
-  else {
-    return newval;
-  }
+  return newval;
 }
 
 static float wpaint_undo_lock_relative(
@@ -535,7 +531,7 @@ static bool do_weight_paint_normalize_all_locked(MDeformVert *dvert,
 
     return (lock_weight == 1.0f);
   }
-  else if (sum_unlock != 0.0f) {
+  if (sum_unlock != 0.0f) {
     fac = (1.0f - lock_weight) / sum_unlock;
 
     for (i = dvert->totweight, dw = dvert->dw; i != 0; i--, dw++) {
@@ -1425,10 +1421,10 @@ static int wpaint_mode_toggle_exec(bContext *C, wmOperator *op)
     }
   }
 
-  /* Weightpaint works by overriding colors in mesh,
-   * so need to make sure we recalc on enter and
+  /* Weight-paint works by overriding colors in mesh,
+   * so need to make sure we recalculate on enter and
    * exit (exit needs doing regardless because we
-   * should redeform).
+   * should re-deform).
    */
   DEG_id_tag_update(&me->id, 0);
 
@@ -2171,7 +2167,7 @@ static void calculate_average_weight(SculptThreadedTaskData *data,
   data->custom_data = accum;
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (data->sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   BLI_task_parallel_range(0, totnode, data, do_wpaint_brush_calc_average_weight_cb_ex, &settings);
 
   uint accum_len = 0;

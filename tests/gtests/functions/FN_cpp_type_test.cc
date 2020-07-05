@@ -18,8 +18,7 @@
 
 #include "FN_cpp_type.hh"
 
-namespace blender {
-namespace fn {
+namespace blender::fn {
 
 static const int default_constructed_value = 1;
 static const int copy_constructed_value = 2;
@@ -82,6 +81,12 @@ TEST(cpp_type, Size)
 TEST(cpp_type, Alignment)
 {
   EXPECT_EQ(CPPType_TestType.alignment(), alignof(TestType));
+}
+
+TEST(cpp_type, Is)
+{
+  EXPECT_TRUE(CPPType_TestType.is<TestType>());
+  EXPECT_FALSE(CPPType_TestType.is<int>());
 }
 
 TEST(cpp_type, DefaultConstruction)
@@ -300,5 +305,4 @@ TEST(cpp_type, FillUninitialized)
   EXPECT_EQ(buffer2[9], 0);
 }
 
-}  // namespace fn
-}  // namespace blender
+}  // namespace blender::fn

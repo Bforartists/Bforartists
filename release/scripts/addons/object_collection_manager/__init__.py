@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2, 7, 26),
+    "version": (2, 9, 2),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -78,9 +78,14 @@ class CollectionManagerProperties(PropertyGroup):
     show_disable_viewport: BoolProperty(default=False, name="[DV] Disable in Viewports")
     show_render: BoolProperty(default=False, name="[RR] Disable in Renders")
 
+    align_local_ops: BoolProperty(default=False, name="Align Local Options",
+                                  description="Align local options in a column to the right")
+
     in_phantom_mode: BoolProperty(default=False)
 
     update_header: CollectionProperty(type=internals.CMListCollection)
+
+    ui_separator: StringProperty(name="", default="")
 
     qcd_slots_blend_data: StringProperty()
 
@@ -110,7 +115,7 @@ classes = (
     preferences.CMPreferences,
     ui.CM_UL_items,
     ui.CollectionManager,
-    ui.CMRestrictionTogglesPanel,
+    ui.CMDisplayOptionsPanel,
     CollectionManagerProperties,
     )
 

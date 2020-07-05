@@ -44,6 +44,8 @@
 
 #include "DEG_depsgraph.h"
 
+#include "IMB_colormanagement.h"
+
 #include "WM_api.h"
 #include "WM_message.h"
 #include "WM_toolsystem.h"
@@ -130,6 +132,10 @@ static void do_paint_brush_task_cb_ex(void *__restrict userdata,
       ss, &test, data->brush->falloff_shape);
   const int thread_id = BLI_task_parallel_thread_id(tls);
 
+  float brush_color[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+  copy_v3_v3(brush_color, BKE_brush_color_get(ss->scene, brush));
+  IMB_colormanagement_srgb_to_scene_linear_v3(brush_color);
+
   BKE_pbvh_vertex_iter_begin(ss->pbvh, data->nodes[n], vd, PBVH_ITER_UNIQUE)
   {
     SCULPT_orig_vert_data_update(&orig_data, &vd);
@@ -168,11 +174,11 @@ static void do_paint_brush_task_cb_ex(void *__restrict userdata,
       }
 
       /* Brush paint color, brush test falloff and flow. */
-      float paint_color[4] = {brush->rgb[0], brush->rgb[1], brush->rgb[2], 1.0f};
+      float paint_color[4];
       float wet_mix_color[4];
       float buffer_color[4];
 
-      mul_v4_fl(paint_color, fade * brush->flow);
+      mul_v4_v4fl(paint_color, brush_color, fade * brush->flow);
       mul_v4_v4fl(wet_mix_color, data->wet_mix_sampled_color, fade * brush->flow);
 
       /* Interpolate with the wet_mix color for wet paint mixing. */
@@ -241,8 +247,10 @@ void SCULPT_do_paint_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
     return;
   }
 
-  if (ss->cache->first_time && ss->cache->mirror_symmetry_pass == 0) {
-    ss->cache->density_seed = BLI_hash_int_01(ss->cache->location[0] * 1000);
+  if (SCULPT_stroke_is_first_brush_step_of_symmetry_pass(ss->cache)) {
+    if (SCULPT_stroke_is_first_brush_step(ss->cache)) {
+      ss->cache->density_seed = BLI_hash_int_01(ss->cache->location[0] * 1000);
+    }
     return;
   }
 
@@ -288,7 +296,7 @@ void SCULPT_do_paint_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
     };
 
     TaskParallelSettings settings;
-    BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+    BKE_pbvh_parallel_range_settings(&settings, true, totnode);
     BLI_task_parallel_range(0, totnode, &data, do_color_smooth_task_cb_exec, &settings);
     return;
   }
@@ -310,7 +318,7 @@ void SCULPT_do_paint_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
     zero_v4(swptd.color);
 
     TaskParallelSettings settings_sample;
-    BKE_pbvh_parallel_range_settings(&settings_sample, (sd->flags & SCULPT_USE_OPENMP), totnode);
+    BKE_pbvh_parallel_range_settings(&settings_sample, true, totnode);
     settings_sample.func_reduce = sample_wet_paint_reduce;
     settings_sample.userdata_chunk = &swptd;
     settings_sample.userdata_chunk_size = sizeof(SampleWetPaintTLSData);
@@ -342,7 +350,7 @@ void SCULPT_do_paint_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
   };
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   BLI_task_parallel_range(0, totnode, &data, do_paint_brush_task_cb_ex, &settings);
 }
 
@@ -438,7 +446,7 @@ void SCULPT_do_smear_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
 
   const int totvert = SCULPT_vertex_count_get(ss);
 
-  if (ss->cache->first_time && ss->cache->mirror_symmetry_pass == 0) {
+  if (SCULPT_stroke_is_first_brush_step(ss->cache)) {
     if (!ss->cache->prev_colors) {
       ss->cache->prev_colors = MEM_callocN(sizeof(float) * 4 * totvert, "prev colors");
       for (int i = 0; i < totvert; i++) {
@@ -457,7 +465,7 @@ void SCULPT_do_smear_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
   };
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
 
   /* Smooth colors mode. */
   if (ss->cache->alt_smooth) {

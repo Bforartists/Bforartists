@@ -25,7 +25,7 @@ BLENDERKIT_DEVEL = "https://devel.blenderkit.com"
 BLENDERKIT_API = "/api/v1/"
 BLENDERKIT_REPORT_URL = "usage_report/"
 BLENDERKIT_USER_ASSETS = "/my-assets"
-BLENDERKIT_PLANS = "https://www.blenderkit.com/plans/pricing/"
+BLENDERKIT_PLANS = "/plans/pricing/"
 BLENDERKIT_MANUAL = "https://youtu.be/1hVgcQhIAo8"
 BLENDERKIT_MODEL_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/upload/"
 BLENDERKIT_MATERIAL_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uploading-material/"
@@ -170,7 +170,7 @@ def extract_filename_from_url(url):
 
 
 def get_download_filenames(asset_data):
-    dirs = get_download_dirs(asset_data['asset_type'])
+    dirs = get_download_dirs(asset_data['assetType'])
     file_names = []
     # fn = asset_data['file_name'].replace('blend_', '')
     if asset_data.get('url') is not None:
