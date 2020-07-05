@@ -1,6 +1,3 @@
-import bpy
-import importlib
-import importlib
 from mathutils import Matrix
 from ..utils import create_widget
 

@@ -84,7 +84,8 @@ struct bSound;
 
 struct PropertyRNA;
 
-namespace DEG {
+namespace blender {
+namespace deg {
 
 struct ComponentNode;
 struct DepsNodeHandle;
@@ -210,10 +211,10 @@ class DepsgraphRelationBuilder : public DepsgraphBuilder {
   virtual void build_collection(LayerCollection *from_layer_collection,
                                 Object *object,
                                 Collection *collection);
-  virtual void build_object(Base *base, Object *object);
+  virtual void build_object(Object *object);
   virtual void build_object_proxy_from(Object *object);
   virtual void build_object_proxy_group(Object *object);
-  virtual void build_object_flags(Base *base, Object *object);
+  virtual void build_object_from_layer_relations(Object *object);
   virtual void build_object_data(Object *object);
   virtual void build_object_data_camera(Object *object);
   virtual void build_object_data_geometry(Object *object);
@@ -385,6 +386,7 @@ struct DepsNodeHandle {
   const char *default_name;
 };
 
-}  // namespace DEG
+}  // namespace deg
+}  // namespace blender
 
 #include "intern/builder/deg_builder_relations_impl.h"

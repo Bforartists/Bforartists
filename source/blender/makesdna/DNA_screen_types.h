@@ -41,6 +41,7 @@ struct uiLayout;
 struct wmDrawBuffer;
 struct wmTimer;
 struct wmTooltipState;
+struct PointerRNA;
 
 /* TODO Doing this is quite ugly :)
  * Once the top-bar is merged bScreen should be refactored to use ScrAreaMap. */
@@ -135,6 +136,15 @@ typedef struct Panel_Runtime {
 
   /* For instanced panels: Index of the list item the panel corresponds to. */
   int list_index;
+
+  /**
+   * Pointer for storing which data the panel corresponds to.
+   * Useful when there can be multiple instances of the same panel type.
+   *
+   * \note A panel and its sub-panels share the same custom data pointer.
+   * This avoids freeing the same pointer twice when panels are removed.
+   */
+  struct PointerRNA *custom_data_ptr;
 } Panel_Runtime;
 
 /** The part from uiBlock that needs saved in file. */
@@ -157,9 +167,8 @@ typedef struct Panel {
   /** Panel size excluding children. */
   int blocksizex, blocksizey;
   short labelofs;
-  char _pad[2];
+  char _pad[4];
   short flag, runtime_flag;
-  short control;
   short snap;
   /** Panels are aligned according to increasing sort-order. */
   int sortorder;
@@ -542,8 +551,8 @@ enum {
   PNL_CLOSEDX = (1 << 1),
   PNL_CLOSEDY = (1 << 2),
   PNL_CLOSED = (PNL_CLOSEDX | PNL_CLOSEDY),
-  /*PNL_TABBED    = (1 << 3), */ /*UNUSED*/
-  PNL_OVERLAP = (1 << 4),
+  /* PNL_TABBED = (1 << 3), */  /*UNUSED*/
+  /* PNL_OVERLAP = (1 << 4), */ /*UNUSED*/
   PNL_PIN = (1 << 5),
   PNL_POPOVER = (1 << 6),
   /** The panel has been drag-drop reordered and the instanced panel list needs to be rebuilt. */

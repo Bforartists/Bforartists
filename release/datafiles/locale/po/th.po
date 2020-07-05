@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -3671,10 +3671,6 @@ msgid "Enter Edit Mode"
 msgstr "เข้าสู่โหมดแก้ไข"
 
 
-msgid "rv"
-msgstr "rv"
-
-
 msgid "Image Editor"
 msgstr "ตัวแก้ไขรูปภาพ"
 
@@ -4334,11 +4330,6 @@ msgid "Zoom out"
 msgstr "ซูมออก"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "นำไปใช้"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "ใหม่"
@@ -4786,6 +4777,11 @@ msgstr "เขียนทับ %s"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "ล้างรอยต่อ"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "นำไปใช้"
 
 
 msgid "'%s' doesn't contain '%s' with prefix & suffix"

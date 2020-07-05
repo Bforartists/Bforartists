@@ -30,8 +30,10 @@ import queue
 
 @persistent
 def scene_load(context):
-    if not (bpy.app.timers.is_registered(queue_worker)):
-        bpy.app.timers.register(queue_worker)
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.use_timers:
+        if not (bpy.app.timers.is_registered(queue_worker)):
+            bpy.app.timers.register(queue_worker)
 
 
 def get_queue():

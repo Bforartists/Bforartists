@@ -167,9 +167,7 @@ static bool test_swap_v3_v3(float a[3], float b[3])
     swap_v3_v3(a, b);
     return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 static bool sculpt_undo_restore_deformed(
@@ -179,9 +177,7 @@ static bool sculpt_undo_restore_deformed(
     copy_v3_v3(unode->co[uindex], ss->deform_cos[oindex]);
     return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 static bool sculpt_undo_restore_coords(bContext *C, Depsgraph *depsgraph, SculptUndoNode *unode)
@@ -417,10 +413,7 @@ static void sculpt_undo_bmesh_restore_generic_task_cb(
   BKE_pbvh_node_mark_redraw(nodes[n]);
 }
 
-static void sculpt_undo_bmesh_restore_generic(bContext *C,
-                                              SculptUndoNode *unode,
-                                              Object *ob,
-                                              SculptSession *ss)
+static void sculpt_undo_bmesh_restore_generic(SculptUndoNode *unode, Object *ob, SculptSession *ss)
 {
   if (unode->applied) {
     BM_log_undo(ss->bm, ss->bm_log);
@@ -434,12 +427,11 @@ static void sculpt_undo_bmesh_restore_generic(bContext *C,
   if (unode->type == SCULPT_UNDO_MASK) {
     int totnode;
     PBVHNode **nodes;
-    Sculpt *sd = CTX_data_tool_settings(C)->sculpt;
 
     BKE_pbvh_search_gather(ss->pbvh, NULL, NULL, &nodes, &totnode);
 
     TaskParallelSettings settings;
-    BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+    BKE_pbvh_parallel_range_settings(&settings, true, totnode);
     BLI_task_parallel_range(
         0, totnode, nodes, sculpt_undo_bmesh_restore_generic_task_cb, &settings);
 
@@ -611,7 +603,7 @@ static int sculpt_undo_bmesh_restore(bContext *C,
       return true;
     default:
       if (ss->bm_log) {
-        sculpt_undo_bmesh_restore_generic(C, unode, ob, ss);
+        sculpt_undo_bmesh_restore_generic(unode, ob, ss);
         return true;
       }
       break;
@@ -1274,17 +1266,17 @@ SculptUndoNode *SCULPT_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType
     BLI_thread_unlock(LOCK_CUSTOM1);
     return unode;
   }
-  else if (type == SCULPT_UNDO_GEOMETRY) {
+  if (type == SCULPT_UNDO_GEOMETRY) {
     unode = sculpt_undo_geometry_push(ob, type);
     BLI_thread_unlock(LOCK_CUSTOM1);
     return unode;
   }
-  else if (type == SCULPT_UNDO_FACE_SETS) {
+  if (type == SCULPT_UNDO_FACE_SETS) {
     unode = sculpt_undo_face_sets_push(ob, type);
     BLI_thread_unlock(LOCK_CUSTOM1);
     return unode;
   }
-  else if ((unode = SCULPT_undo_get_node(node))) {
+  if ((unode = SCULPT_undo_get_node(node))) {
     BLI_thread_unlock(LOCK_CUSTOM1);
     return unode;
   }

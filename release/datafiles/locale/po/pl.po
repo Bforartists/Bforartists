@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -3905,10 +3905,6 @@ msgstr "Ogranicznik Ogranicz odległość"
 
 msgid "Limit the distance from target object"
 msgstr "Ogranicz odległość od obiektu docelowego"
-
-
-msgid "For Transform"
-msgstr "Dla transformacji"
 
 
 msgid "Transforms are affected by this constraint as well"
@@ -10138,6 +10134,10 @@ msgstr "Nie można ustanowić ścieżki względnej przy niezapisanym pliku blend
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Nie można ustanowić ścieżki absolutnej przy niezapisanym pliku blend"
+
+
+msgid "Sync Length"
+msgstr "Sync Długość"
 
 
 msgid "Now"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1244,10 +1244,6 @@ msgstr "Automatisches Verpacken aller externen Daten in die .blend-Datei"
 
 msgid "Version"
 msgstr "Version"
-
-
-msgid "Version of Blender the .blend was saved with"
-msgstr "Version von Blender, mit der die .blend Datei gespeichert wurde"
 
 
 msgid "Volumes"
@@ -3971,10 +3967,6 @@ msgid "Limit the distance from target object"
 msgstr "Entfernung zwischen Zielobjekt begrenzen"
 
 
-msgid "For Transform"
-msgstr "Transformieren"
-
-
 msgid "Limit Location Constraint"
 msgstr "Positionbeschränkung begrenzen"
 
@@ -6368,10 +6360,6 @@ msgid "Frame on which the simulation starts"
 msgstr "Einzelbild an dem die Simulation beginnt"
 
 
-msgid "Final"
-msgstr "Endergebnis"
-
-
 msgid "Cell Size"
 msgstr "Zellengröße"
 
@@ -6496,6 +6484,10 @@ msgid "Nearest"
 msgstr "Nächster"
 
 
+msgid "Final"
+msgstr "Endergebnis"
+
+
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -6516,10 +6508,6 @@ msgid "Compression"
 msgstr "Komprimierung"
 
 
-msgid "Compression method to be used"
-msgstr "Kompressionsmethode, die verwendet wird"
-
-
 msgid "Effective but slow compression"
 msgstr "Effektive, aber langsame Kompression"
 
@@ -6530,6 +6518,10 @@ msgstr "Nummer"
 
 msgid "Cache Compression"
 msgstr "Pufferkompression"
+
+
+msgid "Compression method to be used"
+msgstr "Kompressionsmethode, die verwendet wird"
 
 
 msgid "Fast but not so effective compression"
@@ -9402,6 +9394,10 @@ msgid "Polygons of the mesh"
 msgstr "Polygone des Meshes"
 
 
+msgid "All vertex colors"
+msgstr "Alle Vertexfarben"
+
+
 msgid "Skin Vertices"
 msgstr "Haut-Vertices"
 
@@ -9476,10 +9472,6 @@ msgstr "Markierung"
 
 msgid "Vertex Colors"
 msgstr "Vertexfarben"
-
-
-msgid "All vertex colors"
-msgstr "Alle Vertexfarben"
 
 
 msgid "Vertices"
@@ -16631,6 +16623,10 @@ msgid "Sky Texture"
 msgstr "Himmeltextur"
 
 
+msgid "Air"
+msgstr "Luft"
+
+
 msgid "Sky Type"
 msgstr "Himmeltyp"
 
@@ -18925,15 +18921,7 @@ msgid "(De)select all control points"
 msgstr "Kontrollpunkte aus-/abwählen"
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "Zwischen ausgewählten Markierungen"
-
-
 msgid "Select all control points linked to already selected ones"
-msgstr "Gegenstände mittels Rahmen-Auswahl auswählen"
-
-
-msgid "Select control points directly linked to already selected ones"
 msgstr "Gegenstände mittels Rahmen-Auswahl auswählen"
 
 
@@ -19761,6 +19749,10 @@ msgid "Eraser"
 msgstr "Radierer"
 
 
+msgid "Side"
+msgstr "Seite"
+
+
 msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "Wachsstift umwandeln"
@@ -19847,10 +19839,6 @@ msgstr "Neue Ebene hinzufügen"
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Maskenebene löschen"
-
-
-msgid "Side"
-msgstr "Seite"
 
 
 msgid "Mouse location"
@@ -20912,7 +20900,6 @@ msgid "Shrink/fatten selected vertices along normals"
 msgstr "Schrumpfe/Vergrößert ausgewählte Vertices entlang der Normalen"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Region extrudieren"
 
@@ -20921,6 +20908,7 @@ msgid "Extrude region of faces"
 msgstr "Flächenbereich extrudieren"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Region extrudieren"
 
@@ -21364,6 +21352,14 @@ msgid "Turns"
 msgstr "Drehungen"
 
 
+msgid "Add vertex color layer"
+msgstr "Vertex-Farbebene hinzufügen"
+
+
+msgid "Remove vertex color layer"
+msgstr "Vertex-Farbebene löschen"
+
+
 msgid "(De)select all vertices, edges or faces"
 msgstr "Kamera auswählen"
 
@@ -21658,17 +21654,9 @@ msgid "Add Vertex Color"
 msgstr "Vertexfarbe hinzufügen"
 
 
-msgid "Add vertex color layer"
-msgstr "Vertex-Farbebene hinzufügen"
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "Vertexfarbe löschen"
-
-
-msgid "Remove vertex color layer"
-msgstr "Vertex-Farbebene löschen"
 
 
 msgid "Flatten angles of selected vertices"
@@ -28686,10 +28674,6 @@ msgid "Duplicate Action"
 msgstr "Aktion duplizieren"
 
 
-msgid "Causes actions to be duplicated with the object"
-msgstr "Veranlasst Aktionen dazu mit einem Objekt dupliziert zu werden"
-
-
 msgid "Duplicate Armature"
 msgstr "Skelett duplizieren"
 
@@ -28802,10 +28786,6 @@ msgid "Built-in animation player"
 msgstr "Eingebauter Animationsplayer"
 
 
-msgid "Djv"
-msgstr "Djv"
-
-
 msgid "Open source frame player: http://djv.sourceforge.net"
 msgstr "Open Source Einzelbild-Player: http://djv.sourceforge.net"
 
@@ -28816,10 +28796,6 @@ msgstr "FrameCycler"
 
 msgid "Frame player from IRIDAS"
 msgstr "Einzelbild-Player von IRIDAS"
-
-
-msgid "rv"
-msgstr "rv"
 
 
 msgid "Frame player from Tweak Software"
@@ -29578,30 +29554,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Flächenausrichtung umkehren"
 
 
-msgid "Type of primitive used for hair rendering"
-msgstr "Zum Rendern zu verwendende Engine"
-
-
-msgid "Line Segments"
-msgstr "Nebensegmente"
-
-
-msgid "Curve Segments"
-msgstr "Hauptsegmente"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Zwischen ausgewählten Markierungen"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "CPU zum Rendern verwenden"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Aktive Kamera, die zum Rendern der Szene verwendet wird"
-
-
 msgid "Cast Shadow"
 msgstr "Schatten werfen"
 
@@ -29836,10 +29788,6 @@ msgstr "Vorschau pausieren"
 
 msgid "Pause all viewport preview renders"
 msgstr "Pausiert alle Vorschaurenderer im Ansichtsfenster"
-
-
-msgid "Preview Samples"
-msgstr "Vorschabtastwerte"
 
 
 msgid "Number of samples to render in the viewport, unlimited if 0"
@@ -35206,14 +35154,6 @@ msgid "Anim Player"
 msgstr "Wiedergabe"
 
 
-msgid "File Path:"
-msgstr "Dateipfad:"
-
-
-msgid "Manual Transform:"
-msgstr "Manuelle Transformation:"
-
-
 msgid "Display number of users of this data (click to make a single-user copy)"
 msgstr "Anzahl der Benutzer dieser Daten anzeigen (klicken, um Einzel-Benutzer-Kopie zu erstellen)"
 
@@ -35334,11 +35274,6 @@ msgid "Browse ID data to be linked"
 msgstr "Zu verknüpfende ID-Daten durchsuchen"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Anwenden"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "Neu"
@@ -35448,8 +35383,8 @@ msgid "%d items"
 msgstr "%d Gegenstände"
 
 
-msgid "Archive Options:"
-msgstr "Archiv-Optionen:"
+msgid "Manual Transform:"
+msgstr "Manuelle Transformation:"
 
 
 msgid "Scene Options:"
@@ -35690,10 +35625,6 @@ msgid "Bake failed: invalid canvas"
 msgstr "Backen fehlgeschlagen: ungültge Zeichenfläche"
 
 
-msgid "Air"
-msgstr "Luft"
-
-
 msgid "Bark"
 msgstr "Rinde"
 
@@ -35852,6 +35783,10 @@ msgstr "Aktives Schlüsselbild"
 
 msgid "Fields"
 msgstr "Felder"
+
+
+msgid "File Path:"
+msgstr "Dateipfad:"
 
 
 msgid "Track is locked"
@@ -36112,6 +36047,10 @@ msgstr "Relative Pfade können nicht bei einer ungespeicherten blend-Datei geset
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Absolute Pfade können nicht bei einer ungespeicherten blend-Datei gesetzt werden"
+
+
+msgid "Sync Length"
+msgstr "Länge synchronisieren"
 
 
 msgid "No valid action to add"
@@ -36741,6 +36680,15 @@ msgid "Cannot open file: %s"
 msgstr "Datei kann nicht geöffnet werden: %s"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Anwenden"
+
+
+msgid "Bone Envelopes"
+msgstr "Knochen-Einhüllende"
+
+
 msgid "Background image cannot be removed"
 msgstr "Hintergrundbild kann nicht entfernt werden"
 
@@ -36853,10 +36801,6 @@ msgstr "Operator '%s' nicht gefunden!"
 
 msgid "Gizmo group '%s' not found!"
 msgstr "Gizmo-Gruppe '%s' nicht gefunden!"
-
-
-msgid "Bone Envelopes"
-msgstr "Knochen-Einhüllende"
 
 
 msgid "Sharp Edges"

@@ -345,7 +345,7 @@ class CabinetProperties(PropertyGroup):
                 ('2', "90 CCW", ""),
                 ('3', "180", ""),
                 ),
-            name="Rot",
+            name="Rotate",
             description="Rotate cabinet relative to previous one",
             )
 

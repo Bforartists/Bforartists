@@ -482,7 +482,7 @@ class SEQUENCER_MT_navigation(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.view_frame", text="Go to Playhead", icon='CENTER')
+        layout.operator("sequencer.view_frame", icon='CENTER')
 
         layout.separator()
 
@@ -648,7 +648,7 @@ class SEQUENCER_MT_strip_transform(Menu):
         layout = self.layout
 
         layout.operator("transform.seq_slide", text="Move", icon = "TRANSFORM_MOVE")
-        layout.operator("transform.transform", text="Move/Extend from Playhead", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
+        layout.operator("transform.transform", text="Move/Extend from Current Frame", icon = "SEQ_MOVE_EXTEND").mode = 'TIME_EXTEND'
         layout.operator("sequencer.slip", text="Slip Strip Contents", icon = "SEQ_SLIP_CONTENTS")
 
         layout.separator()
@@ -1592,7 +1592,7 @@ class SEQUENCER_PT_time(SequencerButtonsPanel, Panel):
 
         split = col.split(factor=0.5 + max_factor, align=True)
         split.alignment = 'RIGHT'
-        split.label(text="Playhead")
+        split.label(text="Current Frame")
         split = split.split(factor=0.8 + max_factor, align=True)
         frame_display = frame_current - frame_final_start
         split.label(text="%14s" % smpte_from_frame(frame_display))

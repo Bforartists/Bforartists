@@ -1,9 +1,7 @@
 import bpy
-from mathutils import Vector
 from ...utils import copy_bone, flip_bone
 from ...utils import strip_org, make_deformer_name, connected_children_names, make_mechanism_name
-from ...utils import create_circle_widget, create_sphere_widget, create_widget
-from ...utils import MetarigError
+from ...utils import MetarigError, create_circle_widget, create_widget
 
 from ....utils.mechanism import make_property
 

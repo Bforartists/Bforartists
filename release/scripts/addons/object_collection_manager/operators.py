@@ -883,10 +883,34 @@ class CMRemoveCollectionOperator(Operator):
                 parent_collection.objects.link(obj)
 
 
-        # shift all child collections to the parent collection
+        # shift all child collections to the parent collection preserving view layer RTOs
         if collection.children:
+            # store view layer RTOs for all children of the to be deleted collection
+            child_states = {}
+            def get_child_states(layer_collection):
+                child_states[layer_collection.name] = (layer_collection.exclude,
+                                                       layer_collection.hide_viewport,
+                                                       layer_collection.holdout,
+                                                       layer_collection.indirect_only)
+
+            apply_to_children(laycol["ptr"], get_child_states)
+
+            # link any subcollections of the to be deleted collection to it's parent
             for subcollection in collection.children:
                 parent_collection.children.link(subcollection)
+
+            # apply the stored view layer RTOs to the newly linked collections and their
+            # children
+            def restore_child_states(layer_collection):
+                state = child_states.get(layer_collection.name)
+
+                if state:
+                    layer_collection.exclude = state[0]
+                    layer_collection.hide_viewport = state[1]
+                    layer_collection.holdout = state[2]
+                    layer_collection.indirect_only = state[3]
+
+            apply_to_children(laycol["parent"]["ptr"], restore_child_states)
 
 
         # remove collection, update expanded, and update tree view

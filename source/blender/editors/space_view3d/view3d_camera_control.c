@@ -116,9 +116,8 @@ Object *ED_view3d_cameracontrol_object_get(View3DCameraControl *vctrl)
   if (rv3d->persp == RV3D_CAMOB) {
     return view3d_cameracontrol_object(vctrl);
   }
-  else {
-    return NULL;
-  }
+
+  return NULL;
 }
 
 /**
@@ -182,7 +181,7 @@ struct View3DCameraControl *ED_view3d_cameracontrol_acquire(Depsgraph *depsgraph
     copy_qt_qt(vctrl->rot_backup, rv3d->viewquat);
     copy_v3_v3(vctrl->ofs_backup, rv3d->ofs);
 
-    /* the dist defines a vector that is infront of the offset
+    /* The dist defines a vector that is in front of the offset
      * to rotate the view about.
      * this is no good for fly mode because we
      * want to rotate about the viewers center.

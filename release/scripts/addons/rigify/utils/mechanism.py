@@ -19,8 +19,10 @@
 # <pep8 compliant>
 
 import bpy
+import re
 
-from rna_prop_ui import rna_idprop_ui_create
+from rna_prop_ui import rna_idprop_ui_create, rna_idprop_ui_prop_get
+from rna_prop_ui import rna_idprop_quote_path as quote_property
 
 #=============================================
 # Constraint creation utilities
@@ -98,7 +100,9 @@ def make_constraint(
 # Custom property creation utilities
 #=============================================
 
-def make_property(owner, name, default, *, min=0.0, max=1.0, soft_min=None, soft_max=None, description=None, overridable=True):
+def make_property(
+        owner, name, default, *, min=0.0, max=1.0, soft_min=None, soft_max=None,
+        description=None, overridable=True, **options):
     """
     Creates and initializes a custom property of owner.
 
@@ -112,6 +116,7 @@ def make_property(owner, name, default, *, min=0.0, max=1.0, soft_min=None, soft
         min = min, max = max, soft_min = soft_min, soft_max = soft_max,
         description = description or name,
         overridable = overridable,
+        **options
     )
 
 #=============================================
@@ -140,13 +145,20 @@ def _init_driver_target(drv_target, var_info, target_id):
             if isinstance(subtarget, str):
                 subtarget = target_id.pose.bones[subtarget]
 
+            if subtarget == target_id:
+                path = ''
+            else:
+                path = subtarget.path_from_id()
+
             # Use ".foo" type path items verbatim, otherwise quote
-            path = subtarget.path_from_id()
             for item in refs:
                 if isinstance(item, str):
-                    path += item if item[0] == '.' else '["'+item+'"]'
+                    path += item if item[0] == '.' else quote_property(item)
                 else:
                     path += '[%r]' % (item)
+
+            if path[0] == '.':
+                path = path[1:]
 
         drv_target.id = target_id
         drv_target.data_path = path
@@ -293,6 +305,91 @@ def driver_var_transform(target, bone=None, *, type='LOC_X', space='WORLD', rota
         target_map['bone_target'] = bone
 
     return { 'type': 'TRANSFORMS', 'targets': [ target_map ] }
+
+
+#=============================================
+# Custom property management
+#=============================================
+
+def deactivate_custom_properties(obj, *, reset=True):
+    """Disable drivers on custom properties and reset values to default."""
+
+    prefix = '["'
+
+    if obj != obj.id_data:
+        prefix = obj.path_from_id() + prefix
+
+    adt = obj.id_data.animation_data
+    if adt:
+        for fcu in adt.drivers:
+            if fcu.data_path.startswith(prefix):
+                fcu.mute = True
+
+    if reset:
+        for key, value in obj.items():
+            valtype = type(value)
+            if valtype in {int, float}:
+                info = rna_idprop_ui_prop_get(obj, key, False) or {}
+                obj[key] = valtype(info.get("default", 0))
+
+
+def reactivate_custom_properties(obj):
+    """Re-enable drivers on custom properties."""
+
+    prefix = '["'
+
+    if obj != obj.id_data:
+        prefix = obj.path_from_id() + prefix
+
+    adt = obj.id_data.animation_data
+    if adt:
+        for fcu in adt.drivers:
+            if fcu.data_path.startswith(prefix):
+                fcu.mute = False
+
+
+def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=False):
+    """Copy custom properties with filtering by prefix. Optionally link using drivers."""
+    res = []
+
+    for key, value in src.items():
+        if key.startswith(prefix):
+            new_key = dest_prefix + key[len(prefix):]
+
+            dest[new_key] = value
+
+            info = rna_idprop_ui_prop_get(src, key, False)
+            if info:
+                info2 = rna_idprop_ui_prop_get(dest, new_key, True)
+                for ki, vi in info.items():
+                    info2[ki] = vi
+
+            if link_driver:
+                make_driver(src, quote_property(key), variables=[(dest.id_data, dest, new_key)])
+
+            res.append((key, new_key, value, info))
+
+    return res
+
+
+def copy_custom_properties_with_ui(rig, src, dest_bone, *, ui_controls=None, **options):
+    """Copy custom properties, and create rig UI for them."""
+    if isinstance(src, str):
+        src = rig.get_bone(src)
+
+    bone = rig.get_bone(dest_bone)
+    mapping = copy_custom_properties(src, bone, **options)
+
+    if mapping:
+        panel = rig.script.panel_with_selected_check(rig, ui_controls or rig.bones.ctrl.flatten())
+
+        for key,new_key,value,info in mapping:
+            name = re.sub(r'[_.-]', ' ', new_key).title()
+            slider = type(value) is float and info and info.get("min", None) == 0 and info.get("max", None) == 1
+
+            panel.custom_prop(dest_bone, new_key, text=name, slider=slider)
+
+    return mapping
 
 
 #=============================================

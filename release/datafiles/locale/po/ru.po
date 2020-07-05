@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -1580,10 +1580,6 @@ msgstr "Автоматически упаковать все внешние да
 
 msgid "Version"
 msgstr "Версия"
-
-
-msgid "Version of Blender the .blend was saved with"
-msgstr "Версия Blender, в который сохранён .blend-файл"
 
 
 msgid "Volumes"
@@ -6207,10 +6203,6 @@ msgid "Limit the distance from target object"
 msgstr "Ограничение расстояния от целевого объекта"
 
 
-msgid "For Transform"
-msgstr "Для трансформаций"
-
-
 msgid "Transforms are affected by this constraint as well"
 msgstr "Трансформации также будут подвержены этому ограничителю"
 
@@ -7585,10 +7577,6 @@ msgstr "Точка пути, используемого для задания п
 
 msgid "First Handle Type"
 msgstr "Тип первой рукоятки"
-
-
-msgid "Path interpolation at this point: Bezier or vector"
-msgstr "Интерполяция в этой точки: Безье или вектор"
 
 
 msgid "Second Handle Type"
@@ -11516,24 +11504,8 @@ msgid "Replay"
 msgstr "Перевоспроизвести"
 
 
-msgid "Use the timeline to bake the scene. Pausing and resuming possible"
-msgstr "Использовать временную шкалу для запекания сцены. Возможны паузы и продолжения"
-
-
 msgid "Modular"
 msgstr "Модульно"
-
-
-msgid "Bake every stage of the simulation separately. Pausing and resuming possible"
-msgstr "Запечь все стадии симуляции раздельно. Возможны паузы и продолжения"
-
-
-msgid "Final"
-msgstr "Итоговый результат"
-
-
-msgid "Bake the entire simulation at once. Only generates the most essential cache files. Pausing and resuming not possible"
-msgstr "Запечь всю симуляцию за раз. Генерирует только самые нужные файлы кэша. Паузы и продолжения не поддерживаются"
 
 
 msgid "Cell Size"
@@ -11646,30 +11618,6 @@ msgstr "Цветная решётка"
 
 msgid "Smoke color grid"
 msgstr "Сетка цвета дыма"
-
-
-msgid "Data Depth"
-msgstr "Разрядность данных"
-
-
-msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
-msgstr "Битовая разрядность для записи всех чисел (включая вектора); чем ниже, тем меньше размер файла"
-
-
-msgid "Float (Half)"
-msgstr "Нецелое (половина)"
-
-
-msgid "Half float (16 bit data)"
-msgstr "Половинный нецелочисленный (16-битные данные)"
-
-
-msgid "Float (Full)"
-msgstr "Нецелое (полное)"
-
-
-msgid "Full float (32 bit data)"
-msgstr "Полный нецелочисленный (32-битные данные)"
 
 
 msgid "Density Grid"
@@ -11860,6 +11808,10 @@ msgid "Nearest"
 msgstr "Ближайший"
 
 
+msgid "Final"
+msgstr "Итоговый результат"
+
+
 msgid "Preview"
 msgstr "Предпросмотр"
 
@@ -11896,10 +11848,6 @@ msgid "Compression"
 msgstr "Сжатие"
 
 
-msgid "Compression method to be used"
-msgstr "Используемый метод сжатия"
-
-
 msgid "Zip"
 msgstr "Zip"
 
@@ -11920,6 +11868,26 @@ msgid "Do not use any compression"
 msgstr "Не использовать сжатие"
 
 
+msgid "Data Depth"
+msgstr "Разрядность данных"
+
+
+msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
+msgstr "Битовая разрядность для записи всех чисел (включая вектора); чем ниже, тем меньше размер файла"
+
+
+msgid "Half"
+msgstr "Наполовину"
+
+
+msgid "Half float (16 bit data)"
+msgstr "Половинный нецелочисленный (16-битные данные)"
+
+
+msgid "Full float (32 bit data)"
+msgstr "Полный нецелочисленный (32-битные данные)"
+
+
 msgid "Number"
 msgstr "Число"
 
@@ -11930,6 +11898,10 @@ msgstr "Случайность"
 
 msgid "Cache Compression"
 msgstr "Сжатие кэша"
+
+
+msgid "Compression method to be used"
+msgstr "Используемый метод сжатия"
 
 
 msgid "Lite"
@@ -14002,16 +13974,16 @@ msgid "Opacity of the strokes"
 msgstr "Прозрачность штрихов"
 
 
+msgid "Texture Mapping"
+msgstr "Разметка текстуры"
+
+
 msgid "Tint"
 msgstr "Оттенок"
 
 
 msgid "Tint strokes with new color"
 msgstr "Окрасить штрихи новым цветом"
-
-
-msgid "Texture Mapping"
-msgstr "Разметка текстуры"
 
 
 msgid "Armature Modifier"
@@ -14770,6 +14742,14 @@ msgstr "Активная заметка"
 
 msgid "Note/Layer to add annotation strokes to"
 msgstr "Заметка/слой, на которую добавляются штрихи аннотации"
+
+
+msgid "Index of the first loop of this polygon"
+msgstr "Индекс первой петли этого полигона"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Количество петель, используемых полигоном"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -16655,10 +16635,6 @@ msgstr "Режим заполнения"
 
 msgid "Mode of filling curve"
 msgstr "Режим заполнения кривой"
-
-
-msgid "Half"
-msgstr "Наполовину"
 
 
 msgid "Offset the curve to adjust the width of a text"
@@ -19379,6 +19355,10 @@ msgid "Size of the voxel in object space used for volume evaluation. Lower value
 msgstr "Размер вокселя в масштабе объекта, используемого для пересчёта объёма. Более низкие значения сохраняют более мелкие детали"
 
 
+msgid "All vertex colors"
+msgstr "Все цвета вершин"
+
+
 msgid "Skin Vertices"
 msgstr "Вершины скелетной оболочки"
 
@@ -19565,10 +19545,6 @@ msgstr "Все слои UV-петель"
 
 msgid "Vertex Colors"
 msgstr "Цвета вершин"
-
-
-msgid "All vertex colors"
-msgstr "Все цвета вершин"
 
 
 msgid "Vertex Paint Mask"
@@ -24726,11 +24702,6 @@ msgid "Line Feed"
 msgstr "Перевод строки"
 
 
-msgctxt "UI_Events_KeyMaps"
-msgid "Back Space"
-msgstr "Backspace"
-
-
 msgid "BkSpace"
 msgstr "BkSpace"
 
@@ -28345,16 +28316,8 @@ msgid "Loop Start"
 msgstr "Начало цикла"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Индекс первой петли этого полигона"
-
-
 msgid "Loop Total"
 msgstr "Всего в цикле"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Количество петель, используемых полигоном"
 
 
 msgid "Polygon Normal"
@@ -36555,6 +36518,10 @@ msgid "Sky Texture"
 msgstr "Текстура неба"
 
 
+msgid "Air"
+msgstr "Воздух"
+
+
 msgid "Ground Albedo"
 msgstr "Альбедо земной поверхности"
 
@@ -41285,10 +41252,6 @@ msgid "(De)select all control points"
 msgstr "Установить/снять выделение со всех контрольных точек"
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "Уменьшить текущее выделение, сняв выделение с граничных элементов"
-
-
 msgid "Select all control points linked to the current selection"
 msgstr "Выделить все контрольные точки, связанные с текущим выделением"
 
@@ -41299,10 +41262,6 @@ msgstr "Выделить все контрольные точки, связан�
 
 msgid "Deselect linked control points rather than selecting them"
 msgstr "Снять выделение со связанных контрольных точек вместо их выделения"
-
-
-msgid "Select control points directly linked to already selected ones"
-msgstr "Выделить контрольные точки, напрямую связанные с уже выделенными"
 
 
 msgctxt "Operator"
@@ -43505,6 +43464,34 @@ msgid "Wait for first click instead of painting immediately"
 msgstr "Ожидать первого нажатия, а не рисовать сразу"
 
 
+msgid "Projection Type"
+msgstr "Тип проецирования"
+
+
+msgid "Reproject the strokes using the X-Z plane"
+msgstr "Перепроецировать штрихи, используя плоскость X-Z"
+
+
+msgid "Side"
+msgstr "Сторона"
+
+
+msgid "Reproject the strokes using the Y-Z plane"
+msgstr "Перепроецировать штрихи, используя плоскость Y-Z"
+
+
+msgid "Reproject the strokes using the X-Y plane"
+msgstr "Перепроецировать штрихи, используя плоскость X-Y"
+
+
+msgid "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using 'Cursor' Stroke Placement"
+msgstr "Перепроецировать штрихи на общую плоскость, как если бы они рисовались с текущей точки просмотра при расположении штрихов по курсору"
+
+
+msgid "Reproject the strokes using the orientation of 3D cursor"
+msgstr "Перепроецировать штрихи, используя ориентацию 3D-курсора"
+
+
 msgctxt "Operator"
 msgid "Insert Blank Frame"
 msgstr "Вставить пустой кадр"
@@ -44160,36 +44147,8 @@ msgid "Keep Original"
 msgstr "Сохранить оригинал"
 
 
-msgid "Projection Type"
-msgstr "Тип проецирования"
-
-
-msgid "Reproject the strokes using the X-Z plane"
-msgstr "Перепроецировать штрихи, используя плоскость X-Z"
-
-
-msgid "Side"
-msgstr "Сторона"
-
-
-msgid "Reproject the strokes using the Y-Z plane"
-msgstr "Перепроецировать штрихи, используя плоскость Y-Z"
-
-
-msgid "Reproject the strokes using the X-Y plane"
-msgstr "Перепроецировать штрихи, используя плоскость X-Y"
-
-
-msgid "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using 'Cursor' Stroke Placement"
-msgstr "Перепроецировать штрихи на общую плоскость, как если бы они рисовались с текущей точки просмотра при расположении штрихов по курсору"
-
-
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
 msgstr "Перепроецировать штрихи на геометрию сцены, как если бы они рисовались с расположением на поверхности"
-
-
-msgid "Reproject the strokes using the orientation of 3D cursor"
-msgstr "Перепроецировать штрихи, используя ориентацию 3D-курсора"
 
 
 msgid "Show all Grease Pencil layers"
@@ -47486,7 +47445,6 @@ msgid "Shrink/fatten selected vertices along normals"
 msgstr "Сжать/расжать выделенные вершины вдоль нормалей"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Экструдировать участок"
 
@@ -47495,6 +47453,7 @@ msgid "Extrude region of faces"
 msgstr "Экструдировать участок граней"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Экструдировать участок"
 
@@ -48782,6 +48741,14 @@ msgid "Turns"
 msgstr "Поворотов"
 
 
+msgid "Add vertex color layer"
+msgstr "Добавить слой цветов вершин"
+
+
+msgid "Remove vertex color layer"
+msgstr "Удалить слой цветов вершин"
+
+
 msgid "(De)select all vertices, edges or faces"
 msgstr "Выделить или снять выделение для вершин, рёбер или граней"
 
@@ -49499,17 +49466,9 @@ msgid "Add Vertex Color"
 msgstr "Добавить цвета вершин"
 
 
-msgid "Add vertex color layer"
-msgstr "Добавить слой цветов вершин"
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "Удалить цвета вершин"
-
-
-msgid "Remove vertex color layer"
-msgstr "Удалить слой цветов вершин"
 
 
 msgctxt "Operator"
@@ -50942,10 +50901,6 @@ msgstr "Кривая из меша/текста"
 
 msgid "Mesh from Curve/Meta/Surf/Text"
 msgstr "Меш из кривой/мета/поверхности/текста"
-
-
-msgid "Grease Pencil from Curve"
-msgstr "Grease Pencil из кривой"
 
 
 msgctxt "Operator"
@@ -52627,20 +52582,8 @@ msgid "Apply sinusoidal deformation"
 msgstr "Применить синусоидальную деформацию"
 
 
-msgid "Move shaderfx down in the stack"
-msgstr "Переместить шейдерный эффект вниз по стеку"
-
-
 msgid "Name of the shaderfx to edit"
 msgstr "Название shaderfx для редактирования"
-
-
-msgid "Move shaderfx up in the stack"
-msgstr "Переместить шейдерный эффект вверх по стеку"
-
-
-msgid "Remove a shaderfx from the active grease pencil object"
-msgstr "Убрать эффект у активного объекта Grease Pencil"
 
 
 msgctxt "Operator"
@@ -53615,6 +53558,10 @@ msgid "Unhide"
 msgstr "Показать"
 
 
+msgid "Delete child objects and collections"
+msgstr "Удалить коллекцию и объекты внутри неё"
+
+
 msgctxt "Operator"
 msgid "Add Drivers for Selected"
 msgstr "Добавить драйверы для выбранных"
@@ -53892,10 +53839,6 @@ msgstr "Операция с объектом"
 
 msgid "Select Hierarchy"
 msgstr "Выделить иерархию"
-
-
-msgid "Delete Hierarchy"
-msgstr "Удалить иерархию"
 
 
 msgid "Make all users of selected data-blocks to use instead a new chosen one"
@@ -61447,10 +61390,6 @@ msgid "Enable this to run the import in the background, disable to block Blender
 msgstr "Включите это, чтобы запустить импорт в фоновом режиме (отключить блокировку Blender во время импорта). Эта опция устарела; используйте тип EXECUTE у оператора для запуска на переднем плане и INVOKE для выполнения в качестве фонового задания"
 
 
-msgid "Ogawa"
-msgstr "Ogawa"
-
-
 msgid "Curves as Mesh"
 msgstr "Кривые как меш"
 
@@ -63791,14 +63730,6 @@ msgstr "Использовать только деформирующие мод�
 
 msgid "Show faces in dynamic-topology mode with smooth shading rather than flat shaded"
 msgstr "Отображать грани в режиме динамической топологии с гладким затенением, а не с плоским затенением"
-
-
-msgid "Use OpenMP"
-msgstr "С OpenMP"
-
-
-msgid "Take advantage of multiple CPU cores to improve sculpting performance"
-msgstr "Пользоваться несколькими ядрами процессора для улучшения производительности скульптинга"
 
 
 msgid "UV Sculpting"
@@ -66862,10 +66793,6 @@ msgid "Duplicate Action"
 msgstr "Дублировать действия"
 
 
-msgid "Causes actions to be duplicated with the object"
-msgstr "Дублировать действия вместе с объектом"
-
-
 msgid "Duplicate Armature"
 msgstr "Дублировать арматуру"
 
@@ -67030,10 +66957,6 @@ msgid "Built-in animation player"
 msgstr "Встроенный проигрыватель анимации"
 
 
-msgid "Djv"
-msgstr "Djv"
-
-
 msgid "Open source frame player: http://djv.sourceforge.net"
 msgstr "Покадровый проигрыватель с открытым исходным кодом: http://djv.sourceforge.net"
 
@@ -67044,10 +66967,6 @@ msgstr "FrameCycler"
 
 msgid "Frame player from IRIDAS"
 msgstr "Проигрыватель кадров от IRIDAS"
-
-
-msgid "rv"
-msgstr "rv"
 
 
 msgid "Frame player from Tweak Software"
@@ -68794,68 +68713,12 @@ msgid "Uses the mirror ball mapping"
 msgstr "Использовать наложение зеркального шара"
 
 
-msgid "Cull Back-faces"
-msgstr "Пропускать задние грани"
-
-
-msgid "Do not test the back-face of each strand"
-msgstr "Не проверять задние грани для каждой пряди"
-
-
-msgid "Type of primitive used for hair rendering"
-msgstr "Тип примитива, используемого для рендеринга волос"
-
-
-msgid "Create triangle geometry around strands"
-msgstr "Представлять каждый волос в виде последовательности треугольников"
-
-
-msgid "Line Segments"
-msgstr "Сегменты прямых"
-
-
-msgid "Use line segment primitives"
-msgstr "Использовать примитивы сегментов прямых"
-
-
-msgid "Curve Segments"
-msgstr "Сегменты кривых"
-
-
-msgid "Use segmented cardinal curve primitives"
-msgstr "Использовать примитивы сегментов кардинальной кривой"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Разрешение генерируемого меша"
-
-
 msgid "Form of hair"
 msgstr "Форма волос"
 
 
-msgid "Ribbons"
-msgstr "Ленты"
-
-
-msgid "Ignore thickness of each strand"
-msgstr "Игнорировать толщину каждой пряди"
-
-
-msgid "Use thickness of strand when rendering"
-msgstr "Использовать толщину прядей при рендеринге"
-
-
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Количество подразделений, используемых в пересечении с кардинальной кривой (степень двойки)"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "Использовать рендеринг волос Cycles"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Включить рендеринг волос в Cycles для системы частиц"
 
 
 msgid "CPU"
@@ -69686,14 +69549,6 @@ msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
 msgstr "Количество сглаживающих сэмплов для рендеринга во вьюпорте, 0 для неограниченного количества"
 
 
-msgid "Viewport Denoising"
-msgstr "Шумоподавление вьюпорта"
-
-
-msgid "Preview Dicing Rate"
-msgstr "Предпросмотр уровня дробления"
-
-
 msgid "Size of a micropolygon in pixels during preview render"
 msgstr "Размер микрополигона в пикселях во время предварительного рендера"
 
@@ -69706,8 +69561,8 @@ msgid "Pause all viewport preview renders"
 msgstr "Остановить рендеринг во всех вьюпортах"
 
 
-msgid "Preview Samples"
-msgstr "Сэмплов просмотра"
+msgid "Viewport Samples"
+msgstr "Сэмплов во вьюпорте"
 
 
 msgid "Number of samples to render in the viewport, unlimited if 0"
@@ -69980,14 +69835,6 @@ msgstr "Использовать анимированную вариацию"
 
 msgid "Use different seed values (and hence noise patterns) at different frames"
 msgstr "Использовать различные значения случайные вариации шума для разных кадров"
-
-
-msgid "Use Embree"
-msgstr "Использовать Embree"
-
-
-msgid "Use Embree as ray accelerator"
-msgstr "Использовать Embree в качестве ускорителя лучей"
 
 
 msgid "Allow objects to be culled based on the camera frustum"
@@ -72550,10 +72397,6 @@ msgid "Minimum light intensity for a light to contribute to the lighting"
 msgstr "Минимальная яркость света, чтобы свет от него учитывался в просчёте освещения"
 
 
-msgid "Number of samples to take with motion blur"
-msgstr "Количество сэмплов для формирования размытия движения"
-
-
 msgid "Overscan Size"
 msgstr "Размер вылета за кадр"
 
@@ -72624,10 +72467,6 @@ msgstr "Сэмплов на рендере"
 
 msgid "Number of samples per pixels for rendering"
 msgstr "Количество сэмплов на каждый пиксель во время финального рендера"
-
-
-msgid "Viewport Samples"
-msgstr "Сэмплов во вьюпорте"
 
 
 msgid "Number of samples, unlimited if 0"
@@ -72704,6 +72543,10 @@ msgstr "Рефракция в пространстве экрана"
 
 msgid "Enable screen space Refractions"
 msgstr "Включить преломления в пространстве экрана"
+
+
+msgid "Viewport Denoising"
+msgstr "Шумоподавление вьюпорта"
 
 
 msgid "Denoise image using temporal reprojection (can leave some ghosting)"
@@ -74157,10 +74000,6 @@ msgid "Effect name"
 msgstr "Название эффекта"
 
 
-msgid "Set effect expanded in the user interface"
-msgstr "Развернуть параметры эффекта"
-
-
 msgid "Display effect in Edit mode"
 msgstr "Показывать эффект в режиме редактирования"
 
@@ -74291,10 +74130,6 @@ msgstr "Эффект пикселизации"
 
 msgid "Pixelate effect"
 msgstr "Эффект пикселизации"
-
-
-msgid "Color used for lines"
-msgstr "Цвет, используемый для линий"
 
 
 msgid "Pixel size"
@@ -84067,14 +83902,6 @@ msgid "Anim Player"
 msgstr "Остановить"
 
 
-msgid "File Path:"
-msgstr "Путь к файлу:"
-
-
-msgid "Manual Transform:"
-msgstr "Ручная трансформация:"
-
-
 msgid "Indirect library data-block, cannot change"
 msgstr "Невозможно изменить датаблок из не напрямую соединённой библиотеки"
 
@@ -84295,11 +84122,6 @@ msgid "Browse ID data to be linked"
 msgstr "Выбор связываемых данных идентификаторов"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Применить"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "Создать"
@@ -84429,8 +84251,8 @@ msgid "%d items"
 msgstr "%d элем."
 
 
-msgid "Archive Options:"
-msgstr "Активные опции:"
+msgid "Manual Transform:"
+msgstr "Ручная трансформация:"
 
 
 msgid "Scene Options:"
@@ -85536,10 +85358,6 @@ msgid "Object '%s' already has a Rigid Body Constraint"
 msgstr "У объекта «%s» уже есть ограничитель твёрдых тел"
 
 
-msgid "Air"
-msgstr "Воздух"
-
-
 msgid "Acrylic"
 msgstr "Акрил"
 
@@ -86213,6 +86031,10 @@ msgid "Fields"
 msgstr "Поля"
 
 
+msgid "File Path:"
+msgstr "Путь к файлу:"
+
+
 msgid "Track is locked"
 msgstr "Трек заблокирован"
 
@@ -86814,6 +86636,10 @@ msgid " | Free GPU Mem: %s"
 msgstr " | Свободно памяти GPU: %s"
 
 
+msgid "Sync Length"
+msgstr "Синхронизировать длину"
+
+
 msgid "Now"
 msgstr "Сейчас"
 
@@ -87272,10 +87098,6 @@ msgstr "Блок данных будет сохранён с использов�
 
 msgid "Data-block has no users and will be deleted"
 msgstr "Блок данных не используется и будет удалён"
-
-
-msgid "Data-block has a 'fake' user which will keep it in the file even if nothing else uses it"
-msgstr "У этого блока данных есть «фиктивный» пользователь, который позволит сохранять блок, даже если он нигде не используется"
 
 
 msgctxt "Action"
@@ -88417,6 +88239,15 @@ msgid "Cannot open file: %s"
 msgstr "Не удалось открыть файл: %s"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Применить"
+
+
+msgid "Bone Envelopes"
+msgstr "Обёртки кости"
+
+
 msgid "AaBbCc"
 msgstr "АаБбФф"
 
@@ -89325,10 +89156,6 @@ msgstr "Оператор «%s» не найден"
 
 msgid "Gizmo group '%s' not found!"
 msgstr "Группа манипуляторов «%s» не найдена!"
-
-
-msgid "Bone Envelopes"
-msgstr "Обёртки кости"
 
 
 msgid "Outer"

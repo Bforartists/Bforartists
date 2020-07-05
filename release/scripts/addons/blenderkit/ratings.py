@@ -139,7 +139,7 @@ def upload_rating(asset):
     headers = utils.get_headers(api_key)
 
     bkit_ratings = asset.bkit_ratings
-    # print('rating asset', asset_data['name'], asset_data['asset_base_id'])
+    # print('rating asset', asset_data['name'], asset_data['assetBaseId'])
     url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
 
     ratings = [
@@ -168,7 +168,7 @@ def upload_rating(asset):
     s = bpy.context.scene
     s['assets rated'] = s.get('assets rated', {})
     if bkit_ratings.rating_quality > 0.1 and bkit_ratings.rating_work_hours > 0.1:
-        s['assets rated'][asset['asset_data']['asset_base_id']] = True
+        s['assets rated'][asset['asset_data']['assetBaseId']] = True
 
 
 class StarRatingOperator(bpy.types.Operator):

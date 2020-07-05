@@ -126,14 +126,14 @@ static ListBase selected_objects_get(bContext *C);
 /** \name Internal Utilities
  * \{ */
 
-Object *ED_object_context(bContext *C)
+Object *ED_object_context(const bContext *C)
 {
   return CTX_data_pointer_get_type(C, "object", &RNA_Object).data;
 }
 
 /* find the correct active object per context
  * note: context can be NULL when called from a enum with PROP_ENUM_NO_CONTEXT */
-Object *ED_object_active_context(bContext *C)
+Object *ED_object_active_context(const bContext *C)
 {
   Object *ob = NULL;
   if (C) {
@@ -156,9 +156,7 @@ static bool object_hide_poll(bContext *C)
   if (CTX_wm_space_outliner(C) != NULL) {
     return ED_outliner_collections_editor_poll(C);
   }
-  else {
-    return ED_operator_view3d_active(C);
-  }
+  return ED_operator_view3d_active(C);
 }
 
 static int object_hide_view_clear_exec(bContext *C, wmOperator *op)
@@ -600,7 +598,8 @@ bool ED_object_editmode_enter_ex(Main *bmain, Scene *scene, Object *ob, int flag
 {
   bool ok = false;
 
-  if (ELEM(NULL, ob, ob->data) || ID_IS_LINKED(ob)) {
+  if (ELEM(NULL, ob, ob->data) || ID_IS_LINKED(ob) || ID_IS_OVERRIDE_LIBRARY(ob) ||
+      ID_IS_OVERRIDE_LIBRARY(ob->data)) {
     return false;
   }
 
@@ -695,14 +694,10 @@ bool ED_object_editmode_enter(bContext *C, int flag)
 {
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
-  Object *ob;
 
   /* Active layer checked here for view3d,
    * callers that don't want view context can call the extended version. */
-  ob = CTX_data_active_object(C);
-  if ((ob == NULL) || ID_IS_LINKED(ob)) {
-    return false;
-  }
+  Object *ob = CTX_data_active_object(C);
   return ED_object_editmode_enter_ex(bmain, scene, ob, flag);
 }
 
@@ -760,7 +755,8 @@ static bool editmode_toggle_poll(bContext *C)
   Object *ob = CTX_data_active_object(C);
 
   /* covers proxies too */
-  if (ELEM(NULL, ob, ob->data) || ID_IS_LINKED(ob->data)) {
+  if (ELEM(NULL, ob, ob->data) || ID_IS_LINKED(ob->data) || ID_IS_OVERRIDE_LIBRARY(ob) ||
+      ID_IS_OVERRIDE_LIBRARY(ob->data)) {
     return 0;
   }
 
@@ -1368,7 +1364,8 @@ static bool shade_poll(bContext *C)
   Object *obact = OBACT(view_layer);
   if (obact != NULL) {
     /* Doesn't handle edit-data, sculpt dynamic-topology, or their undo systems. */
-    if (obact->mode & (OB_MODE_EDIT | OB_MODE_SCULPT)) {
+    if (obact->mode & (OB_MODE_EDIT | OB_MODE_SCULPT) || obact->data == NULL ||
+        ID_IS_OVERRIDE_LIBRARY(obact) || ID_IS_OVERRIDE_LIBRARY(obact->data)) {
       return false;
     }
   }
@@ -1635,15 +1632,14 @@ static bool move_to_collection_poll(bContext *C)
   if (CTX_wm_space_outliner(C) != NULL) {
     return ED_outliner_collections_editor_poll(C);
   }
-  else {
-    View3D *v3d = CTX_wm_view3d(C);
 
-    if (v3d && v3d->localvd) {
-      return false;
-    }
+  View3D *v3d = CTX_wm_view3d(C);
 
-    return ED_operator_objectmode(C);
+  if (v3d && v3d->localvd) {
+    return false;
   }
+
+  return ED_operator_objectmode(C);
 }
 
 static int move_to_collection_exec(bContext *C, wmOperator *op)

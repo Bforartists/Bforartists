@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -1799,10 +1799,6 @@ msgid "Limit Distance Constraint"
 msgstr "Izgara çizgileri arasındaki mesafeyi ayarlayın"
 
 
-msgid "For Transform"
-msgstr "Görsel Dönüşüm"
-
-
 msgid "Limit Location Constraint"
 msgstr "Varsayılan ses konumu seçin"
 
@@ -3280,10 +3276,6 @@ msgid "Start"
 msgstr "Başlat"
 
 
-msgid "Final"
-msgstr "Sonuç "
-
-
 msgid "Cell Size"
 msgstr "Ekstrüzyon Boyutu"
 
@@ -3350,6 +3342,10 @@ msgstr "Tam Ekran"
 
 msgid "Nearest"
 msgstr "En yakın Kare"
+
+
+msgid "Final"
+msgstr "Sonuç "
 
 
 msgid "Preview"
@@ -4904,6 +4900,10 @@ msgid "Polygons of the mesh"
 msgstr "Mesh Araçları"
 
 
+msgid "All vertex colors"
+msgstr "Ebeveyn Nokta Oluştur"
+
+
 msgid "Skin Vertices"
 msgstr "Noktalar"
 
@@ -4982,10 +4982,6 @@ msgstr "Tüm Katmanları Göster"
 
 msgid "Vertex Colors"
 msgstr "Nokta Boyama"
-
-
-msgid "All vertex colors"
-msgstr "Ebeveyn Nokta Oluştur"
 
 
 msgid "Vertices"
@@ -12323,6 +12319,10 @@ msgid "Draw Poly Line"
 msgstr "Satır numaralarını göster"
 
 
+msgid "Side"
+msgstr "Sağ Yan"
+
+
 msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "Eğriyi buna Çevir"
@@ -12417,10 +12417,6 @@ msgstr "Katman Sil"
 
 msgid "Keep Original"
 msgstr "Orijinali Koru"
-
-
-msgid "Side"
-msgstr "Sağ Yan"
 
 
 msgid "Mouse location"
@@ -13358,7 +13354,6 @@ msgid "Extrude Individual Faces"
 msgstr "Yalnızca Görülen Yüzey"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Ekstrüzyon Boyutu"
 
@@ -13367,6 +13362,7 @@ msgid "Extrude region of faces"
 msgstr "Yalnızca Görülen Yüzey"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Ekstrüzyon Boyutu"
 
@@ -13695,6 +13691,14 @@ msgid "Turns"
 msgstr "Devir:"
 
 
+msgid "Add vertex color layer"
+msgstr "Yeni bir nokta rengi katmanı oluştur"
+
+
+msgid "Remove vertex color layer"
+msgstr "Yeni bir nokta rengi katmanı oluştur"
+
+
 msgctxt "Operator"
 msgid "Select Axis"
 msgstr "Yatay Eksen"
@@ -13925,16 +13929,8 @@ msgid "Add Vertex Color"
 msgstr "Yeni bir nokta rengi katmanı oluştur"
 
 
-msgid "Add vertex color layer"
-msgstr "Yeni bir nokta rengi katmanı oluştur"
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
-msgstr "Yeni bir nokta rengi katmanı oluştur"
-
-
-msgid "Remove vertex color layer"
 msgstr "Yeni bir nokta rengi katmanı oluştur"
 
 
@@ -18548,10 +18544,6 @@ msgid "Use Deform Only"
 msgstr "Yalnızca Görülen Yüzey"
 
 
-msgid "Use OpenMP"
-msgstr "Kırpma Kullan"
-
-
 msgid "UV Sculpting"
 msgstr "UV "
 
@@ -19333,10 +19325,6 @@ msgid "Duplicate Action"
 msgstr "Hareket Editörü "
 
 
-msgid "Causes actions to be duplicated with the object"
-msgstr "Shift+D ile Armature bilgisini çoğalt"
-
-
 msgid "Duplicate Armature"
 msgstr "Bağlantılı Çoğalt"
 
@@ -19853,30 +19841,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Konum Kısıtlamaları"
 
 
-msgid "Type of primitive used for hair rendering"
-msgstr "Sunumda kullanılacak hesaplama aygıtı"
-
-
-msgid "Line Segments"
-msgstr "Kemik Kısıtlamaları"
-
-
-msgid "Curve Segments"
-msgstr "Kemik Kısıtlamaları"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Eğri ve Yüzey"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "Merkezi İşlem Birimi Kullanılıyor"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Dahil Olduğu tüm grup"
-
-
 msgid "Cast Shadow"
 msgstr "Mesh Gölgesini Çiz"
 
@@ -20006,10 +19970,6 @@ msgstr "Parçacık Hareketi"
 
 
 msgid "Pause Preview"
-msgstr "Birleşik Önizleme..."
-
-
-msgid "Preview Samples"
 msgstr "Birleşik Önizleme..."
 
 
@@ -23243,10 +23203,6 @@ msgid "Anim Player"
 msgstr "Anim Oynatıcısı"
 
 
-msgid "File Path:"
-msgstr "Dosya Yolu:"
-
-
 msgid "Reset operator defaults"
 msgstr "Kullanıcı ayarlarını (varsayılanı) kaydet"
 
@@ -23361,11 +23317,6 @@ msgstr "Eskiz Kalemi Verileri bağına gözat"
 
 msgid "Browse ID data to be linked"
 msgstr "Kimlik Verileri bağına gözat"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Uygula"
 
 
 msgctxt "Scene"
@@ -23771,6 +23722,10 @@ msgstr "Aktif F-Eğrisi"
 
 msgid "Active Keyframe"
 msgstr "Aktif Anahtarkare"
+
+
+msgid "File Path:"
+msgstr "Dosya Yolu:"
 
 
 msgid "Track is locked"
@@ -24224,6 +24179,15 @@ msgid "Clear Seam"
 msgstr "Dikişi Temizle"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Uygula"
+
+
+msgid "Bone Envelopes"
+msgstr "Kemik Kısıtlamaları"
+
+
 msgid "Keying set path could not be added"
 msgstr "Kesit Sınırı Oluştur"
 
@@ -24306,10 +24270,6 @@ msgstr "Aktif Grubu Sil"
 
 msgid "Property value not in enumeration"
 msgstr "ID Özellik Gezgini"
-
-
-msgid "Bone Envelopes"
-msgstr "Kemik Kısıtlamaları"
 
 
 msgid "Outer"

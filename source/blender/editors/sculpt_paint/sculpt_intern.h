@@ -148,6 +148,15 @@ void SCULPT_active_vertex_normal_get(SculptSession *ss, float normal[3]);
 
 bool SCULPT_vertex_is_boundary(SculptSession *ss, const int index);
 
+/* Fake Neighbors */
+
+#define FAKE_NEIGHBOR_NONE -1
+
+void SCULPT_fake_neighbors_ensure(struct Sculpt *sd, Object *ob, const float max_dist);
+void SCULPT_fake_neighbors_enable(Object *ob);
+void SCULPT_fake_neighbors_disable(Object *ob);
+void SCULPT_fake_neighbors_free(struct Object *ob);
+
 /* Sculpt Visibility API */
 
 void SCULPT_vertex_visible_set(SculptSession *ss, int index, bool visible);
@@ -173,6 +182,10 @@ bool SCULPT_vertex_any_face_set_visible_get(SculptSession *ss, int index);
 
 void SCULPT_face_sets_visibility_invert(SculptSession *ss);
 void SCULPT_face_sets_visibility_all_set(SculptSession *ss, bool visible);
+
+bool SCULPT_stroke_is_main_symmetry_pass(struct StrokeCache *cache);
+bool SCULPT_stroke_is_first_brush_step(struct StrokeCache *cache);
+bool SCULPT_stroke_is_first_brush_step_of_symmetry_pass(struct StrokeCache *cache);
 
 /* Sculpt Original Data */
 typedef struct {
@@ -573,6 +586,7 @@ typedef struct SculptThreadedTaskData {
 
   int filter_type;
   float filter_strength;
+  float *filter_fill_color;
 
   bool use_area_cos;
   bool use_area_nos;
@@ -618,6 +632,16 @@ typedef struct SculptThreadedTaskData {
   float dirty_mask_min;
   float dirty_mask_max;
   bool dirty_mask_dirty_only;
+
+  /* Mask By Color Tool */
+
+  float mask_by_color_threshold;
+  bool mask_by_color_invert;
+  bool mask_by_color_preserve_mask;
+
+  /* Index of the vertex that is going to be used as a reference for the colors. */
+  int mask_by_color_vertex;
+  float *mask_by_color_floodfill;
 
   int face_set;
   int filter_undo_type;

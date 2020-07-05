@@ -257,7 +257,7 @@ def draw_ratings_bgl():
             #     b = utils.get_active_brush()
             #     thumbnail_image = b.icon_filepath
 
-            directory = paths.get_temp_dir('%s_search' % asset_data['asset_type'])
+            directory = paths.get_temp_dir('%s_search' % asset_data['assetType'])
             tpath = os.path.join(directory, asset_data['thumbnail_small'])
 
             img = utils.get_hidden_image(tpath, 'rating_preview')
@@ -274,7 +274,7 @@ def draw_ratings_bgl():
                          ui.rating_ui_width + ui.margin,
                          ui.rating_ui_height + 2 * ui.margin + font_size,
                          bgcol)
-        if asset_data['asset_type'] == 'model':
+        if asset_data['assetType'] == 'model':
             ui_img_name = 'rating_ui.png'
         else:
             ui_img_name = 'rating_ui_empty.png'
@@ -303,7 +303,7 @@ def draw_ratings_bgl():
         img = utils.get_thumbnail('bar_slider.png')
         # for a in range(0,11):
         if work_hours > 0.2:
-            if asset_data['asset_type'] == 'model':
+            if asset_data['assetType'] == 'model':
                 complexity = math.log2(work_hours) + 2  # real complexity
                 complexity = (1. / 9.) * (complexity - 1) * ui.workhours_bar_x_max
             else:
@@ -321,7 +321,7 @@ def draw_ratings_bgl():
         # (0.5,1,2,4,8,16,32,64,128,256)
         # ratings have to be different for models and brushes+materials.
 
-        scalevalues, xs = get_rating_scalevalues(asset_data['asset_type'])
+        scalevalues, xs = get_rating_scalevalues(asset_data['assetType'])
         for v, x in zip(scalevalues, xs):
             ui_bgl.draw_rect(ui.rating_x + ui.workhours_bar_x + int(
                 x * ui.workhours_bar_x_max) - 1 + ui.workhours_bar_slider_size / 2,
@@ -650,7 +650,7 @@ def draw_callback_3d_progress(self, context):
         tcom = threaddata[2]
         if tcom.passargs.get('downloaders'):
             for d in tcom.passargs['downloaders']:
-                if asset_data['asset_type'] == 'model':
+                if asset_data['assetType'] == 'model':
                     draw_bbox(d['location'], d['rotation'], asset_data['bbox_min'], asset_data['bbox_max'],
                               progress=tcom.progress)
 
@@ -669,7 +669,7 @@ def draw_callback_2d_progress(self, context):
         asset_data = threaddata[1]
         tcom = threaddata[2]
 
-        directory = paths.get_temp_dir('%s_search' % asset_data['asset_type'])
+        directory = paths.get_temp_dir('%s_search' % asset_data['assetType'])
         tpath = os.path.join(directory, asset_data['thumbnail_small'])
         img = utils.get_hidden_image(tpath, asset_data['id'])
 
@@ -679,7 +679,7 @@ def draw_callback_2d_progress(self, context):
                 loc = view3d_utils.location_3d_to_region_2d(bpy.context.region, bpy.context.space_data.region_3d,
                                                             d['location'])
                 if loc is not None:
-                    if asset_data['asset_type'] == 'model':
+                    if asset_data['assetType'] == 'model':
                         # models now draw with star trek mode, no need to draw percent for the image.
                         draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img)
                     else:
@@ -823,11 +823,11 @@ def draw_callback_2d_search(self, context):
                     # object type icons - just a test..., adds clutter/ not so userfull:
                     # icons = ('type_finished.png', 'type_template.png', 'type_particle_system.png')
 
-                    if (result.get('can_download', True)) == 0:
+                    if (result.get('canDownload', True)) == 0:
                         img = utils.get_thumbnail('locked.png')
                         ui_bgl.draw_image(x + 2, y + 2, 24, 24, img, 1)
 
-                    v_icon = verification_icons[result.get('verification_status', 'validated')]
+                    v_icon = verification_icons[result.get('verificationStatus', 'validated')]
                     if v_icon is not None:
                         img = utils.get_thumbnail(v_icon)
                         ui_bgl.draw_image(x + ui_props.thumb_size - 26, y + 2, 24, 24, img, 1)
@@ -881,7 +881,7 @@ def draw_callback_2d_search(self, context):
                 gimg = None
                 atip = ''
                 if bpy.context.window_manager.get('bkit authors') is not None:
-                    a = bpy.context.window_manager['bkit authors'].get(r['author_id'])
+                    a = bpy.context.window_manager['bkit authors'].get(r['author']['id'])
                     if a is not None and a != '':
                         if a.get('gravatarImg') is not None:
                             gimg = utils.get_hidden_image(a['gravatarImg'], a['gravatarHash'])
@@ -999,7 +999,7 @@ def is_rating_possible():
             b = utils.get_active_brush()
             ad = b.get('asset_data')
             if ad is not None:
-                rated = bpy.context.scene['assets rated'].get(ad['asset_base_id'])
+                rated = bpy.context.scene['assets rated'].get(ad['assetBaseId'])
                 return True, rated, b, ad
         if ao is not None:
             ad = None
@@ -1008,7 +1008,7 @@ def is_rating_possible():
             while ad is None or (ad is None and ao_check.parent is not None):
                 ad = ao_check.get('asset_data')
                 if ad is not None:
-                    rated = bpy.context.scene['assets rated'].get(ad['asset_base_id'])
+                    rated = bpy.context.scene['assets rated'].get(ad['assetBaseId'])
                     # originally hidden for already rated assets
                     return True, rated, ao_check, ad
                 elif ao_check.parent is not None:
@@ -1021,7 +1021,7 @@ def is_rating_possible():
             if m is not None:
                 ad = m.get('asset_data')
                 if ad is not None:
-                    rated = bpy.context.scene['assets rated'].get(ad['asset_base_id'])
+                    rated = bpy.context.scene['assets rated'].get(ad['assetBaseId'])
                     return True, rated, m, ad
 
         # if t>2 and t<2.5:
@@ -1092,7 +1092,7 @@ def interact_rating(r, mx, my, event):
                     if ui.dragging_rating_work_hours:
                         xv = rmx - ui.workhours_bar_x - ui.workhours_bar_slider_size / 2
                         ratio = xv / ui.workhours_bar_x_max
-                        if asset_data['asset_type'] == 'model':
+                        if asset_data['assetType'] == 'model':
                             wh_log2 = ratio * 9 - 1
                             wh = 2 ** wh_log2
                         else:
@@ -1254,6 +1254,14 @@ class AssetBarOperator(bpy.types.Operator):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
         areas = []
+
+
+        #timers testing - seems timers might be causing crashes. testing it this way now.
+        if not user_preferences.use_timers:
+                search.timer_update()
+                download.timer_update()
+                tasks_queue.queue_worker()
+                bg_blender.bg_update()
 
         if bpy.context.scene != self.scene:
             self.exit_modal()
@@ -1505,7 +1513,7 @@ class AssetBarOperator(bpy.types.Operator):
                     # check if asset is locked and let the user know in that case
                     asset_search_index = ui_props.active_index
                     asset_data = sr[asset_search_index]
-                    if not asset_data['can_download']:
+                    if not asset_data.get('canDownload'):
                         message = "Let's support asset creators and Blender development."
                         link_text = 'Unlock the asset.'
                         url = paths.get_bkit_url() + '/get-blenderkit/' + asset_data['id'] + '/?from_addon'
@@ -1667,7 +1675,7 @@ class AssetBarOperator(bpy.types.Operator):
         if event.type == 'W' and ui_props.active_index > -1:
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
-            a = bpy.context.window_manager['bkit authors'].get(asset_data['author_id'])
+            a = bpy.context.window_manager['bkit authors'].get(asset_data['author']['id'])
             if a is not None:
                 utils.p('author:', a)
                 if a.get('aboutMeUrl') is not None:
@@ -1676,7 +1684,7 @@ class AssetBarOperator(bpy.types.Operator):
         if event.type == 'A' and ui_props.active_index > -1:
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
-            a = asset_data['author_id']
+            a = asset_data['author']['id']
             if a is not None:
                 sprops = utils.get_search_props()
                 sprops.search_keywords = ''

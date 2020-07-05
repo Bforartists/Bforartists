@@ -18,12 +18,11 @@
 
 # <pep8 compliant>
 import bpy, math
-from ....utils       import MetarigError, connected_children_names
-from ....utils       import create_widget, copy_bone, create_circle_widget
-from ....utils       import strip_org, flip_bone, put_bone
+from ....utils       import connected_children_names, create_circle_widget
+from ....utils       import copy_bone, flip_bone, put_bone
 from rna_prop_ui     import rna_idprop_ui_prop_get
 from ..super_widgets import create_foot_widget, create_ballsocket_widget
-from .limb_utils     import *
+from .limb_utils     import orient_bone, make_constraint, get_bone_name
 
 from .....utils.mechanism import make_property
 

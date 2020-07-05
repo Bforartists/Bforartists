@@ -18,9 +18,7 @@
 
 # <pep8 compliant>
 
-import bpy
-import sys
-import traceback
+import collections
 
 from .utils.errors import RaiseErrorMixin
 from .utils.bones import BoneDict, BoneUtilityMixin
@@ -194,11 +192,15 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
         self.rigify_child_bones = set()
         # Bones created by the rig (mapped to original names)
         self.rigify_new_bones = dict()
+        self.rigify_derived_bones = collections.defaultdict(set)
 
     def register_new_bone(self, new_name, old_name=None):
         """Registers this rig as the owner of this new bone."""
         self.rigify_new_bones[new_name] = old_name
         self.generator.bone_owners[new_name] = self
+        if old_name:
+            self.rigify_derived_bones[old_name].add(new_name)
+            self.generator.derived_bones[old_name].add(new_name)
 
     ###########################################################
     # Bone ownership

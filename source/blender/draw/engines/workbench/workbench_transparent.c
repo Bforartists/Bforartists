@@ -157,7 +157,7 @@ void workbench_transparent_draw_depth_pass(WORKBENCH_Data *data)
   WORKBENCH_FramebufferList *fbl = data->fbl;
   WORKBENCH_PassList *psl = data->psl;
 
-  const bool do_xray_depth_pass = XRAY_ALPHA(wpd) > 0.0f;
+  const bool do_xray_depth_pass = !XRAY_FLAG_ENABLED(wpd) || XRAY_ALPHA(wpd) > 0.0f;
   const bool do_transparent_depth_pass = psl->outline_ps || wpd->dof_enabled || do_xray_depth_pass;
 
   if (do_transparent_depth_pass) {
@@ -165,14 +165,14 @@ void workbench_transparent_draw_depth_pass(WORKBENCH_Data *data)
 
     if (!DRW_pass_is_empty(psl->transp_accum_ps)) {
       GPU_framebuffer_bind(fbl->opaque_fb);
-      /* TODO(fclem) Disable writting to first two buffers. Unecessary waste of bandwidth. */
+      /* TODO(fclem) Disable writing to first two buffers. Unnecessary waste of bandwidth. */
       DRW_pass_state_set(psl->transp_accum_ps, state | wpd->cull_state | wpd->clip_state);
       DRW_draw_pass(psl->transp_accum_ps);
     }
 
     if (!DRW_pass_is_empty(psl->transp_accum_infront_ps)) {
       GPU_framebuffer_bind(fbl->opaque_infront_fb);
-      /* TODO(fclem) Disable writting to first two buffers. Unecessary waste of bandwidth. */
+      /* TODO(fclem) Disable writing to first two buffers. Unnecessary waste of bandwidth. */
       DRW_pass_state_set(psl->transp_accum_infront_ps, state | wpd->cull_state | wpd->clip_state);
       DRW_draw_pass(psl->transp_accum_infront_ps);
     }

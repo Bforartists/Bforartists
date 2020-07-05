@@ -122,7 +122,7 @@ void ED_scene_change_update(Main *bmain, Scene *scene, ViewLayer *layer)
   DEG_graph_relations_update(depsgraph, bmain, scene, layer);
   DEG_on_visible_update(bmain, false);
 
-  ED_render_engine_changed(bmain);
+  ED_render_engine_changed(bmain, false);
   ED_update_for_newframe(bmain, depsgraph);
 }
 
@@ -133,8 +133,8 @@ static bool view_layer_remove_poll(const Scene *scene, const ViewLayer *layer)
   if (act == -1) {
     return false;
   }
-  else if ((scene->view_layers.first == scene->view_layers.last) &&
-           (scene->view_layers.first == layer)) {
+  if ((scene->view_layers.first == scene->view_layers.last) &&
+      (scene->view_layers.first == layer)) {
     /* ensure 1 layer is kept */
     return false;
   }

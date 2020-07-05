@@ -221,9 +221,7 @@ float SCULPT_neighbor_mask_average(SculptSession *ss, int index)
   if (total > 0) {
     return avg / (float)total;
   }
-  else {
-    return SCULPT_vertex_mask_get(ss, index);
-  }
+  return SCULPT_vertex_mask_get(ss, index);
 }
 
 void SCULPT_neighbor_color_average(SculptSession *ss, float result[4], int index)
@@ -453,7 +451,7 @@ void SCULPT_smooth(Sculpt *sd,
     };
 
     TaskParallelSettings settings;
-    BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+    BKE_pbvh_parallel_range_settings(&settings, true, totnode);
 
     switch (type) {
       case PBVH_GRIDS:
@@ -612,8 +610,7 @@ void SCULPT_do_surface_smooth_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, in
   Brush *brush = BKE_paint_brush(&sd->paint);
   SculptSession *ss = ob->sculpt;
 
-  if (ss->cache->first_time && ss->cache->mirror_symmetry_pass == 0 &&
-      ss->cache->radial_symmetry_pass == 0) {
+  if (SCULPT_stroke_is_first_brush_step(ss->cache)) {
     BLI_assert(ss->cache->surface_smooth_laplacian_disp == NULL);
     ss->cache->surface_smooth_laplacian_disp = MEM_callocN(
         SCULPT_vertex_count_get(ss) * 3 * sizeof(float), "HC smooth laplacian b");
@@ -628,7 +625,7 @@ void SCULPT_do_surface_smooth_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, in
   };
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   for (int i = 0; i < brush->surface_smooth_iterations; i++) {
     BLI_task_parallel_range(
         0, totnode, &data, SCULPT_do_surface_smooth_brush_laplacian_task_cb_ex, &settings);

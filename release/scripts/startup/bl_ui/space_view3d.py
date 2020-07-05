@@ -4995,6 +4995,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
         layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
 
+        props = layout.operator("mesh.loopcut_slide", icon = "LOOP_CUT_AND_SLIDE")
+        props.TRANSFORM_OT_edge_slide.release_confirm = False
         layout.operator("mesh.offset_edge_loops_slide", icon = "OFFSET_EDGE_SLIDE")
 
         layout.separator()

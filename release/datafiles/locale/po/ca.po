@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1931,10 +1931,6 @@ msgid "Limit the distance from target object"
 msgstr "Seleccionar connectats"
 
 
-msgid "For Transform"
-msgstr "Aplicar Deformació"
-
-
 msgid "Limit Location Constraint"
 msgstr "Esborrar Posició"
 
@@ -3488,10 +3484,6 @@ msgid "Start"
 msgstr "Començar Joc"
 
 
-msgid "Final"
-msgstr "Esborrar Origen"
-
-
 msgid "Cell Size"
 msgstr "Extrusionar"
 
@@ -3542,6 +3534,10 @@ msgstr "Guardar"
 
 msgid "Nearest"
 msgstr "Començar Joc"
+
+
+msgid "Final"
+msgstr "Esborrar Origen"
 
 
 msgid "Preview"
@@ -5176,6 +5172,10 @@ msgid "Polygons of the mesh"
 msgstr "Seleccionar connectats"
 
 
+msgid "All vertex colors"
+msgstr "Separar"
+
+
 msgid "Skin Vertices"
 msgstr "Corba"
 
@@ -5265,10 +5265,6 @@ msgstr "Moure a Capa"
 
 
 msgid "Vertex Colors"
-msgstr "Separar"
-
-
-msgid "All vertex colors"
 msgstr "Separar"
 
 
@@ -12722,19 +12718,11 @@ msgid "(De)select all control points"
 msgstr "Menú Esborrar"
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "Seleccionar connectats"
-
-
 msgid "Select all control points linked to already selected ones"
 msgstr "Seleccionar connectats"
 
 
 msgid "Deselect linked control points rather than selecting them"
-msgstr "Seleccionar connectats"
-
-
-msgid "Select control points directly linked to already selected ones"
 msgstr "Seleccionar connectats"
 
 
@@ -13506,6 +13494,10 @@ msgid "Eraser"
 msgstr "Goma d'esborrar"
 
 
+msgid "Side"
+msgstr "Costat"
+
+
 msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "Començar Joc"
@@ -13596,10 +13588,6 @@ msgstr "Moure a Capa"
 
 msgid "Keep Original"
 msgstr "Esborrar Origen"
-
-
-msgid "Side"
-msgstr "Costat"
 
 
 msgid "Mouse location"
@@ -14647,7 +14635,6 @@ msgid "Shrink/Fatten"
 msgstr "Contreure/Engreixar"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Extrusionar"
 
@@ -14656,6 +14643,7 @@ msgid "Extrude region of faces"
 msgstr "Extrusionar"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Extrusionar"
 
@@ -15039,6 +15027,14 @@ msgid "Screw"
 msgstr "Emparentar"
 
 
+msgid "Add vertex color layer"
+msgstr "Render"
+
+
+msgid "Remove vertex color layer"
+msgstr "Render"
+
+
 msgid "(De)select all vertices, edges or faces"
 msgstr "Seleccionar connectats"
 
@@ -15326,17 +15322,9 @@ msgid "Add Vertex Color"
 msgstr "Pintura Vectorial"
 
 
-msgid "Add vertex color layer"
-msgstr "Render"
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "Pintura Vectorial"
-
-
-msgid "Remove vertex color layer"
-msgstr "Render"
 
 
 msgid "Flatten angles of selected vertices"
@@ -20330,10 +20318,6 @@ msgid "Use Deform Only"
 msgstr "Corba"
 
 
-msgid "Use OpenMP"
-msgstr "Començar Joc"
-
-
 msgid "UV Sculpting"
 msgstr "Mode d'Edició"
 
@@ -21550,30 +21534,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Seleccionar connectats"
 
 
-msgid "Type of primitive used for hair rendering"
-msgstr "Finestra de Render"
-
-
-msgid "Line Segments"
-msgstr "Crea Segment"
-
-
-msgid "Curve Segments"
-msgstr "Emparentar"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Seleccionar connectats"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "Guardar com"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Image Displist"
-
-
 msgid "Cast Shadow"
 msgstr "Corba"
 
@@ -21748,10 +21708,6 @@ msgstr "Esborrar"
 
 msgid "Pause Preview"
 msgstr "Anterior"
-
-
-msgid "Preview Samples"
-msgstr "Image Displist"
 
 
 msgid "Start Resolution"
@@ -25235,10 +25191,6 @@ msgid "Anim Player"
 msgstr "Finestra de Render"
 
 
-msgid "File Path:"
-msgstr "Arxiu"
-
-
 msgid "Reset operator defaults"
 msgstr "Començar Joc"
 
@@ -25269,11 +25221,6 @@ msgstr "Afegir Tira"
 
 msgid "Stop animation playback"
 msgstr "Finestra de Render"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Aplicar Tamany/Rotació"
 
 
 msgctxt "Scene"
@@ -25663,6 +25610,10 @@ msgstr "Moure a Capa"
 
 msgid "Fields"
 msgstr "Camps"
+
+
+msgid "File Path:"
+msgstr "Arxiu"
 
 
 msgid "Track is locked"
@@ -26107,6 +26058,15 @@ msgid "Clear Seam"
 msgstr "Desparentar"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Aplicar Tamany/Rotació"
+
+
+msgid "Bone Envelopes"
+msgstr "Afegir Tira"
+
+
 msgid "Keying set path could not be added"
 msgstr "Moure a Capa"
 
@@ -26197,10 +26157,6 @@ msgstr "Finestra de Render"
 
 msgid "Property value not in enumeration"
 msgstr "Image Displist"
-
-
-msgid "Bone Envelopes"
-msgstr "Afegir Tira"
 
 
 msgid "Create Along Paths"
