@@ -327,8 +327,8 @@ enum {
 #define FLUID_NAME_PP_MESH "pp_mesh"
 #define FLUID_NAME_FLAGS_MESH "flags_mesh"
 #define FLUID_NAME_LMESH "lMesh"
-#define FLUID_NAME_VELOCITYVEC_MESH "vertex_velocities_mesh" /* == OpenVDB grid attribute name. \
-                                                              */
+/* == OpenVDB grid attribute name. */
+#define FLUID_NAME_VELOCITYVEC_MESH "vertex_velocities_mesh"
 #define FLUID_NAME_VELOCITY_MESH "velocity_mesh"
 #define FLUID_NAME_PINDEX_MESH "pindex_mesh"
 #define FLUID_NAME_GPI_MESH "gpi_mesh"
@@ -338,11 +338,12 @@ enum {
 #define FLUID_NAME_PVEL_PARTICLES "pVelSnd"
 #define FLUID_NAME_PLIFE_PARTICLES "pLifeSnd"
 #define FLUID_NAME_PFORCE_PARTICLES "pForceSnd"
-#define FLUID_NAME_PARTS_PARTICLES "particles_secondary" /* == OpenVDB grid attribute name. */
-#define FLUID_NAME_PARTSVEL_PARTICLES \
-  "particles_velocity_secondary" /* == OpenVDB grid attribute name. */
-#define FLUID_NAME_PARTSLIFE_PARTICLES \
-  "particles_life_secondary" /* == OpenVDB grid attribute name. */
+/* == OpenVDB grid attribute name. */
+#define FLUID_NAME_PARTS_PARTICLES "particles_secondary"
+/* == OpenVDB grid attribute name. */
+#define FLUID_NAME_PARTSVEL_PARTICLES "particles_velocity_secondary"
+/* == OpenVDB grid attribute name. */
+#define FLUID_NAME_PARTSLIFE_PARTICLES "particles_life_secondary"
 #define FLUID_NAME_PARTSFORCE_PARTICLES "particles_force_secondary"
 #define FLUID_NAME_VELOCITY_PARTICLES "velocity_secondary"
 #define FLUID_NAME_FLAGS_PARTICLES "flags_secondary"
@@ -351,12 +352,12 @@ enum {
 #define FLUID_NAME_PHIOUT_PARTICLES "phiOut_secondary"
 #define FLUID_NAME_NORMAL_PARTICLES "normal_secondary"
 #define FLUID_NAME_NEIGHBORRATIO_PARTICLES "neighbor_ratio_secondary"
-#define FLUID_NAME_TRAPPEDAIR_PARTICLES \
-  "trapped_air_secondary"                                     /* == OpenVDB grid attribute name. */
-#define FLUID_NAME_WAVECREST_PARTICLES "wave_crest_secondary" /* == OpenVDB grid attribute name. \
-                                                               */
-#define FLUID_NAME_KINETICENERGY_PARTICLES \
-  "kinetic_energy_secondary" /* == OpenVDB grid attribute name. */
+/* == OpenVDB grid attribute name. */
+#define FLUID_NAME_TRAPPEDAIR_PARTICLES "trapped_air_secondary"
+/* == OpenVDB grid attribute name. */
+#define FLUID_NAME_WAVECREST_PARTICLES "wave_crest_secondary"
+/* == OpenVDB grid attribute name. */
+#define FLUID_NAME_KINETICENERGY_PARTICLES "kinetic_energy_secondary"
 
 /* Guiding object names. */
 #define FLUID_NAME_VELT "velT"
@@ -426,7 +427,7 @@ typedef struct FluidDomainSettings {
 
   /* -- Runtime-only fields (from here on). -- */
 
-  struct FluidModifierData *mmd; /* For fast RNA access. */
+  struct FluidModifierData *fmd; /* For fast RNA access. */
   struct MANTA *fluid;
   struct MANTA *fluid_old; /* Adaptive domain needs access to old fluid state. */
   void *fluid_mutex;
@@ -579,6 +580,7 @@ typedef struct FluidDomainSettings {
   int cache_frame_pause_mesh;
   int cache_frame_pause_particles;
   int cache_frame_pause_guide;
+  int cache_frame_offset;
   int cache_flag;
   char cache_mesh_format;
   char cache_data_format;
@@ -588,7 +590,7 @@ typedef struct FluidDomainSettings {
   char error[64]; /* Bake error description. */
   short cache_type;
   char cache_id[4]; /* Run-time only */
-  char _pad8[6];
+  char _pad8[2];
 
   /* Time options. */
   float dt;
@@ -687,7 +689,7 @@ typedef struct FluidFlowSettings {
   /* -- Runtime-only fields (from here on). -- */
 
   /* For fast RNA access. */
-  struct FluidModifierData *mmd;
+  struct FluidModifierData *fmd;
   struct Mesh *mesh;
   struct ParticleSystem *psys;
   struct Tex *noise_texture;
@@ -763,7 +765,7 @@ typedef struct FluidEffectorSettings {
   /* -- Runtime-only fields (from here on). -- */
 
   /* For fast RNA access. */
-  struct FluidModifierData *mmd;
+  struct FluidModifierData *fmd;
   struct Mesh *mesh;
   float *verts_old;
   int numverts;

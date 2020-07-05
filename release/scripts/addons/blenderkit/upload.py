@@ -822,10 +822,11 @@ class AssetVerificationStatusChange(Operator):
 
         for r in sr:
             if r['id'] == self.asset_id:
-                r['verification_status'] = self.state
+                r['verificationStatus'] = self.state
         for r in sro:
             if r['id'] == self.asset_id:
                 r['verificationStatus'] = self.state
+
 
         thread = threading.Thread(target=verification_status_change_thread,
                                   args=(self.asset_id, self.state, preferences.api_key))
@@ -837,6 +838,7 @@ class AssetVerificationStatusChange(Operator):
         if self.state == 'deleted':
             wm = context.window_manager
             return wm.invoke_props_dialog(self)
+        return {'RUNNING_MODAL'}
 
 
 def register_upload():

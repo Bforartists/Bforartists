@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4441,10 +4441,6 @@ msgid "Frame on which the simulation starts"
 msgstr "Кадар од кога почиње симулација"
 
 
-msgid "Final"
-msgstr "Коначно"
-
-
 msgid "Cell Size"
 msgstr "Величина ћелије"
 
@@ -4537,6 +4533,10 @@ msgid "Nearest"
 msgstr "Најближе"
 
 
+msgid "Final"
+msgstr "Коначно"
+
+
 msgid "Preview"
 msgstr "Преглед"
 
@@ -4565,12 +4565,12 @@ msgid "Compression"
 msgstr "Компресија"
 
 
-msgid "Compression method to be used"
-msgstr "Избор метода спајања."
-
-
 msgid "Effective but slow compression"
 msgstr "Ефикасна, али спора компресија"
+
+
+msgid "Half"
+msgstr "Упола"
 
 
 msgid "Number"
@@ -4579,6 +4579,10 @@ msgstr "Број"
 
 msgid "Cache Compression"
 msgstr "Компресија"
+
+
+msgid "Compression method to be used"
+msgstr "Избор метода спајања."
 
 
 msgid "Heavy"
@@ -5950,10 +5954,6 @@ msgid "Fill Mode"
 msgstr "Попуни рупе"
 
 
-msgid "Half"
-msgstr "Упола"
-
-
 msgid "Path Length"
 msgstr "Дужина путање"
 
@@ -6770,6 +6770,10 @@ msgid "Polygons of the mesh"
 msgstr "Одређује тврдоћу сјаја"
 
 
+msgid "All vertex colors"
+msgstr "Све боје темена"
+
+
 msgid "Skin Vertices"
 msgstr "Темена коже"
 
@@ -6840,10 +6844,6 @@ msgstr "Сви слојеви UV петљи"
 
 msgid "Vertex Colors"
 msgstr "Боје темена"
-
-
-msgid "All vertex colors"
-msgstr "Све боје темена"
 
 
 msgid "Vertex Paint Mask"
@@ -12462,6 +12462,10 @@ msgid "Sky Texture"
 msgstr "Текстура неба"
 
 
+msgid "Air"
+msgstr "Ваздух"
+
+
 msgid "Sky Type"
 msgstr "Врста неба"
 
@@ -15397,6 +15401,10 @@ msgid "Eraser"
 msgstr "Гумица"
 
 
+msgid "Side"
+msgstr "Са стране"
+
+
 msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "Претвори скицу"
@@ -15567,10 +15575,6 @@ msgstr "Убаци потезе"
 
 msgid "Keep Original"
 msgstr "Сачувај оригинал"
-
-
-msgid "Side"
-msgstr "Са стране"
 
 
 msgid "Show all Grease Pencil layers"
@@ -16560,7 +16564,6 @@ msgid "Shrink/Fatten"
 msgstr "Скупи удебљај"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Извуци регион"
 
@@ -16569,6 +16572,7 @@ msgid "Extrude region of faces"
 msgstr "Извуци регион"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Извуци регион"
 
@@ -21964,14 +21968,6 @@ msgid "Use only deformation modifiers (temporary disable all constructive modifi
 msgstr "Користи само деформационе модификаторе (привремено искључује све конструктивне модификаторе осим више-резолуција)"
 
 
-msgid "Use OpenMP"
-msgstr "Користи OpenMP"
-
-
-msgid "Take advantage of multiple CPU cores to improve sculpting performance"
-msgstr "Користи предност више процесора за унапређење перформаси вајања"
-
-
 msgid "UV Sculpting"
 msgstr "UV вајање"
 
@@ -23417,30 +23413,6 @@ msgstr "Величина објектива камере"
 
 msgid "Panorama Type"
 msgstr "Врста панораме"
-
-
-msgid "Type of primitive used for hair rendering"
-msgstr "Наставак датотеке за чување рендеринга"
-
-
-msgid "Create triangle geometry around strands"
-msgstr "Користи троугаоне таласе за стварање трака"
-
-
-msgid "Line Segments"
-msgstr "Мањи делови"
-
-
-msgid "Curve Segments"
-msgstr "Главни делови"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Резолуција генерисане површине"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Честице у систему честица"
 
 
 msgid "Cast Shadow"
@@ -26933,10 +26905,6 @@ msgid "Reset Curve"
 msgstr "Ресетуј криву"
 
 
-msgid "File Path:"
-msgstr "Путања датотеке:"
-
-
 msgid "Display number of users of this data (click to make a single-user copy)"
 msgstr "Приказује број корисника ових података (кликни за једнокорисничку копију)"
 
@@ -27055,11 +27023,6 @@ msgstr "Изаберите четкицу за повезивање"
 
 msgid "Browse Particle Settings to be linked"
 msgstr "Изаберите поставке честица за повезивање"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Примени"
 
 
 msgctxt "Scene"
@@ -27339,10 +27302,6 @@ msgid "No frames to bake"
 msgstr "Без кадрова за печење"
 
 
-msgid "Air"
-msgstr "Ваздух"
-
-
 msgid "Acrylic"
 msgstr "Акрил"
 
@@ -27585,6 +27544,10 @@ msgstr "Компајлирано без подршке за звук"
 
 msgid "Fields"
 msgstr "Поља"
+
+
+msgid "File Path:"
+msgstr "Путања датотеке:"
 
 
 msgid "Track is locked"
@@ -28131,6 +28094,11 @@ msgstr "UV теме"
 
 msgid "Cannot open file: %s"
 msgstr "Не могу да отворим датотеку: %s"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Примени"
 
 
 msgid "Index out of range"

@@ -20,12 +20,10 @@
 
 import bpy
 
-from itertools import count
 from mathutils import Matrix
 
 from ...utils.bones import put_bone, compute_chain_x_axis, align_bone_x_axis, align_bone_z_axis
 from ...utils.naming import make_derived_name
-from ...utils.misc import map_list
 from ...utils.widgets import adjust_widget_transform_mesh
 
 from ..widgets import create_hand_widget

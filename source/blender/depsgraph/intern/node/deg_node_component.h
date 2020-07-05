@@ -32,7 +32,8 @@
 struct ID;
 struct bPoseChannel;
 
-namespace DEG {
+namespace blender {
+namespace deg {
 
 struct BoneComponentNode;
 struct Depsgraph;
@@ -83,12 +84,9 @@ struct ComponentNode : public Node {
    * when node may have been partially created earlier (e.g. parent ref before
    * parent item is added)
    *
-   * \param type: Operation node type (corresponding to context/component that
-   *              it operates in)
-   * \param optype: Role that operation plays within component
-   *                (i.e. where in eval process)
-   * \param op: The operation to perform
-   * \param name: Identifier for operation - used to find/locate it again */
+   * \param opcode: The operation to perform.
+   * \param name: Identifier for operation - used to find/locate it again.
+   */
   OperationNode *add_operation(const DepsEvalOperationCb &op,
                                OperationCode opcode,
                                const char *name,
@@ -203,4 +201,5 @@ struct BoneComponentNode : public ComponentNode {
 
 void deg_register_component_depsnodes();
 
-}  // namespace DEG
+}  // namespace deg
+}  // namespace blender

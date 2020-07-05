@@ -217,7 +217,7 @@ void BLI_system_backtrace(FILE *fp)
 /**
  * Ensure type \c str to is in the #types array.
  * \param str: Struct name without any qualifiers.
- * \param len: The struct size in bytes.
+ * \param size: The struct size in bytes.
  * \return Index in the #types array.
  */
 static int add_type(const char *str, int size);
@@ -360,7 +360,7 @@ static int add_type(const char *str, int size)
   }
   else if (strchr(str, '*')) {
     /* note: this is valid C syntax but we can't parse, complain!
-     * 'struct SomeStruct* somevar;' <-- correct but we cant handle right now. */
+     * `struct SomeStruct* some_var;` <-- correct but we cant handle right now. */
     return -1;
   }
 

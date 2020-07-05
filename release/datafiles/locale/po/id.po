@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -1227,6 +1227,10 @@ msgid "Active Shape Index"
 msgstr "Tekstur"
 
 
+msgid "All vertex colors"
+msgstr "Semua Tampilan"
+
+
 msgid "Skin Vertices"
 msgstr "Partikel"
 
@@ -1257,10 +1261,6 @@ msgstr "Tekstur"
 
 msgid "UV Loop Layers"
 msgstr "Warna Standar"
-
-
-msgid "All vertex colors"
-msgstr "Semua Tampilan"
 
 
 msgid "Meta elements"
@@ -6528,22 +6528,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Saluran"
 
 
-msgid "Line Segments"
-msgstr "Hapus Titik"
-
-
-msgid "Curve Segments"
-msgstr "Hapus Titik"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Gerakan"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "Partikel"
-
-
 msgid "Transmission Direct"
 msgstr "Orientasi Transformasi"
 
@@ -7270,11 +7254,6 @@ msgid "Stop this job"
 msgstr "Hentikan Perintah"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Setujui"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "Baru"
@@ -7819,6 +7798,11 @@ msgstr "Warna Standar"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "Hapus"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Setujui"
 
 
 msgid "Keying set path could not be removed"

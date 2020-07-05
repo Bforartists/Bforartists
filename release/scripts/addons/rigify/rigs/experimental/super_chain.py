@@ -5,7 +5,6 @@ from ...utils import strip_org, make_deformer_name, connected_children_names
 from ...utils import create_chain_widget
 from ...utils import make_mechanism_name
 from ...utils import ControlLayersOption
-from rna_prop_ui import rna_idprop_ui_prop_get
 from ..limbs.limb_utils import get_bone_name
 
 

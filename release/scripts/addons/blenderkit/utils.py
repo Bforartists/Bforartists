@@ -77,12 +77,18 @@ def get_active_model():
 
 
 def get_selected_models():
+    '''
+    Detect all hierarchies that contain asset data from selection. Only parents that have actual ['asset data'] get returned
+    Returns
+    list of objects containing asset data.
+
+    '''
     obs = bpy.context.selected_objects[:]
     done = {}
     parents = []
     for ob in obs:
         if ob not in done:
-            while ob.parent is not None and ob not in done and ob.blenderkit.asset_base_id != '' and ob.instance_collection is not None:
+            while ob.parent is not None and ob not in done and ob.blenderkit.asset_base_id == '' and ob.instance_collection is None:
                 done[ob] = True
                 ob = ob.parent
 
@@ -96,6 +102,35 @@ def get_selected_models():
         parents = obs
     return parents
 
+def get_selected_replace_adepts():
+    '''
+    Detect all hierarchies that contain either asset data from selection, or selected objects themselves.
+    Returns
+    list of objects for replacement.
+
+    '''
+    obs = bpy.context.selected_objects[:]
+    done = {}
+    parents = []
+    for selected_ob in obs:
+        ob = selected_ob
+        if ob not in done:
+            while ob.parent is not None and ob not in done and ob.blenderkit.asset_base_id == '' and ob.instance_collection is None:
+                done[ob] = True
+                # print('step,',ob.name)
+                ob = ob.parent
+
+            # print('fin', ob.name)
+            if ob not in parents and ob not in done:
+                if ob.blenderkit.name != '' or ob.instance_collection is not None:
+                    parents.append(ob)
+
+            done[ob] = True
+    # print(parents)
+    #if no blenderkit - like objects were found, use the original selection.
+    if len(parents) == 0:
+        parents = obs
+    return parents
 
 def get_search_props():
     scene = bpy.context.scene

@@ -25,7 +25,6 @@ from itertools import count
 from ...utils.bones import align_chain_x_axis
 from ...utils.widgets_basic import create_circle_widget
 from ...utils.layers import ControlLayersOption
-from ...utils.misc import map_list
 
 from ...base_rig import stage
 

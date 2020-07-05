@@ -367,17 +367,15 @@ static SnapObjectData *snap_object_data_editmesh_get(SnapObjectContext *sctx,
  * \{ */
 
 typedef void (*IterSnapObjsCallback)(SnapObjectContext *sctx,
-                                     bool use_obedit,
-                                     bool use_backface_culling,
                                      Object *ob,
                                      float obmat[4][4],
+                                     bool use_obedit,
+                                     bool use_backface_culling,
+                                     bool is_object_active,
                                      void *data);
 
 /**
  * Walks through all objects in the scene to create the list of objects to snap.
- *
- * \param sctx: Snap context to store data.
- * \param snap_select: from enum #eSnapSelect.
  */
 static void iter_snap_objects(SnapObjectContext *sctx,
                               Depsgraph *depsgraph,
@@ -393,7 +391,6 @@ static void iter_snap_objects(SnapObjectContext *sctx,
 
   Base *base_act = view_layer->basact;
   for (Base *base = view_layer->object_bases.first; base != NULL; base = base->next) {
-
     if (!BASE_VISIBLE(v3d, base)) {
       continue;
     }
@@ -405,13 +402,14 @@ static void iter_snap_objects(SnapObjectContext *sctx,
       continue;
     }
 
+    const bool is_object_active = (base == base_act);
     if (snap_select == SNAP_NOT_SELECTED) {
       if ((base->flag & BASE_SELECTED) || (base->flag_legacy & BA_WAS_SEL)) {
         continue;
       }
     }
     else if (snap_select == SNAP_NOT_ACTIVE) {
-      if (base == base_act) {
+      if (is_object_active) {
         continue;
       }
     }
@@ -421,14 +419,24 @@ static void iter_snap_objects(SnapObjectContext *sctx,
       DupliObject *dupli_ob;
       ListBase *lb = object_duplilist(depsgraph, sctx->scene, obj_eval);
       for (dupli_ob = lb->first; dupli_ob; dupli_ob = dupli_ob->next) {
-        sob_callback(
-            sctx, use_object_edit_cage, use_backface_culling, dupli_ob->ob, dupli_ob->mat, data);
+        sob_callback(sctx,
+                     dupli_ob->ob,
+                     dupli_ob->mat,
+                     use_object_edit_cage,
+                     use_backface_culling,
+                     is_object_active,
+                     data);
       }
       free_object_duplilist(lb);
     }
 
-    sob_callback(
-        sctx, use_object_edit_cage, use_backface_culling, obj_eval, obj_eval->obmat, data);
+    sob_callback(sctx,
+                 obj_eval,
+                 obj_eval->obmat,
+                 use_object_edit_cage,
+                 use_backface_culling,
+                 is_object_active,
+                 data);
   }
 }
 
@@ -956,10 +964,11 @@ struct RaycastObjUserData {
  * \note Duplicate args here are documented at #snapObjectsRay
  */
 static void raycast_obj_fn(SnapObjectContext *sctx,
-                           bool use_obedit,
-                           bool use_backface_culling,
                            Object *ob,
                            float obmat[4][4],
+                           bool use_obedit,
+                           bool use_backface_culling,
+                           bool is_object_active,
                            void *data)
 {
   struct RaycastObjUserData *dt = data;
@@ -1005,12 +1014,11 @@ static void raycast_obj_fn(SnapObjectContext *sctx,
                                    dt->r_hit_list);
           break;
         }
-        else {
-          BMEditMesh *em = BKE_editmesh_from_object(ob);
-          if (em->mesh_eval_final) {
-            me = em->mesh_eval_final;
-            use_hide = true;
-          }
+
+        BMEditMesh *em = BKE_editmesh_from_object(ob);
+        if (em->mesh_eval_final) {
+          me = em->mesh_eval_final;
+          use_hide = true;
         }
       }
       retval = raycastMesh(sctx,
@@ -1032,24 +1040,26 @@ static void raycast_obj_fn(SnapObjectContext *sctx,
     case OB_CURVE:
     case OB_SURF:
     case OB_FONT: {
-      Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob);
-      if (mesh_eval) {
-        retval = raycastMesh(sctx,
-                             dt->ray_start,
-                             dt->ray_dir,
-                             ob,
-                             mesh_eval,
-                             obmat,
-                             ob_index,
-                             false,
-                             use_backface_culling,
-                             ray_depth,
-                             dt->r_loc,
-                             dt->r_no,
-                             dt->r_index,
-                             dt->r_hit_list);
-        break;
+      if (!is_object_active) {
+        Mesh *mesh_eval = BKE_object_get_evaluated_mesh(ob);
+        if (mesh_eval) {
+          retval = raycastMesh(sctx,
+                               dt->ray_start,
+                               dt->ray_dir,
+                               ob,
+                               mesh_eval,
+                               obmat,
+                               ob_index,
+                               false,
+                               use_backface_culling,
+                               ray_depth,
+                               dt->r_loc,
+                               dt->r_no,
+                               dt->r_index,
+                               dt->r_hit_list);
+        }
       }
+      break;
     }
   }
 
@@ -1071,9 +1081,7 @@ static void raycast_obj_fn(SnapObjectContext *sctx,
  * Walks through all objects in the scene to find the `hit` on object surface.
  *
  * \param sctx: Snap context to store data.
- * \param snap_select: from enum eSnapSelect.
- * \param use_object_edit_cage: Uses the coordinates of BMesh(if any) to do the snapping.
- * \param obj_list: List with objects to snap (created in `create_object_list`).
+ * \param params: Snapping behavior.
  *
  * Read/Write Args
  * ---------------
@@ -2650,11 +2658,12 @@ struct SnapObjUserData {
  *
  * \note Duplicate args here are documented at #snapObjectsRay
  */
-static void sanp_obj_fn(SnapObjectContext *sctx,
-                        bool use_obedit,
-                        bool use_backface_culling,
+static void snap_obj_fn(SnapObjectContext *sctx,
                         Object *ob,
                         float obmat[4][4],
+                        bool use_obedit,
+                        bool use_backface_culling,
+                        bool UNUSED(is_object_active),
                         void *data)
 {
   struct SnapObjUserData *dt = data;
@@ -2679,11 +2688,10 @@ static void sanp_obj_fn(SnapObjectContext *sctx,
                                 dt->r_index);
           break;
         }
-        else {
-          BMEditMesh *em = BKE_editmesh_from_object(ob);
-          if (em->mesh_eval_final) {
-            me = em->mesh_eval_final;
-          }
+
+        BMEditMesh *em = BKE_editmesh_from_object(ob);
+        if (em->mesh_eval_final) {
+          me = em->mesh_eval_final;
         }
       }
       else if (ob->dt == OB_BOUNDBOX) {
@@ -2800,7 +2808,7 @@ static short snapObjectsRay(SnapObjectContext *sctx,
       .ret = 0,
   };
 
-  iter_snap_objects(sctx, depsgraph, params, sanp_obj_fn, &data);
+  iter_snap_objects(sctx, depsgraph, params, snap_obj_fn, &data);
 
   return data.ret;
 }
@@ -3205,7 +3213,7 @@ short ED_transform_snap_object_project_view3d_ex(SnapObjectContext *sctx,
  * \param mval: Screenspace coordinate.
  * \param prev_co: Coordinate for perpendicular point calculation (optional).
  * \param dist_px: Maximum distance to snap (in pixels).
- * \param r_co: hit location.
+ * \param r_loc: hit location.
  * \param r_no: hit normal (optional).
  * \return Snap success
  */

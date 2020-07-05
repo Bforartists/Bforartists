@@ -867,17 +867,16 @@ class ConstraintButtonsPanel(Panel):
         if context.object.pose.ik_solver == 'ITASC':
             layout.prop(con, "ik_type")
 
-            layout.prop(con, "pole_target")
+            # This button gives itself too much padding, so put it in a column with the subtarget
+            col = layout.column()
+            col.prop(con, "pole_target")
 
             if con.pole_target and con.pole_target.type == 'ARMATURE':
-                layout.prop_search(con, "pole_subtarget", con.pole_target.data, "bones", text="Bone")
-
-            if con.pole_target:
-                row = layout.row()
-                row.label()
-                row.prop(con, "pole_angle")
+                col.prop_search(con, "pole_subtarget", con.pole_target.data, "bones", text="Bone")
 
             col = layout.column()
+            if con.pole_target:
+                col.prop(con, "pole_angle")
             col.prop(con, "use_tail")
             col.prop(con, "use_stretch")
             col.prop(con, "chain_count")
@@ -885,30 +884,37 @@ class ConstraintButtonsPanel(Panel):
             if con.ik_type == 'COPY_POSE':
                 layout.prop(con, "reference_axis", expand=True)
 
-                col = layout.column()
-                col.prop(con, "use_location")
+                # Use separate rows and columns here to avoid an alignment issue with the lock buttons
+                loc_col = layout.column()
+                loc_col.prop(con, "use_location")
 
-                sub = col.column()
-                sub.active = con.use_location
-                sub.prop(con, "weight", text="Weight", slider=True)
-                row = sub.row(heading="Lock")
+                row = loc_col.row()
+                row.active = con.use_location
+                row.prop(con, "weight", text="Weight", slider=True)
+
+                row = loc_col.row(heading="Lock", align=True)
                 row.use_property_decorate = False
-                row.prop(con, "lock_location_x", text="X", toggle=True)
-                row.prop(con, "lock_location_y", text="Y", toggle=True)
-                row.prop(con, "lock_location_z", text="Z", toggle=True)
+                row.active = con.use_location
+                sub = row.row(align=True)
+                sub.prop(con, "lock_location_x", text="X", toggle=True)
+                sub.prop(con, "lock_location_y", text="Y", toggle=True)
+                sub.prop(con, "lock_location_z", text="Z", toggle=True)
                 row.label(icon='BLANK1')
 
-                col = layout.column()
-                col.prop(con, "use_rotation")
+                rot_col = layout.column()
+                rot_col.prop(con, "use_rotation")
 
-                sub = col.column()
-                sub.active = con.use_rotation
-                sub.prop(con, "orient_weight", text="Weight", slider=True)
-                row = sub.row(heading="Lock")
+                row = rot_col.row()
+                row.active = con.use_rotation
+                row.prop(con, "orient_weight", text="Weight", slider=True)
+
+                row = rot_col.row(heading="Lock", align=True)
                 row.use_property_decorate = False
-                row.prop(con, "lock_rotation_x", text="X", toggle=True)
-                row.prop(con, "lock_rotation_y", text="Y", toggle=True)
-                row.prop(con, "lock_rotation_z", text="Z", toggle=True)
+                row.active = con.use_rotation
+                sub = row.row(align=True)
+                sub.prop(con, "lock_rotation_x", text="X", toggle=True)
+                sub.prop(con, "lock_rotation_y", text="Y", toggle=True)
+                sub.prop(con, "lock_rotation_z", text="Z", toggle=True)
                 row.label(icon='BLANK1')
 
             elif con.ik_type == 'DISTANCE':
@@ -919,17 +925,15 @@ class ConstraintButtonsPanel(Panel):
                 col.prop(con, "distance", text="Distance", slider=True)
         else:
             # Standard IK constraint
-            layout.prop(con, "pole_target")
+            col = layout.column()
+            col.prop(con, "pole_target")
 
             if con.pole_target and con.pole_target.type == 'ARMATURE':
-                layout.prop_search(con, "pole_subtarget", con.pole_target.data, "bones", text="Bone")
-
-            if con.pole_target:
-                row = layout.row()
-                row.prop(con, "pole_angle")
-                row.label()
+                col.prop_search(con, "pole_subtarget", con.pole_target.data, "bones", text="Bone")
 
             col = layout.column()
+            if con.pole_target:
+                col.prop(con, "pole_angle")
             col.prop(con, "iterations")
             col.prop(con, "chain_count")
             col.prop(con, "use_tail")
@@ -998,7 +1002,7 @@ class ConstraintButtonsSubPanel(Panel):
         con = self.get_constraint(context)
         layout.use_property_split = True
         layout.use_property_decorate = True
-        
+
         layout.prop(con, "map_to_x_from", expand=False, text="Source Axis X")
 
         layout.prop(con, "map_to_y_from", expand=False, text="Y")
@@ -1029,7 +1033,7 @@ class ConstraintButtonsSubPanel(Panel):
 
         col = layout.column(align=True)
         col.prop(con, "to_min_z" + ext, text="Z Min")
-        col.prop(con, "to_max_z" + ext, text="Max")      
+        col.prop(con, "to_max_z" + ext, text="Max")
 
         layout.prop(con, "mix_mode" + ext, text="Mix")
 
@@ -1408,11 +1412,11 @@ class OBJECT_PT_bTransformConstraint_mapping(ObjectConstraintPanel, ConstraintBu
 class BONE_PT_bTransformConstraint_mapping(BoneConstraintPanel, ConstraintButtonsSubPanel):
     bl_parent_id = "BONE_PT_bTransformConstraint"
     bl_label = "Mapping"
-    
+
     def draw(self, context):
         self.draw_transform_mapping(context)
 
-  
+
 class OBJECT_PT_bTransformConstraint_destination(ObjectConstraintPanel, ConstraintButtonsSubPanel):
     bl_parent_id = "OBJECT_PT_bTransformConstraint"
     bl_label = "Destination"

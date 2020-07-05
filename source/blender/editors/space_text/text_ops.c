@@ -85,7 +85,7 @@ static void test_line_start(char c, bool *r_last_state)
 
 /**
  * This function converts the indentation tabs from a buffer to spaces.
- * \param buf: A pointer to a cstring.
+ * \param in_buf: A pointer to a cstring.
  * \param tab_size: The size, in spaces, of the tab character.
  */
 static char *buf_tabs_to_spaces(const char *in_buf, const int tab_size)
@@ -3012,7 +3012,7 @@ static void text_cursor_set_to_pos_wrapped(
           break;
           /* Exactly at the cursor */
         }
-        else if (y == 0 && i - start <= x && i + columns - start > x) {
+        if (y == 0 && i - start <= x && i + columns - start > x) {
           /* current position could be wrapped to next line */
           /* this should be checked when end of current line would be reached */
           charp = curs = j;
@@ -3471,21 +3471,20 @@ static int text_insert_invoke(bContext *C, wmOperator *op, const wmEvent *event)
     if ((event->ctrl || event->oskey) && !event->utf8_buf[0]) {
       return OPERATOR_PASS_THROUGH;
     }
-    else {
-      char str[BLI_UTF8_MAX + 1];
-      size_t len;
 
-      if (event->utf8_buf[0]) {
-        len = BLI_str_utf8_size_safe(event->utf8_buf);
-        memcpy(str, event->utf8_buf, len);
-      }
-      else {
-        /* in theory, ghost can set value to extended ascii here */
-        len = BLI_str_utf8_from_unicode(event->ascii, str);
-      }
-      str[len] = '\0';
-      RNA_string_set(op->ptr, "text", str);
+    char str[BLI_UTF8_MAX + 1];
+    size_t len;
+
+    if (event->utf8_buf[0]) {
+      len = BLI_str_utf8_size_safe(event->utf8_buf);
+      memcpy(str, event->utf8_buf, len);
     }
+    else {
+      /* in theory, ghost can set value to extended ascii here */
+      len = BLI_str_utf8_from_unicode(event->ascii, str);
+    }
+    str[len] = '\0';
+    RNA_string_set(op->ptr, "text", str);
   }
 
   ret = text_insert_exec(C, op);
@@ -3673,9 +3672,7 @@ static int text_replace_exec(bContext *C, wmOperator *op)
   if (replace_all) {
     return text_replace_all(C);
   }
-  else {
-    return text_find_and_replace(C, op, TEXT_REPLACE);
-  }
+  return text_find_and_replace(C, op, TEXT_REPLACE);
 }
 
 void TEXT_OT_replace(wmOperatorType *ot)

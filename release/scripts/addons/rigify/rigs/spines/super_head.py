@@ -24,7 +24,7 @@ from itertools import count
 
 from ...utils.naming import make_derived_name
 from ...utils.bones import align_bone_orientation
-from ...utils.widgets_basic import create_circle_widget, create_cube_widget
+from ...utils.widgets_basic import create_circle_widget
 from ...utils.widgets_special import create_neck_bend_widget, create_neck_tweak_widget
 from ...utils.switch_parent import SwitchParentBuilder
 from ...utils.misc import map_list

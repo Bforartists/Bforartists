@@ -274,9 +274,8 @@ static int actkeys_previewrange_exec(bContext *C, wmOperator *UNUSED(op))
   if (ac.scene == NULL) {
     return OPERATOR_CANCELLED;
   }
-  else {
-    scene = ac.scene;
-  }
+
+  scene = ac.scene;
 
   /* set the range directly */
   get_keyframe_extents(&ac, &min, &max, false);
@@ -901,7 +900,7 @@ static void duplicate_action_keys(bAnimContext *ac)
       duplicate_fcurve_keys((FCurve *)ale->key_data);
     }
     else if (ale->type == ANIMTYPE_GPLAYER) {
-      ED_gplayer_frames_duplicate((bGPDlayer *)ale->data);
+      ED_gpencil_layer_frames_duplicate((bGPDlayer *)ale->data);
     }
     else if (ale->type == ANIMTYPE_MASKLAYER) {
       ED_masklayer_frames_duplicate((MaskLayer *)ale->data);
@@ -977,7 +976,7 @@ static bool delete_action_keys(bAnimContext *ac)
     bool changed = false;
 
     if (ale->type == ANIMTYPE_GPLAYER) {
-      changed = ED_gplayer_frames_delete((bGPDlayer *)ale->data);
+      changed = ED_gpencil_layer_frames_delete((bGPDlayer *)ale->data);
     }
     else if (ale->type == ANIMTYPE_MASKLAYER) {
       changed = ED_masklayer_frames_delete((MaskLayer *)ale->data);
@@ -1552,7 +1551,7 @@ static void setkeytype_gpencil_keys(bAnimContext *ac, short mode)
   /* loop through each layer */
   for (ale = anim_data.first; ale; ale = ale->next) {
     if (ale->type == ANIMTYPE_GPLAYER) {
-      ED_gplayer_frames_keytype_set(ale->data, mode);
+      ED_gpencil_layer_frames_keytype_set(ale->data, mode);
       ale->update |= ANIM_UPDATE_DEPS;
     }
   }
@@ -1753,7 +1752,7 @@ static void snap_action_keys(bAnimContext *ac, short mode)
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
     if (ale->type == ANIMTYPE_GPLAYER) {
-      ED_gplayer_snap_frames(ale->data, ac->scene, mode);
+      ED_gpencil_layer_snap_frames(ale->data, ac->scene, mode);
     }
     else if (ale->type == ANIMTYPE_MASKLAYER) {
       ED_masklayer_snap_frames(ale->data, ac->scene, mode);
@@ -1883,7 +1882,7 @@ static void mirror_action_keys(bAnimContext *ac, short mode)
     AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 
     if (ale->type == ANIMTYPE_GPLAYER) {
-      ED_gplayer_mirror_frames(ale->data, ac->scene, mode);
+      ED_gpencil_layer_mirror_frames(ale->data, ac->scene, mode);
     }
     else if (ale->type == ANIMTYPE_MASKLAYER) {
       /* TODO */

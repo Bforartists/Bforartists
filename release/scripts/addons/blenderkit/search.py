@@ -102,13 +102,35 @@ def refresh_token_timer():
     return max(3600, user_preferences.api_key_life - 3600)
 
 
+def update_assets_data():  # updates assets data on scene load.
+    '''updates some properties that were changed on scenes with older assets.
+    The properties were mainly changed from snake_case to CamelCase to fit the data that is coming from the server.
+    '''
+    for ob in bpy.context.scene.objects:
+        if ob.get('asset_data') != None:
+            ad = ob['asset_data']
+            if not ad.get('assetBaseId'):
+                ad['assetBaseId'] = ad['asset_base_id'],  # this should stay ONLY for compatibility with older scenes
+                ad['assetType'] = ad['asset_type'],  # this should stay ONLY for compatibility with older scenes
+                ad['canDownload'] = ad['can_download'],  # this should stay ONLY for compatibility with older scenes
+                ad['verificationStatus'] = ad[
+                                               'verification_status'],  # this should stay ONLY for compatibility with older scenes
+                ad['author'] = {}
+                ad['author']['id'] = ad['author_id'],  # this should stay ONLY for compatibility with older scenes
+
+
 @persistent
 def scene_load(context):
+    '''
+    Loads categories , checks timers registration, and updates scene asset data.
+    Should (probably)also update asset data from server (after user consent)
+    '''
     wm = bpy.context.window_manager
     fetch_server_data()
     categories.load_categories()
     if not bpy.app.timers.is_registered(refresh_token_timer):
         bpy.app.timers.register(refresh_token_timer, persistent=True, first_interval=36000)
+    update_assets_data()
 
 
 def fetch_server_data():
@@ -132,6 +154,12 @@ last_clipboard = ''
 
 
 def check_clipboard():
+    '''
+    Checks clipboard for an exact string containing asset ID.
+    The string is generated on www.blenderkit.com as for example here:
+    https://www.blenderkit.com/get-blenderkit/54ff5c85-2c73-49e9-ba80-aec18616a408/
+    '''
+
     # clipboard monitoring to search assets from web
     if platform.system() != 'Linux':
         global last_clipboard
@@ -147,6 +175,98 @@ def check_clipboard():
                     search_props = utils.get_search_props()
                     search_props.search_keywords = last_clipboard
                     # don't run search after this - assigning to keywords runs the search_update function.
+
+
+def parse_result(r):
+    '''
+    needed to generate some extra data in the result(by now)
+    Parameters
+    ----------
+    r - search result, also called asset_data
+    '''
+    scene = bpy.context.scene
+
+    # TODO remove this fix when filesSize is fixed.
+    # this is a temporary fix for too big numbers from the server.
+    try:
+        r['filesSize'] = int(r['filesSize'] / 1024)
+    except:
+        utils.p('asset with no files-size')
+    asset_type = r['assetType']
+    if len(r['files']) > 0:
+
+        allthumbs = []
+        durl, tname = None, None
+        for f in r['files']:
+            if f['fileType'] == 'thumbnail':
+                tname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
+                small_tname = paths.extract_filename_from_url(f['fileThumbnail'])
+                allthumbs.append(tname)  # TODO just first thumb is used now.
+
+            tdict = {}
+            for i, t in enumerate(allthumbs):
+                tdict['thumbnail_%i'] = t
+            if f['fileType'] == 'blend':
+                durl = f['downloadUrl'].split('?')[0]
+                # fname = paths.extract_filename_from_url(f['filePath'])
+        if durl and tname:
+
+            tooltip = generate_tooltip(r)
+            # for some reason, the id was still int on some occurances. investigate this.
+            r['author']['id'] = str(r['author']['id'])
+
+            # some helper props, but generally shouldn't be renaming/duplifiying original properties,
+            # so blender's data is same as on server.
+            asset_data = {'thumbnail': tname,
+                          'thumbnail_small': small_tname,
+                          # 'thumbnails':allthumbs,
+                          'download_url': durl,
+                          # 'id': r['id'],
+                          # 'asset_base_id': r['assetBaseId'],#this should stay ONLY for compatibility with older scenes
+                          # 'name': r['name'],
+                          # 'asset_type': r['assetType'], #this should stay ONLY for compatibility with older scenes
+                          'tooltip': tooltip,
+                          # 'tags': r['tags'],
+                          # 'can_download': r.get('canDownload', True),#this should stay ONLY for compatibility with older scenes
+                          # 'verification_status': r['verificationStatus'],#this should stay ONLY for compatibility with older scenes
+                          # 'author_id': r['author']['id'],#this should stay ONLY for compatibility with older scenes
+                          # 'author': r['author']['firstName'] + ' ' + r['author']['lastName']
+                          # 'description': r['description'],
+                          }
+            asset_data['downloaded'] = 0
+
+            # parse extra params needed for blender here
+            params = utils.params_to_dict(r['parameters'])
+
+            if asset_type == 'model':
+                if params.get('boundBoxMinX') != None:
+                    bbox = {
+                        'bbox_min': (
+                            float(params['boundBoxMinX']),
+                            float(params['boundBoxMinY']),
+                            float(params['boundBoxMinZ'])),
+                        'bbox_max': (
+                            float(params['boundBoxMaxX']),
+                            float(params['boundBoxMaxY']),
+                            float(params['boundBoxMaxZ']))
+                    }
+
+                else:
+                    bbox = {
+                        'bbox_min': (-.5, -.5, 0),
+                        'bbox_max': (.5, .5, 1)
+                    }
+                asset_data.update(bbox)
+            if asset_type == 'material':
+                asset_data['texture_size_meters'] = params.get('textureSizeMeters', 1.0)
+
+            asset_data.update(tdict)
+            if r['assetBaseId'] in scene.get('assets used', {}).keys():
+                asset_data['downloaded'] = 100
+
+            # attempt to switch to use original data gradually, since the parsing as itself should become obsolete.
+            asset_data.update(r)
+        return asset_data
 
 
 # @bpy.app.handlers.persistent
@@ -171,7 +291,7 @@ def timer_update():
         search()
         preferences.first_run = False
 
-    #check_clipboard()
+    # check_clipboard()
 
     global search_threads
     if len(search_threads) == 0:
@@ -221,86 +341,11 @@ def timer_update():
             if ok:
                 bpy.ops.object.run_assetbar_fix_context()
                 for r in rdata['results']:
-                    # TODO remove this fix when filesSize is fixed.
-                    # this is a temporary fix for too big numbers from the server.
-                    try:
-                        r['filesSize'] = int(r['filesSize'] / 1024)
-                    except:
-                        utils.p('asset with no files-size')
-                    if r['assetType'] == asset_type:
-                        if len(r['files']) > 0:
-                            furl = None
-                            tname = None
-                            allthumbs = []
-                            durl, tname = None, None
-                            for f in r['files']:
-                                if f['fileType'] == 'thumbnail':
-                                    tname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
-                                    small_tname = paths.extract_filename_from_url(f['fileThumbnail'])
-                                    allthumbs.append(tname)  # TODO just first thumb is used now.
+                    asset_data = parse_result(r)
+                    if asset_data != None:
+                        result_field.append(asset_data)
 
-                                tdict = {}
-                                for i, t in enumerate(allthumbs):
-                                    tdict['thumbnail_%i'] = t
-                                if f['fileType'] == 'blend':
-                                    durl = f['downloadUrl'].split('?')[0]
-                                    # fname = paths.extract_filename_from_url(f['filePath'])
-                            if durl and tname:
-
-                                tooltip = generate_tooltip(r)
-                                # for some reason, the id was still int on some occurances. investigate this.
-                                r['author']['id'] = str(r['author']['id'])
-
-                                asset_data = {'thumbnail': tname,
-                                              'thumbnail_small': small_tname,
-                                              # 'thumbnails':allthumbs,
-                                              'download_url': durl,
-                                              'id': r['id'],
-                                              'asset_base_id': r['assetBaseId'],
-                                              'name': r['name'],
-                                              'asset_type': r['assetType'],
-                                              'tooltip': tooltip,
-                                              'tags': r['tags'],
-                                              'can_download': r.get('canDownload', True),
-                                              'verification_status': r['verificationStatus'],
-                                              'author_id': r['author']['id'],
-                                              # 'author': r['author']['firstName'] + ' ' + r['author']['lastName']
-                                              # 'description': r['description'],
-                                              }
-                                asset_data['downloaded'] = 0
-
-                                # parse extra params needed for blender here
-                                params = utils.params_to_dict(r['parameters'])
-
-                                if asset_type == 'model':
-                                    if params.get('boundBoxMinX') != None:
-                                        bbox = {
-                                            'bbox_min': (
-                                                float(params['boundBoxMinX']),
-                                                float(params['boundBoxMinY']),
-                                                float(params['boundBoxMinZ'])),
-                                            'bbox_max': (
-                                                float(params['boundBoxMaxX']),
-                                                float(params['boundBoxMaxY']),
-                                                float(params['boundBoxMaxZ']))
-                                        }
-
-                                    else:
-                                        bbox = {
-                                            'bbox_min': (-.5, -.5, 0),
-                                            'bbox_max': (.5, .5, 1)
-                                        }
-                                    asset_data.update(bbox)
-                                if asset_type == 'material':
-                                    asset_data['texture_size_meters'] = params.get('textureSizeMeters', 1.0)
-
-                                asset_data.update(tdict)
-                                if r['assetBaseId'] in scene.get('assets used', {}).keys():
-                                    asset_data['downloaded'] = 100
-
-                                result_field.append(asset_data)
-
-                                # results = rdata['results']
+                        # results = rdata['results']
                 s[search_name] = result_field
                 s['search results'] = result_field
                 s[search_name + ' orig'] = rdata
@@ -500,6 +545,16 @@ def generate_tooltip(mdata):
                                      fmt_length(mparams['dimensionZ']))
     if has(mparams, 'faceCount'):
         t += 'face count: %s, render: %s\n' % (mparams['faceCount'], mparams['faceCountRender'])
+
+    # write files size - this doesn't reflect true file size, since files size is computed from all asset files, including resolutions.
+    if mdata.get('filesSize'):
+        fs = mdata['filesSize']
+        fsmb = fs // 1024
+        fskb = fs % 1024
+        if fsmb == 0:
+            t += 'files size: %iKB\n' % fskb
+        else:
+            t += 'files size: %iMB %iKB\n' % (fsmb, fskb)
 
     # t = writeblockm(t, mparams, key='meshPolyType', pretext='mesh type', width = col_w)
     # t = writeblockm(t, mparams, key='objectCount', pretext='nubmber of objects', width = col_w)
@@ -770,7 +825,7 @@ class Searcher(threading.Thread):
             # assumes no keywords and no category, thus an empty search that is triggered on start.
             # orders by last core file upload
             if query.get('verification_status') == 'uploaded':
-                #for validators, sort uploaded from oldest
+                # for validators, sort uploaded from oldest
                 requeststring += '+order:created'
             else:
                 requeststring += '+order:-last_upload'
@@ -843,21 +898,6 @@ class Searcher(threading.Thread):
             print(inst)
 
         mt('data parsed ')
-
-        # filter results here:
-        # todo remove this in future
-        nresults = []
-        for d in rdata.get('results', []):
-            # TODO this code is for filtering brush types, should vanish after we implement filter in Elastic
-            mode = None
-            if query['asset_type'] == 'brush':
-                for p in d['parameters']:
-                    if p['parameterType'] == 'mode':
-                        mode = p['value']
-            if query['asset_type'] != 'brush' or (
-                    query.get('mode') != None and query['mode']) == mode:
-                nresults.append(d)
-        rdata['results'] = nresults
 
         # print('number of results: ', len(rdata.get('results', [])))
         if self.stopped():
@@ -977,23 +1017,9 @@ def build_query_common(query, props):
     if props.search_verification_status != 'ALL':
         query_common['verification_status'] = props.search_verification_status.lower()
 
-    if props.search_advanced:
-        if props.search_texture_resolution:
-            query["textureResolutionMax_gte"] = props.search_texture_resolution_min
-            query["textureResolutionMax_lte"] = props.search_texture_resolution_max
-
-        elif props.search_procedural == 'TEXTURE_BASED':
-            # todo this procedural hack should be replaced with the parameter
-            query["textureResolutionMax_gte"] = 0
-            # query["procedural"] = False
-
-        if props.search_procedural == "PROCEDURAL":
-            # todo this procedural hack should be replaced with the parameter
-            query["files_size_lte"] = 1024 * 1024
-            # query["procedural"] = True
-        elif props.search_file_size:
-            query_common["files_size_gte"] = props.search_file_size_min * 1024 * 1024
-            query_common["files_size_lte"] = props.search_file_size_max * 1024 * 1024
+    if props.search_file_size:
+        query_common["files_size_gte"] = props.search_file_size_min * 1024 * 1024
+        query_common["files_size_lte"] = props.search_file_size_max * 1024 * 1024
 
     query.update(query_common)
 
@@ -1016,15 +1042,18 @@ def build_query_model():
     if props.free_only:
         query["is_free"] = True
 
-    if props.search_advanced:
-        if props.search_condition != 'UNSPECIFIED':
-            query["condition"] = props.search_condition
-        if props.search_design_year:
-            query["designYear_gte"] = props.search_design_year_min
-            query["designYear_lte"] = props.search_design_year_max
-        if props.search_polycount:
-            query["faceCount_gte"] = props.search_polycount_min
-            query["faceCount_lte"] = props.search_polycount_max
+    # if props.search_advanced:
+    if props.search_condition != 'UNSPECIFIED':
+        query["condition"] = props.search_condition
+    if props.search_design_year:
+        query["designYear_gte"] = props.search_design_year_min
+        query["designYear_lte"] = props.search_design_year_max
+    if props.search_polycount:
+        query["faceCount_gte"] = props.search_polycount_min
+        query["faceCount_lte"] = props.search_polycount_max
+    if props.search_texture_resolution:
+        query["textureResolutionMax_gte"] = props.search_texture_resolution_min
+        query["textureResolutionMax_lte"] = props.search_texture_resolution_max
 
     build_query_common(query, props)
 
@@ -1061,6 +1090,20 @@ def build_query_material():
             query["style"] = props.search_style
         else:
             query["style"] = props.search_style_other
+    if props.search_procedural == 'TEXTURE_BASED':
+        # todo this procedural hack should be replaced with the parameter
+        query["textureResolutionMax_gte"] = 0
+        # query["procedural"] = False
+        if props.search_texture_resolution:
+            query["textureResolutionMax_gte"] = props.search_texture_resolution_min
+            query["textureResolutionMax_lte"] = props.search_texture_resolution_max
+
+
+
+    elif props.search_procedural == "PROCEDURAL":
+        # todo this procedural hack should be replaced with the parameter
+        query["files_size_lte"] = 1024 * 1024
+        # query["procedural"] = True
 
     build_query_common(query, props)
 
@@ -1139,33 +1182,34 @@ def search(category='', get_next=False, author_id=''):
     search_start_time = time.time()
     # mt('start')
     scene = bpy.context.scene
-    uiprops = scene.blenderkitUI
+    ui_props = scene.blenderkitUI
 
-    if uiprops.asset_type == 'MODEL':
+    if ui_props.asset_type == 'MODEL':
         if not hasattr(scene, 'blenderkit'):
             return;
         props = scene.blenderkit_models
         query = build_query_model()
 
-    if uiprops.asset_type == 'SCENE':
+    if ui_props.asset_type == 'SCENE':
         if not hasattr(scene, 'blenderkit_scene'):
             return;
         props = scene.blenderkit_scene
         query = build_query_scene()
-
-    if uiprops.asset_type == 'MATERIAL':
+    if ui_props.asset_type == 'MATERIAL':
         if not hasattr(scene, 'blenderkit_mat'):
             return;
+
         props = scene.blenderkit_mat
         query = build_query_material()
+        utils.p(query)
 
-    if uiprops.asset_type == 'TEXTURE':
+    if ui_props.asset_type == 'TEXTURE':
         if not hasattr(scene, 'blenderkit_tex'):
             return;
         # props = scene.blenderkit_tex
         # query = build_query_texture()
 
-    if uiprops.asset_type == 'BRUSH':
+    if ui_props.asset_type == 'BRUSH':
         if not hasattr(scene, 'blenderkit_brush'):
             return;
         props = scene.blenderkit_brush
@@ -1307,7 +1351,9 @@ def register_search():
     for c in classes:
         bpy.utils.register_class(c)
 
-    bpy.app.timers.register(timer_update)
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.use_timers:
+        bpy.app.timers.register(timer_update)
 
     categories.load_categories()
 
@@ -1317,5 +1363,6 @@ def unregister_search():
 
     for c in classes:
         bpy.utils.unregister_class(c)
+
     if bpy.app.timers.is_registered(timer_update):
         bpy.app.timers.unregister(timer_update)

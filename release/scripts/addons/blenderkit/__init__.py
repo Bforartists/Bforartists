@@ -255,19 +255,19 @@ def asset_type_callback(self, context):
     # ui_props = s.blenderkitUI
     if self.down_up == 'SEARCH':
         items = (
-            ('MODEL', 'Find Models', 'Find models in the BlenderKit online database', 'OBJECT_DATAMODE', 0),
+            ('MODEL', 'Models', 'Find models in the BlenderKit online database', 'OBJECT_DATAMODE', 0),
             # ('SCENE', 'SCENE', 'Browse scenes', 'SCENE_DATA', 1),
-            ('MATERIAL', 'Find Materials', 'Find models in the BlenderKit online database', 'MATERIAL', 2),
+            ('MATERIAL', 'Materials', 'Find models in the BlenderKit online database', 'MATERIAL', 2),
             # ('TEXTURE', 'Texture', 'Browse textures', 'TEXTURE', 3),
-            ('BRUSH', 'Find Brushes', 'Find models in the BlenderKit online database', 'BRUSH_DATA', 3)
+            ('BRUSH', 'Brushes', 'Find models in the BlenderKit online database', 'BRUSH_DATA', 3)
         )
     else:
         items = (
-            ('MODEL', 'Upload Model', 'Upload a model to BlenderKit', 'OBJECT_DATAMODE', 0),
+            ('MODEL', 'Model', 'Upload a model to BlenderKit', 'OBJECT_DATAMODE', 0),
             # ('SCENE', 'SCENE', 'Browse scenes', 'SCENE_DATA', 1),
-            ('MATERIAL', 'Upload Material', 'Upload a material to BlenderKit', 'MATERIAL', 2),
+            ('MATERIAL', 'Material', 'Upload a material to BlenderKit', 'MATERIAL', 2),
             # ('TEXTURE', 'Texture', 'Browse textures', 'TEXTURE', 3),
-            ('BRUSH', 'Upload Brush', 'Upload a brush to BlenderKit', 'BRUSH_DATA', 3)
+            ('BRUSH', 'Brush', 'Upload a brush to BlenderKit', 'BRUSH_DATA', 3)
         )
     return items
 
@@ -1555,6 +1555,13 @@ class BlenderKitAddonPreferences(AddonPreferences):
         default=True,
         update=utils.save_prefs
     )
+
+    use_timers: BoolProperty(
+        name="Use timers",
+        description="Use timers for bkit",
+        default=True,
+        update=utils.save_prefs
+    )
     # allow_proximity : BoolProperty(
     #     name="allow proximity data reports",
     #     description="This sends anonymized proximity data \n \
@@ -1593,6 +1600,8 @@ class BlenderKitAddonPreferences(AddonPreferences):
         layout.prop(self, "max_assetbar_rows")
         layout.prop(self, "tips_on_start")
         layout.prop(self, "search_in_header")
+        if bpy.context.preferences.view.show_developer_ui:
+            layout.prop(self, "use_timers")
 
 
 # registration
@@ -1673,13 +1682,16 @@ def register():
     bkit_oauth.register()
     tasks_queue.register()
 
-    bpy.app.timers.register(check_timers_timer, persistent=True)
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.use_timers:
+        bpy.app.timers.register(check_timers_timer, persistent=True)
 
     bpy.app.handlers.load_post.append(scene_load)
 
 
 def unregister():
-    bpy.app.timers.unregister(check_timers_timer)
+    if bpy.app.timers.is_registered(check_timers_timer):
+        bpy.app.timers.unregister(check_timers_timer)
     ui_panels.unregister_ui_panels()
     ui.unregister_ui()
 

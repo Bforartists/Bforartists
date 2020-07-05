@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2250,10 +2250,6 @@ msgid "Limit the distance from target object"
 msgstr "Markera Länkad"
 
 
-msgid "For Transform"
-msgstr "Transformera"
-
-
 msgid "Limit Location Constraint"
 msgstr "Rensa Placering"
 
@@ -4055,10 +4051,6 @@ msgid "Start"
 msgstr "Starta"
 
 
-msgid "Final"
-msgstr "Rensa Ursprung"
-
-
 msgid "Cell Size"
 msgstr "Extrudera"
 
@@ -4121,6 +4113,10 @@ msgstr "Spara"
 
 msgid "Nearest"
 msgstr "Starta Spel"
+
+
+msgid "Final"
+msgstr "Rensa Ursprung"
 
 
 msgid "Preview"
@@ -6047,6 +6043,10 @@ msgid "Polygons of the mesh"
 msgstr "Markera Länkad"
 
 
+msgid "All vertex colors"
+msgstr "Vertexfärger"
+
+
 msgid "Skin Vertices"
 msgstr "Bana"
 
@@ -6136,10 +6136,6 @@ msgstr "Flytta Till Lager"
 
 
 msgid "Vertex Colors"
-msgstr "Vertexfärger"
-
-
-msgid "All vertex colors"
 msgstr "Vertexfärger"
 
 
@@ -12227,6 +12223,10 @@ msgid "Sky Texture"
 msgstr "Text"
 
 
+msgid "Air"
+msgstr "Luft"
+
+
 msgid "Sun Direction"
 msgstr "Riktning"
 
@@ -14683,19 +14683,11 @@ msgid "(De)select all control points"
 msgstr "Raderings Meny"
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "Markera Länkad"
-
-
 msgid "Select all control points linked to already selected ones"
 msgstr "Markera Länkad"
 
 
 msgid "Deselect linked control points rather than selecting them"
-msgstr "Markera Länkad"
-
-
-msgid "Select control points directly linked to already selected ones"
 msgstr "Markera Länkad"
 
 
@@ -16922,7 +16914,6 @@ msgid "Shrink/fatten selected vertices along normals"
 msgstr "Markera Länkad"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Extruderingshöjd"
 
@@ -16931,6 +16922,7 @@ msgid "Extrude region of faces"
 msgstr "Extruderingshöjd"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Extruderingshöjd"
 
@@ -17354,6 +17346,14 @@ msgid "Screw"
 msgstr "Skapa Förälder"
 
 
+msgid "Add vertex color layer"
+msgstr "Rendera"
+
+
+msgid "Remove vertex color layer"
+msgstr "Rendera"
+
+
 msgid "(De)select all vertices, edges or faces"
 msgstr "Markera Länkad"
 
@@ -17674,17 +17674,9 @@ msgid "Add Vertex Color"
 msgstr "Vektor Måla"
 
 
-msgid "Add vertex color layer"
-msgstr "Rendera"
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "Vektor Måla"
-
-
-msgid "Remove vertex color layer"
-msgstr "Rendera"
 
 
 msgid "Flatten angles of selected vertices"
@@ -23782,10 +23774,6 @@ msgid "Use Deform Only"
 msgstr "Bana"
 
 
-msgid "Use OpenMP"
-msgstr "Spridning"
-
-
 msgid "UV Sculpting"
 msgstr "Skulptera"
 
@@ -25091,30 +25079,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Markera Länkad"
 
 
-msgid "Type of primitive used for hair rendering"
-msgstr "Renderingsmotor"
-
-
-msgid "Line Segments"
-msgstr "B-benssegment"
-
-
-msgid "Curve Segments"
-msgstr "B-benssegment"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Markera Länkad"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "Renderingsmotor"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Partikel i ett partikelsystem"
-
-
 msgid "Cast Shadow"
 msgstr "Skugga"
 
@@ -25297,10 +25261,6 @@ msgstr "Antal uppdelningar mellan rutnätets linjer"
 
 msgid "Pause Preview"
 msgstr "Förhandsvisa bild"
-
-
-msgid "Preview Samples"
-msgstr "Bild Displist"
 
 
 msgid "Start Resolution"
@@ -29005,10 +28965,6 @@ msgid "Anim Player"
 msgstr "Renderings Fönster"
 
 
-msgid "File Path:"
-msgstr "Sökväg:"
-
-
 msgid "Reset operator defaults"
 msgstr "Förvalt övertoning"
 
@@ -29039,11 +28995,6 @@ msgstr "Lägg till Stripp"
 
 msgid "Stop animation playback"
 msgstr "Renderings Fönster"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Applicera Storlek/Rotation"
 
 
 msgctxt "Scene"
@@ -29387,10 +29338,6 @@ msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "Rotera"
 
 
-msgid "Air"
-msgstr "Luft"
-
-
 msgid "Scene has no camera"
 msgstr "Markera kamera"
 
@@ -29449,6 +29396,10 @@ msgstr "Flytta Till Lager"
 
 msgid "Fields"
 msgstr "Fält"
+
+
+msgid "File Path:"
+msgstr "Sökväg:"
 
 
 msgid "Track is locked"
@@ -29950,6 +29901,15 @@ msgid "Clear Seam"
 msgstr "Rensa Förälder"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Applicera Storlek/Rotation"
+
+
+msgid "Bone Envelopes"
+msgstr "Benomslutningar"
+
+
 msgid "Keying set path could not be added"
 msgstr "Flytta Till Lager"
 
@@ -30044,10 +30004,6 @@ msgstr "Duplicera"
 
 msgid "Property value not in enumeration"
 msgstr "Redigera egenskapens värde"
-
-
-msgid "Bone Envelopes"
-msgstr "Benomslutningar"
 
 
 msgid "Outer"
