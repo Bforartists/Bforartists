@@ -1713,9 +1713,7 @@ static int mask_hide_view_clear_exec(bContext *C, wmOperator *op)
 
     return OPERATOR_FINISHED;
   }
-  else {
-    return OPERATOR_CANCELLED;
-  }
+  return OPERATOR_CANCELLED;
 }
 
 void MASK_OT_hide_view_clear(wmOperatorType *ot)
@@ -1776,9 +1774,7 @@ static int mask_hide_view_set_exec(bContext *C, wmOperator *op)
 
     return OPERATOR_FINISHED;
   }
-  else {
-    return OPERATOR_CANCELLED;
-  }
+  return OPERATOR_CANCELLED;
 }
 
 void MASK_OT_hide_view_set(wmOperatorType *ot)
@@ -1830,9 +1826,7 @@ static int mask_feather_weight_clear_exec(bContext *C, wmOperator *UNUSED(op))
 
     return OPERATOR_FINISHED;
   }
-  else {
-    return OPERATOR_CANCELLED;
-  }
+  return OPERATOR_CANCELLED;
 }
 
 void MASK_OT_feather_weight_clear(wmOperatorType *ot)

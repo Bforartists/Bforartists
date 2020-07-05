@@ -25,7 +25,7 @@ from math import cos, pi
 from itertools import count, repeat
 
 from rigify.utils.rig import is_rig_base_bone
-from rigify.utils.naming import strip_org, make_derived_name
+from rigify.utils.naming import strip_org, make_derived_name, choose_derived_bone
 from rigify.utils.widgets import create_widget
 from rigify.utils.misc import map_list
 
@@ -81,9 +81,9 @@ class Rig(BaseRig):
         self.rig_parent_bone = self.get_bone_parent(self.bones.org[0])
 
         # Parent to the deform bone of the parent if exists
-        def_bone = make_derived_name(self.rig_parent_bone, 'def')
+        def_bone = choose_derived_bone(self.generator, self.rig_parent_bone, 'def')
 
-        if def_bone in self.obj.data.bones:
+        if def_bone:
             self.rig_parent_bone = def_bone
 
     ####################################################

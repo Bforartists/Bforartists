@@ -32,7 +32,6 @@ bl_info = {
 import importlib
 import sys
 import bpy
-import os
 
 
 # The order in which core modules of the addon are loaded and reloaded.
@@ -194,6 +193,14 @@ class RigifyPreferences(AddonPreferences):
             load_rigs()
 
             register()
+
+    def register_feature_sets(self, register):
+        """Call register or unregister of external feature sets"""
+        if self.legacy_mode:
+            return
+
+        for set_name in feature_set_list.get_installed_list():
+            feature_set_list.call_register_function(set_name, register)
 
     def update_external_rigs(self, force=False):
         """Get external feature sets"""
@@ -409,14 +416,17 @@ class RigifyParameterValidator(object):
             print("!!! RIGIFY RIG %s: INVALID DEFINITION FOR RIG PARAMETER %s: %r\n" % (self.__rig_name, name, val))
             return
 
-        if name in self.__prop_table:
-            cur_rig, cur_info = self.__prop_table[name]
-            if val != cur_info:
-                print("!!! RIGIFY RIG %s: REDEFINING PARAMETER %s AS:\n\n    %s\n" % (self.__rig_name, name, format_property_spec(val)))
-                print("!!! PREVIOUS DEFINITION BY %s:\n\n    %s\n" % (cur_rig, format_property_spec(cur_info)))
-
         # actually defining the property modifies the dictionary with new parameters, so copy it now
         new_def = (val[0], val[1].copy())
+
+        if 'poll' in new_def[1]:
+            del new_def[1]['poll']
+
+        if name in self.__prop_table:
+            cur_rig, cur_info = self.__prop_table[name]
+            if new_def != cur_info:
+                print("!!! RIGIFY RIG %s: REDEFINING PARAMETER %s AS:\n\n    %s\n" % (self.__rig_name, name, format_property_spec(val)))
+                print("!!! PREVIOUS DEFINITION BY %s:\n\n    %s\n" % (cur_rig, format_property_spec(cur_info)))
 
         # inject a generic update callback that calls the appropriate rig classmethod
         val[1]['update'] = update_callback(name)
@@ -559,6 +569,7 @@ def register():
     if legacy_loaded or bpy.context.preferences.addons['rigify'].preferences.legacy_mode:
         bpy.context.preferences.addons['rigify'].preferences.legacy_mode = True
 
+    bpy.context.preferences.addons['rigify'].preferences.register_feature_sets(True)
     bpy.context.preferences.addons['rigify'].preferences.update_external_rigs()
 
     # Add rig parameters
@@ -588,6 +599,8 @@ def register_rig_parameters():
 
 def unregister():
     from bpy.utils import unregister_class
+
+    bpy.context.preferences.addons['rigify'].preferences.register_feature_sets(False)
 
     # Properties on PoseBones and Armature.
     del bpy.types.PoseBone.rigify_type

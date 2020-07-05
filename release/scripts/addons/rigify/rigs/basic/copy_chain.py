@@ -21,13 +21,7 @@
 import bpy
 
 from ..chain_rigs import SimpleChainRig
-
-from ...utils.errors import MetarigError
-from ...utils.rig import connected_children_names
-from ...utils.naming import make_derived_name
-from ...utils.widgets_basic import create_bone_widget
-
-from ...base_rig import BaseRig, stage
+from ...base_rig import stage
 
 
 class Rig(SimpleChainRig):

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2592,10 +2592,6 @@ msgid "Limit the distance from target object"
 msgstr "Odstranit vybrané vertexy z aktuální skupiny vertexů"
 
 
-msgid "For Transform"
-msgstr "Transformace"
-
-
 msgid "Limit Location Constraint"
 msgstr "Kopírovat polohu"
 
@@ -4705,10 +4701,6 @@ msgid "Start"
 msgstr "Počátek"
 
 
-msgid "Final"
-msgstr "původní"
-
-
 msgid "Cell Size"
 msgstr "Velikost krychle"
 
@@ -4779,6 +4771,10 @@ msgstr "Zachytit obrazovku"
 
 msgid "Nearest"
 msgstr "Zkosit"
+
+
+msgid "Final"
+msgstr "původní"
 
 
 msgid "Preview"
@@ -6869,6 +6865,10 @@ msgid "Polygons of the mesh"
 msgstr "Velikost štětce"
 
 
+msgid "All vertex colors"
+msgstr "Nová vertexová barva"
+
+
 msgid "Skin Vertices"
 msgstr "Vertexy"
 
@@ -6966,10 +6966,6 @@ msgstr "Vrstvy"
 
 
 msgid "Vertex Colors"
-msgstr "Nová vertexová barva"
-
-
-msgid "All vertex colors"
 msgstr "Nová vertexová barva"
 
 
@@ -13525,6 +13521,10 @@ msgid "Sky Texture"
 msgstr "Textura oblohy"
 
 
+msgid "Air"
+msgstr "Vzduch"
+
+
 msgid "Sun Direction"
 msgstr "Odznačit spojené"
 
@@ -15984,20 +15984,12 @@ msgid "(De)select all control points"
 msgstr "O(d)značit vše"
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "Odstranit označené Objekt(y)"
-
-
 msgid "Select all control points linked to already selected ones"
 msgstr "Vybrané vertexy náleží do aktuální skupiny vertexů"
 
 
 msgid "Deselect linked control points rather than selecting them"
 msgstr "Zdvojí vybrané kontrolní body a úseky mezi nimi"
-
-
-msgid "Select control points directly linked to already selected ones"
-msgstr "Vybrané vertexy náleží do aktuální skupiny vertexů"
 
 
 msgctxt "Operator"
@@ -16989,6 +16981,10 @@ msgid "Eraser"
 msgstr "Smazat"
 
 
+msgid "Side"
+msgstr "Ze strany"
+
+
 msgctxt "Operator"
 msgid "Convert Grease Pencil"
 msgstr "Převést skicovací tužku"
@@ -17091,10 +17087,6 @@ msgstr "Vrstvy masky"
 
 msgid "Keep Original"
 msgstr "Uchovat originál"
-
-
-msgid "Side"
-msgstr "Ze strany"
 
 
 msgid "Mouse location"
@@ -18296,7 +18288,6 @@ msgid "Shrink/fatten selected vertices along normals"
 msgstr "Smrštit/roztáhnout podél normál"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Táhnout oblast"
 
@@ -18305,6 +18296,7 @@ msgid "Extrude region of faces"
 msgstr "Táhnout oblast"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "Táhnout oblast"
 
@@ -18784,6 +18776,14 @@ msgid "Turns"
 msgstr "Otáčky:"
 
 
+msgid "Add vertex color layer"
+msgstr "Přidat barvu"
+
+
+msgid "Remove vertex color layer"
+msgstr "Načíst uložené Render Hladiny"
+
+
 msgid "(De)select all vertices, edges or faces"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
 
@@ -19112,17 +19112,9 @@ msgid "Add Vertex Color"
 msgstr "Nová vertexová barva"
 
 
-msgid "Add vertex color layer"
-msgstr "Přidat barvu"
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "Odstranit barvu vertexů"
-
-
-msgid "Remove vertex color layer"
-msgstr "Načíst uložené Render Hladiny"
 
 
 msgid "Flatten angles of selected vertices"
@@ -25316,10 +25308,6 @@ msgid "Use Deform Only"
 msgstr "Deformace"
 
 
-msgid "Use OpenMP"
-msgstr "Vlákna"
-
-
 msgid "UV Sculpting"
 msgstr "Tesat"
 
@@ -26949,30 +26937,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "Vybrat cestu"
 
 
-msgid "Type of primitive used for hair rendering"
-msgstr "Spustit renderovani"
-
-
-msgid "Line Segments"
-msgstr "Segmenty"
-
-
-msgid "Curve Segments"
-msgstr "Vytvořit segment"
-
-
-msgid "Resolution of generated mesh"
-msgstr "Určuje délku životnosti vlny"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "Spustit renderovani"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Částice"
-
-
 msgid "Cast Shadow"
 msgstr "Stín"
 
@@ -27159,10 +27123,6 @@ msgstr "Počet dělení plošek v 3D pohledu"
 
 msgid "Pause Preview"
 msgstr "Náhled obrázku"
-
-
-msgid "Preview Samples"
-msgstr "Editor Ipo křivek"
 
 
 msgid "Start Resolution"
@@ -31363,10 +31323,6 @@ msgid "Anim Player"
 msgstr "Přehrávač animací"
 
 
-msgid "File Path:"
-msgstr "Důležité cesty"
-
-
 msgid "Display number of users of this data (click to make a single-user copy)"
 msgstr "Zobrazí počet uživatelů těchto dat (klini pro vytvoření kopie pro jednoho uživatele)"
 
@@ -31485,11 +31441,6 @@ msgstr "Prochází připojená data skicovací tužky"
 
 msgid "Browse ID data to be linked"
 msgstr "Prochází připojená ID data"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Použít"
 
 
 msgctxt "Scene"
@@ -31857,10 +31808,6 @@ msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "Rotovat "
 
 
-msgid "Air"
-msgstr "Vzduch"
-
-
 msgid "Scene has no camera"
 msgstr "Označit vrstvu"
 
@@ -31927,6 +31874,10 @@ msgstr "Aktivní snímek"
 
 msgid "Fields"
 msgstr "Soubor"
+
+
+msgid "File Path:"
+msgstr "Důležité cesty"
 
 
 msgid "Track is locked"
@@ -32448,6 +32399,15 @@ msgid "Clear Seam"
 msgstr "Zrušit šev"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Použít"
+
+
+msgid "Bone Envelopes"
+msgstr "Plášť"
+
+
 msgid "Keying set path could not be added"
 msgstr "Klíčovací sestava"
 
@@ -32546,10 +32506,6 @@ msgstr "Přesunout modifikátor dolů v zásobníku modifikátorů"
 
 msgid "Property value not in enumeration"
 msgstr "Vlastnosti..."
-
-
-msgid "Bone Envelopes"
-msgstr "Plášť"
 
 
 msgid "Sharp Edges"

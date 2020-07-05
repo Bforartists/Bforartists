@@ -27,7 +27,8 @@
 
 struct ID;
 
-namespace DEG {
+namespace blender {
+namespace deg {
 
 template<class ModeObjectType> NodeType DepsNodeFactoryImpl<ModeObjectType>::type() const
 {
@@ -49,7 +50,7 @@ Node *DepsNodeFactoryImpl<ModeObjectType>::create_node(const ID *id,
                                                        const char *subdata,
                                                        const char *name) const
 {
-  Node *node = OBJECT_GUARDED_NEW(ModeObjectType);
+  Node *node = new ModeObjectType();
   /* Populate base node settings. */
   node->type = type();
   /* Set name if provided, or use default type name. */
@@ -63,4 +64,5 @@ Node *DepsNodeFactoryImpl<ModeObjectType>::create_node(const ID *id,
   return node;
 }
 
-}  // namespace DEG
+}  // namespace deg
+}  // namespace blender

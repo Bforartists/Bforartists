@@ -65,7 +65,6 @@ struct uiWidgetColors;
 struct wmDrag;
 struct wmDropBox;
 struct wmEvent;
-struct wmEvent;
 struct wmGizmo;
 struct wmKeyConfig;
 struct wmKeyMap;
@@ -174,13 +173,6 @@ enum {
   UI_RETURN_UPDATE = 1 << 4,
   /** Popup is ok to be handled. */
   UI_RETURN_POPUP_OK = 1 << 5,
-};
-
-/* panel controls */
-enum {
-  UI_PNL_SOLID = 1 << 1,
-  UI_PNL_CLOSE = 1 << 5,
-  UI_PNL_SCALE = 1 << 9,
 };
 
 /* but->flag - general state flags. */
@@ -1706,12 +1698,17 @@ void UI_panel_category_draw_all(struct ARegion *region, const char *category_id_
 
 struct PanelType *UI_paneltype_find(int space_id, int region_id, const char *idname);
 
+struct PointerRNA *UI_region_panel_custom_data_under_cursor(const struct bContext *C,
+                                                            const struct wmEvent *event);
+void UI_panel_custom_data_set(struct Panel *panel, struct PointerRNA *custom_data);
+
 /* Polyinstantiated panels for representing a list of data. */
 struct Panel *UI_panel_add_instanced(struct ScrArea *area,
                                      struct ARegion *region,
                                      struct ListBase *panels,
                                      char *panel_idname,
-                                     int list_index);
+                                     int list_index,
+                                     struct PointerRNA *custom_data);
 void UI_panels_free_instanced(struct bContext *C, struct ARegion *region);
 
 #define LIST_PANEL_UNIQUE_STR_LEN 4

@@ -123,9 +123,7 @@ static ID *outliner_ID_drop_find(bContext *C, const wmEvent *event, short idcode
   if (te && te->idcode == idcode && tselem->type == 0) {
     return tselem->id;
   }
-  else {
-    return NULL;
-  }
+  return NULL;
 }
 
 /* Find tree element to drop into, with additional before and after reorder support. */
@@ -154,44 +152,35 @@ static TreeElement *outliner_drop_insert_find(bContext *C,
           *r_insert_type = TE_INSERT_INTO;
           return te_hovered;
         }
-        else {
-          *r_insert_type = TE_INSERT_BEFORE;
-          return te_hovered->subtree.first;
-        }
+        *r_insert_type = TE_INSERT_BEFORE;
+        return te_hovered->subtree.first;
       }
-      else {
-        *r_insert_type = TE_INSERT_AFTER;
-        return te_hovered;
-      }
-    }
-    else if (view_mval[1] > (te_hovered->ys + (3 * margin))) {
-      *r_insert_type = TE_INSERT_BEFORE;
-      return te_hovered;
-    }
-    else {
-      *r_insert_type = TE_INSERT_INTO;
-      return te_hovered;
-    }
-  }
-  else {
-    /* Mouse doesn't hover any item (ignoring x-axis),
-     * so it's either above list bounds or below. */
-    TreeElement *first = soops->tree.first;
-    TreeElement *last = soops->tree.last;
-
-    if (view_mval[1] < last->ys) {
       *r_insert_type = TE_INSERT_AFTER;
-      return last;
+      return te_hovered;
     }
-    else if (view_mval[1] > (first->ys + UI_UNIT_Y)) {
+    if (view_mval[1] > (te_hovered->ys + (3 * margin))) {
       *r_insert_type = TE_INSERT_BEFORE;
-      return first;
+      return te_hovered;
     }
-    else {
-      BLI_assert(0);
-      return NULL;
-    }
+    *r_insert_type = TE_INSERT_INTO;
+    return te_hovered;
   }
+
+  /* Mouse doesn't hover any item (ignoring x-axis),
+   * so it's either above list bounds or below. */
+  TreeElement *first = soops->tree.first;
+  TreeElement *last = soops->tree.last;
+
+  if (view_mval[1] < last->ys) {
+    *r_insert_type = TE_INSERT_AFTER;
+    return last;
+  }
+  if (view_mval[1] > (first->ys + UI_UNIT_Y)) {
+    *r_insert_type = TE_INSERT_BEFORE;
+    return first;
+  }
+  BLI_assert(0);
+  return NULL;
 }
 
 static Collection *outliner_collection_from_tree_element_and_parents(TreeElement *te,
@@ -270,9 +259,7 @@ static bool parent_drop_allowed(TreeElement *te, Object *potential_child)
     }
     return false;
   }
-  else {
-    return true;
-  }
+  return true;
 }
 
 static bool allow_parenting_without_modifier_key(SpaceOutliner *soops)
@@ -650,7 +637,7 @@ static Collection *collection_parent_from_ID(ID *id)
   if (GS(id->name) == ID_SCE) {
     return ((Scene *)id)->master_collection;
   }
-  else if (GS(id->name) == ID_GR) {
+  if (GS(id->name) == ID_GR) {
     return (Collection *)id;
   }
 
@@ -772,12 +759,10 @@ static bool collection_drop_poll(bContext *C,
     }
     return true;
   }
-  else {
-    if (changed) {
-      ED_region_tag_redraw_no_rebuild(region);
-    }
-    return false;
+  if (changed) {
+    ED_region_tag_redraw_no_rebuild(region);
   }
+  return false;
 }
 
 static int collection_drop_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
@@ -906,6 +891,9 @@ static int outliner_item_drag_drop_invoke(bContext *C,
   if (outliner_item_is_co_within_close_toggle(te, view_mval[0])) {
     return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
   }
+
+  /* Scroll view when dragging near edges */
+  WM_operator_name_call(C, "VIEW2D_OT_edge_pan", WM_OP_INVOKE_DEFAULT, NULL);
 
   wmDrag *drag = WM_event_start_drag(C, data.icon, WM_DRAG_ID, NULL, 0.0, WM_DRAG_NOP);
 

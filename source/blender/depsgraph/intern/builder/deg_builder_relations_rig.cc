@@ -58,7 +58,8 @@
 #include "intern/depsgraph_relation.h"
 #include "intern/depsgraph_type.h"
 
-namespace DEG {
+namespace blender {
+namespace deg {
 
 /* IK Solver Eval Steps */
 void DepsgraphRelationBuilder::build_ik_pose(Object *object,
@@ -449,7 +450,7 @@ void DepsgraphRelationBuilder::build_rig(Object *object)
     }
     /* Custom shape. */
     if (pchan->custom != nullptr) {
-      build_object(nullptr, pchan->custom);
+      build_object(pchan->custom);
     }
   }
 }
@@ -509,4 +510,5 @@ void DepsgraphRelationBuilder::build_proxy_rig(Object *object)
   }
 }
 
-}  // namespace DEG
+}  // namespace deg
+}  // namespace blender

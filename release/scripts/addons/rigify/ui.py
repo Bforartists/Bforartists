@@ -54,7 +54,7 @@ def build_type_list(context, rigify_types):
 
     for r in sorted(rig_lists.rigs):
         if (context.object.data.active_feature_set in ('all', rig_lists.rigs[r]['feature_set'])
-                or len(feature_set_list.feature_set_items(context.scene, context)) == 2
+                or len(feature_set_list.get_installed_list()) == 0
                 ):
             a = rigify_types.add()
             a.name = r
@@ -180,7 +180,7 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
                 id_store.rigify_active_type = 0
 
             # Rig type list
-            if len(feature_set_list.feature_set_items(context.scene, context)) > 2:
+            if len(feature_set_list.get_installed_list()) > 0:
                 row = layout.row()
                 row.prop(context.object.data, "active_feature_set")
             row = layout.row()
@@ -598,7 +598,7 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
         build_type_list(context, id_store.rigify_types)
 
         # Rig type field
-        if len(feature_set_list.feature_set_items(context.scene, context)) > 2:
+        if len(feature_set_list.get_installed_list()) > 0:
             row = layout.row()
             row.prop(context.object.data, "active_feature_set")
         row = layout.row()

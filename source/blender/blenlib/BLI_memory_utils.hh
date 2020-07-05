@@ -204,14 +204,6 @@ template<typename T> void uninitialized_fill_n(T *dst, uint n, const T &value)
   }
 }
 
-/**
- * The same as std::unique_ptr. This can be removed when we start using C++14.
- */
-template<typename T, typename... Args> std::unique_ptr<T> make_unique(Args &&... args)
-{
-  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-
 template<typename T> struct DestructValueAtAddress {
   void operator()(T *ptr)
   {
@@ -236,18 +228,25 @@ template<typename T> using destruct_ptr = std::unique_ptr<T, DestructValueAtAddr
 template<size_t Size, size_t Alignment> class alignas(Alignment) AlignedBuffer {
  private:
   /* Don't create an empty array. This causes problems with some compilers. */
-  char m_buffer[(Size > 0) ? Size : 1];
+  char buffer_[(Size > 0) ? Size : 1];
 
  public:
   void *ptr()
   {
-    return (void *)m_buffer;
+    return (void *)buffer_;
   }
 
   const void *ptr() const
   {
-    return (const void *)m_buffer;
+    return (const void *)buffer_;
   }
+};
+
+/**
+ * This can be used by container constructors. A parameter of this type should be used to indicate
+ * that the constructor does not construct the elements.
+ */
+class NoInitialization {
 };
 
 }  // namespace blender

@@ -194,15 +194,13 @@ static float cloth_brush_simulation_falloff_get(const Brush *brush,
     /* Outiside the limits. */
     return 0.0f;
   }
-  else if (distance < falloff) {
+  if (distance < falloff) {
     /* Before the falloff area. */
     return 1.0f;
   }
-  else {
-    /* Do a smoothstep transition inside the falloff area. */
-    float p = 1.0f - ((distance - falloff) / (limit - falloff));
-    return 3.0f * p * p - 2.0f * p * p * p;
-  }
+  /* Do a smoothstep transition inside the falloff area. */
+  float p = 1.0f - ((distance - falloff) / (limit - falloff));
+  return 3.0f * p * p - 2.0f * p * p * p;
 }
 
 static void cloth_brush_apply_force_to_vertex(SculptSession *UNUSED(ss),
@@ -547,7 +545,7 @@ static void cloth_brush_do_simulation_step(
   };
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   BLI_task_parallel_range(
       0, totnode, &solve_simulation_data, do_cloth_brush_solve_simulation_task_cb_ex, &settings);
 }
@@ -622,7 +620,7 @@ static void cloth_brush_apply_brush_foces(Sculpt *sd, Object *ob, PBVHNode **nod
   }
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   BLI_task_parallel_range(
       0, totnode, &apply_forces_data, do_cloth_brush_apply_forces_task_cb_ex, &settings);
 }
@@ -640,10 +638,10 @@ void SCULPT_do_cloth_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
    * nodes inside the simulation's limits. */
   /* Brush stroke types that restore the mesh on each brush step also need the cloth sim data to be
    * created on each step. */
-  if (ss->cache->first_time || !ss->cache->cloth_sim) {
+  if (SCULPT_stroke_is_first_brush_step_of_symmetry_pass(ss->cache) || !ss->cache->cloth_sim) {
 
     /* The simulation structure only needs to be created on the first symmetry pass. */
-    if (ss->cache->mirror_symmetry_pass == 0) {
+    if (SCULPT_stroke_is_first_brush_step(ss->cache)) {
       ss->cache->cloth_sim = cloth_brush_simulation_create(
           ss, brush->cloth_mass, brush->cloth_damping);
       for (int i = 0; i < totverts; i++) {
@@ -671,8 +669,6 @@ void SCULPT_do_cloth_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
 
   /* Update and write the simulation to the nodes. */
   cloth_brush_do_simulation_step(sd, ob, ss->cache->cloth_sim, nodes, totnode);
-
-  return;
 }
 
 void SCULPT_cloth_simulation_free(struct SculptClothSimulation *cloth_sim)
@@ -872,8 +868,7 @@ static int sculpt_cloth_filter_modal(bContext *C, wmOperator *op, const wmEvent 
   };
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(
-      &settings, (sd->flags & SCULPT_USE_OPENMP), ss->filter_cache->totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, ss->filter_cache->totnode);
   BLI_task_parallel_range(
       0, ss->filter_cache->totnode, &data, cloth_filter_apply_forces_task_cb, &settings);
 

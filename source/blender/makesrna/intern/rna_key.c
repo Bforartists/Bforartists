@@ -708,9 +708,8 @@ static KeyBlock *rna_ShapeKeyData_find_keyblock(Key *key, float *point)
     return NULL;
   }
 
-  /* we'll need to manually search through the keyblocks and check
-   * if the point is somewhere in the middle of each block's data
-   */
+  /* We'll need to manually search through the key-blocks and check
+   * if the point is somewhere in the middle of each block's data. */
   for (kb = key->block.first; kb; kb = kb->next) {
     if (kb->data) {
       float *start = (float *)kb->data;
@@ -918,6 +917,7 @@ static void rna_def_keyblock(BlenderRNA *brna)
    * (to test results) */
   prop = RNA_def_property(srna, "value", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "curval");
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_float_funcs(prop, NULL, "rna_ShapeKey_value_set", "rna_ShapeKey_value_range");
   RNA_def_property_ui_range(prop, -10.0f, 10.0f, 10, 3);
   RNA_def_property_ui_text(prop, "Value", "Value of shape key at the current frame");
@@ -944,6 +944,7 @@ static void rna_def_keyblock(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "mute", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", KEYBLOCK_MUTE);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Mute", "Toggle this shape key");
   RNA_def_property_ui_icon(prop, ICON_CHECKBOX_HLT, -1);
   RNA_def_property_update(prop, 0, "rna_Key_update_data");
@@ -966,6 +967,7 @@ static void rna_def_keyblock(BlenderRNA *brna)
   prop = RNA_def_property(srna, "data", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "data", "totelem");
   RNA_def_property_struct_type(prop, "UnknownType");
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_IGNORE);
   RNA_def_property_ui_text(prop, "Data", "");
   RNA_def_property_collection_funcs(prop,
                                     "rna_ShapeKey_data_begin",
@@ -1028,6 +1030,7 @@ static void rna_def_key(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "key_blocks", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "block", NULL);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_struct_type(prop, "ShapeKey");
   RNA_def_property_ui_text(prop, "Key Blocks", "Shape keys");
 
@@ -1051,6 +1054,7 @@ static void rna_def_key(BlenderRNA *brna)
   prop = RNA_def_property(srna, "eval_time", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "ctime");
   RNA_def_property_range(prop, MINFRAME, MAXFRAME);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(prop, "Evaluation Time", "Evaluation time for absolute shape keys");
   RNA_def_property_update(prop, 0, "rna_Key_update_data");
 }

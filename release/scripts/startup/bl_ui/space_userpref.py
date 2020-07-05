@@ -2164,8 +2164,10 @@ class ExperimentalPanel:
             split = layout.split(factor=0.66)
             col = split.split()
             col.prop(experimental, **prop_keywords)
-            col = split.split()
-            col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
+
+            if task:
+                col = split.split()
+                col.operator("wm.url_open", text=task, icon='URL').url = self.url_prefix + task
 
 """
 # Example panel, leave it here so we always have a template to follow even
@@ -2223,6 +2225,7 @@ class USERPREF_PT_experimental_debugging(ExperimentalPanel, Panel):
         self._draw_items(
             context, (
                 ({"property": "use_undo_legacy"}, "T60695"),
+                ({"property": "use_cycles_debug"}, None),
             ),
         )
 

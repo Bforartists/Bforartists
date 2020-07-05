@@ -287,7 +287,8 @@ class RenumerateQCDSlots(Operator):
     bl_label = "Renumber QCD Slots"
     bl_description = (
         "Renumber QCD slots.\n"
-        "  * LMB - Renumber starting from the slot designated 1.\n"
+        "  * LMB - Renumber (breadth first) starting from the slot designated 1.\n"
+        "  * Ctrl+LMB - Renumber (depth first) starting from the slot designated 1.\n"
         "  * Alt+LMB - Renumber from the beginning"
         )
     bl_idname = "view3d.renumerate_qcd_slots"
@@ -300,6 +301,9 @@ class RenumerateQCDSlots(Operator):
 
         if modifiers == {'alt'}:
             qcd_slots.renumerate(beginning=True)
+
+        elif modifiers == {'ctrl'}:
+            qcd_slots.renumerate(depth_first=True)
 
         else:
             qcd_slots.renumerate()

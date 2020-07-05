@@ -1619,9 +1619,7 @@ RenderEngineType *ED_view3d_engine_type(const Scene *scene, int drawtype)
   if (drawtype == OB_MATERIAL && (type->flag & RE_USE_EEVEE_VIEWPORT)) {
     return RE_engines_find(RE_engine_id_BLENDER_EEVEE);
   }
-  else {
-    return type;
-  }
+  return type;
 }
 
 void view3d_main_region_draw(const bContext *C, ARegion *region)
@@ -1888,7 +1886,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
 
   if (own_ofs) {
     /* bind */
-    ofs = GPU_offscreen_create(sizex, sizey, 0, true, false, err_out);
+    ofs = GPU_offscreen_create(sizex, sizey, true, false, err_out);
     if (ofs == NULL) {
       DRW_opengl_context_disable();
       return NULL;

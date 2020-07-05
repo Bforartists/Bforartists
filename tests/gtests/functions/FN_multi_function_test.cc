@@ -20,8 +20,7 @@
 #include "FN_multi_function.hh"
 #include "FN_multi_function_builder.hh"
 
-namespace blender {
-namespace fn {
+namespace blender::fn {
 
 class AddFunction : public MultiFunction {
  public:
@@ -219,10 +218,10 @@ TEST(multi_function, GenericAppendFunction)
   EXPECT_EQ(vectors_ref[3][0], 1);
 }
 
-TEST(multi_function, CustomFunction_SI_SO)
+TEST(multi_function, CustomMF_SI_SO)
 {
-  CustomFunction_SI_SO<std::string, uint> fn("strlen",
-                                             [](const std::string &str) { return str.size(); });
+  CustomMF_SI_SO<std::string, uint> fn("strlen",
+                                       [](const std::string &str) { return str.size(); });
 
   Array<std::string> strings = {"hello", "world", "test", "another test"};
   Array<uint> sizes(strings.size(), 0);
@@ -241,9 +240,9 @@ TEST(multi_function, CustomFunction_SI_SO)
   EXPECT_EQ(sizes[3], 12);
 }
 
-TEST(multi_function, CustomFunction_SI_SI_SO)
+TEST(multi_function, CustomMF_SI_SI_SO)
 {
-  CustomFunction_SI_SI_SO<int, int, int> fn("mul", [](int a, int b) { return a * b; });
+  CustomMF_SI_SI_SO<int, int, int> fn("mul", [](int a, int b) { return a * b; });
 
   Array<int> values_a = {4, 6, 8, 9};
   int value_b = 10;
@@ -264,9 +263,36 @@ TEST(multi_function, CustomFunction_SI_SI_SO)
   EXPECT_EQ(outputs[3], 90);
 }
 
-TEST(multi_function, CustomFunction_SM)
+TEST(multi_function, CustomMF_SI_SI_SI_SO)
 {
-  CustomFunction_SM<std::string> fn("AddSuffix", [](std::string &value) { value += " test"; });
+  CustomMF_SI_SI_SI_SO<int, std::string, bool, uint> fn{
+      "custom",
+      [](int a, const std::string &b, bool c) { return (uint)((uint)a + b.size() + (uint)c); }};
+
+  Array<int> values_a = {5, 7, 3, 8};
+  Array<std::string> values_b = {"hello", "world", "another", "test"};
+  Array<bool> values_c = {true, false, false, true};
+  Array<uint> outputs(values_a.size(), 0);
+
+  MFParamsBuilder params(fn, values_a.size());
+  params.add_readonly_single_input(values_a.as_span());
+  params.add_readonly_single_input(values_b.as_span());
+  params.add_readonly_single_input(values_c.as_span());
+  params.add_uninitialized_single_output(outputs.as_mutable_span());
+
+  MFContextBuilder context;
+
+  fn.call({1, 2, 3}, params, context);
+
+  EXPECT_EQ(outputs[0], 0);
+  EXPECT_EQ(outputs[1], 12);
+  EXPECT_EQ(outputs[2], 10);
+  EXPECT_EQ(outputs[3], 13);
+}
+
+TEST(multi_function, CustomMF_SM)
+{
+  CustomMF_SM<std::string> fn("AddSuffix", [](std::string &value) { value += " test"; });
 
   Array<std::string> values = {"a", "b", "c", "d", "e"};
 
@@ -284,5 +310,23 @@ TEST(multi_function, CustomFunction_SM)
   EXPECT_EQ(values[4], "e");
 }
 
-}  // namespace fn
-}  // namespace blender
+TEST(multi_function, CustomMF_Constant)
+{
+  CustomMF_Constant<int> fn{42};
+
+  Array<int> outputs(4, 0);
+
+  MFParamsBuilder params(fn, outputs.size());
+  params.add_uninitialized_single_output(outputs.as_mutable_span());
+
+  MFContextBuilder context;
+
+  fn.call({0, 2, 3}, params, context);
+
+  EXPECT_EQ(outputs[0], 42);
+  EXPECT_EQ(outputs[1], 0);
+  EXPECT_EQ(outputs[2], 42);
+  EXPECT_EQ(outputs[3], 42);
+}
+
+}  // namespace blender::fn
