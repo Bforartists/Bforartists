@@ -23,15 +23,12 @@ import bpy
 from itertools import count
 
 from ...utils.naming import strip_org, make_derived_name
-from ...utils.bones import put_bone, flip_bone, is_same_position, connect_bbone_chain_handles
-from ...utils.bones import align_bone_orientation, set_bone_widget_transform
+from ...utils.bones import put_bone, set_bone_widget_transform
 from ...utils.widgets_basic import create_circle_widget
-from ...utils.layers import ControlLayersOption
 from ...utils.misc import map_list
 
 from ...base_rig import stage
 
-from ..chain_rigs import TweakChainRig, SimpleChainRig
 from ..widgets import create_ballsocket_widget
 
 from .spine_rigs import BaseHeadTailRig

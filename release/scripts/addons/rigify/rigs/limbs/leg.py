@@ -21,14 +21,13 @@
 import bpy
 import math
 
-from itertools import count
 from mathutils import Vector, Matrix
 
 from ...utils.rig import is_rig_base_bone
-from ...utils.bones import align_chain_x_axis, align_bone_x_axis, align_bone_y_axis, align_bone_z_axis
-from ...utils.bones import align_bone_to_axis, flip_bone, put_bone, align_bone_orientation
+from ...utils.bones import align_chain_x_axis, align_bone_x_axis, align_bone_z_axis
+from ...utils.bones import put_bone, align_bone_orientation
 from ...utils.naming import make_derived_name
-from ...utils.misc import map_list, matrix_from_axis_roll, matrix_from_axis_pair
+from ...utils.misc import matrix_from_axis_roll, matrix_from_axis_pair
 from ...utils.widgets import adjust_widget_transform_mesh
 
 from ..widgets import create_foot_widget, create_ballsocket_widget

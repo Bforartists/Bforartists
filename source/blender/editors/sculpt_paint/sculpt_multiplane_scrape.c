@@ -257,7 +257,7 @@ void SCULPT_do_multiplane_scrape_brush(Sculpt *sd, Object *ob, PBVHNode **nodes,
   }
 
   /* Delay the first daub because grab delta is not setup. */
-  if (ss->cache->first_time) {
+  if (SCULPT_stroke_is_first_brush_step_of_symmetry_pass(ss->cache)) {
     ss->cache->multiplane_scrape_angle = 0.0f;
     return;
   }
@@ -304,7 +304,7 @@ void SCULPT_do_multiplane_scrape_brush(Sculpt *sd, Object *ob, PBVHNode **nodes,
     MultiplaneScrapeSampleData mssd = {{{0}}};
 
     TaskParallelSettings sample_settings;
-    BKE_pbvh_parallel_range_settings(&sample_settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+    BKE_pbvh_parallel_range_settings(&sample_settings, true, totnode);
     sample_settings.func_reduce = calc_multiplane_scrape_surface_reduce;
     sample_settings.userdata_chunk = &mssd;
     sample_settings.userdata_chunk_size = sizeof(MultiplaneScrapeSampleData);
@@ -395,7 +395,7 @@ void SCULPT_do_multiplane_scrape_brush(Sculpt *sd, Object *ob, PBVHNode **nodes,
   plane_from_point_normal_v3(data.multiplane_scrape_planes[0], area_co, plane_no);
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   BLI_task_parallel_range(0, totnode, &data, do_multiplane_scrape_brush_task_cb_ex, &settings);
 }
 

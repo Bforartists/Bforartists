@@ -1203,6 +1203,10 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
     fbx_layer_data = elem_prop_first(elem_find_first(fbx_layer, layer_id))
     fbx_layer_index = elem_prop_first(elem_find_first(fbx_layer, b'NormalsIndex'))
 
+    if fbx_layer_data is None:
+        print("warning %r %r missing data" % (layer_id, fbx_layer_name))
+        return False
+
     # try loops, then vertices.
     tries = ((mesh.loops, "Loops", False, blen_read_geom_array_mapped_polyloop),
              (mesh.polygons, "Polygons", True, blen_read_geom_array_mapped_polygon),

@@ -141,7 +141,7 @@ class CollectionManager(Operator):
         filter_sec = button_row.row()
         filter_sec.alignment = 'RIGHT'
 
-        filter_sec.popover(panel="COLLECTIONMANAGER_PT_restriction_toggles",
+        filter_sec.popover(panel="COLLECTIONMANAGER_PT_display_options",
                            text="", icon='FILTER')
 
         mc_box = layout.box()
@@ -450,9 +450,17 @@ class CM_UL_items(UIList):
         selected_objects = get_move_selection()
         active_object = get_move_active()
 
-        split = layout.split(factor=0.96)
-        row = split.row(align=True)
-        row.alignment = 'LEFT'
+        column = layout.column(align=True)
+
+        main_row = column.row()
+
+        s1 = main_row.row(align=True)
+        s1.alignment = 'LEFT'
+
+        s2 = main_row.row(align=True)
+        s2.alignment = 'RIGHT'
+
+        row = s1
 
         # allow room to select the row from the beginning
         row.separator()
@@ -505,20 +513,22 @@ class CM_UL_items(UIList):
             QCD.scale_x = 0.4
             QCD.prop(item, "qcd_slot_idx", text="")
 
-        name_row = row.row()
+        c_name = row.row()
 
         #if rename[0] and index == cm.cm_list_index:
-            #name_row.activate_init = True
+            #c_name.activate_init = True
             #rename[0] = False
 
-        name_row.prop(item, "name", text="", expand=True)
+        c_name.prop(item, "name", text="", expand=True)
 
         # used as a separator (actual separator not wide enough)
         row.label()
 
+        row = s2 if cm.align_local_ops else s1
+
         # add set_collection op
-        row_setcol = row.row()
-        row_setcol.operator_context = 'INVOKE_DEFAULT'
+        set_obj_col = row.row()
+        set_obj_col.operator_context = 'INVOKE_DEFAULT'
 
         icon = 'MESH_CUBE'
 
@@ -530,10 +540,10 @@ class CM_UL_items(UIList):
                 icon = 'STICKY_UVS_LOC'
 
         else:
-            row_setcol.enabled = False
+            set_obj_col.enabled = False
 
 
-        prop = row_setcol.operator("view3d.set_collection", text="",
+        prop = set_obj_col.operator("view3d.set_collection", text="",
                                    icon=icon, emboss=False)
         prop.collection_index = laycol["id"]
         prop.collection_name = item.name
@@ -598,15 +608,35 @@ class CM_UL_items(UIList):
                          emboss=highlight, depress=highlight).name = item.name
 
 
-        rm_op = split.row()
-        rm_op.alignment = 'RIGHT'
+
+        row = s2
+
+        row.separator()
+        row.separator()
+
+        rm_op = row.row()
         rm_op.operator("view3d.remove_collection", text="", icon='X',
                        emboss=False).collection_name = item.name
 
+
+        if len(data.cm_list_collection) > index + 1:
+            line_separator = column.row(align=True)
+            line_separator.ui_units_y = 0.01
+            line_separator.scale_y = 0.1
+            line_separator.enabled = False
+
+            line_separator.separator()
+            line_separator.label(icon='BLANK1')
+
+            for _ in range(laycol["lvl"] + 1):
+                line_separator.label(icon='BLANK1')
+
+            line_separator.prop(cm, "ui_separator")
+
         if cm.in_phantom_mode:
             c_icon.enabled = False
-            name_row.enabled = False
-            row_setcol.enabled = False
+            c_name.enabled = False
+            set_obj_col.enabled = False
             rm_op.enabled = False
 
             if prefs.enable_qcd:
@@ -669,9 +699,13 @@ class CM_UL_items(UIList):
         pass
 
 
-class CMRestrictionTogglesPanel(Panel):
-    bl_label = "Restriction Toggles"
-    bl_idname = "COLLECTIONMANAGER_PT_restriction_toggles"
+class CMDisplayOptionsPanel(Panel):
+    bl_label = "Display Options"
+    bl_idname = "COLLECTIONMANAGER_PT_display_options"
+
+    # set space type to VIEW_3D and region type to HEADER
+    # because we only need it in a popover in the 3D View
+    # and don't want it always present in the UI/N-Panel
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
 
@@ -680,17 +714,30 @@ class CMRestrictionTogglesPanel(Panel):
 
         layout = self.layout
 
-        name_row = layout.row()
-        name_row.alignment = 'LEFT'
-        name_row.label(text="Filter Restriction Toggles")
+        panel_header = layout.row()
+        panel_header.alignment = 'CENTER'
+        panel_header.label(text="Display Options")
+
+        layout.separator()
+
+        section_header = layout.row()
+        section_header.alignment = 'LEFT'
+        section_header.label(text="Restriction Toggles")
 
         row = layout.row()
-
         row.prop(cm, "show_exclude", icon='CHECKBOX_HLT', icon_only=True)
         row.prop(cm, "show_selectable", icon='RESTRICT_SELECT_OFF', icon_only=True)
         row.prop(cm, "show_hide_viewport", icon='HIDE_OFF', icon_only=True)
         row.prop(cm, "show_disable_viewport", icon='RESTRICT_VIEW_OFF', icon_only=True)
         row.prop(cm, "show_render", icon='RESTRICT_RENDER_OFF', icon_only=True)
+
+        layout.separator()
+
+        section_header = layout.row()
+        section_header.label(text="Layout")
+
+        row = layout.row()
+        row.prop(cm, "align_local_ops")
 
 
 def view3d_header_qcd_slots(self, context):

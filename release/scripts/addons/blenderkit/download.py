@@ -190,7 +190,7 @@ def report_usages():
 
     for ob in asset_obs:
         asset_data = ob['asset_data']
-        abid = asset_data['asset_base_id']
+        abid = asset_data['assetBaseId']
 
         if assets.get(abid) is None:
             asset_usages[abid] = {'count': 1}
@@ -201,7 +201,7 @@ def report_usages():
     # brushes
     for b in bpy.data.brushes:
         if b.get('asset_data') != None:
-            abid = b['asset_data']['asset_base_id']
+            abid = b['asset_data']['assetBaseId']
             asset_usages[abid] = {'count': 1}
             assets[abid] = b['asset_data']
     # materials
@@ -211,7 +211,7 @@ def report_usages():
 
             if m is not None and m.get('asset_data') is not None:
 
-                abid = m['asset_data']['asset_base_id']
+                abid = m['asset_data']['assetBaseId']
                 if assets.get(abid) is None:
                     asset_usages[abid] = {'count': 1}
                     assets[abid] = m['asset_data']
@@ -282,18 +282,17 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     #
     scene = bpy.context.scene
 
-
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
     if user_preferences.api_key == '':
         user_preferences.asset_counter += 1
 
-    if asset_data['asset_type'] == 'scene':
+    if asset_data['assetType'] == 'scene':
         scene = append_link.append_scene(file_names[0], link=False, fake_user=False)
         props = scene.blenderkit
         parent = scene
 
-    if asset_data['asset_type'] == 'model':
+    if asset_data['assetType'] == 'model':
         s = bpy.context.scene
         downloaders = kwargs.get('downloaders')
         s = bpy.context.scene
@@ -306,12 +305,12 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             sprops.append_link = 'APPEND'
             sprops.import_as = 'INDIVIDUAL'
 
-        #copy for override
+        # copy for override
         al = sprops.append_link
         import_as = sprops.import_as
         # set consistency for objects already in scene, otherwise this literally breaks blender :)
         ain = asset_in_scene(asset_data)
-        #override based on history
+        # override based on history
         if ain is not False:
             if ain == 'LINKED':
                 al = 'LINK'
@@ -319,7 +318,6 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             else:
                 al = 'APPEND'
                 import_as = 'INDIVIDUAL'
-
 
         # first get conditions for append link
         link = al == 'LINK'
@@ -338,11 +336,11 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
 
                 if sprops.import_as == 'GROUP':
                     parent, newobs = append_link.link_collection(file_names[-1],
-                                                            location=downloader['location'],
-                                                            rotation=downloader['rotation'],
-                                                            link=link,
-                                                            name=asset_data['name'],
-                                                            parent=kwargs.get('parent'))
+                                                                 location=downloader['location'],
+                                                                 rotation=downloader['rotation'],
+                                                                 link=link,
+                                                                 name=asset_data['name'],
+                                                                 parent=kwargs.get('parent'))
 
                 else:
                     parent, newobs = append_link.append_objects(file_names[-1],
@@ -360,11 +358,11 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         elif kwargs.get('model_location') is not None:
             if sprops.import_as == 'GROUP':
                 parent, newobs = append_link.link_collection(file_names[-1],
-                                                        location=kwargs['model_location'],
-                                                        rotation=kwargs['model_rotation'],
-                                                        link=link,
-                                                        name=asset_data['name'],
-                                                        parent=kwargs.get('parent'))
+                                                             location=kwargs['model_location'],
+                                                             rotation=kwargs['model_rotation'],
+                                                             link=link,
+                                                             name=asset_data['name'],
+                                                             parent=kwargs.get('parent'))
             else:
                 parent, newobs = append_link.append_objects(file_names[-1],
                                                             location=kwargs['model_location'],
@@ -383,7 +381,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             lib = group.library
             lib['asset_data'] = asset_data
 
-    elif asset_data['asset_type'] == 'brush':
+    elif asset_data['assetType'] == 'brush':
 
         # TODO if already in scene, should avoid reappending.
         inscene = False
@@ -414,7 +412,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         props = brush.blenderkit
         parent = brush
 
-    elif asset_data['asset_type'] == 'material':
+    elif asset_data['assetType'] == 'material':
         inscene = False
         for m in bpy.data.materials:
             if m.blenderkit.id == asset_data['id']:
@@ -433,15 +431,15 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         parent = material
 
     scene['assets used'] = scene.get('assets used', {})
-    scene['assets used'][asset_data['asset_base_id']] = asset_data.copy()
+    scene['assets used'][asset_data['assetBaseId']] = asset_data.copy()
 
     scene['assets rated'] = scene.get('assets rated', {})
 
-    id = asset_data['asset_base_id']
+    id = asset_data['assetBaseId']
     scene['assets rated'][id] = scene['assets rated'].get(id, False)
 
     parent['asset_data'] = asset_data  # TODO remove this??? should write to blenderkit Props?
-    bpy.ops.wm.undo_push_context(message = 'add %s to scene'% asset_data['name'])
+    bpy.ops.wm.undo_push_context(message='add %s to scene' % asset_data['name'])
     # moving reporting to on save.
     # report_use_success(asset_data['id'])
 
@@ -477,7 +475,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff, not 
             file_names = paths.get_download_filenames(asset_data)
             wm = bpy.context.window_manager
 
-            at = asset_data['asset_type']
+            at = asset_data['assetType']
             if ((bpy.context.mode == 'OBJECT' and (at == 'model' \
                                                    or at == 'material'))) \
                     or ((at == 'brush') \
@@ -505,15 +503,15 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff, not 
                 else:
                     done = try_finished_append(asset_data, **tcom.passargs)
                     if not done:
-                        at = asset_data['asset_type']
+                        at = asset_data['assetType']
                         tcom.passargs['retry_counter'] = tcom.passargs.get('retry_counter', 0) + 1
                         if at in ('model', 'material'):
                             download(asset_data, **tcom.passargs)
-                        elif asset_data['asset_type'] == 'material':
+                        elif asset_data['assetType'] == 'material':
                             download(asset_data, **tcom.passargs)
-                        elif asset_data['asset_type'] == 'scene':
+                        elif asset_data['assetType'] == 'scene':
                             download(asset_data, **tcom.passargs)
-                        elif asset_data['asset_type'] == 'brush' or asset_data['asset_type'] == 'texture':
+                        elif asset_data['assetType'] == 'brush' or asset_data['assetType'] == 'texture':
                             download(asset_data, **tcom.passargs)
                     if bpy.context.scene['search results'] is not None and done:
                         for sres in bpy.context.scene['search results']:
@@ -525,7 +523,7 @@ def timer_update():  # TODO might get moved to handle all blenderkit stuff, not 
 
 
 def download_file(asset_data):
-    #this is a simple non-threaded way to download files for background resolution genenration tool
+    # this is a simple non-threaded way to download files for background resolution genenration tool
     file_name = paths.get_download_filenames(asset_data)[0]  # prefer global dir if possible.
 
     if check_existing(asset_data):
@@ -551,6 +549,7 @@ def download_file(asset_data):
                 print(dl)
                 f.write(data)
     return file_name
+
 
 class Downloader(threading.Thread):
     def __init__(self, asset_data, tcom, scene_id, api_key):
@@ -675,7 +674,7 @@ def check_downloading(asset_data, **kwargs):
     for p in download_threads:
         p_asset_data = p[1]
         if p_asset_data['id'] == asset_data['id']:
-            at = asset_data['asset_type']
+            at = asset_data['assetType']
             if at in ('model', 'material'):
                 downloader = {'location': kwargs['model_location'],
                               'rotation': kwargs['model_rotation']}
@@ -737,7 +736,7 @@ def asset_in_scene(asset_data):
     scene = bpy.context.scene
     au = scene.get('assets used', {})
 
-    id = asset_data['asset_base_id']
+    id = asset_data['assetBaseId']
     if id in au.keys():
         ad = au[id]
         if ad.get('file_name') != None:
@@ -831,15 +830,15 @@ def start_download(asset_data, **kwargs):
         #     props = utils.get_search_props()
         #     props.report = str('asset ')
         if not done:
-            at = asset_data['asset_type']
+            at = asset_data['assetType']
             if at in ('model', 'material'):
                 downloader = {'location': kwargs['model_location'],
                               'rotation': kwargs['model_rotation']}
                 download(asset_data, downloaders=[downloader], **kwargs)
 
-            elif asset_data['asset_type'] == 'scene':
+            elif asset_data['assetType'] == 'scene':
                 download(asset_data, **kwargs)
-            elif asset_data['asset_type'] == 'brush' or asset_data['asset_type'] == 'texture':
+            elif asset_data['assetType'] == 'brush' or asset_data['assetType'] == 'texture':
                 download(asset_data)
 
 
@@ -883,6 +882,11 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
     )
     asset_index: IntProperty(name="Asset Index", description='asset index in search results', default=-1)
 
+    asset_base_id: StringProperty(
+        name="Asset base Id",
+        description="Asset base id, used instead of search result index.",
+        default="")
+
     target_object: StringProperty(
         name="Target Object",
         description="Material or object target for replacement",
@@ -905,24 +909,40 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
 
     def execute(self, context):
         s = bpy.context.scene
-        sr = s['search results']
 
-        asset_data = sr[self.asset_index].to_dict()  # TODO CHECK ALL OCCURRENCES OF PASSING BLENDER ID PROPS TO THREADS!
+        if self.asset_index > -1:
+            # either get the data from search results
+            sr = s['search results']
+            asset_data = sr[
+                self.asset_index].to_dict()  # TODO CHECK ALL OCCURRENCES OF PASSING BLENDER ID PROPS TO THREADS!
+            asset_base_id = asset_data['assetBaseId']
+        else:
+            # or from the scene.
+            asset_base_id = self.asset_base_id
+
         au = s.get('assets used')
         if au == None:
             s['assets used'] = {}
-        if asset_data['asset_base_id'] in s.get('assets used'):
-            asset_data = s['assets used'][asset_data['asset_base_id']].to_dict()
+        if asset_base_id in s.get('assets used'):
+            # already used assets have already download link and especially file link.
+            asset_data = s['assets used'][asset_base_id].to_dict()
 
-        atype = asset_data['asset_type']
+        atype = asset_data['assetType']
         if bpy.context.mode != 'OBJECT' and (
                 atype == 'model' or atype == 'material') and bpy.context.view_layer.objects.active is not None:
             bpy.ops.object.mode_set(mode='OBJECT')
 
         if self.replace:  # cleanup first, assign later.
-            obs = utils.get_selected_models()
-
+            obs = utils.get_selected_replace_adepts()
+            print(obs)
             for ob in obs:
+                print('replace attempt ', ob.name)
+                if self.asset_base_id != '':
+                    # this is for a case when replace is called from a panel, this makes the first of the objects not replacable.
+                    if ob.get('asset_data') is not None and ob['asset_data']['assetBaseId'] == self.asset_base_id:
+                        print('skipping this oneli')
+                        continue;
+
                 kwargs = {
                     'cast_parent': self.cast_parent,
                     'target_object': ob.name,
@@ -953,7 +973,9 @@ def register_download():
     bpy.utils.register_class(BlenderkitKillDownloadOperator)
     bpy.app.handlers.load_post.append(scene_load)
     bpy.app.handlers.save_pre.append(scene_save)
-    bpy.app.timers.register(timer_update)
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.use_timers:
+        bpy.app.timers.register(timer_update)
 
 
 def unregister_download():

@@ -19,17 +19,11 @@
 # <pep8 compliant>
 
 import bpy
-import math
 
-from itertools import count
-from mathutils import Vector
-
-from ...utils.bones import compute_chain_x_axis, align_bone_x_axis, align_bone_y_axis, align_bone_z_axis
-from ...utils.bones import align_bone_to_axis, flip_bone, put_bone, align_bone_orientation
+from ...utils.bones import compute_chain_x_axis, align_bone_x_axis, align_bone_z_axis
+from ...utils.bones import align_bone_to_axis, flip_bone
 from ...utils.naming import make_derived_name
-from ...utils.misc import map_list
 
-from ...utils.widgets_basic import create_circle_widget
 from ..widgets import create_foot_widget, create_ballsocket_widget
 
 from ...base_rig import stage

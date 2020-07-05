@@ -501,7 +501,7 @@ class PDTSceneProperties(PropertyGroup):
         description="Number of Vertices per Cycle (180 Degrees)")
     trig_tanmax : FloatProperty(name="Tangent Max", default=10, min=0.1,
         description="Maximum Permitted Tangent Value")
-    trig_off : FloatVectorProperty(name="Start Loc", default=(0,0,0),
+    trig_off : FloatVectorProperty(name="Start Location", default=(0,0,0),
         description="Location in World Space for Origin of Wave")
     trig_abs : BoolProperty(name="Absolute", default=False,
         description="Use Absolute Values Only")

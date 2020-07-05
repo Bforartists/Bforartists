@@ -15,7 +15,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 3, 21),
+    "version": (1, 3, 28),
     'blender': (2, 90, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -384,7 +384,7 @@ class ExportGLTF2_Base:
         # find all export_ props
         all_props = self.properties
         export_props = {x: getattr(self, x) for x in dir(all_props)
-                        if x.startswith("export_") and all_props.get(x) is not None}
+                        if (x.startswith("export_") or x == "use_selection") and all_props.get(x) is not None}
 
         context.scene[self.scene_key] = export_props
 

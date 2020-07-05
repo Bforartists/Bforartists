@@ -127,7 +127,7 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
 
         row = layout.row(align=False)
         row.use_property_split = False
-        row.prop(rd, "use_border")     
+        row.prop(rd, "use_border")
         if rd.use_border:
             row.prop(rd, "use_crop_to_border")
 
@@ -173,7 +173,7 @@ class RENDER_PT_post_processing(RenderOutputButtonsPanel, Panel):
         col.label(text = "Pipeline")
         col.use_property_split = False
         row = col.row()
-        row.separator()      
+        row.separator()
         row.prop(rd, "use_compositing")
         row = col.row()
         row.separator()
@@ -304,7 +304,7 @@ class RENDER_PT_output(RenderOutputButtonsPanel, Panel):
         layout.prop(rd, "filepath", text="")
 
         layout.template_image_settings(image_settings, color_management=False)
-        
+
         if is_eevee or is_workbench:
             row = layout.row()
             row.prop(rd, "film_transparent", text="Transparent")
@@ -325,7 +325,7 @@ class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
 
         rd = context.scene.render
         image_settings = rd.image_settings
-        
+
         col = layout.column(align = True)
         col.label(text = "Saving")
         row = col.row()
@@ -334,7 +334,7 @@ class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(rd, "use_render_cache")
-        
+
         if not rd.is_movie_format:
             col = layout.column(align = True)
             col.label(text = "Image Sequence")
@@ -477,6 +477,8 @@ class RENDER_PT_encoding_audio(RenderOutputButtonsPanel, Panel):
             layout.prop(ffmpeg, "audio_codec", text="Audio Codec")
 
         if ffmpeg.audio_codec != 'NONE':
+            layout.prop(ffmpeg, "audio_channels")
+            layout.prop(ffmpeg, "audio_mixrate", text="Sample Rate")
             layout.prop(ffmpeg, "audio_bitrate")
             layout.prop(ffmpeg, "audio_volume", slider=True)
 

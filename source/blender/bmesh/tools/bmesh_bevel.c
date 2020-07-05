@@ -175,6 +175,26 @@ typedef struct ProfileSpacing {
 } ProfileSpacing;
 
 /**
+ * If the mesh has custom data Loop layers that 'have math' we use this
+ * data to help decide which face to use as representative when there
+ * is an ambiguous choice as to which face to use, which happens
+ * when there is an odd number of segments.
+ *
+ * The face_compent field of the following will only be set if there are an odd
+ * number of segments. The it uses BMFace indices to index into it, so will
+ * only be valid as long BMFaces are not added or deleted in the BMesh.
+ * "Connected Component" here means connected in UV space:
+ * i.e., one face is directly connected to another if they share an edge and
+ * all of Loop UV custom layers are contiguous across that edge.
+ */
+typedef struct MathLayerInfo {
+  /** A connected-component id for each BMFace in the mesh. */
+  int *face_component;
+  /** Does the mesh have any custom loop uv layers? */
+  bool has_math_layers;
+} MathLayerInfo;
+
+/**
  * An element in a cyclic boundary of a Vertex Mesh (VMesh), placed on each side of beveled edges
  * where each profile starts, or on each side of a miter.
  */
@@ -297,6 +317,8 @@ typedef struct BevelParams {
   ProfileSpacing pro_spacing;
   /** Parameter values for evenly spaced profile points for the miter profiles. */
   ProfileSpacing pro_spacing_miter;
+  /** Information about 'math' loop layers, like UV layers. */
+  MathLayerInfo math_layer_info;
   /** Blender units to offset each side of a beveled edge. */
   float offset;
   /** How offset is measured; enum defined in bmesh_operators.h. */
@@ -512,7 +534,7 @@ static EdgeHalf *find_other_end_edge_half(BevelParams *bp, EdgeHalf *e, BevVert 
     BLI_assert(eother != NULL);
     return eother;
   }
-  else if (r_bvother) {
+  if (r_bvother) {
     *r_bvother = NULL;
   }
   return NULL;
@@ -733,12 +755,13 @@ static BMFace *bev_create_quad_ex(BMesh *bm,
                                   BMEdge *e2,
                                   BMEdge *e3,
                                   BMEdge *e4,
+                                  BMFace *frep,
                                   int mat_nr)
 {
   BMVert *varr[4] = {v1, v2, v3, v4};
   BMFace *farr[4] = {f1, f2, f3, f4};
   BMEdge *earr[4] = {e1, e2, e3, e4};
-  return bev_create_ngon(bm, varr, 4, farr, f1, earr, mat_nr, true);
+  return bev_create_ngon(bm, varr, 4, farr, frep, earr, mat_nr, true);
 }
 
 /* Is Loop layer layer_index contiguous across shared vertex of l1 and l2? */
@@ -752,53 +775,217 @@ static bool contig_ldata_across_loops(BMesh *bm, BMLoop *l1, BMLoop *l2, int lay
 }
 
 /* Are all loop layers with have math (e.g., UVs)
- * contiguous from face f1 to face f2 across edge e? */
+ * contiguous from face f1 to face f2 across edge e?
+ */
 static bool contig_ldata_across_edge(BMesh *bm, BMEdge *e, BMFace *f1, BMFace *f2)
 {
   BMLoop *lef1, *lef2;
   BMLoop *lv1f1, *lv1f2, *lv2f1, *lv2f2;
   BMVert *v1, *v2;
+  UNUSED_VARS_NDEBUG(v1, v2);
   int i;
 
   if (bm->ldata.totlayer == 0) {
     return true;
   }
 
-  v1 = e->v1;
-  v2 = e->v2;
   if (!BM_edge_loop_pair(e, &lef1, &lef2)) {
     return false;
   }
+  /* If faces are oriented consistently around e,
+   * should now have lef1 and lef2 being f1 and f2 in either order.
+   */
   if (lef1->f == f2) {
     SWAP(BMLoop *, lef1, lef2);
   }
-
-  if (lef1->v == v1) {
-    lv1f1 = lef1;
-    lv2f1 = BM_face_other_edge_loop(f1, e, v2);
+  if (lef1->f != f1 || lef2->f != f2) {
+    return false;
   }
-  else {
-    lv2f1 = lef1;
-    lv1f1 = BM_face_other_edge_loop(f1, e, v1);
-  }
-
-  if (lef2->v == v1) {
-    lv1f2 = lef2;
-    lv2f2 = BM_face_other_edge_loop(f2, e, v2);
-  }
-  else {
-    lv2f2 = lef2;
-    lv1f2 = BM_face_other_edge_loop(f2, e, v1);
-  }
-
+  v1 = lef1->v;
+  v2 = lef2->v;
+  BLI_assert((v1 == e->v1 && v2 == e->v2) || (v1 == e->v2 && v2 == e->v1));
+  lv1f1 = lef1;
+  lv2f1 = lef1->next;
+  lv1f2 = lef2->next;
+  lv2f2 = lef2;
+  BLI_assert(lv1f1->v == v1 && lv1f1->f == f1 && lv2f1->v == v2 && lv2f1->f == f1 &&
+             lv1f2->v == v1 && lv1f2->f == f2 && lv2f2->v == v2 && lv2f2->f == f2);
   for (i = 0; i < bm->ldata.totlayer; i++) {
-    if (CustomData_layer_has_math(&bm->ldata, i) &&
-        (!contig_ldata_across_loops(bm, lv1f1, lv1f2, i) ||
-         !contig_ldata_across_loops(bm, lv2f1, lv2f2, i))) {
-      return false;
+    if (CustomData_layer_has_math(&bm->ldata, i)) {
+      if (!contig_ldata_across_loops(bm, lv1f1, lv1f2, i) ||
+          !contig_ldata_across_loops(bm, lv2f1, lv2f2, i)) {
+        return false;
+      }
     }
   }
   return true;
+}
+
+/*
+ * Set up the fields of bp->math_layer_info.
+ * We always set has_math_layers to the correct value.
+ * Only if there are UV layers and the number of segments is odd,
+ * we need to calculate connected face components in UV space.
+ */
+static void math_layer_info_init(BevelParams *bp, BMesh *bm)
+{
+  int i, f, stack_top, totface, current_component;
+  int bmf_index, bmf_other_index;
+  int *face_component;
+  BMFace *bmf, *bmf_other;
+  BMEdge *bme;
+  BMFace **stack;
+  BMIter eiter, fiter;
+
+  bp->math_layer_info.has_math_layers = false;
+  bp->math_layer_info.face_component = NULL;
+  for (i = 0; i < bm->ldata.totlayer; i++) {
+    if (CustomData_has_layer(&bm->ldata, CD_MLOOPUV)) {
+      bp->math_layer_info.has_math_layers = true;
+      break;
+    }
+  }
+  if (!bp->math_layer_info.has_math_layers || (bp->seg % 2) == 0) {
+    return;
+  }
+
+  BM_mesh_elem_index_ensure(bm, BM_FACE);
+  BM_mesh_elem_table_ensure(bm, BM_FACE);
+  totface = bm->totface;
+  face_component = BLI_memarena_alloc(bp->mem_arena, totface * sizeof(int));
+  bp->math_layer_info.face_component = face_component;
+
+  /* Set all component ids by DFS from faces with unassigned components. */
+  for (f = 0; f < totface; f++) {
+    face_component[f] = -1;
+  }
+  current_component = -1;
+
+  /* Use an array as a stack. Stack size can't exceed double total faces. */
+  stack = MEM_malloc_arrayN(2 * totface, sizeof(BMFace *), __func__);
+  for (f = 0; f < totface; f++) {
+    if (face_component[f] == -1) {
+      stack_top = 0;
+      current_component++;
+      BLI_assert(stack_top < 2 * totface);
+      stack[stack_top] = BM_face_at_index(bm, f);
+      while (stack_top >= 0) {
+        bmf = stack[stack_top];
+        stack_top--;
+        bmf_index = BM_elem_index_get(bmf);
+        if (face_component[bmf_index] != -1) {
+          continue;
+        }
+        face_component[bmf_index] = current_component;
+        /* Neighbors are faces that share an edge with bmf and
+         * are where contig_ldata_across_edge(...) is true for the
+         * shared edge and two faces.
+         */
+        BM_ITER_ELEM (bme, &eiter, bmf, BM_EDGES_OF_FACE) {
+          BM_ITER_ELEM (bmf_other, &fiter, bme, BM_FACES_OF_EDGE) {
+            if (bmf_other != bmf) {
+              bmf_other_index = BM_elem_index_get(bmf_other);
+              if (face_component[bmf_other_index] != -1) {
+                continue;
+              }
+              if (contig_ldata_across_edge(bm, bme, bmf, bmf_other)) {
+                stack_top++;
+                BLI_assert(stack_top < 2 * totface);
+                stack[stack_top] = bmf_other;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  MEM_freeN(stack);
+}
+
+/**
+ * Use a tie-breaking rule to choose a representative face when
+ * there are number of choices, `face[0]`, `face[1]`, ..., `face[nfaces]`.
+ * This is needed when there are an odd number of segments, and the center
+ * segment (and its continuation into vmesh) can usually arbitrarily be
+ * the previous face or the next face.
+ * Or, for the center polygon of a corner, all of the faces around
+ * the vertex are possible choices.
+ * If we just choose randomly, the resulting UV maps or material
+ * assignment can look ugly/inconsistent.
+ * Allow for the case when arguments are null.
+ */
+static BMFace *choose_rep_face(BevelParams *bp, BMFace **face, int nfaces)
+{
+  int bmf_index, value_index, best_f, i;
+  BMFace *bmf;
+  float cent[3];
+#define VEC_VALUE_LEN 6
+  float(*value_vecs)[VEC_VALUE_LEN] = NULL;
+  bool *still_viable = NULL;
+  int num_viable = 0;
+
+  value_vecs = BLI_array_alloca(value_vecs, nfaces);
+  still_viable = BLI_array_alloca(still_viable, nfaces);
+  for (int f = 0; f < nfaces; f++) {
+    bmf = face[f];
+    if (bmf == NULL) {
+      still_viable[f] = false;
+      continue;
+    }
+    still_viable[f] = true;
+    num_viable++;
+    bmf_index = BM_elem_index_get(bmf);
+    value_index = 0;
+    /* First tie-breaker: lower math-layer connected component id. */
+    value_vecs[f][value_index++] = bp->math_layer_info.face_component ?
+                                       (float)bp->math_layer_info.face_component[bmf_index] :
+                                       0.0f;
+    /* Next tie-breaker: selected face beats unselected one. */
+    value_vecs[f][value_index++] = BM_elem_flag_test(bmf, BM_ELEM_SELECT) ? 0.0f : 1.0f;
+    /* Next tie-breaker: lower material index. */
+    value_vecs[f][value_index++] = bmf->mat_nr >= 0 ? (float)bmf->mat_nr : 0.0f;
+    /* Next three tie-breakers: z, x, y components of face center. */
+    BM_face_calc_center_bounds(bmf, cent);
+    value_vecs[f][value_index++] = cent[2];
+    value_vecs[f][value_index++] = cent[0];
+    value_vecs[f][value_index++] = cent[1];
+    BLI_assert(value_index == VEC_VALUE_LEN);
+  }
+
+  /* Look for a face that has a unique minimum value for in a value_index,
+   * trying each value_index in turn until find a unique minimum.
+   */
+  best_f = -1;
+  for (value_index = 0; num_viable > 1 && value_index < VEC_VALUE_LEN; value_index++) {
+    for (int f = 0; f < nfaces; f++) {
+      if (!still_viable[f] || f == best_f) {
+        continue;
+      }
+      if (best_f == -1) {
+        best_f = f;
+        continue;
+      }
+      if (value_vecs[f][value_index] < value_vecs[best_f][value_index]) {
+        best_f = f;
+        /* Previous f's are now not viable any more. */
+        for (i = f - 1; i >= 0; i--) {
+          if (still_viable[i]) {
+            still_viable[i] = false;
+            num_viable--;
+          }
+        }
+      }
+      else if (value_vecs[f][value_index] > value_vecs[best_f][value_index]) {
+        still_viable[f] = false;
+        num_viable--;
+      }
+    }
+  }
+  if (best_f == -1) {
+    best_f = 0;
+  }
+  return face[best_f];
+#undef VEC_VALUE_LEN
 }
 
 /* Merge (using average) all the UV values for loops of v's faces.
@@ -909,13 +1096,11 @@ static bool is_outside_edge(EdgeHalf *e, const float co[3], BMVert **ret_closer_
     *ret_closer_v = e->e->v1;
     return true;
   }
-  else if (lambda >= (1.0f + BEVEL_EPSILON_BIG) * lenu) {
+  if (lambda >= (1.0f + BEVEL_EPSILON_BIG) * lenu) {
     *ret_closer_v = e->e->v2;
     return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 /* Return whether the angle is less than, equal to, or larger than 180 degrees. */
@@ -946,12 +1131,10 @@ static int edges_angle_kind(EdgeHalf *e1, EdgeHalf *e2, BMVert *v)
   if (fabsf(dot) < BEVEL_EPSILON_BIG) {
     return ANGLE_STRAIGHT;
   }
-  else if (dot < 0.0f) {
+  if (dot < 0.0f) {
     return ANGLE_LARGER;
   }
-  else {
-    return ANGLE_SMALLER;
-  }
+  return ANGLE_SMALLER;
 }
 
 /* co should be approximately on the plane between e1 and e2, which share common vert v and common
@@ -1659,9 +1842,7 @@ static double superellipse_co(double x, float r, bool rbig)
   if (rbig) {
     return pow((1.0 - pow(x, r)), (1.0 / r));
   }
-  else {
-    return 1.0 - pow((1.0 - pow(1.0 - x, r)), (1.0 / r));
-  }
+  return 1.0 - pow((1.0 - pow(1.0 - x, r)), (1.0 / r));
 }
 
 /**
@@ -2763,7 +2944,7 @@ static void build_boundary(BevelParams *bp, BevVert *bv, bool construct)
             bool betodd = (between % 2) == 1;
             int i = 0;
             /* Put first half of in-between edges at index 0, second half at index bp->seg.
-             * If between is odd, put middle one at midindex. */
+             * If between is odd, put middle one at mid-index. */
             for (e3 = e->next; e3 != e2; e3 = e3->next) {
               v1->elast = e3;
               if (i < bet2) {
@@ -3105,16 +3286,13 @@ static EdgeHalf *next_edgehalf_bev(BevelParams *bp,
     if ((next_edge != NULL) && compare_ff(best_dot, second_best_dot, BEVEL_SMALL_ANG_DOT)) {
       return NULL;
     }
-    else {
-      return next_edge;
-    }
-  }
-  else {
-    /* Case 2: The next EdgeHalf is the other side of the BMEdge.
-     * It's part of the same BMEdge, so we know the other EdgeHalf is also beveled. */
-    next_edge = find_other_end_edge_half(bp, start_edge, r_bv);
     return next_edge;
   }
+
+  /* Case 2: The next EdgeHalf is the other side of the BMEdge.
+   * It's part of the same BMEdge, so we know the other EdgeHalf is also beveled. */
+  next_edge = find_other_end_edge_half(bp, start_edge, r_bv);
+  return next_edge;
 }
 
 /**
@@ -3554,9 +3732,8 @@ static bool is_canon(VMesh *vm, int i, int j, int k)
   if (vm->seg % 2 == 1) { /* Odd. */
     return (j <= ns2 && k <= ns2);
   }
-  else { /* Even. */
-    return ((j < ns2 && k <= ns2) || (j == ns2 && k == ns2 && i == 0));
-  }
+  /* Even. */
+  return ((j < ns2 && k <= ns2) || (j == ns2 && k == ns2 && i == 0));
 }
 
 /* Copy the vertex data to all of vm verts from canonical ones. */
@@ -3620,7 +3797,7 @@ static float sabin_gamma(int n)
   if (n < 3) {
     return 0.0f;
   }
-  else if (n == 3) {
+  if (n == 3) {
     ans = 0.065247584f;
   }
   else if (n == 4) {
@@ -4074,7 +4251,7 @@ static VMesh *make_cube_corner_adj_vmesh(BevelParams *bp)
     if (r == PRO_SQUARE_R) {
       return make_cube_corner_square(mem_arena, nseg);
     }
-    else if (r == PRO_SQUARE_IN_R) {
+    if (r == PRO_SQUARE_IN_R) {
       return make_cube_corner_square_in(mem_arena, nseg);
     }
   }
@@ -4351,7 +4528,7 @@ static VMesh *pipe_adj_vmesh(BevelParams *bp, BevVert *bv, BoundVert *vpipe)
   bool even, midline;
   float *profile_point_pipe1, *profile_point_pipe2, f;
 
-  /* Some unecessary overhead running this subdivision with custom profile snapping later on. */
+  /* Some unnecessary overhead running this subdivision with custom profile snapping later on. */
   vm = adj_vmesh(bp, bv);
 
   /* Now snap all interior coordinates to be on the epipe profile. */
@@ -4442,9 +4619,7 @@ static BMEdge *find_closer_edge(float *co, BMEdge *e1, BMEdge *e2)
   if (dsq1 < dsq2) {
     return e1;
   }
-  else {
-    return e2;
-  }
+  return e2;
 }
 
 /* Snap co to the closest edge of face f. Return the edge in *r_snap_e,
@@ -4472,6 +4647,106 @@ static float snap_face_dist_squared(float *co, BMFace *f, BMEdge **r_snap_e, flo
   return beste_d2;
 }
 
+/* What would be the area of the polygon around bv if interpolated in face frep?
+ */
+static float interp_poly_area(BevVert *bv, BMFace *frep)
+{
+  BoundVert *v;
+  VMesh *vm = bv->vmesh;
+  BMEdge *snape;
+  int n;
+  float(*uv_co)[3] = NULL;
+  float area;
+
+  BLI_assert(vm != NULL);
+  uv_co = BLI_array_alloca(uv_co, vm->count);
+  v = vm->boundstart;
+  n = 0;
+  do {
+    BLI_assert(n < vm->count);
+    snap_face_dist_squared(v->nv.v->co, frep, &snape, uv_co[n]);
+    n++;
+  } while ((v = v->next) != vm->boundstart);
+  area = fabsf(area_poly_v3(uv_co, n));
+  return area;
+}
+
+/**
+ * If we make a poly out of verts around \a bv, snapping to rep \a frep,
+ * will uv poly have zero area?
+ * The uv poly is made by snapping all `outside-of-frep` vertices to the closest edge in \a frep.
+ * Sometimes this results in a zero or very small area polygon, which translates to a zero
+ * or very small area polygon in UV space -- not good for interpolating textures.
+ */
+static bool is_bad_uv_poly(BevVert *bv, BMFace *frep)
+{
+  float area = interp_poly_area(bv, frep);
+  return area < BEVEL_EPSILON_BIG;
+}
+
+/**
+ * Pick a good face from all the faces around \a bv to use for
+ * a representative face, using choose_rep_face.
+ * We want to choose from among the faces that would be
+ * chosen for a single-segment edge polygon between two successive
+ * Boundverts.
+ * But the single beveled edge is a special case,
+ * where we also want to consider the third face (else can get
+ * zero-area UV interpolated face).
+ *
+ * If there are math-having custom loop layers, like UV, then
+ * don't include faces that would result in zero-area UV polygons
+ * if chosen as the rep.
+ */
+static BMFace *frep_for_center_poly(BevelParams *bp, BevVert *bv)
+{
+  int i, j, fcount;
+  BMFace **fchoices, *bmf, *bmf1, *bmf2, *any_bmf;
+  BMFace *ftwo[2];
+  bool already_there;
+  bool consider_all_faces;
+
+  fcount = 0;
+  any_bmf = NULL;
+  consider_all_faces = bv->selcount == 1;
+  /* Make an array that can hold maximum possible number of choices. */
+  fchoices = BLI_array_alloca(fchoices, bv->edgecount);
+  for (i = 0; i < bv->edgecount; i++) {
+    if (!bv->edges[i].is_bev && !consider_all_faces) {
+      continue;
+    }
+    bmf1 = bv->edges[i].fprev;
+    bmf2 = bv->edges[i].fnext;
+    ftwo[0] = bmf1;
+    ftwo[1] = bmf2;
+    bmf = choose_rep_face(bp, ftwo, 2);
+    if (bmf != NULL) {
+      if (any_bmf == NULL) {
+        any_bmf = bmf;
+      }
+      already_there = false;
+      for (j = fcount - 1; j >= 0; j--) {
+        if (fchoices[j] == bmf) {
+          already_there = true;
+          break;
+        }
+      }
+      if (!already_there) {
+        if (bp->math_layer_info.has_math_layers) {
+          if (is_bad_uv_poly(bv, bmf)) {
+            continue;
+          }
+        }
+        fchoices[fcount++] = bmf;
+      }
+    }
+  }
+  if (fcount == 0) {
+    return any_bmf;
+  }
+  return choose_rep_face(bp, fchoices, fcount);
+}
+
 static void build_center_ngon(BevelParams *bp, BMesh *bm, BevVert *bv, int mat_nr)
 {
   VMesh *vm = bv->vmesh;
@@ -4488,7 +4763,7 @@ static void build_center_ngon(BevelParams *bp, BMesh *bm, BevVert *bv, int mat_n
 
   ns2 = vm->seg / 2;
   if (bv->any_seam) {
-    frep = boundvert_rep_face(vm->boundstart, NULL);
+    frep = frep_for_center_poly(bp, bv);
     get_incident_edges(frep, bv->v, &frep_e1, &frep_e2);
   }
   else {
@@ -4517,10 +4792,12 @@ static void build_center_ngon(BevelParams *bp, BMesh *bm, BevVert *bv, int mat_n
   BLI_array_free(ve);
 }
 
-/* Special case of bevel_build_rings when tri-corner and profile is 0.
+/**
+ * Special case of #bevel_build_rings when triangle-corner and profile is 0.
  * There is no corner mesh except, if nseg odd, for a center poly.
  * Boundary verts merge with previous ones according to pattern:
- * (i, 0, k) merged with (i+1, 0, ns-k) for k <= ns/2. */
+ * (i, 0, k) merged with (i+1, 0, ns-k) for k <= ns/2.
+ */
 static void build_square_in_vmesh(BevelParams *bp, BMesh *bm, BevVert *bv, VMesh *vm1)
 {
   int n, ns, ns2, odd, i, k;
@@ -4554,7 +4831,9 @@ static void build_square_in_vmesh(BevelParams *bp, BMesh *bm, BevVert *bv, VMesh
   }
 }
 
-/* Copy whichever of a and b is closer to v into r. */
+/**
+ * Copy whichever of \a a and \a b is closer to v into \a r.
+ */
 static void closer_v3_v3v3v3(float r[3], float a[3], float b[3], float v[3])
 {
   if (len_squared_v3v3(a, v) <= len_squared_v3v3(b, v)) {
@@ -4714,7 +4993,7 @@ static VMesh *square_out_adj_vmesh(BevelParams *bp, BevVert *bv)
     bndv = bndv->next;
   }
 
-  /* Fill in rest of centerlines by interpolation. */
+  /* Fill in rest of center-lines by interpolation. */
   copy_v3_v3(co2, bv->v->co);
   bndv = vm->boundstart;
   for (i = 0; i < n_bndv; i++) {
@@ -4765,7 +5044,7 @@ static VMesh *square_out_adj_vmesh(BevelParams *bp, BevVert *bv)
   }
   vmesh_copy_equiv_verts(vm);
 
-  /* Fill in interior points by interpolation from edges to centerlines. */
+  /* Fill in interior points by interpolation from edges to center-lines. */
   bndv = vm->boundstart;
   for (i = 0; i < n_bndv; i++) {
     im1 = (i == 0) ? n_bndv - 1 : i - 1;
@@ -4803,9 +5082,9 @@ static VMesh *square_out_adj_vmesh(BevelParams *bp, BevVert *bv)
 }
 
 /**
- * Given that the boundary is built and the boundary BMVerts have been made,
+ * Given that the boundary is built and the boundary #BMVert's have been made,
  * calculate the positions of the interior mesh points for the M_ADJ pattern,
- * using cubic subdivision, then make the BMVerts and the new faces.
+ * using cubic subdivision, then make the #BMVert's and the new faces.
  */
 static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert *vpipe)
 {
@@ -4813,7 +5092,8 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert
   VMesh *vm1, *vm;
   BoundVert *bndv;
   BMVert *bmv1, *bmv2, *bmv3, *bmv4;
-  BMFace *f, *f2, *r_f;
+  BMFace *f, *f2, *r_f, *fc;
+  BMFace *fchoices[2];
   BMEdge *bme, *bme1, *bme2, *bme3;
   EdgeHalf *e;
   int mat_nr = bp->mat_nr;
@@ -4867,6 +5147,14 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert
     i = bndv->index;
     f = boundvert_rep_face(bndv, NULL);
     f2 = boundvert_rep_face(bndv->next, NULL);
+    fchoices[0] = f;
+    fchoices[1] = f2;
+    if (odd) {
+      fc = choose_rep_face(bp, fchoices, 2);
+    }
+    else {
+      fc = NULL;
+    }
     if (bp->vertex_only) {
       e = bndv->efirst;
     }
@@ -4877,7 +5165,10 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert
     /* For odd ns, make polys with lower left corner at (i,j,k) for
      *    j in [0, ns2-1], k in [0, ns2].  And then the center ngon.
      * For even ns,
-     *    j in [0, ns2-1], k in [0, ns2-1]. */
+     *    j in [0, ns2-1], k in [0, ns2-1].
+     *
+     * Recall: j is ring index, k is segment index.
+     */
     for (j = 0; j < ns2; j++) {
       for (k = 0; k < ns2 + odd; k++) {
         bmv1 = mesh_vert(vm, i, j, k)->v;
@@ -4901,6 +5192,7 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert
                                        NULL,
                                        bndv->next->efirst->e,
                                        bme,
+                                       f2,
                                        mat_nr);
             }
             else {
@@ -4914,11 +5206,11 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert
             /* Only one edge attached to v, since vertex_only. */
             if (e->is_seam) {
               r_f = bev_create_quad_ex(
-                  bm, bmv1, bmv2, bmv3, bmv4, f2, f2, f2, f2, bme, NULL, bme, NULL, mat_nr);
+                  bm, bmv1, bmv2, bmv3, bmv4, f2, f2, f2, f2, bme, NULL, bme, NULL, f2, mat_nr);
             }
             else {
               r_f = bev_create_quad_ex(
-                  bm, bmv1, bmv2, bmv3, bmv4, f2, f2, f2, f, bme, NULL, bme, NULL, mat_nr);
+                  bm, bmv1, bmv2, bmv3, bmv4, f2, f2, f2, f, bme, NULL, bme, NULL, f2, mat_nr);
             }
           }
         }
@@ -4927,10 +5219,11 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert
             if (k == ns2) {
               if (e && e->is_seam) {
                 r_f = bev_create_quad_ex(
-                    bm, bmv1, bmv2, bmv3, bmv4, f, f, f, f, NULL, bme, bme, NULL, mat_nr);
+                    bm, bmv1, bmv2, bmv3, bmv4, fc, fc, fc, fc, NULL, bme, bme, NULL, fc, mat_nr);
               }
               else {
-                r_f = bev_create_quad(bm, bmv1, bmv2, bmv3, bmv4, f, f2, f2, f, mat_nr);
+                r_f = bev_create_quad_ex(
+                    bm, bmv1, bmv2, bmv3, bmv4, f, f2, f2, f, NULL, bme, bme, NULL, fc, mat_nr);
               }
             }
             else {
@@ -4945,7 +5238,7 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv, BoundVert
             }
             bme2 = bme1 != NULL ? bme1 : bme3;
             r_f = bev_create_quad_ex(
-                bm, bmv1, bmv2, bmv3, bmv4, f, f, f, f, NULL, bme1, bme2, bme3, mat_nr);
+                bm, bmv1, bmv2, bmv3, bmv4, f, f, f, f, NULL, bme1, bme2, bme3, f, mat_nr);
           }
         }
         record_face_kind(bp, r_f, F_VERT);
@@ -5014,7 +5307,7 @@ static void bevel_build_cutoff(BevelParams *bp, BMesh *bm, BevVert *bv)
     i = bndv->index;
 
     /* Find the "down" direction for this side of the cutoff face. */
-    /* Find the direction along the intersection of the two adjecent profile normals. */
+    /* Find the direction along the intersection of the two adjacent profile normals. */
     cross_v3_v3v3(down_direction, bndv->profile.plane_no, bndv->prev->profile.plane_no);
     if (dot_v3v3(down_direction, bv->v->no) > 0.0f) {
       negate_v3(down_direction);
@@ -5143,43 +5436,9 @@ static void bevel_build_cutoff(BevelParams *bp, BMesh *bm, BevVert *bv)
   }
 }
 
-/**
- * If we make a poly out of verts around bv, snapping to rep frep, will uv poly have zero area?
- * The uv poly is made by snapping all outside-of-frep vertices to the closest edge in frep.
- * Assume that this function is called when the only inside-of-frep vertex is vm->boundstart.
- * The poly will have zero area if the distance of that first vertex to some edge e is zero,
- * and all the other vertices snap to e or snap to an edge
- * at a point that is essentially on e too.
- */
-static bool is_bad_uv_poly(BevVert *bv, BMFace *frep)
-{
-  BoundVert *v;
-  BMEdge *snape, *firste;
-  float co[3];
-  VMesh *vm = bv->vmesh;
-  float d2;
-
-  v = vm->boundstart;
-  d2 = snap_face_dist_squared(v->nv.v->co, frep, &firste, co);
-  if (d2 > BEVEL_EPSILON_BIG_SQ || firste == NULL) {
-    return false;
-  }
-
-  for (v = v->next; v != vm->boundstart; v = v->next) {
-    snap_face_dist_squared(v->nv.v->co, frep, &snape, co);
-    if (snape != firste) {
-      d2 = dist_to_line_v3(co, firste->v1->co, firste->v2->co);
-      if (d2 > BEVEL_EPSILON_BIG_SQ) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 static BMFace *bevel_build_poly(BevelParams *bp, BMesh *bm, BevVert *bv)
 {
-  BMFace *f, *repface, *frep2;
+  BMFace *f, *repface;
   int n, k;
   VMesh *vm = bv->vmesh;
   BoundVert *bndv;
@@ -5192,10 +5451,7 @@ static BMFace *bevel_build_poly(BevelParams *bp, BMesh *bm, BevVert *bv)
   BLI_array_staticdeclare(bmfaces, BM_DEFAULT_NGON_STACK_SIZE);
 
   if (bv->any_seam) {
-    repface = boundvert_rep_face(vm->boundstart, &frep2);
-    if (frep2 && repface && is_bad_uv_poly(bv, repface)) {
-      repface = frep2;
-    }
+    repface = frep_for_center_poly(bp, bv);
     get_incident_edges(repface, bv->v, &repface_e1, &repface_e2);
   }
   else {
@@ -5502,9 +5758,7 @@ static float edge_face_angle(EdgeHalf *e)
     /* Angle between faces is supplement of angle between face normals. */
     return (float)M_PI - angle_normalized_v3v3(e->fprev->no, e->fnext->no);
   }
-  else {
-    return 0.0f;
-  }
+  return 0.0f;
 }
 
 /* Take care, this flag isn't cleared before use, it just so happens that its not set. */
@@ -6413,7 +6667,7 @@ static void bevel_build_edge_polygons(BMesh *bm, BevelParams *bp, BMEdge *bme)
   VMesh *vm1, *vm2;
   EdgeHalf *e1, *e2;
   BMEdge *bme1, *bme2, *center_bme;
-  BMFace *f1, *f2, *f, *r_f;
+  BMFace *f1, *f2, *f, *r_f, *f_choice;
   BMVert *verts[4];
   BMFace *faces[4];
   BMEdge *edges[4];
@@ -6474,15 +6728,17 @@ static void bevel_build_edge_polygons(BMesh *bm, BevelParams *bp, BMEdge *bme)
     verts[3] = mesh_vert(vm1, i1, 0, k)->v;
     verts[2] = mesh_vert(vm2, i2, 0, nseg - k)->v;
     if (odd && k == mid + 1) {
+      BMFace *fchoices[2] = {f1, f2};
+      edges[0] = edges[1] = NULL;
+      edges[2] = edges[3] = bme;
+      f_choice = choose_rep_face(bp, fchoices, 2);
       if (e1->is_seam) {
-        /* Straddles a seam: choose to interpolate in f1 and snap right edge to bme. */
-        edges[0] = edges[1] = NULL;
-        edges[2] = edges[3] = bme;
-        r_f = bev_create_ngon(bm, verts, 4, NULL, f1, edges, mat_nr, true);
+        /* Straddles a seam: choose to interpolate in f_choice and snap right edge to bme. */
+        r_f = bev_create_ngon(bm, verts, 4, NULL, f_choice, edges, mat_nr, true);
       }
       else {
         /* Straddles but not a seam: interpolate left half in f1, right half in f2. */
-        r_f = bev_create_ngon(bm, verts, 4, faces, NULL, NULL, mat_nr, true);
+        r_f = bev_create_ngon(bm, verts, 4, faces, f_choice, NULL, mat_nr, true);
       }
     }
     else if (!odd && k == mid) {
@@ -6858,7 +7114,7 @@ static float find_profile_fullness(BevelParams *bp)
 
 /**
  * Fills the ProfileSpacing struct with the 2D coordinates for the profile's vertices.
- * The superellipse used for multisegment profiles does not have a closed-form way
+ * The superellipse used for multi-segment profiles does not have a closed-form way
  * to generate evenly spaced points along an arc. We use an expensive search procedure
  * to find the parameter values that lead to bp->seg even chords.
  * We also want spacing for a number of segments that is a power of 2 >= bp->seg (but at least 4).
@@ -7263,6 +7519,8 @@ void BM_mesh_bevel(BMesh *bm,
 
     bp.face_hash = BLI_ghash_ptr_new(__func__);
     BLI_ghash_flag_set(bp.face_hash, GHASH_FLAG_ALLOW_DUPES);
+
+    math_layer_info_init(&bp, bm);
 
     /* Analyze input vertices, sorting edges and assigning initial new vertex positions. */
     BM_ITER_MESH (v, &iter, bm, BM_VERTS_OF_MESH) {

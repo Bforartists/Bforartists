@@ -100,7 +100,12 @@ static bool object_remesh_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
 
-  if (ob == NULL) {
+  if (ob == NULL || ob->data == NULL) {
+    return false;
+  }
+
+  if (ID_IS_LINKED(ob) || ID_IS_LINKED(ob->data) || ID_IS_OVERRIDE_LIBRARY(ob->data)) {
+    CTX_wm_operator_poll_msg_set(C, "The remesher cannot worked on linked or override data");
     return false;
   }
 
@@ -398,6 +403,7 @@ static int voxel_size_edit_modal(bContext *C, wmOperator *op, const wmEvent *eve
     mesh->remesh_voxel_size = cd->voxel_size;
     MEM_freeN(op->customdata);
     ED_region_tag_redraw(ar);
+    ED_workspace_status_text(C, NULL);
     return OPERATOR_FINISHED;
   }
 
@@ -526,7 +532,9 @@ static int voxel_size_edit_invoke(bContext *C, wmOperator *op, const wmEvent *ev
 
   /* Project the selected face in the previous step of the Bounding Box. */
   for (int i = 0; i < 4; i++) {
-    ED_view3d_project(ar, cd->preview_plane[i], preview_plane_proj[i]);
+    float preview_plane_world_space[3];
+    mul_v3_m4v3(preview_plane_world_space, active_object->obmat, cd->preview_plane[i]);
+    ED_view3d_project(ar, preview_plane_world_space, preview_plane_proj[i]);
   }
 
   /* Get the initial X and Y axis of the basis from the edges of the Bounding Box face. */
@@ -574,7 +582,9 @@ static int voxel_size_edit_invoke(bContext *C, wmOperator *op, const wmEvent *ev
   copy_v3_v3(cd->text_mat[3], text_pos);
 
   /* Scale the text.  */
-  const float pixelsize = ED_view3d_pixel_size(rv3d, text_pos);
+  float text_pos_word_space[3];
+  mul_v3_m4v3(text_pos_word_space, active_object->obmat, text_pos);
+  const float pixelsize = ED_view3d_pixel_size(rv3d, text_pos_word_space);
   scale_m4_fl(scale_mat, pixelsize * 0.5f);
   mul_m4_m4_post(cd->text_mat, scale_mat);
 
@@ -1032,7 +1042,7 @@ static bool quadriflow_poll_property(const bContext *C, wmOperator *op, const Pr
     if (STREQ(prop_id, "target_edge_length") && mode != QUADRIFLOW_REMESH_EDGE_LENGTH) {
       return false;
     }
-    else if (STREQ(prop_id, "target_faces")) {
+    if (STREQ(prop_id, "target_faces")) {
       if (mode != QUADRIFLOW_REMESH_FACES) {
         /* Make sure we can edit the target_faces value even if it doesn't start as EDITABLE */
         float area = RNA_float_get(op->ptr, "mesh_area");

@@ -1898,19 +1898,19 @@ static void draw_seq_strips(const bContext *C, Editing *ed, ARegion *region)
       if ((seq->flag & SELECT) != sel) {
         continue;
       }
-      else if (seq == last_seq && (last_seq->flag & SELECT)) {
+      if (seq == last_seq && (last_seq->flag & SELECT)) {
         continue;
       }
-      else if (min_ii(seq->startdisp, seq->start) > v2d->cur.xmax) {
+      if (min_ii(seq->startdisp, seq->start) > v2d->cur.xmax) {
         continue;
       }
-      else if (max_ii(seq->enddisp, seq->start + seq->len) < v2d->cur.xmin) {
+      if (max_ii(seq->enddisp, seq->start + seq->len) < v2d->cur.xmin) {
         continue;
       }
-      else if (seq->machine + 1.0f < v2d->cur.ymin) {
+      if (seq->machine + 1.0f < v2d->cur.ymin) {
         continue;
       }
-      else if (seq->machine > v2d->cur.ymax) {
+      if (seq->machine > v2d->cur.ymax) {
         continue;
       }
 
@@ -2298,9 +2298,6 @@ void draw_timeline_seq(const bContext *C, ARegion *region)
   if ((sseq->flag & SEQ_DRAWFRAMES) == 0) {
     cfra_flag |= DRAWCFRA_UNIT_SECONDS;
   }
-
-  /* Draw the current frame indicator. */
-  ANIM_draw_cfra(C, v2d, cfra_flag);
 
   /* Draw overlap frame frame indicator. */
   if (scene->ed && scene->ed->over_flag & SEQ_EDIT_OVERLAY_SHOW) {

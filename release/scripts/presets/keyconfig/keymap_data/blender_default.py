@@ -728,6 +728,16 @@ def km_property_editor(_params):
          {"properties": [("direction", 'PREV'), ], },),
         ("screen.space_context_cycle", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "ctrl": True},
          {"properties": [("direction", 'NEXT'), ], },),
+        # Modifier panels
+        ("object.modifier_remove", {"type": 'X', "value": 'PRESS'}, {"properties": [("report", True)]}),
+        ("object.modifier_remove", {"type": 'DEL', "value": 'PRESS'}, {"properties": [("report", True)]}),
+        ("object.modifier_copy", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("object.modifier_apply", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("report", True)]}),
+        # Grease pencil modifier panels
+        ("object.gpencil_modifier_remove", {"type": 'X', "value": 'PRESS'}, {"properties": [("report", True)]}),
+        ("object.gpencil_modifier_remove", {"type": 'DEL', "value": 'PRESS'}, {"properties": [("report", True)]}),
+        ("object.gpencil_modifier_copy", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("object.gpencil_modifier_apply", {"type": 'A', "value": 'PRESS', "ctrl": True}, {"properties": [("report", True)]}),
     ])
 
     return keymap
@@ -1896,7 +1906,7 @@ def km_file_browser_main(params):
          {"properties": [("open", False), ("deselect_all", not params.legacy)]}),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
-         {"properties": [("extend", True)]}),
+         {"properties": [("extend", True), ("open", False)]}),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'CLICK', "shift": True},
          {"properties": [("extend", True), ("fill", True), ("open", False)]}),
         ("file.select_walk", {"type": 'UP_ARROW', "value": 'PRESS'},
@@ -6292,6 +6302,18 @@ def km_3d_view_tool_sculpt_color_filter(params):
         ]},
     )
 
+def km_3d_view_tool_sculpt_mask_by_color(params):
+    return (
+        "3D View Tool: Sculpt, Mask By Color",
+        {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
+        {"items": [
+            ("sculpt.mask_by_color", {"type": params.tool_mouse, "value": 'ANY'},
+             None),
+            ("sculpt.mask_by_color", {"type": params.tool_tweak, "value": 'ANY'},
+             None),
+        ]},
+    )
+
 def km_3d_view_tool_paint_weight_sample_weight(params):
     return (
         "3D View Tool: Paint Weight, Sample Weight",
@@ -6833,6 +6855,7 @@ def generate_keymaps(params=None):
         km_3d_view_tool_sculpt_mesh_filter(params),
         km_3d_view_tool_sculpt_cloth_filter(params),
         km_3d_view_tool_sculpt_color_filter(params),
+        km_3d_view_tool_sculpt_mask_by_color(params),
         km_3d_view_tool_paint_weight_sample_weight(params),
         km_3d_view_tool_paint_weight_sample_vertex_group(params),
         km_3d_view_tool_paint_weight_gradient(params),

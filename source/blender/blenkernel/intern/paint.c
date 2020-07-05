@@ -1310,7 +1310,7 @@ static void sculptsession_free_pbvh(Object *object)
   MEM_SAFE_FREE(ss->pmap);
   MEM_SAFE_FREE(ss->pmap_mem);
 
-  MEM_SAFE_FREE(ss->layer_base);
+  MEM_SAFE_FREE(ss->persistent_base);
 
   MEM_SAFE_FREE(ss->preview_vert_index_list);
   ss->preview_vert_index_count = 0;
@@ -1367,6 +1367,9 @@ void BKE_sculptsession_free(Object *ob)
     MEM_SAFE_FREE(ss->deform_imats);
 
     MEM_SAFE_FREE(ss->preview_vert_index_list);
+
+    MEM_SAFE_FREE(ss->vertex_info.connected_component);
+    MEM_SAFE_FREE(ss->fake_neighbors.fake_neighbor_index);
 
     if (ss->pose_ik_chain_preview) {
       for (int i = 0; i < ss->pose_ik_chain_preview->tot_segments; i++) {
@@ -1493,6 +1496,8 @@ static void sculpt_update_object(Depsgraph *depsgraph,
   ss->show_face_sets = (sd->flags & SCULPT_HIDE_FACE_SETS) == 0;
 
   ss->building_vp_handle = false;
+
+  ss->scene = scene;
 
   if (need_mask) {
     if (mmd == NULL) {

@@ -58,13 +58,13 @@ class SCENE_PT_scene(SceneButtonsPanel, Panel):
         layout = self.layout
         layout.use_property_split = True
         layout.use_property_decorate = False
-        
+
         # Active workspace view-layer is retrieved through window, not through workspace.
         window = context.window
         screen = context.screen
         scene = window.scene
         layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete")
-        
+
         # the following props have another scene definition
 
         scn = context.scene
@@ -90,7 +90,7 @@ class SCENE_PT_unit(SceneButtonsPanel, Panel):
         col = layout.column()
         col.enabled = unit.system != 'NONE'
         col.prop(unit, "scale_length")
-        
+
         col.use_property_split = False
         col.prop(unit, "use_separate")
 
@@ -298,8 +298,6 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
         layout.use_property_split = True
 
         scene = context.scene
-        rd = context.scene.render
-        ffmpeg = rd.ffmpeg
 
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
@@ -309,6 +307,7 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
         col.separator()
 
         layout.operator("sound.bake_animation")
+
 
 class SCENE_PT_audio_options(SceneButtonsPanel, Panel):
     bl_label = "Audio Options"

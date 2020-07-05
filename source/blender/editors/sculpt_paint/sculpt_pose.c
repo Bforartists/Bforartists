@@ -293,7 +293,7 @@ static void sculpt_pose_grow_pose_factor(Sculpt *sd,
   PoseGrowFactorTLSData gftd;
   gftd.pos_count = 0;
   zero_v3(gftd.pos_avg);
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   settings.func_reduce = pose_brush_grow_factor_reduce;
   settings.userdata_chunk = &gftd;
   settings.userdata_chunk_size = sizeof(PoseGrowFactorTLSData);
@@ -430,7 +430,7 @@ static bool pose_topology_floodfill_cb(
           co, data->pose_initial_co, data->radius, data->symm)) {
     return true;
   }
-  else if (SCULPT_check_vertex_pivot_symmetry(co, data->pose_initial_co, data->symm)) {
+  if (SCULPT_check_vertex_pivot_symmetry(co, data->pose_initial_co, data->symm)) {
     if (!is_duplicate) {
       add_v3_v3(data->pose_origin, co);
       data->tot_co++;
@@ -937,18 +937,32 @@ SculptPoseIKChain *SCULPT_pose_ik_chain_init(Sculpt *sd,
                                              const float initial_location[3],
                                              const float radius)
 {
+  SculptPoseIKChain *ik_chain = NULL;
+
+  const bool use_fake_neighbors = !(br->flag2 & BRUSH_USE_CONNECTED_ONLY);
+
+  if (use_fake_neighbors) {
+    SCULPT_fake_neighbors_ensure(sd, ob, br->disconnected_distance_max);
+    SCULPT_fake_neighbors_enable(ob);
+  }
+
   switch (br->pose_origin_type) {
     case BRUSH_POSE_ORIGIN_TOPOLOGY:
-      return pose_ik_chain_init_topology(sd, ob, ss, br, initial_location, radius);
+      ik_chain = pose_ik_chain_init_topology(sd, ob, ss, br, initial_location, radius);
       break;
     case BRUSH_POSE_ORIGIN_FACE_SETS:
-      return pose_ik_chain_init_face_sets(sd, ob, ss, br, radius);
+      ik_chain = pose_ik_chain_init_face_sets(sd, ob, ss, br, radius);
       break;
     case BRUSH_POSE_ORIGIN_FACE_SETS_FK:
-      return pose_ik_chain_init_face_sets_fk(sd, ob, ss, radius, initial_location);
+      ik_chain = pose_ik_chain_init_face_sets_fk(sd, ob, ss, radius, initial_location);
       break;
   }
-  return NULL;
+
+  if (use_fake_neighbors) {
+    SCULPT_fake_neighbors_disable(ob);
+  }
+
+  return ik_chain;
 }
 
 void SCULPT_pose_brush_init(Sculpt *sd, Object *ob, SculptSession *ss, Brush *br)
@@ -975,7 +989,7 @@ void SCULPT_pose_brush_init(Sculpt *sd, Object *ob, SculptSession *ss, Brush *br
     data.pose_factor = ss->cache->pose_ik_chain->segments[ik].weights;
     for (int i = 0; i < br->pose_smooth_iterations; i++) {
       TaskParallelSettings settings;
-      BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+      BKE_pbvh_parallel_range_settings(&settings, true, totnode);
       BLI_task_parallel_range(0, totnode, &data, pose_brush_init_task_cb_ex, &settings);
     }
   }
@@ -1198,7 +1212,7 @@ void SCULPT_do_pose_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
   };
 
   TaskParallelSettings settings;
-  BKE_pbvh_parallel_range_settings(&settings, (sd->flags & SCULPT_USE_OPENMP), totnode);
+  BKE_pbvh_parallel_range_settings(&settings, true, totnode);
   BLI_task_parallel_range(0, totnode, &data, do_pose_brush_task_cb_ex, &settings);
 }
 

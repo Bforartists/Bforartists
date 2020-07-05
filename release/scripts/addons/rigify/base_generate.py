@@ -62,6 +62,8 @@ class GeneratorPlugin(base_rig.GenerateCallbackHost, metaclass=SingletonPluginMe
 
     def register_new_bone(self, new_name, old_name=None):
         self.generator.bone_owners[new_name] = None
+        if old_name:
+            self.generator.derived_bones[old_name].add(new_name)
 
 
 #=============================================
@@ -201,6 +203,7 @@ class BaseGenerator:
         self.root_rigs = []
         # Map from bone names to their rigs
         self.bone_owners = {}
+        self.derived_bones = collections.defaultdict(set)
 
         # Set of plugins
         self.plugin_list = []
@@ -226,6 +229,32 @@ class BaseGenerator:
     def disable_auto_parent(self, bone_name):
         """Prevent automatically parenting the bone to root if parentless."""
         self.noparent_bones.add(bone_name)
+
+
+    def find_derived_bones(self, bone_name, *, by_owner=False, recursive=True):
+        """Find which bones were copied from the specified one."""
+        if by_owner:
+            owner = self.bone_owners.get(bone_name, None)
+            if not owner:
+                return {}
+
+            table = owner.rigify_derived_bones
+        else:
+            table = self.derived_bones
+
+        if recursive:
+            result = set()
+
+            def rec(name):
+                for child in table.get(name, {}):
+                    result.add(child)
+                    rec(child)
+
+            rec(bone_name)
+
+            return result
+        else:
+            return set(table.get(bone_name, {}))
 
 
     def set_layer_group_priority(self, bone_name, layers, priority):
