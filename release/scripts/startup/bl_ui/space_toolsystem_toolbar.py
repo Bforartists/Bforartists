@@ -487,7 +487,7 @@ class _defs_view3d_add:
         return dict(
             idname="builtin.primitive_cone_add",
             label="Add Cone",
-            icon="ops.mesh.primitive_cube_add_gizmo",
+            icon="ops.mesh.primitive_cone_add_gizmo",
             description=(
                 "Add cone to mesh interactively"
             ),
@@ -1254,10 +1254,10 @@ class _defs_sculpt:
             layout.use_property_split = False
             layout.prop(props, "use_face_sets")
             layout.use_property_split = True
-            if (props.type == "SURFACE_SMOOTH"):
+            if props.type == 'SURFACE_SMOOTH':
                 layout.prop(props, "surface_smooth_shape_preservation", expand=False)
                 layout.prop(props, "surface_smooth_current_vertex", expand=False)
-            if (props.type == "SHARPEN"):
+            elif props.type == 'SHARPEN':
                 layout.prop(props, "sharpen_smooth_ratio", expand=False)
 
         return dict(
@@ -1294,12 +1294,32 @@ class _defs_sculpt:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.color_filter")
             layout.prop(props, "type", expand=False)
+            if props.type == 'FILL':
+                layout.prop(props, "fill_color", expand=False)
             layout.prop(props, "strength")
 
         return dict(
             idname="builtin.color_filter",
             label="Color Filter",
             icon="ops.sculpt.color_filter",
+            widget=None,
+            keymap=(),
+            draw_settings=draw_settings,
+        )
+
+    @ToolDef.from_fn
+    def mask_by_color():
+        def draw_settings(_context, layout, tool):
+            props = tool.operator_properties("sculpt.mask_by_color")
+            layout.prop(props, "threshold")
+            layout.prop(props, "contiguous")
+            layout.prop(props, "invert")
+            layout.prop(props, "preserve_previous_mask")
+
+        return dict(
+            idname="builtin.mask_by_color",
+            label="Mask By Color",
+            icon="ops.sculpt.mask_by_color",
             widget=None,
             keymap=(),
             draw_settings=draw_settings,
@@ -2484,6 +2504,8 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             _defs_sculpt.mesh_filter,
             _defs_sculpt.cloth_filter,
             _defs_sculpt.color_filter,
+            None,
+            _defs_sculpt.mask_by_color,
             None,
             _defs_transform.translate,
             _defs_transform.rotate,

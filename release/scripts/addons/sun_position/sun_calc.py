@@ -161,6 +161,8 @@ def move_sun(context):
             locZ = math.cos(sun.theta)
             sky_node.texture_mapping.rotation.z = 0.0
             sky_node.sun_direction = locX, locY, locZ
+            sky_node.sun_elevation = math.radians(sun.elevation)
+            sky_node.sun_rotation = math.radians(sun.az_north)
 
     # Sun object
     if (sun_props.sun_object is not None

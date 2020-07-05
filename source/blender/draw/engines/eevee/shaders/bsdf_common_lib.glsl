@@ -94,6 +94,7 @@ layout(std140) uniform renderpass_block
   bool renderPassGlossyLight;
   bool renderPassEmit;
   bool renderPassSSSColor;
+  bool renderPassEnvironment;
 };
 
 vec3 render_pass_diffuse_mask(vec3 diffuse_color, vec3 diffuse_light)
@@ -877,6 +878,14 @@ Closure closure_mix(Closure cl1, Closure cl2, float fac)
 {
   Closure cl;
   cl.holdout = mix(cl1.holdout, cl2.holdout, fac);
+
+  if (FLAG_TEST(cl1.flag, CLOSURE_HOLDOUT_FLAG)) {
+    fac = 1.0;
+  }
+  else if (FLAG_TEST(cl2.flag, CLOSURE_HOLDOUT_FLAG)) {
+    fac = 0.0;
+  }
+
   cl.transmittance = mix(cl1.transmittance, cl2.transmittance, fac);
   cl.radiance = mix(cl1.radiance, cl2.radiance, fac);
   cl.flag = cl1.flag | cl2.flag;
@@ -958,7 +967,7 @@ void main()
 {
   Closure cl = nodetree_exec();
 
-  float holdout = 1.0 - saturate(cl.holdout);
+  float holdout = saturate(1.0 - cl.holdout);
   float transmit = saturate(avg(cl.transmittance));
   float alpha = 1.0 - transmit;
 
@@ -972,8 +981,9 @@ void main()
    * Since we do that using the blending pipeline we need to account for material transmittance. */
   vol_scatter -= vol_scatter * cl.transmittance;
 
-  outRadiance = vec4(cl.radiance * vol_transmit + vol_scatter, alpha * holdout);
-  outTransmittance = vec4(cl.transmittance, transmit * holdout);
+  cl.radiance = cl.radiance * holdout * vol_transmit + vol_scatter;
+  outRadiance = vec4(cl.radiance, alpha * holdout);
+  outTransmittance = vec4(cl.transmittance, transmit) * holdout;
 #    else
   outRadiance = vec4(cl.radiance, holdout);
   ssrNormals = cl.ssr_normal;

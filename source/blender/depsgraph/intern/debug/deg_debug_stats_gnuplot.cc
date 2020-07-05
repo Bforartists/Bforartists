@@ -36,7 +36,10 @@
 
 #define NL "\r\n"
 
-namespace DEG {
+namespace deg = blender::deg;
+
+namespace blender {
+namespace deg {
 namespace {
 
 struct DebugContext {
@@ -52,9 +55,8 @@ struct StatsEntry {
 };
 
 /* TODO(sergey): De-duplicate with graphviz relation debugger. */
-static void deg_debug_fprintf(const DebugContext &ctx, const char *fmt, ...)
-    ATTR_PRINTF_FORMAT(2, 3);
-static void deg_debug_fprintf(const DebugContext &ctx, const char *fmt, ...)
+void deg_debug_fprintf(const DebugContext &ctx, const char *fmt, ...) ATTR_PRINTF_FORMAT(2, 3);
+void deg_debug_fprintf(const DebugContext &ctx, const char *fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
@@ -62,7 +64,7 @@ static void deg_debug_fprintf(const DebugContext &ctx, const char *fmt, ...)
   va_end(args);
 }
 
-BLI_INLINE double get_node_time(const DebugContext & /*ctx*/, const Node *node)
+inline double get_node_time(const DebugContext & /*ctx*/, const Node *node)
 {
   // TODO(sergey): Figure out a nice way to define which exact time
   // we want to show.
@@ -147,7 +149,8 @@ void deg_debug_stats_gnuplot(const DebugContext &ctx)
 }
 
 }  // namespace
-}  // namespace DEG
+}  // namespace deg
+}  // namespace blender
 
 void DEG_debug_stats_gnuplot(const Depsgraph *depsgraph,
                              FILE *f,
@@ -157,10 +160,10 @@ void DEG_debug_stats_gnuplot(const Depsgraph *depsgraph,
   if (depsgraph == nullptr) {
     return;
   }
-  DEG::DebugContext ctx;
+  deg::DebugContext ctx;
   ctx.file = f;
-  ctx.graph = (DEG::Depsgraph *)depsgraph;
+  ctx.graph = (deg::Depsgraph *)depsgraph;
   ctx.label = label;
   ctx.output_filename = output_filename;
-  DEG::deg_debug_stats_gnuplot(ctx);
+  deg::deg_debug_stats_gnuplot(ctx);
 }

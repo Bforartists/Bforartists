@@ -164,7 +164,7 @@ class SequencerFadesClear(Operator):
             if curve:
                 fcurves.remove(curve)
             setattr(sequence, animated_property, 1.0)
-            sequence.invalidate('COMPOSITE')
+            sequence.invalidate_cache('COMPOSITE')
 
         return {'FINISHED'}
 
@@ -185,8 +185,10 @@ class SequencerFadesAdd(Operator):
             ('IN_OUT', 'Fade In And Out', 'Fade selected strips in and out'),
             ('IN', 'Fade In', 'Fade in selected strips'),
             ('OUT', 'Fade Out', 'Fade out selected strips'),
-            ('CURSOR_FROM', 'From Playhead', 'Fade from the time cursor to the end of overlapping sequences'),
-            ('CURSOR_TO', 'To Playhead', 'Fade from the start of sequences under the time cursor to the current frame'),
+            ('CURSOR_FROM', 'From Current Frame',
+             'Fade from the time cursor to the end of overlapping sequences'),
+            ('CURSOR_TO', 'To Current Frame',
+             'Fade from the start of sequences under the time cursor to the current frame'),
         ),
         name="Fade type",
         description="Fade in, out, both in and out, to, or from the current frame. Default is both in and out",
@@ -231,7 +233,7 @@ class SequencerFadesAdd(Operator):
             self.fade_animation_clear(fade_fcurve, fades)
             self.fade_animation_create(fade_fcurve, fades)
             faded_sequences.append(sequence)
-            sequence.invalidate('COMPOSITE')
+            sequence.invalidate_cache('COMPOSITE')
 
         sequence_string = "sequence" if len(faded_sequences) == 1 else "sequences"
         self.report({'INFO'}, "Added fade animation to %d %s." % (len(faded_sequences), sequence_string))

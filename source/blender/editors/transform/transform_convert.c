@@ -96,12 +96,10 @@ static int trans_data_compare_dist(const void *a, const void *b)
   if (td_a->dist < td_b->dist) {
     return -1;
   }
-  else if (td_a->dist > td_b->dist) {
+  if (td_a->dist > td_b->dist) {
     return 1;
   }
-  else {
-    return 0;
-  }
+  return 0;
 }
 
 static int trans_data_compare_rdist(const void *a, const void *b)
@@ -112,12 +110,10 @@ static int trans_data_compare_rdist(const void *a, const void *b)
   if (td_a->rdist < td_b->rdist) {
     return -1;
   }
-  else if (td_a->rdist > td_b->rdist) {
+  if (td_a->rdist > td_b->rdist) {
     return 1;
   }
-  else {
-    return 0;
-  }
+  return 0;
 }
 
 static void sort_trans_data_dist_container(const TransInfo *t, TransDataContainer *tc)
@@ -610,9 +606,7 @@ bool FrameOnMouseSide(char side, float frame, float cframe)
   if (side == 'R') {
     return (frame >= cframe);
   }
-  else {
-    return (frame <= cframe);
-  }
+  return (frame <= cframe);
 }
 
 /** \} */
@@ -670,7 +664,7 @@ void posttrans_fcurve_clean(FCurve *fcu, const int sel_flag, const bool use_hand
           found = true;
           break;
         }
-        else if (rk->frame < bezt->vec[1][0]) {
+        if (rk->frame < bezt->vec[1][0]) {
           /* Terminate early if have passed the supposed insertion point? */
           break;
         }
@@ -696,11 +690,10 @@ void posttrans_fcurve_clean(FCurve *fcu, const int sel_flag, const bool use_hand
     }
     return;
   }
-  else {
-    /* Compute the average values for each retained keyframe */
-    LISTBASE_FOREACH (tRetainedKeyframe *, rk, &retained_keys) {
-      rk->val = rk->val / (float)rk->tot_count;
-    }
+
+  /* Compute the average values for each retained keyframe */
+  LISTBASE_FOREACH (tRetainedKeyframe *, rk, &retained_keys) {
+    rk->val = rk->val / (float)rk->tot_count;
   }
 
   /* 2) Delete all keyframes duplicating the "retained keys" found above
@@ -774,7 +767,7 @@ bool constraints_list_needinv(TransInfo *t, ListBase *list)
   bConstraint *con;
 
   /* loop through constraints, checking if there's one of the mentioned
-   * constraints needing special crazyspace corrections
+   * constraints needing special crazy-space corrections
    */
   if (list) {
     for (con = list->first; con; con = con->next) {
@@ -925,13 +918,13 @@ int special_transform_moving(TransInfo *t)
   if (t->spacetype == SPACE_SEQ) {
     return G_TRANSFORM_SEQ;
   }
-  else if (t->spacetype == SPACE_GRAPH) {
+  if (t->spacetype == SPACE_GRAPH) {
     return G_TRANSFORM_FCURVES;
   }
-  else if ((t->flag & T_EDIT) || (t->flag & T_POSE)) {
+  if ((t->flag & T_EDIT) || (t->flag & T_POSE)) {
     return G_TRANSFORM_EDIT;
   }
-  else if (t->flag & (T_OBJECT | T_TEXTURE)) {
+  if (t->flag & (T_OBJECT | T_TEXTURE)) {
     return G_TRANSFORM_OBJ;
   }
 
@@ -1160,6 +1153,7 @@ void createTransData(bContext *C, TransInfo *t)
       break;
     case TC_POSE:
       createTransPose(t);
+      /* Disable PET, its not usable in pose mode yet [#32444] */
       init_prop_edit = false;
       break;
     case TC_ARMATURE_VERTS:
@@ -1290,6 +1284,10 @@ void createTransData(bContext *C, TransInfo *t)
       /* Needed because bezier handles can be partially selected
        * and are still added into transform data. */
       sort_trans_data_selected_first(t);
+    }
+
+    if (!init_prop_edit) {
+      t->flag &= ~T_PROP_EDIT_ALL;
     }
   }
 

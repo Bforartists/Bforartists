@@ -23,7 +23,7 @@ import json
 
 from ...utils.animation import add_generic_snap_fk_to_ik, add_fk_ik_snap_buttons
 from ...utils.rig import connected_children_names
-from ...utils.bones import BoneDict, put_bone, compute_chain_x_axis, align_bone_orientation, set_bone_widget_transform
+from ...utils.bones import BoneDict, put_bone, align_bone_orientation, set_bone_widget_transform
 from ...utils.naming import strip_org, make_derived_name
 from ...utils.layers import ControlLayersOption
 from ...utils.misc import pairwise_nozip, padnone, map_list
@@ -38,7 +38,7 @@ from ..widgets import create_gear_widget, create_ikarrow_widget
 from ...rig_ui_template import UTILITIES_FUNC_COMMON_IKFK
 
 from math import pi
-from itertools import count, repeat, chain
+from itertools import count, chain
 from mathutils import Vector
 from collections import namedtuple
 

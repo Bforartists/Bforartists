@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -658,21 +658,12 @@ msgid "Reset"
 msgstr "לוחתא"
 
 
-msgid "File Path:"
-msgstr ":ץבוק ביתנ"
-
-
 msgid "Delete points"
 msgstr "תודוקנ קחמ"
 
 
 msgid "Stop this job"
 msgstr "וז הדובע רוצע"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "לחה"
 
 
 msgid "%d items"
@@ -705,6 +696,10 @@ msgstr "הליעפ הבכש עבק"
 
 msgid "Fields"
 msgstr "תודש"
+
+
+msgid "File Path:"
+msgstr ":ץבוק ביתנ"
 
 
 msgid "Width:"
@@ -853,6 +848,11 @@ msgstr "הגוצת"
 
 msgid "UV Vertex"
 msgstr ":דוקדוק"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "לחה"
 
 
 msgid "Modify"

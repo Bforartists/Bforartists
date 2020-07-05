@@ -228,10 +228,11 @@ class ConnectingChainRig(TweakChainRig):
         if self.use_connect_chain:
             first_org = self.bones.org[0]
             parent = self.rigify_parent
-            parent_orgs = parent.bones.org
 
             if not isinstance(parent, SimpleChainRig):
                 self.raise_error("Cannot connect to non-chain parent rig.")
+
+            parent_orgs = parent.bones.org
 
             ok_reverse = is_same_position(self.obj, parent_orgs[0], first_org)
             ok_direct = is_connected_position(self.obj, parent_orgs[-1], first_org)

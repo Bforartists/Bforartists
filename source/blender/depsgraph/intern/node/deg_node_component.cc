@@ -38,7 +38,8 @@
 #include "intern/node/deg_node_id.h"
 #include "intern/node/deg_node_operation.h"
 
-namespace DEG {
+namespace blender {
+namespace deg {
 
 /* *********** */
 /* Outer Nodes */
@@ -97,9 +98,7 @@ void ComponentNode::init(const ID * /*id*/, const char * /*subdata*/)
 ComponentNode::~ComponentNode()
 {
   clear_operations();
-  if (operations_map != nullptr) {
-    delete operations_map;
-  }
+  delete operations_map;
 }
 
 string ComponentNode::identifier() const
@@ -220,12 +219,12 @@ void ComponentNode::clear_operations()
 {
   if (operations_map != nullptr) {
     for (OperationNode *op_node : operations_map->values()) {
-      OBJECT_GUARDED_DELETE(op_node, OperationNode);
+      delete op_node;
     }
     operations_map->clear();
   }
   for (OperationNode *op_node : operations) {
-    OBJECT_GUARDED_DELETE(op_node, OperationNode);
+    delete op_node;
   }
   operations.clear();
 }
@@ -377,4 +376,5 @@ void deg_register_component_depsnodes()
   register_node_typeinfo(&DNTI_SIMULATION);
 }
 
-}  // namespace DEG
+}  // namespace deg
+}  // namespace blender

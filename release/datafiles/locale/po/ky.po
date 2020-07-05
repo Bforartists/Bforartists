@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
@@ -807,6 +807,10 @@ msgid "Compression"
 msgstr "Кысылышы"
 
 
+msgid "Half"
+msgstr "Жартысы"
+
+
 msgid "Delete"
 msgstr "Өчүрүү"
 
@@ -974,10 +978,6 @@ msgstr "Өлчөмдөр"
 
 msgid "Fill Mode"
 msgstr "Толтуруу режими"
-
-
-msgid "Half"
-msgstr "Жартысы"
 
 
 msgid "Text Curve"
@@ -2886,16 +2886,8 @@ msgid "Add/Replace"
 msgstr "Кошуу/алмаштыруу"
 
 
-msgid "Djv"
-msgstr "Djv"
-
-
 msgid "FrameCycler"
 msgstr "FrameCycler"
-
-
-msgid "rv"
-msgstr "rv"
 
 
 msgid "MPlayer"
@@ -3345,11 +3337,6 @@ msgid "Zoom out"
 msgstr "Кичирейтүү"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Колдонуу"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "Жаңы"
@@ -3680,6 +3667,11 @@ msgstr "FPS: %i"
 
 msgid "(Smooth)"
 msgstr "(тегиз)"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Колдонуу"
 
 
 msgctxt "Key"

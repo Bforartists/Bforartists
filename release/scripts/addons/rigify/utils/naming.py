@@ -307,3 +307,20 @@ def random_id(length=8):
         text += random.choice(chars)
     text += str(hex(int(time.time())))[2:][-tlength:].rjust(tlength, '0')[::-1]
     return text
+
+
+def choose_derived_bone(generator, original, subtype, *, by_owner=True, recursive=True):
+    bones = generator.obj.pose.bones
+    names = generator.find_derived_bones(original, by_owner=by_owner, recursive=recursive)
+
+    direct = make_derived_name(original, subtype)
+    if direct in names and direct in bones:
+        return direct
+
+    prefix = _PREFIX_TABLE[subtype] + '-'
+    matching = [ name for name in names if name.startswith(prefix) and name in bones ]
+
+    if len(matching) > 0:
+        return matching[0]
+
+    return None

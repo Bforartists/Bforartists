@@ -210,7 +210,7 @@ class QCDSlots():
                 if self.length() > 20:
                     break
 
-    def renumerate(self, *, beginning=False):
+    def renumerate(self, *, depth_first=False, beginning=False):
         if beginning:
             self.clear_slots()
             self.overrides.clear()
@@ -242,7 +242,11 @@ class QCDSlots():
                         self.add_slot(f"{x+1}", layer_collection.name)
 
 
-            laycol_iter_list.extend(list(layer_collection.children))
+            if depth_first:
+                laycol_iter_list[0:0] = list(layer_collection.children)
+
+            else:
+                laycol_iter_list.extend(list(layer_collection.children))
 
             if self.length() > 20:
                 break

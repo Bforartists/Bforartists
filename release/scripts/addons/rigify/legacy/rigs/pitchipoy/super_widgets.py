@@ -1,6 +1,3 @@
-import bpy
-import importlib
-import importlib
 from   ...utils import create_widget
 
 MODULE_NAME = "super_widgets"  # Windows/Mac blender is weird, so __package__ doesn't work

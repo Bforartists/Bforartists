@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -4208,10 +4208,6 @@ msgid "Limit the distance from target object"
 msgstr "ﻑﺪﻫ ﻦﺋﺎﻛ ﻦﻣ ﺔﻓﺎﺴﻤﻟﺍ ﺩﺪﺣ"
 
 
-msgid "For Transform"
-msgstr "ﺭﻮﻓ ﻝﻮﺤﺗ"
-
-
 msgid "Transforms are affected by this constraint as well"
 msgstr "ﺪﻴﻘﻟﺍ ﺍﺬﻬﺑ ﺎﻀﻳﺍ ﺔﻟﻮﻤﺸﻣ ﺕﻻ﻿ﻮﺤﺘﻟﺍ"
 
@@ -7829,10 +7825,6 @@ msgid "Frame on which the simulation starts"
 msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ ﺃﺪﺒﺗ ﻪﻴﻓ ﻱﺬﻟﺍ ﺭﺎﻃﻹ﻿ﺍ"
 
 
-msgid "Final"
-msgstr "ﻲﺋﺎﻬﻧ"
-
-
 msgid "Clipping"
 msgstr "ﻢﻴﻠﻘﺗ"
 
@@ -7921,6 +7913,10 @@ msgid "Full Sample"
 msgstr "ﺔﻠﻣﺎﻛ ﺕﺎﻨﻴﻋ"
 
 
+msgid "Final"
+msgstr "ﻲﺋﺎﻬﻧ"
+
+
 msgid "Preview"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ"
 
@@ -7945,12 +7941,12 @@ msgid "Compression"
 msgstr "ﻂﻐﺿ"
 
 
-msgid "Compression method to be used"
-msgstr "ﺔﻠﻤﻌﺘﺴﻤﻟﺍ ﻂﻐﻀﻟﺍ ﺔﻠﻴﺳﻭ"
-
-
 msgid "Effective but slow compression"
 msgstr "ءﻲﻄﺑ ﻦﻜﻟ ﻝﺎﻌﻓ ﻂﻐﺿ"
+
+
+msgid "Half"
+msgstr "ﻒﺼﻧ"
 
 
 msgid "Number"
@@ -7959,6 +7955,10 @@ msgstr "ﺩﺪﻌﻟﺍ"
 
 msgid "Cache Compression"
 msgstr "ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﻂﻐﺿ"
+
+
+msgid "Compression method to be used"
+msgstr "ﺔﻠﻤﻌﺘﺴﻤﻟﺍ ﻂﻐﻀﻟﺍ ﺔﻠﻴﺳﻭ"
 
 
 msgid "Fast but not so effective compression"
@@ -10475,10 +10475,6 @@ msgid "Mode of filling curve"
 msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﺔﺌﺒﻌﺗ ﺔﻘﻳﺮﻃ"
 
 
-msgid "Half"
-msgstr "ﻒﺼﻧ"
-
-
 msgid "Offset the curve to adjust the width of a text"
 msgstr "ﺺﻨﻟﺍ ﺽﺮﻋ ﻞﻳﺪﻌﺘﻟ  ﻰﻨﺤﻨﻤﻟﺍ ﺡﺯﺍ"
 
@@ -12239,6 +12235,10 @@ msgid "Polygons of the mesh"
 msgstr "ﻢﺴﺠﻤﻟﺍ ﻪﺟﻭﺍ"
 
 
+msgid "All vertex colors"
+msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﺍﻮﻟﺍ ﻞﻛ"
+
+
 msgid "Skin Vertices"
 msgstr "ﺓﺮﺸﻘﻟﺍ ﻂﻘﻧ"
 
@@ -12361,10 +12361,6 @@ msgstr "UV ـﻟﺍ ﻞﺴﻠﺴﺗ ﺕﺎﻘﺒﻃ ﻞﻛ"
 
 msgid "Vertex Colors"
 msgstr "ﻂﻘﻨﻟﺍ ﻥﺍﻮﻟﺃ"
-
-
-msgid "All vertex colors"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﺍﻮﻟﺍ ﻞﻛ"
 
 
 msgid "Vertex Paint Mask"
@@ -16435,11 +16431,6 @@ msgstr "ﺓﺮﻄﺴﻤﻟﺍ"
 msgctxt "UI_Events_KeyMaps"
 msgid "Line Feed"
 msgstr "ﺔﻳﺬﻐﺗ ﻂﺧ"
-
-
-msgctxt "UI_Events_KeyMaps"
-msgid "Back Space"
-msgstr "ﻒﻠﺨﻠﻟ ﺔﻓﺎﺴﻣ"
 
 
 msgid "BkSpace"
@@ -22124,6 +22115,10 @@ msgid "Vertex Attribute Name"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﺔﻤﺳ ﻢﺳﺍ"
 
 
+msgid "Air"
+msgstr "ءﺍﻮﻫ"
+
+
 msgid "Sky Type"
 msgstr "ءﺎﻤﺴﻟﺍ ﻉﻮﻧ"
 
@@ -24273,10 +24268,6 @@ msgid "(De)select all control points"
 msgstr "ﻢﻜﺤﺘﻟﺍ ﻁﺎﻘﻧ ﻞﻛ ﺮﺘﺨﺗ ﻻ﻿/ﺮﺘﺧﺍ"
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﺮﺻﺎﻨﻋ ﻙﺮﺘﺑ ﻲﻟﺎﺤﻟﺍ ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻒﻔﺧ"
-
-
 msgctxt "Operator"
 msgid "Select Next"
 msgstr "ﻲﻟﺎﺘﻟﺍ ﺮﺘﺧﺍ"
@@ -26253,13 +26244,13 @@ msgid "Shrink/Fatten"
 msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
 
 
+msgid "Extrude region of faces"
+msgstr "ﻪﺟﻭﻻ﻿ﺍ ﺔﻘﻄﻨﻣ ﻖﺜﺑﺍ"
+
+
 msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "ﺔﻘﻄﻨﻤﻟﺍ ﻖﺜﺑﺍ"
-
-
-msgid "Extrude region of faces"
-msgstr "ﻪﺟﻭﻻ﻿ﺍ ﺔﻘﻄﻨﻣ ﻖﺜﺑﺍ"
 
 
 msgid "Extrude region and move result"
@@ -28632,10 +28623,6 @@ msgstr "ﻞﻜﻴﻬﻤﻠﻟ ﻦﺋﺎﻛ ﺔﻴﻠﻤﻋ"
 
 msgid "Select Hierarchy"
 msgstr "ﺔﻴﻠﻜﻴﻬﻟﺍ ﺮﺘﺧﺇ"
-
-
-msgid "Delete Hierarchy"
-msgstr "ﺔﻴﻠﻜﻴﻬﻟﺍ ﻑﺬﺣﺇ"
 
 
 msgid "Drag to clear parent in Outliner"
@@ -32004,10 +31991,6 @@ msgid "Use Deform Only"
 msgstr "ﻂﻘﻓ ﻊﻳﻮﻄﺘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Use OpenMP"
-msgstr "OpenMP ﻡﺪﺨﺘﺳﺍ"
-
-
 msgid "UV Sculpting"
 msgstr "UV ـﻟﺍ ﺖﺤﻧ"
 
@@ -33600,10 +33583,6 @@ msgid "Duplicate Action"
 msgstr "ﺙﺪﺤﻟﺍ ﺦﺴﻧﺍ"
 
 
-msgid "Causes actions to be duplicated with the object"
-msgstr "ﻦﺋﺎﻜﻟﺍ ﻊﻣ ﺙﺍﺪﺣﻷ﻿ﺍ ﺦﺴﻨﺗ ﻰﻟﺇ ﻱﺩﺆﻳ"
-
-
 msgid "Duplicate Armature"
 msgstr "ﻞﻜﻴﻬﻟﺍ ﺦﺴﻧﺍ"
 
@@ -33736,10 +33715,6 @@ msgid "Built-in animation player"
 msgstr "ﻲﻠﺧﺪﻟﺍ ﻙﺮّﺤﺘﻟﺍ ﺽﺭﺎﻋ"
 
 
-msgid "Djv"
-msgstr "Djv"
-
-
 msgid "Open source frame player: http://djv.sourceforge.net"
 msgstr "  http://djv.sourceforge.net :ﺭﺪﺼﻤﻟﺍ ﺡﻮﺘﻔﻣ ﺮﻃﺃ ﺽﺭﺎﻋ"
 
@@ -33750,10 +33725,6 @@ msgstr "ﺮﻃﻻ﻿ﺍ ﺭﻭﺪﻣ"
 
 msgid "Frame player from IRIDAS"
 msgstr "IRIDAS ﻦﻣ ﺮﻃﺃ ﺽﺭﺎﻋ"
-
-
-msgid "rv"
-msgstr "rv"
 
 
 msgid "Frame player from Tweak Software"
@@ -34672,30 +34643,6 @@ msgid "Ideal for fulldomes, ignore the sensor dimensions"
 msgstr "ﻪﺟﻮﻟﺍ ﻩﺎﺠﺗﺍ ﺲﻜﻋﺍ"
 
 
-msgid "Type of primitive used for hair rendering"
-msgstr "ﺮﻌﺸﻟﺍ ﺮﻴﻴﺼﺘﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺱﺎﺳﻻ﻿ﺍ ﻉﻮﻧ"
-
-
-msgid "Line Segments"
-msgstr "ﺔﻠﻴﺌﻀﻟﺍ ءﺍﺰﺟﻻ﻿ﺍ"
-
-
-msgid "Curve Segments"
-msgstr "ﺔﻠﻴﺌﻀﻟﺍ ءﺍﺰﺟﻻ﻿ﺍ"
-
-
-msgid "Resolution of generated mesh"
-msgstr "ﺪﻟَﻮﻤﻟﺍ ﻢﺴﺠﻤﻟﺍ ﺔﻗﺩ"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "ﺰﻠﻜﻳﺎﺴﻟ ﺮﻌﺸﻟﺍ ﺮﻴّﺼﻣ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻨﻟ ﺰﻠﻜﻳﺎﺳ ﺮﻌﺷ ﺮﻴﻴﺼﺗ ﻞﻌّﻓ"
-
-
 msgid "Cast Shadow"
 msgstr "ﻞﻈﻟﺍ ﻲﻘﻟﺍ"
 
@@ -34918,10 +34865,6 @@ msgstr "0 ﺖﻧﺎﻛ ﺍﺫﺍ ﺓﺩﺪﺤﻣ ﺮﻴﻏ ,ﺽﺮﻌﻟﺍ ﺬ�
 
 msgid "Pause Preview"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﻒﻗﻭﺍ"
-
-
-msgid "Preview Samples"
-msgstr "ﺕﺎﻨﻴﻌﻟﺍ ﻦﻳﺎﻋ"
 
 
 msgid "Start Resolution"
@@ -39762,10 +39705,6 @@ msgid "Anim Player"
 msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﻞﻐﺸﻣ"
 
 
-msgid "File Path:"
-msgstr ":ﻒﻠﻤﻟﺍ ﺭﺎﺴﻣ"
-
-
 msgid "Display number of users of this data (click to make a single-user copy)"
 msgstr "(ﺪﻴﺣﻭ-ﻡﺪﺨﺘﺴﻣ ﺔﺨﺴﻧ ﻞﻌﺠﻟ ﻂﻐﺿﺇ) ﺕﺎﻧﺎﻴﺒﻟﺍ ﻩﺬﻫ ﻲﻣﺪﺨﺘﺴﻣ ﺩﺪﻋ ﺮﻬﻈﻳ"
 
@@ -39924,11 +39863,6 @@ msgstr "ﻁﺎﺒﺗﺭﻺ﻿ﻟ ﻢﺳﺮﻟﺍ ﻰﻨﺤﻨﻣ ﺕﺎﻧﺎﻴ
 
 msgid "Browse ID data to be linked"
 msgstr "ﺔﻄﺒﺗﺮﻣ ﻥﻮﻜﺘﻟ ﻑﺮﻌﻤﻟﺍ ﺕﺎﻧﺎﻴﺑ ﺢﻔﺼﺗ"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "ﻖﺒﻃ"
 
 
 msgctxt "Scene"
@@ -40370,10 +40304,6 @@ msgid "Bake failed: no Dynamic Paint modifier found"
 msgstr "ﻱﻮﻴﺤﻟﺍ ﻢﺳﺮﻟﺍ ﺮﻴﻐﻣ"
 
 
-msgid "Air"
-msgstr "ءﺍﻮﻫ"
-
-
 msgid "Bark"
 msgstr "ءﺎﺤﻟ"
 
@@ -40500,6 +40430,10 @@ msgstr "ﻝﺎﻌﻔﻟﺍ ﺡﺎﺘﻔﻤﻟﺍ"
 
 msgid "Fields"
 msgstr "ﻝﻮﻘﺣ"
+
+
+msgid "File Path:"
+msgstr ":ﻒﻠﻤﻟﺍ ﺭﺎﺴﻣ"
 
 
 msgid "Track is locked"
@@ -40752,6 +40686,10 @@ msgstr "ﺕﺎﻔﻠﻣ %d‬‪ ﻰﻟﺇ ﻍﺮﻓ"
 
 msgid "Unpack"
 msgstr "ﻍﺮّﻓ"
+
+
+msgid "Sync Length"
+msgstr "ﻦﻣﺍﺰﺘﻟﺍ ﻝﻮﻃ"
 
 
 msgid "Now"
@@ -41217,6 +41155,15 @@ msgid "Cannot open file: %s"
 msgstr "‬%s‪ :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ﻿"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "ﻖﺒﻃ"
+
+
+msgid "Bone Envelopes"
+msgstr "ﻢﻈﻌﻟﺍ ﺔﻔﻠﻏﺃ"
+
+
 msgid "Keying set path could not be added"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺭﺎﺴﻣ"
 
@@ -41357,10 +41304,6 @@ msgstr "ﺔﻄﺒﺗﺮﻣ ﺢﻴﺗﺎﻔﻣ ﺔﻄﻳﺮﺧ"
 
 msgid "Property value not in enumeration"
 msgstr "ﺔﻤﺴﻟﺍ ﺔﻤﻴﻗ ﻞﻳﺪﻌﺗ"
-
-
-msgid "Bone Envelopes"
-msgstr "ﻢﻈﻌﻟﺍ ﺔﻔﻠﻏﺃ"
 
 
 msgid "Outer"

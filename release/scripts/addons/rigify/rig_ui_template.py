@@ -23,7 +23,6 @@ import bpy
 from collections import OrderedDict
 
 from .utils.animation import SCRIPT_REGISTER_BAKE, SCRIPT_UTILITIES_BAKE
-from .utils.layers import get_layers
 from .utils.rig import attach_persistent_script
 
 from . import base_generate

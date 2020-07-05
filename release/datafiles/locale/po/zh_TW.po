@@ -1,18 +1,18 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
-"PO-Revision-Date: 2020-03-28 00:56+0800\n"
+"PO-Revision-Date: 2020-06-30 10:25+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
-"Language-Team: chinese-l10n <chinese-l10n@googlegroups.com>\n"
+"Language-Team: Chinese (Traditional) <https://r2.tw.pan93412.dedyn.io/projects/blender/blender/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.3.1\n"
 "X-Poedit-Bookmarks: 11434,-1,-1,-1,-1,-1,-1,-1,-1,-1"
 
 
@@ -3209,7 +3209,7 @@ msgstr "不要對顯示器執行任何色彩轉換，使用舊的顯示器無色
 
 
 msgid "Color Mapping"
-msgstr "色彩映射 "
+msgstr "色彩映射"
 
 
 msgid "Color mapping settings"
@@ -4505,10 +4505,6 @@ msgid "Limit the distance from target object"
 msgstr "限制與目標物體間的距離"
 
 
-msgid "For Transform"
-msgstr "供變換"
-
-
 msgid "Transforms are affected by this constraint as well"
 msgstr "此約束也會影響變換"
 
@@ -5397,8 +5393,16 @@ msgid "Plane"
 msgstr "平面"
 
 
+msgid "Normal/View"
+msgstr "法線/視圖"
+
+
+msgid "Normal/Surface"
+msgstr "法線/曲面"
+
+
 msgid "View"
-msgstr "檢視"
+msgstr "視圖"
 
 
 msgid "Detect Corners"
@@ -7274,7 +7278,7 @@ msgstr "F 曲線值的修改器"
 
 
 msgid "F-Curve Modifier is the one being edited "
-msgstr "正在編輯的 F 曲線修改器"
+msgstr "正在編輯的 F 曲線修改器 "
 
 
 msgid "Blend In"
@@ -8271,7 +8275,7 @@ msgstr "啟用檔案過濾功能"
 
 
 msgid "Show .blend1, .blend2, etc. files"
-msgstr "顯示 .blend1、.blend2  等檔案"
+msgstr "顯示 .blend1、.blend2 等檔案"
 
 
 msgid "Filter Blender"
@@ -8376,10 +8380,6 @@ msgstr "開始"
 
 msgid "Frame on which the simulation starts"
 msgstr "模擬開始的框幀位置"
-
-
-msgid "Final"
-msgstr "最終"
 
 
 msgid "Cell Size"
@@ -8514,6 +8514,10 @@ msgid "Nearest"
 msgstr "最近"
 
 
+msgid "Final"
+msgstr "最終"
+
+
 msgid "Preview"
 msgstr "預覽"
 
@@ -8550,12 +8554,12 @@ msgid "Compression"
 msgstr "壓縮"
 
 
-msgid "Compression method to be used"
-msgstr "使用的壓縮方法"
-
-
 msgid "Effective but slow compression"
 msgstr "有效但緩慢的壓縮"
+
+
+msgid "Half"
+msgstr "一半"
 
 
 msgid "Number"
@@ -8572,6 +8576,10 @@ msgstr "用於粒子採樣的隨機係數"
 
 msgid "Cache Compression"
 msgstr "快取壓縮"
+
+
+msgid "Compression method to be used"
+msgstr "使用的壓縮方法"
 
 
 msgid "Fast but not so effective compression"
@@ -8787,7 +8795,7 @@ msgstr "初始"
 
 
 msgid "Normal"
-msgstr "一般"
+msgstr "法線"
 
 
 msgid "Amount of normal directional velocity"
@@ -9985,7 +9993,15 @@ msgstr "格線縮放"
 
 
 msgid "Active Layer"
-msgstr "作用分​​層"
+msgstr "作用分層"
+
+
+msgid "Index of the first loop of this polygon"
+msgstr "此多角形的第一個迴圈索引"
+
+
+msgid "Number of loops used by this polygon"
+msgstr "此多角形使用的迴圈數"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -10415,6 +10431,10 @@ msgstr "遮罩紋理槽"
 
 msgid "Mask Tool"
 msgstr "遮罩工具"
+
+
+msgid "Normal Radius"
+msgstr "法線半徑"
 
 
 msgid "Normal Weight"
@@ -11283,10 +11303,6 @@ msgstr "填補模式"
 
 msgid "Mode of filling curve"
 msgstr "填補曲線的模式"
-
-
-msgid "Half"
-msgstr "一半"
 
 
 msgid "Offset the curve to adjust the width of a text"
@@ -13051,6 +13067,10 @@ msgid "Polygons of the mesh"
 msgstr "網格的多角形"
 
 
+msgid "All vertex colors"
+msgstr "所有頂點色彩"
+
+
 msgid "Skin Vertices"
 msgstr "皮膚頂點"
 
@@ -13177,10 +13197,6 @@ msgstr "所有 UV 迴圈分層"
 
 msgid "Vertex Colors"
 msgstr "頂點色彩"
-
-
-msgid "All vertex colors"
-msgstr "所有頂點色彩"
 
 
 msgid "Vertex Paint Mask"
@@ -13528,7 +13544,7 @@ msgstr "由連結的節點組成的節點樹，用於紋理"
 
 
 msgid "Active Material"
-msgstr "作用中​​材質"
+msgstr "作用中材質"
 
 
 msgid "Active material being displayed"
@@ -18137,7 +18153,7 @@ msgstr "遮罩元素的親代處理設定"
 
 
 msgid "ID-block to which masking element would be parented to or to it's property"
-msgstr "遮罩元素會被認為親代的 ID 塊或其屬性的 ID 塊 "
+msgstr "遮罩元素會被認為親代的 ID 塊或其屬性的 ID 塊"
 
 
 msgid "ID Type"
@@ -18821,16 +18837,8 @@ msgid "Loop Start"
 msgstr "迴圈開始"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "此多角形的第一個迴圈索引"
-
-
 msgid "Loop Total"
 msgstr "迴圈總計"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "此多角形使用的迴圈數"
 
 
 msgid "Polygon Normal"
@@ -21106,7 +21114,7 @@ msgstr "將四角形分割為三角形的方法"
 
 
 msgid "Beauty "
-msgstr "優美"
+msgstr "優美 "
 
 
 msgid "Split the quads in nice triangles, slower method"
@@ -23097,7 +23105,7 @@ msgstr "相對大小 Y"
 
 
 msgid "Filter Type"
-msgstr "過濾器類型 "
+msgstr "過濾器類型"
 
 
 msgid "Tent"
@@ -23269,7 +23277,7 @@ msgstr "受單一通道限制"
 
 
 msgid "Limit by max of other channels "
-msgstr "受最多其他通道的限制"
+msgstr "受最多其他通道的限制 "
 
 
 msgid "Values lower than this setting are 100% keyed"
@@ -25264,6 +25272,10 @@ msgstr "XYZ 法線向量映射至 RGB 色彩"
 
 msgid "Sky Texture"
 msgstr "天空紋理"
+
+
+msgid "Air"
+msgstr "空氣"
 
 
 msgid "Ground color that is subtly reflected in the sky"
@@ -29148,20 +29160,12 @@ msgid "(De)select all control points"
 msgstr "(取消)全選控制點"
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "藉取消選取邊界元素來減少目前的選取"
-
-
 msgid "Select all control points linked to already selected ones"
 msgstr "選取所有連結至已選取項目的控制點"
 
 
 msgid "Deselect linked control points rather than selecting them"
 msgstr "取消選取已連結的控制點，而不是選取它們"
-
-
-msgid "Select control points directly linked to already selected ones"
-msgstr "選取直接連結至已選取項目的控制點"
 
 
 msgctxt "Operator"
@@ -30715,6 +30719,10 @@ msgid "Eraser"
 msgstr "橡皮擦"
 
 
+msgid "Side"
+msgstr "側"
+
+
 msgctxt "Operator"
 msgid "Insert Blank Frame"
 msgstr "插入空白框幀"
@@ -30885,6 +30893,14 @@ msgid "Limit"
 msgstr "限制"
 
 
+msgid "Empty Groups"
+msgstr "空白群組"
+
+
+msgid "Automatic Weights"
+msgstr "自動權重"
+
+
 msgid "Hide unselected rather than selected layers"
 msgstr "隱藏未選取層，而不是選取層"
 
@@ -30906,10 +30922,6 @@ msgstr "移除遮罩分層"
 
 msgid "Keep Original"
 msgstr "保留原始"
-
-
-msgid "Side"
-msgstr "側"
 
 
 msgid "Mouse location"
@@ -32736,7 +32748,6 @@ msgid "Shrink/fatten selected vertices along normals"
 msgstr "沿法線收縮/擴充已選取的頂點"
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "擠出區塊"
 
@@ -32745,6 +32756,7 @@ msgid "Extrude region of faces"
 msgstr "擠出面的區塊"
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
 msgstr "擠出區塊"
 
@@ -33036,7 +33048,7 @@ msgstr "標記 Freestyle 面"
 
 
 msgid "(Un)mark selected faces for exclusion from Freestyle feature edge detection"
-msgstr "(取消)標記從 Freestyle 特徵邊線偵測中排除的所選面 "
+msgstr "(取消)標記從 Freestyle 特徵邊線偵測中排除的所選面"
 
 
 msgctxt "Operator"
@@ -33489,6 +33501,14 @@ msgstr "從指示的視接口中以螺旋外形圍繞游標擠出所選的頂點
 
 msgid "Turns"
 msgstr "圈數"
+
+
+msgid "Add vertex color layer"
+msgstr "添加頂點色彩分層"
+
+
+msgid "Remove vertex color layer"
+msgstr "移除頂點色彩分層"
 
 
 msgid "(De)select all vertices, edges or faces"
@@ -34043,17 +34063,9 @@ msgid "Add Vertex Color"
 msgstr "添加頂點色彩"
 
 
-msgid "Add vertex color layer"
-msgstr "添加頂點色彩分層"
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "移除頂點色彩"
-
-
-msgid "Remove vertex color layer"
-msgstr "移除頂點色彩分層"
 
 
 msgid "Flatten angles of selected vertices"
@@ -37058,10 +37070,6 @@ msgid "Select Hierarchy"
 msgstr "選取階層"
 
 
-msgid "Delete Hierarchy"
-msgstr "刪除階層"
-
-
 msgid "Context menu for item operations"
 msgstr "項目操作的情境選單"
 
@@ -39755,6 +39763,10 @@ msgid "Clicks on the background do not start the stroke"
 msgstr "在背景中點擊並不會啟動筆觸"
 
 
+msgid "Filter type"
+msgstr "過濾器類型"
+
+
 msgid "Use Face Sets"
 msgstr "使用面集"
 
@@ -41406,7 +41418,7 @@ msgstr "伽瑪已校正"
 
 
 msgid "The source color is gamma corrected "
-msgstr "來源色彩已經伽碼校正"
+msgstr "來源色彩已經過伽碼校正 "
 
 
 msgctxt "Operator"
@@ -44011,14 +44023,6 @@ msgid "Show faces in dynamic-topology mode with smooth shading rather than flat 
 msgstr "在動態拓樸模式中以平滑著色方式而非扁平著色方式來顯示面"
 
 
-msgid "Use OpenMP"
-msgstr "使用 OpenMP"
-
-
-msgid "Take advantage of multiple CPU cores to improve sculpting performance"
-msgstr "利用多顆 CPU 核心的優勢來改善雕塑效能"
-
-
 msgid "UV Sculpting"
 msgstr "UV 雕塑"
 
@@ -45735,10 +45739,6 @@ msgid "Duplicate Action"
 msgstr "製作動作複本"
 
 
-msgid "Causes actions to be duplicated with the object"
-msgstr "使動作隨物體一同製作出複本"
-
-
 msgid "Duplicate Armature"
 msgstr "製作骨架複本"
 
@@ -45871,10 +45871,6 @@ msgid "Built-in animation player"
 msgstr "內建動畫播放器"
 
 
-msgid "Djv"
-msgstr "Djv"
-
-
 msgid "Open source frame player: http://djv.sourceforge.net"
 msgstr "開源框幀播放器：http://djv.sourceforge.net"
 
@@ -45885,10 +45881,6 @@ msgstr "FrameCycler"
 
 msgid "Frame player from IRIDAS"
 msgstr "來自 IRIDAS 的框幀播放器"
-
-
-msgid "rv"
-msgstr "rv"
 
 
 msgid "Frame player from Tweak Software"
@@ -46943,60 +46935,8 @@ msgid "Fisheye Equisolid"
 msgstr "魚眼等立體角"
 
 
-msgid "Do not test the back-face of each strand"
-msgstr "不要測試每個股段的背面"
-
-
-msgid "Type of primitive used for hair rendering"
-msgstr "毛髮算繪使用的初形類型"
-
-
-msgid "Create triangle geometry around strands"
-msgstr "在幾何邊線周圍建立三角形幾何"
-
-
-msgid "Line Segments"
-msgstr "線條分段"
-
-
-msgid "Use line segment primitives"
-msgstr "使用線條分段初形"
-
-
-msgid "Curve Segments"
-msgstr "曲線分段"
-
-
-msgid "Use segmented cardinal curve primitives"
-msgstr "使用分段的曲線初形"
-
-
-msgid "Resolution of generated mesh"
-msgstr "產生的網格的解析度"
-
-
 msgid "Form of hair"
 msgstr "毛髮形式"
-
-
-msgid "Ribbons"
-msgstr "緞帶"
-
-
-msgid "Ignore thickness of each strand"
-msgstr "忽略每個股段的厚度"
-
-
-msgid "Use thickness of strand when rendering"
-msgstr "算繪時使用線股厚度"
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "使用 Cycles 毛髮算繪"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "啟動粒子系統的 Cycles 毛髮算繪"
 
 
 msgid "Cast Shadow"
@@ -47273,10 +47213,6 @@ msgstr "暫停預覽"
 
 msgid "Pause all viewport preview renders"
 msgstr "暫停所有視接口的預覽算繪"
-
-
-msgid "Preview Samples"
-msgstr "預覽樣本"
 
 
 msgid "Number of samples to render in the viewport, unlimited if 0"
@@ -52325,7 +52261,7 @@ msgstr "主題設定中的影片剪輯編輯器"
 
 
 msgid "Active Marker"
-msgstr "作用中​​標記"
+msgstr "作用中標記"
 
 
 msgid "Color of active marker"
@@ -53401,7 +53337,7 @@ msgstr "時間步"
 
 
 msgid "Stick stroke to the view "
-msgstr "筆劃固定於視圖"
+msgstr "筆劃固定於視圖 "
 
 
 msgid "Stick stroke to surfaces"
@@ -54705,11 +54641,11 @@ msgstr "檔案是由較新的 Blender 二元檔 (%d.%d) 寫入，預期會遺失
 
 
 msgid "Loading failed: "
-msgstr "載入失敗："
+msgstr "載入失敗： "
 
 
 msgid "Loading '%s' failed: "
-msgstr "載入「%s」失敗："
+msgstr "載入「%s」失敗： "
 
 
 msgid "Path '%s' not found"
@@ -55806,7 +55742,7 @@ msgstr "明："
 
 
 msgid "Hex: "
-msgstr "十六進位："
+msgstr "十六進位： "
 
 
 msgid "(Gamma Corrected)"
@@ -55891,10 +55827,6 @@ msgstr "重設曲線"
 
 msgid "Anim Player"
 msgstr "動畫播放器"
-
-
-msgid "File Path:"
-msgstr "檔案路徑："
 
 
 msgid "Display number of users of this data (click to make a single-user copy)"
@@ -56065,11 +55997,6 @@ msgid "Browse ID data to be linked"
 msgstr "瀏覽要連結的 ID 資料"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "套用"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "新增"
@@ -56197,10 +56124,6 @@ msgstr "新增"
 
 msgid "%d items"
 msgstr "%d 項"
-
-
-msgid "Archive Options:"
-msgstr "封存選項："
 
 
 msgid "Object Options:"
@@ -56709,10 +56632,6 @@ msgid "Object '%s' already has a Rigid Body Constraint"
 msgstr "物體「%s」已有剛體約束"
 
 
-msgid "Air"
-msgstr "空氣"
-
-
 msgid "Acrylic"
 msgstr "壓克力"
 
@@ -56918,7 +56837,7 @@ msgstr "3D 區域檢視"
 
 
 msgid "Frame:%d "
-msgstr "框幀：%d"
+msgstr "框幀：%d "
 
 
 msgid "| Last:%s "
@@ -56926,15 +56845,15 @@ msgstr "| 最終：%s "
 
 
 msgid "Time:%s "
-msgstr "時間：%s"
+msgstr "時間：%s "
 
 
 msgid "Ve:%d "
-msgstr "點：%d"
+msgstr "點：%d "
 
 
 msgid "Fa:%d "
-msgstr "面：%d"
+msgstr "面：%d "
 
 
 msgid "| Mem:%.2fM, Peak: %.2fM "
@@ -57107,6 +57026,10 @@ msgstr "在紋理標籤頁中顯示紋理"
 
 msgid "Fields"
 msgstr "場"
+
+
+msgid "File Path:"
+msgstr "檔案路徑："
 
 
 msgid "Track is locked"
@@ -57540,6 +57463,10 @@ msgstr "無法對未儲存的 blend 檔設定相對路徑"
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "無法對未儲存的 blend 檔設定絕對路徑"
+
+
+msgid "Sync Length"
+msgstr "同步長度"
 
 
 msgid "Now"
@@ -58364,15 +58291,15 @@ msgstr "或 Alt) 擴展以適應 %s"
 
 
 msgid "Edge Slide: "
-msgstr "邊線滑動："
+msgstr "邊線滑動： "
 
 
 msgid "(E)ven: %s, "
-msgstr "平滑(E)：%s，"
+msgstr "平滑(E)：%s， "
 
 
 msgid "(F)lipped: %s, "
-msgstr "翻轉(F)：%s，"
+msgstr "翻轉(F)：%s， "
 
 
 msgid "Alt or (C)lamp: %s"
@@ -58472,7 +58399,7 @@ msgstr "左"
 
 
 msgid "Vert Slide: "
-msgstr "頂點滑動："
+msgstr "頂點滑動： "
 
 
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
@@ -58585,6 +58512,15 @@ msgid "Cannot open file: %s"
 msgstr "無法開啟檔案：%s"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "套用"
+
+
+msgid "Bone Envelopes"
+msgstr "骨骼封套"
+
+
 msgid "AaBbCc"
 msgstr "AaBbCc 東來過五湖"
 
@@ -58670,7 +58606,7 @@ msgstr "無法移除鍵處理集路徑"
 
 
 msgid "No valid driver data to create copy of"
-msgstr "無有效的驅動器資料可製作副本，副本來源為 "
+msgstr "無有效的驅動器資料可製作副本，副本來源為"
 
 
 msgid "Registering keying set info class: '%s' is too long, maximum length is %d"
@@ -59101,10 +59037,6 @@ msgstr "無法從「%s」移除KeyMapItem「%s」"
 
 msgid "KeyConfig '%s' cannot be removed"
 msgstr "無法移除 KeyConfig「%s」"
-
-
-msgid "Bone Envelopes"
-msgstr "骨骼封套"
 
 
 msgid "Outer"

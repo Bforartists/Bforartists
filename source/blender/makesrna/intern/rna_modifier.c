@@ -1040,20 +1040,20 @@ static void rna_UVProjector_object_set(PointerRNA *ptr,
 
 static void rna_fluid_set_type(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  FluidModifierData *mmd = (FluidModifierData *)ptr->data;
+  FluidModifierData *fmd = (FluidModifierData *)ptr->data;
   Object *ob = (Object *)ptr->owner_id;
 
   /* nothing changed */
-  if ((mmd->type & MOD_FLUID_TYPE_DOMAIN) && mmd->domain) {
+  if ((fmd->type & MOD_FLUID_TYPE_DOMAIN) && fmd->domain) {
     return;
   }
 
 #  ifdef WITH_FLUID
-  BKE_fluid_modifier_free(mmd);             /* XXX TODO: completely free all 3 pointers */
-  BKE_fluid_modifier_create_type_data(mmd); /* create regarding of selected type */
+  BKE_fluid_modifier_free(fmd);             /* XXX TODO: completely free all 3 pointers */
+  BKE_fluid_modifier_create_type_data(fmd); /* create regarding of selected type */
 #  endif
 
-  switch (mmd->type) {
+  switch (fmd->type) {
     case MOD_FLUID_TYPE_DOMAIN:
       ob->dt = OB_WIRE;
       break;
@@ -2086,7 +2086,7 @@ static void rna_def_modifier_build(BlenderRNA *brna)
   prop = RNA_def_property(srna, "frame_start", PROP_FLOAT, PROP_TIME);
   RNA_def_property_float_sdna(prop, NULL, "start");
   RNA_def_property_range(prop, MINAFRAMEF, MAXFRAMEF);
-  RNA_def_property_ui_text(prop, "Start", "Start frame of the effect");
+  RNA_def_property_ui_text(prop, "Start Frame", "Start frame of the effect");
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
   prop = RNA_def_property(srna, "frame_duration", PROP_FLOAT, PROP_TIME);
@@ -3415,7 +3415,7 @@ static void rna_def_modifier_cast(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_radius_as_size", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", MOD_CAST_SIZE_FROM_RADIUS);
   RNA_def_property_ui_text(
-      prop, "From Radius", "Use radius as size of projection shape (0 = auto)");
+      prop, "Size from Radius", "Use radius as size of projection shape (0 = auto)");
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
   prop = RNA_def_property(srna, "use_transform", PROP_BOOLEAN, PROP_NONE);
@@ -4800,7 +4800,7 @@ static void rna_def_modifier_screw(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_normal_calculate", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", MOD_SCREW_NORMAL_CALC);
   RNA_def_property_ui_text(
-      prop, "Calc Order", "Calculate the order of edges (needed for meshes, but not curves)");
+      prop, "Calculate Order", "Calculate the order of edges (needed for meshes, but not curves)");
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
 
   prop = RNA_def_property(srna, "use_object_screw_offset", PROP_BOOLEAN, PROP_NONE);
@@ -5587,6 +5587,24 @@ static void rna_def_modifier_ocean(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Generate Foam", "Generate foam mask as a vertex color channel");
   RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
 
+  prop = RNA_def_property(srna, "use_spray", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", MOD_OCEAN_GENERATE_SPRAY);
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_ui_text(
+      prop, "Generate Spray Map", "Generate map of spray direction as a vertex color channel");
+  RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
+
+  prop = RNA_def_property(srna, "invert_spray", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", MOD_OCEAN_INVERT_SPRAY);
+  RNA_def_property_ui_text(prop, "Invert Spray", "Invert the spray direction map");
+  RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
+
+  prop = RNA_def_property(srna, "spray_layer_name", PROP_STRING, PROP_NONE);
+  RNA_def_property_string_sdna(prop, NULL, "spraylayername");
+  RNA_def_property_ui_text(
+      prop, "Spray Map", "Name of the vertex color layer used for the spray direction map");
+  RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
+
   prop = RNA_def_property(srna, "resolution", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, NULL, "resolution");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -5626,7 +5644,7 @@ static void rna_def_modifier_ocean(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "wave_alignment", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_float_sdna(prop, NULL, "wave_alignment");
-  RNA_def_property_range(prop, 0.0, 10.0);
+  RNA_def_property_range(prop, 0.0, 1.0);
   RNA_def_property_ui_text(prop, "Wave Alignment", "How much the waves are aligned to each other");
   RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
 
@@ -5703,7 +5721,7 @@ static void rna_def_modifier_ocean(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "sharpen_peak_jonswap", PROP_FLOAT, PROP_UNSIGNED);
   RNA_def_property_float_sdna(prop, NULL, "sharpen_peak_jonswap");
-  RNA_def_property_range(prop, 0.0, 10.0);
+  RNA_def_property_range(prop, 0.0, 1.0);
   RNA_def_property_ui_text(prop, "Sharpen peak", "Peak sharpening for 'JONSWAP' and 'TMA' models");
   RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
 

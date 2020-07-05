@@ -50,11 +50,11 @@ typedef enum TreeElementInsertType {
 } TreeElementInsertType;
 
 typedef enum TreeTraversalAction {
-  /* Continue traversal regularly, don't skip children. */
+  /** Continue traversal regularly, don't skip children. */
   TRAVERSE_CONTINUE = 0,
-  /* Stop traversal */
+  /** Stop traversal. */
   TRAVERSE_BREAK,
-  /* Continue traversal, but skip childs of traversed element */
+  /** Continue traversal, but skip children of traversed element. */
   TRAVERSE_SKIP_CHILDS,
 } TreeTraversalAction;
 
@@ -63,15 +63,15 @@ typedef TreeTraversalAction (*TreeTraversalFunc)(struct TreeElement *te, void *c
 typedef struct TreeElement {
   struct TreeElement *next, *prev, *parent;
   ListBase subtree;
-  int xs, ys;                 // do selection
-  TreeStoreElem *store_elem;  // element in tree store
-  short flag;                 // flag for non-saved stuff
-  short index;                // index for data arrays
-  short idcode;               // from TreeStore id
-  short xend;                 // width of item display, for select
+  int xs, ys;                /* Do selection. */
+  TreeStoreElem *store_elem; /* Element in tree store. */
+  short flag;                /* Flag for non-saved stuff. */
+  short index;               /* Index for data arrays. */
+  short idcode;              /* From TreeStore id. */
+  short xend;                /* Width of item display, for select. */
   const char *name;
-  void *directdata;   // Armature Bones, Base, Sequence, Strip...
-  PointerRNA rnaptr;  // RNA Pointer
+  void *directdata;  /* Armature Bones, Base, Sequence, Strip... */
+  PointerRNA rnaptr; /* RNA Pointer. */
 } TreeElement;
 
 typedef struct TreeElementIcon {

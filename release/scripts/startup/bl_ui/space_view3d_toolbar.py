@@ -197,6 +197,7 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
     bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
     bl_label = "Options"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_ui_units_x = 12
 
     @classmethod
     def poll(cls, context):
@@ -208,11 +209,14 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
 
+        tool_settings = context.tool_settings
         ob = context.active_object
         mesh = ob.data
-        tool_settings = context.tool_settings
 
         split = layout.split()
+
+        row = layout.row(align=True, heading="Transform")
+        row.prop(tool_settings, "use_transform_correct_face_attributes")
 
         row = layout.row(heading="Mirror")
         sub = row.row(align=True)
@@ -868,9 +872,6 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
         col = layout.column()
         col.label(text = "Display")
 
-        row = col.row()
-        row.separator()
-        row.prop(sculpt, "use_threaded", text="Threaded Sculpt")
         row = col.row()
         row.separator()
         row.prop(sculpt, "show_low_resolution")

@@ -2043,6 +2043,12 @@ def importMesh_IndexedFaceSet(geom, ancestry):
         t_min = mins[t_axis]
         dt = deltas[t_axis]
 
+        # Avoid divide by zero T76303.
+        if not (ds > 0.0):
+            ds = 1.0
+        if not (dt > 0.0):
+            dt = 1.0
+
         def generatePointCoords(pt):
             return (pt[s_axis] - s_min) / ds, (pt[t_axis] - t_min) / dt
         loops = [co for f in faces

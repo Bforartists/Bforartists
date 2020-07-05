@@ -86,13 +86,11 @@ static bool vertex_group_use_vert_sel(Object *ob)
   if (ob->mode == OB_MODE_EDIT) {
     return true;
   }
-  else if ((ob->type == OB_MESH) &&
-           ((Mesh *)ob->data)->editflag & (ME_EDIT_PAINT_VERT_SEL | ME_EDIT_PAINT_FACE_SEL)) {
+  if ((ob->type == OB_MESH) &&
+      ((Mesh *)ob->data)->editflag & (ME_EDIT_PAINT_VERT_SEL | ME_EDIT_PAINT_FACE_SEL)) {
     return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 static Lattice *vgroup_edit_lattice(Object *ob)
@@ -189,7 +187,7 @@ bool ED_vgroup_parray_alloc(ID *id,
 
           return true;
         }
-        else if (me->dvert) {
+        if (me->dvert) {
           MVert *mvert = me->mvert;
           MDeformVert *dvert = me->dvert;
           int i;
@@ -1771,12 +1769,14 @@ static void vgroup_lock_all(Object *ob, int action, int mask)
       switch (mask) {
         case VGROUP_MASK_INVERT_UNSELECTED:
         case VGROUP_MASK_SELECTED:
-          if (!selected[i])
+          if (!selected[i]) {
             continue;
+          }
           break;
         case VGROUP_MASK_UNSELECTED:
-          if (selected[i])
+          if (selected[i]) {
             continue;
+          }
           break;
         default:;
       }
@@ -1791,12 +1791,14 @@ static void vgroup_lock_all(Object *ob, int action, int mask)
   for (dg = ob->defbase.first, i = 0; dg; dg = dg->next, i++) {
     switch (mask) {
       case VGROUP_MASK_SELECTED:
-        if (!selected[i])
+        if (!selected[i]) {
           continue;
+        }
         break;
       case VGROUP_MASK_UNSELECTED:
-        if (selected[i])
+        if (selected[i]) {
           continue;
+        }
         break;
       default:;
     }
@@ -2115,15 +2117,13 @@ static int inv_cmp_mdef_vert_weights(const void *a1, const void *a2)
   if (dw1->weight < dw2->weight) {
     return 1;
   }
-  else if (dw1->weight > dw2->weight) {
+  if (dw1->weight > dw2->weight) {
     return -1;
   }
-  else if (&dw1 < &dw2) {
+  if (&dw1 < &dw2) {
     return 1; /* compare address for stable sort algorithm */
   }
-  else {
-    return -1;
-  }
+  return -1;
 }
 
 /* Used for limiting the number of influencing bones per vertex when exporting
@@ -2659,46 +2659,43 @@ static void vgroup_assign_verts(Object *ob, const float weight)
 /** \name Shared Operator Poll Functions
  * \{ */
 
-static bool vertex_group_poll(bContext *C)
-{
-  Object *ob = ED_object_context(C);
-  ID *data = (ob) ? ob->data : NULL;
-
-  return (ob && !ID_IS_LINKED(ob) && data && !ID_IS_LINKED(data) &&
-          OB_TYPE_SUPPORT_VGROUP(ob->type) && ob->defbase.first);
-}
-
 static bool vertex_group_supported_poll(bContext *C)
 {
   Object *ob = ED_object_context(C);
   ID *data = (ob) ? ob->data : NULL;
-  return (ob && !ID_IS_LINKED(ob) && OB_TYPE_SUPPORT_VGROUP(ob->type) && data &&
-          !ID_IS_LINKED(data));
+
+  return (ob && !ID_IS_LINKED(ob) && OB_TYPE_SUPPORT_VGROUP(ob->type) &&
+          !ID_IS_OVERRIDE_LIBRARY(ob) && data && !ID_IS_LINKED(data) &&
+          !ID_IS_OVERRIDE_LIBRARY(data));
+}
+
+static bool vertex_group_poll(bContext *C)
+{
+  Object *ob = ED_object_context(C);
+
+  return (vertex_group_supported_poll(C) && ob->defbase.first);
 }
 
 static bool vertex_group_mesh_poll(bContext *C)
 {
   Object *ob = ED_object_context(C);
-  ID *data = (ob) ? ob->data : NULL;
 
-  return (ob && !ID_IS_LINKED(ob) && data && !ID_IS_LINKED(data) && ob->type == OB_MESH &&
-          ob->defbase.first);
+  return (vertex_group_poll(C) && ob->type == OB_MESH);
 }
 
 static bool UNUSED_FUNCTION(vertex_group_mesh_supported_poll)(bContext *C)
 {
   Object *ob = ED_object_context(C);
-  ID *data = (ob) ? ob->data : NULL;
-  return (ob && !ID_IS_LINKED(ob) && ob->type == OB_MESH && data && !ID_IS_LINKED(data));
+
+  return (vertex_group_supported_poll(C) && ob->type == OB_MESH);
 }
 
 static bool UNUSED_FUNCTION(vertex_group_poll_edit)(bContext *C)
 {
   Object *ob = ED_object_context(C);
-  ID *data = (ob) ? ob->data : NULL;
 
-  if (!(ob && !ID_IS_LINKED(ob) && data && !ID_IS_LINKED(data))) {
-    return 0;
+  if (!vertex_group_supported_poll(C)) {
+    return false;
   }
 
   return BKE_object_is_in_editmode_vgroup(ob);
@@ -2710,9 +2707,8 @@ static bool vertex_group_vert_poll_ex(bContext *C,
                                       const short ob_type_flag)
 {
   Object *ob = ED_object_context(C);
-  ID *data = (ob) ? ob->data : NULL;
 
-  if (!(ob && !ID_IS_LINKED(ob) && data && !ID_IS_LINKED(data))) {
+  if (!vertex_group_supported_poll(C)) {
     return false;
   }
 
@@ -2723,23 +2719,17 @@ static bool vertex_group_vert_poll_ex(bContext *C,
   if (BKE_object_is_in_editmode_vgroup(ob)) {
     return true;
   }
-  else if (ob->mode & OB_MODE_WEIGHT_PAINT) {
+  if (ob->mode & OB_MODE_WEIGHT_PAINT) {
     if (needs_select) {
       if (BKE_object_is_in_wpaint_select_vert(ob)) {
         return true;
       }
-      else {
-        CTX_wm_operator_poll_msg_set(C, "Vertex select needs to be enabled in weight paint mode");
-        return false;
-      }
+      CTX_wm_operator_poll_msg_set(C, "Vertex select needs to be enabled in weight paint mode");
+      return false;
     }
-    else {
-      return true;
-    }
+    return true;
   }
-  else {
-    return false;
-  }
+  return false;
 }
 
 #if 0
@@ -2770,14 +2760,13 @@ static bool vertex_group_mesh_vert_select_poll(bContext *C)
 static bool vertex_group_vert_select_unlocked_poll(bContext *C)
 {
   Object *ob = ED_object_context(C);
-  ID *data = (ob) ? ob->data : NULL;
 
-  if (!(ob && !ID_IS_LINKED(ob) && data && !ID_IS_LINKED(data))) {
-    return 0;
+  if (!vertex_group_supported_poll(C)) {
+    return false;
   }
 
   if (!(BKE_object_is_in_editmode_vgroup(ob) || BKE_object_is_in_wpaint_select_vert(ob))) {
-    return 0;
+    return false;
   }
 
   if (ob->actdef != 0) {
@@ -2786,21 +2775,20 @@ static bool vertex_group_vert_select_unlocked_poll(bContext *C)
       return !(dg->flag & DG_LOCK_WEIGHT);
     }
   }
-  return 1;
+  return true;
 }
 
 static bool vertex_group_vert_select_mesh_poll(bContext *C)
 {
   Object *ob = ED_object_context(C);
-  ID *data = (ob) ? ob->data : NULL;
 
-  if (!(ob && !ID_IS_LINKED(ob) && data && !ID_IS_LINKED(data))) {
-    return 0;
+  if (!vertex_group_supported_poll(C)) {
+    return false;
   }
 
   /* only difference to #vertex_group_vert_select_poll */
   if (ob->type != OB_MESH) {
-    return 0;
+    return false;
   }
 
   return (BKE_object_is_in_editmode_vgroup(ob) || BKE_object_is_in_wpaint_select_vert(ob));
@@ -3187,9 +3175,7 @@ static int vertex_group_normalize_exec(bContext *C, wmOperator *UNUSED(op))
 
     return OPERATOR_FINISHED;
   }
-  else {
-    return OPERATOR_CANCELLED;
-  }
+  return OPERATOR_CANCELLED;
 }
 
 /** \} */
@@ -3235,10 +3221,9 @@ static int vertex_group_normalize_all_exec(bContext *C, wmOperator *op)
 
     return OPERATOR_FINISHED;
   }
-  else {
-    /* allow to adjust settings */
-    return OPERATOR_FINISHED;
-  }
+
+  /* allow to adjust settings */
+  return OPERATOR_FINISHED;
 }
 
 /** \} */
@@ -3729,11 +3714,10 @@ static int vertex_group_limit_total_exec(bContext *C, wmOperator *op)
 
     return OPERATOR_FINISHED;
   }
-  else {
-    /* note, would normally return canceled, except we want the redo
-     * UI to show up for users to change */
-    return OPERATOR_FINISHED;
-  }
+
+  /* note, would normally return canceled, except we want the redo
+   * UI to show up for users to change */
+  return OPERATOR_FINISHED;
 }
 
 void OBJECT_OT_vertex_group_limit_total(wmOperatorType *ot)
@@ -4125,8 +4109,6 @@ static void vgroup_sort_bone_hierarchy(Object *ob, ListBase *bonebase)
       }
     }
   }
-
-  return;
 }
 
 enum {
@@ -4509,9 +4491,7 @@ static int vertex_weight_normalize_active_vertex_exec(bContext *C, wmOperator *U
 
     return OPERATOR_FINISHED;
   }
-  else {
-    return OPERATOR_CANCELLED;
-  }
+  return OPERATOR_CANCELLED;
 }
 
 void OBJECT_OT_vertex_weight_normalize_active_vertex(wmOperatorType *ot)

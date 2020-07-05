@@ -20,7 +20,7 @@
 
 import bpy
 
-from ...utils.naming import strip_org, strip_prefix
+from ...utils.naming import strip_org, strip_prefix, choose_derived_bone
 
 from ...base_rig import BaseRig
 from ...base_generate import SubstitutionRig
@@ -83,15 +83,17 @@ class RelinkConstraintsMixin:
     def find_relink_target(self, spec, old_target):
         if spec == '':
             return old_target
-        elif spec == 'CTRL':
-            spec = strip_prefix(old_target)
-        elif spec in {'DEF', 'MCH'}:
-            spec = spec + '-' + strip_prefix(old_target)
-
-        if spec not in self.obj.pose.bones:
-            self.report_error("Cannot find bone '{}' for relinking", spec)
-
-        return spec
+        elif spec in {'CTRL', 'DEF', 'MCH'}:
+            result = choose_derived_bone(self.generator, old_target, spec.lower())
+            if not result:
+                result = choose_derived_bone(self.generator, old_target, spec.lower(), by_owner=False)
+            if not result:
+                self.report_error("Cannot find derived {} bone of bone '{}' for relinking", spec, old_target)
+            return result
+        else:
+            if spec not in self.obj.pose.bones:
+                self.report_error("Cannot find bone '{}' for relinking", spec)
+            return spec
 
 
     @classmethod

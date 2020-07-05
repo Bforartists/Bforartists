@@ -70,36 +70,19 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
-using Alembic::Abc::Int32ArraySamplePtr;
 using Alembic::Abc::ObjectHeader;
-
-using Alembic::AbcGeom::kWrapExisting;
-using Alembic::AbcGeom::MetaData;
-using Alembic::AbcGeom::P3fArraySamplePtr;
-
 using Alembic::AbcGeom::ICamera;
-using Alembic::AbcGeom::ICompoundProperty;
 using Alembic::AbcGeom::ICurves;
-using Alembic::AbcGeom::ICurvesSchema;
 using Alembic::AbcGeom::IFaceSet;
 using Alembic::AbcGeom::ILight;
-using Alembic::AbcGeom::IN3fArrayProperty;
-using Alembic::AbcGeom::IN3fGeomParam;
 using Alembic::AbcGeom::INuPatch;
 using Alembic::AbcGeom::IObject;
 using Alembic::AbcGeom::IPoints;
-using Alembic::AbcGeom::IPointsSchema;
 using Alembic::AbcGeom::IPolyMesh;
-using Alembic::AbcGeom::IPolyMeshSchema;
 using Alembic::AbcGeom::ISampleSelector;
 using Alembic::AbcGeom::ISubD;
-using Alembic::AbcGeom::IV2fGeomParam;
 using Alembic::AbcGeom::IXform;
-using Alembic::AbcGeom::IXformSchema;
-using Alembic::AbcGeom::N3fArraySamplePtr;
-using Alembic::AbcGeom::V3fArraySamplePtr;
-using Alembic::AbcGeom::XformSample;
-
+using Alembic::AbcGeom::MetaData;
 using Alembic::AbcMaterial::IMaterial;
 
 using namespace blender::io::alembic;
@@ -390,7 +373,7 @@ static std::pair<bool, AbcObjectReader *> visit_object(
     }
   }
   else if (object.getParent()) {
-    if (claiming_child_readers.size() > 0) {
+    if (!claiming_child_readers.empty()) {
       /* The first claiming child will serve just fine as parent to
        * our non-claiming children. Since all claiming children share
        * the same XForm, it doesn't really matter which one we pick. */
@@ -496,7 +479,7 @@ static void import_startjob(void *user_data, short *stop, short *do_update, floa
   visit_object(archive->getTop(), data->readers, data->settings, assign_as_parent);
 
   /* There shouldn't be any orphans. */
-  BLI_assert(assign_as_parent.size() == 0);
+  BLI_assert(assign_as_parent.empty());
 
   if (G.is_break) {
     data->was_cancelled = true;

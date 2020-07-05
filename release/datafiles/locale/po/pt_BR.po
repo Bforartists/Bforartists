@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'b358a92faf87')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -1491,10 +1491,6 @@ msgstr "Empacota todos os arquivos externos dentro do arquivo Blender."
 
 msgid "Version"
 msgstr "Versão"
-
-
-msgid "Version of Blender the .blend was saved with"
-msgstr "Versão do Blender com a qual o arquivo .blend foi salvo."
 
 
 msgid "Window Managers"
@@ -5140,10 +5136,6 @@ msgstr "Restrição - Limitar distância"
 
 msgid "Limit the distance from target object"
 msgstr "Limita a distância a partir do objeto alvo."
-
-
-msgid "For Transform"
-msgstr "Usar nas transformações"
 
 
 msgid "Transforms are affected by this constraint as well"
@@ -9322,10 +9314,6 @@ msgid "Frame on which the simulation starts"
 msgstr "Quadro no qual a simulação irá iniciar."
 
 
-msgid "Final"
-msgstr "Final"
-
-
 msgid "Cell Size"
 msgstr "Tamanho da célula"
 
@@ -9428,30 +9416,6 @@ msgstr "Grade de cor"
 
 msgid "Smoke color grid"
 msgstr "A grade de cores para fumaça."
-
-
-msgid "Data Depth"
-msgstr "Profundidade de dados"
-
-
-msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
-msgstr "A profundidade de bits para definir a escala da escrita de todos os valores (incluindo os vetores). Valores mais baixos reduzem o tamanho dos arquivos."
-
-
-msgid "Float (Half)"
-msgstr "Flutuante (Parcial)"
-
-
-msgid "Half float (16 bit data)"
-msgstr "Ponto flutuante parcial (dados de 16 bits)."
-
-
-msgid "Float (Full)"
-msgstr "Flutuante (Pleno)"
-
-
-msgid "Full float (32 bit data)"
-msgstr "Ponto flutuante pleno (dados de 32 bits)."
 
 
 msgid "Density Grid"
@@ -9558,6 +9522,10 @@ msgid "Nearest"
 msgstr "Mais próximo"
 
 
+msgid "Final"
+msgstr "Final"
+
+
 msgid "Preview"
 msgstr "Previsão"
 
@@ -9594,10 +9562,6 @@ msgid "Compression"
 msgstr "Compressão"
 
 
-msgid "Compression method to be used"
-msgstr "Método de compressão para ser usado."
-
-
 msgid "Zip"
 msgstr "Zip"
 
@@ -9618,6 +9582,26 @@ msgid "Do not use any compression"
 msgstr "Não utiliza qualquer compressão."
 
 
+msgid "Data Depth"
+msgstr "Profundidade de dados"
+
+
+msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
+msgstr "A profundidade de bits para definir a escala da escrita de todos os valores (incluindo os vetores). Valores mais baixos reduzem o tamanho dos arquivos."
+
+
+msgid "Half"
+msgstr "Metade"
+
+
+msgid "Half float (16 bit data)"
+msgstr "Ponto flutuante parcial (dados de 16 bits)."
+
+
+msgid "Full float (32 bit data)"
+msgstr "Ponto flutuante pleno (dados de 32 bits)."
+
+
 msgid "Number"
 msgstr "Número(s)"
 
@@ -9628,6 +9612,10 @@ msgstr "Aleatorização"
 
 msgid "Cache Compression"
 msgstr "Compressão de cache"
+
+
+msgid "Compression method to be used"
+msgstr "Método de compressão para ser usado."
 
 
 msgid "Fast but not so effective compression"
@@ -11086,12 +11074,12 @@ msgid "Hue/Saturation"
 msgstr "Matiz e saturação"
 
 
-msgid "Tint"
-msgstr "Tingimento"
-
-
 msgid "Texture Mapping"
 msgstr "Mapeamento de textura"
+
+
+msgid "Tint"
+msgstr "Tingimento"
 
 
 msgid "Armature Modifier"
@@ -11394,6 +11382,14 @@ msgstr "Índice de camada ativa"
 
 msgid "Index of active grease pencil layer"
 msgstr "O índice da camada de lápis de cera ativa."
+
+
+msgid "Index of the first loop of this polygon"
+msgstr "Índice do primeiro anel deste polígono."
+
+
+msgid "Number of loops used by this polygon"
+msgstr "Número de anéis usados por este polígono."
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -12843,10 +12839,6 @@ msgstr "Modo de preenchimento"
 
 msgid "Mode of filling curve"
 msgstr "O modo de preenchimento de curva."
-
-
-msgid "Half"
-msgstr "Metade"
 
 
 msgid "Offset the curve to adjust the width of a text"
@@ -14765,6 +14757,10 @@ msgid "Polygons of the mesh"
 msgstr "Polígonos da malha."
 
 
+msgid "All vertex colors"
+msgstr "Todas as cores dos vértices."
+
+
 msgid "Skin Vertices"
 msgstr "Vértices de cobertura"
 
@@ -14887,10 +14883,6 @@ msgstr "Todas as camadas de anéis UV."
 
 msgid "Vertex Colors"
 msgstr "Cores de vértices"
-
-
-msgid "All vertex colors"
-msgstr "Todas as cores dos vértices."
 
 
 msgid "Vertex Paint Mask"
@@ -19354,11 +19346,6 @@ msgid "Line Feed"
 msgstr "Line Feed"
 
 
-msgctxt "UI_Events_KeyMaps"
-msgid "Back Space"
-msgstr "Back Space"
-
-
 msgid "BkSpace"
 msgstr "Back Space"
 
@@ -22375,16 +22362,8 @@ msgid "Loop Start"
 msgstr "Início dos anéis"
 
 
-msgid "Index of the first loop of this polygon"
-msgstr "Índice do primeiro anel deste polígono."
-
-
 msgid "Loop Total"
 msgstr "Total de anéis"
-
-
-msgid "Number of loops used by this polygon"
-msgstr "Número de anéis usados por este polígono."
 
 
 msgid "Polygon Normal"
@@ -29876,6 +29855,10 @@ msgid "Sky Texture"
 msgstr "Textura de céu"
 
 
+msgid "Air"
+msgstr "Ar"
+
+
 msgid "Ground Albedo"
 msgstr "Albedo para base"
 
@@ -34106,20 +34089,12 @@ msgid "(De)select all control points"
 msgstr "(De)seleciona todos os pontos de controle."
 
 
-msgid "Reduce current selection by deselecting boundary elements"
-msgstr "Reduz a seleção atual pela de-seleção dos elementos nas extremidades."
-
-
 msgid "Select all control points linked to already selected ones"
 msgstr "Seleciona todos os pontos de controle conectados aos já selecionados."
 
 
 msgid "Deselect linked control points rather than selecting them"
 msgstr "De-seleciona os pontos de controle conectados ao invés de selecioná-los."
-
-
-msgid "Select control points directly linked to already selected ones"
-msgstr "Seleciona os pontos de controle diretamente conectados aos já selecionados."
 
 
 msgctxt "Operator"
@@ -35870,6 +35845,18 @@ msgid "Wait for first click instead of painting immediately"
 msgstr "Esperar pelo primeiro clique ao invés de pintar imediatamente."
 
 
+msgid "Projection Type"
+msgstr "Tipo de projeção"
+
+
+msgid "Side"
+msgstr "Lado"
+
+
+msgid "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using 'Cursor' Stroke Placement"
+msgstr "Reprojeta os trações para que sejam encerrados dentro do mesmo plano, como se fossem desenhados a partir da porta de visão atual usando o posicionamento dos traços no cursor."
+
+
 msgctxt "Operator"
 msgid "Insert Blank Frame"
 msgstr "Inserir quadro em branco"
@@ -36256,18 +36243,6 @@ msgstr "Reprojeta os traços selecionados a partir da porta de visão atual como
 
 msgid "Keep Original"
 msgstr "Manter original"
-
-
-msgid "Projection Type"
-msgstr "Tipo de projeção"
-
-
-msgid "Side"
-msgstr "Lado"
-
-
-msgid "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using 'Cursor' Stroke Placement"
-msgstr "Reprojeta os trações para que sejam encerrados dentro do mesmo plano, como se fossem desenhados a partir da porta de visão atual usando o posicionamento dos traços no cursor."
 
 
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
@@ -38771,17 +38746,17 @@ msgid "Shrink/fatten selected vertices along normals"
 msgstr "Encolhe ou estufa os vértices selecionados ao longo das normais."
 
 
-msgctxt "Operator"
 msgid "Extrude Region"
-msgstr "Executar extrusão de região"
+msgstr "Executar extrusão da região"
 
 
 msgid "Extrude region of faces"
 msgstr "Executa a extrusão da região das faces."
 
 
+msgctxt "Operator"
 msgid "Extrude Region"
-msgstr "Executar extrusão da região"
+msgstr "Executar extrusão de região"
 
 
 msgid "Extrude region and move result"
@@ -39680,6 +39655,14 @@ msgid "Turns"
 msgstr "Voltas"
 
 
+msgid "Add vertex color layer"
+msgstr "Adiciona uma camada de cores de vértices."
+
+
+msgid "Remove vertex color layer"
+msgstr "Remove a camada de cores de vértices."
+
+
 msgid "(De)select all vertices, edges or faces"
 msgstr "(De)seleciona todos os vértices, arestas ou faces."
 
@@ -40299,17 +40282,9 @@ msgid "Add Vertex Color"
 msgstr "Adicionar camada de cores de vértices"
 
 
-msgid "Add vertex color layer"
-msgstr "Adiciona uma camada de cores de vértices."
-
-
 msgctxt "Operator"
 msgid "Remove Vertex Color"
 msgstr "Remover camada de cores de vértices"
-
-
-msgid "Remove vertex color layer"
-msgstr "Remove a camada de cores de vértices."
 
 
 msgid "Flatten angles of selected vertices"
@@ -43718,10 +43693,6 @@ msgstr "Operações de objeto"
 
 msgid "Select Hierarchy"
 msgstr "Selecionar toda a hierarquia"
-
-
-msgid "Delete Hierarchy"
-msgstr "Apagar toda a hierarquia"
 
 
 msgid "Make all users of selected data-blocks to use instead a new chosen one"
@@ -50045,10 +50016,6 @@ msgid "Run as Background Job"
 msgstr "Executar como tarefa em plano de fundo"
 
 
-msgid "Ogawa"
-msgstr "Ogawa"
-
-
 msgid "End frame of the export, use the default value to take the end frame of the current scene"
 msgstr "O quadro final a ser exportado, use o valor padrão para tomar como base o quadro final da cena atual."
 
@@ -51834,14 +51801,6 @@ msgstr "Usa somente modificadores de deformação (desabilitar temporariamente t
 
 msgid "Show faces in dynamic-topology mode with smooth shading rather than flat shaded"
 msgstr "Mostra as faces no modo de topologia dinâmica com sombreamento suave ao invés de achatado."
-
-
-msgid "Use OpenMP"
-msgstr "Usar OpenMP"
-
-
-msgid "Take advantage of multiple CPU cores to improve sculpting performance"
-msgstr "Leva em consideração múltiplos núcleos de CPU para melhorar a performance de escultura."
 
 
 msgid "UV Sculpting"
@@ -53756,10 +53715,6 @@ msgid "Duplicate Action"
 msgstr "Duplicar ação"
 
 
-msgid "Causes actions to be duplicated with the object"
-msgstr "Faz com que as ações sejam duplicadas com o objeto."
-
-
 msgid "Duplicate Armature"
 msgstr "Duplicar armação"
 
@@ -53892,10 +53847,6 @@ msgid "Built-in animation player"
 msgstr "Reprodutor de animação interno"
 
 
-msgid "Djv"
-msgstr "DJV"
-
-
 msgid "Open source frame player: http://djv.sourceforge.net"
 msgstr "Reprodutor de quadros de código-fonte aberto: http://djv.sourceforge.net"
 
@@ -53906,10 +53857,6 @@ msgstr "FrameCycler"
 
 msgid "Frame player from IRIDAS"
 msgstr "Reprodutor de quadros da IRIDAS"
-
-
-msgid "rv"
-msgstr "RV"
 
 
 msgid "Frame player from Tweak Software"
@@ -55100,64 +55047,12 @@ msgid "Uses the mirror ball mapping"
 msgstr "Usa o mapeamento em formato de esfera espelhada."
 
 
-msgid "Do not test the back-face of each strand"
-msgstr "Não testar a face posterior de cada vertente."
-
-
-msgid "Type of primitive used for hair rendering"
-msgstr "Tipo de primitiva usada para renderização de cabelos."
-
-
-msgid "Create triangle geometry around strands"
-msgstr "Cria uma geometria feita de triângulos em torno das vertentes."
-
-
-msgid "Line Segments"
-msgstr "Segmentos de linha"
-
-
-msgid "Use line segment primitives"
-msgstr "Usa as primitivas de segmento de linha."
-
-
-msgid "Curve Segments"
-msgstr "Segmentos de curva"
-
-
-msgid "Use segmented cardinal curve primitives"
-msgstr "Usa primitivas de curva cardinal segmentada."
-
-
-msgid "Resolution of generated mesh"
-msgstr "Resolução da malha gerada."
-
-
 msgid "Form of hair"
 msgstr "Forma do cabelo"
 
 
-msgid "Ribbons"
-msgstr "Tiras"
-
-
-msgid "Ignore thickness of each strand"
-msgstr "Ignorar a espessura de cada vertente."
-
-
-msgid "Use thickness of strand when rendering"
-msgstr "Usa a espessura das vertentes durante a renderização."
-
-
 msgid "Number of subdivisions used in Cardinal curve intersection (power of 2)"
 msgstr "Número de subdivisões usadas em intersecção de curvas cardinais (elevado ao quadrado)."
-
-
-msgid "Use Cycles Hair Rendering"
-msgstr "Usar renderização de cabelos Cycles"
-
-
-msgid "Activate Cycles hair rendering for particle system"
-msgstr "Ativa a renderização de cabelos Cycles para o sistema de partículas."
 
 
 msgid "CPU"
@@ -55884,10 +55779,6 @@ msgid "Number of antialiasing samples to render in the viewport, unlimited if 0"
 msgstr "Número de amostras de antisserrilhamento para renderizar dentro da porta de visão, sem limites caso seja zero."
 
 
-msgid "Preview Dicing Rate"
-msgstr "Taxa de previsão de compartimentalização"
-
-
 msgid "Size of a micropolygon in pixels during preview render"
 msgstr "Tamanho de um micro-polígono em pixeis durante a previsão de renderização."
 
@@ -55898,10 +55789,6 @@ msgstr "Pausar previsão"
 
 msgid "Pause all viewport preview renders"
 msgstr "Pausa todas as previsões de renderização na porta de visão."
-
-
-msgid "Preview Samples"
-msgstr "Amostras de pré-visualização"
 
 
 msgid "Number of samples to render in the viewport, unlimited if 0"
@@ -66529,14 +66416,6 @@ msgid "Anim Player"
 msgstr "Rep. animação"
 
 
-msgid "File Path:"
-msgstr "Caminho dos arquivos:"
-
-
-msgid "Manual Transform:"
-msgstr "Transformações manuais:"
-
-
 msgid "Indirect library data-block, cannot change"
 msgstr "Bloco de dados de biblioteca indireta, não é possível alterar."
 
@@ -66725,11 +66604,6 @@ msgid "Browse ID data to be linked"
 msgstr "Permite navegar entre os dados de identificadores a ser vinculados."
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "Aplicar"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "Novo(a)"
@@ -66844,8 +66718,8 @@ msgid "%d items"
 msgstr "%d itens"
 
 
-msgid "Archive Options:"
-msgstr "Opções para arquivos:"
+msgid "Manual Transform:"
+msgstr "Transformações manuais:"
 
 
 msgid "Scene Options:"
@@ -67727,10 +67601,6 @@ msgid "Object '%s' already has a Rigid Body Constraint"
 msgstr "Objeto '%s' já possui uma restrição do tipo \"Corpo rígido\"."
 
 
-msgid "Air"
-msgstr "Ar"
-
-
 msgid "Acrylic"
 msgstr "Acrílico"
 
@@ -68307,6 +68177,10 @@ msgid "Fields"
 msgstr "Campos"
 
 
+msgid "File Path:"
+msgstr "Caminho dos arquivos:"
+
+
 msgid "Track is locked"
 msgstr "Trilha está bloqueada"
 
@@ -68816,6 +68690,10 @@ msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Não é possível configurar caminhos absolutos com um arquivo .blend não salvo."
 
 
+msgid "Sync Length"
+msgstr "Sincronizar comprimento"
+
+
 msgid "Now"
 msgstr "Agora"
 
@@ -69094,10 +68972,6 @@ msgstr "O bloco de dados será retido usando um usuário virtual."
 
 msgid "Data-block has no users and will be deleted"
 msgstr "O bloco de dados não possui usuários e será apagado."
-
-
-msgid "Data-block has a 'fake' user which will keep it in the file even if nothing else uses it"
-msgstr "O bloco de dados possui um usuário virtual que irá mantê-lo no arquivo mesmo no caso de não haver quaisquer vínculos de utilização."
 
 
 msgctxt "Action"
@@ -70055,6 +69929,15 @@ msgid "Cannot open file: %s"
 msgstr "Não é possível abrir o arquivo: %s"
 
 
+msgctxt "Operator"
+msgid "Apply"
+msgstr "Aplicar"
+
+
+msgid "Bone Envelopes"
+msgstr "Envelopes de ossos"
+
+
 msgid "AaBbCc"
 msgstr "AaBbCc"
 
@@ -70735,10 +70618,6 @@ msgstr "Item de mapa de tecla '%s' não pode ser removido a partir de '%s'."
 
 msgid "KeyConfig '%s' cannot be removed"
 msgstr "Configuração de tecla '%s' não pode ser removida."
-
-
-msgid "Bone Envelopes"
-msgstr "Envelopes de ossos"
 
 
 msgid "Outer"
