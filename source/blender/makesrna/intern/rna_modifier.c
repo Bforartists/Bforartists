@@ -371,8 +371,8 @@ const EnumPropertyItem rna_enum_modifier_shrinkwrap_mode_items[] = {
 #ifndef RNA_RUNTIME
 /* use eWarp_Falloff_*** & eHook_Falloff_***, they're in sync */
 static const EnumPropertyItem modifier_warp_falloff_items[] = {
-    {eWarp_Falloff_None, "NONE", 0, "No Falloff", ""},
-    {eWarp_Falloff_Curve, "CURVE", 0, "Curve", ""},
+    {eWarp_Falloff_None, "NONE", ICON_ZOOMOUT, "No Falloff", ""},
+    {eWarp_Falloff_Curve, "CURVE", ICON_CURVE_DATA, "Curve", ""},
     {eWarp_Falloff_Smooth, "SMOOTH", ICON_SMOOTHCURVE, "Smooth", ""},
     {eWarp_Falloff_Sphere, "SPHERE", ICON_SPHERECURVE, "Sphere", ""},
     {eWarp_Falloff_Root, "ROOT", ICON_ROOTCURVE, "Root", ""},
