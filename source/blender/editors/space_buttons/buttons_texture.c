@@ -582,7 +582,7 @@ void uiTemplateTextureShow(uiLayout *layout, const bContext *C, PointerRNA *ptr,
                        0.0,
                        0.0,
                        0.0,
-                       TIP_("Show texture in texture tab"));
+                       TIP_("Change Context\nShow texture in texture tab"));
     UI_but_func_set(but, template_texture_show, user->ptr.data, user->prop);
   }
 }
