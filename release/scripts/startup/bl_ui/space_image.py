@@ -409,15 +409,37 @@ class IMAGE_MT_uvs_mirror(Menu):
         layout.operator("transform.mirror", text="Y Axis", icon = "MIRROR_Y").constraint_axis[1] = True
 
 
-class IMAGE_MT_uvs_weldalign(Menu):
-    bl_label = "Weld/Align"
+class IMAGE_MT_uvs_align(Menu):
+    bl_label = "Align"
 
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("uv.weld", icon='WELD')  # W, 1.
-        layout.operator("uv.remove_doubles", icon='REMOVE_DOUBLES')
-        layout.operator_enum("uv.align", "axis")  # W, 2/3/4.
+        layout.operator_enum("uv.align", "axis")
+
+
+class IMAGE_MT_uvs_merge(Menu):
+    bl_label = "Merge"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("uv.weld", text="At Center", icon='WELD')
+        # Mainly to match the mesh menu.
+        layout.operator("uv.snap_selected", text="At Cursor", icon='WELD').target = 'CURSOR'
+
+        layout.separator()
+
+        layout.operator("uv.remove_doubles", text="By Distance", icon='REMOVE_DOUBLES')
+
+
+class IMAGE_MT_uvs_split(Menu):
+    bl_label = "Split"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("uv.select_split", text="Selection", icon = 'SPLIT')
 
 
 # Tooltip and operator for Clear Seam.
@@ -452,6 +474,10 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
         layout.operator("uv.pin", icon = "PINNED").clear = False
         layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
+        layout.menu("IMAGE_MT_uvs_merge")
+        layout.menu("IMAGE_MT_uvs_split")
+
+        layout.separator()
 
         layout.separator()
 
@@ -468,7 +494,7 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.menu("IMAGE_MT_uvs_weldalign")
+        layout.menu("IMAGE_MT_uvs_align")
         layout.menu("IMAGE_MT_uvs_select_mode")
 
         layout.separator()
@@ -536,12 +562,7 @@ class IMAGE_MT_uvs_context_menu(Menu):
 
             layout.separator()
 
-            layout.operator("uv.weld", icon='WELD')
-            layout.operator("uv.stitch", icon = "STITCH")
-
-            layout.separator()
-
-            layout.operator_enum("uv.align", "axis")  # W, 2/3/4.
+            layout.menu("IMAGE_MT_uvs_snap")
 
             layout.separator()
 
@@ -550,7 +571,14 @@ class IMAGE_MT_uvs_context_menu(Menu):
 
             layout.separator()
 
-            layout.menu("IMAGE_MT_uvs_snap")
+            layout.operator_enum("uv.align", "axis")  # W, 2/3/4.
+
+            layout.separator()
+
+            # Remove
+            layout.operator("uv.remove_doubles", text="Merge By Distance", icon = 'REMOVE_DOUBLES')
+            layout.operator("uv.weld", icon='WELD')
+            layout.operator("uv.stitch", icon = "STITCH")
 
 
 class IMAGE_MT_pivot_pie(Menu):
@@ -1629,7 +1657,9 @@ classes = (
     IMAGE_MT_uvs_transform,
     IMAGE_MT_uvs_snap,
     IMAGE_MT_uvs_mirror,
-    IMAGE_MT_uvs_weldalign,
+    IMAGE_MT_uvs_align,
+    IMAGE_MT_uvs_merge,
+    IMAGE_MT_uvs_split,
     IMAGE_MT_uvs_select_mode,
     IMAGE_MT_uvs_context_menu,
     IMAGE_MT_mask_context_menu,

@@ -95,8 +95,6 @@ class MFNode : NonCopyable, NonMovable {
   Span<MFOutputSocket *> outputs();
   Span<const MFOutputSocket *> outputs() const;
 
-  template<typename FuncT> void foreach_origin_socket(const FuncT &func) const;
-
   bool all_inputs_have_origin() const;
 
  private:
@@ -150,6 +148,7 @@ class MFSocket : NonCopyable, NonMovable {
   StringRefNull name() const;
 
   uint id() const;
+  uint index() const;
 
   const MFDataType &data_type() const;
 
@@ -216,10 +215,21 @@ class MFNetwork : NonCopyable, NonMovable {
   void relink(MFOutputSocket &old_output, MFOutputSocket &new_output);
 
   void remove(MFNode &node);
+  void remove(Span<MFNode *> nodes);
 
-  uint max_socket_id() const;
+  uint socket_id_amount() const;
+  uint node_id_amount() const;
 
-  std::string to_dot() const;
+  Span<MFDummyNode *> dummy_nodes();
+  Span<MFFunctionNode *> function_nodes();
+
+  MFNode *node_or_null_by_id(uint id);
+  const MFNode *node_or_null_by_id(uint id) const;
+
+  MFSocket *socket_or_null_by_id(uint id);
+  const MFSocket *socket_or_null_by_id(uint id) const;
+
+  std::string to_dot(Span<const MFNode *> marked_nodes = {}) const;
 };
 
 /* --------------------------------------------------------------------
@@ -325,16 +335,6 @@ inline Span<const MFOutputSocket *> MFNode::outputs() const
   return outputs_;
 }
 
-template<typename FuncT> void MFNode::foreach_origin_socket(const FuncT &func) const
-{
-  for (const MFInputSocket *socket : inputs_) {
-    const MFOutputSocket *origin = socket->origin();
-    if (origin != nullptr) {
-      func(*origin);
-    }
-  }
-}
-
 inline bool MFNode::all_inputs_have_origin() const
 {
   for (const MFInputSocket *socket : inputs_) {
@@ -400,6 +400,11 @@ inline StringRefNull MFSocket::name() const
 inline uint MFSocket::id() const
 {
   return id_;
+}
+
+inline uint MFSocket::index() const
+{
+  return index_;
 }
 
 inline const MFDataType &MFSocket::data_type() const
@@ -476,16 +481,51 @@ inline Span<MFInputSocket *> MFOutputSocket::targets()
 
 inline Span<const MFInputSocket *> MFOutputSocket::targets() const
 {
-  return targets_.as_span();
+  return targets_;
 }
 
 /* --------------------------------------------------------------------
  * MFNetwork inline methods.
  */
 
-inline uint MFNetwork::max_socket_id() const
+inline Span<MFDummyNode *> MFNetwork::dummy_nodes()
 {
-  return socket_or_null_by_id_.size() - 1;
+  return dummy_nodes_;
+}
+
+inline Span<MFFunctionNode *> MFNetwork::function_nodes()
+{
+  return function_nodes_;
+}
+
+inline MFNode *MFNetwork::node_or_null_by_id(uint id)
+{
+  return node_or_null_by_id_[id];
+}
+
+inline const MFNode *MFNetwork::node_or_null_by_id(uint id) const
+{
+  return node_or_null_by_id_[id];
+}
+
+inline MFSocket *MFNetwork::socket_or_null_by_id(uint id)
+{
+  return socket_or_null_by_id_[id];
+}
+
+inline const MFSocket *MFNetwork::socket_or_null_by_id(uint id) const
+{
+  return socket_or_null_by_id_[id];
+}
+
+inline uint MFNetwork::socket_id_amount() const
+{
+  return socket_or_null_by_id_.size();
+}
+
+inline uint MFNetwork::node_id_amount() const
+{
+  return node_or_null_by_id_.size();
 }
 
 }  // namespace blender::fn
