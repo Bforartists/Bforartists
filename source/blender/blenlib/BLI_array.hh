@@ -74,7 +74,7 @@ class Array {
   Allocator allocator_;
 
   /** A placeholder buffer that will remain uninitialized until it is used. */
-  AlignedBuffer<sizeof(T) * InlineBufferCapacity, alignof(T)> inline_buffer_;
+  TypedBuffer<T, InlineBufferCapacity> inline_buffer_;
 
  public:
   /**
@@ -82,24 +82,26 @@ class Array {
    */
   Array()
   {
-    data_ = this->inline_buffer();
+    data_ = inline_buffer_;
     size_ = 0;
   }
 
   /**
    * Create a new array that contains copies of all values.
    */
-  Array(Span<T> values)
+  template<typename U, typename std::enable_if_t<std::is_convertible_v<U, T>> * = nullptr>
+  Array(Span<U> values, Allocator allocator = {}) : allocator_(allocator)
   {
     size_ = values.size();
     data_ = this->get_buffer_for_size(values.size());
-    uninitialized_copy_n(values.data(), size_, data_);
+    uninitialized_convert_n<U, T>(values.data(), size_, data_);
   }
 
   /**
    * Create a new array that contains copies of all values.
    */
-  Array(const std::initializer_list<T> &values) : Array(Span<T>(values))
+  template<typename U, typename std::enable_if_t<std::is_convertible_v<U, T>> * = nullptr>
+  Array(const std::initializer_list<U> &values) : Array(Span<U>(values))
   {
   }
 
@@ -147,12 +149,8 @@ class Array {
     data_ = this->get_buffer_for_size(size);
   }
 
-  Array(const Array &other) : allocator_(other.allocator_)
+  Array(const Array &other) : Array(other.as_span(), other.allocator_)
   {
-    size_ = other.size();
-
-    data_ = this->get_buffer_for_size(other.size());
-    uninitialized_copy_n(other.data(), size_, data_);
   }
 
   Array(Array &&other) noexcept : allocator_(other.allocator_)
@@ -167,7 +165,7 @@ class Array {
       uninitialized_relocate_n(other.data_, size_, data_);
     }
 
-    other.data_ = other.inline_buffer();
+    other.data_ = other.inline_buffer_;
     other.size_ = 0;
   }
 
@@ -221,6 +219,18 @@ class Array {
   operator MutableSpan<T>()
   {
     return MutableSpan<T>(data_, size_);
+  }
+
+  template<typename U, typename std::enable_if_t<is_convertible_pointer_v<T, U>> * = nullptr>
+  operator Span<U>() const
+  {
+    return Span<U>(data_, size_);
+  }
+
+  template<typename U, typename std::enable_if_t<is_convertible_pointer_v<T, U>> * = nullptr>
+  operator MutableSpan<U>()
+  {
+    return MutableSpan<U>(data_, size_);
   }
 
   Span<T> as_span() const
@@ -335,16 +345,11 @@ class Array {
   T *get_buffer_for_size(uint size)
   {
     if (size <= InlineBufferCapacity) {
-      return this->inline_buffer();
+      return inline_buffer_;
     }
     else {
       return this->allocate(size);
     }
-  }
-
-  T *inline_buffer() const
-  {
-    return (T *)inline_buffer_.ptr();
   }
 
   T *allocate(uint size)
@@ -354,7 +359,7 @@ class Array {
 
   bool uses_inline_buffer() const
   {
-    return data_ == this->inline_buffer();
+    return data_ == inline_buffer_;
   }
 };
 

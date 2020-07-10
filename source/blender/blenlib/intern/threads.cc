@@ -176,9 +176,9 @@ void BLI_threadpool_init(ListBase *threadbase, void *(*do_thread)(void *), int t
   unsigned int level = atomic_fetch_and_add_u(&thread_levels, 1);
   if (level == 0) {
 #ifdef USE_APPLE_OMP_FIX
-    /* workaround for Apple gcc 4.2.1 omp vs background thread bug,
-     * we copy gomp thread local storage pointer to setting it again
-     * inside the thread that we start */
+    /* Workaround for Apple gcc 4.2.1 OMP vs background thread bug,
+     * we copy GOMP thread local storage pointer to setting it again
+     * inside the thread that we start. */
     thread_tls_data = pthread_getspecific(gomp_tls_key);
 #endif
   }
@@ -218,8 +218,8 @@ static void *tslot_thread_start(void *tslot_p)
   ThreadSlot *tslot = (ThreadSlot *)tslot_p;
 
 #ifdef USE_APPLE_OMP_FIX
-  /* workaround for Apple gcc 4.2.1 omp vs background thread bug,
-   * set gomp thread local storage pointer which was copied beforehand */
+  /* Workaround for Apple gcc 4.2.1 OMP vs background thread bug,
+   * set GOMP thread local storage pointer which was copied beforehand */
   pthread_setspecific(gomp_tls_key, thread_tls_data);
 #endif
 
@@ -433,7 +433,7 @@ void BLI_mutex_free(ThreadMutex *mutex)
 
 /* Spin Locks */
 
-#if WITH_TBB
+#ifdef WITH_TBB
 static tbb::spin_mutex *tbb_spin_mutex_cast(SpinLock *spin)
 {
   static_assert(sizeof(SpinLock) >= sizeof(tbb::spin_mutex),
@@ -500,7 +500,7 @@ void BLI_spin_end(SpinLock *spin)
 #elif defined(__APPLE__)
   BLI_mutex_end(spin);
 #elif defined(_MSC_VER)
-  BLI_mutex_unlock(spin);
+  /* Nothing to do, spin is a simple integer type. */
 #else
   pthread_spin_destroy(spin);
 #endif
