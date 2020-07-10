@@ -14,27 +14,19 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef __NODE_FUNCTION_UTIL_H__
-#define __NODE_FUNCTION_UTIL_H__
+#ifndef __FN_MULTI_FUNCTION_NETWORK_OPTIMIZATION_HH__
+#define __FN_MULTI_FUNCTION_NETWORK_OPTIMIZATION_HH__
 
-#include <string.h>
+#include "FN_multi_function_network.hh"
 
-#include "BLI_utildefines.h"
+#include "BLI_resource_collector.hh"
 
-#include "MEM_guardedalloc.h"
+namespace blender::fn::mf_network_optimization {
 
-#include "DNA_node_types.h"
+void dead_node_removal(MFNetwork &network);
+void constant_folding(MFNetwork &network, ResourceCollector &resources);
+void common_subnetwork_elimination(MFNetwork &network);
 
-#include "BKE_node.h"
+}  // namespace blender::fn::mf_network_optimization
 
-#include "BLT_translation.h"
-
-#include "NOD_function.h"
-
-#include "node_util.h"
-
-void fn_node_type_base(
-    struct bNodeType *ntype, int type, const char *name, short nclass, short flag);
-bool fn_node_poll_default(struct bNodeType *ntype, struct bNodeTree *ntree);
-
-#endif /* __NODE_FUNCTION_UTIL_H__ */
+#endif /* __FN_MULTI_FUNCTION_NETWORK_OPTIMIZATION_HH__ */

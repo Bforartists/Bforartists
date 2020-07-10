@@ -1,22 +1,9 @@
-/*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- */
+/* Apache License, Version 2.0 */
 
 #include "testing/testing.h"
 
 #include "FN_cpp_type.hh"
+#include "FN_cpp_types.hh"
 
 namespace blender::fn {
 
@@ -50,7 +37,7 @@ struct TestType {
     other.value = copy_constructed_from_value;
   }
 
-  TestType(TestType &&other)
+  TestType(TestType &&other) noexcept
   {
     value = move_constructed_value;
     other.value = move_constructed_from_value;
@@ -63,11 +50,17 @@ struct TestType {
     return *this;
   }
 
-  TestType &operator=(TestType &&other)
+  TestType &operator=(TestType &&other) noexcept
   {
     value = move_assigned_value;
     other.value = move_assigned_from_value;
     return *this;
+  }
+
+  friend std::ostream &operator<<(std::ostream &stream, const TestType &value)
+  {
+    stream << value.value;
+    return stream;
   }
 };
 
@@ -303,6 +296,15 @@ TEST(cpp_type, FillUninitialized)
   EXPECT_EQ(buffer2[7], 0);
   EXPECT_EQ(buffer2[8], copy_constructed_value);
   EXPECT_EQ(buffer2[9], 0);
+}
+
+TEST(cpp_type, DebugPrint)
+{
+  int value = 42;
+  std::stringstream ss;
+  CPPType_int32.debug_print((void *)&value, ss);
+  std::string text = ss.str();
+  EXPECT_EQ(text, "42");
 }
 
 }  // namespace blender::fn
