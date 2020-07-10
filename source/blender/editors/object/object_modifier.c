@@ -330,10 +330,8 @@ static bool object_modifier_safe_to_delete(Main *bmain,
           !ED_object_iter_other(bmain, ob, false, object_has_modifier_cb, &type));
 }
 
-static bool object_modifier_remove(Main *bmain,
-                                   Object *ob,
-                                   ModifierData *md,
-                                   bool *r_sort_depsgraph)
+static bool object_modifier_remove(
+    Main *bmain, Scene *scene, Object *ob, ModifierData *md, bool *r_sort_depsgraph)
 {
   /* It seems on rapid delete it is possible to
    * get called twice on same modifier, so make
@@ -344,11 +342,8 @@ static bool object_modifier_remove(Main *bmain,
 
   /* special cases */
   if (md->type == eModifierType_ParticleSystem) {
-    ParticleSystemModifierData *psmd = (ParticleSystemModifierData *)md;
-
-    BLI_remlink(&ob->particlesystem, psmd->psys);
-    psys_free(ob, psmd->psys);
-    psmd->psys = NULL;
+    object_remove_particle_system(bmain, scene, ob);
+    return true;
   }
   else if (md->type == eModifierType_Softbody) {
     if (ob->soft) {
@@ -391,12 +386,13 @@ static bool object_modifier_remove(Main *bmain,
   return 1;
 }
 
-bool ED_object_modifier_remove(ReportList *reports, Main *bmain, Object *ob, ModifierData *md)
+bool ED_object_modifier_remove(
+    ReportList *reports, Main *bmain, Scene *scene, Object *ob, ModifierData *md)
 {
   bool sort_depsgraph = false;
   bool ok;
 
-  ok = object_modifier_remove(bmain, ob, md, &sort_depsgraph);
+  ok = object_modifier_remove(bmain, scene, ob, md, &sort_depsgraph);
 
   if (!ok) {
     BKE_reportf(reports, RPT_ERROR, "Modifier '%s' not in object '%s'", md->name, ob->id.name);
@@ -409,7 +405,7 @@ bool ED_object_modifier_remove(ReportList *reports, Main *bmain, Object *ob, Mod
   return 1;
 }
 
-void ED_object_modifier_clear(Main *bmain, Object *ob)
+void ED_object_modifier_clear(Main *bmain, Scene *scene, Object *ob)
 {
   ModifierData *md = ob->modifiers.first;
   bool sort_depsgraph = false;
@@ -423,7 +419,7 @@ void ED_object_modifier_clear(Main *bmain, Object *ob)
 
     next_md = md->next;
 
-    object_modifier_remove(bmain, ob, md, &sort_depsgraph);
+    object_modifier_remove(bmain, scene, ob, md, &sort_depsgraph);
 
     md = next_md;
   }
@@ -822,7 +818,8 @@ bool ED_object_modifier_apply(Main *bmain,
                               Scene *scene,
                               Object *ob,
                               ModifierData *md,
-                              int mode)
+                              int mode,
+                              bool keep_modifier)
 {
   int prev_mode;
 
@@ -830,7 +827,7 @@ bool ED_object_modifier_apply(Main *bmain,
     BKE_report(reports, RPT_ERROR, "Modifiers cannot be applied in edit mode");
     return false;
   }
-  if (ID_REAL_USERS(ob->data) > 1) {
+  if (mode != MODIFIER_APPLY_SHAPE && ID_REAL_USERS(ob->data) > 1) {
     BKE_report(reports, RPT_ERROR, "Modifiers cannot be applied to multi-user data");
     return false;
   }
@@ -869,22 +866,34 @@ bool ED_object_modifier_apply(Main *bmain,
   }
 
   md_eval->mode = prev_mode;
-  BLI_remlink(&ob->modifiers, md);
-  BKE_modifier_free(md);
+
+  if (!keep_modifier) {
+    BLI_remlink(&ob->modifiers, md);
+    BKE_modifier_free(md);
+  }
 
   BKE_object_free_derived_caches(ob);
 
   return true;
 }
 
-int ED_object_modifier_copy(ReportList *UNUSED(reports), Object *ob, ModifierData *md)
+int ED_object_modifier_copy(
+    ReportList *UNUSED(reports), Main *bmain, Scene *scene, Object *ob, ModifierData *md)
 {
   ModifierData *nmd;
 
-  nmd = BKE_modifier_new(md->type);
-  BKE_modifier_copydata(md, nmd);
-  BLI_insertlinkafter(&ob->modifiers, md, nmd);
-  BKE_modifier_unique_name(&ob->modifiers, nmd);
+  if (md->type == eModifierType_ParticleSystem) {
+    nmd = object_copy_particle_system(bmain, scene, ob, ((ParticleSystemModifierData *)md)->psys);
+    BLI_remlink(&ob->modifiers, nmd);
+    BLI_insertlinkafter(&ob->modifiers, md, nmd);
+    return true;
+  }
+  else {
+    nmd = BKE_modifier_new(md->type);
+    BKE_modifier_copydata(md, nmd);
+    BLI_insertlinkafter(&ob->modifiers, md, nmd);
+    BKE_modifier_unique_name(&ob->modifiers, nmd);
+  }
 
   return 1;
 }
@@ -1116,6 +1125,7 @@ ModifierData *edit_modifier_property_get(wmOperator *op, Object *ob, int type)
 static int modifier_remove_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   Object *ob = ED_object_active_context(C);
   ModifierData *md = edit_modifier_property_get(op, ob, 0);
@@ -1129,7 +1139,7 @@ static int modifier_remove_exec(bContext *C, wmOperator *op)
   char name[MAX_NAME];
   strcpy(name, md->name);
 
-  if (!ED_object_modifier_remove(op->reports, bmain, ob, md)) {
+  if (!ED_object_modifier_remove(op->reports, bmain, scene, ob, md)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -1326,7 +1336,7 @@ void OBJECT_OT_modifier_move_to_index(wmOperatorType *ot)
 /** \name Apply Modifier Operator
  * \{ */
 
-static bool modifier_apply_poll(bContext *C)
+static bool modifier_apply_poll_ex(bContext *C, bool allow_shared)
 {
   if (!edit_modifier_poll_generic(C, &RNA_Modifier, 0, false)) {
     return false;
@@ -1341,7 +1351,7 @@ static bool modifier_apply_poll(bContext *C)
     CTX_wm_operator_poll_msg_set(C, "Modifiers cannot be applied on override data");
     return false;
   }
-  if ((ob->data != NULL) && ID_REAL_USERS(ob->data) > 1) {
+  if (!allow_shared && (ob->data != NULL) && ID_REAL_USERS(ob->data) > 1) {
     CTX_wm_operator_poll_msg_set(C, "Modifiers cannot be applied to multi-user data");
     return false;
   }
@@ -1356,14 +1366,18 @@ static bool modifier_apply_poll(bContext *C)
   return true;
 }
 
-static int modifier_apply_exec(bContext *C, wmOperator *op)
+static bool modifier_apply_poll(bContext *C)
+{
+  return modifier_apply_poll_ex(C, false);
+}
+
+static int modifier_apply_exec_ex(bContext *C, wmOperator *op, int apply_as, bool keep_modifier)
 {
   Main *bmain = CTX_data_main(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
   Object *ob = ED_object_active_context(C);
   ModifierData *md = edit_modifier_property_get(op, ob, 0);
-  int apply_as = RNA_enum_get(op->ptr, "apply_as");
 
   if (md == NULL) {
     return OPERATOR_CANCELLED;
@@ -1373,7 +1387,8 @@ static int modifier_apply_exec(bContext *C, wmOperator *op)
   char name[MAX_NAME];
   strcpy(name, md->name);
 
-  if (!ED_object_modifier_apply(bmain, op->reports, depsgraph, scene, ob, md, apply_as)) {
+  if (!ED_object_modifier_apply(
+          bmain, op->reports, depsgraph, scene, ob, md, apply_as, keep_modifier)) {
     return OPERATOR_CANCELLED;
   }
 
@@ -1388,6 +1403,11 @@ static int modifier_apply_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static int modifier_apply_exec(bContext *C, wmOperator *op)
+{
+  return modifier_apply_exec_ex(C, op, MODIFIER_APPLY_DATA, false);
+}
+
 static int modifier_apply_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   int retval;
@@ -1396,16 +1416,6 @@ static int modifier_apply_invoke(bContext *C, wmOperator *op, const wmEvent *eve
   }
   return retval;
 }
-
-static const EnumPropertyItem modifier_apply_as_items[] = {
-    {MODIFIER_APPLY_DATA, "DATA", 0, "Object Data", "Apply modifier to the object's data"},
-    {MODIFIER_APPLY_SHAPE,
-     "SHAPE",
-     0,
-     "New Shape",
-     "Apply deform-only modifier to a new shape on this object"},
-    {0, NULL, 0, NULL, NULL},
-};
 
 void OBJECT_OT_modifier_apply(wmOperatorType *ot)
 {
@@ -1420,12 +1430,68 @@ void OBJECT_OT_modifier_apply(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 
-  RNA_def_enum(ot->srna,
-               "apply_as",
-               modifier_apply_as_items,
-               MODIFIER_APPLY_DATA,
-               "Apply as",
-               "How to apply the modifier to the geometry");
+  edit_modifier_properties(ot);
+  edit_modifier_report_property(ot);
+}
+
+/** \} */
+
+/* ------------------------------------------------------------------- */
+/** \name Apply Modifier As Shapekey Operator
+ * \{ */
+
+static bool modifier_apply_as_shapekey_poll(bContext *C)
+{
+  return modifier_apply_poll_ex(C, true);
+}
+
+static int modifier_apply_as_shapekey_exec(bContext *C, wmOperator *op)
+{
+  bool keep = RNA_boolean_get(op->ptr, "keep_modifier");
+
+  return modifier_apply_exec_ex(C, op, MODIFIER_APPLY_SHAPE, keep);
+}
+
+static int modifier_apply_as_shapekey_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+  int retval;
+  if (edit_modifier_invoke_properties(C, op, event, &retval)) {
+    return modifier_apply_as_shapekey_exec(C, op);
+  }
+  else {
+    return retval;
+  }
+}
+
+static char *modifier_apply_as_shapekey_get_description(struct bContext *UNUSED(C),
+                                                        struct wmOperatorType *UNUSED(op),
+                                                        struct PointerRNA *values)
+{
+  bool keep = RNA_boolean_get(values, "keep_modifier");
+
+  if (keep) {
+    return BLI_strdup("Apply modifier as a new shapekey and keep it in the stack");
+  }
+
+  return NULL;
+}
+
+void OBJECT_OT_modifier_apply_as_shapekey(wmOperatorType *ot)
+{
+  ot->name = "Apply Modifier As Shapekey";
+  ot->description = "Apply modifier as a new shapekey and remove from the stack";
+  ot->idname = "OBJECT_OT_modifier_apply_as_shapekey";
+
+  ot->invoke = modifier_apply_as_shapekey_invoke;
+  ot->exec = modifier_apply_as_shapekey_exec;
+  ot->poll = modifier_apply_as_shapekey_poll;
+  ot->get_description = modifier_apply_as_shapekey_get_description;
+
+  /* flags */
+  ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
+
+  RNA_def_boolean(
+      ot->srna, "keep_modifier", false, "Keep Modifier", "Do not remove the modifier from stack");
   edit_modifier_properties(ot);
   edit_modifier_report_property(ot);
 }
@@ -1487,10 +1553,12 @@ void OBJECT_OT_modifier_convert(wmOperatorType *ot)
 
 static int modifier_copy_exec(bContext *C, wmOperator *op)
 {
+  Main *bmain = CTX_data_main(C);
+  Scene *scene = CTX_data_scene(C);
   Object *ob = ED_object_active_context(C);
   ModifierData *md = edit_modifier_property_get(op, ob, 0);
 
-  if (!md || !ED_object_modifier_copy(op->reports, ob, md)) {
+  if (!md || !ED_object_modifier_copy(op->reports, bmain, scene, ob, md)) {
     return OPERATOR_CANCELLED;
   }
 
