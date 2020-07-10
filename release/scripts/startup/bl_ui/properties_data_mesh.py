@@ -481,6 +481,10 @@ class DATA_PT_sculpt_vertex_colors(MeshButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
+    @classmethod
+    def poll(cls, context):
+        return context.preferences.experimental.use_sculpt_vertex_colors
+
     def draw(self, context):
         layout = self.layout
 
@@ -533,9 +537,10 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
             row = col.row()
             row.separator()
             row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
-            row = col.row()
-            row.separator()
-            row.prop(mesh, "use_remesh_preserve_vertex_colors", text="Vertex Colors")
+            if context.preferences.experimental.use_sculpt_vertex_colors:
+                row = col.row()
+                row.separator()
+                row.prop(mesh, "use_remesh_preserve_vertex_colors", text="Vertex Colors")
 
             row = col.row()
             row.operator("object.voxel_remesh", text="Voxel Remesh")

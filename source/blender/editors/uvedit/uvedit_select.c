@@ -88,6 +88,59 @@ static void uv_select_tag_update_for_object(Depsgraph *depsgraph,
                                             Object *obedit);
 
 /* -------------------------------------------------------------------- */
+/** \name Active Selection Tracking
+ *
+ * Currently we don't store loops in the selection history,
+ * store face/edge/vert combinations (needed for UV path selection).
+ * \{ */
+
+void ED_uvedit_active_vert_loop_set(BMesh *bm, BMLoop *l)
+{
+  BM_select_history_clear(bm);
+  BM_select_history_remove(bm, (BMElem *)l->f);
+  BM_select_history_remove(bm, (BMElem *)l->v);
+  BM_select_history_store_notest(bm, (BMElem *)l->f);
+  BM_select_history_store_notest(bm, (BMElem *)l->v);
+}
+
+BMLoop *ED_uvedit_active_vert_loop_get(BMesh *bm)
+{
+  BMEditSelection *ese = bm->selected.last;
+  if (ese && ese->prev) {
+    BMEditSelection *ese_prev = ese->prev;
+    if ((ese->htype == BM_VERT) && (ese_prev->htype == BM_FACE)) {
+      /* May be NULL. */
+      return BM_face_vert_share_loop((BMFace *)ese_prev->ele, (BMVert *)ese->ele);
+    }
+  }
+  return NULL;
+}
+
+void ED_uvedit_active_edge_loop_set(BMesh *bm, BMLoop *l)
+{
+  BM_select_history_clear(bm);
+  BM_select_history_remove(bm, (BMElem *)l->f);
+  BM_select_history_remove(bm, (BMElem *)l->e);
+  BM_select_history_store_notest(bm, (BMElem *)l->f);
+  BM_select_history_store_notest(bm, (BMElem *)l->e);
+}
+
+BMLoop *ED_uvedit_active_edge_loop_get(BMesh *bm)
+{
+  BMEditSelection *ese = bm->selected.last;
+  if (ese && ese->prev) {
+    BMEditSelection *ese_prev = ese->prev;
+    if ((ese->htype == BM_EDGE) && (ese_prev->htype == BM_FACE)) {
+      /* May be NULL. */
+      return BM_face_edge_share_loop((BMFace *)ese_prev->ele, (BMEdge *)ese->ele);
+    }
+  }
+  return NULL;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
 /** \name Visibility and Selection Utilities
  * \{ */
 
@@ -1531,6 +1584,11 @@ static int uv_mouse_select_multi(bContext *C,
       hituv[hit.lindex] = hit.luv->uv;
 
       hitlen = hit.efa->len;
+
+      if ((ts->uv_flag & UV_SYNC_SELECTION) == 0) {
+        BMesh *bm = BKE_editmesh_from_object(hit.ob)->bm;
+        ED_uvedit_active_vert_loop_set(bm, hit.l);
+      }
     }
   }
   else if (selectmode == UV_SELECT_EDGE) {
@@ -1550,6 +1608,11 @@ static int uv_mouse_select_multi(bContext *C,
       hituv[(hit.lindex + 1) % hit.efa->len] = hit.luv_next->uv;
 
       hitlen = hit.efa->len;
+
+      if ((ts->uv_flag & UV_SYNC_SELECTION) == 0) {
+        BMesh *bm = BKE_editmesh_from_object(hit.ob)->bm;
+        ED_uvedit_active_edge_loop_set(bm, hit.l);
+      }
     }
   }
   else if (selectmode == UV_SELECT_FACE) {
@@ -2061,6 +2124,7 @@ void UV_OT_select_linked_pick(wmOperatorType *ot)
  */
 static int uv_select_split_exec(bContext *C, wmOperator *op)
 {
+  Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
   const ToolSettings *ts = scene->toolsettings;
@@ -2127,6 +2191,7 @@ static int uv_select_split_exec(bContext *C, wmOperator *op)
     if (changed) {
       changed_multi = true;
       WM_event_add_notifier(C, NC_SPACE | ND_SPACE_IMAGE, NULL);
+      uv_select_tag_update_for_object(depsgraph, ts, obedit);
     }
   }
   MEM_freeN(objects);

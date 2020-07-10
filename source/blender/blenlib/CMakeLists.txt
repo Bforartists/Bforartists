@@ -105,7 +105,7 @@ set(SRC
   intern/polyfill_2d.c
   intern/polyfill_2d_beautify.c
   intern/quadric.c
-  intern/rand.c
+  intern/rand.cc
   intern/rct.c
   intern/scanfill.c
   intern/scanfill_utils.c
@@ -163,6 +163,7 @@ set(SRC
   BLI_convexhull_2d.h
   BLI_delaunay_2d.h
   BLI_dial_2d.h
+  BLI_disjoint_set.hh
   BLI_dlrbTree.h
   BLI_dot_export.hh
   BLI_dot_export_attribute_enums.hh
@@ -232,6 +233,7 @@ set(SRC
   BLI_quadric.h
   BLI_rand.h
   BLI_rect.h
+  BLI_resource_collector.hh
   BLI_scanfill.h
   BLI_set.hh
   BLI_set_slots.hh
