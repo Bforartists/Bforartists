@@ -6268,6 +6268,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("uv.shortest_path_pick", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ],
    },
   ),
