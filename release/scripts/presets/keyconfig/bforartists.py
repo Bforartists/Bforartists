@@ -3436,17 +3436,7 @@ keyconfig_data = \
  ("Mesh",
   {"space_type": 'EMPTY', "region_type": 'WINDOW'},
   {"items":
-   [("mesh.loopcut_slide",
-     {"type": 'R', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("TRANSFORM_OT_edge_slide",
-        [("release_confirm", False),
-         ],
-        ),
-       ],
-      },
-     ),
-    ("mesh.select_mode",
+   [("mesh.select_mode",
      {"type": 'X', "value": 'PRESS'},
      {"properties":
       [("type", 'VERT'),
