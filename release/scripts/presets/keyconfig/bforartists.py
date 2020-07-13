@@ -1710,7 +1710,7 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
      {"properties":
       [("extend", True),
-       ("open", True),
+       ("open", False),
        ],
       },
      ),
