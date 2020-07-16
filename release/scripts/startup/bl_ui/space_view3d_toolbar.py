@@ -823,8 +823,7 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
 
         col = layout.column()
         mesh = context.active_object.data
-        row = col.row(align=True)
-        row.prop(mesh, "remesh_mode", text="Mode", expand=True)
+
         row = col.row(align=True)
         row.prop(mesh, "remesh_voxel_size")
         props = row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
@@ -847,10 +846,10 @@ class VIEW3D_PT_sculpt_voxel_remesh(Panel, View3DPaintPanel):
         row.prop(mesh, "use_remesh_preserve_sculpt_face_sets", text="Face Sets")
         row = col.row()
         row.separator()
-        if preferences.experimental.use_preserver_vertex_colors:
+        if context.preferences.experimental.use_sculpt_vertex_colors:
             col.prop(mesh, "use_remesh_preserve_vertex_colors", text="Vertex Colors")
 
-        layout.operator("object.voxel_remesh", text="Remesh")
+        layout.operator("object.voxel_remesh", text="Voxel Remesh")
 
 
 # TODO, move to space_view3d.py
