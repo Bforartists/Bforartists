@@ -2884,7 +2884,7 @@ keyconfig_data = \
       },
      ),
     ("wm.call_panel",
-     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
       [("name", 'VIEW3D_PT_gpencil_weight_context_menu'),
        ],
