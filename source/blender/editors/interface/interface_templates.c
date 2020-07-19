@@ -522,7 +522,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
   switch (event) {
     case UI_ID_BROWSE:
     case UI_ID_PIN:
-      RNA_warning("warning, id event %d shouldnt come here", event);
+      RNA_warning("warning, id event %d shouldn't come here", event);
       break;
     case UI_ID_OPEN:
     case UI_ID_ADD_NEW:
@@ -559,7 +559,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
     case UI_ID_LOCAL:
       if (id) {
         Main *bmain = CTX_data_main(C);
-        if (BKE_lib_override_library_is_enabled() && CTX_wm_window(C)->eventstate->shift) {
+        if (CTX_wm_window(C)->eventstate->shift) {
           if (ID_IS_OVERRIDABLE_LIBRARY(id)) {
             /* Only remap that specific ID usage to overriding local data-block. */
             ID *override_id = BKE_lib_override_library_create_from_id(bmain, id, false);
@@ -569,6 +569,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
               /* Assign new pointer, takes care of updates/notifiers */
               RNA_id_pointer_create(override_id, &idptr);
             }
+            undo_push_label = "Make Library Override";
           }
         }
         else {
@@ -577,11 +578,13 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
 
             /* reassign to get get proper updates/notifiers */
             idptr = RNA_property_pointer_get(&template_ui->ptr, template_ui->prop);
+            undo_push_label = "Make Local";
           }
         }
-        RNA_property_pointer_set(&template_ui->ptr, template_ui->prop, idptr, NULL);
-        RNA_property_update(C, &template_ui->ptr, template_ui->prop);
-        undo_push_label = "Make Local";
+        if (undo_push_label != NULL) {
+          RNA_property_pointer_set(&template_ui->ptr, template_ui->prop, idptr, NULL);
+          RNA_property_update(C, &template_ui->ptr, template_ui->prop);
+        }
       }
       break;
     case UI_ID_OVERRIDE:
@@ -933,10 +936,8 @@ static void template_ID(const bContext *C,
                            0,
                            0,
                            0,
-                           BKE_lib_override_library_is_enabled() ?
-                               TIP_("Direct linked library data-block, click to make local, "
-                                    "Shift + Click to create a library override") :
-                               TIP_("Direct linked library data-block, click to make local"));
+                           TIP_("Direct linked library data-block, click to make local, "
+                                "Shift + Click to create a library override"));
         if (disabled) {
           UI_but_flag_enable(but, UI_BUT_DISABLED);
         }
@@ -2029,6 +2030,7 @@ void uiTemplateConstraints(uiLayout *UNUSED(layout), bContext *C, bool use_bone_
   ScrArea *sa = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
 
+  Object *ob = ED_object_active_context(C);
   ListBase *constraints = get_constraints(C, use_bone_constraints);
 
   /* Switch between the bone panel ID function and the object panel ID function. */
@@ -2044,11 +2046,15 @@ void uiTemplateConstraints(uiLayout *UNUSED(layout), bContext *C, bool use_bone_
       char panel_idname[MAX_NAME];
       panel_id_func(con, panel_idname);
 
+      /* Create custom data RNA pointer. */
+      PointerRNA *con_ptr = MEM_mallocN(sizeof(PointerRNA), "panel customdata");
+      RNA_pointer_create(&ob->id, &RNA_Constraint, con, con_ptr);
+
       Panel *new_panel = UI_panel_add_instanced(
-          sa, region, &region->panels, panel_idname, i, NULL);
+          sa, region, &region->panels, panel_idname, i, con_ptr);
+
       if (new_panel) {
-        /* Set the list panel functionality function pointers since we don't do it with
-         * python. */
+        /* Set the list panel functionality function pointers since we don't do it with python. */
         new_panel->type->set_list_data_expand_flag = set_constraint_expand_flag;
         new_panel->type->get_list_data_expand_flag = get_constraint_expand_flag;
         new_panel->type->reorder = constraint_reorder;
@@ -2063,6 +2069,22 @@ void uiTemplateConstraints(uiLayout *UNUSED(layout), bContext *C, bool use_bone_
       if ((panel->type != NULL) && (panel->type->flag & PNL_INSTANCED)) {
         UI_panel_set_expand_from_list_data(C, panel);
       }
+    }
+
+    /* Assuming there's only one group of instanced panels, update the custom data pointers. */
+    Panel *panel = region->panels.first;
+    LISTBASE_FOREACH (bConstraint *, con, constraints) {
+      /* Move to the next instanced panel corresponding to the next constraint. */
+      while ((panel->type == NULL) || !(panel->type->flag & PNL_INSTANCED)) {
+        panel = panel->next;
+        BLI_assert(panel != NULL); /* There shouldn't be fewer panels than constraint panels. */
+      }
+
+      PointerRNA *con_ptr = MEM_mallocN(sizeof(PointerRNA), "constraint panel customdata");
+      RNA_pointer_create(&ob->id, &RNA_Constraint, con, con_ptr);
+      UI_panel_custom_data_set(panel, con_ptr);
+
+      panel = panel->next;
     }
   }
 }
@@ -4851,6 +4873,7 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
   /* Preset selector */
   /* There is probably potential to use simpler "uiItemR" functions here, but automatic updating
    * after a preset is selected would be more complicated. */
+  row = uiLayoutRow(layout, true);
   bt = uiDefBlockBut(
       block, CurveProfile_buttons_presets, profile, "Preset", 0, 0, UI_UNIT_X, UI_UNIT_X, "");
   UI_but_funcN_set(bt, rna_update_cb, MEM_dupallocN(cb), NULL);

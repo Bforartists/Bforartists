@@ -348,7 +348,7 @@ void gpu_extensions_init(void)
     GG.mip_render_workaround = true;
   }
 
-  /* Intel Ivy Bridge GPU's seems to have buggy cubemap array support. (see T75943) */
+  /* Intel Ivy Bridge GPU's seems to have buggy cube-map array support. (see T75943) */
   if (GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_WIN, GPU_DRIVER_OFFICIAL) &&
       (strstr(renderer, "HD Graphics 4000") || strstr(renderer, "HD Graphics 2500"))) {
     GG.glew_arb_texture_cube_map_array_is_supported = false;
@@ -409,7 +409,7 @@ void gpu_extensions_exit(void)
 bool GPU_mem_stats_supported(void)
 {
 #ifndef GPU_STANDALONE
-  return (GLEW_NVX_gpu_memory_info || GLEW_ATI_meminfo) && (G.debug & G_DEBUG_GPU_MEM);
+  return (GLEW_NVX_gpu_memory_info || GLEW_ATI_meminfo);
 #else
   return false;
 #endif
@@ -436,4 +436,12 @@ void GPU_mem_stats_get(int *totalmem, int *freemem)
     *totalmem = 0;
     *freemem = 0;
   }
+}
+
+/* Return support for the active context + window. */
+bool GPU_stereo_quadbuffer_support(void)
+{
+  GLboolean stereo = GL_FALSE;
+  glGetBooleanv(GL_STEREO, &stereo);
+  return stereo == GL_TRUE;
 }
