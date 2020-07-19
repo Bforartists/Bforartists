@@ -106,11 +106,11 @@ static void wm_paintcursor_draw(bContext *C, ScrArea *area, ARegion *region)
 
       if (pc->poll == NULL || pc->poll(C)) {
         /* Prevent drawing outside region. */
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(region->winrct.xmin,
-                  region->winrct.ymin,
-                  BLI_rcti_size_x(&region->winrct) + 1,
-                  BLI_rcti_size_y(&region->winrct) + 1);
+        GPU_scissor_test(true);
+        GPU_scissor(region->winrct.xmin,
+                    region->winrct.ymin,
+                    BLI_rcti_size_x(&region->winrct) + 1,
+                    BLI_rcti_size_y(&region->winrct) + 1);
 
         if (ELEM(win->grabcursor, GHOST_kGrabWrap, GHOST_kGrabHide)) {
           int x = 0, y = 0;
@@ -121,7 +121,7 @@ static void wm_paintcursor_draw(bContext *C, ScrArea *area, ARegion *region)
           pc->draw(C, win->eventstate->x, win->eventstate->y, pc->customdata);
         }
 
-        glDisable(GL_SCISSOR_TEST);
+        GPU_scissor_test(false);
       }
     }
   }
@@ -135,14 +135,7 @@ static void wm_paintcursor_draw(bContext *C, ScrArea *area, ARegion *region)
 
 static void wm_region_draw_overlay(bContext *C, ScrArea *area, ARegion *region)
 {
-  wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win = CTX_wm_window(C);
-
-  /* Don't draw overlay with locked interface. Drawing could access scene data that another thread
-   * may be modifying. */
-  if (wm->is_interface_locked) {
-    return;
-  }
 
   wmViewport(&region->winrct);
   UI_SetTheme(area->spacetype, region->regiontype);
@@ -403,14 +396,8 @@ static void wm_draw_offscreen_texture_parameters(GPUOffScreen *offscreen)
   /* We don't support multisample textures here. */
   BLI_assert(GPU_texture_target(texture) == GL_TEXTURE_2D);
 
-  glBindTexture(GL_TEXTURE_2D, GPU_texture_opengl_bindcode(texture));
-
   /* No mipmaps or filtering. */
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-  /* GL_TEXTURE_BASE_LEVEL = 0 by default */
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glBindTexture(GL_TEXTURE_2D, 0);
+  GPU_texture_mipmap_mode(texture, false, false);
 }
 
 static void wm_draw_region_buffer_create(ARegion *region, bool stereo, bool use_viewport)
@@ -473,8 +460,8 @@ static void wm_draw_region_bind(ARegion *region, int view)
 
     /* For now scissor is expected by region drawing, we could disable it
      * and do the enable/disable in the specific cases that setup scissor. */
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(0, 0, region->winx, region->winy);
+    GPU_scissor_test(true);
+    GPU_scissor(0, 0, region->winx, region->winy);
   }
 
   region->draw_buffer->bound_view = view;
@@ -492,7 +479,7 @@ static void wm_draw_region_unbind(ARegion *region)
     GPU_viewport_unbind(region->draw_buffer->viewport);
   }
   else {
-    glDisable(GL_SCISSOR_TEST);
+    GPU_scissor_test(false);
     GPU_offscreen_unbind(region->draw_buffer->offscreen, false);
   }
 }
@@ -554,23 +541,9 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
     alpha = 1.0f;
   }
 
-  /* setup actual texture */
-  GPUTexture *texture = wm_draw_region_texture(region, view);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, GPU_texture_opengl_bindcode(texture));
-
   /* wmOrtho for the screen has this same offset */
   const float halfx = GLA_PIXEL_OFS / (BLI_rcti_size_x(&region->winrct) + 1);
   const float halfy = GLA_PIXEL_OFS / (BLI_rcti_size_y(&region->winrct) + 1);
-
-  if (blend) {
-    /* GL_ONE because regions drawn offscreen have premultiplied alpha. */
-    GPU_blend(true);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-  }
-
-  GPUShader *shader = GPU_shader_get_builtin_shader(GPU_SHADER_2D_IMAGE_RECT_COLOR);
-  GPU_shader_bind(shader);
 
   rcti rect_geo = region->winrct;
   rect_geo.xmax += 1;
@@ -598,26 +571,39 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
     alpha = 1.0f;
   }
 
-  glUniform1i(GPU_shader_get_uniform(shader, "image"), 0);
-  glUniform4f(GPU_shader_get_uniform(shader, "rect_icon"),
-              rect_tex.xmin,
-              rect_tex.ymin,
-              rect_tex.xmax,
-              rect_tex.ymax);
-  glUniform4f(GPU_shader_get_uniform(shader, "rect_geom"),
-              rect_geo.xmin,
-              rect_geo.ymin,
-              rect_geo.xmax,
-              rect_geo.ymax);
-  glUniform4f(
-      GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_COLOR), alpha, alpha, alpha, alpha);
+  /* Not the same layout as rectf/recti. */
+  float rectt[4] = {rect_tex.xmin, rect_tex.ymin, rect_tex.xmax, rect_tex.ymax};
+  float rectg[4] = {rect_geo.xmin, rect_geo.ymin, rect_geo.xmax, rect_geo.ymax};
+
+  if (blend) {
+    /* GL_ONE because regions drawn offscreen have premultiplied alpha. */
+    GPU_blend_set_func(GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+    GPU_blend(true);
+  }
+
+  /* setup actual texture */
+  GPUTexture *texture = wm_draw_region_texture(region, view);
+
+  GPUShader *shader = GPU_shader_get_builtin_shader(GPU_SHADER_2D_IMAGE_RECT_COLOR);
+  GPU_shader_bind(shader);
+
+  int color_loc = GPU_shader_get_builtin_uniform(shader, GPU_UNIFORM_COLOR);
+  int rect_tex_loc = GPU_shader_get_uniform(shader, "rect_icon");
+  int rect_geo_loc = GPU_shader_get_uniform(shader, "rect_geom");
+  int texture_bind_loc = GPU_shader_get_texture_binding(shader, "image");
+
+  GPU_texture_bind(texture, texture_bind_loc);
+
+  GPU_shader_uniform_vector(shader, rect_tex_loc, 4, 1, rectt);
+  GPU_shader_uniform_vector(shader, rect_geo_loc, 4, 1, rectg);
+  GPU_shader_uniform_vector(shader, color_loc, 4, 1, (const float[4]){1, 1, 1, 1});
 
   GPU_draw_primitive(GPU_PRIM_TRI_STRIP, 4);
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+  GPU_texture_unbind(texture);
 
   if (blend) {
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    GPU_blend_set_func(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA);
     GPU_blend(false);
   }
 }
@@ -736,8 +722,8 @@ static void wm_draw_window_offscreen(bContext *C, wmWindow *win, bool stereo)
 
       wm_draw_region_buffer_create(region, false, false);
       wm_draw_region_bind(region, 0);
-      glClearColor(0, 0, 0, 0);
-      glClear(GL_COLOR_BUFFER_BIT);
+      GPU_clear_color(0, 0, 0, 0);
+      GPU_clear(GPU_COLOR_BIT);
       ED_region_do_draw(C, region);
       wm_draw_region_unbind(region);
 
@@ -759,8 +745,8 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
    * Actually this is only a problem when resizing the window.
    * If it becomes a problem we should clear only when window size changes. */
 #if 0
-  glClearColor(0, 0, 0, 0);
-  glClear(GL_COLOR_BUFFER_BIT);
+  GPU_clear_color(0, 0, 0, 0);
+  GPU_clear(GPU_COLOR_BIT);
 #endif
 
   /* Blit non-overlapping area regions. */
@@ -844,11 +830,13 @@ static void wm_draw_window(bContext *C, wmWindow *win)
   }
   else if (win->stereo3d_format->display_mode == S3D_DISPLAY_PAGEFLIP) {
     /* For pageflip we simply draw to both back buffers. */
-    glDrawBuffer(GL_BACK_LEFT);
+    GPU_backbuffer_bind(GPU_BACKBUFFER_LEFT);
     wm_draw_window_onscreen(C, win, 0);
-    glDrawBuffer(GL_BACK_RIGHT);
+
+    GPU_backbuffer_bind(GPU_BACKBUFFER_RIGHT);
     wm_draw_window_onscreen(C, win, 1);
-    glDrawBuffer(GL_BACK);
+
+    GPU_backbuffer_bind(GPU_BACKBUFFER);
   }
   else if (ELEM(win->stereo3d_format->display_mode, S3D_DISPLAY_ANAGLYPH, S3D_DISPLAY_INTERLACE)) {
     /* For anaglyph and interlace, we draw individual regions with
@@ -874,8 +862,7 @@ static void wm_draw_window(bContext *C, wmWindow *win)
         GPU_offscreen_unbind(offscreen, false);
 
         /* Draw offscreen buffer to screen. */
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, GPU_texture_opengl_bindcode(texture));
+        GPU_texture_bind(texture, 0);
 
         wmWindowViewport(win);
         if (win->stereo3d_format->display_mode == S3D_DISPLAY_SIDEBYSIDE) {
@@ -885,7 +872,7 @@ static void wm_draw_window(bContext *C, wmWindow *win)
           wm_stereo3d_draw_topbottom(win, view);
         }
 
-        glBindTexture(GL_TEXTURE_2D, 0);
+        GPU_texture_unbind(texture);
       }
 
       GPU_offscreen_free(offscreen);

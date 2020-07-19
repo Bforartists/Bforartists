@@ -89,6 +89,8 @@
 #include "UI_resources.h"
 #include "UI_view2d.h"
 
+#include "GPU_extensions.h"
+
 #include "screen_intern.h" /* own module include */
 
 #define KM_MODAL_CANCEL 1
@@ -358,6 +360,13 @@ bool ED_operator_object_active_editable(bContext *C)
 {
   Object *ob = ED_object_active_context(C);
   return ED_operator_object_active_editable_ex(C, ob);
+}
+
+/** Object must be editable and fully local (i.e. not an override). */
+bool ED_operator_object_active_local_editable(bContext *C)
+{
+  Object *ob = ED_object_active_context(C);
+  return ED_operator_object_active_editable_ex(C, ob) && !ID_IS_OVERRIDE_LIBRARY(ob);
 }
 
 bool ED_operator_object_active_editable_mesh(bContext *C)
@@ -4120,12 +4129,6 @@ static void SCREEN_OT_header_toggle_menus(wmOperatorType *ot)
 /** \name Region Context Menu Operator (Header/Footer/Navbar)
  * \{ */
 
-static bool screen_region_context_menu_poll(bContext *C)
-{
-  ScrArea *area = CTX_wm_area(C);
-  return (area && area->spacetype != SPACE_STATUSBAR);
-}
-
 // bfa - show hide the editorsmenu
 static int header_toggle_editortypemenu_exec(bContext *C, wmOperator *UNUSED(op))
 {
@@ -4387,7 +4390,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
   if (!ELEM(area->spacetype, SPACE_TOPBAR)) {
     uiItemS(layout);
 
-    uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
+    uiItemO(layout, but_flip_str, ICON_NONE, "SCREEN_OT_region_flip");
   }
 
   // bfa - show hide the editortypemenu
@@ -4535,15 +4538,35 @@ void ED_screens_navigation_bar_tools_menu_create(bContext *C, uiLayout *layout, 
   uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
 }
 
+static void ED_screens_statusbar_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
+{
+  PointerRNA ptr;
+
+  RNA_pointer_create(NULL, &RNA_PreferencesView, &U, &ptr);
+  uiItemR(layout, &ptr, "show_statusbar_stats", 0, IFACE_("Scene Statistics"), ICON_NONE);
+  uiItemR(layout, &ptr, "show_statusbar_memory", 0, IFACE_("System Memory"), ICON_NONE);
+  if (GPU_mem_stats_supported()) {
+    uiItemR(layout, &ptr, "show_statusbar_vram", 0, IFACE_("Video Memory"), ICON_NONE);
+  }
+  uiItemR(layout, &ptr, "show_statusbar_version", 0, IFACE_("Blender Version"), ICON_NONE);
+}
+
 static int screen_context_menu_invoke(bContext *C,
                                       wmOperator *UNUSED(op),
                                       const wmEvent *UNUSED(event))
 {
   uiPopupMenu *pup;
   uiLayout *layout;
+  const ScrArea *area = CTX_wm_area(C);
   const ARegion *region = CTX_wm_region(C);
 
-  if (ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER)) {
+  if (area && area->spacetype == SPACE_STATUSBAR) {
+    pup = UI_popup_menu_begin(C, IFACE_("Status Bar"), ICON_NONE);
+    layout = UI_popup_menu_layout(pup);
+    ED_screens_statusbar_menu_create(C, layout, NULL);
+    UI_popup_menu_end(C, pup);
+  }
+  else if (ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER)) {
     pup = UI_popup_menu_begin(C, IFACE_("Header"), ICON_NONE);
     layout = UI_popup_menu_layout(pup);
     ED_screens_header_tools_menu_create(C, layout, NULL);
@@ -4573,7 +4596,6 @@ static void SCREEN_OT_region_context_menu(wmOperatorType *ot)
   ot->idname = "SCREEN_OT_region_context_menu";
 
   /* api callbacks */
-  ot->poll = screen_region_context_menu_poll;
   ot->invoke = screen_context_menu_invoke;
 }
 
@@ -5209,7 +5231,7 @@ static int userpref_show_exec(bContext *C, wmOperator *op)
 
   /* changes context! */
   if (WM_window_open_temp(C,
-                          IFACE_("Preferences"),
+                          IFACE_("Preferences"), /*bfa - preferences, not blender preferences*/
                           event->x,
                           event->y,
                           sizex,

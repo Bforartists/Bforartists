@@ -416,7 +416,7 @@ option(WITH_ASSERT_ABORT "Call abort() when raising an assertion through BLI_ass
 mark_as_advanced(WITH_ASSERT_ABORT)
 
 if(UNIX AND NOT APPLE)
-  option(WITH_CLANG_TIDY "Use Clang Tidy to analyze the source code (only enable for development on Limux using Clang)" OFF)
+  option(WITH_CLANG_TIDY "Use Clang Tidy to analyze the source code (only enable for development on Linux using Clang)" OFF)
   mark_as_advanced(WITH_CLANG_TIDY)
 endif()
 
@@ -900,7 +900,7 @@ if(MSVC)
   # endianess-detection and auto-setting is counterproductive
   # so we just set endianness according CMAKE_OSX_ARCHITECTURES
 
-elseif(CMAKE_OSX_ARCHITECTURES MATCHES i386 OR CMAKE_OSX_ARCHITECTURES MATCHES x86_64)
+elseif(CMAKE_OSX_ARCHITECTURES MATCHES i386 OR CMAKE_OSX_ARCHITECTURES MATCHES x86_64 OR CMAKE_OSX_ARCHITECTURES MATCHES arm64)
   add_definitions(-D__LITTLE_ENDIAN__)
 elseif(CMAKE_OSX_ARCHITECTURES MATCHES ppc OR CMAKE_OSX_ARCHITECTURES MATCHES ppc64)
   add_definitions(-D__BIG_ENDIAN__)
@@ -1627,10 +1627,6 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Libraries
-
-if(WITH_GTESTS)
-  include(GTestTesting)
-endif()
 
 if(WITH_BLENDER)
   add_subdirectory(intern)

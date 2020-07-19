@@ -29,6 +29,7 @@ CCL_NAMESPACE_BEGIN
 class Device;
 class RenderBuffers;
 class RenderTile;
+class RenderTileNeighbors;
 class Tile;
 
 enum DenoiserType {
@@ -39,6 +40,14 @@ enum DenoiserType {
 
   DENOISER_NONE = 0,
   DENOISER_ALL = ~0,
+};
+
+enum DenoiserInput {
+  DENOISER_INPUT_RGB = 1,
+  DENOISER_INPUT_RGB_ALBEDO = 2,
+  DENOISER_INPUT_RGB_ALBEDO_NORMAL = 3,
+
+  DENOISER_INPUT_NUM,
 };
 
 typedef int DenoiserTypeMask;
@@ -72,10 +81,10 @@ class DenoiseParams {
   /* Clamp the input to the range of +-1e8. Should be enough for any legitimate data. */
   bool clamp_input;
 
-  /** Optix Denoiser **/
+  /** OIDN/Optix Denoiser **/
 
-  /* Passes handed over to the OptiX denoiser (default to color + albedo). */
-  int optix_input_passes;
+  /* Passes handed over to the OIDN/OptiX denoiser (default to color + albedo). */
+  DenoiserInput input_passes;
 
   DenoiseParams()
   {
@@ -91,7 +100,7 @@ class DenoiseParams {
     neighbor_frames = 2;
     clamp_input = true;
 
-    optix_input_passes = 2;
+    input_passes = DENOISER_INPUT_RGB_ALBEDO_NORMAL;
 
     start_sample = 0;
   }
@@ -150,8 +159,8 @@ class DeviceTask {
   function<void(RenderTile &)> update_tile_sample;
   function<void(RenderTile &)> release_tile;
   function<bool()> get_cancel;
-  function<void(RenderTile *, Device *)> map_neighbor_tiles;
-  function<void(RenderTile *, Device *)> unmap_neighbor_tiles;
+  function<void(RenderTileNeighbors &, Device *)> map_neighbor_tiles;
+  function<void(RenderTileNeighbors &, Device *)> unmap_neighbor_tiles;
 
   uint tile_types;
   DenoiseParams denoising;

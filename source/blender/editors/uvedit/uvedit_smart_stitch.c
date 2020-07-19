@@ -534,7 +534,7 @@ static void stitch_island_calculate_edge_rotation(UvEdge *edge,
                                                   StitchStateContainer *ssc,
                                                   StitchState *state,
                                                   UVVertAverage *uv_average,
-                                                  uint *uvfinal_map,
+                                                  const uint *uvfinal_map,
                                                   IslandStitchData *island_stitch_data)
 {
   BMesh *bm = state->em->bm;
@@ -981,7 +981,7 @@ static void stitch_propagate_uv_final_position(Scene *scene,
       if (final) {
         copy_v2_v2(luv->uv, final_position[index].uv);
 
-        uvedit_uv_select_enable(state->em, scene, l, false, cd_loop_uv_offset);
+        uvedit_uv_select_enable(scene, state->em, l, false, cd_loop_uv_offset);
       }
       else {
         int face_preview_pos =

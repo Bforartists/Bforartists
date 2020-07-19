@@ -4421,7 +4421,7 @@ static void def_sh_tex_sky(StructRNA *srna)
   RNA_def_property_enum_sdna(prop, NULL, "sky_model");
   RNA_def_property_enum_items(prop, prop_sky_type);
   RNA_def_property_ui_text(prop, "Sky Type", "Which sky model should be used");
-  RNA_def_property_update(prop, 0, "rna_Node_update");
+  RNA_def_property_update(prop, 0, "rna_ShaderNode_socket_update");
 
   prop = RNA_def_property(srna, "sun_direction", PROP_FLOAT, PROP_DIRECTION);
   RNA_def_property_ui_text(prop, "Sun Direction", "Direction from where the sun is shining");
@@ -4445,12 +4445,18 @@ static void def_sh_tex_sky(StructRNA *srna)
   RNA_def_property_ui_text(prop, "Sun Disc", "Include the sun itself in the output");
   RNA_def_property_boolean_sdna(prop, NULL, "sun_disc", 1);
   RNA_def_property_boolean_default(prop, true);
-  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+  RNA_def_property_update(prop, 0, "rna_ShaderNode_socket_update");
 
   prop = RNA_def_property(srna, "sun_size", PROP_FLOAT, PROP_ANGLE);
   RNA_def_property_ui_text(prop, "Sun Size", "Size of sun disc (angular diameter)");
   RNA_def_property_range(prop, 0.0f, M_PI_2);
   RNA_def_property_float_default(prop, DEG2RADF(0.545));
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+
+  prop = RNA_def_property(srna, "sun_intensity", PROP_FLOAT, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Sun Intensity", "Strength of sun");
+  RNA_def_property_range(prop, 0.0f, 1000.0f);
+  RNA_def_property_float_default(prop, 1.0f);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "sun_elevation", PROP_FLOAT, PROP_ANGLE);
@@ -4461,14 +4467,13 @@ static void def_sh_tex_sky(StructRNA *srna)
 
   prop = RNA_def_property(srna, "sun_rotation", PROP_FLOAT, PROP_ANGLE);
   RNA_def_property_ui_text(prop, "Sun Rotation", "Rotation of sun around zenith");
-  RNA_def_property_range(prop, 0.0f, 2.0f * M_PI);
   RNA_def_property_float_default(prop, 0.0f);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
-  prop = RNA_def_property(srna, "altitude", PROP_INT, PROP_NONE);
-  RNA_def_property_ui_text(prop, "Altitude", "Altitude height from sea level in meters");
-  RNA_def_property_range(prop, 0, 60000);
-  RNA_def_property_int_default(prop, 0);
+  prop = RNA_def_property(srna, "altitude", PROP_FLOAT, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Altitude", "Height from sea level in km");
+  RNA_def_property_range(prop, 0.0f, 60.0f);
+  RNA_def_property_float_default(prop, 0.0f);
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 
   prop = RNA_def_property(srna, "air_density", PROP_FLOAT, PROP_FACTOR);
@@ -9318,6 +9323,8 @@ static void rna_def_node(BlenderRNA *brna)
   RNA_def_property_pointer_sdna(prop, NULL, "parent");
   RNA_def_property_pointer_funcs(prop, NULL, "rna_Node_parent_set", NULL, "rna_Node_parent_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_PTR_NO_OWNERSHIP);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_struct_type(prop, "Node");
   RNA_def_property_ui_text(prop, "Parent", "Parent this node is attached to");
 
@@ -9532,29 +9539,39 @@ static void rna_def_node_link(BlenderRNA *brna)
   RNA_def_property_pointer_sdna(prop, NULL, "fromnode");
   RNA_def_property_struct_type(prop, "Node");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_PTR_NO_OWNERSHIP);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_ui_text(prop, "From node", "");
 
   prop = RNA_def_property(srna, "to_node", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "tonode");
   RNA_def_property_struct_type(prop, "Node");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_PTR_NO_OWNERSHIP);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_ui_text(prop, "To node", "");
 
   prop = RNA_def_property(srna, "from_socket", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "fromsock");
   RNA_def_property_struct_type(prop, "NodeSocket");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_PTR_NO_OWNERSHIP);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_ui_text(prop, "From socket", "");
 
   prop = RNA_def_property(srna, "to_socket", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "tosock");
   RNA_def_property_struct_type(prop, "NodeSocket");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_PTR_NO_OWNERSHIP);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_ui_text(prop, "To socket", "");
 
   prop = RNA_def_property(srna, "is_hidden", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_funcs(prop, "rna_NodeLink_is_hidden_get", NULL);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+  RNA_def_property_flag(prop, PROP_PTR_NO_OWNERSHIP);
+  RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_ui_text(prop, "Is Hidden", "Link is hidden due to invisible sockets");
 }
 
