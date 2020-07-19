@@ -814,7 +814,7 @@ static bool uv_rip_object(Scene *scene, Object *obedit, const float co[2], const
 
   /* Special case: if we have selected faces, isolated them.
    * This isn't a rip, however it's useful for users as a quick way
-   * to detech the selection.
+   * to detach the selection.
    *
    * We could also extract an edge loop from the boundary
    * however in practice it's not that useful, see T78751. */
@@ -857,7 +857,7 @@ static bool uv_rip_object(Scene *scene, Object *obedit, const float co[2], const
               BMLoop *l_iter = BLI_gsetIterator_getKey(&gs_iter);
               ULData *ul = UL(l_iter);
               if (ul->side == side_from_cursor) {
-                uvedit_uv_select_disable(em, scene, l_iter, cd_loop_uv_offset);
+                uvedit_uv_select_disable(scene, em, l_iter, cd_loop_uv_offset);
                 changed = true;
               }
               /* Ensure we don't operate on these again. */
@@ -875,7 +875,7 @@ static bool uv_rip_object(Scene *scene, Object *obedit, const float co[2], const
             BMLoop *l_iter = BLI_gsetIterator_getKey(&gs_iter);
             ULData *ul = UL(l_iter);
             if (ul->side == side_from_cursor) {
-              uvedit_uv_select_disable(em, scene, l_iter, cd_loop_uv_offset);
+              uvedit_uv_select_disable(scene, em, l_iter, cd_loop_uv_offset);
               changed = true;
             }
             /* Ensure we don't operate on these again. */
@@ -962,7 +962,7 @@ void UV_OT_rip(wmOperatorType *ot)
   ot->poll = ED_operator_uvedit;
 
   /* translation data */
-  Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR_DUMMY);
+  Transform_Properties(ot, P_MIRROR_DUMMY);
 
   /* properties */
   RNA_def_float_vector(

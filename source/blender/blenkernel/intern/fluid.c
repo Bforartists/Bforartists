@@ -137,9 +137,9 @@ bool BKE_fluid_reallocate_fluid(FluidDomainSettings *fds, int res[3], int free_o
 void BKE_fluid_reallocate_copy_fluid(FluidDomainSettings *fds,
                                      int o_res[3],
                                      int n_res[3],
-                                     int o_min[3],
-                                     int n_min[3],
-                                     int o_max[3],
+                                     const int o_min[3],
+                                     const int n_min[3],
+                                     const int o_max[3],
                                      int o_shift[3],
                                      int n_shift[3])
 {
@@ -491,6 +491,17 @@ static void manta_set_domain_from_mesh(FluidDomainSettings *fds,
   fds->cell_size[2] /= (float)fds->base_res[2];
 }
 
+static void update_final_gravity(FluidDomainSettings *fds, Scene *scene)
+{
+  if (scene->physics_settings.flag & PHYS_GLOBAL_GRAVITY) {
+    copy_v3_v3(fds->gravity_final, scene->physics_settings.gravity);
+  }
+  else {
+    copy_v3_v3(fds->gravity_final, fds->gravity);
+  }
+  mul_v3_fl(fds->gravity_final, fds->effector_weights->global_gravity);
+}
+
 static bool BKE_fluid_modifier_init(
     FluidModifierData *fmd, Depsgraph *depsgraph, Object *ob, Scene *scene, Mesh *me)
 {
@@ -502,10 +513,7 @@ static bool BKE_fluid_modifier_init(
     /* Set domain dimensions from mesh. */
     manta_set_domain_from_mesh(fds, ob, me, true);
     /* Set domain gravity, use global gravity if enabled. */
-    if (scene->physics_settings.flag & PHYS_GLOBAL_GRAVITY) {
-      copy_v3_v3(fds->gravity, scene->physics_settings.gravity);
-    }
-    mul_v3_fl(fds->gravity, fds->effector_weights->global_gravity);
+    update_final_gravity(fds, scene);
     /* Reset domain values. */
     zero_v3_int(fds->shift);
     zero_v3(fds->shift_f);
@@ -559,7 +567,7 @@ static bool BKE_fluid_modifier_init(
 // forward declaration
 static void manta_smoke_calc_transparency(FluidDomainSettings *fds, ViewLayer *view_layer);
 static float calc_voxel_transp(
-    float *result, float *input, int res[3], int *pixel, float *t_ray, float correct);
+    float *result, const float *input, int res[3], int *pixel, float *t_ray, float correct);
 static void update_distances(int index,
                              float *fesh_distances,
                              BVHTreeFromMesh *tree_data,
@@ -594,8 +602,8 @@ static int get_light(ViewLayer *view_layer, float *light)
 static void clamp_bounds_in_domain(FluidDomainSettings *fds,
                                    int min[3],
                                    int max[3],
-                                   float *min_vel,
-                                   float *max_vel,
+                                   const float *min_vel,
+                                   const float *max_vel,
                                    int margin,
                                    float dt)
 {
@@ -1830,7 +1838,7 @@ static void sample_mesh(FluidFlowSettings *ffs,
                         float *velocity_map,
                         int index,
                         const int base_res[3],
-                        float flow_center[3],
+                        const float flow_center[3],
                         BVHTreeFromMesh *tree_data,
                         const float ray_start[3],
                         const float *vert_vel,
@@ -3328,17 +3336,13 @@ static Mesh *create_liquid_geometry(FluidDomainSettings *fds, Mesh *orgmesh, Obj
     mverts->co[1] = manta_liquid_get_vertex_y_at(fds->fluid, i);
     mverts->co[2] = manta_liquid_get_vertex_z_at(fds->fluid, i);
 
-    /* If reading raw data directly from manta, normalize now (e.g. during replay mode).
-     * If reading data from files from disk, omit this normalization. */
-    if (!manta_liquid_mesh_from_file(fds->fluid)) {
-      // normalize to unit cube around 0
-      mverts->co[0] -= ((float)fds->res[0] * fds->mesh_scale) * 0.5f;
-      mverts->co[1] -= ((float)fds->res[1] * fds->mesh_scale) * 0.5f;
-      mverts->co[2] -= ((float)fds->res[2] * fds->mesh_scale) * 0.5f;
-      mverts->co[0] *= fds->dx / fds->mesh_scale;
-      mverts->co[1] *= fds->dx / fds->mesh_scale;
-      mverts->co[2] *= fds->dx / fds->mesh_scale;
-    }
+    /* Adjust coordinates from Mantaflow to match viewport scaling. */
+    float tmp[3] = {(float)fds->res[0], (float)fds->res[1], (float)fds->res[2]};
+    /* Scale to unit cube around 0. */
+    mul_v3_fl(tmp, fds->mesh_scale * 0.5f);
+    sub_v3_v3(mverts->co, tmp);
+    /* Apply scaling of domain object. */
+    mul_v3_fl(mverts->co, fds->dx / fds->mesh_scale);
 
     mul_v3_v3(mverts->co, co_scale);
     add_v3_v3(mverts->co, co_offset);
@@ -3808,10 +3812,7 @@ static void BKE_fluid_modifier_processDomain(FluidModifierData *fmd,
   fds->time_per_frame = 0;
 
   /* Ensure that gravity is copied over every frame (could be keyframed). */
-  if (scene->physics_settings.flag & PHYS_GLOBAL_GRAVITY) {
-    copy_v3_v3(fds->gravity, scene->physics_settings.gravity);
-    mul_v3_fl(fds->gravity, fds->effector_weights->global_gravity);
-  }
+  update_final_gravity(fds, scene);
 
   int next_frame = scene_framenr + 1;
   int prev_frame = scene_framenr - 1;
@@ -4118,42 +4119,46 @@ static void BKE_fluid_modifier_process(
 struct Mesh *BKE_fluid_modifier_do(
     FluidModifierData *fmd, Depsgraph *depsgraph, Scene *scene, Object *ob, Mesh *me)
 {
-  /* Lock so preview render does not read smoke data while it gets modified. */
-  if ((fmd->type & MOD_FLUID_TYPE_DOMAIN) && fmd->domain) {
-    BLI_rw_mutex_lock(fmd->domain->fluid_mutex, THREAD_LOCK_WRITE);
-  }
-
-  BKE_fluid_modifier_process(fmd, depsgraph, scene, ob, me);
-
-  if ((fmd->type & MOD_FLUID_TYPE_DOMAIN) && fmd->domain) {
-    BLI_rw_mutex_unlock(fmd->domain->fluid_mutex);
-  }
-
   /* Optimization: Do not update viewport during bakes (except in replay mode)
    * Reason: UI is locked and updated liquid / smoke geometry is not visible anyways. */
   bool needs_viewport_update = false;
-  if (fmd->domain) {
-    FluidDomainSettings *fds = fmd->domain;
 
-    /* Always update viewport in cache replay mode. */
-    if (fds->cache_type == FLUID_DOMAIN_CACHE_REPLAY ||
-        fds->flags & FLUID_DOMAIN_USE_ADAPTIVE_DOMAIN) {
-      needs_viewport_update = true;
+  /* Optimization: Only process modifier if object is not being altered. */
+  if (!G.moving) {
+    /* Lock so preview render does not read smoke data while it gets modified. */
+    if ((fmd->type & MOD_FLUID_TYPE_DOMAIN) && fmd->domain) {
+      BLI_rw_mutex_lock(fmd->domain->fluid_mutex, THREAD_LOCK_WRITE);
     }
-    /* In other cache modes, only update the viewport when no bake is going on. */
-    else {
-      bool with_mesh;
-      with_mesh = fds->flags & FLUID_DOMAIN_USE_MESH;
-      bool baking_data, baking_noise, baking_mesh, baking_particles, baking_guide;
-      baking_data = fds->cache_flag & FLUID_DOMAIN_BAKING_DATA;
-      baking_noise = fds->cache_flag & FLUID_DOMAIN_BAKING_NOISE;
-      baking_mesh = fds->cache_flag & FLUID_DOMAIN_BAKING_MESH;
-      baking_particles = fds->cache_flag & FLUID_DOMAIN_BAKING_PARTICLES;
-      baking_guide = fds->cache_flag & FLUID_DOMAIN_BAKING_GUIDE;
 
-      if (with_mesh && !baking_data && !baking_noise && !baking_mesh && !baking_particles &&
-          !baking_guide) {
+    BKE_fluid_modifier_process(fmd, depsgraph, scene, ob, me);
+
+    if ((fmd->type & MOD_FLUID_TYPE_DOMAIN) && fmd->domain) {
+      BLI_rw_mutex_unlock(fmd->domain->fluid_mutex);
+    }
+
+    if (fmd->domain) {
+      FluidDomainSettings *fds = fmd->domain;
+
+      /* Always update viewport in cache replay mode. */
+      if (fds->cache_type == FLUID_DOMAIN_CACHE_REPLAY ||
+          fds->flags & FLUID_DOMAIN_USE_ADAPTIVE_DOMAIN) {
         needs_viewport_update = true;
+      }
+      /* In other cache modes, only update the viewport when no bake is going on. */
+      else {
+        bool with_mesh;
+        with_mesh = fds->flags & FLUID_DOMAIN_USE_MESH;
+        bool baking_data, baking_noise, baking_mesh, baking_particles, baking_guide;
+        baking_data = fds->cache_flag & FLUID_DOMAIN_BAKING_DATA;
+        baking_noise = fds->cache_flag & FLUID_DOMAIN_BAKING_NOISE;
+        baking_mesh = fds->cache_flag & FLUID_DOMAIN_BAKING_MESH;
+        baking_particles = fds->cache_flag & FLUID_DOMAIN_BAKING_PARTICLES;
+        baking_guide = fds->cache_flag & FLUID_DOMAIN_BAKING_GUIDE;
+
+        if (with_mesh && !baking_data && !baking_noise && !baking_mesh && !baking_particles &&
+            !baking_guide) {
+          needs_viewport_update = true;
+        }
       }
     }
   }
@@ -4196,7 +4201,7 @@ struct Mesh *BKE_fluid_modifier_do(
 }
 
 static float calc_voxel_transp(
-    float *result, float *input, int res[3], int *pixel, float *t_ray, float correct)
+    float *result, const float *input, int res[3], int *pixel, float *t_ray, float correct)
 {
   const size_t index = manta_get_index(pixel[0], res[0], pixel[1], res[1], pixel[2]);
 

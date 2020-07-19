@@ -198,7 +198,7 @@ class IMAGE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("uv.select_linked", text = "Linked", icon = "LINKED")
+        layout.menu("IMAGE_MT_select_linked")
         myop = layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED")
         myop.extend = True
         myop.deselect = False
@@ -213,6 +213,16 @@ class IMAGE_MT_select(Menu):
 
         layout.operator("uv.select_more", text="More", icon = "SELECTMORE")
         layout.operator("uv.select_less", text="Less", icon = "SELECTLESS")
+
+
+class IMAGE_MT_select_linked(Menu):
+    bl_label = "Select Linked"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("uv.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("uv.shortest_path_select", text="Shortest Path", icon = "LINKED")
 
 
 class IMAGE_MT_brush(Menu):
@@ -771,15 +781,13 @@ class IMAGE_HT_header(Header):
             )
 
             # Proportional Editing
-
-            kw = {}
-            if tool_settings.use_proportional_edit:
-                kw["icon"] = 'PROP_ON'
-            else:
-                kw["icon"] = 'PROP_OFF'
-
             row = layout.row(align=True)
-            row.prop(tool_settings, "use_proportional_edit", icon_only=True, **kw)
+            row.prop(
+                tool_settings,
+                "use_proportional_edit",
+                icon_only=True,
+                icon='PROP_CON' if tool_settings.use_proportional_connected else 'PROP_ON',
+            )
             sub = row.row(align=True)
            # proportional editing settings
             if tool_settings.use_proportional_edit is True:
@@ -1649,6 +1657,7 @@ classes = (
     IMAGE_MT_select_inverse,
     IMAGE_MT_select_none,
     IMAGE_MT_select,
+    IMAGE_MT_select_linked,
     IMAGE_MT_image,
     IMAGE_MT_image_invert,
     IMAGE_MT_uvs_clear_seam,

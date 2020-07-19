@@ -78,6 +78,28 @@ void GPU_blend_set_func_separate(eGPUBlendFunction src_rgb,
                       gpu_get_gl_blendfunction(dst_alpha));
 }
 
+void GPU_face_culling(eGPUFaceCull culling)
+{
+  if (culling == GPU_CULL_NONE) {
+    glDisable(GL_CULL_FACE);
+  }
+  else {
+    glEnable(GL_CULL_FACE);
+    glCullFace((culling == GPU_CULL_FRONT) ? GL_FRONT : GL_BACK);
+  }
+}
+
+void GPU_front_facing(bool invert)
+{
+  glFrontFace((invert) ? GL_CW : GL_CCW);
+}
+
+void GPU_provoking_vertex(eGPUProvokingVertex vert)
+{
+  glProvokingVertex((vert == GPU_VERTEX_FIRST) ? GL_FIRST_VERTEX_CONVENTION :
+                                                 GL_LAST_VERTEX_CONVENTION);
+}
+
 void GPU_depth_range(float near, float far)
 {
   /* glDepthRangef is only for OpenGL 4.1 or higher */
@@ -146,9 +168,24 @@ void GPU_program_point_size(bool enable)
   }
 }
 
+void GPU_scissor_test(bool enable)
+{
+  if (enable) {
+    glEnable(GL_SCISSOR_TEST);
+  }
+  else {
+    glDisable(GL_SCISSOR_TEST);
+  }
+}
+
 void GPU_scissor(int x, int y, int width, int height)
 {
   glScissor(x, y, width, height);
+}
+
+void GPU_viewport(int x, int y, int width, int height)
+{
+  glViewport(x, y, width, height);
 }
 
 void GPU_scissor_get_f(float coords[4])
@@ -181,18 +218,54 @@ void GPU_finish(void)
   glFinish();
 }
 
-void GPU_logic_op_invert_set(bool enable)
+void GPU_unpack_row_length_set(uint len)
+{
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, len);
+}
+
+void GPU_logic_op_xor_set(bool enable)
 {
   if (enable) {
-    glLogicOp(GL_INVERT);
+    glLogicOp(GL_XOR);
     glEnable(GL_COLOR_LOGIC_OP);
-    glDisable(GL_DITHER);
   }
   else {
-    glLogicOp(GL_COPY);
     glDisable(GL_COLOR_LOGIC_OP);
-    glEnable(GL_DITHER);
   }
+}
+
+void GPU_color_mask(bool r, bool g, bool b, bool a)
+{
+  glColorMask(r, g, b, a);
+}
+
+void GPU_depth_mask(bool depth)
+{
+  glDepthMask(depth);
+}
+
+bool GPU_depth_mask_get(void)
+{
+  GLint mask;
+  glGetIntegerv(GL_DEPTH_WRITEMASK, &mask);
+  return mask == GL_TRUE;
+}
+
+void GPU_stencil_mask(uint stencil)
+{
+  glStencilMask(stencil);
+}
+
+void GPU_clip_distances(int distances_new)
+{
+  static int distances_enabled = 0;
+  for (int i = 0; i < distances_new; i++) {
+    glEnable(GL_CLIP_DISTANCE0 + i);
+  }
+  for (int i = distances_new; i < distances_enabled; i++) {
+    glDisable(GL_CLIP_DISTANCE0 + i);
+  }
+  distances_enabled = distances_new;
 }
 
 /** \name GPU Push/Pop State
@@ -207,7 +280,6 @@ typedef struct {
   uint is_blend : 1;
   uint is_cull_face : 1;
   uint is_depth_test : 1;
-  uint is_dither : 1;
   /* uint is_lighting : 1; */ /* UNUSED */
   uint is_line_smooth : 1;
   uint is_color_logic_op : 1;
@@ -275,7 +347,6 @@ void gpuPushAttr(eGPUAttrMask mask)
 
     Attr.is_cull_face = glIsEnabled(GL_CULL_FACE);
     Attr.is_depth_test = glIsEnabled(GL_DEPTH_TEST);
-    Attr.is_dither = glIsEnabled(GL_DITHER);
     Attr.is_line_smooth = glIsEnabled(GL_LINE_SMOOTH);
     Attr.is_color_logic_op = glIsEnabled(GL_COLOR_LOGIC_OP);
     Attr.is_multisample = glIsEnabled(GL_MULTISAMPLE);
@@ -339,7 +410,6 @@ void gpuPopAttr(void)
 
     restore_mask(GL_CULL_FACE, Attr.is_cull_face);
     restore_mask(GL_DEPTH_TEST, Attr.is_depth_test);
-    restore_mask(GL_DITHER, Attr.is_dither);
     restore_mask(GL_LINE_SMOOTH, Attr.is_line_smooth);
     restore_mask(GL_COLOR_LOGIC_OP, Attr.is_color_logic_op);
     restore_mask(GL_MULTISAMPLE, Attr.is_multisample);
@@ -395,6 +465,9 @@ void GPU_state_init(void)
   glFrontFace(GL_CCW);
   glCullFace(GL_BACK);
   glDisable(GL_CULL_FACE);
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
   /* Is default but better be explicit. */
   glEnable(GL_MULTISAMPLE);

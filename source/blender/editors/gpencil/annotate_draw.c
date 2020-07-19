@@ -53,9 +53,8 @@
 
 #include "WM_api.h"
 
-#include "BIF_glutil.h"
-
 #include "GPU_immediate.h"
+#include "GPU_matrix.h"
 #include "GPU_state.h"
 
 #include "ED_gpencil.h"
@@ -555,16 +554,13 @@ static void annotation_draw_strokes(const bGPDframe *gpf,
     /* check which stroke-drawer to use */
     if (dflag & GP_DRAWDATA_ONLY3D) {
       const int no_xray = (dflag & GP_DRAWDATA_NO_XRAY);
-      int mask_orig = 0;
 
       if (no_xray) {
-        glGetIntegerv(GL_DEPTH_WRITEMASK, &mask_orig);
-        glDepthMask(0);
         GPU_depth_test(true);
 
         /* first arg is normally rv3d->dist, but this isn't
          * available here and seems to work quite well without */
-        bglPolygonOffset(1.0f, 1.0f);
+        GPU_polygon_offset(1.0f, 1.0f);
       }
 
       /* 3D Lines - OpenGL primitives-based */
@@ -578,10 +574,9 @@ static void annotation_draw_strokes(const bGPDframe *gpf,
       }
 
       if (no_xray) {
-        glDepthMask(mask_orig);
         GPU_depth_test(false);
 
-        bglPolygonOffset(0.0, 0.0);
+        GPU_polygon_offset(0.0f, 0.0f);
       }
     }
     else {
@@ -743,12 +738,18 @@ static void annotation_draw_data(
       GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
   GPU_blend(true);
 
+  /* Do not write to depth (avoid self-occlusion). */
+  bool prev_depth_mask = GPU_depth_mask_get();
+  GPU_depth_mask(false);
+
   /* draw! */
   annotation_draw_data_layers(gpd, offsx, offsy, winx, winy, cfra, dflag);
 
   /* turn off alpha blending, then smooth lines */
   GPU_blend(false);        // alpha blending
   GPU_line_smooth(false);  // smooth lines
+
+  GPU_depth_mask(prev_depth_mask);
 }
 
 /* if we have strokes for scenes (3d view)/clips (movie clip editor)

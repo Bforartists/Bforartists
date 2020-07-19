@@ -860,11 +860,13 @@ static void node_shader_buts_tex_sky(uiLayout *layout, bContext *UNUSED(C), Poin
   if (RNA_enum_get(ptr, "sky_type") == SHD_SKY_NISHITA) {
     uiItemR(layout, ptr, "sun_disc", DEFAULT_FLAGS, NULL, 0);
 
+    uiLayout *col;
     if (RNA_boolean_get(ptr, "sun_disc")) {
-      uiItemR(layout, ptr, "sun_size", DEFAULT_FLAGS, NULL, ICON_NONE);
+      col = uiLayoutColumn(layout, true);
+      uiItemR(col, ptr, "sun_size", DEFAULT_FLAGS, NULL, ICON_NONE);
+      uiItemR(col, ptr, "sun_intensity", DEFAULT_FLAGS, NULL, ICON_NONE);
     }
 
-    uiLayout *col;
     col = uiLayoutColumn(layout, true);
     uiItemR(col, ptr, "sun_elevation", DEFAULT_FLAGS, NULL, ICON_NONE);
     uiItemR(col, ptr, "sun_rotation", DEFAULT_FLAGS, NULL, ICON_NONE);
@@ -1013,7 +1015,8 @@ static void node_shader_buts_vertex_color(uiLayout *layout, bContext *C, Pointer
   if (obptr.data && RNA_enum_get(&obptr, "type") == OB_MESH) {
     PointerRNA dataptr = RNA_pointer_get(&obptr, "data");
 
-    if (RNA_collection_length(&dataptr, "sculpt_vertex_colors")) {
+    if (U.experimental.use_sculpt_vertex_colors &&
+        RNA_collection_length(&dataptr, "sculpt_vertex_colors")) {
       uiItemPointerR(
           layout, ptr, "layer_name", &dataptr, "sculpt_vertex_colors", "", ICON_GROUP_VCOL);
     }
