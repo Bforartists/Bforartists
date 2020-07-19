@@ -15,6 +15,8 @@
  */
 
 #include "BLI_dot_export.hh"
+#include "BLI_stack.hh"
+
 #include "FN_multi_function_network.hh"
 
 namespace blender::fn {
@@ -195,6 +197,7 @@ MFInputSocket &MFNetwork::add_output(StringRef name, MFDataType data_type)
 void MFNetwork::relink(MFOutputSocket &old_output, MFOutputSocket &new_output)
 {
   BLI_assert(&old_output != &new_output);
+  BLI_assert(old_output.data_type_ == new_output.data_type_);
   for (MFInputSocket *input : old_output.targets()) {
     input->origin_ = &new_output;
   }
@@ -235,6 +238,43 @@ void MFNetwork::remove(Span<MFNode *> nodes)
   for (MFNode *node : nodes) {
     this->remove(*node);
   }
+}
+
+void MFNetwork::find_dependencies(Span<const MFInputSocket *> sockets,
+                                  VectorSet<const MFOutputSocket *> &r_dummy_sockets,
+                                  VectorSet<const MFInputSocket *> &r_unlinked_inputs) const
+{
+  Set<const MFNode *> visited_nodes;
+  Stack<const MFInputSocket *> sockets_to_check;
+  sockets_to_check.push_multiple(sockets);
+
+  while (!sockets_to_check.is_empty()) {
+    const MFInputSocket &socket = *sockets_to_check.pop();
+    const MFOutputSocket *origin_socket = socket.origin();
+    if (origin_socket == nullptr) {
+      r_unlinked_inputs.add(&socket);
+      continue;
+    }
+
+    const MFNode &origin_node = origin_socket->node();
+
+    if (origin_node.is_dummy()) {
+      r_dummy_sockets.add(origin_socket);
+      continue;
+    }
+
+    if (visited_nodes.add(&origin_node)) {
+      sockets_to_check.push_multiple(origin_node.inputs());
+    }
+  }
+}
+
+bool MFNetwork::have_dummy_or_unlinked_dependencies(Span<const MFInputSocket *> sockets) const
+{
+  VectorSet<const MFOutputSocket *> dummy_sockets;
+  VectorSet<const MFInputSocket *> unlinked_inputs;
+  this->find_dependencies(sockets, dummy_sockets, unlinked_inputs);
+  return dummy_sockets.size() + unlinked_inputs.size() > 0;
 }
 
 std::string MFNetwork::to_dot(Span<const MFNode *> marked_nodes) const

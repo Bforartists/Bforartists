@@ -202,7 +202,29 @@ template<typename Mut1> class CustomMF_SM : public MultiFunction {
   }
 };
 
-bool generic_values_are_equal(const CPPType &type, const void *a, const void *b);
+/**
+ * Generates a multi-function that converts between two types.
+ */
+template<typename From, typename To> class CustomMF_Convert : public MultiFunction {
+ public:
+  CustomMF_Convert()
+  {
+    std::string name = CPPType::get<From>().name() + " to " + CPPType::get<To>().name();
+    MFSignatureBuilder signature = this->get_builder(std::move(name));
+    signature.single_input<From>("Input");
+    signature.single_output<To>("Output");
+  }
+
+  void call(IndexMask mask, MFParams params, MFContext UNUSED(context)) const override
+  {
+    VSpan<From> inputs = params.readonly_single_input<From>(0);
+    MutableSpan<To> outputs = params.uninitialized_single_output<To>(1);
+
+    for (uint i : mask) {
+      new ((void *)&outputs[i]) To(inputs[i]);
+    }
+  }
+};
 
 /**
  * A multi-function that outputs the same value every time. The value is not owned by an instance
@@ -271,12 +293,24 @@ template<typename T> class CustomMF_Constant : public MultiFunction {
     const CustomMF_GenericConstant *other2 = dynamic_cast<const CustomMF_GenericConstant *>(
         &other);
     if (other2 != nullptr) {
-      if (CPPType::get<T>() == other2->type_) {
-        return generic_values_are_equal(other2->type_, (const void *)&value_, other2->value_);
+      const CPPType &type = CPPType::get<T>();
+      if (type == other2->type_) {
+        return type.is_equal((const void *)&value_, other2->value_);
       }
     }
     return false;
   }
+};
+
+class CustomMF_DefaultOutput : public MultiFunction {
+ private:
+  uint output_amount_;
+
+ public:
+  CustomMF_DefaultOutput(StringRef name,
+                         Span<MFDataType> input_types,
+                         Span<MFDataType> output_types);
+  void call(IndexMask mask, MFParams params, MFContext context) const override;
 };
 
 }  // namespace blender::fn

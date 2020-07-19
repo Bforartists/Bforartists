@@ -373,8 +373,7 @@ static void draw_stabilization_border(
 
     /* Exclusive OR allows to get orig value when second operand is 0,
      * and negative of orig value when second operand is 1. */
-    glEnable(GL_COLOR_LOGIC_OP);
-    glLogicOp(GL_XOR);
+    GPU_logic_op_xor_set(true);
 
     GPU_matrix_push();
     GPU_matrix_translate_2f(x, y);
@@ -399,7 +398,7 @@ static void draw_stabilization_border(
 
     GPU_matrix_pop();
 
-    glDisable(GL_COLOR_LOGIC_OP);
+    GPU_logic_op_xor_set(false);
   }
 }
 
@@ -790,15 +789,14 @@ static void draw_marker_areas(SpaceClip *sc,
       immUniform1f("dash_width", 6.0f);
       immUniform1f("dash_factor", 0.5f);
 
-      glEnable(GL_COLOR_LOGIC_OP);
-      glLogicOp(GL_XOR);
+      GPU_logic_op_xor_set(true);
 
       immBegin(GPU_PRIM_LINES, 2);
       immVertex2fv(shdr_pos, pos);
       immVertex2fv(shdr_pos, marker_pos);
       immEnd();
 
-      glDisable(GL_COLOR_LOGIC_OP);
+      GPU_logic_op_xor_set(false);
     }
   }
 
@@ -1203,7 +1201,6 @@ static void draw_plane_marker_image(Scene *scene,
     }
 
     if (display_buffer) {
-      GLuint texid;
       float frame_corners[4][2] = {{0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}};
       float perspective_matrix[3][3];
       float gl_matrix[4][4];
@@ -1220,23 +1217,17 @@ static void draw_plane_marker_image(Scene *scene,
             GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
       }
 
-      glGenTextures(1, (GLuint *)&texid);
-
-      glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, texid);
-
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-      glTexImage2D(GL_TEXTURE_2D,
-                   0,
-                   GL_RGBA8,
-                   ibuf->x,
-                   ibuf->y,
-                   0,
-                   GL_RGBA,
-                   GL_UNSIGNED_BYTE,
-                   display_buffer);
+      GPUTexture *texture = GPU_texture_create_nD(ibuf->x,
+                                                  ibuf->y,
+                                                  0,
+                                                  2,
+                                                  display_buffer,
+                                                  GPU_RGBA8,
+                                                  GPU_DATA_UNSIGNED_BYTE,
+                                                  0,
+                                                  false,
+                                                  NULL);
+      GPU_texture_filter_mode(texture, false);
 
       GPU_matrix_push();
       GPU_matrix_mul(gl_matrix);
@@ -1246,10 +1237,10 @@ static void draw_plane_marker_image(Scene *scene,
       uint texCoord = GPU_vertformat_attr_add(
           imm_format, "texCoord", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-      immBindBuiltinProgram(GPU_SHADER_3D_IMAGE_MODULATE_ALPHA);
+      immBindBuiltinProgram(GPU_SHADER_2D_IMAGE_COLOR);
 
-      immUniform1f("alpha", plane_track->image_opacity);
-      immUniform1i("image", 0);
+      immBindTexture("image", texture);
+      immUniformColor4f(1.0f, 1.0f, 1.0f, plane_track->image_opacity);
 
       immBegin(GPU_PRIM_TRI_FAN, 4);
 
@@ -1271,7 +1262,8 @@ static void draw_plane_marker_image(Scene *scene,
 
       GPU_matrix_pop();
 
-      glBindTexture(GL_TEXTURE_2D, 0);
+      GPU_texture_unbind(texture);
+      GPU_texture_free(texture);
 
       if (transparent) {
         GPU_blend(false);
