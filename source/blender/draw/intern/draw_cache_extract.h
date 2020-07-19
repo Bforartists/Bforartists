@@ -60,6 +60,10 @@ typedef struct DRW_MeshCDMask {
    *  modifiers could remove it. (see T68857) */
   uint32_t edit_uv : 1;
 } DRW_MeshCDMask;
+/* Keep `DRW_MeshCDMask` struct within an `uint64_t`.
+ * bit-wise and atomic operations are used to compare and update the struct.
+ * See `mesh_cd_layers_type_*` functions. */
+BLI_STATIC_ASSERT(sizeof(DRW_MeshCDMask) <= sizeof(uint64_t), "DRW_MeshCDMask exceeds 64 bits")
 
 typedef enum eMRIterType {
   MR_ITER_LOOPTRI = 1 << 0,
@@ -166,8 +170,7 @@ typedef enum DRWBatchFlag {
   MBC_WIRE_EDGES = (1 << 23),
   MBC_WIRE_LOOPS = (1 << 24),
   MBC_WIRE_LOOPS_UVS = (1 << 25),
-  MBC_SURF_PER_MAT = (1 << 26),
-  MBC_SKIN_ROOTS = (1 << 27),
+  MBC_SKIN_ROOTS = (1 << 26),
 } DRWBatchFlag;
 
 #define MBC_EDITUV \

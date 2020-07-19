@@ -88,14 +88,14 @@ void gpu_select_query_begin(
 
   gpuPushAttr(GPU_DEPTH_BUFFER_BIT | GPU_VIEWPORT_BIT | GPU_SCISSOR_BIT);
   /* disable writing to the framebuffer */
-  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  GPU_color_mask(false, false, false, false);
 
   /* In order to save some fill rate we minimize the viewport using rect.
    * We need to get the region of the viewport so that our geometry doesn't
    * get rejected before the depth test. Should probably cull rect against
    * the viewport but this is a rare case I think */
-  glGetFloatv(GL_VIEWPORT, viewport);
-  glViewport(viewport[0], viewport[1], BLI_rcti_size_x(input), BLI_rcti_size_y(input));
+  GPU_viewport_size_get_f(viewport);
+  GPU_viewport(viewport[0], viewport[1], BLI_rcti_size_x(input), BLI_rcti_size_y(input));
 
   /* occlusion queries operates on fragments that pass tests and since we are interested on all
    * objects in the view frustum independently of their order, we need to disable the depth test */
@@ -206,7 +206,7 @@ uint gpu_select_query_end(void)
   MEM_freeN(g_query_state.queries);
   MEM_freeN(g_query_state.id);
   gpuPopAttr();
-  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  GPU_color_mask(true, true, true, true);
 
   return hits;
 }

@@ -191,6 +191,10 @@ class ColorPalettePanel(BrushPanel):
         elif context.vertex_paint_object:
             capabilities = brush.vertex_paint_capabilities
             return capabilities.has_color
+
+        elif context.sculpt_object:
+            capabilities = brush.sculpt_capabilities
+            return capabilities.has_color
         return False
 
     def draw(self, context):
@@ -692,6 +696,10 @@ def brush_settings(layout, context, brush, popover=False):
             col.prop(brush, "density")
             col.prop(brush, "tip_roundness")
             col.prop(brush, "tip_scale_x")
+
+        if brush.sculpt_tool == 'SMEAR':
+            col = layout.column()
+            col.prop(brush, "smear_deform_type")
 
         if brush.sculpt_tool == 'MULTIPLANE_SCRAPE':
             col = layout.column()

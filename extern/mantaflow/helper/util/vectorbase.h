@@ -248,12 +248,14 @@ template<class S> class Vector3D {
  protected:
 };
 
-//! helper to check whether float/double value is non-zero
-inline bool notZero(Real f)
+//! helper to check whether value is non-zero
+template<class S> inline bool notZero(S v)
 {
-  if (std::abs(f) > VECTOR_EPSILON)
-    return true;
-  return false;
+  return (std::abs(v) > VECTOR_EPSILON);
+}
+template<class S> inline bool notZero(Vector3D<S> v)
+{
+  return (std::abs(norm(v)) > VECTOR_EPSILON);
 }
 
 //************************************************************************
@@ -435,6 +437,36 @@ inline Real norm(const int v)
 inline Real normSquare(const int v)
 {
   return square(v);
+}
+
+//! Compute sum of all components, allow use of int, Real too
+template<class S> inline S sum(const S v)
+{
+  return v;
+}
+template<class S> inline S sum(const Vector3D<S> &v)
+{
+  return v.x + v.y + v.z;
+}
+
+//! Get absolute representation of vector, allow use of int, Real too
+inline Real abs(const Real v)
+{
+  return std::fabs(v);
+}
+inline int abs(const int v)
+{
+  return std::abs(v);
+}
+
+template<class S> inline Vector3D<S> abs(const Vector3D<S> &v)
+{
+  Vector3D<S> cp(v.x, v.y, v.z);
+  for (int i = 0; i < 3; ++i) {
+    if (cp[i] < 0)
+      cp[i] *= (-1.0);
+  }
+  return cp;
 }
 
 //! Returns a normalized vector
