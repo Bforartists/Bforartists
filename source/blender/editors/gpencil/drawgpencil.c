@@ -60,9 +60,8 @@
 
 #include "WM_api.h"
 
-#include "BIF_glutil.h"
-
 #include "GPU_immediate.h"
+#include "GPU_matrix.h"
 #include "GPU_state.h"
 
 #include "ED_gpencil.h"
@@ -306,6 +305,10 @@ static void gpencil_draw_strokes(tGPDdraw *tgpw)
 
   GPU_program_point_size(true);
 
+  /* Do not write to depth (avoid self-occlusion). */
+  bool prev_depth_mask = GPU_depth_mask_get();
+  GPU_depth_mask(false);
+
   bGPDstroke *gps_init = (tgpw->gps) ? tgpw->gps : tgpw->t_gpf->strokes.first;
 
   for (bGPDstroke *gps = gps_init; gps; gps = gps->next) {
@@ -343,16 +346,13 @@ static void gpencil_draw_strokes(tGPDdraw *tgpw)
     /* check which stroke-drawer to use */
     if (tgpw->dflag & GP_DRAWDATA_ONLY3D) {
       const int no_xray = (tgpw->dflag & GP_DRAWDATA_NO_XRAY);
-      int mask_orig = 0;
 
       if (no_xray) {
-        glGetIntegerv(GL_DEPTH_WRITEMASK, &mask_orig);
-        glDepthMask(0);
         GPU_depth_test(true);
 
         /* first arg is normally rv3d->dist, but this isn't
          * available here and seems to work quite well without */
-        bglPolygonOffset(1.0f, 1.0f);
+        GPU_polygon_offset(1.0f, 1.0f);
       }
 
       /* 3D Stroke */
@@ -393,10 +393,9 @@ static void gpencil_draw_strokes(tGPDdraw *tgpw)
         }
       }
       if (no_xray) {
-        glDepthMask(mask_orig);
         GPU_depth_test(false);
 
-        bglPolygonOffset(0.0, 0.0);
+        GPU_polygon_offset(0.0f, 0.0f);
       }
     }
     /* if only one stroke, exit from loop */
@@ -405,6 +404,7 @@ static void gpencil_draw_strokes(tGPDdraw *tgpw)
     }
   }
 
+  GPU_depth_mask(prev_depth_mask);
   GPU_program_point_size(false);
 }
 

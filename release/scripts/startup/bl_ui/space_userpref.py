@@ -296,6 +296,22 @@ class USERPREF_PT_interface_temporary_windows(InterfacePanel, CenterAlignMixIn, 
         flow.prop(view, "filebrowser_display_type", text="File Browser")
 
 
+class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
+    bl_label = "Status Bar"
+    bl_parent_id = "USERPREF_PT_interface_editors"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw_centered(self, context, layout):
+        prefs = context.preferences
+        view = prefs.view
+
+        col = layout.column(heading="Show")
+        col.prop(view, "show_statusbar_stats", text="Scene Statistics")
+        col.prop(view, "show_statusbar_memory", text="System Memory")
+        col.prop(view, "show_statusbar_vram", text="Video Memory")
+        col.prop(view, "show_statusbar_version", text="Blender Version")
+
+
 class USERPREF_PT_interface_menus(InterfacePanel, Panel):
     bl_label = "Menus"
     bl_options = {'DEFAULT_CLOSED'}
@@ -1039,7 +1055,7 @@ class USERPREF_PT_theme_bone_color_sets(ThemePanel, CenterAlignMixIn, Panel):
         layout.use_property_split = True
 
         for i, ui in enumerate(theme.bone_color_sets, 1):
-            layout.label(text=iface_(f"Color Set {i:d}"), translate=False)
+            layout.label(text=iface_("Color Set %d") % i, translate=False)
 
             flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
@@ -2249,6 +2265,7 @@ classes = (
     USERPREF_PT_interface_display,
     USERPREF_PT_interface_editors,
     USERPREF_PT_interface_temporary_windows,
+    USERPREF_PT_interface_statusbar,
     USERPREF_PT_interface_translation,
     USERPREF_PT_interface_text,
     USERPREF_PT_interface_menus,

@@ -3853,6 +3853,10 @@ static void write_simulation(BlendWriter *writer, Simulation *simulation, const 
                            layers,
                            CD_MASK_ALL);
 
+          if (layers != NULL && layers != layers_buff) {
+            MEM_freeN(layers);
+          }
+
           write_pointcaches(writer, &particle_state->ptcaches);
           break;
         }

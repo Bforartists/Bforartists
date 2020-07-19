@@ -53,9 +53,9 @@
 #  include "BLI_string_utf8.h"
 #  include "BLI_winstuff.h"
 #  include "utfconv.h"
+#  include <ShObjIdl.h>
 #  include <direct.h>
 #  include <io.h>
-#  include <shobjidl_core.h>
 #  include <stdbool.h>
 #else
 #  include <pwd.h>
@@ -275,25 +275,26 @@ eFileAttributes BLI_file_attributes(const char *path)
     ret |= FILE_ATTR_REPARSE_POINT;
   }
 
-#  endif
+#  else
 
-#  ifdef __linux__
   UNUSED_VARS(path);
 
   /* TODO:
    * If Immutable set FILE_ATTR_READONLY
    * If Archived set FILE_ATTR_ARCHIVE
    */
-
 #  endif
-
   return ret;
 }
 #endif
 
 /* Return alias/shortcut file target. Apple version is defined in storage_apple.mm */
 #ifndef __APPLE__
-bool BLI_file_alias_target(char target[FILE_MAXDIR], const char *filepath)
+bool BLI_file_alias_target(
+    /* This parameter can only be const on non-windows platforms.
+     * NOLINTNEXTLINE: readability-non-const-parameter. */
+    char target[FILE_MAXDIR],
+    const char *filepath)
 {
 #  ifdef WIN32
   if (!BLI_path_extension_check(filepath, ".lnk")) {
@@ -330,9 +331,7 @@ bool BLI_file_alias_target(char target[FILE_MAXDIR], const char *filepath)
   }
 
   return (success && target[0]);
-#  endif
-
-#  ifdef __linux__
+#  else
   UNUSED_VARS(target, filepath);
   /* File-based redirection not supported. */
   return false;

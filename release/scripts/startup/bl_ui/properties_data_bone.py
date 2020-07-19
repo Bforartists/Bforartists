@@ -285,7 +285,7 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
         if bone:
             row = layout.row()
             row.use_property_split = False
-            row.prop(bone, "hide", text="Hide", toggle=0)
+            row.prop(bone, "hide", text = "Hide", toggle = False)
             row.prop_decorator(bone, "hide")
 
 
