@@ -268,15 +268,6 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
             col.prop(itasc, "precision")
             col.prop(itasc, "iterations")
 
-            if simulation:
-                col.prop(itasc, "use_auto_step")
-                sub = layout.column(align=True)
-                if itasc.use_auto_step:
-                    sub.prop(itasc, "step_min", text="Steps Min")
-                    sub.prop(itasc, "step_max", text="Max")
-                else:
-                    sub.prop(itasc, "step_count", text="Steps")
-
             col.prop(itasc, "solver")
             if simulation:
                 col.prop(itasc, "feedback")
@@ -285,6 +276,17 @@ class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
                 col.separator()
                 col.prop(itasc, "damping_max", text="Damping Max", slider=True)
                 col.prop(itasc, "damping_epsilon", text="Damping Epsilon", slider=True)
+                
+            if simulation:
+                col.use_property_split = False
+                col.prop(itasc, "use_auto_step")
+                col.use_property_split = True
+                sub = layout.column(align=True)
+                if itasc.use_auto_step:
+                    sub.prop(itasc, "step_min", text="Steps Min")
+                    sub.prop(itasc, "step_max", text="Max")
+                else:
+                    sub.prop(itasc, "step_count", text="Steps")
 
 
 class DATA_PT_motion_paths(MotionPathButtonsPanel, Panel):
