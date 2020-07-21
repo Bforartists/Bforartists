@@ -429,7 +429,9 @@ class BONE_PT_inverse_kinematics(BoneButtonsPanel, Panel):
         if ob.pose.ik_solver == 'ITASC':
 
             col = layout.column()
+            col.use_property_split = False
             col.prop(pchan, "use_ik_rotation_control", text="Control Rotation")
+            col.use_property_split = True
             col.active = active
 
             col = layout.column()
