@@ -287,9 +287,10 @@ class RenumerateQCDSlots(Operator):
     bl_label = "Renumber QCD Slots"
     bl_description = (
         "Renumber QCD slots.\n"
-        "  * LMB - Renumber (breadth first) starting from the slot designated 1.\n"
-        "  * Ctrl+LMB - Renumber (depth first) starting from the slot designated 1.\n"
-        "  * Alt+LMB - Renumber from the beginning"
+        "  * LMB - Renumber (breadth first) from slot 1.\n"
+        "  * +Ctrl - Linear.\n"
+        "  * +Alt - Reset.\n"
+        "  * +Shift - Constrain to branch"
         )
     bl_idname = "view3d.renumerate_qcd_slots"
     bl_options = {'REGISTER', 'UNDO'}
@@ -299,14 +300,22 @@ class RenumerateQCDSlots(Operator):
 
         modifiers = get_modifiers(event)
 
-        if modifiers == {'alt'}:
-            qcd_slots.renumerate(beginning=True)
+        beginning = False
+        depth_first = False
+        constrain = False
 
-        elif modifiers == {'ctrl'}:
-            qcd_slots.renumerate(depth_first=True)
+        if 'alt' in modifiers:
+            beginning=True
 
-        else:
-            qcd_slots.renumerate()
+        if 'ctrl' in modifiers:
+            depth_first=True
+
+        if 'shift' in modifiers:
+            constrain=True
+
+        qcd_slots.renumerate(beginning=beginning,
+                             depth_first=depth_first,
+                             constrain=constrain)
 
         update_property_group(context)
 

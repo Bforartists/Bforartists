@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-06-02 17:40+0200\n"
@@ -1287,10 +1287,6 @@ msgid "Softbody goal weight"
 msgstr "Cieľová váha mäkkého telesa"
 
 
-msgid "Blendfile Data"
-msgstr "Údaje blend súboru"
-
-
 msgid "Main data structure representing a .blend file and all its data-blocks"
 msgstr "Hlavná údaje štruktúry reprezentujúcej .blend súbor a všetky jeho bloky údajov"
 
@@ -1581,10 +1577,6 @@ msgstr "Textúry"
 
 msgid "Texture data-blocks"
 msgstr "Blok údajov textúr"
-
-
-msgid "Use Autopack"
-msgstr "Použiť auto zbalenie"
 
 
 msgid "Automatically pack all external data into .blend file"
@@ -3535,8 +3527,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Obrázok a nastavenia pre zobrazenie pozadia 3D zobrazenia"
 
 
-msgid "Alpha"
-msgstr "Alfa"
+msgid "Opacity"
+msgstr "Nepriehľadná"
 
 
 msgid "Image opacity to blend the image against the background color"
@@ -4891,6 +4883,10 @@ msgid "Element defining a color at a position in the color ramp"
 msgstr "Prvok definujúci farbu na pozícii vo farebnom spáde"
 
 
+msgid "Alpha"
+msgstr "Alfa"
+
+
 msgid "Set alpha of selected color stop"
 msgstr "Nastaví zarážku alfa vybranej farby"
 
@@ -6144,24 +6140,12 @@ msgid "Constraint position along Z axis"
 msgstr "Obmedzenie polohy pozdĺž osi Z"
 
 
-msgid "Lock X Rot"
-msgstr "Zamknúť X rotáciu"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Obmedzenie rotácie pozdĺž osi X"
 
 
-msgid "Lock Y Rot"
-msgstr "Zamknúť Y rotáciu"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Obmedzenie rotácie pozdĺž osi Y"
-
-
-msgid "Lock Z Rot"
-msgstr "Zamknúť Z rotáciu"
 
 
 msgid "Constraint rotation along Z axis"
@@ -6452,48 +6436,24 @@ msgid "Use the pivot point in every rotation"
 msgstr "Použije otočný bod v každej rotácii"
 
 
-msgid "-X Rot"
-msgstr "Rotácia -X"
-
-
 msgid "Use the pivot point in the negative rotation range around the X-axis"
 msgstr "Použije otočný bod v rozsahu zápornej rotácie okolo osi X"
-
-
-msgid "-Y Rot"
-msgstr "Rotácia -Y"
 
 
 msgid "Use the pivot point in the negative rotation range around the Y-axis"
 msgstr "Použije otočný bod v rozsahu zápornej rotácie okolo osi Y"
 
 
-msgid "-Z Rot"
-msgstr "Rotácia -Z"
-
-
 msgid "Use the pivot point in the negative rotation range around the Z-axis"
 msgstr "Použije otočný bod v rozsahu zápornej rotácie okolo osi Z"
-
-
-msgid "X Rot"
-msgstr "Rotácia X"
 
 
 msgid "Use the pivot point in the positive rotation range around the X-axis"
 msgstr "Použije otočný bod v rozsahu kladnej rotácie okolo osi X"
 
 
-msgid "Y Rot"
-msgstr "Rotácia Y"
-
-
 msgid "Use the pivot point in the positive rotation range around the Y-axis"
 msgstr "Použije otočný bod v rozsahu kladnej rotácie okolo osi Y"
-
-
-msgid "Z Rot"
-msgstr "Rotácia Z"
 
 
 msgid "Use the pivot point in the positive rotation range around the Z-axis"
@@ -7084,12 +7044,8 @@ msgid "The transformation type to use from the target"
 msgstr "Typ transformácie použitej pre cieľ"
 
 
-msgid "Loc"
-msgstr "Poloha"
-
-
-msgid "Rot"
-msgstr "Rotácia"
+msgid "Location"
+msgstr "Pozícia"
 
 
 msgid "Map To"
@@ -7294,10 +7250,6 @@ msgstr "Automatická manipulácia zarážky"
 
 msgid "Vector Handle"
 msgstr "Vektorová manipulácia"
-
-
-msgid "Location"
-msgstr "Pozícia"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -11558,16 +11510,8 @@ msgid "End"
 msgstr "Koniec"
 
 
-msgid "Frame on which the simulation stops"
-msgstr "Snímka, na ktorej sa simulácia zastaví"
-
-
 msgid "Start"
 msgstr "Štart"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Snímka, na ktorej sa simulácia začne"
 
 
 msgid "Select the file format to be used for caching surface data"
@@ -13462,10 +13406,6 @@ msgid "View Map Cache"
 msgstr "Zásobník máp zobrazenia"
 
 
-msgid "Keep the computed view map and avoid re-calculating it if mesh geometry is unchanged"
-msgstr "Udržiava vypočítanú mapu zobrazenia a vyhne sa jej opätovnému výpočtu, ak sa geometria povrchovej siete nezmení"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Snímka pastelky"
 
@@ -13856,10 +13796,6 @@ msgstr "Zoznam vrstiev maskovania"
 
 msgid "Parent inverse transformation matrix"
 msgstr "Inverzia rodičovskej matice transformácie"
-
-
-msgid "Opacity"
-msgstr "Nepriehľadná"
 
 
 msgid "Layer Opacity"
@@ -17173,6 +17109,10 @@ msgstr "Automatické maskovanie topológie"
 
 msgid "Affect only vertices connected to the active vertex under the brush"
 msgstr "Ovplyvňované sú iba vrcholy spojené s aktívnym vrcholom pod štetcom"
+
+
+msgid "Connected Only"
+msgstr "Iba pripojené"
 
 
 msgid "Use Cursor Overlay"
@@ -23743,10 +23683,6 @@ msgid "Show Status Bar"
 msgstr "Zobraziť stavový riadok"
 
 
-msgid "Show status bar"
-msgstr "Zobrazí stavový riadok"
-
-
 msgid "Follow current frame in editors"
 msgstr "Nasleduje aktuálnu snímku v editoroch"
 
@@ -27406,32 +27342,20 @@ msgid "Delta Rotation"
 msgstr "Delta rotácia"
 
 
-msgid "Insert keyframes for additional scaling factor"
-msgstr "Vloží kľúčovú snímku pre ďalší faktor mierky"
-
-
 msgid "Insert a keyframe on each of the location and rotation channels"
 msgstr "Vloží kľúčovú snímku na všetky kanály polohy a rotácie"
-
-
-msgid "LocRot"
-msgstr "Poloha, rotácia"
 
 
 msgid "Insert a keyframe on each of the location and scale channels"
 msgstr "Vloží kľúčovú snímku na všetky kanály polohy a zmeny veľkosti"
 
 
-msgid "LocScale"
-msgstr "Poloha, veľkosť"
-
-
 msgid "Insert a keyframe on each of the rotation and scale channels"
 msgstr "Vloží kľúčovú snímku na všetky kanály rotácie a zmeny veľkosti"
 
 
-msgid "RotScale"
-msgstr "Rotácia, veľkosť"
+msgid "Rotation & Scale"
+msgstr "Rotácia a mierka"
 
 
 msgid "Insert a keyframe on each of the location channels, taking into account effects of constraints and relationships"
@@ -27446,26 +27370,6 @@ msgid "Insert a keyframe on each of the location and rotation channels, taking i
 msgstr "Vloží kľúčovú snímku na všetky kanály polohy a rotácie, berúc do úvahy efekty obmedzení"
 
 
-msgid "Visual LocRot"
-msgstr "Viditeľná poloha, rotácia"
-
-
-msgid "Insert a keyframe on each of the location, rotation and scaling channels, taking into account effects of constraints and relationships"
-msgstr "Vloží kľúčovú snímku na všetky kanály polohy, rotácie a zmeny veľkosti, berúc do úvahy efekty obmedzení"
-
-
-msgid "Visual LocRotScale"
-msgstr "Viditeľná poloha, rotácia, veľkosť"
-
-
-msgid "Insert a keyframe on each of the location and scaling channels, taking into account effects of constraints and relationships"
-msgstr "Vloží kľúčovú snímku na všetky kanály polohy a zmeny veľkosti, berúc do úvahy efekty obmedzení"
-
-
-msgid "Visual LocScale"
-msgstr "Viditeľná poloha, veľkosť"
-
-
 msgid "Insert a keyframe on each of the rotation channels, taking into account effects of constraints and relationships"
 msgstr "Vloží kľúčovú snímku na všetky kanály rotácie, berúc do úvahy efekty obmedzení"
 
@@ -27474,28 +27378,12 @@ msgid "Visual Rotation"
 msgstr "Viditeľná rotácia"
 
 
-msgid "Insert a keyframe on each of the rotation and scaling channels, taking into account effects of constraints and relationships"
-msgstr "Vloží kľúčovú snímku na všetky kanály rotácie a zmeny veľkosti, berúc do úvahy efekty obmedzení"
-
-
-msgid "Visual RotScale"
-msgstr "Viditeľná rotácia, veľkosť"
-
-
 msgid "Insert a keyframe on each of the scale channels, taking into account effects of constraints and relationships"
 msgstr "Vloží kľúčovú snímku na všetky kanály zmeny veľkosti, berúc do úvahy efekty obmedzení"
 
 
-msgid "Visual Scaling"
-msgstr "Viditeľná veľkosť"
-
-
 msgid "Insert a keyframe on each of the location, rotation, and scale channels"
 msgstr "Vloží kľúčovú snímku na všetky kanály polohy, rotácie a zmeny veľkosti"
-
-
-msgid "LocRotScale"
-msgstr "Poloha, rotácia, veľkosť"
 
 
 msgid "Insert a keyframe on each of the location channels"
@@ -27508,10 +27396,6 @@ msgstr "Vloží kľúčovú snímku na všetky kanály rotácie"
 
 msgid "Insert a keyframe on each of the scale channels"
 msgstr "Vloží kľúčovú snímku na všetky kanály zmeny veľkosti"
-
-
-msgid "Scaling"
-msgstr "Zmena mierky"
 
 
 msgid "Insert a keyframe for all properties that are likely to get animated in a character rig (useful when blocking out a shot)"
@@ -29161,8 +29045,16 @@ msgid "Mask Context Menu"
 msgstr "Kontextová ponuka masky"
 
 
+msgid "Select Linked"
+msgstr "Vybrať prepojené"
+
+
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Align"
+msgstr "Zarovnať"
 
 
 msgid "UV Context Menu"
@@ -29175,10 +29067,6 @@ msgstr "Režim výberu UV"
 
 msgid "Show/Hide Faces"
 msgstr "Zobraziť/skryť plôšky"
-
-
-msgid "Weld/Align"
-msgstr "Spojiť/Zarovnať"
 
 
 msgid "Info Context Menu"
@@ -29300,10 +29188,6 @@ msgstr "Vybrať kanál"
 
 msgid "Select Handle"
 msgstr "Vybrať manipulátor"
-
-
-msgid "Select Linked"
-msgstr "Vybrať prepojené"
 
 
 msgid "Strip"
@@ -31134,10 +31018,6 @@ msgstr "Iba deformuje vrcholy v tejto vzdialenosti od stredu efektu (nechá ako 
 
 msgid "Size of projection shape (leave as 0 for auto)"
 msgstr "Veľkosť tvaru projekcie (ponechá 0 pre auto)"
-
-
-msgid "From Radius"
-msgstr "Podľa dosahu"
 
 
 msgid "Use radius as size of projection shape (0 = auto)"
@@ -33043,10 +32923,6 @@ msgstr "Posuv pootočenia pozdĺž jeho osí"
 
 msgid "Merge adjacent vertices (screw offset must be zero)"
 msgstr "Zlúči priľahlé vrcholy (posuv skrutky musí byť nula)"
-
-
-msgid "Calc Order"
-msgstr "Vypočítať poradie"
 
 
 msgid "Calculate the order of edges (needed for meshes, but not curves)"
@@ -42058,22 +41934,6 @@ msgid "Place markers across the whole frame"
 msgstr "Umiestni značky cez celú snímku"
 
 
-msgid "Inside Grease Pencil"
-msgstr "Vnútri pastelky"
-
-
-msgid "Place markers only inside areas outlined with Grease Pencil"
-msgstr "Umiestni značky iba vnútri oblastí načrtnutých pastelkou"
-
-
-msgid "Outside Grease Pencil"
-msgstr "Zvonku pastelky"
-
-
-msgid "Place markers only outside areas outlined with Grease Pencil"
-msgstr "Umiestni značky iba mimo oblastí načrtnutých pastelkou"
-
-
 msgid "Threshold level to consider feature good enough for tracking"
 msgstr "Úroveň prahu na posúdenie funkcie dosť dobré pre snímanie"
 
@@ -43282,6 +43142,10 @@ msgid "Remove constraint from constraint stack"
 msgstr "Odstráni obmedzenia zo zásobníka obmedzení"
 
 
+msgid "Report"
+msgstr "Oznámenie"
+
+
 msgctxt "Operator"
 msgid "Disable and Keep Transform"
 msgstr "Zakázať a zachovať transformáciu"
@@ -43546,10 +43410,6 @@ msgid "Bweight"
 msgstr "VahaOhybu"
 
 
-msgid "Align"
-msgstr "Zarovnať"
-
-
 msgid "Edge Slide"
 msgstr "Posúvať hranu"
 
@@ -43608,11 +43468,6 @@ msgstr "Prispôsobiť priestor textúry"
 
 msgid "Match texture space to object's bounding box"
 msgstr "Prispôsobí priestor textúry na schránku ohraničenia objektu"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Prepočítať kolmice"
 
 
 msgid "Recalculate the direction of selected handles"
@@ -49329,10 +49184,6 @@ msgid "Extend report selection"
 msgstr "Rozšírenie výberu oznámenia"
 
 
-msgid "Report"
-msgstr "Oznámenie"
-
-
 msgid "Index of the report"
 msgstr "Index zostavy"
 
@@ -49656,10 +49507,6 @@ msgstr "Vytvorí novú masku"
 
 msgid "Name of new mask"
 msgstr "Názov novej masky"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "Prepočíta smer vybraných manipulátorov"
 
 
 msgid "Clear the mask's parenting"
@@ -54864,14 +54711,6 @@ msgstr "Vytvoriť prepis knižnice"
 
 msgid "Make a local override of this library linked data-block"
 msgstr "Vytvorí lokálny prepis tejto knižnice prepojením blokov údajov"
-
-
-msgid "Override Object"
-msgstr "Prepísať objekt"
-
-
-msgid "Name of lib-linked/collection object to make an override from"
-msgstr "Názov objektu z prepojenej knižnice/kolekcie na vytvorenie prepisu"
 
 
 msgid "Make linked data local to each object"
@@ -61412,16 +61251,8 @@ msgid "Fade out selected strips"
 msgstr "Vybrané pásy sa zjavujú"
 
 
-msgid "From Playhead"
-msgstr "Od prehrávacej hlavy"
-
-
 msgid "Fade from the time cursor to the end of overlapping sequences"
 msgstr "Vytrácanie od časového kurzora po koniec prekrývajúcich sa sekvencií"
-
-
-msgid "To Playhead"
-msgstr "Po prehrávaciu hlavu"
 
 
 msgid "Fade from the start of sequences under the time cursor to the current frame"
@@ -68281,6 +68112,11 @@ msgstr "Podporuje ľubovoľnú kombináciu uchopenia, rotácie a zmeny veľkosti
 
 
 msgctxt "Operator"
+msgid "Rip Region"
+msgstr "Odtrhnúť oblasť"
+
+
+msgctxt "Operator"
 msgid "Grab"
 msgstr "Uchopenie"
 
@@ -69183,11 +69019,6 @@ msgstr "Vytvoriť uholník"
 msgctxt "Operator"
 msgid "Spin Duplicates"
 msgstr "Pootočiť kópie"
-
-
-msgctxt "Operator"
-msgid "Rip Region"
-msgstr "Odtrhnúť oblasť"
 
 
 msgctxt "Operator"
@@ -70268,6 +70099,14 @@ msgstr "Bez kompresie"
 
 msgid "Cache file path"
 msgstr "Cesta k súboru zásobníka"
+
+
+msgid "Frame on which the simulation stops"
+msgstr "Snímka, na ktorej sa simulácia zastaví"
+
+
+msgid "Frame on which the simulation starts"
+msgstr "Snímka, na ktorej sa simulácia začne"
 
 
 msgid "Cache Step"
@@ -73246,10 +73085,6 @@ msgid "Input Passes"
 msgstr "Vstupné prechody"
 
 
-msgid "Passes handed over to the OptiX denoiser (this can have different effects on the denoised image)"
-msgstr "Prechody vrátené do odšumovača OptiX (to môže mať rozdielne efekty na odšumený obrázok)"
-
-
 msgid "Use only color as input"
 msgstr "Ako vstup používajte iba farbu"
 
@@ -73288,10 +73123,6 @@ msgstr "Pri odstraňovaní pixelov, ktoré nenesú informácie, použije relatí
 
 msgid "Store Denoising Passes"
 msgstr "Uložiť prechody zníženia šumu"
-
-
-msgid "Store the denoising feature passes and the noisy image"
-msgstr "Uloží charakteristiky prechodov zníženia šumu a obrázku šumu"
 
 
 msgid "Denoising Strength"
@@ -75438,14 +75269,6 @@ msgid "Simplify Grease Pencil only during animation playback"
 msgstr "Zjednoduší pastelku iba počas prehrávania animácie"
 
 
-msgid "ShadersFX"
-msgstr "FX shadery"
-
-
-msgid "Display Shader FX"
-msgstr "Zobrazí FX shader"
-
-
 msgid "Layers Tinting"
 msgstr "Vrstvy tónovania"
 
@@ -77514,10 +77337,6 @@ msgstr "Konvertovať pohyblivú čiarku"
 
 msgid "Convert input to float data"
 msgstr "Konvertuje vstup na pohyblivej čiarke"
-
-
-msgid "Use a preview proxy and/or timecode index for this strip"
-msgstr "Použije náhľad náhrady a/alebo index časového kódu pre tento pás"
 
 
 msgid "Reverse Frames"
@@ -84108,10 +83927,6 @@ msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painti
 msgstr "Uistite sa, že každá deformácia kosti skupiny vrcholov pripočíta 1,0 počas maľovania váhy"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Zmení hrany švu prepočítaním rozvinutia UV"
-
-
 msgid "Use Additive Drawing"
 msgstr "Použiť prídavnú kresbu"
 
@@ -84242,10 +84057,6 @@ msgstr "Proporcionálna úprava akcií"
 
 msgid "Proportional editing in action editor"
 msgstr "Proporcionálne úpravy v Editore akcií"
-
-
-msgid "Connected Only"
-msgstr "Iba pripojené"
 
 
 msgid "Proportional Editing using connected geometry only"
@@ -89500,10 +89311,6 @@ msgid "Direct linked library data-block, click to make local, Shift + Click to c
 msgstr "Priamy prepojený blok údajov knižnice, kliknutím vytvoríte lokálny, Shift+klik vytvoríte prepis knižnice"
 
 
-msgid "Direct linked library data-block, click to make local"
-msgstr "Blok údajov priamo prepojenej knižnice, kliknutím vytvoríte lokálnu"
-
-
 msgid "Library override of linked data-block, click to make fully local"
 msgstr "Prepísanie prepojeného bloku údajov z knižnice, kliknutím na ikonu sa stane úplne lokálnym"
 
@@ -91936,10 +91743,6 @@ msgid "Some data failed to reconstruct (see console for details)"
 msgstr "Niektoré údaje sa nepodarilo znova vytvoriť (podrobnosti nájdete na konzole)"
 
 
-msgid "Average re-projection error: %.3f"
-msgstr "Priemerná chyba opätovnej projekcie: %.3f"
-
-
 msgid "File path"
 msgstr "Cesta súboru"
 
@@ -92417,8 +92220,20 @@ msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Nemožno nastaviť absolútnu cestu neuloženého blend súboru"
 
 
-msgid " | Free GPU Mem: %s"
-msgstr " | Voľná pamäť GPU: %s"
+msgid "(Key) "
+msgstr "(klávesa) "
+
+
+msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "Vrcholy:%s/%s | Hrany:%s/%s | Plôšky:%s/%s | Trojuholníky:%s"
+
+
+msgid "Verts:%s/%s | Bones:%s/%s"
+msgstr "Vrcholy:%s/%s | Kosti:%s/%s"
+
+
+msgid "Verts:%s/%s"
+msgstr "Vrcholy:%s/%s"
 
 
 msgid "Sync Length"
@@ -94839,10 +94654,6 @@ msgid "Sequences.new_image: unable to open image file"
 msgstr "Sekvencia - nový obrázok: nedá sa otvoriť súbor s obrázkom"
 
 
-msgid "Sequences.new_movie: unable to open movie file"
-msgstr "Sekvencia - nový obrázok: nedá sa otvoriť súbor s filmom"
-
-
 msgid "Sequences.new_sound: unable to open sound file"
 msgstr "Sekvencia - nový zvuk: nedá sa otvoriť zvukový súbor"
 
@@ -95059,10 +94870,6 @@ msgid "Gizmo group '%s' not found!"
 msgstr "Skupina manipulačného prvku '%s' nebola nájdená!"
 
 
-msgid "Outer"
-msgstr "Vonkajší"
-
-
 msgid "Settings are inside the Physics tab"
 msgstr "Nastavenia sú v záložke Fyzika"
 
@@ -95094,6 +94901,10 @@ msgstr "Postavené bez modifikátora Pretvorenia povrchovej siete"
 
 msgid "Rim"
 msgstr "Lem"
+
+
+msgid "Outer"
+msgstr "Vonkajší"
 
 
 msgid "Aspect X"

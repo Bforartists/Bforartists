@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1351,8 +1351,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Slika i podešavanja prikaza pozadine 3D pogleda"
 
 
-msgid "Alpha"
-msgstr "Alfa"
+msgid "Opacity"
+msgstr "Providnost"
 
 
 msgid "MovieClip"
@@ -1949,6 +1949,10 @@ msgstr "B-kriva"
 
 msgid "Constant"
 msgstr "Konstantno"
+
+
+msgid "Alpha"
+msgstr "Alfa"
 
 
 msgid "Position"
@@ -2624,30 +2628,6 @@ msgid "Always"
 msgstr "Uvek"
 
 
-msgid "-X Rot"
-msgstr "-X okr."
-
-
-msgid "-Y Rot"
-msgstr "-Y okr."
-
-
-msgid "-Z Rot"
-msgstr "-Z okr."
-
-
-msgid "X Rot"
-msgstr "X okr."
-
-
-msgid "Y Rot"
-msgstr "Y okr."
-
-
-msgid "Z Rot"
-msgstr "Z okr."
-
-
 msgid "Use Relative Offset"
 msgstr "Koristi relativno rastojanje"
 
@@ -2784,12 +2764,8 @@ msgid "From Minimum Z"
 msgstr "Od minimalnog Z"
 
 
-msgid "Loc"
-msgstr "Zaključaj"
-
-
-msgid "Rot"
-msgstr "Rot"
+msgid "Location"
+msgstr "Lokacija"
 
 
 msgid "Map To"
@@ -2854,10 +2830,6 @@ msgstr "Automatska ručka"
 
 msgid "Vector Handle"
 msgstr "Ručka vektora"
-
-
-msgid "Location"
-msgstr "Lokacija"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -4429,16 +4401,8 @@ msgid "End"
 msgstr "Kraj"
 
 
-msgid "Frame on which the simulation stops"
-msgstr "Kadar početka simulacije"
-
-
 msgid "Start"
 msgstr "Početak"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Kadar od koga počinje simulacija"
 
 
 msgid "Cell Size"
@@ -4947,10 +4911,6 @@ msgstr "Zaključaj"
 
 msgid "Frame Locked"
 msgstr "Zaključan kadar"
-
-
-msgid "Opacity"
-msgstr "Providnost"
 
 
 msgid "Layer Opacity"
@@ -9100,52 +9060,12 @@ msgid "Delta Rotation"
 msgstr "Delta rotacija"
 
 
-msgid "LocRot"
-msgstr "LokRot"
-
-
-msgid "LocScale"
-msgstr "LokVeličina"
-
-
-msgid "RotScale"
-msgstr "RotVeličina"
-
-
 msgid "Visual Location"
-msgstr "Vizuelna lokacija"
-
-
-msgid "Visual LocRot"
-msgstr "Vizuelna LokRot"
-
-
-msgid "Visual LocRotScale"
-msgstr "Vizuelna LokRot"
-
-
-msgid "Visual LocScale"
 msgstr "Vizuelna lokacija"
 
 
 msgid "Visual Rotation"
 msgstr "Vizuelna rotacija"
-
-
-msgid "Visual RotScale"
-msgstr "Vizuelna rotacija"
-
-
-msgid "Visual Scaling"
-msgstr "Vizuelna lokacija"
-
-
-msgid "LocRotScale"
-msgstr "LokRotVeličina"
-
-
-msgid "Scaling"
-msgstr "Veličina"
 
 
 msgid "Whole Character"
@@ -9550,8 +9470,16 @@ msgid "Material Specials"
 msgstr "Specijalni materijali"
 
 
+msgid "Select Linked"
+msgstr "Izaberi povezano"
+
+
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Align"
+msgstr "Poravnaj"
 
 
 msgid "UV Select Mode"
@@ -9601,10 +9529,6 @@ msgstr "Traka efekta"
 
 msgid "Navigation"
 msgstr "Navigacija"
-
-
-msgid "Select Linked"
-msgstr "Izaberi povezano"
 
 
 msgid "Strip"
@@ -10227,10 +10151,6 @@ msgid "Reversed"
 msgstr "Obrnuto"
 
 
-msgid "From Radius"
-msgstr "Od poluprečnika"
-
-
 msgid "Use Transform"
 msgstr "Koristi transformaciju"
 
@@ -10717,10 +10637,6 @@ msgstr "Osa zavrtanja"
 
 msgid "Render Steps"
 msgstr "Koraka renderinga"
-
-
-msgid "Calc Order"
-msgstr "Računaj redosled"
 
 
 msgid "Calculate the order of edges (needed for meshes, but not curves)"
@@ -14293,6 +14209,10 @@ msgid "Delete Constraint"
 msgstr "Izbriši ograničenje"
 
 
+msgid "Report"
+msgstr "Izveštaj"
+
+
 msgctxt "Operator"
 msgid "Move Constraint Down"
 msgstr "Pomeri ograničenje na dole"
@@ -14384,10 +14304,6 @@ msgid "Shrinkfatten"
 msgstr "SkupiUdebljaj"
 
 
-msgid "Align"
-msgstr "Poravnaj"
-
-
 msgid "Edge Slide"
 msgstr "Klizaj ivicu"
 
@@ -14430,11 +14346,6 @@ msgstr "Kopira materijal na ostale izabrane objekte"
 msgctxt "Operator"
 msgid "Match Texture Space"
 msgstr "Prepoznaj prostor teksture"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Preračunaj normale"
 
 
 msgctxt "Operator"
@@ -16054,10 +15965,6 @@ msgstr "Izaberi izveštaj"
 
 msgid "Select reports by index"
 msgstr "Izaberi izveštaj po indeksu"
-
-
-msgid "Report"
-msgstr "Izveštaj"
 
 
 msgid "Index of the report"
@@ -22591,6 +22498,14 @@ msgid "Cache file path"
 msgstr "Putanja do skladišta"
 
 
+msgid "Frame on which the simulation stops"
+msgstr "Kadar početka simulacije"
+
+
+msgid "Frame on which the simulation starts"
+msgstr "Kadar od koga počinje simulacija"
+
+
 msgid "Cache Step"
 msgstr "Korak ostave"
 
@@ -27702,6 +27617,22 @@ msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Izaber datoteke relativno u odnosu na blend datoteku"
 
 
+msgid "(Key) "
+msgstr "(ključ)"
+
+
+msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "Temena:%s/%s | Ivica:%s/%s | Strana:%s/%s | Trouglova:%s"
+
+
+msgid "Verts:%s/%s | Bones:%s/%s"
+msgstr "Temena:%s/%s | Kostiju:%s/%s"
+
+
+msgid "Verts:%s/%s"
+msgstr "Temena:%s/%s"
+
+
 msgid "Now"
 msgstr "Sad"
 
@@ -28186,10 +28117,6 @@ msgid "ParticleSystem"
 msgstr "SistemČestica"
 
 
-msgid "Outer"
-msgstr "Spoljašnje"
-
-
 msgid "Settings are inside the Physics tab"
 msgstr "Podešavanja su u jezičku fizike"
 
@@ -28213,6 +28140,10 @@ msgstr "Pretvori"
 
 msgid "Rim"
 msgstr "Obod"
+
+
+msgid "Outer"
+msgstr "Spoljašnje"
 
 
 msgid "To"

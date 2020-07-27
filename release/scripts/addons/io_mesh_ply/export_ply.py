@@ -24,8 +24,55 @@ colors, and texture coordinates per face or per vertex.
 """
 
 
-def save_mesh(filepath, mesh, use_normals=True, use_uv_coords=True, use_colors=True):
-    import os
+def _write_binary(fw, ply_verts, ply_faces, mesh_verts):
+    from struct import pack
+
+    # Vertex data
+    # ---------------------------
+
+    for index, normal, uv_coords, color in ply_verts:
+        fw(pack("<3f", *mesh_verts[index].co))
+        if normal is not None:
+            fw(pack("<3f", *normal))
+        if uv_coords is not None:
+            fw(pack("<2f", *uv_coords))
+        if color is not None:
+            fw(pack("<4B", *color))
+
+    # Face data
+    # ---------------------------
+
+    for pf in ply_faces:
+        length = len(pf)
+        fw(pack("<B%dI" % length, length, *pf))
+
+
+def _write_ascii(fw, ply_verts, ply_faces, mesh_verts):
+
+    # Vertex data
+    # ---------------------------
+
+    for index, normal, uv_coords, color in ply_verts:
+        fw(b"%.6f %.6f %.6f" % mesh_verts[index].co[:])
+        if normal is not None:
+            fw(b" %.6f %.6f %.6f" % normal)
+        if uv_coords is not None:
+            fw(b" %.6f %.6f" % uv_coords)
+        if color is not None:
+            fw(b" %u %u %u %u" % color)
+        fw(b"\n")
+
+    # Face data
+    # ---------------------------
+
+    for pf in ply_faces:
+        fw(b"%d" % len(pf))
+        for index in pf:
+            fw(b" %d" % index)
+        fw(b"\n")
+
+
+def save_mesh(filepath, mesh, use_ascii, use_normals, use_uv_coords, use_colors):
     import bpy
 
     def rvec3d(v):
@@ -56,10 +103,11 @@ def save_mesh(filepath, mesh, use_normals=True, use_uv_coords=True, use_colors=T
 
     for i, f in enumerate(mesh.polygons):
 
-        smooth = not use_normals or f.use_smooth
-        if not smooth:
-            normal = f.normal[:]
-            normal_key = rvec3d(normal)
+        if use_normals:
+            smooth = f.use_smooth
+            if not smooth:
+                normal = f.normal[:]
+                normal_key = rvec3d(normal)
 
         if use_uv_coords:
             uv = [
@@ -76,7 +124,7 @@ def save_mesh(filepath, mesh, use_normals=True, use_uv_coords=True, use_colors=T
         for j, vidx in enumerate(f.vertices):
             v = mesh_verts[vidx]
 
-            if smooth:
+            if use_normals and smooth:
                 normal = v.normal[:]
                 normal_key = rvec3d(normal)
 
@@ -104,89 +152,71 @@ def save_mesh(filepath, mesh, use_normals=True, use_uv_coords=True, use_colors=T
 
             pf.append(pf_vidx)
 
-    with open(filepath, "w", encoding="utf-8", newline="\n") as file:
+    with open(filepath, "wb") as file:
         fw = file.write
+        file_format = b"ascii" if use_ascii else b"binary_little_endian"
 
         # Header
         # ---------------------------
 
-        fw("ply\n")
-        fw("format ascii 1.0\n")
-        fw(
-            f"comment Created by Blender {bpy.app.version_string} - "
-            f"www.blender.org, source file: {os.path.basename(bpy.data.filepath)!r}\n"
-        )
+        fw(b"ply\n")
+        fw(b"format %s 1.0\n" % file_format)
+        fw(b"comment Created by Blender %s - www.blender.org\n" % bpy.app.version_string.encode("utf-8"))
 
-        fw(f"element vertex {len(ply_verts)}\n")
+        fw(b"element vertex %d\n" % len(ply_verts))
         fw(
-            "property float x\n"
-            "property float y\n"
-            "property float z\n"
+            b"property float x\n"
+            b"property float y\n"
+            b"property float z\n"
         )
         if use_normals:
             fw(
-                "property float nx\n"
-                "property float ny\n"
-                "property float nz\n"
+                b"property float nx\n"
+                b"property float ny\n"
+                b"property float nz\n"
             )
         if use_uv_coords:
             fw(
-                "property float s\n"
-                "property float t\n"
+                b"property float s\n"
+                b"property float t\n"
             )
         if use_colors:
             fw(
-                "property uchar red\n"
-                "property uchar green\n"
-                "property uchar blue\n"
-                "property uchar alpha\n"
+                b"property uchar red\n"
+                b"property uchar green\n"
+                b"property uchar blue\n"
+                b"property uchar alpha\n"
             )
 
-        fw(f"element face {len(mesh.polygons)}\n")
-        fw("property list uchar uint vertex_indices\n")
+        fw(b"element face %d\n" % len(mesh.polygons))
+        fw(b"property list uchar uint vertex_indices\n")
+        fw(b"end_header\n")
 
-        fw("end_header\n")
-
-        # Vertex data
+        # Geometry
         # ---------------------------
 
-        for i, v in enumerate(ply_verts):
-            fw("%.6f %.6f %.6f" % mesh_verts[v[0]].co[:])
-            if use_normals:
-                fw(" %.6f %.6f %.6f" % v[1])
-            if use_uv_coords:
-                fw(" %.6f %.6f" % v[2])
-            if use_colors:
-                fw(" %u %u %u %u" % v[3])
-            fw("\n")
-
-        # Face data
-        # ---------------------------
-
-        for pf in ply_faces:
-            fw(f"{len(pf)}")
-            for v in pf:
-                fw(f" {v}")
-            fw("\n")
-
-        print(f"Writing {filepath!r} done")
-
-    return {'FINISHED'}
+        if use_ascii:
+            _write_ascii(fw, ply_verts, ply_faces, mesh_verts)
+        else:
+            _write_binary(fw, ply_verts, ply_faces, mesh_verts)
 
 
 def save(
-    operator,
     context,
     filepath="",
+    use_ascii=False,
     use_selection=False,
     use_mesh_modifiers=True,
     use_normals=True,
     use_uv_coords=True,
     use_colors=True,
-    global_matrix=None
+    global_matrix=None,
 ):
+    import time
     import bpy
     import bmesh
+
+    t = time.time()
 
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='OBJECT')
@@ -224,14 +254,16 @@ def save(
     if use_normals:
         mesh.calc_normals()
 
-    ret = save_mesh(
+    save_mesh(
         filepath,
         mesh,
-        use_normals=use_normals,
-        use_uv_coords=use_uv_coords,
-        use_colors=use_colors,
+        use_ascii,
+        use_normals,
+        use_uv_coords,
+        use_colors,
     )
 
     bpy.data.meshes.remove(mesh)
 
-    return ret
+    t_delta = time.time() - t
+    print(f"Export completed {filepath!r} in {t_delta:.3f}")

@@ -33,18 +33,21 @@
 #include "BLI_math_base.h"
 #include "BLI_string.h"
 
+#include "BKE_animsys.h"
 #include "BKE_fcurve_driver.h"
 #include "BKE_global.h"
+
+#include "RNA_access.h"
+#include "RNA_types.h"
 
 #include "bpy_rna_driver.h" /* for pyrna_driver_get_variable_value */
 
 #include "bpy_intern_string.h"
 
 #include "bpy_driver.h"
+#include "bpy_rna.h"
 
 #include "BPY_extern.h"
-
-extern void BPY_update_rna_module(void);
 
 #define USE_RNA_AS_PYOBJECT
 
@@ -111,6 +114,19 @@ int bpy_pydriver_create_dict(void)
     Py_DECREF(mod);
   }
 
+  /* Add math utility functions. */
+  mod = PyImport_ImportModuleLevel("bl_math", NULL, NULL, NULL, 0);
+  if (mod) {
+    static const char *names[] = {"clamp", "lerp", "smoothstep", NULL};
+
+    for (const char **pname = names; *pname; ++pname) {
+      PyObject *func = PyDict_GetItemString(PyModule_GetDict(mod), *pname);
+      PyDict_SetItemString(bpy_pydriver_Dict, *pname, func);
+    }
+
+    Py_DECREF(mod);
+  }
+
 #ifdef USE_BYTECODE_WHITELIST
   /* setup the whitelist */
   {
@@ -130,6 +146,10 @@ int bpy_pydriver_create_dict(void)
         "bool",
         "float",
         "int",
+        /* bl_math */
+        "clamp",
+        "lerp",
+        "smoothstep",
 
         NULL,
     };
@@ -377,17 +397,51 @@ static bool bpy_driver_secure_bytecode_validate(PyObject *expr_code, PyObject *d
 
 #endif /* USE_BYTECODE_WHITELIST */
 
-/* This evals py driver expressions, 'expr' is a Python expression that
- * should evaluate to a float number, which is returned.
+static PyObject *bpy_pydriver_depsgraph_as_pyobject(struct Depsgraph *depsgraph)
+{
+  /* This should never happen, but it's probably better to have None in Python
+   * than a NULL-wrapping Depsgraph py struct. */
+  BLI_assert(depsgraph != NULL);
+  if (depsgraph == NULL) {
+    Py_RETURN_NONE;
+  }
+
+  struct PointerRNA depsgraph_ptr;
+  RNA_pointer_create(NULL, &RNA_Depsgraph, depsgraph, &depsgraph_ptr);
+  return pyrna_struct_CreatePyObject(&depsgraph_ptr);
+}
+
+/**
+ * Adds a variable 'depsgraph' to the driver variables. This can then be used to obtain evaluated
+ * data-blocks, and the current view layer and scene. See T75553.
+ */
+static void bpy_pydriver_namespace_add_depsgraph(PyObject *driver_vars,
+                                                 struct Depsgraph *depsgraph)
+{
+  PyObject *py_depsgraph = bpy_pydriver_depsgraph_as_pyobject(depsgraph);
+  const char *depsgraph_variable_name = "depsgraph";
+
+  if (PyDict_SetItemString(driver_vars, depsgraph_variable_name, py_depsgraph) == -1) {
+    fprintf(stderr,
+            "\tBPY_driver_eval() - couldn't add variable '%s' to namespace\n",
+            depsgraph_variable_name);
+    PyErr_Print();
+    PyErr_Clear();
+  }
+}
+
+/**
+ * This evaluates Python driver expressions, `driver_orig->expression`
+ * is a Python expression that should evaluate to a float number, which is returned.
  *
  * (old)note: PyGILState_Ensure() isn't always called because python can call
  * the bake operator which intern starts a thread which calls scene update
- * which does a driver update. to avoid a deadlock check PyC_IsInterpreterActive()
- * if PyGILState_Ensure() is needed - see [#27683]
+ * which does a driver update. to avoid a deadlock check #PyC_IsInterpreterActive()
+ * if #PyGILState_Ensure() is needed, see T27683.
  *
- * (new)note: checking if python is running is not threadsafe [#28114]
+ * (new)note: checking if python is running is not thread-safe T28114
  * now release the GIL on python operator execution instead, using
- * PyEval_SaveThread() / PyEval_RestoreThread() so we don't lock up blender.
+ * #PyEval_SaveThread() / #PyEval_RestoreThread() so we don't lock up blender.
  *
  * For copy-on-write we always cache expressions and write errors in the
  * original driver, otherwise these would get freed while editing. Due to
@@ -396,7 +450,7 @@ static bool bpy_driver_secure_bytecode_validate(PyObject *expr_code, PyObject *d
 float BPY_driver_exec(struct PathResolvedRNA *anim_rna,
                       ChannelDriver *driver,
                       ChannelDriver *driver_orig,
-                      const float evaltime)
+                      const AnimationEvalContext *anim_eval_context)
 {
   PyObject *driver_vars = NULL;
   PyObject *retval = NULL;
@@ -456,7 +510,7 @@ float BPY_driver_exec(struct PathResolvedRNA *anim_rna,
   }
 
   /* update global namespace */
-  bpy_pydriver_namespace_update_frame(evaltime);
+  bpy_pydriver_namespace_update_frame(anim_eval_context->eval_time);
 
   if (driver_orig->flag & DRIVER_FLAG_USE_SELF) {
     bpy_pydriver_namespace_update_self(anim_rna);
@@ -588,6 +642,8 @@ float BPY_driver_exec(struct PathResolvedRNA *anim_rna,
     }
   }
 #endif /* USE_BYTECODE_WHITELIST */
+
+  bpy_pydriver_namespace_add_depsgraph(driver_vars, anim_eval_context->depsgraph);
 
 #if 0 /* slow, with this can avoid all Py_CompileString above. */
   /* execute expression to get a value */

@@ -93,20 +93,8 @@ static bool isDisabled(const struct Scene *UNUSED(scene),
 
 static const ParticleSimulationState *find_particle_state(SimulationModifierData *smd)
 {
-  if (smd->simulation == nullptr) {
-    return nullptr;
-  }
-  if (smd->data_path == nullptr) {
-    return nullptr;
-  }
-  LISTBASE_FOREACH (const SimulationState *, state, &smd->simulation->states) {
-    if (STREQ(smd->data_path, state->name)) {
-      if (state->type == SIM_STATE_TYPE_PARTICLES) {
-        return (ParticleSimulationState *)state;
-      }
-    }
-  }
-  return nullptr;
+  return (const ParticleSimulationState *)BKE_simulation_state_try_find_by_name_and_type(
+      smd->simulation, smd->data_path, SIM_TYPE_NAME_PARTICLE_SIMULATION);
 }
 
 static PointCloud *modifyPointCloud(ModifierData *md,
@@ -129,7 +117,7 @@ static PointCloud *modifyPointCloud(ModifierData *md,
   memcpy(pointcloud->co, positions, sizeof(float3) * state->tot_particles);
 
   for (int i = 0; i < state->tot_particles; i++) {
-    pointcloud->radius[i] = 0.1f;
+    pointcloud->radius[i] = 0.03f;
   }
 
   return pointcloud;
@@ -142,6 +130,9 @@ static void panel_draw(const bContext *C, Panel *panel)
   PointerRNA ptr;
   PointerRNA ob_ptr;
   modifier_panel_get_property_pointers(C, panel, &ob_ptr, &ptr);
+
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
 
   uiItemR(layout, &ptr, "simulation", 0, NULL, ICON_NONE);
   uiItemR(layout, &ptr, "data_path", 0, NULL, ICON_NONE);

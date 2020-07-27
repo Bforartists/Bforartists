@@ -298,7 +298,7 @@ def addBrilliant(context, self, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
         bpy.context.tool_settings.mesh_select_mode = sel_mode
         bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
 
-        bpy.ops.object.modifier_apply(apply_as='DATA', modifier="EdgeSplit")
+        bpy.ops.object.modifier_apply(modifier="EdgeSplit")
 
     return dobj
 

@@ -267,12 +267,11 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         # if obj_type == 'MESH' or is_empty_image:
         #    col.prop(obj, "show_transparent", text="Transparency") #bfa - we have it in the output
 
-        col = layout.column()
+        sub = layout.column()
         if is_wire:
             # wire objects only use the max. display type for duplis
-            col.active = is_dupli
-
-        col.prop(obj, "display_type", text="Display As")
+            sub.active = is_dupli
+        sub.prop(obj, "display_type", text="Display As")
 
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
             # Only useful with object having faces/materials...
@@ -429,10 +428,10 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         row.prop_decorator(ob, "hide_render")
 
         if context.object.type == 'GPENCIL':
-            
+
             col = layout.column(align = True)
             col.label(text = "Grease Pencil")
-            
+
             row = col.row()
             row.separator()
             row.use_property_split = False

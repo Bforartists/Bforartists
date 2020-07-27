@@ -28,6 +28,7 @@
 #include "BLI_disjoint_set.hh"
 #include "BLI_ghash.h"
 #include "BLI_map.hh"
+#include "BLI_multi_value_map.hh"
 #include "BLI_rand.h"
 #include "BLI_stack.hh"
 
@@ -107,7 +108,7 @@ static Vector<MFNode *> find_nodes_based_on_mask(MFNetwork &network,
                                                  bool mask_value)
 {
   Vector<MFNode *> nodes;
-  for (uint id : id_mask.index_range()) {
+  for (int id : id_mask.index_range()) {
     if (id_mask[id] == mask_value) {
       MFNode *node = network.node_or_null_by_id(id);
       if (node != nullptr) {
@@ -142,13 +143,24 @@ void dead_node_removal(MFNetwork &network)
  *
  * \{ */
 
+static bool function_node_can_be_constant(MFFunctionNode *node)
+{
+  if (node->has_unlinked_inputs()) {
+    return false;
+  }
+  if (node->function().depends_on_context()) {
+    return false;
+  }
+  return true;
+}
+
 static Vector<MFNode *> find_non_constant_nodes(MFNetwork &network)
 {
   Vector<MFNode *> non_constant_nodes;
   non_constant_nodes.extend(network.dummy_nodes());
 
   for (MFFunctionNode *node : network.function_nodes()) {
-    if (!node->all_inputs_have_origin()) {
+    if (!function_node_can_be_constant(node)) {
       non_constant_nodes.append(node);
     }
   }
@@ -212,7 +224,7 @@ static void prepare_params_for_constant_folding(const MultiFunction &network_fn,
                                                 MFParamsBuilder &params,
                                                 ResourceCollector &resources)
 {
-  for (uint param_index : network_fn.param_indices()) {
+  for (int param_index : network_fn.param_indices()) {
     MFParamType param_type = network_fn.param_type(param_index);
     MFDataType data_type = param_type.data_type();
 
@@ -244,7 +256,7 @@ static Array<MFOutputSocket *> add_constant_folded_sockets(const MultiFunction &
 {
   Array<MFOutputSocket *> folded_sockets{network_fn.param_indices().size(), nullptr};
 
-  for (uint param_index : network_fn.param_indices()) {
+  for (int param_index : network_fn.param_indices()) {
     MFParamType param_type = network_fn.param_type(param_index);
     MFDataType data_type = param_type.data_type();
 
@@ -254,7 +266,7 @@ static Array<MFOutputSocket *> add_constant_folded_sockets(const MultiFunction &
       case MFDataType::Single: {
         const CPPType &cpp_type = data_type.single_type();
         GMutableSpan array = params.computed_array(param_index);
-        void *buffer = array.buffer();
+        void *buffer = array.data();
         resources.add(buffer, array.type().destruct_cb(), AT);
 
         constant_fn = &resources.construct<CustomMF_GenericConstant>(AT, cpp_type, buffer);
@@ -302,7 +314,7 @@ void constant_folding(MFNetwork &network, ResourceCollector &resources)
   Array<MFOutputSocket *> folded_sockets = compute_constant_sockets_and_add_folded_nodes(
       network, inputs_to_fold, resources);
 
-  for (uint i : inputs_to_fold.index_range()) {
+  for (int i : inputs_to_fold.index_range()) {
     MFOutputSocket &original_socket = *inputs_to_fold[i]->origin();
     network.relink(original_socket, *folded_sockets[i]);
   }
@@ -317,24 +329,25 @@ void constant_folding(MFNetwork &network, ResourceCollector &resources)
  *
  * \{ */
 
-static uint32_t compute_node_hash(MFFunctionNode &node, RNG *rng, Span<uint32_t> node_hashes)
+static uint64_t compute_node_hash(MFFunctionNode &node, RNG *rng, Span<uint64_t> node_hashes)
 {
-  uint32_t combined_inputs_hash = 394659347u;
+  if (node.function().depends_on_context()) {
+    return BLI_rng_get_uint(rng);
+  }
+  if (node.has_unlinked_inputs()) {
+    return BLI_rng_get_uint(rng);
+  }
+
+  uint64_t combined_inputs_hash = 394659347u;
   for (MFInputSocket *input_socket : node.inputs()) {
     MFOutputSocket *origin_socket = input_socket->origin();
-    uint32_t input_hash;
-    if (origin_socket == nullptr) {
-      input_hash = BLI_rng_get_uint(rng);
-    }
-    else {
-      input_hash = BLI_ghashutil_combine_hash(node_hashes[origin_socket->node().id()],
-                                              origin_socket->index());
-    }
+    uint64_t input_hash = BLI_ghashutil_combine_hash(node_hashes[origin_socket->node().id()],
+                                                     origin_socket->index());
     combined_inputs_hash = BLI_ghashutil_combine_hash(combined_inputs_hash, input_hash);
   }
 
-  uint32_t function_hash = node.function().hash();
-  uint32_t node_hash = BLI_ghashutil_combine_hash(combined_inputs_hash, function_hash);
+  uint64_t function_hash = node.function().hash();
+  uint64_t node_hash = BLI_ghashutil_combine_hash(combined_inputs_hash, function_hash);
   return node_hash;
 }
 
@@ -342,15 +355,15 @@ static uint32_t compute_node_hash(MFFunctionNode &node, RNG *rng, Span<uint32_t>
  * Produces a hash for every node. Two nodes with the same hash should have a high probability of
  * outputting the same values.
  */
-static Array<uint32_t> compute_node_hashes(MFNetwork &network)
+static Array<uint64_t> compute_node_hashes(MFNetwork &network)
 {
   RNG *rng = BLI_rng_new(0);
-  Array<uint32_t> node_hashes(network.node_id_amount());
+  Array<uint64_t> node_hashes(network.node_id_amount());
   Array<bool> node_is_hashed(network.node_id_amount(), false);
 
   /* No dummy nodes are not assumed to output the same values. */
   for (MFDummyNode *node : network.dummy_nodes()) {
-    uint32_t node_hash = BLI_rng_get_uint(rng);
+    uint64_t node_hash = BLI_rng_get_uint(rng);
     node_hashes[node->id()] = node_hash;
     node_is_hashed[node->id()] = true;
   }
@@ -381,7 +394,7 @@ static Array<uint32_t> compute_node_hashes(MFNetwork &network)
       continue;
     }
 
-    uint32_t node_hash = compute_node_hash(node, rng, node_hashes);
+    uint64_t node_hash = compute_node_hash(node, rng, node_hashes);
     node_hashes[node.id()] = node_hash;
     node_is_hashed[node.id()] = true;
     nodes_to_check.pop();
@@ -391,15 +404,15 @@ static Array<uint32_t> compute_node_hashes(MFNetwork &network)
   return node_hashes;
 }
 
-static Map<uint32_t, Vector<MFNode *, 1>> group_nodes_by_hash(MFNetwork &network,
-                                                              Span<uint32_t> node_hashes)
+static MultiValueMap<uint64_t, MFNode *> group_nodes_by_hash(MFNetwork &network,
+                                                             Span<uint64_t> node_hashes)
 {
-  Map<uint32_t, Vector<MFNode *, 1>> nodes_by_hash;
-  for (uint id : IndexRange(network.node_id_amount())) {
+  MultiValueMap<uint64_t, MFNode *> nodes_by_hash;
+  for (int id : IndexRange(network.node_id_amount())) {
     MFNode *node = network.node_or_null_by_id(id);
     if (node != nullptr) {
-      uint32_t node_hash = node_hashes[id];
-      nodes_by_hash.lookup_or_add_default(node_hash).append(node);
+      uint64_t node_hash = node_hashes[id];
+      nodes_by_hash.add(node_hash, node);
     }
   }
   return nodes_by_hash;
@@ -428,7 +441,7 @@ static bool nodes_output_same_values(DisjointSet &cache, const MFNode &a, const 
   if (!functions_are_equal(a.as_function().function(), b.as_function().function())) {
     return false;
   }
-  for (uint i : a.inputs().index_range()) {
+  for (int i : a.inputs().index_range()) {
     const MFOutputSocket *origin_a = a.input(i).origin();
     const MFOutputSocket *origin_b = b.input(i).origin();
     if (origin_a == nullptr || origin_b == nullptr) {
@@ -444,7 +457,7 @@ static bool nodes_output_same_values(DisjointSet &cache, const MFNode &a, const 
 }
 
 static void relink_duplicate_nodes(MFNetwork &network,
-                                   Map<uint32_t, Vector<MFNode *, 1>> &nodes_by_hash)
+                                   MultiValueMap<uint64_t, MFNode *> &nodes_by_hash)
 {
   DisjointSet same_node_cache{network.node_id_amount()};
 
@@ -462,7 +475,7 @@ static void relink_duplicate_nodes(MFNetwork &network,
         /* This is true with fairly high probability, but hash collisions can happen. So we have to
          * check if the node actually output the same values. */
         if (nodes_output_same_values(same_node_cache, deduplicated_node, *node)) {
-          for (uint i : deduplicated_node.outputs().index_range()) {
+          for (int i : deduplicated_node.outputs().index_range()) {
             network.relink(node->output(i), deduplicated_node.output(i));
           }
         }
@@ -481,8 +494,8 @@ static void relink_duplicate_nodes(MFNetwork &network,
  */
 void common_subnetwork_elimination(MFNetwork &network)
 {
-  Array<uint32_t> node_hashes = compute_node_hashes(network);
-  Map<uint32_t, Vector<MFNode *, 1>> nodes_by_hash = group_nodes_by_hash(network, node_hashes);
+  Array<uint64_t> node_hashes = compute_node_hashes(network);
+  MultiValueMap<uint64_t, MFNode *> nodes_by_hash = group_nodes_by_hash(network, node_hashes);
   relink_duplicate_nodes(network, nodes_by_hash);
 }
 

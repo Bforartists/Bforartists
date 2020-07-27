@@ -360,7 +360,7 @@ def cleanupApplyPre(context):
         if temp_mod:
             for m in temp_mod:
                 if m.object:
-                    bpy.ops.object.modifier_apply(apply_as='DATA', modifier=m.name)
+                    bpy.ops.object.modifier_apply(modifier=m.name)
 
                 else:
                     bpy.ops.object.modifier_remove(modifier=m.name)
@@ -411,7 +411,7 @@ def applyLatticeModifier():
 
         if temp_mod:
             for m in temp_mod:
-                bpy.ops.object.modifier_apply(apply_as='DATA', modifier=m.name)
+                bpy.ops.object.modifier_apply(modifier=m.name)
 
     except:
         print("no modifiers")
@@ -529,7 +529,7 @@ def applyLatticeOp(obj, context):
             if temp_mod:
                 for m in temp_mod:
                     if m.object:
-                        bpy.ops.object.modifier_apply(apply_as='DATA', modifier=m.name)
+                        bpy.ops.object.modifier_apply(modifier=m.name)
 
                     else:
                         bpy.ops.object.modifier_remove(modifier=m.name)
