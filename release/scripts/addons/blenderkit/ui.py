@@ -796,14 +796,14 @@ def draw_callback_2d_search(self, context):
                     index = a + ui_props.scrolloffset + b * ui_props.wcount
                     iname = utils.previmg_name(index)
                     img = bpy.data.images.get(iname)
-
-                    w = int(ui_props.thumb_size * img.size[0] / max(img.size[0], img.size[1]))
-                    h = int(ui_props.thumb_size * img.size[1] / max(img.size[0], img.size[1]))
-                    crop = (0, 0, 1, 1)
-                    if img.size[0] > img.size[1]:
-                        offset = (1 - img.size[1] / img.size[0]) / 2
-                        crop = (offset, 0, 1 - offset, 1)
                     if img is not None:
+                        w = int(ui_props.thumb_size * img.size[0] / max(img.size[0], img.size[1]))
+                        h = int(ui_props.thumb_size * img.size[1] / max(img.size[0], img.size[1]))
+                        crop = (0, 0, 1, 1)
+                        if img.size[0] > img.size[1]:
+                            offset = (1 - img.size[1] / img.size[0]) / 2
+                            crop = (offset, 0, 1 - offset, 1)
+
                         ui_bgl.draw_image(x, y, w, w, img, 1,
                                           crop=crop)
                         if index == ui_props.active_index:
@@ -815,7 +815,7 @@ def draw_callback_2d_search(self, context):
                         #               w + 2*highlight_margin, h + 2*highlight_margin , highlight)
 
                     else:
-                        ui_bgl.draw_rect(x, y, w, h, white)
+                        ui_bgl.draw_rect(x, y, ui_props.thumb_size, ui_props.thumb_size, white)
 
                     result = search_results[index]
                     if result['downloaded'] > 0:
@@ -876,7 +876,7 @@ def draw_callback_2d_search(self, context):
                     else:
                         iname = utils.previmg_name(ui_props.active_index)
                         img = bpy.data.images.get(iname)
-                    img.colorspace_settings.name = 'Linear'
+                    img.colorspace_settings.name = 'sRGB'
 
                 gimg = None
                 atip = ''
@@ -1688,10 +1688,12 @@ class AssetBarOperator(bpy.types.Operator):
             if a is not None:
                 sprops = utils.get_search_props()
                 sprops.search_keywords = ''
+                sprops.search_verification_status = 'ALL'
                 utils.p('author:', a)
                 search.search(author_id=a)
             return {'RUNNING_MODAL'}
         if event.type == 'X' and ui_props.active_index > -1:
+            # delete downloaded files for this asset
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
             print(asset_data['name'])

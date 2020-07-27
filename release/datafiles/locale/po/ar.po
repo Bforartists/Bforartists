@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -991,10 +991,6 @@ msgid "Softbody goal weight"
 msgstr "ﻦﻴﻠﻟﺍ ﻢﺴﺠﻟﺍ ﻑﺪﻫ ﻥﺯﻭ"
 
 
-msgid "Blendfile Data"
-msgstr "ﺭﺪﻨﻠﺑ ﻒﻠﻣ ﺕﺎﻧﺎﻴﺑ"
-
-
 msgid "Actions"
 msgstr "ﺙﺍﺪﺣﻷ﻿ﺍ"
 
@@ -1133,10 +1129,6 @@ msgstr "ﺹﻮﺼﻨﻟﺍ"
 
 msgid "Textures"
 msgstr "ﺞﺳﺎﻨﻤﻟﺍ"
-
-
-msgid "Use Autopack"
-msgstr "ﻲﺗﺍﺬﻟﺍ ﻡﺰﺤﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 
 msgid "Automatically pack all external data into .blend file"
@@ -2103,8 +2095,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "ﺩﺎﻌﺑﻷ﻿ﺍ ﻲﺛﻼ﻿ﺜﻟﺍ ﺽﺮﻌﻟﺍ ﺔﺣﺎﺴﻣ ﺔﻴﻔﻠﺧ ﻲﻓ ﺭﺎﻬﻇﻺ﻿ﻟ ﺩﺍﺪﻋﻹ﻿ﺍ ﻭ ﺓﺭﻮﺼﻟﺍ"
 
 
-msgid "Alpha"
-msgstr "ﺎﻔﻟﺍ ﺓﺎﻨﻗ"
+msgid "Opacity"
+msgstr "ﺔﻣﻮﺘﻌﻟﺍ"
 
 
 msgid "Image opacity to blend the image against the background color"
@@ -3085,6 +3077,10 @@ msgstr "ﻥﻮﻠﻟﺍ ﻢﻠﺳ ﺮﺼﻨﻋ"
 
 msgid "Element defining a color at a position in the color ramp"
 msgstr "ﻥﻮﻠﻟﺍ ﻢﻠﺳ ﻰﻠﻋ ﻊﻗﻮﻣ ﻲﻓ ﻥﻮﻠﻟﺍ ﻑﺮﻌﻳ ﻱﺬﻟﺍ ﺮﺼﻨﻌﻟﺍ"
+
+
+msgid "Alpha"
+msgstr "ﺎﻔﻟﺍ ﺓﺎﻨﻗ"
 
 
 msgid "Set alpha of selected color stop"
@@ -4112,24 +4108,12 @@ msgid "Constraint position along Z axis"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻝﻮﻃ ﻰﻠﻋ ﻊﻗﻮﻤﻟﺍ ﺪﻴّﻗ"
 
 
-msgid "Lock X Rot"
-msgstr "X ﻰﻠﻋ ﻥﺍﺭﻭﺪﻟﺍ ﻞﻔﻗ"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "ﻲﻘﻓﻻ﻿ﺍ ﺭﻮﺤﻤﻟﺍ ﻰﻠﻋ ﺔﻛﺮﺤﻟﺍ ﺪﻴﻗ"
 
 
-msgid "Lock Y Rot"
-msgstr "Y ﻰﻠﻋ ﻥﺍﺭﻭﺪﻟﺍ ﻞﻔﻗ"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻰﻠﻋ ﺔﻛﺮﺤﻟﺍ ﺪﻴﻗ"
-
-
-msgid "Lock Z Rot"
-msgstr "Z ﻰﻠﻋ ﻥﺍﺭﻭﺪﻟﺍ ﻞﻔﻗ"
 
 
 msgid "Constraint rotation along Z axis"
@@ -4396,48 +4380,24 @@ msgid "Use the pivot point in every rotation"
 msgstr "ﺮﻳﻭﺪﺗ ﻞﻛ ﻲﻓ ﺮﻳﻭﺪﺘﻟﺍ ﺔﻄﻘﻧ ﻞﻤﻌﺘﺳﺇ"
 
 
-msgid "-X Rot"
-msgstr "X- ﻰﻠﻋ ﻥﺍﺭﻭﺩ"
-
-
 msgid "Use the pivot point in the negative rotation range around the X-axis"
 msgstr "X ﺭﻮﺤﻤﻟﺍ ﻝﻮﺣ ﺐﻟﺎﺴﻟﺍ ﺮﻳﻭﺪﺘﻟﺍ ﻕﺎﻄﻧ ﻲﻓ ﺮﻳﻭﺪﺘﻟﺍ ﺔﻄﻘﻧ ﻞﻤﻌﺘﺳﺇ"
-
-
-msgid "-Y Rot"
-msgstr "Y- ﻰﻠﻋ ﻥﺍﺭﻭﺩ"
 
 
 msgid "Use the pivot point in the negative rotation range around the Y-axis"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻝﻮﺣ ﺐﻟﺎﺴﻟﺍ ﺮﻳﻭﺪﺘﻟﺍ ﻕﺎﻄﻧ ﻲﻓ ﺮﻳﻭﺪﺘﻟﺍ ﺔﻄﻘﻧ ﻞﻤﻌﺘﺳﺇ"
 
 
-msgid "-Z Rot"
-msgstr "Z- ﻰﻠﻋ ﻥﺍﺭﻭﺩ"
-
-
 msgid "Use the pivot point in the negative rotation range around the Z-axis"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻝﻮﺣ ﺐﻟﺎﺴﻟﺍ ﺮﻳﻭﺪﺘﻟﺍ ﻕﺎﻄﻧ ﻲﻓ ﺮﻳﻭﺪﺘﻟﺍ ﺔﻄﻘﻧ ﻞﻤﻌﺘﺳﺇ"
-
-
-msgid "X Rot"
-msgstr "X ﻰﻠﻋ ﻥﺍﺭﻭﺩ"
 
 
 msgid "Use the pivot point in the positive rotation range around the X-axis"
 msgstr "X ﺭﻮﺤﻤﻟﺍ ﻝﻮﺣ ﺐﺟﻮﻤﻟﺍ ﺮﻳﻭﺪﺘﻟﺍ ﻕﺎﻄﻧ ﻲﻓ ﺮﻳﻭﺪﺘﻟﺍ ﺔﻄﻘﻧ ﻞﻤﻌﺘﺳﺇ"
 
 
-msgid "Y Rot"
-msgstr "Y ﻰﻠﻋ ﻥﺍﺭﻭﺩ"
-
-
 msgid "Use the pivot point in the positive rotation range around the Y-axis"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻝﻮﺣ ﺐﺟﻮﻤﻟﺍ ﺮﻳﻭﺪﺘﻟﺍ ﻕﺎﻄﻧ ﻲﻓ ﺮﻳﻭﺪﺘﻟﺍ ﺔﻄﻘﻧ ﻞﻤﻌﺘﺳﺇ"
-
-
-msgid "Z Rot"
-msgstr "Z ﻰﻠﻋ ﻥﺍﺭﻭﺩ"
 
 
 msgid "Use the pivot point in the positive rotation range around the Z-axis"
@@ -4828,12 +4788,8 @@ msgid "The transformation type to use from the target"
 msgstr "ﻑﺪﻬﻟﺍ ﻦﻣ ﻝﺎﻤﻌﺘﺳﻼ﻿ﻟ ﻞﻳﻮﺤﺘﻟﺍ ﻉﻮﻧ"
 
 
-msgid "Loc"
-msgstr "ﻊﻘﻣ"
-
-
-msgid "Rot"
-msgstr "ﻥﺍﺭﻭﺩ"
+msgid "Location"
+msgstr "ﺔﺣﺍﺯﻹ﻿ﺍ"
 
 
 msgid "Map To"
@@ -4958,10 +4914,6 @@ msgstr "ﻲﺋﺎﻘﻠﺗ ﺾﺒﻘﻣ"
 
 msgid "Vector Handle"
 msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﺾﺒﻘﻣ"
-
-
-msgid "Location"
-msgstr "ﺔﺣﺍﺯﻹ﻿ﺍ"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -7813,16 +7765,8 @@ msgid "End"
 msgstr "ﺔﻳﺎﻬﻨﻟﺍ"
 
 
-msgid "Frame on which the simulation stops"
-msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ ﻩﺪﻨﻋ ﻒﻗﻮﺘﺗ ﻱﺬﻟﺍ ﺭﺎﻃﻹ﻿ﺍ"
-
-
 msgid "Start"
 msgstr "ﺃﺪﺑﺇ"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ ﺃﺪﺒﺗ ﻪﻴﻓ ﻱﺬﻟﺍ ﺭﺎﻃﻹ﻿ﺍ"
 
 
 msgid "Clipping"
@@ -8593,10 +8537,6 @@ msgid "View Map Cache"
 msgstr "ﺔﻄﻳﺮﺨﻟﺍ ﻥﺰﺨﻣ ﺮﻬﻇﺍ"
 
 
-msgid "Keep the computed view map and avoid re-calculating it if mesh geometry is unchanged"
-msgstr "ﻢﺴﺠﻤﻟﺍ ﺔﺳﺪﻨﻫ ﺮﻴﻐﺘﺗ ﻢﻟ ﺍﺫﺍ ﺎﻬﺑﺎﺴﺣ ﺓﺩﺎﻋﺇ ﺐﻨﺠﺗ ﻭ ﺔﺑﻮﺴﺤﻤﻟﺍ ﺮﻈﻨﻤﻟﺍ ﺔﻄﻳﺮﺧ ﻖﺑﺍ"
-
-
 msgid "Grease Pencil Frame"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺭﺎﻃﺇ"
 
@@ -8747,10 +8687,6 @@ msgstr "ﻖﻠﻐﻣ ﺭﺎﻃﺇ"
 
 msgid "Lock current frame displayed by layer"
 msgstr "ﺔﻘﺒﻄﻟﺎﺑ ﺽﻭﺮﻌﻤﻟﺍ ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻹ﻿ﺍ ﻖﻠﻏﺇ"
-
-
-msgid "Opacity"
-msgstr "ﺔﻣﻮﺘﻌﻟﺍ"
 
 
 msgid "Layer Opacity"
@@ -17104,44 +17040,16 @@ msgid "Delta Rotation"
 msgstr "ﻕﺭﺎﻔﻟﺍ ﻥﺍﺭﻭﺪﻟﺍ"
 
 
-msgid "LocScale"
-msgstr "ﻢﺠﺤﻟﺍ ﻭ ﻊﻗﻮﻤﻟﺍ"
-
-
-msgid "RotScale"
-msgstr "ﻢﺠﺤﻟﺍ ﻭ ﻥﺍﺭﻭﺪﻟﺍ"
+msgid "Rotation & Scale"
+msgstr "ﻢﻴﺠﺤﺘﻟﺍ ﻭ ﺮﻳﻭﺪﺘﻟﺍ"
 
 
 msgid "Visual Location"
 msgstr "ﻲﺋﺮﻤﻟﺍ ﻊﻗﻮﻤﻟﺍ"
 
 
-msgid "Visual LocRotScale"
-msgstr "ﻢﺠﺤﻟﺍ ﻭ ﻥﺍﺭﻭﺪﻟﺍ ﻭ ﻊﻗﻮﻤﻟﺍ"
-
-
-msgid "Visual LocScale"
-msgstr "ﻲﺋﺮﻤﻟﺍ ﻊﻗﻮﻤﻟﺍ"
-
-
 msgid "Visual Rotation"
 msgstr "ﻲﺋﺮﻤﻟﺍ ﻥﺍﺭﻭﺪﻟﺍ"
-
-
-msgid "Visual RotScale"
-msgstr "ﻲﺋﺮﻤﻟﺍ ﻥﺍﺭﻭﺪﻟﺍ"
-
-
-msgid "Visual Scaling"
-msgstr "ﻲﺋﺮﻤﻟﺍ ﻊﻗﻮﻤﻟﺍ"
-
-
-msgid "LocRotScale"
-msgstr "ﻢﺠﺤﻟﺍ ﻭ ﻥﺍﺭﻭﺪﻟﺍ ﻭ ﻊﻗﻮﻤﻟﺍ"
-
-
-msgid "Scaling"
-msgstr "ﻢﻴﺠﺤﺘﻟﺍ"
 
 
 msgid "Whole Character"
@@ -17698,8 +17606,16 @@ msgid "Material Specials"
 msgstr "ﺕﺎﻣﺎﺨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
 
 
+msgid "Select Linked"
+msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺎﺘﺧﺇ"
+
+
 msgid "UV"
 msgstr "ﺭﻭﺎﺤﻣ"
+
+
+msgid "Align"
+msgstr "ﻱﺫﺎﺣ"
 
 
 msgid "UV Select Mode"
@@ -17708,10 +17624,6 @@ msgstr "UV ـﻟﺍ ﺭﺎﻴﺘﺧﺍ ﻂﻤﻧ"
 
 msgid "Show/Hide Faces"
 msgstr "ﻪﺟﻭﻷ﻿ﺍ ﻲﻔﺧﺇ/ﺮﻬﻇﺍ"
-
-
-msgid "Weld/Align"
-msgstr "ﻱﺫﺎﺣ/ﻢﺤﻟﺍ"
 
 
 msgctxt "Operator"
@@ -17765,10 +17677,6 @@ msgstr "ﺮﻃﻷ﻿ﺍ ﻝﺪﻌﻤﻟ ﺔﻘﺒﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋ
 
 msgid "Navigation"
 msgstr "ﺢﻔّﺼﺗ"
-
-
-msgid "Select Linked"
-msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﺭﺎﺘﺧﺇ"
 
 
 msgid "Strip"
@@ -18519,10 +18427,6 @@ msgid "Target object shape"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻞﻜﺷ ﻑﺪَﻫ"
 
 
-msgid "From Radius"
-msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ ﻦﻣ"
-
-
 msgid "Use Transform"
 msgstr "ﻝﻮﺤﺘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
@@ -19241,10 +19145,6 @@ msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺕﺍﻮﻄﺧ"
 
 msgid "Number of steps in the revolution"
 msgstr "ﺓﺭﻭﺪﻟﺍ ﻲﻓ ﺕﺍﻮﻄﺨﻟﺍ ﺩﺪﻋ"
-
-
-msgid "Calc Order"
-msgstr "ﺏﺎﺴﺤﻟﺍ ﺐﻴﺗﺮﺗ"
 
 
 msgid "Calculate the order of edges (needed for meshes, but not curves)"
@@ -24200,10 +24100,6 @@ msgid "Bweight"
 msgstr "ﻥﺯﻮﻟﺍ"
 
 
-msgid "Align"
-msgstr "ﻱﺫﺎﺣ"
-
-
 msgctxt "Operator"
 msgid "Extrude Curve and Move"
 msgstr "ﻙﺮّﺣ ﻭ ﻰﻨﺤﻨﻤﻟﺍ ﻖﺜﺑﺍ"
@@ -24234,11 +24130,6 @@ msgstr "ﻢﺴﻗ ﺊﺸﻧﺍ"
 msgctxt "Operator"
 msgid "Match Texture Space"
 msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻖﺑﺎﻃ"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "ﺕﺎﻤﻇﺎﻨﻟﺍ ﺏﺎﺴﺣ ﺪﻋﺍ"
 
 
 msgid "Recalculate the direction of selected handles"
@@ -25816,10 +25707,6 @@ msgstr "ﺪﻳﺪﺟ ﻉﺎﻨﻗ ﺊﺸﻧﺃ"
 
 msgid "Name of new mask"
 msgstr "ﺪﻳﺪﺠﻟﺍ ﻉﺎﻨﻘﻟﺍ ﻢﺳﺍ"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺾﺑﺎﻘﻤﻟﺍ ﻩﺎﺠﺗﺇ ﺏﺎﺴﺣ ﺪﻋﺍ"
 
 
 msgid "Clear the mask's parenting"
@@ -33091,6 +32978,14 @@ msgid "Cache file path"
 msgstr "ﻦﻳﺰﺨﺘﻟﺍ ﻒﻠﻣ ﺭﺎﺴﻣ"
 
 
+msgid "Frame on which the simulation stops"
+msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ ﻩﺪﻨﻋ ﻒﻗﻮﺘﺗ ﻱﺬﻟﺍ ﺭﺎﻃﻹ﻿ﺍ"
+
+
+msgid "Frame on which the simulation starts"
+msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ ﺃﺪﺒﺗ ﻪﻴﻓ ﻱﺬﻟﺍ ﺭﺎﻃﻹ﻿ﺍ"
+
+
 msgid "Cache Step"
 msgstr "ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﺕﺍﻮﻄﺧ"
 
@@ -38167,10 +38062,6 @@ msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painti
 msgstr "ﻥﺯﻮﻟﺍ ﻦﻳﻮﻠﺗ ﺪﻨﻋ 1.0 ﻒﻴﻀﺗ ﺔﻋﻮّﻄﻤﻟﺍ ﻡﺎﻈﻌﻟﺍ ﻂﻘﻧ ﺕﺎﻋﻮﻤﺠﻣ ﻞﻛ ﻥﺃ ﻦﻣ ﺪﻛﺄﺗ"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "UV ـﻟﺍ ﻁﺎﻘﺳﺇ ﺏﺎﺴﺣ ﺪﻴﻌﺗ ﻑﺍﻮﺤﻟﺍ ﺓﺯﺭﺩ ﺮﻴﻴﻐﺗ"
-
-
 msgid "Only Endpoints"
 msgstr "ﻂﻘﻨﻟﺍ ﺕﺎﻳﺎﻬﻧ ﻂﻘﻓ"
 
@@ -41306,10 +41197,6 @@ msgid "Property value not in enumeration"
 msgstr "ﺔﻤﺴﻟﺍ ﺔﻤﻴﻗ ﻞﻳﺪﻌﺗ"
 
 
-msgid "Outer"
-msgstr "ﻲﺟﺭﺎﺧ"
-
-
 msgid "Settings are inside the Physics tab"
 msgstr "ﺕﺎﻴﺋﺎﻳﺰﻴﻔﻟﺍ ﺓﻭﺮﻋ ﻞﺧﺍﺩ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
 
@@ -41333,6 +41220,10 @@ msgstr "ﻝﻮّﺣ"
 
 msgid "Rim"
 msgstr "ﺔﻓﺎﺣ"
+
+
+msgid "Outer"
+msgstr "ﻲﺟﺭﺎﺧ"
 
 
 msgid "Aspect X"

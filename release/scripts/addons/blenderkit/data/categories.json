@@ -1,22 +1,5 @@
 [
     {
-        "name": "addon",
-        "slug": "addon",
-        "active": true,
-        "thumbnail": null,
-        "thumbnailWidth": null,
-        "thumbnailHeight": null,
-        "order": 0,
-        "alternateTitle": "addon",
-        "alternateUrl": "",
-        "description": "",
-        "metaKeywords": "",
-        "metaExtra": "",
-        "children": [],
-        "assetCount": 3,
-        "assetCountCumulative": 3
-    },
-    {
         "name": "brush",
         "slug": "brush",
         "active": true,
@@ -97,23 +80,6 @@
                 "children": [],
                 "assetCount": 8,
                 "assetCountCumulative": 8
-            },
-            {
-                "name": "crack",
-                "slug": "crack",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "crack",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
             },
             {
                 "name": "cut",
@@ -269,23 +235,6 @@
                 "assetCountCumulative": 1
             },
             {
-                "name": "nature",
-                "slug": "nature-brush",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "nature",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 1,
-                "assetCountCumulative": 1
-            },
-            {
                 "name": "pattern",
                 "slug": "pattern",
                 "active": true,
@@ -316,42 +265,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 7,
-                "assetCountCumulative": 7
-            },
-            {
-                "name": "rust",
-                "slug": "rust-brush",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "rust",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
-            },
-            {
-                "name": "sculpture",
-                "slug": "sculpture-brush",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "sculpture",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
+                "assetCount": 8,
+                "assetCountCumulative": 8
             },
             {
                 "name": "stitches",
@@ -371,23 +286,6 @@
                 "assetCountCumulative": 12
             },
             {
-                "name": "stone",
-                "slug": "stone-brush",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "stone",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
-            },
-            {
                 "name": "tree",
                 "slug": "tree-brush",
                 "active": true,
@@ -403,23 +301,6 @@
                 "children": [],
                 "assetCount": 4,
                 "assetCountCumulative": 4
-            },
-            {
-                "name": "wood",
-                "slug": "wood-brush",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "wood",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
             }
         ],
         "assetCount": 94,
@@ -453,8 +334,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 2,
-                "assetCountCumulative": 2
+                "assetCount": 36,
+                "assetCountCumulative": 36
             },
             {
                 "name": "asphalt",
@@ -470,8 +351,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 5,
-                "assetCountCumulative": 5
+                "assetCount": 36,
+                "assetCountCumulative": 36
             },
             {
                 "name": "bricks",
@@ -487,8 +368,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 10,
-                "assetCountCumulative": 10
+                "assetCount": 64,
+                "assetCountCumulative": 64
             },
             {
                 "name": "ceramic",
@@ -504,8 +385,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 2,
-                "assetCountCumulative": 2
+                "assetCount": 16,
+                "assetCountCumulative": 16
             },
             {
                 "name": "concrete",
@@ -521,8 +402,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 21,
-                "assetCountCumulative": 21
+                "assetCount": 64,
+                "assetCountCumulative": 64
             },
             {
                 "name": "dirt",
@@ -538,8 +419,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 6,
-                "assetCountCumulative": 6
+                "assetCount": 25,
+                "assetCountCumulative": 25
             },
             {
                 "name": "fabric",
@@ -555,8 +436,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 41,
-                "assetCountCumulative": 41
+                "assetCount": 169,
+                "assetCountCumulative": 169
             },
             {
                 "name": "floor",
@@ -572,8 +453,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 27,
-                "assetCountCumulative": 27
+                "assetCount": 41,
+                "assetCountCumulative": 41
             },
             {
                 "name": "food",
@@ -589,8 +470,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 2,
-                "assetCountCumulative": 2
+                "assetCount": 30,
+                "assetCountCumulative": 30
             },
             {
                 "name": "fx",
@@ -606,8 +487,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 1,
-                "assetCountCumulative": 1
+                "assetCount": 19,
+                "assetCountCumulative": 19
             },
             {
                 "name": "glass",
@@ -623,25 +504,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 9,
-                "assetCountCumulative": 9
-            },
-            {
-                "name": "grass",
-                "slug": "grass",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "grass",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
+                "assetCount": 28,
+                "assetCountCumulative": 28
             },
             {
                 "name": "ground",
@@ -657,25 +521,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 12,
-                "assetCountCumulative": 12
-            },
-            {
-                "name": "human",
-                "slug": "human",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "human",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
+                "assetCount": 70,
+                "assetCountCumulative": 70
             },
             {
                 "name": "ice",
@@ -691,8 +538,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 2,
-                "assetCountCumulative": 2
+                "assetCount": 20,
+                "assetCountCumulative": 20
             },
             {
                 "name": "leather",
@@ -708,8 +555,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 6,
-                "assetCountCumulative": 6
+                "assetCount": 37,
+                "assetCountCumulative": 37
             },
             {
                 "name": "liquid",
@@ -725,25 +572,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 5,
-                "assetCountCumulative": 5
-            },
-            {
-                "name": "marble",
-                "slug": "marble",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "marble",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
+                "assetCount": 7,
+                "assetCountCumulative": 7
             },
             {
                 "name": "metal",
@@ -759,8 +589,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 37,
-                "assetCountCumulative": 37
+                "assetCount": 119,
+                "assetCountCumulative": 119
             },
             {
                 "name": "organic",
@@ -776,8 +606,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 3,
-                "assetCountCumulative": 3
+                "assetCount": 29,
+                "assetCountCumulative": 29
             },
             {
                 "name": "ornaments",
@@ -793,8 +623,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 1,
-                "assetCountCumulative": 1
+                "assetCount": 3,
+                "assetCountCumulative": 3
             },
             {
                 "name": "paper",
@@ -810,8 +640,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 26,
-                "assetCountCumulative": 26
+                "assetCount": 30,
+                "assetCountCumulative": 30
             },
             {
                 "name": "paving",
@@ -827,8 +657,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 9,
-                "assetCountCumulative": 9
+                "assetCount": 32,
+                "assetCountCumulative": 32
             },
             {
                 "name": "plaster",
@@ -844,8 +674,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 8,
-                "assetCountCumulative": 8
+                "assetCount": 34,
+                "assetCountCumulative": 34
             },
             {
                 "name": "plastic",
@@ -861,8 +691,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 3,
-                "assetCountCumulative": 3
+                "assetCount": 25,
+                "assetCountCumulative": 25
             },
             {
                 "name": "rock",
@@ -878,8 +708,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 7,
-                "assetCountCumulative": 7
+                "assetCount": 21,
+                "assetCountCumulative": 21
             },
             {
                 "name": "roofing",
@@ -895,8 +725,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 2,
-                "assetCountCumulative": 2
+                "assetCount": 12,
+                "assetCountCumulative": 12
             },
             {
                 "name": "rubber",
@@ -912,8 +742,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 1,
-                "assetCountCumulative": 1
+                "assetCount": 8,
+                "assetCountCumulative": 8
             },
             {
                 "name": "rust",
@@ -929,8 +759,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 5,
-                "assetCountCumulative": 5
+                "assetCount": 17,
+                "assetCountCumulative": 17
             },
             {
                 "name": "sand",
@@ -946,25 +776,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 2,
-                "assetCountCumulative": 2
-            },
-            {
-                "name": "soil",
-                "slug": "soil",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "soil",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [],
-                "assetCount": 0,
-                "assetCountCumulative": 0
+                "assetCount": 16,
+                "assetCountCumulative": 16
             },
             {
                 "name": "stone",
@@ -980,8 +793,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 11,
-                "assetCountCumulative": 11
+                "assetCount": 117,
+                "assetCountCumulative": 117
             },
             {
                 "name": "tech",
@@ -997,8 +810,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 3,
-                "assetCountCumulative": 3
+                "assetCount": 34,
+                "assetCountCumulative": 34
             },
             {
                 "name": "tiles",
@@ -1014,8 +827,8 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 19,
-                "assetCountCumulative": 19
+                "assetCount": 84,
+                "assetCountCumulative": 84
             },
             {
                 "name": "wood",
@@ -1031,12 +844,12 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [],
-                "assetCount": 42,
-                "assetCountCumulative": 42
+                "assetCount": 121,
+                "assetCountCumulative": 121
             }
         ],
-        "assetCount": 331,
-        "assetCountCumulative": 331
+        "assetCount": 1365,
+        "assetCountCumulative": 1365
     },
     {
         "name": "model",
@@ -1080,97 +893,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "helicopter",
-                        "slug": "helicopter",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "helicopter",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "historic",
-                        "slug": "historic-aircraft",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "historic",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "jet",
-                        "slug": "jet",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "jet",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "part",
-                        "slug": "part-aircraft",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "part",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "private",
-                        "slug": "private",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "private",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 20,
+                        "assetCountCumulative": 20
                     }
                 ],
-                "assetCount": 0,
-                "assetCountCumulative": 0
+                "assetCount": 20,
+                "assetCountCumulative": 20
             },
             {
                 "name": "architecture",
@@ -1200,12 +928,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 4,
-                        "assetCountCumulative": 4
+                        "assetCount": 133,
+                        "assetCountCumulative": 133
                     }
                 ],
-                "assetCount": 5,
-                "assetCountCumulative": 5
+                "assetCount": 137,
+                "assetCountCumulative": 137
             },
             {
                 "name": "art",
@@ -1221,40 +949,6 @@
                 "metaKeywords": "",
                 "metaExtra": "",
                 "children": [
-                    {
-                        "name": "design",
-                        "slug": "design",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "design",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "drawing",
-                        "slug": "drawing",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "drawing",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
                     {
                         "name": "literature",
                         "slug": "literature",
@@ -1286,8 +980,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 8,
-                        "assetCountCumulative": 8
+                        "assetCount": 15,
+                        "assetCountCumulative": 15
                     },
                     {
                         "name": "sculpture",
@@ -1303,8 +997,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 8,
-                        "assetCountCumulative": 8
+                        "assetCount": 15,
+                        "assetCountCumulative": 15
                     },
                     {
                         "name": "supplies",
@@ -1320,12 +1014,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 8,
+                        "assetCountCumulative": 8
                     }
                 ],
-                "assetCount": 26,
-                "assetCountCumulative": 26
+                "assetCount": 49,
+                "assetCountCumulative": 49
             },
             {
                 "name": "character",
@@ -1355,25 +1049,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 4,
-                        "assetCountCumulative": 4
-                    },
-                    {
-                        "name": "child",
-                        "slug": "child",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "child",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 14,
+                        "assetCountCumulative": 14
                     },
                     {
                         "name": "clothing",
@@ -1389,8 +1066,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 4,
-                        "assetCountCumulative": 4
+                        "assetCount": 9,
+                        "assetCountCumulative": 9
                     },
                     {
                         "name": "fantasy",
@@ -1406,8 +1083,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 2,
+                        "assetCountCumulative": 2
                     },
                     {
                         "name": "man",
@@ -1423,42 +1100,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 7,
-                        "assetCountCumulative": 7
-                    },
-                    {
-                        "name": "people",
-                        "slug": "people",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "people",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "sci-fi",
-                        "slug": "sci-fi-character",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "sci-fi",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 13,
+                        "assetCountCumulative": 13
                     },
                     {
                         "name": "woman",
@@ -1478,8 +1121,8 @@
                         "assetCountCumulative": 7
                     }
                 ],
-                "assetCount": 22,
-                "assetCountCumulative": 22
+                "assetCount": 46,
+                "assetCountCumulative": 46
             },
             {
                 "name": "exterior",
@@ -1509,8 +1152,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 4,
-                        "assetCountCumulative": 4
+                        "assetCount": 24,
+                        "assetCountCumulative": 24
                     },
                     {
                         "name": "cityspace",
@@ -1526,76 +1169,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 6,
-                        "assetCountCumulative": 6
-                    },
-                    {
-                        "name": "historic",
-                        "slug": "historic",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "historic",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "house",
-                        "slug": "house",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "house",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "industrial",
-                        "slug": "industrial-exterior",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "industrial",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "landmark",
-                        "slug": "landmark",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "landmark",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 24,
+                        "assetCountCumulative": 24
                     },
                     {
                         "name": "landscape",
@@ -1611,8 +1186,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 12,
-                        "assetCountCumulative": 12
+                        "assetCount": 35,
+                        "assetCountCumulative": 35
                     },
                     {
                         "name": "public",
@@ -1628,42 +1203,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 4,
-                        "assetCountCumulative": 4
-                    },
-                    {
-                        "name": "sci-fi",
-                        "slug": "sci-fi",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "sci-fi",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "stadium",
-                        "slug": "stadium",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "stadium",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 12,
+                        "assetCountCumulative": 12
                     },
                     {
                         "name": "street",
@@ -1679,12 +1220,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 35,
+                        "assetCountCumulative": 35
                     }
                 ],
-                "assetCount": 27,
-                "assetCountCumulative": 27
+                "assetCount": 132,
+                "assetCountCumulative": 132
             },
             {
                 "name": "food & drink",
@@ -1714,8 +1255,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 10,
-                        "assetCountCumulative": 10
+                        "assetCount": 33,
+                        "assetCountCumulative": 33
                     },
                     {
                         "name": "drink",
@@ -1731,8 +1272,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 14,
-                        "assetCountCumulative": 14
+                        "assetCount": 27,
+                        "assetCountCumulative": 27
                     },
                     {
                         "name": "drugs",
@@ -1748,8 +1289,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 3,
-                        "assetCountCumulative": 3
+                        "assetCount": 7,
+                        "assetCountCumulative": 7
                     },
                     {
                         "name": "food",
@@ -1765,12 +1306,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 8,
-                        "assetCountCumulative": 8
+                        "assetCount": 47,
+                        "assetCountCumulative": 47
                     }
                 ],
-                "assetCount": 35,
-                "assetCountCumulative": 35
+                "assetCount": 117,
+                "assetCountCumulative": 117
             },
             {
                 "name": "furniture",
@@ -1800,8 +1341,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 3,
-                        "assetCountCumulative": 3
+                        "assetCount": 21,
+                        "assetCountCumulative": 21
                     },
                     {
                         "name": "carpet",
@@ -1817,8 +1358,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 7,
-                        "assetCountCumulative": 7
+                        "assetCount": 10,
+                        "assetCountCumulative": 10
                     },
                     {
                         "name": "desk",
@@ -1834,8 +1375,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 5,
-                        "assetCountCumulative": 5
+                        "assetCount": 21,
+                        "assetCountCumulative": 21
                     },
                     {
                         "name": "fireplace",
@@ -1851,8 +1392,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 8,
+                        "assetCountCumulative": 8
                     },
                     {
                         "name": "lighting",
@@ -1868,8 +1409,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 19,
-                        "assetCountCumulative": 19
+                        "assetCount": 106,
+                        "assetCountCumulative": 106
                     },
                     {
                         "name": "seating",
@@ -1885,8 +1426,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 36,
-                        "assetCountCumulative": 36
+                        "assetCount": 179,
+                        "assetCountCumulative": 179
                     },
                     {
                         "name": "shelving",
@@ -1902,8 +1443,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 17,
-                        "assetCountCumulative": 17
+                        "assetCount": 38,
+                        "assetCountCumulative": 38
                     },
                     {
                         "name": "sofa",
@@ -1919,8 +1460,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 9,
-                        "assetCountCumulative": 9
+                        "assetCount": 57,
+                        "assetCountCumulative": 57
                     },
                     {
                         "name": "storage",
@@ -1936,8 +1477,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 24,
-                        "assetCountCumulative": 24
+                        "assetCount": 65,
+                        "assetCountCumulative": 65
                     },
                     {
                         "name": "table",
@@ -1953,12 +1494,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 36,
-                        "assetCountCumulative": 36
+                        "assetCount": 106,
+                        "assetCountCumulative": 106
                     }
                 ],
-                "assetCount": 157,
-                "assetCountCumulative": 157
+                "assetCount": 611,
+                "assetCountCumulative": 611
             },
             {
                 "name": "industrial",
@@ -1975,57 +1516,6 @@
                 "metaExtra": "",
                 "children": [
                     {
-                        "name": "agriculture",
-                        "slug": "agriculture",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "agriculture",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "communication",
-                        "slug": "communication",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "communication",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "construction",
-                        "slug": "construction",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "construction",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
                         "name": "container",
                         "slug": "container-industrial",
                         "active": true,
@@ -2039,25 +1529,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 11,
-                        "assetCountCumulative": 11
-                    },
-                    {
-                        "name": "machine",
-                        "slug": "machine",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "machine",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 48,
+                        "assetCountCumulative": 48
                     },
                     {
                         "name": "tool",
@@ -2073,29 +1546,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 5,
-                        "assetCountCumulative": 5
-                    },
-                    {
-                        "name": "utility",
-                        "slug": "utility-industrial",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "part",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 29,
+                        "assetCountCumulative": 29
                     }
                 ],
-                "assetCount": 18,
-                "assetCountCumulative": 18
+                "assetCount": 85,
+                "assetCountCumulative": 85
             },
             {
                 "name": "interior",
@@ -2125,8 +1581,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 24,
-                        "assetCountCumulative": 24
+                        "assetCount": 96,
+                        "assetCountCumulative": 96
                     },
                     {
                         "name": "bedroom",
@@ -2142,8 +1598,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 14,
-                        "assetCountCumulative": 14
+                        "assetCount": 64,
+                        "assetCountCumulative": 64
                     },
                     {
                         "name": "decoration",
@@ -2159,8 +1615,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 71,
-                        "assetCountCumulative": 71
+                        "assetCount": 291,
+                        "assetCountCumulative": 291
                     },
                     {
                         "name": "hall",
@@ -2176,8 +1632,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 2,
-                        "assetCountCumulative": 2
+                        "assetCount": 8,
+                        "assetCountCumulative": 8
                     },
                     {
                         "name": "kids room",
@@ -2193,8 +1649,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 9,
-                        "assetCountCumulative": 9
+                        "assetCount": 42,
+                        "assetCountCumulative": 42
                     },
                     {
                         "name": "kitchen",
@@ -2210,8 +1666,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 69,
-                        "assetCountCumulative": 69
+                        "assetCount": 181,
+                        "assetCountCumulative": 181
                     },
                     {
                         "name": "living room",
@@ -2227,8 +1683,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 17,
-                        "assetCountCumulative": 17
+                        "assetCount": 127,
+                        "assetCountCumulative": 127
                     },
                     {
                         "name": "office",
@@ -2244,8 +1700,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 13,
-                        "assetCountCumulative": 13
+                        "assetCount": 48,
+                        "assetCountCumulative": 48
                     },
                     {
                         "name": "utility",
@@ -2261,12 +1717,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 34,
-                        "assetCountCumulative": 34
+                        "assetCount": 74,
+                        "assetCountCumulative": 74
                     }
                 ],
-                "assetCount": 253,
-                "assetCountCumulative": 253
+                "assetCount": 932,
+                "assetCountCumulative": 932
             },
             {
                 "name": "military",
@@ -2283,23 +1739,6 @@
                 "metaExtra": "",
                 "children": [
                     {
-                        "name": "air",
-                        "slug": "air",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "air",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
                         "name": "equipment",
                         "slug": "equipment",
                         "active": true,
@@ -2313,25 +1752,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "ground",
-                        "slug": "ground",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "ground",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 3,
+                        "assetCountCumulative": 3
                     },
                     {
                         "name": "historic",
@@ -2347,25 +1769,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "naval",
-                        "slug": "naval",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "naval",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 6,
+                        "assetCountCumulative": 6
                     },
                     {
                         "name": "weapon",
@@ -2381,12 +1786,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 3,
-                        "assetCountCumulative": 3
+                        "assetCount": 29,
+                        "assetCountCumulative": 29
                     }
                 ],
-                "assetCount": 3,
-                "assetCountCumulative": 3
+                "assetCount": 40,
+                "assetCountCumulative": 40
             },
             {
                 "name": "music",
@@ -2416,63 +1821,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
-                    },
-                    {
-                        "name": "instruments",
-                        "slug": "instruments",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "instruments",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "stage",
-                        "slug": "stage",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "stage",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "studio",
-                        "slug": "studio",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "studio",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 13,
+                        "assetCountCumulative": 13
                     }
                 ],
-                "assetCount": 2,
-                "assetCountCumulative": 2
+                "assetCount": 13,
+                "assetCountCumulative": 13
             },
             {
                 "name": "nature",
@@ -2502,8 +1856,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 3,
-                        "assetCountCumulative": 3
+                        "assetCount": 7,
+                        "assetCountCumulative": 7
                     },
                     {
                         "name": "atmosphere",
@@ -2519,8 +1873,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 2,
+                        "assetCountCumulative": 2
                     },
                     {
                         "name": "landscape",
@@ -2536,8 +1890,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 9,
-                        "assetCountCumulative": 9
+                        "assetCount": 35,
+                        "assetCountCumulative": 35
                     },
                     {
                         "name": "plant",
@@ -2553,8 +1907,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 15,
-                        "assetCountCumulative": 15
+                        "assetCount": 48,
+                        "assetCountCumulative": 48
                     },
                     {
                         "name": "tree",
@@ -2570,29 +1924,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 14,
-                        "assetCountCumulative": 14
-                    },
-                    {
-                        "name": "weather",
-                        "slug": "weather",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "weather",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 47,
+                        "assetCountCumulative": 47
                     }
                 ],
-                "assetCount": 41,
-                "assetCountCumulative": 41
+                "assetCount": 141,
+                "assetCountCumulative": 141
             },
             {
                 "name": "space",
@@ -2609,57 +1946,6 @@
                 "metaExtra": "",
                 "children": [
                     {
-                        "name": "astronomy",
-                        "slug": "astronomy",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "astronomy",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "planets",
-                        "slug": "planets",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "planets",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "sci-fi",
-                        "slug": "sci-fi-space",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "sci-fi",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
                         "name": "spacecraft",
                         "slug": "spacecraft",
                         "active": true,
@@ -2673,12 +1959,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 9,
+                        "assetCountCumulative": 9
                     }
                 ],
-                "assetCount": 1,
-                "assetCountCumulative": 1
+                "assetCount": 10,
+                "assetCountCumulative": 10
             },
             {
                 "name": "sports",
@@ -2695,23 +1981,6 @@
                 "metaExtra": "",
                 "children": [
                     {
-                        "name": "animal",
-                        "slug": "animal",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "animal",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
                         "name": "exercise",
                         "slug": "exercise",
                         "active": true,
@@ -2725,8 +1994,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 12,
+                        "assetCountCumulative": 12
                     },
                     {
                         "name": "extreme",
@@ -2742,8 +2011,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 4,
+                        "assetCountCumulative": 4
                     },
                     {
                         "name": "individual",
@@ -2759,8 +2028,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 5,
+                        "assetCountCumulative": 5
                     },
                     {
                         "name": "outdoor",
@@ -2776,8 +2045,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 4,
+                        "assetCountCumulative": 4
                     },
                     {
                         "name": "team",
@@ -2793,12 +2062,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 3,
-                        "assetCountCumulative": 3
+                        "assetCount": 6,
+                        "assetCountCumulative": 6
                     }
                 ],
-                "assetCount": 7,
-                "assetCountCumulative": 7
+                "assetCount": 31,
+                "assetCountCumulative": 31
             },
             {
                 "name": "technology",
@@ -2815,23 +2084,6 @@
                 "metaExtra": "",
                 "children": [
                     {
-                        "name": "ai",
-                        "slug": "ai",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "ai",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
                         "name": "audio",
                         "slug": "audio",
                         "active": true,
@@ -2845,8 +2097,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
+                        "assetCount": 16,
+                        "assetCountCumulative": 16
                     },
                     {
                         "name": "computer",
@@ -2862,25 +2114,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 2,
-                        "assetCountCumulative": 2
-                    },
-                    {
-                        "name": "medical",
-                        "slug": "medical",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "medical",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 102,
+                        "assetCountCumulative": 102
                     },
                     {
                         "name": "phone",
@@ -2896,8 +2131,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 2,
-                        "assetCountCumulative": 2
+                        "assetCount": 8,
+                        "assetCountCumulative": 8
                     },
                     {
                         "name": "photography",
@@ -2913,46 +2148,12 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
-                    },
-                    {
-                        "name": "science",
-                        "slug": "science",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "science",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "video",
-                        "slug": "video",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "video",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 6,
+                        "assetCountCumulative": 6
                     }
                 ],
-                "assetCount": 6,
-                "assetCountCumulative": 6
+                "assetCount": 138,
+                "assetCountCumulative": 138
             },
             {
                 "name": "vehicle",
@@ -2969,40 +2170,6 @@
                 "metaExtra": "",
                 "children": [
                     {
-                        "name": "bicycle",
-                        "slug": "bicycle",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "bicycle",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "bus",
-                        "slug": "bus",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "bus",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
                         "name": "car",
                         "slug": "car",
                         "active": true,
@@ -3016,25 +2183,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 9,
-                        "assetCountCumulative": 9
-                    },
-                    {
-                        "name": "historic",
-                        "slug": "historic-vehicle",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "historic",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 43,
+                        "assetCountCumulative": 43
                     },
                     {
                         "name": "industrial",
@@ -3050,25 +2200,8 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 1,
-                        "assetCountCumulative": 1
-                    },
-                    {
-                        "name": "motorcycle",
-                        "slug": "motorcycle",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "motorcycle",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCount": 5,
+                        "assetCountCumulative": 5
                     },
                     {
                         "name": "part",
@@ -3084,222 +2217,32 @@
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
-                        "assetCount": 8,
-                        "assetCountCumulative": 8
+                        "assetCount": 20,
+                        "assetCountCumulative": 20
                     },
                     {
-                        "name": "train",
-                        "slug": "train",
+                        "name": "Animals",
+                        "slug": "animals",
                         "active": true,
                         "thumbnail": null,
                         "thumbnailWidth": null,
                         "thumbnailHeight": null,
                         "order": 0,
-                        "alternateTitle": "train",
+                        "alternateTitle": "Animals",
                         "alternateUrl": "",
                         "description": "",
                         "metaKeywords": "",
                         "metaExtra": "",
                         "children": [],
                         "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "truck",
-                        "slug": "truck",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "truck",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
+                        "assetCountCumulative": 11
                     }
                 ],
-                "assetCount": 18,
-                "assetCountCumulative": 18
-            },
-            {
-                "name": "watercraft",
-                "slug": "watercraft",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "watercraft",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [
-                    {
-                        "name": "historic",
-                        "slug": "historic-watercraft",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "historic",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "industrial",
-                        "slug": "industrial-watercraft",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "industrial",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "part",
-                        "slug": "part-watercraft",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "part",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "personal",
-                        "slug": "personal",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "personal",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "recreational",
-                        "slug": "recreational",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "recreational",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    }
-                ],
-                "assetCount": 0,
-                "assetCountCumulative": 0
+                "assetCount": 70,
+                "assetCountCumulative": 70
             }
         ],
-        "assetCount": 621,
-        "assetCountCumulative": 621
-    },
-    {
-        "name": "texture",
-        "slug": "texture",
-        "active": true,
-        "thumbnail": null,
-        "thumbnailWidth": null,
-        "thumbnailHeight": null,
-        "order": 0,
-        "alternateTitle": "texture",
-        "alternateUrl": "",
-        "description": "",
-        "metaKeywords": "",
-        "metaExtra": "",
-        "children": [
-            {
-                "name": "Animals",
-                "slug": "animals",
-                "active": true,
-                "thumbnail": null,
-                "thumbnailWidth": null,
-                "thumbnailHeight": null,
-                "order": 0,
-                "alternateTitle": "Animals",
-                "alternateUrl": "",
-                "description": "",
-                "metaKeywords": "",
-                "metaExtra": "",
-                "children": [
-                    {
-                        "name": "Mammals",
-                        "slug": "mammals",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "Mammals",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    },
-                    {
-                        "name": "Plants",
-                        "slug": "plants",
-                        "active": true,
-                        "thumbnail": null,
-                        "thumbnailWidth": null,
-                        "thumbnailHeight": null,
-                        "order": 0,
-                        "alternateTitle": "Plants",
-                        "alternateUrl": "",
-                        "description": "",
-                        "metaKeywords": "",
-                        "metaExtra": "",
-                        "children": [],
-                        "assetCount": 0,
-                        "assetCountCumulative": 0
-                    }
-                ],
-                "assetCount": 0,
-                "assetCountCumulative": 1
-            }
-        ],
-        "assetCount": 0,
-        "assetCountCumulative": 0
+        "assetCount": 2572,
+        "assetCountCumulative": 2572
     }
 ]

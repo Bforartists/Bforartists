@@ -695,7 +695,7 @@ def boolean_operation(bool_type="DIFFERENCE"):
     ActiveObj = bpy.context.active_object
     sel_index = 0 if bpy.context.selected_objects[0] != bpy.context.active_object else 1
 
-    # bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_SOLIDIFY")
+    # bpy.ops.object.modifier_apply(modifier="CT_SOLIDIFY")
     bool_name = "CT_" + bpy.context.selected_objects[sel_index].name
     BoolMod = ActiveObj.modifiers.new(bool_name, "BOOLEAN")
     BoolMod.object = bpy.context.selected_objects[sel_index]
@@ -736,14 +736,14 @@ def Rebool(context, self):
     if self.ObjectBrush or self.ProfileBrush:
         rebool_obj.show_in_front = False
         try:
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_SOLIDIFY")
+            bpy.ops.object.modifier_apply(modifier="CT_SOLIDIFY")
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             self.report({'ERROR'}, str(exc_value))
 
     if self.dont_apply_boolean is False:
         try:
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_INTERSECT")
+            bpy.ops.object.modifier_apply(modifier="CT_INTERSECT")
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             self.report({'ERROR'}, str(exc_value))
@@ -758,7 +758,7 @@ def Rebool(context, self):
     target_obj.select_set(True)
     if self.dont_apply_boolean is False:
         try:
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_DIFFERENCE")
+            bpy.ops.object.modifier_apply(modifier="CT_DIFFERENCE")
         except:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             self.report({'ERROR'}, str(exc_value))

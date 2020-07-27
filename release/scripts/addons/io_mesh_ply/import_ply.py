@@ -110,19 +110,12 @@ class ObjectSpec:
         self.specs = []
 
     def load(self, format, stream):
-        return dict([(i.name, [i.load(format, stream) for j in range(i.count)]) for i in self.specs])
-
-        # Longhand for above LC
-        """
-        answer = {}
-        for i in self.specs:
-            answer[i.name] = []
-            for j in range(i.count):
-                if not j % 100 and meshtools.show_progress:
-                    Blender.Window.DrawProgressBar(float(j) / i.count, 'Loading ' + i.name)
-                answer[i.name].append(i.load(format, stream))
-        return answer
-        """
+        return {
+            i.name: [
+                i.load(format, stream) for j in range(i.count)
+            ]
+            for i in self.specs
+        }
 
 
 def read(filepath):
@@ -279,20 +272,20 @@ def load_ply_mesh(filepath, ply_name):
             if len(colindices) == 3:
                 mesh_colors.extend([
                     (
-                       vertices[index][colindices[0]] * colmultiply[0],
-                       vertices[index][colindices[1]] * colmultiply[1],
-                       vertices[index][colindices[2]] * colmultiply[2],
-                       1.0
+                        vertices[index][colindices[0]] * colmultiply[0],
+                        vertices[index][colindices[1]] * colmultiply[1],
+                        vertices[index][colindices[2]] * colmultiply[2],
+                        1.0,
                     )
                     for index in indices
                 ])
             elif len(colindices) == 4:
                 mesh_colors.extend([
                     (
-                       vertices[index][colindices[0]] * colmultiply[0],
-                       vertices[index][colindices[1]] * colmultiply[1],
-                       vertices[index][colindices[2]] * colmultiply[2],
-                       vertices[index][colindices[3]] * colmultiply[3],
+                        vertices[index][colindices[0]] * colmultiply[0],
+                        vertices[index][colindices[1]] * colmultiply[1],
+                        vertices[index][colindices[2]] * colmultiply[2],
+                        vertices[index][colindices[3]] * colmultiply[3],
                     )
                     for index in indices
                 ])
@@ -415,12 +408,16 @@ def load_ply(filepath):
     if not mesh:
         return {'CANCELLED'}
 
+    for ob in bpy.context.selected_objects:
+        ob.select_set(False)
+
     obj = bpy.data.objects.new(ply_name, mesh)
     bpy.context.collection.objects.link(obj)
     bpy.context.view_layer.objects.active = obj
     obj.select_set(True)
 
     print("\nSuccessfully imported %r in %.3f sec" % (filepath, time.time() - t))
+
     return {'FINISHED'}
 
 

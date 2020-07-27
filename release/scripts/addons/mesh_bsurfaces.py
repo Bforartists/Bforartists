@@ -1660,7 +1660,7 @@ class MESH_OT_SURFSK_add_surface(Operator):
         shrinkwrap_modifier.wrap_method = "NEAREST_VERTEX"
         shrinkwrap_modifier.target = self.main_object
 
-        bpy.ops.object.modifier_apply('INVOKE_REGION_WIN', apply_as='DATA', modifier=shrinkwrap_modifier.name)
+        bpy.ops.object.modifier_apply('INVOKE_REGION_WIN', modifier=shrinkwrap_modifier.name)
 
         # Make list with verts of original mesh as index and coords as value
         main_object_verts_coords = []
@@ -4010,7 +4010,7 @@ class CURVE_OT_SURFSK_reorder_splines(Operator):
         bpy.ops.object.modifier_add('INVOKE_REGION_WIN', type='SHRINKWRAP')
         curves_duplicate_2.modifiers["Shrinkwrap"].wrap_method = "NEAREST_VERTEX"
         curves_duplicate_2.modifiers["Shrinkwrap"].target = GP_strokes_mesh
-        bpy.ops.object.modifier_apply('INVOKE_REGION_WIN', apply_as='DATA', modifier='Shrinkwrap')
+        bpy.ops.object.modifier_apply('INVOKE_REGION_WIN', modifier='Shrinkwrap')
 
         # Get the distance of each vert from its original position to its position with Shrinkwrap
         nearest_points_coords = {}

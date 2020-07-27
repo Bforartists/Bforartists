@@ -51,13 +51,14 @@ namespace blender::fn {
 class GSpan {
  private:
   const CPPType *type_;
-  const void *buffer_;
-  uint size_;
+  const void *data_;
+  int64_t size_;
 
  public:
-  GSpan(const CPPType &type, const void *buffer, uint size)
-      : type_(&type), buffer_(buffer), size_(size)
+  GSpan(const CPPType &type, const void *buffer, int64_t size)
+      : type_(&type), data_(buffer), size_(size)
   {
+    BLI_assert(size >= 0);
     BLI_assert(buffer != nullptr || size == 0);
     BLI_assert(type.pointer_has_valid_alignment(buffer));
   }
@@ -81,26 +82,26 @@ class GSpan {
     return size_ == 0;
   }
 
-  uint size() const
+  int64_t size() const
   {
     return size_;
   }
 
-  const void *buffer() const
+  const void *data() const
   {
-    return buffer_;
+    return data_;
   }
 
-  const void *operator[](uint index) const
+  const void *operator[](int64_t index) const
   {
     BLI_assert(index < size_);
-    return POINTER_OFFSET(buffer_, type_->size() * index);
+    return POINTER_OFFSET(data_, type_->size() * index);
   }
 
   template<typename T> Span<T> typed() const
   {
     BLI_assert(type_->is<T>());
-    return Span<T>((const T *)buffer_, size_);
+    return Span<T>((const T *)data_, size_);
   }
 };
 
@@ -111,13 +112,14 @@ class GSpan {
 class GMutableSpan {
  private:
   const CPPType *type_;
-  void *buffer_;
-  uint size_;
+  void *data_;
+  int64_t size_;
 
  public:
-  GMutableSpan(const CPPType &type, void *buffer, uint size)
-      : type_(&type), buffer_(buffer), size_(size)
+  GMutableSpan(const CPPType &type, void *buffer, int64_t size)
+      : type_(&type), data_(buffer), size_(size)
   {
+    BLI_assert(size >= 0);
     BLI_assert(buffer != nullptr || size == 0);
     BLI_assert(type.pointer_has_valid_alignment(buffer));
   }
@@ -134,7 +136,7 @@ class GMutableSpan {
 
   operator GSpan() const
   {
-    return GSpan(*type_, buffer_, size_);
+    return GSpan(*type_, data_, size_);
   }
 
   const CPPType &type() const
@@ -147,26 +149,26 @@ class GMutableSpan {
     return size_ == 0;
   }
 
-  uint size() const
+  int64_t size() const
   {
     return size_;
   }
 
-  void *buffer()
+  void *data()
   {
-    return buffer_;
+    return data_;
   }
 
-  void *operator[](uint index)
+  void *operator[](int64_t index)
   {
     BLI_assert(index < size_);
-    return POINTER_OFFSET(buffer_, type_->size() * index);
+    return POINTER_OFFSET(data_, type_->size() * index);
   }
 
   template<typename T> MutableSpan<T> typed()
   {
     BLI_assert(type_->is<T>());
-    return MutableSpan<T>((T *)buffer_, size_);
+    return MutableSpan<T>((T *)data_, size_);
   }
 };
 
@@ -178,7 +180,7 @@ enum class VSpanCategory {
 
 template<typename T> struct VSpanBase {
  protected:
-  uint virtual_size_;
+  int64_t virtual_size_;
   VSpanCategory category_;
   union {
     struct {
@@ -212,7 +214,7 @@ template<typename T> struct VSpanBase {
     return this->virtual_size_ == 0;
   }
 
-  uint size() const
+  int64_t size() const
   {
     return this->virtual_size_;
   }
@@ -259,7 +261,7 @@ template<typename T> class VSpan : public VSpanBase<T> {
     this->data_.full_pointer_array.data = values.begin();
   }
 
-  static VSpan FromSingle(const T *value, uint virtual_size)
+  static VSpan FromSingle(const T *value, int64_t virtual_size)
   {
     VSpan ref;
     ref.virtual_size_ = virtual_size;
@@ -268,8 +270,9 @@ template<typename T> class VSpan : public VSpanBase<T> {
     return ref;
   }
 
-  const T &operator[](uint index) const
+  const T &operator[](int64_t index) const
   {
+    BLI_assert(index >= 0);
     BLI_assert(index < this->virtual_size_);
     switch (this->category_) {
       case VSpanCategory::Single:
@@ -308,7 +311,7 @@ class GVSpan : public VSpanBase<void> {
     this->type_ = &values.type();
     this->virtual_size_ = values.size();
     this->category_ = VSpanCategory::FullArray;
-    this->data_.full_array.data = values.buffer();
+    this->data_.full_array.data = values.data();
   }
 
   GVSpan(GMutableSpan values) : GVSpan(GSpan(values))
@@ -329,7 +332,7 @@ class GVSpan : public VSpanBase<void> {
   {
   }
 
-  static GVSpan FromSingle(const CPPType &type, const void *value, uint virtual_size)
+  static GVSpan FromSingle(const CPPType &type, const void *value, int64_t virtual_size)
   {
     GVSpan ref;
     ref.type_ = &type;
@@ -341,7 +344,7 @@ class GVSpan : public VSpanBase<void> {
 
   static GVSpan FromSingleWithMaxSize(const CPPType &type, const void *value)
   {
-    return GVSpan::FromSingle(type, value, UINT32_MAX);
+    return GVSpan::FromSingle(type, value, INT64_MAX);
   }
 
   static GVSpan FromDefault(const CPPType &type)
@@ -349,7 +352,7 @@ class GVSpan : public VSpanBase<void> {
     return GVSpan::FromSingleWithMaxSize(type, type.default_value());
   }
 
-  static GVSpan FromFullPointerArray(const CPPType &type, const void *const *values, uint size)
+  static GVSpan FromFullPointerArray(const CPPType &type, const void *const *values, int64_t size)
   {
     GVSpan ref;
     ref.type_ = &type;
@@ -364,8 +367,9 @@ class GVSpan : public VSpanBase<void> {
     return *this->type_;
   }
 
-  const void *operator[](uint index) const
+  const void *operator[](int64_t index) const
   {
+    BLI_assert(index >= 0);
     BLI_assert(index < this->virtual_size_);
     switch (this->category_) {
       case VSpanCategory::Single:
@@ -400,8 +404,8 @@ class GVSpan : public VSpanBase<void> {
   {
     BLI_assert(this->size() >= mask.min_array_size());
 
-    uint element_size = type_->size();
-    for (uint i : mask) {
+    int64_t element_size = type_->size();
+    for (int64_t i : mask) {
       type_->copy_to_uninitialized((*this)[i], POINTER_OFFSET(dst, element_size * i));
     }
   }

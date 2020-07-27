@@ -2362,7 +2362,7 @@ static Object *modifier_skin_armature_create(Depsgraph *depsgraph,
   BKE_object_transform_copy(arm_ob, skin_ob);
   arm = arm_ob->data;
   arm->layer = 1;
-  arm_ob->dtx |= OB_DRAWXRAY;
+  arm_ob->dtx |= OB_DRAW_IN_FRONT;
   arm->drawtype = ARM_LINE;
   arm->edbo = MEM_callocN(sizeof(ListBase), "edbo armature");
 
@@ -2796,12 +2796,16 @@ static int ocean_bake_exec(bContext *C, wmOperator *op)
   cfra = scene->r.cfra;
 
   /* precalculate time variable before baking */
+  Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
   for (f = omd->bakestart; f <= omd->bakeend; f++) {
     /* For now only simple animation of time value is supported, nothing else.
      * No drivers or other modifier parameters. */
     /* TODO(sergey): This operates on an original data, so no flush is needed. However, baking
      * usually should happen on an evaluated objects, so this seems to be deeper issue here. */
-    BKE_animsys_evaluate_animdata((ID *)ob, ob->adt, f, ADT_RECALC_ANIM, false);
+
+    const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(depsgraph,
+                                                                                      f);
+    BKE_animsys_evaluate_animdata((ID *)ob, ob->adt, &anim_eval_context, ADT_RECALC_ANIM, false);
 
     och->time[i] = omd->time;
     i++;

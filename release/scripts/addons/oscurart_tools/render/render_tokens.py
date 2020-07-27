@@ -30,7 +30,7 @@ def replaceTokens (dummy):
     "$Scene":bpy.context.scene.name,
     "$File":os.path.basename(bpy.data.filepath).split(".")[0],
     "$ViewLayer":bpy.context.view_layer.name,
-    "$Camera":bpy.context.scene.camera.name}
+    "$Camera": "NoCamera" if bpy.context.scene.camera == None else bpy.context.scene.camera.name}
 
     renpath = bpy.context.scene.render.filepath
     

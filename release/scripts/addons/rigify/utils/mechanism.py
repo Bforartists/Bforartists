@@ -351,9 +351,10 @@ def reactivate_custom_properties(obj):
 def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=False):
     """Copy custom properties with filtering by prefix. Optionally link using drivers."""
     res = []
+    exclude = {'_RNA_UI', 'rigify_parameters', 'rigify_type'}
 
     for key, value in src.items():
-        if key.startswith(prefix):
+        if key.startswith(prefix) and key not in exclude:
             new_key = dest_prefix + key[len(prefix):]
 
             dest[new_key] = value

@@ -325,7 +325,6 @@ def fake_main():
 
     bpy.app = module_add("bpy.app")
     bpy.app.use_userpref_skip_save_on_exit = False
-    bpy.app.use_override_library = True
 
     bpy.app.build_options = module_add("bpy.app.build_options")
     bpy.app.build_options.fluid = True

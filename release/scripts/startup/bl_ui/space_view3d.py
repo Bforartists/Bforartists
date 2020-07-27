@@ -3275,6 +3275,8 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_explode", icon = "MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon = "MOD_SMOKE")
         layout.operator("object.quick_liquid", icon = "MOD_FLUIDSIM")
+        if _context.preferences.experimental.use_new_particle_system:
+            layout.operator("object.quick_particles", icon = "PARTICLES")
 
 
 # Workaround to separate the tooltips for Show Hide
@@ -4683,7 +4685,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.extrude_vertices_move", text="Extrude Vertices", icon='EXTRUDE_REGION')
-            col.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').vertex_only = True
+            col.operator("mesh.bevel", text="Bevel Vertices", icon='BEVEL').affect = 'VERTICES'
 
             if selected_verts_len > 1:
                 col.separator()
@@ -4730,7 +4732,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.separator()
 
             col.operator("mesh.extrude_edges_move", text="Extrude Edges", icon='EXTRUDE_REGION')
-            col.operator("mesh.bevel", text="Bevel Edges", icon = "BEVEL").vertex_only = False
+            col.operator("mesh.bevel", text="Bevel Edges", icon = "BEVEL").affect = 'EDGES'
             if selected_edges_len >= 2:
                 col.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
             if selected_edges_len >= 1:
@@ -7330,7 +7332,7 @@ class VIEW3D_PT_overlay_motion_tracking(Panel):
 
     def draw_header(self, context):
         view = context.space_data
-        self.layout.prop(view, "show_reconstruction", text="")
+        self.layout.prop(view, "show_reconstruction", text=self.bl_label)
 
     def draw(self, context):
         layout = self.layout
@@ -8172,7 +8174,7 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.separator()
 
             col.menu("VIEW3D_MT_mirror", text="Mirror Points")
-            col.menu("VIEW3D_MT_snap", text="Snap Points")
+            col.menu("GPENCIL_MT_snap", text="Snap Points")
 
             col.separator()
 

@@ -78,6 +78,7 @@ def send_rating_to_thread_quality(url, ratings, headers):
     thread = threading.Thread(target=upload_rating_thread, args=(url, ratings, headers))
     thread.start()
 
+
 def send_rating_to_thread_work_hours(url, ratings, headers):
     '''Sens rating into thread rating, main purpose is for tasks_queue.
     One function per property to avoid lost data due to stashing.'''
@@ -93,6 +94,7 @@ def upload_review_thread(url, reviews, headers):
 
 
 def get_rating(asset_id):
+    #this function isn't used anywhere,should probably get removed.
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
     headers = utils.get_headers(api_key)
@@ -128,9 +130,10 @@ def update_ratings_work_hours(self, context):
     bkit_ratings = asset.bkit_ratings
     url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
 
-    if bkit_ratings.rating_quality > 0.1:
+    if bkit_ratings.rating_work_hours > 0.05:
         ratings = [('working_hours', round(bkit_ratings.rating_work_hours, 1))]
         tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=1, only_last=True)
+
 
 
 def upload_rating(asset):
@@ -170,26 +173,43 @@ def upload_rating(asset):
     if bkit_ratings.rating_quality > 0.1 and bkit_ratings.rating_work_hours > 0.1:
         s['assets rated'][asset['asset_data']['assetBaseId']] = True
 
+def get_assets_for_rating():
+    '''
+    gets assets from scene that could/should be rated by the user.
+    TODO this is only a draft.
 
-class StarRatingOperator(bpy.types.Operator):
-    """Tooltip"""
-    bl_idname = "object.blenderkit_rating"
-    bl_label = "Rate the Asset Quality"
-    bl_options = {'REGISTER', 'INTERNAL'}
+    '''
+    assets = []
+    for ob in bpy.context.scene.objects:
+        if ob.get('asset_data'):
+            assets.append(ob)
+    for m in bpy.data.materials:
+        if m.get('asset_data'):
+            assets.append(m)
+    for b in bpy.data.brushes:
+        if b.get('asset_data'):
+            assets.append(b)
+    return assets
 
-    property_name: StringProperty(
-        name="Rating Property",
-        description="Property that is rated",
-        default="",
-    )
-
-    rating: IntProperty(name="Rating", description="rating value", default=1, min=1, max=10)
-
-    def execute(self, context):
-        asset = utils.get_active_asset()
-        props = asset.bkit_ratings
-        props.rating_quality = self.rating
-        return {'FINISHED'}
+# class StarRatingOperator(bpy.types.Operator):
+#     """Tooltip"""
+#     bl_idname = "object.blenderkit_rating"
+#     bl_label = "Rate the Asset Quality"
+#     bl_options = {'REGISTER', 'INTERNAL'}
+#
+#     property_name: StringProperty(
+#         name="Rating Property",
+#         description="Property that is rated",
+#         default="",
+#     )
+#
+#     rating: IntProperty(name="Rating", description="rating value", default=1, min=1, max=10)
+#
+#     def execute(self, context):
+#         asset = utils.get_active_asset()
+#         props = asset.bkit_ratings
+#         props.rating_quality = self.rating
+#         return {'FINISHED'}
 
 
 asset_types = (
@@ -234,29 +254,43 @@ class UploadRatingOperator(bpy.types.Operator):
         return wm.invoke_props_dialog(self)
 
 
+
 def draw_rating(layout, props, prop_name, name):
     # layout.label(name)
 
     row = layout.row(align=True)
-
-    for a in range(0, 10):
-        if eval('props.' + prop_name) < a + 1:
-            icon = 'SOLO_OFF'
-        else:
-            icon = 'SOLO_ON'
-
-        op = row.operator('object.blenderkit_rating', icon=icon, emboss=False, text='')
-        op.property_name = prop_name
-        op.rating = a + 1
+    # test method - 10 booleans.
+    # propsx = bpy.context.active_object.bkit_ratings
+    # for a in range(0, 10):
+    #     pn = f'rq{str(a+1).zfill(2)}'
+    #     if eval('propsx.' + pn) == False:
+    #         icon = 'SOLO_OFF'
+    #     else:
+    #         icon = 'SOLO_ON'
+    #     row.prop(propsx, pn, icon=icon, icon_only=True)
+    # print(dir(props))
+    # new best method - enum with an items callback. ('animates' the stars as item icons)
+    row.prop(props, 'rating_quality_ui', expand=True, icon_only=True, emboss = False)
+    # original (operator) method:
+    # row = layout.row(align=True)
+    # for a in range(0, 10):
+    #     if eval('props.' + prop_name) < a + 1:
+    #         icon = 'SOLO_OFF'
+    #     else:
+    #         icon = 'SOLO_ON'
+    #
+    #     op = row.operator('object.blenderkit_rating', icon=icon, emboss=False, text='')
+    #     op.property_name = prop_name
+    #     op.rating = a + 1
 
 
 def register_ratings():
     pass;
-    bpy.utils.register_class(StarRatingOperator)
+    # bpy.utils.register_class(StarRatingOperator)
     bpy.utils.register_class(UploadRatingOperator)
 
 
 def unregister_ratings():
     pass;
-    bpy.utils.unregister_class(StarRatingOperator)
+    # bpy.utils.unregister_class(StarRatingOperator)
     bpy.utils.unregister_class(UploadRatingOperator)

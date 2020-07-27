@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -958,10 +958,6 @@ msgid "Weight"
 msgstr "Gewicht"
 
 
-msgid "Blendfile Data"
-msgstr "Blenddatei Daten"
-
-
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -1232,10 +1228,6 @@ msgstr "Texturen"
 
 msgid "Texture data-blocks"
 msgstr "Textur-Datenblöcke"
-
-
-msgid "Use Autopack"
-msgstr "Automaisches Verpacken verwenden"
 
 
 msgid "Automatically pack all external data into .blend file"
@@ -2530,8 +2522,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Bild und Anzeigeeinstellungen für die 3D-Ansicht-Hintergrund"
 
 
-msgid "Alpha"
-msgstr "Alpha"
+msgid "Opacity"
+msgstr "Deckkraft"
 
 
 msgid "Image opacity to blend the image against the background color"
@@ -3208,6 +3200,10 @@ msgstr "Konstant"
 
 msgid "Color Ramp Element"
 msgstr "Farbregler Element"
+
+
+msgid "Alpha"
+msgstr "Alpha"
 
 
 msgid "Set color of selected color stop"
@@ -3899,24 +3895,12 @@ msgid "Constraint position along Z axis"
 msgstr "Position entlang der Z-Achse beschränken"
 
 
-msgid "Lock X Rot"
-msgstr "X-Rot sperren"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Rotation entlang der X-Achse beschränken"
 
 
-msgid "Lock Y Rot"
-msgstr "Y-Rot sperren"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Rotation entlang der Y-Achse beschränken"
-
-
-msgid "Lock Z Rot"
-msgstr "Z-Rot sperren"
 
 
 msgid "Constraint rotation along Z axis"
@@ -4123,48 +4107,24 @@ msgid "Use the pivot point in every rotation"
 msgstr "Drehpunkt in jeder Rotation verwenden"
 
 
-msgid "-X Rot"
-msgstr "-X-Rot"
-
-
 msgid "Use the pivot point in the negative rotation range around the X-axis"
 msgstr "Verwendet den Drehpunkt im negativen Rotationsbereich um die X-Achse herum"
-
-
-msgid "-Y Rot"
-msgstr "-Y-Rot"
 
 
 msgid "Use the pivot point in the negative rotation range around the Y-axis"
 msgstr "Verwendet den Drehpunkt im negativen Rotationsbereich um die Y-Achse herum"
 
 
-msgid "-Z Rot"
-msgstr "-Z-Rot"
-
-
 msgid "Use the pivot point in the negative rotation range around the Z-axis"
 msgstr "Verwendet den Drehpunkt im negativen Rotationsbereich um die Z-Achse herum"
-
-
-msgid "X Rot"
-msgstr "X-Rot"
 
 
 msgid "Use the pivot point in the positive rotation range around the X-axis"
 msgstr "Verwendet den Drehpunkt im positiven Rotationsbereich um die X-Achse herum"
 
 
-msgid "Y Rot"
-msgstr "Y-Rot"
-
-
 msgid "Use the pivot point in the positive rotation range around the Y-axis"
 msgstr "Verwendet den Drehpunkt im positiven Rotationsbereich um die Y-Achse herum"
-
-
-msgid "Z Rot"
-msgstr "Z-Rot"
 
 
 msgid "Use the pivot point in the positive rotation range around the Z-axis"
@@ -4387,12 +4347,8 @@ msgid "Bottom range of Z axis source motion"
 msgstr "Niedrigster Bereich der Z-Achsen Ursprungsbewegung"
 
 
-msgid "Loc"
-msgstr "Pos"
-
-
-msgid "Rot"
-msgstr "Rot"
+msgid "Location"
+msgstr "Position"
 
 
 msgid "The source axis constrained object's X axis uses"
@@ -4485,10 +4441,6 @@ msgstr "Autoanfasser"
 
 msgid "Vector Handle"
 msgstr "Vektoranfasser"
-
-
-msgid "Location"
-msgstr "Position"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -6348,16 +6300,8 @@ msgid "End"
 msgstr "Ende"
 
 
-msgid "Frame on which the simulation stops"
-msgstr "Einzelbild an dem die Simulation stoppt"
-
-
 msgid "Start"
 msgstr "Start"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Einzelbild an dem die Simulation beginnt"
 
 
 msgid "Cell Size"
@@ -7114,10 +7058,6 @@ msgstr "Gesperrt"
 
 msgid "Frame Locked"
 msgstr "Rahmen sperren"
-
-
-msgid "Opacity"
-msgstr "Deckkraft"
 
 
 msgid "Layer Opacity"
@@ -11888,52 +11828,16 @@ msgid "Delta Rotation"
 msgstr "Rotation begrenzen"
 
 
-msgid "LocRot"
-msgstr "Pos, Rot"
-
-
-msgid "LocScale"
-msgstr "Pos, Skalieren"
-
-
-msgid "RotScale"
-msgstr "Rot, Skalieren"
+msgid "Rotation & Scale"
+msgstr "Rotieren & Skalieren"
 
 
 msgid "Visual Location"
 msgstr "Visuelle Position"
 
 
-msgid "Visual LocRot"
-msgstr "Visuelle Pos, Rot"
-
-
-msgid "Visual LocRotScale"
-msgstr "Visuelle Pos, Rot"
-
-
-msgid "Visual LocScale"
-msgstr "Visuelle Position"
-
-
 msgid "Visual Rotation"
 msgstr "Visuelle Rotation"
-
-
-msgid "Visual RotScale"
-msgstr "Visuelle Rotation"
-
-
-msgid "Visual Scaling"
-msgstr "Visuelle Position"
-
-
-msgid "LocRotScale"
-msgstr "Pos, Rot, Skalieren"
-
-
-msgid "Scaling"
-msgstr "Skalieren"
 
 
 msgid "Whole Character"
@@ -12462,8 +12366,16 @@ msgid "Mask Context Menu"
 msgstr "Masken Kontextmenü"
 
 
+msgid "Select Linked"
+msgstr "Verknüpfte auswählen"
+
+
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Align"
+msgstr "Ausrichten"
 
 
 msgid "UV Context Menu"
@@ -12529,10 +12441,6 @@ msgstr "Ändern"
 
 msgid "Navigation"
 msgstr "Navigation"
-
-
-msgid "Select Linked"
-msgstr "Verknüpfte auswählen"
 
 
 msgid "Strip"
@@ -13259,10 +13167,6 @@ msgid "Size of projection shape (leave as 0 for auto)"
 msgstr "Größe der Projektionsform (0 für automatisch)"
 
 
-msgid "From Radius"
-msgstr "Von Radius"
-
-
 msgid "Use Transform"
 msgstr "Transformieren"
 
@@ -13777,10 +13681,6 @@ msgstr "Objekt, das die Schraubenachse definiert"
 
 msgid "Render Steps"
 msgstr "Renderstufen"
-
-
-msgid "Calc Order"
-msgstr "Berechnungsreihenfolge"
 
 
 msgid "Object Screw"
@@ -18714,6 +18614,10 @@ msgid "Delete Constraint"
 msgstr "Beschränkung löschen"
 
 
+msgid "Report"
+msgstr "Meldung"
+
+
 msgid "First frame of path animation"
 msgstr "Startbild für die Animation"
 
@@ -18803,10 +18707,6 @@ msgid "Bonesize"
 msgstr "Knochengröße"
 
 
-msgid "Align"
-msgstr "Ausrichten"
-
-
 msgid "Edge Slide"
 msgstr "Kante schieben"
 
@@ -18840,11 +18740,6 @@ msgstr "(Nicht) ausgewählte Kontrollpunkte ausblenden"
 msgctxt "Operator"
 msgid "Make Segment"
 msgstr "Segment erzeugen"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Normalen neuberechnen"
 
 
 msgctxt "Operator"
@@ -20298,10 +20193,6 @@ msgid "Select reports by index"
 msgstr "Berichte nach Index auswählen"
 
 
-msgid "Report"
-msgstr "Meldung"
-
-
 msgctxt "Operator"
 msgid "Flip (Distortion Free)"
 msgstr "Richtung umdrehen"
@@ -20536,10 +20427,6 @@ msgstr "Neues Maske erstellen"
 
 msgid "Name of new mask"
 msgstr "Name der neuen Maske"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "Ausgewählte Objekte löschen"
 
 
 msgid "Clear the mask's parenting"
@@ -28430,6 +28317,14 @@ msgid "Cache file path"
 msgstr "Pufferdateipfad"
 
 
+msgid "Frame on which the simulation stops"
+msgstr "Einzelbild an dem die Simulation stoppt"
+
+
+msgid "Frame on which the simulation starts"
+msgstr "Einzelbild an dem die Simulation beginnt"
+
+
 msgid "Cache Step"
 msgstr "Pufferstufen"
 
@@ -33708,10 +33603,6 @@ msgstr "Einrastelement"
 
 msgid "Unified Paint Settings"
 msgstr "Partikelsystem-Einstellungen"
-
-
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Veränderte Nahtkanten berechnen die UV-Abwicklung neu"
 
 
 msgid "Only Endpoints"

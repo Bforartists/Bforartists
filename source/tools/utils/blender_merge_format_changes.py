@@ -88,7 +88,7 @@ if code != 0:
     os.system('git ' + mode_cmd + ' ' + recursive_format_commit_merge_options + ' ' + format_commits[-1])
     paths = get_string(('git', '--no-pager', 'diff', '--name-only', format_commits[-1])).replace('\n', ' ')
     if sys.platform == 'win32' and len(paths) > 8000:
-        # Windows commandline does not accept more than 8191 chars...
+        # Windows command-line does not accept more than 8191 chars.
         os.system('make format')
     else:
         os.system('make format PATHS="' + paths + '"')

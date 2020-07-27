@@ -61,6 +61,7 @@
 #include "BKE_lib_query.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
+#include "BKE_simulation.h"
 
 #include "BLI_ghash.h"
 #include "BLI_threads.h"
@@ -2493,6 +2494,7 @@ ID *BKE_node_tree_find_owner_ID(Main *bmain, struct bNodeTree *ntree)
                        &bmain->textures,
                        &bmain->scenes,
                        &bmain->linestyles,
+                       &bmain->simulations,
                        NULL};
 
   for (int i = 0; lists[i] != NULL; i++) {
@@ -3637,6 +3639,16 @@ void ntreeUpdateAllUsers(Main *main, ID *ngroup)
   FOREACH_NODETREE_END;
 }
 
+static void ntreeUpdateSimulationDependencies(Main *main, bNodeTree *simulation_ntree)
+{
+  FOREACH_NODETREE_BEGIN (main, ntree, owner_id) {
+    if (GS(owner_id->name) == ID_SIM && ntree == simulation_ntree) {
+      BKE_simulation_update_dependencies((Simulation *)owner_id, main);
+    }
+  }
+  FOREACH_NODETREE_END;
+}
+
 void ntreeUpdateTree(Main *bmain, bNodeTree *ntree)
 {
   bNode *node;
@@ -3679,7 +3691,6 @@ void ntreeUpdateTree(Main *bmain, bNodeTree *ntree)
     ntreeInterfaceTypeUpdate(ntree);
   }
 
-  /* XXX hack, should be done by depsgraph!! */
   if (bmain) {
     ntreeUpdateAllUsers(bmain, &ntree->id);
   }
@@ -3693,6 +3704,11 @@ void ntreeUpdateTree(Main *bmain, bNodeTree *ntree)
 
     /* check link validity */
     ntree_validate_links(ntree);
+  }
+
+  if (bmain != NULL && ntree->typeinfo == ntreeType_Simulation &&
+      (ntree->id.flag & LIB_EMBEDDED_DATA)) {
+    ntreeUpdateSimulationDependencies(bmain, ntree);
   }
 
   /* clear update flags */
@@ -4345,6 +4361,7 @@ static void registerFunctionNodes(void)
   register_node_type_fn_switch();
   register_node_type_fn_group_instance_id();
   register_node_type_fn_combine_strings();
+  register_node_type_fn_object_transforms();
 }
 
 void init_nodesystem(void)

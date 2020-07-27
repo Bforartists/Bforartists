@@ -298,8 +298,7 @@ class ARCHIPACK_OT_apply_holes(Operator):
         for mod in o.modifiers[:]:
             ctx['modifier'] = mod
             try:
-                bpy.ops.object.modifier_apply(ctx, apply_as='DATA',
-                                              modifier=mod.name)
+                bpy.ops.object.modifier_apply(ctx, modifier=mod.name)
             except:
                 pass
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2020-06-30 10:25+0800\n"
@@ -1224,10 +1224,6 @@ msgid "Softbody goal weight"
 msgstr "柔體目的權重"
 
 
-msgid "Blendfile Data"
-msgstr "Blendfile 資料"
-
-
 msgid "Actions"
 msgstr "動作"
 
@@ -1366,10 +1362,6 @@ msgstr "文字"
 
 msgid "Textures"
 msgstr "紋理"
-
-
-msgid "Use Autopack"
-msgstr "使用自動打包"
 
 
 msgid "Automatically pack all external data into .blend file"
@@ -2384,8 +2376,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "在 3D 視圖背景中顯示用的影像與設定"
 
 
-msgid "Alpha"
-msgstr "Alpha"
+msgid "Opacity"
+msgstr "不透明度"
 
 
 msgid "Image opacity to blend the image against the background color"
@@ -3370,6 +3362,10 @@ msgstr "色彩漸變元素"
 
 msgid "Element defining a color at a position in the color ramp"
 msgstr "定義於色彩漸變中某位置其色彩的元素"
+
+
+msgid "Alpha"
+msgstr "Alpha"
 
 
 msgid "Set alpha of selected color stop"
@@ -4409,24 +4405,12 @@ msgid "Constraint position along Z axis"
 msgstr "沿 Z 軸約束位置"
 
 
-msgid "Lock X Rot"
-msgstr "鎖定 X 旋轉"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "沿 X 軸約束旋轉"
 
 
-msgid "Lock Y Rot"
-msgstr "鎖定 Y 旋轉"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "沿 Y 軸約束旋轉"
-
-
-msgid "Lock Z Rot"
-msgstr "鎖定 Z 旋轉"
 
 
 msgid "Constraint rotation along Z axis"
@@ -4693,48 +4677,24 @@ msgid "Use the pivot point in every rotation"
 msgstr "每個旋轉都使用樞紐點"
 
 
-msgid "-X Rot"
-msgstr "-X 旋轉"
-
-
 msgid "Use the pivot point in the negative rotation range around the X-axis"
 msgstr "繞著 X 軸於負向旋轉範圍使用樞紐點"
-
-
-msgid "-Y Rot"
-msgstr "-Y 旋轉"
 
 
 msgid "Use the pivot point in the negative rotation range around the Y-axis"
 msgstr "繞著 Y 軸於負向旋轉範圍使用樞紐點"
 
 
-msgid "-Z Rot"
-msgstr "-Z 旋轉"
-
-
 msgid "Use the pivot point in the negative rotation range around the Z-axis"
 msgstr "繞著 Z 軸於負向旋轉範圍使用樞紐點"
-
-
-msgid "X Rot"
-msgstr "X 旋轉"
 
 
 msgid "Use the pivot point in the positive rotation range around the X-axis"
 msgstr "繞著 X 軸於正向旋轉範圍使用樞紐點"
 
 
-msgid "Y Rot"
-msgstr "Y 旋轉"
-
-
 msgid "Use the pivot point in the positive rotation range around the Y-axis"
 msgstr "繞著 Y 軸於正向旋轉範圍使用樞紐點"
-
-
-msgid "Z Rot"
-msgstr "Z 旋轉"
 
 
 msgid "Use the pivot point in the positive rotation range around the Z-axis"
@@ -5153,12 +5113,8 @@ msgid "The transformation type to use from the target"
 msgstr "從目標使用的變換類型"
 
 
-msgid "Loc"
+msgid "Location"
 msgstr "位置"
-
-
-msgid "Rot"
-msgstr "旋轉"
 
 
 msgid "Map To"
@@ -5283,10 +5239,6 @@ msgstr "自動控制桿"
 
 msgid "Vector Handle"
 msgstr "向量控制桿"
-
-
-msgid "Location"
-msgstr "位置"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -8370,16 +8322,8 @@ msgid "End"
 msgstr "結束"
 
 
-msgid "Frame on which the simulation stops"
-msgstr "模擬停止的框幀位置"
-
-
 msgid "Start"
 msgstr "開始"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "模擬開始的框幀位置"
 
 
 msgid "Cell Size"
@@ -9250,10 +9194,6 @@ msgid "View Map Cache"
 msgstr "檢視映射快取"
 
 
-msgid "Keep the computed view map and avoid re-calculating it if mesh geometry is unchanged"
-msgstr "保留計算的視圖映射，若網格幾何未改變時則可避免重新計算"
-
-
 msgid "Grease Pencil Frame"
 msgstr "蠟筆框幀"
 
@@ -9420,10 +9360,6 @@ msgstr "框幀已鎖定"
 
 msgid "Lock current frame displayed by layer"
 msgstr "鎖定依層顯示的目前框幀"
-
-
-msgid "Opacity"
-msgstr "不透明度"
 
 
 msgid "Layer Opacity"
@@ -17363,68 +17299,32 @@ msgid "Delta Rotation"
 msgstr "增減旋轉"
 
 
-msgid "Insert keyframes for additional scaling factor"
-msgstr "為額外的縮放係數插入鍵幀"
-
-
 msgid "Insert a keyframe on each of the location and rotation channels"
 msgstr "在每個位置通道與旋轉通道上插入鍵幀"
-
-
-msgid "LocRot"
-msgstr "位旋"
 
 
 msgid "Insert a keyframe on each of the location and scale channels"
 msgstr "在每個位置通道與縮放通道上插入鍵幀"
 
 
-msgid "LocScale"
-msgstr "位縮"
-
-
 msgid "Insert a keyframe on each of the rotation and scale channels"
 msgstr "在每個旋轉與縮放通道上插入鍵幀"
 
 
-msgid "RotScale"
-msgstr "旋縮"
+msgid "Rotation & Scale"
+msgstr "旋轉與縮放"
 
 
 msgid "Visual Location"
 msgstr "視覺位置"
 
 
-msgid "Visual LocRot"
-msgstr "視覺位旋"
-
-
-msgid "Visual LocRotScale"
-msgstr "視覺位旋縮"
-
-
-msgid "Visual LocScale"
-msgstr "視覺位縮"
-
-
 msgid "Visual Rotation"
 msgstr "視覺旋轉"
 
 
-msgid "Visual RotScale"
-msgstr "視覺旋縮"
-
-
-msgid "Visual Scaling"
-msgstr "視覺縮放"
-
-
 msgid "Insert a keyframe on each of the location, rotation, and scale channels"
 msgstr "在每個位置、旋轉、縮放等通道上插入鍵幀"
-
-
-msgid "LocRotScale"
-msgstr "位旋縮"
 
 
 msgid "Insert a keyframe on each of the location channels"
@@ -17437,10 +17337,6 @@ msgstr "在每個旋轉通道上插入鍵幀"
 
 msgid "Insert a keyframe on each of the scale channels"
 msgstr "在每個縮放通道上插入鍵幀"
-
-
-msgid "Scaling"
-msgstr "縮放"
 
 
 msgid "Whole Character"
@@ -18378,8 +18274,16 @@ msgid "Material Specials"
 msgstr "材質特殊項"
 
 
+msgid "Select Linked"
+msgstr "選取連結項"
+
+
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Align"
+msgstr "對齊"
 
 
 msgid "UV Select Mode"
@@ -18388,10 +18292,6 @@ msgstr "UV 選取模式"
 
 msgid "Show/Hide Faces"
 msgstr "顯示/隱藏面"
-
-
-msgid "Weld/Align"
-msgstr "焊接/對齊"
 
 
 msgctxt "Operator"
@@ -18469,10 +18369,6 @@ msgstr "效果片段"
 
 msgid "Navigation"
 msgstr "導覽"
-
-
-msgid "Select Linked"
-msgstr "選取連結項"
 
 
 msgid "Strip"
@@ -19523,10 +19419,6 @@ msgstr "僅變形從效果中心起這個距離之內的頂點 (留 0 為無限)
 
 msgid "Size of projection shape (leave as 0 for auto)"
 msgstr "投影外形的大小 (留 0 為自動)"
-
-
-msgid "From Radius"
-msgstr "從半徑"
 
 
 msgid "Use radius as size of projection shape (0 = auto)"
@@ -20763,10 +20655,6 @@ msgstr "迴旋的步數"
 
 msgid "Offset the revolution along its axis"
 msgstr "迴旋沿其軸的偏移"
-
-
-msgid "Calc Order"
-msgstr "計算順序"
 
 
 msgid "Calculate the order of edges (needed for meshes, but not curves)"
@@ -28814,6 +28702,10 @@ msgid "Remove constraint from constraint stack"
 msgstr "從約束堆疊中刪除約束"
 
 
+msgid "Report"
+msgstr "報告"
+
+
 msgctxt "Operator"
 msgid "Disable and Keep Transform"
 msgstr "停用並保持變換"
@@ -29009,10 +28901,6 @@ msgid "Bweight"
 msgstr "倒角權重"
 
 
-msgid "Align"
-msgstr "對齊"
-
-
 msgid "Edge Slide"
 msgstr "邊線滑動"
 
@@ -29067,11 +28955,6 @@ msgstr "符合紋理空間"
 
 msgid "Match texture space to object's bounding box"
 msgstr "讓紋理空間符合物體的邊界方塊"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "重新計算法線"
 
 
 msgid "Recalculate the direction of selected handles"
@@ -31753,10 +31636,6 @@ msgid "Select reports by index"
 msgstr "根據索引選取報告"
 
 
-msgid "Report"
-msgstr "報告"
-
-
 msgid "Index of the report"
 msgstr "報告的索引"
 
@@ -32050,10 +31929,6 @@ msgstr "建立新的遮罩"
 
 msgid "Name of new mask"
 msgstr "新的遮罩名稱"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "重新計算所選控制桿的方向"
 
 
 msgid "Clear the mask's parenting"
@@ -45243,6 +45118,14 @@ msgid "Cache file path"
 msgstr "快取檔案路徑"
 
 
+msgid "Frame on which the simulation stops"
+msgstr "模擬停止的框幀位置"
+
+
+msgid "Frame on which the simulation starts"
+msgstr "模擬開始的框幀位置"
+
+
 msgid "Cache Step"
 msgstr "快取步"
 
@@ -49161,10 +49044,6 @@ msgstr "轉換浮點"
 
 msgid "Convert input to float data"
 msgstr "轉換輸入為浮點資料"
-
-
-msgid "Use a preview proxy and/or timecode index for this strip"
-msgstr "為此片段使用預覽代理與/或時間碼索引"
 
 
 msgid "Reverse Frames"
@@ -53473,10 +53352,6 @@ msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painti
 msgstr "確保所有骨骼變形頂點群組當權重繪製時添加高至 1.0"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "變更邊線縫合重算 UV 拆解"
-
-
 msgid "Only Endpoints"
 msgstr "僅端點"
 
@@ -57152,10 +57027,6 @@ msgid "Some data failed to reconstruct (see console for details)"
 msgstr "有些資料無法重構 (請見主控臺以瞭解細節)"
 
 
-msgid "Average re-projection error: %.3f"
-msgstr "重新投射的平均錯誤：%.3f"
-
-
 msgid "File path"
 msgstr "檔案路徑"
 
@@ -57463,6 +57334,22 @@ msgstr "無法對未儲存的 blend 檔設定相對路徑"
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "無法對未儲存的 blend 檔設定絕對路徑"
+
+
+msgid "(Key) "
+msgstr "(鍵)"
+
+
+msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "點：%s/%s | 線：%s/%s | 面：%s/%s | 三角：%s"
+
+
+msgid "Verts:%s/%s | Bones:%s/%s"
+msgstr "點：%s/%s | 骨骼：%s/%s"
+
+
+msgid "Verts:%s/%s"
+msgstr "點：%s/%s"
 
 
 msgid "Sync Length"
@@ -58983,10 +58870,6 @@ msgid "Sequences.new_image: unable to open image file"
 msgstr "Sequences.new_image：無法開啟影像檔"
 
 
-msgid "Sequences.new_movie: unable to open movie file"
-msgstr "Sequences.new_movie：無法開啟影片檔"
-
-
 msgid "Sequences.new_sound: unable to open sound file"
 msgstr "Sequences.new_sound：無法開啟音效檔"
 
@@ -59039,10 +58922,6 @@ msgid "KeyConfig '%s' cannot be removed"
 msgstr "無法移除 KeyConfig「%s」"
 
 
-msgid "Outer"
-msgstr "外部"
-
-
 msgid "Settings are inside the Physics tab"
 msgstr "設定值位於物理分頁內"
 
@@ -59066,6 +58945,10 @@ msgstr "轉換"
 
 msgid "Rim"
 msgstr "邊框"
+
+
+msgid "Outer"
+msgstr "外部"
 
 
 msgid "Aspect X"
