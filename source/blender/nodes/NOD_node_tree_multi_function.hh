@@ -106,7 +106,7 @@ class MFNetworkTreeMap {
   void add(Span<const DInputSocket *> dsockets, Span<fn::MFInputSocket *> sockets)
   {
     assert_same_size(dsockets, sockets);
-    for (uint i : dsockets.index_range()) {
+    for (int i : dsockets.index_range()) {
       this->add(*dsockets[i], *sockets[i]);
     }
   }
@@ -114,7 +114,7 @@ class MFNetworkTreeMap {
   void add(Span<const DOutputSocket *> dsockets, Span<fn::MFOutputSocket *> sockets)
   {
     assert_same_size(dsockets, sockets);
-    for (uint i : dsockets.index_range()) {
+    for (int i : dsockets.index_range()) {
       this->add(*dsockets[i], *sockets[i]);
     }
   }
@@ -133,7 +133,7 @@ class MFNetworkTreeMap {
 
   void add_try_match(Span<const DSocket *> dsockets, Span<fn::MFSocket *> sockets)
   {
-    uint used_sockets = 0;
+    int used_sockets = 0;
     for (const DSocket *dsocket : dsockets) {
       if (!dsocket->is_available()) {
         continue;
@@ -288,7 +288,12 @@ class SocketMFNetworkBuilder : public MFNetworkBuilderBase {
    */
   template<typename T> void set_constant_value(T value)
   {
-    const fn::MultiFunction &fn = this->construct_fn<fn::CustomMF_Constant<T>>(std::move(value));
+    this->construct_generator_fn<fn::CustomMF_Constant<T>>(std::move(value));
+  }
+
+  template<typename T, typename... Args> void construct_generator_fn(Args &&... args)
+  {
+    const fn::MultiFunction &fn = this->construct_fn<T>(std::forward<Args>(args)...);
     this->set_generator_fn(fn);
   }
 

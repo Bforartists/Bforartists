@@ -14,8 +14,8 @@
 
 bl_info = {
     'name': 'glTF 2.0 format',
-    'author': 'Julien Duroure, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 3, 28),
+    'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
+    "version": (1, 4, 1),
     'blender': (2, 90, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -485,6 +485,8 @@ class ExportGLTF2_Base:
             bpy.path.ensure_ext(self.filepath,self.filename_ext)))[0] + '.bin'
 
         user_extensions = []
+        pre_export_callbacks = []
+        post_export_callbacks = []
 
         import sys
         preferences = bpy.context.preferences
@@ -500,7 +502,13 @@ class ExportGLTF2_Base:
                 extension_ctors = module.glTF2ExportUserExtensions
                 for extension_ctor in extension_ctors:
                     user_extensions.append(extension_ctor())
+            if hasattr(module, 'glTF2_pre_export_callback'):
+                pre_export_callbacks.append(module.glTF2_pre_export_callback)
+            if hasattr(module, 'glTF2_post_export_callback'):
+                post_export_callbacks.append(module.glTF2_post_export_callback)
         export_settings['gltf_user_extensions'] = user_extensions
+        export_settings['pre_export_callbacks'] = pre_export_callbacks
+        export_settings['post_export_callbacks'] = post_export_callbacks
 
         return gltf2_blender_export.save(context, export_settings)
 
@@ -854,6 +862,18 @@ class ImportGLTF2(Operator, ImportHelper):
         default=True
     )
 
+    merge_vertices: BoolProperty(
+        name='Merge Vertices',
+        description=(
+            'The glTF format requires discontinuous normals, UVs, and '
+            'other vertex attributes to be stored as separate vertices, '
+            'as required for rendering on typical graphics hardware.\n'
+            'This option attempts to combine co-located vertices where possible.\n'
+            'Currently cannot combine verts with different normals'
+        ),
+        default=False,
+    )
+
     import_shading: EnumProperty(
         name="Shading",
         items=(("NORMALS", "Use Normal Data", ""),
@@ -898,6 +918,7 @@ class ImportGLTF2(Operator, ImportHelper):
         layout.use_property_decorate = False  # No animation.
 
         layout.prop(self, 'import_pack_images')
+        layout.prop(self, 'merge_vertices')
         layout.prop(self, 'import_shading')
         layout.prop(self, 'guess_original_bind_pose')
         layout.prop(self, 'bone_heuristic')

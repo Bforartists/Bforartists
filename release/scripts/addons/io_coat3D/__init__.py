@@ -36,7 +36,7 @@ else:
 from bpy.app.handlers import persistent
 
 from io_coat3D import tex
-#from io_coat3D import texVR
+from io_coat3D import texVR
 
 import os
 import ntpath
@@ -65,57 +65,6 @@ bpy.coat3D['status'] = 0
 initial_settings = True
 time_interval = 2.0
 global_exchange_folder = ''
-
-
-
-
-@persistent
-def every_3_seconds():
-    global global_exchange_folder
-    global initial_settings
-    path_ex = ''
-    
-    if(initial_settings):
-        global_exchange_folder = set_exchange_folder()
-        initial_settings = False
-    
-    coat3D = bpy.context.scene.coat3D
-
-    Export_folder  = global_exchange_folder
-    Blender_folder = os.path.join(Export_folder, 'Blender')
-
-    BlenderFolder = Blender_folder
-    ExportFolder = Export_folder
-    
-    Blender_folder += ('%sexport.txt' % (os.sep))
-    Export_folder += ('%sexport.txt' % (os.sep))
-    
-
-    if  os.path.isfile(Export_folder):
-
-        print('BLENDER -> 3DC -> BLENDER WORKFLLOW')
-        DeleteExtra3DC() 
-        workflow1(ExportFolder)
-        removeFile(Export_folder)
-        removeFile(Blender_folder)    
-        
-       
-    
-    elif os.path.isfile(Blender_folder):
-
-        print('3DC -> BLENDER WORKFLLOW')
-        DeleteExtra3DC() 
-        workflow2(BlenderFolder)
-        removeFile(Blender_folder)
-        
-    
-   
-
-    return 3.0
-
-@persistent
-def load_handler(dummy):
-    bpy.app.timers.register(every_3_seconds)
 
 
 def removeFile(exportfile):
@@ -155,19 +104,44 @@ def set_exchange_folder():
 
     if(os.path.isdir(exchange)):
         bpy.coat3D['status'] = 1
+
         if(platform == 'win32'):
+
             exchange_path = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender' + os.sep + 'Exchange_folder.txt'
             applink_folder = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender'
             if(not(os.path.isdir(applink_folder))):
                 os.makedirs(applink_folder)
+
         else:
+
             exchange_path = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender' + os.sep + 'Exchange_folder.txt'
             applink_folder = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender'
             if(not(os.path.isdir(applink_folder))):
                 os.makedirs(applink_folder)
-        file = open(exchange_path, "w")
-        file.write("%s"%(coat3D.exchangedir))
-        file.close()
+
+        if(os.path.isfile(exchange_path) == False):
+
+            file = open(exchange_path, "w")
+            file.write("%s"%(exchange_path))
+            file.close()
+
+        else:
+
+            exchangeline = open(exchange_path)
+            for line in exchangeline:
+                source = line
+                break
+            exchangeline.close()
+
+            if(source != coat3D.exchangedir and coat3D.exchangedir != '' and coat3D.exchangedir.rfind('Exchange') >= 0):
+
+                file = open(exchange_path, "w")
+                file.write("%s"%(coat3D.exchangedir))
+                file.close()
+                exchange = coat3D.exchangedir
+            
+            else:
+                exchange = source
 
     else:
         if(platform == 'win32'):
@@ -300,7 +274,6 @@ def updatemesh(objekti, proxy, texturelist):
                     vertex_map_copy.data[loop_index].color = proxy.data.vertex_colors[0].data[loop_index].color
 
     # UV -Sets
-
     udim_textures = False
     if(texturelist != []):
         if(texturelist[0][0].startswith('100')):
@@ -311,7 +284,7 @@ def updatemesh(objekti, proxy, texturelist):
 
     uv_count = len(proxy.data.uv_layers)
     index = 0
-    while(index < uv_count):
+    while(index < uv_count and len(proxy.data.polygons) == len(objekti.data.polygons)):
         for poly in proxy.data.polygons:
             for indi in poly.loop_indices:
                 if(proxy.data.uv_layers[index].data[indi].uv[0] != 0 and proxy.data.uv_layers[index].data[indi].uv[1] != 0):
@@ -319,11 +292,10 @@ def updatemesh(objekti, proxy, texturelist):
                     if(udim_textures):
                         udim = proxy.data.uv_layers[index].name
                         udim_index = int(udim[2:]) - 1
-
+    
                     objekti.data.uv_layers[0].data[indi].uv[0] = proxy.data.uv_layers[index].data[indi].uv[0]
                     objekti.data.uv_layers[0].data[indi].uv[1] = proxy.data.uv_layers[index].data[indi].uv[1]
-                    if(udim_textures):
-                        objekti.data.uv_layers[0].data[indi].uv[0] += udim_index
+            
         index = index + 1
 
     # Mesh Copy
@@ -332,6 +304,54 @@ def updatemesh(objekti, proxy, texturelist):
     else:
         for ind, v in enumerate(objekti.data.vertices):
             v.co = proxy.data.vertices[ind].co
+
+class SCENE_OT_getback(bpy.types.Operator):
+    bl_idname = "getback.pilgway_3d_coat"
+    bl_label = "Export your custom property"
+    bl_description = "Export your custom property"
+    bl_options = {'UNDO'}
+
+    def invoke(self, context, event):
+        
+        global global_exchange_folder
+        global initial_settings
+        path_ex = ''
+        
+        if(initial_settings):
+            global_exchange_folder = set_exchange_folder()
+            initial_settings = False
+
+        Export_folder  = global_exchange_folder
+        Blender_folder = os.path.join(Export_folder, 'Blender')
+
+        BlenderFolder = Blender_folder
+        ExportFolder = Export_folder
+        
+        Blender_folder += ('%sexport.txt' % (os.sep))
+        Export_folder += ('%sexport.txt' % (os.sep))
+        
+        if (bpy.app.background == False):
+            if os.path.isfile(Export_folder):
+
+                print('BLENDER -> 3DC -> BLENDER WORKFLLOW')
+                DeleteExtra3DC() 
+                workflow1(ExportFolder)
+                removeFile(Export_folder)
+                removeFile(Blender_folder)    
+                
+            
+            
+            elif os.path.isfile(Blender_folder):
+
+                print('3DC -> BLENDER WORKFLLOW')
+                DeleteExtra3DC() 
+                workflow2(BlenderFolder)
+                removeFile(Blender_folder)
+        
+    
+
+        return {'FINISHED'}
+
 
 class SCENE_OT_folder(bpy.types.Operator):
     bl_idname = "update_exchange_folder.pilgway_3d_coat"
@@ -760,11 +780,11 @@ class SCENE_OT_export(bpy.types.Operator):
         if(coat3D.type == 'autopo'):
             coat3D.bring_retopo = True
             coat3D.bring_retopo_path = checkname
-            bpy.ops.export_scene.fbx(filepath=checkname, use_selection=True, use_mesh_modifiers=coat3D.exportmod, axis_forward='-Z', axis_up='Y')
+            bpy.ops.export_scene.fbx(filepath=checkname, global_scale = 0.01, use_selection=True, use_mesh_modifiers=coat3D.exportmod, axis_forward='-Z', axis_up='Y')
 
         elif (coat3D.type == 'vox'):
             coat3D.bring_retopo = False
-            bpy.ops.export_scene.fbx(filepath=coa.applink_address, global_scale=1, use_selection=True,
+            bpy.ops.export_scene.fbx(filepath=coa.applink_address, global_scale = 0.01, use_selection=True,
                                      use_mesh_modifiers=coat3D.exportmod, axis_forward='-Z', axis_up='Y')
 
         else:
@@ -803,11 +823,12 @@ class SCENE_OT_export(bpy.types.Operator):
                                 if(node.name.startswith('3DC_') == True):
                                     material.material.node_tree.nodes.remove(node)
 
-
+    
             for ind, mat_list in enumerate(mod_mat_list):
-                if(mat_list == objekti.name):
+                if(mat_list == '__' + objekti.name):
                     for ind, mat in enumerate(mod_mat_list[mat_list]):
                         objekti.material_slots[mod_mat_list[mat_list][ind][0]].material = mod_mat_list[mat_list][ind][1]
+        
         bpy.context.scene.render.engine = active_render
         return {'FINISHED'}
 
@@ -906,10 +927,14 @@ def new_ref_function(new_applink_address, nimi):
     refmesh.coat3D.applink_name = ''
     refmesh.coat3D.applink_address = ''
     refmesh.coat3D.type = ''
+    copymesh.scale = (1,1,1)
+    copymesh.coat3D.applink_scale = (1,1,1)
+    copymesh.location = (0,0,0)
+    copymesh.rotation_euler = (0,0,0)
 
 
 def blender_3DC_blender(texturelist):
-
+    
     coat3D = bpy.context.scene.coat3D
 
     old_materials = bpy.data.materials.keys()
@@ -965,7 +990,6 @@ def blender_3DC_blender(texturelist):
     for oname in object_list:
 
         objekti = bpy.data.objects[oname]
-
         if(objekti.coat3D.applink_mesh == True):
 
             path3b_n = coat3D.exchangedir
@@ -1034,7 +1058,7 @@ def blender_3DC_blender(texturelist):
 
                     if objekti.coat3D.applink_firsttime == True and objekti.coat3D.type == 'vox':
                         objekti.select_set(True)
-                        objekti.scale = (1, 1, 1)
+                        objekti.scale = (0.01, 0.01, 0.01)
                         objekti.rotation_euler[0] = 1.5708
                         objekti.rotation_euler[2] = 1.5708
                         bpy.ops.object.transforms_to_deltas(mode='ROT')
@@ -1062,8 +1086,7 @@ def blender_3DC_blender(texturelist):
 
                         #delete_materials_from_end(keep_materials_count, obj_proxy)
 
-                        for index, material in enumerate(objekti.material_slots):
-                            obj_proxy.material_slots[index-1].material = material.material
+               
                         updatemesh(objekti,obj_proxy, texturelist)
                         bpy.context.view_layer.objects.active = objekti
 
@@ -1247,6 +1270,7 @@ def blender_3DC(texturelist, new_applink_address):
 
             if(facture_object):
                 texVR.matlab(new_obj, mat_list, texturelist, is_new)
+                new_obj.scale = (0.01, 0.01, 0.01)
             else:
                 tex.matlab(new_obj, mat_list, texturelist, is_new)
 
@@ -1354,7 +1378,6 @@ def workflow2(BlenderFolder):
     new_ref_object = False
 
     if(os.path.isfile(Blender_export)):
-        print('blender')
         obj_pathh = open(Blender_export)
         new_object = True
         for line in obj_pathh:
@@ -1420,9 +1443,10 @@ class SCENE_PT_Main(bpy.types.Panel):
             row.prop(coat3D,"type",text = "")
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=False, even_rows=False, align=True)
 
-            col = flow.column()
+            row = layout.row()
 
-            col.operator("export_applink.pilgway_3d_coat", text="Send")
+            row.operator("export_applink.pilgway_3d_coat", text="Send")
+            row.operator("getback.pilgway_3d_coat", text="GetBack")
 
 
 class ObjectButtonsPanel():
@@ -1944,6 +1968,11 @@ class MaterialCoat3D(PropertyGroup):
         description="Import diffuse texture",
         default=True
     )
+    bring_gloss: BoolProperty(
+        name="Import diffuse texture",
+        description="Import diffuse texture",
+        default=True
+    )
 
 classes = (
     SCENE_PT_Main,
@@ -1957,6 +1986,7 @@ classes = (
     SCENE_OT_folder,
     SCENE_OT_opencoat,
     SCENE_OT_export,
+    SCENE_OT_getback,
     SCENE_OT_delete_material_nodes,
     SCENE_OT_delete_object_nodes,
     SCENE_OT_delete_collection_nodes,
@@ -2014,6 +2044,11 @@ def register():
         description="Import alpha texture",
         default=True
     )
+    bpy.types.Material.coat3D_gloss = BoolProperty(
+        name="Import alpha texture",
+        description="Import alpha texture",
+        default=True
+    )
 
 
     from bpy.utils import register_class
@@ -2023,9 +2058,7 @@ def register():
     bpy.types.Object.coat3D = PointerProperty(type=ObjectCoat3D)
     bpy.types.Scene.coat3D = PointerProperty(type=SceneCoat3D)
     bpy.types.Mesh.coat3D = PointerProperty(type=MeshCoat3D)
-    bpy.types.Material.coat3D = PointerProperty(type=MaterialCoat3D)
-    bpy.app.handlers.load_post.append(load_handler)
-  
+    bpy.types.Material.coat3D = PointerProperty(type=MaterialCoat3D)  
 
     kc = bpy.context.window_manager.keyconfigs.addon
 

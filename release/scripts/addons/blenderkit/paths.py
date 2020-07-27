@@ -16,7 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import bpy, os, sys
+import bpy, os, sys, tempfile, shutil
+from blenderkit import tasks_queue, ui
 
 _presets = os.path.join(bpy.utils.user_resource('SCRIPTS'), "presets")
 BLENDERKIT_LOCAL = "http://localhost:8001"
@@ -35,6 +36,15 @@ BLENDERKIT_OAUTH_LANDING_URL = "/oauth-landing/"
 BLENDERKIT_SIGNUP_URL = "https://www.blenderkit.com/accounts/register"
 BLENDERKIT_SETTINGS_FILENAME = os.path.join(_presets, "bkit.json")
 
+def cleanup_old_folders():
+    '''function to clean up any historical folders for BlenderKit. By now removes the temp folder.'''
+    orig_temp = os.path.join(os.path.expanduser('~'), 'blenderkit_data', 'temp')
+    if os.path.isdir(orig_temp):
+        try:
+            shutil.rmtree(orig_temp)
+        except Exception as e:
+            print(e)
+            print("couldn't delete old temp directory")
 
 def get_bkit_url():
     # bpy.app.debug_value = 2
@@ -81,7 +91,7 @@ def get_temp_dir(subdir=None):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
     # tempdir = user_preferences.temp_dir
-    tempdir = os.path.join(user_preferences.global_dir, 'temp')
+    tempdir = os.path.join(tempfile.gettempdir(), 'bkit_temp')
     if tempdir.startswith('//'):
         tempdir = bpy.path.abspath(tempdir)
     try:
@@ -91,11 +101,14 @@ def get_temp_dir(subdir=None):
             tempdir = os.path.join(tempdir, subdir)
             if not os.path.exists(tempdir):
                 os.makedirs(tempdir)
+        cleanup_old_folders()
     except:
-        print('Cache directory not found. Resetting Cache folder path.')
+        tasks_queue.add_task((ui.add_report, ('Cache directory not found. Resetting Cache folder path.',)))
+
         p = default_global_dict()
         if p == user_preferences.global_dir:
-            print('Global dir was already default, plese set a global directory in addon preferences to a dir where you have write permissions.')
+            message = 'Global dir was already default, plese set a global directory in addon preferences to a dir where you have write permissions.'
+            tasks_queue.add_task((ui.add_report, (message,)))
             return None
         user_preferences.global_dir = p
         tempdir = get_temp_dir(subdir = subdir)

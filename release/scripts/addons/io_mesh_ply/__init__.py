@@ -21,9 +21,9 @@
 bl_info = {
     "name": "Stanford PLY format",
     "author": "Bruce Merry, Campbell Barton",
-    "version": (1, 1, 0),
-    "blender": (2, 82, 0),
-    "location": "File > Import-Export",
+    "version": (2, 0, 0),
+    "blender": (2, 90, 0),
+    "location": "File > Import/Export",
     "description": "Import-Export PLY mesh data with UVs and vertex colors",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/import_export/mesh_ply.html",
     "support": 'OFFICIAL',
@@ -52,7 +52,7 @@ from bpy_extras.io_utils import (
     ImportHelper,
     ExportHelper,
     axis_conversion,
-    orientation_helper
+    orientation_helper,
 )
 
 
@@ -64,11 +64,9 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
 
     files: CollectionProperty(
         name="File Path",
-        description=(
-            "File path used for importing "
-            "the PLY file"
-        ),
-        type=bpy.types.OperatorFileListElement)
+        description="File path used for importing the PLY file",
+        type=bpy.types.OperatorFileListElement,
+    )
 
     # Hide opertator properties, rest of this is managed in C. See WM_operator_properties_filesel().
     hide_props_region: BoolProperty(
@@ -84,16 +82,22 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         import os
+        from . import import_ply
 
-        paths = [os.path.join(self.directory, name.name)
-                 for name in self.files]
+        context.window.cursor_set('WAIT')
+
+        paths = [
+            os.path.join(self.directory, name.name)
+            for name in self.files
+        ]
+
         if not paths:
             paths.append(self.filepath)
 
-        from . import import_ply
-
         for path in paths:
             import_ply.load(self, context, path)
+
+        context.window.cursor_set('DEFAULT')
 
         return {'FINISHED'}
 
@@ -107,6 +111,10 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
     filename_ext = ".ply"
     filter_glob: StringProperty(default="*.ply", options={'HIDDEN'})
 
+    use_ascii: BoolProperty(
+        name="ASCII",
+        description="Export using ASCII file format, otherwise use binary",
+    )
     use_selection: BoolProperty(
         name="Selection Only",
         description="Export selected objects only",
@@ -120,10 +128,8 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
     use_normals: BoolProperty(
         name="Normals",
         description=(
-            "Export Normals for smooth and "
-            "hard shaded faces "
-            "(hard shaded faces will be exported "
-            "as individual faces)"
+            "Export Normals for smooth and hard shaded faces "
+            "(hard shaded faces will be exported as individual faces)"
         ),
         default=True,
     )
@@ -137,17 +143,18 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
         description="Export the active vertex color layer",
         default=True,
     )
-
     global_scale: FloatProperty(
         name="Scale",
-        min=0.01, max=1000.0,
+        min=0.01,
+        max=1000.0,
         default=1.0,
     )
 
     def execute(self, context):
+        from mathutils import Matrix
         from . import export_ply
 
-        from mathutils import Matrix
+        context.window.cursor_set('WAIT')
 
         keywords = self.as_keywords(
             ignore=(
@@ -164,13 +171,22 @@ class ExportPLY(bpy.types.Operator, ExportHelper):
         ).to_4x4() @ Matrix.Scale(self.global_scale, 4)
         keywords["global_matrix"] = global_matrix
 
-        filepath = self.filepath
-        filepath = bpy.path.ensure_ext(filepath, self.filename_ext)
+        export_ply.save(context, **keywords)
 
-        return export_ply.save(self, context, **keywords)
+        context.window.cursor_set('DEFAULT')
+
+        return {'FINISHED'}
 
     def draw(self, context):
-        pass
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        sfile = context.space_data
+        operator = sfile.active_operator
+
+        col = layout.column(heading="Format")
+        col.prop(operator, "use_ascii")
 
 
 class PLY_PT_export_include(bpy.types.Panel):
@@ -189,7 +205,7 @@ class PLY_PT_export_include(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
+        layout.use_property_decorate = False
 
         sfile = context.space_data
         operator = sfile.active_operator
@@ -213,7 +229,7 @@ class PLY_PT_export_transform(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
+        layout.use_property_decorate = False
 
         sfile = context.space_data
         operator = sfile.active_operator
@@ -239,7 +255,7 @@ class PLY_PT_export_geometry(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
-        layout.use_property_decorate = False  # No animation.
+        layout.use_property_decorate = False
 
         sfile = context.space_data
         operator = sfile.active_operator

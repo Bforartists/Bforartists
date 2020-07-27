@@ -194,8 +194,7 @@ class AutoMirror(bpy.types.Operator):
             bpy.context.object.modifiers[-1].show_on_cage = automirror.show_on_cage
             if automirror.apply_mirror:
                 bpy.ops.object.mode_set(mode = 'OBJECT')
-                bpy.ops.object.modifier_apply(apply_as = 'DATA',
-                                              modifier = bpy.context.object.modifiers[-1].name)
+                bpy.ops.object.modifier_apply(modifier = bpy.context.object.modifiers[-1].name)
                 if automirror.toggle_edit:
                     bpy.ops.object.mode_set(mode = 'EDIT')
                 else:

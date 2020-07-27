@@ -58,7 +58,7 @@ class ApplyAllModifiers(Operator):
                 is_mod = True
                 try:
                     bpy.ops.object.modifier_apply(
-                                        contx, apply_as='DATA',
+                                        contx,
                                         modifier=contx['modifier'].name
                                         )
                 except:

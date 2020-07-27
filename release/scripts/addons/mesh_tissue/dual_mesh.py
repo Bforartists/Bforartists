@@ -240,9 +240,7 @@ class dual_mesh(Operator):
                 if ob.modifiers[0].name == "dual_mesh_subsurf":
                     break
 
-            bpy.ops.object.modifier_apply(
-                    apply_as='DATA', modifier='dual_mesh_subsurf'
-                    )
+            bpy.ops.object.modifier_apply(modifier='dual_mesh_subsurf')
 
             bpy.ops.object.mode_set(mode='EDIT')
             bpy.ops.mesh.select_all(action='DESELECT')

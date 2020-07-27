@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1267,8 +1267,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Obrázek a nastavení pro zobrazení na pozadí 3D pohledu"
 
 
-msgid "Alpha"
-msgstr "Alfa"
+msgid "Opacity"
+msgstr "Neprůsvitnost"
 
 
 msgid "MovieClip"
@@ -1777,6 +1777,10 @@ msgstr "Konstantní"
 
 msgid "Color Ramp Element"
 msgstr "Prvek barevné rampy"
+
+
+msgid "Alpha"
+msgstr "Alfa"
 
 
 msgid "Set color of selected color stop"
@@ -2520,24 +2524,12 @@ msgid "Lock Z Pos"
 msgstr "Zamknout osu Z"
 
 
-msgid "Lock X Rot"
-msgstr "Uzamknout otáčení"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Původni rotace"
 
 
-msgid "Lock Y Rot"
-msgstr "Uzamknout otáčení"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Původni rotace"
-
-
-msgid "Lock Z Rot"
-msgstr "Uzamknout otáčení"
 
 
 msgid "Constraint rotation along Z axis"
@@ -2756,30 +2748,6 @@ msgid "Always"
 msgstr "Armatura"
 
 
-msgid "-X Rot"
-msgstr "X Otáčení"
-
-
-msgid "-Y Rot"
-msgstr "Otáčení Y"
-
-
-msgid "-Z Rot"
-msgstr "Z Otáčení"
-
-
-msgid "X Rot"
-msgstr "X Otáčení"
-
-
-msgid "Y Rot"
-msgstr "Otáčení Y"
-
-
-msgid "Z Rot"
-msgstr "Z Otáčení"
-
-
 msgid "Use Relative Offset"
 msgstr "Relativní cesta"
 
@@ -2988,12 +2956,8 @@ msgid "The transformation type to use from the target"
 msgstr "Přidat objekt(y) do aktivní vrstvy"
 
 
-msgid "Loc"
-msgstr "Zamknout"
-
-
-msgid "Rot"
-msgstr "Kvadratické"
+msgid "Location"
+msgstr "Umístění"
 
 
 msgid "Map To"
@@ -3062,10 +3026,6 @@ msgstr "Úchop Vektoru"
 
 msgid "Vector Handle"
 msgstr "Úchop Vektoru"
-
-
-msgid "Location"
-msgstr "Umístění"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -5067,10 +5027,6 @@ msgstr "Zamčený snímek"
 
 msgid "Lock current frame displayed by layer"
 msgstr "Uzamkne současný snímek zobrazovaný ve vrstvě"
-
-
-msgid "Opacity"
-msgstr "Neprůsvitnost"
 
 
 msgid "Layer Opacity"
@@ -9371,44 +9327,12 @@ msgid "Delta Rotation"
 msgstr "Vyčistit otáčení"
 
 
-msgid "LocScale"
-msgstr "Změna velikosti"
-
-
-msgid "RotScale"
-msgstr "Změnit velikost"
-
-
 msgid "Visual Location"
-msgstr "Rotace"
-
-
-msgid "Visual LocRotScale"
-msgstr "Změna velikosti"
-
-
-msgid "Visual LocScale"
 msgstr "Rotace"
 
 
 msgid "Visual Rotation"
 msgstr "Rotace"
-
-
-msgid "Visual RotScale"
-msgstr "Rotace"
-
-
-msgid "Visual Scaling"
-msgstr "Rotace"
-
-
-msgid "LocRotScale"
-msgstr "Změna velikosti"
-
-
-msgid "Scaling"
-msgstr "Změna velikosti"
 
 
 msgid "Whole Character"
@@ -9740,16 +9664,20 @@ msgid "Material Specials"
 msgstr "Materiál"
 
 
+msgid "Select Linked"
+msgstr "Vybrat Propojené"
+
+
+msgid "Align"
+msgstr "Zarovnaný"
+
+
 msgid "UV Select Mode"
 msgstr "UV výběrový mód"
 
 
 msgid "Show/Hide Faces"
 msgstr "Zobrazit/skrýt plošky"
-
-
-msgid "Weld/Align"
-msgstr "Zarovnaný"
 
 
 msgctxt "Operator"
@@ -9799,10 +9727,6 @@ msgstr "NLA Proužky"
 
 msgid "Navigation"
 msgstr "Navigace"
-
-
-msgid "Select Linked"
-msgstr "Vybrat Propojené"
 
 
 msgid "Strip"
@@ -10411,10 +10335,6 @@ msgstr "Vazby objektu"
 
 msgid "Target object shape"
 msgstr "Vytvořit proxy objekt"
-
-
-msgid "From Radius"
-msgstr "Činitel"
 
 
 msgid "Cloth Modifier"
@@ -11035,10 +10955,6 @@ msgstr "Render: "
 
 msgid "Number of steps in the revolution"
 msgstr "Číslo ve stupních určující počet otočení"
-
-
-msgid "Calc Order"
-msgstr "Náhodně..."
 
 
 msgid "Object Screw"
@@ -15749,6 +15665,10 @@ msgid "Delete Constraint"
 msgstr "Vymazat vazbu"
 
 
+msgid "Report"
+msgstr "Exportovat"
+
+
 msgid "First frame of path animation"
 msgstr "Počáteční snímek animace"
 
@@ -15866,10 +15786,6 @@ msgid "Bweight"
 msgstr "Váha:"
 
 
-msgid "Align"
-msgstr "Zarovnaný"
-
-
 msgid "Edge Slide"
 msgstr "Posouvat hranu"
 
@@ -15915,11 +15831,6 @@ msgstr "Vytvořit segment"
 
 msgid "Join two curves by their selected ends"
 msgstr "Odstranit označené Objekt(y)"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Vypocitat normaly"
 
 
 msgctxt "Operator"
@@ -17618,10 +17529,6 @@ msgid "Select reports by index"
 msgstr "Vyberte typ textury"
 
 
-msgid "Report"
-msgstr "Exportovat"
-
-
 msgid "Index of the report"
 msgstr "Velikost štětce"
 
@@ -17877,10 +17784,6 @@ msgstr "Vytvoří novou vrstvu barvy vertexů"
 
 msgid "Name of new mask"
 msgstr "Nelze uložit soubor"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "Vypočítá trasy pro vybrané kosti"
 
 
 msgid "Clear the mask's parenting"
