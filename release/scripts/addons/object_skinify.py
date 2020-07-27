@@ -551,8 +551,8 @@ def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_
 
     # object mode apply all modifiers
     if apply_mod:
-        bpy.ops.object.modifier_apply(override, apply_as='DATA', modifier="Skin")
-        bpy.ops.object.modifier_apply(override, apply_as='DATA', modifier="Subsurf")
+        bpy.ops.object.modifier_apply(override, modifier="Skin")
+        bpy.ops.object.modifier_apply(override, modifier="Subsurf")
 
     return {'FINISHED'}
 

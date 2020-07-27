@@ -209,9 +209,9 @@ def get_upload_props():
 
 def previmg_name(index, fullsize=False):
     if not fullsize:
-        return '.bkit_preview_' + str(index).zfill(2)
+        return '.bkit_preview_' + str(index).zfill(3)
     else:
-        return '.bkit_preview_full_' + str(index).zfill(2)
+        return '.bkit_preview_full_' + str(index).zfill(3)
 
 
 def get_active_brush():
@@ -263,6 +263,15 @@ def save_prefs(self, context):
         except Exception as e:
             print(e)
 
+def get_hidden_texture(tpath, bdata_name, force_reload = False):
+    i = get_hidden_image(tpath, bdata_name, force_reload = force_reload)
+    bdata_name = f".{bdata_name}"
+    t = bpy.data.textures.get(bdata_name)
+    if t is None:
+        t = bpy.data.textures.new('.test', 'IMAGE')
+    if t.image!= i:
+        t.image = i
+    return t
 
 def get_hidden_image(tpath, bdata_name, force_reload=False):
     hidden_name = '.%s' % bdata_name
@@ -289,12 +298,12 @@ def get_hidden_image(tpath, bdata_name, force_reload=False):
 
                 img.filepath = tpath
                 img.reload()
-        img.colorspace_settings.name = 'Linear'
+        img.colorspace_settings.name = 'sRGB'
     elif force_reload:
         if img.packed_file is not None:
             img.unpack(method='USE_ORIGINAL')
         img.reload()
-        img.colorspace_settings.name = 'Linear'
+        img.colorspace_settings.name = 'sRGB'
     return img
 
 
@@ -304,7 +313,7 @@ def get_thumbnail(name):
     img = bpy.data.images.get(name)
     if img == None:
         img = bpy.data.images.load(p)
-        img.colorspace_settings.name = 'Linear'
+        img.colorspace_settings.name = 'sRGB'
         img.name = name
         img.name = name
 
@@ -603,3 +612,32 @@ def guard_from_crash():
     if bpy.context.preferences.addons['blenderkit'].preferences is None:
         return False;
     return True
+
+
+def label_multiline(layout, text='', icon='NONE', width=-1):
+    ''' draw a ui label, but try to split it in multiple lines.'''
+    if text.strip() == '':
+        return
+    lines = text.split('\n')
+    if width > 0:
+        threshold = int(width / 5.5)
+    else:
+        threshold = 35
+    maxlines = 8
+    li = 0
+    for l in lines:
+        while len(l) > threshold:
+            i = l.rfind(' ', 0, threshold)
+            if i < 1:
+                i = threshold
+            l1 = l[:i]
+            layout.label(text=l1, icon=icon)
+            icon = 'NONE'
+            l = l[i:].lstrip()
+            li += 1
+            if li > maxlines:
+                break;
+        if li > maxlines:
+            break;
+        layout.label(text=l, icon=icon)
+        icon = 'NONE'

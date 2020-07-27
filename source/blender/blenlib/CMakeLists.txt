@@ -267,6 +267,7 @@ set(SRC
   BLI_utility_mixins.hh
   BLI_uvproject.h
   BLI_vector.hh
+  BLI_vector_adaptor.hh
   BLI_vector_set.hh
   BLI_vector_set_slots.hh
   BLI_vfontdata.h
@@ -340,3 +341,29 @@ set_source_files_properties(
 )
 
 blender_add_lib(bf_blenlib "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+if(WITH_GTESTS)
+  set(TEST_SRC
+    tests/BLI_array_test.cc
+    tests/BLI_disjoint_set_test.cc
+    tests/BLI_edgehash_test.cc
+    tests/BLI_index_mask_test.cc
+    tests/BLI_index_range_test.cc
+    tests/BLI_linear_allocator_test.cc
+    tests/BLI_map_test.cc
+    tests/BLI_math_base_safe_test.cc
+    tests/BLI_memory_utils_test.cc
+    tests/BLI_multi_value_map_test.cc
+    tests/BLI_set_test.cc
+    tests/BLI_span_test.cc
+    tests/BLI_stack_cxx_test.cc
+    tests/BLI_string_ref_test.cc
+    tests/BLI_vector_set_test.cc
+    tests/BLI_vector_test.cc
+  )
+  set(TEST_LIB
+    bf_blenlib
+  )
+  include(GTestTesting)
+  blender_add_test_lib(bf_bli_tests "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")
+endif()

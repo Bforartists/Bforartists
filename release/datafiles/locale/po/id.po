@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -673,10 +673,6 @@ msgstr "Orientasi Transformasi"
 
 msgid "Map transformations of the target to the object"
 msgstr "Orientasi Transformasi"
-
-
-msgid "Loc"
-msgstr "Kunci"
 
 
 msgid "Location"
@@ -1683,23 +1679,7 @@ msgid "Visual Location"
 msgstr "lokasi"
 
 
-msgid "Visual LocRotScale"
-msgstr "lokasi"
-
-
-msgid "Visual LocScale"
-msgstr "lokasi"
-
-
 msgid "Visual Rotation"
-msgstr "lokasi"
-
-
-msgid "Visual RotScale"
-msgstr "lokasi"
-
-
-msgid "Visual Scaling"
 msgstr "lokasi"
 
 
@@ -1824,6 +1804,10 @@ msgid "Clip"
 msgstr "Buka"
 
 
+msgid "Select Linked"
+msgstr "Seleksi"
+
+
 msgctxt "Operator"
 msgid "Add"
 msgstr "Baru"
@@ -1839,10 +1823,6 @@ msgstr "Warna"
 
 msgid "Node Color Specials"
 msgstr "Warna"
-
-
-msgid "Select Linked"
-msgstr "Seleksi"
 
 
 msgid "Text"
@@ -2003,10 +1983,6 @@ msgstr "Warna"
 
 msgid "Smooth Shading"
 msgstr "Tampilan 3D"
-
-
-msgid "Calc Order"
-msgstr "Acak"
 
 
 msgid "Object Screw"
@@ -3526,11 +3502,6 @@ msgstr "Modus Sunting"
 msgctxt "Operator"
 msgid "Make Segment"
 msgstr "Hapus Titik"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Nama"
 
 
 msgctxt "Operator"

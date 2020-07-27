@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -381,14 +381,6 @@ msgstr "Kopieer Pose"
 
 msgid "Bone"
 msgstr "Bot"
-
-
-msgid "Loc"
-msgstr "Loc"
-
-
-msgid "Rot"
-msgstr "Rot"
 
 
 msgid "Location"
@@ -1127,6 +1119,10 @@ msgid "Key"
 msgstr "Sleutel"
 
 
+msgid "Select Linked"
+msgstr "Selecteer Aaneengesloten"
+
+
 msgctxt "Operator"
 msgid "Add"
 msgstr "Toevoegen"
@@ -1146,10 +1142,6 @@ msgstr "Indeling"
 
 msgid "Navigation"
 msgstr "Navigatie"
-
-
-msgid "Select Linked"
-msgstr "Selecteer Aaneengesloten"
 
 
 msgid "Text"

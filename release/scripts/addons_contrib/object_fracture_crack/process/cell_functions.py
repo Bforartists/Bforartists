@@ -379,7 +379,7 @@ def cell_boolean(context, original, cells,
             original.select_set(True)
             cell.select_set(True)
             bpy.context.view_layer.objects.active = cell
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Boolean")
+            bpy.ops.object.modifier_apply(modifier="Boolean")
 
             if i == 0:
                 bpy.data.objects.remove(cell, do_unlink=True)

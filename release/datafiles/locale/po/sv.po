@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1049,8 +1049,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Materialets volym-inställningar"
 
 
-msgid "Alpha"
-msgstr "Alpha"
+msgid "Opacity"
+msgstr "Genomskinlighet"
 
 
 msgid "MovieClip"
@@ -1507,6 +1507,10 @@ msgstr "Lägg till Stripp"
 
 msgid "Color Ramp Element"
 msgstr "Rensa Förälder"
+
+
+msgid "Alpha"
+msgstr "Alpha"
 
 
 msgid "Set color of selected color stop"
@@ -2178,24 +2182,12 @@ msgid "Lock Z Pos"
 msgstr "Lås Z-axeln"
 
 
-msgid "Lock X Rot"
-msgstr "Lås rotation"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Ärv rotation"
 
 
-msgid "Lock Y Rot"
-msgstr "Lås rotation"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Ärv rotation"
-
-
-msgid "Lock Z Rot"
-msgstr "Lås rotation"
 
 
 msgid "Constraint rotation along Z axis"
@@ -2388,30 +2380,6 @@ msgstr "Rensa Rotation"
 
 msgid "Always"
 msgstr "Stega alltid"
-
-
-msgid "-X Rot"
-msgstr "Rotation"
-
-
-msgid "-Y Rot"
-msgstr "Rotation"
-
-
-msgid "-Z Rot"
-msgstr "Z-rotation"
-
-
-msgid "X Rot"
-msgstr "Rotation"
-
-
-msgid "Y Rot"
-msgstr "Rotation"
-
-
-msgid "Z Rot"
-msgstr "Z-rotation"
 
 
 msgid "Use Relative Offset"
@@ -2622,12 +2590,8 @@ msgid "The transformation type to use from the target"
 msgstr "Rensa Rotation"
 
 
-msgid "Loc"
-msgstr "Lås"
-
-
-msgid "Rot"
-msgstr "Rot"
+msgid "Location"
+msgstr "Position"
 
 
 msgid "Map To"
@@ -2684,10 +2648,6 @@ msgstr "Vektor Handtag"
 
 msgid "Vector Handle"
 msgstr "Vektor Handtag"
-
-
-msgid "Location"
-msgstr "Position"
 
 
 msgid "Selection state of the curve point"
@@ -4389,10 +4349,6 @@ msgstr "Lås"
 
 msgid "Frame Locked"
 msgstr "Spel"
-
-
-msgid "Opacity"
-msgstr "Genomskinlighet"
 
 
 msgid "Layer Opacity"
@@ -8365,44 +8321,12 @@ msgid "Delta Rotation"
 msgstr "Rensa Rotation"
 
 
-msgid "LocScale"
-msgstr "Skala"
-
-
-msgid "RotScale"
-msgstr "Skala"
-
-
 msgid "Visual Location"
-msgstr "Rensa Rotation"
-
-
-msgid "Visual LocRotScale"
-msgstr "Skala"
-
-
-msgid "Visual LocScale"
 msgstr "Rensa Rotation"
 
 
 msgid "Visual Rotation"
 msgstr "Rensa Rotation"
-
-
-msgid "Visual RotScale"
-msgstr "Rensa Rotation"
-
-
-msgid "Visual Scaling"
-msgstr "Rensa Rotation"
-
-
-msgid "LocRotScale"
-msgstr "Skala"
-
-
-msgid "Scaling"
-msgstr "Sampling:"
 
 
 msgid "Whole Character"
@@ -8698,16 +8622,20 @@ msgid "Material Specials"
 msgstr "Spara som"
 
 
+msgid "Select Linked"
+msgstr "Avmarkera Länkad"
+
+
+msgid "Align"
+msgstr "Duplicera"
+
+
 msgid "UV Select Mode"
 msgstr "UV-markeringsläge"
 
 
 msgid "Show/Hide Faces"
 msgstr "Visa/göm ytor"
-
-
-msgid "Weld/Align"
-msgstr "Löd/räta upp"
 
 
 msgctxt "Operator"
@@ -8753,10 +8681,6 @@ msgstr "Lägg till Stripp"
 
 msgid "Navigation"
 msgstr "Renderings Fönster"
-
-
-msgid "Select Linked"
-msgstr "Avmarkera Länkad"
 
 
 msgid "Strip"
@@ -9313,10 +9237,6 @@ msgstr "Duplicera"
 
 msgid "Target object shape"
 msgstr "Packa Data"
-
-
-msgid "From Radius"
-msgstr "Zooma Ut"
 
 
 msgid "Use Transform"
@@ -9905,10 +9825,6 @@ msgstr "Rendera stämpel"
 
 msgid "Number of steps in the revolution"
 msgstr "Iterationer"
-
-
-msgid "Calc Order"
-msgstr "Slumpfrö"
 
 
 msgid "Object Screw"
@@ -14460,6 +14376,10 @@ msgid "Remove constraint from constraint stack"
 msgstr "Göm Markerad"
 
 
+msgid "Report"
+msgstr "Rapport"
+
+
 msgid "First frame of path animation"
 msgstr "Starta rendering av sekvens"
 
@@ -14565,10 +14485,6 @@ msgid "Bweight"
 msgstr "Höjd"
 
 
-msgid "Align"
-msgstr "Duplicera"
-
-
 msgid "Edge Slide"
 msgstr "Dela"
 
@@ -14614,11 +14530,6 @@ msgstr "Skapa Förälder"
 
 msgid "Join two curves by their selected ends"
 msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Beräkna Normaler"
 
 
 msgctxt "Operator"
@@ -16264,10 +16175,6 @@ msgid "Select reports by index"
 msgstr "Avmarkera Länkad"
 
 
-msgid "Report"
-msgstr "Rapport"
-
-
 msgid "Index of the report"
 msgstr "Materialets volym-inställningar"
 
@@ -16507,10 +16414,6 @@ msgstr "Rensa Rotation"
 
 msgid "Name of new mask"
 msgstr "Flytta Till Lager"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "Markera Länkad"
 
 
 msgid "Clear the mask's parenting"
@@ -30006,10 +29909,6 @@ msgid "Property value not in enumeration"
 msgstr "Redigera egenskapens värde"
 
 
-msgid "Outer"
-msgstr "Yttre"
-
-
 msgid "Sharp Edges"
 msgstr "Markera Rad"
 
@@ -30025,6 +29924,10 @@ msgstr "Konvertera:"
 
 msgid "Rim"
 msgstr "Ovan"
+
+
+msgid "Outer"
+msgstr "Yttre"
 
 
 msgid "Aspect X"

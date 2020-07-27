@@ -47,6 +47,7 @@
 
 #include "PIL_time.h"
 
+#include "BKE_animsys.h"
 #include "BKE_blender_undo.h"
 #include "BKE_brush.h"
 #include "BKE_colorband.h"
@@ -1752,21 +1753,21 @@ static void ui_selectcontext_apply(bContext *C,
       RNA_property_int_range(&but->rnapoin, prop, &min.i, &max.i);
     }
     else if (rna_type == PROP_ENUM) {
-      /* not a delta infact */
+      /* Not a delta in fact. */
       delta.i = RNA_property_enum_get(&but->rnapoin, prop);
     }
     else if (rna_type == PROP_BOOLEAN) {
       if (is_array) {
-        /* not a delta infact */
+        /* Not a delta in fact. */
         delta.b = RNA_property_boolean_get_index(&but->rnapoin, prop, index);
       }
       else {
-        /* not a delta infact */
+        /* Not a delta in fact. */
         delta.b = RNA_property_boolean_get(&but->rnapoin, prop);
       }
     }
     else if (rna_type == PROP_POINTER) {
-      /* not a delta infact */
+      /* Not a delta in fact. */
       delta.p = RNA_property_pointer_get(&but->rnapoin, prop);
     }
 
@@ -8408,6 +8409,9 @@ void UI_context_update_anim_flag(const bContext *C)
 {
   Scene *scene = CTX_data_scene(C);
   ARegion *region = CTX_wm_region(C);
+  struct Depsgraph *depsgraph = CTX_data_depsgraph_pointer(C);
+  const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
+      depsgraph, (scene) ? scene->r.cfra : 0.0f);
   uiBlock *block;
   uiBut *but, *activebut;
 
@@ -8417,7 +8421,7 @@ void UI_context_update_anim_flag(const bContext *C)
 
     for (block = region->uiblocks.first; block; block = block->next) {
       for (but = block->buttons.first; but; but = but->next) {
-        ui_but_anim_flag(but, (scene) ? scene->r.cfra : 0.0f);
+        ui_but_anim_flag(but, &anim_eval_context);
         ui_but_override_flag(CTX_data_main(C), but);
         if (UI_but_is_decorator(but)) {
           ui_but_anim_decorate_update_from_flag(but);

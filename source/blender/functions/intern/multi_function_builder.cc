@@ -34,10 +34,10 @@ void CustomMF_GenericConstant::call(IndexMask mask,
                                     MFContext UNUSED(context)) const
 {
   GMutableSpan output = params.uninitialized_single_output(0);
-  type_.fill_uninitialized_indices(value_, output.buffer(), mask);
+  type_.fill_uninitialized_indices(value_, output.data(), mask);
 }
 
-uint CustomMF_GenericConstant::hash() const
+uint64_t CustomMF_GenericConstant::hash() const
 {
   return type_.hash(value_);
 }
@@ -58,8 +58,8 @@ static std::string gspan_to_string(GSpan array)
 {
   std::stringstream ss;
   ss << "[";
-  uint max_amount = 5;
-  for (uint i : IndexRange(std::min(max_amount, array.size()))) {
+  const int64_t max_amount = 5;
+  for (int64_t i : IndexRange(std::min(max_amount, array.size()))) {
     array.type().debug_print(array[i], ss);
     ss << ", ";
   }
@@ -82,7 +82,7 @@ void CustomMF_GenericConstantArray::call(IndexMask mask,
                                          MFContext UNUSED(context)) const
 {
   GVectorArray &vectors = params.vector_output(0);
-  for (uint i : mask) {
+  for (int64_t i : mask) {
     vectors.extend(i, array_);
   }
 }
@@ -102,7 +102,7 @@ CustomMF_DefaultOutput::CustomMF_DefaultOutput(StringRef name,
 }
 void CustomMF_DefaultOutput::call(IndexMask mask, MFParams params, MFContext UNUSED(context)) const
 {
-  for (uint param_index : this->param_indices()) {
+  for (int param_index : this->param_indices()) {
     MFParamType param_type = this->param_type(param_index);
     if (!param_type.is_output()) {
       continue;
@@ -111,7 +111,7 @@ void CustomMF_DefaultOutput::call(IndexMask mask, MFParams params, MFContext UNU
     if (param_type.data_type().is_single()) {
       GMutableSpan span = params.uninitialized_single_output(param_index);
       const CPPType &type = span.type();
-      type.fill_uninitialized_indices(type.default_value(), span.buffer(), mask);
+      type.fill_uninitialized_indices(type.default_value(), span.data(), mask);
     }
   }
 }

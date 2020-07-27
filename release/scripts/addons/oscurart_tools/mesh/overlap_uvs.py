@@ -27,66 +27,57 @@ from bpy.props import (
         FloatProperty,
         EnumProperty,
         )
-import os
+        
+        
 import bmesh
-
-C = bpy.context
-D = bpy.data
-
-
 
 # -------------------------- OVERLAP UV ISLANDS
 
 def defCopyUvsIsland(self, context):
-    bpy.ops.object.mode_set(mode="OBJECT")
-    global obLoop
-    global islandFaces
-    obLoop = []
-    islandFaces = []
-    for poly in bpy.context.object.data.polygons:
-        if poly.select:
-            islandFaces.append(poly.index)
-            for li in poly.loop_indices:
-                obLoop.append(li)
-
-    bpy.ops.object.mode_set(mode="EDIT")
+    global islandSet
+    islandSet = {}
+    islandSet["Loop"] = []
+   
+    bpy.context.scene.tool_settings.use_uv_select_sync = True
+    bpy.ops.uv.select_linked()
+    bm = bmesh.from_edit_mesh(bpy.context.object.data)
+    uv_lay = bm.loops.layers.uv.active
+    faceSel = 0
+    for face in bm.faces:
+        if face.select:
+            faceSel +=1 
+            for loop in face.loops:
+                islandSet["Loop"].append(loop[uv_lay].uv.copy())     
+    islandSet["Size"] = faceSel
 
 def defPasteUvsIsland(self, uvOffset, rotateUv,context):
-    bpy.ops.object.mode_set(mode="OBJECT")
-    selPolys = [poly.index for poly in bpy.context.object.data.polygons if poly.select]
-
-    for island in selPolys:
-        bpy.ops.object.mode_set(mode="EDIT")
+    bm = bmesh.from_edit_mesh(bpy.context.object.data)
+    bpy.context.scene.tool_settings.use_uv_select_sync = True    
+    pickedFaces = [face for face in bm.faces if face.select]
+    for face in pickedFaces:
         bpy.ops.mesh.select_all(action="DESELECT")
-        bpy.ops.object.mode_set(mode="OBJECT")
-        bpy.context.object.data.polygons[island].select = True
-        bpy.ops.object.mode_set(mode="EDIT")
-        bpy.ops.mesh.select_linked()
-        bpy.ops.object.mode_set(mode="OBJECT")
-        TobLoop = []
-        TislandFaces = []
-        for poly in bpy.context.object.data.polygons:
-            if poly.select:
-                TislandFaces.append(poly.index)
-                for li in poly.loop_indices:
-                    TobLoop.append(li)
-
-        for source,target in zip(range(min(obLoop),max(obLoop)+1),range(min(TobLoop),max(TobLoop)+1)):
-            bpy.context.object.data.uv_layers.active.data[target].uv = bpy.context.object.data.uv_layers.active.data[source].uv + Vector((uvOffset,0))
-
-        bpy.ops.object.mode_set(mode="EDIT")
-
-    if rotateUv:
-        bpy.ops.object.mode_set(mode="OBJECT")
-        for poly in selPolys:
-            bpy.context.object.data.polygons[poly].select = True
-        bpy.ops.object.mode_set(mode="EDIT")
-        bm = bmesh.from_edit_mesh(bpy.context.object.data)
-        bmesh.ops.reverse_uvs(bm, faces=[f for f in bm.faces if f.select])
-        bmesh.ops.rotate_uvs(bm, faces=[f for f in bm.faces if f.select])
-        #bmesh.update_edit_mesh(bpy.context.object.data, tessface=False, destructive=False)
-
-
+        face.select=True
+        bmesh.update_edit_mesh(bpy.context.object.data)
+        bpy.ops.uv.select_linked()
+        uv_lay = bm.loops.layers.uv.active      
+        faceSel = 0
+        for face in bm.faces:
+            if face.select:
+                faceSel +=1     
+        i = 0        
+        if faceSel == islandSet["Size"]:   
+            for face in bm.faces:
+                if face.select:                
+                    for loop in face.loops:
+                        loop[uv_lay].uv  = islandSet["Loop"][i] if uvOffset == False else islandSet["Loop"][i]+Vector((1,0))
+                        i += 1 
+        else:
+            print("the island have a different size of geometry")   
+            
+        if rotateUv:
+            bpy.ops.object.mode_set(mode="EDIT")
+            bmesh.ops.reverse_uvs(bm, faces=[f for f in bm.faces if f.select])
+            bmesh.ops.rotate_uvs(bm, faces=[f for f in bm.faces if f.select])        
 
 class CopyUvIsland(Operator):
     """Copy Uv Island"""
@@ -119,6 +110,7 @@ class PasteUvIsland(Operator):
             name="Rotate Uv Corner",
             default=False
             )
+        
     @classmethod
     def poll(cls, context):
         return (context.active_object is not None and

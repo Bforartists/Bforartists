@@ -19,8 +19,8 @@
 bl_info = {
     "name": "BlenderKit Online Asset Library",
     "author": "Vilem Duha, Petr Dlouhy",
-    "version": (1, 0, 30),
-    "blender": (2, 82, 0),
+    "version": (1, 0, 31),
+    "blender": (2, 83, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more). Connects to the internet.",
     "warning": "",
@@ -92,6 +92,7 @@ def scene_load(context):
     ui_props.turn_off = False
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     preferences.login_attempt = False
+
 
 @bpy.app.handlers.persistent
 def check_timers_timer():
@@ -249,17 +250,19 @@ def switch_search_results(self, context):
         s['search results orig'] = s.get('bkit brush search orig')
     search.load_previews()
 
-
 def asset_type_callback(self, context):
-    # s = bpy.context.scene
-    # ui_props = s.blenderkitUI
+    '''
+    Returns
+    items for Enum property, depending on the down_up property - BlenderKit is either in search or in upload mode.
+
+    '''
     if self.down_up == 'SEARCH':
         items = (
             ('MODEL', 'Models', 'Find models in the BlenderKit online database', 'OBJECT_DATAMODE', 0),
             # ('SCENE', 'SCENE', 'Browse scenes', 'SCENE_DATA', 1),
-            ('MATERIAL', 'Materials', 'Find models in the BlenderKit online database', 'MATERIAL', 2),
+            ('MATERIAL', 'Materials', 'Find materials in the BlenderKit online database', 'MATERIAL', 2),
             # ('TEXTURE', 'Texture', 'Browse textures', 'TEXTURE', 3),
-            ('BRUSH', 'Brushes', 'Find models in the BlenderKit online database', 'BRUSH_DATA', 3)
+            ('BRUSH', 'Brushes', 'Find brushes in the BlenderKit online database', 'BRUSH_DATA', 3)
         )
     else:
         items = (
@@ -481,6 +484,7 @@ class BlenderKitCommonSearchProps(object):
             ('DELETED', 'Deleted', 'Deleted'),
         ),
         default='ALL',
+        update=search.search_update,
     )
 
 
@@ -525,7 +529,7 @@ def update_free(self, context):
                   "Part of subscription is sent to artists based on usage by paying users."
 
         def draw_message(self, context):
-            ui_panels.label_multiline(self.layout, text=message, icon='NONE', width=-1)
+            utils.label_multiline(self.layout, text=message, icon='NONE', width=-1)
 
         bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
 
@@ -646,6 +650,29 @@ class BlenderKitCommonUploadProps(object):
     )
 
 
+def stars_enum_callback(self, context):
+    items = []
+    for a in range(0, 10):
+        if self.rating_quality < a+1:
+            icon = 'SOLO_OFF'
+        else:
+            icon = 'SOLO_ON'
+        # has to have something before the number in the value, otherwise fails on registration.
+        items.append((f'{a+1}', f'{a+1}', '', icon, a+1))
+    return items
+
+
+def update_quality(self, context):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.api_key == '':
+        # ui_panels.draw_not_logged_in(self, message='Please login/signup to rate assets.')
+        # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_login_menu')
+        # return
+        bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT', message = 'Please login/signup to rate assets. Clicking OK takes you to web login.')
+        self.rating_quality_ui = '0'
+    self.rating_quality = int(self.rating_quality_ui)
+
+
 class BlenderKitRatingProps(PropertyGroup):
     rating_quality: IntProperty(name="Quality",
                                 description="quality of the material",
@@ -653,17 +680,25 @@ class BlenderKitRatingProps(PropertyGroup):
                                 min=-1, max=10,
                                 update=ratings.update_ratings_quality)
 
+    #the following enum is only to ease interaction - enums support 'drag over' and enable to draw the stars easily.
+    rating_quality_ui: EnumProperty(name='rating_quality_ui',
+                                     items=stars_enum_callback,
+                                     description='Rating stars 0 - 10',
+                                     default=None,
+                                     update=update_quality,
+                                     )
+
     rating_work_hours: FloatProperty(name="Work Hours",
                                      description="How many hours did this work take?",
-                                     default=0.01,
+                                     default=0.00,
                                      min=0.0, max=1000, update=ratings.update_ratings_work_hours
                                      )
-    rating_complexity: IntProperty(name="Complexity",
-                                   description="Complexity is a number estimating how much work was spent on the asset.aaa",
-                                   default=0, min=0, max=10)
-    rating_virtual_price: FloatProperty(name="Virtual Price",
-                                        description="How much would you pay for this object if buing it?",
-                                        default=0, min=0, max=10000)
+    # rating_complexity: IntProperty(name="Complexity",
+    #                                description="Complexity is a number estimating how much work was spent on the asset.aaa",
+    #                                default=0, min=0, max=10)
+    # rating_virtual_price: FloatProperty(name="Virtual Price",
+    #                                     description="How much would you pay for this object if buing it?",
+    #                                     default=0, min=0, max=10000)
     rating_problems: StringProperty(
         name="Problems",
         description="Problems found/ why did you take points down - this will be available for the author"
@@ -1392,14 +1427,15 @@ class BlenderKitSceneSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
         update=search.search_update
     )
 
+
 def fix_subdir(self, context):
     '''Fixes project subdicrectory settings if people input invalid path.'''
 
     # pp = pathlib.PurePath(self.project_subdir)
     pp = self.project_subdir[:]
-    pp = pp.replace('\\','')
-    pp = pp.replace('/','')
-    pp = pp.replace(':','')
+    pp = pp.replace('\\', '')
+    pp = pp.replace('/', '')
+    pp = pp.replace(':', '')
     pp = '//' + pp
     if self.project_subdir != pp:
         self.project_subdir = pp
@@ -1410,9 +1446,10 @@ def fix_subdir(self, context):
                   "and uses it for storing assets."
 
         def draw_message(self, context):
-            ui_panels.label_multiline(self.layout, text=message, icon='NONE', width=400)
+            utils.label_multiline(self.layout, text=message, icon='NONE', width=400)
 
         bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
+
 
 class BlenderKitAddonPreferences(AddonPreferences):
     # this must match the addon name, use '__package__'
@@ -1493,7 +1530,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
         description="where data will be stored for individual projects",
         # subtype='DIR_PATH',
         default="//assets",
-        update = fix_subdir
+        update=fix_subdir
     )
 
     directory_behaviour: EnumProperty(
@@ -1558,10 +1595,11 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     use_timers: BoolProperty(
         name="Use timers",
-        description="Use timers for bkit",
+        description="Use timers for BlenderKit. Usefull for debugging since timers seem to be unstable.",
         default=True,
         update=utils.save_prefs
     )
+
     # allow_proximity : BoolProperty(
     #     name="allow proximity data reports",
     #     description="This sends anonymized proximity data \n \

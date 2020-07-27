@@ -67,12 +67,16 @@ dict_custom = {
     "editability",
     "equiangular",
     "finalizer",
+    "flushable",
     "initializer"
     "instantiation",
+    "jitteryness",
     "merchantability",
     "monospaced",
     "natively",
+    "paddings",
     "parameterization",
+    "polytope",
     "postprocessed",
     "precalculate",
     "prefetch", "prefetching",
@@ -190,6 +194,7 @@ dict_custom = {
     "manpage",
     "mozilla",
     "netscape",
+    "nvidia",
     "openexr"
     "posix",
     "qtcreator",
@@ -217,6 +222,7 @@ dict_custom = {
     "lacunarity",
     "lossless",
     "lossy",
+    "mipmapping",
     "musgrave",
     "ngon", "ngons",
     "normals",
@@ -229,7 +235,7 @@ dict_custom = {
     "shaders",
     "specular",
 
-    # blender terms
+    # Blender specific terms.
     "animsys",
     "animviz",
     "bmain",
@@ -243,8 +249,7 @@ dict_custom = {
     "mathutils",
     "obdata",
 
-    # should have apostrophe but ignore for now
-    # unless we want to get really picky!
+    # Should have apostrophe but ignore for now unless we want to get really picky!
     "indices",
     "vertices",
 }

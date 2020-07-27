@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -886,10 +886,6 @@ msgid "Background Image"
 msgstr "Arkaplan Resmi"
 
 
-msgid "Alpha"
-msgstr "Alfa"
-
-
 msgid "Clip User"
 msgstr "Kullanıcı Toplulukları"
 
@@ -1196,6 +1192,10 @@ msgstr "Sabit"
 
 msgid "Color Ramp Element"
 msgstr "Arabellek rengini yapıştır"
+
+
+msgid "Alpha"
+msgstr "Alfa"
 
 
 msgid "Position"
@@ -1743,18 +1743,6 @@ msgid "Lock Z Pos"
 msgstr "Caps Lock Pasif"
 
 
-msgid "Lock X Rot"
-msgstr "Caps Lock Pasif"
-
-
-msgid "Lock Y Rot"
-msgstr "Caps Lock Pasif"
-
-
-msgid "Lock Z Rot"
-msgstr "Caps Lock Pasif"
-
-
 msgid "Orientation Weight"
 msgstr "Ağırlık Ortalaması:"
 
@@ -1869,30 +1857,6 @@ msgstr "Konum Kısıtlamaları"
 
 msgid "Enabled Rotation Range"
 msgstr "Ölçeyi/Çevrimi Uygula"
-
-
-msgid "-X Rot"
-msgstr "Açı"
-
-
-msgid "-Y Rot"
-msgstr "Açı"
-
-
-msgid "-Z Rot"
-msgstr "Açı"
-
-
-msgid "X Rot"
-msgstr "Açı"
-
-
-msgid "Y Rot"
-msgstr "Açı"
-
-
-msgid "Z Rot"
-msgstr "Açı"
 
 
 msgid "Use Relative Offset"
@@ -2023,12 +1987,8 @@ msgid "Map From"
 msgstr "Tüm grupları sil"
 
 
-msgid "Loc"
+msgid "Location"
 msgstr "Konum"
-
-
-msgid "Rot"
-msgstr "Açı"
 
 
 msgid "Map To"
@@ -2097,10 +2057,6 @@ msgstr "Otomatik Normalleştir"
 
 msgid "Vector Handle"
 msgstr "Vektör Tutamak"
-
-
-msgid "Location"
-msgstr "Konum"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -6577,40 +6533,12 @@ msgid "Delta Rotation"
 msgstr "Döndürme & Ölçek"
 
 
-msgid "LocRot"
-msgstr "KonumAçı"
-
-
 msgid "Visual Location"
-msgstr "Konum Kısıtlamaları"
-
-
-msgid "Visual LocRot"
-msgstr "Görsel Dönüşüm"
-
-
-msgid "Visual LocRotScale"
-msgstr "Görsel Dönüşüm"
-
-
-msgid "Visual LocScale"
 msgstr "Konum Kısıtlamaları"
 
 
 msgid "Visual Rotation"
 msgstr "Döndürme & Ölçek"
-
-
-msgid "Visual RotScale"
-msgstr "Döndürme & Ölçek"
-
-
-msgid "Visual Scaling"
-msgstr "Konum Kısıtlamaları"
-
-
-msgid "LocRotScale"
-msgstr "KonumAçıÖlçek"
 
 
 msgid "Keying Set Path"
@@ -6894,8 +6822,16 @@ msgid "Material Specials"
 msgstr "Ekstra Kenar Özellikleri"
 
 
+msgid "Select Linked"
+msgstr "Bağlantılı Çoğalt"
+
+
 msgid "UV"
 msgstr "UV "
+
+
+msgid "Align"
+msgstr "Düzen"
 
 
 msgid "UV Select Mode"
@@ -6904,10 +6840,6 @@ msgstr "Kenar Seçme Modu:"
 
 msgid "Show/Hide Faces"
 msgstr "Tümünü Göster/Gizle"
-
-
-msgid "Weld/Align"
-msgstr "Görüntü Hizalama"
 
 
 msgctxt "Operator"
@@ -6953,10 +6885,6 @@ msgstr "Strip Özellikleri..."
 
 msgid "Navigation"
 msgstr "Dolaşım Görünümü"
-
-
-msgid "Select Linked"
-msgstr "Bağlantılı Çoğalt"
 
 
 msgid "Strip"
@@ -7417,10 +7345,6 @@ msgstr "Değiştirici Ekle"
 
 msgid "Target object shape"
 msgstr "Şekil Anahtarı Ekle"
-
-
-msgid "From Radius"
-msgstr "Yarıçap Ortalaması:"
 
 
 msgid "Use Transform"
@@ -11355,6 +11279,10 @@ msgid "Remove constraint from constraint stack"
 msgstr "Tüm grupları sil"
 
 
+msgid "Report"
+msgstr "Raporla"
+
+
 msgid "First frame of path animation"
 msgstr "Alttaki değerlere bağlı olarak (DupSta, DupEnd, DupOn, DupOff) nesne, dış hattı (yolu) izleyerek çoğaltılacaktır"
 
@@ -11432,10 +11360,6 @@ msgid "Trackball"
 msgstr "Trackball"
 
 
-msgid "Align"
-msgstr "Düzen"
-
-
 msgid "Edge Slide"
 msgstr "Kenar Kaydır"
 
@@ -11468,11 +11392,6 @@ msgstr "Menüyü Göster/Gizle"
 msgctxt "Operator"
 msgid "Make Segment"
 msgstr "Gerçek Yap"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Yüzey Alanı"
 
 
 msgctxt "Operator"
@@ -12841,10 +12760,6 @@ msgid "Select reports by index"
 msgstr "Katmandan Tümünü Seç"
 
 
-msgid "Report"
-msgstr "Raporla"
-
-
 msgid "Index of the report"
 msgstr "Yeni malzeme ekle"
 
@@ -13056,10 +12971,6 @@ msgstr "Yeni dosya oluştur"
 
 msgid "Name of new mask"
 msgstr "DörtgenYüzey Küre Ekle"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "X doğrultusunda seçili nokta bilgisini Sıralar"
 
 
 msgid "Clear the mask's parenting"
@@ -24272,10 +24183,6 @@ msgid "Property value not in enumeration"
 msgstr "ID Özellik Gezgini"
 
 
-msgid "Outer"
-msgstr "Select Outer"
-
-
 msgid "Sharp Edges"
 msgstr "Tüm Kenarlar"
 
@@ -24287,6 +24194,10 @@ msgstr "Yeni dosya oluştur"
 msgctxt "Operator"
 msgid "Convert"
 msgstr "Çevir"
+
+
+msgid "Outer"
+msgstr "Select Outer"
 
 
 msgid "Aspect X"

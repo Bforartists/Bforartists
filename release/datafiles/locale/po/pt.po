@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -1205,10 +1205,6 @@ msgid "Softbody goal weight"
 msgstr "Peso de objetivo de corpo macio."
 
 
-msgid "Blendfile Data"
-msgstr "Dados de ficheiro Blender"
-
-
 msgid "Main data structure representing a .blend file and all its data-blocks"
 msgstr "Estrutura principal de dados representando um ficheiro Blender e todos os seus blocos de dados."
 
@@ -1471,10 +1467,6 @@ msgstr "Texturas"
 
 msgid "Texture data-blocks"
 msgstr "Bloco de dados de textura."
-
-
-msgid "Use Autopack"
-msgstr "Usar empacotamento automático"
 
 
 msgid "Automatically pack all external data into .blend file"
@@ -2909,8 +2901,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Imagem e definições para exibição no plano de fundo da janela de visualização 3D."
 
 
-msgid "Alpha"
-msgstr "Alfa"
+msgid "Opacity"
+msgstr "Opacidade"
 
 
 msgid "Image opacity to blend the image against the background color"
@@ -3971,6 +3963,10 @@ msgstr "Elemento da gradiente de cor"
 
 msgid "Element defining a color at a position in the color ramp"
 msgstr "Elemento definindo uma cor em uma posição na gradiente de cores."
+
+
+msgid "Alpha"
+msgstr "Alfa"
 
 
 msgid "Set alpha of selected color stop"
@@ -5034,24 +5030,12 @@ msgid "Constraint position along Z axis"
 msgstr "Posição de restrição ao longo do eixo Z."
 
 
-msgid "Lock X Rot"
-msgstr "Travar rotação em X"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Restrição de rotação ao longo do eixo X."
 
 
-msgid "Lock Y Rot"
-msgstr "Travar rotação em Y"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Restrição de rotação ao longo do eixo Y."
-
-
-msgid "Lock Z Rot"
-msgstr "Travar rotação em Z"
 
 
 msgid "Constraint rotation along Z axis"
@@ -5318,48 +5302,24 @@ msgid "Use the pivot point in every rotation"
 msgstr "Usa o ponto de pivô em qualquer rotação."
 
 
-msgid "-X Rot"
-msgstr "Rotação -X"
-
-
 msgid "Use the pivot point in the negative rotation range around the X-axis"
 msgstr "Usa o ponto de pivô no campo de rotação negativo em torno do eixo X."
-
-
-msgid "-Y Rot"
-msgstr "Rotação -Y"
 
 
 msgid "Use the pivot point in the negative rotation range around the Y-axis"
 msgstr "Usa o ponto de pivô no campo de rotação negativo em torno do eixo Y."
 
 
-msgid "-Z Rot"
-msgstr "Rotação -Z"
-
-
 msgid "Use the pivot point in the negative rotation range around the Z-axis"
 msgstr "Usa o ponto de pivô no campo de rotação negativo em torno do eixo Z."
-
-
-msgid "X Rot"
-msgstr "Rotação X"
 
 
 msgid "Use the pivot point in the positive rotation range around the X-axis"
 msgstr "Usa o ponto de pivô no campo de rotação positivo em torno do eixo X."
 
 
-msgid "Y Rot"
-msgstr "Rotação Y"
-
-
 msgid "Use the pivot point in the positive rotation range around the Y-axis"
 msgstr "Usa o ponto de pivô no campo de rotação positivo em torno do eixo Y."
-
-
-msgid "Z Rot"
-msgstr "Rotação Z"
 
 
 msgid "Use the pivot point in the positive rotation range around the Z-axis"
@@ -5778,12 +5738,8 @@ msgid "The transformation type to use from the target"
 msgstr "O tipo de transformação para usar a partir do alvo."
 
 
-msgid "Loc"
+msgid "Location"
 msgstr "Localização"
-
-
-msgid "Rot"
-msgstr "Rotação"
 
 
 msgid "Map To"
@@ -5912,10 +5868,6 @@ msgstr "Limitado(a) automaticamente"
 
 msgid "Vector Handle"
 msgstr "Manípulo de vetor"
-
-
-msgid "Location"
-msgstr "Localização"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -9278,16 +9230,8 @@ msgid "End"
 msgstr "Fim"
 
 
-msgid "Frame on which the simulation stops"
-msgstr "Fotograma no qual a simulação será interrompida."
-
-
 msgid "Start"
 msgstr "Início"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Fotograma no qual a simulação irá iniciar."
 
 
 msgid "Cell Size"
@@ -10346,10 +10290,6 @@ msgid "View Map Cache"
 msgstr "Cache de mapa de visualização"
 
 
-msgid "Keep the computed view map and avoid re-calculating it if mesh geometry is unchanged"
-msgstr "Mantém o mapa de visualização computado e evita o recálculo do mesmo se a geometria da malha não for alterada."
-
-
 msgid "Grease Pencil Frame"
 msgstr "Fotograma de lápis de cera"
 
@@ -10688,10 +10628,6 @@ msgstr "Trava o fotograma atual mostrado pela camada."
 
 msgid "Parent inverse transformation matrix"
 msgstr "Matriz de transformação inversa de parentesco."
-
-
-msgid "Opacity"
-msgstr "Opacidade"
 
 
 msgid "Layer Opacity"
@@ -20318,31 +20254,19 @@ msgid "Delta Rotation"
 msgstr "Delta - Rotação"
 
 
-msgid "Insert keyframes for additional scaling factor"
-msgstr "Insere fotogramas chave para um fator de escalonamento adicional."
-
-
 msgid "Insert a keyframe on each of the location and rotation channels"
 msgstr "Insere um fotograma chave em cada um dos canais de localização e rotação."
-
-
-msgid "LocRot"
-msgstr "Localização e rotação"
 
 
 msgid "Insert a keyframe on each of the location and scale channels"
 msgstr "Insere um fotograma chave em cada um dos canais de localização e escala."
 
 
-msgid "LocScale"
-msgstr "Localização e escala"
-
-
 msgid "Insert a keyframe on each of the rotation and scale channels"
 msgstr "Insere um fotograma chave em cada um dos canais de rotação e escala."
 
 
-msgid "RotScale"
+msgid "Rotation & Scale"
 msgstr "Rotação e escala"
 
 
@@ -20350,36 +20274,12 @@ msgid "Visual Location"
 msgstr "Visual - Localização"
 
 
-msgid "Visual LocRot"
-msgstr "Visual - Localização e rotação"
-
-
-msgid "Visual LocRotScale"
-msgstr "Visual - Localização, rotação e escala"
-
-
-msgid "Visual LocScale"
-msgstr "Visual - Localização e escala"
-
-
 msgid "Visual Rotation"
 msgstr "Visual - Rotação"
 
 
-msgid "Visual RotScale"
-msgstr "Visual - Rotação e escala"
-
-
-msgid "Visual Scaling"
-msgstr "Visual - Escala"
-
-
 msgid "Insert a keyframe on each of the location, rotation, and scale channels"
 msgstr "Insere um fotograma chave em cada um dos canais de localização, rotação e escala."
-
-
-msgid "LocRotScale"
-msgstr "Localização, rotação e escala"
 
 
 msgid "Insert a keyframe on each of the location channels"
@@ -20392,10 +20292,6 @@ msgstr "Insere um fotograma chave em cada um dos canais de rotação."
 
 msgid "Insert a keyframe on each of the scale channels"
 msgstr "Insere um fotograma chave em cada um dos canais selecionados."
-
-
-msgid "Scaling"
-msgstr "Escalonamento"
 
 
 msgid "Whole Character"
@@ -21761,8 +21657,16 @@ msgid "Material Specials"
 msgstr "Especiais para materiais"
 
 
+msgid "Select Linked"
+msgstr "Selecionar vinculados(as)"
+
+
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Align"
+msgstr "Alinhar"
 
 
 msgid "UV Select Mode"
@@ -21771,10 +21675,6 @@ msgstr "Modo de seleção de UV"
 
 msgid "Show/Hide Faces"
 msgstr "Mostrar ou ocultar faces"
-
-
-msgid "Weld/Align"
-msgstr "Soldar e alinhar"
 
 
 msgctxt "Operator"
@@ -21836,10 +21736,6 @@ msgstr "Faixa de efeito"
 
 msgid "Navigation"
 msgstr "Navegação"
-
-
-msgid "Select Linked"
-msgstr "Selecionar vinculados(as)"
 
 
 msgid "Strip"
@@ -23072,10 +22968,6 @@ msgstr "Somente deforma os vértices dentro desta distância, a partir do centro
 
 msgid "Size of projection shape (leave as 0 for auto)"
 msgstr "Tamanho do formato de projeção. Valor zero significa automático."
-
-
-msgid "From Radius"
-msgstr "A partir do raio"
 
 
 msgid "Use radius as size of projection shape (0 = auto)"
@@ -24708,10 +24600,6 @@ msgstr "Número de passos dentro da revolução."
 
 msgid "Offset the revolution along its axis"
 msgstr "Desloca a revolução ao longo de seu eixo."
-
-
-msgid "Calc Order"
-msgstr "Calcular ordenamento"
 
 
 msgid "Calculate the order of edges (needed for meshes, but not curves)"
@@ -33521,6 +33409,10 @@ msgid "Remove constraint from constraint stack"
 msgstr "Remove a restrição a partir da pilha de restrições."
 
 
+msgid "Report"
+msgstr "Relatório"
+
+
 msgctxt "Operator"
 msgid "Auto Animate Path"
 msgstr "Animar automaticamente o caminho"
@@ -33713,10 +33605,6 @@ msgid "Bweight"
 msgstr "Peso B"
 
 
-msgid "Align"
-msgstr "Alinhar"
-
-
 msgid "Edge Slide"
 msgstr "Deslizar arestas"
 
@@ -33771,11 +33659,6 @@ msgstr "Combinar espaço de textura"
 
 msgid "Match texture space to object's bounding box"
 msgstr "Combina o espaço de textura com a caixa circundante do objeto."
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Recalcular normais"
 
 
 msgid "Recalculate the direction of selected handles"
@@ -37378,10 +37261,6 @@ msgid "Select reports by index"
 msgstr "Seleciona os relatórios por índice."
 
 
-msgid "Report"
-msgstr "Relatório"
-
-
 msgid "Index of the report"
 msgstr "Índice do relatório"
 
@@ -37692,10 +37571,6 @@ msgstr "Cria uma nova máscara."
 
 msgid "Name of new mask"
 msgstr "Nome da nova máscara."
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "Recalcula a direção das hastes selecionadas."
 
 
 msgid "Clear the mask's parenting"
@@ -52786,6 +52661,14 @@ msgid "Cache file path"
 msgstr "Diretório de ficheiros de cache."
 
 
+msgid "Frame on which the simulation stops"
+msgstr "Fotograma no qual a simulação será interrompida."
+
+
+msgid "Frame on which the simulation starts"
+msgstr "Fotograma no qual a simulação irá iniciar."
+
+
 msgid "Cache Step"
 msgstr "Passos de cache"
 
@@ -54912,10 +54795,6 @@ msgstr "O tamanho da área da imagem que será usada para redução dos ruídos 
 
 msgid "When removing pixels that don't carry information, use a relative threshold instead of an absolute one (can help to reduce artifacts, but might cause detail loss around edges)"
 msgstr "Durante a remoção de pixeis que não carregam informações, utiliza um ajuste relativo ao invés do ajuste absoluto (pode ajudar na remoção de artefatos, mas pode causar perda de detalhes em torno das arestas)."
-
-
-msgid "Store the denoising feature passes and the noisy image"
-msgstr "Armazena os passos da funcionalidade de redução de ruídos e a imagem com os ruídos."
 
 
 msgid "Denoising Strength"
@@ -57861,10 +57740,6 @@ msgstr "Converter para ponto flutuante"
 
 msgid "Convert input to float data"
 msgstr "Converte a entrada para dados em ponto flutuante."
-
-
-msgid "Use a preview proxy and/or timecode index for this strip"
-msgstr "Usa uma aproximação de previsão e / ou um índice de código de tempo para esta faixa."
 
 
 msgid "Reverse Frames"
@@ -62689,10 +62564,6 @@ msgstr "Normalização automática de pintura de pesos"
 
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "Assegura que todos os grupos de vértices de deformação por ossos adicionam até 1.0 durante a pintura de pesos."
-
-
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "A alteração das costuras das arestas recalcula o desdobramento UV."
 
 
 msgid "Use Additive Drawing"
@@ -67842,10 +67713,6 @@ msgid "Some data failed to reconstruct (see console for details)"
 msgstr "Alguns dados falharam na reconstrução (veja a linha de comando para detalhes)."
 
 
-msgid "Average re-projection error: %.3f"
-msgstr "Média de erro de re-projeção %.3f"
-
-
 msgid "File path"
 msgstr "Caminho de ficheiro"
 
@@ -68173,6 +68040,22 @@ msgstr "Não é possível definir caminhos relativos com um ficheiro .blend não
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Não é possível definir caminhos absolutos com um ficheiro .blend não guardado."
+
+
+msgid "(Key) "
+msgstr "(Chave)"
+
+
+msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "Vértices: %s/%s | Arestas: %s/%s | Faces: %s/%s | Triângulos: %s"
+
+
+msgid "Verts:%s/%s | Bones:%s/%s"
+msgstr "Vértices: %s/%s | Ossos: %s/%s"
+
+
+msgid "Verts:%s/%s"
+msgstr "Vértices: %s/%s"
 
 
 msgid "Sync Length"
@@ -69977,10 +69860,6 @@ msgid "Sequences.new_image: unable to open image file"
 msgstr "Nova imagem para sequências - Não foi possível abrir o(s) ficheiro(s) de imagem !"
 
 
-msgid "Sequences.new_movie: unable to open movie file"
-msgstr "Novo filme para sequências - Não foi possível abrir o(s) ficheiro(s) de filme !"
-
-
 msgid "Sequences.new_sound: unable to open sound file"
 msgstr "Novo som para sequências - Não foi possível abrir ficheiro(s) de som !"
 
@@ -70089,10 +69968,6 @@ msgid "KeyConfig '%s' cannot be removed"
 msgstr "Definição de tecla '%s' não pode ser removida."
 
 
-msgid "Outer"
-msgstr "Parte externa"
-
-
 msgid "Settings are inside the Physics tab"
 msgstr "Definições estão localizadas nos painéis do contexto de físicas."
 
@@ -70120,6 +69995,10 @@ msgstr "Construído sem o modificador para reestruturar malha."
 
 msgid "Rim"
 msgstr "Aros"
+
+
+msgid "Outer"
+msgstr "Parte externa"
 
 
 msgid "Aspect X"

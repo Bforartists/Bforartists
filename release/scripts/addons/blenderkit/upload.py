@@ -777,7 +777,7 @@ class UploadOperator(Operator):
         props = utils.get_upload_props()
 
         if not utils.user_logged_in():
-            ui_panels.draw_not_logged_in(self)
+            ui_panels.draw_not_logged_in(self, message = 'To upload assets you need to login/signup.')
             return {'CANCELLED'}
 
         if props.is_private == 'PUBLIC':

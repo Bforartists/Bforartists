@@ -1395,7 +1395,7 @@ static int collection_instance_add_exec(bContext *C, wmOperator *op)
 
     /* Avoid dependency cycles. */
     LayerCollection *active_lc = BKE_layer_collection_get_active(view_layer);
-    while (BKE_collection_find_cycle(active_lc->collection, collection)) {
+    while (BKE_collection_cycle_find(active_lc->collection, collection)) {
       active_lc = BKE_layer_collection_activate_parent(view_layer, active_lc);
     }
 
@@ -2751,6 +2751,8 @@ static void object_convert_ui(bContext *UNUSED(C), wmOperator *op)
 {
   uiLayout *layout = op->layout;
   PointerRNA ptr;
+
+  uiLayoutSetPropSep(layout, true);
 
   RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
   uiItemR(layout, &ptr, "target", 0, NULL, ICON_NONE);

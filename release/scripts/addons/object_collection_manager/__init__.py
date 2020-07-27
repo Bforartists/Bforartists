@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2, 9, 2),
+    "version": (2, 12, 2),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -110,12 +110,15 @@ classes = (
     operators.CMUnDisableRenderAllOperator,
     operators.CMNewCollectionOperator,
     operators.CMRemoveCollectionOperator,
+    operators.CMRemoveEmptyCollectionsOperator,
     operators.CMSetCollectionOperator,
     operators.CMPhantomModeOperator,
+    operators.CMApplyPhantomModeOperator,
     preferences.CMPreferences,
     ui.CM_UL_items,
     ui.CollectionManager,
     ui.CMDisplayOptionsPanel,
+    ui.SpecialsMenu,
     CollectionManagerProperties,
     )
 
@@ -133,6 +136,18 @@ def undo_redo_post_handler(dummy):
     internals.move_selection.clear()
     internals.move_active = None
 
+
+def menu_addition(self, context):
+    layout = self.layout
+
+    layout.operator('view3d.collection_manager')
+
+    if bpy.context.preferences.addons[__package__].preferences.enable_qcd:
+        layout.operator('view3d.qcd_move_widget')
+
+    layout.separator()
+
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -144,6 +159,9 @@ def register():
     km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
     kmi = km.keymap_items.new('view3d.collection_manager', 'M', 'PRESS')
     addon_keymaps.append((km, kmi))
+
+    # Add Collection Manager & QCD Move Widget to the Object->Collections menu
+    bpy.types.VIEW3D_MT_object_collection.prepend(menu_addition)
 
     bpy.app.handlers.depsgraph_update_post.append(depsgraph_update_post_handler)
     bpy.app.handlers.undo_post.append(undo_redo_post_handler)
@@ -158,6 +176,9 @@ def unregister():
 
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
+    # Remove Collection Manager & QCD Move Widget from the Object->Collections menu
+    bpy.types.VIEW3D_MT_object_collection.remove(menu_addition)
 
     bpy.app.handlers.depsgraph_update_post.remove(depsgraph_update_post_handler)
     bpy.app.handlers.undo_post.remove(undo_redo_post_handler)
