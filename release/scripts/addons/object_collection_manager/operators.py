@@ -63,6 +63,8 @@ from .operator_utils import (
     swap_rtos,
     clear_copy,
     clear_swap,
+    link_child_collections_to_parent,
+    remove_collection,
 )
 
 class SetActiveCollection(Operator):
@@ -98,7 +100,6 @@ class ExpandAllOperator(Operator):
     '''Expand/Collapse all collections'''
     bl_label = "Expand All Items"
     bl_idname = "view3d.expand_all_items"
-    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         global expand_history
@@ -129,7 +130,6 @@ class ExpandSublevelOperator(Operator):
         "  * Alt+LMB - Discard history"
         )
     bl_idname = "view3d.expand_sublevel"
-    bl_options = {'REGISTER', 'UNDO'}
 
     expand: BoolProperty()
     name: StringProperty()
@@ -869,12 +869,9 @@ class CMRemoveCollectionOperator(Operator):
         global expand_history
         global qcd_slots
 
-        cm = context.scene.collection_manager
-
         laycol = layer_collections[self.collection_name]
         collection = laycol["ptr"].collection
         parent_collection = laycol["parent"]["ptr"].collection
-        selected_row_name = cm.cm_list_collection[cm.cm_list_index].name
 
 
         # shift all objects in this collection to the parent collection
@@ -885,76 +882,68 @@ class CMRemoveCollectionOperator(Operator):
 
         # shift all child collections to the parent collection preserving view layer RTOs
         if collection.children:
-            # store view layer RTOs for all children of the to be deleted collection
-            child_states = {}
-            def get_child_states(layer_collection):
-                child_states[layer_collection.name] = (layer_collection.exclude,
-                                                       layer_collection.hide_viewport,
-                                                       layer_collection.holdout,
-                                                       layer_collection.indirect_only)
+            link_child_collections_to_parent(laycol, collection, parent_collection)
 
-            apply_to_children(laycol["ptr"], get_child_states)
-
-            # link any subcollections of the to be deleted collection to it's parent
-            for subcollection in collection.children:
-                parent_collection.children.link(subcollection)
-
-            # apply the stored view layer RTOs to the newly linked collections and their
-            # children
-            def restore_child_states(layer_collection):
-                state = child_states.get(layer_collection.name)
-
-                if state:
-                    layer_collection.exclude = state[0]
-                    layer_collection.hide_viewport = state[1]
-                    layer_collection.holdout = state[2]
-                    layer_collection.indirect_only = state[3]
-
-            apply_to_children(laycol["parent"]["ptr"], restore_child_states)
-
-
-        # remove collection, update expanded, and update tree view
-        bpy.data.collections.remove(collection)
-        expanded.discard(self.collection_name)
-
-        if expand_history["target"] == self.collection_name:
-            expand_history["target"] = ""
-
-        if self.collection_name in expand_history["history"]:
-            expand_history["history"].remove(self.collection_name)
-
-        update_property_group(context)
-
-
-        # update selected row
-        laycol = layer_collections.get(selected_row_name, None)
-        if laycol:
-            cm.cm_list_index = laycol["row_index"]
-
-        elif len(cm.cm_list_collection) == cm.cm_list_index:
-            cm.cm_list_index -=  1
-
-            if cm.cm_list_index > -1:
-                name = cm.cm_list_collection[cm.cm_list_index].name
-                laycol = layer_collections[name]
-                while not laycol["visible"]:
-                    laycol = laycol["parent"]
-
-                cm.cm_list_index = laycol["row_index"]
-
-
-        # update qcd
-        if qcd_slots.contains(name=self.collection_name):
-            qcd_slots.del_slot(name=self.collection_name)
-
-        if self.collection_name in qcd_slots.overrides:
-            qcd_slots.overrides.remove(self.collection_name)
-
-        # reset history
-        for rto in rto_history.values():
-            rto.clear()
+        # remove collection, update references, and update tree view
+        remove_collection(laycol, collection, context)
 
         return {'FINISHED'}
+
+
+class CMRemoveEmptyCollectionsOperator(Operator):
+    bl_label = "Remove Empty Collections"
+    bl_idname = "view3d.remove_empty_collections"
+    bl_options = {'UNDO'}
+
+    without_objects: BoolProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.without_objects:
+            tooltip = (
+                "Purge All Collections Without Objects.\n"
+                "Deletes all collections that don't contain objects even if they have subcollections"
+                )
+
+        else:
+            tooltip = (
+                "Remove Empty Collections.\n"
+                "Delete collections that don't have any subcollections or objects"
+                )
+
+        return tooltip
+
+    def execute(self, context):
+        global rto_history
+        global expand_history
+        global qcd_slots
+
+        if self.without_objects:
+            empty_collections = [laycol["name"]
+                                for laycol in layer_collections.values()
+                                if not laycol["ptr"].collection.objects]
+        else:
+            empty_collections = [laycol["name"]
+                                for laycol in layer_collections.values()
+                                if not laycol["children"] and
+                                not laycol["ptr"].collection.objects]
+
+        for name in empty_collections:
+            laycol = layer_collections[name]
+            collection = laycol["ptr"].collection
+            parent_collection = laycol["parent"]["ptr"].collection
+
+            # link all child collections to the parent collection preserving view layer RTOs
+            if collection.children:
+                link_child_collections_to_parent(laycol, collection, parent_collection)
+
+            # remove collection, update references, and update tree view
+            remove_collection(laycol, collection, context)
+
+        self.report({"INFO"}, f"Removed {len(empty_collections)} collections")
+
+        return {'FINISHED'}
+
 
 rename = [False]
 class CMNewCollectionOperator(Operator):
@@ -1106,5 +1095,17 @@ class CMPhantomModeOperator(Operator):
 
             cm.in_phantom_mode = False
 
+
+        return {'FINISHED'}
+
+
+class CMApplyPhantomModeOperator(Operator):
+    '''Make all changes made in Phantom Mode permanent'''
+    bl_label = "Apply Phantom Mode"
+    bl_idname = "view3d.apply_phantom_mode"
+
+    def execute(self, context):
+        cm = context.scene.collection_manager
+        cm.in_phantom_mode = False
 
         return {'FINISHED'}

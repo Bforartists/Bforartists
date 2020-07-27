@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
@@ -313,8 +313,8 @@ msgid "Background Image"
 msgstr "Фон сүрөтү"
 
 
-msgid "Alpha"
-msgstr "Альфа"
+msgid "Opacity"
+msgstr "Күңүрттүк"
 
 
 msgid "MovieClip"
@@ -443,6 +443,10 @@ msgstr "Бөлүү"
 
 msgid "B-Spline"
 msgstr "B-сплайн"
+
+
+msgid "Alpha"
+msgstr "Альфа"
 
 
 msgctxt "Text"
@@ -841,10 +845,6 @@ msgstr "Көрүнүү"
 
 msgid "Blend Mode"
 msgstr "Аралаштыруу режими"
-
-
-msgid "Opacity"
-msgstr "Күңүрттүк"
 
 
 msgid "Layer"
@@ -1430,6 +1430,10 @@ msgid "UV"
 msgstr "UV"
 
 
+msgid "Align"
+msgstr "Түздөө"
+
+
 msgctxt "Operator"
 msgid "Add"
 msgstr "Кошуу"
@@ -1896,10 +1900,6 @@ msgstr "Трекбол"
 
 msgid "Bweight"
 msgstr "B-салмак"
-
-
-msgid "Align"
-msgstr "Түздөө"
 
 
 msgctxt "Operator"
@@ -3606,6 +3606,10 @@ msgstr "Сүрөттү жүктөө оңунан чыккан жок"
 
 msgid " + Z"
 msgstr " + Z"
+
+
+msgid "(Key) "
+msgstr "(Ачкыч) "
 
 
 msgid "Path:"

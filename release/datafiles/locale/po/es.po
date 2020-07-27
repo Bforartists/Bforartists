@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1286,10 +1286,6 @@ msgid "Softbody goal weight"
 msgstr "Influencia del objetivo de cuerpo blando"
 
 
-msgid "Blendfile Data"
-msgstr "Datos de archivo .blend"
-
-
 msgid "Main data structure representing a .blend file and all its data-blocks"
 msgstr "Estructura principal de datos que representa a un archivo .blend y todos sus bloques de datos"
 
@@ -1580,10 +1576,6 @@ msgstr "Texturas"
 
 msgid "Texture data-blocks"
 msgstr "Bloques de datos de textura"
-
-
-msgid "Use Autopack"
-msgstr "Usar empaque automático"
 
 
 msgid "Automatically pack all external data into .blend file"
@@ -3534,8 +3526,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Imagen y opciones para visualizar en el fondo de la vista 3D"
 
 
-msgid "Alpha"
-msgstr "Alfa"
+msgid "Opacity"
+msgstr "Opacidad"
 
 
 msgid "Image opacity to blend the image against the background color"
@@ -4890,6 +4882,10 @@ msgid "Element defining a color at a position in the color ramp"
 msgstr "Elemento que define el color de una posición en la rampa de colores"
 
 
+msgid "Alpha"
+msgstr "Alfa"
+
+
 msgid "Set alpha of selected color stop"
 msgstr "Permite definir el alfa de la parada seleccionada"
 
@@ -6143,24 +6139,12 @@ msgid "Constraint position along Z axis"
 msgstr "Posición restringida a lo largo del eje Z"
 
 
-msgid "Lock X Rot"
-msgstr "Bloquear rot X"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Restringe la rotación al eje X"
 
 
-msgid "Lock Y Rot"
-msgstr "Bloquear rot Y"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Restringe la rotación al eje Y"
-
-
-msgid "Lock Z Rot"
-msgstr "Bloquear rot Z"
 
 
 msgid "Constraint rotation along Z axis"
@@ -6451,48 +6435,24 @@ msgid "Use the pivot point in every rotation"
 msgstr "Usa el punto de pivote en cada rotación"
 
 
-msgid "-X Rot"
-msgstr "Rot -X"
-
-
 msgid "Use the pivot point in the negative rotation range around the X-axis"
 msgstr "Usa el punto de pivote en las rotaciones negativas sobre el eje X"
-
-
-msgid "-Y Rot"
-msgstr "Rot -Y"
 
 
 msgid "Use the pivot point in the negative rotation range around the Y-axis"
 msgstr "Usa el punto de pivote en las rotaciones negativas sobre el eje Y"
 
 
-msgid "-Z Rot"
-msgstr "Rot -Z"
-
-
 msgid "Use the pivot point in the negative rotation range around the Z-axis"
 msgstr "Usa el punto de pivote en las rotaciones negativas sobre el eje Z"
-
-
-msgid "X Rot"
-msgstr "Rot X"
 
 
 msgid "Use the pivot point in the positive rotation range around the X-axis"
 msgstr "Usa el punto de pivote en las rotaciones positivas sobre el eje X"
 
 
-msgid "Y Rot"
-msgstr "Rot Y"
-
-
 msgid "Use the pivot point in the positive rotation range around the Y-axis"
 msgstr "Usa el punto de pivote en las rotaciones positivas sobre el eje Y"
-
-
-msgid "Z Rot"
-msgstr "Rot Z"
 
 
 msgid "Use the pivot point in the positive rotation range around the Z-axis"
@@ -7083,12 +7043,8 @@ msgid "The transformation type to use from the target"
 msgstr "La transformación del objetivo a ser usada"
 
 
-msgid "Loc"
-msgstr "Pos"
-
-
-msgid "Rot"
-msgstr "Rot"
+msgid "Location"
+msgstr "Posición"
 
 
 msgid "Map To"
@@ -7293,10 +7249,6 @@ msgstr "Asa automática limitada"
 
 msgid "Vector Handle"
 msgstr "Asa de tipo Vector"
-
-
-msgid "Location"
-msgstr "Posición"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -11557,16 +11509,8 @@ msgid "End"
 msgstr "Fin"
 
 
-msgid "Frame on which the simulation stops"
-msgstr "Fotograma en el que finaliza la simulación"
-
-
 msgid "Start"
 msgstr "Inicio"
-
-
-msgid "Frame on which the simulation starts"
-msgstr "Fotograma donde comienza la simulación"
 
 
 msgid "Select the file format to be used for caching surface data"
@@ -13461,10 +13405,6 @@ msgid "View Map Cache"
 msgstr "Caché mapa de vista"
 
 
-msgid "Keep the computed view map and avoid re-calculating it if mesh geometry is unchanged"
-msgstr "Retiene el mapa de la vista, para evitar recalcularlo mientras la geometría de la malla permanezca incambiada"
-
-
 msgid "Grease Pencil Frame"
 msgstr "Fotograma lápiz de cera"
 
@@ -13855,10 +13795,6 @@ msgstr "Lista de capas de máscara"
 
 msgid "Parent inverse transformation matrix"
 msgstr "Matriz de transformaciones relativa al superior"
-
-
-msgid "Opacity"
-msgstr "Opacidad"
 
 
 msgid "Layer Opacity"
@@ -17172,6 +17108,10 @@ msgstr "Auto enmascarar topología"
 
 msgid "Affect only vertices connected to the active vertex under the brush"
 msgstr "Permite afectar sólo los vértices conectados al vértice activo bajo el pincel"
+
+
+msgid "Connected Only"
+msgstr "Sólo conectada"
 
 
 msgid "Use Cursor Overlay"
@@ -23742,10 +23682,6 @@ msgid "Show Status Bar"
 msgstr "Mostrar barra de estado"
 
 
-msgid "Show status bar"
-msgstr "Muestra la barra de estado"
-
-
 msgid "Follow current frame in editors"
 msgstr "Seguir al fotograma actual en todos los editores"
 
@@ -27405,32 +27341,20 @@ msgid "Delta Rotation"
 msgstr "Rotación relativa"
 
 
-msgid "Insert keyframes for additional scaling factor"
-msgstr "Inserta fotogramas clave para un desplazamiento adicional de la escala"
-
-
 msgid "Insert a keyframe on each of the location and rotation channels"
 msgstr "Inserta un fotograma clave en cada canal de posición y rotación"
-
-
-msgid "LocRot"
-msgstr "Pos+Rot"
 
 
 msgid "Insert a keyframe on each of the location and scale channels"
 msgstr "Inserta un fotograma clave en cada canal de posición y escala"
 
 
-msgid "LocScale"
-msgstr "Pos+Esc"
-
-
 msgid "Insert a keyframe on each of the rotation and scale channels"
 msgstr "Inserta un fotograma clave en cada canal de rotación y escala"
 
 
-msgid "RotScale"
-msgstr "Rot+Esc"
+msgid "Rotation & Scale"
+msgstr "Rotación y escala"
 
 
 msgid "Insert a keyframe on each of the location channels, taking into account effects of constraints and relationships"
@@ -27445,26 +27369,6 @@ msgid "Insert a keyframe on each of the location and rotation channels, taking i
 msgstr "Inserta un fotograma clave en cada canal de posición y rotación, tomando en cuenta el efecto de las restricciones y otras relaciones"
 
 
-msgid "Visual LocRot"
-msgstr "Pos+Rot visual"
-
-
-msgid "Insert a keyframe on each of the location, rotation and scaling channels, taking into account effects of constraints and relationships"
-msgstr "Inserta un fotograma clave en cada canal de posición, rotación y escala, tomando en cuenta el efecto de las restricciones y otras relaciones"
-
-
-msgid "Visual LocRotScale"
-msgstr "Pos+Rot+Esc visual"
-
-
-msgid "Insert a keyframe on each of the location and scaling channels, taking into account effects of constraints and relationships"
-msgstr "Inserta un fotograma clave en cada canal de posición y escala, tomando en cuenta el efecto de las restricciones y otras relaciones"
-
-
-msgid "Visual LocScale"
-msgstr "Pos+Esc visual"
-
-
 msgid "Insert a keyframe on each of the rotation channels, taking into account effects of constraints and relationships"
 msgstr "Inserta un fotograma clave en cada canal de rotación, tomando en cuenta el efecto de las restricciones y otras relaciones"
 
@@ -27473,28 +27377,12 @@ msgid "Visual Rotation"
 msgstr "Rotación visual"
 
 
-msgid "Insert a keyframe on each of the rotation and scaling channels, taking into account effects of constraints and relationships"
-msgstr "Inserta un fotograma clave en cada canal de rotación y escala, tomando en cuenta el efecto de las restricciones y otras relaciones"
-
-
-msgid "Visual RotScale"
-msgstr "Rot+Esc visual"
-
-
 msgid "Insert a keyframe on each of the scale channels, taking into account effects of constraints and relationships"
 msgstr "Inserta un fotograma clave en cada canal de escala, tomando en cuenta el efecto de las restricciones y otras relaciones"
 
 
-msgid "Visual Scaling"
-msgstr "Escala visual"
-
-
 msgid "Insert a keyframe on each of the location, rotation, and scale channels"
 msgstr "Inserta un fotograma clave en cada canal de posición, rotación y escala"
-
-
-msgid "LocRotScale"
-msgstr "Pos+Rot+Esc"
 
 
 msgid "Insert a keyframe on each of the location channels"
@@ -27507,10 +27395,6 @@ msgstr "Inserta un fotograma clave en cada canal de rotación"
 
 msgid "Insert a keyframe on each of the scale channels"
 msgstr "Inserta un fotograma clave en cada canal de escala"
-
-
-msgid "Scaling"
-msgstr "Escala"
 
 
 msgid "Insert a keyframe for all properties that are likely to get animated in a character rig (useful when blocking out a shot)"
@@ -29160,8 +29044,16 @@ msgid "Mask Context Menu"
 msgstr "Máscara - menú contextual"
 
 
+msgid "Select Linked"
+msgstr "Seleccionar vinculado"
+
+
 msgid "UV"
 msgstr "UV"
+
+
+msgid "Align"
+msgstr "Alinear"
 
 
 msgid "UV Context Menu"
@@ -29174,10 +29066,6 @@ msgstr "Modo de selección de UV"
 
 msgid "Show/Hide Faces"
 msgstr "Mostrar / Ocultar caras"
-
-
-msgid "Weld/Align"
-msgstr "Fusionar / Alinear"
 
 
 msgid "Info Context Menu"
@@ -29299,10 +29187,6 @@ msgstr "Seleccionar canal"
 
 msgid "Select Handle"
 msgstr "Seleccionar asa"
-
-
-msgid "Select Linked"
-msgstr "Seleccionar vinculado"
 
 
 msgid "Strip"
@@ -31133,10 +31017,6 @@ msgstr "Sólo se deformarán los vértices dentro de esta distancia, a partir el
 
 msgid "Size of projection shape (leave as 0 for auto)"
 msgstr "Tamaño de la forma proyectada (0 es automático)"
-
-
-msgid "From Radius"
-msgstr "Usar radio"
 
 
 msgid "Use radius as size of projection shape (0 = auto)"
@@ -33042,10 +32922,6 @@ msgstr "Desplazamiento de la revolución a lo largo de su eje"
 
 msgid "Merge adjacent vertices (screw offset must be zero)"
 msgstr "Fusionar vértices adyacentes (el desplazamiento de la rosca debe ser cero)"
-
-
-msgid "Calc Order"
-msgstr "Calcular orden"
 
 
 msgid "Calculate the order of edges (needed for meshes, but not curves)"
@@ -42055,22 +41931,6 @@ msgid "Place markers across the whole frame"
 msgstr "Ubicar marcadores en toda la imagen"
 
 
-msgid "Inside Grease Pencil"
-msgstr "Lápiz de cera interior"
-
-
-msgid "Place markers only inside areas outlined with Grease Pencil"
-msgstr "Ubicar marcadores sólo dentro de las áreas demarcadas con el lápiz de cera"
-
-
-msgid "Outside Grease Pencil"
-msgstr "Lápiz de cera exterior"
-
-
-msgid "Place markers only outside areas outlined with Grease Pencil"
-msgstr "Ubicar marcadores sólo fuera de las áreas demarcadas con el lápiz de cera"
-
-
 msgid "Threshold level to consider feature good enough for tracking"
 msgstr "Umbral para considerar a un elemento característico como suficientemente bueno para ser rastreado"
 
@@ -43279,6 +43139,10 @@ msgid "Remove constraint from constraint stack"
 msgstr "Remueve la restricción de la lista de restricciones"
 
 
+msgid "Report"
+msgstr "Reportar"
+
+
 msgctxt "Operator"
 msgid "Disable and Keep Transform"
 msgstr "Deshabilitar y mantener transformaciones"
@@ -43543,10 +43407,6 @@ msgid "Bweight"
 msgstr "InfluenciaB"
 
 
-msgid "Align"
-msgstr "Alinear"
-
-
 msgid "Edge Slide"
 msgstr "Deslizar borde"
 
@@ -43605,11 +43465,6 @@ msgstr "Ajustar espacio de texturizado"
 
 msgid "Match texture space to object's bounding box"
 msgstr "Ajusta el espacio de texturizado para que coincida con el volumen delimitador del objeto"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Recalcular normales"
 
 
 msgid "Recalculate the direction of selected handles"
@@ -49326,10 +49181,6 @@ msgid "Extend report selection"
 msgstr "Extiende la selección de reportes"
 
 
-msgid "Report"
-msgstr "Reportar"
-
-
 msgid "Index of the report"
 msgstr "Índice del reporte"
 
@@ -49653,10 +49504,6 @@ msgstr "Crea una nueva máscara"
 
 msgid "Name of new mask"
 msgstr "Nombre de la nueva máscara"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "Recalcula la dirección de las asas seleccionadas"
 
 
 msgid "Clear the mask's parenting"
@@ -54861,14 +54708,6 @@ msgstr "Hacer redefinición de biblioteca"
 
 msgid "Make a local override of this library linked data-block"
 msgstr "Hace una redefinición local de este bloque de datos vinculado a una biblioteca"
-
-
-msgid "Override Object"
-msgstr "Objeto a redefinir"
-
-
-msgid "Name of lib-linked/collection object to make an override from"
-msgstr "Nombre del objeto (vinculado a una biblioteca o colección) del cual hacer una redefinición"
 
 
 msgid "Make linked data local to each object"
@@ -61409,16 +61248,8 @@ msgid "Fade out selected strips"
 msgstr "Funde los clips seleccionados de salida"
 
 
-msgid "From Playhead"
-msgstr "Desde cursor de tiempo"
-
-
 msgid "Fade from the time cursor to the end of overlapping sequences"
 msgstr "Funde desde el cursor de tiempo hasta el final de las secuencias superpuestas"
-
-
-msgid "To Playhead"
-msgstr "Hacia cursor de tiempo"
 
 
 msgid "Fade from the start of sequences under the time cursor to the current frame"
@@ -68278,6 +68109,11 @@ msgstr "Soporta cualquier combinación de mover, rotar y escalar al mismo tiempo
 
 
 msgctxt "Operator"
+msgid "Rip Region"
+msgstr "Arrancar región"
+
+
+msgctxt "Operator"
 msgid "Grab"
 msgstr "Arrastrar"
 
@@ -69180,11 +69016,6 @@ msgstr "Crear polígono"
 msgctxt "Operator"
 msgid "Spin Duplicates"
 msgstr "Girar duplicados"
-
-
-msgctxt "Operator"
-msgid "Rip Region"
-msgstr "Arrancar región"
 
 
 msgctxt "Operator"
@@ -70265,6 +70096,14 @@ msgstr "Sin compresión"
 
 msgid "Cache file path"
 msgstr "Ruta a archivo de caché"
+
+
+msgid "Frame on which the simulation stops"
+msgstr "Fotograma en el que finaliza la simulación"
+
+
+msgid "Frame on which the simulation starts"
+msgstr "Fotograma donde comienza la simulación"
 
 
 msgid "Cache Step"
@@ -73243,10 +73082,6 @@ msgid "Input Passes"
 msgstr "Pasadas en entrada"
 
 
-msgid "Passes handed over to the OptiX denoiser (this can have different effects on the denoised image)"
-msgstr "Pasadas enviadas al reductor de ruidos OptiX (esto puede producir diferentes efectos en la imagen a ser limpiada)"
-
-
 msgid "Use only color as input"
 msgstr "Usa sólo datos de color como entrada"
 
@@ -73285,10 +73120,6 @@ msgstr "Permite usar un umbral relativo al eliminar píxeles que no contengan in
 
 msgid "Store Denoising Passes"
 msgstr "Almacenar pasadas de reducción"
-
-
-msgid "Store the denoising feature passes and the noisy image"
-msgstr "Almacena las pasadas de reducción de ruido, así como la imagen original"
 
 
 msgid "Denoising Strength"
@@ -75435,14 +75266,6 @@ msgid "Simplify Grease Pencil only during animation playback"
 msgstr "Simplifica el lápiz de cera sólo durante la reproducción"
 
 
-msgid "ShadersFX"
-msgstr "Efectos visuales"
-
-
-msgid "Display Shader FX"
-msgstr "Mostrar efectos visuales"
-
-
 msgid "Layers Tinting"
 msgstr "Teñido de capas"
 
@@ -77511,10 +77334,6 @@ msgstr "Convertir a decimal"
 
 msgid "Convert input to float data"
 msgstr "Convierte la entrada a datos con coma decimal"
-
-
-msgid "Use a preview proxy and/or timecode index for this strip"
-msgstr "Usar un reemplazo de previsualización y/o un índice de código de tiempo para este clip"
 
 
 msgid "Reverse Frames"
@@ -84105,10 +83924,6 @@ msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painti
 msgstr "Asegura que al pintar influencias, todos los grupos de vértices deformados por huesos sumen 1.0"
 
 
-msgid "Changing edges seam re-calculates UV unwrap"
-msgstr "Cambiar los bordes de costura recalcula el despliegue UV"
-
-
 msgid "Use Additive Drawing"
 msgstr "Dibujar aditivamente"
 
@@ -84239,10 +84054,6 @@ msgstr "Editar acciones proporcionalmente"
 
 msgid "Proportional editing in action editor"
 msgstr "Modo de edición proporcional de acciones"
-
-
-msgid "Connected Only"
-msgstr "Sólo conectada"
 
 
 msgid "Proportional Editing using connected geometry only"
@@ -89497,10 +89308,6 @@ msgid "Direct linked library data-block, click to make local, Shift + Click to c
 msgstr "Bloque de datos de una biblioteca vinculada directamente, clic para hacer local, Mayúsculas + clic para crear una redefinición de biblioteca"
 
 
-msgid "Direct linked library data-block, click to make local"
-msgstr "Bloque de datos vinculado directamente desde una biblioteca, clic para hacer local"
-
-
 msgid "Library override of linked data-block, click to make fully local"
 msgstr "Redefinición de biblioteca de un bloque de datos vinculado, clic para hacer completamente local"
 
@@ -91933,10 +91740,6 @@ msgid "Some data failed to reconstruct (see console for details)"
 msgstr "Falló la reconstrucción de algunos datos (ver consola para más detalles)"
 
 
-msgid "Average re-projection error: %.3f"
-msgstr "Error promedio de reproyección: %.3f"
-
-
 msgid "File path"
 msgstr "Ruta del archivo"
 
@@ -92414,8 +92217,20 @@ msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "No es posible definir rutas absolutas con un archivo .blend no guardado"
 
 
-msgid " | Free GPU Mem: %s"
-msgstr " | Mem. libre GPU: %s"
+msgid "(Key) "
+msgstr "(Clave) "
+
+
+msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "Vért:%s/%s | Bordes:%s/%s | Caras:%s/%s | Triáng:%s"
+
+
+msgid "Verts:%s/%s | Bones:%s/%s"
+msgstr "Vért:%s/%s | Huesos:%s/%s"
+
+
+msgid "Verts:%s/%s"
+msgstr "Vért:%s/%s"
 
 
 msgid "Sync Length"
@@ -94836,10 +94651,6 @@ msgid "Sequences.new_image: unable to open image file"
 msgstr "Sequences.new_image: no se puede abrir el archivo de imagen"
 
 
-msgid "Sequences.new_movie: unable to open movie file"
-msgstr "Sequences.new_movie: no se puede abrir el archivo de película"
-
-
 msgid "Sequences.new_sound: unable to open sound file"
 msgstr "Sequences.new_sound: no se puede abrir el archivo de sonido"
 
@@ -95056,10 +94867,6 @@ msgid "Gizmo group '%s' not found!"
 msgstr "Grupo de manipulador '%s' no encontrado!"
 
 
-msgid "Outer"
-msgstr "Exterior"
-
-
 msgid "Settings are inside the Physics tab"
 msgstr "Opciones dentro de la solapa Dinámicas"
 
@@ -95091,6 +94898,10 @@ msgstr "Construido sin el modificador Rehacer malla"
 
 msgid "Rim"
 msgstr "Canto"
+
+
+msgid "Outer"
+msgstr "Exterior"
 
 
 msgid "Aspect X"

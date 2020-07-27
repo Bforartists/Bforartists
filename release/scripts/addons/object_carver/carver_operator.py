@@ -1196,7 +1196,7 @@ class CARVER_OT_operator(bpy.types.Operator):
                     for mb in ActiveObj.modifiers:
                         if (mb.type == 'BOOLEAN') and (mb.name == BMname):
                             try:
-                                bpy.ops.object.modifier_apply(apply_as='DATA', modifier=BMname)
+                                bpy.ops.object.modifier_apply(modifier=BMname)
                             except:
                                 bpy.ops.object.modifier_remove(modifier=BMname)
                                 exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -1208,7 +1208,7 @@ class CARVER_OT_operator(bpy.types.Operator):
                     for mb in self.CurrentObj.modifiers:
                         if (mb.type == 'SOLIDIFY') and (mb.name == "CT_SOLIDIFY"):
                             try:
-                                bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_SOLIDIFY")
+                                bpy.ops.object.modifier_apply(modifier="CT_SOLIDIFY")
                             except:
                                 exc_type, exc_value, exc_traceback = sys.exc_info()
                                 self.report({'ERROR'}, str(exc_value))
@@ -1243,7 +1243,7 @@ class CARVER_OT_operator(bpy.types.Operator):
                 for mb in ActiveObj.modifiers:
                     if (mb.type == 'BOOLEAN') and (mb.name == BMname):
                         try:
-                            bpy.ops.object.modifier_apply(apply_as='DATA', modifier=BMname)
+                            bpy.ops.object.modifier_apply(modifier=BMname)
                         except:
                             bpy.ops.object.modifier_remove(modifier=BMname)
                             exc_type, exc_value, exc_traceback = sys.exc_info()

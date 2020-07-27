@@ -27,10 +27,12 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 from bpy.types import Operator
+
 from .internals import (
     layer_collections,
     qcd_slots,
     )
+
 from . import qcd_operators
 
 def spacer():
@@ -338,13 +340,7 @@ def mouse_in_area(mouse_pos, area, buf = 0):
     return True
 
 def account_for_view_bounds(area):
-    # make sure it renders in the 3d view
-    # left
-    if area["vert"][0] < 0:
-        x = 0
-        y = area["vert"][1]
-
-        area["vert"] = (x, y)
+    # make sure it renders in the 3d view - prioritize top left
 
     # right
     if area["vert"][0] + area["width"] > bpy.context.region.width:
@@ -353,10 +349,10 @@ def account_for_view_bounds(area):
 
         area["vert"] = (x, y)
 
-    # top
-    if area["vert"][1] > bpy.context.region.height:
-        x = area["vert"][0]
-        y = bpy.context.region.height
+    # left
+    if area["vert"][0] < 0:
+        x = 0
+        y = area["vert"][1]
 
         area["vert"] = (x, y)
 
@@ -367,12 +363,19 @@ def account_for_view_bounds(area):
 
         area["vert"] = (x, y)
 
+    # top
+    if area["vert"][1] > bpy.context.region.height:
+        x = area["vert"][0]
+        y = bpy.context.region.height
+
+        area["vert"] = (x, y)
+
 def update_area_dimensions(area, w=0, h=0):
     area["width"] += w
     area["height"] += h
 
 class QCDMoveWidget(Operator):
-    """QCD Move Widget"""
+    """Move objects to QCD Slots"""
     bl_idname = "view3d.qcd_move_widget"
     bl_label = "QCD Move Widget"
 
@@ -390,6 +393,7 @@ class QCDMoveWidget(Operator):
         }
 
     last_type = ''
+    initialized = False
     moved = False
 
     def modal(self, context, event):
@@ -424,12 +428,16 @@ class QCDMoveWidget(Operator):
             self.mouse_pos = (event.mouse_region_x, event.mouse_region_y)
 
             if not mouse_in_area(self.mouse_pos, self.areas["Main Window"], 50 * scale_factor()):
-                bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
+                if self.initialized:
+                    bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
-                if self.moved:
-                    bpy.ops.ed.undo_push()
+                    if self.moved:
+                        bpy.ops.ed.undo_push()
 
-                return {'FINISHED'}
+                    return {'FINISHED'}
+
+            else:
+                self.initialized = True
 
         elif event.value == 'PRESS' and event.type == 'LEFTMOUSE':
             if not mouse_in_area(self.mouse_pos, self.areas["Main Window"], 10 * scale_factor()):
@@ -498,13 +506,14 @@ class QCDMoveWidget(Operator):
                 "height": 0,
                 "value": None
                 }
-            account_for_view_bounds(main_window)
 
-            # add main window background to areas
             self.areas["Main Window"] = main_window
+            allocate_main_ui(self, context)
+            account_for_view_bounds(main_window)
 
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
+
         else:
             self.report({'WARNING'}, "View3D not found, cannot run operator")
             return {'CANCELLED'}

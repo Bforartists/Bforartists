@@ -189,8 +189,8 @@ def __gather_children(blender_object, blender_scene, export_settings):
                 rot_quat = Quaternion(rot)
                 axis_basis_change = Matrix(
                     ((1.0, 0.0, 0.0, 0.0), (0.0, 0.0, -1.0, 0.0), (0.0, 1.0, 0.0, 0.0), (0.0, 0.0, 0.0, 1.0)))
-                mat = gltf2_blender_math.multiply(child.matrix_parent_inverse, child.matrix_basis)
-                mat = gltf2_blender_math.multiply(mat, axis_basis_change)
+                mat = child.matrix_parent_inverse @ child.matrix_basis
+                mat = mat @ axis_basis_change
 
                 _, rot_quat, _ = mat.decompose()
                 child_node.rotation = [rot_quat[1], rot_quat[2], rot_quat[3], rot_quat[0]]
@@ -248,6 +248,9 @@ def __gather_matrix(blender_object, export_settings):
 
 
 def __gather_mesh(blender_object, library, export_settings):
+    if blender_object.type in ['CURVE', 'SURFACE', 'FONT']:
+        return __gather_mesh_from_nonmesh(blender_object, library, export_settings)
+
     if blender_object.type != "MESH":
         return None
 
@@ -338,6 +341,49 @@ def __gather_mesh(blender_object, library, export_settings):
     return result
 
 
+def __gather_mesh_from_nonmesh(blender_object, library, export_settings):
+    """Handles curves, surfaces, text, etc."""
+    needs_to_mesh_clear = False
+    try:
+        # Convert to a mesh
+        try:
+            if export_settings[gltf2_blender_export_keys.APPLY]:
+                depsgraph = bpy.context.evaluated_depsgraph_get()
+                blender_mesh_owner = blender_object.evaluated_get(depsgraph)
+                blender_mesh = blender_mesh_owner.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+                # TODO: do we need preserve_all_data_layers?
+
+            else:
+                blender_mesh_owner = blender_object
+                blender_mesh = blender_mesh_owner.to_mesh()
+
+        except Exception:
+            return None
+
+        needs_to_mesh_clear = True
+
+        skip_filter = True
+        material_names = tuple([ms.material.name for ms in blender_object.material_slots if ms.material is not None])
+        vertex_groups = None
+        modifiers = None
+        blender_object_for_skined_data = None
+
+        result = gltf2_blender_gather_mesh.gather_mesh(blender_mesh,
+                                                       library,
+                                                       blender_object_for_skined_data,
+                                                       vertex_groups,
+                                                       modifiers,
+                                                       skip_filter,
+                                                       material_names,
+                                                       export_settings)
+
+    finally:
+        if needs_to_mesh_clear:
+            blender_mesh_owner.to_mesh_clear()
+
+    return result
+
+
 def __gather_name(blender_object, export_settings):
     return blender_object.name
 
@@ -358,7 +404,7 @@ def __gather_trans_rot_scale(blender_object, export_settings):
 
 
         if blender_object.matrix_local[3][3] != 0.0:
-            trans, rot, sca = gltf2_blender_extract.decompose_transition(blender_object.matrix_local, export_settings)
+            trans, rot, sca = blender_object.matrix_local.decompose()
         else:
             # Some really weird cases, scale is null (if parent is null when evaluation is done)
             print_console('WARNING', 'Some nodes are 0 scaled during evaluation. Result can be wrong')

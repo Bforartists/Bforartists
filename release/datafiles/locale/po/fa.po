@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -740,8 +740,8 @@ msgid "Background Image"
 msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
 
 
-msgid "Alpha"
-msgstr "Alpha"
+msgid "Opacity"
+msgstr "ﯼﺭﺪﮐِ"
 
 
 msgid "Back"
@@ -1146,6 +1146,10 @@ msgstr "ﮓﻧﺭ ﭗﻣﺭ ﺮﺼﻨﻋ"
 
 msgid "Element defining a color at a position in the color ramp"
 msgstr "ﮓﻧﺭ ﭗﻣﺭ ﺭﺩ ﺖﯿﻌﻗﻮﻣ ﮏﯾ ﺭﺩ ﮓﻧﺭ ﻩﺪﻨﻨﮐ ﻒﯾﺮﻌﺗ ﺮﺼﻨﻋ"
+
+
+msgid "Alpha"
+msgstr "Alpha"
 
 
 msgid "Set color of selected color stop"
@@ -1805,14 +1809,6 @@ msgid "Map transformations of the target to the object"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
-msgid "Loc"
-msgstr "ﻞﻔﻗ"
-
-
-msgid "Rot"
-msgstr "ﺎﻫ‌ﻪﺸﯾﺭ"
-
-
 msgid "Auto Handle"
 msgstr "ﺭﺎﮐﺩﻮﺧ ﻪﺘﺳﺩ"
 
@@ -2456,10 +2452,6 @@ msgstr "ﯽﺋﺮﻣ"
 
 msgid "Frames"
 msgstr "ﺎﻫ‌ﻢﯾﺮﻓ"
-
-
-msgid "Opacity"
-msgstr "ﯼﺭﺪﮐِ"
 
 
 msgid "Parent Object"
@@ -4255,24 +4247,8 @@ msgid "Visual Location"
 msgstr "ﻞﺤﻣ ﺖﺨﭘ"
 
 
-msgid "Visual LocRotScale"
-msgstr "ﻞﺤﻣ ﺖﺨﭘ"
-
-
-msgid "Visual LocScale"
-msgstr "ﻞﺤﻣ ﺖﺨﭘ"
-
-
 msgid "Visual Rotation"
 msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Visual RotScale"
-msgstr "ﺖﻓﺎﺑ ﯽﺷﺎﻘﻧ"
-
-
-msgid "Visual Scaling"
-msgstr "ﻞﺤﻣ ﺖﺨﭘ"
 
 
 msgid "Whole Character"
@@ -4424,6 +4400,10 @@ msgid "Key"
 msgstr "ﺪﯿﻠﮐ"
 
 
+msgid "Select Linked"
+msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
+
+
 msgid "UV"
 msgstr "UV"
 
@@ -4451,10 +4431,6 @@ msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 msgid "Node Color Specials"
 msgstr "ﮓﻧﺭ ﺖﺸﻧ"
-
-
-msgid "Select Linked"
-msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgid "Python"
@@ -4899,10 +4875,6 @@ msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 msgid "Render Steps"
 msgstr "ﻪﺤﻔﺻ ﯼﺭﺍﺰﮔﺭﺎﺑ"
-
-
-msgid "Calc Order"
-msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ"
 
 
 msgid "Object Screw"
@@ -7361,11 +7333,6 @@ msgstr "ﺎﻫ‌ﺶﺨﺑ ﻑﺬﺣ"
 
 
 msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "ﺎﻫ‌ﻝﺎﻣﺮﻧ:"
-
-
-msgctxt "Operator"
 msgid "Add Bezier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -8334,10 +8301,6 @@ msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 
 msgid "Create new mask"
 msgstr "ﺪﯾﺪﺟ ﻩﻭﺮﮔ ﻪﺑ ﺹﺎﺼﺘﺧﺍ"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
 msgctxt "Operator"

@@ -579,7 +579,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
   }
 
   if (bmain->versionfile <= 109) {
-    /* new variable: gridlines */
+    /* New variable: `gridlines`. */
     bScreen *screen = bmain->screens.first;
     while (screen) {
       ScrArea *area = screen->areabase.first;
@@ -1339,7 +1339,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *bmain)
         arm = blo_do_versions_newlibadr(fd, lib, ob->data);
         enum { ARM_DRAWXRAY = (1 << 1) };
         if (arm->flag & ARM_DRAWXRAY) {
-          ob->dtx |= OB_DRAWXRAY;
+          ob->dtx |= OB_DRAW_IN_FRONT;
         }
       }
       else if (ob->type == OB_MESH) {

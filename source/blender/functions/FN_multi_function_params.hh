@@ -34,7 +34,7 @@ namespace blender::fn {
 class MFParamsBuilder {
  private:
   const MFSignature *signature_;
-  uint min_array_size_;
+  int64_t min_array_size_;
   Vector<GVSpan> virtual_spans_;
   Vector<GMutableSpan> mutable_spans_;
   Vector<GVArraySpan> virtual_array_spans_;
@@ -43,89 +43,103 @@ class MFParamsBuilder {
   friend class MFParams;
 
  public:
-  MFParamsBuilder(const MFSignature &signature, uint min_array_size)
+  MFParamsBuilder(const MFSignature &signature, int64_t min_array_size)
       : signature_(&signature), min_array_size_(min_array_size)
   {
   }
 
-  MFParamsBuilder(const class MultiFunction &fn, uint min_array_size);
+  MFParamsBuilder(const class MultiFunction &fn, int64_t min_array_size);
 
-  template<typename T> void add_readonly_single_input(const T *value)
+  template<typename T> void add_readonly_single_input(const T *value, StringRef expected_name = "")
   {
-    this->add_readonly_single_input(GVSpan::FromSingle(CPPType::get<T>(), value, min_array_size_));
+    this->add_readonly_single_input(GVSpan::FromSingle(CPPType::get<T>(), value, min_array_size_),
+                                    expected_name);
   }
-  void add_readonly_single_input(GVSpan ref)
+  void add_readonly_single_input(GVSpan ref, StringRef expected_name = "")
   {
-    this->assert_current_param_type(MFParamType::ForSingleInput(ref.type()));
+    this->assert_current_param_type(MFParamType::ForSingleInput(ref.type()), expected_name);
     BLI_assert(ref.size() >= min_array_size_);
     virtual_spans_.append(ref);
   }
 
-  void add_readonly_vector_input(GVArraySpan ref)
+  void add_readonly_vector_input(GVArraySpan ref, StringRef expected_name = "")
   {
-    this->assert_current_param_type(MFParamType::ForVectorInput(ref.type()));
+    this->assert_current_param_type(MFParamType::ForVectorInput(ref.type()), expected_name);
     BLI_assert(ref.size() >= min_array_size_);
     virtual_array_spans_.append(ref);
   }
 
-  void add_uninitialized_single_output(GMutableSpan ref)
+  template<typename T> void add_uninitialized_single_output(T *value, StringRef expected_name = "")
   {
-    this->assert_current_param_type(MFParamType::ForSingleOutput(ref.type()));
+    this->add_uninitialized_single_output(GMutableSpan(CPPType::get<T>(), value, 1),
+                                          expected_name);
+  }
+  void add_uninitialized_single_output(GMutableSpan ref, StringRef expected_name = "")
+  {
+    this->assert_current_param_type(MFParamType::ForSingleOutput(ref.type()), expected_name);
     BLI_assert(ref.size() >= min_array_size_);
     mutable_spans_.append(ref);
   }
 
-  void add_vector_output(GVectorArray &vector_array)
+  void add_vector_output(GVectorArray &vector_array, StringRef expected_name = "")
   {
-    this->assert_current_param_type(MFParamType::ForVectorOutput(vector_array.type()));
+    this->assert_current_param_type(MFParamType::ForVectorOutput(vector_array.type()),
+                                    expected_name);
     BLI_assert(vector_array.size() >= min_array_size_);
     vector_arrays_.append(&vector_array);
   }
 
-  void add_single_mutable(GMutableSpan ref)
+  void add_single_mutable(GMutableSpan ref, StringRef expected_name = "")
   {
-    this->assert_current_param_type(MFParamType::ForMutableSingle(ref.type()));
+    this->assert_current_param_type(MFParamType::ForMutableSingle(ref.type()), expected_name);
     BLI_assert(ref.size() >= min_array_size_);
     mutable_spans_.append(ref);
   }
 
-  void add_vector_mutable(GVectorArray &vector_array)
+  void add_vector_mutable(GVectorArray &vector_array, StringRef expected_name = "")
   {
-    this->assert_current_param_type(MFParamType::ForMutableVector(vector_array.type()));
+    this->assert_current_param_type(MFParamType::ForMutableVector(vector_array.type()),
+                                    expected_name);
     BLI_assert(vector_array.size() >= min_array_size_);
     vector_arrays_.append(&vector_array);
   }
 
-  GMutableSpan computed_array(uint param_index)
+  GMutableSpan computed_array(int param_index)
   {
     BLI_assert(ELEM(signature_->param_types[param_index].category(),
                     MFParamType::SingleOutput,
                     MFParamType::SingleMutable));
-    uint data_index = signature_->data_index(param_index);
+    int data_index = signature_->data_index(param_index);
     return mutable_spans_[data_index];
   }
 
-  GVectorArray &computed_vector_array(uint param_index)
+  GVectorArray &computed_vector_array(int param_index)
   {
     BLI_assert(ELEM(signature_->param_types[param_index].category(),
                     MFParamType::VectorOutput,
                     MFParamType::VectorMutable));
-    uint data_index = signature_->data_index(param_index);
+    int data_index = signature_->data_index(param_index);
     return *vector_arrays_[data_index];
   }
 
  private:
-  void assert_current_param_type(MFParamType param_type)
+  void assert_current_param_type(MFParamType param_type, StringRef expected_name = "")
   {
-    UNUSED_VARS_NDEBUG(param_type);
+    UNUSED_VARS_NDEBUG(param_type, expected_name);
 #ifdef DEBUG
-    uint param_index = this->current_param_index();
+    int param_index = this->current_param_index();
+
+    if (expected_name != "") {
+      StringRef actual_name = signature_->param_names[param_index];
+      BLI_assert(actual_name == expected_name);
+    }
+
     MFParamType expected_type = signature_->param_types[param_index];
     BLI_assert(expected_type == param_type);
 #endif
   }
 
-  uint current_param_index() const
+  int current_param_index() const
   {
     return virtual_spans_.size() + mutable_spans_.size() + virtual_array_spans_.size() +
            vector_arrays_.size();
@@ -141,75 +155,75 @@ class MFParams {
   {
   }
 
-  template<typename T> VSpan<T> readonly_single_input(uint param_index, StringRef name = "")
+  template<typename T> VSpan<T> readonly_single_input(int param_index, StringRef name = "")
   {
     return this->readonly_single_input(param_index, name).typed<T>();
   }
-  GVSpan readonly_single_input(uint param_index, StringRef name = "")
+  GVSpan readonly_single_input(int param_index, StringRef name = "")
   {
     this->assert_correct_param(param_index, name, MFParamType::SingleInput);
-    uint data_index = builder_->signature_->data_index(param_index);
+    int data_index = builder_->signature_->data_index(param_index);
     return builder_->virtual_spans_[data_index];
   }
 
   template<typename T>
-  MutableSpan<T> uninitialized_single_output(uint param_index, StringRef name = "")
+  MutableSpan<T> uninitialized_single_output(int param_index, StringRef name = "")
   {
     return this->uninitialized_single_output(param_index, name).typed<T>();
   }
-  GMutableSpan uninitialized_single_output(uint param_index, StringRef name = "")
+  GMutableSpan uninitialized_single_output(int param_index, StringRef name = "")
   {
     this->assert_correct_param(param_index, name, MFParamType::SingleOutput);
-    uint data_index = builder_->signature_->data_index(param_index);
+    int data_index = builder_->signature_->data_index(param_index);
     return builder_->mutable_spans_[data_index];
   }
 
-  template<typename T> VArraySpan<T> readonly_vector_input(uint param_index, StringRef name = "")
+  template<typename T> VArraySpan<T> readonly_vector_input(int param_index, StringRef name = "")
   {
     return this->readonly_vector_input(param_index, name).typed<T>();
   }
-  GVArraySpan readonly_vector_input(uint param_index, StringRef name = "")
+  GVArraySpan readonly_vector_input(int param_index, StringRef name = "")
   {
     this->assert_correct_param(param_index, name, MFParamType::VectorInput);
-    uint data_index = builder_->signature_->data_index(param_index);
+    int data_index = builder_->signature_->data_index(param_index);
     return builder_->virtual_array_spans_[data_index];
   }
 
-  template<typename T> GVectorArrayRef<T> vector_output(uint param_index, StringRef name = "")
+  template<typename T> GVectorArrayRef<T> vector_output(int param_index, StringRef name = "")
   {
     return this->vector_output(param_index, name).typed<T>();
   }
-  GVectorArray &vector_output(uint param_index, StringRef name = "")
+  GVectorArray &vector_output(int param_index, StringRef name = "")
   {
     this->assert_correct_param(param_index, name, MFParamType::VectorOutput);
-    uint data_index = builder_->signature_->data_index(param_index);
+    int data_index = builder_->signature_->data_index(param_index);
     return *builder_->vector_arrays_[data_index];
   }
 
-  template<typename T> MutableSpan<T> single_mutable(uint param_index, StringRef name = "")
+  template<typename T> MutableSpan<T> single_mutable(int param_index, StringRef name = "")
   {
     return this->single_mutable(param_index, name).typed<T>();
   }
-  GMutableSpan single_mutable(uint param_index, StringRef name = "")
+  GMutableSpan single_mutable(int param_index, StringRef name = "")
   {
     this->assert_correct_param(param_index, name, MFParamType::SingleMutable);
-    uint data_index = builder_->signature_->data_index(param_index);
+    int data_index = builder_->signature_->data_index(param_index);
     return builder_->mutable_spans_[data_index];
   }
 
-  template<typename T> GVectorArrayRef<T> vector_mutable(uint param_index, StringRef name = "")
+  template<typename T> GVectorArrayRef<T> vector_mutable(int param_index, StringRef name = "")
   {
     return this->vector_mutable(param_index, name).typed<T>();
   }
-  GVectorArray &vector_mutable(uint param_index, StringRef name = "")
+  GVectorArray &vector_mutable(int param_index, StringRef name = "")
   {
     this->assert_correct_param(param_index, name, MFParamType::VectorMutable);
-    uint data_index = builder_->signature_->data_index(param_index);
+    int data_index = builder_->signature_->data_index(param_index);
     return *builder_->vector_arrays_[data_index];
   }
 
  private:
-  void assert_correct_param(uint param_index, StringRef name, MFParamType param_type)
+  void assert_correct_param(int param_index, StringRef name, MFParamType param_type)
   {
     UNUSED_VARS_NDEBUG(param_index, name, param_type);
 #ifdef DEBUG
@@ -220,7 +234,7 @@ class MFParams {
 #endif
   }
 
-  void assert_correct_param(uint param_index, StringRef name, MFParamType::Category category)
+  void assert_correct_param(int param_index, StringRef name, MFParamType::Category category)
   {
     UNUSED_VARS_NDEBUG(param_index, name, category);
 #ifdef DEBUG

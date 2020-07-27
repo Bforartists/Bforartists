@@ -162,7 +162,6 @@ def register():
         description="Display support level",
         default={'OFFICIAL', 'COMMUNITY'},
         options={'ENUM_FLAG'},
-        
     )
     # done...
 

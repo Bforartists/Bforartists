@@ -17,12 +17,17 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # Copyright 2011, Ryan Inch
+import bpy
 
 from .internals import (
     layer_collections,
+    qcd_slots,
+    expanded,
+    expand_history,
     rto_history,
     copy_buffer,
     swap_buffer,
+    update_property_group,
 )
 
 rto_path = {
@@ -289,3 +294,80 @@ def clear_swap(rto):
         swap_buffer["A"]["values"].clear()
         swap_buffer["B"]["RTO"] = ""
         swap_buffer["B"]["values"].clear()
+
+
+def link_child_collections_to_parent(laycol, collection, parent_collection):
+    # store view layer RTOs for all children of the to be deleted collection
+    child_states = {}
+    def get_child_states(layer_collection):
+        child_states[layer_collection.name] = (layer_collection.exclude,
+                                               layer_collection.hide_viewport,
+                                               layer_collection.holdout,
+                                               layer_collection.indirect_only)
+
+    apply_to_children(laycol["ptr"], get_child_states)
+
+    # link any subcollections of the to be deleted collection to it's parent
+    for subcollection in collection.children:
+        if not subcollection.name in parent_collection.children:
+            parent_collection.children.link(subcollection)
+
+    # apply the stored view layer RTOs to the newly linked collections and their
+    # children
+    def restore_child_states(layer_collection):
+        state = child_states.get(layer_collection.name)
+
+        if state:
+            layer_collection.exclude = state[0]
+            layer_collection.hide_viewport = state[1]
+            layer_collection.holdout = state[2]
+            layer_collection.indirect_only = state[3]
+
+    apply_to_children(laycol["parent"]["ptr"], restore_child_states)
+
+
+def remove_collection(laycol, collection, context):
+    # get selected row
+    cm = context.scene.collection_manager
+    selected_row_name = cm.cm_list_collection[cm.cm_list_index].name
+
+    # delete collection
+    bpy.data.collections.remove(collection)
+
+    # update references
+    expanded.discard(laycol["name"])
+
+    if expand_history["target"] == laycol["name"]:
+        expand_history["target"] = ""
+
+    if laycol["name"] in expand_history["history"]:
+        expand_history["history"].remove(laycol["name"])
+
+    if qcd_slots.contains(name=laycol["name"]):
+        qcd_slots.del_slot(name=laycol["name"])
+
+    if laycol["name"] in qcd_slots.overrides:
+        qcd_slots.overrides.remove(laycol["name"])
+
+    # reset history
+    for rto in rto_history.values():
+        rto.clear()
+
+    # update tree view
+    update_property_group(context)
+
+    # update selected row
+    laycol = layer_collections.get(selected_row_name, None)
+    if laycol:
+        cm.cm_list_index = laycol["row_index"]
+
+    elif len(cm.cm_list_collection) <= cm.cm_list_index:
+        cm.cm_list_index =  len(cm.cm_list_collection) - 1
+
+        if cm.cm_list_index > -1:
+            name = cm.cm_list_collection[cm.cm_list_index].name
+            laycol = layer_collections[name]
+            while not laycol["visible"]:
+                laycol = laycol["parent"]
+
+            cm.cm_list_index = laycol["row_index"]

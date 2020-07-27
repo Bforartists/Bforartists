@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -522,6 +522,10 @@ msgid "Material"
 msgstr "วัสดุ"
 
 
+msgid "Opacity"
+msgstr "ความทึบแสง"
+
+
 msgid "Depth"
 msgstr "ความลึก"
 
@@ -696,22 +700,6 @@ msgstr "กล้อง"
 
 msgid "Track"
 msgstr "แทร็ค"
-
-
-msgid "-X Rot"
-msgstr "หมุน -X"
-
-
-msgid "-Y Rot"
-msgstr "หมุน -Y"
-
-
-msgid "-Z Rot"
-msgstr "หมุน -Z"
-
-
-msgid "Rot"
-msgstr "หมุน"
 
 
 msgid "Location"
@@ -1230,10 +1218,6 @@ msgstr "กำหนดเอง"
 
 msgid "Frames"
 msgstr "เฟรม"
-
-
-msgid "Opacity"
-msgstr "ความทึบแสง"
 
 
 msgid "Mask Layer"
@@ -2076,6 +2060,10 @@ msgid "Paths"
 msgstr "เส้นทาง"
 
 
+msgid "Rotation & Scale"
+msgstr "หมุน และ ย่อขยาย"
+
+
 msgid "Squares"
 msgstr "สี่เหลี่ยม"
 
@@ -2644,6 +2632,10 @@ msgid "Paste from Clipboard"
 msgstr "วางจากคลิปบอร์ด"
 
 
+msgid "Report"
+msgstr "รายงาน"
+
+
 msgctxt "Operator"
 msgid "Add Bezier Circle"
 msgstr "เพิ่มวงกลมเบซิเยร์"
@@ -2866,10 +2858,6 @@ msgstr "ซูมรูปภาพออก (ใช้ศูนย์กลา�
 
 msgid "Track Camera"
 msgstr "ตามกล้อง"
-
-
-msgid "Report"
-msgstr "รายงาน"
 
 
 msgid "Add Vertex"
@@ -4604,8 +4592,20 @@ msgid " + Z"
 msgstr " + Z"
 
 
-msgid " | Free GPU Mem: %s"
-msgstr " | หน่วยความจำ GPU ที่พร้อมใช้งาน: %s"
+msgid "(Key) "
+msgstr "(คีย์) "
+
+
+msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "จุดยอด:%s/%s | เส้นขอบ:%s/%s | ด้าน:%s/%s | ส่วนแบ่งสามส่วน:%s"
+
+
+msgid "Verts:%s/%s | Bones:%s/%s"
+msgstr "จุดยอด:%s/%s | กระดูก:%s/%s"
+
+
+msgid "Verts:%s/%s"
+msgstr "จุดยอด:%s/%s"
 
 
 msgid "Speed:"

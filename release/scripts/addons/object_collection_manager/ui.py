@@ -21,6 +21,7 @@
 import bpy
 
 from bpy.types import (
+    Menu,
     Operator,
     Panel,
     UIList,
@@ -58,6 +59,7 @@ last_icon_theme_text_sel = None
 
 
 class CollectionManager(Operator):
+    '''Manage and control collections, with advanced features, in a popup UI'''
     bl_label = "Collection Manager"
     bl_idname = "view3d.collection_manager"
 
@@ -111,9 +113,9 @@ class CollectionManager(Operator):
         layout.row().separator()
 
         # buttons
-        button_row = layout.row()
+        button_row_1 = layout.row()
 
-        op_sec = button_row.row()
+        op_sec = button_row_1.row()
         op_sec.alignment = 'LEFT'
 
         collapse_sec = op_sec.row()
@@ -137,11 +139,12 @@ class CollectionManager(Operator):
             renum_sec.alignment = 'LEFT'
             renum_sec.operator("view3d.renumerate_qcd_slots")
 
-        # filter
-        filter_sec = button_row.row()
-        filter_sec.alignment = 'RIGHT'
+        # menu & filter
+        right_sec = button_row_1.row()
+        right_sec.alignment = 'RIGHT'
 
-        filter_sec.popover(panel="COLLECTIONMANAGER_PT_display_options",
+        right_sec.menu("VIEW3D_MT_CM_specials_menu")
+        right_sec.popover(panel="COLLECTIONMANAGER_PT_display_options",
                            text="", icon='FILTER')
 
         mc_box = layout.box()
@@ -303,17 +306,23 @@ class CollectionManager(Operator):
                                    sort_lock=True)
 
         # add collections
-        addcollec_row = layout.row()
-        addcollec_row.operator("view3d.add_collection", text="Add Collection",
-                               icon='COLLECTION_NEW').child = False
+        button_row_2 = layout.row()
+        prop = button_row_2.operator("view3d.add_collection", text="Add Collection",
+                               icon='COLLECTION_NEW')
+        prop.child = False
 
-        addcollec_row.operator("view3d.add_collection", text="Add SubCollection",
-                               icon='COLLECTION_NEW').child = True
+        prop = button_row_2.operator("view3d.add_collection", text="Add SubCollection",
+                               icon='COLLECTION_NEW')
+        prop.child = True
+
+
+        button_row_3 = layout.row()
 
         # phantom mode
-        phantom_row = layout.row()
+        phantom_mode = button_row_3.row(align=True)
         toggle_text = "Disable " if cm.in_phantom_mode else "Enable "
-        phantom_row.operator("view3d.toggle_phantom_mode", text=toggle_text+"Phantom Mode")
+        phantom_mode.operator("view3d.toggle_phantom_mode", text=toggle_text+"Phantom Mode")
+        phantom_mode.operator("view3d.apply_phantom_mode", text="", icon='CHECKMARK')
 
         if cm.in_phantom_mode:
             view.enabled = False
@@ -557,8 +566,9 @@ class CM_UL_items(UIList):
             highlight = bool(exclude_history and exclude_target == item.name)
             icon = 'CHECKBOX_DEHLT' if laycol["ptr"].exclude else 'CHECKBOX_HLT'
 
-            row.operator("view3d.exclude_collection", text="", icon=icon,
-                         emboss=highlight, depress=highlight).name = item.name
+            prop = row.operator("view3d.exclude_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight)
+            prop.name = item.name
 
         if cm.show_selectable:
             select_history_base = rto_history["select"].get(view_layer.name, {})
@@ -569,8 +579,9 @@ class CM_UL_items(UIList):
             icon = ('RESTRICT_SELECT_ON' if laycol["ptr"].collection.hide_select else
                     'RESTRICT_SELECT_OFF')
 
-            row.operator("view3d.restrict_select_collection", text="", icon=icon,
-                         emboss=highlight, depress=highlight).name = item.name
+            prop = row.operator("view3d.restrict_select_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight)
+            prop.name = item.name
 
         if cm.show_hide_viewport:
             hide_history_base = rto_history["hide"].get(view_layer.name, {})
@@ -580,8 +591,9 @@ class CM_UL_items(UIList):
             highlight = bool(hide_history and hide_target == item.name)
             icon = 'HIDE_ON' if laycol["ptr"].hide_viewport else 'HIDE_OFF'
 
-            row.operator("view3d.hide_collection", text="", icon=icon,
-                         emboss=highlight, depress=highlight).name = item.name
+            prop = row.operator("view3d.hide_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight)
+            prop.name = item.name
 
         if cm.show_disable_viewport:
             disable_history_base = rto_history["disable"].get(view_layer.name, {})
@@ -592,8 +604,9 @@ class CM_UL_items(UIList):
             icon = ('RESTRICT_VIEW_ON' if laycol["ptr"].collection.hide_viewport else
                     'RESTRICT_VIEW_OFF')
 
-            row.operator("view3d.disable_viewport_collection", text="", icon=icon,
-                         emboss=highlight, depress=highlight).name = item.name
+            prop = row.operator("view3d.disable_viewport_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight)
+            prop.name = item.name
 
         if cm.show_render:
             render_history_base = rto_history["render"].get(view_layer.name, {})
@@ -604,8 +617,9 @@ class CM_UL_items(UIList):
             icon = ('RESTRICT_RENDER_ON' if laycol["ptr"].collection.hide_render else
                     'RESTRICT_RENDER_OFF')
 
-            row.operator("view3d.disable_render_collection", text="", icon=icon,
-                         emboss=highlight, depress=highlight).name = item.name
+            prop = row.operator("view3d.disable_render_collection", text="", icon=icon,
+                         emboss=highlight, depress=highlight)
+            prop.name = item.name
 
 
 
@@ -615,8 +629,8 @@ class CM_UL_items(UIList):
         row.separator()
 
         rm_op = row.row()
-        rm_op.operator("view3d.remove_collection", text="", icon='X',
-                       emboss=False).collection_name = item.name
+        prop = rm_op.operator("view3d.remove_collection", text="", icon='X', emboss=False)
+        prop.collection_name = item.name
 
 
         if len(data.cm_list_collection) > index + 1:
@@ -738,6 +752,21 @@ class CMDisplayOptionsPanel(Panel):
 
         row = layout.row()
         row.prop(cm, "align_local_ops")
+
+
+class SpecialsMenu(Menu):
+    bl_label = "Specials"
+    bl_idname = "VIEW3D_MT_CM_specials_menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        prop = layout.operator("view3d.remove_empty_collections")
+        prop.without_objects = False
+
+        prop = layout.operator("view3d.remove_empty_collections",
+                               text="Purge All Collections Without Objects")
+        prop.without_objects = True
 
 
 def view3d_header_qcd_slots(self, context):

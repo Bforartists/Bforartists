@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -407,10 +407,6 @@ msgid "Weight"
 msgstr "भार"
 
 
-msgid "Blendfile Data"
-msgstr "Blendfile डेटा"
-
-
 msgid "Brushes"
 msgstr "तूलिका"
 
@@ -671,10 +667,6 @@ msgid "Background Image"
 msgstr "पृष्ठभूमि छवि"
 
 
-msgid "Alpha"
-msgstr "पारदर्शिता"
-
-
 msgid "Depth"
 msgstr "गहनता"
 
@@ -851,6 +843,10 @@ msgid "Ease"
 msgstr "सहज"
 
 
+msgid "Alpha"
+msgstr "पारदर्शिता"
+
+
 msgctxt "Text"
 msgid "Line"
 msgstr "रेखा"
@@ -968,18 +964,6 @@ msgid "Use Tail"
 msgstr "पूंछ का प्रयोग करें"
 
 
-msgid "X Rot"
-msgstr "घूर्णन x"
-
-
-msgid "Y Rot"
-msgstr "Y घूर्णन"
-
-
-msgid "Z Rot"
-msgstr "Z घूर्णन"
-
-
 msgid "Off"
 msgstr "बंद"
 
@@ -1008,16 +992,12 @@ msgid "Original Length"
 msgstr "मूल लंबाई"
 
 
-msgid "Loc"
+msgid "Location"
 msgstr "स्थिति"
 
 
 msgid "Map To"
 msgstr "करने के लिए मैप"
-
-
-msgid "Location"
-msgstr "स्थिति"
 
 
 msgid "Clip"
@@ -2815,10 +2795,6 @@ msgid "Insert keyframes for additional rotation offset"
 msgstr "ऑफ़सेट अतिरिक्त घूर्णन के लिए keyframes सम्मिलित करें"
 
 
-msgid "Insert keyframes for additional scaling factor"
-msgstr "अतिरिक्त प्रमाण फेक्टर के लिए keyframes सम्मिलित करें"
-
-
 msgid "Insert a keyframe on each of the location and rotation channels"
 msgstr "स्थान और घूर्णन सरणिों में से प्रत्येक पर एक keyframe सम्मिलित करें"
 
@@ -2829,6 +2805,10 @@ msgstr "स्थान और प्रंमाण पर सरणिों �
 
 msgid "Insert a keyframe on each of the rotation and scale channels"
 msgstr "घूर्णन और प्रंमाण पर सरणिों में से प्रत्येक पर एक keyframe सम्मिलित करें"
+
+
+msgid "Rotation & Scale"
+msgstr "घूर्णन एवं प्रमाण"
 
 
 msgid "Insert a keyframe on each of the location, rotation, and scale channels"
@@ -2910,6 +2890,10 @@ msgstr "स्नैप"
 
 msgid "UV"
 msgstr "यूवी"
+
+
+msgid "Align"
+msgstr "संरेखित करें"
 
 
 msgctxt "Operator"
@@ -3762,6 +3746,10 @@ msgid "Constraint"
 msgstr "प्रतिबंधी"
 
 
+msgid "Report"
+msgstr "विवरण"
+
+
 msgctxt "Operator"
 msgid "Toggle Cyclic"
 msgstr "चक्रीय बंद/बुझ"
@@ -3774,10 +3762,6 @@ msgstr "अनुकृति वक्र"
 
 msgid "Duplicate Curve"
 msgstr "अनुकृति वक्र"
-
-
-msgid "Align"
-msgstr "संरेखित करें"
 
 
 msgid "Edge Slide"
@@ -3970,10 +3954,6 @@ msgstr "कुण्डली"
 
 msgid "Relative Paths"
 msgstr "सापेक्ष पथ"
-
-
-msgid "Report"
-msgstr "विवरण"
 
 
 msgid "Select the camera"
@@ -6392,6 +6372,10 @@ msgid "Unpack"
 msgstr "खोल देना"
 
 
+msgid "(Key) "
+msgstr "(कुंजी) "
+
+
 msgid "Speed:"
 msgstr "गति:"
 
@@ -6569,12 +6553,12 @@ msgid "Group"
 msgstr "समूह"
 
 
-msgid "Outer"
-msgstr "बाहरी"
-
-
 msgid "Rim"
 msgstr "रिम"
+
+
+msgid "Outer"
+msgstr "बाहरी"
 
 
 msgid "To"

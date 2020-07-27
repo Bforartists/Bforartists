@@ -21,8 +21,10 @@
 """
 Script for checking source code spelling.
 
-   python3 source/tools/check_source/check_spelling_c.py some_soure_file.py
+   python3 source/tools/check_source/check_spelling.py some_soure_file.py
 
+- Pass in a path for it to be checked recursively.
+- Pass in '--strings' to check strings instead of comments.
 
 Currently only python source is checked.
 """
@@ -142,6 +144,38 @@ class Comment:
 
     def parse(self):
         return words_from_text(self.text)
+
+
+def extract_code_strings(filepath):
+    import pygments
+    from pygments import lexers
+    from pygments.token import Token
+
+    comments = []
+    code_words = set()
+
+    # lex = lexers.find_lexer_class_for_filename(filepath)
+    # if lex is None:
+    #     return comments, code_words
+    if filepath.endswith(".py"):
+        lex = lexers.get_lexer_by_name("python")
+    else:
+        lex = lexers.get_lexer_by_name("c")
+
+    slineno = 1
+    with open(filepath, encoding='utf-8') as fh:
+        source = fh.read()
+
+    for ty, ttext in lex.get_tokens(source):
+        if ty in {Token.Literal.String, Token.Literal.String.Double, Token.Literal.String.Single}:
+            comments.append(Comment(filepath, ttext, slineno, 'STRING'))
+        else:
+            for match in re_vars.finditer(ttext):
+                code_words.add(match.group(0))
+        # Ugh - not nice or fast.
+        slineno += ttext.count("\n")
+
+    return comments, code_words
 
 
 def extract_py_comments(filepath):
@@ -326,12 +360,15 @@ def extract_c_comments(filepath):
     return comments, code_words
 
 
-def spell_check_comments(filepath):
+def spell_check_file(filepath, check_type='COMMENTS'):
 
-    if filepath.endswith(".py"):
-        comment_list, code_words = extract_py_comments(filepath)
-    else:
-        comment_list, code_words = extract_c_comments(filepath)
+    if check_type == 'COMMENTS':
+        if filepath.endswith(".py"):
+            comment_list, code_words = extract_py_comments(filepath)
+        else:
+            comment_list, code_words = extract_c_comments(filepath)
+    elif check_type == 'STRINGS':
+        comment_list, code_words = extract_code_strings(filepath)
 
     for comment in comment_list:
         for w in comment.parse():
@@ -375,7 +412,7 @@ def spell_check_comments(filepath):
                            ))
 
 
-def spell_check_comments_recursive(dirpath):
+def spell_check_file_recursive(dirpath, check_type='COMMENTS'):
     from os.path import join, splitext
 
     def source_list(path, filename_check=None):
@@ -408,17 +445,26 @@ def spell_check_comments_recursive(dirpath):
         })
 
     for filepath in source_list(dirpath, is_source):
-        spell_check_comments(filepath)
+        spell_check_file(filepath, check_type=check_type)
 
 
 import sys
 import os
 
 if __name__ == "__main__":
-    for filepath in sys.argv[1:]:
+    # TODO, use argparse to expose more options.
+    args = sys.argv[1:]
+    try:
+        args.remove("--strings")
+        check_type = 'STRINGS'
+    except ValueError:
+        check_type = 'COMMENTS'
+
+    print(check_type)
+    for filepath in args:
         if os.path.isdir(filepath):
             # recursive search
-            spell_check_comments_recursive(filepath)
+            spell_check_file_recursive(filepath, check_type=check_type)
         else:
             # single file
-            spell_check_comments(filepath)
+            spell_check_file(filepath, check_type=check_type)
