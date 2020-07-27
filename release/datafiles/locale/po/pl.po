@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -958,10 +958,6 @@ msgid "Softbody goal weight"
 msgstr "Limit docelowy softbody"
 
 
-msgid "Blendfile Data"
-msgstr "Dane pliku blend"
-
-
 msgid "Actions"
 msgstr "Akcje"
 
@@ -1088,10 +1084,6 @@ msgstr "Teksty"
 
 msgid "Textures"
 msgstr "Tekstury"
-
-
-msgid "Use Autopack"
-msgstr "Użyj auto-pakowania"
 
 
 msgid "Automatically pack all external data into .blend file"
@@ -1886,8 +1878,8 @@ msgid "Image and settings for display in the 3D View background"
 msgstr "Obraz i ustawienia wyświetlania dla tła widoku 3D"
 
 
-msgid "Alpha"
-msgstr "Przezroczystość"
+msgid "Opacity"
+msgstr "Nieprzejrzystość"
 
 
 msgid "Image opacity to blend the image against the background color"
@@ -2820,6 +2812,10 @@ msgstr "Element gradientu kolorów"
 
 msgid "Element defining a color at a position in the color ramp"
 msgstr "Element definiujący kolor w pozycji na gradiencie kolorów"
+
+
+msgid "Alpha"
+msgstr "Przezroczystość"
 
 
 msgid "Set alpha of selected color stop"
@@ -3811,24 +3807,12 @@ msgid "Constraint position along Z axis"
 msgstr "Blokuj położenie na osi Z"
 
 
-msgid "Lock X Rot"
-msgstr "Blokuj rotX"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Blokuj rotację wokół osi X"
 
 
-msgid "Lock Y Rot"
-msgstr "Blokuj rotY"
-
-
 msgid "Constraint rotation along Y axis"
 msgstr "Blokuj rotację wokół osi Y"
-
-
-msgid "Lock Z Rot"
-msgstr "Blokuj rotZ"
 
 
 msgid "Constraint rotation along Z axis"
@@ -4091,48 +4075,24 @@ msgid "Use the pivot point in every rotation"
 msgstr "Użyj punktu odniesienia w każdej rotacji"
 
 
-msgid "-X Rot"
-msgstr "-X Rot"
-
-
 msgid "Use the pivot point in the negative rotation range around the X-axis"
 msgstr "Użyj punktu odniesienia w zakresie ujemnej rotacji wokół osi X"
-
-
-msgid "-Y Rot"
-msgstr "-Y Rot"
 
 
 msgid "Use the pivot point in the negative rotation range around the Y-axis"
 msgstr "Użyj punktu odniesienia w zakresie ujemnej rotacji wokół osi Y"
 
 
-msgid "-Z Rot"
-msgstr "-Z Rot"
-
-
 msgid "Use the pivot point in the negative rotation range around the Z-axis"
 msgstr "Użyj punktu odniesienia w zakresie ujemnej rotacji wokół osi Z"
-
-
-msgid "X Rot"
-msgstr "X Rot"
 
 
 msgid "Use the pivot point in the positive rotation range around the X-axis"
 msgstr "Użyj punktu odniesienia w zakresie dodatniej rotacji wokół osi X"
 
 
-msgid "Y Rot"
-msgstr "Y Rot"
-
-
 msgid "Use the pivot point in the positive rotation range around the Y-axis"
 msgstr "Użyj punktu odniesienia w zakresie dodatniej rotacji wokół osi Y"
-
-
-msgid "Z Rot"
-msgstr "Z Rot"
 
 
 msgid "Use the pivot point in the positive rotation range around the Z-axis"
@@ -4503,12 +4463,8 @@ msgid "The transformation type to use from the target"
 msgstr "Rodzaj transformacji z obiektu docelowego"
 
 
-msgid "Loc"
-msgstr "Lok"
-
-
-msgid "Rot"
-msgstr "Rot"
+msgid "Location"
+msgstr "Lokalizacja"
 
 
 msgid "Map To"
@@ -4633,10 +4589,6 @@ msgstr "Uchwyt automatyczny"
 
 msgid "Vector Handle"
 msgstr "Uchwyt wektorowy"
-
-
-msgid "Location"
-msgstr "Lokalizacja"
 
 
 msgid "X/Y coordinates of the curve point"
@@ -6258,10 +6210,6 @@ msgstr "Tryb Mieszania"
 
 msgid "Frames"
 msgstr "Klatki"
-
-
-msgid "Opacity"
-msgstr "Nieprzejrzystość"
 
 
 msgid "Parent Object"
@@ -9856,10 +9804,6 @@ msgid "Some data failed to reconstruct (see console for details)"
 msgstr "Rekonstrukcja dla niektórych danych nie powiodła się (Szczegóły w konsoli)"
 
 
-msgid "Average re-projection error: %.3f"
-msgstr "Średni błąd reprojekcji: %.3f"
-
-
 msgid "File path"
 msgstr "Ścieżka pliku"
 
@@ -10134,6 +10078,22 @@ msgstr "Nie można ustanowić ścieżki względnej przy niezapisanym pliku blend
 
 msgid "Cannot set absolute paths with an unsaved blend file"
 msgstr "Nie można ustanowić ścieżki absolutnej przy niezapisanym pliku blend"
+
+
+msgid "(Key) "
+msgstr "(Klucz) "
+
+
+msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
+msgstr "Wierzch:%s%s | Krawęd:%s%s | Ściany:%s/%s | Trójk:%s"
+
+
+msgid "Verts:%s/%s | Bones:%s/%s"
+msgstr "Wierzch:%s%s | Kości:%s%s"
+
+
+msgid "Verts:%s/%s"
+msgstr "Wierzch:%s/%s"
 
 
 msgid "Sync Length"
@@ -11712,10 +11672,6 @@ msgstr "Nie odnaleziono modyfikatora w stosie"
 
 msgid "Sequences.new_image: unable to open image file"
 msgstr "Sequences.new_image: otwarcie pliku obrazka niemożliwe"
-
-
-msgid "Sequences.new_movie: unable to open movie file"
-msgstr "Sequences.new_movie: otwarcie pliku filmowego niemożliwe"
 
 
 msgid "Sequences.new_sound: unable to open sound file"

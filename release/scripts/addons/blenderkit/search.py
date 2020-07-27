@@ -56,8 +56,8 @@ import requests, os, random
 import time
 import threading
 import platform
-import json
 import bpy
+import copy
 
 search_start_time = 0
 prev_time = 0
@@ -134,13 +134,13 @@ def scene_load(context):
 
 
 def fetch_server_data():
-    ''' download categories and addon version'''
+    ''' download categories , profile, and refresh token if needed.'''
     if not bpy.app.background:
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
         api_key = user_preferences.api_key
         # Only refresh new type of tokens(by length), and only one hour before the token timeouts.
         if user_preferences.enable_oauth and \
-                len(user_preferences.api_key) < 38 and \
+                len(user_preferences.api_key) < 38 and len(user_preferences.api_key) > 0 and \
                 user_preferences.api_key_timeout < time.time() + 3600:
             bkit_oauth.refresh_token_thread()
         if api_key != '' and bpy.context.window_manager.get('bkit profile') == None:
@@ -266,7 +266,7 @@ def parse_result(r):
 
             # attempt to switch to use original data gradually, since the parsing as itself should become obsolete.
             asset_data.update(r)
-        return asset_data
+            return asset_data
 
 
 # @bpy.app.handlers.persistent
@@ -312,20 +312,17 @@ def timer_update():
             asset_type = thread[2]
             if asset_type == 'model':
                 props = scene.blenderkit_models
-                json_filepath = os.path.join(icons_dir, 'model_searchresult.json')
-                search_name = 'bkit model search'
+                # json_filepath = os.path.join(icons_dir, 'model_searchresult.json')
             if asset_type == 'scene':
                 props = scene.blenderkit_scene
-                json_filepath = os.path.join(icons_dir, 'scene_searchresult.json')
-                search_name = 'bkit scene search'
+                # json_filepath = os.path.join(icons_dir, 'scene_searchresult.json')
             if asset_type == 'material':
                 props = scene.blenderkit_mat
-                json_filepath = os.path.join(icons_dir, 'material_searchresult.json')
-                search_name = 'bkit material search'
+                # json_filepath = os.path.join(icons_dir, 'material_searchresult.json')
             if asset_type == 'brush':
                 props = scene.blenderkit_brush
-                json_filepath = os.path.join(icons_dir, 'brush_searchresult.json')
-                search_name = 'bkit brush search'
+                # json_filepath = os.path.join(icons_dir, 'brush_searchresult.json')
+            search_name = f'bkit {asset_type} search'
 
             s[search_name] = []
 
@@ -333,8 +330,8 @@ def timer_update():
             if reports != '':
                 props.report = str(reports)
                 return .2
-            with open(json_filepath, 'r') as data_file:
-                rdata = json.load(data_file)
+
+            rdata = thread[0].result
 
             result_field = []
             ok, error = check_errors(rdata)
@@ -348,8 +345,9 @@ def timer_update():
                         # results = rdata['results']
                 s[search_name] = result_field
                 s['search results'] = result_field
-                s[search_name + ' orig'] = rdata
-                s['search results orig'] = rdata
+                s[search_name + ' orig'] = copy.deepcopy(rdata)
+                s['search results orig'] = s[search_name + ' orig']
+
                 load_previews()
                 ui_props = bpy.context.scene.blenderkitUI
                 if len(result_field) < ui_props.scrolloffset:
@@ -360,9 +358,6 @@ def timer_update():
                 if len(s['search results']) == 0:
                     tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
 
-            # (rdata['next'])
-            # if rdata['next'] != None:
-            # search(False, get_next = True)
             else:
                 print('error', error)
                 props.report = error
@@ -374,18 +369,11 @@ def timer_update():
 
 
 def load_previews():
-    mappingdict = {
-        'MODEL': 'model',
-        'SCENE': 'scene',
-        'MATERIAL': 'material',
-        'TEXTURE': 'texture',
-        'BRUSH': 'brush'
-    }
+
     scene = bpy.context.scene
     # FIRST START SEARCH
     props = scene.blenderkitUI
-
-    directory = paths.get_temp_dir('%s_search' % mappingdict[props.asset_type])
+    directory = paths.get_temp_dir('%s_search' % props.asset_type.lower())
     s = bpy.context.scene
     results = s.get('search results')
     #
@@ -411,7 +399,7 @@ def load_previews():
                         img.unpack(method='USE_ORIGINAL')
                     img.filepath = tpath
                     img.reload()
-                img.colorspace_settings.name = 'Linear'
+                img.colorspace_settings.name = 'sRGB'
             i += 1
     # print('previews loaded')
 
@@ -694,7 +682,7 @@ def write_gravatar(a_id, gravatar_path):
 def fetch_gravatar(adata):
     utils.p('fetch gravatar')
     if adata.get('gravatarHash') is not None:
-        gravatar_path = paths.get_temp_dir(subdir='g/') + adata['gravatarHash'] + '.jpg'
+        gravatar_path = paths.get_temp_dir(subdir='bkit_g/') + adata['gravatarHash'] + '.jpg'
 
         if os.path.exists(gravatar_path):
             tasks_queue.add_task((write_gravatar, (adata['id'], gravatar_path)))
@@ -790,11 +778,12 @@ def get_profile():
 class Searcher(threading.Thread):
     query = None
 
-    def __init__(self, query, params):
+    def __init__(self, query, params,orig_result):
         super(Searcher, self).__init__()
         self.query = query
         self.params = params
         self._stop_event = threading.Event()
+        self.result = orig_result
 
     def stop(self):
         self._stop_event.set()
@@ -854,7 +843,7 @@ class Searcher(threading.Thread):
         t = time.time()
         mt('search thread started')
         tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
-        json_filepath = os.path.join(tempdir, '%s_searchresult.json' % query['asset_type'])
+        # json_filepath = os.path.join(tempdir, '%s_searchresult.json' % query['asset_type'])
 
         headers = utils.get_headers(params['api_key'])
 
@@ -862,23 +851,11 @@ class Searcher(threading.Thread):
         rdata['results'] = []
 
         if params['get_next']:
-            with open(json_filepath, 'r') as infile:
-                try:
-                    origdata = json.load(infile)
-                    urlquery = origdata['next']
-                    # rparameters = {}
-                    if urlquery == None:
-                        return;
-                except:
-                    # in case no search results found on drive we don't do next page loading.
-                    params['get_next'] = False
+            urlquery = self.result['next']
         if not params['get_next']:
-            url = paths.get_api_url() + 'search/'
-
-            urlquery = url
-
-            # rparameters = query
             urlquery = self.query_to_url()
+
+
         try:
             utils.p(urlquery)
             r = rerequests.get(urlquery, headers=headers)  # , params = rparameters)
@@ -941,10 +918,10 @@ class Searcher(threading.Thread):
         # we save here because a missing thumbnail check is in the previous loop
         # we can also prepend previous results. These have downloaded thumbnails already...
         if params['get_next']:
-            rdata['results'][0:0] = origdata['results']
-
-        with open(json_filepath, 'w') as outfile:
-            json.dump(rdata, outfile)
+            rdata['results'][0:0] = self.result['results']
+        self.result = rdata
+        # with open(json_filepath, 'w') as outfile:
+        #     json.dump(rdata, outfile)
 
         killthreads_sml = []
         for k in thumb_sml_download_threads.keys():
@@ -1157,7 +1134,7 @@ def mt(text):
     utils.p(text, alltime, since_last)
 
 
-def add_search_process(query, params):
+def add_search_process(query, params, orig_result):
     global search_threads
 
     while (len(search_threads) > 0):
@@ -1166,10 +1143,10 @@ def add_search_process(query, params):
         # TODO CARE HERE FOR ALSO KILLING THE THREADS...AT LEAST NOW SEARCH DONE FIRST WON'T REWRITE AN OLDER ONE
 
     tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
-    thread = Searcher(query, params)
+    thread = Searcher(query, params, orig_result)
     thread.start()
 
-    search_threads.append([thread, tempdir, query['asset_type']])
+    search_threads.append([thread, tempdir, query['asset_type'],{}])# 4th field is for results
 
     mt('thread started')
 
@@ -1184,6 +1161,14 @@ def search(category='', get_next=False, author_id=''):
     scene = bpy.context.scene
     ui_props = scene.blenderkitUI
 
+    ### updating of search categories was moved here, due to the reason that BlenderKit created the blenderkit_data
+    # folder upon registration of BlenderKit, which wasn't a favourite option for some users (devs running tests).
+    # user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    # if not user_preferences.first_run:
+    #     api_key = user_preferences.api_key
+    #     if bpy.context.window_manager.get('bkit_categories') is None:
+    #         categories.fetch_categories_thread(api_key)
+
     if ui_props.asset_type == 'MODEL':
         if not hasattr(scene, 'blenderkit'):
             return;
@@ -1195,13 +1180,14 @@ def search(category='', get_next=False, author_id=''):
             return;
         props = scene.blenderkit_scene
         query = build_query_scene()
+
     if ui_props.asset_type == 'MATERIAL':
         if not hasattr(scene, 'blenderkit_mat'):
             return;
 
         props = scene.blenderkit_mat
         query = build_query_material()
-        utils.p(query)
+
 
     if ui_props.asset_type == 'TEXTURE':
         if not hasattr(scene, 'blenderkit_tex'):
@@ -1209,11 +1195,13 @@ def search(category='', get_next=False, author_id=''):
         # props = scene.blenderkit_tex
         # query = build_query_texture()
 
+
     if ui_props.asset_type == 'BRUSH':
         if not hasattr(scene, 'blenderkit_brush'):
             return;
         props = scene.blenderkit_brush
         query = build_query_brush()
+
 
     if props.is_searching and get_next == True:
         return;
@@ -1242,8 +1230,11 @@ def search(category='', get_next=False, author_id=''):
 
     # if free_only:
     #     query['keywords'] += '+is_free:true'
-
-    add_search_process(query, params)
+    orig_results = scene.get(f'bkit {ui_props.asset_type.lower()} search orig', {})
+    if orig_results != {}:
+        #ensure it's a copy in dict for what we are passing to thread:
+        orig_results = orig_results.to_dict()
+    add_search_process(query, params, orig_results)
     tasks_queue.add_task((ui.add_report, ('BlenderKit searching....', 2)))
 
     props.report = 'BlenderKit searching....'

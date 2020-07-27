@@ -47,6 +47,7 @@
 #include "BLI_array.hh"
 #include "BLI_linear_allocator.hh"
 #include "BLI_map.hh"
+#include "BLI_multi_value_map.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_timeit.hh"
 #include "BLI_utility_mixins.hh"
@@ -71,8 +72,8 @@ class SocketRef : NonCopyable, NonMovable {
   NodeRef *node_;
   bNodeSocket *bsocket_;
   bool is_input_;
-  uint id_;
-  uint index_;
+  int id_;
+  int index_;
   PointerRNA rna_;
   Vector<SocketRef *> linked_sockets_;
   Vector<SocketRef *> directly_linked_sockets_;
@@ -87,8 +88,8 @@ class SocketRef : NonCopyable, NonMovable {
   const NodeRef &node() const;
   const NodeTreeRef &tree() const;
 
-  uint id() const;
-  uint index() const;
+  int id() const;
+  int index() const;
 
   bool is_input() const;
   bool is_output() const;
@@ -124,7 +125,7 @@ class NodeRef : NonCopyable, NonMovable {
   NodeTreeRef *tree_;
   bNode *bnode_;
   PointerRNA rna_;
-  uint id_;
+  int id_;
   Vector<InputSocketRef *> inputs_;
   Vector<OutputSocketRef *> outputs_;
 
@@ -136,8 +137,8 @@ class NodeRef : NonCopyable, NonMovable {
   Span<const InputSocketRef *> inputs() const;
   Span<const OutputSocketRef *> outputs() const;
 
-  const InputSocketRef &input(uint index) const;
-  const OutputSocketRef &output(uint index) const;
+  const InputSocketRef &input(int index) const;
+  const OutputSocketRef &output(int index) const;
 
   bNode *bnode() const;
   bNodeTree *btree() const;
@@ -146,7 +147,7 @@ class NodeRef : NonCopyable, NonMovable {
   StringRefNull idname() const;
   StringRefNull name() const;
 
-  uint id() const;
+  int id() const;
 
   bool is_reroute_node() const;
   bool is_group_node() const;
@@ -162,7 +163,7 @@ class NodeTreeRef : NonCopyable, NonMovable {
   Vector<SocketRef *> sockets_by_id_;
   Vector<InputSocketRef *> input_sockets_;
   Vector<OutputSocketRef *> output_sockets_;
-  Map<const bNodeType *, Vector<NodeRef *>> nodes_by_type_;
+  MultiValueMap<const bNodeType *, NodeRef *> nodes_by_type_;
 
  public:
   NodeTreeRef(bNodeTree *btree);
@@ -220,12 +221,12 @@ inline const NodeTreeRef &SocketRef::tree() const
   return node_->tree();
 }
 
-inline uint SocketRef::id() const
+inline int SocketRef::id() const
 {
   return id_;
 }
 
-inline uint SocketRef::index() const
+inline int SocketRef::index() const
 {
   return index_;
 }
@@ -334,12 +335,12 @@ inline Span<const OutputSocketRef *> NodeRef::outputs() const
   return outputs_;
 }
 
-inline const InputSocketRef &NodeRef::input(uint index) const
+inline const InputSocketRef &NodeRef::input(int index) const
 {
   return *inputs_[index];
 }
 
-inline const OutputSocketRef &NodeRef::output(uint index) const
+inline const OutputSocketRef &NodeRef::output(int index) const
 {
   return *outputs_[index];
 }
@@ -369,7 +370,7 @@ inline StringRefNull NodeRef::name() const
   return bnode_->name;
 }
 
-inline uint NodeRef::id() const
+inline int NodeRef::id() const
 {
   return id_;
 }
@@ -411,13 +412,7 @@ inline Span<const NodeRef *> NodeTreeRef::nodes_by_type(StringRefNull idname) co
 
 inline Span<const NodeRef *> NodeTreeRef::nodes_by_type(const bNodeType *nodetype) const
 {
-  const Vector<NodeRef *> *nodes = nodes_by_type_.lookup_ptr(nodetype);
-  if (nodes == nullptr) {
-    return {};
-  }
-  else {
-    return *nodes;
-  }
+  return nodes_by_type_.lookup(nodetype);
 }
 
 inline Span<const SocketRef *> NodeTreeRef::sockets() const

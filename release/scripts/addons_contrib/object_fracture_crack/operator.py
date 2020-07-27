@@ -205,7 +205,7 @@ class FRACTURE_OT_Crack(Operator):
                 var1=crack_props.extrude_var, var2=crack_props.extrude_var, var3=crack_props.extrude_var,
                 num=crack_props.extrude_num, ran=0
                 )
-            bpy.ops.object.modifier_apply(apply_as='DATA', modifier='DECIMATE_crackit')
+            bpy.ops.object.modifier_apply(modifier='DECIMATE_crackit')
             bpy.ops.object.shade_smooth()
 
             if crack_props.modifier_wireframe == True:

@@ -17,35 +17,22 @@
 #ifndef __SIM_SIMULATION_SOLVER_HH__
 #define __SIM_SIMULATION_SOLVER_HH__
 
-#include "BLI_float3.hh"
-#include "BLI_span.hh"
-
-#include "DNA_simulation_types.h"
-
-#include "FN_attributes_ref.hh"
+#include "simulation_collect_influences.hh"
 
 struct Depsgraph;
 
 namespace blender::sim {
 
-class ParticleForce {
- public:
-  virtual ~ParticleForce();
-  virtual void add_force(fn::AttributesRef attributes,
-                         MutableSpan<float3> r_combined_force) const = 0;
-};
-
-struct SimulationInfluences {
-  Map<std::string, Vector<const ParticleForce *>> particle_forces;
-};
-
 void initialize_simulation_states(Simulation &simulation,
                                   Depsgraph &depsgraph,
-                                  const SimulationInfluences &influences);
+                                  const SimulationInfluences &influences,
+                                  const bke::PersistentDataHandleMap &handle_map);
 
 void solve_simulation_time_step(Simulation &simulation,
                                 Depsgraph &depsgraph,
                                 const SimulationInfluences &influences,
+                                const bke::PersistentDataHandleMap &handle_map,
+                                const DependencyAnimations &dependency_animations,
                                 float time_step);
 
 }  // namespace blender::sim

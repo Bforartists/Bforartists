@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'8aaca8840295')\n"
+"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-11 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1859,23 +1859,11 @@ msgid "Lock Z Pos"
 msgstr "Ampliar"
 
 
-msgid "Lock X Rot"
-msgstr "Esborrar Rotació"
-
-
 msgid "Constraint rotation along X axis"
 msgstr "Esborrar Rotació"
 
 
-msgid "Lock Y Rot"
-msgstr "Esborrar Rotació"
-
-
 msgid "Constraint rotation along Y axis"
-msgstr "Esborrar Rotació"
-
-
-msgid "Lock Z Rot"
 msgstr "Esborrar Rotació"
 
 
@@ -2059,30 +2047,6 @@ msgid "Always"
 msgstr "Finestra de Render"
 
 
-msgid "-X Rot"
-msgstr "Esborrar Rotació"
-
-
-msgid "-Y Rot"
-msgstr "Esborrar Rotació"
-
-
-msgid "-Z Rot"
-msgstr "Esborrar Rotació"
-
-
-msgid "X Rot"
-msgstr "Esborrar Rotació"
-
-
-msgid "Y Rot"
-msgstr "Esborrar Rotació"
-
-
-msgid "Z Rot"
-msgstr "Esborrar Rotació"
-
-
 msgid "Use Relative Offset"
 msgstr "Esborrar Rotació"
 
@@ -2255,12 +2219,8 @@ msgid "Map From"
 msgstr "Començar Joc"
 
 
-msgid "Loc"
+msgid "Location"
 msgstr "Esborrar Posició"
-
-
-msgid "Rot"
-msgstr "Rotar"
 
 
 msgid "Map To"
@@ -2305,10 +2265,6 @@ msgstr "Tangents lineals"
 
 msgid "Vector Handle"
 msgstr "Tangents lineals"
-
-
-msgid "Location"
-msgstr "Esborrar Posició"
 
 
 msgid "Selection state of the curve point"
@@ -7146,44 +7102,12 @@ msgid "Delta Rotation"
 msgstr "Esborrar Rotació"
 
 
-msgid "LocScale"
-msgstr "Escalar"
-
-
-msgid "RotScale"
-msgstr "Escalar"
-
-
 msgid "Visual Location"
-msgstr "Esborrar Rotació"
-
-
-msgid "Visual LocRotScale"
-msgstr "Escalar"
-
-
-msgid "Visual LocScale"
 msgstr "Esborrar Rotació"
 
 
 msgid "Visual Rotation"
 msgstr "Esborrar Rotació"
-
-
-msgid "Visual RotScale"
-msgstr "Esborrar Rotació"
-
-
-msgid "Visual Scaling"
-msgstr "Esborrar Rotació"
-
-
-msgid "LocRotScale"
-msgstr "Escalar"
-
-
-msgid "Scaling"
-msgstr "Partir"
 
 
 msgid "Whole Character"
@@ -7463,16 +7387,20 @@ msgid "Material Specials"
 msgstr "Guardar com"
 
 
+msgid "Select Linked"
+msgstr "Deseleccionar Enllaçats"
+
+
+msgid "Align"
+msgstr "Duplicar"
+
+
 msgid "UV Select Mode"
 msgstr "Seleccionar fila"
 
 
 msgid "Show/Hide Faces"
 msgstr "Mostrar"
-
-
-msgid "Weld/Align"
-msgstr "Duplicar"
 
 
 msgctxt "Operator"
@@ -7514,10 +7442,6 @@ msgstr "Afegir Tira"
 
 msgid "Navigation"
 msgstr "Finestra de Render"
-
-
-msgid "Select Linked"
-msgstr "Deseleccionar Enllaçats"
 
 
 msgid "Strip"
@@ -7978,10 +7902,6 @@ msgstr "Duplicar"
 
 msgid "Target object shape"
 msgstr "Comprimir Dades"
-
-
-msgid "From Radius"
-msgstr "Reduir"
 
 
 msgid "Use Transform"
@@ -8526,10 +8446,6 @@ msgstr "Render"
 
 msgid "Number of steps in the revolution"
 msgstr "Esborrar Rotació"
-
-
-msgid "Calc Order"
-msgstr "Seleccionar fila"
 
 
 msgid "Object Screw"
@@ -12612,10 +12528,6 @@ msgid "Bweight"
 msgstr "Dreta"
 
 
-msgid "Align"
-msgstr "Duplicar"
-
-
 msgctxt "Operator"
 msgid "Extrude Curve and Move"
 msgstr "Corba"
@@ -12653,11 +12565,6 @@ msgstr "Emparentar"
 
 msgid "Join two curves by their selected ends"
 msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Recalc Normals"
-msgstr "Calcular Normals"
 
 
 msgctxt "Operator"
@@ -14256,10 +14163,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Name of new mask"
 msgstr "Moure a Capa"
-
-
-msgid "Re-calculate the direction of selected handles"
-msgstr "Seleccionar connectats"
 
 
 msgid "Clear the mask's parenting"

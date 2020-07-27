@@ -9,7 +9,6 @@
     "input": 0,
     "rampnode": "no",
     "huenode": "yes",
-    "node_location": [ -400, 400 ],
     "node_color": [0.535, 0.608, 0.306]
   },
 
@@ -22,7 +21,6 @@
     "input": 1,
     "rampnode": "yes",
     "huenode": "no",
-    "node_location": [ -830, 160 ],
     "node_color": [ 0.027, 0.324, 0.908 ]
   },
 
@@ -35,7 +33,6 @@
     "input": 2,
     "rampnode": "yes",
     "huenode": "no",
-    "node_location": [ -550, 0 ],
     "node_color": [ 0.608, 0.254, 0.000 ]
   },
 
@@ -48,7 +45,6 @@
     "input": 3,
     "rampnode": "no",
     "huenode": "no",
-    "node_location": [ -650, -500 ],
     "normal_node_location": [ -350, -350 ],
     "node_color": [ 0.417, 0.363, 0.608 ]
   },
@@ -60,7 +56,6 @@
     "displacement": "yes",
     "rampnode": "yes",
     "huenode": "no",
-    "node_location": [ 100, 100 ],
     "input": 5,
     "node_color": [ 0.608, 0.591, 0.498 ]
   },
@@ -73,7 +68,6 @@
     "find_input": [ "Emissive" ],
     "rampnode": "no",
     "huenode": "yes",
-    "node_location": [ 100, 100 ],
     "input": 4,
     "node_color": [ 0.0, 0.0, 0.0 ]
   },
@@ -85,7 +79,6 @@
     "displacement": "no",
     "rampnode": "no",
     "huenode": "no",
-    "node_location": [ 100, 100 ],
     "node_color": [ 0.0, 0.0, 0.0 ]
   },
 
@@ -96,7 +89,6 @@
     "displacement": "no",
     "rampnode": "yes",
     "huenode": "no",
-    "node_location": [ 100, 100 ],
     "node_color": [ 0.1, 0.5, 0.1 ]
   },
 
@@ -109,7 +101,6 @@
     "input": 8,
     "rampnode": "no",
     "huenode": "no",
-    "node_location": [ 0, -1000 ],
     "node_color": [0.535, 0.608, 0.306]
   }
 
