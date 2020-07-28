@@ -1785,118 +1785,28 @@ static const EnumPropertyItem *rna_SpaceProperties_context_itemf(bContext *UNUSE
   SpaceProperties *sbuts = (SpaceProperties *)(ptr->data);
   EnumPropertyItem *item = NULL;
 
-  /*bfa -  this new blender code collides with our features. We have removed the tools tab
-  from the properties editor. And this new code produces a crash to desktop*/
+  /* We use 32 tabs maximum here so a flag for each can fit into a 32 bit integer flag.
+   * A theoretical maximum would be BCONTEXT_TOT * 2, with every tab displayed and a spacer
+   * in every other item. But this size is currently limited by the size of integer
+   * supported by RNA enums. */
+  int context_tabs_array[32];
+  int totitem = ED_buttons_tabs_list(sbuts, context_tabs_array);
+  BLI_assert(totitem <= ARRAY_SIZE(context_tabs_array));
 
-  //  /* We use 32 tabs maximum here so a flag for each can fit into a 32 bit integer flag.
-  // * A theoretical maximum would be BCONTEXT_TOT * 2, with every tab displayed and a spacer
-  // * in every other item. But this size is currently limited by the size of integer
-  // * supported by RNA enums. */
-  //int context_tabs_array[32];
-  //int totitem = ED_buttons_tabs_list(sbuts, context_tabs_array);
-  //BLI_assert(totitem <= ARRAY_SIZE(context_tabs_array));
+  int totitem_added = 0;
+  for (int i = 0; i < totitem; i++) {
+    if (context_tabs_array[i] == -1) {
+      RNA_enum_item_add_separator(&item, &totitem_added);
+      continue;
+    }
 
-  //int totitem_added = 0;
-  //for (int i = 0; i < totitem; i++) {
-  //  if (context_tabs_array[i] == -1) {
-  //    RNA_enum_item_add_separator(&item, &totitem_added);
-  //    continue;
-  //  }
+    RNA_enum_items_add_value(&item, &totitem_added, buttons_context_items, context_tabs_array[i]);
 
-  //  RNA_enum_items_add_value(&item, &totitem_added, buttons_context_items, context_tabs_array[i]);
-
-  //  /* Add the object data icon dynamically for the data tab. */
-  //  if (context_tabs_array[i] == BCONTEXT_DATA) {
-  //    (item + totitem_added - 1)->icon = sbuts->dataicon;
-  //  }
-  //}
-  /*bfa - end not working blender code*/
-
-  /*bfa old method*/
-  int totitem = 0;
-
-  if (sbuts->pathflag & (1 << BCONTEXT_TOOL)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_TOOL);
+    /* Add the object data icon dynamically for the data tab. */
+    if (context_tabs_array[i] == BCONTEXT_DATA) {
+      (item + totitem_added - 1)->icon = sbuts->dataicon;
+    }
   }
-
-  if (totitem) {
-    RNA_enum_item_add_separator(&item, &totitem);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_RENDER)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_RENDER);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_OUTPUT)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_OUTPUT);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_VIEW_LAYER)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_VIEW_LAYER);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_SCENE)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_SCENE);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_WORLD)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_WORLD);
-  }
-
-  if (totitem) {
-    RNA_enum_item_add_separator(&item, &totitem);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_OBJECT)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_OBJECT);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_MODIFIER)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_MODIFIER);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_SHADERFX)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_SHADERFX);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_PARTICLE)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_PARTICLE);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_PHYSICS)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_PHYSICS);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_CONSTRAINT)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_CONSTRAINT);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_DATA)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_DATA);
-    (item + totitem - 1)->icon = sbuts->dataicon;
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_BONE)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_BONE);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_BONE_CONSTRAINT)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_BONE_CONSTRAINT);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_MATERIAL)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_MATERIAL);
-  }
-
-  if (totitem) {
-    RNA_enum_item_add_separator(&item, &totitem);
-  }
-
-  if (sbuts->pathflag & (1 << BCONTEXT_TEXTURE)) {
-    RNA_enum_items_add_value(&item, &totitem, buttons_context_items, BCONTEXT_TEXTURE);
-  }
-
-  /*bfa - end old method*/
 
   RNA_enum_item_end(&item, &totitem);
   *r_free = true;
