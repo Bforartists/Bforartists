@@ -148,10 +148,13 @@ static void buttons_main_region_init(wmWindowManager *wm, ARegion *region)
 int ED_buttons_tabs_list(SpaceProperties *sbuts, int *context_tabs_array)
 {
   int length = 0;
-  if (sbuts->pathflag & (1 << BCONTEXT_TOOL)) {
-    context_tabs_array[length] = BCONTEXT_TOOL;
-    length++;
-  }
+  /*bfa - we don't have the tools in the properties editor.
+  Not commenting this out leads to a crash to desktop since the array then doesn't fit anymore
+  See also source\blender\makesrna\intern\rna_space.c - static const EnumPropertyItem *rna_SpaceProperties_context_itemf */
+  //if (sbuts->pathflag & (1 << BCONTEXT_TOOL)) {
+  //  context_tabs_array[length] = BCONTEXT_TOOL;
+  //  length++;
+  //}
   if (length != 0) {
     context_tabs_array[length] = -1;
     length++;
