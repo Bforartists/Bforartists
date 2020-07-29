@@ -225,7 +225,9 @@ def draw_material_settings(self, context):
         row.prop(mat, "alpha_threshold")
 
     if mat.blend_method not in {'OPAQUE', 'CLIP', 'HASHED'}:
+        layout.use_property_split = False
         layout.prop(mat, "show_transparent_back")
+        layout.use_property_split = True
 
     row = layout.row()
     row.use_property_split = False
