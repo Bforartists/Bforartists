@@ -33,25 +33,25 @@ class GPENCIL_MT_material_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("gpencil.material_reveal", icon='RESTRICT_VIEW_OFF', text="Show All")
-        layout.operator("gpencil.material_hide", icon='RESTRICT_VIEW_ON', text="Hide Others").unselected = True
+        layout.operator("gpencil.material_reveal", text="Show All", icon='HIDE_OFF')
+        layout.operator("gpencil.material_hide", text="Hide Others", icon='HIDE_UNSELECTED').unselected = True
 
         layout.separator()
 
-        layout.operator("gpencil.material_lock_all", icon='LOCKED', text="Lock All")
-        layout.operator("gpencil.material_unlock_all", icon='UNLOCKED', text="UnLock All")
+        layout.operator("gpencil.material_lock_all", text="Lock All", icon='LOCKED')
+        layout.operator("gpencil.material_unlock_all", text="UnLock All", icon='UNLOCKED')
 
-        layout.operator("gpencil.material_lock_unused", text="Lock Unselected")
-        layout.operator("gpencil.lock_layer", text="Lock Unused")
-
-        layout.separator()
-
-        layout.operator("object.material_slot_remove_unused")
-        layout.operator("gpencil.stroke_merge_material", text="Merge Similar")
+        layout.operator("gpencil.material_lock_unused", text="Lock Unselected", icon='LOCKED')
+        layout.operator("gpencil.lock_layer", text="Lock Unused", icon='LOCKED')
 
         layout.separator()
-        layout.operator("gpencil.material_to_vertex_color", text="Convert Materials to Vertex Color")
-        layout.operator("gpencil.extract_palette_vertex", text="Extract Palette from Vertex Color")
+
+        layout.operator("object.material_slot_remove_unused", icon='DELETE')
+        layout.operator("gpencil.stroke_merge_material", text="Merge Similar", icon='MERGE')
+
+        layout.separator()
+        layout.operator("gpencil.material_to_vertex_color", text="Convert Materials to Vertex Color", icon='NODE_VERTEX_COLOR')
+        layout.operator("gpencil.extract_palette_vertex", text="Extract Palette from Vertex Color", icon='MATERIAL_DATA')
 
 
 class GPENCIL_UL_matslots(UIList):
@@ -168,7 +168,7 @@ class MATERIAL_PT_gpencil_strokecolor(GPMaterialButtonsPanel, Panel):
 
             if gpcolor.mode == 'LINE':
                 row = layout.row()
-                row.use_property_split = False    
+                row.use_property_split = False
                 row.prop(gpcolor, "use_overlap_strokes")
                 row.prop_decorator(gpcolor, "use_overlap_strokes")
 
@@ -204,9 +204,9 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             col.prop(gpcolor, "fill_color", text="Base Color")
             col.prop(gpcolor, "mix_color", text="Secondary Color")
             col.prop(gpcolor, "mix_factor", text="Blend", slider=True)
-            
+
             row = col.row(align = True)
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(gpcolor, "flip", text="Flip Colors")
             row.prop_decorator(gpcolor, "flip")
 
@@ -227,10 +227,10 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
 
             col.prop(gpcolor, "texture_offset", text="Location")
             col.prop(gpcolor, "texture_angle", text="Rotation")
-            col.prop(gpcolor, "texture_scale", text="Scale")          
-            
+            col.prop(gpcolor, "texture_scale", text="Scale")
+
             row = col.row(align = True)
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(gpcolor, "texture_clamp", text="Clip Image")
             row.prop_decorator(gpcolor, "texture_clamp")
 
