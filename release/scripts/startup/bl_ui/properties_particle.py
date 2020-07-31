@@ -736,6 +736,7 @@ class PARTICLE_PT_physics(ParticleButtonsPanel, Panel):
             sub.active = not psys or not psys.use_keyed_timing
             sub.prop(part, "keyed_loops", text="Loops")
             if psys:
+                col.use_property_split = False
                 col.prop(psys, "use_keyed_timing", text="Use Timing")
 
 
