@@ -887,11 +887,21 @@ class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
         boids = part.boids
 
-        col = layout.column()
+        col = layout.column()       
 
-        col.prop(boids, "use_flight")
-        col.prop(boids, "use_land")
-        col.prop(boids, "use_climb")
+        col = layout.column(align = True)
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(boids, "use_flight")
+        row.prop_decorator(boids, "use_flight")       
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(boids, "use_land")
+        row.prop_decorator(boids, "use_land")
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(boids, "use_climb")
+        row.prop_decorator(boids, "use_climb")
 
         col = layout.column()
 
@@ -903,19 +913,20 @@ class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
         col.prop(boids, "air_ave_max", slider=True)
         col.prop(boids, "air_personal_space")
         row = col.row(align=True)
-        row.active = (boids.use_land or boids.use_climb) and boids.use_flight
-        row.prop(boids, "land_smooth")
+        #row.active = (boids.use_land or boids.use_climb) and boids.use_flight
+        if (boids.use_land or boids.use_climb) and boids.use_flight:
+            row.prop(boids, "land_smooth")
 
-        layout.separator()
+            layout.separator()
 
-        col = layout.column()
-        col.active = boids.use_land or boids.use_climb
-        col.prop(boids, "land_speed_max")
-        col.prop(boids, "land_jump_speed")
-        col.prop(boids, "land_acc_max", slider=True)
-        col.prop(boids, "land_ave_max", slider=True)
-        col.prop(boids, "land_personal_space")
-        col.prop(boids, "land_stick_force")
+            col = layout.column()
+            col.active = boids.use_land or boids.use_climb
+            col.prop(boids, "land_speed_max")
+            col.prop(boids, "land_jump_speed")
+            col.prop(boids, "land_acc_max", slider=True)
+            col.prop(boids, "land_ave_max", slider=True)
+            col.prop(boids, "land_personal_space")
+            col.prop(boids, "land_stick_force")
 
         layout.separator()
 
