@@ -81,7 +81,7 @@ void BOID_OT_rule_add(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Add Boid Rule";
-  ot->description = "Add a boid rule to the current boid state";
+  ot->description = "Add Boid Rule\nAdd a boid rule to the current boid state";
   ot->idname = "BOID_OT_rule_add";
 
   /* api callbacks */
