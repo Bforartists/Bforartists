@@ -1234,32 +1234,42 @@ class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
         rule = state.active_boid_rule
 
         if rule:
+            
             col = layout.column(align=True)
+            col.use_property_split = False
             col.prop(rule, "use_in_air")
             col.prop(rule, "use_on_land")
 
-            col = layout.column()
+            col = layout.column(align = True)
 
             if rule.type == 'GOAL':
                 col.prop(rule, "object")
+                col.use_property_split = False
                 col.prop(rule, "use_predict")
             elif rule.type == 'AVOID':
                 col.prop(rule, "object")
+                col.use_property_split = False
                 col.prop(rule, "use_predict")
+                col.use_property_split = True
                 col.prop(rule, "fear_factor")
             elif rule.type == 'FOLLOW_PATH':
                 col.label(text="Not yet functional")
             elif rule.type == 'AVOID_COLLISION':
+                col.use_property_split = False
                 col.prop(rule, "use_avoid")
                 col.prop(rule, "use_avoid_collision")
+                col.use_property_split = True
                 col.prop(rule, "look_ahead")
             elif rule.type == 'FOLLOW_LEADER':
                 col.prop(rule, "object")
                 col.prop(rule, "distance")
-                col.prop(rule, "use_line")
-                sub = col.row()
-                sub.active = rule.use_line
-                sub.prop(rule, "queue_count")
+                row = layout.row()
+                row.use_property_split = False
+                row.prop(rule, "use_line")
+                sub = row.row()
+                if rule.use_line:
+                    sub.use_property_split = True
+                    sub.prop(rule, "queue_count")
             elif rule.type == 'AVERAGE_SPEED':
                 col.prop(rule, "speed", slider=True)
                 col.prop(rule, "wander", slider=True)
