@@ -758,22 +758,33 @@ class PARTICLE_PT_physics_fluid_advanced(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
         fluid = part.fluid
 
-        col = layout.column()
+        col = layout.column(align = True)
 
         if fluid.solver == 'DDR':
-            sub = col.column()
-            sub.prop(fluid, "repulsion", slider=fluid.use_factor_repulsion)
-            sub.prop(fluid, "use_factor_repulsion")
-
-            sub.prop(fluid, "stiff_viscosity", slider=fluid.use_factor_stiff_viscosity)
-            sub.prop(fluid, "use_factor_stiff_viscosity")
-
-        sub = col.column()
-        sub.prop(fluid, "fluid_radius", slider=fluid.use_factor_radius)
-        sub.prop(fluid, "use_factor_radius")
-
-        sub.prop(fluid, "rest_density", slider=fluid.use_factor_density)
-        sub.prop(fluid, "use_factor_density")
+            
+            col.prop(fluid, "repulsion", slider=fluid.use_factor_repulsion)
+            row = col.row()
+            row.use_property_split = False
+            row.prop(fluid, "use_factor_repulsion")
+            row.prop_decorator(fluid, "use_factor_repulsion")
+            
+            col.prop(fluid, "stiff_viscosity", slider=fluid.use_factor_stiff_viscosity)
+            row = col.row()
+            row.use_property_split = False
+            row.prop(fluid, "use_factor_stiff_viscosity")
+            row.prop_decorator(fluid, "use_factor_stiff_viscosity")
+        
+        col.prop(fluid, "fluid_radius", slider=fluid.use_factor_radius)
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_factor_radius")
+        row.prop_decorator(fluid, "use_factor_radius")
+        
+        col.prop(fluid, "rest_density", slider=fluid.use_factor_density)
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_factor_density")
+        row.prop_decorator(fluid, "use_factor_density")
 
         if fluid.solver == 'CLASSICAL':
             # With the classical solver, it is possible to calculate the
@@ -840,8 +851,11 @@ class PARTICLE_PT_physics_fluid_springs_viscoelastic(ParticleButtonsPanel, Panel
         col.prop(fluid, "plasticity", slider=True)
 
         col.separator()
-
-        col.prop(fluid, "use_initial_rest_length")
+        
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_initial_rest_length")
+        row.prop_decorator(fluid, "use_initial_rest_length")
         col.prop(fluid, "spring_frames", text="Frames")
 
 
@@ -864,9 +878,12 @@ class PARTICLE_PT_physics_fluid_springs_advanced(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
         fluid = part.fluid
 
-        sub = layout.column()
-        sub.prop(fluid, "rest_length", slider=fluid.use_factor_rest_length)
-        sub.prop(fluid, "use_factor_rest_length")
+        col = layout.column(align = True)
+        col.prop(fluid, "rest_length", slider=fluid.use_factor_rest_length)
+        row = col.row()
+        row.use_property_split = False
+        row.prop(fluid, "use_factor_rest_length")
+        row.prop_decorator(fluid, "use_factor_rest_length")
 
 
 class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
@@ -887,19 +904,19 @@ class PARTICLE_PT_physics_boids_movement(ParticleButtonsPanel, Panel):
         part = particle_get_settings(context)
         boids = part.boids
 
-        col = layout.column()       
+        col = layout.column()
 
         col = layout.column(align = True)
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(boids, "use_flight")
-        row.prop_decorator(boids, "use_flight")       
+        row.prop_decorator(boids, "use_flight")
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(boids, "use_land")
         row.prop_decorator(boids, "use_land")
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(boids, "use_climb")
         row.prop_decorator(boids, "use_climb")
 
@@ -1162,11 +1179,14 @@ class PARTICLE_PT_physics_integration(ParticleButtonsPanel, Panel):
         col.prop(part, "timestep")
         col.prop(part, "subframes")
 
-        if part.physics_type == 'FLUID':
-            col.prop(part, "use_adaptive_subframes", text="Adaptive")
+        if part.physics_type == 'FLUID':         
+            row = col.row()
+            row.use_property_split = False
+            row.prop(part, "use_adaptive_subframes", text="Adaptive")
+            row.prop_decorator(part, "use_adaptive_subframes")
             sub = col.row()
-            sub.enabled = part.use_adaptive_subframes
-            sub.prop(part, "courant_target", text="Threshold")
+            if part.use_adaptive_subframes:
+                sub.prop(part, "courant_target", text="Threshold")
 
 
 class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
@@ -1234,7 +1254,7 @@ class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
         rule = state.active_boid_rule
 
         if rule:
-            
+
             col = layout.column(align=True)
             col.use_property_split = False
             col.prop(rule, "use_in_air")
