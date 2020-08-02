@@ -118,7 +118,8 @@ typedef struct BrushGpencilSettings {
   int sculpt_mode_flag;
   /** Preset type (used to reset brushes - internal). */
   short preset_type;
-  char _pad3[2];
+  /** Brush preselected mode (Active/Material/Vertexcolor). */
+  short brush_draw_mode;
 
   /** Randomness for Hue. */
   float random_hue;
@@ -257,6 +258,13 @@ typedef enum eGP_BrushEraserMode {
   GP_BRUSH_ERASER_HARD = 1,
   GP_BRUSH_ERASER_STROKE = 2,
 } eGP_BrushEraserMode;
+
+/* BrushGpencilSettings->brush_draw_mode */
+typedef enum eGP_BrushMode {
+  GP_BRUSH_MODE_ACTIVE = 0,
+  GP_BRUSH_MODE_MATERIAL = 1,
+  GP_BRUSH_MODE_VERTEXCOLOR = 2,
+} eGP_BrushMode;
 
 /* BrushGpencilSettings default brush icons */
 typedef enum eGP_BrushIcons {
@@ -500,7 +508,7 @@ typedef struct Brush {
   /** Source for fill tool color gradient application. */
   char gradient_fill_mode;
 
-  char _pad0[1];
+  char _pad0[5];
 
   /** Projection shape (sphere, circle). */
   char falloff_shape;
@@ -571,6 +579,8 @@ typedef struct Brush {
 
   float cloth_sim_limit;
   float cloth_sim_falloff;
+
+  float cloth_constraint_softbody_strength;
 
   /* smooth */
   int smooth_deform_type;

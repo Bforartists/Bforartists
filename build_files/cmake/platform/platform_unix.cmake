@@ -36,6 +36,11 @@ if(NOT DEFINED LIBDIR)
   elseif(EXISTS ${LIBDIR_CENTOS7_ABI})
     set(LIBDIR ${LIBDIR_CENTOS7_ABI})
     set(WITH_CXX11_ABI OFF)
+
+    if(CMAKE_COMPILER_IS_GNUCC AND
+       CMAKE_C_COMPILER_VERSION VERSION_LESS 9.3)
+      message(FATAL_ERROR "GCC version must be at least 9.3 for precompiled libraries, found ${CMAKE_C_COMPILER_VERSION}")
+    endif()
   endif()
 
   # Avoid namespace pollustion.
@@ -427,6 +432,14 @@ if(WITH_XR_OPENXR)
   if(NOT XR_OPENXR_SDK_FOUND)
     message(WARNING "OpenXR-SDK not found, disabling WITH_XR_OPENXR")
     set(WITH_XR_OPENXR OFF)
+  endif()
+endif()
+
+if(WITH_GMP)
+  find_package_wrapper(GMP)
+  if(NOT GMP_FOUND)
+    message(WARNING "GMP not found, disabling WITH_GMP")
+    set(WITH_GMP OFF)
   endif()
 endif()
 
