@@ -52,7 +52,6 @@
 #include "BKE_screen.h"
 #include "BKE_unit.h"
 
-#include "GPU_glew.h"
 #include "GPU_matrix.h"
 #include "GPU_state.h"
 
@@ -1487,7 +1486,7 @@ static void ui_menu_block_set_keymaps(const bContext *C, uiBlock *block)
           continue;
         }
       }
-      else if (but->dt != UI_EMBOSS_PULLDOWN) {
+      else if (but->emboss != UI_EMBOSS_PULLDOWN) {
         continue;
       }
 
@@ -2801,25 +2800,39 @@ char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
   return str;
 }
 
-static bool ui_set_but_string_eval_num_unit(bContext *C,
-                                            uiBut *but,
-                                            const char *str,
-                                            double *r_value)
+/**
+ * Report a generic error prefix when evaluating a string with #BPY_execute_string_as_number
+ * as the Python error on it's own doesn't provide enough context.
+ */
+#define UI_NUMBER_EVAL_ERROR_PREFIX IFACE_("Error evaluating number, see Info editor for details")
+
+static bool ui_number_from_string_units(
+    bContext *C, const char *str, const int unit_type, const UnitSettings *unit, double *r_value)
 {
+  return user_string_to_number(C, str, unit, unit_type, UI_NUMBER_EVAL_ERROR_PREFIX, r_value);
+}
+
+static bool ui_number_from_string_units_with_but(bContext *C,
+                                                 const char *str,
+                                                 const uiBut *but,
+                                                 double *r_value)
+{
+  const int unit_type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
   const UnitSettings *unit = but->block->unit;
-  int type = RNA_SUBTYPE_UNIT_VALUE(UI_but_unit_type_get(but));
-  return user_string_to_number(C, str, unit, type, r_value);
+  return ui_number_from_string_units(C, str, unit_type, unit, r_value);
 }
 
 static bool ui_number_from_string(bContext *C, const char *str, double *r_value)
 {
+  bool ok;
 #ifdef WITH_PYTHON
-  return BPY_execute_string_as_number(C, NULL, str, true, r_value);
+  ok = BPY_execute_string_as_number(C, NULL, str, UI_NUMBER_EVAL_ERROR_PREFIX, r_value);
 #else
   UNUSED_VARS(C);
   *r_value = atof(str);
-  return true;
+  ok = true;
 #endif
+  return ok;
 }
 
 static bool ui_number_from_string_factor(bContext *C, const char *str, double *r_value)
@@ -2853,7 +2866,7 @@ static bool ui_number_from_string_percentage(bContext *C, const char *str, doubl
   return ui_number_from_string(C, str, r_value);
 }
 
-bool ui_but_string_set_eval_num(bContext *C, uiBut *but, const char *str, double *r_value)
+bool ui_but_string_eval_number(bContext *C, const uiBut *but, const char *str, double *r_value)
 {
   if (str[0] == '\0') {
     *r_value = 0.0;
@@ -2867,7 +2880,7 @@ bool ui_but_string_set_eval_num(bContext *C, uiBut *but, const char *str, double
 
   if (ui_but_is_float(but)) {
     if (ui_but_is_unit(but)) {
-      return ui_set_but_string_eval_num_unit(C, but, str, r_value);
+      return ui_number_from_string_units_with_but(C, str, but, r_value);
     }
     if (subtype == PROP_FACTOR) {
       return ui_number_from_string_factor(C, str, r_value);
@@ -3007,7 +3020,7 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
     /* number editing */
     double value;
 
-    if (ui_but_string_set_eval_num(C, but, str, &value) == false) {
+    if (ui_but_string_eval_number(C, but, str, &value) == false) {
       WM_report_banner_show();
       return false;
     }
@@ -3079,8 +3092,38 @@ static double soft_range_round_down(double value, double max)
   return newmax;
 }
 
+void ui_but_range_set_hard(uiBut *but)
+{
+  if (but->rnaprop) {
+    const PropertyType type = RNA_property_type(but->rnaprop);
+    double hardmin, hardmax;
+
+    /* clamp button range to something reasonable in case
+     * we get -inf/inf from RNA properties */
+    if (type == PROP_INT) {
+      int imin, imax;
+
+      RNA_property_int_range(&but->rnapoin, but->rnaprop, &imin, &imax);
+      hardmin = (imin == INT_MIN) ? -1e4 : imin;
+      hardmax = (imin == INT_MAX) ? 1e4 : imax;
+    }
+    else if (type == PROP_FLOAT) {
+      float fmin, fmax;
+
+      RNA_property_float_range(&but->rnapoin, but->rnaprop, &fmin, &fmax);
+      hardmin = (fmin == -FLT_MAX) ? (float)-1e4 : fmin;
+      hardmax = (fmax == FLT_MAX) ? (float)1e4 : fmax;
+    }
+    else {
+      return;
+    }
+    but->hardmin = hardmin;
+    but->hardmax = hardmax;
+  }
+}
+
 /* note: this could be split up into functions which handle arrays and not */
-static void ui_set_but_soft_range(uiBut *but)
+void ui_but_range_set_soft(uiBut *but)
 {
   /* ideally we would not limit this but practically, its more than
    * enough worst case is very long vectors wont use a smart soft-range
@@ -3341,7 +3384,7 @@ void UI_block_region_set(uiBlock *block, ARegion *region)
   block->oldblock = oldblock;
 }
 
-uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, short dt)
+uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, char emboss)
 {
   uiBlock *block;
   wmWindow *window;
@@ -3352,7 +3395,7 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, sh
 
   block = MEM_callocN(sizeof(uiBlock), "uiBlock");
   block->active = 1;
-  block->dt = dt;
+  block->emboss = emboss;
   block->evil_C = (void *)C; /* XXX */
 
   if (scn) {
@@ -3391,12 +3434,12 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, sh
 
 char UI_block_emboss_get(uiBlock *block)
 {
-  return block->dt;
+  return block->emboss;
 }
 
-void UI_block_emboss_set(uiBlock *block, char dt)
+void UI_block_emboss_set(uiBlock *block, char emboss)
 {
-  block->dt = dt;
+  block->emboss = emboss;
 }
 
 void UI_block_theme_style_set(uiBlock *block, char theme_style)
@@ -3484,7 +3527,7 @@ static void ui_but_update_ex(uiBut *but, const bool validate)
   /* only update soft range while not editing */
   if (!ui_but_is_editing(but)) {
     if ((but->rnaprop != NULL) || (but->poin && (but->pointype & UI_BUT_POIN_TYPES))) {
-      ui_set_but_soft_range(but);
+      ui_but_range_set_soft(but);
     }
   }
 
@@ -3776,7 +3819,7 @@ static uiBut *ui_def_but(uiBlock *block,
   but->tip = tip;
 
   but->disabled_info = block->lockstr;
-  but->dt = block->dt;
+  but->emboss = block->emboss;
   but->pie_dir = UI_RADIAL_NONE;
 
   but->block = block; /* pointer back, used for frontbuffer status, and picker */
@@ -4309,7 +4352,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
   }
 
   if (type == UI_BTYPE_MENU) {
-    if (but->dt == UI_EMBOSS_PULLDOWN) {
+    if (but->emboss == UI_EMBOSS_PULLDOWN) {
       ui_but_submenu_enable(block, but);
     }
   }

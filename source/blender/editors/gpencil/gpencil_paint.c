@@ -268,7 +268,7 @@ typedef struct tGPsdata {
 
 /* Macros for accessing sensitivity thresholds... */
 /* minimum number of pixels mouse should move before new point created */
-#define MIN_MANHATTEN_PX (U.gp_manhattendist)
+#define MIN_MANHATTEN_PX (U.gp_manhattandist)
 /* minimum length of new segment before new point can be added */
 #define MIN_EUCLIDEAN_PX (U.gp_euclideandist)
 
@@ -1817,15 +1817,15 @@ static void gpencil_init_drawing_brush(bContext *C, tGPsdata *p)
     changed = true;
   }
   /* Be sure curves are initializated. */
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_sensitivity);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_strength);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_jitter);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_rand_pressure);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_rand_strength);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_rand_uv);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_rand_hue);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_rand_saturation);
-  BKE_curvemapping_initialize(paint->brush->gpencil_settings->curve_rand_value);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_sensitivity);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_strength);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_jitter);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_rand_pressure);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_rand_strength);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_rand_uv);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_rand_hue);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_rand_saturation);
+  BKE_curvemapping_init(paint->brush->gpencil_settings->curve_rand_value);
 
   /* assign to temp tGPsdata */
   p->brush = paint->brush;
