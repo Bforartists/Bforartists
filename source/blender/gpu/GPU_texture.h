@@ -24,11 +24,9 @@
 #ifndef __GPU_TEXTURE_H__
 #define __GPU_TEXTURE_H__
 
-#include "GPU_state.h"
+#include "BLI_utildefines.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "GPU_state.h"
 
 struct GPUVertBuf;
 struct ImBuf;
@@ -46,7 +44,6 @@ typedef struct GPUTexture GPUTexture;
  * - Internally used by textures.
  * - All states are created at startup to avoid runtime costs.
  */
-
 typedef enum eGPUSamplerState {
   GPU_SAMPLER_FILTER = (1 << 0),
   GPU_SAMPLER_MIPMAP = (1 << 1),
@@ -59,6 +56,12 @@ typedef enum eGPUSamplerState {
   /* Don't use that. */
   GPU_SAMPLER_MAX = (1 << 8),
 } eGPUSamplerState;
+
+ENUM_OPERATORS(eGPUSamplerState)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define GPU_SAMPLER_DEFAULT GPU_SAMPLER_FILTER
 #define GPU_SAMPLER_REPEAT (GPU_SAMPLER_REPEAT_S | GPU_SAMPLER_REPEAT_T | GPU_SAMPLER_REPEAT_R)
@@ -120,7 +123,6 @@ typedef enum eGPUTextureFormat {
 #if 0
   GPU_RGB10_A2,
   GPU_RGB10_A2UI,
-  GPU_SRGB8_A8,
 #endif
   GPU_R11F_G11F_B10F,
   GPU_DEPTH32F_STENCIL8,
@@ -149,7 +151,13 @@ typedef enum eGPUTextureFormat {
   GPU_R8_SNORM,
 #endif
 
-/* Special formats texture only */
+  /* Special formats texture only */
+  GPU_SRGB8_A8_DXT1,
+  GPU_SRGB8_A8_DXT3,
+  GPU_SRGB8_A8_DXT5,
+  GPU_RGBA8_DXT1,
+  GPU_RGBA8_DXT3,
+  GPU_RGBA8_DXT5,
 #if 0
   GPU_SRGB8,
   GPU_RGB9_E5,
@@ -222,17 +230,10 @@ GPUTexture *GPU_texture_create_cube_array(
 GPUTexture *GPU_texture_create_from_vertbuf(struct GPUVertBuf *vert);
 GPUTexture *GPU_texture_create_buffer(eGPUTextureFormat data_type, const uint buffer);
 
-GPUTexture *GPU_texture_from_bindcode(int textarget, int bindcode);
-GPUTexture *GPU_texture_from_blender(struct Image *ima,
-                                     struct ImageUser *iuser,
-                                     struct ImBuf *ibuf,
-                                     int textarget);
+GPUTexture *GPU_texture_create_compressed(
+    int w, int h, int miplen, eGPUTextureFormat format, const void *data);
 
-/* movie clip drawing */
-GPUTexture *GPU_texture_from_movieclip(struct MovieClip *clip,
-                                       struct MovieClipUser *cuser,
-                                       int textarget);
-void GPU_free_texture_movieclip(struct MovieClip *clip);
+GPUTexture *GPU_texture_create_error(int dimension, bool array);
 
 void GPU_texture_add_mipmap(GPUTexture *tex,
                             eGPUDataFormat gpu_data_format,
@@ -268,6 +269,7 @@ void GPU_texture_unbind_all(void);
 void GPU_texture_copy(GPUTexture *dst, GPUTexture *src);
 
 void GPU_texture_generate_mipmap(GPUTexture *tex);
+void GPU_texture_anisotropic_filter(GPUTexture *tex, bool use_aniso);
 void GPU_texture_compare_mode(GPUTexture *tex, bool use_compare);
 void GPU_texture_filter_mode(GPUTexture *tex, bool use_filter);
 void GPU_texture_mipmap_mode(GPUTexture *tex, bool use_mipmap, bool use_filter);
