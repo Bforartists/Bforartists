@@ -1292,13 +1292,10 @@ static DRWShadingGroup *drw_shgroup_material_create_ex(GPUPass *gpupass, DRWPass
 }
 
 static void drw_shgroup_material_texture(DRWShadingGroup *grp,
-                                         GPUMaterialTexture *tex,
+                                         GPUTexture *gputex,
                                          const char *name,
-                                         eGPUSamplerState state,
-                                         int textarget)
+                                         eGPUSamplerState state)
 {
-  GPUTexture *gputex = GPU_texture_from_blender(tex->ima, tex->iuser, NULL, textarget);
-
   DRW_shgroup_uniform_texture_ex(grp, name, gputex, state);
 
   GPUTexture **gputex_ref = BLI_memblock_alloc(DST.vmempool->images);
@@ -1314,15 +1311,16 @@ void DRW_shgroup_add_material_resources(DRWShadingGroup *grp, struct GPUMaterial
   LISTBASE_FOREACH (GPUMaterialTexture *, tex, &textures) {
     if (tex->ima) {
       /* Image */
+      GPUTexture *gputex;
       if (tex->tiled_mapping_name[0]) {
-        drw_shgroup_material_texture(
-            grp, tex, tex->sampler_name, tex->sampler_state, GL_TEXTURE_2D_ARRAY);
-        drw_shgroup_material_texture(
-            grp, tex, tex->tiled_mapping_name, tex->sampler_state, GL_TEXTURE_1D_ARRAY);
+        gputex = BKE_image_get_gpu_tiles(tex->ima, tex->iuser, NULL);
+        drw_shgroup_material_texture(grp, gputex, tex->sampler_name, tex->sampler_state);
+        gputex = BKE_image_get_gpu_tilemap(tex->ima, tex->iuser, NULL);
+        drw_shgroup_material_texture(grp, gputex, tex->tiled_mapping_name, tex->sampler_state);
       }
       else {
-        drw_shgroup_material_texture(
-            grp, tex, tex->sampler_name, tex->sampler_state, GL_TEXTURE_2D);
+        gputex = BKE_image_get_gpu_texture(tex->ima, tex->iuser, NULL);
+        drw_shgroup_material_texture(grp, gputex, tex->sampler_name, tex->sampler_state);
       }
     }
     else if (tex->colorband) {

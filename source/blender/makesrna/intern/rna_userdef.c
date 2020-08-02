@@ -179,6 +179,7 @@ static const EnumPropertyItem rna_enum_userdef_viewport_aa_items[] = {
 #  include "BKE_blender.h"
 #  include "BKE_global.h"
 #  include "BKE_idprop.h"
+#  include "BKE_image.h"
 #  include "BKE_main.h"
 #  include "BKE_mesh_runtime.h"
 #  include "BKE_paint.h"
@@ -187,9 +188,9 @@ static const EnumPropertyItem rna_enum_userdef_viewport_aa_items[] = {
 
 #  include "DEG_depsgraph.h"
 
-#  include "GPU_draw.h"
 #  include "GPU_extensions.h"
 #  include "GPU_select.h"
+#  include "GPU_texture.h"
 
 #  include "BLF_api.h"
 
@@ -363,13 +364,14 @@ static void rna_userdef_load_ui_update(Main *UNUSED(bmain), Scene *UNUSED(scene)
 
 static void rna_userdef_anisotropic_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  GPU_set_anisotropic(U.anisotropic_filter);
+  GPU_samplers_free();
+  GPU_samplers_init();
   rna_userdef_update(bmain, scene, ptr);
 }
 
 static void rna_userdef_gl_texture_limit_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-  GPU_free_images(bmain);
+  BKE_image_free_all_gputextures(bmain);
   rna_userdef_update(bmain, scene, ptr);
 }
 
@@ -4988,7 +4990,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
 
   /* grease pencil */
   prop = RNA_def_property(srna, "grease_pencil_manhattan_distance", PROP_INT, PROP_PIXEL);
-  RNA_def_property_int_sdna(prop, NULL, "gp_manhattendist");
+  RNA_def_property_int_sdna(prop, NULL, "gp_manhattandist");
   RNA_def_property_range(prop, 0, 100);
   RNA_def_property_ui_text(prop,
                            "Grease Pencil Manhattan Distance",
