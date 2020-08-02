@@ -29,7 +29,7 @@ using namespace std;
 namespace Manta {
 
 ParticleBase::ParticleBase(FluidSolver *parent)
-    : PbClass(parent), mAllowCompress(true), mFreePdata(false)
+    : PbClass(parent), mMaxParticles(0), mAllowCompress(true), mFreePdata(false)
 {
 }
 

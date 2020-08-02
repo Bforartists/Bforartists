@@ -79,7 +79,6 @@
 #include "RNA_define.h"
 
 #include "GPU_framebuffer.h"
-#include "GPU_glew.h"
 #include "GPU_matrix.h"
 
 #include "render_intern.h"
@@ -351,7 +350,7 @@ static void screen_opengl_render_doit(const bContext *C, OGLRender *oglrender, R
       G.f &= ~G_FLAG_RENDER_VIEWPORT;
 
       gp_rect = MEM_mallocN(sizex * sizey * sizeof(uchar) * 4, "offscreen rect");
-      GPU_offscreen_read_pixels(oglrender->ofs, GL_UNSIGNED_BYTE, gp_rect);
+      GPU_offscreen_read_pixels(oglrender->ofs, GPU_DATA_UNSIGNED_BYTE, gp_rect);
 
       for (i = 0; i < sizex * sizey * 4; i += 4) {
         blend_color_mix_byte(&render_rect[i], &render_rect[i], &gp_rect[i]);
@@ -963,7 +962,7 @@ static void screen_opengl_render_cancel(bContext *C, wmOperator *op)
 }
 
 /* share between invoke and exec */
-static bool screen_opengl_render_anim_initialize(bContext *C, wmOperator *op)
+static bool screen_opengl_render_anim_init(bContext *C, wmOperator *op)
 {
   /* initialize animation */
   OGLRender *oglrender;
@@ -1257,7 +1256,7 @@ static int screen_opengl_render_invoke(bContext *C, wmOperator *op, const wmEven
   }
 
   if (anim) {
-    if (!screen_opengl_render_anim_initialize(C, op)) {
+    if (!screen_opengl_render_anim_init(C, op)) {
       return OPERATOR_CANCELLED;
     }
   }
@@ -1293,7 +1292,7 @@ static int screen_opengl_render_exec(bContext *C, wmOperator *op)
 
   bool ret = true;
 
-  if (!screen_opengl_render_anim_initialize(C, op)) {
+  if (!screen_opengl_render_anim_init(C, op)) {
     return OPERATOR_CANCELLED;
   }
 

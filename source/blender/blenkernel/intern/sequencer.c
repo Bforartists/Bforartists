@@ -46,6 +46,7 @@
 #include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_path_util.h"
+#include "BLI_session_uuid.h"
 #include "BLI_string.h"
 #include "BLI_string_utf8.h"
 #include "BLI_threads.h"
@@ -4301,6 +4302,10 @@ void BKE_sequence_invalidate_movieclip_strips(Main *bmain, MovieClip *clip_targe
 
 void BKE_sequencer_free_imbuf(Scene *scene, ListBase *seqbase, bool for_render)
 {
+  if (scene->ed == NULL) {
+    return;
+  }
+
   Sequence *seq;
 
   BKE_sequencer_cache_cleanup(scene);
@@ -5348,7 +5353,14 @@ Sequence *BKE_sequence_alloc(ListBase *lb, int cfra, int machine, int type)
   seq->stereo3d_format = MEM_callocN(sizeof(Stereo3dFormat), "Sequence Stereo Format");
   seq->cache_flag = SEQ_CACHE_STORE_RAW | SEQ_CACHE_STORE_PREPROCESSED | SEQ_CACHE_STORE_COMPOSITE;
 
+  BKE_sequence_session_uuid_generate(seq);
+
   return seq;
+}
+
+void BKE_sequence_session_uuid_generate(struct Sequence *sequence)
+{
+  sequence->runtime.session_uuid = BLI_session_uuid_generate();
 }
 
 void BKE_sequence_alpha_mode_from_extension(Sequence *seq)
@@ -5659,6 +5671,10 @@ static Sequence *seq_dupli(const Scene *scene_src,
                            const int flag)
 {
   Sequence *seqn = MEM_dupallocN(seq);
+
+  if ((flag & LIB_ID_CREATE_NO_MAIN) == 0) {
+    BKE_sequence_session_uuid_generate(seq);
+  }
 
   seq->tmp = seqn;
   seqn->strip = MEM_dupallocN(seq->strip);
@@ -6041,4 +6057,114 @@ bool BKE_sequencer_check_scene_recursion(Scene *scene, ReportList *reports)
   }
 
   return false;
+}
+
+/* Check if "seq_main" (indirectly) uses strip "seq". */
+bool BKE_sequencer_render_loop_check(Sequence *seq_main, Sequence *seq)
+{
+  if (seq_main == seq) {
+    return true;
+  }
+
+  if ((seq_main->seq1 && BKE_sequencer_render_loop_check(seq_main->seq1, seq)) ||
+      (seq_main->seq2 && BKE_sequencer_render_loop_check(seq_main->seq2, seq)) ||
+      (seq_main->seq3 && BKE_sequencer_render_loop_check(seq_main->seq3, seq))) {
+    return true;
+  }
+
+  SequenceModifierData *smd;
+  for (smd = seq_main->modifiers.first; smd; smd = smd->next) {
+    if (smd->mask_sequence && BKE_sequencer_render_loop_check(smd->mask_sequence, seq)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static void sequencer_flag_users_for_removal(Scene *scene, ListBase *seqbase, Sequence *seq)
+{
+  LISTBASE_FOREACH (Sequence *, user_seq, seqbase) {
+    /* Look in metas for usage of seq. */
+    if (user_seq->type == SEQ_TYPE_META) {
+      sequencer_flag_users_for_removal(scene, &user_seq->seqbase, seq);
+    }
+
+    /* Clear seq from modifiers. */
+    SequenceModifierData *smd;
+    for (smd = user_seq->modifiers.first; smd; smd = smd->next) {
+      if (smd->mask_sequence == seq) {
+        smd->mask_sequence = NULL;
+      }
+    }
+
+    /* Remove effects, that use seq. */
+    if ((user_seq->seq1 && user_seq->seq1 == seq) || (user_seq->seq2 && user_seq->seq2 == seq) ||
+        (user_seq->seq3 && user_seq->seq3 == seq)) {
+      user_seq->flag |= SEQ_FLAG_DELETE;
+      /* Strips can be used as mask even if not in same seqbase. */
+      sequencer_flag_users_for_removal(scene, &scene->ed->seqbase, user_seq);
+    }
+  }
+}
+
+/* Flag seq and its users (effects) for removal. */
+void BKE_sequencer_flag_for_removal(Scene *scene, ListBase *seqbase, Sequence *seq)
+{
+  if (seq == NULL || (seq->flag & SEQ_FLAG_DELETE) != 0) {
+    return;
+  }
+
+  /* Flag and remove meta children. */
+  if (seq->type == SEQ_TYPE_META) {
+    LISTBASE_FOREACH (Sequence *, meta_child, &seq->seqbase) {
+      BKE_sequencer_flag_for_removal(scene, &seq->seqbase, meta_child);
+    }
+  }
+
+  seq->flag |= SEQ_FLAG_DELETE;
+  sequencer_flag_users_for_removal(scene, seqbase, seq);
+}
+
+/* Remove all flagged sequences, return true if sequence is removed. */
+void BKE_sequencer_remove_flagged_sequences(Scene *scene, ListBase *seqbase)
+{
+  LISTBASE_FOREACH_MUTABLE (Sequence *, seq, seqbase) {
+    if (seq->flag & SEQ_FLAG_DELETE) {
+      if (seq->type == SEQ_TYPE_META) {
+        BKE_sequencer_remove_flagged_sequences(scene, &seq->seqbase);
+      }
+      BLI_remlink(seqbase, seq);
+      BKE_sequence_free(scene, seq, true);
+    }
+  }
+}
+
+void BKE_sequencer_check_uuids_unique_and_report(const Scene *scene)
+{
+  if (scene->ed == NULL) {
+    return;
+  }
+
+  struct GSet *used_uuids = BLI_gset_new(
+      BLI_session_uuid_ghash_hash, BLI_session_uuid_ghash_compare, "sequencer used uuids");
+
+  const Sequence *sequence;
+  SEQ_BEGIN (scene->ed, sequence) {
+    const SessionUUID *session_uuid = &sequence->runtime.session_uuid;
+    if (!BLI_session_uuid_is_generated(session_uuid)) {
+      printf("Sequence %s does not have UUID generated.\n", sequence->name);
+      continue;
+    }
+
+    if (BLI_gset_lookup(used_uuids, session_uuid) != NULL) {
+      printf("Sequence %s has duplicate UUID generated.\n", sequence->name);
+      continue;
+    }
+
+    BLI_gset_insert(used_uuids, (void *)session_uuid);
+  }
+  SEQ_END;
+
+  BLI_gset_free(used_uuids, NULL);
 }
