@@ -4173,7 +4173,8 @@ static Base *mesh_separate_tagged(
   BKE_object_material_array_assign(bmain,
                                    base_new->object,
                                    BKE_object_material_array_p(obedit),
-                                   *BKE_object_material_len_p(obedit));
+                                   *BKE_object_material_len_p(obedit),
+                                   false);
 
   ED_object_base_select(base_new, BA_SELECT);
 
@@ -4245,7 +4246,8 @@ static Base *mesh_separate_arrays(Main *bmain,
   BKE_object_material_array_assign(bmain,
                                    base_new->object,
                                    BKE_object_material_array_p(obedit),
-                                   *BKE_object_material_len_p(obedit));
+                                   *BKE_object_material_len_p(obedit),
+                                   false);
 
   ED_object_base_select(base_new, BA_SELECT);
 

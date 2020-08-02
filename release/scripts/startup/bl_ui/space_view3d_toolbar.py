@@ -218,6 +218,10 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         row = layout.row(align=True, heading="Transform")
         row.prop(tool_settings, "use_transform_correct_face_attributes")
 
+        row = layout.row(align=True)
+        row.active = tool_settings.use_transform_correct_face_attributes
+        row.prop(tool_settings, "use_transform_correct_keep_connected")
+
         row = layout.row(heading="Mirror")
         sub = row.row(align=True)
         sub.prop(mesh, "use_mirror_x", text="X", toggle=True)
@@ -1445,6 +1449,9 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
 
         col = layout.column(align=True)
         if brush is not None:
+            col.prop(gp_settings, "brush_draw_mode")
+            col.separator()
+
             if brush.gpencil_tool != 'FILL':
                 col.prop(gp_settings, "input_samples")
                 col.separator()

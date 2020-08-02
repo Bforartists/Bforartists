@@ -52,38 +52,37 @@ set(INC_SYS
 )
 
 set(SRC
-  intern/gpu_attr_binding.c
-  intern/gpu_batch.c
+  intern/gpu_attr_binding.cc
+  intern/gpu_batch.cc
   intern/gpu_batch_presets.c
   intern/gpu_batch_utils.c
   intern/gpu_buffers.c
   intern/gpu_codegen.c
-  intern/gpu_context.cpp
-  intern/gpu_debug.c
-  intern/gpu_draw.c
-  intern/gpu_draw_smoke.c
-  intern/gpu_element.c
-  intern/gpu_extensions.c
-  intern/gpu_framebuffer.c
-  intern/gpu_immediate.c
+  intern/gpu_context.cc
+  intern/gpu_debug.cc
+  intern/gpu_element.cc
+  intern/gpu_extensions.cc
+  intern/gpu_framebuffer.cc
+  intern/gpu_immediate.cc
   intern/gpu_immediate_util.c
   intern/gpu_init_exit.c
   intern/gpu_material.c
   intern/gpu_material_library.c
-  intern/gpu_matrix.c
+  intern/gpu_matrix.cc
   intern/gpu_node_graph.c
-  intern/gpu_platform.c
+  intern/gpu_platform.cc
   intern/gpu_primitive.c
   intern/gpu_select.c
   intern/gpu_select_pick.c
   intern/gpu_select_sample_query.c
-  intern/gpu_shader.c
-  intern/gpu_shader_interface.c
-  intern/gpu_state.c
-  intern/gpu_texture.c
-  intern/gpu_uniformbuffer.c
-  intern/gpu_vertex_buffer.c
-  intern/gpu_vertex_format.c
+  intern/gpu_shader.cc
+  intern/gpu_shader_builtin.c
+  intern/gpu_shader_interface.cc
+  intern/gpu_state.cc
+  intern/gpu_texture.cc
+  intern/gpu_uniformbuffer.cc
+  intern/gpu_vertex_buffer.cc
+  intern/gpu_vertex_format.cc
   intern/gpu_viewport.c
 
   GPU_attr_binding.h
@@ -94,7 +93,6 @@ set(SRC
   GPU_common.h
   GPU_context.h
   GPU_debug.h
-  GPU_draw.h
   GPU_element.h
   GPU_extensions.h
   GPU_framebuffer.h
@@ -215,6 +213,8 @@ data_to_c_simple(shaders/gpu_shader_text_vert.glsl SRC)
 data_to_c_simple(shaders/gpu_shader_text_frag.glsl SRC)
 data_to_c_simple(shaders/gpu_shader_keyframe_diamond_vert.glsl SRC)
 data_to_c_simple(shaders/gpu_shader_keyframe_diamond_frag.glsl SRC)
+
+data_to_c_simple(shaders/gpu_shader_codegen_lib.glsl SRC)
 
 data_to_c_simple(shaders/gpu_shader_geometry.glsl SRC)
 

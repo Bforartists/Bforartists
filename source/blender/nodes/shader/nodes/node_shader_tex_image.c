@@ -19,8 +19,6 @@
 
 #include "../node_shader_util.h"
 
-#include "GPU_draw.h"
-
 /* **************** OUTPUT ******************** */
 
 static bNodeSocketTemplate sh_node_tex_image_in[] = {
@@ -95,7 +93,8 @@ static int node_shader_gpu_tex_image(GPUMaterial *mat,
 
   if (tex->interpolation != SHD_INTERP_CLOSEST) {
     sampler_state |= GPU_SAMPLER_ANISO | GPU_SAMPLER_FILTER;
-    sampler_state |= GPU_get_mipmap() ? GPU_SAMPLER_MIPMAP : 0;
+    /* TODO(fclem) For now assume mipmap is always enabled. */
+    sampler_state |= true ? GPU_SAMPLER_MIPMAP : 0;
   }
   const bool use_cubic = ELEM(tex->interpolation, SHD_INTERP_CUBIC, SHD_INTERP_SMART);
 

@@ -59,6 +59,7 @@
 #include "BKE_font.h"
 #include "BKE_global.h"
 #include "BKE_icons.h"
+#include "BKE_image.h"
 #include "BKE_keyconfig.h"
 #include "BKE_lib_remap.h"
 #include "BKE_main.h"
@@ -120,7 +121,6 @@
 #include "UI_interface.h"
 #include "UI_resources.h"
 
-#include "GPU_draw.h"
 #include "GPU_init_exit.h"
 #include "GPU_material.h"
 
@@ -171,7 +171,7 @@ void WM_init_state_start_with_console_set(bool value)
  */
 static bool opengl_is_init = false;
 
-void WM_init_opengl(Main *bmain)
+void WM_init_opengl(Main *UNUSED(bmain))
 {
   /* must be called only once */
   BLI_assert(opengl_is_init == false);
@@ -185,9 +185,6 @@ void WM_init_opengl(Main *bmain)
   DRW_opengl_context_create();
 
   GPU_init();
-  GPU_set_mipmap(bmain, true);
-  GPU_set_linear_mipmap(true);
-  GPU_set_anisotropic(U.anisotropic_filter);
 
   GPU_pass_cache_init();
 
@@ -578,7 +575,7 @@ void WM_exit_ex(bContext *C, const bool do_python)
   BKE_subdiv_exit();
 
   if (opengl_is_init) {
-    GPU_free_unused_buffers();
+    BKE_image_free_unused_gpu_textures();
   }
 
   BKE_blender_free(); /* blender.c, does entire library and spacetypes */

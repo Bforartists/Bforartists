@@ -36,6 +36,7 @@
 #include "BKE_context.h"
 #include "BKE_customdata.h"
 #include "BKE_global.h"
+#include "BKE_image.h"
 #include "BKE_key.h"
 #include "BKE_layer.h"
 #include "BKE_main.h"
@@ -74,7 +75,6 @@
 
 #include "GPU_batch.h"
 #include "GPU_batch_presets.h"
-#include "GPU_draw.h"
 #include "GPU_framebuffer.h"
 #include "GPU_immediate.h"
 #include "GPU_immediate_util.h"
@@ -115,8 +115,8 @@ void ED_view3d_update_viewmat(Depsgraph *depsgraph,
                               const Scene *scene,
                               View3D *v3d,
                               ARegion *region,
-                              float viewmat[4][4],
-                              float winmat[4][4],
+                              const float viewmat[4][4],
+                              const float winmat[4][4],
                               const rcti *rect,
                               bool offscreen)
 {
@@ -197,8 +197,8 @@ static void view3d_main_region_setup_view(Depsgraph *depsgraph,
                                           Scene *scene,
                                           View3D *v3d,
                                           ARegion *region,
-                                          float viewmat[4][4],
-                                          float winmat[4][4],
+                                          const float viewmat[4][4],
+                                          const float winmat[4][4],
                                           const rcti *rect)
 {
   RegionView3D *rv3d = region->regiondata;
@@ -214,8 +214,8 @@ static void view3d_main_region_setup_offscreen(Depsgraph *depsgraph,
                                                const Scene *scene,
                                                View3D *v3d,
                                                ARegion *region,
-                                               float viewmat[4][4],
-                                               float winmat[4][4])
+                                               const float viewmat[4][4],
+                                               const float winmat[4][4])
 {
   RegionView3D *rv3d = region->regiondata;
   ED_view3d_update_viewmat(depsgraph, scene, v3d, region, viewmat, winmat, NULL, true);
@@ -353,8 +353,8 @@ void ED_view3d_draw_setup_view(const wmWindowManager *wm,
                                Scene *scene,
                                ARegion *region,
                                View3D *v3d,
-                               float viewmat[4][4],
-                               float winmat[4][4],
+                               const float viewmat[4][4],
+                               const float winmat[4][4],
                                const rcti *rect)
 {
   RegionView3D *rv3d = region->regiondata;
@@ -1617,7 +1617,7 @@ void view3d_main_region_draw(const bContext *C, ARegion *region)
   view3d_draw_view(C, region);
 
   DRW_cache_free_old_batches(bmain);
-  GPU_free_images_old(bmain);
+  BKE_image_free_old_gputextures(bmain);
   GPU_pass_cache_garbage_collect();
 
   /* XXX This is in order to draw UI batches with the DRW
@@ -1640,7 +1640,7 @@ static void view3d_stereo3d_setup_offscreen(Depsgraph *depsgraph,
                                             const Scene *scene,
                                             View3D *v3d,
                                             ARegion *region,
-                                            float winmat[4][4],
+                                            const float winmat[4][4],
                                             const char *viewname)
 {
   /* update the viewport matrices with the new camera */
@@ -1667,8 +1667,8 @@ void ED_view3d_draw_offscreen(Depsgraph *depsgraph,
                               ARegion *region,
                               int winx,
                               int winy,
-                              float viewmat[4][4],
-                              float winmat[4][4],
+                              const float viewmat[4][4],
+                              const float winmat[4][4],
                               bool is_image_render,
                               bool do_sky,
                               bool UNUSED(is_persp),
@@ -1707,7 +1707,7 @@ void ED_view3d_draw_offscreen(Depsgraph *depsgraph,
   {
     /* free images which can have changed on frame-change
      * warning! can be slow so only free animated images - campbell */
-    GPU_free_images_anim(G.main); /* XXX :((( */
+    BKE_image_free_anim_gputextures(G.main); /* XXX :((( */
   }
 
   GPU_matrix_push_projection();
@@ -1759,8 +1759,8 @@ void ED_view3d_draw_offscreen_simple(Depsgraph *depsgraph,
                                      int winx,
                                      int winy,
                                      uint draw_flags,
-                                     float viewmat[4][4],
-                                     float winmat[4][4],
+                                     const float viewmat[4][4],
+                                     const float winmat[4][4],
                                      float clip_start,
                                      float clip_end,
                                      bool is_image_render,
@@ -1954,10 +1954,10 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
                            NULL);
 
   if (ibuf->rect_float) {
-    GPU_offscreen_read_pixels(ofs, GL_FLOAT, ibuf->rect_float);
+    GPU_offscreen_read_pixels(ofs, GPU_DATA_FLOAT, ibuf->rect_float);
   }
   else if (ibuf->rect) {
-    GPU_offscreen_read_pixels(ofs, GL_UNSIGNED_BYTE, ibuf->rect);
+    GPU_offscreen_read_pixels(ofs, GPU_DATA_UNSIGNED_BYTE, ibuf->rect);
   }
 
   /* unbind */
@@ -2406,7 +2406,7 @@ struct RV3DMatrixStore *ED_view3d_mats_rv3d_backup(struct RegionView3D *rv3d)
   copy_m4_m4(rv3dmat->viewinv, rv3d->viewinv);
   copy_v4_v4(rv3dmat->viewcamtexcofac, rv3d->viewcamtexcofac);
   rv3dmat->pixsize = rv3d->pixsize;
-  return (void *)rv3dmat;
+  return rv3dmat;
 }
 
 void ED_view3d_mats_rv3d_restore(struct RegionView3D *rv3d, struct RV3DMatrixStore *rv3dmat_pt)

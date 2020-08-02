@@ -74,7 +74,6 @@
 #include "RNA_access.h"
 #include "RNA_define.h"
 
-#include "GPU_draw.h"
 #include "GPU_immediate.h"
 #include "GPU_state.h"
 
@@ -182,7 +181,7 @@ void imapaint_image_update(
     int h = imapaintpartial.y2 - imapaintpartial.y1;
     if (w && h) {
       /* Testing with partial update in uv editor too */
-      GPU_paint_update_image(image, iuser, imapaintpartial.x1, imapaintpartial.y1, w, h);
+      BKE_image_update_gputexture(image, iuser, imapaintpartial.x1, imapaintpartial.y1, w, h);
     }
   }
 }
@@ -1118,7 +1117,6 @@ void PAINT_OT_sample_color(wmOperatorType *ot)
 
 void ED_object_texture_paint_mode_enter_ex(Main *bmain, Scene *scene, Object *ob)
 {
-  bScreen *screen;
   Image *ima = NULL;
   ImagePaintSettings *imapaint = &scene->toolsettings->imapaint;
 
@@ -1142,17 +1140,16 @@ void ED_object_texture_paint_mode_enter_ex(Main *bmain, Scene *scene, Object *ob
   }
 
   if (ima) {
-    for (screen = bmain->screens.first; screen; screen = screen->id.next) {
-      ScrArea *area;
-      for (area = screen->areabase.first; area; area = area->next) {
-        SpaceLink *sl;
-        for (sl = area->spacedata.first; sl; sl = sl->next) {
-          if (sl->spacetype == SPACE_IMAGE) {
-            SpaceImage *sima = (SpaceImage *)sl;
+    wmWindowManager *wm = bmain->wm.first;
+    for (wmWindow *win = wm->windows.first; win; win = win->next) {
+      const bScreen *screen = WM_window_get_active_screen(win);
+      for (ScrArea *area = screen->areabase.first; area; area = area->next) {
+        SpaceLink *sl = area->spacedata.first;
+        if (sl->spacetype == SPACE_IMAGE) {
+          SpaceImage *sima = (SpaceImage *)sl;
 
-            if (!sima->pin) {
-              ED_space_image_set(bmain, sima, NULL, ima, true);
-            }
+          if (!sima->pin) {
+            ED_space_image_set(bmain, sima, NULL, ima, true);
           }
         }
       }
@@ -1166,9 +1163,9 @@ void ED_object_texture_paint_mode_enter_ex(Main *bmain, Scene *scene, Object *ob
   BKE_paint_toolslots_brush_validate(bmain, &imapaint->paint);
 
   if (U.glreslimit != 0) {
-    GPU_free_images(bmain);
+    BKE_image_free_all_gputextures(bmain);
   }
-  GPU_paint_set_mipmap(bmain, 0);
+  BKE_image_paint_set_mipmap(bmain, 0);
 
   toggle_paint_cursor(scene, true);
 
@@ -1191,9 +1188,9 @@ void ED_object_texture_paint_mode_exit_ex(Main *bmain, Scene *scene, Object *ob)
   ob->mode &= ~OB_MODE_TEXTURE_PAINT;
 
   if (U.glreslimit != 0) {
-    GPU_free_images(bmain);
+    BKE_image_free_all_gputextures(bmain);
   }
-  GPU_paint_set_mipmap(bmain, 1);
+  BKE_image_paint_set_mipmap(bmain, 1);
   toggle_paint_cursor(scene, false);
 
   Mesh *me = BKE_mesh_from_object(ob);
