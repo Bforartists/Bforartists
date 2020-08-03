@@ -2564,7 +2564,7 @@ class WM_MT_splash(Menu):
 
         layout.separator()
 
-        layout.label(text = "Bforartists 2.3.0 is based on Blender 2.90 Alpha")
+        layout.label(text = "Bforartists 2.4.0 is based on Blender 2.91 Alpha")
 
         layout.separator()
 
