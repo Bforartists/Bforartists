@@ -787,33 +787,43 @@ class _defs_edit_mesh:
 
                 layout.prop(props, "material")
 
-                col = layout.column()
+                col = layout.column(align = True)
+                col.use_property_split = False
                 col.prop(props, "harden_normals")
                 col.prop(props, "clamp_overlap")
                 col.prop(props, "loop_slide")
+                
+                if edge_bevel:
+                    col = layout.column(align = True)
+                    col.use_property_split = False
+                    col.label(text = "Mark")              
+                    row = col.row()
+                    row.separator()
+                    row.prop(props, "mark_seam", text="Seam")
+                    row = col.row()
+                    row.separator()
+                    row.prop(props, "mark_sharp", text="Sharp")
 
-                col = layout.column(heading="Mark")
-                col.active = edge_bevel
-                col.prop(props, "mark_seam", text="Seam")
-                col.prop(props, "mark_sharp", text="Sharp")
-
-
-                col = layout.column()
-                col.active = edge_bevel
-                col.prop(props, "miter_outer", text="Miter Outer")
-                col.prop(props, "miter_inner", text="Inner")
+                if edge_bevel:
+                    col = layout.column()
+                    col.prop(props, "miter_outer", text="Miter Outer")
+                    col.prop(props, "miter_inner", text="Inner")
                 if props.miter_inner == 'ARC':
                     col.prop(props, "spread")
 
                 layout.separator()
-
-                col = layout.column()
-                col.active = edge_bevel
-                col.prop(props, "vmesh_method", text="Intersections")
+                
+                if edge_bevel:
+                    col = layout.column()
+                    col.prop(props, "vmesh_method", text="Intersections")
+                    
+                    layout.separator()
 
                 layout.prop(props, "face_strength_mode", text="Face Strength")
 
                 layout.prop(props, "profile_type")
+                
+                layout.separator()
 
                 if props.profile_type == 'CUSTOM':
                     tool_settings = context.tool_settings
