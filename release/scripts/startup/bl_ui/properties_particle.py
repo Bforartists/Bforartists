@@ -1889,7 +1889,8 @@ class PARTICLE_PT_field_weights(ParticleButtonsPanel, Panel):
             col.prop(part, "apply_effector_to_children")
 
             col.separator()
-
+          
+            col.use_property_split = True
             col.prop(part, "effect_hair", slider=True)
 
 
