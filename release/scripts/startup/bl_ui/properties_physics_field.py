@@ -149,7 +149,13 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
 
             col = flow.column()
             col.prop(field, "source_object")
-            col.prop(field, "use_smoke_density")
+            
+            col = flow.column(align = True)
+            row = col.row()
+            row.use_property_split = False    
+            row.prop(field, "use_smoke_density")
+            row.prop_decorator(field, "use_smoke_density")
+        
         else:
             del flow
             basic_force_field_settings_ui(self, field)
