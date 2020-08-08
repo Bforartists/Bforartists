@@ -420,12 +420,16 @@ class PHYSICS_PT_collision_softbody(PhysicButtonsPanel, Panel):
         col = flow.column()
         col.prop(settings, "cloth_friction")
 
-        col = flow.column()
-        col.prop(settings, "use_culling")
-
-        col = flow.column()
-        col.prop(settings, "use_normal")
-
+        col = flow.column(align = True)
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(settings, "use_culling")
+        row.prop_decorator(settings, "use_culling")
+        
+        row = col.row()
+        row.use_property_split = False    
+        row.prop(settings, "use_normal")
+        row.prop_decorator(settings, "use_normal")
 
 classes = (
     PHYSICS_PT_field,
