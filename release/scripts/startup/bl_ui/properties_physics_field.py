@@ -120,8 +120,16 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
 
             col = flow.column()
             col.prop(field, "texture_nabla")
-            col.prop(field, "use_object_coords")
-            col.prop(field, "use_2d_force")
+
+            col = flow.column(align = True)          
+            row = col.row()
+            row.use_property_split = False    
+            row.prop(field, "use_object_coords")
+            row.prop_decorator(field, "use_object_coords")
+            row = col.row()
+            row.use_property_split = False    
+            row.prop(field, "use_2d_force")
+            row.prop_decorator(field, "use_2d_force")
 
         elif field.type == 'FLUID_FLOW':
             col = flow.column()
