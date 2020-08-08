@@ -96,19 +96,30 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col.prop(field, "guide_minimum")
             col.prop(field, "guide_free")
             col.prop(field, "falloff_power")
-            col.prop(field, "use_guide_path_add")
-            col.prop(field, "use_guide_path_weight")
+            
+            col = flow.column(align = True)
+            row = col.row()
+            row.use_property_split = False    
+            row.prop(field, "use_guide_path_add")
+            row.prop_decorator(field, "use_guide_path_add")
+            row = col.row()
+            row.use_property_split = False    
+            row.prop(field, "use_guide_path_weight")
+            row.prop_decorator(field, "use_guide_path_weight")
 
             col.separator()
 
             col = flow.column()
             col.prop(field, "guide_clump_amount", text="Clumping amount")
             col.prop(field, "guide_clump_shape")
-            col.prop(field, "use_max_distance")
+            row = col.row()
+            row.use_property_split = False    
+            row.prop(field, "use_max_distance")
+            row.prop_decorator(field, "use_max_distance")
 
             sub = col.column()
-            sub.active = field.use_max_distance
-            sub.prop(field, "distance_max")
+            if field.use_max_distance:
+                sub.prop(field, "distance_max")
 
         elif field.type == 'TEXTURE':
             col = flow.column()
