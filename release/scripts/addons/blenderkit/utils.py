@@ -32,9 +32,6 @@ import json
 import os
 import sys
 
-
-
-
 ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000
 BELOW_NORMAL_PRIORITY_CLASS = 0x00004000
 HIGH_PRIORITY_CLASS = 0x00000080
@@ -42,11 +39,13 @@ IDLE_PRIORITY_CLASS = 0x00000040
 NORMAL_PRIORITY_CLASS = 0x00000020
 REALTIME_PRIORITY_CLASS = 0x00000100
 
+
 def get_process_flags():
     flags = BELOW_NORMAL_PRIORITY_CLASS
     if sys.platform != 'win32':  # TODO test this on windows
         flags = 0
     return flags
+
 
 def activate(ob):
     bpy.ops.object.select_all(action='DESELECT')
@@ -97,10 +96,11 @@ def get_selected_models():
                     parents.append(ob)
             done[ob] = True
 
-    #if no blenderkit - like objects were found, use the original selection.
+    # if no blenderkit - like objects were found, use the original selection.
     if len(parents) == 0:
         parents = obs
     return parents
+
 
 def get_selected_replace_adepts():
     '''
@@ -127,10 +127,11 @@ def get_selected_replace_adepts():
 
             done[ob] = True
     # print(parents)
-    #if no blenderkit - like objects were found, use the original selection.
+    # if no blenderkit - like objects were found, use the original selection.
     if len(parents) == 0:
         parents = obs
     return parents
+
 
 def get_search_props():
     scene = bpy.context.scene
@@ -238,7 +239,7 @@ def load_prefs():
 
 def save_prefs(self, context):
     # first check context, so we don't do this on registration or blender startup
-    if not bpy.app.background: #(hasattr kills blender)
+    if not bpy.app.background:  # (hasattr kills blender)
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
         # we test the api key for length, so not a random accidentally typed sequence gets saved.
         lk = len(user_preferences.api_key)
@@ -263,15 +264,17 @@ def save_prefs(self, context):
         except Exception as e:
             print(e)
 
-def get_hidden_texture(tpath, bdata_name, force_reload = False):
-    i = get_hidden_image(tpath, bdata_name, force_reload = force_reload)
+
+def get_hidden_texture(tpath, bdata_name, force_reload=False):
+    i = get_hidden_image(tpath, bdata_name, force_reload=force_reload)
     bdata_name = f".{bdata_name}"
     t = bpy.data.textures.get(bdata_name)
     if t is None:
         t = bpy.data.textures.new('.test', 'IMAGE')
-    if t.image!= i:
+    if t.image != i:
         t.image = i
     return t
+
 
 def get_hidden_image(tpath, bdata_name, force_reload=False):
     hidden_name = '.%s' % bdata_name
@@ -348,15 +351,18 @@ def get_hierarchy(ob):
         obs.append(o)
     return obs
 
-def select_hierarchy(ob, state = True):
+
+def select_hierarchy(ob, state=True):
     obs = get_hierarchy(ob)
     for ob in obs:
         ob.select_set(state)
     return obs
 
+
 def delete_hierarchy(ob):
     obs = get_hierarchy(ob)
     bpy.ops.object.delete({"selected_objects": obs})
+
 
 def get_bounds_snappable(obs, use_modifiers=False):
     # progress('getting bounds of object(s)')
@@ -473,13 +479,15 @@ def get_headers(api_key):
         headers["Authorization"] = "Bearer %s" % api_key
     return headers
 
+
 def scale_2d(v, s, p):
     '''scale a 2d vector with a pivot'''
     return (p[0] + s[0] * (v[0] - p[0]), p[1] + s[1] * (v[1] - p[1]))
 
-def scale_uvs(ob, scale  = 1.0, pivot = Vector((.5,.5))):
+
+def scale_uvs(ob, scale=1.0, pivot=Vector((.5, .5))):
     mesh = ob.data
-    if len(mesh.uv_layers)>0:
+    if len(mesh.uv_layers) > 0:
         uv = mesh.uv_layers[mesh.uv_layers.active_index]
 
         # Scale a UV map iterating over its coordinates to a given scale and with a pivot point
@@ -488,7 +496,7 @@ def scale_uvs(ob, scale  = 1.0, pivot = Vector((.5,.5))):
 
 
 # map uv cubic and switch of auto tex space and set it to 1,1,1
-def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False, just_scale = False):
+def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False, just_scale=False):
     from blenderkit import bg_blender as bg
     s = bpy.context.scene
     mat_props = s.blenderkit_mat
@@ -540,8 +548,9 @@ def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False
             # by now, it takes the basic uv map = 1 meter. also, it now doeasn't respect more materials on one object,
             # it just scales whole UV.
             if just_scale:
-                scale_uvs(tob, scale=Vector((1/tex_size, 1/tex_size)))
+                scale_uvs(tob, scale=Vector((1 / tex_size, 1 / tex_size)))
             bpy.context.view_layer.objects.active = actob
+
 
 def name_update():
     props = get_upload_props()
@@ -562,11 +571,13 @@ def name_update():
     asset = get_active_asset()
     asset.name = fname
 
+
 def params_to_dict(params):
     params_dict = {}
     for p in params:
         params_dict[p['parameterType']] = p['value']
     return params_dict
+
 
 def dict_to_params(inputs, parameters=None):
     if parameters == None:
@@ -605,6 +616,7 @@ def profile_is_validator():
         return True
     return False
 
+
 def guard_from_crash():
     '''Blender tends to crash when trying to run some functions with the addon going through unregistration process.'''
     if bpy.context.preferences.addons.get('blenderkit') is None:
@@ -612,6 +624,42 @@ def guard_from_crash():
     if bpy.context.preferences.addons['blenderkit'].preferences is None:
         return False;
     return True
+
+
+def get_largest_area(area_type='VIEW_3D'):
+    maxsurf = 0
+    maxa = None
+    maxw = None
+    region = None
+    for w in bpy.context.window_manager.windows:
+        for a in w.screen.areas:
+            if a.type == area_type:
+                asurf = a.width * a.height
+                if asurf > maxsurf:
+                    maxa = a
+                    maxw = w
+                    maxsurf = asurf
+
+                    for r in a.regions:
+                        if r.type == 'WINDOW':
+                            region = r
+    global active_area, active_window, active_region
+    active_window = maxw
+    active_area = maxa
+    active_region = region
+    return maxw, maxa, region
+
+
+def get_fake_context(context, area_type='VIEW_3D'):
+    C_dict = {}  # context.copy() #context.copy was a source of problems - incompatibility with addons that also define context
+    C_dict.update(region='WINDOW')
+    if context.area is None or context.area.type != area_type:
+        w, a, r = get_largest_area(area_type=area_type)
+
+        override = {'window': w, 'screen': w.screen, 'area': a, 'region': r}
+        C_dict.update(override)
+        # print(w,a,r)
+    return C_dict
 
 
 def label_multiline(layout, text='', icon='NONE', width=-1):

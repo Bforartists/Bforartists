@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Santiago Lizardo <santiago.lizardo@gmail.com>\n"
 "Language-Team: Blender Català (http://www.blender.cat)\n"
@@ -5164,10 +5164,6 @@ msgid "Selected face count in editmode"
 msgstr "Amagar Seleccionats"
 
 
-msgid "Selected Vert Total"
-msgstr "Seleccionar fila"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Seleccionar connectats"
 
@@ -5494,10 +5490,6 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "Verts"
-msgstr "Pintura Vectorial"
 
 
 msgid "Location of the object"
@@ -9058,10 +9050,6 @@ msgstr "Moure a Capa"
 
 msgid "Display Hidden"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Only Selected"
-msgstr "Seleccionar fila"
 
 
 msgid "Dopesheet Sort Field"
@@ -12837,6 +12825,10 @@ msgid "Start frame for export"
 msgstr "Començar a renderitzar una seqüència"
 
 
+msgid "Only Selected"
+msgstr "Seleccionar fila"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Seleccionar fila"
@@ -13420,10 +13412,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Gap Randomness"
 msgstr "Partir"
-
-
-msgid "Radius Fac"
-msgstr "Seleccionar fila"
 
 
 msgid "The start frame of the path control curve"
@@ -14274,10 +14262,6 @@ msgstr "Autotangents"
 
 msgid "Segments for curved edge"
 msgstr "Seleccionar connectats"
-
-
-msgid "Bevel only vertices"
-msgstr "Corba"
 
 
 msgid "Axis Threshold"
@@ -17766,10 +17750,6 @@ msgid "Clear User Transforms"
 msgstr "Aplicar Deformació"
 
 
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "Seleccionar connectats"
-
-
 msgid "Only visible/selected bones"
 msgstr "Amagar Seleccionats"
 
@@ -19752,20 +19732,12 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Duplicar"
 
 
-msgid "Deform Bones only"
-msgstr "Corba"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "Seleccionar connectats"
 
 
 msgid "Modifier resolution for export"
 msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "Apply modifier's view settings"
-msgstr "Seleccionar connectats"
 
 
 msgid "Apply modifier's render settings"
@@ -20136,10 +20108,6 @@ msgid "URL to open"
 msgstr "URL per obrir"
 
 
-msgid "UV Maps"
-msgstr "Image Displist"
-
-
 msgctxt "Operator"
 msgid "New World"
 msgstr "Sigüent"
@@ -20371,6 +20339,10 @@ msgstr "Finestra de Render"
 
 msgid "Text Boxes"
 msgstr "Texte"
+
+
+msgid "UV Maps"
+msgstr "Image Displist"
 
 
 msgid "Filters"
@@ -25235,32 +25207,8 @@ msgid "%d items"
 msgstr "%d elements"
 
 
-msgid "Options:"
-msgstr "Esborrar Rotació"
-
-
 msgid "No filename given"
 msgstr "Arxiu"
-
-
-msgid "Texture Options:"
-msgstr "Esborrar Rotació"
-
-
-msgid "Export Data Options:"
-msgstr "Esborrar Rotació"
-
-
-msgid "Armature Options:"
-msgstr "Esborrar Rotació"
-
-
-msgid "Collada Options:"
-msgstr "Esborrar Rotació"
-
-
-msgid "Import Data Options:"
-msgstr "Esborrar Rotació"
 
 
 msgid "Not a valid selection for extrude"
@@ -25930,10 +25878,6 @@ msgstr "Seleccionar fila"
 
 msgid "Shrink/Fatten:"
 msgstr "Contreure/Engreixar"
-
-
-msgid "Vert Slide: "
-msgstr "Pintura Vectorial"
 
 
 msgid "global"

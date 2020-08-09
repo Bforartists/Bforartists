@@ -28,6 +28,7 @@
 #include "BLI_memblock.h"
 
 #include "BKE_duplilist.h"
+#include "BKE_modifier.h"
 
 #include "DEG_depsgraph_query.h"
 
@@ -147,26 +148,44 @@ EEVEE_ObjectMotionData *EEVEE_motion_blur_object_data_get(EEVEE_MotionBlurData *
   return ob_step;
 }
 
-EEVEE_GeometryMotionData *EEVEE_motion_blur_geometry_data_get(EEVEE_MotionBlurData *mb,
-                                                              Object *ob,
-                                                              bool hair)
+static EEVEE_GeometryMotionData *motion_blur_geometry_data_get(EEVEE_MotionBlurData *mb,
+                                                               void *key,
+                                                               bool hair)
 {
   if (mb->geom == NULL) {
     return NULL;
   }
-
-  /* Use original data as key to ensure matching accross update. */
-  Object *ob_orig = DEG_get_original_object(ob);
-
-  void *key = (char *)ob_orig->data + hair;
+  key = (char *)key + (int)hair;
   EEVEE_GeometryMotionData *geom_step = BLI_ghash_lookup(mb->geom, key);
   if (geom_step == NULL) {
     geom_step = MEM_callocN(sizeof(EEVEE_GeometryMotionData), __func__);
-    geom_step->type = (hair) ? EEVEE_HAIR_GEOM_MOTION_DATA : EEVEE_MESH_GEOM_MOTION_DATA;
+    geom_step->type = hair ? EEVEE_HAIR_GEOM_MOTION_DATA : EEVEE_MESH_GEOM_MOTION_DATA;
     BLI_ghash_insert(mb->geom, key, geom_step);
   }
-
   return geom_step;
+}
+
+EEVEE_GeometryMotionData *EEVEE_motion_blur_geometry_data_get(EEVEE_MotionBlurData *mb, Object *ob)
+{
+  /* Use original data as key to ensure matching accross update. */
+  return motion_blur_geometry_data_get(mb, DEG_get_original_object(ob)->data, false);
+}
+
+EEVEE_GeometryMotionData *EEVEE_motion_blur_hair_data_get(EEVEE_MotionBlurData *mb,
+                                                          Object *ob,
+                                                          ModifierData *md)
+{
+  void *key;
+  if (md) {
+    /* Particle system. */
+    key = BKE_modifier_get_original(md);
+  }
+  else {
+    /* Hair object. */
+    key = DEG_get_original_object(ob)->data;
+  }
+
+  return motion_blur_geometry_data_get(mb, key, true);
 }
 
 /* View Layer data. */
@@ -218,6 +237,11 @@ EEVEE_ViewLayerData *EEVEE_view_layer_data_get(void)
   return (EEVEE_ViewLayerData *)DRW_view_layer_engine_data_get(&draw_engine_eevee_type);
 }
 
+static void eevee_view_layer_init(EEVEE_ViewLayerData *sldata)
+{
+  sldata->common_ubo = DRW_uniformbuffer_create(sizeof(sldata->common_data), NULL);
+}
+
 EEVEE_ViewLayerData *EEVEE_view_layer_data_ensure_ex(struct ViewLayer *view_layer)
 {
   EEVEE_ViewLayerData **sldata = (EEVEE_ViewLayerData **)DRW_view_layer_engine_data_ensure_ex(
@@ -225,6 +249,7 @@ EEVEE_ViewLayerData *EEVEE_view_layer_data_ensure_ex(struct ViewLayer *view_laye
 
   if (*sldata == NULL) {
     *sldata = MEM_callocN(sizeof(**sldata), "EEVEE_ViewLayerData");
+    eevee_view_layer_init(*sldata);
   }
 
   return *sldata;
@@ -237,6 +262,7 @@ EEVEE_ViewLayerData *EEVEE_view_layer_data_ensure(void)
 
   if (*sldata == NULL) {
     *sldata = MEM_callocN(sizeof(**sldata), "EEVEE_ViewLayerData");
+    eevee_view_layer_init(*sldata);
   }
 
   return *sldata;

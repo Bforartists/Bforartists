@@ -155,7 +155,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
             elif Level == 1:
                 if (material.pov.specular_shader == 'COOKTORR' or
                     material.pov.specular_shader == 'PHONG'):
-                    tabWrite("phong %.3g\n" % (material.pov.specular_intensity/5))
+                    tabWrite("phong 0\n")#%.3g\n" % (material.pov.specular_intensity/5))
                     tabWrite("phong_size %.3g\n" % (material.pov.specular_hardness /3.14))
 
                 # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
@@ -183,8 +183,10 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                     # specular for some values.
                     tabWrite("brilliance %.4g\n" % (1.8 - material.pov.specular_slope * 1.8))
             elif Level == 3:
-                tabWrite("specular %.3g\n" % ((material.pov.specular_intensity*material.pov.specular_color.v)*5))
-                tabWrite("roughness %.3g\n" % (1.1/material.pov.specular_hardness))
+                # Spec must be Max at Level 3 so that white of mixing texture always shows specularity
+                # That's why it's multiplied by 255. maybe replace by texture's brightest pixel value?
+                tabWrite("specular %.3g\n" % ((material.pov.specular_intensity*material.pov.specular_color.v)*(255* slot.specular_factor)))
+                tabWrite("roughness %.3g\n" % (1/material.pov.specular_hardness))
             tabWrite("diffuse %.3g %.3g\n" % (frontDiffuse, backDiffuse))
 
             tabWrite("ambient %.3g\n" % material.pov.ambient)
@@ -265,12 +267,12 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
 
     if material:
         special_texture_found = False
-        idx = -1
+        tmpidx = -1
         for t in material.pov_texture_slots:
-            idx += 1
+            tmpidx += 1
             # index = material.pov.active_texture_index
-            slot = material.pov_texture_slots[idx] # [index]
-            povtex = slot.name
+            slot = material.pov_texture_slots[tmpidx] # [index]
+            povtex = slot.texture # slot.name
             tex = bpy.data.textures[povtex]
 
             if t and t.use and tex is not None:
@@ -777,7 +779,7 @@ def exportPattern(texture, string_strip_hyphen):
     return(texStrg)
 
 
-def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, lampCount,
+def writeTextureInfluence(using_uberpov, mater, materialNames, LocalMaterialNames, path_image, lampCount,
                             imageFormat, imgMap, imgMapTransforms, tabWrite, comments,
                             string_strip_hyphen, safety, col, os, preview_dir, unpacked_images):
     """Translate Blender texture influences to various POV texture tricks and write to pov file."""
@@ -805,14 +807,15 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     texturesNorm = ""
     texturesAlpha = ""
     #proceduralFlag=False
+    tmpidx = -1
     for t in mater.pov_texture_slots:
-        idx = -1
-        for t in mater.pov_texture_slots:
-            idx += 1
-            # index = mater.pov.active_texture_index
-            slot = mater.pov_texture_slots[idx] # [index]
-            povtex = slot.name
-            tex = bpy.data.textures[povtex]
+
+
+        tmpidx += 1
+        # index = mater.pov.active_texture_index
+        slot = mater.pov_texture_slots[tmpidx] # [index]
+        povtex = slot.texture # slot.name
+        tex = bpy.data.textures[povtex]
 
         if t and (t.use and (tex is not None)):
             # 'NONE' ('NONE' type texture is different from no texture covered above)
@@ -876,11 +879,13 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                 # IMAGE SEQUENCE ENDS
                 imgGamma = ""
                 if image_filename:
+                    texdata = bpy.data.textures[t.texture]
                     if t.use_map_color_diffuse:
                         texturesDif = image_filename
                         # colvalue = t.default_value  # UNUSED
                         t_dif = t
-                        if t_dif.texture.pov.tex_gamma_enable:
+                        print (texdata)
+                        if texdata.pov.tex_gamma_enable:
                             imgGamma = (" gamma %.3g " % t_dif.texture.pov.tex_gamma_value)
                     if t.use_map_specular or t.use_map_raymir:
                         texturesSpec = image_filename
@@ -913,6 +918,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     if mater.pov.replacement_text != "":
         tabWrite("%s\n" % mater.pov.replacement_text)
     #################################################################################
+    # XXX TODO: replace by new POV MINNAERT rather than aoi
     if mater.pov.diffuse_shader == 'MINNAERT':
         tabWrite("\n")
         tabWrite("aoi\n")
@@ -1056,12 +1062,36 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             mappingNor =imgMapTransforms(t_nor)
 
             if texturesNorm and texturesNorm.startswith("PAT_"):
-                tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor, mappingNor))
+                tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, ( - t_nor.normal_factor * 9.5), mappingNor))
             else:
-                tabWrite("normal {uv_mapping bump_map " \
-                         "{%s \"%s\" %s  bump_size %.4g }%s}\n" % \
+                tabWrite("normal {\n")
+                # XXX TODO: fix and propagate the micro normals reflection blur below to non textured materials
+                if (mater.pov_raytrace_mirror.use and mater.pov_raytrace_mirror.gloss_factor < 1.0 and not using_uberpov):
+                    tabWrite("average\n")
+                    tabWrite("normal_map{\n")
+                    # 0.5 for entries below means a 50 percent mix
+                    # between the micro normal and user bump map
+                    # order seems indifferent as commutative
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(10/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.1]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.15]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.2]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.25]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.3]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.35]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.4]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.45]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.5]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                    tabWrite("[1.0 ") # Proceed with user bump...
+                tabWrite("uv_mapping bump_map " \
+                         "{%s \"%s\" %s  bump_size %.4g }%s" % \
                          (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
-                          t_nor.normal_factor, mappingNor))
+                          ( - t_nor.normal_factor * 9.5), mappingNor))
+                # ...Then close its last entry and the the normal_map itself
+                if (mater.pov_raytrace_mirror.use and mater.pov_raytrace_mirror.gloss_factor < 1.0 and not using_uberpov):
+                    tabWrite("]}}\n")
+                else:
+                    tabWrite("]}\n")
         if texturesSpec != "":
             tabWrite("]\n")
         ##################Second index for mapping specular max value###############
@@ -1094,6 +1124,35 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             # Level 3 is full specular
             tabWrite("finish {%s}\n" % (safety(material_finish, Level=3)))
 
+            if mater.pov_raytrace_mirror.use and mater.pov_raytrace_mirror.gloss_factor < 1.0 and not using_uberpov:
+                tabWrite("normal {\n")
+                tabWrite("average\n")
+                tabWrite("normal_map{\n")
+                # 0.5 for entries below means a 50 percent mix
+                # between the micro normal and user bump map
+                # order seems indifferent as commutative
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(10/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.1]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.15]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.2]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.25]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.3]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.35]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.4]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.45]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.5]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+            #XXX IF USER BUMP_MAP
+            if texturesNorm != "":
+                tabWrite("[1.0 ") # Blurry reflection or not Proceed with user bump in either case...
+                tabWrite("uv_mapping bump_map " \
+                         "{%s \"%s\" %s  bump_size %.4g }%s]\n" % \
+                         (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
+                          ( - t_nor.normal_factor * 9.5), mappingNor))
+            # ...Then close the normal_map itself if blurry reflection
+            if mater.pov_raytrace_mirror.use and mater.pov_raytrace_mirror.gloss_factor < 1.0 and not using_uberpov:
+                tabWrite("}}\n")
+            else:
+                tabWrite("}\n")
         elif colored_specular_found:
             # Level 1 is no specular
             tabWrite("finish {%s}\n" % (safety(material_finish, Level=1)))
@@ -1166,11 +1225,36 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         mappingNor =imgMapTransforms(t_nor)
 
         if texturesNorm and texturesNorm.startswith("PAT_"):
-            tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor, mappingNor))
+            tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, ( - t_nor.normal_factor * 9.5), mappingNor))
         else:
-            tabWrite("normal {uv_mapping bump_map {%s \"%s\" %s  bump_size %.4g }%s}\n" % \
+            tabWrite("normal {\n")
+            # XXX TODO: fix and propagate the micro normals reflection blur below to non textured materials
+            if mater.pov_raytrace_mirror.use and mater.pov_raytrace_mirror.gloss_factor < 1.0 and not using_uberpov:
+                tabWrite("average\n")
+                tabWrite("normal_map{\n")
+                # 0.5 for entries below means a 50 percent mix
+                # between the micro normal and user bump map
+                # order seems indifferent as commutative
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(10/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.1]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.15]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.2]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.25]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.3]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.35]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.4]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.45]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[0.025 bumps %.4g scale 0.1*%.4g phase 0.5]\n" %((10/(mater.pov_raytrace_mirror.gloss_factor+0.01)),(1/(mater.pov_raytrace_mirror.gloss_samples+0.001)))) # micronormals blurring
+                tabWrite("[1.0 ") # Blurry reflection or not Proceed with user bump in either case...
+            tabWrite("uv_mapping bump_map " \
+                     "{%s \"%s\" %s  bump_size %.4g }%s]\n" % \
                      (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
-                      t_nor.normal_factor, mappingNor))
+                      ( - t_nor.normal_factor * 9.5), mappingNor))
+            # ...Then close the normal_map itself if blurry reflection
+            if mater.pov_raytrace_mirror.use and mater.pov_raytrace_mirror.gloss_factor < 1.0 and not using_uberpov:
+                tabWrite("}}\n")
+            else:
+                tabWrite("}\n")
     if texturesSpec != "" and mater.pov.replacement_text == "":
         tabWrite("]\n")
 
@@ -1201,12 +1285,12 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     # Write another layered texture using invisible diffuse and metallic trick
     # to emulate colored specular highlights
     special_texture_found = False
-    idx = -1
+    tmpidx = -1
     for t in mater.pov_texture_slots:
-        idx += 1
+        tmpidx += 1
         # index = mater.pov.active_texture_index
-        slot = mater.pov_texture_slots[idx] # [index]
-        povtex = slot.name
+        slot = mater.pov_texture_slots[tmpidx] # [index]
+        povtex = slot.texture # slot.name
         tex = bpy.data.textures[povtex]
         if(t and t.use and ((tex.type == 'IMAGE' and tex.image) or tex.type != 'IMAGE') and
            (t.use_map_specular or t.use_map_raymir)):
@@ -1240,7 +1324,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                 if image_filename:
                     if t.use_map_normal:
                         texturesNorm = image_filename
-                        # colvalue = t.normal_factor/10  # UNUSED
+                        # colvalue = t.normal_factor/10  # UNUSED   XXX *-9.5 !
                         #textNormName=tex.image.name + ".normal"
                         #was the above used? --MR
                         t_nor = t
@@ -1248,13 +1332,13 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                             tabWrite("normal{function" \
                                      "{f%s(x,y,z).grey} bump_size %.4g}\n" % \
                                      (texturesNorm,
-                                     t_nor.normal_factor))
+                                     ( - t_nor.normal_factor * 9.5)))
                         else:
                             tabWrite("normal {uv_mapping bump_map " \
                                      "{%s \"%s\" %s  bump_size %.4g }%s}\n" % \
                                      (imageFormat(texturesNorm),
                                      texturesNorm, imgMap(t_nor),
-                                     t_nor.normal_factor,
+                                     ( - t_nor.normal_factor * 9.5),
                                      mappingNor))
 
         tabWrite("}\n") # THEN IT CAN CLOSE LAST LAYER OF TEXTURE

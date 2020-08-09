@@ -996,7 +996,7 @@ class VIEW3D_MT_transform_base(Menu):
 
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
-            layout.operator_context = 'EXEC_DEFAULT'
+            layout.operator_context = 'EXEC_REGION_WIN'
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE').offset = 0.1
             layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -1834,7 +1834,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Vertices", icon = "SELECT_UNGROUPED_VERTS")
 
         layout.separator()
 
@@ -2085,7 +2085,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
+        layout.operator("lattice.select_ungrouped", text="Ungrouped Vertices", icon = "SELECT_UNGROUPED_VERTS")
 
         layout.separator()
 
@@ -2303,7 +2303,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
-        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
+        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Vertices", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_angle_control(Menu):
@@ -2420,7 +2420,7 @@ class VIEW3D_MT_edit_metaball_context_menu(Menu):
         layout.separator()
 
         # Remove
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("mball.delete_metaelems", text="Delete", icon = "DELETE")
 
 
@@ -2681,7 +2681,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
         myvar = layout.operator("object.delete", text="Delete", icon = "DELETE")
         myvar.use_global = False
         myvar.confirm = False
@@ -3143,7 +3143,7 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("object.delete", text="Delete", icon = "DELETE").use_global = False
 
 
@@ -3203,7 +3203,7 @@ class VIEW3D_MT_object_parent(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("object.parent_no_inverse_set", icon = "PARENT")
         layout.operator_context = operator_context_default
 
@@ -3309,7 +3309,7 @@ class VIEW3D_MT_make_single_user(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
 
         props = layout.operator("object.make_single_user", text="Object", icon='MAKE_SINGLE_USER')
         props.object = True
@@ -4673,7 +4673,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
         row = layout.row()
 
         if is_vert_mode:
-            col = row.column()
+            col = row.column(align=True)
 
             col.label(text="Vertex Context Menu", icon='VERTEXSEL')
             col.separator()
@@ -4698,7 +4698,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
             col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
-            col.operator_context = 'EXEC_DEFAULT'
+            col.operator_context = 'EXEC_REGION_WIN'
             col.operator("transform.vertex_random", text="Randomize Vertices", icon = 'RANDOMIZE')
             col.operator_context = 'INVOKE_REGION_WIN'
             col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
@@ -4721,7 +4721,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
         if is_edge_mode:
             render = context.scene.render
 
-            col = row.column()
+            col = row.column(align=True)
             col.label(text="Edge Context Menu", icon='EDGESEL')
             col.separator()
 
@@ -4781,7 +4781,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("mesh.delete", text="Delete Edges", icon = "DELETE").type = 'EDGE'
 
         if is_face_mode:
-            col = row.column()
+            col = row.column(align=True)
 
             col.label(text="Face Context Menu", icon='FACESEL')
             col.separator()
@@ -4918,7 +4918,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
         layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -5114,7 +5114,7 @@ class VIEW3D_MT_edit_mesh_normals_select_strength(Menu):
 
 
 class VIEW3D_MT_edit_mesh_normals_set_strength(Menu):
-    bl_label = "Select by Face Strength"
+    bl_label = "Set Face Strength"
 
     def draw(self, _context):
         layout = self.layout
@@ -5161,7 +5161,7 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout.operator("transform.rotate_normal", text="Rotate", icon = "NORMAL_ROTATE")
         layout.operator("mesh.point_normals", text="Point normals to target", icon = "NORMAL_TARGET")
 
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("mesh.merge_normals", text="Merge", icon = "MERGE")
         layout.operator("mesh.split_normals", text="Split", icon = "SPLIT")
         layout.menu("VIEW3D_MT_edit_mesh_normals_average", text="Average")
@@ -5175,8 +5175,8 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength", text="Select by Face Strength")
-        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength", text="Set Face Strength")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_select_strength", icon="HAND")
+        layout.menu("VIEW3D_MT_edit_mesh_normals_set_strength", icon="MESH_PLANE")
 
 
 class VIEW3D_MT_edit_mesh_shading(Menu):
@@ -5713,7 +5713,7 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.menu("VIEW3D_MT_edit_meta_showhide")
 
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("mball.delete_metaelems", text="Delete", icon = "DELETE")
 
 

@@ -171,7 +171,7 @@ void EEVEE_temporal_sampling_update_matrices(EEVEE_Data *vedata)
 
   double ht_point[2];
   double ht_offset[2] = {0.0, 0.0};
-  uint ht_primes[2] = {2, 3};
+  const uint ht_primes[2] = {2, 3};
 
   BLI_halton_2d(ht_primes, ht_offset, effects->taa_current_sample - 1, ht_point);
 
@@ -269,7 +269,14 @@ int EEVEE_temporal_sampling_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data
       }
     }
     else {
-      effects->bypass_drawing = true;
+      const bool all_shaders_compiled = stl->g_data->queued_shaders_count_prev == 0;
+      /* Fix Texture painting (see T79370) and shader compilation (see T78520). */
+      if (DRW_state_is_navigating() || !all_shaders_compiled) {
+        effects->taa_current_sample = 1;
+      }
+      else {
+        effects->bypass_drawing = true;
+      }
     }
 
     return repro_flag | EFFECT_TAA | EFFECT_DOUBLE_BUFFER | EFFECT_DEPTH_DOUBLE_BUFFER |

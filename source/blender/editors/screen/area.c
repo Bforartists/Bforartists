@@ -291,7 +291,7 @@ static void region_draw_azone_tab_arrow(ScrArea *area, ARegion *region, AZone *a
 
   /* Workaround for different color spaces between normal areas and the ones using GPUViewports. */
   float alpha = WM_region_use_viewport(area, region) ? 0.6f : 0.4f;
-  float color[4] = {0.05f, 0.05f, 0.05f, alpha};
+  const float color[4] = {0.05f, 0.05f, 0.05f, alpha};
   UI_draw_roundbox_aa(
       true, (float)az->x1, (float)az->y1, (float)az->x2, (float)az->y2, 4.0f, color);
 
@@ -2126,7 +2126,7 @@ void ED_area_newspace(bContext *C, ScrArea *area, int type, const bool skip_regi
     area->spacetype = type;
     area->type = st;
 
-    /* If st->new may be called, don't use context until then. The
+    /* If st->create may be called, don't use context until then. The
      * area->type->context() callback has changed but data may be invalid
      * (e.g. with properties editor) until space-data is properly created */
 
@@ -2166,7 +2166,7 @@ void ED_area_newspace(bContext *C, ScrArea *area, int type, const bool skip_regi
       if (st) {
         /* Don't get scene from context here which may depend on space-data. */
         Scene *scene = WM_window_get_active_scene(win);
-        sl = st->new (area, scene);
+        sl = st->create(area, scene);
         BLI_addhead(&area->spacedata, sl);
 
         /* swap regions */

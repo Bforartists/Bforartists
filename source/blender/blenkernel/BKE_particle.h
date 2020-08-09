@@ -20,8 +20,7 @@
  * Copyright 2011-2012 AutoCRC
  */
 
-#ifndef __BKE_PARTICLE_H__
-#define __BKE_PARTICLE_H__
+#pragma once
 
 /** \file
  * \ingroup bke
@@ -217,7 +216,7 @@ typedef struct ParticleCollision {
   /** Collision modifier for current object. */
   struct CollisionModifierData *md;
 
-  /** Time factor of previous collision, needed for substracting face velocity. */
+  /** Time factor of previous collision, needed for subtracting face velocity. */
   float f;
   float fac1, fac2;
 
@@ -631,5 +630,3 @@ extern void (*BKE_particle_batch_cache_free_cb)(struct ParticleSystem *psys);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __BKE_PARTICLE_H__ */

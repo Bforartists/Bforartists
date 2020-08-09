@@ -216,7 +216,7 @@ static int box_areasort(const void *p1, const void *p2)
   if (a1 < a2) {
     return 1;
   }
-  else if (a1 > a2) {
+  if (a1 > a2) {
     return -1;
   }
   return 0;
@@ -246,10 +246,10 @@ static int vertex_sort(const void *p1, const void *p2, void *vs_ctx_p)
   if (UNLIKELY(v1->free == 0 && v2->free == 0)) {
     return 0;
   }
-  else if (UNLIKELY(v1->free == 0)) {
+  if (UNLIKELY(v1->free == 0)) {
     return 1;
   }
-  else if (UNLIKELY(v2->free == 0)) {
+  if (UNLIKELY(v2->free == 0)) {
     return -1;
   }
 #endif
@@ -266,7 +266,7 @@ static int vertex_sort(const void *p1, const void *p2, void *vs_ctx_p)
   if (a1 > a2) {
     return 1;
   }
-  else if (a1 < a2) {
+  if (a1 < a2) {
     return -1;
   }
   return 0;
@@ -309,8 +309,8 @@ void BLI_box_pack_2d(BoxPack *boxarray, const uint len, float *r_tot_x, float *r
   qsort(boxarray, (size_t)len, sizeof(BoxPack), box_areasort);
 
   /* add verts to the boxes, these are only used internally  */
-  vert = MEM_mallocN((size_t)len * 4 * sizeof(BoxVert), "BoxPack Verts");
-  vertex_pack_indices = MEM_mallocN((size_t)len * 3 * sizeof(int), "BoxPack Indices");
+  vert = MEM_mallocN(sizeof(BoxVert[4]) * (size_t)len, "BoxPack Verts");
+  vertex_pack_indices = MEM_mallocN(sizeof(int[3]) * (size_t)len, "BoxPack Indices");
 
   vs_ctx.vertarray = vert;
 

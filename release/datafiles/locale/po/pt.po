@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
 "Last-Translator: Ivan Paulos Tomé <greylica@gmail.com>\n"
 "Language-Team: Ivan Paulos Tomé, Inês Almeida, João Brandão (ULISBOA), Paulo Martins <ivan.paulos.tome@yandex.com>\n"
@@ -14681,10 +14681,6 @@ msgid "Selected face count in editmode"
 msgstr "Contagem de faces selecionadas no modo de edição."
 
 
-msgid "Selected Vert Total"
-msgstr "Total de vértices selecionados"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Contagem de vértices selecionados no modo de edição."
 
@@ -15311,10 +15307,6 @@ msgstr "Ambos"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "Definições para o uso do objeto como um campo dentro da simulação física."
-
-
-msgid "Verts"
-msgstr "Vértices"
 
 
 msgid "Faces"
@@ -23046,16 +23038,8 @@ msgid "Original Coords"
 msgstr "Coordenadas originais"
 
 
-msgid "Use base mesh vert coords as the rest position"
-msgstr "Usa as coordenadas de base dos vértices da malha como a posição de descanso."
-
-
 msgid "Bind Coords"
 msgstr "Atrelamento de coordenadas"
-
-
-msgid "Use bind vert coords for rest position"
-msgstr "Usa o atrelamento das coordenadas dos vértices para a posição de descanso."
 
 
 msgid "Smooth Type"
@@ -25983,10 +25967,6 @@ msgstr "Mostrar ocultos"
 
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Inclui os canais a partir dos objetos ou ossos que não estão visíveis."
-
-
-msgid "Only Selected"
-msgstr "Somente selecionados"
 
 
 msgid "Dopesheet Sort Field"
@@ -34113,6 +34093,10 @@ msgid "Start frame for export"
 msgstr "Fotograma inicial para exportar."
 
 
+msgid "Only Selected"
+msgstr "Somente selecionados"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Exportar BVH"
@@ -35559,10 +35543,6 @@ msgstr "Aleatorização para lacunas"
 
 msgid "Custom Gap mode: Number of frames that gap lengths can vary"
 msgstr "Modo de lacunas personalizadas: O número de fotogramas que perfazem as lacunas pode variar em seu comprimento."
-
-
-msgid "Radius Fac"
-msgstr "Fator de raio"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -37808,14 +37788,6 @@ msgid "Segments for curved edge"
 msgstr "Segmentos para aresta curvada"
 
 
-msgid "Vertex Only"
-msgstr "Somente vértices"
-
-
-msgid "Bevel only vertices"
-msgstr "Chanfra somente nos vértices."
-
-
 msgctxt "Operator"
 msgid "Bisect"
 msgstr "Bi-seccionar"
@@ -38185,10 +38157,6 @@ msgid "Dissolve edges, merging faces"
 msgstr "Dissolve as arestas, fundindo as faces."
 
 
-msgid "Dissolve Verts"
-msgstr "Dissolver vértices"
-
-
 msgid "Dissolve remaining vertices"
 msgstr "Dissolve os vértices remanescentes."
 
@@ -38205,10 +38173,6 @@ msgstr "Dissolve as faces."
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Dissolução limitada"
-
-
-msgid "Dissolve selected edges and verts, limited by the angle of surrounding geometry"
-msgstr "Dissolve os vértices e arestas selecionadas, limitados pelo ângulo da geometria circundante."
 
 
 msgid "Delimit dissolve operation"
@@ -38230,10 +38194,6 @@ msgstr "Romper extremidades"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "Separa (dividindo) as junções (quinas) das faces ao invés de fazer uma fusão."
-
-
-msgid "Dissolve verts, merge edges and faces"
-msgstr "Dissolve os vértices, funde as arestas e faces."
 
 
 msgctxt "Operator"
@@ -42754,16 +42714,8 @@ msgid "Add Weights"
 msgstr "Adicionar pesos"
 
 
-msgid "Add verts from groups that have zero weight before inverting"
-msgstr "Adiciona vértices a partir dos grupos que possuem peso zero antes da inversão."
-
-
 msgid "Remove Weights"
 msgstr "Remover pesos"
-
-
-msgid "Remove verts from groups that have zero weight after inverting"
-msgstr "Remove os vértices dos grupos que possuem peso zero depois da inversão."
 
 
 msgctxt "Operator"
@@ -42914,10 +42866,6 @@ msgid "Remove from all groups"
 msgstr "Remove de todos os grupos."
 
 
-msgid "All Verts"
-msgstr "Todos os vértices"
-
-
 msgid "Clear the active group"
 msgstr "Limpa o grupo ativo."
 
@@ -43016,10 +42964,6 @@ msgstr "Normaliza os pesos de influência dos vértices ativos."
 msgctxt "Operator"
 msgid "Paste Weight to Selected"
 msgstr "Colar pesos para selecionados"
-
-
-msgid "Copy this group's weight to other selected verts (disabled if vertex group is locked)"
-msgstr "Copia este peso de grupo para outros vértices selecionados (desativado caso o grupo de vértices esteja bloqueado)."
 
 
 msgctxt "Operator"
@@ -44859,10 +44803,6 @@ msgstr "Redefine a localização, rotação, e escala dos ossos selecionados aos
 msgctxt "Operator"
 msgid "Clear User Transforms"
 msgstr "Limpar transformações do utilizador"
-
-
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "Redefine a pose nos ossos selecionados para o estado de fotogramas com chaves inseridas."
 
 
 msgid "Only visible/selected bones"
@@ -49802,20 +49742,12 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Aplica os modificadores para a malha exportada (não destrutivo)."
 
 
-msgid "Deform Bones only"
-msgstr "Somente ossos de deformação"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "Somente exportar os ossos que se deformam com as armações."
 
 
 msgid "Modifier resolution for export"
 msgstr "Resolução do modificador para exportar."
-
-
-msgid "Apply modifier's view settings"
-msgstr "Aplica as definições de visualização do modificador."
 
 
 msgid "Apply modifier's render settings"
@@ -50942,10 +50874,6 @@ msgid "URL to open"
 msgstr "A localização do tipo \"URL\" a ser aberta"
 
 
-msgid "UV Maps"
-msgstr "Mapas UV"
-
-
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Fechar janela"
@@ -51618,6 +51546,10 @@ msgstr "Esqueleto"
 
 msgid "Text Boxes"
 msgstr "Caixas de texto"
+
+
+msgid "UV Maps"
+msgstr "Mapas UV"
 
 
 msgid "Filters"
@@ -61642,10 +61574,6 @@ msgid "Edge Select"
 msgstr "Seleção de arestas"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "Vértices, arestas e faces - Ativos(as)"
-
-
 msgid "Face Dot Selected"
 msgstr "Ponto de face selecionado"
 
@@ -66074,56 +66002,12 @@ msgid "%d items"
 msgstr "%d itens"
 
 
-msgid "Manual Transform:"
-msgstr "Transformações manuais:"
-
-
-msgid "Scene Options:"
-msgstr "Opções para cenas:"
-
-
-msgid "Object Options:"
-msgstr "Opções para objetos:"
-
-
-msgid "Particle Systems:"
-msgstr "Sistemas de partículas:"
-
-
-msgid "Options:"
-msgstr "Opções:"
-
-
 msgid "No filename given"
 msgstr "Nome de ficheiro não fornecido."
 
 
 msgid "Unable to determine ABC sequence length"
 msgstr "Não é possível determinar o comprimento de sequência do ficheiro ABC (Alembic)."
-
-
-msgid "Texture Options:"
-msgstr "Opções de textura:"
-
-
-msgid "Export Data Options:"
-msgstr "Opções de exportação de dados:"
-
-
-msgid "Transformation Type"
-msgstr "Tipo de transformação"
-
-
-msgid "Armature Options:"
-msgstr "Opções para armação:"
-
-
-msgid "Collada Options:"
-msgstr "Opções COLLADA:"
-
-
-msgid "Import Data Options:"
-msgstr "Opções de importação de dados:"
 
 
 msgid "Can't create export file"
@@ -66185,6 +66069,10 @@ msgstr "Esfera UV"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Esfera icosaédrica"
+
+
+msgid "Seams"
+msgstr "Costuras"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -68455,10 +68343,6 @@ msgid "TODO: in what cases does this happen?"
 msgstr "PARA FAZER: em quais situações isto ocorre ?"
 
 
-msgid "Cannot reassign inputs: no cycles allowed"
-msgstr "Não é possível reatribuir as entradas: sem permissão a reciclagem."
-
-
 msgid "No valid inputs to swap"
 msgstr "Sem entradas válidas para trocar."
 
@@ -69175,10 +69059,6 @@ msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for tra
 msgstr "Usa o modo de transformação que moverá o tempo ao invés da movimentação dos itens para mover os fotogramas chave presentes no editor tabela de animação."
 
 
-msgid "Vert Slide: "
-msgstr "Deslizar vértices: "
-
-
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "Cria um parâmetro de orientação para \"uso\" é válido somente dentro de um contexto da janela de visualização 3D."
 
@@ -69255,10 +69135,6 @@ msgstr "Vértices UV"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "Limpar as costuras"
-
-
-msgid "Select linked only works in face select mode when sync selection is enabled"
-msgstr "A seleção de elementos vinculados somente funciona no modo de seleção de faces quando a sincronização da seleção está ativada."
 
 
 msgid "Cannot split selection when sync selection is enabled"

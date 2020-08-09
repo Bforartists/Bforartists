@@ -770,7 +770,7 @@ static void pointdensity_color(
 
 static void sample_dummy_point_density(int resolution, float *values)
 {
-  memset(values, 0, sizeof(float) * 4 * resolution * resolution * resolution);
+  memset(values, 0, sizeof(float[4]) * resolution * resolution * resolution);
 }
 
 static void particle_system_minmax(Depsgraph *depsgraph,
@@ -868,7 +868,7 @@ void RE_point_density_minmax(struct Depsgraph *depsgraph,
     particle_system_minmax(depsgraph, scene, object, psys, pd->radius, r_min, r_max);
   }
   else {
-    float radius[3] = {pd->radius, pd->radius, pd->radius};
+    const float radius[3] = {pd->radius, pd->radius, pd->radius};
     BoundBox *bb = BKE_object_boundbox_get(object);
 
     if (bb != NULL) {

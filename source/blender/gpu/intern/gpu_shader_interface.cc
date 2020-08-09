@@ -33,7 +33,7 @@
 #include "GPU_shader_interface.h"
 
 #include "gpu_batch_private.h"
-#include "gpu_context_private.h"
+#include "gpu_context_private.hh"
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -111,7 +111,7 @@ static const char *BuiltinUniformBlock_name(GPUUniformBlockBuiltin u)
 
 GPU_INLINE bool match(const char *a, const char *b)
 {
-  return strcmp(a, b) == 0;
+  return STREQ(a, b);
 }
 
 GPU_INLINE uint hash_string(const char *str)
@@ -157,13 +157,12 @@ GPU_INLINE const GPUShaderInput *input_lookup(const GPUShaderInterface *shaderfa
         }
         return NULL; /* not found */
       }
-      else {
-        /* This is a bit dangerous since we could have a hash collision.
-         * where the asked uniform that does not exist has the same hash
-         * as a real uniform. */
-        BLI_assert(match(name, shaderface->name_buffer + inputs[i].name_offset));
-        return inputs + i;
-      }
+
+      /* This is a bit dangerous since we could have a hash collision.
+       * where the asked uniform that does not exist has the same hash
+       * as a real uniform. */
+      BLI_assert(match(name, shaderface->name_buffer + inputs[i].name_offset));
+      return inputs + i;
     }
   }
   return NULL; /* not found */

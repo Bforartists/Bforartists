@@ -24,6 +24,10 @@ import os
 import sys
 import time
 from math import atan, pi, degrees, sqrt, cos, sin
+####################
+## Faster mesh export
+import numpy as np
+####################
 import re
 import random
 import platform  #
@@ -69,6 +73,7 @@ def imageFormat(imgF):
 def imgMap(ts):
     """Translate mapping type from Blender UI to POV syntax and return that string."""
     image_map = ""
+    texdata = bpy.data.textures[ts.texture]
     if ts.mapping == 'FLAT':
         image_map = "map_type 0 "
     elif ts.mapping == 'SPHERE':
@@ -82,9 +87,9 @@ def imgMap(ts):
     #    image_map = " map_type 3 "
     # elif ts.mapping=="?":
     #    image_map = " map_type 4 "
-    if ts.texture.use_interpolation:
+    if ts.use_interpolation: # Available if image sampling class reactivated?
         image_map += " interpolate 2 "
-    if ts.texture.extension == 'CLIP':
+    if texdata.extension == 'CLIP':
         image_map += " once "
     # image_map += "}"
     # if ts.mapping=='CUBE':
@@ -110,12 +115,12 @@ def imgMapTransforms(ts):
     image_map_transforms = (
         "scale <%.4g,%.4g,%.4g> translate <%.4g,%.4g,%.4g>"
         % (
-            1.0 / ts.scale.x,
-            1.0 / ts.scale.y,
-            1.0 / ts.scale.z,
-            0.5 - (0.5 / ts.scale.x) - (ts.offset.x),
-            0.5 - (0.5 / ts.scale.y) - (ts.offset.y),
-            ts.offset.z,
+            ts.scale[0],
+            ts.scale[1],
+            ts.scale[2],
+            ts.offset[0],
+            ts.offset[1],
+            ts.offset[2],
         )
     )
     # image_map_transforms = (" translate <-0.5,-0.5,0.0> scale <%.4g,%.4g,%.4g> translate <%.4g,%.4g,%.4g>" % \
@@ -137,6 +142,7 @@ def imgMapTransforms(ts):
 
 def imgMapBG(wts):
     """Translate world mapping from Blender UI to POV syntax and return that string."""
+    tex = bpy.data.textures[wts.texture]
     image_mapBG = ""
     # texture_coords refers to the mapping of world textures:
     if wts.texture_coords == 'VIEW' or wts.texture_coords == 'GLOBAL':
@@ -146,9 +152,9 @@ def imgMapBG(wts):
     elif wts.texture_coords == 'TUBE':
         image_mapBG = " map_type 2 "
 
-    if wts.texture.use_interpolation:
+    if tex.use_interpolation:
         image_mapBG += " interpolate 2 "
-    if wts.texture.extension == 'CLIP':
+    if tex.extension == 'CLIP':
         image_mapBG += " once "
     # image_mapBG += "}"
     # if wts.mapping == 'CUBE':
@@ -386,6 +392,7 @@ def write_object_modifiers(scene, ob, File):
 
 def write_pov(filename, scene=None, info_callback=None):
     """Main export process from Blender UI to POV syntax and write to exported file """
+
     import mathutils
 
     # file = filename
@@ -690,7 +697,7 @@ def write_pov(filename, scene=None, info_callback=None):
                 tabWrite("right <%s, 0, 0>\n" % -Qsize)
                 tabWrite("up <0, 1, 0>\n")
                 tabWrite(
-                    "angle  %f\n" % (360.0 * atan(16.0 / camera.data.lens) / pi)
+                    "angle  %f\n" % ( 2 * atan(camera.data.sensor_width / 2 / camera.data.lens) * 180.0 / pi )
                 )
 
             tabWrite(
@@ -737,6 +744,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
     def exportLamps(lamps):
         """Translate lights from Blender UI to POV syntax and write to exported file."""
+
         # Incremented after each lamp export to declare its target
         # currently used for Fresnel diffuse shader as their slope vector:
         global lampCount
@@ -2346,6 +2354,64 @@ def write_pov(filename, scene=None, info_callback=None):
 
     def exportMeshes(scene, sel, csg):
         """write all meshes as POV mesh2{} syntax to exported file """
+        #some numpy functions to speed up mesh export
+
+        # TODO: also write a numpy function to read matrices at object level?
+        # feed below with mesh object.data, but only after doing data.calc_loop_triangles()
+        def read_verts_co(self, mesh):
+            #'float64' would be a slower 64-bit floating-point number numpy datatype
+            # using 'float32' vert coordinates for now until any issue is reported
+            mverts_co = np.zeros((len(mesh.vertices)*3), dtype=np.float32)
+            mesh.vertices.foreach_get("co", mverts_co)
+            return np.reshape(mverts_co, (len(mesh.vertices), 3))
+
+        def read_verts_idx(self, mesh):
+            mverts_idx = np.zeros((len(mesh.vertices)), dtype=np.int64)
+            mesh.vertices.foreach_get("index", mverts_idx)
+            return np.reshape(mverts_idx, (len(mesh.vertices), 1))
+
+        def read_verts_norms(self, mesh):
+            #'float64' would be a slower 64-bit floating-point number numpy datatype
+            # using less accurate 'float16' normals for now until any issue is reported
+            mverts_no = np.zeros((len(mesh.vertices)*3), dtype=np.float16)
+            mesh.vertices.foreach_get("normal", mverts_no)
+            return np.reshape(mverts_no, (len(mesh.vertices), 3))
+
+        def read_faces_idx(self, mesh):
+            mfaces_idx = np.zeros((len(mesh.loop_triangles)), dtype=np.int64)
+            mesh.loop_triangles.foreach_get("index", mfaces_idx)
+            return np.reshape(mfaces_idx, (len(mesh.loop_triangles), 1))
+
+        def read_faces_verts_indices(self, mesh):
+            mfaces_verts_idx = np.zeros((len(mesh.loop_triangles)*3), dtype=np.int64)
+            mesh.loop_triangles.foreach_get("vertices", mfaces_verts_idx)
+            return np.reshape(mfaces_verts_idx, (len(mesh.loop_triangles), 3))
+
+        #Why is below different from verex indices?
+        def read_faces_verts_loops(self, mesh):
+            mfaces_verts_loops = np.zeros((len(mesh.loop_triangles)*3), dtype=np.int64)
+            mesh.loop_triangles.foreach_get("loops", mfaces_verts_loops)
+            return np.reshape(mfaces_verts_loops, (len(mesh.loop_triangles), 3))
+
+        def read_faces_norms(self, mesh):
+            #'float64' would be a slower 64-bit floating-point number numpy datatype
+            # using less accurate 'float16' normals for now until any issue is reported
+            mfaces_no = np.zeros((len(mesh.loop_triangles)*3), dtype=np.float16)
+            mesh.loop_triangles.foreach_get("normal", mfaces_no)
+            return np.reshape(mfaces_no, (len(mesh.loop_triangles), 3))
+
+        def read_faces_smooth(self, mesh):
+            mfaces_smth = np.zeros((len(mesh.loop_triangles)*1), dtype=np.bool)
+            mesh.loop_triangles.foreach_get("use_smooth", mfaces_smth)
+            return np.reshape(mfaces_smth, (len(mesh.loop_triangles), 1))
+
+        def read_faces_material_indices(self, mesh):
+            mfaces_mats_idx = np.zeros((len(mesh.loop_triangles)), dtype=np.int16)
+            mesh.loop_triangles.foreach_get("material_index", mfaces_mats_idx)
+            return np.reshape(mfaces_mats_idx, (len(mesh.loop_triangles), 1))
+
+
+
         #        obmatslist = []
         #        def hasUniqueMaterial():
         #            # Grab materials attached to object instances ...
@@ -2684,6 +2750,7 @@ def write_pov(filename, scene=None, info_callback=None):
                                         pmaterial = ob.material_slots[
                                             pSys.settings.material - 1
                                         ].material
+                                        #XXX Todo: replace by pov_(Particles?)_texture_slot
                                         for th in pmaterial.texture_slots:
                                             if th and th.use:
                                                 if (
@@ -3411,6 +3478,8 @@ def write_pov(filename, scene=None, info_callback=None):
                                 ob.pov.v_max,
                             )
                         )
+                        # Previous to 3.8 default max_gradient 1.0 was too slow
+                        tabWrite("max_gradient 0.001\n")
                         if ob.pov.contained_by == "sphere":
                             tabWrite("contained_by { sphere{0, 2} }\n")
                         else:
@@ -3593,6 +3662,14 @@ def write_pov(filename, scene=None, info_callback=None):
                             me.calc_loop_triangles()
                             me_materials = me.materials
                             me_faces = me.loop_triangles[:]
+                            ## numpytest
+                            #me_looptris = me.loops
+
+                            ## otypes = ['int32'] is a 32-bit signed integer number numpy datatype
+                            #get_v_index = np.vectorize(lambda l: l.vertex_index, otypes = ['int32'], cache = True)
+                            #faces_verts_idx = get_v_index(me_looptris)
+
+
                         # if len(me_faces)==0:
                         # tabWrite("\n//dummy sphere to represent empty mesh location\n")
                         # tabWrite("#declare %s =sphere {<0, 0, 0>,0 pigment{rgbt 1} no_image no_reflection no_radiosity photons{pass_through collect off} hollow}\n" % povdataname)
@@ -4092,6 +4169,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
                                         else:
                                             shading.writeTextureInfluence(
+                                                using_uberpov,
                                                 mater,
                                                 materialNames,
                                                 LocalMaterialNames,
@@ -4581,89 +4659,91 @@ def write_pov(filename, scene=None, info_callback=None):
             for (
                 t
             ) in (
-                world.texture_slots
+                world.pov_texture_slots
             ):  # risk to write several sky_spheres but maybe ok.
-                if t and t.texture.type is not None:
+                if t:
+                    tex = bpy.data.textures[t.texture]
+                if tex.type is not None:
                     worldTexCount += 1
-                # XXX No enable checkbox for world textures yet (report it?)
-                # if t and t.texture.type == 'IMAGE' and t.use:
-                if t and t.texture.type == 'IMAGE':
-                    image_filename = path_image(t.texture.image)
-                    if t.texture.image.filepath != image_filename:
-                        t.texture.image.filepath = image_filename
-                    if image_filename != "" and t.use_map_blend:
-                        texturesBlend = image_filename
-                        # colvalue = t.default_value
-                        t_blend = t
+                    # XXX No enable checkbox for world textures yet (report it?)
+                    # if t and tex.type == 'IMAGE' and t.use:
+                    if tex.type == 'IMAGE':
+                        image_filename = path_image(tex.image)
+                        if tex.image.filepath != image_filename:
+                            tex.image.filepath = image_filename
+                        if image_filename != "" and t.use_map_blend:
+                            texturesBlend = image_filename
+                            # colvalue = t.default_value
+                            t_blend = t
 
-                    # Commented below was an idea to make the Background image oriented as camera
-                    # taken here:
-                    # http://news.pov.org/pov.newusers/thread/%3Cweb.4a5cddf4e9c9822ba2f93e20@news.pov.org%3E/
-                    # Replace 4/3 by the ratio of each image found by some custom or existing
-                    # function
-                    # mappingBlend = (" translate <%.4g,%.4g,%.4g> rotate z*degrees" \
-                    #                "(atan((camLocation - camLookAt).x/(camLocation - " \
-                    #                "camLookAt).y)) rotate x*degrees(atan((camLocation - " \
-                    #                "camLookAt).y/(camLocation - camLookAt).z)) rotate y*" \
-                    #                "degrees(atan((camLocation - camLookAt).z/(camLocation - " \
-                    #                "camLookAt).x)) scale <%.4g,%.4g,%.4g>b" % \
-                    #                (t_blend.offset.x / 10 , t_blend.offset.y / 10 ,
-                    #                 t_blend.offset.z / 10, t_blend.scale.x ,
-                    #                 t_blend.scale.y , t_blend.scale.z))
-                    # using camera rotation valuesdirectly from blender seems much easier
-                    if t_blend.texture_coords == 'ANGMAP':
-                        mappingBlend = ""
-                    else:
-                        # POV-Ray "scale" is not a number of repetitions factor, but its
-                        # inverse, a standard scale factor.
-                        # 0.5 Offset is needed relatively to scale because center of the
-                        # UV scale is 0.5,0.5 in blender and 0,0 in POV
-                        # Further Scale by 2 and translate by -1 are
-                        # required for the sky_sphere not to repeat
+                        # Commented below was an idea to make the Background image oriented as camera
+                        # taken here:
+                        # http://news.pov.org/pov.newusers/thread/%3Cweb.4a5cddf4e9c9822ba2f93e20@news.pov.org%3E/
+                        # Replace 4/3 by the ratio of each image found by some custom or existing
+                        # function
+                        # mappingBlend = (" translate <%.4g,%.4g,%.4g> rotate z*degrees" \
+                        #                "(atan((camLocation - camLookAt).x/(camLocation - " \
+                        #                "camLookAt).y)) rotate x*degrees(atan((camLocation - " \
+                        #                "camLookAt).y/(camLocation - camLookAt).z)) rotate y*" \
+                        #                "degrees(atan((camLocation - camLookAt).z/(camLocation - " \
+                        #                "camLookAt).x)) scale <%.4g,%.4g,%.4g>b" % \
+                        #                (t_blend.offset.x / 10 , t_blend.offset.y / 10 ,
+                        #                 t_blend.offset.z / 10, t_blend.scale.x ,
+                        #                 t_blend.scale.y , t_blend.scale.z))
+                        # using camera rotation valuesdirectly from blender seems much easier
+                        if t_blend.texture_coords == 'ANGMAP':
+                            mappingBlend = ""
+                        else:
+                            # POV-Ray "scale" is not a number of repetitions factor, but its
+                            # inverse, a standard scale factor.
+                            # 0.5 Offset is needed relatively to scale because center of the
+                            # UV scale is 0.5,0.5 in blender and 0,0 in POV
+                            # Further Scale by 2 and translate by -1 are
+                            # required for the sky_sphere not to repeat
 
-                        mappingBlend = (
-                            "scale 2 scale <%.4g,%.4g,%.4g> translate -1 "
-                            "translate <%.4g,%.4g,%.4g> rotate<0,0,0> "
+                            mappingBlend = (
+                                "scale 2 scale <%.4g,%.4g,%.4g> translate -1 "
+                                "translate <%.4g,%.4g,%.4g> rotate<0,0,0> "
+                                % (
+                                    (1.0 / t_blend.scale.x),
+                                    (1.0 / t_blend.scale.y),
+                                    (1.0 / t_blend.scale.z),
+                                    0.5
+                                    - (0.5 / t_blend.scale.x)
+                                    - t_blend.offset.x,
+                                    0.5
+                                    - (0.5 / t_blend.scale.y)
+                                    - t_blend.offset.y,
+                                    t_blend.offset.z,
+                                )
+                            )
+
+                            # The initial position and rotation of the pov camera is probably creating
+                            # the rotation offset should look into it someday but at least background
+                            # won't rotate with the camera now.
+                        # Putting the map on a plane would not introduce the skysphere distortion and
+                        # allow for better image scale matching but also some waay to chose depth and
+                        # size of the plane relative to camera.
+                        tabWrite("sky_sphere {\n")
+                        tabWrite("pigment {\n")
+                        tabWrite(
+                            "image_map{%s \"%s\" %s}\n"
                             % (
-                                (1.0 / t_blend.scale.x),
-                                (1.0 / t_blend.scale.y),
-                                (1.0 / t_blend.scale.z),
-                                0.5
-                                - (0.5 / t_blend.scale.x)
-                                - t_blend.offset.x,
-                                0.5
-                                - (0.5 / t_blend.scale.y)
-                                - t_blend.offset.y,
-                                t_blend.offset.z,
+                                imageFormat(texturesBlend),
+                                texturesBlend,
+                                imgMapBG(t_blend),
                             )
                         )
-
-                        # The initial position and rotation of the pov camera is probably creating
-                        # the rotation offset should look into it someday but at least background
-                        # won't rotate with the camera now.
-                    # Putting the map on a plane would not introduce the skysphere distortion and
-                    # allow for better image scale matching but also some waay to chose depth and
-                    # size of the plane relative to camera.
-                    tabWrite("sky_sphere {\n")
-                    tabWrite("pigment {\n")
-                    tabWrite(
-                        "image_map{%s \"%s\" %s}\n"
-                        % (
-                            imageFormat(texturesBlend),
-                            texturesBlend,
-                            imgMapBG(t_blend),
+                        tabWrite("}\n")
+                        tabWrite("%s\n" % (mappingBlend))
+                        # The following layered pigment opacifies to black over the texture for
+                        # transmit below 1 or otherwise adds to itself
+                        tabWrite(
+                            "pigment {rgb 0 transmit %s}\n" % (tex.intensity)
                         )
-                    )
-                    tabWrite("}\n")
-                    tabWrite("%s\n" % (mappingBlend))
-                    # The following layered pigment opacifies to black over the texture for
-                    # transmit below 1 or otherwise adds to itself
-                    tabWrite(
-                        "pigment {rgb 0 transmit %s}\n" % (t.texture.intensity)
-                    )
-                    tabWrite("}\n")
-                    # tabWrite("scale 2\n")
-                    # tabWrite("translate -1\n")
+                        tabWrite("}\n")
+                        # tabWrite("scale 2\n")
+                        # tabWrite("translate -1\n")
 
             # For only Background gradient
 
@@ -4910,7 +4990,8 @@ def write_pov(filename, scene=None, info_callback=None):
             "//--Exported with POV-Ray exporter for Blender--\n"
             "//----------------------------------------------\n\n"
         )
-    file.write("#version 3.7;\n")
+    file.write("#version 3.7;\n")    #Switch below as soon as 3.8 beta gets easy linked
+    #file.write("#version 3.8;\n")
     file.write(
         "#declare Default_texture = texture{pigment {rgb 0.8} "
         "finish {brilliance 3.8} }\n\n"
@@ -5066,7 +5147,11 @@ def write_pov(filename, scene=None, info_callback=None):
     if comments:
         file.write("//--Mesh objects--\n")
 
+
+    #tbefore = time.time()
     exportMeshes(scene, sel, csg)
+    #totime = time.time() - tbefore
+    #print("exportMeshes took" + str(totime))
 
     # What follow used to happen here:
     # exportCamera()
@@ -5097,7 +5182,7 @@ def write_pov_ini(
     y = int(render.resolution_y * render.resolution_percentage * 0.01)
 
     file = open(filename_ini, "w")
-    file.write("Version=3.7\n")
+    file.write("Version=3.8\n")
     # write povray text stream to temporary file of same name with _log suffix
     # file.write("All_File='%s'\n" % filename_log)
     # DEBUG.OUT log if none specified:
@@ -5797,15 +5882,106 @@ class PovrayRender(bpy.types.RenderEngine):
 
             # print(filename_log) #bring the pov log to blender console with proper path?
             with open(
-                self._temp_file_log
+                self._temp_file_log,
+                encoding='utf-8'
             ) as f:  # The with keyword automatically closes the file when you are done
-                print(f.read())
+                msg = f.read()
+                #if isinstance(msg, str):
+                    #stdmsg = msg
+                    #decoded = False
+                #else:
+                    #if type(msg) == bytes:
+                #stdmsg = msg.split('\n')
+                #stdmsg = msg.encode('utf-8', "replace")
+                #stdmsg = msg.encode("utf-8", "replace")
+
+                #stdmsg = msg.decode(encoding)
+                    #decoded = True
+                #msg.encode('utf-8').decode('utf-8')
+                print(msg)
+                # Also print to the interactive console used in POV centric workspace
+                # To do: get a grip on new line encoding
+                # and make this a function to be used elsewhere
+                for win in bpy.context.window_manager.windows:
+                    if win.screen != None:
+                        scr = win.screen
+                        for area in scr.areas:
+                            if area.type == 'CONSOLE':
+                                #context override
+                                #ctx = {'window': win, 'screen': scr, 'area':area}#bpy.context.copy()
+                                ctx = {}
+                                ctx['area'] = area
+                                ctx['region'] = area.regions[-1]
+                                ctx['space_data'] = area.spaces.active
+                                ctx['screen'] = scr#C.screen
+                                ctx['window'] = win
+
+                                #bpy.ops.console.banner(ctx, text = "Hello world")
+                                bpy.ops.console.clear_line(ctx)
+                                stdmsg = msg.split('\n') #XXX todo , test and see
+                                for i in stdmsg:
+                                    bpy.ops.console.insert(ctx, text = i)
 
             self.update_stats("", "")
 
             if scene.pov.tempfiles_enable or scene.pov.deletefiles_enable:
                 self._cleanup()
 
+            sound_on = bpy.context.preferences.addons[
+                __package__
+            ].preferences.use_sounds
+
+            if sys.platform[:3] == "win" and sound_on:
+                # Could not find tts Windows command so playing beeps instead :-)
+                # "Korobeiniki"(Коробе́йники)
+                # aka "A-Type" Tetris theme
+                import winsound
+                winsound.Beep(494,250) #B
+                winsound.Beep(370,125) #F
+                winsound.Beep(392,125) #G
+                winsound.Beep(440,250) #A
+                winsound.Beep(392,125) #G
+                winsound.Beep(370,125) #F#
+                winsound.Beep(330,275) #E
+                winsound.Beep(330,125) #E
+                winsound.Beep(392,125) #G
+                winsound.Beep(494,275) #B
+                winsound.Beep(440,125) #A
+                winsound.Beep(392,125) #G
+                winsound.Beep(370,275) #F
+                winsound.Beep(370,125) #F
+                winsound.Beep(392,125) #G
+                winsound.Beep(440,250) #A
+                winsound.Beep(494,250) #B
+                winsound.Beep(392,250) #G
+                winsound.Beep(330,350) #E
+                time.sleep(0.5)
+                winsound.Beep(440,250) #A
+                winsound.Beep(440,150) #A
+                winsound.Beep(523,125) #D8
+                winsound.Beep(659,250) #E8
+                winsound.Beep(587,125) #D8
+                winsound.Beep(523,125) #C8
+                winsound.Beep(494,250) #B
+                winsound.Beep(494,125) #B
+                winsound.Beep(392,125) #G
+                winsound.Beep(494,250) #B
+                winsound.Beep(440,150) #A
+                winsound.Beep(392,125) #G
+                winsound.Beep(370,250) #F#
+                winsound.Beep(370,125) #F#
+                winsound.Beep(392,125) #G
+                winsound.Beep(440,250) #A
+                winsound.Beep(494,250) #B
+                winsound.Beep(392,250) #G
+                winsound.Beep(330,300) #E
+
+            #Does Linux support say command?
+            elif sys.platform[:3] != "win" :
+                finished_render_message = "\'Render completed\'"
+                # We don't want the say command to block Python,
+                # so we add an ampersand after the message
+                os.system("say %s &" % (finished_render_message))
 
 ##################################################################################
 #################################Operators########################################
@@ -5833,7 +6009,7 @@ class RenderPovTexturePreview(Operator):
         outputPrevFile = os.path.join(preview_dir, texPrevName)
         ##################### ini ##########################################
         fileIni = open("%s" % iniPrevFile, "w")
-        fileIni.write('Version=3.7\n')
+        fileIni.write('Version=3.8\n')
         fileIni.write('Input_File_Name="%s"\n' % inputPrevFile)
         fileIni.write('Output_File_Name="%s.png"\n' % outputPrevFile)
         fileIni.write('Library_Path="%s"\n' % preview_dir)

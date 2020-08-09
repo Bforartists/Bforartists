@@ -72,7 +72,7 @@ void multires_reshape_apply_base_update_mesh_coords(MultiresReshapeContext *resh
 
 /* Assumes no is normalized; return value's sign is negative if v is on the other side of the
  * plane. */
-static float v3_dist_from_plane(float v[3], float center[3], float no[3])
+static float v3_dist_from_plane(const float v[3], const float center[3], const float no[3])
 {
   float s[3];
   sub_v3_v3v3(s, v, center);
@@ -99,7 +99,7 @@ void multires_reshape_apply_base_refit_base_mesh(MultiresReshapeContext *reshape
                                 base_mesh->totloop);
 
   float(*origco)[3] = MEM_calloc_arrayN(
-      base_mesh->totvert, 3 * sizeof(float), "multires apply base origco");
+      base_mesh->totvert, sizeof(float[3]), "multires apply base origco");
   for (int i = 0; i < base_mesh->totvert; i++) {
     copy_v3_v3(origco[i], base_mesh->mvert[i].co);
   }
@@ -140,7 +140,7 @@ void multires_reshape_apply_base_refit_base_mesh(MultiresReshapeContext *reshape
       fake_poly.totloop = p->totloop;
       fake_poly.loopstart = 0;
       fake_loops = MEM_malloc_arrayN(p->totloop, sizeof(MLoop), "fake_loops");
-      fake_co = MEM_malloc_arrayN(p->totloop, 3 * sizeof(float), "fake_co");
+      fake_co = MEM_malloc_arrayN(p->totloop, sizeof(float[3]), "fake_co");
 
       for (int k = 0; k < p->totloop; k++) {
         const int vndx = base_mesh->mloop[p->loopstart + k].v;

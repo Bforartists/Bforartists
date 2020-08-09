@@ -11,13 +11,13 @@ def ApplyOverrides(dummy):
     global obDict
 
     for override in bpy.context.scene.ovlist:
-        
+
         # set collections clean name
-        collClean = override.colloverride   
+        collClean = override.colloverride
         obClean = override.oboverride
-        
-        
-        
+
+
+
         if collClean != None:
             for ob in collClean.all_objects:
                 if ob.type == "MESH": #si es un mesh
@@ -28,22 +28,22 @@ def ApplyOverrides(dummy):
                             for iob in ob.instance_collection.all_objects:
                                 if iob.type == "MESH":
                                     if not iob.hide_viewport and not iob.hide_render:
-                                        obDict.append([iob,[mat for mat in iob.data.materials]])                  
+                                        obDict.append([iob,[mat for mat in iob.data.materials]])
         else:
-            obDict.append([obClean,[mat for mat in obClean.data.materials]])    
-            
-            
+            obDict.append([obClean,[mat for mat in obClean.data.materials]])
+
+
     for override in bpy.context.scene.ovlist:
-        
+
         # set collections clean name
-        collClean = override.colloverride          
-        # set material clean name    
-        matClean = override.matoverride   
-        # set objeto clean name  
-        obClean = override.oboverride   
-        
+        collClean = override.colloverride
+        # set material clean name
+        matClean = override.matoverride
+        # set objeto clean name
+        obClean = override.oboverride
+
         print(matClean)
-            
+
         if collClean != None:
             for ob in collClean.all_objects:
                 if ob.type == "MESH":
@@ -56,12 +56,12 @@ def ApplyOverrides(dummy):
                                 if iob.type == "MESH":
                                     if not iob.hide_viewport and not iob.hide_render:
                                         for i,mat  in enumerate(iob.data.materials):
-                                            iob.data.materials[i] = matClean    
+                                            iob.data.materials[i] = matClean
         else:
             if obClean.type == "MESH":
-                if not obClean.hide_viewport and not obClean.hide_render:  
-                      for i,mat  in enumerate(obClean.data.materials):   
-                             obClean.data.materials[i] = matClean                                                
+                if not obClean.hide_viewport and not obClean.hide_render:
+                      for i,mat  in enumerate(obClean.data.materials):
+                             obClean.data.materials[i] = matClean
 
 
 @persistent
@@ -79,22 +79,22 @@ def RestoreOverrides(dummy):
 
 
 
-class OscOverridesProp(bpy.types.PropertyGroup):    
+class OscOverridesProp(bpy.types.PropertyGroup):
     colloverride: bpy.props.PointerProperty(
                 name="Collection Override",
                 type=bpy.types.Collection,
                 description="All objects in this collection will be override",
-                )  
+                )
     oboverride: bpy.props.PointerProperty(
                 name="Object Override",
                 type=bpy.types.Object,
                 description="Only this object will be override.",
-                )                  
+                )
     matoverride: bpy.props.PointerProperty(
                 name="Material Override",
                 type=bpy.types.Material,
                 description="Material for override objects",
-                )                  
+                )
 
 bpy.utils.register_class(OscOverridesProp)
 bpy.types.Scene.ovlist = bpy.props.CollectionProperty(type=OscOverridesProp)
@@ -118,9 +118,9 @@ class OVERRIDES_PT_OscOverridesGUI(bpy.types.Panel):
         col.operator("render.overrides_transfer")
         for i, m in enumerate(bpy.context.scene.ovlist):
             colrow = col.row(align=1)
-            colrow.prop(m, "colloverride", text="")  
-            colrow.prop(m, "oboverride", text="") 
-            colrow.prop(m, "matoverride", text="")                      
+            colrow.prop(m, "colloverride", text="")
+            colrow.prop(m, "oboverride", text="")
+            colrow.prop(m, "matoverride", text="")
             if i != len(bpy.context.scene.ovlist) - 1:
                 pa = colrow.operator(
                     "ovlist.move_down",

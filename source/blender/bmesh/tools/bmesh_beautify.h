@@ -14,15 +14,17 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef __BMESH_BEAUTIFY_H__
-#define __BMESH_BEAUTIFY_H__
+#pragma once
 
 /** \file
  * \ingroup bmesh
  */
 
 enum {
+  /** Vertices tags must match (special case). */
   VERT_RESTRICT_TAG = (1 << 0),
+  /** Don't rotate out of degenerate state (needed for iterative rotation). */
+  EDGE_RESTRICT_DEGENERATE = (1 << 1),
 };
 
 void BM_mesh_beautify_fill(BMesh *bm,
@@ -39,5 +41,3 @@ float BM_verts_calc_rotate_beauty(const BMVert *v1,
                                   const BMVert *v4,
                                   const short flag,
                                   const short method);
-
-#endif /* __BMESH_BEAUTIFY_H__ */

@@ -50,13 +50,13 @@ from bpy.props import (
 # Note: bones are stored by name, this means that if the bone is renamed,
 # there can be problems. However, bone renaming is unlikely during animation.
 class SelectionEntry(PropertyGroup):
-    name: StringProperty(name="Bone Name")
+    name: StringProperty(name="Bone Name", override={'LIBRARY_OVERRIDABLE'})
 
 
 class SelectionSet(PropertyGroup):
-    name: StringProperty(name="Set Name")
-    bone_ids: CollectionProperty(type=SelectionEntry)
-    is_selected: BoolProperty(name="Is Selected")
+    name: StringProperty(name="Set Name", override={'LIBRARY_OVERRIDABLE'})
+    bone_ids: CollectionProperty(type=SelectionEntry, override={'LIBRARY_OVERRIDABLE'})
+    is_selected: BoolProperty(name="Is Selected", override={'LIBRARY_OVERRIDABLE'})
 
 
 # UI Panel w/ UIList ##########################################################
@@ -545,12 +545,14 @@ def register():
     bpy.types.Object.selection_sets = CollectionProperty(
         type=SelectionSet,
         name="Selection Sets",
-        description="List of groups of bones for easy selection"
+        description="List of groups of bones for easy selection",
+        override={'LIBRARY_OVERRIDABLE'}
     )
     bpy.types.Object.active_selection_set = IntProperty(
         name="Active Selection Set",
         description="Index of the currently active selection set",
-        default=0
+        default=0,
+        override={'LIBRARY_OVERRIDABLE'}
     )
 
     # Add shortcuts to the keymap.

@@ -382,7 +382,7 @@ class BoneUtilityMixin(object):
     def new_bone(self, new_name):
         """Create a new bone with the specified name."""
         name = new_bone(self.obj, new_name)
-        self.register_new_bone(self, name)
+        self.register_new_bone(name)
         return name
 
     def copy_bone(self, bone_name, new_name='', *, parent=False, bbone=False, length=None, scale=None):

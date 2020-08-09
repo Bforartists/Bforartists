@@ -20,8 +20,7 @@
  * \ingroup draw
  */
 
-#ifndef __DRAW_CACHE_INLINE_H__
-#define __DRAW_CACHE_INLINE_H__
+#pragma once
 
 #include "GPU_batch.h"
 #include "MEM_guardedalloc.h"
@@ -49,7 +48,7 @@ BLI_INLINE GPUBatch *DRW_batch_request(GPUBatch **batch)
 {
   /* XXX TODO(fclem): We are writing to batch cache here. Need to make this thread safe. */
   if (*batch == NULL) {
-    *batch = MEM_callocN(sizeof(GPUBatch), "GPUBatch");
+    *batch = GPU_batch_calloc(1);
   }
   return *batch;
 }
@@ -110,5 +109,3 @@ BLI_INLINE bool DRW_vbo_requested(GPUVertBuf *vbo)
 {
   return (vbo != NULL && vbo->format.attr_len == 0);
 }
-
-#endif /* __DRAW_CACHE_INLINE_H__ */

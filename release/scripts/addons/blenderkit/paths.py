@@ -75,6 +75,9 @@ def get_api_url():
 def get_oauth_landing_url():
     return get_bkit_url() + BLENDERKIT_OAUTH_LANDING_URL
 
+def get_author_gallery_url(author_id):
+    return f'{get_bkit_url()}/asset-gallery?query=author_id:{author_id}'
+
 
 def default_global_dict():
     from os.path import expanduser

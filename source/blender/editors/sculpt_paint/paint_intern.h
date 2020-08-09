@@ -21,8 +21,7 @@
  * \ingroup edsculpt
  */
 
-#ifndef __PAINT_INTERN_H__
-#define __PAINT_INTERN_H__
+#pragma once
 
 struct ARegion;
 struct Brush;
@@ -341,6 +340,7 @@ typedef enum {
 
 void PAINT_OT_mask_flood_fill(struct wmOperatorType *ot);
 void PAINT_OT_mask_lasso_gesture(struct wmOperatorType *ot);
+void PAINT_OT_mask_box_gesture(struct wmOperatorType *ot);
 
 /* paint_curve.c */
 void PAINTCURVE_OT_new(struct wmOperatorType *ot);
@@ -366,5 +366,3 @@ void paint_delete_blur_kernel(BlurKernel *);
 
 /* paint curve defines */
 #define PAINT_CURVE_NUM_SEGMENTS 40
-
-#endif /* __PAINT_INTERN_H__ */

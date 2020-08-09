@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -3445,10 +3445,6 @@ msgstr "Жаңы"
 msgctxt "FreestyleLineStyle"
 msgid "New"
 msgstr "Жаңы"
-
-
-msgid "Options:"
-msgstr "Опциялар:"
 
 
 msgctxt "Mesh"

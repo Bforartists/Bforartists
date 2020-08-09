@@ -173,19 +173,19 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
         if(udim_textures == False):
             for slot_index, texture_info in enumerate(texturelist):
 
-                uv_MODE_mat = 'MAT' 
+                uv_MODE_mat = 'MAT'
                 for index, layer in enumerate(objekti.data.uv_layers):
                     if(layer.name == texturelist[slot_index][0]):
                         uv_MODE_mat = 'UV'
                         break
-                
+
                 print('aaa')
                 print(texture_info[0])
                 print(index_mat)
                 if(texture_info[0] == index_mat.name):
                     if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
                         if(index_mat.material.coat3D_diffuse):
-                            
+
                             texcoat['color'].append(texture_info[3])
                             create_nodes = True
                         else:
@@ -248,7 +248,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                             os.remove(texture_info[3])
 
                     create_group_node = True
-              
+
         else:
             for texture_info in texturelist:
 
@@ -282,7 +282,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                     texcoat['alpha'].append([texture_info[0], texture_info[3]])
                     create_nodes = True
                 create_group_node = True
-     
+
         if(create_nodes):
             coat3D = bpy.context.scene.coat3D
             path3b_n = coat3D.exchangedir
@@ -311,7 +311,7 @@ def createnodes(active_mat,texcoat, create_group_node, tile_list, objekti, ind, 
 
     if(coatMat.use_nodes == False):
         coatMat.use_nodes = True
-        
+
     act_material = coatMat.node_tree
     main_material = coatMat.node_tree
     applink_group_node = False
@@ -596,7 +596,7 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
     else:
         node = act_material.nodes.new('ShaderNodeTexImage')
         uv_node = act_material.nodes.new('ShaderNodeUVMap')
-    
+
         uv_node.uv_map = objekti.data.uv_layers[0].name
         act_material.links.new(uv_node.outputs[0], node.inputs[0])
         uv_node.use_custom_color = True
@@ -646,7 +646,7 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
 
         if (load_image):
             node.image = bpy.data.images.load(texcoat[type['name']][0])
-        
+
         if node.image and type['colorspace'] == 'noncolor':
             node.image.colorspace_settings.is_data = True
 
@@ -788,7 +788,7 @@ def createExtraNodes(act_material, node, type, notegroup):
         curvenode.location = -900, -1250
         rampnode.location = -600, -1200
         huenode.location = -300, -1200
-    
+
     if(type['name'] == 'color'):
         node_vertex = act_material.nodes.new('ShaderNodeVertexColor')
         node_mixRGB = act_material.nodes.new('ShaderNodeMixRGB')
@@ -804,12 +804,12 @@ def createExtraNodes(act_material, node, type, notegroup):
 
         node_vertex.location = -337, 525
         node_mixRGB.location = 0, 425
-        
+
         act_material.links.new(node_vertex.outputs[0], node_mixRGB.inputs[1])
         act_material.links.new(huenode.outputs[0], node_mixRGB.inputs[2])
         act_material.links.new(node_vertex.outputs[1], notegroup.inputs[8])
         act_material.links.new(node_mixRGB.outputs[0], node_vectormath.inputs[0])
-        
+
         return node_vectormath
 
     return huenode
@@ -829,7 +829,7 @@ def matlab(objekti,mat_list,texturelist,is_new):
     ''' Check if bind textures with UVs or Materials '''
 
     if(texturelist != []):
-    
+
         udim_textures = False
         if texturelist[0][0].startswith('100'):
             udim_textures = True
