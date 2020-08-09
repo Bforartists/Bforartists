@@ -81,10 +81,10 @@ static void workbench_dof_setup_samples(struct GPUUniformBuffer **ubo,
                                         float bokeh_ratio)
 {
   if (*data == NULL) {
-    *data = MEM_callocN(sizeof(float) * 4 * SAMP_LEN, "workbench dof samples");
+    *data = MEM_callocN(sizeof(float[4]) * SAMP_LEN, "workbench dof samples");
   }
   if (*ubo == NULL) {
-    *ubo = DRW_uniformbuffer_create(sizeof(float) * 4 * SAMP_LEN, NULL);
+    *ubo = DRW_uniformbuffer_create(sizeof(float[4]) * SAMP_LEN, NULL);
   }
 
   float *samp = *data;
@@ -155,7 +155,7 @@ void workbench_dof_engine_init(WORKBENCH_Data *vedata)
   }
 
   const float *full_size = DRW_viewport_size_get();
-  int size[2] = {max_ii(1, (int)full_size[0] / 2), max_ii(1, (int)full_size[1] / 2)};
+  const int size[2] = {max_ii(1, (int)full_size[0] / 2), max_ii(1, (int)full_size[1] / 2)};
 #if 0 /* TODO(fclem) finish COC min_max optimisation */
   /* NOTE: We Ceil here in order to not miss any edge texel if using a NPO2 texture.  */
   int shrink_h_size[2] = {ceilf(size[0] / 8.0f), size[1]};

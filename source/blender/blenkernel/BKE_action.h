@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-#ifndef __BKE_ACTION_H__
-#define __BKE_ACTION_H__
+#pragma once
 
 /** \file
  * \ingroup bke
@@ -129,6 +128,8 @@ void BKE_pose_channel_free(struct bPoseChannel *pchan);
 void BKE_pose_channel_free_ex(struct bPoseChannel *pchan, bool do_id_user);
 
 void BKE_pose_channel_runtime_reset(struct bPoseChannel_Runtime *runtime);
+void BKE_pose_channel_runtime_reset_on_copy(struct bPoseChannel_Runtime *runtime);
+
 void BKE_pose_channel_runtime_free(struct bPoseChannel_Runtime *runtime);
 
 void BKE_pose_channel_free_bbone_cache(struct bPoseChannel_Runtime *runtime);
@@ -153,11 +154,14 @@ void BKE_pose_copy_data_ex(struct bPose **dst,
                            const bool copy_constraints);
 void BKE_pose_copy_data(struct bPose **dst, const struct bPose *src, const bool copy_constraints);
 void BKE_pose_channel_copy_data(struct bPoseChannel *pchan, const struct bPoseChannel *pchan_from);
+void BKE_pose_channel_session_uuid_generate(struct bPoseChannel *pchan);
 struct bPoseChannel *BKE_pose_channel_find_name(const struct bPose *pose, const char *name);
 struct bPoseChannel *BKE_pose_channel_active(struct Object *ob);
 struct bPoseChannel *BKE_pose_channel_active_or_first_selected(struct Object *ob);
 struct bPoseChannel *BKE_pose_channel_verify(struct bPose *pose, const char *name);
 struct bPoseChannel *BKE_pose_channel_get_mirrored(const struct bPose *pose, const char *name);
+
+void BKE_pose_check_uuids_unique_and_report(const struct bPose *pose);
 
 #ifndef NDEBUG
 bool BKE_pose_channels_is_valid(const struct bPose *pose);
@@ -217,6 +221,4 @@ void BKE_pose_tag_recalc(struct Main *bmain, struct bPose *pose);
 
 #ifdef __cplusplus
 };
-#endif
-
 #endif

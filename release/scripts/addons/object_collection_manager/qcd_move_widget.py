@@ -655,6 +655,10 @@ def allocate_main_ui(self, context):
     self.areas["Button Row 2 B"] = button_row_2_b
 
 
+    selected_objects = qcd_operators.get_move_selection()
+    active_object = qcd_operators.get_move_active()
+
+
     # BUTTONS
     def get_buttons(button_row, row_num):
         cur_width_pos = button_row["vert"][0]
@@ -667,8 +671,6 @@ def allocate_main_ui(self, context):
             if qcd_slot_name:
                 qcd_laycol = layer_collections[qcd_slot_name]["ptr"]
                 collection_objects = qcd_laycol.collection.objects
-                selected_objects = qcd_operators.get_move_selection()
-                active_object = qcd_operators.get_move_active()
 
                 # BUTTON
                 x = cur_width_pos

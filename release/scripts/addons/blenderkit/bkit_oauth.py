@@ -116,7 +116,7 @@ class RegisterLoginOnline(bpy.types.Operator):
     message: bpy.props.StringProperty(
         name="Message",
         description="",
-        default="You were logged out from BlenderKit. Clicking OK takes you to web login. ")
+        default="You were logged out from BlenderKit.\n Clicking OK takes you to web login. ")
 
     @classmethod
     def poll(cls, context):
@@ -124,7 +124,7 @@ class RegisterLoginOnline(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        utils.label_multiline(layout, text=self.message)
+        utils.label_multiline(layout, text=self.message, width = 300)
 
     def execute(self, context):
         preferences = bpy.context.preferences.addons['blenderkit'].preferences

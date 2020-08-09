@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef __BKE_OCEAN_H__
-#define __BKE_OCEAN_H__
+#pragma once
 
 #include <stdbool.h>
 
@@ -70,8 +69,10 @@ typedef struct OceanCache {
 struct Ocean *BKE_ocean_add(void);
 void BKE_ocean_free_data(struct Ocean *oc);
 void BKE_ocean_free(struct Ocean *oc);
-bool BKE_ocean_ensure(struct OceanModifierData *omd);
-void BKE_ocean_init_from_modifier(struct Ocean *ocean, struct OceanModifierData const *omd);
+bool BKE_ocean_ensure(struct OceanModifierData *omd, const int resolution);
+void BKE_ocean_init_from_modifier(struct Ocean *ocean,
+                                  struct OceanModifierData const *omd,
+                                  const int resolution);
 
 void BKE_ocean_init(struct Ocean *o,
                     int M,
@@ -134,6 +135,4 @@ float BLI_ocean_spectrum_jonswap(const struct Ocean *oc, const float kx, const f
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

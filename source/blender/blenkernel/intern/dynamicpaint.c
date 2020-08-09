@@ -320,7 +320,7 @@ static int dynamicPaint_surfaceNumOfPoints(DynamicPaintSurface *surface)
   if (surface->format == MOD_DPAINT_SURFACE_F_PTEX) {
     return 0; /* not supported atm */
   }
-  else if (surface->format == MOD_DPAINT_SURFACE_F_VERTEX) {
+  if (surface->format == MOD_DPAINT_SURFACE_F_VERTEX) {
     const Mesh *canvas_mesh = dynamicPaint_canvas_mesh_get(surface->canvas);
     return (canvas_mesh) ? canvas_mesh->totvert : 0;
   }
@@ -353,7 +353,7 @@ bool dynamicPaint_outputLayerExists(struct DynamicPaintSurface *surface, Object 
       Mesh *me = ob->data;
       return (CustomData_get_named_layer_index(&me->ldata, CD_MLOOPCOL, name) != -1);
     }
-    else if (surface->type == MOD_DPAINT_SURFACE_T_WEIGHT) {
+    if (surface->type == MOD_DPAINT_SURFACE_T_WEIGHT) {
       return (BKE_object_defgroup_name_index(ob, name) != -1);
     }
   }
@@ -602,7 +602,7 @@ static bool boundIntersectPoint(Bounds3D *b, const float point[3], const float r
 }
 
 /* expand bounds by a new point */
-static void boundInsert(Bounds3D *b, float point[3])
+static void boundInsert(Bounds3D *b, const float point[3])
 {
   if (!b->valid) {
     copy_v3_v3(b->min, point);
@@ -2675,7 +2675,7 @@ static void dynamic_paint_find_island_border(const DynamicPaintCreateUVSurfaceDa
 
     int w = bdata->w, h = bdata->h, px = bdata->px, py = bdata->py;
 
-    int final_pixel[2] = {(int)floorf(tgt_pixel[0] * w), (int)floorf(tgt_pixel[1] * h)};
+    const int final_pixel[2] = {(int)floorf(tgt_pixel[0] * w), (int)floorf(tgt_pixel[1] * h)};
 
     /* If current pixel uv is outside of texture */
     if (final_pixel[0] < 0 || final_pixel[0] >= w || final_pixel[1] < 0 || final_pixel[1] >= h) {
@@ -3742,7 +3742,7 @@ static bool meshBrush_boundsIntersect(Bounds3D *b1,
   if (brush->collision == MOD_DPAINT_COL_VOLUME) {
     return boundsIntersect(b1, b2);
   }
-  else if (brush->collision == MOD_DPAINT_COL_DIST || brush->collision == MOD_DPAINT_COL_VOLDIST) {
+  if (brush->collision == MOD_DPAINT_COL_DIST || brush->collision == MOD_DPAINT_COL_VOLDIST) {
     return boundsIntersectDist(b1, b2, brush_radius);
   }
   return true;
@@ -4203,7 +4203,7 @@ static void dynamic_paint_paint_mesh_cell_point_cb_ex(
                        brushVelocity[v3].v,
                        weights);
 
-      /* substract canvas point velocity */
+      /* subtract canvas point velocity */
       if (bData->velocity) {
         sub_v3_v3v3(velocity, brushPointVelocity, bData->velocity[index].v);
       }
@@ -4548,7 +4548,7 @@ static void dynamic_paint_paint_particle_cell_point_cb_ex(
       ParticleData *pa = psys->particles + part_index;
       mul_v3_v3fl(velocity, pa->state.vel, particle_timestep);
 
-      /* substract canvas point velocity */
+      /* subtract canvas point velocity */
       if (bData->velocity) {
         sub_v3_v3(velocity, bData->velocity[index].v);
       }
@@ -4739,7 +4739,7 @@ static void dynamic_paint_paint_single_point_cb_ex(void *__restrict userdata,
     if (brush->flags & MOD_DPAINT_USES_VELOCITY) {
       float velocity[3];
 
-      /* substract canvas point velocity */
+      /* subtract canvas point velocity */
       if (bData->velocity) {
         sub_v3_v3v3(velocity, brushVelocity->v, bData->velocity[index].v);
       }
@@ -5166,7 +5166,7 @@ static int dynamicPaint_prepareEffectStep(struct Depsgraph *depsgraph,
     ListBase *effectors = BKE_effectors_create(depsgraph, ob, NULL, surface->effector_weights);
 
     /* allocate memory for force data (dir vector + strength) */
-    *force = MEM_mallocN(sData->total_points * 4 * sizeof(float), "PaintEffectForces");
+    *force = MEM_mallocN(sizeof(float[4]) * sData->total_points, "PaintEffectForces");
 
     if (*force) {
       DynamicPaintEffectData data = {
@@ -6260,7 +6260,7 @@ static int dynamicPaint_doStep(Depsgraph *depsgraph,
 
           /* calculate brush speed vectors if required */
           if (surface->type == MOD_DPAINT_SURFACE_T_PAINT && brush->flags & MOD_DPAINT_DO_SMUDGE) {
-            bData->brush_velocity = MEM_callocN(sData->total_points * sizeof(float) * 4,
+            bData->brush_velocity = MEM_callocN(sizeof(float[4]) * sData->total_points,
                                                 "Dynamic Paint brush velocity");
             /* init adjacency data if not already */
             if (!sData->adj_data) {

@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef __NOD_NODE_TREE_FUNCTION_HH__
-#define __NOD_NODE_TREE_FUNCTION_HH__
+#pragma once
 
 /** \file
  * \ingroup nodes
@@ -127,8 +126,20 @@ class MFNetworkTreeMap {
 
   void add_try_match(const DNode &dnode, fn::MFNode &node)
   {
-    this->add_try_match(dnode.inputs(), node.inputs());
-    this->add_try_match(dnode.outputs(), node.outputs());
+    this->add_try_match(dnode.inputs().cast<const DSocket *>(),
+                        node.inputs().cast<fn::MFSocket *>());
+    this->add_try_match(dnode.outputs().cast<const DSocket *>(),
+                        node.outputs().cast<fn::MFSocket *>());
+  }
+
+  void add_try_match(Span<const DInputSocket *> dsockets, Span<fn::MFInputSocket *> sockets)
+  {
+    this->add_try_match(dsockets.cast<const DSocket *>(), sockets.cast<fn::MFSocket *>());
+  }
+
+  void add_try_match(Span<const DOutputSocket *> dsockets, Span<fn::MFOutputSocket *> sockets)
+  {
+    this->add_try_match(dsockets.cast<const DSocket *>(), sockets.cast<fn::MFSocket *>());
   }
 
   void add_try_match(Span<const DSocket *> dsockets, Span<fn::MFSocket *> sockets)
@@ -251,19 +262,17 @@ class MFNetworkBuilderBase {
  */
 class SocketMFNetworkBuilder : public MFNetworkBuilderBase {
  private:
-  const DSocket *dsocket_ = nullptr;
-  const DGroupInput *group_input_ = nullptr;
   bNodeSocket *bsocket_;
   fn::MFOutputSocket *built_socket_ = nullptr;
 
  public:
   SocketMFNetworkBuilder(CommonMFNetworkBuilderData &common, const DSocket &dsocket)
-      : MFNetworkBuilderBase(common), dsocket_(&dsocket), bsocket_(dsocket.bsocket())
+      : MFNetworkBuilderBase(common), bsocket_(dsocket.bsocket())
   {
   }
 
   SocketMFNetworkBuilder(CommonMFNetworkBuilderData &common, const DGroupInput &group_input)
-      : MFNetworkBuilderBase(common), group_input_(&group_input), bsocket_(group_input.bsocket())
+      : MFNetworkBuilderBase(common), bsocket_(group_input.bsocket())
   {
   }
 
@@ -280,7 +289,7 @@ class SocketMFNetworkBuilder : public MFNetworkBuilderBase {
    */
   template<typename T> T *socket_default_value()
   {
-    return (T *)bsocket_->default_value;
+    return static_cast<T *>(bsocket_->default_value);
   }
 
   /**
@@ -389,5 +398,3 @@ MFNetworkTreeMap insert_node_tree_into_mf_network(fn::MFNetwork &network,
                                                   ResourceCollector &resources);
 
 }  // namespace blender::nodes
-
-#endif /* __NOD_NODE_TREE_FUNCTION_HH__ */

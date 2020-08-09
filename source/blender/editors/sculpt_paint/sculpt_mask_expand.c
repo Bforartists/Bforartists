@@ -174,7 +174,7 @@ static int sculpt_mask_expand_modal(bContext *C, wmOperator *op, const wmEvent *
   ARegion *region = CTX_wm_region(C);
   float prevclick_f[2];
   copy_v2_v2(prevclick_f, op->customdata);
-  int prevclick[2] = {(int)prevclick_f[0], (int)prevclick_f[1]};
+  const int prevclick[2] = {(int)prevclick_f[0], (int)prevclick_f[1]};
   int len = (int)len_v2v2_int(prevclick, event->mval);
   len = abs(len);
   int mask_speed = RNA_int_get(op->ptr, "mask_speed");
@@ -359,7 +359,7 @@ static int sculpt_mask_expand_invoke(bContext *C, wmOperator *op, const wmEvent 
 
   SCULPT_vertex_random_access_init(ss);
 
-  op->customdata = MEM_mallocN(2 * sizeof(float), "initial mouse position");
+  op->customdata = MEM_mallocN(sizeof(float[2]), "initial mouse position");
   copy_v2_v2(op->customdata, mouse);
 
   SCULPT_cursor_geometry_info_update(C, &sgi, mouse, false);

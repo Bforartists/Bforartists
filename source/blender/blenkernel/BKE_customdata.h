@@ -22,8 +22,7 @@
  * \brief CustomData interface, see also DNA_customdata_types.h.
  */
 
-#ifndef __BKE_CUSTOMDATA_H__
-#define __BKE_CUSTOMDATA_H__
+#pragma once
 
 #include "BLI_sys_types.h"
 #include "BLI_utildefines.h"
@@ -455,6 +454,7 @@ bool CustomData_from_bmeshpoly_test(CustomData *fdata, CustomData *ldata, bool f
 bool CustomData_layer_validate(struct CustomDataLayer *layer,
                                const uint totitems,
                                const bool do_fixes);
+void CustomData_layers__print(struct CustomData *data);
 
 /* External file storage */
 
@@ -573,6 +573,4 @@ void CustomData_data_transfer(const struct MeshPairRemap *me_remap,
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

@@ -237,7 +237,7 @@ static int stroke_march_next_point(const bGPDstroke *gps,
     copy_v3_v3(result, &pt->x);
     *pressure = gps->points[next_point_index].pressure;
     *strength = gps->points[next_point_index].strength;
-    memcpy(vert_color, gps->points[next_point_index].vert_color, sizeof(float) * 4);
+    memcpy(vert_color, gps->points[next_point_index].vert_color, sizeof(float[4]));
 
     *index_from = next_point_index - 1;
     *index_to = next_point_index;
@@ -245,24 +245,23 @@ static int stroke_march_next_point(const bGPDstroke *gps,
 
     return 0;
   }
-  else {
-    float ratio = remaining_march / remaining_till_next;
-    interp_v3_v3v3(result, step_start, point, ratio);
-    *pressure = interpf(
-        gps->points[next_point_index].pressure, gps->points[next_point_index - 1].pressure, ratio);
-    *strength = interpf(
-        gps->points[next_point_index].strength, gps->points[next_point_index - 1].strength, ratio);
-    interp_v4_v4v4(vert_color,
-                   gps->points[next_point_index - 1].vert_color,
-                   gps->points[next_point_index].vert_color,
-                   ratio);
 
-    *index_from = next_point_index - 1;
-    *index_to = next_point_index;
-    *ratio_result = ratio;
+  float ratio = remaining_march / remaining_till_next;
+  interp_v3_v3v3(result, step_start, point, ratio);
+  *pressure = interpf(
+      gps->points[next_point_index].pressure, gps->points[next_point_index - 1].pressure, ratio);
+  *strength = interpf(
+      gps->points[next_point_index].strength, gps->points[next_point_index - 1].strength, ratio);
+  interp_v4_v4v4(vert_color,
+                 gps->points[next_point_index - 1].vert_color,
+                 gps->points[next_point_index].vert_color,
+                 ratio);
 
-    return next_point_index;
-  }
+  *index_from = next_point_index - 1;
+  *index_to = next_point_index;
+  *ratio_result = ratio;
+
+  return next_point_index;
 }
 
 static int stroke_march_next_point_no_interp(const bGPDstroke *gps,
@@ -306,11 +305,10 @@ static int stroke_march_next_point_no_interp(const bGPDstroke *gps,
     copy_v3_v3(result, &pt->x);
     return 0;
   }
-  else {
-    float ratio = remaining_march / remaining_till_next;
-    interp_v3_v3v3(result, step_start, point, ratio);
-    return next_point_index;
-  }
+
+  float ratio = remaining_march / remaining_till_next;
+  interp_v3_v3v3(result, step_start, point, ratio);
+  return next_point_index;
 }
 
 static int stroke_march_count(const bGPDstroke *gps, const float dist)
@@ -447,7 +445,7 @@ bool BKE_gpencil_stroke_sample(bGPDstroke *gps, const float dist, const bool sel
   copy_v3_v3(&pt2->x, last_coord);
   new_pt[i].pressure = pt[0].pressure;
   new_pt[i].strength = pt[0].strength;
-  memcpy(new_pt[i].vert_color, pt[0].vert_color, sizeof(float) * 4);
+  memcpy(new_pt[i].vert_color, pt[0].vert_color, sizeof(float[4]));
   if (select) {
     new_pt[i].flag |= GP_SPOINT_SELECT;
   }
@@ -473,7 +471,7 @@ bool BKE_gpencil_stroke_sample(bGPDstroke *gps, const float dist, const bool sel
     copy_v3_v3(&pt2->x, last_coord);
     new_pt[i].pressure = pressure;
     new_pt[i].strength = strength;
-    memcpy(new_pt[i].vert_color, vert_color, sizeof(float) * 4);
+    memcpy(new_pt[i].vert_color, vert_color, sizeof(float[4]));
     if (select) {
       new_pt[i].flag |= GP_SPOINT_SELECT;
     }
@@ -1352,10 +1350,9 @@ bool BKE_gpencil_stroke_trim(bGPDstroke *gps)
           if ((lambda <= 0.0f) || (lambda >= 1.0f)) {
             continue;
           }
-          else {
-            intersect = true;
-            break;
-          }
+
+          intersect = true;
+          break;
         }
       }
     }

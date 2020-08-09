@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bastien Montagne <montagne29@wanadoo.fr>\n"
 "Language-Team: \n"
@@ -19664,10 +19664,6 @@ msgid "Selected face count in editmode"
 msgstr "Nombre de faces sélectionnées en mode Edit"
 
 
-msgid "Selected Vert Total"
-msgstr "Total de vertices sélectionnés"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Nombre de vertices sélectionnés en mode Edit"
 
@@ -20438,10 +20434,6 @@ msgstr "Type d’instance"
 
 msgid "If not None, object instancing method to use"
 msgstr "Si non None, méthode d’instanciation d’objet à utiliser"
-
-
-msgid "Verts"
-msgstr "Vertices"
 
 
 msgid "Instantiate child objects on all vertices"
@@ -28816,16 +28808,8 @@ msgid "Original Coords"
 msgstr "Coordonnées originales"
 
 
-msgid "Use base mesh vert coords as the rest position"
-msgstr "Utiliser les coordonnées de vertices du mesh de base comme position de repos"
-
-
 msgid "Bind Coords"
 msgstr "Coordonnées de liaison"
-
-
-msgid "Use bind vert coords for rest position"
-msgstr "Utiliser les coordonnées de vertices à la liaison (“bind”) comme position de repos"
 
 
 msgid "Smooth Type"
@@ -31878,10 +31862,6 @@ msgstr "Montrer cachés"
 
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Inclure les canaux des objets/os invisibles"
-
-
-msgid "Only Selected"
-msgstr "Sélectionnées seulement"
 
 
 msgid "Dopesheet Sort Field"
@@ -40302,6 +40282,10 @@ msgid "Start frame for export"
 msgstr "Première frame à exporter"
 
 
+msgid "Only Selected"
+msgstr "Sélectionnées seulement"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Exporter BVH"
@@ -41849,10 +41833,6 @@ msgstr "Randomisation d’interstice"
 
 msgid "Custom Gap mode: Number of frames that gap lengths can vary"
 msgstr "Mode “Interstices personnalisés” : nombre de frames dont peut varier la longueur des interstices"
-
-
-msgid "Radius Fac"
-msgstr "Facteur rayon"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -44554,14 +44534,6 @@ msgid "Segments for curved edge"
 msgstr "Segments pour les arêtes courbes"
 
 
-msgid "Vertex Only"
-msgstr "Vertices uniquement"
-
-
-msgid "Bevel only vertices"
-msgstr "Ne biseauter que les vertices"
-
-
 msgctxt "Operator"
 msgid "Bisect"
 msgstr "Bisecter"
@@ -44931,10 +44903,6 @@ msgid "Dissolve edges, merging faces"
 msgstr "Dissoudre les arêtes, en fusionnant les faces"
 
 
-msgid "Dissolve Verts"
-msgstr "Dissoudre vertices"
-
-
 msgid "Dissolve remaining vertices"
 msgstr "Dissoudre les vertices restants"
 
@@ -44951,10 +44919,6 @@ msgstr "Dissoudre faces"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Dissolution limitée"
-
-
-msgid "Dissolve selected edges and verts, limited by the angle of surrounding geometry"
-msgstr "Dissoudre les arêtes et vertices sélectionnés, limité par l’angle de la géométrie environnante"
 
 
 msgid "Delimit dissolve operation"
@@ -44976,10 +44940,6 @@ msgstr "Déchirer limite"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "Diviser les coins de face au lieu de fusionner les faces"
-
-
-msgid "Dissolve verts, merge edges and faces"
-msgstr "Dissoudre les vertices, en fusionnant arêtes et faces"
 
 
 msgctxt "Operator"
@@ -49926,16 +49886,8 @@ msgid "Add Weights"
 msgstr "Ajouter poids"
 
 
-msgid "Add verts from groups that have zero weight before inverting"
-msgstr "Ajouter les vertices dans les groupes dans lesquels ils ont un poids nul avant inversion"
-
-
 msgid "Remove Weights"
 msgstr "Enlever poids"
-
-
-msgid "Remove verts from groups that have zero weight after inverting"
-msgstr "Enlever les vertices des groupes dans lesquels ils ont un poids nul après inversion"
 
 
 msgctxt "Operator"
@@ -50086,10 +50038,6 @@ msgid "Remove from all groups"
 msgstr "Supprimer de tous les groupes"
 
 
-msgid "All Verts"
-msgstr "Tous les vertices"
-
-
 msgid "Clear the active group"
 msgstr "Nettoyer le groupe actif"
 
@@ -50188,10 +50136,6 @@ msgstr "Normaliser les poids du vertex actif"
 msgctxt "Operator"
 msgid "Paste Weight to Selected"
 msgstr "Coller poids vers sélectionnés"
-
-
-msgid "Copy this group's weight to other selected verts (disabled if vertex group is locked)"
-msgstr "Copier le poids de ce groupe vers les autres vertices sélectionnés (désactivé si le groupe de vertices est verrouillé)"
 
 
 msgctxt "Operator"
@@ -52182,10 +52126,6 @@ msgstr "Réinitialiser les positions, rotations et tailles des os sélectionnés
 msgctxt "Operator"
 msgid "Clear User Transforms"
 msgstr "Effacer transformations utilisateur"
-
-
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "Réinitialiser les poses des os sélectionnés à leur état défini par les images clé"
 
 
 msgid "Only visible/selected bones"
@@ -57461,10 +57401,6 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Appliquer les modificateurs au mesh exporté (non destructif)"
 
 
-msgid "Deform Bones only"
-msgstr "Os déformants uniquement"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "N’exporter que les os déformants avec les armatures"
 
@@ -57483,10 +57419,6 @@ msgstr "Axe haut global"
 
 msgid "Modifier resolution for export"
 msgstr "Résolution de modificateur pour l’export"
-
-
-msgid "Apply modifier's view settings"
-msgstr "Appliquer les réglages de vue des modificateurs"
 
 
 msgid "Apply modifier's render settings"
@@ -58677,10 +58609,6 @@ msgid "URL to open"
 msgstr "URL à ouvrir"
 
 
-msgid "UV Maps"
-msgstr "Cartes UV"
-
-
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Fermer fenêtre"
@@ -59471,6 +59399,10 @@ msgstr "Squelette"
 
 msgid "Text Boxes"
 msgstr "Boîtes de texte"
+
+
+msgid "UV Maps"
+msgstr "Cartes UV"
 
 
 msgid "Filters"
@@ -70605,10 +70537,6 @@ msgid "Edge Select"
 msgstr "Arêtes sélectionnées"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "Vertex/arête/face actif"
-
-
 msgid "Face Dot Selected"
 msgstr "Point de face sélectionnée"
 
@@ -75090,56 +75018,12 @@ msgid "%d items"
 msgstr "%d éléments"
 
 
-msgid "Manual Transform:"
-msgstr "Transformation manuelle :"
-
-
-msgid "Scene Options:"
-msgstr "Options de scène :"
-
-
-msgid "Object Options:"
-msgstr "Options d’objet :"
-
-
-msgid "Particle Systems:"
-msgstr "Système de particules :"
-
-
-msgid "Options:"
-msgstr "Options :"
-
-
 msgid "No filename given"
 msgstr "Aucun nom de fichier donné"
 
 
 msgid "Unable to determine ABC sequence length"
 msgstr "Impossible de déterminer la longueur de la séquence ABC"
-
-
-msgid "Texture Options:"
-msgstr "Options texture :"
-
-
-msgid "Export Data Options:"
-msgstr "Options d’export de données :"
-
-
-msgid "Transformation Type"
-msgstr "Type de transformation"
-
-
-msgid "Armature Options:"
-msgstr "Options d’armature :"
-
-
-msgid "Collada Options:"
-msgstr "Options Collada :"
-
-
-msgid "Import Data Options:"
-msgstr "Options d’import de données :"
 
 
 msgid "Can't create export file"
@@ -75201,6 +75085,10 @@ msgstr "Sphère"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Icosphère"
+
+
+msgid "Seams"
+msgstr "Coutures (UV)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -77631,10 +77519,6 @@ msgid "TODO: in what cases does this happen?"
 msgstr "TODO : dans quels cas cela se produit-il ?"
 
 
-msgid "Cannot reassign inputs: no cycles allowed"
-msgstr "Impossible de réassigner les entrées : les cycles sont interdits"
-
-
 msgid "No valid inputs to swap"
 msgstr "Pas d’entrées valides à intervertir"
 
@@ -78395,10 +78279,6 @@ msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for tra
 msgstr "Utiliser le mode de transformation 'Time_Translate' au lieu du mode 'Translation' pour déplacer les images clés dans l’éditeur Dope Sheet"
 
 
-msgid "Vert Slide: "
-msgstr "Glisser vertex : "
-
-
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "Le paramètre “use” de “Créer orientation” n’est valide que dans un contexte de vue 3D"
 
@@ -78495,10 +78375,6 @@ msgstr "Vertex UV"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "Effacer couture UV"
-
-
-msgid "Select linked only works in face select mode when sync selection is enabled"
-msgstr "Sélectionner liés ne fonctionne qu’en mode de sélection par face quand la sélection synchronisée est activée"
 
 
 msgid "Cannot split selection when sync selection is enabled"

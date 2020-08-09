@@ -18,8 +18,7 @@
  * \ingroup DNA
  */
 
-#ifndef __DNA_LIGHTPROBE_TYPES_H__
-#define __DNA_LIGHTPROBE_TYPES_H__
+#pragma once
 
 #include "DNA_ID.h"
 #include "DNA_defs.h"
@@ -150,7 +149,7 @@ BLI_STATIC_ASSERT_ALIGN(LightGridCache, 16)
 
 typedef struct LightCacheTexture {
   struct GPUTexture *tex;
-  /* Copy of GPU datas to create GPUTextures on file read. */
+  /** Copy of GPU datas to create GPUTextures on file read. */
   char *data;
   int tex_size[3];
   char data_type;
@@ -204,6 +203,10 @@ enum {
   LIGHTCACHE_UPDATE_GRID = (1 << 5),
   LIGHTCACHE_UPDATE_WORLD = (1 << 6),
   LIGHTCACHE_UPDATE_AUTO = (1 << 7),
+  /** Invalid means we tried to alloc it but failed. */
+  LIGHTCACHE_INVALID = (1 << 8),
+  /** The data present in the cache is valid but unusable on this GPU. */
+  LIGHTCACHE_NOT_USABLE = (1 << 9),
 };
 
 /* EEVEE_LightCacheTexture->data_type */
@@ -216,5 +219,3 @@ enum {
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __DNA_LIGHTPROBE_TYPES_H__ */

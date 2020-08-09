@@ -50,7 +50,7 @@
 #include "DEG_depsgraph_query.h"
 
 /* Helper: Check materials with same color. */
-static int gpencil_check_same_material_color(Object *ob_gp, float color[4], Material **r_mat)
+static int gpencil_check_same_material_color(Object *ob_gp, const float color[4], Material **r_mat)
 {
   Material *ma = NULL;
   float color_cu[4];
@@ -329,7 +329,7 @@ static void gpencil_convert_spline(Main *bmain,
                                         bezt->vec[1][j],
                                         coord_array + j,
                                         resolu - 1,
-                                        3 * sizeof(float));
+                                        sizeof(float[3]));
         }
         /* Save first point coordinates. */
         if (s == 0) {

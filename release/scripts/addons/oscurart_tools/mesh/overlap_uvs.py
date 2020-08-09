@@ -27,8 +27,8 @@ from bpy.props import (
         FloatProperty,
         EnumProperty,
         )
-        
-        
+
+
 import bmesh
 
 # -------------------------- OVERLAP UV ISLANDS
@@ -37,7 +37,7 @@ def defCopyUvsIsland(self, context):
     global islandSet
     islandSet = {}
     islandSet["Loop"] = []
-   
+
     bpy.context.scene.tool_settings.use_uv_select_sync = True
     bpy.ops.uv.select_linked()
     bm = bmesh.from_edit_mesh(bpy.context.object.data)
@@ -45,39 +45,39 @@ def defCopyUvsIsland(self, context):
     faceSel = 0
     for face in bm.faces:
         if face.select:
-            faceSel +=1 
+            faceSel +=1
             for loop in face.loops:
-                islandSet["Loop"].append(loop[uv_lay].uv.copy())     
+                islandSet["Loop"].append(loop[uv_lay].uv.copy())
     islandSet["Size"] = faceSel
 
 def defPasteUvsIsland(self, uvOffset, rotateUv,context):
     bm = bmesh.from_edit_mesh(bpy.context.object.data)
-    bpy.context.scene.tool_settings.use_uv_select_sync = True    
+    bpy.context.scene.tool_settings.use_uv_select_sync = True
     pickedFaces = [face for face in bm.faces if face.select]
     for face in pickedFaces:
         bpy.ops.mesh.select_all(action="DESELECT")
         face.select=True
         bmesh.update_edit_mesh(bpy.context.object.data)
         bpy.ops.uv.select_linked()
-        uv_lay = bm.loops.layers.uv.active      
+        uv_lay = bm.loops.layers.uv.active
         faceSel = 0
         for face in bm.faces:
             if face.select:
-                faceSel +=1     
-        i = 0        
-        if faceSel == islandSet["Size"]:   
+                faceSel +=1
+        i = 0
+        if faceSel == islandSet["Size"]:
             for face in bm.faces:
-                if face.select:                
+                if face.select:
                     for loop in face.loops:
                         loop[uv_lay].uv  = islandSet["Loop"][i] if uvOffset == False else islandSet["Loop"][i]+Vector((1,0))
-                        i += 1 
+                        i += 1
         else:
-            print("the island have a different size of geometry")   
-            
+            print("the island have a different size of geometry")
+
         if rotateUv:
             bpy.ops.object.mode_set(mode="EDIT")
             bmesh.ops.reverse_uvs(bm, faces=[f for f in bm.faces if f.select])
-            bmesh.ops.rotate_uvs(bm, faces=[f for f in bm.faces if f.select])        
+            bmesh.ops.rotate_uvs(bm, faces=[f for f in bm.faces if f.select])
 
 class CopyUvIsland(Operator):
     """Copy Uv Island"""
@@ -110,7 +110,7 @@ class PasteUvIsland(Operator):
             name="Rotate Uv Corner",
             default=False
             )
-        
+
     @classmethod
     def poll(cls, context):
         return (context.active_object is not None and

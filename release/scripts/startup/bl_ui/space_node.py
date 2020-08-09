@@ -185,7 +185,7 @@ class NODE_HT_header(Header):
 
 
         # ----------------- rest of the options
-        
+
 
         # Put pin next to ID block
         if not is_compositor:
@@ -286,7 +286,7 @@ class NODE_MT_view(Menu):
 
             layout.operator("node.viewer_border", text = "Set Viewer Region", icon = "RENDERBORDER")
             layout.operator("node.clear_viewer_border", text = "Clear Viewer Region", icon = "RENDERBORDER_CLEAR")
-            
+
         layout.separator()
 
         layout.menu("INFO_MT_area")
@@ -322,7 +322,7 @@ class NODE_MT_select(Menu):
 
         layout.operator("node.select_all",text = "All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("node.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("node.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("node.select_all_inverse", text="Invert", icon='INVERSE') # bfa - separated tooltip
 
         layout.separator()
 
@@ -359,7 +359,7 @@ class NODE_MT_node(Menu):
         myvar = layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
         myvar.release_confirm = True
         layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
-        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")       
+        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
 
         layout.separator()
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
@@ -382,7 +382,7 @@ class NODE_MT_node(Menu):
         layout.separator()
 
         layout.menu("NODE_MT_node_links")
-        
+
         layout.separator()
 
         layout.menu("NODE_MT_node_group_separate")
@@ -515,7 +515,7 @@ class NODE_MT_context_menu(Menu):
         layout.operator("node.delete", icon='DELETE')
         layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
         layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
-        layout.operator_context = 'EXEC_DEFAULT'
+        layout.operator_context = 'EXEC_REGION_WIN'
 
         layout.operator("node.delete_reconnect", icon='DELETE')
 

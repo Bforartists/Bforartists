@@ -30,6 +30,7 @@ def export(filepath, face_data, colors, width, height, opacity):
     offscreen.bind()
 
     try:
+        bgl.glClearColor(0.0, 0.0, 0.0, 0.0)
         bgl.glClear(bgl.GL_COLOR_BUFFER_BIT)
         draw_image(face_data, opacity)
 

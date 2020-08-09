@@ -21,8 +21,7 @@
  * \ingroup DNA
  */
 
-#ifndef __DNA_SCREEN_TYPES_H__
-#define __DNA_SCREEN_TYPES_H__
+#pragma once
 
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
@@ -718,5 +717,3 @@ enum {
   /* Only editor overlays (currently gizmos only!) should be redrawn. */
   RGN_DRAW_EDITOR_OVERLAYS = 32,
 };
-
-#endif /* __DNA_SCREEN_TYPES_H__ */

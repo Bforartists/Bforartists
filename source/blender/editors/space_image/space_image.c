@@ -75,11 +75,10 @@
 #include "GPU_batch_presets.h"
 #include "GPU_framebuffer.h"
 #include "GPU_viewport.h"
-#include "image_intern.h"
 
-/* TODO(fclem) remove bad level calls */
-#include "../draw/DRW_engine.h"
-#include "wm_draw.h"
+#include "DRW_engine_types.h"
+
+#include "image_intern.h"
 
 /**************************** common state *****************************/
 
@@ -117,7 +116,7 @@ static void image_user_refresh_scene(const bContext *C, SpaceImage *sima)
 
 /* ******************** default callbacks for image space ***************** */
 
-static SpaceLink *image_new(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
+static SpaceLink *image_create(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
 {
   ARegion *region;
   SpaceImage *simage;
@@ -643,17 +642,18 @@ static void image_main_region_draw(const bContext *C, ARegion *region)
   // View2DScrollers *scrollers;
   float col[3];
 
-  /* XXX This is in order to draw UI batches with the DRW
-   * old context since we now use it for drawing the entire area. */
-  gpu_batch_presets_reset();
+  GPU_batch_presets_reset();
+  GPUViewport *viewport = WM_draw_region_get_viewport(region);
+  GPUFrameBuffer *framebuffer_default, *framebuffer_overlay;
 
-  GPUViewport *viewport = region->draw_buffer->viewport;
-  DefaultFramebufferList *fbl = GPU_viewport_framebuffer_list_get(viewport);
-  GPU_framebuffer_bind(fbl->default_fb);
+  framebuffer_default = GPU_viewport_framebuffer_default_get(viewport);
+  framebuffer_overlay = GPU_viewport_framebuffer_overlay_get(viewport);
+
+  GPU_framebuffer_bind(framebuffer_default);
   GPU_clear_color(0.0f, 0.0f, 0.0f, 0.0f);
   GPU_clear(GPU_COLOR_BIT);
 
-  GPU_framebuffer_bind(fbl->overlay_fb);
+  GPU_framebuffer_bind(framebuffer_overlay);
 
   /* XXX not supported yet, disabling for now */
   scene->r.scemode &= ~R_COMP_CROP;
@@ -1093,7 +1093,7 @@ void ED_spacetype_image(void)
   st->spaceid = SPACE_IMAGE;
   strncpy(st->name, "Image", BKE_ST_MAXNAME);
 
-  st->new = image_new;
+  st->create = image_create;
   st->free = image_free;
   st->init = image_init;
   st->duplicate = image_duplicate;

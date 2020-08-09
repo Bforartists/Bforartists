@@ -131,9 +131,8 @@ class IMemStream : public Imf::IStream {
       _exrpos += n;
       return true;
     }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   virtual Int64 tellg()
@@ -597,15 +596,13 @@ int imb_save_openexr(struct ImBuf *ibuf, const char *name, int flags)
   if (ibuf->foptions.flag & OPENEXR_HALF) {
     return (int)imb_save_openexr_half(ibuf, name, flags);
   }
-  else {
-    /* when no float rect, we save as half (16 bits is sufficient) */
-    if (ibuf->rect_float == NULL) {
-      return (int)imb_save_openexr_half(ibuf, name, flags);
-    }
-    else {
-      return (int)imb_save_openexr_float(ibuf, name, flags);
-    }
+
+  /* when no float rect, we save as half (16 bits is sufficient) */
+  if (ibuf->rect_float == NULL) {
+    return (int)imb_save_openexr_half(ibuf, name, flags);
   }
+
+  return (int)imb_save_openexr_float(ibuf, name, flags);
 }
 
 /* ******* Nicer API, MultiLayer and with Tile file support ************************************ */
@@ -719,9 +716,8 @@ static int imb_exr_get_multiView_id(StringVector &views, const std::string &name
     if (name == *i) {
       return count;
     }
-    else {
-      count++;
-    }
+
+    count++;
   }
 
   /* no views or wrong name */
@@ -741,7 +737,7 @@ static void imb_exr_get_views(MultiPartInputFile &file, StringVector &views)
 
   else {
     for (int p = 0; p < file.parts(); p++) {
-      std::string view = "";
+      std::string view;
       if (file.header(p).hasView()) {
         view = file.header(p).view();
       }
@@ -1173,7 +1169,7 @@ void IMB_exrtile_write_channels(
 
       /* eventually we can make the parts' channels to include
        * only the current view TODO */
-      if (strcmp(viewname, echan->m->view.c_str()) != 0) {
+      if (!STREQ(viewname, echan->m->view.c_str())) {
         continue;
       }
 
@@ -1421,7 +1417,7 @@ static int imb_exr_split_channel_name(ExrChannel *echan, char *layname, char *pa
     printf("multilayer read: bad channel name: %s\n", name);
     return 0;
   }
-  else if (len == 1) {
+  if (len == 1) {
     echan->chan_id = token[0];
   }
   else if (len > 1) {
@@ -1904,7 +1900,7 @@ struct ImBuf *imb_load_openexr(const unsigned char *mem,
   MultiPartInputFile *file = NULL;
 
   if (imb_is_a_openexr(mem) == 0) {
-    return (NULL);
+    return NULL;
   }
 
   colorspace_set_default_role(colorspace, IM_MAX_SPACE, COLOR_ROLE_DEFAULT_FLOAT);
@@ -1980,7 +1976,7 @@ struct ImBuf *imb_load_openexr(const unsigned char *mem,
           const bool has_luma = exr_has_luma(*file);
           FrameBuffer frameBuffer;
           float *first;
-          int xstride = sizeof(float) * 4;
+          int xstride = sizeof(float[4]);
           int ystride = -xstride * width;
 
           imb_addrectfloatImBuf(ibuf);
@@ -2077,7 +2073,7 @@ struct ImBuf *imb_load_openexr(const unsigned char *mem,
         ibuf->flags |= IB_alphamode_premul;
       }
     }
-    return (ibuf);
+    return ibuf;
   }
   catch (const std::exception &exc) {
     std::cerr << exc.what() << std::endl;
@@ -2087,7 +2083,7 @@ struct ImBuf *imb_load_openexr(const unsigned char *mem,
     delete file;
     delete membuf;
 
-    return (0);
+    return 0;
   }
 }
 

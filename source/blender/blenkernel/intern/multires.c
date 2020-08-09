@@ -407,15 +407,14 @@ int multires_get_level(const Scene *scene,
     return (scene != NULL) ? get_render_subsurf_level(&scene->r, mmd->renderlvl, true) :
                              mmd->renderlvl;
   }
-  else if (ob->mode == OB_MODE_SCULPT) {
+  if (ob->mode == OB_MODE_SCULPT) {
     return mmd->sculptlvl;
   }
-  else if (ignore_simplify) {
+  if (ignore_simplify) {
     return mmd->lvl;
   }
-  else {
-    return (scene != NULL) ? get_render_subsurf_level(&scene->r, mmd->lvl, false) : mmd->lvl;
-  }
+
+  return (scene != NULL) ? get_render_subsurf_level(&scene->r, mmd->lvl, false) : mmd->lvl;
 }
 
 void multires_set_tot_level(Object *ob, MultiresModifierData *mmd, int lvl)
@@ -553,7 +552,7 @@ static int get_levels_from_disps(Object *ob)
         if (md->totdisp == lvl_totdisp) {
           break;
         }
-        else if (md->totdisp < lvl_totdisp) {
+        if (md->totdisp < lvl_totdisp) {
           totlvl--;
         }
         else {
@@ -609,7 +608,7 @@ static void multires_reallocate_mdisps(int totloop, MDisps *mdisps, int lvl)
   /* reallocate displacements to be filled in */
   for (i = 0; i < totloop; i++) {
     int totdisp = multires_grid_tot[lvl];
-    float(*disps)[3] = MEM_calloc_arrayN(totdisp, 3 * sizeof(float), "multires disps");
+    float(*disps)[3] = MEM_calloc_arrayN(totdisp, sizeof(float[3]), "multires disps");
 
     if (mdisps[i].disps) {
       MEM_freeN(mdisps[i].disps);
@@ -727,7 +726,7 @@ static void multires_del_higher(MultiresModifierData *mmd, Object *ob, int lvl)
           float(*disps)[3], (*ndisps)[3], (*hdisps)[3];
           int totdisp = multires_grid_tot[lvl];
 
-          disps = MEM_calloc_arrayN(totdisp, 3 * sizeof(float), "multires disps");
+          disps = MEM_calloc_arrayN(totdisp, sizeof(float[3]), "multires disps");
 
           if (mdisp->disps != NULL) {
             ndisps = disps;
@@ -1541,7 +1540,7 @@ static void old_mdisps_convert(MFace *mface, MDisps *mdisp)
   int x, y, S;
   float(*disps)[3], (*out)[3], u = 0.0f, v = 0.0f; /* Quite gcc barking. */
 
-  disps = MEM_calloc_arrayN(newtotdisp, 3 * sizeof(float), "multires disps");
+  disps = MEM_calloc_arrayN(newtotdisp, sizeof(float[3]), "multires disps");
 
   out = disps;
   for (S = 0; S < nvert; S++) {
@@ -1601,7 +1600,7 @@ void multires_load_old_250(Mesh *me)
 
       for (j = 0; j < nvert; j++, k++) {
         mdisps2[k].disps = MEM_calloc_arrayN(
-            totdisp, 3 * sizeof(float), "multires disp in conversion");
+            totdisp, sizeof(float[3]), "multires disp in conversion");
         mdisps2[k].totdisp = totdisp;
         mdisps2[k].level = mdisps[i].level;
         memcpy(mdisps2[k].disps, mdisps[i].disps + totdisp * j, totdisp);
@@ -1673,7 +1672,7 @@ static void create_old_vert_face_map(ListBase **map,
   IndexNode *node = NULL;
 
   (*map) = MEM_calloc_arrayN(totvert, sizeof(ListBase), "vert face map");
-  (*mem) = MEM_calloc_arrayN(totface, 4 * sizeof(IndexNode), "vert face map mem");
+  (*mem) = MEM_calloc_arrayN(totface, sizeof(IndexNode[4]), "vert face map mem");
   node = *mem;
 
   /* Find the users */
@@ -1695,7 +1694,7 @@ static void create_old_vert_edge_map(ListBase **map,
   IndexNode *node = NULL;
 
   (*map) = MEM_calloc_arrayN(totvert, sizeof(ListBase), "vert edge map");
-  (*mem) = MEM_calloc_arrayN(totedge, 2 * sizeof(IndexNode), "vert edge map mem");
+  (*mem) = MEM_calloc_arrayN(totedge, sizeof(IndexNode[2]), "vert edge map mem");
   node = *mem;
 
   /* Find the users */
@@ -2377,7 +2376,7 @@ void multires_topology_changed(Mesh *me)
     if (!mdisp->totdisp || !mdisp->disps) {
       if (grid) {
         mdisp->totdisp = grid;
-        mdisp->disps = MEM_calloc_arrayN(3 * sizeof(float), mdisp->totdisp, "mdisp topology");
+        mdisp->disps = MEM_calloc_arrayN(sizeof(float[3]), mdisp->totdisp, "mdisp topology");
       }
 
       continue;

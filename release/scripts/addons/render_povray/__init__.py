@@ -25,16 +25,16 @@ Scene Description Language. The script has been split in as few files
 as possible :
 
 ___init__.py :
-    Initialize variables
+    Initialize properties
 
 update_files.py
-    Update new variables to values from older API. This file needs an update.
+    Update new variables to values from older API. This file needs an update
 
 ui.py :
-    Provide property buttons for the user to set up the variables.
+    Provide property buttons for the user to set up the variables
 
 primitives.py :
-    Display some POV native primitives in 3D view for input and output.
+    Display some POV native primitives in 3D view for input and output
 
 shading.py
     Translate shading properties to declared textures at the top of a pov file
@@ -50,7 +50,7 @@ render.py :
 
 
 Along these essential files also coexist a few additional libraries to help make
-Blender stand up to other POV IDEs such as povwin or QTPOV.
+Blender stand up to other POV IDEs such as povwin or QTPOV
     presets :
         Material (sss)
             apple.py ; chicken.py ; cream.py ; Ketchup.py ; marble.py ;
@@ -64,11 +64,14 @@ Blender stand up to other POV IDEs such as povwin or QTPOV.
             01_Clear_Blue_Sky.py ; 02_Partly_Hazy_Sky.py ; 03_Overcast_Sky.py ;
             04_Cartoony_Sky.py ; 05_Under_Water.py ;
         Light
-            01_(5400K)_Direct_Sun.py ; 02_(5400K)_High_Noon_Sun.py ;
+            01_(4800K)_Direct_Sun.py ;
+            02_(5400K)_High_Noon_Sun.py ;
             03_(6000K)_Daylight_Window.py ;
             04_(6000K)_2500W_HMI_(Halogen_Metal_Iodide).py ;
-            05_(4000K)_100W_Metal_Halide.py ; 06_(3200K)_100W_Quartz_Halogen.py ;
-            07_(2850K)_100w_Tungsten.py ; 08_(2600K)_40w_Tungsten.py ;
+            05_(4000K)_100W_Metal_Halide.py ;
+            06_(3200K)_100W_Quartz_Halogen.py ;
+            07_(2850K)_100w_Tungsten.py ;
+            08_(2600K)_40w_Tungsten.py ;
             09_(5000K)_75W_Full_Spectrum_Fluorescent_T12.py ;
             10_(4300K)_40W_Vintage_Fluorescent_T12.py ;
             11_(5000K)_18W_Standard_Fluorescent_T8 ;
@@ -78,10 +81,13 @@ Blender stand up to other POV IDEs such as povwin or QTPOV.
             15_(3200K)_40W_Induction_Fluorescent.py ;
             16_(2100K)_150W_High_Pressure_Sodium.py ;
             17_(1700K)_135W_Low_Pressure_Sodium.py ;
-            18_(6800K)_175W_Mercury_Vapor.py ; 19_(5200K)_700W_Carbon_Arc.py ;
-            20_(6500K)_15W_LED_Spot.py ; 21_(2700K)_7W_OLED_Panel.py ;
+            18_(6800K)_175W_Mercury_Vapor.py ;
+            19_(5200K)_700W_Carbon_Arc.py ;
+            20_(6500K)_15W_LED_Spot.py ;
+            21_(2700K)_7W_OLED_Panel.py ;
             22_(30000K)_40W_Black_Light_Fluorescent.py ;
-            23_(30000K)_40W_Black_Light_Bulb.py; 24_(1850K)_Candle.py
+            23_(30000K)_40W_Black_Light_Bulb.py;
+            24_(1850K)_Candle.py
     templates:
         abyss.pov ; biscuit.pov ; bsp_Tango.pov ; chess2.pov ;
         cornell.pov ; diffract.pov ; diffuse_back.pov ; float5 ;
@@ -98,20 +104,23 @@ bl_info = {
     "Bastien Montagne, "
     "Constantin Rahn, "
     "Silvio Falcinelli",
-    "version": (0, 1, 0),
+    "version": (0, 1, 1),
     "blender": (2, 81, 0),
     "location": "Render Properties > Render Engine > Persistence of Vision",
     "description": "Persistence of Vision integration for blender",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/render/povray.html",
     "category": "Render",
+    "warning": "Under active development, seeking co-maintainer(s)",
 }
 
 if "bpy" in locals():
     import importlib
 
     importlib.reload(ui)
+    importlib.reload(nodes)
     importlib.reload(render)
     importlib.reload(shading)
+    importlib.reload(primitives)
     importlib.reload(update_files)
 
 else:
@@ -121,13 +130,18 @@ else:
     import nodeitems_utils  # for Nodes
     from nodeitems_utils import NodeCategory, NodeItem  # for Nodes
     from bl_operators.presets import AddPresetBase
-    from bpy.types import AddonPreferences, PropertyGroup
+    from bpy.types import (
+        AddonPreferences,
+        PropertyGroup,
+        NodeSocket,
+    )
+
     from bpy.props import (
+        FloatVectorProperty,
         StringProperty,
         BoolProperty,
         IntProperty,
         FloatProperty,
-        FloatVectorProperty,
         EnumProperty,
         PointerProperty,
         CollectionProperty,
@@ -137,31 +151,86 @@ else:
 
 def string_strip_hyphen(name):
 
-    """Remove hyphen characters from a string to avoid POV errors."""
+    """Remove hyphen characters from a string to avoid POV errors"""
 
     return name.replace("-", "")
 
+def pov_context_tex_datablock(context):
+    """Texture context type recreated as deprecated in blender 2.8"""
+
+    idblock = context.brush
+    if idblock and context.scene.texture_context == 'OTHER':
+        return idblock
+
+    # idblock = bpy.context.active_object.active_material
+    idblock = context.view_layer.objects.active.active_material
+    if idblock and context.scene.texture_context == 'MATERIAL':
+        return idblock
+
+    idblock = context.world
+    if idblock and context.scene.texture_context == 'WORLD':
+        return idblock
+
+    idblock = context.light
+    if idblock and context.scene.texture_context == 'LIGHT':
+        return idblock
+
+    if context.particle_system and context.scene.texture_context == 'PARTICLES':
+        idblock = context.particle_system.settings
+
+    return idblock
+
+    idblock = context.line_style
+    if idblock and context.scene.texture_context == 'LINESTYLE':
+        return idblock
+
+def brush_texture_update(self, context):
+
+    """Brush texture rolldown must show active slot texture props"""
+    idblock = pov_context_tex_datablock(context)
+    if idblock is not None:
+        #mat = context.view_layer.objects.active.active_material
+        idblock = pov_context_tex_datablock(context)
+        slot = idblock.pov_texture_slots[idblock.pov.active_texture_index]
+        tex = slot.texture
+
+        if tex:
+            # Switch paint brush to active texture so slot and settings remain contextual
+            bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[tex]
+            bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[tex]
 
 def active_texture_name_from_uilist(self, context):
-    mat = context.scene.view_layers["View Layer"].objects.active.active_material
-    index = mat.pov.active_texture_index
-    name = mat.pov_texture_slots[index].name
-    newname = mat.pov_texture_slots[index].texture
-    tex = bpy.data.textures[name]
-    tex.name = newname
-    mat.pov_texture_slots[index].name = newname
+
+    idblock = pov_context_tex_datablock(context)
+    #mat = context.view_layer.objects.active.active_material
+    if idblock is not None:
+        index = idblock.pov.active_texture_index
+        name = idblock.pov_texture_slots[index].name
+        newname = idblock.pov_texture_slots[index].texture
+        tex = bpy.data.textures[name]
+        tex.name = newname
+        idblock.pov_texture_slots[index].name = newname
 
 
 def active_texture_name_from_search(self, context):
-    mat = context.scene.view_layers["View Layer"].objects.active.active_material
-    index = mat.pov.active_texture_index
-    name = mat.pov_texture_slots[index].texture_search
+    """Texture rolldown to change the data linked by an existing texture"""
+    idblock = pov_context_tex_datablock(context)
+    #mat = context.view_layer.objects.active.active_material
+    if idblock is not None:
+        index = idblock.pov.active_texture_index
+        slot = idblock.pov_texture_slots[index]
+        name = slot.texture_search
+
     try:
         tex = bpy.data.textures[name]
-        mat.pov_texture_slots[index].name = name
-        mat.pov_texture_slots[index].texture = name
+        slot.name = name
+        slot.texture = name
+        # Switch paint brush to this texture so settings remain contextual
+        #bpy.context.tool_settings.image_paint.brush.texture = tex
+        #bpy.context.tool_settings.image_paint.brush.mask_texture = tex
     except:
         pass
+
 
 
 ###############################################################################
@@ -169,7 +238,7 @@ def active_texture_name_from_search(self, context):
 ###############################################################################
 class RenderPovSettingsScene(PropertyGroup):
 
-    """Declare scene level properties controllable in UI and translated to POV."""
+    """Declare scene level properties controllable in UI and translated to POV"""
 
     # Linux SDL-window enable
     sdl_window_enable: BoolProperty(
@@ -770,7 +839,7 @@ class RenderPovSettingsScene(PropertyGroup):
         name="Error Bound",
         description="One of the two main speed/quality tuning values, "
         "lower values are more accurate",
-        min=0.0, max=1000.0, soft_min=0.1, soft_max=10.0, default=1.8
+        min=0.0, max=1000.0, soft_min=0.1, soft_max=10.0, default=10.0
     )
 
     radio_gray_threshold: FloatProperty(
@@ -837,14 +906,15 @@ class RenderPovSettingsScene(PropertyGroup):
         name="Pretrace Start",
         description="Fraction of the screen width which sets the size of the "
         "blocks in the mosaic preview first pass",
-        min=0.01, max=1.00, soft_min=0.02, soft_max=1.0, default=0.08
+        min=0.005, max=1.00, soft_min=0.02, soft_max=1.0, default=0.04
     )
-
+    # XXX TODO set automatically to  pretrace_end = 8 / max (image_width, image_height)
+    # for non advanced mode
     radio_pretrace_end: FloatProperty(
         name="Pretrace End",
         description="Fraction of the screen width which sets the size of the blocks "
         "in the mosaic preview last pass",
-        min=0.000925, max=1.00, soft_min=0.01, soft_max=1.00, default=0.04, precision=3
+        min=0.000925, max=1.00, soft_min=0.01, soft_max=1.00, default=0.004, precision=3
     )
 
 ###############################################################################
@@ -856,19 +926,28 @@ class MaterialTextureSlot(PropertyGroup):
     bl_idname="pov_texture_slots",
     bl_description="Texture_slots from Blender-2.79",
 
+    # Adding a "real" texture datablock as property is not possible
+    # (or at least not easy through a dynamically populated EnumProperty).
+    # That's why we'll use a prop_search() UILayout function in ui.py.
+    # So we'll assign the name of the needed texture datablock to the below StringProperty.
     texture : StringProperty(update=active_texture_name_from_uilist)
-    texture_search : StringProperty(update=active_texture_name_from_search)
+    # and use another temporary StringProperty to change the linked data
+    texture_search : StringProperty(
+        name="",
+        update = active_texture_name_from_search,
+        description = "Browse Texture to be linked",
+    )
 
     alpha_factor: FloatProperty(
         name="Alpha",
         description="Amount texture affects alpha",
-        default = 0.0,
+        default = 1.0,
     )
 
     ambient_factor: FloatProperty(
         name="",
         description="Amount texture affects ambient",
-        default = 0.0,
+        default = 1.0,
     )
 
     bump_method: EnumProperty(
@@ -897,49 +976,49 @@ class MaterialTextureSlot(PropertyGroup):
     density_factor: FloatProperty(
         name="",
         description="Amount texture affects density",
-        default = 0.0,
+        default = 1.0,
     )
 
     diffuse_color_factor: FloatProperty(
         name="",
         description="Amount texture affects diffuse color",
-        default = 0.0,
+        default = 1.0,
     )
 
     diffuse_factor: FloatProperty(
         name="",
         description="Amount texture affects diffuse reflectivity",
-        default = 0.0,
+        default = 1.0,
     )
 
     displacement_factor: FloatProperty(
         name="",
         description="Amount texture displaces the surface",
-        default = 0.0,
+        default = 0.2,
     )
 
     emission_color_factor: FloatProperty(
         name="",
         description="Amount texture affects emission color",
-        default = 0.0,
+        default = 1.0,
     )
 
     emission_factor: FloatProperty(
         name="",
         description="Amount texture affects emission",
-        default = 0.0,
+        default = 1.0,
     )
 
     emit_factor: FloatProperty(
         name="",
         description="Amount texture affects emission",
-        default = 0.0,
+        default = 1.0,
     )
 
     hardness_factor: FloatProperty(
         name="",
         description="Amount texture affects hardness",
-        default = 0.0,
+        default = 1.0,
     )
 
     mapping: EnumProperty(
@@ -985,13 +1064,13 @@ class MaterialTextureSlot(PropertyGroup):
     mirror_factor: FloatProperty(
         name="",
         description="Amount texture affects mirror color",
-        default = 0.0,
+        default = 1.0,
     )
 
     normal_factor: FloatProperty(
         name="",
         description="Amount texture affects normal values",
-        default = 0.0,
+        default = 1.0,
     )
 
     normal_map_space: EnumProperty(
@@ -1013,38 +1092,64 @@ class MaterialTextureSlot(PropertyGroup):
     raymir_factor: FloatProperty(
         name="",
         description="Amount texture affects ray mirror",
-        default = 0.0,
+        default = 1.0,
     )
 
     reflection_color_factor: FloatProperty(
         name="",
         description="Amount texture affects color of out-scattered light",
-        default = 0.0,
+        default = 1.0,
     )
 
     reflection_factor: FloatProperty(
         name="",
         description="Amount texture affects brightness of out-scattered light",
-        default = 0.0,
+        default = 1.0,
     )
 
     scattering_factor: FloatProperty(
         name="",
         description="Amount texture affects scattering",
-        default = 0.0,
+        default = 1.0,
     )
 
     specular_color_factor: FloatProperty(
         name="",
         description="Amount texture affects specular color",
-        default = 0.0,
+        default = 1.0,
     )
 
     specular_factor: FloatProperty(
         name="",
         description="Amount texture affects specular reflectivity",
-        default = 0.0,
+        default = 1.0,
     )
+
+    offset: FloatVectorProperty(
+        name="Offset",
+        description=("Fine tune of the texture mapping X, Y and Z locations "),
+        precision=4,
+        step=0.1,
+        soft_min= -100.0,
+        soft_max=100.0,
+        default=(0.0,0.0,0.0),
+        options={'ANIMATABLE'},
+        subtype='TRANSLATION',
+    )
+
+    scale: FloatVectorProperty(
+        name="Size",
+        subtype='XYZ',
+        size=3,
+        description="Set scaling for the texture’s X, Y and Z sizes ",
+        precision=4,
+        step=0.1,
+        soft_min= -100.0,
+        soft_max=100.0,
+        default=(1.0,1.0,1.0),
+        options={'ANIMATABLE'},
+    )
+
 
     texture_coords: EnumProperty(
         name="",
@@ -1068,13 +1173,13 @@ class MaterialTextureSlot(PropertyGroup):
     translucency_factor: FloatProperty(
         name="",
         description="Amount texture affects translucency",
-        default = 0.0,
+        default = 1.0,
     )
 
     transmission_color_factor: FloatProperty(
         name="",
         description="Amount texture affects result color after light has been scattered/absorbed",
-        default = 0.0,
+        default = 1.0,
     )
 
     use: BoolProperty(
@@ -1095,6 +1200,12 @@ class MaterialTextureSlot(PropertyGroup):
         default = False,
     )
 
+    use_interpolation: BoolProperty(
+        name="",
+        description="Interpolates pixels using selected filter ",
+        default = False,
+    )
+
     use_map_alpha: BoolProperty(
         name="",
         description="Causes the texture to affect the alpha value",
@@ -1110,7 +1221,7 @@ class MaterialTextureSlot(PropertyGroup):
     use_map_color_diffuse: BoolProperty(
         name="",
         description="Causes the texture to affect basic color of the material",
-        default = False,
+        default = True,
     )
 
     use_map_color_emission: BoolProperty(
@@ -1234,7 +1345,7 @@ class MaterialTextureSlot(PropertyGroup):
     )
 
 
-#######################################"
+#######################################
 
     blend_factor: FloatProperty(
         name="Blend",
@@ -1328,10 +1439,10 @@ bpy.types.ID.texture_context = EnumProperty(
     default = 'MATERIAL',
 )
 
-bpy.types.ID.active_texture_index = IntProperty(
-    name = "Index for texture_slots",
-    default = 0,
-)
+# bpy.types.ID.active_texture_index = IntProperty(
+    # name = "Index for texture_slots",
+    # default = 0,
+# )
 
 class RenderPovSettingsMaterial(PropertyGroup):
     """Declare material level properties controllable in UI and translated to POV."""
@@ -1360,6 +1471,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
     active_texture_index: IntProperty(
         name = "Index for texture_slots",
         default = 0,
+        update = brush_texture_update
     )
 
     transparency_method: EnumProperty(
@@ -2123,7 +2235,7 @@ class MaterialRaytraceTransparency(PropertyGroup):
 
     gloss_samples: IntProperty(
         name="Samples",
-        description="Number of cone samples averaged for blurry refractions",
+        description="frequency of the noise sample used for blurry refractions",
         min=0, max=1024, default=18
     )
 
@@ -2205,8 +2317,8 @@ class MaterialRaytraceMirror(PropertyGroup):
     )
 
     gloss_samples: IntProperty(
-        name="Samples",
-        description="Number of cone samples averaged for blurry reflections",
+        name="Noise",
+        description="Frequency of the noise pattern bumps averaged for blurry reflections",
         min=0, max=1024, default=18,
     )
 
@@ -3223,7 +3335,7 @@ class MaterialStrandSettings(PropertyGroup):
 # Povray Nodes
 ###############################################################################
 
-class PovraySocketUniversal(bpy.types.NodeSocket):
+class PovraySocketUniversal(NodeSocket):
     bl_idname = 'PovraySocketUniversal'
     bl_label = 'Povray Socket'
     value_unlimited: bpy.props.FloatProperty(default=0.0)
@@ -3276,7 +3388,7 @@ class PovraySocketUniversal(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (1, 0, 0, 1)
 
-class PovraySocketFloat_0_1(bpy.types.NodeSocket):
+class PovraySocketFloat_0_1(NodeSocket):
     bl_idname = 'PovraySocketFloat_0_1'
     bl_label = 'Povray Socket'
     default_value: bpy.props.FloatProperty(description="Input node Value_0_1",min=0,max=1,default=0)
@@ -3289,7 +3401,7 @@ class PovraySocketFloat_0_1(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (0.5, 0.7, 0.7, 1)
 
-class PovraySocketFloat_0_10(bpy.types.NodeSocket):
+class PovraySocketFloat_0_10(NodeSocket):
     bl_idname = 'PovraySocketFloat_0_10'
     bl_label = 'Povray Socket'
     default_value: bpy.props.FloatProperty(description="Input node Value_0_10",min=0,max=10,default=0)
@@ -3304,7 +3416,7 @@ class PovraySocketFloat_0_10(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1)
 
-class PovraySocketFloat_10(bpy.types.NodeSocket):
+class PovraySocketFloat_10(NodeSocket):
     bl_idname = 'PovraySocketFloat_10'
     bl_label = 'Povray Socket'
     default_value: bpy.props.FloatProperty(description="Input node Value_10",min=-10,max=10,default=0)
@@ -3319,7 +3431,7 @@ class PovraySocketFloat_10(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1)
 
-class PovraySocketFloatPositive(bpy.types.NodeSocket):
+class PovraySocketFloatPositive(NodeSocket):
     bl_idname = 'PovraySocketFloatPositive'
     bl_label = 'Povray Socket'
     default_value: bpy.props.FloatProperty(description="Input Node Value Positive", min=0.0, default=0)
@@ -3331,7 +3443,7 @@ class PovraySocketFloatPositive(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (0.045, 0.005, 0.136, 1)
 
-class PovraySocketFloat_000001_10(bpy.types.NodeSocket):
+class PovraySocketFloat_000001_10(NodeSocket):
     bl_idname = 'PovraySocketFloat_000001_10'
     bl_label = 'Povray Socket'
     default_value: bpy.props.FloatProperty(min=0.000001,max=10,default=0.000001)
@@ -3343,7 +3455,7 @@ class PovraySocketFloat_000001_10(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (1, 0, 0, 1)
 
-class PovraySocketFloatUnlimited(bpy.types.NodeSocket):
+class PovraySocketFloatUnlimited(NodeSocket):
     bl_idname = 'PovraySocketFloatUnlimited'
     bl_label = 'Povray Socket'
     default_value: bpy.props.FloatProperty(default = 0.0)
@@ -3355,7 +3467,7 @@ class PovraySocketFloatUnlimited(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (0.7, 0.7, 1, 1)
 
-class PovraySocketInt_1_9(bpy.types.NodeSocket):
+class PovraySocketInt_1_9(NodeSocket):
     bl_idname = 'PovraySocketInt_1_9'
     bl_label = 'Povray Socket'
     default_value: bpy.props.IntProperty(description="Input node Value_1_9",min=1,max=9,default=6)
@@ -3367,7 +3479,7 @@ class PovraySocketInt_1_9(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (1, 0.7, 0.7, 1)
 
-class PovraySocketInt_0_256(bpy.types.NodeSocket):
+class PovraySocketInt_0_256(NodeSocket):
     bl_idname = 'PovraySocketInt_0_256'
     bl_label = 'Povray Socket'
     default_value: bpy.props.IntProperty(min=0,max=255,default=0)
@@ -3380,7 +3492,7 @@ class PovraySocketInt_0_256(bpy.types.NodeSocket):
         return (0.5, 0.5, 0.5, 1)
 
 
-class PovraySocketPattern(bpy.types.NodeSocket):
+class PovraySocketPattern(NodeSocket):
     bl_idname = 'PovraySocketPattern'
     bl_label = 'Povray Socket'
 
@@ -3417,7 +3529,7 @@ class PovraySocketPattern(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (1, 1, 1, 1)
 
-class PovraySocketColor(bpy.types.NodeSocket):
+class PovraySocketColor(NodeSocket):
     bl_idname = 'PovraySocketColor'
     bl_label = 'Povray Socket'
 
@@ -3434,7 +3546,7 @@ class PovraySocketColor(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (1, 1, 0, 1)
 
-class PovraySocketColorRGBFT(bpy.types.NodeSocket):
+class PovraySocketColorRGBFT(NodeSocket):
     bl_idname = 'PovraySocketColorRGBFT'
     bl_label = 'Povray Socket'
 
@@ -3452,7 +3564,7 @@ class PovraySocketColorRGBFT(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (1, 1, 0, 1)
 
-class PovraySocketTexture(bpy.types.NodeSocket):
+class PovraySocketTexture(NodeSocket):
     bl_idname = 'PovraySocketTexture'
     bl_label = 'Povray Socket'
     default_value: bpy.props.IntProperty()
@@ -3464,7 +3576,7 @@ class PovraySocketTexture(bpy.types.NodeSocket):
 
 
 
-class PovraySocketTransform(bpy.types.NodeSocket):
+class PovraySocketTransform(NodeSocket):
     bl_idname = 'PovraySocketTransform'
     bl_label = 'Povray Socket'
     default_value: bpy.props.IntProperty(min=0,max=255,default=0)
@@ -3474,7 +3586,7 @@ class PovraySocketTransform(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (99/255, 99/255, 199/255, 1)
 
-class PovraySocketNormal(bpy.types.NodeSocket):
+class PovraySocketNormal(NodeSocket):
     bl_idname = 'PovraySocketNormal'
     bl_label = 'Povray Socket'
     default_value: bpy.props.IntProperty(min=0,max=255,default=0)
@@ -3484,7 +3596,7 @@ class PovraySocketNormal(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (0.65, 0.65, 0.65, 1)
 
-class PovraySocketSlope(bpy.types.NodeSocket):
+class PovraySocketSlope(NodeSocket):
     bl_idname = 'PovraySocketSlope'
     bl_label = 'Povray Socket'
     default_value: bpy.props.FloatProperty(min = 0.0, max = 1.0)
@@ -3500,7 +3612,7 @@ class PovraySocketSlope(bpy.types.NodeSocket):
     def draw_color(self, context, node):
         return (0, 0, 0, 1)
 
-class PovraySocketMap(bpy.types.NodeSocket):
+class PovraySocketMap(NodeSocket):
     bl_idname = 'PovraySocketMap'
     bl_label = 'Povray Socket'
     default_value: bpy.props.StringProperty()
@@ -3774,7 +3886,7 @@ class RenderPovSettingsTexture(PropertyGroup):
             ('checker', "Checker", "", 'PLUGIN', 34),
             ('hexagon', "Hexagon", "", 'PLUGIN', 35),
             ('object', "Mesh", "", 'PLUGIN', 36),
-            ('emulator', "Internal Emulator", "", 'PLUG', 37)
+            ('emulator', "Blender Type Emulator", "", 'SCRIPTPLUGINS', 37)
         ),
         default='emulator',
     )
@@ -5167,7 +5279,7 @@ class RenderPovSettingsWorld(PropertyGroup):
         items=(
             ('MATERIAL', "", "Show material textures", "MATERIAL",0), # "Show material textures"
             ('WORLD', "", "Show world textures", "WORLD",1), # "Show world textures"
-            ('LAMP', "", "Show lamp textures", "LIGHT",2), # "Show lamp textures"
+            ('LIGHT', "", "Show lamp textures", "LIGHT",2), # "Show lamp textures"
             ('PARTICLES', "", "Show particles textures", "PARTICLES",3), # "Show particles textures"
             ('LINESTYLE', "", "Show linestyle textures", "LINE_DATA",4), # "Show linestyle textures"
             ('OTHER', "", "Show other data textures", "TEXTURE_DATA",5), # "Show other data textures"
@@ -5215,12 +5327,27 @@ class RenderPovSettingsWorld(PropertyGroup):
     )
     active_texture_index: IntProperty(
         name = "Index for texture_slots",
-        default = 0
+        default = 0,
+        update = brush_texture_update
     )
 
-
 class WorldTextureSlot(PropertyGroup):
-    """Declare world texture slot properties controllable in UI and translated to POV."""
+    """Declare world texture slot level properties for UI and translated to POV."""
+
+    bl_idname="pov_texture_slots",
+    bl_description="Texture_slots from Blender-2.79",
+
+    # Adding a "real" texture datablock as property is not possible
+    # (or at least not easy through a dynamically populated EnumProperty).
+    # That's why we'll use a prop_search() UILayout function in ui.py.
+    # So we'll assign the name of the needed texture datablock to the below StringProperty.
+    texture : StringProperty(update=active_texture_name_from_uilist)
+    # and use another temporary StringProperty to change the linked data
+    texture_search : StringProperty(
+        name="",
+        update = active_texture_name_from_search,
+        description = "Browse Texture to be linked",
+    )
 
     blend_factor: FloatProperty(
         name="Blend",
@@ -5239,6 +5366,31 @@ class WorldTextureSlot(PropertyGroup):
         name="Object",
         description="Object to use for mapping with Object texture coordinates",
         default="",
+    )
+
+    offset: FloatVectorProperty(
+        name="Offset",
+        description=("Fine tune of the texture mapping X, Y and Z locations "),
+        precision=4,
+        step=0.1,
+        soft_min= -100.0,
+        soft_max=100.0,
+        default=(0.0,0.0,0.0),
+        options={'ANIMATABLE'},
+        subtype='TRANSLATION',
+    )
+
+    scale: FloatVectorProperty(
+        name="Size",
+        subtype='XYZ',
+        size=3,
+        description="Set scaling for the texture’s X, Y and Z sizes ",
+        precision=4,
+        step=0.1,
+        soft_min= -100.0,
+        soft_max=100.0,
+        default=(1.0,1.0,1.0),
+        options={'ANIMATABLE'},
     )
 
     texture_coords: EnumProperty(
@@ -5308,7 +5460,7 @@ for i in range(18):  # length of world texture slots
 
 class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(bpy.types.UIList):
     # texture_slots:
-    index: bpy.props.IntProperty(name='index')
+    #index: bpy.props.IntProperty(name='index')
     # foo  = random prop
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
         ob = data
@@ -5385,11 +5537,44 @@ class PovrayPreferences(AddonPreferences):
         subtype='FILE_PATH',
     )
 
+    use_sounds: BoolProperty(
+        name="Use Sound",
+        description="Signaling end of the render process at various"
+        "stages can help if you're away from monitor",
+        default=False,
+    )
+
+    # TODO: Auto find POV sound directory as it does for binary
+    # And implement the three cases, left uncommented for a dummy
+    # interface in case some doc screenshots get made for that area
+    filepath_complete_sound: StringProperty(
+        name="Finish Render Sound",
+        description="Path to finished render sound file",
+        subtype='FILE_PATH',
+    )
+
+    filepath_parse_error_sound: StringProperty(
+        name="Parse Error Sound",
+        description="Path to parsing time error sound file",
+        subtype='FILE_PATH',
+    )
+
+    filepath_cancel_sound: StringProperty(
+        name="Cancel Render Sound",
+        description="Path to cancelled or render time error sound file",
+        subtype='FILE_PATH',
+    )
+
+    #shall we not move this to UI file?
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "branch_feature_set_povray")
         layout.prop(self, "filepath_povray")
         layout.prop(self, "docpath_povray")
+        layout.prop(self, "filepath_complete_sound")
+        layout.prop(self, "filepath_parse_error_sound")
+        layout.prop(self, "filepath_cancel_sound")
+        layout.prop(self, "use_sounds", icon='SOUND')
 
 
 classes = (
@@ -5451,7 +5636,7 @@ def register():
     bpy.types.Light.pov = PointerProperty(type=RenderPovSettingsLight)
     bpy.types.World.pov = PointerProperty(type=RenderPovSettingsWorld)
     bpy.types.Material.pov_texture_slots = CollectionProperty(type=MaterialTextureSlot)
-    bpy.types.World.texture_slots = CollectionProperty(type=WorldTextureSlot)
+    bpy.types.World.pov_texture_slots = CollectionProperty(type=WorldTextureSlot)
     bpy.types.Text.pov = PointerProperty(type=RenderPovSettingsText)
 
 
@@ -5468,6 +5653,7 @@ def unregister():
     del bpy.types.Camera.pov
     del bpy.types.Light.pov
     del bpy.types.World.pov
+    del bpy.types.World.pov_texture_slots
     del bpy.types.Material.pov_texture_slots
     del bpy.types.Text.pov
 

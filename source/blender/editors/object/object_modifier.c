@@ -345,7 +345,8 @@ static bool object_modifier_remove(
     object_remove_particle_system(bmain, scene, ob);
     return true;
   }
-  else if (md->type == eModifierType_Softbody) {
+
+  if (md->type == eModifierType_Softbody) {
     if (ob->soft) {
       sbFree(ob);
       ob->softflag = 0; /* TODO(Sybren): this should probably be moved into sbFree() */
@@ -888,12 +889,11 @@ int ED_object_modifier_copy(
     BLI_insertlinkafter(&ob->modifiers, md, nmd);
     return true;
   }
-  else {
-    nmd = BKE_modifier_new(md->type);
-    BKE_modifier_copydata(md, nmd);
-    BLI_insertlinkafter(&ob->modifiers, md, nmd);
-    BKE_modifier_unique_name(&ob->modifiers, nmd);
-  }
+
+  nmd = BKE_modifier_new(md->type);
+  BKE_modifier_copydata(md, nmd);
+  BLI_insertlinkafter(&ob->modifiers, md, nmd);
+  BKE_modifier_unique_name(&ob->modifiers, nmd);
 
   return 1;
 }
@@ -1347,7 +1347,7 @@ static bool modifier_apply_poll_ex(bContext *C, bool allow_shared)
   Object *ob = (ptr.owner_id != NULL) ? (Object *)ptr.owner_id : ED_object_active_context(C);
   ModifierData *md = ptr.data; /* May be NULL. */
 
-  if (ID_IS_OVERRIDE_LIBRARY(ob) || ID_IS_OVERRIDE_LIBRARY(ob->data)) {
+  if (ID_IS_OVERRIDE_LIBRARY(ob) || ((ob->data != NULL) && ID_IS_OVERRIDE_LIBRARY(ob->data))) {
     CTX_wm_operator_poll_msg_set(C, "Modifiers cannot be applied on override data");
     return false;
   }
@@ -1458,9 +1458,7 @@ static int modifier_apply_as_shapekey_invoke(bContext *C, wmOperator *op, const 
   if (edit_modifier_invoke_properties(C, op, event, &retval)) {
     return modifier_apply_as_shapekey_exec(C, op);
   }
-  else {
-    return retval;
-  }
+  return retval;
 }
 
 static char *modifier_apply_as_shapekey_get_description(struct bContext *UNUSED(C),
@@ -2813,7 +2811,7 @@ static int ocean_bake_exec(bContext *C, wmOperator *op)
 
   /* make a copy of ocean to use for baking - threadsafety */
   ocean = BKE_ocean_add();
-  BKE_ocean_init_from_modifier(ocean, omd);
+  BKE_ocean_init_from_modifier(ocean, omd, omd->resolution);
 
 #if 0
   BKE_ocean_bake(ocean, och);
