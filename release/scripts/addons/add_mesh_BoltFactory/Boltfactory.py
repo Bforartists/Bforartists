@@ -141,7 +141,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
                     ('bf_Torx_T50', 'T50', 'T50'),
                     ('bf_Torx_T55', 'T55', 'T55'),
                     ]
-    
+
     bf_Torx_Size_Type: EnumProperty(
             attr='bf_Torx_Size_Type',
             name='Torx Size',
@@ -323,7 +323,7 @@ class add_mesh_bolt(Operator, AddObjectHelper):
             description='Height of the 12 Point Nut',
             unit='LENGTH',
             )
-    
+
     bf_12_Point_Nut_Flat_Distance: FloatProperty(
             attr='bf_12_Point_Nut_Flat_Distance',
             name='12 Point Nut Flat Dist', default=3.0,
@@ -400,8 +400,8 @@ class add_mesh_bolt(Operator, AddObjectHelper):
                 col.prop(self, 'bf_Hex_Nut_Height')
                 col.prop(self, 'bf_Hex_Nut_Flat_Distance')
 
-            
-            
+
+
         # Thread
         col.label(text='Thread')
         if self.bf_Model_Type == 'bf_Model_Bolt':

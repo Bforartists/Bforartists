@@ -537,7 +537,7 @@ static void contarget_get_lattice_mat(Object *ob, const char *substring, float m
       MDeformWeight *dw = BKE_defvert_find_index(dv, defgroup);
       if (dw && dw->weight > 0.0f) {
         /* copy coordinates of point to temporary vector, then add to find average */
-        memcpy(tvec, co ? co : bp->vec, 3 * sizeof(float));
+        memcpy(tvec, co ? co : bp->vec, sizeof(float[3]));
 
         add_v3_v3(vec, tvec);
         grouped++;
@@ -2404,7 +2404,7 @@ static void armdef_get_tarmat(struct Depsgraph *UNUSED(depsgraph),
   }
 }
 
-static void armdef_accumulate_matrix(float obmat[4][4],
+static void armdef_accumulate_matrix(const float obmat[4][4],
                                      const float iobmat[4][4],
                                      const float basemat[4][4],
                                      const float bonemat[4][4],
@@ -5284,9 +5284,8 @@ const bConstraintTypeInfo *BKE_constraint_typeinfo_from_type(int type)
     /* there shouldn't be any segfaults here... */
     return constraintsTypeInfo[type];
   }
-  else {
-    CLOG_WARN(&LOG, "No valid constraint type-info data available. Type = %i", type);
-  }
+
+  CLOG_WARN(&LOG, "No valid constraint type-info data available. Type = %i", type);
 
   return NULL;
 }
@@ -5300,9 +5299,8 @@ const bConstraintTypeInfo *BKE_constraint_typeinfo_get(bConstraint *con)
   if (con) {
     return BKE_constraint_typeinfo_from_type(con->type);
   }
-  else {
-    return NULL;
-  }
+
+  return NULL;
 }
 
 /* ************************* General Constraints API ************************** */
@@ -5384,9 +5382,8 @@ bool BKE_constraint_remove(ListBase *list, bConstraint *con)
     BLI_freelinkN(list, con);
     return true;
   }
-  else {
-    return false;
-  }
+
+  return false;
 }
 
 bool BKE_constraint_remove_ex(ListBase *list, Object *ob, bConstraint *con, bool clear_dep)
@@ -5399,9 +5396,8 @@ bool BKE_constraint_remove_ex(ListBase *list, Object *ob, bConstraint *con, bool
     }
     return true;
   }
-  else {
-    return false;
-  }
+
+  return false;
 }
 
 /* ......... */

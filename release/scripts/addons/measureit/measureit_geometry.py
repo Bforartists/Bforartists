@@ -413,7 +413,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                             if ms.gltype == 11:  # arc
                                 # print length or arc and angle
                                 if ms.glarc_len is True:
-                                    tx_dist = ms.glarc_txlen + format_distance(fmt, units, arc_length)
+                                    tx_dist = ms.glarc_txlen + format_distance(fmt, units, arc_length * scale)
                                 else:
                                     tx_dist = " "
 
@@ -453,7 +453,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                                 if scene.measureit_gl_show_d is True and ms.gldist is True and \
                                         ms.glarc_rad is True:
                                     tx_dist = ms.glarc_txradio + format_distance(fmt, units,
-                                                                                 dist * scene.measureit_scale_factor)
+                                                                                 dist * scene.measureit_scale_factor * scale)
                                 else:
                                     tx_dist = " "
                             if ms.gltype == 2:

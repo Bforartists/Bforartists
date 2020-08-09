@@ -1024,14 +1024,18 @@ static void rna_Fluid_flowtype_set(struct PointerRNA *ptr, int value)
   FluidFlowSettings *settings = (FluidFlowSettings *)ptr->data;
 
   if (value != settings->type) {
+    short prev_value = settings->type;
     settings->type = value;
 
-    /* Force flow source to mesh */
+    /* Force flow source to mesh for liquids.
+     * Also use different surface emission. Liquids should by default not emit around surface. */
     if (value == FLUID_FLOW_TYPE_LIQUID) {
       rna_Fluid_flowsource_set(ptr, FLUID_FLOW_SOURCE_MESH);
       settings->surface_distance = 0.0f;
     }
-    else {
+    /* Use some surface emission when switching to a gas emitter. Gases should by default emit a
+     * bit around surface. */
+    if (prev_value == FLUID_FLOW_TYPE_LIQUID) {
       settings->surface_distance = 1.5f;
     }
   }
@@ -1677,7 +1681,7 @@ static void rna_def_fluid_domain_settings(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.001, 1.0);
   RNA_def_property_ui_range(prop, 0.01, 1.0, 0.05, -1);
   RNA_def_property_ui_text(prop,
-                           "Obstacle-Fluid Threshold ",
+                           "Obstacle-Fluid Threshold",
                            "Determines how much fluid is allowed in an obstacle cell "
                            "(higher values will tag a boundary cell as an obstacle easier "
                            "and reduce the boundary smoothening effect)");
@@ -2394,7 +2398,7 @@ static void rna_def_fluid_domain_settings(BlenderRNA *brna)
   prop = RNA_def_property(srna, "openvdb_cache_compress_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "openvdb_compression");
   RNA_def_property_enum_items(prop, prop_compression_items);
-  RNA_def_property_ui_text(prop, "Compression", "facession method to be used");
+  RNA_def_property_ui_text(prop, "Compression", "Compression method to be used");
 
   prop = RNA_def_property(srna, "openvdb_data_depth", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_bitflag_sdna(prop, NULL, "openvdb_data_depth");

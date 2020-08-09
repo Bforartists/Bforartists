@@ -597,13 +597,21 @@ def generate_state():
     return state
 
 
-def get_move_selection():
+def get_move_selection(*, names_only=False):
     global move_selection
 
     if not move_selection:
-        move_selection = [obj.name for obj in bpy.context.selected_objects]
+        move_selection = {obj.name for obj in bpy.context.selected_objects}
 
-    return [bpy.data.objects[name] for name in move_selection]
+    if names_only:
+        return move_selection
+
+    else:
+        if len(move_selection) <= 5:
+            return {bpy.data.objects[name] for name in move_selection}
+
+        else:
+            return {obj for obj in bpy.data.objects if obj.name in move_selection}
 
 
 def get_move_active():
@@ -613,7 +621,7 @@ def get_move_active():
     if not move_active:
         move_active = getattr(bpy.context.view_layer.objects.active, "name", None)
 
-    if move_active not in [obj.name for obj in get_move_selection()]:
+    if move_active not in get_move_selection(names_only=True):
         move_active = None
 
     return bpy.data.objects[move_active] if move_active else None

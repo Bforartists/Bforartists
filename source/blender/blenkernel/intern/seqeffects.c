@@ -303,10 +303,10 @@ static void do_alphaover_effect_float(
       mfac = 1.0f - (fac2 * rt1[3]);
 
       if (fac <= 0.0f) {
-        memcpy(rt, rt2, 4 * sizeof(float));
+        memcpy(rt, rt2, sizeof(float[4]));
       }
       else if (mfac <= 0) {
-        memcpy(rt, rt1, 4 * sizeof(float));
+        memcpy(rt, rt1, sizeof(float[4]));
       }
       else {
         rt[0] = fac * rt1[0] + mfac * rt2[0];
@@ -330,10 +330,10 @@ static void do_alphaover_effect_float(
       mfac = 1.0f - (fac4 * rt1[3]);
 
       if (fac <= 0.0f) {
-        memcpy(rt, rt2, 4 * sizeof(float));
+        memcpy(rt, rt2, sizeof(float[4]));
       }
       else if (mfac <= 0.0f) {
-        memcpy(rt, rt1, 4 * sizeof(float));
+        memcpy(rt, rt1, sizeof(float[4]));
       }
       else {
         rt[0] = fac * rt1[0] + mfac * rt2[0];
@@ -499,16 +499,16 @@ static void do_alphaunder_effect_float(
        * 'skybuf' can be crossed in
        */
       if (rt2[3] <= 0 && fac2 >= 1.0f) {
-        memcpy(rt, rt1, 4 * sizeof(float));
+        memcpy(rt, rt1, sizeof(float[4]));
       }
       else if (rt2[3] >= 1.0f) {
-        memcpy(rt, rt2, 4 * sizeof(float));
+        memcpy(rt, rt2, sizeof(float[4]));
       }
       else {
         fac = fac2 * (1.0f - rt2[3]);
 
         if (fac == 0) {
-          memcpy(rt, rt2, 4 * sizeof(float));
+          memcpy(rt, rt2, sizeof(float[4]));
         }
         else {
           rt[0] = fac * rt1[0] + rt2[0];
@@ -530,16 +530,16 @@ static void do_alphaunder_effect_float(
     x = xo;
     while (x--) {
       if (rt2[3] <= 0 && fac4 >= 1.0f) {
-        memcpy(rt, rt1, 4 * sizeof(float));
+        memcpy(rt, rt1, sizeof(float[4]));
       }
       else if (rt2[3] >= 1.0f) {
-        memcpy(rt, rt2, 4 * sizeof(float));
+        memcpy(rt, rt2, sizeof(float[4]));
       }
       else {
         fac = fac4 * (1.0f - rt2[3]);
 
         if (fac == 0) {
-          memcpy(rt, rt2, 4 * sizeof(float));
+          memcpy(rt, rt2, sizeof(float[4]));
         }
         else {
           rt[0] = fac * rt1[0] + rt2[0];
@@ -2522,7 +2522,7 @@ static void RVBlurBitmap2_float(float *map, int width, int height, float blur, i
   }
 
   /* Allocate memory for the tempmap and the blur filter matrix */
-  temp = MEM_mallocN((width * height * 4 * sizeof(float)), "blurbitmaptemp");
+  temp = MEM_mallocN(sizeof(float[4]) * width * height, "blurbitmaptemp");
   if (!temp) {
     return;
   }
@@ -2746,8 +2746,8 @@ static void do_glow_effect_byte(Sequence *seq,
   float *outbuf, *inbuf;
   GlowVars *glow = (GlowVars *)seq->effectdata;
 
-  inbuf = MEM_mallocN(4 * sizeof(float) * x * y, "glow effect input");
-  outbuf = MEM_mallocN(4 * sizeof(float) * x * y, "glow effect output");
+  inbuf = MEM_mallocN(sizeof(float[4]) * x * y, "glow effect input");
+  outbuf = MEM_mallocN(sizeof(float[4]) * x * y, "glow effect output");
 
   IMB_buffer_float_from_byte(inbuf, rect1, IB_PROFILE_SRGB, IB_PROFILE_SRGB, false, x, y, x, x);
   IMB_buffer_float_premultiply(inbuf, x, y);
@@ -3269,9 +3269,8 @@ float BKE_sequencer_speed_effect_target_frame_get(const SeqRenderData *context,
   if (input == 0) { /* Current frame. */
     return floor(seq->start + s->frameMap[nr]);
   }
-  else { /* Next frame. */
-    return ceil(seq->start + s->frameMap[nr]);
-  }
+  /* Next frame. */
+  return ceil(seq->start + s->frameMap[nr]);
 }
 
 static float speed_effect_interpolation_ratio_get(SpeedControlVars *s, Sequence *seq, float cfra)
@@ -4024,7 +4023,7 @@ static int early_out_fade(Sequence *UNUSED(seq), float facf0, float facf1)
   if (facf0 == 0.0f && facf1 == 0.0f) {
     return EARLY_USE_INPUT_1;
   }
-  else if (facf0 == 1.0f && facf1 == 1.0f) {
+  if (facf0 == 1.0f && facf1 == 1.0f) {
     return EARLY_USE_INPUT_2;
   }
   return EARLY_DO_EFFECT;

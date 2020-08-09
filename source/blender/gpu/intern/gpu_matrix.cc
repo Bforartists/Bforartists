@@ -23,7 +23,7 @@
 
 #include "GPU_shader_interface.h"
 
-#include "gpu_context_private.h"
+#include "gpu_context_private.hh"
 #include "gpu_matrix_private.h"
 
 #define SUPPRESS_GENERIC_MATRIX_API
@@ -590,9 +590,8 @@ const float (*GPU_matrix_model_view_get(float m[4][4]))[4]
     copy_m4_m4(m, ModelView);
     return m;
   }
-  else {
-    return ModelView;
-  }
+
+  return ModelView;
 }
 
 const float (*GPU_matrix_projection_get(float m[4][4]))[4]
@@ -601,9 +600,8 @@ const float (*GPU_matrix_projection_get(float m[4][4]))[4]
     copy_m4_m4(m, Projection);
     return m;
   }
-  else {
-    return Projection;
-  }
+
+  return Projection;
 }
 
 const float (*GPU_matrix_model_view_projection_get(float m[4][4]))[4]

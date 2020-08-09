@@ -96,9 +96,7 @@ char *BLI_current_working_dir(char *dir, const size_t maxncpy)
       memcpy(dir, pwd, srclen + 1);
       return dir;
     }
-    else {
-      return NULL;
-    }
+    return NULL;
   }
   return getcwd(dir, maxncpy);
 #endif
@@ -373,13 +371,13 @@ int BLI_exists(const char *name)
 
   free(tmp_16);
   if (res == -1) {
-    return (0);
+    return 0;
   }
 #else
   struct stat st;
   BLI_assert(!BLI_path_is_rel(name));
   if (stat(name, &st)) {
-    return (0);
+    return 0;
   }
 #endif
   return (st.st_mode);

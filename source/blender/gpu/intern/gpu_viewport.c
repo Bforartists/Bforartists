@@ -912,9 +912,8 @@ GPUTexture *GPU_viewport_color_texture(GPUViewport *viewport, int view)
     if (viewport->active_view == view) {
       return dtxl->color;
     }
-    else {
-      return dtxl->color_stereo;
-    }
+
+    return dtxl->color_stereo;
   }
 
   return NULL;
@@ -1034,4 +1033,16 @@ void GPU_viewport_free(GPUViewport *viewport)
   gpu_viewport_batch_free(viewport);
 
   MEM_freeN(viewport);
+}
+
+GPUFrameBuffer *GPU_viewport_framebuffer_default_get(GPUViewport *viewport)
+{
+  DefaultFramebufferList *fbl = GPU_viewport_framebuffer_list_get(viewport);
+  return fbl->default_fb;
+}
+
+GPUFrameBuffer *GPU_viewport_framebuffer_overlay_get(GPUViewport *viewport)
+{
+  DefaultFramebufferList *fbl = GPU_viewport_framebuffer_list_get(viewport);
+  return fbl->overlay_fb;
 }

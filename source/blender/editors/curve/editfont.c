@@ -475,7 +475,7 @@ static int kill_selection(Object *obedit, int ins) /* 1 == new character */
     ef->selstart = ef->selend = 0;
   }
 
-  return (direction);
+  return direction;
 }
 
 /** \} */
@@ -649,7 +649,7 @@ static void txt_add_object(bContext *C, TextLine *firstline, int totline, const 
   int nchars = 0, nbytes = 0;
   char *s;
   int a;
-  float rot[3] = {0.f, 0.f, 0.f};
+  const float rot[3] = {0.f, 0.f, 0.f};
 
   obedit = BKE_object_add(bmain, scene, view_layer, OB_FONT, NULL);
   base = view_layer->basact;

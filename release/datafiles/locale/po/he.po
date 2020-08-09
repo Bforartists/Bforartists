@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -418,10 +418,6 @@ msgstr "היוור"
 
 msgid "Gap Randomness"
 msgstr "יארקא"
-
-
-msgid "Radius Fac"
-msgstr ":X סוידר"
 
 
 msgid "Timing Mode"

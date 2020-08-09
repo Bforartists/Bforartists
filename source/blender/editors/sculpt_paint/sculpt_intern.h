@@ -21,8 +21,7 @@
  * \ingroup edsculpt
  */
 
-#ifndef __SCULPT_INTERN_H__
-#define __SCULPT_INTERN_H__
+#pragma once
 
 #include "DNA_brush_types.h"
 #include "DNA_key_types.h"
@@ -351,7 +350,6 @@ void SCULPT_cloth_simulation_free(struct SculptClothSimulation *cloth_sim);
 
 void SCULPT_cloth_simulation_limits_draw(const uint gpuattr,
                                          const struct Brush *brush,
-                                         const float obmat[4][4],
                                          const float location[3],
                                          const float normal[3],
                                          const float rds,
@@ -397,6 +395,7 @@ void SCULPT_pose_ik_chain_free(struct SculptPoseIKChain *ik_chain);
 /* Multiplane Scrape Brush. */
 void SCULPT_do_multiplane_scrape_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode);
 void SCULPT_multiplane_scrape_preview_draw(const uint gpuattr,
+                                           Brush *brush,
                                            SculptSession *ss,
                                            const float outline_col[3],
                                            const float outline_alpha);
@@ -909,7 +908,10 @@ typedef struct FilterCache {
 
   /* Sharpen mesh filter. */
   float sharpen_smooth_ratio;
+  float sharpen_intensify_detail_strength;
+  int sharpen_curvature_smooth_iterations;
   float *sharpen_factor;
+  float (*sharpen_detail_directions)[3];
 
   /* unmasked nodes */
   PBVHNode **nodes;
@@ -994,5 +996,3 @@ void SCULPT_OT_set_detail_size(struct wmOperatorType *ot);
 
 /* Dyntopo. */
 void SCULPT_OT_dynamic_topology_toggle(struct wmOperatorType *ot);
-
-#endif

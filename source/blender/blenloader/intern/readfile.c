@@ -373,7 +373,7 @@ static void oldnewmap_insert_or_replace(OldNewMap *onm, OldNew entry)
       onm->nentries++;
       break;
     }
-    else if (onm->entries[index].oldp == entry.oldp) {
+    if (onm->entries[index].oldp == entry.oldp) {
       onm->entries[index] = entry;
       break;
     }
@@ -1112,9 +1112,8 @@ static bool read_file_dna(FileData *fd, const char **r_error_message)
 
         return true;
       }
-      else {
-        return false;
-      }
+
+      return false;
     }
     else if (bhead->code == ENDB) {
       break;
@@ -1135,7 +1134,7 @@ static int *read_file_thumbnail(FileData *fd)
       const bool do_endian_swap = (fd->flags & FD_FLAGS_SWITCH_ENDIAN) != 0;
       int *data = (int *)(bhead + 1);
 
-      if (bhead->len < (2 * sizeof(int))) {
+      if (bhead->len < (sizeof(int[2]))) {
         break;
       }
 
@@ -1156,7 +1155,7 @@ static int *read_file_thumbnail(FileData *fd)
       blend_thumb = data;
       break;
     }
-    else if (bhead->code != REND) {
+    if (bhead->code != REND) {
       /* Thumbnail is stored in TEST immediately after first REND... */
       break;
     }
@@ -1187,7 +1186,7 @@ static int fd_read_data_from_file(FileData *filedata,
     filedata->file_offset += readsize;
   }
 
-  return (readsize);
+  return readsize;
 }
 
 static off64_t fd_seek_data_from_file(FileData *filedata, off64_t offset, int whence)
@@ -1212,7 +1211,7 @@ static int fd_read_gzip_from_file(FileData *filedata,
     filedata->file_offset += readsize;
   }
 
-  return (readsize);
+  return readsize;
 }
 
 /* Memory reading. */
@@ -1228,7 +1227,7 @@ static int fd_read_from_memory(FileData *filedata,
   memcpy(buffer, filedata->buffer + filedata->file_offset, readsize);
   filedata->file_offset += readsize;
 
-  return (readsize);
+  return readsize;
 }
 
 /* MemFile reading. */
@@ -1373,9 +1372,8 @@ static FileData *blo_filedata_from_file_descriptor(const char *filepath,
                 errno ? strerror(errno) : TIP_("insufficient content"));
     return NULL;
   }
-  else {
-    BLI_lseek(file, 0, SEEK_SET);
-  }
+
+  BLI_lseek(file, 0, SEEK_SET);
 
   /* Regular file. */
   if (memcmp(header, "BLENDER", sizeof(header)) == 0) {
@@ -1397,12 +1395,11 @@ static FileData *blo_filedata_from_file_descriptor(const char *filepath,
                   errno ? strerror(errno) : TIP_("unknown error reading file"));
       return NULL;
     }
-    else {
-      /* 'seek_fn' is too slow for gzip, don't set it. */
-      read_fn = fd_read_gzip_from_file;
-      /* Caller must close. */
-      file = -1;
-    }
+
+    /* 'seek_fn' is too slow for gzip, don't set it. */
+    read_fn = fd_read_gzip_from_file;
+    /* Caller must close. */
+    file = -1;
   }
 
   if (read_fn == NULL) {
@@ -1487,14 +1484,14 @@ static int fd_read_gzip_from_memory(FileData *filedata,
   if (err == Z_STREAM_END) {
     return 0;
   }
-  else if (err != Z_OK) {
+  if (err != Z_OK) {
     printf("fd_read_gzip_from_memory: zlib error\n");
     return 0;
   }
 
   filedata->file_offset += size;
 
-  return (size);
+  return size;
 }
 
 static int fd_read_gzip_from_memory_init(FileData *fd)
@@ -1521,28 +1518,27 @@ FileData *blo_filedata_from_memory(const void *mem, int memsize, ReportList *rep
     BKE_report(reports, RPT_WARNING, (mem) ? TIP_("Unable to read") : TIP_("Unable to open"));
     return NULL;
   }
-  else {
-    FileData *fd = filedata_new();
-    const char *cp = mem;
 
-    fd->buffer = mem;
-    fd->buffersize = memsize;
+  FileData *fd = filedata_new();
+  const char *cp = mem;
 
-    /* test if gzip */
-    if (cp[0] == 0x1f && cp[1] == 0x8b) {
-      if (0 == fd_read_gzip_from_memory_init(fd)) {
-        blo_filedata_free(fd);
-        return NULL;
-      }
+  fd->buffer = mem;
+  fd->buffersize = memsize;
+
+  /* test if gzip */
+  if (cp[0] == 0x1f && cp[1] == 0x8b) {
+    if (0 == fd_read_gzip_from_memory_init(fd)) {
+      blo_filedata_free(fd);
+      return NULL;
     }
-    else {
-      fd->read = fd_read_from_memory;
-    }
-
-    fd->flags |= FD_FLAGS_NOT_MY_BUFFER;
-
-    return blo_decode_and_check(fd, reports);
   }
+  else {
+    fd->read = fd_read_from_memory;
+  }
+
+  fd->flags |= FD_FLAGS_NOT_MY_BUFFER;
+
+  return blo_decode_and_check(fd, reports);
 }
 
 FileData *blo_filedata_from_memfile(MemFile *memfile,
@@ -1553,16 +1549,15 @@ FileData *blo_filedata_from_memfile(MemFile *memfile,
     BKE_report(reports, RPT_WARNING, "Unable to open blend <memory>");
     return NULL;
   }
-  else {
-    FileData *fd = filedata_new();
-    fd->memfile = memfile;
-    fd->undo_direction = params->undo_direction;
 
-    fd->read = fd_read_from_memfile;
-    fd->flags |= FD_FLAGS_NOT_MY_BUFFER;
+  FileData *fd = filedata_new();
+  fd->memfile = memfile;
+  fd->undo_direction = params->undo_direction;
 
-    return blo_decode_and_check(fd, reports);
-  }
+  fd->read = fd_read_from_memfile;
+  fd->flags |= FD_FLAGS_NOT_MY_BUFFER;
+
+  return blo_decode_and_check(fd, reports);
 }
 
 void blo_filedata_free(FileData *fd)
@@ -1695,7 +1690,7 @@ bool BLO_library_path_explode(const char *path, char *r_dir, char **r_group, cha
     if (BLO_has_bfile_extension(r_dir) && BLI_is_file(r_dir)) {
       break;
     }
-    else if (STREQ(r_dir, BLO_EMBEDDED_STARTUP_BLEND)) {
+    if (STREQ(r_dir, BLO_EMBEDDED_STARTUP_BLEND)) {
       break;
     }
 
@@ -5145,6 +5140,9 @@ static void direct_link_pose(BlendDataReader *reader, bPose *pose)
   pose->chan_array = NULL;
 
   for (pchan = pose->chanbase.first; pchan; pchan = pchan->next) {
+    BKE_pose_channel_runtime_reset(&pchan->runtime);
+    BKE_pose_channel_session_uuid_generate(pchan);
+
     pchan->bone = NULL;
     BLO_read_data_address(reader, &pchan->parent);
     BLO_read_data_address(reader, &pchan->child);
@@ -5170,7 +5168,6 @@ static void direct_link_pose(BlendDataReader *reader, bPose *pose)
     CLAMP(pchan->rotmode, ROT_MODE_MIN, ROT_MODE_MAX);
 
     pchan->draw_data = NULL;
-    BKE_pose_channel_runtime_reset(&pchan->runtime);
   }
   pose->ikdata = NULL;
   if (pose->ikparam != NULL) {
@@ -6030,7 +6027,7 @@ static void direct_link_lightcache_texture(BlendDataReader *reader, LightCacheTe
 
   if (lctex->data) {
     BLO_read_data_address(reader, &lctex->data);
-    if (BLO_read_requires_endian_switch(reader)) {
+    if (lctex->data && BLO_read_requires_endian_switch(reader)) {
       int data_size = lctex->components * lctex->tex_size[0] * lctex->tex_size[1] *
                       lctex->tex_size[2];
 
@@ -6042,10 +6039,15 @@ static void direct_link_lightcache_texture(BlendDataReader *reader, LightCacheTe
       }
     }
   }
+
+  if (lctex->data == NULL) {
+    zero_v3_int(lctex->tex_size);
+  }
 }
 
 static void direct_link_lightcache(BlendDataReader *reader, LightCache *cache)
 {
+  cache->flag &= ~LIGHTCACHE_NOT_USABLE;
   direct_link_lightcache_texture(reader, &cache->cube_tx);
   direct_link_lightcache_texture(reader, &cache->grid_tx);
 
@@ -6086,6 +6088,14 @@ static bool scene_validate_setscene__liblink(Scene *sce, const int totscene)
   }
 
   for (a = 0, sce_iter = sce; sce_iter->set; sce_iter = sce_iter->set, a++) {
+    /* This runs per library (before each libraries #Main has been joined),
+     * so we can't step into other libraries since `totscene` is only for this library.
+     *
+     * Also, other libraries may not have been linked yet,
+     * while we could check #LIB_TAG_NEED_LINK the library pointer check is sufficient. */
+    if (sce->id.lib != sce_iter->id.lib) {
+      return true;
+    }
     if (sce_iter->flag & SCE_READFILE_LIBLINK_NEED_SETSCENE_CHECK) {
       return true;
     }
@@ -6954,31 +6964,31 @@ static void direct_link_area(BlendDataReader *reader, ScrArea *area)
       BLO_read_data_address(reader, &snla->ads);
     }
     else if (sl->spacetype == SPACE_OUTLINER) {
-      SpaceOutliner *soops = (SpaceOutliner *)sl;
+      SpaceOutliner *space_outliner = (SpaceOutliner *)sl;
 
       /* use newdataadr_no_us and do not free old memory avoiding double
        * frees and use of freed memory. this could happen because of a
        * bug fixed in revision 58959 where the treestore memory address
        * was not unique */
-      TreeStore *ts = newdataadr_no_us(reader->fd, soops->treestore);
-      soops->treestore = NULL;
+      TreeStore *ts = newdataadr_no_us(reader->fd, space_outliner->treestore);
+      space_outliner->treestore = NULL;
       if (ts) {
         TreeStoreElem *elems = newdataadr_no_us(reader->fd, ts->data);
 
-        soops->treestore = BLI_mempool_create(
+        space_outliner->treestore = BLI_mempool_create(
             sizeof(TreeStoreElem), ts->usedelem, 512, BLI_MEMPOOL_ALLOW_ITER);
         if (ts->usedelem && elems) {
           int i;
           for (i = 0; i < ts->usedelem; i++) {
-            TreeStoreElem *new_elem = BLI_mempool_alloc(soops->treestore);
+            TreeStoreElem *new_elem = BLI_mempool_alloc(space_outliner->treestore);
             *new_elem = elems[i];
           }
         }
         /* we only saved what was used */
-        soops->storeflag |= SO_TREESTORE_CLEANUP;  // at first draw
+        space_outliner->storeflag |= SO_TREESTORE_CLEANUP;  // at first draw
       }
-      soops->treehash = NULL;
-      soops->tree.first = soops->tree.last = NULL;
+      space_outliner->treehash = NULL;
+      space_outliner->tree.first = space_outliner->tree.last = NULL;
     }
     else if (sl->spacetype == SPACE_IMAGE) {
       SpaceImage *sima = (SpaceImage *)sl;
@@ -7205,20 +7215,20 @@ static void lib_link_area(BlendLibReader *reader, ID *parent_id, ScrArea *area)
         break;
       }
       case SPACE_OUTLINER: {
-        SpaceOutliner *so = (SpaceOutliner *)sl;
-        BLO_read_id_address(reader, NULL, &so->search_tse.id);
+        SpaceOutliner *space_outliner = (SpaceOutliner *)sl;
+        BLO_read_id_address(reader, NULL, &space_outliner->search_tse.id);
 
-        if (so->treestore) {
+        if (space_outliner->treestore) {
           TreeStoreElem *tselem;
           BLI_mempool_iter iter;
 
-          BLI_mempool_iternew(so->treestore, &iter);
+          BLI_mempool_iternew(space_outliner->treestore, &iter);
           while ((tselem = BLI_mempool_iterstep(&iter))) {
             BLO_read_id_address(reader, NULL, &tselem->id);
           }
-          if (so->treehash) {
+          if (space_outliner->treehash) {
             /* rebuild hash table, because it depends on ids too */
-            so->storeflag |= SO_TREESTORE_REBUILD;
+            space_outliner->storeflag |= SO_TREESTORE_REBUILD;
           }
         }
         break;
@@ -7777,15 +7787,16 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map,
           }
         }
         else if (sl->spacetype == SPACE_OUTLINER) {
-          SpaceOutliner *so = (SpaceOutliner *)sl;
+          SpaceOutliner *space_outliner = (SpaceOutliner *)sl;
 
-          so->search_tse.id = restore_pointer_by_name(id_map, so->search_tse.id, USER_IGNORE);
+          space_outliner->search_tse.id = restore_pointer_by_name(
+              id_map, space_outliner->search_tse.id, USER_IGNORE);
 
-          if (so->treestore) {
+          if (space_outliner->treestore) {
             TreeStoreElem *tselem;
             BLI_mempool_iter iter;
 
-            BLI_mempool_iternew(so->treestore, &iter);
+            BLI_mempool_iternew(space_outliner->treestore, &iter);
             while ((tselem = BLI_mempool_iterstep(&iter))) {
               /* Do not try to restore pointers to drivers/sequence/etc.,
                * can crash in undo case! */
@@ -7796,9 +7807,9 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map,
                 tselem->id = NULL;
               }
             }
-            if (so->treehash) {
+            if (space_outliner->treehash) {
               /* rebuild hash table, because it depends on ids too */
-              so->storeflag |= SO_TREESTORE_REBUILD;
+              space_outliner->storeflag |= SO_TREESTORE_REBUILD;
             }
           }
         }
@@ -9238,17 +9249,16 @@ static bool read_libblock_undo_restore(
     *r_id_old = id_old;
     return true;
   }
-  else if (id_old != NULL) {
+  if (id_old != NULL) {
     /* Local datablock was changed. Restore at the address of the old datablock. */
     DEBUG_PRINTF("read to old existing address\n");
     *r_id_old = id_old;
     return false;
   }
-  else {
-    /* Local datablock does not exist in the undo step, so read from scratch. */
-    DEBUG_PRINTF("read at new address\n");
-    return false;
-  }
+
+  /* Local datablock does not exist in the undo step, so read from scratch. */
+  DEBUG_PRINTF("read at new address\n");
+  return false;
 }
 
 /* This routine reads a datablock and its direct data, and advances bhead to
@@ -10019,7 +10029,7 @@ static int verg_bheadsort(const void *v1, const void *v2)
   if (x1->old > x2->old) {
     return 1;
   }
-  else if (x1->old < x2->old) {
+  if (x1->old < x2->old) {
     return -1;
   }
   return 0;

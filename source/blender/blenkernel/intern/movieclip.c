@@ -717,9 +717,8 @@ static bool put_imbuf_cache(
     IMB_moviecache_put(clip->cache->moviecache, &key, ibuf);
     return true;
   }
-  else {
-    return IMB_moviecache_put_if_possible(clip->cache->moviecache, &key, ibuf);
-  }
+
+  return IMB_moviecache_put_if_possible(clip->cache->moviecache, &key, ibuf);
 }
 
 static bool moviecache_check_free_proxy(ImBuf *UNUSED(ibuf), void *userkey, void *UNUSED(userdata))
@@ -1875,24 +1874,28 @@ static GPUTexture **movieclip_get_gputexture_ptr(MovieClip *clip,
                                                  MovieClipUser *cuser,
                                                  eGPUTextureTarget textarget)
 {
-  LISTBASE_FOREACH (MovieClip_RuntimeGPUTexture *, tex, &clip->runtime.gputextures) {
+  /* Check if we have an existing entry for that clip user. */
+  MovieClip_RuntimeGPUTexture *tex;
+  for (tex = clip->runtime.gputextures.first; tex; tex = tex->next) {
     if (memcmp(&tex->user, cuser, sizeof(MovieClipUser)) == 0) {
-      if (tex == NULL) {
-        tex = (MovieClip_RuntimeGPUTexture *)MEM_mallocN(sizeof(MovieClip_RuntimeGPUTexture),
-                                                         __func__);
-
-        for (int i = 0; i < TEXTARGET_COUNT; i++) {
-          tex->gputexture[i] = NULL;
-        }
-
-        memcpy(&tex->user, cuser, sizeof(MovieClipUser));
-        BLI_addtail(&clip->runtime.gputextures, tex);
-      }
-
-      return &tex->gputexture[textarget];
+      break;
     }
   }
-  return NULL;
+
+  /* If not, allocate a new one. */
+  if (tex == NULL) {
+    tex = (MovieClip_RuntimeGPUTexture *)MEM_mallocN(sizeof(MovieClip_RuntimeGPUTexture),
+                                                     __func__);
+
+    for (int i = 0; i < TEXTARGET_COUNT; i++) {
+      tex->gputexture[i] = NULL;
+    }
+
+    memcpy(&tex->user, cuser, sizeof(MovieClipUser));
+    BLI_addtail(&clip->runtime.gputextures, tex);
+  }
+
+  return &tex->gputexture[textarget];
 }
 
 GPUTexture *BKE_movieclip_get_gpu_texture(MovieClip *clip, MovieClipUser *cuser)

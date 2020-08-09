@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Tabačan <tabycz@gmail.com>\n"
 "Language-Team: Taby <tabycz@gmail.com>\n"
@@ -6857,10 +6857,6 @@ msgid "Selected face count in editmode"
 msgstr "Skrýt neoznačené"
 
 
-msgid "Selected Vert Total"
-msgstr "Vybrat Cestu Vertexu"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
 
@@ -7263,10 +7259,6 @@ msgstr "Oba"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "První frame animace"
-
-
-msgid "Verts"
-msgstr "Vertexy"
 
 
 msgid "Faces"
@@ -11647,10 +11639,6 @@ msgstr "Nastavení mapování"
 
 msgid "Display Hidden"
 msgstr "Zobrazit skryté"
-
-
-msgid "Only Selected"
-msgstr "Pouze vybrané"
 
 
 msgid "Dopesheet Sort Field"
@@ -16136,6 +16124,10 @@ msgid "Start frame for export"
 msgstr "První frame animace"
 
 
+msgid "Only Selected"
+msgstr "Pouze vybrané"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Importovat"
@@ -16915,10 +16907,6 @@ msgstr "Sytost"
 
 msgid "Gap Randomness"
 msgstr "Čáry mřížky"
-
-
-msgid "Radius Fac"
-msgstr "Poloměr"
 
 
 msgid "The start frame of the path control curve"
@@ -17909,10 +17897,6 @@ msgid "Segments for curved edge"
 msgstr "Vybrat propojené uzly"
 
 
-msgid "Bevel only vertices"
-msgstr "Pouze vertexy"
-
-
 msgid "Axis Threshold"
 msgstr "Práh osy"
 
@@ -18046,10 +18030,6 @@ msgstr "Pouze plošky"
 msgctxt "Operator"
 msgid "Delete Edge Loop"
 msgstr "Odstranit smyčku hran"
-
-
-msgid "Dissolve Verts"
-msgstr "Skrýt označené"
 
 
 msgctxt "Operator"
@@ -22033,10 +22013,6 @@ msgid "Clear User Transforms"
 msgstr "Transformace"
 
 
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "Odstranit vybrané vertexy z aktuální skupiny vertexů"
-
-
 msgid "Only visible/selected bones"
 msgstr "Na Vybraných Klíčích"
 
@@ -24610,20 +24586,12 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Vazby objektu"
 
 
-msgid "Deform Bones only"
-msgstr "Deformace"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "Odstranit vybrané vertexy z aktuální skupiny vertexů"
 
 
 msgid "Modifier resolution for export"
 msgstr "Konečný frame pro zobrazení rozsahu Přízraku"
-
-
-msgid "Apply modifier's view settings"
-msgstr "Aplikovat tento modifikátor a odstranit ho ze zásobníku"
 
 
 msgid "Apply modifier's render settings"
@@ -25094,10 +25062,6 @@ msgid "URL to open"
 msgstr "URL k otevření"
 
 
-msgid "UV Maps"
-msgstr "Použít Ořez"
-
-
 msgid "Toggle the current window fullscreen"
 msgstr "Přepne současné okno na celou obrazovku"
 
@@ -25361,6 +25325,10 @@ msgstr "Přehrát animaci"
 
 msgid "Text Boxes"
 msgstr "Textury"
+
+
+msgid "UV Maps"
+msgstr "Použít Ořez"
 
 
 msgid "Filters"
@@ -29816,10 +29784,6 @@ msgid "Edge Select"
 msgstr "Skrýt označené"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "Přidat vertex/hranu/plošku"
-
-
 msgid "Face Dot Selected"
 msgstr "Nahrdit objekt"
 
@@ -31455,32 +31419,12 @@ msgid "%d items"
 msgstr "%d předměty"
 
 
-msgid "Options:"
-msgstr "Nastavení:"
-
-
 msgid "No filename given"
 msgstr "Zobrazit jméno"
 
 
-msgid "Texture Options:"
-msgstr "Možnosti deformace"
-
-
-msgid "Export Data Options:"
-msgstr "Možnosti deformace"
-
-
-msgid "Armature Options:"
-msgstr "Možnosti deformace"
-
-
-msgid "Collada Options:"
-msgstr "Nastavení:"
-
-
-msgid "Import Data Options:"
-msgstr "Možnosti deformace"
+msgid "Seams"
+msgstr "Švy"
 
 
 msgid "Not a valid selection for extrude"
@@ -32271,10 +32215,6 @@ msgstr "Náhodné"
 
 msgid "Shrink/Fatten:"
 msgstr "Smrštit/roztáhnout"
-
-
-msgid "Vert Slide: "
-msgstr "Velikost vertexu"
 
 
 msgid "global"

@@ -178,8 +178,12 @@ class CollectionManager(Operator):
         row_setcol = global_rto_row.row()
         row_setcol.alignment = 'LEFT'
         row_setcol.operator_context = 'INVOKE_DEFAULT'
+
         selected_objects = get_move_selection()
         active_object = get_move_active()
+        CM_UL_items.selected_objects = selected_objects
+        CM_UL_items.active_object = active_object
+
         collection = context.view_layer.layer_collection.collection
 
         icon = 'MESH_CUBE'
@@ -188,7 +192,7 @@ class CollectionManager(Operator):
             if active_object and active_object.name in collection.objects:
                 icon = 'SNAP_VOLUME'
 
-            elif not set(selected_objects).isdisjoint(collection.objects):
+            elif not selected_objects.isdisjoint(collection.objects):
                 icon = 'STICKY_UVS_LOC'
 
         else:
@@ -437,6 +441,9 @@ class CollectionManager(Operator):
 class CM_UL_items(UIList):
     last_filter_value = ""
 
+    selected_objects = set()
+    active_object = None
+
     filter_by_selected: BoolProperty(
                         name="Filter By Selected",
                         default=False,
@@ -456,8 +463,8 @@ class CM_UL_items(UIList):
         view_layer = context.view_layer
         laycol = layer_collections[item.name]
         collection = laycol["ptr"].collection
-        selected_objects = get_move_selection()
-        active_object = get_move_active()
+        selected_objects = CM_UL_items.selected_objects
+        active_object = CM_UL_items.active_object
 
         column = layout.column(align=True)
 
@@ -545,7 +552,7 @@ class CM_UL_items(UIList):
             if active_object and active_object.name in collection.objects:
                 icon = 'SNAP_VOLUME'
 
-            elif not set(selected_objects).isdisjoint(collection.objects):
+            elif not selected_objects.isdisjoint(collection.objects):
                 icon = 'STICKY_UVS_LOC'
 
         else:
@@ -781,14 +788,15 @@ def view3d_header_qcd_slots(self, context):
 
     update_collection_tree(context)
 
+    selected_objects = get_move_selection()
+    active_object = get_move_active()
+
     for x in range(20):
         qcd_slot_name = qcd_slots.get_name(str(x+1))
 
         if qcd_slot_name:
             qcd_laycol = layer_collections[qcd_slot_name]["ptr"]
             collection_objects = qcd_laycol.collection.objects
-            selected_objects = get_move_selection()
-            active_object = get_move_active()
 
             icon_value = 0
 
@@ -797,9 +805,8 @@ def view3d_header_qcd_slots(self, context):
                 active_object.name in collection_objects):
                 icon = 'LAYER_ACTIVE'
 
-
             # if there are selected objects use LAYER_ACTIVE
-            elif not set(selected_objects).isdisjoint(collection_objects):
+            elif not selected_objects.isdisjoint(collection_objects):
                 icon = 'LAYER_USED'
 
             # If there are objects use LAYER_USED
