@@ -1100,7 +1100,7 @@ class CMPhantomModeOperator(Operator):
 
 
 class CMApplyPhantomModeOperator(Operator):
-    '''Make all changes made in Phantom Mode permanent'''
+    '''Apply changes and quit Phantom Mode'''
     bl_label = "Apply Phantom Mode"
     bl_idname = "view3d.apply_phantom_mode"
 

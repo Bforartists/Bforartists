@@ -51,6 +51,7 @@
 #include "ED_screen.h"
 #include "ED_view3d.h"
 
+#include "GPU_context.h"
 #include "GPU_framebuffer.h"
 #include "GPU_immediate.h"
 #include "GPU_state.h"
@@ -206,7 +207,7 @@ static bool wm_draw_region_stereo_set(Main *bmain,
       if (region->regiontype == RGN_TYPE_PREVIEW) {
         return true;
       }
-      else if (region->regiontype == RGN_TYPE_WINDOW) {
+      if (region->regiontype == RGN_TYPE_WINDOW) {
         return (sseq->draw_flag & SEQ_DRAW_BACKDROP) != 0;
       }
     }
@@ -519,9 +520,7 @@ GPUTexture *wm_draw_region_texture(ARegion *region, int view)
   if (viewport) {
     return GPU_viewport_color_texture(viewport, view);
   }
-  else {
-    return GPU_offscreen_color_texture(region->draw_buffer->offscreen);
-  }
+  return GPU_offscreen_color_texture(region->draw_buffer->offscreen);
 }
 
 void wm_draw_region_blend(ARegion *region, int view, bool blend)
@@ -571,8 +570,8 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
   }
 
   /* Not the same layout as rectf/recti. */
-  float rectt[4] = {rect_tex.xmin, rect_tex.ymin, rect_tex.xmax, rect_tex.ymax};
-  float rectg[4] = {rect_geo.xmin, rect_geo.ymin, rect_geo.xmax, rect_geo.ymax};
+  const float rectt[4] = {rect_tex.xmin, rect_tex.ymin, rect_tex.xmax, rect_tex.ymax};
+  const float rectg[4] = {rect_geo.xmin, rect_geo.ymin, rect_geo.xmax, rect_geo.ymax};
 
   if (blend) {
     /* GL_ONE because regions drawn offscreen have premultiplied alpha. */
@@ -998,6 +997,7 @@ void wm_draw_update(bContext *C)
   wmWindowManager *wm = CTX_wm_manager(C);
   wmWindow *win;
 
+  GPU_context_main_lock();
   BKE_image_free_unused_gpu_textures();
 
   for (win = wm->windows.first; win; win = win->next) {
@@ -1035,6 +1035,8 @@ void wm_draw_update(bContext *C)
 
   /* Draw non-windows (surfaces) */
   wm_surfaces_iter(C, wm_draw_surface);
+
+  GPU_context_main_unlock();
 }
 
 void wm_draw_region_clear(wmWindow *win, ARegion *UNUSED(region))

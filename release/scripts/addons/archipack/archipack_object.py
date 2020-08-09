@@ -259,7 +259,7 @@ class ArchipackDrawTool(ArchipackCollectionManager):
         view_vector_mouse = region_2d_to_vector_3d(region, rv3d, co2d)
         ray_origin_mouse = region_2d_to_origin_3d(region, rv3d, co2d)
         res, pos, normal, face_index, object, matrix_world = context.scene.ray_cast(
-            view_layer=context.view_layer,
+            depsgraph=context.view_layer.depsgraph,
             origin=ray_origin_mouse,
             direction=view_vector_mouse)
         return res, pos, normal, face_index, object, matrix_world

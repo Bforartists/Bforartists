@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
 "Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
@@ -6320,10 +6320,6 @@ msgid "Cube"
 msgstr "Sześcian"
 
 
-msgid "Verts"
-msgstr "Wierzchołki"
-
-
 msgid "Faces"
 msgstr "Ściany"
 
@@ -6473,10 +6469,6 @@ msgid "Display Hidden"
 msgstr "Pokaż ukryte"
 
 
-msgid "Only Selected"
-msgstr "Tylko wybrane"
-
-
 msgid "Active Track"
 msgstr "Aktywna Ścieżka"
 
@@ -6577,6 +6569,10 @@ msgstr "Ogranicznik"
 msgctxt "Operator"
 msgid "Smooth"
 msgstr "Gładkie"
+
+
+msgid "Only Selected"
+msgstr "Tylko wybrane"
 
 
 msgid "Null"
@@ -8387,30 +8383,6 @@ msgstr "%d elementów"
 
 msgid "No filename given"
 msgstr "Nie podano nazwy pliku"
-
-
-msgid "Texture Options:"
-msgstr "Opcje tekstury:"
-
-
-msgid "Export Data Options:"
-msgstr "Opcje danych eksportu:"
-
-
-msgid "Transformation Type"
-msgstr "Typ transformacji"
-
-
-msgid "Armature Options:"
-msgstr "Opcje szkieletu:"
-
-
-msgid "Collada Options:"
-msgstr "Opcje Collada:"
-
-
-msgid "Import Data Options:"
-msgstr "Opcje importu danych:"
 
 
 msgid "Can't create export file"
@@ -10429,10 +10401,6 @@ msgid "TODO: in what cases does this happen?"
 msgstr "TODO: w jakich przypadkach tak się dzieje?"
 
 
-msgid "Cannot reassign inputs: no cycles allowed"
-msgstr "Nie można ponownie przydzielić wejść: cykliczność zabroniona"
-
-
 msgid "No valid inputs to swap"
 msgstr "Brak prawidłowych wejść do zamiany"
 
@@ -11069,10 +11037,6 @@ msgstr "AutoIK-Len: %d"
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"
 msgstr "Użyj trybu transformacji 'Time_Translate' zamiast trybu 'Translation' dla translacji (przesunięcia) klatek kluczowych w Edytorze Kluczy"
-
-
-msgid "Vert Slide: "
-msgstr "Ślizganie Wierzchołka: "
 
 
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"

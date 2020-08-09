@@ -1639,7 +1639,7 @@ class archipack_wall2(ArchipackObject, Manipulable, PropertyGroup):
             # prevent self intersect
             o.hide_viewport = True
             res, pos, normal, face_index, r, matrix_world = context.scene.ray_cast(
-                view_layer=context.view_layer,
+                depsgraph=context.view_layer.depsgraph,
                 origin=p,
                 direction=up)
 

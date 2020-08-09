@@ -713,8 +713,8 @@ CCGError ccgSubSurf_syncFace(
 
     if (f) {
       if (f->numVerts != numVerts ||
-          memcmp(FACE_getVerts(f), ss->tempVerts, sizeof(*ss->tempVerts) * numVerts) ||
-          memcmp(FACE_getEdges(f), ss->tempEdges, sizeof(*ss->tempEdges) * numVerts)) {
+          memcmp(FACE_getVerts(f), ss->tempVerts, sizeof(*ss->tempVerts) * numVerts) != 0 ||
+          memcmp(FACE_getEdges(f), ss->tempEdges, sizeof(*ss->tempEdges) * numVerts) != 0) {
         topologyChanged = 1;
       }
     }
@@ -784,8 +784,8 @@ CCGError ccgSubSurf_syncFace(
 
     if (f) {
       if (f->numVerts != numVerts ||
-          memcmp(FACE_getVerts(f), ss->tempVerts, sizeof(*ss->tempVerts) * numVerts) ||
-          memcmp(FACE_getEdges(f), ss->tempEdges, sizeof(*ss->tempEdges) * numVerts)) {
+          memcmp(FACE_getVerts(f), ss->tempVerts, sizeof(*ss->tempVerts) * numVerts) != 0 ||
+          memcmp(FACE_getEdges(f), ss->tempEdges, sizeof(*ss->tempEdges) * numVerts) != 0) {
         topologyChanged = 1;
       }
     }
@@ -1543,7 +1543,7 @@ void CCG_key(CCGKey *key, const CCGSubSurf *ss, int level)
   /* if normals are present, always the last three floats of an
    * element */
   if (key->has_normals) {
-    key->normal_offset = key->elem_size - sizeof(float) * 3;
+    key->normal_offset = key->elem_size - sizeof(float[3]);
   }
   else {
     key->normal_offset = -1;

@@ -18,8 +18,7 @@
  * \ingroup collada
  */
 
-#ifndef __COLLADA_UTILS_H__
-#define __COLLADA_UTILS_H__
+#pragma once
 
 #include "COLLADAFWColorOrTexture.h"
 #include "COLLADAFWFloatOrDoubleArray.h"
@@ -155,7 +154,7 @@ inline std::string bc_string_after(const std::string &s, const std::string probe
   if (i != std::string::npos) {
     return (s.substr(i + probe.length(), s.length() - i));
   }
-  return (s);
+  return s;
 }
 
 inline std::string bc_string_before(const std::string &s, const std::string probe)
@@ -164,7 +163,7 @@ inline std::string bc_string_before(const std::string &s, const std::string prob
   if (i != std::string::npos) {
     return s.substr(0, i);
   }
-  return (s);
+  return s;
 }
 
 inline bool bc_startswith(std::string const &value, std::string const &starting)
@@ -393,5 +392,3 @@ COLLADASW::ColorOrTexture bc_get_cot_from_shader(bNode *shader,
 
 COLLADASW::ColorOrTexture bc_get_cot(float r, float g, float b, float a);
 COLLADASW::ColorOrTexture bc_get_cot(Color col, bool with_alpha = true);
-
-#endif

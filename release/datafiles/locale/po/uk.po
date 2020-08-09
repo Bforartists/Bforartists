@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
 "Last-Translator: lxlalexlxl <pilipchukap@rambler.ru>\n"
 "Language-Team: Ukrainian (Ukraine) (http://www.transifex.com/lxlalexlxl/blender/language/uk_UA/)\n"
@@ -18059,10 +18059,6 @@ msgid "Selected face count in editmode"
 msgstr "Кількість граней, вибраних у режимі редагування"
 
 
-msgid "Selected Vert Total"
-msgstr "Всього вибрано вершин"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Кількість вершин, вибраних у режимі редагування"
 
@@ -18805,10 +18801,6 @@ msgstr "Тип Примірника"
 
 msgid "If not None, object instancing method to use"
 msgstr "Якщо не Нема, то використовується метод об'єктного примірникування"
-
-
-msgid "Verts"
-msgstr "Вершини"
 
 
 msgid "Instantiate child objects on all vertices"
@@ -27755,16 +27747,8 @@ msgid "Original Coords"
 msgstr "Оригінальні координати"
 
 
-msgid "Use base mesh vert coords as the rest position"
-msgstr "Взяти для положення спокою координати вершин базової сіті"
-
-
 msgid "Bind Coords"
 msgstr "Пов'язані координати"
-
-
-msgid "Use bind vert coords for rest position"
-msgstr "Взяти для положення спокою координати пов'язаних вершин"
 
 
 msgid "Smooth Type"
@@ -30977,10 +30961,6 @@ msgstr "Показати приховане"
 
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Включити канали з невидимих об'єктів/кісток"
-
-
-msgid "Only Selected"
-msgstr "Лише вибране"
 
 
 msgid "Dopesheet Sort Field"
@@ -39668,6 +39648,10 @@ msgid "Start frame for export"
 msgstr "Початковий кадр для експорту"
 
 
+msgid "Only Selected"
+msgstr "Лише вибране"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Експорт BVH"
@@ -41495,10 +41479,6 @@ msgstr "Випадковість пропуску"
 
 msgid "Custom Gap mode: Number of frames that gap lengths can vary"
 msgstr "Власний режим пропусків: кількість кадрів, на яку може змінюватись тривалість пропусків"
-
-
-msgid "Radius Fac"
-msgstr "Коеф. радіусів"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -44588,18 +44568,6 @@ msgid "Averaging method"
 msgstr "Метод усереднення"
 
 
-msgid "Take Average of vert Normals"
-msgstr "Взяти Усереднення Нормалей вершин"
-
-
-msgid "Set all vert normals by Face Area"
-msgstr "Задати усі нормалі вершин за Площею Грані"
-
-
-msgid "Set all vert normals by Corner Angle"
-msgstr "Задати усі нормалі вершин за Кутом Кутка"
-
-
 msgid "Weight applied per face"
 msgstr "Вагомість, застосовувана для кожної грані"
 
@@ -44652,14 +44620,6 @@ msgstr "Кількість сегментів для закруглення"
 
 msgid "Amount to spread arcs for arc inner miters"
 msgstr "Величина поширення дуг для дуги ізсередини мітерів"
-
-
-msgid "Vertex Only"
-msgstr "Лише Вершини"
-
-
-msgid "Bevel only vertices"
-msgstr "Скіс лише на вершинах"
 
 
 msgctxt "Operator"
@@ -45039,10 +44999,6 @@ msgid "Dissolve edges, merging faces"
 msgstr "Розчинити ребра, з'єднати грані"
 
 
-msgid "Dissolve Verts"
-msgstr "Розчинити вершини"
-
-
 msgid "Dissolve remaining vertices"
 msgstr "Розчинити вершини, що залишились"
 
@@ -45059,10 +45015,6 @@ msgstr "Розчинити грані"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Обмежене розчинення"
-
-
-msgid "Dissolve selected edges and verts, limited by the angle of surrounding geometry"
-msgstr "Розчинити вибрані ребра та вершини, залежно від кута між прилеглими гранями та ребрами"
 
 
 msgid "Delimit dissolve operation"
@@ -45084,10 +45036,6 @@ msgstr "Розривати на межах"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "Розділяти кутки граней, а не об'єднувати грані"
-
-
-msgid "Dissolve verts, merge edges and faces"
-msgstr "Розчинити вершини, об'єднати ребра і грані"
 
 
 msgctxt "Operator"
@@ -50517,16 +50465,8 @@ msgid "Add Weights"
 msgstr "Додати вагомості"
 
 
-msgid "Add verts from groups that have zero weight before inverting"
-msgstr "Додати вершини з груп, які мають нульову вагу, перед інвертуванням"
-
-
 msgid "Remove Weights"
 msgstr "Вилучити вагомості"
-
-
-msgid "Remove verts from groups that have zero weight after inverting"
-msgstr "Вилучити вершини з груп, які мають нульову вагомість, після інвертування"
 
 
 msgctxt "Operator"
@@ -50677,10 +50617,6 @@ msgid "Remove from all groups"
 msgstr "Вилучити з усіх груп"
 
 
-msgid "All Verts"
-msgstr "Всі вершини"
-
-
 msgid "Clear the active group"
 msgstr "Зчистити активну групу"
 
@@ -50779,10 +50715,6 @@ msgstr "Нормалізувати вагомості активних верш�
 msgctxt "Operator"
 msgid "Paste Weight to Selected"
 msgstr "Вставити вагомості до вибраного"
-
-
-msgid "Copy this group's weight to other selected verts (disabled if vertex group is locked)"
-msgstr "Копіювати вагу цієї групи до інших вибраних вершин (недоступно, якщо група вершин заблокована)"
 
 
 msgctxt "Operator"
@@ -51160,20 +51092,20 @@ msgid "Make Local"
 msgstr "Зробити локальним"
 
 
-msgid "Add Library Override"
-msgstr "Додати заміщення бібліотеки"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "Додати локальне заміщення цього пов'язаного блока даних"
-
-
 msgid "Remap Users"
 msgstr "Перерозкласти користувачів"
 
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "Зробити усіх користувачів виділених блоків даних для використання замість поточного (клацнутого)"
+
+
+msgid "Add Library Override"
+msgstr "Додати заміщення бібліотеки"
+
+
+msgid "Add a local override of this linked data-block"
+msgstr "Додати локальне заміщення цього пов'язаного блока даних"
 
 
 msgid "Paste"
@@ -53010,10 +52942,6 @@ msgstr "Скинути місце, оберт і масштаб вибраних
 msgctxt "Operator"
 msgid "Clear User Transforms"
 msgstr "Зчистити користувацькі трансформації"
-
-
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "Скинути позу вибраних кісток до стану ключового кадру"
 
 
 msgid "Only visible/selected bones"
@@ -58706,10 +58634,6 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Застосувати модифікатори до експортованої сіті (не руйнуючи)"
 
 
-msgid "Deform Bones only"
-msgstr "Лише деформувальні кістки"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "Експортувати з арматурами лише деформувальні кістки"
 
@@ -58810,10 +58734,6 @@ msgid "Modifier resolution for export"
 msgstr "Роздільність модифікатора для експорту"
 
 
-msgid "Apply modifier's view settings"
-msgstr "Застосувати параметри модифікатора для перегляду"
-
-
 msgid "Apply modifier's render settings"
 msgstr "Застосувати устави рендера для модифікатора"
 
@@ -58868,10 +58788,6 @@ msgstr "Зберегти дані прив'язки"
 
 msgid "Store Bindpose information in custom bone properties for later use during Collada export"
 msgstr "Зберегти дані пози прив'язки у власних властивостях кістки для подальшого використання під час експорту в Collada"
-
-
-msgid "All keyed curves"
-msgstr "Всі ключовані криві"
 
 
 msgid "Export also curves which have only one key or are totally flat"
@@ -60162,14 +60078,6 @@ msgid "URL to open"
 msgstr "URL для відкриття"
 
 
-msgid "UV Maps"
-msgstr "UV-карти"
-
-
-msgid "Instancing"
-msgstr "Примірникування"
-
-
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Закрити вікно"
@@ -61112,6 +61020,10 @@ msgid "Text Boxes"
 msgstr "Текстові поля"
 
 
+msgid "UV Maps"
+msgstr "UV-карти"
+
+
 msgid "Filters"
 msgstr "Фільтри"
 
@@ -61334,6 +61246,10 @@ msgstr "Різання Пов'язань"
 
 msgid "Delta Transform"
 msgstr "Дельта-трансформація"
+
+
+msgid "Instancing"
+msgstr "Примірникування"
 
 
 msgid "Scale by Face Size"
@@ -74333,10 +74249,6 @@ msgid "Edge Select"
 msgstr "Вибір ребер"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "Активна вершина/ребро/грань"
-
-
 msgid "Face Dot Selected"
 msgstr "Крапка вибраної грані"
 
@@ -80338,60 +80250,12 @@ msgid "%d items"
 msgstr "%d елементів"
 
 
-msgid "Manual Transform:"
-msgstr "Ручна трансформація:"
-
-
-msgid "Scene Options:"
-msgstr "Опції сцени:"
-
-
-msgid "Object Options:"
-msgstr "Опції об'єкта:"
-
-
-msgid "Particle Systems:"
-msgstr "Системи частинок:"
-
-
-msgid "Options:"
-msgstr "Опції:"
-
-
 msgid "No filename given"
 msgstr "Не дано назви файлу"
 
 
 msgid "Unable to determine ABC sequence length"
 msgstr "Неможливо визначити довжину послідовності ABC"
-
-
-msgid "Global Orientation:"
-msgstr "Глобальна Орієнтація:"
-
-
-msgid "Texture Options:"
-msgstr "Параметри текстури:"
-
-
-msgid "Export Data Options:"
-msgstr "Опції експорту даних:"
-
-
-msgid "Transformation Type"
-msgstr "Тип трансформування"
-
-
-msgid "Armature Options:"
-msgstr "Опції арматури:"
-
-
-msgid "Collada Options:"
-msgstr "Опції Collada:"
-
-
-msgid "Import Data Options:"
-msgstr "Опції імпорту даних:"
 
 
 msgid "Can't create export file"
@@ -80457,6 +80321,10 @@ msgstr "Сфера"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Iкосфера"
+
+
+msgid "Seams"
+msgstr "Шви"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -83213,10 +83081,6 @@ msgid "TODO: in what cases does this happen?"
 msgstr "TODO: у яких випадках це трапляється?"
 
 
-msgid "Cannot reassign inputs: no cycles allowed"
-msgstr "Неможливо перепризначити вводи: цикли не дозволені"
-
-
 msgid "No valid inputs to swap"
 msgstr "Немає правильних вводів для обміну"
 
@@ -84045,10 +83909,6 @@ msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for tra
 msgstr "Використати режим трансформування 'Time_Translate' замість режиму 'Translation' для трансформування ключкадрів у Редакторі Аркуш Експозицій"
 
 
-msgid "Vert Slide: "
-msgstr "Зсунути вершину:"
-
-
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "Створення орієнтації 'використовує' лише параметри, правильні в контексті 3D-вигляду"
 
@@ -84145,10 +84005,6 @@ msgstr "UV-вершина"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "Зчистити шов"
-
-
-msgid "Select linked only works in face select mode when sync selection is enabled"
-msgstr "Операція Вибрати зв'язане працює тільки у режимі вибору граней та при увімкненій опції Синхронізація вибору"
 
 
 msgid "Cannot split selection when sync selection is enabled"

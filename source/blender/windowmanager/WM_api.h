@@ -16,8 +16,7 @@
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
  */
-#ifndef __WM_API_H__
-#define __WM_API_H__
+#pragma once
 
 /** \file
  * \ingroup wm
@@ -99,7 +98,7 @@ void WM_main(struct bContext *C) ATTR_NORETURN;
 
 void WM_init_splash(struct bContext *C);
 
-void WM_init_opengl(struct Main *bmain);
+void WM_init_opengl(void);
 
 void WM_check(struct bContext *C);
 void WM_reinit_gizmomap_all(struct Main *bmain);
@@ -904,5 +903,3 @@ bool WM_xr_session_state_viewer_pose_matrix_info_get(const wmXrData *xr,
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __WM_API_H__ */

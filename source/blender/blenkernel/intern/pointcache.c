@@ -126,19 +126,19 @@ static CLG_LogRef LOG = {"bke.pointcache"};
 
 static int ptcache_data_size[] = {
     sizeof(unsigned int),  // BPHYS_DATA_INDEX
-    3 * sizeof(float),     // BPHYS_DATA_LOCATION
-    3 * sizeof(float),     // BPHYS_DATA_VELOCITY
-    4 * sizeof(float),     // BPHYS_DATA_ROTATION
-    3 * sizeof(float),     // BPHYS_DATA_AVELOCITY / BPHYS_DATA_XCONST
+    sizeof(float[3]),      // BPHYS_DATA_LOCATION
+    sizeof(float[3]),      // BPHYS_DATA_VELOCITY
+    sizeof(float[4]),      // BPHYS_DATA_ROTATION
+    sizeof(float[3]),      // BPHYS_DATA_AVELOCITY / BPHYS_DATA_XCONST
     sizeof(float),         // BPHYS_DATA_SIZE
-    3 * sizeof(float),     // BPHYS_DATA_TIMES
+    sizeof(float[3]),      // BPHYS_DATA_TIMES
     sizeof(BoidData),      // case BPHYS_DATA_BOIDS
 };
 
 static int ptcache_extra_datasize[] = {
     0,
     sizeof(ParticleSpring),
-    sizeof(float) * 3,
+    sizeof(float[3]),
 };
 
 /* forward declarations */
@@ -212,8 +212,8 @@ static void ptcache_softbody_read(
   BodyPoint *bp = soft->bpoint + index;
 
   if (old_data) {
-    memcpy(bp->pos, data, 3 * sizeof(float));
-    memcpy(bp->vec, data + 3, 3 * sizeof(float));
+    memcpy(bp->pos, data, sizeof(float[3]));
+    memcpy(bp->vec, data + 3, sizeof(float[3]));
   }
   else {
     PTCACHE_DATA_TO(data, BPHYS_DATA_LOCATION, 0, bp->pos);
@@ -241,8 +241,8 @@ static void ptcache_softbody_interpolate(int index,
   copy_v3_v3(keys[1].vel, bp->vec);
 
   if (old_data) {
-    memcpy(keys[2].co, old_data, 3 * sizeof(float));
-    memcpy(keys[2].vel, old_data + 3, 3 * sizeof(float));
+    memcpy(keys[2].co, old_data, sizeof(float[3]));
+    memcpy(keys[2].vel, old_data + 3, sizeof(float[3]));
   }
   else {
     BKE_ptcache_make_particle_key(keys + 2, 0, data, cfra2);
@@ -545,9 +545,9 @@ static void ptcache_cloth_read(
   ClothVertex *vert = cloth->verts + index;
 
   if (old_data) {
-    memcpy(vert->x, data, 3 * sizeof(float));
-    memcpy(vert->xconst, data + 3, 3 * sizeof(float));
-    memcpy(vert->v, data + 6, 3 * sizeof(float));
+    memcpy(vert->x, data, sizeof(float[3]));
+    memcpy(vert->xconst, data + 3, sizeof(float[3]));
+    memcpy(vert->v, data + 6, sizeof(float[3]));
   }
   else {
     PTCACHE_DATA_TO(data, BPHYS_DATA_LOCATION, 0, vert->x);
@@ -577,8 +577,8 @@ static void ptcache_cloth_interpolate(int index,
   copy_v3_v3(keys[1].vel, vert->v);
 
   if (old_data) {
-    memcpy(keys[2].co, old_data, 3 * sizeof(float));
-    memcpy(keys[2].vel, old_data + 6, 3 * sizeof(float));
+    memcpy(keys[2].co, old_data, sizeof(float[3]));
+    memcpy(keys[2].vel, old_data + 6, sizeof(float[3]));
   }
   else {
     BKE_ptcache_make_particle_key(keys + 2, 0, data, cfra2);
@@ -1404,9 +1404,8 @@ static int ptcache_dynamicpaint_totpoint(void *sd, int UNUSED(cfra))
   if (!surface->data) {
     return 0;
   }
-  else {
-    return surface->data->total_points;
-  }
+
+  return surface->data->total_points;
 }
 
 static void ptcache_dynamicpaint_error(void *UNUSED(sd), const char *UNUSED(message))
@@ -1422,7 +1421,7 @@ static int ptcache_dynamicpaint_write(PTCacheFile *pf, void *dp_v)
   int cache_compress = 1;
 
   /* version header */
-  ptcache_file_write(pf, DPAINT_CACHE_VERSION, 1, sizeof(char) * 4);
+  ptcache_file_write(pf, DPAINT_CACHE_VERSION, 1, sizeof(char[4]));
 
   if (surface->format != MOD_DPAINT_SURFACE_F_IMAGESEQ && surface->data) {
     int total_points = surface->data->total_points;
@@ -1460,7 +1459,7 @@ static int ptcache_dynamicpaint_read(PTCacheFile *pf, void *dp_v)
   char version[4];
 
   /* version header */
-  ptcache_file_read(pf, version, 1, sizeof(char) * 4);
+  ptcache_file_read(pf, version, 1, sizeof(char[4]));
   if (!STREQLEN(version, DPAINT_CACHE_VERSION, 4)) {
     CLOG_ERROR(&LOG, "Dynamic Paint: Invalid cache version: '%c%c%c%c'!", UNPACK4(version));
     return 0;
@@ -1539,8 +1538,8 @@ static void ptcache_rigidbody_read(
     if (rbo->type == RBO_TYPE_ACTIVE) {
 
       if (old_data) {
-        memcpy(rbo->pos, data, 3 * sizeof(float));
-        memcpy(rbo->orn, data + 3, 4 * sizeof(float));
+        memcpy(rbo->pos, data, sizeof(float[3]));
+        memcpy(rbo->orn, data + 3, sizeof(float[4]));
       }
       else {
         PTCACHE_DATA_TO(data, BPHYS_DATA_LOCATION, 0, rbo->pos);
@@ -1578,8 +1577,8 @@ static void ptcache_rigidbody_interpolate(int index,
       copy_qt_qt(keys[1].rot, rbo->orn);
 
       if (old_data) {
-        memcpy(keys[2].co, data, 3 * sizeof(float));
-        memcpy(keys[2].rot, data + 3, 4 * sizeof(float));
+        memcpy(keys[2].co, data, sizeof(float[3]));
+        memcpy(keys[2].rot, data + 3, sizeof(float[4]));
       }
       else {
         BKE_ptcache_make_particle_key(&keys[2], 0, data, cfra2);
@@ -2128,7 +2127,7 @@ static int ptcache_path(PTCacheID *pid, char *filename)
 
     return BLI_path_slash_ensure(filename); /* new strlen() */
   }
-  else if (G.relbase_valid || lib) {
+  if (G.relbase_valid || lib) {
     char file[MAX_PTCACHE_PATH]; /* we don't want the dir, only the file */
 
     BLI_split_file_part(blendfilename, file, sizeof(file));
@@ -2277,7 +2276,7 @@ static int ptcache_file_compressed_read(PTCacheFile *pf, unsigned char *result, 
   size_t out_len = len;
 #endif
   unsigned char *in;
-  unsigned char *props = MEM_callocN(16 * sizeof(char), "tmp");
+  unsigned char *props = MEM_callocN(sizeof(char[16]), "tmp");
 
   ptcache_file_read(pf, &compressed, 1, sizeof(unsigned char));
   if (compressed) {
@@ -2323,7 +2322,7 @@ static int ptcache_file_compressed_write(
   int r = 0;
   unsigned char compressed = 0;
   size_t out_len = 0;
-  unsigned char *props = MEM_callocN(16 * sizeof(char), "tmp");
+  unsigned char *props = MEM_callocN(sizeof(char[16]), "tmp");
   size_t sizeOfIt = 5;
 
   (void)mode; /* unused when building w/o compression */
@@ -2521,9 +2520,8 @@ int BKE_ptcache_mem_index_find(PTCacheMem *pm, unsigned int index)
 
     return -1;
   }
-  else {
-    return (index < pm->totpoint ? index : -1);
-  }
+
+  return (index < pm->totpoint ? index : -1);
 }
 
 void BKE_ptcache_mem_pointers_init(PTCacheMem *pm)
@@ -2625,13 +2623,13 @@ static void ptcache_mem_clear(PTCacheMem *pm)
 static int ptcache_old_elemsize(PTCacheID *pid)
 {
   if (pid->type == PTCACHE_TYPE_SOFTBODY) {
-    return 6 * sizeof(float);
+    return sizeof(float[6]);
   }
-  else if (pid->type == PTCACHE_TYPE_PARTICLES) {
+  if (pid->type == PTCACHE_TYPE_PARTICLES) {
     return sizeof(ParticleKey);
   }
-  else if (pid->type == PTCACHE_TYPE_CLOTH) {
-    return 9 * sizeof(float);
+  if (pid->type == PTCACHE_TYPE_CLOTH) {
+    return sizeof(float[9]);
   }
 
   return 0;
@@ -3585,16 +3583,15 @@ int BKE_ptcache_id_exist(PTCacheID *pid, int cfra)
 
     return BLI_exists(filename);
   }
-  else {
-    PTCacheMem *pm = pid->cache->mem_cache.first;
 
-    for (; pm; pm = pm->next) {
-      if (pm->frame == cfra) {
-        return 1;
-      }
+  PTCacheMem *pm = pid->cache->mem_cache.first;
+
+  for (; pm; pm = pm->next) {
+    if (pm->frame == cfra) {
+      return 1;
     }
-    return 0;
   }
+  return 0;
 }
 void BKE_ptcache_id_time(
     PTCacheID *pid, Scene *scene, float cfra, int *startframe, int *endframe, float *timescale)

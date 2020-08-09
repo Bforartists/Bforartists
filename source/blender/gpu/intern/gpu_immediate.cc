@@ -33,7 +33,7 @@
 #include "GPU_texture.h"
 
 #include "gpu_attr_binding_private.h"
-#include "gpu_context_private.h"
+#include "gpu_context_private.hh"
 #include "gpu_primitive_private.h"
 #include "gpu_shader_private.h"
 #include "gpu_vertex_format_private.h"
@@ -928,6 +928,14 @@ void immUniformThemeColor(int color_id)
 {
   float color[4];
   UI_GetThemeColor4fv(color_id, color);
+  immUniformColor4fv(color);
+}
+
+void immUniformThemeColorAlpha(int color_id, float a)
+{
+  float color[4];
+  UI_GetThemeColor3fv(color_id, color);
+  color[3] = a;
   immUniformColor4fv(color);
 }
 

@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-#ifndef __BKE_PAINT_H__
-#define __BKE_PAINT_H__
+#pragma once
 
 /** \file
  * \ingroup bke
@@ -42,6 +41,7 @@ struct EdgeSet;
 struct GHash;
 struct GridPaintMask;
 struct ImagePool;
+struct ListBase;
 struct MLoop;
 struct MLoopTri;
 struct MVert;
@@ -295,7 +295,9 @@ typedef struct SculptClothSimulation {
   float (*pos)[3];
   float (*init_pos)[3];
   float (*prev_pos)[3];
+  float (*last_iteration_pos)[3];
 
+  struct ListBase *collider_list;
 } SculptClothSimulation;
 
 typedef struct SculptPersistentBase {
@@ -332,6 +334,9 @@ typedef struct SculptSession {
     struct MultiresModifierData *modifier;
     int level;
   } multires;
+
+  /* Depsgraph for the Cloth Brush solver to get the colliders. */
+  struct Depsgraph *depsgraph;
 
   /* These are always assigned to base mesh data when using PBVH_FACES and PBVH_GRIDS. */
   struct MVert *mvert;
@@ -486,6 +491,10 @@ struct PBVH *BKE_sculpt_object_pbvh_ensure(struct Depsgraph *depsgraph, struct O
 
 void BKE_sculpt_bvh_update_from_ccg(struct PBVH *pbvh, struct SubdivCCG *subdiv_ccg);
 
+/* This ensure that all elements in the mesh (both vertices and grids) have their visibility
+ * updated according to the face sets. */
+void BKE_sculpt_sync_face_set_visibility(struct Mesh *mesh, struct SubdivCCG *subdiv_ccg);
+
 bool BKE_sculptsession_use_pbvh_draw(const struct Object *ob, const struct View3D *v3d);
 
 enum {
@@ -495,6 +504,4 @@ enum {
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

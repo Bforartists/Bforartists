@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
 "Last-Translator: Geuntak Jeong <beroberos@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/lxlalexlxl/blender/language/ko/)\n"
@@ -19648,10 +19648,6 @@ msgid "Selected face count in editmode"
 msgstr "에디트 모드에서 선택된 페이스 개수"
 
 
-msgid "Selected Vert Total"
-msgstr "선택된 버텍스 합계"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "에디트 모드에서 선택된 버텍스 개수"
 
@@ -20462,10 +20458,6 @@ msgstr "인스턴스 유형"
 
 msgid "If not None, object instancing method to use"
 msgstr "만약 '없음'이 아니라면 오브젝트 인스턴스화 메서드를 사용합니다"
-
-
-msgid "Verts"
-msgstr "버텍스"
 
 
 msgid "Instantiate child objects on all vertices"
@@ -29768,16 +29760,8 @@ msgid "Original Coords"
 msgstr "원본 좌표"
 
 
-msgid "Use base mesh vert coords as the rest position"
-msgstr "휴식 위치로 베이스 메쉬 버텍스 좌표를 사용"
-
-
 msgid "Bind Coords"
 msgstr "좌표를 결속"
-
-
-msgid "Use bind vert coords for rest position"
-msgstr "휴식 위치에 대한 결속 버텍스 좌표를 사용"
 
 
 msgid "Smooth Type"
@@ -33090,10 +33074,6 @@ msgstr "숨긴 대상을 표시"
 
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "보이지 않는 오브젝트/본으로부터의 채널을 포함"
-
-
-msgid "Only Selected"
-msgstr "선택된 항목 만"
 
 
 msgid "Dopesheet Sort Field"
@@ -42338,6 +42318,10 @@ msgid "Start frame for export"
 msgstr "내보내는 시작 프레임"
 
 
+msgid "Only Selected"
+msgstr "선택된 항목 만"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "BVH를 내보내기"
@@ -44335,10 +44319,6 @@ msgstr "격차 랜덤성"
 
 msgid "Custom Gap mode: Number of frames that gap lengths can vary"
 msgstr "커스텀 간격 모드: 간격 길이가 다를 수 있는 프레임의 수"
-
-
-msgid "Radius Fac"
-msgstr "반경 팩터"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -47654,18 +47634,6 @@ msgid "Averaging method"
 msgstr "평균화 메서드"
 
 
-msgid "Take Average of vert Normals"
-msgstr "버텍스 노멀의 평균을 가지기"
-
-
-msgid "Set all vert normals by Face Area"
-msgstr "페이스 영역으로 모든 버텍스 노멀을 설정"
-
-
-msgid "Set all vert normals by Corner Angle"
-msgstr "코너 각도로 모든 버텍스 노멀을 설정합니다"
-
-
 msgid "Weight applied per face"
 msgstr "페이스 당 적용된 무게웨이트"
 
@@ -47726,14 +47694,6 @@ msgstr "커브 에지의 부분"
 
 msgid "Amount to spread arcs for arc inner miters"
 msgstr "아크 내부 마이터에 대한 아크 확산의 양"
-
-
-msgid "Vertex Only"
-msgstr "버텍스 전용"
-
-
-msgid "Bevel only vertices"
-msgstr "버텍스 만 베벨"
 
 
 msgid "The method to use to create meshes at intersections"
@@ -48125,10 +48085,6 @@ msgid "Dissolve edges, merging faces"
 msgstr "에지를 디졸브, 페이스를 병합"
 
 
-msgid "Dissolve Verts"
-msgstr "디졸브 버텍스"
-
-
 msgid "Dissolve remaining vertices"
 msgstr "남아있는 버텍스를 디졸브"
 
@@ -48145,10 +48101,6 @@ msgstr "디졸브 페이스"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "제한된 디졸브"
-
-
-msgid "Dissolve selected edges and verts, limited by the angle of surrounding geometry"
-msgstr "선택된 에지 및 버텍스를 디졸브, 주위의 지오메트리의 각도로 제한된"
 
 
 msgid "Delimit dissolve operation"
@@ -48174,10 +48126,6 @@ msgstr "눈물 경계"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "페이스를 병합하는 대신 페이스 코너를 분할합니다"
-
-
-msgid "Dissolve verts, merge edges and faces"
-msgstr "버텍스를 디졸브, 에지 및 페이스를 병합합니다"
 
 
 msgctxt "Operator"
@@ -53914,16 +53862,8 @@ msgid "Add Weights"
 msgstr "웨이트를 추가"
 
 
-msgid "Add verts from groups that have zero weight before inverting"
-msgstr "반전하기 전에 웨이트가 0인 그룹에서 버텍스를 추가"
-
-
 msgid "Remove Weights"
 msgstr "웨이트를 제거"
-
-
-msgid "Remove verts from groups that have zero weight after inverting"
-msgstr "뒤집은 후 웨이트가 0인 그룹에서 버텍스를 제거"
 
 
 msgctxt "Operator"
@@ -54074,10 +54014,6 @@ msgid "Remove from all groups"
 msgstr "모든 그룹에서 제거"
 
 
-msgid "All Verts"
-msgstr "모든 버텍스"
-
-
 msgid "Clear the active group"
 msgstr "활성 그룹을 지우기"
 
@@ -54176,10 +54112,6 @@ msgstr "활성 버텍스 웨이트를 노멀라이즈"
 msgctxt "Operator"
 msgid "Paste Weight to Selected"
 msgstr "선정된 웨이트를 붙여 넣기"
-
-
-msgid "Copy this group's weight to other selected verts (disabled if vertex group is locked)"
-msgstr "이 그룹의 웨이트를 다른 선택된 버텍스에 복사 (버텍스 그룹이 잠겨 있으면 사용 중지)"
 
 
 msgctxt "Operator"
@@ -54566,20 +54498,20 @@ msgid "Make Local"
 msgstr "로컬을 만들기"
 
 
-msgid "Add Library Override"
-msgstr "라이브러리 덮어 쓰기를 추가"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "이 링크된 데이터 블록의 로컬 재정의를 추가"
-
-
 msgid "Remap Users"
 msgstr "유저를 재배치"
 
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "선택한 데이터-블록의 모든 유저가 현재 (클릭된) 블록을 대신 사용하도록합니다"
+
+
+msgid "Add Library Override"
+msgstr "라이브러리 덮어 쓰기를 추가"
+
+
+msgid "Add a local override of this linked data-block"
+msgstr "이 링크된 데이터 블록의 로컬 재정의를 추가"
 
 
 msgid "Paste"
@@ -56458,10 +56390,6 @@ msgstr "선택한 본의 위치, 회전 및 축적 조정을 기본 값으로 �
 msgctxt "Operator"
 msgid "Clear User Transforms"
 msgstr "사용자 변환을 지우기"
-
-
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "키 프레임 상태로 선택된 본에 포즈를 재설정"
 
 
 msgid "Only visible/selected bones"
@@ -62686,10 +62614,6 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "내보낸 메쉬에 모디파이어를 적용 (비파괴))"
 
 
-msgid "Deform Bones only"
-msgstr "변형 본 만"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "아마튜어와 변형하는 본 만 내보내기"
 
@@ -62794,10 +62718,6 @@ msgid "Modifier resolution for export"
 msgstr "내보내기에 대한 모디파이어 해상도"
 
 
-msgid "Apply modifier's view settings"
-msgstr "모디파이어의 뷰 설정을 적용"
-
-
 msgid "Apply modifier's render settings"
 msgstr "모디파이어의 렌더링 설정을 적용"
 
@@ -62852,10 +62772,6 @@ msgstr "결속 정보를 유지"
 
 msgid "Store Bindpose information in custom bone properties for later use during Collada export"
 msgstr "Collada 내보내는 동안 나중에 사용할 수 있도록 커스텀 뼈대 속성에 바인딩 정보를 저장 합니다"
-
-
-msgid "All keyed curves"
-msgstr "모든 키 커브"
 
 
 msgid "Export also curves which have only one key or are totally flat"
@@ -64215,14 +64131,6 @@ msgid "Site"
 msgstr "사이트"
 
 
-msgid "UV Maps"
-msgstr "UV 맵"
-
-
-msgid "Instancing"
-msgstr "인스턴싱"
-
-
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "창을 닫기"
@@ -65173,6 +65081,10 @@ msgid "Text Boxes"
 msgstr "텍스트 박스"
 
 
+msgid "UV Maps"
+msgstr "UV 맵"
+
+
 msgid "Filters"
 msgstr "필터"
 
@@ -65436,6 +65348,10 @@ msgstr "연결 잘라내기"
 
 msgid "Delta Transform"
 msgstr "델타 변환"
+
+
+msgid "Instancing"
+msgstr "인스턴싱"
 
 
 msgid "Scale by Face Size"
@@ -79174,10 +79090,6 @@ msgid "Edge Select"
 msgstr "에지 선택"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "활성 버텍스/에지/페이스"
-
-
 msgid "Face Orientation Back"
 msgstr "페이스 오리엔테이션 후면"
 
@@ -85492,60 +85404,12 @@ msgid "%d items"
 msgstr "%d 항목"
 
 
-msgid "Manual Transform:"
-msgstr "메뉴얼 변환:"
-
-
-msgid "Scene Options:"
-msgstr "씬 옵션:"
-
-
-msgid "Object Options:"
-msgstr "오브젝트 옵션:"
-
-
-msgid "Particle Systems:"
-msgstr "파티클 시스템:"
-
-
-msgid "Options:"
-msgstr "옵션:"
-
-
 msgid "No filename given"
 msgstr "지정된 파일 이름이 없음"
 
 
 msgid "Unable to determine ABC sequence length"
 msgstr "ABC 순서 길이를 결정할 수 없습니다"
-
-
-msgid "Global Orientation:"
-msgstr "글로벌 오리엔테이션:"
-
-
-msgid "Texture Options:"
-msgstr "텍스처 옵션:"
-
-
-msgid "Export Data Options:"
-msgstr "내보내기 데이터 옵션:"
-
-
-msgid "Transformation Type"
-msgstr "변환 유형"
-
-
-msgid "Armature Options:"
-msgstr "아마튜어 옵션:"
-
-
-msgid "Collada Options:"
-msgstr "Collada 옵션:"
-
-
-msgid "Import Data Options:"
-msgstr "가져오기 데이터 옵션:"
 
 
 msgid "Can't create export file"
@@ -85611,6 +85475,10 @@ msgstr "구체"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "아이코스피어"
+
+
+msgid "Seams"
+msgstr "씨임"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -88538,10 +88406,6 @@ msgid "TODO: in what cases does this happen?"
 msgstr "TODO: 어떤 경우에 이런 일이 발생합니까?"
 
 
-msgid "Cannot reassign inputs: no cycles allowed"
-msgstr "입력을 다시 할당 할 수 없음: Cycles을 허용하지 않습니다"
-
-
 msgid "No valid inputs to swap"
 msgstr "교환하는 유효한 입력이 없음"
 
@@ -89386,10 +89250,6 @@ msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for tra
 msgstr "도프 시트 에디터에서 키 프레임을 변환하려면 '옮기기' 모드 대신 ''시간_옮기기' 변환 모드를 사용하십시오"
 
 
-msgid "Vert Slide: "
-msgstr "버텍스 슬라이드: "
-
-
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "오리엔테이션의 'use' 매개 변수는 3DView 컨텍스트에서만 유효합니다"
 
@@ -89486,10 +89346,6 @@ msgstr "UV 버텍스"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "씨임을 지우기"
-
-
-msgid "Select linked only works in face select mode when sync selection is enabled"
-msgstr "동기화 선택이 활성화된 경우에만 연결된 선택이 페이스 선택 모드로 작동합니다"
 
 
 msgid "Cannot split selection when sync selection is enabled"

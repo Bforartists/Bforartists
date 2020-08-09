@@ -655,19 +655,22 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "pose_smooth_iterations")
             if brush.pose_deform_type == 'ROTATE_TWIST' and brush.pose_origin_type in {'TOPOLOGY', 'FACE_SETS'}:
               layout.prop(brush, "pose_ik_segments")
-
-            layout.separator()
-
-            layout.use_property_split = False
+            if brush.pose_deform_type == 'SCALE_TRANSLATE':
+               layout.prop(brush, "use_pose_lock_rotation")
             layout.prop(brush, "use_pose_ik_anchored")
             layout.prop(brush, "use_connected_only")
-            layout.use_property_split = True
             layout.prop(brush, "disconnected_distance_max")
+
+            layout.separator()
 
         elif sculpt_tool == 'CLOTH':
             layout.separator()
-            layout.prop(brush, "cloth_sim_limit")
-            layout.prop(brush, "cloth_sim_falloff")
+            layout.prop(brush, "cloth_simulation_area_type")
+            if brush.cloth_simulation_area_type == 'LOCAL':
+                layout.prop(brush, "cloth_sim_limit")
+                layout.prop(brush, "cloth_sim_falloff")
+                layout.prop(brush, "use_cloth_pin_simulation_boundary")
+
             layout.separator()
             layout.prop(brush, "cloth_deform_type")
             layout.prop(brush, "cloth_force_falloff_type")
@@ -675,6 +678,8 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "cloth_mass")
             layout.prop(brush, "cloth_damping")
             layout.prop(brush, "cloth_constraint_softbody_strength")
+            layout.separator()
+            layout.prop(brush, "use_cloth_collision")
 
             layout.separator()
 

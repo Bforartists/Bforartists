@@ -26,7 +26,7 @@ from bpy_extras.io_utils import ImportHelper
 from bpy_extras import object_utils
 from bpy.utils import register_class
 from math import atan, pi, degrees, sqrt, cos, sin
-
+from bpy.types import Operator
 
 from bpy.props import (
     StringProperty,
@@ -40,6 +40,7 @@ from bpy.props import (
 )
 
 from mathutils import Vector, Matrix
+
 
 # import collections
 
@@ -60,7 +61,7 @@ def pov_define_mesh(mesh, verts, edges, faces, name, hide_geometry=True):
     return mesh
 
 
-class POVRAY_OT_lathe_add(bpy.types.Operator):
+class POVRAY_OT_lathe_add(Operator):
     """Add the representation of POV lathe using a screw modifier."""
 
     bl_idname = "pov.addlathe"
@@ -212,7 +213,7 @@ def pov_superellipsoid_define(context, op, ob):
         bpy.ops.object.mode_set(mode="OBJECT")
 
 
-class POVRAY_OT_superellipsoid_add(bpy.types.Operator):
+class POVRAY_OT_superellipsoid_add(Operator):
     """Add the representation of POV superellipsoid using the pov_superellipsoid_define() function."""
 
     bl_idname = "pov.addsuperellipsoid"
@@ -286,7 +287,7 @@ class POVRAY_OT_superellipsoid_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_superellipsoid_update(bpy.types.Operator):
+class POVRAY_OT_superellipsoid_update(Operator):
     """Update the superellipsoid.
 
     Delete its previous proxy geometry and rerun pov_superellipsoid_define() function
@@ -455,7 +456,7 @@ def pov_supertorus_define(context, op, ob):
         ob.pov.st_edit = st_edit
 
 
-class POVRAY_OT_supertorus_add(bpy.types.Operator):
+class POVRAY_OT_supertorus_add(Operator):
     """Add the representation of POV supertorus using the pov_supertorus_define() function."""
 
     bl_idname = "pov.addsupertorus"
@@ -530,7 +531,7 @@ class POVRAY_OT_supertorus_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_supertorus_update(bpy.types.Operator):
+class POVRAY_OT_supertorus_update(Operator):
     """Update the supertorus.
 
     Delete its previous proxy geometry and rerun pov_supetorus_define() function
@@ -566,7 +567,7 @@ class POVRAY_OT_supertorus_update(bpy.types.Operator):
 
 
 #########################################################################################################
-class POVRAY_OT_loft_add(bpy.types.Operator):
+class POVRAY_OT_loft_add(Operator):
     """Create the representation of POV loft using Blender curves."""
 
     bl_idname = "pov.addloft"
@@ -695,7 +696,7 @@ class POVRAY_OT_loft_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_plane_add(bpy.types.Operator):
+class POVRAY_OT_plane_add(Operator):
     """Add the representation of POV infinite plane using just a very big Blender Plane.
 
     Flag its primitive type with a specific pov.object_as attribute and lock edit mode
@@ -725,7 +726,7 @@ class POVRAY_OT_plane_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_box_add(bpy.types.Operator):
+class POVRAY_OT_box_add(Operator):
     """Add the representation of POV box using a simple Blender mesh cube.
 
     Flag its primitive type with a specific pov.object_as attribute and lock edit mode
@@ -796,7 +797,7 @@ def pov_cylinder_define(context, op, ob, radius, loc, loc_cap):
     bpy.ops.object.shade_smooth()
 
 
-class POVRAY_OT_cylinder_add(bpy.types.Operator):
+class POVRAY_OT_cylinder_add(Operator):
     """Add the representation of POV cylinder using pov_cylinder_define() function.
 
     Use imported_cyl_loc when this operator is run by POV importer."""
@@ -846,7 +847,7 @@ class POVRAY_OT_cylinder_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_cylinder_update(bpy.types.Operator):
+class POVRAY_OT_cylinder_update(Operator):
     """Update the POV cylinder.
 
     Delete its previous proxy geometry and rerun pov_cylinder_define() function
@@ -932,7 +933,7 @@ def pov_sphere_define(context, op, ob, loc):
         bpy.ops.object.mode_set(mode="OBJECT")
 
 
-class POVRAY_OT_sphere_add(bpy.types.Operator):
+class POVRAY_OT_sphere_add(Operator):
     """Add the representation of POV sphere using pov_sphere_define() function.
 
     Use imported_loc when this operator is run by POV importer."""
@@ -989,7 +990,7 @@ class POVRAY_OT_sphere_add(bpy.types.Operator):
     # return {'FINISHED'}
 
 
-class POVRAY_OT_sphere_update(bpy.types.Operator):
+class POVRAY_OT_sphere_update(Operator):
     """Update the POV sphere.
 
     Delete its previous proxy geometry and rerun pov_sphere_define() function
@@ -1084,7 +1085,7 @@ def pov_cone_define(context, op, ob):
         ob.pov.cone_cap_z = zc
 
 
-class POVRAY_OT_cone_add(bpy.types.Operator):
+class POVRAY_OT_cone_add(Operator):
     """Add the representation of POV cone using pov_cone_define() function."""
 
     bl_idname = "pov.cone_add"
@@ -1139,7 +1140,7 @@ class POVRAY_OT_cone_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_cone_update(bpy.types.Operator):
+class POVRAY_OT_cone_update(Operator):
     """Update the POV cone.
 
     Delete its previous proxy geometry and rerun pov_cone_define() function
@@ -1177,7 +1178,7 @@ class POVRAY_OT_cone_update(bpy.types.Operator):
 ########################################ISOSURFACES##################################
 
 
-class POVRAY_OT_isosurface_box_add(bpy.types.Operator):
+class POVRAY_OT_isosurface_box_add(Operator):
     """Add the representation of POV isosurface box using also just a Blender mesh cube.
 
     Flag its primitive type with a specific pov.object_as attribute and lock edit mode
@@ -1207,7 +1208,7 @@ class POVRAY_OT_isosurface_box_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_isosurface_sphere_add(bpy.types.Operator):
+class POVRAY_OT_isosurface_sphere_add(Operator):
     """Add the representation of POV isosurface sphere by a Blender mesh icosphere.
 
     Flag its primitive type with a specific pov.object_as attribute and lock edit mode
@@ -1238,7 +1239,7 @@ class POVRAY_OT_isosurface_sphere_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_sphere_sweep_add(bpy.types.Operator):
+class POVRAY_OT_sphere_sweep_add(Operator):
     """Add the representation of POV sphere_sweep using a Blender NURBS curve.
 
     Flag its primitive type with a specific ob.pov.curveshape attribute and
@@ -1264,7 +1265,7 @@ class POVRAY_OT_sphere_sweep_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_blob_add(bpy.types.Operator):
+class POVRAY_OT_blob_add(Operator):
     """Add the representation of POV blob using a Blender meta ball.
 
     No need to flag its primitive type as meta are exported to blobs
@@ -1284,7 +1285,7 @@ class POVRAY_OT_blob_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_rainbow_add(bpy.types.Operator):
+class POVRAY_OT_rainbow_add(Operator):
     """Add the representation of POV rainbow using a Blender spot light.
 
     Rainbows indeed propagate along a visibility cone.
@@ -1334,7 +1335,7 @@ class POVRAY_OT_height_field_add(bpy.types.Operator, ImportHelper):
 
     bl_idname = "pov.addheightfield"
     bl_label = "Height Field"
-    bl_description = "Add Height Field "
+    bl_description = "Add Height Field"
     bl_options = {'REGISTER', 'UNDO'}
 
     # XXX Keep it in sync with __init__'s hf Primitive
@@ -1470,7 +1471,7 @@ def pov_torus_define(context, op, ob):
         bpy.ops.object.mode_set(mode="OBJECT")
 
 
-class POVRAY_OT_torus_add(bpy.types.Operator):
+class POVRAY_OT_torus_add(Operator):
     """Add the representation of POV torus using using pov_torus_define() function."""
 
     bl_idname = "pov.addtorus"
@@ -1503,7 +1504,7 @@ class POVRAY_OT_torus_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_torus_update(bpy.types.Operator):
+class POVRAY_OT_torus_update(Operator):
     """Update the POV torus.
 
     Delete its previous proxy geometry and rerun pov_torus_define() function
@@ -1536,7 +1537,7 @@ class POVRAY_OT_torus_update(bpy.types.Operator):
 ###################################################################################
 
 
-class POVRAY_OT_prism_add(bpy.types.Operator):
+class POVRAY_OT_prism_add(Operator):
     """Add the representation of POV prism using using an extruded curve."""
 
     bl_idname = "pov.addprism"
@@ -1662,7 +1663,7 @@ def pov_parametric_define(context, op, ob):
         bpy.ops.object.mode_set(mode="OBJECT")
 
 
-class POVRAY_OT_parametric_add(bpy.types.Operator):
+class POVRAY_OT_parametric_add(Operator):
     """Add the representation of POV parametric surfaces using pov_parametric_define() function."""
 
     bl_idname = "pov.addparametric"
@@ -1698,7 +1699,7 @@ class POVRAY_OT_parametric_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class POVRAY_OT_parametric_update(bpy.types.Operator):
+class POVRAY_OT_parametric_update(Operator):
     """Update the representation of POV parametric surfaces.
 
     Delete its previous proxy geometry and rerun pov_parametric_define() function
@@ -1731,7 +1732,7 @@ class POVRAY_OT_parametric_update(bpy.types.Operator):
 #######################################################################
 
 
-class POVRAY_OT_shape_polygon_to_circle_add(bpy.types.Operator):
+class POVRAY_OT_shape_polygon_to_circle_add(Operator):
     """Add the proxy mesh for POV Polygon to circle lofting macro"""
 
     bl_idname = "pov.addpolygontocircle"

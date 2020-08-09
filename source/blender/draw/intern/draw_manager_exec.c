@@ -518,7 +518,7 @@ static bool draw_culling_box_test(const float (*frustum_planes)[4], const BoundB
          * Go to next plane. */
         break;
       }
-      else if (v == 7) {
+      if (v == 7) {
         /* 8 points behind this plane. */
         return false;
       }
@@ -592,7 +592,7 @@ void DRW_culling_frustum_corners_get(const DRWView *view, BoundBox *corners)
 void DRW_culling_frustum_planes_get(const DRWView *view, float planes[6][4])
 {
   view = view ? view : DST.view_default;
-  memcpy(planes, view->frustum_planes, sizeof(float) * 6 * 4);
+  memcpy(planes, view->frustum_planes, sizeof(float[6][4]));
 }
 
 static void draw_compute_culling(DRWView *view)
@@ -995,9 +995,8 @@ static void draw_call_single_do(DRWShadingGroup *shgroup,
       draw_select_buffer(shgroup, state, batch, &handle);
       return;
     }
-    else {
-      GPU_select_load_id(state->select_id);
-    }
+
+    GPU_select_load_id(state->select_id);
   }
 
   draw_geometry_execute(shgroup,

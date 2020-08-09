@@ -1286,6 +1286,8 @@ class _defs_sculpt:
                 layout.prop(props, "surface_smooth_current_vertex", expand=False)
             elif props.type == 'SHARPEN':
                 layout.prop(props, "sharpen_smooth_ratio", expand=False)
+                layout.prop(props, "sharpen_intensify_detail_strength", expand=False)
+                layout.prop(props, "sharpen_curvature_smooth_iterations", expand=False)
 
         return dict(
             idname="builtin.mesh_filter",
@@ -1306,6 +1308,7 @@ class _defs_sculpt:
             layout.prop(props, "cloth_damping")
             layout.use_property_split = False
             layout.prop(props, "use_face_sets")
+            layout.prop(props, "use_collisions")
 
         return dict(
             idname="builtin.cloth_filter",

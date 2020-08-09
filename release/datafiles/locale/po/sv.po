@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Arvid Rudling <arvid.r@gmail.com>\n"
 "Language-Team: \n"
@@ -6035,10 +6035,6 @@ msgid "Selected face count in editmode"
 msgstr "Markering till omarkerade grannar"
 
 
-msgid "Selected Vert Total"
-msgstr "Markera Rad"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Markera Länkad"
 
@@ -6385,10 +6381,6 @@ msgstr "Rensa Ursprung"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "Starta rendering av sekvens"
-
-
-msgid "Verts"
-msgstr "Vertex"
 
 
 msgid "Faces"
@@ -10493,10 +10485,6 @@ msgstr "Flytta Till Lager"
 
 msgid "Display Hidden"
 msgstr "Visa inställningar för kant"
-
-
-msgid "Only Selected"
-msgstr "Markera Rad"
 
 
 msgid "Dopesheet Sort Field"
@@ -14826,6 +14814,10 @@ msgid "Start frame for export"
 msgstr "Starta rendering av sekvens"
 
 
+msgid "Only Selected"
+msgstr "Markera Rad"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Exportera"
@@ -15561,10 +15553,6 @@ msgstr "Mättnad"
 
 msgid "Gap Randomness"
 msgstr "Dela"
-
-
-msgid "Radius Fac"
-msgstr "Radie"
 
 
 msgid "The start frame of the path control curve"
@@ -16535,10 +16523,6 @@ msgid "Segments for curved edge"
 msgstr "Radera Allt"
 
 
-msgid "Bevel only vertices"
-msgstr "Bana"
-
-
 msgid "Axis Threshold"
 msgstr "Tröskel"
 
@@ -16672,10 +16656,6 @@ msgstr "Bana"
 msgctxt "Operator"
 msgid "Delete Edge Loop"
 msgstr "Radera kant-slinga"
-
-
-msgid "Dissolve Verts"
-msgstr "Lös upp"
 
 
 msgctxt "Operator"
@@ -20571,10 +20551,6 @@ msgid "Clear User Transforms"
 msgstr "Applicera Deformering"
 
 
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "Markera Länkad"
-
-
 msgid "Only visible/selected bones"
 msgstr "Endast markerade kanaler"
 
@@ -23121,20 +23097,12 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Duplicera"
 
 
-msgid "Deform Bones only"
-msgstr "Fördröja "
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "Markera Länkad"
 
 
 msgid "Modifier resolution for export"
 msgstr "(Av)Markera Alla"
-
-
-msgid "Apply modifier's view settings"
-msgstr "Markera Länkad"
 
 
 msgid "Apply modifier's render settings"
@@ -23568,10 +23536,6 @@ msgid "URL to open"
 msgstr "Webbaddress som skall öppnas"
 
 
-msgid "UV Maps"
-msgstr "Mappning"
-
-
 msgid "Toggle the current window fullscreen"
 msgstr "Växla fullskrmsläge för aktivt fönster"
 
@@ -23831,6 +23795,10 @@ msgstr "Renderings Fönster"
 
 msgid "Text Boxes"
 msgstr "Textrutor"
+
+
+msgid "UV Maps"
+msgstr "Mappning"
 
 
 msgid "Filters"
@@ -29005,32 +28973,12 @@ msgid "New"
 msgstr "Ny"
 
 
-msgid "Options:"
-msgstr "Alternativ:"
-
-
 msgid "No filename given"
 msgstr "Filnamn"
 
 
-msgid "Texture Options:"
-msgstr "Rensa Rotation"
-
-
-msgid "Export Data Options:"
-msgstr "Rensa Rotation"
-
-
-msgid "Armature Options:"
-msgstr "Rensa Rotation"
-
-
-msgid "Collada Options:"
-msgstr "Alternativ:"
-
-
-msgid "Import Data Options:"
-msgstr "Rensa Rotation"
+msgid "Seams"
+msgstr "Arkiv"
 
 
 msgid "Not a valid selection for extrude"
@@ -29773,10 +29721,6 @@ msgstr "Slumpmässig"
 
 msgid "Shrink/Fatten:"
 msgstr "Krymp/sväll"
-
-
-msgid "Vert Slide: "
-msgstr "Vektor Måla"
 
 
 msgid "global"

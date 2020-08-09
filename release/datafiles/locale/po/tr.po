@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
 "Last-Translator: Fatih EKE <fatiheke@hotmail.com>\n"
 "Language-Team: BLENDIST <fatiheke@hotmail.com>\n"
@@ -4892,10 +4892,6 @@ msgid "Selected face count in editmode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
-msgid "Selected Vert Total"
-msgstr "Seçili İşaretler arasında"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
@@ -5170,10 +5166,6 @@ msgstr "Izgara çizgileri arasındaki mesafeyi ayarlayın"
 
 msgid "Both"
 msgstr "İkisi de"
-
-
-msgid "Verts"
-msgstr "Noktalar"
 
 
 msgid "Faces"
@@ -8245,10 +8237,6 @@ msgstr "Fabrika Ayarlarını Yükle"
 
 msgid "Display Hidden"
 msgstr "Gizlileri Göster"
-
-
-msgid "Only Selected"
-msgstr "Seçilenler"
 
 
 msgid "Dopesheet Sort Field"
@@ -11640,6 +11628,10 @@ msgid "Start frame for export"
 msgstr "Alttaki değerlere bağlı olarak (DupSta, DupEnd, DupOn, DupOff) nesne, dış hattı (yolu) izleyerek çoğaltılacaktır"
 
 
+msgid "Only Selected"
+msgstr "Seçilenler"
+
+
 msgid "End frame to export"
 msgstr "Geçerli Kareyi Ortala"
 
@@ -12257,10 +12249,6 @@ msgstr "Doygunluk"
 
 msgid "Gap Randomness"
 msgstr "Izgara Ekle"
-
-
-msgid "Radius Fac"
-msgstr "Yarıçap"
 
 
 msgid "The start frame of the path control curve"
@@ -13072,10 +13060,6 @@ msgid "Bevel"
 msgstr "Pah "
 
 
-msgid "Bevel only vertices"
-msgstr "Yalnız Noktalar"
-
-
 msgid "Axis Threshold"
 msgstr "Yatay Eksen"
 
@@ -13164,10 +13148,6 @@ msgstr "Yalnız Yüzeyler"
 msgctxt "Operator"
 msgid "Delete Edge Loop"
 msgstr "Kenar Doğrultusunca Seç"
-
-
-msgid "Dissolve Verts"
-msgstr "Ayrık Nokta/Kenar"
 
 
 msgid "Rotate Source"
@@ -18003,16 +17983,8 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Merkez Noktasını Yenile (Nesnede yapılan düzenlemeden sonra, değişen boyutlar nedeniyle merkez noktası değişir)"
 
 
-msgid "Deform Bones only"
-msgstr "Yalnızca Görülen Yüzey"
-
-
 msgid "Modifier resolution for export"
 msgstr "Alttaki değerlere bağlı olarak (DupSta, DupEnd, DupOn, DupOff) nesne, dış hattı (yolu) izleyerek çoğaltılacaktır"
-
-
-msgid "Apply modifier's view settings"
-msgstr "Birleşik Önizleme..."
 
 
 msgid "Apply modifier's render settings"
@@ -18398,10 +18370,6 @@ msgid "URL to open"
 msgstr "Kütüphaneye Ekle"
 
 
-msgid "UV Maps"
-msgstr "UV "
-
-
 msgctxt "Operator"
 msgid "New World"
 msgstr "Dünya butonları"
@@ -18549,6 +18517,10 @@ msgstr "Animasyon Pencereleri"
 
 msgid "Text Boxes"
 msgstr "Metni Düzenle:"
+
+
+msgid "UV Maps"
+msgstr "UV "
 
 
 msgid "Bookmarks"
@@ -23339,32 +23311,8 @@ msgid "%d items"
 msgstr "%d öğe"
 
 
-msgid "Options:"
-msgstr "Kırpma Seçenekleri"
-
-
 msgid "No filename given"
 msgstr "Yalnız Kenarlar"
-
-
-msgid "Texture Options:"
-msgstr "Metin Çizim Seçenekleri:"
-
-
-msgid "Export Data Options:"
-msgstr "Metin Çizim Seçenekleri:"
-
-
-msgid "Armature Options:"
-msgstr "Kırpma Seçenekleri"
-
-
-msgid "Collada Options:"
-msgstr "Kırpma Seçenekleri"
-
-
-msgid "Import Data Options:"
-msgstr "Metin Çizim Seçenekleri:"
 
 
 msgid "You have to select a string of connected vertices too"
@@ -24059,10 +24007,6 @@ msgstr "Rasgele"
 
 msgid "Shrink/Fatten:"
 msgstr "Eğri Önayarı"
-
-
-msgid "Vert Slide: "
-msgstr "Vertex Slide"
 
 
 msgid "global"

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
 "Last-Translator: Roshan Lal Gumasta <roshan@anisecrets.com>\n"
 "Language-Team: Hindi <www.anisecrets.com>\n"
@@ -2322,10 +2322,6 @@ msgid "Both"
 msgstr "दोनों"
 
 
-msgid "Verts"
-msgstr "शिरोबिन्दु"
-
-
 msgid "Faces"
 msgstr "सतह"
 
@@ -3210,10 +3206,6 @@ msgid "Display Hidden"
 msgstr "छिपे हुए का प्रदर्शित करें"
 
 
-msgid "Only Selected"
-msgstr "केवल चयनित"
-
-
 msgid "Total"
 msgstr "कुल"
 
@@ -3820,6 +3812,10 @@ msgstr "पूर्ववत् करें"
 
 msgid "Item"
 msgstr "वस्तु"
+
+
+msgid "Only Selected"
+msgstr "केवल चयनित"
 
 
 msgid "X Up"
@@ -6081,10 +6077,6 @@ msgid "%d items"
 msgstr "%d वस्तु"
 
 
-msgid "Options:"
-msgstr "विकल्प:"
-
-
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "समतल"
@@ -6118,6 +6110,10 @@ msgstr "जालक"
 msgctxt "Mesh"
 msgid "Sphere"
 msgstr "गोला"
+
+
+msgid "Seams"
+msgstr "तेजी"
 
 
 msgid "No additional selected meshes with equal vertex count to join"

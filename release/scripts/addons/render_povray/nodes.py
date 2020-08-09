@@ -21,7 +21,14 @@
 import bpy
 
 from bpy.utils import register_class
-from bpy.types import Node, ShaderNodeTree, CompositorNodeTree, TextureNodeTree#, NodeSocket
+from bpy.types import (
+        Node,
+        ShaderNodeTree,
+        CompositorNodeTree,
+        TextureNodeTree,
+        #NodeSocket,
+        Operator,
+        )
 from bpy.props import (
         StringProperty,
         BoolProperty,
@@ -1025,7 +1032,7 @@ class TextureOutputNode(Node, TextureNodeTree):
 ##################################################################################
 
 
-class NODE_OT_iso_add(bpy.types.Operator):
+class NODE_OT_iso_add(Operator):
     bl_idname = "pov.nodeisoadd"
     bl_label = "Create iso props"
 
@@ -1042,7 +1049,7 @@ class NODE_OT_iso_add(bpy.types.Operator):
         isonode.label = ob.name
         return {'FINISHED'}
 
-class NODE_OT_map_create(bpy.types.Operator):
+class NODE_OT_map_create(Operator):
     bl_idname = "node.map_create"
     bl_label = "Create map"
 
@@ -1067,7 +1074,7 @@ class NODE_OT_map_create(bpy.types.Operator):
         mat = context.object.active_material
         layout.prop(mat.pov,"inputs_number")
 
-class NODE_OT_povray_node_texture_map_add(bpy.types.Operator):
+class NODE_OT_povray_node_texture_map_add(Operator):
     bl_idname = "pov.nodetexmapadd"
     bl_label = "Texture map"
 
@@ -1091,7 +1098,7 @@ class NODE_OT_povray_node_texture_map_add(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class NODE_OT_povray_node_output_add(bpy.types.Operator):
+class NODE_OT_povray_node_output_add(Operator):
     bl_idname = "pov.nodeoutputadd"
     bl_label = "Output"
 
@@ -1105,7 +1112,7 @@ class NODE_OT_povray_node_output_add(bpy.types.Operator):
         tmap.label="Output"
         return {'FINISHED'}
 
-class NODE_OT_povray_node_layered_add(bpy.types.Operator):
+class NODE_OT_povray_node_layered_add(Operator):
     bl_idname = "pov.nodelayeredadd"
     bl_label = "Layered material"
 
@@ -1116,7 +1123,7 @@ class NODE_OT_povray_node_layered_add(bpy.types.Operator):
         tmap.label="Layered material"
         return {'FINISHED'}
 
-class NODE_OT_povray_input_add(bpy.types.Operator):
+class NODE_OT_povray_input_add(Operator):
     bl_idname = "pov.nodeinputadd"
     bl_label = "Add entry"
 
@@ -1141,7 +1148,7 @@ class NODE_OT_povray_input_add(bpy.types.Operator):
 
         return {'FINISHED'}
 
-class NODE_OT_povray_input_remove(bpy.types.Operator):
+class NODE_OT_povray_input_remove(Operator):
     bl_idname = "pov.nodeinputremove"
     bl_label = "Remove input"
 
@@ -1159,7 +1166,7 @@ class NODE_OT_povray_input_remove(bpy.types.Operator):
                     els.remove(el)
         return {'FINISHED'}
 
-class NODE_OT_povray_image_open(bpy.types.Operator):
+class NODE_OT_povray_image_open(Operator):
     bl_idname = "pov.imageopen"
     bl_label = "Open"
 
@@ -1181,7 +1188,7 @@ class NODE_OT_povray_image_open(bpy.types.Operator):
         return {'FINISHED'}
 
 
-# class TEXTURE_OT_povray_open_image(bpy.types.Operator):
+# class TEXTURE_OT_povray_open_image(Operator):
     # bl_idname = "pov.openimage"
     # bl_label = "Open Image"
 
@@ -1204,7 +1211,7 @@ class NODE_OT_povray_image_open(bpy.types.Operator):
         # view_layer.update()
         # return {'FINISHED'}
 
-class PovrayPatternNode(bpy.types.Operator):
+class PovrayPatternNode(Operator):
     bl_idname = "pov.patternnode"
     bl_label  = "Pattern"
 
@@ -1259,7 +1266,7 @@ class PovrayPatternNode(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-class UpdatePreviewMaterial(bpy.types.Operator):
+class UpdatePreviewMaterial(Operator):
     '''Operator update preview material'''
     bl_idname = "node.updatepreview"
     bl_label = "Update preview"
@@ -1283,7 +1290,7 @@ class UpdatePreviewMaterial(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
-class UpdatePreviewKey(bpy.types.Operator):
+class UpdatePreviewKey(Operator):
     '''Operator update preview keymap'''
     bl_idname = "wm.updatepreviewkey"
     bl_label = "Activate RMB"

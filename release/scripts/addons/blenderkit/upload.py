@@ -767,7 +767,7 @@ class UploadOperator(Operator):
             layout.label(text="For updates of thumbnail or model use reupload.")
 
         if props.is_private == 'PUBLIC':
-            ui_panels.label_multiline(layout, text='public assets are validated several hours'
+            utils.label_multiline(layout, text='public assets are validated several hours'
                                                    ' or days after upload. Remember always to '
                                                     'test download your asset to a clean file'
                                                    ' to see if it uploaded correctly.'

@@ -18,8 +18,7 @@
  * \ingroup DNA
  */
 
-#ifndef __DNA_MODIFIER_TYPES_H__
-#define __DNA_MODIFIER_TYPES_H__
+#pragma once
 
 #include "DNA_defs.h"
 #include "DNA_listBase.h"
@@ -1277,7 +1276,11 @@ typedef struct OceanModifierData {
   struct Ocean *ocean;
   struct OceanCache *oceancache;
 
+  /** Render resolution. */
   int resolution;
+  /** Viewport resolution for the non-render case. */
+  int viewport_resolution;
+
   int spatial_size;
 
   float wind_velocity;
@@ -1293,8 +1296,6 @@ typedef struct OceanModifierData {
   float chop_amount;
   float foam_coverage;
   float time;
-
-  char _pad1[4];
 
   /* Spectrum being used. */
   int spectrum;
@@ -2052,6 +2053,10 @@ enum {
   MOD_NORMALEDIT_MIX_MUL = 3,
 };
 
+typedef struct MeshCacheVertexVelocity {
+  float vel[3];
+} MeshCacheVertexVelocity;
+
 typedef struct MeshSeqCacheModifierData {
   ModifierData modifier;
 
@@ -2060,11 +2065,31 @@ typedef struct MeshSeqCacheModifierData {
   char object_path[1024];
 
   char read_flag;
-  char _pad[7];
+  char _pad[3];
+
+  float velocity_scale;
 
   /* Runtime. */
   struct CacheReader *reader;
   char reader_object_path[1024];
+
+  /* Vertex velocities read from the cache. The velocities are not automatically read during
+   * modifier execution, and therefore have to manually be read when needed. This is only used
+   * through the RNA for now. */
+  struct MeshCacheVertexVelocity *vertex_velocities;
+
+  /* The number of vertices of the Alembic mesh, set when the modifier is executed. */
+  int num_vertices;
+
+  /* Time (in frames or seconds) between two velocity samples. Automatically computed to
+   * scale the velocity vectors at render time for generating proper motion blur data. */
+  float velocity_delta;
+
+  /* Caches the scene time (in seconds) used to lookup data in the Alembic archive when the
+   * modifier was last executed. Used to access Alembic samples through the RNA. */
+  float last_lookup_time;
+
+  int _pad1;
 } MeshSeqCacheModifierData;
 
 /* MeshSeqCacheModifierData.read_flag */
@@ -2164,5 +2189,3 @@ typedef struct SimulationModifierData {
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __DNA_MODIFIER_TYPES_H__ */

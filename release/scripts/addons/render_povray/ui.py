@@ -22,11 +22,15 @@
 import bpy
 import sys  # really import here and in render.py?
 import os  # really import here and in render.py?
+import addon_utils
+from time import sleep
 from os.path import isfile
+from bpy.app.handlers import persistent
 from bl_operators.presets import AddPresetBase
 from bpy.utils import register_class, unregister_class
 from bpy.types import (
     Operator,
+    Menu,
     UIList,
     Panel,
     Brush,
@@ -43,17 +47,29 @@ from bl_ui import properties_output
 for member in dir(properties_output):
     subclass = getattr(properties_output, member)
     try:
-        subclass.COMPAT_ENGINES.add('POVRAY')
+        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
     except:
         pass
 del properties_output
+
+from bl_ui import properties_freestyle
+for member in dir(properties_freestyle):
+    subclass = getattr(properties_freestyle, member)
+    try:
+        if not (subclass.bl_space_type == 'PROPERTIES'
+            and subclass.bl_context == "render"):
+            subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+            #subclass.bl_parent_id = "RENDER_PT_POV_filter"
+    except:
+        pass
+del properties_freestyle
 
 from bl_ui import properties_view_layer
 
 for member in dir(properties_view_layer):
     subclass = getattr(properties_view_layer, member)
     try:
-        subclass.COMPAT_ENGINES.add('POVRAY')
+        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
     except:
         pass
 del properties_view_layer
@@ -242,19 +258,136 @@ for member in dir(
         pass
 del properties_particle
 
-# Example of wrapping every class 'as is'
-from bl_ui import properties_output
 
-for member in dir(properties_output):
-    subclass = getattr(properties_output, member)
-    try:
-        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
-    except:
-        pass
-del properties_output
+############# POV-Centric WORSPACE #############
+@persistent
+def povCentricWorkspace(dummy):
+    """Set up a POV centric Workspace if addon was activated and saved as default renderer
+
+    This would bring a ’_RestrictData’ error because UI needs to be fully loaded before
+    workspace changes so registering this function in bpy.app.handlers is needed.
+    By default handlers are freed when loading new files, but here we want the handler
+    to stay running across multiple files as part of this add-on. That is why the the
+    bpy.app.handlers.persistent decorator is used (@persistent) above.
+    """
+
+    wsp = bpy.data.workspaces.get('Scripting')
+    context = bpy.context
+    if wsp is not None and context.scene.render.engine == 'POVRAY_RENDER':
+        new_wsp = bpy.ops.workspace.duplicate({'workspace': wsp})
+        bpy.data.workspaces['Scripting.001'].name='POV'
+        # Already done it would seem, but explicitly make this workspaces the active one
+        context.window.workspace = bpy.data.workspaces['POV']
+        pov_screen = bpy.data.workspaces['POV'].screens[0]
+        pov_workspace = pov_screen.areas
 
 
-class WORLD_MT_POV_presets(bpy.types.Menu):
+        override = bpy.context.copy()
+
+        for area in pov_workspace:
+            if area.type == 'VIEW_3D':
+                for region in [r for r in area.regions if r.type == 'WINDOW']:
+                    for space in area.spaces:
+                        if space.type == 'VIEW_3D':
+                            #override['screen'] = pov_screen
+                            override['area'] = area
+                            override['region']= region
+                            #bpy.data.workspaces['POV'].screens[0].areas[6].spaces[0].width = 333 # Read only, how do we set ?
+                            #This has a glitch:
+                            #bpy.ops.screen.area_move(override, x=(area.x + area.width), y=(area.y + 5), delta=100)
+                            #bpy.ops.screen.area_move(override, x=(area.x + 5), y=area.y, delta=-100)
+
+                            bpy.ops.screen.space_type_set_or_cycle(override, space_type = 'TEXT_EDITOR')
+                            space.show_region_ui = True
+                            #bpy.ops.screen.region_scale(override)
+                            #bpy.ops.screen.region_scale()
+                            break
+
+            elif area.type == 'CONSOLE':
+                for region in [r for r in area.regions if r.type == 'WINDOW']:
+                    for space in area.spaces:
+                        if space.type == 'CONSOLE':
+                            #override['screen'] = pov_screen
+                            override['area'] = area
+                            override['region']= region
+                            bpy.ops.screen.space_type_set_or_cycle(override, space_type = 'INFO')
+
+                            break
+            elif area.type == 'INFO':
+                for region in [r for r in area.regions if r.type == 'WINDOW']:
+                    for space in area.spaces:
+                        if space.type == 'INFO':
+                            #override['screen'] = pov_screen
+                            override['area'] = area
+                            override['region']= region
+                            bpy.ops.screen.space_type_set_or_cycle(override, space_type = 'CONSOLE')
+
+                            break
+
+            elif area.type == 'TEXT_EDITOR':
+                for region in [r for r in area.regions if r.type == 'WINDOW']:
+                    for space in area.spaces:
+                        if space.type == 'TEXT_EDITOR':
+                            #override['screen'] = pov_screen
+                            override['area'] = area
+                            override['region']= region
+                            #bpy.ops.screen.space_type_set_or_cycle(space_type='VIEW_3D')
+                            #space.type = 'VIEW_3D'
+                            bpy.ops.screen.space_type_set_or_cycle(override, space_type = 'VIEW_3D')
+
+                            #bpy.ops.screen.area_join(override, cursor=(area.x, area.y + area.height))
+
+                            break
+
+
+            if area.type == 'VIEW_3D':
+                for region in [r for r in area.regions if r.type == 'WINDOW']:
+                    for space in area.spaces:
+                        if space.type == 'VIEW_3D':
+                            #override['screen'] = pov_screen
+                            override['area'] = area
+                            override['region']= region
+                            bpy.ops.screen.region_quadview(override)
+                            space.region_3d.view_perspective = 'CAMERA'
+                            #bpy.ops.screen.space_type_set_or_cycle(override, space_type = 'TEXT_EDITOR')
+                            #bpy.ops.screen.region_quadview(override)
+
+
+
+
+
+
+        bpy.data.workspaces.update()
+        # Already outliners but invert both types
+        pov_workspace[1].spaces[0].display_mode = 'LIBRARIES'
+        pov_workspace[3].spaces[0].display_mode = 'VIEW_LAYER'
+
+        '''
+        for window in bpy.context.window_manager.windows:
+            for area in [a for a in window.screen.areas if a.type == 'VIEW_3D']:
+                for region in [r for r in area.regions if r.type == 'WINDOW']:
+                    context_override = {
+                        'window': window,
+                        'screen': window.screen,
+                        'area': area,
+                        'region': region,
+                        'space_data': area.spaces.active,
+                        'scene': bpy.context.scene
+                        }
+                    bpy.ops.view3d.camera_to_view(context_override)
+        '''
+
+
+    else:
+        print("default 'Scripting' workspace needed for POV centric Workspace")
+
+
+
+
+
+
+
+class WORLD_MT_POV_presets(Menu):
     bl_label = "World Presets"
     preset_subdir = "pov/world"
     preset_operator = "script.execute_preset"
@@ -262,7 +395,7 @@ class WORLD_MT_POV_presets(bpy.types.Menu):
 
 
 class WORLD_OT_POV_add_preset(AddPresetBase, Operator):
-    '''Add a World Preset'''
+    """Add a World Preset"""
 
     bl_idname = "object.world_preset_add"
     bl_label = "Add World Preset"
@@ -324,6 +457,15 @@ def check_add_mesh_extra_objects():
         return True
     return False
 
+def check_render_freestyle_svg():
+    """Test if Freestyle SVG Exporter addon is activated
+
+    This addon is currently used to generate the SVG lines file
+    when Freestyle is enabled alongside POV
+    """
+    if "render_freestyle_svg" in bpy.context.preferences.addons.keys():
+        return True
+    return False
 
 def locate_docpath():
     """POV can be installed with some include files.
@@ -373,31 +515,29 @@ def pov_context_tex_datablock(context):
     """Texture context type recreated as deprecated in blender 2.8"""
 
     idblock = context.brush
-    if idblock and bpy.context.scene.texture_context == 'OTHER':
+    if idblock and context.scene.texture_context == 'OTHER':
         return idblock
 
     # idblock = bpy.context.active_object.active_material
-    idblock = bpy.context.scene.view_layers[
-        "View Layer"
-    ].objects.active.active_material
-    if idblock:
+    idblock = context.view_layer.objects.active.active_material
+    if idblock and context.scene.texture_context == 'MATERIAL':
         return idblock
 
-    idblock = context.world
-    if idblock:
+    idblock = context.scene.world
+    if idblock and context.scene.texture_context == 'WORLD':
         return idblock
 
     idblock = context.light
-    if idblock:
+    if idblock and context.scene.texture_context == 'LIGHT':
         return idblock
 
-    if context.particle_system:
+    if context.particle_system and context.scene.texture_context == 'PARTICLES':
         idblock = context.particle_system.settings
 
     return idblock
 
     idblock = context.line_style
-    if idblock:
+    if idblock and context.scene.texture_context == 'LINESTYLE':
         return idblock
 
 
@@ -688,7 +828,7 @@ class LIGHT_PT_POV_light(PovLampButtonsPanel, Panel):
     draw = properties_data_light.DATA_PT_light.draw
 
 
-class LIGHT_MT_POV_presets(bpy.types.Menu):
+class LIGHT_MT_POV_presets(Menu):
     """Use this class to define preset menu for pov lights."""
 
     bl_label = "Lamp Presets"
@@ -1114,9 +1254,8 @@ class WORLD_PT_POV_mist(WorldButtonsPanel, Panel):
 
 class RENDER_PT_POV_export_settings(RenderButtonsPanel, Panel):
     """Use this class to define pov ini settingss buttons."""
-
-    bl_label = "Start Options"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_label = "Auto Start"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def draw_header(self, context):
@@ -1131,6 +1270,7 @@ class RENDER_PT_POV_export_settings(RenderButtonsPanel, Panel):
             )
 
     def draw(self, context):
+
         layout = self.layout
 
         scene = context.scene
@@ -1143,25 +1283,25 @@ class RENDER_PT_POV_export_settings(RenderButtonsPanel, Panel):
         col.prop(scene.pov, "command_line_switches", text="")
         split = layout.split()
 
-        layout.active = not scene.pov.tempfiles_enable
-        # if not scene.pov.tempfiles_enable:
-        split.prop(scene.pov, "deletefiles_enable", text="Delete files")
-        split.prop(scene.pov, "pov_editor", text="POV Editor")
+        #layout.active = not scene.pov.tempfiles_enable
+        if not scene.pov.tempfiles_enable:
+            split.prop(scene.pov, "deletefiles_enable", text="Delete files")
+            split.prop(scene.pov, "pov_editor", text="POV Editor")
 
-        col = layout.column()
-        col.prop(scene.pov, "scene_name", text="Name")
-        col.prop(scene.pov, "scene_path", text="Path to files")
-        # col.prop(scene.pov, "scene_path", text="Path to POV-file")
-        # col.prop(scene.pov, "renderimage_path", text="Path to image")
+            col = layout.column()
+            col.prop(scene.pov, "scene_name", text="Name")
+            col.prop(scene.pov, "scene_path", text="Path to files")
+            # col.prop(scene.pov, "scene_path", text="Path to POV-file")
+            # col.prop(scene.pov, "renderimage_path", text="Path to image")
 
-        split = layout.split()
-        split.prop(scene.pov, "indentation_character", text="Indent")
-        if scene.pov.indentation_character == 'SPACE':
-            split.prop(scene.pov, "indentation_spaces", text="Spaces")
+            split = layout.split()
+            split.prop(scene.pov, "indentation_character", text="Indent")
+            if scene.pov.indentation_character == 'SPACE':
+                split.prop(scene.pov, "indentation_spaces", text="Spaces")
 
-        row = layout.row()
-        row.prop(scene.pov, "comments_enable", text="Comments")
-        row.prop(scene.pov, "list_lf_enable", text="Line breaks in lists")
+            row = layout.row()
+            row.prop(scene.pov, "comments_enable", text="Comments")
+            row.prop(scene.pov, "list_lf_enable", text="Line breaks in lists")
 
 
 class RENDER_PT_POV_render_settings(RenderButtonsPanel, Panel):
@@ -1414,7 +1554,7 @@ class RENDER_PT_POV_radiosity(RenderButtonsPanel, Panel):
             col.prop(scene.pov, "radio_subsurface")
 
 
-class POV_RADIOSITY_MT_presets(bpy.types.Menu):
+class POV_RADIOSITY_MT_presets(Menu):
     """Use this class to define pov radiosity presets menu."""
 
     bl_label = "Radiosity Presets"
@@ -1562,7 +1702,7 @@ class MODIFIERS_PT_POV_modifiers(ModifierButtonsPanel, Panel):
                         col.prop(ob.pov, "inside_vector")
 
 
-class MATERIAL_MT_POV_sss_presets(bpy.types.Menu):
+class MATERIAL_MT_POV_sss_presets(Menu):
     """Use this class to define pov sss preset menu."""
 
     bl_label = "SSS Presets"
@@ -1872,7 +2012,7 @@ class MATERIAL_PT_POV_mirror(MaterialButtonsPanel, Panel):
         sub = col.column()
         sub.active = raym.gloss_factor < 1.0
         sub.prop(raym, "gloss_threshold", text="Threshold")
-        sub.prop(raym, "gloss_samples", text="Samples")
+        sub.prop(raym, "gloss_samples", text="Noise")
         sub.prop(raym, "gloss_anisotropic", text="Anisotropic")
 
 
@@ -2178,7 +2318,7 @@ class MATERIAL_PT_POV_replacement_text(MaterialButtonsPanel, Panel):
         col.prop(mat.pov, "replacement_text", text="")
 
 
-class TEXTURE_MT_POV_specials(bpy.types.Menu):
+class TEXTURE_MT_POV_specials(Menu):
     """Use this class to define pov texture slot operations buttons."""
 
     bl_label = "Texture Specials"
@@ -2191,14 +2331,20 @@ class TEXTURE_MT_POV_specials(bpy.types.Menu):
         layout.operator("texture.slot_paste", icon='PASTEDOWN')
 
 
-class TEXTURE_UL_POV_texture_slots(bpy.types.UIList):
-    """Use this class to show pov texture slots list."""  # used?
+class WORLD_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
+    """Use this class to show pov texture slots list."""  # XXX Not used yet
 
-    COMPAT_ENGINES = {'POVRAY_RENDER'}
-
+    index: bpy.props.IntProperty(name='index')
     def draw_item(
         self, context, layout, data, item, icon, active_data, active_propname
     ):
+        world = context.scene.world  # .pov
+        active_data = world.pov
+        # tex = context.texture #may be needed later?
+
+        # We could write some code to decide which icon to use here...
+        custom_icon = 'TEXTURE'
+
         ob = data
         slot = item
         # ma = slot.name
@@ -2220,62 +2366,7 @@ class TEXTURE_UL_POV_texture_slots(bpy.types.UIList):
             layout.label(text="", icon_value=icon)
 
 
-'''
-class MATERIAL_TEXTURE_SLOTS_UL_List(UIList):
-    """Texture Slots UIList."""
-
-
-    def draw_item(self, context, layout, material, item, icon, active_data,
-                  material_texture_list_index, index):
-        material = context.material#.pov
-        active_data = material
-        #tex = context.texture #may be needed later?
-
-
-        # We could write some code to decide which icon to use here...
-        custom_icon = 'TEXTURE'
-
-        # Make sure your code supports all 3 layout types
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout.label(item.name, icon = custom_icon)
-
-        elif self.layout_type in {'GRID'}:
-            layout.alignment = 'CENTER'
-            layout.label("", icon = custom_icon)
-'''
-
-
-class WORLD_TEXTURE_SLOTS_UL_List(UIList):
-    """Use this class to show pov texture slots list."""  # XXX Not used yet
-
-    def draw_item(
-        self,
-        context,
-        layout,
-        world,
-        item,
-        icon,
-        active_data,
-        active_texture_index,
-        index,
-    ):
-        world = context.world  # .pov
-        active_data = world.pov
-        # tex = context.texture #may be needed later?
-
-        # We could write some code to decide which icon to use here...
-        custom_icon = 'TEXTURE'
-
-        # Make sure your code supports all 3 layout types
-        if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            layout.label(item.name, icon=custom_icon)
-
-        elif self.layout_type in {'GRID'}:
-            layout.alignment = 'CENTER'
-            layout.label("", icon=custom_icon)
-
-
-class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(bpy.types.UIList):
+class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
     """Use this class to show pov texture slots list."""
 
     #    texture_slots:
@@ -2304,6 +2395,53 @@ class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(bpy.types.UIList):
             layout.alignment = 'CENTER'
             layout.label(text="", icon_value=icon)
 
+# Rewrite an existing class to modify.
+# register but not unregistered because
+# the modified parts concern only POVRAY_RENDER
+class TEXTURE_PT_context(TextureButtonsPanel, Panel):
+    bl_label = ""
+    bl_context = "texture"
+    bl_options = {'HIDE_HEADER'}
+    COMPAT_ENGINES = {'POVRAY_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+
+    @classmethod
+    def poll(cls, context):
+        return (
+            (context.scene.texture_context
+            not in('MATERIAL','WORLD','LIGHT','PARTICLES','LINESTYLE')
+            or context.scene.render.engine != 'POVRAY_RENDER')
+        )
+    def draw(self, context):
+        layout = self.layout
+        tex = context.texture
+        space = context.space_data
+        pin_id = space.pin_id
+        use_pin_id = space.use_pin_id
+        user = context.texture_user
+
+        col = layout.column()
+
+        if not (use_pin_id and isinstance(pin_id, bpy.types.Texture)):
+            pin_id = None
+
+        if not pin_id:
+            col.template_texture_user()
+
+        if user or pin_id:
+            col.separator()
+
+            if pin_id:
+                col.template_ID(space, "pin_id")
+            else:
+                propname = context.texture_user_property.identifier
+                col.template_ID(user, propname, new="texture.new")
+
+            if tex:
+                col.separator()
+
+                split = col.split(factor=0.2)
+                split.label(text="Type")
+                split.prop(tex, "type", text="")
 
 class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
     """Use this class to show pov texture context buttons."""
@@ -2316,11 +2454,11 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
     def poll(cls, context):
         engine = context.scene.render.engine
         return engine in cls.COMPAT_ENGINES
-        # if not (hasattr(context, "texture_slot") or hasattr(context, "texture_node")):
+        # if not (hasattr(context, "pov_texture_slot") or hasattr(context, "texture_node")):
         #     return False
         return (
             context.material
-            or context.world
+            or context.scene.world
             or context.light
             or context.texture
             or context.line_style
@@ -2333,11 +2471,12 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
         layout = self.layout
 
         scene = context.scene
+        mat = context.view_layer.objects.active.active_material
+        wld = context.scene.world
+
         layout.prop(scene, "texture_context", expand=True)
-        if scene.texture_context == 'MATERIAL':
-            mat = context.scene.view_layers[
-                "View Layer"
-            ].objects.active.active_material
+        if scene.texture_context == 'MATERIAL' and mat is not None:
+
             row = layout.row()
             row.template_list(
                 "MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist",
@@ -2353,22 +2492,90 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
             col = row.column(align=True)
             col.operator("pov.textureslotadd", icon='ADD', text='')
             col.operator("pov.textureslotremove", icon='REMOVE', text='')
+            #todo: recreate for pov_texture_slots?
+            #col.operator("texture.slot_move", text="", icon='TRIA_UP').type = 'UP'
+            #col.operator("texture.slot_move", text="", icon='TRIA_DOWN').type = 'DOWN'
             col.separator()
 
             if mat.pov_texture_slots:
                 index = mat.pov.active_texture_index
                 slot = mat.pov_texture_slots[index]
-                povtex = slot.name
+                povtex = slot.texture#slot.name
                 tex = bpy.data.textures[povtex]
                 col.prop(tex, 'use_fake_user', text='')
-                layout.label(text='Find texture:')
+                #layout.label(text='Linked Texture data browser:')
+                propname = slot.texture_search
+                # if slot.texture was a pointer to texture data rather than just a name string:
+                # layout.template_ID(povtex, "texture", new="texture.new")
+
                 layout.prop_search(
-                    slot, 'texture_search', bpy.data, 'textures', text=''
+                    slot, 'texture_search', bpy.data, 'textures', text='', icon='TEXTURE'
                 )
+                try:
+                    bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[slot.texture_search]
+                    bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[slot.texture_search]
+                except KeyError:
+                    # texture not hand-linked by user
+                    pass
+
+                if tex:
+                    layout.separator()
+                    split = layout.split(factor=0.2)
+                    split.label(text="Type")
+                    split.prop(tex, "type", text="")
+
             # else:
             # for i in range(18):  # length of material texture slots
             # mat.pov_texture_slots.add()
+        elif scene.texture_context == 'WORLD' and wld is not None:
 
+            row = layout.row()
+            row.template_list(
+                "WORLD_TEXTURE_SLOTS_UL_POV_layerlist",
+                "",
+                wld,
+                "pov_texture_slots",
+                wld.pov,
+                "active_texture_index",
+                rows=2,
+                maxrows=16,
+                type="DEFAULT"
+            )
+            col = row.column(align=True)
+            col.operator("pov.textureslotadd", icon='ADD', text='')
+            col.operator("pov.textureslotremove", icon='REMOVE', text='')
+
+            #todo: recreate for pov_texture_slots?
+            #col.operator("texture.slot_move", text="", icon='TRIA_UP').type = 'UP'
+            #col.operator("texture.slot_move", text="", icon='TRIA_DOWN').type = 'DOWN'
+            col.separator()
+
+            if wld.pov_texture_slots:
+                index = wld.pov.active_texture_index
+                slot = wld.pov_texture_slots[index]
+                povtex = slot.texture#slot.name
+                tex = bpy.data.textures[povtex]
+                col.prop(tex, 'use_fake_user', text='')
+                #layout.label(text='Linked Texture data browser:')
+                propname = slot.texture_search
+                # if slot.texture was a pointer to texture data rather than just a name string:
+                # layout.template_ID(povtex, "texture", new="texture.new")
+
+                layout.prop_search(
+                    slot, 'texture_search', bpy.data, 'textures', text='', icon='TEXTURE'
+                )
+                try:
+                    bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[slot.texture_search]
+                    bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[slot.texture_search]
+                except KeyError:
+                    # texture not hand-linked by user
+                    pass
+
+                if tex:
+                    layout.separator()
+                    split = layout.split(factor=0.2)
+                    split.label(text="Type")
+                    split.prop(tex, "type", text="")
 
 # Commented out below is a reminder of what existed in Blender Internal
 # attributes need to be recreated
@@ -2518,7 +2725,7 @@ class TEXTURE_PT_colors(TextureButtonsPanel, Panel):
 # Texture Slot Panels #
 
 
-class MATERIAL_OT_POV_texture_slot_add(Operator):
+class TEXTURE_OT_POV_texture_slot_add(Operator):
     """Use this class for the add texture slot button."""
 
     bl_idname = "pov.textureslotadd"
@@ -2528,18 +2735,29 @@ class MATERIAL_OT_POV_texture_slot_add(Operator):
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
-
+        idblock = pov_context_tex_datablock(context)
         tex = bpy.data.textures.new(name='Texture', type='IMAGE')
-        tex.use_fake_user = True
-        ob = context.scene.view_layers["View Layer"].objects.active
-        slot = ob.active_material.pov_texture_slots.add()
+        #tex.use_fake_user = True
+        #mat = context.view_layer.objects.active.active_material
+        slot = idblock.pov_texture_slots.add()
         slot.name = tex.name
         slot.texture = tex.name
+        slot.texture_search = tex.name
+        # Switch paint brush and paint brush mask
+        # to this texture so settings remain contextual
+        bpy.context.tool_settings.image_paint.brush.texture = tex
+        bpy.context.tool_settings.image_paint.brush.mask_texture = tex
+        idblock.pov.active_texture_index = (len(idblock.pov_texture_slots)-1)
+
+        #for area in bpy.context.screen.areas:
+            #if area.type in ['PROPERTIES']:
+                #area.tag_redraw()
+
 
         return {'FINISHED'}
 
 
-class MATERIAL_OT_POV_texture_slot_remove(Operator):
+class TEXTURE_OT_POV_texture_slot_remove(Operator):
     """Use this class for the remove texture slot button."""
 
     bl_idname = "pov.textureslotremove"
@@ -2549,13 +2767,22 @@ class MATERIAL_OT_POV_texture_slot_remove(Operator):
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def execute(self, context):
-        pass
-        # tex = bpy.data.textures.new()
-        # tex_slot = context.object.active_material.pov_texture_slots.add()
-        # tex_slot.name = tex.name
+        idblock = pov_context_tex_datablock(context)
+        #mat = context.view_layer.objects.active.active_material
+        tex_slot = idblock.pov_texture_slots.remove(idblock.pov.active_texture_index)
+        if idblock.pov.active_texture_index > 0:
+            idblock.pov.active_texture_index -= 1
+        try:
+            tex = idblock.pov_texture_slots[idblock.pov.active_texture_index].texture
+        except IndexError:
+            # No more slots
+            return {'FINISHED'}
+        # Switch paint brush to previous texture so settings remain contextual
+        # if 'tex' in locals(): # Would test is the tex variable is assigned / exists
+        bpy.context.tool_settings.image_paint.brush.texture = bpy.data.textures[tex]
+        bpy.context.tool_settings.image_paint.brush.mask_texture = bpy.data.textures[tex]
 
         return {'FINISHED'}
-
 
 class TextureSlotPanel(TextureButtonsPanel):
     """Use this class to show pov texture slots panel."""
@@ -2586,7 +2813,7 @@ class TEXTURE_PT_POV_type(TextureButtonsPanel, Panel):
         tex = context.texture
 
         split = layout.split(factor=0.2)
-        split.label(text="POV:")
+        split.label(text="Pattern")
         split.prop(tex.pov, "tex_pattern_type", text="")
 
         # row = layout.row()
@@ -2631,6 +2858,7 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
     """Use this class to define pov texture pattern buttons."""
 
     bl_label = "POV Pattern Options"
+    bl_options = {'HIDE_HEADER'}
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     def draw(self, context):
@@ -2911,6 +3139,112 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
             row.prop(tex.pov, "warp_turbulence_z", text="Z")
             row.prop(tex.pov, "modifier_omega", text="Omega")
 
+class TEXTURE_PT_POV_mapping(TextureSlotPanel, Panel):
+    """Use this class to define POV texture mapping buttons"""
+    bl_label = "Mapping"
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+
+    @classmethod
+    def poll(cls, context):
+        idblock = pov_context_tex_datablock(context)
+        if isinstance(idblock, Brush) and not context.sculpt_object:
+            return False
+
+        if not getattr(context, "texture_slot", None):
+            return False
+
+        engine = context.scene.render.engine
+        return (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        idblock = pov_context_tex_datablock(context)
+
+        #tex = context.texture_slot
+        tex = mat.pov_texture_slots[
+            mat.active_texture_index
+        ]
+        if not isinstance(idblock, Brush):
+            split = layout.split(percentage=0.3)
+            col = split.column()
+            col.label(text="Coordinates:")
+            col = split.column()
+            col.prop(tex, "texture_coords", text="")
+
+            if tex.texture_coords == 'ORCO':
+                """
+                ob = context.object
+                if ob and ob.type == 'MESH':
+                    split = layout.split(percentage=0.3)
+                    split.label(text="Mesh:")
+                    split.prop(ob.data, "texco_mesh", text="")
+                """
+            elif tex.texture_coords == 'UV':
+                split = layout.split(percentage=0.3)
+                split.label(text="Map:")
+                ob = context.object
+                if ob and ob.type == 'MESH':
+                    split.prop_search(tex, "uv_layer", ob.data, "uv_textures", text="")
+                else:
+                    split.prop(tex, "uv_layer", text="")
+
+            elif tex.texture_coords == 'OBJECT':
+                split = layout.split(percentage=0.3)
+                split.label(text="Object:")
+                split.prop(tex, "object", text="")
+
+            elif tex.texture_coords == 'ALONG_STROKE':
+                split = layout.split(percentage=0.3)
+                split.label(text="Use Tips:")
+                split.prop(tex, "use_tips", text="")
+
+        if isinstance(idblock, Brush):
+            if context.sculpt_object or context.image_paint_object:
+                brush_texture_settings(layout, idblock, context.sculpt_object)
+        else:
+            if isinstance(idblock, FreestyleLineStyle):
+                split = layout.split(percentage=0.3)
+                split.label(text="Projection:")
+                split.prop(tex, "mapping", text="")
+
+                split = layout.split(percentage=0.3)
+                split.separator()
+                row = split.row()
+                row.prop(tex, "mapping_x", text="")
+                row.prop(tex, "mapping_y", text="")
+                row.prop(tex, "mapping_z", text="")
+
+            elif isinstance(idblock, Material):
+                split = layout.split(percentage=0.3)
+                split.label(text="Projection:")
+                split.prop(tex, "mapping", text="")
+
+                split = layout.split()
+
+                col = split.column()
+                if tex.texture_coords in {'ORCO', 'UV'}:
+                    col.prop(tex, "use_from_dupli")
+                    if (idblock.type == 'VOLUME' and tex.texture_coords == 'ORCO'):
+                        col.prop(tex, "use_map_to_bounds")
+                elif tex.texture_coords == 'OBJECT':
+                    col.prop(tex, "use_from_original")
+                    if (idblock.type == 'VOLUME'):
+                        col.prop(tex, "use_map_to_bounds")
+                else:
+                    col.label()
+
+                col = split.column()
+                row = col.row()
+                row.prop(tex, "mapping_x", text="")
+                row.prop(tex, "mapping_y", text="")
+                row.prop(tex, "mapping_z", text="")
+
+            row = layout.row()
+            row.column().prop(tex, "offset")
+            row.column().prop(tex, "scale")
 
 class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
     """Use this class to define pov texture influence buttons."""
@@ -2919,18 +3253,20 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
-    # bl_context = 'texture'
+    #bl_context = 'texture'
     @classmethod
     def poll(cls, context):
         idblock = pov_context_tex_datablock(context)
         if (
-            isinstance(idblock, Brush)
-            and bpy.context.scene.texture_context == 'OTHER'
+            # isinstance(idblock, Brush) and # Brush used for everything since 2.8
+            context.scene.texture_context == 'OTHER'
         ):  # XXX replace by isinstance(idblock, bpy.types.Brush) and ...
             return False
 
-        # if not getattr(context, "pov_texture_slot", None):
-        # return False
+        # Specify below also for pov_world_texture_slots, lights etc.
+        # to display for various types of slots but only when any
+        if not getattr(idblock, "pov_texture_slots", None):
+            return False
 
         engine = context.scene.render.engine
         return engine in cls.COMPAT_ENGINES
@@ -2940,14 +3276,13 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
         layout = self.layout
 
         idblock = pov_context_tex_datablock(context)
-
         # tex = context.pov_texture_slot
-        mat = bpy.context.active_object.active_material
-        texslot = mat.pov_texture_slots[
-            mat.active_texture_index
+        #mat = bpy.context.active_object.active_material
+        texslot = idblock.pov_texture_slots[
+            idblock.pov.active_texture_index
         ]  # bpy.data.textures[mat.active_texture_index]
         tex = bpy.data.textures[
-            mat.pov_texture_slots[mat.active_texture_index].texture
+            idblock.pov_texture_slots[idblock.pov.active_texture_index].texture
         ]
 
         def factor_but(layout, toggle, factor, name):
@@ -3756,7 +4091,7 @@ class OBJECT_PT_povray_replacement_text(ObjectButtonsPanel, Panel):
 ###############################################################################
 
 
-class VIEW_MT_POV_primitives_add(bpy.types.Menu):
+class VIEW_MT_POV_primitives_add(Menu):
     """Define the primitives menu with presets"""
 
     bl_idname = "VIEW_MT_POV_primitives_add"
@@ -3777,7 +4112,7 @@ class VIEW_MT_POV_primitives_add(bpy.types.Menu):
         layout.menu(VIEW_MT_POV_import.bl_idname, text="Import", icon="IMPORT")
 
 
-class VIEW_MT_POV_Basic_Shapes(bpy.types.Menu):
+class VIEW_MT_POV_Basic_Shapes(Menu):
     """Use this class to sort simple primitives menu entries."""
 
     bl_idname = "POVRAY_MT_basic_shape_tools"
@@ -3859,7 +4194,7 @@ class VIEW_MT_POV_Basic_Shapes(bpy.types.Menu):
             )
 
 
-class VIEW_MT_POV_import(bpy.types.Menu):
+class VIEW_MT_POV_import(Menu):
     """Use this class for the import menu."""
 
     bl_idname = "POVRAY_MT_import_tools"
@@ -3910,7 +4245,7 @@ def menu_func_import(self, context):
 # return True
 
 
-class NODE_MT_POV_map_create(bpy.types.Menu):
+class NODE_MT_POV_map_create(Menu):
     """Create maps"""
 
     bl_idname = "POVRAY_MT_node_map_create"
@@ -4056,7 +4391,7 @@ def validinsert(ext):
     return ext in {".txt", ".inc", ".pov"}
 
 
-class TEXT_MT_POV_insert(bpy.types.Menu):
+class TEXT_MT_POV_insert(Menu):
     """Use this class to create a menu launcher in text editor for the TEXT_OT_POV_insert operator ."""
 
     bl_label = "Insert"
@@ -4116,10 +4451,10 @@ class TEXT_PT_POV_custom_code(TextButtonsPanel, Panel):
             row = box.row()
             row.prop(text.pov, "custom_code", expand=True)
             if text.pov.custom_code in {'3dview'}:
-                box.operator("render.render", icon='OUTLINER_DATA_POSE')
+                box.operator("render.render", icon='OUTLINER_DATA_ARMATURE')
             if text.pov.custom_code in {'text'}:
                 rtext = bpy.context.space_data.text
-                box.operator("text.run", icon='POSE_DATA')
+                box.operator("text.run", icon='ARMATURE_DATA')
             # layout.prop(text.pov, "custom_code")
             elif text.pov.custom_code in {'both'}:
                 box.operator("render.render", icon='POSE_HLT')
@@ -4133,7 +4468,7 @@ class TEXT_PT_POV_custom_code(TextButtonsPanel, Panel):
 # Text editor templates from header menu
 
 
-class TEXT_MT_POV_templates(bpy.types.Menu):
+class TEXT_MT_POV_templates(Menu):
     """Use this class to create a menu for the same pov templates scenes as other pov IDEs."""
 
     bl_label = "POV"
@@ -4154,12 +4489,111 @@ def menu_func_templates(self, context):
     # Do not depend on POV being active renderer here...
     self.layout.menu("TEXT_MT_POV_templates")
 
+###############################################################################
+# Freestyle
+###############################################################################
+#import addon_utils
+#addon_utils.paths()[0]
+#addon_utils.modules()
+#mod.bl_info['name'] == 'Freestyle SVG Exporter':
+bpy.utils.script_paths("addons")
+#render_freestyle_svg = os.path.join(bpy.utils.script_paths("addons"), "render_freestyle_svg.py")
+
+render_freestyle_svg = bpy.context.preferences.addons.get('render_freestyle_svg')
+    #mpath=addon_utils.paths()[0].render_freestyle_svg
+    #import mpath
+    #from mpath import render_freestyle_svg #= addon_utils.modules(['Freestyle SVG Exporter'])
+    #from scripts\\addons import render_freestyle_svg
+if check_render_freestyle_svg():
+    '''
+    snippetsWIP
+    import myscript
+    import importlib
+
+    importlib.reload(myscript)
+    myscript.main()
+    '''
+    for member in dir(render_freestyle_svg):
+        subclass = getattr(render_freestyle_svg, member)
+        try:
+            subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+            if subclass.bl_idname == "RENDER_PT_SVGExporterPanel":
+                subclass.bl_parent_id = "RENDER_PT_POV_filter"
+                subclass.bl_options = {'HIDE_HEADER'}
+                #subclass.bl_order = 11
+                print(subclass.bl_info)
+        except:
+            pass
+
+    #del render_freestyle_svg.RENDER_PT_SVGExporterPanel.bl_parent_id
+
+
+class RENDER_PT_POV_filter(RenderButtonsPanel, Panel):
+    """Use this class to invoke stuff like Freestyle UI."""
+
+    bl_label = "Freestyle"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    @classmethod
+    def poll(cls, context):
+        with_freestyle = bpy.app.build_options.freestyle
+        engine = context.scene.render.engine
+        return(with_freestyle and engine == 'POVRAY_RENDER')
+    def draw_header(self, context):
+
+        #scene = context.scene
+        rd = context.scene.render
+        layout = self.layout
+
+        if rd.use_freestyle:
+            layout.prop(
+                rd, "use_freestyle", text="", icon='LINE_DATA'
+                    )
+
+        else:
+            layout.prop(
+                rd, "use_freestyle", text="", icon='OUTLINER_OB_IMAGE'
+                    )
+
+    def draw(self, context):
+        rd = context.scene.render
+        layout = self.layout
+        layout.active = rd.use_freestyle
+        layout.use_property_split = True
+        layout.use_property_decorate = False  # No animation.
+        flow = layout.grid_flow(
+            row_major=True,
+            columns=0,
+            even_columns=True,
+            even_rows=False,
+            align=True,
+        )
+
+        flow.prop(rd, "line_thickness_mode", expand=True)
+
+        if rd.line_thickness_mode == 'ABSOLUTE':
+            flow.prop(rd, "line_thickness")
+
+        # Warning if the Freestyle SVG Exporter addon is not enabled
+        if not check_render_freestyle_svg():
+            # col = box.column()
+            layout.label(
+                text="Please enable Freestyle SVG Exporter addon", icon="INFO"
+            )
+            # layout.separator()
+            layout.operator(
+                "preferences.addon_show",
+                text="Go to Render: Freestyle SVG Exporter addon",
+                icon="PREFERENCES",
+            ).module = "render_freestyle_svg"
 
 classes = (
     WORLD_PT_POV_world,
     WORLD_MT_POV_presets,
     WORLD_OT_POV_add_preset,
-    WORLD_TEXTURE_SLOTS_UL_List,
+    WORLD_TEXTURE_SLOTS_UL_POV_layerlist,
+    #WORLD_TEXTURE_SLOTS_UL_List,
     WORLD_PT_POV_mist,
     # RenderButtonsPanel,
     # ModifierButtonsPanel,
@@ -4188,6 +4622,7 @@ classes = (
     RENDER_PT_POV_photons,
     RENDER_PT_POV_antialias,
     RENDER_PT_POV_radiosity,
+    RENDER_PT_POV_filter,
     POV_RADIOSITY_MT_presets,
     RENDER_OT_POV_radiosity_add_preset,
     RENDER_PT_POV_media,
@@ -4232,13 +4667,13 @@ classes = (
     TEXT_MT_POV_insert,
     TEXT_PT_POV_custom_code,
     TEXT_MT_POV_templates,
-    # TEXTURE_PT_context,
-    # TEXTURE_PT_POV_povray_texture_slots,
-    TEXTURE_UL_POV_texture_slots,
+    #TEXTURE_PT_POV_povray_texture_slots,
+    #TEXTURE_UL_POV_texture_slots,
     MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist,
-    MATERIAL_OT_POV_texture_slot_add,
-    MATERIAL_OT_POV_texture_slot_remove,
+    TEXTURE_OT_POV_texture_slot_add,
+    TEXTURE_OT_POV_texture_slot_remove,
     TEXTURE_PT_POV_influence,
+    TEXTURE_PT_POV_mapping,
 )
 
 
@@ -4257,11 +4692,18 @@ def register():
     # was used for parametric objects but made the other addon unreachable on
     # unregister for other tools to use created a user action call instead
     # addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
-
     # bpy.types.TEXTURE_PT_context_texture.prepend(TEXTURE_PT_POV_type)
 
+    if not povCentricWorkspace in bpy.app.handlers.load_post:
+        print("Adding POV wentric workspace on load handlers list")
+        bpy.app.handlers.load_post.append(povCentricWorkspace)
 
 def unregister():
+    if povCentricWorkspace in bpy.app.handlers.load_post:
+        print("Removing POV wentric workspace from load handlers list")
+        bpy.app.handlers.load_post.remove(povCentricWorkspace)
+
+
     # from bpy.utils import unregister_class
 
     # bpy.types.TEXTURE_PT_context_texture.remove(TEXTURE_PT_POV_type)
@@ -4274,4 +4716,5 @@ def unregister():
     bpy.types.VIEW3D_MT_add.remove(menu_func_add)
 
     for cls in reversed(classes):
-        unregister_class(cls)
+        if cls != TEXTURE_PT_context:
+            unregister_class(cls)

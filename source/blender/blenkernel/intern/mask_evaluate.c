@@ -126,9 +126,8 @@ int BKE_mask_spline_differentiate_calc_total(const MaskSpline *spline, const uns
   if (spline->flag & MASK_SPLINE_CYCLIC) {
     return spline->tot_point * resol;
   }
-  else {
-    return ((spline->tot_point - 1) * resol) + 1;
-  }
+
+  return ((spline->tot_point - 1) * resol) + 1;
 }
 
 float (*BKE_mask_spline_differentiate_with_resolution(MaskSpline *spline,
@@ -179,7 +178,7 @@ float (*BKE_mask_spline_differentiate_with_resolution(MaskSpline *spline,
                                     bezt_curr->vec[1][j],
                                     &(*fp)[j],
                                     resol,
-                                    2 * sizeof(float));
+                                    sizeof(float[2]));
     }
 
     fp += resol;
@@ -688,7 +687,7 @@ static float (*mask_spline_feather_differentiated_points_with_resolution__double
                                     bezt_curr->vec[1][j],
                                     &(*fp)[j],
                                     resol,
-                                    2 * sizeof(float));
+                                    sizeof(float[2]));
     }
 
     /* scale by the uw's */
@@ -846,7 +845,7 @@ float *BKE_mask_point_segment_diff(MaskSpline *spline,
 
   /* resol+1 because of 'forward_diff_bezier' function */
   *tot_diff_point = resol + 1;
-  diff_points = fp = MEM_callocN((resol + 1) * 2 * sizeof(float), "mask segment vets");
+  diff_points = fp = MEM_callocN(sizeof(float[2]) * (resol + 1), "mask segment vets");
 
   for (j = 0; j < 2; j++) {
     BKE_curve_forward_diff_bezier(bezt->vec[1][j],
@@ -855,7 +854,7 @@ float *BKE_mask_point_segment_diff(MaskSpline *spline,
                                   bezt_next->vec[1][j],
                                   fp + j,
                                   resol,
-                                  2 * sizeof(float));
+                                  sizeof(float[2]));
   }
 
   copy_v2_v2(fp + 2 * resol, bezt_next->vec[1]);

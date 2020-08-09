@@ -84,13 +84,11 @@ bool node_group_poll_instance(bNode *node, bNodeTree *nodetree)
     if (grouptree) {
       return nodeGroupPoll(nodetree, grouptree);
     }
-    else {
-      return true; /* without a linked node tree, group node is always ok */
-    }
+
+    return true; /* without a linked node tree, group node is always ok */
   }
-  else {
-    return false;
-  }
+
+  return false;
 }
 
 int nodeGroupPoll(bNodeTree *nodetree, bNodeTree *grouptree)
@@ -131,6 +129,9 @@ static bNodeSocket *group_verify_socket(
   }
   if (sock) {
     strcpy(sock->name, iosock->name);
+
+    const int mask = SOCK_HIDE_VALUE;
+    sock->flag = (sock->flag & ~mask) | (iosock->flag & mask);
 
     if (iosock->typeinfo->interface_verify_socket) {
       iosock->typeinfo->interface_verify_socket(ntree, iosock, gnode, sock, "interface");

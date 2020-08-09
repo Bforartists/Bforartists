@@ -222,9 +222,8 @@ static bool skin_frame_find_contained_faces(const Frame *frame, BMFace *fill_fac
   if (diag) {
     return BM_edge_face_pair(diag, &fill_faces[0], &fill_faces[1]);
   }
-  else {
-    return false;
-  }
+
+  return false;
 }
 
 /* Returns true if hull is successfully built, false otherwise */
@@ -460,7 +459,7 @@ static void node_frames_init(SkinNode *nf, int totframe)
 }
 
 static void create_frame(
-    Frame *frame, const float co[3], const float radius[2], float mat[3][3], float offset)
+    Frame *frame, const float co[3], const float radius[2], const float mat[3][3], float offset)
 {
   float rx[3], ry[3], rz[3];
   int i;
@@ -814,9 +813,8 @@ static int calc_edge_subdivisions(const MVert *mvert,
     if (v1_branch && v2_branch) {
       return 2;
     }
-    else {
-      return 0;
-    }
+
+    return 0;
   }
 
   avg_radius = half_v2(evs[0]->radius) + half_v2(evs[1]->radius);
@@ -1278,7 +1276,7 @@ static void skin_choose_quad_bridge_order(BMVert *a[4], BMVert *b[4], int best_o
 
     if (len < shortest_len) {
       shortest_len = len;
-      memcpy(best_order, orders[i], sizeof(int) * 4);
+      memcpy(best_order, orders[i], sizeof(int[4]));
     }
   }
 }
