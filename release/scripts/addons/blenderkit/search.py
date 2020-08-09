@@ -72,7 +72,7 @@ def check_errors(rdata):
                 if user_preferences.enable_oauth:
                     bkit_oauth.refresh_token_thread()
                 return False, rdata.get('detail')
-            return False, 'Missing or wrong api_key in addon preferences'
+            return False, 'Use login panel to connect your profile.'
     return True, ''
 
 
@@ -101,22 +101,45 @@ def refresh_token_timer():
 
     return max(3600, user_preferences.api_key_life - 3600)
 
+def update_ad(ad):
+    if not ad.get('assetBaseId'):
+        ad['assetBaseId'] = ad['asset_base_id']  # this should stay ONLY for compatibility with older scenes
+        ad['assetType'] = ad['asset_type']  # this should stay ONLY for compatibility with older scenes
+        ad['canDownload'] = ad['can_download']  # this should stay ONLY for compatibility with older scenes
+        ad['verificationStatus'] = ad['verification_status']  # this should stay ONLY for compatibility with older scenes
+        ad['author'] = {}
+        ad['author']['id'] = ad['author_id']  # this should stay ONLY for compatibility with older scenes
+    return ad
 
 def update_assets_data():  # updates assets data on scene load.
     '''updates some properties that were changed on scenes with older assets.
     The properties were mainly changed from snake_case to CamelCase to fit the data that is coming from the server.
     '''
-    for ob in bpy.context.scene.objects:
-        if ob.get('asset_data') != None:
-            ad = ob['asset_data']
-            if not ad.get('assetBaseId'):
-                ad['assetBaseId'] = ad['asset_base_id'],  # this should stay ONLY for compatibility with older scenes
-                ad['assetType'] = ad['asset_type'],  # this should stay ONLY for compatibility with older scenes
-                ad['canDownload'] = ad['can_download'],  # this should stay ONLY for compatibility with older scenes
-                ad['verificationStatus'] = ad[
-                                               'verification_status'],  # this should stay ONLY for compatibility with older scenes
-                ad['author'] = {}
-                ad['author']['id'] = ad['author_id'],  # this should stay ONLY for compatibility with older scenes
+    data = bpy.data
+
+    datablocks = [
+        bpy.data.objects,
+        bpy.data.materials,
+        bpy.data.brushes,
+    ]
+    for dtype in datablocks:
+        for block in dtype:
+            if block.get('asset_data') != None:
+                update_ad(block['asset_data'])
+
+    dicts = [
+        'assets used',
+        'assets rated',
+    ]
+    for s in bpy.data.scenes:
+        for k in dicts:
+            d = s.get(k)
+            if not d:
+                continue;
+
+            for k in d.keys():
+                update_ad(d[k])
+                # bpy.context.scene['assets used'][ad] = ad
 
 
 @persistent
@@ -280,16 +303,16 @@ def timer_update():
             # TODO here it should check if there are some results, and only open assetbar if this is the case, not search.
             # if bpy.context.scene.get('search results') is None:
             search()
-            preferences.first_run = False
+            # preferences.first_run = False
         if preferences.tips_on_start:
-            ui.get_largest_3dview()
+            utils.get_largest_area()
             ui.update_ui_size(ui.active_area, ui.active_region)
             ui.add_report(text='BlenderKit Tip: ' + random.choice(rtips), timeout=12, color=colors.GREEN)
         return 3.0
 
-    if preferences.first_run:
-        search()
-        preferences.first_run = False
+    # if preferences.first_run:
+    #     search()
+    #     preferences.first_run = False
 
     # check_clipboard()
 
@@ -1160,14 +1183,6 @@ def search(category='', get_next=False, author_id=''):
     # mt('start')
     scene = bpy.context.scene
     ui_props = scene.blenderkitUI
-
-    ### updating of search categories was moved here, due to the reason that BlenderKit created the blenderkit_data
-    # folder upon registration of BlenderKit, which wasn't a favourite option for some users (devs running tests).
-    # user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    # if not user_preferences.first_run:
-    #     api_key = user_preferences.api_key
-    #     if bpy.context.window_manager.get('bkit_categories') is None:
-    #         categories.fetch_categories_thread(api_key)
 
     if ui_props.asset_type == 'MODEL':
         if not hasattr(scene, 'blenderkit'):

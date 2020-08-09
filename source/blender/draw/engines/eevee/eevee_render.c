@@ -53,11 +53,9 @@ bool EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
   EEVEE_StorageList *stl = vedata->stl;
   EEVEE_TextureList *txl = vedata->txl;
   EEVEE_FramebufferList *fbl = vedata->fbl;
-  EEVEE_ViewLayerData *sldata = EEVEE_view_layer_data_ensure();
   Scene *scene = DEG_get_evaluated_scene(depsgraph);
   const float *size_orig = DRW_viewport_size_get();
   float size_final[2];
-  float camtexcofac[4];
 
   /* Init default FB and render targets:
    * In render mode the default framebuffer is not generated
@@ -75,6 +73,7 @@ bool EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
   g_data->valid_double_buffer = 0;
   copy_v2_v2(g_data->size_orig, size_orig);
 
+  float *camtexcofac = g_data->camtexcofac;
   if (scene->eevee.flag & SCE_EEVEE_OVERSCAN) {
     g_data->overscan = scene->eevee.overscan / 100.0f;
     g_data->overscan_pixels = roundf(max_ff(size_orig[0], size_orig[1]) * g_data->overscan);
@@ -94,8 +93,10 @@ bool EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
     copy_v4_fl4(camtexcofac, 1.0f, 1.0f, 0.0f, 0.0f);
   }
 
-  int final_res[2] = {size_orig[0] + g_data->overscan_pixels * 2.0f,
-                      size_orig[1] + g_data->overscan_pixels * 2.0f};
+  const int final_res[2] = {
+      size_orig[0] + g_data->overscan_pixels * 2.0f,
+      size_orig[1] + g_data->overscan_pixels * 2.0f,
+  };
 
   int max_dim = max_ii(final_res[0], final_res[1]);
   if (max_dim > GPU_max_texture_size()) {
@@ -125,19 +126,19 @@ bool EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
   GPU_framebuffer_ensure_config(&fbl->main_color_fb,
                                 {GPU_ATTACHMENT_NONE, GPU_ATTACHMENT_TEXTURE(txl->color)});
 
-  /* Alloc common ubo data. */
-  if (sldata->common_ubo == NULL) {
-    sldata->common_ubo = DRW_uniformbuffer_create(sizeof(sldata->common_data),
-                                                  &sldata->common_data);
-  }
+  return true;
+}
 
-  EEVEE_render_view_sync(vedata, engine, depsgraph);
-
+void EEVEE_render_modules_init(EEVEE_Data *vedata,
+                               RenderEngine *engine,
+                               struct Depsgraph *depsgraph)
+{
+  EEVEE_ViewLayerData *sldata = EEVEE_view_layer_data_ensure();
+  EEVEE_StorageList *stl = vedata->stl;
+  EEVEE_FramebufferList *fbl = vedata->fbl;
   /* TODO(sergey): Shall render hold pointer to an evaluated camera instead? */
   struct Object *ob_camera_eval = DEG_get_evaluated_object(depsgraph, RE_GetCamera(engine->re));
-
-  DRWView *view = (DRWView *)DRW_view_default_get();
-  DRW_view_camtexco_set(view, camtexcofac);
+  EEVEE_render_view_sync(vedata, engine, depsgraph);
 
   /* `EEVEE_renderpasses_init` will set the active render passes used by `EEVEE_effects_init`.
    * `EEVEE_effects_init` needs to go second for TAA. */
@@ -146,8 +147,6 @@ bool EEVEE_render_init(EEVEE_Data *ved, RenderEngine *engine, struct Depsgraph *
   EEVEE_materials_init(sldata, vedata, stl, fbl);
   EEVEE_shadows_init(sldata);
   EEVEE_lightprobes_init(sldata, vedata);
-
-  return true;
 }
 
 void EEVEE_render_view_sync(EEVEE_Data *vedata, RenderEngine *engine, struct Depsgraph *depsgraph)
@@ -169,10 +168,13 @@ void EEVEE_render_view_sync(EEVEE_Data *vedata, RenderEngine *engine, struct Dep
   DRW_view_reset();
   DRW_view_default_set(view);
   DRW_view_set_active(view);
+
+  DRW_view_camtexco_set(view, g_data->camtexcofac);
 }
 
 void EEVEE_render_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
 {
+  EEVEE_view_layer_data_ensure();
   EEVEE_bloom_cache_init(sldata, vedata);
   EEVEE_depth_of_field_cache_init(sldata, vedata);
   EEVEE_effects_cache_init(sldata, vedata);
@@ -523,10 +525,10 @@ void EEVEE_render_draw(EEVEE_Data *vedata, RenderEngine *engine, RenderLayer *rl
   }
 
   while (render_samples < tot_sample && !RE_engine_test_break(engine)) {
-    float clear_col[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    const float clear_col[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     float clear_depth = 1.0f;
     uint clear_stencil = 0x00;
-    uint primes[3] = {2, 3, 7};
+    const uint primes[3] = {2, 3, 7};
     double offset[3] = {0.0, 0.0, 0.0};
     double r[3];
 

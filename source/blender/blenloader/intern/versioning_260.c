@@ -658,6 +658,7 @@ static void do_versions_nodetree_customnodes(bNodeTree *ntree, int UNUSED(is_gro
   }
 }
 
+/* NOLINTNEXTLINE: readability-function-size */
 void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 {
   if (bmain->versionfile < 260) {
@@ -2348,10 +2349,14 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
       for (area = screen->areabase.first; area; area = area->next) {
         for (sl = area->spacedata.first; sl; sl = sl->next) {
           if (sl->spacetype == SPACE_OUTLINER) {
-            SpaceOutliner *so = (SpaceOutliner *)sl;
+            SpaceOutliner *space_outliner = (SpaceOutliner *)sl;
 
-            if (!ELEM(so->outlinevis, SO_SCENES, SO_LIBRARIES, SO_SEQUENCE, SO_DATA_API)) {
-              so->outlinevis = SO_SCENES;
+            if (!ELEM(space_outliner->outlinevis,
+                      SO_SCENES,
+                      SO_LIBRARIES,
+                      SO_SEQUENCE,
+                      SO_DATA_API)) {
+              space_outliner->outlinevis = SO_SCENES;
             }
           }
         }

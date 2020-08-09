@@ -37,6 +37,7 @@
 #include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_particle_types.h"
+#include "DNA_rigidbody_types.h"
 #include "DNA_screen_types.h"
 
 #include "ED_screen.h"
@@ -116,8 +117,10 @@ int EEVEE_motion_blur_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Data *veda
     }
 
     const float *fs_size = DRW_viewport_size_get();
-    int tx_size[2] = {1 + ((int)fs_size[0] / EEVEE_VELOCITY_TILE_SIZE),
-                      1 + ((int)fs_size[1] / EEVEE_VELOCITY_TILE_SIZE)};
+    const int tx_size[2] = {
+        1 + ((int)fs_size[0] / EEVEE_VELOCITY_TILE_SIZE),
+        1 + ((int)fs_size[1] / EEVEE_VELOCITY_TILE_SIZE),
+    };
 
     effects->velocity_tiles_x_tx = DRW_texture_pool_query_2d(
         tx_size[0], fs_size[1], GPU_RGBA16, &draw_engine_eevee_type);
@@ -172,8 +175,10 @@ void EEVEE_motion_blur_cache_init(EEVEE_ViewLayerData *UNUSED(sldata), EEVEE_Dat
 
   if ((effects->enabled_effects & EFFECT_MOTION_BLUR) != 0) {
     const float *fs_size = DRW_viewport_size_get();
-    int tx_size[2] = {GPU_texture_width(effects->velocity_tiles_tx),
-                      GPU_texture_height(effects->velocity_tiles_tx)};
+    const int tx_size[2] = {
+        GPU_texture_width(effects->velocity_tiles_tx),
+        GPU_texture_height(effects->velocity_tiles_tx),
+    };
 
     eevee_motion_blur_sync_camera(vedata);
 
@@ -284,8 +289,8 @@ void EEVEE_motion_blur_hair_cache_populate(EEVEE_ViewLayerData *UNUSED(sldata),
     /* Store transform  */
     DRW_hair_duplimat_get(ob, psys, md, mb_data->obmat[mb_step]);
 
-    EEVEE_GeometryMotionData *mb_geom = EEVEE_motion_blur_geometry_data_get(
-        &effects->motion_blur, ob, true);
+    EEVEE_GeometryMotionData *mb_geom = EEVEE_motion_blur_hair_data_get(
+        &effects->motion_blur, ob, md);
 
     if (mb_step == MB_CURR) {
       /* Fill missing matrices if the object was hidden in previous or next frame. */
@@ -325,10 +330,20 @@ void EEVEE_motion_blur_cache_populate(EEVEE_ViewLayerData *UNUSED(sldata),
     return;
   }
 
-  const bool is_dupli = (ob->base_flag & BASE_FROM_DUPLI) != 0;
+  RigidBodyOb *rbo = ob->rigidbody_object;
+
+  /* active rigidbody objects only, as only those are affected by sim. */
+  const bool has_rigidbody = (rbo && (rbo->type == RBO_TYPE_ACTIVE));
+#if 0
   /* For now we assume dupli objects are moving. */
-  const bool object_moves = is_dupli || BKE_object_moves_in_time(ob, true);
-  const bool is_deform = BKE_object_is_deform_modified(DRW_context_state_get()->scene, ob);
+  const bool is_dupli = (ob->base_flag & BASE_FROM_DUPLI) != 0;
+  const bool object_moves = is_dupli || has_rigidbody || BKE_object_moves_in_time(ob, true);
+#else
+  /* BKE_object_moves_in_time does not work in some cases. Better  */
+  const bool object_moves = true;
+#endif
+  const bool is_deform = BKE_object_is_deform_modified(DRW_context_state_get()->scene, ob) ||
+                         (has_rigidbody && (rbo->flag & RBO_FLAG_USE_DEFORM) != 0);
 
   if (!(object_moves || is_deform)) {
     return;
@@ -342,8 +357,8 @@ void EEVEE_motion_blur_cache_populate(EEVEE_ViewLayerData *UNUSED(sldata),
     /* Store transform  */
     copy_m4_m4(mb_data->obmat[mb_step], ob->obmat);
 
-    EEVEE_GeometryMotionData *mb_geom = EEVEE_motion_blur_geometry_data_get(
-        &effects->motion_blur, ob, false);
+    EEVEE_GeometryMotionData *mb_geom = EEVEE_motion_blur_geometry_data_get(&effects->motion_blur,
+                                                                            ob);
 
     if (mb_step == MB_CURR) {
       GPUBatch *batch = DRW_cache_object_surface_get(ob);
@@ -358,14 +373,6 @@ void EEVEE_motion_blur_cache_populate(EEVEE_ViewLayerData *UNUSED(sldata),
       if (is_zero_m4(mb_data->obmat[MB_NEXT])) {
         copy_m4_m4(mb_data->obmat[MB_NEXT], mb_data->obmat[MB_CURR]);
       }
-
-      grp = DRW_shgroup_create(e_data.motion_blur_object_sh, psl->velocity_object);
-      DRW_shgroup_uniform_mat4(grp, "prevModelMatrix", mb_data->obmat[MB_PREV]);
-      DRW_shgroup_uniform_mat4(grp, "currModelMatrix", mb_data->obmat[MB_CURR]);
-      DRW_shgroup_uniform_mat4(grp, "nextModelMatrix", mb_data->obmat[MB_NEXT]);
-      DRW_shgroup_uniform_bool(grp, "useDeform", &mb_geom->use_deform, 1);
-
-      DRW_shgroup_call(grp, batch, ob);
 
       if (mb_geom->use_deform) {
         EEVEE_ObjectEngineData *oedata = EEVEE_object_data_ensure(ob);
@@ -382,6 +389,21 @@ void EEVEE_motion_blur_cache_populate(EEVEE_ViewLayerData *UNUSED(sldata),
         /* Keep to modify later (after init). */
         mb_geom->batch = batch;
       }
+
+      /* Avoid drawing object that has no motions since object_moves is always true. */
+      if (!mb_geom->use_deform && /* Object deformation can happen without transform.  */
+          equals_m4m4(mb_data->obmat[MB_PREV], mb_data->obmat[MB_CURR]) &&
+          equals_m4m4(mb_data->obmat[MB_NEXT], mb_data->obmat[MB_CURR])) {
+        return;
+      }
+
+      grp = DRW_shgroup_create(e_data.motion_blur_object_sh, psl->velocity_object);
+      DRW_shgroup_uniform_mat4(grp, "prevModelMatrix", mb_data->obmat[MB_PREV]);
+      DRW_shgroup_uniform_mat4(grp, "currModelMatrix", mb_data->obmat[MB_CURR]);
+      DRW_shgroup_uniform_mat4(grp, "nextModelMatrix", mb_data->obmat[MB_NEXT]);
+      DRW_shgroup_uniform_bool(grp, "useDeform", &mb_geom->use_deform, 1);
+
+      DRW_shgroup_call(grp, batch, ob);
     }
     else if (is_deform) {
       /* Store vertex position buffer. */
@@ -462,16 +484,15 @@ void EEVEE_motion_blur_cache_finish(EEVEE_Data *vedata)
                 GPU_VERTBUF_DISCARD_SAFE(mb_geom->vbo[MB_NEXT]);
                 break;
               }
+
+              /* Modify the batch to include the previous & next position. */
+              if (i == MB_PREV) {
+                GPU_batch_vertbuf_add_ex(batch, vbo, true);
+                mb_geom->vbo[i] = NULL;
+              }
               else {
-                /* Modify the batch to include the previous & next position. */
-                if (i == MB_PREV) {
-                  GPU_batch_vertbuf_add_ex(batch, vbo, true);
-                  mb_geom->vbo[i] = NULL;
-                }
-                else {
-                  /* This VBO can be reuse by next time step. Don't pass ownership. */
-                  GPU_batch_vertbuf_add_ex(batch, vbo, false);
-                }
+                /* This VBO can be reuse by next time step. Don't pass ownership. */
+                GPU_batch_vertbuf_add_ex(batch, vbo, false);
               }
             }
           }

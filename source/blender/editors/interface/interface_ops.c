@@ -1148,10 +1148,11 @@ static bool jump_to_target_button(bContext *C, bool poll)
     /* For string properties with prop_search, look up the search collection item. */
     if (type == PROP_STRING) {
       const uiBut *but = UI_context_active_but_get(C);
+      const uiButSearch *search_but = (but->type == UI_BTYPE_SEARCH_MENU) ? (uiButSearch *)but :
+                                                                            NULL;
 
-      if (but->type == UI_BTYPE_SEARCH_MENU && but->search &&
-          but->search->update_fn == ui_rna_collection_search_update_fn) {
-        uiRNACollectionSearch *coll_search = but->search->arg;
+      if (search_but && search_but->items_update_fn == ui_rna_collection_search_update_fn) {
+        uiRNACollectionSearch *coll_search = search_but->arg;
 
         char str_buf[MAXBONENAME];
         char *str_ptr = RNA_property_string_get_alloc(&ptr, prop, str_buf, sizeof(str_buf), NULL);
@@ -1807,7 +1808,7 @@ static void UI_OT_drop_color(wmOperatorType *ot)
   ot->flag = OPTYPE_INTERNAL;
 
   RNA_def_float_color(ot->srna, "color", 3, NULL, 0.0, FLT_MAX, "Color", "Source color", 0.0, 1.0);
-  RNA_def_boolean(ot->srna, "gamma", 0, "Gamma Corrected", "The source color is gamma corrected ");
+  RNA_def_boolean(ot->srna, "gamma", 0, "Gamma Corrected", "The source color is gamma corrected");
 }
 
 /** \} */

@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
 "Last-Translator: Yousef Harfoush <bat3a@msn.com>\n"
 "Language-Team: Yousef Harfoush, Amine Moussaoui <bat3a@msn.com>\n"
@@ -12215,10 +12215,6 @@ msgid "Selected face count in editmode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻪﺟﻭﻷ﻿ﺍ ﺩﺪﻋ"
 
 
-msgid "Selected Vert Total"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻂﻘﻨﻟﺍ ﻉﻮﻤﺠﻣ"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻂﻘﻨﻟﺍ ﺩﺪﻋ"
 
@@ -12825,10 +12821,6 @@ msgstr "ﺎﻤﻫﻼ﻿ﻛ"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "ﺔﻴﺋﺎﻳﺰﻴﻔﻟﺍ ﺓﺎﻛﺎﺤﻤﻟﺍ ﻲﻓ ﻞﻘﺤﻛ ﻦﺋﺎﻜﻟﺍ ﻡﺍﺪﺨﺘﺳﻻ﻿ ﺕﺍﺩﺍﺪﻋﺇ"
-
-
-msgid "Verts"
-msgstr "ﻂﻘﻨﻟﺍ"
 
 
 msgid "Faces"
@@ -19942,10 +19934,6 @@ msgid "Include channels from objects/bone that aren't visible"
 msgstr "ﺔﻴﺋﺮﻣ ﺮﻴﻐﻟﺍ ﻡﺎﻈﻌﻟﺍ/ﺕﺎﻨﺋﺎﻜﻟﺍ ﻦﻣ ﺕﺍﻮﻨﻗ ﻦﻤﻀﺘﻳ"
 
 
-msgid "Only Selected"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻂﻘﻓ"
-
-
 msgid "Dopesheet Sort Field"
 msgstr "ﻂﻴﻄﺨﺘﻟﺍ ﺭﺮﺤﻤﻠﻟ ﻞﻘﺤﻟﺍ ﺐﺗﺭ"
 
@@ -24378,6 +24366,10 @@ msgid "Start frame for export"
 msgstr "ﺮﻳﺪﺼﺘﻠﻟ ﺔﻳﺍﺪﺒﻟﺍ ﺭﺎﻃﺍ"
 
 
+msgid "Only Selected"
+msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻂﻘﻓ"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "BVH ﺭﺪّﺻ"
@@ -24898,10 +24890,6 @@ msgstr "ﺓﺪﻤﻟﺍ"
 
 msgid "Gap Randomness"
 msgstr "ﺔﻴﺋﺍﻮﺸﻋ ﺕﺎﻨﺒﻟ"
-
-
-msgid "Radius Fac"
-msgstr "1 ﺮﻄﻘﻟﺍ ﻒﺼﻧ"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -25829,14 +25817,6 @@ msgid "Segments for curved edge"
 msgstr "3D ﻭﺍ 2D ﻉﻮﻧ ﻰﻨﺤﻨﻣ ﺭﺎﺘﺧﺍ"
 
 
-msgid "Vertex Only"
-msgstr "ﻂﻘﻓ ﺔﻄﻘﻨﻟﺍ"
-
-
-msgid "Bevel only vertices"
-msgstr "ﺔﻘﺑﺎﻄﺘﻤﻟﺍ ﻂﻘﻨﻟﺍ ﻑﺬﺣﺍ"
-
-
 msgid "Clear Inner"
 msgstr "ﻲﻠﺧﺍﺪﻟﺍ ﻑﺬﺣﺍ"
 
@@ -25995,10 +25975,6 @@ msgstr "ﺓﺮّﺤﻟﺍ ﻂﻘﻨﻟﺍ ﻝﺯﺍ"
 msgctxt "Operator"
 msgid "Dissolve Edges"
 msgstr "ﻑﺍﻮﺤﻟﺍ ﻞﻠّﺣ"
-
-
-msgid "Dissolve Verts"
-msgstr "ﻂﻘﻨﻟﺍ ﻞﻠﺣ"
 
 
 msgctxt "Operator"
@@ -28353,10 +28329,6 @@ msgid "Remove from all groups"
 msgstr "ﺕﺎﻋﻮﻤﺠﻤﻟﺍ ﻞﻛ ﻑﺬﺣﺍ"
 
 
-msgid "All Verts"
-msgstr "ﻂﻘﻨﻟﺍ ﻞﻛ"
-
-
 msgid "Clear the active group"
 msgstr "ﺔﻟﺎﻌّﻔﻟﺍ ﺔﻋﻮﻤﺠﻤﻟﺍ ﻒﻈّﻧ"
 
@@ -29244,10 +29216,6 @@ msgstr "ﺽ"
 msgctxt "Operator"
 msgid "Clear User Transforms"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺕﻻ﻿ﻮﺤﺗ ﻲﻐﻟﺍ"
-
-
-msgid "Reset pose on selected bones to keyframed state"
-msgstr " ﺢﻴﺗﺎﻔﻤﻟﺎﺑ ﺓﺩﺪﺤﻤﻟﺍ ﻢﻬﺘﻟﺎﺣ ﻰﻟﺇ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻡﺎﻈﻌﻟﺍ ﻰﻠﻋ ﺔﻔﻗﻮﻟﺍ ﻂﺒﺿ ﺪﻋﺃ"
 
 
 msgid "Only visible/selected bones"
@@ -31182,20 +31150,12 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "(ﺮﻴﻣﺪﺗ ﻥﻭﺪﺑ) ﺓﺭﺪّﺼﻤﻟﺍ ﺕﺎﻤﺴﺠﻤﻠﻟ ﺕﺍﺮﻴّﻐﻤﻟﺍ ﻖﺒﻃ"
 
 
-msgid "Deform Bones only"
-msgstr "ﻂﻘﻓ ﻡﺎﻈﻌﻟﺍ ﻉﻮّﻃ"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "ﻞﻛﺎﻴﻬﻟﺍ ﻊﻣ ﻂﻘﻓ ﺔﻋﻮّﻄﻤﻟﺍ ﻡﺎﻈﻌﻟﺍ ﺭﺪّﺻ"
 
 
 msgid "Modifier resolution for export"
 msgstr "ﺮﻳﺪﺼﺘﻠﻟ ﺮﻴّﻐﻤﻟﺍ ﺔﻗﺩ"
-
-
-msgid "Apply modifier's view settings"
-msgstr "ﺮﻴّﻐﻤﻠﻟ ﺮﻈﻨﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺍ ﻖﺒﻃ"
 
 
 msgid "Apply modifier's render settings"
@@ -31720,10 +31680,6 @@ msgid "Open a website in the web-browser"
 msgstr "ﺖﻧﺮﺘﻧﻻ﻿ﺍ ﺢﻔﺼﺘﻤﻟﺍ ﻲﻓ ﻊﻗﻮﻣ ﺢﺘﻓﺇ"
 
 
-msgid "UV Maps"
-msgstr "UV ﻂﺋﺍﺮﺧ"
-
-
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "ﺔﻠﻣﺎﻛ ﺔﺷﺎﺷ ﺓﺬﻓﺎﻨﻟﺍ ﺐﻠﻗﺇ"
@@ -32065,6 +32021,10 @@ msgstr "ﻞﻜﻴﻫ"
 
 msgid "Text Boxes"
 msgstr "ﺔﺑﺎﺘﻜﻟﺍ ﺕﺎﻧﺎﺧ"
+
+
+msgid "UV Maps"
+msgstr "UV ﻂﺋﺍﺮﺧ"
 
 
 msgid "Filters"
@@ -39870,34 +39830,6 @@ msgid "%d items"
 msgstr "‪%d‬ ﺮﺻﺎﻨﻋ"
 
 
-msgid "Options:"
-msgstr ":ﺕﺍﺭﺎﻴﺨﻟﺍ"
-
-
-msgid "Texture Options:"
-msgstr ":ﺞﻴﺴﻨﻟﺍ ﺕﺍﺭﺎﻴﺧ"
-
-
-msgid "Export Data Options:"
-msgstr ":ﺕﺎﻧﺎﻴﺒﻟﺍ ﺮﻳﺪﺼﺗ ﺕﺍﺭﺎﻴﺧ"
-
-
-msgid "Transformation Type"
-msgstr "ﻝﻮﺤﺘﻟﺍ ﻉﻮﻧ"
-
-
-msgid "Armature Options:"
-msgstr ":ﻞﻜﻴﻬﻟﺍ ﺕﺍﺭﺎﻴﺧ"
-
-
-msgid "Collada Options:"
-msgstr ":ﺍﺩﻼ﻿ﻟﻮﻛ ﺕﺍﺭﺎﻴﺧ"
-
-
-msgid "Import Data Options:"
-msgstr ":ﺕﺎﻧﺎﻴﺒﻟﺍ ﺮﻳﺪﺼﺗ ﺕﺍﺭﺎﻴﺧ"
-
-
 msgctxt "Mesh"
 msgid "Plane"
 msgstr "ﺢﻄﺴﻣ"
@@ -39931,6 +39863,10 @@ msgstr "ﺓﺮﻛ"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "(ﺕﺎﺜﻠﺜﻣ)ﺓﺮﻛ"
+
+
+msgid "Seams"
+msgstr "ﺕﺎﻣﺎﺤﻠﻟﺍ"
 
 
 msgid "Not a valid selection for extrude"
@@ -40994,10 +40930,6 @@ msgstr ":ﺔﻓﺎﺤﻟﺍ ﻕﻻ﻿ﺰﻧﺍ"
 
 msgid "Shrink/Fatten:"
 msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
-
-
-msgid "Vert Slide: "
-msgstr "ﻂﻘﻨﻟﺍ ﺡﺯﺍ"
 
 
 msgid "global"

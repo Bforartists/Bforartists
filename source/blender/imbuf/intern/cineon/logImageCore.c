@@ -119,7 +119,7 @@ LogImageFile *logImageOpenFromFile(const char *filename, int cineon)
   if (logImageIsDpx(&magicNum)) {
     return dpxOpen((const unsigned char *)filename, 0, 0);
   }
-  else if (logImageIsCineon(&magicNum)) {
+  if (logImageIsCineon(&magicNum)) {
     return cineonOpen((const unsigned char *)filename, 0, 0);
   }
 
@@ -131,7 +131,7 @@ LogImageFile *logImageOpenFromMemory(const unsigned char *buffer, unsigned int s
   if (logImageIsDpx(buffer)) {
     return dpxOpen(buffer, 1, size);
   }
-  else if (logImageIsCineon(buffer)) {
+  if (logImageIsCineon(buffer)) {
     return cineonOpen(buffer, 1, size);
   }
 
@@ -154,18 +154,17 @@ LogImageFile *logImageCreate(const char *filename,
   if (cineon) {
     return cineonCreate(filename, width, height, bitsPerSample, creator);
   }
-  else {
-    return dpxCreate(filename,
-                     width,
-                     height,
-                     bitsPerSample,
-                     isLogarithmic,
-                     hasAlpha,
-                     referenceWhite,
-                     referenceBlack,
-                     gamma,
-                     creator);
-  }
+
+  return dpxCreate(filename,
+                   width,
+                   height,
+                   bitsPerSample,
+                   isLogarithmic,
+                   hasAlpha,
+                   referenceWhite,
+                   referenceBlack,
+                   gamma,
+                   creator);
 
   return NULL;
 }
@@ -484,7 +483,7 @@ int logImageGetDataRGBA(LogImageFile *logImage, float *data, int dataIsLinearRGB
     memcpy(&mergedElement, &logImage->element[0], sizeof(LogImageElement));
     mergedElement.descriptor = -1;
     mergedElement.depth = logImage->depth;
-    memset(&sortedElementData, -1, 8 * sizeof(int));
+    memset(&sortedElementData, -1, sizeof(int[8]));
 
     /* Try to know how to assemble the elements */
     for (i = 0; i < logImage->numElements; i++) {
@@ -1677,7 +1676,7 @@ static int convertLogElementToRGBA(
   if (rvalue == 1) {
     return 1;
   }
-  else if (dstIsLinearRGB) {
+  if (dstIsLinearRGB) {
     /* convert data from sRGB to Linear RGB via lut */
     float *lut = getSrgbToLinLut(logElement);
     src_ptr = dst;  // no error here

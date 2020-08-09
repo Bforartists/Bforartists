@@ -52,7 +52,7 @@
 #include "UI_view2d.h"
 #include "GPU_framebuffer.h"
 
-static SpaceLink *toolbar_new(const ScrArea *toolbar_new, const Scene *scene)
+static SpaceLink *toolbar_new(const ScrArea *UNUSED(area), const Scene *scene)
 {
   ARegion *region;
 	SpaceToolbar *stoolbar;
@@ -168,8 +168,6 @@ void ED_spacetype_toolbar(void)
 
 	st->spaceid = SPACE_TOOLBAR;
 	strncpy(st->name, "Toolbar", BKE_ST_MAXNAME);
-
-	st->new = toolbar_new;
 
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype toolbar region");

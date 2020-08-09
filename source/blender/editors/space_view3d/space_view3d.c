@@ -260,7 +260,7 @@ void ED_view3d_shade_update(Main *bmain, View3D *v3d, ScrArea *area)
 
 /* ******************** default callbacks for view3d space ***************** */
 
-static SpaceLink *view3d_new(const ScrArea *UNUSED(area), const Scene *scene)
+static SpaceLink *view3d_create(const ScrArea *UNUSED(area), const Scene *scene)
 {
   ARegion *region;
   View3D *v3d;
@@ -616,11 +616,12 @@ static void view3d_lightcache_update(bContext *C)
     return;
   }
 
-  WM_operator_properties_create(&op_ptr, "SCENE_OT_light_cache_bake");
+  wmOperatorType *ot = WM_operatortype_find("SCENE_OT_light_cache_bake", true);
+  WM_operator_properties_create_ptr(&op_ptr, ot);
   RNA_int_set(&op_ptr, "delay", 200);
   RNA_enum_set_identifier(C, &op_ptr, "subset", "DIRTY");
 
-  WM_operator_name_call(C, "SCENE_OT_light_cache_bake", WM_OP_INVOKE_DEFAULT, &op_ptr);
+  WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &op_ptr);
 
   WM_operator_properties_free(&op_ptr);
 }
@@ -1610,7 +1611,7 @@ void ED_spacetype_view3d(void)
   st->spaceid = SPACE_VIEW3D;
   strncpy(st->name, "View3D", BKE_ST_MAXNAME);
 
-  st->new = view3d_new;
+  st->create = view3d_create;
   st->free = view3d_free;
   st->init = view3d_init;
   st->listener = space_view3d_listener;

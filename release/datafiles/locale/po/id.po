@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -3733,10 +3733,6 @@ msgid "Gap Randomness"
 msgstr "Acak"
 
 
-msgid "Radius Fac"
-msgstr "Partikel"
-
-
 msgid "Timing Mode"
 msgstr "Modus Sunting"
 
@@ -4180,10 +4176,6 @@ msgstr "Hapus Titik"
 
 msgid "Angle limit"
 msgstr "Kamera"
-
-
-msgid "Bevel only vertices"
-msgstr "Induk"
 
 
 msgid "Clear Inner"
@@ -7330,26 +7322,6 @@ msgid "New"
 msgstr "Baru"
 
 
-msgid "Texture Options:"
-msgstr "Pilihan:"
-
-
-msgid "Export Data Options:"
-msgstr "Pilihan:"
-
-
-msgid "Armature Options:"
-msgstr "Pilihan:"
-
-
-msgid "Collada Options:"
-msgstr "Perbesar"
-
-
-msgid "Import Data Options:"
-msgstr "Pilihan:"
-
-
 msgid "Cannot rip selected faces"
 msgstr "Warna Standar"
 
@@ -7756,10 +7728,6 @@ msgstr "Data Objek"
 
 msgid "(Random)"
 msgstr "Acak"
-
-
-msgid "Vert Slide: "
-msgstr "Warna Standar"
 
 
 msgid "UV Vertex"

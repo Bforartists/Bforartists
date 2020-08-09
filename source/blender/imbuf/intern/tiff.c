@@ -104,7 +104,7 @@ static int imb_tiff_DummyMapProc(
   (void)pbase;
   (void)psize;
 
-  return (0);
+  return 0;
 }
 
 /**
@@ -145,7 +145,7 @@ static tsize_t imb_tiff_ReadProc(thandle_t handle, tdata_t data, tsize_t n)
 
   /* on EOF, return immediately and read (copy) nothing */
   if (nCopy <= 0) {
-    return (0);
+    return 0;
   }
 
   /* all set -> do the read (copy) */
@@ -238,7 +238,7 @@ static int imb_tiff_CloseProc(thandle_t handle)
   mfile = IMB_TIFF_GET_MEMFILE(handle);
   if (!mfile || !mfile->mem) {
     fprintf(stderr, "imb_tiff_CloseProc: !mfile || !mfile->mem!\n");
-    return (0);
+    return 0;
   }
 
   /* virtually close the file */
@@ -246,7 +246,7 @@ static int imb_tiff_CloseProc(thandle_t handle)
   mfile->offset = 0;
   mfile->size = 0;
 
-  return (0);
+  return 0;
 }
 
 /**
@@ -262,7 +262,7 @@ static toff_t imb_tiff_SizeProc(thandle_t handle)
   mfile = IMB_TIFF_GET_MEMFILE(handle);
   if (!mfile || !mfile->mem) {
     fprintf(stderr, "imb_tiff_SizeProc: !mfile || !mfile->mem!\n");
-    return (0);
+    return 0;
   }
 
   /* return the size */
@@ -306,8 +306,8 @@ static TIFF *imb_tiff_client_open(ImbTIFFMemFile *memFile, const unsigned char *
 #define IMB_TIFF_NCB 4 /* number of comparison bytes used */
 int imb_is_a_tiff(const unsigned char *mem)
 {
-  char big_endian[IMB_TIFF_NCB] = {0x4d, 0x4d, 0x00, 0x2a};
-  char lil_endian[IMB_TIFF_NCB] = {0x49, 0x49, 0x2a, 0x00};
+  const char big_endian[IMB_TIFF_NCB] = {0x4d, 0x4d, 0x00, 0x2a};
+  const char lil_endian[IMB_TIFF_NCB] = {0x49, 0x49, 0x2a, 0x00};
 
   return ((memcmp(big_endian, mem, IMB_TIFF_NCB) == 0) ||
           (memcmp(lil_endian, mem, IMB_TIFF_NCB) == 0));
@@ -764,7 +764,7 @@ int imb_savetiff(ImBuf *ibuf, const char *name, int flags)
             "imb_savetiff: unsupported number of bytes per "
             "pixel: %d\n",
             samplesperpixel);
-    return (0);
+    return 0;
   }
 
   if ((ibuf->foptions.flag & TIF_16BIT) && ibuf->rect_float) {
@@ -790,21 +790,21 @@ int imb_savetiff(ImBuf *ibuf, const char *name, int flags)
     fprintf(stderr,
             "imb_savetiff: creation of in-memory TIFF files is "
             "not yet supported.\n");
-    return (0);
+    return 0;
   }
-  else {
-    /* create image as a file */
+
+  /* create image as a file */
 #ifdef WIN32
-    wchar_t *wname = alloc_utf16_from_8(name, 0);
-    image = TIFFOpenW(wname, "w");
-    free(wname);
+  wchar_t *wname = alloc_utf16_from_8(name, 0);
+  image = TIFFOpenW(wname, "w");
+  free(wname);
 #else
-    image = TIFFOpen(name, "w");
+  image = TIFFOpen(name, "w");
 #endif
-  }
+
   if (image == NULL) {
     fprintf(stderr, "imb_savetiff: could not open TIFF for writing.\n");
-    return (0);
+    return 0;
   }
 
   /* allocate array for pixel data */
@@ -819,7 +819,7 @@ int imb_savetiff(ImBuf *ibuf, const char *name, int flags)
   if (pixels == NULL && pixels16 == NULL) {
     fprintf(stderr, "imb_savetiff: could not allocate pixels array.\n");
     TIFFClose(image);
-    return (0);
+    return 0;
   }
 
   /* setup pointers */
@@ -945,7 +945,7 @@ int imb_savetiff(ImBuf *ibuf, const char *name, int flags)
     if (pixels16) {
       _TIFFfree(pixels16);
     }
-    return (1);
+    return 1;
   }
 
   /* close the TIFF file */
@@ -956,5 +956,5 @@ int imb_savetiff(ImBuf *ibuf, const char *name, int flags)
   if (pixels16) {
     _TIFFfree(pixels16);
   }
-  return (1);
+  return 1;
 }

@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef __NOD_FUNCTION_H__
-#define __NOD_FUNCTION_H__
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,9 +26,8 @@ void register_node_type_fn_switch(void);
 void register_node_type_fn_group_instance_id(void);
 void register_node_type_fn_combine_strings(void);
 void register_node_type_fn_object_transforms(void);
+void register_node_type_fn_random_float(void);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __NOD_FUNCTION_H__ */

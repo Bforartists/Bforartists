@@ -128,22 +128,22 @@ def updatetextures(objekti): # Update 3DC textures
 
 def testi(objekti, texture_info, index_mat_name, uv_MODE_mat, mat_index):
     if uv_MODE_mat == 'UV':
-        
+
         uv_set_founded = False
         for uvset in objekti.data.uv_layers:
-          
+
             if(uvset.name == texture_info):
                 uv_set_founded = True
-               
+
                 break
-            
+
         if(uv_set_founded):
             for uv_poly in objekti.data.uv_layers[texture_info].id_data.polygons:
                 if(mat_index == uv_poly.material_index):
                     return True
         else:
             return False
-            
+
     elif uv_MODE_mat == 'MAT':
         return (texture_info == index_mat_name)
 
@@ -168,17 +168,17 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
         if(udim_textures == False):
             for slot_index, texture_info in enumerate(texturelist):
 
-                uv_MODE_mat = 'MAT' 
+                uv_MODE_mat = 'MAT'
                 for index, layer in enumerate(objekti.data.uv_layers):
                     if(layer.name == texturelist[slot_index][0]):
                         uv_MODE_mat = 'UV'
                         break
 
-                
+
                 if(testi(objekti, texturelist[slot_index][0], index_mat.name, uv_MODE_mat, ind)) :
                     if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
                         if(index_mat.material.coat3D_diffuse):
-                            
+
                             texcoat['color'].append(texture_info[3])
                             create_nodes = True
                         else:
@@ -241,7 +241,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures): #r
                             os.remove(texture_info[3])
 
                     create_group_node = True
-              
+
 
         else:
             for texture_info in texturelist:
@@ -516,21 +516,21 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
     load_image = True
 
     for image in bpy.data.images:
-        
+
         if(texcoat[type['name']][0] == image.filepath):
             load_image = False
             node.image = image
-         
+
             break
 
     if (load_image):
         print('load_image', texcoat[type['name']][0])
-        
+
         node.image = bpy.data.images.load(texcoat[type['name']][0])
     if(udim_textures):
         node.image.source = 'TILED'
 
-    
+
     if node.image and type['colorspace'] == 'noncolor':
         node.image.colorspace_settings.is_data = True
 
@@ -589,7 +589,7 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
                     if(material.name == '3DC_Emission'):
                         main_material.links.new(applink_tree.outputs[type['input']], material.inputs[0])
                         break
-      
+
         uv_node.location = node.location
         uv_node.location[0] -= 300
         uv_node.location[1] -= 200
@@ -688,7 +688,7 @@ def matlab(objekti,mat_list,texturelist,is_new):
     ''' Check if bind textures with UVs or Materials '''
 
     if(texturelist != []):
-    
+
         udim_textures = False
         if texturelist[0][0].startswith('100') and  len(texturelist[0][0]) == 4:
             udim_textures = True

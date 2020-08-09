@@ -20,14 +20,15 @@
  * \ingroup DNA
  */
 
-#ifndef __EEVEE_PRIVATE_H__
-#define __EEVEE_PRIVATE_H__
+#pragma once
 
 #include "DRW_render.h"
 
 #include "BLI_bitmap.h"
 
 #include "DNA_lightprobe_types.h"
+
+#include "GPU_viewport.h"
 
 #include "BKE_camera.h"
 
@@ -890,6 +891,7 @@ typedef struct EEVEE_Data {
   EEVEE_TextureList *txl;
   EEVEE_PassList *psl;
   EEVEE_StorageList *stl;
+  char info[GPU_INFO_SIZE];
 } EEVEE_Data;
 
 typedef struct EEVEE_PrivateData {
@@ -909,6 +911,7 @@ typedef struct EEVEE_PrivateData {
   /* Render Matrices */
   float studiolight_matrix[3][3];
   float overscan, overscan_pixels;
+  float camtexcofac[4];
   float size_orig[2];
 
   /* Mist Settings */
@@ -967,8 +970,10 @@ EEVEE_ObjectMotionData *EEVEE_motion_blur_object_data_get(EEVEE_MotionBlurData *
                                                           Object *ob,
                                                           bool hair);
 EEVEE_GeometryMotionData *EEVEE_motion_blur_geometry_data_get(EEVEE_MotionBlurData *mb,
-                                                              Object *ob,
-                                                              bool hair);
+                                                              Object *ob);
+EEVEE_GeometryMotionData *EEVEE_motion_blur_hair_data_get(EEVEE_MotionBlurData *mb,
+                                                          Object *ob,
+                                                          struct ModifierData *md);
 EEVEE_LightProbeEngineData *EEVEE_lightprobe_data_get(Object *ob);
 EEVEE_LightProbeEngineData *EEVEE_lightprobe_data_ensure(Object *ob);
 EEVEE_LightEngineData *EEVEE_light_data_get(Object *ob);
@@ -1278,6 +1283,9 @@ bool EEVEE_render_init(EEVEE_Data *vedata,
 void EEVEE_render_view_sync(EEVEE_Data *vedata,
                             struct RenderEngine *engine,
                             struct Depsgraph *depsgraph);
+void EEVEE_render_modules_init(EEVEE_Data *vedata,
+                               struct RenderEngine *engine,
+                               struct Depsgraph *depsgraph);
 void EEVEE_render_cache_init(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata);
 void EEVEE_render_cache(void *vedata,
                         struct Object *ob,
@@ -1348,5 +1356,3 @@ static const float cubefacemat[6][4][4] = {
      {0.0f, 0.0f, 1.0f, 0.0f},
      {0.0f, 0.0f, 0.0f, 1.0f}},
 };
-
-#endif /* __EEVEE_PRIVATE_H__ */

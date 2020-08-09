@@ -70,14 +70,14 @@ def calcMeshArea(ob):
     polyArea = 0
     for poly in ob.data.polygons:
         polyArea += poly.area
-    ta = "UvGain: %s%s || " % (round(totalArea * 100),"%")    
+    ta = "UvGain: %s%s || " % (round(totalArea * 100),"%")
     ma = "MeshArea: %s || " % (polyArea)
     pg = "PixelsGain: %s || " % (round(totalArea * (pixels[0] * pixels[1])))
     pl = "PixelsLost: %s || " % ((pixels[0]*pixels[1]) - round(totalArea * (pixels[0] * pixels[1])))
-    tx = "Texel: %s pix/meter" % (round(sqrt(totalArea * pixels[0] * pixels[1] / polyArea)))    
-    GlobLog = ta+ma+pg+pl+tx            
+    tx = "Texel: %s pix/meter" % (round(sqrt(totalArea * pixels[0] * pixels[1] / polyArea)))
+    GlobLog = ta+ma+pg+pl+tx
 
-     
+
 
 
 class uvStats(bpy.types.Operator):
@@ -90,7 +90,7 @@ class uvStats(bpy.types.Operator):
     def poll(cls, context):
         return context.active_object is not None
 
-    def execute(self, context):              
+    def execute(self, context):
         if round(
                 bpy.context.object.scale.x,
                 2) == 1 and round(
@@ -101,25 +101,25 @@ class uvStats(bpy.types.Operator):
             if setImageRes(bpy.context.object):
                 makeTessellate(bpy.context.object)
                 calcArea()
-                calcMeshArea(bpy.context.object)   
+                calcMeshArea(bpy.context.object)
         else:
             print("Warning: Non Uniform Scale Object")
-            
+
             copyOb = bpy.context.object.copy()
             copyMe = bpy.context.object.data.copy()
             bpy.context.scene.collection.objects.link(copyOb)
             copyOb.data = copyMe
             bpy.ops.object.select_all(action="DESELECT")
             copyOb.select_set(1)
-            bpy.ops.object.transform_apply()    
-            
+            bpy.ops.object.transform_apply()
+
             if setImageRes(copyOb):
                 makeTessellate(copyOb)
                 calcArea()
                 calcMeshArea(copyOb)
-                
+
             bpy.data.objects.remove(copyOb)
-            bpy.data.meshes.remove(copyMe)    
-            
-        self.report({'INFO'}, GlobLog)             
-        return {'FINISHED'}       
+            bpy.data.meshes.remove(copyMe)
+
+        self.report({'INFO'}, GlobLog)
+        return {'FINISHED'}

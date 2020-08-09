@@ -76,6 +76,11 @@ def rerequest(method, url, **kwargs):
                         utils.p('reresult', response.status_code)
                         if response.status_code >= 400:
                             utils.p('reresult', response.text)
+                    else:
+                        tasks_queue.add_task((ui.add_report, (
+                            'Refreshing token failed.Please login manually.', 10)))
+                        # tasks_queue.add_task((bkit_oauth.write_tokens, ('', '', '')))
+                        tasks_queue.add_task((bpy.ops.wm.blenderkit_login,( 'INVOKE_DEFAULT',)),fake_context = True)
     return response
 
 

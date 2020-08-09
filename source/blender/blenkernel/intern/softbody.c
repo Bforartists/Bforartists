@@ -230,7 +230,7 @@ static float _final_goal(Object *ob, BodyPoint *bp) /*jow_go_for2_5 */
       }
       f = sb->mingoal + bp->goal * fabsf(sb->maxgoal - sb->mingoal);
       f = pow(f, 4.0f);
-      return (f);
+      return f;
     }
   }
   CLOG_ERROR(&LOG, "sb or bp == NULL");
@@ -1051,7 +1051,7 @@ static int sb_detect_aabb_collisionCached(float UNUSED(force[3]),
 /* --- the aabb section*/
 
 /* +++ the face external section*/
-static int sb_detect_face_pointCached(float face_v1[3],
+static int sb_detect_face_pointCached(const float face_v1[3],
                                       const float face_v2[3],
                                       const float face_v3[3],
                                       float *damp,
@@ -1149,7 +1149,7 @@ static int sb_detect_face_pointCached(float face_v1[3],
   return deflected;
 }
 
-static int sb_detect_face_collisionCached(float face_v1[3],
+static int sb_detect_face_collisionCached(const float face_v1[3],
                                           const float face_v2[3],
                                           const float face_v3[3],
                                           float *damp,
@@ -1328,7 +1328,7 @@ static void scan_for_ext_face_forces(Object *ob, float timenow)
 
 /* +++ the spring external section*/
 
-static int sb_detect_edge_collisionCached(float edge_v1[3],
+static int sb_detect_edge_collisionCached(const float edge_v1[3],
                                           const float edge_v2[3],
                                           float *damp,
                                           float force[3],
@@ -1619,7 +1619,7 @@ static int choose_winner(
     case 3:
       copy_v3_v3(w, cc);
   }
-  return (winner);
+  return winner;
 }
 
 static int sb_detect_vertex_collisionCached(float opco[3],
@@ -1833,7 +1833,7 @@ static int sb_deflect_face(Object *ob,
   deflected = sb_detect_vertex_collisionCachedEx(
       s_actpos, facenormal, cf, force, ob, time, vel, intrusion);
 #endif
-  return (deflected);
+  return deflected;
 }
 
 /* hiding this for now .. but the jacobian may pop up on other tasks .. so i'd like to keep it */
@@ -1991,13 +1991,13 @@ static int _softbody_calc_forces_slice_in_a_thread(Scene *scene,
   }
   else {
     CLOG_ERROR(&LOG, "expected a SB here");
-    return (999);
+    return 999;
   }
 
   /* debugerin */
   if (sb->totpoint < ifirst) {
     printf("Aye 998");
-    return (998);
+    return 998;
   }
   /* debugerin */
 
@@ -3211,12 +3211,11 @@ static int object_has_edges(Object *ob)
   if (ob->type == OB_MESH) {
     return ((Mesh *)ob->data)->totedge;
   }
-  else if (ob->type == OB_LATTICE) {
+  if (ob->type == OB_LATTICE) {
     return 1;
   }
-  else {
-    return 0;
-  }
+
+  return 0;
 }
 
 /* SB global visible functions */
@@ -3281,8 +3280,8 @@ void SB_estimate_transform(Object *ob, float lloc[3], float lrot[3][3], float ls
   if (!sb || !sb->bpoint) {
     return;
   }
-  opos = MEM_callocN((sb->totpoint) * 3 * sizeof(float), "SB_OPOS");
-  rpos = MEM_callocN((sb->totpoint) * 3 * sizeof(float), "SB_RPOS");
+  opos = MEM_callocN(sizeof(float[3]) * sb->totpoint, "SB_OPOS");
+  rpos = MEM_callocN(sizeof(float[3]) * sb->totpoint, "SB_RPOS");
   /* might filter vertex selection with a vertex group */
   for (a = 0, bp = sb->bpoint, rp = sb->scratch->Ref.ivert; a < sb->totpoint; a++, bp++, rp++) {
     copy_v3_v3(rpos[a], rp->pos);
@@ -3563,7 +3562,7 @@ void sbObjectStep(struct Depsgraph *depsgraph,
     BKE_ptcache_invalidate(cache);
     return;
   }
-  else if (framenr > endframe) {
+  if (framenr > endframe) {
     framenr = endframe;
   }
 
@@ -3631,7 +3630,7 @@ void sbObjectStep(struct Depsgraph *depsgraph,
 
     return;
   }
-  else if (cache_result == PTCACHE_READ_OLD) {
+  if (cache_result == PTCACHE_READ_OLD) {
     /* pass */
   }
   else if (/*ob->id.lib || */
