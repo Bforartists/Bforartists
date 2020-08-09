@@ -423,9 +423,8 @@ bool imb_addrectImBuf(ImBuf *ibuf)
     if (ibuf->planes > 32) {
       return (addzbufImBuf(ibuf));
     }
-    else {
-      return true;
-    }
+
+    return true;
   }
 
   return false;
@@ -489,7 +488,7 @@ ImBuf *IMB_allocImBuf(unsigned int x, unsigned int y, uchar planes, unsigned int
     }
   }
 
-  return (ibuf);
+  return ibuf;
 }
 
 bool IMB_initImBuf(
@@ -624,7 +623,7 @@ ImBuf *IMB_dupImBuf(const ImBuf *ibuf1)
 
   *ibuf2 = tbuf;
 
-  return (ibuf2);
+  return ibuf2;
 }
 
 size_t IMB_get_size_in_memory(ImBuf *ibuf)

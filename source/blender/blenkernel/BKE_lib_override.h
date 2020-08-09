@@ -17,8 +17,7 @@
  * All rights reserved.
  */
 
-#ifndef __BKE_LIB_OVERRIDE_H__
-#define __BKE_LIB_OVERRIDE_H__
+#pragma once
 
 /** \file
  * \ingroup bke
@@ -141,7 +140,7 @@ void BKE_lib_override_library_main_update(struct Main *bmain);
 /* For now, we just use a temp main list. */
 typedef struct Main OverrideLibraryStorage;
 
-OverrideLibraryStorage *BKE_lib_override_library_operations_store_initialize(void);
+OverrideLibraryStorage *BKE_lib_override_library_operations_store_init(void);
 struct ID *BKE_lib_override_library_operations_store_start(
     struct Main *bmain, OverrideLibraryStorage *override_storage, struct ID *local);
 void BKE_lib_override_library_operations_store_end(OverrideLibraryStorage *override_storage,
@@ -151,5 +150,3 @@ void BKE_lib_override_library_operations_store_finalize(OverrideLibraryStorage *
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __BKE_LIB_OVERRIDE_H__ */

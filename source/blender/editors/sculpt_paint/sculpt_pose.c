@@ -830,17 +830,21 @@ static bool pose_face_sets_fk_find_masked_floodfill_cb(
   }
 
   const int to_face_set = SCULPT_vertex_face_set_get(ss, to_v);
-  if (SCULPT_vertex_has_unique_face_set(ss, to_v) &&
-      !SCULPT_vertex_has_unique_face_set(ss, from_v) &&
-      SCULPT_vertex_has_face_set(ss, from_v, to_face_set)) {
+  if (!BLI_gset_haskey(data->visited_face_sets, POINTER_FROM_INT(to_face_set))) {
+    if (SCULPT_vertex_has_unique_face_set(ss, to_v) &&
+        !SCULPT_vertex_has_unique_face_set(ss, from_v) &&
+        SCULPT_vertex_has_face_set(ss, from_v, to_face_set)) {
 
-    if (data->floodfill_it[to_v] > data->masked_face_set_it) {
-      data->masked_face_set = to_face_set;
-      data->masked_face_set_it = data->floodfill_it[to_v];
-    }
+      BLI_gset_add(data->visited_face_sets, POINTER_FROM_INT(to_face_set));
 
-    if (data->target_face_set == SCULPT_FACE_SET_NONE) {
-      data->target_face_set = to_face_set;
+      if (data->floodfill_it[to_v] >= data->masked_face_set_it) {
+        data->masked_face_set = to_face_set;
+        data->masked_face_set_it = data->floodfill_it[to_v];
+      }
+
+      if (data->target_face_set == SCULPT_FACE_SET_NONE) {
+        data->target_face_set = to_face_set;
+      }
     }
   }
 
@@ -875,8 +879,10 @@ static SculptPoseIKChain *pose_ik_chain_init_face_sets_fk(
   fdata.masked_face_set = SCULPT_FACE_SET_NONE;
   fdata.target_face_set = SCULPT_FACE_SET_NONE;
   fdata.masked_face_set_it = 0;
+  fdata.visited_face_sets = BLI_gset_int_new_ex("visited_face_sets", 3);
   SCULPT_floodfill_execute(ss, &flood, pose_face_sets_fk_find_masked_floodfill_cb, &fdata);
   SCULPT_floodfill_free(&flood);
+  BLI_gset_free(fdata.visited_face_sets, NULL);
 
   int origin_count = 0;
   float origin_acc[3] = {0.0f};
@@ -1025,8 +1031,10 @@ static void sculpt_pose_do_scale_deform(SculptSession *ss, Brush *brush)
   copy_v3_v3(ik_target, ss->cache->true_location);
   add_v3_v3(ik_target, ss->cache->grab_delta);
 
-  /* Solve the IK for the first segment to include rotation as part of scale. */
-  pose_solve_ik_chain(ik_chain, ik_target, brush->flag2 & BRUSH_POSE_IK_ANCHORED);
+  /* Solve the IK for the first segment to include rotation as part of scale if enabled. */
+  if (!(brush->flag2 & BRUSH_POSE_USE_LOCK_ROTATION)) {
+    pose_solve_ik_chain(ik_chain, ik_target, brush->flag2 & BRUSH_POSE_IK_ANCHORED);
+  }
 
   float scale[3];
   copy_v3_fl(scale, sculpt_pose_get_scale_from_grab_delta(ss, ik_target));

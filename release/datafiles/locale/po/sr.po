@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
 "Last-Translator: Nikola Radovanovic <cobisimo@gmail.com>\n"
 "Language-Team: Nikola Radovanovic\n"
@@ -6766,10 +6766,6 @@ msgid "Selected face count in editmode"
 msgstr "Број изабраних страница у режиму измене"
 
 
-msgid "Selected Vert Total"
-msgstr "Укупно изабраних темена"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Број изабраних темена у режиму измене"
 
@@ -7164,10 +7160,6 @@ msgstr "Обе"
 
 msgid "Settings for using the object as a field in physics simulation"
 msgstr "Подешавања коришћења објекта као поље физичке симулације"
-
-
-msgid "Verts"
-msgstr "Темена"
 
 
 msgid "Faces"
@@ -11122,10 +11114,6 @@ msgid "Include channels from objects/bone that aren't visible"
 msgstr "Укључи приказ канала анимације објеката/костију који нису видљиви"
 
 
-msgid "Only Selected"
-msgstr "Само изабрано"
-
-
 msgid "Longest"
 msgstr "Најдужа"
 
@@ -14619,6 +14607,10 @@ msgid "Start frame for export"
 msgstr "Почетни кадар за извоз"
 
 
+msgid "Only Selected"
+msgstr "Само изабрано"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Извоз BVH"
@@ -15327,10 +15319,6 @@ msgstr "Претвара активни слој скице у објекат к
 
 msgid "Gap Duration"
 msgstr "Трајање рупе"
-
-
-msgid "Radius Fac"
-msgstr "Фак. радиуса"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -16227,10 +16215,6 @@ msgid "Bevel"
 msgstr "Искошавање"
 
 
-msgid "Bevel only vertices"
-msgstr "Искошавање само темена"
-
-
 msgid "Clear Inner"
 msgstr "Очисти унутрашње"
 
@@ -16331,10 +16315,6 @@ msgid "Dissolve edges, merging faces"
 msgstr "Растопи ивице, спајајући странице"
 
 
-msgid "Dissolve Verts"
-msgstr "Растопи темена"
-
-
 msgid "Dissolve remaining vertices"
 msgstr "Растапа преостала темена"
 
@@ -16353,10 +16333,6 @@ msgid "Limited Dissolve"
 msgstr "Ограничено растапање"
 
 
-msgid "Dissolve selected edges and verts, limited by the angle of surrounding geometry"
-msgstr "Растопи изабране ивице и темена, ограничена углом околне геометрије"
-
-
 msgid "Delimit dissolve operation"
 msgstr "Поништи ограничење операције растапања"
 
@@ -16368,10 +16344,6 @@ msgstr "Растопи изабрано"
 
 msgid "Dissolve geometry based on the selection mode"
 msgstr "Растапа геометрију на основу изабора"
-
-
-msgid "Dissolve verts, merge edges and faces"
-msgstr "Растапа темена, спаја ивице и странице"
 
 
 msgid "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor"
@@ -18509,10 +18481,6 @@ msgstr "Уклони све групе темена"
 
 msgid "Remove from all groups"
 msgstr "Уклони из свих група"
-
-
-msgid "All Verts"
-msgstr "Сва темена"
 
 
 msgid "Clear the active group"
@@ -21366,20 +21334,12 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Примени модификаторе пи извозу меша (без губитка квалитета)"
 
 
-msgid "Deform Bones only"
-msgstr "Само кости деформације"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "Извози само кости деформације са костуром"
 
 
 msgid "Modifier resolution for export"
 msgstr "Резолуција модификатора при извозу"
-
-
-msgid "Apply modifier's view settings"
-msgstr "Примени подешавања модификатора за поглед"
 
 
 msgid "Apply modifier's render settings"
@@ -21762,10 +21722,6 @@ msgid "URL"
 msgstr "Адреса"
 
 
-msgid "UV Maps"
-msgstr "UV Мапе"
-
-
 msgid "Toggle the current window fullscreen"
 msgstr "Приказује текући прозор преко целог екрана"
 
@@ -22038,6 +21994,10 @@ msgstr "Скелет"
 
 msgid "Text Boxes"
 msgstr "Блок текста"
+
+
+msgid "UV Maps"
+msgstr "UV Мапе"
 
 
 msgid "Filters"
@@ -25404,10 +25364,6 @@ msgid "Edge Select"
 msgstr "Избор ивице"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "Активно теме/ивица/страница"
-
-
 msgid "Face Dot Selected"
 msgstr "Изабрана тачка странице"
 
@@ -27054,28 +27010,8 @@ msgid "%d items"
 msgstr "%d ставки"
 
 
-msgid "Options:"
-msgstr "Опције:"
-
-
 msgid "No filename given"
 msgstr "Без имена датотеке"
-
-
-msgid "Texture Options:"
-msgstr "Опције костура"
-
-
-msgid "Transformation Type"
-msgstr "Врста трансформације"
-
-
-msgid "Armature Options:"
-msgstr "Опције костура"
-
-
-msgid "Collada Options:"
-msgstr "Collada опције:"
 
 
 msgctxt "Mesh"
@@ -27972,10 +27908,6 @@ msgstr "(Насумично)"
 
 msgid "Shrink/Fatten:"
 msgstr "Скупи/удебљај:"
-
-
-msgid "Vert Slide: "
-msgstr "Величина темена"
 
 
 msgid "global"

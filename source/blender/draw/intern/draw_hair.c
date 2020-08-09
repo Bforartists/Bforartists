@@ -114,7 +114,7 @@ void DRW_hair_init(void)
 
     g_dummy_vbo = GPU_vertbuf_create_with_format(&format);
 
-    float vert[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+    const float vert[4] = {0.0f, 0.0f, 0.0f, 0.0f};
     GPU_vertbuf_data_alloc(g_dummy_vbo, 1);
     GPU_vertbuf_attr_fill(g_dummy_vbo, dummy_id, vert);
     /* Create vbo immediately to bind to texture buffer. */
@@ -330,7 +330,7 @@ void DRW_hair_update(void)
                                     GPU_ATTACHMENT_TEXTURE(tex),
                                 });
 
-  float *data = MEM_mallocN(sizeof(float) * 4 * width * height, "tf fallback buffer");
+  float *data = MEM_mallocN(sizeof(float[4]) * width * height, "tf fallback buffer");
 
   GPU_framebuffer_bind(fb);
   while (g_tf_calls != NULL) {
@@ -347,8 +347,8 @@ void DRW_hair_update(void)
       /* Upload back to VBO. */
       GPU_vertbuf_use(pr_call->vbo);
       glBufferSubData(GL_ARRAY_BUFFER,
-                      sizeof(float) * 4 * g_tf_id_offset,
-                      sizeof(float) * 4 * max_read_px_len,
+                      sizeof(float[4]) * g_tf_id_offset,
+                      sizeof(float[4]) * max_read_px_len,
                       data);
 
       g_tf_id_offset += max_read_px_len;

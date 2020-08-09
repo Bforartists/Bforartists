@@ -2035,19 +2035,26 @@ static bool flip_custom_normals(BMesh *bm, BMLoopNorEditDataArray *lnors_ed_arr)
   }
 
   BMFace *f;
-  BMLoop *l;
-  BMIter iter_f, iter_l;
+  BMLoop *l, *l_start;
+  BMIter iter_f;
   BM_ITER_MESH (f, &iter_f, bm, BM_FACES_OF_MESH) {
+    /* Flip all the custom loop normals on the selected faces. */
     if (!BM_elem_flag_test(f, BM_ELEM_SELECT)) {
       continue;
     }
-    /* Flip all the custom loop normals on the selected faces. */
 
-    BM_ITER_ELEM (l, &iter_l, f, BM_LOOPS_OF_FACE) {
+    /* Because the winding has changed, we need to go the reverse way around the face to get the
+     * correct placement of the normals. However we need to derive the old loop index to get the
+     * correct data. Note that the first loop index is the same though. So the loop starts and ends
+     * in the same place as before the flip.
+     */
 
+    l_start = l = BM_FACE_FIRST_LOOP(f);
+    int old_index = BM_elem_index_get(l);
+    do {
       int loop_index = BM_elem_index_get(l);
 
-      BMLoopNorEditData *lnor_ed = lnors_ed_arr->lidx_to_lnor_editdata[loop_index];
+      BMLoopNorEditData *lnor_ed = lnors_ed_arr->lidx_to_lnor_editdata[old_index];
       BMLoopNorEditData *lnor_ed_new = lnors_ed_arr_new_full->lidx_to_lnor_editdata[loop_index];
       BLI_assert(lnor_ed != NULL && lnor_ed_new != NULL);
 
@@ -2055,7 +2062,10 @@ static bool flip_custom_normals(BMesh *bm, BMLoopNorEditDataArray *lnors_ed_arr)
 
       BKE_lnor_space_custom_normal_to_data(
           bm->lnor_spacearr->lspacearr[loop_index], lnor_ed->nloc, lnor_ed_new->clnors_data);
-    }
+
+      old_index++;
+      l = l->prev;
+    } while (l != l_start);
   }
   BM_loop_normal_editdata_array_free(lnors_ed_arr_new_full);
   return true;
@@ -4025,7 +4035,7 @@ static int edbm_knife_cut_exec(bContext *C, wmOperator *op)
 
   /* the floating point coordinates of verts in screen space will be
    * stored in a hash table according to the vertices pointer */
-  screen_vert_coords = sco = MEM_mallocN(bm->totvert * sizeof(float) * 2, __func__);
+  screen_vert_coords = sco = MEM_mallocN(sizeof(float[2]) * bm->totvert, __func__);
 
   BM_ITER_MESH_INDEX (bv, &iter, bm, BM_VERTS_OF_MESH, i) {
     if (ED_view3d_project_float_object(region, bv->co, *sco, V3D_PROJ_TEST_CLIP_NEAR) !=
@@ -7210,7 +7220,7 @@ void MESH_OT_wireframe(wmOperatorType *ot)
   PropertyRNA *prop;
 
   /* identifiers */
-  ot->name = "Wire Frame";
+  ot->name = "Wireframe";
   ot->idname = "MESH_OT_wireframe";
   ot->description = "Create a solid wire-frame from faces";
 

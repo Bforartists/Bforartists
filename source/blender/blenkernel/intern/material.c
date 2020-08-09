@@ -268,27 +268,27 @@ Material ***BKE_object_material_array_p(Object *ob)
     Mesh *me = ob->data;
     return &(me->mat);
   }
-  else if (ELEM(ob->type, OB_CURVE, OB_FONT, OB_SURF)) {
+  if (ELEM(ob->type, OB_CURVE, OB_FONT, OB_SURF)) {
     Curve *cu = ob->data;
     return &(cu->mat);
   }
-  else if (ob->type == OB_MBALL) {
+  if (ob->type == OB_MBALL) {
     MetaBall *mb = ob->data;
     return &(mb->mat);
   }
-  else if (ob->type == OB_GPENCIL) {
+  if (ob->type == OB_GPENCIL) {
     bGPdata *gpd = ob->data;
     return &(gpd->mat);
   }
-  else if (ob->type == OB_HAIR) {
+  if (ob->type == OB_HAIR) {
     Hair *hair = ob->data;
     return &(hair->mat);
   }
-  else if (ob->type == OB_POINTCLOUD) {
+  if (ob->type == OB_POINTCLOUD) {
     PointCloud *pointcloud = ob->data;
     return &(pointcloud->mat);
   }
-  else if (ob->type == OB_VOLUME) {
+  if (ob->type == OB_VOLUME) {
     Volume *volume = ob->data;
     return &(volume->mat);
   }
@@ -301,27 +301,27 @@ short *BKE_object_material_len_p(Object *ob)
     Mesh *me = ob->data;
     return &(me->totcol);
   }
-  else if (ELEM(ob->type, OB_CURVE, OB_FONT, OB_SURF)) {
+  if (ELEM(ob->type, OB_CURVE, OB_FONT, OB_SURF)) {
     Curve *cu = ob->data;
     return &(cu->totcol);
   }
-  else if (ob->type == OB_MBALL) {
+  if (ob->type == OB_MBALL) {
     MetaBall *mb = ob->data;
     return &(mb->totcol);
   }
-  else if (ob->type == OB_GPENCIL) {
+  if (ob->type == OB_GPENCIL) {
     bGPdata *gpd = ob->data;
     return &(gpd->totcol);
   }
-  else if (ob->type == OB_HAIR) {
+  if (ob->type == OB_HAIR) {
     Hair *hair = ob->data;
     return &(hair->totcol);
   }
-  else if (ob->type == OB_POINTCLOUD) {
+  if (ob->type == OB_POINTCLOUD) {
     PointCloud *pointcloud = ob->data;
     return &(pointcloud->totcol);
   }
-  else if (ob->type == OB_VOLUME) {
+  if (ob->type == OB_VOLUME) {
     Volume *volume = ob->data;
     return &(volume->totcol);
   }
@@ -582,7 +582,7 @@ Material **BKE_object_material_get_p(Object *ob, short act)
   if (act > ob->totcol) {
     return NULL;
   }
-  else if (act <= 0) {
+  if (act <= 0) {
     if (act < 0) {
       CLOG_ERROR(&LOG, "Negative material index!");
     }
@@ -627,9 +627,8 @@ Material *BKE_gpencil_material(Object *ob, short act)
   if (ma != NULL) {
     return ma;
   }
-  else {
-    return BKE_material_default_gpencil();
-  }
+
+  return BKE_material_default_gpencil();
 }
 
 MaterialGPencilStyle *BKE_gpencil_material_settings(Object *ob, short act)
@@ -642,9 +641,8 @@ MaterialGPencilStyle *BKE_gpencil_material_settings(Object *ob, short act)
 
     return ma->gp_style;
   }
-  else {
-    return BKE_material_default_gpencil()->gp_style;
-  }
+
+  return BKE_material_default_gpencil()->gp_style;
 }
 
 void BKE_object_material_resize(Main *bmain, Object *ob, const short totcol, bool do_id_user)
@@ -1135,9 +1133,8 @@ static bNode *nodetree_uv_node_recursive(bNode *node)
       if (inode->typeinfo->nclass == NODE_CLASS_INPUT && inode->typeinfo->type == SH_NODE_UVMAP) {
         return inode;
       }
-      else {
-        return nodetree_uv_node_recursive(inode);
-      }
+
+      return nodetree_uv_node_recursive(inode);
     }
   }
 
@@ -1718,6 +1715,29 @@ static void material_default_volume_init(Material *ma)
   nodeSetActive(ntree, output);
 }
 
+static void material_default_holdout_init(Material *ma)
+{
+  bNodeTree *ntree = ntreeAddTree(NULL, "Shader Nodetree", ntreeType_Shader->idname);
+  ma->nodetree = ntree;
+  ma->use_nodes = true;
+
+  bNode *holdout = nodeAddStaticNode(NULL, ntree, SH_NODE_HOLDOUT);
+  bNode *output = nodeAddStaticNode(NULL, ntree, SH_NODE_OUTPUT_MATERIAL);
+
+  nodeAddLink(ntree,
+              holdout,
+              nodeFindSocket(holdout, SOCK_OUT, "Holdout"),
+              output,
+              nodeFindSocket(output, SOCK_IN, "Surface"));
+
+  holdout->locx = 10.0f;
+  holdout->locy = 300.0f;
+  output->locx = 300.0f;
+  output->locy = 300.0f;
+
+  nodeSetActive(ntree, output);
+}
+
 Material *BKE_material_default_empty(void)
 {
   return &default_material_empty;
@@ -1763,6 +1783,7 @@ void BKE_materials_init(void)
 
   material_default_surface_init(&default_material_surface);
   material_default_volume_init(&default_material_volume);
+  material_default_holdout_init(&default_material_holdout);
   material_default_gpencil_init(&default_material_gpencil);
 }
 

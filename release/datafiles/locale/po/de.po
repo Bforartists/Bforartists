@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Reininger <martinreininger@gmx.net>\n"
 "Language-Team: German translation team\n"
@@ -9362,10 +9362,6 @@ msgid "Selected Face Total"
 msgstr "Markierung löschen"
 
 
-msgid "Selected Vert Total"
-msgstr "Markierung löschen"
-
-
 msgid "Auto Smooth"
 msgstr "Auto Weichzeichnen"
 
@@ -9732,10 +9728,6 @@ msgstr "Entfernung begrenzen"
 
 msgid "Both"
 msgstr "Beides"
-
-
-msgid "Verts"
-msgstr "Vertices"
 
 
 msgid "Faces"
@@ -14422,10 +14414,6 @@ msgid "Include channels from objects/bone that aren't visible"
 msgstr "Einschließlich Kanäle von Objekten/Knochen die unsichtbar sind"
 
 
-msgid "Only Selected"
-msgstr "Nur Ausgewähltes"
-
-
 msgid "Dopesheet Sort Field"
 msgstr "Anfang der Datei"
 
@@ -19037,6 +19025,10 @@ msgid "Start frame for export"
 msgstr "Startbild für Export"
 
 
+msgid "Only Selected"
+msgstr "Nur Ausgewähltes"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "BVH exportieren"
@@ -19663,10 +19655,6 @@ msgstr "Dauer"
 
 msgid "Gap Randomness"
 msgstr "Raster-Zufälligkeit"
-
-
-msgid "Radius Fac"
-msgstr "Radius 1"
 
 
 msgid "The start frame of the path control curve"
@@ -20547,10 +20535,6 @@ msgstr "Fase"
 
 msgid "Segments for curved edge"
 msgstr "Wählt ein 2D oder 3D Kurven Typ"
-
-
-msgid "Bevel only vertices"
-msgstr "Nur Vertices"
 
 
 msgctxt "Operator"
@@ -23311,10 +23295,6 @@ msgstr "Alle Vertexgruppen löschen"
 
 msgid "Remove from all groups"
 msgstr "Von allen Gruppen löschen"
-
-
-msgid "All Verts"
-msgstr "Alle Vertices"
 
 
 msgctxt "Operator"
@@ -26429,14 +26409,6 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Auflösung"
 
 
-msgid "Deform Bones only"
-msgstr "Nur Knochen deformieren"
-
-
-msgid "Apply modifier's view settings"
-msgstr "Modifikatoren Anwenden (Vorschau Auflösung)"
-
-
 msgid "Include Armatures"
 msgstr "Skelett einschließen"
 
@@ -26862,10 +26834,6 @@ msgid "URL to open"
 msgstr "Zu öffnende URL"
 
 
-msgid "UV Maps"
-msgstr "UV-Maps"
-
-
 msgid "Toggle the current window fullscreen"
 msgstr "Vollbildmodus für aktuelles Fenster aktivieren/deaktivieren"
 
@@ -27238,6 +27206,10 @@ msgstr "Skellet"
 
 msgid "Text Boxes"
 msgstr "Textboxen"
+
+
+msgid "UV Maps"
+msgstr "UV-Maps"
 
 
 msgid "Filters"
@@ -33017,10 +32989,6 @@ msgid "Edge Select"
 msgstr "Kantenauswahl"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "Aktive(r) Vertex/Kante/Fläche"
-
-
 msgid "Face Selected"
 msgstr "Ausgewählte Fläche"
 
@@ -35274,52 +35242,8 @@ msgid "%d items"
 msgstr "%d Gegenstände"
 
 
-msgid "Manual Transform:"
-msgstr "Manuelle Transformation:"
-
-
-msgid "Scene Options:"
-msgstr "Szenen-Operation:"
-
-
-msgid "Object Options:"
-msgstr "Objekt-Objektaktion:"
-
-
-msgid "Options:"
-msgstr "Optionen:"
-
-
 msgid "No filename given"
 msgstr "Kein Dateiname vergeben"
-
-
-msgid "Global Orientation:"
-msgstr "Globale Ausrichtung:"
-
-
-msgid "Texture Options:"
-msgstr "Textzeichenoptionen:"
-
-
-msgid "Export Data Options:"
-msgstr "Exportdaten Optionen:"
-
-
-msgid "Transformation Type"
-msgstr "Transformationstyp"
-
-
-msgid "Armature Options:"
-msgstr "Skelettoptionen"
-
-
-msgid "Collada Options:"
-msgstr "Collada-Optionen:"
-
-
-msgid "Import Data Options:"
-msgstr "Importdaten Optionen:"
 
 
 msgctxt "Mesh"
@@ -35360,6 +35284,10 @@ msgstr "Kugel"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Icokugel"
+
+
+msgid "Seams"
+msgstr "Nähte"
 
 
 msgid "Mouse path too short"

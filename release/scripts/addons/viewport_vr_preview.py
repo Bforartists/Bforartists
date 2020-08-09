@@ -181,7 +181,7 @@ class VRLandmark(PropertyGroup):
              "Use an existing camera to define the VR view base location and "
              "rotation"),
             ('CUSTOM', "Custom Pose",
-             "Allow a manually definied position and rotation to be used as "
+             "Allow a manually defined position and rotation to be used as "
              "the VR view base pose"),
         ],
         default='SCENE_CAMERA',

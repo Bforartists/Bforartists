@@ -29,6 +29,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_system.h" /* for 'BLI_system_backtrace' stub. */
 #include "BLI_utildefines.h"
 
 #include "RNA_define.h"
@@ -174,7 +175,7 @@ static int replace_if_different(const char *tmpfile, const char *dep_files[])
     if (dep_files) {
       int pass;
       for (pass = 0; dep_files[pass]; pass++) {
-        char from_path[4096] = __FILE__;
+        const char from_path[4096] = __FILE__;
         char *p1, *p2;
 
         /* dir only */
@@ -3589,7 +3590,7 @@ static void rna_generate_struct_prototypes(FILE *f)
             if (found == 0) {
               fprintf(f, "struct %s;\n", struct_name);
 
-              if (all_structures >= sizeof(structures) / sizeof(structures[0])) {
+              if (all_structures >= ARRAY_SIZE(structures)) {
                 printf("Array size to store all structures names is too small\n");
                 exit(1);
               }

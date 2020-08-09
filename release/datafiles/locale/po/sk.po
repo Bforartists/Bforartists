@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Alpha (b'230f7d79ce3e')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-11 00:00:00\n"
+"POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-06-02 17:40+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: pegas\n"
@@ -20757,10 +20757,6 @@ msgid "Selected face count in editmode"
 msgstr "Počet vybratých plôšok v režime editácie"
 
 
-msgid "Selected Vert Total"
-msgstr "Celkovo vybraných vrcholov"
-
-
 msgid "Selected vertex count in editmode"
 msgstr "Počet vybraných vrcholov v režime editácie"
 
@@ -21579,10 +21575,6 @@ msgstr "Typ inštancie"
 
 msgid "If not None, object instancing method to use"
 msgstr "Ak nie žiadny, používa sa metóda inštancie objektu"
-
-
-msgid "Verts"
-msgstr "Vrcholy"
 
 
 msgid "Instantiate child objects on all vertices"
@@ -31096,16 +31088,8 @@ msgid "Original Coords"
 msgstr "Originálne súradnice"
 
 
-msgid "Use base mesh vert coords as the rest position"
-msgstr "Použije súradnice vrcholov základnej povrchovej siete ako kľudovú polohu"
-
-
 msgid "Bind Coords"
 msgstr "Naviazať súradnice"
-
-
-msgid "Use bind vert coords for rest position"
-msgstr "Použije priradené súradnice vrcholov pre kľudovú polohu"
 
 
 msgid "Compensate for scale applied by other modifiers"
@@ -34576,10 +34560,6 @@ msgstr "Zobraziť skryté"
 
 msgid "Include channels from objects/bone that aren't visible"
 msgstr "Zahrnie kanály objektov/kostí, ktoré nie sú viditeľné"
-
-
-msgid "Only Selected"
-msgstr "Len vybrané"
 
 
 msgid "Dopesheet Sort Field"
@@ -44026,6 +44006,10 @@ msgid "Start frame for export"
 msgstr "Počiatočná snímka pre export"
 
 
+msgid "Only Selected"
+msgstr "Len vybrané"
+
+
 msgctxt "Operator"
 msgid "Export BVH"
 msgstr "Export BVH"
@@ -46100,10 +46084,6 @@ msgstr "Náhodná medzera"
 
 msgid "Custom Gap mode: Number of frames that gap lengths can vary"
 msgstr "Vlastný režim medzery: Počet snímok, ktoré sa môžu líšiť dĺžkou medzery"
-
-
-msgid "Radius Fac"
-msgstr "Faktor dosahu"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -49776,18 +49756,6 @@ msgid "Averaging method"
 msgstr "Metóda spriemerňovania"
 
 
-msgid "Take Average of vert Normals"
-msgstr "Vytvorí priemer kolmíc vrcholov"
-
-
-msgid "Set all vert normals by Face Area"
-msgstr "Nastaví všetky kolmice vrcholov podľa priestoru plôšok"
-
-
-msgid "Set all vert normals by Corner Angle"
-msgstr "Nastaví všetky kolmice vrcholov podľa rohového uhla"
-
-
 msgid "Weight applied per face"
 msgstr "Váha použitá na plôšku"
 
@@ -49848,14 +49816,6 @@ msgstr "Segmenty pre zakrivené hrany"
 
 msgid "Amount to spread arcs for arc inner miters"
 msgstr "Množstvo pre rozšírovanie oblúkov pre oblúky vnútorného sklonu"
-
-
-msgid "Vertex Only"
-msgstr "Len vrcholy"
-
-
-msgid "Bevel only vertices"
-msgstr "Skosí iba vrcholy"
 
 
 msgid "The method to use to create meshes at intersections"
@@ -50247,10 +50207,6 @@ msgid "Dissolve edges, merging faces"
 msgstr "Rozpustí hrany, zlučovanie plôšok"
 
 
-msgid "Dissolve Verts"
-msgstr "Rozpustiť vrcholy"
-
-
 msgid "Dissolve remaining vertices"
 msgstr "Rozpustiť zostávajúce vrcholy"
 
@@ -50267,10 +50223,6 @@ msgstr "Rozpustiť plôšky"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Obmedzené zrušenie"
-
-
-msgid "Dissolve selected edges and verts, limited by the angle of surrounding geometry"
-msgstr "Rozpustí vybrané hrany a vrcholy, ohraničené uhlom okolitej geometrie"
 
 
 msgid "Delimit dissolve operation"
@@ -50296,10 +50248,6 @@ msgstr "Odtrhnúť okraje"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "Oddelí rohy plôšok namiesto zlúčenia plôšok"
-
-
-msgid "Dissolve verts, merge edges and faces"
-msgstr "Rozpustí vrcholy, zlúči hrany a plôšky"
 
 
 msgctxt "Operator"
@@ -56086,16 +56034,8 @@ msgid "Add Weights"
 msgstr "Pridať váhy"
 
 
-msgid "Add verts from groups that have zero weight before inverting"
-msgstr "Pridá vrcholy zo skupín, ktoré majú nulovú váhu pred invertovaním"
-
-
 msgid "Remove Weights"
 msgstr "Odstrániť váhy"
-
-
-msgid "Remove verts from groups that have zero weight after inverting"
-msgstr "Odstráni vrcholy zo skupín, ktoré majú nulovú váhu po invertovaní"
 
 
 msgctxt "Operator"
@@ -56274,10 +56214,6 @@ msgid "Remove from all groups"
 msgstr "Odstráni zo všetkých skupín"
 
 
-msgid "All Verts"
-msgstr "Všetky vrcholy"
-
-
 msgid "Clear the active group"
 msgstr "Vymaže aktívnu skupinu"
 
@@ -56376,10 +56312,6 @@ msgstr "Normalizuje váhy aktívnych vrcholov"
 msgctxt "Operator"
 msgid "Paste Weight to Selected"
 msgstr "Prilepiť váhu na vybrané"
-
-
-msgid "Copy this group's weight to other selected verts (disabled if vertex group is locked)"
-msgstr "Skopíruje váhu tejto skupiny na iné vybrané skupiny vrcholov, ak je zamknutá skupina vrcholov)"
 
 
 msgctxt "Operator"
@@ -56797,20 +56729,20 @@ msgid "Make Local"
 msgstr "Vytvoriť lokálne"
 
 
-msgid "Add Library Override"
-msgstr "Pridať prepis knižnice"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "Pridanie lokálny prepis tohto prepojeného bloku údajov"
-
-
 msgid "Remap Users"
 msgstr "Premapovať užívateľov"
 
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "Aby všetci používatelia vybraných blokov údajov použili namiesto jedného aktuálneho (kliknutie)"
+
+
+msgid "Add Library Override"
+msgstr "Pridať prepis knižnice"
+
+
+msgid "Add a local override of this linked data-block"
+msgstr "Pridanie lokálny prepis tohto prepojeného bloku údajov"
 
 
 msgid "Paste"
@@ -58772,10 +58704,6 @@ msgstr "Vráti späť polohu, rotáciu a mierku vybraných kostí na ich predvol
 msgctxt "Operator"
 msgid "Clear User Transforms"
 msgstr "Vymazať transformácie užívateľov"
-
-
-msgid "Reset pose on selected bones to keyframed state"
-msgstr "Obnoví pózu vybraných kostí do stavu kľúčového snímkovania"
 
 
 msgid "Only visible/selected bones"
@@ -65334,10 +65262,6 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Použiť modifikátory na exportované povrchové siete (nedeštruktívne)"
 
 
-msgid "Deform Bones only"
-msgstr "Len deformované kosti"
-
-
 msgid "Only export deforming bones with armatures"
 msgstr "Exportuje len deformované kosti s kostrrami"
 
@@ -65442,10 +65366,6 @@ msgid "Modifier resolution for export"
 msgstr "Modifikátor rozlíšenia pre export"
 
 
-msgid "Apply modifier's view settings"
-msgstr "Použije nastavenia modifikátora zobrazenia"
-
-
 msgid "Apply modifier's render settings"
 msgstr "Použije nastavenia modifikátora prevodu"
 
@@ -65500,10 +65420,6 @@ msgstr "Zachovať informácie o väzbách"
 
 msgid "Store Bindpose information in custom bone properties for later use during Collada export"
 msgstr "Uchová informácie väzieb póz vo vlastných vlastnostiach kostí pre neskoršie použitie počas exportu Collada"
-
-
-msgid "All keyed curves"
-msgstr "Všetky kľúčované krivky"
 
 
 msgid "Export also curves which have only one key or are totally flat"
@@ -66901,67 +66817,6 @@ msgstr "Stránka"
 
 
 msgctxt "Operator"
-msgid "Export USD"
-msgstr "Exportovať USD"
-
-
-msgid "Export current scene in a USD archive"
-msgstr "Exportuje aktuálnu scény do archívu USD"
-
-
-msgid "Use Settings for"
-msgstr "Použiť nastavenia pre"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "Určuje viditeľnosť objektov, nastavenia modifikátora a ďalších oblastí, kde existujú rôzne nastavenia záberu a prevodu"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "Použije nastavenie prevodu na zviditeľnenie objektu, nastavenie modifikátora atď."
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "Použije nastavenie záberu na zviditeľnenie objektu, nastavenie modifikátora atď."
-
-
-msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
-msgstr "Ak je začiarknuté, exportujú sa všetky snímky vykonaného prevodu. Ak je hodnota false, exportuje sa iba aktuálna snímka"
-
-
-msgid "When checked, hair is exported as USD curves"
-msgstr "Keď je zaškrtnuté sa vlasy exportujú ako USD krivky"
-
-
-msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
-msgstr "Ak je začiarknuté, nastavenia záberu materiálov sú exportované ako materiály náhľadu USD a priradenia materiálov sa exportujú ako podskupiny geometrie"
-
-
-msgid "When checked, normals of exported meshes are included in the export"
-msgstr "Ak je začiarknuté, do exportu sú zahrnuté kolmice exportovaných povrchových sietí"
-
-
-msgid "UV Maps"
-msgstr "UV mapy"
-
-
-msgid "When checked, all UV maps of exported meshes are included in the export"
-msgstr "Ak je zaškrtnuté, do exportu sú zahrnuté všetky UV mapy exportovaných povrchových sietí"
-
-
-msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
-msgstr "Exportujú sa iba vybrané objekty. Nevybraní rodičia vybratých objektov sa exportujú ako prázdna transformácia"
-
-
-msgid "Instancing"
-msgstr "Vyhotovenie"
-
-
-msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
-msgstr "Ak je začiarknuté, inštancie objektov sa exportujú ako referencie v USD. Ak nie je začiarknuté, inštancie objektov sa exportujú ako skutočné objekty"
-
-
-msgctxt "Operator"
 msgid "Close Window"
 msgstr "Zavrieť okno"
 
@@ -67968,6 +67823,10 @@ msgid "Text Boxes"
 msgstr "Textové okienko"
 
 
+msgid "UV Maps"
+msgstr "UV mapy"
+
+
 msgid "OpenVDB File"
 msgstr "Súbor OpenVDB"
 
@@ -68239,6 +68098,10 @@ msgstr "Línie rezu"
 
 msgid "Delta Transform"
 msgstr "Delta transformácia"
+
+
+msgid "Instancing"
+msgstr "Vyhotovenie"
 
 
 msgid "Scale by Face Size"
@@ -82510,10 +82373,6 @@ msgid "Edge Select"
 msgstr "Vybraná hrana"
 
 
-msgid "Active Vert/Edge/Face"
-msgstr "Aktívny vrchol/hrana/plôška"
-
-
 msgid "Face Orientation Back"
 msgstr "Zadná orientácia plôšky"
 
@@ -89683,60 +89542,12 @@ msgid "%d items"
 msgstr "%d položiek"
 
 
-msgid "Manual Transform:"
-msgstr "Manuálna transformácia:"
-
-
-msgid "Scene Options:"
-msgstr "Možnosti scény:"
-
-
-msgid "Object Options:"
-msgstr "Možnosti objektu:"
-
-
-msgid "Particle Systems:"
-msgstr "Systémy častíc:"
-
-
-msgid "Options:"
-msgstr "Nastavenie:"
-
-
 msgid "No filename given"
 msgstr "Nie je zadaný názov súboru"
 
 
 msgid "Unable to determine ABC sequence length"
 msgstr "Nie je možné určiť dĺžku sekvencie ABC"
-
-
-msgid "Global Orientation:"
-msgstr "Globálna orientácia:"
-
-
-msgid "Texture Options:"
-msgstr "Možnosti textúry:"
-
-
-msgid "Export Data Options:"
-msgstr "Možnosti exportu údajov:"
-
-
-msgid "Transformation Type"
-msgstr "Typ transformácie"
-
-
-msgid "Armature Options:"
-msgstr "Možnosti kostry:"
-
-
-msgid "Collada Options:"
-msgstr "Možnosti Collada:"
-
-
-msgid "Import Data Options:"
-msgstr "Možnosti importu údajov:"
 
 
 msgid "Can't create export file"
@@ -89757,10 +89568,6 @@ msgstr "Chyba pri exporte (pozri konzolu)"
 
 msgid "Parsing errors in Document (see Blender Console)"
 msgstr "Analýza chyby v dokumente (pozri Blender konzolu)"
-
-
-msgid "Experimental:"
-msgstr "Experimentálne:"
 
 
 msgctxt "Mesh"
@@ -89806,6 +89613,10 @@ msgstr "Sféra"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Ico guľa"
+
+
+msgid "Seams"
+msgstr "Švy"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -92869,10 +92680,6 @@ msgid "TODO: in what cases does this happen?"
 msgstr "Komentár: v akých prípadoch sa to stalo?"
 
 
-msgid "Cannot reassign inputs: no cycles allowed"
-msgstr "Nemožno priradiť vstupy: nie sú povolené žiadne cykly"
-
-
 msgid "No valid inputs to swap"
 msgstr "Žiadne platné vstupy pre na výmenu"
 
@@ -93725,10 +93532,6 @@ msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for tra
 msgstr "Použije 'časový posuv' namiesto režimu transformácie 'zmeny polohy' režime zmeny polohy kľúčovej snímky v editore informačného listu"
 
 
-msgid "Vert Slide: "
-msgstr "Vertikálny posun: "
-
-
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
 msgstr "Vytvorí orientáciu 'použitia' parametru platného iba v kontexte 3D zobrazenia"
 
@@ -93829,10 +93632,6 @@ msgstr "UV vrchol"
 msgctxt "Operator"
 msgid "Clear Seam"
 msgstr "Zrušiť šev"
-
-
-msgid "Select linked only works in face select mode when sync selection is enabled"
-msgstr "Výber prepojených funguje iba v režime výberu plôšky pri povolenom synchronizovanom výbere"
 
 
 msgid "Cannot split selection when sync selection is enabled"

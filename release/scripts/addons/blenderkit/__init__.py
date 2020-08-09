@@ -250,6 +250,7 @@ def switch_search_results(self, context):
         s['search results orig'] = s.get('bkit brush search orig')
     search.load_previews()
 
+
 def asset_type_callback(self, context):
     '''
     Returns
@@ -650,29 +651,6 @@ class BlenderKitCommonUploadProps(object):
     )
 
 
-def stars_enum_callback(self, context):
-    items = []
-    for a in range(0, 10):
-        if self.rating_quality < a+1:
-            icon = 'SOLO_OFF'
-        else:
-            icon = 'SOLO_ON'
-        # has to have something before the number in the value, otherwise fails on registration.
-        items.append((f'{a+1}', f'{a+1}', '', icon, a+1))
-    return items
-
-
-def update_quality(self, context):
-    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if user_preferences.api_key == '':
-        # ui_panels.draw_not_logged_in(self, message='Please login/signup to rate assets.')
-        # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_login_menu')
-        # return
-        bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT', message = 'Please login/signup to rate assets. Clicking OK takes you to web login.')
-        self.rating_quality_ui = '0'
-    self.rating_quality = int(self.rating_quality_ui)
-
-
 class BlenderKitRatingProps(PropertyGroup):
     rating_quality: IntProperty(name="Quality",
                                 description="quality of the material",
@@ -680,19 +658,20 @@ class BlenderKitRatingProps(PropertyGroup):
                                 min=-1, max=10,
                                 update=ratings.update_ratings_quality)
 
-    #the following enum is only to ease interaction - enums support 'drag over' and enable to draw the stars easily.
+    # the following enum is only to ease interaction - enums support 'drag over' and enable to draw the stars easily.
     rating_quality_ui: EnumProperty(name='rating_quality_ui',
-                                     items=stars_enum_callback,
-                                     description='Rating stars 0 - 10',
-                                     default=None,
-                                     update=update_quality,
-                                     )
+                                    items=ratings.stars_enum_callback,
+                                    description='Rating stars 0 - 10',
+                                    default=None,
+                                    update=ratings.update_quality_ui,
+                                    )
 
     rating_work_hours: FloatProperty(name="Work Hours",
                                      description="How many hours did this work take?",
                                      default=0.00,
                                      min=0.0, max=1000, update=ratings.update_ratings_work_hours
                                      )
+
     # rating_complexity: IntProperty(name="Complexity",
     #                                description="Complexity is a number estimating how much work was spent on the asset.aaa",
     #                                default=0, min=0, max=10)
@@ -1393,6 +1372,17 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
                                         max=180,
                                         subtype='ANGLE')
 
+    perpendicular_snap: BoolProperty(name='Perpendicular snap',
+                                     description="Limit snapping that is close to perpendicular angles to be perpendicular.",
+                                     default=True)
+
+    perpendicular_snap_threshold: FloatProperty(name="Threshold",
+                                                description="Limit perpendicular snap to be below these values.",
+                                                default=.25,
+                                                min=0,
+                                                max=.5,
+                                                )
+
 
 class BlenderKitSceneSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     search_keywords: StringProperty(
@@ -1586,12 +1576,13 @@ class BlenderKitAddonPreferences(AddonPreferences):
                                min=0,
                                max=20000)
 
-    first_run: BoolProperty(
-        name="First run",
-        description="Detects if addon was already registered/run.",
-        default=True,
-        update=utils.save_prefs
-    )
+    # this is now made obsolete by the new popup upon registration -ensures the user knows about the first search.
+    # first_run: BoolProperty(
+    #     name="First run",
+    #     description="Detects if addon was already registered/run.",
+    #     default=True,
+    #     update=utils.save_prefs
+    # )
 
     use_timers: BoolProperty(
         name="Use timers",
@@ -1725,6 +1716,12 @@ def register():
         bpy.app.timers.register(check_timers_timer, persistent=True)
 
     bpy.app.handlers.load_post.append(scene_load)
+    # detect if the user just enabled the addon in preferences, thus enable to run
+    for w in bpy.context.window_manager.windows:
+        for a in w.screen.areas:
+            if a.type == 'PREFERENCES':
+                tasks_queue.add_task((bpy.ops.wm.blenderkit_welcome, ('INVOKE_DEFAULT',)), fake_context=True,
+                                     fake_context_area='PREFERENCES')
 
 
 def unregister():

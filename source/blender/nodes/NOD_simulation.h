@@ -14,8 +14,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef __NOD_SIMULATION_H__
-#define __NOD_SIMULATION_H__
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,9 +38,9 @@ void register_node_type_sim_particle_mesh_collision_event(void);
 void register_node_type_sim_emit_particles(void);
 void register_node_type_sim_time(void);
 void register_node_type_sim_particle_attribute(void);
+void register_node_type_sim_age_reached_event(void);
+void register_node_type_sim_kill_particle(void);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __NOD_SIMULATION_H__ */

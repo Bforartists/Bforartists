@@ -103,7 +103,7 @@ static void *imb_gpu_get_data(const ImBuf *ibuf,
      * convention, no colorspace conversion needed. But we do require 4 channels
      * currently. */
     if (ibuf->channels != 4 || !store_premultiplied) {
-      data_rect = MEM_mallocN(sizeof(float) * 4 * ibuf->x * ibuf->y, __func__);
+      data_rect = MEM_mallocN(sizeof(float[4]) * ibuf->x * ibuf->y, __func__);
       *r_freedata = true;
 
       if (data_rect == NULL) {
@@ -123,7 +123,7 @@ static void *imb_gpu_get_data(const ImBuf *ibuf,
      * We must also convert to premultiplied for correct texture interpolation
      * and consistency with float images. */
     if (!IMB_colormanagement_space_is_data(ibuf->rect_colorspace)) {
-      data_rect = MEM_mallocN(sizeof(uchar) * 4 * ibuf->x * ibuf->y, __func__);
+      data_rect = MEM_mallocN(sizeof(uchar[4]) * ibuf->x * ibuf->y, __func__);
       *r_freedata = true;
 
       if (data_rect == NULL) {
@@ -186,7 +186,7 @@ void IMB_update_gpu_texture_sub(GPUTexture *tex,
                                 bool use_premult)
 {
   const bool do_rescale = (ibuf->x != w || ibuf->y != h);
-  int size[2] = {w, h};
+  const int size[2] = {w, h};
 
   eGPUDataFormat data_format;
   eGPUTextureFormat tex_format;
@@ -208,7 +208,7 @@ void IMB_update_gpu_texture_sub(GPUTexture *tex,
 GPUTexture *IMB_create_gpu_texture(ImBuf *ibuf, bool use_high_bitdepth, bool use_premult)
 {
   GPUTexture *tex = NULL;
-  int size[2] = {GPU_texture_size_with_limit(ibuf->x), GPU_texture_size_with_limit(ibuf->y)};
+  const int size[2] = {GPU_texture_size_with_limit(ibuf->x), GPU_texture_size_with_limit(ibuf->y)};
   bool do_rescale = (ibuf->x != size[0]) || (ibuf->y != size[1]);
 
 #ifdef WITH_DDS
@@ -230,9 +230,8 @@ GPUTexture *IMB_create_gpu_texture(ImBuf *ibuf, bool use_high_bitdepth, bool use
       if (tex != NULL) {
         return tex;
       }
-      else {
-        fprintf(stderr, "ST3C support not found,");
-      }
+
+      fprintf(stderr, "ST3C support not found,");
     }
     /* Fallback to uncompressed texture. */
     fprintf(stderr, " falling back to uncompressed.\n");

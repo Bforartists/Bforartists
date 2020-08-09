@@ -302,7 +302,7 @@ const EnumPropertyItem rna_enum_modifier_triangulate_quad_method_items[] = {
     {MOD_TRIANGULATE_QUAD_BEAUTY,
      "BEAUTY",
      0,
-     "Beauty ",
+     "Beauty",
      "Split the quads in nice triangles, slower method"},
     {MOD_TRIANGULATE_QUAD_FIXED,
      "FIXED",
@@ -1697,6 +1697,51 @@ static bool rna_Modifier_show_expanded_get(PointerRNA *ptr)
 {
   ModifierData *md = ptr->data;
   return md->ui_expand_flag & (1 << 0);
+}
+
+static int rna_MeshSequenceCacheModifier_has_velocity_get(PointerRNA *ptr)
+{
+#  ifdef WITH_ALEMBIC
+  MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *)ptr->data;
+  return ABC_has_vec3_array_property_named(mcmd->reader, mcmd->cache_file->velocity_name);
+#  else
+  return false;
+  UNUSED_VARS(ptr);
+#  endif
+}
+
+static int rna_MeshSequenceCacheModifier_read_velocity_get(PointerRNA *ptr)
+{
+#  ifdef WITH_ALEMBIC
+  MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *)ptr->data;
+
+  if (mcmd->num_vertices == 0) {
+    return 0;
+  }
+
+  if (mcmd->vertex_velocities) {
+    MEM_freeN(mcmd->vertex_velocities);
+  }
+
+  mcmd->vertex_velocities = MEM_mallocN(sizeof(MeshCacheVertexVelocity) * mcmd->num_vertices,
+                                        "Mesh Cache Velocities");
+
+  int num_read = ABC_read_velocity_cache(mcmd->reader,
+                                         mcmd->cache_file->velocity_name,
+                                         mcmd->last_lookup_time,
+                                         mcmd->velocity_scale * mcmd->velocity_delta,
+                                         mcmd->num_vertices,
+                                         (float *)mcmd->vertex_velocities);
+
+  if (num_read == -1 || num_read != mcmd->num_vertices) {
+    return false;
+  }
+
+  return true;
+#  else
+  return false;
+  UNUSED_VARS(ptr);
+#  endif
 }
 
 #else
@@ -5667,7 +5712,17 @@ static void rna_def_modifier_ocean(BlenderRNA *brna)
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_range(prop, 1, 1024);
   RNA_def_property_ui_range(prop, 1, 32, 1, -1);
-  RNA_def_property_ui_text(prop, "Resolution", "Resolution of the generated surface");
+  RNA_def_property_ui_text(
+      prop, "Render Resolution", "Resolution of the generated surface for rendering and baking");
+  RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
+
+  prop = RNA_def_property(srna, "viewport_resolution", PROP_INT, PROP_UNSIGNED);
+  RNA_def_property_int_sdna(prop, NULL, "viewport_resolution");
+  RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+  RNA_def_property_range(prop, 1, 1024);
+  RNA_def_property_ui_range(prop, 1, 32, 1, -1);
+  RNA_def_property_ui_text(
+      prop, "Viewport Resolution", "Viewport resolution of the generated surface");
   RNA_def_property_update(prop, 0, "rna_OceanModifier_init_update");
 
   prop = RNA_def_property(srna, "spatial_size", PROP_INT, PROP_NONE);
@@ -5905,7 +5960,7 @@ static void rna_def_modifier_triangulate(BlenderRNA *brna)
 static void rna_def_modifier_meshcache(BlenderRNA *brna)
 {
   static const EnumPropertyItem prop_format_type_items[] = {
-      {MOD_MESHCACHE_TYPE_MDD, "MDD", 0, "MDD ", ""},
+      {MOD_MESHCACHE_TYPE_MDD, "MDD", 0, "MDD", ""},
       {MOD_MESHCACHE_TYPE_PC2, "PC2", 0, "PC2", ""},
       {0, NULL, 0, NULL, NULL},
   };
@@ -5926,7 +5981,7 @@ static void rna_def_modifier_meshcache(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem prop_interpolation_type_items[] = {
-      {MOD_MESHCACHE_INTERP_NONE, "NONE", 0, "None ", ""},
+      {MOD_MESHCACHE_INTERP_NONE, "NONE", 0, "None", ""},
       {MOD_MESHCACHE_INTERP_LINEAR, "LINEAR", 0, "Linear", ""},
       /* for cardinal we'd need to read 4x cache's */
       // {MOD_MESHCACHE_INTERP_CARDINAL, "CARDINAL", 0, "Cardinal", ""},
@@ -6066,6 +6121,22 @@ static void rna_def_modifier_meshcache(BlenderRNA *brna)
   RNA_define_lib_overridable(false);
 }
 
+static void rna_def_mesh_cache_velocities(BlenderRNA *brna)
+{
+  StructRNA *srna;
+  PropertyRNA *prop;
+
+  srna = RNA_def_struct(brna, "MeshCacheVertexVelocity", NULL);
+  RNA_def_struct_ui_text(srna, "Mesh Cache Velocity", "Velocity attribute of an Alembic mesh");
+  RNA_def_struct_ui_icon(srna, ICON_VERTEXSEL);
+
+  prop = RNA_def_property(srna, "velocity", PROP_FLOAT, PROP_VELOCITY);
+  RNA_def_property_array(prop, 3);
+  RNA_def_property_float_sdna(prop, NULL, "vel");
+  RNA_def_property_ui_text(prop, "Velocity", "");
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+}
+
 static void rna_def_modifier_meshseqcache(BlenderRNA *brna)
 {
   StructRNA *srna;
@@ -6107,6 +6178,35 @@ static void rna_def_modifier_meshseqcache(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Read Data", "Data to read from the cache");
 
   RNA_def_property_update(prop, 0, "rna_Modifier_update");
+
+  prop = RNA_def_property(srna, "velocity_scale", PROP_FLOAT, PROP_NONE);
+  RNA_def_property_float_sdna(prop, NULL, "velocity_scale");
+  RNA_def_property_range(prop, 0.0f, FLT_MAX);
+  RNA_def_property_ui_text(
+      prop,
+      "Velocity Scale",
+      "Multiplier used to control the magnitude of the velocity vectors for time effects");
+  RNA_def_property_update(prop, 0, "rna_Modifier_update");
+
+  /* -------------------------- Velocity Vectors -------------------------- */
+
+  prop = RNA_def_property(srna, "vertex_velocities", PROP_COLLECTION, PROP_NONE);
+  RNA_def_property_collection_sdna(prop, NULL, "vertex_velocities", "num_vertices");
+  RNA_def_property_struct_type(prop, "MeshCacheVertexVelocity");
+  RNA_def_property_ui_text(
+      prop, "Fluid Mesh Vertices", "Vertices of the fluid mesh generated by simulation");
+
+  rna_def_mesh_cache_velocities(brna);
+
+  prop = RNA_def_property(srna, "has_velocity", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Has Velocity Cache", "");
+  RNA_def_property_boolean_funcs(prop, "rna_MeshSequenceCacheModifier_has_velocity_get", NULL);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
+  prop = RNA_def_property(srna, "read_velocity", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_ui_text(prop, "Read Velocity Cache", "");
+  RNA_def_property_boolean_funcs(prop, "rna_MeshSequenceCacheModifier_read_velocity_get", NULL);
+  RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
   RNA_define_lib_overridable(false);
 }

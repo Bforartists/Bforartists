@@ -94,7 +94,7 @@ def upload_review_thread(url, reviews, headers):
 
 
 def get_rating(asset_id):
-    #this function isn't used anywhere,should probably get removed.
+    # this function isn't used anywhere,should probably get removed.
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
     headers = utils.get_headers(api_key)
@@ -114,8 +114,13 @@ def update_ratings_quality(self, context):
 
     headers = utils.get_headers(api_key)
     asset = self.id_data
-    bkit_ratings = asset.bkit_ratings
-    url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+    if asset:
+        bkit_ratings = asset.bkit_ratings
+        url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+    else:
+        # this part is for operator rating:
+        bkit_ratings = self
+        url = paths.get_api_url() + f'assets/{self.asset_id}/rating/'
 
     if bkit_ratings.rating_quality > 0.1:
         ratings = [('quality', bkit_ratings.rating_quality)]
@@ -127,13 +132,17 @@ def update_ratings_work_hours(self, context):
     api_key = user_preferences.api_key
     headers = utils.get_headers(api_key)
     asset = self.id_data
-    bkit_ratings = asset.bkit_ratings
-    url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+    if asset:
+        bkit_ratings = asset.bkit_ratings
+        url = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
+    else:
+        # this part is for operator rating:
+        bkit_ratings = self
+        url = paths.get_api_url() + f'assets/{self.asset_id}/rating/'
 
     if bkit_ratings.rating_work_hours > 0.05:
         ratings = [('working_hours', round(bkit_ratings.rating_work_hours, 1))]
         tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=1, only_last=True)
-
 
 
 def upload_rating(asset):
@@ -173,6 +182,7 @@ def upload_rating(asset):
     if bkit_ratings.rating_quality > 0.1 and bkit_ratings.rating_work_hours > 0.1:
         s['assets rated'][asset['asset_data']['assetBaseId']] = True
 
+
 def get_assets_for_rating():
     '''
     gets assets from scene that could/should be rated by the user.
@@ -190,26 +200,6 @@ def get_assets_for_rating():
         if b.get('asset_data'):
             assets.append(b)
     return assets
-
-# class StarRatingOperator(bpy.types.Operator):
-#     """Tooltip"""
-#     bl_idname = "object.blenderkit_rating"
-#     bl_label = "Rate the Asset Quality"
-#     bl_options = {'REGISTER', 'INTERNAL'}
-#
-#     property_name: StringProperty(
-#         name="Rating Property",
-#         description="Property that is rated",
-#         default="",
-#     )
-#
-#     rating: IntProperty(name="Rating", description="rating value", default=1, min=1, max=10)
-#
-#     def execute(self, context):
-#         asset = utils.get_active_asset()
-#         props = asset.bkit_ratings
-#         props.rating_quality = self.rating
-#         return {'FINISHED'}
 
 
 asset_types = (
@@ -254,43 +244,215 @@ class UploadRatingOperator(bpy.types.Operator):
         return wm.invoke_props_dialog(self)
 
 
+def stars_enum_callback(self, context):
+    '''regenerates the enum property used to display rating stars, so that there are filled/empty stars correctly.'''
+    items = []
+    for a in range(0, 10):
+        if self.rating_quality < a + 1:
+            icon = 'SOLO_OFF'
+        else:
+            icon = 'SOLO_ON'
+        # has to have something before the number in the value, otherwise fails on registration.
+        items.append((f'{a + 1}', f'{a + 1}', '', icon, a + 1))
+    return items
 
-def draw_rating(layout, props, prop_name, name):
-    # layout.label(name)
 
-    row = layout.row(align=True)
-    # test method - 10 booleans.
-    # propsx = bpy.context.active_object.bkit_ratings
-    # for a in range(0, 10):
-    #     pn = f'rq{str(a+1).zfill(2)}'
-    #     if eval('propsx.' + pn) == False:
-    #         icon = 'SOLO_OFF'
-    #     else:
-    #         icon = 'SOLO_ON'
-    #     row.prop(propsx, pn, icon=icon, icon_only=True)
-    # print(dir(props))
-    # new best method - enum with an items callback. ('animates' the stars as item icons)
-    row.prop(props, 'rating_quality_ui', expand=True, icon_only=True, emboss = False)
-    # original (operator) method:
-    # row = layout.row(align=True)
-    # for a in range(0, 10):
-    #     if eval('props.' + prop_name) < a + 1:
-    #         icon = 'SOLO_OFF'
-    #     else:
-    #         icon = 'SOLO_ON'
-    #
-    #     op = row.operator('object.blenderkit_rating', icon=icon, emboss=False, text='')
-    #     op.property_name = prop_name
-    #     op.rating = a + 1
+def update_quality_ui(self, context):
+    '''Converts the _ui the enum into actual quality number.'''
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.api_key == '':
+        # ui_panels.draw_not_logged_in(self, message='Please login/signup to rate assets.')
+        # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_login_menu')
+        # return
+        bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
+                                    message='Please login/signup to rate assets. Clicking OK takes you to web login.')
+        self.rating_quality_ui = '0'
+    self.rating_quality = int(self.rating_quality_ui)
 
+
+def update_ratings_work_hours_ui(self, context):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.api_key == '':
+        # ui_panels.draw_not_logged_in(self, message='Please login/signup to rate assets.')
+        # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_login_menu')
+        # return
+        bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
+                                    message='Please login/signup to rate assets. Clicking OK takes you to web login.')
+        self.rating_work_hours_ui = '0'
+    self.rating_work_hours = float(self.rating_work_hours_ui)
+
+def update_ratings_work_hours_ui_1_5(self, context):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.api_key == '':
+        # ui_panels.draw_not_logged_in(self, message='Please login/signup to rate assets.')
+        # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_login_menu')
+        # return
+        bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
+                                    message='Please login/signup to rate assets. Clicking OK takes you to web login.')
+        self.update_ratings_work_hours_ui_1_5 = '0'
+    self.rating_work_hours = float(self.update_ratings_work_hours_ui_1_5)
+
+
+
+class FastRateMenu(Operator):
+    """Fast rating of the assets directly in the asset bar - without need to download assets."""
+    bl_idname = "wm.blenderkit_menu_rating_upload"
+    bl_label = "Send Rating"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    message: StringProperty(
+        name="message",
+        description="message",
+        default="Rating asset")
+
+    asset_id: StringProperty(
+        name="Asset Base Id",
+        description="Unique name of the asset (hidden)",
+        default="")
+
+    asset_type: StringProperty(
+        name="Asset type",
+        description="asset type",
+        default="")
+
+    rating_quality: IntProperty(name="Quality",
+                                description="quality of the material",
+                                default=0,
+                                min=-1, max=10,
+                                update=update_ratings_quality)
+
+    # the following enum is only to ease interaction - enums support 'drag over' and enable to draw the stars easily.
+    rating_quality_ui: EnumProperty(name='rating_quality_ui',
+                                    items=stars_enum_callback,
+                                    description='Rating stars 0 - 10',
+                                    default=None,
+                                    update=update_quality_ui,
+                                    )
+
+    rating_work_hours: FloatProperty(name="Work Hours",
+                                     description="How many hours did this work take?",
+                                     default=0.00,
+                                     min=0.0, max=1000, update=update_ratings_work_hours
+                                     )
+
+    rating_work_hours_ui: EnumProperty(name="Work Hours",
+                                       description="How many hours did this work take?",
+                                       items=[('0', '0', ''),
+                                              ('.5', '0.5', ''),
+                                              ('1', '1', ''),
+                                              ('2', '2', ''),
+                                              ('3', '3', ''),
+                                              ('4', '4', ''),
+                                              ('5', '5', ''),
+                                              ('10', '10', ''),
+                                              ('15', '15', ''),
+                                              ('20', '20', ''),
+                                              ('50', '50', ''),
+                                              ('100', '100', ''),
+                                              ('150', '100', ''),
+                                              ('200', '100', ''),
+                                              ('250', '100', ''),
+                                              ],
+                                       default='0', update=update_ratings_work_hours_ui
+                                       )
+
+    rating_work_hours_ui_1_5: EnumProperty(name="Work Hours",
+                                           description="How many hours did this work take?",
+                                           items=[('0', '0', ''),
+                                                  ('.2', '0.2', ''),
+                                                  ('.5', '0.5', ''),
+                                                  ('1', '1', ''),
+                                                  ('2', '2', ''),
+                                                  ('3', '3', ''),
+                                                  ('4', '4', ''),
+                                                  ('5', '5', '')
+                                                  ],
+                                           default='0', update=update_ratings_work_hours_ui_1_5
+                                           )
+
+    @classmethod
+    def poll(cls, context):
+        scene = bpy.context.scene
+        ui_props = scene.blenderkitUI
+        return ui_props.active_index > -1
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+
+        # layout.template_icon_view(bkit_ratings, property, show_labels=False, scale=6.0, scale_popup=5.0)
+        col.label(text=self.message)
+        row = col.row()
+        row.prop(self, 'rating_quality_ui', expand=True, icon_only=True, emboss=False)
+        col.separator()
+        col.prop(self, 'rating_work_hours')
+        row = col.row()
+        if self.asset_type == 'model':
+            row.prop(self, 'rating_work_hours_ui', expand=True, icon_only=False, emboss=True)
+        else:
+            row.prop(self, 'rating_work_hours_ui_1_5', expand=True, icon_only=False, emboss=True)
+
+    def execute(self, context):
+        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        api_key = user_preferences.api_key
+        headers = utils.get_headers(api_key)
+
+        url = paths.get_api_url() + f'assets/{self.asset_id}/rating/'
+
+        rtgs = [
+
+        ]
+
+        self.rating_quality = int(self.rating_quality_ui)
+
+        if self.rating_quality > 0.1:
+            rtgs.append(('quality', self.rating_quality))
+        if self.rating_work_hours > 0.1:
+            rtgs.append(('working_hours', round(self.rating_work_hours, 1)))
+
+        thread = threading.Thread(target=upload_rating_thread, args=(url, rtgs, headers))
+        thread.start()
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        scene = bpy.context.scene
+        ui_props = scene.blenderkitUI
+        if ui_props.active_index > -1:
+            sr = bpy.context.scene['search results']
+            asset_data = dict(sr[ui_props.active_index])
+            self.asset_id = asset_data['id']
+            self.asset_type = asset_data['assetType']
+            self.message = f"Rate asset {asset_data['name']}"
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+
+def rating_menu_draw(self, context):
+    layout = self.layout
+
+    ui_props = context.scene.blenderkitUI
+    sr = bpy.context.scene['search results orig']
+
+    asset_search_index = ui_props.active_index
+    if asset_search_index > -1:
+        asset_data = dict(sr['results'][asset_search_index])
+
+    col = layout.column()
+    layout.label(text='Admin rating Tools:')
+    col.operator_context = 'INVOKE_DEFAULT'
+
+    op = col.operator('wm.blenderkit_menu_rating_upload', text='Fast rate')
+    op.asset_id = asset_data['id']
+    op.asset_type = asset_data['assetType']
 
 def register_ratings():
-    pass;
-    # bpy.utils.register_class(StarRatingOperator)
     bpy.utils.register_class(UploadRatingOperator)
+    bpy.utils.register_class(FastRateMenu)
+    # bpy.types.OBJECT_MT_blenderkit_asset_menu.append(rating_menu_draw)
 
 
 def unregister_ratings():
     pass;
     # bpy.utils.unregister_class(StarRatingOperator)
     bpy.utils.unregister_class(UploadRatingOperator)
+    bpy.utils.unregister_class(FastRateMenu)

@@ -21,8 +21,7 @@
  * \ingroup gpu
  */
 
-#ifndef __GPU_VIEWPORT_H__
-#define __GPU_VIEWPORT_H__
+#pragma once
 
 #include <stdbool.h>
 
@@ -40,6 +39,8 @@ extern "C" {
 #define GLA_PIXEL_OFS 0.375f
 
 typedef struct GPUViewport GPUViewport;
+
+struct GPUFrameBuffer;
 
 /* Contains memory pools information */
 typedef struct ViewportMemoryPool {
@@ -151,8 +152,9 @@ GPUTexture *GPU_viewport_texture_pool_query(
 bool GPU_viewport_engines_data_validate(GPUViewport *viewport, void **engine_handle_array);
 void GPU_viewport_cache_release(GPUViewport *viewport);
 
+struct GPUFrameBuffer *GPU_viewport_framebuffer_default_get(GPUViewport *viewport);
+struct GPUFrameBuffer *GPU_viewport_framebuffer_overlay_get(GPUViewport *viewport);
+
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // __GPU_VIEWPORT_H__
