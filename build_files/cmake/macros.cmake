@@ -814,6 +814,10 @@ function(get_blender_version)
   # - BLENDER_VERSION_MINOR
   # - BLENDER_VERSION_PATCH
   # - BLENDER_VERSION_CYCLE (alpha, beta, rc, release)
+  
+  # - BFORARTISTS_VERSION_MAJOR
+  # - BFORARTISTS_VERSION_MINOR
+  # - BFORARTISTS_VERSION_PATCH
 
   # So cmake depends on BKE_blender.h, beware of inf-loops!
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/blender/blenkernel/BKE_blender_version.h
@@ -846,6 +850,34 @@ function(get_blender_version)
   set(BLENDER_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
   set(BLENDER_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
   set(BLENDER_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
+  
+  file(STRINGS ${CMAKE_SOURCE_DIR}/source/blender/blenkernel/BKE_blender_version.h _contents REGEX "^#define[ \t]+BFORARTISTS_.*$")
+
+  string(REGEX REPLACE ".*#define[ \t]+BFORARTISTS_VERSION[ \t]+([0-9]+).*" "\\1" _out_version "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+BFORARTISTS_VERSION_PATCH[ \t]+([0-9]+).*" "\\1" _out_version_patch "${_contents}")
+  string(REGEX REPLACE ".*#define[ \t]+BFORARTISTS_VERSION_CYCLE[ \t]+([a-z]+).*" "\\1" _out_version_cycle "${_contents}")
+  
+  if(NOT ${_out_version} MATCHES "[0-9]+")
+    message(FATAL_ERROR "Version parsing failed for BFORARTISTS_VERSION")
+  endif()
+
+  if(NOT ${_out_version_patch} MATCHES "[0-9]+")
+    message(FATAL_ERROR "Version parsing failed for BFORARTISTS_VERSION_PATCH")
+  endif()
+
+  if(NOT ${_out_version_cycle} MATCHES "[a-z]+")
+    message(FATAL_ERROR "Version parsing failed for BFORARTISTS_VERSION_CYCLE")
+  endif()
+
+  math(EXPR _out_version_major "${_out_version} / 10")
+  math(EXPR _out_version_minor "${_out_version} % 10")
+
+  # output vars
+  set(BFORARTISTS_VERSION "${_out_version_major}.${_out_version_minor}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_MAJOR "${_out_version_major}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
+  set(BFORARTISTS_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
 
 endfunction()
 
