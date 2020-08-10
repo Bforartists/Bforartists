@@ -235,7 +235,7 @@ GHOST_WindowX11::GHOST_WindowX11(GHOST_SystemX11 *system,
       m_empty_cursor(None),
       m_custom_cursor(None),
       m_visible_cursor(None),
-      m_taskbar("blender.desktop"),
+      m_taskbar("bforartists.desktop"),
 #ifdef WITH_XDND
       m_dropTarget(NULL),
 #endif
