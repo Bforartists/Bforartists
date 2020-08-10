@@ -1,11 +1,11 @@
-name: blender
-summary: Blender is the free and open source 3D creation suite.
+name: bforartists
+summary: Bforartists is the free and open source 3D creation suite.
 description: |
-    Blender is the free and open source 3D creation suite. It supports the
+    Bforartists is the free and open source 3D creation suite. It supports the
     entirety of the 3D pipeline—modeling, rigging, animation, simulation,
     rendering, compositing and motion tracking, and video editing.
 
-    Blender is a public project, made by hundreds of people from around the
+    Bforartists is a public project, made by hundreds of people from around the
     world; by studios and individual artists, professionals and hobbyists,
     scientists, students, VFX experts, animators, game artists, modders, and
     the list goes on.
@@ -15,7 +15,7 @@ description: |
            stable - Latest stable release.
         candidate - Test builds for the upcoming stable release.
 
-icon: ../icons/scalable/apps/blender.svg
+icon: ../icons/scalable/apps/bforartists.svg
 
 passthrough:
     license: GPL-3.0
@@ -23,9 +23,9 @@ passthrough:
 confinement: classic
 
 apps:
-    blender:
-        command: ./blender-wrapper
-        desktop: ./blender.desktop
+    bforartists:
+        command: ./bforartists-wrapper
+        desktop: ./bforartists.desktop
 
 version: '@VERSION@'
 grade: @GRADE@
@@ -37,7 +37,7 @@ parts:
         build-attributes: [keep-execstack, no-patchelf]
         override-build: |
             snapcraftctl build
-            sed -i 's|Icon=blender|Icon=${SNAP}/blender.svg|' ${SNAPCRAFT_PART_INSTALL}/blender.desktop
+            sed -i 's|Icon=bforartists|Icon=${SNAP}/bforartists.svg|' ${SNAPCRAFT_PART_INSTALL}/bforartists.desktop
         stage-packages:
             - libxcb1
             - libxext6
@@ -50,4 +50,4 @@ parts:
         plugin: copy
         source: .
         files:
-            blender-wrapper: blender-wrapper
+            bforartists-wrapper: bforartists-wrapper
