@@ -171,6 +171,7 @@ class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
 
                 if surface.surface_format != 'VERTEX':
                     col.prop(surface, "image_resolution")
+                col.use_property_split = False
                 col.prop(surface, "use_antialiasing")
 
                 col = flow.column(align=True)
@@ -199,8 +200,15 @@ class PHYSICS_PT_dynamic_paint_settings(PhysicButtonsPanel, Panel):
 
             col = flow.column()
             col.prop(brush, "paint_wetness", text="Wetness", slider=True)
-            col.prop(brush, "use_absolute_alpha")
-            col.prop(brush, "use_paint_erase")
+
+            row = col.row()
+            row.use_property_split = False
+            row.prop(brush, "use_absolute_alpha")
+            row.prop_decorator(brush, "use_absolute_alpha")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(brush, "use_paint_erase")
+            row.prop_decorator(brush, "use_paint_erase")
 
 
 class PHYSICS_PT_dp_surface_canvas(PhysicButtonsPanel, Panel):
@@ -225,8 +233,6 @@ class PHYSICS_PT_dp_surface_canvas(PhysicButtonsPanel, Panel):
 
         layout.prop(surface, "surface_type")
 
-        layout.separator()
-
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         # per type settings
@@ -237,12 +243,19 @@ class PHYSICS_PT_dp_surface_canvas(PhysicButtonsPanel, Panel):
                 col.prop(surface, "depth_clamp")
                 col.prop(surface, "displace_factor")
 
+            col.use_property_split = False
             col.prop(surface, "use_incremental_displace")
+
             col.separator()
 
         elif surface_type == 'WAVE':
             col = flow.column()
-            col.prop(surface, "use_wave_open_border")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(surface, "use_wave_open_border")
+            row.prop_decorator(surface, "use_wave_open_border")
+
+
             col.prop(surface, "wave_timescale")
             col.prop(surface, "wave_speed")
 
@@ -298,6 +311,7 @@ class PHYSICS_PT_dp_surface_canvas_paint_dry(PhysicButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(surface, "color_dry_threshold", text="Color")
+        col.use_property_split = False
         col.prop(surface, "use_dry_log", text="Slow")
 
 
@@ -335,6 +349,7 @@ class PHYSICS_PT_dp_surface_canvas_paint_dissolve(PhysicButtonsPanel, Panel):
         col.prop(surface, "dissolve_speed", text="Time")
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(surface, "use_dissolve_log", text="Slow")
 
 
@@ -726,14 +741,24 @@ class PHYSICS_PT_dp_brush_source(PhysicButtonsPanel, Panel):
             col.prop(brush, "proximity_falloff")
 
             if brush.paint_source == 'VOLUME_DISTANCE':
-                col.prop(brush, "invert_proximity")
 
                 col = flow.column()
-                col.prop(brush, "use_negative_volume")
+
+                row = col.row()
+                row.use_property_split = False
+                row.prop(brush, "invert_proximity")
+                row.prop_decorator(brush, "invert_proximity")
+                row = col.row()
+                row.use_property_split = False
+                row.prop(brush, "use_negative_volume")
+                row.prop_decorator(brush, "use_negative_volume")
+
 
             if brush.paint_source in {'DISTANCE', 'VOLUME_DISTANCE'}:
                 col = flow.column() if brush.paint_source != 'VOLUME_DISTANCE' else col.column()
+                col.use_property_split = False
                 col.prop(brush, "use_proximity_project")
+                col.use_property_split = True
 
                 sub = col.column()
                 sub.active = brush.use_proximity_project
@@ -760,7 +785,10 @@ class PHYSICS_PT_dp_brush_source_color_ramp(PhysicButtonsPanel, Panel):
         layout.use_property_split = True
 
         brush = context.dynamic_paint.brush_settings
-        layout.prop(brush, "use_proximity_ramp_alpha", text="Only Use Alpha")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(brush, "use_proximity_ramp_alpha", text="Only Use Alpha")
+        row.prop_decorator(brush, "use_proximity_ramp_alpha")
 
         layout.use_property_split = False
         layout.template_color_ramp(brush, "paint_ramp", expand=True)
@@ -786,15 +814,26 @@ class PHYSICS_PT_dp_brush_velocity(PhysicButtonsPanel, Panel):
 
         brush = context.dynamic_paint.brush_settings
 
-        col = flow.column()
-        col.prop(brush, "use_velocity_alpha")
-        col.prop(brush, "use_velocity_color")
+        col = layout.column(align = True)
 
-        col = flow.column()
-        col.prop(brush, "use_velocity_depth")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(brush, "use_velocity_alpha")
+        row.prop_decorator(brush, "use_velocity_alpha")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(brush, "use_velocity_color")
+        row.prop_decorator(brush, "use_velocity_color")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(brush, "use_velocity_depth", text = "Multiply Depth")
+        row.prop_decorator(brush, "use_velocity_depth")
+
         sub = col.column()
-        sub.active = (brush.use_velocity_alpha or brush.use_velocity_color or brush.use_velocity_depth)
-        sub.prop(brush, "velocity_max")
+        if (brush.use_velocity_alpha or brush.use_velocity_color or brush.use_velocity_depth):
+            row = sub.row()
+            row.separator()
+            row.prop(brush, "velocity_max", text = "Max Velocity")
 
 
 class PHYSICS_PT_dp_brush_velocity_color_ramp(PhysicButtonsPanel, Panel):
