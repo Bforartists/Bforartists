@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-    <id>org.blender.Blender</id>
-    <launchable type="desktop-id">blender.desktop</launchable>
-    <name>Blender</name>
+    <id>org.bforartists.Bforartists</id>
+    <launchable type="desktop-id">bforartists.desktop</launchable>
+    <name>Bforartists</name>
     <summary>Free and open source 3D creation suite</summary>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0</project_license>
     <description>
         <p>
-            Blender is the free and open source 3D creation suite. It supports
+            Bforartists is the free and open source 3D creation suite. It supports
             the entirety of the 3D pipeline — modeling, rigging, animation,
             simulation, rendering, compositing, motion tracking, and video
             editing.
         </p>
 
         <p>
-            Blender is a public project, made by hundreds of people from around the
+            Bforartists is a public project, made by hundreds of people from around the
             world; by studios and individual artists, professionals and hobbyists,
             scientists, students, VFX experts, animators, game artists, modders, and
             the list goes on.
         </p>
     </description>
-    <url type="homepage">https://www.blender.org</url>
+    <url type="homepage">https://www.bforartists.de</url>
     <url type="help">https://www.blender.org/support/</url>
     <url type="bugtracker">https://developer.blender.org</url>
     <url type="donation">https://www.blender.org/foundation/donation-payment/</url>
