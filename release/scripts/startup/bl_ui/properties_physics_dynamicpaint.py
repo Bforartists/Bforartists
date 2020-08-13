@@ -415,7 +415,9 @@ class PHYSICS_PT_dp_canvas_output(PhysicButtonsPanel, Panel):
 
             col = flow.column()
             col.prop(surface, "image_fileformat")
+            col.use_property_split = False
             col.prop(surface, "use_premultiply", text="Premultiply Alpha")
+            col.use_property_split = True
 
             if surface_type != 'PAINT':
                 col = col.column()
