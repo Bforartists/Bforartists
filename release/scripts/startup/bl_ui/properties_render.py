@@ -301,7 +301,7 @@ class RENDER_PT_eevee_volumetric_shadows(RenderButtonsPanel, Panel):
         layout.prop(props, "volumetric_shadow_samples", text="Samples")
 
 # bfa - volumetric rendering patch from LordLoki
- class RENDER_PT_eevee_volumetric_blending(RenderButtonsPanel, Panel):
+class RENDER_PT_eevee_volumetric_blending(RenderButtonsPanel, Panel):
     bl_label = "Volumetric Blending"
     bl_parent_id = "RENDER_PT_eevee_volumetric"
     COMPAT_ENGINES = {'BLENDER_EEVEE'}
