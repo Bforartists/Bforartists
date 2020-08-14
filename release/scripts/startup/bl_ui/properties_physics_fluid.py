@@ -244,7 +244,10 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col = grid.column()
             col.prop(flow, "flow_behavior", expand=False)
             if flow.flow_behavior in {'INFLOW', 'OUTFLOW'}:
-                col.prop(flow, "use_inflow")
+                row = col.row()
+                row.use_property_split = False
+                row.prop(flow, "use_inflow")
+                row.prop_decorator(flow, "use_inflow")
 
             col.prop(flow, "subframes", text="Sampling Substeps")
 
@@ -254,7 +257,9 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
                     col.prop(flow, "smoke_color", text="Smoke Color")
 
                 col = grid.column(align=True)
+                col.use_property_split = False
                 col.prop(flow, "use_absolute", text="Absolute Density")
+                col.use_property_split = True
 
                 if flow.flow_type in {'SMOKE', 'BOTH'}:
                     col.prop(flow, "temperature", text="Initial Temperature")
@@ -279,9 +284,14 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col.prop(effector_settings, "surface_distance", text="Surface Thickness")
 
             col = grid.column()
-
-            col.prop(effector_settings, "use_effector", text="Use Effector")
-            col.prop(effector_settings, "use_plane_init", text="Is Planar")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(effector_settings, "use_effector", text="Use Effector")
+            row.prop_decorator(effector_settings, "use_effector")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(effector_settings, "use_plane_init", text="Is Planar")
+            row.prop_decorator(effector_settings, "use_plane_init")
 
             if effector_settings.effector_type == 'GUIDE':
                 col.prop(effector_settings, "velocity_factor", text="Velocity Factor")
@@ -538,14 +548,22 @@ class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
 
         col = grid.column()
         if flow.flow_source == 'MESH':
-            col.prop(flow, "use_plane_init", text="Is Planar")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(flow, "use_plane_init", text="Is Planar")
+            row.prop_decorator(flow, "use_plane_init")
+
             col.prop(flow, "surface_distance", text="Surface Emission")
             if flow.flow_type in {'SMOKE', 'BOTH', 'FIRE'}:
                 col = grid.column()
                 col.prop(flow, "volume_density", text="Volume Emission")
 
         if flow.flow_source == 'PARTICLES':
-            col.prop(flow, "use_particle_size", text="Set Size")
+            row = col.row()
+            row.use_property_split = False
+            row.prop(flow, "use_particle_size", text="Set Size")
+            row.prop_decorator(flow, "use_particle_size")
+
             sub = col.column()
             sub.active = flow.use_particle_size
             sub.prop(flow, "particle_size")
