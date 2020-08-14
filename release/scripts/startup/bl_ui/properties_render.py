@@ -147,7 +147,7 @@ class RENDER_PT_eevee_ambient_occlusion(RenderButtonsPanel, Panel):
         col.prop(props, "gtao_distance")
         col.prop(props, "gtao_factor")
         col.prop(props, "gtao_quality")
-        
+
         col.use_property_split = False
         col.prop(props, "use_gtao_bent_normals")
         col.prop(props, "use_gtao_bounce")
@@ -299,7 +299,8 @@ class RENDER_PT_eevee_volumetric_shadows(RenderButtonsPanel, Panel):
 
         layout.active = props.use_volumetric_shadows
         layout.prop(props, "volumetric_shadow_samples", text="Samples")
- 
+
+# bfa - volumetric rendering patch from LordLoki
  class RENDER_PT_eevee_volumetric_blending(RenderButtonsPanel, Panel):
     bl_label = "Volumetric Blending"
     bl_parent_id = "RENDER_PT_eevee_volumetric"
@@ -442,10 +443,10 @@ class RENDER_PT_eevee_indirect_lighting(RenderButtonsPanel, Panel):
         cache_info = scene.eevee.gi_cache_info
         if cache_info:
             col.label(text=cache_info)
-            
+
         col.use_property_split = False
         col.prop(props, "gi_auto_bake")
-        
+
         col.use_property_split = True
         col.prop(props, "gi_diffuse_bounces")
         col.prop(props, "gi_cubemap_resolution")
@@ -547,7 +548,7 @@ class RENDER_PT_eevee_performance(RenderButtonsPanel, Panel):
         rd = scene.render
 
         layout.use_property_split = False
-        
+
         row = layout.row()
         row.prop(rd, "use_high_quality_normals")
         row.prop_decorator(rd, "use_high_quality_normals")
