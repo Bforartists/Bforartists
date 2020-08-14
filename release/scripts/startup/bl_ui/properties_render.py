@@ -299,6 +299,18 @@ class RENDER_PT_eevee_volumetric_shadows(RenderButtonsPanel, Panel):
 
         layout.active = props.use_volumetric_shadows
         layout.prop(props, "volumetric_shadow_samples", text="Samples")
+ 
+ class RENDER_PT_eevee_volumetric_blending(RenderButtonsPanel, Panel):
+    bl_label = "Volumetric Blending"
+    bl_parent_id = "RENDER_PT_eevee_volumetric"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    def draw_header(self, context):
+        scene = context.scene
+        props = scene.eevee
+        self.layout.prop(props, "use_volumetric_blending", text="")
+    def draw(self, context):
+        pass
 
 
 class RENDER_PT_eevee_subsurface_scattering(RenderButtonsPanel, Panel):
@@ -708,6 +720,7 @@ classes = (
     RENDER_PT_eevee_volumetric,
     RENDER_PT_eevee_volumetric_lighting,
     RENDER_PT_eevee_volumetric_shadows,
+    RENDER_PT_eevee_volumetric_blending,
     RENDER_PT_eevee_performance,
     RENDER_PT_eevee_hair,
     RENDER_PT_eevee_shadows,
