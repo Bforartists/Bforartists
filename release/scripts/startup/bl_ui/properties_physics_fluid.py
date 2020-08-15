@@ -826,7 +826,9 @@ class PHYSICS_PT_mesh(PhysicButtonsPanel, Panel):
         col.prop(domain, "mesh_particle_radius", text="Particle Radius")
 
         col = flow.column()
+        col.use_property_split = False
         col.prop(domain, "use_speed_vectors", text="Use Speed Vectors")
+        col.use_property_split = True
 
         col.separator()
         col.prop(domain, "mesh_generator", text="Mesh Generator")
