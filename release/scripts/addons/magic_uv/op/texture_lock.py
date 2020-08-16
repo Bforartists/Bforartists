@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 import math
 from math import atan2, cos, sqrt, sin, fabs
@@ -435,7 +435,7 @@ class MUV_OT_TextureLock_Intr(bpy.types.Operator):
             bm.faces.ensure_lookup_table()
 
         prev = set(self.__intr_verts)
-        now = set([v.index for v in bm.verts if v.select])
+        now = {v.index for v in bm.verts if v.select}
 
         return prev != now
 

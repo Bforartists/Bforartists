@@ -68,7 +68,7 @@ typedef struct BrushGpencilSettings {
   short draw_subdivide;
   /** Layers used for fill. */
   short fill_layer_mode;
-  char _pad[2];
+  short fill_direction;
 
   /** Factor for transparency. */
   float fill_threshold;
@@ -379,6 +379,21 @@ typedef enum eBrushSlideDeformType {
   BRUSH_SLIDE_DEFORM_EXPAND = 2,
 } eBrushSlideDeformType;
 
+typedef enum eBrushBoundaryDeformType {
+  BRUSH_BOUNDARY_DEFORM_BEND = 0,
+  BRUSH_BOUNDARY_DEFORM_EXPAND = 1,
+  BRUSH_BOUNDARY_DEFORM_INFLATE = 2,
+  BRUSH_BOUNDARY_DEFORM_GRAB = 3,
+  BRUSH_BOUNDARY_DEFORM_TWIST = 4,
+} eBrushBushBoundaryDeformType;
+
+typedef enum eBrushBoundaryFalloffType {
+  BRUSH_BOUNDARY_FALLOFF_CONSTANT = 0,
+  BRUSH_BOUNDARY_FALLOFF_RADIUS = 1,
+  BRUSH_BOUNDARY_FALLOFF_LOOP = 2,
+  BRUSH_BOUNDARY_FALLOFF_LOOP_INVERT = 3,
+} eBrushBoundaryFalloffType;
+
 /* Gpencilsettings.Vertex_mode */
 typedef enum eGp_Vertex_Mode {
   /* Affect to Stroke only. */
@@ -524,7 +539,7 @@ typedef struct Brush {
   /** Source for fill tool color gradient application. */
   char gradient_fill_mode;
 
-  char _pad0[5];
+  char _pad0[1];
 
   /** Projection shape (sphere, circle). */
   char falloff_shape;
@@ -585,6 +600,11 @@ typedef struct Brush {
   int pose_smooth_iterations;
   int pose_ik_segments;
   int pose_origin_type;
+
+  /* boundary */
+  int boundary_deform_type;
+  int boundary_falloff_type;
+  float boundary_offset;
 
   /* cloth */
   int cloth_deform_type;
@@ -798,6 +818,8 @@ typedef enum eBrushSculptTool {
   SCULPT_TOOL_DRAW_FACE_SETS = 27,
   SCULPT_TOOL_PAINT = 28,
   SCULPT_TOOL_SMEAR = 29,
+  SCULPT_TOOL_BOUNDARY = 30,
+  SCULPT_TOOL_DISPLACEMENT_ERASER = 31,
 } eBrushSculptTool;
 
 /* Brush.uv_sculpt_tool */
@@ -835,6 +857,7 @@ typedef enum eBrushUVSculptTool {
         SCULPT_TOOL_CLOTH, \
         SCULPT_TOOL_THUMB, \
         SCULPT_TOOL_LAYER, \
+        SCULPT_TOOL_DISPLACEMENT_ERASER, \
         SCULPT_TOOL_DRAW_SHARP, \
         SCULPT_TOOL_SLIDE_RELAX, \
         SCULPT_TOOL_ELASTIC_DEFORM, \
@@ -854,6 +877,7 @@ typedef enum eBrushUVSculptTool {
         SCULPT_TOOL_ROTATE, \
         SCULPT_TOOL_THUMB, \
         SCULPT_TOOL_DRAW_SHARP, \
+        SCULPT_TOOL_DISPLACEMENT_ERASER, \
         SCULPT_TOOL_SLIDE_RELAX, \
         SCULPT_TOOL_MASK) == 0)
 

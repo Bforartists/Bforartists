@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2, 12, 4),
+    "version": (2, 14, 1),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -77,6 +77,8 @@ class CollectionManagerProperties(PropertyGroup):
     show_hide_viewport: BoolProperty(default=True, name="[VV] Hide in Viewport")
     show_disable_viewport: BoolProperty(default=False, name="[DV] Disable in Viewports")
     show_render: BoolProperty(default=False, name="[RR] Disable in Renders")
+    show_holdout: BoolProperty(default=False, name="[HH] Holdout")
+    show_indirect_only: BoolProperty(default=False, name="[IO] Indirect Only")
 
     align_local_ops: BoolProperty(default=False, name="Align Local Options",
                                   description="Align local options in a column to the right")
@@ -108,9 +110,14 @@ classes = (
     operators.CMUnDisableViewportAllOperator,
     operators.CMDisableRenderOperator,
     operators.CMUnDisableRenderAllOperator,
+    operators.CMHoldoutOperator,
+    operators.CMUnHoldoutAllOperator,
+    operators.CMIndirectOnlyOperator,
+    operators.CMUnIndirectOnlyAllOperator,
     operators.CMNewCollectionOperator,
     operators.CMRemoveCollectionOperator,
     operators.CMRemoveEmptyCollectionsOperator,
+    operators.CMSelectCollectionObjectsOperator,
     operators.CMSetCollectionOperator,
     operators.CMPhantomModeOperator,
     operators.CMApplyPhantomModeOperator,

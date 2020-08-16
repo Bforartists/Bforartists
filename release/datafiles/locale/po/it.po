@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -8953,6 +8953,10 @@ msgid "Compression"
 msgstr "Compressione"
 
 
+msgid "Compression method to be used"
+msgstr "Metodo di compressione da usare"
+
+
 msgid "Zip"
 msgstr "Zip"
 
@@ -8983,10 +8987,6 @@ msgstr "Casualità"
 
 msgid "Cache Compression"
 msgstr "Compressione Cache"
-
-
-msgid "Compression method to be used"
-msgstr "Metodo di compressione da usare"
 
 
 msgid "Fast but not so effective compression"

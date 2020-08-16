@@ -20,13 +20,14 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 if "bpy" in locals():
     import importlib
     importlib.reload(align_uv)
     importlib.reload(align_uv_cursor)
+    importlib.reload(clip_uv)
     importlib.reload(copy_paste_uv)
     importlib.reload(copy_paste_uv_object)
     importlib.reload(copy_paste_uv_uvedit)
@@ -50,6 +51,7 @@ if "bpy" in locals():
 else:
     from . import align_uv
     from . import align_uv_cursor
+    from . import clip_uv
     from . import copy_paste_uv
     from . import copy_paste_uv_object
     from . import copy_paste_uv_uvedit
