@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 from enum import IntEnum
 import math
@@ -438,10 +438,8 @@ class StateNone(StateBase):
                 mouse_view.x, mouse_view.y)
             for i, p in enumerate(ctrl_points):
                 px, py = context.region.view2d.view_to_region(p.x, p.y)
-                in_cp_x = (px + cp_react_size > x and
-                           px - cp_react_size < x)
-                in_cp_y = (py + cp_react_size > y and
-                           py - cp_react_size < y)
+                in_cp_x = px - cp_react_size < x < px + cp_react_size
+                in_cp_y = py - cp_react_size < y < py + cp_react_size
                 if in_cp_x and in_cp_y:
                     if is_uscaling:
                         arr = [1, 3, 6, 8]

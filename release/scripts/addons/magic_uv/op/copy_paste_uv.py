@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>, Jace Priester"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 import bmesh
 import bpy.utils
@@ -75,7 +75,7 @@ def get_copy_uv_layers(ops_obj, bm, uv_map):
     else:
         uv_layers.append(bm.loops.layers.uv[uv_map])
         ops_obj.report(
-            {'INFO'}, "Copy UV coordinate (UV map:{})".format(uv_map))
+            {'INFO'}, "Copy UV coordinate (UV map: {})".format(uv_map))
 
     return uv_layers
 
@@ -97,7 +97,8 @@ def get_paste_uv_layers(ops_obj, obj, bm, src_info, uv_map):
             return None
         uv_layers.append(bm.loops.layers.uv[new_uv_map.name])
         ops_obj.report(
-            {'INFO'}, "Paste UV coordinate (UV map:{})".format(new_uv_map))
+            {'INFO'},
+            "Paste UV coordinate (UV map: {})".format(new_uv_map.name))
     elif uv_map == "__all":
         for src_layer in src_info.keys():
             if src_layer not in bm.loops.layers.uv.keys():
@@ -111,7 +112,7 @@ def get_paste_uv_layers(ops_obj, obj, bm, src_info, uv_map):
     else:
         uv_layers.append(bm.loops.layers.uv[uv_map])
         ops_obj.report(
-            {'INFO'}, "Paste UV coordinate (UV map:{})".format(uv_map))
+            {'INFO'}, "Paste UV coordinate (UV map: {})".format(uv_map))
 
     return uv_layers
 

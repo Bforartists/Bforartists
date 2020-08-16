@@ -1005,22 +1005,26 @@ static EnumPropertyItem prop_sculpt_face_sets_edit_types[] = {
 
 static void sculpt_face_set_grow(Object *ob,
                                  SculptSession *ss,
-                                 int *prev_face_sets,
-                                 const int active_face_set_id)
+                                 const int *prev_face_sets,
+                                 const int active_face_set_id,
+                                 const bool modify_hidden)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   for (int p = 0; p < mesh->totpoly; p++) {
+    if (!modify_hidden && prev_face_sets[p] <= 0) {
+      continue;
+    }
     const MPoly *c_poly = &mesh->mpoly[p];
     for (int l = 0; l < c_poly->totloop; l++) {
       const MLoop *c_loop = &mesh->mloop[c_poly->loopstart + l];
       const MeshElemMap *vert_map = &ss->pmap[c_loop->v];
       for (int i = 0; i < vert_map->count; i++) {
         const int neighbor_face_index = vert_map->indices[i];
-        if (neighbor_face_index != p) {
-
-          if (abs(prev_face_sets[neighbor_face_index]) == active_face_set_id) {
-            ss->face_sets[p] = active_face_set_id;
-          }
+        if (neighbor_face_index == p) {
+          continue;
+        }
+        if (abs(prev_face_sets[neighbor_face_index]) == active_face_set_id) {
+          ss->face_sets[p] = active_face_set_id;
         }
       }
     }
@@ -1029,11 +1033,15 @@ static void sculpt_face_set_grow(Object *ob,
 
 static void sculpt_face_set_shrink(Object *ob,
                                    SculptSession *ss,
-                                   int *prev_face_sets,
-                                   const int active_face_set_id)
+                                   const int *prev_face_sets,
+                                   const int active_face_set_id,
+                                   const bool modify_hidden)
 {
   Mesh *mesh = BKE_mesh_from_object(ob);
   for (int p = 0; p < mesh->totpoly; p++) {
+    if (!modify_hidden && prev_face_sets[p] <= 0) {
+      continue;
+    }
     if (abs(prev_face_sets[p]) == active_face_set_id) {
       const MPoly *c_poly = &mesh->mpoly[p];
       for (int l = 0; l < c_poly->totloop; l++) {
@@ -1041,10 +1049,11 @@ static void sculpt_face_set_shrink(Object *ob,
         const MeshElemMap *vert_map = &ss->pmap[c_loop->v];
         for (int i = 0; i < vert_map->count; i++) {
           const int neighbor_face_index = vert_map->indices[i];
-          if (neighbor_face_index != p) {
-            if (abs(prev_face_sets[neighbor_face_index]) != active_face_set_id) {
-              ss->face_sets[p] = prev_face_sets[neighbor_face_index];
-            }
+          if (neighbor_face_index == p) {
+            continue;
+          }
+          if (abs(prev_face_sets[neighbor_face_index]) != active_face_set_id) {
+            ss->face_sets[p] = prev_face_sets[neighbor_face_index];
           }
         }
       }
@@ -1052,7 +1061,10 @@ static void sculpt_face_set_shrink(Object *ob,
   }
 }
 
-static void sculpt_face_set_apply_edit(Object *ob, const int active_face_set_id, const int mode)
+static void sculpt_face_set_apply_edit(Object *ob,
+                                       const int active_face_set_id,
+                                       const int mode,
+                                       const bool modify_hidden)
 {
   SculptSession *ss = ob->sculpt;
 
@@ -1060,17 +1072,17 @@ static void sculpt_face_set_apply_edit(Object *ob, const int active_face_set_id,
 
   switch (mode) {
     case SCULPT_FACE_SET_EDIT_GROW:
-      sculpt_face_set_grow(ob, ss, prev_face_sets, active_face_set_id);
+      sculpt_face_set_grow(ob, ss, prev_face_sets, active_face_set_id, modify_hidden);
       break;
     case SCULPT_FACE_SET_EDIT_SHRINK:
-      sculpt_face_set_shrink(ob, ss, prev_face_sets, active_face_set_id);
+      sculpt_face_set_shrink(ob, ss, prev_face_sets, active_face_set_id, modify_hidden);
       break;
   }
 
   MEM_SAFE_FREE(prev_face_sets);
 }
 
-static int sculpt_face_set_edit_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int sculpt_face_set_edit_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
   Object *ob = CTX_data_active_object(C);
   SculptSession *ss = ob->sculpt;
@@ -1084,7 +1096,20 @@ static int sculpt_face_set_edit_invoke(bContext *C, wmOperator *op, const wmEven
     return OPERATOR_CANCELLED;
   }
 
+  /* Ignore other events to avoid repeated operations. */
+  if (event->val != KM_PRESS) {
+    return OPERATOR_CANCELLED;
+  }
+
   BKE_sculpt_update_object_for_edit(depsgraph, ob, true, false, false);
+
+  /* Update the current active Face Set and Vertex as the operator can be used directly from the
+   * tool without brush cursor. */
+  SculptCursorGeometryInfo sgi;
+  float mouse[2];
+  mouse[0] = event->mval[0];
+  mouse[1] = event->mval[1];
+  SCULPT_cursor_geometry_info_update(C, &sgi, mouse, false);
 
   PBVH *pbvh = ob->sculpt->pbvh;
   PBVHNode **nodes;
@@ -1099,8 +1124,9 @@ static int sculpt_face_set_edit_invoke(bContext *C, wmOperator *op, const wmEven
   SCULPT_undo_push_node(ob, nodes[0], SCULPT_UNDO_FACE_SETS);
 
   const int active_face_set = SCULPT_active_face_set_get(ss);
+  const bool modify_hidden = RNA_boolean_get(op->ptr, "modify_hidden");
 
-  sculpt_face_set_apply_edit(ob, abs(active_face_set), mode);
+  sculpt_face_set_apply_edit(ob, abs(active_face_set), mode, modify_hidden);
 
   SCULPT_undo_push_end();
 
@@ -1145,4 +1171,9 @@ void SCULPT_OT_face_sets_edit(struct wmOperatorType *ot)
 
   RNA_def_enum(
       ot->srna, "mode", prop_sculpt_face_sets_edit_types, SCULPT_FACE_SET_EDIT_GROW, "Mode", "");
+  ot->prop = RNA_def_boolean(ot->srna,
+                             "modify_hidden",
+                             true,
+                             "Modify Hidden",
+                             "Apply the edit operation to hidden Face Sets");
 }

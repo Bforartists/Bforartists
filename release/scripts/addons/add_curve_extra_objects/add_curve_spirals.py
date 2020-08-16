@@ -245,19 +245,6 @@ def draw_curve(props, context, align_matrix):
         Curve.rotation_euler = props.rotation_euler
         Curve.select_set(True)
 
-    # set curveOptions
-    Curve.data.dimensions = props.shape
-    Curve.data.use_path = True
-    if props.shape == '3D':
-        Curve.data.fill_mode = 'FULL'
-    else:
-        Curve.data.fill_mode = 'BOTH'
-
-    # set curveOptions
-    newSpline.use_cyclic_u = props.use_cyclic_u
-    newSpline.use_endpoint_u = props.endp_u
-    newSpline.order_u = props.order_u
-
     # turn verts into array
     vertArray = vertsToPoints(verts, splineType)
 
@@ -287,6 +274,19 @@ def draw_curve(props, context, align_matrix):
         newSpline.use_endpoint_u = False
         for point in newSpline.points:
             point.select = True
+
+    # set curveOptions
+    newSpline.use_cyclic_u = props.use_cyclic_u
+    newSpline.use_endpoint_u = props.endp_u
+    newSpline.order_u = props.order_u
+
+    # set curveOptions
+    Curve.data.dimensions = props.shape
+    Curve.data.use_path = True
+    if props.shape == '3D':
+        Curve.data.fill_mode = 'FULL'
+    else:
+        Curve.data.fill_mode = 'BOTH'
 
     # move and rotate spline in edit mode
     if bpy.context.mode == 'EDIT_CURVE':

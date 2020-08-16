@@ -20,8 +20,8 @@
 
 __author__ = "McBuff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 from math import sqrt
 
@@ -31,7 +31,6 @@ from bpy.props import (
     FloatProperty,
     IntVectorProperty,
     BoolProperty,
-    StringProperty,
 )
 import bmesh
 from mathutils import Vector
@@ -63,9 +62,34 @@ def _is_valid_context(context):
     return True
 
 
-def _measure_wsuv_info(obj, method='FIRST', tex_size=None):
-    mesh_area = common.measure_mesh_area(obj)
-    uv_area = common.measure_uv_area(obj, method, tex_size)
+def _measure_wsuv_info(obj, calc_method='MESH',
+                       tex_selection_method='FIRST', tex_size=None,
+                       only_selected=True):
+    mesh_areas = common.measure_mesh_area(obj, calc_method, only_selected)
+    uv_areas = common.measure_uv_area(obj, calc_method, tex_selection_method,
+                                      tex_size, only_selected)
+
+    if not uv_areas:
+        return None, mesh_areas, None
+
+    if len(mesh_areas) != len(uv_areas):
+        raise ValueError("mesh_area and uv_area must be same length")
+
+    densities = []
+    for mesh_area, uv_area in zip(mesh_areas, uv_areas):
+        if mesh_area == 0.0:
+            densities.append(0.0)
+        else:
+            densities.append(sqrt(uv_area) / sqrt(mesh_area))
+
+    return uv_areas, mesh_areas, densities
+
+
+def _measure_wsuv_info_from_faces(obj, faces, uv_layer, tex_layer,
+                                  tex_selection_method='FIRST', tex_size=None):
+    mesh_area = common.measure_mesh_area_from_faces(faces)
+    uv_area = common.measure_uv_area_from_faces(
+        obj, faces, uv_layer, tex_layer, tex_selection_method, tex_size)
 
     if not uv_area:
         return None, mesh_area, None
@@ -78,22 +102,12 @@ def _measure_wsuv_info(obj, method='FIRST', tex_size=None):
     return uv_area, mesh_area, density
 
 
-def _apply(obj, origin, factor):
-    bm = bmesh.from_edit_mesh(obj.data)
-    if common.check_version(2, 73, 0) >= 0:
-        bm.verts.ensure_lookup_table()
-        bm.edges.ensure_lookup_table()
-        bm.faces.ensure_lookup_table()
-
-    sel_faces = [f for f in bm.faces if f.select]
-
-    uv_layer = bm.loops.layers.uv.verify()
-
+def _apply(faces, uv_layer, origin, factor):
     # calculate origin
     if origin == 'CENTER':
         origin = Vector((0.0, 0.0))
         num = 0
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin = origin + uv
@@ -101,7 +115,7 @@ def _apply(obj, origin, factor):
         origin = origin / num
     elif origin == 'LEFT_TOP':
         origin = Vector((100000.0, -100000.0))
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = min(origin.x, uv.x)
@@ -109,7 +123,7 @@ def _apply(obj, origin, factor):
     elif origin == 'LEFT_CENTER':
         origin = Vector((100000.0, 0.0))
         num = 0
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = min(origin.x, uv.x)
@@ -118,7 +132,7 @@ def _apply(obj, origin, factor):
         origin.y = origin.y / num
     elif origin == 'LEFT_BOTTOM':
         origin = Vector((100000.0, 100000.0))
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = min(origin.x, uv.x)
@@ -126,7 +140,7 @@ def _apply(obj, origin, factor):
     elif origin == 'CENTER_TOP':
         origin = Vector((0.0, -100000.0))
         num = 0
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = origin.x + uv.x
@@ -136,7 +150,7 @@ def _apply(obj, origin, factor):
     elif origin == 'CENTER_BOTTOM':
         origin = Vector((0.0, 100000.0))
         num = 0
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = origin.x + uv.x
@@ -145,7 +159,7 @@ def _apply(obj, origin, factor):
         origin.x = origin.x / num
     elif origin == 'RIGHT_TOP':
         origin = Vector((-100000.0, -100000.0))
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = max(origin.x, uv.x)
@@ -153,7 +167,7 @@ def _apply(obj, origin, factor):
     elif origin == 'RIGHT_CENTER':
         origin = Vector((-100000.0, 0.0))
         num = 0
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = max(origin.x, uv.x)
@@ -162,20 +176,18 @@ def _apply(obj, origin, factor):
         origin.y = origin.y / num
     elif origin == 'RIGHT_BOTTOM':
         origin = Vector((-100000.0, 100000.0))
-        for f in sel_faces:
+        for f in faces:
             for l in f.loops:
                 uv = l[uv_layer].uv
                 origin.x = max(origin.x, uv.x)
                 origin.y = min(origin.y, uv.y)
 
     # update UV coordinate
-    for f in sel_faces:
+    for f in faces:
         for l in f.loops:
             uv = l[uv_layer].uv
             diff = uv - origin
             l[uv_layer].uv = origin + diff * factor
-
-    bmesh.update_edit_mesh(obj.data)
 
 
 def _get_target_textures(_, __):
@@ -207,7 +219,8 @@ class _Properties:
         )
         scene.muv_world_scale_uv_src_uv_area = FloatProperty(
             name="UV Area",
-            description="Source UV Area",
+            description="Source UV Area (Average if calculation method is UV "
+                        "Island or Face)",
             default=0.0,
             min=0.0
         )
@@ -277,6 +290,26 @@ class _Properties:
             description="Texture to be applied",
             items=_get_target_textures
         )
+        scene.muv_world_scale_uv_tgt_area_calc_method = EnumProperty(
+            name="Area Calculation Method",
+            description="How to calculate target area",
+            items=[
+                ('MESH', "Mesh", "Calculate area by whole faces in mesh"),
+                ('UV ISLAND', "UV Island", "Calculate area each UV islands"),
+                ('FACE', "Face", "Calculate area each face")
+            ],
+            default='MESH'
+        )
+        scene.muv_world_scale_uv_measure_only_selected = BoolProperty(
+            name="Only Selected",
+            description="Measure with only selected faces",
+            default=True,
+        )
+        scene.muv_world_scale_uv_apply_only_selected = BoolProperty(
+            name="Only Selected",
+            description="Apply to only selected faces",
+            default=True,
+        )
 
     @classmethod
     def del_props(cls, scene):
@@ -290,6 +323,9 @@ class _Properties:
         del scene.muv_world_scale_uv_origin
         del scene.muv_world_scale_uv_measure_tgt_texture
         del scene.muv_world_scale_uv_apply_tgt_texture
+        del scene.muv_world_scale_uv_tgt_area_calc_method
+        del scene.muv_world_scale_uv_measure_only_selected
+        del scene.muv_world_scale_uv_apply_only_selected
 
 
 @BlClassRegistry()
@@ -304,10 +340,15 @@ class MUV_OT_WorldScaleUV_Measure(bpy.types.Operator):
     bl_description = "Measure face size for scale calculation"
     bl_options = {'REGISTER', 'UNDO'}
 
-    tgt_texture = StringProperty(
+    tgt_texture = EnumProperty(
         name="Texture",
-        description="Texture to be measured",
-        default="[Average]"
+        description="Texture to be applied",
+        items=_get_target_textures
+    )
+    only_selected = BoolProperty(
+        name="Only Selected",
+        description="Measure with only selected faces",
+        default=True,
     )
 
     @classmethod
@@ -317,32 +358,44 @@ class MUV_OT_WorldScaleUV_Measure(bpy.types.Operator):
             return True
         return _is_valid_context(context)
 
+    @staticmethod
+    def setup_argument(ops, scene):
+        ops.tgt_texture = scene.muv_world_scale_uv_measure_tgt_texture
+        ops.only_selected = scene.muv_world_scale_uv_measure_only_selected
+
     def execute(self, context):
         sc = context.scene
         obj = context.active_object
 
         if self.tgt_texture == "[Average]":
-            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'AVERAGE')
+            uv_areas, mesh_areas, densities = _measure_wsuv_info(
+                obj, calc_method='MESH', tex_selection_method='AVERAGE',
+                only_selected=self.only_selected)
         elif self.tgt_texture == "[Max]":
-            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MAX')
+            uv_areas, mesh_areas, densities = _measure_wsuv_info(
+                obj, calc_method='MESH', tex_selection_method='MAX',
+                only_selected=self.only_selected)
         elif self.tgt_texture == "[Min]":
-            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MIN')
+            uv_areas, mesh_areas, densities = _measure_wsuv_info(
+                obj, calc_method='MESH', tex_selection_method='MIN',
+                only_selected=self.only_selected)
         else:
             texture = bpy.data.images[self.tgt_texture]
-            uv_area, mesh_area, density = _measure_wsuv_info(
-                obj, 'USER_SPECIFIED', texture.size)
-        if not uv_area:
+            uv_areas, mesh_areas, densities = _measure_wsuv_info(
+                obj, calc_method='MESH', tex_selection_method='USER_SPECIFIED',
+                only_selected=self.only_selected, tex_size=texture.size)
+        if not uv_areas:
             self.report({'WARNING'},
                         "Object must have more than one UV map and texture")
             return {'CANCELLED'}
 
-        sc.muv_world_scale_uv_src_uv_area = uv_area
-        sc.muv_world_scale_uv_src_mesh_area = mesh_area
-        sc.muv_world_scale_uv_src_density = density
+        sc.muv_world_scale_uv_src_uv_area = uv_areas[0]
+        sc.muv_world_scale_uv_src_mesh_area = mesh_areas[0]
+        sc.muv_world_scale_uv_src_density = densities[0]
 
         self.report({'INFO'},
                     "UV Area: {0}, Mesh Area: {1}, Texel Density: {2}"
-                    .format(uv_area, mesh_area, density))
+                    .format(uv_areas[0], mesh_areas[0], densities[0]))
 
         return {'FINISHED'}
 
@@ -395,6 +448,21 @@ class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
         default=True,
         options={'HIDDEN', 'SKIP_SAVE'}
     )
+    tgt_area_calc_method = EnumProperty(
+        name="Area Calculation Method",
+        description="How to calculate target area",
+        items=[
+            ('MESH', "Mesh", "Calculate area by whole faces in mesh"),
+            ('UV ISLAND', "UV Island", "Calculate area each UV islands"),
+            ('FACE', "Face", "Calculate area each face")
+        ],
+        default='MESH'
+    )
+    only_selected = BoolProperty(
+        name="Only Selected",
+        description="Apply to only selected faces",
+        default=True,
+    )
 
     @classmethod
     def poll(cls, context):
@@ -402,6 +470,16 @@ class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
         if common.is_console_mode():
             return True
         return _is_valid_context(context)
+
+    @staticmethod
+    def setup_argument(ops, scene):
+        ops.tgt_density = scene.muv_world_scale_uv_tgt_density
+        ops.tgt_texture_size = scene.muv_world_scale_uv_tgt_texture_size
+        ops.origin = scene.muv_world_scale_uv_origin
+        ops.show_dialog = False
+        ops.tgt_area_calc_method = \
+            scene.muv_world_scale_uv_tgt_area_calc_method
+        ops.only_selected = scene.muv_world_scale_uv_apply_only_selected
 
     def __apply_manual(self, context):
         obj = context.active_object
@@ -411,27 +489,47 @@ class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
             bm.edges.ensure_lookup_table()
             bm.faces.ensure_lookup_table()
 
-        tex_size = self.tgt_texture_size
-        uv_area, _, density = _measure_wsuv_info(obj, 'USER_SPECIFIED',
-                                                 tex_size)
-        if not uv_area:
+        if not bm.loops.layers.uv:
             self.report({'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
+        uv_layer = bm.loops.layers.uv.verify()
+        tex_layer = common.find_texture_layer(bm)
+        faces_list = common.get_faces_list(
+            bm, self.tgt_area_calc_method, self.only_selected)
 
-        tgt_density = self.tgt_density
-        factor = tgt_density / density
+        tex_size = self.tgt_texture_size
 
-        _apply(context.active_object, self.origin, factor)
-        self.report({'INFO'}, "Scaling factor: {0}".format(factor))
+        factors = []
+        for faces in faces_list:
+            uv_area, _, density = _measure_wsuv_info_from_faces(
+                obj, faces, uv_layer, tex_layer,
+                tex_selection_method='USER_SPECIFIED', tex_size=tex_size)
+
+            if not uv_area:
+                self.report({'WARNING'},
+                            "Object must have more than one UV map")
+                return {'CANCELLED'}
+
+            tgt_density = self.tgt_density
+            factor = tgt_density / density
+
+            _apply(faces, uv_layer, self.origin, factor)
+            factors.append(factor)
+
+        bmesh.update_edit_mesh(obj.data)
+        self.report({'INFO'}, "Scaling factor: {0}".format(factors))
 
         return {'FINISHED'}
 
     def draw(self, _):
         layout = self.layout
 
-        layout.prop(self, "tgt_density")
+        layout.label(text="Target:")
+        layout.prop(self, "only_selected")
         layout.prop(self, "tgt_texture_size")
+        layout.prop(self, "tgt_density")
         layout.prop(self, "origin")
+        layout.prop(self, "tgt_area_calc_method")
 
         layout.separator()
 
@@ -500,10 +598,25 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
         default=True,
         options={'HIDDEN', 'SKIP_SAVE'}
     )
-    tgt_texture = StringProperty(
+    tgt_texture = EnumProperty(
         name="Texture",
         description="Texture to be applied",
-        default="[Average]"
+        items=_get_target_textures
+    )
+    tgt_area_calc_method = EnumProperty(
+        name="Area Calculation Method",
+        description="How to calculate target area",
+        items=[
+            ('MESH', "Mesh", "Calculate area by whole faces in mesh"),
+            ('UV ISLAND', "UV Island", "Calculate area each UV islands"),
+            ('FACE', "Face", "Calculate area each face")
+        ],
+        default='MESH'
+    )
+    only_selected = BoolProperty(
+        name="Only Selected",
+        description="Apply to only selected faces",
+        default=True,
     )
 
     @classmethod
@@ -513,6 +626,19 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
             return True
         return _is_valid_context(context)
 
+    @staticmethod
+    def setup_argument(ops, scene):
+        ops.tgt_scaling_factor = \
+            scene.muv_world_scale_uv_tgt_scaling_factor
+        ops.origin = scene.muv_world_scale_uv_origin
+        ops.src_density = scene.muv_world_scale_uv_src_density
+        ops.same_density = False
+        ops.show_dialog = False
+        ops.tgt_texture = scene.muv_world_scale_uv_apply_tgt_texture
+        ops.tgt_area_calc_method = \
+            scene.muv_world_scale_uv_tgt_area_calc_method
+        ops.only_selected = scene.muv_world_scale_uv_apply_only_selected
+
     def __apply_scaling_density(self, context):
         obj = context.active_object
         bm = bmesh.from_edit_mesh(obj.data)
@@ -521,26 +647,49 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
             bm.edges.ensure_lookup_table()
             bm.faces.ensure_lookup_table()
 
-        if self.tgt_texture == "[Average]":
-            uv_area, _, density = _measure_wsuv_info(obj, 'AVERAGE')
-        elif self.tgt_texture == "[Max]":
-            uv_area, _, density = _measure_wsuv_info(obj, 'MAX')
-        elif self.tgt_texture == "[Min]":
-            uv_area, _, density = _measure_wsuv_info(obj, 'MIN')
-        else:
-            tgt_texture = bpy.data.images[self.tgt_texture]
-            uv_area, _, density = _measure_wsuv_info(obj, 'USER_SPECIFIED',
-                                                     tgt_texture.size)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map and texture")
+        if not bm.loops.layers.uv:
+            self.report({'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
+        uv_layer = bm.loops.layers.uv.verify()
+        tex_layer = common.find_texture_layer(bm)
+        faces_list = common.get_faces_list(
+            bm, self.tgt_area_calc_method, self.only_selected)
 
-        tgt_density = self.src_density * self.tgt_scaling_factor
-        factor = tgt_density / density
+        factors = []
+        for faces in faces_list:
+            if self.tgt_texture == "[Average]":
+                uv_area, _, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='AVERAGE')
+            elif self.tgt_texture == "[Max]":
+                uv_area, _, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='MAX')
+            elif self.tgt_texture == "[Min]":
+                uv_area, _, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='MIN')
+            else:
+                tgt_texture = bpy.data.images[self.tgt_texture]
+                uv_area, _, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='USER_SPECIFIED',
+                    tex_size=tgt_texture.size)
 
-        _apply(context.active_object, self.origin, factor)
-        self.report({'INFO'}, "Scaling factor: {0}".format(factor))
+            if not uv_area:
+                self.report({'WARNING'},
+                            "Object must have more than one UV map and "
+                            "texture")
+                return {'CANCELLED'}
+
+            tgt_density = self.src_density * self.tgt_scaling_factor
+            factor = tgt_density / density
+
+            _apply(faces, uv_layer, self.origin, factor)
+            factors.append(factor)
+
+        bmesh.update_edit_mesh(obj.data)
+        self.report({'INFO'}, "Scaling factor: {0}".format(factors))
 
         return {'FINISHED'}
 
@@ -554,9 +703,13 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
 
         layout.separator()
 
+        layout.label(text="Target:")
         if not self.same_density:
             layout.prop(self, "tgt_scaling_factor")
+        layout.prop(self, "only_selected")
+        layout.prop(self, "tgt_texture")
         layout.prop(self, "origin")
+        layout.prop(self, "tgt_area_calc_method")
 
         layout.separator()
 
@@ -640,10 +793,25 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
         default=True,
         options={'HIDDEN', 'SKIP_SAVE'}
     )
-    tgt_texture = StringProperty(
+    tgt_texture = EnumProperty(
         name="Texture",
         description="Texture to be applied",
-        default="[Average]"
+        items=_get_target_textures
+    )
+    tgt_area_calc_method = EnumProperty(
+        name="Area Calculation Method",
+        description="How to calculate target area",
+        items=[
+            ('MESH', "Mesh", "Calculate area by whole faces in mesh"),
+            ('UV ISLAND', "UV Island", "Calculate area each UV islands"),
+            ('FACE', "Face", "Calculate area each face")
+        ],
+        default='MESH'
+    )
+    only_selected = BoolProperty(
+        name="Only Selected",
+        description="Apply to only selected faces",
+        default=True,
     )
 
     @classmethod
@@ -653,6 +821,18 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
             return True
         return _is_valid_context(context)
 
+    @staticmethod
+    def setup_argument(ops, scene):
+        ops.origin = scene.muv_world_scale_uv_origin
+        ops.src_density = scene.muv_world_scale_uv_src_density
+        ops.src_uv_area = scene.muv_world_scale_uv_src_uv_area
+        ops.src_mesh_area = scene.muv_world_scale_uv_src_mesh_area
+        ops.show_dialog = False
+        ops.tgt_texture = scene.muv_world_scale_uv_apply_tgt_texture
+        ops.tgt_area_calc_method = \
+            scene.muv_world_scale_uv_tgt_area_calc_method
+        ops.only_selected = scene.muv_world_scale_uv_apply_only_selected
+
     def __apply_proportional_to_mesh(self, context):
         obj = context.active_object
         bm = bmesh.from_edit_mesh(obj.data)
@@ -661,28 +841,49 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
             bm.edges.ensure_lookup_table()
             bm.faces.ensure_lookup_table()
 
-        if self.tgt_texture == "[Average]":
-            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'AVERAGE')
-        elif self.tgt_texture == "[Max]":
-            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MAX')
-        elif self.tgt_texture == "[Min]":
-            uv_area, mesh_area, density = _measure_wsuv_info(obj, 'MIN')
-        else:
-            tgt_texture = bpy.data.images[self.tgt_texture]
-            uv_area, mesh_area, density = _measure_wsuv_info(
-                obj, 'USER_SPECIFIED', tgt_texture.size)
-        if not uv_area:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map and texture")
+        if not bm.loops.layers.uv:
+            self.report({'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
+        uv_layer = bm.loops.layers.uv.verify()
+        tex_layer = common.find_texture_layer(bm)
+        faces_list = common.get_faces_list(
+            bm, self.tgt_area_calc_method, self.only_selected)
 
-        tgt_density = self.src_density * sqrt(mesh_area) / sqrt(
-            self.src_mesh_area)
+        factors = []
+        for faces in faces_list:
+            if self.tgt_texture == "[Average]":
+                uv_area, mesh_area, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='AVERAGE')
+            elif self.tgt_texture == "[Max]":
+                uv_area, mesh_area, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='MAX')
+            elif self.tgt_texture == "[Min]":
+                uv_area, mesh_area, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='MIN')
+            else:
+                tgt_texture = bpy.data.images[self.tgt_texture]
+                uv_area, mesh_area, density = _measure_wsuv_info_from_faces(
+                    obj, faces, uv_layer, tex_layer,
+                    tex_selection_method='USER_SPECIFIED',
+                    tex_size=tgt_texture.size)
+            if not uv_area:
+                self.report({'WARNING'},
+                            "Object must have more than one UV map and "
+                            "texture")
+                return {'CANCELLED'}
 
-        factor = tgt_density / density
+            tgt_density = self.src_density * sqrt(mesh_area) / sqrt(
+                self.src_mesh_area)
+            factor = tgt_density / density
 
-        _apply(context.active_object, self.origin, factor)
-        self.report({'INFO'}, "Scaling factor: {0}".format(factor))
+            _apply(faces, uv_layer, self.origin, factor)
+            factors.append(factor)
+
+        bmesh.update_edit_mesh(obj.data)
+        self.report({'INFO'}, "Scaling factor: {0}".format(factors))
 
         return {'FINISHED'}
 
@@ -697,7 +898,12 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
         col.enabled = False
 
         layout.separator()
+
+        layout.label(text="Target:")
+        layout.prop(self, "only_selected")
         layout.prop(self, "origin")
+        layout.prop(self, "tgt_area_calc_method")
+        layout.prop(self, "tgt_texture")
 
         layout.separator()
 

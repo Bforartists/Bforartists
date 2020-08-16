@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11981,6 +11981,10 @@ msgid "Compression"
 msgstr "Compression"
 
 
+msgid "Compression method to be used"
+msgstr "Méthode de compression à utiliser"
+
+
 msgid "Zip"
 msgstr "Zip"
 
@@ -12063,10 +12067,6 @@ msgstr "La simulation de particules est agrandie de ce facteur (par rapport à l
 
 msgid "Cache Compression"
 msgstr "Compression du cache"
-
-
-msgid "Compression method to be used"
-msgstr "Méthode de compression à utiliser"
 
 
 msgid "Lite"

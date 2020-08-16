@@ -53,12 +53,16 @@ rto_history = {
     "disable": {},
     "disable_all": {},
     "render": {},
-    "render_all": {}
+    "render_all": {},
+    "holdout": {},
+    "holdout_all": {},
+    "indirect": {},
+    "indirect_all": {},
 }
 
 expand_history = {
     "target": "",
-    "history": []
+    "history": [],
     }
 
 phantom_history = {
@@ -70,12 +74,16 @@ phantom_history = {
     "hide_history": {},
     "disable_history": {},
     "render_history": {},
+    "holdout_history": {},
+    "indirect_history": {},
 
     "exclude_all_history": [],
     "select_all_history": [],
     "hide_all_history": [],
     "disable_all_history": [],
-    "render_all_history": []
+    "render_all_history": [],
+    "holdout_all_history": [],
+    "indirect_all_history": [],
                    }
 
 copy_buffer = {
@@ -317,7 +325,9 @@ def update_col_name(self, context):
                 "select",
                 "hide",
                 "disable",
-                "render"
+                "render",
+                "holdout",
+                "indirect",
                 ]
 
             orig_targets = {
@@ -584,6 +594,8 @@ def generate_state():
         "hide": [],
         "disable": [],
         "render": [],
+        "holdout": [],
+        "indirect": [],
         }
 
     for name, laycol in layer_collections.items():
@@ -593,6 +605,8 @@ def generate_state():
         state["hide"].append(laycol["ptr"].hide_viewport)
         state["disable"].append(laycol["ptr"].collection.hide_viewport)
         state["render"].append(laycol["ptr"].collection.hide_render)
+        state["holdout"].append(laycol["ptr"].holdout)
+        state["indirect"].append(laycol["ptr"].indirect_only)
 
     return state
 
