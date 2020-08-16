@@ -20,8 +20,8 @@
 
 __author__ = "imdjs, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 import math
 from math import atan2, tan, sin, cos
@@ -164,8 +164,7 @@ def _get_hdiff_uv_vinfl(uv_layer, loop_seqs, vidx, hidx, pidx, infl):
     # calculate target UV
     for i in range(len(accum_uvlens[:-1])):
         # get line segment which UV will be placed
-        if ((accum_uvlens[i] <= target_length) and
-                (accum_uvlens[i + 1] > target_length)):
+        if accum_uvlens[i] <= target_length < accum_uvlens[i + 1]:
             tgt_seg_len = target_length - accum_uvlens[i]
             seg_len = accum_uvlens[i + 1] - accum_uvlens[i]
             uv1 = orig_uvs[i]
@@ -245,8 +244,7 @@ def _get_vdiff_uv_vinfl(uv_layer, loop_seqs, vidx, hidx, pidx, infl):
     # calculate target UV
     for i in range(len(accum_uvlens[:-1])):
         # get line segment which UV will be placed
-        if ((accum_uvlens[i] <= target_length) and
-                (accum_uvlens[i + 1] > target_length)):
+        if accum_uvlens[i] <= target_length < accum_uvlens[i + 1]:
             tgt_seg_len = target_length - accum_uvlens[i]
             seg_len = accum_uvlens[i + 1] - accum_uvlens[i]
             uv1 = orig_uvs[i]

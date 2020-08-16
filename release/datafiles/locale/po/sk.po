@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-06-02 17:40+0200\n"
@@ -12002,6 +12002,10 @@ msgid "Compression"
 msgstr "Kompresia"
 
 
+msgid "Compression method to be used"
+msgstr "Metóda použitej kompresie"
+
+
 msgid "Zip"
 msgstr "Zip"
 
@@ -12084,10 +12088,6 @@ msgstr "Simulácia častíc je týmto faktorom zväčšená (v porovnaní so zá
 
 msgid "Cache Compression"
 msgstr "Kompresia vyrovnávacej pamäte"
-
-
-msgid "Compression method to be used"
-msgstr "Metóda použitej kompresie"
 
 
 msgid "Lite"
@@ -44755,24 +44755,8 @@ msgid "Output format for images. PNG is lossless and generally preferred, but JP
 msgstr "Výstupný formát pre obrázky .PNG je bezstratový a všeobecne preferovaný, ale JPEG môže byť vhodnejší pre webové aplikácie kvôli menšej veľkosti súboru"
 
 
-msgid ""
-"Save PNGs as PNGs and JPEGs as JPEGs.\n"
-"If neither one, use PNG"
-msgstr ""
-"Uloží PNG ako PNG a JPEG ako JPEG.\n"
-"Ak nie je ani jeden, použije PNG"
-
-
 msgid "JPEG Format (.jpg)"
 msgstr "JPEG formát (.jpg)"
-
-
-msgid ""
-"Save images as JPEGs. (Images that need alpha are saved as PNGs though.)\n"
-"Be aware of a possible loss in quality"
-msgstr ""
-"Uloží obrázky vo formáte JPEG. (Obrázky, ktoré potrebujú alfa, sa však uložia ako PNG.)\n"
-"Uvedomte si možnú stratu kvality"
 
 
 msgid "Punctual Lights"
@@ -44809,16 +44793,6 @@ msgstr "Exportuje dotyčnice vrcholov s kľúčovými tvarmi (ciele Morph)"
 
 msgid "Group by NLA Track"
 msgstr "Skupina podľa stopy NLA"
-
-
-msgid ""
-"When on, multiple actions become part of the same glTF animation if\n"
-"they're pushed onto NLA tracks with the same name.\n"
-"When off, all the currently assigned actions become one glTF animation"
-msgstr ""
-"Keď je zapnutá, viac akcií sa stane súčasťou rovnakej animácie glTF, ak\n"
-"sú stlačené do skladby NLA s rovnakým názvom.\n"
-"Keď je vypnutá, všetky aktuálne priradené akcie sa stanú jednou animáciou glTF"
 
 
 msgid "Export vertex normals with meshes"
@@ -48956,52 +48930,16 @@ msgid "Blender (best for re-importing)"
 msgstr "Blender (najlepší pre opätovný import)"
 
 
-msgid ""
-"Good for re-importing glTFs exported from Blender.\n"
-"Bone tips are placed on their local +Y axis (in glTF space)"
-msgstr ""
-"Dobré pre opätovný import glTF exportovaných z Blenderu.\n"
-"Hroty kostí sú umiestnené na ich miestnej osi + Y (v priestore glTF)"
-
-
 msgid "Temperance (average)"
 msgstr "Miernosť (priemer)"
-
-
-msgid ""
-"Decent all-around strategy.\n"
-"A bone with one child has its tip placed on the local axis\n"
-"closest to its child"
-msgstr ""
-"Skromná všestranná stratégia.\n"
-"Kosť s jedným potomkom má hrot umiestnený na miestnej osi\n"
-"najbližšie k svojmu potomkovi"
 
 
 msgid "Fortune (may look better, less accurate)"
 msgstr "Vec šťastia (môže vyzerať lepšie, menej presné)"
 
 
-msgid ""
-"Might look better than Temperance, but also might have errors.\n"
-"A bone with one child has its tip placed at its child's root.\n"
-"Non-uniform scalings may get messed up though, so beware"
-msgstr ""
-"Môže vyzerať lepšie ako miernosť, ale môže mať aj chyby.\n"
-"Kosť s jedným potomkom má hrot umiestnený v koreňoch potomkov.\n"
-"Nerovnomernou zmenou veľkosti to však môže byť znehodnotené, takže buďte opatrní"
-
-
 msgid "Guess Original Bind Pose"
 msgstr "Odhadnúť originálnu väzbu pózy"
-
-
-msgid ""
-"Try to guess the original bind pose for skinned meshes from the inverse bind matrices.\n"
-"When off, use default/rest pose as bind pose"
-msgstr ""
-"Pokúsi sa odhadnúť pôvodnú väzbu pózy pre opláštenú povrchovú sieť z inverzných matríc väzby.\n"
-"Ak je vypnutá, použije ako väzbu pózy predvolenú/kľudovú pózu"
 
 
 msgid "Pack Images"
@@ -87615,10 +87553,6 @@ msgid "Incompatible Light cache version, please bake again"
 msgstr "Nekompatibilná verzia zásobníka svetla, zapečte, prosím, znova"
 
 
-msgid "Error: Light cache is too big for your GPU to be loaded"
-msgstr "Chyba: zásobník svetla je príliš veľký pre vašu GPU na načítanie"
-
-
 msgid "Baking light cache"
 msgstr "Zásobník zapečenia svetla"
 
@@ -88681,10 +88615,6 @@ msgstr "Pastelka nemá žiadny aktívny nástroj maľovania"
 
 msgid "Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to align, Alt to center, E: extrude"
 msgstr "Riadok: ESC na zrušenie, ĽTM nastaví pôvodné, Enter/STM na potvrdenie, kolieskom/+- úpravu počtu delenia, Shift na zarovnanie, Alt na stred, E: vytiahnuť"
-
-
-msgid "Line: ESC to cancel, LMB to set, Enter/MMB to confirm, Shift to align"
-msgstr "Riadok: ESC na zrušenie, ĽTM na nastavenie, Enter/STM na potvrdenie, Shift na zarovnanie"
 
 
 msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to square, Alt to center"

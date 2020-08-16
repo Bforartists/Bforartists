@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 import bpy
 
@@ -32,6 +32,7 @@ from ..op.uv_bounding_box import (
 from ..op.uv_inspection import (
     MUV_OT_UVInspection_Render,
     MUV_OT_UVInspection_Update,
+    MUV_OT_UVInspection_PaintUVIsland,
 )
 from ..utils.bl_class_registry import BlClassRegistry
 from ..utils import compatibility as compat
@@ -143,3 +144,5 @@ class MUV_PT_UVEdit_EditorEnhancement(bpy.types.Panel):
             row.prop(sc, "muv_uv_inspection_show_flipped")
             row = box.row()
             row.prop(sc, "muv_uv_inspection_show_mode")
+            box.separator()
+            box.operator(MUV_OT_UVInspection_PaintUVIsland.bl_idname)

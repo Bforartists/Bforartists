@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 import bpy
 from bpy.props import (
@@ -33,6 +33,7 @@ from bpy.props import (
 from bpy.types import AddonPreferences
 
 from . import common
+from .op.clip_uv import MUV_OT_ClipUV
 from .op.flip_rotate_uv import MUV_OT_FlipRotateUV
 from .op.mirror_uv import MUV_OT_MirrorUV
 from .op.move_uv import MUV_OT_MoveUV
@@ -122,13 +123,17 @@ def image_uvs_menu_fn(self, context):
     sc = context.scene
 
     layout.separator()
-    # Copy/Paste UV (on UV/Image Editor)
     layout.label(text="Copy/Paste UV", icon=compat.icon('IMAGE'))
+    # Copy/Paste UV (on UV/Image Editor)
     layout.menu(MUV_MT_CopyPasteUV_UVEdit.bl_idname, text="Copy/Paste UV")
 
     layout.separator()
-    # Pack UV
     layout.label(text="UV Manipulation", icon=compat.icon('IMAGE'))
+    # Clip UV
+    ops = layout.operator(MUV_OT_ClipUV.bl_idname, text="Clip UV")
+    ops.clip_uv_range_max = sc.muv_clip_uv_range_max
+    ops.clip_uv_range_min = sc.muv_clip_uv_range_min
+    # Pack UV
     ops = layout.operator(MUV_OT_PackUV.bl_idname, text="Pack UV")
     ops.allowable_center_deviation = sc.muv_pack_uv_allowable_center_deviation
     ops.allowable_size_deviation = sc.muv_pack_uv_allowable_size_deviation
@@ -143,8 +148,8 @@ def image_uvs_menu_fn(self, context):
     layout.menu(MUV_MT_AlignUV.bl_idname, text="Align UV")
 
     layout.separator()
-    # Align UV Cursor
     layout.label(text="Editor Enhancement", icon=compat.icon('IMAGE'))
+    # Align UV Cursor
     layout.menu(MUV_MT_AlignUVCursor.bl_idname, text="Align UV Cursor")
     # UV Bounding Box
     layout.prop(sc, "muv_uv_bounding_box_show", text="UV Bounding Box")

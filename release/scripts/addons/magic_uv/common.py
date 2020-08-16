@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 from collections import defaultdict
 from pprint import pprint
@@ -244,15 +244,16 @@ def __parse_island(bm, face_idx, faces_left, island,
     Parse island
     """
 
-    if face_idx in faces_left:
-        faces_left.remove(face_idx)
-        island.append({'face': bm.faces[face_idx]})
-        for v in face_to_verts[face_idx]:
-            connected_faces = vert_to_faces[v]
-            if connected_faces:
+    faces_to_parse = [face_idx]
+    while faces_to_parse:
+        fidx = faces_to_parse.pop(0)
+        if fidx in faces_left:
+            faces_left.remove(fidx)
+            island.append({'face': bm.faces[fidx]})
+            for v in face_to_verts[fidx]:
+                connected_faces = vert_to_faces[v]
                 for cf in connected_faces:
-                    __parse_island(bm, cf, faces_left, island, face_to_verts,
-                                   vert_to_faces)
+                    faces_to_parse.append(cf)
 
 
 def __get_island(bm, face_to_verts, vert_to_faces):
@@ -351,18 +352,60 @@ def calc_polygon_3d_area(points):
     return 0.5 * area
 
 
-def measure_mesh_area(obj):
+def get_faces_list(bm, method, only_selected):
+    faces_list = []
+    if method == 'MESH':
+        if only_selected:
+            faces_list.append([f for f in bm.faces if f.select])
+        else:
+            faces_list.append([f for f in bm.faces])
+    elif method == 'UV ISLAND':
+        if not bm.loops.layers.uv:
+            return None
+        uv_layer = bm.loops.layers.uv.verify()
+        if only_selected:
+            faces = [f for f in bm.faces if f.select]
+            islands = get_island_info_from_faces(bm, faces, uv_layer)
+            for isl in islands:
+                faces_list.append([f["face"] for f in isl["faces"]])
+        else:
+            faces = [f for f in bm.faces]
+            islands = get_island_info_from_faces(bm, faces, uv_layer)
+            for isl in islands:
+                faces_list.append([f["face"] for f in isl["faces"]])
+    elif method == 'FACE':
+        if only_selected:
+            for f in bm.faces:
+                if f.select:
+                    faces_list.append([f])
+        else:
+            for f in bm.faces:
+                faces_list.append([f])
+    else:
+        raise ValueError("Invalid method: {}".format(method))
+
+    return faces_list
+
+
+def measure_mesh_area(obj, calc_method, only_selected):
     bm = bmesh.from_edit_mesh(obj.data)
     if check_version(2, 73, 0) >= 0:
         bm.verts.ensure_lookup_table()
         bm.edges.ensure_lookup_table()
         bm.faces.ensure_lookup_table()
 
-    sel_faces = [f for f in bm.faces if f.select]
+    faces_list = get_faces_list(bm, calc_method, only_selected)
 
-    # measure
+    areas = []
+    for faces in faces_list:
+        areas.append(measure_mesh_area_from_faces(faces))
+
+    return areas
+
+
+def measure_mesh_area_from_faces(faces):
     mesh_area = 0.0
-    for f in sel_faces:
+    for f in faces:
         verts = [l.vert.co for l in f.loops]
         f_mesh_area = calc_polygon_3d_area(verts)
         mesh_area = mesh_area + f_mesh_area
@@ -405,7 +448,7 @@ def find_image(obj, face=None, tex_layer=None):
 
     if len(images) >= 2:
         raise RuntimeError("Find more than 2 images")
-    if len(images) == 0:
+    if not images:
         return None
 
     return images[0]
@@ -428,40 +471,26 @@ def find_images(obj, face=None, tex_layer=None):
     return images
 
 
-def measure_uv_area(obj, method='FIRST', tex_size=None):
-    bm = bmesh.from_edit_mesh(obj.data)
-    if check_version(2, 73, 0) >= 0:
-        bm.verts.ensure_lookup_table()
-        bm.edges.ensure_lookup_table()
-        bm.faces.ensure_lookup_table()
-
-    if not bm.loops.layers.uv:
-        return None
-    uv_layer = bm.loops.layers.uv.verify()
-
-    tex_layer = find_texture_layer(bm)
-
-    sel_faces = [f for f in bm.faces if f.select]
-
-    # measure
+def measure_uv_area_from_faces(obj, faces, uv_layer, tex_layer,
+                               tex_selection_method, tex_size):
     uv_area = 0.0
-    for f in sel_faces:
+    for f in faces:
         uvs = [l[uv_layer].uv for l in f.loops]
         f_uv_area = calc_polygon_2d_area(uvs)
 
         # user specified
-        if method == 'USER_SPECIFIED' and tex_size is not None:
+        if tex_selection_method == 'USER_SPECIFIED' and tex_size is not None:
             img_size = tex_size
         # first texture if there are more than 2 textures assigned
         # to the object
-        elif method == 'FIRST':
+        elif tex_selection_method == 'FIRST':
             img = find_image(obj, f, tex_layer)
             # can not find from node, so we can not get texture size
             if not img:
                 return None
             img_size = img.size
         # average texture size
-        elif method == 'AVERAGE':
+        elif tex_selection_method == 'AVERAGE':
             imgs = find_images(obj, f, tex_layer)
             if not imgs:
                 return None
@@ -473,7 +502,7 @@ def measure_uv_area(obj, method='FIRST', tex_size=None):
             img_size = [img_size_total[0] / len(imgs),
                         img_size_total[1] / len(imgs)]
         # max texture size
-        elif method == 'MAX':
+        elif tex_selection_method == 'MAX':
             imgs = find_images(obj, f, tex_layer)
             if not imgs:
                 return None
@@ -484,7 +513,7 @@ def measure_uv_area(obj, method='FIRST', tex_size=None):
                                 max(img_size_max[1], img.size[1])]
             img_size = img_size_max
         # min texture size
-        elif method == 'MIN':
+        elif tex_selection_method == 'MIN':
             imgs = find_images(obj, f, tex_layer)
             if not imgs:
                 return None
@@ -495,11 +524,38 @@ def measure_uv_area(obj, method='FIRST', tex_size=None):
                                 min(img_size_min[1], img.size[1])]
             img_size = img_size_min
         else:
-            raise RuntimeError("Unexpected method: {}".format(method))
+            raise RuntimeError("Unexpected method: {}"
+                               .format(tex_selection_method))
 
-        uv_area = uv_area + f_uv_area * img_size[0] * img_size[1]
+        uv_area += f_uv_area * img_size[0] * img_size[1]
 
     return uv_area
+
+
+def measure_uv_area(obj, calc_method, tex_selection_method, tex_size,
+                    only_selected):
+    bm = bmesh.from_edit_mesh(obj.data)
+    if check_version(2, 73, 0) >= 0:
+        bm.verts.ensure_lookup_table()
+        bm.edges.ensure_lookup_table()
+        bm.faces.ensure_lookup_table()
+
+    if not bm.loops.layers.uv:
+        return None
+    uv_layer = bm.loops.layers.uv.verify()
+    tex_layer = find_texture_layer(bm)
+    faces_list = get_faces_list(bm, calc_method, only_selected)
+
+    # measure
+    uv_areas = []
+    for faces in faces_list:
+        uv_area = measure_uv_area_from_faces(
+            obj, faces, uv_layer, tex_layer, tex_selection_method, tex_size)
+        if uv_area is None:
+            return None
+        uv_areas.append(uv_area)
+
+    return uv_areas
 
 
 def diff_point_to_segment(a, b, p):
@@ -520,43 +576,42 @@ def diff_point_to_segment(a, b, p):
 
 # get selected loop pair whose loops are connected each other
 def __get_loop_pairs(l, uv_layer):
-
-    def __get_loop_pairs_internal(l_, pairs_, uv_layer_, parsed_):
-        parsed_.append(l_)
-        for ll in l_.vert.link_loops:
+    pairs = []
+    parsed = []
+    loops_ready = [l]
+    while loops_ready:
+        l = loops_ready.pop(0)
+        parsed.append(l)
+        for ll in l.vert.link_loops:
             # forward direction
             lln = ll.link_loop_next
             # if there is same pair, skip it
             found = False
-            for p in pairs_:
+            for p in pairs:
                 if (ll in p) and (lln in p):
                     found = True
                     break
             # two loops must be selected
-            if ll[uv_layer_].select and lln[uv_layer_].select:
+            if ll[uv_layer].select and lln[uv_layer].select:
                 if not found:
-                    pairs_.append([ll, lln])
-                if lln not in parsed_:
-                    __get_loop_pairs_internal(lln, pairs_, uv_layer_, parsed_)
+                    pairs.append([ll, lln])
+                if (lln not in parsed) and (lln not in loops_ready):
+                    loops_ready.append(lln)
 
             # backward direction
             llp = ll.link_loop_prev
             # if there is same pair, skip it
             found = False
-            for p in pairs_:
+            for p in pairs:
                 if (ll in p) and (llp in p):
                     found = True
                     break
             # two loops must be selected
-            if ll[uv_layer_].select and llp[uv_layer_].select:
+            if ll[uv_layer].select and llp[uv_layer].select:
                 if not found:
-                    pairs_.append([ll, llp])
-                if llp not in parsed_:
-                    __get_loop_pairs_internal(llp, pairs_, uv_layer_, parsed_)
-
-    pairs = []
-    parsed = []
-    __get_loop_pairs_internal(l, pairs, uv_layer, parsed)
+                    pairs.append([ll, llp])
+                if (llp not in parsed) and (llp not in loops_ready):
+                    loops_ready.append(llp)
 
     return pairs
 
@@ -876,12 +931,12 @@ class RingBuffer:
 
 # clip: reference polygon
 # subject: tested polygon
-def __do_weiler_atherton_cliping(clip, subject, uv_layer, mode):
+def __do_weiler_atherton_cliping(clip_uvs, subject_uvs, mode):
 
-    clip_uvs = RingBuffer([l[uv_layer].uv.copy() for l in clip.loops])
+    clip_uvs = RingBuffer(clip_uvs)
     if __is_polygon_flipped(clip_uvs):
         clip_uvs.reverse()
-    subject_uvs = RingBuffer([l[uv_layer].uv.copy() for l in subject.loops])
+    subject_uvs = RingBuffer(subject_uvs)
     if __is_polygon_flipped(subject_uvs):
         subject_uvs.reverse()
 
@@ -1111,22 +1166,29 @@ def __is_points_in_polygon(points, subject_points):
     return True
 
 
-def get_overlapped_uv_info(bm, faces, uv_layer, mode):
+def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list, mode):
     # at first, check island overlapped
-    isl = get_island_info_from_faces(bm, faces, uv_layer)
+    isl = []
+    for bm, uv_layer, faces in zip(bm_list, uv_layer_list, faces_list):
+        info = get_island_info_from_faces(bm, faces, uv_layer)
+        isl.extend([(i, uv_layer) for i in info])
+
     overlapped_isl_pairs = []
-    for i, i1 in enumerate(isl):
-        for i2 in isl[i + 1:]:
+    overlapped_uv_layer_pairs = []
+    for i, (i1, uv_layer_1) in enumerate(isl):
+        for i2, uv_layer_2 in isl[i + 1:]:
             if (i1["max"].x < i2["min"].x) or (i2["max"].x < i1["min"].x) or \
                (i1["max"].y < i2["min"].y) or (i2["max"].y < i1["min"].y):
                 continue
             overlapped_isl_pairs.append([i1, i2])
+            overlapped_uv_layer_pairs.append([uv_layer_1, uv_layer_2])
 
     # next, check polygon overlapped
     overlapped_uvs = []
-    for oip in overlapped_isl_pairs:
+    for oip, uvlp in zip(overlapped_isl_pairs, overlapped_uv_layer_pairs):
         for clip in oip[0]["faces"]:
             f_clip = clip["face"]
+            clip_uvs = [l[uvlp[0]].uv.copy() for l in f_clip.loops]
             for subject in oip[1]["faces"]:
                 f_subject = subject["face"]
 
@@ -1137,29 +1199,33 @@ def get_overlapped_uv_info(bm, faces, uv_layer, mode):
                    (subject["max_uv"].y < clip["min_uv"].y):
                     continue
 
+                subject_uvs = [l[uvlp[1]].uv.copy() for l in f_subject.loops]
                 # slow operation, apply Weiler-Atherton cliping algorithm
-                result, polygons = __do_weiler_atherton_cliping(f_clip,
-                                                                f_subject,
-                                                                uv_layer, mode)
+                result, polygons = __do_weiler_atherton_cliping(clip_uvs,
+                                                                subject_uvs,
+                                                                mode)
                 if result:
-                    subject_uvs = [l[uv_layer].uv.copy()
-                                   for l in f_subject.loops]
                     overlapped_uvs.append({"clip_face": f_clip,
                                            "subject_face": f_subject,
+                                           "clip_uv_layer": uvlp[0],
+                                           "subject_uv_layer": uvlp[1],
                                            "subject_uvs": subject_uvs,
                                            "polygons": polygons})
 
     return overlapped_uvs
 
 
-def get_flipped_uv_info(faces, uv_layer):
+def get_flipped_uv_info(faces_list, uv_layer_list):
     flipped_uvs = []
-    for f in faces:
-        polygon = RingBuffer([l[uv_layer].uv.copy() for l in f.loops])
-        if __is_polygon_flipped(polygon):
-            uvs = [l[uv_layer].uv.copy() for l in f.loops]
-            flipped_uvs.append({"face": f, "uvs": uvs,
-                                "polygons": [polygon.as_list()]})
+    for faces, uv_layer in zip(faces_list, uv_layer_list):
+        for f in faces:
+            polygon = RingBuffer([l[uv_layer].uv.copy() for l in f.loops])
+            if __is_polygon_flipped(polygon):
+                uvs = [l[uv_layer].uv.copy() for l in f.loops]
+                flipped_uvs.append({"face": f,
+                                    "uv_layer": uv_layer,
+                                    "uvs": uvs,
+                                    "polygons": [polygon.as_list()]})
 
     return flipped_uvs
 

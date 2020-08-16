@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -11617,6 +11617,10 @@ msgid "Compression"
 msgstr "압축"
 
 
+msgid "Compression method to be used"
+msgstr "사용되는 압축 메서드"
+
+
 msgid "Zip"
 msgstr "Zip"
 
@@ -11687,10 +11691,6 @@ msgstr "파티클 샘플링을 위한 렌덤성 팩터"
 
 msgid "Cache Compression"
 msgstr "캐시 압축"
-
-
-msgid "Compression method to be used"
-msgstr "사용되는 압축 메서드"
 
 
 msgid "Lite"
@@ -84602,10 +84602,6 @@ msgstr "그리스 펜슬에 활성 페인트 도구가 없습니다"
 
 msgid "Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to align, Alt to center, E: extrude"
 msgstr "라인: 취소 ESC,오리진 설정 LMB, 확인 Enter/MMB, 세분화 수를 조정 WHEEL/+-, 정렬 Shift, 가운데 Alt, 돌출 E"
-
-
-msgid "Line: ESC to cancel, LMB to set, Enter/MMB to confirm, Shift to align"
-msgstr "라인: 취소 ESC, 설정 LMB, 확인 Enter/MMB, 정렬 Shift"
 
 
 msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to square, Alt to center"

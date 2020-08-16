@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 from math import pi, cos, tan, sin
 
@@ -168,6 +168,20 @@ class _Properties:
         del scene.muv_uv_sculpt_relax_method
 
 
+def location_3d_to_region_2d_extra(region, rv3d, coord):
+    coord_2d = view3d_utils.location_3d_to_region_2d(region, rv3d, coord)
+    if coord_2d is None:
+        prj = rv3d.perspective_matrix @ Vector(
+            (coord[0], coord[1], coord[2], 1.0))
+        width_half = region.width / 2.0
+        height_half = region.height / 2.0
+        coord_2d = Vector((
+            width_half + width_half * (prj.x / prj.w),
+            height_half + height_half * (prj.y / prj.w)
+        ))
+    return coord_2d
+
+
 @BlClassRegistry()
 class MUV_OT_UVSculpt(bpy.types.Operator):
     """
@@ -263,7 +277,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
             if not f.select:
                 continue
             for i, l in enumerate(f.loops):
-                loc_2d = view3d_utils.location_3d_to_region_2d(
+                loc_2d = location_3d_to_region_2d_extra(
                     region, space.region_3d,
                     compat.matmul(world_mat, l.vert.co))
                 diff = loc_2d - self.__initial_mco
@@ -301,7 +315,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                 if not f.select:
                     continue
                 for i, l in enumerate(f.loops):
-                    loc_2d = view3d_utils.location_3d_to_region_2d(
+                    loc_2d = location_3d_to_region_2d_extra(
                         region, space.region_3d,
                         compat.matmul(world_mat, l.vert.co))
                     diff = loc_2d - self.__initial_mco
@@ -393,7 +407,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                 if not f.select:
                     continue
                 for i, l in enumerate(f.loops):
-                    loc_2d = view3d_utils.location_3d_to_region_2d(
+                    loc_2d = location_3d_to_region_2d_extra(
                         region, space.region_3d,
                         compat.matmul(world_mat, l.vert.co))
                     diff = loc_2d - self.__initial_mco
