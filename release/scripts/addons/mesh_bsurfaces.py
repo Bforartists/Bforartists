@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
-    "version": (1, 7, 8),
+    "version": (1, 7, 9),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
@@ -237,6 +237,9 @@ class MESH_OT_SURFSK_add_surface(Operator):
     bl_description = "Generates surfaces from grease pencil strokes, bezier curves or loose edges"
     bl_options = {'REGISTER', 'UNDO'}
 
+    is_crosshatch: BoolProperty(
+                    default=False
+                    )
     is_fill_faces: BoolProperty(
                     default=False
                     )
@@ -1435,6 +1438,9 @@ class MESH_OT_SURFSK_add_surface(Operator):
 
         me.from_pydata(all_verts_coords, all_edges, [])
         ob = object_utils.object_data_add(context, me)
+        ob.location = (0.0, 0.0, 0.0)
+        ob.rotation_euler = (0.0, 0.0, 0.0)
+        ob.scale = (1.0, 1.0, 1.0)
 
         bpy.ops.object.select_all('INVOKE_REGION_WIN', action='DESELECT')
         ob.select_set(True)
@@ -1607,6 +1613,9 @@ class MESH_OT_SURFSK_add_surface(Operator):
         me_surf = bpy.data.meshes.new(surf_me_name)
         me_surf.from_pydata(all_surface_verts_co, [], all_surface_faces)
         ob_surface = object_utils.object_data_add(context, me_surf)
+        ob_surface.location = (0.0, 0.0, 0.0)
+        ob_surface.rotation_euler = (0.0, 0.0, 0.0)
+        ob_surface.scale = (1.0, 1.0, 1.0)
 
         # Delete final points temporal object
         bpy.ops.object.delete({"selected_objects": [final_points_ob]})

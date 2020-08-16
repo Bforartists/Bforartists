@@ -20,8 +20,11 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
+
+import random
+from math import fabs
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty
@@ -65,19 +68,31 @@ def _update_uvinsp_info(context):
     sc = context.scene
     props = sc.muv_props.uv_inspection
 
-    obj = context.active_object
-    bm = bmesh.from_edit_mesh(obj.data)
-    if common.check_version(2, 73, 0) >= 0:
-        bm.faces.ensure_lookup_table()
-    uv_layer = bm.loops.layers.uv.verify()
+    bm_list = []
+    uv_layer_list = []
+    faces_list = []
+    for o in bpy.data.objects:
+        if not compat.get_object_select(o):
+            continue
+        if o.type != 'MESH':
+            continue
 
-    if context.tool_settings.use_uv_select_sync:
-        sel_faces = [f for f in bm.faces]
-    else:
-        sel_faces = [f for f in bm.faces if f.select]
+        bm = bmesh.from_edit_mesh(o.data)
+        if common.check_version(2, 73, 0) >= 0:
+            bm.faces.ensure_lookup_table()
+        uv_layer = bm.loops.layers.uv.verify()
+
+        if context.tool_settings.use_uv_select_sync:
+            sel_faces = [f for f in bm.faces]
+        else:
+            sel_faces = [f for f in bm.faces if f.select]
+        bm_list.append(bm)
+        uv_layer_list.append(uv_layer)
+        faces_list.append(sel_faces)
+
     props.overlapped_info = common.get_overlapped_uv_info(
-        bm, sel_faces, uv_layer, sc.muv_uv_inspection_show_mode)
-    props.flipped_info = common.get_flipped_uv_info(sel_faces, uv_layer)
+        bm_list, faces_list, uv_layer_list, sc.muv_uv_inspection_show_mode)
+    props.flipped_info = common.get_flipped_uv_info(faces_list, uv_layer_list)
 
 
 @PropertyClassRegistry()
@@ -205,14 +220,15 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
                         bgl.glColor4f(color[0], color[1], color[2], color[3])
                         for uv in poly:
                             x, y = context.region.view2d.view_to_region(
-                                uv.x, uv.y)
+                                uv.x, uv.y, clip=False)
                             bgl.glVertex2f(x, y)
                         bgl.glEnd()
                 elif sc.muv_uv_inspection_show_mode == 'FACE':
                     bgl.glBegin(bgl.GL_TRIANGLE_FAN)
                     bgl.glColor4f(color[0], color[1], color[2], color[3])
                     for uv in info["subject_uvs"]:
-                        x, y = context.region.view2d.view_to_region(uv.x, uv.y)
+                        x, y = context.region.view2d.view_to_region(
+                            uv.x, uv.y, clip=False)
                         bgl.glVertex2f(x, y)
                     bgl.glEnd()
 
@@ -226,14 +242,15 @@ class MUV_OT_UVInspection_Render(bpy.types.Operator):
                         bgl.glColor4f(color[0], color[1], color[2], color[3])
                         for uv in poly:
                             x, y = context.region.view2d.view_to_region(
-                                uv.x, uv.y)
+                                uv.x, uv.y, clip=False)
                             bgl.glVertex2f(x, y)
                         bgl.glEnd()
                 elif sc.muv_uv_inspection_show_mode == 'FACE':
                     bgl.glBegin(bgl.GL_TRIANGLE_FAN)
                     bgl.glColor4f(color[0], color[1], color[2], color[3])
                     for uv in info["uvs"]:
-                        x, y = context.region.view2d.view_to_region(uv.x, uv.y)
+                        x, y = context.region.view2d.view_to_region(
+                            uv.x, uv.y, clip=False)
                         bgl.glVertex2f(x, y)
                     bgl.glEnd()
 
@@ -277,5 +294,203 @@ class MUV_OT_UVInspection_Update(bpy.types.Operator):
 
         if context.area:
             context.area.tag_redraw()
+
+        return {'FINISHED'}
+
+
+@BlClassRegistry()
+class MUV_OT_UVInspection_PaintUVIsland(bpy.types.Operator):
+    """
+    Operation class: Paint UV island with random color.
+    """
+
+    bl_idname = "uv.muv_uv_inspection_paint_uv_island"
+    bl_label = "Paint UV Island"
+    bl_description = "Paint UV island with random color"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        # we can not get area/space/region from console
+        if common.is_console_mode():
+            return True
+        return _is_valid_context(context)
+
+    def _get_or_new_image(self, name, width, height):
+        if name in bpy.data.images.keys():
+            return bpy.data.images[name]
+        return bpy.data.images.new(name, width, height)
+
+    def _get_or_new_material(self, name):
+        if name in bpy.data.materials.keys():
+            return bpy.data.materials[name]
+        return bpy.data.materials.new(name)
+
+    def _get_or_new_texture(self, name):
+        if name in bpy.data.textures.keys():
+            return bpy.data.textures[name]
+        return bpy.data.textures.new(name, 'IMAGE')
+
+    def _get_override_context(self, context):
+        for window in context.window_manager.windows:
+            screen = window.screen
+            for area in screen.areas:
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            return {'window': window, 'screen': screen,
+                                    'area': area, 'region': region}
+        return None
+
+    def _create_unique_color(self, exist_colors, allowable=0.1):
+        retry = 0
+        while retry < 20:
+            r = random.random()
+            g = random.random()
+            b = random.random()
+            new_color = [r, g, b]
+            for color in exist_colors:
+                if ((fabs(new_color[0] - color[0]) < allowable) and
+                        (fabs(new_color[1] - color[1]) < allowable) and
+                        (fabs(new_color[2] - color[2]) < allowable)):
+                    break
+            else:
+                return new_color
+        return None
+
+    def execute(self, context):
+        obj = context.active_object
+        mode_orig = context.object.mode
+        override_context = self._get_override_context(context)
+        if override_context is None:
+            self.report({'WARNING'}, "More than one 'VIEW_3D' area must exist")
+            return {'CANCELLED'}
+
+        # Setup material of drawing target.
+        target_image = self._get_or_new_image(
+            "MagicUV_PaintUVIsland", 4096, 4096)
+        target_mtrl = self._get_or_new_material("MagicUV_PaintUVMaterial")
+        if compat.check_version(2, 80, 0) >= 0:
+            target_mtrl.use_nodes = True
+            output_node = target_mtrl.node_tree.nodes["Material Output"]
+            nodes_to_remove = [n for n in target_mtrl.node_tree.nodes
+                               if n != output_node]
+            for n in nodes_to_remove:
+                target_mtrl.node_tree.nodes.remove(n)
+            texture_node = \
+                target_mtrl.node_tree.nodes.new("ShaderNodeTexImage")
+            texture_node.image = target_image
+            target_mtrl.node_tree.links.new(output_node.inputs["Surface"],
+                                            texture_node.outputs["Color"])
+            obj.data.use_paint_mask = True
+
+            # Apply material to object (all faces).
+            found = False
+            for mtrl_idx, mtrl_slot in enumerate(obj.material_slots):
+                if mtrl_slot.material == target_mtrl:
+                    found = True
+                    break
+            if not found:
+                bpy.ops.object.material_slot_add()
+                mtrl_idx = len(obj.material_slots) - 1
+                obj.material_slots[mtrl_idx].material = target_mtrl
+            bpy.ops.object.mode_set(mode='EDIT')
+            bm = bmesh.from_edit_mesh(obj.data)
+            bm.faces.ensure_lookup_table()
+            for f in bm.faces:
+                f.select = True
+            bmesh.update_edit_mesh(obj.data)
+            obj.active_material_index = mtrl_idx
+            obj.active_material = target_mtrl
+            bpy.ops.object.material_slot_assign()
+        else:
+            target_tex_slot = target_mtrl.texture_slots.add()
+            target_tex = self._get_or_new_texture("MagicUV_PaintUVTexture")
+            target_tex_slot.texture = target_tex
+            obj.data.use_paint_mask = True
+
+            # Apply material to object (all faces).
+            found = False
+            for mtrl_idx, mtrl_slot in enumerate(obj.material_slots):
+                if mtrl_slot.material == target_mtrl:
+                    found = True
+                    break
+            if not found:
+                bpy.ops.object.material_slot_add()
+                mtrl_idx = len(obj.material_slots) - 1
+                obj.material_slots[mtrl_idx].material = target_mtrl
+            bpy.ops.object.mode_set(mode='EDIT')
+            bm = bmesh.from_edit_mesh(obj.data)
+            bm.faces.ensure_lookup_table()
+            for f in bm.faces:
+                f.select = True
+            bmesh.update_edit_mesh(obj.data)
+            obj.active_material_index = mtrl_idx
+            obj.active_material = target_mtrl
+            bpy.ops.object.material_slot_assign()
+
+        # Update active image in Image Editor.
+        _, _, space = common.get_space(
+            'IMAGE_EDITOR', 'WINDOW', 'IMAGE_EDITOR')
+        if space is None:
+            return {'CANCELLED'}
+        space.image = target_image
+
+        # Analyze island to make map between face and paint color.
+        islands = common.get_island_info_from_bmesh(bm)
+        color_to_faces = []
+        for isl in islands:
+            color = self._create_unique_color([c[0] for c in color_to_faces])
+            if color is None:
+                self.report({'WARNING'},
+                            "Failed to create color. Please try again")
+                return {'CANCELLED'}
+            indices = [f["face"].index for f in isl["faces"]]
+            color_to_faces.append((color, indices))
+
+        for cf in color_to_faces:
+            # Update selection information.
+            bpy.ops.object.mode_set(mode='EDIT')
+            bm = bmesh.from_edit_mesh(obj.data)
+            bm.faces.ensure_lookup_table()
+            for f in bm.faces:
+                f.select = False
+            for fidx in cf[1]:
+                bm.faces[fidx].select = True
+            bmesh.update_edit_mesh(obj.data)
+            bpy.ops.object.mode_set(mode='OBJECT')
+
+            # Update brush color.
+            bpy.data.brushes["Fill"].color = cf[0]
+
+            # Paint.
+            bpy.ops.object.mode_set(mode='TEXTURE_PAINT')
+            if compat.check_version(2, 80, 0) >= 0:
+                bpy.ops.paint.brush_select(override_context, image_tool='FILL')
+            else:
+                paint_settings = \
+                    bpy.data.scenes['Scene'].tool_settings.image_paint
+                paint_mode_orig = paint_settings.mode
+                paint_canvas_orig = paint_settings.canvas
+                paint_settings.mode = 'IMAGE'
+                paint_settings.canvas = target_image
+                bpy.ops.paint.brush_select(override_context,
+                                           texture_paint_tool='FILL')
+            bpy.ops.paint.image_paint(override_context, stroke=[{
+                "name": "",
+                "location": (0, 0, 0),
+                "mouse": (0, 0),
+                "size": 0,
+                "pressure": 0,
+                "pen_flip": False,
+                "time": 0,
+                "is_start": False
+            }])
+
+            if compat.check_version(2, 80, 0) < 0:
+                paint_settings.mode = paint_mode_orig
+                paint_settings.canvas = paint_canvas_orig
+
+        bpy.ops.object.mode_set(mode=mode_orig)
 
         return {'FINISHED'}

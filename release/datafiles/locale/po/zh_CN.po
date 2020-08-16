@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12267,7 +12267,7 @@ msgid "Compression"
 msgstr "压缩"
 
 
-msgid "facession method to be used"
+msgid "Compression method to be used"
 msgstr "使用的压缩方法"
 
 
@@ -12353,10 +12353,6 @@ msgstr "粒子模拟按此因子缩放(与域的基本分辨率相比）"
 
 msgid "Cache Compression"
 msgstr "压缩缓存"
-
-
-msgid "Compression method to be used"
-msgstr "使用的压缩方法"
 
 
 msgid "Lite"
@@ -18014,10 +18010,6 @@ msgstr "从表面拾取到笔刷颜色的颜料量"
 
 msgid "Wet Persistence"
 msgstr "湿润持久"
-
-
-msgid "Amount of wet paint that stays in the brush after applyig paint to the surface"
-msgstr "将颜料涂在表面后留在笔刷中的湿润颜料量"
 
 
 msgid "Path to external displacements file"
@@ -46069,24 +46061,8 @@ msgid "Output format for images. PNG is lossless and generally preferred, but JP
 msgstr "图像的输出格式. PNG是无损的,通常是首选,但由于文件较小,JPEG可能更适合Web应用"
 
 
-msgid ""
-"Save PNGs as PNGs and JPEGs as JPEGs.\n"
-"If neither one, use PNG"
-msgstr ""
-"保存PNG为PNG，保存JPEG为 JPEG。\n"
-"如非这两种格式，则保存为PNG"
-
-
 msgid "JPEG Format (.jpg)"
 msgstr "JPEG格式 (.jpg)"
-
-
-msgid ""
-"Save images as JPEGs. (Images that need alpha are saved as PNGs though.)\n"
-"Be aware of a possible loss in quality"
-msgstr ""
-"将图像另存为 JPEG。(需要alpha 的图像保存为 PNG。)\n"
-"注意可能带来的品质损失"
 
 
 msgid "Punctual Lights"
@@ -46123,16 +46099,6 @@ msgstr "导出带形态键的顶点切向 (变形目标)"
 
 msgid "Group by NLA Track"
 msgstr "按NLA轨道分组"
-
-
-msgid ""
-"When on, multiple actions become part of the same glTF animation if\n"
-"they're pushed onto NLA tracks with the same name.\n"
-"When off, all the currently assigned actions become one glTF animation"
-msgstr ""
-"启用时，如果多个动作被推上同名的NLA轨道，\n"
-"他们成为同一glTF动画的一部分。\n"
-"关闭后，所有当前分配的动作都变为一个glTF 动画"
 
 
 msgid "Export vertex normals with meshes"
@@ -47543,6 +47509,10 @@ msgstr "间隔随机性"
 
 msgid "Custom Gap mode: Number of frames that gap lengths can vary"
 msgstr "自定义间隔模式:  间隔长度的帧数差异量"
+
+
+msgid "Radius Factor"
+msgstr "半径系数"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -50473,51 +50443,16 @@ msgid "Blender (best for re-importing)"
 msgstr "Blender (最适合重新导入)"
 
 
-msgid ""
-"Good for re-importing glTFs exported from Blender.\n"
-"Bone tips are placed on their local +Y axis (in glTF space)"
-msgstr ""
-"有利于重新导入来自blender的glTFs文件。\n"
-"骨骼头部放置在正向局部Y轴(glTF空间)"
-
-
 msgid "Temperance (average)"
 msgstr "克制(平均)"
-
-
-msgid ""
-"Decent all-around strategy.\n"
-"A bone with one child has its tip placed on the local axis\n"
-"closest to its child"
-msgstr ""
-"优秀的策略。\n"
-"拥有一个子骨骼的骨骼的头部放置在最接近子骨骼的本地轴向上"
 
 
 msgid "Fortune (may look better, less accurate)"
 msgstr "碰碰运气(可能看起来更好，不太准确)"
 
 
-msgid ""
-"Might look better than Temperance, but also might have errors.\n"
-"A bone with one child has its tip placed at its child's root.\n"
-"Non-uniform scalings may get messed up though, so beware"
-msgstr ""
-"可能比克制(平均)更好，但也可能有错误。\n"
-"子骨骼的头部放置在它的根级骨骼上。\n"
-"注意，非均匀的缩放可能会导致糟糕的结果"
-
-
 msgid "Guess Original Bind Pose"
 msgstr "猜测原始绑定姿态"
-
-
-msgid ""
-"Try to guess the original bind pose for skinned meshes from the inverse bind matrices.\n"
-"When off, use default/rest pose as bind pose"
-msgstr ""
-"尝试从逆绑定矩阵中猜测蒙皮网格的原始绑定姿势。\n"
-"当关闭时，使用默认/静置姿势作为绑定姿势"
 
 
 msgid "Pack Images"
@@ -50542,16 +50477,6 @@ msgstr "平直着色"
 
 msgid "Log Level"
 msgstr "日志级别"
-
-
-msgid ""
-"The glTF format requires discontinuous normals, UVs, and other vertex attributes to be stored as separate vertices, as required for rendering on typical graphics hardware.\n"
-"This option attempts to combine co-located vertices where possible.\n"
-"Currently cannot combine verts with different normals"
-msgstr ""
-"glTF 格式要求将不连续法向、UV以及其他顶点属性存储为单独的顶点，这是在典型图形硬件上渲染所需的。\n"
-"此选项将尽可能合并同一位置的顶点。\n"
-"当前无法合并具有不同法向的顶点"
 
 
 msgctxt "Operator"
@@ -62180,10 +62105,6 @@ msgid "Applies a filter to modify the current sculpt vertex colors"
 msgstr "应用滤镜来修改当前雕刻顶点色"
 
 
-msgid "fill color"
-msgstr "填充颜色"
-
-
 msgid "Fill with a specific color"
 msgstr "填充特定颜色"
 
@@ -62468,10 +62389,6 @@ msgstr "反转生成的遮罩"
 
 msgid "Preserve Previous Mask"
 msgstr "保留上一个遮罩"
-
-
-msgid "Preserve the previous mask and add or substract the new one generated by the colors"
-msgstr "保留上一个遮罩，并添加或替换颜色生成的新遮罩"
 
 
 msgid "How much changes in color affect the mask generation"
@@ -65880,10 +65797,6 @@ msgstr "断离选中顶点或区域"
 msgctxt "Operator"
 msgid "UV Rip Move"
 msgstr "UV断离移动"
-
-
-msgid "unstitch UV's and move the result"
-msgstr "解缝UV并移动结果"
 
 
 msgid "UV Rip"
@@ -76981,10 +76894,6 @@ msgid "Custom Pose"
 msgstr "自定义姿势"
 
 
-msgid "Allow a manually definied position and rotation to be used as the VR view base pose"
-msgstr "允许将手动定义的位置和旋转用作VR视图基础姿势"
-
-
 msgid "ID Property"
 msgstr "ID 属性"
 
@@ -80954,10 +80863,6 @@ msgstr "像素化效果"
 
 msgid "Pixel size"
 msgstr "像素大小"
-
-
-msgid "Antialiase pixels"
-msgstr "像素抗锯齿"
 
 
 msgid "Rim Effect"
@@ -86663,6 +86568,14 @@ msgid "Correct data such as UV's and vertex colors when transforming"
 msgstr "变换时修正数据(如UV以及顶点色)"
 
 
+msgid "Keep Connected"
+msgstr "保留已连接项"
+
+
+msgid "During the Face Attributes correction, merge attributes connected to the same vertex"
+msgstr "在面属性校正期间，合并与同一顶点相连的属性"
+
+
 msgid "Transform Origins"
 msgstr "变换原点"
 
@@ -90077,6 +89990,10 @@ msgid "ID %s not found in library %s anymore!"
 msgstr "ID %s 未在库 %s 中找到!"
 
 
+msgid "ID %s uses shapekey %s, but its 'from' pointer is invalid (%p), fixing..."
+msgstr "ID %s使用了形态建 %s，但其 “from” 指针无效 (%p)，修复中..."
+
+
 msgid "insufficient content"
 msgstr "不充分的内容"
 
@@ -90119,6 +90036,10 @@ msgstr "LIB: %s: '%s' 直接关联自 '%s' (父级 '%s'), 但是一个非可关�
 
 msgid "LIB: %s: '%s' missing from '%s', parent '%s'"
 msgstr "LIB: %s: '%s' 缺失自 '%s', 父级 '%s'"
+
+
+msgid "Read packed library:  '%s', parent '%s'"
+msgstr "读取已打包的库：'%s'，父级 '%s'"
 
 
 msgid "Read library:  '%s', '%s', parent '%s'"
@@ -90299,10 +90220,6 @@ msgstr "基本"
 
 msgid "Incompatible Light cache version, please bake again"
 msgstr "不兼容的灯光缓存版本，请再次烘焙"
-
-
-msgid "Error: Light cache is too big for your GPU to be loaded"
-msgstr "错误：灯光缓存太大，GPU无法加载"
 
 
 msgid "Baking light cache"
@@ -91383,10 +91300,6 @@ msgstr "蜡笔没有活动的绘画工具"
 
 msgid "Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to align, Alt to center, E: extrude"
 msgstr "线: ESC 取消, 鼠标左键设置原点, 回车/鼠标中键确定, 滚轮/+- 调节细分次数, Shift 对齐, Alt 到中心, E: 挤压"
-
-
-msgid "Line: ESC to cancel, LMB to set, Enter/MMB to confirm, Shift to align"
-msgstr "线: ESC 取消, 鼠标左键设置原点, 回车/鼠标中键确定, Shift对齐"
 
 
 msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to square, Alt to center"
@@ -92790,6 +92703,10 @@ msgstr "无法删除间接关联的库 '%s'"
 
 msgid "Cannot delete object '%s' from scene '%s', indirectly used objects need at least one user"
 msgstr "无法从场景 '%s' 删除物体 '%s', 需要至少一个用户间接使用物体"
+
+
+msgid "Deleted %u object(s)"
+msgstr "已删除 %u 个物体"
 
 
 msgid "Baking of multires data only works with an active mesh object"
@@ -95006,6 +94923,10 @@ msgid "Select an existing NLA Track or an empty action line first"
 msgstr "先选中一个已有的 NLA 轨道或一个空动作行"
 
 
+msgid "No animation channel found at index %d"
+msgstr "在编号 %d 处找不到动画通道"
+
+
 msgid "Animation channel at index %d is not a NLA 'Active Action' channel"
 msgstr "在索引 %d 处的动画通道不是一个NLA“活动动作”的通道"
 
@@ -95609,10 +95530,6 @@ msgstr "未做功能: 在什么情况下会发生?"
 
 msgid "Cannot reassign inputs: strip has no inputs"
 msgstr "无法重新指定输入: 片段没有输入"
-
-
-msgid "Cannot reassign inputs: recursion detected."
-msgstr "无法重新指定输入: 检测到递归"
 
 
 msgid "No valid inputs to swap"
@@ -96666,10 +96583,6 @@ msgid "Use Factor"
 msgstr "使用系数"
 
 
-msgid "Stength"
-msgstr "强度"
-
-
 msgid "Stroke Fit Method"
 msgstr "笔画拟合方法"
 
@@ -96740,6 +96653,10 @@ msgstr "' %s' 没有大写字母数字前缀"
 
 msgid "'%s' doesn't have an alpha-numeric suffix"
 msgstr "' %s' 没有大写字母数字后缀"
+
+
+msgid "%s: expected ID type, not %s"
+msgstr "%s: 预期ID类型, 而非 %s"
 
 
 msgid "Array length mismatch (expected %d, got %d)"
@@ -97143,6 +97060,14 @@ msgid "Texture layer '%s' not found"
 msgstr "未找到纹理层 '%s'"
 
 
+msgid "Number of custom normals is not number of loops (%f / %d)"
+msgstr "自定义法向数不是循环数 (%f / %d)"
+
+
+msgid "Number of custom normals is not number of vertices (%f / %d)"
+msgstr "自定义法向数不是顶点数 (%f / %d)"
+
+
 msgid "Metaball '%s' does not contain spline given"
 msgstr "融球 '%s' 不包含给定的放样"
 
@@ -97498,6 +97423,14 @@ msgstr "空间类型里找不到区域"
 
 msgid "Registering panel class: '%s' is too long, maximum length is %d"
 msgstr "注册的面板类: '%s' 太长, 最大长度为 %d"
+
+
+msgid "Registering panel class: '%s' has category '%s' "
+msgstr "注册面板类: '%s'具有类别'%s' "
+
+
+msgid "Registering panel class: parent '%s' for '%s' not found"
+msgstr "注册面板类: '%s' 作为 '%s' 父级未找到"
 
 
 msgid "Registering uilist class: '%s' is too long, maximum length is %d"
@@ -98629,6 +98562,10 @@ msgstr "'%s': 无法使用当前文件作为库文件"
 
 msgid "Scene '%s' is linked, instantiation of objects & groups is disabled"
 msgstr "场景 '%s' 已链接，实例化例化和组已禁用"
+
+
+msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
+msgstr "库重载：通过重新加载一个失败的数据块替换所有对旧数据块 '%s' 的引用，旧数据块(%d 个剩余用户)必须保留并重命名为 '%s'"
 
 
 msgid "'%s' is not a valid library filepath"

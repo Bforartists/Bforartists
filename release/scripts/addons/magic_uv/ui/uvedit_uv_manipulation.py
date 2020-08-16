@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 import bpy
 
@@ -38,6 +38,7 @@ from ..op.select_uv import (
     MUV_OT_SelectUV_SelectFlipped,
 )
 from ..op.pack_uv import MUV_OT_PackUV
+from ..op.clip_uv import MUV_OT_ClipUV
 from ..utils.bl_class_registry import BlClassRegistry
 from ..utils import compatibility as compat
 
@@ -129,3 +130,16 @@ class MUV_PT_UVEdit_UVManipulation(bpy.types.Panel):
             box.prop(sc, "muv_pack_uv_allowable_center_deviation", text="")
             box.label(text="Allowable Size Deviation:")
             box.prop(sc, "muv_pack_uv_allowable_size_deviation", text="")
+
+        box = layout.box()
+        box.prop(sc, "muv_clip_uv_enabled", text="Clip UV")
+        if sc.muv_clip_uv_enabled:
+            ops = box.operator(MUV_OT_ClipUV.bl_idname, text="Clip UV")
+            ops.clip_uv_range_max = sc.muv_clip_uv_range_max
+            ops.clip_uv_range_min = sc.muv_clip_uv_range_min
+            box.label(text="Range:")
+            row = box.row()
+            col = row.column()
+            col.prop(sc, "muv_clip_uv_range_max", text="Max")
+            col = row.column()
+            col.prop(sc, "muv_clip_uv_range_min", text="Min")
