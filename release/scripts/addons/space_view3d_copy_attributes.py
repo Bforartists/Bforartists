@@ -272,11 +272,7 @@ class CopySelectedPoseConstraints(Operator):
         for bone in selected:
             for index, flag in enumerate(self.selection):
                 if flag:
-                    old_constraint = active.constraints[index]
-                    new_constraint = bone.constraints.new(
-                        active.constraints[index].type
-                    )
-                    generic_copy(old_constraint, new_constraint)
+                    bone.constraints.copy(active.constraints[index])
         return {'FINISHED'}
 
 

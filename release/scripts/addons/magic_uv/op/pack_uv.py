@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 from math import fabs
 

@@ -367,7 +367,7 @@ class DATA_PT_shape_keys(MeshButtonsPanel, Panel):
 
         if enable_edit or (ob.use_shape_key_edit_mode and ob.type == 'MESH'):
             enable_pin = True
-            if ob.show_only_shape_key:
+            if ob.show_only_shape_key is False:
                 enable_edit_value = True
 
         row = layout.row()
@@ -485,7 +485,7 @@ class DATA_PT_sculpt_vertex_colors(MeshButtonsPanel, Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.preferences.experimental.use_sculpt_vertex_colors
+        return super().poll(context) and context.preferences.experimental.use_sculpt_vertex_colors
 
     def draw(self, context):
         layout = self.layout

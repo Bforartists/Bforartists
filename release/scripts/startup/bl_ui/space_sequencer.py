@@ -291,6 +291,8 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
+            if st.display_mode == 'IMAGE':
+                layout.prop(st, "zoom_to_fit", icon='VIEW_SELECTED')
 
             if is_sequencer_view:
                 layout.menu("SEQUENCER_MT_preview_zoom", text="Fractional Preview Zoom")
