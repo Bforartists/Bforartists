@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'fe70605a2a0b')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -12264,8 +12264,8 @@ msgid "Compression"
 msgstr "Nén"
 
 
-msgid "facession method to be used"
-msgstr "Phương pháp nén để dùng"
+msgid "Compression method to be used"
+msgstr "Phương pháp được dùng cho nén đệm chứa"
 
 
 msgid "Zip"
@@ -12350,10 +12350,6 @@ msgstr "Mô phỏng hạt được phóng to bằng hệ số này (so với đ�
 
 msgid "Cache Compression"
 msgstr "Nén Đệm Chứa"
-
-
-msgid "Compression method to be used"
-msgstr "Phương pháp được dùng cho nén đệm chứa"
 
 
 msgid "Lite"
@@ -17919,10 +17915,6 @@ msgstr "Mức nước sơn được nhiễm màu từ bề mặt vào màu của
 
 msgid "Wet Persistence"
 msgstr "Sự Cố Chấp Ướt"
-
-
-msgid "Amount of wet paint that stays in the brush after applyig paint to the surface"
-msgstr "Mức nước sơn ướt được dính trên bút sau tha nước sơn trên bề mặt"
 
 
 msgid "Path to external displacements file"
@@ -45914,20 +45906,8 @@ msgid "Output format for images. PNG is lossless and generally preferred, but JP
 msgstr "Định dạng xuât cho ảnh. PNG không mất dữ liệu nguồn và tốt hơn, nhưng có lẻ JPEG tốt hơn cho ứng dụng trên mạng vì nó nhỏ gọn hơn"
 
 
-msgid ""
-"Save PNGs as PNGs and JPEGs as JPEGs.\n"
-"If neither one, use PNG"
-msgstr "Lưu PNG bằng định dạng PNG, và JPEG bằng định dạng JPEG.Nếu chưa chọn cáo nào, lưu bằng PNG"
-
-
 msgid "JPEG Format (.jpg)"
 msgstr "Định Dạng JPEG (.jpg)"
-
-
-msgid ""
-"Save images as JPEGs. (Images that need alpha are saved as PNGs though.)\n"
-"Be aware of a possible loss in quality"
-msgstr "Lưu các ảnh bằng định dạng JPEG. (Nhưng các ảnh có độ đục sẽ được lưu bằng PNG.)Coi chừng mất chất lượng ảnh"
 
 
 msgid "Punctual Lights"
@@ -45964,16 +45944,6 @@ msgstr "Xuất tiếp tuyến đỉnh với dạng mẫu (mục đích biến d�
 
 msgid "Group by NLA Track"
 msgstr "Nhom Hóa từng Lằn NLA"
-
-
-msgid ""
-"When on, multiple actions become part of the same glTF animation if\n"
-"they're pushed onto NLA tracks with the same name.\n"
-"When off, all the currently assigned actions become one glTF animation"
-msgstr ""
-"Khi bật, nhiều hành động được gồm vào cùng hoạt hình glTF nếu\n"
-"được đẩy vào lằn NLA có tên giống.\n"
-"Khi tắt, tất cả hành động đã được chỉ định hiện tại được trở thành một hoạt hình glTF"
 
 
 msgid "Export vertex normals with meshes"
@@ -50314,52 +50284,16 @@ msgid "Blender (best for re-importing)"
 msgstr "Blender (tốc nhất cho nhập lại)"
 
 
-msgid ""
-"Good for re-importing glTFs exported from Blender.\n"
-"Bone tips are placed on their local +Y axis (in glTF space)"
-msgstr ""
-"Tốt cho nhập lại tệp glTF được xuất từ Blender.\n"
-"Đỉnh xương được đặt trên trục +Y địa phương (trong không gian glTF)"
-
-
 msgid "Temperance (average)"
 msgstr "Độ Giữ Gìn (trung bình)"
-
-
-msgid ""
-"Decent all-around strategy.\n"
-"A bone with one child has its tip placed on the local axis\n"
-"closest to its child"
-msgstr ""
-"Chiến thuật tốt tổng quát.\n"
-"Một xương có một con cái được đặt đỉnh của nó trên trục địa phương\n"
-"gần nhất với con cái"
 
 
 msgid "Fortune (may look better, less accurate)"
 msgstr "Giào (có lẽ đẹp hơn, nhưng giảm độ chính xác)"
 
 
-msgid ""
-"Might look better than Temperance, but also might have errors.\n"
-"A bone with one child has its tip placed at its child's root.\n"
-"Non-uniform scalings may get messed up though, so beware"
-msgstr ""
-"Có lẻ đẹp hơn Giữ Gìn, nhưng có thể có sai lầm.\n"
-"Một xương có một con cái được đặt đỉnh tại rể của con cái.\n"
-"Phóng to không đều có thể bị hư, cẩn thận"
-
-
 msgid "Guess Original Bind Pose"
 msgstr "Đoán Dạng Đứng Gói Lại Ban Đầu"
-
-
-msgid ""
-"Try to guess the original bind pose for skinned meshes from the inverse bind matrices.\n"
-"When off, use default/rest pose as bind pose"
-msgstr ""
-"Thử đoán dạng đứng gói lại ban đầu cho mạng lưới có da từ các ma trận gói lại đảo nghịch.\n"
-"Khi tắt, dùng dạng đứng mặc định/nghỉ làm dạng đứng gói lại"
 
 
 msgid "Pack Images"
@@ -61948,10 +61882,6 @@ msgid "Applies a filter to modify the current sculpt vertex colors"
 msgstr "Áp dụng một bộ lọc để sửa đổi màu đỉnh khắc hiện tại"
 
 
-msgid "fill color"
-msgstr "màu tô đầy"
-
-
 msgid "Fill with a specific color"
 msgstr "Tô đầy bằng một màu nhất định"
 
@@ -62236,10 +62166,6 @@ msgstr "Đảo nghịch mặt nạ được chế tạo"
 
 msgid "Preserve Previous Mask"
 msgstr "Giữ Nguyên Mặt Nạ Cũ"
-
-
-msgid "Preserve the previous mask and add or substract the new one generated by the colors"
-msgstr "Giữ nguyên mặt nạ cũ và cộng hay trừ mặt nạ mới được chế tạo bằng màu"
 
 
 msgid "How much changes in color affect the mask generation"
@@ -65648,10 +65574,6 @@ msgstr "Xé các đỉnh được chọn hoặc một vùng đã chọn"
 msgctxt "Operator"
 msgid "UV Rip Move"
 msgstr "Di Chuyển Xé UV"
-
-
-msgid "unstitch UV's and move the result"
-msgstr "Gỡ khâu UV và di chuyển kết qủa"
 
 
 msgid "UV Rip"
@@ -80640,10 +80562,6 @@ msgid "Pixel size"
 msgstr "Kích cỡ điểm ảnh"
 
 
-msgid "Antialiase pixels"
-msgstr "Chống răng cưa điểm ảnh"
-
-
 msgid "Rim Effect"
 msgstr "Hiệu Ứng Vành"
 
@@ -89989,10 +89907,6 @@ msgid "Incompatible Light cache version, please bake again"
 msgstr "Phiên bản đệm chứa Ánh Sáng không phụ hợp, làm ơn nướng lần nữa"
 
 
-msgid "Error: Light cache is too big for your GPU to be loaded"
-msgstr "Sai lầm: Đệm chứa Ánh Sáng qúa to để nhập vào GPU của bạn"
-
-
 msgid "Baking light cache"
 msgstr "Đang nướng đệm chứa ánh sáng"
 
@@ -91071,10 +90985,6 @@ msgstr "Bút Sáp không có dụng cụ sơn hoạt động"
 
 msgid "Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to align, Alt to center, E: extrude"
 msgstr "Đường Thẳng: ESC để hủy, NCT để đặt gốc tọa độ, Enter/NCG để chấp nhận, NÚT CUỘN/+- để chỉnh số phân hóa, Shift để sắp xếp, Alt để di chuyển đến trung tâm, E: kéo ra"
-
-
-msgid "Line: ESC to cancel, LMB to set, Enter/MMB to confirm, Shift to align"
-msgstr "Đường Thẳng: ESC đề hủy, NCT để đặt, Enter/NCG để chấp nhận, Shift để sắp xếp"
 
 
 msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to square, Alt to center"
@@ -96248,10 +96158,6 @@ msgstr "Bao Bì Xương"
 
 msgid "Use Factor"
 msgstr "Dùng Hệ Số"
-
-
-msgid "Stength"
-msgstr "Sức Lực"
 
 
 msgid "Stroke Fit Method"

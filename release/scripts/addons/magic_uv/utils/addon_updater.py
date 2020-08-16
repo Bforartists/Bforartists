@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.2"
-__date__ = "31 Jul 2019"
+__version__ = "6.3"
+__date__ = "10 Aug 2020"
 
 from threading import Lock
 import urllib
@@ -60,7 +60,7 @@ def _request(url, json_decode=True):
             return json.JSONDecoder().decode(data.decode())
         except Exception as e:
             raise RuntimeError("API response has invalid JSON format ({})"
-                               .format(str(e.reason)))
+                               .format(str(e)))
 
     return data.decode()
 
@@ -153,7 +153,7 @@ def _compare_version(ver1, ver2):
 
         if v1[idx] > v2[idx]:
             return 1        # v1 > v2
-        elif v1[idx] < v2[idx]:
+        if v1[idx] < v2[idx]:
             return -1       # v1 < v2
 
         return comp(v1, v2, idx + 1)
