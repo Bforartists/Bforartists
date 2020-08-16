@@ -1262,6 +1262,7 @@ class PHYSICS_PT_export(PhysicButtonsPanel, Panel):
         # Only show the advanced panel to advanced users who know Mantaflow's birthday :)
         if bpy.app.debug_value == 3001:
             col = flow.column()
+            col.use_property_split = False
             col.prop(domain, "export_manta_script", text="Export Mantaflow Script")
 
 
