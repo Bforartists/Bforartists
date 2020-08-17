@@ -291,7 +291,7 @@ class PHYSICS_PT_rigid_body_dynamics_deactivation(PHYSICS_PT_rigidbody_panel, Pa
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         ob = context.object
@@ -303,6 +303,7 @@ class PHYSICS_PT_rigid_body_dynamics_deactivation(PHYSICS_PT_rigidbody_panel, Pa
         col.prop(rbo, "use_start_deactivated")
 
         col = flow.column()
+        col.use_property_split = True
         col.prop(rbo, "deactivate_linear_velocity", text="Velocity Linear")
         col.prop(rbo, "deactivate_angular_velocity", text="Angular")
         # TODO: other params such as time?
