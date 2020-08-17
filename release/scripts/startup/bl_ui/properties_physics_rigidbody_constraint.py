@@ -68,18 +68,18 @@ class PHYSICS_PT_rigid_body_constraint_settings(PHYSICS_PT_rigidbody_constraint_
 
         col = flow.column()
         row = col.row()
-        row.use_property_split = False  
+        row.use_property_split = False
         row.prop(rbc, "enabled")
         row.prop_decorator(rbc, "enabled")
         row = col.row()
-        row.use_property_split = False  
+        row.use_property_split = False
         row.prop(rbc, "disable_collisions")
         row.prop_decorator(rbc, "disable_collisions")
 
         if rbc.type != 'MOTOR':
             col = flow.column()
             row = col.row()
-            row.use_property_split = False  
+            row.use_property_split = False
             row.prop(rbc, "use_breaking")
             row.prop_decorator(rbc, "use_breaking")
 
@@ -177,7 +177,7 @@ class PHYSICS_PT_rigid_body_constraint_limits_linear(PHYSICS_PT_rigidbody_constr
         if rbc.type in {'PISTON', 'SLIDER'}:
             col = flow.column()
             row = col.row()
-            row.use_property_split = False 
+            row.use_property_split = False
             row.prop(rbc, "use_limit_lin_x")
             row.prop_decorator(rbc, "use_limit_lin_x")
 
@@ -189,36 +189,36 @@ class PHYSICS_PT_rigid_body_constraint_limits_linear(PHYSICS_PT_rigidbody_constr
         elif rbc.type in {'GENERIC', 'GENERIC_SPRING'}:
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbc, "use_limit_lin_x")
             row.prop_decorator(rbc, "use_limit_lin_x")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_lin_x
-            sub.prop(rbc, "limit_lin_x_lower", text="X Lower")
-            sub.prop(rbc, "limit_lin_x_upper", text="Upper")
+            if rbc.use_limit_lin_x:
+                sub.prop(rbc, "limit_lin_x_lower", text="X Lower")
+                sub.prop(rbc, "limit_lin_x_upper", text="Upper")
 
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbc, "use_limit_lin_y")
             row.prop_decorator(rbc, "use_limit_lin_y")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_lin_y
-            sub.prop(rbc, "limit_lin_y_lower", text="Y Lower")
-            sub.prop(rbc, "limit_lin_y_upper", text="Upper")
+            if rbc.use_limit_lin_y:
+                sub.prop(rbc, "limit_lin_y_lower", text="Y Lower")
+                sub.prop(rbc, "limit_lin_y_upper", text="Upper")
 
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbc, "use_limit_lin_z")
             row.prop_decorator(rbc, "use_limit_lin_z")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_lin_z
-            sub.prop(rbc, "limit_lin_z_lower", text="Z Lower")
-            sub.prop(rbc, "limit_lin_z_upper", text="Upper")
+            if rbc.use_limit_lin_z:
+                sub.prop(rbc, "limit_lin_z_lower", text="Z Lower")
+                sub.prop(rbc, "limit_lin_z_upper", text="Upper")
 
 
 class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_constraint_panel, Panel):
@@ -246,60 +246,60 @@ class PHYSICS_PT_rigid_body_constraint_limits_angular(PHYSICS_PT_rigidbody_const
         if rbc.type == 'HINGE':
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbc, "use_limit_ang_z")
             row.prop_decorator(rbc, "use_limit_ang_z")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_ang_z
-            sub.prop(rbc, "limit_ang_z_lower", text="Z Lower")
-            sub.prop(rbc, "limit_ang_z_upper", text="Upper")
+            if rbc.use_limit_ang_z:
+                sub.prop(rbc, "limit_ang_z_lower", text="Z Lower")
+                sub.prop(rbc, "limit_ang_z_upper", text="Upper")
 
         elif rbc.type == 'PISTON':
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbc, "use_limit_ang_x")
             row.prop_decorator(rbc, "use_limit_ang_x")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_ang_x
-            sub.prop(rbc, "limit_ang_x_lower", text="X Lower")
-            sub.prop(rbc, "limit_ang_x_upper", text="Upper")
+            if rbc.use_limit_ang_x:
+                sub.prop(rbc, "limit_ang_x_lower", text="X Lower")
+                sub.prop(rbc, "limit_ang_x_upper", text="Upper")
 
         elif rbc.type in {'GENERIC', 'GENERIC_SPRING'}:
             col = flow.column()
             row = col.row()
-            row.use_property_split = False               
+            row.use_property_split = False
             row.prop(rbc, "use_limit_ang_x")
             row.prop_decorator(rbc, "use_limit_ang_x")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_ang_x
-            sub.prop(rbc, "limit_ang_x_lower", text="X Lower")
-            sub.prop(rbc, "limit_ang_x_upper", text="Upper")
+            if rbc.use_limit_ang_x:
+                sub.prop(rbc, "limit_ang_x_lower", text="X Lower")
+                sub.prop(rbc, "limit_ang_x_upper", text="Upper")
 
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbc, "use_limit_ang_y")
             row.prop_decorator(rbc, "use_limit_ang_y")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_ang_y
-            sub.prop(rbc, "limit_ang_y_lower", text="Y Lower")
-            sub.prop(rbc, "limit_ang_y_upper", text="Upper")
+            if rbc.use_limit_ang_y:
+                sub.prop(rbc, "limit_ang_y_lower", text="Y Lower")
+                sub.prop(rbc, "limit_ang_y_upper", text="Upper")
 
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbc, "use_limit_ang_z")
             row.prop_decorator(rbc, "use_limit_ang_z")
 
             sub = col.column(align=True)
-            sub.active = rbc.use_limit_ang_z
-            sub.prop(rbc, "limit_ang_z_lower", text="Z Lower")
-            sub.prop(rbc, "limit_ang_z_upper", text="Upper")
+            if rbc.use_limit_ang_z:
+                sub.prop(rbc, "limit_ang_z_lower", text="Z Lower")
+                sub.prop(rbc, "limit_ang_z_upper", text="Upper")
 
 
 class PHYSICS_PT_rigid_body_constraint_motor(PHYSICS_PT_rigidbody_constraint_panel, Panel):
@@ -439,28 +439,37 @@ class PHYSICS_PT_rigid_body_constraint_springs_angular(PHYSICS_PT_rigidbody_cons
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         col = flow.column()
-        col.prop(rbc, "use_spring_ang_x", text="X Angle")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbc, "use_spring_ang_x", text="X Angle")
+        row.prop_decorator(rbc, "use_spring_ang_x")
 
         sub = col.column(align=True)
-        sub.active = rbc.use_spring_ang_x
-        sub.prop(rbc, "spring_stiffness_ang_x", text="X Stiffness")
-        sub.prop(rbc, "spring_damping_ang_x", text="Damping")
+        if rbc.use_spring_ang_x:
+            sub.prop(rbc, "spring_stiffness_ang_x", text="X Stiffness")
+            sub.prop(rbc, "spring_damping_ang_x", text="Damping")
 
         col = flow.column()
-        col.prop(rbc, "use_spring_ang_y", text="Y Angle")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbc, "use_spring_ang_y", text="Y Angle")
+        row.prop_decorator(rbc, "use_spring_ang_y")
 
         sub = col.column(align=True)
-        sub.active = rbc.use_spring_ang_y
-        sub.prop(rbc, "spring_stiffness_ang_y", text="Y Stiffness")
-        sub.prop(rbc, "spring_damping_ang_y", text="Damping")
+        if rbc.use_spring_ang_y:
+            sub.prop(rbc, "spring_stiffness_ang_y", text="Y Stiffness")
+            sub.prop(rbc, "spring_damping_ang_y", text="Damping")
 
         col = flow.column()
-        col.prop(rbc, "use_spring_ang_z", text="Z Angle")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbc, "use_spring_ang_z", text="Z Angle")
+        row.prop_decorator(rbc, "use_spring_ang_z")
 
         sub = col.column(align=True)
-        sub.active = rbc.use_spring_ang_z
-        sub.prop(rbc, "spring_stiffness_ang_z", text="Z Stiffness")
-        sub.prop(rbc, "spring_damping_ang_z", text="Damping")
+        if rbc.use_spring_ang_z:
+            sub.prop(rbc, "spring_stiffness_ang_z", text="Z Stiffness")
+            sub.prop(rbc, "spring_damping_ang_z", text="Damping")
 
 
 class PHYSICS_PT_rigid_body_constraint_springs_linear(PHYSICS_PT_rigidbody_constraint_panel, Panel):
@@ -487,28 +496,37 @@ class PHYSICS_PT_rigid_body_constraint_springs_linear(PHYSICS_PT_rigidbody_const
         flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
 
         col = flow.column()
-        col.prop(rbc, "use_spring_x", text="X Axis")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbc, "use_spring_x", text="X Axis")
+        row.prop_decorator(rbc, "use_spring_x")
 
         sub = col.column(align=True)
-        sub.active = rbc.use_spring_x
-        sub.prop(rbc, "spring_stiffness_x", text="X Stiffness")
-        sub.prop(rbc, "spring_damping_x", text="Damping")
+        if rbc.use_spring_x:
+            sub.prop(rbc, "spring_stiffness_x", text="X Stiffness")
+            sub.prop(rbc, "spring_damping_x", text="Damping")
 
         col = flow.column()
-        col.prop(rbc, "use_spring_y", text="Y Axis")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbc, "use_spring_y", text="Y Axis")
+        row.prop_decorator(rbc, "use_spring_y")
 
         sub = col.column(align=True)
-        sub.active = rbc.use_spring_y
-        sub.prop(rbc, "spring_stiffness_y", text="Stiffness")
-        sub.prop(rbc, "spring_damping_y", text="Damping")
+        if rbc.use_spring_y:
+            sub.prop(rbc, "spring_stiffness_y", text="Stiffness")
+            sub.prop(rbc, "spring_damping_y", text="Damping")
 
         col = flow.column()
-        col.prop(rbc, "use_spring_z", text="Z Axis")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(rbc, "use_spring_z", text="Z Axis")
+        row.prop_decorator(rbc, "use_spring_z")
 
         sub = col.column(align=True)
-        sub.active = rbc.use_spring_z
-        sub.prop(rbc, "spring_stiffness_z", text="Stiffness")
-        sub.prop(rbc, "spring_damping_z", text="Damping")
+        if rbc.use_spring_z:
+            sub.prop(rbc, "spring_stiffness_z", text="Stiffness")
+            sub.prop(rbc, "spring_damping_z", text="Damping")
 
 
 classes = (
