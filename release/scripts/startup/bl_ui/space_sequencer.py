@@ -1282,7 +1282,7 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 else:
                     split.label(text="Pack")
                     split.operator("sound.pack", icon='UGLYPACKAGE', text="")
-                    
+
                 layout.use_property_split = False
                 layout.prop(sound, "use_memory_cache")
         else:
@@ -1772,7 +1772,10 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
             col.prop(strip, "undistort")
             col.separator()
 
-        col.prop(strip, "use_reverse_frames")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(strip, "use_reverse_frames")
+        row.prop_decorator(strip, "use_reverse_frames")
 
 
 class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
@@ -2124,7 +2127,7 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
         ed = context.scene.sequence_editor
 
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(strip, "use_linear_modifiers")
         row.prop_decorator(strip, "use_linear_modifiers")
 
