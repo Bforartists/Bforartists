@@ -1425,6 +1425,8 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             split.label(text="Camera")
             split.template_ID(strip, "scene_camera")
 
+            layout.use_property_split = False
+
             layout.prop(strip, "use_grease_pencil", text="Show Grease Pencil")
 
             if scene:
@@ -1812,7 +1814,10 @@ class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
         col = layout.column()
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
-        col.prop(strip, "use_float", text="Convert to Float")
+        row = col.row()
+        row.use_property_split = False
+        row.prop(strip, "use_float", text="Convert to Float")
+        row.prop_decorator(strip, "use_float")
 
 
 class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
