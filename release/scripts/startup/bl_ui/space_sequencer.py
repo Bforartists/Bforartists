@@ -1282,7 +1282,8 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 else:
                     split.label(text="Pack")
                     split.operator("sound.pack", icon='UGLYPACKAGE', text="")
-
+                    
+                layout.use_property_split = False
                 layout.prop(sound, "use_memory_cache")
         else:
             if strip_type == 'IMAGE':
@@ -1654,7 +1655,11 @@ class SEQUENCER_PT_adjust_sound(SequencerButtonsPanel, Panel):
         if sound is not None:
             col = layout.column()
             if st.waveform_display_type == 'DEFAULT_WAVEFORMS':
-                col.prop(strip, "show_waveform")
+                row = col.row()
+                row.use_property_split = False
+                row.prop(strip, "show_waveform")
+                row.prop_decorator(strip, "show_waveform")
+            col.use_property_split = False
             col.prop(sound, "use_mono")
 
 
@@ -2118,7 +2123,10 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
         strip = act_strip(context)
         ed = context.scene.sequence_editor
 
-        layout.prop(strip, "use_linear_modifiers")
+        row = layout.row()
+        row.use_property_split = False    
+        row.prop(strip, "use_linear_modifiers")
+        row.prop_decorator(strip, "use_linear_modifiers")
 
         layout.operator_menu_enum("sequencer.strip_modifier_add", "type")
         layout.operator("sequencer.strip_modifier_copy", icon='COPYDOWN')
