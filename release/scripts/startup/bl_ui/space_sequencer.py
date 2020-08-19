@@ -312,7 +312,6 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
-            layout.prop(st, "show_fcurves")
 
         layout.separator()
 
@@ -1422,7 +1421,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             split.alignment = 'RIGHT'
             split.label(text="Camera")
             split.template_ID(strip, "scene_camera")
-            
+
             layout.use_property_split = False
 
             layout.prop(strip, "use_grease_pencil", text="Show Grease Pencil")
@@ -1813,7 +1812,7 @@ class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(strip, "use_float", text="Convert to Float")
         row.prop_decorator(strip, "use_float")
 
@@ -2240,8 +2239,9 @@ class SEQUENCER_PT_marker_options(Panel):
         tool_settings = context.tool_settings
         st = context.space_data
 
-        layout.prop(tool_settings, "lock_markers")
-        layout.prop(st, "use_marker_sync")
+        col = layout.column(align = True)
+        col.prop(tool_settings, "lock_markers")
+        col.prop(st, "use_marker_sync")
 
 class SEQUENCER_PT_view_options(bpy.types.Panel):
     bl_label = "View Options"
@@ -2257,11 +2257,15 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
         is_sequencer_view = st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
 
         if is_sequencer_view:
+
+            col = layout.column(align = True)
             if st.view_type == 'SEQUENCER':
-                layout.prop(st, "show_backdrop", text="Preview as Backdrop")
-            layout.prop(st, "show_seconds")
-            layout.prop(st, "show_locked_time")
-            layout.prop(st, "show_strip_offset")
+                col.prop(st, "show_backdrop", text="Preview as Backdrop")
+            col.prop(st, "show_seconds")
+            col.prop(st, "show_locked_time")
+            col.prop(st, "show_strip_offset")
+            col.prop(st, "show_fcurves")
+
             layout.menu("SEQUENCER_MT_view_cache")
 
             layout.use_property_split = True
