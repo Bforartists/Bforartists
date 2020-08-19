@@ -282,7 +282,6 @@ class SEQUENCER_MT_view(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
             layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
-            layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
             layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
 
         if is_preview:
@@ -481,7 +480,7 @@ class SEQUENCER_MT_navigation(Menu):
 
         layout.separator()
 
-        layout.operator("sequencer.view_frame", icon='CENTER')
+        layout.operator("sequencer.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
 
