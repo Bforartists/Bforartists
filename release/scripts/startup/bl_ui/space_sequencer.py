@@ -291,8 +291,6 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
             layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
-            if st.display_mode == 'IMAGE':
-                layout.prop(st, "zoom_to_fit", icon='VIEW_SELECTED')
 
             if is_sequencer_view:
                 layout.menu("SEQUENCER_MT_preview_zoom", text="Fractional Preview Zoom")
@@ -1424,7 +1422,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             split.alignment = 'RIGHT'
             split.label(text="Camera")
             split.template_ID(strip, "scene_camera")
-
+            
             layout.use_property_split = False
 
             layout.prop(strip, "use_grease_pencil", text="Show Grease Pencil")
@@ -1815,7 +1813,7 @@ class SEQUENCER_PT_adjust_color(SequencerButtonsPanel, Panel):
         col.prop(strip, "color_saturation", text="Saturation")
         col.prop(strip, "color_multiply", text="Multiply")
         row = col.row()
-        row.use_property_split = False
+        row.use_property_split = False    
         row.prop(strip, "use_float", text="Convert to Float")
         row.prop_decorator(strip, "use_float")
 
@@ -2016,6 +2014,9 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         col.use_property_split = False
         if ed:
             col.prop(ed, "use_prefetch")
+        if st.display_mode == 'IMAGE':
+            layout.use_property_split = False
+            layout.prop(st, "zoom_to_fit")
 
 
 class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
