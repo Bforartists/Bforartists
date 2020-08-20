@@ -421,7 +421,7 @@ class SEQUENCER_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame...")
+        layout.operator_menu_enum("sequencer.select_side_of_frame", "side", text="Side of Frame")
         layout.menu("SEQUENCER_MT_select_handle", text="Handle")
         layout.menu("SEQUENCER_MT_select_channel", text="Channel")
         layout.menu("SEQUENCER_MT_select_linked", text="Linked")

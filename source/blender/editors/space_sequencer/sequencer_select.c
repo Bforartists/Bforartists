@@ -1008,8 +1008,8 @@ static int sequencer_select_side_of_frame_exec(bContext *C, wmOperator *op)
 void SEQUENCER_OT_select_side_of_frame(wmOperatorType *ot)
 {
   static const EnumPropertyItem sequencer_select_left_right_types[] = {
-      {-1, "LEFT", 0, "Left", "Select to the left of the current frame"},
-      {1, "RIGHT", 0, "Right", "Select to the right of the current frame"},
+      {-1, "LEFT", ICON_RESTRICT_SELECT_OFF, "Left", "Select to the left of the current frame"},
+      {1, "RIGHT", ICON_RESTRICT_SELECT_OFF, "Right", "Select to the right of the current frame"},
       {0, NULL, 0, NULL, NULL},
   };
 
