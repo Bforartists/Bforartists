@@ -442,9 +442,6 @@ class SEQUENCER_MT_marker(Menu):
         from bl_ui.space_time import marker_menu_generic
         marker_menu_generic(layout, context)
 
-        if is_sequencer_view:
-            layout.prop(st, "use_marker_sync")
-
 
 class SEQUENCER_MT_change(Menu):
     bl_label = "Change"
