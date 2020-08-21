@@ -741,7 +741,6 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.delete", text="Delete", icon='DELETE')
 
         layout.separator()
-        layout.operator("sequencer.deinterlace_selected_movies", icon='SEQ_DEINTERLACE')
         layout.operator("sequencer.rebuild_proxy", icon='LASTOPERATOR')
 
         strip = act_strip(context)
