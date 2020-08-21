@@ -740,9 +740,6 @@ class SEQUENCER_MT_strip(Menu):
         layout.operator("sequencer.duplicate_move", icon='DUPLICATE')
         layout.operator("sequencer.delete", text="Delete", icon='DELETE')
 
-        layout.separator()
-        layout.operator("sequencer.rebuild_proxy", icon='LASTOPERATOR')
-
         strip = act_strip(context)
 
         if strip:
