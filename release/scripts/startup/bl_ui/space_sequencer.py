@@ -1075,6 +1075,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             flow.prop(strip, "boost_factor")
             flow.prop(strip, "blur_radius")
             flow.prop(strip, "quality", slider=True)
+            flow.use_property_split = False
             flow.prop(strip, "use_only_boost")
 
         elif strip_type == 'SPEED':
@@ -1104,7 +1105,9 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             col.separator()
 
             colsub = col.column(align=True)
+            colsub.use_property_split = False
             colsub.prop(strip, "use_uniform_scale")
+
             if strip.use_uniform_scale:
                 colsub = col.column(align=True)
                 colsub.prop(strip, "scale_start_x", text="Scale")
@@ -1112,10 +1115,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                 col.prop(strip, "scale_start_x", text="Scale X")
                 col.prop(strip, "scale_start_y", text="Y")
 
-            col.separator()
-
             col = layout.column(align=True)
-            col.label(text="Rotation:")
             col.prop(strip, "rotation_start", text="Rotation")
 
         elif strip_type == 'MULTICAM':
@@ -1170,7 +1170,9 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             col.prop(strip, "frame_interpolation_mode")
 
         elif strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
+            col.use_property_split = False
             col.prop(strip, "use_default_fade", text="Default fade")
+            col.use_property_split = True
             if not strip.use_default_fade:
                 col.prop(strip, "effect_fader", text="Effect Fader")
         elif strip_type == 'GAUSSIAN_BLUR':
