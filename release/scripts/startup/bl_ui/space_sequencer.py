@@ -1078,13 +1078,18 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             flow.prop(strip, "use_only_boost")
 
         elif strip_type == 'SPEED':
+            layout.use_property_split = False
             layout.prop(strip, "use_default_fade", text="Stretch to input strip length")
+            layout.use_property_split = True
             if not strip.use_default_fade:
+                layout.use_property_split = False
                 layout.prop(strip, "use_as_speed")
+                layout.use_property_split = True
                 if strip.use_as_speed:
                     layout.prop(strip, "speed_factor")
-                else:
+                else:                 
                     layout.prop(strip, "speed_factor", text="Frame Number")
+                    layout.use_property_split = False
                     layout.prop(strip, "use_scale_to_length")
 
         elif strip_type == 'TRANSFORM':
@@ -1159,7 +1164,9 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
 
         col = layout.column(align=True)
         if strip_type == 'SPEED':
+            col.use_property_split = True
             col.prop(strip, "multiply_speed")
+            col.use_property_split = False
             col.prop(strip, "frame_interpolation_mode")
 
         elif strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
