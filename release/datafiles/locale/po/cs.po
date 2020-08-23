@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -25062,6 +25062,10 @@ msgid "URL to open"
 msgstr "URL k otevření"
 
 
+msgid "UV Maps"
+msgstr "Použít Ořez"
+
+
 msgid "Toggle the current window fullscreen"
 msgstr "Přepne současné okno na celou obrazovku"
 
@@ -25325,10 +25329,6 @@ msgstr "Přehrát animaci"
 
 msgid "Text Boxes"
 msgstr "Textury"
-
-
-msgid "UV Maps"
-msgstr "Použít Ořez"
 
 
 msgid "Filters"

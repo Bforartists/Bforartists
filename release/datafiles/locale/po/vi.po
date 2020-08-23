@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -61861,10 +61861,6 @@ msgid "Expands the cloth's dimensions"
 msgstr "Mở rộng kích thước của vải"
 
 
-msgid "Pinches the cloth to the point were the cursor was when the filter started"
-msgstr "Ngát vải đến vị trí của con trỏ khi khởi động bộ lọc"
-
-
 msgid "Use Face Sets"
 msgstr "Dùng Tập Hợp Mặt"
 
@@ -68718,6 +68714,67 @@ msgstr "Trang Mạng"
 
 
 msgctxt "Operator"
+msgid "Export USD"
+msgstr "Xuất USD"
+
+
+msgid "Export current scene in a USD archive"
+msgstr "Xuất cảnh hiện tại vào một kho USD"
+
+
+msgid "Use Settings for"
+msgstr "Dùng cài đặt cho"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Xác định sự hiển thị của vật thể, cài đặt của cụ sửa đổi, và các lĩnh vực khác có những cài đặt khác cho màn chiếu và kết xuất"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "Dùng cài đặt cho sự hiển thị của vật thể, cài đặt cụ sửa đổi, v.v."
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "Dùng cài đặt Màn Chiếu cho sự hiển thị của vật thể, cụ sửa đổi, v.v."
+
+
+msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
+msgstr "Khi được chọn, xuất phạm vi bức kết xuất. Khi không chọn, chỉ xuất bức hiện tại"
+
+
+msgid "When checked, hair is exported as USD curves"
+msgstr "Khi được chọn, xuất tóc bằng đường cong USD"
+
+
+msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
+msgstr "Khi được chọn, xuất cài đặt cuả màn chiếu của vật thể bằng vật liệu dự khán USD, và xuất chỉ định vật liệu bằng hạ tập hợp hình dạng"
+
+
+msgid "When checked, normals of exported meshes are included in the export"
+msgstr "Khi được chọn, gồm pháp tuyến của mạng lưới khi xuất"
+
+
+msgid "UV Maps"
+msgstr "Bản Đồ UV"
+
+
+msgid "When checked, all UV maps of exported meshes are included in the export"
+msgstr "Khi được chọn, tất cả bản đồ UV được gồm với mạng lưới khi kết xuất"
+
+
+msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
+msgstr "Chỉ vật thể đã chọn được kết xuất. Xuất các phụ huynh của vật thể chưa chọn bằng biến hóa trống rỗng"
+
+
+msgid "Instancing"
+msgstr "Thực Thể Hóa"
+
+
+msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
+msgstr "Khi được chọn, xuất vật thể thực thể bằng tham chiếu trong USD. Khi không được chọn, xuất vật thể thực thể bằng vật thể thật"
+
+
+msgctxt "Operator"
 msgid "Close Window"
 msgstr "Đóng Cửa Sổ"
 
@@ -69760,10 +69817,6 @@ msgid "Text Boxes"
 msgstr "Hợp Văn Bản"
 
 
-msgid "UV Maps"
-msgstr "Bản Đồ UV"
-
-
 msgid "OpenVDB File"
 msgstr "Tệp OpenVDB"
 
@@ -70035,10 +70088,6 @@ msgstr "Cắt Liên Kết"
 
 msgid "Delta Transform"
 msgstr "Biến Hóa Lệch Lạc"
-
-
-msgid "Instancing"
-msgstr "Thực Thể Hóa"
 
 
 msgid "Scale by Face Size"

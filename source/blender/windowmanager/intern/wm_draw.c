@@ -307,7 +307,9 @@ static void wm_region_test_xr_do_draw(const wmWindowManager *wm,
 
 static bool wm_region_use_viewport_by_type(short space_type, short region_type)
 {
-  return (ELEM(space_type, SPACE_VIEW3D, SPACE_IMAGE) && region_type == RGN_TYPE_WINDOW);
+  return (ELEM(space_type, SPACE_VIEW3D, SPACE_IMAGE, SPACE_NODE) &&
+          region_type == RGN_TYPE_WINDOW) ||
+         ((space_type == SPACE_SEQ) && region_type == RGN_TYPE_PREVIEW);
 }
 
 bool WM_region_use_viewport(ScrArea *area, ARegion *region)
@@ -574,9 +576,8 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
   const float rectg[4] = {rect_geo.xmin, rect_geo.ymin, rect_geo.xmax, rect_geo.ymax};
 
   if (blend) {
-    /* GL_ONE because regions drawn offscreen have premultiplied alpha. */
-    GPU_blend_set_func(GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
-    GPU_blend(true);
+    /* Regions drawn offscreen have premultiplied alpha. */
+    GPU_blend(GPU_BLEND_ALPHA_PREMULT);
   }
 
   /* setup actual texture */
@@ -601,8 +602,7 @@ void wm_draw_region_blend(ARegion *region, int view, bool blend)
   GPU_texture_unbind(texture);
 
   if (blend) {
-    GPU_blend_set_func(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA);
-    GPU_blend(false);
+    GPU_blend(GPU_BLEND_NONE);
   }
 }
 
@@ -910,7 +910,7 @@ static bool wm_draw_update_test_window(Main *bmain, bContext *C, wmWindow *win)
   const wmWindowManager *wm = CTX_wm_manager(C);
   Scene *scene = WM_window_get_active_scene(win);
   ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-  struct Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
+  struct Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(bmain, scene, view_layer);
   bScreen *screen = WM_window_get_active_screen(win);
   ARegion *region;
   bool do_draw = false;

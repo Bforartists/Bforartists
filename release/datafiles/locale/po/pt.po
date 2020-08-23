@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -50874,6 +50874,10 @@ msgid "URL to open"
 msgstr "A localização do tipo \"URL\" a ser aberta"
 
 
+msgid "UV Maps"
+msgstr "Mapas UV"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Fechar janela"
@@ -51546,10 +51550,6 @@ msgstr "Esqueleto"
 
 msgid "Text Boxes"
 msgstr "Caixas de texto"
-
-
-msgid "UV Maps"
-msgstr "Mapas UV"
 
 
 msgid "Filters"

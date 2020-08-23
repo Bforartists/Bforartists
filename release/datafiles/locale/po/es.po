@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -18007,6 +18007,10 @@ msgstr "Cantidad de pintura que será tomada desde la superficie para ser usada 
 
 msgid "Wet Persistence"
 msgstr "Persistencia de humedad"
+
+
+msgid "Amount of wet paint that stays in the brush after applying paint to the surface"
+msgstr "Cantidad de pintura húmeda que permanecerá en el pincel luego de pintar sobre la superficie"
 
 
 msgid "Path to external displacements file"
@@ -40238,7 +40242,7 @@ msgstr "Definir atributo de partículas"
 
 
 msgid "Expected type of the attribute. Nothing is done if the type is not correct"
-msgstr "Tipo esperado del atributo. No se realizará nada en caso de que el tipo no fuera correcto "
+msgstr "Tipo esperado del atributo. No se realizará nada en caso de que el tipo no fuera correcto"
 
 
 msgid "The time to output"
@@ -40591,6 +40595,10 @@ msgstr "Plantilla de conector de nodo"
 
 msgid "Parameters to define node sockets"
 msgstr "Parámetro para definir los conectores de un nodo"
+
+
+msgid "Hide the socket input value even when the socket is not connected"
+msgstr "Oculta el valor de entrada del conector, aún en caso de que se encuentre desconectado"
 
 
 msgid "Boolean Node Socket Interface"
@@ -46058,8 +46066,16 @@ msgid "Output format for images. PNG is lossless and generally preferred, but JP
 msgstr "Formato de salida de imágenes. PNG no produce pérdida y por lo general es el preferido, pero es posible que JPEG sea preferido para aplicaciones web debido a su menor tamaño de archivo"
 
 
+msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
+msgstr "Guardar las imágenes PNG como PNG y las JPEG como JPEG. Para otros tipos usar PNG"
+
+
 msgid "JPEG Format (.jpg)"
 msgstr "Formato JPEG (.jpg)"
+
+
+msgid "Save images as JPEGs. (Images that need alpha are saved as PNGs though.) Be aware of a possible loss in quality"
+msgstr "Guarda las imágenes como JPEG. (Sin embargo las que requieran alfa se guardarán como PNG). Nótese que se podrá producir una pérdida de calidad"
 
 
 msgid "Punctual Lights"
@@ -46096,6 +46112,10 @@ msgstr "Exportar tangentes a los vértices junto con las Formas clave"
 
 msgid "Group by NLA Track"
 msgstr "Agrupar por pista de ANL"
+
+
+msgid "When on, multiple actions become part of the same glTF animation if they're pushed onto NLA tracks with the same name. When off, all the currently assigned actions become one glTF animation"
+msgstr "Cuando se encuentre activado, múltiples acciones formarán parte de la misma animación glTF, si hubieran sido empujadas sobre pistas de ANL con el mismo nombre. Cuando se encuentre desactivado, todas las acciones actualmente asignadas serán tomadas como una única animación glTF"
 
 
 msgid "Export vertex normals with meshes"
@@ -50440,16 +50460,32 @@ msgid "Blender (best for re-importing)"
 msgstr "Blender (mejor para re importar luego)"
 
 
+msgid "Good for re-importing glTFs exported from Blender. Bone tips are placed on their local +Y axis (in glTF space)"
+msgstr "Bueno para re importar glTF exportados desde Blender. Las colas de los huesos se ubicarán sobre su eje +Y local (en espacio de glTF)"
+
+
 msgid "Temperance (average)"
 msgstr "Templanza (promedio)"
+
+
+msgid "Decent all-around strategy. A bone with one child has its tip placed on the local axis closest to its child"
+msgstr "Estrategia decente para la mayoría de los casos. Un hueso con un subordinado tendrá su cola ubicada sobre su eje local, cerca del subordinado"
 
 
 msgid "Fortune (may look better, less accurate)"
 msgstr "Fortuna (puede lucir mejor, es menos preciso)"
 
 
+msgid "Might look better than Temperance, but also might have errors. A bone with one child has its tip placed at its child's root. Non-uniform scalings may get messed up though, so beware"
+msgstr "Puede lucir mejor que Templanza, pero también contener errores. Un hueso con un subordinado tendrá su cola ubicada en la cabeza del subordinado. Sin embargo, hay que advertir que valores de escala no uniformes podrían ocasionar problemas"
+
+
 msgid "Guess Original Bind Pose"
 msgstr "Adivinar pose de enlace original"
+
+
+msgid "Try to guess the original bind pose for skinned meshes from the inverse bind matrices. When off, use default/rest pose as bind pose"
+msgstr "Intenta obtener la pose de enlace original de mallas deformadas, a partir de las matrices inversas de enlace. Cuando se encuentre desactivado, usará la pose de reposo predefinida como pose de enlace"
 
 
 msgid "Pack Images"
@@ -50474,6 +50510,10 @@ msgstr "Sombreado plano"
 
 msgid "Log Level"
 msgstr "Nivel de registro"
+
+
+msgid "The glTF format requires discontinuous normals, UVs, and other vertex attributes to be stored as separate vertices, as required for rendering on typical graphics hardware. This option attempts to combine co-located vertices where possible. Currently cannot combine verts with different normals"
+msgstr "El formato glTF requiere que las normales discontinuas, UV y otros atributos de vértices sean almacenados como vértices separados, tal como se requiere para ser procesado por el hardware gráfico usual. Esta opción intentará combinar, cuando sea posible, vértices que compartan la misma ubicación. Actualmente no es posible combinar vértices con distintas normales"
 
 
 msgctxt "Operator"
@@ -61462,7 +61502,7 @@ msgstr "Agrega o remueve un ajuste de material de lápiz de cera"
 
 msgctxt "Operator"
 msgid "Bake Light Cache"
-msgstr "Capturar el caché de luz"
+msgstr "Capturar caché de iluminación"
 
 
 msgid "Bake the active view layer lighting"
@@ -61507,7 +61547,7 @@ msgstr "Intenta capturar sólo los mapas cúbicos de reflexión, si las cuadríc
 
 msgctxt "Operator"
 msgid "Delete Light Cache"
-msgstr "Borrar caché de luz"
+msgstr "Borrar caché de iluminación"
 
 
 msgid "Delete cached indirect lighting"
@@ -62081,10 +62121,6 @@ msgid "Expands the cloth's dimensions"
 msgstr "Expande las dimensiones de la ropa"
 
 
-msgid "Pinches the cloth to the point were the cursor was when the filter started"
-msgstr "Pellizca la ropa en el lugar donde se encontraba el puntero cuando el filtro fue aplicado"
-
-
 msgid "Use Face Sets"
 msgstr "Usar conjuntos de caras"
 
@@ -62386,6 +62422,10 @@ msgstr "Invertir la máscara generada"
 
 msgid "Preserve Previous Mask"
 msgstr "Mantener máscara anterior"
+
+
+msgid "Preserve the previous mask and add or subtract the new one generated by the colors"
+msgstr "Mantiene la máscara anterior y agrega o sustrae la nueva, generada a partir de los colores"
 
 
 msgid "How much changes in color affect the mask generation"
@@ -65796,6 +65836,10 @@ msgid "UV Rip Move"
 msgstr "Arrancar y mover UV"
 
 
+msgid "Unstitch UV's and move the result"
+msgstr "Arranca las UV y permite mover el resultado"
+
+
 msgid "UV Rip"
 msgstr "Arrancar UV"
 
@@ -69020,6 +69064,67 @@ msgstr "Sitio"
 
 
 msgctxt "Operator"
+msgid "Export USD"
+msgstr "Exportar USD"
+
+
+msgid "Export current scene in a USD archive"
+msgstr "Exportar la escena actual a una archivo de Universal Scene Description"
+
+
+msgid "Use Settings for"
+msgstr "Usar opciones de"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Determina la visibilidad de los objetos, opciones de modificadores y otras áreas donde existan diferentes para visualización en la vista 3D y el procesamiento"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "Usar opciones de procesamiento para visibilidad de objetos, opciones de modificadores, etc"
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "Usar opciones de visualización para visibilidad de objetos, opciones de modificadores, etc"
+
+
+msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
+msgstr "Exporta el rango de procesamiento completo. Si está inactiva, se exportará sólo el fotograma actual"
+
+
+msgid "When checked, hair is exported as USD curves"
+msgstr "Exporta el pelo como curvas USD"
+
+
+msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
+msgstr "Exporta las opciones de Visualización en vistas de los materiales como materiales de previsualización USD, y los materiales asignados se exportarán como subconjuntos de geometría"
+
+
+msgid "When checked, normals of exported meshes are included in the export"
+msgstr "Incluye las normales de las mallas exportadas"
+
+
+msgid "UV Maps"
+msgstr "Mapas UV"
+
+
+msgid "When checked, all UV maps of exported meshes are included in the export"
+msgstr "Incluye todos los mapas UV de las mallas exportadas"
+
+
+msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
+msgstr "Exporta sólo los objetos seleccionados. Los superiores de dichos objetos, que no se encontraran también seleccionados, serán exportados como transformaciones vacías"
+
+
+msgid "Instancing"
+msgstr "Instanciado"
+
+
+msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
+msgstr "Exporta los objetos instanciados como referencias en el USD. Si está inactiva, los mismos serán exportados como objetos reales"
+
+
+msgctxt "Operator"
 msgid "Close Window"
 msgstr "Cerrar ventana"
 
@@ -70062,10 +70167,6 @@ msgid "Text Boxes"
 msgstr "Marcos de texto"
 
 
-msgid "UV Maps"
-msgstr "Mapas UV"
-
-
 msgid "OpenVDB File"
 msgstr "Archivo OpenVDB"
 
@@ -70337,10 +70438,6 @@ msgstr "Cortar vínculos"
 
 msgid "Delta Transform"
 msgstr "Transformación relativa"
-
-
-msgid "Instancing"
-msgstr "Instanciado"
 
 
 msgid "Scale by Face Size"
@@ -76889,6 +76986,10 @@ msgid "Custom Pose"
 msgstr "Pose personalizada"
 
 
+msgid "Allow a manually defined position and rotation to be used as the VR view base pose"
+msgstr "Permite usar una posición y rotación definida manualmente como pose base de la vista de RV"
+
+
 msgid "ID Property"
 msgstr "Propiedad ID"
 
@@ -78874,7 +78975,7 @@ msgstr "Permite capturar automáticamente la iluminación indirecta al editar la
 
 
 msgid "Light Cache Info"
-msgstr "Info caché de luz"
+msgstr "Info caché de iluminación"
 
 
 msgid "Cubemap Display Size"
@@ -80866,6 +80967,10 @@ msgstr "Efecto de pixelación"
 
 msgid "Pixel size"
 msgstr "Tamaño de los píxeles"
+
+
+msgid "Antialias pixels"
+msgstr "Suavizar bordes"
 
 
 msgid "Rim Effect"
@@ -90229,8 +90334,20 @@ msgid "Incompatible Light cache version, please bake again"
 msgstr "Versión incompatible del caché de iluminación, por favor capturar nuevamente"
 
 
+msgid "Error: Light cache is too big for the GPU to be loaded"
+msgstr "Error: El caché de iluminación es demasiado grande para ser cargado en la GPU"
+
+
+msgid "Error: Light cache dimensions not supported by the GPU"
+msgstr "Error: Las dimensiones del caché de iluminación no son soportadas por la GPU"
+
+
 msgid "Baking light cache"
-msgstr "Capturando caché de luz"
+msgstr "Capturando caché de iluminación"
+
+
+msgid "Error: LightCache is too large and will not be saved to disk"
+msgstr "Error: El caché de iluminación es demasiado grande y no será guardado en el disco"
 
 
 msgid "%d Ref. Cubemaps, %d Irr. Samples (%s in memory)"
@@ -90238,7 +90355,7 @@ msgstr "%d Mapas Cúb Refl., %d Muestras Irrad. (%s en memoria)"
 
 
 msgid "No light cache in this scene"
-msgstr "No hay cachés de luz en esta escena"
+msgstr "No hay cachés de iluminación en esta escena"
 
 
 msgid "GpencilMode"
@@ -91307,6 +91424,10 @@ msgstr "No hay una herramienta activa de lápiz de cera"
 
 msgid "Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to align, Alt to center, E: extrude"
 msgstr "Línea: Esc para cancelar, clic Izq. definir origen, Intro/clic Medio confirmar, RUEDA/+- ajustar subdivisiones, May. para alinear, Alt para centrar, tecla E para extruir"
+
+
+msgid "Polyline: ESC to cancel, LMB to set, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to align"
+msgstr "Polilínea: Esc cancelar, clic Izq. definir, Intro/clic Medio confirmar, RUEDA/+- ajustar subdivisiones, May. para alinear"
 
 
 msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to square, Alt to center"
@@ -93744,6 +93865,10 @@ msgid "Unable to remove material slot in edit mode"
 msgstr "No es posible eliminar un contenedor de material en modo edición"
 
 
+msgid "Lightcache cannot allocate resources"
+msgstr "No es posible asignar recursos para el caché de iluminación"
+
+
 msgid "No active lineset and associated line style to manipulate the modifier"
 msgstr "No hay un conjunto activo de líneas (y su estilo de línea asociado) para manipular el modificador"
 
@@ -95537,6 +95662,10 @@ msgstr "PENDIENTE: ¿en qué casos sucede esto?"
 
 msgid "Cannot reassign inputs: strip has no inputs"
 msgstr "No es posible reasignar las entradas: el clip no tiene ninguna entrada"
+
+
+msgid "Cannot reassign inputs: recursion detected"
+msgstr "No es posible reasignar las entradas: se ha detectado una recursión"
 
 
 msgid "No valid inputs to swap"

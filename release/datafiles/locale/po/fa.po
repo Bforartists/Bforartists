@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -11793,6 +11793,10 @@ msgid "URL to open"
 msgstr "ﻥﺩﺮﮐ‌ﺯﺎﺑ ﯼﺍﺮﺑ ﯽﺘﻧﺮﺘﻨﯾﺍ ﺱﺭﺩﺁ"
 
 
+msgid "UV Maps"
+msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
+
+
 msgctxt "Operator"
 msgid "New World"
 msgstr "ﻥﺎﻬﺟ"
@@ -11912,10 +11916,6 @@ msgstr "ﺮﯿﺴﻣ ﺩﺍﺪﺘﻣﺍ ﺭﺩ ﻦﺸﯿﻤﯿﻧﺍ"
 
 msgid "Text Boxes"
 msgstr "ﯽﻨﺘﻣ ﯼﺎﻫ‌ﻪﺒﻌﺟ"
-
-
-msgid "UV Maps"
-msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 
 msgid "Bookmarks"
