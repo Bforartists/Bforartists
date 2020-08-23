@@ -978,13 +978,13 @@ void DepsgraphRelationBuilder::build_object_parent(Object *object)
       break;
     }
   }
-  /* Metaballs are the odd balls here (no pun intended): they will request
+  /* Meta-balls are the odd balls here (no pun intended): they will request
    * instance-list (formerly known as dupli-list) during evaluation. This is
    * their way of interacting with all instanced surfaces, making a nice
    * effect when is used form particle system. */
   if (object->type == OB_MBALL && parent->transflag & OB_DUPLI) {
     ComponentKey parent_geometry_key(parent_id, NodeType::GEOMETRY);
-    /* NOTE: Metaballs are evaluating geometry only after their transform,
+    /* NOTE: Meta-balls are evaluating geometry only after their transform,
      * so we only hook up to transform channel here. */
     add_relation(parent_geometry_key, object_transform_key, "Parent");
   }
@@ -2688,7 +2688,7 @@ void DepsgraphRelationBuilder::build_scene_sequencer(Scene *scene)
   ComponentKey sequencer_key(&scene->id, NodeType::SEQUENCER);
   Sequence *seq;
   bool has_audio_strips = false;
-  SEQ_BEGIN (scene->ed, seq) {
+  SEQ_ALL_BEGIN (scene->ed, seq) {
     build_idproperties(seq->prop);
     if (seq->sound != nullptr) {
       build_sound(seq->sound);
@@ -2714,7 +2714,7 @@ void DepsgraphRelationBuilder::build_scene_sequencer(Scene *scene)
     }
     /* TODO(sergey): Movie clip, camera, mask. */
   }
-  SEQ_END;
+  SEQ_ALL_END;
   if (has_audio_strips) {
     add_relation(sequencer_key, scene_audio_key, "Sequencer -> Audio");
   }

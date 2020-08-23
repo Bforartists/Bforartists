@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -44233,6 +44233,10 @@ msgid "URL to open"
 msgstr "URL da aprire"
 
 
+msgid "UV Maps"
+msgstr "Mappe UV"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Chiudi Finestra"
@@ -44810,10 +44814,6 @@ msgstr "Scheletro"
 
 msgid "Text Boxes"
 msgstr "Caselle di Testo"
-
-
-msgid "UV Maps"
-msgstr "Mappe UV"
 
 
 msgid "Filters"

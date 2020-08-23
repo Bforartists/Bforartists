@@ -187,6 +187,7 @@ void DRW_globals_update(void)
   /* M_SQRT2 to be at least the same size of the old square */
   gb->sizeVertex = U.pixelsize *
                    (max_ff(1.0f, UI_GetThemeValuef(TH_VERTEX_SIZE) * (float)M_SQRT2 / 2.0f));
+  gb->sizeVertexGpencil = U.pixelsize * UI_GetThemeValuef(TH_GP_VERTEX_SIZE);
   gb->sizeFaceDot = U.pixelsize * UI_GetThemeValuef(TH_FACEDOT_SIZE);
   gb->sizeEdge = U.pixelsize * (1.0f / 2.0f); /* TODO Theme */
   gb->sizeEdgeFix = U.pixelsize * (0.5f + 2.0f * (2.0f * (gb->sizeEdge * (float)M_SQRT1_2)));
@@ -213,10 +214,11 @@ void DRW_globals_update(void)
   }
 
   if (G_draw.block_ubo == NULL) {
-    G_draw.block_ubo = DRW_uniformbuffer_create(sizeof(GlobalsUboStorage), gb);
+    G_draw.block_ubo = GPU_uniformbuf_create_ex(
+        sizeof(GlobalsUboStorage), gb, "GlobalsUboStorage");
   }
 
-  DRW_uniformbuffer_update(G_draw.block_ubo, gb);
+  GPU_uniformbuf_update(G_draw.block_ubo, gb);
 
   if (!G_draw.ramp) {
     ColorBand ramp = {0};

@@ -108,15 +108,6 @@ enum {
   BOUNDBOX_DIRTY = (1 << 1),
 };
 
-typedef struct LodLevel {
-  struct LodLevel *next, *prev;
-  struct Object *source;
-  int flags;
-  float distance;
-  char _pad0[4];
-  int obhysteresis;
-} LodLevel;
-
 struct CustomData_MeshMasks;
 
 /* Not saved in file! */
@@ -393,10 +384,6 @@ typedef struct Object {
   char empty_image_flag;
   char _pad8[5];
 
-  /** Contains data for levels of detail. */
-  ListBase lodlevels;
-  LodLevel *currentlod;
-
   struct PreviewImage *preview;
 
   /** Runtime evaluation data (keep last). */
@@ -537,8 +524,6 @@ enum {
   OB_TRANSFLAG_UNUSED_12 = 1 << 12, /* cleared */
   /* runtime constraints disable */
   OB_NO_CONSTRAINTS = 1 << 13,
-  /* hack to work around particle issue */
-  OB_NO_PSYS_UPDATE = 1 << 14,
 
   OB_DUPLI = OB_DUPLIVERTS | OB_DUPLICOLLECTION | OB_DUPLIFACES | OB_DUPLIPARTS,
 };

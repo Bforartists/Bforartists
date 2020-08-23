@@ -792,11 +792,11 @@ class _defs_edit_mesh:
                 col.prop(props, "harden_normals")
                 col.prop(props, "clamp_overlap")
                 col.prop(props, "loop_slide")
-                
+
                 if edge_bevel:
                     col = layout.column(align = True)
                     col.use_property_split = False
-                    col.label(text = "Mark")              
+                    col.label(text = "Mark")
                     row = col.row()
                     row.separator()
                     row.prop(props, "mark_seam", text="Seam")
@@ -812,17 +812,17 @@ class _defs_edit_mesh:
                     col.prop(props, "spread")
 
                 layout.separator()
-                
+
                 if edge_bevel:
                     col = layout.column()
                     col.prop(props, "vmesh_method", text="Intersections")
-                    
+
                     layout.separator()
 
                 layout.prop(props, "face_strength_mode", text="Face Strength")
 
                 layout.prop(props, "profile_type")
-                
+
                 layout.separator()
 
                 if props.profile_type == 'CUSTOM':
@@ -1287,10 +1287,10 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.mesh_filter")
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
-            layout.prop(props, "deform_axis")
-            layout.use_property_split = False
+            row = layout.row(align=True)
+            row.prop(props, "deform_axis")
+            layout.prop(props, "orientation", expand=False)
             layout.prop(props, "use_face_sets")
-            layout.use_property_split = True
             if props.type == 'SURFACE_SMOOTH':
                 layout.prop(props, "surface_smooth_shape_preservation", expand=False)
                 layout.prop(props, "surface_smooth_current_vertex", expand=False)
@@ -1314,9 +1314,11 @@ class _defs_sculpt:
             props = tool.operator_properties("sculpt.cloth_filter")
             layout.prop(props, "type", expand=False)
             layout.prop(props, "strength")
+            row = layout.row(align=True)
+            row.prop(props, "force_axis")
+            layout.prop(props, "orientation", expand=False)
             layout.prop(props, "cloth_mass")
             layout.prop(props, "cloth_damping")
-            layout.use_property_split = False
             layout.prop(props, "use_face_sets")
             layout.prop(props, "use_collisions")
 

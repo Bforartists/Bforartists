@@ -150,8 +150,7 @@ typedef struct GlobalsUboStorage {
   float sizeObjectCenter, sizeLightCenter, sizeLightCircle, sizeLightCircleShadow;
   float sizeVertex, sizeEdge, sizeEdgeFix, sizeFaceDot;
   float sizeChecker;
-
-  float pad_globalsBlock;
+  float sizeVertexGpencil;
 } GlobalsUboStorage;
 /* Keep in sync with globalsBlock in shaders */
 BLI_STATIC_ASSERT_ALIGN(GlobalsUboStorage, 16)
@@ -206,11 +205,11 @@ struct DRW_Global {
    * Not needed for constant color. */
   GlobalsUboStorage block;
   /** Define "globalsBlock" uniform for 'block'.  */
-  struct GPUUniformBuffer *block_ubo;
+  struct GPUUniformBuf *block_ubo;
 
   struct GPUTexture *ramp;
   struct GPUTexture *weight_ramp;
 
-  struct GPUUniformBuffer *view_ubo;
+  struct GPUUniformBuf *view_ubo;
 };
 extern struct DRW_Global G_draw;

@@ -37,13 +37,13 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        
+
         window = context.window
         screen = context.screen
         scene = window.scene
-        
+
         layout.template_search(window, "view_layer", scene, "view_layers", new="scene.view_layer_add", unlink="scene.view_layer_remove")
-        
+
         layout.separator()
 
         layout.use_property_split = True
@@ -54,11 +54,11 @@ class VIEWLAYER_PT_layer(ViewLayerButtonsPanel, Panel):
 
         col = layout.column(align = True)
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(layer, "use", text="Use for Rendering")
         row.prop_decorator(layer, "use")
         row = col.row()
-        row.use_property_split = False  
+        row.use_property_split = False
         row.prop(rd, "use_single_layer", text="Render Single Layer")
 
 
@@ -106,7 +106,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         view_layer_eevee = view_layer.eevee
         scene = context.scene
         scene_eevee = scene.eevee
-        
+
         col = layout.column(align = True)
         col.label(text = "Diffuse")
         col.use_property_split = False
@@ -116,7 +116,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_pass_diffuse_color", text="Color")
-       
+
         col = layout.column(align = True)
         col.label(text = "Specular")
         col.use_property_split = False
@@ -126,7 +126,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_pass_glossy_color", text="Color")
-       
+
         col = layout.column(align = True)
         col.label(text = "Volume")
         col.use_property_split = False
@@ -152,7 +152,6 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_pass_ambient_occlusion", text="Ambient Occlusion")
-        row.active = scene_eevee.use_gtao
 
 
 class VIEWLAYER_PT_eevee_layer_passes_effects(ViewLayerButtonsPanel, Panel):

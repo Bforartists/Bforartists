@@ -102,6 +102,11 @@ if(POLICY CMP0068)
   cmake_policy(SET CMP0068 NEW)
 endif()
 
+# find_package() uses <PackageName>_ROOT variables.
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 #-----------------------------------------------------------------------------
 # Load some macros.
 include(build_files/cmake/macros.cmake)
@@ -429,6 +434,10 @@ option(WITH_TBB   "Enable features depending on TBB (OpenVDB, OpenImageDenoise, 
 if(WIN32)
   option(WITH_TBB_MALLOC_PROXY "Enable the TBB malloc replacement" ON)
 endif()
+
+# This should be turned off when Blender enter beta/rc/release
+option(WITH_EXPERIMENTAL_FEATURES "Enable experimental features (still need to enable them in the user preferences)" ON)
+mark_as_advanced(WITH_EXPERIMENTAL_FEATURES)
 
 # Unit testsing
 option(WITH_GTESTS "Enable GTest unit testing" OFF)
