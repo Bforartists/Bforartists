@@ -85,6 +85,7 @@
 
 #ifdef WITH_PYTHON
 #  include "BPY_extern.h"
+#  include "BPY_extern_python.h"
 #endif
 
 #include "GHOST_C-api.h"
@@ -209,7 +210,7 @@ static void sound_jack_sync_callback(Main *bmain, int mode, double time)
       continue;
     }
     ViewLayer *view_layer = WM_window_get_active_view_layer(window);
-    Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, false);
+    Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
     if (depsgraph == NULL) {
       continue;
     }
@@ -348,8 +349,6 @@ void WM_init(bContext *C, int argc, const char **argv)
 
   BKE_material_copybuf_clear();
   ED_render_clear_mtex_copybuf();
-
-  // GPU_blend_set_func(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
 
   wm_history_file_read();
 

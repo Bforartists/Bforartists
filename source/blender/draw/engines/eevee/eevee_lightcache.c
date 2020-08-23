@@ -942,7 +942,7 @@ static void eevee_lightbake_render_world_sample(void *ved, void *user_data)
 
   sldata->common_data.ray_type = EEVEE_RAY_GLOSSY;
   sldata->common_data.ray_depth = 1;
-  DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
+  GPU_uniformbuf_update(sldata->common_ubo, &sldata->common_data);
   EEVEE_lightbake_render_world(sldata, vedata, lbake->rt_fb);
   EEVEE_lightbake_filter_glossy(sldata,
                                 vedata,
@@ -956,7 +956,7 @@ static void eevee_lightbake_render_world_sample(void *ved, void *user_data)
 
   sldata->common_data.ray_type = EEVEE_RAY_DIFFUSE;
   sldata->common_data.ray_depth = 1;
-  DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
+  GPU_uniformbuf_update(sldata->common_ubo, &sldata->common_data);
   EEVEE_lightbake_render_world(sldata, vedata, lbake->rt_fb);
   EEVEE_lightbake_filter_diffuse(sldata, vedata, lbake->rt_color, lbake->store_fb, 0, 1.0f);
 
@@ -1079,7 +1079,7 @@ static void eevee_lightbake_render_grid_sample(void *ved, void *user_data)
   if (lbake->bounce_curr == 0) {
     common_data->prb_num_render_grid = 0;
   }
-  DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
+  GPU_uniformbuf_update(sldata->common_ubo, &sldata->common_data);
 
   EEVEE_lightbake_render_scene(sldata, vedata, lbake->rt_fb, pos, prb->clipsta, prb->clipend);
 
@@ -1145,7 +1145,7 @@ static void eevee_lightbake_render_probe_sample(void *ved, void *user_data)
   common_data->prb_num_render_cube = 0;
   common_data->ray_type = EEVEE_RAY_GLOSSY;
   common_data->ray_depth = 1;
-  DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
+  GPU_uniformbuf_update(sldata->common_ubo, &sldata->common_data);
 
   EEVEE_lightbake_render_scene(
       sldata, vedata, lbake->rt_fb, eprobe->position, prb->clipsta, prb->clipend);
@@ -1302,8 +1302,8 @@ void EEVEE_lightbake_job(void *custom_data, short *stop, short *do_update, float
   EEVEE_LightBake *lbake = (EEVEE_LightBake *)custom_data;
   Depsgraph *depsgraph = lbake->depsgraph;
 
-  DEG_graph_relations_update(depsgraph, lbake->bmain, lbake->scene, lbake->view_layer_input);
-  DEG_evaluate_on_framechange(lbake->bmain, depsgraph, lbake->frame);
+  DEG_graph_relations_update(depsgraph);
+  DEG_evaluate_on_framechange(depsgraph, lbake->frame);
 
   lbake->view_layer = DEG_get_evaluated_view_layer(depsgraph);
   lbake->stop = stop;
@@ -1430,7 +1430,7 @@ void EEVEE_lightbake_update_world_quick(EEVEE_ViewLayerData *sldata,
 
   sldata->common_data.ray_type = EEVEE_RAY_GLOSSY;
   sldata->common_data.ray_depth = 1;
-  DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
+  GPU_uniformbuf_update(sldata->common_ubo, &sldata->common_data);
   EEVEE_lightbake_render_world(sldata, vedata, lbake.rt_fb);
   EEVEE_lightbake_filter_glossy(sldata,
                                 vedata,
@@ -1444,7 +1444,7 @@ void EEVEE_lightbake_update_world_quick(EEVEE_ViewLayerData *sldata,
 
   sldata->common_data.ray_type = EEVEE_RAY_DIFFUSE;
   sldata->common_data.ray_depth = 1;
-  DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
+  GPU_uniformbuf_update(sldata->common_ubo, &sldata->common_data);
   EEVEE_lightbake_render_world(sldata, vedata, lbake.rt_fb);
   EEVEE_lightbake_filter_diffuse(sldata, vedata, lbake.rt_color, lbake.store_fb, 0, 1.0f);
 

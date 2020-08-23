@@ -1088,7 +1088,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                 layout.use_property_split = True
                 if strip.use_as_speed:
                     layout.prop(strip, "speed_factor")
-                else:                 
+                else:
                     layout.prop(strip, "speed_factor", text="Frame Number")
                     layout.use_property_split = False
                     layout.prop(strip, "use_scale_to_length")
@@ -2016,7 +2016,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
             col.prop(ed, "use_prefetch")
         if st.display_mode == 'IMAGE':
             layout.use_property_split = False
-            layout.prop(st, "zoom_to_fit")
+            layout.prop(st, "use_zoom_to_fit")
 
 
 class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):

@@ -359,11 +359,6 @@ static void eevee_render_result_occlusion(RenderLayer *rl,
                                           EEVEE_Data *vedata,
                                           EEVEE_ViewLayerData *sldata)
 {
-  if ((vedata->stl->effects->enabled_effects & EFFECT_GTAO) == 0) {
-    /* AO is not enabled. */
-    return;
-  }
-
   if ((vedata->stl->g_data->render_passes & EEVEE_RENDER_PASS_AO) != 0) {
     EEVEE_renderpasses_postprocess(sldata, vedata, EEVEE_RENDER_PASS_AO);
     eevee_render_color_result(
@@ -579,7 +574,7 @@ void EEVEE_render_draw(EEVEE_Data *vedata, RenderEngine *engine, RenderLayer *rl
     /* Set ray type. */
     sldata->common_data.ray_type = EEVEE_RAY_CAMERA;
     sldata->common_data.ray_depth = 0.0f;
-    DRW_uniformbuffer_update(sldata->common_ubo, &sldata->common_data);
+    GPU_uniformbuf_update(sldata->common_ubo, &sldata->common_data);
 
     GPU_framebuffer_bind(fbl->main_fb);
     GPU_framebuffer_clear_color_depth_stencil(fbl->main_fb, clear_col, clear_depth, clear_stencil);

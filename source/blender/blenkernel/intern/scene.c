@@ -469,7 +469,7 @@ static void scene_foreach_id(ID *id, LibraryForeachIDData *data)
   }
   if (scene->ed) {
     Sequence *seq;
-    SEQP_BEGIN (scene->ed, seq) {
+    SEQ_ALL_BEGIN (scene->ed, seq) {
       BKE_LIB_FOREACHID_PROCESS(data, seq->scene, IDWALK_CB_NEVER_SELF);
       BKE_LIB_FOREACHID_PROCESS(data, seq->scene_camera, IDWALK_CB_NOP);
       BKE_LIB_FOREACHID_PROCESS(data, seq->clip, IDWALK_CB_USER);
@@ -486,7 +486,7 @@ static void scene_foreach_id(ID *id, LibraryForeachIDData *data)
         BKE_LIB_FOREACHID_PROCESS(data, text_data->text_font, IDWALK_CB_USER);
       }
     }
-    SEQ_END;
+    SEQ_ALL_END;
   }
 
   /* This pointer can be NULL during old files reading, better be safe than sorry. */
@@ -1129,6 +1129,11 @@ int BKE_scene_base_iter_next(
   return iter->phase;
 }
 
+bool BKE_scene_has_view_layer(const Scene *scene, const ViewLayer *layer)
+{
+  return BLI_findindex(&scene->view_layers, layer) != -1;
+}
+
 Scene *BKE_scene_find_from_collection(const Main *bmain, const Collection *collection)
 {
   for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
@@ -1485,7 +1490,7 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
 
   for (int pass = 0; pass < 2; pass++) {
     /* (Re-)build dependency graph if needed. */
-    DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+    DEG_graph_relations_update(depsgraph);
     /* Uncomment this to check if graph was properly tagged for update. */
     // DEG_debug_graph_relations_validate(depsgraph, bmain, scene);
     /* Flush editing data if needed. */
@@ -1493,7 +1498,7 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
     /* Update all objects: drivers, matrices, displists, etc. flags set
      * by depgraph or manual, no layer check here, gets correct flushed.
      */
-    DEG_evaluate_on_refresh(bmain, depsgraph);
+    DEG_evaluate_on_refresh(depsgraph);
     /* Update sound system. */
     BKE_scene_update_sound(depsgraph, bmain);
     /* Notify python about depsgraph update. */
@@ -1512,7 +1517,7 @@ static void scene_graph_update_tagged(Depsgraph *depsgraph, Main *bmain, bool on
        * be tagged for an update anyway.
        *
        * If there are no relations changed by the callback this call will do nothing. */
-      DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+      DEG_graph_relations_update(depsgraph);
     }
     /* Inform editors about possible changes. */
     DEG_ids_check_recalc(bmain, depsgraph, scene, view_layer, false);
@@ -1541,10 +1546,11 @@ void BKE_scene_graph_evaluated_ensure(Depsgraph *depsgraph, Main *bmain)
 }
 
 /* applies changes right away, does all sets too */
-void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
+void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph)
 {
   Scene *scene = DEG_get_input_scene(depsgraph);
   ViewLayer *view_layer = DEG_get_input_view_layer(depsgraph);
+  Main *bmain = DEG_get_bmain(depsgraph);
 
   /* Keep this first. */
   BKE_callback_exec_id(bmain, &scene->id, BKE_CB_EVT_FRAME_CHANGE_PRE);
@@ -1555,7 +1561,7 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
      */
     BKE_image_editors_update_frame(bmain, scene->r.cfra);
     BKE_sound_set_cfra(scene->r.cfra);
-    DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+    DEG_graph_relations_update(depsgraph);
     /* Update all objects: drivers, matrices, displists, etc. flags set
      * by depgraph or manual, no layer check here, gets correct flushed.
      *
@@ -1564,10 +1570,10 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
      * loose any possible unkeyed changes made by the handler. */
     if (pass == 0) {
       const float ctime = BKE_scene_frame_get(scene);
-      DEG_evaluate_on_framechange(bmain, depsgraph, ctime);
+      DEG_evaluate_on_framechange(depsgraph, ctime);
     }
     else {
-      DEG_evaluate_on_refresh(bmain, depsgraph);
+      DEG_evaluate_on_refresh(depsgraph);
     }
     /* Update sound system animation. */
     BKE_scene_update_sound(depsgraph, bmain);
@@ -1578,7 +1584,7 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
 
       /* NOTE: Similar to this case in scene_graph_update_tagged(). Need to ensure that
        * DEG_ids_clear_recalc() doesn't access freed memory of possibly removed ID. */
-      DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+      DEG_graph_relations_update(depsgraph);
     }
 
     /* Inform editors about possible changes. */
@@ -1603,7 +1609,7 @@ void BKE_scene_graph_update_for_newframe(Depsgraph *depsgraph, Main *bmain)
  */
 void BKE_scene_view_layer_graph_evaluated_ensure(Main *bmain, Scene *scene, ViewLayer *view_layer)
 {
-  Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
+  Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(bmain, scene, view_layer);
   DEG_make_active(depsgraph);
   BKE_scene_graph_update_tagged(depsgraph, bmain);
 }
@@ -2237,14 +2243,15 @@ void BKE_scene_free_view_layer_depsgraph(Scene *scene, ViewLayer *view_layer)
 
 /* Query depsgraph for a specific contexts. */
 
-static Depsgraph **scene_get_depsgraph_p(Main *bmain,
-                                         Scene *scene,
+static Depsgraph **scene_get_depsgraph_p(Scene *scene,
                                          ViewLayer *view_layer,
-                                         const bool allocate_ghash_entry,
-                                         const bool allocate_depsgraph)
+                                         const bool allocate_ghash_entry)
 {
+  /* bmain may be NULL here! */
   BLI_assert(scene != NULL);
   BLI_assert(view_layer != NULL);
+  BLI_assert(BKE_scene_has_view_layer(scene, view_layer));
+
   /* Make sure hash itself exists. */
   if (allocate_ghash_entry) {
     BKE_scene_ensure_depsgraph_hash(scene);
@@ -2252,42 +2259,68 @@ static Depsgraph **scene_get_depsgraph_p(Main *bmain,
   if (scene->depsgraph_hash == NULL) {
     return NULL;
   }
-  /* Either ensure item is in the hash or simply return NULL if it's not,
-   * depending on whether caller wants us to create depsgraph or not.
-   */
+
   DepsgraphKey key;
   key.view_layer = view_layer;
+
   Depsgraph **depsgraph_ptr;
-  if (allocate_ghash_entry) {
-    DepsgraphKey **key_ptr;
-    if (!BLI_ghash_ensure_p_ex(
-            scene->depsgraph_hash, &key, (void ***)&key_ptr, (void ***)&depsgraph_ptr)) {
-      *key_ptr = MEM_mallocN(sizeof(DepsgraphKey), __func__);
-      **key_ptr = key;
-      if (allocate_depsgraph) {
-        *depsgraph_ptr = DEG_graph_new(bmain, scene, view_layer, DAG_EVAL_VIEWPORT);
-        /* TODO(sergey): Would be cool to avoid string format print,
-         * but is a bit tricky because we can't know in advance whether
-         * we will ever enable debug messages for this depsgraph.
-         */
-        char name[1024];
-        BLI_snprintf(name, sizeof(name), "%s :: %s", scene->id.name, view_layer->name);
-        DEG_debug_name_set(*depsgraph_ptr, name);
-      }
-      else {
-        *depsgraph_ptr = NULL;
-      }
-    }
-  }
-  else {
+  if (!allocate_ghash_entry) {
     depsgraph_ptr = (Depsgraph **)BLI_ghash_lookup_p(scene->depsgraph_hash, &key);
+    return depsgraph_ptr;
   }
+
+  DepsgraphKey **key_ptr;
+  if (BLI_ghash_ensure_p_ex(
+          scene->depsgraph_hash, &key, (void ***)&key_ptr, (void ***)&depsgraph_ptr)) {
+    return depsgraph_ptr;
+  }
+
+  /* Depsgraph was not found in the ghash, but the key still needs allocating. */
+  *key_ptr = MEM_mallocN(sizeof(DepsgraphKey), __func__);
+  **key_ptr = key;
+
+  *depsgraph_ptr = NULL;
   return depsgraph_ptr;
 }
 
-Depsgraph *BKE_scene_get_depsgraph(Main *bmain, Scene *scene, ViewLayer *view_layer, bool allocate)
+static Depsgraph **scene_ensure_depsgraph_p(Main *bmain, Scene *scene, ViewLayer *view_layer)
 {
-  Depsgraph **depsgraph_ptr = scene_get_depsgraph_p(bmain, scene, view_layer, allocate, allocate);
+  BLI_assert(bmain != NULL);
+
+  Depsgraph **depsgraph_ptr = scene_get_depsgraph_p(scene, view_layer, true);
+  if (depsgraph_ptr == NULL) {
+    /* The scene has no depsgraph hash. */
+    return NULL;
+  }
+  if (*depsgraph_ptr != NULL) {
+    /* The depsgraph was found, no need to allocate. */
+    return depsgraph_ptr;
+  }
+
+  /* Allocate a new depsgraph. scene_get_depsgraph_p() already ensured that the pointer is stored
+   * in the scene's depsgraph hash. */
+  *depsgraph_ptr = DEG_graph_new(bmain, scene, view_layer, DAG_EVAL_VIEWPORT);
+
+  /* TODO(sergey): Would be cool to avoid string format print,
+   * but is a bit tricky because we can't know in advance whether
+   * we will ever enable debug messages for this depsgraph.
+   */
+  char name[1024];
+  BLI_snprintf(name, sizeof(name), "%s :: %s", scene->id.name, view_layer->name);
+  DEG_debug_name_set(*depsgraph_ptr, name);
+
+  return depsgraph_ptr;
+}
+
+Depsgraph *BKE_scene_get_depsgraph(Scene *scene, ViewLayer *view_layer)
+{
+  Depsgraph **depsgraph_ptr = scene_get_depsgraph_p(scene, view_layer, false);
+  return (depsgraph_ptr != NULL) ? *depsgraph_ptr : NULL;
+}
+
+Depsgraph *BKE_scene_ensure_depsgraph(Main *bmain, Scene *scene, ViewLayer *view_layer)
+{
+  Depsgraph **depsgraph_ptr = scene_ensure_depsgraph_p(bmain, scene, view_layer);
   return (depsgraph_ptr != NULL) ? *depsgraph_ptr : NULL;
 }
 
@@ -2353,8 +2386,7 @@ void BKE_scene_undo_depsgraphs_restore(Main *bmain, GHash *depsgraph_extract)
       }
       BLI_assert(*depsgraph_extract_ptr != NULL);
 
-      Depsgraph **depsgraph_scene_ptr = scene_get_depsgraph_p(
-          bmain, scene, view_layer, true, false);
+      Depsgraph **depsgraph_scene_ptr = scene_get_depsgraph_p(scene, view_layer, true);
       BLI_assert(depsgraph_scene_ptr != NULL);
       BLI_assert(*depsgraph_scene_ptr == NULL);
 
@@ -2538,13 +2570,13 @@ static void scene_sequencer_disable_sound_strips(Scene *scene)
     return;
   }
   Sequence *seq;
-  SEQ_BEGIN (scene->ed, seq) {
+  SEQ_ALL_BEGIN (scene->ed, seq) {
     if (seq->scene_sound != NULL) {
       BKE_sound_remove_scene_sound(scene, seq->scene_sound);
       seq->scene_sound = NULL;
     }
   }
-  SEQ_END;
+  SEQ_ALL_END;
 }
 
 void BKE_scene_eval_sequencer_sequences(Depsgraph *depsgraph, Scene *scene)
@@ -2555,7 +2587,7 @@ void BKE_scene_eval_sequencer_sequences(Depsgraph *depsgraph, Scene *scene)
   }
   BKE_sound_ensure_scene(scene);
   Sequence *seq;
-  SEQ_BEGIN (scene->ed, seq) {
+  SEQ_ALL_BEGIN (scene->ed, seq) {
     if (seq->scene_sound == NULL) {
       if (seq->sound != NULL) {
         if (seq->scene_sound == NULL) {
@@ -2593,7 +2625,7 @@ void BKE_scene_eval_sequencer_sequences(Depsgraph *depsgraph, Scene *scene)
           seq->scene_sound, seq->pan, (seq->flag & SEQ_AUDIO_PAN_ANIMATED) != 0);
     }
   }
-  SEQ_END;
+  SEQ_ALL_END;
   BKE_sequencer_update_muting(scene->ed);
   BKE_sequencer_update_sound_bounds_all(scene);
 }

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -31680,6 +31680,10 @@ msgid "Open a website in the web-browser"
 msgstr "ﺖﻧﺮﺘﻧﻻ﻿ﺍ ﺢﻔﺼﺘﻤﻟﺍ ﻲﻓ ﻊﻗﻮﻣ ﺢﺘﻓﺇ"
 
 
+msgid "UV Maps"
+msgstr "UV ﻂﺋﺍﺮﺧ"
+
+
 msgctxt "Operator"
 msgid "Toggle Window Fullscreen"
 msgstr "ﺔﻠﻣﺎﻛ ﺔﺷﺎﺷ ﺓﺬﻓﺎﻨﻟﺍ ﺐﻠﻗﺇ"
@@ -32021,10 +32025,6 @@ msgstr "ﻞﻜﻴﻫ"
 
 msgid "Text Boxes"
 msgstr "ﺔﺑﺎﺘﻜﻟﺍ ﺕﺎﻧﺎﺧ"
-
-
-msgid "UV Maps"
-msgstr "UV ﻂﺋﺍﺮﺧ"
 
 
 msgid "Filters"

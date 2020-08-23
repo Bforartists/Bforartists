@@ -257,10 +257,10 @@ static void sound_update_animation_flags(Scene *scene)
   }
   scene->id.tag |= LIB_TAG_DOIT;
 
-  SEQ_BEGIN (scene->ed, seq) {
+  SEQ_ALL_BEGIN (scene->ed, seq) {
     BKE_sequencer_recursive_apply(seq, sound_update_animation_flags_fn, scene);
   }
-  SEQ_END;
+  SEQ_ALL_END;
 
   fcu = id_data_find_fcurve(&scene->id, scene, &RNA_Scene, "audio_volume", 0, &driven);
   if (fcu || driven) {
@@ -306,7 +306,6 @@ static void SOUND_OT_update_animation_flags(wmOperatorType *ot)
 
 static int sound_bake_animation_exec(bContext *C, wmOperator *UNUSED(op))
 {
-  Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   /* NOTE: We will be forcefully evaluating dependency graph at every frame, so no need to ensure
    * current scene state is evaluated as it will be lost anyway. */
@@ -318,11 +317,11 @@ static int sound_bake_animation_exec(bContext *C, wmOperator *UNUSED(op))
 
   for (cfra = (scene->r.sfra > 0) ? (scene->r.sfra - 1) : 0; cfra <= scene->r.efra + 1; cfra++) {
     scene->r.cfra = cfra;
-    BKE_scene_graph_update_for_newframe(depsgraph, bmain);
+    BKE_scene_graph_update_for_newframe(depsgraph);
   }
 
   scene->r.cfra = oldfra;
-  BKE_scene_graph_update_for_newframe(depsgraph, bmain);
+  BKE_scene_graph_update_for_newframe(depsgraph);
 
   return OPERATOR_FINISHED;
 }

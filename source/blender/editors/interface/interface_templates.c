@@ -395,11 +395,10 @@ static void id_search_cb(const bContext *C,
 {
   TemplateID *template_ui = (TemplateID *)arg_template;
   ListBase *lb = template_ui->idlb;
-  ID *id;
   int flag = RNA_property_flag(template_ui->prop);
 
   /* ID listbase */
-  for (id = lb->first; id; id = id->next) {
+  LISTBASE_FOREACH (ID *, id, lb) {
     if (!id_search_add(C, template_ui, flag, str, items, id)) {
       break;
     }
@@ -416,11 +415,10 @@ static void id_search_cb_tagged(const bContext *C,
 {
   TemplateID *template_ui = (TemplateID *)arg_template;
   ListBase *lb = template_ui->idlb;
-  ID *id;
   int flag = RNA_property_flag(template_ui->prop);
 
   /* ID listbase */
-  for (id = lb->first; id; id = id->next) {
+  LISTBASE_FOREACH (ID *, id, lb) {
     if (id->tag & LIB_TAG_DOIT) {
       if (!id_search_add(C, template_ui, flag, str, items, id)) {
         break;
@@ -1864,7 +1862,6 @@ static void modifier_panel_id(void *md_link, char *r_name)
 
 void uiTemplateModifiers(uiLayout *UNUSED(layout), bContext *C)
 {
-  ScrArea *sa = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
 
   Object *ob = ED_object_active_context(C);
@@ -1888,8 +1885,7 @@ void uiTemplateModifiers(uiLayout *UNUSED(layout), bContext *C)
       PointerRNA *md_ptr = MEM_mallocN(sizeof(PointerRNA), "panel customdata");
       RNA_pointer_create(&ob->id, &RNA_Modifier, md, md_ptr);
 
-      Panel *new_panel = UI_panel_add_instanced(
-          sa, region, &region->panels, panel_idname, i, md_ptr);
+      Panel *new_panel = UI_panel_add_instanced(region, &region->panels, panel_idname, i, md_ptr);
 
       if (new_panel != NULL) {
         UI_panel_set_expand_from_list_data(C, new_panel);
@@ -2042,7 +2038,6 @@ static void bone_constraint_panel_id(void *md_link, char *r_name)
  */
 void uiTemplateConstraints(uiLayout *UNUSED(layout), bContext *C, bool use_bone_constraints)
 {
-  ScrArea *sa = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
 
   Object *ob = ED_object_active_context(C);
@@ -2065,8 +2060,7 @@ void uiTemplateConstraints(uiLayout *UNUSED(layout), bContext *C, bool use_bone_
       PointerRNA *con_ptr = MEM_mallocN(sizeof(PointerRNA), "panel customdata");
       RNA_pointer_create(&ob->id, &RNA_Constraint, con, con_ptr);
 
-      Panel *new_panel = UI_panel_add_instanced(
-          sa, region, &region->panels, panel_idname, i, con_ptr);
+      Panel *new_panel = UI_panel_add_instanced(region, &region->panels, panel_idname, i, con_ptr);
 
       if (new_panel) {
         /* Set the list panel functionality function pointers since we don't do it with python. */
@@ -2124,7 +2118,6 @@ static void gpencil_modifier_panel_id(void *md_link, char *r_name)
 
 void uiTemplateGpencilModifiers(uiLayout *UNUSED(layout), bContext *C)
 {
-  ScrArea *sa = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
   Object *ob = ED_object_active_context(C);
   ListBase *modifiers = &ob->greasepencil_modifiers;
@@ -2147,8 +2140,7 @@ void uiTemplateGpencilModifiers(uiLayout *UNUSED(layout), bContext *C)
       PointerRNA *md_ptr = MEM_mallocN(sizeof(PointerRNA), "panel customdata");
       RNA_pointer_create(&ob->id, &RNA_GpencilModifier, md, md_ptr);
 
-      Panel *new_panel = UI_panel_add_instanced(
-          sa, region, &region->panels, panel_idname, i, md_ptr);
+      Panel *new_panel = UI_panel_add_instanced(region, &region->panels, panel_idname, i, md_ptr);
 
       if (new_panel != NULL) {
         UI_panel_set_expand_from_list_data(C, new_panel);
@@ -2213,7 +2205,6 @@ static void shaderfx_panel_id(void *fx_v, char *r_idname)
  */
 void uiTemplateShaderFx(uiLayout *UNUSED(layout), bContext *C)
 {
-  ScrArea *sa = CTX_wm_area(C);
   ARegion *region = CTX_wm_region(C);
   Object *ob = ED_object_active_context(C);
   ListBase *shaderfx = &ob->shader_fx;
@@ -2231,8 +2222,7 @@ void uiTemplateShaderFx(uiLayout *UNUSED(layout), bContext *C)
       PointerRNA *fx_ptr = MEM_mallocN(sizeof(PointerRNA), "panel customdata");
       RNA_pointer_create(&ob->id, &RNA_ShaderFx, fx, fx_ptr);
 
-      Panel *new_panel = UI_panel_add_instanced(
-          sa, region, &region->panels, panel_idname, i, fx_ptr);
+      Panel *new_panel = UI_panel_add_instanced(region, &region->panels, panel_idname, i, fx_ptr);
 
       if (new_panel != NULL) {
         UI_panel_set_expand_from_list_data(C, new_panel);
@@ -2423,9 +2413,8 @@ static eAutoPropButsReturn template_operator_property_buts_draw_single(
   /* Only do this if we're not refreshing an existing UI. */
   if (block->oldblock == NULL) {
     const bool is_popup = (block->flag & UI_BLOCK_KEEP_OPEN) != 0;
-    uiBut *but;
 
-    for (but = block->buttons.first; but; but = but->next) {
+    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
       /* no undo for buttons for operator redo panels */
       UI_but_flag_disable(but, UI_BUT_UNDO);
 
@@ -5418,7 +5407,6 @@ void uiTemplatePalette(uiLayout *layout,
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
   PointerRNA cptr;
   Palette *palette;
-  PaletteColor *color;
   uiBlock *block;
   uiLayout *col;
   uiBut *but = NULL;
@@ -5439,8 +5427,6 @@ void uiTemplatePalette(uiLayout *layout,
   block = uiLayoutGetBlock(layout);
 
   palette = cptr.data;
-
-  color = palette->colors.first;
 
   col = uiLayoutColumn(layout, true);
   uiLayoutRow(col, true);
@@ -5464,7 +5450,7 @@ void uiTemplatePalette(uiLayout *layout,
                 UI_UNIT_X,
                 UI_UNIT_Y,
                 NULL);
-  if (color) {
+  if (palette->colors.first != NULL) {
     but = uiDefIconButO(block,
                         UI_BTYPE_BUT,
                         "PALETTE_OT_color_move",
@@ -5499,7 +5485,7 @@ void uiTemplatePalette(uiLayout *layout,
   col = uiLayoutColumn(layout, true);
   uiLayoutRow(col, true);
 
-  for (; color; color = color->next) {
+  LISTBASE_FOREACH (PaletteColor *, color, &palette->colors) {
     PointerRNA color_ptr;
 
     if (row_cols >= cols_per_row) {
@@ -6653,9 +6639,8 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 
   UI_block_func_handle_set(block, do_running_jobs, NULL);
 
-  Scene *scene;
   /* another scene can be rendering too, for example via compositor */
-  for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
+  LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
     if (WM_jobs_test(wm, scene, WM_JOB_TYPE_ANY)) {
       handle_event = B_STOPOTHER;
       icon = ICON_NONE;
@@ -7369,10 +7354,12 @@ void uiTemplateCacheFile(uiLayout *layout,
 
 int uiTemplateRecentFiles(uiLayout *layout, int rows)
 {
-  const RecentFile *recent;
   int i;
+  LISTBASE_FOREACH_INDEX (RecentFile *, recent, &G.recent_files, i) {
+    if (i >= rows) {
+      break;
+    }
 
-  for (recent = G.recent_files.first, i = 0; (i < rows) && (recent); recent = recent->next, i++) {
     const char *filename = BLI_path_basename(recent->filepath);
     PointerRNA ptr;
     uiItemFullO(layout,

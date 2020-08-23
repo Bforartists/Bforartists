@@ -12,43 +12,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * The Original Code is Copyright (C) 2020 Blender Foundation.
+ * All rights reserved.
  */
 
 /** \file
- * \ingroup gpu
+ * \ingroup depsgraph
  */
 
 #pragma once
 
-#include "GPU_shader_interface.h"
+#include "pipeline_view_layer.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace blender {
+namespace deg {
 
-struct GPUShader {
-  /** Handle for full program (links shader stages below). */
-  GLuint program;
+/* Builds a dependency graph that contains all objects in the view layer.
+ * This is contrary to the regular ViewLayerBuilderPipeline, which is limited to visible objects
+ * (and their dependencies). */
+class AllObjectsBuilderPipeline : public ViewLayerBuilderPipeline {
+ public:
+  AllObjectsBuilderPipeline(::Depsgraph *graph);
 
-  /** Handle for vertex shader. */
-  GLuint vertex;
-  /** Handle for geometry shader. */
-  GLuint geometry;
-  /** Handle for fragment shader. */
-  GLuint fragment;
-
-  /** Cached uniform & attribute interface for shader. */
-  GPUShaderInterface *interface;
-
-  int feedback_transform_type;
-#ifndef NDEBUG
-  char name[64];
-#endif
+ protected:
+  virtual unique_ptr<DepsgraphNodeBuilder> construct_node_builder() override;
+  virtual unique_ptr<DepsgraphRelationBuilder> construct_relation_builder() override;
 };
 
-/* XXX do not use it. Special hack to use OCIO with batch API. */
-GPUShader *immGetShader(void);
-
-#ifdef __cplusplus
-}
-#endif
+}  // namespace deg
+}  // namespace blender
