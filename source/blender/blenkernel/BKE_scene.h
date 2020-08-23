@@ -110,6 +110,7 @@ void BKE_toolsettings_free(struct ToolSettings *toolsettings);
 struct Scene *BKE_scene_duplicate(struct Main *bmain, struct Scene *sce, eSceneCopyMethod type);
 void BKE_scene_groups_relink(struct Scene *sce);
 
+bool BKE_scene_has_view_layer(const struct Scene *scene, const struct ViewLayer *layer);
 struct Scene *BKE_scene_find_from_collection(const struct Main *bmain,
                                              const struct Collection *collection);
 
@@ -145,7 +146,7 @@ void BKE_scene_update_tag_audio_volume(struct Depsgraph *, struct Scene *scene);
 void BKE_scene_graph_update_tagged(struct Depsgraph *depsgraph, struct Main *bmain);
 void BKE_scene_graph_evaluated_ensure(struct Depsgraph *depsgraph, struct Main *bmain);
 
-void BKE_scene_graph_update_for_newframe(struct Depsgraph *depsgraph, struct Main *bmain);
+void BKE_scene_graph_update_for_newframe(struct Depsgraph *depsgraph);
 
 void BKE_scene_view_layer_graph_evaluated_ensure(struct Main *bmain,
                                                  struct Scene *scene,
@@ -218,10 +219,12 @@ void BKE_scene_ensure_depsgraph_hash(struct Scene *scene);
 void BKE_scene_free_depsgraph_hash(struct Scene *scene);
 void BKE_scene_free_view_layer_depsgraph(struct Scene *scene, struct ViewLayer *view_layer);
 
-struct Depsgraph *BKE_scene_get_depsgraph(struct Main *bmain,
-                                          struct Scene *scene,
-                                          struct ViewLayer *view_layer,
-                                          bool allocate);
+/* Do not allocate new depsgraph. */
+struct Depsgraph *BKE_scene_get_depsgraph(struct Scene *scene, struct ViewLayer *view_layer);
+/* Allocate new depsgraph if necessary. */
+struct Depsgraph *BKE_scene_ensure_depsgraph(struct Main *bmain,
+                                             struct Scene *scene,
+                                             struct ViewLayer *view_layer);
 
 struct GHash *BKE_scene_undo_depsgraphs_extract(struct Main *bmain);
 void BKE_scene_undo_depsgraphs_restore(struct Main *bmain, struct GHash *depsgraph_extract);

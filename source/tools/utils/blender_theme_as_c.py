@@ -379,7 +379,7 @@ def main():
     with open(source_dst, 'w', encoding='utf-8') as fh:
         convert_data(blend, theme, fh)
 
-    # grr, msvc doesn't like empty braces
+    # Microsoft Visual Studio doesn't support empty braces.
     file_remove_empty_braces(source_dst)
 
 

@@ -519,9 +519,8 @@ float RE_engine_get_camera_shift_x(RenderEngine *engine, Object *camera, bool us
   if (use_spherical_stereo || re == NULL) {
     return BKE_camera_multiview_shift_x(NULL, camera, NULL);
   }
-  else {
-    return BKE_camera_multiview_shift_x(&re->r, camera, re->viewname);
-  }
+
+  return BKE_camera_multiview_shift_x(&re->r, camera, re->viewname);
 }
 
 void RE_engine_get_camera_model_matrix(RenderEngine *engine,
@@ -610,13 +609,13 @@ static void engine_depsgraph_init(RenderEngine *engine, ViewLayer *view_layer)
 
   if (engine->re->r.scemode & R_BUTS_PREVIEW) {
     Depsgraph *depsgraph = engine->depsgraph;
-    DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
-    DEG_evaluate_on_framechange(bmain, depsgraph, CFRA);
+    DEG_graph_relations_update(depsgraph);
+    DEG_evaluate_on_framechange(depsgraph, CFRA);
     DEG_ids_check_recalc(bmain, depsgraph, scene, view_layer, true);
     DEG_ids_clear_recalc(bmain, depsgraph);
   }
   else {
-    BKE_scene_graph_update_for_newframe(engine->depsgraph, bmain);
+    BKE_scene_graph_update_for_newframe(engine->depsgraph);
   }
 }
 
@@ -638,7 +637,7 @@ void RE_engine_frame_set(RenderEngine *engine, int frame, float subframe)
 
   CLAMP(cfra, MINAFRAME, MAXFRAME);
   BKE_scene_frame_set(re->scene, cfra);
-  BKE_scene_graph_update_for_newframe(engine->depsgraph, re->main);
+  BKE_scene_graph_update_for_newframe(engine->depsgraph);
 
   BKE_scene_camera_switch_update(re->scene);
 }

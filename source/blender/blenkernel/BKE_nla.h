@@ -38,6 +38,10 @@ struct bAction;
 
 struct PointerRNA;
 struct PropertyRNA;
+struct BlendWriter;
+struct BlendDataReader;
+struct BlendLibReader;
+struct BlendExpander;
 
 /* ----------------------------- */
 /* Data Management */
@@ -102,6 +106,7 @@ void BKE_nlastrip_set_active(struct AnimData *adt, struct NlaStrip *strip);
 
 bool BKE_nlastrip_within_bounds(struct NlaStrip *strip, float min, float max);
 void BKE_nlastrip_recalculate_bounds(struct NlaStrip *strip);
+void BKE_nlastrip_recalculate_bounds_sync_action(struct NlaStrip *strip);
 
 void BKE_nlastrip_validate_name(struct AnimData *adt, struct NlaStrip *strip);
 
@@ -144,6 +149,14 @@ enum eNlaTime_ConvertModes {
 };
 
 float BKE_nla_tweakedit_remap(struct AnimData *adt, float cframe, short mode);
+
+/* ----------------------------- */
+/* .blend file API */
+
+void BKE_nla_blend_write(struct BlendWriter *writer, struct ListBase *tracks);
+void BKE_nla_blend_data_read(struct BlendDataReader *reader, struct ListBase *tracks);
+void BKE_nla_blend_lib_read(struct BlendLibReader *reader, struct ID *id, struct ListBase *tracks);
+void BKE_nla_blend_expand(struct BlendExpander *expander, struct ListBase *tracks);
 
 #ifdef __cplusplus
 }

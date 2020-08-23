@@ -81,18 +81,12 @@ void ED_region_tag_refresh_ui(struct ARegion *region);
 void ED_region_tag_redraw_editor_overlays(struct ARegion *region);
 
 void ED_region_panels_init(struct wmWindowManager *wm, struct ARegion *region);
-void ED_region_panels_ex(const struct bContext *C,
-                         struct ARegion *region,
-                         const char *contexts[],
-                         int contextnr,
-                         const bool vertical);
+void ED_region_panels_ex(const struct bContext *C, struct ARegion *region, const char *contexts[]);
 void ED_region_panels(const struct bContext *C, struct ARegion *region);
 void ED_region_panels_layout_ex(const struct bContext *C,
                                 struct ARegion *region,
                                 struct ListBase *paneltypes,
                                 const char *contexts[],
-                                int contextnr,
-                                const bool vertical,
                                 const char *category_override);
 
 void ED_region_panels_layout(const struct bContext *C, struct ARegion *region);
@@ -187,11 +181,7 @@ void ED_area_newspace(struct bContext *C, ScrArea *area, int type, const bool sk
 void ED_area_prevspace(struct bContext *C, ScrArea *area);
 void ED_area_swapspace(struct bContext *C, ScrArea *sa1, ScrArea *sa2);
 int ED_area_headersize(void);
-int ED_area_header_alignment_or_fallback(const ScrArea *area, int fallback);
-int ED_area_header_alignment(const ScrArea *area);
 int ED_area_footersize(void);
-int ED_area_footer_alignment_or_fallback(const ScrArea *area, int fallback);
-int ED_area_footer_alignment(const ScrArea *area);
 int ED_area_global_size_y(const ScrArea *area);
 int ED_area_global_min_size_y(const ScrArea *area);
 int ED_area_global_max_size_y(const ScrArea *area);
