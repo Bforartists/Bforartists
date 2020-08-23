@@ -1765,11 +1765,21 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
         if strip.type == 'MOVIECLIP':
             col = layout.column()
             col.label(text="Tracker")
-            col.prop(strip, "stabilize2d")
+            col = layout.column(align = True)
+            row = col.row()
+            row.separator()
+            row.use_property_split = False    
+            row.prop(strip, "stabilize2d")
+            row.prop_decorator(strip, "stabilize2d")
 
             col = layout.column()
             col.label(text="Distortion")
-            col.prop(strip, "undistort")
+            col = layout.column(align = True)
+            row = col.row()
+            row.separator()
+            row.use_property_split = False    
+            row.prop(strip, "undistort")
+            row.prop_decorator(strip, "undistort")
             col.separator()
 
         row = col.row()
