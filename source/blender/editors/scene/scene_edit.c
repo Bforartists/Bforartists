@@ -116,10 +116,10 @@ bool ED_scene_delete(bContext *C, Main *bmain, Scene *scene)
 /* Depsgraph updates after scene becomes active in a window. */
 void ED_scene_change_update(Main *bmain, Scene *scene, ViewLayer *layer)
 {
-  Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, layer, true);
+  Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(bmain, scene, layer);
 
   BKE_scene_set_background(bmain, scene);
-  DEG_graph_relations_update(depsgraph, bmain, scene, layer);
+  DEG_graph_relations_update(depsgraph);
   DEG_on_visible_update(bmain, false);
 
   ED_render_engine_changed(bmain, false);

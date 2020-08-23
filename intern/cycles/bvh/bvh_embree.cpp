@@ -126,9 +126,13 @@ static void rtc_filter_occluded_func(const RTCFilterFunctionNArguments *args)
       }
       else {
         kernel_embree_convert_hit(kg, ray, hit, &current_isect);
-        if (ctx->local_object_id != current_isect.object) {
+        int object = (current_isect.object == OBJECT_NONE) ?
+                         kernel_tex_fetch(__prim_object, current_isect.prim) :
+                         current_isect.object;
+        if (ctx->local_object_id != object) {
           /* This tells Embree to continue tracing. */
           *args->valid = 0;
+          break;
         }
       }
 
@@ -302,7 +306,7 @@ thread_mutex BVHEmbree::rtc_shared_mutex;
 
 static size_t count_primitives(Geometry *geom)
 {
-  if (geom->type == Geometry::MESH) {
+  if (geom->type == Geometry::MESH || geom->type == Geometry::VOLUME) {
     Mesh *mesh = static_cast<Mesh *>(geom);
     return mesh->num_triangles();
   }
@@ -527,7 +531,7 @@ void BVHEmbree::add_object(Object *ob, int i)
 {
   Geometry *geom = ob->geometry;
 
-  if (geom->type == Geometry::MESH) {
+  if (geom->type == Geometry::MESH || geom->type == Geometry::VOLUME) {
     Mesh *mesh = static_cast<Mesh *>(geom);
     if (mesh->num_triangles() > 0) {
       add_triangles(ob, mesh, i);
@@ -975,7 +979,7 @@ void BVHEmbree::refit_nodes()
     if (!params.top_level || (ob->is_traceable() && !ob->geometry->is_instanced())) {
       Geometry *geom = ob->geometry;
 
-      if (geom->type == Geometry::MESH) {
+      if (geom->type == Geometry::MESH || geom->type == Geometry::VOLUME) {
         Mesh *mesh = static_cast<Mesh *>(geom);
         if (mesh->num_triangles() > 0) {
           update_tri_vertex_buffer(rtcGetGeometry(scene, geom_id), mesh);

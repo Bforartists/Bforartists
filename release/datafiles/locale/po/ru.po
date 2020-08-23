@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'f15d33d585d0')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -62944,6 +62944,14 @@ msgid "Site"
 msgstr "Сайт"
 
 
+msgid "UV Maps"
+msgstr "UV-карты"
+
+
+msgid "Instancing"
+msgstr "Создание экземпляров"
+
+
 msgctxt "Operator"
 msgid "Close Window"
 msgstr "Закрыть окно"
@@ -63890,10 +63898,6 @@ msgid "Text Boxes"
 msgstr "Текстовые блоки"
 
 
-msgid "UV Maps"
-msgstr "UV-карты"
-
-
 msgid "Filters"
 msgstr "Фильтры"
 
@@ -64149,10 +64153,6 @@ msgstr "Обрезка соединений"
 
 msgid "Delta Transform"
 msgstr "Дельта-трансформация"
-
-
-msgid "Instancing"
-msgstr "Создание экземпляров"
 
 
 msgid "Scale by Face Size"

@@ -827,21 +827,11 @@ class SCENE_OT_export(bpy.types.Operator):
                                     if(node.name.startswith('3DC_') == True):
                                         material.material.node_tree.nodes.remove(node)
 
-<<<<<<< HEAD
-
-            for ind, mat_list in enumerate(mod_mat_list):
-                if(mat_list == '__' + objekti.name):
-                    for ind, mat in enumerate(mod_mat_list[mat_list]):
-                        objekti.material_slots[mod_mat_list[mat_list][ind][0]].material = mod_mat_list[mat_list][ind][1]
-
-=======
-        
                 for ind, mat_list in enumerate(mod_mat_list):
                     if(mat_list == '__' + objekti.name):
                         for ind, mat in enumerate(mod_mat_list[mat_list]):
                             objekti.material_slots[mod_mat_list[mat_list][ind][0]].material = mod_mat_list[mat_list][ind][1]
-            
->>>>>>> 215ebd2a... io_coat3D: support for mac. ignores all types except MESH
+
         bpy.context.scene.render.engine = active_render
         return {'FINISHED'}
 
