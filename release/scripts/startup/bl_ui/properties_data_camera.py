@@ -397,6 +397,15 @@ class DATA_PT_camera_display(CameraButtonsPanel, Panel):
         row.prop(cam, "show_name", text="Name")
         row.prop_decorator(cam, "show_name")
 
+        col = layout.column(align=False, heading="Passepartout")
+        col.use_property_decorate = False
+        row = col.row(align=True)
+        sub = row.row(align=True)
+        sub.prop(cam, "show_passepartout", text="")
+        sub = sub.row(align=True)
+        sub.active = cam.show_passepartout
+        sub.prop(cam, "passepartout_alpha", text="")
+        row.prop_decorator(cam, "passepartout_alpha")
 
 class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
     bl_label = "Composition Guides"
@@ -454,27 +463,6 @@ class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
         row.separator()
         row.prop(cam, "show_composition_harmony_tri_b", text="Triangle B")
         row.prop_decorator(cam, "show_composition_harmony_tri_b")
-
-
-class DATA_PT_camera_display_passepartout(CameraButtonsPanel, Panel):
-    bl_label = "Passepartout"
-    bl_parent_id = "DATA_PT_camera_display"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
-
-    def draw_header(self, context):
-        cam = context.camera
-
-        self.layout.prop(cam, "show_passepartout", text="")
-
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
-
-        cam = context.camera
-
-        layout.active = cam.show_passepartout
-        layout.prop(cam, "passepartout_alpha", text="Opacity", slider=True)
 
 
 class DATA_PT_camera_safe_areas(CameraButtonsPanel, Panel):
@@ -576,7 +564,6 @@ classes = (
     DATA_PT_camera_background_image,
     DATA_PT_camera_display,
     DATA_PT_camera_display_composition_guides,
-    DATA_PT_camera_display_passepartout,
     DATA_PT_custom_props_camera,
 )
 

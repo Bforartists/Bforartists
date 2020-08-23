@@ -350,9 +350,9 @@ void wm_event_do_depsgraph(bContext *C, bool is_after_open_file)
      * and for until then we have to accept ambiguities when object is shared
      * across visible view layers and has overrides on it.
      */
-    Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, true);
+    Depsgraph *depsgraph = BKE_scene_ensure_depsgraph(bmain, scene, view_layer);
     if (is_after_open_file) {
-      DEG_graph_relations_update(depsgraph, bmain, scene, view_layer);
+      DEG_graph_relations_update(depsgraph);
       DEG_graph_on_visible_update(bmain, depsgraph, true);
     }
     DEG_make_active(depsgraph);
@@ -390,6 +390,9 @@ void wm_event_do_refresh_wm_and_depsgraph(bContext *C)
 static void wm_event_execute_timers(bContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
+  if (UNLIKELY(wm == NULL)) {
+    return;
+  }
 
   /* Set the first window as context, so that there is some minimal context. This avoids crashes
    * when calling code that assumes that there is always a window in the context (which many
@@ -402,15 +405,16 @@ static void wm_event_execute_timers(bContext *C)
 /* called in mainloop */
 void wm_event_do_notifiers(bContext *C)
 {
-  wmWindowManager *wm = CTX_wm_manager(C);
   wmNotifier *note, *next;
   wmWindow *win;
 
+  /* Run the timer before assigning 'wm' in the unlikely case a timer loads a file, see T80028. */
+  wm_event_execute_timers(C);
+
+  wmWindowManager *wm = CTX_wm_manager(C);
   if (wm == NULL) {
     return;
   }
-
-  wm_event_execute_timers(C);
 
   /* disable? - keep for now since its used for window level notifiers. */
 #if 1
@@ -1363,8 +1367,7 @@ static int wm_operator_invoke(bContext *C,
           ScrArea *area = CTX_wm_area(C);
 
           /* Wrap only in X for header. */
-          if (region &&
-              ELEM(region->regiontype, RGN_TYPE_HEADER, RGN_TYPE_TOOL_HEADER, RGN_TYPE_FOOTER)) {
+          if (region && RGN_TYPE_IS_HEADER_ANY(region->regiontype)) {
             wrap = WM_CURSOR_WRAP_X;
           }
 
@@ -3190,10 +3193,9 @@ void wm_event_do_handlers(bContext *C)
       wm_event_free_all(win);
     }
     else {
-      Main *bmain = CTX_data_main(C);
       Scene *scene = WM_window_get_active_scene(win);
       ViewLayer *view_layer = WM_window_get_active_view_layer(win);
-      Depsgraph *depsgraph = BKE_scene_get_depsgraph(bmain, scene, view_layer, false);
+      Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
       Scene *scene_eval = (depsgraph != NULL) ? DEG_get_evaluated_scene(depsgraph) : NULL;
 
       if (scene_eval != NULL) {
