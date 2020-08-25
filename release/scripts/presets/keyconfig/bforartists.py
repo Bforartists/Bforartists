@@ -4952,7 +4952,7 @@ keyconfig_data = \
   {"items":
    [("screen.animation_step", {"type": 'TIMER0', "value": 'ANY', "any": True}, None),
     ("screen.region_blend", {"type": 'TIMERREGION', "value": 'ANY', "any": True}, None),
-    ("screen.toggle_maximized_area", {"type": 'SPACE', "value": 'PRESS', "ctrl": True}, None),
+    ("screen.screen_full_area", {"type": 'SPACE', "value": 'PRESS', "ctrl": True}, None),
     ("screen.screen_full_area",
      {"type": 'SPACE', "value": 'PRESS', "ctrl": True, "alt": True},
      {"properties":
@@ -6279,10 +6279,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("uv.shortest_path_pick", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
-      {"properties": [("use_fill", False)]}),
-    ("uv.shortest_path_pick", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "shift": True},
-      {"properties": [("use_fill", True)]}),
+    ("uv.shortest_path_pick",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True},
+     {"properties":
+      [("use_fill", False),
+       ],
+      },
+     ),
+    ("uv.shortest_path_pick",
+     {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True},
+     {"properties":
+      [("use_fill", True),
+       ],
+      },
+     ),
     ("uv.select_edge_ring", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True}, None),
     ("uv.select_edge_ring",
      {"type": 'LEFTMOUSE', "value": 'PRESS', "shift": True, "ctrl": True, "alt": True},
