@@ -72,6 +72,7 @@ def render_main(self, context, animation=False):
         [0, 0, 0, 1]])
 
     with offscreen.bind():
+        bgl.glClearColor(0.0, 0.0, 0.0, 0.0)
         bgl.glClear(bgl.GL_COLOR_BUFFER_BIT)
         gpu.matrix.reset()
         gpu.matrix.load_matrix(view_matrix)

@@ -339,7 +339,7 @@ void gpu_select_pick_begin(uint (*buffer)[4], uint bufsize, const rcti *input, c
 
     /* It's possible we don't want to clear depth buffer,
      * so existing elements are masked by current z-buffer. */
-    GPU_clear(GPU_DEPTH_BIT);
+    GPU_clear_depth(1.0f);
 
     /* scratch buffer (read new values here) */
     ps->gl.rect_depth_test = depth_buf_malloc(rect_len);
@@ -518,8 +518,13 @@ bool gpu_select_pick_load_id(uint id, bool end)
       SWAP(DepthBufCache *, ps->gl.rect_depth, ps->gl.rect_depth_test);
 
       if (g_pick_state.mode == GPU_SELECT_PICK_ALL) {
+        /* (fclem) This is to be on the safe side. I don't know if this is required. */
+        bool prev_depth_mask = GPU_depth_mask_get();
         /* we want new depths every time */
-        GPU_clear(GPU_DEPTH_BIT);
+        GPU_depth_mask(true);
+        GPU_clear_depth(1.0f);
+
+        GPU_depth_mask(prev_depth_mask);
       }
     }
   }
