@@ -1126,7 +1126,7 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
         ui_props = context.scene.blenderkitUI
 
         # sr = bpy.context.scene['search results']
-        sr = bpy.context.scene['search results orig']['results']
+        sr = bpy.context.scene['search results']
         asset_data = sr[ui_props.active_index]
         draw_asset_context_menu(self, context, asset_data)
 

@@ -90,7 +90,6 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *region)
 
 	/* clear and setup matrix */
 	UI_ThemeClearColor(TH_BACK);
-	GPU_clear(GPU_COLOR_BIT);
 
 	/* works best with no view2d matrix set */
 	UI_view2d_view_ortho(v2d);
