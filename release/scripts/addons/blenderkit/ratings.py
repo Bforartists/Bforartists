@@ -289,8 +289,10 @@ def update_ratings_work_hours_ui_1_5(self, context):
         # return
         bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
                                     message='Please login/signup to rate assets. Clicking OK takes you to web login.')
-        self.update_ratings_work_hours_ui_1_5 = '0'
-    self.rating_work_hours = float(self.update_ratings_work_hours_ui_1_5)
+        self.rating_work_hours_ui_1_5 = '0'
+    # print('updating 1-5')
+    # print(float(self.rating_work_hours_ui_1_5))
+    self.rating_work_hours = float(self.rating_work_hours_ui_1_5)
 
 
 

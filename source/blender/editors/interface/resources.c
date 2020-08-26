@@ -777,9 +777,6 @@ const uchar *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colorid)
           cp = ts->metadatatext;
           break;
 
-        case TH_UV_OTHERS:
-          cp = ts->uv_others;
-          break;
         case TH_UV_SHADOW:
           cp = ts->uv_shadow;
           break;
@@ -1475,13 +1472,6 @@ void UI_ThemeClearColor(int colorid)
 
   UI_GetThemeColor3fv(colorid, col);
   GPU_clear_color(col[0], col[1], col[2], 1.0f);
-}
-
-void UI_ThemeClearColorAlpha(int colorid, float alpha)
-{
-  float col[3];
-  UI_GetThemeColor3fv(colorid, col);
-  GPU_clear_color(col[0], col[1], col[2], alpha);
 }
 
 int UI_ThemeMenuShadowWidth(void)
