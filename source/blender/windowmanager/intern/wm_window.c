@@ -693,7 +693,7 @@ static void wm_window_ghostwindow_ensure(wmWindowManager *wm, wmWindow *win, boo
       win->cursor = WM_CURSOR_DEFAULT;
     }
 
-    wm_window_ghostwindow_add(wm, "Blender", win, is_dialog);
+    wm_window_ghostwindow_add(wm, "Bforartists", win, is_dialog);
   }
 
   if (win->ghostwin != NULL) {
