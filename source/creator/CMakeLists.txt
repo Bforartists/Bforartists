@@ -115,6 +115,10 @@ if(WITH_XR_OPENXR)
   add_definitions(-DWITH_XR_OPENXR)
 endif()
 
+if(WITH_GMP)
+  add_definitions(-DWITH_GMP)
+endif()
+
 # Setup the exe sources and buildinfo
 set(SRC
   creator.c
@@ -190,6 +194,12 @@ if(WITH_BUILDINFO)
   if(EXISTS ${buildinfo_h_fake})
     message(FATAL_ERROR "File \"${buildinfo_h_fake}\" found, this should never be created, remove!")
   endif()
+
+  # From the cmake documentation "If the output of the custom command is not actually created as a
+  # file on disk it should be marked with the SYMBOLIC source file property."
+  #
+  # Not doing this leads to build warnings for the not generated file on windows when using msbuild
+  SET_SOURCE_FILES_PROPERTIES(${buildinfo_h_fake} PROPERTIES SYMBOLIC TRUE)
 
   # a custom target that is always built
   add_custom_target(buildinfo ALL
