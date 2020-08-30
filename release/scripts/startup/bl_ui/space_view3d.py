@@ -2686,6 +2686,7 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_showhide")
+        layout.menu("VIEW3D_MT_object_cleanup")
 
 
         if obj is None:
@@ -3259,6 +3260,16 @@ class VIEW3D_MT_object_showhide(Menu):
 
         layout.operator("object.hide_view_set", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
+
+
+class VIEW3D_MT_object_cleanup(Menu):
+    bl_label = "Clean Up"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("object.vertex_group_clean", text="Clean Vertex Group Weights").group_select_mode = 'ALL'
+        layout.operator("object.material_slot_remove_unused", text="Remove Unused Material Slots")
 
 
 class VIEW3D_MT_make_single_user(Menu):
@@ -8644,6 +8655,7 @@ classes = (
     VIEW3D_MT_object_quick_effects,
     VIEW3D_hide_view_set_unselected,
     VIEW3D_MT_object_showhide,
+    VIEW3D_MT_object_cleanup,
     VIEW3D_MT_make_single_user,
     VIEW3D_MT_make_links,
     VIEW3D_MT_brush,
