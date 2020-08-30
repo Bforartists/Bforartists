@@ -188,6 +188,7 @@ if(APPLE)
 else()
   option(WITH_XR_OPENXR   "Enable VR features through the OpenXR specification" ON)
 endif()
+option(WITH_GMP "Enable features depending on GMP (Exact Boolean)" ON)
 
 # Compositor
 option(WITH_COMPOSITOR         "Enable the tile based nodal compositor" ON)
@@ -1571,6 +1572,12 @@ endif()
 
 if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+  # Make MSVC properly report the value of the __cplusplus preprocessor macro
+  # Available MSVC 15.7 (1914) and up, without this it reports 199711L regardless
+  # of the C++ standard chosen above 
+  if(MSVC_VERSION GREATER 1913)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus")
+  endif()
 elseif(
   CMAKE_COMPILER_IS_GNUCC OR
   CMAKE_C_COMPILER_ID MATCHES "Clang" OR
@@ -1733,6 +1740,7 @@ if(FIRST_RUN)
   info_cfg_option(WITH_QUADRIFLOW)
   info_cfg_option(WITH_USD)
   info_cfg_option(WITH_TBB)
+  info_cfg_option(WITH_GMP)
 
   info_cfg_text("Compiler Options:")
   info_cfg_option(WITH_BUILDINFO)
