@@ -146,6 +146,12 @@ IDTypeInfo IDType_ID_CU = {
     .free_data = curve_free_data,
     .make_local = NULL,
     .foreach_id = curve_foreach_id,
+    .foreach_cache = NULL,
+
+    .blend_write = NULL,
+    .blend_read_data = NULL,
+    .blend_read_lib = NULL,
+    .blend_read_expand = NULL,
 };
 
 static int cu_isectLL(const float v1[3],
@@ -3315,8 +3321,9 @@ static void calchandlesNurb_intern(Nurb *nu, eBezTriple_Flag handle_sel_flag, bo
   }
 }
 
-/* A utility function for allocating a number of arrays of the same length
- * with easy error checking and deallocation, and an easy way to add or remove
+/**
+ * A utility function for allocating a number of arrays of the same length
+ * with easy error checking and de-allocation, and an easy way to add or remove
  * arrays that are processed in this way when changing code.
  *
  * floats, chars: NULL-terminated arrays of pointers to array pointers that need to be allocated.

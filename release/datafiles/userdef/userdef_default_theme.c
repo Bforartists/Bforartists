@@ -387,7 +387,7 @@ const bTheme U_theme_default = {
     .paint_curve_handle = RGBA(0x7fff7f7f),
   },
   .space_file = {
-    .back = RGBA(0x50505000),
+    .back = RGBA(0x40404000),
     .title = RGBA(0xffffffff),
     .text = RGBA(0xffffffff),
     .text_hi = RGBA(0xffffffff),
@@ -412,6 +412,7 @@ const bTheme U_theme_default = {
     .vertex_size = 3,
     .outline_width = 1,
     .facedot_size = 4,
+    .row_alternate = RGBA(0xffffff06),
   },
   .space_graph = {
     .back = RGBA(0x40404000),
