@@ -84,54 +84,6 @@ static bool vertex_group_supported_poll_ex(bContext *C, const Object *ob);
 /** \name Local Utility Functions
  * \{ */
 
-static Object **object_array_for_wpaint_impl(bContext *C,
-                                             bool (*filter_fn)(struct Object *ob, void *user_data),
-                                             void *filter_user_data,
-                                             uint *r_objects_len)
-{
-  Object **objects;
-
-  Object *ob = NULL;
-  bool use_ob = true;
-  if (CTX_wm_space_properties(C)) {
-    /* May return pinned object. */
-    ob = ED_object_context(C);
-  }
-  else if (CTX_data_mode_enum(C) == CTX_MODE_PAINT_WEIGHT) {
-    /* When painting, limit to active. */
-    ob = CTX_data_active_object(C);
-  }
-  else {
-    /* Otherwise use full selection. */
-    use_ob = false;
-  }
-
-  if (use_ob) {
-    if (!filter_fn(ob, filter_user_data)) {
-      ob = NULL;
-    }
-    *r_objects_len = (ob != NULL) ? 1 : 0;
-    objects = MEM_mallocN(sizeof(*objects) * *r_objects_len, __func__);
-    if (ob != NULL) {
-      objects[0] = ob;
-    }
-  }
-  else {
-    ViewLayer *view_layer = CTX_data_view_layer(C);
-    const View3D *v3d = CTX_wm_view3d(C); /* may be NULL. */
-    objects = BKE_view_layer_array_selected_objects_params(
-        view_layer,
-        v3d,
-        r_objects_len,
-        &((const struct ObjectsInViewLayerParams){
-            .no_dup_data = true,
-            .filter_fn = filter_fn,
-            .filter_userdata = filter_user_data,
-        }));
-  }
-  return objects;
-}
-
 static bool object_array_for_wpaint_filter(Object *ob, void *user_data)
 {
   bContext *C = user_data;
@@ -143,7 +95,7 @@ static bool object_array_for_wpaint_filter(Object *ob, void *user_data)
 
 static Object **object_array_for_wpaint(bContext *C, uint *r_objects_len)
 {
-  return object_array_for_wpaint_impl(C, object_array_for_wpaint_filter, C, r_objects_len);
+  return ED_object_array_in_mode_or_selected(C, object_array_for_wpaint_filter, C, r_objects_len);
 }
 
 static bool vertex_group_use_vert_sel(Object *ob)
@@ -3155,6 +3107,12 @@ void OBJECT_OT_vertex_group_deselect(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Vertex Group Copy Operator
+ * \{ */
+
 static int vertex_group_copy_exec(bContext *C, wmOperator *UNUSED(op))
 {
   Object *ob = ED_object_context(C);
@@ -3167,12 +3125,6 @@ static int vertex_group_copy_exec(bContext *C, wmOperator *UNUSED(op))
 
   return OPERATOR_FINISHED;
 }
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Vertex Group Copy Operator
- * \{ */
 
 void OBJECT_OT_vertex_group_copy(wmOperatorType *ot)
 {
@@ -3188,6 +3140,12 @@ void OBJECT_OT_vertex_group_copy(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Vertex Group Levels Operator
+ * \{ */
 
 static int vertex_group_levels_exec(bContext *C, wmOperator *op)
 {
@@ -3211,12 +3169,6 @@ static int vertex_group_levels_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Vertex Group Levels Operator
- * \{ */
-
 void OBJECT_OT_vertex_group_levels(wmOperatorType *ot)
 {
   /* identifiers */
@@ -3239,6 +3191,12 @@ void OBJECT_OT_vertex_group_levels(wmOperatorType *ot)
       ot->srna, "gain", 1.f, 0.f, FLT_MAX, "Gain", "Value to multiply weights by", 0.0f, 10.f);
 }
 
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Vertex Group Normalize Operator
+ * \{ */
+
 static int vertex_group_normalize_exec(bContext *C, wmOperator *UNUSED(op))
 {
   Object *ob = ED_object_context(C);
@@ -3256,12 +3214,6 @@ static int vertex_group_normalize_exec(bContext *C, wmOperator *UNUSED(op))
   return OPERATOR_CANCELLED;
 }
 
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Vertex Group Normalize Operator
- * \{ */
-
 void OBJECT_OT_vertex_group_normalize(wmOperatorType *ot)
 {
   /* identifiers */
@@ -3277,6 +3229,12 @@ void OBJECT_OT_vertex_group_normalize(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Vertex Group Normalize All Operator
+ * \{ */
 
 static int vertex_group_normalize_all_exec(bContext *C, wmOperator *op)
 {
@@ -3303,12 +3261,6 @@ static int vertex_group_normalize_all_exec(bContext *C, wmOperator *op)
   /* allow to adjust settings */
   return OPERATOR_FINISHED;
 }
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Vertex Group Normalize All Operator
- * \{ */
 
 void OBJECT_OT_vertex_group_normalize_all(wmOperatorType *ot)
 {
@@ -3764,25 +3716,36 @@ void OBJECT_OT_vertex_group_quantize(wmOperatorType *ot)
 
 static int vertex_group_limit_total_exec(bContext *C, wmOperator *op)
 {
-  Object *ob = ED_object_context(C);
-
   const int limit = RNA_int_get(op->ptr, "limit");
-  eVGroupSelect subset_type = RNA_enum_get(op->ptr, "group_select_mode");
+  const eVGroupSelect subset_type = RNA_enum_get(op->ptr, "group_select_mode");
+  int remove_multi_count = 0;
 
-  int subset_count, vgroup_tot;
+  uint objects_len;
+  Object **objects = object_array_for_wpaint(C, &objects_len);
+  for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+    Object *ob = objects[ob_index];
 
-  const bool *vgroup_validmap = BKE_object_defgroup_subset_from_select_type(
-      ob, subset_type, &vgroup_tot, &subset_count);
-  int remove_tot = vgroup_limit_total_subset(ob, vgroup_validmap, vgroup_tot, subset_count, limit);
-  MEM_freeN((void *)vgroup_validmap);
+    int subset_count, vgroup_tot;
+    const bool *vgroup_validmap = BKE_object_defgroup_subset_from_select_type(
+        ob, subset_type, &vgroup_tot, &subset_count);
+    const int remove_count = vgroup_limit_total_subset(
+        ob, vgroup_validmap, vgroup_tot, subset_count, limit);
+    MEM_freeN((void *)vgroup_validmap);
 
-  BKE_reportf(
-      op->reports, remove_tot ? RPT_INFO : RPT_WARNING, "%d vertex weights limited", remove_tot);
+    if (remove_count != 0) {
+      DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
+      WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
+      WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
+    }
+    remove_multi_count += remove_count;
+  }
+  MEM_freeN(objects);
 
-  if (remove_tot) {
-    DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
-    WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
-    WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
+  if (remove_multi_count) {
+    BKE_reportf(op->reports,
+                remove_multi_count ? RPT_INFO : RPT_WARNING,
+                "%d vertex weights limited",
+                remove_multi_count);
 
     return OPERATOR_FINISHED;
   }
