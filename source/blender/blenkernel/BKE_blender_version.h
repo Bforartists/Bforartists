@@ -37,7 +37,7 @@ extern "C" {
 /** Blender release cycle stage: alpha/beta/rc/release. */
 #define BLENDER_VERSION_CYCLE alpha
 
-#define BFORARTISTS_VERSION 24
+#define BFORARTISTS_VERSION 25
 /* Blender patch version for bugfix releases. */
 #define BFORARTISTS_VERSION_PATCH 0
 /** Blender release cycle stage: alpha/beta/rc/release. */
