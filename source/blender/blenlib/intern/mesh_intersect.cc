@@ -48,7 +48,7 @@
 
 #  include "BLI_mesh_intersect.hh"
 
-//#  define PERFDEBUG
+// #  define PERFDEBUG
 
 namespace blender::meshintersect {
 
@@ -1397,6 +1397,11 @@ static double supremum_dot_cross(const double3 &a, const double3 &b)
   return double3::dot(c, c);
 }
 
+/* The index of dot when inputs are plane_coords with index 1 is much higher.
+ * Plane coords have index 6.
+ */
+constexpr int index_dot_plane_coords = 15;
+
 /**
  * Used with supremum to get error bound. See Burnikel et al paper.
  * index_plane_coord is the index of a plane coordinate calculated
@@ -1409,18 +1414,14 @@ static double supremum_dot_cross(const double3 &a, const double3 &b)
  */
 constexpr int index_dot_cross = 11;
 
+/* Not using this at the moment. Leaving it for a bit in case we want it again. */
+#  if 0
 static double supremum_dot(const double3 &a, const double3 &b)
 {
   double3 abs_a = double3::abs(a);
   double3 abs_b = double3::abs(b);
   return double3::dot(abs_a, abs_b);
 }
-
-/* Actually index_dot = 3 + 2 * (max index of input coordinates). */
-/* The index of dot when inputs are plane_coords with index 1 is much higher.
- * Plane coords have index 6.
- */
-constexpr int index_dot_plane_coords = 15;
 
 static double supremum_orient3d(const double3 &a,
                                 const double3 &b,
@@ -1524,6 +1525,7 @@ static bool dot_must_be_positive(const double3 &a, const double3 &b)
   }
   return false;
 }
+#  endif
 
 /**
  * Return the approximate side of point p on a plane with normal plane_no and point plane_p.
@@ -1554,6 +1556,8 @@ static int filter_plane_side(const double3 &p,
   return 0;
 }
 
+/* Not using this at the moment. Leave it here for a while in case we want it again. */
+#  if 0
 /**
  * A fast, non-exhaustive test for non_trivial intersection.
  * If this returns false then we are sure that tri1 and tri2
@@ -1627,6 +1631,7 @@ static bool may_non_trivially_intersect(Face *t1, Face *t2)
   /* We weren't able to prove that any intersection is trivial. */
   return true;
 }
+#  endif
 
 /*
  * interesect_tri_tri and helper functions.
@@ -2402,6 +2407,7 @@ class TriOverlaps {
   BVHTree *tree_{nullptr};
   BVHTree *tree_b_{nullptr};
   BVHTreeOverlap *overlap_{nullptr};
+  Array<int> first_overlap_;
   uint overlap_tot_{0};
 
   struct CBData {
@@ -2458,12 +2464,8 @@ class TriOverlaps {
     }
     else {
       CBData cbdata{tm, shape_fn, nshapes, use_self};
-      if (nshapes == 1 && use_self) {
-        /* Expect a lot of trivial intersects from quads that are triangulated
-         * and faces that share vertices.
-         * Filter them out with a callback. */
-        overlap_ = BLI_bvhtree_overlap(
-            tree_, tree_, &overlap_tot_, only_nontrivial_intersects, &cbdata);
+      if (nshapes == 1) {
+        overlap_ = BLI_bvhtree_overlap(tree_, tree_, &overlap_tot_, NULL, NULL);
       }
       else {
         overlap_ = BLI_bvhtree_overlap(
@@ -2490,6 +2492,13 @@ class TriOverlaps {
         std::cout << "A: " << ov.indexA << ", B: " << ov.indexB << "\n";
       }
     }
+    first_overlap_ = Array<int>(tm.face_size(), -1);
+    for (int i = 0; i < static_cast<int>(overlap_tot_); ++i) {
+      int t = overlap_[i].indexA;
+      if (first_overlap_[t] == -1) {
+        first_overlap_[t] = i;
+      }
+    }
   }
 
   ~TriOverlaps()
@@ -2510,16 +2519,12 @@ class TriOverlaps {
     return Span<BVHTreeOverlap>(overlap_, overlap_tot_);
   }
 
- private:
-  static bool only_nontrivial_intersects(void *userdata,
-                                         int index_a,
-                                         int index_b,
-                                         int UNUSED(thread))
+  int first_overlap_index(int t) const
   {
-    CBData *cbdata = static_cast<CBData *>(userdata);
-    return may_non_trivially_intersect(cbdata->tm.face(index_a), cbdata->tm.face(index_b));
+    return first_overlap_[t];
   }
 
+ private:
   static bool only_different_shapes(void *userdata, int index_a, int index_b, int UNUSED(thread))
   {
     CBData *cbdata = static_cast<CBData *>(userdata);
@@ -2730,24 +2735,6 @@ static void calc_subdivided_tris(Array<IMesh> &r_tri_subdivided,
       0, overlap_tri_range_tot, &data, calc_subdivided_tri_range_func, &settings);
 }
 
-/* Get first index in ov where indexA == t. Assuming sorted on indexA. */
-static int find_first_overlap_index(const TriOverlaps &ov, int t)
-{
-  Span<BVHTreeOverlap> span = ov.overlap();
-  if (span.size() == 0) {
-    return -1;
-  }
-  BVHTreeOverlap bo{t, -1};
-  const BVHTreeOverlap *p = std::lower_bound(
-      span.begin(), span.end(), bo, [](const BVHTreeOverlap &o1, const BVHTreeOverlap &o2) {
-        return o1.indexA < o2.indexA;
-      });
-  if (p != span.end()) {
-    return p - span.begin();
-  }
-  return -1;
-}
-
 static CDT_data calc_cluster_subdivided(const CoplanarClusterInfo &clinfo,
                                         int c,
                                         const IMesh &tm,
@@ -2771,7 +2758,7 @@ static CDT_data calc_cluster_subdivided(const CoplanarClusterInfo &clinfo,
     if (dbg_level > 0) {
       std::cout << "find intersects with triangle " << t << " of cluster\n";
     }
-    int first_i = find_first_overlap_index(ov, t);
+    int first_i = ov.first_overlap_index(t);
     if (first_i == -1) {
       continue;
     }
@@ -3076,10 +3063,6 @@ IMesh trimesh_nary_intersect(const IMesh &tm_in,
       std::cout << "cleaned input mesh:\n" << tm_cleaned;
     }
   }
-  /* Temporary, while developing: populate all plane normals exactly. */
-  for (Face *f : tm_clean->faces()) {
-    f->populate_plane(true);
-  }
 #  ifdef PERFDEBUG
   double clean_time = PIL_check_seconds_timer();
   std::cout << "cleaned, time = " << clean_time - start_time << "\n";
@@ -3094,6 +3077,15 @@ IMesh trimesh_nary_intersect(const IMesh &tm_in,
   double overlap_time = PIL_check_seconds_timer();
   std::cout << "intersect overlaps calculated, time = " << overlap_time - bb_calc_time << "\n";
 #  endif
+  for (int t : tm_clean->face_index_range()) {
+    if (tri_ov.first_overlap_index(t) != -1) {
+      tm_clean->face(t)->populate_plane(true);
+    }
+  }
+#  ifdef PERFDEBUG
+  double plane_populate = PIL_check_seconds_timer();
+  std::cout << "planes populated, time = " << plane_populate - overlap_time << "\n";
+#  endif
   /* itt_map((a,b)) will hold the intersection value resulting from intersecting
    * triangles with indices a and b, where a < b. */
   Map<std::pair<int, int>, ITT_value> itt_map;
@@ -3101,7 +3093,7 @@ IMesh trimesh_nary_intersect(const IMesh &tm_in,
   calc_overlap_itts(itt_map, *tm_clean, tri_ov, arena);
 #  ifdef PERFDEBUG
   double itt_time = PIL_check_seconds_timer();
-  std::cout << "itts found, time = " << itt_time - overlap_time << "\n";
+  std::cout << "itts found, time = " << itt_time - plane_populate << "\n";
 #  endif
   CoplanarClusterInfo clinfo = find_clusters(*tm_clean, tri_bb, itt_map);
   if (dbg_level > 1) {
