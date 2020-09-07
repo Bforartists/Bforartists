@@ -227,15 +227,6 @@ def unique_name(collection, base_name):
     return name
 
 
-def org_name(name):
-    """ Returns the name with ORG_PREFIX stripped from it.
-    """
-    if name.startswith(ORG_PREFIX):
-        return name[len(ORG_PREFIX):]
-    else:
-        return name
-
-
 def strip_org(name):
     """ Returns the name with ORG_PREFIX stripped from it.
     """
@@ -247,7 +238,7 @@ org_name = strip_org
 
 
 def strip_mch(name):
-    """ Returns the name with ORG_PREFIX stripped from it.
+    """ Returns the name with MCH_PREFIX stripped from it.
         """
     if name.startswith(MCH_PREFIX):
         return name[len(MCH_PREFIX):]

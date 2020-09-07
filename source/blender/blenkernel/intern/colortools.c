@@ -1151,50 +1151,48 @@ void BKE_curvemapping_evaluate_premulRGB(const CurveMapping *cumap,
   vecout_byte[2] = unit_float_to_uchar_clamp(vecout[2]);
 }
 
-int BKE_curvemapping_RGBA_does_something(const CurveMapping *cumap)
+bool BKE_curvemapping_RGBA_does_something(const CurveMapping *cumap)
 {
-  int a;
-
   if (cumap->black[0] != 0.0f) {
-    return 1;
+    return true;
   }
   if (cumap->black[1] != 0.0f) {
-    return 1;
+    return true;
   }
   if (cumap->black[2] != 0.0f) {
-    return 1;
+    return true;
   }
   if (cumap->white[0] != 1.0f) {
-    return 1;
+    return true;
   }
   if (cumap->white[1] != 1.0f) {
-    return 1;
+    return true;
   }
   if (cumap->white[2] != 1.0f) {
-    return 1;
+    return true;
   }
 
-  for (a = 0; a < CM_TOT; a++) {
+  for (int a = 0; a < CM_TOT; a++) {
     if (cumap->cm[a].curve) {
       if (cumap->cm[a].totpoint != 2) {
-        return 1;
+        return true;
       }
 
       if (cumap->cm[a].curve[0].x != 0.0f) {
-        return 1;
+        return true;
       }
       if (cumap->cm[a].curve[0].y != 0.0f) {
-        return 1;
+        return true;
       }
       if (cumap->cm[a].curve[1].x != 1.0f) {
-        return 1;
+        return true;
       }
       if (cumap->cm[a].curve[1].y != 1.0f) {
-        return 1;
+        return true;
       }
     }
   }
-  return 0;
+  return false;
 }
 
 void BKE_curvemapping_init(CurveMapping *cumap)
@@ -1322,10 +1320,10 @@ void BKE_histogram_update_sample_line(Histogram *hist,
   const float *fp;
   unsigned char *cp;
 
-  int x1 = 0.5f + hist->co[0][0] * ibuf->x;
-  int x2 = 0.5f + hist->co[1][0] * ibuf->x;
-  int y1 = 0.5f + hist->co[0][1] * ibuf->y;
-  int y2 = 0.5f + hist->co[1][1] * ibuf->y;
+  int x1 = roundf(hist->co[0][0] * ibuf->x);
+  int x2 = roundf(hist->co[1][0] * ibuf->x);
+  int y1 = roundf(hist->co[0][1] * ibuf->y);
+  int y2 = roundf(hist->co[1][1] * ibuf->y);
 
   struct ColormanageProcessor *cm_processor = NULL;
 

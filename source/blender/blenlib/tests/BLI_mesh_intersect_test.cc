@@ -703,6 +703,33 @@ TEST(mesh_intersect, CubeCubeStep)
     write_obj_mesh(out2, "test_cubecubestep_nary");
   }
 }
+
+TEST(mesh_intersect, RectCross)
+{
+  const char *spec = R"(8 4
+  3/2 0 1
+  -3/2 0 1
+  -3/2 0 -1
+  3/2 0 -1
+  1 0 -5
+  -1 0 -5
+  1 0 5
+  -1 0 5
+  1 0 3
+  1 3 2
+  5 4 6
+  5 6 7
+  )";
+
+  IMeshBuilder mb(spec);
+  IMesh out = trimesh_self_intersect(mb.imesh, &mb.arena);
+  out.populate_vert();
+  EXPECT_EQ(out.vert_size(), 17);
+  EXPECT_EQ(out.face_size(), 28);
+  if (DO_OBJ) {
+    write_obj_mesh(out, "test_rectcross");
+  }
+}
 #  endif
 
 #  if DO_PERF_TESTS
@@ -996,10 +1023,10 @@ static void fill_grid_data(int x_subdiv,
 
 static void spheregrid_test(int nrings, int grid_level, double z_offset, bool use_self)
 {
-  /* Make a uvsphere and a grid.
-   * The sphere is radius 1, has nrings rings and 2 * nrings segs,
+  /* Make a uv-sphere and a grid.
+   * The sphere is radius 1, has `nrings` rings and `2 * nrings` segments,
    * and is centered at (0,0,z_offset).
-   * The plane is 4x4, has 2**grid_level subdivisions x and y,
+   * The plane is 4x4, has `2 ** grid_level` subdivisions x and y,
    * and is centered at the origin. */
   if (nrings < 2 || grid_level < 1) {
     return;

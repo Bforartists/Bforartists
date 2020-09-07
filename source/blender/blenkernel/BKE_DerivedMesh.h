@@ -215,7 +215,7 @@ struct DerivedMesh {
   void *(*getPolyDataArray)(DerivedMesh *dm, int type);
 
   /** Retrieves the base CustomData structures for
-   * verts/edges/tessfaces/loops/facdes*/
+   * verts/edges/tessfaces/loops/faces. */
   CustomData *(*getVertDataLayout)(DerivedMesh *dm);
   CustomData *(*getEdgeDataLayout)(DerivedMesh *dm);
   CustomData *(*getTessFaceDataLayout)(DerivedMesh *dm);
@@ -257,7 +257,7 @@ void DM_init(DerivedMesh *dm,
              DerivedMeshType type,
              int numVerts,
              int numEdges,
-             int numFaces,
+             int numTessFaces,
              int numLoops,
              int numPolys);
 
@@ -275,15 +275,15 @@ void DM_from_template(DerivedMesh *dm,
                       DerivedMeshType type,
                       int numVerts,
                       int numEdges,
-                      int numFaces,
+                      int numTessFaces,
                       int numLoops,
                       int numPolys);
 
 /**
  * Utility function to release a DerivedMesh's layers
- * returns 1 if DerivedMesh has to be released by the backend, 0 otherwise.
+ * returns true if DerivedMesh has to be released by the backend, false otherwise.
  */
-int DM_release(DerivedMesh *dm);
+bool DM_release(DerivedMesh *dm);
 
 void DM_set_only_copy(DerivedMesh *dm, const struct CustomData_MeshMasks *mask);
 
@@ -353,7 +353,7 @@ struct Mesh *editbmesh_get_eval_cage(struct Depsgraph *depsgraph,
                                      const struct CustomData_MeshMasks *dataMask);
 struct Mesh *editbmesh_get_eval_cage_from_orig(struct Depsgraph *depsgraph,
                                                struct Scene *scene,
-                                               struct Object *object,
+                                               struct Object *obedit,
                                                const struct CustomData_MeshMasks *dataMask);
 struct Mesh *editbmesh_get_eval_cage_and_final(struct Depsgraph *depsgraph,
                                                struct Scene *scene,
@@ -375,7 +375,7 @@ void makeDerivedMesh(struct Depsgraph *depsgraph,
 void DM_calc_loop_tangents(DerivedMesh *dm,
                            bool calc_active_tangent,
                            const char (*tangent_names)[MAX_NAME],
-                           int tangent_names_count);
+                           int tangent_names_len);
 
 /* debug only */
 #ifndef NDEBUG

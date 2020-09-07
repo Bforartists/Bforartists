@@ -31,7 +31,9 @@
 #include "gl_context.hh"
 #include "gl_drawlist.hh"
 #include "gl_framebuffer.hh"
+#include "gl_index_buffer.hh"
 #include "gl_shader.hh"
+#include "gl_texture.hh"
 #include "gl_uniform_buffer.hh"
 
 namespace blender {
@@ -42,37 +44,61 @@ class GLBackend : public GPUBackend {
   GLSharedOrphanLists shared_orphan_list_;
 
  public:
+  GLBackend()
+  {
+    GLTexture::samplers_init();
+  }
+  ~GLBackend()
+  {
+    GLTexture::samplers_free();
+  }
+
   static GLBackend *get(void)
   {
     return static_cast<GLBackend *>(GPUBackend::get());
   }
 
-  GPUContext *context_alloc(void *ghost_window)
+  void samplers_update(void) override
+  {
+    GLTexture::samplers_update();
+  };
+
+  GPUContext *context_alloc(void *ghost_window) override
   {
     return new GLContext(ghost_window, shared_orphan_list_);
   };
 
-  Batch *batch_alloc(void)
+  Batch *batch_alloc(void) override
   {
     return new GLBatch();
   };
 
-  DrawList *drawlist_alloc(int list_length)
+  DrawList *drawlist_alloc(int list_length) override
   {
     return new GLDrawList(list_length);
   };
 
-  FrameBuffer *framebuffer_alloc(const char *name)
+  FrameBuffer *framebuffer_alloc(const char *name) override
   {
     return new GLFrameBuffer(name);
   };
 
-  Shader *shader_alloc(const char *name)
+  IndexBuf *indexbuf_alloc(void) override
+  {
+    return new GLIndexBuf();
+  };
+
+  Shader *shader_alloc(const char *name) override
   {
     return new GLShader(name);
   };
 
-  UniformBuf *uniformbuf_alloc(int size, const char *name)
+  Texture *texture_alloc(const char *name) override
+  {
+    return new GLTexture(name);
+  };
+
+  UniformBuf *uniformbuf_alloc(int size, const char *name) override
   {
     return new GLUniformBuf(size, name);
   };

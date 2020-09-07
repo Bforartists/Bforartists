@@ -18,8 +18,6 @@ from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
 from io_scene_gltf2.io.com import gltf2_io
 from io_scene_gltf2.io.com.gltf2_io_extensions import Extension
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_texture_info, gltf2_blender_export_keys
-from io_scene_gltf2.blender.exp import gltf2_blender_gather_material_normal_texture_info_class
-from io_scene_gltf2.blender.exp import gltf2_blender_gather_material_occlusion_texture_info_class
 from io_scene_gltf2.blender.exp import gltf2_blender_search_node_tree
 
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_materials_pbr_metallic_roughness
@@ -89,7 +87,7 @@ def __gather_alpha_cutoff(blender_material, export_settings):
 def __gather_alpha_mode(blender_material, export_settings):
     if blender_material.blend_method == 'CLIP':
         return 'MASK'
-    elif blender_material.blend_method == 'BLEND':
+    elif blender_material.blend_method in ['BLEND', 'HASHED']:
         return 'BLEND'
     return None
 
@@ -111,12 +109,13 @@ def __gather_emissive_factor(blender_material, export_settings):
     if emissive_socket is None:
         emissive_socket = gltf2_blender_get.get_socket_old(blender_material, "EmissiveFactor")
     if isinstance(emissive_socket, bpy.types.NodeSocket):
-        if emissive_socket.is_linked:
+        fac = gltf2_blender_get.get_factor_from_socket(emissive_socket, kind='RGB')
+        if fac is None and emissive_socket.is_linked:
             # In glTF, the default emissiveFactor is all zeros, so if an emission texture is connected,
             # we have to manually set it to all ones.
-            return [1.0, 1.0, 1.0]
-        else:
-            return list(emissive_socket.default_value)[0:3]
+            fac = [1.0, 1.0, 1.0]
+        if fac == [0, 0, 0]: fac = None
+        return fac
     return None
 
 
@@ -141,7 +140,11 @@ def __gather_extensions(blender_material, export_settings):
     if clearcoat_extension:
         extensions["KHR_materials_clearcoat"] = clearcoat_extension
 
-    # TODO KHR_materials_pbrSpecularGlossiness
+    # KHR_materials_transmission
+
+    transmission_extension = __gather_transmission_extension(blender_material, export_settings)
+    if transmission_extension:
+        extensions["KHR_materials_transmission"] = transmission_extension
 
     return extensions if extensions else None
 
@@ -160,7 +163,7 @@ def __gather_normal_texture(blender_material, export_settings):
     normal = gltf2_blender_get.get_socket(blender_material, "Normal")
     if normal is None:
         normal = gltf2_blender_get.get_socket_old(blender_material, "Normal")
-    return gltf2_blender_gather_material_normal_texture_info_class.gather_material_normal_texture_info_class(
+    return gltf2_blender_gather_texture_info.gather_material_normal_texture_info_class(
         (normal,),
         export_settings)
 
@@ -208,13 +211,13 @@ def __gather_orm_texture(blender_material, export_settings):
 
 def __gather_occlusion_texture(blender_material, orm_texture, export_settings):
     if orm_texture is not None:
-        return gltf2_blender_gather_material_occlusion_texture_info_class.gather_material_occlusion_texture_info_class(
+        return gltf2_blender_gather_texture_info.gather_material_occlusion_texture_info_class(
             orm_texture,
             export_settings)
     occlusion = gltf2_blender_get.get_socket(blender_material, "Occlusion")
     if occlusion is None:
         occlusion = gltf2_blender_get.get_socket_old(blender_material, "Occlusion")
-    return gltf2_blender_gather_material_occlusion_texture_info_class.gather_material_occlusion_texture_info_class(
+    return gltf2_blender_gather_texture_info.gather_material_occlusion_texture_info_class(
         (occlusion,),
         export_settings)
 
@@ -278,9 +281,40 @@ def __gather_clearcoat_extension(blender_material, export_settings):
             clearcoat_extension['clearcoatRoughnessTexture'] = combined_texture
 
     if __has_image_node_from_socket(clearcoat_normal_socket):
-        clearcoat_extension['clearcoatNormalTexture'] = gltf2_blender_gather_material_normal_texture_info_class.gather_material_normal_texture_info_class(
+        clearcoat_extension['clearcoatNormalTexture'] = gltf2_blender_gather_texture_info.gather_material_normal_texture_info_class(
             (clearcoat_normal_socket,),
             export_settings
         )
 
     return Extension('KHR_materials_clearcoat', clearcoat_extension, False)
+
+def __gather_transmission_extension(blender_material, export_settings):
+    transmission_enabled = False
+    has_transmission_texture = False
+
+    transmission_extension = {}
+    transmission_slots = ()
+
+    transmission_socket = gltf2_blender_get.get_socket(blender_material, 'Transmission')
+
+    if isinstance(transmission_socket, bpy.types.NodeSocket) and not transmission_socket.is_linked:
+        transmission_extension['transmissionFactor'] = transmission_socket.default_value
+        transmission_enabled = transmission_extension['transmissionFactor'] > 0
+    elif __has_image_node_from_socket(transmission_socket):
+        transmission_extension['transmissionFactor'] = 1
+        has_transmission_texture = True
+        transmission_enabled = True
+
+    if not transmission_enabled:
+        return None
+
+    # Pack transmission channel (R).
+    if has_transmission_texture:
+        transmission_slots = (transmission_socket,)
+
+    if len(transmission_slots) > 0:
+        combined_texture = gltf2_blender_gather_texture_info.gather_texture_info(transmission_slots, export_settings)
+        if has_transmission_texture:
+            transmission_extension['transmissionTexture'] = combined_texture
+
+    return Extension('KHR_materials_transmission', transmission_extension, False)

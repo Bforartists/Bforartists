@@ -1661,9 +1661,6 @@ bool SCULPT_brush_test_cube(SculptBrushTest *test,
 {
   float side = M_SQRT1_2;
   float local_co[3];
-  float i_local[4][4];
-
-  invert_m4_m4(i_local, local);
 
   if (sculpt_brush_test_clipping(test, co)) {
     return false;
@@ -1771,10 +1768,10 @@ static bool sculpt_brush_test_cyl(SculptBrushTest *test,
 
     test->dist = dist;
 
-    return 1;
+    return true;
   }
 
-  return 0;
+  return false;
 }
 
 #endif
@@ -2273,9 +2270,12 @@ static float brush_strength(const Sculpt *sd,
     case SCULPT_TOOL_DISPLACEMENT_ERASER:
       return alpha * pressure * overlap * feather;
     case SCULPT_TOOL_CLOTH:
-      if (ELEM(brush->cloth_deform_type, BRUSH_CLOTH_DEFORM_GRAB, BRUSH_CLOTH_DEFORM_SNAKE_HOOK)) {
+      if (brush->cloth_deform_type == BRUSH_CLOTH_DEFORM_GRAB) {
         /* Grab deform uses the same falloff as a regular grab brush. */
         return root_alpha * feather;
+      }
+      else if (brush->cloth_deform_type == BRUSH_CLOTH_DEFORM_SNAKE_HOOK) {
+        return root_alpha * feather * pressure * overlap;
       }
       else if (brush->cloth_deform_type == BRUSH_CLOTH_DEFORM_EXPAND) {
         /* Expand is more sensible to strength as it keeps expanding the cloth when sculpting over
@@ -6654,7 +6654,7 @@ static bool sculpt_needs_delta_from_anchored_origin(Brush *brush)
 static bool sculpt_needs_delta_for_tip_orientation(Brush *brush)
 {
   if (brush->sculpt_tool == SCULPT_TOOL_CLOTH) {
-    return brush->cloth_deform_type == BRUSH_CLOTH_DEFORM_SNAKE_HOOK;
+    return brush->cloth_deform_type != BRUSH_CLOTH_DEFORM_GRAB;
   }
   return ELEM(brush->sculpt_tool,
               SCULPT_TOOL_CLAY_STRIPS,
@@ -9153,6 +9153,8 @@ void ED_operatortypes_sculpt(void)
   WM_operatortype_append(SCULPT_OT_face_sets_init);
   WM_operatortype_append(SCULPT_OT_cloth_filter);
   WM_operatortype_append(SCULPT_OT_face_sets_edit);
+  WM_operatortype_append(SCULPT_OT_face_set_lasso_gesture);
+  WM_operatortype_append(SCULPT_OT_face_set_box_gesture);
 
   WM_operatortype_append(SCULPT_OT_sample_color);
   WM_operatortype_append(SCULPT_OT_loop_to_vertex_colors);

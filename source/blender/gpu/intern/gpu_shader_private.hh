@@ -23,7 +23,7 @@
 #include "BLI_span.hh"
 
 #include "GPU_shader.h"
-#include "GPU_vertex_buffer.h"
+#include "gpu_vertex_buffer_private.hh"
 #include "gpu_shader_interface.hh"
 
 namespace blender {
@@ -63,6 +63,11 @@ class Shader {
   virtual void uniform_int(int location, int comp_len, int array_size, const int *data) = 0;
 
   virtual void vertformat_from_shader(GPUVertFormat *) const = 0;
+
+  inline const char *const name_get(void) const
+  {
+    return name;
+  };
 
  protected:
   void print_errors(Span<const char *> sources, char *log, const char *stage);
