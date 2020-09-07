@@ -79,6 +79,7 @@ dict_custom = {
     "overridable",
     "paddings",
     "parameterization",
+    "parentless",
     "polytope",
     "postprocessed",
     "precalculate",

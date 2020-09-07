@@ -451,7 +451,7 @@ static void drw_context_state_init(void)
   if (DST.draw_ctx.object_mode & OB_MODE_POSE) {
     DST.draw_ctx.object_pose = DST.draw_ctx.obact;
   }
-  else if (DST.draw_ctx.object_mode & OB_MODE_WEIGHT_PAINT) {
+  else if ((DST.draw_ctx.object_mode & OB_MODE_ALL_WEIGHT_PAINT)) {
     DST.draw_ctx.object_pose = BKE_object_pose_armature_get(DST.draw_ctx.obact);
   }
   else {
@@ -1929,7 +1929,7 @@ static void draw_select_framebuffer_depth_only_setup(const int size[2])
 
   if (g_select_buffer.texture_depth == NULL) {
     g_select_buffer.texture_depth = GPU_texture_create_2d(
-        size[0], size[1], GPU_DEPTH_COMPONENT24, NULL, NULL);
+        "select_depth", size[0], size[1], 1, GPU_DEPTH_COMPONENT24, NULL);
 
     GPU_framebuffer_texture_attach(
         g_select_buffer.framebuffer_depth_only, g_select_buffer.texture_depth, 0, 0);
