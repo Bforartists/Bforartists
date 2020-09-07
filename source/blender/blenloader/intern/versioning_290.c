@@ -33,6 +33,7 @@
 #include "DNA_gpencil_types.h"
 #include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
+#include "DNA_rigidbody_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_shader_fx_types.h"
 
@@ -518,6 +519,23 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
   }
 
+  for (Scene *scene = bmain->scenes.first; scene; scene = scene->id.next) {
+    RigidBodyWorld *rbw = scene->rigidbody_world;
+
+    if (rbw == NULL) {
+      continue;
+    }
+
+    /* The substep method changed from "per second" to "per frame".
+     * To get the new value simply divide the old bullet sim fps with the scene fps.
+     */
+    rbw->substeps_per_frame /= FPS;
+
+    if (rbw->substeps_per_frame <= 0) {
+      rbw->substeps_per_frame = 1;
+    }
+  }
+
   /**
    * Versioning code until next subversion bump goes here.
    *
@@ -528,6 +546,14 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
    * \note Keep this message at the bottom of the function.
    */
   {
+    /* Set the minimum sequence interpolate for grease pencil. */
+    if (!DNA_struct_elem_find(fd->filesdna, "GP_Interpolate_Settings", "int", "step")) {
+      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+        ToolSettings *ts = scene->toolsettings;
+        ts->gp_interpolate.step = 1;
+      }
+    }
+
     /* Keep this block, even when empty. */
   }
 }

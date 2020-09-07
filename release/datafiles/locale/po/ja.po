@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -61087,6 +61087,10 @@ msgid "Restore key map item"
 msgstr "キーマップアイテムを復元"
 
 
+msgid "Identifier of the item to restore"
+msgstr "リストアするアイテムのID"
+
+
 msgctxt "Operator"
 msgid "Restore Key Map(s)"
 msgstr "キーマップを復元"
@@ -62515,6 +62519,10 @@ msgstr "クロスをインフレート"
 
 msgid "Expands the cloth's dimensions"
 msgstr "クロスの寸法を広げます"
+
+
+msgid "Pinches the cloth to the point where the cursor was when the filter started"
+msgstr "フィルター開始時のカーソル位置にクロスを引っぱります"
 
 
 msgid "Use Face Sets"
@@ -69493,12 +69501,75 @@ msgid "Site"
 msgstr "サイト"
 
 
+msgctxt "Operator"
+msgid "Export USD"
+msgstr "USDをエクスポート"
+
+
+msgid "Export current scene in a USD archive"
+msgstr "現在のシーンを USD アーカイブでエクスポートします"
+
+
+msgid "Use Settings for"
+msgstr "使用する設定"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr ""
+"オブジェクトの可視性やモディファイアー設定などの\n"
+"ビューポートとレンダリング用のどちらの設定を使用するか"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "レンダー用設定をオブジェクトの可視性やモディファイアー設定などに使用します"
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "ビューポート用設定をオブジェクトの可視性やモディファイアー設定などに使用します"
+
+
+msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
+msgstr ""
+"有効時、レンダーフレーム範囲をエクスポートします\n"
+"無効時は現在のフレームのみエクスポートします"
+
+
+msgid "When checked, hair is exported as USD curves"
+msgstr "有効時、ヘアーを USD カーブとしてエクスポートします"
+
+
+msgid "When checked, the viewport settings of materials are exported as USD preview materials, and material assignments are exported as geometry subsets"
+msgstr ""
+"有効時、マテリアルのビューポート設定を USD プレビューマテリアルとしてエクスポートし\n"
+"マテリアルの割り当てをジオメトリのサブセットとしてエクスポートします"
+
+
+msgid "When checked, normals of exported meshes are included in the export"
+msgstr "チェック時、メッシュの法線もメッシュと一緒にエクスポートします"
+
+
 msgid "UV Maps"
 msgstr "UVマップ"
 
 
+msgid "When checked, all UV maps of exported meshes are included in the export"
+msgstr "チェック時、メッシュの全 UV マップもメッシュと一緒にエクスポートします"
+
+
+msgid "Only selected objects are exported. Unselected parents of selected objects are exported as empty transform"
+msgstr ""
+"選択中のオブジェクトのみエクスポートします\n"
+"選択オブジェクトの非選択の親は空のトランスフォームとしてエクスポートされます"
+
+
 msgid "Instancing"
 msgstr "インスタンス化"
+
+
+msgid "When checked, instanced objects are exported as references in USD. When unchecked, instanced objects are exported as real objects"
+msgstr ""
+"有効時、オブジェクトのインスタンスを USD 内の参照としてエクスポートします\n"
+"無効時はインスタンスも実際のオブジェクトとしてエクスポートします"
 
 
 msgctxt "Operator"

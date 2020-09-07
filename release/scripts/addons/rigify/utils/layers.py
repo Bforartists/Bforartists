@@ -116,6 +116,7 @@ class ControlLayersOption:
         prop_layers = bpy.props.BoolVectorProperty(
             size=32,
             description=self.description,
+            subtype='LAYER',
             default=tuple([i == 1 for i in range(0, 32)])
         )
 
@@ -130,42 +131,8 @@ class ControlLayersOption:
         if not active:
             return
 
-        r = box.row()
-        col = r.column(align=True)
-        row = col.row(align=True)
-
-        bone_layers = bpy.context.active_pose_bone.bone.layers[:]
-
-        for i in range(8):    # Layers 0-7
-            icon = "NONE"
-            if bone_layers[i]:
-                icon = "LAYER_ACTIVE"
-            row.prop(params, self.layers_option, index=i, toggle=True, text="", icon=icon)
-
-        row = col.row(align=True)
-
-        for i in range(16, 24):     # Layers 16-23
-            icon = "NONE"
-            if bone_layers[i]:
-                icon = "LAYER_ACTIVE"
-            row.prop(params, self.layers_option, index=i, toggle=True, text="", icon=icon)
-
-        col = r.column(align=True)
-        row = col.row(align=True)
-
-        for i in range(8, 16):  # Layers 8-15
-            icon = "NONE"
-            if bone_layers[i]:
-                icon = "LAYER_ACTIVE"
-            row.prop(params, self.layers_option, index=i, toggle=True, text="", icon=icon)
-
-        row = col.row(align=True)
-
-        for i in range(24, 32):     # Layers 24-31
-            icon = "NONE"
-            if bone_layers[i]:
-                icon = "LAYER_ACTIVE"
-            row.prop(params, self.layers_option, index=i, toggle=True, text="", icon=icon)
+        row = box.row(align=True)
+        row.prop(params, self.layers_option, text="")
 
 
 ControlLayersOption.FK = ControlLayersOption('fk', description="Layers for the FK controls to be on")

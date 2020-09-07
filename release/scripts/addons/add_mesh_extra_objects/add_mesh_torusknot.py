@@ -177,6 +177,7 @@ class AddTorusKnot(bpy.types.Operator, object_utils.AddObjectHelper):
             obj = object_utils.object_data_add(context, mesh, operator=self)
             obj.select_set(True)
             active_object.select_set(True)
+            bpy.context.view_layer.objects.active = active_object
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')

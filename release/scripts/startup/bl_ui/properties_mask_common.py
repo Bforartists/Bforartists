@@ -172,7 +172,7 @@ class MASK_PT_spline:
         col = layout.column()
         col.prop(spline, "offset_mode")
         col.prop(spline, "weight_interpolation", text="Interpolation")
-        
+
         col.use_property_split = False
         col.prop(spline, "use_cyclic")
         col.prop(spline, "use_fill")
@@ -387,10 +387,16 @@ class MASK_MT_transform(Menu):
         layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
         layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
         layout.operator("transform.resize", text = "Scale",  icon = "TRANSFORM_SCALE")
-        layout.operator("transform.transform", text = "Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
 
         layout.separator()
 
+        layout.operator("transform.tosphere")
+        layout.operator("transform.shear")
+        layout.operator("transform.push_pull")
+
+        layout.separator()
+
+        layout.operator("transform.transform", text = "Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
         layout.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
 
 
@@ -438,12 +444,12 @@ class MASK_MT_select(Menu):
         layout.operator("mask.select_all", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("mask.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("mask.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
-        
+
         layout.separator()
 
         layout.operator("mask.select_box", icon = 'BORDER_RECT')
         layout.operator("mask.select_circle", icon = 'CIRCLE_SELECT')
- 
+
         layout.separator()
 
         layout.operator("mask.select_linked", text = "Linked", icon = "LINKED")
@@ -460,7 +466,7 @@ classes = (
     MASK_MT_add,
     MASK_MT_visibility,
     MASK_MT_transform,
-    MASK_MT_animation,  
+    MASK_MT_animation,
     MASK_MT_select_inverse,
     MASK_MT_select_none,
     MASK_MT_select,
