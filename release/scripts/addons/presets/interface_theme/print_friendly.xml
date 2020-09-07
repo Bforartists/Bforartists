@@ -533,11 +533,12 @@
     </graph_editor>
     <file_browser>
       <ThemeFileBrowser
+        row_alternate="#ffffffff"
         selected_file="#76afff"
         >
         <space>
           <ThemeSpaceGeneric
-            back="#a4a4a4"
+            back="#d8d8d8"
             title="#000000"
             text="#000000"
             text_hi="#ffffff"

@@ -66,10 +66,9 @@ FrameBuffer::FrameBuffer(const char *name)
 
 FrameBuffer::~FrameBuffer()
 {
-  GPUFrameBuffer *gpu_fb = reinterpret_cast<GPUFrameBuffer *>(this);
   for (int i = 0; i < ARRAY_SIZE(attachments_); i++) {
     if (attachments_[i].tex != NULL) {
-      GPU_texture_detach_framebuffer(attachments_[i].tex, gpu_fb);
+      reinterpret_cast<Texture *>(attachments_[i].tex)->detach_from(this);
     }
   }
 }
@@ -77,7 +76,7 @@ FrameBuffer::~FrameBuffer()
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Attachments managment
+/** \name Attachments Management
  * \{ */
 
 void FrameBuffer::attachment_set(GPUAttachmentType type, const GPUAttachment &new_attachment)
@@ -86,7 +85,7 @@ void FrameBuffer::attachment_set(GPUAttachmentType type, const GPUAttachment &ne
     return; /* GPU_ATTACHMENT_LEAVE */
   }
 
-  if (type >= GPU_FB_MAX_ATTACHEMENT) {
+  if (type >= GPU_FB_MAX_ATTACHMENT) {
     fprintf(stderr,
             "GPUFramebuffer: Error: Trying to attach texture to type %d but maximum slot is %d.\n",
             type - GPU_FB_COLOR_ATTACHMENT0,
@@ -96,10 +95,7 @@ void FrameBuffer::attachment_set(GPUAttachmentType type, const GPUAttachment &ne
 
   if (new_attachment.tex) {
     if (new_attachment.layer > 0) {
-      BLI_assert(ELEM(GPU_texture_target(new_attachment.tex),
-                      GL_TEXTURE_2D_ARRAY,
-                      GL_TEXTURE_CUBE_MAP,
-                      GL_TEXTURE_CUBE_MAP_ARRAY_ARB));
+      BLI_assert(GPU_texture_cube(new_attachment.tex) || GPU_texture_array(new_attachment.tex));
     }
     if (GPU_texture_stencil(new_attachment.tex)) {
       BLI_assert(ELEM(type, GPU_FB_DEPTH_STENCIL_ATTACHMENT));
@@ -118,14 +114,14 @@ void FrameBuffer::attachment_set(GPUAttachmentType type, const GPUAttachment &ne
   /* Unbind previous and bind new. */
   /* TODO(fclem) cleanup the casts. */
   if (attachment.tex) {
-    GPU_texture_detach_framebuffer(attachment.tex, reinterpret_cast<GPUFrameBuffer *>(this));
+    reinterpret_cast<Texture *>(attachment.tex)->detach_from(this);
   }
 
   attachment = new_attachment;
 
   /* Might be null if this is for unbinding. */
   if (attachment.tex) {
-    GPU_texture_attach_framebuffer(attachment.tex, reinterpret_cast<GPUFrameBuffer *>(this), type);
+    reinterpret_cast<Texture *>(attachment.tex)->attach_to(this, type);
   }
   else {
     /* GPU_ATTACHMENT_NONE */
@@ -134,42 +130,33 @@ void FrameBuffer::attachment_set(GPUAttachmentType type, const GPUAttachment &ne
   dirty_attachments_ = true;
 }
 
+void FrameBuffer::attachment_remove(GPUAttachmentType type)
+{
+  attachments_[type] = GPU_ATTACHMENT_NONE;
+  dirty_attachments_ = true;
+}
+
 void FrameBuffer::recursive_downsample(int max_lvl,
                                        void (*callback)(void *userData, int level),
                                        void *userData)
 {
-  GPUContext *ctx = GPU_context_active_get();
-  /* Bind to make sure the framebuffer is up to date. */
+  /* Bind to make sure the frame-buffer is up to date. */
   this->bind(true);
 
-  if (width_ == 1 && height_ == 1) {
-    return;
-  }
-  /* HACK: Make the framebuffer appear not bound to avoid assert in GPU_texture_bind. */
-  ctx->active_fb = NULL;
+  /* FIXME(fclem): This assumes all mips are defined which may not be the case. */
+  max_lvl = min_ii(max_lvl, floor(log2(max_ii(width_, height_))));
 
-  int levels = floor(log2(max_ii(width_, height_)));
-  max_lvl = min_ii(max_lvl, levels);
-
-  int current_dim[2] = {width_, height_};
-  int mip_lvl;
-  for (mip_lvl = 1; mip_lvl < max_lvl + 1; mip_lvl++) {
-    /* calculate next viewport size */
-    current_dim[0] = max_ii(current_dim[0] / 2, 1);
-    current_dim[1] = max_ii(current_dim[1] / 2, 1);
-    /* Replace attaached miplevel for each attachement. */
+  for (int mip_lvl = 1; mip_lvl <= max_lvl; mip_lvl++) {
+    /* Replace attached mip-level for each attachment. */
     for (int att = 0; att < ARRAY_SIZE(attachments_); att++) {
-      GPUTexture *tex = attachments_[att].tex;
+      Texture *tex = reinterpret_cast<Texture *>(attachments_[att].tex);
       if (tex != NULL) {
         /* Some Intel HDXXX have issue with rendering to a mipmap that is below
          * the texture GL_TEXTURE_MAX_LEVEL. So even if it not correct, in this case
          * we allow GL_TEXTURE_MAX_LEVEL to be one level lower. In practice it does work! */
-        int map_lvl = (GPU_mip_render_workaround()) ? mip_lvl : (mip_lvl - 1);
+        int mip_max = (GPU_mip_render_workaround()) ? mip_lvl : (mip_lvl - 1);
         /* Restrict fetches only to previous level. */
-        GPU_texture_bind(tex, 0);
-        glTexParameteri(GPU_texture_target(tex), GL_TEXTURE_BASE_LEVEL, mip_lvl - 1);
-        glTexParameteri(GPU_texture_target(tex), GL_TEXTURE_MAX_LEVEL, map_lvl);
-        GPU_texture_unbind(tex);
+        tex->mip_range_set(mip_lvl - 1, mip_max);
         /* Bind next level. */
         attachments_[att].mip = mip_lvl;
       }
@@ -177,25 +164,14 @@ void FrameBuffer::recursive_downsample(int max_lvl,
     /* Update the internal attachments and viewport size. */
     dirty_attachments_ = true;
     this->bind(true);
-    /* HACK: Make the framebuffer appear not bound to avoid assert in GPU_texture_bind. */
-    ctx->active_fb = NULL;
 
     callback(userData, mip_lvl);
-
-    /* This is the last mipmap level. Exit loop without incrementing mip_lvl. */
-    if (current_dim[0] == 1 && current_dim[1] == 1) {
-      break;
-    }
   }
 
   for (int att = 0; att < ARRAY_SIZE(attachments_); att++) {
     if (attachments_[att].tex != NULL) {
       /* Reset mipmap level range. */
-      GPUTexture *tex = attachments_[att].tex;
-      GPU_texture_bind(tex, 0);
-      glTexParameteri(GPU_texture_target(tex), GL_TEXTURE_BASE_LEVEL, 0);
-      glTexParameteri(GPU_texture_target(tex), GL_TEXTURE_MAX_LEVEL, mip_lvl);
-      GPU_texture_unbind(tex);
+      reinterpret_cast<Texture *>(attachments_[att].tex)->mip_range_set(0, max_lvl);
       /* Reset base level. NOTE: might not be the one bound at the start of this function. */
       attachments_[att].mip = 0;
     }
@@ -217,7 +193,7 @@ using namespace blender::gpu;
 GPUFrameBuffer *GPU_framebuffer_create(const char *name)
 {
   /* We generate the FB object later at first use in order to
-   * create the framebuffer in the right opengl context. */
+   * create the frame-buffer in the right opengl context. */
   return (GPUFrameBuffer *)GPUBackend::get()->framebuffer_alloc(name);
 }
 
@@ -235,7 +211,9 @@ void GPU_framebuffer_bind(GPUFrameBuffer *gpu_fb)
   fb->bind(enable_srgb);
 }
 
-/* Workaround for binding a srgb framebuffer without doing the srgb transform. */
+/**
+ * Workaround for binding a SRGB frame-buffer without doing the SRGB transform.
+ */
 void GPU_framebuffer_bind_no_srgb(GPUFrameBuffer *gpu_fb)
 {
   FrameBuffer *fb = reinterpret_cast<FrameBuffer *>(gpu_fb);
@@ -243,7 +221,9 @@ void GPU_framebuffer_bind_no_srgb(GPUFrameBuffer *gpu_fb)
   fb->bind(enable_srgb);
 }
 
-/* For stereo rendering. */
+/**
+ * For stereo rendering.
+ */
 void GPU_backbuffer_bind(eGPUBackBuffer buffer)
 {
   GPUContext *ctx = GPU_context_active_get();
@@ -267,7 +247,7 @@ GPUFrameBuffer *GPU_framebuffer_active_get(void)
   return reinterpret_cast<GPUFrameBuffer *>(ctx ? ctx->active_fb : NULL);
 }
 
-/* Returns the default framebuffer. Will always exists even if it's just a dummy. */
+/* Returns the default frame-buffer. Will always exists even if it's just a dummy. */
 GPUFrameBuffer *GPU_framebuffer_back_get(void)
 {
   GPUContext *ctx = GPU_context_active_get();
@@ -286,42 +266,37 @@ bool GPU_framebuffer_check_valid(GPUFrameBuffer *gpu_fb, char err_out[256])
   return reinterpret_cast<FrameBuffer *>(gpu_fb)->check(err_out);
 }
 
-void GPU_framebuffer_texture_attach_ex(GPUFrameBuffer *gpu_fb, GPUAttachment attachement, int slot)
+void GPU_framebuffer_texture_attach_ex(GPUFrameBuffer *gpu_fb, GPUAttachment attachment, int slot)
 {
-  GPUAttachmentType type = blender::gpu::Texture::attachment_type(attachement.tex, slot);
-  reinterpret_cast<FrameBuffer *>(gpu_fb)->attachment_set(type, attachement);
+  Texture *tex = reinterpret_cast<Texture *>(attachment.tex);
+  GPUAttachmentType type = tex->attachment_type(slot);
+  reinterpret_cast<FrameBuffer *>(gpu_fb)->attachment_set(type, attachment);
 }
 
 void GPU_framebuffer_texture_attach(GPUFrameBuffer *fb, GPUTexture *tex, int slot, int mip)
 {
-  GPUAttachment attachement = GPU_ATTACHMENT_TEXTURE_MIP(tex, mip);
-  GPU_framebuffer_texture_attach_ex(fb, attachement, slot);
+  GPUAttachment attachment = GPU_ATTACHMENT_TEXTURE_MIP(tex, mip);
+  GPU_framebuffer_texture_attach_ex(fb, attachment, slot);
 }
 
 void GPU_framebuffer_texture_layer_attach(
     GPUFrameBuffer *fb, GPUTexture *tex, int slot, int layer, int mip)
 {
-  GPUAttachment attachement = GPU_ATTACHMENT_TEXTURE_LAYER_MIP(tex, layer, mip);
-  GPU_framebuffer_texture_attach_ex(fb, attachement, slot);
+  GPUAttachment attachment = GPU_ATTACHMENT_TEXTURE_LAYER_MIP(tex, layer, mip);
+  GPU_framebuffer_texture_attach_ex(fb, attachment, slot);
 }
 
 void GPU_framebuffer_texture_cubeface_attach(
     GPUFrameBuffer *fb, GPUTexture *tex, int slot, int face, int mip)
 {
-  GPUAttachment attachement = GPU_ATTACHMENT_TEXTURE_CUBEFACE_MIP(tex, face, mip);
-  GPU_framebuffer_texture_attach_ex(fb, attachement, slot);
+  GPUAttachment attachment = GPU_ATTACHMENT_TEXTURE_CUBEFACE_MIP(tex, face, mip);
+  GPU_framebuffer_texture_attach_ex(fb, attachment, slot);
 }
 
 void GPU_framebuffer_texture_detach(GPUFrameBuffer *gpu_fb, GPUTexture *tex)
 {
-  GPUAttachment attachement = GPU_ATTACHMENT_NONE;
-  int type = GPU_texture_framebuffer_attachement_get(tex, gpu_fb);
-  if (type != -1) {
-    reinterpret_cast<FrameBuffer *>(gpu_fb)->attachment_set((GPUAttachmentType)type, attachement);
-  }
-  else {
-    BLI_assert(!"Error: Texture: Framebuffer is not attached");
-  }
+  FrameBuffer *fb = reinterpret_cast<FrameBuffer *>(gpu_fb);
+  reinterpret_cast<Texture *>(tex)->detach_from(fb);
 }
 
 /**
@@ -336,36 +311,38 @@ void GPU_framebuffer_config_array(GPUFrameBuffer *gpu_fb,
 {
   FrameBuffer *fb = reinterpret_cast<FrameBuffer *>(gpu_fb);
 
-  const GPUAttachment &depth_attachement = config[0];
+  const GPUAttachment &depth_attachment = config[0];
   Span<GPUAttachment> color_attachments(config + 1, config_len - 1);
 
-  if (depth_attachement.mip == -1) {
+  if (depth_attachment.mip == -1) {
     /* GPU_ATTACHMENT_LEAVE */
   }
-  else if (depth_attachement.tex == NULL) {
+  else if (depth_attachment.tex == NULL) {
     /* GPU_ATTACHMENT_NONE: Need to clear both targets. */
-    fb->attachment_set(GPU_FB_DEPTH_STENCIL_ATTACHMENT, depth_attachement);
-    fb->attachment_set(GPU_FB_DEPTH_ATTACHMENT, depth_attachement);
+    fb->attachment_set(GPU_FB_DEPTH_STENCIL_ATTACHMENT, depth_attachment);
+    fb->attachment_set(GPU_FB_DEPTH_ATTACHMENT, depth_attachment);
   }
   else {
-    GPUAttachmentType type = GPU_texture_stencil(depth_attachement.tex) ?
+    GPUAttachmentType type = GPU_texture_stencil(depth_attachment.tex) ?
                                  GPU_FB_DEPTH_STENCIL_ATTACHMENT :
                                  GPU_FB_DEPTH_ATTACHMENT;
-    fb->attachment_set(type, depth_attachement);
+    fb->attachment_set(type, depth_attachment);
   }
 
   GPUAttachmentType type = GPU_FB_COLOR_ATTACHMENT0;
-  for (const GPUAttachment &attachement : color_attachments) {
-    fb->attachment_set(type, attachement);
+  for (const GPUAttachment &attachment : color_attachments) {
+    fb->attachment_set(type, attachment);
     ++type;
   }
 }
 
 /* ---------- Viewport & Scissor Region ----------- */
 
-/* Viewport and scissor size is stored per framebuffer.
- * It is only reset to its original dimensions explicitely OR when binding the framebuffer after
- * modifiying its attachments. */
+/**
+ * Viewport and scissor size is stored per frame-buffer.
+ * It is only reset to its original dimensions explicitly OR when binding the frame-buffer after
+ * modifying its attachments.
+ */
 void GPU_framebuffer_viewport_set(GPUFrameBuffer *gpu_fb, int x, int y, int width, int height)
 {
   int viewport_rect[4] = {x, y, width, height};
@@ -377,7 +354,9 @@ void GPU_framebuffer_viewport_get(GPUFrameBuffer *gpu_fb, int r_viewport[4])
   reinterpret_cast<FrameBuffer *>(gpu_fb)->viewport_get(r_viewport);
 }
 
-/* Reset to its attachement(s) size. */
+/**
+ * Reset to its attachment(s) size.
+ */
 void GPU_framebuffer_viewport_reset(GPUFrameBuffer *gpu_fb)
 {
   reinterpret_cast<FrameBuffer *>(gpu_fb)->viewport_reset();
@@ -394,7 +373,9 @@ void GPU_framebuffer_clear(GPUFrameBuffer *gpu_fb,
   reinterpret_cast<FrameBuffer *>(gpu_fb)->clear(buffers, clear_col, clear_depth, clear_stencil);
 }
 
-/* Clear all textures attached to this framebuffer with a different color. */
+/**
+ * Clear all textures attached to this frame-buffer with a different color.
+ */
 void GPU_framebuffer_multi_clear(GPUFrameBuffer *gpu_fb, const float (*clear_cols)[4])
 {
   reinterpret_cast<FrameBuffer *>(gpu_fb)->clear_multi(clear_cols);
@@ -487,7 +468,7 @@ void GPU_framebuffer_blit(GPUFrameBuffer *gpufb_read,
 }
 
 /**
- * Use this if you need to custom down-sample your texture and use the previous mip level as
+ * Use this if you need to custom down-sample your texture and use the previous mip-level as
  * input. This function only takes care of the correct texture handling. It execute the callback
  * for each texture level.
  */
@@ -504,7 +485,7 @@ void GPU_framebuffer_recursive_downsample(GPUFrameBuffer *gpu_fb,
 /* -------------------------------------------------------------------- */
 /** \name GPUOffScreen
  *
- * Container that holds a framebuffer and its textures.
+ * Container that holds a frame-buffer and its textures.
  * Might be bound to multiple contexts.
  * \{ */
 
@@ -541,16 +522,11 @@ struct GPUOffScreen {
 
   GPUTexture *color;
   GPUTexture *depth;
-
-  /** Saved state of the previously bound framebuffer. */
-  /* TODO(fclem) This is quite hacky and a proper fix would be to
-   * put these states directly inside the GPUFrambuffer.
-   * But we don't have a GPUFramebuffer for the default framebuffer yet. */
-  int saved_viewport[4];
-  int saved_scissor[4];
 };
 
-/* Returns the correct framebuffer for the current context. */
+/**
+ * Returns the correct frame-buffer for the current context.
+ */
 static GPUFrameBuffer *gpu_offscreen_fb_get(GPUOffScreen *ofs)
 {
   GPUContext *ctx = GPU_context_active_get();
@@ -600,13 +576,14 @@ GPUOffScreen *GPU_offscreen_create(
   width = max_ii(1, width);
 
   ofs->color = GPU_texture_create_2d(
-      width, height, (high_bitdepth) ? GPU_RGBA16F : GPU_RGBA8, NULL, err_out);
+      "ofs_color", width, height, 1, (high_bitdepth) ? GPU_RGBA16F : GPU_RGBA8, NULL);
 
   if (depth) {
-    ofs->depth = GPU_texture_create_2d(width, height, GPU_DEPTH24_STENCIL8, NULL, err_out);
+    ofs->depth = GPU_texture_create_2d("ofs_depth", width, height, 1, GPU_DEPTH24_STENCIL8, NULL);
   }
 
   if ((depth && !ofs->depth) || !ofs->color) {
+    BLI_snprintf(err_out, 256, "GPUTexture: Texture allocation failed.");
     GPU_offscreen_free(ofs);
     return NULL;
   }
@@ -642,26 +619,16 @@ void GPU_offscreen_free(GPUOffScreen *ofs)
 void GPU_offscreen_bind(GPUOffScreen *ofs, bool save)
 {
   if (save) {
-    GPU_scissor_get(ofs->saved_scissor);
-    GPU_viewport_size_get_i(ofs->saved_viewport);
-
     GPUFrameBuffer *fb = GPU_framebuffer_active_get();
     gpuPushFrameBuffer(reinterpret_cast<GPUFrameBuffer *>(fb));
   }
-  GPUFrameBuffer *ofs_fb = gpu_offscreen_fb_get(ofs);
-  GPU_framebuffer_bind(ofs_fb);
-  glDisable(GL_FRAMEBUFFER_SRGB);
-  GPU_scissor_test(false);
-  GPU_shader_set_framebuffer_srgb_target(false);
+  reinterpret_cast<FrameBuffer *>(gpu_offscreen_fb_get(ofs))->bind(false);
 }
 
-void GPU_offscreen_unbind(GPUOffScreen *ofs, bool restore)
+void GPU_offscreen_unbind(GPUOffScreen *UNUSED(ofs), bool restore)
 {
   GPUFrameBuffer *fb = NULL;
-
   if (restore) {
-    GPU_scissor(UNPACK4(ofs->saved_scissor));
-    GPU_viewport(UNPACK4(ofs->saved_viewport));
     fb = gpuPopFrameBuffer();
   }
 
@@ -706,7 +673,9 @@ GPUTexture *GPU_offscreen_color_texture(const GPUOffScreen *ofs)
   return ofs->color;
 }
 
-/* only to be used by viewport code! */
+/**
+ * \note only to be used by viewport code!
+ */
 void GPU_offscreen_viewport_data_get(GPUOffScreen *ofs,
                                      GPUFrameBuffer **r_fb,
                                      GPUTexture **r_color,

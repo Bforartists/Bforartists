@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -12632,6 +12632,14 @@ msgid "Surface tension of liquid (higher value results in greater hydrophobic be
 msgstr "Lực căng bề mặt cùa chất lỏng (giá trị cao hơn tăng hành vi giảm độ ướt)"
 
 
+msgid "System Maximum"
+msgstr "Cực Đại Hệ Thống"
+
+
+msgid "Maximum number of fluid particles that are allowed in this simulation"
+msgstr "Số lượng hạt chất lỏng tối đa được dùng trong mô phỏng này"
+
+
 msgid "Temperature Grid"
 msgstr "Đồ Thị Nhiệt Độ"
 
@@ -14918,6 +14926,10 @@ msgid "GizmoGroup has a set of reports (warnings and errors) from last execution
 msgstr "Nhóm Đồ Đạc có một tập bien báo (cảnh báo và sai lầm) từ lần trước được thực hành"
 
 
+msgid "VR Landmark Indicators"
+msgstr "Đồ Biểu Lộ Mốc Bờ Của Sự Thật Ảo"
+
+
 msgid "VR Viewer Pose Indicator"
 msgstr "Đồ Biểu Lộ Dạng Đứng Của Hiển Thị Sự Thật Ảo"
 
@@ -17045,12 +17057,52 @@ msgid "Mask"
 msgstr "Mặt Nạ"
 
 
+msgid "Invert Pressure for Density"
+msgstr "Đảo Nghịch Áp Suất Cho Tỉ Trọng"
+
+
+msgid "Invert the modulation of pressure in density"
+msgstr "Đảo nghịch biến dạng của áp suất trong tỉ trọng"
+
+
+msgid "Invert Pressure for Flow"
+msgstr "Đảo Nghịch Áp Suất Cho Luồng"
+
+
+msgid "Invert the modulation of pressure in flow"
+msgstr "Đảo nghịch biến dạng của áp suất trong luồng"
+
+
+msgid "Invert Pressure for Hardness"
+msgstr "Đảo Nghịch Áp Suất Cho Độ Cứng"
+
+
+msgid "Invert the modulation of pressure in hardness"
+msgstr "Đảo nghịch biến dạng của áp suất trong độ cứng"
+
+
 msgid "Invert to Scrape or Fill"
 msgstr "Đảo nghịch đến Cào hay Làm Đầy"
 
 
 msgid "Use Scrape or Fill tool when inverting this brush instead of inverting its displacement direction"
 msgstr "Dùng dụng cụ Cào hay Làm Đầy khi đảo nghịch bút này thay thế lật nghịch hướng dịch"
+
+
+msgid "Invert Pressure for Wet Mix"
+msgstr "Đảo Nghịch Áp Suất Cho Pha Trộn Ướt"
+
+
+msgid "Invert the modulation of pressure in wet mix"
+msgstr "Đảo nghịch biến dạng của áp suất trong pha trộn ướt"
+
+
+msgid "Invert Pressure for Wet Persistence"
+msgstr "Đảo Nghịch Áp Suất Cho Cố Chấp Ướt"
+
+
+msgid "Invert the modulation of pressure in wet persistence"
+msgstr "Đảo nghịch biến dạng của áp suất trong cố chấp ướt"
 
 
 msgid "Jitter the position of the brush while painting"
@@ -17621,12 +17673,28 @@ msgid "Set the brush icon from an image file"
 msgstr "Đặt biểu tượng bút bằng từ một tệp ảnh"
 
 
+msgid "Use Pressure for Density"
+msgstr "Dùng Sức Áp Suất Cho Tỉ Trọng"
+
+
+msgid "Use pressure to modulate density"
+msgstr "Dùng áp suất để biến dạng tỉ trọng"
+
+
 msgid "Edge-to-edge"
 msgstr "Cạnh Đến Cạnh"
 
 
 msgid "Drag anchor brush from edge-to-edge"
 msgstr "Kéo bút neo từ cạnh đến cạnh"
+
+
+msgid "Use Pressure for Flow"
+msgstr "Dùng Áp Suất Cho Luồng"
+
+
+msgid "Use pressure to modulate flow"
+msgstr "Dùng áp suất để biến dạng luồng"
 
 
 msgid "Use Front-Face"
@@ -17651,6 +17719,14 @@ msgstr "Bắt Đỉnh Hoạt Động"
 
 msgid "Apply the maximum grab strength to the active vertex instead of the cursor location"
 msgstr "Áp dụng sức bắt cực đại với đỉnh hoạt động thay thế con trỏ"
+
+
+msgid "Use Pressure for Hardness"
+msgstr "Dùng Áp Suật Cho Độ Cứng"
+
+
+msgid "Use pressure to modulate hardness"
+msgstr "Dùng áp suất để biến dạng độ cứng"
 
 
 msgid "Inverse Smooth Pressure"
@@ -17877,6 +17953,22 @@ msgid "Use this brush in grease pencil vertex color mode"
 msgstr "Dùng bút này trong chế độ sơn đỉnh bút sáp"
 
 
+msgid "Use Pressure for Wet Mix"
+msgstr "Dùng Áp Suất Cho Pha Trọng Ướt"
+
+
+msgid "Use pressure to modulate wet mix"
+msgstr "Dùng áp suất để biến dạng pha trọng ướt"
+
+
+msgid "Use Pressure for Wet Persistence"
+msgstr "Dùng Áp Suất Cho Cố Chấp Ướt"
+
+
+msgid "Use pressure to modulate wet persistence"
+msgstr "Dùng áp suất để biến dạng cố chấp ướt"
+
+
 msgid "Grab UVs"
 msgstr "Bắt UV"
 
@@ -17915,6 +18007,10 @@ msgstr "Mức nước sơn được nhiễm màu từ bề mặt vào màu của
 
 msgid "Wet Persistence"
 msgstr "Sự Cố Chấp Ướt"
+
+
+msgid "Amount of wet paint that stays in the brush after applying paint to the surface"
+msgstr "Mức nước sơn ướt được dính trên bút sau tha nước sơn trên bề mặt"
 
 
 msgid "Path to external displacements file"
@@ -21273,6 +21369,10 @@ msgstr "Tổng Số Mặt Được Chọn"
 
 msgid "Selected face count in editmode"
 msgstr "Tổng số lượng mặt được chọn trong chế độ biên tập"
+
+
+msgid "Selected Vertex Total"
+msgstr "Tổng Số Đỉnh Được Chọn"
 
 
 msgid "Selected vertex count in editmode"
@@ -30067,6 +30167,10 @@ msgid "Add Image"
 msgstr "Thêm Ảnh"
 
 
+msgid "Landmark Controls"
+msgstr "Điều Khiển Mốc Bờ"
+
+
 msgid "Light"
 msgstr "Nhẹ"
 
@@ -31791,8 +31895,16 @@ msgid "Original Coords"
 msgstr "Tọa Độ Ban Đầu"
 
 
+msgid "Use base mesh vertex coords as the rest position"
+msgstr "Dùng tọa độ đỉnh cơ sở của mạng lưới cho làm vị trí nghỉ ngơi"
+
+
 msgid "Bind Coords"
 msgstr "Trói Tọa Độ"
+
+
+msgid "Use bind vertex coords for rest position"
+msgstr "Dùng tọa độ đỉnh trói cho làm vị trí nghỉ ngơi"
 
 
 msgid "Compensate for scale applied by other modifiers"
@@ -33041,6 +33153,14 @@ msgstr "Dùng Nhăn"
 
 msgid "Use mesh edge crease information to sharpen edges"
 msgstr "Dùng thông tin nhăn của mạng lưới để bén hóa cạnh"
+
+
+msgid "Use Custom Normals"
+msgstr "Dùng Pháp Tuyến Tùy Chọn"
+
+
+msgid "Interpolates existing custom normals to resulting mesh"
+msgstr "Suy nội phạp tuyến đang tồn tại cho mạng lưới tổng kết"
 
 
 msgid "UV Smooth"
@@ -38704,6 +38824,10 @@ msgid "Group Instance ID"
 msgstr "ID Thực Thể Nhóm"
 
 
+msgid "Object Transforms"
+msgstr "Các Biến Hóa Vật Thể"
+
+
 msgid "Data type for inputs and outputs"
 msgstr "Lọi dữ liệu cho ngõ vào và ngõ ra"
 
@@ -39569,12 +39693,24 @@ msgid "Air"
 msgstr "Không Khí"
 
 
+msgid "Density of air molecules"
+msgstr "Tỉ trọng của phần tử không khí"
+
+
 msgid "Altitude"
 msgstr "Độ Cao"
 
 
+msgid "Height from sea level"
+msgstr "Độ cao từ mực nước biển"
+
+
 msgid "Dust"
 msgstr "Bụi"
+
+
+msgid "Density of dust molecules and water droplets"
+msgstr "Tỉ trọng của bụi và giọt nước"
 
 
 msgid "Ground Albedo"
@@ -39587,6 +39723,10 @@ msgstr "Màu đất được phản xạ nhẹt trong bầu trời"
 
 msgid "Ozone"
 msgstr "Ôzôn"
+
+
+msgid "Density of Ozone layer"
+msgstr "Tỉ trọng của lớp Ôzôn"
 
 
 msgid "Sky Type"
@@ -39641,6 +39781,10 @@ msgid "Sun Elevation"
 msgstr "Góc Mặt Trời"
 
 
+msgid "Sun angle from horizon"
+msgstr "Góc mặt trời từ chân trời"
+
+
 msgid "Sun Intensity"
 msgstr "Độ Sáng Mặt Trời"
 
@@ -39659,6 +39803,10 @@ msgstr "Xoay của mặt trời quanh đỉnh trời"
 
 msgid "Sun Size"
 msgstr "Cỡ Mặt Trời"
+
+
+msgid "Size of sun disc"
+msgstr "Cỡ của mặt trời"
 
 
 msgid "Turbidity"
@@ -40447,6 +40595,10 @@ msgstr "Bố Cục Mẫu Ổ Cắm Giao Điểm"
 
 msgid "Parameters to define node sockets"
 msgstr "Tham số để chỉ định giao điểm ổ cắm"
+
+
+msgid "Hide the socket input value even when the socket is not connected"
+msgstr "Giấu giá trị ngõ vào của ổ cắm khi không kết nối"
 
 
 msgid "Boolean Node Socket Interface"
@@ -45303,6 +45455,14 @@ msgid "-Z Up"
 msgstr "-Z Trên"
 
 
+msgid "ASCII"
+msgstr "ASCII"
+
+
+msgid "Export using ASCII file format, otherwise use binary"
+msgstr "Xuất dùng định dạng ASCII, nếu không dùng nhị phận"
+
+
 msgid "Export the active vertex color layer"
 msgstr "Xuất lớp màu đỉnh hoạt động"
 
@@ -45867,7 +46027,7 @@ msgstr "Áp dụng lấy mẫu vật cho tất cả hoạt hình"
 
 
 msgid "Output format and embedding options. Binary is most efficient, but JSON (embedded or separate) may be easier to edit later"
-msgstr "Định dạng ngõ ra và tùy chọn nhét đồ. Nhị Phận có hiệu qủa cao nhất, nhưng JSON (được nhét vào hay để riêng) có lẻ dễ biên tập hơn trong tương lai"
+msgstr "Định dạng ngõ ra và tùy chọn nhét đồ. Nhị phận có hiệu qủa cao nhất, nhưng JSON (được nhét vào hay để riêng) có lẻ dễ biên tập hơn trong tương lai"
 
 
 msgid "glTF Binary (.glb)"
@@ -45906,8 +46066,16 @@ msgid "Output format for images. PNG is lossless and generally preferred, but JP
 msgstr "Định dạng xuât cho ảnh. PNG không mất dữ liệu nguồn và tốt hơn, nhưng có lẻ JPEG tốt hơn cho ứng dụng trên mạng vì nó nhỏ gọn hơn"
 
 
+msgid "Save PNGs as PNGs and JPEGs as JPEGs. If neither one, use PNG"
+msgstr "Lưu PNG bằng PNG, và JPEG bằng JPEG. Nếu chưa chọn cái nào, lưu bằng PNG"
+
+
 msgid "JPEG Format (.jpg)"
 msgstr "Định Dạng JPEG (.jpg)"
+
+
+msgid "Save images as JPEGs. (Images that need alpha are saved as PNGs though.) Be aware of a possible loss in quality"
+msgstr "Lưu các ảnh bằng JPEG. (Những ảnh cần độ đục sẽ được lưu bằng PNG.) Coi chừng mất chất lượng ảnh"
 
 
 msgid "Punctual Lights"
@@ -45944,6 +46112,10 @@ msgstr "Xuất tiếp tuyến đỉnh với dạng mẫu (mục đích biến d�
 
 msgid "Group by NLA Track"
 msgstr "Nhom Hóa từng Lằn NLA"
+
+
+msgid "When on, multiple actions become part of the same glTF animation if they're pushed onto NLA tracks with the same name. When off, all the currently assigned actions become one glTF animation"
+msgstr "Khi bật, nhiều hành động được gồm vào cùng hoạt hình glTF nếu được đẩy vào lằn NLA có cùng tên. Khi tắt, tất cả hành động hiện tại đang được chỉ định hiện tại được trở thành một hoạt hình glTF"
 
 
 msgid "Export vertex normals with meshes"
@@ -47354,6 +47526,10 @@ msgstr "Ngẫu Nhiên Cách Không"
 
 msgid "Custom Gap mode: Number of frames that gap lengths can vary"
 msgstr "Chế Độ Cách Không Tùy Chọn: Chênh lệch của số bức giai đoạn"
+
+
+msgid "Radius Factor"
+msgstr "Hệ Số Bán Kính"
 
 
 msgid "Multiplier for the points' radii (set from stroke width)"
@@ -50284,16 +50460,32 @@ msgid "Blender (best for re-importing)"
 msgstr "Blender (tốc nhất cho nhập lại)"
 
 
+msgid "Good for re-importing glTFs exported from Blender. Bone tips are placed on their local +Y axis (in glTF space)"
+msgstr "Tốt cho nhập lại tệp glTF được xuất từ Blender. Đỉnh xương được đặt trên trục +Y địa phương (trong không gian glTF)"
+
+
 msgid "Temperance (average)"
 msgstr "Độ Giữ Gìn (trung bình)"
+
+
+msgid "Decent all-around strategy. A bone with one child has its tip placed on the local axis closest to its child"
+msgstr "Chiến thuật tốt tổng quát. Một xương có một con cái được đặt đỉnh của nó trên trục địa phương gần nhất với con cái"
 
 
 msgid "Fortune (may look better, less accurate)"
 msgstr "Giào (có lẽ đẹp hơn, nhưng giảm độ chính xác)"
 
 
+msgid "Might look better than Temperance, but also might have errors. A bone with one child has its tip placed at its child's root. Non-uniform scalings may get messed up though, so beware"
+msgstr "Có lẻ đẹp hơn Giữ Gìn, nhưng có thể có sai lầm. Một xương có một con cái đã có đỉnh tại rể của con cái. Phóng to không đều có thể bị hư, cẩn thận"
+
+
 msgid "Guess Original Bind Pose"
 msgstr "Đoán Dạng Đứng Gói Lại Ban Đầu"
+
+
+msgid "Try to guess the original bind pose for skinned meshes from the inverse bind matrices. When off, use default/rest pose as bind pose"
+msgstr "Thử đoán dạng đứng gói lại ban đầu cho mạng lưới có da từ các ma trận gói lại đảo nghịch. Khi tắt, dùng dạng đứng mặc định/nghỉ cho làm dạng đứng gói lại"
 
 
 msgid "Pack Images"
@@ -50318,6 +50510,10 @@ msgstr "Tô Sắc Đều"
 
 msgid "Log Level"
 msgstr "Mức Log"
+
+
+msgid "The glTF format requires discontinuous normals, UVs, and other vertex attributes to be stored as separate vertices, as required for rendering on typical graphics hardware. This option attempts to combine co-located vertices where possible. Currently cannot combine verts with different normals"
+msgstr "Định dạng glTF yêu cầu những pháp tuyến không liên tiếp, tọa độ UV, và đặc trưng điểm khác được chứa bởi đỉnh riêng biệt, theo như cầu của phần cứng đồ họa bình thường. Tùy chọn này thử gồm lại đỉnh ở cùng chổ. Hiện tại chưa được gồm đỉnh có pháp tuyến khác nhau"
 
 
 msgctxt "Operator"
@@ -51048,6 +51244,18 @@ msgid "Averaging method"
 msgstr "Phương Pháp Tính Trung Bình"
 
 
+msgid "Take average of vertex normals"
+msgstr "Tính trung bình của pháp tuyến đỉnh"
+
+
+msgid "Set all vertex normals by face area"
+msgstr "Đặt hết pháp tuyến đỉnh bằng diện tích mặt"
+
+
+msgid "Set all vertex normals by corner angle"
+msgstr "Đặt hết pháp tuyến đỉnh bằng góc của góc giác"
+
+
 msgid "Weight applied per face"
 msgstr "Quyền lượng được áp dụng mỗi mặt"
 
@@ -51072,6 +51280,10 @@ msgstr "Xiên"
 
 msgid "Cut into selected items at an angle to create bevel or chamfer"
 msgstr "Cắt thàng những mặt hàng được chọn tại một góc để chế tạo xiên hay góc tròn"
+
+
+msgid "Affect Edges or Vertices"
+msgstr "Ảnh Hưởng Cạnh hay Điểm"
 
 
 msgid "Do not allow beveled edges/vertices to overlap each other"
@@ -51503,6 +51715,10 @@ msgid "Dissolve edges, merging faces"
 msgstr "Hoà tan cạnh, gồm mặt"
 
 
+msgid "Dissolve Vertices"
+msgstr "Hòa Tan Đỉnh"
+
+
 msgid "Dissolve remaining vertices"
 msgstr "Hòa tan đỉnh còn lại"
 
@@ -51519,6 +51735,10 @@ msgstr "Hòa tan mặt"
 msgctxt "Operator"
 msgid "Limited Dissolve"
 msgstr "Hòa Tan Hạn Chế"
+
+
+msgid "Dissolve selected edges and vertices, limited by the angle of surrounding geometry"
+msgstr "Hòa tan cạnh và đỉnh đã chọn, được hạn chế bởi góc của hình dạng xung quanh"
 
 
 msgid "Delimit dissolve operation"
@@ -51544,6 +51764,10 @@ msgstr "Xé Ranh Giới"
 
 msgid "Split off face corners instead of merging faces"
 msgstr "Chẻ góc giác mặt thay thế gồm mặt"
+
+
+msgid "Dissolve vertices, merge edges and faces"
+msgstr "Hòa tan đỉnh, gồm cạnh và mặt"
 
 
 msgctxt "Operator"
@@ -57515,8 +57739,16 @@ msgid "Add Weights"
 msgstr "Thêm Quyền Lượng"
 
 
+msgid "Add vertices from groups that have zero weight before inverting"
+msgstr "Thêm đỉnh từ các nhóm có quyền lượng bằng không trước đảo nghịch"
+
+
 msgid "Remove Weights"
 msgstr "Xóa Quyền Lượng"
+
+
+msgid "Remove vertices from groups that have zero weight after inverting"
+msgstr "Xóa đỉnh từ các nhóm có quyền lượng bằng không sau đảo nghịch"
 
 
 msgctxt "Operator"
@@ -57695,6 +57927,10 @@ msgid "Remove from all groups"
 msgstr "Xóa từ hết nhóm đỉnh"
 
 
+msgid "All Vertices"
+msgstr "Hết Đỉnh"
+
+
 msgid "Clear the active group"
 msgstr "Xóa nhóm hoạt động"
 
@@ -57793,6 +58029,10 @@ msgstr "Đơn vị hóa quyền lượng của đỉnh hoạt động"
 msgctxt "Operator"
 msgid "Paste Weight to Selected"
 msgstr "Dán Quyền Lượng Đến Được Chọn"
+
+
+msgid "Copy this group's weight to other selected vertices (disabled if vertex group is locked)"
+msgstr "Chép quyền lượng của vật thể này đến các đỉnh khác đã chọn (bị tắt nếu nhóm đỉnh bị khóa)"
 
 
 msgctxt "Operator"
@@ -58240,6 +58480,22 @@ msgstr "Thêm Tầng Bậc Thay Thế Thư Viện"
 
 msgid "Add a local override of this linked data-block, and its hierarchy of dependencies"
 msgstr "Thêm một thay thế địa phương của cục dữ liệu được liên kết này, và tầng bậc nhờ của nó"
+
+
+msgid "Reset Library Override"
+msgstr "Đặt Lại Thay Thế Của Thư Viện"
+
+
+msgid "Reset this local override to its linked values"
+msgstr "Đặt lại thay thế địa phương này trở lại giá trị được liên kết"
+
+
+msgid "Reset Library Override Hierarchy"
+msgstr "Đặt Lại Tầng Bậc Thay Thế Của Thư Viện"
+
+
+msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
+msgstr "Đặt lại thay thế địa phương này trở lại giá trị được liên kết, và tầng bậc nhờ của nó"
 
 
 msgid "Paste"
@@ -60207,6 +60463,10 @@ msgid "Clear User Transforms"
 msgstr "Xóa Biến Hóa Người Dùng"
 
 
+msgid "Reset pose bone transforms to keyframed state"
+msgstr "Đặt lại biến hóa xương dạng đứng đến trạng thái bức mẫu"
+
+
 msgid "Only visible/selected bones"
 msgstr "Chỉ xương hiển thị/được chọn"
 
@@ -60431,6 +60691,10 @@ msgstr "Hoàn Lại Mặt Hàng Ánh Xạ Bàn Phím"
 
 msgid "Restore key map item"
 msgstr "Hoàn lại mặt hàng ánh xạ bàn phím"
+
+
+msgid "Identifier of the item to restore"
+msgstr "Tên của mặt hàng để hoàn lại"
 
 
 msgctxt "Operator"
@@ -61861,6 +62125,10 @@ msgid "Expands the cloth's dimensions"
 msgstr "Mở rộng kích thước của vải"
 
 
+msgid "Pinches the cloth to the point where the cursor was when the filter started"
+msgstr "Ngát vải đến điểm của con trỏ khi khởi động bộ lọc"
+
+
 msgid "Use Face Sets"
 msgstr "Dùng Tập Hợp Mặt"
 
@@ -62162,6 +62430,10 @@ msgstr "Đảo nghịch mặt nạ được chế tạo"
 
 msgid "Preserve Previous Mask"
 msgstr "Giữ Nguyên Mặt Nạ Cũ"
+
+
+msgid "Preserve the previous mask and add or subtract the new one generated by the colors"
+msgstr "Giữ nguyên mặt nạ cũ và cộng hay trừ mặt nạ mới được chế tạo bằng màu"
 
 
 msgid "How much changes in color affect the mask generation"
@@ -65572,6 +65844,10 @@ msgid "UV Rip Move"
 msgstr "Di Chuyển Xé UV"
 
 
+msgid "Unstitch UV's and move the result"
+msgstr "Gỡ khâu UV và di chuyển kết qủa"
+
+
 msgid "UV Rip"
 msgstr "Xé UV"
 
@@ -65873,6 +66149,14 @@ msgid "Pan the view when the mouse is held at an edge"
 msgstr "Dời màn khi chuột được giữ tại một cạnh"
 
 
+msgid "Outside Padding"
+msgstr "Lót Ngoài"
+
+
+msgid "Padding around the region in UI units within which panning is activated (0 to disable boundary)"
+msgstr "Khoảng cách lót quanh khu vực bằng đơn vị giao diện được kích động sự dời (đặt = 0 để tắt)"
+
+
 msgid "Delta X"
 msgstr "Lệch Lạc X"
 
@@ -65962,6 +66246,15 @@ msgstr "Hệ Số Phóng Vào Y"
 
 
 msgctxt "Operator"
+msgid "New Camera from VR Landmark"
+msgstr "Máy Quay Phim Mới Từ Mốc Bờ Sự Thật Ảo"
+
+
+msgid "Create a new Camera from the selected VR Landmark"
+msgstr "Tạo một Máy Quay Phim mới từ Mốc Bờ sự thật ảo"
+
+
+msgctxt "Operator"
 msgid "Add Background Image"
 msgstr "Thêm Ảnh Nền"
 
@@ -65999,6 +66292,15 @@ msgstr "Được Chọn Vừa Khung Máy Quay Phim"
 
 msgid "Move the camera so selected objects are framed"
 msgstr "Di chuyển máy quay phim cho các vật thể được chọn ở trong khung máy quay phim"
+
+
+msgctxt "Operator"
+msgid "Scene Camera to VR Landmark"
+msgstr "Máy Quay Phim Cảnh Đến Mốc Bờ Sự Thật Ảo"
+
+
+msgid "Position the scene camera at the selected landmark"
+msgstr "Di chuyển máy quay phim của cảnh đến mốc bờ đã chọn"
 
 
 msgid "Clear the boundaries of the border render and disable border render"
@@ -66058,6 +66360,15 @@ msgstr "Phép Chiếu Bề Mặt"
 
 msgid "Project onto the surface"
 msgstr "Chiếu trên bề mặt"
+
+
+msgctxt "Operator"
+msgid "Cursor to VR Landmark"
+msgstr "Con Trỏ Đến Mốc Bờ Sự Thật Ảo"
+
+
+msgid "Move the 3D Cursor to the selected VR Landmark"
+msgstr "Di chuyển Con Trỏ 3D đến Mốc Bờ sự thật ảo đã chọn"
 
 
 msgctxt "Operator"
@@ -66153,6 +66464,14 @@ msgstr "Màn Con Trỏ 3D"
 
 msgid "Start placement using the mouse cursor projected onto the view plane"
 msgstr "Bắt đầu đặt vị trí dùng con trỏ chuột được chiếu lên mặt phẳng màn"
+
+
+msgid "Use the surface normal (the transform orientation as a fallback)"
+msgstr "Dùng pháp tuyến bề mặt (định hướng của biến hóa nếu có sư cố)"
+
+
+msgid "Use the current transform orientation"
+msgstr "Dùng định hướng của biến hóa hiện tại"
 
 
 msgid "The initial position for placement"
@@ -66484,6 +66803,15 @@ msgid "Set the current transform gizmo"
 msgstr "Đặt đồ đạc biến hóa hiện tại"
 
 
+msgctxt "Operator"
+msgid "Update Custom VR Landmark"
+msgstr "Nâng Cấp Mốc Bờ Sự Thật Ảo Tùy Chọn"
+
+
+msgid "Update the selected landmark from the current viewer pose in the VR session"
+msgstr "Nâng cấp mốc bờ đã chọn từ dáng đứng hiện của đồ nhìn tại trong phiên chạy của sự thật ảo"
+
+
 msgid "View all objects in scene"
 msgstr "Hiển thị tất cả vật thể trong cảnh"
 
@@ -66763,6 +67091,24 @@ msgstr "Thêm Mốc Bờ Sự Thật Ảo"
 
 msgid "Add a new VR landmark to the list and select it"
 msgstr "Thêm một mốc bờ sự thật ảo trong danh sách và chọn nó"
+
+
+msgctxt "Operator"
+msgid "Add VR Landmark from camera"
+msgstr "Thêm Mốc Bờ Sự Thật Ảo từ máy quay phim"
+
+
+msgid "Add a new VR landmark from the active camera object to the list and select it"
+msgstr "Thêm một mốc bờ sự thật ảo từ vật thể máy quay phim hoạt động vào danh sách và chọn nó"
+
+
+msgctxt "Operator"
+msgid "Add VR Landmark from session"
+msgstr "Thêm Môc Bờ Sự Thật Ảo từ phiên chạy"
+
+
+msgid "Add VR landmark from the viewer pose of the running VR session to the list and select it"
+msgstr "Thêm mốc bờ từ dạng đứng đồ nhìn của phiên chạy sự thật ảo đang chạy vào danh sách và chọn mốc bờ mời đó"
 
 
 msgctxt "Operator"
@@ -67137,6 +67483,10 @@ msgid "Apply modifiers to exported mesh (non destructive))"
 msgstr "Áp dụng cụ sửa đổi với mạng lưới xuất (không pha/đổi cái gì)"
 
 
+msgid "Deform Bones Only"
+msgstr "Chỉ Méo Hóa Xương"
+
+
 msgid "Only export deforming bones with armatures"
 msgstr "Chỉ xuất xương có thể méo với cốt"
 
@@ -67241,6 +67591,10 @@ msgid "Modifier resolution for export"
 msgstr "Độ phân giải cho cụ sửa đổi khi xuất"
 
 
+msgid "Apply modifier's viewport settings"
+msgstr "Áp dụng cài đặt màn của cụ sửa đổi"
+
+
 msgid "Apply modifier's render settings"
 msgstr "Áp dụng cài đặt kết xuất của cụ sửa đổi"
 
@@ -67295,6 +67649,10 @@ msgstr "Giữ Thông Tin Trói"
 
 msgid "Store Bindpose information in custom bone properties for later use during Collada export"
 msgstr "Giữ thông tin trói dạng đứng trong đặc tính tùy chọn của xương để dùng khi xuất tệp Collada"
+
+
+msgid "All Keyed Curves"
+msgstr "Hết Đường Cong Có Bức Mẫu"
 
 
 msgid "Export also curves which have only one key or are totally flat"
@@ -76632,6 +76990,14 @@ msgid "Use an existing camera to define the VR view base location and rotation"
 msgstr "Dùng một máy quay phim đang tồn tại để xác định vị trí và xoay của cơ sở sự thật ảo"
 
 
+msgid "Custom Pose"
+msgstr "Dạng Đứng Tùy Chọn"
+
+
+msgid "Allow a manually defined position and rotation to be used as the VR view base pose"
+msgstr "Cho một vị trí và xoay được chọn bằng tay để dùng cho dạng đứng cơ sở đồ nhìn của sự thật ảo"
+
+
 msgid "ID Property"
 msgstr "Đặc Tính ID (tên)"
 
@@ -80609,6 +80975,10 @@ msgstr "Hiệu ứng điểm ảnh hóa"
 
 msgid "Pixel size"
 msgstr "Kích cỡ điểm ảnh"
+
+
+msgid "Antialias pixels"
+msgstr "Điểm ảnh chống răng cưa"
 
 
 msgid "Rim Effect"
@@ -84637,6 +85007,10 @@ msgid "Edge Select"
 msgstr "Chọn Cạnh"
 
 
+msgid "Active Vertex/Edge/Face"
+msgstr "Đỉnh/Cạnh/Mặt Hoạt Động"
+
+
 msgid "Face Orientation Back"
 msgstr "Định Hướng Mặt Phía Sau"
 
@@ -86310,6 +86684,14 @@ msgid "Correct data such as UV's and vertex colors when transforming"
 msgstr "Sửa dữ liệu như UV và màu đỉnh khi đang biến hóa"
 
 
+msgid "Keep Connected"
+msgstr "Giữ Được Kết Nối"
+
+
+msgid "During the Face Attributes correction, merge attributes connected to the same vertex"
+msgstr "Khi chỉnh sửa Đặc Điểm Mặt, gồm đặc điểm đang kết nối đến cùng đỉnh "
+
+
 msgid "Transform Origins"
 msgstr "Biến Hóa Góc Tọa Độ"
 
@@ -87588,6 +87970,10 @@ msgstr "Ánh Sáng Không Gian Thế Giới"
 
 msgid "Make the lighting fixed and not follow the camera"
 msgstr "Làm ánh sáng đẳng và không đi theo máy quay phim"
+
+
+msgid "Show Landmarks"
+msgstr "Hiện Mốc Bờ"
 
 
 msgid "Show VR Camera"
@@ -89956,8 +90342,20 @@ msgid "Incompatible Light cache version, please bake again"
 msgstr "Phiên bản đệm chứa Ánh Sáng không phụ hợp, làm ơn nướng lần nữa"
 
 
+msgid "Error: Light cache is too big for the GPU to be loaded"
+msgstr "Sai lầm: Đệm chứa Ánh Sáng qúa to để nhập vào GPU"
+
+
+msgid "Error: Light cache dimensions not supported by the GPU"
+msgstr "Sai lầm: GPU không hỗ trợ cỡ thước của đệm chứa Ánh Sáng "
+
+
 msgid "Baking light cache"
 msgstr "Đang nướng đệm chứa ánh sáng"
+
+
+msgid "Error: LightCache is too large and will not be saved to disk"
+msgstr "Sai lầm: Đệm chứa Ánh Sáng qúa to và sẽ không được lưu vào đĩa"
 
 
 msgid "%d Ref. Cubemaps, %d Irr. Samples (%s in memory)"
@@ -91036,6 +91434,10 @@ msgid "Line: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to ad
 msgstr "Đường Thẳng: ESC để hủy, NCT để đặt gốc tọa độ, Enter/NCG để chấp nhận, NÚT CUỘN/+- để chỉnh số phân hóa, Shift để sắp xếp, Alt để di chuyển đến trung tâm, E: kéo ra"
 
 
+msgid "Polyline: ESC to cancel, LMB to set, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to align"
+msgstr "Đường Đa Điểm: ESC để hủy, NCT để đặt, Enter/NCG để chấp nhận, NÚT CUỘN/+- để chỉnh số phân hóa, Shift để sắp xếp"
+
+
 msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- to adjust subdivision number, Shift to square, Alt to center"
 msgstr "Chữ Nhật: ESC để hủy, NCT để đặt gốc tọa độ, Enter/NCG để chấp nhận, NÚT CUỘN/+- để chỉnh số phân hóa, Shift để làm vuông, Alt để di chuyển đến trung tâm"
 
@@ -91904,12 +92306,80 @@ msgid "%d items"
 msgstr "%d mặt hàng"
 
 
+msgid "Manual Transform"
+msgstr "Biến Hóa Bằng Tay"
+
+
+msgid "Scene Options"
+msgstr "Tùy Chọn Cảnh"
+
+
+msgid "Samples Transform"
+msgstr "Biến Hóa Mẫu"
+
+
+msgid "Close"
+msgstr "Gần"
+
+
+msgid "Only"
+msgstr "Chỉ"
+
+
+msgid "Renderable Objects"
+msgstr "Vật Thể Có Thể Kết Xuất"
+
+
+msgid "Visible Objects"
+msgstr "Vật Thể Hiển Thị"
+
+
+msgid "Object Options"
+msgstr "Tùy Chọn Vật Thể"
+
+
+msgid "Use Schema"
+msgstr "Dùng Kế Hoạch"
+
+
+msgid "Method Quads"
+msgstr "Phương Pháp Tư Giác"
+
+
 msgid "No filename given"
 msgstr "Chưa xác định tên tệp"
 
 
 msgid "Unable to determine ABC sequence length"
 msgstr "Không thể tính bề dài trình tự ABC"
+
+
+msgid "Global Orientation"
+msgstr "Định Hướng Toàn Cầu"
+
+
+msgid "Texture Options"
+msgstr "Tùy Chọn Họa Tiết"
+
+
+msgid "Only Selected Map"
+msgstr "Chỉ Bản Độ Được Chọn"
+
+
+msgid "Export Data Options"
+msgstr "Tùy Chọn Xuất Dữ Liệu"
+
+
+msgid "Armature Options"
+msgstr "Tùy Chọn Cốt"
+
+
+msgid "Collada Options"
+msgstr "Tùy Chọn Collada"
+
+
+msgid "Import Data Options"
+msgstr "Tùy Chọn Nhập Dữ Liệu"
 
 
 msgid "Can't create export file"
@@ -91987,6 +92457,14 @@ msgstr "Vết Sẹo"
 
 msgid "Miter Outer"
 msgstr "Mũ Tế Ngoại"
+
+
+msgid "Intersection Type"
+msgstr "Loại Chỗ Cắt"
+
+
+msgid "%s: Confirm, %s: Cancel, %s: Mode (%s), %s: Width (%s), %s: Segments (%d), %s: Profile (%.3f), %s: Clamp Overlap (%s), %s: Affect (%s), %s: Outer Miter (%s), %s: Inner Miter (%s), %s: Harden Normals (%s), %s: Mark Seam (%s), %s: Mark Sharp (%s), %s: Profile Type (%s), %s: Intersection (%s)"
+msgstr "%s: Chấp Nhận, %s: Hủy, %s: Chế Độ (%s), %s: Bề Rộng (%s), %s: Số Khúc (%d), %s: Trình Bày (%.3f), %s: Kẹp Lấn Trên (%s), %s: Ảnh Hưởng (%s), %s: Mũ Tế Ngoại (%s), %s: Mũ Tế Nội (%s), %s: Pháp Tuyến Cứng Hóa (%s), %s: Ký Dấu Vết Sẹo (%s), %s: Ký Dấu Bén (%s), %s: Loại Trình Bày (%s), %s: Cắt Nhau (%s)"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -92071,6 +92549,10 @@ msgstr "Chưa chọn vùng mặt nào"
 
 msgid "No matching face regions found"
 msgstr "Không tìm được vùng mặt giống"
+
+
+msgid "Mesh object(s) have no active vertex/edge/face"
+msgstr "Vật thể thì không có đỉnh/cạnh/mặt hoạt động"
 
 
 msgid "Does not work in face selection mode"
@@ -93389,6 +93871,10 @@ msgstr "Đang bỏ qua bức tồn tại \"%s\""
 
 msgid "Unable to remove material slot in edit mode"
 msgstr "Không thể xóa khe vật liệu trong chế độ biên tập"
+
+
+msgid "Lightcache cannot allocate resources"
+msgstr "Đệm chứa ánh sáng không thể giàng được tài nguyên"
 
 
 msgid "No active lineset and associated line style to manipulate the modifier"
@@ -95162,6 +95648,10 @@ msgid "Cannot reassign inputs: strip has no inputs"
 msgstr "Không thể công phân lại ngõ vào: đoạn không có ngõ vào nào"
 
 
+msgid "Cannot reassign inputs: recursion detected"
+msgstr "Không thể chỉ định lại các ngõ vào: đã phát hiện đệ quy"
+
+
 msgid "No valid inputs to swap"
 msgstr "Không có ngõ vào hợp lệ để trao đổi"
 
@@ -96032,6 +96522,10 @@ msgstr "Dịch tự động đặt đến %s - bấm %s để bật/tắt hướ
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"
 msgstr "Dùng chế độ biến hóa 'Dịch_ThờiGian' thay thế chế độ 'Dịch' cho dịch bức mẫu trong Bộ Biên Tập Bảng Hoạt Hình"
+
+
+msgid "Vertex Slide: "
+msgstr "Trượt Đỉnh: "
 
 
 msgid "Create Orientation's 'use' parameter only valid in a 3DView context"
@@ -96991,6 +97485,10 @@ msgid "Modifier was not found in the stack"
 msgstr "Không tìm được cụ sửa đổi trong xếp đồng"
 
 
+msgid "Recursion detected, can not use this strip"
+msgstr "Đã phát hiện đệ quy, không thể dùng đoạn này"
+
+
 msgid "Sequences.new_image: unable to open image file"
 msgstr "Sequences.new_image: không mở được tệp ảnh"
 
@@ -97265,6 +97763,10 @@ msgstr "Cắt thành hai"
 
 msgid "Flip UDIM"
 msgstr "Lật UDIM"
+
+
+msgid "Level Viewport"
+msgstr "Màn Chiếu Tầng"
 
 
 msgid "Unsubdivide"

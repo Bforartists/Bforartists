@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3290,7 +3290,7 @@ msgstr "平滑"
 
 
 msgid "Thickness"
-msgstr "厚度"
+msgstr "厚(宽)度"
 
 
 msgid "Randomize"
@@ -60696,6 +60696,10 @@ msgid "Restore key map item"
 msgstr "还原全部键位映射条目"
 
 
+msgid "Identifier of the item to restore"
+msgstr "待还原的项ID"
+
+
 msgctxt "Operator"
 msgid "Restore Key Map(s)"
 msgstr "还原全部键位映射"
@@ -62122,6 +62126,10 @@ msgstr "膨胀布料"
 
 msgid "Expands the cloth's dimensions"
 msgstr "扩展布料的尺寸"
+
+
+msgid "Pinches the cloth to the point where the cursor was when the filter started"
+msgstr "将布料夹到滤镜启动时游标所在点"
 
 
 msgid "Use Face Sets"
@@ -79024,7 +79032,7 @@ msgstr "4096 px"
 
 
 msgid "Number of time the light is reinjected inside light grids, 0 disable indirect diffuse light"
-msgstr "光在在光网内反弹的次数, 0为禁用间接漫反射光"
+msgstr "光在光网内反弹的次数, 0为禁用间接漫反射光"
 
 
 msgid "Filter Quality"
@@ -96782,6 +96790,10 @@ msgstr "' %s' 没有大写字母数字前缀"
 
 msgid "'%s' doesn't have an alpha-numeric suffix"
 msgstr "' %s' 没有大写字母数字后缀"
+
+
+msgid "%s: expected %s type, not %s"
+msgstr "%s: 预期 %s 类型, 而非 %s"
 
 
 msgid "%s: expected ID type, not %s"
