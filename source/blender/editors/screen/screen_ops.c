@@ -481,7 +481,7 @@ bool ED_operator_posemode(bContext *C)
   if (obact && !(obact->mode & OB_MODE_EDIT)) {
     Object *obpose;
     if ((obpose = BKE_object_pose_armature_get(obact))) {
-      if ((obact == obpose) || (obact->mode & OB_MODE_WEIGHT_PAINT)) {
+      if ((obact == obpose) || (obact->mode & OB_MODE_ALL_WEIGHT_PAINT)) {
         return 1;
       }
     }
@@ -623,7 +623,8 @@ bool ED_operator_mask(bContext *C)
       case SPACE_IMAGE: {
         SpaceImage *sima = area->spacedata.first;
         ViewLayer *view_layer = CTX_data_view_layer(C);
-        return ED_space_image_check_show_maskedit(sima, view_layer);
+        Object *obedit = OBEDIT_FROM_VIEW_LAYER(view_layer);
+        return ED_space_image_check_show_maskedit(sima, obedit);
       }
     }
   }
@@ -4795,7 +4796,7 @@ static int screen_animation_step(bContext *C, wmOperator *UNUSED(op), const wmEv
         scene->r.cfra++;
       }
       else {
-        scene->r.cfra = max_ii(scene->r.cfra, newfra + 0.5);
+        scene->r.cfra = max_ii(scene->r.cfra, round(newfra));
       }
 
 #ifdef PROFILE_AUDIO_SYNCH

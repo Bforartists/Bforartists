@@ -111,8 +111,8 @@ int orient3d(const mpq3 &a, const mpq3 &b, const mpq3 &c, const mpq3 &d)
 /**
  * For double versions of orient and incircle functions, use robust predicates
  * that give exact answers for double inputs.
- * First, encapsulate functions frm Jonathan Shewchuk's implementation.
- * After this namespace, see the implementation of the double3 primitives.
+ * First, encapsulate functions from Jonathan Shewchuk's implementation.
+ * After this name-space, see the implementation of the double3 primitives.
  */
 namespace robust_pred {
 
@@ -121,9 +121,9 @@ namespace robust_pred {
  * and to export only the following declared non-static functions.
  *
  * Since this is C++, an instantiated singleton class is used to make
- * sure that exactinit() is called once.
- * (Because of undefinedness of when this is called in initialization of all
- * modules, other modules shouldn't use these functions in initialization.)
+ * sure that #exactinit() is called once.
+ * (Because it's undefined when this is called in initialization of all modules,
+ other modules shouldn't use these functions in initialization.)
  */
 
 void exactinit();

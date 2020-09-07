@@ -533,6 +533,7 @@
     </graph_editor>
     <file_browser>
       <ThemeFileBrowser
+        row_alternate="#ffffff06"
         selected_file="#337fcc"
         >
         <space>

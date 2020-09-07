@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4"
+"X-Generator: Poedit 2.4.1"
 
 
 msgid "Action F-Curves"
@@ -699,7 +699,7 @@ msgstr "Espacios"
 
 
 msgid "Spaces contained in this area, the first being the active space (NOTE: Useful for example to restore a previously used 3D view space in a certain area to get the old view orientation)"
-msgstr "Espacios contenidos en esta área, el primero es el espacio activo (NOTA: Útil por ejemplo para restaurar un espacio de vista 3D previamente usado en una cierta área y obtener la antigua orientación de la vista)"
+msgstr "Espacios contenidos en esta área, el primero es el espacio activo (NOTA: Útil por ejemplo para restablecer un espacio de vista 3D previamente usado en una cierta área y obtener la antigua orientación de la vista)"
 
 
 msgid "Editor Type"
@@ -17910,7 +17910,7 @@ msgstr "Muestra la textura en la vista"
 
 
 msgid "Restore Mesh"
-msgstr "Recuperar malla"
+msgstr "Restablecer malla"
 
 
 msgid "Allow a single dot to be carefully positioned"
@@ -60693,6 +60693,10 @@ msgid "Restore key map item"
 msgstr "Restablece un elemento del mapa de teclado"
 
 
+msgid "Identifier of the item to restore"
+msgstr "Identificador del elemento a restablecer"
+
+
 msgctxt "Operator"
 msgid "Restore Key Map(s)"
 msgstr "Restablecer mapa de teclado"
@@ -61666,7 +61670,7 @@ msgstr "Restablecer fotograma"
 
 
 msgid "Restore the frame when animation was initialized"
-msgstr "Restaurar al fotograma cuando se inicializó la animación"
+msgstr "Restablecer al fotograma cuando se inicializó la animación"
 
 
 msgctxt "Operator"
@@ -62119,6 +62123,10 @@ msgstr "Infla la ropa"
 
 msgid "Expands the cloth's dimensions"
 msgstr "Expande las dimensiones de la ropa"
+
+
+msgid "Pinches the cloth to the point where the cursor was when the filter started"
+msgstr "Pellizca la ropa en el lugar donde se encontraba el puntero cuando el filtro fue aplicado"
 
 
 msgid "Use Face Sets"
@@ -95268,7 +95276,7 @@ msgstr "Los nodos en el portapapeles son de un tipo incompatible"
 
 
 msgid "Some nodes references could not be restored, will be left empty"
-msgstr "No fue posible restrablecer algunas referencias de nodos, se dejarán vacías"
+msgstr "No fue posible restablecer algunas referencias de nodos, se dejarán vacías"
 
 
 msgid "Text not used by any node, no update done"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'8010cbe620d2')\n"
+"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -260,6 +260,14 @@ msgstr "Type de périphérique de calculs"
 
 msgid "Device to use for computation (rendering with Cycles)"
 msgstr "Périphérique à utiliser pour les calculs (rendu avec Cycles)"
+
+
+msgid "Distribute memory across devices"
+msgstr "Distribuer la mémoire dans les prériphériques"
+
+
+msgid "Make more room for large scenes to fit by distributing memory across interconnected devices (e.g. via NVLink) rather than duplicating it"
+msgstr "Faire de la place pour les grandes scènes en distribuant la mémoire dans les différents périphériques interconnectés (par ex. via NVLink), au lieu de l'y dupliquer"
 
 
 msgid "Fribidi Library"
@@ -934,6 +942,10 @@ msgid "Cage Extrusion"
 msgstr "Extrusion de cage"
 
 
+msgid "Inflate the active object by the specified distance for baking. This helps matching to points nearer to the outside of the selected object meshes"
+msgstr "Grossir l'objet actif de la valeur spécifiée pour le pré-calcul. Cela aide à faire correspondre les points les plus proches de l'extérieur des objets mesh sélectionnés"
+
+
 msgid "Cage Object"
 msgstr "Objet cage"
 
@@ -964,6 +976,10 @@ msgstr "Marge"
 
 msgid "Extends the baked result as a post process filter"
 msgstr "Étend le résultat pré-calculé comme filtre post-process"
+
+
+msgid "The maximum ray distance for matching points between the active and selected objects. If zero, there is no limit"
+msgstr "La distance de rayon maximale pour une correspondance de points entre l'objet actif et ceux sélectionnés. Si nulle, il n'y a pas de limite"
 
 
 msgid "Normal Space"
@@ -1514,6 +1530,10 @@ msgid "Particle data-blocks"
 msgstr "Blocs de données particules"
 
 
+msgid "Point Clouds"
+msgstr "Nuages de points"
+
+
 msgid "Scenes"
 msgstr "Scènes"
 
@@ -1576,6 +1596,10 @@ msgstr "Empaqueter automatiquement toutes les données externes dans le fichier 
 
 msgid "Version"
 msgstr "Version"
+
+
+msgid "File format version the .blend file was saved with"
+msgstr "Version do format de fichier utilisés pour sauvegarder ce fichier .blend"
 
 
 msgid "Volumes"
@@ -1680,6 +1704,14 @@ msgstr "Crayons gras du Main"
 
 msgid "Collection of grease pencils"
 msgstr "Collection de crayons gras"
+
+
+msgid "Main Hairs"
+msgstr "Cheveux principaux"
+
+
+msgid "Collection of hairs"
+msgstr "Collection de cheveux"
 
 
 msgid "Main Images"
@@ -3298,6 +3330,10 @@ msgid "Hue"
 msgstr "Teinte"
 
 
+msgid "Random factor to modify original hue"
+msgstr "Facteur aléatoire de modification de la teinte originale"
+
+
 msgid "Pressure Randomness"
 msgstr "Niveau de pression aléatoire"
 
@@ -3310,6 +3346,10 @@ msgid "Saturation"
 msgstr "Saturation"
 
 
+msgid "Random factor to modify original saturation"
+msgstr "Facteur aléatoire de modification de la saturation originale"
+
+
 msgid "Strength Randomness"
 msgstr "Niveau de force aléatoire"
 
@@ -3320,6 +3360,10 @@ msgstr "Facteur aléatoire pour la force des nouveaux traits"
 
 msgid "Value"
 msgstr "Valeur"
+
+
+msgid "Random factor to modify original value"
+msgstr "Facteur aléatoire de modification de la valeur originale"
 
 
 msgid "Show Fill"
@@ -3438,6 +3482,10 @@ msgid "Use tablet pressure"
 msgstr "Utiliser la pression de la tablette"
 
 
+msgid "Use pressure to modulate randomness"
+msgstr "Utiliser la pression pour moduler le facteur aléatoire"
+
+
 msgid "Use Post-Process Settings"
 msgstr "Utiliser réglages de post-process"
 
@@ -3468,6 +3516,14 @@ msgstr "Utiliser pression de force"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Utiliser la pression de la tablette pour la force de couleur"
+
+
+msgid "Stroke Random"
+msgstr "Trait aléatoire"
+
+
+msgid "Use randomness at stroke level"
+msgstr "Utiliser l'aléatoire au niveau du trait"
 
 
 msgid "UV Random"
@@ -4058,6 +4114,14 @@ msgid "Effector Weights"
 msgstr "Poids de l’effecteur"
 
 
+msgid "Fluid Density"
+msgstr "Densité de fluide"
+
+
+msgid "Density (kg/l) of the fluid contained inside the object, used to create a hydrostatic pressure gradient simulating the weight of the internal fluid, or buoyancy from the surrounding fluid if negative"
+msgstr "Densité (kg/l) du fluide contenu dans l'objet, utilisé pour créer un gradient de pression hydrostatique simulant le poids du fluide interne, ou la flottabilité du fluide environnant est négative"
+
+
 msgid "Goal Default"
 msgstr "But par défaut"
 
@@ -4170,6 +4234,10 @@ msgid "Pressure Scale"
 msgstr "Échelle de pression"
 
 
+msgid "Ambient pressure (kPa) that balances out between the inside and outside of the object when it has the target volume"
+msgstr "Pression ambiante (kPa) qui équilibre entre l'intérieur et l'extérieur de l'objet quand il a le volume cible"
+
+
 msgid "Quality"
 msgstr "Qualité"
 
@@ -4276,6 +4344,10 @@ msgstr "Simuler la pression à l’intérieur d’un mesh tissu clos"
 
 msgid "Use Custom Volume"
 msgstr "Utiliser volume personnalisé"
+
+
+msgid "Use the Target Volume parameter as the initial volume, instead of calculating it from the mesh itself"
+msgstr "Utiliser le paramètre Volume Cible comme volume initial, au lieu de le calculer depuis le mesh lui-même"
 
 
 msgid "Sew Cloth"
@@ -8023,6 +8095,14 @@ msgid "Include visualization of particle related animation data"
 msgstr "Inclure la visualisation des données d’animation relatives aux particules"
 
 
+msgid "Display Point Cloud"
+msgstr "Afficher nuage de points"
+
+
+msgid "Include visualization of point cloud related animation data"
+msgstr "Inclure la visualisation des données d’animation relatives aux nuages de points"
+
+
 msgid "Display Scene"
 msgstr "Afficher scène"
 
@@ -8369,6 +8449,16 @@ msgstr "Texte"
 msgctxt "ID"
 msgid "Texture"
 msgstr "Texture"
+
+
+msgctxt "ID"
+msgid "Hair"
+msgstr "Cheveux"
+
+
+msgctxt "ID"
+msgid "PointCloud"
+msgstr "Nuage de points"
 
 
 msgctxt "ID"
@@ -9293,6 +9383,14 @@ msgstr "Magnétique"
 
 msgid "Magnetic effector weight"
 msgstr "Poids de l’effecteur Magnétique"
+
+
+msgid "Fluid Flow"
+msgstr "Flux de fluide"
+
+
+msgid "Fluid Flow effector weight"
+msgstr "Poids de l’effecteur de flux de fluide"
 
 
 msgid "Texture effector weight"
@@ -10881,6 +10979,14 @@ msgid "Adjust force strength based on smoke density"
 msgstr "Ajuster la puissance de la force selon la densité de la fumée"
 
 
+msgid "Wind Factor"
+msgstr "Facteur de vent"
+
+
+msgid "How much the force is reduced when acting parallel to a surface, e.g. cloth"
+msgstr "À quel point la force est réduite quand elle agit parallelement à la surface, par ex. du tissus"
+
+
 msgid "Z Direction"
 msgstr "Direction Z"
 
@@ -11489,8 +11595,20 @@ msgid "End"
 msgstr "Fin"
 
 
+msgid "Frame on which the simulation stops. This is the last frame that will be baked"
+msgstr "Image à laquelle la simulation s'arrête. C'est la dernière image qui sera pré-calculée"
+
+
+msgid "Frame offset that is used when loading the simulation from the cache. It is not considered when baking the simulation, only when loading it"
+msgstr "Décalage d'image qui sera utilisé au chargement de la simulation depuis le cache. Il n'est pas considéré pour le pré-calcul de la simulation, seulement pour son chargement"
+
+
 msgid "Start"
 msgstr "Début"
+
+
+msgid "Frame on which the simulation starts. This is the first frame that will be baked"
+msgstr "Image à laquelle la simulation commence. C'est la première image qui sera calculée"
 
 
 msgid "Select the file format to be used for caching surface data"
@@ -11505,6 +11623,14 @@ msgid "Select the file format to be used for caching particle data"
 msgstr "Sélectionner le format de fichier à utiliser pour la mise en cache des données de particules"
 
 
+msgid "Resumable"
+msgstr "Re-démarrable"
+
+
+msgid "Additional data will be saved so that the bake jobs can be resumed after pausing. Because more data will be written to disk it is recommended to avoid enabling this option when baking at high resolutions"
+msgstr "Des données suplémentaire seront enregistrées de façon que les tâches puissent être relancées après une pause. "
+
+
 msgid "Change the cache type of the simulation"
 msgstr "Modifier le type de cache de la simulation"
 
@@ -11513,8 +11639,20 @@ msgid "Replay"
 msgstr "Rejouer"
 
 
+msgid "Use the timeline to bake the scene"
+msgstr "Utiliser la ligne de temps pour pré-calculer la scène"
+
+
 msgid "Modular"
 msgstr "Modulaire"
+
+
+msgid "Bake every stage of the simulation separately"
+msgstr "Pré-calculer chaque étape de la simulation séparément"
+
+
+msgid "Bake all simulation settings at once"
+msgstr "Pré-calculer tous les réglages de simulation d'un coup"
 
 
 msgid "Cell Size"
@@ -12193,8 +12331,144 @@ msgid "Amount of drag force that moves bubbles along with the fluid (high value 
 msgstr "Quantité de force de traînée qui entraîne les bulles avec le fluide (de hautes valeurs donnent des bulles suivant essentiellement le fluide)"
 
 
+msgid "Combined Export"
+msgstr "Export combiné"
+
+
+msgid "Determines which particle systems are created from secondary particles"
+msgstr "Détermine quels systèmes de particules sont générés depuis les particules secondaires"
+
+
+msgid "Create a separate particle system for every secondary particle type"
+msgstr "Créer un système de particules séparé pour chaque type de particules secondaires"
+
+
+msgid "Spray + Foam"
+msgstr "Aérosol + écume"
+
+
+msgid "Spray and foam particles are saved in the same particle system"
+msgstr "Les particules d'aérosol et d'écume sont enregistrées dans le même système de particules"
+
+
+msgid "Spray + Bubbles"
+msgstr "Aérosol + bulles"
+
+
+msgid "Spray and bubble particles are saved in the same particle system"
+msgstr "Les particules d'aérosol et de bulles sont sauvegardées dans le même système de particules"
+
+
+msgid "Foam + Bubbles"
+msgstr "Écume + bulles"
+
+
+msgid "Foam and bubbles particles are saved in the same particle system"
+msgstr "Les particules d'écume et de bulles sont sauvegardées dans le même système de particules"
+
+
+msgid "Spray + Foam + Bubbles"
+msgstr "Aérosol + écume + bulles"
+
+
+msgid "Create one particle system that contains all three secondary particle types"
+msgstr "Créer un système de particules contenant les trois types de particules secondaires"
+
+
+msgid "Maximum Lifetime"
+msgstr "Durée de vie maximale"
+
+
+msgid "Highest possible particle lifetime"
+msgstr "Durée de vie maximale d'une particule"
+
+
 msgid "Minimum Lifetime"
 msgstr "Durée de vie minimale"
+
+
+msgid "Lowest possible particle lifetime"
+msgstr "Durée de vie minimale d'une particule"
+
+
+msgid "Maximum Kinetic Energy Potential"
+msgstr "Énergie kinétique potentielle maximale"
+
+
+msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher value results in generally less particles)"
+msgstr "Limite haute indiquant à quelle vitesse du fluide les cellules n'émettent plus de particules (de plus hautes valeurs produisent généralement moins de particules)"
+
+
+msgid "Maximum Trapped Air Potential"
+msgstr "Potentiel d'air prisonnier maximum"
+
+
+msgid "Upper clamping threshold for marking fluid cells where air is trapped (higher value results in less marked cells)"
+msgstr "Limite haute pour marquer les cellules de fluide contenant de l'air (de plus hautes valeurs produisent moins de cellules marquées)"
+
+
+msgid "Maximum Wave Crest Potential"
+msgstr "Potentiel de crête de vague maximum"
+
+
+msgid "Upper clamping threshold for marking fluid cells as wave crests (higher value results in less marked cells)"
+msgstr "Limite haute pour marquer les cellules de fluide comme crêtes de vague (de plus hautes valeurs produisent moins de cellules marquées)"
+
+
+msgid "Minimum Kinetic Energy Potential"
+msgstr "Énergie kinétique potentielle minimale"
+
+
+msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
+msgstr "Limite basse indiquant à quelle vitesse du fluide les cellules commencent à émettre des particules (de plus basses valeurs produisent généralement plus de particules)"
+
+
+msgid "Minimum Trapped Air Potential"
+msgstr "Potentiel d'air prisonnier minimum"
+
+
+msgid "Lower clamping threshold for marking fluid cells where air is trapped (lower value results in more marked cells)"
+msgstr "Limite basse pour marquer les cellules de fluide contenant de l'air (de plus basses valeurs produisent plus de cellules marquées)"
+
+
+msgid "Minimum Wave Crest Potential"
+msgstr "Potentiel de crête de vague minimum"
+
+
+msgid "Lower clamping threshold for marking fluid cells as wave crests (lower value results in more marked cells)"
+msgstr "Limite basse pour marquer les cellules de fluide comme crêtes de vague (de plus basses valeurs produisent plus de cellules marquées)"
+
+
+msgid "Potential Radius"
+msgstr "Rayon de potentiel"
+
+
+msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
+msgstr "Rayon pour calculer le potentiel de chaque cellule (de plus hautes valeurs sont plus lentes mais créent des grilles de potentiel plus lisses)"
+
+
+msgid "Trapped Air Sampling"
+msgstr "Échantillonnage d'air prisonnier"
+
+
+msgid "Maximum number of particles generated per trapped air cell per frame"
+msgstr "Nombre maximal de particules générées par cellule contenant de l'air, par frame"
+
+
+msgid "Wave Crest Sampling"
+msgstr "Échantillonnage de crête de vague"
+
+
+msgid "Maximum number of particles generated per wave crest cell per frame"
+msgstr "Nombre maximal de particules générées par cellule de crête de vague, par frame"
+
+
+msgid "Update Radius"
+msgstr "Rayon de mise à jour"
+
+
+msgid "Radius to compute position update for each particle (higher values are slower but particles move less chaotic)"
+msgstr "Rayon pour calculer la mise à jour de la position de chaque particule (de plus hautes valeurs sont plus lentes mais le mouvement des particules est moins chaotique)\""
 
 
 msgid "p0"
@@ -12209,8 +12483,24 @@ msgid "Tension"
 msgstr "Tension"
 
 
+msgid "Surface tension of liquid (higher value results in greater hydrophobic behaviour)"
+msgstr "Tension de surface du liquide (de plus hautes valeurs donnent un comportement plus hydrophobique)"
+
+
+msgid "System Maximum"
+msgstr "Maximum système"
+
+
+msgid "Maximum number of fluid particles that are allowed in this simulation"
+msgstr "Nombre maximum de particules de fluide autorisées dans cette simulation"
+
+
 msgid "Temperature Grid"
 msgstr "Grille de température"
+
+
+msgid "Smoke temperature grid, range 0..1 represents 0..1000K"
+msgstr "Grille de température de fumée, l'intervalle [0, 1] reprsésente [0, 1000K]"
 
 
 msgid "Time Scale"
@@ -12221,6 +12511,14 @@ msgid "Adjust simulation speed"
 msgstr "Ajuster la vitesse de la simulation"
 
 
+msgid "Maximum number of simulation steps to perform for one frame"
+msgstr "Nombre maximal d'étapes de simulation à effectuer par frame"
+
+
+msgid "Minimum number of simulation steps to perform for one frame"
+msgstr "Nombre minimal d'étapes de simulation à effectuer par frame"
+
+
 msgid "Adaptive Domain"
 msgstr "Domaine adaptatif"
 
@@ -12229,12 +12527,48 @@ msgid "Adapt simulation resolution and size to fluid"
 msgstr "Adapter les résolution et taille de la simulation au fluide"
 
 
+msgid "Use Adaptive Time Steps"
+msgstr "Utiliser pas de temps adaptatifs"
+
+
+msgid "Bubble"
+msgstr "Bulle"
+
+
+msgid "Create bubble particle system"
+msgstr "Créer un système de particules de bulles"
+
+
+msgid "Enable collisions with back domain border"
+msgstr "Activer les collisions avec la limite arrière du domaine"
+
+
 msgid "Bottom"
 msgstr "En bas"
 
 
+msgid "Enable collisions with bottom domain border"
+msgstr "Activer les collisions avec la limite inférieure du domaine"
+
+
+msgid "Enable collisions with front domain border"
+msgstr "Activer les collisions avec la limite frontale du domaine"
+
+
+msgid "Enable collisions with left domain border"
+msgstr "Activer les collisions avec la limite gauche du domaine"
+
+
+msgid "Enable collisions with right domain border"
+msgstr "Activer les collisions avec la limite droite du domaine"
+
+
 msgid "Top"
 msgstr "En haut"
+
+
+msgid "Enable collisions with top domain border"
+msgstr "Activer les collisions avec la limite supérieure du domaine"
 
 
 msgid "Render a simulation field while mapping its voxels values to the colors of a ramp"
@@ -12243,6 +12577,10 @@ msgstr "Rendre un champ de simulation tout en faisant correspondre ses voxels au
 
 msgid "Use Diffusion"
 msgstr "Utiliser diffusion"
+
+
+msgid "Enable fluid diffusion settings (e.g. viscosity, surface tension)"
+msgstr "Aciver les réglages de diffusion de fluide (par ex. la viscosité, la tension de surface)"
 
 
 msgid "Dissolve Smoke"
@@ -12257,6 +12595,14 @@ msgid "Logarithmic Dissolve"
 msgstr "Dissolution logarithmique"
 
 
+msgid "Dissolve smoke in a logarithmic fashion. Dissolves quickly at first, but lingers longer"
+msgstr "Dissoudre la fumée de façon logarithmique (rapidement d'abord, mais persiste plus longtemps)"
+
+
+msgid "FLIP"
+msgstr "FLIP"
+
+
 msgid "Create liquid particle system"
 msgstr "Créer un système de particules liquide"
 
@@ -12269,8 +12615,20 @@ msgid "Create foam particle system"
 msgstr "Créer un système de particules d’écume"
 
 
+msgid "Fractional Obstacles"
+msgstr "Obstacles fractionnels"
+
+
+msgid "Fractional obstacles improve and smoothen the fluid-obstacle boundary"
+msgstr "Les obstacles fractionnels améliorent et adoucissent les limites fluide-obstacle"
+
+
 msgid "Use Guiding"
 msgstr "Utiliser guidage"
+
+
+msgid "Enable fluid guiding"
+msgstr "Activer guide de fluide"
 
 
 msgid "Use Mesh"
@@ -12293,8 +12651,24 @@ msgid "Speed Vectors"
 msgstr "Vecteurs de vitesse"
 
 
+msgid "Caches velocities of mesh vertices. These will be used (automatically) when rendering with motion blur enabled"
+msgstr "Metter en cache les vitesses des vertices de mesh. Celle-ci seront utilisées (automatiquement) lorsque le rendu de flou cinétique est activé"
+
+
+msgid "Spray"
+msgstr "Aérosol"
+
+
+msgid "Create spray particle system"
+msgstr "Créer un système de particules d'aérosol"
+
+
 msgid "Tracer"
 msgstr "Traceuses"
+
+
+msgid "Create tracer particle system"
+msgstr "Créer un système de particules traçeuses"
 
 
 msgid "Display Type"
@@ -12369,28 +12743,64 @@ msgid "Effector Type"
 msgstr "Type d’effecteur"
 
 
+msgid "Change type of effector in the simulation"
+msgstr "Changer le type d'effecteur dans la simulation"
+
+
 msgid "Collision"
 msgstr "Collision"
+
+
+msgid "Create collision object"
+msgstr "Créer un objet de collision"
 
 
 msgid "Guide"
 msgstr "Guide"
 
 
+msgid "Create guide object"
+msgstr "Créer un objet guide"
+
+
+msgid "Guiding mode"
+msgstr "Mode de guidage"
+
+
+msgid "How to create guiding velocities"
+msgstr "Comment créer les vitesses de guidage"
+
+
 msgid "Maximize"
 msgstr "Maximiser"
+
+
+msgid "Compare velocities from previous frame with new velocities from current frame and keep the maximum"
+msgstr "Comparer les vitesses de la frame précédente avec les nouvelles vitesses de la frame actuelle, et conserver la valeur maximale"
 
 
 msgid "Minimize"
 msgstr "Minimiser"
 
 
+msgid "Compare velocities from previous frame with new velocities from current frame and keep the minimum"
+msgstr "Comparer les vitesses de la frame précédente avec les nouvelles vitesses de la frame actuelle, et conserver la valeur minimale"
+
+
 msgid "Override"
 msgstr "Remplacer"
 
 
+msgid "Always write new guide velocities for every frame (each frame only contains current velocities from guiding objects)"
+msgstr "Toujours écrire de nouvelles vitesses guide pour toutes les frames (chaque frame ne contient aue la vitesse courante des objets guide)"
+
+
 msgid "Averaged"
 msgstr "Moyenné"
+
+
+msgid "Take average of velocities from previous frame and new velocities from current frame"
+msgstr "Moyenne des vitesses des frames précédentes et des nouvelles vitesses de la frame actuelle"
 
 
 msgid "Subframes"
@@ -12401,8 +12811,24 @@ msgid "Number of additional samples to take between frames to improve quality of
 msgstr "Nombre d’échantillons supplémentaires à prendre entre les frames pour améliorer la qualité des objets effecteurs se déplaçant rapidement"
 
 
+msgid "Additional distance around mesh surface to consider as effector"
+msgstr "Distance additionnelle autour de la surface du mesh à considérer comme effecteur"
+
+
+msgid "Control when to apply the effector"
+msgstr "Contrôler quand appliquer l'effecteur"
+
+
 msgid "Is Planar"
 msgstr "Est planaire"
+
+
+msgid "Treat this object as a planar, unclosed mesh"
+msgstr "Traiter cet objet comme un mesh plan, non-fermé"
+
+
+msgid "Multiplier of obstacle velocity"
+msgstr "Multiplicateur de vitesse d'obstacle"
 
 
 msgid "Flow Settings"
@@ -12425,6 +12851,10 @@ msgid "Flow Behavior"
 msgstr "Comportement de flux"
 
 
+msgid "Change flow behavior in the simulation"
+msgstr "Modifier le comportement du flux dans cette simulation"
+
+
 msgid "Add fluid to simulation"
 msgstr "Ajouter du fluide à la simulation"
 
@@ -12435,6 +12865,10 @@ msgstr "Flux de sortie"
 
 msgid "Delete fluid from simulation"
 msgstr "Supprimer du fluide de la simulation"
+
+
+msgid "Only use given geometry for fluid"
+msgstr "N'utiliser que la géométrie donnée pour le fluide"
 
 
 msgid "Change how fluid is emitted"
@@ -12469,6 +12903,10 @@ msgid "Add fire"
 msgstr "Ajouter feu"
 
 
+msgid "Add liquid"
+msgstr "Ajouter liquide"
+
+
 msgid "Flame Rate"
 msgstr "Taux de flamme"
 
@@ -12495,6 +12933,10 @@ msgstr "Nombre d’échantillons supplémentaires à prendre entre les frames po
 
 msgid "Surface Emission"
 msgstr "Émission de surface"
+
+
+msgid "Controls fluid emission from the mesh surface (higher value results in emission further away from the mesh surface"
+msgstr "Contrôle l'émission de fluide depuis la surface du mesh (de plus hautes valeurs donnent une émission plus éloignée de la surface du mesh)"
 
 
 msgid "Temp. Diff."
@@ -12541,6 +12983,14 @@ msgid "Only allow given density value in emitter area and will not add up"
 msgstr "Ne permettre qu’une valeur de densité donnée dans la zone de l’émetteur, non cumulable"
 
 
+msgid "Use Flow"
+msgstr "Utiliser flux"
+
+
+msgid "Control when to apply fluid flow"
+msgstr "Contrôle quand appliquer le flux de fluide"
+
+
 msgid "Initial Velocity"
 msgstr "Vitesse initiale"
 
@@ -12557,6 +13007,10 @@ msgid "Set particle size in simulation cells or use nearest cell"
 msgstr "Définir la taille des particules dans les cellules de simulation ou utiliser la cellule la plus proche"
 
 
+msgid "Treat this object as a planar and unclosed mesh. Fluid will only be emitted from the mesh surface and based on the surface emission value"
+msgstr "Traiter cet objet comme un mesh plan et non-fermé. Le fluide ne sera émit que depuis la surface du mesh, en fonction de la valeur d'émission de la surface"
+
+
 msgid "Use Texture"
 msgstr "Utiliser texture"
 
@@ -12569,6 +13023,14 @@ msgid "Initial"
 msgstr "Initial"
 
 
+msgid "Initial velocity in X, Y and Z direction in world space"
+msgstr "Vitesse initiale dans les directions X, Y et Z, en espace monde"
+
+
+msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
+msgstr "Multiplicateur de vitesse source passé au fluide (la vitesse source n'est pas nulle uniquement si l'objet se déplace)"
+
+
 msgid "Normal"
 msgstr "Normale"
 
@@ -12579,6 +13041,14 @@ msgstr "Quantité de vitesse directionnelle normale"
 
 msgid "Amount of random velocity"
 msgstr "Quantité de vitesse aléatoire"
+
+
+msgid "Volume Emission"
+msgstr "Émission du volume"
+
+
+msgid "Controls fluid emission from within the mesh (higher value results in greater emissions from inside the mesh)"
+msgstr "Contrôle l'émission du fluide depuis l'intérieur du mesh (de plus hautes valeurs donnent plus d'émission depuis l'intérieur du mesh)"
 
 
 msgid "Freestyle Line Set"
@@ -12953,6 +13423,10 @@ msgid "As Render Pass"
 msgstr "Comme passe de rendu"
 
 
+msgid "Renders Freestyle output to a separate pass instead of overlaying it on the Combined pass"
+msgstr "Rendre la sortie Freestyle dans une passe séparée au lieu de la superposer à la passe combinée"
+
+
 msgid "Crease Angle"
 msgstr "Angle de plis"
 
@@ -13079,6 +13553,14 @@ msgstr "Verrou de peinture"
 
 msgid "Frame is being edited (painted on)"
 msgstr "La frame est éditée (peinte)"
+
+
+msgid "Keyframe Type"
+msgstr "Type d'image clé"
+
+
+msgid "Type of keyframe"
+msgstr "Type de l'image clé"
 
 
 msgid "Keyframe"
@@ -13441,6 +13923,10 @@ msgid "Avoids editing locked materials in the layer"
 msgstr "Évite l’édition des matériaux verrouillés dans le calque"
 
 
+msgid "List of Masking Layers"
+msgstr "Liste de calques de masquage"
+
+
 msgid "Parent inverse transformation matrix"
 msgstr "Matrice de transformation inverse du parent"
 
@@ -13537,6 +14023,10 @@ msgid "Use Lights"
 msgstr "Utiliser lumières"
 
 
+msgid "Enable the use of lights on stroke and fill materials"
+msgstr "Activer l'usage des lumières pour les matériaux de trait et de remplissage"
+
+
 msgid "Mask Layer"
 msgstr "Calque de masquage"
 
@@ -13561,6 +14051,10 @@ msgid "Vertex Paint Opacity"
 msgstr "Opacité de peinture de vertices"
 
 
+msgid "Vertex Paint mix factor"
+msgstr "Facteur de mélange pour peinture de vertices"
+
+
 msgid "ViewLayer"
 msgstr "Calque de vue"
 
@@ -13571,6 +14065,10 @@ msgstr "N’inclure que le calque dans le rendu de ce calque de vue (laisser vid
 
 msgid "Grease Pencil Masking Layers"
 msgstr "Calques de masquage de crayon gras"
+
+
+msgid "List of Mask Layers"
+msgstr "liste de calques de masquage"
 
 
 msgid "Set mask Visibility"
@@ -13587,6 +14085,10 @@ msgstr "Inverser masque"
 
 msgid "Layer"
 msgstr "Calque"
+
+
+msgid "Mask layer name"
+msgstr "Nom du calque de masquage"
 
 
 msgid "GPencil Sculpt Guide"
@@ -13753,6 +14255,10 @@ msgid "Scale Stroke Thickness"
 msgstr "Redimensionner épaisseur de trait"
 
 
+msgid "Scale the stroke thickness when transforming strokes"
+msgstr "Redimensionner l'épaisseur du trait lors de la transformation des traits"
+
+
 msgid "Use Curve"
 msgstr "Utiliser courbe"
 
@@ -13767,6 +14273,14 @@ msgstr "Trait de crayon gras"
 
 msgid "Freehand curve defining part of a sketch"
 msgstr "Courbe à main levée définissant une partie d’un croquis"
+
+
+msgid "Boundbox Max"
+msgstr "Boîte englobante max"
+
+
+msgid "Boundbox Min"
+msgstr "Boîte englobante min"
 
 
 msgid "Draw Mode"
@@ -13889,16 +14403,32 @@ msgid "UV Rotation"
 msgstr "Rotation UV"
 
 
+msgid "Rotation of the UV"
+msgstr "Rotation de l'UV"
+
+
 msgid "UV Scale"
 msgstr "Échelle UV"
+
+
+msgid "Scale of the UV"
+msgstr "Redimensionnement de l'UV"
 
 
 msgid "UV Translation"
 msgstr "Translation UV"
 
 
+msgid "Translation of default UV position"
+msgstr "Déplacement de la position UV par défaut"
+
+
 msgid "Vertex Fill Color"
 msgstr "Couleur de vertices de remplissage"
+
+
+msgid "Color used to mix with fill color to get final color"
+msgstr "Couleur mélangée avec la couleur de remplissage pour obtenir la couleur finale"
 
 
 msgid "Grease Pencil Stroke Point"
@@ -13933,8 +14463,20 @@ msgid "Internal UV factor"
 msgstr "Facteur UV interne"
 
 
+msgid "UV Fill"
+msgstr "Remplissage UV"
+
+
+msgid "Internal UV factor for filling"
+msgstr "Facteur UV interne pour le remplissage"
+
+
 msgid "Internal UV factor for dot mode"
 msgstr "Facteur UV interne pour le mode pointillés"
+
+
+msgid "Color used to mix with point color to get final color"
+msgstr "Couleur mélangée avec la couleur de point pour obtenir la couleur finale"
 
 
 msgid "Grease Pencil Stroke Points"
@@ -13980,6 +14522,14 @@ msgstr "Collection de gizmos"
 
 msgid "Gizmo group this gizmo is a member of"
 msgstr "Groupe de gizmos dont ce gizmo est membre"
+
+
+msgid "Hide Keymap"
+msgstr "Cacher raccourcis"
+
+
+msgid "Ignore the key-map for this gizmo"
+msgstr "Ignorer les raccourcis de ce gizmo"
 
 
 msgid "Hide Select"

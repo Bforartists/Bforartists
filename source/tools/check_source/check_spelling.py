@@ -30,13 +30,17 @@ Currently only python source is checked.
 """
 
 import os
-PRINT_QTC_TASKFORMAT = False
-if "USE_QTC_TASK" in os.environ:
-    PRINT_QTC_TASKFORMAT = True
 
 ONLY_ONCE = True
 USE_COLOR = True
-_only_once_ids = set()
+
+_words_visited = set()
+_files_visited = set()
+
+# Lowercase word -> suggestion list.
+_suggest_map = {}
+
+VERBOSE_CACHE = False
 
 if USE_COLOR:
     COLOR_WORD = "\033[92m"
@@ -55,76 +59,92 @@ from check_spelling_c_config import (
 )
 
 
+# -----------------------------------------------------------------------------
+# General Utilities
+
+def hash_of_file_and_len(fp):
+    import hashlib
+    with open(fp, 'rb') as fh:
+        data = fh.read()
+        return hashlib.sha512().digest(), len(data)
+
+
 import re
 re_vars = re.compile("[A-Za-z]+")
-re_url = re.compile(r'(https?|ftp)://\S+')
+re_words = re.compile(
+    r"\b("
+    # Capital words, with optional '-' and "'".
+    r"[A-Z]+[\-'A-Z]*[A-Z]|"
+    # Lowercase words, with optional '-' and "'".
+    r"[A-Za-z][\-'a-z]*[a-z]+"
+    r")\b"
+)
+re_ignore = re.compile(
+    r'('
+
+    # URL.
+    r'(https?|ftp)://\S+|'
+    # Email address: me@email.com
+    r"<\w+@[\w\.]+>|"
+
+    # Convention for TODO/FIXME messages: TODO(name)
+    r"\b(TODO|FIXME|XXX)\([A-Za-z\s]+\)|"
+
+    # Doxygen style: <pre> ... </pre>
+    r"<pre>.+</pre>|"
+    # Doxygen style: \code ... \endcode
+    r"\s+\\code\b.+\s\\endcode\b|"
+    # Doxygen style #SOME_CODE.
+    r'#\S+|'
+    # Doxygen commands: \param foo
+    r"\\(section|subsection|subsubsection|ingroup|param|page|a|see)\s+\S+|"
+    # Doxygen commands without any arguments after them: \command
+    # Used rarely: \param foo[in,out]
+    r"\\(retval|todo)\b|"
+
+    # Words containing underscores: a_b
+    r'\S*\w+_\S+|'
+    # Words containing arrows: a->b
+    r'\S*\w+\->\S+'
+    # Words containing dot notation: a.b  (NOT  ab... since this is used in English).
+    r'\w+\.\w+\S*|'
+
+    # Single and back-tick quotes (often used to reference code).
+    r"\s\`[^\n`]+\`|"
+    r"\s'[^\n']+'"
+
+    r')',
+    re.MULTILINE | re.DOTALL,
+)
+
+re_not_newline = re.compile("[^\n]")
+
 
 def words_from_text(text):
     """ Extract words to treat as English for spell checking.
     """
+    # Replace non-newlines with white-space, so all alignment is kept.
+    def replace_ignore(match):
+        start, end = match.span()
+        return re_not_newline.sub(" ", match.string[start:end])
 
-    # Strip out URL's.
-    text = re_url.sub(" ", text)
+    # Handy for checking what we ignore, incase we ignore too much and miss real errors.
+    # for match in re_ignore.finditer(text):
+    #     print(match.group(0))
 
-    text = text.strip("#'\"")
-    text = text.replace("/", " ")
-    text = text.replace("-", " ")
-    text = text.replace("+", " ")
-    text = text.replace("%", " ")
-    text = text.replace(",", " ")
-    text = text.replace("=", " ")
-    text = text.replace("|", " ")
-    words = text.split()
+    # Strip out URL's, code-blocks, etc.
+    text = re_ignore.sub(replace_ignore, text)
 
-    # filter words
-    words[:] = [w.strip("*?!:;.,'\"`") for w in words]
+    words = []
+    for match in re_words.finditer(text):
+        words.append((match.group(0), match.start()))
 
     def word_ok(w):
-        # check for empty string
-        if not w:
-            return False
-
-        # ignore all uppercase words
+        # Ignore all uppercase words.
         if w.isupper():
             return False
-
-        # check for string with no characters in it
-        is_alpha = False
-        for c in w:
-            if c.isalpha():
-                is_alpha = True
-                break
-        if not is_alpha:
-            return False
-
-        # check for prefix/suffix which render this not a real word
-        # example '--debug', '\n'
-        # TODO, add more
-        if w[0] in "%-+\\@":
-            return False
-
-        # check for code in comments
-        for c in r"<>{}[]():._0123456789\&*":
-            if c in w:
-                return False
-
-        # check for words which contain lower case but have upper case
-        # ending chars eg - 'StructRNA', we can ignore these.
-        if len(w) > 1:
-            has_lower = False
-            for c in w:
-                if c.islower():
-                    has_lower = True
-                    break
-            if has_lower and (not w[1:].islower()):
-                return False
-
         return True
-    words[:] = [w for w in words if word_ok(w)]
-
-    # text = " ".join(words)
-
-    # print(text)
+    words[:] = [w for w in words if word_ok(w[0])]
     return words
 
 
@@ -145,6 +165,18 @@ class Comment:
     def parse(self):
         return words_from_text(self.text)
 
+    def line_and_column_from_comment_offset(self, pos):
+        text = self.text
+        slineno = self.line + text.count("\n", 0, pos)
+        # Allow for -1 to be not found.
+        scol = text.rfind("\n", 0, pos) + 1
+        if scol == 0:
+            # Not found.
+            scol = pos
+        else:
+            scol = pos - scol
+        return slineno, scol
+
 
 def extract_code_strings(filepath):
     import pygments
@@ -162,7 +194,7 @@ def extract_code_strings(filepath):
     else:
         lex = lexers.get_lexer_by_name("c")
 
-    slineno = 1
+    slineno = 0
     with open(filepath, encoding='utf-8') as fh:
         source = fh.read()
 
@@ -221,41 +253,14 @@ def extract_c_comments(filepath):
     END = "*/"
     TABSIZE = 4
     SINGLE_LINE = False
-    STRIP_DOXY = True
-    STRIP_DOXY_DIRECTIVES = (
-        r"\section",
-        r"\subsection",
-        r"\subsubsection",
-        r"\ingroup",
-        r"\param[in]",
-        r"\param[out]",
-        r"\param[in,out]",
-        r"\param",
-        r"\page",
-    )
     SKIP_COMMENTS = (
-        "BEGIN GPL LICENSE BLOCK",
+        # GPL header.
+        "This program is free software; you can",
     )
-
-    # http://doc.qt.nokia.com/qtcreator-2.4/creator-task-lists.html#task-list-file-format
-    # file\tline\ttype\tdescription
-    # ... > foobar.tasks
 
     # reverse these to find blocks we won't parse
     PRINT_NON_ALIGNED = False
     PRINT_SPELLING = True
-
-    def strip_doxy_comments(block_split):
-
-        for i, l in enumerate(block_split):
-            for directive in STRIP_DOXY_DIRECTIVES:
-                if directive in l:
-                    l_split = l.split()
-                    l_split[l_split.index(directive) + 1] = " "
-                    l = " ".join(l_split)
-                    del l_split
-                    break
-            block_split[i] = l
 
     comment_ranges = []
 
@@ -302,66 +307,62 @@ def extract_c_comments(filepath):
 
     comments = []
 
+    slineno = 0
+    i_prev = 0
     for i, i_next in comment_ranges:
-        block = text[i:i_next]
-
-        # add whitespace in front of the block (for alignment test)
-        ws = []
-        j = i
-        while j > 0 and text[j - 1] != "\n":
-            ws .append("\t" if text[j - 1] == "\t" else " ")
-            j -= 1
-        ws.reverse()
-        block = "".join(ws) + block
 
         ok = True
+        block = text[i:i_next]
+        for c in SKIP_COMMENTS:
+            if c in block:
+                ok = False
+                break
+
+        if not ok:
+            continue
+
+        # Add white-space in front of the block (for alignment test)
+        # allow for -1 being not found, which results as zero.
+        j = text.rfind("\n", 0, i) + 1
+        block = (" " * (i - j)) + block
 
         if not (SINGLE_LINE or ("\n" in block)):
             ok = False
 
         if ok:
-            for c in SKIP_COMMENTS:
-                if c in block:
-                    ok = False
-                    break
-
-        if ok:
-            # expand tabs
-            block_split = [l.expandtabs(TABSIZE) for l in block.split("\n")]
-
-            # now validate that the block is aligned
-            align_vals = tuple(sorted(set([l.find("*") for l in block_split])))
-            is_aligned = len(align_vals) == 1
-
-            if is_aligned:
-                if PRINT_SPELLING:
-                    if STRIP_DOXY:
-                        strip_doxy_comments(block_split)
-
-                    align = align_vals[0] + 1
-                    block = "\n".join([l[align:] for l in block_split])[:-len(END)]
-
-                    # now strip block and get text
-                    # print(block)
-
-                    # ugh - not nice or fast
-                    slineno = 1 + text.count("\n", 0, i)
-
-                    comments.append(Comment(filepath, block, slineno, 'COMMENT'))
-            else:
-                if PRINT_NON_ALIGNED:
-                    lineno = 1 + text.count("\n", 0, i)
-                    if PRINT_QTC_TASKFORMAT:
-                        filepath = os.path.abspath(filepath)
-                        print("%s\t%d\t%s\t%s" % (filepath, lineno, "comment", align_vals))
-                    else:
-                        print(filepath + ":" + str(lineno) + ":")
+            slineno += text.count("\n", i_prev, i)
+            comments.append(Comment(filepath, block, slineno, 'COMMENT'))
+            i_prev = i
 
     return comments, code_words
 
 
-def spell_check_file(filepath, check_type='COMMENTS'):
+def spell_check_report(filepath, report):
+    w, slineno, scol = report
+    w_lower = w.lower()
 
+    if ONLY_ONCE:
+        if w_lower in _words_visited:
+            return
+        else:
+            _words_visited.add(w_lower)
+
+    suggest = _suggest_map.get(w_lower)
+    if suggest is None:
+        _suggest_map[w_lower] = suggest = " ".join(dict_spelling.suggest(w))
+
+    print("%s:%d:%d: %s%s%s, suggest (%s)" % (
+        filepath,
+        slineno + 1,
+        scol + 1,
+        COLOR_WORD,
+        w,
+        COLOR_ENDC,
+        suggest,
+    ))
+
+
+def spell_check_file(filepath, check_type='COMMENTS'):
     if check_type == 'COMMENTS':
         if filepath.endswith(".py"):
             comment_list, code_words = extract_py_comments(filepath)
@@ -371,10 +372,7 @@ def spell_check_file(filepath, check_type='COMMENTS'):
         comment_list, code_words = extract_code_strings(filepath)
 
     for comment in comment_list:
-        for w in comment.parse():
-            # if len(w) < 15:
-            #     continue
-
+        for w, pos in comment.parse():
             w_lower = w.lower()
             if w_lower in dict_custom or w_lower in dict_ignore:
                 continue
@@ -387,32 +385,12 @@ def spell_check_file(filepath, check_type='COMMENTS'):
                     # print("Skipping", w)
                     continue
 
-                if ONLY_ONCE:
-                    if w_lower in _only_once_ids:
-                        continue
-                    else:
-                        _only_once_ids.add(w_lower)
-
-                if PRINT_QTC_TASKFORMAT:
-                    print("%s\t%d\t%s\t%s, suggest (%s)" %
-                          (comment.file,
-                           comment.line,
-                           "comment",
-                           w,
-                           " ".join(dict_spelling.suggest(w)),
-                           ))
-                else:
-                    print("%s:%d: %s%s%s, suggest (%s)" %
-                          (comment.file,
-                           comment.line,
-                           COLOR_WORD,
-                           w,
-                           COLOR_ENDC,
-                           " ".join(dict_spelling.suggest(w)),
-                           ))
+                slineno, scol = comment.line_and_column_from_comment_offset(pos)
+                yield (w, slineno, scol)
 
 
-def spell_check_file_recursive(dirpath, check_type='COMMENTS'):
+def spell_check_file_recursive(dirpath, check_type='COMMENTS', cache_data=None):
+    import os
     from os.path import join, splitext
 
     def source_list(path, filename_check=None):
@@ -445,26 +423,162 @@ def spell_check_file_recursive(dirpath, check_type='COMMENTS'):
         })
 
     for filepath in source_list(dirpath, is_source):
-        spell_check_file(filepath, check_type=check_type)
+        for report in spell_check_file_with_cache_support(filepath, check_type=check_type, cache_data=cache_data):
+            spell_check_report(filepath, report)
 
 
-import sys
-import os
+# -----------------------------------------------------------------------------
+# Cache File Support
+#
+# Cache is formatted as follows:
+# (
+#     # Store all misspelled words.
+#     {filepath: (size, sha512, [reports, ...])},
+#
+#     # Store suggestions, as these are slow to re-calculate.
+#     {lowercase_words: suggestions},
+# )
+#
+
+def spell_cache_read(cache_filepath):
+    import pickle
+    cache_data = {}, {}
+    if os.path.exists(cache_filepath):
+        with open(cache_filepath, 'rb') as fh:
+            cache_data = pickle.load(fh)
+    return cache_data
+
+
+def spell_cache_write(cache_filepath, cache_data):
+    import pickle
+    with open(cache_filepath, 'wb') as fh:
+        pickle.dump(cache_data, fh)
+
+
+def spell_check_file_with_cache_support(filepath, check_type='COMMENTS', cache_data=None):
+    """
+    Iterator each item is a report: (word, line_number, column_number)
+    """
+    _files_visited.add(filepath)
+
+    if cache_data is None:
+        yield from spell_check_file(filepath, check_type=check_type)
+        return
+
+    cache_data_for_file = cache_data.get(filepath)
+    if cache_data_for_file and len(cache_data_for_file) != 3:
+        cache_data_for_file = None
+
+    cache_hash_test, cache_len_test = hash_of_file_and_len(filepath)
+    if cache_data_for_file is not None:
+        cache_len, cache_hash, cache_reports = cache_data_for_file
+        if cache_len_test == cache_len:
+            if cache_hash_test == cache_hash:
+                if VERBOSE_CACHE:
+                    print("Using cache for:", filepath)
+                yield from cache_reports
+                return
+
+    cache_reports = []
+    for report in spell_check_file(filepath, check_type=check_type):
+        cache_reports.append(report)
+
+    cache_data[filepath] = (cache_len_test, cache_hash_test, cache_reports)
+
+    yield from cache_reports
+
+
+# -----------------------------------------------------------------------------
+# Extract Bad Spelling from a Source File
+
+
+# -----------------------------------------------------------------------------
+# Main & Argument Parsing
+
+def argparse_create():
+    import argparse
+
+    # When --help or no args are given, print this help
+    description = __doc__
+    parser = argparse.ArgumentParser(description=description)
+
+    parser.add_argument(
+        '--extract',
+        dest='extract',
+        choices=('COMMENTS', 'STRINGS'),
+        default='COMMENTS',
+        required=False,
+        metavar='WHAT',
+        help=(
+            'Text to extract for checking.\n'
+            '\n'
+            '- ``COMMENTS`` extracts comments from source code.\n'
+            '- ``STRINGS`` extracts text.'
+        ),
+    )
+
+    parser.add_argument(
+        "--cache-file",
+        dest="cache_file",
+        help=(
+            "Optional cache, for fast re-execution, "
+            "avoiding re-extracting spelling when files have not been modified."
+        ),
+        required=False,
+    )
+
+    parser.add_argument(
+        "paths",
+        nargs='+',
+        help="Files or directories to walk recursively.",
+    )
+
+    return parser
+
+
+def main():
+    global _suggest_map
+
+    import os
+
+    args = argparse_create().parse_args()
+
+    check_type = args.extract
+    cache_filepath = args.cache_file
+
+    cache_data = None
+    if cache_filepath:
+        cache_data, _suggest_map = spell_cache_read(cache_filepath)
+        clear_stale_cache = True
+
+    # print(check_type)
+    try:
+        for filepath in args.paths:
+            if os.path.isdir(filepath):
+                # recursive search
+                spell_check_file_recursive(filepath, check_type=check_type, cache_data=cache_data)
+            else:
+                # single file
+                for report in spell_check_file_with_cache_support(
+                        filepath, check_type=check_type, cache_data=cache_data):
+                    spell_check_report(filepath, report)
+    except KeyboardInterrupt:
+        clear_stale_cache = False
+
+    if cache_filepath:
+        if VERBOSE_CACHE:
+            print("Writing cache:", len(cache_data))
+
+        if clear_stale_cache:
+            # Don't keep suggestions for old misspellings.
+            _suggest_map = {w_lower: _suggest_map[w_lower] for w_lower in _words_visited}
+
+            for filepath in list(cache_data.keys()):
+                if filepath not in _files_visited:
+                    del cache_data[filepath]
+
+        spell_cache_write(cache_filepath, (cache_data, _suggest_map))
+
 
 if __name__ == "__main__":
-    # TODO, use argparse to expose more options.
-    args = sys.argv[1:]
-    try:
-        args.remove("--strings")
-        check_type = 'STRINGS'
-    except ValueError:
-        check_type = 'COMMENTS'
-
-    print(check_type)
-    for filepath in args:
-        if os.path.isdir(filepath):
-            # recursive search
-            spell_check_file_recursive(filepath, check_type=check_type)
-        else:
-            # single file
-            spell_check_file(filepath, check_type=check_type)
+    main()
