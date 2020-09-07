@@ -407,20 +407,40 @@ class VIEW3D_OT_vr_landmark_from_session(Operator):
     def poll(cls, context):
         return bpy.types.XrSessionState.is_running(context)
 
+    @staticmethod
+    def _calc_landmark_angle_from_viewer_rotation(rot):
+        from mathutils import Vector
+
+        # We want an angle around Z based on the current viewer rotation. Idea
+        # is to create a vector from the viewer rotation, project that onto a
+        # Z-Up plane and use the resulting vector to get an angle around Z.
+
+        view_rot_vec = Vector((0, 0, 1))
+        view_rot_vec.rotate(rot)
+        angle_vec = view_rot_vec - view_rot_vec.project(Vector((0, 0, 1)))
+
+        # We could probably use a 3D version of Vector.angle_signed() here, but
+        # that's not available. So manually calculate it via a quaternion delta.
+        forward_vec = Vector((0, -1, 0))
+        diff = angle_vec.rotation_difference(forward_vec)
+
+        return diff.angle * -diff.axis[2]
+
     def execute(self, context):
         scene = context.scene
         landmarks = scene.vr_landmarks
         wm = context.window_manager
 
         lm = landmarks.add()
-        lm.type = "CUSTOM"
+        lm.type = 'CUSTOM'
         scene.vr_landmarks_selected = len(landmarks) - 1
 
         loc = wm.xr_session_state.viewer_pose_location
-        rot = wm.xr_session_state.viewer_pose_rotation.to_euler()
+        rot = wm.xr_session_state.viewer_pose_rotation
+        angle = self._calc_landmark_angle_from_viewer_rotation(rot)
 
         lm.base_pose_location = loc
-        lm.base_pose_angle = rot[2]
+        lm.base_pose_angle = angle
 
         return {'FINISHED'}
 

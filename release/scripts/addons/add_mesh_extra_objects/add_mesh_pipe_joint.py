@@ -259,6 +259,7 @@ class AddElbowJoint(Operator, object_utils.AddObjectHelper):
             obj = object_utils.object_data_add(context, mesh, operator=self)
             obj.select_set(True)
             active_object.select_set(True)
+            bpy.context.view_layer.objects.active = active_object
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
@@ -524,6 +525,7 @@ class AddTeeJoint(Operator, object_utils.AddObjectHelper):
             obj = object_utils.object_data_add(context, mesh, operator=self)
             obj.select_set(True)
             active_object.select_set(True)
+            bpy.context.view_layer.objects.active = active_object
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
@@ -806,6 +808,7 @@ class AddWyeJoint(Operator, object_utils.AddObjectHelper):
             obj = object_utils.object_data_add(context, mesh, operator=self)
             obj.select_set(True)
             active_object.select_set(True)
+            bpy.context.view_layer.objects.active = active_object
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
@@ -1152,6 +1155,7 @@ class AddCrossJoint(Operator, object_utils.AddObjectHelper):
             obj = object_utils.object_data_add(context, mesh, operator=self)
             obj.select_set(True)
             active_object.select_set(True)
+            bpy.context.view_layer.objects.active = active_object
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
@@ -1393,6 +1397,7 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
             obj = object_utils.object_data_add(context, mesh, operator=self)
             obj.select_set(True)
             active_object.select_set(True)
+            bpy.context.view_layer.objects.active = active_object
             bpy.ops.object.join()
             context.active_object.name = name_active_object
             bpy.ops.object.mode_set(mode='EDIT')
