@@ -2614,9 +2614,10 @@ static void rna_FileBrowser_FSMenu_active_range(PointerRNA *UNUSED(ptr),
   *max = *softmax = ED_fsmenu_get_nentries(fsmenu, category) - 1;
 }
 
-static void rna_FileBrowser_FSMenu_active_update(struct bContext *C, PointerRNA *UNUSED(ptr))
+static void rna_FileBrowser_FSMenu_active_update(struct bContext *C, PointerRNA *ptr)
 {
-  ED_file_change_dir(C);
+  ScrArea *area = rna_area_from_space(ptr);
+  ED_file_change_dir_ex(C, (bScreen *)ptr->owner_id, area);
 }
 
 static int rna_FileBrowser_FSMenuSystem_active_get(PointerRNA *ptr)
@@ -2980,7 +2981,11 @@ static void rna_def_space_outliner(BlenderRNA *brna)
        ICON_RENDER_RESULT,
        "View Layer",
        "Display collections and objects in the view layer"},
-      {SO_SEQUENCE, "SEQUENCE", ICON_SEQUENCE, "Sequence", "Display sequence data-blocks"},
+      {SO_SEQUENCE,
+       "SEQUENCE",
+       ICON_SEQUENCE,
+       "Video Sequencer",
+       "Display data belonging to the Video Sequencer"},
       {SO_LIBRARIES,
        "LIBRARIES",
        ICON_FILE_BLEND,
@@ -3045,6 +3050,12 @@ static void rna_def_space_outliner(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SO_SYNC_SELECT);
   RNA_def_property_ui_text(
       prop, "Sync Outliner Selection", "Sync outliner selection with other editors");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, NULL);
+
+  prop = RNA_def_property(srna, "show_mode_column", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "flag", SO_MODE_COLUMN);
+  RNA_def_property_ui_text(
+      prop, "Show Mode Column", "Show the mode column for mode toggle and activation");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, NULL);
 
   /* Granular restriction column option. */

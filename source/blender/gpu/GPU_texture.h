@@ -36,6 +36,8 @@ struct MovieClipUser;
 struct PreviewImage;
 
 struct GPUFrameBuffer;
+
+/** Opaque type hiding blender::gpu::Texture. */
 typedef struct GPUTexture GPUTexture;
 
 /* GPU Samplers state
@@ -218,9 +220,9 @@ void GPU_texture_update_mipmap(GPUTexture *tex,
                                eGPUDataFormat gpu_data_format,
                                const void *pixels);
 
-void GPU_texture_update(GPUTexture *tex, eGPUDataFormat data_format, const void *pixels);
+void GPU_texture_update(GPUTexture *tex, eGPUDataFormat data_format, const void *data);
 void GPU_texture_update_sub(GPUTexture *tex,
-                            eGPUDataFormat gpu_data_format,
+                            eGPUDataFormat data_format,
                             const void *pixels,
                             int offset_x,
                             int offset_y,
@@ -228,13 +230,10 @@ void GPU_texture_update_sub(GPUTexture *tex,
                             int width,
                             int height,
                             int depth);
+void GPU_unpack_row_length_set(uint len);
 
-void *GPU_texture_read(GPUTexture *tex, eGPUDataFormat gpu_data_format, int miplvl);
-void GPU_texture_clear(GPUTexture *tex, eGPUDataFormat gpu_data_format, const void *color);
-
-void GPU_invalid_tex_init(void);
-void GPU_invalid_tex_bind(int mode);
-void GPU_invalid_tex_free(void);
+void *GPU_texture_read(GPUTexture *tex, eGPUDataFormat data_format, int miplvl);
+void GPU_texture_clear(GPUTexture *tex, eGPUDataFormat data_format, const void *data);
 
 void GPU_texture_free(GPUTexture *tex);
 
@@ -243,6 +242,10 @@ void GPU_texture_bind(GPUTexture *tex, int unit);
 void GPU_texture_bind_ex(GPUTexture *tex, eGPUSamplerState state, int unit, const bool set_number);
 void GPU_texture_unbind(GPUTexture *tex);
 void GPU_texture_unbind_all(void);
+
+void GPU_texture_image_bind(GPUTexture *tex, int unit);
+void GPU_texture_image_unbind(GPUTexture *tex);
+void GPU_texture_image_unbind_all(void);
 
 void GPU_texture_copy(GPUTexture *dst, GPUTexture *src);
 
@@ -254,14 +257,12 @@ void GPU_texture_mipmap_mode(GPUTexture *tex, bool use_mipmap, bool use_filter);
 void GPU_texture_wrap_mode(GPUTexture *tex, bool use_repeat, bool use_clamp);
 void GPU_texture_swizzle_set(GPUTexture *tex, const char swizzle[4]);
 
-int GPU_texture_target(const GPUTexture *tex);
 int GPU_texture_width(const GPUTexture *tex);
 int GPU_texture_height(const GPUTexture *tex);
 int GPU_texture_orig_width(const GPUTexture *tex);
 int GPU_texture_orig_height(const GPUTexture *tex);
 void GPU_texture_orig_size_set(GPUTexture *tex, int w, int h);
 eGPUTextureFormat GPU_texture_format(const GPUTexture *tex);
-int GPU_texture_samples(const GPUTexture *tex);
 bool GPU_texture_array(const GPUTexture *tex);
 bool GPU_texture_cube(const GPUTexture *tex);
 bool GPU_texture_depth(const GPUTexture *tex);

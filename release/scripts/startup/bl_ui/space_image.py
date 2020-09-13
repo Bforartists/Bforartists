@@ -463,6 +463,28 @@ class IMAGE_MT_uvs_clear_seam(bpy.types.Operator):
         bpy.ops.uv.mark_seam(clear=True)
         return {'FINISHED'}
 
+class IMAGE_MT_uvs_unwrap(Menu):
+    bl_label = "Unwrap"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("uv.unwrap")
+
+        layout.separator()
+
+        layout.operator_context = 'INVOKE_DEFAULT'
+        layout.operator("uv.smart_project")
+        layout.operator("uv.lightmap_pack")
+        layout.operator("uv.follow_active_quads")
+
+        layout.separator()
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("uv.cube_project")
+        layout.operator("uv.cylinder_project")
+        layout.operator("uv.sphere_project")
+
 
 class IMAGE_MT_uvs(Menu):
     bl_label = "UV"
@@ -481,6 +503,9 @@ class IMAGE_MT_uvs(Menu):
 
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+        layout.menu("IMAGE_MT_uvs_unwrap")
+
         layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
         layout.operator("uv.pin", icon = "PINNED").clear = False
         layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
@@ -1146,7 +1171,9 @@ class IMAGE_PT_view_display_uv_edit_overlays(Panel):
 
         col = layout.column()
         col.use_property_split = False
-        col.prop(uvedit, "show_smooth_edges", text="Smooth")
+        col = layout.column()
+        if context.preferences.experimental.use_image_editor_legacy_drawing:
+          col.prop(uvedit, "show_smooth_edges", text="Smooth")
         col.prop(uvedit, "show_modified_edges", text="Modified")
         col.prop(uvedit, "uv_opacity")
 
@@ -1672,6 +1699,7 @@ classes = (
     IMAGE_MT_uvs_align,
     IMAGE_MT_uvs_merge,
     IMAGE_MT_uvs_split,
+    IMAGE_MT_uvs_unwrap,
     IMAGE_MT_uvs_select_mode,
     IMAGE_MT_uvs_context_menu,
     IMAGE_MT_mask_context_menu,

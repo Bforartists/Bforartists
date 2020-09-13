@@ -142,7 +142,7 @@ typedef struct LoadTexData {
   ViewContext *vc;
 
   MTex *mtex;
-  GLubyte *buffer;
+  uchar *buffer;
   bool col;
 
   struct ImagePool *pool;
@@ -160,7 +160,7 @@ static void load_tex_task_cb_ex(void *__restrict userdata,
   ViewContext *vc = data->vc;
 
   MTex *mtex = data->mtex;
-  GLubyte *buffer = data->buffer;
+  uchar *buffer = data->buffer;
   const bool col = data->col;
 
   struct ImagePool *pool = data->pool;
@@ -230,7 +230,7 @@ static void load_tex_task_cb_ex(void *__restrict userdata,
 
         /* Clamp to avoid precision overflow. */
         CLAMP(avg, 0.0f, 1.0f);
-        buffer[index] = 255 - (GLubyte)(255 * avg);
+        buffer[index] = 255 - (uchar)(255 * avg);
       }
     }
     else {
@@ -254,7 +254,7 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 
   MTex *mtex = (primary) ? &br->mtex : &br->mask_mtex;
   ePaintOverlayControlFlags overlay_flags = BKE_paint_get_overlay_flags();
-  GLubyte *buffer = NULL;
+  uchar *buffer = NULL;
 
   int size;
   bool refresh;
@@ -309,10 +309,10 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
       target->old_col = col;
     }
     if (col) {
-      buffer = MEM_mallocN(sizeof(GLubyte) * size * size * 4, "load_tex");
+      buffer = MEM_mallocN(sizeof(uchar) * size * size * 4, "load_tex");
     }
     else {
-      buffer = MEM_mallocN(sizeof(GLubyte) * size * size, "load_tex");
+      buffer = MEM_mallocN(sizeof(uchar) * size * size, "load_tex");
     }
 
     pool = BKE_image_pool_new();
@@ -381,7 +381,7 @@ static void load_tex_cursor_task_cb(void *__restrict userdata,
   LoadTexData *data = userdata;
   Brush *br = data->br;
 
-  GLubyte *buffer = data->buffer;
+  uchar *buffer = data->buffer;
 
   const int size = data->size;
 
@@ -398,7 +398,7 @@ static void load_tex_cursor_task_cb(void *__restrict userdata,
       /* Falloff curve. */
       float avg = BKE_brush_curve_strength_clamped(br, len, 1.0f);
 
-      buffer[index] = (GLubyte)(255 * avg);
+      buffer[index] = (uchar)(255 * avg);
     }
     else {
       buffer[index] = 0;
@@ -411,7 +411,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
   bool init;
 
   ePaintOverlayControlFlags overlay_flags = BKE_paint_get_overlay_flags();
-  GLubyte *buffer = NULL;
+  uchar *buffer = NULL;
 
   int size;
   const bool refresh = !cursor_snap.overlay_texture ||
@@ -452,7 +452,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
 
       cursor_snap.size = size;
     }
-    buffer = MEM_mallocN(sizeof(GLubyte) * size * size, "load_tex");
+    buffer = MEM_mallocN(sizeof(uchar) * size * size, "load_tex");
 
     BKE_curvemapping_init(br->curve);
 
@@ -911,7 +911,6 @@ static void paint_draw_curve_cursor(Brush *brush, ViewContext *vc)
   GPU_matrix_translate_2f(vc->region->winrct.xmin, vc->region->winrct.ymin);
 
   if (brush->paint_curve && brush->paint_curve->points) {
-    int i;
     PaintCurve *pc = brush->paint_curve;
     PaintCurvePoint *cp = pc->points;
 
@@ -928,7 +927,7 @@ static void paint_draw_curve_cursor(Brush *brush, ViewContext *vc)
     UI_GetThemeColorType4fv(TH_PAINT_CURVE_HANDLE, SPACE_VIEW3D, handle_col);
     UI_GetThemeColorType4fv(TH_PAINT_CURVE_PIVOT, SPACE_VIEW3D, pivot_col);
 
-    for (i = 0; i < pc->tot_points - 1; i++, cp++) {
+    for (int i = 0; i < pc->tot_points - 1; i++, cp++) {
       int j;
       PaintCurvePoint *cp_next = cp + 1;
       float data[(PAINT_CURVE_NUM_SEGMENTS + 1) * 2];
@@ -1154,7 +1153,8 @@ static void sculpt_geometry_preview_lines_draw(const uint gpuattr,
   if (ss->preview_vert_index_count > 0) {
     immBegin(GPU_PRIM_LINES, ss->preview_vert_index_count);
     for (int i = 0; i < ss->preview_vert_index_count; i++) {
-      immVertex3fv(gpuattr, SCULPT_vertex_co_get(ss, ss->preview_vert_index_list[i]));
+      immVertex3fv(gpuattr,
+                   SCULPT_vertex_co_for_grab_active_get(ss, ss->preview_vert_index_list[i]));
     }
     immEnd();
   }
@@ -1572,7 +1572,14 @@ static void paint_cursor_draw_3d_view_brush_cursor_inactive(PaintCursorContext *
 
   /* Cursor location symmetry points. */
 
-  const float *active_vertex_co = SCULPT_active_vertex_co_get(pcontext->ss);
+  const float *active_vertex_co;
+  if (brush->sculpt_tool == SCULPT_TOOL_GRAB && brush->flag & BRUSH_GRAB_ACTIVE_VERTEX) {
+    active_vertex_co = SCULPT_vertex_co_for_grab_active_get(
+        pcontext->ss, SCULPT_active_vertex_get(pcontext->ss));
+  }
+  else {
+    active_vertex_co = SCULPT_active_vertex_co_get(pcontext->ss);
+  }
   if (len_v3v3(active_vertex_co, pcontext->location) < pcontext->radius) {
     immUniformColor3fvAlpha(pcontext->outline_col, pcontext->outline_alpha);
     cursor_draw_point_with_symmetry(pcontext->pos,

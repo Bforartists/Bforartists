@@ -1318,13 +1318,14 @@ class VIEW3D_PT_blenderkit_downloads(Panel):
 
     def draw(self, context):
         layout = self.layout
-        for threaddata in download.download_threads:
+        for i,threaddata in enumerate(download.download_threads):
             tcom = threaddata[2]
             asset_data = threaddata[1]
             row = layout.row()
             row.label(text=asset_data['name'])
             row.label(text=str(int(tcom.progress)) + ' %')
-            row.operator('scene.blenderkit_download_kill', text='', icon='CANCEL')
+            op = row.operator('scene.blenderkit_download_kill', text='', icon='CANCEL')
+            op.thread_index = i
             if tcom.passargs.get('retry_counter', 0) > 0:
                 row = layout.row()
                 row.label(text='failed. retrying ... ', icon='ERROR')

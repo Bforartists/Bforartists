@@ -396,9 +396,6 @@ static void wm_draw_offscreen_texture_parameters(GPUOffScreen *offscreen)
   /* Setup offscreen color texture for drawing. */
   GPUTexture *texture = GPU_offscreen_color_texture(offscreen);
 
-  /* We don't support multisample textures here. */
-  BLI_assert(GPU_texture_target(texture) == GL_TEXTURE_2D);
-
   /* No mipmaps or filtering. */
   GPU_texture_mipmap_mode(texture, false, false);
 }
@@ -795,6 +792,7 @@ static void wm_draw_window_onscreen(bContext *C, wmWindow *win, int view)
   /* After area regions so we can do area 'overlay' drawing. */
   ED_screen_draw_edges(win);
   wm_draw_callbacks(win);
+  wmWindowViewport(win);
 
   /* Blend in floating regions (menus). */
   LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {

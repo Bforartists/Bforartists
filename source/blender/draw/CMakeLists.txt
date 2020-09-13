@@ -44,10 +44,6 @@ set(INC
   ../../../intern/guardedalloc
 )
 
-set(INC_SYS
-  ${GLEW_INCLUDE_PATH}
-)
-
 set(SRC
   intern/draw_cache.c
   intern/draw_cache_extract_mesh.c
@@ -77,6 +73,8 @@ set(SRC
   intern/draw_select_buffer.c
   intern/draw_view.c
   engines/basic/basic_engine.c
+  engines/image/image_engine.c
+  engines/image/image_shader.c
   engines/eevee/eevee_bloom.c
   engines/eevee/eevee_data.c
   engines/eevee/eevee_depth_of_field.c
@@ -132,6 +130,7 @@ set(SRC
   engines/overlay/overlay_edit_curve.c
   engines/overlay/overlay_edit_mesh.c
   engines/overlay/overlay_edit_text.c
+  engines/overlay/overlay_edit_uv.c
   engines/overlay/overlay_engine.c
   engines/overlay/overlay_extra.c
   engines/overlay/overlay_facing.c
@@ -163,6 +162,7 @@ set(SRC
   intern/draw_instance_data.h
   intern/draw_manager.h
   intern/draw_manager_profiling.h
+  intern/draw_manager_testing.h
   intern/draw_manager_text.h
   intern/draw_view.h
   intern/smaa_textures.h
@@ -318,6 +318,7 @@ data_to_c_simple(engines/basic/shaders/conservative_depth_geom.glsl SRC)
 data_to_c_simple(engines/basic/shaders/depth_vert.glsl SRC)
 data_to_c_simple(engines/basic/shaders/depth_frag.glsl SRC)
 
+data_to_c_simple(engines/overlay/shaders/common_overlay_lib.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/antialiasing_frag.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/antialiasing_vert.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/armature_dof_vert.glsl SRC)
@@ -361,6 +362,15 @@ data_to_c_simple(engines/overlay/shaders/edit_mesh_skin_root_vert.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/edit_mesh_vert.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/edit_particle_strand_vert.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/edit_particle_point_vert.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_edges_vert.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_edges_geom.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_edges_frag.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_verts_vert.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_verts_frag.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_faces_vert.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_face_dots_vert.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_stretching_vert.glsl SRC)
+data_to_c_simple(engines/overlay/shaders/edit_uv_tiled_image_borders_vert.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/extra_frag.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/extra_vert.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/extra_groundline_vert.glsl SRC)
@@ -401,6 +411,9 @@ data_to_c_simple(engines/overlay/shaders/wireframe_vert.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/wireframe_frag.glsl SRC)
 data_to_c_simple(engines/overlay/shaders/xray_fade_frag.glsl SRC)
 
+data_to_c_simple(engines/image/shaders/engine_image_frag.glsl SRC)
+data_to_c_simple(engines/image/shaders/engine_image_vert.glsl SRC)
+
 list(APPEND INC
 )
 
@@ -425,7 +438,6 @@ if(WITH_GTESTS)
   endif()
 endif()
 
-add_definitions(${GL_DEFINITIONS})
 
 blender_add_lib(bf_draw "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
 
@@ -436,9 +448,9 @@ if(WITH_GTESTS)
     )
     set(TEST_INC
       "../../../intern/ghost/"
+      "../gpu/tests/"
     )
     set(TEST_LIB
-      bf_draw
     )
     include(GTestTesting)
     blender_add_test_lib(bf_draw_tests "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")

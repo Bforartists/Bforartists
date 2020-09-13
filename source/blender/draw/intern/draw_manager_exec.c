@@ -29,7 +29,6 @@
 
 #include "BKE_global.h"
 
-#include "GPU_extensions.h"
 #include "GPU_platform.h"
 #include "GPU_shader.h"
 #include "GPU_state.h"
@@ -596,6 +595,12 @@ static void draw_update_uniforms(DRWShadingGroup *shgroup,
           break;
         case DRW_UNIFORM_TEXTURE_REF:
           GPU_texture_bind_ex(*uni->texture_ref, uni->sampler_state, uni->location, false);
+          break;
+        case DRW_UNIFORM_IMAGE:
+          GPU_texture_image_bind(uni->texture, uni->location);
+          break;
+        case DRW_UNIFORM_IMAGE_REF:
+          GPU_texture_image_bind(*uni->texture_ref, uni->location);
           break;
         case DRW_UNIFORM_BLOCK:
           GPU_uniformbuf_bind(uni->block, uni->location);

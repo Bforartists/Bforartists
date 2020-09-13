@@ -337,7 +337,6 @@ class OUTLINER_MT_object(Menu):
 
         space = context.space_data
         obj = context.active_object
-        object_mode = 'OBJECT' if obj is None else obj.mode
 
         layout.operator("outliner.object_operation", text="Select", icon="RESTRICT_SELECT_OFF").type = 'SELECT'
         layout.operator("outliner.object_operation", text="Select Hierarchy", icon="RESTRICT_SELECT_OFF").type = 'SELECT_HIERARCHY'
@@ -355,16 +354,6 @@ class OUTLINER_MT_object(Menu):
         layout.operator("outliner.delete", text="Delete Hierarchy", icon="DELETE").hierarchy = True
 
         layout.separator()
-
-        if object_mode in {'EDIT', 'POSE'}:
-            name = bpy.types.Object.bl_rna.properties["mode"].enum_items[object_mode].name
-            layout.operator("outliner.object_operation",
-                            text=iface_("%s Set", i18n_contexts.operator_default) % name).type = 'OBJECT_MODE_ENTER'
-            layout.operator("outliner.object_operation",
-                            text=iface_("%s Clear", i18n_contexts.operator_default) % name).type = 'OBJECT_MODE_EXIT'
-            del name
-
-            layout.separator()
 
         if not (space.display_mode == 'VIEW_LAYER' and not space.use_filter_collection):
             layout.operator("outliner.id_operation", text="Unlink", icon = "UNLINKED").type = 'UNLINK'
@@ -410,6 +399,10 @@ class OUTLINER_PT_filter(Panel):
 
         row = layout.row(align=True)
         row.prop(space, "use_sync_select", text="Sync Selection")
+
+        row = layout.row(align=True)
+        row.prop(space, "show_mode_column", text="Show Mode Column")
+        layout.separator()
 
         col = layout.column(align=True)
         col.label(text="Search:")
