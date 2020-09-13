@@ -1119,8 +1119,6 @@ class VIEW3D_MT_uv_map(Menu):
     def draw(self, context):
         layout = self.layout
 
-        tool_settings = context.tool_settings
-
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
         layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 

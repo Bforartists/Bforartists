@@ -25,7 +25,7 @@
 
 #include "DNA_userdef_types.h"
 
-#include "GPU_extensions.h"
+#include "GPU_capabilities.h"
 #include "GPU_framebuffer.h"
 #include "GPU_platform.h"
 
@@ -44,7 +44,7 @@ namespace blender::gpu {
 
 GLTexture::GLTexture(const char *name) : Texture(name)
 {
-  BLI_assert(GPU_context_active_get() != NULL);
+  BLI_assert(GLContext::get() != NULL);
 
   glGenTextures(1, &tex_id_);
 }
@@ -54,12 +54,12 @@ GLTexture::~GLTexture()
   if (framebuffer_) {
     GPU_framebuffer_free(framebuffer_);
   }
-  GPUContext *ctx = GPU_context_active_get();
+  GLContext *ctx = GLContext::get();
   if (ctx != NULL && is_bound_) {
     /* This avoid errors when the texture is still inside the bound texture array. */
     ctx->state_manager->texture_unbind(this);
   }
-  GLBackend::get()->tex_free(tex_id_);
+  GLContext::tex_free(tex_id_);
 }
 
 /* Return true on success. */
@@ -71,8 +71,9 @@ bool GLTexture::init_internal(void)
     format_ = GPU_DEPTH32F_STENCIL8;
   }
 
-  if ((type_ == GPU_TEXTURE_CUBE_ARRAY) && !GPU_arb_texture_cube_map_array_is_supported()) {
-    debug::raise_gl_error("Attempt to create a cubemap array without hardware support!");
+  if ((type_ == GPU_TEXTURE_CUBE_ARRAY) && (GLContext::texture_cube_map_array_support == false)) {
+    /* Silently fail and let the caller handle the error. */
+    // debug::raise_gl_error("Attempt to create a cubemap array without hardware support!");
     return false;
   }
 
@@ -88,29 +89,21 @@ bool GLTexture::init_internal(void)
   this->ensure_mipmaps(0);
 
   /* Avoid issue with incomplete textures. */
-  if (GLEW_ARB_direct_state_access) {
+  if (GLContext::direct_state_access_support) {
     glTextureParameteri(tex_id_, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
   else {
     glTexParameteri(target_, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
 
-#ifndef __APPLE__
-  if ((G.debug & G_DEBUG_GPU) && (GLEW_VERSION_4_3 || GLEW_KHR_debug)) {
-    char sh_name[64];
-    SNPRINTF(sh_name, "Texture-%s", name_);
-    /* Binding before setting the label is needed on some drivers. */
-    glObjectLabel(GL_TEXTURE, tex_id_, -1, sh_name);
-  }
-#endif
-
-  GL_CHECK_ERROR("Post-texture creation");
+  debug::object_label(GL_TEXTURE, tex_id_, name_);
   return true;
 }
 
 /* Return true on success. */
 bool GLTexture::init_internal(GPUVertBuf *vbo)
 {
+  GLVertBuf *gl_vbo = static_cast<GLVertBuf *>(unwrap(vbo));
   target_ = to_gl_target(type_);
 
   /* We need to bind once to define the texture type.  */
@@ -118,23 +111,15 @@ bool GLTexture::init_internal(GPUVertBuf *vbo)
 
   GLenum internal_format = to_gl_internal_format(format_);
 
-  if (GLEW_ARB_direct_state_access) {
-    glTextureBuffer(tex_id_, internal_format, vbo->vbo_id);
+  if (GLContext::direct_state_access_support) {
+    glTextureBuffer(tex_id_, internal_format, gl_vbo->vbo_id_);
   }
   else {
-    glTexBuffer(target_, internal_format, vbo->vbo_id);
+    glTexBuffer(target_, internal_format, gl_vbo->vbo_id_);
   }
 
-#ifndef __APPLE__
-  if ((G.debug & G_DEBUG_GPU) && (GLEW_VERSION_4_3 || GLEW_KHR_debug)) {
-    char sh_name[64];
-    SNPRINTF(sh_name, "Texture-%s", name_);
-    /* Binding before setting the label is needed on some drivers. */
-    glObjectLabel(GL_TEXTURE, tex_id_, -1, sh_name);
-  }
-#endif
+  debug::object_label(GL_TEXTURE, tex_id_, name_);
 
-  GL_CHECK_ERROR("Post-texture buffer creation");
   return true;
 }
 
@@ -195,8 +180,6 @@ void GLTexture::ensure_mipmaps(int miplvl)
           break;
       }
     }
-
-    GL_CHECK_ERROR("Post-mipmap creation");
   }
 
   this->mip_range_set(0, mipmaps_);
@@ -242,7 +225,6 @@ void GLTexture::update_sub_direct_state_access(
         break;
     }
   }
-  GL_CHECK_ERROR("Post-update_sub_direct_state_access");
 }
 
 void GLTexture::update_sub(
@@ -262,8 +244,8 @@ void GLTexture::update_sub(
   GLenum gl_format = to_gl_data_format(format_);
   GLenum gl_type = to_gl(type);
 
-  /* Some drivers have issues with cubemap & glTextureSubImage3D even if it correct. */
-  if (GLEW_ARB_direct_state_access && (type_ != GPU_TEXTURE_CUBE)) {
+  /* Some drivers have issues with cubemap & glTextureSubImage3D even if it is correct. */
+  if (GLContext::direct_state_access_support && (type_ != GPU_TEXTURE_CUBE)) {
     this->update_sub_direct_state_access(mip, offset, extent, gl_format, gl_type, data);
     return;
   }
@@ -306,8 +288,6 @@ void GLTexture::update_sub(
         break;
     }
   }
-
-  GL_CHECK_ERROR("Post-update_sub");
 }
 
 /** This will create the mipmap images and populate them with filtered data from base level.
@@ -326,7 +306,7 @@ void GLTexture::generate_mipmap(void)
   }
 
   /* Downsample from mip 0 using implementation. */
-  if (GLEW_ARB_direct_state_access) {
+  if (GLContext::direct_state_access_support) {
     glGenerateTextureMipmap(tex_id_);
   }
   else {
@@ -339,7 +319,7 @@ void GLTexture::clear(eGPUDataFormat data_format, const void *data)
 {
   BLI_assert(validate_data_format(format_, data_format));
 
-  if (GLEW_ARB_clear_texture && !(G.debug & G_DEBUG_GPU_FORCE_WORKAROUNDS)) {
+  if (GLContext::clear_texture_support) {
     int mip = 0;
     GLenum gl_format = to_gl_data_format(format_);
     GLenum gl_type = to_gl(data_format);
@@ -368,8 +348,7 @@ void GLTexture::copy_to(Texture *dst_)
   /* TODO support array / 3D textures. */
   BLI_assert(dst->d_ == 0);
 
-  if (GLEW_ARB_copy_image && !GPU_texture_copy_workaround()) {
-    /* Opengl 4.3 */
+  if (GLContext::copy_image_support) {
     int mip = 0;
     /* NOTE: mip_size_get() won't override any dimension that is equal to 0. */
     int extent[3] = {1, 1, 1};
@@ -405,7 +384,7 @@ void *GLTexture::read(int mip, eGPUDataFormat type)
   GLenum gl_format = to_gl_data_format(format_);
   GLenum gl_type = to_gl(type);
 
-  if (GLEW_ARB_direct_state_access) {
+  if (GLContext::direct_state_access_support) {
     glGetTextureImage(tex_id_, mip, gl_format, gl_type, texture_size, data);
   }
   else {
@@ -436,7 +415,7 @@ void GLTexture::swizzle_set(const char swizzle[4])
                          (GLint)swizzle_to_gl(swizzle[1]),
                          (GLint)swizzle_to_gl(swizzle[2]),
                          (GLint)swizzle_to_gl(swizzle[3])};
-  if (GLEW_ARB_direct_state_access) {
+  if (GLContext::direct_state_access_support) {
     glTextureParameteriv(tex_id_, GL_TEXTURE_SWIZZLE_RGBA, gl_swizzle);
   }
   else {
@@ -450,7 +429,7 @@ void GLTexture::mip_range_set(int min, int max)
   BLI_assert(min <= max && min >= 0 && max <= mipmaps_);
   mip_min_ = min;
   mip_max_ = max;
-  if (GLEW_ARB_direct_state_access) {
+  if (GLContext::direct_state_access_support) {
     glTextureParameteri(tex_id_, GL_TEXTURE_BASE_LEVEL, min);
     glTextureParameteri(tex_id_, GL_TEXTURE_MAX_LEVEL, max);
   }
@@ -511,6 +490,21 @@ void GLTexture::samplers_init(void)
      * - GL_TEXTURE_MAX_LOD is 1000.
      * - GL_TEXTURE_LOD_BIAS is 0.0f.
      **/
+
+    char sampler_name[128] = "\0\0";
+    SNPRINTF(sampler_name,
+             "%s%s%s%s%s%s%s%s%s%s",
+             (state == GPU_SAMPLER_DEFAULT) ? "_default" : "",
+             (state & GPU_SAMPLER_FILTER) ? "_filter" : "",
+             (state & GPU_SAMPLER_MIPMAP) ? "_mipmap" : "",
+             (state & GPU_SAMPLER_REPEAT) ? "_repeat-" : "",
+             (state & GPU_SAMPLER_REPEAT_S) ? "S" : "",
+             (state & GPU_SAMPLER_REPEAT_T) ? "T" : "",
+             (state & GPU_SAMPLER_REPEAT_R) ? "R" : "",
+             (state & GPU_SAMPLER_CLAMP_BORDER) ? "_clamp_border" : "",
+             (state & GPU_SAMPLER_COMPARE) ? "_compare" : "",
+             (state & GPU_SAMPLER_ANISO) ? "_aniso" : "");
+    debug::object_label(GL_SAMPLER, samplers_[i], &sampler_name[1]);
   }
   samplers_update();
 
@@ -519,11 +513,13 @@ void GLTexture::samplers_init(void)
   glSamplerParameteri(icon_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
   glSamplerParameteri(icon_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glSamplerParameterf(icon_sampler, GL_TEXTURE_LOD_BIAS, -0.5f);
+
+  debug::object_label(GL_SAMPLER, icon_sampler, "icons");
 }
 
 void GLTexture::samplers_update(void)
 {
-  if (!GLEW_EXT_texture_filter_anisotropic) {
+  if (!GLContext::texture_filter_anisotropic_support) {
     return;
   }
 
@@ -559,8 +555,8 @@ bool GLTexture::proxy_check(int mip)
 {
   /* Manual validation first, since some implementation have issues with proxy creation. */
   int max_size = GPU_max_texture_size();
-  int max_3d_size = GPU_max_texture_3d_size();
-  int max_cube_size = GPU_max_cube_map_size();
+  int max_3d_size = GLContext::max_texture_3d_size;
+  int max_cube_size = GLContext::max_cubemap_size;
   int size[3] = {1, 1, 1};
   this->mip_size_get(mip, size);
 
@@ -660,7 +656,7 @@ void GLTexture::check_feedback_loop(void)
   if (GPU_mip_render_workaround()) {
     return;
   }
-  GLFrameBuffer *fb = static_cast<GLFrameBuffer *>(GPU_context_active_get()->active_fb);
+  GLFrameBuffer *fb = static_cast<GLFrameBuffer *>(GLContext::get()->active_fb);
   for (int i = 0; i < ARRAY_SIZE(fb_); i++) {
     if (fb_[i] == fb) {
       GPUAttachmentType type = fb_attachment_[i];

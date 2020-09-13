@@ -53,9 +53,10 @@ def register_qcd():
     ui.preview_collections["icons"] = pcoll
 
     wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
-    kmi = km.keymap_items.new('view3d.qcd_move_widget', 'V', 'PRESS')
-    addon_qcd_keymaps.append((km, kmi))
+    if wm.keyconfigs.addon: # not present when started with --background
+        km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
+        kmi = km.keymap_items.new('view3d.qcd_move_widget', 'V', 'PRESS')
+        addon_qcd_keymaps.append((km, kmi))
 
     bpy.app.handlers.save_pre.append(save_internal_data)
     bpy.app.handlers.load_post.append(load_internal_data)
@@ -74,90 +75,92 @@ def register_qcd():
 
 def register_qcd_view_hotkeys():
     wm = bpy.context.window_manager
-    # create qcd hotkeys
-    qcd_hotkeys = [
-        ["ONE", False, "1"],
-        ["TWO", False, "2"],
-        ["THREE", False, "3"],
-        ["FOUR", False, "4"],
-        ["FIVE", False, "5"],
-        ["SIX", False, "6"],
-        ["SEVEN", False, "7"],
-        ["EIGHT", False, "8"],
-        ["NINE", False, "9"],
-        ["ZERO", False, "10"],
-        ["ONE", True, "11"],
-        ["TWO", True, "12"],
-        ["THREE", True, "13"],
-        ["FOUR", True, "14"],
-        ["FIVE", True, "15"],
-        ["SIX", True, "16"],
-        ["SEVEN", True, "17"],
-        ["EIGHT", True, "18"],
-        ["NINE", True, "19"],
-        ["ZERO", True, "20"],
-    ]
+    if wm.keyconfigs.addon: # not present when started with --background
+        # create qcd hotkeys
+        qcd_hotkeys = [
+            ["ONE", False, "1"],
+            ["TWO", False, "2"],
+            ["THREE", False, "3"],
+            ["FOUR", False, "4"],
+            ["FIVE", False, "5"],
+            ["SIX", False, "6"],
+            ["SEVEN", False, "7"],
+            ["EIGHT", False, "8"],
+            ["NINE", False, "9"],
+            ["ZERO", False, "10"],
+            ["ONE", True, "11"],
+            ["TWO", True, "12"],
+            ["THREE", True, "13"],
+            ["FOUR", True, "14"],
+            ["FIVE", True, "15"],
+            ["SIX", True, "16"],
+            ["SEVEN", True, "17"],
+            ["EIGHT", True, "18"],
+            ["NINE", True, "19"],
+            ["ZERO", True, "20"],
+        ]
 
-    for key in qcd_hotkeys:
-        for mode in ['Object Mode', 'Pose', 'Weight Paint']:
-            km = wm.keyconfigs.addon.keymaps.new(name=mode)
-            kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS', alt=key[1])
-            kmi.properties.slot = key[2]
-            kmi.properties.toggle = False
-            addon_qcd_view_hotkey_keymaps.append((km, kmi))
+        for key in qcd_hotkeys:
+            for mode in ['Object Mode', 'Pose', 'Weight Paint']:
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS', alt=key[1])
+                kmi.properties.slot = key[2]
+                kmi.properties.toggle = False
+                addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
-            km = wm.keyconfigs.addon.keymaps.new(name=mode)
-            kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS',shift=True,  alt=key[1])
-            kmi.properties.slot = key[2]
-            kmi.properties.toggle = True
-            addon_qcd_view_hotkey_keymaps.append((km, kmi))
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS',shift=True,  alt=key[1])
+                kmi.properties.slot = key[2]
+                kmi.properties.toggle = True
+                addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
 
 def register_qcd_view_edit_mode_hotkeys():
     wm = bpy.context.window_manager
-    # create qcd hotkeys
-    qcd_hotkeys = [
-        ["ONE", False, "1"],
-        ["TWO", False, "2"],
-        ["THREE", False, "3"],
-        ["FOUR", False, "4"],
-        ["FIVE", False, "5"],
-        ["SIX", False, "6"],
-        ["SEVEN", False, "7"],
-        ["EIGHT", False, "8"],
-        ["NINE", False, "9"],
-        ["ZERO", False, "10"],
-        ["ONE", True, "11"],
-        ["TWO", True, "12"],
-        ["THREE", True, "13"],
-        ["FOUR", True, "14"],
-        ["FIVE", True, "15"],
-        ["SIX", True, "16"],
-        ["SEVEN", True, "17"],
-        ["EIGHT", True, "18"],
-        ["NINE", True, "19"],
-        ["ZERO", True, "20"],
-    ]
+    if wm.keyconfigs.addon: # not present when started with --background
+        # create qcd hotkeys
+        qcd_hotkeys = [
+            ["ONE", False, "1"],
+            ["TWO", False, "2"],
+            ["THREE", False, "3"],
+            ["FOUR", False, "4"],
+            ["FIVE", False, "5"],
+            ["SIX", False, "6"],
+            ["SEVEN", False, "7"],
+            ["EIGHT", False, "8"],
+            ["NINE", False, "9"],
+            ["ZERO", False, "10"],
+            ["ONE", True, "11"],
+            ["TWO", True, "12"],
+            ["THREE", True, "13"],
+            ["FOUR", True, "14"],
+            ["FIVE", True, "15"],
+            ["SIX", True, "16"],
+            ["SEVEN", True, "17"],
+            ["EIGHT", True, "18"],
+            ["NINE", True, "19"],
+            ["ZERO", True, "20"],
+        ]
 
-    for mode in ["Mesh", "Curve", "Armature", "Metaball", "Lattice", "Grease Pencil Stroke Edit Mode"]:
-        for key in qcd_hotkeys:
-            km = wm.keyconfigs.addon.keymaps.new(name=mode)
-            kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS', alt=key[1])
-            kmi.properties.slot = key[2]
-            kmi.properties.toggle = False
-            addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
+        for mode in ["Mesh", "Curve", "Armature", "Metaball", "Lattice", "Grease Pencil Stroke Edit Mode"]:
+            for key in qcd_hotkeys:
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS', alt=key[1])
+                kmi.properties.slot = key[2]
+                kmi.properties.toggle = False
+                addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
 
-            km = wm.keyconfigs.addon.keymaps.new(name=mode)
-            kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS',shift=True,  alt=key[1])
-            kmi.properties.slot = key[2]
-            kmi.properties.toggle = True
-            addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.view_qcd_slot', key[0], 'PRESS',shift=True,  alt=key[1])
+                kmi.properties.slot = key[2]
+                kmi.properties.toggle = True
+                addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
 
 
-    km = wm.keyconfigs.addon.keymaps.new(name="Mesh")
-    kmi = km.keymap_items.new('wm.call_menu', 'ACCENT_GRAVE', 'PRESS')
-    kmi.properties.name = "VIEW3D_MT_edit_mesh_select_mode"
-    addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
+        km = wm.keyconfigs.addon.keymaps.new(name="Mesh")
+        kmi = km.keymap_items.new('wm.call_menu', 'ACCENT_GRAVE', 'PRESS')
+        kmi.properties.name = "VIEW3D_MT_edit_mesh_select_mode"
+        addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
 
 
 

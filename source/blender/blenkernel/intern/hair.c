@@ -47,6 +47,11 @@
 
 #include "DEG_depsgraph_query.h"
 
+#include "BLO_read_write.h"
+
+static const char *HAIR_ATTR_POSITION = "Position";
+static const char *HAIR_ATTR_RADIUS = "Radius";
+
 /* Hair datablock */
 
 static void hair_random(Hair *hair);
@@ -61,8 +66,10 @@ static void hair_init_data(ID *id)
   CustomData_reset(&hair->pdata);
   CustomData_reset(&hair->cdata);
 
-  CustomData_add_layer(&hair->pdata, CD_LOCATION, CD_CALLOC, NULL, hair->totpoint);
-  CustomData_add_layer(&hair->pdata, CD_RADIUS, CD_CALLOC, NULL, hair->totpoint);
+  CustomData_add_layer_named(
+      &hair->pdata, CD_PROP_FLOAT3, CD_CALLOC, NULL, hair->totpoint, HAIR_ATTR_POSITION);
+  CustomData_add_layer_named(
+      &hair->pdata, CD_PROP_FLOAT, CD_CALLOC, NULL, hair->totpoint, HAIR_ATTR_RADIUS);
   CustomData_add_layer(&hair->cdata, CD_HAIRCURVE, CD_CALLOC, NULL, hair->totcurve);
   BKE_hair_update_customdata_pointers(hair);
 
@@ -104,6 +111,69 @@ static void hair_foreach_id(ID *id, LibraryForeachIDData *data)
   }
 }
 
+static void hair_blend_write(BlendWriter *writer, ID *id, const void *id_address)
+{
+  Hair *hair = (Hair *)id;
+  if (hair->id.us > 0 || BLO_write_is_undo(writer)) {
+    CustomDataLayer *players = NULL, players_buff[CD_TEMP_CHUNK_SIZE];
+    CustomDataLayer *clayers = NULL, clayers_buff[CD_TEMP_CHUNK_SIZE];
+    CustomData_blend_write_prepare(&hair->pdata, &players, players_buff, ARRAY_SIZE(players_buff));
+    CustomData_blend_write_prepare(&hair->cdata, &clayers, clayers_buff, ARRAY_SIZE(clayers_buff));
+
+    /* Write LibData */
+    BLO_write_id_struct(writer, Hair, id_address, &hair->id);
+    BKE_id_blend_write(writer, &hair->id);
+
+    /* Direct data */
+    CustomData_blend_write(writer, &hair->pdata, players, hair->totpoint, CD_MASK_ALL, &hair->id);
+    CustomData_blend_write(writer, &hair->cdata, clayers, hair->totcurve, CD_MASK_ALL, &hair->id);
+
+    BLO_write_pointer_array(writer, hair->totcol, hair->mat);
+    if (hair->adt) {
+      BKE_animdata_blend_write(writer, hair->adt);
+    }
+
+    /* Remove temporary data. */
+    if (players && players != players_buff) {
+      MEM_freeN(players);
+    }
+    if (clayers && clayers != clayers_buff) {
+      MEM_freeN(clayers);
+    }
+  }
+}
+
+static void hair_blend_read_data(BlendDataReader *reader, ID *id)
+{
+  Hair *hair = (Hair *)id;
+  BLO_read_data_address(reader, &hair->adt);
+  BKE_animdata_blend_read_data(reader, hair->adt);
+
+  /* Geometry */
+  CustomData_blend_read(reader, &hair->pdata, hair->totpoint);
+  CustomData_blend_read(reader, &hair->cdata, hair->totcurve);
+  BKE_hair_update_customdata_pointers(hair);
+
+  /* Materials */
+  BLO_read_pointer_array(reader, (void **)&hair->mat);
+}
+
+static void hair_blend_read_lib(BlendLibReader *reader, ID *id)
+{
+  Hair *hair = (Hair *)id;
+  for (int a = 0; a < hair->totcol; a++) {
+    BLO_read_id_address(reader, hair->id.lib, &hair->mat[a]);
+  }
+}
+
+static void hair_blend_read_expand(BlendExpander *expander, ID *id)
+{
+  Hair *hair = (Hair *)id;
+  for (int a = 0; a < hair->totcol; a++) {
+    BLO_expand(expander, hair->mat[a]);
+  }
+}
+
 IDTypeInfo IDType_ID_HA = {
     .id_code = ID_HA,
     .id_filter = FILTER_ID_HA,
@@ -121,10 +191,10 @@ IDTypeInfo IDType_ID_HA = {
     .foreach_id = hair_foreach_id,
     .foreach_cache = NULL,
 
-    .blend_write = NULL,
-    .blend_read_data = NULL,
-    .blend_read_lib = NULL,
-    .blend_read_expand = NULL,
+    .blend_write = hair_blend_write,
+    .blend_read_data = hair_blend_read_data,
+    .blend_read_lib = hair_blend_read_lib,
+    .blend_read_expand = hair_blend_read_expand,
 };
 
 static void hair_random(Hair *hair)
@@ -222,10 +292,15 @@ BoundBox *BKE_hair_boundbox_get(Object *ob)
 
 void BKE_hair_update_customdata_pointers(Hair *hair)
 {
-  hair->co = CustomData_get_layer(&hair->pdata, CD_LOCATION);
-  hair->radius = CustomData_get_layer(&hair->pdata, CD_RADIUS);
+  hair->co = CustomData_get_layer_named(&hair->pdata, CD_PROP_FLOAT3, HAIR_ATTR_POSITION);
+  hair->radius = CustomData_get_layer_named(&hair->pdata, CD_PROP_FLOAT, HAIR_ATTR_RADIUS);
   hair->curves = CustomData_get_layer(&hair->cdata, CD_HAIRCURVE);
   hair->mapping = CustomData_get_layer(&hair->cdata, CD_HAIRMAPPING);
+}
+
+bool BKE_hair_customdata_required(Hair *UNUSED(hair), CustomDataLayer *layer)
+{
+  return layer->type == CD_PROP_FLOAT3 && STREQ(layer->name, HAIR_ATTR_POSITION);
 }
 
 /* Dependency Graph */
@@ -294,7 +369,8 @@ static Hair *hair_evaluate_modifiers(struct Depsgraph *depsgraph,
       }
 
       /* Ensure we are not overwriting referenced data. */
-      CustomData_duplicate_referenced_layer(&hair->pdata, CD_LOCATION, hair->totpoint);
+      CustomData_duplicate_referenced_layer_named(
+          &hair->pdata, CD_PROP_FLOAT3, HAIR_ATTR_POSITION, hair->totpoint);
       BKE_hair_update_customdata_pointers(hair);
 
       /* Created deformed coordinates array on demand. */

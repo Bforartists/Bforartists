@@ -520,40 +520,43 @@ def generate_rig(context, metarig):
         raise e
 
 
-def create_selection_sets(obj, metarig):
+def create_selection_set_for_rig_layer(
+        rig: bpy.types.Object, 
+        set_name: str, 
+        layer_idx: int
+    ) -> None:
+    """Create a single selection set on a rig.
 
+    The set will contain all bones on the rig layer with the given index.
+    """
+    selset = rig.selection_sets.add()
+    selset.name = set_name
+
+    for b in rig.pose.bones:
+        if not b.bone.layers[layer_idx] or b.name in selset.bone_ids:
+            continue
+    
+        bone_id = selset.bone_ids.add()
+        bone_id.name = b.name
+
+def create_selection_sets(obj, metarig):
+    """Create selection sets if the Selection Sets addon is enabled.
+
+    Whether a selection set for a rig layer is created is controlled in the
+    Rigify Layer Names panel.
+    """
     # Check if selection sets addon is installed
     if 'bone_selection_groups' not in bpy.context.preferences.addons \
             and 'bone_selection_sets' not in bpy.context.preferences.addons:
         return
 
-    bpy.ops.object.mode_set(mode='POSE')
-
-    bpy.context.view_layer.objects.active = obj
-    obj.select_set(True)
-    metarig.select_set(False)
-    pbones = obj.pose.bones
+    obj.selection_sets.clear()
 
     for i, name in enumerate(metarig.data.rigify_layers.keys()):
         if name == '' or not metarig.data.rigify_layers[i].selset:
             continue
 
-        bpy.ops.pose.select_all(action='DESELECT')
-        for b in pbones:
-            if b.bone.layers[i]:
-                b.bone.select = True
-
-        #bpy.ops.pose.selection_set_add()
-        obj.selection_sets.add()
-        obj.selection_sets[-1].name = name
-        if 'bone_selection_sets' in bpy.context.preferences.addons:
-            act_sel_set = obj.selection_sets[-1]
-
-            # iterate only the selected bones in current pose that are not hidden
-            for bone in bpy.context.selected_pose_bones:
-                if bone.name not in act_sel_set.bone_ids:
-                    bone_id = act_sel_set.bone_ids.add()
-                    bone_id.name = bone.name
+        create_selection_set_for_rig_layer(obj, name, i)
 
 
 def create_bone_groups(obj, metarig, priorities={}):

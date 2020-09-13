@@ -2224,6 +2224,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
             context, (
                 ({"property": "use_new_particle_system"}, "T73324"),
                 ({"property": "use_sculpt_vertex_colors"}, "T71947"),
+                ({"property": "use_tools_missing_icons"}, "T80331"),
             ),
         )
 
@@ -2253,6 +2254,7 @@ class USERPREF_PT_experimental_debugging(ExperimentalPanel, Panel):
             context, (
                 ({"property": "use_undo_legacy"}, "T60695"),
                 ({"property": "use_cycles_debug"}, None),
+                ({"property": "use_image_editor_legacy_drawing"}, "T67530"),
             ),
         )
 
