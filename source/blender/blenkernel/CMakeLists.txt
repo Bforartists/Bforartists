@@ -57,7 +57,6 @@ set(INC
 )
 
 set(INC_SYS
-  ${GLEW_INCLUDE_PATH}
   ${ZLIB_INCLUDE_DIRS}
 )
 
@@ -77,6 +76,7 @@ set(SRC
   intern/armature.c
   intern/armature_deform.c
   intern/armature_update.c
+  intern/attribute.c
   intern/autoexec.c
   intern/blender.c
   intern/blender_copybuffer.c
@@ -267,6 +267,7 @@ set(SRC
   BKE_animsys.h
   BKE_appdir.h
   BKE_armature.h
+  BKE_attribute.h
   BKE_autoexec.h
   BKE_blender.h
   BKE_blender_copybuffer.h
@@ -455,7 +456,6 @@ if(WITH_BINRELOC)
   add_definitions(-DWITH_BINRELOC)
 endif()
 
-add_definitions(${GL_DEFINITIONS})
 
 if(WIN32)
   list(APPEND INC

@@ -113,6 +113,7 @@
 
 #include "BKE_action.h"
 #include "BKE_anim_data.h"
+#include "BKE_animsys.h"
 #include "BKE_armature.h"
 #include "BKE_brush.h"
 #include "BKE_collection.h"
@@ -126,8 +127,10 @@
 #include "BKE_fcurve_driver.h"
 #include "BKE_fluid.h"
 #include "BKE_global.h"  // for G
+#include "BKE_gpencil.h"
 #include "BKE_gpencil_modifier.h"
 #include "BKE_hair.h"
+#include "BKE_icons.h"
 #include "BKE_idprop.h"
 #include "BKE_idtype.h"
 #include "BKE_image.h"
@@ -145,6 +148,7 @@
 #include "BKE_nla.h"
 #include "BKE_node.h"  // for tree type defines
 #include "BKE_object.h"
+#include "BKE_packedFile.h"
 #include "BKE_paint.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
@@ -262,6 +266,7 @@ static void *read_struct(FileData *fd, BHead *bh, const char *blockname);
 static void direct_link_modifiers(BlendDataReader *reader, ListBase *lb, Object *ob);
 static BHead *find_bhead_from_code_name(FileData *fd, const short idcode, const char *name);
 static BHead *find_bhead_from_idname(FileData *fd, const char *idname);
+static bool library_link_idcode_needs_tag_check(const short idcode, const int flag);
 
 #ifdef USE_COLLECTION_COMPAT_28
 static void expand_scene_collection(BlendExpander *expander, SceneCollection *sc);
@@ -2245,35 +2250,10 @@ static void link_glob_list(FileData *fd, ListBase *lb) /* for glob data */
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Read Image Preview
- * \{ */
-
-static PreviewImage *direct_link_preview_image(BlendDataReader *reader, PreviewImage *old_prv)
-{
-  PreviewImage *prv = BLO_read_get_new_data_address(reader, old_prv);
-
-  if (prv) {
-    for (int i = 0; i < NUM_ICON_SIZES; i++) {
-      if (prv->rect[i]) {
-        BLO_read_data_address(reader, &prv->rect[i]);
-      }
-      prv->gputexture[i] = NULL;
-    }
-    prv->icon_id = 0;
-    prv->tag = 0;
-  }
-
-  return prv;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Read ID
  * \{ */
 
 static void lib_link_id(BlendLibReader *reader, ID *id);
-static void lib_link_nodetree(BlendLibReader *reader, bNodeTree *ntree);
 static void lib_link_collection(BlendLibReader *reader, Collection *collection);
 
 static void lib_link_id_embedded_id(BlendLibReader *reader, ID *id)
@@ -2283,7 +2263,7 @@ static void lib_link_id_embedded_id(BlendLibReader *reader, ID *id)
   bNodeTree *nodetree = ntreeFromID(id);
   if (nodetree != NULL) {
     lib_link_id(reader, &nodetree->id);
-    lib_link_nodetree(reader, nodetree);
+    ntreeBlendReadLib(reader, nodetree);
   }
 
   if (GS(id->name) == ID_SCE) {
@@ -2337,7 +2317,6 @@ static void direct_link_id_override_property_cb(BlendDataReader *reader, void *d
 
 static void direct_link_id_common(
     BlendDataReader *reader, Library *current_library, ID *id, ID *id_old, const int tag);
-static void direct_link_nodetree(BlendDataReader *reader, bNodeTree *ntree);
 static void direct_link_collection(BlendDataReader *reader, Collection *collection);
 
 static void direct_link_id_embedded_id(BlendDataReader *reader,
@@ -2354,7 +2333,7 @@ static void direct_link_id_embedded_id(BlendDataReader *reader,
                           (ID *)*nodetree,
                           id_old != NULL ? (ID *)ntreeFromID(id_old) : NULL,
                           0);
-    direct_link_nodetree(reader, *nodetree);
+    ntreeBlendReadData(reader, *nodetree);
   }
 
   if (GS(id->name) == ID_SCE) {
@@ -2500,157 +2479,6 @@ static void direct_link_id_common(
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Read ID: Brush
- * \{ */
-
-/* library brush linking after fileread */
-static void lib_link_brush(BlendLibReader *reader, Brush *brush)
-{
-  /* brush->(mask_)mtex.obj is ignored on purpose? */
-  BLO_read_id_address(reader, brush->id.lib, &brush->mtex.tex);
-  BLO_read_id_address(reader, brush->id.lib, &brush->mask_mtex.tex);
-  BLO_read_id_address(reader, brush->id.lib, &brush->clone.image);
-  BLO_read_id_address(reader, brush->id.lib, &brush->toggle_brush);
-  BLO_read_id_address(reader, brush->id.lib, &brush->paint_curve);
-
-  /* link default grease pencil palette */
-  if (brush->gpencil_settings != NULL) {
-    if (brush->gpencil_settings->flag & GP_BRUSH_MATERIAL_PINNED) {
-      BLO_read_id_address(reader, brush->id.lib, &brush->gpencil_settings->material);
-
-      if (!brush->gpencil_settings->material) {
-        brush->gpencil_settings->flag &= ~GP_BRUSH_MATERIAL_PINNED;
-      }
-    }
-    else {
-      brush->gpencil_settings->material = NULL;
-    }
-  }
-}
-
-static void direct_link_brush(BlendDataReader *reader, Brush *brush)
-{
-  /* brush itself has been read */
-
-  /* fallof curve */
-  BLO_read_data_address(reader, &brush->curve);
-
-  BLO_read_data_address(reader, &brush->gradient);
-
-  if (brush->curve) {
-    BKE_curvemapping_blend_read(reader, brush->curve);
-  }
-  else {
-    BKE_brush_curve_preset(brush, CURVE_PRESET_SHARP);
-  }
-
-  /* grease pencil */
-  BLO_read_data_address(reader, &brush->gpencil_settings);
-  if (brush->gpencil_settings != NULL) {
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_sensitivity);
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_strength);
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_jitter);
-
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_rand_pressure);
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_rand_strength);
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_rand_uv);
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_rand_hue);
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_rand_saturation);
-    BLO_read_data_address(reader, &brush->gpencil_settings->curve_rand_value);
-
-    if (brush->gpencil_settings->curve_sensitivity) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_sensitivity);
-    }
-
-    if (brush->gpencil_settings->curve_strength) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_strength);
-    }
-
-    if (brush->gpencil_settings->curve_jitter) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_jitter);
-    }
-
-    if (brush->gpencil_settings->curve_rand_pressure) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_rand_pressure);
-    }
-
-    if (brush->gpencil_settings->curve_rand_strength) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_rand_strength);
-    }
-
-    if (brush->gpencil_settings->curve_rand_uv) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_rand_uv);
-    }
-
-    if (brush->gpencil_settings->curve_rand_hue) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_rand_hue);
-    }
-
-    if (brush->gpencil_settings->curve_rand_saturation) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_rand_saturation);
-    }
-
-    if (brush->gpencil_settings->curve_rand_value) {
-      BKE_curvemapping_blend_read(reader, brush->gpencil_settings->curve_rand_value);
-    }
-  }
-
-  brush->preview = NULL;
-  brush->icon_imbuf = NULL;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Palette
- * \{ */
-
-static void lib_link_palette(BlendLibReader *UNUSED(reader), Palette *UNUSED(palette))
-{
-}
-
-static void direct_link_palette(BlendDataReader *reader, Palette *palette)
-{
-
-  /* palette itself has been read */
-  BLO_read_list(reader, &palette->colors);
-}
-
-static void lib_link_paint_curve(BlendLibReader *UNUSED(reader), PaintCurve *UNUSED(pc))
-{
-}
-
-static void direct_link_paint_curve(BlendDataReader *reader, PaintCurve *pc)
-{
-  BLO_read_data_address(reader, &pc->points);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read PackedFile
- * \{ */
-
-static PackedFile *direct_link_packedfile(BlendDataReader *reader, PackedFile *pf)
-{
-  BLO_read_packed_address(reader, &pf);
-
-  if (pf) {
-    BLO_read_packed_address(reader, &pf->data);
-    if (pf->data == NULL) {
-      /* We cannot allow a PackedFile with a NULL data field,
-       * the whole code assumes this is not possible. See T70315. */
-      printf("%s: NULL packedfile data, cleaning up...\n", __func__);
-      MEM_SAFE_FREE(pf);
-    }
-  }
-
-  return pf;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
 /** \name Read Animation (legacy for version patching)
  * \{ */
 
@@ -2705,102 +2533,6 @@ static void lib_link_constraint_channels(BlendLibReader *reader, ID *id, ListBas
   LISTBASE_FOREACH (bConstraintChannel *, chan, chanbase) {
     BLO_read_id_address(reader, id->lib, &chan->ipo);
   }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Action
- * \{ */
-
-static void lib_link_action(BlendLibReader *reader, bAction *act)
-{
-  // XXX deprecated - old animation system <<<
-  LISTBASE_FOREACH (bActionChannel *, chan, &act->chanbase) {
-    BLO_read_id_address(reader, act->id.lib, &chan->ipo);
-    lib_link_constraint_channels(reader, &act->id, &chan->constraintChannels);
-  }
-  // >>> XXX deprecated - old animation system
-
-  BKE_fcurve_blend_read_lib(reader, &act->id, &act->curves);
-
-  LISTBASE_FOREACH (TimeMarker *, marker, &act->markers) {
-    if (marker->camera) {
-      BLO_read_id_address(reader, act->id.lib, &marker->camera);
-    }
-  }
-}
-
-static void direct_link_action(BlendDataReader *reader, bAction *act)
-{
-  BLO_read_list(reader, &act->curves);
-  BLO_read_list(reader, &act->chanbase);  // XXX deprecated - old animation system
-  BLO_read_list(reader, &act->groups);
-  BLO_read_list(reader, &act->markers);
-
-  // XXX deprecated - old animation system <<<
-  LISTBASE_FOREACH (bActionChannel *, achan, &act->chanbase) {
-    BLO_read_data_address(reader, &achan->grp);
-
-    BLO_read_list(reader, &achan->constraintChannels);
-  }
-  // >>> XXX deprecated - old animation system
-
-  BKE_fcurve_blend_read_data(reader, &act->curves);
-
-  LISTBASE_FOREACH (bActionGroup *, agrp, &act->groups) {
-    BLO_read_data_address(reader, &agrp->channels.first);
-    BLO_read_data_address(reader, &agrp->channels.last);
-  }
-}
-
-/* ------- */
-
-static void lib_link_keyingsets(BlendLibReader *reader, ID *id, ListBase *list)
-{
-  /* here, we're only interested in the ID pointer stored in some of the paths */
-  LISTBASE_FOREACH (KeyingSet *, ks, list) {
-    LISTBASE_FOREACH (KS_Path *, ksp, &ks->paths) {
-      BLO_read_id_address(reader, id->lib, &ksp->id);
-    }
-  }
-}
-
-/* NOTE: this assumes that BLO_read_list has already been called on the list */
-static void direct_link_keyingsets(BlendDataReader *reader, ListBase *list)
-{
-  /* link KeyingSet data to KeyingSet again (non ID-libs) */
-  LISTBASE_FOREACH (KeyingSet *, ks, list) {
-    /* paths */
-    BLO_read_list(reader, &ks->paths);
-
-    LISTBASE_FOREACH (KS_Path *, ksp, &ks->paths) {
-      /* rna path */
-      BLO_read_data_address(reader, &ksp->rna_path);
-    }
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: CacheFiles
- * \{ */
-
-static void lib_link_cachefiles(BlendLibReader *UNUSED(reader), CacheFile *UNUSED(cache_file))
-{
-}
-
-static void direct_link_cachefile(BlendDataReader *reader, CacheFile *cache_file)
-{
-  BLI_listbase_clear(&cache_file->object_paths);
-  cache_file->handle = NULL;
-  cache_file->handle_filepath[0] = '\0';
-  cache_file->handle_readers = NULL;
-
-  /* relink animdata */
-  BLO_read_data_address(reader, &cache_file->adt);
-  BKE_animdata_blend_read_data(reader, cache_file->adt);
 }
 
 /** \} */
@@ -2872,246 +2604,6 @@ static void lib_link_workspace_instance_hook(BlendLibReader *reader,
   WorkSpace *workspace = BKE_workspace_active_get(hook);
   BLO_read_id_address(reader, id->lib, &workspace);
   BKE_workspace_active_set(hook, workspace);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Node Tree
- * \{ */
-
-static void lib_link_node_socket(BlendLibReader *reader, Library *lib, bNodeSocket *sock)
-{
-  IDP_BlendReadLib(reader, sock->prop);
-
-  switch ((eNodeSocketDatatype)sock->type) {
-    case SOCK_OBJECT: {
-      bNodeSocketValueObject *default_value = sock->default_value;
-      BLO_read_id_address(reader, lib, &default_value->value);
-      break;
-    }
-    case SOCK_IMAGE: {
-      bNodeSocketValueImage *default_value = sock->default_value;
-      BLO_read_id_address(reader, lib, &default_value->value);
-      break;
-    }
-    case SOCK_FLOAT:
-    case SOCK_VECTOR:
-    case SOCK_RGBA:
-    case SOCK_BOOLEAN:
-    case SOCK_INT:
-    case SOCK_STRING:
-    case __SOCK_MESH:
-    case SOCK_CUSTOM:
-    case SOCK_SHADER:
-    case SOCK_EMITTERS:
-    case SOCK_EVENTS:
-    case SOCK_FORCES:
-    case SOCK_CONTROL_FLOW:
-      break;
-  }
-}
-
-static void lib_link_node_sockets(BlendLibReader *reader, Library *lib, ListBase *sockets)
-{
-  LISTBASE_FOREACH (bNodeSocket *, sock, sockets) {
-    lib_link_node_socket(reader, lib, sock);
-  }
-}
-
-/* Single node tree (also used for material/scene trees), ntree is not NULL */
-static void lib_link_ntree(BlendLibReader *reader, Library *lib, bNodeTree *ntree)
-{
-  ntree->id.lib = lib;
-
-  BLO_read_id_address(reader, lib, &ntree->gpd);
-
-  LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-    /* Link ID Properties -- and copy this comment EXACTLY for easy finding
-     * of library blocks that implement this.*/
-    IDP_BlendReadLib(reader, node->prop);
-
-    BLO_read_id_address(reader, lib, &node->id);
-
-    lib_link_node_sockets(reader, lib, &node->inputs);
-    lib_link_node_sockets(reader, lib, &node->outputs);
-  }
-
-  lib_link_node_sockets(reader, lib, &ntree->inputs);
-  lib_link_node_sockets(reader, lib, &ntree->outputs);
-
-  /* Set node->typeinfo pointers. This is done in lib linking, after the
-   * first versioning that can change types still without functions that
-   * update the typeinfo pointers. Versioning after lib linking needs
-   * these top be valid. */
-  ntreeSetTypes(NULL, ntree);
-
-  /* For nodes with static socket layout, add/remove sockets as needed
-   * to match the static layout. */
-  if (!BLO_read_lib_is_undo(reader)) {
-    LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-      node_verify_socket_templates(ntree, node);
-    }
-  }
-}
-
-/* library ntree linking after fileread */
-static void lib_link_nodetree(BlendLibReader *reader, bNodeTree *ntree)
-{
-  lib_link_ntree(reader, ntree->id.lib, ntree);
-}
-
-static void direct_link_node_socket(BlendDataReader *reader, bNodeSocket *sock)
-{
-  BLO_read_data_address(reader, &sock->prop);
-  IDP_BlendDataRead(reader, &sock->prop);
-
-  BLO_read_data_address(reader, &sock->link);
-  sock->typeinfo = NULL;
-  BLO_read_data_address(reader, &sock->storage);
-  BLO_read_data_address(reader, &sock->default_value);
-  sock->cache = NULL;
-}
-
-/* ntree itself has been read! */
-static void direct_link_nodetree(BlendDataReader *reader, bNodeTree *ntree)
-{
-  /* note: writing and reading goes in sync, for speed */
-
-  ntree->init = 0; /* to set callbacks and force setting types */
-  ntree->is_updating = false;
-  ntree->typeinfo = NULL;
-  ntree->interface_type = NULL;
-
-  ntree->progress = NULL;
-  ntree->execdata = NULL;
-
-  BLO_read_data_address(reader, &ntree->adt);
-  BKE_animdata_blend_read_data(reader, ntree->adt);
-
-  BLO_read_list(reader, &ntree->nodes);
-  LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-    node->typeinfo = NULL;
-
-    BLO_read_list(reader, &node->inputs);
-    BLO_read_list(reader, &node->outputs);
-
-    BLO_read_data_address(reader, &node->prop);
-    IDP_BlendDataRead(reader, &node->prop);
-
-    BLO_read_list(reader, &node->internal_links);
-    LISTBASE_FOREACH (bNodeLink *, link, &node->internal_links) {
-      BLO_read_data_address(reader, &link->fromnode);
-      BLO_read_data_address(reader, &link->fromsock);
-      BLO_read_data_address(reader, &link->tonode);
-      BLO_read_data_address(reader, &link->tosock);
-    }
-
-    if (node->type == CMP_NODE_MOVIEDISTORTION) {
-      /* Do nothing, this is runtime cache and hence handled by generic code using
-       * `IDTypeInfo.foreach_cache` callback. */
-    }
-    else {
-      BLO_read_data_address(reader, &node->storage);
-    }
-
-    if (node->storage) {
-      /* could be handlerized at some point */
-      switch (node->type) {
-        case SH_NODE_CURVE_VEC:
-        case SH_NODE_CURVE_RGB:
-        case CMP_NODE_TIME:
-        case CMP_NODE_CURVE_VEC:
-        case CMP_NODE_CURVE_RGB:
-        case CMP_NODE_HUECORRECT:
-        case TEX_NODE_CURVE_RGB:
-        case TEX_NODE_CURVE_TIME: {
-          BKE_curvemapping_blend_read(reader, node->storage);
-          break;
-        }
-        case SH_NODE_SCRIPT: {
-          NodeShaderScript *nss = (NodeShaderScript *)node->storage;
-          BLO_read_data_address(reader, &nss->bytecode);
-          break;
-        }
-        case SH_NODE_TEX_POINTDENSITY: {
-          NodeShaderTexPointDensity *npd = (NodeShaderTexPointDensity *)node->storage;
-          memset(&npd->pd, 0, sizeof(npd->pd));
-          break;
-        }
-        case SH_NODE_TEX_IMAGE: {
-          NodeTexImage *tex = (NodeTexImage *)node->storage;
-          tex->iuser.ok = 1;
-          tex->iuser.scene = NULL;
-          break;
-        }
-        case SH_NODE_TEX_ENVIRONMENT: {
-          NodeTexEnvironment *tex = (NodeTexEnvironment *)node->storage;
-          tex->iuser.ok = 1;
-          tex->iuser.scene = NULL;
-          break;
-        }
-        case CMP_NODE_IMAGE:
-        case CMP_NODE_R_LAYERS:
-        case CMP_NODE_VIEWER:
-        case CMP_NODE_SPLITVIEWER: {
-          ImageUser *iuser = node->storage;
-          iuser->ok = 1;
-          iuser->scene = NULL;
-          break;
-        }
-        case CMP_NODE_CRYPTOMATTE: {
-          NodeCryptomatte *nc = (NodeCryptomatte *)node->storage;
-          BLO_read_data_address(reader, &nc->matte_id);
-          break;
-        }
-        case TEX_NODE_IMAGE: {
-          ImageUser *iuser = node->storage;
-          iuser->ok = 1;
-          iuser->scene = NULL;
-          break;
-        }
-        default:
-          break;
-      }
-    }
-  }
-  BLO_read_list(reader, &ntree->links);
-
-  /* and we connect the rest */
-  LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-    BLO_read_data_address(reader, &node->parent);
-    node->lasty = 0;
-
-    LISTBASE_FOREACH (bNodeSocket *, sock, &node->inputs) {
-      direct_link_node_socket(reader, sock);
-    }
-    LISTBASE_FOREACH (bNodeSocket *, sock, &node->outputs) {
-      direct_link_node_socket(reader, sock);
-    }
-  }
-
-  /* interface socket lists */
-  BLO_read_list(reader, &ntree->inputs);
-  BLO_read_list(reader, &ntree->outputs);
-  LISTBASE_FOREACH (bNodeSocket *, sock, &ntree->inputs) {
-    direct_link_node_socket(reader, sock);
-  }
-  LISTBASE_FOREACH (bNodeSocket *, sock, &ntree->outputs) {
-    direct_link_node_socket(reader, sock);
-  }
-
-  LISTBASE_FOREACH (bNodeLink *, link, &ntree->links) {
-    BLO_read_data_address(reader, &link->fromnode);
-    BLO_read_data_address(reader, &link->tonode);
-    BLO_read_data_address(reader, &link->fromsock);
-    BLO_read_data_address(reader, &link->tosock);
-  }
-
-  /* TODO, should be dealt by new generic cache handling of IDs... */
-  ntree->previews = NULL;
-
-  /* type verification is in lib-link */
 }
 
 /** \} */
@@ -3274,117 +2766,6 @@ static void lib_link_pose(BlendLibReader *reader, Object *ob, bPose *pose)
   }
 }
 
-static void lib_link_bones(BlendLibReader *reader, Bone *bone)
-{
-  IDP_BlendReadLib(reader, bone->prop);
-
-  LISTBASE_FOREACH (Bone *, curbone, &bone->childbase) {
-    lib_link_bones(reader, curbone);
-  }
-}
-
-static void lib_link_armature(BlendLibReader *reader, bArmature *arm)
-{
-  LISTBASE_FOREACH (Bone *, curbone, &arm->bonebase) {
-    lib_link_bones(reader, curbone);
-  }
-}
-
-static void direct_link_bones(BlendDataReader *reader, Bone *bone)
-{
-  BLO_read_data_address(reader, &bone->parent);
-  BLO_read_data_address(reader, &bone->prop);
-  IDP_BlendDataRead(reader, &bone->prop);
-
-  BLO_read_data_address(reader, &bone->bbone_next);
-  BLO_read_data_address(reader, &bone->bbone_prev);
-
-  bone->flag &= ~(BONE_DRAW_ACTIVE | BONE_DRAW_LOCKED_WEIGHT);
-
-  BLO_read_list(reader, &bone->childbase);
-
-  LISTBASE_FOREACH (Bone *, child, &bone->childbase) {
-    direct_link_bones(reader, child);
-  }
-}
-
-static void direct_link_armature(BlendDataReader *reader, bArmature *arm)
-{
-  BLO_read_list(reader, &arm->bonebase);
-  arm->bonehash = NULL;
-  arm->edbo = NULL;
-  /* Must always be cleared (armatures don't have their own edit-data). */
-  arm->needs_flush_to_id = 0;
-
-  BLO_read_data_address(reader, &arm->adt);
-  BKE_animdata_blend_read_data(reader, arm->adt);
-
-  LISTBASE_FOREACH (Bone *, bone, &arm->bonebase) {
-    direct_link_bones(reader, bone);
-  }
-
-  BLO_read_data_address(reader, &arm->act_bone);
-  arm->act_edbone = NULL;
-
-  BKE_armature_bone_hash_make(arm);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Camera
- * \{ */
-
-static void lib_link_camera(BlendLibReader *reader, Camera *ca)
-{
-  BLO_read_id_address(reader, ca->id.lib, &ca->ipo); /* deprecated, for versioning */
-
-  BLO_read_id_address(reader, ca->id.lib, &ca->dof_ob); /* deprecated, for versioning */
-  BLO_read_id_address(reader, ca->id.lib, &ca->dof.focus_object);
-
-  LISTBASE_FOREACH (CameraBGImage *, bgpic, &ca->bg_images) {
-    BLO_read_id_address(reader, ca->id.lib, &bgpic->ima);
-    BLO_read_id_address(reader, ca->id.lib, &bgpic->clip);
-  }
-}
-
-static void direct_link_camera(BlendDataReader *reader, Camera *ca)
-{
-  BLO_read_data_address(reader, &ca->adt);
-  BKE_animdata_blend_read_data(reader, ca->adt);
-
-  BLO_read_list(reader, &ca->bg_images);
-
-  LISTBASE_FOREACH (CameraBGImage *, bgpic, &ca->bg_images) {
-    bgpic->iuser.ok = 1;
-    bgpic->iuser.scene = NULL;
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Light
- * \{ */
-
-static void lib_link_light(BlendLibReader *reader, Light *la)
-{
-  BLO_read_id_address(reader, la->id.lib, &la->ipo);  // XXX deprecated - old animation system
-}
-
-static void direct_link_light(BlendDataReader *reader, Light *la)
-{
-  BLO_read_data_address(reader, &la->adt);
-  BKE_animdata_blend_read_data(reader, la->adt);
-
-  BLO_read_data_address(reader, &la->curfalloff);
-  if (la->curfalloff) {
-    BKE_curvemapping_blend_read(reader, la->curfalloff);
-  }
-
-  la->preview = direct_link_preview_image(reader, la->preview);
-}
-
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -3397,371 +2778,6 @@ void blo_do_versions_key_uidgen(Key *key)
   LISTBASE_FOREACH (KeyBlock *, block, &key->block) {
     block->uid = key->uidgen++;
   }
-}
-
-static void lib_link_key(BlendLibReader *reader, Key *key)
-{
-  BLI_assert((key->id.tag & LIB_TAG_EXTERN) == 0);
-
-  BLO_read_id_address(reader, key->id.lib, &key->ipo);  // XXX deprecated - old animation system
-  BLO_read_id_address(reader, key->id.lib, &key->from);
-}
-
-static void switch_endian_keyblock(Key *key, KeyBlock *kb)
-{
-  int elemsize = key->elemsize;
-  char *data = kb->data;
-
-  for (int a = 0; a < kb->totelem; a++) {
-    const char *cp = key->elemstr;
-    char *poin = data;
-
-    while (cp[0]) {    /* cp[0] == amount */
-      switch (cp[1]) { /* cp[1] = type */
-        case IPO_FLOAT:
-        case IPO_BPOINT:
-        case IPO_BEZTRIPLE: {
-          int b = cp[0];
-          BLI_endian_switch_float_array((float *)poin, b);
-          poin += sizeof(float) * b;
-          break;
-        }
-      }
-
-      cp += 2;
-    }
-    data += elemsize;
-  }
-}
-
-static void direct_link_key(BlendDataReader *reader, Key *key)
-{
-  BLO_read_list(reader, &(key->block));
-
-  BLO_read_data_address(reader, &key->adt);
-  BKE_animdata_blend_read_data(reader, key->adt);
-
-  BLO_read_data_address(reader, &key->refkey);
-
-  LISTBASE_FOREACH (KeyBlock *, kb, &key->block) {
-    BLO_read_data_address(reader, &kb->data);
-
-    if (BLO_read_requires_endian_switch(reader)) {
-      switch_endian_keyblock(key, kb);
-    }
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Meta Ball
- * \{ */
-
-static void lib_link_mball(BlendLibReader *reader, MetaBall *mb)
-{
-  for (int a = 0; a < mb->totcol; a++) {
-    BLO_read_id_address(reader, mb->id.lib, &mb->mat[a]);
-  }
-
-  BLO_read_id_address(reader, mb->id.lib, &mb->ipo);  // XXX deprecated - old animation system
-}
-
-static void direct_link_mball(BlendDataReader *reader, MetaBall *mb)
-{
-  BLO_read_data_address(reader, &mb->adt);
-  BKE_animdata_blend_read_data(reader, mb->adt);
-
-  BLO_read_pointer_array(reader, (void **)&mb->mat);
-
-  BLO_read_list(reader, &(mb->elems));
-
-  BLI_listbase_clear(&mb->disp);
-  mb->editelems = NULL;
-  /* Must always be cleared (meta's don't have their own edit-data). */
-  mb->needs_flush_to_id = 0;
-  /*  mb->edit_elems.first= mb->edit_elems.last= NULL;*/
-  mb->lastelem = NULL;
-  mb->batch_cache = NULL;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: World
- * \{ */
-
-static void lib_link_world(BlendLibReader *reader, World *wrld)
-{
-  BLO_read_id_address(reader, wrld->id.lib, &wrld->ipo);  // XXX deprecated - old animation system
-}
-
-static void direct_link_world(BlendDataReader *reader, World *wrld)
-{
-  BLO_read_data_address(reader, &wrld->adt);
-  BKE_animdata_blend_read_data(reader, wrld->adt);
-
-  wrld->preview = direct_link_preview_image(reader, wrld->preview);
-  BLI_listbase_clear(&wrld->gpumaterial);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: VFont
- * \{ */
-
-static void lib_link_vfont(BlendLibReader *UNUSED(reader), VFont *UNUSED(vf))
-{
-}
-
-static void direct_link_vfont(BlendDataReader *reader, VFont *vf)
-{
-  vf->data = NULL;
-  vf->temp_pf = NULL;
-  vf->packedfile = direct_link_packedfile(reader, vf->packedfile);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Text
- * \{ */
-
-static void lib_link_text(BlendLibReader *UNUSED(reader), Text *UNUSED(text))
-{
-}
-
-static void direct_link_text(BlendDataReader *reader, Text *text)
-{
-  BLO_read_data_address(reader, &text->filepath);
-
-  text->compiled = NULL;
-
-#if 0
-  if (text->flags & TXT_ISEXT) {
-    BKE_text_reload(text);
-  }
-  /* else { */
-#endif
-
-  BLO_read_list(reader, &text->lines);
-
-  BLO_read_data_address(reader, &text->curl);
-  BLO_read_data_address(reader, &text->sell);
-
-  LISTBASE_FOREACH (TextLine *, ln, &text->lines) {
-    BLO_read_data_address(reader, &ln->line);
-    ln->format = NULL;
-
-    if (ln->len != (int)strlen(ln->line)) {
-      printf("Error loading text, line lengths differ\n");
-      ln->len = strlen(ln->line);
-    }
-  }
-
-  text->flags = (text->flags) & ~TXT_ISEXT;
-
-  id_us_ensure_real(&text->id);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Image
- * \{ */
-
-static void lib_link_image(BlendLibReader *UNUSED(reader), Image *ima)
-{
-  /* Images have some kind of 'main' cache, when NULL we should also clear all others. */
-  /* Needs to be done *after* cache pointers are restored (call to
-   * `foreach_cache`/`blo_cache_storage_entry_restore_in_new`), easier for now to do it in
-   * lib_link... */
-  if (ima->cache == NULL) {
-    BKE_image_free_buffers(ima);
-  }
-}
-
-static void direct_link_image(BlendDataReader *reader, Image *ima)
-{
-  BLO_read_list(reader, &ima->tiles);
-
-  BLO_read_list(reader, &(ima->renderslots));
-  if (!BLO_read_data_is_undo(reader)) {
-    /* We reset this last render slot index only when actually reading a file, not for undo. */
-    ima->last_render_slot = ima->render_slot;
-  }
-
-  BLO_read_list(reader, &(ima->views));
-  BLO_read_list(reader, &(ima->packedfiles));
-
-  if (ima->packedfiles.first) {
-    LISTBASE_FOREACH (ImagePackedFile *, imapf, &ima->packedfiles) {
-      imapf->packedfile = direct_link_packedfile(reader, imapf->packedfile);
-    }
-    ima->packedfile = NULL;
-  }
-  else {
-    ima->packedfile = direct_link_packedfile(reader, ima->packedfile);
-  }
-
-  BLI_listbase_clear(&ima->anims);
-  ima->preview = direct_link_preview_image(reader, ima->preview);
-  BLO_read_data_address(reader, &ima->stereo3d_format);
-  LISTBASE_FOREACH (ImageTile *, tile, &ima->tiles) {
-    tile->ok = IMA_OK;
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Curve
- * \{ */
-
-static void lib_link_curve(BlendLibReader *reader, Curve *cu)
-{
-  for (int a = 0; a < cu->totcol; a++) {
-    BLO_read_id_address(reader, cu->id.lib, &cu->mat[a]);
-  }
-
-  BLO_read_id_address(reader, cu->id.lib, &cu->bevobj);
-  BLO_read_id_address(reader, cu->id.lib, &cu->taperobj);
-  BLO_read_id_address(reader, cu->id.lib, &cu->textoncurve);
-  BLO_read_id_address(reader, cu->id.lib, &cu->vfont);
-  BLO_read_id_address(reader, cu->id.lib, &cu->vfontb);
-  BLO_read_id_address(reader, cu->id.lib, &cu->vfonti);
-  BLO_read_id_address(reader, cu->id.lib, &cu->vfontbi);
-
-  BLO_read_id_address(reader, cu->id.lib, &cu->ipo);  // XXX deprecated - old animation system
-  BLO_read_id_address(reader, cu->id.lib, &cu->key);
-}
-
-static void switch_endian_knots(Nurb *nu)
-{
-  if (nu->knotsu) {
-    BLI_endian_switch_float_array(nu->knotsu, KNOTSU(nu));
-  }
-  if (nu->knotsv) {
-    BLI_endian_switch_float_array(nu->knotsv, KNOTSV(nu));
-  }
-}
-
-static void direct_link_curve(BlendDataReader *reader, Curve *cu)
-{
-  BLO_read_data_address(reader, &cu->adt);
-  BKE_animdata_blend_read_data(reader, cu->adt);
-
-  /* Protect against integer overflow vulnerability. */
-  CLAMP(cu->len_char32, 0, INT_MAX - 4);
-
-  BLO_read_pointer_array(reader, (void **)&cu->mat);
-
-  BLO_read_data_address(reader, &cu->str);
-  BLO_read_data_address(reader, &cu->strinfo);
-  BLO_read_data_address(reader, &cu->tb);
-
-  if (cu->vfont == NULL) {
-    BLO_read_list(reader, &(cu->nurb));
-  }
-  else {
-    cu->nurb.first = cu->nurb.last = NULL;
-
-    TextBox *tb = MEM_calloc_arrayN(MAXTEXTBOX, sizeof(TextBox), "TextBoxread");
-    if (cu->tb) {
-      memcpy(tb, cu->tb, cu->totbox * sizeof(TextBox));
-      MEM_freeN(cu->tb);
-      cu->tb = tb;
-    }
-    else {
-      cu->totbox = 1;
-      cu->actbox = 1;
-      cu->tb = tb;
-      cu->tb[0].w = cu->linewidth;
-    }
-    if (cu->wordspace == 0.0f) {
-      cu->wordspace = 1.0f;
-    }
-  }
-
-  cu->editnurb = NULL;
-  cu->editfont = NULL;
-  cu->batch_cache = NULL;
-
-  LISTBASE_FOREACH (Nurb *, nu, &cu->nurb) {
-    BLO_read_data_address(reader, &nu->bezt);
-    BLO_read_data_address(reader, &nu->bp);
-    BLO_read_data_address(reader, &nu->knotsu);
-    BLO_read_data_address(reader, &nu->knotsv);
-    if (cu->vfont == NULL) {
-      nu->charidx = 0;
-    }
-
-    if (BLO_read_requires_endian_switch(reader)) {
-      switch_endian_knots(nu);
-    }
-  }
-  cu->texflag &= ~CU_AUTOSPACE_EVALUATED;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Texture
- * \{ */
-
-static void lib_link_texture(BlendLibReader *reader, Tex *tex)
-{
-  BLO_read_id_address(reader, tex->id.lib, &tex->ima);
-  BLO_read_id_address(reader, tex->id.lib, &tex->ipo);  // XXX deprecated - old animation system
-}
-
-static void direct_link_texture(BlendDataReader *reader, Tex *tex)
-{
-  BLO_read_data_address(reader, &tex->adt);
-  BKE_animdata_blend_read_data(reader, tex->adt);
-
-  BLO_read_data_address(reader, &tex->coba);
-
-  tex->preview = direct_link_preview_image(reader, tex->preview);
-
-  tex->iuser.ok = 1;
-  tex->iuser.scene = NULL;
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Material
- * \{ */
-
-static void lib_link_material(BlendLibReader *reader, Material *ma)
-{
-  BLO_read_id_address(reader, ma->id.lib, &ma->ipo);  // XXX deprecated - old animation system
-
-  /* relink grease pencil settings */
-  if (ma->gp_style != NULL) {
-    MaterialGPencilStyle *gp_style = ma->gp_style;
-    if (gp_style->sima != NULL) {
-      BLO_read_id_address(reader, ma->id.lib, &gp_style->sima);
-    }
-    if (gp_style->ima != NULL) {
-      BLO_read_id_address(reader, ma->id.lib, &gp_style->ima);
-    }
-  }
-}
-
-static void direct_link_material(BlendDataReader *reader, Material *ma)
-{
-  BLO_read_data_address(reader, &ma->adt);
-  BKE_animdata_blend_read_data(reader, ma->adt);
-
-  ma->texpaintslot = NULL;
-
-  ma->preview = direct_link_preview_image(reader, ma->preview);
-  BLI_listbase_clear(&ma->gpumaterial);
-
-  BLO_read_data_address(reader, &ma->gp_style);
 }
 
 /** \} */
@@ -4988,7 +4004,8 @@ static void direct_link_object(BlendDataReader *reader, Object *ob)
     }
   }
 
-  ob->preview = direct_link_preview_image(reader, ob->preview);
+  BLO_read_data_address(reader, &ob->preview);
+  BKE_previewimg_blend_read(reader, ob->preview);
 }
 
 static void direct_link_view_settings(BlendDataReader *reader,
@@ -5130,7 +4147,8 @@ static void direct_link_collection(BlendDataReader *reader, Collection *collecti
   BLO_read_list(reader, &collection->gobject);
   BLO_read_list(reader, &collection->children);
 
-  collection->preview = direct_link_preview_image(reader, collection->preview);
+  BLO_read_data_address(reader, &collection->preview);
+  BKE_previewimg_blend_read(reader, collection->preview);
 
   collection->flag &= ~COLLECTION_HAS_OBJECT_CACHE;
   collection->tag = 0;
@@ -5314,7 +4332,7 @@ static bool scene_validate_setscene__liblink(Scene *sce, const int totscene)
 
 static void lib_link_scene(BlendLibReader *reader, Scene *sce)
 {
-  lib_link_keyingsets(reader, &sce->id, &sce->keyingsets);
+  BKE_keyingsets_blend_read_lib(reader, &sce->id, &sce->keyingsets);
 
   BLO_read_id_address(reader, sce->id.lib, &sce->camera);
   BLO_read_id_address(reader, sce->id.lib, &sce->world);
@@ -5593,7 +4611,7 @@ static void direct_link_scene(BlendDataReader *reader, Scene *sce)
   BKE_animdata_blend_read_data(reader, sce->adt);
 
   BLO_read_list(reader, &sce->keyingsets);
-  direct_link_keyingsets(reader, &sce->keyingsets);
+  BKE_keyingsets_blend_read_data(reader, &sce->keyingsets);
 
   BLO_read_data_address(reader, &sce->basact);
 
@@ -5842,7 +4860,8 @@ static void direct_link_scene(BlendDataReader *reader, Scene *sce)
     }
   }
 
-  sce->preview = direct_link_preview_image(reader, sce->preview);
+  BLO_read_data_address(reader, &sce->preview);
+  BKE_previewimg_blend_read(reader, sce->preview);
 
   BKE_curvemapping_blend_read(reader, &sce->r.mblur_shutter_curve);
 
@@ -5876,100 +4895,6 @@ static void direct_link_scene(BlendDataReader *reader, Scene *sce)
 
   BLO_read_data_address(reader, &sce->layer_properties);
   IDP_BlendDataRead(reader, &sce->layer_properties);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Grease Pencil
- * \{ */
-
-/* relink's grease pencil data's refs */
-static void lib_link_gpencil(BlendLibReader *reader, bGPdata *gpd)
-{
-  /* Relink all data-lock linked by GP data-lock */
-  /* Layers */
-  LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
-    /* Layer -> Parent References */
-    BLO_read_id_address(reader, gpd->id.lib, &gpl->parent);
-  }
-
-  /* materials */
-  for (int a = 0; a < gpd->totcol; a++) {
-    BLO_read_id_address(reader, gpd->id.lib, &gpd->mat[a]);
-  }
-}
-
-/* relinks grease-pencil data - used for direct_link and old file linkage */
-static void direct_link_gpencil(BlendDataReader *reader, bGPdata *gpd)
-{
-  /* we must firstly have some grease-pencil data to link! */
-  if (gpd == NULL) {
-    return;
-  }
-
-  /* relink animdata */
-  BLO_read_data_address(reader, &gpd->adt);
-  BKE_animdata_blend_read_data(reader, gpd->adt);
-
-  /* Ensure full objectmode for linked grease pencil. */
-  if (gpd->id.lib != NULL) {
-    gpd->flag &= ~GP_DATA_STROKE_PAINTMODE;
-    gpd->flag &= ~GP_DATA_STROKE_EDITMODE;
-    gpd->flag &= ~GP_DATA_STROKE_SCULPTMODE;
-    gpd->flag &= ~GP_DATA_STROKE_WEIGHTMODE;
-    gpd->flag &= ~GP_DATA_STROKE_VERTEXMODE;
-  }
-
-  /* init stroke buffer */
-  gpd->runtime.sbuffer = NULL;
-  gpd->runtime.sbuffer_used = 0;
-  gpd->runtime.sbuffer_size = 0;
-  gpd->runtime.tot_cp_points = 0;
-
-  /* relink palettes (old palettes deprecated, only to convert old files) */
-  BLO_read_list(reader, &gpd->palettes);
-  if (gpd->palettes.first != NULL) {
-    LISTBASE_FOREACH (Palette *, palette, &gpd->palettes) {
-      BLO_read_list(reader, &palette->colors);
-    }
-  }
-
-  /* materials */
-  BLO_read_pointer_array(reader, (void **)&gpd->mat);
-
-  /* relink layers */
-  BLO_read_list(reader, &gpd->layers);
-
-  LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
-    /* relink frames */
-    BLO_read_list(reader, &gpl->frames);
-
-    BLO_read_data_address(reader, &gpl->actframe);
-
-    gpl->runtime.icon_id = 0;
-
-    /* Relink masks. */
-    BLO_read_list(reader, &gpl->mask_layers);
-
-    LISTBASE_FOREACH (bGPDframe *, gpf, &gpl->frames) {
-      /* relink strokes (and their points) */
-      BLO_read_list(reader, &gpf->strokes);
-
-      LISTBASE_FOREACH (bGPDstroke *, gps, &gpf->strokes) {
-        /* relink stroke points array */
-        BLO_read_data_address(reader, &gps->points);
-        /* Relink geometry*/
-        BLO_read_data_address(reader, &gps->triangles);
-
-        /* relink weight data */
-        if (gps->dvert) {
-          BLO_read_data_address(reader, &gps->dvert);
-          BKE_defvert_blend_read(reader, gps->totpoints, gps->dvert);
-        }
-      }
-    }
-  }
 }
 
 /** \} */
@@ -6116,7 +5041,7 @@ static void direct_link_area(BlendDataReader *reader, ScrArea *area)
 
       if (v3d->gpd) {
         BLO_read_data_address(reader, &v3d->gpd);
-        direct_link_gpencil(reader, v3d->gpd);
+        BKE_gpencil_blend_read_data(reader, v3d->gpd);
       }
       BLO_read_data_address(reader, &v3d->localvd);
 
@@ -6188,7 +5113,7 @@ static void direct_link_area(BlendDataReader *reader, ScrArea *area)
 #if 0
       sima->gpd = newdataadr(fd, sima->gpd);
       if (sima->gpd) {
-        direct_link_gpencil(fd, sima->gpd);
+        BKE_gpencil_blend_read_data(fd, sima->gpd);
       }
 #endif
     }
@@ -6197,7 +5122,7 @@ static void direct_link_area(BlendDataReader *reader, ScrArea *area)
 
       if (snode->gpd) {
         BLO_read_data_address(reader, &snode->gpd);
-        direct_link_gpencil(reader, snode->gpd);
+        BKE_gpencil_blend_read_data(reader, snode->gpd);
       }
 
       BLO_read_list(reader, &snode->treepath);
@@ -6222,7 +5147,7 @@ static void direct_link_area(BlendDataReader *reader, ScrArea *area)
 #if 0
       if (sseq->gpd) {
         sseq->gpd = newdataadr(fd, sseq->gpd);
-        direct_link_gpencil(fd, sseq->gpd);
+        BKE_gpencil_blend_read_data(fd, sseq->gpd);
       }
 #endif
       sseq->scopes.reference_ibuf = NULL;
@@ -7146,7 +6071,8 @@ static bool direct_link_screen(BlendDataReader *reader, bScreen *screen)
   screen->context = NULL;
   screen->active_region = NULL;
 
-  screen->preview = direct_link_preview_image(reader, screen->preview);
+  BLO_read_data_address(reader, &screen->preview);
+  BKE_previewimg_blend_read(reader, screen->preview);
 
   if (!direct_link_area_map(reader, AREAMAP_FROM_SCREEN(screen))) {
     printf("Error reading Screen %s... removing it.\n", screen->id.name + 2);
@@ -7204,7 +6130,7 @@ static void direct_link_library(FileData *fd, Library *lib, Main *main)
   //  printf("direct_link_library: filepath_abs %s\n", lib->filepath_abs);
 
   BlendDataReader reader = {fd};
-  lib->packedfile = direct_link_packedfile(&reader, lib->packedfile);
+  BKE_packedfile_blend_read(&reader, &lib->packedfile);
 
   /* new main */
   newmain = BKE_main_new();
@@ -7248,619 +6174,6 @@ static void fix_relpaths_library(const char *basepath, Main *main)
       }
     }
   }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Light Probe
- * \{ */
-
-static void lib_link_lightprobe(BlendLibReader *reader, LightProbe *prb)
-{
-  BLO_read_id_address(reader, prb->id.lib, &prb->visibility_grp);
-}
-
-static void direct_link_lightprobe(BlendDataReader *reader, LightProbe *prb)
-{
-  BLO_read_data_address(reader, &prb->adt);
-  BKE_animdata_blend_read_data(reader, prb->adt);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Speaker
- * \{ */
-
-static void lib_link_speaker(BlendLibReader *reader, Speaker *spk)
-{
-  BLO_read_id_address(reader, spk->id.lib, &spk->sound);
-}
-
-static void direct_link_speaker(BlendDataReader *reader, Speaker *spk)
-{
-  BLO_read_data_address(reader, &spk->adt);
-  BKE_animdata_blend_read_data(reader, spk->adt);
-
-#if 0
-  spk->sound = newdataadr(fd, spk->sound);
-  direct_link_sound(fd, spk->sound);
-#endif
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Sound
- * \{ */
-
-static void direct_link_sound(BlendDataReader *reader, bSound *sound)
-{
-  sound->tags = 0;
-  sound->handle = NULL;
-  sound->playback_handle = NULL;
-
-  /* versioning stuff, if there was a cache, then we enable caching: */
-  if (sound->cache) {
-    sound->flags |= SOUND_FLAGS_CACHING;
-    sound->cache = NULL;
-  }
-
-  if (BLO_read_data_is_undo(reader)) {
-    sound->tags |= SOUND_TAGS_WAVEFORM_NO_RELOAD;
-  }
-
-  sound->spinlock = MEM_mallocN(sizeof(SpinLock), "sound_spinlock");
-  BLI_spin_init(sound->spinlock);
-
-  /* clear waveform loading flag */
-  sound->tags &= ~SOUND_TAGS_WAVEFORM_LOADING;
-
-  sound->packedfile = direct_link_packedfile(reader, sound->packedfile);
-  sound->newpackedfile = direct_link_packedfile(reader, sound->newpackedfile);
-}
-
-static void lib_link_sound(BlendLibReader *reader, bSound *sound)
-{
-  BLO_read_id_address(
-      reader, sound->id.lib, &sound->ipo);  // XXX deprecated - old animation system
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Movie Clip
- * \{ */
-
-static void direct_link_movieReconstruction(BlendDataReader *reader,
-                                            MovieTrackingReconstruction *reconstruction)
-{
-  BLO_read_data_address(reader, &reconstruction->cameras);
-}
-
-static void direct_link_movieTracks(BlendDataReader *reader, ListBase *tracksbase)
-{
-  BLO_read_list(reader, tracksbase);
-
-  LISTBASE_FOREACH (MovieTrackingTrack *, track, tracksbase) {
-    BLO_read_data_address(reader, &track->markers);
-  }
-}
-
-static void direct_link_moviePlaneTracks(BlendDataReader *reader, ListBase *plane_tracks_base)
-{
-  BLO_read_list(reader, plane_tracks_base);
-
-  LISTBASE_FOREACH (MovieTrackingPlaneTrack *, plane_track, plane_tracks_base) {
-    BLO_read_pointer_array(reader, (void **)&plane_track->point_tracks);
-    for (int i = 0; i < plane_track->point_tracksnr; i++) {
-      BLO_read_data_address(reader, &plane_track->point_tracks[i]);
-    }
-
-    BLO_read_data_address(reader, &plane_track->markers);
-  }
-}
-
-static void direct_link_movieclip(BlendDataReader *reader, MovieClip *clip)
-{
-  MovieTracking *tracking = &clip->tracking;
-
-  BLO_read_data_address(reader, &clip->adt);
-
-  direct_link_movieTracks(reader, &tracking->tracks);
-  direct_link_moviePlaneTracks(reader, &tracking->plane_tracks);
-  direct_link_movieReconstruction(reader, &tracking->reconstruction);
-
-  BLO_read_data_address(reader, &clip->tracking.act_track);
-  BLO_read_data_address(reader, &clip->tracking.act_plane_track);
-
-  clip->anim = NULL;
-  clip->tracking_context = NULL;
-  clip->tracking.stats = NULL;
-
-  /* TODO we could store those in undo cache storage as well, and preserve them instead of
-   * re-creating them... */
-  BLI_listbase_clear(&clip->runtime.gputextures);
-
-  /* Needed for proper versioning, will be NULL for all newer files anyway. */
-  BLO_read_data_address(reader, &clip->tracking.stabilization.rot_track);
-
-  clip->tracking.dopesheet.ok = 0;
-  BLI_listbase_clear(&clip->tracking.dopesheet.channels);
-  BLI_listbase_clear(&clip->tracking.dopesheet.coverage_segments);
-
-  BLO_read_list(reader, &tracking->objects);
-
-  LISTBASE_FOREACH (MovieTrackingObject *, object, &tracking->objects) {
-    direct_link_movieTracks(reader, &object->tracks);
-    direct_link_moviePlaneTracks(reader, &object->plane_tracks);
-    direct_link_movieReconstruction(reader, &object->reconstruction);
-  }
-}
-
-static void lib_link_movieTracks(BlendLibReader *reader, MovieClip *clip, ListBase *tracksbase)
-{
-  LISTBASE_FOREACH (MovieTrackingTrack *, track, tracksbase) {
-    BLO_read_id_address(reader, clip->id.lib, &track->gpd);
-  }
-}
-
-static void lib_link_moviePlaneTracks(BlendLibReader *reader,
-                                      MovieClip *clip,
-                                      ListBase *tracksbase)
-{
-  LISTBASE_FOREACH (MovieTrackingPlaneTrack *, plane_track, tracksbase) {
-    BLO_read_id_address(reader, clip->id.lib, &plane_track->image);
-  }
-}
-
-static void lib_link_movieclip(BlendLibReader *reader, MovieClip *clip)
-{
-  MovieTracking *tracking = &clip->tracking;
-
-  BLO_read_id_address(reader, clip->id.lib, &clip->gpd);
-
-  lib_link_movieTracks(reader, clip, &tracking->tracks);
-  lib_link_moviePlaneTracks(reader, clip, &tracking->plane_tracks);
-
-  LISTBASE_FOREACH (MovieTrackingObject *, object, &tracking->objects) {
-    lib_link_movieTracks(reader, clip, &object->tracks);
-    lib_link_moviePlaneTracks(reader, clip, &object->plane_tracks);
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Masks
- * \{ */
-
-static void direct_link_mask(BlendDataReader *reader, Mask *mask)
-{
-  BLO_read_data_address(reader, &mask->adt);
-
-  BLO_read_list(reader, &mask->masklayers);
-
-  LISTBASE_FOREACH (MaskLayer *, masklay, &mask->masklayers) {
-    /* can't use newdataadr since it's a pointer within an array */
-    MaskSplinePoint *act_point_search = NULL;
-
-    BLO_read_list(reader, &masklay->splines);
-
-    LISTBASE_FOREACH (MaskSpline *, spline, &masklay->splines) {
-      MaskSplinePoint *points_old = spline->points;
-
-      BLO_read_data_address(reader, &spline->points);
-
-      for (int i = 0; i < spline->tot_point; i++) {
-        MaskSplinePoint *point = &spline->points[i];
-
-        if (point->tot_uw) {
-          BLO_read_data_address(reader, &point->uw);
-        }
-      }
-
-      /* detect active point */
-      if ((act_point_search == NULL) && (masklay->act_point >= points_old) &&
-          (masklay->act_point < points_old + spline->tot_point)) {
-        act_point_search = &spline->points[masklay->act_point - points_old];
-      }
-    }
-
-    BLO_read_list(reader, &masklay->splines_shapes);
-
-    LISTBASE_FOREACH (MaskLayerShape *, masklay_shape, &masklay->splines_shapes) {
-      BLO_read_data_address(reader, &masklay_shape->data);
-
-      if (masklay_shape->tot_vert) {
-        if (BLO_read_requires_endian_switch(reader)) {
-          BLI_endian_switch_float_array(masklay_shape->data,
-                                        masklay_shape->tot_vert * sizeof(float) *
-                                            MASK_OBJECT_SHAPE_ELEM_SIZE);
-        }
-      }
-    }
-
-    BLO_read_data_address(reader, &masklay->act_spline);
-    masklay->act_point = act_point_search;
-  }
-}
-
-static void lib_link_mask_parent(BlendLibReader *reader, Mask *mask, MaskParent *parent)
-{
-  BLO_read_id_address(reader, mask->id.lib, &parent->id);
-}
-
-static void lib_link_mask(BlendLibReader *reader, Mask *mask)
-{
-  LISTBASE_FOREACH (MaskLayer *, masklay, &mask->masklayers) {
-    MaskSpline *spline;
-
-    spline = masklay->splines.first;
-    while (spline) {
-      for (int i = 0; i < spline->tot_point; i++) {
-        MaskSplinePoint *point = &spline->points[i];
-
-        lib_link_mask_parent(reader, mask, &point->parent);
-      }
-
-      lib_link_mask_parent(reader, mask, &spline->parent);
-
-      spline = spline->next;
-    }
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Line Style
- * \{ */
-
-static void lib_link_linestyle(BlendLibReader *reader, FreestyleLineStyle *linestyle)
-{
-  LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->color_modifiers) {
-    switch (m->type) {
-      case LS_MODIFIER_DISTANCE_FROM_OBJECT: {
-        LineStyleColorModifier_DistanceFromObject *cm =
-            (LineStyleColorModifier_DistanceFromObject *)m;
-        BLO_read_id_address(reader, linestyle->id.lib, &cm->target);
-        break;
-      }
-    }
-  }
-  LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->alpha_modifiers) {
-    switch (m->type) {
-      case LS_MODIFIER_DISTANCE_FROM_OBJECT: {
-        LineStyleAlphaModifier_DistanceFromObject *am =
-            (LineStyleAlphaModifier_DistanceFromObject *)m;
-        BLO_read_id_address(reader, linestyle->id.lib, &am->target);
-        break;
-      }
-    }
-  }
-  LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->thickness_modifiers) {
-    switch (m->type) {
-      case LS_MODIFIER_DISTANCE_FROM_OBJECT: {
-        LineStyleThicknessModifier_DistanceFromObject *tm =
-            (LineStyleThicknessModifier_DistanceFromObject *)m;
-        BLO_read_id_address(reader, linestyle->id.lib, &tm->target);
-        break;
-      }
-    }
-  }
-  for (int a = 0; a < MAX_MTEX; a++) {
-    MTex *mtex = linestyle->mtex[a];
-    if (mtex) {
-      BLO_read_id_address(reader, linestyle->id.lib, &mtex->tex);
-      BLO_read_id_address(reader, linestyle->id.lib, &mtex->object);
-    }
-  }
-}
-
-static void direct_link_linestyle_color_modifier(BlendDataReader *reader,
-                                                 LineStyleModifier *modifier)
-{
-  switch (modifier->type) {
-    case LS_MODIFIER_ALONG_STROKE: {
-      LineStyleColorModifier_AlongStroke *m = (LineStyleColorModifier_AlongStroke *)modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-    case LS_MODIFIER_DISTANCE_FROM_CAMERA: {
-      LineStyleColorModifier_DistanceFromCamera *m = (LineStyleColorModifier_DistanceFromCamera *)
-          modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-    case LS_MODIFIER_DISTANCE_FROM_OBJECT: {
-      LineStyleColorModifier_DistanceFromObject *m = (LineStyleColorModifier_DistanceFromObject *)
-          modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-    case LS_MODIFIER_MATERIAL: {
-      LineStyleColorModifier_Material *m = (LineStyleColorModifier_Material *)modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-    case LS_MODIFIER_TANGENT: {
-      LineStyleColorModifier_Tangent *m = (LineStyleColorModifier_Tangent *)modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-    case LS_MODIFIER_NOISE: {
-      LineStyleColorModifier_Noise *m = (LineStyleColorModifier_Noise *)modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-    case LS_MODIFIER_CREASE_ANGLE: {
-      LineStyleColorModifier_CreaseAngle *m = (LineStyleColorModifier_CreaseAngle *)modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-    case LS_MODIFIER_CURVATURE_3D: {
-      LineStyleColorModifier_Curvature_3D *m = (LineStyleColorModifier_Curvature_3D *)modifier;
-      BLO_read_data_address(reader, &m->color_ramp);
-      break;
-    }
-  }
-}
-
-static void direct_link_linestyle_alpha_modifier(BlendDataReader *reader,
-                                                 LineStyleModifier *modifier)
-{
-  switch (modifier->type) {
-    case LS_MODIFIER_ALONG_STROKE: {
-      LineStyleAlphaModifier_AlongStroke *m = (LineStyleAlphaModifier_AlongStroke *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_DISTANCE_FROM_CAMERA: {
-      LineStyleAlphaModifier_DistanceFromCamera *m = (LineStyleAlphaModifier_DistanceFromCamera *)
-          modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_DISTANCE_FROM_OBJECT: {
-      LineStyleAlphaModifier_DistanceFromObject *m = (LineStyleAlphaModifier_DistanceFromObject *)
-          modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_MATERIAL: {
-      LineStyleAlphaModifier_Material *m = (LineStyleAlphaModifier_Material *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_TANGENT: {
-      LineStyleAlphaModifier_Tangent *m = (LineStyleAlphaModifier_Tangent *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_NOISE: {
-      LineStyleAlphaModifier_Noise *m = (LineStyleAlphaModifier_Noise *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_CREASE_ANGLE: {
-      LineStyleAlphaModifier_CreaseAngle *m = (LineStyleAlphaModifier_CreaseAngle *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_CURVATURE_3D: {
-      LineStyleAlphaModifier_Curvature_3D *m = (LineStyleAlphaModifier_Curvature_3D *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-  }
-}
-
-static void direct_link_linestyle_thickness_modifier(BlendDataReader *reader,
-                                                     LineStyleModifier *modifier)
-{
-  switch (modifier->type) {
-    case LS_MODIFIER_ALONG_STROKE: {
-      LineStyleThicknessModifier_AlongStroke *m = (LineStyleThicknessModifier_AlongStroke *)
-          modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_DISTANCE_FROM_CAMERA: {
-      LineStyleThicknessModifier_DistanceFromCamera *m =
-          (LineStyleThicknessModifier_DistanceFromCamera *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_DISTANCE_FROM_OBJECT: {
-      LineStyleThicknessModifier_DistanceFromObject *m =
-          (LineStyleThicknessModifier_DistanceFromObject *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_MATERIAL: {
-      LineStyleThicknessModifier_Material *m = (LineStyleThicknessModifier_Material *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_TANGENT: {
-      LineStyleThicknessModifier_Tangent *m = (LineStyleThicknessModifier_Tangent *)modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_CREASE_ANGLE: {
-      LineStyleThicknessModifier_CreaseAngle *m = (LineStyleThicknessModifier_CreaseAngle *)
-          modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-    case LS_MODIFIER_CURVATURE_3D: {
-      LineStyleThicknessModifier_Curvature_3D *m = (LineStyleThicknessModifier_Curvature_3D *)
-          modifier;
-      BLO_read_data_address(reader, &m->curve);
-      BKE_curvemapping_blend_read(reader, m->curve);
-      break;
-    }
-  }
-}
-
-static void direct_link_linestyle_geometry_modifier(BlendDataReader *UNUSED(reader),
-                                                    LineStyleModifier *UNUSED(modifier))
-{
-}
-
-static void direct_link_linestyle(BlendDataReader *reader, FreestyleLineStyle *linestyle)
-{
-  BLO_read_data_address(reader, &linestyle->adt);
-  BKE_animdata_blend_read_data(reader, linestyle->adt);
-  BLO_read_list(reader, &linestyle->color_modifiers);
-  LISTBASE_FOREACH (LineStyleModifier *, modifier, &linestyle->color_modifiers) {
-    direct_link_linestyle_color_modifier(reader, modifier);
-  }
-  BLO_read_list(reader, &linestyle->alpha_modifiers);
-  LISTBASE_FOREACH (LineStyleModifier *, modifier, &linestyle->alpha_modifiers) {
-    direct_link_linestyle_alpha_modifier(reader, modifier);
-  }
-  BLO_read_list(reader, &linestyle->thickness_modifiers);
-  LISTBASE_FOREACH (LineStyleModifier *, modifier, &linestyle->thickness_modifiers) {
-    direct_link_linestyle_thickness_modifier(reader, modifier);
-  }
-  BLO_read_list(reader, &linestyle->geometry_modifiers);
-  LISTBASE_FOREACH (LineStyleModifier *, modifier, &linestyle->geometry_modifiers) {
-    direct_link_linestyle_geometry_modifier(reader, modifier);
-  }
-  for (int a = 0; a < MAX_MTEX; a++) {
-    BLO_read_data_address(reader, &linestyle->mtex[a]);
-  }
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Hair
- * \{ */
-
-static void lib_link_hair(BlendLibReader *reader, Hair *hair)
-{
-  for (int a = 0; a < hair->totcol; a++) {
-    BLO_read_id_address(reader, hair->id.lib, &hair->mat[a]);
-  }
-}
-
-static void direct_link_hair(BlendDataReader *reader, Hair *hair)
-{
-  BLO_read_data_address(reader, &hair->adt);
-  BKE_animdata_blend_read_data(reader, hair->adt);
-
-  /* Geometry */
-  CustomData_blend_read(reader, &hair->pdata, hair->totpoint);
-  CustomData_blend_read(reader, &hair->cdata, hair->totcurve);
-  BKE_hair_update_customdata_pointers(hair);
-
-  /* Materials */
-  BLO_read_pointer_array(reader, (void **)&hair->mat);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Point Cloud
- * \{ */
-
-static void lib_link_pointcloud(BlendLibReader *reader, PointCloud *pointcloud)
-{
-  for (int a = 0; a < pointcloud->totcol; a++) {
-    BLO_read_id_address(reader, pointcloud->id.lib, &pointcloud->mat[a]);
-  }
-}
-
-static void direct_link_pointcloud(BlendDataReader *reader, PointCloud *pointcloud)
-{
-  BLO_read_data_address(reader, &pointcloud->adt);
-  BKE_animdata_blend_read_data(reader, pointcloud->adt);
-
-  /* Geometry */
-  CustomData_blend_read(reader, &pointcloud->pdata, pointcloud->totpoint);
-  BKE_pointcloud_update_customdata_pointers(pointcloud);
-
-  /* Materials */
-  BLO_read_pointer_array(reader, (void **)&pointcloud->mat);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Volume
- * \{ */
-
-static void lib_link_volume(BlendLibReader *reader, Volume *volume)
-{
-  /* Needs to be done *after* cache pointers are restored (call to
-   * `foreach_cache`/`blo_cache_storage_entry_restore_in_new`), easier for now to do it in
-   * lib_link... */
-  BKE_volume_init_grids(volume);
-
-  for (int a = 0; a < volume->totcol; a++) {
-    BLO_read_id_address(reader, volume->id.lib, &volume->mat[a]);
-  }
-}
-
-static void direct_link_volume(BlendDataReader *reader, Volume *volume)
-{
-  BLO_read_data_address(reader, &volume->adt);
-  BKE_animdata_blend_read_data(reader, volume->adt);
-
-  volume->packedfile = direct_link_packedfile(reader, volume->packedfile);
-  volume->runtime.frame = 0;
-
-  /* materials */
-  BLO_read_pointer_array(reader, (void **)&volume->mat);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Read ID: Simulation
- * \{ */
-
-static void lib_link_simulation(BlendLibReader *reader, Simulation *simulation)
-{
-  LISTBASE_FOREACH (SimulationDependency *, dependency, &simulation->dependencies) {
-    BLO_read_id_address(reader, simulation->id.lib, &dependency->id);
-  }
-}
-
-static void direct_link_simulation(BlendDataReader *reader, Simulation *simulation)
-{
-  BLO_read_data_address(reader, &simulation->adt);
-  BKE_animdata_blend_read_data(reader, simulation->adt);
-
-  BLO_read_list(reader, &simulation->states);
-  LISTBASE_FOREACH (SimulationState *, state, &simulation->states) {
-    BLO_read_data_address(reader, &state->name);
-    BLO_read_data_address(reader, &state->type);
-    if (STREQ(state->type, SIM_TYPE_NAME_PARTICLE_SIMULATION)) {
-      ParticleSimulationState *particle_state = (ParticleSimulationState *)state;
-      CustomData_blend_read(reader, &particle_state->attributes, particle_state->tot_particles);
-    }
-  }
-
-  BLO_read_list(reader, &simulation->dependencies);
 }
 
 /** \} */
@@ -8024,110 +6337,52 @@ static bool direct_link_id(FileData *fd, Main *main, const int tag, ID *id, ID *
     case ID_OB:
       direct_link_object(&reader, (Object *)id);
       break;
-    case ID_CU:
-      direct_link_curve(&reader, (Curve *)id);
-      break;
-    case ID_MB:
-      direct_link_mball(&reader, (MetaBall *)id);
-      break;
-    case ID_MA:
-      direct_link_material(&reader, (Material *)id);
-      break;
-    case ID_TE:
-      direct_link_texture(&reader, (Tex *)id);
-      break;
-    case ID_IM:
-      direct_link_image(&reader, (Image *)id);
-      break;
-    case ID_LA:
-      direct_link_light(&reader, (Light *)id);
-      break;
-    case ID_VF:
-      direct_link_vfont(&reader, (VFont *)id);
-      break;
-    case ID_TXT:
-      direct_link_text(&reader, (Text *)id);
-      break;
     case ID_IP:
       direct_link_ipo(&reader, (Ipo *)id);
-      break;
-    case ID_KE:
-      direct_link_key(&reader, (Key *)id);
-      break;
-    case ID_WO:
-      direct_link_world(&reader, (World *)id);
       break;
     case ID_LI:
       direct_link_library(fd, (Library *)id, main);
       break;
-    case ID_CA:
-      direct_link_camera(&reader, (Camera *)id);
-      break;
-    case ID_SPK:
-      direct_link_speaker(&reader, (Speaker *)id);
-      break;
-    case ID_SO:
-      direct_link_sound(&reader, (bSound *)id);
-      break;
-    case ID_LP:
-      direct_link_lightprobe(&reader, (LightProbe *)id);
-      break;
     case ID_GR:
       direct_link_collection(&reader, (Collection *)id);
-      break;
-    case ID_AR:
-      direct_link_armature(&reader, (bArmature *)id);
-      break;
-    case ID_AC:
-      direct_link_action(&reader, (bAction *)id);
-      break;
-    case ID_NT:
-      direct_link_nodetree(&reader, (bNodeTree *)id);
-      break;
-    case ID_BR:
-      direct_link_brush(&reader, (Brush *)id);
       break;
     case ID_PA:
       direct_link_particlesettings(&reader, (ParticleSettings *)id);
       break;
-    case ID_GD:
-      direct_link_gpencil(&reader, (bGPdata *)id);
-      break;
-    case ID_MC:
-      direct_link_movieclip(&reader, (MovieClip *)id);
-      break;
-    case ID_MSK:
-      direct_link_mask(&reader, (Mask *)id);
-      break;
-    case ID_LS:
-      direct_link_linestyle(&reader, (FreestyleLineStyle *)id);
-      break;
-    case ID_PAL:
-      direct_link_palette(&reader, (Palette *)id);
-      break;
-    case ID_PC:
-      direct_link_paint_curve(&reader, (PaintCurve *)id);
-      break;
-    case ID_CF:
-      direct_link_cachefile(&reader, (CacheFile *)id);
-      break;
     case ID_WS:
       direct_link_workspace(&reader, (WorkSpace *)id, main);
       break;
-    case ID_HA:
-      direct_link_hair(&reader, (Hair *)id);
-      break;
-    case ID_PT:
-      direct_link_pointcloud(&reader, (PointCloud *)id);
-      break;
-    case ID_VO:
-      direct_link_volume(&reader, (Volume *)id);
-      break;
-    case ID_SIM:
-      direct_link_simulation(&reader, (Simulation *)id);
-      break;
     case ID_ME:
     case ID_LT:
+    case ID_AC:
+    case ID_NT:
+    case ID_LS:
+    case ID_TXT:
+    case ID_VF:
+    case ID_MC:
+    case ID_PAL:
+    case ID_PC:
+    case ID_BR:
+    case ID_IM:
+    case ID_LA:
+    case ID_MA:
+    case ID_MB:
+    case ID_CU:
+    case ID_CA:
+    case ID_WO:
+    case ID_MSK:
+    case ID_SPK:
+    case ID_AR:
+    case ID_LP:
+    case ID_KE:
+    case ID_TE:
+    case ID_GD:
+    case ID_HA:
+    case ID_PT:
+    case ID_VO:
+    case ID_SIM:
+    case ID_SO:
+    case ID_CF:
       /* Do nothing. Handled by IDTypeInfo callback. */
       break;
   }
@@ -8733,9 +6988,6 @@ static void lib_link_all(FileData *fd, Main *bmain)
      * Please keep order of entries in that switch matching that order, it's easier to quickly see
      * whether something is wrong then. */
     switch (GS(id->name)) {
-      case ID_MSK:
-        lib_link_mask(&reader, (Mask *)id);
-        break;
       case ID_WM:
         lib_link_windowmanager(&reader, (wmWindowManager *)id);
         break;
@@ -8746,104 +6998,19 @@ static void lib_link_all(FileData *fd, Main *bmain)
       case ID_SCE:
         lib_link_scene(&reader, (Scene *)id);
         break;
-      case ID_LS:
-        lib_link_linestyle(&reader, (FreestyleLineStyle *)id);
-        break;
       case ID_OB:
         lib_link_object(&reader, (Object *)id);
         break;
       case ID_SCR:
-        /* DO NOT skip screens here,
-         * 3D viewport may contains pointers to other ID data (like bgpic)! See T41411. */
+        /* DO NOT skip screens here, 3D viewport may contains pointers
+         * to other ID data (like #View3D.ob_center)! See T41411. */
         lib_link_screen(&reader, (bScreen *)id);
-        break;
-      case ID_MC:
-        lib_link_movieclip(&reader, (MovieClip *)id);
-        break;
-      case ID_WO:
-        lib_link_world(&reader, (World *)id);
-        break;
-      case ID_LP:
-        lib_link_lightprobe(&reader, (LightProbe *)id);
-        break;
-      case ID_SPK:
-        lib_link_speaker(&reader, (Speaker *)id);
         break;
       case ID_PA:
         lib_link_particlesettings(&reader, (ParticleSettings *)id);
         break;
-      case ID_PC:
-        lib_link_paint_curve(&reader, (PaintCurve *)id);
-        break;
-      case ID_BR:
-        lib_link_brush(&reader, (Brush *)id);
-        break;
       case ID_GR:
         lib_link_collection(&reader, (Collection *)id);
-        break;
-      case ID_SO:
-        lib_link_sound(&reader, (bSound *)id);
-        break;
-      case ID_TXT:
-        lib_link_text(&reader, (Text *)id);
-        break;
-      case ID_CA:
-        lib_link_camera(&reader, (Camera *)id);
-        break;
-      case ID_LA:
-        lib_link_light(&reader, (Light *)id);
-        break;
-      case ID_MB:
-        lib_link_mball(&reader, (MetaBall *)id);
-        break;
-      case ID_CU:
-        lib_link_curve(&reader, (Curve *)id);
-        break;
-      case ID_CF:
-        lib_link_cachefiles(&reader, (CacheFile *)id);
-        break;
-      case ID_AR:
-        lib_link_armature(&reader, (bArmature *)id);
-        break;
-      case ID_VF:
-        lib_link_vfont(&reader, (VFont *)id);
-        break;
-      case ID_HA:
-        lib_link_hair(&reader, (Hair *)id);
-        break;
-      case ID_PT:
-        lib_link_pointcloud(&reader, (PointCloud *)id);
-        break;
-      case ID_VO:
-        lib_link_volume(&reader, (Volume *)id);
-        break;
-      case ID_MA:
-        lib_link_material(&reader, (Material *)id);
-        break;
-      case ID_TE:
-        lib_link_texture(&reader, (Tex *)id);
-        break;
-      case ID_IM:
-        lib_link_image(&reader, (Image *)id);
-        break;
-      case ID_NT:
-        /* Has to be done after node users (scene/materials/...), this will verify group nodes. */
-        lib_link_nodetree(&reader, (bNodeTree *)id);
-        break;
-      case ID_GD:
-        lib_link_gpencil(&reader, (bGPdata *)id);
-        break;
-      case ID_PAL:
-        lib_link_palette(&reader, (Palette *)id);
-        break;
-      case ID_KE:
-        lib_link_key(&reader, (Key *)id);
-        break;
-      case ID_AC:
-        lib_link_action(&reader, (bAction *)id);
-        break;
-      case ID_SIM:
-        lib_link_simulation(&reader, (Simulation *)id);
         break;
       case ID_IP:
         /* XXX deprecated... still needs to be maintained for version patches still. */
@@ -8854,6 +7021,35 @@ static void lib_link_all(FileData *fd, Main *bmain)
         break;
       case ID_ME:
       case ID_LT:
+      case ID_AC:
+      case ID_NT:
+      case ID_LS:
+      case ID_TXT:
+      case ID_VF:
+      case ID_MC:
+      case ID_PAL:
+      case ID_PC:
+      case ID_BR:
+      case ID_IM:
+      case ID_LA:
+      case ID_MA:
+      case ID_MB:
+      case ID_CU:
+      case ID_CA:
+      case ID_WO:
+      case ID_MSK:
+      case ID_SPK:
+      case ID_AR:
+      case ID_LP:
+      case ID_KE:
+      case ID_TE:
+      case ID_GD:
+      case ID_HA:
+      case ID_PT:
+      case ID_VO:
+      case ID_SIM:
+      case ID_SO:
+      case ID_CF:
         /* Do nothing. Handled by IDTypeInfo callback. */
         break;
     }
@@ -9437,7 +7633,6 @@ static void expand_constraint_channels(BlendExpander *expander, ListBase *chanba
 }
 
 static void expand_id(BlendExpander *expander, ID *id);
-static void expand_nodetree(BlendExpander *expander, bNodeTree *ntree);
 static void expand_collection(BlendExpander *expander, Collection *collection);
 
 static void expand_id_embedded_id(BlendExpander *expander, ID *id)
@@ -9446,7 +7641,7 @@ static void expand_id_embedded_id(BlendExpander *expander, ID *id)
   bNodeTree *nodetree = ntreeFromID(id);
   if (nodetree != NULL) {
     expand_id(expander, &nodetree->id);
-    expand_nodetree(expander, nodetree);
+    ntreeBlendReadExpand(expander, nodetree);
   }
 
   if (GS(id->name) == ID_SCE) {
@@ -9473,35 +7668,6 @@ static void expand_id(BlendExpander *expander, ID *id)
   }
 
   expand_id_embedded_id(expander, id);
-}
-
-static void expand_action(BlendExpander *expander, bAction *act)
-{
-  // XXX deprecated - old animation system --------------
-  LISTBASE_FOREACH (bActionChannel *, chan, &act->chanbase) {
-    BLO_expand(expander, chan->ipo);
-    expand_constraint_channels(expander, &chan->constraintChannels);
-  }
-  // ---------------------------------------------------
-
-  /* F-Curves in Action */
-  BKE_fcurve_blend_read_expand(expander, &act->curves);
-
-  LISTBASE_FOREACH (TimeMarker *, marker, &act->markers) {
-    if (marker->camera) {
-      BLO_expand(expander, marker->camera);
-    }
-  }
-}
-
-static void expand_keyingsets(BlendExpander *expander, ListBase *list)
-{
-  /* expand the ID-pointers in KeyingSets's paths */
-  LISTBASE_FOREACH (KeyingSet *, ks, list) {
-    LISTBASE_FOREACH (KS_Path *, ksp, &ks->paths) {
-      BLO_expand(expander, ksp->id);
-    }
-  }
 }
 
 static void expand_particlesettings(BlendExpander *expander, ParticleSettings *part)
@@ -9569,136 +7735,6 @@ static void expand_collection(BlendExpander *expander, Collection *collection)
 #endif
 }
 
-static void expand_key(BlendExpander *expander, Key *key)
-{
-  BLO_expand(expander, key->ipo);  // XXX deprecated - old animation system
-}
-
-static void expand_node_socket(BlendExpander *expander, bNodeSocket *sock)
-{
-  IDP_BlendReadExpand(expander, sock->prop);
-
-  if (sock->default_value != NULL) {
-
-    switch ((eNodeSocketDatatype)sock->type) {
-      case SOCK_OBJECT: {
-        bNodeSocketValueObject *default_value = sock->default_value;
-        BLO_expand(expander, default_value->value);
-        break;
-      }
-      case SOCK_IMAGE: {
-        bNodeSocketValueImage *default_value = sock->default_value;
-        BLO_expand(expander, default_value->value);
-        break;
-      }
-      case SOCK_FLOAT:
-      case SOCK_VECTOR:
-      case SOCK_RGBA:
-      case SOCK_BOOLEAN:
-      case SOCK_INT:
-      case SOCK_STRING:
-      case __SOCK_MESH:
-      case SOCK_CUSTOM:
-      case SOCK_SHADER:
-      case SOCK_EMITTERS:
-      case SOCK_EVENTS:
-      case SOCK_FORCES:
-      case SOCK_CONTROL_FLOW:
-        break;
-    }
-  }
-}
-
-static void expand_node_sockets(BlendExpander *expander, ListBase *sockets)
-{
-  LISTBASE_FOREACH (bNodeSocket *, sock, sockets) {
-    expand_node_socket(expander, sock);
-  }
-}
-
-static void expand_nodetree(BlendExpander *expander, bNodeTree *ntree)
-{
-  if (ntree->gpd) {
-    BLO_expand(expander, ntree->gpd);
-  }
-
-  LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
-    if (node->id && node->type != CMP_NODE_R_LAYERS) {
-      BLO_expand(expander, node->id);
-    }
-
-    IDP_BlendReadExpand(expander, node->prop);
-
-    expand_node_sockets(expander, &node->inputs);
-    expand_node_sockets(expander, &node->outputs);
-  }
-
-  expand_node_sockets(expander, &ntree->inputs);
-  expand_node_sockets(expander, &ntree->outputs);
-}
-
-static void expand_texture(BlendExpander *expander, Tex *tex)
-{
-  BLO_expand(expander, tex->ima);
-  BLO_expand(expander, tex->ipo);  // XXX deprecated - old animation system
-}
-
-static void expand_brush(BlendExpander *expander, Brush *brush)
-{
-  BLO_expand(expander, brush->mtex.tex);
-  BLO_expand(expander, brush->mask_mtex.tex);
-  BLO_expand(expander, brush->clone.image);
-  BLO_expand(expander, brush->paint_curve);
-  if (brush->gpencil_settings != NULL) {
-    BLO_expand(expander, brush->gpencil_settings->material);
-  }
-}
-
-static void expand_material(BlendExpander *expander, Material *ma)
-{
-  BLO_expand(expander, ma->ipo);  // XXX deprecated - old animation system
-
-  if (ma->gp_style) {
-    MaterialGPencilStyle *gp_style = ma->gp_style;
-    BLO_expand(expander, gp_style->sima);
-    BLO_expand(expander, gp_style->ima);
-  }
-}
-
-static void expand_light(BlendExpander *expander, Light *la)
-{
-  BLO_expand(expander, la->ipo);  // XXX deprecated - old animation system
-}
-
-static void expand_world(BlendExpander *expander, World *wrld)
-{
-  BLO_expand(expander, wrld->ipo);  // XXX deprecated - old animation system
-}
-
-static void expand_mball(BlendExpander *expander, MetaBall *mb)
-{
-  for (int a = 0; a < mb->totcol; a++) {
-    BLO_expand(expander, mb->mat[a]);
-  }
-}
-
-static void expand_curve(BlendExpander *expander, Curve *cu)
-{
-  for (int a = 0; a < cu->totcol; a++) {
-    BLO_expand(expander, cu->mat[a]);
-  }
-
-  BLO_expand(expander, cu->vfont);
-  BLO_expand(expander, cu->vfontb);
-  BLO_expand(expander, cu->vfonti);
-  BLO_expand(expander, cu->vfontbi);
-  BLO_expand(expander, cu->key);
-  BLO_expand(expander, cu->ipo);  // XXX deprecated - old animation system
-  BLO_expand(expander, cu->bevobj);
-  BLO_expand(expander, cu->taperobj);
-  BLO_expand(expander, cu->textoncurve);
-}
-
 /* callback function used to expand constraint ID-links */
 static void expand_constraint_cb(bConstraint *UNUSED(con),
                                  ID **idpoin,
@@ -9731,22 +7767,6 @@ static void expand_pose(BlendExpander *expander, bPose *pose)
     expand_constraints(expander, &chan->constraints);
     IDP_BlendReadExpand(expander, chan->prop);
     BLO_expand(expander, chan->custom);
-  }
-}
-
-static void expand_bones(BlendExpander *expander, Bone *bone)
-{
-  IDP_BlendReadExpand(expander, bone->prop);
-
-  LISTBASE_FOREACH (Bone *, curBone, &bone->childbase) {
-    expand_bones(expander, curBone);
-  }
-}
-
-static void expand_armature(BlendExpander *expander, bArmature *arm)
-{
-  LISTBASE_FOREACH (Bone *, curBone, &arm->bonebase) {
-    expand_bones(expander, curBone);
   }
 }
 
@@ -9861,7 +7881,7 @@ static void expand_scene(BlendExpander *expander, Scene *sce)
   BLO_expand(expander, sce->camera);
   BLO_expand(expander, sce->world);
 
-  expand_keyingsets(expander, &sce->keyingsets);
+  BKE_keyingsets_blend_read_expand(expander, &sce->keyingsets);
 
   if (sce->set) {
     BLO_expand(expander, sce->set);
@@ -9957,132 +7977,10 @@ static void expand_scene(BlendExpander *expander, Scene *sce)
   }
 }
 
-static void expand_camera(BlendExpander *expander, Camera *ca)
-{
-  BLO_expand(expander, ca->ipo);  // XXX deprecated - old animation system
-
-  LISTBASE_FOREACH (CameraBGImage *, bgpic, &ca->bg_images) {
-    if (bgpic->source == CAM_BGIMG_SOURCE_IMAGE) {
-      BLO_expand(expander, bgpic->ima);
-    }
-    else if (bgpic->source == CAM_BGIMG_SOURCE_MOVIE) {
-      BLO_expand(expander, bgpic->ima);
-    }
-  }
-}
-
-static void expand_cachefile(BlendExpander *UNUSED(expander), CacheFile *UNUSED(cache_file))
-{
-}
-
-static void expand_speaker(BlendExpander *expander, Speaker *spk)
-{
-  BLO_expand(expander, spk->sound);
-}
-
-static void expand_sound(BlendExpander *expander, bSound *snd)
-{
-  BLO_expand(expander, snd->ipo);  // XXX deprecated - old animation system
-}
-
-static void expand_lightprobe(BlendExpander *UNUSED(expander), LightProbe *UNUSED(prb))
-{
-}
-
-static void expand_movieclip(BlendExpander *UNUSED(expander), MovieClip *UNUSED(clip))
-{
-}
-
-static void expand_mask_parent(BlendExpander *expander, MaskParent *parent)
-{
-  if (parent->id) {
-    BLO_expand(expander, parent->id);
-  }
-}
-
-static void expand_mask(BlendExpander *expander, Mask *mask)
-{
-  LISTBASE_FOREACH (MaskLayer *, mask_layer, &mask->masklayers) {
-    LISTBASE_FOREACH (MaskSpline *, spline, &mask_layer->splines) {
-      for (int i = 0; i < spline->tot_point; i++) {
-        MaskSplinePoint *point = &spline->points[i];
-        expand_mask_parent(expander, &point->parent);
-      }
-
-      expand_mask_parent(expander, &spline->parent);
-    }
-  }
-}
-
-static void expand_linestyle(BlendExpander *expander, FreestyleLineStyle *linestyle)
-{
-  for (int a = 0; a < MAX_MTEX; a++) {
-    if (linestyle->mtex[a]) {
-      BLO_expand(expander, linestyle->mtex[a]->tex);
-      BLO_expand(expander, linestyle->mtex[a]->object);
-    }
-  }
-
-  LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->color_modifiers) {
-    if (m->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
-      BLO_expand(expander, ((LineStyleColorModifier_DistanceFromObject *)m)->target);
-    }
-  }
-  LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->alpha_modifiers) {
-    if (m->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
-      BLO_expand(expander, ((LineStyleAlphaModifier_DistanceFromObject *)m)->target);
-    }
-  }
-  LISTBASE_FOREACH (LineStyleModifier *, m, &linestyle->thickness_modifiers) {
-    if (m->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
-      BLO_expand(expander, ((LineStyleThicknessModifier_DistanceFromObject *)m)->target);
-    }
-  }
-}
-
-static void expand_gpencil(BlendExpander *expander, bGPdata *gpd)
-{
-  LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
-    BLO_expand(expander, gpl->parent);
-  }
-
-  for (int a = 0; a < gpd->totcol; a++) {
-    BLO_expand(expander, gpd->mat[a]);
-  }
-}
-
 static void expand_workspace(BlendExpander *expander, WorkSpace *workspace)
 {
   LISTBASE_FOREACH (WorkSpaceLayout *, layout, &workspace->layouts) {
     BLO_expand(expander, BKE_workspace_layout_screen_get(layout));
-  }
-}
-
-static void expand_hair(BlendExpander *expander, Hair *hair)
-{
-  for (int a = 0; a < hair->totcol; a++) {
-    BLO_expand(expander, hair->mat[a]);
-  }
-}
-
-static void expand_pointcloud(BlendExpander *expander, PointCloud *pointcloud)
-{
-  for (int a = 0; a < pointcloud->totcol; a++) {
-    BLO_expand(expander, pointcloud->mat[a]);
-  }
-}
-
-static void expand_volume(BlendExpander *expander, Volume *volume)
-{
-  for (int a = 0; a < volume->totcol; a++) {
-    BLO_expand(expander, volume->mat[a]);
-  }
-}
-
-static void expand_simulation(BlendExpander *expander, Simulation *simulation)
-{
-  LISTBASE_FOREACH (SimulationDependency *, dependency, &simulation->dependencies) {
-    BLO_expand(expander, dependency->id);
   }
 }
 
@@ -10132,56 +8030,11 @@ void BLO_expand_main(void *fdhandle, Main *mainvar)
             case ID_OB:
               expand_object(&expander, (Object *)id);
               break;
-            case ID_CU:
-              expand_curve(&expander, (Curve *)id);
-              break;
-            case ID_MB:
-              expand_mball(&expander, (MetaBall *)id);
-              break;
             case ID_SCE:
               expand_scene(&expander, (Scene *)id);
               break;
-            case ID_MA:
-              expand_material(&expander, (Material *)id);
-              break;
-            case ID_TE:
-              expand_texture(&expander, (Tex *)id);
-              break;
-            case ID_WO:
-              expand_world(&expander, (World *)id);
-              break;
-            case ID_LA:
-              expand_light(&expander, (Light *)id);
-              break;
-            case ID_KE:
-              expand_key(&expander, (Key *)id);
-              break;
-            case ID_CA:
-              expand_camera(&expander, (Camera *)id);
-              break;
-            case ID_SPK:
-              expand_speaker(&expander, (Speaker *)id);
-              break;
-            case ID_SO:
-              expand_sound(&expander, (bSound *)id);
-              break;
-            case ID_LP:
-              expand_lightprobe(&expander, (LightProbe *)id);
-              break;
-            case ID_AR:
-              expand_armature(&expander, (bArmature *)id);
-              break;
-            case ID_AC:
-              expand_action(&expander, (bAction *)id);  // XXX deprecated - old animation system
-              break;
             case ID_GR:
               expand_collection(&expander, (Collection *)id);
-              break;
-            case ID_NT:
-              expand_nodetree(&expander, (bNodeTree *)id);
-              break;
-            case ID_BR:
-              expand_brush(&expander, (Brush *)id);
               break;
             case ID_IP:
               expand_ipo(&expander, (Ipo *)id);  // XXX deprecated - old animation system
@@ -10189,35 +8042,8 @@ void BLO_expand_main(void *fdhandle, Main *mainvar)
             case ID_PA:
               expand_particlesettings(&expander, (ParticleSettings *)id);
               break;
-            case ID_MC:
-              expand_movieclip(&expander, (MovieClip *)id);
-              break;
-            case ID_MSK:
-              expand_mask(&expander, (Mask *)id);
-              break;
-            case ID_LS:
-              expand_linestyle(&expander, (FreestyleLineStyle *)id);
-              break;
-            case ID_GD:
-              expand_gpencil(&expander, (bGPdata *)id);
-              break;
-            case ID_CF:
-              expand_cachefile(&expander, (CacheFile *)id);
-              break;
             case ID_WS:
               expand_workspace(&expander, (WorkSpace *)id);
-              break;
-            case ID_HA:
-              expand_hair(&expander, (Hair *)id);
-              break;
-            case ID_PT:
-              expand_pointcloud(&expander, (PointCloud *)id);
-              break;
-            case ID_VO:
-              expand_volume(&expander, (Volume *)id);
-              break;
-            case ID_SIM:
-              expand_simulation(&expander, (Simulation *)id);
               break;
             default:
               break;
@@ -10311,10 +8137,10 @@ static void add_loose_objects_to_scene(Main *mainvar,
           base->local_view_bits |= v3d->local_view_uuid;
         }
 
-        if (flag & FILE_AUTOSELECT) {
-          base->flag |= BASE_SELECTED;
+        if ((flag & FILE_AUTOSELECT) && (base->flag & BASE_SELECTABLE)) {
           /* Do NOT make base active here! screws up GUI stuff,
-           * if you want it do it on src/ level. */
+           * if you want it do it at the editor level. */
+          base->flag |= BASE_SELECTED;
         }
 
         BKE_scene_object_base_flag_sync_from_base(base);
@@ -10322,6 +8148,62 @@ static void add_loose_objects_to_scene(Main *mainvar,
         ob->id.tag &= ~LIB_TAG_INDIRECT;
         ob->id.flag &= ~LIB_INDIRECT_WEAK_LINK;
         ob->id.tag |= LIB_TAG_EXTERN;
+      }
+    }
+  }
+}
+
+static void add_loose_object_data_to_scene(Main *mainvar,
+                                           Main *bmain,
+                                           Scene *scene,
+                                           ViewLayer *view_layer,
+                                           const View3D *v3d,
+                                           const short flag)
+{
+  if ((flag & FILE_OBDATA_INSTANCE) == 0) {
+    return;
+  }
+
+  Collection *active_collection = scene->master_collection;
+  if (flag & FILE_ACTIVE_COLLECTION) {
+    LayerCollection *lc = BKE_layer_collection_get_active(view_layer);
+    active_collection = lc->collection;
+  }
+
+  /* Loop over all ID types, instancing object-data for ID types that have support for it. */
+  ListBase *lbarray[MAX_LIBARRAY];
+  int i = set_listbasepointers(mainvar, lbarray);
+  while (i--) {
+    const short idcode = BKE_idtype_idcode_from_index(i);
+    if (!OB_DATA_SUPPORT_ID(idcode)) {
+      continue;
+    }
+
+    LISTBASE_FOREACH (ID *, id, lbarray[i]) {
+      if (id->tag & LIB_TAG_DOIT) {
+        const int type = BKE_object_obdata_to_type(id);
+        BLI_assert(type != -1);
+        Object *ob = BKE_object_add_only_object(bmain, type, id->name + 2);
+        ob->data = id;
+        id_us_plus(id);
+        BKE_object_materials_test(bmain, ob, ob->data);
+
+        BKE_collection_object_add(bmain, active_collection, ob);
+        Base *base = BKE_view_layer_base_find(view_layer, ob);
+
+        if (v3d != NULL) {
+          base->local_view_bits |= v3d->local_view_uuid;
+        }
+
+        if ((flag & FILE_AUTOSELECT) && (base->flag & BASE_SELECTABLE)) {
+          /* Do NOT make base active here! screws up GUI stuff,
+           * if you want it do it at the editor level. */
+          base->flag |= BASE_SELECTED;
+        }
+
+        BKE_scene_object_base_flag_sync_from_base(base);
+
+        copy_v3_v3(ob->loc, scene->cursor.location);
       }
     }
   }
@@ -10343,7 +8225,7 @@ static void add_collections_to_scene(Main *mainvar,
 
   /* Give all objects which are tagged a base. */
   LISTBASE_FOREACH (Collection *, collection, &mainvar->collections) {
-    if ((flag & FILE_GROUP_INSTANCE) && (collection->id.tag & LIB_TAG_DOIT)) {
+    if ((flag & FILE_COLLECTION_INSTANCE) && (collection->id.tag & LIB_TAG_DOIT)) {
       /* Any indirect collection should not have been tagged. */
       BLI_assert((collection->id.tag & LIB_TAG_INDIRECT) == 0);
 
@@ -10359,13 +8241,16 @@ static void add_collections_to_scene(Main *mainvar,
         base->local_view_bits |= v3d->local_view_uuid;
       }
 
-      if (base->flag & BASE_SELECTABLE) {
+      if ((flag & FILE_AUTOSELECT) && (base->flag & BASE_SELECTABLE)) {
         base->flag |= BASE_SELECTED;
       }
 
       BKE_scene_object_base_flag_sync_from_base(base);
       DEG_id_tag_update(&ob->id, ID_RECALC_TRANSFORM | ID_RECALC_GEOMETRY | ID_RECALC_ANIMATION);
-      view_layer->basact = base;
+
+      if (flag & FILE_AUTOSELECT) {
+        view_layer->basact = base;
+      }
 
       /* Assign the collection. */
       ob->instance_collection = collection;
@@ -10469,6 +8354,14 @@ static ID *link_named_part(
   /* if we found the id but the id is NULL, this is really bad */
   BLI_assert(!((bhead != NULL) && (id == NULL)));
 
+  /* Tag as loose object (or data associated with objects)
+   * needing to be instantiated in #LibraryLink_Params.scene. */
+  if ((id != NULL) && (flag & BLO_LIBLINK_NEEDS_ID_TAG_DOIT)) {
+    if (library_link_idcode_needs_tag_check(idcode, flag)) {
+      id->tag |= LIB_TAG_DOIT;
+    }
+  }
+
   return id;
 }
 
@@ -10514,23 +8407,6 @@ int BLO_library_link_copypaste(Main *mainl, BlendHandle *bh, const uint64_t id_t
   return num_directly_linked;
 }
 
-static ID *link_named_part_ex(
-    Main *mainl, FileData *fd, const short idcode, const char *name, const int flag)
-{
-  ID *id = link_named_part(mainl, fd, idcode, name, flag);
-
-  if (id && (GS(id->name) == ID_OB)) {
-    /* Tag as loose object needing to be instantiated somewhere... */
-    id->tag |= LIB_TAG_DOIT;
-  }
-  else if (id && (GS(id->name) == ID_GR)) {
-    /* tag as needing to be instantiated or linked */
-    id->tag |= LIB_TAG_DOIT;
-  }
-
-  return id;
-}
-
 /**
  * Link a named data-block from an external blend file.
  *
@@ -10543,41 +8419,58 @@ static ID *link_named_part_ex(
 ID *BLO_library_link_named_part(Main *mainl,
                                 BlendHandle **bh,
                                 const short idcode,
-                                const char *name)
+                                const char *name,
+                                const struct LibraryLink_Params *params)
 {
   FileData *fd = (FileData *)(*bh);
-  return link_named_part(mainl, fd, idcode, name, 0);
-}
-
-/**
- * Link a named data-block from an external blend file.
- * Optionally instantiate the object/collection in the scene when the flags are set.
- *
- * \param mainl: The main database to link from (not the active one).
- * \param bh: The blender file handle.
- * \param idcode: The kind of data-block to link.
- * \param name: The name of the data-block (without the 2 char ID prefix).
- * \param flag: Options for linking, used for instantiating.
- * \return the linked ID when found.
- */
-ID *BLO_library_link_named_part_ex(
-    Main *mainl, BlendHandle **bh, const short idcode, const char *name, const int flag)
-{
-  FileData *fd = (FileData *)(*bh);
-  return link_named_part_ex(mainl, fd, idcode, name, flag);
+  return link_named_part(mainl, fd, idcode, name, params->flag);
 }
 
 /* common routine to append/link something from a library */
 
-static Main *library_link_begin(Main *mainvar, FileData **fd, const char *filepath)
+/**
+ * Checks if the \a idcode needs to be tagged with #LIB_TAG_DOIT when linking/appending.
+ */
+static bool library_link_idcode_needs_tag_check(const short idcode, const int flag)
+{
+  if (flag & BLO_LIBLINK_NEEDS_ID_TAG_DOIT) {
+    /* Always true because of #add_loose_objects_to_scene & #add_collections_to_scene. */
+    if (ELEM(idcode, ID_OB, ID_GR)) {
+      return true;
+    }
+    if (flag & FILE_OBDATA_INSTANCE) {
+      if (OB_DATA_SUPPORT_ID(idcode)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Clears #LIB_TAG_DOIT based on the result of #library_link_idcode_needs_tag_check.
+ */
+static void library_link_clear_tag(Main *mainvar, const int flag)
+{
+  for (int i = 0; i < MAX_LIBARRAY; i++) {
+    const short idcode = BKE_idtype_idcode_from_index(i);
+    BLI_assert(idcode != -1);
+    if (library_link_idcode_needs_tag_check(idcode, flag)) {
+      BKE_main_id_tag_idcode(mainvar, idcode, LIB_TAG_DOIT, false);
+    }
+  }
+}
+
+static Main *library_link_begin(Main *mainvar, FileData **fd, const char *filepath, const int flag)
 {
   Main *mainl;
 
   (*fd)->mainlist = MEM_callocN(sizeof(ListBase), "FileData.mainlist");
 
-  /* clear for objects and collections instantiating tag */
-  BKE_main_id_tag_listbase(&(mainvar->objects), LIB_TAG_DOIT, false);
-  BKE_main_id_tag_listbase(&(mainvar->collections), LIB_TAG_DOIT, false);
+  if (flag & BLO_LIBLINK_NEEDS_ID_TAG_DOIT) {
+    /* Clear for objects and collections instantiating tag. */
+    library_link_clear_tag(mainvar, flag);
+  }
 
   /* make mains */
   blo_split_main((*fd)->mainlist, mainvar);
@@ -10595,19 +8488,49 @@ static Main *library_link_begin(Main *mainvar, FileData **fd, const char *filepa
   return mainl;
 }
 
+void BLO_library_link_params_init(struct LibraryLink_Params *params,
+                                  struct Main *bmain,
+                                  const int flag)
+{
+  memset(params, 0, sizeof(*params));
+  params->bmain = bmain;
+  params->flag = flag;
+}
+
+void BLO_library_link_params_init_with_context(struct LibraryLink_Params *params,
+                                               struct Main *bmain,
+                                               const int flag,
+                                               /* Context arguments. */
+                                               struct Scene *scene,
+                                               struct ViewLayer *view_layer,
+                                               const struct View3D *v3d)
+{
+  BLO_library_link_params_init(params, bmain, flag);
+  if (scene != NULL) {
+    /* Tagging is needed for instancing. */
+    params->flag |= BLO_LIBLINK_NEEDS_ID_TAG_DOIT;
+
+    params->context.scene = scene;
+    params->context.view_layer = view_layer;
+    params->context.v3d = v3d;
+  }
+}
+
 /**
  * Initialize the #BlendHandle for linking library data.
  *
- * \param mainvar: The current main database, e.g. #G_MAIN or #CTX_data_main(C).
  * \param bh: A blender file handle as returned by
  * #BLO_blendhandle_from_file or #BLO_blendhandle_from_memory.
  * \param filepath: Used for relative linking, copied to the `lib->filepath`.
- * \return the library #Main, to be passed to #BLO_library_link_named_part_ex as \a mainl.
+ * \param params: Settings for linking that don't change from beginning to end of linking.
+ * \return the library #Main, to be passed to #BLO_library_link_named_part as \a mainl.
  */
-Main *BLO_library_link_begin(Main *mainvar, BlendHandle **bh, const char *filepath)
+Main *BLO_library_link_begin(BlendHandle **bh,
+                             const char *filepath,
+                             const struct LibraryLink_Params *params)
 {
   FileData *fd = (FileData *)(*bh);
-  return library_link_begin(mainvar, &fd, filepath);
+  return library_link_begin(params->bmain, &fd, filepath, params->flag);
 }
 
 static void split_main_newid(Main *mainptr, Main *main_newid)
@@ -10642,8 +8565,8 @@ static void split_main_newid(Main *mainptr, Main *main_newid)
  */
 static void library_link_end(Main *mainl,
                              FileData **fd,
-                             const short flag,
                              Main *bmain,
+                             const int flag,
                              Scene *scene,
                              ViewLayer *view_layer,
                              const View3D *v3d)
@@ -10720,19 +8643,19 @@ static void library_link_end(Main *mainl,
 
   /* Give a base to loose objects and collections.
    * Only directly linked objects & collections are instantiated by
-   * #BLO_library_link_named_part_ex & co,
+   * #BLO_library_link_named_part & co,
    * here we handle indirect ones and other possible edge-cases. */
-  if (scene) {
-    add_collections_to_scene(mainvar, bmain, scene, view_layer, v3d, curlib, flag);
-    add_loose_objects_to_scene(mainvar, bmain, scene, view_layer, v3d, curlib, flag);
-  }
-  else {
-    /* printf("library_append_end, scene is NULL (objects wont get bases)\n"); */
-  }
+  if (flag & BLO_LIBLINK_NEEDS_ID_TAG_DOIT) {
+    /* Should always be true. */
+    if (scene != NULL) {
+      add_collections_to_scene(mainvar, bmain, scene, view_layer, v3d, curlib, flag);
+      add_loose_objects_to_scene(mainvar, bmain, scene, view_layer, v3d, curlib, flag);
+      add_loose_object_data_to_scene(mainvar, bmain, scene, view_layer, v3d, flag);
+    }
 
-  /* Clear objects and collections instantiating tag. */
-  BKE_main_id_tag_listbase(&(mainvar->objects), LIB_TAG_DOIT, false);
-  BKE_main_id_tag_listbase(&(mainvar->collections), LIB_TAG_DOIT, false);
+    /* Clear objects and collections instantiating tag. */
+    library_link_clear_tag(mainvar, flag);
+  }
 
   /* patch to prevent switch_endian happens twice */
   if ((*fd)->flags & FD_FLAGS_SWITCH_ENDIAN) {
@@ -10748,25 +8671,18 @@ static void library_link_end(Main *mainl,
  *
  * \param mainl: The main database to link from (not the active one).
  * \param bh: The blender file handle (WARNING! may be freed by this function!).
- * \param flag: Options for linking, used for instantiating.
- * \param bmain: The main database in which to instantiate objects/collections
- * \param scene: The scene in which to instantiate objects/collections
- * (if NULL, no instantiation is done).
- * \param view_layer: The scene layer in which to instantiate objects/collections
- * (if NULL, no instantiation is done).
- * \param v3d: The active 3D viewport
- * (only to define local-view for instantiated objects & groups, can be NULL).
+ * \param params: Settings for linking that don't change from beginning to end of linking.
  */
-void BLO_library_link_end(Main *mainl,
-                          BlendHandle **bh,
-                          int flag,
-                          Main *bmain,
-                          Scene *scene,
-                          ViewLayer *view_layer,
-                          const View3D *v3d)
+void BLO_library_link_end(Main *mainl, BlendHandle **bh, const struct LibraryLink_Params *params)
 {
   FileData *fd = (FileData *)(*bh);
-  library_link_end(mainl, &fd, flag, bmain, scene, view_layer, v3d);
+  library_link_end(mainl,
+                   &fd,
+                   params->bmain,
+                   params->flag,
+                   params->context.scene,
+                   params->context.view_layer,
+                   params->context.v3d);
   *bh = (BlendHandle *)fd;
 }
 
