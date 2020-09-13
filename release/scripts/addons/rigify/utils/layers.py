@@ -137,3 +137,7 @@ class ControlLayersOption:
 
 ControlLayersOption.FK = ControlLayersOption('fk', description="Layers for the FK controls to be on")
 ControlLayersOption.TWEAK = ControlLayersOption('tweak', description="Layers for the tweak controls to be on")
+
+# Layer parameters used by the super_face rig.
+ControlLayersOption.FACE_PRIMARY = ControlLayersOption('primary', description="Layers for the primary controls to be on")
+ControlLayersOption.FACE_SECONDARY = ControlLayersOption('secondary', description="Layers for the secondary controls to be on")

@@ -7,37 +7,22 @@
 #include "GPU_context.h"
 #include "GPU_init_exit.h"
 #include "GPU_shader.h"
-
-#include "GHOST_C-api.h"
+#include "gpu_testing.hh"
 
 #include "engines/eevee/eevee_private.h"
 #include "engines/gpencil/gpencil_engine.h"
+#include "engines/image/image_private.h"
 #include "engines/overlay/overlay_private.h"
 #include "engines/workbench/workbench_private.h"
 
-/* Base class for draw test cases. It will setup and tear down the GPU part around each test. */
-class DrawTest : public ::testing::Test {
- private:
-  GHOST_SystemHandle ghost_system;
-  GHOST_ContextHandle ghost_context;
-  GPUContext *context;
+namespace blender::draw {
 
+/* Base class for draw test cases. It will setup and tear down the GPU part around each test. */
+class DrawTest : public blender::gpu::GPUTest {
   void SetUp() override
   {
-    GHOST_GLSettings glSettings = {0};
-    ghost_system = GHOST_CreateSystem();
-    ghost_context = GHOST_CreateOpenGLContext(ghost_system, glSettings);
-    context = GPU_context_create(0);
-    GPU_init();
+    GPUTest::SetUp();
     DRW_draw_state_init_gtests(GPU_SHADER_CFG_DEFAULT);
-  }
-
-  void TearDown() override
-  {
-    GPU_exit();
-    GPU_context_discard(context);
-    GHOST_DisposeOpenGLContext(ghost_system, ghost_context);
-    GHOST_DisposeSystem(ghost_system);
   }
 };
 
@@ -167,8 +152,19 @@ TEST_F(DrawTest, gpencil_glsl_shaders)
   GPENCIL_shader_free();
 }
 
+TEST_F(DrawTest, image_glsl_shaders)
+{
+  IMAGE_shader_library_ensure();
+
+  EXPECT_NE(IMAGE_shader_image_get(), nullptr);
+
+  IMAGE_shader_free();
+}
+
 TEST_F(DrawTest, overlay_glsl_shaders)
 {
+  OVERLAY_shader_library_ensure();
+
   for (int i = 0; i < 2; i++) {
     eGPUShaderConfig sh_cfg = i == 0 ? GPU_SHADER_CFG_DEFAULT : GPU_SHADER_CFG_CLIPPED;
     DRW_draw_state_init_gtests(sh_cfg);
@@ -205,6 +201,13 @@ TEST_F(DrawTest, overlay_glsl_shaders)
     EXPECT_NE(OVERLAY_shader_edit_mesh_vert(), nullptr);
     EXPECT_NE(OVERLAY_shader_edit_particle_strand(), nullptr);
     EXPECT_NE(OVERLAY_shader_edit_particle_point(), nullptr);
+    EXPECT_NE(OVERLAY_shader_edit_uv_edges_get(), nullptr);
+    EXPECT_NE(OVERLAY_shader_edit_uv_face_get(), nullptr);
+    EXPECT_NE(OVERLAY_shader_edit_uv_face_dots_get(), nullptr);
+    EXPECT_NE(OVERLAY_shader_edit_uv_verts_get(), nullptr);
+    EXPECT_NE(OVERLAY_shader_edit_uv_stretching_area_get(), nullptr);
+    EXPECT_NE(OVERLAY_shader_edit_uv_stretching_angle_get(), nullptr);
+    EXPECT_NE(OVERLAY_shader_edit_uv_tiled_image_borders_get(), nullptr);
     EXPECT_NE(OVERLAY_shader_extra(false), nullptr);
     EXPECT_NE(OVERLAY_shader_extra(true), nullptr);
     EXPECT_NE(OVERLAY_shader_extra_groundline(), nullptr);
@@ -217,6 +220,7 @@ TEST_F(DrawTest, overlay_glsl_shaders)
     EXPECT_NE(OVERLAY_shader_facing(), nullptr);
     EXPECT_NE(OVERLAY_shader_gpencil_canvas(), nullptr);
     EXPECT_NE(OVERLAY_shader_grid(), nullptr);
+    EXPECT_NE(OVERLAY_shader_grid_image(), nullptr);
     EXPECT_NE(OVERLAY_shader_image(), nullptr);
     EXPECT_NE(OVERLAY_shader_motion_path_line(), nullptr);
     EXPECT_NE(OVERLAY_shader_motion_path_vert(), nullptr);
@@ -320,3 +324,5 @@ TEST_F(DrawTest, eevee_glsl_shaders_static)
   }
   EEVEE_shaders_free();
 }
+
+}  // namespace blender::draw

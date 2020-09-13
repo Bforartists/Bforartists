@@ -20,6 +20,7 @@ set(INC
   ../io
   ../../blenkernel
   ../../blenlib
+  ../../gpu
   ../../makesdna
   ../../makesrna
   ../../windowmanager
@@ -35,6 +36,7 @@ set(SRC
 )
 
 set(LIB
+  bf_editor_geometry
   bf_editor_space_action
   bf_editor_space_buttons
   bf_editor_space_clip

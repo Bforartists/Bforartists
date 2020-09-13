@@ -59,11 +59,10 @@ set(SRC
   intern/gpu_batch_presets.c
   intern/gpu_batch_utils.c
   intern/gpu_buffers.c
+  intern/gpu_capabilities.cc
   intern/gpu_codegen.c
   intern/gpu_context.cc
-  intern/gpu_debug.cc
   intern/gpu_drawlist.cc
-  intern/gpu_extensions.cc
   intern/gpu_framebuffer.cc
   intern/gpu_immediate.cc
   intern/gpu_immediate_util.c
@@ -74,9 +73,10 @@ set(SRC
   intern/gpu_matrix.cc
   intern/gpu_node_graph.c
   intern/gpu_platform.cc
+  intern/gpu_query.cc
   intern/gpu_select.c
   intern/gpu_select_pick.c
-  intern/gpu_select_sample_query.c
+  intern/gpu_select_sample_query.cc
   intern/gpu_shader.cc
   intern/gpu_shader_builtin.c
   intern/gpu_shader_interface.cc
@@ -87,31 +87,33 @@ set(SRC
   intern/gpu_vertex_format.cc
   intern/gpu_viewport.c
 
+  opengl/gl_backend.cc
   opengl/gl_batch.cc
   opengl/gl_context.cc
   opengl/gl_drawlist.cc
   opengl/gl_debug.cc
+  opengl/gl_debug_layer.cc
   opengl/gl_framebuffer.cc
   opengl/gl_immediate.cc
   opengl/gl_index_buffer.cc
+  opengl/gl_query.cc
   opengl/gl_shader.cc
   opengl/gl_shader_interface.cc
   opengl/gl_state.cc
   opengl/gl_texture.cc
   opengl/gl_uniform_buffer.cc
   opengl/gl_vertex_array.cc
+  opengl/gl_vertex_buffer.cc
 
   GPU_batch.h
   GPU_batch_presets.h
   GPU_batch_utils.h
   GPU_buffers.h
+  GPU_capabilities.h
   GPU_common.h
   GPU_context.h
-  GPU_debug.h
   GPU_drawlist.h
-  GPU_extensions.h
   GPU_framebuffer.h
-  GPU_glew.h
   GPU_immediate.h
   GPU_immediate_util.h
   GPU_index_buffer.h
@@ -132,6 +134,7 @@ set(SRC
 
   intern/gpu_backend.hh
   intern/gpu_batch_private.hh
+  intern/gpu_capabilities_private.hh
   intern/gpu_codegen.h
   intern/gpu_context_private.hh
   intern/gpu_drawlist_private.hh
@@ -142,6 +145,8 @@ set(SRC
   intern/gpu_matrix_private.h
   intern/gpu_node_graph.h
   intern/gpu_private.h
+  intern/gpu_platform_private.hh
+  intern/gpu_query.hh
   intern/gpu_select_private.h
   intern/gpu_shader_private.hh
   intern/gpu_shader_interface.hh
@@ -160,12 +165,14 @@ set(SRC
   opengl/gl_immediate.hh
   opengl/gl_index_buffer.hh
   opengl/gl_primitive.hh
+  opengl/gl_query.hh
   opengl/gl_shader.hh
   opengl/gl_shader_interface.hh
   opengl/gl_state.hh
   opengl/gl_texture.hh
   opengl/gl_uniform_buffer.hh
   opengl/gl_vertex_array.hh
+  opengl/gl_vertex_buffer.hh
 )
 
 set(LIB
@@ -370,3 +377,19 @@ if(WITH_IMAGE_DDS)
 endif()
 
 blender_add_lib(bf_gpu "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")
+
+if(WITH_GTESTS)
+  if(WITH_OPENGL_DRAW_TESTS)
+    set(TEST_SRC
+      tests/gpu_testing.cc
+    )
+    set(TEST_INC
+      "../../../intern/ghost/"
+    )
+    set(TEST_LIB
+
+    )
+    include(GTestTesting)
+    blender_add_test_lib(bf_gpu_tests "${TEST_SRC}" "${INC};${TEST_INC}" "${INC_SYS}" "${LIB};${TEST_LIB}")
+  endif()
+endif()

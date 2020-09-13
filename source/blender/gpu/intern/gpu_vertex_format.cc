@@ -51,6 +51,7 @@ void GPU_vertformat_clear(GPUVertFormat *format)
   format->packed = false;
   format->name_offset = 0;
   format->name_len = 0;
+  format->deinterleaved = false;
 
   for (uint i = 0; i < GPU_VERT_ATTR_MAX_LEN; i++) {
     format->attrs[i].name_len = 0;
@@ -64,37 +65,12 @@ void GPU_vertformat_copy(GPUVertFormat *dest, const GPUVertFormat *src)
   memcpy(dest, src, sizeof(GPUVertFormat));
 }
 
-GLenum convert_comp_type_to_gl(GPUVertCompType type)
-{
-  switch (type) {
-    case GPU_COMP_I8:
-      return GL_BYTE;
-    case GPU_COMP_U8:
-      return GL_UNSIGNED_BYTE;
-    case GPU_COMP_I16:
-      return GL_SHORT;
-    case GPU_COMP_U16:
-      return GL_UNSIGNED_SHORT;
-    case GPU_COMP_I32:
-      return GL_INT;
-    case GPU_COMP_U32:
-      return GL_UNSIGNED_INT;
-    case GPU_COMP_F32:
-      return GL_FLOAT;
-    case GPU_COMP_I10:
-      return GL_INT_2_10_10_10_REV;
-    default:
-      BLI_assert(0);
-      return GL_FLOAT;
-  }
-}
-
 static uint comp_sz(GPUVertCompType type)
 {
 #if TRUST_NO_ONE
   assert(type <= GPU_COMP_F32); /* other types have irregular sizes (not bytes) */
 #endif
-  const GLubyte sizes[] = {1, 1, 2, 2, 4, 4, 4};
+  const uint sizes[] = {1, 1, 2, 2, 4, 4, 4};
   return sizes[type];
 }
 
