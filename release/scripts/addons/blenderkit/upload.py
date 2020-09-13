@@ -817,7 +817,7 @@ class AssetVerificationStatusChange(Operator):
         preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
         if not bpy.context.scene['search results']:
-            return;
+            return {'CANCELLED'};
         # update status in search results for validator's clarity
         sr = bpy.context.scene['search results']
         sro = bpy.context.scene['search results orig']['results']

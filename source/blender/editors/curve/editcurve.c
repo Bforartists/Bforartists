@@ -1144,7 +1144,7 @@ static int *init_index_map(Object *obedit, int *r_old_totvert)
   Nurb *nu;
   CVKeyIndex *keyIndex;
   int *old_to_new_map;
-  int old_totvert, i;
+  int old_totvert;
   int vertex_index;
 
   for (nu = curve->nurb.first, old_totvert = 0; nu != NULL; nu = nu->next) {
@@ -1157,7 +1157,7 @@ static int *init_index_map(Object *obedit, int *r_old_totvert)
   }
 
   old_to_new_map = MEM_mallocN(old_totvert * sizeof(int), "curve old to new index map");
-  for (i = 0; i < old_totvert; i++) {
+  for (int i = 0; i < old_totvert; i++) {
     old_to_new_map[i] = -1;
   }
 
@@ -2804,19 +2804,15 @@ static void smooth_single_bezt(BezTriple *bezt,
                                const BezTriple *bezt_orig_next,
                                float factor)
 {
-  int i;
-
   BLI_assert(IN_RANGE_INCL(factor, 0.0f, 1.0f));
 
-  for (i = 0; i < 3; i++) {
-    float val_old, val_new, offset;
-
+  for (int i = 0; i < 3; i++) {
     /* get single dimension pos of the mid handle */
-    val_old = bezt->vec[1][i];
+    float val_old = bezt->vec[1][i];
 
     /* get the weights of the previous/next mid handles and calc offset */
-    val_new = (bezt_orig_prev->vec[1][i] * 0.5f) + (bezt_orig_next->vec[1][i] * 0.5f);
-    offset = (val_old * (1.0f - factor)) + (val_new * factor) - val_old;
+    float val_new = (bezt_orig_prev->vec[1][i] * 0.5f) + (bezt_orig_next->vec[1][i] * 0.5f);
+    float offset = (val_old * (1.0f - factor)) + (val_new * factor) - val_old;
 
     /* offset midpoint and 2 handles */
     bezt->vec[1][i] += offset;
@@ -2833,11 +2829,9 @@ static void smooth_single_bp(BPoint *bp,
                              const BPoint *bp_orig_next,
                              float factor)
 {
-  int i;
-
   BLI_assert(IN_RANGE_INCL(factor, 0.0f, 1.0f));
 
-  for (i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     float val_old, val_new, offset;
 
     val_old = bp->vec[i];
@@ -3472,7 +3466,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
   BezTriple *bezt, *beztnew, *beztn;
   BPoint *bp, *prevbp, *bpnew, *bpn;
   float vec[15];
-  int a, b, sel, amount, *usel, *vsel, i;
+  int a, b, sel, amount, *usel, *vsel;
   float factor;
 
   // printf("*** subdivideNurb: entering subdivide\n");
@@ -3525,7 +3519,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
 
             memcpy(prevvec, bezt->vec, sizeof(float[9]));
 
-            for (i = 0; i < number_cuts; i++) {
+            for (int i = 0; i < number_cuts; i++) {
               factor = 1.0f / (number_cuts + 1 - i);
 
               memcpy(beztn, nextbezt, sizeof(BezTriple));
@@ -3615,7 +3609,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
 
           if ((bp->f1 & SELECT) && (nextbp->f1 & SELECT)) {
             // printf("*** subdivideNurb: insert 'linear' point\n");
-            for (i = 0; i < number_cuts; i++) {
+            for (int i = 0; i < number_cuts; i++) {
               factor = (float)(i + 1) / (number_cuts + 1);
 
               memcpy(bpn, nextbp, sizeof(BPoint));
@@ -3646,9 +3640,8 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
        * degree of the functions used to build the NURB. The
        * expression
        *
-       *     degree = #knots - #controlpoints + 1 (J Walter piece)
-       *     degree = #knots - #controlpoints     (Blender
-       *                                           implementation)
+       *     `degree = knots - controlpoints + 1` (J Walter piece)
+       *     `degree = knots - controlpoints` (Blender implementation)
        *       ( this is confusing.... what is true? Another concern
        *       is that the JW piece allows the curve to become
        *       explicitly 1st order derivative discontinuous, while
@@ -3657,12 +3650,12 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
        * is an invariant for a single NURB curve. Raising the degree
        * of the NURB is done elsewhere; the degree is assumed
        * constant during this operation. Degree is a property shared
-       * by all controlpoints in a curve (even though it is stored
+       * by all control-points in a curve (even though it is stored
        * per control point - this can be misleading).
        * Adding a knot is done by searching for the place in the
        * knot vector where a certain knot value must be inserted, or
        * by picking an appropriate knot value between two existing
-       * ones. The number of controlpoints that is influenced by the
+       * ones. The number of control-points that is influenced by the
        * insertion depends on the order of the curve. A certain
        * minimum number of knots is needed to form high-order
        * curves, as can be seen from the equation above. In Blender,
@@ -3718,7 +3711,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
             bp++;
             if (b < nu->pntsu - 1) {
               prevbp = bp - 1;
-              for (i = 0; i < number_cuts; i++) {
+              for (int i = 0; i < number_cuts; i++) {
                 factor = (float)(i + 1) / (number_cuts + 1);
                 *bpn = *bp;
                 interp_v4_v4v4(bpn->vec, prevbp->vec, bp->vec, factor);
@@ -3736,7 +3729,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
 
           for (b = 0; b < (number_cuts + 1) * nu->pntsu - number_cuts; b++) {
             BPoint *tmp = bpn;
-            for (i = 0; i < number_cuts; i++) {
+            for (int i = 0; i < number_cuts; i++) {
               factor = (float)(i + 1) / (number_cuts + 1);
               *tmp = *bp;
               interp_v4_v4v4(tmp->vec, prevbp->vec, bp->vec, factor);
@@ -3778,7 +3771,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
               bp++;
             }
             if ((a < nu->pntsv - 1) && vsel[a] == nu->pntsu && vsel[a + 1] == nu->pntsu) {
-              for (i = 0; i < number_cuts; i++) {
+              for (int i = 0; i < number_cuts; i++) {
                 factor = (float)(i + 1) / (number_cuts + 1);
                 prevbp = bp - nu->pntsu;
                 for (b = 0; b < nu->pntsu; b++) {
@@ -3834,7 +3827,7 @@ static void subdividenurb(Object *obedit, View3D *v3d, int number_cuts)
                    * handle at most 3rd order curves? I miss
                    * some symmetry here...
                    */
-                  for (i = 0; i < number_cuts; i++) {
+                  for (int i = 0; i < number_cuts; i++) {
                     factor = (float)(i + 1) / (number_cuts + 1);
                     prevbp = bp - 1;
                     *bpn = *prevbp;

@@ -557,6 +557,9 @@ void DRW_shgroup_uniform_ivec4(DRWShadingGroup *shgroup,
                                int arraysize);
 void DRW_shgroup_uniform_mat3(DRWShadingGroup *shgroup, const char *name, const float (*value)[3]);
 void DRW_shgroup_uniform_mat4(DRWShadingGroup *shgroup, const char *name, const float (*value)[4]);
+/* Only to be used when image load store is supported (GPU_shader_image_load_store_support()). */
+void DRW_shgroup_uniform_image(DRWShadingGroup *shgroup, const char *name, const GPUTexture *tex);
+void DRW_shgroup_uniform_image_ref(DRWShadingGroup *shgroup, const char *name, GPUTexture **tex);
 /* Store value instead of referencing it. */
 void DRW_shgroup_uniform_int_copy(DRWShadingGroup *shgroup, const char *name, const int value);
 void DRW_shgroup_uniform_ivec2_copy(DRWShadingGroup *shgroup, const char *name, const int *value);
@@ -721,7 +724,6 @@ void DRW_state_lock(DRWState state);
 void DRW_select_load_id(uint id);
 
 /* Draw State */
-void DRW_state_dfdy_factors_get(float dfdyfac[2]);
 bool DRW_state_is_fbo(void);
 bool DRW_state_is_select(void);
 bool DRW_state_is_depth(void);
@@ -737,9 +739,11 @@ bool DRW_state_draw_background(void);
 
 /* Avoid too many lookups while drawing */
 typedef struct DRWContextState {
-  struct ARegion *region;    /* 'CTX_wm_region(C)' */
-  struct RegionView3D *rv3d; /* 'CTX_wm_region_view3d(C)' */
-  struct View3D *v3d;        /* 'CTX_wm_view3d(C)' */
+
+  struct ARegion *region;       /* 'CTX_wm_region(C)' */
+  struct RegionView3D *rv3d;    /* 'CTX_wm_region_view3d(C)' */
+  struct View3D *v3d;           /* 'CTX_wm_view3d(C)' */
+  struct SpaceLink *space_data; /* 'CTX_wm_space_data(C)' */
 
   struct Scene *scene;          /* 'CTX_data_scene(C)' */
   struct ViewLayer *view_layer; /* 'CTX_data_view_layer(C)' */

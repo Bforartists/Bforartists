@@ -211,7 +211,7 @@ static float sb_time_scale(Object *ob)
  * will cause unwanted responses of the softbody system (which does inter frame calculations )
  * so first 'cure' would be: interpolate linear in time ..
  * Q: why do i write this?
- * A: because it happened once, that some eger coder 'streamlined' code to fail.
+ * A: because it happened once, that some eager coder 'streamlined' code to fail.
  * We DO linear interpolation for goals .. and i think we should do on animated properties as well
  */
 
@@ -3014,7 +3014,7 @@ static void curve_surf_to_softbody(Scene *scene, Object *ob)
        *
        * a: never ever make tangent handles (sub) and or (ob)ject to collision.
        * b: rather calculate them using some C2
-       *    (C2= continuous in second derivate -> no jump in bending ) condition.
+       *    (C2= continuous in second derivative -> no jump in bending ) condition.
        *
        * Not too hard to do, but needs some more code to care for;
        * some one may want look at it (JOW 2010/06/12). */

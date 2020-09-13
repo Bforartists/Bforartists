@@ -30,7 +30,6 @@
 
 #include "GPU_batch.h"
 #include "GPU_batch_presets.h"
-#include "GPU_extensions.h"
 #include "GPU_matrix.h"
 #include "GPU_platform.h"
 #include "GPU_shader.h"
@@ -236,14 +235,12 @@ void GPU_batch_draw(GPUBatch *batch)
 {
   GPU_shader_bind(batch->shader);
   GPU_batch_draw_advanced(batch, 0, 0, 0, 0);
-  GPU_shader_unbind();
 }
 
 void GPU_batch_draw_range(GPUBatch *batch, int v_first, int v_count)
 {
   GPU_shader_bind(batch->shader);
   GPU_batch_draw_advanced(batch, v_first, v_count, 0, 0);
-  GPU_shader_unbind();
 }
 
 /* Draw multiple instance of a batch without having any instance attributes. */
@@ -253,13 +250,12 @@ void GPU_batch_draw_instanced(GPUBatch *batch, int i_count)
 
   GPU_shader_bind(batch->shader);
   GPU_batch_draw_advanced(batch, 0, 0, 0, i_count);
-  GPU_shader_unbind();
 }
 
 void GPU_batch_draw_advanced(
     GPUBatch *gpu_batch, int v_first, int v_count, int i_first, int i_count)
 {
-  BLI_assert(GPU_context_active_get()->shader != NULL);
+  BLI_assert(Context::get()->shader != NULL);
   Batch *batch = static_cast<Batch *>(gpu_batch);
 
   if (v_count == 0) {
@@ -267,14 +263,14 @@ void GPU_batch_draw_advanced(
       v_count = batch->elem_()->index_len_get();
     }
     else {
-      v_count = batch->verts[0]->vertex_len;
+      v_count = batch->verts_(0)->vertex_len;
     }
   }
   if (i_count == 0) {
-    i_count = (batch->inst[0]) ? batch->inst[0]->vertex_len : 1;
+    i_count = (batch->inst[0]) ? batch->inst_(0)->vertex_len : 1;
     /* Meh. This is to be able to use different numbers of verts in instance vbos. */
     if (batch->inst[1] != NULL) {
-      i_count = min_ii(i_count, batch->inst[1]->vertex_len);
+      i_count = min_ii(i_count, batch->inst_(1)->vertex_len);
     }
   }
 

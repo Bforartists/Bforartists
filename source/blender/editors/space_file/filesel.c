@@ -828,13 +828,23 @@ FileLayout *ED_fileselect_get_layout(struct SpaceFile *sfile, ARegion *region)
   return sfile->layout;
 }
 
-void ED_file_change_dir(bContext *C)
+/**
+ * Support updating the directory even when this isn't the active space
+ * needed so RNA properties update function isn't context sensitive, see T70255.
+ */
+void ED_file_change_dir_ex(bContext *C, bScreen *screen, ScrArea *area)
 {
-  wmWindowManager *wm = CTX_wm_manager(C);
-  SpaceFile *sfile = CTX_wm_space_file(C);
-
+  /* May happen when manipulating non-active spaces. */
+  if (UNLIKELY(area->spacetype != SPACE_FILE)) {
+    return;
+  }
+  SpaceFile *sfile = area->spacedata.first;
   if (sfile->params) {
-    ED_fileselect_clear(wm, CTX_data_scene(C), sfile);
+    wmWindowManager *wm = CTX_wm_manager(C);
+    Scene *scene = WM_windows_scene_get_from_screen(wm, screen);
+    if (LIKELY(scene != NULL)) {
+      ED_fileselect_clear(wm, scene, sfile);
+    }
 
     /* Clear search string, it is very rare to want to keep that filter while changing dir,
      * and usually very annoying to keep it actually! */
@@ -853,23 +863,28 @@ void ED_file_change_dir(bContext *C)
 
     folderlist_pushdir(sfile->folders_prev, sfile->params->dir);
 
-    file_draw_check(C);
+    file_draw_check_ex(C, area);
   }
+}
+
+void ED_file_change_dir(bContext *C)
+{
+  bScreen *screen = CTX_wm_screen(C);
+  ScrArea *area = CTX_wm_area(C);
+  ED_file_change_dir_ex(C, screen, area);
 }
 
 int file_select_match(struct SpaceFile *sfile, const char *pattern, char *matched_file)
 {
   int match = 0;
 
-  int i;
-  FileDirEntry *file;
   int n = filelist_files_ensure(sfile->files);
 
   /* select any file that matches the pattern, this includes exact match
    * if the user selects a single file by entering the filename
    */
-  for (i = 0; i < n; i++) {
-    file = filelist_file(sfile->files, i);
+  for (int i = 0; i < n; i++) {
+    FileDirEntry *file = filelist_file(sfile->files, i);
     /* Do not check whether file is a file or dir here! Causes T44243
      * (we do accept dirs at this stage). */
     if (fnmatch(pattern, file->relpath, 0) == 0) {
@@ -941,9 +956,8 @@ int autocomplete_file(struct bContext *C, char *str, void *UNUSED(arg_v))
   if (str[0] && sfile->files) {
     AutoComplete *autocpl = UI_autocomplete_begin(str, FILE_MAX);
     int nentries = filelist_files_ensure(sfile->files);
-    int i;
 
-    for (i = 0; i < nentries; i++) {
+    for (int i = 0; i < nentries; i++) {
       FileDirEntry *file = filelist_file(sfile->files, i);
       UI_autocomplete_update_name(autocpl, file->relpath);
     }

@@ -22,7 +22,7 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2, 14, 1),
+    "version": (2, 14, 2),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
@@ -163,9 +163,10 @@ def register():
 
     # create the global menu hotkey
     wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
-    kmi = km.keymap_items.new('view3d.collection_manager', 'M', 'PRESS')
-    addon_keymaps.append((km, kmi))
+    if wm.keyconfigs.addon: # not present when started with --background
+        km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
+        kmi = km.keymap_items.new('view3d.collection_manager', 'M', 'PRESS')
+        addon_keymaps.append((km, kmi))
 
     # Add Collection Manager & QCD Move Widget to the Object->Collections menu
     bpy.types.VIEW3D_MT_object_collection.prepend(menu_addition)
