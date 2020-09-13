@@ -27,7 +27,7 @@
 #include "BLI_assert.h"
 
 #include "GPU_batch.h"
-#include "GPU_extensions.h"
+#include "GPU_capabilities.h"
 
 #include "glew-mx.h"
 
@@ -40,8 +40,6 @@
 #include "gl_primitive.hh"
 
 #include <limits.h>
-
-#define USE_MULTI_DRAW_INDIRECT 1
 
 using namespace blender::gpu;
 
@@ -75,8 +73,7 @@ GLDrawList::GLDrawList(int length)
   data_size_ = 0;
   data_ = NULL;
 
-  if (USE_MULTI_DRAW_INDIRECT && GLEW_ARB_multi_draw_indirect &&
-      GPU_arb_base_instance_is_supported()) {
+  if (GLContext::multi_draw_indirect_support) {
     /* Alloc the biggest possible command list, which is indexed. */
     buffer_size_ = sizeof(GLDrawCommandIndexed) * length;
   }
@@ -88,15 +85,12 @@ GLDrawList::GLDrawList(int length)
 
 GLDrawList::~GLDrawList()
 {
-  /* TODO This ... */
-  static_cast<GLBackend *>(GPUBackend::get())->buf_free(buffer_id_);
-  /* ... should be this. */
-  // context_->buf_free(buffer_id_)
+  GLContext::buf_free(buffer_id_);
 }
 
 void GLDrawList::init(void)
 {
-  BLI_assert(GPU_context_active_get());
+  BLI_assert(GLContext::get());
   BLI_assert(MDI_ENABLED);
   BLI_assert(data_ == NULL);
   batch_ = NULL;
@@ -105,7 +99,7 @@ void GLDrawList::init(void)
   if (buffer_id_ == 0) {
     /* Allocate on first use. */
     glGenBuffers(1, &buffer_id_);
-    context_ = static_cast<GLContext *>(GPU_context_active_get());
+    context_ = GLContext::get();
   }
 
   glBindBuffer(GL_DRAW_INDIRECT_BUFFER, buffer_id_);
@@ -139,10 +133,10 @@ void GLDrawList::append(GPUBatch *gpu_batch, int i_first, int i_count)
     this->submit();
     batch_ = batch;
     /* Cached for faster access. */
-    GLIndexBuf *el = batch_->gl_elem();
+    GLIndexBuf *el = batch_->elem_();
     base_index_ = el ? el->index_base_ : UINT_MAX;
     v_first_ = el ? el->index_start_ : 0;
-    v_count_ = el ? el->index_len_ : batch->verts[0]->vertex_len;
+    v_count_ = el ? el->index_len_ : batch->verts_(0)->vertex_len;
   }
 
   if (v_count_ == 0) {
@@ -183,7 +177,7 @@ void GLDrawList::submit(void)
   /* Something's wrong if we get here without MDI support. */
   BLI_assert(MDI_ENABLED);
   BLI_assert(data_);
-  BLI_assert(GPU_context_active_get()->shader != NULL);
+  BLI_assert(GLContext::get()->shader != NULL);
 
   /* Only do multi-draw indirect if doing more than 2 drawcall. This avoids the overhead of
    * buffer mapping if scene is not very instance friendly. BUT we also need to take into
@@ -202,7 +196,7 @@ void GLDrawList::submit(void)
     batch_->bind(0);
 
     if (MDI_INDEXED) {
-      GLenum gl_type = to_gl(batch_->gl_elem()->index_type_);
+      GLenum gl_type = to_gl(batch_->elem_()->index_type_);
       glMultiDrawElementsIndirect(prim, gl_type, offset, command_len_, 0);
     }
     else {

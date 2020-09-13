@@ -13,23 +13,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * The Original Code is Copyright (C) 2005 Blender Foundation.
- * All rights reserved.
+ * Copyright 2020, Blender Foundation.
  */
 
 /** \file
- * \ingroup gpu
+ * \ingroup draw_editors
  */
 
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* prints something if debug mode is active only */
-void GPU_print_error_debug(const char *str);
-
-#ifdef __cplusplus
-}
-#endif
+extern DrawEngineType draw_engine_image_type;

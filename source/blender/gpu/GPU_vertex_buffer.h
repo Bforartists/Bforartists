@@ -46,7 +46,6 @@ ENUM_OPERATORS(GPUVertBufStatus)
 extern "C" {
 #endif
 
-#define VRAM_USAGE 1
 /**
  * How to create a #GPUVertBuf:
  * 1) verts = GPU_vertbuf_calloc()
@@ -62,11 +61,10 @@ typedef enum {
   GPU_USAGE_DYNAMIC,
 } GPUUsageType;
 
+/** Opaque type hiding blender::gpu::VertBuf. */
 typedef struct GPUVertBuf GPUVertBuf;
 
-#define GPU_vertbuf_calloc() GPU_vertbuf_create(GPU_USAGE_STATIC);
-
-GPUVertBuf *GPU_vertbuf_create(GPUUsageType);
+GPUVertBuf *GPU_vertbuf_calloc(void);
 GPUVertBuf *GPU_vertbuf_create_with_format_ex(const GPUVertFormat *, GPUUsageType);
 
 #define GPU_vertbuf_create_with_format(format) \
@@ -79,7 +77,6 @@ void GPU_vertbuf_discard(GPUVertBuf *);
 void GPU_vertbuf_handle_ref_add(GPUVertBuf *verts);
 void GPU_vertbuf_handle_ref_remove(GPUVertBuf *verts);
 
-void GPU_vertbuf_init(GPUVertBuf *, GPUUsageType);
 void GPU_vertbuf_init_with_format_ex(GPUVertBuf *, const GPUVertFormat *, GPUUsageType);
 
 #define GPU_vertbuf_init_with_format(verts, format) \
@@ -87,7 +84,6 @@ void GPU_vertbuf_init_with_format_ex(GPUVertBuf *, const GPUVertFormat *, GPUUsa
 
 GPUVertBuf *GPU_vertbuf_duplicate(GPUVertBuf *verts);
 
-uint GPU_vertbuf_size_get(const GPUVertBuf *);
 void GPU_vertbuf_data_alloc(GPUVertBuf *, uint v_len);
 void GPU_vertbuf_data_resize(GPUVertBuf *, uint v_len);
 void GPU_vertbuf_data_len_set(GPUVertBuf *, uint v_len);
@@ -112,7 +108,7 @@ typedef struct GPUVertBufRaw {
   uint stride;
   unsigned char *data;
   unsigned char *data_init;
-#if TRUST_NO_ONE
+#ifdef DEBUG
   /* Only for overflow check */
   unsigned char *_data_end;
 #endif
@@ -122,9 +118,7 @@ GPU_INLINE void *GPU_vertbuf_raw_step(GPUVertBufRaw *a)
 {
   unsigned char *data = a->data;
   a->data += a->stride;
-#if TRUST_NO_ONE
-  assert(data < a->_data_end);
-#endif
+  BLI_assert(data < a->_data_end);
   return (void *)data;
 }
 
@@ -144,6 +138,9 @@ uint GPU_vertbuf_get_vertex_len(const GPUVertBuf *verts);
 GPUVertBufStatus GPU_vertbuf_get_status(const GPUVertBuf *verts);
 
 void GPU_vertbuf_use(GPUVertBuf *);
+
+/* XXX do not use. */
+void GPU_vertbuf_update_sub(GPUVertBuf *verts, uint start, uint len, void *data);
 
 /* Metrics */
 uint GPU_vertbuf_get_memory_usage(void);

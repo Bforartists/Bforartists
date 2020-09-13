@@ -13,32 +13,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * The Original Code is Copyright (C) 2005 Blender Foundation.
+ * The Original Code is Copyright (C) 2020 Blender Foundation.
  * All rights reserved.
  */
 
 /** \file
- * \ingroup gpu
+ * \ingroup editors
  */
 
-#include "BLI_compiler_attrs.h"
-#include "BLI_sys_types.h"
-#include "BLI_system.h"
-#include "BLI_utildefines.h"
+#ifndef __ED_GEOMETRY_H__
+#define __ED_GEOMETRY_H__
 
-#include "BKE_global.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "GPU_debug.h"
-#include "GPU_glew.h"
-#include "intern/gpu_private.h"
+void ED_operatortypes_geometry(void);
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-void GPU_print_error_debug(const char *str)
-{
-  if (G.debug & G_DEBUG) {
-    fprintf(stderr, "GPU: %s\n", str);
-  }
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* __ED_GEOMETRY_H__ */

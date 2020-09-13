@@ -123,6 +123,8 @@ set(SRC
   bpy_utils_units.h
   ../BPY_extern.h
   ../BPY_extern_clog.h
+  ../BPY_extern_python.h
+  ../BPY_extern_run.h
 )
 
 set(LIB
@@ -339,6 +341,5 @@ if(WITH_XR_OPENXR)
   add_definitions(-DWITH_XR_OPENXR)
 endif()
 
-add_definitions(${GL_DEFINITIONS})
 
 blender_add_lib(bf_python "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

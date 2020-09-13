@@ -331,6 +331,7 @@ static void buttons_main_region_listener(wmWindow *UNUSED(win),
 
 static void buttons_operatortypes(void)
 {
+  WM_operatortype_append(BUTTONS_OT_toggle_pin);
   WM_operatortype_append(BUTTONS_OT_context_menu);
   WM_operatortype_append(BUTTONS_OT_file_browse);
   WM_operatortype_append(BUTTONS_OT_directory_browse);
@@ -661,8 +662,8 @@ static void buttons_id_remap(ScrArea *UNUSED(area), SpaceLink *slink, ID *old_id
 
   if (sbuts->path) {
     ButsContextPath *path = sbuts->path;
-    int i;
 
+    int i;
     for (i = 0; i < path->len; i++) {
       if (path->ptr[i].owner_id == old_id) {
         break;

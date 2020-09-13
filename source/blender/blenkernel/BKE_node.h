@@ -72,6 +72,10 @@ struct bNodeTree;
 struct bNodeTreeExec;
 struct bNodeTreeType;
 struct uiLayout;
+struct BlendWriter;
+struct BlendDataReader;
+struct BlendLibReader;
+struct BlendExpander;
 
 /* -------------------------------------------------------------------- */
 /** \name Node Type Definitions
@@ -250,23 +254,23 @@ typedef struct bNodeType {
    * \note Used as a fallback when #bNode.label isn't set.
    */
   void (*labelfunc)(struct bNodeTree *ntree, struct bNode *node, char *label, int maxlen);
-  /// Optional custom resize handle polling.
+  /** Optional custom resize handle polling. */
   int (*resize_area_func)(struct bNode *node, int x, int y);
-  /// Optional selection area polling.
+  /** Optional selection area polling. */
   int (*select_area_func)(struct bNode *node, int x, int y);
-  /// Optional tweak area polling (for grabbing).
+  /** Optional tweak area polling (for grabbing). */
   int (*tweak_area_func)(struct bNode *node, int x, int y);
 
-  /// Called when the node is updated in the editor.
+  /** Called when the node is updated in the editor. */
   void (*updatefunc)(struct bNodeTree *ntree, struct bNode *node);
-  /// Check and update if internal ID data has changed.
+  /** Check and update if internal ID data has changed. */
   void (*group_update_func)(struct bNodeTree *ntree, struct bNode *node);
 
-  /// Initialize a new node instance of this type after creation.
+  /** Initialize a new node instance of this type after creation. */
   void (*initfunc)(struct bNodeTree *ntree, struct bNode *node);
-  /// Free the node instance.
+  /** Free the node instance. */
   void (*freefunc)(struct bNode *node);
-  /// Make a copy of the node instance.
+  /** Make a copy of the node instance. */
   void (*copyfunc)(struct bNodeTree *dest_ntree,
                    struct bNode *dest_node,
                    const struct bNode *src_node);
@@ -452,6 +456,11 @@ void ntreeNodeFlagSet(const bNodeTree *ntree, const int flag, const bool enable)
 struct bNodeTree *ntreeLocalize(struct bNodeTree *ntree);
 void ntreeLocalSync(struct bNodeTree *localtree, struct bNodeTree *ntree);
 void ntreeLocalMerge(struct Main *bmain, struct bNodeTree *localtree, struct bNodeTree *ntree);
+
+void ntreeBlendWrite(struct BlendWriter *writer, struct bNodeTree *ntree);
+void ntreeBlendReadData(struct BlendDataReader *reader, struct bNodeTree *ntree);
+void ntreeBlendReadLib(struct BlendLibReader *reader, struct bNodeTree *ntree);
+void ntreeBlendReadExpand(struct BlendExpander *expander, struct bNodeTree *ntree);
 
 /** \} */
 
