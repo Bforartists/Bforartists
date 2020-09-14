@@ -390,9 +390,9 @@ class MASK_MT_transform(Menu):
 
         layout.separator()
 
-        layout.operator("transform.tosphere")
-        layout.operator("transform.shear")
-        layout.operator("transform.push_pull")
+        layout.operator("transform.tosphere", icon = "TOSPHERE")
+        layout.operator("transform.shear", icon = "SHEAR")
+        layout.operator("transform.push_pull", icon = "PUSH_PULL")
 
         layout.separator()
 
