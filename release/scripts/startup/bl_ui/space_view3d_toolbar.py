@@ -362,7 +362,9 @@ class VIEW3D_PT_tools_particlemode(Panel, View3DPaintPanel):
                 col.prop(brush, "count")
 
                 col = layout.column()
+                col.use_property_split = False
                 col.prop(settings, "use_default_interpolate")
+                col.use_property_split = True
                 col.prop(brush, "steps", slider=True)
                 col.prop(settings, "default_key_count", slider=True)
             else:
@@ -372,9 +374,12 @@ class VIEW3D_PT_tools_particlemode(Panel, View3DPaintPanel):
                     layout.row().prop(brush, "length_mode", expand=True)
                 elif tool == 'PUFF':
                     layout.row().prop(brush, "puff_mode", expand=True)
+                    layout.use_property_split = False
                     layout.prop(brush, "use_puff_volume")
                 elif tool == 'COMB':
+                    layout.use_property_split = False
                     layout.prop(settings, "use_emitter_deflect", text="Deflect Emitter")
+                    layout.use_property_split = True
                     col = layout.column()
                     col.active = settings.use_emitter_deflect
                     col.prop(settings, "emitter_distance", text="Distance")
