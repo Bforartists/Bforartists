@@ -213,16 +213,20 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         ob = context.active_object
         mesh = ob.data
 
-        row = layout.row(align=True)
-        row.label(text = "Transform")
-        row = layout.row()
+        col = layout.column(align = True)
+        col.label(text = "Transform")
+        row = col.row()
         row.use_property_split = False
         row.separator()
         row.prop(tool_settings, "use_transform_correct_face_attributes")
         if tool_settings.use_transform_correct_face_attributes:
             row.prop(tool_settings, "use_transform_correct_keep_connected")
 
-        row = layout.row(align=True, heading="UVs")
+        col = layout.column(align = True)
+        col.label(text = "UV's")
+        row = col.row()
+        row.use_property_split = False
+        row.separator()
         row.prop(tool_settings, "use_edge_path_live_unwrap")
 
         row = layout.row(heading="Mirror")
@@ -237,8 +241,6 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
         if ob.data.use_mirror_x or ob.data.use_mirror_y or ob.data.use_mirror_z:
             row.separator()
             row.prop(mesh, "use_mirror_topology")
-
-        layout.prop(tool_settings, "use_edge_path_live_unwrap", text = "Live Unwrap Edge Path")
 
 
 class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
