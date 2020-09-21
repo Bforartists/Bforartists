@@ -689,6 +689,7 @@ const bTheme U_theme_default = {
       .back = RGBA(0x464646ff),
       .sub_back = RGBA(0x0000003e),
     },
+    .grid = RGBA(0x505050ff),
     .wire_edit = RGBA(0xc0c0c0ff),
     .vertex_select = RGBA(0xff8500ff),
     .edge_select = RGBA(0xff8500ff),
@@ -720,7 +721,6 @@ const bTheme U_theme_default = {
     .paint_curve_pivot = RGBA(0xff7f7f7f),
     .paint_curve_handle = RGBA(0x7fff7f7f),
     .metadatatext = RGBA(0xffffffff),
-    .grid = RGBA(0x505050ff),
   },
   .space_text = {
     .back = RGBA(0xcccccc00),

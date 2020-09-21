@@ -41,6 +41,7 @@
 #include "BLI_utildefines.h"
 
 #include "DNA_brush_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_curve_types.h"
 #include "DNA_dynamicpaint_types.h"
 #include "DNA_gpencil_types.h"
@@ -460,6 +461,33 @@ DEF_ICON_VECTOR_COLORSET_DRAW_NTH(19, 18)
 DEF_ICON_VECTOR_COLORSET_DRAW_NTH(20, 19)
 
 #  undef DEF_ICON_VECTOR_COLORSET_DRAW_NTH
+
+static void vicon_collection_color_draw(
+    short color_tag, int x, int y, int UNUSED(w), int UNUSED(h), float UNUSED(alpha))
+{
+  bTheme *btheme = UI_GetTheme();
+  const ThemeCollectionColor *collection_color = &btheme->collection_color[color_tag];
+
+  UI_icon_draw_ex(
+      x, y, ICON_GROUP, U.inv_dpi_fac, 1.0f, 0.0f, collection_color->color, true);
+}
+
+#  define DEF_ICON_COLLECTION_COLOR_DRAW(index, color) \
+    static void vicon_collection_color_draw_##index(int x, int y, int w, int h, float alpha) \
+    { \
+      vicon_collection_color_draw(color, x, y, w, h, alpha); \
+    }
+
+DEF_ICON_COLLECTION_COLOR_DRAW(01, COLLECTION_COLOR_01);
+DEF_ICON_COLLECTION_COLOR_DRAW(02, COLLECTION_COLOR_02);
+DEF_ICON_COLLECTION_COLOR_DRAW(03, COLLECTION_COLOR_03);
+DEF_ICON_COLLECTION_COLOR_DRAW(04, COLLECTION_COLOR_04);
+DEF_ICON_COLLECTION_COLOR_DRAW(05, COLLECTION_COLOR_05);
+DEF_ICON_COLLECTION_COLOR_DRAW(06, COLLECTION_COLOR_06);
+DEF_ICON_COLLECTION_COLOR_DRAW(07, COLLECTION_COLOR_07);
+DEF_ICON_COLLECTION_COLOR_DRAW(08, COLLECTION_COLOR_08);
+
+#  undef DEF_ICON_COLLECTION_COLOR_DRAW
 
 /* Dynamically render icon instead of rendering a plain color to a texture/buffer
  * This is not strictly a "vicon", as it needs access to icon->obj to get the color info,
@@ -969,6 +997,15 @@ static void init_internal_icons(void)
   def_internal_vicon(ICON_COLORSET_18_VEC, vicon_colorset_draw_18);
   def_internal_vicon(ICON_COLORSET_19_VEC, vicon_colorset_draw_19);
   def_internal_vicon(ICON_COLORSET_20_VEC, vicon_colorset_draw_20);
+
+  def_internal_vicon(ICON_COLLECTION_COLOR_01, vicon_collection_color_draw_01);
+  def_internal_vicon(ICON_COLLECTION_COLOR_02, vicon_collection_color_draw_02);
+  def_internal_vicon(ICON_COLLECTION_COLOR_03, vicon_collection_color_draw_03);
+  def_internal_vicon(ICON_COLLECTION_COLOR_04, vicon_collection_color_draw_04);
+  def_internal_vicon(ICON_COLLECTION_COLOR_05, vicon_collection_color_draw_05);
+  def_internal_vicon(ICON_COLLECTION_COLOR_06, vicon_collection_color_draw_06);
+  def_internal_vicon(ICON_COLLECTION_COLOR_07, vicon_collection_color_draw_07);
+  def_internal_vicon(ICON_COLLECTION_COLOR_08, vicon_collection_color_draw_08);
 }
 
 static void init_iconfile_list(struct ListBase *list)
@@ -1213,7 +1250,7 @@ void UI_icons_init()
 
 /* Render size for preview images and icons
  */
-int UI_preview_render_size(enum eIconSizes size)
+int UI_icon_preview_to_render_size(enum eIconSizes size)
 {
   switch (size) {
     case ICON_SIZE_ICON:
@@ -1229,7 +1266,7 @@ int UI_preview_render_size(enum eIconSizes size)
  */
 static void icon_create_rect(struct PreviewImage *prv_img, enum eIconSizes size)
 {
-  const uint render_size = UI_preview_render_size(size);
+  const uint render_size = UI_icon_preview_to_render_size(size);
 
   if (!prv_img) {
     if (G.debug & G_DEBUG) {
@@ -1909,7 +1946,7 @@ static void ui_id_preview_image_render_size(
   }
 }
 
-void UI_id_icon_render(const bContext *C, Scene *scene, ID *id, const bool big, const bool use_job)
+void UI_icon_render_id(const bContext *C, Scene *scene, ID *id, const bool big, const bool use_job)
 {
   PreviewImage *pi = BKE_previewimg_id_ensure(id);
 
@@ -2128,10 +2165,13 @@ int ui_id_icon_get(const bContext *C, ID *id, const bool big)
     case ID_LA: /* fall through */
       iconid = BKE_icon_id_ensure(id);
       /* checks if not exists, or changed */
-      UI_id_icon_render(C, NULL, id, big, true);
+      UI_icon_render_id(C, NULL, id, big, true);
       break;
     case ID_SCR:
       iconid = ui_id_screen_get_icon(C, id);
+      break;
+    case ID_GR:
+      iconid = UI_icon_color_from_collection((Collection *)id);
       break;
     default:
       break;
@@ -2140,7 +2180,7 @@ int ui_id_icon_get(const bContext *C, ID *id, const bool big)
   return iconid;
 }
 
-int UI_library_icon_get(const ID *id)
+int UI_icon_from_library(const ID *id)
 {
   if (ID_IS_LINKED(id)) {
     if (id->tag & LIB_TAG_MISSING) {
@@ -2158,7 +2198,7 @@ int UI_library_icon_get(const ID *id)
   return ICON_NONE;
 }
 
-int UI_rnaptr_icon_get(bContext *C, PointerRNA *ptr, int rnaicon, const bool big)
+int UI_icon_from_rnaptr(bContext *C, PointerRNA *ptr, int rnaicon, const bool big)
 {
   ID *id = NULL;
 
@@ -2215,9 +2255,9 @@ int UI_rnaptr_icon_get(bContext *C, PointerRNA *ptr, int rnaicon, const bool big
   return rnaicon;
 }
 
-int UI_idcode_icon_get(const int idcode)
+int UI_icon_from_idcode(const int idcode)
 {
-  switch (idcode) {
+  switch ((ID_Type)idcode) {
     case ID_AC:
       return ICON_ACTION;
     case ID_AR:
@@ -2289,14 +2329,21 @@ int UI_idcode_icon_get(const int idcode)
     case ID_SIM:
       /* TODO: Use correct icon. */
       return ICON_PHYSICS;
-    default:
-      return ICON_NONE;
+
+    /* No icons for these ID-types. */
+    case ID_LI:
+    case ID_IP:
+    case ID_KE:
+    case ID_SCR:
+    case ID_WM:
+      break;
   }
+  return ICON_NONE;
 }
 
-int UI_mode_icon_get(const int mode)
+int UI_icon_from_object_mode(const int mode)
 {
-  switch (mode) {
+  switch ((eObjectMode)mode) {
     case OB_MODE_OBJECT:
       return ICON_OBJECT_DATAMODE;
     case OB_MODE_EDIT:
@@ -2319,9 +2366,19 @@ int UI_mode_icon_get(const int mode)
       return ICON_POSE_HLT;
     case OB_MODE_PAINT_GPENCIL:
       return ICON_GREASEPENCIL;
-    default:
-      return ICON_NONE;
   }
+  return ICON_NONE;
+}
+
+int UI_icon_color_from_collection(const Collection *collection)
+{
+  int icon = ICON_GROUP;
+
+  if (collection->color_tag != COLLECTION_COLOR_NONE) {
+    icon = ICON_COLLECTION_COLOR_01 + collection->color_tag;
+  }
+
+  return icon;
 }
 
 /* draws icon with dpi scale factor */
@@ -2364,7 +2421,7 @@ void UI_icon_draw_ex(float x,
 
 /* ********** Alert Icons ********** */
 
-ImBuf *UI_alert_image(eAlertIcon icon)
+ImBuf *UI_icon_alert_imbuf_get(eAlertIcon icon)
 {
 #ifdef WITH_HEADLESS
   return NULL;

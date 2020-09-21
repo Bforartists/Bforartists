@@ -1768,7 +1768,7 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
             col = layout.column(align = True)
             row = col.row()
             row.separator()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(strip, "stabilize2d")
             row.prop_decorator(strip, "stabilize2d")
 
@@ -1777,7 +1777,7 @@ class SEQUENCER_PT_adjust_video(SequencerButtonsPanel, Panel):
             col = layout.column(align = True)
             row = col.row()
             row.separator()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(strip, "undistort")
             row.prop_decorator(strip, "undistort")
             col.separator()

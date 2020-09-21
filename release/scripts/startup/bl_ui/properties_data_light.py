@@ -287,10 +287,10 @@ class DATA_PT_spot(DataButtonsPanel, Panel):
 
         col.prop(light, "spot_size", text="Size")
         col.prop(light, "spot_blend", text="Blend", slider=True)
-        
+
         col = layout.column(align = True)
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(light, "show_cone")
         row.prop_decorator(light, "show_cone")
 

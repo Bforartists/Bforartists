@@ -53,20 +53,20 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
             depth_row.enabled = not ob.show_in_front
             depth_row.prop(ob, "empty_image_depth", text="Depth", expand=True)
             col.row().prop(ob, "empty_image_side", text="Side", expand=True)
-            
+
             col = layout.column(align=True)
             col.label( text = "Show in")
-            col.use_property_split = False  
+            col.use_property_split = False
             row = col.row()
             row.separator()
             row.prop(ob, "show_empty_image_orthographic", text="Orthographic")
-            row.prop_decorator(ob, "show_empty_image_orthographic")       
+            row.prop_decorator(ob, "show_empty_image_orthographic")
             row = col.row()
             row.separator()
             row.prop(ob, "show_empty_image_perspective", text="Perspective")
             row.prop_decorator(ob, "show_empty_image_perspective")
             row = col.row()
-            row.separator() 
+            row.separator()
             row.prop(ob, "show_empty_image_only_axis_aligned", text="Only Axis Aligned")
             row.prop_decorator(ob, "show_empty_image_only_axis_aligned")
 

@@ -101,7 +101,7 @@ class INFO_OT_Toggle_Maximize_Area(bpy.types.Operator):
 
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.screen.screen_full_area(use_hide_panels = False)
-        return {'FINISHED'}  
+        return {'FINISHED'}
 
 
 class INFO_MT_area(Menu):

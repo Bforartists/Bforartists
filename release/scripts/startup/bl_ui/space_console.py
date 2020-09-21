@@ -28,7 +28,7 @@ class CONSOLE_HT_header(Header):
         layout = self.layout.row()
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
-        CONSOLE_MT_editor_menus.draw_collapsible(context, layout)      
+        CONSOLE_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.operator("console.autocomplete", text="Autocomplete")
 
@@ -60,9 +60,9 @@ class CONSOLE_MT_console(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        
+
         layout.operator("console.execute", icon = "PLAY").interactive = True
-        
+
         layout.separator()
 
         layout.operator("console.clear", icon = "DELETE")
@@ -73,17 +73,17 @@ class CONSOLE_MT_console(Menu):
         layout.operator("console.copy_as_script", text = "Copy as Script", icon = "COPYDOWN")
         layout.operator("console.copy", text ="Copy", icon = "COPYDOWN")
         layout.operator("console.paste", text = "Paste", icon = "PASTEDOWN")
-        
+
         layout.separator()
 
         layout.menu("CONSOLE_MT_language")
-        
+
         layout.separator()
-        
+
         myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text in", icon = "ZOOM_IN")
         myvar.data_path = "space_data.font_size"
         myvar.reverse = False
-        
+
         myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text Out", icon = "ZOOM_OUT")
         myvar.data_path = "space_data.font_size"
         myvar.reverse = True
@@ -91,7 +91,7 @@ class CONSOLE_MT_console(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
-        
+
 class CONSOLE_MT_edit(Menu):
     bl_label = "Edit"
 
@@ -100,22 +100,22 @@ class CONSOLE_MT_edit(Menu):
 
         layout.operator("console.indent", icon = "INDENT")
         layout.operator("console.unindent", icon = "UNINDENT")
-        
+
         layout.separator()
-        
+
         layout.operator("console.move", text ="Cursor to Previous Word", icon = "CARET_PREV_WORD").type = "PREVIOUS_WORD"
         layout.operator("console.move", text ="Cursor to Next Word", icon = "CARET_NEXT_WORD").type = "NEXT_WORD"
         layout.operator("console.move", text ="Cursor to Line Begin", icon = "CARET_LINE_BEGIN").type = "LINE_BEGIN"
-        layout.operator("console.move", text ="Cursor to Line End", icon = "CARET_LINE_END").type = "LINE_END"     
+        layout.operator("console.move", text ="Cursor to Line End", icon = "CARET_LINE_END").type = "LINE_END"
         layout.operator("console.move", text ="Cursor to Previous Character", icon = "CARET_PREV_CHAR").type = "PREVIOUS_CHARACTER"
         layout.operator("console.move", text ="Cursor to Next Character", icon = "CARET_NEXT_CHAR").type = "NEXT_CHARACTER"
-        
+
         layout.separator()
-        
+
         layout.menu("CONSOLE_MT_edit_delete")
-        
+
         layout.separator()
-        
+
         layout.operator("console.history_cycle", text = "Forward in History", icon = "HISTORY_CYCLE_FORWARD").reverse = False
         layout.operator("console.history_cycle", text = "Backward in History", icon = "HISTORY_CYCLE_BACK").reverse = True
 

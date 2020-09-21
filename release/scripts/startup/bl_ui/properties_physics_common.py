@@ -332,7 +332,7 @@ def basic_force_field_settings_ui(self, field):
 
     if field.type == 'TURBULENCE':
         row = col.row()
-        row.use_property_split = False  
+        row.use_property_split = False
         row.prop(field, "use_global_coords", text="Global")
         row.prop_decorator(field, "use_global_coords")
 
@@ -347,9 +347,9 @@ def basic_force_field_settings_ui(self, field):
         row.use_property_split = False
         row.prop(field, "use_gravity_falloff", text="Gravitation")
         row.prop_decorator(field, "use_gravity_falloff")
-        
+
     row = col.row()
-    row.use_property_split = False  
+    row.use_property_split = False
     row.prop(field, "use_absorption")
     row.prop_decorator(field, "use_absorption")
     col.prop(field, "wind_factor")
