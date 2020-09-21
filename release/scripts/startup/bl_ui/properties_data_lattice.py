@@ -73,10 +73,10 @@ class DATA_PT_lattice(DataButtonsPanel, Panel):
         sub.prop(lat, "interpolation_type_w", text="W")
 
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(lat, "use_outside")
         row.prop_decorator(lat, "use_outside")
-        
+
         col = layout.column()
         col.prop_search(lat, "vertex_group", context.object, "vertex_groups")
 

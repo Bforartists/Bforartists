@@ -302,6 +302,12 @@ class OUTLINER_MT_collection(Menu):
 
         if space.display_mode != 'VIEW_LAYER':
             layout.operator("outliner.collection_link", text="Link to Scene", icon = "LINKED")
+
+            layout.separator()
+
+            row = layout.row(align=True)
+            row.operator_enum("outliner.collection_color_tag_set", "color", icon_only=True)
+
         layout.operator("outliner.id_operation", text="Unlink", icon = "UNLINKED").type = 'UNLINK'
 
         layout.separator()

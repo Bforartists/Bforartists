@@ -1177,8 +1177,9 @@ int WM_keymap_item_raw_to_string(const short shift,
                                  const int result_len)
 {
 #define ADD_SEP \
-  if (p != buf) \
+  if (p != buf) { \
     *p++ = ' '; \
+  } \
   (void)0
 
   char buf[128];

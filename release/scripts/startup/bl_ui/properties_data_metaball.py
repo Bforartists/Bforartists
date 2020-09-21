@@ -81,12 +81,12 @@ class DATA_PT_mball_texture_space(DataButtonsPanel, Panel):
         layout.use_property_split = True
 
         mball = context.meta_ball
-        
+
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(mball, "use_auto_texspace")
         row.prop_decorator(mball, "use_auto_texspace")
-        
+
         col = layout.column()
         col.prop(mball, "texspace_location")
         col.prop(mball, "texspace_size")

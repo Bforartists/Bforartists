@@ -452,47 +452,27 @@ class VIEW3D_HT_tool_header(Header):
             sub.scale_x = 0.6
             return row, sub
 
-        if mode_string == 'EDIT_MESH':
+        if mode_string == 'EDIT_ARMATURE':
             _row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="    ", icon='MIRROR_X', toggle=True)
-            sub.prop(context.object.data, "use_mirror_y", text="    ", icon='MIRROR_Y', toggle=True)
-            sub.prop(context.object.data, "use_mirror_z", text="    ", icon='MIRROR_Z', toggle=True)
-            tool_settings = context.tool_settings
-            layout.prop(tool_settings, "use_mesh_automerge", text="")
-        elif mode_string == 'EDIT_ARMATURE':
-            _row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="    ", icon='MIRROR_X', toggle=True)
+            sub.prop(context.object.data, "use_mirror_x", text="X", icon='MIRROR_X', toggle=True)
         elif mode_string == 'POSE':
             _row, sub = row_for_mirror()
-            sub.prop(context.object.pose, "use_mirror_x", text="    ", icon='MIRROR_X', toggle=True)
-        elif mode_string == 'PAINT_WEIGHT':
+            sub.prop(context.object.pose, "use_mirror_x", text="X", icon='MIRROR_X', toggle=True)
+        elif mode_string in {'EDIT_MESH', 'PAINT_WEIGHT', 'SCULPT', 'PAINT_VERTEX'}:
+            # Mesh Modes, Use Mesh Symmetry
             row, sub = row_for_mirror()
-            wpaint = context.tool_settings.weight_paint
-            sub.prop(wpaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
-            sub.prop(wpaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
-            sub.prop(wpaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
-            row.popover(panel="VIEW3D_PT_tools_weightpaint_symmetry_for_topbar", text="")
-        elif mode_string == 'SCULPT':
-            row, sub = row_for_mirror()
-            sculpt = context.tool_settings.sculpt
-            sub.prop(sculpt, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
-            sub.prop(sculpt, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
-            sub.prop(sculpt, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
-            row.popover(panel="VIEW3D_PT_sculpt_symmetry_for_topbar", text="")
-        elif mode_string == 'PAINT_TEXTURE':
-            _row, sub = row_for_mirror()
-            ipaint = context.tool_settings.image_paint
-            sub.prop(ipaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
-            sub.prop(ipaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
-            sub.prop(ipaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
-            # No need for a popover, the panel only has these options.
-        elif mode_string == 'PAINT_VERTEX':
-            row, sub = row_for_mirror()
-            vpaint = context.tool_settings.vertex_paint
-            sub.prop(vpaint, "use_symmetry_x", text="    ", icon='MIRROR_X', toggle=True)
-            sub.prop(vpaint, "use_symmetry_y", text="    ", icon='MIRROR_Y', toggle=True)
-            sub.prop(vpaint, "use_symmetry_z", text="    ", icon='MIRROR_Z', toggle=True)
-            row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
+            sub.prop(context.object.data, "use_mirror_x", text="X", icon='MIRROR_X', toggle=True)
+            sub.prop(context.object.data, "use_mirror_y", text="Y", icon='MIRROR_Y', toggle=True)
+            sub.prop(context.object.data, "use_mirror_z", text="Z", icon='MIRROR_Z', toggle=True)
+            if mode_string == 'EDIT_MESH':
+                tool_settings = context.tool_settings
+                layout.prop(tool_settings, "use_mesh_automerge", text="")
+            elif mode_string == 'PAINT_WEIGHT':
+                row.popover(panel="VIEW3D_PT_tools_weightpaint_symmetry_for_topbar", text="")
+            elif mode_string == 'SCULPT':
+                row.popover(panel="VIEW3D_PT_sculpt_symmetry_for_topbar", text="")
+            elif mode_string == 'PAINT_VERTEX':
+                row.popover(panel="VIEW3D_PT_tools_vertexpaint_symmetry_for_topbar", text="")
 
         # Expand panels from the side-bar as popovers.
         popover_kw = {"space_type": 'VIEW_3D', "region_type": 'UI', "category": "Tool"}
@@ -2145,7 +2125,7 @@ class VIEW3D_MT_select_gpencil_none(bpy.types.Operator):
 class VIEW3D_MT_select_gpencil(Menu):
     bl_label = "Select"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.operator("gpencil.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
@@ -2158,7 +2138,7 @@ class VIEW3D_MT_select_gpencil(Menu):
         layout.operator("gpencil.select_alternate", icon = "ALTERNATED")
         layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
 
-        if _context.mode == 'VERTEX_GPENCIL':
+        if context.mode == 'VERTEX_GPENCIL':
             layout.operator("gpencil.select_vertex_color", text="Vertex Color")
 
         layout.separator()
@@ -3222,14 +3202,14 @@ class VIEW3D_MT_object_constraints(Menu):
 class VIEW3D_MT_object_quick_effects(Menu):
     bl_label = "Quick Effects"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.operator("object.quick_fur", icon = "HAIR")
         layout.operator("object.quick_explode", icon = "MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon = "MOD_SMOKE")
         layout.operator("object.quick_liquid", icon = "MOD_FLUIDSIM")
-        if _context.preferences.experimental.use_new_particle_system:
+        if context.preferences.experimental.use_new_particle_system:
             layout.operator("object.quick_particles", icon = "PARTICLES")
 
 
@@ -6118,9 +6098,9 @@ class VIEW3D_MT_edit_gpencil_arrange_strokes(Menu):
 class VIEW3D_MT_edit_gpencil_stroke(Menu):
     bl_label = "Stroke"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
-        settings = _context.tool_settings.gpencil_sculpt
+        settings = context.tool_settings.gpencil_sculpt
 
         layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES").only_selected = False
         layout.menu("VIEW3D_MT_gpencil_simplify")
@@ -6876,7 +6856,12 @@ class VIEW3D_PT_shading_lighting(Panel):
 
                 split = layout.split(factor=0.9)
                 col = split.column()
-                col.prop(shading, "studiolight_rotate_z", text="Rotation")
+
+                row = col.row()
+                row.prop(shading, "use_studiolight_view_rotation", text="", icon='WORLD', toggle=True)
+                row = row.row()
+                row.prop(shading, "studiolight_rotate_z", text="Rotation")
+
                 col.prop(shading, "studiolight_intensity")
                 col.prop(shading, "studiolight_background_alpha")
                 col.prop(shading, "studiolight_background_blur")
@@ -7293,6 +7278,12 @@ class VIEW3D_PT_overlay_geometry(Panel):
         col.active = display_all
 
         col.prop(overlay, "show_face_orientation")
+        row = col.row(align=True)
+
+        row.prop(overlay, "show_fade_inactive", text="")
+        sub = row.row()
+        sub.active = overlay.show_fade_inactive
+        sub.prop(overlay, "fade_inactive_alpha", text="Fade Inactive Geometry")
 
         # sub.prop(overlay, "show_onion_skins")
 

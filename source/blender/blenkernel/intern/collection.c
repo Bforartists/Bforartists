@@ -204,6 +204,7 @@ static Collection *collection_add(Main *bmain,
 
   /* Create new collection. */
   Collection *collection = BKE_libblock_alloc(bmain, ID_GR, name, 0);
+  collection->color_tag = COLLECTION_COLOR_NONE;
 
   /* We increase collection user count when linking to Collections. */
   id_us_min(&collection->id);
@@ -649,6 +650,7 @@ Collection *BKE_collection_master_add()
   STRNCPY(master_collection->id.name, "GRMaster Collection");
   master_collection->id.flag |= LIB_EMBEDDED_DATA;
   master_collection->flag |= COLLECTION_IS_MASTER;
+  master_collection->color_tag = COLLECTION_COLOR_NONE;
   return master_collection;
 }
 
