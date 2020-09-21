@@ -54,6 +54,7 @@ struct MemArena;
 struct Mesh;
 struct ModifierData;
 struct Object;
+struct PointCloud;
 struct Scene;
 
 #ifdef __cplusplus
@@ -172,6 +173,16 @@ void BKE_mesh_to_curve(struct Main *bmain,
                        struct Depsgraph *depsgraph,
                        struct Scene *scene,
                        struct Object *ob);
+void BKE_pointcloud_from_mesh(struct Mesh *me, struct PointCloud *pointcloud);
+void BKE_mesh_to_pointcloud(struct Main *bmain,
+                            struct Depsgraph *depsgraph,
+                            struct Scene *scene,
+                            struct Object *ob);
+void BKE_mesh_from_pointcloud(struct PointCloud *pointcloud, struct Mesh *me);
+void BKE_pointcloud_to_mesh(struct Main *bmain,
+                            struct Depsgraph *depsgraph,
+                            struct Scene *scene,
+                            struct Object *ob);
 void BKE_mesh_material_index_remove(struct Mesh *me, short index);
 bool BKE_mesh_material_index_used(struct Mesh *me, short index);
 void BKE_mesh_material_index_clear(struct Mesh *me);
@@ -232,8 +243,6 @@ void BKE_mesh_nomain_to_meshkey(struct Mesh *mesh_src, struct Mesh *mesh_dst, st
 bool BKE_mesh_minmax(const struct Mesh *me, float r_min[3], float r_max[3]);
 void BKE_mesh_transform(struct Mesh *me, const float mat[4][4], bool do_keys);
 void BKE_mesh_translate(struct Mesh *me, const float offset[3], const bool do_keys);
-
-void BKE_mesh_ensure_navmesh(struct Mesh *me);
 
 void BKE_mesh_tessface_calc(struct Mesh *mesh);
 void BKE_mesh_tessface_ensure(struct Mesh *mesh);

@@ -2513,7 +2513,7 @@ static int edbm_do_smooth_vertex_exec(bContext *C, wmOperator *op)
     }
 
     /* mirror before smooth */
-    if (((Mesh *)obedit->data)->editflag & ME_EDIT_MIRROR_X) {
+    if (((Mesh *)obedit->data)->symmetry & ME_SYMMETRY_X) {
       EDBM_verts_mirror_cache_begin(em, 0, false, true, false, use_topology);
     }
 
@@ -2560,7 +2560,7 @@ static int edbm_do_smooth_vertex_exec(bContext *C, wmOperator *op)
     }
 
     /* apply mirror */
-    if (((Mesh *)obedit->data)->editflag & ME_EDIT_MIRROR_X) {
+    if (((Mesh *)obedit->data)->symmetry & ME_SYMMETRY_X) {
       EDBM_verts_mirror_apply(em, BM_ELEM_SELECT, 0);
       EDBM_verts_mirror_cache_end(em);
     }
@@ -2658,7 +2658,7 @@ static int edbm_do_smooth_laplacian_vertex_exec(bContext *C, wmOperator *op)
     }
 
     /* Mirror before smooth. */
-    if (((Mesh *)obedit->data)->editflag & ME_EDIT_MIRROR_X) {
+    if (((Mesh *)obedit->data)->symmetry & ME_SYMMETRY_X) {
       EDBM_verts_mirror_cache_begin(em, 0, false, true, false, use_topology);
     }
 
@@ -2684,7 +2684,7 @@ static int edbm_do_smooth_laplacian_vertex_exec(bContext *C, wmOperator *op)
     }
 
     /* Apply mirror. */
-    if (((Mesh *)obedit->data)->editflag & ME_EDIT_MIRROR_X) {
+    if (((Mesh *)obedit->data)->symmetry & ME_SYMMETRY_X) {
       EDBM_verts_mirror_apply(em, BM_ELEM_SELECT, 0);
       EDBM_verts_mirror_cache_end(em);
     }

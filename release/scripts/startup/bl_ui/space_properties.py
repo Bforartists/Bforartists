@@ -23,14 +23,25 @@ from bpy.types import Header, Panel, Menu
 class PROPERTIES_HT_header(Header):
     bl_space_type = 'PROPERTIES'
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
+        view = context.space_data
 
-        ALL_MT_editormenu.draw_hidden(_context, layout) # bfa - show hide the editormenu
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         # bfa - The tabs to switch between the four animation editors. The classes are in the space_outliner.py
         row = layout.row(align=True)
         row.operator("wm.switch_editor_to_outliner", text="", icon='OOPS')
+
+        layout.separator_spacer()
+
+        layout.prop(view, "search_filter", icon='VIEWZOOM', text="")
+
+        layout.separator_spacer()
+
+        row = layout.row()
+        row.emboss = 'NONE'
+        row.operator("buttons.toggle_pin", icon=('PINNED' if view.use_pin_id else 'UNPINNED'), text="")
 
 
 class PROPERTIES_PT_navigation_bar(Panel):
