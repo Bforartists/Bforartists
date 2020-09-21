@@ -256,13 +256,7 @@ if(WITH_PYTHON_MODULE)
   )
 
   if(APPLE)
-    set_target_properties(
-      bforartists
-      PROPERTIES
-        MACOSX_BUNDLE TRUE
-        LINK_FLAGS_RELEASE "${PLATFORM_LINKFLAGS}"
-        LINK_FLAGS_DEBUG "${PLATFORM_LINKFLAGS_DEBUG}"
-    )
+    set_target_properties(bforartists PROPERTIES MACOSX_BUNDLE TRUE)
   endif()
 
   if(WIN32)
@@ -1127,7 +1121,8 @@ add_dependencies(bforartists makesdna)
 target_link_libraries(bforartists ${LIB})
 unset(LIB)
 
-setup_liblinks(bforartists)
+setup_platform_linker_flags(bforartists)
+setup_platform_linker_libs(bforartists)
 
 if(APPLE)
   set_target_properties(bforartists PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/osx_locals.map)
@@ -1156,15 +1151,15 @@ if(WIN32)
   set_target_properties(bforartists PROPERTIES
     PDB_NAME "bforartists_private"
     PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>")
-    if (WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
+    if(WITH_WINDOWS_PDB AND WITH_WINDOWS_STRIPPED_PDB)
       # This is slightly messy, but single target generators like ninja will not have the
       # CMAKE_CFG_INTDIR variable and multitarget generators like msbuild will not have
       # CMAKE_BUILD_TYPE. This can be simplified by target_link_options and the $<CONFIG>
       # generator expression in newer cmake (2.13+) but until that time this fill have suffice.
       if(CMAKE_BUILD_TYPE)
-        set_property(TARGET bforartists APPEND PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bforartists_public.pdb")
+        set_property(TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/bforartists_public.pdb")
       else()
-        set_property(TARGET bforartists APPEND PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bforartists_public.pdb")
+        set_property(TARGET bforartists APPEND_STRING PROPERTY LINK_FLAGS  " /PDBSTRIPPED:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bforartists_public.pdb")
       endif()
   endif()
 endif()

@@ -1136,7 +1136,8 @@ class IMAGE_PT_view_display(Panel):
             col.use_property_split = True
             col.prop(ima, "display_aspect", text="Aspect Ratio")
             col.use_property_split = False
-            col.prop(sima, "show_repeat", text="Repeat Image")
+            if ima.source != 'TILED':
+                col.prop(sima, "show_repeat", text="Repeat Image")
 
         if show_uvedit:
             col.prop(uvedit, "show_pixel_coords", text="Pixel Coordinates")
@@ -1640,10 +1641,13 @@ class IMAGE_PT_uv_cursor(Panel):
 
         sima = context.space_data
 
+        layout.use_property_split = False
+        layout.use_property_decorate = False
+
         col = layout.column()
 
         col = layout.column()
-        col.prop(sima, "cursor_location", text="Cursor Location")
+        col.prop(sima, "cursor_location", text="Location")
 
 
 class IMAGE_PT_udim_grid(Panel):
@@ -1663,6 +1667,9 @@ class IMAGE_PT_udim_grid(Panel):
 
         sima = context.space_data
         uvedit = sima.uv_editor
+
+        layout.use_property_split = False
+        layout.use_property_decorate = False
 
         col = layout.column()
         col.prop(uvedit, "tile_grid_shape", text="Grid Shape")

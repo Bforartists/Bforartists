@@ -349,7 +349,7 @@ class PHYSICS_PT_softbody_solver(PhysicButtonsPanel, Panel):
         row.use_property_split = False
         row.prop(softbody, "use_auto_step", text="Auto-Step")
         row.prop_decorator(softbody, "use_auto_step")
-        
+
         col.prop(softbody, "error_threshold")
 
 

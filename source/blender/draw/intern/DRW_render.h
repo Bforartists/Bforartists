@@ -423,7 +423,7 @@ void DRW_shgroup_call_ex(DRWShadingGroup *shgroup,
 #define DRW_shgroup_call_obmat(shgroup, geom, obmat) \
   DRW_shgroup_call_ex(shgroup, NULL, obmat, geom, false, NULL)
 
-/* TODO(fclem) remove this when we have DRWView */
+/* TODO(fclem): remove this when we have DRWView */
 /* user_data is used by DRWCallVisibilityFn defined in DRWView. */
 #define DRW_shgroup_call_with_callback(shgroup, geom, ob, user_data) \
   DRW_shgroup_call_ex(shgroup, ob, NULL, geom, false, user_data)
@@ -581,10 +581,6 @@ bool DRW_shgroup_is_empty(DRWShadingGroup *shgroup);
 DRWPass *DRW_pass_create(const char *name, DRWState state);
 DRWPass *DRW_pass_create_instance(const char *name, DRWPass *original, DRWState state);
 void DRW_pass_link(DRWPass *first, DRWPass *second);
-/* TODO Replace with passes inheritance. */
-void DRW_pass_state_set(DRWPass *pass, DRWState state);
-void DRW_pass_state_add(DRWPass *pass, DRWState state);
-void DRW_pass_state_remove(DRWPass *pass, DRWState state);
 void DRW_pass_foreach_shgroup(DRWPass *pass,
                               void (*callback)(void *userData, DRWShadingGroup *shgroup),
                               void *userData);

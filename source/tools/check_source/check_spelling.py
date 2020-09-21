@@ -78,11 +78,12 @@ re_ignore = re.compile(
 
     # URL.
     r'(https?|ftp)://\S+|'
-    # Email address: me@email.com
-    r"<\w+@[\w\.]+>|"
+    # Email address: <me@email.com>
+    #                <someone@foo.bar-baz.com>
+    r"<\w+@[\w\.\-]+>|"
 
-    # Convention for TODO/FIXME messages: TODO(my name) OR FIXME(name+name) OR XXX(some-name)
-    r"\b(TODO|FIXME|XXX)\([A-Za-z\s\+\-]+\)|"
+    # Convention for TODO/FIXME messages: TODO(my name) OR FIXME(name+name) OR XXX(some-name) OR NOTE(name/other-name):
+    r"\b(TODO|FIXME|XXX|NOTE)\([A-Za-z\s\+\-/]+\)|"
 
     # Doxygen style: <pre> ... </pre>
     r"<pre>.+</pre>|"

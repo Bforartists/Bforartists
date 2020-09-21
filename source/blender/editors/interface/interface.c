@@ -367,6 +367,12 @@ void UI_block_translate(uiBlock *block, int x, int y)
   BLI_rctf_translate(&block->rect, x, y);
 }
 
+static bool ui_but_is_row_alignment_group(const uiBut *left, const uiBut *right)
+{
+  const bool is_same_align_group = (left->alignnr && (left->alignnr == right->alignnr));
+  return is_same_align_group && (left->rect.xmin < right->rect.xmin);
+}
+
 static void ui_block_bounds_calc_text(uiBlock *block, float offset)
 {
   const uiStyle *style = UI_style_get();
@@ -385,7 +391,26 @@ static void ui_block_bounds_calc_text(uiBlock *block, float offset)
       }
     }
 
-    if (bt->next && bt->rect.xmin < bt->next->rect.xmin) {
+    /* Skip all buttons that are in a horizontal alignment group.
+     * We don't want to split them apart (but still check the row's width and apply current
+     * offsets). */
+    if (bt->next && ui_but_is_row_alignment_group(bt, bt->next)) {
+      int width = 0;
+      int alignnr = bt->alignnr;
+      for (col_bt = bt; col_bt && col_bt->alignnr == alignnr; col_bt = col_bt->next) {
+        width += BLI_rctf_size_x(&col_bt->rect);
+        col_bt->rect.xmin += x1addval;
+        col_bt->rect.xmax += x1addval;
+      }
+      if (width > i) {
+        i = width;
+      }
+      /* Give the following code the last button in the alignment group, there might have to be a
+       * split immediately after. */
+      bt = col_bt ? col_bt->prev : NULL;
+    }
+
+    if (bt && bt->next && bt->rect.xmin < bt->next->rect.xmin) {
       /* End of this column, and it's not the last one. */
       for (col_bt = init_col_bt; col_bt->prev != bt; col_bt = col_bt->next) {
         col_bt->rect.xmin = x1addval;
@@ -403,6 +428,17 @@ static void ui_block_bounds_calc_text(uiBlock *block, float offset)
 
   /* Last column. */
   for (col_bt = init_col_bt; col_bt; col_bt = col_bt->next) {
+    /* Recognize a horizontally arranged alignment group and skip its items. */
+    if (col_bt->next && ui_but_is_row_alignment_group(col_bt, col_bt->next)) {
+      int alignnr = col_bt->alignnr;
+      for (; col_bt && col_bt->alignnr == alignnr; col_bt = col_bt->next) {
+        /* pass */
+      }
+    }
+    if (!col_bt) {
+      break;
+    }
+
     col_bt->rect.xmin = x1addval;
     col_bt->rect.xmax = max_ff(x1addval + i + block->bounds, offset + block->minbounds);
 
@@ -731,6 +767,38 @@ uiBut *ui_but_find_new(uiBlock *block_new, const uiBut *but_old)
   return but_new;
 }
 
+static bool ui_but_extra_icons_equals_old(const uiButExtraOpIcon *new_extra_icon,
+                                          const uiButExtraOpIcon *old_extra_icon)
+{
+  return (new_extra_icon->optype_params->optype == old_extra_icon->optype_params->optype) &&
+         (new_extra_icon->icon == old_extra_icon->icon);
+}
+
+static uiButExtraOpIcon *ui_but_extra_icon_find_old(const uiButExtraOpIcon *new_extra_icon,
+                                                    const uiBut *old_but)
+{
+  LISTBASE_FOREACH (uiButExtraOpIcon *, op_icon, &old_but->extra_op_icons) {
+    if (ui_but_extra_icons_equals_old(new_extra_icon, op_icon)) {
+      return op_icon;
+    }
+  }
+  return NULL;
+}
+
+static void ui_but_extra_icons_update_from_old_but(const uiBut *new_but, const uiBut *old_but)
+{
+  /* Specifically for keeping some state info for the active button. */
+  BLI_assert(old_but->active);
+
+  LISTBASE_FOREACH (uiButExtraOpIcon *, new_extra_icon, &new_but->extra_op_icons) {
+    uiButExtraOpIcon *old_extra_icon = ui_but_extra_icon_find_old(new_extra_icon, old_but);
+    /* Keep the highlighting state, and let handling update it later. */
+    if (old_extra_icon) {
+      new_extra_icon->highlighted = old_extra_icon->highlighted;
+    }
+  }
+}
+
 /**
  * \return true when \a but_p is set (only done for active buttons).
  */
@@ -818,6 +886,7 @@ static bool ui_but_update_from_old_block(const bContext *C,
     oldbut->flag = (oldbut->flag & ~flag_copy) | (but->flag & flag_copy);
     oldbut->drawflag = (oldbut->drawflag & ~drawflag_copy) | (but->drawflag & drawflag_copy);
 
+    ui_but_extra_icons_update_from_old_but(but, oldbut);
     SWAP(ListBase, but->extra_op_icons, oldbut->extra_op_icons);
 
     if (oldbut->type == UI_BTYPE_SEARCH_MENU) {
@@ -1569,6 +1638,7 @@ static PointerRNA *ui_but_extra_operator_icon_add_ptr(uiBut *but,
   WM_operator_properties_create_ptr(extra_op_icon->optype_params->opptr,
                                     extra_op_icon->optype_params->optype);
   extra_op_icon->optype_params->opcontext = opcontext;
+  extra_op_icon->highlighted = false;
 
   BLI_addtail(&but->extra_op_icons, extra_op_icon);
 
@@ -1774,6 +1844,11 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_x
 
   BLI_assert(block->active);
 
+  /* Extend button data. This needs to be done before the block updating. */
+  LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+    ui_but_predefined_extra_operator_icons_add(but);
+  }
+
   UI_block_update_from_old(C, block);
 
   /* inherit flags from 'old' buttons that was drawn here previous, based
@@ -1805,7 +1880,6 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_x
     if (UI_but_is_decorator(but)) {
       ui_but_anim_decorate_update_from_flag((uiButDecorator *)but);
     }
-    ui_but_predefined_extra_operator_icons_add(but);
 
 #ifndef NDEBUG
     ui_but_validate(but);
@@ -1959,8 +2033,12 @@ void UI_block_draw(const bContext *C, uiBlock *block)
         }
       }
     }
-    ui_draw_aligned_panel(
-        &style, block, &rect, UI_panel_category_is_visible(region), show_background);
+    ui_draw_aligned_panel(&style,
+                          block,
+                          &rect,
+                          UI_panel_category_is_visible(region),
+                          show_background,
+                          region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE);
   }
 
   BLF_batch_draw_begin();
@@ -3505,6 +3583,25 @@ void UI_block_theme_style_set(uiBlock *block, char theme_style)
   block->theme_style = theme_style;
 }
 
+bool UI_block_is_search_only(const uiBlock *block)
+{
+  return block->flag & UI_BLOCK_SEARCH_ONLY;
+}
+
+/**
+ * Use when a block must be searched to give accurate results
+ * for the whole region but shouldn't be displayed.
+ */
+void UI_block_set_search_only(uiBlock *block, bool search_only)
+{
+  SET_FLAG_FROM_TEST(block->flag, search_only, UI_BLOCK_SEARCH_ONLY);
+}
+
+void UI_block_set_search_filter(uiBlock *block, const char *search_filter)
+{
+  block->search_filter = search_filter;
+}
+
 static void ui_but_build_drawstr_float(uiBut *but, double value)
 {
   size_t slen = 0;
@@ -3907,6 +4004,7 @@ uiBut *ui_but_change_type(uiBut *but, eButType new_type)
         const bool found_layout = ui_layout_replace_but_ptr(but->layout, old_but_ptr, but);
         BLI_assert(found_layout);
         UNUSED_VARS_NDEBUG(found_layout);
+        ui_button_group_replace_but_ptr(but->layout, old_but_ptr, but);
       }
     }
   }
@@ -4674,7 +4772,7 @@ uiBut *uiDefButImage(
 
 uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height)
 {
-  struct ImBuf *ibuf = UI_alert_image(icon);
+  struct ImBuf *ibuf = UI_icon_alert_imbuf_get(icon);
 
   if (icon == ALERT_ICON_BLENDER) {
     return uiDefButImage(block, ibuf, x, y, width, height, NULL);
