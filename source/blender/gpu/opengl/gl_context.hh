@@ -135,6 +135,9 @@ class GLContext : public Context {
   void vao_cache_register(GLVaoCache *cache);
   void vao_cache_unregister(GLVaoCache *cache);
 
+  void debug_group_begin(const char *name, int index) override;
+  void debug_group_end(void) override;
+
  private:
   static void orphans_add(Vector<GLuint> &orphan_list, std::mutex &list_mutex, GLuint id);
   void orphans_clear(void);

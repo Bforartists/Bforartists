@@ -693,7 +693,7 @@ void transform_data_ext_rotate(TransData *td, float mat[3][3], bool use_drot);
 /*********************** Transform Orientations ******************************/
 short transform_orientation_matrix_get(struct bContext *C,
                                        TransInfo *t,
-                                       const short orientation,
+                                       short orientation,
                                        const float custom[3][3],
                                        float r_spacemtx[3][3]);
 const char *transform_orientations_spacename_get(TransInfo *t, const short orient_type);
@@ -721,6 +721,8 @@ enum {
 #define ORIENTATION_USE_PLANE(ty) ELEM(ty, ORIENTATION_NORMAL, ORIENTATION_EDGE, ORIENTATION_FACE)
 
 int getTransformOrientation_ex(const struct bContext *C,
+                               struct Object *ob,
+                               struct Object *obedit,
                                float normal[3],
                                float plane[3],
                                const short around);

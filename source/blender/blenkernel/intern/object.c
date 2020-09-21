@@ -48,6 +48,7 @@
 #include "DNA_meta_types.h"
 #include "DNA_movieclip_types.h"
 #include "DNA_object_types.h"
+#include "DNA_pointcloud_types.h"
 #include "DNA_rigidbody_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
@@ -60,6 +61,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_kdtree.h"
 #include "BLI_linklist.h"
+#include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_threads.h"
 #include "BLI_utildefines.h"
@@ -685,6 +687,60 @@ bool BKE_object_support_modifier_type_check(const Object *ob, int modifier_type)
   return false;
 }
 
+bool BKE_object_copy_modifier(struct Object *ob_dst, const struct Object *ob_src, ModifierData *md)
+{
+  ModifierData *nmd = NULL;
+
+  if (ELEM(md->type, eModifierType_Hook, eModifierType_Collision)) {
+    return false;
+  }
+
+  if (!BKE_object_support_modifier_type_check(ob_dst, md->type)) {
+    return false;
+  }
+
+  switch (md->type) {
+    case eModifierType_Softbody:
+      BKE_object_copy_softbody(ob_dst, ob_src, 0);
+      break;
+    case eModifierType_Skin:
+      /* ensure skin-node customdata exists */
+      BKE_mesh_ensure_skin_customdata(ob_dst->data);
+      break;
+  }
+
+  nmd = BKE_modifier_new(md->type);
+  BLI_strncpy(nmd->name, md->name, sizeof(nmd->name));
+
+  if (md->type == eModifierType_Multires) {
+    /* Has to be done after mod creation, but *before* we actually copy its settings! */
+    multiresModifier_sync_levels_ex(
+        ob_dst, (MultiresModifierData *)md, (MultiresModifierData *)nmd);
+  }
+
+  BKE_modifier_copydata(md, nmd);
+  BLI_addtail(&ob_dst->modifiers, nmd);
+  BKE_modifier_unique_name(&ob_dst->modifiers, nmd);
+
+  return true;
+}
+
+bool BKE_object_copy_gpencil_modifier(struct Object *ob_dst, GpencilModifierData *md)
+{
+  GpencilModifierData *nmd = NULL;
+
+  nmd = BKE_gpencil_modifier_new(md->type);
+  BLI_strncpy(nmd->name, md->name, sizeof(nmd->name));
+
+  const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(md->type);
+  mti->copyData(md, nmd);
+
+  BLI_addtail(&ob_dst->greasepencil_modifiers, nmd);
+  BKE_gpencil_modifier_unique_name(&ob_dst->greasepencil_modifiers, nmd);
+
+  return true;
+}
+
 void BKE_object_link_modifiers(struct Object *ob_dst, const struct Object *ob_src)
 {
   BKE_object_free_modifiers(ob_dst, 0);
@@ -698,54 +754,14 @@ void BKE_object_link_modifiers(struct Object *ob_dst, const struct Object *ob_sr
   /* No grease pencil modifiers. */
   if ((ob_src->type != OB_GPENCIL) && (ob_dst->type != OB_GPENCIL)) {
     LISTBASE_FOREACH (ModifierData *, md, &ob_src->modifiers) {
-      ModifierData *nmd = NULL;
-
-      if (ELEM(md->type, eModifierType_Hook, eModifierType_Collision)) {
-        continue;
-      }
-
-      if (!BKE_object_support_modifier_type_check(ob_dst, md->type)) {
-        continue;
-      }
-
-      switch (md->type) {
-        case eModifierType_Softbody:
-          BKE_object_copy_softbody(ob_dst, ob_src, 0);
-          break;
-        case eModifierType_Skin:
-          /* ensure skin-node customdata exists */
-          BKE_mesh_ensure_skin_customdata(ob_dst->data);
-          break;
-      }
-
-      nmd = BKE_modifier_new(md->type);
-      BLI_strncpy(nmd->name, md->name, sizeof(nmd->name));
-
-      if (md->type == eModifierType_Multires) {
-        /* Has to be done after mod creation, but *before* we actually copy its settings! */
-        multiresModifier_sync_levels_ex(
-            ob_dst, (MultiresModifierData *)md, (MultiresModifierData *)nmd);
-      }
-
-      BKE_modifier_copydata(md, nmd);
-      BLI_addtail(&ob_dst->modifiers, nmd);
-      BKE_modifier_unique_name(&ob_dst->modifiers, nmd);
+      BKE_object_copy_modifier(ob_dst, ob_src, md);
     }
   }
 
   /* Copy grease pencil modifiers. */
   if ((ob_src->type == OB_GPENCIL) && (ob_dst->type == OB_GPENCIL)) {
     LISTBASE_FOREACH (GpencilModifierData *, md, &ob_src->greasepencil_modifiers) {
-      GpencilModifierData *nmd = NULL;
-
-      nmd = BKE_gpencil_modifier_new(md->type);
-      BLI_strncpy(nmd->name, md->name, sizeof(nmd->name));
-
-      const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(md->type);
-      mti->copyData(md, nmd);
-
-      BLI_addtail(&ob_dst->greasepencil_modifiers, nmd);
-      BKE_gpencil_modifier_unique_name(&ob_dst->greasepencil_modifiers, nmd);
+      BKE_object_copy_gpencil_modifier(ob_dst, md);
     }
   }
 
@@ -1270,7 +1286,7 @@ void *BKE_object_obdata_add_from_type(Main *bmain, int type, const char *name)
     case OB_HAIR:
       return BKE_hair_add(bmain, name);
     case OB_POINTCLOUD:
-      return BKE_pointcloud_add(bmain, name);
+      return BKE_pointcloud_add_default(bmain, name);
     case OB_VOLUME:
       return BKE_volume_add(bmain, name);
     case OB_EMPTY:
@@ -3867,17 +3883,31 @@ KeyBlock *BKE_object_shapekey_insert(Main *bmain,
                                      const char *name,
                                      const bool from_mix)
 {
+  KeyBlock *key = NULL;
+
   switch (ob->type) {
     case OB_MESH:
-      return insert_meshkey(bmain, ob, name, from_mix);
+      key = insert_meshkey(bmain, ob, name, from_mix);
+      break;
     case OB_CURVE:
     case OB_SURF:
-      return insert_curvekey(bmain, ob, name, from_mix);
+      key = insert_curvekey(bmain, ob, name, from_mix);
+      break;
     case OB_LATTICE:
-      return insert_lattkey(bmain, ob, name, from_mix);
+      key = insert_lattkey(bmain, ob, name, from_mix);
+      break;
     default:
-      return NULL;
+      break;
   }
+
+  /* Set the first active when none is set when called from RNA. */
+  if (key != NULL) {
+    if (ob->shapenr <= 0) {
+      ob->shapenr = 1;
+    }
+  }
+
+  return key;
 }
 
 bool BKE_object_shapekey_free(Main *bmain, Object *ob)
@@ -3948,7 +3978,11 @@ bool BKE_object_shapekey_remove(Main *bmain, Object *ob, KeyBlock *kb)
   }
   MEM_freeN(kb);
 
-  if (ob->shapenr > 1) {
+  /* Unset active when all are freed. */
+  if (BLI_listbase_is_empty(&key->block)) {
+    ob->shapenr = 0;
+  }
+  else if (ob->shapenr > 1) {
     ob->shapenr--;
   }
 
@@ -4553,7 +4587,7 @@ bool BKE_object_modifier_gpencil_use_time(Object *ob, GpencilModifierData *md)
   }
 
   /* Check whether modifier is animated. */
-  /* TODO (Aligorith): this should be handled as part of build_animdata() */
+  /* TODO(Aligorith): this should be handled as part of build_animdata() */
   if (ob->adt) {
     AnimData *adt = ob->adt;
     FCurve *fcu;
@@ -4588,7 +4622,7 @@ bool BKE_object_shaderfx_use_time(Object *ob, ShaderFxData *fx)
   }
 
   /* Check whether effect is animated. */
-  /* TODO (Aligorith): this should be handled as part of build_animdata() */
+  /* TODO(Aligorith): this should be handled as part of build_animdata() */
   if (ob->adt) {
     AnimData *adt = ob->adt;
     FCurve *fcu;

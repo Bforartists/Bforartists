@@ -96,14 +96,14 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col.prop(field, "guide_minimum")
             col.prop(field, "guide_free")
             col.prop(field, "falloff_power")
-            
+
             col = flow.column(align = True)
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(field, "use_guide_path_add")
             row.prop_decorator(field, "use_guide_path_add")
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(field, "use_guide_path_weight")
             row.prop_decorator(field, "use_guide_path_weight")
 
@@ -113,7 +113,7 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col.prop(field, "guide_clump_amount", text="Clumping amount")
             col.prop(field, "guide_clump_shape")
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(field, "use_max_distance")
             row.prop_decorator(field, "use_max_distance")
 
@@ -132,13 +132,13 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col = flow.column()
             col.prop(field, "texture_nabla")
 
-            col = flow.column(align = True)          
+            col = flow.column(align = True)
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(field, "use_object_coords")
             row.prop_decorator(field, "use_object_coords")
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(field, "use_2d_force")
             row.prop_decorator(field, "use_2d_force")
 
@@ -149,13 +149,13 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
 
             col = flow.column()
             col.prop(field, "source_object")
-            
+
             col = flow.column(align = True)
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(field, "use_smoke_density")
             row.prop_decorator(field, "use_smoke_density")
-        
+
         else:
             del flow
             basic_force_field_settings_ui(self, field)
@@ -447,12 +447,12 @@ class PHYSICS_PT_collision_softbody(PhysicButtonsPanel, Panel):
 
         col = flow.column(align = True)
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(settings, "use_culling")
         row.prop_decorator(settings, "use_culling")
-        
+
         row = col.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(settings, "use_normal")
         row.prop_decorator(settings, "use_normal")
 

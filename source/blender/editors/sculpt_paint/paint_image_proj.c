@@ -5887,7 +5887,8 @@ void *paint_proj_new_stroke(bContext *C, Object *ob, const float mouse[2], int m
 
   ps_handle->orig_brush_size = BKE_brush_size_get(scene, ps_handle->brush);
 
-  ps_handle->symmetry_flags = settings->imapaint.paint.symmetry_flags & PAINT_SYMM_AXIS_ALL;
+  Mesh *mesh = BKE_mesh_from_object(ob);
+  ps_handle->symmetry_flags = mesh->symmetry;
   ps_handle->ps_views_tot = 1 + (pow_i(2, count_bits_i(ps_handle->symmetry_flags)) - 1);
   bool is_multi_view = (ps_handle->ps_views_tot != 1);
 
@@ -6091,8 +6092,6 @@ static int texture_paint_camera_project_exec(bContext *C, wmOperator *op)
 
   scene->toolsettings->imapaint.flag |= IMAGEPAINT_DRAWING;
 
-  ED_image_undo_push_begin(op->type->name, PAINT_MODE_TEXTURE_3D);
-
   /* allocate and initialize spatial data structures */
   project_paint_begin(C, &ps, false, 0);
 
@@ -6101,6 +6100,8 @@ static int texture_paint_camera_project_exec(bContext *C, wmOperator *op)
     BKE_report(op->reports, RPT_ERROR, "Could not get valid evaluated mesh");
     return OPERATOR_CANCELLED;
   }
+
+  ED_image_undo_push_begin(op->type->name, PAINT_MODE_TEXTURE_3D);
 
   const float pos[2] = {0.0, 0.0};
   const float lastpos[2] = {0.0, 0.0};
@@ -6116,6 +6117,8 @@ static int texture_paint_camera_project_exec(bContext *C, wmOperator *op)
   }
 
   project_paint_end(&ps);
+
+  ED_image_undo_push_end();
 
   scene->toolsettings->imapaint.flag &= ~IMAGEPAINT_DRAWING;
   BKE_brush_size_set(scene, ps.brush, orig_brush_size);
