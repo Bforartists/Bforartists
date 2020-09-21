@@ -110,39 +110,39 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
         if is_curve:
             col.prop(curve, "twist_mode")
             col.prop(curve, "twist_smooth", text="Smooth")
-            
+
         elif is_text:
             row = layout.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(curve, "use_fast_edit", text="Fast Editing")
             row.prop_decorator(curve, "use_fast_edit")
-            
+
         if is_curve or is_text:
             col = layout.column()
-            
+
             col.separator()
-            
+
 
             sub = col.column()
-            sub.active = (curve.dimensions == '2D' or (curve.bevel_object is None and curve.dimensions == '3D'))
+            sub.active = (curve.dimensions == '2D' or (curve.bevel_mode != 'OBJECT' and curve.dimensions == '3D'))
             sub.prop(curve, "fill_mode")
-            
+
             row = sub.row()
             row = sub.row() # two ones, no bug, using this as a separator
-            
-            row.use_property_split = False          
+
+            row.use_property_split = False
             row.prop(curve, "use_fill_deform")
             row.prop_decorator(curve, "use_fill_deform")
 
         if is_curve:
-            
-            col.use_property_split = False                
+
+            col.use_property_split = False
             row = col.row()
             row.prop(curve, "use_radius")
-            row.prop_decorator(curve, "use_radius")          
+            row.prop_decorator(curve, "use_radius")
             row = col.row()
             row.prop(curve, "use_stretch")
-            row.prop_decorator(curve, "use_stretch")       
+            row.prop_decorator(curve, "use_stretch")
             row = col.row()
             row.prop(curve, "use_deform_bounds")
             row.prop_decorator(curve, "use_deform_bounds")
@@ -160,10 +160,10 @@ class DATA_PT_curve_texture_space(CurveButtonsPanel, Panel):
         curve = context.curve
 
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(curve, "use_auto_texspace")
         row.prop_decorator(curve, "use_auto_texspace")
-        
+
         layout.use_property_split = True
 
         col = layout.column()
@@ -191,16 +191,16 @@ class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
         col.prop(curve, "offset")
 
         sub = col.column()
-        sub.active = (curve.bevel_object is None)
+        sub.active = (curve.bevel_mode != 'OBJECT')
         sub.prop(curve, "extrude")
 
         col.prop(curve, "taper_object")
 
         if type(curve) is not TextCurve:
-            # This setting makes no sense for texts, since we have no control over start/end of the bevel object curve.           
+            # This setting makes no sense for texts, since we have no control over start/end of the bevel object curve.
             row = layout.row()
             row.active = curve.taper_object is not None
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(curve, "use_map_taper")
             row.prop_decorator(curve, "use_map_taper")
 
@@ -215,23 +215,19 @@ class DATA_PT_geometry_curve_bevel(CurveButtonsPanelCurve, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
 
         curve = context.curve
+        layout.prop(curve, "bevel_mode", expand=True)
+
+        layout.use_property_split = True
 
         col = layout.column()
-        sub = col.column()
-        sub.active = (curve.bevel_object is None)
-        sub.prop(curve, "bevel_depth", text="Depth")
-        sub.prop(curve, "bevel_resolution", text="Resolution")
-
-        col.prop(curve, "bevel_object", text="Object")
-
-        row = layout.row()
-        row.active = curve.bevel_object is not None
-        row.use_property_split = False    
-        row.prop(curve, "use_fill_caps")
-        row.prop_decorator(curve, "use_fill_caps")
+        if curve.bevel_mode == 'OBJECT':
+            col.prop(curve, "bevel_object", text="Object")
+        else:
+            col.prop(curve, "bevel_depth", text="Depth")
+            col.prop(curve, "bevel_resolution", text="Resolution")
+        col.prop(curve, "use_fill_caps")
 
         if type(curve) is not TextCurve:
 
@@ -242,12 +238,16 @@ class DATA_PT_geometry_curve_bevel(CurveButtonsPanelCurve, Panel):
                 (curve.bevel_object is not None)
             )
             sub = col.column(align=True)
-            sub.prop(curve, "bevel_factor_start", text="Bevel Start")
+            sub.prop(curve, "bevel_factor_start", text="Start")
             sub.prop(curve, "bevel_factor_end", text="End")
 
             sub = col.column(align=True)
-            sub.prop(curve, "bevel_factor_mapping_start", text="Bevel Mapping Start")
+            sub.prop(curve, "bevel_factor_mapping_start", text="Mapping Start")
             sub.prop(curve, "bevel_factor_mapping_end", text="End")
+
+        # Put the large template at the end so it doesn't displace the other properties
+        if curve.bevel_mode == 'PROFILE':
+            col.template_curveprofile(curve, "bevel_profile")
 
 
 class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
@@ -273,7 +273,7 @@ class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
 
         # these are for paths only
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(curve, "use_path_follow")
         row.prop_decorator(curve, "use_path_follow")
 
@@ -349,7 +349,7 @@ class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
                 col.prop(act_spline, "radius_interpolation", text="Radius")
 
             row = layout.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(act_spline, "use_smooth")
             row.prop_decorator(act_spline, "use_smooth")
 

@@ -761,25 +761,25 @@ class PARTICLE_PT_physics_fluid_advanced(ParticleButtonsPanel, Panel):
         col = layout.column(align = True)
 
         if fluid.solver == 'DDR':
-            
+
             col.prop(fluid, "repulsion", slider=fluid.use_factor_repulsion)
             row = col.row()
             row.use_property_split = False
             row.prop(fluid, "use_factor_repulsion")
             row.prop_decorator(fluid, "use_factor_repulsion")
-            
+
             col.prop(fluid, "stiff_viscosity", slider=fluid.use_factor_stiff_viscosity)
             row = col.row()
             row.use_property_split = False
             row.prop(fluid, "use_factor_stiff_viscosity")
             row.prop_decorator(fluid, "use_factor_stiff_viscosity")
-        
+
         col.prop(fluid, "fluid_radius", slider=fluid.use_factor_radius)
         row = col.row()
         row.use_property_split = False
         row.prop(fluid, "use_factor_radius")
         row.prop_decorator(fluid, "use_factor_radius")
-        
+
         col.prop(fluid, "rest_density", slider=fluid.use_factor_density)
         row = col.row()
         row.use_property_split = False
@@ -851,7 +851,7 @@ class PARTICLE_PT_physics_fluid_springs_viscoelastic(ParticleButtonsPanel, Panel
         col.prop(fluid, "plasticity", slider=True)
 
         col.separator()
-        
+
         row = col.row()
         row.use_property_split = False
         row.prop(fluid, "use_initial_rest_length")
@@ -1179,7 +1179,7 @@ class PARTICLE_PT_physics_integration(ParticleButtonsPanel, Panel):
         col.prop(part, "timestep")
         col.prop(part, "subframes")
 
-        if part.physics_type == 'FLUID':         
+        if part.physics_type == 'FLUID':
             row = col.row()
             row.use_property_split = False
             row.prop(part, "use_adaptive_subframes", text="Adaptive")
@@ -1889,7 +1889,7 @@ class PARTICLE_PT_field_weights(ParticleButtonsPanel, Panel):
             col.prop(part, "apply_effector_to_children")
 
             col.separator()
-          
+
             col.use_property_split = True
             col.prop(part, "effect_hair", slider=True)
 

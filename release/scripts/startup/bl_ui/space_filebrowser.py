@@ -39,7 +39,7 @@ class FILEBROWSER_HT_header(Header):
         layout.separator_spacer()
 
         layout.template_running_jobs()
-        
+
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
     bl_label = ""

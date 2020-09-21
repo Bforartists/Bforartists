@@ -70,6 +70,7 @@ class GPENCIL_UL_matslots(UIList):
                 row.prop(ma, "name", text="", emboss=False, icon_value=icon)
 
                 row = layout.row(align=True)
+
                 if gpcolor.ghost is True:
                     icon = 'ONIONSKIN_OFF'
                 else:
@@ -172,6 +173,8 @@ class MATERIAL_PT_gpencil_strokecolor(GPMaterialButtonsPanel, Panel):
                 row.prop(gpcolor, "use_overlap_strokes")
                 row.prop_decorator(gpcolor, "use_overlap_strokes")
 
+            col.prop(gpcolor, "use_stroke_holdout")
+
 
 class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
     bl_label = "Fill"
@@ -233,6 +236,8 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             row.use_property_split = False
             row.prop(gpcolor, "texture_clamp", text="Clip Image")
             row.prop_decorator(gpcolor, "texture_clamp")
+
+        col.prop(gpcolor, "use_fill_holdout")
 
 
 class MATERIAL_PT_gpencil_preview(GPMaterialButtonsPanel, Panel):
