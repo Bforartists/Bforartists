@@ -173,7 +173,10 @@ class MATERIAL_PT_gpencil_strokecolor(GPMaterialButtonsPanel, Panel):
                 row.prop(gpcolor, "use_overlap_strokes")
                 row.prop_decorator(gpcolor, "use_overlap_strokes")
 
-            col.prop(gpcolor, "use_stroke_holdout")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(gpcolor, "use_stroke_holdout")
+            row.prop_decorator(gpcolor, "use_stroke_holdout")
 
 
 class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
@@ -237,7 +240,10 @@ class MATERIAL_PT_gpencil_fillcolor(GPMaterialButtonsPanel, Panel):
             row.prop(gpcolor, "texture_clamp", text="Clip Image")
             row.prop_decorator(gpcolor, "texture_clamp")
 
-        col.prop(gpcolor, "use_fill_holdout")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(gpcolor, "use_fill_holdout")
+        row.prop_decorator(gpcolor, "use_fill_holdout")
 
 
 class MATERIAL_PT_gpencil_preview(GPMaterialButtonsPanel, Panel):
