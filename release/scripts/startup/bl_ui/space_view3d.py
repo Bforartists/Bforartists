@@ -2550,6 +2550,8 @@ class VIEW3D_MT_object_relations(Menu):
 
         layout.operator("object.make_override_library", text="Make Library Override", icon = "LIBRARY_DATA_OVERRIDE")
 
+        layout.operator("object.convert_proxy_to_override")
+
         layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
 
         layout.separator()
@@ -2665,6 +2667,10 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_showhide")
         layout.menu("VIEW3D_MT_object_cleanup")
 
+        # Potrace lib dependency
+        if bpy.app.build_options.potrace:
+            layout.separator()
+            layout.operator("gpencil.trace_image")
 
         if obj is None:
             pass
