@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -670,6 +670,18 @@ msgid "Active Bone"
 msgstr "Aktywna Kość"
 
 
+msgid "Vector"
+msgstr "Wektorowy"
+
+
+msgid "Point"
+msgstr "Punkt"
+
+
+msgid "Curve"
+msgstr "Krzywa"
+
+
 msgid "Bake Data"
 msgstr "Wylicz dane"
 
@@ -876,10 +888,6 @@ msgstr "Rodzaje uchwytów"
 
 msgid "Free"
 msgstr "Swobodny"
-
-
-msgid "Vector"
-msgstr "Wektorowy"
 
 
 msgid "Aligned"
@@ -1822,20 +1830,28 @@ msgid "Has Spacing"
 msgstr "Odstępy"
 
 
-msgid "Direction"
-msgstr "Kierunek"
-
-
 msgid "Mode"
 msgstr "Tryb"
 
 
-msgid "Point"
-msgstr "Punkt"
+msgid "Active"
+msgstr "Aktywny"
 
 
-msgid "Default"
-msgstr "Domyślnie"
+msgid "Material"
+msgstr "Materiał"
+
+
+msgid "Direction"
+msgstr "Kierunek"
+
+
+msgid "All"
+msgstr "Wszystko"
+
+
+msgid "Visible"
+msgstr "Widoczny"
 
 
 msgid "Threshold"
@@ -1848,10 +1864,6 @@ msgstr "Wygładzanie"
 
 msgid "Blur"
 msgstr "Rozmycie"
-
-
-msgid "Material"
-msgstr "Materiał"
 
 
 msgid "Iterations"
@@ -2594,10 +2606,6 @@ msgid "Color management settings used for displaying images on the display"
 msgstr "Ustawienia zarządzania kolorami używane do wyświetlania obrazków na ekranie"
 
 
-msgid "Curve"
-msgstr "Krzywa"
-
-
 msgid "Color curve mapping applied before display transform"
 msgstr "Mapowanie kolorów za pomocą krzywej, przed transformacjami wyświetlania"
 
@@ -2620,10 +2628,6 @@ msgstr "Modyfikacja parametru gamma stosowana po przekształceniach wyświetlani
 
 msgid "Look"
 msgstr "Wygląd"
-
-
-msgid "Additional transform applied before view transform for an artistic needs"
-msgstr "Dodatkowa transformacja dodawana przed transformacją widoku (dla potrzeb artystycznych)"
 
 
 msgid "Do not modify image in an artistic manner"
@@ -2869,10 +2873,6 @@ msgstr "Błąd"
 
 msgid "Constraint modifying the transformation of objects and bones"
 msgstr "Sprzężenie modyfikujące transformację obiektów i kości"
-
-
-msgid "Active"
-msgstr "Aktywny"
 
 
 msgid "Lin error"
@@ -3505,6 +3505,10 @@ msgstr "Ogranicznik kopiujący rotację"
 
 msgid "Copy the rotation of the target"
 msgstr "Kopiuje orientację obiektu docelowego"
+
+
+msgid "Default"
+msgstr "Domyślnie"
 
 
 msgid "Invert the X rotation"
@@ -5331,10 +5335,6 @@ msgid "Effector weights for physics simulation"
 msgstr "Wagi efektorów wpływających na symulacje fizyczne"
 
 
-msgid "All"
-msgstr "Wszystko"
-
-
 msgid "All effector's weight"
 msgstr "Wagi wszystkich efektorów"
 
@@ -5808,10 +5808,6 @@ msgid "Modifier for values of F-Curve"
 msgstr "Modyfikator dla wartości krzywej-F"
 
 
-msgid "F-Curve Modifier is the one being edited "
-msgstr "Modyfikator krzywej-F będzie jedynym, który będzie przetwarzany"
-
-
 msgid "Blend In"
 msgstr "Łagodne wejście"
 
@@ -6200,10 +6196,6 @@ msgid "Visibility"
 msgstr "Widoczność"
 
 
-msgid "Visible"
-msgstr "Widoczny"
-
-
 msgid "Blend Mode"
 msgstr "Tryb Mieszania"
 
@@ -6254,6 +6246,10 @@ msgstr "Biblioteka"
 
 msgid "Envelope"
 msgstr "Obwiednia"
+
+
+msgid "Local"
+msgstr "Lokalnie"
 
 
 msgid "Mask"
@@ -6439,10 +6435,6 @@ msgstr "Kula"
 
 msgid "New"
 msgstr "Nowy"
-
-
-msgid "Local"
-msgstr "Lokalnie"
 
 
 msgid "Overwrite"
@@ -6747,6 +6739,49 @@ msgstr "Animowana"
 
 msgid "Unknown"
 msgstr "Nieznany"
+
+
+msgid "To"
+msgstr "Do"
+
+
+msgctxt "Operator"
+msgid "Remove"
+msgstr "Usuń"
+
+
+msgid "Detail"
+msgstr "Szczegóły"
+
+
+msgid "Priority"
+msgstr "Priorytet"
+
+
+msgid "Temperature"
+msgstr "Temperatura"
+
+
+msgid "Unpack"
+msgstr "Rozpakuj"
+
+
+msgid "File: %s"
+msgstr "Plik: %s"
+
+
+msgctxt "Operator"
+msgid "Quit"
+msgstr "Wyjdź"
+
+
+msgctxt "Operator"
+msgid "Flat"
+msgstr "Płaskie"
+
+
+msgid "Layer:"
+msgstr "Warstwa:"
 
 
 msgid "Const"
@@ -9716,10 +9751,6 @@ msgid "Frame: - / %d"
 msgstr "Klatka: - / %d"
 
 
-msgid "File: %s"
-msgstr "Plik: %s"
-
-
 msgid "unsupported movie clip format"
 msgstr "Format klipu filmowego nie obsługiwany"
 
@@ -10032,10 +10063,6 @@ msgid "Unpack %d Files"
 msgstr "Rozpakuj %d plików"
 
 
-msgid "Unpack"
-msgstr "Rozpakuj"
-
-
 msgid "No packed files to unpack"
 msgstr "Brak spakowanych plików do rozpakowania"
 
@@ -10202,10 +10229,6 @@ msgstr "Ścieżka bazowa"
 
 msgid "Add Input"
 msgstr "Dodaj Wejście"
-
-
-msgid "Layer:"
-msgstr "Warstwa:"
 
 
 msgid "File Subpath:"
@@ -10739,24 +10762,12 @@ msgid " along X axis"
 msgstr " wzdłuż osi X"
 
 
-msgid " locking %s X axis"
-msgstr " blokada osi X - %s"
-
-
 msgid " along %s X axis"
 msgstr " wzdłuż osi X - %s"
 
 
-msgid " locking %s Y axis"
-msgstr " blokada osi Y - %s"
-
-
 msgid " along %s Y axis"
 msgstr " wzdłuż osi Y - %s"
-
-
-msgid " locking %s Z axis"
-msgstr " blokada osi Z - %s"
 
 
 msgid " along %s Z axis"
@@ -11738,10 +11749,6 @@ msgid "KeyConfig '%s' cannot be removed"
 msgstr "KeyConfig '%s' niemożlwe do usunięcia"
 
 
-msgid "To"
-msgstr "Do"
-
-
 msgid "Convertor"
 msgstr "Konwertor"
 
@@ -11840,10 +11847,6 @@ msgstr "Cr"
 
 msgid "Val"
 msgstr "Val"
-
-
-msgid "Temperature"
-msgstr "Temperatura"
 
 
 msgid "Anisotropy"
@@ -11990,10 +11993,6 @@ msgid "Row Height"
 msgstr "Wysokość rzędu"
 
 
-msgid "Detail"
-msgstr "Szczegóły"
-
-
 msgid "Detail Scale"
 msgstr "Skala szczegółów"
 
@@ -12036,14 +12035,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "iSkala"
-
-
-msgid ""
-"%s\n"
-"location: %s:%d"
-msgstr ""
-"%s\n"
-"location: %s:%d"
 
 
 msgid "Unknown py-exception, could not convert"

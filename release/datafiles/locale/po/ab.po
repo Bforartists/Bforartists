@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -27,6 +27,18 @@ msgstr "Ацхра"
 
 msgid "Empty"
 msgstr "Аҭацәы"
+
+
+msgid "Vertex"
+msgstr "Ақәыцә"
+
+
+msgid "Edge"
+msgstr "Акьыԥшь"
+
+
+msgid "Curve"
+msgstr "Архәара"
 
 
 msgid "Object"
@@ -67,10 +79,6 @@ msgstr "Агьежьра"
 
 msgid "Scale"
 msgstr "Ашәага"
-
-
-msgid "Curve"
-msgstr "Архәара"
 
 
 msgid "Difference"
@@ -149,10 +157,6 @@ msgid "Speaker"
 msgstr "Абжьы Ахыҵхырҭа"
 
 
-msgid "Vertex"
-msgstr "Ақәыцә"
-
-
 msgid "Group"
 msgstr "Агәыԥ"
 
@@ -187,6 +191,14 @@ msgstr "Аҭыџьеихац"
 
 msgid "Library"
 msgstr "Ашәҟәыԥхьарҭа"
+
+
+msgid "Local"
+msgstr "Ҷыдала"
+
+
+msgid "Global"
+msgstr "Зеиԥшла"
 
 
 msgctxt "Light"
@@ -240,10 +252,6 @@ msgid "Empty"
 msgstr "Аҭацәы"
 
 
-msgid "Global"
-msgstr "Зеиԥшла"
-
-
 msgid "3D Cursor"
 msgstr "3Д Ахырхага"
 
@@ -268,10 +276,6 @@ msgid "Mesh"
 msgstr "Аҿарҧага"
 
 
-msgid "Edge"
-msgstr "Акьыԥшь"
-
-
 msgid "Face"
 msgstr "Ахаҿы"
 
@@ -294,10 +298,6 @@ msgstr "Ампыл"
 
 msgid "New"
 msgstr "Аҿыц"
-
-
-msgid "Local"
-msgstr "Ҷыдала"
 
 
 msgid "Keying"
@@ -428,6 +428,90 @@ msgstr "Асахьанҵа"
 msgctxt "WindowManager"
 msgid "Text"
 msgstr "Аҳәоу"
+
+
+msgctxt "Operator"
+msgid "Location"
+msgstr "Аҭыԥ"
+
+
+msgctxt "Operator"
+msgid "Group"
+msgstr "Агәыԥ"
+
+
+msgctxt "Operator"
+msgid "Text"
+msgstr "Аҳәоу"
+
+
+msgid "location"
+msgstr "Аҭыԥ"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Акамера"
+
+
+msgctxt "Operator"
+msgid "Plane"
+msgstr "Аҟьаҟьа"
+
+
+msgctxt "Operator"
+msgid "Cube"
+msgstr "Акуб"
+
+
+msgctxt "Operator"
+msgid "UV Sphere"
+msgstr "UV Асфера"
+
+
+msgctxt "Operator"
+msgid "Ico Sphere"
+msgstr "Ico Асфера                     "
+
+
+msgctxt "Operator"
+msgid "Cylinder"
+msgstr "Ацилиндр"
+
+
+msgctxt "Operator"
+msgid "Cone"
+msgstr "Аконус"
+
+
+msgctxt "Operator"
+msgid "Monkey"
+msgstr "Амаамын"
+
+
+msgctxt "Operator"
+msgid "Empty"
+msgstr "Аҭацәы"
+
+
+msgctxt "Operator"
+msgid "Speaker"
+msgstr "Абжьы Ахыҵхырҭа"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Агьежьра"
+
+
+msgctxt "Operator"
+msgid "Armature"
+msgstr "Абаҩ"
+
+
+msgctxt "Operator"
+msgid "Lattice"
+msgstr "Аҭыџьеихац"
 
 
 msgctxt "Scene"

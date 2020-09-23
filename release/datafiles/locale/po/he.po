@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -35,16 +35,16 @@ msgid "Width"
 msgstr "בחור"
 
 
+msgid "Vector"
+msgstr "רוטקו"
+
+
 msgid "Indirect"
 msgstr "ףיקע"
 
 
 msgid "Color"
 msgstr "עבצ"
-
-
-msgid "Vector"
-msgstr "רוטקו"
 
 
 msgid "Speed"
@@ -59,8 +59,8 @@ msgid "Random"
 msgstr "יארקא"
 
 
-msgid "Default"
-msgstr "לדחמ תרירב"
+msgid "Vertex Color"
+msgstr "דוקדוק עבצ"
 
 
 msgid "Smooth"
@@ -111,6 +111,10 @@ msgid "Output"
 msgstr "טלפ"
 
 
+msgid "Default"
+msgstr "לדחמ תרירב"
+
+
 msgid "Off"
 msgstr "יובכ"
 
@@ -143,10 +147,6 @@ msgid "Shrink"
 msgstr "ץווכ"
 
 
-msgid "Vertex Color"
-msgstr "דוקדוק עבצ"
-
-
 msgid "Modifiers"
 msgstr "םינשמ"
 
@@ -175,24 +175,12 @@ msgid "Start"
 msgstr "הלחתה"
 
 
-msgid "Red"
-msgstr "םודא"
-
-
-msgid "Green"
-msgstr "קורי"
-
-
-msgid "Blue"
-msgstr "לוחכ"
+msgid "Smoke Color"
+msgstr "חתפמ עבצ"
 
 
 msgid "Density"
 msgstr "תופיפצ"
-
-
-msgid "Smoke Color"
-msgstr "חתפמ עבצ"
 
 
 msgid "Add fire"
@@ -241,6 +229,18 @@ msgstr "הכירע בצמ"
 
 msgid "Mirror"
 msgstr "הארמ"
+
+
+msgid "Red"
+msgstr "םודא"
+
+
+msgid "Green"
+msgstr "קורי"
+
+
+msgid "Blue"
+msgstr "לוחכ"
 
 
 msgid "Mask"
@@ -555,6 +555,142 @@ msgid "Default Layout"
 msgstr "לדחמ תרירב"
 
 
+msgctxt "Operator"
+msgid "Animate Path"
+msgstr ":ץבוק ביתנ"
+
+
+msgctxt "Operator"
+msgid "Remove"
+msgstr "רסה"
+
+
+msgid "Detail"
+msgstr "טוריפ"
+
+
+msgctxt "Operator"
+msgid "Cursor to Selected"
+msgstr "רחבנל קתעה"
+
+
+msgctxt "Operator"
+msgid "Invert"
+msgstr "רמה"
+
+
+msgid "Dimension"
+msgstr "דמימ"
+
+
+msgctxt "Operator"
+msgid "Location"
+msgstr "םוקימ"
+
+
+msgctxt "Operator"
+msgid "Set X Axis"
+msgstr "קלח"
+
+
+msgctxt "Operator"
+msgid "Set Y Axis"
+msgstr "Y ריצ"
+
+
+msgctxt "Operator"
+msgid "Interpolation Mode"
+msgstr "תופקתשה"
+
+
+msgctxt "Operator"
+msgid "Vertex"
+msgstr ":דוקדוק"
+
+
+msgctxt "Operator"
+msgid "X Axis"
+msgstr "Y ריצ"
+
+
+msgctxt "Operator"
+msgid "Y Axis"
+msgstr "Y ריצ"
+
+
+msgctxt "Operator"
+msgid "Movie"
+msgstr "טרס"
+
+
+msgctxt "Operator"
+msgid "Left"
+msgstr "לאמש"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "ןימי"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "הנצס"
+
+
+msgctxt "Operator"
+msgid "Color"
+msgstr "עבצ"
+
+
+msgctxt "Operator"
+msgid "Alpha Over"
+msgstr "רמה"
+
+
+msgctxt "Operator"
+msgid "Alpha Under"
+msgstr "רמה"
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "ינדי"
+
+
+msgid "Location:"
+msgstr "‏:םוקימ"
+
+
+msgid "Preferences:"
+msgstr "Blender שמתשמ תופדעה"
+
+
+msgctxt "Operator"
+msgid "Path"
+msgstr "ביתנ"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "בוביס"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "הכסמ"
+
+
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "ץווכ"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "לחה"
+
+
 msgid "Invalid selection"
 msgstr "תופקתשה"
 
@@ -846,11 +982,6 @@ msgid "UV Vertex"
 msgstr ":דוקדוק"
 
 
-msgctxt "Operator"
-msgid "Apply"
-msgstr "לחה"
-
-
 msgid "Modify"
 msgstr "הנש"
 
@@ -885,14 +1016,6 @@ msgstr "הרוש הבוג"
 
 msgid "Reflection"
 msgstr "תופקתשה"
-
-
-msgid "Detail"
-msgstr "טוריפ"
-
-
-msgid "Dimension"
-msgstr "דמימ"
 
 
 msgid "Bricks 1"

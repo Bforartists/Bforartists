@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.90.0 Beta (b'e0772c6607ae')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -919,6 +919,50 @@ msgid "Armatures active edit bone"
 msgstr "아마튜어의 활성 편집본"
 
 
+msgid "Data Type"
+msgstr "데이터 유형"
+
+
+msgid "Float"
+msgstr "실수"
+
+
+msgid "Vector"
+msgstr "벡터"
+
+
+msgid "String"
+msgstr "문자열"
+
+
+msgid "Domain"
+msgstr "도메인"
+
+
+msgid "Vertex"
+msgstr "버텍스"
+
+
+msgid "Edge"
+msgstr "에지"
+
+
+msgid "Corner"
+msgstr "코너"
+
+
+msgid "Polygon"
+msgstr "폴리곤"
+
+
+msgid "Point"
+msgstr "포인트"
+
+
+msgid "Curve"
+msgstr "커브"
+
+
 msgid "Bake Data"
 msgstr "데이터를 베이크"
 
@@ -1201,10 +1245,6 @@ msgstr "핸들 유형"
 
 msgid "Free"
 msgstr "자유"
-
-
-msgid "Vector"
-msgstr "벡터"
 
 
 msgid "Aligned"
@@ -2979,6 +3019,22 @@ msgid "Reduce brush thickness by this factor when stroke is perpendicular to 'An
 msgstr "스트로크가 '각도' 방향에 수직일 때 이 팩터로 브러시 두께를 감소"
 
 
+msgid "Mode"
+msgstr "모드"
+
+
+msgid "Active"
+msgstr "활성"
+
+
+msgid "Material"
+msgstr "매테리얼"
+
+
+msgid "Vertex Color"
+msgstr "버텍스 컬러"
+
+
 msgid "Curve Jitter"
 msgstr "커브 지터"
 
@@ -3015,20 +3071,12 @@ msgid "Subtract effect of brush"
 msgstr "브러시의 이펙트를 빼기"
 
 
-msgid "Mode"
-msgstr "모드"
-
-
 msgid "Eraser Mode"
 msgstr "지우게 모드"
 
 
 msgid "Dissolve"
 msgstr "디졸브"
-
-
-msgid "Point"
-msgstr "포인트"
 
 
 msgid "Stroke"
@@ -3051,12 +3099,16 @@ msgid "Amount of erasing for thickness"
 msgstr "두께에 대한 소거 양"
 
 
+msgid "Normal"
+msgstr "노멀"
+
+
 msgid "Mode to draw boundary limits"
 msgstr "경계 제한을 그리는 모드"
 
 
-msgid "Default"
-msgstr "기본 값"
+msgid "All"
+msgstr "모두"
 
 
 msgid "Use both visible strokes and edit lines as fill boundary limits"
@@ -3085,6 +3137,10 @@ msgstr "해상도"
 
 msgid "Multiplier for fill resolution, higher resolution is more accurate but slower"
 msgstr "채우기 해상도를 위한 멀티플러, 더 높은 해상도가 더 정확하지만 느림"
+
+
+msgid "Visible"
+msgstr "보임"
 
 
 msgid "Leak Size"
@@ -3213,10 +3269,6 @@ msgstr "입력 샘플"
 
 msgid "Generate intermediate points for very fast mouse movements. Set to 0 to disable"
 msgstr "매우 빠른 마우스 움직임을 위한 중간 지점을 생성. 비활성화하려면 0으로 설정"
-
-
-msgid "Material"
-msgstr "매테리얼"
 
 
 msgid "Material used for strokes drawn using this brush"
@@ -4587,10 +4639,6 @@ msgid "Color management settings used for displaying images on the display"
 msgstr "디스플레이에서 이미지을 표시하는 데 사용되는 컬러 매니지먼트 설정"
 
 
-msgid "Curve"
-msgstr "커브"
-
-
 msgid "Color curve mapping applied before display transform"
 msgstr "디스플레이 변환 전에 적용된 컬러 커브 매핑"
 
@@ -4613,10 +4661,6 @@ msgstr "디스플레이 변환 후에 적용된 감마 수정의 보정의 양"
 
 msgid "Look"
 msgstr "보기"
-
-
-msgid "Additional transform applied before view transform for an artistic needs"
-msgstr "예술적 필요를 위해 뷰 변환 전에 적용되는 추가 변환"
 
 
 msgid "Do not modify image in an artistic manner"
@@ -4878,10 +4922,6 @@ msgstr "오류"
 
 msgid "Constraint modifying the transformation of objects and bones"
 msgstr "오브젝트 및 본의 변환을 수정하는 제약"
-
-
-msgid "Active"
-msgstr "활성"
 
 
 msgid "Constraint is the one being edited"
@@ -5222,6 +5262,10 @@ msgstr "본의 변환 축에 동작을 맵"
 
 msgid "The constraining action"
 msgstr "제약하는 액션"
+
+
+msgid "Evaluation Time"
+msgstr "평가 시간"
 
 
 msgid "Last frame of the Action to use"
@@ -5626,6 +5670,10 @@ msgstr "오일러 순서"
 
 msgid "Explicitly specify the euler rotation order"
 msgstr "오일러 회전 순서를 명시적으로 지정"
+
+
+msgid "Default"
+msgstr "기본 값"
 
 
 msgid "Euler using the default rotation order"
@@ -8719,10 +8767,6 @@ msgid "Strength of displace when applied to the mesh"
 msgstr "메쉬에 적용된 변위의 강도"
 
 
-msgid "Data Type"
-msgstr "데이터 유형"
-
-
 msgid "Displacement"
 msgstr "변위"
 
@@ -8823,10 +8867,6 @@ msgid "UV Texture"
 msgstr "UV 텍스처"
 
 
-msgid "Vertex Color"
-msgstr "버텍스 컬러"
-
-
 msgid "Data Layer"
 msgstr "데이터 레이어"
 
@@ -8885,10 +8925,6 @@ msgstr "형식"
 
 msgid "Surface Format"
 msgstr "표면 형식"
-
-
-msgid "Vertex"
-msgstr "버텍스"
 
 
 msgid "Image Sequence"
@@ -9105,10 +9141,6 @@ msgstr "본의 테일 종료의 위치"
 
 msgid "Effector weights for physics simulation"
 msgstr "피직스 시뮬레이션에 대한 이펙터 웨이트"
-
-
-msgid "All"
-msgstr "모두"
 
 
 msgid "All effector's weight"
@@ -9822,10 +9854,6 @@ msgstr "F-모디파이어"
 
 msgid "Modifier for values of F-Curve"
 msgstr "F-커브의 값에 대한 모디파이어"
-
-
-msgid "F-Curve Modifier is the one being edited "
-msgstr "F-커브 모디파이어는 편집중인 하나 "
 
 
 msgid "Blend In"
@@ -11233,100 +11261,20 @@ msgid "Clipping"
 msgstr "클리핑"
 
 
-msgid "Field"
-msgstr "필드"
-
-
-msgid "Simulation field to color map"
-msgstr "컬러 맵으로 필드를 시뮬레이션"
-
-
-msgid "Red"
-msgstr "레드"
-
-
-msgid "Red component of the color field"
-msgstr "컬러 필드의 레드 구성 요소"
-
-
-msgid "Green"
-msgstr "그린"
-
-
-msgid "Green component of the color field"
-msgstr "컬러 필드의 그린 구성 요소"
-
-
-msgid "Blue"
-msgstr "불루"
-
-
-msgid "Blue component of the color field"
-msgstr "컬러 필드의 블루 구성 요소"
-
-
-msgid "Density"
-msgstr "밀도"
-
-
-msgid "Quantity of soot in the fluid"
-msgstr "유체의 그을음의 양"
-
-
-msgid "Flame"
-msgstr "플래임"
-
-
-msgid "Flame field"
-msgstr "플래임 필드"
-
-
-msgid "Fuel"
-msgstr "연료"
-
-
-msgid "Fuel field"
-msgstr "연료 필드"
-
-
-msgid "Heat"
-msgstr "온도"
-
-
-msgid "Temperature of the fluid"
-msgstr "필드의 온도"
-
-
-msgid "X Velocity"
-msgstr "X 속도"
-
-
-msgid "X component of the velocity field"
-msgstr "속도 필드의 X 구성 요소"
-
-
-msgid "Y Velocity"
-msgstr "Y 속도"
-
-
-msgid "Y component of the velocity field"
-msgstr "속도 필드의 Y 구성 요소"
-
-
-msgid "Z Velocity"
-msgstr "Z 속도"
-
-
-msgid "Z component of the velocity field"
-msgstr "속도 필드의 Z 구성 요소"
-
-
 msgid "Color Grid"
 msgstr "컬러 격자"
 
 
 msgid "Smoke color grid"
 msgstr "스모크 컬러 격자"
+
+
+msgid "Field"
+msgstr "필드"
+
+
+msgid "Simulation field to color map"
+msgstr "컬러 맵으로 필드를 시뮬레이션"
 
 
 msgid "Density Grid"
@@ -11351,6 +11299,14 @@ msgstr "큐빅"
 
 msgid "Smoothed high quality interpolation, but slower"
 msgstr "고른 품질의 보간, 하지만 느림"
+
+
+msgid "Closest"
+msgstr "가까운"
+
+
+msgid "No interpolation"
+msgstr "보간이 없음"
 
 
 msgid "Thickness of smoke drawing in the viewport"
@@ -11453,7 +11409,7 @@ msgid "Limit forces to this collection"
 msgstr "이 컬렉션에 포스를 제한"
 
 
-msgid "Obstacle-Fluid Threshold "
+msgid "Obstacle-Fluid Threshold"
 msgstr "장애물-유체 임계 값"
 
 
@@ -11463,6 +11419,18 @@ msgstr "장애물 셀에 허용되는 유체의 양을 결정합니다 (값이 �
 
 msgid "Gravity in X, Y and Z direction"
 msgstr "X에서 중력, Y 및 Z 방향"
+
+
+msgid "Fluid"
+msgstr "유체"
+
+
+msgid "Outflow"
+msgstr "유출"
+
+
+msgid "Flags"
+msgstr "플래그"
 
 
 msgid "Guiding weight (higher value results in greater lag)"
@@ -11483,10 +11451,6 @@ msgstr "가이딩 소스"
 
 msgid "Choose where to get guiding velocities from"
 msgstr "가이딩 속도를 얻을 수있는 곳을 선택"
-
-
-msgid "Domain"
-msgstr "도메인"
 
 
 msgid "Effector"
@@ -11705,14 +11669,6 @@ msgid "Heavy"
 msgstr "헤비"
 
 
-msgid "Display Velocity"
-msgstr "디스플레이 속도"
-
-
-msgid "Toggle visualization of the velocity field as needles"
-msgstr "니들로 속도 필드의 시각화를 토글"
-
-
 msgid "Simulation Method"
 msgstr "시뮬레이션 메서드"
 
@@ -11743,22 +11699,6 @@ msgstr "Z 축을 따라 슬라이스"
 
 msgid "Position of the slice"
 msgstr "슬라이스의 위치"
-
-
-msgid "View Method"
-msgstr "뷰 메서드"
-
-
-msgid "How to slice the volume for viewport rendering"
-msgstr "뷰포트 렌더링의 볼륨을 슬라이스하는 방법"
-
-
-msgid "Slice volume parallel to the view plane"
-msgstr "뷰 평면에 평행 볼륨을 슬라이스"
-
-
-msgid "Slice volume parallel to the major axis"
-msgstr "장축에 평행 볼륨을 슬라이스"
 
 
 msgid "Slice Per Voxel"
@@ -11951,10 +11891,6 @@ msgstr "Bottom"
 
 msgid "Top"
 msgstr "Top"
-
-
-msgid "Render a simulation field while mapping its voxels values to the colors of a ramp"
-msgstr "복셀 값을 램프의 컬러에 매핑하면서 시뮬레이션 필드를 렌더"
 
 
 msgid "Dissolve Smoke"
@@ -12177,6 +12113,10 @@ msgid "Fluid flow settings"
 msgstr "유체 흐름 설정"
 
 
+msgid "Density"
+msgstr "밀도"
+
+
 msgid "Vertex Group"
 msgstr "버텍스 그룹"
 
@@ -12195,10 +12135,6 @@ msgstr "시뮬레이션에서 흐름 동작 변경"
 
 msgid "Add fluid to simulation"
 msgstr "시뮬레이션에 유체를 추가"
-
-
-msgid "Outflow"
-msgstr "유출"
 
 
 msgid "Delete fluid from simulation"
@@ -12343,10 +12279,6 @@ msgstr "초기"
 
 msgid "Multiplier of source velocity passed to fluid (source velocity is non-zero only if object is moving)"
 msgstr "소스 속도의 승수가 유체로 전달됨 (오브젝트가 움직이는 경우에만 소스 속도가 0이 아님)"
-
-
-msgid "Normal"
-msgstr "노멀"
 
 
 msgid "Amount of normal directional velocity"
@@ -12659,10 +12591,6 @@ msgstr "가시성"
 
 msgid "Determine how to use visibility for feature edge selection"
 msgstr "특성 에지 선택을 위해 가시성을 사용하는 방법을 결정하기"
-
-
-msgid "Visible"
-msgstr "보임"
 
 
 msgid "Select visible feature edges"
@@ -12983,6 +12911,10 @@ msgstr "시기"
 
 msgid "Time between bounces for elastic easing"
 msgstr "탄성 완화를 위한 바운스 사이의 시간"
+
+
+msgid "Step"
+msgstr "단계"
 
 
 msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
@@ -14569,10 +14501,6 @@ msgid "Thickness Factor"
 msgstr "두께 팩터"
 
 
-msgid "Step"
-msgstr "단계"
-
-
 msgid "Number of frames before recalculate random values again"
 msgstr "다시 렌덤 값을 재계산하기 전의 프레임 수"
 
@@ -14915,6 +14843,18 @@ msgstr "루마"
 
 msgid "Red Green Blue"
 msgstr "레드 그린 블루"
+
+
+msgid "Red"
+msgstr "레드"
+
+
+msgid "Green"
+msgstr "그린"
+
+
+msgid "Blue"
+msgstr "불루"
 
 
 msgid "Show Line"
@@ -15358,6 +15298,30 @@ msgid "Gaussian"
 msgstr "가우시안"
 
 
+msgid "Deformation"
+msgstr "변형"
+
+
+msgid "Deformation type that is used in the brush"
+msgstr "브러시에 사용되는 변형 유형"
+
+
+msgid "Bend"
+msgstr "굽히기"
+
+
+msgid "Expand"
+msgstr "확장"
+
+
+msgid "Inflate"
+msgstr "팽창"
+
+
+msgid "Loop"
+msgstr "루프"
+
+
 msgid "Brush's capabilities"
 msgstr "브러시의 기능"
 
@@ -15382,20 +15346,16 @@ msgid "Clone Offset"
 msgstr "클론 오프셋"
 
 
-msgid "Deformation"
-msgstr "변형"
+msgid "Snake Hook"
+msgstr "스네이크 후크"
 
 
-msgid "Deformation type that is used in the brush"
-msgstr "브러시에 사용되는 변형 유형"
+msgid "Local"
+msgstr "로컬"
 
 
-msgid "Inflate"
-msgstr "팽창"
-
-
-msgid "Expand"
-msgstr "확장"
+msgid "Global"
+msgstr "글로벌"
 
 
 msgid "Color Type"
@@ -15850,10 +15810,6 @@ msgid "Elastic Deform"
 msgstr "엘라스틱 변형"
 
 
-msgid "Snake Hook"
-msgstr "스네이크 후크"
-
-
 msgid "Thumb"
 msgstr "썸"
 
@@ -15868,6 +15824,10 @@ msgstr "넛지"
 
 msgid "Rotate"
 msgstr "회전"
+
+
+msgid "Boundary"
+msgstr "경계"
 
 
 msgid "Cloth"
@@ -16394,6 +16354,10 @@ msgid "Up"
 msgstr "위쪽"
 
 
+msgid "Second"
+msgstr "초"
+
+
 msgid "Camera data-block for storing camera settings"
 msgstr "카메라 설정을 저장하기 위한 카메라 데이터 블록"
 
@@ -16810,12 +16774,24 @@ msgid "Factor that defines from where beveling of spline happens (0=from the ver
 msgstr "스플라인의 베벨이 발생하는 지점을 정의하는 요소 (0 = 처음부터, 1 = 맨 끝부터)"
 
 
+msgid "Round"
+msgstr "둥근"
+
+
+msgid "Profile"
+msgstr "단면"
+
+
 msgid "Bevel Object"
 msgstr "베벨 오브젝트"
 
 
 msgid "Curve object name that defines the bevel shape"
 msgstr "베벨 셰이프를 정의하는 해당 커브 오브젝트 이름"
+
+
+msgid "Custom Profile Path"
+msgstr "커스텀 프로필 경로"
 
 
 msgid "Bevel Resolution"
@@ -16848,10 +16824,6 @@ msgstr "커브의 Z 축을 클램프"
 
 msgid "Allow editing on the Z axis of this curve, also allows tilt and curve radius to be used"
 msgstr "이 커브의 Z 축상에서 편집을 허용, 또한 기울기 및 커브 반경 사용 가능"
-
-
-msgid "Evaluation Time"
-msgstr "평가 시간"
 
 
 msgid "Parametric position along the length of the curve that Objects 'following' it should be at (position is evaluated by dividing by the 'Path Length' value)"
@@ -17162,10 +17134,6 @@ msgid "Object Font"
 msgstr "오브젝트 폰트"
 
 
-msgid "Use Objects as font characters (give font objects a common name followed by the character they represent, eg. 'family-a', 'family-b', etc, set this setting to 'family-', and turn on Vertex Duplication)"
-msgstr "오브젝트를 폰트 문자로 사용 (예 : 'family-a', 'family-b'등의 폰트 이름 뒤에 일반 이름을 붙이면이 설정을 'family-'로 설정하고 버텍스 복제를 켜십시오)"
-
-
 msgid "Text on Curve"
 msgstr "커브에 대한 텍스트"
 
@@ -17364,10 +17332,6 @@ msgstr "버트"
 
 msgid "Butt cap (flat)"
 msgstr "버트 캡 (플랫)"
-
-
-msgid "Round"
-msgstr "둥근"
 
 
 msgid "Round cap (half-circle)"
@@ -17990,10 +17954,6 @@ msgid "Type of keyframe (for filtering)"
 msgstr "키 프레임의 유형 (필터링 용)"
 
 
-msgid "All Types"
-msgstr "모든 유형"
-
-
 msgid "Include all Keyframe types"
 msgstr "모든 키 프레임 유형을 포함"
 
@@ -18120,6 +18080,10 @@ msgstr "표면 오프셋"
 
 msgid "Offset amount when drawing in surface mode"
 msgstr "표면 모드에서 그리기 할 때의 오프셋 양"
+
+
+msgid "Attributes"
+msgstr "속성"
 
 
 msgid "Image data-block referencing an external or packed image"
@@ -19388,10 +19352,6 @@ msgid "Shader Ball"
 msgstr "셰이더 볼"
 
 
-msgid "Fluid"
-msgstr "유체"
-
-
 msgid "Refraction Depth"
 msgstr "굴절 깊이"
 
@@ -19678,30 +19638,6 @@ msgstr "토폴로지 미러"
 
 msgid "Use topology based mirroring (for when both sides of mesh have matching, unique topology)"
 msgstr "토폴로지 기반 미러링을 사용 (메쉬의 양면에 일치하는 고유 토폴로지가 있는 경우)"
-
-
-msgid "X Mirror"
-msgstr "X 미러"
-
-
-msgid "X Axis mirror editing"
-msgstr "X 축 미러 편집"
-
-
-msgid "Y Mirror"
-msgstr "Y 미러"
-
-
-msgid "Y Axis mirror editing"
-msgstr "Y 축 미러 편집하기"
-
-
-msgid "Z Mirror"
-msgstr "Z 미러"
-
-
-msgid "Z Axis mirror editing"
-msgstr "Z 축 미러 편집하기"
 
 
 msgid "Paint Mask"
@@ -20134,10 +20070,6 @@ msgstr "투 패스"
 
 msgid "Use two pass execution during editing: first calculate fast nodes, second pass calculate all nodes"
 msgstr "편집하는 동안 두번 패스 실행을 사용: 먼저 고속 노드를 계산하고 두 번째 패스는 모든 노드를 계산합니다"
-
-
-msgid "Viewer Border"
-msgstr "뷰어 경계"
 
 
 msgid "Use boundaries for viewer nodes and composite backdrop"
@@ -20899,23 +20831,8 @@ msgstr "표면"
 
 
 msgctxt "ID"
-msgid "Meta"
-msgstr "메타"
-
-
-msgctxt "ID"
 msgid "Empty"
 msgstr "엠프티"
-
-
-msgctxt "ID"
-msgid "GPencil"
-msgstr "그리스 펜슬"
-
-
-msgctxt "ID"
-msgid "Probe"
-msgstr "프로브"
 
 
 msgid "Axis that points in the upward direction (applies to InstanceFrame when parent 'Follow' is enabled)"
@@ -21926,10 +21843,6 @@ msgid "Use even distribution from faces based on face areas or edge lengths"
 msgstr "페이스 영역 또는 에지 길이를 기준으로 페이스에서 균일한 분포를 사용"
 
 
-msgid "Global"
-msgstr "글로벌"
-
-
 msgid "Use object's global coordinates for duplication"
 msgstr "복제에 대해 오브젝트의 글로벌 좌표를 사용"
 
@@ -22058,12 +21971,8 @@ msgid "Use whole collection at once"
 msgstr "한 번에 전체 컬렉션을 사용"
 
 
-msgid "P/F"
-msgstr "P/F"
-
-
-msgid "Emission locations / face (0 = automatic)"
-msgstr "방출 위치 / 페이스 (0 = 자동)"
+msgid "Particles/Face"
+msgstr "파티클/페이스"
 
 
 msgid "Virtual Parents"
@@ -23930,10 +23839,6 @@ msgstr "ID 라이브러리 재정의 속성 작업"
 
 msgid "Description of an override operation over an overridden property"
 msgstr "재정의된 속성에 대한 재정의 작업의 설명"
-
-
-msgid "Flags"
-msgstr "플래그"
 
 
 msgid "Optional flags (NOT USED)"
@@ -28068,10 +27973,6 @@ msgid "Mesh"
 msgstr "메쉬"
 
 
-msgid "Edge"
-msgstr "에지"
-
-
 msgid "Edge Data"
 msgstr "에지 데이터"
 
@@ -28090,6 +27991,10 @@ msgstr "노멀"
 
 msgid "Select by Face Strength"
 msgstr "페이스 강도로 선택"
+
+
+msgid "Set Face Strength"
+msgstr "페이스 강도를 설정"
 
 
 msgid "Select All by Trait"
@@ -28446,10 +28351,6 @@ msgstr "삼각형 노멀"
 
 msgid "Local space unit length normal vector for this triangle"
 msgstr "이 삼각형의 지역 공간 단위 길이 노멀 벡터"
-
-
-msgid "Polygon"
-msgstr "폴리곤"
 
 
 msgid "Index of mesh polygon that the triangle is a part of"
@@ -29348,10 +29249,6 @@ msgid "Angle above which to bevel edges"
 msgstr "에지를 베벨하는 이상의 각도"
 
 
-msgid "Custom Profile Path"
-msgstr "커스텀 프로필 경로"
-
-
 msgid "The path for the custom profile"
 msgstr "커스텀 프로파일의 경로"
 
@@ -29516,10 +29413,6 @@ msgid "Amount is percent of adjacent edge length"
 msgstr "양은 에지 길이에 인접한의 퍼센트입니다"
 
 
-msgid "Profile"
-msgstr "단면"
-
-
 msgid "The profile shape (0.5 = round)"
 msgstr "단면 셰이프 (0.5 = 둥근)"
 
@@ -29612,20 +29505,8 @@ msgid "Mesh object to use for Boolean operation"
 msgstr "부울 작업을 위해 사용하는 메쉬 오브젝트"
 
 
-msgid "Keep the part of the mesh that intersects with the other selected object"
-msgstr "다른 선택된 오브젝트와 교차하는 메쉬의 부분을 유지"
-
-
 msgid "Union"
 msgstr "결합"
-
-
-msgid "Combine two meshes in an additive way"
-msgstr "덧셈 방식으로 두 개의 매쉬를 결합"
-
-
-msgid "Combine two meshes in a subtractive way"
-msgstr "뺄셈 방식으로 두 개의 메쉬를 결합"
 
 
 msgid "Build effect modifier"
@@ -30436,10 +30317,6 @@ msgid "Material value that gives no displacement"
 msgstr "변위를 제공하지 않는 매테리얼 값"
 
 
-msgid "Local"
-msgstr "로컬"
-
-
 msgid "Direction is defined in local coordinates"
 msgstr "방향은 로컬 좌표로 정의됩니다"
 
@@ -30704,10 +30581,6 @@ msgid "Cache Mesh"
 msgstr "메쉬를 캐시"
 
 
-msgid "MDD "
-msgstr "MDD "
-
-
 msgid "Deform Mode"
 msgstr "변형 모드"
 
@@ -30750,10 +30623,6 @@ msgstr "프레임 시작"
 
 msgid "Add this to the start frame"
 msgstr "시작 프레임에 이것을 추가"
-
-
-msgid "None "
-msgstr "없음 "
 
 
 msgid "Use the time from the scene"
@@ -31188,10 +31057,6 @@ msgid "Repetitions of the generated surface in Y"
 msgstr "Y에서 생성된 표면의 반복"
 
 
-msgid "Resolution of the generated surface"
-msgstr "생성된 표면의 해상도"
-
-
 msgid "Surface scale factor (does not affect the height of the waves)"
 msgstr "표면 축적 팩터 (웨이브 의 높이에 영향을 주지 않음)"
 
@@ -31617,10 +31482,6 @@ msgid "Rotate around the Z axis of the modifier space"
 msgstr "모디파이어 공간의 Z 축 주위에 회전"
 
 
-msgid "Bend"
-msgstr "굽히기"
-
-
 msgid "Bend the mesh over the Z axis of the modifier space"
 msgstr "모디파이어 공간의 Z축을 넘어메쉬를 굽히기"
 
@@ -31979,10 +31840,6 @@ msgstr "쿼드 메서드"
 
 msgid "Method for splitting the quads into triangles"
 msgstr "삼각형으로 쿼드를 분할하는 매서드"
-
-
-msgid "Beauty "
-msgstr "뷰티 "
 
 
 msgid "Split the quads in nice triangles, slower method"
@@ -32646,10 +32503,6 @@ msgstr "크리스 웨이트 (활성화된 경우)"
 
 msgid "Thickness factor"
 msgstr "두께 팩터"
-
-
-msgid "Boundary"
-msgstr "경계"
 
 
 msgid "Support face boundaries"
@@ -34536,10 +34389,6 @@ msgid "Limit by single channel"
 msgstr "싱글 채널로 제한"
 
 
-msgid "Limit by max of other channels "
-msgstr "다른 채널의 최대로 제한 "
-
-
 msgid "Values lower than this setting are 100% keyed"
 msgstr "이 설정보다 낮은 값은 100% 키됩니다"
 
@@ -36297,16 +36146,8 @@ msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blen
 msgstr "Z 버퍼를 안티 앨리어싱하여 부자연스러운 결과를 피하려고 시도, 블렌더 렌더에 주로 유용합니다"
 
 
-msgid "Float"
-msgstr "실수"
-
-
 msgid "Int"
 msgstr "정수"
-
-
-msgid "String"
-msgstr "문자열"
 
 
 msgctxt "NodeTree"
@@ -43071,10 +42912,6 @@ msgid "Export directional, point, and spot lights. Uses \"KHR_lights_punctual\" 
 msgstr "방향, 포인트 및 스폿 라이트를 내 보냅니다. \"KHR_lights_punctual\" glTF 확장자 사용"
 
 
-msgid "Export materials"
-msgstr "매테리얼을 내보내기"
-
-
 msgid "Export shape keys (morph targets)"
 msgstr "셰이프 키를 내보내기 (모프 타겟)"
 
@@ -44593,6 +44430,10 @@ msgid "Send new stroke to Back"
 msgstr "새 스트로크를 뒤로 보내기"
 
 
+msgid "All Frames"
+msgstr "모든 프레임"
+
+
 msgctxt "Operator"
 msgid "Clean Fill Boundaries"
 msgstr "채우기 경계를 지우기"
@@ -44608,10 +44449,6 @@ msgstr "활성 프레임 만"
 
 msgid "Clean active frame only"
 msgstr "활성 프레임 만 지우기"
-
-
-msgid "All Frames"
-msgstr "모든 프레임"
 
 
 msgid "Clean all frames in all layers"
@@ -44896,17 +44733,8 @@ msgid "Paste by Layer"
 msgstr "레이어로 붙여 넣기"
 
 
-msgctxt "Operator"
-msgid "Grease Pencil Shapes"
-msgstr "그리스 펜슬 셰이프"
-
-
-msgid "Create predefined grease pencil stroke shapes"
-msgstr "사전 정의된 그리스 팬슬 스트로크 셰이프를 생성"
-
-
-msgid "Number of polygon edges"
-msgstr "폴리곤 에지의 수"
+msgid "Subdivisions"
+msgstr "섭디비젼"
 
 
 msgid "Type of shape"
@@ -46454,10 +46282,6 @@ msgstr "씬 FPS를 업데이트"
 
 msgid "Set the scene framerate to that of the BVH file (note that this nullifies the 'Scale FPS' option, as the scale will be 1:1)"
 msgstr "씬 프레임 속도를 BVH 파일의 프레임 속도로 설정 (참고: 축적이 1:1이되므로 'FPS 축적' 옵션이 무효화됩니다)"
-
-
-msgid "Loop"
-msgstr "루프"
 
 
 msgid "Loop the animation playback"
@@ -48357,6 +48181,34 @@ msgid "Flatten selected faces"
 msgstr "선택한 페이스를 평평하게"
 
 
+msgid "Add Boundary Loop"
+msgstr "경계 루프를 추가"
+
+
+msgid "Add an extra edge loop to better preserve the shape when applying a subdivision surface modifier"
+msgstr "서브디비젼 펴면 모디파이어를 적용할 때 쉐이프를 더 잘 유지하기 위해 여분의 에지 루프 추가합니다"
+
+
+msgid "Extract as Solid"
+msgstr "솔리드로 추출"
+
+
+msgid "Extract the mask as a solid object with a solidify modifier"
+msgstr "솔리디파이 모디파이어를 사용하여 마스크를 솔리드 오브젝트로 돌풀합니다"
+
+
+msgid "Project to Sculpt"
+msgstr "스컬프트로 프로젝트"
+
+
+msgid "Project the extracted mesh into the original sculpt"
+msgstr "추출된 메쉬를 원래 스컬프트으로 투사"
+
+
+msgid "Smooth iterations applied to the extracted mesh"
+msgstr "추출된 메쉬에 적용된 스무스 반복"
+
+
 msgctxt "Operator"
 msgid "Weld Edges into Faces"
 msgstr "페이스 안으로 에지를 용접"
@@ -48586,10 +48438,6 @@ msgstr "차이 교차점을 사용하여 어느 쪽이 유지되는 지를 바�
 msgctxt "Operator"
 msgid "Knife Project"
 msgstr "나이프 투사"
-
-
-msgid "Use other objects outlines & boundaries to project knife cuts"
-msgstr "다른 오브젝트의 윤곽선을 사용 & 나이프 자르기를 투사하는 경계"
 
 
 msgid "Cut through"
@@ -48914,36 +48762,8 @@ msgid "Create a new mesh object from the current paint mask"
 msgstr "현재 페인트 마스크에서 새 메쉬 오브젝트를 생성"
 
 
-msgid "Add Boundary Loop"
-msgstr "경계 루프를 추가"
-
-
-msgid "Add an extra edge loop to better preserve the shape when applying a subdivision surface modifier"
-msgstr "서브디비젼 펴면 모디파이어를 적용할 때 쉐이프를 더 잘 유지하기 위해 여분의 에지 루프 추가합니다"
-
-
-msgid "Extract as Solid"
-msgstr "솔리드로 추출"
-
-
-msgid "Extract the mask as a solid object with a solidify modifier"
-msgstr "솔리디파이 모디파이어를 사용하여 마스크를 솔리드 오브젝트로 돌풀합니다"
-
-
-msgid "Project to Sculpt"
-msgstr "스컬프트로 프로젝트"
-
-
-msgid "Project the extracted mesh into the original sculpt"
-msgstr "추출된 메쉬를 원래 스컬프트으로 투사"
-
-
 msgid "Minimum mask value to consider the vertex valid to extract a face from the original mesh"
 msgstr "원래 메쉬에서 페이스를 추출하는 데 유효 버텍스를 고려하기 위한 최소 마스크 값"
-
-
-msgid "Smooth iterations applied to the extracted mesh"
-msgstr "추출된 메쉬에 적용된 스무스 반복"
 
 
 msgctxt "Operator"
@@ -49268,10 +49088,6 @@ msgid "Construct an Icosphere mesh"
 msgstr "아이코 구체 메쉬를 만들기"
 
 
-msgid "Subdivisions"
-msgstr "섭디비젼"
-
-
 msgctxt "Operator"
 msgid "Add Monkey"
 msgstr "원숭이를 추가"
@@ -49345,10 +49161,6 @@ msgstr "마이너 부분"
 
 msgid "Number of segments for the minor ring of the torus"
 msgstr "토러스의 마이너 링에 대한 부분의 수"
-
-
-msgid "Torus Dimensions"
-msgstr "토러스 크기"
 
 
 msgid "Major/Minor"
@@ -50401,11 +50213,6 @@ msgid "Smooth Z Axis"
 msgstr "스무스 Z 축"
 
 
-msgctxt "Operator"
-msgid "Wire Frame"
-msgstr "와이어프레임"
-
-
 msgid "Create a solid wire-frame from faces"
 msgstr "페이스에서 솔리드 와어 프레임을 생성"
 
@@ -50904,11 +50711,6 @@ msgstr "배경 이미지 줌"
 
 msgid "Zoom in/out the background image"
 msgstr "배경 이미지를 줌 확대/축소"
-
-
-msgctxt "Operator"
-msgid "Clear Viewer Border"
-msgstr "뷰어 경계를 지우기"
 
 
 msgid "Clear the boundaries for viewer operations"
@@ -51507,10 +51309,6 @@ msgid "Align to axis"
 msgstr "축에 정렬"
 
 
-msgid "Align Mode:"
-msgstr "정렬 모드:"
-
-
 msgid "Side of object to use for alignment"
 msgstr "정렬을 위해 사용하는 오브젝트의 측면"
 
@@ -51535,8 +51333,8 @@ msgid "Enables high quality calculation of the bounding box for perfect results 
 msgstr "회전/축적 (느림)을 사용하여 복잡한 지오메트리 메쉬에서 완벽한 결과에 대해 경계 박스를 고품질로 계산할 수 있습니다"
 
 
-msgid "Relative To:"
-msgstr "으로 상대적인:"
+msgid "Relative To"
+msgstr "다음에 상대적"
 
 
 msgid "Reference location to align to"
@@ -51771,10 +51569,6 @@ msgid "Curve from Mesh/Text"
 msgstr "메쉬/텍스트에서 커브"
 
 
-msgid "Mesh from Curve/Meta/Surf/Text"
-msgstr "커브/메타/서프/텍스트에서 메쉬"
-
-
 msgctxt "Operator"
 msgid "Corrective Smooth Bind"
 msgstr "코렉티브 스무스 결속"
@@ -51811,10 +51605,6 @@ msgstr "버텍스 그룹(들)"
 
 msgid "Transfer crease values"
 msgstr "크리스 값을 전송"
-
-
-msgid "VCol"
-msgstr "버텍스 컬러"
 
 
 msgid "Factor controlling precision of islands handling (the higher, the better the results)"
@@ -52873,6 +52663,10 @@ msgid "Vertex (Triangle)"
 msgstr "버텍스 (삼각형)"
 
 
+msgid "X Mirror"
+msgstr "X 미러"
+
+
 msgid "Apply weights symmetrically along X axis, for Envelope/Automatic vertex groups creation"
 msgstr "엔벌로프 / 자동 버텍스 그룹 생성을 위해 X 축을 따라 대칭으로 웨이트를 적용"
 
@@ -53227,11 +53021,6 @@ msgstr "산란 오브젝트"
 
 msgid "Change selection of all visible objects in scene"
 msgstr "씬에서 모든 보이는 오브젝트의 선택을 변경"
-
-
-msgctxt "Operator"
-msgid "Select By Type"
-msgstr "유형으로 선택"
 
 
 msgid "Select all visible objects that are of a type"
@@ -53771,11 +53560,6 @@ msgstr "새로운 그룹에 할당"
 
 msgid "Assign the selected vertices to a new vertex group"
 msgstr "새로운 버텍스 그룹에 선택된 버텍스를 할당"
-
-
-msgctxt "Operator"
-msgid "Clean Vertex Group"
-msgstr "버텍스 그룹을 정리"
 
 
 msgid "Remove vertex group assignments which are not required"
@@ -55117,15 +54901,6 @@ msgid "Switch brush to smooth mode for duration of stroke"
 msgstr "스트로크의 지속에 대해 스무스 모드로 브러시를 전환"
 
 
-msgctxt "Operator"
-msgid "Mask Flood Fill"
-msgstr "마스크 플러드 채우기"
-
-
-msgid "Fill the whole mask with a given value, or invert its values"
-msgstr "주어진 값으로 전체를 채우기, 또는 그 값의 반전"
-
-
 msgid "Set mask to the level specified by the 'value' property"
 msgstr "'값' 속성에 의해 지정된 레벨로 마스크를 설정"
 
@@ -55142,8 +54917,21 @@ msgid "Invert the mask"
 msgstr "마스크를 반전"
 
 
+msgid "Front Faces Only"
+msgstr "앞쪽 페이스 만"
+
+
 msgid "Mask level to use when mode is 'Value'; zero means no masking and one is fully masked"
 msgstr "모드가 '값'일 때 사용할 마스크 레벨; 0은 마스킹 없음을 의미하고 1은 완전히 마스킹됨을 의미합니다"
+
+
+msgctxt "Operator"
+msgid "Mask Flood Fill"
+msgstr "마스크 플러드 채우기"
+
+
+msgid "Fill the whole mask with a given value, or invert its values"
+msgstr "주어진 값으로 전체를 채우기, 또는 그 값의 반전"
 
 
 msgctxt "Operator"
@@ -58166,11 +57954,6 @@ msgid "Number of times that the filter is going to be applied"
 msgstr "필터가 적용되는 횟수"
 
 
-msgctxt "Operator"
-msgid "Filter mesh"
-msgstr "필터 메쉬"
-
-
 msgid "Applies a filter to modify the current mesh"
 msgstr "현재 메쉬를 수정하기 위해 필터를 적용합니다"
 
@@ -59841,10 +59624,6 @@ msgid "Align with Point Normal"
 msgstr "포인트 노멀로 정렬"
 
 
-msgid "Closest"
-msgstr "가까운"
-
-
 msgid "Snap closest point onto target"
 msgstr "가장 가까운 포인트를 대상에 스냅"
 
@@ -60070,10 +59849,6 @@ msgid "To Sphere"
 msgstr "구체로"
 
 
-msgid "Move selected vertices outward in a spherical shape around mesh center"
-msgstr "메쉬 중심 주위의 구형 바깥쪽으로 선택한 버텍스를 이동"
-
-
 msgctxt "Operator"
 msgid "Trackball"
 msgstr "트랙볼"
@@ -60246,10 +60021,6 @@ msgstr "소스 컬러"
 
 msgid "Gamma Corrected"
 msgstr "감마 보정됨"
-
-
-msgid "The source color is gamma corrected "
-msgstr "소스 컬러은 감마 보정됨 "
 
 
 msgctxt "Operator"
@@ -61082,10 +60853,6 @@ msgid "Create a new UV map for every mesh packed"
 msgstr "포장 모든 메쉬에 대한 새 UV 맵을 생성"
 
 
-msgid "Share Tex Space"
-msgstr "텍스 공간을 공유"
-
-
 msgid "Objects Share texture space, map all objects into 1 uvmap"
 msgstr "오브젝트 텍스처 공간 공유, 1 언맵으로 모든 오브젝트를 맵"
 
@@ -61306,28 +61073,8 @@ msgid "Smart UV Project"
 msgstr "스마트 UV 투사"
 
 
-msgid "This script projection unwraps the selected faces of a mesh (it operates on all selected mesh objects, and can be used to unwrap selected faces, or all faces)"
-msgstr "이 스크립트 프로젝션은 메쉬의 선택된 페이스를 펼칩니다 (선택한 모든 메쉬 오브젝트에서 작동하며 선택한 페이스나 모든 페이스의 펼치기에 사용할 수 있음)"
-
-
 msgid "Lower for more projection groups, higher for less distortion"
 msgstr "더 많은 투영 그룹을 위해 더 낮게, 왜곡을 줄이기 위해 더 높게"
-
-
-msgid "Island Margin"
-msgstr "아일랜드 여백"
-
-
-msgid "Margin to reduce bleed from adjacent islands"
-msgstr "인접 아일랜드로부터의 번짐을 감소하기 위한 여백"
-
-
-msgid "Stretch to UV Bounds"
-msgstr "UV 경계로 늘이기"
-
-
-msgid "Stretch the final output to texture bounds"
-msgstr "텍스처의 경계에 최종 출력을 늘이기"
 
 
 msgid "Area Weight"
@@ -61336,6 +61083,14 @@ msgstr "영역 웨이트"
 
 msgid "Weight projections vector by faces with larger areas"
 msgstr "더 큰 영역을 가진 페이스에 의한 웨이트 투영 벡터"
+
+
+msgid "Island Margin"
+msgstr "아일랜드 여백"
+
+
+msgid "Margin to reduce bleed from adjacent islands"
+msgstr "인접 아일랜드로부터의 번짐을 감소하기 위한 여백"
 
 
 msgctxt "Operator"
@@ -63531,6 +63286,10 @@ msgid "Which data-block previews to clear"
 msgstr "지우는 어떤 데이터 블럭 미리보기"
 
 
+msgid "All Types"
+msgstr "모든 유형"
+
+
 msgid "All Geometry Types"
 msgstr "모든 지오메트리 유형"
 
@@ -65033,10 +64792,6 @@ msgid "Composition Guides"
 msgstr "구성 가이드"
 
 
-msgid "Passepartout"
-msgstr "대지"
-
-
 msgid "Center-Cut Safe Areas"
 msgstr "중심 자르기 안전 영역"
 
@@ -65111,10 +64866,6 @@ msgstr "북마크"
 
 msgid "Favorites"
 msgstr "즐겨 찾기"
-
-
-msgid "Attributes"
-msgstr "속성"
 
 
 msgid "Directory Path"
@@ -65557,10 +65308,6 @@ msgstr "진단"
 
 msgid "Helpers"
 msgstr "도우미"
-
-
-msgid "Debug Velocity"
-msgstr "디버그 속도"
 
 
 msgid "Creates a Panel in the Render Layers context of the properties editor"
@@ -72126,10 +71873,6 @@ msgid "Render Views"
 msgstr "뷰를 렌더"
 
 
-msgid "Number of CPU threads to use simultaneously while rendering (for multi-core/CPU systems)"
-msgstr "렌더링하는 동안 동시에 사용하는 CPU 스레드의 수 (다중 코어/CPU 시스템에 대해)"
-
-
 msgid "Threads Mode"
 msgstr "스레드 모드"
 
@@ -73048,14 +72791,6 @@ msgstr "리지드 보디 제약 오브젝트가 포함된 컬렉션"
 
 msgid "Simulation will be evaluated"
 msgstr "시뮬레이션을 계산 함"
-
-
-msgid "Steps Per Second"
-msgstr "초 당 단계"
-
-
-msgid "Number of simulation steps taken per second (higher values are more accurate but slower)"
-msgstr "초당 수행된 시뮬레이션 단계 수 (높은 값은 더 정확하지만 느림)"
 
 
 msgid "Change the speed of the simulation"
@@ -74334,10 +74069,6 @@ msgstr "다른 스트립에 아핀 변환을 적용하는 시퀀스 스트립"
 
 msgid "Method to determine how missing pixels are created"
 msgstr "누락된 픽셀 생성 방법을 결정하는 메서드"
-
-
-msgid "No interpolation"
-msgstr "보간이 없음"
 
 
 msgid "Bilinear interpolation"
@@ -76853,10 +76584,6 @@ msgid "Display collections and objects in the view layer"
 msgstr "뷰 레이어에 컬렉션 및 오브젝트를 표시"
 
 
-msgid "Display sequence data-blocks"
-msgstr "시퀀스 데이터-블록을 표시"
-
-
 msgid "Blender File"
 msgstr "블렌더 파일"
 
@@ -77832,10 +77559,6 @@ msgstr "편집하는 동안 UV를 픽셀로 스냅합니다"
 
 msgid "Don't snap to pixels"
 msgstr "픽셀에 스냅하지 마십시오"
-
-
-msgid "Corner"
-msgstr "코너"
 
 
 msgid "Snap to pixel corners"
@@ -78962,6 +78685,14 @@ msgid "Theme settings for the File Browser"
 msgstr "파일 브라우저에 대한 테마 설정"
 
 
+msgid "Alternate Rows"
+msgstr "대체 행"
+
+
+msgid "Overlay color on every other row"
+msgstr "다른 모든 행에 컬러를 오버레이"
+
+
 msgid "Selected File"
 msgstr "선택된 파일"
 
@@ -79116,10 +78847,6 @@ msgstr "페인트 커브 핸들"
 
 msgid "Paint Curve Pivot"
 msgstr "페인트 커브 피벗"
-
-
-msgid "Other Object UVs"
-msgstr "다른 오브젝트 UV"
 
 
 msgid "Texture paint/Modifier UVs"
@@ -79352,14 +79079,6 @@ msgstr "편집된 오브젝트"
 
 msgid "Filter Match"
 msgstr "필터 일치"
-
-
-msgid "Alternate Rows"
-msgstr "대체 행"
-
-
-msgid "Overlay color on every other row"
-msgstr "다른 모든 행에 컬러를 오버레이"
 
 
 msgid "Selected Highlight"
@@ -80012,10 +79731,6 @@ msgstr "스트로크 배치 (이미지 에디터)"
 
 msgid "Draw stroke at 3D cursor location"
 msgstr "3D 커서 위치에서 스트로크를 그리기"
-
-
-msgid "Stick stroke to the view "
-msgstr "뷰에 스트로크를 붙이기 "
 
 
 msgid "Stick stroke to surfaces"
@@ -80803,10 +80518,6 @@ msgid "Radius of the brush"
 msgstr "브러시의 반경"
 
 
-msgid "Measure brush size relative to the view or the scene "
-msgstr "뷰 또는 씬을 기준으로 브러쉬 크기를 측정합니다 "
-
-
 msgid "Use Unified Color"
 msgstr "통일된 컬러를 사용"
 
@@ -81361,10 +81072,6 @@ msgstr "본 X-Ray를 표시"
 
 msgid "Show the bone selection overlay"
 msgstr "본 선택 오버레이를 표시"
-
-
-msgid "Stencil Opacity"
-msgstr "스텐실 불투명도"
 
 
 msgid "Opacity of the texture paint mode stencil mask overlay"
@@ -82813,6 +82520,6128 @@ msgstr "아이드라퍼 모달 맵"
 msgctxt "WindowManager"
 msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "아이드라퍼 컬러램프 포인트샘플링 맵"
+
+
+msgid "Frame '%s' not found, animation must be complete"
+msgstr "프레임 '%s'을 찾지 못했습니다. 애니메이션이 완료되어야합니다"
+
+
+msgid "OSL shader compilation succeeded"
+msgstr "OSL 셰이더 컴파일에 성공"
+
+
+msgid "OSL script compilation failed, see console for errors"
+msgstr "OSL 스크립트 컴파일 실패, 오류에 대한 콘솔을 참조"
+
+
+msgid "No text or file specified in node, nothing to compile"
+msgstr "노드에서 지정된 텍스트 또는 파일이 없음, 컴파일 할 수 없음"
+
+
+msgid "OSL query failed to open "
+msgstr "OSL 쿼리를 열지 못했습니다 "
+
+
+msgid "External shader script must have .osl or .oso extension, or be a module name"
+msgstr "외부 쉐이더 스크립트는 .osl 또는 .oso 확장자를 가져야하며, 또는 모듈 이름이어야 합니다"
+
+
+msgid "Can't read OSO bytecode to store in node at %r"
+msgstr "%r에서 노드에 저장할 OSO 바이트 코드를 읽을 수 없습니다"
+
+
+msgid "Failed to write .oso file next to external .osl file at "
+msgstr "외부 .osl 파일 옆에 .oso 파일을 쓰지 못했습니다 "
+
+
+msgid "No compatible GPUs found for path tracing"
+msgstr "경로 추적에 호환되는 GPU가 없습니다"
+
+
+msgid "Cycles will render on the CPU"
+msgstr "사이클이 CPU에서 렌더링됩니다"
+
+
+msgid "OptiX support is experimental"
+msgstr "OptiX 지원은 실험적입니다"
+
+
+msgid "Not all Cycles features are supported yet"
+msgstr "아직 모든 Cycles 기능이 지원되는 것은 아닙니다"
+
+
+msgid "Total Samples:"
+msgstr "전체 샘플:"
+
+
+msgid "AO"
+msgstr "AO"
+
+
+msgid "Mesh Light"
+msgstr "메쉬 라이트"
+
+
+msgid "Subsurface"
+msgstr "서브 표면"
+
+
+msgid "Dicing Rate Render"
+msgstr "다이싱 레이트 렌더"
+
+
+msgid "Offscreen Scale"
+msgstr "오프스크린 축적"
+
+
+msgid "Direct Light"
+msgstr "직접 라이트"
+
+
+msgid "Indirect Light"
+msgstr "간접 라이트"
+
+
+msgid "Rolling Shutter"
+msgstr "롤링 셔터"
+
+
+msgid "Roughness Threshold"
+msgstr "거칠기 임계 값"
+
+
+msgid "Tiles X"
+msgstr "타일 X"
+
+
+msgid "Persistent Images"
+msgstr "지속적인 이미지"
+
+
+msgid "Start Pixels"
+msgstr "시작 픽셀"
+
+
+msgid "Surfaces"
+msgstr "표면"
+
+
+msgid "Denoising Data"
+msgstr "노이즈 제거 데이터"
+
+
+msgid "Render Time"
+msgstr "렌더 시간"
+
+
+msgid "Asset"
+msgstr "에셋"
+
+
+msgid "Accurate Mode"
+msgstr "정확한 모드"
+
+
+msgid "Feature Strength"
+msgstr "특성 강도"
+
+
+msgid "No output node"
+msgstr "출력 노드 없음"
+
+
+msgid "Homogeneous"
+msgstr "동종"
+
+
+msgid "CPU Flags:"
+msgstr "CPU 플래그:"
+
+
+msgid "CUDA Flags:"
+msgstr "CUDA 플래그:"
+
+
+msgid "OptiX Flags:"
+msgstr "OptiX 플래그:"
+
+
+msgid "OpenCL Flags:"
+msgstr "OpenCL 플래그:"
+
+
+msgid "Max Subdivision"
+msgstr "최대 섭디비젼"
+
+
+msgid "Texture Limit"
+msgstr "텍스처 제한"
+
+
+msgid "%s AA"
+msgstr "%s AA"
+
+
+msgid "%s AA, %s Diffuse, %s Glossy, %s Transmission"
+msgstr "%s AA, %s 확산, %s 광택, %s 전달"
+
+
+msgid "%s AO, %s Mesh Light, %s Subsurface, %s Volume"
+msgstr "%s AO, %s 메쉬 라이트, %s 서브 표면, %s 볼륨"
+
+
+msgid "Incompatible output node"
+msgstr "호환되지 않는 출력 노드"
+
+
+msgid "Portal"
+msgstr "포탈"
+
+
+msgid "Swizzle R"
+msgstr "스위즐 R"
+
+
+msgid "Extrusion"
+msgstr "돌출 부분"
+
+
+msgid "Clear Image"
+msgstr "이미지를 지우기"
+
+
+msgctxt "Operator"
+msgid "Assign"
+msgstr "할당"
+
+
+msgctxt "Operator"
+msgid "Deselect"
+msgstr "선택 해제"
+
+
+msgid "The BVH file does not contain frame duration in its MOTION section, assuming the BVH and Blender scene have the same frame rate"
+msgstr "BVH 파일은 모션 섹션에 프레임 지속 시간을 포함하지 않음, BVH 및 블렌더 씬이 동일한 프레임 속도를 가지고 있다고 가정합니다"
+
+
+msgid "Unable to update scene frame rate, as the BVH file contains a zero frame duration in its MOTION section"
+msgstr "BVH 파일의 모션 섹션에 제로 프레임 길이가 포함되어 있으므로 씬 프레임 속도를 업데이트 할 수 없습니다"
+
+
+msgid "Unable to extend the scene duration, as the BVH file does not contain the number of frames in its MOTION section"
+msgstr "BVH 파일의 모션 섹션에 프레임 수가 포함되어 있지 않으므로 씬 지속 시간을 연장할 수 없습니다"
+
+
+msgid "Invalid target %r (must be 'ARMATURE' or 'OBJECT')"
+msgstr "잘못된 대상 %r ( '아머튜어'또는 '오브젝트'여야 함)"
+
+
+msgid "Cameras & Markers (.py)"
+msgstr "카메라 & 마커 (.py)"
+
+
+msgid "Unable to parse XML, %s:%s for file %r"
+msgstr "XML를 분석할 수 없음, %s:%s는 파일 %r에 대한"
+
+
+msgid "Images as Planes"
+msgstr "평면으로 이미지"
+
+
+msgid "Import Options:"
+msgstr "가져 오기 옵션:"
+
+
+msgid "Compositing Nodes:"
+msgstr "컴포지팅 노드:"
+
+
+msgid "Material Settings:"
+msgstr "매테리얼 설정:"
+
+
+msgid "Texture Settings:"
+msgstr "텍스처 설정:"
+
+
+msgid "Position:"
+msgstr "위치:"
+
+
+msgid "Plane dimensions:"
+msgstr "평면 크기:"
+
+
+msgid "Orientation:"
+msgstr "오리엔테이션:"
+
+
+msgid "Added {} Image Plane(s)"
+msgstr "추가됨 {} 이미지 평면(들)"
+
+
+msgid "%s is not supported"
+msgstr "%s은 지원되지 않습니다"
+
+
+msgid "Cannot generate materials for unknown %s render engine"
+msgstr "알 수없는 %s 렌더 엔진에 대한 매테리얼을 생성 할 수 없습니다"
+
+
+msgid "Generating Cycles/EEVEE compatible material, but won't be visible with %s engine"
+msgstr "생성하는 Cycles/EEVEE 호환 매테리얼은 표시는 되지만 %s 엔진에는 표시되지 않습니다"
+
+
+msgid "Mesh '%s' has polygons with more than 4 vertices, cannot compute/export tangent space for it"
+msgstr "메쉬 '%s'에는 4 개 이상의 버텍스가 있는 다각형이 있으며 탄젠트 공간을 계산/내보낼 수 없습니다"
+
+
+msgid "ASCII FBX files are not supported %r"
+msgstr "아스키 FBX 파일은 지원되지 않음 %r"
+
+
+msgid "Version %r unsupported, must be %r or later"
+msgstr "버전 %r은 지원되지 않음, %r 이상이어야 합니다"
+
+
+msgid "No 'GlobalSettings' found in file %r"
+msgstr "파일 %r 에서 '글로벌 설정'을 찾을 수 없음"
+
+
+msgid "No 'Objects' found in file %r"
+msgstr "파일 %r 에서 '오브젝트'를 찾을 수 없음"
+
+
+msgid "No 'Connections' found in file %r"
+msgstr "파일 %r 에서 '관련성'을 찾을 수 없음"
+
+
+msgid "Couldn't open file %r (%s)"
+msgstr "파일 %r (%s)을 열 수 없습니다"
+
+
+msgid "Multiple selected objects. Only the active one will be evaluated"
+msgstr "다중 선택된 오브젝트. 활성 상태인 것만 평가됩니다"
+
+
+msgid "Triangulated  faces"
+msgstr "삼각분할된 페이스"
+
+
+msgid "Modified: + vertices, + edges, + faces"
+msgstr "수정된: + 버텍스, + 에지, +페이스"
+
+
+msgid "Scaled by "
+msgstr "다음으로 축적 조정됨 "
+
+
+msgid "Object has zero volume"
+msgstr "오브젝트는 제로 볼륨을 가짐"
+
+
+msgid "Object has zero bounds"
+msgstr "오브젝트는 제로 경계를 가짐"
+
+
+msgid "Report is out of date, re-run check"
+msgstr "보고서는 오래됨, 체크를 다시 실행"
+
+
+msgid "Statistics"
+msgstr "통계"
+
+
+msgctxt "Operator"
+msgid "Volume"
+msgstr "볼륨"
+
+
+msgctxt "Operator"
+msgid "Area"
+msgstr "영역"
+
+
+msgid "Checks"
+msgstr "확인"
+
+
+msgctxt "Operator"
+msgid "Solid"
+msgstr "솔리드"
+
+
+msgctxt "Operator"
+msgid "Intersections"
+msgstr "교차"
+
+
+msgctxt "Operator"
+msgid "Degenerate"
+msgstr "퇴화"
+
+
+msgctxt "Operator"
+msgid "Distorted"
+msgstr "왜곡"
+
+
+msgctxt "Operator"
+msgid "Edge Sharp"
+msgstr "에지 샤프"
+
+
+msgctxt "Operator"
+msgid "Overhang"
+msgstr "돌출"
+
+
+msgctxt "Operator"
+msgid "Check All"
+msgstr "모두 확인"
+
+
+msgctxt "Operator"
+msgid "Make Manifold"
+msgstr "매니폴드를 만들기"
+
+
+msgid "Scale To"
+msgstr "다음으로 축적"
+
+
+msgctxt "Operator"
+msgid "Bounds"
+msgstr "경계"
+
+
+msgctxt "Operator"
+msgid "Export"
+msgstr "내보내기"
+
+
+msgid "Result"
+msgstr "결과"
+
+
+msgid "Demo Mode:"
+msgstr "데모 모드:"
+
+
+msgid "No configuration found with text or file: %s. Run File -> Demo Mode Setup"
+msgstr "텍스트 또는 파일과 함께 구성을 찾을 수 없음: %s. 파일을 실행 -> 데모 모드 설정"
+
+
+msgid "Save to PO File"
+msgstr "PO 파일로 저장"
+
+
+msgid "Rebuild MO File"
+msgstr "MO 파일 다시 작성"
+
+
+msgid "Erase Local MO files"
+msgstr "로컬 MO 파일을 지우기"
+
+
+msgid "invoke() needs to be called before execute()"
+msgstr "invoke ()를 execute () 전에 호출해야합니다"
+
+
+msgid "    RNA Path: bpy.types."
+msgstr "    RNA 경로: bpy.types."
+
+
+msgid "    RNA Context: "
+msgstr "    RNA 컨텍스트: "
+
+
+msgid "Labels:"
+msgstr "레이블:"
+
+
+msgid "Tool Tips:"
+msgstr "도구 팁:"
+
+
+msgid "Button Label:"
+msgstr "버튼 레이블:"
+
+
+msgid "RNA Label:"
+msgstr "RNA 레이블:"
+
+
+msgid "Enum Item Label:"
+msgstr "열거 항목 레이블:"
+
+
+msgid "Button Tip:"
+msgstr "버튼 팁:"
+
+
+msgid "RNA Tip:"
+msgstr "RNA 팁:"
+
+
+msgid "Enum Item Tip:"
+msgstr "열거 항목 팁:"
+
+
+msgid "Could not write to po file ({})"
+msgstr "po 파일에 작성할 수 없음 ({})"
+
+
+msgid "WARNING: preferences are lost when add-on is disabled, be sure to use \"Save Persistent\" if you want to keep your settings!"
+msgstr "경고: 추가 기능이 비활성화 되면 환경 설정이 손실 됩니다. 설정을 유지하려면 \"영구 저장\"을 사용해야 합니다!"
+
+
+msgctxt "Operator"
+msgid "Save Persistent To..."
+msgstr "다음으로 지속적인 저장..."
+
+
+msgctxt "Operator"
+msgid "Load Persistent From..."
+msgstr "다음에서 지속되는 불러오기..."
+
+
+msgctxt "Operator"
+msgid "Load"
+msgstr "불러오기"
+
+
+msgid "No add-on module given!"
+msgstr "주어진 애드온 모듈이 없음!"
+
+
+msgid "Add-on '{}' not found!"
+msgstr "애드온 '{}'을 찾을 수 없습니다!"
+
+
+msgid "Info written to {} text datablock!"
+msgstr "정보는 {} 텍스트 데이터 블록에 기록!"
+
+
+msgid "Message extraction process failed!"
+msgstr "메시지 추출 처리 실패함!"
+
+
+msgid "Could not init languages data!"
+msgstr "언어 데이터를 초기화 할 수 없음!"
+
+
+msgid "Please edit the preferences of the UI Translate add-on"
+msgstr "UI 번역 애드온의 사용자 설정을 편집 하세요"
+
+
+msgctxt "Operator"
+msgid "Reset Settings"
+msgstr "설정을 재설정"
+
+
+msgctxt "Operator"
+msgid "Deselect All"
+msgstr "모두 선택 해제"
+
+
+msgctxt "Operator"
+msgid "Update Branches"
+msgstr "분기 업데이트"
+
+
+msgctxt "Operator"
+msgid "Update Trunk"
+msgstr "트렁크 업데이트"
+
+
+msgctxt "Operator"
+msgid "Clean up Branches"
+msgstr "지점을 정리"
+
+
+msgctxt "Operator"
+msgid "Statistics"
+msgstr "통계"
+
+
+msgid "Add-ons:"
+msgstr "애드온:"
+
+
+msgctxt "Operator"
+msgid "Refresh I18n Data..."
+msgstr "I18n 데이터 새로 고침..."
+
+
+msgctxt "Operator"
+msgid "Export PO..."
+msgstr "PO를 내보내기..."
+
+
+msgctxt "Operator"
+msgid "Import PO..."
+msgstr "PO를 가져오기..."
+
+
+msgctxt "Operator"
+msgid "Invert Selection"
+msgstr "선택을 반전"
+
+
+msgid "[{}]: \"{}\" ({})"
+msgstr "[{}]: \"{}\" ({})"
+
+
+msgid "API Defined"
+msgstr "API 정의"
+
+
+msgctxt "Operator"
+msgid "Edit"
+msgstr "편집"
+
+
+msgid "Frame Numbers"
+msgstr "프레임 번호"
+
+
+msgid "Keyframe Numbers"
+msgstr "키 프레임 번호"
+
+
+msgid "Frame Range Before"
+msgstr "이전 프레임 범위"
+
+
+msgid "After"
+msgstr "이후"
+
+
+msgid "To"
+msgstr "다음으로"
+
+
+msgid "Nothing to show yet..."
+msgstr "아직 표시할 항목이 없음..."
+
+
+msgid "+ Non-Grouped Keyframes"
+msgstr "+ 그룹 되지 않은 키 프레임"
+
+
+msgid "Frame Range Start"
+msgstr "프레임 범위 시작"
+
+
+msgid "Bone Cache From"
+msgstr "본 캐시 시작"
+
+
+msgid "Cache From"
+msgstr "캐시 시작"
+
+
+msgctxt "Operator"
+msgid "Update Paths"
+msgstr "경로 업데이트"
+
+
+msgctxt "Operator"
+msgid "Calculate..."
+msgstr "계산..."
+
+
+msgctxt "Operator"
+msgid "Add Object Constraint"
+msgstr "오브젝트 제약을 추가"
+
+
+msgctxt "Operator"
+msgid "Add Bone Constraint"
+msgstr "본 제약을 추가"
+
+
+msgctxt "Operator"
+msgid "Animate Path"
+msgstr "애니메이트 경로"
+
+
+msgid "Extrapolate"
+msgstr "외삽법"
+
+
+msgid "Blender 2.6 doesn't support python constraints yet"
+msgstr "블렌더 2.6은 아직 Python 제약을 지원하지 않습니다"
+
+
+msgctxt "Operator"
+msgid "Add Target Bone"
+msgstr "대상 본 추가"
+
+
+msgid "Pivot Offset"
+msgstr "피벗 오프셋"
+
+
+msgid "Layers:"
+msgstr "레이어:"
+
+
+msgid "Protected Layers:"
+msgstr "보호된 레이어:"
+
+
+msgid "Axes"
+msgstr "축"
+
+
+msgid "Shapes"
+msgstr "셰이프"
+
+
+msgid "Group Colors"
+msgstr "그룹 컬러"
+
+
+msgctxt "Operator"
+msgid "Remove"
+msgstr "제거"
+
+
+msgid "Error: Potentially corrupt library, run 'Sanitize' operator to fix"
+msgstr "오류: 잠재적으로 손상된 라이브러리, 'Sanitize'작업자를 실행하여 고치십시오"
+
+
+msgid "Damping Max"
+msgstr "감폭 최대"
+
+
+msgid "Damping Epsilon"
+msgstr "감폭 엡실론"
+
+
+msgid "Steps Min"
+msgstr "단계 최소"
+
+
+msgid "Display Size X"
+msgstr "표시 크기 X"
+
+
+msgid "Curve In X"
+msgstr "커브 In X"
+
+
+msgid "Curve Out X"
+msgstr "커브 Out X"
+
+
+msgid "Start Handle"
+msgstr "시작 핸들"
+
+
+msgid "End Handle"
+msgstr "종료 핸들"
+
+
+msgid "Lock IK X"
+msgstr "잠금 IK X"
+
+
+msgid "Stiffness X"
+msgstr "강성 X"
+
+
+msgid "Envelope Distance"
+msgstr "엔벨로프 거리"
+
+
+msgid "Envelope Weight"
+msgstr "엔벨로프 웨이트"
+
+
+msgid "Envelope Multiply"
+msgstr "엔벨로프 곱하기"
+
+
+msgid "Radius Head"
+msgstr "반경 헤드"
+
+
+msgid "Control Rotation"
+msgstr "회전 컨트롤"
+
+
+msgid "IK Rotation Weight"
+msgstr "IK 회전 웨이트"
+
+
+msgid "Focus on Object"
+msgstr "오브젝트에 초점"
+
+
+msgctxt "Operator"
+msgid "Add Image"
+msgstr "이미지를 추가"
+
+
+msgid "Pole Merge Angle Start"
+msgstr "폴 병합 각도 시작"
+
+
+msgid "Not Set"
+msgstr "설정 없음"
+
+
+msgid "Views Format:"
+msgstr "뷰 형식:"
+
+
+msgid "Latitude Min"
+msgstr "위도 최소"
+
+
+msgid "Longitude Min"
+msgstr "경도 최소"
+
+
+msgid "Resolution Preview U"
+msgstr "해상도 미리보기 U"
+
+
+msgid "Render U"
+msgstr "렌더 U"
+
+
+msgid "Bold & Italic"
+msgstr "굵은 & 기울임"
+
+
+msgid "Small Caps Scale"
+msgstr "소형 캡 축적"
+
+
+msgid "Character Spacing"
+msgstr "문자 간격"
+
+
+msgid "Word Spacing"
+msgstr "단어 간격"
+
+
+msgid "Line Spacing"
+msgstr "줄 간격"
+
+
+msgid "Interpolation Tilt"
+msgstr "보간 틸트"
+
+
+msgctxt "Operator"
+msgid "Show All"
+msgstr "모두 표시"
+
+
+msgctxt "Operator"
+msgid "Lock All"
+msgstr "모두 잠금"
+
+
+msgctxt "Operator"
+msgid "UnLock All"
+msgstr "모두 잠금 해제"
+
+
+msgid "Autolock Inactive Layers"
+msgstr "비활성 레이어를 자동 잠금"
+
+
+msgid "Before"
+msgstr "이전"
+
+
+msgid "View In Render"
+msgstr "렌더에서 보기"
+
+
+msgid "Thickness Scale"
+msgstr "두께 축적"
+
+
+msgctxt "Operator"
+msgid "Hide Others"
+msgstr "기타를 숨기기"
+
+
+msgctxt "Operator"
+msgid "New Layer"
+msgstr "새로운 레이어"
+
+
+msgctxt "Operator"
+msgid "Assign to Active Group"
+msgstr "활성 그룹에 할당"
+
+
+msgctxt "Operator"
+msgid "Remove from Active Group"
+msgstr "활성 그룹에서 제거"
+
+
+msgctxt "Operator"
+msgid "Select Points"
+msgstr "포인트를 선택"
+
+
+msgctxt "Operator"
+msgid "Deselect Points"
+msgstr "포인트를 선택 해제"
+
+
+msgid "Keyframes Before"
+msgstr "키 프레임 이전"
+
+
+msgid "Keyframes After"
+msgstr "키 프레임 이후"
+
+
+msgctxt "Operator"
+msgid "Remove Active Group"
+msgstr "활성 그룹을 제거"
+
+
+msgctxt "Operator"
+msgid "Remove All Groups"
+msgstr "모든 그룹을 제거"
+
+
+msgid "Interpolation U"
+msgstr "보간 U"
+
+
+msgid "Clipping Start"
+msgstr "클리핑 시작"
+
+
+msgid "Clipping Offset"
+msgstr "클리핑 오프셋"
+
+
+msgid "Bleed Bias"
+msgstr "번짐 성향"
+
+
+msgid "Arrow Size"
+msgstr "화살표 크기"
+
+
+msgctxt "Operator"
+msgid "Lock Invert All"
+msgstr "모두 잠금 반전"
+
+
+msgctxt "Operator"
+msgid "Sort by Name"
+msgstr "이름으로 분류"
+
+
+msgctxt "Operator"
+msgid "Sort by Bone Hierarchy"
+msgstr "본 계층 구조로 분류"
+
+
+msgctxt "Operator"
+msgid "Mirror Vertex Group (Topology)"
+msgstr "버텍스 그룹을 미러 (토폴로지)"
+
+
+msgctxt "Operator"
+msgid "Remove from All Groups"
+msgstr "모든 그룹에서 제거"
+
+
+msgctxt "Operator"
+msgid "Clear Active Group"
+msgstr "활성 그룹을 지우기"
+
+
+msgctxt "Operator"
+msgid "Delete All Unlocked Groups"
+msgstr "모든 잠금 해제된 그룹을 삭제"
+
+
+msgctxt "Operator"
+msgid "Delete All Groups"
+msgstr "모든 그룹을 삭제"
+
+
+msgctxt "Operator"
+msgid "New Shape From Mix"
+msgstr "조합에서 새로운 셰이프"
+
+
+msgctxt "Operator"
+msgid "Mirror Shape Key (Topology)"
+msgstr "미러 셰이프 키 (토폴로지)"
+
+
+msgctxt "Operator"
+msgid "Delete All Shape Keys"
+msgstr "모든 셰이프 키를 삭제"
+
+
+msgctxt "Operator"
+msgid "Move to Top"
+msgstr "맨 위로 이동"
+
+
+msgctxt "Operator"
+msgid "Move to Bottom"
+msgstr "맨 아래로 이동"
+
+
+msgid "Resolution Viewport"
+msgstr "해상도 뷰포트"
+
+
+msgid "Influence Threshold"
+msgstr "영향 임계 값"
+
+
+msgid "Update on Edit"
+msgstr "편집에 대한 업데이트"
+
+
+msgid "Volume Min"
+msgstr "볼륨 최소"
+
+
+msgid "Distance Reference"
+msgstr "거리 참조"
+
+
+msgid "Angle Outer"
+msgstr "각도 바깥"
+
+
+msgid "Detail"
+msgstr "디테일"
+
+
+msgid "Edge Detection Options:"
+msgstr "에지 감지 옵션:"
+
+
+msgid "Priority"
+msgstr "우선권"
+
+
+msgid "Style modules:"
+msgstr "스타일 모듈:"
+
+
+msgid "Selection By:"
+msgstr "다음으로 선택:"
+
+
+msgid "Edge Types"
+msgstr "에지 유형"
+
+
+msgid "Face Marks"
+msgstr "페이스 마크"
+
+
+msgid "Image Border"
+msgstr "이미지 경계"
+
+
+msgid "Chaining:"
+msgstr "연쇄:"
+
+
+msgid "Splitting:"
+msgstr "분할:"
+
+
+msgid "D1"
+msgstr "D1"
+
+
+msgid "G1"
+msgstr "G1"
+
+
+msgid "D2"
+msgstr "D2"
+
+
+msgid "G2"
+msgstr "G2"
+
+
+msgid "D3"
+msgstr "D3"
+
+
+msgid "G3"
+msgstr "G3"
+
+
+msgid "Sorting:"
+msgstr "분류:"
+
+
+msgid "Selection:"
+msgstr "선택:"
+
+
+msgid "Caps:"
+msgstr "캡:"
+
+
+msgid "Dashed Line:"
+msgstr "점선:"
+
+
+msgid "Visibility:"
+msgstr "가시성:"
+
+
+msgid "Edge Types:"
+msgstr "에지 유형:"
+
+
+msgid "Face Marks:"
+msgstr "페이스 마크:"
+
+
+msgid "Collection:"
+msgstr "컬렉션:"
+
+
+msgid "Base Color:"
+msgstr "베이스 컬러:"
+
+
+msgid "Modifiers:"
+msgstr "모디파이어:"
+
+
+msgid "Base Transparency:"
+msgstr "베이스 투명도:"
+
+
+msgid "Base Thickness:"
+msgstr "베이스 두께:"
+
+
+msgid "Spacing Along Stroke"
+msgstr "스트로크를 따라 간격"
+
+
+msgctxt "Operator"
+msgid "Go to Linestyle Textures Properties"
+msgstr "라인스타일 택스처 속성으로 이동"
+
+
+msgid "Stroke Placement:"
+msgstr "스트로크 배치:"
+
+
+msgid "Draw:"
+msgstr "그리기:"
+
+
+msgctxt "Operator"
+msgid "Delete Frame(s)"
+msgstr "프레임(들)을 삭제"
+
+
+msgctxt "Operator"
+msgid "Selection to Grid"
+msgstr "선택을 격자에 스냅"
+
+
+msgctxt "Operator"
+msgid "Cursor to Selected"
+msgstr "커서를 선택에 스냅"
+
+
+msgctxt "Operator"
+msgid "Cursor to World Origin"
+msgstr "커서를 월드 오리진에 스냅"
+
+
+msgctxt "Operator"
+msgid "Cursor to Grid"
+msgstr "커서를 격자에 스냅"
+
+
+msgctxt "Operator"
+msgid "Delete Active Keyframes (All Layers)"
+msgstr "활성 키 프레임을 삭제 (모든 레이어)"
+
+
+msgctxt "Operator"
+msgid "Delete Loose Points"
+msgstr "루즈 포인트를 삭제"
+
+
+msgid "Show Only On Keyframed"
+msgstr "키 프레임에 만 표시"
+
+
+msgctxt "Operator"
+msgid "Poly"
+msgstr "폴리"
+
+
+msgid "Data Source:"
+msgstr "데이터 소스:"
+
+
+msgctxt "Operator"
+msgid "Selection to Cursor"
+msgstr "선택을 커서에 스냅"
+
+
+msgctxt "Operator"
+msgid "Selection to Cursor (Keep Offset)"
+msgstr "선택을 커서에 스냅 (오프셋 유지)"
+
+
+msgctxt "Operator"
+msgid "Delete Active Keyframe (Active Layer)"
+msgstr "활성 키 프레임을 삭제 (활성 레이어)"
+
+
+msgctxt "Operator"
+msgid "Boundary Strokes"
+msgstr "경계 스트로크"
+
+
+msgctxt "Operator"
+msgid "Boundary Strokes all Frames"
+msgstr "모든 프레임을 경계 스트로크"
+
+
+msgid "Display Cursor"
+msgstr "커서를 표시"
+
+
+msgid "Show Fill Color While Drawing"
+msgstr "그리는 동안 채우기 컬러를 표시합니다"
+
+
+msgid "Cursor Color"
+msgstr "커서 컬러"
+
+
+msgid "Lock Frame"
+msgstr "프레임을 잠금"
+
+
+msgid "Inverse Cursor Color"
+msgstr "커서 컬러를 반전"
+
+
+msgid "Unlocked"
+msgstr "잠금 해제됨"
+
+
+msgid "Frame: %d (%s)"
+msgstr "프레임: %d (%s)"
+
+
+msgid "Stroke Color"
+msgstr "스트로크 컬러"
+
+
+msgctxt "Operator"
+msgid "Re-key Shape Points"
+msgstr "셰이프 포인트를 다시 키"
+
+
+msgctxt "Operator"
+msgid "Reset Feather Animation"
+msgstr "페더 애니메이션 재설정"
+
+
+msgid "Parent:"
+msgstr "부모:"
+
+
+msgid "Transform:"
+msgstr "변환:"
+
+
+msgid "Spline:"
+msgstr "스플라인:"
+
+
+msgid "Parenting:"
+msgstr "부모 지정:"
+
+
+msgctxt "Operator"
+msgid "Parent"
+msgstr "부모"
+
+
+msgctxt "Operator"
+msgid "Clear"
+msgstr "지우기"
+
+
+msgid "Animation:"
+msgstr "애니메이션:"
+
+
+msgctxt "Operator"
+msgid "Insert Key"
+msgstr "키를 삽입"
+
+
+msgctxt "Operator"
+msgid "Clear Key"
+msgstr "키를 지우기"
+
+
+msgctxt "Operator"
+msgid "Re-Key Shape Points"
+msgstr "셰이프 포인트를 다시 키"
+
+
+msgctxt "Operator"
+msgid "Square"
+msgstr "사각형"
+
+
+msgid "Holes"
+msgstr "구멍"
+
+
+msgctxt "Operator"
+msgid "Scale Feather"
+msgstr "페더 축적"
+
+
+msgctxt "Operator"
+msgid "Hide Unselected"
+msgstr "비 선택된 항목을 숨기기"
+
+
+msgctxt "Operator"
+msgid "All"
+msgstr "모두"
+
+
+msgctxt "Operator"
+msgid "None"
+msgstr "없음"
+
+
+msgctxt "Operator"
+msgid "Invert"
+msgstr "반전"
+
+
+msgctxt "Operator"
+msgid "Lock Unselected"
+msgstr "선택되지 않음 잠금"
+
+
+msgctxt "Operator"
+msgid "Lock Unused"
+msgstr "미사용을 잠금"
+
+
+msgid "Flip Colors"
+msgstr "컬러를 뒤집기"
+
+
+msgid "Clip Image"
+msgstr "클립 이미지"
+
+
+msgid "Tracking Axis"
+msgstr "트래킹 축"
+
+
+msgid "All Edges"
+msgstr "모든 에지"
+
+
+msgid "Align to Vertex Normal"
+msgstr "버텍스 노멀에 정렬"
+
+
+msgid "Aspect X"
+msgstr "측면 X"
+
+
+msgid "Old"
+msgstr "오래된"
+
+
+msgid "Date"
+msgstr "날짜"
+
+
+msgid "Hostname"
+msgstr "호스트 이름"
+
+
+msgid "Include Labels"
+msgstr "라벨을 포함"
+
+
+msgid "Buffer"
+msgstr "버퍼"
+
+
+msgid "Sample Rate"
+msgstr "샘플 비율"
+
+
+msgid "Custom (%.4g fps)"
+msgstr "커스텀 (%.4g fps)"
+
+
+msgid "%.4g fps"
+msgstr "%.4g fps"
+
+
+msgid "Mask Mapping"
+msgstr "마스크 매핑"
+
+
+msgid "Pressure Masking"
+msgstr "압력 마스킹"
+
+
+msgid "Falloff Opacity"
+msgstr "감소 불투명도"
+
+
+msgid "Advanced:"
+msgstr "고급:"
+
+
+msgid "Sample Bias"
+msgstr "샘플 기초"
+
+
+msgid "Edge To Edge"
+msgstr "에지에서 에지"
+
+
+msgid "Texture Opacity"
+msgstr "텍스처 불투명도"
+
+
+msgid "Mask Texture Opacity"
+msgstr "마스크 텍스처 불투명도"
+
+
+msgid "Thickness Profile"
+msgstr "두께 프로필"
+
+
+msgid "Use Thickness Profile"
+msgstr "두께 프로필을 사용"
+
+
+msgid "Source Clone Slot"
+msgstr "소스 클론 슬롯"
+
+
+msgid "Source Clone Image"
+msgstr "소스 클론 이미지"
+
+
+msgid "Source Clone UV Map"
+msgstr "소스 클론 UV 맵"
+
+
+msgid "Gradient Mapping"
+msgstr "그라디언트 매핑"
+
+
+msgid "Mask Value"
+msgstr "마스크 값"
+
+
+msgid "CCW"
+msgstr "CCW"
+
+
+msgid "CW"
+msgstr "CW"
+
+
+msgid "Invert to Fill"
+msgstr "채우기로 반전"
+
+
+msgid "Invert to Scrape"
+msgstr "스크랩으로 반전"
+
+
+msgctxt "Operator"
+msgid "Copy Active to Selected Objects"
+msgstr "선택된 오브젝트로 활성을 복사"
+
+
+msgctxt "Operator"
+msgid "Copy All to Selected Objects"
+msgstr "선택한 오브젝트에 모두 복사"
+
+
+msgid "Quality Steps"
+msgstr "품질 단계"
+
+
+msgid "Pin Goal Strength"
+msgstr "핀 골대 강도"
+
+
+msgid "Air Drag"
+msgstr "공기 항력"
+
+
+msgid "Density Target"
+msgstr "밀도 대상"
+
+
+msgid "Density Strength"
+msgstr "밀도 강도"
+
+
+msgid "Tangent Phase"
+msgstr "탄젠트 위상"
+
+
+msgid "Render As"
+msgstr "다음 같은 렌더링"
+
+
+msgid "Parent Particles"
+msgstr "부모 파티클"
+
+
+msgid "Global Coordinates"
+msgstr "글로벌 좌표"
+
+
+msgid "Object Rotation"
+msgstr "오브젝트 회전"
+
+
+msgid "Object Scale"
+msgstr "오브젝트 축적"
+
+
+msgid "Display Amount"
+msgstr "표시 양"
+
+
+msgid "Render Amount"
+msgstr "렌더 양"
+
+
+msgid "Kink Type"
+msgstr "꼬임 유형"
+
+
+msgid "Effector Amount"
+msgstr "이펙터 양"
+
+
+msgid "Roughness 1"
+msgstr "거칠기 1"
+
+
+msgid "Roughness 2"
+msgstr "거칠기 2"
+
+
+msgid "Roughness End"
+msgstr "거칠기 종료"
+
+
+msgid "Strand Shape"
+msgstr "가닥 셰이프"
+
+
+msgid "Lifetime Randomness"
+msgstr "수명 렌덤성"
+
+
+msgid "Hair dynamics disabled"
+msgstr "헤어 역학 사용 중지됨"
+
+
+msgid "Iterations: %d .. %d (avg. %d)"
+msgstr "반복: %d .. %d (avg. %d)"
+
+
+msgid "Error: %.5f .. %.5f (avg. %.5f)"
+msgstr "오류: %.5f .. %.5f (avg. %.5f)"
+
+
+msgid "Multiply Mass with Size"
+msgstr "크기에 질량을 곱하기"
+
+
+msgid "Spacing: %g"
+msgstr "간격: %g"
+
+
+msgid "Show Emitter"
+msgstr "이미터를 표시"
+
+
+msgid "Fade Distance"
+msgstr "페이드 거리"
+
+
+msgid "Strand Steps"
+msgstr "가닥 단계"
+
+
+msgid "Randomize Size"
+msgstr "랜덤 크기"
+
+
+msgid "Parting not available with virtual parents"
+msgstr "가상 부모와 함께 사용할 수없는 가르기"
+
+
+msgid "Endpoint"
+msgstr "종료 포인트"
+
+
+msgid "Randomize Amplitude"
+msgstr "랜덤화 진폭"
+
+
+msgid "Randomize Axis"
+msgstr "렌덤화 축"
+
+
+msgid "Settings used for fluid"
+msgstr "유체에 사용되는 설정"
+
+
+msgid "Jittering Amount"
+msgstr "지터링 양"
+
+
+msgid "Scale Randomness"
+msgstr "축적 렌덤성"
+
+
+msgid "Coordinate System"
+msgstr "좌표 시스템"
+
+
+msgid "%d fluid particles for this frame"
+msgstr "이 프레임에 대한 %d 유체 파티클"
+
+
+msgctxt "Operator"
+msgid "Delete Edit"
+msgstr "편집을 삭제"
+
+
+msgid "Use Timing"
+msgstr "타이밍을 사용"
+
+
+msgid "Display percentage makes dynamics inaccurate without baking"
+msgstr "디스플레이 백분율은 배이킹하지 않고 역학을 부정확하게 만듭니다"
+
+
+msgid "Not yet functional"
+msgstr "아직 작동하지 않음"
+
+
+msgctxt "Operator"
+msgid "Connect All"
+msgstr "모두 연결"
+
+
+msgctxt "Operator"
+msgid "Disconnect All"
+msgstr "모두 연결 끊기"
+
+
+msgid "Speed Multiplier"
+msgstr "속력 배율"
+
+
+msgid "Air Viscosity"
+msgstr "공기 점도"
+
+
+msgid "Max Spring Creation Length"
+msgstr "최대 스프링 생성 길이"
+
+
+msgid "Max Creation Diversion"
+msgstr "최대 생성 전환"
+
+
+msgid "Check Surface Normals"
+msgstr "표면 노멀을 확인"
+
+
+msgid "Max Tension"
+msgstr "최대 장력"
+
+
+msgid "Max Compression"
+msgstr "최대 압축률"
+
+
+msgid "Pin Group"
+msgstr "핀 그룹"
+
+
+msgid "Sewing"
+msgstr "재봉"
+
+
+msgid "Max Sewing Force"
+msgstr "최대 재봉 포스"
+
+
+msgid "Shrinking Factor"
+msgstr "수축하는 팩터"
+
+
+msgid "Dynamic Mesh"
+msgstr "다이나믹 메쉬"
+
+
+msgid "Structural Group"
+msgstr "구조적 그룹"
+
+
+msgid "Shear Group"
+msgstr "전단 그룹"
+
+
+msgid "Max Shearing"
+msgstr "최대 전단"
+
+
+msgid "Bending Group"
+msgstr "굽힘 그룹"
+
+
+msgid "Max Bending"
+msgstr "최대 굽힘"
+
+
+msgid "Shrinking Group"
+msgstr "수축하는 그룹"
+
+
+msgid "Max Shrinking"
+msgstr "최대 수축"
+
+
+msgid "Structural"
+msgstr "구조적"
+
+
+msgid "Noise Amount"
+msgstr "노이즈 양"
+
+
+msgid "Enable physics for:"
+msgstr "다음에 대해 피직스를 사용:"
+
+
+msgctxt "Operator"
+msgid "Current Cache to Bake"
+msgstr "현재 캐시를 베이크하기"
+
+
+msgctxt "Operator"
+msgid "Delete All Bakes"
+msgstr "모든 베이크 삭제"
+
+
+msgctxt "Operator"
+msgid "Force Field"
+msgstr "포스 필드"
+
+
+msgid "Use Library Path"
+msgstr "라이브러리 경로를 사용"
+
+
+msgid "Simulation Start"
+msgstr "시뮬레이션 시작"
+
+
+msgctxt "Operator"
+msgid "Delete Bake"
+msgstr "베이크를 삭제"
+
+
+msgctxt "Operator"
+msgid "Calculate To Frame"
+msgstr "프레임으로 계산"
+
+
+msgctxt "Operator"
+msgid "Bake All Dynamics"
+msgstr "모든 역학을 베이크"
+
+
+msgctxt "Operator"
+msgid "Update All To Frame"
+msgstr "프레임에 모두 업데이트"
+
+
+msgid "Cache is disabled until the file is saved"
+msgstr "캐시는 파일이 저장 될 때까지 사용 중지됨"
+
+
+msgid "Options are disabled until the file is saved"
+msgstr "옵션은 파일이 저장 될 때까지 비활성화됩니다"
+
+
+msgid "Linked object baking requires Disk Cache to be enabled"
+msgstr "연결된 오브젝트 배이킹을 사용하려면 디스크 캐시를 활성화해야 합니다"
+
+
+msgctxt "Operator"
+msgid "Bake Image Sequence"
+msgstr "이미지 시퀀스를 베이크"
+
+
+msgctxt "Operator"
+msgid "Remove Canvas"
+msgstr "캔버스를 제거"
+
+
+msgid "Wetness"
+msgstr "습도"
+
+
+msgid "Paintmap Layer"
+msgstr "페인트맵 레이어"
+
+
+msgid "Wetmap Layer"
+msgstr "웨트맵 레이어"
+
+
+msgid "Effect Solid Radius"
+msgstr "이펙트 솔리드 반경"
+
+
+msgid "Use Particle's Radius"
+msgstr "파티클의 반경을 사용"
+
+
+msgctxt "Operator"
+msgid "Add Canvas"
+msgstr "캔버스를 추가"
+
+
+msgctxt "Operator"
+msgid "Remove Brush"
+msgstr "브러시를 제거"
+
+
+msgid "Displace Type"
+msgstr "변위 유형"
+
+
+msgid "Color Layer"
+msgstr "컬러 레이어"
+
+
+msgid "Wave Clamp"
+msgstr "웨이브 클램프"
+
+
+msgid "No collision settings available"
+msgstr "사용할 수있는 충돌 설정이 없습니다"
+
+
+msgid "Use Min Angle"
+msgstr "최소 각도를 사용"
+
+
+msgid "Use Max Angle"
+msgstr "최대 각도를 사용"
+
+
+msgid "Min Distance"
+msgstr "최소 거리"
+
+
+msgid "Field Absorption"
+msgstr "필드 흡수"
+
+
+msgid "Thickness Outer"
+msgstr "두께 외부"
+
+
+msgid "Clumping amount"
+msgstr "응집 양"
+
+
+msgid "Heat"
+msgstr "온도"
+
+
+msgid "Reaction Speed"
+msgstr "반응 속력"
+
+
+msgid "Flame Smoke"
+msgstr "플래임 스모크"
+
+
+msgid "Flame Color"
+msgstr "플래임 컬러"
+
+
+msgid "Particle Radius"
+msgstr "파티클 반경"
+
+
+msgid "Particles Maximum"
+msgstr "파티클 최대"
+
+
+msgid "Narrow Band Width"
+msgstr "좁은 밴드 폭"
+
+
+msgid "Add Resolution"
+msgstr "해상도를 추가"
+
+
+msgid "Upres Factor"
+msgstr "업레스 팩터"
+
+
+msgid "Use Speed Vectors"
+msgstr "속력 벡터를 사용"
+
+
+msgid "Mesh Generator"
+msgstr "메쉬 생성기"
+
+
+msgid "Bubbles"
+msgstr "버블스"
+
+
+msgid "Wave Crest Potential Maximum"
+msgstr "웨이브 크레스트 잠재력 최대"
+
+
+msgid "Trapped Air Potential Maximum"
+msgstr "갇힌 공기 잠재력 최대"
+
+
+msgid "Kinetic Energy Potential Maximum"
+msgstr "운동 에너지 잠재력 최대"
+
+
+msgid "Particle Update Radius"
+msgstr "파티클 업데이트 반경"
+
+
+msgid "Wave Crest Particle Sampling"
+msgstr "웨이브 크레스트 파티클 샘플링"
+
+
+msgid "Trapped Air Particle Sampling"
+msgstr "갇힌 공기 파티클 샘플링"
+
+
+msgid "Particle Life Maximum"
+msgstr "파티클 수명 최대"
+
+
+msgid "Particles in Boundary:"
+msgstr "경계의 파티클:"
+
+
+msgid "Surface Tension"
+msgstr "표면 장력"
+
+
+msgid "Velocity Source"
+msgstr "속도 소스"
+
+
+msgid "Built without Fluid modifier"
+msgstr "유체 모디파이어 없이 작성"
+
+
+msgid "Resolution Divisions"
+msgstr "해상도 분할"
+
+
+msgid "CFL Number"
+msgstr "CFL 번호"
+
+
+msgid "Timesteps Maximum"
+msgstr "타임 스텝 최대"
+
+
+msgid "Smoothing Positive"
+msgstr "스무딩 포지티브"
+
+
+msgid "Concavity Upper"
+msgstr "오목한 상위"
+
+
+msgid "Guide Parent"
+msgstr "가이드 부모"
+
+
+msgid "Using Scene Gravity"
+msgstr "장면 중력을 사용"
+
+
+msgid "Sampling Substeps"
+msgstr "샘플링 하위 단계"
+
+
+msgctxt "Operator"
+msgid "Resume"
+msgstr "재개"
+
+
+msgctxt "Operator"
+msgid "Free"
+msgstr "자유"
+
+
+msgid "Surface Thickness"
+msgstr "표면 두께"
+
+
+msgctxt "Operator"
+msgid "Baking Noise - ESC to pause"
+msgstr "베이킹 노이즈 - ESC 일시 중지"
+
+
+msgctxt "Operator"
+msgid "Baking Mesh - ESC to pause"
+msgstr "베이킹 메쉬 - ESC 일시 중지"
+
+
+msgctxt "Operator"
+msgid "Baking Particles - ESC to pause"
+msgstr "베이킹 파티클 - ESC 일시 중지"
+
+
+msgctxt "Operator"
+msgid "Baking All - ESC to pause"
+msgstr "모두 베이킹 - ESC 일시 중지"
+
+
+msgctxt "Operator"
+msgid "Baking Data - ESC to pause"
+msgstr "베이킹 데이터 - ESC 일시 중지"
+
+
+msgid "Initial Temperature"
+msgstr "초기 온도"
+
+
+msgid "Fuel"
+msgstr "연료"
+
+
+msgid "Guide Mode"
+msgstr "가이드 모드"
+
+
+msgid "Bounciness"
+msgstr "탄력"
+
+
+msgid "Damping Translation"
+msgstr "감폭 옮기기"
+
+
+msgid "Velocity Linear"
+msgstr "속도 선형"
+
+
+msgid "X Stiffness"
+msgstr "X 강성"
+
+
+msgid "Y Stiffness"
+msgstr "Y 강성"
+
+
+msgid "Z Stiffness"
+msgstr "Z 강성"
+
+
+msgid "X Lower"
+msgstr "X 하위"
+
+
+msgid "Z Lower"
+msgstr "Z 하위"
+
+
+msgid "Y Lower"
+msgstr "Y 하위"
+
+
+msgid "Collision Edge"
+msgstr "충돌 에지"
+
+
+msgid "Calculation Type"
+msgstr "계산 유형"
+
+
+msgid "Dampening"
+msgstr "축임"
+
+
+msgid "Step Size Min"
+msgstr "단계 크기 최소"
+
+
+msgid "Auto-Step"
+msgstr "자동-단계"
+
+
+msgid "Light Clamping"
+msgstr "라이트 클램핑"
+
+
+msgid "Refraction"
+msgstr "굴절"
+
+
+msgid "Cascade Size"
+msgstr "캐스케이드 크기"
+
+
+msgctxt "Operator"
+msgid "Bake Indirect Lighting"
+msgstr "간접 라이트닝을 베이크"
+
+
+msgctxt "Operator"
+msgid "Delete Lighting Cache"
+msgstr "라이트닝 캐시를 삭제"
+
+
+msgid "Diffuse Occlusion"
+msgstr "확산 폐색"
+
+
+msgid "Irradiance Size"
+msgstr "방사 조도 크기"
+
+
+msgid "Max Child Particles"
+msgstr "최대 자식 입자"
+
+
+msgid "Render Engine"
+msgstr "렌더 엔진"
+
+
+msgctxt "Operator"
+msgid "Bake Cubemap Only"
+msgstr "큐브맵 만 베이크"
+
+
+msgid "Temperature"
+msgstr "온도"
+
+
+msgid "General Override"
+msgstr "일반 재정의"
+
+
+msgid "Paths:"
+msgstr "경로:"
+
+
+msgid "Doppler Speed"
+msgstr "도플러 속력"
+
+
+msgid "Active Set Override"
+msgstr "활성 설정 재정의"
+
+
+msgid "Target ID-Block"
+msgstr "대상 ID-블록"
+
+
+msgid "Array All Items"
+msgstr "모든 항목을 배열"
+
+
+msgid "F-Curve Grouping"
+msgstr "F-커브 그룹화"
+
+
+msgctxt "Operator"
+msgid "Export to File"
+msgstr "파일로 내보내기"
+
+
+msgid "Minimum Size"
+msgstr "최소의 크기"
+
+
+msgid "Second Basis"
+msgstr "두 번째 기반"
+
+
+msgid "Gaussian Filter"
+msgstr "가우스 필터"
+
+
+msgid "Calculate"
+msgstr "계산"
+
+
+msgid "Flip Axes"
+msgstr "축을 뒤집기"
+
+
+msgid "Dimension"
+msgstr "크기"
+
+
+msgid "Third"
+msgstr "삼분할"
+
+
+msgid "Fourth"
+msgstr "사분할"
+
+
+msgid "Multiply R"
+msgstr "곱하기 R"
+
+
+msgid "Eccentricity"
+msgstr "이심율"
+
+
+msgid "Enable the Color Ramp first"
+msgstr "먼저 컬러 램프를 활성화"
+
+
+msgid "Tiles Even"
+msgstr "균일한 타일"
+
+
+msgid "Odd"
+msgstr "홀수"
+
+
+msgid "Mapping X"
+msgstr "맵핑 X"
+
+
+msgid "Map"
+msgstr "맵"
+
+
+msgid "Use for Rendering"
+msgstr "렌더링에 사용"
+
+
+msgid "Unknown add-ons"
+msgstr "알 수없는 애드온"
+
+
+msgid "%s: %s"
+msgstr "%s: %s"
+
+
+msgid "Display Thin"
+msgstr "얇게 표시"
+
+
+msgid "B/W"
+msgstr "B/W"
+
+
+msgid "Calibration"
+msgstr "보정"
+
+
+msgctxt "Operator"
+msgid "Prefetch"
+msgstr "프리페치"
+
+
+msgctxt "Operator"
+msgid "Copy From Active Track"
+msgstr "활성 트랙에서 복사"
+
+
+msgid "Track:"
+msgstr "트랙:"
+
+
+msgid "Clear:"
+msgstr "지우기:"
+
+
+msgid "Refine:"
+msgstr "개선:"
+
+
+msgid "Merge:"
+msgstr "병합:"
+
+
+msgid "Tripod"
+msgstr "삼각대"
+
+
+msgctxt "Operator"
+msgid "Solve Camera Motion"
+msgstr "솔브 카메라 모션"
+
+
+msgctxt "Operator"
+msgid "Solve Object Motion"
+msgstr "솔브 오브젝트 모션"
+
+
+msgid "Pixel Aspect"
+msgstr "픽셀 측면"
+
+
+msgid "Optical Center"
+msgstr "시각적인 중심"
+
+
+msgctxt "Operator"
+msgid "Set Center"
+msgstr "중심을 설정"
+
+
+msgid "Build Original:"
+msgstr "작성 원본:"
+
+
+msgid "Build Undistorted:"
+msgstr "왜곡 안된 빌드:"
+
+
+msgctxt "Operator"
+msgid "Build Proxy / Timecode"
+msgstr "빌드 플록시 / 타임코드"
+
+
+msgctxt "Operator"
+msgid "Build Proxy"
+msgstr "프록시 작성"
+
+
+msgid "Proxy Size"
+msgstr "프록시 크기"
+
+
+msgctxt "Operator"
+msgid "Clear After"
+msgstr "이후를 지우기"
+
+
+msgctxt "Operator"
+msgid "Clear Before"
+msgstr "이전을 지우기"
+
+
+msgctxt "Operator"
+msgid "Track Frame Backwards"
+msgstr "프레임 뒤로 트랙"
+
+
+msgctxt "Operator"
+msgid "Track Backwards"
+msgstr "뒤로 트랙"
+
+
+msgctxt "Operator"
+msgid "Track Forwards"
+msgstr "앞으로 트랙"
+
+
+msgctxt "Operator"
+msgid "Track Frame Forwards"
+msgstr "프레임 앞으로 트랙"
+
+
+msgctxt "Operator"
+msgid "Location"
+msgstr "위치"
+
+
+msgctxt "Operator"
+msgid "Affine"
+msgstr "어파인"
+
+
+msgctxt "Operator"
+msgid "Set Viewport Background"
+msgstr "뷰포트 배경을 설정"
+
+
+msgctxt "Operator"
+msgid "Set Floor"
+msgstr "바닥을 설정"
+
+
+msgid "3D Markers"
+msgstr "3D 마커"
+
+
+msgid "Display Aspect Ratio"
+msgstr "화면 비율을 표시"
+
+
+msgctxt "Operator"
+msgid "Floor"
+msgstr "바닥"
+
+
+msgctxt "Operator"
+msgid "Wall"
+msgstr "벽"
+
+
+msgctxt "Operator"
+msgid "Set X Axis"
+msgstr "X 축을 설정"
+
+
+msgctxt "Operator"
+msgid "Set Y Axis"
+msgstr "Y 축을 설정"
+
+
+msgid "No active track"
+msgstr "활성 트랙 없음"
+
+
+msgid "No active plane track"
+msgstr "활성 플레인 트랙 없음"
+
+
+msgid "Tracks For Stabilization"
+msgstr "안정화에 대한 트랙"
+
+
+msgid "Tracks For Location"
+msgstr "위치에 대한 트랙"
+
+
+msgid "Timecode Index"
+msgstr "타임코드 인덱스"
+
+
+msgctxt "Operator"
+msgid "Set Wall"
+msgstr "벽을 설정"
+
+
+msgctxt "Operator"
+msgid "Inverse"
+msgstr "반전"
+
+
+msgctxt "Operator"
+msgid "Show Tracks"
+msgstr "트랙을 표시"
+
+
+msgid "Normalization"
+msgstr "노멀라이즈"
+
+
+msgid "Use Brute Force"
+msgstr "무력을 사용"
+
+
+msgctxt "Operator"
+msgid "Match Previous"
+msgstr "이전을 일치"
+
+
+msgctxt "Operator"
+msgid "Match Keyframe"
+msgstr "키 프레임을 일치"
+
+
+msgid "Tripod Solver"
+msgstr "삼각대 솔버"
+
+
+msgctxt "Operator"
+msgid "Set Keyframe A"
+msgstr "키 프레임 A를 설정"
+
+
+msgctxt "Operator"
+msgid "Set Keyframe B"
+msgstr "키 프레임 B를 설정"
+
+
+msgid "Tracks For Rotation / Scale"
+msgstr "회전/축적에 대한 트랙"
+
+
+msgctxt "Operator"
+msgid "Zoom %d:%d"
+msgstr "줌 %d:%d"
+
+
+msgctxt "Operator"
+msgid "View Fit"
+msgstr "뷰 맞추기"
+
+
+msgctxt "Operator"
+msgid "Enable Markers"
+msgstr "마커를 사용"
+
+
+msgctxt "Operator"
+msgid "Unlock Tracks"
+msgstr "트랙을 잠금 해제"
+
+
+msgid "Zoom %d:%d"
+msgstr "줌 %d:%d"
+
+
+msgctxt "Operator"
+msgid "Copy as Script"
+msgstr "스크립트로 복사"
+
+
+msgctxt "Operator"
+msgid "Autocomplete"
+msgstr "자동 완성"
+
+
+msgctxt "Operator"
+msgid "Move to Previous Word"
+msgstr "이전 단어로 이동"
+
+
+msgctxt "Operator"
+msgid "Move to Next Word"
+msgstr "다음 단어로 이동"
+
+
+msgctxt "Operator"
+msgid "Move to Line Begin"
+msgstr "라인 시작으로 이동"
+
+
+msgctxt "Operator"
+msgid "Move to Line End"
+msgstr "라인 끝으로 이동"
+
+
+msgctxt "Operator"
+msgid "Delete Previous Word"
+msgstr "이전 단어를 삭제"
+
+
+msgctxt "Operator"
+msgid "Delete Next Word"
+msgstr "다음 단어를 삭제"
+
+
+msgctxt "Operator"
+msgid "Backward in History"
+msgstr "기록에서 뒤로"
+
+
+msgctxt "Operator"
+msgid "Forward in History"
+msgstr "기록에서 앞으로"
+
+
+msgid "Filter by Type:"
+msgstr "유형별 필터:"
+
+
+msgid "Options:"
+msgstr "옵션:"
+
+
+msgid "Multi-word Match Search"
+msgstr "다중 단어 일치 검색"
+
+
+msgctxt "Operator"
+msgid "Toggle Graph Editor"
+msgstr "그래프 에디터를 토글"
+
+
+msgctxt "Operator"
+msgid "Before Current Frame"
+msgstr "현재 프레임 이전"
+
+
+msgctxt "Operator"
+msgid "After Current Frame"
+msgstr "현재 프레임 이후에"
+
+
+msgctxt "Operator"
+msgid "Extrapolation Mode"
+msgstr "외삽법 모드"
+
+
+msgctxt "Operator"
+msgid "Move..."
+msgstr "이동..."
+
+
+msgctxt "Operator"
+msgid "Snap"
+msgstr "스냅"
+
+
+msgctxt "Operator"
+msgid "Keyframe Type"
+msgstr "키 프레임 유형"
+
+
+msgctxt "Operator"
+msgid "Handle Type"
+msgstr "핸들 유형"
+
+
+msgctxt "Operator"
+msgid "Interpolation Mode"
+msgstr "보간 모드"
+
+
+msgid "Grease Pencil Objects"
+msgstr "그리스 펜슬 오브젝트"
+
+
+msgctxt "Operator"
+msgid "Push Down"
+msgstr "아래로 밀기"
+
+
+msgctxt "Operator"
+msgid "Stash"
+msgstr "제외"
+
+
+msgctxt "Operator"
+msgid "Box Select (Axis Range)"
+msgstr "박스 선택 (축 범위)"
+
+
+msgctxt "Operator"
+msgid "Columns on Selected Keys"
+msgstr "선택된 키에 세로줄"
+
+
+msgctxt "Operator"
+msgid "Column on Current Frame"
+msgstr "현재 프레임에 세로줄"
+
+
+msgctxt "Operator"
+msgid "Columns on Selected Markers"
+msgstr "선택된 마커에 세로줄"
+
+
+msgctxt "Operator"
+msgid "Between Selected Markers"
+msgstr "선택된 마커 사이에"
+
+
+msgctxt "Operator"
+msgid "Paste Flipped"
+msgstr "뒤집힌 붙여 넣기"
+
+
+msgctxt "Operator"
+msgid "Clean Channels"
+msgstr "채널을 정리"
+
+
+msgctxt "Operator"
+msgid "Extend"
+msgstr "확장"
+
+
+msgctxt "Operator"
+msgid "Slide"
+msgstr "슬라이드"
+
+
+msgctxt "Operator"
+msgid "Mute Channels"
+msgstr "채널을 음소거"
+
+
+msgctxt "Operator"
+msgid "Unmute Channels"
+msgstr "채널 음소거를 해제"
+
+
+msgctxt "Operator"
+msgid "Protect Channels"
+msgstr "채널을 보호"
+
+
+msgctxt "Operator"
+msgid "Unprotect Channels"
+msgstr "채널 보호를 해제"
+
+
+msgctxt "Operator"
+msgid "Current Frame"
+msgstr "현재 프레임"
+
+
+msgctxt "Operator"
+msgid "Nearest Frame"
+msgstr "가까운 프레임"
+
+
+msgctxt "Operator"
+msgid "Nearest Second"
+msgstr "가장 가까운 초"
+
+
+msgctxt "Operator"
+msgid "Nearest Marker"
+msgstr "가까운 마커"
+
+
+msgid "Recursions"
+msgstr "반복"
+
+
+msgid "Folders"
+msgstr "폴더"
+
+
+msgctxt "Operator"
+msgid "Cleanup"
+msgstr "정리"
+
+
+msgctxt "Operator"
+msgid "Back"
+msgstr "뒤쪽"
+
+
+msgctxt "Operator"
+msgid "Forward"
+msgstr "앞으로"
+
+
+msgctxt "Operator"
+msgid "Go to Parent"
+msgstr "부모로 이동"
+
+
+msgctxt "Operator"
+msgid "New Folder"
+msgstr "새 폴더"
+
+
+msgid ".blend Files"
+msgstr ".blend 파일"
+
+
+msgid "Backup .blend Files"
+msgstr ".blend 백업 파일"
+
+
+msgid "Image Files"
+msgstr "이미지 파일"
+
+
+msgid "Movie Files"
+msgstr "무비 파일"
+
+
+msgid "Script Files"
+msgstr "스크립트 파일"
+
+
+msgid "Font Files"
+msgstr "폰트 파일"
+
+
+msgid "Sound Files"
+msgstr "사운드 파일"
+
+
+msgid "Text Files"
+msgstr "텍스트 파일"
+
+
+msgid "Blender IDs"
+msgstr "Blender IDs"
+
+
+msgctxt "Operator"
+msgid "Increase Number"
+msgstr "번호를 증가"
+
+
+msgctxt "Operator"
+msgid "Decrease Number"
+msgstr "번호를 감소"
+
+
+msgctxt "Operator"
+msgid "Toggle Dope Sheet"
+msgstr "도프시트를 토글"
+
+
+msgctxt "Operator"
+msgid "Box Select (Include Handles)"
+msgstr "박스 선택 (핸들을 포함)"
+
+
+msgctxt "Operator"
+msgid "Easing Type"
+msgstr "완화 유형"
+
+
+msgctxt "Operator"
+msgid "Discontinuity (Euler) Filter"
+msgstr "불연속 (오일러) 필터"
+
+
+msgctxt "Operator"
+msgid "Hide Selected Curves"
+msgstr "선택된 커브를 숨기기"
+
+
+msgctxt "Operator"
+msgid "Hide Unselected Curves"
+msgstr "선택되지 않은 커브를 숨기기"
+
+
+msgctxt "Operator"
+msgid "Decimate (Ratio)"
+msgstr "데시메이트 (비율)"
+
+
+msgctxt "Operator"
+msgid "Decimate (Allowed Change)"
+msgstr "데시메이트 (허용된 변경)"
+
+
+msgctxt "Operator"
+msgid "Cursor Value"
+msgstr "커서 값"
+
+
+msgctxt "Operator"
+msgid "Flatten Handles"
+msgstr "평평한 핸들"
+
+
+msgctxt "Operator"
+msgid "Less"
+msgstr "더 적게"
+
+
+msgctxt "Operator"
+msgid "More"
+msgstr "더 많이"
+
+
+msgctxt "Operator"
+msgid "Linked"
+msgstr "연결됨"
+
+
+msgctxt "Operator"
+msgid "Shortest Path"
+msgstr "최단 경로"
+
+
+msgctxt "Operator"
+msgid "New"
+msgstr "새로운"
+
+
+msgctxt "Operator"
+msgid "Open..."
+msgstr "열기..."
+
+
+msgctxt "Operator"
+msgid "Save All Images"
+msgstr "모든 이미지를 저장"
+
+
+msgctxt "Operator"
+msgid "Invert Image Colors"
+msgstr "이미지 컬러를 반전"
+
+
+msgctxt "Operator"
+msgid "By Distance"
+msgstr "거리에 의해"
+
+
+msgid "Grid Shape"
+msgstr "격자 모양"
+
+
+msgid "Show Same Material"
+msgstr "같은 매테리얼을 표시"
+
+
+msgctxt "Operator"
+msgid "Frame All Fit"
+msgstr "프레임 모두 맞춤"
+
+
+msgctxt "Operator"
+msgid "Render Slot Cycle Next"
+msgstr "다음 슬롯주기를 렌더"
+
+
+msgctxt "Operator"
+msgid "Box Select Pinned"
+msgstr "고정된 박스 선택"
+
+
+msgctxt "Operator"
+msgid "Edit Externally"
+msgstr "외부에서 편집"
+
+
+msgctxt "Operator"
+msgid "Save As..."
+msgstr "다른 이름으로 저장..."
+
+
+msgctxt "Operator"
+msgid "Invert Red Channel"
+msgstr "레드 채널을 반전"
+
+
+msgctxt "Operator"
+msgid "Invert Green Channel"
+msgstr "그린 채널을 반전"
+
+
+msgctxt "Operator"
+msgid "Invert Blue Channel"
+msgstr "블루 채널을 반전"
+
+
+msgctxt "Operator"
+msgid "Invert Alpha Channel"
+msgstr "알파 채널을 반전"
+
+
+msgctxt "Operator"
+msgid "Selected to Pixels"
+msgstr "선택된 항목을 픽셀에 스냅"
+
+
+msgctxt "Operator"
+msgid "Selected to Cursor"
+msgstr "선택된 항목을 커서에 스냅"
+
+
+msgctxt "Operator"
+msgid "Selected to Cursor (Offset)"
+msgstr "선택된 항목을 커서에 스냅 (오프셋)"
+
+
+msgctxt "Operator"
+msgid "Selected to Adjacent Unselected"
+msgstr "선택된 항목을 인접한 비선택된 항목에 스냅"
+
+
+msgctxt "Operator"
+msgid "Cursor to Pixels"
+msgstr "커서를 픽셀에 스냅"
+
+
+msgctxt "Operator"
+msgid "Unpin"
+msgstr "고정을 해제"
+
+
+msgctxt "Operator"
+msgid "Clear Seam"
+msgstr "씨임을 지우기"
+
+
+msgctxt "Operator"
+msgid "Vertex"
+msgstr "버텍스"
+
+
+msgctxt "Operator"
+msgid "Edge"
+msgstr "에지"
+
+
+msgctxt "Operator"
+msgid "Face"
+msgstr "페이스"
+
+
+msgctxt "Operator"
+msgid "Island"
+msgstr "아일랜드"
+
+
+msgid "Image*"
+msgstr "이미지*"
+
+
+msgid "Aspect Ratio"
+msgstr "측면 비율"
+
+
+msgid "Repeat Image"
+msgstr "이미지를 반복"
+
+
+msgctxt "Operator"
+msgid "Render Slot Cycle Previous"
+msgstr "이전 슬롯사이클 렌더"
+
+
+msgctxt "Operator"
+msgid "Replace..."
+msgstr "교체..."
+
+
+msgctxt "Operator"
+msgid "Save a Copy..."
+msgstr "사본으로 저장..."
+
+
+msgctxt "Operator"
+msgid "Pack"
+msgstr "포장"
+
+
+msgctxt "Operator"
+msgid "X Axis"
+msgstr "X 축"
+
+
+msgctxt "Operator"
+msgid "Y Axis"
+msgstr "Y 축"
+
+
+msgctxt "Operator"
+msgid "Unpack"
+msgstr "포장을 해제"
+
+
+msgctxt "Operator"
+msgid "Mirror X"
+msgstr "미러 X"
+
+
+msgctxt "Operator"
+msgid "Mirror Y"
+msgstr "미러 Y"
+
+
+msgctxt "Operator"
+msgid "Toggle Selection"
+msgstr "선택을 토글"
+
+
+msgctxt "Operator"
+msgid "Horizontal Split"
+msgstr "수평 분할"
+
+
+msgctxt "Operator"
+msgid "Vertical Split"
+msgstr "수직 분할"
+
+
+msgctxt "Operator"
+msgid "Toggle Fullscreen Area"
+msgstr "전체 화면 영역을 토글"
+
+
+msgctxt "Operator"
+msgid "Track Ordering..."
+msgstr "트랙 정리..."
+
+
+msgctxt "Operator"
+msgid "Linked Duplicate"
+msgstr "연결된 복제"
+
+
+msgctxt "Operator"
+msgid "Stop Tweaking Strip Actions"
+msgstr "트위킹 스트립 액션을 중지"
+
+
+msgctxt "Operator"
+msgid "Start Tweaking Strip Actions"
+msgstr "스트립 액션 조정을 시작"
+
+
+msgctxt "Operator"
+msgid "Add Tracks Above Selected"
+msgstr "트랙을 선택된 위에 추가"
+
+
+msgctxt "Operator"
+msgid "Stop Editing Stashed Action"
+msgstr "제외된 액션 편집을 중지"
+
+
+msgctxt "Operator"
+msgid "Start Editing Stashed Action"
+msgstr "제외된 액션 편집을 시작"
+
+
+msgctxt "Operator"
+msgid "Join in New Frame"
+msgstr "새로운 프레임에 합치기"
+
+
+msgctxt "Operator"
+msgid "Remove from Frame"
+msgstr "프레임에서 제거"
+
+
+msgctxt "Operator"
+msgid "Rename..."
+msgstr "이름을 변경..."
+
+
+msgid "Projection X"
+msgstr "투사 X"
+
+
+msgctxt "Operator"
+msgid "Fit"
+msgstr "맞추기"
+
+
+msgctxt "Operator"
+msgid "Search..."
+msgstr "검색..."
+
+
+msgctxt "Operator"
+msgid "Backdrop Move"
+msgstr "배경 화면 이동"
+
+
+msgctxt "Operator"
+msgid "Fit Backdrop to Available Space"
+msgstr "이용 가능한 공간에 배경 화면을 맞추기"
+
+
+msgctxt "Operator"
+msgid "Activate Same Type Previous"
+msgstr "활성 동일 유형 이전"
+
+
+msgctxt "Operator"
+msgid "Activate Same Type Next"
+msgstr "활성 동일 유형 다음"
+
+
+msgctxt "Operator"
+msgid "Make and Replace Links"
+msgstr "연결을 만들기 및 교체"
+
+
+msgctxt "Operator"
+msgid "Group"
+msgstr "그룹"
+
+
+msgid "Inputs:"
+msgstr "입력:"
+
+
+msgctxt "Operator"
+msgid "Backdrop Zoom In"
+msgstr "배경 화면 줌 확대"
+
+
+msgctxt "Operator"
+msgid "Backdrop Zoom Out"
+msgstr "배경 화면 줌 축소"
+
+
+msgctxt "Operator"
+msgid "Show One Level"
+msgstr "하나의 레벨을 표시"
+
+
+msgctxt "Operator"
+msgid "Isolate"
+msgstr "분리"
+
+
+msgctxt "Operator"
+msgid "Show"
+msgstr "표시"
+
+
+msgctxt "Operator"
+msgid "Show All Inside"
+msgstr "모든 내부를 표시"
+
+
+msgctxt "Operator"
+msgid "Hide All Inside"
+msgstr "모든 내부를 숨기기"
+
+
+msgctxt "Operator"
+msgid "Enable in Viewports"
+msgstr "뷰포트에서 사용"
+
+
+msgctxt "Operator"
+msgid "Disable in Viewports"
+msgstr "뷰포트에서 사용 중지"
+
+
+msgctxt "Operator"
+msgid "Enable in Render"
+msgstr "렌더에서 사용"
+
+
+msgctxt "Operator"
+msgid "Disable in Render"
+msgstr "렌더에서 사용 안 함"
+
+
+msgctxt "Operator"
+msgid "Instance to Scene"
+msgstr "씬으로 인스턴스"
+
+
+msgctxt "Operator"
+msgid "ID Data"
+msgstr "ID 데이터"
+
+
+msgid "Sync Selection"
+msgstr "선택을 동기화"
+
+
+msgid "Search:"
+msgstr "검색:"
+
+
+msgid "Filter:"
+msgstr "필터:"
+
+
+msgid "Object Contents"
+msgstr "오브젝트 내용"
+
+
+msgid "Object Children"
+msgstr "오브젝트 자식"
+
+
+msgid "Empties"
+msgstr "엠프티"
+
+
+msgctxt "Operator"
+msgid "Hide One Level"
+msgstr "하나의 레벨을 숨기기"
+
+
+msgctxt "Operator"
+msgid "Link to Scene"
+msgstr "씬에 연결"
+
+
+msgid "Restriction Toggles:"
+msgstr "제한 토글:"
+
+
+msgid "Others"
+msgstr "기타"
+
+
+msgctxt "Operator"
+msgid "Purge"
+msgstr "퍼지"
+
+
+msgid "No Keying Set Active"
+msgstr "키잉 설정 활성이 없음"
+
+
+msgid "Lift:"
+msgstr "상승:"
+
+
+msgid "Gamma:"
+msgstr "감마:"
+
+
+msgid "Gain:"
+msgstr "이득:"
+
+
+msgctxt "Operator"
+msgid "Set Frame Range to Strips"
+msgstr "프레임 범위를 스트립으로 설정"
+
+
+msgctxt "Operator"
+msgid "Sequence Render Animation"
+msgstr "시퀀스 렌더 애니메이션"
+
+
+msgid "Handle"
+msgstr "핸들"
+
+
+msgctxt "Operator"
+msgid "Grouped"
+msgstr "그룹됨"
+
+
+msgctxt "Operator"
+msgid "Path/Files"
+msgstr "경로/파일"
+
+
+msgctxt "Operator"
+msgid "Jump to Previous Strip"
+msgstr "이전 스트립으로 이동"
+
+
+msgctxt "Operator"
+msgid "Jump to Next Strip"
+msgstr "다음 스트립으로 이동"
+
+
+msgctxt "Operator"
+msgid "Jump to Previous Strip (Center)"
+msgstr "이전 스트립(중심)으로 이동"
+
+
+msgctxt "Operator"
+msgid "Jump to Next Strip (Center)"
+msgstr "다음 스트립(중심)으로 이동"
+
+
+msgctxt "Operator"
+msgid "Movie"
+msgstr "무비"
+
+
+msgctxt "Operator"
+msgid "Sound"
+msgstr "사운드"
+
+
+msgctxt "Operator"
+msgid "Image/Sequence"
+msgstr "이미지/시퀀스"
+
+
+msgctxt "Operator"
+msgid "Fade"
+msgstr "페이드"
+
+
+msgid "No Items Available"
+msgstr "사용 가능한 항목이 없음"
+
+
+msgctxt "Operator"
+msgid "Sound Crossfade"
+msgstr "사운드 교차 페이드"
+
+
+msgctxt "Operator"
+msgid "Slip Strip Contents"
+msgstr "스트립 내용을 미끌기"
+
+
+msgctxt "Operator"
+msgid "Change Path/Files"
+msgstr "경로/파일을 변경"
+
+
+msgctxt "Operator"
+msgid "Swap Data"
+msgstr "교환 데이터"
+
+
+msgid "Position X"
+msgstr "위치 X"
+
+
+msgid "Convert to Float"
+msgstr "실수로 변환"
+
+
+msgid "Storage"
+msgstr "스토리지"
+
+
+msgctxt "Operator"
+msgid "Set Overlay Region"
+msgstr "오버레이 지역DMF 설정"
+
+
+msgctxt "Operator"
+msgid "Set Preview Range to Strips"
+msgstr "미리보기 범위를 스트립으로 설정"
+
+
+msgid "Preview as Backdrop"
+msgstr "배경 화면으로 미리보기"
+
+
+msgctxt "Operator"
+msgid "Zoom"
+msgstr "줌"
+
+
+msgctxt "Operator"
+msgid "Fit Preview in Window"
+msgstr "창에서 미리보기를 맞추기"
+
+
+msgctxt "Operator"
+msgid "Refresh All"
+msgstr "모두 새로 고침"
+
+
+msgctxt "Operator"
+msgid "Sequence Render Image"
+msgstr "시퀀스 렌더 이미지"
+
+
+msgctxt "Operator"
+msgid "Both"
+msgstr "양쪽"
+
+
+msgctxt "Operator"
+msgid "Left"
+msgstr "왼쪽"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "오른쪽"
+
+
+msgctxt "Operator"
+msgid "Both Sides"
+msgstr "양쪽 측면"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "씬..."
+
+
+msgctxt "Operator"
+msgid "Clip..."
+msgstr "클립..."
+
+
+msgctxt "Operator"
+msgid "Mask..."
+msgstr "마스크..."
+
+
+msgctxt "Operator"
+msgid "Color"
+msgstr "컬러"
+
+
+msgctxt "Operator"
+msgid "Text"
+msgstr "텍스트"
+
+
+msgctxt "Operator"
+msgid "Adjustment Layer"
+msgstr "레이어를 조정"
+
+
+msgctxt "Operator"
+msgid "Cross"
+msgstr "교차"
+
+
+msgctxt "Operator"
+msgid "Gamma Cross"
+msgstr "감마 교차"
+
+
+msgctxt "Operator"
+msgid "Wipe"
+msgstr "웨이프"
+
+
+msgctxt "Operator"
+msgid "Subtract"
+msgstr "빼기"
+
+
+msgctxt "Operator"
+msgid "Multiply"
+msgstr "곱하기"
+
+
+msgctxt "Operator"
+msgid "Over Drop"
+msgstr "오버 드롭"
+
+
+msgctxt "Operator"
+msgid "Alpha Over"
+msgstr "알파 오버"
+
+
+msgctxt "Operator"
+msgid "Alpha Under"
+msgstr "알파 언더"
+
+
+msgctxt "Operator"
+msgid "Color Mix"
+msgstr "컬러 조합"
+
+
+msgctxt "Operator"
+msgid "Multicam Selector"
+msgstr "멀티캠 선택기"
+
+
+msgctxt "Operator"
+msgid "Speed Control"
+msgstr "속력 컨트롤"
+
+
+msgctxt "Operator"
+msgid "Glow"
+msgstr "글로우"
+
+
+msgctxt "Operator"
+msgid "Gaussian Blur"
+msgstr "가우시안 블러"
+
+
+msgctxt "Operator"
+msgid "Reload Strips and Adjust Length"
+msgstr "스트립을 다시 불러오고 길이를 조정"
+
+
+msgctxt "Operator"
+msgid "Mute Unselected Strips"
+msgstr "선택되지 않은 스트립을 음소거"
+
+
+msgctxt "Operator"
+msgid "Unmute Deselected Strips"
+msgstr "선택 해제된 스트립 음소거를 해제"
+
+
+msgid "Show Grease Pencil"
+msgstr "그리스 펜슬을 표시"
+
+
+msgid "Original frame range: %d-%d (%d)"
+msgstr "원본 프레임 범위: %d-%d (%d)"
+
+
+msgid "Strip Offset Start"
+msgstr "스트립 오프셋 시작"
+
+
+msgid "Hold Offset Start"
+msgstr "유지 오프셋 시작"
+
+
+msgid "Tracker"
+msgstr "트래커"
+
+
+msgid "Build JPEG Quality"
+msgstr "빌드 JPEG 품질"
+
+
+msgid "Fractional Preview Zoom"
+msgstr "분수적 미리보기 줌"
+
+
+msgid "Show Frame Overlay"
+msgstr "프레임 오버레이를 표시"
+
+
+msgid "Show Annotations"
+msgstr "주석을 표시"
+
+
+msgctxt "Operator"
+msgid "Scene"
+msgstr "씬"
+
+
+msgctxt "Operator"
+msgid "Clip"
+msgstr "클립"
+
+
+msgctxt "Operator"
+msgid "Copy Modifiers to Selection"
+msgstr "모디파이어를 선택 항목에 복사"
+
+
+msgctxt "Operator"
+msgid "Toggle Meta"
+msgstr "메타를 전환"
+
+
+msgctxt "Operator"
+msgid "Clear Fade"
+msgstr "페이드를 제거"
+
+
+msgid "Default fade"
+msgstr "기본 페이드"
+
+
+msgid "%dx%d"
+msgstr "%dx%d"
+
+
+msgid "Unpack"
+msgstr "포장 해제"
+
+
+msgid "Pack"
+msgstr "포장"
+
+
+msgid "Original Frame Range"
+msgstr "원본 프레임 범위"
+
+
+msgid "Show Separate Color Channels"
+msgstr "별도의 색상 채널을 표시"
+
+
+msgid "Add Transition"
+msgstr "전환을 추가"
+
+
+msgctxt "Operator"
+msgid "Crossfade Sounds"
+msgstr "교차 페이드 사운드"
+
+
+msgid "Effect Fader"
+msgstr "이펙트 페더"
+
+
+msgid "Stretch to input strip length"
+msgstr "입력 스트립 길이에 늘이기"
+
+
+msgid "Source Channel"
+msgstr "소스 채널"
+
+
+msgid "    Cut to"
+msgstr "    다음으로 잘라내기"
+
+
+msgid "Two or more channels are needed below this strip"
+msgstr "이 스트립 아래에 두 개 이상의 채널이 필요합니다"
+
+
+msgctxt "Operator"
+msgid "Word"
+msgstr "단어"
+
+
+msgctxt "Operator"
+msgid "Find & Replace..."
+msgstr "찾기 & 바꾸기..."
+
+
+msgctxt "Operator"
+msgid "Jump To..."
+msgstr "이동..."
+
+
+msgctxt "Operator"
+msgid "Top"
+msgstr "위쪽"
+
+
+msgctxt "Operator"
+msgid "Bottom"
+msgstr "아래쪽"
+
+
+msgctxt "Operator"
+msgid "Line Begin"
+msgstr "라인 시작"
+
+
+msgctxt "Operator"
+msgid "Line End"
+msgstr "라인 끝"
+
+
+msgctxt "Operator"
+msgid "Previous Line"
+msgstr "이전 라인"
+
+
+msgctxt "Operator"
+msgid "Next Line"
+msgstr "다음 라인"
+
+
+msgctxt "Operator"
+msgid "Previous Word"
+msgstr "이전 단어"
+
+
+msgctxt "Operator"
+msgid "Next Word"
+msgstr "다음 단어"
+
+
+msgctxt "Operator"
+msgid "One Object"
+msgstr "하나의 오브젝트"
+
+
+msgctxt "Operator"
+msgid "One Object Per Line"
+msgstr "라인 당 하나의 오브젝트"
+
+
+msgctxt "Operator"
+msgid "Move Line(s) Up"
+msgstr "라인을 위로 이동"
+
+
+msgctxt "Operator"
+msgid "Move Line(s) Down"
+msgstr "라인을 아래로 이동"
+
+
+msgid "Text: ExternalText: Internal"
+msgstr "텍스트: 외부 텍스트: 내부"
+
+
+msgid "File: *%s (unsaved)"
+msgstr "파일: *%s (저장되지 않음)"
+
+
+msgid "File: %s"
+msgstr "파일: %s"
+
+
+msgid "Text: External"
+msgstr "텍스트: 외부"
+
+
+msgid "Text: Internal"
+msgstr "텍스트: 내부"
+
+
+msgctxt "Operator"
+msgid "Duplicate Marker"
+msgstr "마커를 복제"
+
+
+msgctxt "Operator"
+msgid "Move Marker"
+msgstr "마커를 이동"
+
+
+msgctxt "Operator"
+msgid "Duplicate Marker to Scene..."
+msgstr "마커를 씬에 복제..."
+
+
+msgctxt "Operator"
+msgid "Duplicate Marker to Scene"
+msgstr "마커를 씬에 복제"
+
+
+msgctxt "Operator"
+msgid "Jump to Next Marker"
+msgstr "다음 마커로 이동"
+
+
+msgctxt "Operator"
+msgid "Jump to Previous Marker"
+msgstr "이전 마커로 이동"
+
+
+msgid "Active Keying Set:"
+msgstr "활성 키 설정:"
+
+
+msgid "New Keyframe Type:"
+msgstr "새 키 프레임 유형:"
+
+
+msgid "Auto Keyframing:"
+msgstr "자동 키 프레임:"
+
+
+msgid "Layered Recording"
+msgstr "레이어화 기록"
+
+
+msgid "Drag:"
+msgstr "드래그:"
+
+
+msgid "Unable to find toolbar group"
+msgstr "툴바 그룹을 찾을 수 없습니다"
+
+
+msgid "Annotation:"
+msgstr "주석:"
+
+
+msgid "Gizmos:"
+msgstr "기즈모:"
+
+
+msgctxt "Operator"
+msgid "Install Application Template..."
+msgstr "어플리케이션 템플릿을 설치 ..."
+
+
+msgctxt "Operator"
+msgid "Link..."
+msgstr "연결..."
+
+
+msgctxt "Operator"
+msgid "Append..."
+msgstr "덧붙이기..."
+
+
+msgctxt "Operator"
+msgid "Quit"
+msgstr "끝내기"
+
+
+msgctxt "Operator"
+msgid "Last Session"
+msgstr "마지막 세션"
+
+
+msgctxt "Operator"
+msgid "Auto Save..."
+msgstr "자동 저장..."
+
+
+msgctxt "Operator"
+msgid "Render Animation"
+msgstr "애니메이션을 렌더"
+
+
+msgctxt "Operator"
+msgid "Render Audio..."
+msgstr "오디오를 렌더..."
+
+
+msgctxt "Operator"
+msgid "View Render"
+msgstr "렌더를 보기"
+
+
+msgctxt "Operator"
+msgid "View Animation"
+msgstr "에니메이션을 보기"
+
+
+msgctxt "Operator"
+msgid "Undo History..."
+msgstr "실행 취소 기록..."
+
+
+msgctxt "Operator"
+msgid "Repeat History..."
+msgstr "기록을 반복..."
+
+
+msgctxt "Operator"
+msgid "Adjust Last Operation..."
+msgstr "마지막 작업 조정..."
+
+
+msgctxt "Operator"
+msgid "Rename Active Item..."
+msgstr "활성 항목 이름을 변경..."
+
+
+msgctxt "Operator"
+msgid "Preferences..."
+msgstr "환경 설정..."
+
+
+msgctxt "Operator"
+msgid "Reorder to Front"
+msgstr "앞쪽으로 순서 변경"
+
+
+msgctxt "Operator"
+msgid "Reorder to Back"
+msgstr "뒤쪽으로 순서 변경"
+
+
+msgctxt "Operator"
+msgid "Previous Workspace"
+msgstr "이전 작업공간"
+
+
+msgctxt "Operator"
+msgid "Next Workspace"
+msgstr "다음 작업공간"
+
+
+msgctxt "Operator"
+msgid "Back to Previous"
+msgstr "이전으로 돌아 가기"
+
+
+msgctxt "Operator"
+msgid "Save Copy..."
+msgstr "사본으로 저장..."
+
+
+msgctxt "Operator"
+msgid "General"
+msgstr "일반"
+
+
+msgctxt "Operator"
+msgid "Collada (Default) (.dae)"
+msgstr "Collada (기본 값) (.DAE)"
+
+
+msgctxt "Operator"
+msgid "Alembic (.abc)"
+msgstr "Alembic (.abc)"
+
+
+msgctxt "Operator"
+msgid "Universal Scene Description (.usd, .usdc, .usda)"
+msgstr "범용 씬 설명 (.usd, .usdc, .usda)"
+
+
+msgctxt "Operator"
+msgid "Render Image"
+msgstr "이미지를 렌더"
+
+
+msgctxt "Operator"
+msgid "Operator Search..."
+msgstr "작업자 검색..."
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "메뉴얼"
+
+
+msgctxt "Operator"
+msgid "Tutorials"
+msgstr "튜토리얼"
+
+
+msgctxt "Operator"
+msgid "Support"
+msgstr "지원"
+
+
+msgctxt "Operator"
+msgid "User Communities"
+msgstr "사용자 커뮤니티"
+
+
+msgctxt "Operator"
+msgid "Developer Community"
+msgstr "개발자 커뮤니티"
+
+
+msgctxt "Operator"
+msgid "Python API Reference"
+msgstr "Python API 참조"
+
+
+msgctxt "Operator"
+msgid "Report a Bug"
+msgstr "버그 신고"
+
+
+msgid "Sequence Strip Name"
+msgstr "시퀀스 스트립 이름"
+
+
+msgid "No active item"
+msgstr "활성 항목이 없음"
+
+
+msgctxt "Operator"
+msgid "Developer Documentation"
+msgstr "개발자 문서"
+
+
+msgid "Node Label"
+msgstr "노드 레이블"
+
+
+msgid "Auto-Save Preferences"
+msgstr "환경 설정을 자동 저장"
+
+
+msgctxt "Operator"
+msgid "Revert to Saved Preferences"
+msgstr "저장된 환경 설정으로 되돌리기"
+
+
+msgid "Resolution Scale"
+msgstr "해상도 축적"
+
+
+msgid "Splash Screen"
+msgstr "스플래쉬 화면"
+
+
+msgid "Hinting"
+msgstr "힌팅"
+
+
+msgid "New Data"
+msgstr "새로운 데이터"
+
+
+msgid "Corner Splitting"
+msgstr "코너 분할"
+
+
+msgid "Render in"
+msgstr "다음에서 렌더"
+
+
+msgid "Top Level"
+msgstr "상위 레벨"
+
+
+msgid "Sub Level"
+msgstr "하위 레벨"
+
+
+msgid "Link Materials to"
+msgstr "다음으로 매테리얼을 연결"
+
+
+msgid "Align to"
+msgstr "다음으로 정렬"
+
+
+msgid "Default Color"
+msgstr "기본 컬러"
+
+
+msgid "Eraser Radius"
+msgstr "지우개 반경"
+
+
+msgid "Use Custom Colors"
+msgstr "커스텀 컬러를 사용"
+
+
+msgid "Sculpt Overlay Color"
+msgstr "스컬프트 오버레이 컬러"
+
+
+msgid "Node Auto-offset Margin"
+msgstr "노드 자동-오프셋 여백"
+
+
+msgid "Minimum Grid Spacing"
+msgstr "최소의 격자 간격"
+
+
+msgid "Only Insert Needed"
+msgstr "필요할 때 만 삽입"
+
+
+msgid "Show Warning"
+msgstr "경고를 표시"
+
+
+msgid "Only Insert Available"
+msgstr "사용 가능할 때 만 삽입"
+
+
+msgid "Enable in New Scenes"
+msgstr "새로운 씬에서 사용"
+
+
+msgid "F-Curve Visibility"
+msgstr "F-커브 가시성"
+
+
+msgid "Default Smoothing Mode"
+msgstr "기본 스무딩 모드"
+
+
+msgid "Default Interpolation"
+msgstr "기본 보간"
+
+
+msgid "Default Handles"
+msgstr "기본 핸들"
+
+
+msgid "XYZ to RGB"
+msgstr "XYZ를 RGB로 표현"
+
+
+msgid "Mixing Buffer"
+msgstr "믹싱 버퍼"
+
+
+msgid "Sample Format"
+msgstr "샘플 포맷"
+
+
+msgid "Undo Memory Limit"
+msgstr "실행 취소 메모리 제한"
+
+
+msgid "Console Scrollback Lines"
+msgstr "콘솔 스크롤 막대 라인"
+
+
+msgid "Garbage Collection Rate"
+msgstr "가비지 컬렉션 비율"
+
+
+msgid "Vbo Time Out"
+msgstr "VBO 타임 아웃"
+
+
+msgid "View Name"
+msgstr "뷰 이름"
+
+
+msgid "Playback FPS"
+msgstr "재생 FPS"
+
+
+msgid "3D Viewport Axis"
+msgstr "3D 뷰포트 축"
+
+
+msgid "Limit Size"
+msgstr "크기를 제한"
+
+
+msgctxt "Operator"
+msgid "Install..."
+msgstr "설치..."
+
+
+msgid "Axis X"
+msgstr "축 X"
+
+
+msgid "Shadow Offset X"
+msgstr "섀도우 오프셋 X"
+
+
+msgid "Panel Title"
+msgstr "패널 타이틀"
+
+
+msgid "Widget Label"
+msgstr "위젯 레이블"
+
+
+msgid "Scripts"
+msgstr "스크립트"
+
+
+msgid "Temporary Files"
+msgstr "임시 파일"
+
+
+msgid "Render Output"
+msgstr "렌더 출력"
+
+
+msgid "Render Cache"
+msgstr "렌더 캐시"
+
+
+msgid "I18n Branches"
+msgstr "I18n 분기"
+
+
+msgid "Excluded Paths:"
+msgstr "제외 경로:"
+
+
+msgid "Timer (mins)"
+msgstr "타이머(분)"
+
+
+msgid "Double Click Speed"
+msgstr "더블 클릭 속력"
+
+
+msgid "Zoom Method"
+msgstr "줌 메서드"
+
+
+msgid "Pan Sensitivity"
+msgstr "팬 감도"
+
+
+msgid "Use Light"
+msgstr "라이트를 사용"
+
+
+msgctxt "Operator"
+msgid "Save as Studio light"
+msgstr "스튜디오 라이트로 저장"
+
+
+msgid "Player"
+msgstr "플레이어"
+
+
+msgid "Natural Trackpad Direction"
+msgstr "자연 트랙 패드 방향"
+
+
+msgid "Invert Wheel Zoom Direction"
+msgstr "휠 줌 방향을 반전"
+
+
+msgid "Multiple add-ons with the same name found!"
+msgstr "동일한 이름을 가진 복수의 애드온이 있습니다!"
+
+
+msgid "Delete one of each pair to resolve:"
+msgstr "리솔브에 각 쌍 중 하나를 삭제:"
+
+
+msgid "Missing script files"
+msgstr "스크립트 파일이 누락 됨"
+
+
+msgid ":"
+msgstr ":"
+
+
+msgid "Description:"
+msgstr "설명:"
+
+
+msgid "description"
+msgstr "설명"
+
+
+msgid "Location:"
+msgstr "위치:"
+
+
+msgid "location"
+msgstr "위치"
+
+
+msgid "File:"
+msgstr "파일:"
+
+
+msgid "Author:"
+msgstr "작성자:"
+
+
+msgid "author"
+msgstr "작성자"
+
+
+msgid "Version:"
+msgstr "버젼:"
+
+
+msgid "Warning:"
+msgstr "경고:"
+
+
+msgid "Internet:"
+msgstr "인터넷:"
+
+
+msgctxt "Operator"
+msgid "Documentation"
+msgstr "문서"
+
+
+msgid "Preferences:"
+msgstr "환경 설정:"
+
+
+msgid "Error (see console)"
+msgstr "오류 (콘솔 참조)"
+
+
+msgctxt "Operator"
+msgid "Interactive Mirror"
+msgstr "쌍방향 미러"
+
+
+msgctxt "Operator"
+msgid "Selection to Active"
+msgstr "선택을 활성에 스냅"
+
+
+msgctxt "Operator"
+msgid "Cursor to Active"
+msgstr "커서를 활성에 스냅"
+
+
+msgctxt "Operator"
+msgid "Perspective/Orthographic"
+msgstr "원근법/정사법"
+
+
+msgctxt "Operator"
+msgid "Viewport Render Image"
+msgstr "뷰포트 렌더 이미지"
+
+
+msgctxt "Operator"
+msgid "Viewport Render Keyframes"
+msgstr "뷰포트 렌더 키 프레임"
+
+
+msgctxt "Operator"
+msgid "Toggle Local View"
+msgstr "로컬 뷰를 토글"
+
+
+msgctxt "Operator"
+msgid "Active Camera"
+msgstr "활성 카메라"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "카메라"
+
+
+msgctxt "Operator"
+msgid "Orbit Opposite"
+msgstr "오비트 반대편"
+
+
+msgctxt "Operator"
+msgid "Zoom Region..."
+msgstr "지역 줌..."
+
+
+msgctxt "Operator"
+msgid "Align Active Camera to View"
+msgstr "활성 카메라를 뷰에 정렬"
+
+
+msgctxt "Operator"
+msgid "Align Active Camera to Selected"
+msgstr "활성 카메라를 선택된 항목에 정렬"
+
+
+msgctxt "Operator"
+msgid "Front"
+msgstr "앞쪽"
+
+
+msgctxt "Operator"
+msgid "Clipping Region..."
+msgstr "클리핑 지역..."
+
+
+msgctxt "Operator"
+msgid "Render Region..."
+msgstr "렌더 지역..."
+
+
+msgctxt "Operator"
+msgid "Child"
+msgstr "자식"
+
+
+msgctxt "Operator"
+msgid "Extend Parent"
+msgstr "부모를 확장"
+
+
+msgctxt "Operator"
+msgid "Extend Child"
+msgstr "자식을 확장"
+
+
+msgctxt "Operator"
+msgid "Select Active Camera"
+msgstr "활성 카메라를 선택"
+
+
+msgctxt "Operator"
+msgid "Mirror Selection"
+msgstr "미러 선택"
+
+
+msgctxt "Operator"
+msgid "Select Pattern..."
+msgstr "패턴을 선택..."
+
+
+msgctxt "Operator"
+msgid "Flip Active"
+msgstr "활성을 뒤집기"
+
+
+msgctxt "Operator"
+msgid "Constraint Target"
+msgstr "대상 제약"
+
+
+msgctxt "Operator"
+msgid "Roots"
+msgstr "루트"
+
+
+msgctxt "Operator"
+msgid "Tips"
+msgstr "팁"
+
+
+msgctxt "Operator"
+msgid "Face Regions"
+msgstr "페이스 지역"
+
+
+msgctxt "Operator"
+msgid "Loose Geometry"
+msgstr "루즈 지오메트리"
+
+
+msgctxt "Operator"
+msgid "Interior Faces"
+msgstr "내부 페이스"
+
+
+msgctxt "Operator"
+msgid "Faces by Sides"
+msgstr "측면에 의한 페이스"
+
+
+msgctxt "Operator"
+msgid "Next Active"
+msgstr "다음 활성"
+
+
+msgctxt "Operator"
+msgid "Previous Active"
+msgstr "이전 활성"
+
+
+msgctxt "Operator"
+msgid "Linked Flat Faces"
+msgstr "연결된 플랫 페이스"
+
+
+msgctxt "Operator"
+msgid "Side of Active"
+msgstr "활성의 측면"
+
+
+msgctxt "Operator"
+msgid "Similar"
+msgstr "유사"
+
+
+msgctxt "Operator"
+msgid "Plane"
+msgstr "평면"
+
+
+msgctxt "Operator"
+msgid "Cube"
+msgstr "큐브"
+
+
+msgctxt "Operator"
+msgid "UV Sphere"
+msgstr "UV 구체"
+
+
+msgctxt "Operator"
+msgid "Ico Sphere"
+msgstr "아이코 구체"
+
+
+msgctxt "Operator"
+msgid "Cylinder"
+msgstr "실린더"
+
+
+msgctxt "Operator"
+msgid "Cone"
+msgstr "원뿔"
+
+
+msgctxt "Operator"
+msgid "Torus"
+msgstr "토러스"
+
+
+msgctxt "Operator"
+msgid "Grid"
+msgstr "격자"
+
+
+msgctxt "Operator"
+msgid "Monkey"
+msgstr "원숭이"
+
+
+msgctxt "Operator"
+msgid "Bezier"
+msgstr "베지어"
+
+
+msgctxt "Operator"
+msgid "Nurbs Curve"
+msgstr "넙스 커브"
+
+
+msgctxt "Operator"
+msgid "Nurbs Circle"
+msgstr "넙스 원형"
+
+
+msgctxt "Operator"
+msgid "Path"
+msgstr "경로"
+
+
+msgctxt "Operator"
+msgid "Nurbs Surface"
+msgstr "넙스 표면"
+
+
+msgctxt "Operator"
+msgid "Nurbs Cylinder"
+msgstr "넙스 실린더"
+
+
+msgctxt "Operator"
+msgid "Nurbs Sphere"
+msgstr "넙스 구체"
+
+
+msgctxt "Operator"
+msgid "Nurbs Torus"
+msgstr "넙스 토러스"
+
+
+msgctxt "Operator"
+msgid "Single Bone"
+msgstr "싱글 본"
+
+
+msgctxt "Operator"
+msgid "Empty"
+msgstr "엠프티"
+
+
+msgctxt "Operator"
+msgid "Grease Pencil"
+msgstr "그리스 펜슬"
+
+
+msgctxt "Operator"
+msgid "Speaker"
+msgstr "스피커"
+
+
+msgctxt "Operator"
+msgid "Reference"
+msgstr "참조"
+
+
+msgctxt "Operator"
+msgid "Background"
+msgstr "배경"
+
+
+msgctxt "Operator"
+msgid "Make Proxy..."
+msgstr "플록시를 만들기..."
+
+
+msgctxt "Operator"
+msgid "Make Library Override..."
+msgstr "라이브러리 재정의를 만들기..."
+
+
+msgctxt "Operator"
+msgid "Make Local..."
+msgstr "로컬을 만들기..."
+
+
+msgctxt "Operator"
+msgid "Insert Keyframe..."
+msgstr "키 프레임을 삽입..."
+
+
+msgctxt "Operator"
+msgid "Delete Keyframes..."
+msgstr "키 프레임을 삭제..."
+
+
+msgctxt "Operator"
+msgid "Clear Keyframes..."
+msgstr "키 프레임을 지우기..."
+
+
+msgctxt "Operator"
+msgid "Change Keying Set..."
+msgstr "키잉 설정을 변경..."
+
+
+msgctxt "Operator"
+msgid "Bake Action..."
+msgstr "액션을 베이크..."
+
+
+msgctxt "Operator"
+msgid "Change Shape"
+msgstr "셰이프를 변경"
+
+
+msgctxt "Operator"
+msgid "Copy from Active"
+msgstr "활성에서 복사"
+
+
+msgctxt "Operator"
+msgid "Apply Transformation"
+msgstr "변환을 적용"
+
+
+msgctxt "Operator"
+msgid "Connect"
+msgstr "연결"
+
+
+msgctxt "Operator"
+msgid "Origin"
+msgstr "오리진"
+
+
+msgctxt "Operator"
+msgid "Rename Active Object..."
+msgstr "활성 오브젝트 이름을 변경..."
+
+
+msgctxt "Operator"
+msgid "Flat"
+msgstr "플랫"
+
+
+msgid "Visual Transform"
+msgstr "시각 변환"
+
+
+msgctxt "Operator"
+msgid "Object"
+msgstr "오브젝트"
+
+
+msgctxt "Operator"
+msgid "Object & Data"
+msgstr "오브젝트 & 데이터"
+
+
+msgctxt "Operator"
+msgid "Object & Data & Materials"
+msgstr "오브젝트 & 데이터 & 매테리얼"
+
+
+msgctxt "Operator"
+msgid "Materials"
+msgstr "매테리얼"
+
+
+msgctxt "Operator"
+msgid "Object Animation"
+msgstr "오브젝트 애니메이션"
+
+
+msgctxt "Operator"
+msgid "Levels"
+msgstr "레벨"
+
+
+msgctxt "Operator"
+msgid "Hue Saturation Value"
+msgstr "색조 채도 값"
+
+
+msgctxt "Operator"
+msgid "Bright/Contrast"
+msgstr "밝기/대비"
+
+
+msgctxt "Operator"
+msgid "Add New Group"
+msgstr "새로운 그룹을 추가"
+
+
+msgctxt "Operator"
+msgid "Normalize All"
+msgstr "모두 노멀라이즈"
+
+
+msgctxt "Operator"
+msgid "Normalize"
+msgstr "노멀라이즈"
+
+
+msgctxt "Operator"
+msgid "Clean"
+msgstr "정리"
+
+
+msgctxt "Operator"
+msgid "Quantize"
+msgstr "정량화"
+
+
+msgctxt "Operator"
+msgid "Limit Total"
+msgstr "제한 합계"
+
+
+msgctxt "Operator"
+msgid "Fix Deforms"
+msgstr "변형을 고치기"
+
+
+msgctxt "Operator"
+msgid "Show Bounding Box"
+msgstr "경계 박스를 표시"
+
+
+msgctxt "Operator"
+msgid "Hide Bounding Box"
+msgstr "경계 박스를 숨기기"
+
+
+msgctxt "Operator"
+msgid "Hide Masked"
+msgstr "마스크된 부분을 숨기기"
+
+
+msgid "Set Pivot"
+msgstr "피벗을 설정"
+
+
+msgctxt "Operator"
+msgid "Invert Mask"
+msgstr "마스크를 반전"
+
+
+msgctxt "Operator"
+msgid "Fill Mask"
+msgstr "마스크를 채우기"
+
+
+msgctxt "Operator"
+msgid "Clear Mask"
+msgstr "마스크를 지우기"
+
+
+msgctxt "Operator"
+msgid "Smooth Mask"
+msgstr "스무스 마스크"
+
+
+msgctxt "Operator"
+msgid "Sharpen Mask"
+msgstr "샤픈 마스크"
+
+
+msgctxt "Operator"
+msgid "Grow Mask"
+msgstr "성장 마스크"
+
+
+msgctxt "Operator"
+msgid "Shrink Mask"
+msgstr "수축 마스크"
+
+
+msgctxt "Operator"
+msgid "Increase Contrast"
+msgstr "대비를 증가"
+
+
+msgctxt "Operator"
+msgid "Decrease Contrast"
+msgstr "대비를 감소"
+
+
+msgctxt "Operator"
+msgid "Expand Mask By Topology"
+msgstr "토폴로지로 마스크를 확장"
+
+
+msgctxt "Operator"
+msgid "Expand Mask By Curvature"
+msgstr "곡률로 마스크를 확장"
+
+
+msgctxt "Operator"
+msgid "Mask Slice and Fill Holes"
+msgstr "마스크 슬라이스 및 구멍을 채우기"
+
+
+msgctxt "Operator"
+msgid "Mask Slice to New Object"
+msgstr "새 오브젝트로 마스크 슬라이스"
+
+
+msgctxt "Operator"
+msgid "Pivot to Origin"
+msgstr "오리진으로 피벗"
+
+
+msgctxt "Operator"
+msgid "Pivot to Unmasked"
+msgstr "마스크 해제된 항목로 피벗"
+
+
+msgctxt "Operator"
+msgid "Pivot to Mask Border"
+msgstr "마스크 경계에 피벗"
+
+
+msgctxt "Operator"
+msgid "Pivot to Active Vertex"
+msgstr "활성 버텍스로 피벗"
+
+
+msgctxt "Operator"
+msgid "Pivot to Surface Under Cursor"
+msgstr "커서 아래 표면으로 피벗"
+
+
+msgctxt "Operator"
+msgid "Change Armature Layers..."
+msgstr "아마튜어 레이어를 변경..."
+
+
+msgctxt "Operator"
+msgid "Change Bone Layers..."
+msgstr "본 레이어를 변경..."
+
+
+msgid "Bone Settings"
+msgstr "본 설정"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "회전"
+
+
+msgctxt "Operator"
+msgid "Reset Unkeyed"
+msgstr "키가 없는 항목을 재설정"
+
+
+msgctxt "Operator"
+msgid "Browse Poses..."
+msgstr "포즈 찾아보기..."
+
+
+msgctxt "Operator"
+msgid "Add Pose..."
+msgstr "포즈를 추가..."
+
+
+msgctxt "Operator"
+msgid "Rename Pose..."
+msgstr "포즈 이름을 변경..."
+
+
+msgctxt "Operator"
+msgid "Remove Pose..."
+msgstr "포즈를 제거..."
+
+
+msgctxt "Operator"
+msgid "Calculate"
+msgstr "계산"
+
+
+msgctxt "Operator"
+msgid "Add (With Targets)..."
+msgstr "추가(대상과 함께)..."
+
+
+msgctxt "Operator"
+msgid "Rename Active Bone..."
+msgstr "활성 본 이름을 변경..."
+
+
+msgctxt "Operator"
+msgid "Calculate Motion Paths"
+msgstr "모션 경로를 계산"
+
+
+msgctxt "Operator"
+msgid "Clear Motion Paths"
+msgstr "모션 경로를 지우기"
+
+
+msgctxt "Operator"
+msgid "Sort Elements..."
+msgstr "분류 요소..."
+
+
+msgctxt "Operator"
+msgid "Extrude Vertices"
+msgstr "버텍스를 돌출"
+
+
+msgctxt "Operator"
+msgid "New Edge/Face from Vertices"
+msgstr "버텍스에서 새로운 에지/페이스"
+
+
+msgctxt "Operator"
+msgid "Connect Vertex Path"
+msgstr "버텍스 경로를 연결"
+
+
+msgctxt "Operator"
+msgid "Connect Vertex Pairs"
+msgstr "버텍스 두 개를 연결"
+
+
+msgctxt "Operator"
+msgid "Rip Vertices"
+msgstr "버텍스 추출"
+
+
+msgctxt "Operator"
+msgid "Rip Vertices and Fill"
+msgstr "버텍스 추출 및 채우기"
+
+
+msgctxt "Operator"
+msgid "Rip Vertices and Extend"
+msgstr "버텍스 추출 및 확장"
+
+
+msgctxt "Operator"
+msgid "Slide Vertices"
+msgstr "버텍스를 슬라이드"
+
+
+msgctxt "Operator"
+msgid "Propagate to Shapes"
+msgstr "셰이프로 전파"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp from Vertices"
+msgstr "버텍스에서 샤프를 지우기"
+
+
+msgctxt "Operator"
+msgid "Extrude Edges"
+msgstr "에지를 돌출"
+
+
+msgctxt "Operator"
+msgid "Extrude Faces"
+msgstr "페이스를 돌출"
+
+
+msgctxt "Operator"
+msgid "Extrude Faces Along Normals"
+msgstr "노멀을 따라 페이스를 돌출"
+
+
+msgctxt "Operator"
+msgid "Solidify Faces"
+msgstr "페이스를 솔리디파이"
+
+
+msgctxt "Operator"
+msgid "Weak"
+msgstr "약한"
+
+
+msgctxt "Operator"
+msgid "Medium"
+msgstr "중간"
+
+
+msgctxt "Operator"
+msgid "Strong"
+msgstr "강한"
+
+
+msgctxt "Operator"
+msgid "Flip"
+msgstr "뒤집기"
+
+
+msgctxt "Operator"
+msgid "Set From Faces"
+msgstr "페이스에서 설정"
+
+
+msgctxt "Operator"
+msgid "Rotate..."
+msgstr "회전..."
+
+
+msgctxt "Operator"
+msgid "Point to Target..."
+msgstr "대상으로 포인트..."
+
+
+msgctxt "Operator"
+msgid "Smooth Faces"
+msgstr "스무스 페이스"
+
+
+msgctxt "Operator"
+msgid "Flat Faces"
+msgstr "플랫 페이스"
+
+
+msgctxt "Operator"
+msgid "Sharp Edges"
+msgstr "샤프 에지"
+
+
+msgctxt "Operator"
+msgid "Edge Loops"
+msgstr "에지 루프"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "만들기"
+
+
+msgctxt "Operator"
+msgid "Bones"
+msgstr "본"
+
+
+msgctxt "Operator"
+msgid "Dissolve Bones"
+msgstr "뼈를 디졸브"
+
+
+msgctxt "Operator"
+msgid "Fixed"
+msgstr "고정됨"
+
+
+msgctxt "Operator"
+msgid "Adaptive"
+msgstr "적응형"
+
+
+msgctxt "Operator"
+msgid "Trim"
+msgstr "다듬기"
+
+
+msgctxt "Operator"
+msgid "Set as Active Material"
+msgstr "활성 매테리얼로 설정"
+
+
+msgctxt "Operator"
+msgid "Arrange Strokes"
+msgstr "스트로크를 정렬"
+
+
+msgctxt "Operator"
+msgid "Close"
+msgstr "닫기"
+
+
+msgctxt "Operator"
+msgid "Toggle Caps"
+msgstr "캡을 토글"
+
+
+msgctxt "Operator"
+msgid "Extrude Points"
+msgstr "포인트를 돌출"
+
+
+msgctxt "Operator"
+msgid "Merge Points"
+msgstr "포인트를 병합"
+
+
+msgctxt "Operator"
+msgid "Insert Blank Keyframe (Active Layer)"
+msgstr "빈 키 프레임을 삽입 (활성 레이어)"
+
+
+msgctxt "Operator"
+msgid "Duplicate Active Keyframe (Active Layer)"
+msgstr "활성 키 프레임을 복제 (활성 레이어)"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "보간"
+
+
+msgctxt "Operator"
+msgid "Sequence"
+msgstr "시퀀스"
+
+
+msgctxt "Operator"
+msgid "View Selected"
+msgstr "선택된 항목을 보기"
+
+
+msgid "Show Gizmos"
+msgstr "기즈모를 표시"
+
+
+msgid "Toggle Overlays"
+msgstr "오버레이를 토글"
+
+
+msgid "Object Types Visibility"
+msgstr "오브젝트 유형 가시성"
+
+
+msgid "Viewport Gizmos"
+msgstr "뷰 기즈모"
+
+
+msgid "Navigate"
+msgstr "네비게이트"
+
+
+msgid "Active Tools"
+msgstr "활성 도구"
+
+
+msgid "Object Gizmos"
+msgstr "오브젝트 기즈모"
+
+
+msgid "Look At"
+msgstr "바라보기"
+
+
+msgid "Viewport Overlays"
+msgstr "뷰포트 오버레이"
+
+
+msgid "Text Info"
+msgstr "텍스트 정보"
+
+
+msgid "Origins"
+msgstr "오리진"
+
+
+msgid "Origins (All)"
+msgstr "오리진 (모두)"
+
+
+msgid "Creases"
+msgstr "크리스"
+
+
+msgctxt "Plural"
+msgid "Sharp"
+msgstr "샤프"
+
+
+msgid "Seams"
+msgstr "씨임"
+
+
+msgid "Vertex Group Weights"
+msgstr "버텍스 그룹 웨이트"
+
+
+msgid "Mesh Analysis"
+msgstr "메쉬 분석"
+
+
+msgid "Face Angle"
+msgstr "페이스 각도"
+
+
+msgid "Edge Marks"
+msgstr "에지 마크"
+
+
+msgid "Zero Weights"
+msgstr "제로 웨이트"
+
+
+msgid "Snap to"
+msgstr "다음에 스냅"
+
+
+msgid "Display:"
+msgstr "표시:"
+
+
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "수축 팽창"
+
+
+msgctxt "Operator"
+msgid "Move Texture Space"
+msgstr "텍스처 공간 이동"
+
+
+msgctxt "Operator"
+msgid "Scale Texture Space"
+msgstr "텍스처 공간 축적"
+
+
+msgctxt "Operator"
+msgid "Align to Transform Orientation"
+msgstr "변환 오리엔테이션으로 정렬"
+
+
+msgctxt "Operator"
+msgid "Project from View (Bounds)"
+msgstr "뷰에서 투사 (경계)"
+
+
+msgctxt "Operator"
+msgid "Viewport Render Animation"
+msgstr "애니메이션을 뷰포트 렌더"
+
+
+msgctxt "Operator"
+msgid "Roll Left"
+msgstr "롤 왼쪽"
+
+
+msgctxt "Operator"
+msgid "Roll Right"
+msgstr "롤 오른쪽"
+
+
+msgctxt "Operator"
+msgid "Non Manifold"
+msgstr "논 매니폴드"
+
+
+msgctxt "Operator"
+msgid "Edge Rings"
+msgstr "에지 링"
+
+
+msgctxt "Operator"
+msgid "Armature"
+msgstr "아마튜어"
+
+
+msgctxt "Operator"
+msgid "Lattice"
+msgstr "래티스"
+
+
+msgctxt "Operator"
+msgid "Collection Instance..."
+msgstr "컬렉션 인스턴스..."
+
+
+msgctxt "Operator"
+msgid "No Collections to Instance"
+msgstr "인스턴스 컬렉션이 없음"
+
+
+msgctxt "Operator"
+msgid "Collection Instance"
+msgstr "컬렉션 인스턴스"
+
+
+msgctxt "Operator"
+msgid "Delete Global"
+msgstr "글로벌 삭제"
+
+
+msgctxt "Operator"
+msgid "Add Active"
+msgstr "활성을 추가"
+
+
+msgctxt "Operator"
+msgid "Add Passive"
+msgstr "수동을 추가"
+
+
+msgid "Location to Deltas"
+msgstr "델타로 위치"
+
+
+msgid "Rotation to Deltas"
+msgstr "델타로 회전"
+
+
+msgid "Scale to Deltas"
+msgstr "델타로 축적"
+
+
+msgid "All Transforms to Deltas"
+msgstr "델타로 모두 변환"
+
+
+msgid "Visual Geometry to Mesh"
+msgstr "메쉬에 시각적인 지오메트리"
+
+
+msgctxt "Operator"
+msgid "Objects to Scene..."
+msgstr "오브젝트를 씬에..."
+
+
+msgctxt "Operator"
+msgid "Objects to Scene"
+msgstr "오브젝트를 씬에"
+
+
+msgctxt "Operator"
+msgid "Hook to Selected Object Bone"
+msgstr "선택된 오브젝트 본에 후크"
+
+
+msgctxt "Operator"
+msgid "Transfer Weights"
+msgstr "웨이트를 전송"
+
+
+msgctxt "Operator"
+msgid "Paste Pose Flipped"
+msgstr "뒤집힌 포즈를 붙여 넣기"
+
+
+msgctxt "Operator"
+msgid "To Next Keyframe"
+msgstr "다음 키 프레임으로"
+
+
+msgctxt "Operator"
+msgid "To Last Keyframe (Make Cyclic)"
+msgstr "마지막 키 프레임으로 (사이클을 만들기)"
+
+
+msgctxt "Operator"
+msgid "On Selected Keyframes"
+msgstr "선택된 키 프레임에"
+
+
+msgctxt "Operator"
+msgid "On Selected Markers"
+msgstr "선택된 마커에"
+
+
+msgctxt "Operator"
+msgid "AutoName Left/Right"
+msgstr "자동이름 왼쪽/오른쪽"
+
+
+msgctxt "Operator"
+msgid "AutoName Front/Back"
+msgstr "자동이름 앞쪽/뒤쪽"
+
+
+msgctxt "Operator"
+msgid "AutoName Top/Bottom"
+msgstr "자동이름 위쪽/아래쪽"
+
+
+msgctxt "Operator"
+msgid "Apply Selected as Rest Pose"
+msgstr "레스트 포즈로 선택된 항목을 적용"
+
+
+msgctxt "Operator"
+msgid "Paste X-Flipped Pose"
+msgstr "X-뒤집힌 포즈를 붙여 넣기"
+
+
+msgid "Vertex Context Menu"
+msgstr "버텍스 컨텍스트 메뉴"
+
+
+msgctxt "Operator"
+msgid "Smooth Laplacian"
+msgstr "스무스 라플라시안"
+
+
+msgid "Mirror Vertices"
+msgstr "버텍스를 미러"
+
+
+msgid "Snap Vertices"
+msgstr "버텍스를 스냅"
+
+
+msgid "Edge Context Menu"
+msgstr "에지 컨텍스트 메뉴"
+
+
+msgid "Face Context Menu"
+msgstr "페이스 컨텍스트 메뉴"
+
+
+msgid "UV Unwrap Faces"
+msgstr "페이스를 UV 펼치기"
+
+
+msgctxt "Operator"
+msgid "Bevel Vertices"
+msgstr "버텍스를 베벨"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "샤프를 지우기"
+
+
+msgctxt "Operator"
+msgid "Mark Sharp from Vertices"
+msgstr "버텍스에서 샤프를 마크"
+
+
+msgctxt "Operator"
+msgid "Bevel Edges"
+msgstr "에지를 베벨"
+
+
+msgctxt "Operator"
+msgid "Rotate Edge CW"
+msgstr "에지를 CW 회전"
+
+
+msgctxt "Operator"
+msgid "Rotate Edge CCW"
+msgstr "에지를 CCW 회전"
+
+
+msgctxt "Operator"
+msgid "Custom Normal"
+msgstr "커스텀 노멀"
+
+
+msgctxt "Operator"
+msgid "Face Area"
+msgstr "페이스 영역"
+
+
+msgctxt "Operator"
+msgid "Corner Angle"
+msgstr "코너 각도"
+
+
+msgctxt "Operator"
+msgid "Recalculate Outside"
+msgstr "외부를 재계산"
+
+
+msgctxt "Operator"
+msgid "Recalculate Inside"
+msgstr "내부를 재계산"
+
+
+msgctxt "Operator"
+msgid "Copy Vectors"
+msgstr "벡터를 복사"
+
+
+msgctxt "Operator"
+msgid "Paste Vectors"
+msgstr "벡터를 붙여 넣기"
+
+
+msgctxt "Operator"
+msgid "Reset Vectors"
+msgstr "벡터를 초기화"
+
+
+msgctxt "Operator"
+msgid "Smooth Edges"
+msgstr "스무스 에지"
+
+
+msgctxt "Operator"
+msgid "Sharp Vertices"
+msgstr "샤프 버텍스"
+
+
+msgctxt "Operator"
+msgid "Delete Segment"
+msgstr "세그먼트를 삭제"
+
+
+msgctxt "Operator"
+msgid "Delete Point"
+msgstr "포인트를 삭제"
+
+
+msgctxt "Operator"
+msgid "Copyright"
+msgstr "저작권"
+
+
+msgctxt "Operator"
+msgid "Registered Trademark"
+msgstr "등록된 상표"
+
+
+msgctxt "Operator"
+msgid "Degree Sign"
+msgstr "디그리 기호"
+
+
+msgctxt "Operator"
+msgid "Multiplication Sign"
+msgstr "곱셈 기호"
+
+
+msgctxt "Operator"
+msgid "Superscript 1"
+msgstr "첨자 1"
+
+
+msgctxt "Operator"
+msgid "Superscript 2"
+msgstr "첨자 2"
+
+
+msgctxt "Operator"
+msgid "Superscript 3"
+msgstr "첨자 3"
+
+
+msgctxt "Operator"
+msgid "Double >>"
+msgstr "이중 >>"
+
+
+msgctxt "Operator"
+msgid "Double <<"
+msgstr "이중 <<"
+
+
+msgctxt "Operator"
+msgid "Promillage"
+msgstr "프로밀레이지"
+
+
+msgctxt "Operator"
+msgid "Dutch Florin"
+msgstr "네덜란드 플로린"
+
+
+msgctxt "Operator"
+msgid "British Pound"
+msgstr "영국 파운드"
+
+
+msgctxt "Operator"
+msgid "Japanese Yen"
+msgstr "일본 엔"
+
+
+msgctxt "Operator"
+msgid "German S"
+msgstr "독일어 S"
+
+
+msgctxt "Operator"
+msgid "Spanish Question Mark"
+msgstr "스페인어 물음표"
+
+
+msgctxt "Operator"
+msgid "Spanish Exclamation Mark"
+msgstr "스페인어 느낌표"
+
+
+msgctxt "Operator"
+msgid "To Uppercase"
+msgstr "대문자로"
+
+
+msgctxt "Operator"
+msgid "To Lowercase"
+msgstr "소문자로"
+
+
+msgctxt "Operator"
+msgid "Toggle Bold"
+msgstr "굵기를 토글"
+
+
+msgctxt "Operator"
+msgid "Toggle Italic"
+msgstr "기울임을 토글"
+
+
+msgctxt "Operator"
+msgid "Toggle Underline"
+msgstr "밑줄을 토글"
+
+
+msgctxt "Operator"
+msgid "Toggle Small Caps"
+msgstr "작은 대문자를 토글"
+
+
+msgctxt "Operator"
+msgid "Set Roll"
+msgstr "롤을 설정"
+
+
+msgctxt "Operator"
+msgid "With Empty Groups"
+msgstr "빈 그룹과 함께"
+
+
+msgctxt "Operator"
+msgid "With Automatic Weights"
+msgstr "자동 웨이트와 함께"
+
+
+msgid "No layer to copy"
+msgstr "복사 할 레이어가 없습니다"
+
+
+msgctxt "Operator"
+msgid "Paste by Layer"
+msgstr "레이어로 붙여 넣기"
+
+
+msgctxt "Operator"
+msgid "Smooth Points"
+msgstr "스무스 포인트"
+
+
+msgctxt "Operator"
+msgid "Insert Blank Keyframe (All Layers)"
+msgstr "빈 키 프레임을 삽입 (모든 레이어)"
+
+
+msgctxt "Operator"
+msgid "Duplicate Active Keyframe (All Layers)"
+msgstr "활성 키 프레임을 복제 (모든 레이어)"
+
+
+msgctxt "Operator"
+msgid "Hide Active Layer"
+msgstr "활성 레이어를 숨기기"
+
+
+msgctxt "Operator"
+msgid "Hide Inactive Layers"
+msgstr "비활성 레이어를 숨기기"
+
+
+msgid "Toggle X-Ray"
+msgstr "X-Ray를 토글"
+
+
+msgid "X-Ray"
+msgstr "X-Ray"
+
+
+msgid "Marker Names"
+msgstr "마커 이름"
+
+
+msgid "Tracks:"
+msgstr "트랙:"
+
+
+msgid "Developer"
+msgstr "개발자"
+
+
+msgid "Fade Geometry"
+msgstr "페이드 지오메트리"
+
+
+msgid "Snap with"
+msgstr "다음으로 스냅"
+
+
+msgid "Reference Point"
+msgstr "참조 포인트"
+
+
+msgid "Point Context Menu"
+msgstr "포인트 컨텍스트 메뉴"
+
+
+msgid "Mirror Points"
+msgstr "포인트를 미러"
+
+
+msgid "Snap Points"
+msgstr "포인트를 스냅"
+
+
+msgid "Stroke Context Menu"
+msgstr "스트로크 컨텍스트 메뉴"
+
+
+msgid "Mirror Stroke"
+msgstr "스트로크를 미러"
+
+
+msgid "Snap Stroke"
+msgstr "스트로크를 스냅"
+
+
+msgid "Multiframe"
+msgstr "멀티프레임"
+
+
+msgctxt "Operator"
+msgid "Frame Selected (Quad View)"
+msgstr "선택한 프레임 (쿼드 뷰)"
+
+
+msgctxt "Operator"
+msgid "Assign Automatic From Bones"
+msgstr "본에서 자동 할당"
+
+
+msgctxt "Operator"
+msgid "Assign From Bone Envelopes"
+msgstr "본 엔벨로프에서 할당"
+
+
+msgctxt "Operator"
+msgid "Assign to Group"
+msgstr "그룹에 할당"
+
+
+msgctxt "Operator"
+msgid "Randomize Vertices"
+msgstr "버텍스를 렌덤화"
+
+
+msgctxt "Operator"
+msgid "Delete Vertices"
+msgstr "버텍스를 삭제"
+
+
+msgctxt "Operator"
+msgid "New Face from Edges"
+msgstr "에지에서 새로운 페이스"
+
+
+msgctxt "Operator"
+msgid "Delete Edges"
+msgstr "에지를 삭제"
+
+
+msgctxt "Operator"
+msgid "Bridge Faces"
+msgstr "페이스를 브릿지"
+
+
+msgctxt "Operator"
+msgid "Delete Faces"
+msgstr "페이스를 삭제"
+
+
+msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "프리스타일 에지를 지우기"
+
+
+msgctxt "Operator"
+msgid "Clear Freestyle Face"
+msgstr "프리스타일 페이스를 지우기"
+
+
+msgid "No destination object"
+msgstr "목적지 오브젝트가 없음"
+
+
+msgid "Specular Lighting"
+msgstr "반사 라이트닝"
+
+
+msgid "Custom Location"
+msgstr "커스텀 위치"
+
+
+msgctxt "Operator"
+msgid "Delete Points"
+msgstr "포인트를 삭제"
+
+
+msgctxt "Operator"
+msgid "Dissolve Points"
+msgstr "포인트를 디졸브"
+
+
+msgctxt "Operator"
+msgid "Dissolve Between"
+msgstr "사이를 디졸브"
+
+
+msgctxt "Operator"
+msgid "Dissolve Unselected"
+msgstr "비선택을 디졸브"
+
+
+msgctxt "Operator"
+msgid "Delete Strokes"
+msgstr "스트로크를 삭제"
+
+
+msgctxt "Operator"
+msgid "Scale BBone"
+msgstr "B본 축적"
+
+
+msgctxt "Operator"
+msgid "Remove from All"
+msgstr "모두에서 제거"
+
+
+msgid "Disable Studio Light Edit"
+msgstr "스튜디오 라이트 편집을 사용 중지"
+
+
+msgid "Object Location"
+msgstr "오브젝트 위치"
+
+
+msgctxt "Operator"
+msgid "Scale Envelope Distance"
+msgstr "축적 엔벨로프 거리"
+
+
+msgctxt "Operator"
+msgid "Scale Radius"
+msgstr "축적 반경"
+
+
+msgctxt "Operator"
+msgid "Camera Lens Angle"
+msgstr "카메라 렌즈 각도"
+
+
+msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "카메라 렌즈 축적"
+
+
+msgctxt "Operator"
+msgid "Extrude Size"
+msgstr "크기를 돌출"
+
+
+msgctxt "Operator"
+msgid "Width Size"
+msgstr "폭 크기"
+
+
+msgid "Ridge"
+msgstr "능선"
+
+
+msgid "Valley"
+msgstr "계곡"
+
+
+msgid "No object selected, using cursor"
+msgstr "커서를 사용하여 오브젝트를 선택하지 않았습니다"
+
+
+msgctxt "Operator"
+msgid "DOF Distance (Pick)"
+msgstr "DOF 거리 (선택)"
+
+
+msgctxt "Operator"
+msgid "DOF Distance"
+msgstr "DOF 거리"
+
+
+msgctxt "Operator"
+msgid "Convert to Mesh"
+msgstr "메쉬로 변환"
+
+
+msgctxt "Operator"
+msgid "Convert to Grease Pencil"
+msgstr "그리스 펜슬로 변환"
+
+
+msgctxt "Operator"
+msgid "Convert to Path"
+msgstr "경로로 변환"
+
+
+msgctxt "Operator"
+msgid "Convert to Bezier Curve"
+msgstr "베지어 커브로 변환"
+
+
+msgctxt "Operator"
+msgid "Convert to Polygon Curve"
+msgstr "폴리곤 커브로 변환"
+
+
+msgctxt "Operator"
+msgid "Empty Draw Size"
+msgstr "엠프티 그리기 크기"
+
+
+msgctxt "Operator"
+msgid "Power"
+msgstr "파워"
+
+
+msgctxt "Operator"
+msgid "Size X"
+msgstr "크기 X"
+
+
+msgctxt "Operator"
+msgid "Spot Size"
+msgstr "스폿 크기"
+
+
+msgctxt "Operator"
+msgid "Spot Blend"
+msgstr "스폿 혼합"
+
+
+msgctxt "Operator"
+msgid "Size Y"
+msgstr "크기 Y"
+
+
+msgctxt "Operator"
+msgid "Angle"
+msgstr "각도"
+
+
+msgid "Layer:"
+msgstr "레이어:"
+
+
+msgid "Locations"
+msgstr "위치"
+
+
+msgid "Affect Only"
+msgstr "영향 만"
+
+
+msgid "Display Color"
+msgstr "표시 컬러"
+
+
+msgid "Refine Method"
+msgstr "수정 방법"
+
+
+msgid "Detailing"
+msgstr "디테일링"
+
+
+msgctxt "Operator"
+msgid "Remesh"
+msgstr "리메쉬"
+
+
+msgid "Tile Offset"
+msgstr "타일 오프셋"
+
+
+msgid "Auto Normalize"
+msgstr "자동 노멀라이즈"
+
+
+msgid "Multi-Paint"
+msgstr "다중 페인트"
+
+
+msgctxt "Operator"
+msgid "Quick Edit"
+msgstr "빠르게 편집"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "적용"
+
+
+msgctxt "Operator"
+msgid "Apply Camera Image"
+msgstr "카메라 이미지를 적용"
+
+
+msgid "Editing Type"
+msgstr "편집 유형"
+
+
+msgid "Preserve Strand Lengths"
+msgstr "가닥 길이를 보존"
+
+
+msgid "Preserve Root Positions"
+msgstr "루트 위치를 보존"
+
+
+msgid "Path Steps"
+msgstr "경로 단계"
+
+
+msgid "Interpolate Strokes"
+msgstr "보간 스트로크"
+
+
+msgid "Sequence Options:"
+msgstr "시퀀스 옵션:"
+
+
+msgid "No Brushes currently available"
+msgstr "현재 사용할 수있는 브러쉬가 없음"
+
+
+msgid "UV Map Needed"
+msgstr "필요한 UV 맵"
+
+
+msgctxt "Operator"
+msgid "Add Simple UVs"
+msgstr "심플 UV를 추가"
+
+
+msgid "Point cache must be baked"
+msgstr "포인트 캐시는 베이크해야 함"
+
+
+msgid "in memory to enable editing!"
+msgstr "편집을 가능하게하는 메모리에!"
+
+
+msgid "Auto-Velocity"
+msgstr "자동-속도"
+
+
+msgid "No Textures"
+msgstr "텍스처가 없음"
+
+
+msgctxt "Operator"
+msgid "Add UVs"
+msgstr "UV를 추가"
 
 
 msgid "No AnimData to set action on"
@@ -84608,18 +90437,6 @@ msgid "Rectangle: ESC to cancel, LMB set origin, Enter/MMB to confirm, WHEEL/+- 
 msgstr "직사각형: 취소 Esc, 오리진 설정 LMB, 확인 Enter/MMB , 세분화 수를 조정 WHEEL/+-, 사각형 Shift , 가운데 Alt"
 
 
-msgid "Circle: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust edge number, Shift to square, Alt to center"
-msgstr "원: 취소 ESC, 확인 Enter/MMB, 모서리 수 조정 WHEEL/+-, 사각형 Shift , 가운데 Alt"
-
-
-msgid "Arc: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust edge number, Shift to square, Alt to center, M: Flip, E: extrude"
-msgstr "아크: 취소 ESC, 확인 Enter/MMB, 모서리 수 조정 WHEEL/+-, 사각형 Shift , 가운데 Alt , M: 뒤집기, E: 돌출"
-
-
-msgid "Curve: ESC to cancel, Enter/MMB to confirm, WHEEL/+- to adjust edge number, Shift to square, Alt to center, E: extrude"
-msgstr "커브 : 취소 ESC, 확인 Enter/MMB , 에지 수를 조정 WHEEL/+-, 사각형으로 Shift, 가운데로 Alt, E: 돌출"
-
-
 msgid "Primitives can only be added in Draw or Edit modes"
 msgstr "프리미티브는 그리기 또는 에디트 모드에서만 추가 할 수 있습니다"
 
@@ -84634,10 +90451,6 @@ msgstr "그리스 펜슬 스컬프트: %s 스트로크 | LMB로 페인트 | RMB/
 
 msgid "Copy some strokes to the clipboard before using the Clone brush to paste copies of them"
 msgstr "클론 브러시를 사용하여 사본을 붙여 넣기 전에 클립 보드에 일부 스트로크를 복사"
-
-
-msgid "Cannot sculpt while play animation"
-msgstr "애니메이션을 재생하는 동안 스컬프트을 할 수 없습니다"
 
 
 msgid "Non-Keyboard Shortcut"
@@ -85471,10 +91284,6 @@ msgstr "구체"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "아이코스피어"
-
-
-msgid "Seams"
-msgstr "씨임"
 
 
 msgid "LMB: Click and drag to draw cut line"
@@ -87140,10 +92949,6 @@ msgid "Not implemented for Masks"
 msgstr "마스크에 대해 구현되지 않음"
 
 
-msgid "Follow context or keep fixed data-block displayed"
-msgstr "컨텍스트를 따르거나 고정된 데이터 블록을 계속 표시합니다"
-
-
 msgid "Cannot activate a file selector, one already open"
 msgstr "이미 열려있는 파일 선택기를 활성화 할 수 없습니다"
 
@@ -87174,10 +92979,6 @@ msgstr "파일 경로:"
 
 msgid "Track is locked"
 msgstr "트랙이 잠김"
-
-
-msgid "Position:"
-msgstr "위치:"
 
 
 msgid "X:"
@@ -87294,10 +93095,6 @@ msgstr "프레임: %d / %d"
 
 msgid "Frame: - / %d"
 msgstr "프레임: - / %d"
-
-
-msgid "File: %s"
-msgstr "파일: %s"
 
 
 msgid "unsupported movie clip format"
@@ -87753,10 +93550,6 @@ msgid "Unpack %d Files"
 msgstr "%d 파일을 포장 해제"
 
 
-msgid "Unpack"
-msgstr "포장 해제"
-
-
 msgid "No packed files to unpack"
 msgstr "포장 해제 할 포장된 파일이 없음"
 
@@ -87941,10 +93734,6 @@ msgid "Add Input"
 msgstr "입력을 추가"
 
 
-msgid "Layer:"
-msgstr "레이어:"
-
-
 msgid "File Subpath:"
 msgstr "파일 하위 경로:"
 
@@ -88007,10 +93796,6 @@ msgstr "마스크 '%s'을 찾을 수 없습니다"
 
 msgid "Node tree type %s undefined"
 msgstr "노드 트리 유형 %s 미정의"
-
-
-msgid "Inputs:"
-msgstr "입력:"
 
 
 msgid "Outputs:"
@@ -88173,10 +93958,6 @@ msgid "Restrict visibility in the 3D View"
 msgstr "3D뷰에서 가시성을 제한"
 
 
-msgid "Restrict selection in the 3D View"
-msgstr "3D뷰에서 선택을 제한"
-
-
 msgid "Restrict editing of strokes and keyframes in this layer"
 msgstr "이 레이어의 스트로크 및 키 프레임 편집을 제한"
 
@@ -88268,10 +94049,6 @@ msgstr "라이브러리 경로 '%s'가 유효함, 라이브러리를 새로 고�
 
 msgid "). Click here to proceed..."
 msgstr "). 진행하려면 여기를 클릭하십시오..."
-
-
-msgid "Active object mode not changed"
-msgstr "활성 오브젝트가 변경되지 않았습니다"
 
 
 msgid "Cannot edit builtin name"
@@ -88918,24 +94695,12 @@ msgid " along X axis"
 msgstr " X 축을 따라"
 
 
-msgid " locking %s X axis"
-msgstr " %s X 축을 잠그기"
-
-
 msgid " along %s X axis"
 msgstr " %s X 축을 따라"
 
 
-msgid " locking %s Y axis"
-msgstr " %s Y 축을 잠그기"
-
-
 msgid " along %s Y axis"
 msgstr " %s Y 축을 따라"
-
-
-msgid " locking %s Z axis"
-msgstr " %s Z 축을 잠그기"
 
 
 msgid " along %s Z axis"
@@ -89339,11 +95104,6 @@ msgid "UV Vertex"
 msgstr "UV 버텍스"
 
 
-msgctxt "Operator"
-msgid "Clear Seam"
-msgstr "씨임을 지우기"
-
-
 msgid "Cannot split selection when sync selection is enabled"
 msgstr "동기화 선택이 활성화된 경우 선택 영역을 분할할 수 없습니다"
 
@@ -89386,11 +95146,6 @@ msgstr "프리스타일: 스트로크 렌더링"
 
 msgid "Cannot open file: %s"
 msgstr "읽을 수 없는 파일: %s"
-
-
-msgctxt "Operator"
-msgid "Apply"
-msgstr "적용"
 
 
 msgid "Bone Envelopes"
@@ -90356,14 +96111,6 @@ msgid "Outer"
 msgstr "바깥"
 
 
-msgid "Aspect X"
-msgstr "측면 X"
-
-
-msgid "To"
-msgstr "다음으로"
-
-
 msgid "Global Influence:"
 msgstr "글로벌 영향:"
 
@@ -90500,14 +96247,6 @@ msgid "Shader Editor"
 msgstr "셰이더 에디터"
 
 
-msgid "AO"
-msgstr "AO"
-
-
-msgid "Temperature"
-msgstr "온도"
-
-
 msgid "Anisotropy"
 msgstr "비등방성"
 
@@ -90556,10 +96295,6 @@ msgid "Random Roughness"
 msgstr "렌덤 거칠기"
 
 
-msgid "Subsurface"
-msgstr "서브 표면"
-
-
 msgid "Subsurface Radius"
 msgstr "서브 표면 샘플 반경"
 
@@ -90596,6 +96331,10 @@ msgid "Transmission Roughness"
 msgstr "전송 거칠기"
 
 
+msgid "Emission Strength"
+msgstr "방출 강도"
+
+
 msgid "Clearcoat Normal"
 msgstr "클리어코트 노멀"
 
@@ -90622,10 +96361,6 @@ msgstr "뷰 Z 깊이"
 
 msgid "View Distance"
 msgstr "뷰 거리"
-
-
-msgid "Result"
-msgstr "결과"
 
 
 msgid "Emissive Color"
@@ -90780,16 +96515,12 @@ msgid "Reflection"
 msgstr "반사"
 
 
-msgid "Detail"
-msgstr "디테일"
-
-
-msgid "Dimension"
-msgstr "크기"
-
-
 msgid "Detail Scale"
 msgstr "디테일 축적"
+
+
+msgid "Flame"
+msgstr "플래임"
 
 
 msgid "Color Attribute"
@@ -90802,10 +96533,6 @@ msgstr "밀도 속성"
 
 msgid "Absorption Color"
 msgstr "흡수 컬러"
-
-
-msgid "Emission Strength"
-msgstr "방출 강도"
 
 
 msgid "Emission Color"
@@ -90866,14 +96593,6 @@ msgstr "W4"
 
 msgid "iScale"
 msgstr "반대 축적"
-
-
-msgid ""
-"%s\n"
-"location: %s:%d"
-msgstr ""
-"%s\n"
-"위치: %s:%d"
 
 
 msgid "Unknown py-exception, could not convert"
@@ -91110,10 +96829,6 @@ msgstr "'%s': 아무것도 표시하지 않음"
 
 msgid "'%s': cannot use current file as library"
 msgstr "'%s': 라이브러리로 현재 파일을 사용 할 수 없습니다"
-
-
-msgid "Scene '%s' is linked, instantiation of objects & groups is disabled"
-msgstr "씬 '%s'이 연결되어 있으면 개체 및 그룹의 인스턴스가 비활성화됩니다"
 
 
 msgid "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, old one (%d remaining users) had to be kept and was renamed to '%s'"
