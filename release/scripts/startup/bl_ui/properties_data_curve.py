@@ -227,7 +227,11 @@ class DATA_PT_geometry_curve_bevel(CurveButtonsPanelCurve, Panel):
         else:
             col.prop(curve, "bevel_depth", text="Depth")
             col.prop(curve, "bevel_resolution", text="Resolution")
-        col.prop(curve, "use_fill_caps")
+
+        row = col.row()
+        row.use_property_split = False
+        row.prop(curve, "use_fill_caps")
+        row.prop_decorator(curve, "use_fill_caps")
 
         if type(curve) is not TextCurve:
 
