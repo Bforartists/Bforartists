@@ -2019,7 +2019,7 @@ class CYCLES_RENDER_PT_bake_influence(CyclesButtonsPanel, Panel):
 
         elif cscene.bake_type in {'DIFFUSE', 'GLOSSY', 'TRANSMISSION'}:
             col = layout.column(heading="Contributions", align=True)
-            row.use_property_split = False
+            col.use_property_split = False
             col.prop(cbk, "use_pass_direct")
             col.prop(cbk, "use_pass_indirect")
             col.prop(cbk, "use_pass_color")
