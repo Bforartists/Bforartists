@@ -37,10 +37,11 @@ extern "C" {
 /** Blender release cycle stage: alpha/beta/rc/release. */
 #define BLENDER_VERSION_CYCLE alpha
 
+/* Bforartists major and minor version. */
 #define BFORARTISTS_VERSION 25
-/* Blender patch version for bugfix releases. */
-#define BFORARTISTS_VERSION_PATCH 0
-/** Blender release cycle stage: alpha/beta/rc/release. */
+/* Bforartists patch version for bugfix releases. */
+#define BFORARTISTS_VERSION_PATCH 1
+/** Bforartists release cycle stage: alpha/beta/rc/release. */
 #define BFORARTISTS_VERSION_CYCLE alpha
 
 /* Blender file format version. */
