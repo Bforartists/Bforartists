@@ -2736,7 +2736,7 @@ static bool graphkeys_framejump_poll(bContext *C)
 {
   /* prevent changes during render */
   if (G.is_rendering) {
-    return 0;
+    return false;
   }
 
   return graphop_visible_keyframes_poll(C);
@@ -3625,7 +3625,7 @@ static bool graph_driver_delete_invalid_poll(bContext *C)
 
   /* firstly, check if in Graph Editor */
   if ((area == NULL) || (area->spacetype != SPACE_GRAPH)) {
-    return 0;
+    return false;
   }
 
   /* try to init Anim-Context stuff ourselves and check */
