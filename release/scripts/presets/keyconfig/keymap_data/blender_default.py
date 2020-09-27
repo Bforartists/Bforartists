@@ -1008,12 +1008,17 @@ def km_view3d(params):
         ("view3d.localview", {"type": 'MOUSESMARTZOOM', "value": 'ANY'}, None),
         ("view3d.localview_remove_from", {"type": 'M', "value": 'PRESS'}, None),
         # Navigation.
+        ("view3d.rotate", {"type": 'MOUSEROTATE', "value": 'ANY'}, None),
         *((
             ("view3d.rotate", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True}, None),
             ("view3d.move", {"type": 'MIDDLEMOUSE', "value": 'PRESS'}, None),
+            ("view3d.rotate", {"type": 'TRACKPADPAN', "value": 'ANY', "shift": True}, None),
+            ("view3d.move", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
         ) if params.use_v3d_mmb_pan else (
             ("view3d.rotate", {"type": 'MIDDLEMOUSE', "value": 'PRESS'}, None),
             ("view3d.move", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True}, None),
+            ("view3d.rotate", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
+            ("view3d.move", {"type": 'TRACKPADPAN', "value": 'ANY', "shift": True}, None),
         )),
         ("view3d.zoom", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "ctrl": True}, None),
         ("view3d.dolly", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "shift": True, "ctrl": True}, None),
@@ -1022,9 +1027,6 @@ def km_view3d(params):
         ("view3d.view_selected", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'},
          {"properties": [("use_all_regions", False)]}),
         ("view3d.smoothview", {"type": 'TIMER1', "value": 'ANY', "any": True}, None),
-        ("view3d.rotate", {"type": 'TRACKPADPAN', "value": 'ANY'}, None),
-        ("view3d.rotate", {"type": 'MOUSEROTATE', "value": 'ANY'}, None),
-        ("view3d.move", {"type": 'TRACKPADPAN', "value": 'ANY', "shift": True}, None),
         ("view3d.zoom", {"type": 'TRACKPADZOOM', "value": 'ANY'}, None),
         ("view3d.zoom", {"type": 'TRACKPADPAN', "value": 'ANY', "ctrl": True}, None),
         ("view3d.zoom", {"type": 'NUMPAD_PLUS', "value": 'PRESS'},
@@ -5011,7 +5013,7 @@ def km_transform_modal_map(_params):
         ("AUTOIK_CHAIN_LEN_DOWN", {"type": 'WHEELUPMOUSE', "value": 'PRESS', "shift": True}, None),
         ("INSERTOFS_TOGGLE_DIR", {"type": 'T', "value": 'PRESS', "repeat": False}, None),
         ("AUTOCONSTRAIN", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "repeat": False}, None),
-        ("AUTOCONSTRAIN", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "repeat": False, "shift": True}, None),
+        ("AUTOCONSTRAINPLANE", {"type": 'MIDDLEMOUSE', "value": 'PRESS', "repeat": False, "shift": True}, None),
     ])
 
     return keymap
@@ -6386,6 +6388,17 @@ def km_3d_view_tool_sculpt_lasso_trim(params):
         ]},
     )
 
+def km_3d_view_tool_sculpt_line_mask(params):
+    return (
+        "3D View Tool: Sculpt, Line Mask",
+        {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
+        {"items": [
+            ("paint.mask_line_gesture", {"type": params.tool_tweak, "value": 'ANY'},
+             {"properties": [("value", 1.0)]}),
+            ("paint.mask_line_gesture", {"type": params.tool_tweak, "value": 'ANY', "ctrl": True},
+             {"properties": [("value", 0.0)]}),
+        ]},
+    )
 
 def km_3d_view_tool_sculpt_mesh_filter(params):
     return (
@@ -6991,6 +7004,7 @@ def generate_keymaps(params=None):
         km_3d_view_tool_sculpt_lasso_face_set(params),
         km_3d_view_tool_sculpt_box_trim(params),
         km_3d_view_tool_sculpt_lasso_trim(params),
+        km_3d_view_tool_sculpt_line_mask(params),
         km_3d_view_tool_sculpt_mesh_filter(params),
         km_3d_view_tool_sculpt_cloth_filter(params),
         km_3d_view_tool_sculpt_color_filter(params),
