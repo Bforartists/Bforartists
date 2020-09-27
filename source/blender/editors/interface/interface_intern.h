@@ -524,12 +524,6 @@ struct uiBlock {
    */
   char display_device[64];
 
-  /**
-   * Pointer to the space's property search string.
-   * The block doesn't allocate this or change it.
-   */
-  const char *search_filter;
-
   struct PieMenuData pie_data;
 };
 
@@ -820,7 +814,7 @@ extern void ui_draw_aligned_panel(const struct uiStyle *style,
                                   const bool show_pin,
                                   const bool show_background,
                                   const bool region_search_filter_active);
-void ui_panel_set_search_filter_match(struct Panel *panel, const bool value);
+void ui_panel_tag_search_filter_match(struct Panel *panel);
 
 /* interface_draw.c */
 extern void ui_draw_dropshadow(
