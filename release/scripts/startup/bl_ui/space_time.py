@@ -204,33 +204,63 @@ class TIME_PT_playback(TimelinePanelButtons, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         screen = context.screen
         scene = context.scene
 
+        col = layout.column(align = True)
+        col.label(text = "Audio")
+        row = col.row()
+        row.separator()
+        row.use_property_split = True
+        row.prop(scene, "sync_mode", text="Sync Mode")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "use_audio_scrub", text="Scrubbing")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "use_audio", text="Mute")
+
+        col = layout.column(align = True)
+        col.label(text = "Playback")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "lock_frame_selection_to_range", text="Limit to Frame Range")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_follow", text="Follow Current Frame")
+
+        col = layout.column(align = True)
+        col.label(text = "Play In")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_top_left_3d_editor", text="Active Editor")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_3d_editors", text="3D Viewport")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_animation_editors", text="Animation Editors")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_image_editors", text="Image Editor")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_properties_editors", text="Properties Editor")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_node_editors", text="Node Editors")
+        row = col.row()
+        row.separator()
+        row.prop(screen, "use_play_sequence_editors", text="Video Sequencer")
+
         col = layout.column()
-        col.prop(scene, "sync_mode", text="Audio")
-        col.prop(scene, "use_audio_scrub", text="Scrubbing")
-        col.prop(scene, "use_audio", text="Mute")
-
-        col = layout.column(heading="Playback")
-        col.prop(scene, "lock_frame_selection_to_range", text="Limit to Frame Range")
-        col.prop(screen, "use_follow", text="Follow Current Frame")
-
-        col = layout.column(heading="Play In")
-        col.prop(screen, "use_play_top_left_3d_editor", text="Active Editor")
-        col.prop(screen, "use_play_3d_editors", text="3D Viewport")
-        col.prop(screen, "use_play_animation_editors", text="Animation Editors")
-        col.prop(screen, "use_play_image_editors", text="Image Editor")
-        col.prop(screen, "use_play_properties_editors", text="Properties Editor")
-        col.prop(screen, "use_play_clip_editors", text="Movie Clip Editor")
-        col.prop(screen, "use_play_node_editors", text="Node Editors")
-        col.prop(screen, "use_play_sequence_editors", text="Video Sequencer")
-
-        col = layout.column(heading="Show")
-        col.prop(scene, "show_subframe", text="Subframes")
+        col.prop(scene, "show_subframe", text="Show Subframes")
 
         layout.separator()
 
