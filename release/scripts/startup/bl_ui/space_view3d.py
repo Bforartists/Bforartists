@@ -7306,7 +7306,14 @@ class VIEW3D_PT_overlay_motion_tracking(Panel):
         overlay = view.overlay
         display_all = overlay.show_overlays
         layout.active = display_all
-        layout.prop(view, "show_reconstruction", text=self.bl_label)
+
+        row = layout.row()
+        split = row.split()
+        split.prop(view, "show_reconstruction", text=self.bl_label)
+        if view.show_reconstruction:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
     def draw(self, context):
         layout = self.layout
@@ -7321,7 +7328,6 @@ class VIEW3D_PT_overlay_motion_tracking(Panel):
             split = col.split()
 
             sub = split.column(align=True)
-            sub.active = view.show_reconstruction
             sub.prop(view, "show_camera_path", text="Camera Path")
 
             sub = split.column()
