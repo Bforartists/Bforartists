@@ -7270,15 +7270,19 @@ class VIEW3D_PT_overlay_geometry(Panel):
         display_all = overlay.show_overlays
         is_wireframes = view.shading.type == 'WIREFRAME'
 
-        col = layout.column()
+        col = layout.column(align = True)
         col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(overlay, "show_wireframes")
 
-        row = col.row(align=True)
-        if not is_wireframes:
-            row.prop(overlay, "show_wireframes", text="")
-        sub = row.row()
-        sub.active = overlay.show_wireframes or is_wireframes
-        sub.prop(overlay, "wireframe_threshold", text="Wireframe")
+        row = split.row(align=True)
+        if overlay.show_wireframes or is_wireframes:
+            row.prop(overlay, "wireframe_threshold", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
         col = layout.column(align=True)
         col.active = display_all
@@ -7286,10 +7290,19 @@ class VIEW3D_PT_overlay_geometry(Panel):
         col.prop(overlay, "show_face_orientation")
         row = col.row(align=True)
 
-        row.prop(overlay, "show_fade_inactive", text="")
-        sub = row.row()
-        sub.active = overlay.show_fade_inactive
-        sub.prop(overlay, "fade_inactive_alpha", text="Fade Inactive Geometry")
+        col = layout.column(align = True)
+        col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(overlay, "show_fade_inactive")
+
+        row = split.row(align=True)
+        if overlay.show_fade_inactive:
+            row.prop(overlay, "fade_inactive_alpha", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
         # sub.prop(overlay, "show_onion_skins")
 
@@ -7506,15 +7519,21 @@ class VIEW3D_PT_overlay_edit_mesh_normals(Panel):
 
         col = layout.column()
         col.active = display_all
+        split = col.split()
 
-        row = col.row(align=True)
+        row = split.row(align=True)
+        row.separator()
+        row.separator()
         row.prop(overlay, "show_vertex_normals", text="", icon='NORMALS_VERTEX')
         row.prop(overlay, "show_split_normals", text="", icon='NORMALS_VERTEX_FACE')
         row.prop(overlay, "show_face_normals", text="", icon='NORMALS_FACE')
 
-        sub = row.row(align=True)
-        sub.active = overlay.show_vertex_normals or overlay.show_face_normals or overlay.show_split_normals
-        sub.prop(overlay, "normals_length", text="Size")
+        sub = split.row(align=True)
+        if overlay.show_vertex_normals or overlay.show_face_normals or overlay.show_split_normals:
+            sub.use_property_split = True
+            sub.prop(overlay, "normals_length", text="")
+        else:
+            sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class VIEW3D_PT_overlay_edit_mesh_freestyle(Panel):
@@ -7564,11 +7583,19 @@ class VIEW3D_PT_overlay_edit_curve(Panel):
         row = col.row()
         row.prop(overlay, "display_handle", text="Handles")
 
-        row = col.row()
-        row.prop(overlay, "show_curve_normals", text="")
-        sub = row.row()
-        sub.active = overlay.show_curve_normals
-        sub.prop(overlay, "normals_length", text="Normals")
+        col = layout.column(align = True)
+        col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(overlay, "show_curve_normals")
+
+        row = split.row(align=True)
+        if overlay.show_curve_normals:
+            row.prop(overlay, "normals_length", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class VIEW3D_PT_overlay_sculpt(Panel):
@@ -7592,18 +7619,35 @@ class VIEW3D_PT_overlay_sculpt(Panel):
 
         view = context.space_data
         overlay = view.overlay
+        display_all = overlay.show_overlays
 
-        row = layout.row(align=True)
-        row.prop(sculpt, "show_mask", text="")
-        sub = row.row()
-        sub.active = sculpt.show_mask
-        sub.prop(overlay, "sculpt_mode_mask_opacity", text="Mask")
+        col = layout.column(align = True)
+        col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(sculpt, "show_mask")
 
-        row = layout.row(align=True)
-        row.prop(sculpt, "show_face_sets", text="")
-        sub = row.row()
-        sub.active = sculpt.show_face_sets
-        row.prop(overlay, "sculpt_mode_face_sets_opacity", text="Face Sets")
+        row = split.row(align=True)
+        if sculpt.show_mask:
+            row.prop(overlay, "sculpt_mode_mask_opacity", text = "")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        col = layout.column(align = True)
+        col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(sculpt, "show_face_sets")
+
+        row = split.row(align=True)
+        if sculpt.show_face_sets:
+            row.prop(overlay, "sculpt_mode_face_sets_opacity", text="")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class VIEW3D_PT_overlay_pose(Panel):
@@ -7631,11 +7675,21 @@ class VIEW3D_PT_overlay_pose(Panel):
         col.active = display_all
 
         if mode == 'POSE':
-            row = col.row()
-            row.prop(overlay, "show_xray_bone", text="")
-            sub = row.row()
-            sub.active = display_all and overlay.show_xray_bone
-            sub.prop(overlay, "xray_alpha_bone", text="Fade Geometry")
+
+            col = layout.column(align = True)
+            col.active = display_all
+            split = col.split()
+            row = split.row(align=True)
+            #row.separator()
+            #row.separator()
+            row.prop(overlay, "show_xray_bone")
+
+            row = split.row(align=True)
+            if overlay.show_xray_bone:
+                row.prop(overlay, "xray_alpha_bone", text="")
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
+
         else:
             row = col.row()
             row.prop(overlay, "show_xray_bone")
@@ -7659,7 +7713,9 @@ class VIEW3D_PT_overlay_texture_paint(Panel):
 
         col = layout.column()
         col.active = display_all
+        col.use_property_split = True
         col.prop(overlay, "texture_paint_mode_opacity")
+        col.use_property_split = False
 
 
 class VIEW3D_PT_overlay_vertex_paint(Panel):
@@ -7680,8 +7736,9 @@ class VIEW3D_PT_overlay_vertex_paint(Panel):
 
         col = layout.column()
         col.active = display_all
-
+        col.use_property_split = True
         col.prop(overlay, "vertex_paint_mode_opacity")
+        col.use_property_split = False
         col.prop(overlay, "show_paint_wire")
 
 
@@ -7704,7 +7761,9 @@ class VIEW3D_PT_overlay_weight_paint(Panel):
         col = layout.column()
         col.active = display_all
 
+        col.use_property_split = True
         col.prop(overlay, "weight_paint_mode_opacity", text="Opacity")
+        col.use_property_split = False
         row = col.split(factor=0.33)
         row.label(text="Zero Weights")
         sub = row.row()
@@ -7915,36 +7974,63 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
         layout = self.layout
         view = context.space_data
         overlay = view.overlay
+        display_all = overlay.show_overlays
 
         layout.prop(overlay, "use_gpencil_onion_skin", text="Onion Skin")
 
-        col = layout.column()
-        row = col.row()
-        row.prop(overlay, "use_gpencil_grid", text="")
-        sub = row.row(align=True)
-        sub.active = overlay.use_gpencil_grid
-        sub.prop(overlay, "gpencil_grid_opacity", text="Canvas", slider=True)
-        sub.prop(overlay, "use_gpencil_canvas_xray", text="", icon='XRAY')
+        col = layout.column(align = True)
+        col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(overlay, "use_gpencil_grid")
 
-        row = col.row()
-        row.prop(overlay, "use_gpencil_fade_layers", text="")
-        sub = row.row()
-        sub.active = overlay.use_gpencil_fade_layers
-        sub.prop(overlay, "gpencil_fade_layer", text="Fade Layers", slider=True)
+        row = split.row(align=True)
+        if overlay.use_gpencil_grid:
+            row.prop(overlay, "gpencil_grid_opacity", text="", slider=True)
+            row.prop(overlay, "use_gpencil_canvas_xray", text="", icon='XRAY')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        row = col.row()
-        row.prop(overlay, "use_gpencil_fade_objects", text="")
-        sub = row.row(align=True)
-        sub.active = overlay.use_gpencil_fade_objects
-        sub.prop(overlay, "gpencil_fade_objects", text="Fade Objects", slider=True)
-        sub.prop(overlay, "use_gpencil_fade_gp_objects", text="", icon='OUTLINER_OB_GREASEPENCIL')
+        col = layout.column(align = True)
+        col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(overlay, "use_gpencil_fade_layers")
+
+        row = split.row(align=True)
+        if overlay.use_gpencil_fade_layers:
+            row.prop(overlay, "gpencil_fade_layer", text="", slider=True)
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        col = layout.column(align = True)
+        col.active = display_all
+        split = col.split()
+        row = split.row(align=True)
+        #row.separator()
+        #row.separator()
+        row.prop(overlay, "use_gpencil_fade_objects")
+
+        row = split.row(align=True)
+        if overlay.use_gpencil_fade_objects:
+            row.prop(overlay, "gpencil_fade_objects", text="", slider=True)
+            row.prop(overlay, "use_gpencil_fade_gp_objects", text="", icon='OUTLINER_OB_GREASEPENCIL')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if context.object.mode in {'EDIT_GPENCIL', 'SCULPT_GPENCIL', 'WEIGHT_GPENCIL', 'VERTEX_GPENCIL'}:
             split = layout.split()
             col = split.column()
             col.prop(overlay, "use_gpencil_edit_lines", text="Edit Lines")
             col = split.column()
-            col.prop(overlay, "use_gpencil_multiedit_line_only", text="Only in Multiframe")
+            if overlay.use_gpencil_edit_lines:
+                col.prop(overlay, "use_gpencil_multiedit_line_only", text="Only in Multiframe")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
             if context.object.mode == 'EDIT_GPENCIL':
                 split = layout.split()
@@ -7953,6 +8039,8 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
                 col = split.column()
                 col.prop(overlay, "use_gpencil_show_material_name",  text="Material Name")
 
+            layout.use_property_split = True
+            layout.separator()
             layout.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
 
         if context.object.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:
@@ -7960,6 +8048,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             row = layout.row()
             shading = VIEW3D_PT_shading.get_shading(context)
             row.enabled = shading.type not in {'WIREFRAME', 'RENDERED'}
+            row.use_property_split = True
             row.prop(overlay, "gpencil_vertex_paint_opacity", text="Opacity", slider=True)
 
 
