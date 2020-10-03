@@ -215,11 +215,24 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 
         col = layout.column(align = True)
         col.label(text = "Transform")
-        row = col.row()
-        row.use_property_split = False
+
+        subcol = col.column()
+        subcol.use_property_split = False
+        row = subcol.row()
         row.separator()
-        row.prop(tool_settings, "use_transform_correct_face_attributes")
+        split = row.split(factor = 0.85)
+        split.prop(tool_settings, "use_transform_correct_face_attributes")
         if tool_settings.use_transform_correct_face_attributes:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')  
+        
+        
+        if tool_settings.use_transform_correct_face_attributes:
+            row = col.row()
+            row.separator()
+            row.separator()       
+            row.use_property_split = False
             row.prop(tool_settings, "use_transform_correct_keep_connected")
 
         col = layout.column(align = True)
