@@ -492,16 +492,19 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(rd, "filter_size")
-
-        col = layout.column(align=False, heading="Overscan")
-        col.use_property_decorate = False
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(props, "use_overscan", text="")
-        sub = sub.row(align=True)
-        sub.active = props.use_overscan
-        sub.prop(props, "overscan_size", text="")
-        row.prop_decorator(props, "overscan_size")
+        
+        col = layout.column()
+        split = col.split(factor = 0.35)
+        row = split.row()
+        row.use_property_split = False
+        row.prop(props, "use_overscan", text="Overscan")
+        row = split.row(align = True)
+        if props.use_overscan:
+            row.use_property_split = False
+            row.prop(props, "overscan_size", text="")
+            row.prop_decorator(props, "overscan_size")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class RENDER_PT_eevee_hair(RenderButtonsPanel, Panel):
