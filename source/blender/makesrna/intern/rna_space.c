@@ -3978,7 +3978,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "overlay.gpencil_vertex_paint_opacity");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_float_default(prop, 1.0f);
-  RNA_def_property_ui_text(prop, "Opacity", "Vertex Paint mix factor");
+  RNA_def_property_ui_text(prop, "Opacity", "Vertex Paint mix factor\nNot in wireframe or render shading mode");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_GPencil_update");
 }
 
