@@ -271,11 +271,8 @@ class VIEW3D_HT_header(Header):
                     row = layout.row(align=True)
                     row.prop(settings, "use_guide", text="", icon='GRID')
                     sub = row.row(align=True)
-                    sub.active = settings.use_guide
-                    sub.popover(
-                        panel="VIEW3D_PT_gpencil_guide",
-                        text="Guides",
-                    )
+                    if settings.use_guide:
+                        sub.popover(panel="VIEW3D_PT_gpencil_guide", text="Guides")
 
         elif not show_region_tool_header:
             # Transform settings depending on tool header visibility
