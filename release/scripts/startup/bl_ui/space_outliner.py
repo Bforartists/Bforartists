@@ -241,6 +241,43 @@ class OUTLINER_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
 
+class OUTLINER_MT_context_menu(Menu):
+    bl_label = "Outliner Context Menu"
+
+    @staticmethod
+    def draw_common_operators(layout):
+        layout.menu("OUTLINER_MT_context_menu_view")
+
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
+    def draw(self, context):
+        space = context.space_data
+
+        layout = self.layout
+
+        if space.display_mode == 'VIEW_LAYER':
+            OUTLINER_MT_collection_new.draw_without_context_menu(context, layout)
+            layout.separator()
+
+        OUTLINER_MT_context_menu.draw_common_operators(layout)
+
+
+class OUTLINER_MT_context_menu_view(Menu):
+    bl_label = "View"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("outliner.show_active", icon = "CENTER")
+
+        layout.separator()
+
+        layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
+        layout.operator("outliner.show_one_level", text = "Show One Level", icon = "HIERARCHY_DOWN")
+        layout.operator("outliner.hide_one_level", text = "Hide One Level", icon = "HIERARCHY_UP") # bfa - separated tooltip
+
 
 class OUTLINER_MT_edit_datablocks(Menu):
     bl_label = "Edit"
@@ -318,13 +355,18 @@ class OUTLINER_MT_collection(Menu):
 
         layout.operator_menu_enum("outliner.id_operation", "type", text="ID Data")
 
+        layout.separator()
+
+        OUTLINER_MT_context_menu.draw_common_operators(layout)
+
+
 
 class OUTLINER_MT_collection_new(Menu):
     bl_label = "Collection"
 
     @staticmethod
     def draw_without_context_menu(context, layout):
-        layout.operator("outliner.collection_new", text="New Collection").nested = False
+        layout.operator("outliner.collection_new", text="New Collection", icon = "GROUP").nested = False
         layout.operator("outliner.id_paste", text="Paste Data-Blocks", icon='PASTEDOWN')
 
     def draw(self, context):
@@ -333,6 +375,10 @@ class OUTLINER_MT_collection_new(Menu):
         layout.operator("outliner.collection_new", text="New Nested", icon='COLLECTION_NEW').nested = True
         layout.operator("outliner.collection_new", text="New", icon='COLLECTION_NEW')
         layout.operator("outliner.id_paste", text="Paste", icon='PASTEDOWN')
+
+        layout.separator()
+
+        OUTLINER_MT_context_menu.draw_common_operators(layout)
 
 
 class OUTLINER_MT_object(Menu):
@@ -366,6 +412,10 @@ class OUTLINER_MT_object(Menu):
             layout.separator()
 
         layout.operator_menu_enum("outliner.id_operation", "type", text="ID Data")
+
+        layout.separator()
+
+        OUTLINER_MT_context_menu.draw_common_operators(layout)
 
 
 class OUTLINER_PT_filter(Panel):
@@ -492,6 +542,8 @@ classes = (
     OUTLINER_MT_collection_new,
     OUTLINER_MT_collection_visibility,
     OUTLINER_MT_object,
+    OUTLINER_MT_context_menu,
+    OUTLINER_MT_context_menu_view,
     OUTLINER_PT_filter,
 )
 
