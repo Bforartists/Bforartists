@@ -6539,12 +6539,20 @@ class VIEW3D_PT_view3d_properties(Panel):
 
         subcol = col.column()
         subcol.use_property_split = False
-        subcol.prop(view, "use_local_camera")
+        row = subcol.row()
+        split = row.split(factor = 0.65)
+        split.prop(view, "use_local_camera")
+        if view.use_local_camera:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')      
 
         if view.use_local_camera:
             subcol = col.column()
-            subcol.use_property_split = True
-            subcol.prop(view, "camera", text="")
+            row = subcol.row()
+            row.separator()
+            row.use_property_split = True
+            row.prop(view, "camera", text="")
 
         subcol.use_property_split = False
         subcol.prop(view, "use_render_border")
