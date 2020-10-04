@@ -23,7 +23,6 @@
  * PopUp Menu Region
  */
 
-#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -340,7 +339,7 @@ uiPopupBlockHandle *ui_popup_menu_create(
 #if 0
     /* if this is an rna button then we can assume its an enum
      * flipping enums is generally not good since the order can be
-     * important [#28786] */
+     * important T28786. */
     if (but->rnaprop && RNA_property_type(but->rnaprop) == PROP_ENUM) {
       pup->block->flag |= UI_BLOCK_NO_FLIP;
     }

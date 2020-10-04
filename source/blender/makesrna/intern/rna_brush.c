@@ -18,7 +18,6 @@
  * \ingroup RNA
  */
 
-#include <assert.h>
 #include <stdlib.h>
 
 #include "DNA_brush_types.h"
@@ -1736,7 +1735,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Mode", "Preselected mode when using this brush");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 
-  prop = RNA_def_property(srna, "trim", PROP_BOOLEAN, PROP_NONE);
+  prop = RNA_def_property(srna, "use_trim", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", GP_BRUSH_TRIM_STROKE);
   RNA_def_property_boolean_default(prop, false);
   RNA_def_property_ui_text(prop, "Trim Stroke Ends", "Trim intersecting stroke ends");
@@ -2099,6 +2098,11 @@ static void rna_def_brush(BlenderRNA *brna)
        "Local",
        "Simulates only a specific area around the brush limited by a fixed radius"},
       {BRUSH_CLOTH_SIMULATION_AREA_GLOBAL, "GLOBAL", 0, "Global", "Simulates the entire mesh"},
+      {BRUSH_CLOTH_SIMULATION_AREA_DYNAMIC,
+       "DYNAMIC",
+       0,
+       "Dynamic",
+       "The active simulation area moves with the brush"},
       {0, NULL, 0, NULL, NULL},
   };
 

@@ -338,7 +338,7 @@ class FloorGenerator(CutAblePolygon, CutAbleGenerator):
                     offset_type='OFFSET',
                     segments=1,     # d.bevel_res
                     profile=0.5,
-                    vertex_only=False,
+                    # vertex_only=False,
                     clamp_overlap=False,
                     material=-1)
 

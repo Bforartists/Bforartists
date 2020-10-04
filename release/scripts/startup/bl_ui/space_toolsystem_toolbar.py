@@ -1315,7 +1315,6 @@ class _defs_sculpt:
             draw_settings=draw_settings,
         )
 
-
     @ToolDef.from_fn
     def face_set_lasso():
         def draw_settings(_context, layout, tool):
@@ -1347,6 +1346,16 @@ class _defs_sculpt:
             idname="builtin.lasso_trim",
             label="Lasso Trim",
             icon="ops.sculpt.lasso_trim",
+            widget=None,
+            keymap=(),
+        )
+
+    @ToolDef.from_fn
+    def project_line():
+        return dict(
+            idname="builtin.line_project",
+            label="Line Project",
+            icon="ops.sculpt.line_project",
             widget=None,
             keymap=(),
         )
@@ -2097,10 +2106,10 @@ class _defs_gpencil_edit:
     @ToolDef.from_fn
     def transform_fill():
         def draw_settings(context, layout, tool):
-                props = tool.operator_properties("gpencil.transform_fill")
-                row = layout.row()
-                row.use_property_split = False
-                row.prop(props, "mode", expand=True)
+            props = tool.operator_properties("gpencil.transform_fill")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(props, "mode", expand=True)
 
         return dict(
             idname="builtin.transform_fill",
@@ -2111,6 +2120,7 @@ class _defs_gpencil_edit:
             keymap=(),
             draw_settings=draw_settings,
         )
+
 
 class _defs_gpencil_sculpt:
 
@@ -2727,6 +2737,13 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             ),
             lambda context: (
                 (_defs_sculpt.trim_lasso,)
+                if context is None or (
+                        context.preferences.view.show_developer_ui and
+                        context.preferences.experimental.use_tools_missing_icons)
+                else ()
+            ),
+            lambda context: (
+                (_defs_sculpt.project_line,)
                 if context is None or (
                         context.preferences.view.show_developer_ui and
                         context.preferences.experimental.use_tools_missing_icons)

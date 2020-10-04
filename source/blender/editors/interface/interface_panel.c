@@ -116,6 +116,7 @@ typedef struct PanelSort {
   int new_offset_y;
 } PanelSort;
 
+static void panel_set_expansion_from_list_data(const bContext *C, Panel *panel);
 static int get_panel_real_size_y(const Panel *panel);
 static void panel_activate_state(const bContext *C, Panel *panel, uiHandlePanelState state);
 static int compare_panel(const void *a, const void *b);
@@ -131,7 +132,6 @@ static bool panel_type_context_poll(ARegion *region,
 
 static void panel_title_color_get(const Panel *panel,
                                   const bool show_background,
-                                  const bool use_search_color,
                                   const bool region_search_filter_active,
                                   uchar r_color[4])
 {
@@ -145,16 +145,11 @@ static void panel_title_color_get(const Panel *panel,
 
   const bool search_match = UI_panel_matches_search_filter(panel);
 
-  if (region_search_filter_active && use_search_color && search_match) {
-    UI_GetThemeColor4ubv(TH_MATCH, r_color);
-  }
-  else {
-    UI_GetThemeColor4ubv(TH_TITLE, r_color);
-    if (region_search_filter_active && !search_match) {
-      r_color[0] *= 0.5;
-      r_color[1] *= 0.5;
-      r_color[2] *= 0.5;
-    }
+  UI_GetThemeColor4ubv(TH_TITLE, r_color);
+  if (region_search_filter_active && !search_match) {
+    r_color[0] *= 0.5;
+    r_color[1] *= 0.5;
+    r_color[2] *= 0.5;
   }
 }
 
@@ -198,10 +193,11 @@ static bool panel_active_animation_changed(ListBase *lb,
   return false;
 }
 
-static bool panels_need_realign(ScrArea *area, ARegion *region, Panel **r_panel_animation)
+/**
+ * \return True if the properties editor switch tabs since the last layout pass.
+ */
+static bool properties_space_needs_realign(ScrArea *area, ARegion *region)
 {
-  *r_panel_animation = NULL;
-
   if (area->spacetype == SPACE_PROPERTIES && region->regiontype == RGN_TYPE_WINDOW) {
     SpaceProperties *sbuts = area->spacedata.first;
 
@@ -209,10 +205,15 @@ static bool panels_need_realign(ScrArea *area, ARegion *region, Panel **r_panel_
       return true;
     }
   }
-  else if (area->spacetype == SPACE_IMAGE && region->regiontype == RGN_TYPE_PREVIEW) {
-    return true;
-  }
-  else if (area->spacetype == SPACE_FILE && region->regiontype == RGN_TYPE_CHANNELS) {
+
+  return false;
+}
+
+static bool panels_need_realign(ScrArea *area, ARegion *region, Panel **r_panel_animation)
+{
+  *r_panel_animation = NULL;
+
+  if (properties_space_needs_realign(area, region)) {
     return true;
   }
 
@@ -240,10 +241,10 @@ static bool panels_need_realign(ScrArea *area, ARegion *region, Panel **r_panel_
 /** \name Functions for Instanced Panels
  * \{ */
 
-static Panel *UI_panel_add_instanced_ex(ARegion *region,
-                                        ListBase *panels,
-                                        PanelType *panel_type,
-                                        PointerRNA *custom_data)
+static Panel *panel_add_instanced(ARegion *region,
+                                  ListBase *panels,
+                                  PanelType *panel_type,
+                                  PointerRNA *custom_data)
 {
   Panel *panel = MEM_callocN(sizeof(Panel), "instanced panel");
   panel->type = panel_type;
@@ -256,7 +257,7 @@ static Panel *UI_panel_add_instanced_ex(ARegion *region,
    * function to create them, as UI_panel_begin does other things we don't need to do. */
   LISTBASE_FOREACH (LinkData *, child, &panel_type->children) {
     PanelType *child_type = child->data;
-    UI_panel_add_instanced_ex(region, &panel->children, child_type, custom_data);
+    panel_add_instanced(region, &panel->children, child_type, custom_data);
   }
 
   /* Make sure the panel is added to the end of the display-order as well. This is needed for
@@ -281,7 +282,8 @@ static Panel *UI_panel_add_instanced_ex(ARegion *region,
  * Called in situations where panels need to be added dynamically rather than
  * having only one panel corresponding to each #PanelType.
  */
-Panel *UI_panel_add_instanced(ARegion *region,
+Panel *UI_panel_add_instanced(const bContext *C,
+                              ARegion *region,
                               ListBase *panels,
                               char *panel_idname,
                               PointerRNA *custom_data)
@@ -296,7 +298,12 @@ Panel *UI_panel_add_instanced(ARegion *region,
     return NULL;
   }
 
-  return UI_panel_add_instanced_ex(region, panels, panel_type, custom_data);
+  Panel *new_panel = panel_add_instanced(region, panels, panel_type, custom_data);
+
+  /* Do this after #panel_add_instatnced so all subpanels are added. */
+  panel_set_expansion_from_list_data(C, new_panel);
+
+  return new_panel;
 }
 
 /**
@@ -478,7 +485,7 @@ static void reorder_instanced_panel_list(bContext *C, ARegion *region, Panel *dr
 }
 
 /**
- * Recursive implementation for #UI_panel_set_expand_from_list_data.
+ * Recursive implementation for #panel_set_expansion_from_list_data.
  *
  * \return Whether the closed flag for the panel or any sub-panels changed.
  */
@@ -496,11 +503,10 @@ static bool panel_set_expand_from_list_data_recursive(Panel *panel, short flag, 
 }
 
 /**
- * Set the expansion of the panel and its sub-panels from the flag stored by the list data
- * corresponding to this panel. The flag has expansion stored in each bit in depth first
- * order.
+ * Set the expansion of the panel and its sub-panels from the flag stored in the
+ * corresponding list data. The flag has expansion stored in each bit in depth first order.
  */
-void UI_panel_set_expand_from_list_data(const bContext *C, Panel *panel)
+static void panel_set_expansion_from_list_data(const bContext *C, Panel *panel)
 {
   BLI_assert(panel->type != NULL);
   BLI_assert(panel->type->flag & PNL_INSTANCED);
@@ -524,9 +530,11 @@ void UI_panel_set_expand_from_list_data(const bContext *C, Panel *panel)
 static void region_panels_set_expansion_from_list_data(const bContext *C, ARegion *region)
 {
   LISTBASE_FOREACH (Panel *, panel, &region->panels) {
-    PanelType *panel_type = panel->type;
-    if (panel_type != NULL && panel->type->flag & PNL_INSTANCED) {
-      UI_panel_set_expand_from_list_data(C, panel);
+    if (panel->runtime_flag & PANEL_ACTIVE) {
+      PanelType *panel_type = panel->type;
+      if (panel_type != NULL && panel->type->flag & PNL_INSTANCED) {
+        panel_set_expansion_from_list_data(C, panel);
+      }
     }
   }
 }
@@ -682,6 +690,8 @@ Panel *UI_panel_begin(
     panel->type = pt;
   }
 
+  panel->runtime.block = block;
+
   /* Do not allow closed panels without headers! Else user could get "disappeared" UI! */
   if ((pt->flag & PNL_NO_HEADER) && (panel->flag & PNL_CLOSED)) {
     panel->flag &= ~PNL_CLOSED;
@@ -736,6 +746,41 @@ Panel *UI_panel_begin(
   return panel;
 }
 
+/**
+ * Create the panel header button group, used to mark which buttons are part of
+ * panel headers for later panel search handling. Should be called before adding
+ * buttons for the panel's header layout.
+ */
+void UI_panel_header_buttons_begin(Panel *panel)
+{
+  uiBlock *block = panel->runtime.block;
+
+  ui_block_new_button_group(block, UI_BUTTON_GROUP_LOCK | UI_BUTTON_GROUP_PANEL_HEADER);
+}
+
+/**
+ * Allow new button groups to be created after the header group.
+ */
+void UI_panel_header_buttons_end(Panel *panel)
+{
+  uiBlock *block = panel->runtime.block;
+
+  /* There should always be the button group created in #UI_panel_header_buttons_begin. */
+  BLI_assert(!BLI_listbase_is_empty(&block->button_groups));
+
+  uiButtonGroup *button_group = block->button_groups.last;
+
+  /* Repurpose the first "header" button group if it is empty, in case the first button added to
+   * the panel doesn't add a new group (if the button is created directly rather than through an
+   * interface layout call). */
+  if (BLI_listbase_count(&block->button_groups) == 1 &&
+      BLI_listbase_is_empty(&button_group->buttons)) {
+    button_group->flag &= ~UI_BUTTON_GROUP_PANEL_HEADER;
+  }
+
+  button_group->flag &= ~UI_BUTTON_GROUP_LOCK;
+}
+
 static float panel_region_offset_x_get(const ARegion *region)
 {
   if (UI_panel_category_is_visible(region)) {
@@ -744,22 +789,23 @@ static float panel_region_offset_x_get(const ARegion *region)
     }
   }
 
-  return 0;
+  return 0.0f;
 }
 
-void UI_panel_end(const ARegion *region, uiBlock *block, int width, int height, bool open)
+/**
+ * Starting from the "block size" set in #UI_panel_end, calculate the full size
+ * of the panel including the subpanel headers and buttons.
+ */
+static void panel_calculate_size_recursive(ARegion *region, Panel *panel)
 {
-  Panel *panel = block->panel;
+  int width = panel->blocksizex;
+  int height = panel->blocksizey;
 
-  /* Set panel size excluding children. */
-  panel->blocksizex = width;
-  panel->blocksizey = height;
-
-  /* Compute total panel size including children. */
-  LISTBASE_FOREACH (Panel *, pachild, &panel->children) {
-    if (pachild->runtime_flag & PANEL_ACTIVE) {
-      width = max_ii(width, pachild->sizex);
-      height += get_panel_real_size_y(pachild);
+  LISTBASE_FOREACH (Panel *, child_panel, &panel->children) {
+    if (child_panel->runtime_flag & PANEL_ACTIVE) {
+      panel_calculate_size_recursive(region, child_panel);
+      width = max_ii(width, child_panel->sizex);
+      height += get_panel_real_size_y(child_panel);
     }
   }
 
@@ -777,7 +823,7 @@ void UI_panel_end(const ARegion *region, uiBlock *block, int width, int height, 
     if (width != 0) {
       panel->sizex = width;
     }
-    if (height != 0 || open) {
+    if (height != 0 || !(panel->flag & PNL_CLOSED)) {
       panel->sizey = height;
     }
 
@@ -792,6 +838,14 @@ void UI_panel_end(const ARegion *region, uiBlock *block, int width, int height, 
       panel->runtime_flag |= PANEL_ANIM_ALIGN;
     }
   }
+}
+
+void UI_panel_end(Panel *panel, int width, int height)
+{
+  /* Store the size of the buttons layout in the panel. The actual panel size
+   * (including subpanels) is calculated in #UI_panels_end. */
+  panel->blocksizex = width;
+  panel->blocksizey = height;
 }
 
 static void ui_offset_panel_block(uiBlock *block)
@@ -844,20 +898,22 @@ bool UI_panel_matches_search_filter(const Panel *panel)
 /**
  * Expands a panel if it was tagged as having a result by property search, otherwise collapses it.
  */
-static void panel_set_expansion_from_seach_filter_recursive(const bContext *C, Panel *panel)
+static void panel_set_expansion_from_seach_filter_recursive(const bContext *C,
+                                                            Panel *panel,
+                                                            const bool use_animation)
 {
-  short start_flag = panel->flag;
-  SET_FLAG_FROM_TEST(panel->flag, !UI_panel_matches_search_filter(panel), PNL_CLOSED);
-  if (start_flag != panel->flag) {
-    panel_activate_state(C, panel, PANEL_STATE_ANIMATION);
+  if (!(panel->type->flag & PNL_NO_HEADER)) {
+    short start_flag = panel->flag;
+    SET_FLAG_FROM_TEST(panel->flag, !UI_panel_matches_search_filter(panel), PNL_CLOSED);
+    if (use_animation && start_flag != panel->flag) {
+      panel_activate_state(C, panel, PANEL_STATE_ANIMATION);
+    }
   }
 
   /* If the panel is filtered (removed) we need to check that its children are too. */
   LISTBASE_FOREACH (Panel *, child_panel, &panel->children) {
-    if (panel->runtime_flag & PANEL_ACTIVE) {
-      if (!(panel->type->flag & PNL_NO_HEADER)) {
-        panel_set_expansion_from_seach_filter_recursive(C, child_panel);
-      }
+    if (child_panel->runtime_flag & PANEL_ACTIVE) {
+      panel_set_expansion_from_seach_filter_recursive(C, child_panel, use_animation);
     }
   }
 }
@@ -866,15 +922,70 @@ static void panel_set_expansion_from_seach_filter_recursive(const bContext *C, P
  * Uses the panel's search filter flag to set its expansion, activating animation if it was closed
  * or opened. Note that this can't be set too often, or manual interaction becomes impossible.
  */
-void UI_panels_set_expansion_from_seach_filter(const bContext *C, ARegion *region)
+static void region_panels_set_expansion_from_seach_filter(const bContext *C,
+                                                          ARegion *region,
+                                                          const bool use_animation)
 {
   LISTBASE_FOREACH (Panel *, panel, &region->panels) {
     if (panel->runtime_flag & PANEL_ACTIVE) {
-      if (!(panel->type->flag & PNL_NO_HEADER)) {
-        panel_set_expansion_from_seach_filter_recursive(C, panel);
+      panel_set_expansion_from_seach_filter_recursive(C, panel, use_animation);
+    }
+  }
+  set_panels_list_data_expand_flag(C, region);
+}
+
+/**
+ * Hide buttons in invisible layouts, which are created because in order to search,
+ * buttons must be added for all panels, even panels that will end up closed.
+ */
+static void panel_remove_invisible_layouts_recursive(Panel *panel, const Panel *parent_panel)
+{
+  uiBlock *block = panel->runtime.block;
+  BLI_assert(block != NULL);
+  BLI_assert(block->active);
+  if (parent_panel != NULL && parent_panel->flag & PNL_CLOSED) {
+    /* The parent panel is closed, so this panel can be completely removed. */
+    UI_block_set_search_only(block, true);
+    LISTBASE_FOREACH (uiBut *, but, &block->buttons) {
+      but->flag |= UI_HIDDEN;
+    }
+  }
+  else if (panel->flag & PNL_CLOSED) {
+    /* If subpanels have no search results but the parent panel does, then the parent panel open
+     * and the subpanels will close. In that case there must be a way to hide the buttons in the
+     * panel but keep the header buttons. */
+    LISTBASE_FOREACH (uiButtonGroup *, button_group, &block->button_groups) {
+      if (button_group->flag & UI_BUTTON_GROUP_PANEL_HEADER) {
+        continue;
+      }
+      LISTBASE_FOREACH (LinkData *, link, &button_group->buttons) {
+        uiBut *but = link->data;
+        but->flag |= UI_HIDDEN;
       }
     }
   }
+
+  LISTBASE_FOREACH (Panel *, child_panel, &panel->children) {
+    if (child_panel->runtime_flag & PANEL_ACTIVE) {
+      BLI_assert(child_panel->runtime.block != NULL);
+      panel_remove_invisible_layouts_recursive(child_panel, panel);
+    }
+  }
+}
+
+static void region_panels_remove_invisible_layouts(ARegion *region)
+{
+  LISTBASE_FOREACH (Panel *, panel, &region->panels) {
+    if (panel->runtime_flag & PANEL_ACTIVE) {
+      BLI_assert(panel->runtime.block != NULL);
+      panel_remove_invisible_layouts_recursive(panel, NULL);
+    }
+  }
+}
+
+bool UI_panel_is_active(const Panel *panel)
+{
+  return panel->runtime_flag & PANEL_ACTIVE;
 }
 
 /** \} */
@@ -954,8 +1065,7 @@ static void ui_draw_aligned_panel_header(const uiStyle *style,
 
   /* Draw text labels. */
   uchar col_title[4];
-  panel_title_color_get(
-      panel, show_background, is_subpanel, region_search_filter_active, col_title);
+  panel_title_color_get(panel, show_background, region_search_filter_active, col_title);
   col_title[3] = 255;
 
   rcti hrect = *rect;
@@ -1073,7 +1183,7 @@ void ui_draw_aligned_panel(const uiStyle *style,
   /* draw optional pin icon */
   if (show_pin && (block->panel->flag & PNL_PIN)) {
     uchar col_title[4];
-    panel_title_color_get(panel, show_background, false, region_search_filter_active, col_title);
+    panel_title_color_get(panel, show_background, region_search_filter_active, col_title);
 
     GPU_blend(GPU_BLEND_ALPHA);
     UI_icon_draw_ex(headrect.xmax - ((PNL_ICON * 2.2f) / block->aspect),
@@ -1188,7 +1298,7 @@ void ui_draw_aligned_panel(const uiStyle *style,
     BLI_rctf_scale(&itemrect, 0.25f);
 
     uchar col_title[4];
-    panel_title_color_get(panel, show_background, false, region_search_filter_active, col_title);
+    panel_title_color_get(panel, show_background, region_search_filter_active, col_title);
     float tria_color[4];
     rgb_uchar_to_float(tria_color, col_title);
     tria_color[3] = 1.0f;
@@ -1935,12 +2045,24 @@ void UI_panels_end(const bContext *C, ARegion *region, int *r_x, int *r_y)
 
   region_panels_set_expansion_from_list_data(C, region);
 
-  /* Update panel expansion based on property search results. */
-  if (region->flag & RGN_FLAG_SEARCH_FILTER_UPDATE) {
-    /* Don't use the last update from the deactivation, or all the panels will be left closed. */
-    if (region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE) {
-      UI_panels_set_expansion_from_seach_filter(C, region);
-      set_panels_list_data_expand_flag(C, region);
+  if (region->flag & RGN_FLAG_SEARCH_FILTER_ACTIVE) {
+    /* Update panel expansion based on property search results. Keep this inside the check
+     * for an active search filter, or all panels will be left closed when a search ends. */
+    if (region->flag & RGN_FLAG_SEARCH_FILTER_UPDATE) {
+      region_panels_set_expansion_from_seach_filter(C, region, true);
+    }
+    else if (properties_space_needs_realign(area, region)) {
+      region_panels_set_expansion_from_seach_filter(C, region, false);
+    }
+
+    /* Clean up the extra panels and buttons created for searching. */
+    region_panels_remove_invisible_layouts(region);
+  }
+
+  LISTBASE_FOREACH (Panel *, panel, &region->panels) {
+    if (panel->runtime_flag & PANEL_ACTIVE) {
+      BLI_assert(panel->runtime.block != NULL);
+      panel_calculate_size_recursive(region, panel);
     }
   }
 

@@ -41,6 +41,10 @@ extern "C" {
 #define MAX_SOCKET 512
 
 struct ARegion;
+struct BlendDataReader;
+struct BlendExpander;
+struct BlendLibReader;
+struct BlendWriter;
 struct ColorManagedDisplaySettings;
 struct ColorManagedViewSettings;
 struct FreestyleLineStyle;
@@ -72,10 +76,6 @@ struct bNodeTree;
 struct bNodeTreeExec;
 struct bNodeTreeType;
 struct uiLayout;
-struct BlendWriter;
-struct BlendDataReader;
-struct BlendLibReader;
-struct BlendExpander;
 
 /* -------------------------------------------------------------------- */
 /** \name Node Type Definitions
@@ -1311,7 +1311,7 @@ struct bNodeTreeExec *ntreeTexBeginExecTree(struct bNodeTree *ntree);
 void ntreeTexEndExecTree(struct bNodeTreeExec *exec);
 int ntreeTexExecTree(struct bNodeTree *ntree,
                      struct TexResult *target,
-                     float co[3],
+                     const float co[3],
                      float dxt[3],
                      float dyt[3],
                      int osatex,

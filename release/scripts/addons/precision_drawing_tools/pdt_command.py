@@ -1038,10 +1038,10 @@ def fillet_geometry(context, pg, mode, obj, bm, verts, values):
         context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
         return
     if mode in {"i", "v"}:
-        vert_bool = True
+        affect = 'VERTICES'
     else:
         # Must be "e"
-        vert_bool = False
+        affect = 'EDGES'
     # Note that passing an empty parameter results in that parameter being seen as "0"
     # _offset <= 0 is ignored since a bevel/fillet radius must be > 0 to make sense
     _offset = float(values[0])
@@ -1095,5 +1095,5 @@ def fillet_geometry(context, pg, mode, obj, bm, verts, values):
         offset=_offset,
         segments=_segments,
         profile=_profile,
-        vertex_only=vert_bool
+        affect=affect
     )

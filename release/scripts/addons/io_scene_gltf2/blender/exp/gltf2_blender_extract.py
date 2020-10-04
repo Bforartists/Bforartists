@@ -179,7 +179,7 @@ def extract_primitives(glTF, blender_mesh, library, blender_object, blender_vert
 
     prim_indices = {}  # maps material index to TRIANGLES-style indices into dots
 
-    if not use_materials:
+    if use_materials == "NONE": # Only for None. For placeholder and export, keep primitives
         # Put all vertices into one primitive
         prim_indices[-1] = loop_indices
 
@@ -347,6 +347,12 @@ def __get_normals(blender_mesh, key_blocks, armature, blender_object, export_set
         for ns in morph_normals:
             ns[:] = __apply_mat_to_all(normal_transform, ns)
             __normalize_vecs(ns)
+
+    for ns in [normals, *morph_normals]:
+        # Replace zero normals with the unit UP vector.
+        # Seems to happen sometimes with degenerate tris?
+        is_zero = ~ns.any(axis=1)
+        ns[is_zero, 2] = 1
 
     # glTF stores deltas in morph targets
     for ns in morph_normals:

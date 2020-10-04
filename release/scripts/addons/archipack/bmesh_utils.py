@@ -215,7 +215,7 @@ class BmeshEdit():
             offset_type='OFFSET',
             segments=1,
             profile=0.5,
-            vertex_only=False,
+            # vertex_only=False,
             clamp_overlap=True,
             material=-1,
             use_selection=True):
@@ -244,7 +244,7 @@ class BmeshEdit():
             offset_type=offset_type,
             segments=segments,
             profile=profile,
-            vertex_only=vertex_only,
+            # vertex_only=vertex_only,
             clamp_overlap=clamp_overlap,
             material=material)
 

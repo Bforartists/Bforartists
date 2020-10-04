@@ -885,7 +885,7 @@ class VIEW3D_MT_edit_mesh_tools(Menu):
         props.quad_method = props.ngon_method = 'BEAUTY'
         layout.operator("mesh.tris_convert_to_quads")
         layout.operator('mesh.vertex_chamfer', text="Vertex Chamfer")
-        layout.operator("mesh.bevel", text="Bevel Vertices").vertex_only = True
+        layout.operator("mesh.bevel", text="Bevel Vertices").affect = 'VERTICES'
         layout.operator('mesh.offset_edges', text="Offset Edges")
         layout.operator('mesh.fillet_plus', text="Fillet Edges")
         layout.operator("mesh.face_inset_fillet",
@@ -930,7 +930,7 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
             row = col_top.row(align=True)
             row.operator("mesh.random_vertices", text="Random Vertices")
             row = col_top.row(align=True)
-            row.operator("mesh.bevel", text="Bevel Vertices").vertex_only = True
+            row.operator("mesh.bevel", text="Bevel Vertices").affect = 'VERTICES'
 
         # edge - first line
         split = col.split(factor=0.80, align=True)
@@ -956,7 +956,7 @@ class VIEW3D_PT_edit_mesh_tools(Panel):
             row = col_top.row(align=True)
             row.operator("mesh.extrude_edges_move", text="Extrude Edges")
             row = col_top.row(align=True)
-            row.operator("mesh.bevel", text="Bevel Edges").vertex_only = False
+            row.operator("mesh.bevel", text="Bevel Edges").affect = 'EDGES'
 
         # face - first line
         split = col.split(factor=0.80, align=True)

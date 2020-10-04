@@ -1198,7 +1198,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL')
         layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION').animation = True
-        props = layout.operator("render.opengl", text="OpenGL Render Keyframes", icon='RENDER_ANIMATION')
+        props = layout.operator("render.opengl", text="Viewport Render Keyframes", icon='RENDER_ANIMATION')
         props.animation = True
         props.render_keyed_only = True
 
@@ -2457,7 +2457,7 @@ class VIEW3D_MT_add(Menu):
         # note, don't use 'EXEC_SCREEN' or operators won't get the 'v3d' context.
 
         # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
-        #       "align_view" to work on first call (see [#32719]).
+        #       "align_view" to work on first call (see T32719).
         layout.operator_context = 'EXEC_REGION_WIN'
 
         # layout.operator_menu_enum("object.mesh_add", "type", text="Mesh", icon='OUTLINER_OB_MESH')
@@ -3939,7 +3939,6 @@ class VIEW3D_MT_face_sets(Menu):
     def draw(self, _context):
         layout = self.layout
 
-
         op = layout.operator("sculpt.face_sets_create", text='Face Set From Masked', icon = "MOD_MASK")
         op.mode = 'MASKED'
 
@@ -4200,6 +4199,7 @@ class VIEW3D_MT_particle_show_hide(Menu):
         layout.operator("particle.reveal", text="Show Hidden", icon = "HIDE_OFF")
         layout.operator("particle.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("particle.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
+
 
 class VIEW3D_MT_pose(Menu):
     bl_label = "Pose"
@@ -6545,7 +6545,7 @@ class VIEW3D_PT_view3d_properties(Panel):
         if view.use_local_camera:
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')      
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if view.use_local_camera:
             subcol = col.column()
@@ -7891,8 +7891,7 @@ class VIEW3D_PT_proportional_edit(Panel):
         layout = self.layout
         tool_settings = context.tool_settings
         col = layout.column()
-        col.active = (tool_settings.use_proportional_edit_objects if context.mode == 'OBJECT'
-            else tool_settings.use_proportional_edit)
+        col.active = (tool_settings.use_proportional_edit_objects if context.mode == 'OBJECT' else tool_settings.use_proportional_edit)
 
         if context.mode != 'OBJECT':
             col.prop(tool_settings, "use_proportional_connected")
@@ -8103,7 +8102,7 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
                 row.separator()
                 row.prop(overlay, "use_gpencil_show_directions")
                 col = split.column()
-                col.prop(overlay, "use_gpencil_show_material_name",  text="Material Name")
+                col.prop(overlay, "use_gpencil_show_material_name", text="Material Name")
 
             layout.use_property_split = True
             layout.separator()
@@ -8547,26 +8546,26 @@ class VIEW3D_PT_paint_weight_context_menu(Panel):
 
 
 def draw_gpencil_layer_active(context, layout):
-        gpl = context.active_gpencil_layer
-        if gpl:
-            layout.label(text="Active Layer")
-            row = layout.row(align=True)
-            row.operator_context = 'EXEC_REGION_WIN'
-            row.operator_menu_enum("gpencil.layer_change", "layer", text="", icon='GREASEPENCIL')
-            row.prop(gpl, "info", text="")
-            row.operator("gpencil.layer_remove", text="", icon='X')
+    gpl = context.active_gpencil_layer
+    if gpl:
+        layout.label(text="Active Layer")
+        row = layout.row(align=True)
+        row.operator_context = 'EXEC_REGION_WIN'
+        row.operator_menu_enum("gpencil.layer_change", "layer", text="", icon='GREASEPENCIL')
+        row.prop(gpl, "info", text="")
+        row.operator("gpencil.layer_remove", text="", icon='X')
 
 
 def draw_gpencil_material_active(context, layout):
-        ob = context.active_object
-        if ob and len(ob.material_slots) > 0 and ob.active_material_index >= 0:
-            ma = ob.material_slots[ob.active_material_index].material
-            if ma:
-                layout.label(text="Active Material")
-                row = layout.row(align=True)
-                row.operator_context = 'EXEC_REGION_WIN'
-                row.operator_menu_enum("gpencil.material_set", "slot", text="", icon='MATERIAL')
-                row.prop(ma, "name", text="")
+    ob = context.active_object
+    if ob and len(ob.material_slots) > 0 and ob.active_material_index >= 0:
+        ma = ob.material_slots[ob.active_material_index].material
+        if ma:
+            layout.label(text="Active Material")
+            row = layout.row(align=True)
+            row.operator_context = 'EXEC_REGION_WIN'
+            row.operator_menu_enum("gpencil.material_set", "slot", text="", icon='MATERIAL')
+            row.prop(ma, "name", text="")
 
 class VIEW3D_PT_gpencil_sculpt_context_menu(Panel):
     bl_space_type = 'VIEW_3D'

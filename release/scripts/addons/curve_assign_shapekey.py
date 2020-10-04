@@ -855,7 +855,7 @@ class MarkerController:
     def __init__(self, context):
         self.smMap = self.createSMMap(context)
         self.shader = gpu.shader.from_builtin('3D_FLAT_COLOR')
-        self.shader.bind()
+        # self.shader.bind()
 
         MarkerController.drawHandlerRef = \
             bpy.types.SpaceView3D.draw_handler_add(self.drawHandler, \
@@ -926,14 +926,21 @@ class MarkerController:
         states = []
         spaces = MarkerController.getSpaces3D(context)
         for s in spaces:
-            states.append(s.overlay.show_curve_handles)
-            s.overlay.show_curve_handles = False
+            if(hasattr(s.overlay, 'show_curve_handles')):
+                states.append(s.overlay.show_curve_handles)
+                s.overlay.show_curve_handles = False
+            elif(hasattr(s.overlay, 'display_handle')): # 2.90
+                states.append(s.overlay.display_handle)
+                s.overlay.display_handle = 'NONE'
         return states
 
     def resetShowHandleState(context, handleStates):
         spaces = MarkerController.getSpaces3D(context)
         for i, s in enumerate(spaces):
-            s.overlay.show_curve_handles = handleStates[i]
+            if(hasattr(s.overlay, 'show_curve_handles')):
+                s.overlay.show_curve_handles = handleStates[i]
+            elif(hasattr(s.overlay, 'display_handle')): # 2.90
+                s.overlay.display_handle = handleStates[i]
 
 
 class ModalMarkSegStartOp(Operator):
@@ -965,25 +972,12 @@ class ModalMarkSegStartOp(Operator):
             self.markerState.updateSMMap()
             self.markerState.createBatch(context)
 
-        elif(event.type in {'LEFT_CTRL', 'RIGHT_CTRL'}):
-            self.ctrl = (event.value == 'PRESS')
-
-        elif(event.type in {'LEFT_SHIFT', 'RIGHT_SHIFT'}):
-            self.shift = (event.value == 'PRESS')
-
-            if(event.type not in {"MIDDLEMOUSE", "TAB", "LEFTMOUSE", \
-                "RIGHTMOUSE", 'WHEELDOWNMOUSE', 'WHEELUPMOUSE'} and \
-                not event.type.startswith("NUMPAD_")):
-                return {'RUNNING_MODAL'}
-
         return {"PASS_THROUGH"}
 
     def execute(self, context):
         #TODO: Why such small step?
         self._timer = context.window_manager.event_timer_add(time_step = 0.0001, \
             window = context.window)
-        self.ctrl = False
-        self.shift = False
 
         context.window_manager.modal_handler_add(self)
         self.markerState = MarkerController(context)

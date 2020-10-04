@@ -1457,10 +1457,9 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
     # We have no metallic (a.k.a. reflection) color...
     # elem_props_get_color_rgb(fbx_props, b'ReflectionColor', const_color_white)
     ma_wrap.normalmap_strength = elem_props_get_number(fbx_props, b'BumpFactor', 1.0)
-    # For emission color we can take into account the factor, but only for default values, not in case of texture.
-    emission_factor = elem_props_get_number(fbx_props, b'EmissiveFactor', 1.0)
-    ma_wrap.emission_color = [c * emission_factor
-                              for c in elem_props_get_color_rgb(fbx_props, b'EmissiveColor', const_color_black)]
+    # Emission strength and color
+    ma_wrap.emission_strength = elem_props_get_number(fbx_props, b'EmissiveFactor', 1.0)
+    ma_wrap.emission_color = elem_props_get_color_rgb(fbx_props, b'EmissiveColor', const_color_black)
 
     nodal_material_wrap_map[ma] = ma_wrap
 
@@ -3151,6 +3150,9 @@ def load(operator, context, filepath="",
                     elif lnk_type in {b'EmissiveColor'}:
                         ma_wrap.emission_color_texture.image = image
                         texture_mapping_set(fbx_lnk, ma_wrap.emission_color_texture)
+                    elif lnk_type in {b'EmissiveFactor'}:
+                        ma_wrap.emission_strength_texture.image = image
+                        texture_mapping_set(fbx_lnk, ma_wrap.emission_strength_texture)
                     else:
                         print("WARNING: material link %r ignored" % lnk_type)
 

@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc)",
-    "version": (3, 3, 1),
-    "blender": (2, 80, 0),
+    "version": (3, 3, 2),
+    "blender": (2, 91, 5),
     "location": "File > Import > Images as Planes or Add > Mesh > Images as Planes",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
                    "The images are mapped to the planes.",
@@ -1016,24 +1016,24 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             core_shader = get_shadeless_node(node_tree)
         else:  # Emission Shading
             core_shader = node_tree.nodes.new('ShaderNodeEmission')
-            core_shader.inputs[1].default_value = self.emit_strength
+            core_shader.inputs['Strength'].default_value = self.emit_strength
 
         # Connect color from texture
-        node_tree.links.new(core_shader.inputs[0], tex_image.outputs[0])
+        node_tree.links.new(core_shader.inputs[0], tex_image.outputs['Color'])
 
         if self.use_transparency:
             if self.shader == 'PRINCIPLED':
-                node_tree.links.new(core_shader.inputs[18], tex_image.outputs[1])
+                node_tree.links.new(core_shader.inputs['Alpha'], tex_image.outputs['Alpha'])
             else:
                 bsdf_transparent = node_tree.nodes.new('ShaderNodeBsdfTransparent')
 
                 mix_shader = node_tree.nodes.new('ShaderNodeMixShader')
-                node_tree.links.new(mix_shader.inputs[0], tex_image.outputs[1])
-                node_tree.links.new(mix_shader.inputs[1], bsdf_transparent.outputs[0])
+                node_tree.links.new(mix_shader.inputs['Fac'], tex_image.outputs['Alpha'])
+                node_tree.links.new(mix_shader.inputs[1], bsdf_transparent.outputs['BSDF'])
                 node_tree.links.new(mix_shader.inputs[2], core_shader.outputs[0])
                 core_shader = mix_shader
 
-        node_tree.links.new(out_node.inputs[0], core_shader.outputs[0])
+        node_tree.links.new(out_node.inputs['Surface'], core_shader.outputs[0])
 
         auto_align_nodes(node_tree)
         return material

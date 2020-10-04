@@ -35,10 +35,12 @@ from bpy.props import (
 from .internals import (
     collection_tree,
     collection_state,
+    qcd_collection_state,
     expanded,
     get_max_lvl,
     layer_collections,
     rto_history,
+    qcd_history,
     expand_history,
     phantom_history,
     copy_buffer,
@@ -50,6 +52,10 @@ from .internals import (
     get_move_selection,
     get_move_active,
     update_qcd_header,
+)
+
+from .qcd_operators import (
+    QCDAllBase,
 )
 
 
@@ -842,17 +848,69 @@ class SpecialsMenu(Menu):
         prop.without_objects = True
 
 
+class EnableAllQCDSlotsMenu(Menu):
+    bl_label = "Global QCD Slot Actions"
+    bl_idname = "VIEW3D_MT_CM_qcd_enable_all_menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("view3d.enable_all_qcd_slots")
+        layout.operator("view3d.enable_all_qcd_slots_isolated")
+
+        layout.separator()
+
+        layout.operator("view3d.disable_all_non_qcd_slots")
+        layout.operator("view3d.disable_all_collections")
+
+        if context.mode == 'OBJECT':
+            layout.separator()
+            layout.operator("view3d.select_all_qcd_objects")
+
+        layout.separator()
+
+        layout.operator("view3d.discard_qcd_history")
+
+
 def view3d_header_qcd_slots(self, context):
+    global qcd_collection_state
+
+    update_collection_tree(context)
+
+    view_layer = context.view_layer
+
     layout = self.layout
 
     idx = 1
 
-    split = layout.split()
+    if qcd_collection_state:
+        view_layer = context.view_layer
+        new_state = generate_state(qcd=True)
+
+        if (new_state["name"] != qcd_collection_state["name"]
+        or  new_state["exclude"] != qcd_collection_state["exclude"]
+        or  new_state["exclude"] != qcd_collection_state["exclude"]
+        or  new_state["qcd"] != qcd_collection_state["qcd"]):
+            if view_layer.name in qcd_history:
+                del qcd_history[view_layer.name]
+                qcd_collection_state.clear()
+                QCDAllBase.clear()
+
+
+    main_row = layout.row(align=True)
+    current_qcd_history = qcd_history.get(context.view_layer.name, [])
+
+    main_row.operator_menu_hold("view3d.enable_all_qcd_slots_meta",
+                                text="",
+                                icon='HIDE_OFF',
+                                depress=bool(current_qcd_history),
+                                menu="VIEW3D_MT_CM_qcd_enable_all_menu")
+
+
+    split = main_row.split()
     col = split.column(align=True)
     row = col.row(align=True)
     row.scale_y = 0.5
-
-    update_collection_tree(context)
 
     selected_objects = get_move_selection()
     active_object = get_move_active()

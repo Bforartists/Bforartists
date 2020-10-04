@@ -2844,7 +2844,7 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
        "SHARED_VERTEX",
        ICON_STICKY_UVS_VERT,
        "Shared Vertex",
-       "Select UVs that share mesh vertex, irrespective if they are in the same location"},
+       "Select UVs that share a mesh vertex, whether or not they are at the same location"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -2874,9 +2874,7 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   RNA_def_property_enum_sdna(prop, NULL, "sticky");
   RNA_def_property_enum_items(prop, sticky_mode_items);
   RNA_def_property_ui_text(
-      prop,
-      "Sticky Selection Mode",
-      "Automatically select also UVs sharing the same vertex as the ones being selected");
+      prop, "Sticky Selection Mode", "Method for extending UV vertex selection");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, NULL);
 
   /* drawing */
@@ -5641,13 +5639,13 @@ static void rna_def_fileselect_idfilter(BlenderRNA *brna)
        ICON_IMAGE_DATA,
        "Images & Sounds",
        "Show images, movie clips, sounds and masks"},
-      {FILTER_ID_CA | FILTER_ID_LA | FILTER_ID_LP | FILTER_ID_SPK | FILTER_ID_WO | FILTER_ID_WS,
+      {FILTER_ID_CA | FILTER_ID_LA | FILTER_ID_LP | FILTER_ID_SPK | FILTER_ID_WO,
        "category_environment",
        ICON_WORLD,
        "Environment",
        "Show worlds, lights, cameras and speakers"},
       {FILTER_ID_BR | FILTER_ID_GD | FILTER_ID_PA | FILTER_ID_PAL | FILTER_ID_PC | FILTER_ID_TXT |
-           FILTER_ID_VF | FILTER_ID_CF,
+           FILTER_ID_VF | FILTER_ID_CF | FILTER_ID_WS,
        "category_misc",
        ICON_GREASEPENCIL,
        "Miscellaneous",
