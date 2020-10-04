@@ -31,6 +31,29 @@ from .internals import (
     get_move_selection,
 )
 
+mode_converter = {
+    'EDIT_MESH': 'EDIT',
+    'EDIT_CURVE': 'EDIT',
+    'EDIT_SURFACE': 'EDIT',
+    'EDIT_TEXT': 'EDIT',
+    'EDIT_ARMATURE': 'EDIT',
+    'EDIT_METABALL': 'EDIT',
+    'EDIT_LATTICE': 'EDIT',
+    'POSE': 'POSE',
+    'SCULPT': 'SCULPT',
+    'PAINT_WEIGHT': 'WEIGHT_PAINT',
+    'PAINT_VERTEX': 'VERTEX_PAINT',
+    'PAINT_TEXTURE': 'TEXTURE_PAINT',
+    'PARTICLE': 'PARTICLE_EDIT',
+    'OBJECT': 'OBJECT',
+    'PAINT_GPENCIL': 'PAINT_GPENCIL',
+    'EDIT_GPENCIL': 'EDIT_GPENCIL',
+    'SCULPT_GPENCIL': 'SCULPT_GPENCIL',
+    'WEIGHT_GPENCIL': 'WEIGHT_GPENCIL',
+    'VERTEX_GPENCIL': 'VERTEX_GPENCIL',
+    }
+
+
 rto_path = {
     "exclude": "exclude",
     "select": "collection.hide_select",
@@ -469,7 +492,7 @@ def remove_collection(laycol, collection, context):
             cm.cm_list_index = laycol["row_index"]
 
 
-def select_collection_objects(is_master_collection, collection_name, replace, nested):
+def select_collection_objects(is_master_collection, collection_name, replace, nested, selection_state=None):
     if is_master_collection:
         target_collection = bpy.context.view_layer.layer_collection.collection
 
@@ -480,7 +503,8 @@ def select_collection_objects(is_master_collection, collection_name, replace, ne
     if replace:
         bpy.ops.object.select_all(action='DESELECT')
 
-    selection_state = get_move_selection().isdisjoint(target_collection.objects)
+    if selection_state == None:
+        selection_state = get_move_selection().isdisjoint(target_collection.objects)
 
     def select_objects(collection):
             for obj in collection.objects:
@@ -493,3 +517,21 @@ def select_collection_objects(is_master_collection, collection_name, replace, ne
 
     if nested:
         apply_to_children(target_collection, select_objects)
+
+def set_exclude_state(target_layer_collection, state):
+    # get current child exclusion state
+    child_exclusion = []
+
+    def get_child_exclusion(layer_collection):
+        child_exclusion.append([layer_collection, layer_collection.exclude])
+
+    apply_to_children(target_layer_collection, get_child_exclusion)
+
+
+    # set exclusion
+    target_layer_collection.exclude = state
+
+
+    # set correct state for all children
+    for laycol in child_exclusion:
+        laycol[0].exclude = laycol[1]

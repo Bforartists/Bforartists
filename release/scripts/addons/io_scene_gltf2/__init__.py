@@ -15,8 +15,8 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 4, 22),
-    'blender': (2, 90, 0),
+    "version": (1, 4, 32),
+    'blender': (2, 91, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
     'warning': '',
@@ -214,10 +214,16 @@ class ExportGLTF2_Base:
         default=False
     )
 
-    export_materials: BoolProperty(
+    export_materials: EnumProperty(
         name='Materials',
-        description='Export materials',
-        default=True
+        items=(('EXPORT', 'Export',
+        'Export all materials used by included objects'),
+        ('PLACEHOLDER', 'Placeholder',
+        'Do not export materials, but write multiple primitive groups per mesh, keeping material slot information'),
+        ('NONE', 'No export',
+        'Do not export materials, and combine mesh primitive groups, losing material slot information')),
+        description='Export materials ',
+        default='EXPORT'
     )
 
     export_colors: BoolProperty(
@@ -672,7 +678,7 @@ class GLTF_PT_export_geometry(bpy.types.Panel):
         layout.prop(operator, 'export_colors')
         layout.prop(operator, 'export_materials')
         col = layout.column()
-        col.active = operator.export_materials
+        col.active = operator.export_materials == "EXPORT"
         col.prop(operator, 'export_image_format')
 
 

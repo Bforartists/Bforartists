@@ -42,6 +42,8 @@
 #include "GPU_batch.h"
 #include "GPU_texture.h"
 
+#include "DEG_depsgraph_query.h"
+
 #include "DRW_render.h"
 
 #include "draw_cache.h"      /* own include */
@@ -61,6 +63,9 @@ typedef struct VolumeBatchCache {
     GPUVertBuf *pos_nor_in_order;
     GPUBatch *batch;
   } face_wire;
+
+  /* Surface for selection */
+  GPUBatch *selection_surface;
 
   /* settings to determine if cache is invalid */
   bool is_dirty;
@@ -132,6 +137,7 @@ static void volume_batch_cache_clear(Volume *volume)
 
   GPU_VERTBUF_DISCARD_SAFE(cache->face_wire.pos_nor_in_order);
   GPU_BATCH_DISCARD_SAFE(cache->face_wire.batch);
+  GPU_BATCH_DISCARD_SAFE(cache->selection_surface);
 }
 
 void DRW_volume_batch_cache_free(Volume *volume)
@@ -209,10 +215,55 @@ GPUBatch *DRW_volume_batch_cache_get_wireframes_face(Volume *volume)
   return cache->face_wire.batch;
 }
 
+static void drw_volume_selection_surface_cb(
+    void *userdata, float (*verts)[3], int (*tris)[3], int totvert, int tottris)
+{
+  Volume *volume = userdata;
+  VolumeBatchCache *cache = volume->batch_cache;
+
+  static GPUVertFormat format = {0};
+  static uint pos_id;
+  if (format.attr_len == 0) {
+    pos_id = GPU_vertformat_attr_add(&format, "pos", GPU_COMP_F32, 3, GPU_FETCH_FLOAT);
+  }
+
+  /* Create vertex buffer. */
+  GPUVertBuf *vbo_surface = GPU_vertbuf_create_with_format(&format);
+  GPU_vertbuf_data_alloc(vbo_surface, totvert);
+  GPU_vertbuf_attr_fill(vbo_surface, pos_id, verts);
+
+  /* Create index buffer. */
+  GPUIndexBufBuilder elb;
+  GPU_indexbuf_init(&elb, GPU_PRIM_TRIS, tottris, totvert);
+  for (int i = 0; i < tottris; i++) {
+    GPU_indexbuf_add_tri_verts(&elb, UNPACK3(tris[i]));
+  }
+  GPUIndexBuf *ibo_surface = GPU_indexbuf_build(&elb);
+
+  cache->selection_surface = GPU_batch_create_ex(
+      GPU_PRIM_TRIS, vbo_surface, ibo_surface, GPU_BATCH_OWNS_VBO | GPU_BATCH_OWNS_INDEX);
+}
+
+GPUBatch *DRW_volume_batch_cache_get_selection_surface(Volume *volume)
+{
+  VolumeBatchCache *cache = volume_batch_cache_get(volume);
+  if (cache->selection_surface == NULL) {
+    VolumeGrid *volume_grid = BKE_volume_grid_active_get(volume);
+    if (volume_grid == NULL) {
+      return NULL;
+    }
+    BKE_volume_grid_selection_surface(
+        volume, volume_grid, drw_volume_selection_surface_cb, volume);
+  }
+  return cache->selection_surface;
+}
+
 static DRWVolumeGrid *volume_grid_cache_get(Volume *volume,
                                             VolumeGrid *grid,
                                             VolumeBatchCache *cache)
 {
+  const DRWContextState *draw_ctx = DRW_context_state_get();
+
   const char *name = BKE_volume_grid_name(grid);
 
   /* Return cached grid. */
@@ -242,35 +293,32 @@ static DRWVolumeGrid *volume_grid_cache_get(Volume *volume,
   const bool was_loaded = BKE_volume_grid_is_loaded(grid);
   BKE_volume_grid_load(volume, grid);
 
-  /* Compute dense voxel grid size. */
-  int64_t dense_min[3], dense_max[3], resolution[3] = {0};
-  if (BKE_volume_grid_dense_bounds(volume, grid, dense_min, dense_max)) {
-    resolution[0] = dense_max[0] - dense_min[0];
-    resolution[1] = dense_max[1] - dense_min[1];
-    resolution[2] = dense_max[2] - dense_min[2];
+  float resolution_factor = 1.0f;
+  if (DEG_get_mode(draw_ctx->depsgraph) != DAG_EVAL_RENDER) {
+    if (draw_ctx->scene->r.mode & R_SIMPLIFY) {
+      resolution_factor = draw_ctx->scene->r.simplify_volumes;
+    }
   }
-  size_t num_voxels = resolution[0] * resolution[1] * resolution[2];
-  size_t elem_size = sizeof(float) * channels;
+  if (resolution_factor == 0.0f) {
+    return cache_grid;
+  }
 
-  /* Allocate and load voxels. */
-  float *voxels = (num_voxels > 0) ? MEM_malloc_arrayN(num_voxels, elem_size, __func__) : NULL;
-  if (voxels != NULL) {
-    BKE_volume_grid_dense_voxels(volume, grid, dense_min, dense_max, voxels);
+  DenseFloatVolumeGrid dense_grid;
+  if (BKE_volume_grid_dense_floats(volume, grid, resolution_factor, &dense_grid)) {
+    copy_m4_m4(cache_grid->texture_to_object, dense_grid.texture_to_object);
+    invert_m4_m4(cache_grid->object_to_texture, dense_grid.texture_to_object);
 
     /* Create GPU texture. */
     eGPUTextureFormat format = (channels == 3) ? GPU_RGB16F : GPU_R16F;
-    cache_grid->texture = GPU_texture_create_3d(
-        "volume_grid", UNPACK3(resolution), 1, format, GPU_DATA_FLOAT, voxels);
-
+    cache_grid->texture = GPU_texture_create_3d("volume_grid",
+                                                UNPACK3(dense_grid.resolution),
+                                                1,
+                                                format,
+                                                GPU_DATA_FLOAT,
+                                                dense_grid.voxels);
     GPU_texture_swizzle_set(cache_grid->texture, (channels == 3) ? "rgb1" : "rrr1");
     GPU_texture_wrap_mode(cache_grid->texture, false, false);
-
-    MEM_freeN(voxels);
-
-    /* Compute transform matrices. */
-    BKE_volume_grid_dense_transform_matrix(
-        grid, dense_min, dense_max, cache_grid->texture_to_object);
-    invert_m4_m4(cache_grid->object_to_texture, cache_grid->texture_to_object);
+    BKE_volume_dense_float_grid_clear(&dense_grid);
   }
 
   /* Free grid from memory if it wasn't previously loaded. */

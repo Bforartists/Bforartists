@@ -1687,7 +1687,7 @@ PyDoc_STRVAR(
     "\n"
     "   Set the matrix to its adjugate.\n"
     "\n"
-    "   .. note:: When the matrix cannot be adjugated a :exc:`ValueError` exception is raised.\n"
+    "   :raises ValueError: if the matrix cannot be adjugate.\n"
     "\n"
     "   .. seealso:: `Adjugate matrix <https://en.wikipedia.org/wiki/Adjugate_matrix>`__ on "
     "Wikipedia.\n");
@@ -1718,16 +1718,14 @@ static PyObject *Matrix_adjugate(MatrixObject *self)
   Py_RETURN_NONE;
 }
 
-PyDoc_STRVAR(
-    Matrix_adjugated_doc,
-    ".. method:: adjugated()\n"
-    "\n"
-    "   Return an adjugated copy of the matrix.\n"
-    "\n"
-    "   :return: the adjugated matrix.\n"
-    "   :rtype: :class:`Matrix`\n"
-    "\n"
-    "   .. note:: When the matrix cant be adjugated a :exc:`ValueError` exception is raised.\n");
+PyDoc_STRVAR(Matrix_adjugated_doc,
+             ".. method:: adjugated()\n"
+             "\n"
+             "   Return an adjugated copy of the matrix.\n"
+             "\n"
+             "   :return: the adjugated matrix.\n"
+             "   :rtype: :class:`Matrix`\n"
+             "   :raises ValueError: if the matrix cannot be adjugated\n");
 static PyObject *Matrix_adjugated(MatrixObject *self)
 {
   return matrix__apply_to_copy(Matrix_adjugate, self);
