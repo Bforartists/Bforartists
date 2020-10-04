@@ -66,6 +66,7 @@ from .operator_utils import (
     link_child_collections_to_parent,
     remove_collection,
     select_collection_objects,
+    set_exclude_state,
 )
 
 class SetActiveCollection(Operator):
@@ -398,6 +399,7 @@ class CMExcludeOperator(Operator):
         modifiers = get_modifiers(event)
         view_layer = context.view_layer.name
         orig_active_collection = context.view_layer.active_layer_collection
+        orig_active_object = context.view_layer.objects.active
         laycol_ptr = layer_collections[self.name]["ptr"]
 
         if not view_layer in rto_history["exclude"]:
@@ -424,28 +426,17 @@ class CMExcludeOperator(Operator):
             # reset exclude history
             del rto_history["exclude"][view_layer]
 
-
-            # get current child exclusion state
-            child_exclusion = []
-
-            def get_child_exclusion(layer_collection):
-                child_exclusion.append([layer_collection, layer_collection.exclude])
-
-            apply_to_children(laycol_ptr, get_child_exclusion)
-
-
-            # toggle exclusion of collection
-            laycol_ptr.exclude = not laycol_ptr.exclude
-
-
-            # set correct state for all children
-            for laycol in child_exclusion:
-                laycol[0].exclude = laycol[1]
+            set_exclude_state(laycol_ptr, not laycol_ptr.exclude)
 
             cls.isolated = False
 
-        # reset active collection
+        # restore active collection
         context.view_layer.active_layer_collection = orig_active_collection
+
+        # restore active object if possible
+        if orig_active_object:
+            if orig_active_object.name in context.view_layer.objects:
+                context.view_layer.objects.active = orig_active_object
 
         # reset exclude all history
         if view_layer in rto_history["exclude_all"]:
@@ -470,6 +461,7 @@ class CMUnExcludeAllOperator(Operator):
         global rto_history
 
         orig_active_collection = context.view_layer.active_layer_collection
+        orig_active_object = context.view_layer.objects.active
         view_layer = context.view_layer.name
         modifiers = get_modifiers(event)
 
@@ -494,8 +486,13 @@ class CMUnExcludeAllOperator(Operator):
         else:
             activate_all_rtos(view_layer, "exclude")
 
-        # reset active collection
+        # restore active collection
         context.view_layer.active_layer_collection = orig_active_collection
+
+        # restore active object if possible
+        if orig_active_object:
+            if orig_active_object.name in context.view_layer.objects:
+                context.view_layer.objects.active = orig_active_object
 
         return {'FINISHED'}
 

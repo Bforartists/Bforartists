@@ -22,8 +22,6 @@
  * \ingroup edarmature
  */
 
-#include <assert.h>
-
 #include "DNA_armature_types.h"
 #include "DNA_constraint_types.h"
 #include "DNA_object_types.h"
@@ -415,7 +413,7 @@ static int armature_calc_roll_exec(bContext *C, wmOperator *op)
         copy_v3_v3(vec, mat[2]);
       }
       else { /* Axis */
-        assert(type <= 5);
+        BLI_assert(type <= 5);
         if (type < 3) {
           vec[type] = 1.0f;
         }
@@ -931,9 +929,9 @@ static int armature_switch_direction_exec(bContext *C, wmOperator *UNUSED(op))
     /* ensure that mirror bones will also be operated on */
     armature_tag_select_mirrored(arm);
 
-    /* clear BONE_TRANSFORM flags
-     * - used to prevent duplicate/canceling operations from occurring [#34123]
-     * - BONE_DONE cannot be used here as that's already used for mirroring
+    /* Clear BONE_TRANSFORM flags
+     * - Used to prevent duplicate/canceling operations from occurring T34123.
+     * - #BONE_DONE cannot be used here as that's already used for mirroring.
      */
     armature_clear_swap_done_flags(arm);
 
@@ -949,7 +947,7 @@ static int armature_switch_direction_exec(bContext *C, wmOperator *UNUSED(op))
          */
         parent = ebo->parent;
 
-        /* skip bone if already handled... [#34123] */
+        /* skip bone if already handled, see T34123. */
         if ((ebo->flag & BONE_TRANSFORM) == 0) {
           /* only if selected and editable */
           if (EBONE_VISIBLE(arm, ebo) && EBONE_EDITABLE(ebo)) {

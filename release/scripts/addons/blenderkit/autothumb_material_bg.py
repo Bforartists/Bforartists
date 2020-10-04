@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
         colmapdict = {
             'BALL': 'Ball',
-            'CUBE': 'Cube',
+            'BALL_COMPLEX': 'Ball complex',
             'FLUID': 'Fluid',
             'CLOTH': 'Cloth',
             'HAIR': 'Hair'
@@ -79,6 +79,7 @@ if __name__ == "__main__":
         for ob in bpy.context.visible_objects:
             if ob.name[:15] == 'MaterialPreview':
                 ob.material_slots[0].material = mat
+                ob.data.use_auto_texspace = False
                 ob.data.texspace_size.x = 1 / tscale
                 ob.data.texspace_size.y = 1 / tscale
                 ob.data.texspace_size.z = 1 / tscale
@@ -88,7 +89,7 @@ if __name__ == "__main__":
                 else:
                     ob.cycles.use_adaptive_subdivision = False
                 ts = data['texture_size_meters']
-                if data["thumbnail_type"] in ['BALL', 'CUBE', 'CLOTH']:
+                if data["thumbnail_type"] in ['BALL', 'BALL_COMPLEX', 'CLOTH']:
                    utils.automap(ob.name, tex_size = ts / tscale, just_scale = True, bg_exception=True)
         bpy.context.view_layer.update()
 

@@ -19,7 +19,7 @@
 bl_info = {
     "name": "BlenderKit Online Asset Library",
     "author": "Vilem Duha, Petr Dlouhy",
-    "version": (1, 0, 31),
+    "version": (1, 0, 32),
     "blender": (2, 83, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more). Connects to the internet.",
@@ -807,7 +807,7 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
         name="Thumbnail Style",
         items=(
             ('BALL', 'Ball', ""),
-            ('CUBE', 'Cube', 'cube'),
+            ('BALL_COMPLEX', 'Ball complex', 'Complex ball to highlight edgewear or material thickness'),
             ('FLUID', 'Fluid', 'Fluid'),
             ('CLOTH', 'Cloth', 'Cloth'),
             ('HAIR', 'Hair', 'Hair  ')

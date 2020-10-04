@@ -1973,6 +1973,7 @@ class CYCLES_RENDER_PT_bake_influence(CyclesButtonsPanel, Panel):
     bl_context = "render"
     bl_parent_id = "CYCLES_RENDER_PT_bake"
     COMPAT_ENGINES = {'CYCLES'}
+
     @classmethod
     def poll(cls, context):
         scene = context.scene
@@ -2283,8 +2284,10 @@ class CYCLES_VIEW3D_PT_shading_lighting(Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.engine in cls.COMPAT_ENGINES
-            and context.space_data.shading.type == 'RENDERED')
+        return (
+            context.engine in cls.COMPAT_ENGINES and
+            context.space_data.shading.type == 'RENDERED'
+        )
 
     def draw(self, context):
         layout = self.layout

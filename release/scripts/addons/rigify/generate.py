@@ -361,6 +361,8 @@ class Generator(base_generate.BaseGenerator):
         # Copy bones from metarig to obj
         self.__duplicate_rig()
 
+        obj.data.use_mirror_x = False
+
         t.tick("Duplicate rig: ")
 
         #------------------------------------------
@@ -521,8 +523,8 @@ def generate_rig(context, metarig):
 
 
 def create_selection_set_for_rig_layer(
-        rig: bpy.types.Object, 
-        set_name: str, 
+        rig: bpy.types.Object,
+        set_name: str,
         layer_idx: int
     ) -> None:
     """Create a single selection set on a rig.
@@ -535,7 +537,7 @@ def create_selection_set_for_rig_layer(
     for b in rig.pose.bones:
         if not b.bone.layers[layer_idx] or b.name in selset.bone_ids:
             continue
-    
+
         bone_id = selset.bone_ids.add()
         bone_id.name = b.name
 

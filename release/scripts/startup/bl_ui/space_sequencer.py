@@ -267,7 +267,7 @@ class SEQUENCER_MT_view(Menu):
         if st.view_type == 'PREVIEW':
             # Specifying the REGION_PREVIEW context is needed in preview-only
             # mode, else the lookup for the shortcut will fail in
-            # wm_keymap_item_find_props() (see #32595).
+            # wm_keymap_item_find_props() (see T32595).
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_toolbar")
@@ -1161,13 +1161,12 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             col.use_property_split = True
             layout.prop(strip, "wrap_width", text="Wrap Width")
 
-
         col = layout.column(align=True)
         if strip_type == 'SPEED':
             col.use_property_split = True
             col.prop(strip, "multiply_speed")
             col.use_property_split = False
-            col.prop(strip, "frame_interpolation_mode")
+            col.prop(strip, "use_frame_interpolate")
 
         elif strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
             col.use_property_split = False

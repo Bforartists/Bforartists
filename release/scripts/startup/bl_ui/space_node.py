@@ -71,7 +71,7 @@ class NODE_HT_header(Header):
 
                 types_that_support_material = {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META',
                                                'GPENCIL', 'VOLUME', 'HAIR', 'POINTCLOUD'}
-                # disable material slot buttons when pinned, cannot find correct slot within id_from (#36589)
+                # disable material slot buttons when pinned, cannot find correct slot within id_from (T36589)
                 # disable also when the selected object does not support materials
                 has_material_slots = not snode.pin and ob_type in types_that_support_material
 
@@ -267,8 +267,11 @@ class NODE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
-        layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
+        sub = layout.column()
+        sub.operator_context = 'EXEC_REGION_WIN'
+        sub.operator("view2d.zoom_in", icon = "ZOOM_IN")
+        sub.operator("view2d.zoom_out", icon = "ZOOM_OUT")
+
         layout.operator("view2d.zoom_border", icon = "ZOOM_BORDER")
 
         layout.separator()
