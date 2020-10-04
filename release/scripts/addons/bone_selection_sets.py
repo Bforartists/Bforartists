@@ -55,7 +55,10 @@ class SelectionEntry(PropertyGroup):
 
 class SelectionSet(PropertyGroup):
     name: StringProperty(name="Set Name", override={'LIBRARY_OVERRIDABLE'})
-    bone_ids: CollectionProperty(type=SelectionEntry, override={'LIBRARY_OVERRIDABLE'})
+    bone_ids: CollectionProperty(
+        type=SelectionEntry, 
+        override={'LIBRARY_OVERRIDABLE', 'USE_INSERTION'}
+    )  
     is_selected: BoolProperty(name="Is Selected", override={'LIBRARY_OVERRIDABLE'})
 
 
@@ -546,7 +549,7 @@ def register():
         type=SelectionSet,
         name="Selection Sets",
         description="List of groups of bones for easy selection",
-        override={'LIBRARY_OVERRIDABLE'}
+        override={'LIBRARY_OVERRIDABLE', 'USE_INSERTION'}
     )
     bpy.types.Object.active_selection_set = IntProperty(
         name="Active Selection Set",

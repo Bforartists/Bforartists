@@ -154,7 +154,7 @@ static struct VolumeFileCache {
 
   ~VolumeFileCache()
   {
-    assert(cache.empty());
+    BLI_assert(cache.empty());
   }
 
   Entry *add_metadata_user(const Entry &template_entry)
@@ -1269,6 +1269,8 @@ Volume *BKE_volume_new_for_eval(const Volume *volume_src)
   STRNCPY(volume_dst->id.name, volume_src->id.name);
   volume_dst->mat = (Material **)MEM_dupallocN(volume_src->mat);
   volume_dst->totcol = volume_src->totcol;
+  volume_dst->render = volume_src->render;
+  volume_dst->display = volume_src->display;
   BKE_volume_init_grids(volume_dst);
 
   return volume_dst;

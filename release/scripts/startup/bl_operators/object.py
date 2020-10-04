@@ -208,7 +208,6 @@ class SelectHierarchy(Operator):
                 select_new.sort(key=lambda obj_iter: obj_iter.name)
                 act_new = select_new[0]
 
-
         # don't edit any object settings above this
         if select_new:
             if not self.extend:
@@ -801,7 +800,7 @@ class TransformsToDeltasAnim(Operator):
                 continue
 
             # first pass over F-Curves: ensure that we don't have conflicting
-            # transforms already (e.g. if this was applied already) [#29110]
+            # transforms already (e.g. if this was applied already) T29110.
             existingFCurves = {}
             for fcu in adt.action.fcurves:
                 # get "delta" path - i.e. the final paths which may clash

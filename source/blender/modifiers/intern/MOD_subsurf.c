@@ -30,6 +30,7 @@
 
 #include "BLT_translation.h"
 
+#include "DNA_defaults.h"
 #include "DNA_mesh_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
@@ -71,11 +72,9 @@ static void initData(ModifierData *md)
 {
   SubsurfModifierData *smd = (SubsurfModifierData *)md;
 
-  smd->levels = 1;
-  smd->renderLevels = 2;
-  smd->uv_smooth = SUBSURF_UV_SMOOTH_PRESERVE_CORNERS;
-  smd->quality = 3;
-  smd->flags |= (eSubsurfModifierFlag_UseCrease | eSubsurfModifierFlag_ControlEdges);
+  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(smd, modifier));
+
+  MEMCPY_STRUCT_AFTER(smd, DNA_struct_default_get(SubsurfModifierData), modifier);
 }
 
 static void requiredDataMask(Object *UNUSED(ob),
@@ -154,13 +153,21 @@ static int subdiv_levels_for_modifier_get(const SubsurfModifierData *smd,
   return get_render_subsurf_level(&scene->r, requested_levels, use_render_params);
 }
 
-static void subdiv_settings_init(SubdivSettings *settings, const SubsurfModifierData *smd)
+static void subdiv_settings_init(SubdivSettings *settings,
+                                 const SubsurfModifierData *smd,
+                                 const ModifierEvalContext *ctx)
 {
+  const bool use_render_params = (ctx->flag & MOD_APPLY_RENDER);
+  const int requested_levels = (use_render_params) ? smd->renderLevels : smd->levels;
+
   settings->is_simple = (smd->subdivType == SUBSURF_TYPE_SIMPLE);
-  settings->is_adaptive = true;
-  settings->level = settings->is_simple ? 1 : smd->quality;
+  settings->is_adaptive = !(smd->flags & eSubsurfModifierFlag_UseRecursiveSubdivision);
+  settings->level = settings->is_simple ?
+                        1 :
+                        (settings->is_adaptive ? smd->quality : requested_levels);
   settings->use_creases = (smd->flags & eSubsurfModifierFlag_UseCrease);
-  settings->vtx_boundary_interpolation = SUBDIV_VTX_BOUNDARY_EDGE_ONLY;
+  settings->vtx_boundary_interpolation = BKE_subdiv_vtx_boundary_interpolation_from_subsurf(
+      smd->boundary_smooth);
   settings->fvar_linear_interpolation = BKE_subdiv_fvar_interpolation_from_uv_smooth(
       smd->uv_smooth);
 }
@@ -252,11 +259,10 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 #endif
   SubsurfModifierData *smd = (SubsurfModifierData *)md;
   SubdivSettings subdiv_settings;
-  subdiv_settings_init(&subdiv_settings, smd);
+  subdiv_settings_init(&subdiv_settings, smd, ctx);
   if (subdiv_settings.level == 0) {
     return result;
   }
-  BKE_subdiv_settings_validate_for_mesh(&subdiv_settings, mesh);
   SubsurfRuntimeData *runtime_data = subsurf_ensure_runtime(smd);
   Subdiv *subdiv = subdiv_descriptor_ensure(smd, &subdiv_settings, mesh);
   if (subdiv == NULL) {
@@ -296,7 +302,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 }
 
 static void deformMatrices(ModifierData *md,
-                           const ModifierEvalContext *UNUSED(ctx),
+                           const ModifierEvalContext *ctx,
                            Mesh *mesh,
                            float (*vertex_cos)[3],
                            float (*deform_matrices)[3][3],
@@ -312,11 +318,10 @@ static void deformMatrices(ModifierData *md,
 
   SubsurfModifierData *smd = (SubsurfModifierData *)md;
   SubdivSettings subdiv_settings;
-  subdiv_settings_init(&subdiv_settings, smd);
+  subdiv_settings_init(&subdiv_settings, smd, ctx);
   if (subdiv_settings.level == 0) {
     return;
   }
-  BKE_subdiv_settings_validate_for_mesh(&subdiv_settings, mesh);
   SubsurfRuntimeData *runtime_data = subsurf_ensure_runtime(smd);
   Subdiv *subdiv = subdiv_descriptor_ensure(smd, &subdiv_settings, mesh);
   if (subdiv == NULL) {
@@ -342,6 +347,11 @@ static bool get_show_adaptive_options(const bContext *C, Panel *panel)
   PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
   ModifierData *md = ptr->data;
   if (md->next != NULL) {
+    return false;
+  }
+
+  /* Don't show adaptive options if regular subdivision used*/
+  if (!RNA_boolean_get(ptr, "use_limit_surface")) {
     return false;
   }
 
@@ -452,8 +462,14 @@ static void advanced_panel_draw(const bContext *C, Panel *panel)
   uiLayoutSetPropSep(layout, true);
 
   uiLayoutSetActive(layout, !(show_adaptive_options && ob_use_adaptive_subdivision));
-  uiItemR(layout, ptr, "quality", 0, NULL, ICON_NONE);
+  uiItemR(layout, ptr, "use_limit_surface", 0, NULL, ICON_NONE);
+
+  uiLayout *col = uiLayoutColumn(layout, true);
+  uiLayoutSetActive(col, RNA_boolean_get(ptr, "use_limit_surface"));
+  uiItemR(col, ptr, "quality", 0, NULL, ICON_NONE);
+
   uiItemR(layout, ptr, "uv_smooth", 0, NULL, ICON_NONE);
+  uiItemR(layout, ptr, "boundary_smooth", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "use_creases", 0, NULL, ICON_NONE);
   uiItemR(layout, ptr, "use_custom_normals", 0, NULL, ICON_NONE);
 }
@@ -501,7 +517,6 @@ ModifierTypeInfo modifierType_Subsurf = {
     /* updateDepsgraph */ NULL,
     /* dependsOnTime */ NULL,
     /* dependsOnNormals */ dependsOnNormals,
-    /* foreachObjectLink */ NULL,
     /* foreachIDLink */ NULL,
     /* foreachTexLink */ NULL,
     /* freeRuntimeData */ freeRuntimeData,

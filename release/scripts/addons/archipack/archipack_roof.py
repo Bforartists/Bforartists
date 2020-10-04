@@ -1867,7 +1867,7 @@ class RoofGenerator(CutAbleGenerator):
                     offset_type=offset_type,
                     segments=d.tile_bevel_segs,
                     profile=0.5,
-                    vertex_only=False,
+                    # vertex_only=False,
                     clamp_overlap=True,
                     material=-1)
 

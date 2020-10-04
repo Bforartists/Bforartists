@@ -167,14 +167,14 @@ AnimData *BKE_animdata_add_id(ID *id)
 /* Action Setter --------------------------------------- */
 
 /**
- * Called when user tries to change the active action of an AnimData block
+ * Called when user tries to change the active action of an #AnimData block
  * (via RNA, Outliner, etc.)
  *
- * \param reports can be NULL.
- * \param id the owner of the animation data
- * \param act the Action to set, or NULL to clear.
+ * \param reports: Can be NULL.
+ * \param id: The owner of the animation data
+ * \param act: The Action to set, or NULL to clear.
  *
- * Return true when the action was succesfully updated, false otherwise.
+ * \return true when the action was successfully updated, false otherwise.
  */
 bool BKE_animdata_set_action(ReportList *reports, ID *id, bAction *act)
 {
@@ -238,6 +238,11 @@ bool BKE_animdata_action_editable(const AnimData *adt)
 bool BKE_animdata_action_ensure_idroot(const ID *owner, bAction *action)
 {
   const int idcode = GS(owner->name);
+
+  if (action == NULL) {
+    /* A NULL action is usable by any ID type. */
+    return true;
+  }
 
   if (action->idroot == 0) {
     /* First time this Action is assigned, lock it to this ID type. */
@@ -352,10 +357,23 @@ AnimData *BKE_animdata_copy(Main *bmain, AnimData *adt, const int flag)
 
   /* make a copy of action - at worst, user has to delete copies... */
   if (do_action) {
+    /* Recursive copy of 'real' IDs is a bit hairy. Even if do not want to deal with usercount
+     *  when copying ID's data itself, we still need to do so with sub-IDs, since those will not be
+     * handled by later 'update usercounts of used IDs' code as used e.g. at end of
+     * BKE_id_copy_ex().
+     * So in case we do copy the ID and its sub-IDs in bmain, silence the 'no usercount' flag for
+     * the sub-IDs copying.
+     * Note: This is a bit weak, as usually when it comes to recursive ID copy. Should work for
+     * now, but we may have to revisit this at some point and add a proper extra flag to deal with
+     * that situation. Or refactor completely the way we handle such recursion, by flattening it
+     * e.g. */
+    const int id_copy_flag = (flag & LIB_ID_CREATE_NO_MAIN) == 0 ?
+                                 flag & ~LIB_ID_CREATE_NO_USER_REFCOUNT :
+                                 flag;
     BLI_assert(bmain != NULL);
     BLI_assert(dadt->action == NULL || dadt->action != dadt->tmpact);
-    BKE_id_copy_ex(bmain, (ID *)dadt->action, (ID **)&dadt->action, flag);
-    BKE_id_copy_ex(bmain, (ID *)dadt->tmpact, (ID **)&dadt->tmpact, flag);
+    BKE_id_copy_ex(bmain, (ID *)dadt->action, (ID **)&dadt->action, id_copy_flag);
+    BKE_id_copy_ex(bmain, (ID *)dadt->tmpact, (ID **)&dadt->tmpact, id_copy_flag);
   }
   else if (do_id_user) {
     id_us_plus((ID *)dadt->action);
@@ -1573,7 +1591,7 @@ void BKE_animdata_blend_read_data(BlendDataReader *reader, AnimData *adt)
 
   /* relink active track/strip - even though strictly speaking this should only be used
    * if we're in 'tweaking mode', we need to be able to have this loaded back for
-   * undo, but also since users may not exit tweakmode before saving (#24535)
+   * undo, but also since users may not exit tweakmode before saving (T24535)
    */
   // TODO: it's not really nice that anyone should be able to save the file in this
   //      state, but it's going to be too hard to enforce this single case...
