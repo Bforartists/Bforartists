@@ -346,7 +346,7 @@ class VIEW3D_PT_vr_info(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(icon='ERROR', text="Built without VR/OpenXR features.")
+        layout.label(icon='ERROR', text="Built without VR/OpenXR features")
 
 
 class VIEW3D_OT_vr_landmark_add(Operator):

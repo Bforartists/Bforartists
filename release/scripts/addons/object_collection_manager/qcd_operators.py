@@ -35,8 +35,12 @@ from . import internals
 from .internals import (
     layer_collections,
     rto_history,
+    qcd_history,
     qcd_slots,
+    qcd_collection_state,
+    update_collection_tree,
     update_property_group,
+    generate_state,
     get_modifiers,
     get_move_selection,
     get_move_active,
@@ -44,9 +48,442 @@ from .internals import (
 )
 
 from .operator_utils import (
+    mode_converter,
     apply_to_children,
     select_collection_objects,
+    set_exclude_state,
 )
+
+class LockedObjects():
+    def __init__(self):
+        self.objs = []
+        self.mode = ""
+
+def get_locked_objs(context):
+    # get objects not in object mode
+    locked = LockedObjects()
+    if context.mode == 'OBJECT':
+        return locked
+
+    if context.view_layer.objects.active:
+        active = context.view_layer.objects.active
+        locked.mode = mode_converter[context.mode]
+
+        for obj in context.view_layer.objects:
+            if obj.mode != 'OBJECT':
+                if obj.mode not in ['POSE', 'WEIGHT_PAINT'] or obj == active:
+                    if obj.mode == active.mode:
+                        locked.objs.append(obj)
+
+    return locked
+
+
+
+class QCDAllBase():
+    meta_op = False
+    meta_report = None
+
+    context = None
+    view_layer = ""
+    history = None
+    orig_active_collection = None
+    orig_active_object = None
+    locked = None
+
+    @classmethod
+    def init(cls, context):
+        cls.context = context
+        cls.orig_active_collection = context.view_layer.active_layer_collection
+        cls.view_layer = context.view_layer.name
+        cls.orig_active_object = context.view_layer.objects.active
+
+        if not cls.view_layer in qcd_history:
+            qcd_history[cls.view_layer] = []
+
+        cls.history = qcd_history[cls.view_layer]
+
+        cls.locked = get_locked_objs(context)
+
+    @classmethod
+    def apply_history(cls):
+        for x, item in enumerate(layer_collections.values()):
+            item["ptr"].exclude = cls.history[x]
+
+        # clear rto history
+        del qcd_history[cls.view_layer]
+
+        internals.qcd_collection_state.clear()
+        cls.history = None
+
+    @classmethod
+    def finalize(cls):
+        # restore active collection
+        cls.context.view_layer.active_layer_collection = cls.orig_active_collection
+
+        # restore active object if possible
+        if cls.orig_active_object:
+            if cls.orig_active_object.name in cls.context.view_layer.objects:
+                cls.context.view_layer.objects.active = cls.orig_active_object
+
+        # restore locked objects back to their original mode
+        # needed because of exclude child updates
+        if cls.context.view_layer.objects.active:
+            if cls.locked.objs:
+                bpy.ops.object.mode_set(mode=cls.locked.mode)
+
+    @classmethod
+    def clear(cls):
+
+        cls.context = None
+        cls.view_layer = ""
+        cls.history = None
+        cls.orig_active_collection = None
+        cls.orig_active_object = None
+        cls.locked = {}
+
+
+class EnableAllQCDSlotsMeta(Operator):
+    '''QCD All Meta Operator'''
+    bl_label = "Quick View Toggles"
+    bl_description = (
+        "  * LMB - Enable all slots/Restore.\n"
+        "  * Alt+LMB - Select all objects in QCD slots.\n"
+        "  * LMB+Hold - Menu"
+        )
+    bl_idname = "view3d.enable_all_qcd_slots_meta"
+
+    def invoke(self, context, event):
+        global qcd_slots
+        global layer_collections
+        qab = QCDAllBase
+
+        modifiers = get_modifiers(event)
+
+        qab.meta_op = True
+
+        if modifiers == {"alt"}:
+            bpy.ops.view3d.select_all_qcd_objects()
+
+        else:
+            qab.init(context)
+
+            if not qab.history:
+                bpy.ops.view3d.enable_all_qcd_slots()
+
+            else:
+                qab.apply_history()
+                qab.finalize()
+
+
+        if qab.meta_report:
+            self.report({"INFO"}, qab.meta_report)
+            qab.meta_report = None
+
+        qab.meta_op = False
+
+
+        return {'FINISHED'}
+
+
+class EnableAllQCDSlots(Operator):
+    '''Toggles between the current state and all enabled'''
+    bl_label = "Enable All QCD Slots"
+    bl_idname = "view3d.enable_all_qcd_slots"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        global qcd_slots
+        global layer_collections
+        qab = QCDAllBase
+
+        # validate qcd slots
+        if not dict(qcd_slots):
+            if qab.meta_op:
+                qab.meta_report = "No QCD slots."
+            else:
+                self.report({"INFO"}, "No QCD slots.")
+
+            return {'CANCELLED'}
+
+        qab.init(context)
+
+        if not qab.history:
+            keep_history = False
+
+            for laycol in layer_collections.values():
+                is_qcd_slot = qcd_slots.contains(name=laycol["name"])
+
+                qab.history.append(laycol["ptr"].exclude)
+
+                if is_qcd_slot and laycol["ptr"].exclude:
+                    keep_history = True
+                    set_exclude_state(laycol["ptr"], False)
+
+
+            if not keep_history:
+                # clear rto history
+                del qcd_history[qab.view_layer]
+                qab.clear()
+
+                if qab.meta_op:
+                    qab.meta_report = "All QCD slots are already enabled."
+
+                else:
+                    self.report({"INFO"}, "All QCD slots are already enabled.")
+
+                return {'CANCELLED'}
+
+            internals.qcd_collection_state.clear()
+            internals.qcd_collection_state.update(internals.generate_state(qcd=True))
+
+        else:
+            qab.apply_history()
+
+        qab.finalize()
+
+        return {'FINISHED'}
+
+class EnableAllQCDSlotsIsolated(Operator):
+    '''Toggles between the current state and all enabled (non-QCD collections disabled)'''
+    bl_label = "Enable All QCD Slots Isolated"
+    bl_idname = "view3d.enable_all_qcd_slots_isolated"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        global qcd_slots
+        global layer_collections
+        qab = QCDAllBase
+
+        # validate qcd slots
+        if not dict(qcd_slots):
+            self.report({"INFO"}, "No QCD slots.")
+
+            return {'CANCELLED'}
+
+        qab.init(context)
+
+        if qab.locked.objs and not qcd_slots.object_in_slots(qab.orig_active_object):
+            # clear rto history
+            del qcd_history[qab.view_layer]
+            qab.clear()
+
+            self.report({"WARNING"}, "Cannot execute.  The active object would be lost.")
+
+            return {'CANCELLED'}
+
+        if not qab.history:
+            keep_history = False
+
+            for laycol in layer_collections.values():
+                is_qcd_slot = qcd_slots.contains(name=laycol["name"])
+
+                qab.history.append(laycol["ptr"].exclude)
+
+                if is_qcd_slot and laycol["ptr"].exclude:
+                    keep_history = True
+                    set_exclude_state(laycol["ptr"], False)
+
+                if not is_qcd_slot and not laycol["ptr"].exclude:
+                    keep_history = True
+                    set_exclude_state(laycol["ptr"], True)
+
+
+            if not keep_history:
+                # clear rto history
+                del qcd_history[qab.view_layer]
+                qab.clear()
+
+                self.report({"INFO"}, "All QCD slots are already enabled and isolated.")
+                return {'CANCELLED'}
+
+            internals.qcd_collection_state.clear()
+            internals.qcd_collection_state.update(internals.generate_state(qcd=True))
+
+        else:
+            qab.apply_history()
+
+        qab.finalize()
+
+        return {'FINISHED'}
+
+class DisableAllNonQCDSlots(Operator):
+    '''Toggles between the current state and all non-QCD collections disabled'''
+    bl_label = "Disable All Non QCD Slots"
+    bl_idname = "view3d.disable_all_non_qcd_slots"
+    bl_options = {'REGISTER', 'UNDO'}
+
+
+    def execute(self, context):
+        global qcd_slots
+        global layer_collections
+        qab = QCDAllBase
+
+        # validate qcd slots
+        if not dict(qcd_slots):
+            self.report({"INFO"}, "No QCD slots.")
+
+            return {'CANCELLED'}
+
+        qab.init(context)
+
+        if qab.locked.objs and not qcd_slots.object_in_slots(qab.orig_active_object):
+            # clear rto history
+            del qcd_history[qab.view_layer]
+            qab.clear()
+
+            self.report({"WARNING"}, "Cannot execute.  The active object would be lost.")
+
+            return {'CANCELLED'}
+
+        if not qab.history:
+            keep_history = False
+
+            for laycol in layer_collections.values():
+                is_qcd_slot = qcd_slots.contains(name=laycol["name"])
+
+                qab.history.append(laycol["ptr"].exclude)
+
+                if not is_qcd_slot and not laycol["ptr"].exclude:
+                    keep_history = True
+                    set_exclude_state(laycol["ptr"], True)
+
+            if not keep_history:
+                # clear rto history
+                del qcd_history[qab.view_layer]
+                qab.clear()
+
+                self.report({"INFO"}, "All non QCD slots are already disabled.")
+                return {'CANCELLED'}
+
+            internals.qcd_collection_state.clear()
+            internals.qcd_collection_state.update(internals.generate_state(qcd=True))
+
+        else:
+            qab.apply_history()
+
+        qab.finalize()
+
+        return {'FINISHED'}
+
+
+class DisableAllCollections(Operator):
+    '''Toggles between the current state and all collections disabled'''
+    bl_label = "Disable All collections"
+    bl_idname = "view3d.disable_all_collections"
+    bl_options = {'REGISTER', 'UNDO'}
+
+
+    def execute(self, context):
+        global qcd_slots
+        global layer_collections
+        qab = QCDAllBase
+
+        qab.init(context)
+
+        if qab.locked.objs:
+            # clear rto history
+            del qcd_history[qab.view_layer]
+            qab.clear()
+
+            self.report({"WARNING"}, "Cannot execute.  The active object would be lost.")
+
+            return {'CANCELLED'}
+
+        if not qab.history:
+            for laycol in layer_collections.values():
+
+                qab.history.append(laycol["ptr"].exclude)
+
+            if all(qab.history): # no collections are enabled
+                # clear rto history
+                del qcd_history[qab.view_layer]
+                qab.clear()
+
+                self.report({"INFO"}, "All collections are already disabled.")
+                return {'CANCELLED'}
+
+            for laycol in layer_collections.values():
+                laycol["ptr"].exclude = True
+
+            internals.qcd_collection_state.clear()
+            internals.qcd_collection_state.update(internals.generate_state(qcd=True))
+
+        else:
+            qab.apply_history()
+
+        qab.finalize()
+
+        return {'FINISHED'}
+
+
+class SelectAllQCDObjects(Operator):
+    '''Select all objects in QCD slots'''
+    bl_label = "Select All QCD Objects"
+    bl_idname = "view3d.select_all_qcd_objects"
+    bl_options = {'REGISTER', 'UNDO'}
+
+
+    def execute(self, context):
+        global qcd_slots
+        global layer_collections
+        qab = QCDAllBase
+
+        if context.mode != 'OBJECT':
+            return {'CANCELLED'}
+
+        if not context.selectable_objects:
+            if qab.meta_op:
+                qab.meta_report = "No objects present to select."
+
+            else:
+                self.report({"INFO"}, "No objects present to select.")
+
+            return {'CANCELLED'}
+
+        orig_selected_objects = context.selected_objects
+
+        bpy.ops.object.select_all(action='DESELECT')
+
+        for slot, collection_name in qcd_slots:
+            select_collection_objects(
+                is_master_collection=False,
+                collection_name=collection_name,
+                replace=False,
+                nested=False,
+                selection_state=True
+                )
+
+        if context.selected_objects == orig_selected_objects:
+            for slot, collection_name in qcd_slots:
+                select_collection_objects(
+                    is_master_collection=False,
+                    collection_name=collection_name,
+                    replace=False,
+                    nested=False,
+                    selection_state=False
+                    )
+
+
+        return {'FINISHED'}
+
+
+class DiscardQCDHistory(Operator):
+    '''Discard QCD History'''
+    bl_label = "Discard History"
+    bl_idname = "view3d.discard_qcd_history"
+
+    def execute(self, context):
+        global qcd_slots
+        global layer_collections
+        qab = QCDAllBase
+
+        view_layer = context.view_layer.name
+
+        if view_layer in qcd_history:
+            del qcd_history[view_layer]
+            qab.clear()
+
+        return {'FINISHED'}
 
 
 class MoveToQCDSlot(Operator):
@@ -144,7 +581,9 @@ class ViewMoveQCDSlot(Operator):
             "  * LMB - Isolate slot.\n"
             "  * Shift+LMB - Toggle slot.\n"
             "  * Ctrl+LMB - Move objects to slot.\n"
-            "  * Ctrl+Shift+LMB - Toggle objects' slot"
+            "  * Ctrl+Shift+LMB - Toggle objects' slot.\n"
+            "  * Alt+LMB - Select objects in slot.\n"
+            "  * Alt+Shift+LMB - Toggle objects' selection for slot"
             )
 
         return f"{slot_string}{hotkey_string}"
@@ -209,54 +648,25 @@ class ViewQCDSlot(Operator):
             return {'CANCELLED'}
 
 
-        # get objects not in object mode
-        locked_active_obj = context.view_layer.objects.active
-        locked_objs = []
-        locked_objs_mode = ""
-        for obj in context.view_layer.objects:
-            if obj.mode != 'OBJECT':
-                if obj.mode not in ['POSE', 'WEIGHT_PAINT'] or obj == locked_active_obj:
-                    locked_objs.append(obj)
-                    locked_objs_mode = obj.mode
+        orig_active_object = context.view_layer.objects.active
+        locked = get_locked_objs(context)
 
 
         if self.toggle:
             # check if slot can be toggled off.
-            for obj in qcd_laycol.collection.objects:
-                if obj.mode != 'OBJECT':
-                    if obj.mode not in ['POSE', 'WEIGHT_PAINT'] or obj == locked_active_obj:
-                        return {'CANCELLED'}
-
-            # get current child exclusion state
-            child_exclusion = []
-
-            def get_child_exclusion(layer_collection):
-                child_exclusion.append([layer_collection, layer_collection.exclude])
-
-            apply_to_children(qcd_laycol, get_child_exclusion)
+            if not qcd_laycol.exclude:
+                if not set(locked.objs).isdisjoint(qcd_laycol.collection.objects):
+                    return {'CANCELLED'}
 
             # toggle exclusion of qcd_laycol
-            qcd_laycol.exclude = not qcd_laycol.exclude
-
-            # set correct state for all children
-            for laycol in child_exclusion:
-                laycol[0].exclude = laycol[1]
-
-            # restore locked objects back to their original mode
-            # needed because of exclude child updates
-            if locked_objs:
-                context.view_layer.objects.active = locked_active_obj
-                bpy.ops.object.mode_set(mode=locked_objs_mode)
-
-            # set layer as active layer collection
-            context.view_layer.active_layer_collection = qcd_laycol
+            set_exclude_state(qcd_laycol, not qcd_laycol.exclude)
 
         else:
             # exclude all collections
             for laycol in layer_collections.values():
                 if laycol["name"] != qcd_laycol.name:
                     # prevent exclusion if locked objects in this collection
-                    if set(locked_objs).isdisjoint(laycol["ptr"].collection.objects):
+                    if set(locked.objs).isdisjoint(laycol["ptr"].collection.objects):
                         laycol["ptr"].exclude = True
                     else:
                         laycol["ptr"].exclude = False
@@ -267,21 +677,25 @@ class ViewQCDSlot(Operator):
             # exclude all children
             def exclude_all_children(layer_collection):
                 # prevent exclusion if locked objects in this collection
-                if set(locked_objs).isdisjoint(layer_collection.collection.objects):
+                if set(locked.objs).isdisjoint(layer_collection.collection.objects):
                     layer_collection.exclude = True
                 else:
                     layer_collection.exclude = False
 
             apply_to_children(qcd_laycol, exclude_all_children)
 
-            # restore locked objects back to their original mode
-            # needed because of exclude child updates
-            if locked_objs:
-                context.view_layer.objects.active = locked_active_obj
-                bpy.ops.object.mode_set(mode=locked_objs_mode)
+        if orig_active_object:
+            if orig_active_object.name in context.view_layer.objects:
+                context.view_layer.objects.active = orig_active_object
 
-            # set layer as active layer collection
-            context.view_layer.active_layer_collection = qcd_laycol
+        # restore locked objects back to their original mode
+        # needed because of exclude child updates
+        if context.view_layer.objects.active:
+            if locked.objs:
+                bpy.ops.object.mode_set(mode=locked.mode)
+
+        # set layer as active layer collection
+        context.view_layer.active_layer_collection = qcd_laycol
 
 
         # update header UI

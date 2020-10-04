@@ -284,7 +284,7 @@ typedef struct BHeadN {
   struct BHead bhead;
 } BHeadN;
 
-#define BHEADN_FROM_BHEAD(bh) ((BHeadN *)POINTER_OFFSET(bh, -offsetof(BHeadN, bhead)))
+#define BHEADN_FROM_BHEAD(bh) ((BHeadN *)POINTER_OFFSET(bh, -(int)offsetof(BHeadN, bhead)))
 
 /* We could change this in the future, for now it's simplest if only data is delayed
  * because ID names are used in lookup tables. */
@@ -779,7 +779,7 @@ static void bh4_from_bh8(BHead *bhead, BHead8 *bhead8, int do_endian_swap)
      * 0x0000000000000000000012345678 would become 0x12345678000000000000000000000000
      */
     if (do_endian_swap) {
-      BLI_endian_switch_int64(&bhead8->old);
+      BLI_endian_switch_uint64(&bhead8->old);
     }
 
     /* this patch is to avoid a long long being read from not-eight aligned positions
@@ -1114,8 +1114,11 @@ static bool read_file_dna(FileData *fd, const char **r_error_message)
       if (fd->filesdna) {
         blo_do_versions_dna(fd->filesdna, fd->fileversion, subversion);
         fd->compflags = DNA_struct_get_compareflags(fd->filesdna, fd->memsdna);
+        fd->reconstruct_info = DNA_reconstruct_info_create(
+            fd->filesdna, fd->memsdna, fd->compflags);
         /* used to retrieve ID names from (bhead+1) */
         fd->id_name_offs = DNA_elem_offset(fd->filesdna, "ID", "char", "name[]");
+        BLI_assert(fd->id_name_offs != -1);
 
         return true;
       }
@@ -1610,6 +1613,9 @@ void blo_filedata_free(FileData *fd)
     if (fd->compflags) {
       MEM_freeN((void *)fd->compflags);
     }
+    if (fd->reconstruct_info) {
+      DNA_reconstruct_info_free(fd->reconstruct_info);
+    }
 
     if (fd->datamap) {
       oldnewmap_free(fd->datamap);
@@ -1788,7 +1794,7 @@ static void *newdataadr_no_us(FileData *fd, const void *adr)
 }
 
 /* direct datablocks with global linking */
-static void *newglobadr(FileData *fd, const void *adr)
+void *blo_read_get_new_globaldata_address(FileData *fd, const void *adr)
 {
   return oldnewmap_lookup_and_inc(fd->globmap, adr, true);
 }
@@ -2133,7 +2139,7 @@ static void switch_endian_structs(const struct SDNA *filesdna, BHead *bhead)
   char *data;
 
   data = (char *)(bhead + 1);
-  blocksize = filesdna->types_size[filesdna->structs[bhead->SDNAnr][0]];
+  blocksize = filesdna->types_size[filesdna->structs[bhead->SDNAnr]->type];
 
   nblocks = bhead->nr;
   while (nblocks--) {
@@ -2177,8 +2183,7 @@ static void *read_struct(FileData *fd, BHead *bh, const char *blockname)
           }
         }
 #endif
-        temp = DNA_struct_reconstruct(
-            fd->memsdna, fd->filesdna, fd->compflags, bh->SDNAnr, bh->nr, (bh + 1));
+        temp = DNA_struct_reconstruct(fd->reconstruct_info, bh->SDNAnr, bh->nr, (bh + 1));
       }
       else {
         /* SDNA_CMP_EQUAL */
@@ -2548,6 +2553,21 @@ static void lib_link_workspaces(BlendLibReader *reader, WorkSpace *workspace)
 {
   ID *id = (ID *)workspace;
 
+  /* Restore proper 'parent' pointers to relevant data, and clean up unused/invalid entries. */
+  LISTBASE_FOREACH_MUTABLE (WorkSpaceDataRelation *, relation, &workspace->hook_layout_relations) {
+    relation->parent = NULL;
+    LISTBASE_FOREACH (wmWindowManager *, wm, &reader->main->wm) {
+      LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
+        if (win->winid == relation->parentid) {
+          relation->parent = win->workspace_hook;
+        }
+      }
+    }
+    if (relation->parent == NULL) {
+      BLI_freelinkN(&workspace->hook_layout_relations, relation);
+    }
+  }
+
   LISTBASE_FOREACH_MUTABLE (WorkSpaceLayout *, layout, &workspace->layouts) {
     BLO_read_id_address(reader, id->lib, &layout->screen);
 
@@ -2568,7 +2588,7 @@ static void lib_link_workspaces(BlendLibReader *reader, WorkSpace *workspace)
   }
 }
 
-static void direct_link_workspace(BlendDataReader *reader, WorkSpace *workspace, const Main *main)
+static void direct_link_workspace(BlendDataReader *reader, WorkSpace *workspace)
 {
   BLO_read_list(reader, &workspace->layouts);
   BLO_read_list(reader, &workspace->hook_layout_relations);
@@ -2576,17 +2596,9 @@ static void direct_link_workspace(BlendDataReader *reader, WorkSpace *workspace,
   BLO_read_list(reader, &workspace->tools);
 
   LISTBASE_FOREACH (WorkSpaceDataRelation *, relation, &workspace->hook_layout_relations) {
-    /* data from window - need to access through global oldnew-map */
-    relation->parent = newglobadr(reader->fd, relation->parent);
+    /* parent pointer does not belong to workspace data and is therefore restored in lib_link step
+     * of window manager.*/
     BLO_read_data_address(reader, &relation->value);
-  }
-
-  /* Same issue/fix as in direct_link_workspace_link_scene_data: Can't read workspace data
-   * when reading windows, so have to update windows after/when reading workspaces. */
-  LISTBASE_FOREACH (wmWindowManager *, wm, &main->wm) {
-    LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
-      BLO_read_data_address(reader, &win->workspace_hook->act_layout);
-    }
   }
 
   LISTBASE_FOREACH (bToolRef *, tref, &workspace->tools) {
@@ -3266,7 +3278,7 @@ static void lib_link_object(BlendLibReader *reader, Object *ob)
   }
 
   /* When the object is local and the data is library its possible
-   * the material list size gets out of sync. [#22663] */
+   * the material list size gets out of sync. T22663. */
   if (ob->data && ob->id.lib != ((ID *)ob->data)->lib) {
     const short *totcol_data = BKE_object_material_len_p(ob);
     /* Only expand so as not to loose any object materials that might be set. */
@@ -3820,7 +3832,7 @@ static void direct_link_object(BlendDataReader *reader, Object *ob)
    * to stay in object mode during undo presses so keep editmode disabled.
    *
    * Also when linking in a file don't allow edit and pose modes.
-   * See [#34776, #42780] for more information.
+   * See [T34776, T42780] for more information.
    */
   const bool is_undo = BLO_read_data_is_undo(reader);
   if (is_undo || (ob->id.tag & (LIB_TAG_EXTERN | LIB_TAG_INDIRECT))) {
@@ -4974,9 +4986,6 @@ static void direct_link_region(BlendDataReader *reader, ARegion *region, int spa
     }
   }
 
-  region->v2d.tab_offset = NULL;
-  region->v2d.tab_num = 0;
-  region->v2d.tab_cur = 0;
   region->v2d.sms = NULL;
   region->v2d.alpha_hor = region->v2d.alpha_vert = 255; /* visible by default */
   BLI_listbase_clear(&region->panels_category);
@@ -5474,9 +5483,17 @@ static void direct_link_windowmanager(BlendDataReader *reader, wmWindowManager *
     WorkSpaceInstanceHook *hook = win->workspace_hook;
     BLO_read_data_address(reader, &win->workspace_hook);
 
-    /* we need to restore a pointer to this later when reading workspaces,
-     * so store in global oldnew-map. */
-    oldnewmap_insert(reader->fd->globmap, hook, win->workspace_hook, 0);
+    /* This will be NULL for any pre-2.80 blend file. */
+    if (win->workspace_hook != NULL) {
+      /* We need to restore a pointer to this later when reading workspaces,
+       * so store in global oldnew-map.
+       * Note that this is only needed for versioning of older .blend files now.. */
+      oldnewmap_insert(reader->fd->globmap, hook, win->workspace_hook, 0);
+      /* Cleanup pointers to data outside of this data-block scope. */
+      win->workspace_hook->act_layout = NULL;
+      win->workspace_hook->temp_workspace_store = NULL;
+      win->workspace_hook->temp_layout_store = NULL;
+    }
 
     direct_link_area_map(reader, &win->global_areas);
 
@@ -5835,7 +5852,7 @@ static void lib_link_workspace_layout_restore(struct IDNameLib_Map *id_map,
           }
 
           /* force recalc of list of channels, potentially updating the active action
-           * while we're at it (as it can only be updated that way) [#28962]
+           * while we're at it (as it can only be updated that way) T28962.
            */
           saction->runtime.flag |= SACTION_RUNTIME_FLAG_NEED_CHAN_SYNC;
         }
@@ -6170,7 +6187,7 @@ static void fix_relpaths_library(const char *basepath, Main *main)
       /* when loading a linked lib into a file which has not been saved,
        * there is nothing we can be relative to, so instead we need to make
        * it absolute. This can happen when appending an object with a relative
-       * link into an unsaved blend file. See [#27405].
+       * link into an unsaved blend file. See T27405.
        * The remap relative option will make it relative again on save - campbell */
       if (BLI_path_is_rel(lib->filepath)) {
         BLI_strncpy(lib->filepath, lib->filepath_abs, sizeof(lib->filepath));
@@ -6364,7 +6381,7 @@ static bool direct_link_id(FileData *fd, Main *main, const int tag, ID *id, ID *
       direct_link_particlesettings(&reader, (ParticleSettings *)id);
       break;
     case ID_WS:
-      direct_link_workspace(&reader, (WorkSpace *)id, main);
+      direct_link_workspace(&reader, (WorkSpace *)id);
       break;
     case ID_ME:
     case ID_LT:
@@ -6849,7 +6866,7 @@ static BHead *read_global(BlendFileData *bfd, FileData *fd, BHead *bhead)
 /* note, this has to be kept for reading older files... */
 static void link_global(FileData *fd, BlendFileData *bfd)
 {
-  bfd->cur_view_layer = newglobadr(fd, bfd->cur_view_layer);
+  bfd->cur_view_layer = blo_read_get_new_globaldata_address(fd, bfd->cur_view_layer);
   bfd->curscreen = newlibadr(fd, NULL, bfd->curscreen);
   bfd->curscene = newlibadr(fd, NULL, bfd->curscene);
   // this happens in files older than 2.35
@@ -6866,39 +6883,15 @@ static void link_global(FileData *fd, BlendFileData *bfd)
 /** \name Versioning
  * \{ */
 
-/* initialize userdef with non-UI dependency stuff */
-/* other initializers (such as theme color defaults) go to resources.c */
-static void do_versions_userdef(FileData *fd, BlendFileData *bfd)
+static void do_versions_userdef(FileData *UNUSED(fd), BlendFileData *bfd)
 {
-  Main *bmain = bfd->main;
   UserDef *user = bfd->user;
 
   if (user == NULL) {
     return;
   }
 
-  if (MAIN_VERSION_OLDER(bmain, 266, 4)) {
-    /* Themes for Node and Sequence editor were not using grid color,
-     * but back. we copy this over then. */
-    LISTBASE_FOREACH (bTheme *, btheme, &user->themes) {
-      copy_v4_v4_uchar(btheme->space_node.grid, btheme->space_node.back);
-      copy_v4_v4_uchar(btheme->space_sequencer.grid, btheme->space_sequencer.back);
-    }
-  }
-
-  if (!DNA_struct_elem_find(fd->filesdna, "UserDef", "WalkNavigation", "walk_navigation")) {
-    user->walk_navigation.mouse_speed = 1.0f;
-    user->walk_navigation.walk_speed = 2.5f; /* m/s */
-    user->walk_navigation.walk_speed_factor = 5.0f;
-    user->walk_navigation.view_height = 1.6f;   /* m */
-    user->walk_navigation.jump_height = 0.4f;   /* m */
-    user->walk_navigation.teleport_time = 0.2f; /* s */
-  }
-
-  /* tablet pressure threshold */
-  if (!DNA_struct_elem_find(fd->filesdna, "UserDef", "float", "pressure_threshold_max")) {
-    user->pressure_threshold_max = 1.0f;
-  }
+  blo_do_versions_userdef(user);
 }
 
 static void do_versions(FileData *fd, Library *lib, Main *main)
@@ -9135,7 +9128,7 @@ static void convert_pointer_array_32_to_64(BlendDataReader *UNUSED(reader),
                                            const uint32_t *src,
                                            uint64_t *dst)
 {
-  /* Match pointer conversion rules from bh8_from_bh4 and cast_pointer. */
+  /* Match pointer conversion rules from bh8_from_bh4 and cast_pointer_32_to_64. */
   for (int i = 0; i < array_size; i++) {
     dst[i] = src[i];
   }

@@ -288,7 +288,7 @@ def get_hidden_image(tpath, bdata_name, force_reload=False):
     if img == None or (img.filepath != tpath):
         if tpath.startswith('//'):
             tpath = bpy.path.abspath(tpath)
-        if not os.path.exists(tpath) or tpath == '':
+        if not os.path.exists(tpath) or os.path.isdir(tpath):
             tpath = paths.get_addon_thumbnail_path('thumbnail_notready.jpg')
 
         if img is None:
@@ -631,7 +631,7 @@ def get_largest_area(area_type='VIEW_3D'):
     maxa = None
     maxw = None
     region = None
-    for w in bpy.context.window_manager.windows:
+    for w in bpy.data.window_managers[0].windows:
         for a in w.screen.areas:
             if a.type == area_type:
                 asurf = a.width * a.height
@@ -653,6 +653,7 @@ def get_largest_area(area_type='VIEW_3D'):
 def get_fake_context(context, area_type='VIEW_3D'):
     C_dict = {}  # context.copy() #context.copy was a source of problems - incompatibility with addons that also define context
     C_dict.update(region='WINDOW')
+
     if context.area is None or context.area.type != area_type:
         w, a, r = get_largest_area(area_type=area_type)
 

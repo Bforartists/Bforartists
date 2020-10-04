@@ -869,7 +869,7 @@ static bool ui_but_update_from_old_block(const bContext *C,
     }
 
     /* copy hardmin for list rows to prevent 'sticking' highlight to mouse position
-     * when scrolling without moving mouse (see [#28432]) */
+     * when scrolling without moving mouse (see T28432) */
     if (ELEM(oldbut->type, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
       oldbut->hardmax = but->hardmax;
     }
@@ -1322,14 +1322,11 @@ static bool ui_but_event_property_operator_string(const bContext *C,
       opnames_len = ARRAY_SIZE(ctx_enum_opnames);
     }
   }
-
-  bool found = false;
-
   /* Don't use the button again. */
   but = NULL;
 
   if (prop == NULL) {
-    return NULL;
+    return false;
   }
 
   /* this version is only for finding hotkeys for properties
@@ -1414,6 +1411,7 @@ static bool ui_but_event_property_operator_string(const bContext *C,
   }
 
   /* we have a datapath! */
+  bool found = false;
   if (data_path || (prop_enum_value_ok && prop_enum_value_id)) {
     /* create a property to host the "datapath" property we're sending to the operators */
     IDProperty *prop_path;
@@ -2021,7 +2019,7 @@ void UI_block_draw(const bContext *C, uiBlock *block)
       ui_but_to_pixelrect(&rect, region, block, but);
 
       /* XXX: figure out why invalid coordinates happen when closing render window */
-      /* and material preview is redrawn in main window (temp fix for bug #23848) */
+      /* and material preview is redrawn in main window (temp fix for bug T23848) */
       if (rect.xmin < rect.xmax && rect.ymin < rect.ymax) {
         ui_draw_but(C, region, &style, but, &rect);
       }
@@ -3394,6 +3392,8 @@ void UI_block_free(const bContext *C, uiBlock *block)
   BLI_freelistN(&block->saferct);
   BLI_freelistN(&block->color_pickers.list);
 
+  ui_block_free_button_groups(block);
+
   MEM_freeN(block);
 }
 
@@ -3474,6 +3474,8 @@ uiBlock *UI_block_begin(const bContext *C, ARegion *region, const char *name, ch
   block->active = 1;
   block->emboss = emboss;
   block->evil_C = (void *)C; /* XXX */
+
+  BLI_listbase_clear(&block->button_groups);
 
   if (scene) {
     /* store display device name, don't lookup for transformations yet
@@ -3946,7 +3948,7 @@ uiBut *ui_but_change_type(uiBut *but, eButType new_type)
       const bool found_layout = ui_layout_replace_but_ptr(but->layout, old_but_ptr, but);
       BLI_assert(found_layout);
       UNUSED_VARS_NDEBUG(found_layout);
-      ui_button_group_replace_but_ptr(but->layout, old_but_ptr, but);
+      ui_button_group_replace_but_ptr(uiLayoutGetBlock(but->layout), old_but_ptr, but);
     }
   }
 
@@ -7061,13 +7063,10 @@ void UI_init(void)
 }
 
 /* after reading userdef file */
-void UI_init_userdef(Main *bmain)
+void UI_init_userdef(void)
 {
-  /* fix saved themes */
-  init_userdef_do_versions(bmain);
+  /* Initialize UI variables from values set in the preferences. */
   uiStyleInit();
-
-  BLO_sanitize_experimental_features_userpref_blend(&U);
 }
 
 void UI_reinit_font(void)

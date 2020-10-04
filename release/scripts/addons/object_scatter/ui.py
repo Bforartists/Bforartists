@@ -138,6 +138,9 @@ class ObjectScatterPanel(bpy.types.Panel):
         layout.prop(scatter, "normal_offset", text="Offset", slider=True)
         layout.prop(scatter, "seed")
 
+def draw_menu(self, context):
+    layout = self.layout
+    layout.operator("object.scatter")
 
 classes = (
     ObjectScatterProperties,
@@ -148,8 +151,10 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
     bpy.types.Scene.scatter_properties = PointerProperty(type=ObjectScatterProperties)
+    bpy.types.VIEW3D_MT_object.append(draw_menu)
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.scatter_properties
+    bpy.types.VIEW3D_MT_object.remove(draw_menu)

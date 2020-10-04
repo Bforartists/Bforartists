@@ -4260,9 +4260,9 @@ static PyObject *pyrna_struct_getattro(BPy_StructRNA *self, PyObject *pyname)
       ListBase newlb;
       short newtype;
 
-      const int done = CTX_data_get(C, name, &newptr, &newlb, &newtype);
+      const eContextResult done = CTX_data_get(C, name, &newptr, &newlb, &newtype);
 
-      if (done == 1) { /* Found. */
+      if (done == CTX_RESULT_OK) {
         switch (newtype) {
           case CTX_DATA_TYPE_POINTER:
             if (newptr.data == NULL) {
@@ -4295,7 +4295,7 @@ static PyObject *pyrna_struct_getattro(BPy_StructRNA *self, PyObject *pyname)
             break;
         }
       }
-      else if (done == -1) { /* Found, but not set. */
+      else if (done == CTX_RESULT_NO_DATA) {
         ret = Py_None;
         Py_INCREF(ret);
       }
@@ -4482,9 +4482,9 @@ static int pyrna_struct_setattro(BPy_StructRNA *self, PyObject *pyname, PyObject
     ListBase newlb;
     short newtype;
 
-    const int done = CTX_data_get(C, name, &newptr, &newlb, &newtype);
+    const eContextResult done = CTX_data_get(C, name, &newptr, &newlb, &newtype);
 
-    if (done == 1) {
+    if (done == CTX_RESULT_OK) {
       PyErr_Format(
           PyExc_AttributeError, "bpy_struct: Context property \"%.200s\" is read-only", name);
       BLI_freelistN(&newlb);
@@ -8700,19 +8700,21 @@ void pyrna_free_types(void)
 PyDoc_STRVAR(pyrna_register_class_doc,
              ".. method:: register_class(cls)\n"
              "\n"
-             "   Register a subclass of a blender type in (:class:`bpy.types.Panel`,\n"
-             "   :class:`bpy.types.UIList`, :class:`bpy.types.Menu`, :class:`bpy.types.Header`,\n"
-             "   :class:`bpy.types.Operator`, :class:`bpy.types.KeyingSetInfo`,\n"
-             "   :class:`bpy.types.RenderEngine`).\n"
+             "   Register a subclass of a Blender type class.\n"
              "\n"
-             "   If the class has a *register* class method it will be called\n"
-             "   before registration.\n"
+             "   :arg cls: Blender type class in:\n"
+             "      :class:`bpy.types.Panel`, :class:`bpy.types.UIList`,\n"
+             "      :class:`bpy.types.Menu`, :class:`bpy.types.Header`,\n"
+             "      :class:`bpy.types.Operator`, :class:`bpy.types.KeyingSetInfo`,\n"
+             "      :class:`bpy.types.RenderEngine`\n"
+             "   :type cls: class\n"
+             "   :raises ValueError:\n"
+             "      if the class is not a subclass of a registerable blender class.\n"
              "\n"
              "   .. note::\n"
              "\n"
-             "      :exc:`ValueError` exception is raised if the class is not a\n"
-             "      subclass of a registerable blender class.\n"
-             "\n");
+             "      If the class has a *register* class method it will be called\n"
+             "      before registration.\n");
 PyMethodDef meth_bpy_register_class = {
     "register_class", pyrna_register_class, METH_O, pyrna_register_class_doc};
 static PyObject *pyrna_register_class(PyObject *UNUSED(self), PyObject *py_class)

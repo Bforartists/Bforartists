@@ -19,77 +19,110 @@
 # <pep8 compliant>
 
 # Script copyright (C) Bob Holcomb
-# Contributors: Campbell Barton, Bob Holcomb, Richard Lärkäng, Damien McGinnes, Mark Stijnman
+# Contributors: Campbell Barton, Bob Holcomb, Richard Lärkäng, Damien McGinnes, Mark Stijnman, Sebastian Sille
 
 """
 Exporting is based on 3ds loader from www.gametutorials.com(Thanks DigiBen) and using information
 from the lib3ds project (http://lib3ds.sourceforge.net/) sourcecode.
 """
 
+import bpy
+import math
+import struct
+import mathutils
+import bpy_extras
+from bpy_extras import node_shader_utils
+
 ######################################################
 # Data Structures
 ######################################################
 
-#Some of the chunks that we will export
-#----- Primary Chunk, at the beginning of each file
+# Some of the chunks that we will export
+# ----- Primary Chunk, at the beginning of each file
 PRIMARY = 0x4D4D
 
-#------ Main Chunks
-OBJECTINFO = 0x3D3D  # This gives the version of the mesh and is found right before the material and object information
+# ------ Main Chunks
 VERSION = 0x0002  # This gives the version of the .3ds file
 KFDATA = 0xB000  # This is the header for all of the key frame info
 
-#------ sub defines of OBJECTINFO
+# ------ sub defines of OBJECTINFO
+OBJECTINFO = 0x3D3D  # Main mesh object chunk before the material and object information
+MESHVERSION = 0x3D3E  # This gives the version of the mesh
+AMBIENTLIGHT = 0x2100  # The color of the ambient light
 MATERIAL = 45055  # 0xAFFF // This stored the texture info
 OBJECT = 16384  # 0x4000 // This stores the faces, vertices, etc...
 
-#>------ sub defines of MATERIAL
+# >------ sub defines of MATERIAL
 MATNAME = 0xA000  # This holds the material name
 MATAMBIENT = 0xA010  # Ambient color of the object/material
 MATDIFFUSE = 0xA020  # This holds the color of the object/material
-MATSPECULAR = 0xA030  # SPecular color of the object/material
-MATSHINESS = 0xA040  # ??
+MATSPECULAR = 0xA030  # Specular color of the object/material
+MATSHINESS = 0xA040  # Specular intensity of the object/material (percent)
+MATSHIN2 = 0xA041  # Reflection of the object/material (percent)
+MATSHIN3 = 0xA042  # metallic/mirror of the object/material (percent)
+MATTRANS = 0xA050  # Transparency value (100-OpacityValue) (percent)
+MATSELFILPCT = 0xA084  # Self illumination strength (percent)
+MATSHADING = 0xA100  # Material shading method
 
 MAT_DIFFUSEMAP = 0xA200  # This is a header for a new diffuse texture
+MAT_SPECMAP = 0xA204  # head for specularity map
 MAT_OPACMAP = 0xA210  # head for opacity map
-MAT_BUMPMAP = 0xA230  # read for normal map
-MAT_SPECMAP = 0xA204  # read for specularity map
+MAT_REFLMAP = 0xA220  # head for reflect map
+MAT_BUMPMAP = 0xA230  # head for normal map
+MAT_BUMP_PERCENT = 0xA252  # Normalmap strength (percent)
+MAT_TEX2MAP = 0xA33A  # head for secondary texture
+MAT_SHINMAP = 0xA33C  # head for roughness map
+MAT_SELFIMAP = 0xA33D  # head for emission map
 
-#>------ sub defines of MAT_???MAP
+# >------ sub defines of MAT_MAP
 MATMAPFILE = 0xA300  # This holds the file name of a texture
-
 MAT_MAP_TILING = 0xa351   # 2nd bit (from LSB) is mirror UV flag
+MAT_MAP_TEXBLUR = 0xA353  # Texture blurring factor
 MAT_MAP_USCALE = 0xA354   # U axis scaling
 MAT_MAP_VSCALE = 0xA356   # V axis scaling
 MAT_MAP_UOFFSET = 0xA358  # U axis offset
 MAT_MAP_VOFFSET = 0xA35A  # V axis offset
 MAT_MAP_ANG = 0xA35C      # UV rotation around the z-axis in rad
+MAP_COL1 = 0xA360  # Tint Color1
+MAP_COL2 = 0xA362  # Tint Color2
+MAP_RCOL = 0xA364  # Red tint
+MAP_GCOL = 0xA366  # Green tint
+MAP_BCOL = 0xA368  # Blue tint
 
-RGB1 = 0x0011
-RGB2 = 0x0012
+RGB = 0x0010  # RGB float
+RGB1 = 0x0011  # RGB Color1
+RGB2 = 0x0012  # RGB Color2
+PCT = 0x0030  # Percent chunk
+MASTERSCALE = 0x0100  # Master scale factor
 
-#>------ sub defines of OBJECT
+# >------ sub defines of OBJECT
 OBJECT_MESH = 0x4100  # This lets us know that we are reading a new object
-OBJECT_LIGHT = 0x4600  # This lets un know we are reading a light object
-OBJECT_CAMERA = 0x4700  # This lets un know we are reading a camera object
+OBJECT_LIGHT = 0x4600  # This lets us know we are reading a light object
+OBJECT_CAMERA = 0x4700  # This lets us know we are reading a camera object
 
-#>------ sub defines of CAMERA
-OBJECT_CAM_RANGES = 0x4720      # The camera range values
+# >------ Sub defines of LIGHT
+LIGHT_MULTIPLIER = 0x465B  # The light energy factor
+LIGHT_SPOTLIGHT = 0x4610  # The target of a spotlight
+LIGHT_SPOTROLL = 0x4656  # The roll angle of the spot
 
-#>------ sub defines of OBJECT_MESH
+# >------ sub defines of CAMERA
+OBJECT_CAM_RANGES = 0x4720  # The camera range values
+
+# >------ sub defines of OBJECT_MESH
 OBJECT_VERTICES = 0x4110  # The objects vertices
 OBJECT_FACES = 0x4120  # The objects faces
 OBJECT_MATERIAL = 0x4130  # This is found if the object has a material, either texture map or color
 OBJECT_UV = 0x4140  # The UV texture coordinates
+OBJECT_SMOOTH = 0x4150  # The objects smooth groups
 OBJECT_TRANS_MATRIX = 0x4160  # The Object Matrix
 
-#>------ sub defines of KFDATA
+# >------ sub defines of KFDATA
 KFDATA_KFHDR = 0xB00A
 KFDATA_KFSEG = 0xB008
 KFDATA_KFCURTIME = 0xB009
 KFDATA_OBJECT_NODE_TAG = 0xB002
 
-#>------ sub defines of OBJECT_NODE_TAG
+# >------ sub defines of OBJECT_NODE_TAG
 OBJECT_NODE_ID = 0xB030
 OBJECT_NODE_HDR = 0xB010
 OBJECT_PIVOT = 0xB013
@@ -98,7 +131,6 @@ POS_TRACK_TAG = 0xB020
 ROT_TRACK_TAG = 0xB021
 SCL_TRACK_TAG = 0xB022
 
-import struct
 
 # So 3ds max can open files, limit names to 12 in length
 # this is very annoying for filenames!
@@ -127,6 +159,7 @@ def sane_name(name):
 
 def uv_key(uv):
     return round(uv[0], 6), round(uv[1], 6)
+
 
 # size defines:
 SZ_SHORT = 2
@@ -202,7 +235,7 @@ class _3ds_string(object):
         file.write(struct.pack(binary_format, self.value))
 
     def __str__(self):
-        return self.value
+        return str(self.value)
 
 
 class _3ds_point_3d(object):
@@ -220,6 +253,7 @@ class _3ds_point_3d(object):
 
     def __str__(self):
         return '(%f, %f, %f)' % (self.x, self.y, self.z)
+
 
 # Used for writing a track
 '''
@@ -257,6 +291,23 @@ class _3ds_point_uv(object):
 
     def __str__(self):
         return '(%g, %g)' % self.uv
+
+
+class _3ds_float_color(object):
+    """Class representing a rgb float color for a 3ds file."""
+    __slots__ = "r", "g", "b"
+
+    def __init__(self, col):
+        self.r, self.g, self.b = col
+
+    def get_size(self):
+        return 3 * SZ_FLOAT
+
+    def write(self, file):
+        file.write(struct.pack('3f', self.r, self.g, self.b))
+
+    def __str__(self):
+        return '{%f, %f, %f}' % (self.r, self.g, self.b)
 
 
 class _3ds_rgb_color(object):
@@ -357,7 +408,7 @@ class _3ds_named_variable(object):
                   self.value)
 
 
-#the chunk class
+# the chunk class
 class _3ds_chunk(object):
     """Class representing a chunk in a 3ds file.
 
@@ -410,7 +461,7 @@ class _3ds_chunk(object):
         """Write the chunk to a file.
 
         Uses the write function of the variables and the subchunks to do the actual work."""
-        #write header
+        # write header
         self.ID.write(file)
         self.size.write(file)
         for variable in self.variables:
@@ -436,23 +487,26 @@ class _3ds_chunk(object):
 # EXPORT
 ######################################################
 
-def get_material_image_texslots(material):
-    # blender utility func.
+def get_material_image(material):
+    """ Get images from paint slots."""
     if material:
-        return [s for s in material.texture_slots if s and s.texture.type == 'IMAGE' and s.texture.image]
+        pt = material.paint_active_slot
+        tex = material.texture_paint_images
+        if pt < len(tex):
+            slot = tex[pt]
+            if slot.type == 'IMAGE':
+                return slot
 
-    return []
 
-    """
-    images = []
-    if material:
-        for mtex in material.getTextures():
-            if mtex and mtex.tex.type == Blender.Texture.Types.IMAGE:
-                image = mtex.tex.image
-                if image:
-                    images.append(image) # maye want to include info like diffuse, spec here.
-    return images
-    """
+def get_uv_image(ma):
+    """ Get image from material wrapper."""
+    if ma and ma.use_nodes:
+        ma_wrap = node_shader_utils.PrincipledBSDFWrapper(ma)
+        ma_tex = ma_wrap.base_color_texture
+        if ma_tex and ma_tex.image is not None:
+            return ma_tex.image
+    else:
+        return get_material_image(ma)
 
 
 def make_material_subchunk(chunk_id, color):
@@ -466,86 +520,130 @@ def make_material_subchunk(chunk_id, color):
     # optional:
     #col2 = _3ds_chunk(RGB1)
     #col2.add_variable("color2", _3ds_rgb_color(color))
-    #mat_sub.add_subchunk(col2)
+    # mat_sub.add_subchunk(col2)
     return mat_sub
 
 
-def make_material_texture_chunk(chunk_id, texslots, tess_uv_image=None):
-    """Make Material Map texture chunk given a seq. of `MaterialTextureSlot`'s
+def make_percent_subchunk(chunk_id, percent):
+    """Make a percentage based subchunk."""
+    pct_sub = _3ds_chunk(chunk_id)
+    pcti = _3ds_chunk(PCT)
+    pcti.add_variable("percent", _3ds_ushort(int(round(percent * 100, 0))))
+    pct_sub.add_subchunk(pcti)
+    return pct_sub
 
-        `tess_uv_image` is optionally used as image source if the slots are
-        empty. No additional filtering for mapping modes is done, all
-        slots are written "as is".
-    """
 
-    mat_sub = _3ds_chunk(chunk_id)
+def make_texture_chunk(chunk_id, images):
+    """Make Material Map texture chunk."""
+    # Add texture percentage value (100 = 1.0)
+    ma_sub = make_percent_subchunk(chunk_id, 1)
     has_entry = False
 
-    import bpy
+    def add_image(img):
+        filename = bpy.path.basename(image.filepath)
+        ma_sub_file = _3ds_chunk(MATMAPFILE)
+        ma_sub_file.add_variable("image", _3ds_string(sane_name(filename)))
+        ma_sub.add_subchunk(ma_sub_file)
+
+    for image in images:
+        add_image(image)
+        has_entry = True
+
+    return ma_sub if has_entry else None
+
+
+def make_material_texture_chunk(chunk_id, texslots, pct):
+    """Make Material Map texture chunk given a seq. of `MaterialTextureSlot`'s
+        Paint slots are optionally used as image source if no nodes are
+        used. No additional filtering for mapping modes is done, all
+        slots are written "as is"."""
+    # Add texture percentage value
+    mat_sub = make_percent_subchunk(chunk_id, pct)
+    has_entry = False
 
     def add_texslot(texslot):
-        texture = texslot.texture
-        image = texture.image
+        image = texslot.image
 
         filename = bpy.path.basename(image.filepath)
         mat_sub_file = _3ds_chunk(MATMAPFILE)
         mat_sub_file.add_variable("mapfile", _3ds_string(sane_name(filename)))
         mat_sub.add_subchunk(mat_sub_file)
+        for link in texslot.socket_dst.links:
+            socket = link.from_socket.identifier
 
         maptile = 0
 
         # no perfect mapping for mirror modes - 3DS only has uniform mirror w. repeat=2
-        if texture.extension == 'REPEAT' and (texture.use_mirror_x and texture.repeat_x > 1) \
-           or (texture.use_mirror_y and texture.repeat_y > 1):
-            maptile |= 0x2
+        if texslot.extension == 'EXTEND':
+            maptile |= 0x1
         # CLIP maps to 3DS' decal flag
-        elif texture.extension == 'CLIP':
+        elif texslot.extension == 'CLIP':
             maptile |= 0x10
 
         mat_sub_tile = _3ds_chunk(MAT_MAP_TILING)
-        mat_sub_tile.add_variable("maptiling", _3ds_ushort(maptile))
+        mat_sub_tile.add_variable("tiling", _3ds_ushort(maptile))
         mat_sub.add_subchunk(mat_sub_tile)
 
+        if socket == 'Alpha':
+            mat_sub_alpha = _3ds_chunk(MAP_TILING)
+            alphaflag = 0x40  # summed area sampling 0x20
+            mat_sub_alpha.add_variable("alpha", _3ds_ushort(alphaflag))
+            mat_sub.add_subchunk(mat_sub_alpha)
+            if texslot.socket_dst.identifier in {'Base Color', 'Specular'}:
+                mat_sub_tint = _3ds_chunk(MAP_TILING)  # RGB tint 0x200
+                tint = 0x80 if texslot.image.colorspace_settings.name == 'Non-Color' else 0x200
+                mat_sub_tint.add_variable("tint", _3ds_ushort(tint))
+                mat_sub.add_subchunk(mat_sub_tint)
+
+        mat_sub_texblur = _3ds_chunk(MAT_MAP_TEXBLUR)  # Based on observation this is usually 1.0
+        mat_sub_texblur.add_variable("maptexblur", _3ds_float(1.0))
+        mat_sub.add_subchunk(mat_sub_texblur)
+
         mat_sub_uscale = _3ds_chunk(MAT_MAP_USCALE)
-        mat_sub_uscale.add_variable("mapuscale", _3ds_float(texslot.scale[0]))
+        mat_sub_uscale.add_variable("mapuscale", _3ds_float(round(texslot.scale[0], 6)))
         mat_sub.add_subchunk(mat_sub_uscale)
 
         mat_sub_vscale = _3ds_chunk(MAT_MAP_VSCALE)
-        mat_sub_vscale.add_variable("mapuscale", _3ds_float(texslot.scale[1]))
+        mat_sub_vscale.add_variable("mapvscale", _3ds_float(round(texslot.scale[1], 6)))
         mat_sub.add_subchunk(mat_sub_vscale)
 
         mat_sub_uoffset = _3ds_chunk(MAT_MAP_UOFFSET)
-        mat_sub_uoffset.add_variable("mapuoffset", _3ds_float(texslot.offset[0]))
+        mat_sub_uoffset.add_variable("mapuoffset", _3ds_float(round(texslot.translation[0], 6)))
         mat_sub.add_subchunk(mat_sub_uoffset)
 
         mat_sub_voffset = _3ds_chunk(MAT_MAP_VOFFSET)
-        mat_sub_voffset.add_variable("mapvoffset", _3ds_float(texslot.offset[1]))
+        mat_sub_voffset.add_variable("mapvoffset", _3ds_float(round(texslot.translation[1], 6)))
         mat_sub.add_subchunk(mat_sub_voffset)
+
+        mat_sub_angle = _3ds_chunk(MAT_MAP_ANG)
+        mat_sub_angle.add_variable("mapangle", _3ds_float(round(texslot.rotation[2], 6)))
+        mat_sub.add_subchunk(mat_sub_angle)
+
+        if texslot.socket_dst.identifier in {'Base Color', 'Specular'}:
+            rgb = _3ds_chunk(MAP_COL1)  # Add tint color
+            base = texslot.owner_shader.material.diffuse_color[:3]
+            spec = texslot.owner_shader.material.specular_color[:]
+            rgb.add_variable("mapcolor", _3ds_rgb_color(spec if texslot.socket_dst.identifier == 'Specular' else base))
+            mat_sub.add_subchunk(rgb)
 
     # store all textures for this mapto in order. This at least is what
     # the 3DS exporter did so far, afaik most readers will just skip
     # over 2nd textures.
     for slot in texslots:
-        add_texslot(slot)
-        has_entry = True
-
-    # image from tess. UV face - basically the code above should handle
-    # this already. No idea why its here so keep it :-)
-    if tess_uv_image and not has_entry:
-        has_entry = True
-
-        filename = bpy.path.basename(tess_uv_image.filepath)
-        mat_sub_file = _3ds_chunk(MATMAPFILE)
-        mat_sub_file.add_variable("mapfile", _3ds_string(sane_name(filename)))
-        mat_sub.add_subchunk(mat_sub_file)
+        if slot.image is not None:
+            add_texslot(slot)
+            has_entry = True
 
     return mat_sub if has_entry else None
 
 
 def make_material_chunk(material, image):
-    """Make a material chunk out of a blender material."""
+    """Make a material chunk out of a blender material.
+    Shading method is required for 3ds max, 0 for wireframe.
+    0x1 for flat, 0x2 for gouraud, 0x3 for phong and 0x4 for metal."""
     material_chunk = _3ds_chunk(MATERIAL)
     name = _3ds_chunk(MATNAME)
+    shading = _3ds_chunk(MATSHADING)
 
     name_str = material.name if material else "None"
 
@@ -556,49 +654,108 @@ def make_material_chunk(material, image):
     material_chunk.add_subchunk(name)
 
     if not material:
+        shading.add_variable("shading", _3ds_ushort(1))  # Flat shading
         material_chunk.add_subchunk(make_material_subchunk(MATAMBIENT, (0.0, 0.0, 0.0)))
         material_chunk.add_subchunk(make_material_subchunk(MATDIFFUSE, (0.8, 0.8, 0.8)))
         material_chunk.add_subchunk(make_material_subchunk(MATSPECULAR, (1.0, 1.0, 1.0)))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, .2))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHIN2, 1))
+        material_chunk.add_subchunk(shading)
+
+    elif material and material.use_nodes:
+        wrap = node_shader_utils.PrincipledBSDFWrapper(material)
+        shading.add_variable("shading", _3ds_ushort(3))  # Phong shading
+        material_chunk.add_subchunk(make_material_subchunk(MATAMBIENT, wrap.emission_color[:3]))
+        material_chunk.add_subchunk(make_material_subchunk(MATDIFFUSE, wrap.base_color[:3]))
+        material_chunk.add_subchunk(make_material_subchunk(MATSPECULAR, material.specular_color[:]))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, wrap.roughness))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHIN2, wrap.specular))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHIN3, wrap.metallic))
+        material_chunk.add_subchunk(make_percent_subchunk(MATTRANS, 1 - wrap.alpha))
+        material_chunk.add_subchunk(shading)
+
+        if wrap.base_color_texture:
+            d_pct = 0.7 + sum(wrap.base_color[:]) * 0.1
+            color = [wrap.base_color_texture]
+            matmap = make_material_texture_chunk(MAT_DIFFUSEMAP, color, d_pct)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
+
+        if wrap.specular_texture:
+            spec = [wrap.specular_texture]
+            s_pct = material.specular_intensity
+            matmap = make_material_texture_chunk(MAT_SPECMAP, spec, s_pct)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
+
+        if wrap.alpha_texture:
+            alpha = [wrap.alpha_texture]
+            a_pct = material.diffuse_color[3]
+            matmap = make_material_texture_chunk(MAT_OPACMAP, alpha, a_pct)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
+
+        if wrap.metallic_texture:
+            metallic = [wrap.metallic_texture]
+            m_pct = material.metallic
+            matmap = make_material_texture_chunk(MAT_REFLMAP, metallic, m_pct)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
+
+        if wrap.normalmap_texture:
+            normal = [wrap.normalmap_texture]
+            bump = wrap.normalmap_strength
+            b_pct = min(bump, 1)
+            bumpval = min(999, (bump * 100))  # 3ds max bump = 999
+            strength = _3ds_chunk(MAT_BUMP_PERCENT)
+            strength.add_variable("bump_pct", _3ds_ushort(int(bumpval)))
+            matmap = make_material_texture_chunk(MAT_BUMPMAP, normal, b_pct)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
+                material_chunk.add_subchunk(strength)
+
+        if wrap.roughness_texture:
+            roughness = [wrap.roughness_texture]
+            r_pct = material.roughness
+            matmap = make_material_texture_chunk(MAT_SHINMAP, roughness, r_pct)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
+
+        if wrap.emission_color_texture:
+            e_pct = sum(wrap.emission_color[:]) * .25
+            emission = [wrap.emission_color_texture]
+            matmap = make_material_texture_chunk(MAT_SELFIMAP, emission, e_pct)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
+
+        # make sure no textures are lost. Everything that doesn't fit
+        # into a channel is exported as secondary texture
+        diffuse = []
+
+        for link in wrap.material.node_tree.links:
+            if link.from_node.type == 'TEX_IMAGE' and link.to_node.type != 'BSDF_PRINCIPLED':
+                diffuse = [link.from_node.image] if not wrap.normalmap_texture else None
+
+        if diffuse:
+            matmap = make_texture_chunk(MAT_TEX2MAP, diffuse)
+            if matmap:
+                material_chunk.add_subchunk(matmap)
 
     else:
-        material_chunk.add_subchunk(make_material_subchunk(MATAMBIENT, (material.ambient * material.diffuse_color)[:]))
-        material_chunk.add_subchunk(make_material_subchunk(MATDIFFUSE, material.diffuse_color[:]))
+        shading.add_variable("shading", _3ds_ushort(2))  # Gouraud shading
+        material_chunk.add_subchunk(make_material_subchunk(MATAMBIENT, material.line_color[:3]))
+        material_chunk.add_subchunk(make_material_subchunk(MATDIFFUSE, material.diffuse_color[:3]))
         material_chunk.add_subchunk(make_material_subchunk(MATSPECULAR, material.specular_color[:]))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHINESS, material.roughness))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHIN2, material.specular_intensity))
+        material_chunk.add_subchunk(make_percent_subchunk(MATSHIN3, material.metallic))
+        material_chunk.add_subchunk(make_percent_subchunk(MATTRANS, 1 - material.diffuse_color[3]))
+        material_chunk.add_subchunk(shading)
 
-        slots = get_material_image_texslots(material)  # can be None
+        slots = [get_material_image(material)]  # can be None
 
-        if slots:
-
-            spec = [s for s in slots if s.use_map_specular or s.use_map_color_spec]
-            matmap = make_material_texture_chunk(MAT_SPECMAP, spec)
-            if matmap:
-                material_chunk.add_subchunk(matmap)
-
-            alpha = [s for s in slots if s.use_map_alpha]
-            matmap = make_material_texture_chunk(MAT_OPACMAP, alpha)
-            if matmap:
-                material_chunk.add_subchunk(matmap)
-
-            normal = [s for s in slots if s.use_map_normal]
-            matmap = make_material_texture_chunk(MAT_BUMPMAP, normal)
-            if matmap:
-                material_chunk.add_subchunk(matmap)
-
-            # make sure no textures are lost. Everything that doesn't fit
-            # into a channel is exported as diffuse texture with a
-            # warning.
-            diffuse = []
-            for s in slots:
-                if s.use_map_color_diffuse:
-                    diffuse.append(s)
-                elif not (s in normal or s in alpha or s in spec):
-                    print('\nwarning: failed to map texture to 3DS map channel, assuming diffuse')
-                    diffuse.append(s)
-
-            if diffuse:
-                matmap = make_material_texture_chunk(MAT_DIFFUSEMAP, diffuse, image)
-                if matmap:
-                    material_chunk.add_subchunk(matmap)
+        if image:
+            material_chunk.add_subchunk(make_texture_chunk(MAT_DIFFUSEMAP, slots))
 
     return material_chunk
 
@@ -608,52 +765,47 @@ class tri_wrapper(object):
 
     Used when converting faces to triangles"""
 
-    __slots__ = "vertex_index", "mat", "image", "faceuvs", "offset"
+    __slots__ = "vertex_index", "ma", "image", "faceuvs", "offset", "group"
 
-    def __init__(self, vindex=(0, 0, 0), mat=None, image=None, faceuvs=None):
+    def __init__(self, vindex=(0, 0, 0), ma=None, image=None, faceuvs=None, group=0):
         self.vertex_index = vindex
-        self.mat = mat
+        self.ma = ma
         self.image = image
         self.faceuvs = faceuvs
         self.offset = [0, 0, 0]  # offset indices
+        self.group = group
 
 
 def extract_triangles(mesh):
-    """Extract triangles from a mesh.
+    """Extract triangles from a mesh."""
 
-    If the mesh contains quads, they will be split into triangles."""
+    mesh.calc_loop_triangles()
+    (polygroup, count) = mesh.calc_smooth_groups(use_bitflags=True)
+
     tri_list = []
-    do_uv = bool(mesh.tessface_uv_textures)
+    do_uv = bool(mesh.uv_layers)
 
     img = None
-    for i, face in enumerate(mesh.tessfaces):
+    for i, face in enumerate(mesh.loop_triangles):
         f_v = face.vertices
 
-        uf = mesh.tessface_uv_textures.active.data[i] if do_uv else None
+        uf = mesh.uv_layers.active.data if do_uv else None
 
         if do_uv:
-            f_uv = uf.uv
-            img = uf.image if uf else None
-            if img is not None:
-                img = img.name
+            f_uv = [uf[lp].uv for lp in face.loops]
+            for ma in mesh.materials:
+                img = get_uv_image(ma) if uf else None
+                if img is not None:
+                    img = img.name
 
-        # if f_v[3] == 0:
+        smoothgroup = polygroup[face.polygon_index]
+
         if len(f_v) == 3:
             new_tri = tri_wrapper((f_v[0], f_v[1], f_v[2]), face.material_index, img)
             if (do_uv):
                 new_tri.faceuvs = uv_key(f_uv[0]), uv_key(f_uv[1]), uv_key(f_uv[2])
+            new_tri.group = smoothgroup if face.use_smooth else 0
             tri_list.append(new_tri)
-
-        else:  # it's a quad
-            new_tri = tri_wrapper((f_v[0], f_v[1], f_v[2]), face.material_index, img)
-            new_tri_2 = tri_wrapper((f_v[0], f_v[2], f_v[3]), face.material_index, img)
-
-            if (do_uv):
-                new_tri.faceuvs = uv_key(f_uv[0]), uv_key(f_uv[1]), uv_key(f_uv[2])
-                new_tri_2.faceuvs = uv_key(f_uv[0]), uv_key(f_uv[2]), uv_key(f_uv[3])
-
-            tri_list.append(new_tri)
-            tri_list.append(new_tri_2)
 
     return tri_list
 
@@ -726,17 +878,20 @@ def remove_face_uv(verts, tri_list):
 
 def make_faces_chunk(tri_list, mesh, materialDict):
     """Make a chunk for the faces.
-
     Also adds subchunks assigning materials to all faces."""
+    do_smooth = False
+    use_smooth = [poly.use_smooth for poly in mesh.polygons]
+    if True in use_smooth:
+        do_smooth = True
 
     materials = mesh.materials
     if not materials:
-        mat = None
+        ma = None
 
     face_chunk = _3ds_chunk(OBJECT_FACES)
     face_list = _3ds_array()
 
-    if mesh.tessface_uv_textures:
+    if mesh.uv_layers:
         # Gather materials used in this mesh - mat/image pairs
         unique_mats = {}
         for i, tri in enumerate(tri_list):
@@ -744,30 +899,30 @@ def make_faces_chunk(tri_list, mesh, materialDict):
             face_list.add(_3ds_face(tri.vertex_index))
 
             if materials:
-                mat = materials[tri.mat]
-                if mat:
-                    mat = mat.name
+                ma = materials[tri.ma]
+                if ma:
+                    ma = ma.name
 
             img = tri.image
 
             try:
-                context_mat_face_array = unique_mats[mat, img][1]
+                context_face_array = unique_mats[ma, img][1]
             except:
-                name_str = mat if mat else "None"
+                name_str = ma if ma else "None"
                 if img:
                     name_str += img
 
-                context_mat_face_array = _3ds_array()
-                unique_mats[mat, img] = _3ds_string(sane_name(name_str)), context_mat_face_array
+                context_face_array = _3ds_array()
+                unique_mats[ma, img] = _3ds_string(sane_name(name_str)), context_face_array
 
-            context_mat_face_array.add(_3ds_ushort(i))
-            # obj_material_faces[tri.mat].add(_3ds_ushort(i))
+            context_face_array.add(_3ds_ushort(i))
+            # obj_material_faces[tri.ma].add(_3ds_ushort(i))
 
         face_chunk.add_variable("faces", face_list)
-        for mat_name, mat_faces in unique_mats.values():
+        for ma_name, ma_faces in unique_mats.values():
             obj_material_chunk = _3ds_chunk(OBJECT_MATERIAL)
-            obj_material_chunk.add_variable("name", mat_name)
-            obj_material_chunk.add_variable("face_list", mat_faces)
+            obj_material_chunk.add_variable("name", ma_name)
+            obj_material_chunk.add_variable("face_list", ma_faces)
             face_chunk.add_subchunk(obj_material_chunk)
 
     else:
@@ -782,8 +937,8 @@ def make_faces_chunk(tri_list, mesh, materialDict):
 
         for i, tri in enumerate(tri_list):
             face_list.add(_3ds_face(tri.vertex_index))
-            if (tri.mat < n_materials):
-                obj_material_faces[tri.mat].add(_3ds_ushort(i))
+            if (tri.ma < n_materials):
+                obj_material_faces[tri.ma].add(_3ds_ushort(i))
 
         face_chunk.add_variable("faces", face_list)
         for i in range(n_materials):
@@ -791,6 +946,12 @@ def make_faces_chunk(tri_list, mesh, materialDict):
             obj_material_chunk.add_variable("name", obj_material_names[i])
             obj_material_chunk.add_variable("face_list", obj_material_faces[i])
             face_chunk.add_subchunk(obj_material_chunk)
+
+    if do_smooth:
+        obj_smooth_chunk = _3ds_chunk(OBJECT_SMOOTH)
+        for i, tri in enumerate(tri_list):
+            obj_smooth_chunk.add_variable("face_" + str(i), _3ds_uint(tri.group))
+        face_chunk.add_subchunk(obj_smooth_chunk)
 
     return face_chunk
 
@@ -809,21 +970,23 @@ def make_uv_chunk(uv_array):
     return uv_chunk
 
 
+'''
 def make_matrix_4x3_chunk(matrix):
     matrix_chunk = _3ds_chunk(OBJECT_TRANS_MATRIX)
     for vec in matrix.col:
         for f in vec[:3]:
             matrix_chunk.add_variable("matrix_f", _3ds_float(f))
     return matrix_chunk
+'''
 
 
-def make_mesh_chunk(mesh, matrix, materialDict):
+def make_mesh_chunk(ob, mesh, matrix, materialDict, translation):
     """Make a chunk out of a Blender mesh."""
 
     # Extract the triangles from the mesh:
     tri_list = extract_triangles(mesh)
 
-    if mesh.tessface_uv_textures:
+    if mesh.uv_layers:
         # Remove the face UVs and convert it to vertex UV:
         vert_array, uv_array, tri_list = remove_face_uv(mesh.vertices, tri_list)
     else:
@@ -839,15 +1002,40 @@ def make_mesh_chunk(mesh, matrix, materialDict):
 
     # add vertex chunk:
     mesh_chunk.add_subchunk(make_vert_chunk(vert_array))
-    # add faces chunk:
 
+    # add faces chunk:
     mesh_chunk.add_subchunk(make_faces_chunk(tri_list, mesh, materialDict))
 
     # if available, add uv chunk:
     if uv_array:
         mesh_chunk.add_subchunk(make_uv_chunk(uv_array))
 
-    mesh_chunk.add_subchunk(make_matrix_4x3_chunk(matrix))
+    # mesh_chunk.add_subchunk(make_matrix_4x3_chunk(matrix))
+
+    # create transformation matrix chunk
+    matrix_chunk = _3ds_chunk(OBJECT_TRANS_MATRIX)
+    obj_matrix = matrix.transposed().to_3x3()
+
+    if ob.parent is None:
+        obj_translate = translation[ob.name]
+
+    else:  # Calculate child matrix translation relative to parent
+        obj_translate = translation[ob.name].cross(-1 * translation[ob.parent.name])
+
+    matrix_chunk.add_variable("xx", _3ds_float(obj_matrix[0].to_tuple(6)[0]))
+    matrix_chunk.add_variable("xy", _3ds_float(obj_matrix[0].to_tuple(6)[1]))
+    matrix_chunk.add_variable("xz", _3ds_float(obj_matrix[0].to_tuple(6)[2]))
+    matrix_chunk.add_variable("yx", _3ds_float(obj_matrix[1].to_tuple(6)[0]))
+    matrix_chunk.add_variable("yy", _3ds_float(obj_matrix[1].to_tuple(6)[1]))
+    matrix_chunk.add_variable("yz", _3ds_float(obj_matrix[1].to_tuple(6)[2]))
+    matrix_chunk.add_variable("zx", _3ds_float(obj_matrix[2].to_tuple(6)[0]))
+    matrix_chunk.add_variable("zy", _3ds_float(obj_matrix[2].to_tuple(6)[1]))
+    matrix_chunk.add_variable("zz", _3ds_float(obj_matrix[2].to_tuple(6)[2]))
+    matrix_chunk.add_variable("tx", _3ds_float(obj_translate.to_tuple(6)[0]))
+    matrix_chunk.add_variable("ty", _3ds_float(obj_translate.to_tuple(6)[1]))
+    matrix_chunk.add_variable("tz", _3ds_float(obj_translate.to_tuple(6)[2]))
+
+    mesh_chunk.add_subchunk(matrix_chunk)
 
     return mesh_chunk
 
@@ -982,23 +1170,24 @@ def save(operator,
          global_matrix=None,
          ):
 
-    import bpy
-    import mathutils
-
     import time
     from bpy_extras.io_utils import create_derived_objects, free_derived_objects
 
     """Save the Blender scene to a 3ds file."""
 
     # Time the export
-    time1 = time.clock()
-    #Blender.Window.WaitCursor(1)
+    duration = time.time()
+    # Blender.Window.WaitCursor(1)
 
     if global_matrix is None:
         global_matrix = mathutils.Matrix()
 
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='OBJECT')
+
+    scene = context.scene
+    layer = context.view_layer
+    #depsgraph = context.evaluated_depsgraph_get()
 
     # Initialize the main chunk (primary):
     primary = _3ds_chunk(PRIMARY)
@@ -1007,8 +1196,24 @@ def save(operator,
     version_chunk.add_variable("version", _3ds_uint(3))
     primary.add_subchunk(version_chunk)
 
-    # init main object info chunk:
+    # Init main object info chunk:
     object_info = _3ds_chunk(OBJECTINFO)
+    mesh_version = _3ds_chunk(MESHVERSION)
+    mesh_version.add_variable("mesh", _3ds_uint(3))
+    object_info.add_subchunk(mesh_version)
+
+    # Add MASTERSCALE element
+    mscale = _3ds_chunk(MASTERSCALE)
+    mscale.add_variable("scale", _3ds_float(1))
+    object_info.add_subchunk(mscale)
+
+    # Add AMBIENT color
+    if scene.world is not None:
+        ambient_chunk = _3ds_chunk(AMBIENTLIGHT)
+        ambient_light = _3ds_chunk(RGB)
+        ambient_light.add_variable("ambient", _3ds_float_color(scene.world.color))
+        ambient_chunk.add_subchunk(ambient_light)
+        object_info.add_subchunk(ambient_chunk)
 
     ''' # COMMENTED OUT FOR 2.42 RELEASE!! CRASHES 3DS MAX
     # init main key frame data chunk:
@@ -1020,13 +1225,13 @@ def save(operator,
     materialDict = {}
     mesh_objects = []
 
-    scene = context.scene
-    depsgraph = context.evaluated_depsgraph_get()
-
     if use_selection:
-        objects = (ob for ob in scene.objects if ob.is_visible(scene) and ob.select)
+        objects = [ob for ob in scene.objects if not ob.hide_viewport and ob.select_get(view_layer=layer)]
     else:
-        objects = (ob for ob in scene.objects if ob.is_visible(scene))
+        objects = [ob for ob in scene.objects if not ob.hide_viewport]
+
+    light_objects = [ob for ob in objects if ob.type == 'LIGHT']
+    camera_objects = [ob for ob in objects if ob.type == 'CAMERA']
 
     for ob in objects:
         # get derived objects
@@ -1035,73 +1240,75 @@ def save(operator,
         if derived is None:
             continue
 
-        for ob_derived, mat in derived:
+        for ob_derived, mtx in derived:
             if ob.type not in {'MESH', 'CURVE', 'SURFACE', 'FONT', 'META'}:
                 continue
 
-            ob_derived_eval = ob_derived.evaluated_get(depsgraph)
+            #ob_derived_eval = ob_derived.evaluated_get(depsgraph)
             try:
-                data = ob_derived_eval.to_mesh()
+                data = ob_derived.to_mesh()
             except:
                 data = None
 
             if data:
-                matrix = global_matrix * mat
+                matrix = global_matrix @ mtx
                 data.transform(matrix)
                 mesh_objects.append((ob_derived, data, matrix))
-                mat_ls = data.materials
-                mat_ls_len = len(mat_ls)
+                ma_ls = data.materials
+                ma_ls_len = len(ma_ls)
 
                 # get material/image tuples.
-                if data.tessface_uv_textures:
-                    if not mat_ls:
-                        mat = mat_name = None
+                if data.uv_layers:
+                    if not ma_ls:
+                        ma = ma_name = None
 
-                    for f, uf in zip(data.tessfaces, data.tessface_uv_textures.active.data):
-                        if mat_ls:
-                            mat_index = f.material_index
-                            if mat_index >= mat_ls_len:
-                                mat_index = f.mat = 0
-                            mat = mat_ls[mat_index]
-                            mat_name = None if mat is None else mat.name
+                    for f, uf in zip(data.polygons, data.uv_layers.active.data):
+                        if ma_ls:
+                            ma_index = f.material_index
+                            if ma_index >= ma_ls_len:
+                                ma_index = f.material_index = 0
+                            ma = ma_ls[ma_index]
+                            ma_name = None if ma is None else ma.name
                         # else there already set to none
 
-                        img = uf.image
+                        img = get_uv_image(ma)
                         img_name = None if img is None else img.name
 
-                        materialDict.setdefault((mat_name, img_name), (mat, img))
+                        materialDict.setdefault((ma_name, img_name), (ma, img))
 
                 else:
-                    for mat in mat_ls:
-                        if mat:  # material may be None so check its not.
-                            materialDict.setdefault((mat.name, None), (mat, None))
+                    for ma in ma_ls:
+                        if ma:  # material may be None so check its not.
+                            materialDict.setdefault((ma.name, None), (ma, None))
 
                     # Why 0 Why!
-                    for f in data.tessfaces:
-                        if f.material_index >= mat_ls_len:
+                    for f in data.polygons:
+                        if f.material_index >= ma_ls_len:
                             f.material_index = 0
 
-                ob_derived_eval.to_mesh_clear()
+                # ob_derived_eval.to_mesh_clear()
 
         if free:
             free_derived_objects(ob)
 
     # Make material chunks for all materials used in the meshes:
-    for mat_and_image in materialDict.values():
-        object_info.add_subchunk(make_material_chunk(mat_and_image[0], mat_and_image[1]))
+    for ma_image in materialDict.values():
+        object_info.add_subchunk(make_material_chunk(ma_image[0], ma_image[1]))
 
     # Give all objects a unique ID and build a dictionary from object name to object id:
+    translation = {}  # collect translation for transformation matrix
+    #name_to_id = {}
+    for ob, data, matrix in mesh_objects:
+        translation[ob.name] = ob.location
+        #name_to_id[ob.name]= len(name_to_id)
     """
-    name_to_id = {}
-    for ob, data in mesh_objects:
-        name_to_id[ob.name]= len(name_to_id)
     #for ob in empty_objects:
     #    name_to_id[ob.name]= len(name_to_id)
     """
 
     # Create object chunks for all meshes:
     i = 0
-    for ob, blender_mesh, matrix in mesh_objects:
+    for ob, mesh, matrix in mesh_objects:
         # create a new object chunk
         object_chunk = _3ds_chunk(OBJECT)
 
@@ -1109,7 +1316,7 @@ def save(operator,
         object_chunk.add_variable("name", _3ds_string(sane_name(ob.name)))
 
         # make a mesh chunk out of the mesh:
-        object_chunk.add_subchunk(make_mesh_chunk(blender_mesh, matrix, materialDict))
+        object_chunk.add_subchunk(make_mesh_chunk(ob, mesh, matrix, materialDict, translation))
 
         # ensure the mesh has no over sized arrays
         # skip ones that do!, otherwise we cant write since the array size wont
@@ -1124,8 +1331,8 @@ def save(operator,
         kfdata.add_subchunk(make_kf_obj_node(ob, name_to_id))
         '''
 
-        if not blender_mesh.users:
-            bpy.data.meshes.remove(blender_mesh)
+        # if not blender_mesh.users:
+        # bpy.data.meshes.remove(blender_mesh)
         #blender_mesh.vertices = None
 
         i += i
@@ -1137,6 +1344,55 @@ def save(operator,
         kfdata.add_subchunk(make_kf_obj_node(ob, name_to_id))
         pass
     '''
+
+    # Create light object chunks
+    for ob in light_objects:
+        object_chunk = _3ds_chunk(OBJECT)
+        light_chunk = _3ds_chunk(OBJECT_LIGHT)
+        color_float_chunk = _3ds_chunk(RGB)
+        energy_factor = _3ds_chunk(LIGHT_MULTIPLIER)
+        object_chunk.add_variable("light", _3ds_string(sane_name(ob.name)))
+        light_chunk.add_variable("location", _3ds_point_3d(ob.location))
+        color_float_chunk.add_variable("color", _3ds_float_color(ob.data.color))
+        energy_factor.add_variable("energy", _3ds_float(ob.data.energy * .001))
+        light_chunk.add_subchunk(color_float_chunk)
+        light_chunk.add_subchunk(energy_factor)
+
+        if ob.data.type == 'SPOT':
+            cone_angle = math.degrees(ob.data.spot_size)
+            hotspot = cone_angle - (ob.data.spot_blend * math.floor(cone_angle))
+            hypo = math.copysign(math.sqrt(pow(ob.location[0], 2) + pow(ob.location[1], 2)), ob.location[1])
+            pos_x = ob.location[0] + (ob.location[1] * math.tan(ob.rotation_euler[2]))
+            pos_y = ob.location[1] + (ob.location[0] * math.tan(math.radians(90) - ob.rotation_euler[2]))
+            pos_z = hypo * math.tan(math.radians(90) - ob.rotation_euler[0])
+            spotlight_chunk = _3ds_chunk(LIGHT_SPOTLIGHT)
+            spot_roll_chunk = _3ds_chunk(LIGHT_SPOTROLL)
+            spotlight_chunk.add_variable("target", _3ds_point_3d((pos_x, pos_y, pos_z)))
+            spotlight_chunk.add_variable("hotspot", _3ds_float(round(hotspot, 4)))
+            spotlight_chunk.add_variable("angle", _3ds_float(round(cone_angle, 4)))
+            spot_roll_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler[1], 6)))
+            spotlight_chunk.add_subchunk(spot_roll_chunk)
+            light_chunk.add_subchunk(spotlight_chunk)
+
+        # Add light to object info
+        object_chunk.add_subchunk(light_chunk)
+        object_info.add_subchunk(object_chunk)
+
+    # Create camera object chunks
+    for ob in camera_objects:
+        object_chunk = _3ds_chunk(OBJECT)
+        camera_chunk = _3ds_chunk(OBJECT_CAMERA)
+        diagonal = math.copysign(math.sqrt(pow(ob.location[0], 2) + pow(ob.location[1], 2)), ob.location[1])
+        focus_x = ob.location[0] + (ob.location[1] * math.tan(ob.rotation_euler[2]))
+        focus_y = ob.location[1] + (ob.location[0] * math.tan(math.radians(90) - ob.rotation_euler[2]))
+        focus_z = diagonal * math.tan(math.radians(90) - ob.rotation_euler[0])
+        object_chunk.add_variable("camera", _3ds_string(sane_name(ob.name)))
+        camera_chunk.add_variable("location", _3ds_point_3d(ob.location))
+        camera_chunk.add_variable("target", _3ds_point_3d((focus_x, focus_y, focus_z)))
+        camera_chunk.add_variable("roll", _3ds_float(round(ob.rotation_euler[1], 6)))
+        camera_chunk.add_variable("lens", _3ds_float(ob.data.lens))
+        object_chunk.add_subchunk(camera_chunk)
+        object_info.add_subchunk(object_chunk)
 
     # Add main object info chunk to primary chunk:
     primary.add_subchunk(object_info)
@@ -1164,10 +1420,10 @@ def save(operator,
     name_mapping.clear()
 
     # Debugging only: report the exporting time:
-    #Blender.Window.WaitCursor(0)
-    print("3ds export time: %.2f" % (time.clock() - time1))
+    # Blender.Window.WaitCursor(0)
+    print("3ds export time: %.2f" % (time.time() - duration))
 
     # Debugging only: dump the chunk hierarchy:
-    #primary.dump()
+    # primary.dump()
 
     return {'FINISHED'}
