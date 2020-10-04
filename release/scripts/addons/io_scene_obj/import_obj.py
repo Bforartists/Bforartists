@@ -195,6 +195,7 @@ def create_materials(filepath, relpath,
 
         elif type == 'Ke':
             _generic_tex_set(mat_wrap.emission_color_texture, image, 'UV', map_offset, map_scale)
+            mat_wrap.emission_strength = 1.0
 
         elif type == 'Bump':
             bump_mult = map_options.get(b'-bm')
@@ -357,6 +358,7 @@ def create_materials(filepath, relpath,
                         # We cannot set context_material.emit right now, we need final diffuse color as well for this.
                         # XXX Unsupported currently
                         context_mat_wrap.emission_color = _get_colors(line_split)
+                        context_mat_wrap.emission_strength = 1.0
                     elif line_id == b'ns':
                         # XXX Totally empirical conversion, trying to adapt it
                         #     (from 0.0 - 900.0 OBJ specular exponent range to 1.0 - 0.0 Principled BSDF range)...

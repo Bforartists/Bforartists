@@ -28,14 +28,16 @@ struct ListBase;
 /* note on naming: typical _get() suffix is omitted here,
  * since its the main purpose of the API. */
 const char *BKE_appdir_folder_default(void);
-const char *BKE_appdir_folder_id_ex(const int folder_id,
-                                    const char *subfolder,
-                                    char *path,
-                                    size_t path_len);
+bool BKE_appdir_folder_id_ex(const int folder_id,
+                             const char *subfolder,
+                             char *path,
+                             size_t path_len);
 const char *BKE_appdir_folder_id(const int folder_id, const char *subfolder);
 const char *BKE_appdir_folder_id_create(const int folder_id, const char *subfolder);
 const char *BKE_appdir_folder_id_user_notest(const int folder_id, const char *subfolder);
-const char *BKE_appdir_folder_id_version(const int folder_id, const int ver, const bool do_check);
+const char *BKE_appdir_folder_id_version(const int folder_id,
+                                         const int ver,
+                                         const bool check_is_dir);
 
 bool BKE_appdir_app_is_portable_install(void);
 bool BKE_appdir_app_template_any(void);
@@ -59,8 +61,7 @@ bool BKE_appdir_program_python_search(char *fullpath,
                                       const int version_minor);
 
 /* Initialize path to temporary directory. */
-void BKE_tempdir_init(char *userdir);
-void BKE_tempdir_system_init(char *dir);
+void BKE_tempdir_init(const char *userdir);
 
 const char *BKE_tempdir_base(void);
 const char *BKE_tempdir_session(void);

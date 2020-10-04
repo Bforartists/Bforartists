@@ -16,10 +16,18 @@ addon_qcd_view_edit_mode_hotkey_keymaps = []
 
 qcd_classes = (
     qcd_move_widget.QCDMoveWidget,
+    qcd_operators.EnableAllQCDSlotsMeta,
+    qcd_operators.EnableAllQCDSlots,
+    qcd_operators.EnableAllQCDSlotsIsolated,
+    qcd_operators.DisableAllNonQCDSlots,
+    qcd_operators.DisableAllCollections,
+    qcd_operators.SelectAllQCDObjects,
+    qcd_operators.DiscardQCDHistory,
     qcd_operators.MoveToQCDSlot,
     qcd_operators.ViewQCDSlot,
     qcd_operators.ViewMoveQCDSlot,
     qcd_operators.RenumerateQCDSlots,
+    ui.EnableAllQCDSlotsMenu,
     )
 
 
@@ -41,6 +49,13 @@ def load_internal_data(dummy):
     internals.qcd_slots.load_blend_data(data)
 
 
+@persistent
+def load_pre_handler(dummy):
+    internals.qcd_collection_state.clear()
+    for key in list(internals.qcd_history.keys()):
+        del internals.qcd_history[key]
+
+
 def register_qcd():
     for cls in qcd_classes:
         bpy.utils.register_class(cls)
@@ -60,6 +75,7 @@ def register_qcd():
 
     bpy.app.handlers.save_pre.append(save_internal_data)
     bpy.app.handlers.load_post.append(load_internal_data)
+    bpy.app.handlers.load_pre.append(load_pre_handler)
 
     prefs = bpy.context.preferences.addons[__package__].preferences
 
@@ -114,6 +130,27 @@ def register_qcd_view_hotkeys():
                 kmi.properties.toggle = True
                 addon_qcd_view_hotkey_keymaps.append((km, kmi))
 
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.enable_all_qcd_slots', 'PLUS', 'PRESS', shift=True)
+                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.enable_all_qcd_slots_isolated', 'PLUS', 'PRESS', shift=True, alt=True)
+                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.disable_all_non_qcd_slots', 'PLUS', 'PRESS', shift=True, ctrl=True)
+                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.disable_all_collections', 'EQUAL', 'PRESS', alt=True, ctrl=True)
+                addon_qcd_view_hotkey_keymaps.append((km, kmi))
+
+                if mode == 'Object Mode':
+                    km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                    kmi = km.keymap_items.new('view3d.select_all_qcd_objects', 'EQUAL', 'PRESS', alt=True)
+                    addon_qcd_view_hotkey_keymaps.append((km, kmi))
+
 
 def register_qcd_view_edit_mode_hotkeys():
     wm = bpy.context.window_manager
@@ -156,6 +193,22 @@ def register_qcd_view_edit_mode_hotkeys():
                 kmi.properties.toggle = True
                 addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
 
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.enable_all_qcd_slots', 'PLUS', 'PRESS', shift=True)
+                addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
+
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.enable_all_qcd_slots_isolated', 'PLUS', 'PRESS', shift=True, alt=True)
+                addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
+
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.disable_all_non_qcd_slots', 'PLUS', 'PRESS', shift=True, ctrl=True)
+                addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
+
+                km = wm.keyconfigs.addon.keymaps.new(name=mode)
+                kmi = km.keymap_items.new('view3d.disable_all_collections', 'EQUAL', 'PRESS', alt=True, ctrl=True)
+                addon_qcd_view_edit_mode_hotkey_keymaps.append((km, kmi))
+
 
         km = wm.keyconfigs.addon.keymaps.new(name="Mesh")
         kmi = km.keymap_items.new('wm.call_menu', 'ACCENT_GRAVE', 'PRESS')
@@ -173,6 +226,7 @@ def unregister_qcd():
 
     bpy.app.handlers.save_pre.remove(save_internal_data)
     bpy.app.handlers.load_post.remove(load_internal_data)
+    bpy.app.handlers.load_pre.remove(load_pre_handler)
 
     for pcoll in ui.preview_collections.values():
         bpy.utils.previews.remove(pcoll)

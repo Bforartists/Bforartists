@@ -257,6 +257,10 @@ static bool paint_stroke_use_scene_spacing(Brush *brush, ePaintMode mode)
 
 static bool paint_tool_require_inbetween_mouse_events(Brush *brush, ePaintMode mode)
 {
+  if (brush->flag & BRUSH_ANCHORED) {
+    return false;
+  }
+
   switch (mode) {
     case PAINT_MODE_SCULPT:
       if (ELEM(brush->sculpt_tool,
@@ -680,7 +684,7 @@ static float paint_space_stroke_spacing(bContext *C,
   }
   else {
     /* brushes can have a minimum size of 1.0 but with pressure it can be smaller then a pixel
-     * causing very high step sizes, hanging blender [#32381] */
+     * causing very high step sizes, hanging blender T32381. */
     size_clamp = max_ff(1.0f, size);
   }
 

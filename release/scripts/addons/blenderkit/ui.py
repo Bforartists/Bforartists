@@ -377,7 +377,7 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
 
     texth = line_height * nlines + nameline_height
 
-    if max(img.size[0], img.size[1]) == 0:
+    if not img or max(img.size[0], img.size[1]) == 0:
         return;
     isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
     isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
@@ -738,6 +738,14 @@ def draw_callback_2d_search(self, context):
     highlight = (1, 1, 1, .2)
     # highlight = (1, 1, 1, 0.8)
     # background of asset bar
+    if ui_props.hcount>0:
+        #this fixes a draw issue introduced in blender 2.91. draws a very small version of the image to avoid problems
+        # with alpha. Not sure why this works.
+        img = utils.get_thumbnail('arrow_left.png')
+        ui_bgl.draw_image(0, 0, 1,
+                          1,
+                          img,
+                          1)
     if not ui_props.dragging and ui_props.hcount>0:
         search_results = s.get('search results')
         search_results_orig = s.get('search results orig')
@@ -796,7 +804,7 @@ def draw_callback_2d_search(self, context):
                     index = a + ui_props.scrolloffset + b * ui_props.wcount
                     iname = utils.previmg_name(index)
                     img = bpy.data.images.get(iname)
-                    if img is not None:
+                    if img is not None and img.size[0]>0 and img.size[1]>0:
                         w = int(ui_props.thumb_size * img.size[0] / max(img.size[0], img.size[1]))
                         h = int(ui_props.thumb_size * img.size[1] / max(img.size[0], img.size[1]))
                         crop = (0, 0, 1, 1)
@@ -856,6 +864,9 @@ def draw_callback_2d_search(self, context):
             if sr != None and -1 < ui_props.active_index < len(sr):
                 r = sr[ui_props.active_index]
                 tpath = os.path.join(directory, r['thumbnail'])
+                if not r['thumbnail']:
+                    tpath = paths.get_addon_thumbnail_path('thumbnail_not_available.jpg')
+
 
                 img = bpy.data.images.get(iname)
                 if img == None or img.filepath != tpath:
@@ -927,7 +938,7 @@ def mouse_raycast(context, mx, my):
     vec = ray_target - ray_origin
 
     has_hit, snapped_location, snapped_normal, face_index, object, matrix = bpy.context.scene.ray_cast(
-        bpy.context.view_layer, ray_origin, vec)
+        bpy.context.view_layer.depsgraph, ray_origin, vec)
 
     # rote = mathutils.Euler((0, 0, math.pi))
     randoffset = math.pi
@@ -1021,7 +1032,7 @@ def is_rating_possible():
             while ad is None or (ad is None and ao_check.parent is not None):
                 s = bpy.context.scene
                 ad = ao_check.get('asset_data')
-                if ad is not None:
+                if ad is not None and ad.get('assetBaseId') is not None:
 
                     s['assets rated'] = s.get('assets rated',{})
                     rated = s['assets rated'].get(ad['assetBaseId'])
@@ -1799,8 +1810,14 @@ class UndoWithContext(bpy.types.Operator):
     message: StringProperty('Undo Message', default='BlenderKit operation')
 
     def execute(self, context):
-        C_dict = utils.get_fake_context(context)
-        bpy.ops.ed.undo_push(C_dict, 'INVOKE_REGION_WIN', message=self.message)
+        # C_dict = utils.get_fake_context(context)
+        #w, a, r = get_largest_area(area_type=area_type)
+        # wm = bpy.context.window_manager#bpy.data.window_managers[0]
+        # w = wm.windows[0]
+        #
+        # C_dict = {'window': w, 'screen': w.screen}
+        # bpy.ops.ed.undo_push(C_dict, 'INVOKE_REGION_WIN', message=self.message)
+        bpy.ops.ed.undo_push( 'INVOKE_REGION_WIN', message=self.message)
         return {'FINISHED'}
 
 
