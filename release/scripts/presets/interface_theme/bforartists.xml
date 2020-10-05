@@ -538,10 +538,11 @@
     <file_browser>
       <ThemeFileBrowser
         selected_file="#ff8c19"
+        row_alternate="#ffffff06"
         >
         <space>
           <ThemeSpaceGeneric
-            back="#505050"
+            back="#404040"
             title="#ffffff"
             text="#ffffff"
             text_hi="#ffffff"
@@ -715,6 +716,7 @@
     </dopesheet_editor>
     <image_editor>
       <ThemeImageEditor
+        grid="#505050ff"
         vertex="#000000"
         vertex_select="#ff8500"
         vertex_size="3"
@@ -738,7 +740,6 @@
         preview_stitch_unstitchable="#ff0000ff"
         preview_stitch_active="#e1d2c323"
         uv_shadow="#707070ff"
-        uv_others="#606060ff"
         frame_current="#60c040"
         metadatabg="#000000"
         metadatatext="#ffffff"
@@ -848,7 +849,9 @@
       </ThemeSequenceEditor>
     </sequence_editor>
     <properties>
-      <ThemeProperties>
+      <ThemeProperties
+        match="#000000"
+        >
         <space>
           <ThemeSpaceGeneric
             back="#404040"
@@ -930,6 +933,7 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
+        grid="#404040"
         node_selected="#f15800"
         node_active="#eefcff"
         wire="#808080"
@@ -1165,7 +1169,7 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
-        grid="#000000"
+        grid="#424242ff"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"
@@ -1447,6 +1451,40 @@
         >
       </ThemeBoneColorSet>
     </bone_color_sets>
+    <collection_color>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#000000"
+        >
+      </ThemeCollectionColor>
+    </collection_color>
   </Theme>
   <ThemeStyle>
     <panel_title>
