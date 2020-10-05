@@ -2667,7 +2667,7 @@ class VIEW3D_MT_object(Menu):
         # Potrace lib dependency
         if bpy.app.build_options.potrace:
             layout.separator()
-            layout.operator("gpencil.trace_image")
+            layout.operator("gpencil.trace_image", icon = "FILE_IMAGE")
 
         if obj is None:
             pass
@@ -3248,12 +3248,12 @@ class VIEW3D_MT_object_cleanup(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.vertex_group_clean", text="Clean Vertex Group Weights").group_select_mode = 'ALL'
-        layout.operator("object.vertex_group_limit_total", text="Limit Total Vertex Groups").group_select_mode = 'ALL'
+        layout.operator("object.vertex_group_clean", text="Clean Vertex Group Weights", icon = 'CLEAN_CHANNELS').group_select_mode = 'ALL'
+        layout.operator("object.vertex_group_limit_total", text="Limit Total Vertex Groups", icon = 'WEIGHT_LIMIT_TOTAL').group_select_mode = 'ALL'
 
         layout.separator()
 
-        layout.operator("object.material_slot_remove_unused", text="Remove Unused Material Slots")
+        layout.operator("object.material_slot_remove_unused", text="Remove Unused Material Slots", icon = 'DELETE')
 
 
 class VIEW3D_MT_make_single_user(Menu):
