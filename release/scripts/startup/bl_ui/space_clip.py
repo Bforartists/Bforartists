@@ -1346,7 +1346,7 @@ class CLIP_MT_view_zoom(Menu):
 
             layout.operator(
                 "clip.view_zoom_ratio",
-                text=iface_("Zoom %d:%d") % (a, b),
+                text=iface_("Zoom %d:%d") % (a, b), icon = "ZOOM_SET",
                 translate=False,
             ).ratio = a / b
 
