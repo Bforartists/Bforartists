@@ -162,10 +162,17 @@ class TEXT_PT_properties(Panel):
 
         text = st.text
         if text:
-            layout.prop(text, "indentation")
-        flow.use_property_split = False
-        flow.prop(st, "show_margin")
-        flow.use_property_split = True
+            layout.prop(text, "indentation")    
+        
+        flow = layout.column_flow()
+        split = flow.split(factor = 0.66)
+        split.use_property_split = False
+        split.prop(st, "show_margin")
+        if st.show_margin:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')  
+        
         if st.show_margin:
 
             col = flow.column()
