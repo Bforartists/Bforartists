@@ -2102,6 +2102,7 @@ class CYCLES_RENDER_PT_bake_output(CyclesButtonsPanel, Panel):
 
         if rd.use_bake_multires:
             layout.prop(rd, "bake_margin")
+            layout.use_property_split = False
             layout.prop(rd, "use_bake_clear", text="Clear Image")
 
             if rd.bake_type == 'DISPLACEMENT':
