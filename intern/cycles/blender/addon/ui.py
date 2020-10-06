@@ -192,7 +192,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
         subcol = col.column()
         subcol.use_property_split = False
         row = subcol.row()
-        split = row.split(factor = 0.55)
+        split = row.split()
         split.prop(cscene, "use_square_samples")
         if cscene.use_square_samples:
             split.label(icon='DISCLOSURE_TRI_DOWN')
@@ -271,34 +271,37 @@ class CYCLES_RENDER_PT_sampling_denoising(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
         cscene = scene.cycles
-
-        heading = layout.column(align=True, heading="Render")
-        row = heading.row(align=True)
-        row.prop(cscene, "use_denoising", text="")
-        sub = row.row()
-
-        sub.active = cscene.use_denoising
-        for view_layer in scene.view_layers:
-            if view_layer.cycles.denoising_store_passes:
-                sub.active = True
-
-        sub.prop(cscene, "denoiser", text="")
-
-        heading = layout.column(align=False, heading="Viewport")
-        row = heading.row(align=True)
-        row.prop(cscene, "use_preview_denoising", text="")
-        sub = row.row()
-        sub.active = cscene.use_preview_denoising
-        sub.prop(cscene, "preview_denoiser", text="")
-
-        sub = heading.row(align=True)
-        sub.active = cscene.use_preview_denoising
-        sub.prop(cscene, "preview_denoising_start_sample", text="Start Sample")
+        
+        col = layout.column()
+        subcol = col.column()
+        subcol.use_property_split = False
+        row = subcol.row()
+        split = row.split()
+        split.prop(cscene, "use_denoising")
+        if cscene.use_denoising:
+            split.prop(cscene, "denoiser", text="")
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+      
+        col = layout.column()
+        subcol = col.column()
+        subcol.use_property_split = False
+        row = subcol.row()
+        split = row.split()
+        split.prop(cscene, "use_preview_denoising")
+        if cscene.use_preview_denoising:
+            split.prop(cscene, "preview_denoiser", text="")
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+        if cscene.use_preview_denoising:
+            row = layout.row()
+            row.separator()
+            row.prop(cscene, "preview_denoising_start_sample", text="Start Sample")
 
 
 class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
