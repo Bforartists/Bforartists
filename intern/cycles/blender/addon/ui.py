@@ -177,24 +177,33 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
         if not use_optix(context):
             layout.prop(cscene, "progressive")
 
-        col = layout.column() # bfa
+        col = layout.column()
 
         if not use_branched_path(context):
             col.prop(cscene, "samples", text="Render")
             col.prop(cscene, "preview_samples", text="Viewport")
-            col = layout.column() # bfa
-            col.use_property_split = False # bfa
-            col.prop(cscene, "use_square_samples") # bfa
 
         else:
             col.prop(cscene, "aa_samples", text="Render")
             col.prop(cscene, "preview_aa_samples", text="Viewport")
-            col = layout.column() # bfa
-            col.use_property_split = False # bfa
-            col.prop(cscene, "use_square_samples") # bfa
+        
+        col = layout.column()
+
+        subcol = col.column()
+        subcol.use_property_split = False
+        row = subcol.row()
+        split = row.split(factor = 0.55)
+        split.prop(cscene, "use_square_samples")
+        if cscene.use_square_samples:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')  
 
         if not use_branched_path(context):
             draw_samples_info(layout, context)
+        else:
+            if cscene.use_square_samples:
+                layout.label(text = "See Sub Samples Total Samples count")
 
 
 class CYCLES_RENDER_PT_sampling_sub_samples(CyclesButtonsPanel, Panel):
