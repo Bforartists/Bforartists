@@ -720,7 +720,7 @@ class CYCLES_RENDER_PT_performance_acceleration_structure(CyclesButtonsPanel, Pa
         import _cycles
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -742,6 +742,7 @@ class CYCLES_RENDER_PT_performance_acceleration_structure(CyclesButtonsPanel, Pa
         sub.prop(cscene, "debug_use_hair_bvh")
         sub = col.column()
         sub.active = not cscene.debug_use_spatial_splits and not use_embree
+        sub.use_property_split = True
         sub.prop(cscene, "debug_bvh_time_steps")
 
 
