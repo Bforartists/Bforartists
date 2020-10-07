@@ -124,12 +124,19 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(rd, "pixel_aspect_x", text="Aspect X")
         col.prop(rd, "pixel_aspect_y", text="Y")
-
-        row = layout.row(align=False)
-        row.use_property_split = False
-        row.prop(rd, "use_border")
+            
+            
+        split = layout.split()
+        col = split.column()
+        col.use_property_split = False
+        col.prop(rd, "use_border")
+        col = split.column()
         if rd.use_border:
-            row.prop(rd, "use_crop_to_border")
+            col.use_property_split = False
+            col.prop(rd, "use_crop_to_border")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')            
+
 
         col = layout.column(align=True)
         col.prop(scene, "frame_start", text="Frame Start")
