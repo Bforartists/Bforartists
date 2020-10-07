@@ -364,26 +364,32 @@ def basic_force_field_falloff_ui(self, field):
     col = layout.column()
     col.prop(field, "z_direction")
     col.prop(field, "falloff_power", text="Power")
-
-    col = layout.column(align=False, heading="Min Distance")
-    col.use_property_decorate = False
-    row = col.row(align=True)
-    sub = row.row(align=True)
-    sub.prop(field, "use_min_distance", text="")
-    sub = sub.row(align=True)
-    sub.active = field.use_min_distance
-    sub.prop(field, "distance_min", text="")
-    row.prop_decorator(field, "distance_min")
-
-    col = layout.column(align=False, heading="Max Distance")
-    col.use_property_decorate = False
-    row = col.row(align=True)
-    sub = row.row(align=True)
-    sub.prop(field, "use_max_distance", text="")
-    sub = sub.row(align=True)
-    sub.active = field.use_max_distance
-    sub.prop(field, "distance_max", text="")
-    row.prop_decorator(field, "distance_max")
+    
+    split = layout.split(factor = 0.35)
+    col = split.column()
+    col.use_property_split = False
+    col.prop(field, "use_min_distance", text="Min Distance")
+    col = split.column()
+    if field.use_min_distance:
+        col.use_property_split = False
+        row = col.row(align = True)
+        row.prop(field, "distance_min", text="")
+        row.prop_decorator(field, "distance_min")
+    else:
+        col.label(icon='DISCLOSURE_TRI_RIGHT')   	
+    
+    split = layout.split(factor = 0.35)
+    col = split.column()
+    col.use_property_split = False
+    col.prop(field, "use_max_distance", text="Max Distance")
+    col = split.column()
+    if field.use_max_distance:
+        col.use_property_split = False
+        row = col.row(align = True)
+        row.prop(field, "distance_max", text="")
+        row.prop_decorator(field, "distance_max")
+    else:
+        col.label(icon='DISCLOSURE_TRI_RIGHT')   	
 
 
 classes = (
