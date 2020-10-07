@@ -207,13 +207,19 @@ class PHYSICS_PT_rigid_body_collisions_sensitivity(PHYSICS_PT_rigidbody_panel, P
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=True)
             col = flow.column()
             row = col.row()
-            row.use_property_split = False   
+            row.use_property_split = False
             row.prop(rbo, "use_margin")
+            if rbo.use_margin:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
             row.prop_decorator(rbo, "use_margin")
 
             col = flow.column()
-            col.active = rbo.use_margin
-            col.prop(rbo, "collision_margin", text="Margin")
+            if rbo.use_margin:
+                row = col.row()
+                row.separator()
+                row.prop(rbo, "collision_margin", text="Margin")
 
 
 class PHYSICS_PT_rigid_body_collisions_collections(PHYSICS_PT_rigidbody_panel, Panel):
