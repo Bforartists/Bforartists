@@ -396,16 +396,16 @@ class DATA_PT_camera_display(CameraButtonsPanel, Panel):
         row.separator()
         row.prop(cam, "show_name", text="Name")
         row.prop_decorator(cam, "show_name")
-
-        col = layout.column(align=False, heading="Passepartout")
-        col.use_property_decorate = False
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(cam, "show_passepartout", text="")
-        sub = sub.row(align=True)
-        sub.active = cam.show_passepartout
-        sub.prop(cam, "passepartout_alpha", text="")
-        row.prop_decorator(cam, "passepartout_alpha")
+    
+        split = layout.split(factor = 0.36)
+        col = split.column()
+        col.use_property_split = False  
+        col.prop(cam, "show_passepartout", text = "Passepartout")
+        col = split.column()
+        if cam.show_passepartout:
+            col.prop(cam, "passepartout_alpha", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
