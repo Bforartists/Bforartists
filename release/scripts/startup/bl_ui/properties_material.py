@@ -220,7 +220,6 @@ def draw_material_settings(self, context):
     layout.prop(mat, "shadow_method")
 
     row = layout.row()
-    #row.active = ((mat.blend_method == 'CLIP') or (mat.shadow_method == 'CLIP'))
     if ((mat.blend_method == 'CLIP') or (mat.shadow_method == 'CLIP')):
         row.prop(mat, "alpha_threshold")
 
@@ -229,17 +228,27 @@ def draw_material_settings(self, context):
         layout.prop(mat, "show_transparent_back")
         layout.use_property_split = True
 
-    row = layout.row()
-    row.use_property_split = False
-    row.prop(mat, "use_screen_refraction")
-    if mat.use_screen_refraction:
-        row.prop(mat, "refraction_depth", text = "")
+    col = layout.column()
 
-    row = layout.row()
-    row.use_property_split = False
-    row.prop(mat, "use_sss_translucency")
+    subcol = col.column()
+    subcol.use_property_split = False
+    row = subcol.row()
+    split = row.split(factor = 0.55)
+    split.prop(mat, "use_screen_refraction")
+    if mat.use_screen_refraction:
+        split.prop(mat, "refraction_depth", text = "")
+    else:
+        split.label(icon='DISCLOSURE_TRI_RIGHT')
+
+    subcol = col.column()
+    subcol.use_property_split = False
+    row = subcol.row()
+    split = row.split(factor = 0.55)
+    split.prop(mat, "use_sss_translucency")
     if mat.use_sss_translucency:
-        row.prop(mat, "pass_index", text = "")
+        split.prop(mat, "pass_index", text = "")
+    else:
+        split.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class EEVEE_MATERIAL_PT_settings(MaterialButtonsPanel, Panel):
