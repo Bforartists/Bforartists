@@ -629,16 +629,23 @@ class CYCLES_RENDER_PT_film_transparency(CyclesButtonsPanel, Panel):
         rd = scene.render
         cscene = scene.cycles
 
-        layout.active = rd.film_transparent
-
-        col = layout.column()
+        layout.active = rd.film_transparent     
+        
+        split = layout.split()
+        col = split.column()
         col.use_property_split = False
         col.prop(cscene, "film_transparent_glass", text="Transparent Glass")
-        col.use_property_split = True
-
-        sub = col.column()
-        sub.active = rd.film_transparent and cscene.film_transparent_glass
-        sub.prop(cscene, "film_transparent_roughness", text="Roughness Threshold")
+        col = split.column()
+        if cscene.film_transparent_glass:
+            col.label(icon='DISCLOSURE_TRI_DOWN') 
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+            
+        if cscene.film_transparent_glass: 
+            row = layout.row()
+            row.separator()
+            row.prop(cscene, "film_transparent_roughness", text="Roughness Threshold")
+                
 
 
 class CYCLES_RENDER_PT_film_pixel_filter(CyclesButtonsPanel, Panel):
