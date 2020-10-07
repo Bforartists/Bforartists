@@ -276,16 +276,16 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
             # Only useful with object having faces/materials...
             col.prop(obj, "color")
-
-        col = layout.column()
-        col.use_property_decorate = False
-        row = col.row(align=True)
-        row.use_property_split = False
-        row.prop(obj, "show_bounds", text="Bounds")
+           
+        split = layout.split(factor = 0.35)
+        col = split.column()
+        col.use_property_split = False
+        col.prop(obj, "show_bounds", text="Bounds")
+        col = split.column()
         if obj.show_bounds or (obj.display_type == 'BOUNDS'):
-            row.use_property_split = True
-            row.prop(obj, "display_bounds_type", text="")
-            row.prop_decorator(obj, "display_bounds_type")
+            col.prop(obj, "display_bounds_type", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
