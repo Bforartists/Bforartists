@@ -603,13 +603,16 @@ def brush_settings(layout, context, brush, popover=False):
             )
 
             layout.separator()
-
-            row = layout.row(align = True)
-            row.use_property_split = False
-            row.prop(brush, "use_plane_trim", text="Plane Trim")
-
+                
+            split = layout.split(factor = 0.36)
+            col = split.column()
+            col.use_property_split = False
+            col.prop(brush, "use_plane_trim", text="Plane Trim")
+            col = split.column()
             if brush.use_plane_trim:
-                row.prop(brush, "plane_trim", slider=True, text="")
+                col.prop(brush, "plane_trim", slider=True, text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
         # height
