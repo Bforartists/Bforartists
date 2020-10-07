@@ -81,11 +81,17 @@ class PHYSICS_PT_rigid_body_constraint_settings(PHYSICS_PT_rigidbody_constraint_
             row = col.row()
             row.use_property_split = False
             row.prop(rbc, "use_breaking")
+            if rbc.use_breaking:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
             row.prop_decorator(rbc, "use_breaking")
 
             sub = col.column()
-            sub.active = rbc.use_breaking
-            sub.prop(rbc, "breaking_threshold", text="Threshold")
+            if rbc.use_breaking:
+                row = sub.row()
+                row.separator()
+                row.prop(rbc, "breaking_threshold", text="Threshold")
 
 
 class PHYSICS_PT_rigid_body_constraint_objects(PHYSICS_PT_rigidbody_constraint_panel, Panel):
