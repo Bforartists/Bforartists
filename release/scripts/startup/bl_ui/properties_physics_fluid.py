@@ -180,12 +180,20 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             row = col.row()
             row.use_property_split = False
             row.prop(domain, "use_adaptive_timesteps")
+            if domain.use_adaptive_timesteps:
+                row.label(icon='DISCLOSURE_TRI_DOWN')
+            else:
+                row.label(icon='DISCLOSURE_TRI_RIGHT')
             row.prop_decorator(domain, "use_adaptive_timesteps")
 
             sub = col.column(align=True)
-            sub.active = domain.use_adaptive_timesteps
-            sub.prop(domain, "timesteps_max", text="Timesteps Maximum")
-            sub.prop(domain, "timesteps_min", text="Minimum")
+            if domain.use_adaptive_timesteps:
+                row = sub.row()
+                row.separator()
+                row.prop(domain, "timesteps_max", text="Timesteps Maximum")
+                row = sub.row()
+                row.separator()
+                row.prop(domain, "timesteps_min", text="Minimum")
 
             col.separator()
 
@@ -259,10 +267,10 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
             col.prop(flow, "flow_behavior", expand=False)
             if flow.flow_behavior in {'INFLOW', 'OUTFLOW'}:
                 row = col.row()
-                row.use_property_split = False    
+                row.use_property_split = False
                 row.prop(flow, "use_inflow")
                 row.prop_decorator(flow, "use_inflow")
-                
+
             col.prop(flow, "subframes", text="Sampling Substeps")
 
             if not flow.flow_behavior == 'OUTFLOW' and flow.flow_type in {'SMOKE', 'BOTH', 'FIRE'}:
@@ -273,7 +281,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
                 col = grid.column(align=True)
                 col.use_property_split = False
                 col.prop(flow, "use_absolute", text="Absolute Density")
-                col.use_property_split = True  
+                col.use_property_split = True
 
                 if flow.flow_type in {'SMOKE', 'BOTH'}:
                     col.prop(flow, "temperature", text="Initial Temperature")
@@ -299,11 +307,11 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
 
             col = grid.column()
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(effector_settings, "use_effector", text="Use Effector")
             row.prop_decorator(effector_settings, "use_effector")
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(effector_settings, "use_plane_init", text="Is Planar")
             row.prop_decorator(effector_settings, "use_plane_init")
 
@@ -563,10 +571,10 @@ class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
         col = grid.column()
         if flow.flow_source == 'MESH':
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(flow, "use_plane_init", text="Is Planar")
-            row.prop_decorator(flow, "use_plane_init")        
-                  
+            row.prop_decorator(flow, "use_plane_init")
+
             col.prop(flow, "surface_distance", text="Surface Emission")
             if flow.flow_type in {'SMOKE', 'BOTH', 'FIRE'}:
                 col = grid.column()
@@ -574,10 +582,10 @@ class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
 
         if flow.flow_source == 'PARTICLES':
             row = col.row()
-            row.use_property_split = False    
+            row.use_property_split = False
             row.prop(flow, "use_particle_size", text="Set Size")
-            row.prop_decorator(flow, "use_particle_size")    
-                
+            row.prop_decorator(flow, "use_particle_size")
+
             sub = col.column()
             sub.active = flow.use_particle_size
             sub.prop(flow, "particle_size")
