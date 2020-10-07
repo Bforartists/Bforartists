@@ -191,15 +191,16 @@ class DATA_PT_normals(MeshButtonsPanel, Panel):
 
         mesh = context.mesh
 
-        col = layout.column(align=False)
-        col.use_property_decorate = False
-        row = col.row(align=True)
-        sub = row.row(align=True)
-        sub.prop(mesh, "use_auto_smooth", text="Auto Smooth")
-        sub = sub.row(align=True)
-        sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
-        sub.prop(mesh, "auto_smooth_angle", text="")
-        row.prop_decorator(mesh, "auto_smooth_angle")
+        split = layout.split()
+        col = split.column()
+        col.prop(mesh, "use_auto_smooth", text="Auto Smooth")
+        col = split.column()
+        if mesh.use_auto_smooth and not mesh.has_custom_normals:
+            row = col.row(align = True)
+            row.prop(mesh, "auto_smooth_angle", text="")
+            row.prop_decorator(mesh, "auto_smooth_angle")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class DATA_PT_normals_auto_smooth(MeshButtonsPanel, Panel):
