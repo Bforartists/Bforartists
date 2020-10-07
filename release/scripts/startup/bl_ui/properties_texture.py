@@ -420,6 +420,10 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
         row = col.row()
         row.use_property_split = False
         row.prop(tex, "use_mipmap")
+        if tex.use_mipmap:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
         row.prop_decorator(tex, "use_mipmap")
 
         if tex.use_mipmap:
