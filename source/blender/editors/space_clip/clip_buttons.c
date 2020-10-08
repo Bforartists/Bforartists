@@ -466,10 +466,10 @@ void uiTemplateMarker(uiLayout *layout,
     block = uiLayoutGetBlock(layout);
 
     if (cb->marker_flag & MARKER_DISABLED) {
-      tip = TIP_("Disabled\nMarker is disabled at current frame");
+      tip = TIP_("Marker is disabled at current frame");
     }
     else {
-      tip = TIP_("Enabled\nMarker is enabled at current frame");
+      tip = TIP_("Marker is enabled at current frame");
     }
 
     bt = uiDefIconButBitI(block,
@@ -542,10 +542,10 @@ void uiTemplateMarker(uiLayout *layout,
     UI_block_funcN_set(block, marker_update_cb, cb, NULL);
 
     if (cb->marker_flag & MARKER_DISABLED) {
-      tip = TIP_("Disabled\nMarker is disabled at current frame");
+      tip = TIP_("Marker is disabled at current frame");
     }
     else {
-      tip = TIP_("Enabled\nMarker is enabled at current frame");
+      tip = TIP_("Marker is enabled at current frame");
     }
 
     uiDefButBitI(block,
