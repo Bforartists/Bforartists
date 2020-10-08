@@ -1079,6 +1079,7 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
 
     def draw(self, context):
         layout = self.layout
+
         layout.use_property_decorate = False
 
         tracking = context.space_data.clip.tracking
@@ -1088,10 +1089,14 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
 
         layout.prop(stab, "anchor_frame")
 
-        row = layout.row(align=False)
-        row.prop(stab, "use_stabilize_rotation", text="Rotation")
+        split = layout.split()
+        col = split.column()
+        col.prop(stab, "use_stabilize_rotation", text="Rotation")
+        col = split.column()
         if stab.use_stabilize_rotation:
-            row.prop(stab, "use_stabilize_scale", text="Scale")
+            col.prop(stab, "use_stabilize_scale", text="Scale")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         box = layout.box()
         row = box.row(align=True)
@@ -1130,12 +1135,14 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
                 sub.menu('CLIP_MT_stabilize_2d_rotation_context_menu', text="",
                          icon='DOWNARROW_HLT')
 
-        col = layout.column()
+        split = layout.split()
+        col = split.column()
         col.prop(stab, "use_autoscale")
-        sub = col.row()
-        sub.active = stab.use_autoscale
+        col = split.column()
         if stab.use_autoscale:
-            sub.prop(stab, "scale_max", text="Max")
+            col.prop(stab, "scale_max", text="Max")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         layout.label(text = "Expected Position:")
         col = layout.column(align=True)
@@ -1146,14 +1153,12 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
 
         if not stab.use_autoscale:
             row.prop(stab, "target_scale")
-        #row.active = not stab.use_autoscale
 
         col = layout.column(align=True)
         col.prop(stab, "influence_location")
         sub = col.column(align=True)
 
         if stab.use_stabilize_rotation:
-        #sub.active = stab.use_stabilize_rotation
             sub.prop(stab, "influence_rotation")
             sub.prop(stab, "influence_scale")
 
