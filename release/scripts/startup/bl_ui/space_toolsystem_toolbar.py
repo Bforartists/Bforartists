@@ -1259,6 +1259,7 @@ class _defs_sculpt:
     def mask_border():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("paint.mask_box_gesture")
+            layout.use_property_split = False
             layout.prop(props, "use_front_faces_only", expand=False)
 
         return dict(
@@ -1369,9 +1370,9 @@ class _defs_sculpt:
             row = layout.row(align=True)
             row.prop(props, "deform_axis")
             layout.prop(props, "orientation", expand=False)
-            layout.use_property_split = False 
+            layout.use_property_split = False
             layout.prop(props, "use_face_sets")
-            layout.use_property_split = True 
+            layout.use_property_split = True
             if props.type == 'SURFACE_SMOOTH':
                 layout.prop(props, "surface_smooth_shape_preservation", expand=False)
                 layout.prop(props, "surface_smooth_current_vertex", expand=False)
@@ -1400,7 +1401,7 @@ class _defs_sculpt:
             layout.prop(props, "orientation", expand=False)
             layout.prop(props, "cloth_mass")
             layout.prop(props, "cloth_damping")
-            layout.use_property_split = False            
+            layout.use_property_split = False
             layout.prop(props, "use_face_sets")
             layout.prop(props, "use_collisions")
 
