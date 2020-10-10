@@ -1398,6 +1398,7 @@ class _defs_sculpt:
             layout.prop(props, "orientation", expand=False)
             layout.prop(props, "cloth_mass")
             layout.prop(props, "cloth_damping")
+            layout.use_property_split = False            
             layout.prop(props, "use_face_sets")
             layout.prop(props, "use_collisions")
 
