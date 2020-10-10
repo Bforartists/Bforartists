@@ -1060,7 +1060,7 @@ class _defs_edit_curve:
                 if not extra:
                     layout.prop(cps, "curve_type", text="")
                     layout.prop(cps, "depth_mode", expand=True)
-                    layout.popover("TOPBAR_PT_tool_settings_extra", text="...")
+                    layout.popover("TOPBAR_PT_tool_settings_extra", text="Draw Settings")
                     return
 
             layout.use_property_split = True
@@ -1072,14 +1072,18 @@ class _defs_edit_curve:
             if cps.curve_type == 'BEZIER':
                 layout.prop(cps, "fit_method")
                 layout.prop(cps, "error_threshold")
-                if region_type != 'TOOL_HEADER':
-                    row = layout.row(heading="Detect Corners", align=True)
+                
+                split = layout.split()
+                col = split.column()
+                col.use_property_split = False
+                col.prop(cps, "use_corners_detect")
+                col = split.column()
+                if cps.use_corners_detect:
+                    col.use_property_split = False
+                    col.prop(cps, "corner_angle", text="")
                 else:
-                    row = layout.row(heading="Corners", align=True)
-                row.prop(cps, "use_corners_detect", text="")
-                sub = row.row(align=True)
-                sub.active = cps.use_corners_detect
-                sub.prop(cps, "corner_angle", text="")
+                    col.label(icon='DISCLOSURE_TRI_RIGHT')   	
+                
                 layout.separator()
 
             col = layout.column(align=True)
