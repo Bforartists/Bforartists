@@ -1217,6 +1217,7 @@ class VIEW3D_PT_tools_imagepaint_options(View3DPaintPanel, Panel):
         layout.prop(ipaint, "dither", slider=True)
 
         col = layout.column()
+        col.use_property_split = False
         col.prop(ipaint, "use_occlude")
         col.prop(ipaint, "use_backface_culling", text="Backface Culling")
 
