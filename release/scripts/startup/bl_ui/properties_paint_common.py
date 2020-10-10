@@ -603,7 +603,7 @@ def brush_settings(layout, context, brush, popover=False):
             )
 
             layout.separator()
-                
+
             split = layout.split(factor = 0.36)
             col = split.column()
             col.use_property_split = False
@@ -671,13 +671,16 @@ def brush_settings(layout, context, brush, popover=False):
 
         elif sculpt_tool == 'CLOTH':
             layout.separator()
+            layout.use_property_split = True
             layout.prop(brush, "cloth_simulation_area_type")
             if brush.cloth_simulation_area_type != 'GLOBAL':
                 layout.prop(brush, "cloth_sim_limit")
                 layout.prop(brush, "cloth_sim_falloff")
 
             if brush.cloth_simulation_area_type == 'LOCAL':
+                layout.use_property_split = False
                 layout.prop(brush, "use_cloth_pin_simulation_boundary")
+                layout.use_property_split = True
 
             layout.separator()
             layout.prop(brush, "cloth_deform_type")
@@ -687,6 +690,7 @@ def brush_settings(layout, context, brush, popover=False):
             layout.prop(brush, "cloth_damping")
             layout.prop(brush, "cloth_constraint_softbody_strength")
             layout.separator()
+            layout.use_property_split = False
             layout.prop(brush, "use_cloth_collision")
 
             layout.separator()
