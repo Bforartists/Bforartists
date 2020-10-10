@@ -309,7 +309,7 @@ class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
         is_surf = type(curve) is SurfaceCurve
         is_poly = (act_spline.type == 'POLY')
 
-        col = layout.column()
+        col = layout.column(align = True)
 
         if is_poly:
             # These settings are below but its easier to have
@@ -319,31 +319,46 @@ class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
             col.prop(act_spline, "use_smooth")
         else:
 
-            sub = col.column(heading="Cyclic", align=True)
+            sub = col.column(align = True)
+            sub.label(text = "Cyclic")
             sub.use_property_split = False
-            sub.prop(act_spline, "use_cyclic_u", text="U")
+            row = sub.row()
+            row.separator()
+            row.prop(act_spline, "use_cyclic_u", text="U")
+            
             if is_surf:
-                sub.prop(act_spline, "use_cyclic_v", text="V")
+                row = sub.row()
+                row.separator()
+                row.prop(act_spline, "use_cyclic_v", text="V")
 
             if act_spline.type == 'NURBS':
-                sub = col.column(heading="Bezier", align=True)
-                # sub.active = (not act_spline.use_cyclic_u)
+                sub = col.column(align = True)
+                sub.label(text = "Bezier")
                 sub.use_property_split = False
-                sub.prop(act_spline, "use_bezier_u", text="U")
+                row = sub.row()
+                row.separator()
+                row.prop(act_spline, "use_bezier_u", text="U")
 
                 if is_surf:
                     subsub = sub.column()
-                    subsub.active = (not act_spline.use_cyclic_v)
-                    subsub.prop(act_spline, "use_bezier_v", text="V")
+                    row = subsub.row()
+                    row.separator()
+                    row.active = (not act_spline.use_cyclic_v)
+                    row.prop(act_spline, "use_bezier_v", text="V")
 
-                sub = col.column(heading="Endpoint", align=True)
+                sub = col.column(align = True)
+                sub.label(text = "Endpoint")
                 sub.use_property_split = False
-                sub.prop(act_spline, "use_endpoint_u", text="U")
+                row = sub.row()
+                row.separator()
+                row.prop(act_spline, "use_endpoint_u", text="U")
 
                 if is_surf:
                     subsub = sub.column()
-                    subsub.active = (not act_spline.use_cyclic_v)
-                    subsub.prop(act_spline, "use_endpoint_v", text="V")
+                    row = subsub.row()
+                    row.separator()
+                    row.active = (not act_spline.use_cyclic_v)
+                    row.prop(act_spline, "use_endpoint_v", text="V")
 
                 sub = col.column(align=True)
                 sub.prop(act_spline, "order_u", text="Order U")
