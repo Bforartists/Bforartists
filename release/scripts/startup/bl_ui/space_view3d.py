@@ -444,23 +444,21 @@ class VIEW3D_HT_tool_header(Header):
 
         def row_for_mirror():
             row = layout.row(align=True)
-            #row.label(icon='MOD_MIRROR')
             sub = row.row(align=True)
-            sub.scale_x = 0.6
             return row, sub
 
         if mode_string == 'EDIT_ARMATURE':
             _row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="X", icon='MIRROR_X', toggle=True)
+            sub.prop(context.object.data, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only = True)
         elif mode_string == 'POSE':
             _row, sub = row_for_mirror()
-            sub.prop(context.object.pose, "use_mirror_x", text="X", icon='MIRROR_X', toggle=True)
+            sub.prop(context.object.pose, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only = True)
         elif mode_string in {'EDIT_MESH', 'PAINT_WEIGHT', 'SCULPT', 'PAINT_VERTEX'}:
             # Mesh Modes, Use Mesh Symmetry
             row, sub = row_for_mirror()
-            sub.prop(context.object.data, "use_mirror_x", text="X", icon='MIRROR_X', toggle=True)
-            sub.prop(context.object.data, "use_mirror_y", text="Y", icon='MIRROR_Y', toggle=True)
-            sub.prop(context.object.data, "use_mirror_z", text="Z", icon='MIRROR_Z', toggle=True)
+            sub.prop(context.object.data, "use_mirror_x", icon='MIRROR_X', toggle=True, icon_only = True)
+            sub.prop(context.object.data, "use_mirror_y", icon='MIRROR_Y', toggle=True, icon_only = True)
+            sub.prop(context.object.data, "use_mirror_z", icon='MIRROR_Z', toggle=True, icon_only = True)
             if mode_string == 'EDIT_MESH':
                 tool_settings = context.tool_settings
                 layout.prop(tool_settings, "use_mesh_automerge", text="")
