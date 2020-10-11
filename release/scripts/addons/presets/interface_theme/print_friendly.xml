@@ -9,12 +9,16 @@
         widget_emboss="#000000ff"
         editor_outline="#000000"
         widget_text_cursor="#3399e6"
+        transparent_checker_primary="#9b9b9b"
+        transparent_checker_secondary="#cacaca"
+        transparent_checker_size="8"
         axis_x="#ff3352"
         axis_y="#8bdc00"
         axis_z="#2890ff"
         gizmo_hi="#ffffff"
         gizmo_primary="#f5f14d"
         gizmo_secondary="#63ffff"
+        gizmo_view_align="#ffffff"
         gizmo_a="#4da84d"
         gizmo_b="#a33535"
         icon_scene="#000000ff"
@@ -712,6 +716,7 @@
     </dopesheet_editor>
     <image_editor>
       <ThemeImageEditor
+        grid="#a4a4a4ff"
         vertex="#000000"
         vertex_select="#00b38a"
         vertex_size="3"
@@ -794,9 +799,12 @@
         scene_strip="#4e983e"
         audio_strip="#2e8f8f"
         effect_strip="#a9547c"
-        transition_strip="#a25f6f"
+        color_strip="#8f8f8f"
         meta_strip="#6d9183"
+        mask_strip="#666666"
         text_strip="#a29700"
+        active_strip="#d9d9d9"
+        selected_strip="#ff8f0d"
         frame_current="#5680c2"
         time_scrub_background="#d8d8d8ff"
         time_marker_line="#00000060"
@@ -923,6 +931,7 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
+        grid="#cecece"
         node_selected="#f15800"
         node_active="#f15800"
         wire="#a7a7a7"
@@ -1158,6 +1167,7 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
+        grid="#a4a4a438"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"

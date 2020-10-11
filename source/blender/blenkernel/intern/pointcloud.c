@@ -206,9 +206,7 @@ static void pointcloud_random(PointCloud *pointcloud)
 
 void *BKE_pointcloud_add(Main *bmain, const char *name)
 {
-  PointCloud *pointcloud = BKE_libblock_alloc(bmain, ID_PT, name, 0);
-
-  pointcloud_init_data(&pointcloud->id);
+  PointCloud *pointcloud = BKE_id_new(bmain, ID_PT, name);
 
   return pointcloud;
 }
@@ -228,13 +226,6 @@ void *BKE_pointcloud_add_default(Main *bmain, const char *name)
   pointcloud_random(pointcloud);
 
   return pointcloud;
-}
-
-PointCloud *BKE_pointcloud_copy(Main *bmain, const PointCloud *pointcloud)
-{
-  PointCloud *pointcloud_copy;
-  BKE_id_copy(bmain, &pointcloud->id, (ID **)&pointcloud_copy);
-  return pointcloud_copy;
 }
 
 BoundBox *BKE_pointcloud_boundbox_get(Object *ob)
@@ -309,8 +300,7 @@ PointCloud *BKE_pointcloud_copy_for_eval(struct PointCloud *pointcloud_src, bool
     flags |= LIB_ID_COPY_CD_REFERENCE;
   }
 
-  PointCloud *result;
-  BKE_id_copy_ex(NULL, &pointcloud_src->id, (ID **)&result, flags);
+  PointCloud *result = (PointCloud *)BKE_id_copy_ex(NULL, &pointcloud_src->id, NULL, flags);
   return result;
 }
 

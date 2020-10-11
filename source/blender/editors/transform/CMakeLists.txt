@@ -28,6 +28,7 @@ set(INC
   ../../makesrna
   ../../render/extern/include
   ../../depsgraph
+  ../../sequencer
   ../../windowmanager
   ../../../../intern/glew-mx
   ../../../../intern/guardedalloc
@@ -106,6 +107,7 @@ set(SRC
   transform_data.h
   transform_draw_cursors.h
   transform_mode.h
+  transform_orientations.h
   transform_snap.h
 )
 

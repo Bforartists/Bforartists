@@ -244,7 +244,7 @@ static int graphkeys_previewrange_exec(bContext *C, wmOperator *UNUSED(op))
   scene->r.pefra = round_fl_to_int(max);
 
   /* set notifier that things have changed */
-  // XXX err... there's nothing for frame ranges yet, but this should do fine too
+  /* XXX err... there's nothing for frame ranges yet, but this should do fine too */
   WM_event_add_notifier(C, NC_SCENE | ND_FRAME, ac.scene);
 
   return OPERATOR_FINISHED;
@@ -259,7 +259,7 @@ void GRAPH_OT_previewrange_set(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = graphkeys_previewrange_exec;
-  // XXX: unchecked poll to get fsamples working too, but makes modifier damage trickier...
+  /* XXX: unchecked poll to get fsamples working too, but makes modifier damage trickier. */
   ot->poll = ED_operator_graphedit_active;
 
   /* flags */
@@ -515,7 +515,7 @@ void GRAPH_OT_ghost_curves_create(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  // todo: add props for start/end frames
+  /* TODO: add props for start/end frames */
 }
 
 /* ******************** Clear Ghost-Curves Operator *********************** */
@@ -1071,7 +1071,8 @@ void GRAPH_OT_paste(wmOperatorType *ot)
       "channels, starting on the current frame";
 
   /* api callbacks */
-  //  ot->invoke = WM_operator_props_popup; // better wait for graph redo panel
+
+  // ot->invoke = WM_operator_props_popup; /* better wait for graph redo panel */
   ot->exec = graphkeys_paste_exec;
   ot->poll = graphop_editable_keyframes_poll;
 
@@ -1297,7 +1298,7 @@ void GRAPH_OT_clean(wmOperatorType *ot)
       "keyframes in selected channels";
 
   /* api callbacks */
-  // ot->invoke =  // XXX we need that number popup for this!
+  // ot->invoke = ???; /* XXX we need that number popup for this! */
   ot->exec = graphkeys_clean_exec;
   ot->poll = graphop_editable_keyframes_poll;
 
@@ -1833,7 +1834,7 @@ static int graphkeys_bake_exec(bContext *C, wmOperator *UNUSED(op))
   }
 
   /* for now, init start/end from preview-range extents */
-  // TODO: add properties for this
+  /* TODO: add properties for this */
   scene = ac.scene;
   start = PSFRA;
   end = PEFRA;
@@ -1842,7 +1843,7 @@ static int graphkeys_bake_exec(bContext *C, wmOperator *UNUSED(op))
   bake_graph_curves(&ac, start, end);
 
   /* set notifier that keyframes have changed */
-  // NOTE: some distinction between order/number of keyframes and type should be made?
+  /* NOTE: some distinction between order/number of keyframes and type should be made? */
   WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
 
   return OPERATOR_FINISHED;
@@ -1856,14 +1857,14 @@ void GRAPH_OT_bake(wmOperatorType *ot)
   ot->description = "Bake selected F-Curves to a set of sampled points defining a similar curve";
 
   /* api callbacks */
-  ot->invoke = WM_operator_confirm;  // FIXME...
+  ot->invoke = WM_operator_confirm; /* FIXME */
   ot->exec = graphkeys_bake_exec;
   ot->poll = graphop_selected_fcurve_poll;
 
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-  // todo: add props for start/end frames
+  /* TODO: add props for start/end frames */
 }
 
 #ifdef WITH_AUDASPACE
@@ -1979,7 +1980,7 @@ static int graphkeys_sound_bake_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-#else  // WITH_AUDASPACE
+#else /* WITH_AUDASPACE */
 
 static int graphkeys_sound_bake_exec(bContext *UNUSED(C), wmOperator *op)
 {
@@ -1988,7 +1989,7 @@ static int graphkeys_sound_bake_exec(bContext *UNUSED(C), wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 
-#endif  // WITH_AUDASPACE
+#endif /* WITH_AUDASPACE */
 
 static int graphkeys_sound_bake_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
@@ -2229,7 +2230,7 @@ static void setexpo_graph_keys(bAnimContext *ac, short mode)
       if (mode == MAKE_CYCLIC_EXPO) {
         /* only add if one doesn't exist */
         if (list_has_suitable_fmodifier(&fcu->modifiers, FMODIFIER_TYPE_CYCLES, -1) == 0) {
-          // TODO: add some more preset versions which set different extrapolation options?
+          /* TODO: add some more preset versions which set different extrapolation options? */
           add_fmodifier(&fcu->modifiers, FMODIFIER_TYPE_CYCLES, fcu);
         }
       }
@@ -3254,8 +3255,8 @@ static int graph_fmodifier_add_exec(bContext *C, wmOperator *op)
   /* filter data */
   filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
   if (RNA_boolean_get(op->ptr, "only_active")) {
-    filter |=
-        ANIMFILTER_ACTIVE;  // FIXME: enforce in this case only a single channel to get handled?
+    /* FIXME: enforce in this case only a single channel to get handled? */
+    filter |= ANIMFILTER_ACTIVE;
   }
   else {
     filter |= (ANIMFILTER_SEL | ANIMFILTER_CURVE_VISIBLE);

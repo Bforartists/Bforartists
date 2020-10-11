@@ -62,7 +62,7 @@ static void rna_Fluid_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerR
 {
   DEG_id_tag_update(ptr->owner_id, ID_RECALC_GEOMETRY);
 
-  // Needed for liquid domain objects
+  /* Needed for liquid domain objects */
   Object *ob = (Object *)ptr->owner_id;
   WM_main_add_notifier(NC_OBJECT | ND_DRAW, ob);
 }
@@ -490,7 +490,7 @@ static void rna_Fluid_combined_export_update(Main *bmain, Scene *scene, PointerR
     }
   }
   else {
-    // sanity check, should not occur
+    /* sanity check, should not occur */
     printf("ERROR: Unexpected combined export setting encountered!");
   }
 }
@@ -1303,12 +1303,6 @@ static void rna_def_fluid_domain_settings(BlenderRNA *brna)
   /*  Cache type - generated dynamically based on domain type */
   static EnumPropertyItem cache_file_type_items[] = {
       {0, "NONE", 0, "", ""},
-      {0, NULL, 0, NULL, NULL},
-  };
-
-  static const EnumPropertyItem axis_slice_method_items[] = {
-      {AXIS_SLICE_FULL, "FULL", 0, "Full", "Slice the whole domain object"},
-      {AXIS_SLICE_SINGLE, "SINGLE", 0, "Single", "Perform a single slice of the domain object"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -2439,10 +2433,9 @@ static void rna_def_fluid_domain_settings(BlenderRNA *brna)
 
   /* display settings */
 
-  prop = RNA_def_property(srna, "axis_slice_method", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_sdna(prop, NULL, "axis_slice_method");
-  RNA_def_property_enum_items(prop, axis_slice_method_items);
-  RNA_def_property_ui_text(prop, "Method", "");
+  prop = RNA_def_property(srna, "use_slice", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "axis_slice_method", AXIS_SLICE_SINGLE);
+  RNA_def_property_ui_text(prop, "Slice", "Perform a single slice of the domain object");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
 
   prop = RNA_def_property(srna, "slice_axis", PROP_ENUM, PROP_NONE);

@@ -40,7 +40,8 @@ class BCAnimation {
   BCAnimation(bContext *C, Object *ob) : mContext(C)
   {
     Main *bmain = CTX_data_main(mContext);
-    reference = BKE_object_copy(bmain, ob);
+    reference = (Object *)BKE_id_copy(bmain, &ob->id);
+    id_us_min(&reference->id);
   }
 
   ~BCAnimation()
@@ -133,7 +134,7 @@ class BCSampleFrameContainer {
   }
 
   BCSample &add(Object *ob, int frame_index);
-  BCSampleFrame *get_frame(int frame_index);  // returns NULL if frame does not exist
+  BCSampleFrame *get_frame(int frame_index); /* returns NULL if frame does not exist */
 
   int get_frames(std::vector<int> &frames) const;
   int get_frames(Object *ob, BCFrames &frames) const;

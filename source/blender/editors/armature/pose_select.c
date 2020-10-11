@@ -117,7 +117,7 @@ void ED_pose_bone_select(Object *ob, bPoseChannel *pchan, bool select)
   bArmature *arm;
 
   /* sanity checks */
-  // XXX: actually, we can probably still get away with no object - at most we have no updates
+  /* XXX: actually, we can probably still get away with no object - at most we have no updates */
   if (ELEM(NULL, ob, ob->pose, pchan, pchan->bone)) {
     return;
   }
@@ -136,7 +136,7 @@ void ED_pose_bone_select(Object *ob, bPoseChannel *pchan, bool select)
       arm->act_bone = NULL;
     }
 
-    // TODO: select and activate corresponding vgroup?
+    /* TODO: select and activate corresponding vgroup? */
     ED_pose_bone_select_tag_update(ob);
   }
 }

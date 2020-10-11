@@ -26,6 +26,7 @@ blender_include_dirs(
   ../../../../intern/atomic
   ../../../../intern/guardedalloc
   ../../blenlib
+  ../../imbuf
   ..
 )
 
@@ -151,6 +152,7 @@ set(SRC
   ../DNA_material_defaults.h
   ../DNA_mesh_defaults.h
   ../DNA_meta_defaults.h
+  ../DNA_modifier_defaults.h
   ../DNA_modifier_types.h
   ../DNA_object_defaults.h
   ../DNA_pointcloud_defaults.h

@@ -54,7 +54,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
     category : StringProperty(
             name="Category",
             description="Choose a name for the category of the panel",
-            default="Grease pencil",
+            default="Grease Pencil",
             update=update_panel)
 
     pref_tabs : EnumProperty(
@@ -74,7 +74,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         items=(('KEY_LINEAR', "Linear (perspective mode)", "Linear interpolation, like corner deform / perspective tools of classic 2D", 'IPO_LINEAR',0),
                ('KEY_BSPLINE', "Spline (smooth deform)", "Spline interpolation transformation\nBest when lattice is subdivided", 'IPO_CIRC',1),
                ),
-        name='Starting interpolation', default='KEY_LINEAR', description='Choose default interpolation when entering mode')
+        name='Starting Interpolation', default='KEY_LINEAR', description='Choose default interpolation when entering mode')
     
     # About interpolation : https://docs.blender.org/manual/en/2.83/animation/shape_keys/shape_keys_panel.html#fig-interpolation-type
 
@@ -142,7 +142,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
 
                 ## BOX DEFORM
                 box = layout.box()
-                box.label(text='Box deform:')
+                box.label(text='Box Deform:')
                 box.prop(self, "use_clic_drag")
                 # box.separator()
                 box.prop(self, "default_deform_type")
@@ -155,7 +155,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 box = layout.box()
                 box.label(text='Rotate canvas:')
 
-                box.prop(self, "canvas_use_shortcut", text='Bind shortcuts')
+                box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
 
                 if self.canvas_use_shortcut:
                     
@@ -181,7 +181,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
 
                 #**Behavior from context mode**
                 col = layout.column()
-                col.label(text='Box deform tool')
+                col.label(text='Box Deform Tool')
                 col.label(text="Usage:", icon='MOD_LATTICE')
                 col.label(text="Use the shortcut 'Ctrl+T' in available modes (listed below)")
                 col.label(text="The lattice box is generated facing your view (be sure to face canvas if you want to stay on it)")

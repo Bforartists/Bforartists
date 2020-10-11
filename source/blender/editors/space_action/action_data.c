@@ -108,7 +108,7 @@ static bAction *action_create_new(bContext *C, bAction *oldact)
    */
   if (oldact && GS(oldact->id.name) == ID_AC) {
     /* make a copy of the existing action */
-    action = BKE_action_copy(CTX_data_main(C), oldact);
+    action = (bAction *)BKE_id_copy(CTX_data_main(C), &oldact->id);
   }
   else {
     /* just make a new (empty) action */
@@ -757,7 +757,7 @@ static void action_layer_switch_strip(
       adt->flag |= ADT_NLA_SOLO_TRACK;
       nlt->flag |= NLATRACK_SOLO;
 
-      // TODO: Needs rest-pose flushing (when we get reference track)
+      /* TODO: Needs rest-pose flushing (when we get reference track) */
     }
   }
 
@@ -851,7 +851,7 @@ static int action_layer_next_exec(bContext *C, wmOperator *op)
       /* turn on NLA muting (to keep same effect) */
       adt->flag |= ADT_NLA_EVAL_OFF;
 
-      // TODO: Needs rest-pose flushing (when we get reference track)
+      /* TODO: Needs rest-pose flushing (when we get reference track) */
     }
   }
 

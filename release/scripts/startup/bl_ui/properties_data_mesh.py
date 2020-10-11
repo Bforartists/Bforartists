@@ -65,7 +65,7 @@ class MESH_MT_shape_key_context_menu(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("object.shape_key_add", icon='ADD', text="New Shape From Mix").from_mix = True
+        layout.operator("object.shape_key_add", icon='ADD', text="New Shape from Mix").from_mix = True
         layout.separator()
         layout.operator("object.shape_key_mirror", icon='TRANSFORM_MIRROR').use_topology = False
         layout.operator("object.shape_key_mirror", text="Mirror Shape Key (Topology)", icon = "TRANSFORM_MIRROR").use_topology = True
