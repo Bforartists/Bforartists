@@ -94,7 +94,7 @@
 
 #include "engines/eevee/eevee_lightcache.h"
 
-#include "render_intern.h"  // own include
+#include "render_intern.h" /* own include */
 
 static bool object_materials_supported_poll_ex(bContext *C, const Object *ob);
 
@@ -751,8 +751,8 @@ static int new_material_exec(bContext *C, wmOperator *UNUSED(op))
 
   /* add or copy material */
   if (ma) {
-    Material *new_ma = NULL;
-    BKE_id_copy_ex(bmain, &ma->id, (ID **)&new_ma, LIB_ID_COPY_DEFAULT | LIB_ID_COPY_ACTIONS);
+    Material *new_ma = (Material *)BKE_id_copy_ex(
+        bmain, &ma->id, NULL, LIB_ID_COPY_DEFAULT | LIB_ID_COPY_ACTIONS);
     ma = new_ma;
   }
   else {
@@ -820,7 +820,7 @@ static int new_texture_exec(bContext *C, wmOperator *UNUSED(op))
 
   /* add or copy texture */
   if (tex) {
-    tex = BKE_texture_copy(bmain, tex);
+    tex = (Tex *)BKE_id_copy(bmain, &tex->id);
   }
   else {
     tex = BKE_texture_add(bmain, DATA_("Texture"));
@@ -873,8 +873,8 @@ static int new_world_exec(bContext *C, wmOperator *UNUSED(op))
 
   /* add or copy world */
   if (wo) {
-    World *new_wo = NULL;
-    BKE_id_copy_ex(bmain, &wo->id, (ID **)&new_wo, LIB_ID_COPY_DEFAULT | LIB_ID_COPY_ACTIONS);
+    World *new_wo = (World *)BKE_id_copy_ex(
+        bmain, &wo->id, NULL, LIB_ID_COPY_DEFAULT | LIB_ID_COPY_ACTIONS);
     wo = new_wo;
   }
   else {
@@ -1092,7 +1092,7 @@ static int light_cache_bake_exec(bContext *C, wmOperator *op)
   EEVEE_lightbake_job(rj, &stop, &do_update, &progress);
   EEVEE_lightbake_job_data_free(rj);
 
-  // no redraw needed, we leave state as we entered it
+  /* No redraw needed, we leave state as we entered it. */
   ED_update_for_newframe(bmain, CTX_data_depsgraph_pointer(C));
 
   WM_event_add_notifier(C, NC_SCENE | NA_EDITED, scene);
@@ -1662,7 +1662,7 @@ static int freestyle_linestyle_new_exec(bContext *C, wmOperator *op)
   }
   if (lineset->linestyle) {
     id_us_min(&lineset->linestyle->id);
-    lineset->linestyle = BKE_linestyle_copy(bmain, lineset->linestyle);
+    lineset->linestyle = (FreestyleLineStyle *)BKE_id_copy(bmain, &lineset->linestyle->id);
   }
   else {
     lineset->linestyle = BKE_linestyle_new(bmain, "LineStyle");

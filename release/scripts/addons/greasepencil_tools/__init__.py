@@ -19,16 +19,16 @@
 
 bl_info = {
 "name": "Grease Pencil Tools",
-"description": "Pack of tools for Grease pencil drawing",
+"description": "Extra tools for Grease Pencil",
 "author": "Samuel Bernou, Antonio Vazquez, Daniel Martinez Lara, Matias Mendiola",
-"version": (1, 1, 2),
+"version": (1, 1, 3),
 "blender": (2, 91, 0),
-"location": "Sidebar > Grease pencil > Grease pencil",
+"location": "Sidebar > Grease Pencil > Grease Pencil Tools",
 "warning": "",
 "doc_url": "https://docs.blender.org/manual/en/dev/addons/object/grease_pencil_tools.html",
 "tracker_url": "https://github.com/Pullusb/greasepencil-addon/issues",
 "category": "Object",
-"support": "OFFICIAL",
+"support": "COMMUNITY",
 }
 
 import bpy

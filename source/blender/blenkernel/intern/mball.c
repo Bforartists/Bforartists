@@ -210,18 +210,9 @@ MetaBall *BKE_mball_add(Main *bmain, const char *name)
 {
   MetaBall *mb;
 
-  mb = BKE_libblock_alloc(bmain, ID_MB, name, 0);
-
-  metaball_init_data(&mb->id);
+  mb = BKE_id_new(bmain, ID_MB, name);
 
   return mb;
-}
-
-MetaBall *BKE_mball_copy(Main *bmain, const MetaBall *mb)
-{
-  MetaBall *mb_copy;
-  BKE_id_copy(bmain, &mb->id, (ID **)&mb_copy);
-  return mb_copy;
 }
 
 /* most simple meta-element adding function

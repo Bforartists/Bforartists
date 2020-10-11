@@ -184,7 +184,7 @@ static void select_linked_time(ListBase *seqbase, Sequence *seq_link)
   }
 }
 
-#if 0  // BRING BACK
+#if 0 /* BRING BACK */
 void select_surround_from_last(Scene *scene)
 {
   Sequence *seq = get_last_seq(scene);
@@ -981,10 +981,10 @@ static int sequencer_select_side_of_frame_exec(bContext *C, wmOperator *op)
     bool test = false;
     switch (side) {
       case -1:
-        test = (cfra >= seq->startdisp);
+        test = (cfra >= seq->enddisp);
         break;
       case 1:
-        test = (cfra <= seq->enddisp);
+        test = (cfra <= seq->startdisp);
         break;
       case 0:
         test = (cfra <= seq->enddisp) && (cfra >= seq->startdisp);

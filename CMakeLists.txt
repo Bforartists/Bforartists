@@ -203,6 +203,7 @@ option(WITH_OPENVDB       "Enable features relying on OpenVDB" ON)
 option(WITH_OPENVDB_BLOSC "Enable blosc compression for OpenVDB, only enable if OpenVDB was built with blosc support" ON)
 option(WITH_OPENVDB_3_ABI_COMPATIBLE "Assume OpenVDB library has been compiled with version 3 ABI compatibility" OFF)
 mark_as_advanced(WITH_OPENVDB_3_ABI_COMPATIBLE)
+option(WITH_NANOVDB       "Enable usage of NanoVDB data structure for accelerated rendering on the GPU" OFF)
 
 # GHOST Windowing Library Options
 option(WITH_GHOST_DEBUG   "Enable debugging output for the GHOST library" OFF)
@@ -704,6 +705,9 @@ set_and_warn_dependency(WITH_TBB WITH_OPENIMAGEDENOISE  OFF)
 set_and_warn_dependency(WITH_TBB WITH_OPENVDB           OFF)
 set_and_warn_dependency(WITH_TBB WITH_MOD_FLUID         OFF)
 
+# NanoVDB requires OpenVDB to convert the data structure
+set_and_warn_dependency(WITH_OPENVDB WITH_NANOVDB       OFF)
+
 # OpenVDB uses 'half' type from OpenEXR & fails to link without OpenEXR enabled.
 set_and_warn_dependency(WITH_IMAGE_OPENEXR WITH_OPENVDB OFF)
 
@@ -849,11 +853,17 @@ set(PLATFORM_LINKFLAGS_DEBUG "")
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "Release")
   if(WITH_COMPILER_ASAN)
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${COMPILER_ASAN_CFLAGS}")
-    set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} ${COMPILER_ASAN_CFLAGS}")
+    if(NOT APPLE)
+      # Avoid passing address sanitizer compiler flags to `try_compile`.
+      # Since linker flags are not set, all compiler checks and `find_package`
+      # calls that rely on `try_compile` will fail.
+      # See CMP0066 also.
+      set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${COMPILER_ASAN_CFLAGS}")
+      set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} ${COMPILER_ASAN_CFLAGS}")
 
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMPILER_ASAN_CXXFLAGS}")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_ASAN_CXXFLAGS}")
+      set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMPILER_ASAN_CXXFLAGS}")
+      set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_ASAN_CXXFLAGS}")
+    endif()
     if(MSVC)
       set(COMPILER_ASAN_LINKER_FLAGS "/FUNCTIONPADMIN:6")
     endif()

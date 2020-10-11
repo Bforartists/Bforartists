@@ -915,7 +915,7 @@ int ED_transform_calc_gizmo_stats(const bContext *C,
 
     /* selection center */
     if (totsel) {
-      mul_v3_fl(tbounds->center, 1.0f / (float)totsel);  // centroid!
+      mul_v3_fl(tbounds->center, 1.0f / (float)totsel); /* centroid! */
       mul_m4_v3(obedit->obmat, tbounds->center);
       mul_m4_v3(obedit->obmat, tbounds->min);
       mul_m4_v3(obedit->obmat, tbounds->max);
@@ -958,7 +958,7 @@ int ED_transform_calc_gizmo_stats(const bContext *C,
     MEM_freeN(objects);
 
     if (totsel) {
-      mul_v3_fl(tbounds->center, 1.0f / (float)totsel);  // centroid!
+      mul_v3_fl(tbounds->center, 1.0f / (float)totsel); /* centroid! */
       mul_m4_v3(ob->obmat, tbounds->center);
       mul_m4_v3(ob->obmat, tbounds->min);
       mul_m4_v3(ob->obmat, tbounds->max);
@@ -996,7 +996,7 @@ int ED_transform_calc_gizmo_stats(const bContext *C,
 
       /* selection center */
       if (totsel) {
-        mul_v3_fl(tbounds->center, 1.0f / (float)totsel);  // centroid!
+        mul_v3_fl(tbounds->center, 1.0f / (float)totsel); /* centroid! */
       }
     }
   }
@@ -1044,7 +1044,7 @@ int ED_transform_calc_gizmo_stats(const bContext *C,
 
     /* selection center */
     if (totsel) {
-      mul_v3_fl(tbounds->center, 1.0f / (float)totsel);  // centroid!
+      mul_v3_fl(tbounds->center, 1.0f / (float)totsel); /* centroid! */
     }
   }
 
@@ -1280,7 +1280,7 @@ void drawDial3d(const TransInfo *t)
     float mat_basis[4][4];
     float mat_final[4][4];
     float color[4];
-    float increment;
+    float increment = 0.0f;
     float line_with = GIZMO_AXIS_LINE_WIDTH + 1.0f;
     float scale = UI_DPI_FAC * U.gizmo_size;
 
@@ -1335,10 +1335,7 @@ void drawDial3d(const TransInfo *t)
 
     if (activeSnap(t) && (!transformModeUseSnap(t) ||
                           (t->tsnap.mode & (SCE_SNAP_MODE_INCREMENT | SCE_SNAP_MODE_GRID)))) {
-      increment = (t->modifiers & MOD_PRECISION) ? t->snap[2] : t->snap[1];
-    }
-    else {
-      increment = t->snap[0];
+      increment = (t->modifiers & MOD_PRECISION) ? t->snap[1] : t->snap[0];
     }
 
     BLI_assert(axis_idx >= MAN_AXIS_RANGE_ROT_START && axis_idx < MAN_AXIS_RANGE_ROT_END);

@@ -394,7 +394,7 @@ class RenderPovSettingsScene(PropertyGroup):
     media_diffusion_scale: FloatProperty(
         name="Scale",
         description="Scale factor of Media Diffusion Color",
-        precision=12, step=0.00000001, min=0.000000001, max=1.0,
+        precision=6, step=0.00000001, min=0.000000001, max=1.0,
         default=(1.0),
     )
 
@@ -411,7 +411,7 @@ class RenderPovSettingsScene(PropertyGroup):
         name="Scale",
         description="Scale factor of Media Absorption Color. "
         "use 1/depth of media volume in meters",
-        precision=12,
+        precision=6,
         step=0.000001,
         min=0.000000001,
         max=1.0,

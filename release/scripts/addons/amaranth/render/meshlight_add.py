@@ -48,7 +48,7 @@ class AMTH_OBJECT_OT_meshlight_add(bpy.types.Operator):
         name="Temperature",
         min=800, max=12000.0,
         default=5500.0,
-        step=800.0,
+        step=100.0,
         description="Temperature in Kelvin. Lower is warmer, higher is colder",
         )
 
