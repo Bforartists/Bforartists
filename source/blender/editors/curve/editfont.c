@@ -1767,7 +1767,7 @@ void FONT_OT_text_insert(wmOperatorType *ot)
       ot->srna,
       "accent",
       0,
-      "Accent mode",
+      "Accent Mode",
       "Next typed character will strike through previous, for special character input");
 }
 

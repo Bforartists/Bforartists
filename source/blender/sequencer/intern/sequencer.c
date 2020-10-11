@@ -1631,13 +1631,13 @@ typedef struct SeqIndexBuildContext {
 static IMB_Proxy_Size seq_rendersize_to_proxysize(int render_size)
 {
   switch (render_size) {
-    case SEQ_PROXY_RENDER_SIZE_25:
+    case SEQ_RENDER_SIZE_PROXY_25:
       return IMB_PROXY_25;
-    case SEQ_PROXY_RENDER_SIZE_50:
+    case SEQ_RENDER_SIZE_PROXY_50:
       return IMB_PROXY_50;
-    case SEQ_PROXY_RENDER_SIZE_75:
+    case SEQ_RENDER_SIZE_PROXY_75:
       return IMB_PROXY_75;
-    case SEQ_PROXY_RENDER_SIZE_100:
+    case SEQ_RENDER_SIZE_PROXY_100:
       return IMB_PROXY_100;
   }
   return IMB_PROXY_NONE;
@@ -1646,11 +1646,11 @@ static IMB_Proxy_Size seq_rendersize_to_proxysize(int render_size)
 double BKE_sequencer_rendersize_to_scale_factor(int render_size)
 {
   switch (render_size) {
-    case SEQ_PROXY_RENDER_SIZE_25:
+    case SEQ_RENDER_SIZE_PROXY_25:
       return 0.25;
-    case SEQ_PROXY_RENDER_SIZE_50:
+    case SEQ_RENDER_SIZE_PROXY_50:
       return 0.50;
-    case SEQ_PROXY_RENDER_SIZE_75:
+    case SEQ_RENDER_SIZE_PROXY_75:
       return 0.75;
   }
   return 1.0;
@@ -2714,7 +2714,7 @@ static ImBuf *input_preprocess(const SeqRenderData *context,
 
     /* Calculate scale factor for current image if needed. */
     double scale_factor, image_scale_factor = 1.0;
-    if (context->preview_render_size == SEQ_PROXY_RENDER_SIZE_SCENE) {
+    if (context->preview_render_size == SEQ_RENDER_SIZE_SCENE) {
       scale_factor = image_scale_factor = (double)scene->r.size / 100;
     }
     else {
@@ -3387,7 +3387,8 @@ static ImBuf *seq_render_mask(const SeqRenderData *context, Mask *mask, float nr
   Mask *mask_temp;
   MaskRasterHandle *mr_handle;
 
-  mask_temp = BKE_mask_copy_nolib(mask);
+  mask_temp = (Mask *)BKE_id_copy_ex(
+      NULL, &mask->id, NULL, LIB_ID_COPY_LOCALIZE | LIB_ID_COPY_NO_ANIMDATA);
 
   BKE_mask_evaluate(mask_temp, mask->sfra + nr, true);
 
@@ -3404,8 +3405,7 @@ static ImBuf *seq_render_mask(const SeqRenderData *context, Mask *mask, float nr
   BKE_maskrasterize_handle_init(
       mr_handle, mask_temp, context->rectx, context->recty, true, true, true);
 
-  BKE_mask_free(mask_temp);
-  MEM_freeN(mask_temp);
+  BKE_id_free(NULL, &mask_temp->id);
 
   BKE_maskrasterize_buffer(mr_handle, context->rectx, context->recty, maskbuf);
 

@@ -247,18 +247,9 @@ static void cachefile_handle_free(CacheFile *cache_file)
 
 void *BKE_cachefile_add(Main *bmain, const char *name)
 {
-  CacheFile *cache_file = BKE_libblock_alloc(bmain, ID_CF, name, 0);
-
-  cache_file_init_data(&cache_file->id);
+  CacheFile *cache_file = BKE_id_new(bmain, ID_CF, name);
 
   return cache_file;
-}
-
-CacheFile *BKE_cachefile_copy(Main *bmain, const CacheFile *cache_file)
-{
-  CacheFile *cache_file_copy;
-  BKE_id_copy(bmain, &cache_file->id, (ID **)&cache_file_copy);
-  return cache_file_copy;
 }
 
 void BKE_cachefile_reload(Depsgraph *depsgraph, CacheFile *cache_file)

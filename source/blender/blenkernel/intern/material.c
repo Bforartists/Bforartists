@@ -100,12 +100,20 @@ static void material_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const 
   Material *material_dst = (Material *)id_dst;
   const Material *material_src = (const Material *)id_src;
 
+  const bool is_localized = (flag & LIB_ID_CREATE_LOCAL) != 0;
   /* We always need allocation of our private ID data. */
   const int flag_private_id_data = flag & ~LIB_ID_CREATE_NO_ALLOCATE;
 
-  if (material_src->nodetree) {
-    BKE_id_copy_ex(
-        bmain, (ID *)material_src->nodetree, (ID **)&material_dst->nodetree, flag_private_id_data);
+  if (material_src->nodetree != NULL) {
+    if (is_localized) {
+      material_dst->nodetree = ntreeLocalize(material_src->nodetree);
+    }
+    else {
+      BKE_id_copy_ex(bmain,
+                     (ID *)material_src->nodetree,
+                     (ID **)&material_dst->nodetree,
+                     flag_private_id_data);
+    }
   }
 
   if ((flag & LIB_ID_COPY_NO_PREVIEW) == 0) {
@@ -116,7 +124,8 @@ static void material_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const 
   }
 
   if (material_src->texpaintslot != NULL) {
-    material_dst->texpaintslot = MEM_dupallocN(material_src->texpaintslot);
+    /* TODO: Think we can also skip copying this data in the more generic `NO_MAIN` case? */
+    material_dst->texpaintslot = is_localized ? NULL : MEM_dupallocN(material_src->texpaintslot);
   }
 
   if (material_src->gp_style != NULL) {
@@ -216,7 +225,7 @@ static void material_blend_read_data(BlendDataReader *reader, ID *id)
 static void material_blend_read_lib(BlendLibReader *reader, ID *id)
 {
   Material *ma = (Material *)id;
-  BLO_read_id_address(reader, ma->id.lib, &ma->ipo);  // XXX deprecated - old animation system
+  BLO_read_id_address(reader, ma->id.lib, &ma->ipo); /* XXX deprecated - old animation system */
 
   /* relink grease pencil settings */
   if (ma->gp_style != NULL) {
@@ -233,7 +242,7 @@ static void material_blend_read_lib(BlendLibReader *reader, ID *id)
 static void material_blend_read_expand(BlendExpander *expander, ID *id)
 {
   Material *ma = (Material *)id;
-  BLO_expand(expander, ma->ipo);  // XXX deprecated - old animation system
+  BLO_expand(expander, ma->ipo); /* XXX deprecated - old animation system */
 
   if (ma->gp_style) {
     MaterialGPencilStyle *gp_style = ma->gp_style;
@@ -288,9 +297,7 @@ Material *BKE_material_add(Main *bmain, const char *name)
 {
   Material *ma;
 
-  ma = BKE_libblock_alloc(bmain, ID_MA, name, 0);
-
-  material_init_data(&ma->id);
+  ma = BKE_id_new(bmain, ID_MA, name);
 
   return ma;
 }
@@ -306,48 +313,6 @@ Material *BKE_gpencil_material_add(Main *bmain, const char *name)
     BKE_gpencil_material_attr_init(ma);
   }
   return ma;
-}
-
-Material *BKE_material_copy(Main *bmain, const Material *ma)
-{
-  Material *ma_copy;
-  BKE_id_copy(bmain, &ma->id, (ID **)&ma_copy);
-  return ma_copy;
-}
-
-/* XXX (see above) material copy without adding to main dbase */
-Material *BKE_material_localize(Material *ma)
-{
-  /* TODO(bastien): Replace with something like:
-   *
-   *   Material *ma_copy;
-   *   BKE_id_copy_ex(bmain, &ma->id, (ID **)&ma_copy,
-   *                  LIB_ID_COPY_NO_MAIN | LIB_ID_COPY_NO_PREVIEW | LIB_ID_COPY_NO_USER_REFCOUNT,
-   *                  false);
-   *   return ma_copy;
-   *
-   * NOTE: Only possible once nested node trees are fully converted to that too. */
-
-  Material *man = BKE_libblock_copy_for_localize(&ma->id);
-
-  man->texpaintslot = NULL;
-  man->preview = NULL;
-
-  if (ma->nodetree != NULL) {
-    man->nodetree = ntreeLocalize(ma->nodetree);
-  }
-
-  if (ma->gp_style != NULL) {
-    man->gp_style = MEM_dupallocN(ma->gp_style);
-  }
-
-  BLI_listbase_clear(&man->gpumaterial);
-
-  /* TODO Duplicate Engine Settings and set runtime to NULL */
-
-  man->id.tag |= LIB_TAG_LOCALIZED;
-
-  return man;
 }
 
 Material ***BKE_object_material_array_p(Object *ob)

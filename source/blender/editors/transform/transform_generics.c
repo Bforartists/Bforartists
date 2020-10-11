@@ -61,6 +61,7 @@
 
 #include "transform.h"
 #include "transform_mode.h"
+#include "transform_orientations.h"
 #include "transform_snap.h"
 
 /* ************************** Functions *************************** */
@@ -389,7 +390,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
   }
   else if (t->spacetype == SPACE_IMAGE) {
     SpaceImage *sima = area->spacedata.first;
-    // XXX for now, get View2D from the active region
+    /* XXX for now, get View2D from the active region. */
     t->view = &region->v2d;
     t->around = sima->around;
 
@@ -408,7 +409,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
     /* image not in uv edit, nor in mask mode, can happen for some tools */
   }
   else if (t->spacetype == SPACE_NODE) {
-    // XXX for now, get View2D from the active region
+    /* XXX for now, get View2D from the active region. */
     t->view = &region->v2d;
     t->around = V3D_AROUND_CENTER_BOUNDS;
   }
@@ -431,9 +432,9 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
   }
   else {
     if (region) {
-      // XXX for now, get View2D  from the active region
+      /* XXX for now, get View2D  from the active region */
       t->view = &region->v2d;
-      // XXX for now, the center point is the midpoint of the data
+      /* XXX for now, the center point is the midpoint of the data */
     }
     else {
       t->view = NULL;
@@ -479,9 +480,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
       if (t_values_set_is_array) {
         /* For operators whose `t->values` is array, set constraint so that the
          * orientation is more intuitive in the Redo Panel. */
-        for (int i = 3; i--;) {
-          constraint_axis[i] |= t->values[i] != 0.0f;
-        }
+        constraint_axis[0] = constraint_axis[1] = constraint_axis[2] = true;
       }
       else if (use_orient_axis) {
         constraint_axis[t->orient_axis] = true;
@@ -531,10 +530,8 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
     if (op && ((prop = RNA_struct_find_property(op->ptr, "orient_type")) &&
                RNA_property_is_set(op->ptr, prop))) {
       orient_type_set = RNA_property_enum_get(op->ptr, prop);
-      if (orient_type_set >= V3D_ORIENT_CUSTOM) {
-        if (orient_type_set >= V3D_ORIENT_CUSTOM + BIF_countTransformOrientation(C)) {
-          orient_type_set = V3D_ORIENT_GLOBAL;
-        }
+      if (orient_type_set >= V3D_ORIENT_CUSTOM + BIF_countTransformOrientation(C)) {
+        orient_type_set = V3D_ORIENT_GLOBAL;
       }
 
       /* Change the default orientation to be used when redoing. */
@@ -718,7 +715,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
     }
   }
 
-  // Mirror is not supported with PET, turn it off.
+  /* Mirror is not supported with PET, turn it off. */
 #if 0
   if (t->flag & T_PROP_EDIT) {
     t->flag &= ~T_MIRROR;

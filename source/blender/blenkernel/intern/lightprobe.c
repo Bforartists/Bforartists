@@ -135,16 +135,7 @@ void *BKE_lightprobe_add(Main *bmain, const char *name)
 {
   LightProbe *probe;
 
-  probe = BKE_libblock_alloc(bmain, ID_LP, name, 0);
-
-  lightprobe_init_data(&probe->id);
+  probe = BKE_id_new(bmain, ID_LP, name);
 
   return probe;
-}
-
-LightProbe *BKE_lightprobe_copy(Main *bmain, const LightProbe *probe)
-{
-  LightProbe *probe_copy;
-  BKE_id_copy(bmain, &probe->id, (ID **)&probe_copy);
-  return probe_copy;
 }

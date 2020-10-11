@@ -83,7 +83,7 @@ IDTypeInfo IDType_ID_WS = {
     .name = "WorkSpace",
     .name_plural = "workspaces",
     .translation_context = BLT_I18NCONTEXT_ID_WORKSPACE,
-    .flags = IDTYPE_FLAGS_NO_COPY | IDTYPE_FLAGS_NO_MAKELOCAL,
+    .flags = IDTYPE_FLAGS_NO_COPY | IDTYPE_FLAGS_NO_MAKELOCAL | IDTYPE_FLAGS_NO_ANIMDATA,
 
     .init_data = NULL,
     .copy_data = NULL,
@@ -205,7 +205,7 @@ static bool UNUSED_FUNCTION(workspaces_is_screen_used)
 
 WorkSpace *BKE_workspace_add(Main *bmain, const char *name)
 {
-  WorkSpace *new_workspace = BKE_libblock_alloc(bmain, ID_WS, name, 0);
+  WorkSpace *new_workspace = BKE_id_new(bmain, ID_WS, name);
   id_us_ensure_real(&new_workspace->id);
   return new_workspace;
 }

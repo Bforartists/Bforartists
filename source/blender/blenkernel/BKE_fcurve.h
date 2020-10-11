@@ -244,6 +244,9 @@ bool BKE_fcurve_calc_bounds(struct FCurve *fcu,
                             const bool do_sel_only,
                             const bool include_handles);
 
+void BKE_fcurve_active_keyframe_set(struct FCurve *fcu, const struct BezTriple *active_bezt);
+int BKE_fcurve_active_keyframe_index(const struct FCurve *fcu);
+
 /* .............. */
 
 /* Are keyframes on F-Curve of any use (to final result, and to show in editors)? */
@@ -266,6 +269,18 @@ typedef enum eFCU_Cycle_Type {
 } eFCU_Cycle_Type;
 
 eFCU_Cycle_Type BKE_fcurve_get_cycle_type(struct FCurve *fcu);
+
+/** Adjust Bezier handles of all three given BezTriples, so that `bezt` can be inserted between
+ * `prev` and `next` without changing the resulting curve shape.
+ *
+ * \param r_pdelta: return Y difference between `bezt` and the original curve value at its X
+ * position.
+ * \return Whether the split was succesful.
+ */
+bool BKE_bezt_subdivide_handles(struct BezTriple *bezt,
+                                struct BezTriple *prev,
+                                struct BezTriple *next,
+                                float *r_pdelta);
 
 /* -------- Curve Sanity --------  */
 

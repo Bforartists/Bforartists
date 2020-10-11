@@ -978,7 +978,7 @@ static void do_version_curvemapping_walker(Main *bmain, void (*callback)(CurveMa
       }
     }
 
-    // toolsettings
+    /* toolsettings */
     ToolSettings *ts = scene->toolsettings;
     if (ts->vpaint) {
       callback(ts->vpaint->paint.cavity_curve);
@@ -1201,7 +1201,7 @@ static void do_version_fcurve_hide_viewport_fix(struct ID *UNUSED(id),
                                                 struct FCurve *fcu,
                                                 void *UNUSED(user_data))
 {
-  if (!STREQ(fcu->rna_path, "hide")) {
+  if (fcu->rna_path == NULL || !STREQ(fcu->rna_path, "hide")) {
     return;
   }
 
@@ -1665,7 +1665,7 @@ void do_versions_after_linking_280(Main *bmain, ReportList *UNUSED(reports))
       BKE_mesh_tessface_clear(me);
 
       /* Moved from do_versions because we need updated polygons for calculating normals. */
-      if (MAIN_VERSION_OLDER(bmain, 256, 6)) {
+      if (!MAIN_VERSION_ATLEAST(bmain, 256, 6)) {
         BKE_mesh_calc_normals(me);
       }
     }
@@ -2988,9 +2988,9 @@ void blo_do_versions_280(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
     /* gpencil grid settings */
     for (bGPdata *gpd = bmain->gpencils.first; gpd; gpd = gpd->id.next) {
-      ARRAY_SET_ITEMS(gpd->grid.color, 0.5f, 0.5f, 0.5f);  // Color
-      ARRAY_SET_ITEMS(gpd->grid.scale, 1.0f, 1.0f);        // Scale
-      gpd->grid.lines = GP_DEFAULT_GRID_LINES;             // Number of lines
+      ARRAY_SET_ITEMS(gpd->grid.color, 0.5f, 0.5f, 0.5f); /* Color */
+      ARRAY_SET_ITEMS(gpd->grid.scale, 1.0f, 1.0f);       /* Scale */
+      gpd->grid.lines = GP_DEFAULT_GRID_LINES;            /* Number of lines */
     }
   }
 

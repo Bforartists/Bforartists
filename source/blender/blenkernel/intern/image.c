@@ -95,7 +95,7 @@
 
 #include "GPU_texture.h"
 
-#include "BLI_sys_types.h"  // for intptr_t support
+#include "BLI_sys_types.h" /* for intptr_t support */
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
@@ -311,7 +311,7 @@ IDTypeInfo IDType_ID_IM = {
     .name = "Image",
     .name_plural = "images",
     .translation_context = BLT_I18NCONTEXT_ID_IMAGE,
-    .flags = 0,
+    .flags = IDTYPE_FLAGS_NO_ANIMDATA,
 
     .init_data = image_init_data,
     .copy_data = image_copy_data,
@@ -598,14 +598,6 @@ static void copy_image_packedfiles(ListBase *lb_dst, const ListBase *lb_src)
 
     BLI_addtail(lb_dst, imapf_dst);
   }
-}
-
-/* empty image block, of similar type and filename */
-Image *BKE_image_copy(Main *bmain, const Image *ima)
-{
-  Image *ima_copy;
-  BKE_id_copy(bmain, &ima->id, (ID **)&ima_copy);
-  return ima_copy;
 }
 
 void BKE_image_merge(Main *bmain, Image *dest, Image *source)
@@ -1820,7 +1812,7 @@ void BKE_imbuf_to_image_format(struct ImageFormatData *im_format, const ImBuf *i
       im_format->depth = R_IMF_CHAN_DEPTH_16;
     }
     if (custom_flags & OPENEXR_COMPRESS) {
-      im_format->exr_codec = R_IMF_EXR_CODEC_ZIP;  // Can't determine compression
+      im_format->exr_codec = R_IMF_EXR_CODEC_ZIP; /* Can't determine compression */
     }
     if (imbuf->zbuf_float) {
       im_format->flag |= R_IMF_FLAG_ZBUF;
@@ -2208,7 +2200,7 @@ void BKE_image_stamp_buf(Scene *scene,
   float w, h, pad;
   int x, y, y_ofs;
   float h_fixed;
-  const int mono = blf_mono_font_render;  // XXX
+  const int mono = blf_mono_font_render; /* XXX */
   struct ColorManagedDisplay *display;
   const char *display_device;
 

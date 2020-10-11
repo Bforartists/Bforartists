@@ -50,6 +50,7 @@
 #include "UI_resources.h"
 
 #include "transform.h"
+#include "transform_orientations.h"
 #include "transform_snap.h"
 
 /* Own include. */
@@ -384,9 +385,9 @@ static void applyAxisConstraintVec(
 
     if (activeSnap(t)) {
       if (validSnap(t)) {
-        is_snap_to_point = (t->tsnap.snapElem & SCE_SNAP_MODE_VERTEX) != 0;
         is_snap_to_edge = (t->tsnap.snapElem & SCE_SNAP_MODE_EDGE) != 0;
         is_snap_to_face = (t->tsnap.snapElem & SCE_SNAP_MODE_FACE) != 0;
+        is_snap_to_point = !is_snap_to_edge && !is_snap_to_face;
       }
       else if (t->tsnap.snapElem & SCE_SNAP_MODE_GRID) {
         is_snap_to_point = true;
@@ -424,7 +425,8 @@ static void applyAxisConstraintVec(
         else if (t->con.mode & CON_AXIS1) {
           copy_v3_v3(c, t->spacemtx[1]);
         }
-        else if (t->con.mode & CON_AXIS2) {
+        else {
+          BLI_assert(t->con.mode & CON_AXIS2);
           copy_v3_v3(c, t->spacemtx[2]);
         }
 
@@ -698,25 +700,34 @@ void setUserConstraint(TransInfo *t, int mode, const char ftext[])
   const char *spacename = transform_orientations_spacename_get(t, orientation);
   BLI_snprintf(text, sizeof(text), ftext, spacename);
 
-  switch (orientation) {
-    case V3D_ORIENT_LOCAL:
-      setLocalConstraint(t, mode, text);
-      break;
-    case V3D_ORIENT_NORMAL:
-      if (checkUseAxisMatrix(t)) {
-        setAxisMatrixConstraint(t, mode, text);
+  if (t->modifiers & (MOD_CONSTRAINT_SELECT | MOD_CONSTRAINT_PLANE)) {
+    /* Force the orientation of the active object.
+     * Although possible, it is not convenient to use the local or axis constraint
+     * with the modifier to select constraint.
+     * This also follows the convention of older versions. */
+    setConstraint(t, mode, text);
+  }
+  else {
+    switch (orientation) {
+      case V3D_ORIENT_LOCAL:
+        setLocalConstraint(t, mode, text);
+        break;
+      case V3D_ORIENT_NORMAL:
+        if (checkUseAxisMatrix(t)) {
+          setAxisMatrixConstraint(t, mode, text);
+          break;
+        }
+        ATTR_FALLTHROUGH;
+      case V3D_ORIENT_GLOBAL:
+      case V3D_ORIENT_VIEW:
+      case V3D_ORIENT_CURSOR:
+      case V3D_ORIENT_GIMBAL:
+      case V3D_ORIENT_CUSTOM_MATRIX:
+      case V3D_ORIENT_CUSTOM:
+      default: {
+        setConstraint(t, mode, text);
         break;
       }
-      ATTR_FALLTHROUGH;
-    case V3D_ORIENT_GLOBAL:
-    case V3D_ORIENT_VIEW:
-    case V3D_ORIENT_CURSOR:
-    case V3D_ORIENT_GIMBAL:
-    case V3D_ORIENT_CUSTOM_MATRIX:
-    case V3D_ORIENT_CUSTOM:
-    default: {
-      setConstraint(t, mode, text);
-      break;
     }
   }
   t->con.mode |= CON_USER;

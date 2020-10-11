@@ -520,7 +520,7 @@ class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
         row.prop(settings, "use_default_blue_channel", text="B", toggle=True)
 
         col.separator()
-        col.operator("clip.track_settings_as_default", text="Copy From Active Track", icon = "COPYDOWN")
+        col.operator("clip.track_settings_as_default", text="Copy from Active Track", icon = "COPYDOWN")
 
 
 class CLIP_PT_tracking_settings_extras(CLIP_PT_tracking_panel, Panel):

@@ -244,18 +244,9 @@ static void hair_random(Hair *hair)
 
 void *BKE_hair_add(Main *bmain, const char *name)
 {
-  Hair *hair = BKE_libblock_alloc(bmain, ID_HA, name, 0);
-
-  hair_init_data(&hair->id);
+  Hair *hair = BKE_id_new(bmain, ID_HA, name);
 
   return hair;
-}
-
-Hair *BKE_hair_copy(Main *bmain, const Hair *hair)
-{
-  Hair *hair_copy;
-  BKE_id_copy(bmain, &hair->id, (ID **)&hair_copy);
-  return hair_copy;
 }
 
 BoundBox *BKE_hair_boundbox_get(Object *ob)
@@ -330,8 +321,7 @@ Hair *BKE_hair_copy_for_eval(Hair *hair_src, bool reference)
     flags |= LIB_ID_COPY_CD_REFERENCE;
   }
 
-  Hair *result;
-  BKE_id_copy_ex(NULL, &hair_src->id, (ID **)&result, flags);
+  Hair *result = (Hair *)BKE_id_copy_ex(NULL, &hair_src->id, NULL, flags);
   return result;
 }
 

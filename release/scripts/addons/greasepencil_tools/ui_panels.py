@@ -19,10 +19,10 @@
 import bpy
 
 class GP_PT_sidebarPanel(bpy.types.Panel):
-    bl_label = "Grease Pencil tools"
+    bl_label = "Grease Pencil Tools"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_category = "Grease pencil"
+    bl_category = "Grease Pencil"
 
     def draw(self, context):
         layout = self.layout

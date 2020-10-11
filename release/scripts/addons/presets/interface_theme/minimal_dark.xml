@@ -9,12 +9,16 @@
         widget_emboss="#00000000"
         editor_outline="#202020"
         widget_text_cursor="#cccccc"
+        transparent_checker_primary="#2f2f2f"
+        transparent_checker_secondary="#1d1d1d"
+        transparent_checker_size="8"
         axis_x="#ff4040"
         axis_y="#00ff00"
         axis_z="#6666ff"
         gizmo_hi="#ffffff"
         gizmo_primary="#f3ef4c"
         gizmo_secondary="#63ffff"
+        gizmo_view_align="#ffffff"
         gizmo_a="#4da84d"
         gizmo_b="#a33535"
         icon_scene="#f2f2f2ff"
@@ -712,6 +716,7 @@
     </dopesheet_editor>
     <image_editor>
       <ThemeImageEditor
+        grid="#3e3e3eff"
         vertex="#000000"
         vertex_select="#00c0ff"
         vertex_size="3"
@@ -794,9 +799,12 @@
         scene_strip="#777777"
         audio_strip="#60bf77"
         effect_strip="#71fe9b"
-        transition_strip="#80797d"
+        color_strip="#8f8f8f"
         meta_strip="#608073"
+        mask_strip="#666666"
         text_strip="#d1ff80"
+        active_strip="#d9d9d9"
+        selected_strip="#ff8f0d"
         frame_current="#337fcc"
         time_scrub_background="#292929e6"
         time_marker_line="#00000060"
@@ -923,6 +931,7 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
+        grid="#252525"
         node_selected="#00bdff"
         node_active="#00ff2f"
         wire="#1a1a1a"
@@ -951,7 +960,7 @@
         >
         <space>
           <ThemeSpaceGeneric
-            back="#262626"
+            back="#2b2b2b"
             title="#ffffff"
             text="#ffffff"
             text_hi="#ffffff"
@@ -1158,6 +1167,7 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
+        grid="#42424237"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"
