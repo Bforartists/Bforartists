@@ -99,12 +99,19 @@ static void world_copy_data(Main *bmain, ID *id_dst, const ID *id_src, const int
 {
   World *wrld_dst = (World *)id_dst;
   const World *wrld_src = (const World *)id_src;
+
+  const bool is_localized = (flag & LIB_ID_CREATE_LOCAL) != 0;
   /* We always need allocation of our private ID data. */
   const int flag_private_id_data = flag & ~LIB_ID_CREATE_NO_ALLOCATE;
 
   if (wrld_src->nodetree) {
-    BKE_id_copy_ex(
-        bmain, (ID *)wrld_src->nodetree, (ID **)&wrld_dst->nodetree, flag_private_id_data);
+    if (is_localized) {
+      wrld_dst->nodetree = ntreeLocalize(wrld_src->nodetree);
+    }
+    else {
+      BKE_id_copy_ex(
+          bmain, (ID *)wrld_src->nodetree, (ID **)&wrld_dst->nodetree, flag_private_id_data);
+    }
   }
 
   BLI_listbase_clear(&wrld_dst->gpumaterial);
@@ -167,13 +174,13 @@ static void world_blend_read_data(BlendDataReader *reader, ID *id)
 static void world_blend_read_lib(BlendLibReader *reader, ID *id)
 {
   World *wrld = (World *)id;
-  BLO_read_id_address(reader, wrld->id.lib, &wrld->ipo);  // XXX deprecated - old animation system
+  BLO_read_id_address(reader, wrld->id.lib, &wrld->ipo); /* XXX deprecated, old animation system */
 }
 
 static void world_blend_read_expand(BlendExpander *expander, ID *id)
 {
   World *wrld = (World *)id;
-  BLO_expand(expander, wrld->ipo);  // XXX deprecated - old animation system
+  BLO_expand(expander, wrld->ipo); /* XXX deprecated, old animation system */
 }
 
 IDTypeInfo IDType_ID_WO = {
@@ -203,41 +210,9 @@ World *BKE_world_add(Main *bmain, const char *name)
 {
   World *wrld;
 
-  wrld = BKE_libblock_alloc(bmain, ID_WO, name, 0);
-
-  world_init_data(&wrld->id);
+  wrld = BKE_id_new(bmain, ID_WO, name);
 
   return wrld;
-}
-
-World *BKE_world_localize(World *wrld)
-{
-  /* TODO(bastien): Replace with something like:
-   *
-   *   World *wrld_copy;
-   *   BKE_id_copy_ex(bmain, &wrld->id, (ID **)&wrld_copy,
-   *                  LIB_ID_COPY_NO_MAIN | LIB_ID_COPY_NO_PREVIEW | LIB_ID_COPY_NO_USER_REFCOUNT,
-   *                  false);
-   *   return wrld_copy;
-   *
-   * NOTE: Only possible once nested node trees are fully converted to that too. */
-
-  World *wrldn;
-
-  wrldn = BKE_libblock_copy_for_localize(&wrld->id);
-
-  if (wrld->nodetree) {
-    wrldn->nodetree = ntreeLocalize(wrld->nodetree);
-  }
-
-  wrldn->preview = NULL;
-
-  BLI_listbase_clear(&wrldn->gpumaterial);
-  BLI_listbase_clear((ListBase *)&wrldn->drawdata);
-
-  wrldn->id.tag |= LIB_TAG_LOCALIZED;
-
-  return wrldn;
 }
 
 void BKE_world_eval(struct Depsgraph *depsgraph, World *world)

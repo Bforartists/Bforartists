@@ -682,7 +682,10 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
 
         layout.separator()
 
-        layout.prop(st, "show_sliders")
+       # Sliders are always shown in the Shape Key Editor regardless of this setting.
+        col = layout.column()
+        col.active = context.space_data.mode != 'SHAPEKEY'
+        col.prop(st, "show_sliders")
         layout.prop(st, "show_group_colors")
         layout.prop(st, "show_interpolation")
         layout.prop(st, "show_extremes")

@@ -2001,7 +2001,7 @@ static void sphclassical_force_cb(void *sphdata_v,
   /* 4.77 is an experimentally determined density factor */
   float rest_density = fluid->rest_density * (fluid->flag & SPH_FAC_DENSITY ? 4.77f : 1.0f);
 
-  // Use speed of sound squared
+  /* Use speed of sound squared */
   float stiffness = pow2f(fluid->stiffness_k);
 
   ParticleData *npa;
@@ -2118,7 +2118,7 @@ void psys_sph_init(ParticleSimulationData *sim, SPHData *sphdata)
 
   BLI_buffer_field_init(&sphdata->new_springs, ParticleSpring);
 
-  // Add other coupled particle systems.
+  /* Add other coupled particle systems. */
   sphdata->psys[0] = sim->psys;
   for (i = 1, pt = sim->psys->targets.first; i < 10; i++, pt = (pt ? pt->next : NULL)) {
     sphdata->psys[i] = pt ? psys_get_target_system(sim->ob, pt) : NULL;
@@ -2132,8 +2132,8 @@ void psys_sph_init(ParticleSimulationData *sim, SPHData *sphdata)
   }
   sphdata->eh = sph_springhash_build(sim->psys);
 
-  // These per-particle values should be overridden later, but just for
-  // completeness we give them default values now.
+  /* These per-particle values should be overridden later, but just for
+   * completeness we give them default values now. */
   sphdata->pa = NULL;
   sphdata->mass = 1.0f;
 
@@ -4744,9 +4744,8 @@ static int hair_needs_recalc(ParticleSystem *psys)
 
 static ParticleSettings *particle_settings_localize(ParticleSettings *particle_settings)
 {
-  ParticleSettings *particle_settings_local;
-  BKE_id_copy_ex(
-      NULL, (ID *)&particle_settings->id, (ID **)&particle_settings_local, LIB_ID_COPY_LOCALIZE);
+  ParticleSettings *particle_settings_local = (ParticleSettings *)BKE_id_copy_ex(
+      NULL, (ID *)&particle_settings->id, NULL, LIB_ID_COPY_LOCALIZE);
   return particle_settings_local;
 }
 

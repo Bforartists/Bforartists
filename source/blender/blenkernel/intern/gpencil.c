@@ -972,20 +972,6 @@ bGPDlayer *BKE_gpencil_layer_duplicate(const bGPDlayer *gpl_src)
 }
 
 /**
- * Standard API to make a copy of GP data-block, separate from copying its data.
- *
- * \param bmain: Main pointer
- * \param gpd: Grease pencil data-block
- * \return Pointer to new data-block
- */
-bGPdata *BKE_gpencil_copy(Main *bmain, const bGPdata *gpd)
-{
-  bGPdata *gpd_copy;
-  BKE_id_copy(bmain, &gpd->id, (ID **)&gpd_copy);
-  return gpd_copy;
-}
-
-/**
  * Make a copy of a given gpencil data-block.
  *
  * XXX: Should this be deprecated?
@@ -1009,7 +995,7 @@ bGPdata *BKE_gpencil_data_duplicate(Main *bmain, const bGPdata *gpd_src, bool in
   }
   else {
     BLI_assert(bmain != NULL);
-    BKE_id_copy(bmain, &gpd_src->id, (ID **)&gpd_dst);
+    gpd_dst = (bGPdata *)BKE_id_copy(bmain, &gpd_src->id);
   }
 
   /* Copy internal data (layers, etc.) */
@@ -2563,6 +2549,12 @@ void BKE_gpencil_visible_stroke_iter(ViewLayer *view_layer,
     /* Use evaluated frame (with modifiers for active stroke)/ */
     act_gpf = gpl->actframe;
     if (act_gpf) {
+      /* If layer solo mode and Paint mode, only keyframes with data are displayed. */
+      if (GPENCIL_PAINT_MODE(gpd) && (gpl->flag & GP_LAYER_SOLO_MODE) &&
+          (act_gpf->framenum != cfra)) {
+        continue;
+      }
+
       act_gpf->runtime.onion_id = 0;
       if (layer_cb) {
         layer_cb(gpl, act_gpf, NULL, thunk);

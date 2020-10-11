@@ -343,6 +343,14 @@ static void rna_def_volume_grids(BlenderRNA *brna, PropertyRNA *cprop)
 
   func = RNA_def_function(srna, "unload", "BKE_volume_unload");
   RNA_def_function_ui_description(func, "Unload all grid and voxel data from memory");
+
+  func = RNA_def_function(srna, "save", "BKE_volume_save");
+  RNA_def_function_ui_description(func, "Save grids and metadata to file");
+  RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
+  parm = RNA_def_string_file_path(func, "filepath", NULL, 0, "", "File path to save to");
+  RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+  parm = RNA_def_boolean(func, "success", 0, "", "True if grid list was successfully loaded");
+  RNA_def_function_return(func, parm);
 }
 
 static void rna_def_volume_display(BlenderRNA *brna)
@@ -406,16 +414,6 @@ static void rna_def_volume_display(BlenderRNA *brna)
       {0, NULL, 0, NULL, NULL},
   };
 
-  static const EnumPropertyItem axis_slice_method_items[] = {
-      {VOLUME_AXIS_SLICE_FULL, "FULL", 0, "Full", "Slice the whole domain object"},
-      {VOLUME_AXIS_SLICE_SINGLE,
-       "SINGLE",
-       0,
-       "Single",
-       "Perform a single slice of the domain object"},
-      {0, NULL, 0, NULL, NULL},
-  };
-
   static const EnumPropertyItem axis_slice_position_items[] = {
       {VOLUME_SLICE_AXIS_AUTO,
        "AUTO",
@@ -444,9 +442,9 @@ static void rna_def_volume_display(BlenderRNA *brna)
       prop, "Interpolation", "Interpolation method to use for volumes in solid mode");
   RNA_def_property_update(prop, 0, "rna_Volume_update_display");
 
-  prop = RNA_def_property(srna, "axis_slice_method", PROP_ENUM, PROP_NONE);
-  RNA_def_property_enum_items(prop, axis_slice_method_items);
-  RNA_def_property_ui_text(prop, "Method", "");
+  prop = RNA_def_property(srna, "use_slice", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "axis_slice_method", VOLUME_AXIS_SLICE_SINGLE);
+  RNA_def_property_ui_text(prop, "Slice", "Perform a single slice of the domain object");
   RNA_def_property_update(prop, 0, "rna_Volume_update_display");
 
   prop = RNA_def_property(srna, "slice_axis", PROP_ENUM, PROP_NONE);
