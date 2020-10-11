@@ -1626,6 +1626,8 @@ class AssetBarOperator(bpy.types.Operator):
                         if ao != None and not ao.is_library_indirect:
                             target_object = bpy.context.active_object.name
                             target_slot = bpy.context.active_object.active_material_index
+                            #change snapped location for placing material downloader.
+                            ui_props.snapped_location =  bpy.context.active_object.location
                         else:
                             target_object = ''
                             target_slot = ''

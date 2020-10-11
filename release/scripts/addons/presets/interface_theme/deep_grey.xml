@@ -537,8 +537,8 @@
     </graph_editor>
     <file_browser>
       <ThemeFileBrowser
-        row_alternate="#4f4f4fff"
         selected_file="#c85130"
+        row_alternate="#4f4f4fff"
         >
         <space>
           <ThemeSpaceGeneric
@@ -716,6 +716,7 @@
     </dopesheet_editor>
     <image_editor>
       <ThemeImageEditor
+        grid="#505050ff"
         vertex="#000000"
         vertex_select="#ffaa18"
         vertex_size="3"
@@ -848,7 +849,9 @@
       </ThemeSequenceEditor>
     </sequence_editor>
     <properties>
-      <ThemeProperties>
+      <ThemeProperties
+        match="#5680c2"
+        >
         <space>
           <ThemeSpaceGeneric
             back="#474747"
@@ -930,6 +933,7 @@
     </text_editor>
     <node_editor>
       <ThemeNodeEditor
+        grid="#474747"
         node_selected="#00b5ff"
         node_active="#ffaa18"
         wire="#808080"
@@ -1165,7 +1169,7 @@
     </console>
     <clip_editor>
       <ThemeClipEditor
-        grid="#303030"
+        grid="#303030ff"
         marker_outline="#000000"
         marker="#7f7f00"
         active_marker="#ffffff"
@@ -1447,6 +1451,40 @@
         >
       </ThemeBoneColorSet>
     </bone_color_sets>
+    <collection_color>
+      <ThemeCollectionColor
+        color="#e4312b"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#ef7e42"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#e4dd52"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#9ac546"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#46bcc2"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#8b65dc"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#999999"
+        >
+      </ThemeCollectionColor>
+      <ThemeCollectionColor
+        color="#6d4432"
+        >
+      </ThemeCollectionColor>
+    </collection_color>
   </Theme>
   <ThemeStyle>
     <panel_title>

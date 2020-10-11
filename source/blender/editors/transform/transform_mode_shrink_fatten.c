@@ -116,7 +116,7 @@ static void applyShrinkFatten(TransInfo *t, const int UNUSED(mval[2]))
 
 void initShrinkFatten(TransInfo *t)
 {
-  // If not in mesh edit mode, fallback to Resize
+  /* If not in mesh edit mode, fallback to Resize. */
   if ((t->flag & T_EDIT) == 0 || (t->obedit_type != OB_MESH)) {
     initResize(t);
   }
@@ -128,11 +128,10 @@ void initShrinkFatten(TransInfo *t)
 
     t->idx_max = 0;
     t->num.idx_max = 0;
-    t->snap[0] = 0.0f;
-    t->snap[1] = 1.0f;
-    t->snap[2] = t->snap[1] * 0.1f;
+    t->snap[0] = 1.0f;
+    t->snap[1] = t->snap[0] * 0.1f;
 
-    copy_v3_fl(t->num.val_inc, t->snap[1]);
+    copy_v3_fl(t->num.val_inc, t->snap[0]);
     t->num.unit_sys = t->scene->unit.system;
     t->num.unit_type[0] = B_UNIT_LENGTH;
 

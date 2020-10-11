@@ -25,6 +25,7 @@ set(INC
   ../../imbuf
   ../../makesdna
   ../../makesrna
+  ../../sequencer
   ../../windowmanager
   ../../../../intern/glew-mx
   ../../../../intern/guardedalloc

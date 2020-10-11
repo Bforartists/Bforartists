@@ -70,7 +70,7 @@ void wm_stereo3d_draw_sidebyside(wmWindow *win, int view)
       soffx = 0;
     }
   }
-  else {  // RIGHT_LEFT_ID
+  else { /* #RIGHT_LEFT_ID */
     if (cross_eyed) {
       soffx = 0;
     }
@@ -367,7 +367,7 @@ int wm_stereo3d_set_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(ev
   if (wm_stereo3d_set_properties(C, op)) {
     return wm_stereo3d_set_exec(C, op);
   }
-  return WM_operator_props_dialog_popup(C, op, 250);
+  return WM_operator_props_dialog_popup(C, op, 300);
 }
 
 void wm_stereo3d_set_draw(bContext *UNUSED(C), wmOperator *op)
@@ -378,6 +378,9 @@ void wm_stereo3d_set_draw(bContext *UNUSED(C), wmOperator *op)
   uiLayout *col;
 
   RNA_pointer_create(NULL, &RNA_Stereo3dDisplay, &s3dd->stereo3d_format, &stereo3d_format_ptr);
+
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
 
   col = uiLayoutColumn(layout, false);
   uiItemR(col, &stereo3d_format_ptr, "display_mode", 0, NULL, ICON_NONE);

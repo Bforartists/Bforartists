@@ -275,7 +275,8 @@ typedef struct ThemeSpace {
   unsigned char wire[4], wire_edit[4], select[4];
   unsigned char lamp[4], speaker[4], empty[4], camera[4];
   unsigned char active[4], group[4], group_active[4], transform[4];
-  unsigned char vertex[4], vertex_select[4], vertex_bevel[4], vertex_unreferenced[4];
+  unsigned char vertex[4], vertex_select[4], vertex_active[4], vertex_bevel[4],
+      vertex_unreferenced[4];
   unsigned char edge[4], edge_select[4];
   unsigned char edge_seam[4], edge_sharp[4], edge_facesel[4], edge_crease[4], edge_bevel[4];
   /** Solid faces. */
@@ -321,10 +322,10 @@ typedef struct ThemeSpace {
   unsigned char grid_levels;
 
   /* syntax for textwindow and nodes */
-  unsigned char syntaxl[4], syntaxs[4];  // in nodespace used for backdrop matte
-  unsigned char syntaxb[4], syntaxn[4];  // in nodespace used for color input
-  unsigned char syntaxv[4], syntaxc[4];  // in nodespace used for converter group
-  unsigned char syntaxd[4], syntaxr[4];  // in nodespace used for distort
+  unsigned char syntaxl[4], syntaxs[4]; /* in nodespace used for backdrop matte */
+  unsigned char syntaxb[4], syntaxn[4]; /* in nodespace used for color input */
+  unsigned char syntaxv[4], syntaxc[4]; /* in nodespace used for converter group */
+  unsigned char syntaxd[4], syntaxr[4]; /* in nodespace used for distort */
 
   unsigned char line_numbers[4];
   char _pad6[3];
@@ -357,7 +358,7 @@ typedef struct ThemeSpace {
   unsigned char path_before[4], path_after[4];
   unsigned char path_keyframe_before[4], path_keyframe_after[4];
   unsigned char camera_path[4];
-  unsigned char _pad1[2];
+  unsigned char _pad1[6];
 
   unsigned char gp_vertex_size;
   unsigned char gp_vertex[4], gp_vertex_select[4];
