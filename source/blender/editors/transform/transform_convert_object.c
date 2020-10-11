@@ -50,6 +50,7 @@
 
 /* Own include. */
 #include "transform_convert.h"
+#include "transform_orientations.h"
 
 /* -------------------------------------------------------------------- */
 /** \name Object Mode Custom Data
@@ -183,8 +184,7 @@ static void ObjectToTransData(TransInfo *t, TransData *td, Object *ob)
   }
 
   /* axismtx has the real orientation */
-  copy_m3_m4(td->axismtx, ob->obmat);
-  normalize_m3(td->axismtx);
+  transform_orientations_create_from_axis(td->axismtx, UNPACK3(ob->obmat));
 
   td->con = ob->constraints.first;
 
@@ -251,8 +251,11 @@ static void ObjectToTransData(TransInfo *t, TransData *td, Object *ob)
 
     td->ext->irotAngle = ob->rotAngle;
     copy_v3_v3(td->ext->irotAxis, ob->rotAxis);
-    // td->ext->drotAngle = ob->drotAngle;          // XXX, not implemented
-    // copy_v3_v3(td->ext->drotAxis, ob->drotAxis); // XXX, not implemented
+    /* XXX, not implemented. */
+#if 0
+    td->ext->drotAngle = ob->drotAngle;
+    copy_v3_v3(td->ext->drotAxis, ob->drotAxis);
+#endif
   }
   else {
     td->ext->rot = NULL;
@@ -726,7 +729,7 @@ void createTransTexspace(TransInfo *t)
 
   ob = OBACT(view_layer);
 
-  if (ob == NULL) {  // Shouldn't logically happen, but still...
+  if (ob == NULL) { /* Shouldn't logically happen, but still. */
     return;
   }
 
@@ -788,7 +791,7 @@ static void autokeyframe_object(
   ID *id = &ob->id;
   FCurve *fcu;
 
-  // TODO: this should probably be done per channel instead...
+  /* TODO: this should probably be done per channel instead. */
   if (autokeyframe_cfra_can_key(scene, id)) {
     ReportList *reports = CTX_wm_reports(C);
     ToolSettings *ts = scene->toolsettings;

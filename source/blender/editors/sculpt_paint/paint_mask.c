@@ -821,11 +821,24 @@ static void paint_mask_gesture_operator_properties(wmOperatorType *ot)
 typedef enum eSculptTrimOperationType {
   SCULPT_GESTURE_TRIM_INTERSECT,
   SCULPT_GESTURE_TRIM_DIFFERENCE,
+  SCULPT_GESTURE_TRIM_UNION,
+  SCULPT_GESTURE_TRIM_JOIN,
 } eSculptTrimOperationType;
 
+/* Intersect is not exposed in the UI because it does not work correctly with symmetry (it deletes
+ * the symmetrical part of the mesh in the first symmetry pass). */
 static EnumPropertyItem prop_trim_operation_types[] = {
-    {SCULPT_GESTURE_TRIM_INTERSECT, "INTERSECT", 0, "Intersect", ""},
-    {SCULPT_GESTURE_TRIM_DIFFERENCE, "DIFFERENCE", 0, "Difference", ""},
+    {SCULPT_GESTURE_TRIM_DIFFERENCE,
+     "DIFFERENCE",
+     0,
+     "Difference",
+     "Use a difference boolean operation"},
+    {SCULPT_GESTURE_TRIM_UNION, "UNION", 0, "Union", "Use a union boolean operation"},
+    {SCULPT_GESTURE_TRIM_JOIN,
+     "JOIN",
+     0,
+     "Join",
+     "Join the new mesh as separate geometry, without preforming any boolean operation"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -1088,17 +1101,25 @@ static void sculpt_gesture_apply_trim(SculptGestureContext *sgcontext)
     }
   }
 
-  int boolean_mode;
-  switch (trim_operation->mode) {
-    case SCULPT_GESTURE_TRIM_INTERSECT:
-      boolean_mode = eBooleanModifierOp_Intersect;
-      break;
-    case SCULPT_GESTURE_TRIM_DIFFERENCE:
-      boolean_mode = eBooleanModifierOp_Difference;
-      break;
+  /* Join does not do a boolean operation, it just adds the geometry. */
+  if (trim_operation->mode != SCULPT_GESTURE_TRIM_JOIN) {
+    int boolean_mode = 0;
+    switch (trim_operation->mode) {
+      case SCULPT_GESTURE_TRIM_INTERSECT:
+        boolean_mode = eBooleanModifierOp_Intersect;
+        break;
+      case SCULPT_GESTURE_TRIM_DIFFERENCE:
+        boolean_mode = eBooleanModifierOp_Difference;
+        break;
+      case SCULPT_GESTURE_TRIM_UNION:
+        boolean_mode = eBooleanModifierOp_Union;
+        break;
+      case SCULPT_GESTURE_TRIM_JOIN:
+        BLI_assert(false);
+        break;
+    }
+    BM_mesh_boolean(bm, looptris, tottri, bm_face_isect_pair, NULL, 2, false, boolean_mode);
   }
-
-  BM_mesh_boolean(bm, looptris, tottri, bm_face_isect_pair, NULL, 2, false, boolean_mode);
 
   Mesh *result = BKE_mesh_from_bmesh_for_eval_nomain(bm, NULL, sculpt_mesh);
   BM_mesh_free(bm);
@@ -1212,6 +1233,9 @@ static void project_line_gesture_apply_task_cb(void *__restrict userdata,
       continue;
     }
     add_v3_v3(vd.co, disp);
+    if (vd.mvert) {
+      vd.mvert->flag |= ME_VERT_PBVH_UPDATE;
+    }
     any_updated = true;
   }
   BKE_pbvh_vertex_iter_end;
@@ -1419,7 +1443,7 @@ void PAINT_OT_mask_line_gesture(wmOperatorType *ot)
   ot->idname = "PAINT_OT_mask_line_gesture";
   ot->description = "Add mask to the right of a line as you move the brush";
 
-  ot->invoke = WM_gesture_straightline_invoke;
+  ot->invoke = WM_gesture_straightline_active_side_invoke;
   ot->modal = WM_gesture_straightline_oneshot_modal;
   ot->exec = paint_mask_gesture_line_exec;
 
@@ -1516,7 +1540,7 @@ void SCULPT_OT_project_line_gesture(wmOperatorType *ot)
   ot->idname = "SCULPT_OT_project_line_gesture";
   ot->description = "Project the geometry onto a plane defined by a line";
 
-  ot->invoke = WM_gesture_straightline_invoke;
+  ot->invoke = WM_gesture_straightline_active_side_invoke;
   ot->modal = WM_gesture_straightline_oneshot_modal;
   ot->exec = project_gesture_line_exec;
 
