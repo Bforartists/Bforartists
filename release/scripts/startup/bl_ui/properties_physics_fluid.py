@@ -1392,6 +1392,7 @@ class PHYSICS_PT_viewport_display_slicing(PhysicButtonsPanel, Panel):
         col.prop(domain, "slice_depth")
 
         sub = col.column()
+        sub.use_property_split = False
         sub.prop(domain, "show_gridlines")
 
         sub.active = domain.display_interpolation == 'CLOSEST' or domain.color_ramp_field == 'FLAGS'
@@ -1460,13 +1461,23 @@ class PHYSICS_PT_viewport_display_debug(PhysicButtonsPanel, Panel):
             note.label(icon='INFO', text="Enable Guides first! Defaulting to Fluid Velocity")
 
         if domain.vector_display_type == 'MAC':
-            sub = col.column(heading="MAC Grid")
-            sub.prop(domain, "vector_show_mac_x")
-            sub.prop(domain, "vector_show_mac_y")
-            sub.prop(domain, "vector_show_mac_z")
+            sub = col.column()
+            sub.use_property_split = False
+            sub.label(text = "MAC Grid")
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "vector_show_mac_x")
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "vector_show_mac_y")
+            row = sub.row()
+            row.separator()
+            row.prop(domain, "vector_show_mac_z")
         else:
+            col.use_property_split = False
             col.prop(domain, "vector_scale_with_magnitude")
 
+        col.use_property_split = True
         col.prop(domain, "vector_field")
         col.prop(domain, "vector_scale")
 
