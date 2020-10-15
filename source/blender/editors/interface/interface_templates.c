@@ -3212,7 +3212,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                         0,
                         0,
                         0,
-                        TIP_("Add a new color stop to the color ramp"));
+                        TIP_("Add Stop\nAdd a new color stop to the color ramp"));
   UI_but_funcN_set(bt, colorband_add_cb, MEM_dupallocN(cb), coba);
 
   bt = uiDefIconTextBut(block,
@@ -3229,7 +3229,7 @@ static void colorband_buttons_layout(uiLayout *layout,
                         0,
                         0,
                         0,
-                        TIP_("Delete the active position"));
+                        TIP_("Delete Stop\nDelete the active position"));
   UI_but_funcN_set(bt, colorband_del_cb, MEM_dupallocN(cb), coba);
 
   bt = uiDefIconBlockBut(block,
