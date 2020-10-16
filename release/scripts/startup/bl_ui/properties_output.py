@@ -395,6 +395,7 @@ class RENDER_PT_encoding(RenderOutputButtonsPanel, Panel):
         ffmpeg = rd.ffmpeg
 
         layout.prop(rd.ffmpeg, "format")
+        layout.use_property_split = False
         layout.prop(ffmpeg, "use_autosplit")
 
 
@@ -428,7 +429,9 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
             return
 
         if ffmpeg.codec == 'DNXHD':
+            layout.use_property_split = False
             layout.prop(ffmpeg, "use_lossless_output")
+            layout.use_property_split = True
 
         # Output quality
         use_crf = needs_codec and ffmpeg.codec in {'H264', 'MPEG4', 'WEBM'}
@@ -439,12 +442,16 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         layout.prop(ffmpeg, "ffmpeg_preset")
         # I-frames
         layout.prop(ffmpeg, "gopsize")
-        # B-Frames
-        row = layout.row(align=True, heading="Max B-frames")
-        row.prop(ffmpeg, "use_max_b_frames", text="")
-        sub = row.row(align=True)
-        sub.active = ffmpeg.use_max_b_frames
-        sub.prop(ffmpeg, "max_b_frames", text="")
+        # B-Frames      
+        split = layout.split( factor = 0.39)
+        col = split.column()
+        col.use_property_split = False
+        col.prop(ffmpeg, "use_max_b_frames", text = "Max B_Frames")
+        col = split.column()
+        if ffmpeg.use_max_b_frames:
+            col.prop(ffmpeg, "max_b_frames", text="")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if not use_crf or ffmpeg.constant_rate_factor == 'NONE':
             col = layout.column()
