@@ -1072,7 +1072,7 @@ class _defs_edit_curve:
             if cps.curve_type == 'BEZIER':
                 layout.prop(cps, "fit_method")
                 layout.prop(cps, "error_threshold")
-                
+
                 split = layout.split()
                 col = split.column()
                 col.use_property_split = False
@@ -1082,8 +1082,8 @@ class _defs_edit_curve:
                     col.use_property_split = False
                     col.prop(cps, "corner_angle", text="")
                 else:
-                    col.label(icon='DISCLOSURE_TRI_RIGHT')   	
-                
+                    col.label(icon='DISCLOSURE_TRI_RIGHT')
+
                 layout.separator()
 
             col = layout.column(align=True)
@@ -2777,7 +2777,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                         context.preferences.experimental.use_tools_missing_icons)
                 else ()
             ),
-            None,
+            #None, #bfa - too big gap
             lambda context: (
                 (_defs_sculpt.mask_by_color,)
                 if context is None or (
@@ -2786,7 +2786,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                         context.preferences.experimental.use_tools_missing_icons)
                 else ()
             ),
-            None,
+            #None, #bfa - too big gap
             lambda context: (
                 (_defs_sculpt.face_set_edit,)
                 if context is None or (
@@ -2836,7 +2836,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 if context is None or context.pose_object
                 else ()
             ),
-            None,
+            #None, #bfa - too big gap
             lambda context: (
                 VIEW3D_PT_tools_active._tools_select
                 if _defs_weight_paint.poll_select_mask(context)
