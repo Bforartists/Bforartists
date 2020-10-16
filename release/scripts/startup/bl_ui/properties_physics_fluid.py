@@ -1392,10 +1392,47 @@ class PHYSICS_PT_viewport_display_slicing(PhysicButtonsPanel, Panel):
         col.prop(domain, "slice_depth")
 
         sub = col.column()
-        sub.use_property_split = False
-        sub.prop(domain, "show_gridlines")
-
         sub.active = domain.display_interpolation == 'CLOSEST' or domain.color_ramp_field == 'FLAGS'
+        row = sub.row()
+        row.use_property_split = False
+        row.prop(domain, "show_gridlines")
+        if domain.show_gridlines:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+        row.prop_decorator(domain, "show_gridlines")
+
+        if domain.show_gridlines:
+            col = layout.column()
+            col.active = domain.display_interpolation == 'CLOSEST' or domain.color_ramp_field == 'FLAGS'
+            row = col.row()
+            row.separator()
+            row.prop(domain, "gridlines_color_field", text="Color Gridlines")
+
+            if domain.gridlines_color_field == 'RANGE':
+                if domain.use_color_ramp and domain.color_ramp_field != 'FLAGS':
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_lower_bound")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_upper_bound")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_range_color")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.prop(domain, "gridlines_cell_filter")
+                else:
+                    note = layout.split()
+                    if not domain.use_color_ramp:
+                        note.label(icon='INFO', text="Enable Grid Display to use range highlighting!")
+                    else:
+                        note.label(icon='INFO', text="Range highlighting for flags is not available!")
 
 
 class PHYSICS_PT_viewport_display_color(PhysicButtonsPanel, Panel):
@@ -1481,7 +1518,7 @@ class PHYSICS_PT_viewport_display_debug(PhysicButtonsPanel, Panel):
         col.prop(domain, "vector_field")
         col.prop(domain, "vector_scale")
 
-
+# bfa -  this content belongs to the gridlines prop. And is obsolete in BFA. Class deactivated.
 class PHYSICS_PT_viewport_display_advanced(PhysicButtonsPanel, Panel):
     bl_label = "Advanced"
     bl_parent_id = 'PHYSICS_PT_viewport_display'
@@ -1543,7 +1580,7 @@ classes = (
     PHYSICS_PT_viewport_display_slicing,
     PHYSICS_PT_viewport_display_color,
     PHYSICS_PT_viewport_display_debug,
-    PHYSICS_PT_viewport_display_advanced,
+    #PHYSICS_PT_viewport_display_advanced, # bfa - deactivated the advanced panel. Keep for compatibility reasons.
 )
 
 
