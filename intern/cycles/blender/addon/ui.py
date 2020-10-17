@@ -2026,25 +2026,48 @@ class CYCLES_RENDER_PT_bake_influence(CyclesButtonsPanel, Panel):
 
         elif cscene.bake_type == 'COMBINED':
 
-            col = layout.column(heading="Lighting", align=True)
+            col = layout.column(align=True)
+            col.label(text = "Lighting")
             col.use_property_split = False
-            col.prop(cbk, "use_pass_direct")
-            col.prop(cbk, "use_pass_indirect")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_direct")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_indirect")
 
-            col = layout.column(heading="Contributions", align=True)
+            col = layout.column(align=True)
+            col.label(text = "Contributions")
             col.use_property_split = False
-            col.prop(cbk, "use_pass_diffuse")
-            col.prop(cbk, "use_pass_glossy")
-            col.prop(cbk, "use_pass_transmission")
-            col.prop(cbk, "use_pass_ambient_occlusion")
-            col.prop(cbk, "use_pass_emit")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_diffuse")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_glossy")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_transmission")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_ambient_occlusion")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_emit")
 
         elif cscene.bake_type in {'DIFFUSE', 'GLOSSY', 'TRANSMISSION'}:
-            col = layout.column(heading="Contributions", align=True)
+            col = layout.column(align=True)
+            col.label(text = "Contributions")
             col.use_property_split = False
-            col.prop(cbk, "use_pass_direct")
-            col.prop(cbk, "use_pass_indirect")
-            col.prop(cbk, "use_pass_color")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_direct")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_indirect")
+            row = col.row()
+            row.separator()
+            row.prop(cbk, "use_pass_color")
 
 
 class CYCLES_RENDER_PT_bake_selected_to_active(CyclesButtonsPanel, Panel):
