@@ -6971,32 +6971,50 @@ class VIEW3D_PT_shading_options(Panel):
             sub.prop(shading, "xray_alpha_wireframe", text="")
 
         elif shading.type == 'SOLID':
-            row.prop(shading, "show_xray", text="")
-            sub = row.row()
-            sub.active = shading.show_xray
-            sub.prop(shading, "xray_alpha", text="X-Ray")
-            # X-ray mode is off when alpha is 1.0
+
             xray_active = shading.show_xray and shading.xray_alpha != 1
 
-            row = col.row(align=True)
-            row.prop(shading, "show_shadows", text="")
-            row.active = not xray_active
-            sub = row.row(align=True)
-            sub.active = shading.show_shadows
-            sub.prop(shading, "shadow_intensity", text="Shadow")
-            sub.popover(
-                panel="VIEW3D_PT_shading_options_shadow",
-                icon='PREFERENCES',
-                text="",
-            )
+            split = layout.split()
+            col = split.column()
+            col.use_property_split = False
+            col.prop(shading, "show_xray")
+            col = split.column()
+            if shading.show_xray:
+                col.use_property_split = False
+                col.prop(shading, "xray_alpha", text = "")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+            split = layout.split()
+            split.active = not xray_active
+            col = split.column()
+            col.use_property_split = False
+            col.prop(shading, "show_shadows")
+            col = split.column()
+            if shading.show_shadows:
+                col.use_property_split = False
+                row = col.row(align = True)
+                row.prop(shading, "shadow_intensity", text = "")
+                row.popover(panel="VIEW3D_PT_shading_options_shadow", icon='PREFERENCES', text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+            split = layout.split()
+            col = split.column()
+            col.use_property_split = False
+            row = col.row()
+            row.prop(shading, "show_cavity")
+            col = split.column()
+            if shading.show_cavity:
+                col.prop(shading, "cavity_type", text="Type")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
             col = layout.column()
 
-            row = col.row()
-            row.prop(shading, "show_cavity")
-
             if shading.show_cavity:
-                row.prop(shading, "cavity_type", text="Type")
+
+                #row.prop(shading, "cavity_type", text="Type")
 
                 if shading.cavity_type in {'WORLD', 'BOTH'}:
                     col.label(text="World Space")
@@ -7019,11 +7037,18 @@ class VIEW3D_PT_shading_options(Panel):
             row.prop(shading, "use_dof", text="Depth Of Field")
 
         if shading.type in {'WIREFRAME', 'SOLID'}:
-            row = layout.split()
+            split = layout.split()
+            col = split.column()
+            col.use_property_split = False
+            row = col.row()
+            row.separator()
             row.prop(shading, "show_object_outline")
-            sub = row.row()
+            col = split.column()
             if shading.show_object_outline:
-                sub.prop(shading, "object_outline_color", text="")
+                col.use_property_split = False
+                col.prop(shading, "object_outline_color", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if shading.type == 'SOLID':
             col = layout.column()
