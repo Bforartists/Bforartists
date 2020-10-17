@@ -682,12 +682,12 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
     )
     debug_use_hair_bvh: BoolProperty(
         name="Use Hair BVH",
-        description="Use special type BVH optimized for hair (uses more ram but renders faster)",
+        description="Use special type BVH optimized for hair (uses more ram but renders faster)\nActivates with device type GPU Compute",
         default=True,
     )
     debug_bvh_time_steps: IntProperty(
         name="BVH Time Steps",
-        description="Split BVH primitives by this number of time steps to speed up render time in cost of memory",
+        description="Split BVH primitives by this number of time steps to speed up render time in cost of memory\nDeactivates with Use Spatial Splits active",
         default=0,
         min=0, max=16,
     )
@@ -703,7 +703,7 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         description="Instead of rendering each tile until it is finished, "
         "refine the whole image progressively "
         "(this renders somewhat slower, "
-        "but time can be saved by manually stopping the render when the noise is low enough)",
+        "but time can be saved by manually stopping the render when the noise is low enough)\nDeactivates with Save Buffers active",
         default=False,
     )
 
