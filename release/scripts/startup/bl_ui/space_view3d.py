@@ -2815,9 +2815,9 @@ class VIEW3D_MT_object_convert(Menu):
 
             layout.separator()
 
-            layout.operator("gpencil.convert", text="Convert Gpencil to Path", icon = "CURVE_PATH").type = 'PATH'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Bezier Curves", icon = "OUTLINER_DATA_CURVE").type = 'CURVE'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Mesh", icon = "OUTLINER_DATA_MESH").type = 'POLY'
+            layout.operator("gpencil.convert", text="Gpencil to Path", icon = "CURVE_PATH").type = 'PATH'
+            layout.operator("gpencil.convert", text="Gpencil to Bezier Curves", icon = "OUTLINER_DATA_CURVE").type = 'CURVE'
+            layout.operator("gpencil.convert", text="Gpencil to Mesh", icon = "OUTLINER_DATA_MESH").type = 'POLY'
 
 
 class VIEW3D_MT_object_animation(Menu):
@@ -2977,9 +2977,9 @@ class VIEW3D_MT_object_context_menu(Menu):
             layout.separator()
 
         elif obj.type == 'GPENCIL':
-            layout.operator("gpencil.convert", text="Convert Gpencil to Path", icon ="CURVE_PATH").type = 'PATH'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Bezier Curves", icon ="OUTLINER_DATA_CURVE").type = 'CURVE'
-            layout.operator("gpencil.convert", text="Convert Gpencil to Mesh", icon ="OUTLINER_DATA_MESH").type = 'POLY'
+            layout.operator("gpencil.convert", text="Gpencil to Path", icon ="CURVE_PATH").type = 'PATH'
+            layout.operator("gpencil.convert", text="Gpencil to Bezier Curves", icon ="OUTLINER_DATA_CURVE").type = 'CURVE'
+            layout.operator("gpencil.convert", text="Gpencil to Mesh", icon ="OUTLINER_DATA_MESH").type = 'POLY'
 
             layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
 
