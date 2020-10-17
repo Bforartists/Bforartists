@@ -1640,6 +1640,7 @@ class TOOLBAR_MT_misc(Menu):
             row = layout.row(align=True)
 
             row.operator("wm.search_menu", text="", icon='VIEWZOOM')
+            row.operator("wm.search_operator", text="", icon='VIEWZOOM')
 
         if addon_prefs.misc_info:
 
