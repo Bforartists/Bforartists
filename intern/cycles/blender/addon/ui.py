@@ -1774,15 +1774,16 @@ class CYCLES_WORLD_PT_settings_surface(CyclesButtonsPanel, Panel):
         col.prop(cworld, "sampling_method", text="Sampling")
 
         sub = col.column()
-        sub.active = cworld.sampling_method != 'NONE'
         subsub = sub.row(align=True)
-        subsub.active = cworld.sampling_method == 'MANUAL'
-        subsub.prop(cworld, "sample_map_resolution")
+        if cworld.sampling_method == 'MANUAL':
+            subsub.prop(cworld, "sample_map_resolution")
         if use_branched_path(context):
-            subsub = sub.column(align=True)
-            subsub.active = use_sample_all_lights(context)
-            subsub.prop(cworld, "samples")
-        sub.prop(cworld, "max_bounces")
+            if cworld.sampling_method != 'NONE':
+                subsub = sub.column(align=True)
+                if use_sample_all_lights(context):
+                    subsub.prop(cworld, "samples")
+        if cworld.sampling_method != 'NONE':
+            sub.prop(cworld, "max_bounces")
 
 
 class CYCLES_WORLD_PT_settings_volume(CyclesButtonsPanel, Panel):
