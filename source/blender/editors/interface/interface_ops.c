@@ -558,6 +558,13 @@ static int override_type_set_button_exec(bContext *C, wmOperator *op)
 
   IDOverrideLibraryPropertyOperation *opop = RNA_property_override_property_operation_get(
       CTX_data_main(C), &ptr, prop, operation, index, true, NULL, &created);
+
+  if (opop == NULL) {
+    /* Sometimes e.g. RNA cannot generate a path to the given property. */
+    BKE_reportf(op->reports, RPT_WARNING, "Failed to create the override operation");
+    return OPERATOR_CANCELLED;
+  }
+
   if (!created) {
     opop->operation = operation;
   }
@@ -808,6 +815,9 @@ bool UI_context_copy_to_selected_list(bContext *C,
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_FCurve)) {
     *r_lb = CTX_data_collection_get(C, "selected_editable_fcurves");
+  }
+  else if (RNA_struct_is_a(ptr->type, &RNA_Keyframe)) {
+    *r_lb = CTX_data_collection_get(C, "selected_editable_keyframes");
   }
   else if (RNA_struct_is_a(ptr->type, &RNA_NlaStrip)) {
     *r_lb = CTX_data_collection_get(C, "selected_nla_strips");

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2318,10 +2318,6 @@ msgid "Additional"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
-msgid "Single"
-msgstr "ﯽﮑﺗ"
-
-
 msgid "End"
 msgstr "ﻥﺎﯾﺎﭘ"
 
@@ -2682,6 +2678,10 @@ msgid "Global"
 msgstr "ﯽﻧﺎﻬﺟ"
 
 
+msgid "Dynamic"
+msgstr "ﺎﯾﻮﭘ"
+
+
 msgid "Add Color"
 msgstr "ﮓﻧﺭ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
@@ -2896,14 +2896,6 @@ msgstr "ﻦﯿﺑﺭﻭﺩ ﻉﺍﻮﻧﺍ"
 
 msgid "Panoramic"
 msgstr "ﺎﯾﻮﭘ"
-
-
-msgid "End Bevel Factor"
-msgstr "ﻁﻮﻠﺨﻣ ﺭﻮﺘﮐﺎﻓ"
-
-
-msgid "Start Bevel Factor"
-msgstr "ﻁﻮﻠﺨﻣ ﺭﻮﺘﮐﺎﻓ"
 
 
 msgid "Bevel Object"
@@ -3692,10 +3684,6 @@ msgstr "ﯽﻓﺩﺎﺼﺗ"
 
 msgid "Show particles after they have died"
 msgstr "ﻥﺩﺮﮐ‌ﮏﻨﯿﻟ ﯼﺍﺮﺑ ﺕﺍﺭﺫ ﻢﺘﺴﯿﺳ ﺶﻨﯾﺰﮔ"
-
-
-msgid "Dynamic"
-msgstr "ﺎﯾﻮﭘ"
 
 
 msgid "Even Distribution"
@@ -5165,12 +5153,12 @@ msgid "K2"
 msgstr "K2"
 
 
-msgid "Camera's focal length"
-msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻩﺯﺍﺪﻧﺍ"
-
-
 msgid "K3"
 msgstr "K3"
+
+
+msgid "Camera's focal length"
+msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻩﺯﺍﺪﻧﺍ"
 
 
 msgid "Movie Tracking Dopesheet"
@@ -5455,6 +5443,10 @@ msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
 msgid "Limit Channel"
 msgstr "ﺎﻫ‌ﻝﺎﻧﺎﮐ"
+
+
+msgid "Single"
+msgstr "ﯽﮑﺗ"
 
 
 msgid "Alpha falloff"
@@ -8366,11 +8358,6 @@ msgid "Bevel"
 msgstr "ﺡﻮﻄﺳ"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "ﺭﺪﻨﻠﺑ ﯽﮑﯿﻧﻭﺮﺘﮑﻟﺍ ﻩﺎﮕﺷﻭﺮﻓ"
-
-
 msgid "Interpolation method"
 msgstr "ﻡﺎﻏﺩﺍ"
 
@@ -8786,10 +8773,6 @@ msgstr "ﺖﯿﮑﻟﺎﻣ ﻉﻮﻧ ﺎﺑ ﻪﺑﺎﺸﻣ ﯼﺎﻫ‌ﺢﻄ�
 
 
 msgid "Amount of Adjacent Faces"
-msgstr "ﺢﻄﺳ ﺭﺩ ﺱﻮﺋﺭ ﺭﺍﺪﻘﻣ"
-
-
-msgid "Amount of connecting edges"
 msgstr "ﺢﻄﺳ ﺭﺩ ﺱﻮﺋﺭ ﺭﺍﺪﻘﻣ"
 
 
@@ -9311,11 +9294,6 @@ msgid "Copy Constraints to Selected Objects"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "ﻞﯾﺪﺒﺗ"
-
-
 msgid "Exact Match"
 msgstr "ﻮﮕﻟﺍ ﻖﺑﺎﻄﺗ"
 
@@ -9446,11 +9424,6 @@ msgstr "ﯽﻧﺎﺸﻧﺯﺎﺑ"
 msgctxt "Operator"
 msgid "Select Hook"
 msgstr "ﺏﺎﺨﺘﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "ﺎﻤﻧ ﻥﺎﮑﻣ ﺯﺍ"
 
 
 msgctxt "Operator"
@@ -11245,11 +11218,6 @@ msgstr "ﮏﯿﺗﺎﺘﺳﺍ ﻩﺮﯾﺰﺟ"
 msgctxt "Operator"
 msgid "Pin"
 msgstr "ﻪﻨﯿﻤﮐ"
-
-
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "ﺭﻮﺘﮐﮊﻭﺮﭘ"
 
 
 msgctxt "Operator"
@@ -13256,11 +13224,6 @@ msgid "Bounciness"
 msgstr "ﺎﻫﻭﺮﯿﻧ:"
 
 
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "ﻝﺎﻌﻓ ﻩﻭﺮﮔ ﺯﺍ ﻑﺬﺣ"
-
-
 msgid "Track:"
 msgstr "ﺎﻫ ﮎﺮﺗِ:"
 
@@ -14111,6 +14074,11 @@ msgstr "ﻪﮑﺒﺷ"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "ﻞﯾﺪﺒﺗ"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "ﻝﺎﻌﻓ"
 
@@ -14163,16 +14131,6 @@ msgstr "ﺭﺍﺩ ﻂﺧ‌ﺮﯾﺯ"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "ﺶﺧﺮﭼ ﻢﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
-msgid "Assign Automatic From Bones"
-msgstr "ﺎﻫ ﻥﺍﻮﺨﺘﺳﺍ ﺯﺍ ﺭﺎﮐﺩﻮﺧ ﺹﺎﺼﺘﺧﺍ"
-
-
-msgctxt "Operator"
-msgid "Assign From Bone Envelopes"
-msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﯼﺎﻫ‌ﺖﮐﺎﭘ ﺯﺍ ﺹﺎﺼﺘﺧﺍ"
 
 
 msgctxt "Operator"
@@ -14281,10 +14239,6 @@ msgstr "ﺭﺍﺪﺸﻫ:"
 
 msgid "Undefined Type"
 msgstr "ﻁﻮﻠﺨﻣ ﻉﻮﻧ"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﯽﺷ ﻭﺩ ﻦﯿﺑ ﺮﯿﺴﻣ ﻦﯾﺮﺗ ﻩﺎﺗﻮﮐ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgid "No valid formats found"
@@ -15830,6 +15784,10 @@ msgstr "ﺮﯿﺜﮑﺗ ﻝﺎﺣ ﺭﺩ ءﯽﺷ"
 
 msgid "No render output node in scene"
 msgstr "ﺮﯿﺜﮑﺗ ﻝﺎﺣ ﺭﺩ ءﯽﺷ"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﯽﺷ ﻭﺩ ﻦﯿﺑ ﺮﯿﺴﻣ ﻦﯾﺮﺗ ﻩﺎﺗﻮﮐ ﺏﺎﺨﺘﻧﺍ"
 
 
 msgid "Paste name"

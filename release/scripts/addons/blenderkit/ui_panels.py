@@ -1392,5 +1392,5 @@ def register_ui_panels():
 def unregister_ui_panels():
     bpy.types.VIEW3D_MT_editor_menus.remove(header_search_draw)
     for c in classess:
-        print('unregister', c)
+        # print('unregister', c)
         bpy.utils.unregister_class(c)

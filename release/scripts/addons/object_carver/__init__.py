@@ -275,7 +275,7 @@ class CarverPreferences(AddonPreferences):
 addon_keymaps = []
 
 def register():
-    print("Registered Carver")
+    # print("Registered Carver")
 
     bpy.utils.register_class(CarverPreferences)
     # Todo : Add an icon in the toolbat
@@ -295,7 +295,7 @@ def unregister():
     carver_operator.unregister()
     bpy.utils.unregister_class(CarverPreferences)
 
-    print("Unregistered Carver")
+    # print("Unregistered Carver")
 
     # remove keymap entry
     for km, kmi in addon_keymaps:

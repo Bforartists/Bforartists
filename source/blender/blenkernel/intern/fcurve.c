@@ -502,7 +502,7 @@ FCurve *BKE_fcurve_find_by_rna_context_ui(bContext *C,
  * with optional argument for precision required.
  * Returns the index to insert at (data already at that index will be offset if replace is 0)
  */
-static int binarysearch_bezt_index_ex(
+static int BKE_fcurve_bezt_binarysearch_index_ex(
     BezTriple array[], float frame, int arraylen, float threshold, bool *r_replace)
 {
   int start = 0, end = arraylen;
@@ -589,10 +589,14 @@ static int binarysearch_bezt_index_ex(
 /* Binary search algorithm for finding where to insert BezTriple. (for use by insert_bezt_fcurve)
  * Returns the index to insert at (data already at that index will be offset if replace is 0)
  */
-int binarysearch_bezt_index(BezTriple array[], float frame, int arraylen, bool *r_replace)
+int BKE_fcurve_bezt_binarysearch_index(BezTriple array[],
+                                       float frame,
+                                       int arraylen,
+                                       bool *r_replace)
 {
   /* this is just a wrapper which uses the default threshold */
-  return binarysearch_bezt_index_ex(array, frame, arraylen, BEZT_BINARYSEARCH_THRESH, r_replace);
+  return BKE_fcurve_bezt_binarysearch_index_ex(
+      array, frame, arraylen, BEZT_BINARYSEARCH_THRESH, r_replace);
 }
 
 /* ...................................... */
@@ -839,6 +843,8 @@ bool BKE_fcurve_calc_range(
  */
 void BKE_fcurve_active_keyframe_set(FCurve *fcu, const BezTriple *active_bezt)
 {
+  /* The active keyframe should always be selected. */
+  BLI_assert(active_bezt == NULL || (active_bezt->f2 & SELECT));
   fcu->active_keyframe_index = (active_bezt == NULL) ? FCURVE_ACTIVE_KEYFRAME_NONE :
                                                        active_bezt - fcu->bezt;
 }
@@ -850,9 +856,15 @@ int BKE_fcurve_active_keyframe_index(const FCurve *fcu)
 {
   const int active_keyframe_index = fcu->active_keyframe_index;
 
-  /* Sanity checks. */
+  /* Array access boundary checks. */
   if ((fcu->bezt == NULL) || (active_keyframe_index >= fcu->totvert) ||
       (active_keyframe_index < 0)) {
+    return FCURVE_ACTIVE_KEYFRAME_NONE;
+  }
+
+  const BezTriple *active_bezt = &fcu->bezt[active_keyframe_index];
+  if ((active_bezt->f2 & SELECT) == 0) {
+    /* The active keyframe should always be selected. If it's not selected, it can't be active. */
     return FCURVE_ACTIVE_KEYFRAME_NONE;
   }
 
@@ -960,7 +972,7 @@ bool BKE_fcurve_is_keyframable(FCurve *fcu)
  * \{ */
 
 /* add a BezTriple to a column */
-void bezt_add_to_cfra_elem(ListBase *lb, BezTriple *bezt)
+static void UNUSED_FUNCTION(bezt_add_to_cfra_elem)(ListBase *lb, BezTriple *bezt)
 {
   CfraElem *ce, *cen;
 
@@ -1343,8 +1355,11 @@ bool test_time_fcurve(FCurve *fcu)
 /* The length of each handle is not allowed to be more
  * than the horizontal distance between (v1-v4).
  * This is to prevent curve loops.
+ *
+ * This function is very similar to BKE_curve_correct_bezpart(), but allows a steeper tangent for
+ * more snappy animations. This is not desired for other areas in which curves are used, though.
  */
-void correct_bezpart(const float v1[2], float v2[2], float v3[2], const float v4[2])
+void BKE_fcurve_correct_bezpart(const float v1[2], float v2[2], float v3[2], const float v4[2])
 {
   float h1[2], h2[2], len1, len2, len, fac;
 
@@ -1525,11 +1540,18 @@ static void berekeny(float f1, float f2, float f3, float f4, float *o, int b)
   }
 }
 
-/* Recompute handles to neatly subdivide the prev-next range at bezt. */
-bool BKE_bezt_subdivide_handles(struct BezTriple *bezt,
-                                struct BezTriple *prev,
-                                struct BezTriple *next,
-                                float *r_pdelta)
+/**
+ * Adjust Bezier handles of all three given BezTriples, so that `bezt` can be inserted between
+ * `prev` and `next` without changing the resulting curve shape.
+ *
+ * \param r_pdelta: return Y difference between `bezt` and the original curve value at its X
+ * position.
+ * \return Whether the split was successful.
+ */
+bool BKE_fcurve_bezt_subdivide_handles(struct BezTriple *bezt,
+                                       struct BezTriple *prev,
+                                       struct BezTriple *next,
+                                       float *r_pdelta)
 {
   /* The four points that make up this section of the Bezier curve. */
   const float *prev_coords = prev->vec[1];
@@ -1547,7 +1569,7 @@ bool BKE_bezt_subdivide_handles(struct BezTriple *bezt,
   }
 
   /* Apply evaluation-time limits and compute the effective curve. */
-  correct_bezpart(prev_coords, prev_handle_right, next_handle_left, next_coords);
+  BKE_fcurve_correct_bezpart(prev_coords, prev_handle_right, next_handle_left, next_coords);
   float roots[4];
   if (!findzero(new_coords[0],
                 prev_coords[0],
@@ -1659,7 +1681,7 @@ static float fcurve_eval_keyframes_interpolate(FCurve *fcu, BezTriple *bezts, fl
    *   Weird errors, like selecting the wrong keyframe range (see T39207), occur.
    *   This lower bound was established in b888a32eee8147b028464336ad2404d8155c64dd.
    */
-  a = binarysearch_bezt_index_ex(bezts, evaltime, fcu->totvert, 0.0001, &exact);
+  a = BKE_fcurve_bezt_binarysearch_index_ex(bezts, evaltime, fcu->totvert, 0.0001, &exact);
   bezt = bezts + a;
 
   if (exact) {
@@ -1731,7 +1753,7 @@ static float fcurve_eval_keyframes_interpolate(FCurve *fcu, BezTriple *bezts, fl
         return v1[1];
       }
       /* adjust handles so that they don't overlap (forming a loop) */
-      correct_bezpart(v1, v2, v3, v4);
+      BKE_fcurve_correct_bezpart(v1, v2, v3, v4);
 
       /* try to get a value for this position - if failure, try another set of points */
       if (!findzero(evaltime, v1[0], v2[0], v3[0], v4[0], opl)) {
