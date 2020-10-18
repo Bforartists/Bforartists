@@ -309,6 +309,8 @@ def extract_c_comments(filepath):
     for i, i_next in code_ranges:
         for match in re_vars.finditer(text[i:i_next]):
             code_words.add(match.group(0))
+            # Allow plurals of these variables too.
+            code_words.add(match.group(0) + "'s")
 
     comments = []
 

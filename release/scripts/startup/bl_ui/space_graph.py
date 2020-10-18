@@ -510,6 +510,9 @@ class GRAPH_MT_key_snap(Menu):
         layout.operator("graph.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
         layout.operator("graph.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
         layout.operator("graph.snap", text="Flatten Handles", icon = "FLATTEN_HANDLER").type= 'HORIZONTAL'
+        layout.separator()
+        layout.operator("graph.frame_jump", text="Cursor to Selection")
+        layout.operator("graph.snap_cursor_value", text="Cursor Value to Selection")
 
 
 class GRAPH_MT_key_transform(Menu):
@@ -594,6 +597,8 @@ class GRAPH_MT_snap_pie(Menu):
         pie.operator("graph.snap", text="Nearest Second").type = 'NEAREST_SECOND'
         pie.operator("graph.snap", text="Nearest Marker").type = 'NEAREST_MARKER'
         pie.operator("graph.snap", text="Flatten Handles").type = 'HORIZONTAL'
+        pie.operator("graph.frame_jump", text="Cursor to Selection")
+        pie.operator("graph.snap_cursor_value", text="Cursor Value to Selection")
 
 
 class GRAPH_MT_channel_context_menu(Menu):

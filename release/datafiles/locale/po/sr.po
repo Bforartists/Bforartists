@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -5426,6 +5426,10 @@ msgid "Global"
 msgstr "Глобално"
 
 
+msgid "Dynamic"
+msgstr "Динамичко"
+
+
 msgid "Add Color"
 msgstr "Додај боју"
 
@@ -5910,20 +5914,8 @@ msgid "Bevel Depth"
 msgstr "Дубина искошавање"
 
 
-msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
-msgstr "Мапира фактор искошења на број подела криве (U резолуција)"
-
-
 msgid "Spline"
 msgstr "Крива"
-
-
-msgid "Determines how the start bevel factor is mapped to a spline"
-msgstr "Одреди како је почетни фактор искошења мапиран на криву"
-
-
-msgid "Start Bevel Factor"
-msgstr "ПОчетни фактор обарања ивица"
 
 
 msgid "Round"
@@ -7778,10 +7770,6 @@ msgid "Show particles after they have died"
 msgstr "Изаберите систем честица за повезивање"
 
 
-msgid "Dynamic"
-msgstr "Динамичко"
-
-
 msgid "Even Distribution"
 msgstr "Једнака расподела"
 
@@ -9555,10 +9543,6 @@ msgid "Texture Specials"
 msgstr "Контроле текстура"
 
 
-msgid "Text To 3D Object"
-msgstr "Зекст у 3D објекат"
-
-
 msgid "Templates"
 msgstr "Шаблони"
 
@@ -11010,6 +10994,18 @@ msgid "Tracks"
 msgstr "Трагови"
 
 
+msgid "K1"
+msgstr "K1"
+
+
+msgid "K2"
+msgstr "K2"
+
+
+msgid "K3"
+msgstr "K3"
+
+
 msgid "Distortion Model"
 msgstr "Изобличавање модела"
 
@@ -11022,20 +11018,8 @@ msgid "Divisions"
 msgstr "Подела"
 
 
-msgid "K1"
-msgstr "K1"
-
-
-msgid "K2"
-msgstr "K2"
-
-
 msgid "Camera's focal length"
 msgstr "Дужина фокуса камере"
-
-
-msgid "K3"
-msgstr "K3"
 
 
 msgid "Pixel Aspect Ratio"
@@ -17645,11 +17629,6 @@ msgid "Clear Object Constraints"
 msgstr "Очисти ограничења објекта"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Претвори у"
-
-
 msgid "Convert selected objects to another type"
 msgstr "Претвори изабране објекте у други тип"
 
@@ -17831,11 +17810,6 @@ msgstr "Избор удице"
 
 msgid "Select affected vertices on mesh"
 msgstr "Изабери темена која су под утицајем удице"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "Одстојање од курсора"
 
 
 msgctxt "Operator"
@@ -19184,10 +19158,6 @@ msgid "Import Key Configuration..."
 msgstr "Увези конфигурације пречица са тастатуре..."
 
 
-msgid "Keep original"
-msgstr "Сачувај оригинал"
-
-
 msgid "Remove key config"
 msgstr "Уклони подешавање кључа"
 
@@ -19249,11 +19219,6 @@ msgstr "Испеци"
 msgctxt "Operator"
 msgid "Bake All Physics"
 msgstr "Испеци сву физику"
-
-
-msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "Блендер"
 
 
 msgid "Bake from cache"
@@ -20787,11 +20752,6 @@ msgid "Pin"
 msgstr "Закачи"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "Пројектуј из погледа"
-
-
 msgid "Camera Bounds"
 msgstr "Границе камере"
 
@@ -20803,11 +20763,6 @@ msgstr "Минимално растојање међу спојеним теме
 msgctxt "Operator"
 msgid "Reset"
 msgstr "Ресетуј"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "Отпакуј слику..."
 
 
 msgid "Pinned"
@@ -21117,10 +21072,6 @@ msgstr "Поравнај активан"
 
 msgid "Align to the active object's axis"
 msgstr "Поравнај са осама активног објекта"
-
-
-msgid "View From the Front"
-msgstr "Поравнај поглед према изабраном (спреда)"
 
 
 msgctxt "Operator"
@@ -27236,10 +27187,6 @@ msgid "Duplicate Marker to Scene..."
 msgstr "Дуплирај маркер на сцену..."
 
 
-msgid "Auto Keyframing:"
-msgstr "Аутоматски додај кључне кадрове:"
-
-
 msgctxt "Operator"
 msgid "Quit"
 msgstr "Излаз"
@@ -27812,6 +27759,11 @@ msgstr "Кавез"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "Претвори у"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "Додај активни"
 
@@ -28052,33 +28004,6 @@ msgstr "Упозорење"
 
 msgid "Undefined Type"
 msgstr "Недефинисан тип"
-
-
-msgctxt "Sequence"
-msgid "Color Balance"
-msgstr "Однос боја"
-
-
-msgctxt "Sequence"
-msgid "Curves"
-msgstr "Криве"
-
-
-msgctxt "Sequence"
-msgid "Bright/Contrast"
-msgstr "Светлина/контраст"
-
-
-msgid "Strips must be the same length"
-msgstr "Траке морају бити исте дужине"
-
-
-msgid "Strips were not compatible"
-msgstr "Траке нису компатибилне"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "Траке морају имати исти број улаза"
 
 
 msgctxt "MovieClip"
@@ -30027,6 +29952,33 @@ msgstr "Без чвора излаза рендеринга у сцени"
 
 msgid "All render layers are disabled"
 msgstr "Сва правила су просечна"
+
+
+msgctxt "Sequence"
+msgid "Color Balance"
+msgstr "Однос боја"
+
+
+msgctxt "Sequence"
+msgid "Curves"
+msgstr "Криве"
+
+
+msgctxt "Sequence"
+msgid "Bright/Contrast"
+msgstr "Светлина/контраст"
+
+
+msgid "Strips must be the same length"
+msgstr "Траке морају бити исте дужине"
+
+
+msgid "Strips were not compatible"
+msgstr "Траке нису компатибилне"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "Траке морају имати исти број улаза"
 
 
 msgid "Paste name"

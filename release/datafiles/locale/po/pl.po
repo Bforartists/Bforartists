@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -7066,38 +7066,6 @@ msgid "Can't create Rigid Body world"
 msgstr "Nie mogę utworzyć świata Brył Sztywnych"
 
 
-msgctxt "Sequence"
-msgid "Color Balance"
-msgstr "Balans koloru"
-
-
-msgctxt "Sequence"
-msgid "Curves"
-msgstr "Krzywe"
-
-
-msgctxt "Sequence"
-msgid "Hue Correct"
-msgstr "Korekta barwy"
-
-
-msgctxt "Sequence"
-msgid "Bright/Contrast"
-msgstr "Jasność/Kontrast"
-
-
-msgid "Strips must be the same length"
-msgstr "Paski muszą być tej samej długości"
-
-
-msgid "Strips were not compatible"
-msgstr "Paski były niekompatybilne"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "Paski muszą posiadać identyczną liczbę wejść"
-
-
 msgctxt "MovieClip"
 msgid "Plane Track"
 msgstr "Trak płaszczyznowy"
@@ -10762,12 +10730,24 @@ msgid " along X axis"
 msgstr " wzdłuż osi X"
 
 
+msgid " locking %s X axis"
+msgstr " blokada osi X - %s"
+
+
 msgid " along %s X axis"
 msgstr " wzdłuż osi X - %s"
 
 
+msgid " locking %s Y axis"
+msgstr " blokada osi Y - %s"
+
+
 msgid " along %s Y axis"
 msgstr " wzdłuż osi Y - %s"
+
+
+msgid " locking %s Z axis"
+msgstr " blokada osi Z - %s"
 
 
 msgid " along %s Z axis"
@@ -12079,6 +12059,38 @@ msgstr "Wszystkie Render Layers nieaktywne"
 
 msgid "No frames rendered, skipped to not overwrite"
 msgstr "Brak wyrenderowanych klatek, przełączono na nie nadpisuj"
+
+
+msgctxt "Sequence"
+msgid "Color Balance"
+msgstr "Balans koloru"
+
+
+msgctxt "Sequence"
+msgid "Curves"
+msgstr "Krzywe"
+
+
+msgctxt "Sequence"
+msgid "Hue Correct"
+msgstr "Korekta barwy"
+
+
+msgctxt "Sequence"
+msgid "Bright/Contrast"
+msgstr "Jasność/Kontrast"
+
+
+msgid "Strips must be the same length"
+msgstr "Paski muszą być tej samej długości"
+
+
+msgid "Strips were not compatible"
+msgstr "Paski były niekompatybilne"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "Paski muszą posiadać identyczną liczbę wejść"
 
 
 msgid "Paste name"

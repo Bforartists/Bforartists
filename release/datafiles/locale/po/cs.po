@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4677,10 +4677,6 @@ msgid "Maximum number of additional cells"
 msgstr "Číslo ve stupních určující počet otočení"
 
 
-msgid "Single"
-msgstr "Úhel"
-
-
 msgid "End"
 msgstr "Konec"
 
@@ -5557,6 +5553,10 @@ msgid "Global"
 msgstr "Globální"
 
 
+msgid "Dynamic"
+msgstr "Dynamický"
+
+
 msgid "Add Color"
 msgstr "Přidat barvu"
 
@@ -6101,14 +6101,6 @@ msgid "Bevel Depth"
 msgstr "Autovyhlazení"
 
 
-msgid "End Bevel Factor"
-msgstr "Činitel"
-
-
-msgid "Start Bevel Factor"
-msgstr "Činitel"
-
-
 msgid "Round"
 msgstr "Zaoblené"
 
@@ -6167,10 +6159,6 @@ msgstr "Jemnost dělení"
 
 msgid "Resolution V"
 msgstr "Jemnost dělení"
-
-
-msgid "Surface resolution in V direction"
-msgstr "Uložit současný soubor na vybrané umístění"
 
 
 msgid "Splines"
@@ -8013,10 +8001,6 @@ msgid "Show particles after they have died"
 msgstr "Prochází připojené částicové systémy"
 
 
-msgid "Dynamic"
-msgstr "Dynamický"
-
-
 msgid "Even Distribution"
 msgstr "Historie vracení"
 
@@ -9759,10 +9743,6 @@ msgstr "Přidat action strip"
 
 msgid "Texture Specials"
 msgstr "Obrázkové fonty"
-
-
-msgid "Text To 3D Object"
-msgstr "Text jako 3D objekt"
 
 
 msgid "Templates"
@@ -12239,6 +12219,10 @@ msgstr "Barva "
 
 msgid "Limit Channel"
 msgstr "NLA kanály"
+
+
+msgid "Single"
+msgstr "Úhel"
 
 
 msgid "Chroma Key"
@@ -17893,11 +17877,6 @@ msgid "Axis Threshold"
 msgstr "Práh osy"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "Mixovat z Tvaru"
-
-
 msgid "Blending factor"
 msgstr "Činitel mixování"
 
@@ -18765,10 +18744,6 @@ msgstr "Vybrané vertexy již tvoří plošku"
 
 
 msgid "Amount of Adjacent Faces"
-msgstr "Historie vracení"
-
-
-msgid "Amount of connecting edges"
 msgstr "Historie vracení"
 
 
@@ -19756,21 +19731,12 @@ msgid "Copy constraints to other selected objects"
 msgstr "Kopírovat vazby ostatním vybraným objektům"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Převést na"
-
-
 msgid "Convert selected objects to another type"
 msgstr "Převede vybrané objekty na jiný typ"
 
 
 msgid "Type of object to convert to"
 msgstr "Typ objektu pro převod na"
-
-
-msgid "Curve from Mesh/Text"
-msgstr "Křivku ze sítě/textu"
 
 
 msgid "Modifier"
@@ -20024,11 +19990,6 @@ msgstr "Vybrat řádek"
 
 msgid "Select affected vertices on mesh"
 msgstr "Odstraní vybrané vrcholy, hrany nebo plošky"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "Z kurzoru"
 
 
 msgctxt "Operator"
@@ -22032,10 +21993,6 @@ msgid "Import Key Configuration..."
 msgstr "Poslední frame animace"
 
 
-msgid "Keep original"
-msgstr "Uchovat originál"
-
-
 msgctxt "Operator"
 msgid "Remove Key Config"
 msgstr "Odstranit vazbu"
@@ -22125,11 +22082,6 @@ msgstr "Zapéct"
 msgctxt "Operator"
 msgid "Bake All Physics"
 msgstr "Nastavit klíč pro daný tvar jako relativní"
-
-
-msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "Mixovat z Tvaru"
 
 
 msgid "Bake from cache"
@@ -23905,11 +23857,6 @@ msgid "Pin"
 msgstr "Kreslit"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "Promítnout z pohledu (ohraničení)"
-
-
 msgid "Maximum distance between welded vertices"
 msgstr "Minimální vzdálenost mezi slučovanými vrcholy"
 
@@ -23925,11 +23872,6 @@ msgstr "Zrcadlení"
 
 msgid "Reveal all hidden UV vertices"
 msgstr "Odkryje označené plošky"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "Přibalit obrázek"
 
 
 msgid "Mark boundary edges as seams"
@@ -24358,30 +24300,6 @@ msgstr "Zarovnat aktivní"
 
 msgid "Align to the active object's axis"
 msgstr "Zarovnat k ose aktivního objektu"
-
-
-msgid "View From the Left"
-msgstr "Pohled zleva"
-
-
-msgid "View From the Right"
-msgstr "Pohled zprava"
-
-
-msgid "View From the Bottom"
-msgstr "Pohled ze spoda"
-
-
-msgid "View From the Top"
-msgstr "Pohled z vrchu"
-
-
-msgid "View From the Front"
-msgstr "Pohled ze předu"
-
-
-msgid "View From the Back"
-msgstr "Pohled ze zadu"
 
 
 msgctxt "Operator"
@@ -30836,11 +30754,6 @@ msgid "Lock Invert All"
 msgstr "Převrátit osy"
 
 
-msgctxt "Operator"
-msgid "New Shape From Mix"
-msgstr "Renderovaci okno"
-
-
 msgid "Detail"
 msgstr "Zobrazit:"
 
@@ -31076,11 +30989,6 @@ msgstr "Rozměr"
 
 msgid "Odd"
 msgstr "Přidat"
-
-
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "Přidat primitivum"
 
 
 msgid "Track:"
@@ -31577,10 +31485,6 @@ msgstr "Zdvojit značku"
 msgctxt "Operator"
 msgid "Duplicate Marker to Scene..."
 msgstr "Značky ke scéně..."
-
-
-msgid "Auto Keyframing:"
-msgstr "Další klíč"
 
 
 msgctxt "Operator"
@@ -32140,6 +32044,11 @@ msgstr "Mříž"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "Převést na"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "Přidat primitivum"
 
@@ -32251,11 +32160,6 @@ msgstr "Vybrat řádek"
 
 msgid "X-Ray"
 msgstr "X-paprsek"
-
-
-msgctxt "Operator"
-msgid "Assign From Bone Envelopes"
-msgstr "Plášť"
 
 
 msgctxt "Operator"
@@ -32385,14 +32289,6 @@ msgstr "Varování:"
 
 msgid "Undefined Type"
 msgstr "Boolean operace"
-
-
-msgid "Strips must be the same length"
-msgstr "Přepne směr normál označených plošek"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "Odstranit aktuální skript link"
 
 
 msgid "Error writing frame"
@@ -34219,6 +34115,14 @@ msgstr "Aktivovat materiálové uzly"
 
 msgid "No render output node in scene"
 msgstr "Výstupní adresář renderu"
+
+
+msgid "Strips must be the same length"
+msgstr "Přepne směr normál označených plošek"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "Odstranit aktuální skript link"
 
 
 msgid "Paste name"

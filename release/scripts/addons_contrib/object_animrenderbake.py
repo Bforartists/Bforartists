@@ -196,10 +196,9 @@ def register():
             description="End frame of the animated bake",
             default=250)
 
-    bpy.types.CYCLES_RENDER_PT_bake.prepend(draw)
     cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_bake", None)
-#    if cycles_panel:
-#        cycles_panel.prepend(draw)
+    if cycles_panel:
+       cycles_panel.prepend(draw)
 
 
 def unregister():
@@ -207,7 +206,6 @@ def unregister():
     del bpy.types.Scene.animrenderbake_start
     del bpy.types.Scene.animrenderbake_end
 
-    bpy.types.CYCLES_RENDER_PT_bake.remove(draw)
     cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_bake", None)
     if cycles_panel:
         cycles_panel.remove(draw)

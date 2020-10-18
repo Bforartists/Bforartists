@@ -270,10 +270,13 @@ typedef enum eSculptClothConstraintType {
   /* Constraint that creates the structure of the cloth. */
   SCULPT_CLOTH_CONSTRAINT_STRUCTURAL = 0,
   /* Constraint that references the position of a vertex and a position in deformation_pos which
-     can be deformed by the tools. */
+   * can be deformed by the tools. */
   SCULPT_CLOTH_CONSTRAINT_DEFORMATION = 1,
-  /* Constarint that references the vertex position and its initial position. */
+  /* Constraint that references the vertex position and a editable soft-body position for
+   * plasticity. */
   SCULPT_CLOTH_CONSTRAINT_SOFTBODY = 2,
+  /* Constraint that references the vertex position and its initial position. */
+  SCULPT_CLOTH_CONSTRAINT_PIN = 3,
 } eSculptClothConstraintType;
 
 typedef struct SculptClothLengthConstraint {
@@ -292,7 +295,7 @@ typedef struct SculptClothLengthConstraint {
   float length;
   float strength;
 
-  /* Index in SculptClothSimulation.node_state of the node from where this constraint was created.
+  /* Index in #SculptClothSimulation.node_state of the node from where this constraint was created.
    * This constraints will only be used by the solver if the state is active. */
   int node;
 
@@ -314,17 +317,19 @@ typedef struct SculptClothSimulation {
 
   float mass;
   float damping;
+  float softbody_strength;
 
   float (*acceleration)[3];
   float (*pos)[3];
   float (*init_pos)[3];
+  float (*softbody_pos)[3];
   float (*prev_pos)[3];
   float (*last_iteration_pos)[3];
 
   struct ListBase *collider_list;
 
   int totnode;
-  /* PBVHNode pointer as a key, index in SculptClothSimulation.node_state as value. */
+  /** #PBVHNode pointer as a key, index in #SculptClothSimulation.node_state as value. */
   struct GHash *node_state_index;
   eSculptClothNodeSimState *node_state;
 } SculptClothSimulation;
@@ -336,7 +341,7 @@ typedef struct SculptPersistentBase {
 } SculptPersistentBase;
 
 typedef struct SculptVertexInfo {
-  /* Idexed by vertex, stores and ID of its topologycally connected component. */
+  /* Indexed by vertex, stores and ID of its topologically connected component. */
   int *connected_component;
 
   /* Indexed by base mesh vertex index, stores if that vertex is a boundary. */
@@ -424,7 +429,7 @@ typedef struct SculptFakeNeighbors {
   /* Max distance used to calculate neighborhood information. */
   float current_max_distance;
 
-  /* Idexed by vertex, stores the vertex index of its fake neighbor if available. */
+  /* Indexed by vertex, stores the vertex index of its fake neighbor if available. */
   int *fake_neighbor_index;
 
 } SculptFakeNeighbors;
@@ -505,6 +510,11 @@ typedef struct SculptSession {
   float cursor_normal[3];
   float cursor_sampled_normal[3];
   float cursor_view_normal[3];
+
+  /* For Sculpt trimming gesture tools, initial raycast data from the position of the mouse when
+   * the gesture starts (intersection with the surface and if they ray hit the surface or not). */
+  float gesture_initial_location[3];
+  bool gesture_initial_hit;
 
   /* TODO(jbakker): Replace rv3d adn v3d with ViewContext */
   struct RegionView3D *rv3d;
@@ -601,6 +611,11 @@ void BKE_sculpt_bvh_update_from_ccg(struct PBVH *pbvh, struct SubdivCCG *subdiv_
 /* This ensure that all elements in the mesh (both vertices and grids) have their visibility
  * updated according to the face sets. */
 void BKE_sculpt_sync_face_set_visibility(struct Mesh *mesh, struct SubdivCCG *subdiv_ccg);
+
+/* Individual function to sync the Face Set visibility to mesh and grids. */
+void BKE_sculpt_sync_face_sets_visibility_to_base_mesh(struct Mesh *mesh);
+void BKE_sculpt_sync_face_sets_visibility_to_grids(struct Mesh *mesh,
+                                                   struct SubdivCCG *subdiv_ccg);
 
 /* Ensures that a Face Set data-layers exists. If it does not, it creates one respecting the
  * visibility stored in the vertices of the mesh. If it does, it copies the visibility from the

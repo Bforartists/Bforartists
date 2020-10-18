@@ -1081,7 +1081,7 @@ class USERPREF_PT_theme_collection_colors(ThemePanel, CenterAlignMixIn, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
         for i, ui in enumerate(theme.collection_color, 1):
-            flow.prop(ui, "color", text=iface_(f"Color {i:d}"), translate=False)
+            flow.prop(ui, "color", text=iface_("Color %d") % i, translate=False)
 
 
 # Base class for dynamically defined theme-space panels.
@@ -1807,6 +1807,7 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
 
         layout = self.layout
 
+        wm = context.window_manager
         prefs = context.preferences
         used_ext = {ext.module for ext in prefs.addons}
 
@@ -1832,16 +1833,16 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
         split = layout.split(factor=0.6)
 
         row = split.row()
-        row.prop(context.window_manager, "addon_support", expand=True)
+        row.prop(wm, "addon_support", expand=True)
 
         row = split.row(align=True)
         row.operator("preferences.addon_install", icon='IMPORT', text="Install...")
         row.operator("preferences.addon_refresh", icon='FILE_REFRESH', text="Refresh")
 
         row = layout.row()
-        row.prop(context.preferences.view, "show_addons_enabled_only")
-        row.prop(context.window_manager, "addon_filter", text="")
-        row.prop(context.window_manager, "addon_search", text="", icon='VIEWZOOM')
+        row.prop(prefs.view, "show_addons_enabled_only")
+        row.prop(wm, "addon_filter", text="")
+        row.prop(wm, "addon_search", text="", icon='VIEWZOOM')
 
         col = layout.column()
 
@@ -1866,10 +1867,10 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                 "(see console for details)",
             )
 
-        show_enabled_only = context.preferences.view.show_addons_enabled_only
-        filter = context.window_manager.addon_filter
-        search = context.window_manager.addon_search.lower()
-        support = context.window_manager.addon_support
+        show_enabled_only = prefs.view.show_addons_enabled_only
+        filter = wm.addon_filter
+        search = wm.addon_search.lower()
+        support = wm.addon_support
 
         # initialized on demand
         user_addon_paths = []
@@ -2247,6 +2248,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
                 ({"property": "use_sculpt_vertex_colors"}, "T71947"),
                 ({"property": "use_tools_missing_icons"}, "T80331"),
                 ({"property": "use_switch_object_operator"}, "T80402"),
+                ({"property": "use_sculpt_tools_tilt"}, "T00000"),
             ),
         )
 

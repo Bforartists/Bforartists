@@ -236,7 +236,9 @@ void outliner_build_tree(struct Main *mainvar,
                          struct SpaceOutliner *space_outliner,
                          struct ARegion *region);
 
-bool outliner_mode_requires_always_rebuild(const struct SpaceOutliner *space_outliner);
+bool outliner_requires_rebuild_on_select_or_active_change(
+    const struct SpaceOutliner *space_outliner);
+bool outliner_requires_rebuild_on_open_change(const struct SpaceOutliner *space_outliner);
 
 typedef struct IDsSelectedData {
   struct ListBase selected_array;
@@ -284,6 +286,7 @@ void outliner_item_select(struct bContext *C,
                           const short select_flag);
 
 bool outliner_item_is_co_over_name_icons(const TreeElement *te, float view_co_x);
+bool outliner_item_is_co_over_name(const TreeElement *te, float view_co_x);
 bool outliner_item_is_co_within_close_toggle(const TreeElement *te, float view_co_x);
 bool outliner_is_co_within_mode_column(SpaceOutliner *space_outliner, const float view_mval[2]);
 

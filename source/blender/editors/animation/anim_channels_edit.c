@@ -254,109 +254,107 @@ static void select_pchan_for_action_group(bAnimContext *ac, bActionGroup *agrp, 
   }
 }
 
-/* Deselect all animation channels
- * - data: pointer to datatype, as contained in bAnimContext
- * - datatype: the type of data that 'data' represents (eAnimCont_Types)
- * - test: check if deselecting instead of selecting
- * - sel: eAnimChannels_SetFlag;
- */
-void ANIM_deselect_anim_channels(
-    bAnimContext *ac, void *data, eAnimCont_Types datatype, bool test, eAnimChannels_SetFlag sel)
+static ListBase /* bAnimListElem */ anim_channels_for_selection(bAnimContext *ac)
 {
   ListBase anim_data = {NULL, NULL};
-  bAnimListElem *ale;
-  int filter;
 
   /* filter data */
   /* NOTE: no list visible, otherwise, we get dangling */
-  filter = ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_CHANNELS;
-  ANIM_animdata_filter(ac, &anim_data, filter, data, datatype);
+  const int filter = ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_CHANNELS;
+  ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
-  /* See if we should be selecting or deselecting */
-  if (test) {
-    for (ale = anim_data.first; ale; ale = ale->next) {
-      if (sel == 0) {
+  return anim_data;
+}
+
+static eAnimChannels_SetFlag anim_channels_selection_flag_for_toggle(const ListBase anim_data)
+{
+  /* See if we should be selecting or deselecting. */
+  for (bAnimListElem *ale = anim_data.first; ale; ale = ale->next) {
+    switch (ale->type) {
+      case ANIMTYPE_SCENE:
+        if (ale->flag & SCE_DS_SELECTED) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
         break;
-      }
-
-      switch (ale->type) {
-        case ANIMTYPE_SCENE:
-          if (ale->flag & SCE_DS_SELECTED) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
-        case ANIMTYPE_OBJECT:
+      case ANIMTYPE_OBJECT:
 #if 0 /* for now, do not take object selection into account, since it gets too annoying */
           if (ale->flag & SELECT) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
+            return ACHANNEL_SETFLAG_CLEAR;
           }
 #endif
-          break;
-        case ANIMTYPE_GROUP:
-          if (ale->flag & AGRP_SELECTED) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
-        case ANIMTYPE_FCURVE:
-        case ANIMTYPE_NLACURVE:
-          if (ale->flag & FCURVE_SELECTED) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
-        case ANIMTYPE_SHAPEKEY:
-          if (ale->flag & KEYBLOCK_SEL) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
-        case ANIMTYPE_NLATRACK:
-          if (ale->flag & NLATRACK_SELECTED) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
-
-        case ANIMTYPE_FILLACTD: /* Action Expander */
-        case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
-        case ANIMTYPE_DSLAM:
-        case ANIMTYPE_DSCAM:
-        case ANIMTYPE_DSCACHEFILE:
-        case ANIMTYPE_DSCUR:
-        case ANIMTYPE_DSSKEY:
-        case ANIMTYPE_DSWOR:
-        case ANIMTYPE_DSPART:
-        case ANIMTYPE_DSMBALL:
-        case ANIMTYPE_DSARM:
-        case ANIMTYPE_DSMESH:
-        case ANIMTYPE_DSNTREE:
-        case ANIMTYPE_DSTEX:
-        case ANIMTYPE_DSLAT:
-        case ANIMTYPE_DSLINESTYLE:
-        case ANIMTYPE_DSSPK:
-        case ANIMTYPE_DSGPENCIL:
-        case ANIMTYPE_DSMCLIP:
-        case ANIMTYPE_DSHAIR:
-        case ANIMTYPE_DSPOINTCLOUD:
-        case ANIMTYPE_DSVOLUME:
-        case ANIMTYPE_DSSIMULATION: {
-          if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED)) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
+        break;
+      case ANIMTYPE_GROUP:
+        if (ale->flag & AGRP_SELECTED) {
+          return ACHANNEL_SETFLAG_CLEAR;
         }
-        case ANIMTYPE_GPLAYER:
-          if (ale->flag & GP_LAYER_SELECT) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
-        case ANIMTYPE_MASKLAYER:
-          if (ale->flag & MASK_LAYERFLAG_SELECT) {
-            sel = ACHANNEL_SETFLAG_CLEAR;
-          }
-          break;
+        break;
+      case ANIMTYPE_FCURVE:
+      case ANIMTYPE_NLACURVE:
+        if (ale->flag & FCURVE_SELECTED) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
+        break;
+      case ANIMTYPE_SHAPEKEY:
+        if (ale->flag & KEYBLOCK_SEL) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
+        break;
+      case ANIMTYPE_NLATRACK:
+        if (ale->flag & NLATRACK_SELECTED) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
+        break;
+
+      case ANIMTYPE_FILLACTD: /* Action Expander */
+      case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
+      case ANIMTYPE_DSLAM:
+      case ANIMTYPE_DSCAM:
+      case ANIMTYPE_DSCACHEFILE:
+      case ANIMTYPE_DSCUR:
+      case ANIMTYPE_DSSKEY:
+      case ANIMTYPE_DSWOR:
+      case ANIMTYPE_DSPART:
+      case ANIMTYPE_DSMBALL:
+      case ANIMTYPE_DSARM:
+      case ANIMTYPE_DSMESH:
+      case ANIMTYPE_DSNTREE:
+      case ANIMTYPE_DSTEX:
+      case ANIMTYPE_DSLAT:
+      case ANIMTYPE_DSLINESTYLE:
+      case ANIMTYPE_DSSPK:
+      case ANIMTYPE_DSGPENCIL:
+      case ANIMTYPE_DSMCLIP:
+      case ANIMTYPE_DSHAIR:
+      case ANIMTYPE_DSPOINTCLOUD:
+      case ANIMTYPE_DSVOLUME:
+      case ANIMTYPE_DSSIMULATION: {
+        if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED)) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
+        break;
       }
+      case ANIMTYPE_GPLAYER:
+        if (ale->flag & GP_LAYER_SELECT) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
+        break;
+      case ANIMTYPE_MASKLAYER:
+        if (ale->flag & MASK_LAYERFLAG_SELECT) {
+          return ACHANNEL_SETFLAG_CLEAR;
+        }
+        break;
     }
   }
 
-  /* Now set the flags */
+  return ACHANNEL_SETFLAG_ADD;
+}
+
+static void anim_channels_select_set(bAnimContext *ac,
+                                     const ListBase anim_data,
+                                     eAnimChannels_SetFlag sel)
+{
+  bAnimListElem *ale;
+
   for (ale = anim_data.first; ale; ale = ale->next) {
     switch (ale->type) {
       case ANIMTYPE_SCENE: {
@@ -455,8 +453,22 @@ void ANIM_deselect_anim_channels(
       }
     }
   }
+}
 
-  /* Cleanup */
+/* Set selection state of all animation channels in the context. */
+void ANIM_anim_channels_select_set(bAnimContext *ac, eAnimChannels_SetFlag sel)
+{
+  ListBase anim_data = anim_channels_for_selection(ac);
+  anim_channels_select_set(ac, anim_data, sel);
+  ANIM_animdata_freelist(&anim_data);
+}
+
+/* Toggle selection state of all animation channels in the context. */
+void ANIM_anim_channels_select_toggle(bAnimContext *ac)
+{
+  ListBase anim_data = anim_channels_for_selection(ac);
+  const eAnimChannels_SetFlag sel = anim_channels_selection_flag_for_toggle(anim_data);
+  anim_channels_select_set(ac, anim_data, sel);
   ANIM_animdata_freelist(&anim_data);
 }
 
@@ -2527,7 +2539,7 @@ static void ANIM_OT_channels_find(wmOperatorType *ot)
 
 /* ********************** Select All Operator *********************** */
 
-static int animchannels_deselectall_exec(bContext *C, wmOperator *op)
+static int animchannels_selectall_exec(bContext *C, wmOperator *op)
 {
   bAnimContext ac;
 
@@ -2540,16 +2552,16 @@ static int animchannels_deselectall_exec(bContext *C, wmOperator *op)
   const int action = RNA_enum_get(op->ptr, "action");
   switch (action) {
     case SEL_TOGGLE:
-      ANIM_deselect_anim_channels(&ac, ac.data, ac.datatype, true, ACHANNEL_SETFLAG_ADD);
+      ANIM_anim_channels_select_toggle(&ac);
       break;
     case SEL_SELECT:
-      ANIM_deselect_anim_channels(&ac, ac.data, ac.datatype, false, ACHANNEL_SETFLAG_ADD);
+      ANIM_anim_channels_select_set(&ac, ACHANNEL_SETFLAG_ADD);
       break;
     case SEL_DESELECT:
-      ANIM_deselect_anim_channels(&ac, ac.data, ac.datatype, false, ACHANNEL_SETFLAG_CLEAR);
+      ANIM_anim_channels_select_set(&ac, ACHANNEL_SETFLAG_CLEAR);
       break;
     case SEL_INVERT:
-      ANIM_deselect_anim_channels(&ac, ac.data, ac.datatype, false, ACHANNEL_SETFLAG_INVERT);
+      ANIM_anim_channels_select_set(&ac, ACHANNEL_SETFLAG_INVERT);
       break;
     default:
       BLI_assert(0);
@@ -2570,7 +2582,7 @@ static void ANIM_OT_channels_select_all(wmOperatorType *ot)
   ot->description = "Toggle selection of all animation channels";
 
   /* api callbacks */
-  ot->exec = animchannels_deselectall_exec;
+  ot->exec = animchannels_selectall_exec;
   ot->poll = animedit_poll_channels_nla_tweakmode_off;
 
   /* flags */
@@ -2671,7 +2683,11 @@ static int animchannels_box_select_exec(bContext *C, wmOperator *op)
   WM_operator_properties_border_to_rcti(op, &rect);
 
   if (!extend) {
-    ANIM_deselect_anim_channels(&ac, ac.data, ac.datatype, true, ACHANNEL_SETFLAG_CLEAR);
+    printf("\n\n\n\033[92mBox-selecting channels without extend!\033[0m\n");
+    ANIM_anim_channels_select_set(&ac, ACHANNEL_SETFLAG_CLEAR);
+  }
+  else {
+    printf("\n\n\n\033[91mBox-selecting channels WITH extend!\033[0m\n");
   }
 
   if (select) {
@@ -2849,7 +2865,338 @@ static void ANIM_OT_channels_rename(wmOperatorType *ot)
 /* ******************** Mouse-Click Operator *********************** */
 /* Handle selection changes due to clicking on channels. Settings will get caught by UI code... */
 
-static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index, short selectmode)
+static int click_select_channel_scene(bAnimListElem *ale,
+                                      const short /* eEditKeyframes_Select or -1 */ selectmode)
+{
+  Scene *sce = (Scene *)ale->data;
+  AnimData *adt = sce->adt;
+
+  /* set selection status */
+  if (selectmode == SELECT_INVERT) {
+    /* swap select */
+    sce->flag ^= SCE_DS_SELECTED;
+    if (adt) {
+      adt->flag ^= ADT_UI_SELECTED;
+    }
+  }
+  else {
+    sce->flag |= SCE_DS_SELECTED;
+    if (adt) {
+      adt->flag |= ADT_UI_SELECTED;
+    }
+  }
+  return (ND_ANIMCHAN | NA_SELECTED);
+}
+
+static int click_select_channel_object(bContext *C,
+                                       bAnimContext *ac,
+                                       bAnimListElem *ale,
+                                       const short /* eEditKeyframes_Select or -1 */ selectmode)
+{
+  ViewLayer *view_layer = ac->view_layer;
+  Base *base = (Base *)ale->data;
+  Object *ob = base->object;
+  AnimData *adt = ob->adt;
+
+  if ((base->flag & BASE_SELECTABLE) == 0) {
+    return 0;
+  }
+
+  if (selectmode == SELECT_INVERT) {
+    /* swap select */
+    ED_object_base_select(base, BA_INVERT);
+
+    if (adt) {
+      adt->flag ^= ADT_UI_SELECTED;
+    }
+  }
+  else {
+    Base *b;
+
+    /* deselect all */
+    /* TODO: should this deselect all other types of channels too? */
+    for (b = view_layer->object_bases.first; b; b = b->next) {
+      ED_object_base_select(b, BA_DESELECT);
+      if (b->object->adt) {
+        b->object->adt->flag &= ~(ADT_UI_SELECTED | ADT_UI_ACTIVE);
+      }
+    }
+
+    /* select object now */
+    ED_object_base_select(base, BA_SELECT);
+    if (adt) {
+      adt->flag |= ADT_UI_SELECTED;
+    }
+  }
+
+  /* change active object - regardless of whether it is now selected [T37883] */
+  ED_object_base_activate(C, base); /* adds notifier */
+
+  if ((adt) && (adt->flag & ADT_UI_SELECTED)) {
+    adt->flag |= ADT_UI_ACTIVE;
+  }
+
+  /* Ensure we exit editmode on whatever object was active before
+   * to avoid getting stuck there - T48747. */
+  if (ob != CTX_data_edit_object(C)) {
+    ED_object_editmode_exit(C, EM_FREEDATA);
+  }
+  return (ND_ANIMCHAN | NA_SELECTED);
+}
+
+static int click_select_channel_dummy(bAnimContext *ac,
+                                      bAnimListElem *ale,
+                                      const short /* eEditKeyframes_Select or -1 */ selectmode)
+{
+  if (ale->adt == NULL) {
+    return 0;
+  }
+
+  /* select/deselect */
+  if (selectmode == SELECT_INVERT) {
+    /* inverse selection status of this AnimData block only */
+    ale->adt->flag ^= ADT_UI_SELECTED;
+  }
+  else {
+    /* select AnimData block by itself */
+    ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
+    ale->adt->flag |= ADT_UI_SELECTED;
+  }
+
+  /* set active? */
+  if (ale->adt->flag & ADT_UI_SELECTED) {
+    ale->adt->flag |= ADT_UI_ACTIVE;
+  }
+
+  return (ND_ANIMCHAN | NA_SELECTED);
+}
+
+static int click_select_channel_group(bAnimContext *ac,
+                                      bAnimListElem *ale,
+                                      const short /* eEditKeyframes_Select or -1 */ selectmode,
+                                      const int filter)
+{
+  bActionGroup *agrp = (bActionGroup *)ale->data;
+  Object *ob = NULL;
+  bPoseChannel *pchan = NULL;
+
+  /* Armatures-Specific Feature:
+   * Since groups are used to collect F-Curves of the same Bone by default
+   * (via Keying Sets) so that they can be managed better, we try to make
+   * things here easier for animators by mapping group selection to bone
+   * selection.
+   *
+   * Only do this if "Only Selected" dopesheet filter is not active, or else it
+   * becomes too unpredictable/tricky to manage
+   */
+  if ((ac->ads->filterflag & ADS_FILTER_ONLYSEL) == 0) {
+    if ((ale->id) && (GS(ale->id->name) == ID_OB)) {
+      ob = (Object *)ale->id;
+
+      if (ob->type == OB_ARMATURE) {
+        /* Assume for now that any group with corresponding name is what we want
+         * (i.e. for an armature whose location is animated, things would break
+         * if the user were to add a bone named "Location").
+         *
+         * TODO: check the first F-Curve or so to be sure...
+         */
+        pchan = BKE_pose_channel_find_name(ob->pose, agrp->name);
+      }
+    }
+  }
+
+  /* select/deselect group */
+  if (selectmode == SELECT_INVERT) {
+    /* inverse selection status of this group only */
+    agrp->flag ^= AGRP_SELECTED;
+  }
+  else if (selectmode == -1) {
+    /* select all in group (and deselect everything else) */
+    FCurve *fcu;
+
+    /* deselect all other channels */
+    ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
+    if (pchan) {
+      ED_pose_deselect_all(ob, SEL_DESELECT, false);
+    }
+
+    /* only select channels in group and group itself */
+    for (fcu = agrp->channels.first; fcu && fcu->grp == agrp; fcu = fcu->next) {
+      fcu->flag |= FCURVE_SELECTED;
+    }
+    agrp->flag |= AGRP_SELECTED;
+  }
+  else {
+    /* select group by itself */
+    ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
+    if (pchan) {
+      ED_pose_deselect_all(ob, SEL_DESELECT, false);
+    }
+
+    agrp->flag |= AGRP_SELECTED;
+  }
+
+  /* if group is selected now, make group the 'active' one in the visible list */
+  if (agrp->flag & AGRP_SELECTED) {
+    ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, agrp, ANIMTYPE_GROUP);
+    if (pchan) {
+      ED_pose_bone_select(ob, pchan, true);
+    }
+  }
+  else {
+    ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, NULL, ANIMTYPE_GROUP);
+    if (pchan) {
+      ED_pose_bone_select(ob, pchan, false);
+    }
+  }
+
+  return (ND_ANIMCHAN | NA_SELECTED);
+}
+
+static int click_select_channel_fcurve(bAnimContext *ac,
+                                       bAnimListElem *ale,
+                                       const short /* eEditKeyframes_Select or -1 */ selectmode,
+                                       const int filter)
+{
+  FCurve *fcu = (FCurve *)ale->data;
+
+  /* select/deselect */
+  if (selectmode == SELECT_INVERT) {
+    /* inverse selection status of this F-Curve only */
+    fcu->flag ^= FCURVE_SELECTED;
+  }
+  else {
+    /* select F-Curve by itself */
+    ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
+    fcu->flag |= FCURVE_SELECTED;
+  }
+
+  /* if F-Curve is selected now, make F-Curve the 'active' one in the visible list */
+  if (fcu->flag & FCURVE_SELECTED) {
+    ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, fcu, ale->type);
+  }
+
+  return (ND_ANIMCHAN | NA_SELECTED);
+}
+
+static int click_select_channel_shapekey(bAnimContext *ac,
+                                         bAnimListElem *ale,
+                                         const short /* eEditKeyframes_Select or -1 */ selectmode)
+{
+  KeyBlock *kb = (KeyBlock *)ale->data;
+
+  /* select/deselect */
+  if (selectmode == SELECT_INVERT) {
+    /* inverse selection status of this ShapeKey only */
+    kb->flag ^= KEYBLOCK_SEL;
+  }
+  else {
+    /* select ShapeKey by itself */
+    ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
+    kb->flag |= KEYBLOCK_SEL;
+  }
+
+  return (ND_ANIMCHAN | NA_SELECTED);
+}
+
+static int click_select_channel_nlacontrols(bAnimListElem *ale)
+{
+  AnimData *adt = (AnimData *)ale->data;
+
+  /* Toggle expand:
+   * - Although the triangle widget already allows this,
+   *   since there's nothing else that can be done here now,
+   *   let's just use it for easier expand/collapse for now.
+   */
+  adt->flag ^= ADT_NLA_SKEYS_COLLAPSED;
+
+  return (ND_ANIMCHAN | NA_EDITED);
+}
+
+static int click_select_channel_gpdatablock(bAnimListElem *ale)
+{
+  bGPdata *gpd = (bGPdata *)ale->data;
+
+  /* Toggle expand:
+   * - Although the triangle widget already allows this,
+   *   the whole channel can also be used for this purpose.
+   */
+  gpd->flag ^= GP_DATA_EXPAND;
+
+  return (ND_ANIMCHAN | NA_EDITED);
+}
+
+static int click_select_channel_gplayer(bContext *C,
+                                        bAnimContext *ac,
+                                        bAnimListElem *ale,
+                                        const short /* eEditKeyframes_Select or -1 */ selectmode,
+                                        const int filter)
+{
+  bGPdata *gpd = (bGPdata *)ale->id;
+  bGPDlayer *gpl = (bGPDlayer *)ale->data;
+
+  /* select/deselect */
+  if (selectmode == SELECT_INVERT) {
+    /* invert selection status of this layer only */
+    gpl->flag ^= GP_LAYER_SELECT;
+  }
+  else {
+    /* select layer by itself */
+    ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
+    gpl->flag |= GP_LAYER_SELECT;
+  }
+
+  /* change active layer, if this is selected (since we must always have an active layer) */
+  if (gpl->flag & GP_LAYER_SELECT) {
+    ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, gpl, ANIMTYPE_GPLAYER);
+    /* update other layer status */
+    BKE_gpencil_layer_active_set(gpd, gpl);
+    BKE_gpencil_layer_autolock_set(gpd, false);
+    DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
+  }
+
+  /* Grease Pencil updates */
+  WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED | ND_SPACE_PROPERTIES, NULL);
+  return (ND_ANIMCHAN | NA_EDITED); /* Animation Editors updates */
+}
+
+static int click_select_channel_maskdatablock(bAnimListElem *ale)
+{
+  Mask *mask = (Mask *)ale->data;
+
+  /* Toggle expand
+   * - Although the triangle widget already allows this,
+   *   the whole channel can also be used for this purpose.
+   */
+  mask->flag ^= MASK_ANIMF_EXPAND;
+
+  return (ND_ANIMCHAN | NA_EDITED);
+}
+
+static int click_select_channel_masklayer(bAnimContext *ac,
+                                          bAnimListElem *ale,
+                                          const short /* eEditKeyframes_Select or -1 */ selectmode)
+{
+  MaskLayer *masklay = (MaskLayer *)ale->data;
+
+  /* select/deselect */
+  if (selectmode == SELECT_INVERT) {
+    /* invert selection status of this layer only */
+    masklay->flag ^= MASK_LAYERFLAG_SELECT;
+  }
+  else {
+    /* select layer by itself */
+    ANIM_anim_channels_select_set(ac, ACHANNEL_SETFLAG_CLEAR);
+    masklay->flag |= MASK_LAYERFLAG_SELECT;
+  }
+
+  return (ND_ANIMCHAN | NA_EDITED);
+}
+
+static int mouse_anim_channels(bContext *C,
+                               bAnimContext *ac,
+                               const int channel_index,
+                               const short /* eEditKeyframes_Select or -1 */ selectmode)
 {
   ListBase anim_data = {NULL, NULL};
   bAnimListElem *ale;
@@ -2886,84 +3233,12 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
   /* action to take depends on what channel we've got */
   /* WARNING: must keep this in sync with the equivalent function in nla_channels.c */
   switch (ale->type) {
-    case ANIMTYPE_SCENE: {
-      Scene *sce = (Scene *)ale->data;
-      AnimData *adt = sce->adt;
-
-      /* set selection status */
-      if (selectmode == SELECT_INVERT) {
-        /* swap select */
-        sce->flag ^= SCE_DS_SELECTED;
-        if (adt) {
-          adt->flag ^= ADT_UI_SELECTED;
-        }
-      }
-      else {
-        sce->flag |= SCE_DS_SELECTED;
-        if (adt) {
-          adt->flag |= ADT_UI_SELECTED;
-        }
-      }
-
-      notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
+    case ANIMTYPE_SCENE:
+      notifierFlags |= click_select_channel_scene(ale, selectmode);
       break;
-    }
-    case ANIMTYPE_OBJECT: {
-#if 0
-      bDopeSheet *ads = (bDopeSheet *)ac->data;
-      Scene *sce = (Scene *)ads->source;
-#endif
-      ViewLayer *view_layer = ac->view_layer;
-      Base *base = (Base *)ale->data;
-      Object *ob = base->object;
-      AnimData *adt = ob->adt;
-
-      /* set selection status */
-      if (base->flag & BASE_SELECTABLE) {
-        if (selectmode == SELECT_INVERT) {
-          /* swap select */
-          ED_object_base_select(base, BA_INVERT);
-
-          if (adt) {
-            adt->flag ^= ADT_UI_SELECTED;
-          }
-        }
-        else {
-          Base *b;
-
-          /* deselect all */
-          /* TODO: should this deselect all other types of channels too? */
-          for (b = view_layer->object_bases.first; b; b = b->next) {
-            ED_object_base_select(b, BA_DESELECT);
-            if (b->object->adt) {
-              b->object->adt->flag &= ~(ADT_UI_SELECTED | ADT_UI_ACTIVE);
-            }
-          }
-
-          /* select object now */
-          ED_object_base_select(base, BA_SELECT);
-          if (adt) {
-            adt->flag |= ADT_UI_SELECTED;
-          }
-        }
-
-        /* change active object - regardless of whether it is now selected [T37883] */
-        ED_object_base_activate(C, base); /* adds notifier */
-
-        if ((adt) && (adt->flag & ADT_UI_SELECTED)) {
-          adt->flag |= ADT_UI_ACTIVE;
-        }
-
-        /* Ensure we exit editmode on whatever object was active before
-         * to avoid getting stuck there - T48747. */
-        if (ob != CTX_data_edit_object(C)) {
-          ED_object_editmode_exit(C, EM_FREEDATA);
-        }
-
-        notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
-      }
+    case ANIMTYPE_OBJECT:
+      notifierFlags |= click_select_channel_object(C, ac, ale, selectmode);
       break;
-    }
     case ANIMTYPE_FILLACTD: /* Action Expander */
     case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
     case ANIMTYPE_DSLAM:
@@ -2986,231 +3261,34 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
     case ANIMTYPE_DSHAIR:
     case ANIMTYPE_DSPOINTCLOUD:
     case ANIMTYPE_DSVOLUME:
-    case ANIMTYPE_DSSIMULATION: {
-      /* sanity checking... */
-      if (ale->adt) {
-        /* select/deselect */
-        if (selectmode == SELECT_INVERT) {
-          /* inverse selection status of this AnimData block only */
-          ale->adt->flag ^= ADT_UI_SELECTED;
-        }
-        else {
-          /* select AnimData block by itself */
-          ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, false, ACHANNEL_SETFLAG_CLEAR);
-          ale->adt->flag |= ADT_UI_SELECTED;
-        }
-
-        /* set active? */
-        if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED)) {
-          ale->adt->flag |= ADT_UI_ACTIVE;
-        }
-      }
-
-      notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
+    case ANIMTYPE_DSSIMULATION:
+      notifierFlags |= click_select_channel_dummy(ac, ale, selectmode);
       break;
-    }
-    case ANIMTYPE_GROUP: {
-      bActionGroup *agrp = (bActionGroup *)ale->data;
-
-      Object *ob = NULL;
-      bPoseChannel *pchan = NULL;
-
-      /* Armatures-Specific Feature:
-       * Since groups are used to collect F-Curves of the same Bone by default
-       * (via Keying Sets) so that they can be managed better, we try to make
-       * things here easier for animators by mapping group selection to bone
-       * selection.
-       *
-       * Only do this if "Only Selected" dopesheet filter is not active, or else it
-       * becomes too unpredictable/tricky to manage
-       */
-      if ((ac->ads->filterflag & ADS_FILTER_ONLYSEL) == 0) {
-        if ((ale->id) && (GS(ale->id->name) == ID_OB)) {
-          ob = (Object *)ale->id;
-
-          if (ob->type == OB_ARMATURE) {
-            /* Assume for now that any group with corresponding name is what we want
-             * (i.e. for an armature whose location is animated, things would break
-             * if the user were to add a bone named "Location").
-             *
-             * TODO: check the first F-Curve or so to be sure...
-             */
-            pchan = BKE_pose_channel_find_name(ob->pose, agrp->name);
-          }
-        }
-      }
-
-      /* select/deselect group */
-      if (selectmode == SELECT_INVERT) {
-        /* inverse selection status of this group only */
-        agrp->flag ^= AGRP_SELECTED;
-      }
-      else if (selectmode == -1) {
-        /* select all in group (and deselect everything else) */
-        FCurve *fcu;
-
-        /* deselect all other channels */
-        ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, false, ACHANNEL_SETFLAG_CLEAR);
-        if (pchan) {
-          ED_pose_deselect_all(ob, SEL_DESELECT, false);
-        }
-
-        /* only select channels in group and group itself */
-        for (fcu = agrp->channels.first; fcu && fcu->grp == agrp; fcu = fcu->next) {
-          fcu->flag |= FCURVE_SELECTED;
-        }
-        agrp->flag |= AGRP_SELECTED;
-      }
-      else {
-        /* select group by itself */
-        ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, false, ACHANNEL_SETFLAG_CLEAR);
-        if (pchan) {
-          ED_pose_deselect_all(ob, SEL_DESELECT, false);
-        }
-
-        agrp->flag |= AGRP_SELECTED;
-      }
-
-      /* if group is selected now, make group the 'active' one in the visible list */
-      if (agrp->flag & AGRP_SELECTED) {
-        ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, agrp, ANIMTYPE_GROUP);
-        if (pchan) {
-          ED_pose_bone_select(ob, pchan, true);
-        }
-      }
-      else {
-        ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, NULL, ANIMTYPE_GROUP);
-        if (pchan) {
-          ED_pose_bone_select(ob, pchan, false);
-        }
-      }
-
-      notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
+    case ANIMTYPE_GROUP:
+      notifierFlags |= click_select_channel_group(ac, ale, selectmode, filter);
       break;
-    }
     case ANIMTYPE_FCURVE:
-    case ANIMTYPE_NLACURVE: {
-      FCurve *fcu = (FCurve *)ale->data;
-
-      /* select/deselect */
-      if (selectmode == SELECT_INVERT) {
-        /* inverse selection status of this F-Curve only */
-        fcu->flag ^= FCURVE_SELECTED;
-      }
-      else {
-        /* select F-Curve by itself */
-        ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, false, ACHANNEL_SETFLAG_CLEAR);
-        fcu->flag |= FCURVE_SELECTED;
-      }
-
-      /* if F-Curve is selected now, make F-Curve the 'active' one in the visible list */
-      if (fcu->flag & FCURVE_SELECTED) {
-        ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, fcu, ale->type);
-      }
-
-      notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
+    case ANIMTYPE_NLACURVE:
+      notifierFlags |= click_select_channel_fcurve(ac, ale, selectmode, filter);
       break;
-    }
-    case ANIMTYPE_SHAPEKEY: {
-      KeyBlock *kb = (KeyBlock *)ale->data;
-
-      /* select/deselect */
-      if (selectmode == SELECT_INVERT) {
-        /* inverse selection status of this ShapeKey only */
-        kb->flag ^= KEYBLOCK_SEL;
-      }
-      else {
-        /* select ShapeKey by itself */
-        ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, false, ACHANNEL_SETFLAG_CLEAR);
-        kb->flag |= KEYBLOCK_SEL;
-      }
-
-      notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
+    case ANIMTYPE_SHAPEKEY:
+      notifierFlags |= click_select_channel_shapekey(ac, ale, selectmode);
       break;
-    }
-    case ANIMTYPE_NLACONTROLS: {
-      AnimData *adt = (AnimData *)ale->data;
-
-      /* Toggle expand:
-       * - Although the triangle widget already allows this,
-       *   since there's nothing else that can be done here now,
-       *   let's just use it for easier expand/collapse for now.
-       */
-      adt->flag ^= ADT_NLA_SKEYS_COLLAPSED;
-
-      notifierFlags |= (ND_ANIMCHAN | NA_EDITED);
+    case ANIMTYPE_NLACONTROLS:
+      notifierFlags |= click_select_channel_nlacontrols(ale);
       break;
-    }
-    case ANIMTYPE_GPDATABLOCK: {
-      bGPdata *gpd = (bGPdata *)ale->data;
-
-      /* Toggle expand:
-       * - Although the triangle widget already allows this,
-       *   the whole channel can also be used for this purpose.
-       */
-      gpd->flag ^= GP_DATA_EXPAND;
-
-      notifierFlags |= (ND_ANIMCHAN | NA_EDITED);
+    case ANIMTYPE_GPDATABLOCK:
+      notifierFlags |= click_select_channel_gpdatablock(ale);
       break;
-    }
-    case ANIMTYPE_GPLAYER: {
-      bGPdata *gpd = (bGPdata *)ale->id;
-      bGPDlayer *gpl = (bGPDlayer *)ale->data;
-
-      /* select/deselect */
-      if (selectmode == SELECT_INVERT) {
-        /* invert selection status of this layer only */
-        gpl->flag ^= GP_LAYER_SELECT;
-      }
-      else {
-        /* select layer by itself */
-        ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, false, ACHANNEL_SETFLAG_CLEAR);
-        gpl->flag |= GP_LAYER_SELECT;
-      }
-
-      /* change active layer, if this is selected (since we must always have an active layer) */
-      if (gpl->flag & GP_LAYER_SELECT) {
-        ANIM_set_active_channel(ac, ac->data, ac->datatype, filter, gpl, ANIMTYPE_GPLAYER);
-        /* update other layer status */
-        BKE_gpencil_layer_active_set(gpd, gpl);
-        BKE_gpencil_layer_autolock_set(gpd, false);
-        DEG_id_tag_update(&gpd->id, ID_RECALC_GEOMETRY);
-      }
-
-      /* Grease Pencil updates */
-      WM_event_add_notifier(C, NC_GPENCIL | ND_DATA | NA_EDITED | ND_SPACE_PROPERTIES, NULL);
-      notifierFlags |= (ND_ANIMCHAN | NA_EDITED); /* Animation Editors updates */
+    case ANIMTYPE_GPLAYER:
+      notifierFlags |= click_select_channel_gplayer(C, ac, ale, selectmode, filter);
       break;
-    }
-    case ANIMTYPE_MASKDATABLOCK: {
-      Mask *mask = (Mask *)ale->data;
-
-      /* Toggle expand
-       * - Although the triangle widget already allows this,
-       *   the whole channel can also be used for this purpose.
-       */
-      mask->flag ^= MASK_ANIMF_EXPAND;
-
-      notifierFlags |= (ND_ANIMCHAN | NA_EDITED);
+    case ANIMTYPE_MASKDATABLOCK:
+      notifierFlags |= click_select_channel_maskdatablock(ale);
       break;
-    }
-    case ANIMTYPE_MASKLAYER: {
-      MaskLayer *masklay = (MaskLayer *)ale->data;
-
-      /* select/deselect */
-      if (selectmode == SELECT_INVERT) {
-        /* invert selection status of this layer only */
-        masklay->flag ^= MASK_LAYERFLAG_SELECT;
-      }
-      else {
-        /* select layer by itself */
-        ANIM_deselect_anim_channels(ac, ac->data, ac->datatype, false, ACHANNEL_SETFLAG_CLEAR);
-        masklay->flag |= MASK_LAYERFLAG_SELECT;
-      }
-
-      notifierFlags |= (ND_ANIMCHAN | NA_EDITED);
+    case ANIMTYPE_MASKLAYER:
+      notifierFlags |= click_select_channel_masklayer(ac, ale, selectmode);
       break;
-    }
     default:
       if (G.debug & G_DEBUG) {
         printf("Error: Invalid channel type in mouse_anim_channels()\n");

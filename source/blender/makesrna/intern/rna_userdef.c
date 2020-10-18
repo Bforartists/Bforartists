@@ -2893,7 +2893,7 @@ static void rna_def_userdef_theme_space_node(BlenderRNA *brna)
   RNA_def_property_int_sdna(prop, NULL, "noodle_curving");
   RNA_def_property_int_default(prop, 5);
   RNA_def_property_range(prop, 0, 10);
-  RNA_def_property_ui_text(prop, "Noodle curving", "Curving of the noodle");
+  RNA_def_property_ui_text(prop, "Noodle Curving", "Curving of the noodle");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "grid_levels", PROP_INT, PROP_NONE);
@@ -2901,7 +2901,7 @@ static void rna_def_userdef_theme_space_node(BlenderRNA *brna)
   RNA_def_property_int_default(prop, 2);
   RNA_def_property_range(prop, 0, 2);
   RNA_def_property_ui_text(
-      prop, "Grid levels", "Amount of grid lines displayed in the background");
+      prop, "Grid Levels", "Amount of grid lines displayed in the background");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "input_node", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -6178,6 +6178,11 @@ static void rna_def_userdef_experimental(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_tools_missing_icons", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "use_tools_missing_icons", 1);
   RNA_def_property_ui_text(prop, "Tools with Missing Icons", "Show tools with missing icons");
+
+  prop = RNA_def_property(srna, "use_sculpt_tools_tilt", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "use_sculpt_tools_tilt", 1);
+  RNA_def_property_ui_text(
+      prop, "Sculpt Mode Tilt Support", "Support for pen tablet tilt events in Sculpt Mode");
 }
 
 static void rna_def_userdef_addon_collection(BlenderRNA *brna, PropertyRNA *cprop)
