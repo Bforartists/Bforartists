@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4019,10 +4019,6 @@ msgid "Maximum number of additional cells"
 msgstr "Iterationer"
 
 
-msgid "Single"
-msgstr "Vinkel"
-
-
 msgid "End"
 msgstr "Slutför"
 
@@ -5273,14 +5269,6 @@ msgstr "Kamera"
 
 msgid "Bevel Depth"
 msgstr "Färgdjup"
-
-
-msgid "End Bevel Factor"
-msgstr "Rensa Förälder"
-
-
-msgid "Start Bevel Factor"
-msgstr "Markera Rad"
 
 
 msgid "Round"
@@ -8715,10 +8703,6 @@ msgid "Texture Specials"
 msgstr "Text"
 
 
-msgid "Text To 3D Object"
-msgstr "Text till 3D-objekt"
-
-
 msgid "Templates"
 msgstr "Mallar"
 
@@ -11029,6 +11013,10 @@ msgstr "Färgrymd:"
 
 msgid "Limit Channel"
 msgstr "Renderings Fönster"
+
+
+msgid "Single"
+msgstr "Vinkel"
 
 
 msgid "Chroma Key"
@@ -16523,11 +16511,6 @@ msgid "Axis Threshold"
 msgstr "Tröskel"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "Blenders webbutik"
-
-
 msgid "Blend in shape from a shape key"
 msgstr "Starta Spel"
 
@@ -17335,10 +17318,6 @@ msgstr "Markera Länkad"
 
 
 msgid "Amount of Adjacent Faces"
-msgstr "Vertexcache"
-
-
-msgid "Amount of connecting edges"
 msgstr "Vertexcache"
 
 
@@ -18346,11 +18325,6 @@ msgid "Copy constraints to other selected objects"
 msgstr "Markera Länkad"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Konvertera:"
-
-
 msgid "Convert selected objects to another type"
 msgstr "Göm Markerad"
 
@@ -18590,11 +18564,6 @@ msgstr "Markera Rad"
 
 msgid "Select affected vertices on mesh"
 msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "Från muspekaren"
 
 
 msgctxt "Operator"
@@ -20578,10 +20547,6 @@ msgid "Import Key Configuration..."
 msgstr "Använd tangentinställning"
 
 
-msgid "Keep original"
-msgstr "Rensa Ursprung"
-
-
 msgctxt "Operator"
 msgid "Remove Key Config"
 msgstr "Aktivera tangentkonfiguration"
@@ -20683,11 +20648,6 @@ msgstr "Baka samtlig dynamik"
 
 msgid "Bake all physics"
 msgstr "Baka samtlig dynamik"
-
-
-msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "Markera Rad"
 
 
 msgid "Bake from cache"
@@ -22472,11 +22432,6 @@ msgid "Pin"
 msgstr "Måla"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "Spara Bild"
-
-
 msgid "Maximum distance between welded vertices"
 msgstr "Radera"
 
@@ -22492,11 +22447,6 @@ msgstr "Markera Länkad"
 
 msgid "Reveal all hidden UV vertices"
 msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "Spara Bild"
 
 
 msgid "Mark boundary edges as seams"
@@ -22933,14 +22883,6 @@ msgstr "Flytta Till Lager"
 
 msgid "Align to the active object's axis"
 msgstr "Markera Länkad"
-
-
-msgid "View From the Right"
-msgstr "Höger"
-
-
-msgid "View From the Top"
-msgstr "Rensa Rotation"
 
 
 msgctxt "Operator"
@@ -28578,11 +28520,6 @@ msgid "Lock Invert All"
 msgstr "Renderings Fönster"
 
 
-msgctxt "Operator"
-msgid "New Shape From Mix"
-msgstr "Flytta Till Lager"
-
-
 msgid "Detail"
 msgstr "Visa inställningar för kant"
 
@@ -28817,11 +28754,6 @@ msgstr "Eccentricitet"
 
 msgid "Odd"
 msgstr "Ny"
-
-
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "Flytta Till Lager"
 
 
 msgid "Track:"
@@ -29327,10 +29259,6 @@ msgstr "Duplicera markör"
 msgctxt "Operator"
 msgid "Duplicate Marker to Scene..."
 msgstr "Duplicera"
-
-
-msgid "Auto Keyframing:"
-msgstr "Flytta Till Lager"
 
 
 msgctxt "Operator"
@@ -29885,6 +29813,11 @@ msgstr "Lattice"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "Konvertera:"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "Flytta Till Lager"
 
@@ -29992,16 +29925,6 @@ msgstr "Växla kapitäler"
 msgctxt "Operator"
 msgid "Set Roll"
 msgstr "Börja innan:"
-
-
-msgctxt "Operator"
-msgid "Assign Automatic From Bones"
-msgstr "Tilldela från benomslutningar"
-
-
-msgctxt "Operator"
-msgid "Assign From Bone Envelopes"
-msgstr "Tilldela från benomslutningar"
 
 
 msgctxt "Operator"
@@ -30115,14 +30038,6 @@ msgstr "Spridning:"
 
 msgid "Undefined Type"
 msgstr "Arkiv"
-
-
-msgid "Strips must be the same length"
-msgstr "Höger"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "Markera Länkad"
 
 
 msgid "Error writing frame"
@@ -31725,6 +31640,14 @@ msgstr "Byta Stripp"
 
 msgid "No render output node in scene"
 msgstr "Rendera"
+
+
+msgid "Strips must be the same length"
+msgstr "Höger"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "Markera Länkad"
 
 
 msgid "Paste name"

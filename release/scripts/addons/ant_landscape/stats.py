@@ -2,7 +2,7 @@ from time import time
 
 try:
     import psutil
-    print('psutil available')
+    # print('psutil available')
     psutil_available=True
 except ImportError:
     psutil_available=False

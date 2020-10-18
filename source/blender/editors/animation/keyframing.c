@@ -407,7 +407,7 @@ int insert_bezt_fcurve(FCurve *fcu, const BezTriple *bezt, eInsertKeyFlags flag)
   /* are there already keyframes? */
   if (fcu->bezt) {
     bool replace;
-    i = binarysearch_bezt_index(fcu->bezt, bezt->vec[1][0], fcu->totvert, &replace);
+    i = BKE_fcurve_bezt_binarysearch_index(fcu->bezt, bezt->vec[1][0], fcu->totvert, &replace);
 
     /* replace an existing keyframe? */
     if (replace) {
@@ -511,12 +511,12 @@ static void subdivide_nonauto_handles(const FCurve *fcu,
 
   /* Subdivide the curve. */
   float delta;
-  if (!BKE_bezt_subdivide_handles(bezt, prev, next, &delta)) {
+  if (!BKE_fcurve_bezt_subdivide_handles(bezt, prev, next, &delta)) {
     return;
   }
 
   /* Decide when to force auto to manual. */
-  if (!BEZT_IS_AUTOH(bezt) || fabsf(delta) >= 0.001f) {
+  if (!BEZT_IS_AUTOH(bezt)) {
     return;
   }
   if ((prev_auto || next_auto) && fcu->auto_smoothing == FCURVE_SMOOTH_CONT_ACCEL) {
@@ -605,8 +605,7 @@ int insert_vert_fcurve(
 
   /* add temp beztriple to keyframes */
   a = insert_bezt_fcurve(fcu, &beztr, flag);
-
-  fcu->active_keyframe_index = a;
+  BKE_fcurve_active_keyframe_set(fcu, &fcu->bezt[a]);
 
   /* what if 'a' is a negative index?
    * for now, just exit to prevent any segfaults
@@ -1606,7 +1605,7 @@ static bool delete_keyframe_fcurve(AnimData *adt, FCurve *fcu, float cfra)
   int i;
 
   /* try to find index of beztriple to get rid of */
-  i = binarysearch_bezt_index(fcu->bezt, cfra, fcu->totvert, &found);
+  i = BKE_fcurve_bezt_binarysearch_index(fcu->bezt, cfra, fcu->totvert, &found);
   if (found) {
     /* delete the key at the index (will sanity check + do recalc afterwards) */
     delete_fcurve_key(fcu, i, 1);
@@ -2649,7 +2648,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
           int i;
 
           /* try to find index of beztriple to get rid of */
-          i = binarysearch_bezt_index(fcu->bezt, cfra, fcu->totvert, &found);
+          i = BKE_fcurve_bezt_binarysearch_index(fcu->bezt, cfra, fcu->totvert, &found);
           if (found) {
             /* delete the key at the index (will sanity check + do recalc afterwards) */
             delete_fcurve_key(fcu, i, 1);
@@ -2823,9 +2822,9 @@ bool fcurve_frame_has_keyframe(FCurve *fcu, float frame, short filter)
   /* we either include all regardless of muting, or only non-muted  */
   if ((filter & ANIMFILTER_KEYS_MUTED) || (fcu->flag & FCURVE_MUTED) == 0) {
     bool replace;
-    int i = binarysearch_bezt_index(fcu->bezt, frame, fcu->totvert, &replace);
+    int i = BKE_fcurve_bezt_binarysearch_index(fcu->bezt, frame, fcu->totvert, &replace);
 
-    /* binarysearch_bezt_index will set replace to be 0 or 1
+    /* BKE_fcurve_bezt_binarysearch_index will set replace to be 0 or 1
      * - obviously, 1 represents a match
      */
     if (replace) {

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -5441,16 +5441,6 @@ msgid "RenderView"
 msgstr "RenderView"
 
 
-msgctxt "Sequence"
-msgid "Curves"
-msgstr "Krommes"
-
-
-msgctxt "Sequence"
-msgid "Hue Correct"
-msgstr "Hue Corrigeren"
-
-
 msgid "Add Point"
 msgstr "Voeg Punt Toe"
 
@@ -5864,6 +5854,16 @@ msgstr "iScaal"
 
 msgid "Unknown py-exception, could not convert"
 msgstr "Onbekeende py-exceptie, kan niet converteren"
+
+
+msgctxt "Sequence"
+msgid "Curves"
+msgstr "Krommes"
+
+
+msgctxt "Sequence"
+msgid "Hue Correct"
+msgstr "Hue Corrigeren"
 
 
 msgid "Context window not set"
