@@ -367,6 +367,7 @@
         speaker="#000000"
         vertex="#000000"
         vertex_select="#ffaa18"
+        vertex_active="#ffffff"
         vertex_size="3"
         vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
@@ -476,6 +477,7 @@
         preview_range="#a14d0066"
         vertex="#000000"
         vertex_select="#ffc832"
+        vertex_active="#ffffff"
         vertex_size="6"
         vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
@@ -719,6 +721,7 @@
         grid="#505050ff"
         vertex="#000000"
         vertex_select="#ffaa18"
+        vertex_active="#ffffff"
         vertex_size="3"
         vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
@@ -850,7 +853,7 @@
     </sequence_editor>
     <properties>
       <ThemeProperties
-        match="#5680c2"
+        match="#c85130"
         >
         <space>
           <ThemeSpaceGeneric

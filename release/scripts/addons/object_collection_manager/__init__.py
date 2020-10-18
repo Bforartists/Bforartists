@@ -22,12 +22,11 @@ bl_info = {
     "name": "Collection Manager",
     "description": "Manage collections and their objects",
     "author": "Ryan Inch",
-    "version": (2, 15, 2),
+    "version": (2, 15, 3),
     "blender": (2, 80, 0),
     "location": "View3D - Object Mode (Shortcut - M)",
     "warning": '',  # used for warning icon and text in addons panel
     "doc_url": "{BLENDER_MANUAL_URL}/addons/interface/collection_manager.html",
-    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/interface/collection_manager.html",
     "tracker_url": "https://blenderartists.org/t/release-addon-collection-manager-feedback/1186198/",
     "category": "Interface",
 }

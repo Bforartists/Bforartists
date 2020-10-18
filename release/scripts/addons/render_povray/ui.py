@@ -4695,14 +4695,13 @@ def register():
     # bpy.types.TEXTURE_PT_context_texture.prepend(TEXTURE_PT_POV_type)
 
     if not povCentricWorkspace in bpy.app.handlers.load_post:
-        print("Adding POV wentric workspace on load handlers list")
+        # print("Adding POV wentric workspace on load handlers list")
         bpy.app.handlers.load_post.append(povCentricWorkspace)
 
 def unregister():
     if povCentricWorkspace in bpy.app.handlers.load_post:
-        print("Removing POV wentric workspace from load handlers list")
+        # print("Removing POV wentric workspace from load handlers list")
         bpy.app.handlers.load_post.remove(povCentricWorkspace)
-
 
     # from bpy.utils import unregister_class
 

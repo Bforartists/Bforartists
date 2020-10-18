@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -3464,6 +3464,10 @@ msgid "Favorites"
 msgstr "ล่าสุด"
 
 
+msgid "Overlays"
+msgstr "วางซ้อน"
+
+
 msgctxt "Operator"
 msgid "Scale"
 msgstr "ปรับย่อขนาด"
@@ -3472,10 +3476,6 @@ msgstr "ปรับย่อขนาด"
 msgctxt "Operator"
 msgid "Mask"
 msgstr "หน้ากาก"
-
-
-msgid "Overlays"
-msgstr "วางซ้อน"
 
 
 msgid "Misc"
@@ -5244,11 +5244,6 @@ msgstr "กลับด้าน"
 
 
 msgctxt "Operator"
-msgid "Set From Faces"
-msgstr "ตั้งจากแผ่นผิว"
-
-
-msgctxt "Operator"
 msgid "Rotate..."
 msgstr "หมุน..."
 
@@ -5857,12 +5852,24 @@ msgid " along X axis"
 msgstr " ตามแกน X"
 
 
+msgid " locking %s X axis"
+msgstr " กำลังล็อก %s แกน X"
+
+
 msgid " along %s X axis"
 msgstr " ตาม %s แกน X"
 
 
+msgid " locking %s Y axis"
+msgstr " กำลังล็อก %s แกน Y"
+
+
 msgid " along %s Y axis"
 msgstr " ตาม %s แกน Y"
+
+
+msgid " locking %s Z axis"
+msgstr " กำลังล็อก %s แกน Z"
 
 
 msgid " along %s Z axis"

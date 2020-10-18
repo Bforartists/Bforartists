@@ -3123,23 +3123,6 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
   return false;
 }
 
-void ui_but_default_set(bContext *C, const bool all, const bool use_afterfunc)
-{
-  wmOperatorType *ot = WM_operatortype_find("UI_OT_reset_default_button", true);
-
-  if (use_afterfunc) {
-    PointerRNA *ptr = ui_handle_afterfunc_add_operator(ot, WM_OP_EXEC_DEFAULT, true);
-    RNA_boolean_set(ptr, "all", all);
-  }
-  else {
-    PointerRNA ptr;
-    WM_operator_properties_create_ptr(&ptr, ot);
-    RNA_boolean_set(&ptr, "all", all);
-    WM_operator_name_call_ptr(C, ot, WM_OP_EXEC_DEFAULT, &ptr);
-    WM_operator_properties_free(&ptr);
-  }
-}
-
 static double soft_range_round_up(double value, double max)
 {
   /* round up to .., 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, ..
@@ -4706,24 +4689,8 @@ uiBut *uiDefButImage(
 uiBut *uiDefButAlert(uiBlock *block, int icon, int x, int y, short width, short height)
 {
   struct ImBuf *ibuf = UI_icon_alert_imbuf_get(icon);
-
-  if (icon == ALERT_ICON_BLENDER) {
-    return uiDefButImage(block, ibuf, x, y, width, height, NULL);
-  }
-
-  uchar icon_color[4];
-  ThemeColorID color_id = TH_INFO_WARNING;
-  if (icon == ALERT_ICON_ERROR) {
-    color_id = TH_INFO_ERROR;
-  }
-  else if (icon == ALERT_ICON_INFO) {
-    color_id = TH_INFO_INFO;
-  }
-  else if (icon == ALERT_ICON_QUESTION) {
-    color_id = TH_INFO_PROPERTY;
-  }
-  UI_GetThemeColorType4ubv(color_id, SPACE_INFO, icon_color);
-  return uiDefButImage(block, ibuf, x, y, width, height, icon_color);
+  bTheme *btheme = UI_GetTheme();
+  return uiDefButImage(block, ibuf, x, y, width, height, btheme->tui.wcol_menu_back.text);
 }
 
 /**

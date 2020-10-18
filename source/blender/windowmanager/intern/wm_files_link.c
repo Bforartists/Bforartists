@@ -890,6 +890,9 @@ static void lib_relocate_do(Main *bmain,
     ID *new_id = item->new_id;
 
     lib_relocate_do_remap(bmain, old_id, new_id, reports, do_reload, remap_flags);
+    if (new_id == NULL) {
+      continue;
+    }
     /* Usual special code for ShapeKeys snowflakes... */
     Key **old_key_p = BKE_key_from_id_p(old_id);
     if (old_key_p == NULL) {
@@ -1052,6 +1055,15 @@ static int wm_lib_relocate_exec_do(bContext *C, wmOperator *op, bool do_reload)
       BKE_reportf(op->reports,
                   RPT_ERROR_INVALID_INPUT,
                   "Trying to reload or relocate library '%s' to invalid path '%s'",
+                  lib->id.name,
+                  path);
+      return OPERATOR_CANCELLED;
+    }
+
+    if (BLI_path_cmp(BKE_main_blendfile_path(bmain), path) == 0) {
+      BKE_reportf(op->reports,
+                  RPT_ERROR_INVALID_INPUT,
+                  "Cannot relocate library '%s' to current blend file '%s'",
                   lib->id.name,
                   path);
       return OPERATOR_CANCELLED;

@@ -31,9 +31,9 @@ ignore_files = {
 }
 
 
-def compute_paths(paths):
+def compute_paths(paths, use_default_paths):
     # Optionally pass in files to operate on.
-    if not paths:
+    if use_default_paths:
         paths = (
             "intern/atomic",
             "intern/audaspace",
@@ -53,7 +53,6 @@ def compute_paths(paths):
             "intern/opensubdiv",
             "intern/openvdb",
             "intern/rigidbody",
-            "intern/string",
             "intern/utfconv",
             "source",
             "tests/gtests",
@@ -64,8 +63,11 @@ def compute_paths(paths):
     return paths
 
 
-def source_files_from_git(paths):
-    cmd = ("git", "ls-tree", "-r", "HEAD", *paths, "--name-only", "-z")
+def source_files_from_git(paths, changed_only):
+    if changed_only:
+        cmd = ("git", "diff", "HEAD", "--name-only", "-z", "--", *paths)
+    else:
+        cmd = ("git", "ls-tree", "-r", "HEAD", *paths, "--name-only", "-z")
     files = subprocess.check_output(cmd).split(b'\0')
     return [f.decode('ascii') for f in files]
 
@@ -160,6 +162,18 @@ def argparse_create():
         required=False,
     )
     parser.add_argument(
+        "--changed-only",
+        dest="changed_only",
+        default=False,
+        action='store_true',
+        help=(
+            "Format only edited files, including the staged ones. "
+            "Using this with \"paths\" will pick the edited files lying on those paths. "
+            "(default=False)"
+        ),
+        required=False,
+    )
+    parser.add_argument(
         "paths",
         nargs=argparse.REMAINDER,
         help="All trailing arguments are treated as paths."
@@ -179,32 +193,32 @@ def main():
     if version > VERSION_MAX_RECOMMENDED:
         print(
             "WARNING: Version of clang-format is too recent:",
-            version, ">=", VERSION_MAX_RECOMMENDED,
+            version, ">", VERSION_MAX_RECOMMENDED,
         )
         print(
             "You may want to install clang-format-%d.%d, "
             "or use the precompiled libs repository." %
-            (version[0], version[1]),
+            (VERSION_MAX_RECOMMENDED[0], VERSION_MAX_RECOMMENDED[1]),
         )
 
     args = argparse_create().parse_args()
 
-    use_default_paths = not bool(args.paths)
+    use_default_paths = not (bool(args.paths) or bool(args.changed_only))
 
-    paths = compute_paths(args.paths)
-    print("Operating on:")
+    paths = compute_paths(args.paths, use_default_paths)
+    print("Operating on:" + (" (%d changed paths)" % len(paths) if args.changed_only else ""))
     for p in paths:
         print(" ", p)
 
     files = [
-        f for f in source_files_from_git(paths)
+        f for f in source_files_from_git(paths, args.changed_only)
         if f.endswith(extensions)
         if f not in ignore_files
     ]
 
     # Always operate on all cmake files (when expanding tabs and no paths given).
     files_retab = [
-        f for f in source_files_from_git((".",) if use_default_paths else paths)
+        f for f in source_files_from_git((".",) if use_default_paths else paths, args.changed_only)
         if f.endswith(extensions_only_retab)
         if f not in ignore_files
     ]
