@@ -226,6 +226,12 @@ enum {
   UI_BUT_OVERRIDEN = 1u << 31u,
 };
 
+/* Default font size for normal text. */
+#define UI_DEFAULT_TEXT_POINTS 11
+
+/* Larger size used for title text. */
+#define UI_DEFAULT_TITLE_POINTS 12
+
 #define UI_PANEL_WIDTH 340
 #define UI_COMPACT_PANEL_WIDTH 160
 #define UI_SIDEBAR_PANEL_WIDTH 220
@@ -1687,6 +1693,7 @@ void UI_panel_header_buttons_begin(struct Panel *panel);
 void UI_panel_header_buttons_end(struct Panel *panel);
 void UI_panel_end(struct Panel *panel, int width, int height);
 
+bool UI_panel_is_closed(const struct Panel *panel);
 bool UI_panel_is_active(const struct Panel *panel);
 void UI_panel_label_offset(struct uiBlock *block, int *r_x, int *r_y);
 int UI_panel_size_y(const struct Panel *panel);
@@ -1868,6 +1875,7 @@ uiLayout *UI_block_layout(uiBlock *block,
                           const struct uiStyle *style);
 void UI_block_layout_set_current(uiBlock *block, uiLayout *layout);
 void UI_block_layout_resolve(uiBlock *block, int *r_x, int *r_y);
+void UI_block_layout_free(uiBlock *block);
 
 bool UI_block_apply_search_filter(uiBlock *block, const char *search_filter);
 
@@ -2423,6 +2431,8 @@ void uiItemTabsEnumR_prop(uiLayout *layout,
                           struct bContext *C,
                           struct PointerRNA *ptr,
                           PropertyRNA *prop,
+                          struct PointerRNA *ptr_highlight,
+                          PropertyRNA *prop_highlight,
                           bool icon_only);
 
 /* Only for testing, inspecting layouts. */

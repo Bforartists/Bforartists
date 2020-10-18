@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -8890,10 +8890,6 @@ msgid "Maximum number of additional cells"
 msgstr "額外巢格的最大數"
 
 
-msgid "Single"
-msgstr "單一"
-
-
 msgid "End"
 msgstr "結束"
 
@@ -10817,6 +10813,10 @@ msgid "Global"
 msgstr "全域"
 
 
+msgid "Dynamic"
+msgstr "動態"
+
+
 msgid "Crease Brush Pinch Factor"
 msgstr "建立筆刷捏擠係數"
 
@@ -11725,56 +11725,16 @@ msgid "Bevel Depth"
 msgstr "倒角深度"
 
 
-msgid "Bevel depth when not using a bevel object"
-msgstr "不使用倒角物體時的倒角深度"
-
-
-msgid "End Bevel Factor"
-msgstr "結束倒角係數"
-
-
-msgid "Factor that defines to where beveling of spline happens (0=to the very beginning, 1=to the very end)"
-msgstr "定義樣條發生的倒角位置之係數 (0=最開頭，1=最結尾)"
-
-
 msgid "End Mapping Type"
 msgstr "結束映射類型"
-
-
-msgid "Determines how the end bevel factor is mapped to a spline"
-msgstr "決定結束倒角係數映射到樣條的方法"
-
-
-msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
-msgstr "倒角係數映射至樣條的細分數 (U 解析度)"
-
-
-msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
-msgstr "將倒角係數映射至分段的長度與片段的細分數"
 
 
 msgid "Spline"
 msgstr "樣條"
 
 
-msgid "Map the bevel factor to the length of a spline"
-msgstr "將到角係數映射至樣條的長度"
-
-
 msgid "Start Mapping Type"
 msgstr "開始映射類型"
-
-
-msgid "Determines how the start bevel factor is mapped to a spline"
-msgstr "決定起始倒角係數映射至樣條的方法"
-
-
-msgid "Start Bevel Factor"
-msgstr "開始倒角係數"
-
-
-msgid "Factor that defines from where beveling of spline happens (0=from the very beginning, 1=from the very end)"
-msgstr "定義樣條發生倒角的位置之係數 (0=從最開頭，1=從最結尾)"
 
 
 msgid "Round"
@@ -11789,16 +11749,8 @@ msgid "Bevel Object"
 msgstr "倒角物體"
 
 
-msgid "Curve object name that defines the bevel shape"
-msgstr "定義倒角外形的曲線物體名稱"
-
-
 msgid "Bevel Resolution"
 msgstr "倒角解析度"
-
-
-msgid "Bevel resolution when depth is non-zero and no specific bevel object has been defined"
-msgstr "深度非零且尚未定義指定的倒角物體時，其倒角解析度"
 
 
 msgid "Cycles Mesh Settings"
@@ -11833,20 +11785,12 @@ msgid "Extrude"
 msgstr "擠出"
 
 
-msgid "Amount of curve extrusion when not using a bevel object"
-msgstr "不使用倒角物體時曲線擠出的量"
-
-
 msgid "Fill Mode"
 msgstr "填補模式"
 
 
 msgid "Mode of filling curve"
 msgstr "填補曲線的模式"
-
-
-msgid "Offset the curve to adjust the width of a text"
-msgstr "偏移曲線以調整文字寬度"
 
 
 msgid "Path Length"
@@ -11869,16 +11813,8 @@ msgid "Resolution U"
 msgstr "解析度 U"
 
 
-msgid "Surface resolution in U direction"
-msgstr "U 方向的表面解析度"
-
-
 msgid "Resolution V"
 msgstr "解析度 V"
-
-
-msgid "Surface resolution in V direction"
-msgstr "V 方向的表面解析度"
 
 
 msgid "Splines"
@@ -15384,10 +15320,6 @@ msgstr "在粒子逝去之後顯示粒子"
 
 msgid "Particles die when they collide with a deflector object"
 msgstr "當粒子與變流器物體撞擊時粒子逝去"
-
-
-msgid "Dynamic"
-msgstr "動態"
 
 
 msgid "Particle rotations are affected by collisions and effectors"
@@ -19020,10 +18952,6 @@ msgid "Texture Specials"
 msgstr "紋理特殊項"
 
 
-msgid "Text To 3D Object"
-msgstr "文字轉為 3D 物體"
-
-
 msgid "Templates"
 msgstr "範本"
 
@@ -22465,6 +22393,18 @@ msgid "Match-moving camera data for tracking"
 msgstr "追蹤用的比對移動攝影機資料"
 
 
+msgid "K1"
+msgstr "K1"
+
+
+msgid "K2"
+msgstr "K2"
+
+
+msgid "K3"
+msgstr "K3"
+
+
 msgid "Distortion Model"
 msgstr "扭曲模型"
 
@@ -22485,14 +22425,6 @@ msgid "Divisions"
 msgstr "劃分"
 
 
-msgid "K1"
-msgstr "K1"
-
-
-msgid "K2"
-msgstr "K2"
-
-
 msgid "Camera's focal length"
 msgstr "攝影機的焦長"
 
@@ -22503,10 +22435,6 @@ msgstr "三次多項式放射扭曲的第一係數"
 
 msgid "Second coefficient of third order polynomial radial distortion"
 msgstr "三次多項式放射扭曲的第二係數"
-
-
-msgid "K3"
-msgstr "K3"
 
 
 msgid "Third coefficient of third order polynomial radial distortion"
@@ -23763,6 +23691,10 @@ msgstr "演算法"
 
 msgid "Algorithm to use to limit channel"
 msgstr "要用來限制通道的演算法"
+
+
+msgid "Single"
+msgstr "單一"
 
 
 msgid "Limit by single channel"
@@ -31132,10 +31064,6 @@ msgid "Insert Text"
 msgstr "插入文字"
 
 
-msgid "Accent mode"
-msgstr "重音符號模式"
-
-
 msgid "Next typed character will strike through previous, for special character input"
 msgstr "下個輸入的字元將劃過前一個，供特殊字元輸入"
 
@@ -32828,11 +32756,6 @@ msgid "Fill in the cut"
 msgstr "填補切割處"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "從外形混合"
-
-
 msgid "Blend in shape from a shape key"
 msgstr "從外形鍵混入外形"
 
@@ -34215,10 +34138,6 @@ msgid "Amount of Adjacent Faces"
 msgstr "相鄰面的量"
 
 
-msgid "Amount of connecting edges"
-msgstr "連接邊線的量"
-
-
 msgid "Amount of Faces Around an Edge"
 msgstr "邊線周圍面的量"
 
@@ -34618,7 +34537,7 @@ msgid "Create a solid wire-frame from faces"
 msgstr "根據面建立實體線框"
 
 
-msgid "Crease weight"
+msgid "Crease Weight"
 msgstr "皺摺權重"
 
 
@@ -35710,11 +35629,6 @@ msgid "Copy constraints to other selected objects"
 msgstr "複製約束至其他選取的物體"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "轉換為"
-
-
 msgid "Convert selected objects to another type"
 msgstr "將所選物體轉換為其他另一個類型"
 
@@ -35725,10 +35639,6 @@ msgstr "保留原始物體，而不是替換掉"
 
 msgid "Type of object to convert to"
 msgstr "要轉換為何物體類型"
-
-
-msgid "Curve from Mesh/Text"
-msgstr "來自網格/文字的曲線"
 
 
 msgid "Modifier"
@@ -36044,11 +35954,6 @@ msgstr "選取鉤"
 
 msgid "Select affected vertices on mesh"
 msgstr "選取網格上受影響的頂點"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "從游標設定偏移"
 
 
 msgctxt "Operator"
@@ -39037,10 +38942,6 @@ msgid "Import key configuration from a python script"
 msgstr "從 Phthon 指令稿匯入按鍵組態"
 
 
-msgid "Keep original"
-msgstr "保留原始"
-
-
 msgid "Keep original file after copying to configuration folder"
 msgstr "在複製至組態資料夾之後保留原始檔案"
 
@@ -39206,11 +39107,6 @@ msgstr "烘焙所有物理"
 
 msgid "Bake all physics"
 msgstr "烘焙所有的物理運算"
-
-
-msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "從快取烘焙"
 
 
 msgid "Bake from cache"
@@ -40314,16 +40210,8 @@ msgid "Create a new Face Set"
 msgstr "建立一個面集"
 
 
-msgid "Face Set From Masked"
-msgstr "遮罩轉面集"
-
-
 msgid "Create a new Face Set from the masked faces"
 msgstr "使用遮罩來建立面集"
-
-
-msgid "Face Set From Visible"
-msgstr "目前可見轉面集"
 
 
 msgid "Create a new Face Set from the visible vertices"
@@ -42575,11 +42463,6 @@ msgid "Clear pinning for the selection instead of setting it"
 msgstr "清除選取項的釘，而不是設定它"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "投影從視圖"
-
-
 msgid "Project the UV vertices of the mesh as seen in current 3D view"
 msgstr "將網格的 UV 頂點投影如目前 3D 視圖中所見"
 
@@ -42615,11 +42498,6 @@ msgstr "重設 UV 投影"
 
 msgid "Reveal all hidden UV vertices"
 msgstr "揭開所有隱藏的 UV 頂點"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "來自島塊的縫線"
 
 
 msgid "Set mesh seams according to island setup in the UV editor"
@@ -43165,30 +43043,6 @@ msgstr "對齊作用項"
 
 msgid "Align to the active object's axis"
 msgstr "對齊作用中物體的軸"
-
-
-msgid "View From the Left"
-msgstr "從左側檢視"
-
-
-msgid "View From the Right"
-msgstr "從右側檢視"
-
-
-msgid "View From the Bottom"
-msgstr "從底部檢視"
-
-
-msgid "View From the Top"
-msgstr "從頂部檢視"
-
-
-msgid "View From the Front"
-msgstr "從前面檢視"
-
-
-msgid "View From the Back"
-msgstr "從後面檢視"
 
 
 msgctxt "Operator"
@@ -44923,6 +44777,10 @@ msgid "Active Tool"
 msgstr "作用中工具"
 
 
+msgid "Overlays"
+msgstr "疊層"
+
+
 msgid "Scopes"
 msgstr "範圍"
 
@@ -44991,10 +44849,6 @@ msgstr "紋理遮罩"
 
 msgid "2D Cursor"
 msgstr "2D 游標"
-
-
-msgid "Overlays"
-msgstr "疊層"
 
 
 msgid "Histogram"
@@ -52561,10 +52415,6 @@ msgid "Sticky Selection Mode"
 msgstr "黏性選取模式"
 
 
-msgid "Automatically select also UVs sharing the same vertex as the ones being selected"
-msgstr "也自動選取與目前所選項目一般，共享相同頂點的 UV"
-
-
 msgid "Sticky vertex selection disabled"
 msgstr "黏性頂點選取已停用"
 
@@ -52579,10 +52429,6 @@ msgstr "選取位在相同位置上並共享網格頂點的 UV"
 
 msgid "Shared Vertex"
 msgstr "共享的頂點"
-
-
-msgid "Select UVs that share mesh vertex, irrespective if they are in the same location"
-msgstr "選取共享網格頂點的 UV，如果位在相同位置上則不考慮"
 
 
 msgid "Live Unwrap"
@@ -56204,11 +56050,6 @@ msgstr "刪除所有群組"
 
 
 msgctxt "Operator"
-msgid "New Shape From Mix"
-msgstr "來自混合的新外形"
-
-
-msgctxt "Operator"
 msgid "Mirror Shape Key (Topology)"
 msgstr "鏡射外形鍵 (拓樸)"
 
@@ -56677,11 +56518,6 @@ msgstr "校準"
 msgctxt "Operator"
 msgid "Prefetch"
 msgstr "預取"
-
-
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "從作用中軌道複製"
 
 
 msgid "Track:"
@@ -57352,10 +57188,6 @@ msgid "Jump to Previous Marker"
 msgstr "跳往上個標記"
 
 
-msgid "Auto Keyframing:"
-msgstr "自動鍵幀處理："
-
-
 msgid "Annotation:"
 msgstr "註記"
 
@@ -57921,16 +57753,6 @@ msgstr "清除遮罩"
 
 
 msgctxt "Operator"
-msgid "Face Set From Masked"
-msgstr "遮罩轉面集"
-
-
-msgctxt "Operator"
-msgid "Face Set From Visible"
-msgstr "目前顯示轉面集"
-
-
-msgctxt "Operator"
 msgid "Invert Visible Face Sets"
 msgstr "反轉可見面集"
 
@@ -58102,6 +57924,11 @@ msgstr "環形線"
 msgctxt "Operator"
 msgid "Lattice"
 msgstr "晶格"
+
+
+msgctxt "Operator"
+msgid "Convert to"
+msgstr "轉換為"
 
 
 msgctxt "Operator"
@@ -58305,16 +58132,6 @@ msgstr "設定捲動"
 
 msgid "X-Ray"
 msgstr "X 光"
-
-
-msgctxt "Operator"
-msgid "Assign Automatic From Bones"
-msgstr "從骨骼自動指派"
-
-
-msgctxt "Operator"
-msgid "Assign From Bone Envelopes"
-msgstr "從骨骼封套指派"
 
 
 msgctxt "Operator"
@@ -58700,38 +58517,6 @@ msgstr "無法建立剛體世界"
 
 msgid "RenderView"
 msgstr "算繪視圖"
-
-
-msgctxt "Sequence"
-msgid "Color Balance"
-msgstr "色彩平衡"
-
-
-msgctxt "Sequence"
-msgid "Curves"
-msgstr "曲線"
-
-
-msgctxt "Sequence"
-msgid "Hue Correct"
-msgstr "色相校正"
-
-
-msgctxt "Sequence"
-msgid "Bright/Contrast"
-msgstr "亮度/對比"
-
-
-msgid "Strips must be the same length"
-msgstr "片段必須長度相同"
-
-
-msgid "Strips were not compatible"
-msgstr "片段不相容"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "片段必須有相同的輸入數"
 
 
 msgctxt "MovieClip"
@@ -61527,10 +61312,6 @@ msgid "Disconnect nodes connected to the input"
 msgstr "斷開連接至該輸入的節點"
 
 
-msgid "Can't add a new collection to linked scene/collection"
-msgstr "無法將新的選集加入連結的場景/選集"
-
-
 msgid "Can't edit library linked object(s)"
 msgstr "無法編輯藏庫連結的物體"
 
@@ -62004,12 +61785,24 @@ msgid " along X axis"
 msgstr " 沿 X 軸"
 
 
+msgid " locking %s X axis"
+msgstr " 鎖定 %s X 軸"
+
+
 msgid " along %s X axis"
 msgstr " 沿 %s X 軸"
 
 
+msgid " locking %s Y axis"
+msgstr " 鎖定 %s Y 軸"
+
+
 msgid " along %s Y axis"
 msgstr " 沿 %s Y 軸"
+
+
+msgid " locking %s Z axis"
+msgstr " 鎖定 %s Z 軸"
 
 
 msgid " along %s Z axis"
@@ -63434,6 +63227,38 @@ msgstr "%s：無法載入「%s」"
 
 msgid "Error writing render result, %s (see console)"
 msgstr "寫入算繪結果時發生錯誤，%s（請見主控臺）"
+
+
+msgctxt "Sequence"
+msgid "Color Balance"
+msgstr "色彩平衡"
+
+
+msgctxt "Sequence"
+msgid "Curves"
+msgstr "曲線"
+
+
+msgctxt "Sequence"
+msgid "Hue Correct"
+msgstr "色相校正"
+
+
+msgctxt "Sequence"
+msgid "Bright/Contrast"
+msgstr "亮度/對比"
+
+
+msgid "Strips must be the same length"
+msgstr "片段必須長度相同"
+
+
+msgid "Strips were not compatible"
+msgstr "片段不相容"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "片段必須有相同的輸入數"
 
 
 msgid "Paste name"

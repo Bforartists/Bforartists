@@ -137,6 +137,7 @@ dict_custom = {
     "ortho",
     "recalc",
     "reparent",
+    "resync",
     "struct", "structs",
     "subdir",
     "tooltip",

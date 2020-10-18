@@ -50,6 +50,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
+#include "BLI_fileops_types.h"
 #include "BLI_linklist.h"
 #include "BLI_system.h"
 #include "BLI_threads.h"
@@ -2368,10 +2369,47 @@ static int wm_open_mainfile_exec(bContext *C, wmOperator *op)
   return wm_open_mainfile__open(C, op);
 }
 
+static char *wm_open_mainfile_description(struct bContext *UNUSED(C),
+                                          struct wmOperatorType *UNUSED(op),
+                                          struct PointerRNA *params)
+{
+  if (!RNA_struct_property_is_set(params, "filepath")) {
+    return NULL;
+  }
+
+  /* Filepath. */
+  char path[FILE_MAX];
+  RNA_string_get(params, "filepath", path);
+
+  BLI_stat_t stats;
+  if (BLI_stat(path, &stats) == -1) {
+    return BLI_sprintfN("%s\n\n%s", path, N_("File Not Found"));
+  }
+
+  /* Date. */
+  char date_st[FILELIST_DIRENTRY_DATE_LEN];
+  char time_st[FILELIST_DIRENTRY_TIME_LEN];
+  bool is_today, is_yesterday;
+  BLI_filelist_entry_datetime_to_string(
+      NULL, (int64_t)stats.st_mtime, false, time_st, date_st, &is_today, &is_yesterday);
+  if (is_today || is_yesterday) {
+    BLI_strncpy(date_st, is_today ? N_("Today") : N_("Yesterday"), sizeof(date_st));
+  }
+
+  /* Size. */
+  char size_str[FILELIST_DIRENTRY_SIZE_LEN];
+  BLI_filelist_entry_size_to_string(NULL, (uint64_t)stats.st_size, false, size_str);
+
+  return BLI_sprintfN(
+      "%s\n\n%s: %s %s\n%s: %s", path, N_("Modified"), date_st, time_st, N_("Size"), size_str);
+}
+
 /* currently fits in a pointer */
 struct FileRuntime {
   bool is_untrusted;
 };
+BLI_STATIC_ASSERT(sizeof(struct FileRuntime) <= sizeof(void *),
+                  "Struct must not exceed pointer size");
 
 static bool wm_open_mainfile_check(bContext *UNUSED(C), wmOperator *op)
 {
@@ -2430,6 +2468,7 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
   ot->name = "Open";
   ot->idname = "WM_OT_open_mainfile";
   ot->description = "Open a Blender file";
+  ot->get_description = wm_open_mainfile_description;
 
   ot->invoke = wm_open_mainfile_invoke;
   ot->exec = wm_open_mainfile_exec;
@@ -3172,7 +3211,7 @@ static uiBlock *block_create__close_file_dialog(struct bContext *C,
 
   /* Alert Icon. */
   uiLayout *layout = uiLayoutColumn(split_block, false);
-  uiDefButAlert(block, ALERT_ICON_WARNING, 0, 0, 0, icon_size);
+  uiDefButAlert(block, ALERT_ICON_QUESTION, 0, 0, 0, icon_size);
 
   /* The rest of the content on the right. */
   layout = uiLayoutColumn(split_block, false);

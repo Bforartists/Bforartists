@@ -670,6 +670,7 @@ class CMSendReport(Operator):
 
     def draw(self, context):
         layout = self.layout
+        col = layout.column(align=True)
 
         first = True
         string = ""
@@ -677,10 +678,10 @@ class CMSendReport(Operator):
         for num, char in enumerate(self.message):
             if char == "\n":
                 if first:
-                    layout.row().label(text=string, icon='ERROR')
+                    col.row(align=True).label(text=string, icon='ERROR')
                     first = False
                 else:
-                    layout.row().label(text=string, icon='BLANK1')
+                    col.row(align=True).label(text=string, icon='BLANK1')
 
                 string = ""
                 continue
@@ -688,9 +689,9 @@ class CMSendReport(Operator):
             string = string + char
 
         if first:
-            layout.row().label(text=string, icon='ERROR')
+            col.row(align=True).label(text=string, icon='ERROR')
         else:
-            layout.row().label(text=string, icon='BLANK1')
+            col.row(align=True).label(text=string, icon='BLANK1')
 
     def invoke(self, context, event):
         wm = context.window_manager

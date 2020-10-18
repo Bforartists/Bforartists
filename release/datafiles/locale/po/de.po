@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6324,10 +6324,6 @@ msgid "Maximum number of additional cells"
 msgstr "Maximale Anzahl der transparenten Begrenzung"
 
 
-msgid "Single"
-msgstr "Einzelner"
-
-
 msgid "End"
 msgstr "Ende"
 
@@ -7622,6 +7618,10 @@ msgid "Global"
 msgstr "Global"
 
 
+msgid "Dynamic"
+msgstr "Dynamisch"
+
+
 msgid "Color Type"
 msgstr "Farbtyp"
 
@@ -8226,14 +8226,6 @@ msgid "Bevel Depth"
 msgstr "Fasentiefe"
 
 
-msgid "End Bevel Factor"
-msgstr "Faktor"
-
-
-msgid "Start Bevel Factor"
-msgstr "Dämpfungsfaktor"
-
-
 msgid "Round"
 msgstr "Rund"
 
@@ -8274,10 +8266,6 @@ msgid "Fill Mode"
 msgstr "Füllmodus"
 
 
-msgid "Offset the curve to adjust the width of a text"
-msgstr "Die Kurve versetzen, um die Breite eines Texts anzupassen"
-
-
 msgid "Path Length"
 msgstr "Pfadlänge"
 
@@ -8294,16 +8282,8 @@ msgid "Resolution U"
 msgstr "Auflösung U"
 
 
-msgid "Surface resolution in U direction"
-msgstr "Oberflächenauflösung in U-Richtung"
-
-
 msgid "Resolution V"
 msgstr "Auflösung V"
-
-
-msgid "Surface resolution in V direction"
-msgstr "Oberflächenauflösung in V-Richtung"
 
 
 msgid "Splines"
@@ -10364,10 +10344,6 @@ msgstr "Gestorben"
 
 msgid "Show particles after they have died"
 msgstr "Partikel zeigen, nachdem sie gestorben sind"
-
-
-msgid "Dynamic"
-msgstr "Dynamisch"
 
 
 msgid "Emit in random order of elements"
@@ -14302,10 +14278,6 @@ msgid "Tracks"
 msgstr "Spuren"
 
 
-msgid "Divisions"
-msgstr "Unterteilungen"
-
-
 msgid "K1"
 msgstr "K1"
 
@@ -14314,12 +14286,16 @@ msgid "K2"
 msgstr "K2"
 
 
-msgid "Camera's focal length"
-msgstr "Kamerabrennweite"
-
-
 msgid "K3"
 msgstr "K3"
+
+
+msgid "Divisions"
+msgstr "Unterteilungen"
+
+
+msgid "Camera's focal length"
+msgstr "Kamerabrennweite"
 
 
 msgid "Pixel Aspect Ratio"
@@ -15108,6 +15084,10 @@ msgstr "Algorithmus"
 
 msgid "Algorithm to use to limit channel"
 msgstr "Algorithmus, der verwendet wird um den Kanal zu begrenzen"
+
+
+msgid "Single"
+msgstr "Einzelner"
 
 
 msgid "Limit by single channel"
@@ -20501,11 +20481,6 @@ msgid "Segments for curved edge"
 msgstr "Wählt ein 2D oder 3D Kurven Typ"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "Blender e-Shop"
-
-
 msgid "Blending factor"
 msgstr "Überblendungsfaktor"
 
@@ -21292,10 +21267,6 @@ msgid "Amount of Adjacent Faces"
 msgstr "Anzahl an angrenzenden Flächen"
 
 
-msgid "Amount of connecting edges"
-msgstr "Anzahl der verbundenen Kanten"
-
-
 msgid "Amount of Faces Around an Edge"
 msgstr "Anzahl an Flächen um eine Kante herum"
 
@@ -21528,6 +21499,10 @@ msgstr "Y-Achse glätten"
 
 msgid "Smooth Z Axis"
 msgstr "Z-Achse glätten"
+
+
+msgid "Crease Weight"
+msgstr "Faltenwichtung"
 
 
 msgid "Remove original faces"
@@ -22281,21 +22256,12 @@ msgid "Copy constraints to other selected objects"
 msgstr "Beschränkungen zu anderen ausgewählten Objekten kopieren"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Konvertieren in"
-
-
 msgid "Convert selected objects to another type"
 msgstr "Ausgewählte Objekte in einen anderen Typ konvertieren"
 
 
 msgid "Keep original objects instead of replacing them"
 msgstr "Ursprüngliche Objekte beibehalten, anstatt sie zu ersetzen"
-
-
-msgid "Curve from Mesh/Text"
-msgstr "Kurve aus Mesh/Text"
 
 
 msgid "Modifier"
@@ -22495,11 +22461,6 @@ msgstr "Haken zurücksetzen"
 msgctxt "Operator"
 msgid "Select Hook"
 msgstr "Mehr auswählen"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "3D-Cursor setzen"
 
 
 msgctxt "Operator"
@@ -24120,11 +24081,6 @@ msgstr "Jede Physik backen"
 
 msgid "Bake all physics"
 msgstr "Backen aller Physiken"
-
-
-msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "Vom Zwischenspeicher backen"
 
 
 msgid "Bake from cache"
@@ -25851,11 +25807,6 @@ msgid "Pin"
 msgstr "Punkt"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "Projektion aus Ansicht"
-
-
 msgid "Project the UV vertices of the mesh as seen in current 3D view"
 msgstr "UV-Vertices des Meshes aus der gesehen aktuellen 3D-Ansicht projizieren"
 
@@ -25875,11 +25826,6 @@ msgstr "Zurücksetzen"
 
 msgid "Reset UV projection"
 msgstr "Projektion:"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "Nähte von Inseln"
 
 
 msgid "Set mesh seams according to island setup in the UV editor"
@@ -26164,30 +26110,6 @@ msgstr "Alle Aktionen"
 
 msgid "View selected for all regions"
 msgstr "Zwischen ausgewählten Markierungen"
-
-
-msgid "View From the Left"
-msgstr "Sicht von links"
-
-
-msgid "View From the Right"
-msgstr "Ansicht von rechts"
-
-
-msgid "View From the Bottom"
-msgstr "Sicht von unten"
-
-
-msgid "View From the Top"
-msgstr "Sicht von oben"
-
-
-msgid "View From the Front"
-msgstr "Sicht von vorne"
-
-
-msgid "View From the Back"
-msgstr "Sicht von hinten"
 
 
 msgctxt "Operator"
@@ -27177,6 +27099,10 @@ msgid "Active Tool"
 msgstr "Aktives Werkzeug"
 
 
+msgid "Overlays"
+msgstr "Überlagerungen"
+
+
 msgid "Clone from Image/UV Map"
 msgstr "Kopie vom Bild/UV-Map"
 
@@ -27318,14 +27244,6 @@ msgstr "Texturmaske"
 
 msgid "2D Cursor"
 msgstr "2D Cursor"
-
-
-msgid "Overlays"
-msgstr "Überlagerungen"
-
-
-msgid "Stretching"
-msgstr "Strecken"
 
 
 msgid "Histogram"
@@ -34793,11 +34711,6 @@ msgid "B/W"
 msgstr "S/W"
 
 
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "Von aktiver Spur kopieren"
-
-
 msgid "Track:"
 msgstr "Spur:"
 
@@ -35365,10 +35278,6 @@ msgstr "Marker duplizieren"
 msgctxt "Operator"
 msgid "Duplicate Marker to Scene..."
 msgstr "Marker der Szene duplizieren..."
-
-
-msgid "Auto Keyframing:"
-msgstr "Auto-Schlüsselbilder:"
 
 
 msgctxt "Operator"
@@ -36049,6 +35958,11 @@ msgstr "Gitter"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "Konvertieren in"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "Aktiven hinzufügen"
 
@@ -36409,34 +36323,6 @@ msgstr "Zu wenig Arbeitsspeicher"
 
 msgid "Undefined Type"
 msgstr "Undefinierter Typ"
-
-
-msgctxt "Sequence"
-msgid "Color Balance"
-msgstr "Farbbalance"
-
-
-msgctxt "Sequence"
-msgid "Curves"
-msgstr "Kurven"
-
-
-msgctxt "Sequence"
-msgid "Hue Correct"
-msgstr "Farbkorrektur"
-
-
-msgctxt "Sequence"
-msgid "Bright/Contrast"
-msgstr "Helligkeit/Kontrast"
-
-
-msgid "Strips must be the same length"
-msgstr "Streifen muss die selbe Länge haben"
-
-
-msgid "Strips were not compatible"
-msgstr "Streifen waren nicht kompatibel"
 
 
 msgctxt "MovieClip"
@@ -38302,12 +38188,24 @@ msgid " along X axis"
 msgstr " entlang X-Achse"
 
 
+msgid " locking %s X axis"
+msgstr " sperre %s X-Achse"
+
+
 msgid " along %s X axis"
 msgstr " entlang %s X-Achse"
 
 
+msgid " locking %s Y axis"
+msgstr " sperre %s Y-Achse"
+
+
 msgid " along %s Y axis"
 msgstr " entlang %s Y-Achse"
+
+
+msgid " locking %s Z axis"
+msgstr " sperre %s Z-Achse"
 
 
 msgid " along %s Z axis"
@@ -39012,6 +38910,34 @@ msgstr "Renderausgabe-Verzeichnis"
 
 msgid "All render layers are disabled"
 msgstr "Alle Render-Ebenen sind deaktiviert"
+
+
+msgctxt "Sequence"
+msgid "Color Balance"
+msgstr "Farbbalance"
+
+
+msgctxt "Sequence"
+msgid "Curves"
+msgstr "Kurven"
+
+
+msgctxt "Sequence"
+msgid "Hue Correct"
+msgstr "Farbkorrektur"
+
+
+msgctxt "Sequence"
+msgid "Bright/Contrast"
+msgstr "Helligkeit/Kontrast"
+
+
+msgid "Strips must be the same length"
+msgstr "Streifen muss die selbe Länge haben"
+
+
+msgid "Strips were not compatible"
+msgstr "Streifen waren nicht kompatibel"
 
 
 msgid "Paste name"

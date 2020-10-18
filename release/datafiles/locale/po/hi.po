@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1814,6 +1814,10 @@ msgid "Global"
 msgstr "भूमंडलीय"
 
 
+msgid "Dynamic"
+msgstr "गतिकी"
+
+
 msgid "Add Color"
 msgstr "रंग जोड़ें"
 
@@ -1960,14 +1964,6 @@ msgstr "परिप्रेक्ष्य"
 
 msgid "Panoramic"
 msgstr "नयनाभिराम"
-
-
-msgid "End Bevel Factor"
-msgstr "समाप्त बेवल कारक"
-
-
-msgid "Start Bevel Factor"
-msgstr "कटाव कारक प्रारंभ"
 
 
 msgid "Round"
@@ -2476,10 +2472,6 @@ msgstr "यादृच्छिक उठाओ"
 
 msgid "Died"
 msgstr "मृत"
-
-
-msgid "Dynamic"
-msgstr "गतिकी"
 
 
 msgid "Parents"
@@ -6530,18 +6522,6 @@ msgid "Undefined Type"
 msgstr "अपरिभाषित प्रकार"
 
 
-msgid "Strips must be the same length"
-msgstr "स्ट्रिप्स एक ही लंबाई का होना चाहिए"
-
-
-msgid "Strips were not compatible"
-msgstr "स्ट्रिप्स संगत नहीं थे"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "स्ट्रिप्स आदानों की समान संख्या होना आवश्यक"
-
-
 msgid "Error writing frame"
 msgstr "गठन लेखन में त्रुटि"
 
@@ -7475,6 +7455,18 @@ msgstr "डब्ल्यु4"
 
 msgid "Cannot save render buffers, check the temp default path"
 msgstr " प्रतिपादन बफ़र्स सहेजें, अस्थायी मूलभूत पथ की जाँच नहीं कर सकता"
+
+
+msgid "Strips must be the same length"
+msgstr "स्ट्रिप्स एक ही लंबाई का होना चाहिए"
+
+
+msgid "Strips were not compatible"
+msgstr "स्ट्रिप्स संगत नहीं थे"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "स्ट्रिप्स आदानों की समान संख्या होना आवश्यक"
 
 
 msgid "Paste name"

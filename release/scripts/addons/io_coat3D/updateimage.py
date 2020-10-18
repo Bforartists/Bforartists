@@ -8,7 +8,7 @@ def update(texcoat,tex_type,node, udim_textures, udim_len):
 
         for image in bpy.data.images:
             if (os.path.normpath(image.filepath) == os.path.normpath(texcoat[tex_type][0])):
-
+                node.image.use_fake_user = True
                 node.image = image
 
                 node.image.reload()

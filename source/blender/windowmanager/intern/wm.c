@@ -20,9 +20,9 @@
 /** \file
  * \ingroup wm
  *
- * Internal functions for managing UI registrable types (operator, UI and menu types)
+ * Internal functions for managing UI registrable types (operator, UI and menu types).
  *
- * Also Blenders main event loop (WM_main)
+ * Also Blender's main event loop (WM_main).
  */
 
 #include <stddef.h>
@@ -87,7 +87,7 @@ static void window_manager_foreach_id(ID *id, LibraryForeachIDData *data)
     if (win->workspace_hook != NULL) {
       ID *workspace = (ID *)BKE_workspace_active_get(win->workspace_hook);
       BKE_LIB_FOREACHID_PROCESS_ID(data, workspace, IDWALK_CB_NOP);
-      /* allow callback to set a different workspace */
+      /* Allow callback to set a different workspace. */
       BKE_workspace_active_set(win->workspace_hook, (WorkSpace *)workspace);
     }
     if (BKE_lib_query_foreachid_process_flags_get(data) & IDWALK_INCLUDE_UI) {
@@ -129,8 +129,7 @@ void WM_operator_free(wmOperator *op)
 
 #ifdef WITH_PYTHON
   if (op->py_instance) {
-    /* do this first in case there are any __del__ functions or
-     * similar that use properties */
+    /* Do this first in case there are any __del__ functions or similar that use properties. */
     BPY_DECREF_RNA_INVALIDATE(op->py_instance);
   }
 #endif
@@ -180,16 +179,15 @@ void WM_operator_free_all_after(wmWindowManager *wm, struct wmOperator *op)
  */
 void WM_operator_type_set(wmOperator *op, wmOperatorType *ot)
 {
-  /* not supported for Python */
+  /* Not supported for Python. */
   BLI_assert(op->py_instance == NULL);
 
   op->type = ot;
   op->ptr->type = ot->srna;
 
-  /* ensure compatible properties */
+  /* Ensure compatible properties. */
   if (op->properties) {
     PointerRNA ptr;
-
     WM_operator_properties_create_ptr(&ptr, ot);
 
     WM_operator_properties_default(&ptr, false);
@@ -208,8 +206,8 @@ static void wm_reports_free(wmWindowManager *wm)
   WM_event_remove_timer(wm, NULL, wm->reports.reporttimer);
 }
 
-/* all operations get registered in the windowmanager here */
-/* called on event handling by event_system.c */
+/* All operations get registered in the windowmanager here. */
+/* Called on event handling by event_system.c. */
 void wm_operator_register(bContext *C, wmOperator *op)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
@@ -217,7 +215,7 @@ void wm_operator_register(bContext *C, wmOperator *op)
 
   BLI_addtail(&wm->operators, op);
 
-  /* only count registered operators */
+  /* Only count registered operators. */
   while (op) {
     wmOperator *op_prev = op->prev;
     if (op->type->flag & OPTYPE_REGISTER) {
@@ -230,7 +228,7 @@ void wm_operator_register(bContext *C, wmOperator *op)
     op = op_prev;
   }
 
-  /* so the console is redrawn */
+  /* So the console is redrawn. */
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_INFO_REPORT, NULL);
   WM_event_add_notifier(C, NC_WM | ND_HISTORY, NULL);
 }
@@ -252,8 +250,7 @@ void WM_operator_stack_clear(wmWindowManager *wm)
  */
 void WM_operator_handlers_clear(wmWindowManager *wm, wmOperatorType *ot)
 {
-  wmWindow *win;
-  for (win = wm->windows.first; win; win = win->next) {
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     ListBase *lb[2] = {&win->handlers, &win->modalhandlers};
     for (int i = 0; i < ARRAY_SIZE(lb); i++) {
       LISTBASE_FOREACH (wmEventHandler *, handler_base, lb[i]) {
@@ -287,7 +284,7 @@ void WM_keyconfig_init(bContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  /* create standard key configs */
+  /* Create standard key configs. */
   if (wm->defaultconf == NULL) {
     /* Keep lowercase to match the preset filename. */
     wm->defaultconf = WM_keyconfig_new(wm, WM_KEYCONFIG_STR_DEFAULT, false);
@@ -299,8 +296,7 @@ void WM_keyconfig_init(bContext *C)
     wm->userconf = WM_keyconfig_new(wm, WM_KEYCONFIG_STR_DEFAULT " user", false);
   }
 
-  /* initialize only after python init is done, for keymaps that
-   * use python operators */
+  /* Initialize only after python init is done, for keymaps that use python operators. */
   if (CTX_py_init_get(C) && (wm->initialized & WM_KEYCONFIG_IS_INIT) == 0) {
     /* create default key config, only initialize once,
      * it's persistent across sessions */
@@ -325,7 +321,7 @@ void WM_check(bContext *C)
   Main *bmain = CTX_data_main(C);
   wmWindowManager *wm = CTX_wm_manager(C);
 
-  /* wm context */
+  /* WM context. */
   if (wm == NULL) {
     wm = bmain->wm.first;
     CTX_wm_manager_set(C, wm);
@@ -341,18 +337,18 @@ void WM_check(bContext *C)
   }
 
   if (!G.background) {
-    /* case: fileread */
+    /* Case: fileread. */
     if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
       WM_keyconfig_init(C);
       WM_autosave_init(wm);
     }
 
-    /* case: no open windows at all, for old file reads */
+    /* Case: no open windows at all, for old file reads. */
     wm_window_ghostwindows_ensure(wm);
   }
 
-  /* case: fileread */
-  /* note: this runs in bg mode to set the screen context cb */
+  /* Case: fileread. */
+  /* Note: this runs in background mode to set the screen context cb. */
   if ((wm->initialized & WM_WINDOW_IS_INIT) == 0) {
     ED_screens_init(bmain, wm);
     wm->initialized |= WM_WINDOW_IS_INIT;
@@ -362,9 +358,8 @@ void WM_check(bContext *C)
 void wm_clear_default_size(bContext *C)
 {
   wmWindowManager *wm = CTX_wm_manager(C);
-  wmWindow *win;
 
-  /* wm context */
+  /* WM context. */
   if (wm == NULL) {
     wm = CTX_data_main(C)->wm.first;
     CTX_wm_manager_set(C, wm);
@@ -374,7 +369,7 @@ void wm_clear_default_size(bContext *C)
     return;
   }
 
-  for (win = wm->windows.first; win; win = win->next) {
+  LISTBASE_FOREACH (wmWindow *, win, &wm->windows) {
     win->sizex = 0;
     win->sizey = 0;
     win->posx = 0;
@@ -382,7 +377,7 @@ void wm_clear_default_size(bContext *C)
   }
 }
 
-/* on startup, it adds all data, for matching */
+/* On startup, it adds all data, for matching. */
 void wm_add_default(Main *bmain, bContext *C)
 {
   wmWindowManager *wm = BKE_libblock_alloc(bmain, ID_WM, "WinMan", 0);
@@ -404,13 +399,9 @@ void wm_add_default(Main *bmain, bContext *C)
   wm_window_make_drawable(wm, win);
 }
 
-/* context is allowed to be NULL, do not free wm itself (lib_id.c) */
+/* Context is allowed to be NULL, do not free wm itself (lib_id.c). */
 void wm_close_and_free(bContext *C, wmWindowManager *wm)
 {
-  wmWindow *win;
-  wmOperator *op;
-  wmKeyConfig *keyconf;
-
   if (wm->autosavetimer) {
     wm_autosave_timer_ended(wm);
   }
@@ -420,16 +411,19 @@ void wm_close_and_free(bContext *C, wmWindowManager *wm)
   wm_xr_exit(wm);
 #endif
 
+  wmWindow *win;
   while ((win = BLI_pophead(&wm->windows))) {
-    /* prevent draw clear to use screen */
+    /* Prevent draw clear to use screen. */
     BKE_workspace_active_set(win->workspace_hook, NULL);
     wm_window_free(C, wm, win);
   }
 
+  wmOperator *op;
   while ((op = BLI_pophead(&wm->operators))) {
     WM_operator_free(op);
   }
 
+  wmKeyConfig *keyconf;
   while ((keyconf = BLI_pophead(&wm->keyconfigs))) {
     WM_keyconfig_free(keyconf);
   }
@@ -459,7 +453,6 @@ void wm_close_and_free(bContext *C, wmWindowManager *wm)
 void wm_close_and_free_all(bContext *C, ListBase *wmlist)
 {
   wmWindowManager *wm;
-
   while ((wm = wmlist->first)) {
     wm_close_and_free(C, wm);
     BLI_remlink(wmlist, wm);
@@ -476,16 +469,16 @@ void WM_main(bContext *C)
 
   while (1) {
 
-    /* get events from ghost, handle window events, add to window queues */
+    /* Get events from ghost, handle window events, add to window queues. */
     wm_window_process_events(C);
 
-    /* per window, all events to the window, screen, area and region handlers */
+    /* Per window, all events to the window, screen, area and region handlers. */
     wm_event_do_handlers(C);
 
-    /* events have left notes about changes, we handle and cache it */
+    /* Wvents have left notes about changes, we handle and cache it. */
     wm_event_do_notifiers(C);
 
-    /* execute cached changes draw */
+    /* Wxecute cached changes draw. */
     wm_draw_update(C);
   }
 }

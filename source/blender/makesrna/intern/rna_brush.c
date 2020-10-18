@@ -557,6 +557,19 @@ static bool rna_BrushCapabilitiesSculpt_has_gravity_get(PointerRNA *ptr)
   return !ELEM(br->sculpt_tool, SCULPT_TOOL_MASK, SCULPT_TOOL_SMOOTH);
 }
 
+static bool rna_BrushCapabilitiesSculpt_has_tilt_get(PointerRNA *ptr)
+{
+  Brush *br = (Brush *)ptr->data;
+  return ELEM(br->sculpt_tool,
+              SCULPT_TOOL_DRAW,
+              SCULPT_TOOL_DRAW_SHARP,
+              SCULPT_TOOL_FLATTEN,
+              SCULPT_TOOL_FILL,
+              SCULPT_TOOL_SCRAPE,
+              SCULPT_TOOL_CLAY_STRIPS,
+              SCULPT_TOOL_CLAY_THUMB);
+}
+
 static bool rna_TextureCapabilities_has_texture_angle_source_get(PointerRNA *ptr)
 {
   MTex *mtex = (MTex *)ptr->data;
@@ -1137,6 +1150,7 @@ static void rna_def_sculpt_capabilities(BlenderRNA *brna)
   SCULPT_TOOL_CAPABILITY(has_strength_pressure, "Has Strength Pressure");
   SCULPT_TOOL_CAPABILITY(has_direction, "Has Direction");
   SCULPT_TOOL_CAPABILITY(has_gravity, "Has Gravity");
+  SCULPT_TOOL_CAPABILITY(has_tilt, "Has Tilt");
 
 #  undef SCULPT_CAPABILITY
 }
@@ -2753,8 +2767,8 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_text(
       prop,
-      "Soft Body Influence",
-      "How much the simulation preserves the original shape, acting as a soft body");
+      "Soft Body Plasticity",
+      "How much the cloth preserves the original shape, acting as a soft body");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "hardness", PROP_FLOAT, PROP_FACTOR);
@@ -2794,6 +2808,15 @@ static void rna_def_brush(BlenderRNA *brna)
                            "Automatically align edges to the brush direction to "
                            "generate cleaner topology and define sharp features. "
                            "Best used on low-poly meshes as it has a performance impact");
+  RNA_def_property_update(prop, 0, "rna_Brush_update");
+
+  prop = RNA_def_property(srna, "tilt_strength_factor", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_float_sdna(prop, NULL, "tilt_strength_factor");
+  RNA_def_property_float_default(prop, 0);
+  RNA_def_property_range(prop, 0.0f, 1.0f);
+  RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
+  RNA_def_property_ui_text(
+      prop, "Tilt Strength", "How much the tilt of the pen will affect the brush");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "normal_radius_factor", PROP_FLOAT, PROP_FACTOR);
@@ -3403,6 +3426,11 @@ static void rna_def_operator_stroke_element(BlenderRNA *brna)
   RNA_def_property_array(prop, 2);
   RNA_def_property_ui_text(prop, "Mouse", "");
 
+  prop = RNA_def_property(srna, "mouse_event", PROP_FLOAT, PROP_XYZ);
+  RNA_def_property_flag(prop, PROP_IDPROPERTY);
+  RNA_def_property_array(prop, 2);
+  RNA_def_property_ui_text(prop, "Mouse Event", "");
+
   prop = RNA_def_property(srna, "pressure", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_flag(prop, PROP_IDPROPERTY);
   RNA_def_property_range(prop, 0.0f, 1.0f);
@@ -3416,6 +3444,16 @@ static void rna_def_operator_stroke_element(BlenderRNA *brna)
   prop = RNA_def_property(srna, "pen_flip", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_flag(prop, PROP_IDPROPERTY);
   RNA_def_property_ui_text(prop, "Flip", "");
+
+  prop = RNA_def_property(srna, "x_tilt", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_flag(prop, PROP_IDPROPERTY);
+  RNA_def_property_range(prop, -1.0f, 1.0f);
+  RNA_def_property_ui_text(prop, "Tilt X", "");
+
+  prop = RNA_def_property(srna, "y_tilt", PROP_FLOAT, PROP_FACTOR);
+  RNA_def_property_flag(prop, PROP_IDPROPERTY);
+  RNA_def_property_range(prop, -1.0f, 1.0f);
+  RNA_def_property_ui_text(prop, "Tilt Y", "");
 
   /* used in uv painting */
   prop = RNA_def_property(srna, "time", PROP_FLOAT, PROP_UNSIGNED);

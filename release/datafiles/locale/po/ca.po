@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3452,10 +3452,6 @@ msgid "Maximum number of additional cells"
 msgstr "Esborrar Rotació"
 
 
-msgid "Single"
-msgstr "Esborrar Origen"
-
-
 msgid "Start"
 msgstr "Començar Joc"
 
@@ -4526,14 +4522,6 @@ msgstr "Càmera"
 
 msgid "Bevel Depth"
 msgstr "Autotangents"
-
-
-msgid "End Bevel Factor"
-msgstr "Desparentar"
-
-
-msgid "Start Bevel Factor"
-msgstr "Seleccionar fila"
 
 
 msgid "Bevel Object"
@@ -7456,10 +7444,6 @@ msgid "Texture Specials"
 msgstr "Texte"
 
 
-msgid "Text To 3D Object"
-msgstr "Comprimir Dades"
-
-
 msgid "Templates"
 msgstr "Moure a Capa"
 
@@ -9562,6 +9546,10 @@ msgstr "Desparentar"
 
 msgid "Limit Channel"
 msgstr "Finestra de Render"
+
+
+msgid "Single"
+msgstr "Esborrar Origen"
 
 
 msgid "Chroma Key"
@@ -14252,11 +14240,6 @@ msgid "Axis Threshold"
 msgstr "Mode d'Edició"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "Moure a Capa"
-
-
 msgid "Blending factor"
 msgstr "Mostrar propietats de les arestes"
 
@@ -15004,10 +14987,6 @@ msgstr "Seleccionar connectats"
 
 
 msgid "Amount of Adjacent Faces"
-msgstr "Seleccionar connectats"
-
-
-msgid "Amount of connecting edges"
 msgstr "Seleccionar connectats"
 
 
@@ -15890,11 +15869,6 @@ msgid "Copy constraints to other selected objects"
 msgstr "Seleccionar connectats"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Comprimir Dades"
-
-
 msgid "Modifier"
 msgstr "Esborrar tot"
 
@@ -16105,11 +16079,6 @@ msgstr "Seleccionar fila"
 
 
 msgid "Select affected vertices on mesh"
-msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
 msgstr "Seleccionar connectats"
 
 
@@ -17760,10 +17729,6 @@ msgid "Import Key Configuration..."
 msgstr "Finestra de Render"
 
 
-msgid "Keep original"
-msgstr "Esborrar Origen"
-
-
 msgctxt "Operator"
 msgid "Remove Key Config"
 msgstr "Afegir Tira"
@@ -17829,11 +17794,6 @@ msgstr "Guardar com"
 msgctxt "Operator"
 msgid "Bake All Physics"
 msgstr "Guardar com"
-
-
-msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "Moure a Capa"
 
 
 msgid "Bake from cache"
@@ -19260,11 +19220,6 @@ msgid "Pin"
 msgstr "Image Displist"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "Guardar imatge"
-
-
 msgid "Maximum distance between welded vertices"
 msgstr "Esborrar"
 
@@ -19280,11 +19235,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Reveal all hidden UV vertices"
 msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "Guardar imatge"
 
 
 msgid "Mark boundary edges as seams"
@@ -24975,11 +24925,6 @@ msgid "Odd"
 msgstr "Afegir"
 
 
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "Moure a Capa"
-
-
 msgid "Track:"
 msgstr "Crear Pista"
 
@@ -25866,6 +25811,11 @@ msgstr "Lattice"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "Comprimir Dades"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "Moure a Capa"
 
@@ -26066,14 +26016,6 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Undefined Type"
 msgstr "Arxiu"
-
-
-msgid "Strips must be the same length"
-msgstr "Dreta"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "Seleccionar connectats"
 
 
 msgid "No valid formats found"
@@ -27550,6 +27492,14 @@ msgstr "Canviar Str"
 
 msgid "No render output node in scene"
 msgstr "Render"
+
+
+msgid "Strips must be the same length"
+msgstr "Dreta"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "Seleccionar connectats"
 
 
 msgid "Paste name"
