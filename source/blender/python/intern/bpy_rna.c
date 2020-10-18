@@ -80,6 +80,11 @@
 #define USE_MATHUTILS
 #define USE_STRING_COERCE
 
+/* Unfortunately Python needs to hold a global reference to the context.
+ * If we remove this is means `bpy.context` won't be usable from some parts of the code:
+ * `bpy.app.handler` callbacks for example.
+ * Even though this is arguably "correct", it's going to cause problems for existing scripts,
+ * so accept having this for the time being. */
 BPy_StructRNA *bpy_context_module = NULL; /* for fast access */
 
 static PyObject *pyrna_struct_Subtype(PointerRNA *ptr);
@@ -457,7 +462,7 @@ static int mathutils_rna_vector_set(BaseMathObject *bmo, int subtype)
 
   RNA_property_float_set_array(&self->ptr, self->prop, bmo->data);
   if (RNA_property_update_check(self->prop)) {
-    RNA_property_update(BPy_GetContext(), &self->ptr, self->prop);
+    RNA_property_update(BPY_context_get(), &self->ptr, self->prop);
   }
 
   /* Euler order exception. */
@@ -468,7 +473,7 @@ static int mathutils_rna_vector_set(BaseMathObject *bmo, int subtype)
     if (order != eul->order) {
       RNA_property_enum_set(&self->ptr, prop_eul_order, eul->order);
       if (RNA_property_update_check(prop_eul_order)) {
-        RNA_property_update(BPy_GetContext(), &self->ptr, prop_eul_order);
+        RNA_property_update(BPY_context_get(), &self->ptr, prop_eul_order);
       }
     }
   }
@@ -517,7 +522,7 @@ static int mathutils_rna_vector_set_index(BaseMathObject *bmo, int UNUSED(subtyp
   RNA_property_float_set_index(&self->ptr, self->prop, index, bmo->data[index]);
 
   if (RNA_property_update_check(self->prop)) {
-    RNA_property_update(BPy_GetContext(), &self->ptr, self->prop);
+    RNA_property_update(BPY_context_get(), &self->ptr, self->prop);
   }
 
   return 0;
@@ -576,7 +581,7 @@ static int mathutils_rna_matrix_set(BaseMathObject *bmo, int UNUSED(subtype))
   RNA_property_float_set_array(&self->ptr, self->prop, bmo->data);
 
   if (RNA_property_update_check(self->prop)) {
-    RNA_property_update(BPy_GetContext(), &self->ptr, self->prop);
+    RNA_property_update(BPY_context_get(), &self->ptr, self->prop);
   }
   return 0;
 }
@@ -1229,7 +1234,7 @@ static const char *pyrna_enum_as_string(PointerRNA *ptr, PropertyRNA *prop)
   const char *result;
   bool free = false;
 
-  RNA_property_enum_items(BPy_GetContext(), ptr, prop, &item, NULL, &free);
+  RNA_property_enum_items(BPY_context_get(), ptr, prop, &item, NULL, &free);
   if (item) {
     result = BPy_enum_as_string(item);
   }
@@ -1257,7 +1262,7 @@ static int pyrna_string_to_enum(
     return -1;
   }
 
-  if (!RNA_property_enum_value(BPy_GetContext(), ptr, prop, param, r_value)) {
+  if (!RNA_property_enum_value(BPY_context_get(), ptr, prop, param, r_value)) {
     const char *enum_str = pyrna_enum_as_string(ptr, prop);
     PyErr_Format(PyExc_TypeError,
                  "%.200s enum \"%.200s\" not found in (%s)",
@@ -1399,7 +1404,7 @@ static int pyrna_prop_to_enum_bitfield(
     return -1;
   }
 
-  RNA_property_enum_items(BPy_GetContext(), ptr, prop, &item, NULL, &free);
+  RNA_property_enum_items(BPY_context_get(), ptr, prop, &item, NULL, &free);
 
   if (item) {
     ret = pyrna_set_to_enum_bitfield(item, value, r_value, error_prefix);
@@ -1451,7 +1456,7 @@ static PyObject *pyrna_enum_to_py(PointerRNA *ptr, PropertyRNA *prop, int val)
 
     ret = PySet_New(NULL);
 
-    if (RNA_property_enum_bitflag_identifiers(BPy_GetContext(), ptr, prop, val, identifier)) {
+    if (RNA_property_enum_bitflag_identifiers(BPY_context_get(), ptr, prop, val, identifier)) {
       int index;
 
       for (index = 0; identifier[index]; index++) {
@@ -1463,7 +1468,7 @@ static PyObject *pyrna_enum_to_py(PointerRNA *ptr, PropertyRNA *prop, int val)
   }
   else {
     const char *identifier;
-    if (RNA_property_enum_identifier(BPy_GetContext(), ptr, prop, val, &identifier)) {
+    if (RNA_property_enum_identifier(BPY_context_get(), ptr, prop, val, &identifier)) {
       ret = PyUnicode_FromString(identifier);
     }
     else {
@@ -2212,7 +2217,7 @@ static int pyrna_py_to_prop(
 
   /* Run RNA property functions. */
   if (RNA_property_update_check(prop)) {
-    RNA_property_update(BPy_GetContext(), ptr, prop);
+    RNA_property_update(BPY_context_get(), ptr, prop);
   }
 
   return 0;
@@ -2288,7 +2293,7 @@ static int pyrna_py_to_prop_array_index(BPy_PropertyArrayRNA *self, int index, P
 
   /* Run RNA property functions. */
   if (RNA_property_update_check(prop)) {
-    RNA_property_update(BPy_GetContext(), ptr, prop);
+    RNA_property_update(BPY_context_get(), ptr, prop);
   }
 
   return ret;
@@ -3292,7 +3297,7 @@ static int pyrna_prop_array_ass_subscript(BPy_PropertyArrayRNA *self,
 
   if (ret != -1) {
     if (RNA_property_update_check(self->prop)) {
-      RNA_property_update(BPy_GetContext(), &self->ptr, self->prop);
+      RNA_property_update(BPY_context_get(), &self->ptr, self->prop);
     }
   }
 
@@ -3962,7 +3967,7 @@ PyDoc_STRVAR(pyrna_prop_update_doc,
              "      however in rare cases it's useful to call explicitly.\n");
 static PyObject *pyrna_prop_update(BPy_PropertyRNA *self)
 {
-  RNA_property_update(BPy_GetContext(), &self->ptr, self->prop);
+  RNA_property_update(BPY_context_get(), &self->ptr, self->prop);
   Py_RETURN_NONE;
 }
 
@@ -6294,7 +6299,7 @@ static PyObject *pyrna_func_call(BPy_FunctionRNA *self, PyObject *args, PyObject
   if (err == 0) {
     /* Call function. */
     ReportList reports;
-    bContext *C = BPy_GetContext();
+    bContext *C = BPY_context_get();
 
     BKE_reports_init(&reports, RPT_STORE);
     RNA_function_call(C, &reports, self_ptr, self_func, &parms);
@@ -8103,18 +8108,11 @@ static int bpy_class_validate_recursive(PointerRNA *dummyptr,
   for (link = lb->first; link; link = link->next) {
     FunctionRNA *func = (FunctionRNA *)link;
     const int flag = RNA_function_flag(func);
-    /* TODO(campbell): this is used for classmethod's too,
-     * even though class methods should have 'FUNC_USE_SELF_TYPE' set, see Operator.poll for eg.
-     * Keep this as-is since it's working, but we should be using
-     * 'FUNC_USE_SELF_TYPE' for many functions. */
-    const bool is_staticmethod = (flag & FUNC_NO_SELF) && !(flag & FUNC_USE_SELF_TYPE);
-
     if (!(flag & FUNC_REGISTER)) {
       continue;
     }
 
     item = PyObject_GetAttrString(py_class, RNA_function_identifier(func));
-
     have_function[i] = (item != NULL);
     i++;
 
@@ -8127,80 +8125,89 @@ static int bpy_class_validate_recursive(PointerRNA *dummyptr,
                      RNA_function_identifier(func));
         return -1;
       }
-
       PyErr_Clear();
+
+      continue;
+    }
+
+    /* TODO(campbell): this is used for classmethod's too,
+     * even though class methods should have 'FUNC_USE_SELF_TYPE' set, see Operator.poll for eg.
+     * Keep this as-is since it's working, but we should be using
+     * 'FUNC_USE_SELF_TYPE' for many functions. */
+    const bool is_staticmethod = (flag & FUNC_NO_SELF) && !(flag & FUNC_USE_SELF_TYPE);
+
+    /* Store original so we can decrement it's reference before returning. */
+    PyObject *item_orig = item;
+
+    if (is_staticmethod) {
+      if (PyMethod_Check(item) == 0) {
+        PyErr_Format(PyExc_TypeError,
+                     "expected %.200s, %.200s class \"%.200s\" "
+                     "attribute to be a static/class method, not a %.200s",
+                     class_type,
+                     py_class_name,
+                     RNA_function_identifier(func),
+                     Py_TYPE(item)->tp_name);
+        Py_DECREF(item_orig);
+        return -1;
+      }
+      item = ((PyMethodObject *)item)->im_func;
     }
     else {
-      /* No need to keep a ref, the class owns it
-       * (technically we should keep a reference, but...). */
-      Py_DECREF(item);
-
-      if (is_staticmethod) {
-        if (PyMethod_Check(item) == 0) {
-          PyErr_Format(PyExc_TypeError,
-                       "expected %.200s, %.200s class \"%.200s\" "
-                       "attribute to be a static/class method, not a %.200s",
-                       class_type,
-                       py_class_name,
-                       RNA_function_identifier(func),
-                       Py_TYPE(item)->tp_name);
-          return -1;
-        }
-        item = ((PyMethodObject *)item)->im_func;
-      }
-      else {
-        if (PyFunction_Check(item) == 0) {
-          PyErr_Format(PyExc_TypeError,
-                       "expected %.200s, %.200s class \"%.200s\" "
-                       "attribute to be a function, not a %.200s",
-                       class_type,
-                       py_class_name,
-                       RNA_function_identifier(func),
-                       Py_TYPE(item)->tp_name);
-          return -1;
-        }
-      }
-
-      func_arg_count = rna_function_arg_count(func, &func_arg_min_count);
-
-      if (func_arg_count >= 0) { /* -1 if we don't care. */
-        arg_count = ((PyCodeObject *)PyFunction_GET_CODE(item))->co_argcount;
-
-        /* note, the number of args we check for and the number of args we give to
-         * '@staticmethods' are different (quirk of Python),
-         * this is why rna_function_arg_count() doesn't return the value -1*/
-        if (is_staticmethod) {
-          func_arg_count++;
-          func_arg_min_count++;
-        }
-
-        if (arg_count < func_arg_min_count || arg_count > func_arg_count) {
-          if (func_arg_min_count != func_arg_count) {
-            PyErr_Format(
-                PyExc_ValueError,
-                "expected %.200s, %.200s class \"%.200s\" function to have between %d and %d "
-                "args, found %d",
-                class_type,
-                py_class_name,
-                RNA_function_identifier(func),
-                func_arg_count,
-                func_arg_min_count,
-                arg_count);
-          }
-          else {
-            PyErr_Format(
-                PyExc_ValueError,
-                "expected %.200s, %.200s class \"%.200s\" function to have %d args, found %d",
-                class_type,
-                py_class_name,
-                RNA_function_identifier(func),
-                func_arg_count,
-                arg_count);
-          }
-          return -1;
-        }
+      if (PyFunction_Check(item) == 0) {
+        PyErr_Format(PyExc_TypeError,
+                     "expected %.200s, %.200s class \"%.200s\" "
+                     "attribute to be a function, not a %.200s",
+                     class_type,
+                     py_class_name,
+                     RNA_function_identifier(func),
+                     Py_TYPE(item)->tp_name);
+        Py_DECREF(item_orig);
+        return -1;
       }
     }
+
+    func_arg_count = rna_function_arg_count(func, &func_arg_min_count);
+
+    if (func_arg_count >= 0) { /* -1 if we don't care. */
+      arg_count = ((PyCodeObject *)PyFunction_GET_CODE(item))->co_argcount;
+
+      /* note, the number of args we check for and the number of args we give to
+       * '@staticmethods' are different (quirk of Python),
+       * this is why rna_function_arg_count() doesn't return the value -1*/
+      if (is_staticmethod) {
+        func_arg_count++;
+        func_arg_min_count++;
+      }
+
+      if (arg_count < func_arg_min_count || arg_count > func_arg_count) {
+        if (func_arg_min_count != func_arg_count) {
+          PyErr_Format(
+              PyExc_ValueError,
+              "expected %.200s, %.200s class \"%.200s\" function to have between %d and %d "
+              "args, found %d",
+              class_type,
+              py_class_name,
+              RNA_function_identifier(func),
+              func_arg_count,
+              func_arg_min_count,
+              arg_count);
+        }
+        else {
+          PyErr_Format(
+              PyExc_ValueError,
+              "expected %.200s, %.200s class \"%.200s\" function to have %d args, found %d",
+              class_type,
+              py_class_name,
+              RNA_function_identifier(func),
+              func_arg_count,
+              arg_count);
+        }
+        Py_DECREF(item_orig);
+        return -1;
+      }
+    }
+    Py_DECREF(item_orig);
   }
 
   /* Verify properties. */
@@ -8313,7 +8320,7 @@ static int bpy_class_call(bContext *C, PointerRNA *ptr, FunctionRNA *func, Param
   /* XXX, this is needed because render engine calls without a context
    * this should be supported at some point, but at the moment it's not! */
   if (C == NULL) {
-    C = BPy_GetContext();
+    C = BPY_context_get();
   }
 
   /* Annoying! We need to check if the screen gets set to NULL which is a
@@ -8782,7 +8789,7 @@ static PyObject *pyrna_register_class(PyObject *UNUSED(self), PyObject *py_class
   }
 
   /* Get the context, so register callback can do necessary refreshes. */
-  C = BPy_GetContext();
+  C = BPY_context_get();
 
   /* Call the register callback with reports & identifier. */
   BKE_reports_init(&reports, RPT_STORE);
@@ -8993,7 +9000,7 @@ static PyObject *pyrna_unregister_class(PyObject *UNUSED(self), PyObject *py_cla
   }
 
   /* Get the context, so register callback can do necessary refreshes. */
-  C = BPy_GetContext();
+  C = BPY_context_get();
 
   /* Call unregister. */
   unreg(CTX_data_main(C), srna); /* Calls bpy_class_free, this decref's py_class. */

@@ -29,6 +29,7 @@
 
 #include "BLT_translation.h"
 
+#include "DNA_defaults.h"
 #include "DNA_gpencil_modifier_types.h"
 #include "DNA_gpencil_types.h"
 #include "DNA_meshdata_types.h"
@@ -57,11 +58,10 @@
 static void initData(GpencilModifierData *md)
 {
   TimeGpencilModifierData *gpmd = (TimeGpencilModifierData *)md;
-  gpmd->offset = 1;
-  gpmd->frame_scale = 1.0f;
-  gpmd->flag |= GP_TIME_KEEP_LOOP;
-  gpmd->sfra = 1;
-  gpmd->efra = 250;
+
+  BLI_assert(MEMCMP_STRUCT_AFTER_IS_ZERO(gpmd, modifier));
+
+  MEMCPY_STRUCT_AFTER(gpmd, DNA_struct_default_get(TimeGpencilModifierData), modifier);
 }
 
 static void copyData(const GpencilModifierData *md, GpencilModifierData *target)
@@ -233,7 +233,7 @@ static void custom_range_panel_draw(const bContext *UNUSED(C), Panel *panel)
   uiLayoutSetActive(
       layout, (mode != GP_TIME_MODE_FIX) && (RNA_boolean_get(ptr, "use_custom_frame_range")));
 
-  col = uiLayoutColumn(layout, false);
+  col = uiLayoutColumn(layout, true);
   uiItemR(col, ptr, "frame_start", 0, IFACE_("Frame Start"), ICON_NONE);
   uiItemR(col, ptr, "frame_end", 0, IFACE_("End"), ICON_NONE);
 }

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3232,10 +3232,6 @@ msgid "Maximum number of additional cells"
 msgstr "En fazla dahili konsol satır sayısı"
 
 
-msgid "Single"
-msgstr "Tekli Resim Dosyası"
-
-
 msgid "End"
 msgstr "Son"
 
@@ -3912,6 +3908,10 @@ msgid "Global"
 msgstr "Evrensel"
 
 
+msgid "Dynamic"
+msgstr "Dinamik Runtime Kaydet..."
+
+
 msgid "Add Color"
 msgstr "Ekran Rengi:"
 
@@ -4264,14 +4264,6 @@ msgid "Panoramic"
 msgstr "Standart panorama ayarları"
 
 
-msgid "End Bevel Factor"
-msgstr "Harekete bağlı bulanıklık derecesi"
-
-
-msgid "Start Bevel Factor"
-msgstr "Harekete bağlı bulanıklık derecesi"
-
-
 msgid "Bevel Object"
 msgstr "Nesne Kısıtlamaları"
 
@@ -4320,16 +4312,8 @@ msgid "Resolution U"
 msgstr "Çözünürlük:"
 
 
-msgid "Surface resolution in U direction"
-msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
-
-
 msgid "Resolution V"
 msgstr "Çözünürlük:"
-
-
-msgid "Surface resolution in V direction"
-msgstr "X, Y ve Z yönünde Etki Alanı Çözünürlüğü"
 
 
 msgid "Taper Object"
@@ -5660,10 +5644,6 @@ msgid "Pick Random"
 msgstr "Rasgele Bozulma"
 
 
-msgid "Dynamic"
-msgstr "Dinamik Runtime Kaydet..."
-
-
 msgid "Mass from Size"
 msgstr "Yazıtipi Boyutu Seçin:"
 
@@ -6901,10 +6881,6 @@ msgstr "Strip Özellikleri..."
 
 msgid "Texture Specials"
 msgstr "Ekstra Kenar Özellikleri"
-
-
-msgid "Text To 3D Object"
-msgstr "Obje bağlarına gözat"
 
 
 msgid "Templates"
@@ -8657,6 +8633,10 @@ msgstr "Space Handler Scripts"
 
 msgid "Limit Channel"
 msgstr "Kanal Sıralaması"
+
+
+msgid "Single"
+msgstr "Tekli Resim Dosyası"
 
 
 msgid "Chroma Key"
@@ -12148,10 +12128,6 @@ msgid "Insert Text"
 msgstr "Metni Düzenle:"
 
 
-msgid "Accent mode"
-msgstr "Düzenleme Modu"
-
-
 msgctxt "Operator"
 msgid "Paste Text"
 msgstr "Metni Düzenle:"
@@ -13056,11 +13032,6 @@ msgid "Axis Threshold"
 msgstr "Yatay Eksen"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "Şekil Anahtarı Ekle"
-
-
 msgid "Blending factor"
 msgstr "Harekete bağlı bulanıklık derecesi"
 
@@ -13660,10 +13631,6 @@ msgstr "Noktaları Göster/Gizle"
 
 
 msgid "Amount of Adjacent Faces"
-msgstr "Yansıma miktarı"
-
-
-msgid "Amount of connecting edges"
 msgstr "Yansıma miktarı"
 
 
@@ -14386,11 +14353,6 @@ msgid "Copy Constraints to Selected Objects"
 msgstr "Görüntüyü Seçili Olana Hizala"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Eğriyi buna Çevir"
-
-
 msgid "Type of object to convert to"
 msgstr "Nurbs Yüzeyi buna çevir"
 
@@ -14568,11 +14530,6 @@ msgstr "Kanca Ekle"
 msgctxt "Operator"
 msgid "Select Hook"
 msgstr "Kanca Ekle"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "Arkaplan resminin yatay öteleme ayarı"
 
 
 msgctxt "Operator"
@@ -16105,10 +16062,6 @@ msgid "Import Key Configuration..."
 msgstr "Şekil Anahtarı Ekle"
 
 
-msgid "Keep original"
-msgstr "Orijinali Koru"
-
-
 msgctxt "Operator"
 msgid "Remove Key Config"
 msgstr "Şekil Anahtarı Ekle"
@@ -16166,11 +16119,6 @@ msgstr "Fizik Bilgilerini Göster"
 
 msgid "Bake all physics"
 msgstr "Fizik Bilgilerini Göster"
-
-
-msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "Bake Render Meshes"
 
 
 msgid "Bake from cache"
@@ -17471,11 +17419,6 @@ msgid "Pin"
 msgstr "H.Paneli iğnele"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "Görüntü çevirme metodu:"
-
-
 msgid "Use orthographic projection"
 msgstr "Arkaplan Resmi Kullan"
 
@@ -17491,11 +17434,6 @@ msgstr "Sıfırla"
 
 msgid "Reset UV projection"
 msgstr "NURBS Küre"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "Tüm grupları sil"
 
 
 msgid "Select UV vertices"
@@ -17796,30 +17734,6 @@ msgstr "Aktif Kamera"
 
 msgid "Align to the active object's axis"
 msgstr "Kamerayı Görüntüye Hizala"
-
-
-msgid "View From the Left"
-msgstr "Otomatik İsimlendir Sol/Sağ"
-
-
-msgid "View From the Right"
-msgstr "Otomatik İsimlendir Sol/Sağ"
-
-
-msgid "View From the Bottom"
-msgstr "Alta Taşı"
-
-
-msgid "View From the Top"
-msgstr "Üste Taşı"
-
-
-msgid "View From the Front"
-msgstr "Ön Görünümde Olmalısınız (NumPad1)"
-
-
-msgid "View From the Back"
-msgstr "10 Kare Geri"
 
 
 msgctxt "Operator"
@@ -22945,11 +22859,6 @@ msgid "B/W"
 msgstr "S/B"
 
 
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "Aktif Grubu Sil"
-
-
 msgid "Track:"
 msgstr "Yol"
 
@@ -23420,10 +23329,6 @@ msgstr "İşareti Çoğalt"
 msgctxt "Operator"
 msgid "Duplicate Marker to Scene..."
 msgstr "Sonraki İşarete Geç"
-
-
-msgid "Auto Keyframing:"
-msgstr "Otomatik Normalleştir"
 
 
 msgctxt "Operator"
@@ -23946,6 +23851,11 @@ msgstr "Kafes"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "Eğriyi buna Çevir"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "Aktif Kamera"
 
@@ -24165,14 +24075,6 @@ msgstr "Bellek yetersiz."
 
 msgid "Undefined Type"
 msgstr "Kesme Biçimi "
-
-
-msgid "Strips must be the same length"
-msgstr "Otomatik İsimlendir Sol/Sağ"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "Katmandan Tümünü Seç"
 
 
 msgid "Error writing frame"
@@ -25843,6 +25745,14 @@ msgstr "Tüm Nesne Merkezleri"
 
 msgid "No render output node in scene"
 msgstr "İşlenen görüntüyü Tam ekranda(Full Screen), Resim düzenleme penceresinde(İmage Editor) yada ayrı pencerede(Render Window) görüntüleyebilirsiniz."
+
+
+msgid "Strips must be the same length"
+msgstr "Otomatik İsimlendir Sol/Sağ"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "Katmandan Tümünü Seç"
 
 
 msgid "Paste name"

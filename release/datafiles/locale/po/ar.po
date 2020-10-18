@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'701c3e499f61')\n"
+"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -7777,10 +7777,6 @@ msgid "Maximum number of additional cells"
 msgstr "ﺔﻓﺎﻔﺸﻟﺍ ﺕﺍﺩﺍﺪﺗﺭﻺ﻿ﻟ ﺩﺪﻋ ﺮﺜﻛﺍ"
 
 
-msgid "Single"
-msgstr "ﻱﺩﺮﻓ"
-
-
 msgid "End"
 msgstr "ﺔﻳﺎﻬﻨﻟﺍ"
 
@@ -9447,6 +9443,10 @@ msgid "Global"
 msgstr "ﻲﻤﻟﺎﻋ"
 
 
+msgid "Dynamic"
+msgstr "ﻙﺮﺤﺘﻣ"
+
+
 msgid "Crease Brush Pinch Factor"
 msgstr "ﺪﻌّﺠﺘﻟﺍ ﺓﺎﺷﺮﻔﻟ ﻖﻴﻀﺘﻟﺍ ﻞﻣﺎﻌﻣ"
 
@@ -10327,56 +10327,16 @@ msgid "Bevel Depth"
 msgstr "ﺔﻔﻄﺸﻟﺍ ﻖﻤﻋ"
 
 
-msgid "Bevel depth when not using a bevel object"
-msgstr "ﺔﻔﻄﺸﻠﻟ ﻦﺋﺎﻛ ﻡﺪﺨﺘﺴﻳ ﻻ﻿ ﺎﻣﺪﻨﻋ ﺔﻔﻄﺸﻟﺍ ﻖﻤﻋ"
-
-
-msgid "End Bevel Factor"
-msgstr "ﺔﻔﻄﺸﻟﺍ ﺔﻳﺎﻬﻧ ﻞﻣﺎﻌﻣ"
-
-
-msgid "Factor that defines to where beveling of spline happens (0=to the very beginning, 1=to the very end)"
-msgstr "(ﺔﻳﺎﻬﻨﻠﻟ=1 ,ﺔﻳﺍﺪﺒﻠﻟ=0) ﻒﻴﻄﺸﺘﻟﺍ ﺙﺪﺤﻳ ﻰﺘﻤﻟ ﻑﺮّﻌﻤﻟﺍ ﻞﻣﺎﻌﻤﻟﺍ"
-
-
 msgid "End Mapping Type"
 msgstr "ﺭﻮﺤﺘﻟﺍ ﺔﻳﺎﻬﻧ ﻉﻮﻧ"
-
-
-msgid "Determines how the end bevel factor is mapped to a spline"
-msgstr "ﻰﻨﺤﻨﻤﻟ ﺔﻔﻄﺸﻟﺍ ﺔﻳﺎﻬﻧ ﻞﻣﺎﻌﻣ ﺭﻮّﺤﻳ ﻒﻴﻛ ﺩﺪﺤﻳ"
-
-
-msgid "Map the bevel factor to the number of subdivisions of a spline (U resolution)"
-msgstr "(U ﺔﻗﺪﻟﺍ) ﻰﻨﺤﻨﻤﻠﻟ ﺕﺎﻤﻴﺴﻘﺘﻟﺍ ﺩﺪﻌﺑ ﺔﻔﻄﺸﻟﺍ ﻞﻣﺎﻌﻣ ﻂﺑﺭﺍ"
-
-
-msgid "Map the bevel factor to the length of a segment and to the number of subdivisions of a segment"
-msgstr "ﺎﻬﺗﺎﻤﻴﺴﻘﺗ ﺩﺪﻌﺑ ﻭ ﺔﻤﻴﺴﻘﺘﻟﺍ ﻝﻮﻄﺑ ﺔﻔﻄﺸﻟﺍ ﻞﻣﺎﻌﻣ ﻂﺑﺭﺇ"
 
 
 msgid "Spline"
 msgstr "ﻲﺑ-ﻰﻨﺤﻨﻣ"
 
 
-msgid "Map the bevel factor to the length of a spline"
-msgstr "ﻰﻨﺤﻨﻤﻟﺍ  ﻝﻮﻄﺑ ﺔﻔﻄﺸﻟﺍ ﻞﻣﺎﻌﻣ ﻂﺑﺭﺇ"
-
-
 msgid "Start Mapping Type"
 msgstr "ﺭﻮﺤﺘﻟﺍ ﺔﻳﺍﺪﺑ ﻉﻮﻧ"
-
-
-msgid "Determines how the start bevel factor is mapped to a spline"
-msgstr "ﻰﻨﺤﻨﻤﻟ ﺔﻔﻄﺸﻟﺍ ﺔﻳﺍﺪﺑ ﻞﻣﺎﻌﻣ ﺭﻮّﺤﻳ ﻒﻴﻛ ﺩﺪﺤﻳ"
-
-
-msgid "Start Bevel Factor"
-msgstr "ﺔﻔﻄﺸﻟﺍ ﺔﻳﺍﺪﺑ ﻞﻣﺎﻌﻣ"
-
-
-msgid "Factor that defines from where beveling of spline happens (0=from the very beginning, 1=from the very end)"
-msgstr "(ﺔﻳﺎﻬﻨﻟﺍ ﻦﻣ=1 ,ﺔﻳﺍﺪﺒﻟﺍ ﻦﻣ =0) ﻰﻨﺤﻨﻤﻟﺍ ﺔﻔﻄﺷ ﺃﺪﺒﺗ ﻦﻳﺍ ﻦﻣ ﻑﺮّﻌﻤﻟﺍ ﻞﻣﺎﻌﻤﻟﺍ"
 
 
 msgid "Round"
@@ -10387,16 +10347,8 @@ msgid "Bevel Object"
 msgstr "ﺔﻔﻄﺸﻟﺍ ﻦﺋﺎﻛ"
 
 
-msgid "Curve object name that defines the bevel shape"
-msgstr "ﺔﻔﻄﺸﻟﺍ ﻞﻜﺸﻟ ﻑﺮّﻌﻤﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ ﻦﺋﺎﻛ ﻢﺳﺍ"
-
-
 msgid "Bevel Resolution"
 msgstr "ﺔﻔﻄﺸﻟﺍ ﺔﻗﺩ"
-
-
-msgid "Bevel resolution when depth is non-zero and no specific bevel object has been defined"
-msgstr "ﻑﺮّﻌﻣ ﺔﻔﻄﺷ ﻦﺋﺎﻛ ﺪﺟﻮﻳ ﻻ﻿ ﻭ ﺮﻔﺻ ﺮﻴﻏ ﻖﻤﻌﻟﺍ ﻥﻮﻜﻳ ﺎﻣﺪﻨﻋ ﺔﻔﻄﺸﻟﺍ ﺔﻗﺩ"
 
 
 msgid "Cycles Mesh Settings"
@@ -10431,20 +10383,12 @@ msgid "Extrude"
 msgstr "ﻖﺜﺑﺃ"
 
 
-msgid "Amount of curve extrusion when not using a bevel object"
-msgstr "ﺔﻔﻄﺸﻠﻟ ﻦﺋﺎﻛ ﻡﺪﺨﺘﺴﻳ ﻻ﻿ ﺎﻣﺪﻨﻋ ﻰﻨﺤﻨﻤﻟﺍ ﻖﺜﺑ ﺔﻴﻤﻛ"
-
-
 msgid "Fill Mode"
 msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﻊﺿﻭ"
 
 
 msgid "Mode of filling curve"
 msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﺔﺌﺒﻌﺗ ﺔﻘﻳﺮﻃ"
-
-
-msgid "Offset the curve to adjust the width of a text"
-msgstr "ﺺﻨﻟﺍ ﺽﺮﻋ ﻞﻳﺪﻌﺘﻟ  ﻰﻨﺤﻨﻤﻟﺍ ﺡﺯﺍ"
 
 
 msgid "Path Length"
@@ -10475,16 +10419,8 @@ msgid "Resolution U"
 msgstr "U ﻰﻠﻋ ﺔﻗﺪﻟﺍ"
 
 
-msgid "Surface resolution in U direction"
-msgstr "U ﻩﺎﺠﺗﺍ ﻲﻓ ﺢﻄﺴﻟﺍ ﺔﻗﺩ"
-
-
 msgid "Resolution V"
 msgstr "V ﻰﻠﻋ ﺔﻗﺪﻟﺍ"
-
-
-msgid "Surface resolution in V direction"
-msgstr "V ﻩﺎﺠﺗﺍ ﻲﻓ ﺢﻄﺴﻟﺍ ﺔﻗﺩ"
 
 
 msgid "Splines"
@@ -13985,10 +13921,6 @@ msgstr "ﺎﻬﺋﺎﻬﺘﻧﺍ ﺪﻌﺑ ﺕﺎﺌﻳﺰﺠﻟﺍ ﺮﻬﻇﺍ
 
 msgid "Particles die when they collide with a deflector object"
 msgstr "ﻑﺍﺮﺤﻧﻻ﻿ﺍ ﻦﺋﺎﻛ ﻊﻣ ﻡﺩﺎﺼﺘﺗ ﺎﻣﺪﻨﻋ ﺕﺎﺌﻳﺰﺠﻟﺍ ﻑﺬﺤﺗ"
-
-
-msgid "Dynamic"
-msgstr "ﻙﺮﺤﺘﻣ"
 
 
 msgid "Particle rotations are affected by collisions and effectors"
@@ -17683,10 +17615,6 @@ msgid "Texture Specials"
 msgstr "ﺞﻴﺴﻨﻟﺍ ﺕﺎﻓﺎﺿﺇ"
 
 
-msgid "Text To 3D Object"
-msgstr "ﻲﺛﻼ﻿ﺛ ﻦﺋﺎﻛ ﻰﻟﺍ ﺺﻨﻟﺍ"
-
-
 msgid "Templates"
 msgstr "ﺐﻟﺍﻮﻗ"
 
@@ -19846,18 +19774,6 @@ msgid "Tracks"
 msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ"
 
 
-msgid "Distortion Model"
-msgstr "ﻩﻮّﺸﺘﻟﺍ ﻂﻤﻧ"
-
-
-msgid "Polynomial"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﺩﺪﻌﺘﻣ"
-
-
-msgid "Divisions"
-msgstr "ﺕﺎﻤﻴﺴﻘﺘﻟﺍ"
-
-
 msgid "K1"
 msgstr "K1"
 
@@ -19868,6 +19784,18 @@ msgstr "K2"
 
 msgid "K3"
 msgstr "K3"
+
+
+msgid "Distortion Model"
+msgstr "ﻩﻮّﺸﺘﻟﺍ ﻂﻤﻧ"
+
+
+msgid "Polynomial"
+msgstr "ﺩﻭﺪﺤﻟﺍ ﺩﺪﻌﺘﻣ"
+
+
+msgid "Divisions"
+msgstr "ﺕﺎﻤﻴﺴﻘﺘﻟﺍ"
 
 
 msgid "Pixel Aspect Ratio"
@@ -20668,6 +20596,10 @@ msgstr "YCbCr ﻥﻮﻟ ءﺎﻀﻓ"
 
 msgid "Limit Channel"
 msgstr "ﺮﺼﺣ ﺓﺎﻨﻗ"
+
+
+msgid "Single"
+msgstr "ﻱﺩﺮﻓ"
 
 
 msgid "Channel used to determine matte"
@@ -24782,10 +24714,6 @@ msgid "Insert Text"
 msgstr "ﺺﻨﻟﺍ ﻞﺧﺩﺍ"
 
 
-msgid "Accent mode"
-msgstr "ﺔﻴﻘﻄﻨﻟﺍ ﺔﻣﻼ﻿ﻌﻟﺍ ﻊﺿﻭ"
-
-
 msgctxt "Operator"
 msgid "Paste Text"
 msgstr "ﺺﻨﻟﺍ ﻖﺼﻟﺍ"
@@ -25805,11 +25733,6 @@ msgid "Axis Threshold"
 msgstr "ﺭﻮﺤﻤﻟﺍ ﺔﺒﺘﻋ"
 
 
-msgctxt "Operator"
-msgid "Blend From Shape"
-msgstr "ﻞﻜﺸﻟﺍ ﻦﻣ ﻂﻠﺧﺇ"
-
-
 msgid "Interpolation method"
 msgstr "ﺪﻴﻟﻮﺘﻟﺍ ﻊﺿﻭ"
 
@@ -26543,10 +26466,6 @@ msgid "Amount of Adjacent Faces"
 msgstr "ﺓﺭﻭﺎﺠﺘﻤﻟﺍ ﻪﺟﻭﻻ﻿ﺍ ﺔﻴﻤﻛ"
 
 
-msgid "Amount of connecting edges"
-msgstr "ﺔﻠﺼﺘﻤﻟﺍ ﻑﺍﻮﺤﻟﺍ ﺔﻴﻤﻛ"
-
-
 msgid "Amount of Faces Around an Edge"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﻝﻮﺣ ﻪﺣﻭﺃﻻ﻿ ﺔﻴﻤﻛ"
 
@@ -26797,8 +26716,8 @@ msgid "Smooth Z Axis"
 msgstr "ﺮﻌﺸﻟﺍ ﻢﻌﻧ"
 
 
-msgid "Crease weight"
-msgstr "ﺪﻌﺠﺘﻟﺍ ﻥﺯﻭ"
+msgid "Crease Weight"
+msgstr "ﻥﺯﻮﻟﺍ ﺪﻌّﺟ"
 
 
 msgid "Remove original faces"
@@ -27386,15 +27305,6 @@ msgid "Copy Constraints to Selected Objects"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻨﺋﺎﻜﻠﻟ ﺩﻮﻴﻘﻟﺍ ﺦﺴﻧﺍ"
 
 
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "ﻰﻟﺍ ﻝﻮّﺣ"
-
-
-msgid "Curve from Mesh/Text"
-msgstr "ﺺﻧ/ﻢﺴﺠﻣ ﻦﻣ ﻰﻨﺤﻨﻣ"
-
-
 msgid "Vertex Group(s)"
 msgstr "ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻣ"
 
@@ -27550,11 +27460,6 @@ msgstr "ﻑﺎﻄﺨﻟﺍ ﻂﺒﺿ ﺪﻋﺃ"
 msgctxt "Operator"
 msgid "Select Hook"
 msgstr "ﻑﺎﻄﺨﻟﺍ ﺮﺘﺧﺇ"
-
-
-msgctxt "Operator"
-msgid "Set Offset From Cursor"
-msgstr "ﺮﺷﺆﻤﻟﺍ ﻦﻋ ﺪﻌﺒﻟﺍ ﻊﺿ"
 
 
 msgctxt "Operator"
@@ -29252,11 +29157,6 @@ msgstr "ﺕﺎﻴﺋﺎﻳﺰﻔﻟﺍ ﻞﻛ ﻥﺰﺧ"
 
 
 msgctxt "Operator"
-msgid "Bake From Cache"
-msgstr "ﺔﻘﺒﺴﻤﻟﺍ ﺕﺎﺑﺎﺴﺤﻟﺍ ﻦﻣ ﻥﺰﺧ"
-
-
-msgctxt "Operator"
 msgid "Delete Current Cache"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﻑﺬﺣﺍ"
 
@@ -30665,11 +30565,6 @@ msgid "Pin"
 msgstr "ﺖﺒّﺛ"
 
 
-msgctxt "Operator"
-msgid "Project From View"
-msgstr "ﺮﻈﻨﻤﻟﺍ ﻦﻣ ﻂﻘﺳﺍ"
-
-
 msgid "Camera Bounds"
 msgstr "ﺍﺮﻴﻣﺎﻜﻟﺍ ﺩﻭﺪﺣ"
 
@@ -30685,11 +30580,6 @@ msgstr "ﻂﺒﻀﻟﺍ ﺪﻋﺃ"
 
 msgid "Reset UV projection"
 msgstr "UV's ـﻟﺍ ﻁﺎﻘﺳﺍ ﻂﺒﺿ ﺪﻋﺍ"
-
-
-msgctxt "Operator"
-msgid "Seams From Islands"
-msgstr "ﺭﺰﺠﻟﺍ ﻦﻣ ﺓﺯﺭﺩ"
 
 
 msgid "Pinned"
@@ -30966,18 +30856,6 @@ msgstr "ءﺎﺸﻧﻹ﻿ﺍ ﺪﻌﺑ ﻞﻤﻌﺘﺳﺇ"
 
 msgid "Align Active"
 msgstr "ﻝﺎﻌﻔﻟﺍ ﻱﺫﺎﺣ"
-
-
-msgid "View From the Right"
-msgstr "ﻦﻴﻤﻴﻟﺍ ﻦﻣ ﺮﻈﻧﺍ"
-
-
-msgid "View From the Bottom"
-msgstr "ﻞﻔﺳﻻ﻿ﺍ ﻦﻣ ﺮﻈﻧﺍ"
-
-
-msgid "View From the Back"
-msgstr "ﻒﻠﺨﻟﺍ ﻦﻣ ﺮﻬﻇﺍ"
 
 
 msgctxt "Operator"
@@ -39121,11 +38999,6 @@ msgid "Delete All Groups"
 msgstr "ﺕﺎﻋﻮﻤﺠﻤﻟﺍ ﻞﻛ ﻑﺬﺣﺍ"
 
 
-msgctxt "Operator"
-msgid "New Shape From Mix"
-msgstr "ﻂﻴﻠﺨﻟﺍ ﻦﻣ ﺪﻳﺪﺟ ﻞﻜﺷ"
-
-
 msgid "Volume Min"
 msgstr "ﻢﺠﺣ ﻞﻗﺃ"
 
@@ -39472,11 +39345,6 @@ msgstr "ﺩﻮﺳﺃ-ﺾﻴﺑﺃ"
 
 msgid "Calibration"
 msgstr "ﺓﺮﻳﺎﻌﻤﻟﺍ"
-
-
-msgctxt "Operator"
-msgid "Copy From Active Track"
-msgstr "ﻝﺎﻌﻔﻟﺍ ﺭﺎﺴﻤﻟﺍ ﻦﻣ ﺦﺴﻧﺍ"
 
 
 msgid "Track:"
@@ -40108,10 +39976,6 @@ msgstr "ﺔﻣﻼ﻿ﻌﻟﺍ ﺦﺴﻨﺘﺳﺍ"
 msgctxt "Operator"
 msgid "Duplicate Marker to Scene..."
 msgstr "...ﺪﻬﺸﻤﻟﺍ ﻰﻟﺇ ﺔﻣﻼ﻿ﻌﻟﺍ ﺦﺴﻨﺘﺳﺍ"
-
-
-msgid "Auto Keyframing:"
-msgstr ":ﺔﻴﺗﺍﺫ ﺢﻴﺗﺎﻔﻣ ﺔﻓﺎﺿﺇ"
 
 
 msgctxt "Operator"
@@ -40750,6 +40614,11 @@ msgstr "ﺔﻜﺒﺷ"
 
 
 msgctxt "Operator"
+msgid "Convert to"
+msgstr "ﻰﻟﺍ ﻝﻮّﺣ"
+
+
+msgctxt "Operator"
 msgid "Add Active"
 msgstr "ﻲﻌﻤﺟ"
 
@@ -40931,16 +40800,6 @@ msgstr "ﺔﻔﻠﻟﺍ ﺩﺪﺣ"
 
 msgid "X-Ray"
 msgstr "ﺔﻴﻨﻴﺴﻟﺍ ﺔﻌﺷﻷ﻿ﺍ"
-
-
-msgctxt "Operator"
-msgid "Assign Automatic From Bones"
-msgstr "ﻡﺎﻈﻋ ﻦﻣ ﻲﺋﺎﻘﻠﺗ ﻦﻴﻋ"
-
-
-msgctxt "Operator"
-msgid "Assign From Bone Envelopes"
-msgstr "ﻢﻈﻌﻟﺍ ﺔﻔﻠﻏﺃ ﻦﻣ ﻦﻴﻋ"
 
 
 msgctxt "Operator"
@@ -41158,34 +41017,6 @@ msgstr "ﺝﺰﻤﻟﺍ ﻉﻮﻧ"
 
 msgid "RenderView"
 msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﺮﻈﻨﻣ"
-
-
-msgctxt "Sequence"
-msgid "Color Balance"
-msgstr "ﻥﻮﻠﻟّﺍ ﺔﻧﺯﺍﻮﻣ"
-
-
-msgctxt "Sequence"
-msgid "Curves"
-msgstr "ﺕﺎﻴﻨﺤﻨﻤﻟﺍ"
-
-
-msgctxt "Sequence"
-msgid "Hue Correct"
-msgstr "ﻥﻮّﻠﺘﻟﺍ ﺢﻴﺤﺼﺗ"
-
-
-msgctxt "Sequence"
-msgid "Bright/Contrast"
-msgstr "ﻉﻮﻄﺴﻟﺍ/ﻦﻳﺎﺒﺘﻟﺍ"
-
-
-msgid "Strips must be the same length"
-msgstr "ﺭﺎﺴﻴﻟﺍ ﻰﻟﺇ ﻂﺋﺍﺮﺸﻟﺍ"
-
-
-msgid "Strips must have the same number of inputs"
-msgstr "ﻂﻘﻨﻟﺍ ﺩﺪﻌﺑ ﺮﺘﺧﺍ"
 
 
 msgctxt "MovieClip"
@@ -43607,6 +43438,34 @@ msgstr "ﺪﻬﺸﻤﻟﺍ ﻲﻓ ﺮﻴﻴﺼﺘﻟﺍ ﺝﺮﺧ ﺓﺪﻘﻋ �
 
 msgid "All render layers are disabled"
 msgstr "ﺔﻠﻄّﻌﻣ ﺮﻴﻴﺼﺘﻟﺍ ﺕﺎﻘﺒﻃ ﻞﻛ"
+
+
+msgctxt "Sequence"
+msgid "Color Balance"
+msgstr "ﻥﻮﻠﻟّﺍ ﺔﻧﺯﺍﻮﻣ"
+
+
+msgctxt "Sequence"
+msgid "Curves"
+msgstr "ﺕﺎﻴﻨﺤﻨﻤﻟﺍ"
+
+
+msgctxt "Sequence"
+msgid "Hue Correct"
+msgstr "ﻥﻮّﻠﺘﻟﺍ ﺢﻴﺤﺼﺗ"
+
+
+msgctxt "Sequence"
+msgid "Bright/Contrast"
+msgstr "ﻉﻮﻄﺴﻟﺍ/ﻦﻳﺎﺒﺘﻟﺍ"
+
+
+msgid "Strips must be the same length"
+msgstr "ﺭﺎﺴﻴﻟﺍ ﻰﻟﺇ ﻂﺋﺍﺮﺸﻟﺍ"
+
+
+msgid "Strips must have the same number of inputs"
+msgstr "ﻂﻘﻨﻟﺍ ﺩﺪﻌﺑ ﺮﺘﺧﺍ"
 
 
 msgid "Paste name"

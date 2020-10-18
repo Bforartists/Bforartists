@@ -171,6 +171,32 @@ TARM_WORKAROUND = '''\t\t{
 \t\t},
 '''
 
+COLLECTION_COLOR_WORKAROUND = '''\t\t{
+\t\t\t.color = RGBA(0xe4312bff),
+\t\t},
+\t\t{
+\t\t\t.color = RGBA(0xef7e42ff),
+\t\t},
+\t\t{
+\t\t\t.color = RGBA(0xe4dd52ff),
+\t\t},
+\t\t{
+\t\t\t.color = RGBA(0x9ac546ff),
+\t\t},
+\t\t{
+\t\t\t.color = RGBA(0x46bcc2ff),
+\t\t},
+\t\t{
+\t\t\t.color = RGBA(0x8b65dcff),
+\t\t},
+\t\t{
+\t\t\t.color = RGBA(0x999999ff),
+\t\t},
+\t\t{
+\t\t\t.color = RGBA(0x06d4432ff),
+\t\t},
+'''
+
 
 def round_float_32(f):
     from struct import pack, unpack
@@ -297,6 +323,11 @@ def write_member(fw, indent, b, theme, ls):
         if key[0] == b'tarm':
             if path_old[0] != b'tarm':
                 fw(TARM_WORKAROUND)
+            path_old = path_new
+            continue
+        if key[0] == b'collection_color':
+            if path_old[0] != b'collection_color':
+                fw(COLLECTION_COLOR_WORKAROUND)
             path_old = path_new
             continue
 

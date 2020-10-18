@@ -1341,6 +1341,7 @@ class _defs_sculpt:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_box_gesture")
             layout.prop(props, "trim_mode", expand=False)
+            layout.prop(props, "use_cursor_depth", expand=False)
         return dict(
             idname="builtin.box_trim",
             label="Box Trim",
@@ -1355,6 +1356,7 @@ class _defs_sculpt:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.trim_lasso_gesture")
             layout.prop(props, "trim_mode", expand=False)
+            layout.prop(props, "use_cursor_depth", expand=False)
         return dict(
             idname="builtin.lasso_trim",
             label="Lasso Trim",
@@ -1383,9 +1385,6 @@ class _defs_sculpt:
             row = layout.row(align=True)
             row.prop(props, "deform_axis")
             layout.prop(props, "orientation", expand=False)
-            layout.use_property_split = False
-            layout.prop(props, "use_face_sets")
-            layout.use_property_split = True
             if props.type == 'SURFACE_SMOOTH':
                 layout.prop(props, "surface_smooth_shape_preservation", expand=False)
                 layout.prop(props, "surface_smooth_current_vertex", expand=False)
