@@ -6811,7 +6811,9 @@ class VIEW3D_PT_shading_lighting(Panel):
         split = col.split(factor=0.9)
 
         if shading.type == 'SOLID':
-            split.row().prop(shading, "light", expand=True)
+            row = split.row()
+            row.separator()
+            row.prop(shading, "light", expand=True)
             col = split.column()
 
             split = layout.split(factor=0.9)
@@ -6824,9 +6826,13 @@ class VIEW3D_PT_shading_lighting(Panel):
 
                 if not system.use_studio_light_edit:
                     sub.scale_y = 0.6  # smaller studiolight preview
-                    sub.template_icon_view(shading, "studio_light", scale_popup=3.0)
+                    row = sub.row()
+                    row.separator()
+                    row.template_icon_view(shading, "studio_light", scale_popup=3.0)
                 else:
-                    sub.prop(system, "use_studio_light_edit", text="Disable Studio Light Edit", icon='NONE', toggle=True)
+                    row = sub.row()
+                    row.separator()
+                    row.prop(system, "use_studio_light_edit", text="Disable Studio Light Edit", icon='NONE', toggle=True)
 
                 col = split.column()
                 col.operator("preferences.studiolight_show", emboss=False, text="", icon='PREFERENCES')
@@ -6835,6 +6841,7 @@ class VIEW3D_PT_shading_lighting(Panel):
                 col = split.column()
 
                 row = col.row()
+                row.separator()
                 row.prop(shading, "use_world_space_lighting", text="", icon='WORLD', toggle=True)
                 row = row.row()
                 if shading.use_world_space_lighting:
@@ -6843,15 +6850,21 @@ class VIEW3D_PT_shading_lighting(Panel):
 
             elif shading.light == 'MATCAP':
                 sub.scale_y = 0.6  # smaller matcap preview
-                sub.template_icon_view(shading, "studio_light", scale_popup=3.0)
+                row = sub.row()
+                row.separator()
+                row.template_icon_view(shading, "studio_light", scale_popup=3.0)
 
                 col = split.column()
                 col.operator("preferences.studiolight_show", emboss=False, text="", icon='PREFERENCES')
                 col.operator("view3d.toggle_matcap_flip", emboss=False, text="", icon='ARROW_LEFTRIGHT')
 
         elif shading.type == 'MATERIAL':
-            col.prop(shading, "use_scene_lights")
-            col.prop(shading, "use_scene_world")
+            row =col.row()
+            row.separator()
+            row.prop(shading, "use_scene_lights")
+            row =col.row()
+            row.separator()
+            row.prop(shading, "use_scene_world")
             col = layout.column()
             split = col.split(factor=0.9)
 
@@ -6859,7 +6872,9 @@ class VIEW3D_PT_shading_lighting(Panel):
                 col = split.column()
                 sub = col.row()
                 sub.scale_y = 0.6
-                sub.template_icon_view(shading, "studio_light", scale_popup=3)
+                row = sub.row()
+                row.separator()
+                row.template_icon_view(shading, "studio_light", scale_popup=3)
 
                 col = split.column()
                 col.operator("preferences.studiolight_show", emboss=False, text="", icon='PREFERENCES')
@@ -6868,13 +6883,20 @@ class VIEW3D_PT_shading_lighting(Panel):
                 col = split.column()
 
                 row = col.row()
+                row.separator()
                 row.prop(shading, "use_studiolight_view_rotation", text="", icon='WORLD', toggle=True)
                 row = row.row()
                 row.prop(shading, "studiolight_rotate_z", text="Rotation")
 
-                col.prop(shading, "studiolight_intensity")
-                col.prop(shading, "studiolight_background_alpha")
-                col.prop(shading, "studiolight_background_blur")
+                row = col.row()
+                row.separator()
+                row.prop(shading, "studiolight_intensity")
+                row = col.row()
+                row.separator()
+                row.prop(shading, "studiolight_background_alpha")
+                row = col.row()
+                row.separator()
+                row.prop(shading, "studiolight_background_blur")
                 col = split.column()  # to align properly with above
 
         elif shading.type == 'RENDERED':
@@ -6918,6 +6940,7 @@ class VIEW3D_PT_shading_color(Panel):
         shading = VIEW3D_PT_shading.get_shading(context)
 
         layout.grid_flow(columns=3, align=True).prop(shading, "color_type", expand=True)
+
         if shading.color_type == 'SINGLE':
             layout.row().prop(shading, "single_color", text="")
 
@@ -6959,16 +6982,23 @@ class VIEW3D_PT_shading_options(Panel):
         col = layout.column()
 
         if shading.type == 'SOLID':
-            col.prop(shading, "show_backface_culling")
+            row = col.row()
+            row.separator()
+            row.prop(shading, "show_backface_culling")
 
-        row = col.row(align=True)
+        row = col.row()
 
         if shading.type == 'WIREFRAME':
+            split = layout.split()
+            col = split.column()
+            row = col.row()
+            row.separator()
             row.prop(shading, "show_xray_wireframe")
-            sub = row.row()
-            sub.use_property_split = True
-            sub.active = shading.show_xray_wireframe
-            sub.prop(shading, "xray_alpha_wireframe", text="")
+            col = split.column()
+            if shading.show_xray_wireframe:
+                col.prop(shading, "xray_alpha_wireframe", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         elif shading.type == 'SOLID':
 
@@ -6977,7 +7007,9 @@ class VIEW3D_PT_shading_options(Panel):
             split = layout.split()
             col = split.column()
             col.use_property_split = False
-            col.prop(shading, "show_xray")
+            row = col.row()
+            row.separator()
+            row.prop(shading, "show_xray")
             col = split.column()
             if shading.show_xray:
                 col.use_property_split = False
@@ -6989,7 +7021,9 @@ class VIEW3D_PT_shading_options(Panel):
             split.active = not xray_active
             col = split.column()
             col.use_property_split = False
-            col.prop(shading, "show_shadows")
+            row = col.row()
+            row.separator()
+            row.prop(shading, "show_shadows")
             col = split.column()
             if shading.show_shadows:
                 col.use_property_split = False
@@ -7003,6 +7037,7 @@ class VIEW3D_PT_shading_options(Panel):
             col = split.column()
             col.use_property_split = False
             row = col.row()
+            row.separator()
             row.prop(shading, "show_cavity")
             col = split.column()
             if shading.show_cavity:
@@ -7017,23 +7052,44 @@ class VIEW3D_PT_shading_options(Panel):
                 #row.prop(shading, "cavity_type", text="Type")
 
                 if shading.cavity_type in {'WORLD', 'BOTH'}:
-                    col.label(text="World Space")
-                    sub = col.row(align=True)
-                    sub.prop(shading, "cavity_ridge_factor", text="Ridge")
-                    sub.prop(shading, "cavity_valley_factor", text="Valley")
-                    sub.popover(
-                        panel="VIEW3D_PT_shading_options_ssao",
-                        icon='PREFERENCES',
-                        text="",
-                    )
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.label(text="World Space")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "cavity_ridge_factor", text="Ridge")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "cavity_valley_factor", text="Valley")
+                    row.popover(panel="VIEW3D_PT_shading_options_ssao", icon='PREFERENCES', text="",)
 
                 if shading.cavity_type in {'SCREEN', 'BOTH'}:
-                    col.label(text="Screen Space")
-                    sub = col.row(align=True)
-                    sub.prop(shading, "curvature_ridge_factor", text="Ridge")
-                    sub.prop(shading, "curvature_valley_factor", text="Valley")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.label(text="Screen Space")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "curvature_ridge_factor", text="Ridge")
+                    row = col.row()
+                    row.separator()
+                    row.separator()
+                    row.separator()
+                    row.use_property_split = True
+                    row.prop(shading, "curvature_valley_factor", text="Valley")
 
             row = col.row()
+            row.separator()
             row.prop(shading, "use_dof", text="Depth Of Field")
 
         if shading.type in {'WIREFRAME', 'SOLID'}:
@@ -7054,7 +7110,9 @@ class VIEW3D_PT_shading_options(Panel):
             col = layout.column()
             if shading.light in {'STUDIO', 'MATCAP'}:
                 col.active = shading.selected_studio_light.has_specular_highlight_pass
-                col.prop(shading, "show_specular_highlight", text="Specular Lighting")
+                row = col.row()
+                row.separator()
+                row.prop(shading, "show_specular_highlight", text="Specular Lighting")
 
 
 class VIEW3D_PT_shading_options_shadow(Panel):
@@ -7107,7 +7165,9 @@ class VIEW3D_PT_shading_render_pass(Panel):
         shading = context.space_data.shading
 
         layout = self.layout
-        layout.prop(shading, "render_pass", text="")
+        row = layout.row()
+        row.separator()
+        row.prop(shading, "render_pass", text="")
 
 
 class VIEW3D_PT_gizmo_display(Panel):
