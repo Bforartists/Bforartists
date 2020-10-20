@@ -7127,10 +7127,10 @@ class VIEW3D_PT_shading_options(Panel):
         if shading.type == 'SOLID':
             col = layout.column()
             if shading.light in {'STUDIO', 'MATCAP'}:
-                col.active = shading.selected_studio_light.has_specular_highlight_pass
-                row = col.row()
-                row.separator()
-                row.prop(shading, "show_specular_highlight", text="Specular Lighting")
+                if shading.selected_studio_light.has_specular_highlight_pass:
+                    row = col.row()
+                    row.separator()
+                    row.prop(shading, "show_specular_highlight", text="Specular Lighting")
 
 
 class VIEW3D_PT_shading_options_shadow(Panel):
