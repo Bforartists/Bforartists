@@ -903,6 +903,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
 
     if direction:
         layout.row().prop(brush, "direction", expand=True)
+        layout.separator()
         
     if use_frontface:
         layout.prop(brush, "use_frontface", text="Front Faces Only")
