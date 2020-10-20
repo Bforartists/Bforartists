@@ -808,6 +808,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
     strength_pressure = False
     weight = False
     direction = False
+    use_frontface = False
 
     # 3D and 2D Texture Paint #
     if mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
@@ -824,6 +825,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
             strength = True
             strength_pressure = brush.sculpt_capabilities.has_strength_pressure
             direction = not brush.sculpt_capabilities.has_direction
+            use_frontface = True
 
     # Vertex Paint #
     if mode == 'PAINT_VERTEX':
@@ -832,6 +834,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
             size = True
             strength = True
             strength_pressure = True
+            use_frontface = True
 
     # Weight Paint #
     if mode == 'PAINT_WEIGHT':
@@ -839,6 +842,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
             size = True
             weight = brush.weight_paint_capabilities.has_weight
             strength = strength_pressure = True
+            use_frontface = True
         # Only draw blend mode for the Draw tool, because for other tools it is pointless. D5928#137944
         if brush.weight_tool == 'DRAW':
             blend_mode = True
@@ -900,6 +904,10 @@ def brush_shared_settings(layout, context, brush, popover=False):
     if direction:
         layout.row().prop(brush, "direction", expand=True)
         layout.separator()
+    
+    if use_frontface:
+        layout.use_property_split = False
+        layout.prop(brush, "use_frontface", text="Front Faces Only")
 
 
 def brush_settings_advanced(layout, context, brush, popover=False):
@@ -915,12 +923,10 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # These options are shared across many modes.
     use_accumulate = False
-    use_frontface = False
 
     if mode == 'SCULPT':
         capabilities = brush.sculpt_capabilities
         use_accumulate = capabilities.has_accumulate
-        use_frontface = True
 
         col = layout.column()
         col.label(text = "Auto Masking")
@@ -999,22 +1005,18 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         layout.prop(brush, "use_alpha")
         if brush.vertex_tool != 'SMEAR':
             use_accumulate = True
-        use_frontface = True
 
     # Weight Paint
     elif mode == 'PAINT_WEIGHT':
         if brush.weight_tool != 'SMEAR':
             use_accumulate = True
-        use_frontface = True
 
     # Draw shared settings.
     if use_accumulate:
         layout.use_property_split = False
         layout.prop(brush, "use_accumulate")
 
-    if use_frontface:
-        layout.use_property_split = False
-        layout.prop(brush, "use_frontface", text="Front Faces Only")
+
 
 
 def draw_color_settings(context, layout, brush, color_type=False):
