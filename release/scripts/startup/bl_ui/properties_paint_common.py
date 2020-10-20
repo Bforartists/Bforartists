@@ -900,6 +900,10 @@ def brush_shared_settings(layout, context, brush, popover=False):
     if direction:
         layout.row().prop(brush, "direction", expand=True)
         layout.separator()
+    
+    if use_frontface:
+        layout.use_property_split = False
+        layout.prop(brush, "use_frontface", text="Front Faces Only")
 
 
 def brush_settings_advanced(layout, context, brush, popover=False):
@@ -1012,9 +1016,7 @@ def brush_settings_advanced(layout, context, brush, popover=False):
         layout.use_property_split = False
         layout.prop(brush, "use_accumulate")
 
-    if use_frontface:
-        layout.use_property_split = False
-        layout.prop(brush, "use_frontface", text="Front Faces Only")
+
 
 
 def draw_color_settings(context, layout, brush, color_type=False):
