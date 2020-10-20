@@ -808,6 +808,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
     strength_pressure = False
     weight = False
     direction = False
+    use_frontface = False
 
     # 3D and 2D Texture Paint #
     if mode in {'PAINT_TEXTURE', 'PAINT_2D'}:
@@ -919,7 +920,6 @@ def brush_settings_advanced(layout, context, brush, popover=False):
 
     # These options are shared across many modes.
     use_accumulate = False
-    use_frontface = False
 
     if mode == 'SCULPT':
         capabilities = brush.sculpt_capabilities
