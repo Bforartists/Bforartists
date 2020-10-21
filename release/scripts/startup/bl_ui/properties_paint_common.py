@@ -906,9 +906,11 @@ def brush_shared_settings(layout, context, brush, popover=False):
         layout.separator()
         
     if use_frontface:
+        layout.use_property_split = False
         col = layout.column()
         col.prop(brush, "use_frontface", text="Front Faces Only")
         col.active = False if brush.falloff_shape == "SPHERE" else True
+        layout.use_property_split = True
         layout.separator()
 
 
