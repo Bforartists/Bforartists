@@ -903,6 +903,8 @@ class IMAGE_HT_header(Header):
                 row.operator("image.record_composite", icon='REC')
             if ima.type == 'COMPOSITE' and ima.source in {'MOVIE', 'SEQUENCE'}:
                 row.operator("image.play_composite", icon='PLAY')
+        row.popover(panel = "IMAGE_PT_image_options", text = "Options")
+
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -1045,19 +1047,20 @@ class IMAGE_PT_image_options(Panel):
         show_render = sima.show_render
 
         if sima.mode == 'UV':
+            col = layout.column(align = True)
+            col.prop(uv, "lock_bounds")
+            col.prop(uv, "use_live_unwrap")
 
-            layout.prop(uv, "lock_bounds")
-            layout.prop(uv, "use_live_unwrap")
-
-        layout.prop(sima, "use_realtime_update")
-
-        layout.prop(uv, "show_metadata")
+        col = layout.column(align = True)
+        col.prop(sima, "use_realtime_update")
+        col.prop(uv, "show_metadata")
 
         layout.prop_menu_enum(uv, "pixel_snap_mode")
 
         if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
             layout.prop(uv, "show_texpaint")
             layout.prop(tool_settings, "show_uv_local_view", text="Show Same Material")
+
 
 class IMAGE_PT_image_options_unified(Panel):
     bl_space_type = 'IMAGE_EDITOR'
@@ -1075,9 +1078,16 @@ class IMAGE_PT_image_options_unified(Panel):
         brush = settings.brush
         ups = context.tool_settings.unified_paint_settings
 
-        layout.prop(ups, "use_unified_size", text="Unified Size")
-        layout.prop(ups, "use_unified_strength", text="Unified Strength")
-        layout.prop(ups, "use_unified_color", text="Unified Color")
+        col =layout.column(align = True)
+        row = col.row()
+        row.separator()
+        row.prop(ups, "use_unified_size", text="Unified Size")
+        row = col.row()
+        row.separator()
+        row.prop(ups, "use_unified_strength", text="Unified Strength")
+        row = col.row()
+        row.separator()
+        row.prop(ups, "use_unified_color", text="Unified Color")
 
 
 class IMAGE_PT_proportional_edit(Panel):
