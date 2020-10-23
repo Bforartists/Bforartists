@@ -11,7 +11,7 @@
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,F
+#  along with this program; if not, write to the Free Software Foundation,
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
@@ -818,6 +818,11 @@ class IMAGE_HT_header(Header):
             if tool_settings.use_proportional_edit is True:
                 sub = row.row(align=True)
                 sub.prop_with_popover(tool_settings,"proportional_edit_falloff",text="", icon_only=True, panel="VIEW3D_PT_proportional_edit")
+            if show_uvedit:
+                uvedit = sima.uv_editor
+
+                mesh = context.edit_object.data
+                layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="")
 
 
     def draw(self, context):
@@ -828,24 +833,16 @@ class IMAGE_HT_header(Header):
         ima = sima.image
         iuser = sima.image_user
         tool_settings = context.tool_settings
-        uv = sima.uv_editor
+        show_region_tool_header = sima.show_region_tool_header
 
         show_render = sima.show_render
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
-        show_region_tool_header = sima.show_region_tool_header
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         if sima.mode != 'UV':
             layout.prop(sima, "ui_mode", text="")
-
-        # Overlay toggle & popover
-        row = layout.row(align=True)
-        row.prop(overlay, "show_overlays", icon='OVERLAY', text="")
-        sub = row.row(align=True)
-        sub.active = overlay.show_overlays
-        sub.popover(panel="IMAGE_PT_overlay", text="")
 
         # UV editing.
         if show_uvedit:
@@ -877,11 +874,12 @@ class IMAGE_HT_header(Header):
         if not show_region_tool_header:
             IMAGE_HT_header.draw_xform_template(layout, context)
 
-        if show_uvedit:
-            uvedit = sima.uv_editor
-
-            mesh = context.edit_object.data
-            layout.prop_search(mesh.uv_layers, "active", mesh, "uv_layers", text="")
+        # Overlay toggle & popover
+        row = layout.row(align=True)
+        row.prop(overlay, "show_overlays", icon='OVERLAY', text="")
+        sub = row.row(align=True)
+        sub.active = overlay.show_overlays
+        sub.popover(panel="IMAGE_PT_overlay", text="")
 
         if ima:
             if ima.is_stereo_3d:
