@@ -943,7 +943,7 @@ empty_single_arrow
 experimental
 fake_user_off
 fake_user_on
-#def_icon_blank(958
+group_bright
 gp_multiframe_editing
 gp_only_selected
 gp_select_points

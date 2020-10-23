@@ -367,6 +367,7 @@
         speaker="#000000"
         vertex="#000000"
         vertex_select="#ff8500"
+        vertex_active="#000000"
         vertex_size="6"
         vertex_bevel="#00a5ff"
         vertex_unreferenced="#000000"
@@ -476,6 +477,7 @@
         preview_range="#a14d0066"
         vertex="#000000"
         vertex_select="#ff8500"
+        vertex_active="#000000"
         vertex_size="6"
         vertex_bevel="#000000"
         vertex_unreferenced="#000000"
@@ -719,6 +721,7 @@
         grid="#505050ff"
         vertex="#000000"
         vertex_select="#ff8500"
+        vertex_active="#000000"
         vertex_size="3"
         vertex_bevel="#000000"
         vertex_unreferenced="#000000"
@@ -1453,35 +1456,35 @@
     </bone_color_sets>
     <collection_color>
       <ThemeCollectionColor
-        color="#000000"
+        color="#e4312b"
         >
       </ThemeCollectionColor>
       <ThemeCollectionColor
-        color="#000000"
+        color="#ef7e42"
         >
       </ThemeCollectionColor>
       <ThemeCollectionColor
-        color="#000000"
+        color="#e4dd52"
         >
       </ThemeCollectionColor>
       <ThemeCollectionColor
-        color="#000000"
+        color="#9ac546"
         >
       </ThemeCollectionColor>
       <ThemeCollectionColor
-        color="#000000"
+        color="#46bcc2"
         >
       </ThemeCollectionColor>
       <ThemeCollectionColor
-        color="#000000"
+        color="#8b65dc"
         >
       </ThemeCollectionColor>
       <ThemeCollectionColor
-        color="#000000"
+        color="#999999"
         >
       </ThemeCollectionColor>
       <ThemeCollectionColor
-        color="#000000"
+        color="#6d4432"
         >
       </ThemeCollectionColor>
     </collection_color>
