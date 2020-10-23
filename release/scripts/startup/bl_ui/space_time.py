@@ -82,11 +82,11 @@ class TIME_HT_editor_buttons:
         row = layout.row(align=True)
         row.prop(tool_settings, "use_keyframe_insert_auto", text="", toggle=True)
         sub = row.row(align=True)
-        sub.active = tool_settings.use_keyframe_insert_auto
-        sub.popover(
-            panel="TIME_PT_auto_keyframing",
-            text="",
-        )
+        if tool_settings.use_keyframe_insert_auto:
+            sub.popover(
+                panel="TIME_PT_auto_keyframing",
+                text="",
+            )
 
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
 
