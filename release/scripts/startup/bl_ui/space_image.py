@@ -1053,7 +1053,10 @@ class IMAGE_PT_image_options(Panel):
         col.prop(sima, "use_realtime_update")
         col.prop(uv, "show_metadata")
 
-        layout.prop_menu_enum(uv, "pixel_snap_mode")
+        col = layout.column()
+        col.label(text = "Pixel Snap Mode")
+        row = col.row()
+        row.prop(uv, "pixel_snap_mode", expand = True)
 
         if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
             layout.prop(uv, "show_texpaint")
