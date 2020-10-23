@@ -351,6 +351,13 @@ class OUTLINER_MT_collection(Menu):
 
         layout.menu("OUTLINER_MT_collection_visibility")
 
+        if space.display_mode == 'VIEW_LAYER':
+
+            layout.separator()
+
+            row = layout.row(align=True)
+            row.operator_enum("outliner.collection_color_tag_set", "color", icon_only=True)
+
         layout.separator()
 
         layout.operator_menu_enum("outliner.id_operation", "type", text="ID Data")

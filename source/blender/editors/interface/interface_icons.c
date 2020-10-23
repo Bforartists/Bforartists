@@ -462,7 +462,7 @@ static void vicon_collection_color_draw(
   const ThemeCollectionColor *collection_color = &btheme->collection_color[color_tag];
 
   UI_icon_draw_ex(
-      x, y, ICON_GROUP, U.inv_dpi_fac, 1.0f, 0.0f, collection_color->color, true);
+      x, y, ICON_GROUP_BRIGHT, U.inv_dpi_fac, 1.0f, 0.0f, collection_color->color, true);
 }
 
 #  define DEF_ICON_COLLECTION_COLOR_DRAW(index, color) \
@@ -2364,7 +2364,7 @@ int UI_icon_from_object_mode(const int mode)
 
 int UI_icon_color_from_collection(const Collection *collection)
 {
-  int icon = ICON_GROUP;
+  int icon = ICON_GROUP_BRIGHT;
 
   if (collection->color_tag != COLLECTION_COLOR_NONE) {
     icon = ICON_COLLECTION_COLOR_01 + collection->color_tag;
