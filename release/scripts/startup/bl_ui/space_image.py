@@ -1028,10 +1028,8 @@ class IMAGE_PT_snapping(Panel):
 
 class IMAGE_PT_image_options(Panel):
     bl_space_type = 'IMAGE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Image"
+    bl_region_type = 'HEADER'
     bl_label = "Options"
-    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
