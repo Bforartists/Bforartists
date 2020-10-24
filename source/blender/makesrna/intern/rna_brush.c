@@ -2631,7 +2631,7 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_float_default(prop, 0);
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_text(
-      prop, "Normal Weight", "How much grab will pull vertexes out of surface during a grab");
+      prop, "Normal Weight", "How much grab will pull vertices out of surface during a grab");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "elastic_deform_volume_preservation", PROP_FLOAT, PROP_NONE);
@@ -3093,7 +3093,7 @@ static void rna_def_brush(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Use Front-Face",
-      "Brush only affects vertexes that face the viewer. Projected falloff only");
+      "Brush only affects vertices that face the viewer. Projected falloff only");
   RNA_def_property_update(prop, 0, "rna_Brush_update");
 
   prop = RNA_def_property(srna, "use_frontface_falloff", PROP_BOOLEAN, PROP_NONE);
