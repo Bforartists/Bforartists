@@ -1062,34 +1062,6 @@ class IMAGE_PT_image_options(Panel):
             layout.prop(tool_settings, "show_uv_local_view", text="Show Same Material")
 
 
-class IMAGE_PT_image_options_unified(Panel):
-    bl_space_type = 'IMAGE_EDITOR'
-    bl_region_type = 'UI'
-    bl_parent_id = "IMAGE_PT_image_options"
-    bl_category = "Image"
-    bl_label = "Unified Brush"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-
-        tool_settings = context.tool_settings
-        settings = tool_settings.image_paint
-        brush = settings.brush
-        ups = context.tool_settings.unified_paint_settings
-
-        col =layout.column(align = True)
-        row = col.row()
-        row.separator()
-        row.prop(ups, "use_unified_size", text="Unified Size")
-        row = col.row()
-        row.separator()
-        row.prop(ups, "use_unified_strength", text="Unified Strength")
-        row = col.row()
-        row.separator()
-        row.prop(ups, "use_unified_color", text="Unified Color")
-
-
 class IMAGE_PT_proportional_edit(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'HEADER'
@@ -1787,7 +1759,6 @@ classes = (
     IMAGE_PT_snapping,
     IMAGE_PT_proportional_edit,
     IMAGE_PT_image_options,
-    IMAGE_PT_image_options_unified,
     IMAGE_PT_image_properties,
     IMAGE_UL_render_slots,
     IMAGE_PT_render_slots,
