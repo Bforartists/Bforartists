@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bpy
 from bpy.props import BoolProperty
@@ -30,27 +30,21 @@ import bmesh
 from .. import common
 from ..utils.bl_class_registry import BlClassRegistry
 from ..utils.property_class_registry import PropertyClassRegistry
-from ..utils import compatibility as compat
 
 
 def _is_valid_context(context):
-    obj = context.object
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
     # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
     # after the execution
-    for space in context.area.spaces:
-        if (space.type == 'IMAGE_EDITOR') or (space.type == 'VIEW_3D'):
-            break
-    else:
+    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
         return False
 
     return True
@@ -92,18 +86,13 @@ class MUV_OT_SelectUV_SelectOverlapped(bpy.types.Operator):
         return _is_valid_context(context)
 
     def execute(self, context):
-        objs = [o for o in bpy.data.objects if compat.get_object_select(o)]
+        objs = common.get_uv_editable_objects(context)
 
         bm_list = []
         uv_layer_list = []
         faces_list = []
-        for o in bpy.data.objects:
-            if not compat.get_object_select(o):
-                continue
-            if o.type != 'MESH':
-                continue
-
-            bm = bmesh.from_edit_mesh(o.data)
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
             if common.check_version(2, 73, 0) >= 0:
                 bm.faces.ensure_lookup_table()
             uv_layer = bm.loops.layers.uv.verify()
@@ -126,8 +115,8 @@ class MUV_OT_SelectUV_SelectOverlapped(bpy.types.Operator):
                 for l in info["subject_face"].loops:
                     l[info["subject_uv_layer"]].select = True
 
-        for o in objs:
-            bmesh.update_edit_mesh(o.data)
+        for obj in objs:
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}
 
@@ -151,18 +140,13 @@ class MUV_OT_SelectUV_SelectFlipped(bpy.types.Operator):
         return _is_valid_context(context)
 
     def execute(self, context):
-        objs = [o for o in bpy.data.objects if compat.get_object_select(o)]
+        objs = common.get_uv_editable_objects(context)
 
         bm_list = []
         uv_layer_list = []
         faces_list = []
-        for o in bpy.data.objects:
-            if not compat.get_object_select(o):
-                continue
-            if o.type != 'MESH':
-                continue
-
-            bm = bmesh.from_edit_mesh(o.data)
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
             if common.check_version(2, 73, 0) >= 0:
                 bm.faces.ensure_lookup_table()
             uv_layer = bm.loops.layers.uv.verify()
@@ -184,7 +168,7 @@ class MUV_OT_SelectUV_SelectFlipped(bpy.types.Operator):
                 for l in info["face"].loops:
                     l[info["uv_layer"]].select = True
 
-        for o in objs:
-            bmesh.update_edit_mesh(o.data)
+        for obj in objs:
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}

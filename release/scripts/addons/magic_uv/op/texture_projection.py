@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 from collections import namedtuple
 
@@ -124,21 +124,16 @@ def _region_to_canvas(rg_vec, canvas):
 
 
 def _is_valid_context(context):
-    obj = context.object
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
+    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True
@@ -356,62 +351,76 @@ class MUV_OT_TextureProjection_Project(bpy.types.Operator):
         _, region, space = common.get_space('VIEW_3D', 'WINDOW', 'VIEW_3D')
 
         # get faces to be texture projected
-        obj = context.active_object
-        world_mat = obj.matrix_world
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
+        objs = common.get_uv_editable_objects(context)
 
-        # get UV and texture layer
-        if not bm.loops.layers.uv:
-            if sc.muv_texture_projection_assign_uvmap:
-                bm.loops.layers.uv.new()
-            else:
-                self.report({'WARNING'},
-                            "Object must have more than one UV map")
-                return {'CANCELLED'}
+        for obj in objs:
+            world_mat = obj.matrix_world
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
 
-        uv_layer = bm.loops.layers.uv.verify()
-        if compat.check_version(2, 80, 0) < 0:
-            tex_layer = bm.faces.layers.tex.verify()
+            # get UV and texture layer
+            if not bm.loops.layers.uv:
+                if sc.muv_texture_projection_assign_uvmap:
+                    bm.loops.layers.uv.new()
+                else:
+                    self.report({'WARNING'},
+                                "Object {} must have more than one UV map"
+                                .format(obj.name))
+                    return {'CANCELLED'}
 
-        sel_faces = [f for f in bm.faces if f.select]
-
-        # transform 3d space to screen region
-        v_screen = [
-            view3d_utils.location_3d_to_region_2d(
-                region,
-                space.region_3d,
-                compat.matmul(world_mat, l.vert.co))
-            for f in sel_faces for l in f.loops
-        ]
-
-        # transform screen region to canvas
-        v_canvas = [
-            _region_to_canvas(
-                v,
-                _get_canvas(bpy.context,
-                            sc.muv_texture_projection_tex_magnitude)
-            ) for v in v_screen
-        ]
-
-        if compat.check_version(2, 80, 0) >= 0:
-            # set texture
-            nodes = common.find_texture_nodes(obj)
-            nodes[0].image = \
-                bpy.data.images[sc.muv_texture_projection_tex_image]
-
-        # project texture to object
-        i = 0
-        for f in sel_faces:
+            uv_layer = bm.loops.layers.uv.verify()
             if compat.check_version(2, 80, 0) < 0:
-                f[tex_layer].image = \
-                    bpy.data.images[sc.muv_texture_projection_tex_image]
-            for l in f.loops:
-                l[uv_layer].uv = v_canvas[i].to_2d()
-                i = i + 1
+                tex_layer = bm.faces.layers.tex.verify()
 
-        common.redraw_all_areas()
-        bmesh.update_edit_mesh(obj.data)
+            sel_faces = [f for f in bm.faces if f.select]
+
+            # transform 3d space to screen region
+            v_screen = [
+                view3d_utils.location_3d_to_region_2d(
+                    region,
+                    space.region_3d,
+                    compat.matmul(world_mat, l.vert.co))
+                for f in sel_faces for l in f.loops
+            ]
+
+            # transform screen region to canvas
+            v_canvas = [
+                _region_to_canvas(
+                    v,
+                    _get_canvas(bpy.context,
+                                sc.muv_texture_projection_tex_magnitude)
+                ) for v in v_screen
+            ]
+
+            # assign image
+            if compat.check_version(2, 80, 0) >= 0:
+                node_tree = obj.active_material.node_tree
+                output_node = node_tree.nodes["Material Output"]
+
+                nodes = common.find_texture_nodes_from_material(
+                    obj.active_material)
+                if len(nodes) >= 1:
+                    tex_node = nodes[0]
+                else:
+                    tex_node = node_tree.nodes.new(type="ShaderNodeTexImage")
+                tex_node.image = \
+                    bpy.data.images[sc.muv_texture_projection_tex_image]
+                node_tree.links.new(
+                    output_node.inputs["Surface"], tex_node.outputs["Color"])
+            else:
+                for f in sel_faces:
+                    f[tex_layer].image = \
+                        bpy.data.images[sc.muv_texture_projection_tex_image]
+
+            # project texture to object
+            i = 0
+            for f in sel_faces:
+                for l in f.loops:
+                    l[uv_layer].uv = v_canvas[i].to_2d()
+                    i = i + 1
+
+            common.redraw_all_areas()
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}

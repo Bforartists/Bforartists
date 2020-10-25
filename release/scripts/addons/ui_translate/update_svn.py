@@ -124,9 +124,10 @@ def i18n_cleanuptranslation_svn_branches_callback(lng, settings):
         return
     po = utils_i18n.I18nMessages(uid=lng['uid'], kind='PO', src=lng['po_path'], settings=settings)
     errs = po.check(fix=True)
+    cleanedup_commented = po.clean_commented()
     po.write(kind="PO", dest=lng['po_path'])
     print("Processing {} language ({}).\n"
-          "Cleaned up {} commented messages.\n".format(lng['name'], lng['uid'], po.clean_commented()) +
+          "Cleaned up {} commented messages.\n".format(lng['name'], lng['uid'], cleanedup_commented) +
           ("Errors in this po, solved as best as possible!\n\t" + "\n\t".join(errs) if errs else "") + "\n")
 
 

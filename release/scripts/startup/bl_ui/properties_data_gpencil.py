@@ -101,7 +101,7 @@ class GPENCIL_MT_layer_context_menu(Menu):
         layout.separator()
 
         layout.operator("gpencil.lock_all", icon='LOCKED', text="Lock All")
-        layout.operator("gpencil.unlock_all", icon='UNLOCKED', text="UnLock All")
+        layout.operator("gpencil.unlock_all", icon='UNLOCKED', text="Unlock All")
 
         layout.separator()
 
@@ -159,7 +159,7 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
 
                 sub = col.column(align=True)
                 sub.operator("gpencil.layer_isolate", icon='HIDE_ON', text="").affect_visibility = True
-                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False       
+                sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
 
         # Layer main properties
         row = layout.row()
@@ -263,7 +263,7 @@ class DATA_PT_gpencil_onion_skinning_display(DataButtonsPanel, Panel):
         layout.use_property_split = False
         layout.enabled = gpd.users <= 1
 
-        layout.prop(gpd, "use_ghosts_always", text="View In Render")
+        layout.prop(gpd, "use_ghosts_always", text="View in Render")
 
         col = layout.column(align=True)
         col.prop(gpd, "use_onion_fade", text="Fade")

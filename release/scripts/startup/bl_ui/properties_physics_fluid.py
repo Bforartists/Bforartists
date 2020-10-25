@@ -210,7 +210,7 @@ class PHYSICS_PT_settings(PhysicButtonsPanel, Panel):
                 col.prop(domain, "clipping", text="Empty Space")
             row = col.row()
             row.use_property_split = False
-            row.prop(domain, "delete_in_obstacle", text="Delete In Obstacle")
+            row.prop(domain, "delete_in_obstacle", text="Delete in Obstacle")
             row.prop_decorator(domain, "delete_in_obstacle")
 
             if domain.cache_type == 'MODULAR':
@@ -538,7 +538,8 @@ class PHYSICS_PT_liquid(PhysicButtonsPanel, Panel):
         row.prop_decorator(domain, "use_fractions")
         sub = col.column()
         sub.active = domain.use_fractions
-        sub.prop(domain, "fractions_threshold", text="Obstacle-Fluid Threshold")
+        sub.prop(domain, "fractions_distance", text="Obstacle Distance")
+        sub.prop(domain, "fractions_threshold", text="Threshold")
 
 
 class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
