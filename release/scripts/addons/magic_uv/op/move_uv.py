@@ -20,8 +20,8 @@
 
 __author__ = "kgeogeo, mem, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bpy
 from bpy.props import BoolProperty
@@ -34,21 +34,17 @@ from ..utils.property_class_registry import PropertyClassRegistry
 
 
 def _is_valid_context(context):
-    obj = context.object
+    # Multiple objects editing mode is not supported in this feature.
+    objs = common.get_uv_editable_objects(context)
+    if len(objs) != 1:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
+    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True
@@ -179,7 +175,9 @@ class MUV_OT_MoveUV(bpy.types.Operator):
 
         context.window_manager.modal_handler_add(self)
 
-        obj = context.active_object
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
         bm = bmesh.from_edit_mesh(obj.data)
         active_uv = bm.loops.layers.uv.active
         self.__topology_dict, self.__ini_uvs = self._find_uv(bm, active_uv)

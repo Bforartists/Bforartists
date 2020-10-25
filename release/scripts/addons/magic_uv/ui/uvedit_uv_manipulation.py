@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bpy
 
@@ -29,6 +29,11 @@ from ..op.align_uv import (
     MUV_OT_AlignUV_Circle,
     MUV_OT_AlignUV_Straighten,
     MUV_OT_AlignUV_Axis,
+    MUV_OT_AlignUV_SnapToPoint,
+    MUV_OT_AlignUV_Snap_SetPointTargetToCursor,
+    MUV_OT_AlignUV_Snap_SetPointTargetToVertexGroup,
+    MUV_OT_AlignUV_SnapToEdge,
+    MUV_OT_AlignUV_Snap_SetEdgeTargetToEdgeCenter,
 )
 from ..op.smooth_uv import (
     MUV_OT_SmoothUV,
@@ -67,6 +72,8 @@ class MUV_PT_UVEdit_UVManipulation(bpy.types.Panel):
         box = layout.box()
         box.prop(sc, "muv_align_uv_enabled", text="Align UV")
         if sc.muv_align_uv_enabled:
+            box.label(text="Align:")
+
             col = box.column()
             row = col.row(align=True)
             ops = row.operator(MUV_OT_AlignUV_Circle.bl_idname, text="Circle")
@@ -97,6 +104,60 @@ class MUV_PT_UVEdit_UVManipulation(bpy.types.Panel):
             row.prop(sc, "muv_align_uv_vertical", text="Vertical")
             row.prop(sc, "muv_align_uv_horizontal", text="Horizontal")
             col.prop(sc, "muv_align_uv_mesh_infl", text="Mesh Influence")
+
+            box.separator()
+
+            sp = compat.layout_split(box, factor=0.5)
+            sp.label(text="Snap:")
+            sp = compat.layout_split(sp, factor=1.0)
+            sp.prop(sc, "muv_align_uv_snap_method", text="")
+
+            if sc.muv_align_uv_snap_method == 'POINT':
+                row = box.row(align=True)
+                ops = row.operator(MUV_OT_AlignUV_SnapToPoint.bl_idname,
+                                   text="Snap to Point")
+                ops.group = sc.muv_align_uv_snap_point_group
+                ops.target = sc.muv_align_uv_snap_point_target
+
+                col = box.column(align=True)
+                row = col.row(align=True)
+                row.prop(sc, "muv_align_uv_snap_point_group", text="Group")
+
+                col.label(text="Target Point:")
+                row = col.row(align=True)
+                row.prop(sc, "muv_align_uv_snap_point_target", text="")
+                row.operator(
+                    MUV_OT_AlignUV_Snap_SetPointTargetToCursor.bl_idname,
+                    text="", icon=compat.icon('CURSOR'))
+                row.operator(
+                    MUV_OT_AlignUV_Snap_SetPointTargetToVertexGroup.bl_idname,
+                    text="", icon=compat.icon('UV_VERTEXSEL'))
+
+            elif sc.muv_align_uv_snap_method == 'EDGE':
+                row = box.row(align=True)
+                ops = row.operator(MUV_OT_AlignUV_SnapToEdge.bl_idname,
+                                   text="Snap to Edge")
+                ops.group = sc.muv_align_uv_snap_edge_group
+                ops.target_1 = sc.muv_align_uv_snap_edge_target_1
+                ops.target_2 = sc.muv_align_uv_snap_edge_target_2
+
+                col = box.column(align=True)
+                row = col.row(align=True)
+                row.prop(sc, "muv_align_uv_snap_edge_group", text="Group")
+
+                col.label(text="Target Edge:")
+                sp = compat.layout_split(col, factor=0.33)
+                subcol = sp.column()
+                subcol.label(text="Vertex 1:")
+                subcol.prop(sc, "muv_align_uv_snap_edge_target_1", text="")
+                sp = compat.layout_split(sp, factor=0.5)
+                subcol = sp.column()
+                subcol.label(text="Vertex 2:")
+                subcol.prop(sc, "muv_align_uv_snap_edge_target_2", text="")
+                sp = compat.layout_split(sp, factor=1.0)
+                sp.operator(
+                    MUV_OT_AlignUV_Snap_SetEdgeTargetToEdgeCenter.bl_idname,
+                    text="", icon=compat.icon('UV_EDGESEL'))
 
         box = layout.box()
         box.prop(sc, "muv_smooth_uv_enabled", text="Smooth UV")

@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import math
 from math import atan2, cos, sqrt, sin, fabs
@@ -188,21 +188,16 @@ def _calc_tri_vert(v0, v1, angle0, angle1):
 
 
 def _is_valid_context(context):
-    obj = context.object
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
+    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True
@@ -215,7 +210,7 @@ class _Properties:
     @classmethod
     def init_props(cls, scene):
         class Props():
-            verts_orig = None
+            verts_orig = {}   # { Object: verts_orig }
 
         scene.muv_props.texture_lock = Props()
 
@@ -282,20 +277,26 @@ class MUV_OT_TextureLock_Lock(bpy.types.Operator):
 
     def execute(self, context):
         props = context.scene.muv_props.texture_lock
-        obj = bpy.context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+        objs = common.get_uv_editable_objects(context)
 
-        if not bm.loops.layers.uv:
-            self.report({'WARNING'}, "Object must have more than one UV map")
-            return {'CANCELLED'}
+        props.verts_orig = {}
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.verts.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()
+                bm.faces.ensure_lookup_table()
 
-        props.verts_orig = [
-            {"vidx": v.index, "vco": v.co.copy(), "moved": False}
-            for v in bm.verts if v.select]
+            if not bm.loops.layers.uv:
+                self.report({'WARNING'},
+                            "Object {} must have more than one UV map"
+                            .format(obj.name))
+                return {'CANCELLED'}
+
+            props.verts_orig[obj] = [
+                {"vidx": v.index, "vco": v.co.copy(), "moved": False}
+                for v in bm.verts if v.select
+            ]
 
         return {'FINISHED'}
 
@@ -335,53 +336,63 @@ class MUV_OT_TextureLock_Unlock(bpy.types.Operator):
     def execute(self, context):
         sc = context.scene
         props = sc.muv_props.texture_lock
-        obj = bpy.context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+        objs = common.get_uv_editable_objects(context)
 
-        if not bm.loops.layers.uv:
-            self.report({'WARNING'}, "Object must have more than one UV map")
+        if set(objs) != set(props.verts_orig.keys()):
+            self.report({'WARNING'},
+                        "Object list does not match between Lock and Unlock")
             return {'CANCELLED'}
-        uv_layer = bm.loops.layers.uv.verify()
 
-        verts = [v.index for v in bm.verts if v.select]
-        verts_orig = props.verts_orig
+        for obj in objs:
+            verts_orig = props.verts_orig[obj]
 
-        # move UV followed by vertex coordinate
-        for vidx, v_orig in zip(verts, verts_orig):
-            if vidx != v_orig["vidx"]:
-                self.report({'ERROR'}, "Internal Error")
-                return {"CANCELLED"}
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.verts.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()
+                bm.faces.ensure_lookup_table()
 
-            v = bm.verts[vidx]
-            link_loops = _get_link_loops(v)
+            if not bm.loops.layers.uv:
+                self.report({'WARNING'},
+                            "Object {} must have more than one UV map"
+                            .format(obj.name))
+                return {'CANCELLED'}
+            uv_layer = bm.loops.layers.uv.verify()
 
-            result = []
+            verts = [v.index for v in bm.verts if v.select]
 
-            for ll in link_loops:
-                ini_geom = _get_ini_geom(ll, uv_layer, verts_orig, v_orig)
-                target_uv = _get_target_uv(
-                    ll, uv_layer, verts_orig, v, ini_geom)
-                result.append({"l": ll["l"], "uv": target_uv})
+            # move UV followed by vertex coordinate
+            for vidx, v_orig in zip(verts, verts_orig):
+                if vidx != v_orig["vidx"]:
+                    self.report({'ERROR'}, "Internal Error")
+                    return {"CANCELLED"}
 
-            # connect other face's UV
-            if self.connect:
-                ave = Vector((0.0, 0.0))
-                for r in result:
-                    ave = ave + r["uv"]
-                ave = ave / len(result)
-                for r in result:
-                    r["l"][uv_layer].uv = ave
-            else:
-                for r in result:
-                    r["l"][uv_layer].uv = r["uv"]
-            v_orig["moved"] = True
-            bmesh.update_edit_mesh(obj.data)
+                v = bm.verts[vidx]
+                link_loops = _get_link_loops(v)
 
-        props.verts_orig = None
+                result = []
+
+                for ll in link_loops:
+                    ini_geom = _get_ini_geom(ll, uv_layer, verts_orig, v_orig)
+                    target_uv = _get_target_uv(
+                        ll, uv_layer, verts_orig, v, ini_geom)
+                    result.append({"l": ll["l"], "uv": target_uv})
+
+                # connect other face's UV
+                if self.connect:
+                    ave = Vector((0.0, 0.0))
+                    for r in result:
+                        ave = ave + r["uv"]
+                    ave = ave / len(result)
+                    for r in result:
+                        r["l"][uv_layer].uv = ave
+                else:
+                    for r in result:
+                        r["l"][uv_layer].uv = r["uv"]
+                v_orig["moved"] = True
+                bmesh.update_edit_mesh(obj.data)
+
+        props.verts_orig = {}
 
         return {'FINISHED'}
 
@@ -423,84 +434,100 @@ class MUV_OT_TextureLock_Intr(bpy.types.Operator):
             cls.__timer = None
 
     def __init__(self):
-        self.__intr_verts_orig = []
-        self.__intr_verts = []
+        self.__intr_verts_orig = {}     # { Object: verts_orig }
+        self.__intr_verts = {}          # { Object: verts_orig }
 
     def __sel_verts_changed(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+        objs = common.get_uv_editable_objects(context)
 
-        prev = set(self.__intr_verts)
-        now = {v.index for v in bm.verts if v.select}
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.verts.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()
+                bm.faces.ensure_lookup_table()
 
-        return prev != now
+            if obj not in self.__intr_verts:
+                return True
+
+            prev = set(self.__intr_verts[obj])
+            now = {v.index for v in bm.verts if v.select}
+
+            if prev != now:
+                return True
+
+        return False
 
     def __reinit_verts(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+        objs = common.get_uv_editable_objects(context)
+        self.__intr_verts_orig = {}
+        self.__intr_verts = {}
 
-        self.__intr_verts_orig = [
-            {"vidx": v.index, "vco": v.co.copy(), "moved": False}
-            for v in bm.verts if v.select]
-        self.__intr_verts = [v.index for v in bm.verts if v.select]
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.verts.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()
+                bm.faces.ensure_lookup_table()
+
+            self.__intr_verts_orig[obj] = [
+                {"vidx": v.index, "vco": v.co.copy(), "moved": False}
+                for v in bm.verts if v.select]
+            self.__intr_verts[obj] = [v.index for v in bm.verts if v.select]
 
     def __update_uv(self, context):
         """
         Update UV when vertex coordinates are changed
         """
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
-            bm.faces.ensure_lookup_table()
+        objs = common.get_uv_editable_objects(context)
 
-        if not bm.loops.layers.uv:
-            self.report({'WARNING'}, "Object must have more than one UV map")
-            return
-        uv_layer = bm.loops.layers.uv.verify()
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.verts.ensure_lookup_table()
+                bm.edges.ensure_lookup_table()
+                bm.faces.ensure_lookup_table()
 
-        verts = [v.index for v in bm.verts if v.select]
-        verts_orig = self.__intr_verts_orig
-
-        for vidx, v_orig in zip(verts, verts_orig):
-            if vidx != v_orig["vidx"]:
-                self.report({'ERROR'}, "Internal Error")
+            if not bm.loops.layers.uv:
+                self.report({'WARNING'},
+                            "Object {} must have more than one UV map"
+                            .format(obj.data))
                 return
+            uv_layer = bm.loops.layers.uv.verify()
 
-            v = bm.verts[vidx]
-            link_loops = _get_link_loops(v)
+            verts = [v.index for v in bm.verts if v.select]
+            verts_orig = self.__intr_verts_orig[obj]
 
-            result = []
-            for ll in link_loops:
-                ini_geom = _get_ini_geom(ll, uv_layer, verts_orig, v_orig)
-                target_uv = _get_target_uv(
-                    ll, uv_layer, verts_orig, v, ini_geom)
-                result.append({"l": ll["l"], "uv": target_uv})
+            for vidx, v_orig in zip(verts, verts_orig):
+                if vidx != v_orig["vidx"]:
+                    self.report({'ERROR'}, "Internal Error")
+                    return
 
-            # UV connect option is always true, because it raises
-            # unexpected behavior
-            ave = Vector((0.0, 0.0))
-            for r in result:
-                ave = ave + r["uv"]
-            ave = ave / len(result)
-            for r in result:
-                r["l"][uv_layer].uv = ave
-            v_orig["moved"] = True
-            bmesh.update_edit_mesh(obj.data)
+                v = bm.verts[vidx]
+                link_loops = _get_link_loops(v)
 
-        common.redraw_all_areas()
-        self.__intr_verts_orig = [
-            {"vidx": v.index, "vco": v.co.copy(), "moved": False}
-            for v in bm.verts if v.select]
+                result = []
+                for ll in link_loops:
+                    ini_geom = _get_ini_geom(ll, uv_layer, verts_orig, v_orig)
+                    target_uv = _get_target_uv(
+                        ll, uv_layer, verts_orig, v, ini_geom)
+                    result.append({"l": ll["l"], "uv": target_uv})
+
+                # UV connect option is always true, because it raises
+                # unexpected behavior
+                ave = Vector((0.0, 0.0))
+                for r in result:
+                    ave = ave + r["uv"]
+                ave = ave / len(result)
+                for r in result:
+                    r["l"][uv_layer].uv = ave
+                v_orig["moved"] = True
+                bmesh.update_edit_mesh(obj.data)
+
+            common.redraw_all_areas()
+            self.__intr_verts_orig[obj] = [
+                {"vidx": v.index, "vco": v.co.copy(), "moved": False}
+                for v in bm.verts if v.select]
 
     def modal(self, context, event):
         if not _is_valid_context(context):

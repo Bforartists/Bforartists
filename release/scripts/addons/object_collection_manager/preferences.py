@@ -26,7 +26,15 @@ from bpy.props import (
     FloatVectorProperty,
     )
 
+from . import cm_init
 from . import qcd_init
+
+def update_disable_objects_hotkeys_status(self, context):
+    if self.enable_disable_objects_override:
+        cm_init.register_disable_objects_hotkeys()
+
+    else:
+        cm_init.unregister_disable_objects_hotkeys()
 
 def update_qcd_status(self, context):
     if self.enable_qcd:
@@ -187,6 +195,17 @@ def set_tooltip_outline(self, values):
 
 class CMPreferences(AddonPreferences):
     bl_idname = __package__
+
+    # ENABLE DISABLE OBJECTS OVERRIDE
+    enable_disable_objects_override: BoolProperty(
+        name="Disable Objects Override",
+        description=(
+            "Replace the object hiding hotkeys with object disabling hotkeys and add them to the Object->Show/Hide menu.\n"
+            "Disabling objects prevents them from being automatically shown again when collections are unexcluded"
+            ),
+        default=False,
+        update=update_disable_objects_hotkeys_status,
+        )
 
     # ENABLE QCD BOOLS
     enable_qcd: BoolProperty(
@@ -426,6 +445,7 @@ class CMPreferences(AddonPreferences):
         layout = self.layout
         box = layout.box()
 
+        box.row().prop(self, "enable_disable_objects_override")
         box.row().prop(self, "enable_qcd")
 
         if not self.enable_qcd:

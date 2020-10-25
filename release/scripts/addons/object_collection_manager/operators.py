@@ -69,6 +69,8 @@ from .operator_utils import (
     set_exclude_state,
 )
 
+from . import ui
+
 class SetActiveCollection(Operator):
     '''Set the active collection'''
     bl_label = "Set Active Collection"
@@ -1227,8 +1229,22 @@ class CMNewCollectionOperator(Operator):
     def execute(self, context):
         global rto_history
 
-        new_collection = bpy.data.collections.new('Collection')
+        new_collection = bpy.data.collections.new("New Collection")
         cm = context.scene.collection_manager
+
+        # prevent adding collections when collections are filtered
+        # and the selection is ambiguous
+        if cm.cm_list_index == -1 and ui.CM_UL_items.filtering:
+            send_report("Cannot create new collection.\n"
+                        "No collection is selected and collections are filtered."
+                       )
+            return {'CANCELLED'}
+
+        if cm.cm_list_index > -1 and not ui.CM_UL_items.visible_items[cm.cm_list_index]:
+            send_report("Cannot create new collection.\n"
+                        "The selected collection isn't visible."
+                       )
+            return {'CANCELLED'}
 
 
         # if there are collections
@@ -1276,6 +1292,9 @@ class CMNewCollectionOperator(Operator):
         # set new collection to active
         layer_collection = layer_collections[new_collection.name]["ptr"]
         context.view_layer.active_layer_collection = layer_collection
+
+        # show the new collection when collections are filtered.
+        ui.CM_UL_items.new_collections.append(new_collection.name)
 
         global rename
         rename[0] = True
@@ -1366,5 +1385,47 @@ class CMApplyPhantomModeOperator(Operator):
     def execute(self, context):
         cm = context.scene.collection_manager
         cm.in_phantom_mode = False
+
+        return {'FINISHED'}
+
+
+class CMDisableObjectsOperator(Operator):
+    '''Disable selected objects in viewports'''
+    bl_label = "Disable Selected"
+    bl_idname = "view3d.disable_selected_objects"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for obj in context.selected_objects:
+            obj.hide_viewport = True
+
+        return {'FINISHED'}
+
+
+class CMDisableUnSelectedObjectsOperator(Operator):
+    '''Disable unselected objects in viewports'''
+    bl_label = "Disable Unselected"
+    bl_idname = "view3d.disable_unselected_objects"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for obj in bpy.data.objects:
+            if obj in context.visible_objects and not obj in context.selected_objects:
+                obj.hide_viewport = True
+
+        return {'FINISHED'}
+
+
+class CMRestoreDisabledObjectsOperator(Operator):
+    '''Restore disabled objects in viewports'''
+    bl_label = "Restore Disabled Objects"
+    bl_idname = "view3d.restore_disabled_objects"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for obj in bpy.data.objects:
+            if obj.hide_viewport:
+                obj.hide_viewport = False
+                obj.select_set(True)
 
         return {'FINISHED'}

@@ -70,7 +70,11 @@ def queue_worker():
     while not q.empty():
         task = q.get()
         if task.only_last:
-            stashed[task.command] = task
+            #this now makes the keys not only by task, but also first argument.
+            # by now stashing is only used for ratings, where the first argument is url.
+            # This enables fast rating of multiple assets while allowing larger delay for uploading of ratings.
+            # this avoids a duplicate request error on the server
+            stashed[str(task.command)+str(task.arguments[0])] = task
         else:
             back_to_queue.append(task)
     #return tasks to que except for stashed

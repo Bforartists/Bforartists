@@ -292,7 +292,7 @@ class USERPREF_PT_interface_temporary_windows(InterfacePanel, CenterAlignMixIn, 
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.prop(view, "render_display_type", text="Render in")
+        flow.prop(view, "render_display_type", text="Render In")
         flow.prop(view, "filebrowser_display_type", text="File Browser")
 
 
@@ -386,8 +386,8 @@ class USERPREF_PT_edit_objects_new(EditingPanel, CenterAlignMixIn, Panel):
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.prop(edit, "material_link", text="Link Materials to")
-        flow.prop(edit, "object_align", text="Align to")
+        flow.prop(edit, "material_link", text="Link Materials To")
+        flow.prop(edit, "object_align", text="Align To")
 
         flow.use_property_split = False
         flow.prop(edit, "use_enter_edit_mode", text="Enter Edit Mode")
@@ -499,7 +499,7 @@ class USERPREF_PT_edit_misc(EditingPanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.prop(edit, "sculpt_paint_overlay_color", text="Sculpt Overlay Color")
-        flow.prop(edit, "node_margin", text="Node Auto-offset Margin")
+        flow.prop(edit, "node_margin", text="Node Auto-Offset Margin")
 
 
 # -----------------------------------------------------------------------------
@@ -1418,7 +1418,7 @@ class USERPREF_PT_saveload_blend_autosave(SaveLoadPanel, CenterAlignMixIn, Panel
         flow.prop(paths, "use_auto_save_temporary_files")
         sub = flow.column()
         sub.active = paths.use_auto_save_temporary_files
-        sub.prop(paths, "auto_save_time", text="Timer (mins)")
+        sub.prop(paths, "auto_save_time", text="Timer (Minutes)")
 
 
 class USERPREF_PT_saveload_file_browser(SaveLoadPanel, CenterAlignMixIn, Panel):
@@ -2244,9 +2244,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
     def draw(self, context):
         self._draw_items(
             context, (
-                ({"property": "use_new_particle_system"}, "T73324"),
                 ({"property": "use_sculpt_vertex_colors"}, "T71947"),
-                ({"property": "use_tools_missing_icons"}, "T80331"),
                 ({"property": "use_switch_object_operator"}, "T80402"),
                 ({"property": "use_sculpt_tools_tilt"}, "T00000"),
             ),
@@ -2260,6 +2258,8 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
         self._draw_items(
             context, (
                 ({"property": "use_new_hair_type"}, "T68981"),
+                ({"property": "use_new_point_cloud_type"}, "T75717"),
+                ({"property": "use_new_geometry_nodes"}, "project/profile/121"),
             ),
         )
 
@@ -2278,7 +2278,6 @@ class USERPREF_PT_experimental_debugging(ExperimentalPanel, Panel):
             context, (
                 ({"property": "use_undo_legacy"}, "T60695"),
                 ({"property": "use_cycles_debug"}, None),
-                ({"property": "use_image_editor_legacy_drawing"}, "T67530"),
             ),
         )
 
