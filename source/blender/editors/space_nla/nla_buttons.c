@@ -446,9 +446,11 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
   uiItemR(column, &strip_ptr, "action_frame_start", 0, IFACE_("Frame Start"), ICON_NONE);
   uiItemR(column, &strip_ptr, "action_frame_end", 0, IFACE_("End"), ICON_NONE);
 
-  row = uiLayoutRowWithHeading(layout, false, IFACE_("Sync Length"));
-  uiItemR(row, &strip_ptr, "use_sync_length", 0, "", ICON_NONE);
+  row = uiLayoutRow(layout, false); /* bfa - align probs left nla action panel */
+  uiLayoutSetPropSep(row, false);   /* bfa - use_property_split = False */
+  uiItemR(row, &strip_ptr, "use_sync_length", 0, IFACE_("Sync Length"), ICON_NONE);
   uiItemO(row, IFACE_("Now"), ICON_FILE_REFRESH, "NLA_OT_action_sync_length");
+  uiLayoutSetPropSep(row, true); /* bfa - use_property_split = True */
 
   /* action usage */
   column = uiLayoutColumn(layout, true);
