@@ -20,8 +20,8 @@
 
 __author__ = "Keith (Wahooney) Boshoff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bpy
 from bpy.props import (
@@ -39,21 +39,16 @@ from .. import common
 
 
 def _is_valid_context(context):
-    obj = context.object
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
+    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True
@@ -168,48 +163,52 @@ class MUV_OT_MirrorUV(bpy.types.Operator):
         return _is_valid_context(context)
 
     def execute(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
+        objs = common.get_uv_editable_objects(context)
 
-        error = self.error
-        axis = self.axis
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
 
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
-        if not bm.loops.layers.uv:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map")
-            return {'CANCELLED'}
-        uv_layer = bm.loops.layers.uv.verify()
+            error = self.error
+            axis = self.axis
 
-        faces = [f for f in bm.faces if f.select]
-        for f_dst in faces:
-            count = len(f_dst.verts)
-            for f_src in bm.faces:
-                # check if this is a candidate to do mirror UV
-                if f_src.index == f_dst.index:
-                    continue
-                if count != len(f_src.verts):
-                    continue
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            if not bm.loops.layers.uv:
+                self.report({'WARNING'},
+                            "Object {} must have more than one UV map"
+                            .format(obj.name))
+                return {'CANCELLED'}
+            uv_layer = bm.loops.layers.uv.verify()
 
-                # test if the vertices x values are the same sign
-                dst = _get_face_center(f_dst)
-                src = _get_face_center(f_src)
-                if (dst.x > 0 and src.x > 0) or (dst.x < 0 and src.x < 0):
-                    continue
+            faces = [f for f in bm.faces if f.select]
+            for f_dst in faces:
+                count = len(f_dst.verts)
+                for f_src in bm.faces:
+                    # check if this is a candidate to do mirror UV
+                    if f_src.index == f_dst.index:
+                        continue
+                    if count != len(f_src.verts):
+                        continue
 
-                # invert source axis
-                if axis == 'X':
-                    src.x = -src.x
-                elif axis == 'Y':
-                    src.y = -src.z
-                elif axis == 'Z':
-                    src.z = -src.z
+                    # test if the vertices x values are the same sign
+                    dst = _get_face_center(f_dst)
+                    src = _get_face_center(f_src)
+                    if (dst.x > 0 and src.x > 0) or (dst.x < 0 and src.x < 0):
+                        continue
 
-                # do mirror UV
-                if _is_vector_similar(dst, src, error):
-                    _mirror_uvs(uv_layer, f_src, f_dst, self.axis, self.error)
+                    # invert source axis
+                    if axis == 'X':
+                        src.x = -src.x
+                    elif axis == 'Y':
+                        src.y = -src.z
+                    elif axis == 'Z':
+                        src.z = -src.z
 
-        bmesh.update_edit_mesh(obj.data)
+                    # do mirror UV
+                    if _is_vector_similar(dst, src, error):
+                        _mirror_uvs(uv_layer, f_src, f_dst,
+                                    self.axis, self.error)
+
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}

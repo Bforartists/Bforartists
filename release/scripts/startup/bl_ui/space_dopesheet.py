@@ -172,7 +172,7 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
             layout.separator()
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
-            layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-word Match Search")
+            layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-Word Match Search")
 
 ################################ Switch between the editors ##########################################
 

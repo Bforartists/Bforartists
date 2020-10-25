@@ -122,7 +122,7 @@ def _points_from_object(depsgraph, scene, obj, source):
     return points
 
 
-def cell_fracture_objects(context, obj,
+def cell_fracture_objects(context, collection, obj,
                           source={'PARTICLE_OWN'},
                           source_limit=0,
                           source_noise=0.0,
@@ -140,7 +140,6 @@ def cell_fracture_objects(context, obj,
     from . import fracture_cell_calc
     depsgraph = context.evaluated_depsgraph_get()
     scene = context.scene
-    collection = context.collection
     view_layer = context.view_layer
 
     # -------------------------------------------------------------------------
@@ -307,7 +306,7 @@ def cell_fracture_objects(context, obj,
     return objects
 
 
-def cell_fracture_boolean(context, obj, objects,
+def cell_fracture_boolean(context, collection, obj, objects,
                           use_debug_bool=False,
                           clean=True,
                           use_island_split=False,
@@ -318,7 +317,6 @@ def cell_fracture_boolean(context, obj, objects,
                           ):
 
     objects_boolean = []
-    collection = context.collection
     scene = context.scene
     view_layer = context.view_layer
 

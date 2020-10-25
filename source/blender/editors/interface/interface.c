@@ -772,6 +772,95 @@ static void ui_but_extra_icons_update_from_old_but(const uiBut *new_but, const u
 }
 
 /**
+ * Update pointers and other information in the old active button based on new information in the
+ * corresponding new button from the current layout pass.
+ *
+ * \param oldbut: The button from the last layout pass that will be moved to the new block.
+ * \param but: The newly added button with much of the up to date information, to be feed later.
+ *
+ * \note #uiBut has ownership of many of its pointers. When the button is freed all these
+ * pointers are freed as well, so ownership has to be moved out of \a but in order to free it.
+ */
+static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
+{
+  BLI_assert(oldbut->active);
+
+  /* flags from the buttons we want to refresh, may want to add more here... */
+  const int flag_copy = UI_BUT_REDALERT | UI_HAS_ICON;
+  const int drawflag_copy = 0; /* None currently. */
+
+  /* still stuff needs to be copied */
+  oldbut->rect = but->rect;
+  oldbut->context = but->context; /* set by Layout */
+
+  /* drawing */
+  oldbut->icon = but->icon;
+  oldbut->iconadd = but->iconadd;
+  oldbut->alignnr = but->alignnr;
+
+  /* typically the same pointers, but not on undo/redo */
+  /* XXX some menu buttons store button itself in but->poin. Ugly */
+  if (oldbut->poin != (char *)oldbut) {
+    SWAP(char *, oldbut->poin, but->poin);
+    SWAP(void *, oldbut->func_argN, but->func_argN);
+  }
+
+  /* Move tooltip from new to old. */
+  SWAP(uiButToolTipFunc, oldbut->tip_func, but->tip_func);
+  SWAP(void *, oldbut->tip_argN, but->tip_argN);
+
+  oldbut->flag = (oldbut->flag & ~flag_copy) | (but->flag & flag_copy);
+  oldbut->drawflag = (oldbut->drawflag & ~drawflag_copy) | (but->drawflag & drawflag_copy);
+
+  ui_but_extra_icons_update_from_old_but(but, oldbut);
+  SWAP(ListBase, but->extra_op_icons, oldbut->extra_op_icons);
+
+  if (oldbut->type == UI_BTYPE_SEARCH_MENU) {
+    uiButSearch *search_oldbut = (uiButSearch *)oldbut, *search_but = (uiButSearch *)but;
+
+    SWAP(uiButSearchArgFreeFn, search_oldbut->arg_free_fn, search_but->arg_free_fn);
+    SWAP(void *, search_oldbut->arg, search_but->arg);
+  }
+
+  /* copy hardmin for list rows to prevent 'sticking' highlight to mouse position
+   * when scrolling without moving mouse (see T28432) */
+  if (ELEM(oldbut->type, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
+    oldbut->hardmax = but->hardmax;
+  }
+
+  if (oldbut->type == UI_BTYPE_PROGRESS_BAR) {
+    uiButProgressbar *progress_oldbut = (uiButProgressbar *)oldbut;
+    uiButProgressbar *progress_but = (uiButProgressbar *)but;
+    progress_oldbut->progress = progress_but->progress;
+  }
+
+  /* move/copy string from the new button to the old */
+  /* needed for alt+mouse wheel over enums */
+  if (but->str != but->strdata) {
+    if (oldbut->str != oldbut->strdata) {
+      SWAP(char *, but->str, oldbut->str);
+    }
+    else {
+      oldbut->str = but->str;
+      but->str = but->strdata;
+    }
+  }
+  else {
+    if (oldbut->str != oldbut->strdata) {
+      MEM_freeN(oldbut->str);
+      oldbut->str = oldbut->strdata;
+    }
+    BLI_strncpy(oldbut->strdata, but->strdata, sizeof(oldbut->strdata));
+  }
+
+  if (but->dragpoin && (but->dragflag & UI_BUT_DRAGPOIN_FREE)) {
+    SWAP(void *, but->dragpoin, oldbut->dragpoin);
+  }
+
+  /* note: if layout hasn't been applied yet, it uses old button pointers... */
+}
+
+/**
  * \return true when \a but_p is set (only done for active buttons).
  */
 static bool ui_but_update_from_old_block(const bContext *C,
@@ -779,138 +868,51 @@ static bool ui_but_update_from_old_block(const bContext *C,
                                          uiBut **but_p,
                                          uiBut **but_old_p)
 {
-  const int drawflag_copy = 0; /* None currently. */
-
   uiBlock *oldblock = block->oldblock;
-  uiBut *oldbut = NULL, *but = *but_p;
-  bool found_active = false;
+  uiBut *but = *but_p;
 
 #if 0
-  /* simple/stupid - search every time */
-  oldbut = ui_but_find_old(oldblock, but);
-  (void)but_old_p;
+  /* Simple method - search every time. Keep this for easy testing of the "fast path." */
+  uiBut *oldbut = ui_but_find_old(oldblock, but);
+  UNUSED_VARS(but_old_p);
 #else
   BLI_assert(*but_old_p == NULL || BLI_findindex(&oldblock->buttons, *but_old_p) != -1);
 
-  /* Fast-path - avoid loop-in-loop, calling #ui_but_find_old
-   * as long as old/new buttons are aligned. */
+  /* As long as old and new buttons are aligned, avoid loop-in-loop (calling #ui_but_find_old). */
+  uiBut *oldbut;
   if (LIKELY(*but_old_p && ui_but_equals_old(but, *but_old_p))) {
     oldbut = *but_old_p;
   }
   else {
-    /* fallback to block search */
+    /* Fallback to block search. */
     oldbut = ui_but_find_old(oldblock, but);
   }
   (*but_old_p) = oldbut ? oldbut->next : NULL;
 #endif
 
+  bool found_active = false;
+
   if (!oldbut) {
-    return found_active;
+    return false;
   }
 
   if (oldbut->active) {
-    /* flags from the buttons we want to refresh, may want to add more here... */
-    const int flag_copy = UI_BUT_REDALERT | UI_HAS_ICON;
-
-    found_active = true;
-
-#if 0
-    but->flag = oldbut->flag;
-    but->active = oldbut->active;
-    but->pos = oldbut->pos;
-    but->ofs = oldbut->ofs;
-    but->editstr = oldbut->editstr;
-    but->editval = oldbut->editval;
-    but->editvec = oldbut->editvec;
-    but->selsta = oldbut->selsta;
-    but->selend = oldbut->selend;
-    but->softmin = oldbut->softmin;
-    but->softmax = oldbut->softmax;
-    oldbut->active = NULL;
-#endif
-
-    /* move button over from oldblock to new block */
+    /* Move button over from oldblock to new block. */
     BLI_remlink(&oldblock->buttons, oldbut);
     BLI_insertlinkafter(&block->buttons, but, oldbut);
     oldbut->block = block;
     *but_p = oldbut;
 
-    /* still stuff needs to be copied */
-    oldbut->rect = but->rect;
-    oldbut->context = but->context; /* set by Layout */
-
-    /* drawing */
-    oldbut->icon = but->icon;
-    oldbut->iconadd = but->iconadd;
-    oldbut->alignnr = but->alignnr;
-
-    /* typically the same pointers, but not on undo/redo */
-    /* XXX some menu buttons store button itself in but->poin. Ugly */
-    if (oldbut->poin != (char *)oldbut) {
-      SWAP(char *, oldbut->poin, but->poin);
-      SWAP(void *, oldbut->func_argN, but->func_argN);
-    }
-
-    /* Move tooltip from new to old. */
-    SWAP(uiButToolTipFunc, oldbut->tip_func, but->tip_func);
-    SWAP(void *, oldbut->tip_argN, but->tip_argN);
-
-    oldbut->flag = (oldbut->flag & ~flag_copy) | (but->flag & flag_copy);
-    oldbut->drawflag = (oldbut->drawflag & ~drawflag_copy) | (but->drawflag & drawflag_copy);
-
-    ui_but_extra_icons_update_from_old_but(but, oldbut);
-    SWAP(ListBase, but->extra_op_icons, oldbut->extra_op_icons);
-
-    if (oldbut->type == UI_BTYPE_SEARCH_MENU) {
-      uiButSearch *search_oldbut = (uiButSearch *)oldbut, *search_but = (uiButSearch *)but;
-
-      SWAP(uiButSearchArgFreeFn, search_oldbut->arg_free_fn, search_but->arg_free_fn);
-      SWAP(void *, search_oldbut->arg, search_but->arg);
-    }
-
-    /* copy hardmin for list rows to prevent 'sticking' highlight to mouse position
-     * when scrolling without moving mouse (see T28432) */
-    if (ELEM(oldbut->type, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
-      oldbut->hardmax = but->hardmax;
-    }
-
-    if (oldbut->type == UI_BTYPE_PROGRESS_BAR) {
-      uiButProgressbar *progress_oldbut = (uiButProgressbar *)oldbut;
-      uiButProgressbar *progress_but = (uiButProgressbar *)but;
-      progress_oldbut->progress = progress_but->progress;
-    }
+    ui_but_update_old_active_from_new(oldbut, but);
 
     if (!BLI_listbase_is_empty(&block->butstore)) {
       UI_butstore_register_update(block, oldbut, but);
     }
 
-    /* move/copy string from the new button to the old */
-    /* needed for alt+mouse wheel over enums */
-    if (but->str != but->strdata) {
-      if (oldbut->str != oldbut->strdata) {
-        SWAP(char *, but->str, oldbut->str);
-      }
-      else {
-        oldbut->str = but->str;
-        but->str = but->strdata;
-      }
-    }
-    else {
-      if (oldbut->str != oldbut->strdata) {
-        MEM_freeN(oldbut->str);
-        oldbut->str = oldbut->strdata;
-      }
-      BLI_strncpy(oldbut->strdata, but->strdata, sizeof(oldbut->strdata));
-    }
-
-    if (but->dragpoin && (but->dragflag & UI_BUT_DRAGPOIN_FREE)) {
-      SWAP(void *, but->dragpoin, oldbut->dragpoin);
-    }
-
     BLI_remlink(&block->buttons, but);
     ui_but_free(C, but);
 
-    /* note: if layout hasn't been applied yet, it uses old button pointers... */
+    found_active = true;
   }
   else {
     const int flag_copy = UI_BUT_DRAG_MULTI;
@@ -2879,7 +2881,7 @@ char *ui_but_string_get_dynamic(uiBut *but, int *r_str_size)
 
 /**
  * Report a generic error prefix when evaluating a string with #BPY_run_string_as_number
- * as the Python error on it's own doesn't provide enough context.
+ * as the Python error on its own doesn't provide enough context.
  */
 #define UI_NUMBER_EVAL_ERROR_PREFIX IFACE_("Error evaluating number, see Info editor for details")
 
@@ -4148,12 +4150,14 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
   UI_block_layout_set_current(block, layout);
 
   int totitems = 0;
+  int categories = 0;
   int nbr_entries_nosepr = 0;
   for (const EnumPropertyItem *item = item_array; item->identifier; item++, totitems++) {
     if (!item->identifier[0]) {
       /* inconsistent, but menus with categories do not look good flipped */
       if (item->name) {
         block->flag |= UI_BLOCK_NO_FLIP;
+        categories++;
         nbr_entries_nosepr++;
       }
       /* We do not want simple separators in nbr_entries_nosepr count */
@@ -4179,22 +4183,12 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
     rows++;
   }
 
-  if (block->flag & UI_BLOCK_NO_FLIP) {
+  const char *title = RNA_property_ui_name(but->rnaprop);
+
+  if (title[0] && (categories == 0) && (block->flag & UI_BLOCK_NO_FLIP)) {
     /* Title at the top for menus with categories. */
-    uiDefBut(block,
-             UI_BTYPE_LABEL,
-             0,
-             RNA_property_ui_name(but->rnaprop),
-             0,
-             0,
-             UI_UNIT_X * 5,
-             UI_UNIT_Y,
-             NULL,
-             0.0,
-             0.0,
-             0,
-             0,
-             "");
+    uiDefBut(
+        block, UI_BTYPE_LABEL, 0, title, 0, 0, UI_UNIT_X * 5, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
     uiItemS(layout);
   }
 
@@ -4203,10 +4197,13 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
   /* create items */
   uiLayout *split = uiLayoutSplit(layout, 0.0f, false);
 
+  bool new_column;
+
   int column_end = 0;
   uiLayout *column = NULL;
   for (int a = 0; a < totitems; a++) {
-    if (a == column_end) {
+    new_column = (a == column_end);
+    if (new_column) {
       /* start new column, and find out where it ends in advance, so we
        * can flip the order of items properly per column */
       column_end = totitems;
@@ -4225,6 +4222,11 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
     }
 
     const EnumPropertyItem *item = &item_array[a];
+
+    if (new_column && (categories > 0) && item->identifier[0]) {
+      uiItemL(column, "", ICON_NONE);
+      uiItemS(column);
+    }
 
     if (!item->identifier[0]) {
       if (item->name) {
@@ -4249,8 +4251,6 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
                    0,
                    "");
         }
-      }
-      else {
         uiItemS(column);
       }
     }
@@ -4291,23 +4291,11 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
     }
   }
 
-  if (!(block->flag & UI_BLOCK_NO_FLIP)) {
+  if (title[0] && (categories == 0) && !(block->flag & UI_BLOCK_NO_FLIP)) {
     /* Title at the bottom for menus without categories. */
     uiItemS(layout);
-    uiDefBut(block,
-             UI_BTYPE_LABEL,
-             0,
-             RNA_property_ui_name(but->rnaprop),
-             0,
-             0,
-             UI_UNIT_X * 5,
-             UI_UNIT_Y,
-             NULL,
-             0.0,
-             0.0,
-             0,
-             0,
-             "");
+    uiDefBut(
+        block, UI_BTYPE_LABEL, 0, title, 0, 0, UI_UNIT_X * 5, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
   }
 
   UI_block_layout_set_current(block, layout);
@@ -4384,7 +4372,7 @@ static void ui_but_submenu_enable(uiBlock *block, uiBut *but)
  * avoid an extra lookup on 'prop' when its already available.
  *
  * When this kind of change won't disrupt branches, best look into making more
- * of our UI functions take prop rather then propname.
+ * of our UI functions take prop rather than propname.
  */
 static uiBut *ui_def_but_rna(uiBlock *block,
                              int type,
@@ -6771,6 +6759,7 @@ void UI_but_focus_on_enter_event(wmWindow *win, uiBut *but)
 
   event.type = EVT_BUT_OPEN;
   event.val = KM_PRESS;
+  event.is_repeat = false;
   event.customdata = but;
   event.customdatafree = false;
 

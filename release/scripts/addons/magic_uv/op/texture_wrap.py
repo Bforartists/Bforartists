@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bpy
 from bpy.props import (
@@ -35,21 +35,17 @@ from ..utils.property_class_registry import PropertyClassRegistry
 
 
 def _is_valid_context(context):
-    obj = context.object
+    # Multiple objects editing mode is not supported in this feature.
+    objs = common.get_uv_editable_objects(context)
+    if len(objs) != 1:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
+    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True
@@ -111,7 +107,10 @@ class MUV_OT_TextureWrap_Refer(bpy.types.Operator):
 
     def execute(self, context):
         props = context.scene.muv_props.texture_wrap
-        obj = context.active_object
+
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
         bm = bmesh.from_edit_mesh(obj.data)
         if common.check_version(2, 73, 0) >= 0:
             bm.faces.ensure_lookup_table()
@@ -156,7 +155,10 @@ class MUV_OT_TextureWrap_Set(bpy.types.Operator):
     def execute(self, context):
         sc = context.scene
         props = sc.muv_props.texture_wrap
-        obj = context.active_object
+
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
         bm = bmesh.from_edit_mesh(obj.data)
         if common.check_version(2, 73, 0) >= 0:
             bm.faces.ensure_lookup_table()

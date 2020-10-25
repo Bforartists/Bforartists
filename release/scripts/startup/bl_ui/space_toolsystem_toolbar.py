@@ -1237,9 +1237,6 @@ class _defs_sculpt:
         if not prefs.experimental.use_sculpt_vertex_colors:
             exclude_filter = {'PAINT', 'SMEAR'}
 
-        if not prefs.experimental.use_tools_missing_icons:
-            exclude_filter = {'PAINT', 'SMEAR', 'BOUNDARY', 'DISPLACEMENT_ERASER'}
-
         return generate_from_enum_ex(
             context,
             idname_prefix="builtin_brush.",
@@ -1852,6 +1849,11 @@ class _defs_gpencil_paint:
 
     @ToolDef.from_fn
     def cutter():
+        def draw_settings(context, layout, tool):
+            props = tool.operator_properties("gpencil.stroke_cutter")
+            row = layout.row()
+            row.use_property_split = False
+            row.prop(props, "flat_caps")
         return dict(
             idname="builtin.cutter",
             label="Cutter",
@@ -1859,6 +1861,7 @@ class _defs_gpencil_paint:
             cursor='KNIFE',
             widget=None,
             keymap=(),
+            draw_settings=draw_settings,
         )
 
     @ToolDef.from_fn
@@ -2721,50 +2724,18 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
             (
                 _defs_sculpt.mask_border,
                 _defs_sculpt.mask_lasso,
+                 _defs_sculpt.mask_line,
             ),
             _defs_sculpt.hide_border,
-            lambda context: (
-                (_defs_sculpt.mask_line,)
-                if context is None or (
-                        context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_tools_missing_icons)
-                else ()
+            (
+                _defs_sculpt.face_set_box,
+                _defs_sculpt.face_set_lasso,
             ),
-            lambda context: (
-                (_defs_sculpt.face_set_box,)
-                if context is None or (
-                        context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_tools_missing_icons)
-                else ()
+            (
+                _defs_sculpt.trim_box,
+                _defs_sculpt.trim_lasso,
             ),
-            lambda context: (
-                (_defs_sculpt.face_set_lasso,)
-                if context is None or (
-                        context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_tools_missing_icons)
-                else ()
-            ),
-            lambda context: (
-                (_defs_sculpt.trim_box,)
-                if context is None or (
-                        context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_tools_missing_icons)
-                else ()
-            ),
-            lambda context: (
-                (_defs_sculpt.trim_lasso,)
-                if context is None or (
-                        context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_tools_missing_icons)
-                else ()
-            ),
-            lambda context: (
-                (_defs_sculpt.project_line,)
-                if context is None or (
-                        context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_tools_missing_icons)
-                else ()
-            ),
+            _defs_sculpt.project_line,
             None,
             _defs_sculpt.mesh_filter,
             _defs_sculpt.cloth_filter,
@@ -2772,8 +2743,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 (_defs_sculpt.color_filter,)
                 if context is None or (
                         context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_sculpt_vertex_colors and
-                        context.preferences.experimental.use_tools_missing_icons)
+                        context.preferences.experimental.use_sculpt_vertex_colors)
                 else ()
             ),
             #None, #bfa - too big gap
@@ -2781,18 +2751,11 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
                 (_defs_sculpt.mask_by_color,)
                 if context is None or (
                         context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_sculpt_vertex_colors and
-                        context.preferences.experimental.use_tools_missing_icons)
+                        context.preferences.experimental.use_sculpt_vertex_colors)
                 else ()
             ),
             #None, #bfa - too big gap
-            lambda context: (
-                (_defs_sculpt.face_set_edit,)
-                if context is None or (
-                        context.preferences.view.show_developer_ui and
-                        context.preferences.experimental.use_tools_missing_icons)
-                else ()
-            ),
+            _defs_sculpt.face_set_edit,
             None,
             _defs_transform.translate,
             _defs_transform.rotate,

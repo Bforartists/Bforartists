@@ -1080,7 +1080,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
 
         elif strip_type == 'SPEED':
             layout.use_property_split = False
-            layout.prop(strip, "use_default_fade", text="Stretch to input strip length")
+            layout.prop(strip, "use_default_fade", text="Stretch to Input Strip Length")
             layout.use_property_split = True
             if not strip.use_default_fade:
                 layout.use_property_split = False
@@ -1170,7 +1170,7 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
 
         elif strip_type in {'CROSS', 'GAMMA_CROSS', 'WIPE', 'ALPHA_OVER', 'ALPHA_UNDER', 'OVER_DROP'}:
             col.use_property_split = False
-            col.prop(strip, "use_default_fade", text="Default fade")
+            col.prop(strip, "use_default_fade", text="Default Fade")
             col.use_property_split = True
             if not strip.use_default_fade:
                 col.prop(strip, "effect_fader", text="Effect Fader")
