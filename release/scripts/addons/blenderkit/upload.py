@@ -836,7 +836,7 @@ class AssetVerificationStatusChange(Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        print(self.state)
+        # print(self.state)
         if self.state == 'deleted':
             wm = context.window_manager
             return wm.invoke_props_dialog(self)

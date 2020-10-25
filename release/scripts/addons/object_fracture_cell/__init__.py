@@ -45,7 +45,7 @@ from bpy.props import (
 
 from bpy.types import Operator
 
-def main_object(context, obj, level, **kw):
+def main_object(context, collection, obj, level, **kw):
     import random
 
     # pull out some args
@@ -57,7 +57,6 @@ def main_object(context, obj, level, **kw):
     recursion_clamp = kw_copy.pop("recursion_clamp")
     recursion_chance = kw_copy.pop("recursion_chance")
     recursion_chance_select = kw_copy.pop("recursion_chance_select")
-    collection_name = kw_copy.pop("collection_name")
     use_island_split = kw_copy.pop("use_island_split")
     use_debug_bool = kw_copy.pop("use_debug_bool")
     use_interior_vgroup = kw_copy.pop("use_interior_vgroup")
@@ -65,7 +64,6 @@ def main_object(context, obj, level, **kw):
     use_sharp_edges_apply = kw_copy.pop("use_sharp_edges_apply")
 
     scene = context.scene
-    collection = context.collection
 
     if level != 0:
         kw_copy["source_limit"] = recursion_source_limit
@@ -79,9 +77,9 @@ def main_object(context, obj, level, **kw):
         obj_display_type_prev = obj.display_type
         obj.display_type = 'WIRE'
 
-    objects = fracture_cell_setup.cell_fracture_objects(context, obj, **kw_copy)
+    objects = fracture_cell_setup.cell_fracture_objects(context, collection, obj, **kw_copy)
     objects = fracture_cell_setup.cell_fracture_boolean(
-        context, obj, objects,
+        context, collection, obj, objects,
         use_island_split=use_island_split,
         use_interior_hide=(use_interior_vgroup or use_sharp_edges),
         use_debug_bool=use_debug_bool,
@@ -131,7 +129,7 @@ def main_object(context, obj, level, **kw):
             objects_recursive = []
             for i, obj_cell in objects_recurse_input:
                 assert(objects[i] is obj_cell)
-                objects_recursive += main_object(context, obj_cell, level_sub, **kw)
+                objects_recursive += main_object(context, collection, obj_cell, level_sub, **kw)
                 if use_remove_original:
                     collection.objects.unlink(obj_cell)
                     del objects[i]
@@ -154,21 +152,6 @@ def main_object(context, obj, level, **kw):
                 use_sharp_edges_apply=use_sharp_edges_apply,
             )
 
-    #--------------
-    # Scene Options
-
-    # group
-    if collection_name:
-        group = bpy.data.collections.get(collection_name)
-        if group is None:
-            group = bpy.data.collections.new(collection_name)
-            collection.children.link(group)
-        group_objects = group.objects[:]
-        for obj_cell in objects:
-            if obj_cell not in group_objects:
-                collection.objects.unlink(obj_cell)
-                group.objects.link(obj_cell)
-
     if kw_copy["use_debug_redraw"]:
         obj.display_type = obj_display_type_prev
 
@@ -187,11 +170,21 @@ def main(context, **kw):
     # mass
     mass_mode = kw_copy.pop("mass_mode")
     mass = kw_copy.pop("mass")
+    collection_name = kw_copy.pop("collection_name")
+
+    collection = context.collection
+    if collection_name:
+        collection_current = collection
+        collection = bpy.data.collections.get(collection_name)
+        if collection is None:
+            collection = bpy.data.collections.new(collection_name)
+            collection_current.children.link(collection)
+        del collection_current
 
     objects = []
     for obj in objects_context:
         if obj.type == 'MESH':
-            objects += main_object(context, obj, 0, **kw_copy)
+            objects += main_object(context, collection, obj, 0, **kw_copy)
 
     bpy.ops.object.select_all(action='DESELECT')
     for obj_cell in objects:

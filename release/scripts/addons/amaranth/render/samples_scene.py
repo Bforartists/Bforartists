@@ -206,21 +206,13 @@ def init():
         scene.amaranth_cycles_list_sampling = bpy.props.BoolProperty(
             default=False,
             name="Samples Per:")
-        # Note: add versioning code to adress changes introduced in 2.79.1
-        if bpy.app.version >= (2, 79, 1):
-            from cycles import properties as _cycles_props
-            _cycles_props.CyclesRenderSettings.use_samples_final = BoolProperty(
-                    name="Use Final Render Samples",
-                    description="Use current shader samples as final render samples",
-                    default=False
-                    )
-        else:
-            bpy.types.CyclesRenderSettings.use_samples_final = BoolProperty(
-                    name="Use Final Render Samples",
-                    description="Use current shader samples as final render samples",
-                    default=False
-                    )
-
+        # Note: add versioning code to address changes introduced in 2.79.1
+        from cycles import properties as _cycles_props
+        _cycles_props.CyclesRenderSettings.use_samples_final = BoolProperty(
+            name="Use Final Render Samples",
+            description="Use current shader samples as final render samples",
+            default=False,
+        )
 
 
 def clear():
@@ -235,20 +227,14 @@ def register():
     bpy.utils.register_class(AMTH_RENDER_OT_cycles_samples_percentage)
     bpy.utils.register_class(AMTH_RENDER_OT_cycles_samples_percentage_set)
     if utils.cycles_exists():
-        if bpy.app.version >= (2, 79, 1):
-            bpy.types.CYCLES_RENDER_PT_sampling.append(render_cycles_scene_samples)
-        else:
-            bpy.types.CyclesRender_PT_sampling.append(render_cycles_scene_samples)
+        bpy.types.CYCLES_RENDER_PT_sampling.append(render_cycles_scene_samples)
 
 
 def unregister():
     bpy.utils.unregister_class(AMTH_RENDER_OT_cycles_samples_percentage)
     bpy.utils.unregister_class(AMTH_RENDER_OT_cycles_samples_percentage_set)
     if utils.cycles_exists():
-        if bpy.app.version >= (2, 79, 1):
-            bpy.types.CYCLES_RENDER_PT_sampling.remove(render_cycles_scene_samples)
-        else:
-            bpy.types.CyclesRender_PT_sampling.remove(render_cycles_scene_samples)
+        bpy.types.CYCLES_RENDER_PT_sampling.remove(render_cycles_scene_samples)
 
 
     clear()

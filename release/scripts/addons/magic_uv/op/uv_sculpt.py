@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 from math import pi, cos, tan, sin
 
@@ -51,21 +51,16 @@ else:
 
 
 def _is_valid_context(context):
-    obj = context.object
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
+    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True
@@ -255,7 +250,7 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
         bgl.glEnd()
 
     def __init__(self):
-        self.__loop_info = []
+        self.__loop_info = {}       # { Object: loop_info }
         self.__stroking = False
         self.current_mco = Vector((0.0, 0.0))
         self.__initial_mco = Vector((0.0, 0.0))
@@ -265,52 +260,17 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
 
         self.__initial_mco = self.current_mco
 
+        objs = common.get_uv_editable_objects(context)
+
         # get influenced UV
-        obj = context.active_object
-        world_mat = obj.matrix_world
-        bm = bmesh.from_edit_mesh(obj.data)
-        uv_layer = bm.loops.layers.uv.verify()
-        _, region, space = common.get_space('VIEW_3D', 'WINDOW', 'VIEW_3D')
-
-        self.__loop_info = []
-        for f in bm.faces:
-            if not f.select:
-                continue
-            for i, l in enumerate(f.loops):
-                loc_2d = location_3d_to_region_2d_extra(
-                    region, space.region_3d,
-                    compat.matmul(world_mat, l.vert.co))
-                diff = loc_2d - self.__initial_mco
-                if diff.length < sc.muv_uv_sculpt_radius:
-                    info = {
-                        "face_idx": f.index,
-                        "loop_idx": i,
-                        "initial_vco": l.vert.co.copy(),
-                        "initial_vco_2d": loc_2d,
-                        "initial_uv": l[uv_layer].uv.copy(),
-                        "strength": _get_strength(
-                            diff.length, sc.muv_uv_sculpt_radius,
-                            sc.muv_uv_sculpt_strength)
-                    }
-                    self.__loop_info.append(info)
-
-    def __stroke_apply(self, context, _):
-        sc = context.scene
-        obj = context.active_object
-        world_mat = obj.matrix_world
-        bm = bmesh.from_edit_mesh(obj.data)
-        uv_layer = bm.loops.layers.uv.verify()
-        mco = self.current_mco
-
-        if sc.muv_uv_sculpt_tools == 'GRAB':
-            for info in self.__loop_info:
-                diff_uv = (mco - self.__initial_mco) * info["strength"]
-                l = bm.faces[info["face_idx"]].loops[info["loop_idx"]]
-                l[uv_layer].uv = info["initial_uv"] + diff_uv / 100.0
-
-        elif sc.muv_uv_sculpt_tools == 'PINCH':
+        self.__loop_info = {}
+        for obj in objs:
+            world_mat = obj.matrix_world
+            bm = bmesh.from_edit_mesh(obj.data)
+            uv_layer = bm.loops.layers.uv.verify()
             _, region, space = common.get_space('VIEW_3D', 'WINDOW', 'VIEW_3D')
-            loop_info = []
+
+            self.__loop_info[obj] = []
             for f in bm.faces:
                 if not f.select:
                     continue
@@ -330,123 +290,170 @@ class MUV_OT_UVSculpt(bpy.types.Operator):
                                 diff.length, sc.muv_uv_sculpt_radius,
                                 sc.muv_uv_sculpt_strength)
                         }
-                        loop_info.append(info)
+                        self.__loop_info[obj].append(info)
 
-            # mouse coordinate to UV coordinate
-            ray_vec = view3d_utils.region_2d_to_vector_3d(region,
-                                                          space.region_3d, mco)
-            ray_vec.normalize()
-            ray_orig = view3d_utils.region_2d_to_origin_3d(region,
-                                                           space.region_3d,
-                                                           mco)
-            ray_tgt = ray_orig + ray_vec * 1000000.0
-            mwi = world_mat.inverted()
-            ray_orig_obj = compat.matmul(mwi, ray_orig)
-            ray_tgt_obj = compat.matmul(mwi, ray_tgt)
-            ray_dir_obj = ray_tgt_obj - ray_orig_obj
-            ray_dir_obj.normalize()
-            tree = BVHTree.FromBMesh(bm)
-            loc, _, fidx, _ = tree.ray_cast(ray_orig_obj, ray_dir_obj)
-            if not loc:
-                return
-            loops = [l for l in bm.faces[fidx].loops]
-            uvs = [Vector((l[uv_layer].uv.x, l[uv_layer].uv.y, 0.0))
-                   for l in loops]
-            target_uv = barycentric_transform(
-                loc, loops[0].vert.co, loops[1].vert.co, loops[2].vert.co,
-                uvs[0], uvs[1], uvs[2])
-            target_uv = Vector((target_uv.x, target_uv.y))
+    def __stroke_apply(self, context, _):
+        sc = context.scene
+        objs = common.get_uv_editable_objects(context)
 
-            # move to target UV coordinate
-            for info in loop_info:
-                l = bm.faces[info["face_idx"]].loops[info["loop_idx"]]
-                if sc.muv_uv_sculpt_pinch_invert:
-                    diff_uv = (l[uv_layer].uv - target_uv) * info["strength"]
-                else:
-                    diff_uv = (target_uv - l[uv_layer].uv) * info["strength"]
-                l[uv_layer].uv = l[uv_layer].uv + diff_uv / 10.0
+        for obj in objs:
+            world_mat = obj.matrix_world
+            bm = bmesh.from_edit_mesh(obj.data)
+            uv_layer = bm.loops.layers.uv.verify()
+            mco = self.current_mco
 
-        elif sc.muv_uv_sculpt_tools == 'RELAX':
-            _, region, space = common.get_space('VIEW_3D', 'WINDOW', 'VIEW_3D')
+            if sc.muv_uv_sculpt_tools == 'GRAB':
+                for info in self.__loop_info[obj]:
+                    diff_uv = (mco - self.__initial_mco) * info["strength"]
+                    l = bm.faces[info["face_idx"]].loops[info["loop_idx"]]
+                    l[uv_layer].uv = info["initial_uv"] + diff_uv / 100.0
 
-            # get vertex and loop relation
-            vert_db = {}
-            for f in bm.faces:
-                for l in f.loops:
-                    if l.vert in vert_db:
-                        vert_db[l.vert]["loops"].append(l)
-                    else:
-                        vert_db[l.vert] = {"loops": [l]}
-
-            # get relaxation information
-            for k in vert_db.keys():
-                d = vert_db[k]
-                d["uv_sum"] = Vector((0.0, 0.0))
-                d["uv_count"] = 0
-
-                for l in d["loops"]:
-                    ln = l.link_loop_next
-                    lp = l.link_loop_prev
-                    d["uv_sum"] = d["uv_sum"] + ln[uv_layer].uv
-                    d["uv_sum"] = d["uv_sum"] + lp[uv_layer].uv
-                    d["uv_count"] = d["uv_count"] + 2
-                d["uv_p"] = d["uv_sum"] / d["uv_count"]
-                d["uv_b"] = d["uv_p"] - d["loops"][0][uv_layer].uv
-            for k in vert_db.keys():
-                d = vert_db[k]
-                d["uv_sum_b"] = Vector((0.0, 0.0))
-                for l in d["loops"]:
-                    ln = l.link_loop_next
-                    lp = l.link_loop_prev
-                    dn = vert_db[ln.vert]
-                    dp = vert_db[lp.vert]
-                    d["uv_sum_b"] = d["uv_sum_b"] + dn["uv_b"] + dp["uv_b"]
-
-            # apply
-            for f in bm.faces:
-                if not f.select:
-                    continue
-                for i, l in enumerate(f.loops):
-                    loc_2d = location_3d_to_region_2d_extra(
-                        region, space.region_3d,
-                        compat.matmul(world_mat, l.vert.co))
-                    diff = loc_2d - self.__initial_mco
-                    if diff.length >= sc.muv_uv_sculpt_radius:
+            elif sc.muv_uv_sculpt_tools == 'PINCH':
+                _, region, space = common.get_space(
+                    'VIEW_3D', 'WINDOW', 'VIEW_3D')
+                loop_info = []
+                for f in bm.faces:
+                    if not f.select:
                         continue
-                    db = vert_db[l.vert]
-                    strength = _get_strength(diff.length,
-                                             sc.muv_uv_sculpt_radius,
-                                             sc.muv_uv_sculpt_strength)
+                    for i, l in enumerate(f.loops):
+                        loc_2d = location_3d_to_region_2d_extra(
+                            region, space.region_3d,
+                            compat.matmul(world_mat, l.vert.co))
+                        diff = loc_2d - self.__initial_mco
+                        if diff.length < sc.muv_uv_sculpt_radius:
+                            info = {
+                                "face_idx": f.index,
+                                "loop_idx": i,
+                                "initial_vco": l.vert.co.copy(),
+                                "initial_vco_2d": loc_2d,
+                                "initial_uv": l[uv_layer].uv.copy(),
+                                "strength": _get_strength(
+                                    diff.length, sc.muv_uv_sculpt_radius,
+                                    sc.muv_uv_sculpt_strength)
+                            }
+                            loop_info.append(info)
 
-                    base = (1.0 - strength) * l[uv_layer].uv
-                    if sc.muv_uv_sculpt_relax_method == 'HC':
-                        t = 0.5 * (db["uv_b"] + db["uv_sum_b"] / d["uv_count"])
-                        diff = strength * (db["uv_p"] - t)
-                        target_uv = base + diff
-                    elif sc.muv_uv_sculpt_relax_method == 'LAPLACIAN':
-                        diff = strength * db["uv_p"]
-                        target_uv = base + diff
+                # mouse coordinate to UV coordinate
+                ray_vec = view3d_utils.region_2d_to_vector_3d(
+                    region, space.region_3d, mco)
+                ray_vec.normalize()
+                ray_orig = view3d_utils.region_2d_to_origin_3d(
+                    region, space.region_3d, mco)
+                ray_tgt = ray_orig + ray_vec * 1000000.0
+                mwi = world_mat.inverted()
+                ray_orig_obj = compat.matmul(mwi, ray_orig)
+                ray_tgt_obj = compat.matmul(mwi, ray_tgt)
+                ray_dir_obj = ray_tgt_obj - ray_orig_obj
+                ray_dir_obj.normalize()
+                tree = BVHTree.FromBMesh(bm)
+                loc, _, fidx, _ = tree.ray_cast(ray_orig_obj, ray_dir_obj)
+                if not loc:
+                    return
+                loops = [l for l in bm.faces[fidx].loops]
+                uvs = [Vector((l[uv_layer].uv.x, l[uv_layer].uv.y, 0.0))
+                       for l in loops]
+                target_uv = barycentric_transform(
+                    loc,
+                    loops[0].vert.co, loops[1].vert.co, loops[2].vert.co,
+                    uvs[0], uvs[1], uvs[2])
+                target_uv = Vector((target_uv.x, target_uv.y))
+
+                # move to target UV coordinate
+                for info in loop_info:
+                    l = bm.faces[info["face_idx"]].loops[info["loop_idx"]]
+                    if sc.muv_uv_sculpt_pinch_invert:
+                        diff_uv = \
+                            (l[uv_layer].uv - target_uv) * info["strength"]
                     else:
+                        diff_uv = \
+                            (target_uv - l[uv_layer].uv) * info["strength"]
+                    l[uv_layer].uv = l[uv_layer].uv + diff_uv / 10.0
+
+            elif sc.muv_uv_sculpt_tools == 'RELAX':
+                _, region, space = common.get_space(
+                    'VIEW_3D', 'WINDOW', 'VIEW_3D')
+
+                # get vertex and loop relation
+                vert_db = {}
+                for f in bm.faces:
+                    for l in f.loops:
+                        if l.vert in vert_db:
+                            vert_db[l.vert]["loops"].append(l)
+                        else:
+                            vert_db[l.vert] = {"loops": [l]}
+
+                # get relaxation information
+                for k in vert_db.keys():
+                    d = vert_db[k]
+                    d["uv_sum"] = Vector((0.0, 0.0))
+                    d["uv_count"] = 0
+
+                    for l in d["loops"]:
+                        ln = l.link_loop_next
+                        lp = l.link_loop_prev
+                        d["uv_sum"] = d["uv_sum"] + ln[uv_layer].uv
+                        d["uv_sum"] = d["uv_sum"] + lp[uv_layer].uv
+                        d["uv_count"] = d["uv_count"] + 2
+                    d["uv_p"] = d["uv_sum"] / d["uv_count"]
+                    d["uv_b"] = d["uv_p"] - d["loops"][0][uv_layer].uv
+                for k in vert_db.keys():
+                    d = vert_db[k]
+                    d["uv_sum_b"] = Vector((0.0, 0.0))
+                    for l in d["loops"]:
+                        ln = l.link_loop_next
+                        lp = l.link_loop_prev
+                        dn = vert_db[ln.vert]
+                        dp = vert_db[lp.vert]
+                        d["uv_sum_b"] = d["uv_sum_b"] + dn["uv_b"] + dp["uv_b"]
+
+                # apply
+                for f in bm.faces:
+                    if not f.select:
                         continue
+                    for i, l in enumerate(f.loops):
+                        loc_2d = location_3d_to_region_2d_extra(
+                            region, space.region_3d,
+                            compat.matmul(world_mat, l.vert.co))
+                        diff = loc_2d - self.__initial_mco
+                        if diff.length >= sc.muv_uv_sculpt_radius:
+                            continue
+                        db = vert_db[l.vert]
+                        strength = _get_strength(diff.length,
+                                                 sc.muv_uv_sculpt_radius,
+                                                 sc.muv_uv_sculpt_strength)
 
-                    l[uv_layer].uv = target_uv
+                        base = (1.0 - strength) * l[uv_layer].uv
+                        if sc.muv_uv_sculpt_relax_method == 'HC':
+                            t = 0.5 * \
+                                (db["uv_b"] + db["uv_sum_b"] / d["uv_count"])
+                            diff = strength * (db["uv_p"] - t)
+                            target_uv = base + diff
+                        elif sc.muv_uv_sculpt_relax_method == 'LAPLACIAN':
+                            diff = strength * db["uv_p"]
+                            target_uv = base + diff
+                        else:
+                            continue
 
-        bmesh.update_edit_mesh(obj.data)
+                        l[uv_layer].uv = target_uv
+
+            bmesh.update_edit_mesh(obj.data)
 
     def __stroke_exit(self, context, _):
         sc = context.scene
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        uv_layer = bm.loops.layers.uv.verify()
-        mco = self.current_mco
+        objs = common.get_uv_editable_objects(context)
 
-        if sc.muv_uv_sculpt_tools == 'GRAB':
-            for info in self.__loop_info:
-                diff_uv = (mco - self.__initial_mco) * info["strength"]
-                l = bm.faces[info["face_idx"]].loops[info["loop_idx"]]
-                l[uv_layer].uv = info["initial_uv"] + diff_uv / 100.0
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            uv_layer = bm.loops.layers.uv.verify()
+            mco = self.current_mco
 
-        bmesh.update_edit_mesh(obj.data)
+            if sc.muv_uv_sculpt_tools == 'GRAB':
+                for info in self.__loop_info[obj]:
+                    diff_uv = (mco - self.__initial_mco) * info["strength"]
+                    l = bm.faces[info["face_idx"]].loops[info["loop_idx"]]
+                    l[uv_layer].uv = info["initial_uv"] + diff_uv / 100.0
+
+            bmesh.update_edit_mesh(obj.data)
 
     def modal(self, context, event):
         if context.area:

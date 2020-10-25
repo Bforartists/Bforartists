@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bpy
 import bgl
@@ -100,6 +100,13 @@ def get_object_select(obj):
     return obj.select_get()
 
 
+def set_object_select(obj, select):
+    if check_version(2, 80, 0) < 0:
+        obj.select = select
+    else:
+        obj.select_set(select)
+
+
 def set_active_object(obj):
     if check_version(2, 80, 0) < 0:
         bpy.context.scene.objects.active = obj
@@ -108,10 +115,10 @@ def set_active_object(obj):
 
 
 def get_active_object(context):
-    if check_version(2, 80, 0) >= 0:
-        return context.scene.active_object
+    if check_version(2, 80, 0) < 0:
+        return context.scene.objects.active
     else:
-        return context.active_object
+        return context.view_layer.objects.active
 
 
 def object_has_uv_layers(obj):

@@ -20,23 +20,23 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 
 bl_info = {
     "name": "Magic UV",
     "author": "Nutti, Mifth, Jace Priester, kgeogeo, mem, imdjs"
               "Keith (Wahooney) Boshoff, McBuff, MaxRobinot, "
-              "Alexander Milovsky, Dusan Stevanovic",
-    "version": (6, 3, 0),
+              "Alexander Milovsky, Dusan Stevanovic, MatthiasThDs",
+    "version": (6, 4, 0),
     "blender": (2, 80, 0),
     "location": "See Add-ons Preferences",
     "description": "UV Toolset. See Add-ons Preferences for details",
     "warning": "",
     "support": "COMMUNITY",
-    "doc_url": "https://docs.blender.org/manual/en/dev/addons/"
-               "uv/magic_uv.html",
+    "wiki_url": "https://docs.blender.org/manual/en/dev/addons/"
+                "uv/magic_uv.html",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/uv/magic_uv.html",
     "tracker_url": "https://github.com/nutti/Magic-UV",
     "category": "UV",

@@ -330,7 +330,7 @@ class StrokePanel(BrushPanel):
 
         if brush.use_anchor:
             col.use_property_split = False
-            col.prop(brush, "use_edge_to_edge", text="Edge To Edge")
+            col.prop(brush, "use_edge_to_edge", text="Edge to Edge")
             col.use_property_split = True
 
         if brush.use_airbrush:
@@ -488,7 +488,7 @@ class DisplayPanel(BrushPanel):
 
         col.prop(brush, "cursor_color_add", text="Cursor Color")
         if mode == 'SCULPT' and brush.sculpt_capabilities.has_secondary_color:
-            col.prop(brush, "cursor_color_subtract", text="Inverse Cursor Color")
+            col.prop(brush, "cursor_color_subtract", text="Inverse Color")
 
         col.separator()
 
@@ -718,6 +718,7 @@ def brush_settings(layout, context, brush, popover=False):
         elif sculpt_tool == 'GRAB':
             layout.use_property_split = False
             layout.prop(brush, "use_grab_active_vertex")
+            layout.prop(brush, "use_grab_silhouette")
 
         elif sculpt_tool == 'PAINT':
             row = layout.row(align=True)
@@ -904,7 +905,7 @@ def brush_shared_settings(layout, context, brush, popover=False):
     if direction:
         layout.row().prop(brush, "direction", expand=True)
         layout.separator()
-        
+
     if use_frontface:
         col = layout.column()
         col.use_property_split = False
