@@ -407,14 +407,28 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     uiItemR(row, &strip_ptr, "use_auto_blend", 0, NULL, ICON_NONE); /* XXX as toggle? */
 
     /* settings */
-    column = uiLayoutColumnWithHeading(layout, true, IFACE_("Playback"));
-    row = uiLayoutRow(column, true);
+    uiLayoutSetPropSep(layout, false);
+    uiLayoutSetPropDecorate(layout, false);
+
+    column = uiLayoutColumn(layout, true);          /* bfa - align probs left */
+    uiItemL(column, IFACE_("Playback"), ICON_NONE); /* bfa - use label instead of heading */
+
+    row = uiLayoutRow(column, false);
+    uiItemS(row); /* bfa - separator */
     uiLayoutSetActive(row,
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
+
+    row = uiLayoutRow(column, false);
+    uiItemS(row);
     uiItemR(row, &strip_ptr, "use_reverse", 0, NULL, ICON_NONE);
 
-    uiItemR(column, &strip_ptr, "use_animated_time_cyclic", 0, NULL, ICON_NONE);
+    row = uiLayoutRow(column, false);
+    uiItemS(row);
+    uiItemR(row, &strip_ptr, "use_animated_time_cyclic", 0, NULL, ICON_NONE);
+
+    uiLayoutSetPropSep(layout, true);
+    uiLayoutSetPropDecorate(layout, true);
   }
 }
 
