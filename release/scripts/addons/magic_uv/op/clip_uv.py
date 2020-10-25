@@ -20,8 +20,8 @@
 
 __author__ = "Dusan Stevanovic, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 
 import math
@@ -38,13 +38,18 @@ from ..utils import compatibility as compat
 
 
 def _is_valid_context(context):
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
+
+    # only edit mode is allowed to execute
+    if context.object.mode != 'EDIT':
+        return False
+
     # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
     # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
     # after the execution
-    for space in context.area.spaces:
-        if (space.type == 'IMAGE_EDITOR') or (space.type == 'VIEW_3D'):
-            break
-    else:
+    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
         return False
 
     return True
@@ -156,72 +161,78 @@ class MUV_OT_ClipUV(bpy.types.Operator):
         return _is_valid_context(context)
 
     def execute(self, context):
-        obj = context.active_object
-        bm = common.create_bmesh(obj)
+        objs = common.get_uv_editable_objects(context)
 
-        if not bm.loops.layers.uv:
-            self.report({'WARNING'}, "Object must have more than one UV map")
-            return {'CANCELLED'}
+        for obj in objs:
+            bm = common.create_bmesh(obj)
 
-        uv_layer = bm.loops.layers.uv.verify()
+            if not bm.loops.layers.uv:
+                self.report({'WARNING'},
+                            "Object {} must have more than one UV map"
+                            .format(obj.name))
+                return {'CANCELLED'}
 
-        for face in bm.faces:
-            if not face.select:
-                continue
+            uv_layer = bm.loops.layers.uv.verify()
 
-            selected_loops = [l for l in face.loops
-                              if l[uv_layer].select or
-                              context.scene.tool_settings.use_uv_select_sync]
-            if not selected_loops:
-                continue
+            for face in bm.faces:
+                if not face.select:
+                    continue
 
-            # average of UV coordinates on the face
-            max_uv = Vector((-10000000.0, -10000000.0))
-            min_uv = Vector((10000000.0, 10000000.0))
-            for l in selected_loops:
-                uv = l[uv_layer].uv
-                max_uv.x = max(max_uv.x, uv.x)
-                max_uv.y = max(max_uv.y, uv.y)
-                min_uv.x = min(min_uv.x, uv.x)
-                min_uv.y = min(min_uv.y, uv.y)
+                selected_loops = [
+                    l for l in face.loops
+                    if l[uv_layer].select or
+                    context.scene.tool_settings.use_uv_select_sync
+                ]
+                if not selected_loops:
+                    continue
 
-            # clip
-            move_uv = Vector((0.0, 0.0))
-            clip_size = Vector(self.clip_uv_range_max) - \
-                Vector(self.clip_uv_range_min)
-            if max_uv.x > self.clip_uv_range_max[0]:
-                target_x = math.fmod(max_uv.x - self.clip_uv_range_min[0],
-                                     clip_size.x)
-                if target_x < 0.0:
-                    target_x += clip_size.x
-                target_x += self.clip_uv_range_min[0]
-                move_uv.x = target_x - max_uv.x
-            if min_uv.x < self.clip_uv_range_min[0]:
-                target_x = math.fmod(min_uv.x - self.clip_uv_range_min[0],
-                                     clip_size.x)
-                if target_x < 0.0:
-                    target_x += clip_size.x
-                target_x += self.clip_uv_range_min[0]
-                move_uv.x = target_x - min_uv.x
-            if max_uv.y > self.clip_uv_range_max[1]:
-                target_y = math.fmod(max_uv.y - self.clip_uv_range_min[1],
-                                     clip_size.y)
-                if target_y < 0.0:
-                    target_y += clip_size.y
-                target_y += self.clip_uv_range_min[1]
-                move_uv.y = target_y - max_uv.y
-            if min_uv.y < self.clip_uv_range_min[1]:
-                target_y = math.fmod(min_uv.y - self.clip_uv_range_min[1],
-                                     clip_size.y)
-                if target_y < 0.0:
-                    target_y += clip_size.y
-                target_y += self.clip_uv_range_min[1]
-                move_uv.y = target_y - min_uv.y
+                # average of UV coordinates on the face
+                max_uv = Vector((-10000000.0, -10000000.0))
+                min_uv = Vector((10000000.0, 10000000.0))
+                for l in selected_loops:
+                    uv = l[uv_layer].uv
+                    max_uv.x = max(max_uv.x, uv.x)
+                    max_uv.y = max(max_uv.y, uv.y)
+                    min_uv.x = min(min_uv.x, uv.x)
+                    min_uv.y = min(min_uv.y, uv.y)
 
-            # update UV
-            for l in selected_loops:
-                l[uv_layer].uv = l[uv_layer].uv + move_uv
+                # clip
+                move_uv = Vector((0.0, 0.0))
+                clip_size = Vector(self.clip_uv_range_max) - \
+                    Vector(self.clip_uv_range_min)
+                if max_uv.x > self.clip_uv_range_max[0]:
+                    target_x = math.fmod(max_uv.x - self.clip_uv_range_min[0],
+                                         clip_size.x)
+                    if target_x < 0.0:
+                        target_x += clip_size.x
+                    target_x += self.clip_uv_range_min[0]
+                    move_uv.x = target_x - max_uv.x
+                if min_uv.x < self.clip_uv_range_min[0]:
+                    target_x = math.fmod(min_uv.x - self.clip_uv_range_min[0],
+                                         clip_size.x)
+                    if target_x < 0.0:
+                        target_x += clip_size.x
+                    target_x += self.clip_uv_range_min[0]
+                    move_uv.x = target_x - min_uv.x
+                if max_uv.y > self.clip_uv_range_max[1]:
+                    target_y = math.fmod(max_uv.y - self.clip_uv_range_min[1],
+                                         clip_size.y)
+                    if target_y < 0.0:
+                        target_y += clip_size.y
+                    target_y += self.clip_uv_range_min[1]
+                    move_uv.y = target_y - max_uv.y
+                if min_uv.y < self.clip_uv_range_min[1]:
+                    target_y = math.fmod(min_uv.y - self.clip_uv_range_min[1],
+                                         clip_size.y)
+                    if target_y < 0.0:
+                        target_y += clip_size.y
+                    target_y += self.clip_uv_range_min[1]
+                    move_uv.y = target_y - min_uv.y
 
-        bmesh.update_edit_mesh(obj.data)
+                # update UV
+                for l in selected_loops:
+                    l[uv_layer].uv = l[uv_layer].uv + move_uv
+
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}

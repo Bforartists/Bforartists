@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bpy
 
@@ -34,6 +34,8 @@ from ..op.align_uv import (
     MUV_OT_AlignUV_Circle,
     MUV_OT_AlignUV_Straighten,
     MUV_OT_AlignUV_Axis,
+    MUV_OT_AlignUV_SnapToPoint,
+    MUV_OT_AlignUV_SnapToEdge,
 )
 from ..op.select_uv import (
     MUV_OT_SelectUV_SelectOverlapped,
@@ -78,6 +80,8 @@ class MUV_MT_AlignUV(bpy.types.Menu):
         layout = self.layout
         sc = context.scene
 
+        layout.label(text="Align")
+
         ops = layout.operator(MUV_OT_AlignUV_Circle.bl_idname, text="Circle")
         ops.transmission = sc.muv_align_uv_transmission
         ops.select = sc.muv_align_uv_select
@@ -95,6 +99,18 @@ class MUV_MT_AlignUV(bpy.types.Menu):
         ops.vertical = sc.muv_align_uv_vertical
         ops.horizontal = sc.muv_align_uv_horizontal
         ops.location = sc.muv_align_uv_location
+
+        layout.label(text="Snap")
+
+        ops = layout.operator(MUV_OT_AlignUV_SnapToPoint.bl_idname,
+                              text="Snap to Point")
+        ops.group = sc.muv_align_uv_snap_point_group
+        ops.target = sc.muv_align_uv_snap_point_target
+
+        ops = layout.operator(MUV_OT_AlignUV_SnapToEdge, text="Snap to Edge")
+        ops.group = sc.muv_align_uv_snap_edge_group
+        ops.target_1 = sc.muv_align_uv_snap_edge_target_1
+        ops.target_2 = sc.muv_align_uv_snap_edge_target_2
 
 
 @BlClassRegistry()

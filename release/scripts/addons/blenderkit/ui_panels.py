@@ -1083,6 +1083,8 @@ def draw_asset_context_menu(self, context, asset_data):
         # validation
         if utils.profile_is_validator():
             layout.label(text='Validation tools:')
+            layout.operator_context = 'EXEC_DEFAULT'
+
             if asset_data['verificationStatus'] != 'uploaded':
                 op = layout.operator('object.blenderkit_change_status', text='set Uploaded')
                 op.asset_id = asset_data['id']

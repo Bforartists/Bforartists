@@ -20,14 +20,19 @@
 
 __author__ = "imdjs, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import math
 from math import atan2, tan, sin, cos
 
 import bpy
-from bpy.props import EnumProperty, BoolProperty, FloatProperty
+from bpy.props import (
+    EnumProperty,
+    BoolProperty,
+    FloatProperty,
+    FloatVectorProperty,
+)
 import bmesh
 from mathutils import Vector
 
@@ -39,23 +44,18 @@ from .. import common
 
 
 def _is_valid_context(context):
-    obj = context.object
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
     # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
     # after the execution
-    for space in context.area.spaces:
-        if (space.type == 'IMAGE_EDITOR') or (space.type == 'VIEW_3D'):
-            break
-    else:
+    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
         return False
 
     return True
@@ -339,6 +339,66 @@ class _Properties:
             default='MIDDLE'
         )
 
+        scene.muv_align_uv_snap_method = EnumProperty(
+            name="Snap Method",
+            description="Snap method",
+            items=[
+                ('POINT', "Point", "Snap to point"),
+                ('EDGE', "Edge", "Snap to edge"),
+            ],
+            default='POINT'
+        )
+        scene.muv_align_uv_snap_point_group = EnumProperty(
+            name="Snap Group (Point)",
+            description="Group that snap (point) operation applies for",
+            items=[
+                ('VERT', "Vertex", "Vertex"),
+                ('FACE', "Face", "Face"),
+                ('UV_ISLAND', "UV Island", "UV Island"),
+            ],
+            default='FACE'
+        )
+        scene.muv_align_uv_snap_point_target = FloatVectorProperty(
+            name="Snap Target (Point)",
+            description="Target point where UV vertices snap to",
+            size=2,
+            precision=4,
+            soft_min=-1.0,
+            soft_max=1.0,
+            step=1,
+            default=(0.000, 0.000),
+        )
+        scene.muv_align_uv_snap_edge_group = EnumProperty(
+            name="Snap Group (Edge)",
+            description="Group that snap (edge) operation applies for",
+            items=[
+                ('EDGE', "Edge", "Edge"),
+                ('FACE', "Face", "Face"),
+                ('UV_ISLAND', "UV Island", "UV Island"),
+            ],
+            default='FACE'
+        )
+        scene.muv_align_uv_snap_edge_target_1 = FloatVectorProperty(
+            name="Snap Target (Edge)",
+            description="Target edge where UV vertices snap to",
+            size=2,
+            precision=4,
+            soft_min=-1.0,
+            soft_max=1.0,
+            step=1,
+            default=(0.000, 0.000),
+        )
+        scene.muv_align_uv_snap_edge_target_2 = FloatVectorProperty(
+            name="Snap Target (Edge)",
+            description="Target edge where UV vertices snap to",
+            size=2,
+            precision=4,
+            soft_min=-1.0,
+            soft_max=1.0,
+            step=1,
+            default=(0.000, 0.000),
+        )
+
     @classmethod
     def del_props(cls, scene):
         del scene.muv_align_uv_enabled
@@ -348,6 +408,12 @@ class _Properties:
         del scene.muv_align_uv_horizontal
         del scene.muv_align_uv_mesh_infl
         del scene.muv_align_uv_location
+        del scene.muv_align_uv_snap_method
+        del scene.muv_align_uv_snap_point_group
+        del scene.muv_align_uv_snap_point_target
+        del scene.muv_align_uv_snap_edge_group
+        del scene.muv_align_uv_snap_edge_target_1
+        del scene.muv_align_uv_snap_edge_target_2
 
 
 @BlClassRegistry()
@@ -378,77 +444,90 @@ class MUV_OT_AlignUV_Circle(bpy.types.Operator):
         return _is_valid_context(context)
 
     def execute(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
-        uv_layer = bm.loops.layers.uv.verify()
+        objs = common.get_uv_editable_objects(context)
 
-        # loop_seqs[horizontal][vertical][loop]
-        loop_seqs, error = common.get_loop_sequences(bm, uv_layer, True)
-        if not loop_seqs:
-            self.report({'WARNING'}, error)
-            return {'CANCELLED'}
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            uv_layer = bm.loops.layers.uv.verify()
 
-        # get circle and new UVs
-        uvs = [hseq[0][0][uv_layer].uv.copy() for hseq in loop_seqs]
-        c, r = _get_circle(uvs[0:3])
-        new_uvs = _calc_v_on_circle(uvs, c, r)
+            # loop_seqs[horizontal][vertical][loop]
+            loop_seqs, error = common.get_loop_sequences(bm, uv_layer, True)
+            if not loop_seqs:
+                self.report({'WARNING'},
+                            "Object {}: {}".format(obj.name, error))
+                return {'CANCELLED'}
 
-        # check if center is identical
-        center_is_identical = False
-        center = loop_seqs[0][-1][0].vert
-        if (len(loop_seqs[0][-1]) == 1) and loop_seqs[0][-1][0].vert == center:
-            center_is_identical = True
+            # get circle and new UVs
+            uvs = [hseq[0][0][uv_layer].uv.copy() for hseq in loop_seqs]
+            c, r = _get_circle(uvs[0:3])
+            new_uvs = _calc_v_on_circle(uvs, c, r)
 
-        # check if topology is correct
-        if center_is_identical:
-            for hseq in loop_seqs[1:]:
-                if len(hseq[-1]) != 1:
-                    self.report({'WARNING'}, "Last face must be triangle")
-                    return {'CANCELLED'}
-                if hseq[-1][0].vert != center:
-                    self.report({'WARNING'}, "Center must be identical")
-                    return {'CANCELLED'}
-        else:
-            for hseq in loop_seqs[1:]:
-                if len(hseq[-1]) == 1:
-                    self.report({'WARNING'}, "Last face must not be triangle")
-                    return {'CANCELLED'}
-                if hseq[-1][0].vert == center:
-                    self.report({'WARNING'}, "Center must not be identical")
-                    return {'CANCELLED'}
+            # check if center is identical
+            center_is_identical = False
+            center = loop_seqs[0][-1][0].vert
+            if (len(loop_seqs[0][-1]) == 1) and \
+                    loop_seqs[0][-1][0].vert == center:
+                center_is_identical = True
 
-        # align to circle
-        if self.transmission:
-            for hidx, hseq in enumerate(loop_seqs):
-                for vidx, pair in enumerate(hseq):
-                    all_ = int((len(hseq) + 1) / 2)
-                    if center_is_identical:
-                        r = (all_ - int((vidx + 1) / 2)) / all_
-                    else:
-                        r = (1 + all_ - int((vidx + 1) / 2)) / all_
-                    pair[0][uv_layer].uv = c + (new_uvs[hidx] - c) * r
+            # check if topology is correct
+            if center_is_identical:
+                for hseq in loop_seqs[1:]:
+                    if len(hseq[-1]) != 1:
+                        self.report({'WARNING'},
+                                    "Object {}: Last face must be triangle"
+                                    .format(obj.name))
+                        return {'CANCELLED'}
+                    if hseq[-1][0].vert != center:
+                        self.report({'WARNING'},
+                                    "Object {}: Center must be identical"
+                                    .format(obj.name))
+                        return {'CANCELLED'}
+            else:
+                for hseq in loop_seqs[1:]:
+                    if len(hseq[-1]) == 1:
+                        self.report({'WARNING'},
+                                    "Object {}: Last face must not be triangle"
+                                    .format(obj.name))
+                        return {'CANCELLED'}
+                    if hseq[-1][0].vert == center:
+                        self.report({'WARNING'},
+                                    "Object {}: Center must not be identical"
+                                    .format(obj.name))
+                        return {'CANCELLED'}
+
+            # align to circle
+            if self.transmission:
+                for hidx, hseq in enumerate(loop_seqs):
+                    for vidx, pair in enumerate(hseq):
+                        all_ = int((len(hseq) + 1) / 2)
+                        if center_is_identical:
+                            r = (all_ - int((vidx + 1) / 2)) / all_
+                        else:
+                            r = (1 + all_ - int((vidx + 1) / 2)) / all_
+                        pair[0][uv_layer].uv = c + (new_uvs[hidx] - c) * r
+                        if self.select:
+                            pair[0][uv_layer].select = True
+
+                        if len(pair) < 2:
+                            continue
+                        # for quad polygon
+                        next_hidx = (hidx + 1) % len(loop_seqs)
+                        pair[1][uv_layer].uv = \
+                            c + ((new_uvs[next_hidx]) - c) * r
+                        if self.select:
+                            pair[1][uv_layer].select = True
+            else:
+                for hidx, hseq in enumerate(loop_seqs):
+                    pair = hseq[0]
+                    pair[0][uv_layer].uv = new_uvs[hidx]
+                    pair[1][uv_layer].uv = new_uvs[(hidx + 1) % len(loop_seqs)]
                     if self.select:
                         pair[0][uv_layer].select = True
-
-                    if len(pair) < 2:
-                        continue
-                    # for quad polygon
-                    next_hidx = (hidx + 1) % len(loop_seqs)
-                    pair[1][uv_layer].uv = c + ((new_uvs[next_hidx]) - c) * r
-                    if self.select:
                         pair[1][uv_layer].select = True
-        else:
-            for hidx, hseq in enumerate(loop_seqs):
-                pair = hseq[0]
-                pair[0][uv_layer].uv = new_uvs[hidx]
-                pair[1][uv_layer].uv = new_uvs[(hidx + 1) % len(loop_seqs)]
-                if self.select:
-                    pair[0][uv_layer].select = True
-                    pair[1][uv_layer].select = True
 
-        bmesh.update_edit_mesh(obj.data)
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}
 
@@ -585,22 +664,25 @@ class MUV_OT_AlignUV_Straighten(bpy.types.Operator):
             self.__align_wo_transmission(loop_seqs, uv_layer)
 
     def execute(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
-        uv_layer = bm.loops.layers.uv.verify()
+        objs = common.get_uv_editable_objects(context)
 
-        # loop_seqs[horizontal][vertical][loop]
-        loop_seqs, error = common.get_loop_sequences(bm, uv_layer)
-        if not loop_seqs:
-            self.report({'WARNING'}, error)
-            return {'CANCELLED'}
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            uv_layer = bm.loops.layers.uv.verify()
 
-        # align
-        self.__align(loop_seqs, uv_layer)
+            # loop_seqs[horizontal][vertical][loop]
+            loop_seqs, error = common.get_loop_sequences(bm, uv_layer)
+            if not loop_seqs:
+                self.report({'WARNING'},
+                            "Object {}: {}".format(obj.name, error))
+                return {'CANCELLED'}
 
-        bmesh.update_edit_mesh(obj.data)
+            # align
+            self.__align(loop_seqs, uv_layer)
+
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}
 
@@ -982,25 +1064,469 @@ class MUV_OT_AlignUV_Axis(bpy.types.Operator):
                                                        width, height)
 
     def execute(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
-        uv_layer = bm.loops.layers.uv.verify()
+        objs = common.get_uv_editable_objects(context)
 
-        # loop_seqs[horizontal][vertical][loop]
-        loop_seqs, error = common.get_loop_sequences(bm, uv_layer)
-        if not loop_seqs:
-            self.report({'WARNING'}, error)
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            uv_layer = bm.loops.layers.uv.verify()
+
+            # loop_seqs[horizontal][vertical][loop]
+            loop_seqs, error = common.get_loop_sequences(bm, uv_layer)
+            if not loop_seqs:
+                self.report({'WARNING'},
+                            "Object {}: {}".format(obj.name, error))
+                return {'CANCELLED'}
+
+            # get height and width
+            uv_max, uv_min = self.__get_uv_max_min(loop_seqs, uv_layer)
+            width = uv_max.x - uv_min.x
+            height = uv_max.y - uv_min.y
+
+            self.__align(loop_seqs, uv_layer, uv_min, width, height)
+
+            bmesh.update_edit_mesh(obj.data)
+
+        return {'FINISHED'}
+
+
+@BlClassRegistry()
+@compat.make_annotations
+class MUV_OT_AlignUV_SnapToPoint(bpy.types.Operator):
+
+    bl_idname = "uv.muv_align_uv_snap_to_point"
+    bl_label = "Align UV (Snap to Point)"
+    bl_description = "Align UV to the target point"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    group = EnumProperty(
+        name="Snap Group",
+        description="Group that snap operation applies for",
+        items=[
+            ('VERT', "Vertex", "Vertex"),
+            ('FACE', "Face", "Face"),
+            ('UV_ISLAND', "UV Island", "UV Island"),
+        ],
+        default='FACE'
+    )
+    target = FloatVectorProperty(
+        name="Snap Target",
+        description="Target where UV vertices snap to",
+        size=2,
+        precision=4,
+        soft_min=-1.0,
+        soft_max=1.0,
+        step=1,
+        default=(0.000, 0.000),
+    )
+
+    def _get_snap_target_loops(self, context, bm, uv_layer):
+        target_loops = []
+
+        selected_faces = [f for f in bm.faces if f.select]
+
+        # Process snap operation.
+        for face in selected_faces:
+            for l in face.loops:
+                if context.tool_settings.use_uv_select_sync or \
+                        l[uv_layer].select:
+                    target_loops.append(l)
+
+        return target_loops
+
+    def _get_snap_target_faces(self, context, bm, uv_layer):
+        target_faces = []
+
+        selected_faces = [f for f in bm.faces if f.select]
+
+        for face in selected_faces:
+            for l in face.loops:
+                if not context.tool_settings.use_uv_select_sync and \
+                        not l[uv_layer].select:
+                    break
+            else:
+                target_faces.append(face)
+
+        return target_faces
+
+    def _get_snap_target_islands(self, context, bm, uv_layer):
+        target_islands = []
+
+        islands = common.get_island_info_from_bmesh(bm, only_selected=True)
+
+        for isl in islands:
+            some_verts_not_selected = False
+            for face in isl["faces"]:
+                for l in face["face"].loops:
+                    if not context.tool_settings.use_uv_select_sync and \
+                            not l[uv_layer].select:
+                        some_verts_not_selected = True
+                        break
+            if not some_verts_not_selected:
+                target_islands.append(isl)
+
+        return target_islands
+
+    def execute(self, context):
+        objs = common.get_uv_editable_objects(context)
+
+        group_to_reason = {
+            'VERT': "Vertex",
+            'FACE': "Face",
+            'UV_ISLAND': "UV Island",
+        }
+        no_selection_reason = group_to_reason[self.group]
+
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            uv_layer = bm.loops.layers.uv.verify()
+
+            if self.group == 'VERT':
+                target_loops = \
+                    self._get_snap_target_loops(context, bm, uv_layer)
+
+                # Process snap operation.
+                for l in target_loops:
+                    l[uv_layer].uv = self.target
+                    no_selection_reason = None
+
+            elif self.group == 'FACE':
+                target_faces = \
+                    self._get_snap_target_faces(context, bm, uv_layer)
+
+                for face in target_faces:
+                    ave_uv = Vector((0.0, 0.0))
+                    for l in face.loops:
+                        ave_uv += l[uv_layer].uv
+                    ave_uv /= len(face.loops)
+                    diff = Vector(self.target) - ave_uv
+
+                    # Process snap operation.
+                    for l in face.loops:
+                        l[uv_layer].uv += diff
+                        no_selection_reason = None
+
+            elif self.group == 'UV_ISLAND':
+                target_islands = \
+                    self._get_snap_target_islands(context, bm, uv_layer)
+
+                for isl in target_islands:
+                    ave_uv = Vector((0.0, 0.0))
+                    count = 0
+                    for face in isl["faces"]:
+                        for l in face["face"].loops:
+                            ave_uv += l[uv_layer].uv
+                            count += 1
+                    if count != 0:
+                        ave_uv /= count
+                    diff = Vector(self.target) - ave_uv
+
+                    # Process snap operation.
+                    for face in isl["faces"]:
+                        for l in face["face"].loops:
+                            l[uv_layer].uv += diff
+                            no_selection_reason = None
+
+            bmesh.update_edit_mesh(obj.data)
+
+        if no_selection_reason:
+            self.report(
+                {'WARNING'},
+                "Must select more than 1 {}.".format(no_selection_reason)
+            )
             return {'CANCELLED'}
 
-        # get height and width
-        uv_max, uv_min = self.__get_uv_max_min(loop_seqs, uv_layer)
-        width = uv_max.x - uv_min.x
-        height = uv_max.y - uv_min.y
+        return {'FINISHED'}
 
-        self.__align(loop_seqs, uv_layer, uv_min, width, height)
 
-        bmesh.update_edit_mesh(obj.data)
+@BlClassRegistry()
+@compat.make_annotations
+class MUV_OT_AlignUV_Snap_SetPointTargetToCursor(bpy.types.Operator):
+
+    bl_idname = "uv.muv_align_uv_snap_set_point_target_to_cursor"
+    bl_label = "Set Point Target to Cursor"
+    bl_description = """Set point target to the cursor for
+                        'Align UV (Snap to Point)'"""
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        sc = context.scene
+
+        _, _, space = common.get_space('IMAGE_EDITOR', 'WINDOW',
+                                       'IMAGE_EDITOR')
+        cursor_loc = space.cursor_location
+
+        sc.muv_align_uv_snap_point_target = cursor_loc
+
+        return {'FINISHED'}
+
+
+@BlClassRegistry()
+@compat.make_annotations
+class MUV_OT_AlignUV_Snap_SetPointTargetToVertexGroup(bpy.types.Operator):
+
+    bl_idname = "uv.muv_align_uv_snap_set_point_target_to_vertex_group"
+    bl_label = "Set Point Target to Vertex Group"
+    bl_description = """Set point target to the average of vertices for
+                        'Align UV (Snap to Point)'"""
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        sc = context.scene
+        objs = common.get_uv_editable_objects(context)
+
+        ave_uv = Vector((0.0, 0.0))
+        count = 0
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            uv_layer = bm.loops.layers.uv.verify()
+
+            selected_faces = [f for f in bm.faces if f.select]
+            for face in selected_faces:
+                for l in face.loops:
+                    if context.tool_settings.use_uv_select_sync or \
+                            l[uv_layer].select:
+                        ave_uv += l[uv_layer].uv
+                        count += 1
+        if count != 0:
+            ave_uv /= count
+
+        sc.muv_align_uv_snap_point_target = ave_uv
+
+        return {'FINISHED'}
+
+
+@BlClassRegistry()
+@compat.make_annotations
+class MUV_OT_AlignUV_SnapToEdge(bpy.types.Operator):
+
+    bl_idname = "uv.muv_align_uv_snap_to_edge"
+    bl_label = "Align UV (Snap to Edge)"
+    bl_description = "Align UV to the target edge"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    group = EnumProperty(
+        name="Snap Group",
+        description="Group that snap operation applies for",
+        items=[
+            ('EDGE', "Edge", "Edge"),
+            ('FACE', "Face", "Face"),
+            ('UV_ISLAND', "UV Island", "UV Island"),
+        ],
+        default='FACE'
+    )
+    target_1 = FloatVectorProperty(
+        name="Snap Target 1",
+        description="Vertex 1 of the target edge",
+        size=2,
+        precision=4,
+        soft_min=-1.0,
+        soft_max=1.0,
+        step=1,
+        default=(0.000, 0.000),
+    )
+    target_2 = FloatVectorProperty(
+        name="Snap Target 2",
+        description="Vertex 2 of the target edge",
+        size=2,
+        precision=4,
+        soft_min=-1.0,
+        soft_max=1.0,
+        step=1,
+        default=(0.000, 0.000),
+    )
+
+    def _calc_snap_move_amount(self, loops, uv_layer):
+        ave = (loops[0][uv_layer].uv + loops[1][uv_layer].uv) / 2
+        target = (Vector(self.target_1) + Vector(self.target_2)) / 2
+
+        return target - ave
+
+    def _get_snap_target_loop_pairs(self, bm, uv_layer):
+        target_loop_pairs = []
+
+        selected_edges = [e for e in bm.edges if e.select]
+
+        cand_loops = []
+        for edge in selected_edges:
+            for l in edge.link_loops:
+                if l[uv_layer].select:
+                    cand_loops.append(l)
+
+        for l in cand_loops:
+            if l[uv_layer].select and l.link_loop_next[uv_layer].select:
+                d = {l, l.link_loop_next}
+                if d not in target_loop_pairs:
+                    assert l.face == l.link_loop_next.face
+                    target_loop_pairs.append(d)
+
+        return target_loop_pairs
+
+    def _find_target_island_from_face(self, islands, face):
+        for isl in islands:
+            for f in isl["faces"]:
+                if f["face"] == face:
+                    return isl
+
+        return None
+
+    def execute(self, context):
+        objs = common.get_uv_editable_objects(context)
+
+        no_selection = True
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            uv_layer = bm.loops.layers.uv.verify()
+
+            if self.group == 'EDGE':
+                target_loop_pairs = \
+                    self._get_snap_target_loop_pairs(bm, uv_layer)
+
+                for pair in target_loop_pairs:
+                    p = list(pair)
+                    diff = self._calc_snap_move_amount(p, uv_layer)
+
+                    # Process snap operation.
+                    p[0][uv_layer].uv += diff
+                    p[1][uv_layer].uv += diff
+
+                    no_selection = False
+
+            elif self.group == 'FACE':
+                target_loop_pairs = \
+                    self._get_snap_target_loop_pairs(bm, uv_layer)
+
+                face_processed = []
+                for pair in target_loop_pairs:
+                    p = list(pair)
+                    diff = self._calc_snap_move_amount(p, uv_layer)
+
+                    # Process snap operation.
+                    face = p[0].face
+                    if face in face_processed:
+                        self.report(
+                            {'WARNING'},
+                            "Must select only one edge per face. (Object: {})"
+                            .format(obj.name)
+                        )
+                        return {'CANCELLED'}
+                    face_processed.append(face)
+                    for l in face.loops:
+                        l[uv_layer].uv += diff
+                        no_selection = False
+
+            elif self.group == 'UV_ISLAND':
+                target_loop_pairs = \
+                    self._get_snap_target_loop_pairs(bm, uv_layer)
+
+                islands = common.get_island_info_from_bmesh(
+                    bm, only_selected=False)
+
+                isl_processed = []
+                for pair in target_loop_pairs:
+                    p = list(pair)
+                    diff = self._calc_snap_move_amount(p, uv_layer)
+
+                    # Find island to process.
+                    face = p[0].face
+                    target_isl = \
+                        self._find_target_island_from_face(islands, face)
+                    if target_isl is None:
+                        self.report(
+                            {'WARNING'},
+                            "Failed to find island. (Object: {})"
+                            .format(obj.name)
+                        )
+                        return {'CANCELLED'}
+                    if target_isl in isl_processed:
+                        self.report(
+                            {'WARNING'},
+                            """Must select only one edge per island.
+                               (Object: {})"""
+                            .format(obj.name)
+                        )
+                        return {'CANCELLED'}
+                    isl_processed.append(target_isl)
+
+                    # Process snap operation.
+                    for f in target_isl["faces"]:
+                        for l in f["face"].loops:
+                            l[uv_layer].uv += diff
+                            no_selection = False
+
+            bmesh.update_edit_mesh(obj.data)
+
+        if no_selection:
+            self.report({'WARNING'}, "Must select more than 1 Edge.")
+            return {'CANCELLED'}
+
+        return {'FINISHED'}
+
+
+@BlClassRegistry()
+@compat.make_annotations
+class MUV_OT_AlignUV_Snap_SetEdgeTargetToEdgeCenter(bpy.types.Operator):
+
+    bl_idname = "uv.muv_align_uv_snap_set_edge_target_to_edge_center"
+    bl_label = "Set Edge Target to Edge Center"
+    bl_description = """Set edge target to the center of edge for
+                        'Align UV (Snap to Edge)'"""
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def _get_target_loop_pairs(self, bm, uv_layer):
+        target_loop_pairs = []
+
+        selected_edges = [e for e in bm.edges if e.select]
+
+        cand_loops = []
+        for edge in selected_edges:
+            for l in edge.link_loops:
+                if l[uv_layer].select:
+                    cand_loops.append(l)
+
+        for l in cand_loops:
+            if l[uv_layer].select and l.link_loop_next[uv_layer].select:
+                d = {l, l.link_loop_next}
+                if d not in target_loop_pairs:
+                    assert l.face == l.link_loop_next.face
+                    target_loop_pairs.append(d)
+
+        return target_loop_pairs
+
+    def execute(self, context):
+        sc = context.scene
+        objs = common.get_uv_editable_objects(context)
+
+        ave_uv_1 = Vector((0.0, 0.0))
+        ave_uv_2 = Vector((0.0, 0.0))
+        count = 0
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            uv_layer = bm.loops.layers.uv.verify()
+
+            target_loop_pairs = self._get_target_loop_pairs(bm, uv_layer)
+            for pair in target_loop_pairs:
+                p = list(pair)
+                uv_1 = p[0][uv_layer].uv
+                uv_2 = p[1][uv_layer].uv
+                ave_uv_1 += uv_1
+                ave_uv_2 += uv_2
+                count += 1
+
+        if count != 0:
+            ave_uv_1 /= count
+            ave_uv_2 /= count
+
+        sc.muv_align_uv_snap_edge_target_1 = ave_uv_1
+        sc.muv_align_uv_snap_edge_target_2 = ave_uv_2
 
         return {'FINISHED'}

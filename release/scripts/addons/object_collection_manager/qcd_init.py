@@ -1,13 +1,44 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+# Copyright 2011, Ryan Inch
+
+if "bpy" in locals():
+    import importlib
+
+    importlib.reload(internals)
+    importlib.reload(qcd_move_widget)
+    importlib.reload(qcd_operators)
+    importlib.reload(ui)
+    importlib.reload(preferences)
+
+else:
+    from . import internals
+    from . import qcd_move_widget
+    from . import qcd_operators
+    from . import ui
+    from . import preferences
+
 import os
 import bpy
 import bpy.utils.previews
 from bpy.app.handlers import persistent
 
-from . import internals
-from . import preferences
-from . import qcd_move_widget
-from . import qcd_operators
-from . import ui
 
 addon_qcd_keymaps = []
 addon_qcd_view_hotkey_keymaps = []

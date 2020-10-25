@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 from collections import defaultdict
 from pprint import pprint
@@ -42,6 +42,14 @@ def is_console_mode():
     if "MUV_CONSOLE_MODE" not in os.environ:
         return False
     return os.environ["MUV_CONSOLE_MODE"] == "true"
+
+
+def is_valid_space(context, allowed_spaces):
+    for area in context.screen.areas:
+        for space in area.spaces:
+            if space.type in allowed_spaces:
+                return True
+    return False
 
 
 def is_debug_mode():
@@ -422,23 +430,30 @@ def find_texture_layer(bm):
     return bm.faces.layers.tex.verify()
 
 
+def find_texture_nodes_from_material(mtrl):
+    nodes = []
+    if not mtrl.node_tree:
+        return nodes
+    for node in mtrl.node_tree.nodes:
+        tex_node_types = [
+            'TEX_ENVIRONMENT',
+            'TEX_IMAGE',
+        ]
+        if node.type not in tex_node_types:
+            continue
+        if not node.image:
+            continue
+        nodes.append(node)
+
+    return nodes
+
+
 def find_texture_nodes(obj):
     nodes = []
-    for mat in obj.material_slots:
-        if not mat.material:
+    for slot in obj.material_slots:
+        if not slot.material:
             continue
-        if not mat.material.node_tree:
-            continue
-        for node in mat.material.node_tree.nodes:
-            tex_node_types = [
-                'TEX_ENVIRONMENT',
-                'TEX_IMAGE',
-            ]
-            if node.type not in tex_node_types:
-                continue
-            if not node.image:
-                continue
-            nodes.append(node)
+        nodes.extend(find_texture_nodes_from_material(slot.material))
 
     return nodes
 
@@ -1164,6 +1179,18 @@ def __is_points_in_polygon(points, subject_points):
             return False
 
     return True
+
+
+def get_uv_editable_objects(context):
+    if compat.check_version(2, 80, 0) < 0:
+        objs = [context.active_object]
+    else:
+        objs = [o for o in bpy.data.objects
+                if compat.get_object_select(o) and o.type == 'MESH']
+        objs.append(context.active_object)
+
+    objs = list(set(objs))
+    return objs
 
 
 def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list, mode):

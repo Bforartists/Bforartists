@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 from math import fabs
 
@@ -42,23 +42,18 @@ from .. import common
 
 
 def _is_valid_context(context):
-    obj = context.object
+    objs = common.get_uv_editable_objects(context)
+    if not objs:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
     # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
     # after the execution
-    for space in context.area.spaces:
-        if (space.type == 'IMAGE_EDITOR') or (space.type == 'VIEW_3D'):
-            break
-    else:
+    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
         return False
 
     return True
@@ -227,23 +222,37 @@ class MUV_OT_PackUV(bpy.types.Operator):
         return _is_valid_context(context)
 
     def execute(self, context):
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
-        if not bm.loops.layers.uv:
-            self.report({'WARNING'},
-                        "Object must have more than one UV map")
-            return {'CANCELLED'}
-        uv_layer = bm.loops.layers.uv.verify()
+        objs = common.get_uv_editable_objects(context)
 
-        selected_faces = [f for f in bm.faces if f.select]
-        island_info = common.get_island_info(obj)
+        island_info = []
+        selected_faces = []
+        island_to_bm = {}
+        island_to_uv_layer = {}
+        bm_to_loop_lists = {}
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            if not bm.loops.layers.uv:
+                self.report({'WARNING'},
+                            "Object {} must have more than one UV map"
+                            .format(obj.name))
+                return {'CANCELLED'}
+            uv_layer = bm.loops.layers.uv.verify()
+
+            selected_faces.extend([f for f in bm.faces if f.select])
+            isl = common.get_island_info(obj)
+            for i, info in enumerate(isl):
+                id_ = i + len(island_info)
+                island_to_bm[id_] = bm
+                island_to_uv_layer[id_] = uv_layer
+                info["id"] = id_
+            island_info.extend(isl)
+            bm_to_loop_lists[bm] = [l for f in bm.faces for l in f.loops]
+
         num_group = _group_island(island_info,
                                   self.allowable_center_deviation,
                                   self.allowable_size_deviation)
-
-        loop_lists = [l for f in bm.faces for l in f.loops]
         bpy.ops.mesh.select_all(action='DESELECT')
 
         # pack UV
@@ -252,7 +261,8 @@ class MUV_OT_PackUV(bpy.types.Operator):
                 lambda i, idx=gidx: i['group'] == idx, island_info))
             for f in group[0]['faces']:
                 f['face'].select = True
-        bmesh.update_edit_mesh(obj.data)
+        for obj in objs:
+            bmesh.update_edit_mesh(obj.data)
         bpy.ops.uv.select_all(action='SELECT')
         bpy.ops.uv.pack_islands(rotate=self.rotate, margin=self.margin)
 
@@ -262,13 +272,19 @@ class MUV_OT_PackUV(bpy.types.Operator):
                 lambda i, idx=gidx: i['group'] == idx, island_info))
             if len(group) <= 1:
                 continue
+            src_bm = island_to_bm[group[0]["id"]]
+            src_uv_layer = island_to_uv_layer[group[0]["id"]]
+            src_loop_lists = bm_to_loop_lists[src_bm]
             for g in group[1:]:
+                dst_bm = island_to_bm[g["id"]]
+                dst_uv_layer = island_to_uv_layer[g["id"]]
+                dst_loop_lists = bm_to_loop_lists[dst_bm]
                 for (src_face, dest_face) in zip(
                         group[0]['sorted'], g['sorted']):
                     for (src_loop, dest_loop) in zip(
                             src_face['face'].loops, dest_face['face'].loops):
-                        loop_lists[dest_loop.index][uv_layer].uv = loop_lists[
-                            src_loop.index][uv_layer].uv
+                        dst_loop_lists[dest_loop.index][dst_uv_layer].uv = \
+                            src_loop_lists[src_loop.index][src_uv_layer].uv
 
         # restore face/UV selection
         bpy.ops.uv.select_all(action='DESELECT')
@@ -277,6 +293,7 @@ class MUV_OT_PackUV(bpy.types.Operator):
             f.select = True
         bpy.ops.uv.select_all(action='SELECT')
 
-        bmesh.update_edit_mesh(obj.data)
+        for obj in objs:
+            bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}

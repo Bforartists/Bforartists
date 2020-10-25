@@ -39,7 +39,6 @@ import bpy
 # With the sole exception of 'utils', modules must be listed in the
 # correct dependency order.
 initial_load_order = [
-    'utils',
     'utils.errors',
     'utils.misc',
     'utils.rig',
@@ -50,6 +49,7 @@ initial_load_order = [
     'utils.widgets',
     'utils.widgets_basic',
     'utils.widgets_special',
+    'utils',
     'utils.mechanism',
     'utils.animation',
     'utils.metaclass',
@@ -66,6 +66,7 @@ initial_load_order = [
     'rot_mode',
     'ui',
 ]
+utils_module_name = __name__ + '.utils'
 
 
 def get_loaded_modules():
@@ -82,6 +83,14 @@ def reload_modules():
     for name in reload_list:
         importlib.reload(sys.modules[name])
 
+def compare_module_list(a, b):
+    # Allow 'utils' to move around
+    a_copy = list(a)
+    a_copy.remove(utils_module_name)
+    b_copy = list(b)
+    b_copy.remove(utils_module_name)
+    return a_copy == b_copy
+
 def load_initial_modules():
     load_list = [ __name__ + '.' + name for name in initial_load_order ]
 
@@ -91,7 +100,7 @@ def load_initial_modules():
         module_list = get_loaded_modules()
         expected_list = load_list[0 : max(11, i+1)]
 
-        if module_list != expected_list:
+        if not compare_module_list(module_list, expected_list):
             print('!!! RIGIFY: initial load order mismatch after '+name+' - expected: \n', expected_list, '\nGot:\n', module_list)
 
     return load_list
@@ -113,7 +122,7 @@ else:
 
     reload_list = reload_list_init = get_loaded_modules()
 
-    if reload_list != load_list:
+    if not compare_module_list(reload_list, load_list):
         print('!!! RIGIFY: initial load order mismatch - expected: \n', load_list, '\nGot:\n', reload_list)
 
 load_rigs()

@@ -53,7 +53,7 @@ class MESH_MT_vertex_group_context_menu(Menu):
         layout.separator()
         props = layout.operator("object.vertex_group_lock", text="Lock All", icon='LOCKED')
         props.action, props.mask = 'LOCK', 'ALL'
-        props = layout.operator("object.vertex_group_lock", text="UnLock All", icon='UNLOCKED')
+        props = layout.operator("object.vertex_group_lock", text="Unlock All", icon='UNLOCKED')
         props.action, props.mask = 'UNLOCK', 'ALL'
         props = layout.operator("object.vertex_group_lock", text="Lock Invert All", icon = "INVERSE")
         props.action, props.mask = 'INVERT', 'ALL'
