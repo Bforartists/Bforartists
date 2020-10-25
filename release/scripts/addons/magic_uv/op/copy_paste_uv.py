@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>, Jace Priester"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 import bmesh
 import bpy.utils
@@ -39,21 +39,17 @@ from ..utils import compatibility as compat
 
 
 def _is_valid_context(context):
-    obj = context.object
+    # Multiple objects editing mode is not supported in this feature.
+    objs = common.get_uv_editable_objects(context)
+    if len(objs) != 1:
+        return False
 
     # only edit mode is allowed to execute
-    if obj is None:
-        return False
-    if obj.type != 'MESH':
-        return False
     if context.object.mode != 'EDIT':
         return False
 
     # only 'VIEW_3D' space is allowed to execute
-    for space in context.area.spaces:
-        if space.type == 'VIEW_3D':
-            break
-    else:
+    if not common.is_valid_space(context, ['VIEW_3D']):
         return False
 
     return True
@@ -343,7 +339,10 @@ class MUV_OT_CopyPasteUV_CopyUV(bpy.types.Operator):
 
     def execute(self, context):
         props = context.scene.muv_props.copy_paste_uv
-        obj = context.active_object
+
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
         bm = common.create_bmesh(obj)
 
         # get UV layer
@@ -379,8 +378,11 @@ class MUV_MT_CopyPasteUV_CopyUV(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
+
         # create sub menu
-        obj = context.active_object
         bm = common.create_bmesh(obj)
         uv_maps = bm.loops.layers.uv.keys()
 
@@ -452,7 +454,10 @@ class MUV_OT_CopyPasteUV_PasteUV(bpy.types.Operator):
         if not props.src_info:
             self.report({'WARNING'}, "Need copy UV at first")
             return {'CANCELLED'}
-        obj = context.active_object
+
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
         bm = common.create_bmesh(obj)
 
         # get UV layer
@@ -507,8 +512,11 @@ class MUV_MT_CopyPasteUV_PasteUV(bpy.types.Menu):
     def draw(self, context):
         sc = context.scene
         layout = self.layout
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
+
         # create sub menu
-        obj = context.active_object
         bm = common.create_bmesh(obj)
         uv_maps = bm.loops.layers.uv.keys()
 
@@ -560,7 +568,10 @@ class MUV_OT_CopyPasteUV_SelSeqCopyUV(bpy.types.Operator):
 
     def execute(self, context):
         props = context.scene.muv_props.copy_paste_uv_selseq
-        obj = context.active_object
+
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
         bm = common.create_bmesh(obj)
 
         # get UV layer
@@ -596,7 +607,10 @@ class MUV_MT_CopyPasteUV_SelSeqCopyUV(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        obj = context.active_object
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
+
         bm = common.create_bmesh(obj)
         uv_maps = bm.loops.layers.uv.keys()
 
@@ -669,7 +683,10 @@ class MUV_OT_CopyPasteUV_SelSeqPasteUV(bpy.types.Operator):
         if not props.src_info:
             self.report({'WARNING'}, "Need copy UV at first")
             return {'CANCELLED'}
-        obj = context.active_object
+
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
         bm = common.create_bmesh(obj)
 
         # get UV layer
@@ -718,15 +735,18 @@ class MUV_MT_CopyPasteUV_SelSeqPasteUV(bpy.types.Menu):
     def poll(cls, context):
         sc = context.scene
         props = sc.muv_props.copy_paste_uv_selseq
-        if not props.src_uvs or not props.src_pin_uvs:
+        if not props.src_info:
             return False
         return _is_valid_context(context)
 
     def draw(self, context):
         sc = context.scene
         layout = self.layout
+        objs = common.get_uv_editable_objects(context)
+        # poll() method ensures that only one object is selected.
+        obj = objs[0]
+
         # create sub menu
-        obj = context.active_object
         bm = common.create_bmesh(obj)
         uv_maps = bm.loops.layers.uv.keys()
 

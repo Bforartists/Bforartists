@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.3"
-__date__ = "10 Aug 2020"
+__version__ = "6.4"
+__date__ = "23 Oct 2020"
 
 from enum import IntEnum
 import math
@@ -59,10 +59,7 @@ def _is_valid_context(context):
     # 'IMAGE_EDITOR' and 'VIEW_3D' space is allowed to execute.
     # If 'View_3D' space is not allowed, you can't find option in Tool-Shelf
     # after the execution
-    for space in context.area.spaces:
-        if (space.type == 'IMAGE_EDITOR') or (space.type == 'VIEW_3D'):
-            break
-    else:
+    if not common.is_valid_space(context, ['IMAGE_EDITOR', 'VIEW_3D']):
         return False
 
     return True
@@ -700,23 +697,35 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         Get UV coordinate
         """
         sc = context.scene
-        obj = context.active_object
+        objs = common.get_uv_editable_objects(context)
         uv_info = []
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
-        if not bm.loops.layers.uv:
-            return None
-        uv_layer = bm.loops.layers.uv.verify()
-        for f in bm.faces:
-            if not f.select:
+
+        for obj in objs:
+            bm = bmesh.from_edit_mesh(obj.data)
+            if common.check_version(2, 73, 0) >= 0:
+                bm.faces.ensure_lookup_table()
+            if not bm.loops.layers.uv:
                 continue
-            for i, l in enumerate(f.loops):
-                if sc.muv_uv_bounding_box_boundary == 'UV_SEL':
-                    if l[uv_layer].select:
-                        uv_info.append((f.index, i, l[uv_layer].uv.copy()))
-                elif sc.muv_uv_bounding_box_boundary == 'UV':
-                    uv_info.append((f.index, i, l[uv_layer].uv.copy()))
+            uv_layer = bm.loops.layers.uv.verify()
+            for f in bm.faces:
+                if not f.select:
+                    continue
+                for i, l in enumerate(f.loops):
+                    if sc.muv_uv_bounding_box_boundary == 'UV_SEL':
+                        if l[uv_layer].select:
+                            uv_info.append({
+                                "bmesh": bm,
+                                "fidx": f.index,
+                                "lidx": i,
+                                "uv": l[uv_layer].uv.copy()
+                            })
+                    elif sc.muv_uv_bounding_box_boundary == 'UV':
+                        uv_info.append({
+                            "bmesh": bm,
+                            "fidx": f.index,
+                            "lidx": i,
+                            "uv": l[uv_layer].uv.copy()
+                        })
         if not uv_info:
             return None
         return uv_info
@@ -731,7 +740,7 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         bottom = MAX_VALUE
 
         for info in uv_info_ini:
-            uv = info[2]
+            uv = info["uv"]
             if uv.x < left:
                 left = uv.x
             if uv.x > right:
@@ -762,22 +771,21 @@ class MUV_OT_UVBoundingBox(bpy.types.Operator):
         """
         Update UV coordinate
         """
-        obj = context.active_object
-        bm = bmesh.from_edit_mesh(obj.data)
-        if common.check_version(2, 73, 0) >= 0:
-            bm.faces.ensure_lookup_table()
-        if not bm.loops.layers.uv:
-            return
-        uv_layer = bm.loops.layers.uv.verify()
+
         for info in uv_info_ini:
-            fidx = info[0]
-            lidx = info[1]
-            uv = info[2]
+            bm = info["bmesh"]
+            uv_layer = bm.loops.layers.uv.verify()
+            fidx = info["fidx"]
+            lidx = info["lidx"]
+            uv = info["uv"]
             v = mathutils.Vector((uv.x, uv.y, 0.0))
             av = compat.matmul(trans_mat, v)
             bm.faces[fidx].loops[lidx][uv_layer].uv = mathutils.Vector(
                 (av.x, av.y))
-        bmesh.update_edit_mesh(obj.data)
+
+        objs = common.get_uv_editable_objects(context)
+        for obj in objs:
+            bmesh.update_edit_mesh(obj.data)
 
     def __update_ctrl_point(self, ctrl_points_ini, trans_mat):
         """

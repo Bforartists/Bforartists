@@ -2469,7 +2469,7 @@ class VIEW3D_MT_add(Menu):
         layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
         if context.preferences.experimental.use_new_hair_type:
             layout.operator("object.hair_add", text="Hair", icon='OUTLINER_OB_HAIR')
-        if context.preferences.experimental.use_new_particle_system:
+        if context.preferences.experimental.use_new_point_cloud_type:
             layout.operator("object.pointcloud_add", text="Point Cloud", icon='OUTLINER_OB_POINTCLOUD')
         layout.menu("VIEW3D_MT_volume_add", text="Volume", icon='OUTLINER_OB_VOLUME')
         layout.operator_menu_enum("object.gpencil_add", "type", text="Grease Pencil", icon='OUTLINER_OB_GREASEPENCIL')
@@ -2834,7 +2834,7 @@ class VIEW3D_MT_object_animation(Menu):
         layout.separator()
 
         layout.operator("nla.bake", text="Bake Action", icon= 'BAKE_ACTION')
-        layout.operator("gpencil.mesh_bake", text="Bake Mesh to Grease Pencil", icon= 'BAKE_ACTION')
+        layout.operator("gpencil.bake_mesh_animation", text="Bake Mesh to Grease Pencil", icon= 'BAKE_ACTION')
 
 
 class VIEW3D_MT_object_rigid_body(Menu):
@@ -3210,8 +3210,6 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_explode", icon = "MOD_EXPLODE")
         layout.operator("object.quick_smoke", icon = "MOD_SMOKE")
         layout.operator("object.quick_liquid", icon = "MOD_FLUIDSIM")
-        if context.preferences.experimental.use_new_particle_system:
-            layout.operator("object.quick_particles", icon = "PARTICLES")
 
 
 # Workaround to separate the tooltips for Show Hide
@@ -3868,7 +3866,10 @@ class VIEW3D_MT_mask(Menu):
         props.mode = 'VALUE'
         props.value = 0
 
-        props = layout.operator("view3d.select_box", text="Box Mask", icon = "BOX_MASK")
+        props = layout.operator("paint.mask_box_gesture", text="Box Mask", icon = "BOX_MASK")
+        props.mode = 'VALUE'
+        props.value = 0
+
         props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
 
         layout.separator()
@@ -3899,14 +3900,14 @@ class VIEW3D_MT_mask(Menu):
 
         layout.separator()
 
-        props = layout.operator("sculpt.mask_expand", text="Expand Mask By Topology", icon = "MESH_DATA")
+        props = layout.operator("sculpt.mask_expand", text="Expand Mask by Topology", icon = "MESH_DATA")
         props.use_normals = False
         props.keep_previous_mask = False
         props.invert = True
         props.smooth_iterations = 2
         props.create_face_set = False
 
-        props = layout.operator("sculpt.mask_expand", text="Expand Mask By Curvature", icon = "CURVE_DATA")
+        props = layout.operator("sculpt.mask_expand", text="Expand Mask by Curvature", icon = "CURVE_DATA")
         props.use_normals = True
         props.keep_previous_mask = True
         props.invert = False
@@ -4372,7 +4373,7 @@ class VIEW3D_MT_pose_constraints(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)", icon = "CONSTRAINT_DATA")
+        layout.operator("pose.constraint_add_with_targets", text="Add (with Targets)", icon = "CONSTRAINT_DATA")
         layout.operator("pose.constraints_copy", icon = "COPYDOWN")
         layout.operator("pose.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
@@ -4383,9 +4384,9 @@ class VIEW3D_MT_pose_names(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("pose.autoside_names", text="AutoName Left/Right", icon = "STRING").axis = 'XAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Front/Back", icon = "STRING").axis = 'YAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Top/Bottom", icon = "STRING").axis = 'ZAXIS'
+        layout.operator("pose.autoside_names", text="Auto-Name Left/Right", icon = "STRING").axis = 'XAXIS'
+        layout.operator("pose.autoside_names", text="Auto-Name Front/Back", icon = "STRING").axis = 'YAXIS'
+        layout.operator("pose.autoside_names", text="Auto-Name Top/Bottom", icon = "STRING").axis = 'ZAXIS'
         layout.operator("pose.flip_names", icon = "FLIP")
 
 
@@ -5868,9 +5869,9 @@ class VIEW3D_MT_edit_armature_names(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("armature.autoside_names", text="AutoName Left/Right", icon = "STRING").type = 'XAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Front/Back", icon = "STRING").type = 'YAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Top/Bottom", icon = "STRING").type = 'ZAXIS'
+        layout.operator("armature.autoside_names", text="Auto-Name Left/Right", icon = "STRING").type = 'XAXIS'
+        layout.operator("armature.autoside_names", text="Auto-Name Front/Back", icon = "STRING").type = 'YAXIS'
+        layout.operator("armature.autoside_names", text="Auto-Name Top/Bottom", icon = "STRING").type = 'ZAXIS'
         layout.operator("armature.flip_names", text="Flip Names", icon = "FLIP")
 
 
@@ -5970,7 +5971,7 @@ class VIEW3D_MT_paint_gpencil(Menu):
 
 
 class VIEW3D_MT_edit_gpencil_showhide(Menu):
-    bl_label = "Show/hide"
+    bl_label = "Show/Hide"
 
     def draw(self, _context):
         layout = self.layout
@@ -6711,7 +6712,7 @@ class VIEW3D_PT_object_type_visibility(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "View Object Types"
-    bl_ui_units_x = 6
+    bl_ui_units_x = 7
 
     def draw(self, context):
         layout = self.layout
@@ -6721,6 +6722,9 @@ class VIEW3D_PT_object_type_visibility(Panel):
         view = context.space_data
 
         layout.label(text="Object Types Visibility")
+
+        layout.separator()
+
         col = layout.column()
 
         attr_object_types = (
@@ -7108,7 +7112,7 @@ class VIEW3D_PT_shading_options(Panel):
 
             row = col.row()
             row.separator()
-            row.prop(shading, "use_dof", text="Depth Of Field")
+            row.prop(shading, "use_dof", text="Depth of Field")
 
         if shading.type in {'WIREFRAME', 'SOLID'}:
             split = layout.split()
@@ -7192,6 +7196,7 @@ class VIEW3D_PT_gizmo_display(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'HEADER'
     bl_label = "Gizmo"
+    bl_ui_units_x = 8
 
     def draw(self, context):
         layout = self.layout
@@ -7201,6 +7206,8 @@ class VIEW3D_PT_gizmo_display(Panel):
 
         col = layout.column()
         col.label(text="Viewport Gizmos")
+
+        col.separator()
 
         col.active = view.show_gizmo
         colsub = col.column(align = True)
@@ -7952,7 +7959,7 @@ class VIEW3D_PT_snapping(Panel):
 
         layout = self.layout
         col = layout.column()
-        col.label(text="Snap to")
+        col.label(text="Snap To")
         col.prop(tool_settings, "snap_elements", expand=True)
 
         col.separator()
@@ -7960,7 +7967,7 @@ class VIEW3D_PT_snapping(Panel):
             col.prop(tool_settings, "use_snap_grid_absolute")
 
         if snap_elements != {'INCREMENT'}:
-            col.label(text="Snap with")
+            col.label(text="Snap With")
             row = col.row(align=True)
             row.prop(tool_settings, "snap_target", expand=True)
 

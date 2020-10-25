@@ -1011,7 +1011,7 @@ class CLIP_OT_track_settings_as_default(Operator):
     """Track Settings As Default\nCopy tracking settings from active track to default settings"""
 
     bl_idname = "clip.track_settings_as_default"
-    bl_label = "Track Settings As Default"
+    bl_label = "Track Settings as Default"
     bl_options = {'UNDO', 'REGISTER'}
 
     @classmethod

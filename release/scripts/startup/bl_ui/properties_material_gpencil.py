@@ -39,7 +39,7 @@ class GPENCIL_MT_material_context_menu(Menu):
         layout.separator()
 
         layout.operator("gpencil.material_lock_all", text="Lock All", icon='LOCKED')
-        layout.operator("gpencil.material_unlock_all", text="UnLock All", icon='UNLOCKED')
+        layout.operator("gpencil.material_unlock_all", text="Unlock All", icon='UNLOCKED')
 
         layout.operator("gpencil.material_lock_unused", text="Lock Unselected", icon='LOCKED')
         layout.operator("gpencil.lock_layer", text="Lock Unused", icon='LOCKED')

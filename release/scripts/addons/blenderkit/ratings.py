@@ -124,7 +124,7 @@ def update_ratings_quality(self, context):
 
     if bkit_ratings.rating_quality > 0.1:
         ratings = [('quality', bkit_ratings.rating_quality)]
-        tasks_queue.add_task((send_rating_to_thread_quality, (url, ratings, headers)), wait=1, only_last=True)
+        tasks_queue.add_task((send_rating_to_thread_quality, (url, ratings, headers)), wait=2.5, only_last=True)
 
 
 def update_ratings_work_hours(self, context):
@@ -142,7 +142,7 @@ def update_ratings_work_hours(self, context):
 
     if bkit_ratings.rating_work_hours > 0.05:
         ratings = [('working_hours', round(bkit_ratings.rating_work_hours, 1))]
-        tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=1, only_last=True)
+        tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=2.5, only_last=True)
 
 
 def upload_rating(asset):
@@ -159,9 +159,12 @@ def upload_rating(asset):
     ]
 
     if bkit_ratings.rating_quality > 0.1:
-        ratings.append(('quality', bkit_ratings.rating_quality))
+        ratings = (('quality', bkit_ratings.rating_quality),)
+        tasks_queue.add_task((send_rating_to_thread_quality, (url, ratings, headers)), wait=2.5, only_last=True)
     if bkit_ratings.rating_work_hours > 0.1:
-        ratings.append(('working_hours', round(bkit_ratings.rating_work_hours, 1)))
+        ratings=(('working_hours', round(bkit_ratings.rating_work_hours, 1)),)
+        tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=2.5, only_last=True)
+
 
     thread = threading.Thread(target=upload_rating_thread, args=(url, ratings, headers))
     thread.start()
@@ -327,7 +330,7 @@ class FastRateMenu(Operator):
     rating_quality_ui: EnumProperty(name='rating_quality_ui',
                                     items=stars_enum_callback,
                                     description='Rating stars 0 - 10',
-                                    default=None,
+                                    default=0,
                                     update=update_quality_ui,
                                     )
 
@@ -346,14 +349,16 @@ class FastRateMenu(Operator):
                                               ('3', '3', ''),
                                               ('4', '4', ''),
                                               ('5', '5', ''),
+                                              ('6', '6', ''),
+                                              ('8', '8', ''),
                                               ('10', '10', ''),
                                               ('15', '15', ''),
                                               ('20', '20', ''),
                                               ('50', '50', ''),
                                               ('100', '100', ''),
-                                              ('150', '100', ''),
-                                              ('200', '100', ''),
-                                              ('250', '100', ''),
+                                              ('150', '150', ''),
+                                              ('200', '200', ''),
+                                              ('250', '250', ''),
                                               ],
                                        default='0', update=update_ratings_work_hours_ui
                                        )
@@ -405,15 +410,18 @@ class FastRateMenu(Operator):
 
         ]
 
-        self.rating_quality = int(self.rating_quality_ui)
+        if self.rating_quality_ui == '':
+            self.rating_quality = 0
+        else:
+            self.rating_quality = int(self.rating_quality_ui)
 
         if self.rating_quality > 0.1:
-            rtgs.append(('quality', self.rating_quality))
-        if self.rating_work_hours > 0.1:
-            rtgs.append(('working_hours', round(self.rating_work_hours, 1)))
+            rtgs = (('quality', self.rating_quality),)
+            tasks_queue.add_task((send_rating_to_thread_quality, (url, rtgs, headers)), wait=2.5, only_last=True)
 
-        thread = threading.Thread(target=upload_rating_thread, args=(url, rtgs, headers))
-        thread.start()
+        if self.rating_work_hours > 0.1:
+            rtgs = (('working_hours', round(self.rating_work_hours, 1)),)
+            tasks_queue.add_task((send_rating_to_thread_work_hours, (url, rtgs, headers)), wait=2.5, only_last=True)
         return {'FINISHED'}
 
     def invoke(self, context, event):
