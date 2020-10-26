@@ -404,6 +404,7 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
 
     row = uiLayoutRow(column, true);
     uiLayoutSetActive(row, RNA_boolean_get(&strip_ptr, "use_animated_influence") == false);
+    uiLayoutSetPropSep(row, false); /* bfa - use_property_split = false*/
     uiItemR(row, &strip_ptr, "use_auto_blend", 0, NULL, ICON_NONE); /* XXX as toggle? */
 
     /* settings */
