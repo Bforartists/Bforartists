@@ -2801,7 +2801,7 @@ class VIEW3D_MT_object(Menu):
                 props.header_text = "Spot Blend: %.2f"
             
             if light.type in ['SPOT', 'SUN', 'AREA']:
-                props = layout.operator("object.transform_axis_target", text="Track to Cursor", icon = "NODE_LIGHTPATH")
+                props = layout.operator("object.transform_axis_target", text="Interactive Light Track", icon = "NODE_LIGHTPATH")
 
 class VIEW3D_MT_object_convert(Menu):
     bl_label = "Convert To"
@@ -3049,7 +3049,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.header_text = "Spot Blend: %.2f"
             
             if light.type in ['SPOT', 'SUN', 'AREA']:
-                props = layout.operator("object.transform_axis_target", text="Track to Cursor", icon = "NODE_LIGHTPATH")
+                props = layout.operator("object.transform_axis_target", text="Interactive Light Track", icon = "NODE_LIGHTPATH")
 
             layout.separator()
 
