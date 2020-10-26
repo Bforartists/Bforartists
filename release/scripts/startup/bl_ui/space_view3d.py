@@ -2799,6 +2799,9 @@ class VIEW3D_MT_object(Menu):
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
                 props.header_text = "Spot Blend: %.2f"
+            
+            if light.type in ['SPOT', 'SUN', 'AREA']:
+                props = layout.operator("object.transform_axis_target", text="Track to Cursor", icon = "NODE_LIGHTPATH")
 
 class VIEW3D_MT_object_convert(Menu):
     bl_label = "Convert To"
@@ -3046,7 +3049,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.header_text = "Spot Blend: %.2f"
             
             if light.type in ['SPOT', 'SUN', 'AREA']:
-                props = layout.operator("object.transform_axis_target", text="Transform Axis to Target", icon = "NODE_LIGHTPATH")
+                props = layout.operator("object.transform_axis_target", text="Track to Cursor", icon = "NODE_LIGHTPATH")
 
             layout.separator()
 
