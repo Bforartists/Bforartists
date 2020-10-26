@@ -1,3 +1,5 @@
+# Adapted from https://github.com/pragma37/Blender-OctoBuildBot
+
 import sys
 import os
 from os import path
