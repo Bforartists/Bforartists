@@ -535,11 +535,17 @@ class PHYSICS_PT_liquid(PhysicButtonsPanel, Panel):
         row = col.row()
         row.use_property_split = False
         row.prop(domain, "use_fractions", text="Fractional Obstacles")
+        if domain.use_fractions:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+
         row.prop_decorator(domain, "use_fractions")
-        sub = col.column()
-        sub.active = domain.use_fractions
-        sub.prop(domain, "fractions_distance", text="Obstacle Distance")
-        sub.prop(domain, "fractions_threshold", text="Threshold")
+
+        if domain.use_fractions:
+            sub = col.column()
+            sub.prop(domain, "fractions_distance", text="Obstacle Distance")
+            sub.prop(domain, "fractions_threshold", text="Threshold")
 
 
 class PHYSICS_PT_flow_source(PhysicButtonsPanel, Panel):
