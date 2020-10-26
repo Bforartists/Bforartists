@@ -407,14 +407,28 @@ static void nla_panel_properties(const bContext *C, Panel *panel)
     uiItemR(row, &strip_ptr, "use_auto_blend", 0, NULL, ICON_NONE); /* XXX as toggle? */
 
     /* settings */
-    column = uiLayoutColumnWithHeading(layout, true, IFACE_("Playback"));
-    row = uiLayoutRow(column, true);
+    uiLayoutSetPropSep(layout, false);
+    uiLayoutSetPropDecorate(layout, false);
+
+    column = uiLayoutColumn(layout, true);          /* bfa - align probs left */
+    uiItemL(column, IFACE_("Playback"), ICON_NONE); /* bfa - use label instead of heading */
+
+    row = uiLayoutRow(column, false);
+    uiItemS(row); /* bfa - separator */
     uiLayoutSetActive(row,
                       !(RNA_boolean_get(&strip_ptr, "use_animated_influence") ||
                         RNA_boolean_get(&strip_ptr, "use_animated_time")));
+
+    row = uiLayoutRow(column, false);
+    uiItemS(row);
     uiItemR(row, &strip_ptr, "use_reverse", 0, NULL, ICON_NONE);
 
-    uiItemR(column, &strip_ptr, "use_animated_time_cyclic", 0, NULL, ICON_NONE);
+    row = uiLayoutRow(column, false);
+    uiItemS(row);
+    uiItemR(row, &strip_ptr, "use_animated_time_cyclic", 0, NULL, ICON_NONE);
+
+    uiLayoutSetPropSep(layout, true);
+    uiLayoutSetPropDecorate(layout, true);
   }
 }
 
@@ -446,9 +460,11 @@ static void nla_panel_actclip(const bContext *C, Panel *panel)
   uiItemR(column, &strip_ptr, "action_frame_start", 0, IFACE_("Frame Start"), ICON_NONE);
   uiItemR(column, &strip_ptr, "action_frame_end", 0, IFACE_("End"), ICON_NONE);
 
-  row = uiLayoutRowWithHeading(layout, false, IFACE_("Sync Length"));
-  uiItemR(row, &strip_ptr, "use_sync_length", 0, "", ICON_NONE);
+  row = uiLayoutRow(layout, false); /* bfa - align probs left nla action panel */
+  uiLayoutSetPropSep(row, false);   /* bfa - use_property_split = False */
+  uiItemR(row, &strip_ptr, "use_sync_length", 0, IFACE_("Sync Length"), ICON_NONE);
   uiItemO(row, IFACE_("Now"), ICON_FILE_REFRESH, "NLA_OT_action_sync_length");
+  uiLayoutSetPropSep(row, true); /* bfa - use_property_split = True */
 
   /* action usage */
   column = uiLayoutColumn(layout, true);
