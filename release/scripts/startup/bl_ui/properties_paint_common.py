@@ -667,8 +667,12 @@ def brush_settings(layout, context, brush, popover=False):
                 layout.prop(brush, "pose_ik_segments")
             if brush.pose_deform_type == 'SCALE_TRANSLATE':
                 layout.prop(brush, "use_pose_lock_rotation")
+
+            layout.use_property_split = False
             layout.prop(brush, "use_pose_ik_anchored")
             layout.prop(brush, "use_connected_only")
+            layout.use_property_split = True
+
             layout.prop(brush, "disconnected_distance_max")
 
             layout.separator()
