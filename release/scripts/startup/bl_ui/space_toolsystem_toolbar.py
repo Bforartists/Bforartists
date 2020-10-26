@@ -1292,6 +1292,7 @@ class _defs_sculpt:
     def mask_line():
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("paint.mask_line_gesture")
+            layout.use_property_split = False
             layout.prop(props, "use_front_faces_only", expand=False)
 
         return dict(
