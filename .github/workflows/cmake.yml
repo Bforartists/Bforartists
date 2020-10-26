@@ -4,9 +4,9 @@ name: BUILD-RELEASE
 on:
   push:
     push:
-    branches: [ master ]
+    branches: [ naetherm-actions-patch ]
   pull_request:
-    branches: [ master ]
+    branches: [ naetherm-actions-patch ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
