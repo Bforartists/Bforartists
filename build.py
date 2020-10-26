@@ -24,7 +24,7 @@ for key, value in platform_dir.items():
     if sys.platform.startswith(key):
         SVN_DIR = value
 
-SVN = 'https://svn.blender.org/svnroot/bf-blender/tags/blender-2.83.1-release/lib/' + SVN_DIR
+SVN = 'https://svn.blender.org/svnroot/bf-blender/tags/blender-2.91-release/lib/' + SVN_DIR
 binaries_path = path.join('..','lib',SVN_DIR)
 try:
     subprocess.check_call(['svn','checkout',SVN,binaries_path])
