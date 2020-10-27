@@ -2,11 +2,10 @@ name: BUILD-RELEASE
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 on:
-  push:
-    push:
-    branches: [ naetherm-actions-patch ]
+  schedule:
+    - cron: 0 0 * * 0
   pull_request:
-    branches: [ naetherm-actions-patch ]
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
