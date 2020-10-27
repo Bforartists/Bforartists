@@ -3318,7 +3318,7 @@ class VIEW3D_MT_brush(Menu):
 
         # skip if no active brush
         if not brush:
-            layout.label(text="No Brushes currently available. Please add a texture first.", icon='INFO')
+            layout.label(text="No Brush selected. Please select a brush first", icon='INFO')
             return
 
         tex_slot = brush.texture_slot
