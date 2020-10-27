@@ -3866,12 +3866,6 @@ class VIEW3D_MT_mask(Menu):
         props.mode = 'VALUE'
         props.value = 0
 
-        props = layout.operator("paint.mask_box_gesture", text="Box Mask", icon = "BOX_MASK")
-        props.mode = 'VALUE'
-        props.value = 0
-
-        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
-
         layout.separator()
 
         props = layout.operator("sculpt.mask_filter", text='Smooth Mask', icon = "PARTICLEBRUSH_SMOOTH")

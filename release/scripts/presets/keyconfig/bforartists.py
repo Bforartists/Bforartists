@@ -5271,6 +5271,13 @@ keyconfig_data = \
       },
      ),
     ("wm.tool_set_by_id",
+     {"type": 'NONE', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("name", 'builtin.box_mask'),
+       ],
+      },
+     ),
+    ("wm.tool_set_by_id",
      {"type": 'B', "value": 'PRESS', "repeat": True},
      {"properties":
       [("name", 'builtin.box_mask'),
