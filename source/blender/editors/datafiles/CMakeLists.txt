@@ -985,7 +985,7 @@ select_loose
 select_sharpedges
 
 node_direcitonalblur
-#def_icon_blank(1001
+value_to_selection
 seq_strip_duplicate
 seq_strip_meta
 node_doubleedgemask
