@@ -516,6 +516,8 @@ class VIEW3D_HT_tool_header(Header):
                 panel="TOPBAR_PT_gpencil_layers",
                 text=text,
             )
+            if mode_string == 'EDIT_GPENCIL':
+                sub.popover(panel = "VIEW3D_PT_gpencil_edit_options", text = "Options")
 
 
 class _draw_tool_settings_context_mode:
@@ -6127,7 +6129,6 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.separator()
 
         layout.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes")
-        layout.prop(settings, "use_scale_thickness")
 
         layout.separator()
         layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon = "RESET")
@@ -8756,6 +8757,18 @@ class VIEW3D_MT_gpencil_sculpt(Menu):
         props.data_path = "space_data.overlay.use_gpencil_multiedit_line_only"
 
 
+class VIEW3D_PT_gpencil_edit_options(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Options"
+
+    def draw(self, context):
+        layout = self.layout
+        settings = context.tool_settings.gpencil_sculpt
+
+        layout.prop(settings, "use_scale_thickness")
+
+
 class VIEW3D_PT_sculpt_context_menu(Panel):
     # Only for popover, these are dummy values.
     bl_space_type = 'VIEW_3D'
@@ -9103,6 +9116,7 @@ classes = (
     VIEW3D_PT_gpencil_sculpt_context_menu,
     VIEW3D_PT_gpencil_weight_context_menu,
     VIEW3D_PT_gpencil_draw_context_menu,
+    VIEW3D_PT_gpencil_edit_options,
     VIEW3D_PT_sculpt_context_menu,
     TOPBAR_PT_gpencil_materials,
     TOPBAR_PT_gpencil_vertexcolor,
