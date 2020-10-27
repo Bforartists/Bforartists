@@ -95,8 +95,8 @@ class VIEW3D_MT_brush_gpencil_context_menu(Menu):
             layout.label(text="No Brushes currently available", icon='INFO')
             return
 
-        layout.operator("gpencil.brush_reset")
-        layout.operator("gpencil.brush_reset_all")
+        layout.operator("gpencil.brush_reset", icon = "RESET")
+        layout.operator("gpencil.brush_reset_all", icon = "RESET")
 
 
 class VIEW3D_MT_brush_context_menu_paint_modes(Menu):
