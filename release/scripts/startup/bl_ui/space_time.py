@@ -378,18 +378,25 @@ class TIME_PT_view_view_cache(TimelinePanelButtons, Panel):
 
         st = context.space_data
 
-        layout.prop(st, "show_cache")
+        row = layout.row()
+        row.use_property_split = False
+        row.prop(st, "show_cache")
+        row.use_property_split = True
+        
+        if st.show_cache:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+            row = layout.row()
 
-        layout.separator()
-
-        col = layout.column()
-        col.enabled = st.show_cache
-        col.prop(st, "cache_softbody")
-        col.prop(st, "cache_particles")
-        col.prop(st, "cache_cloth")
-        col.prop(st, "cache_smoke")
-        col.prop(st, "cache_dynamicpaint")
-        col.prop(st, "cache_rigidbody")
+            row.separator() #indent
+            col = row.column()
+            col.prop(st, "cache_softbody")
+            col.prop(st, "cache_particles")
+            col.prop(st, "cache_cloth")
+            col.prop(st, "cache_smoke")
+            col.prop(st, "cache_dynamicpaint")
+            col.prop(st, "cache_rigidbody")
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class TIME_PT_auto_keyframing(TimelinePanelButtons, Panel):
