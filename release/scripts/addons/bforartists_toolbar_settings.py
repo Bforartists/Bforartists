@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Toolbar Settings Bforartists",
     "author": "Bforartists",
-    "version": (1, 1),
-    "blender": (2, 80, 0),
+    "version": (1, 1, 1),
+    "blender": (2, 90, 0),
     "location": "User Preferences > Addons",
     "description": "Toolbar Settings. DO NOT TURN OFF! This addon contains the settings for the toolbar editor",
     "warning": "",
@@ -119,7 +119,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     animation_sync : BoolProperty(name="Sync", default=False, description = "Display the Sync Toolbar\nAll Modes", )
     animation_keyframetype : BoolProperty(name="Keyframetype", default=False, description = "Display the Keyframe Type Toolbar\nAll Modes", )
     animation_keyingset : BoolProperty(name="Keyingset", default=True, description = "Display the Keyingset Toolbar\nAll Modes", )
-    
+
     # edit
 
     edit_edit : BoolProperty(name="Edit", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
@@ -133,7 +133,8 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     misc_undoredo : BoolProperty(name="Undo / Redo", default=True, description = "Display the Undo Redo toolbar\nAll Modes", )
     misc_undohistory : BoolProperty(name="Undo History", default=True, description = "Display the Undo History Toolbar\nAll Modes", )
     misc_repeat : BoolProperty(name="Repeat", default=True, description = "Display the Repeat Toolbar\nAll Modes", )
-    misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )    
+    misc_scene : BoolProperty(name="Scene", default=False, description = "Display the Scene dropdown box", )
+    misc_viewlayer : BoolProperty(name="View Layer", default=False, description = "Display the View Layer dropdown box", )
     misc_last : BoolProperty(name="Last", default=True, description = "Display the Adjust Last Operator panel\nAll Modes", )
     misc_operatorsearch : BoolProperty(name="Operatorsearch", default=True, description = "Display the Operator Search\nAll Modes", )
     misc_info : BoolProperty(name="Info", default=False, description = "Displays the Info and Messages string", )
@@ -207,7 +208,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "mesh_faces_rotatemisc")
-        row.prop(self, "mesh_cleanup")      
+        row.prop(self, "mesh_cleanup")
 
         layout.label(text="The Primitives toolbar container")
 
@@ -238,8 +239,8 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row.prop(self, "image_uv_align")
         row.prop(self, "image_uv_unwrap")
-        row.prop(self, "image_uv_modify")      
-        
+        row.prop(self, "image_uv_modify")
+
         layout.label(text="The Tools toolbar container")
 
         row = layout.row()
@@ -270,7 +271,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row.prop(self, "animation_sync")
 
         row = layout.row()
-        
+
         row.prop(self, "animation_keyframetype")
         row.prop(self, "animation_keyingset")
 
@@ -291,6 +292,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row.prop(self, "misc_undohistory")
         row.prop(self, "misc_repeat")
         row.prop(self, "misc_scene")
+        row.prop(self, "misc_viewlayer")
         row.prop(self, "misc_last")
         row.prop(self, "misc_info")
         row.prop(self, "misc_operatorsearch")
@@ -331,9 +333,9 @@ class BFA_OT_toolbar_prefs(Operator):
 
 
 classes = (
-    BFA_OT_toolbar_prefs, 
+    BFA_OT_toolbar_prefs,
 	BFA_OT_toolbar_settings_prefs,
-)	
+)
 
 
 # Registration
