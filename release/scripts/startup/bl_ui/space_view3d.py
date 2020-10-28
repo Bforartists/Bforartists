@@ -1238,6 +1238,10 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator("screen.region_quadview", icon = "QUADVIEW")
+
+        layout.separator()
+
         layout.menu("INFO_MT_area")
 
 class VIEW3D_MT_view_navigation(Menu):
@@ -2801,7 +2805,7 @@ class VIEW3D_MT_object(Menu):
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
                 props.header_text = "Spot Blend: %.2f"
-            
+
             if light.type in ['SPOT', 'SUN', 'AREA']:
                 props = layout.operator("object.transform_axis_target", text="Interactive Light Track", icon = "NODE_LIGHTPATH")
 
@@ -3049,7 +3053,7 @@ class VIEW3D_MT_object_context_menu(Menu):
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
                 props.header_text = "Spot Blend: %.2f"
-            
+
             if light.type in ['SPOT', 'SUN', 'AREA']:
                 props = layout.operator("object.transform_axis_target", text="Interactive Light Track", icon = "NODE_LIGHTPATH")
 
