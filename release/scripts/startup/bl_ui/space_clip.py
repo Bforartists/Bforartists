@@ -1235,7 +1235,7 @@ from bl_ui.properties_mask_common import (
     MASK_PT_spline,
     MASK_PT_point,
     MASK_PT_display,
-    MASK_PT_tools
+    #MASK_PT_tools # bfa - former mask tools panel. Keeping code for compatibility reasons
 )
 
 
@@ -1268,10 +1268,11 @@ class CLIP_PT_mask(MASK_PT_mask, Panel):
     bl_region_type = 'UI'
     bl_category = "Mask"
 
-class CLIP_PT_tools_mask_tools(MASK_PT_tools, Panel):
-    bl_space_type = 'CLIP_EDITOR'
-    bl_region_type = 'TOOLS'
-    bl_category = "Mask"
+# bfa - former mask tools panel. Keeping code for compatibility reasons
+# class CLIP_PT_tools_mask_tools(MASK_PT_tools, Panel):
+#     bl_space_type = 'CLIP_EDITOR'
+#     bl_region_type = 'TOOLS'
+#     bl_category = "Mask"
 
 
 # --- end mask ---
@@ -1841,7 +1842,7 @@ classes = (
     CLIP_PT_mask_display,
     CLIP_PT_active_mask_spline,
     CLIP_PT_active_mask_point,
-    CLIP_PT_tools_mask_tools,
+    #CLIP_PT_tools_mask_tools, # bfa - former mask tools panel. Keeping code for compatibility reasons
     CLIP_PT_tools_scenesetup,
     CLIP_PT_annotation,
     CLIP_PT_tools_grease_pencil_draw,
