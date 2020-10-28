@@ -463,27 +463,29 @@ class IMAGE_MT_uvs_clear_seam(bpy.types.Operator):
         bpy.ops.uv.mark_seam(clear=True)
         return {'FINISHED'}
 
+
 class IMAGE_MT_uvs_unwrap(Menu):
     bl_label = "Unwrap"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.unwrap")
+        layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+        layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("uv.smart_project")
-        layout.operator("uv.lightmap_pack")
-        layout.operator("uv.follow_active_quads")
+        layout.operator("uv.smart_project", icon = "MOD_UVPROJECT")
+        layout.operator("uv.lightmap_pack", icon = "LIGHTMAPPACK")
+        layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
 
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("uv.cube_project")
-        layout.operator("uv.cylinder_project")
-        layout.operator("uv.sphere_project")
+        layout.operator("uv.cube_project", icon = "CUBEPROJECT")
+        layout.operator("uv.cylinder_project", icon = "CYLINDERPROJECT")
+        layout.operator("uv.sphere_project", icon = "SPHEREPROJECT")
 
 
 class IMAGE_MT_uvs(Menu):
@@ -501,18 +503,12 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
-        layout.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
-
         layout.menu("IMAGE_MT_uvs_unwrap")
 
-        layout.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
         layout.operator("uv.pin", icon = "PINNED").clear = False
         layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
         layout.menu("IMAGE_MT_uvs_merge")
         layout.menu("IMAGE_MT_uvs_split")
-
-        layout.separator()
 
         layout.separator()
 
