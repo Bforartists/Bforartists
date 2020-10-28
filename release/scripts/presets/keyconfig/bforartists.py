@@ -4662,8 +4662,6 @@ keyconfig_data = \
     ("outliner.delete", {"type": 'DEL', "value": 'PRESS', "repeat": True}, None),
     ("object.move_to_collection", {"type": 'M', "value": 'PRESS', "repeat": True}, None),
     ("object.link_to_collection", {"type": 'M', "value": 'PRESS', "shift": True, "repeat": True}, None),
-    ("outliner.collection_exclude_set", {"type": 'E', "value": 'PRESS', "repeat": True}, None),
-    ("outliner.collection_exclude_clear", {"type": 'E', "value": 'PRESS', "alt": True, "repeat": True}, None),
     ("outliner.hide", {"type": 'H', "value": 'PRESS', "repeat": True}, None),
     ("outliner.unhide_all", {"type": 'H', "value": 'PRESS', "alt": True, "repeat": True}, None),
     ("outliner.id_copy", {"type": 'C', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
