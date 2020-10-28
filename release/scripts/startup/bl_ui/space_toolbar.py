@@ -1577,6 +1577,7 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         layout.prop(addon_prefs, "misc_undohistory")
         layout.prop(addon_prefs, "misc_repeat")
         layout.prop(addon_prefs, "misc_scene")
+        layout.prop(addon_prefs, "misc_viewlayer")
         layout.prop(addon_prefs, "misc_last")
         layout.prop(addon_prefs, "misc_operatorsearch")
         layout.prop(addon_prefs, "misc_info")
@@ -1628,6 +1629,16 @@ class TOOLBAR_MT_misc(Menu):
             row = layout.row(align=True)
 
             layout.template_ID(window, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
+
+        if addon_prefs.misc_viewlayer:
+
+            row = layout.row(align=True)
+
+            window = context.window
+            screen = context.screen
+            scene = window.scene
+
+            layout.template_search(window, "view_layer", scene, "view_layers", new="scene.view_layer_add", unlink="scene.view_layer_remove")
 
         if addon_prefs.misc_last:
 
