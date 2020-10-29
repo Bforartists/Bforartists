@@ -51,6 +51,8 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
     bl_label = "Transform"
 
     def draw(self, context):
+        draw4L = False
+        
         layout = self.layout
         layout.use_property_split = True
 
@@ -64,6 +66,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
 
         rotation_mode = ob.rotation_mode
         if rotation_mode == 'QUATERNION':
+            draw4L = True
             col = layout.column()
             row = col.row(align=True)
             row.prop(ob, "rotation_quaternion", text="Rotation")
@@ -72,6 +75,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
             sub.prop(ob, "lock_rotation_w", text="", emboss=False, icon='DECORATE_UNLOCKED')
             sub.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
         elif rotation_mode == 'AXIS_ANGLE':
+            draw4L = True
             col = layout.column()
             row = col.row(align=True)
             row.prop(ob, "rotation_axis_angle", text="Rotation")
@@ -86,9 +90,17 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
             row.prop(ob, "rotation_euler", text="Rotation")
             row.use_property_decorate = False
             row.prop(ob, "lock_rotation", text="", emboss=False, icon='DECORATE_UNLOCKED')
-        row = layout.row(align=True)
+
+        row = layout.row(align=False)
         row.prop(ob, "rotation_mode", text="Mode")
-        row.label(text="", icon='BLANK1')
+        row = row.row(align=False)
+        row.ui_units_x = 1.0
+
+        if draw4L:
+            row.use_property_decorate = False
+            row.prop(ob, "lock_rotations_4d", text="4L", emboss=False, icon='NONE')
+        else:
+            row.label(text="", icon='BLANK1')
 
         col = layout.column()
         row = col.row(align=True)
