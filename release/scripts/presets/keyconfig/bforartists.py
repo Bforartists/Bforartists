@@ -5592,7 +5592,7 @@ keyconfig_data = \
        ],
       },
      ),
-    ("transform.seq_slide", {"type": 'G', "value": 'PRESS', "repeat": True}, None),
+    ("transform.seq_slide", {"type": 'W', "value": 'PRESS', "repeat": True}, None),
     ("transform.seq_slide", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, None),
     ("transform.transform",
      {"type": 'E', "value": 'PRESS', "repeat": True},
@@ -5603,13 +5603,6 @@ keyconfig_data = \
      ),
     ("marker.add", {"type": 'M', "value": 'PRESS', "repeat": True}, None),
     ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
-    ("transform.transform",
-     {"type": 'W', "value": 'PRESS', "repeat": True},
-     {"properties":
-      [("mode", 'TRANSLATION'),
-       ],
-      },
-     ),
     ("wm.call_menu",
      {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
