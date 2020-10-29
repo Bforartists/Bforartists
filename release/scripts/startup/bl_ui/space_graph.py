@@ -253,6 +253,17 @@ class GRAPH_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+        layout.menu("GRAPH_MT_view_pie_menus")
+
+
+class GRAPH_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.call_menu_pie", text = "Pivot", icon = "MENU_PANEL").name = 'GRAPH_MT_pivot_pie'
+        layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'GRAPH_MT_snap_pie'
 
 
 # Workaround to separate the tooltips
@@ -651,6 +662,7 @@ classes = (
     GRAPH_PT_properties_view_options,
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,
+    GRAPH_MT_view_pie_menus,
     GRAPH_MT_select_inverse,
     GRAPH_MT_select_none,
     GRAPH_MT_select,

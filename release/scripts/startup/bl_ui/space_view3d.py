@@ -1243,6 +1243,36 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+        layout.menu("VIEW3D_MT_view_pie_menus")
+
+
+class VIEW3D_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.call_menu_pie", text = "Object Mode", icon = "MENU_PANEL").name = 'VIEW3D_MT_object_mode_pie'
+        layout.operator("wm.call_menu_pie", text = "View", icon = "MENU_PANEL").name = 'VIEW3D_MT_view_pie'
+        layout.operator("wm.call_menu_pie", text = "Transform", icon = "MENU_PANEL").name = 'VIEW3D_MT_transform_gizmo_pie'
+        layout.operator("wm.call_menu_pie", text = "Shading", icon = "MENU_PANEL").name = 'VIEW3D_MT_shading_pie'
+        layout.operator("wm.call_menu_pie", text = "Pivot", icon = "MENU_PANEL").name = 'VIEW3D_MT_pivot_pie'
+        layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'VIEW3D_MT_snap_pie'
+        layout.operator("wm.call_menu_pie", text = "Orientations", icon = "MENU_PANEL").name = 'VIEW3D_MT_orientations_pie'
+        layout.operator("wm.call_menu_pie", text = "Proportional Editing Falloff", icon = "MENU_PANEL").name = 'VIEW3D_MT_proportional_editing_falloff_pie'
+        layout.operator("wm.call_menu_pie", text = "Sculpt Mask Edit", icon = "MENU_PANEL").name = 'VIEW3D_MT_sculpt_mask_edit_pie'
+        layout.operator("wm.call_menu_pie", text = "Sculpt Faces Sets Edit", icon = "MENU_PANEL").name = 'VIEW3D_MT_sculpt_face_sets_edit_pie'
+        layout.operator("wm.call_menu_pie", text = "Weightpaint Vertexgroup Lock", icon = "MENU_PANEL").name = 'VIEW3D_MT_wpaint_vgroup_lock_pie'
+
+        layout.separator()
+
+        layout.operator("wm.call_menu_pie", text = "Greasepencil Snap", icon = "MENU_PANEL").name = 'GPENCIL_MT_snap_pie'
+
+        layout.separator()
+
+        layout.operator("wm.toolbar_fallback_pie", text = "Fallback Tool", icon = "MENU_PANEL")
+        layout.operator("view3d.object_mode_pie_or_toggle", text = "Modes", icon = "MENU_PANEL")
+
 
 class VIEW3D_MT_view_navigation(Menu):
     bl_label = "Navi"
@@ -8866,6 +8896,7 @@ classes = (
     VIEW3D_MT_view_center_cursor_and_view_all,
     VIEW3D_MT_switchactivecamto,
     VIEW3D_MT_view,
+    VIEW3D_MT_view_pie_menus,
     VIEW3D_MT_view_navigation,
     VIEW3D_MT_view_align,
     VIEW3D_MT_view_align_selected,
