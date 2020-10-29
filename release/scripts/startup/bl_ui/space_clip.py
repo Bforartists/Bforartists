@@ -1400,6 +1400,19 @@ class CLIP_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+        layout.menu("CLIP_MT_view_pie_menus")
+
+class CLIP_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.call_menu_pie", text = "Pivot", icon = "MENU_PANEL").name = 'CLIP_MT_pivot_pie'
+        layout.operator("wm.call_menu_pie", text = "Marker", icon = "MENU_PANEL").name = 'CLIP_MT_marker_pie'
+        layout.operator("wm.call_menu_pie", text = "Tracking", icon = "MENU_PANEL").name = 'CLIP_MT_tracking_pie'
+        layout.operator("wm.call_menu_pie", text = "Reconstruction", icon = "MENU_PANEL").name = 'CLIP_MT_reconstruction_pie'
+        layout.operator("wm.call_menu_pie", text = "Solving", icon = "MENU_PANEL").name = 'CLIP_MT_solving_pie'
 
 
 class CLIP_MT_clip(Menu):
@@ -1848,6 +1861,7 @@ classes = (
     CLIP_PT_tools_grease_pencil_draw,
     CLIP_MT_view_zoom,
     CLIP_MT_view,
+    CLIP_MT_view_pie_menus,
     CLIP_MT_clip,
     CLIP_MT_reconstruction,
     CLIP_MT_track_visibility,
