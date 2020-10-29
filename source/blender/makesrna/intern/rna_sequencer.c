@@ -67,7 +67,7 @@ const EnumPropertyItem rna_enum_sequence_modifier_type_items[] = {
      "Bright/Contrast",
      ""},
     {seqModifierType_Mask, "MASK", ICON_MOD_MASK, "Mask", ""},
-    {seqModifierType_WhiteBalance, "WHITE_BALANCE", ICON_NONE, "White Balance", ""},
+    {seqModifierType_WhiteBalance, "WHITE_BALANCE", ICON_WHITE_BALANCE, "White Balance", ""},
     {seqModifierType_Tonemap, "TONEMAP", ICON_NODE_TONEMAP, "Tone Map", ""},
     {0, NULL, 0, NULL, NULL},
 };
