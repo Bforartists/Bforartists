@@ -1336,9 +1336,12 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
 
 static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 {
-  uiLayout *split, *colsub;
+  /* bfa - rewrite transform panel to match the Python one */
+  uiLayout *col, *row, *sub;
+  uiLayoutSetPropSep(layout, true); /* bfa - layout.use_property_split = True */
 
-  split = uiLayoutSplit(layout, 0.8f, false);
+  bool drawLocation = true; /* bfa - boolean to decide show location or not */
+  bool draw4L = false;      /* bfa - boolean to decide show 4L button or not*/
 
   if (ptr->type == &RNA_PoseBone) {
     PointerRNA boneptr;
@@ -1346,99 +1349,132 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 
     boneptr = RNA_pointer_get(ptr, "bone");
     bone = boneptr.data;
-    uiLayoutSetActive(split, !(bone->parent && bone->flag & BONE_CONNECTED));
+    if (bone->parent && bone->flag & BONE_CONNECTED) {
+      drawLocation = false; /* bfa - hide location for child bones */
+    }
   }
-  colsub = uiLayoutColumn(split, true);
-  uiItemR(colsub, ptr, "location", 0, NULL, ICON_NONE);
-  colsub = uiLayoutColumn(split, true);
-  uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
-  uiItemL(colsub, "", ICON_NONE);
-  uiItemR(colsub,
-          ptr,
-          "lock_location",
-          UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-          "",
-          ICON_DECORATE_UNLOCKED);
-
-  split = uiLayoutSplit(layout, 0.8f, false);
+  
+  if (drawLocation){
+    col = uiLayoutColumn(layout, false);               /* bfa - col = layout.column() */
+    row = uiLayoutRow(col, true);                      /* bfa - row = col.row(align=True) */
+    uiItemR(row, ptr, "location", 0, NULL, ICON_NONE); /* bfa - row.prop(ob, "location") */
+    uiLayoutSetPropDecorate(row, false);               /* bfa - row.use_property_decorate = False */
+    /* bfa - row.prop(ob, "lock_location", text="", emboss=False, icon='DECORATE_UNLOCKED') */
+    uiLayoutSetEmboss(row, UI_EMBOSS_NONE); /* bfa - emboss=False */
+    uiItemR(row,
+            ptr,
+            "lock_location",
+            UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
+            "",
+            ICON_DECORATE_UNLOCKED);
+    uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED); /* bfa - restore emboss to default?*/
+    uiItemS_ex(layout, .25f);                    /* bfa - separator*/
+  }
 
   switch (RNA_enum_get(ptr, "rotation_mode")) {
     case ROT_MODE_QUAT: /* quaternion */
-      colsub = uiLayoutColumn(split, true);
-      uiItemR(colsub, ptr, "rotation_quaternion", 0, IFACE_("Rotation"), ICON_NONE);
-      colsub = uiLayoutColumn(split, true);
-      uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
-      uiItemR(colsub, ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
+      col = uiLayoutColumn(layout, false);
+      row = uiLayoutRow(col, true);
+      /* bfa - row.prop(ob, "rotation_quaternion", text="Rotation") */
+      uiItemR(row, ptr, "rotation_quaternion", 0, IFACE_("Rotation"), ICON_NONE);
+
+      sub = uiLayoutColumn(row, true);
+      uiLayoutSetPropDecorate(sub, false);
+
+      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
+      draw4L = true; /* bfa - show 4L button if quaternion */
+
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
-        uiItemR(colsub,
+        uiItemR(sub,
                 ptr,
                 "lock_rotation_w",
                 UI_ITEM_R_TOGGLE + UI_ITEM_R_ICON_ONLY,
                 "",
                 ICON_DECORATE_UNLOCKED);
       }
-      else {
-        uiItemL(colsub, "", ICON_NONE);
-      }
-      uiItemR(colsub,
+
+      uiItemR(sub,
               ptr,
               "lock_rotation",
               UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
               "",
               ICON_DECORATE_UNLOCKED);
+      uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED);
       break;
+
     case ROT_MODE_AXISANGLE: /* axis angle */
-      colsub = uiLayoutColumn(split, true);
-      uiItemR(colsub, ptr, "rotation_axis_angle", 0, IFACE_("Rotation"), ICON_NONE);
-      colsub = uiLayoutColumn(split, true);
-      uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
-      uiItemR(colsub, ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
+      col = uiLayoutColumn(layout, false);
+      row = uiLayoutRow(col, true);
+      uiItemR(row, ptr, "rotation_axis_angle", 0, IFACE_("Rotation"), ICON_NONE);
+
+      sub = uiLayoutColumn(row, true);
+      uiLayoutSetPropDecorate(sub, false);
+
+      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
+      draw4L = true; /* bfa - show 4L button if axis-angle */
+
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
-        uiItemR(colsub,
+        uiItemR(sub,
                 ptr,
                 "lock_rotation_w",
                 UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
                 "",
                 ICON_DECORATE_UNLOCKED);
       }
-      else {
-        uiItemL(colsub, "", ICON_NONE);
-      }
-      uiItemR(colsub,
+      uiItemR(sub,
               ptr,
               "lock_rotation",
               UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
               "",
               ICON_DECORATE_UNLOCKED);
+      uiLayoutSetEmboss(sub, UI_EMBOSS_UNDEFINED);
       break;
+
     default: /* euler rotations */
-      colsub = uiLayoutColumn(split, true);
-      uiItemR(colsub, ptr, "rotation_euler", 0, IFACE_("Rotation"), ICON_NONE);
-      colsub = uiLayoutColumn(split, true);
-      uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
-      uiItemL(colsub, "", ICON_NONE);
-      uiItemR(colsub,
+      col = uiLayoutColumn(layout, false);
+
+      row = uiLayoutRow(col, true);
+      uiItemR(row, ptr, "rotation_euler", 0, IFACE_("Rotation"), ICON_NONE);
+      uiLayoutSetPropDecorate(row, false);
+      uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+      uiItemR(row,
               ptr,
               "lock_rotation",
               UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
               "",
               ICON_DECORATE_UNLOCKED);
+      uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED);
       break;
   }
-  uiItemR(layout, ptr, "rotation_mode", 0, "", ICON_NONE);
 
-  split = uiLayoutSplit(layout, 0.8f, false);
-  colsub = uiLayoutColumn(split, true);
-  uiItemR(colsub, ptr, "scale", 0, NULL, ICON_NONE);
-  colsub = uiLayoutColumn(split, true);
-  uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
-  uiItemL(colsub, "", ICON_NONE);
-  uiItemR(colsub,
-          ptr,
-          "lock_scale",
-          UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
-          "",
-          ICON_DECORATE_UNLOCKED);
+  uiItemS_ex(layout, .25f);
+
+  row = uiLayoutRow(layout, false);
+  uiItemR(row, ptr, "rotation_mode", 0, IFACE_("Mode"), ICON_NONE);
+  row = uiLayoutRow(row, false);
+  uiLayoutSetUnitsX(row, 1.f);
+  uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+
+  /* bfa - display 4L button */
+  if (draw4L) {
+    uiLayoutSetPropDecorate(row, false);
+    uiItemR(row, ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
+  }
+  else {
+    uiItemL(row, "", ICON_BLANK1);
+  }
+  uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED);
+
+  uiItemS_ex(layout, .25f);
+
+  col = uiLayoutColumn(layout, false);
+  row = uiLayoutRow(col, true);
+  uiItemR(row, ptr, "scale", 0, IFACE_("Scale"), ICON_NONE); /* bfa - row.prop(ob, "scale") */
+  uiLayoutSetPropDecorate(row, false);
+  uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+  uiItemR(
+      row, ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
+  uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED);
 }
 
 static void v3d_posearmature_buts(uiLayout *layout, Object *ob)
