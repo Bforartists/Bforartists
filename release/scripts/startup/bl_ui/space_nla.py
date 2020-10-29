@@ -147,7 +147,19 @@ class NLA_MT_view(Menu):
         layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
+
         layout.menu("INFO_MT_area")
+        layout.menu("NLA_MT_view_pie_menus")
+
+
+class NLA_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'NLA_MT_snap_pie'
+
 
 class NLA_PT_view_marker_options(Panel):
     bl_label = "Marker Options"
@@ -395,6 +407,7 @@ classes = (
     NLA_MT_edit,
     NLA_MT_editor_menus,
     NLA_MT_view,
+    NLA_MT_view_pie_menus,
     NLA_PT_view_marker_options,
     NLA_PT_view_view_options,
     NLA_MT_select_inverse,
