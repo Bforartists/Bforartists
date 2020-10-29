@@ -1458,7 +1458,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   /* bfa - display 4L button */
   if (draw4L) {
     uiLayoutSetPropDecorate(row, false);
-    uiItemR(row, ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, "4L", ICON_NONE);
+    uiItemR(row, ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
   }
   else {
     uiItemL(row, "", ICON_BLANK1);
