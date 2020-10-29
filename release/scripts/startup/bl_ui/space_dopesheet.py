@@ -407,6 +407,16 @@ class DOPESHEET_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
+        layout.menu("DOPESHEET_MT_view_pie_menus")
+
+
+class DOPESHEET_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'DOPESHEET_MT_snap_pie'
 
 
 # Workaround to separate the tooltips
@@ -958,6 +968,7 @@ classes = (
     DOPESHEET_HT_header,
     DOPESHEET_MT_editor_menus,
     DOPESHEET_MT_view,
+    DOPESHEET_MT_view_pie_menus,
     DOPESHEET_MT_select_before_current_frame,
     DOPESHEET_MT_select_after_current_frame,
     DOPESHEET_MT_select_inverse,

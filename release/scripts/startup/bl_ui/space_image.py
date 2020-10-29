@@ -138,6 +138,16 @@ class IMAGE_MT_view(Menu):
             layout.separator()
 
         layout.menu("INFO_MT_area")
+        layout.menu("IMAGE_MT_view_pie_menus")
+
+class IMAGE_MT_view_pie_menus(Menu):
+    bl_label = "Pie menus"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("wm.call_menu_pie", text = "Pivot", icon = "MENU_PANEL").name = 'IMAGE_MT_pivot_pie'
+        layout.operator("wm.call_menu_pie", text = "UV's snap", icon = "MENU_PANEL").name = 'IMAGE_MT_uvs_snap_pie'
 
 
 class IMAGE_MT_view_zoom(Menu):
@@ -1718,6 +1728,7 @@ classes = (
     ALL_MT_editormenu,
     IMAGE_MT_view_view_fit,
     IMAGE_MT_view,
+    IMAGE_MT_view_pie_menus,
     IMAGE_MT_view_zoom,
     IMAGE_MT_select_inverse,
     IMAGE_MT_select_none,
