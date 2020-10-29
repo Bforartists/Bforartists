@@ -58,13 +58,17 @@ typedef struct EffectInfo {
 } EffectInfo;
 
 const EnumPropertyItem rna_enum_sequence_modifier_type_items[] = {
-    {seqModifierType_ColorBalance, "COLOR_BALANCE", ICON_NONE, "Color Balance", ""},
-    {seqModifierType_Curves, "CURVES", ICON_NONE, "Curves", ""},
-    {seqModifierType_HueCorrect, "HUE_CORRECT", ICON_NONE, "Hue Correct", ""},
-    {seqModifierType_BrightContrast, "BRIGHT_CONTRAST", ICON_NONE, "Bright/Contrast", ""},
-    {seqModifierType_Mask, "MASK", ICON_NONE, "Mask", ""},
+    {seqModifierType_ColorBalance, "COLOR_BALANCE", ICON_NODE_COLORBALANCE, "Color Balance", ""},
+    {seqModifierType_Curves, "CURVES", ICON_OUTLINER_DATA_CURVE, "Curves", ""},
+    {seqModifierType_HueCorrect, "HUE_CORRECT", ICON_HUECORRECT, "Hue Correct", ""},
+    {seqModifierType_BrightContrast,
+     "BRIGHT_CONTRAST",
+     ICON_BRIGHTNESS_CONTRAST,
+     "Bright/Contrast",
+     ""},
+    {seqModifierType_Mask, "MASK", ICON_MOD_MASK, "Mask", ""},
     {seqModifierType_WhiteBalance, "WHITE_BALANCE", ICON_NONE, "White Balance", ""},
-    {seqModifierType_Tonemap, "TONEMAP", ICON_NONE, "Tone Map", ""},
+    {seqModifierType_Tonemap, "TONEMAP", ICON_NODE_TONEMAP, "Tone Map", ""},
     {0, NULL, 0, NULL, NULL},
 };
 
