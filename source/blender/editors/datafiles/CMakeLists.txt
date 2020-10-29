@@ -1001,7 +1001,7 @@ rigid_body_constraint
 image_reference
 indirect_only_off
 indirect_only_on
-#def_icon_blank(1016
+white_balance
 mod_hue_saturation
 #def_icon_blank(1018
 mod_noise
