@@ -1465,6 +1465,7 @@ class _defs_sculpt:
         def draw_settings(_context, layout, tool):
             props = tool.operator_properties("sculpt.face_set_edit")
             layout.prop(props, "mode", expand=False)
+            layout.use_property_split = False
             layout.prop(props, "modify_hidden")
 
         return dict(
