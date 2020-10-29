@@ -5218,6 +5218,7 @@ class VIEW3D_MT_edit_mesh_dissolve(Menu):
         layout.separator()
 
         layout.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED')
+        layout.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION')
 
         layout.separator()
 
