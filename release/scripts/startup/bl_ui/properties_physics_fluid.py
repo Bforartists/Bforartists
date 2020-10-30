@@ -324,6 +324,7 @@ class PHYSICS_PT_borders(PhysicButtonsPanel, Panel):
     bl_label = "Border Collisions"
     bl_parent_id = 'PHYSICS_PT_settings'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -363,6 +364,7 @@ class PHYSICS_PT_smoke(PhysicButtonsPanel, Panel):
     bl_label = "Gas"
     bl_parent_id = 'PHYSICS_PT_fluid'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1207,6 +1209,7 @@ class PHYSICS_PT_cache(PhysicButtonsPanel, Panel):
     bl_label = "Cache"
     bl_parent_id = 'PHYSICS_PT_fluid'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
