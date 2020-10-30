@@ -29,7 +29,7 @@ from bpy.props import (
 
 
 class SequencerCrossfadeSounds(Operator):
-    """Crossfade sounds\nDo cross-fading volume animation of two selected sound strips"""
+    """Do cross-fading volume animation of two selected sound strips"""
 
     bl_idname = "sequencer.crossfade_sounds"
     bl_label = "Crossfade Sounds"
