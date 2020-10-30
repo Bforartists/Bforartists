@@ -138,6 +138,13 @@ class TIME_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
+        layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
+
+        layout.separator()
+
         # NOTE: "action" now, since timeline is in the dopesheet editor, instead of as own editor
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
@@ -145,7 +152,6 @@ class TIME_MT_view(Menu):
         layout.separator()
 
         layout.menu("INFO_MT_area")
-
 
 
 # Workaround to separate the tooltips
@@ -382,7 +388,7 @@ class TIME_PT_view_view_cache(TimelinePanelButtons, Panel):
         row.use_property_split = False
         row.prop(st, "show_cache")
         row.use_property_split = True
-        
+
         if st.show_cache:
             row.label(icon='DISCLOSURE_TRI_DOWN')
             row = layout.row()
