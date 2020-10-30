@@ -212,13 +212,24 @@ class _defs_annotate:
         elif tool.idname == "builtin.annotate" and region_type != 'TOOL_HEADER':
             layout.separator()
             props = tool.operator_properties("gpencil.annotate")
-            layout.use_property_split = False
-            layout.prop(props, "use_stabilizer", text="Stabilize Stroke")
-            layout.use_property_split = True
-            col = layout.column(align=False)
+                
+            split = layout.split(factor = 0.66)
+            col = split.column()
+            col.use_property_split = False
+            col.prop(props, "use_stabilizer", text="Stabilize Stroke")
+            col = split.column()
             if props.use_stabilizer:
-                col.prop(props, "stabilizer_radius", text="Radius", slider=True)
-                col.prop(props, "stabilizer_factor", text="Factor", slider=True)
+                col.label(icon='DISCLOSURE_TRI_DOWN')
+                col = layout.column()
+                row = col.row()
+                row.separator()
+                row.prop(props, "stabilizer_radius", text="Radius", slider=True)
+                row = col.row()
+                row.separator()
+                row.prop(props, "stabilizer_factor", text="Factor", slider=True)
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
+
 
     @ToolDef.from_fn.with_args(draw_settings=draw_settings_common)
     def scribble(*, draw_settings):
