@@ -1392,6 +1392,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
                 "",
                 ICON_DECORATE_UNLOCKED);
       }
+      else {
+        uiItemL(sub, "", ICON_BLANK1);
+      }
 
       uiItemR(sub,
               ptr,
@@ -1420,6 +1423,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
                 UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY,
                 "",
                 ICON_DECORATE_UNLOCKED);
+      }
+      else {
+        uiItemL(sub, "", ICON_BLANK1);
       }
       uiItemR(sub,
               ptr,
