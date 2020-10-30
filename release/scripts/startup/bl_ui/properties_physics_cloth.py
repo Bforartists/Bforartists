@@ -103,6 +103,7 @@ class PHYSICS_PT_cloth_stiffness(PhysicButtonsPanel, Panel):
     bl_label = "Stiffness"
     bl_parent_id = 'PHYSICS_PT_cloth_physical_properties'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -134,6 +135,7 @@ class PHYSICS_PT_cloth_damping(PhysicButtonsPanel, Panel):
     bl_label = "Damping"
     bl_parent_id = 'PHYSICS_PT_cloth_physical_properties'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -165,6 +167,7 @@ class PHYSICS_PT_cloth_internal_springs(PhysicButtonsPanel, Panel):
     bl_label = "Internal Springs"
     bl_parent_id = 'PHYSICS_PT_cloth_physical_properties'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
         cloth = context.cloth.settings
@@ -209,6 +212,7 @@ class PHYSICS_PT_cloth_pressure(PhysicButtonsPanel, Panel):
     bl_label = "Pressure"
     bl_parent_id = 'PHYSICS_PT_cloth_physical_properties'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
         cloth = context.cloth.settings
