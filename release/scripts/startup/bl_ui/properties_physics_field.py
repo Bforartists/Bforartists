@@ -221,6 +221,7 @@ class PHYSICS_PT_field_falloff(PhysicButtonsPanel, Panel):
     bl_label = "Falloff"
     bl_parent_id = "PHYSICS_PT_field"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
