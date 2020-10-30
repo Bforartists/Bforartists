@@ -2243,6 +2243,11 @@ class SEQUENCER_PT_marker_options(Panel):
     bl_region_type = 'UI'
     bl_category = 'View'
 
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        return st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
+
     def draw(self, context):
         layout = self.layout
 
