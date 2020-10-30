@@ -212,6 +212,8 @@ static TransformProperties *v3d_transform_props_ensure(View3D *v3d)
 /* is used for both read and write... */
 static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float lim)
 {
+  uiLayout *row, *col; /* bfa - use uiLayout when possible */
+  uiBlock *subblock;   /* bfa - helper block for UI */
   uiBlock *block = (layout) ? uiLayoutAbsoluteBlock(layout) : NULL;
   TransformProperties *tfp = v3d_transform_props_ensure(v3d);
   TransformMedian median_basis, ve_median_basis;
@@ -435,33 +437,41 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     const int butw = 200;
     const int buth = 20 * UI_DPI_FAC;
     const int but_margin = 2;
-    const char *c;
 
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
+    row = uiLayoutRow(layout, false);
+    col = uiLayoutColumn(row, false);
 
-    UI_block_align_begin(block);
     if (tot == 1) {
       if (totcurvedata) {
         /* Curve */
-        c = IFACE_("Control Point:");
+        uiItemL(col, IFACE_("Control Point X"), ICON_NONE); /* bfa - text in front of the sliders*/
       }
       else {
         /* Mesh or lattice */
-        c = IFACE_("Vertex:");
+        uiItemL(col, IFACE_("Vertex X"), ICON_NONE); 
       }
     }
     else {
-      c = IFACE_("Median:");
+      uiItemL(col, IFACE_("Median X"), ICON_NONE);
     }
-    uiDefBut(block, UI_BTYPE_LABEL, 0, c, 0, yi -= buth, butw, buth, NULL, 0, 0, 0, 0, "");
 
-    UI_block_align_begin(block);
+    uiItemL(col, IFACE_("Y"), ICON_NONE);
+    uiItemL(col, IFACE_("Z"), ICON_NONE);
+
+    if (totcurvebweight == tot) {
+      uiItemL(col, IFACE_("W"), ICON_NONE);
+    }
+
+    col = uiLayoutColumn(row, true);
+    subblock = uiLayoutGetBlock(col);
+    UI_block_layout_set_current(subblock, col);
 
     /* Should be no need to translate these. */
-    but = uiDefButF(block,
+    but = uiDefButF(subblock,
                     UI_BTYPE_NUM,
                     B_TRANSFORM_PANEL_MEDIAN,
-                    IFACE_("X:"),
+                    "",
                     0,
                     yi -= buth,
                     butw,
@@ -475,10 +485,11 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     UI_but_number_step_size_set(but, 10);
     UI_but_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
-    but = uiDefButF(block,
+
+    but = uiDefButF(subblock,
                     UI_BTYPE_NUM,
                     B_TRANSFORM_PANEL_MEDIAN,
-                    IFACE_("Y:"),
+                    "",
                     0,
                     yi -= buth,
                     butw,
@@ -492,10 +503,11 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     UI_but_number_step_size_set(but, 10);
     UI_but_number_precision_set(but, RNA_TRANSLATION_PREC_DEFAULT);
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
-    but = uiDefButF(block,
+
+    but = uiDefButF(subblock,
                     UI_BTYPE_NUM,
                     B_TRANSFORM_PANEL_MEDIAN,
-                    IFACE_("Z:"),
+                    "",
                     0,
                     yi -= buth,
                     butw,
@@ -511,10 +523,10 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
 
     if (totcurvebweight == tot) {
-      but = uiDefButF(block,
+      but = uiDefButF(subblock,
                       UI_BTYPE_NUM,
                       B_TRANSFORM_PANEL_MEDIAN,
-                      IFACE_("W:"),
+                      "",
                       0,
                       yi -= buth,
                       butw,
@@ -528,9 +540,13 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
       UI_but_number_step_size_set(but, 1);
       UI_but_number_precision_set(but, 3);
     }
+    UI_block_layout_set_current(block, layout);
 
-    UI_block_align_begin(block);
-    uiDefButBitS(block,
+    row = uiLayoutRow(layout, true); /* bfa - use high level UI when possible */
+    subblock = uiLayoutGetBlock(row);
+    UI_block_layout_set_current(subblock, row);
+
+    uiDefButBitS(subblock,
                  UI_BTYPE_TOGGLE,
                  V3D_GLOBAL_STATS,
                  B_REDR,
@@ -545,7 +561,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                  0,
                  0,
                  TIP_("Displays global values"));
-    uiDefButBitS(block,
+    uiDefButBitS(subblock,
                  UI_BTYPE_TOGGLE_N,
                  V3D_GLOBAL_STATS,
                  B_REDR,
@@ -560,7 +576,9 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
                  0,
                  0,
                  TIP_("Displays local values"));
-    UI_block_align_end(block);
+    UI_block_layout_set_current(
+        block,
+        layout); /* bfa - restore layout, otherwise following UI elements will be messed up */
 
     /* Meshes... */
     if (has_meshdata) {
