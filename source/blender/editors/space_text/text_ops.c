@@ -519,9 +519,9 @@ static int text_unlink_exec(bContext *C, wmOperator *UNUSED(op))
 void TEXT_OT_unlink(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Unlink";
+  ot->name = "Remove";
   ot->idname = "TEXT_OT_unlink";
-  ot->description = "Unlink active text data-block";
+  ot->description = "Remove active text";
 
   /* api callbacks */
   ot->exec = text_unlink_exec;
