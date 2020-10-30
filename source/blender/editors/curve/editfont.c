@@ -2193,9 +2193,9 @@ static int font_unlink_exec(bContext *C, wmOperator *op)
 void FONT_OT_unlink(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Unlink";
+  ot->name = "Remove";
   ot->idname = "FONT_OT_unlink";
-  ot->description = "Unlink active font data-block";
+  ot->description = "Remove active font";
 
   /* api callbacks */
   ot->exec = font_unlink_exec;
