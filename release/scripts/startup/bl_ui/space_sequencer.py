@@ -278,24 +278,31 @@ class SEQUENCER_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
+
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
-            layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
             layout.operator("view2d.zoom_border", text = "Zoom Border", icon = "ZOOM_BORDER")
-
-        if is_preview:
-            layout.operator_context = 'INVOKE_REGION_PREVIEW'
 
             layout.separator()
 
-            layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
+            layout.operator("sequencer.view_all", text="Frame All", icon = "VIEWALL" )
+            layout.operator("sequencer.view_selected", text = "Frame Selected", icon='VIEW_SELECTED')
+
+        if is_preview:
+            layout.operator_context = 'INVOKE_REGION_PREVIEW'
 
             if is_sequencer_view:
                 layout.menu("SEQUENCER_MT_preview_zoom", text="Fractional Preview Zoom")
             else:
                 layout.operator("view2d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
                 layout.menu("SEQUENCER_MT_preview_zoom")
+
+            layout.separator()
+
+            layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
 
             layout.separator()
 
@@ -309,8 +316,10 @@ class SEQUENCER_MT_view(Menu):
             layout.operator_context = 'INVOKE_DEFAULT'
 
             layout.separator()
+
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
+
 
         layout.separator()
 
