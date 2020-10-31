@@ -1567,8 +1567,12 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
 
   RNA_pointer_create(&arm->id, &RNA_EditBone, ebone, &eboneptr);
 
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
+
   col = uiLayoutColumn(layout, false);
   uiItemR(col, &eboneptr, "head", 0, NULL, ICON_NONE);
+
   if (ebone->parent && ebone->flag & BONE_CONNECTED) {
     PointerRNA parptr = RNA_pointer_get(&eboneptr, "parent");
     uiItemR(col, &parptr, "tail_radius", 0, IFACE_("Radius (Parent)"), ICON_NONE);
@@ -1577,6 +1581,7 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
     uiItemR(col, &eboneptr, "head_radius", 0, IFACE_("Radius"), ICON_NONE);
   }
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &eboneptr, "tail", 0, NULL, ICON_NONE);
   uiItemR(col, &eboneptr, "tail_radius", 0, IFACE_("Radius"), ICON_NONE);
 
