@@ -120,6 +120,7 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "file_load_save")
+        layout.prop(addon_prefs, "file_recover")
         layout.prop(addon_prefs, "file_link_append")
         layout.prop(addon_prefs, "file_import_menu")
         layout.prop(addon_prefs, "file_export_menu")
@@ -176,6 +177,15 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.save_mainfile", text="", icon='FILE_TICK')
             row.operator("wm.save_as_mainfile", text="", icon='SAVE_AS')
             row.operator("wm.save_as_mainfile", text="", icon='SAVE_COPY')
+
+        if addon_prefs.file_recover:
+
+            row = layout.row(align=True)
+
+            row.operator("wm.revert_mainfile", text="", icon='FILE_REFRESH')
+            row.menu("TOPBAR_MT_file_recover", text = "", icon  = "DOWNARROW_HLT")
+            row.operator("wm.recover_last_session", text="", icon='RECOVER_LAST')
+            row.operator("wm.recover_auto_save", text="", icon='RECOVER_AUTO')
 
         ## ------------------ Link Append
 
