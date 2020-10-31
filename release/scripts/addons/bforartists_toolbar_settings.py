@@ -43,6 +43,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     # file
 
     file_load_save : BoolProperty(name="Load / Save", default=True, description = "Display the Load Save Toolbar\nAll Modes", )
+    file_recover : BoolProperty(name="Recover", default=False, description = "Display the Recover Toolbar\nAll Modes", )
     file_link_append : BoolProperty(name="Link / Append", default=False, description = "Display the Link Append Toolbar\nAll Modes", )
 
     file_import_menu : BoolProperty(name="Import Menu", default=True, description = "Display the Import Menu\nAll Modes", )
@@ -161,19 +162,21 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "file_load_save")
+        row.prop(self, "file_recover")
         row.prop(self, "file_link_append")
         row.prop(self, "file_import_menu")
-        row.prop(self, "file_export_menu")
 
         row = layout.row()
 
+        row.prop(self, "file_export_menu")
         row.prop(self, "file_import_common")
         row.prop(self, "file_import_common2")
         row.prop(self, "file_import_uncommon")
-        row.prop(self, "file_export_common")
+
 
         row = layout.row()
 
+        row.prop(self, "file_export_common")
         row.prop(self, "file_export_common2")
         row.prop(self, "file_export_uncommon")
 
@@ -292,6 +295,9 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row.prop(self, "misc_undohistory")
         row.prop(self, "misc_repeat")
         row.prop(self, "misc_scene")
+
+        row = layout.row()
+
         row.prop(self, "misc_viewlayer")
         row.prop(self, "misc_last")
         row.prop(self, "misc_info")
