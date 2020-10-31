@@ -1612,33 +1612,32 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
   col = uiLayoutColumn(layout, false);
   uiItemR(col, &ptr, "co", 0, NULL, ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &ptr, "radius", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "stiffness", 0, NULL, ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &ptr, "type", 0, NULL, ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   col = uiLayoutColumn(layout, true);
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:
       break;
     case MB_CUBE:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       uiItemR(col, &ptr, "size_y", 0, "Y", ICON_NONE);
       uiItemR(col, &ptr, "size_z", 0, "Z", ICON_NONE);
       break;
     case MB_TUBE:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       break;
     case MB_PLANE:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       uiItemR(col, &ptr, "size_y", 0, "Y", ICON_NONE);
       break;
     case MB_ELIPSOID:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       uiItemR(col, &ptr, "size_y", 0, "Y", ICON_NONE);
       uiItemR(col, &ptr, "size_z", 0, "Z", ICON_NONE);
       break;
