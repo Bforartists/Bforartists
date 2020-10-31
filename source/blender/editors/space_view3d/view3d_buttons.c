@@ -1606,6 +1606,9 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
 
   RNA_pointer_create(&mball->id, &RNA_MetaElement, mball->lastelem, &ptr);
 
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
+
   col = uiLayoutColumn(layout, false);
   uiItemR(col, &ptr, "co", 0, NULL, ICON_NONE);
 
