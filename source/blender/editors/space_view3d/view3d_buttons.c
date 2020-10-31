@@ -1585,6 +1585,7 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
   uiItemR(col, &eboneptr, "tail", 0, NULL, ICON_NONE);
   uiItemR(col, &eboneptr, "tail_radius", 0, IFACE_("Radius"), ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &eboneptr, "roll", 0, NULL, ICON_NONE);
   uiItemR(col, &eboneptr, "length", 0, NULL, ICON_NONE);
   uiItemR(col, &eboneptr, "envelope_distance", 0, IFACE_("Envelope"), ICON_NONE);
