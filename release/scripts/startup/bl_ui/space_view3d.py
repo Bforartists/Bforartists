@@ -235,7 +235,7 @@ class VIEW3D_HT_header(Header):
                     sub = row.row(align=True)
                     sub.popover(panel="VIEW3D_PT_gpencil_multi_frame", text="")
 
-            if gpd.use_stroke_edit_mode:
+            if gpd.use_stroke_edit_mode or gpd.is_stroke_paint_mode:
                 row = layout.row(align=True)
                 row.popover(
                     panel="VIEW3D_PT_tools_grease_pencil_interpolate",
@@ -6461,6 +6461,22 @@ class VIEW3D_MT_sculpt_mask_edit_pie(Menu):
         op.auto_iteration_count = False
 
 
+class VIEW3D_MT_sculpt_automasking_pie(Menu):
+    bl_label = "Automasking"
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        tool_settings = context.tool_settings
+        sculpt = tool_settings.sculpt
+
+        pie.prop(sculpt, "use_automasking_topology", text="Topology")
+        pie.prop(sculpt, "use_automasking_face_sets", text="Face Sets")
+        pie.prop(sculpt, "use_automasking_boundary_edges", text="Mesh Boundary")
+        pie.prop(sculpt, "use_automasking_boundary_face_sets", text="Face Sets Boundary")
+
+
 class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
     bl_label = "Face Sets Edit"
 
@@ -9101,6 +9117,7 @@ classes = (
     VIEW3D_MT_orientations_pie,
     VIEW3D_MT_proportional_editing_falloff_pie,
     VIEW3D_MT_sculpt_mask_edit_pie,
+    VIEW3D_MT_sculpt_automasking_pie,
     VIEW3D_MT_wpaint_vgroup_lock_pie,
     VIEW3D_MT_sculpt_face_sets_edit_pie,
     VIEW3D_PT_active_tool,
