@@ -1567,8 +1567,12 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
 
   RNA_pointer_create(&arm->id, &RNA_EditBone, ebone, &eboneptr);
 
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
+
   col = uiLayoutColumn(layout, false);
   uiItemR(col, &eboneptr, "head", 0, NULL, ICON_NONE);
+
   if (ebone->parent && ebone->flag & BONE_CONNECTED) {
     PointerRNA parptr = RNA_pointer_get(&eboneptr, "parent");
     uiItemR(col, &parptr, "tail_radius", 0, IFACE_("Radius (Parent)"), ICON_NONE);
@@ -1577,9 +1581,11 @@ static void v3d_editarmature_buts(uiLayout *layout, Object *ob)
     uiItemR(col, &eboneptr, "head_radius", 0, IFACE_("Radius"), ICON_NONE);
   }
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &eboneptr, "tail", 0, NULL, ICON_NONE);
   uiItemR(col, &eboneptr, "tail_radius", 0, IFACE_("Radius"), ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &eboneptr, "roll", 0, NULL, ICON_NONE);
   uiItemR(col, &eboneptr, "length", 0, NULL, ICON_NONE);
   uiItemR(col, &eboneptr, "envelope_distance", 0, IFACE_("Envelope"), ICON_NONE);
@@ -1600,36 +1606,38 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
 
   RNA_pointer_create(&mball->id, &RNA_MetaElement, mball->lastelem, &ptr);
 
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
+
   col = uiLayoutColumn(layout, false);
   uiItemR(col, &ptr, "co", 0, NULL, ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &ptr, "radius", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "stiffness", 0, NULL, ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   uiItemR(col, &ptr, "type", 0, NULL, ICON_NONE);
 
+  uiItemS_ex(col, .25f); /* bfa - separator*/
   col = uiLayoutColumn(layout, true);
   switch (RNA_enum_get(&ptr, "type")) {
     case MB_BALL:
       break;
     case MB_CUBE:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       uiItemR(col, &ptr, "size_y", 0, "Y", ICON_NONE);
       uiItemR(col, &ptr, "size_z", 0, "Z", ICON_NONE);
       break;
     case MB_TUBE:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       break;
     case MB_PLANE:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       uiItemR(col, &ptr, "size_y", 0, "Y", ICON_NONE);
       break;
     case MB_ELIPSOID:
-      uiItemL(col, IFACE_("Size:"), ICON_NONE);
-      uiItemR(col, &ptr, "size_x", 0, "X", ICON_NONE);
+      uiItemR(col, &ptr, "size_x", 0, "Size X", ICON_NONE);
       uiItemR(col, &ptr, "size_y", 0, "Y", ICON_NONE);
       uiItemR(col, &ptr, "size_z", 0, "Z", ICON_NONE);
       break;
