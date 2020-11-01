@@ -1270,8 +1270,8 @@ rip_fill
 hook_new
 hook_selected
 
-#def_icon_blank(1286
-#def_icon_blank(1287
+4l_on
+4l_off
 node_normalize
 node_normalmap
 node_objectinfo
