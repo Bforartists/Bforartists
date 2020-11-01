@@ -134,7 +134,6 @@ def draw_vpaint_symmetry(layout, vpaint, mesh):
 
     layout.prop(vpaint, "radial_symmetry", text="Radial")
     layout.use_property_split = False
-    
 
 
 # Most of these panels should not be visible in GP edit modes
@@ -1035,13 +1034,20 @@ class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
         tool_settings = context.tool_settings
         wpaint = tool_settings.weight_paint
-        draw_vpaint_symmetry(layout, wpaint, context.object.data)
+        mesh = context.object.data
 
-        col = layout.column()
-        row = col.row(align=True)
-        row.prop(context.object.data, 'use_mirror_vertex_group_x')
+        draw_vpaint_symmetry(layout, wpaint, mesh)
+
+        col = layout.column(align=True)
+        col.prop(mesh, 'use_mirror_vertex_group_x', text="Vertex Group X")
+        row = col.row()
+        row.active = mesh.use_mirror_vertex_group_x
+        row.prop(mesh, "use_mirror_topology")
 
 
 class VIEW3D_PT_tools_weightpaint_symmetry_for_topbar(Panel):
@@ -1074,14 +1080,6 @@ class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
         col.prop(tool_settings, "use_multipaint", text="Multi-Paint")
 
         col.prop(wpaint, "use_group_restrict")
-
-        obj = context.weight_paint_object
-        if obj.type == 'MESH':
-            mesh = obj.data
-            col.prop(mesh, "use_mirror_x")
-            row = col.row()
-            row.active = mesh.use_mirror_x
-            row.prop(mesh, "use_mirror_topology")
 
 
 # ********** default tools for vertex-paint ****************
@@ -1117,8 +1115,12 @@ class VIEW3D_PT_tools_vertexpaint_symmetry(Panel, View3DPaintPanel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
         tool_settings = context.tool_settings
         vpaint = tool_settings.vertex_paint
+
         draw_vpaint_symmetry(layout, vpaint, context.object.data)
 
 
@@ -1774,7 +1776,8 @@ class VIEW3D_PT_tools_grease_pencil_interpolate(Panel):
             return False
 
         gpd = context.gpencil_data
-        return bool(context.editable_gpencil_strokes) and bool(gpd.use_stroke_edit_mode)
+        valid_mode = bool(gpd.use_stroke_edit_mode or gpd.is_stroke_paint_mode)
+        return bool(context.editable_gpencil_strokes) and valid_mode
 
     def draw(self, context):
         layout = self.layout
@@ -1789,7 +1792,10 @@ class VIEW3D_PT_tools_grease_pencil_interpolate(Panel):
         col = layout.column(align=True)
         col.label(text="Options:")
         col.prop(settings, "interpolate_all_layers")
-        col.prop(settings, "interpolate_selected_only")
+
+        gpd = context.gpencil_data
+        if gpd.use_stroke_edit_mode:
+            col.prop(settings, "interpolate_selected_only")
 
         col = layout.column(align=True)
         col.label(text="Sequence Options:")
