@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -5376,6 +5376,10 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "(ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻘﻟ) SC ﻑﺮﻌﻣ ﻭ ،(ﻂﻴﻄﺨﺘﻟﺍ ﺔﻗﺭﻭ ﺭﺮﺤﻤﻟ) SCE ﻑﺮﻌﻣ ﺎﻴﻟﺎﺣ ،ﺕﺎﻧﺎﻴﺒﻟﺍ ﺭﺪﺼﻤﻟ ﻞﺜﻤﻤﻟﺍ ﻞﺴﻠﺴﺘﻟﺍ ﻑﺮﻌﻣ"
 
 
+msgid "Invert"
+msgstr "ﺲﻜﻋﺇ"
+
+
 msgid "Driver for the value of a setting based on an external value"
 msgstr "ﺔﻴﺟﺭﺎﺧ ﺔﻤﻴﻗ ﻰﻠﻋ ﺍﺩﺎﻤﺘﻋﺍ ﺭﺎﻴﺧ ﺔﻤﻴﻗ ﻞﺟﺃ ﻦﻣ ﻞﻜّﺸﻤﻟﺍ"
 
@@ -7901,24 +7905,8 @@ msgid "Effective but slow compression"
 msgstr "ءﻲﻄﺑ ﻦﻜﻟ ﻝﺎﻌﻓ ﻂﻐﺿ"
 
 
-msgid "Half"
-msgstr "ﻒﺼﻧ"
-
-
 msgid "Number"
 msgstr "ﺩﺪﻌﻟﺍ"
-
-
-msgid "Cache Compression"
-msgstr "ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﻂﻐﺿ"
-
-
-msgid "Fast but not so effective compression"
-msgstr "ﺎﻴﻟﺎﻌﻓ ﺎﻄﻐﺿ ﺲﻴﻟ ﻦﻜﻟ ﻊﻳﺮﺳ"
-
-
-msgid "Heavy"
-msgstr "ﻞﻴﻘﺛ"
 
 
 msgid "Delete"
@@ -8739,10 +8727,6 @@ msgstr "(ﺢﻴﺤﺼﺘﻟﺍ ﺽﺍﺮﻏﻷ﻿) ﺕﺎﺒﻄﺸﻠﻟ ﺔﻠ�
 
 msgid "Onion Skinning"
 msgstr "ﺔﻴﻓﺎﻔﺸﻟﺍ ﻞﻴﻌﻔﺗ"
-
-
-msgid "Invert"
-msgstr "ﺲﻜﻋﺇ"
 
 
 msgid "Layer"
@@ -10389,6 +10373,10 @@ msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﻊﺿﻭ"
 
 msgid "Mode of filling curve"
 msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﺔﺌﺒﻌﺗ ﺔﻘﻳﺮﻃ"
+
+
+msgid "Half"
+msgstr "ﻒﺼﻧ"
 
 
 msgid "Path Length"
@@ -12325,10 +12313,6 @@ msgstr "ﻞﺴﻠﺴﺘﻟﺍ ﻒﻠﻣ ﻭﺃ ﻢﻠﻔﻟﺍ ﻢﺳﺍ"
 
 msgid "Detected duration of movie clip in frames"
 msgstr "ﺮﻃﻷ﻿ﺎﺑ ﻢﻠﻔﻟﺍ ﺔﺻﺎﻘﻟ ﺔﻔﺸﺘﻜﻤﻟﺍ ﺓﺪﻤﻟﺍ"
-
-
-msgid "Offset of footage first frame relative to it's file name (affects only how footage is loading, does not change data associated with a clip)"
-msgstr " (ﺔﺻﺎﺼﻔﻟﺎﺑ ﺔﻘﻠّﻌﺘﻤﻟﺍ ﺕﺎﻧﺎﻴﺒﻟﺍ ﺮﻴﻐﻳ ﻻ﻿ ﻭ ,ﺓﺩﺎﻤﻟﺍ ﻞﻴﻤﺤﺗ ﺔﻴﻔﻴﻛ ﻰﻠﻋ ﻂﻘﻓ ﺮﺛﺆﻳ) ,ﻪﻔﻠﻣ ﻢﺳﻹ﻿ ﻲﺒﺴﻨﻟﺍ ﺓﺩﺎﻤﻠﻟ ﺭﺎﻃﺇ ﻝﻭﺃ ﺔﺣﺍﺯﺇ"
 
 
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
@@ -26342,6 +26326,10 @@ msgid "Select Boundary Loop"
 msgstr "ﺔﻓﺎﺤﻟﺍ ﻞﺴﻠﺴﺗ ﺮﺘﺧﺍ"
 
 
+msgid "Sharp Edges"
+msgstr "ﺩﺎﺣ ﻑﺮﺣ"
+
+
 msgid "Merge selected to other unselected vertices"
 msgstr "ﺓﺭﺎﺘﺨﻣ ﺮﻴﻐﻟﺍ ﻯﺮﺧﻻ﻿ﺍ ﻂﻘﻨﻠﻟ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺞﻣﺩﺍ"
 
@@ -27752,6 +27740,10 @@ msgid "Quick Fur"
 msgstr "ﻊﻳﺮﺳ ﻭﺮﻓ"
 
 
+msgid "Heavy"
+msgstr "ﻞﻴﻘﺛ"
+
+
 msgctxt "Operator"
 msgid "Quick Smoke"
 msgstr "ﻊﻳﺮﺳ ﻥﺎﺧﺩ"
@@ -28288,6 +28280,10 @@ msgid "Close or open all items"
 msgstr "ﺮﺻﺎﻨﻌﻟﺍ ﻞﻛ ﺢﺘﻓﺍ ﻭﺍ ﻖﻠﻏﺍ"
 
 
+msgid "Use Active"
+msgstr "ﻝﺎﻌّﻔﻟﺍ ﻡﺪﺨﺘﺳﺇ"
+
+
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻤﻟ ﺭﺎﺘﺨﻤﻟﺍ ﻒﺿﺍ"
@@ -28667,10 +28663,6 @@ msgstr "ﻑﺪﻬﻟﺍ ﺕﺎﺌﻳﺰﺠﻟﺍ ﻑﺬﺣﺍ"
 
 msgid "Remove particle systems on the target objects"
 msgstr "ﻑﺪﻬﻟﺍ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻰﻠﻋ ﺕﺎﺌﻳﺰﺠﻟﺍ ﺔﻤﻈﻧﺃ ﻑﺬﺣﺍ"
-
-
-msgid "Use Active"
-msgstr "ﻝﺎﻌّﻔﻟﺍ ﻡﺪﺨﺘﺳﺇ"
 
 
 msgid "Delete selected particles or keys"
@@ -31817,10 +31809,6 @@ msgid "Geometry Data"
 msgstr "ﻢﺴﺠﻤﻟﺍ ﺪﻌﺑ"
 
 
-msgid "Transparency"
-msgstr "ﺔﻴﻓﺎﻔﺷ"
-
-
 msgid "Paragraph"
 msgstr "ﺓﺮﻘﻓ"
 
@@ -32740,8 +32728,16 @@ msgid "The index of particle system on the target object"
 msgstr "ﻑﺪﻬﻟﺍ ﻦﺋﺎﻜﻟﺍ ﻰﻠﻋ ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻧ ﺮﺷﺆﻣ"
 
 
+msgid "Cache Compression"
+msgstr "ﻖﺒﺴﻤﻟﺍ ﺏﺎﺴﺤﻟﺍ ﻂﻐﺿ"
+
+
 msgid "No compression"
 msgstr "ﻂﻐﺿ ﻻ﻿"
+
+
+msgid "Fast but not so effective compression"
+msgstr "ﺎﻴﻟﺎﻌﻓ ﺎﻄﻐﺿ ﺲﻴﻟ ﻦﻜﻟ ﻊﻳﺮﺳ"
 
 
 msgid "Cache file path"
@@ -35690,10 +35686,6 @@ msgstr " 'ﻙﻮﻫ'ﻝﺍ ﻯﻮﻗ ﻝﺪﺑ ﺔﺟﺰﻠﻟﺍ ﻯﻮﻘﻟ�
 
 msgid "Elastic Limit"
 msgstr "ﺔﻧﻭﺮﻤﻟﺍ ﺪﺣ"
-
-
-msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
-msgstr "ﺎﻨﻛﺎﺳ ﻪﻟﻮﻃ ﺮﻴﻴﻐﺗ ﻑﺪﻬﺑ ﻂﻐﻀﻳ ﻭﺃ ﺾﺑﺎﻨﻟﺍ ﺩﺪﻤﺘﻳ ﻥﺃ ﻦﻤﻜﻳ ﻢﻛ ﻰﻟﺇ"
 
 
 msgid "Attenuation constant"
@@ -38686,6 +38678,10 @@ msgstr "ﻢﺴﺠﻤﻟﺍ ءﻮﺿ"
 
 msgid "Subsurface"
 msgstr "ﻲﺤﻄﺳ-ﺖﺤﺗ"
+
+
+msgid "Transparency"
+msgstr "ﺔﻴﻓﺎﻔﺷ"
 
 
 msgid "Tiles X"
@@ -43097,10 +43093,6 @@ msgstr "ﺔﻤﺴﻟﺍ ﺔﻤﻴﻗ ﻞﻳﺪﻌﺗ"
 
 msgid "Settings are inside the Physics tab"
 msgstr "ﺕﺎﻴﺋﺎﻳﺰﻴﻔﻟﺍ ﺓﻭﺮﻋ ﻞﺧﺍﺩ ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ"
-
-
-msgid "Sharp Edges"
-msgstr "ﺩﺎﺣ ﻑﺮﺣ"
 
 
 msgid "Coverage"

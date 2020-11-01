@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -1889,6 +1889,10 @@ msgid "Safe Areas"
 msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
 
 
+msgid "Invert"
+msgstr "ﻥﻭﺭﺍﻭ"
+
+
 msgid "Expression"
 msgstr "ﺕﺭﺎﺒﻋ"
 
@@ -2464,10 +2468,6 @@ msgstr "ﺖﯾﺩﻭﺪﺤﻣ ﻉﻮﻧ"
 
 msgid "Onion Skinning"
 msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ"
-
-
-msgid "Invert"
-msgstr "ﻥﻭﺭﺍﻭ"
 
 
 msgid "Layer"

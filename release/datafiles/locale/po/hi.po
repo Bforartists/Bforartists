@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1533,16 +1533,8 @@ msgid "Time"
 msgstr "समय"
 
 
-msgid "Half"
-msgstr "अर्ध"
-
-
 msgid "Number"
 msgstr "संख्या"
-
-
-msgid "Heavy"
-msgstr "भारी"
 
 
 msgid "Delete"
@@ -1980,6 +1972,10 @@ msgstr "आयाम"
 
 msgid "Extrude"
 msgstr "बिहर्वेधन"
+
+
+msgid "Half"
+msgstr "अर्ध"
 
 
 msgid "Path Length"
@@ -3912,6 +3908,14 @@ msgid "Subdivisions"
 msgstr "उप विभाजन"
 
 
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
+
+
 msgid "Highest frequency"
 msgstr "उच्चतम आवृत्ति"
 
@@ -4213,6 +4217,10 @@ msgstr "हड्डी सापेक्ष"
 
 msgid "Remove the selected particle system"
 msgstr "चयनित कण प्रणाली हटाएँ"
+
+
+msgid "Heavy"
+msgstr "भारी"
 
 
 msgctxt "Operator"
@@ -5251,14 +5259,6 @@ msgstr "खिंचाव"
 
 msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
-
-
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
 
 
 msgctxt "MovieClip"
