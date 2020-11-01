@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -8056,6 +8056,10 @@ msgid "Alphabetically sorts data-blocks - mainly objects in the scene (disable t
 msgstr "알파벳순으로 데이터-블록을 분류 - 주로 씬의 오브젝트 (뷰포트 속력를 높이려면 비활성화)"
 
 
+msgid "Invert"
+msgstr "반전"
+
+
 msgid "Multi-Word Fuzzy Filter"
 msgstr "다중 단어 퍼지 필터"
 
@@ -11397,10 +11401,6 @@ msgid "Limit forces to this collection"
 msgstr "이 컬렉션에 포스를 제한"
 
 
-msgid "Obstacle-Fluid Threshold"
-msgstr "장애물-유체 임계 값"
-
-
 msgid "Determines how much fluid is allowed in an obstacle cell (higher values will tag a boundary cell as an obstacle easier and reduce the boundary smoothening effect)"
 msgstr "장애물 셀에 허용되는 유체의 양을 결정합니다 (값이 클수록 경계 셀에 장애물로 태그를 지정하고 경계 스무딩 효과를 줄임)"
 
@@ -11597,22 +11597,6 @@ msgid "Data Depth"
 msgstr "데이터 깊이"
 
 
-msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
-msgstr "모든 스칼라(벡터 포함) 낮은 값을 쓰는 비트 심도는 파일 크기를 줄입니다"
-
-
-msgid "Half"
-msgstr "절반"
-
-
-msgid "Half float (16 bit data)"
-msgstr "하프 실수 (16 비트 데이터)"
-
-
-msgid "Full float (32 bit data)"
-msgstr "전체 실수 (32 비트 데이터)"
-
-
 msgid "Particle (narrow) band width (higher value results in thicker band and more particles)"
 msgstr "파티클 (좁은) 밴드 폭 (값이 클수록 밴드가 두껍고 파티클들이 많아짐)"
 
@@ -11639,22 +11623,6 @@ msgstr "랜덤성"
 
 msgid "Randomness factor for particle sampling"
 msgstr "파티클 샘플링을 위한 렌덤성 팩터"
-
-
-msgid "Cache Compression"
-msgstr "캐시 압축"
-
-
-msgid "Lite"
-msgstr "조금"
-
-
-msgid "Fast but not so effective compression"
-msgstr "빠르지만 효과적이지 않은 압축"
-
-
-msgid "Heavy"
-msgstr "헤비"
 
 
 msgid "Simulation Method"
@@ -13251,10 +13219,6 @@ msgstr "뷰 레이어"
 
 msgid "Only include Layer in this View Layer render output (leave blank to include always)"
 msgstr "이 뷰 레이어 렌더 출력에만 레이어를 포함 (항상 비워 두십시오)"
-
-
-msgid "Invert"
-msgstr "반전"
 
 
 msgid "Layer"
@@ -16786,6 +16750,10 @@ msgid "Mode of filling curve"
 msgstr "채우는 커브의 모드"
 
 
+msgid "Half"
+msgstr "절반"
+
+
 msgid "Path Length"
 msgstr "경로 길이"
 
@@ -19754,10 +19722,6 @@ msgstr "초당 프레임으로 무비 클립의 감지된 프레임 비율"
 
 msgid "Detected duration of movie clip in frames"
 msgstr "프레임에서 무비 클립의 감지된 지속"
-
-
-msgid "Offset of footage first frame relative to it's file name (affects only how footage is loading, does not change data associated with a clip)"
-msgstr "푸티지 첫 프레임의 파일 이름과 관련된 오프셋 (푸티지가 불러오기되는 방식에만 영향을 미치고 클립과 연결된 데이터는 변경하지 않음)"
 
 
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
@@ -27080,10 +27044,6 @@ msgid "Parenting settings for masking element"
 msgstr "마스킹 요소에 대한 부모 지정 설정"
 
 
-msgid "ID-block to which masking element would be parented to or to it's property"
-msgstr "마스킹 요소를 부모로 지정할 ID 블록 또는 해당 속성"
-
-
 msgid "ID Type"
 msgstr "ID 유형"
 
@@ -27652,10 +27612,6 @@ msgstr "레이아웃"
 
 msgid "Matte"
 msgstr "매트"
-
-
-msgid "Forces"
-msgstr "포스"
 
 
 msgid "Node Context Menu"
@@ -28867,10 +28823,6 @@ msgstr "모든 폴리곤들을 삼각형으로 변환합니다"
 
 msgid "Weld"
 msgstr "용접"
-
-
-msgid "Find groups of vertices closer then dist and merges them together"
-msgstr "먼 곳에있는 버텍스 그룹을 찾아서 dist와 병합"
 
 
 msgid "Wireframe"
@@ -45164,6 +45116,14 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
+msgid "White"
+msgstr "화이트"
+
+
 msgid "Confirm on Release"
 msgstr "릴리즈에 대한 확인"
 
@@ -47222,10 +47182,6 @@ msgid "Slide Spline Curvature"
 msgstr "슬라이드 스플라인 곡률"
 
 
-msgid "Slide a point on the spline to define it's curvature"
-msgstr "스플라인의 한 포인트를 밀어 곡률을 정의합니다"
-
-
 msgctxt "Operator"
 msgid "Copy Material"
 msgstr "매테리얼을 복사"
@@ -49245,6 +49201,10 @@ msgstr "선택한 페이스 주위의 경계 에지를 선택"
 
 msgid "Merge vertices based on their proximity"
 msgstr "근접성을 기반으로 버텍스들을 병합"
+
+
+msgid "Sharp Edges"
+msgstr "샤프 에지"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -52739,6 +52699,10 @@ msgid "Fur Density"
 msgstr "모피 밀도"
 
 
+msgid "Heavy"
+msgstr "헤비"
+
+
 msgid "View %"
 msgstr "뷰 %"
 
@@ -54244,6 +54208,10 @@ msgid "Rename the active element"
 msgstr "활성 요소 이름을 바꾸기"
 
 
+msgid "Use Active"
+msgstr "활성을 사용"
+
+
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "키잉 설정 추가 선택된"
@@ -55087,10 +55055,6 @@ msgstr "각 오브젝트의 로컬 공간 내부에 복사"
 
 msgid "Copy in world space"
 msgstr "월드 공간에서 복사"
-
-
-msgid "Use Active"
-msgstr "활성을 사용"
 
 
 msgid "Use the active particle system from the context"
@@ -64605,10 +64569,6 @@ msgid "Geometry Data"
 msgstr "지오메트리 데이터"
 
 
-msgid "Transparency"
-msgstr "투명도"
-
-
 msgid "Adjustments"
 msgstr "조정"
 
@@ -64993,6 +64953,10 @@ msgstr "스프링"
 
 msgid "Viscoelastic Springs"
 msgstr "점탄성 스프링"
+
+
+msgid "Forces"
+msgstr "포스"
 
 
 msgid "Timing"
@@ -66670,8 +66634,20 @@ msgid "Active point cache for physics simulations"
 msgstr "피직스 시뮬레이션을 위한 활성 포인트 캐시"
 
 
+msgid "Cache Compression"
+msgstr "캐시 압축"
+
+
 msgid "No compression"
 msgstr "압축 없음"
+
+
+msgid "Lite"
+msgstr "조금"
+
+
+msgid "Fast but not so effective compression"
+msgstr "빠르지만 효과적이지 않은 압축"
 
 
 msgid "Cache file path"
@@ -72758,10 +72734,6 @@ msgid "Elastic Limit"
 msgstr "탄성 제한"
 
 
-msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
-msgstr "휴식 길이를 변경하기 위해 스프링을 늘리거나 압축해야 하는 정도"
-
-
 msgid "Light Direction"
 msgstr "라이트 방향"
 
@@ -74125,10 +74097,6 @@ msgid "Sequence Color Balance Data"
 msgstr "시퀀스 컬러 균형 데이터"
 
 
-msgid "Color balance parameters for a sequence strip and it's modifiers"
-msgstr "시퀀스 스트립에 대한 컬러 균형 매개 변수와 그것의 모디파이어"
-
-
 msgid "Color balance gain (highlights)"
 msgstr "컬러 균형 이득 (강조)"
 
@@ -75266,16 +75234,8 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -77390,14 +77350,6 @@ msgid "Display UV coordinates in pixels rather than from 0.0 to 1.0"
 msgstr "UV 좌표를 0.0에서 1.0이 아니라 픽셀 단위로 표시"
 
 
-msgid "Display Smooth Edges"
-msgstr "스무스 에지를 표시"
-
-
-msgid "Display UV edges anti-aliased"
-msgstr "안티 앨리어싱된 UV 가장자리를 표시"
-
-
 msgid "Display Stretch"
 msgstr "늘이기를 표시"
 
@@ -78808,10 +78760,6 @@ msgstr "노드 배경 화면"
 
 msgid "Node Selected"
 msgstr "노드 선택됨"
-
-
-msgid "Noodle curving"
-msgstr "노드 커브"
 
 
 msgid "Curving of the noodle"
@@ -82375,6 +82323,10 @@ msgid "Offscreen Scale"
 msgstr "오프스크린 축적"
 
 
+msgid "Transparency"
+msgstr "투명도"
+
+
 msgid "Direct Light"
 msgstr "직접 라이트"
 
@@ -83518,10 +83470,6 @@ msgstr "커서 컬러"
 
 msgid "Lock Frame"
 msgstr "프레임을 잠금"
-
-
-msgid "Inverse Cursor Color"
-msgstr "커서 컬러를 반전"
 
 
 msgid "Unlocked"
@@ -85140,11 +85088,6 @@ msgstr "데시메이트 (비율)"
 msgctxt "Operator"
 msgid "Decimate (Allowed Change)"
 msgstr "데시메이트 (허용된 변경)"
-
-
-msgctxt "Operator"
-msgid "Cursor Value"
-msgstr "커서 값"
 
 
 msgctxt "Operator"
@@ -95791,10 +95734,6 @@ msgstr "기즈모 그룹 '%s'을 찾을 수 없습니다!"
 
 msgid "Settings are inside the Physics tab"
 msgstr "설정은 피직스 탭 안에 있습니다"
-
-
-msgid "Sharp Edges"
-msgstr "샤프 에지"
 
 
 msgid "Coverage"

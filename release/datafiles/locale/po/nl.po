@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -516,10 +516,6 @@ msgid "Time"
 msgstr "Tijd"
 
 
-msgid "Half"
-msgstr "Half"
-
-
 msgid "Delete"
 msgstr "Verwijder"
 
@@ -724,6 +720,10 @@ msgstr "Dimensie"
 
 msgid "Extrude"
 msgstr "Uitrekken"
+
+
+msgid "Half"
+msgstr "Half"
 
 
 msgid "Fill Caps"
@@ -2826,6 +2826,10 @@ msgstr "Voeg Donut Toe"
 msgctxt "Operator"
 msgid "Add UV Sphere"
 msgstr "Voeg UV Bol Toe"
+
+
+msgid "Sharp Edges"
+msgstr "Scherpe Randen"
 
 
 msgctxt "Operator"
@@ -5810,10 +5814,6 @@ msgstr "Punt is niet gevonden voor de opgegeven Spline"
 msgctxt "Armature"
 msgid "Group"
 msgstr "Groep"
-
-
-msgid "Sharp Edges"
-msgstr "Scherpe Randen"
 
 
 msgid "Replace Original"

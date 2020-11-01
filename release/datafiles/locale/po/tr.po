@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -2303,6 +2303,10 @@ msgid "Source"
 msgstr "Kaynak"
 
 
+msgid "Invert"
+msgstr "Yaklaş/Uzaklaş"
+
+
 msgid "Expression"
 msgstr "İfade: %s"
 
@@ -3332,10 +3336,6 @@ msgid "Compression"
 msgstr "Dosya sıkıştırmayı etkinleştir"
 
 
-msgid "Cache Compression"
-msgstr "Dosya sıkıştırmayı etkinleştir"
-
-
 msgid "Delete"
 msgstr "Sil"
 
@@ -3546,10 +3546,6 @@ msgstr "Kontrol Noktaları:"
 
 msgid "Mask Layer"
 msgstr "Katman Sil"
-
-
-msgid "Invert"
-msgstr "Yaklaş/Uzaklaş"
 
 
 msgid "Layer"
@@ -12316,6 +12312,14 @@ msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
 
 
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
+
+
 msgid "Confirm on Release"
 msgstr "Seçili Anahtarlarda"
 
@@ -13513,6 +13517,10 @@ msgstr "Seçili yüzeyleri gizler"
 msgctxt "Operator"
 msgid "Select Boundary Loop"
 msgstr "Kenar Doğrultusunca Seç"
+
+
+msgid "Sharp Edges"
+msgstr "Tüm Kenarlar"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -18398,10 +18406,6 @@ msgid "Geometry Data"
 msgstr "Falloff Mesafesi"
 
 
-msgid "Transparency"
-msgstr "Saydamlık"
-
-
 msgid "Path Animation"
 msgstr "Animasyon Pencereleri"
 
@@ -18921,6 +18925,10 @@ msgstr "İşareti (Tekrar) Adlandır"
 
 msgid "Target Particle System"
 msgstr "Hedef değişkeni sil"
+
+
+msgid "Cache Compression"
+msgstr "Dosya sıkıştırmayı etkinleştir"
 
 
 msgid "No compression"
@@ -20779,14 +20787,6 @@ msgid "Outline"
 msgstr "Anahat"
 
 
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
-
-
 msgid "Pivot center for rotation/scaling"
 msgstr "Çevirme/Ölçekleme Ekseni (Kısayollar: Virgül, Shift Virgül)"
 
@@ -22493,6 +22493,10 @@ msgstr "Kırpma Kullan"
 
 msgid "Mesh Light"
 msgstr "Doğrusal Bozulma"
+
+
+msgid "Transparency"
+msgstr "Saydamlık"
 
 
 msgid "Persistent Images"
@@ -25508,10 +25512,6 @@ msgstr "Aktif Grubu Sil"
 
 msgid "Property value not in enumeration"
 msgstr "ID Özellik Gezgini"
-
-
-msgid "Sharp Edges"
-msgstr "Tüm Kenarlar"
 
 
 msgid "Create Along Paths"

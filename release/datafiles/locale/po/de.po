@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4819,6 +4819,10 @@ msgid "Source"
 msgstr "Quelle"
 
 
+msgid "Invert"
+msgstr "Invertieren"
+
+
 msgid "Driver for the value of a setting based on an external value"
 msgstr "Treiber für Einstellungswert, basierend auf externen Wert"
 
@@ -6452,18 +6456,6 @@ msgid "Number"
 msgstr "Nummer"
 
 
-msgid "Cache Compression"
-msgstr "Pufferkompression"
-
-
-msgid "Fast but not so effective compression"
-msgstr "Schnelle, aber nicht so effektive Kompression"
-
-
-msgid "Heavy"
-msgstr "Schwer"
-
-
 msgid "Delete"
 msgstr "Löschen"
 
@@ -7082,10 +7074,6 @@ msgstr "Zwiebelschalen-Animation"
 
 msgid "Mask Layer"
 msgstr "Maskenebene"
-
-
-msgid "Invert"
-msgstr "Invertieren"
 
 
 msgid "Layer"
@@ -12385,10 +12373,6 @@ msgstr "Layout"
 
 msgid "Matte"
 msgstr "Maske"
-
-
-msgid "Forces"
-msgstr "Kräfte"
 
 
 msgid "Node"
@@ -19686,6 +19670,14 @@ msgid "Snap Selection to Grid"
 msgstr "Auswahl an Raster einrasten"
 
 
+msgid "Black"
+msgstr "Schwarz"
+
+
+msgid "White"
+msgstr "Weiß"
+
+
 msgid "Confirm on Release"
 msgstr "Ausgabe bestätigen"
 
@@ -21127,6 +21119,10 @@ msgstr "Dreieckige ausgewählte Flächen"
 msgctxt "Operator"
 msgid "Select Boundary Loop"
 msgstr "Nach Typ auswählen"
+
+
+msgid "Sharp Edges"
+msgstr "Scharfe Kanten"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -22809,6 +22805,10 @@ msgstr "Anzahl der Teile"
 msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Schnelles Fell"
+
+
+msgid "Heavy"
+msgstr "Schwer"
 
 
 msgctxt "Operator"
@@ -27031,10 +27031,6 @@ msgid "Geometry Data"
 msgstr "Geometrieabstand"
 
 
-msgid "Transparency"
-msgstr "Transparenz"
-
-
 msgid "Adjustments"
 msgstr "Anpassungen"
 
@@ -27328,6 +27324,10 @@ msgstr "Bewegung"
 
 msgid "Viscoelastic Springs"
 msgstr "Visko-elastische Sprungfeder"
+
+
+msgid "Forces"
+msgstr "Kräfte"
 
 
 msgid "Border Collisions"
@@ -28124,8 +28124,16 @@ msgid "Particle target name"
 msgstr "Partikelziel-Name"
 
 
+msgid "Cache Compression"
+msgstr "Pufferkompression"
+
+
 msgid "No compression"
 msgstr "Keine Kompression"
+
+
+msgid "Fast but not so effective compression"
+msgstr "Schnelle, aber nicht so effektive Kompression"
 
 
 msgid "Cache file path"
@@ -31369,14 +31377,6 @@ msgid "Dash"
 msgstr "Gepunktet"
 
 
-msgid "Black"
-msgstr "Schwarz"
-
-
-msgid "White"
-msgstr "Weiß"
-
-
 msgid "Overlay Mode"
 msgstr "Überlagerungsmodus"
 
@@ -32316,14 +32316,6 @@ msgid "Display UV coordinates in pixels rather than from 0.0 to 1.0"
 msgstr "Zeigt die UV-Koordinaten in Pixeln anstatt in 0,0 bis 1,0 an"
 
 
-msgid "Display Smooth Edges"
-msgstr "Weiche Kanten anzeigen"
-
-
-msgid "Display UV edges anti-aliased"
-msgstr "Zeigt UV-Kanten mit Kantenglättung an"
-
-
 msgid "Shared Vertex"
 msgstr "Gemeinsamer Vertex"
 
@@ -32966,10 +32958,6 @@ msgstr "Knoten-Kulisse"
 
 msgid "Node Selected"
 msgstr "Knotenauswahl"
-
-
-msgid "Noodle curving"
-msgstr "Kabelsalatkurven"
 
 
 msgid "Curving of the noodle"
@@ -34073,6 +34061,10 @@ msgstr "Mesh-Licht"
 
 msgid "Subsurface"
 msgstr "Oberfläche"
+
+
+msgid "Transparency"
+msgstr "Transparenz"
 
 
 msgid "Direct Light"
@@ -38457,10 +38449,6 @@ msgstr "Operator '%s' nicht gefunden!"
 
 msgid "Gizmo group '%s' not found!"
 msgstr "Gizmo-Gruppe '%s' nicht gefunden!"
-
-
-msgid "Sharp Edges"
-msgstr "Scharfe Kanten"
 
 
 msgctxt "Operator"
