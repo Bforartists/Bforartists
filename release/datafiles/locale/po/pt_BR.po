@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -6490,6 +6490,10 @@ msgid "Alphabetically sorts data-blocks - mainly objects in the scene (disable t
 msgstr "Ordena alfabeticamente os blocos de dados, principalmente os dos objetos presentes na cena. Desabilite para aumentar a velocidade na porta de visão."
 
 
+msgid "Invert"
+msgstr "Inverter"
+
+
 msgid "Multi-Word Fuzzy Filter"
 msgstr "Filtro múltiplo para palavras difusas "
 
@@ -9474,40 +9478,12 @@ msgid "Data Depth"
 msgstr "Profundidade de dados"
 
 
-msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
-msgstr "A profundidade de bits para definir a escala da escrita de todos os valores (incluindo os vetores). Valores mais baixos reduzem o tamanho dos arquivos."
-
-
-msgid "Half"
-msgstr "Metade"
-
-
-msgid "Half float (16 bit data)"
-msgstr "Ponto flutuante parcial (dados de 16 bits)."
-
-
-msgid "Full float (32 bit data)"
-msgstr "Ponto flutuante pleno (dados de 32 bits)."
-
-
 msgid "Number"
 msgstr "Número(s)"
 
 
 msgid "Randomness"
 msgstr "Aleatorização"
-
-
-msgid "Cache Compression"
-msgstr "Compressão de cache"
-
-
-msgid "Fast but not so effective compression"
-msgstr "Compressão rápida mas não tão eficaz."
-
-
-msgid "Heavy"
-msgstr "Pesada"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -10648,10 +10624,6 @@ msgstr "Transparência (papel vegetal) "
 
 msgid "Mask Layer"
 msgstr "Camada de máscara"
-
-
-msgid "Invert"
-msgstr "Inverter"
 
 
 msgid "Layer"
@@ -12675,6 +12647,10 @@ msgstr "Modo de preenchimento"
 
 msgid "Mode of filling curve"
 msgstr "O modo de preenchimento de curva."
+
+
+msgid "Half"
+msgstr "Metade"
 
 
 msgid "Path Length"
@@ -14775,10 +14751,6 @@ msgstr "Nome do arquivo do filme ou arquivo de sequência."
 
 msgid "Detected duration of movie clip in frames"
 msgstr "Duração detectada do clipe de filme em quadros."
-
-
-msgid "Offset of footage first frame relative to it's file name (affects only how footage is loading, does not change data associated with a clip)"
-msgstr "Deslocamento do primeiro quadro da filmagem relativo a seu nome de arquivo (afeta como a filmagem é carregada, não altera os dados associados com o clipe)."
 
 
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
@@ -21273,10 +21245,6 @@ msgstr "Mascarar parente"
 
 msgid "Parenting settings for masking element"
 msgstr "Configurações de parenteamento para elemento de mascaramento."
-
-
-msgid "ID-block to which masking element would be parented to or to it's property"
-msgstr "O identificador de bloco no qual o elemento de máscara será parenteado ou a sua propriedade."
 
 
 msgid "ID Type"
@@ -36151,6 +36119,14 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgid "Confirm on Release"
 msgstr "Confirmar ao soltar"
 
@@ -37704,10 +37680,6 @@ msgid "Slide Spline Curvature"
 msgstr "Deslizar curvatura da spline"
 
 
-msgid "Slide a point on the spline to define it's curvature"
-msgstr "Permite deslizar um ponto na Spline para definir a sua curvatura."
-
-
 msgctxt "Operator"
 msgid "Copy Material"
 msgstr "Copiar material"
@@ -39196,6 +39168,10 @@ msgstr "Selecionar os anéis das extremidades"
 
 msgid "Select boundary edges around the selected faces"
 msgstr "Seleciona as arestas das extremidades em torno das faces selecionadas."
+
+
+msgid "Sharp Edges"
+msgstr "Arestas ressaltadas"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -42090,6 +42066,10 @@ msgid "Fur Density"
 msgstr "Densidade de pelos"
 
 
+msgid "Heavy"
+msgstr "Pesada"
+
+
 msgid "View %"
 msgstr "Visualização %"
 
@@ -43131,6 +43111,10 @@ msgid "Close or open all items"
 msgstr "Fecha ou abre todos os itens"
 
 
+msgid "Use Active"
+msgstr "Usar os dados ativos"
+
+
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "Adicionar selecionados ao conjunto de inserção de chaves"
@@ -43920,10 +43904,6 @@ msgstr "Copiar dentro de cada espaço local de objeto."
 
 msgid "Copy in world space"
 msgstr "Copiar no espaço do ambiente"
-
-
-msgid "Use Active"
-msgstr "Usar os dados ativos"
 
 
 msgid "Use the active particle system from the context"
@@ -51494,10 +51474,6 @@ msgid "Geometry Data"
 msgstr "Dados da geometria"
 
 
-msgid "Transparency"
-msgstr "Transparência"
-
-
 msgid "Paragraph"
 msgstr "Parágrafo"
 
@@ -52571,8 +52547,16 @@ msgid "Collection of paths"
 msgstr "Coleção de caminhos."
 
 
+msgid "Cache Compression"
+msgstr "Compressão de cache"
+
+
 msgid "No compression"
 msgstr "Sem compressão."
+
+
+msgid "Fast but not so effective compression"
+msgstr "Compressão rápida mas não tão eficaz."
 
 
 msgid "Cache file path"
@@ -57367,10 +57351,6 @@ msgid "Elastic Limit"
 msgstr "Limite elástico"
 
 
-msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
-msgstr "Define quanto a mola deverá ser esticada ou comprimida de maneira a alterar sua posição de descanso."
-
-
 msgid "Attenuation constant"
 msgstr "Constante de atenuação."
 
@@ -58250,10 +58230,6 @@ msgid "Sequence Color Balance Data"
 msgstr "Dados de balanço de cor de sequência"
 
 
-msgid "Color balance parameters for a sequence strip and it's modifiers"
-msgstr "Parâmetros de balanço de cor para uma faixa de sequência e seus modificadores."
-
-
 msgid "Color balance gain (highlights)"
 msgstr "Balanço de cor de ganho (realces)."
 
@@ -59041,14 +59017,6 @@ msgstr "Contorno"
 
 msgid "Dash"
 msgstr "Mostrador"
-
-
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
 
 
 msgid "Overlay Mode"
@@ -61878,10 +61846,6 @@ msgid "Node Selected"
 msgstr "Nós selecionados"
 
 
-msgid "Noodle curving"
-msgstr "Curvamento do nódulo"
-
-
 msgid "Curving of the noodle"
 msgstr "Curvamento do nódulo."
 
@@ -64180,6 +64144,10 @@ msgstr "Sub-superfície"
 
 msgid "Offscreen Scale"
 msgstr "Escalonamento fora de tela"
+
+
+msgid "Transparency"
+msgstr "Transparência"
 
 
 msgid "Roughness Threshold"
@@ -73018,10 +72986,6 @@ msgstr "Configuração de tecla '%s' não pode ser removida."
 
 msgid "Settings are inside the Physics tab"
 msgstr "Configurações estão localizadas nos painéis do contexto de físicas."
-
-
-msgid "Sharp Edges"
-msgstr "Arestas ressaltadas"
 
 
 msgid "Coverage"

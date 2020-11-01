@@ -393,8 +393,16 @@ def createnodes(active_mat,texcoat, create_group_node, objekti, ind, is_new, udi
                     break
 
         # READ DATA.JSON FILE
+        platform = os.sys.platform
 
-        json_address = os.path.dirname(bpy.app.binary_path) + os.sep + str(bpy.app.version[0]) + '.' + str(bpy.app.version[1]) + os.sep + 'scripts' + os.sep + 'addons' + os.sep + 'io_coat3D' + os.sep + 'data.json'
+        if(platform == 'darwin'):
+            json_address = os.path.dirname(bpy.app.binary_path) + os.sep + str(bpy.app.version[0]) + '.' + str(bpy.app.version[1]) + os.sep + 'scripts' + os.sep + 'addons' + os.sep + 'io_coat3D' + os.sep + 'data.json'
+            json_address = json_address.replace('MacOS', 'Resources')
+
+        else:
+            json_address = os.path.dirname(bpy.app.binary_path) + os.sep + str(bpy.app.version[0]) + '.' + str(bpy.app.version[1]) + os.sep + 'scripts' + os.sep + 'addons' + os.sep + 'io_coat3D' + os.sep + 'data.json'
+
+
         with open(json_address, encoding='utf-8') as data_file:
             data = json.loads(data_file.read())
 

@@ -80,7 +80,8 @@ def check_missing():
 
 def check_unused():
     '''find assets that have been deleted from scene but their library is still present.'''
-
+    #this is obviously broken. Blender should take care of the extra data automaticlaly
+    return;
     used_libs = []
     for ob in bpy.data.objects:
         if ob.instance_collection is not None and ob.instance_collection.library is not None:
@@ -96,7 +97,7 @@ def check_unused():
                 used_libs.append(ps.settings.instance_collection)
 
     for l in bpy.data.libraries:
-        if l not in used_libs:
+        if l not in used_libs and l.getn('asset_data'):
             print('attempt to remove this library: ', l.filepath)
             # have to unlink all groups, since the file is a 'user' even if the groups aren't used at all...
             for user_id in l.users_id:
