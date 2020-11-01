@@ -32,7 +32,6 @@ extern "C" {
 #endif
 
 int GPU_max_texture_size(void);
-int GPU_max_texture_3d_size(void);
 int GPU_max_texture_layers(void);
 int GPU_max_textures(void);
 int GPU_max_textures_vert(void);
