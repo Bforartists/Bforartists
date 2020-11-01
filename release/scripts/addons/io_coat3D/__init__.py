@@ -60,7 +60,8 @@ from bpy.props import (
         PointerProperty,
         )
 
-foundExchangeFolder = False
+global_exchange_folder = ''
+foundExchangeFolder = True
 saved_exchange_folder = ''
 liveUpdate = True
 mTime = 0
@@ -71,13 +72,10 @@ def every_3_seconds():
     global global_exchange_folder
     global liveUpdate
     global mTime
-    global foundExchangeFolder
+    
+
     try:
         coat3D = bpy.context.scene.coat3D
- 
-
-        if(foundExchangeFolder == False):
-            foundExchangeFolder, global_exchange_folder = folders.InitFolders()
 
         Export_folder  = coat3D.exchangeFolder
         Export_folder += ('%sexport.txt' % (os.sep))
@@ -100,8 +98,6 @@ def every_3_seconds():
 
 @persistent
 def load_handler(dummy):
-    global foundExchangeFolder
-    foundExchangeFolder = False
     bpy.app.timers.register(every_3_seconds)
 
 def removeFile(exportfile):
@@ -507,8 +503,13 @@ class SCENE_OT_export(bpy.types.Operator):
         return {'FINISHED'}
 
     def execute(self, context):
+        global foundExchangeFolder
+        global global_exchange_folder
         global run_background_update
         run_background_update = False
+
+        foundExchangeFolder, global_exchange_folder = folders.InitFolders()
+
         for mesh in bpy.data.meshes:
             if (mesh.users == 0 and mesh.coat3D.name == '3DC'):
                 bpy.data.meshes.remove(mesh)
@@ -716,7 +717,7 @@ class SCENE_OT_export(bpy.types.Operator):
         if(coat3D.type == 'autopo'):
             coat3D.bring_retopo = True
             coat3D.bring_retopo_path = checkname
-            bpy.ops.export_scene.fbx(filepath=checkname, global_scale = 0.01, use_selection=True, use_mesh_modifiers=coat3D.exportmod, axis_forward='-Z', axis_up='Y')
+            bpy.ops.export_scene.fbx(filepath=checkname, global_scale = 1, use_selection=True, use_mesh_modifiers=coat3D.exportmod, axis_forward='-Z', axis_up='Y')
 
         elif (coat3D.type == 'vox'):
             coat3D.bring_retopo = False

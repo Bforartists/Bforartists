@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -6247,6 +6247,10 @@ msgid "Alphabetically sorts data-blocks - mainly objects in the scene (disable t
 msgstr "Ordina alfabeticamente i blocchi dati - principalmente gli oggetti della scena (disabilita per aumentare la velocità della vista)"
 
 
+msgid "Invert"
+msgstr "Inverti"
+
+
 msgid "Expression"
 msgstr "Espressione"
 
@@ -8941,28 +8945,12 @@ msgid "Data Depth"
 msgstr "Profondità Dati"
 
 
-msgid "Half"
-msgstr "Metà"
-
-
 msgid "Number"
 msgstr "Numero"
 
 
 msgid "Randomness"
 msgstr "Casualità"
-
-
-msgid "Cache Compression"
-msgstr "Compressione Cache"
-
-
-msgid "Fast but not so effective compression"
-msgstr "Compressione veloce ma non così efficace"
-
-
-msgid "Heavy"
-msgstr "Pesante"
 
 
 msgid "Slice along the X axis"
@@ -9711,10 +9699,6 @@ msgstr "Strati a Cipolla"
 
 msgid "Mask Layer"
 msgstr "Livello Maschera"
-
-
-msgid "Invert"
-msgstr "Inverti"
 
 
 msgid "Layer"
@@ -11378,6 +11362,10 @@ msgstr "Modalità Riempimento"
 
 msgid "Mode of filling curve"
 msgstr "Modalità di riempimento della curva"
+
+
+msgid "Half"
+msgstr "Metà"
 
 
 msgid "Path Length"
@@ -18779,10 +18767,6 @@ msgstr "Livello"
 
 msgid "Matte"
 msgstr "Mascherino"
-
-
-msgid "Forces"
-msgstr "Forze"
 
 
 msgid "Node"
@@ -30815,6 +30799,14 @@ msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
 
 
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
+
+
 msgid "Confirm on Release"
 msgstr "Conferma al Rilascio"
 
@@ -33519,6 +33511,10 @@ msgid "Select boundary edges around the selected faces"
 msgstr "Seleziona gli spigoli di contorno dell'insieme di facce selezionate"
 
 
+msgid "Sharp Edges"
+msgstr "Spigoli Vivi"
+
+
 msgid "Merge selected to other unselected vertices"
 msgstr "Unisce i vertici selezionati agli altri vertici non selezionati"
 
@@ -36173,6 +36169,10 @@ msgid "Fur Density"
 msgstr "Densità Pelliccia"
 
 
+msgid "Heavy"
+msgstr "Pesante"
+
+
 msgid "View %"
 msgstr "Vista %"
 
@@ -37221,6 +37221,10 @@ msgid "Close or open all items"
 msgstr "Chiude o apre tutti gli elementi"
 
 
+msgid "Use Active"
+msgstr "Usa Attivo"
+
+
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "Aggiungi Selezionato a Gruppo Chiavi"
@@ -37903,10 +37907,6 @@ msgstr "Copia Sistemi Particelle"
 
 msgid "Remove particle systems on the target objects"
 msgstr "Rimuovi il sistema particellare nell'oggetto obiettivo"
-
-
-msgid "Use Active"
-msgstr "Usa Attivo"
 
 
 msgid "Delete selected particles or keys"
@@ -44529,10 +44529,6 @@ msgid "Geometry Data"
 msgstr "Dati Geometria"
 
 
-msgid "Transparency"
-msgstr "Trasparenza"
-
-
 msgid "Paragraph"
 msgstr "Paragrafo"
 
@@ -44757,6 +44753,10 @@ msgstr "Molle"
 
 msgid "Viscoelastic Springs"
 msgstr "Molle Viscoelastiche"
+
+
+msgid "Forces"
+msgstr "Forze"
 
 
 msgid "Timing"
@@ -45841,8 +45841,16 @@ msgid "Collection of paths"
 msgstr "Raccolta di percorsi"
 
 
+msgid "Cache Compression"
+msgstr "Compressione Cache"
+
+
 msgid "No compression"
 msgstr "Nessuna compressione"
+
+
+msgid "Fast but not so effective compression"
+msgstr "Compressione veloce ma non così efficace"
 
 
 msgid "Cache file path"
@@ -49777,10 +49785,6 @@ msgid "Elastic Limit"
 msgstr "Limite Elastico"
 
 
-msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
-msgstr "Quanto la molla deve essere allungata / compressa al fine di modificare la sua lunghezza a riposo"
-
-
 msgid "Attenuation constant"
 msgstr "Costante di attenuazione"
 
@@ -50370,10 +50374,6 @@ msgid "Sequence Color Balance Data"
 msgstr "Bilanciamento Colore Sequenza"
 
 
-msgid "Color balance parameters for a sequence strip and it's modifiers"
-msgstr "Parametri per il bilanciamento del colore di uno spezzone sequenza e dei suoi modificatori"
-
-
 msgid "Color balance gain (highlights)"
 msgstr "Guadagno bilanciamento colore (alte luci)"
 
@@ -50881,14 +50881,6 @@ msgstr "Contorno"
 
 msgid "Dash"
 msgstr "Tratteggiato"
-
-
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
 
 
 msgid "Overlay Mode"
@@ -53182,10 +53174,6 @@ msgid "Node Selected"
 msgstr "Nodo Selezionato"
 
 
-msgid "Noodle curving"
-msgstr "Curvatura connessioni"
-
-
 msgid "Curving of the noodle"
 msgstr "Curvatura dei collegamenti fra nodi"
 
@@ -55216,6 +55204,10 @@ msgstr "Luce Mesh"
 
 msgid "Subsurface"
 msgstr "SubSuperficie"
+
+
+msgid "Transparency"
+msgstr "Trasparenza"
 
 
 msgid "Direct Light"
@@ -63354,10 +63346,6 @@ msgstr "Suono non incorporato"
 
 msgid "Settings are inside the Physics tab"
 msgstr "Le impostazioni sono nella scheda Fisica"
-
-
-msgid "Sharp Edges"
-msgstr "Spigoli Vivi"
 
 
 msgid "Coverage"
