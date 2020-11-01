@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -8111,6 +8111,10 @@ msgid "Alphabetically sorts data-blocks - mainly objects in the scene (disable t
 msgstr "Сортировать датаблоки по алфавиту — в основном объекты сцены (отключите для ускорения вьюпорта)"
 
 
+msgid "Invert"
+msgstr "Инвертировать"
+
+
 msgid "Multi-Word Fuzzy Filter"
 msgstr "Фильтр для фрагментов слов"
 
@@ -11768,44 +11772,12 @@ msgid "Data Depth"
 msgstr "Разрядность данных"
 
 
-msgid "Bit depth for writing all scalar (including vector) lower values reduce file size"
-msgstr "Битовая разрядность для записи всех чисел (включая вектора); чем ниже, тем меньше размер файла"
-
-
-msgid "Half"
-msgstr "Наполовину"
-
-
-msgid "Half float (16 bit data)"
-msgstr "Половинный нецелочисленный (16-битные данные)"
-
-
-msgid "Full float (32 bit data)"
-msgstr "Полный нецелочисленный (32-битные данные)"
-
-
 msgid "Number"
 msgstr "Число"
 
 
 msgid "Randomness"
 msgstr "Случайность"
-
-
-msgid "Cache Compression"
-msgstr "Сжатие кэша"
-
-
-msgid "Lite"
-msgstr "Лёгко"
-
-
-msgid "Fast but not so effective compression"
-msgstr "Быстрое, но малоэффективное сжатие"
-
-
-msgid "Heavy"
-msgstr "Сильно"
 
 
 msgid "Adjust slice direction according to the view direction"
@@ -13082,10 +13054,6 @@ msgstr "Слой визуализации"
 
 msgid "Only include Layer in this View Layer render output (leave blank to include always)"
 msgstr "Включать этот слой в этот вывод слоя визуализации (оставьте пустым, чтобы включать везде)"
-
-
-msgid "Invert"
-msgstr "Инвертировать"
 
 
 msgid "Layer"
@@ -16481,6 +16449,10 @@ msgid "Mode of filling curve"
 msgstr "Режим заполнения кривой"
 
 
+msgid "Half"
+msgstr "Наполовину"
+
+
 msgid "Path Length"
 msgstr "Длительность пути"
 
@@ -19437,10 +19409,6 @@ msgstr "Обнаруженная частота кадров видеофраг�
 
 msgid "Detected duration of movie clip in frames"
 msgstr "Длительность видеофрагмента в кадрах"
-
-
-msgid "Offset of footage first frame relative to it's file name (affects only how footage is loading, does not change data associated with a clip)"
-msgstr "Смещение первого кадра исходного видео по отношению к имени файла (влияет только на загрузку видео и не меняет данные, связанные с видеофрагментом)"
 
 
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
@@ -26744,10 +26712,6 @@ msgid "Parenting settings for masking element"
 msgstr "Настройки родительства для маскировки элемента"
 
 
-msgid "ID-block to which masking element would be parented to or to it's property"
-msgstr "ID-блок или  его свойство, для которого маскирующий элемент должен стать родителем"
-
-
 msgid "ID Type"
 msgstr "ID-тип"
 
@@ -27312,10 +27276,6 @@ msgstr "Разметка"
 
 msgid "Matte"
 msgstr "Маска"
-
-
-msgid "Forces"
-msgstr "Силы"
 
 
 msgid "Node Context Menu"
@@ -44220,6 +44180,14 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "Обрезать выделенный штрих до первой петли или пересечения"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
+msgid "White"
+msgstr "Белый"
+
+
 msgid "Confirm on Release"
 msgstr "Подтверждать при отжатии кнопки"
 
@@ -46194,10 +46162,6 @@ msgstr "Сначала пытаться сдвинуть растушёвку, �
 msgctxt "Operator"
 msgid "Slide Spline Curvature"
 msgstr "Сдвинуть кривизну сплайна"
-
-
-msgid "Slide a point on the spline to define it's curvature"
-msgstr "Сдвинуть точку вдоль сплайна для задания кривизны"
 
 
 msgctxt "Operator"
@@ -48182,6 +48146,10 @@ msgstr "Выделить граничные рёбра вокруг выделе
 
 msgid "Merge vertices based on their proximity"
 msgstr "Объединить точки, близкие друг к другу"
+
+
+msgid "Sharp Edges"
+msgstr "Острые рёбра"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -51676,6 +51644,10 @@ msgid "Fur Density"
 msgstr "Плотность меха"
 
 
+msgid "Heavy"
+msgstr "Сильно"
+
+
 msgid "View %"
 msgstr "Вид %"
 
@@ -53168,6 +53140,10 @@ msgid "Rename the active element"
 msgstr "Переименовать активный элемент"
 
 
+msgid "Use Active"
+msgstr "Использовать активную"
+
+
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "Добавить выбранное в ключевой набор"
@@ -54011,10 +53987,6 @@ msgstr "Копировать в локальное пространство ка
 
 msgid "Copy in world space"
 msgstr "Копировать в пространстве мира"
-
-
-msgid "Use Active"
-msgstr "Использовать активную"
 
 
 msgid "Use the active particle system from the context"
@@ -63428,10 +63400,6 @@ msgid "Geometry Data"
 msgstr "Геометрические данные"
 
 
-msgid "Transparency"
-msgstr "Прозрачность"
-
-
 msgid "Adjustments"
 msgstr "Корректировки"
 
@@ -63808,6 +63776,10 @@ msgstr "Пружины"
 
 msgid "Viscoelastic Springs"
 msgstr "Вязкоупругие пружины"
+
+
+msgid "Forces"
+msgstr "Силы"
 
 
 msgid "Timing"
@@ -65450,8 +65422,20 @@ msgid "Active point cache for physics simulations"
 msgstr "Активная точка кэша для физической симуляции"
 
 
+msgid "Cache Compression"
+msgstr "Сжатие кэша"
+
+
 msgid "No compression"
 msgstr "Без сжатия"
+
+
+msgid "Lite"
+msgstr "Лёгко"
+
+
+msgid "Fast but not so effective compression"
+msgstr "Быстрое, но малоэффективное сжатие"
 
 
 msgid "Cache file path"
@@ -71470,10 +71454,6 @@ msgid "Elastic Limit"
 msgstr "Предел упругости"
 
 
-msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
-msgstr "Изменение растяжения или сжатия пружины, необходимое для изменения её остальной длины"
-
-
 msgid "Light Direction"
 msgstr "Направление света"
 
@@ -72837,10 +72817,6 @@ msgid "Sequence Color Balance Data"
 msgstr "Данные цветового баланса последовательности"
 
 
-msgid "Color balance parameters for a sequence strip and it's modifiers"
-msgstr "Параметры цветового баланса для дорожки видеоредактора и её модификаторов"
-
-
 msgid "Color balance gain (highlights)"
 msgstr "Насыщенность цветового баланса (яркие участки)"
 
@@ -73978,16 +73954,8 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -76094,14 +76062,6 @@ msgid "Display UV coordinates in pixels rather than from 0.0 to 1.0"
 msgstr "Отображать UV-координаты в пикселях вместо относительных координат от 0.0 до 1.0"
 
 
-msgid "Display Smooth Edges"
-msgstr "Отображать гладкие рёбра"
-
-
-msgid "Display UV edges anti-aliased"
-msgstr "Отображать рёбра UV со сглаживанием"
-
-
 msgid "Display Stretch"
 msgstr "Отображать с растяжением"
 
@@ -77496,10 +77456,6 @@ msgstr "Подложка"
 
 msgid "Node Selected"
 msgstr "Выделенная нода"
-
-
-msgid "Noodle curving"
-msgstr "Искривление связей"
 
 
 msgid "Curving of the noodle"
@@ -80991,6 +80947,10 @@ msgid "Offscreen Scale"
 msgstr "Масштаб вне экрана"
 
 
+msgid "Transparency"
+msgstr "Прозрачность"
+
+
 msgid "Direct Light"
 msgstr "Прямые лучи"
 
@@ -83538,11 +83498,6 @@ msgstr "Скрыть выделенные кривые"
 msgctxt "Operator"
 msgid "Hide Unselected Curves"
 msgstr "Скрыть невыделенные кривые"
-
-
-msgctxt "Operator"
-msgid "Cursor Value"
-msgstr "Значение курсора"
 
 
 msgctxt "Operator"
@@ -94053,10 +94008,6 @@ msgstr "Группа манипуляторов «%s» не найдена!"
 
 msgid "Settings are inside the Physics tab"
 msgstr "Настройки можно задать на вкладке физики"
-
-
-msgid "Sharp Edges"
-msgstr "Острые рёбра"
 
 
 msgid "Coverage"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3530,10 +3530,6 @@ msgstr "Comprimir Dades"
 
 msgid "Wavelet"
 msgstr "Esborrar Rotació"
-
-
-msgid "Heavy"
-msgstr "Pesat"
 
 
 msgid "Delete"
@@ -13479,6 +13475,14 @@ msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Seleccionar fila"
@@ -16398,6 +16402,10 @@ msgstr "Image Displist"
 
 msgid "Fur Density"
 msgstr "Seleccionar fila"
+
+
+msgid "Heavy"
+msgstr "Pesat"
 
 
 msgid "View %"
@@ -20248,10 +20256,6 @@ msgid "Geometry Data"
 msgstr "Mostrar propietats de les arestes"
 
 
-msgid "Transparency"
-msgstr "Seleccionar connectats"
-
-
 msgid "Path Animation"
 msgstr "Finestra de Render"
 
@@ -22360,10 +22364,6 @@ msgid "Sequence Color Balance Data"
 msgstr "Render"
 
 
-msgid "Color balance parameters for a sequence strip and it's modifiers"
-msgstr "Començar a renderitzar una seqüència"
-
-
 msgid "Inverse Gain"
 msgstr "Mode d'Edició"
 
@@ -22658,14 +22658,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"
@@ -24594,6 +24586,10 @@ msgstr "Seleccionar connectats"
 
 msgid "Mesh Light"
 msgstr "Dreta"
+
+
+msgid "Transparency"
+msgstr "Seleccionar connectats"
 
 
 msgid "Tiles X"

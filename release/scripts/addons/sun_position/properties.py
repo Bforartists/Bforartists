@@ -162,7 +162,7 @@ class SunPosProperties(PropertyGroup):
 
     sky_texture: StringProperty(
         name="Sky Texture",
-        default="Sky Texture",
+        default="",
         description="Name of sky texture to be used",
         update=sun_update)
 

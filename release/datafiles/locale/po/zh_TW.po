@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -6269,6 +6269,10 @@ msgid "Sort Data-Blocks"
 msgstr "排序資料塊"
 
 
+msgid "Invert"
+msgstr "反轉"
+
+
 msgid "Driver for the value of a setting based on an external value"
 msgstr "基於外部值的設定驅動器"
 
@@ -9066,10 +9070,6 @@ msgid "Effective but slow compression"
 msgstr "有效但緩慢的壓縮"
 
 
-msgid "Half"
-msgstr "一半"
-
-
 msgid "Number"
 msgstr "數目"
 
@@ -9080,18 +9080,6 @@ msgstr "隨機度"
 
 msgid "Randomness factor for particle sampling"
 msgstr "用於粒子採樣的隨機係數"
-
-
-msgid "Cache Compression"
-msgstr "快取壓縮"
-
-
-msgid "Fast but not so effective compression"
-msgstr "快速，但沒有有效壓縮"
-
-
-msgid "Heavy"
-msgstr "濃密"
 
 
 msgid "Delete"
@@ -9988,10 +9976,6 @@ msgstr "繪製頂點混和係數"
 
 msgid "ViewLayer"
 msgstr "視圖層"
-
-
-msgid "Invert"
-msgstr "反轉"
 
 
 msgid "Layer"
@@ -11791,6 +11775,10 @@ msgstr "填補模式"
 
 msgid "Mode of filling curve"
 msgstr "填補曲線的模式"
+
+
+msgid "Half"
+msgstr "一半"
 
 
 msgid "Path Length"
@@ -13761,10 +13749,6 @@ msgstr "幀率"
 
 msgid "Detected duration of movie clip in frames"
 msgstr "偵測到的影片剪輯時間，以幀數計"
-
-
-msgid "Offset of footage first frame relative to it's file name (affects only how footage is loading, does not change data associated with a clip)"
-msgstr "連續鏡頭第一幀相對於其檔名的偏移 (僅影響連續鏡頭的載入方式，不會更改與剪輯相關的資料)"
 
 
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
@@ -18601,10 +18585,6 @@ msgid "Parenting settings for masking element"
 msgstr "遮罩元素的親代處理設定"
 
 
-msgid "ID-block to which masking element would be parented to or to it's property"
-msgstr "遮罩元素會被認為親代的 ID 塊或其屬性的 ID 塊"
-
-
 msgid "ID Type"
 msgstr "ID 類型"
 
@@ -18901,10 +18881,6 @@ msgstr "配置"
 
 msgid "Matte"
 msgstr "遮景片"
-
-
-msgid "Forces"
-msgstr "力"
 
 
 msgid "Node"
@@ -31404,6 +31380,14 @@ msgid "Snap Selection to Grid"
 msgstr "吸附選取項至格線"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgid "Confirm on Release"
 msgstr "放開時確認"
 
@@ -33880,6 +33864,10 @@ msgstr "選取邊界圈"
 
 msgid "Select boundary edges around the selected faces"
 msgstr "選取所選面周圍的邊界線"
+
+
+msgid "Sharp Edges"
+msgstr "銳利邊線"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -36455,6 +36443,10 @@ msgid "Fur Density"
 msgstr "毛髮密度"
 
 
+msgid "Heavy"
+msgstr "濃密"
+
+
 msgid "View %"
 msgstr "視圖 %"
 
@@ -37373,6 +37365,10 @@ msgid "Close or open all items"
 msgstr "關閉或開啟所有項目"
 
 
+msgid "Use Active"
+msgstr "使用作用項"
+
+
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
 msgstr "鍵處理集添加所選項"
@@ -37979,10 +37975,6 @@ msgstr "在各個物體的局部空間內複製"
 
 msgid "Copy in world space"
 msgstr "在世界空間中複製"
-
-
-msgid "Use Active"
-msgstr "使用作用項"
 
 
 msgid "Use the active particle system from the context"
@@ -44733,10 +44725,6 @@ msgid "Geometry Data"
 msgstr "幾何資料"
 
 
-msgid "Transparency"
-msgstr "透明"
-
-
 msgid "Paragraph"
 msgstr "段落"
 
@@ -44945,6 +44933,10 @@ msgstr "彈簧"
 
 msgid "Viscoelastic Springs"
 msgstr "黏彈性彈簧"
+
+
+msgid "Forces"
+msgstr "力"
 
 
 msgid "Border Collisions"
@@ -45938,8 +45930,16 @@ msgid "Enable wildcard globbing"
 msgstr "啟用萬用字元比對功能"
 
 
+msgid "Cache Compression"
+msgstr "快取壓縮"
+
+
 msgid "No compression"
 msgstr "無壓縮"
+
+
+msgid "Fast but not so effective compression"
+msgstr "快速，但沒有有效壓縮"
 
 
 msgid "Cache file path"
@@ -49550,10 +49550,6 @@ msgid "Elastic Limit"
 msgstr "彈性限度"
 
 
-msgid "How much the spring has to be stretched/compressed in order to change it's rest length"
-msgstr "彈簧要延伸/壓縮多少以改變其靜止長度"
-
-
 msgid "Attenuation constant"
 msgstr "衰減常數"
 
@@ -50286,10 +50282,6 @@ msgid "Sequence Color Balance Data"
 msgstr "序段色彩平衡資料"
 
 
-msgid "Color balance parameters for a sequence strip and it's modifiers"
-msgstr "一序段片段與其修改器的色彩平衡參數"
-
-
 msgid "Color balance gain (highlights)"
 msgstr "色彩平衡增益 (突顯)"
 
@@ -50945,14 +50937,6 @@ msgstr "外框"
 
 msgid "Dash"
 msgstr "虛線"
-
-
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgid "Overlay Mode"
@@ -53611,10 +53595,6 @@ msgid "Node Selected"
 msgstr "選取的節點"
 
 
-msgid "Noodle curving"
-msgstr "麵條彎曲"
-
-
 msgid "Curving of the noodle"
 msgstr "麵條的彎曲"
 
@@ -55580,6 +55560,10 @@ msgstr "網格光照"
 
 msgid "Subsurface"
 msgstr "次表面"
+
+
+msgid "Transparency"
+msgstr "透明"
 
 
 msgid "Tiles X"
@@ -62730,10 +62714,6 @@ msgstr "找不到「%s」Gizmo 群組！"
 
 msgid "Settings are inside the Physics tab"
 msgstr "設定值位於物理分頁內"
-
-
-msgid "Sharp Edges"
-msgstr "銳利邊線"
 
 
 msgid "Coverage"

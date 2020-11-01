@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -3180,6 +3180,10 @@ msgid "Source"
 msgstr "Izvor"
 
 
+msgid "Invert"
+msgstr "Obrnuto"
+
+
 msgid "Expression"
 msgstr "Izraz"
 
@@ -4541,20 +4545,8 @@ msgid "Effective but slow compression"
 msgstr "Efikasna, ali spora kompresija"
 
 
-msgid "Half"
-msgstr "Upola"
-
-
 msgid "Number"
 msgstr "Broj"
-
-
-msgid "Cache Compression"
-msgstr "Kompresija"
-
-
-msgid "Heavy"
-msgstr "Teško"
 
 
 msgid "p0"
@@ -4947,10 +4939,6 @@ msgstr "Prikaži tačke"
 
 msgid "Mask Layer"
 msgstr "Maskiraj sloj"
-
-
-msgid "Invert"
-msgstr "Obrnuto"
 
 
 msgid "Layer"
@@ -5944,6 +5932,10 @@ msgstr "Izvuci"
 
 msgid "Fill Mode"
 msgstr "Popuni rupe"
+
+
+msgid "Half"
+msgstr "Upola"
 
 
 msgid "Path Length"
@@ -15508,6 +15500,14 @@ msgid "Snap Selection to Grid"
 msgstr "Izabrano za mrežu"
 
 
+msgid "Black"
+msgstr "Crno"
+
+
+msgid "White"
+msgstr "Bela"
+
+
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "Pridruži grupu temena"
@@ -16774,6 +16774,10 @@ msgstr "Pokreni sve provere"
 
 msgid "Minimum distance between elements to merge"
 msgstr "Minimalno rastojanje među elementima za spajanje"
+
+
+msgid "Sharp Edges"
+msgstr "Oštre ivice"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -18075,6 +18079,10 @@ msgstr "Brzo krzno"
 
 msgid "Fur Density"
 msgstr "Gustina krzna"
+
+
+msgid "Heavy"
+msgstr "Teško"
 
 
 msgid "View %"
@@ -21868,10 +21876,6 @@ msgid "Geometry Data"
 msgstr "Geometrijski podaci"
 
 
-msgid "Transparency"
-msgstr "Providnost"
-
-
 msgid "Paragraph"
 msgstr "Paragraf"
 
@@ -22336,6 +22340,10 @@ msgstr "Neprijatelj"
 
 msgid "Target Particle System"
 msgstr "Sistem čestica mete"
+
+
+msgid "Cache Compression"
+msgstr "Kompresija"
 
 
 msgid "No compression"
@@ -24355,14 +24363,6 @@ msgid "Dash"
 msgstr "Isprekidano"
 
 
-msgid "Black"
-msgstr "Crno"
-
-
-msgid "White"
-msgstr "Bela"
-
-
 msgid "Alpha Channel"
 msgstr "Alfa kanal"
 
@@ -26195,6 +26195,10 @@ msgstr "Meš svetlo"
 
 msgid "Subsurface"
 msgstr "Izdeljena površ"
+
+
+msgid "Transparency"
+msgstr "Providnost"
 
 
 msgid "Tiles X"
@@ -29639,10 +29643,6 @@ msgstr "SistemČestica"
 
 msgid "Settings are inside the Physics tab"
 msgstr "Podešavanja su u jezičku fizike"
-
-
-msgid "Sharp Edges"
-msgstr "Oštre ivice"
 
 
 msgid "Coverage"

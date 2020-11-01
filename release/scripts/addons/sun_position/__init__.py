@@ -62,7 +62,6 @@ def register():
                         description="Sun Position Settings"))
     bpy.utils.register_class(properties.SunPosAddonPreferences)
     bpy.utils.register_class(ui_sun.SUNPOS_OT_AddPreset)
-    bpy.utils.register_class(ui_sun.SUNPOS_OT_DefaultPresets)
     bpy.utils.register_class(ui_sun.SUNPOS_MT_Presets)
     bpy.utils.register_class(ui_sun.SUNPOS_PT_Panel)
     bpy.utils.register_class(ui_sun.SUNPOS_PT_Location)
@@ -78,7 +77,6 @@ def unregister():
     bpy.utils.unregister_class(ui_sun.SUNPOS_PT_Location)
     bpy.utils.unregister_class(ui_sun.SUNPOS_PT_Time)
     bpy.utils.unregister_class(ui_sun.SUNPOS_MT_Presets)
-    bpy.utils.unregister_class(ui_sun.SUNPOS_OT_DefaultPresets)
     bpy.utils.unregister_class(ui_sun.SUNPOS_OT_AddPreset)
     bpy.utils.unregister_class(properties.SunPosAddonPreferences)
     del bpy.types.Scene.sun_pos_properties
