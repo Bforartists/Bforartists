@@ -104,7 +104,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
 
         if draw4L:
             row.use_property_decorate = False
-            row.prop(ob, "lock_rotations_4d", text="4L", emboss=False, icon='NONE')
+            row.prop(ob, "lock_rotations_4d", icon_only=True, emboss=False, icon='4L_ON' if ob.lock_rotations_4d else '4L_OFF')
         else:
             row.label(text="", icon='BLANK1')
 
