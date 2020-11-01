@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -365,6 +365,10 @@ msgid "Shading"
 msgstr "Itzalak"
 
 
+msgid "Invert"
+msgstr "Alderantzikatu"
+
+
 msgid "Force"
 msgstr "Indarra"
 
@@ -403,10 +407,6 @@ msgstr "Ezabatu"
 
 msgid "Onion Skinning"
 msgstr "Tipula-azapa"
-
-
-msgid "Invert"
-msgstr "Alderantzikatu"
 
 
 msgid "Layer"

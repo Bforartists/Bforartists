@@ -63,40 +63,6 @@ class SUNPOS_OT_AddPreset(AddPresetBase, Operator):
     preset_subdir = "operator/sun_position"
 
 
-class SUNPOS_OT_DefaultPresets(Operator):
-    '''Copy Sun Position default presets'''
-    bl_idname = "world.sunpos_default_presets"
-    bl_label = "Copy Sun Position default presets"
-
-    def execute(self, context):
-        preset_dirpath = bpy.utils.user_resource('SCRIPTS', path="presets/operator/sun_position", create=True)
-        #                       [month, day, time, UTC, lat, lon, dst]
-        presets = {"chongqing.py": [10, 1,  7.18,  8, 29.5583,  106.567, False],
-                   "sao_paulo.py": [9,  7,  12.0, -3,  -23.55, -46.6333, False],
-                   "kinshasa.py":  [6,  30, 12.0,  1,  -4.325,  15.3222, False],
-                   "london.py":    [6,  11, 12.0,  0, 51.5072,  -0.1275, True],
-                   "new_york.py":  [7,  4,  12.0, -5, 40.6611, -73.9439, True],
-                   "sydney.py":    [1,  26, 17.6, 10, -33.865,  151.209, False]}
-
-        script = '''import bpy
-sun_props = bpy.context.scene.sun_pos_properties
-
-sun_props.month = {:d}
-sun_props.day = {:d}
-sun_props.time = {:f}
-sun_props.UTC_zone = {:d}
-sun_props.latitude = {:f}
-sun_props.longitude = {:f}
-sun_props.use_daylight_savings = {}
-'''
-
-        for path, p in presets.items():
-            print(p)
-            with open(os.path.join(preset_dirpath, path), 'w') as f:
-                f.write(script.format(*p))
-
-        return {'FINISHED'}
-
 # -------------------------------------------------------------------
 #
 #   Draw the Sun Panel, sliders, et. al.
@@ -133,8 +99,20 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
 
         col = flow.column(align=True)
         col.label(text="Environment texture:")
-        col.prop_search(sp, "hdr_texture",
-                        context.scene.world.node_tree, "nodes", text="")
+
+        if context.scene.world is not None:
+            if context.scene.world.node_tree is not None:
+                col.prop_search(sp, "hdr_texture",
+                                context.scene.world.node_tree, "nodes")
+                col.prop_search(sp, "sky_texture",
+                                context.scene.world.node_tree, "nodes")
+            else:
+                col.label(text="Please activate Use Nodes in the World panel.",
+                          icon="ERROR")
+        else:
+            col.label(text="Please select World in the World panel.",
+                      icon="ERROR")
+
         col.separator()
 
         col = flow.column(align=True)
@@ -156,7 +134,7 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
         else:
             prop_text="Bind Texture to Sun "
         col.prop(sp, "bind_to_sun", toggle=True, icon="CONSTRAINT",
-                  text=prop_text)
+                 text=prop_text)
 
         row = col.row(align=True)
         row.enabled = not sp.bind_to_sun
@@ -168,7 +146,6 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
             row.menu(SUNPOS_MT_Presets.__name__, text=SUNPOS_MT_Presets.bl_label)
             row.operator(SUNPOS_OT_AddPreset.bl_idname, text="", icon='ADD')
             row.operator(SUNPOS_OT_AddPreset.bl_idname, text="", icon='REMOVE').remove_active = True
-            row.operator(SUNPOS_OT_DefaultPresets.bl_idname, text="", icon='FILE_REFRESH')
 
         col = layout.column(align=True)
         col.use_property_split = True
@@ -183,8 +160,16 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
                 col.prop(sp, "time_spread")
         col.separator()
 
-        col.prop_search(sp, "sky_texture", context.scene.world.node_tree,
-                        "nodes")
+        if context.scene.world is not None:
+            if context.scene.world.node_tree is not None:
+                col.prop_search(sp, "sky_texture",
+                                context.scene.world.node_tree, "nodes")
+            else:
+                col.label(text="Please activate Use Nodes in the World panel.",
+                          icon="ERROR")
+        else:
+            col.label(text="Please select World in the World panel.",
+                      icon="ERROR")
 
 class SUNPOS_PT_Location(bpy.types.Panel):
     bl_space_type = "PROPERTIES"

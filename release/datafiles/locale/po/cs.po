@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3312,6 +3312,10 @@ msgid "Source"
 msgstr "Zdroj"
 
 
+msgid "Invert"
+msgstr "Převrátit"
+
+
 msgid "Expression"
 msgstr "Komprimovat soubor"
 
@@ -4793,14 +4797,6 @@ msgid "Compression"
 msgstr "Komprimovat soubor"
 
 
-msgid "Cache Compression"
-msgstr "Komprimovat soubor"
-
-
-msgid "Heavy"
-msgstr "Záhlaví"
-
-
 msgid "Delete"
 msgstr "Smazat"
 
@@ -5075,10 +5071,6 @@ msgstr "Přiřadit rodiče"
 
 msgid "Mask Layer"
 msgstr "Vrstvy masky"
-
-
-msgid "Invert"
-msgstr "Převrátit"
 
 
 msgid "Layer"
@@ -16986,6 +16978,14 @@ msgid "Snap Selection to Grid"
 msgstr "Přichytit výběr k mřížce"
 
 
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Seskupený objekt"
@@ -18586,6 +18586,10 @@ msgstr "Vybrat podle typu"
 
 msgid "Select boundary edges around the selected faces"
 msgstr "Kopírovat typ vykreslení z aktivní plošky na ostatní vybrané plošky"
+
+
+msgid "Sharp Edges"
+msgstr "Ostré hrany..."
 
 
 msgid "Merge selected to other unselected vertices"
@@ -20389,6 +20393,10 @@ msgstr "Rychlá kožešina"
 
 msgid "Fur Density"
 msgstr "Hustota srsti"
+
+
+msgid "Heavy"
+msgstr "Záhlaví"
 
 
 msgid "View %"
@@ -25190,10 +25198,6 @@ msgid "Geometry Data"
 msgstr "Zobrazit:"
 
 
-msgid "Transparency"
-msgstr "Průhlednost"
-
-
 msgid "Path Animation"
 msgstr "Přehrát animaci"
 
@@ -25929,6 +25933,10 @@ msgstr "Nastavení částic"
 
 msgid "Target Particle System"
 msgstr "Částicový systém"
+
+
+msgid "Cache Compression"
+msgstr "Komprimovat soubor"
 
 
 msgid "No compression"
@@ -27907,10 +27915,6 @@ msgid "Sequence Color Balance Data"
 msgstr "Nelineární video editor"
 
 
-msgid "Color balance parameters for a sequence strip and it's modifiers"
-msgstr "První frame animace"
-
-
 msgid "Inverse Gain"
 msgstr "Prohodit"
 
@@ -28289,14 +28293,6 @@ msgstr "Zamknout ke kurzoru"
 
 msgid "Outline"
 msgstr "Obrys"
-
-
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
 
 
 msgid "Editing context being displayed"
@@ -30569,6 +30565,10 @@ msgstr "Limity"
 
 msgid "Mesh Light"
 msgstr "Světlo"
+
+
+msgid "Transparency"
+msgstr "Průhlednost"
 
 
 msgid "Tiles X"
@@ -33862,10 +33862,6 @@ msgstr "Přesunout modifikátor dolů v zásobníku modifikátorů"
 
 msgid "Property value not in enumeration"
 msgstr "Vlastnosti..."
-
-
-msgid "Sharp Edges"
-msgstr "Ostré hrany..."
 
 
 msgid "Coverage"

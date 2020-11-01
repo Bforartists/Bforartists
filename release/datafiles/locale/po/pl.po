@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Alpha (b'cf778a9e4237')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -4947,6 +4947,10 @@ msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
 msgstr "Blok danych reprezentujący dane źródłowe, zwykle ID_SCE (np. scena)"
 
 
+msgid "Invert"
+msgstr "Odwrócenie"
+
+
 msgid "Driver for the value of a setting based on an external value"
 msgstr "Sterownik dla wartości parametru bazującego na wartości zewnętrznej"
 
@@ -6210,10 +6214,6 @@ msgstr "Obiekt rodzica"
 
 msgid "Onion Skinning"
 msgstr "Pokrywanie wielowarstwowe"
-
-
-msgid "Invert"
-msgstr "Odwrócenie"
 
 
 msgid "Layer"
