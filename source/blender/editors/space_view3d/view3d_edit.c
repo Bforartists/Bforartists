@@ -3637,6 +3637,17 @@ static int view3d_zoom_border_exec(bContext *C, wmOperator *op)
     MEM_SAFE_FREE(depth_temp.depths);
   }
 
+  /* Resize border to the same ratio as the window. */
+  {
+    const float region_aspect = (float)region->winx / (float)region->winy;
+    if (((float)BLI_rcti_size_x(&rect) / (float)BLI_rcti_size_y(&rect)) < region_aspect) {
+      BLI_rcti_resize_x(&rect, (int)(BLI_rcti_size_y(&rect) * region_aspect));
+    }
+    else {
+      BLI_rcti_resize_y(&rect, (int)(BLI_rcti_size_x(&rect) / region_aspect));
+    }
+  }
+
   cent[0] = (((float)rect.xmin) + ((float)rect.xmax)) / 2;
   cent[1] = (((float)rect.ymin) + ((float)rect.ymax)) / 2;
 
@@ -3658,6 +3669,9 @@ static int view3d_zoom_border_exec(bContext *C, wmOperator *op)
     negate_v3_v3(new_ofs, p);
 
     new_dist = len_v3(dvec);
+
+    /* Account for the lens, without this a narrow lens zooms in too close. */
+    new_dist *= (v3d->lens / DEFAULT_SENSOR_WIDTH);
 
     /* ignore dist_range min */
     dist_range[0] = v3d->clip_start * 1.5f;
@@ -3899,6 +3913,7 @@ static void axis_set_view(bContext *C,
                           region,
                           smooth_viewtx,
                           &(const V3D_SmoothParams){
+                              .camera_old = camera_eval,
                               .ofs = ofs,
                               .quat = quat,
                               .dist = &dist,

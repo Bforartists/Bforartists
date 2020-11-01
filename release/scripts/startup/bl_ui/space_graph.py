@@ -490,6 +490,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")
         layout.operator("graph.sample", icon = "SAMPLE_KEYFRAMES")
         layout.operator("graph.bake", icon = "BAKE_CURVE")
+        layout.operator("graph.unbake")
 
         layout.separator()
 
