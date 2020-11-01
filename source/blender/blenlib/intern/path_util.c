@@ -531,7 +531,7 @@ void BLI_path_rel(char *file, const char *relfile)
     char *ptemp;
     /* fix missing volume name in relative base,
      * can happen with old recent-files.txt files */
-    get_default_root(temp);
+    BLI_windows_get_default_root_dir(temp);
     ptemp = &temp[2];
     if (relfile[0] != '\\' && relfile[0] != '/') {
       ptemp++;
@@ -639,7 +639,7 @@ void BLI_path_rel(char *file, const char *relfile)
     }
 
     /* don't copy the slash at the beginning */
-    r += BLI_strcpy_rlen(r, q + 1);
+    r += BLI_strncpy_rlen(r, q + 1, FILE_MAX - (r - res));
 
 #ifdef WIN32
     BLI_str_replace_char(res + 2, '/', '\\');
@@ -1025,7 +1025,7 @@ bool BLI_path_abs(char *path, const char *basepath)
    */
   if (!wasrelative && !BLI_path_is_abs(path)) {
     char *p = path;
-    get_default_root(tmp);
+    BLI_windows_get_default_root_dir(tmp);
     /* Get rid of the slashes at the beginning of the path. */
     while (ELEM(*p, '\\', '/')) {
       p++;
@@ -1389,7 +1389,7 @@ void BLI_make_file_string(const char *relabase, char *string, const char *dir, c
         string[3] = '\0';
       }
       else { /* we're out of luck here, guessing the first valid drive, usually c:\ */
-        get_default_root(string);
+        BLI_windows_get_default_root_dir(string);
       }
 
       /* ignore leading slashes */
