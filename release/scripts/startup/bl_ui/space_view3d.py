@@ -1262,6 +1262,7 @@ class VIEW3D_MT_view_pie_menus(Menu):
         layout.operator("wm.call_menu_pie", text = "Proportional Editing Falloff", icon = "MENU_PANEL").name = 'VIEW3D_MT_proportional_editing_falloff_pie'
         layout.operator("wm.call_menu_pie", text = "Sculpt Mask Edit", icon = "MENU_PANEL").name = 'VIEW3D_MT_sculpt_mask_edit_pie'
         layout.operator("wm.call_menu_pie", text = "Sculpt Faces Sets Edit", icon = "MENU_PANEL").name = 'VIEW3D_MT_sculpt_face_sets_edit_pie'
+        layout.operator("wm.call_menu_pie", text = "Automasking", icon = "MENU_PANEL").name = 'VIEW3D_MT_sculpt_automasking_pie'
         layout.operator("wm.call_menu_pie", text = "Weightpaint Vertexgroup Lock", icon = "MENU_PANEL").name = 'VIEW3D_MT_wpaint_vgroup_lock_pie'
 
         layout.separator()
