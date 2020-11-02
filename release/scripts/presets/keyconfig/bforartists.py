@@ -1,4 +1,4 @@
-keyconfig_version = (2, 92, 0)
+keyconfig_version = (2, 92, 1)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -5265,13 +5265,6 @@ keyconfig_data = \
        ("use_normals", True),
        ("keep_previous_mask", True),
        ("create_face_set", False),
-       ],
-      },
-     ),
-    ("wm.tool_set_by_id",
-     {"type": 'NONE', "value": 'PRESS', "repeat": True},
-     {"properties":
-      [("name", 'builtin.box_mask'),
        ],
       },
      ),
