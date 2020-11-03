@@ -1006,7 +1006,7 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
 
   col = uiLayoutColumn(layout, false);
   uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
-  uiItemR(col, &ptr, "vmesh_method", 0, IFACE_("Intersection Type"), ICON_NONE);
+  uiItemR(col, &ptr, "vmesh_method", 0, IFACE_("Intersections"), ICON_NONE);
 
   uiItemR(layout, &ptr, "face_strength_mode", 0, IFACE_("Face Strength"), ICON_NONE);
 
