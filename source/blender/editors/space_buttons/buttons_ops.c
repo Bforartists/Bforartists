@@ -385,7 +385,7 @@ void BUTTONS_OT_file_browse(wmOperatorType *ot)
 void BUTTONS_OT_directory_browse(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Accept";
+  ot->name = "Browse";
   ot->description =
       "Open a directory browser, Hold Shift to open the file, Alt to browse containing directory";
   ot->idname = "BUTTONS_OT_directory_browse";
