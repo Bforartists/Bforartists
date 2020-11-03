@@ -645,15 +645,23 @@ class CLIP_PT_tools_solve(CLIP_PT_tracking_panel, Panel):
         col.prop(tracking_object, "keyframe_a")
         col.prop(tracking_object, "keyframe_b")
 
-        col = layout.column(heading="Refine", align=True)
+        col = layout.column(align=True)
+        col.use_property_split = False
+        col.label(text = "Refine")
         col.active = tracking_object.is_camera
-        col.prop(settings, "refine_intrinsics_focal_length", text="Focal Length")
-        col.prop(settings, "refine_intrinsics_principal_point", text="Optical Center")
-
-        col.prop(settings, "refine_intrinsics_radial_distortion", text="Radial Distortion")
+        row = col.row()
+        row.separator()
+        row.prop(settings, "refine_intrinsics_focal_length", text="Focal Length")
+        row = col.row()
+        row.separator()
+        row.prop(settings, "refine_intrinsics_principal_point", text="Optical Center")
+        row = col.row()
+        row.separator()
+        row.prop(settings, "refine_intrinsics_radial_distortion", text="Radial Distortion")
 
         row = col.row()
         row.active = (camera.distortion_model == 'BROWN')
+        row.separator()
         row.prop(settings, "refine_intrinsics_tangential_distortion", text="Tangential Distortion")
 
         col = layout.column(align=True)
