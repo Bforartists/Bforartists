@@ -2076,7 +2076,7 @@ static void rna_def_softbody(BlenderRNA *brna)
   RNA_def_property_boolean_funcs(
       prop, "rna_SoftBodySettings_stiff_quads_get", "rna_SoftBodySettings_stiff_quads_set");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "Stiff Quads", "Add diagonal springs on 4-gons");
+  RNA_def_property_ui_text(prop, "Stiff Quads", "Add diagonal springs on quads");
   RNA_def_property_update(prop, 0, "rna_softbody_update");
 
   prop = RNA_def_property(srna, "use_edge_collision", PROP_BOOLEAN, PROP_NONE);
