@@ -939,7 +939,9 @@ static void rna_def_trackingSettings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Refine Tangential",
-      "Refine tangential coefficients of distortion model during camera solving");
+      "Refine tangential coefficients of distortion model during camera solving\n"
+      "Activates with camera lens distortion model Brown\n"
+      "See sidebar > Track > Camera > Lens Distortion ");
 
   /* tool settings */
 
