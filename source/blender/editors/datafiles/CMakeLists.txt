@@ -1516,9 +1516,9 @@ con_followpath
 con_pivot
 con_shrinkwrap
 con_action
-#def_icon_blank(1532
-#def_icon_blank(1533
-#def_icon_blank(1534
+follow_leader
+goal
+protect
 
 # ------------------------- row 27  --------------------------*/
 
@@ -1572,9 +1572,9 @@ anchor_left
 anchor_right
 anchor_top
 #def_icon_blank(1587
-#def_icon_blank(1588
-#def_icon_blank(1589
-#def_icon_blank(1593
+avoid
+fight
+flock
 outliner_data_volume
 
 # ------------------------- row 28 --------------------------*/
