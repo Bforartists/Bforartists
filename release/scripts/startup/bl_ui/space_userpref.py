@@ -659,13 +659,25 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
         layout.separator()
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
-        flow.use_property_split = False
-        flow.prop(system, "use_sequencer_disk_cache")
-        flow.use_property_split = True
-        flow.prop(system, "sequencer_disk_cache_dir")
-        flow.prop(system, "sequencer_disk_cache_size_limit")
-        flow.prop(system, "sequencer_disk_cache_compression")
+        
+        split = flow.split()
+        col = split.column()
+        col.use_property_split = False
+        col.prop(system, "use_sequencer_disk_cache")
+        col = split.column()
+        if system.use_sequencer_disk_cache:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+            row = flow.row()
+            row.separator()
+            row.prop(system, "sequencer_disk_cache_dir")
+            row = flow.row()
+            row.separator()
+            row.prop(system, "sequencer_disk_cache_size_limit")
+            row = flow.row()
+            row.separator()
+            row.prop(system, "sequencer_disk_cache_compression")            
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')    
 
         layout.separator()
 
