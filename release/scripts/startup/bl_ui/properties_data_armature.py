@@ -226,17 +226,15 @@ class DATA_PT_pose_library(ArmatureButtonsPanel, Panel):
 
             if pose_marker_active is not None:
                 col.operator("poselib.pose_remove", icon='REMOVE', text="")
-                col.operator(
-                    "poselib.apply_pose",
-                    icon='ZOOM_SELECTED',
-                    text="",
-                ).pose_index = poselib.pose_markers.active_index
 
             col.operator("poselib.action_sanitize", icon='HELP', text="")  # XXX: put in menu?
 
             if pose_marker_active is not None:
                 col.operator("poselib.pose_move", icon='TRIA_UP', text="").direction = 'UP'
                 col.operator("poselib.pose_move", icon='TRIA_DOWN', text="").direction = 'DOWN'
+                
+            if pose_marker_active is not None:
+                layout.operator("poselib.apply_pose").pose_index = poselib.pose_markers.active_index
 
 
 class DATA_PT_iksolver_itasc(ArmatureButtonsPanel, Panel):
