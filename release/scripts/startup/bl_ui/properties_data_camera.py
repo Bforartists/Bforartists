@@ -84,12 +84,12 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
         col.separator()
 
         if cam.type == 'PERSP':
+            col.prop(cam, "lens_unit")
             if cam.lens_unit == 'MILLIMETERS':
                 col.prop(cam, "lens")
             elif cam.lens_unit == 'FOV':
                 col.prop(cam, "angle")
-            col.prop(cam, "lens_unit")
-
+            
         elif cam.type == 'ORTHO':
             col.prop(cam, "ortho_scale")
 
@@ -111,11 +111,12 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
                     sub.prop(ccam, "longitude_min", text="Longitude Min")
                     sub.prop(ccam, "longitude_max", text="Max")
             elif engine in {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}:
+                col.prop(cam, "lens_unit")
                 if cam.lens_unit == 'MILLIMETERS':
                     col.prop(cam, "lens")
                 elif cam.lens_unit == 'FOV':
                     col.prop(cam, "angle")
-                col.prop(cam, "lens_unit")
+                
 
         col = layout.column()
         col.separator()
