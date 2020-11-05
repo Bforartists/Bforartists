@@ -575,14 +575,14 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
 
       if (tot) {
         uiItemL(layout,
-                tot == 1 ? IFACE_("Vertex Data") : IFACE_("Vertices Data"),
+                tot == 1 ? IFACE_("Vertex Data Mean") : IFACE_("Vertices Data Mean"),
                 ICON_NONE); /* bfa - put the term "mean" into the label */
 
         row = uiLayoutRow(layout, false);
         uiItemS(row); /* bfa - separator indent */
         col = uiLayoutColumn(row, false);
 
-        uiItemL(col, tot == 1 ? IFACE_("Bevel Weight") : IFACE_("Bevel Weight Mean"), ICON_NONE);
+        uiItemL(col, IFACE_("Bevel Weight"), ICON_NONE);
 
         col = uiLayoutColumn(row, false);
         subblock = uiLayoutGetBlock(col);
@@ -654,16 +654,16 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         UI_block_layout_set_current(block, layout);
       }
       if (totedgedata) {
-        uiItemL(layout, totedgedata == 1 ? IFACE_("Edge Data") : IFACE_("Edges Data"), ICON_NONE);
+        uiItemL(layout,
+                totedgedata == 1 ? IFACE_("Edge Data Mean") : IFACE_("Edges Data Mean"),
+                ICON_NONE);
 
         row = uiLayoutRow(layout, false);
         uiItemS(row); /* bfa - separator indent */
         col = uiLayoutColumn(row, false);
 
-        uiItemL(col,
-                totedgedata == 1 ? IFACE_("Bevel Weight") : IFACE_("Bevel Weight Mean"),
-                ICON_NONE);
-        uiItemL(col, totedgedata == 1 ? IFACE_("Crease") : IFACE_("Crease Mean"), ICON_NONE);
+        uiItemL(col, IFACE_("Bevel Weight"), ICON_NONE);
+        uiItemL(col, IFACE_("Crease"), ICON_NONE);
 
         col = uiLayoutColumn(row, false);
         subblock = uiLayoutGetBlock(col);
