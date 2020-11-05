@@ -6066,6 +6066,7 @@ keyconfig_data = \
     ("AUTOIK_CHAIN_LEN_UP", {"type": 'WHEELDOWNMOUSE', "value": 'PRESS', "shift": True}, None),
     ("AUTOIK_CHAIN_LEN_DOWN", {"type": 'WHEELUPMOUSE', "value": 'PRESS', "shift": True}, None),
     ("INSERTOFS_TOGGLE_DIR", {"type": 'T', "value": 'PRESS', "repeat": True}, None),
+    ("AUTOCONSTRAINPLANE", {"type": 'S', "value": 'PRESS'}, None),
     ],
    },
   ),
