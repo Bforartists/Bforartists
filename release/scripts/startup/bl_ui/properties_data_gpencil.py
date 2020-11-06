@@ -330,19 +330,21 @@ class DATA_PT_gpencil_vertex_groups(ObjectButtonsPanel, Panel):
         col = row.column(align=True)
         col.operator("object.vertex_group_add", icon='ADD', text="")
         col.operator("object.vertex_group_remove", icon='REMOVE', text="").all = False
+        
+        if ob.mode in {'EDIT_GPENCIL', 'SCULPT_GPENCIL'}:
 
-        if ob.vertex_groups:
-            row = layout.row()
+            if ob.vertex_groups:
+                row = layout.row()
 
-            sub = row.row(align=True)
-            sub.operator("gpencil.vertex_group_assign", text="Assign")
-            sub.operator("gpencil.vertex_group_remove_from", text="Remove")
+                sub = row.row(align=True)
+                sub.operator("gpencil.vertex_group_assign", text="Assign")
+                sub.operator("gpencil.vertex_group_remove_from", text="Remove")
 
-            sub = row.row(align=True)
-            sub.operator("gpencil.vertex_group_select", text="Select")
-            sub.operator("gpencil.vertex_group_deselect", text="Deselect")
+                sub = row.row(align=True)
+                sub.operator("gpencil.vertex_group_select", text="Select")
+                sub.operator("gpencil.vertex_group_deselect", text="Deselect")
 
-            layout.prop(context.tool_settings, "vertex_group_weight", text="Weight")
+                layout.prop(context.tool_settings, "vertex_group_weight", text="Weight")
 
 
 class DATA_PT_gpencil_strokes(DataButtonsPanel, Panel):
