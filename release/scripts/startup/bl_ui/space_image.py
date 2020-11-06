@@ -218,6 +218,7 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_pinned", text = "Pinned", icon = "PINNED")
         layout.operator("uv.select_split", text = "Split", icon = "SPLIT")
         layout.operator("uv.select_overlap", text = "Overlap", icon = "OVERLAP")
+        layout.operator("uv.shortest_path_pick", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
 
         layout.separator()
 
