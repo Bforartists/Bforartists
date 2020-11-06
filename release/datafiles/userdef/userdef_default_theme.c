@@ -317,6 +317,7 @@ const bTheme U_theme_default = {
       .sub_back = RGBA(0x00000026),
     },
     .grid = RGBA(0x8c8c8cff),
+    .view_overlay = RGBA(0xffffff00),
     .wire = RGBA(0x000000ff),
     .wire_edit = RGBA(0x000000ff),
     .select = RGBA(0xf15800ff),
