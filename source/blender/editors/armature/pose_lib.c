@@ -282,7 +282,7 @@ static int poselib_unlink_exec(bContext *C, wmOperator *UNUSED(op))
 void POSELIB_OT_unlink(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Unlink Pose Library";
+  ot->name = "Remove Pose Library";
   ot->idname = "POSELIB_OT_unlink";
   ot->description = "Remove Pose Library from active Object";
 
