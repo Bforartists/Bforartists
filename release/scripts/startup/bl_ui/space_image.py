@@ -518,7 +518,7 @@ class IMAGE_MT_uvs(Menu):
         layout.operator("uv.pin", icon = "PINNED").clear = False
         layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
         layout.menu("IMAGE_MT_uvs_merge")
-        layout.menu("IMAGE_MT_uvs_split")
+        layout.operator("uv.select_split", text="Split Selection", icon = 'SPLIT')
 
         layout.separator()
 
