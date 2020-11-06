@@ -741,7 +741,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
       case ID_VO:
         return N_("Data Browser\nBrowse Volume Data to be linked");
       case ID_SIM:
-        return N_("Browse Simulation to be linked");
+        return N_("Data Browser\nBrowse Simulation to be linked");
 
       /* Use generic text. */
       case ID_LI:
@@ -753,7 +753,7 @@ static const char *template_id_browse_tip(const StructRNA *type)
         break;
     }
   }
-  return N_("Browse ID data to be linked");
+  return N_("Data Browser\nChoose a Font to use");
 }
 
 /**
