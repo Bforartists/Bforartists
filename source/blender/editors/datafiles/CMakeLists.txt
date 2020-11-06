@@ -1041,7 +1041,7 @@ select_sideofactive
 select_ungrouped_verts
 angle
 
-#def_icon_blank(1060
+mod_mask_off
 node_fileoutput
 snap_midpoint
 snap_perpendicular

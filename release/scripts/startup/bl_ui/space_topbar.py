@@ -154,7 +154,7 @@ class TOPBAR_PT_gpencil_layers(Panel):
             srow = col.row(align=True)
             srow.prop(gpl, "opacity", text="Opacity", slider=True)
             srow.prop(gpl, "use_mask_layer", text="",
-                      icon='MOD_MASK' if gpl.use_mask_layer else 'LAYER_ACTIVE')
+                      icon='MOD_MASK' if gpl.use_mask_layer else 'MOD_MASK_OFF')
 
             srow = col.row(align=True)
             srow.prop(gpl, "use_lights")
@@ -531,7 +531,7 @@ class TOPBAR_MT_edit(Menu):
         layout.operator("wm.batch_rename", icon='RENAME')
 
         layout.separator()
-       
+
         layout.operator("preferences.app_template_install", text="Install Application Template", icon = "APPTEMPLATE")
 
         layout.separator()

@@ -711,7 +711,7 @@ class GPENCIL_UL_layer(UIList):
 
             row = layout.row(align=True)
 
-            icon_mask = 'MOD_MASK' if gpl.use_mask_layer else 'LAYER_ACTIVE'
+            icon_mask = 'MOD_MASK' if gpl.use_mask_layer else 'MOD_MASK_OFF'
 
             row.prop(gpl, "use_mask_layer", text="", icon=icon_mask, emboss=False)
 
