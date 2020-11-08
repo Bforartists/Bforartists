@@ -30,15 +30,11 @@ from bpy.props import (
     IntProperty
 )
 
+# For VARS
 from . import internals
 
+# For FUNCTIONS
 from .internals import (
-    layer_collections,
-    rto_history,
-    qcd_history,
-    qcd_slots,
-    qcd_collection_state,
-    update_collection_tree,
     update_property_group,
     generate_state,
     get_modifiers,
@@ -97,20 +93,20 @@ class QCDAllBase():
         cls.view_layer = context.view_layer.name
         cls.orig_active_object = context.view_layer.objects.active
 
-        if not cls.view_layer in qcd_history:
-            qcd_history[cls.view_layer] = []
+        if not cls.view_layer in internals.qcd_history:
+            internals.qcd_history[cls.view_layer] = []
 
-        cls.history = qcd_history[cls.view_layer]
+        cls.history = internals.qcd_history[cls.view_layer]
 
         cls.locked = get_locked_objs(context)
 
     @classmethod
     def apply_history(cls):
-        for x, item in enumerate(layer_collections.values()):
+        for x, item in enumerate(internals.layer_collections.values()):
             item["ptr"].exclude = cls.history[x]
 
         # clear rto history
-        del qcd_history[cls.view_layer]
+        del internals.qcd_history[cls.view_layer]
 
         internals.qcd_collection_state.clear()
         cls.history = None
@@ -133,7 +129,6 @@ class QCDAllBase():
 
     @classmethod
     def clear(cls):
-
         cls.context = None
         cls.view_layer = ""
         cls.history = None
@@ -153,8 +148,6 @@ class EnableAllQCDSlotsMeta(Operator):
     bl_idname = "view3d.enable_all_qcd_slots_meta"
 
     def invoke(self, context, event):
-        global qcd_slots
-        global layer_collections
         qab = QCDAllBase
 
         modifiers = get_modifiers(event)
@@ -192,12 +185,10 @@ class EnableAllQCDSlots(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
         qab = QCDAllBase
 
         # validate qcd slots
-        if not dict(qcd_slots):
+        if not dict(internals.qcd_slots):
             if qab.meta_op:
                 qab.meta_report = "No QCD slots."
             else:
@@ -210,8 +201,8 @@ class EnableAllQCDSlots(Operator):
         if not qab.history:
             keep_history = False
 
-            for laycol in layer_collections.values():
-                is_qcd_slot = qcd_slots.contains(name=laycol["name"])
+            for laycol in internals.layer_collections.values():
+                is_qcd_slot = internals.qcd_slots.contains(name=laycol["name"])
 
                 qab.history.append(laycol["ptr"].exclude)
 
@@ -222,7 +213,7 @@ class EnableAllQCDSlots(Operator):
 
             if not keep_history:
                 # clear rto history
-                del qcd_history[qab.view_layer]
+                del internals.qcd_history[qab.view_layer]
                 qab.clear()
 
                 if qab.meta_op:
@@ -243,6 +234,7 @@ class EnableAllQCDSlots(Operator):
 
         return {'FINISHED'}
 
+
 class EnableAllQCDSlotsIsolated(Operator):
     '''Toggles between the current state and all enabled (non-QCD collections disabled)'''
     bl_label = "Enable All QCD Slots Isolated"
@@ -250,21 +242,19 @@ class EnableAllQCDSlotsIsolated(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
         qab = QCDAllBase
 
         # validate qcd slots
-        if not dict(qcd_slots):
+        if not dict(internals.qcd_slots):
             self.report({"INFO"}, "No QCD slots.")
 
             return {'CANCELLED'}
 
         qab.init(context)
 
-        if qab.locked.objs and not qcd_slots.object_in_slots(qab.orig_active_object):
+        if qab.locked.objs and not internals.qcd_slots.object_in_slots(qab.orig_active_object):
             # clear rto history
-            del qcd_history[qab.view_layer]
+            del internals.qcd_history[qab.view_layer]
             qab.clear()
 
             self.report({"WARNING"}, "Cannot execute.  The active object would be lost.")
@@ -274,8 +264,8 @@ class EnableAllQCDSlotsIsolated(Operator):
         if not qab.history:
             keep_history = False
 
-            for laycol in layer_collections.values():
-                is_qcd_slot = qcd_slots.contains(name=laycol["name"])
+            for laycol in internals.layer_collections.values():
+                is_qcd_slot = internals.qcd_slots.contains(name=laycol["name"])
 
                 qab.history.append(laycol["ptr"].exclude)
 
@@ -290,7 +280,7 @@ class EnableAllQCDSlotsIsolated(Operator):
 
             if not keep_history:
                 # clear rto history
-                del qcd_history[qab.view_layer]
+                del internals.qcd_history[qab.view_layer]
                 qab.clear()
 
                 self.report({"INFO"}, "All QCD slots are already enabled and isolated.")
@@ -314,21 +304,19 @@ class DisableAllNonQCDSlots(Operator):
 
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
         qab = QCDAllBase
 
         # validate qcd slots
-        if not dict(qcd_slots):
+        if not dict(internals.qcd_slots):
             self.report({"INFO"}, "No QCD slots.")
 
             return {'CANCELLED'}
 
         qab.init(context)
 
-        if qab.locked.objs and not qcd_slots.object_in_slots(qab.orig_active_object):
+        if qab.locked.objs and not internals.qcd_slots.object_in_slots(qab.orig_active_object):
             # clear rto history
-            del qcd_history[qab.view_layer]
+            del internals.qcd_history[qab.view_layer]
             qab.clear()
 
             self.report({"WARNING"}, "Cannot execute.  The active object would be lost.")
@@ -338,8 +326,8 @@ class DisableAllNonQCDSlots(Operator):
         if not qab.history:
             keep_history = False
 
-            for laycol in layer_collections.values():
-                is_qcd_slot = qcd_slots.contains(name=laycol["name"])
+            for laycol in internals.layer_collections.values():
+                is_qcd_slot = internals.qcd_slots.contains(name=laycol["name"])
 
                 qab.history.append(laycol["ptr"].exclude)
 
@@ -349,7 +337,7 @@ class DisableAllNonQCDSlots(Operator):
 
             if not keep_history:
                 # clear rto history
-                del qcd_history[qab.view_layer]
+                del internals.qcd_history[qab.view_layer]
                 qab.clear()
 
                 self.report({"INFO"}, "All non QCD slots are already disabled.")
@@ -374,15 +362,13 @@ class DisableAllCollections(Operator):
 
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
         qab = QCDAllBase
 
         qab.init(context)
 
         if qab.locked.objs:
             # clear rto history
-            del qcd_history[qab.view_layer]
+            del internals.qcd_history[qab.view_layer]
             qab.clear()
 
             self.report({"WARNING"}, "Cannot execute.  The active object would be lost.")
@@ -390,19 +376,19 @@ class DisableAllCollections(Operator):
             return {'CANCELLED'}
 
         if not qab.history:
-            for laycol in layer_collections.values():
+            for laycol in internals.layer_collections.values():
 
                 qab.history.append(laycol["ptr"].exclude)
 
             if all(qab.history): # no collections are enabled
                 # clear rto history
-                del qcd_history[qab.view_layer]
+                del internals.qcd_history[qab.view_layer]
                 qab.clear()
 
                 self.report({"INFO"}, "All collections are already disabled.")
                 return {'CANCELLED'}
 
-            for laycol in layer_collections.values():
+            for laycol in internals.layer_collections.values():
                 laycol["ptr"].exclude = True
 
             internals.qcd_collection_state.clear()
@@ -424,8 +410,6 @@ class SelectAllQCDObjects(Operator):
 
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
         qab = QCDAllBase
 
         if context.mode != 'OBJECT':
@@ -444,7 +428,7 @@ class SelectAllQCDObjects(Operator):
 
         bpy.ops.object.select_all(action='DESELECT')
 
-        for slot, collection_name in qcd_slots:
+        for slot, collection_name in internals.qcd_slots:
             select_collection_objects(
                 is_master_collection=False,
                 collection_name=collection_name,
@@ -454,7 +438,7 @@ class SelectAllQCDObjects(Operator):
                 )
 
         if context.selected_objects == orig_selected_objects:
-            for slot, collection_name in qcd_slots:
+            for slot, collection_name in internals.qcd_slots:
                 select_collection_objects(
                     is_master_collection=False,
                     collection_name=collection_name,
@@ -473,14 +457,12 @@ class DiscardQCDHistory(Operator):
     bl_idname = "view3d.discard_qcd_history"
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
         qab = QCDAllBase
 
         view_layer = context.view_layer.name
 
-        if view_layer in qcd_history:
-            del qcd_history[view_layer]
+        if view_layer in internals.qcd_history:
+            del internals.qcd_history[view_layer]
             qab.clear()
 
         return {'FINISHED'}
@@ -496,18 +478,16 @@ class MoveToQCDSlot(Operator):
     toggle: BoolProperty()
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
 
         selected_objects = get_move_selection()
         active_object = get_move_active()
         internals.move_triggered = True
 
         qcd_laycol = None
-        slot_name = qcd_slots.get_name(self.slot)
+        slot_name = internals.qcd_slots.get_name(self.slot)
 
         if slot_name:
-            qcd_laycol = layer_collections[slot_name]["ptr"]
+            qcd_laycol = internals.layer_collections[slot_name]["ptr"]
 
         else:
             return {'CANCELLED'}
@@ -543,7 +523,7 @@ class MoveToQCDSlot(Operator):
                     qcd_laycol.collection.objects.link(obj)
 
                 for collection in obj.users_collection:
-                    qcd_idx = qcd_slots.get_idx(collection.name)
+                    qcd_idx = internals.qcd_slots.get_idx(collection.name)
                     if qcd_idx != self.slot:
                         collection.objects.unlink(obj)
 
@@ -571,12 +551,8 @@ class ViewMoveQCDSlot(Operator):
 
     @classmethod
     def description(cls, context, properties):
-        global qcd_slots
-
         slot_name = qcd_slots.get_name(properties.slot)
-
         slot_string = f"QCD Slot {properties.slot}: \"{slot_name}\"\n"
-
         hotkey_string = (
             "  * LMB - Isolate slot.\n"
             "  * Shift+LMB - Toggle slot.\n"
@@ -589,9 +565,6 @@ class ViewMoveQCDSlot(Operator):
         return f"{slot_string}{hotkey_string}"
 
     def invoke(self, context, event):
-        global layer_collections
-        global qcd_history
-
         modifiers = get_modifiers(event)
 
         if modifiers == {"shift"}:
@@ -606,7 +579,7 @@ class ViewMoveQCDSlot(Operator):
         elif modifiers == {"alt"}:
             select_collection_objects(
                 is_master_collection=False,
-                collection_name=qcd_slots.get_name(self.slot),
+                collection_name=internals.qcd_slots.get_name(self.slot),
                 replace=True,
                 nested=False
                 )
@@ -614,7 +587,7 @@ class ViewMoveQCDSlot(Operator):
         elif modifiers == {"alt", "shift"}:
             select_collection_objects(
                 is_master_collection=False,
-                collection_name=qcd_slots.get_name(self.slot),
+                collection_name=internals.qcd_slots.get_name(self.slot),
                 replace=False,
                 nested=False
                 )
@@ -634,15 +607,11 @@ class ViewQCDSlot(Operator):
     toggle: BoolProperty()
 
     def execute(self, context):
-        global qcd_slots
-        global layer_collections
-        global rto_history
-
         qcd_laycol = None
-        slot_name = qcd_slots.get_name(self.slot)
+        slot_name = internals.qcd_slots.get_name(self.slot)
 
         if slot_name:
-            qcd_laycol = layer_collections[slot_name]["ptr"]
+            qcd_laycol = internals.layer_collections[slot_name]["ptr"]
 
         else:
             return {'CANCELLED'}
@@ -663,7 +632,7 @@ class ViewQCDSlot(Operator):
 
         else:
             # exclude all collections
-            for laycol in layer_collections.values():
+            for laycol in internals.layer_collections.values():
                 if laycol["name"] != qcd_laycol.name:
                     # prevent exclusion if locked objects in this collection
                     if set(locked.objs).isdisjoint(laycol["ptr"].collection.objects):
@@ -702,10 +671,10 @@ class ViewQCDSlot(Operator):
         update_qcd_header()
 
         view_layer = context.view_layer.name
-        if view_layer in rto_history["exclude"]:
-            del rto_history["exclude"][view_layer]
-        if view_layer in rto_history["exclude_all"]:
-            del rto_history["exclude_all"][view_layer]
+        if view_layer in internals.rto_history["exclude"]:
+            del internals.rto_history["exclude"][view_layer]
+        if view_layer in internals.rto_history["exclude_all"]:
+            del internals.rto_history["exclude_all"][view_layer]
 
 
         return {'FINISHED'}
@@ -724,8 +693,6 @@ class RenumerateQCDSlots(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def invoke(self, context, event):
-        global qcd_slots
-
         modifiers = get_modifiers(event)
 
         beginning = False
@@ -741,7 +708,7 @@ class RenumerateQCDSlots(Operator):
         if 'shift' in modifiers:
             constrain=True
 
-        qcd_slots.renumerate(beginning=beginning,
+        internals.qcd_slots.renumerate(beginning=beginning,
                              depth_first=depth_first,
                              constrain=constrain)
 

@@ -59,6 +59,8 @@
 #define BEVEL_SMALL_ANG DEG2RADF(10.0f)
 /** Difference in dot products that corresponds to 10 degree difference between vectors. */
 #define BEVEL_SMALL_ANG_DOT 1 - cosf(BEVEL_SMALL_ANG)
+/** Difference in dot products that corresponds to 2.0 degree difference between vectors. */
+#define BEVEL_EPSILON_ANG_DOT 1 - cosf(BEVEL_EPSILON_ANG)
 #define BEVEL_MAX_ADJUST_PCT 10.0f
 #define BEVEL_MAX_AUTO_ADJUST_PCT 300.0f
 #define BEVEL_MATCH_SPEC_WEIGHT 0.2
@@ -301,14 +303,14 @@ typedef enum {
 } FKind;
 
 /** Helper for keeping track of angle kind. */
-enum {
+typedef enum AngleKind {
   /** Angle less than 180 degrees. */
   ANGLE_SMALLER = -1,
   /** 180 degree angle. */
   ANGLE_STRAIGHT = 0,
   /** Angle greater than 180 degrees. */
   ANGLE_LARGER = 1,
-};
+} AngleKind;
 
 /** Bevel parameters and state. */
 typedef struct BevelParams {
@@ -430,6 +432,18 @@ static bool nearly_parallel(const float d1[3], const float d2[3])
   float ang = angle_v3v3(d1, d2);
 
   return (fabsf(ang) < BEVEL_EPSILON_ANG) || (fabsf(ang - (float)M_PI) < BEVEL_EPSILON_ANG);
+}
+
+/**
+ * \return True if d1 and d2 are parallel or nearly parallel.
+ */
+static bool nearly_parallel_normalized(const float d1[3], const float d2[3])
+{
+  BLI_ASSERT_UNIT_V3(d1);
+  BLI_ASSERT_UNIT_V3(d2);
+
+  const float direction_dot = dot_v3v3(d1, d2);
+  return compare_ff(fabsf(direction_dot), 1.0f, BEVEL_EPSILON_ANG_DOT);
 }
 
 /* Make a new BoundVert of the given kind, inserting it at the end of the circular linked
@@ -1087,7 +1101,7 @@ static bool is_outside_edge(EdgeHalf *e, const float co[3], BMVert **ret_closer_
 }
 
 /* Return whether the angle is less than, equal to, or larger than 180 degrees. */
-static int edges_angle_kind(EdgeHalf *e1, EdgeHalf *e2, BMVert *v)
+static AngleKind edges_angle_kind(EdgeHalf *e1, EdgeHalf *e2, BMVert *v)
 {
   BMVert *v1 = BM_edge_other_vert(e1->e, v);
   BMVert *v2 = BM_edge_other_vert(e2->e, v);
@@ -1096,6 +1110,12 @@ static int edges_angle_kind(EdgeHalf *e1, EdgeHalf *e2, BMVert *v)
   sub_v3_v3v3(dir2, v->co, v2->co);
   normalize_v3(dir1);
   normalize_v3(dir2);
+
+  /* First check for in-line edges using a simpler test. */
+  if (nearly_parallel_normalized(dir1, dir2)) {
+    return ANGLE_STRAIGHT;
+  }
+
   /* Angles are in [0,pi]. Need to compare cross product with normal to see if they are reflex. */
   float cross[3];
   cross_v3_v3v3(cross, dir1, dir2);
@@ -1110,11 +1130,8 @@ static int edges_angle_kind(EdgeHalf *e1, EdgeHalf *e2, BMVert *v)
   else {
     no = v->no;
   }
-  float dot = dot_v3v3(cross, no);
-  if (fabsf(dot) < BEVEL_EPSILON_BIG) {
-    return ANGLE_STRAIGHT;
-  }
-  if (dot < 0.0f) {
+
+  if (dot_v3v3(cross, no) < 0.0f) {
     return ANGLE_LARGER;
   }
   return ANGLE_SMALLER;
@@ -1382,7 +1399,7 @@ static void offset_meet(BevelParams *bp,
     normalize_v3(norm_perp2);
 
     float off1a[3], off1b[3], off2a[3], off2b[3];
-    if (bp->offset_type == BEVEL_AMT_PERCENT || bp->offset_type == BEVEL_AMT_ABSOLUTE) {
+    if (ELEM(bp->offset_type, BEVEL_AMT_PERCENT, BEVEL_AMT_ABSOLUTE)) {
       offset_meet_lines_percent_or_absolute(bp, e1, e2, v, off1a, off1b, off2a, off2b);
     }
     else {
@@ -1539,7 +1556,7 @@ static bool offset_on_edge_between(BevelParams *bp,
   float meet1[3], meet2[3];
   bool ok1 = offset_meet_edge(e1, emid, v, meet1, &ang1);
   bool ok2 = offset_meet_edge(emid, e2, v, meet2, &ang2);
-  if (bp->offset_type == BEVEL_AMT_PERCENT || bp->offset_type == BEVEL_AMT_ABSOLUTE) {
+  if (ELEM(bp->offset_type, BEVEL_AMT_PERCENT, BEVEL_AMT_ABSOLUTE)) {
     BMVert *v2 = BM_edge_other_vert(emid->e, v);
     if (bp->offset_type == BEVEL_AMT_PERCENT) {
       interp_v3_v3v3(meetco, v->co, v2->co, bp->offset / 100.0f);
@@ -2141,7 +2158,7 @@ static void snap_to_superellipsoid(float co[3], const float super_r, bool midlin
   float x = a;
   float y = b;
   float z = c;
-  if (r == PRO_SQUARE_R || r == PRO_SQUARE_IN_R) {
+  if (ELEM(r, PRO_SQUARE_R, PRO_SQUARE_IN_R)) {
     /* Will only be called for 2d profile. */
     BLI_assert(fabsf(z) < BEVEL_EPSILON);
     z = 0.0f;
@@ -2424,7 +2441,7 @@ static void bevel_harden_normals(BevelParams *bp, BMesh *bm)
   BMFace *f;
   BM_ITER_MESH (f, &fiter, bm, BM_FACES_OF_MESH) {
     FKind fkind = get_face_kind(bp, f);
-    if (fkind == F_ORIG || fkind == F_RECON) {
+    if (ELEM(fkind, F_ORIG, F_RECON)) {
       continue;
     }
     BMIter liter;
@@ -3010,7 +3027,7 @@ static void build_boundary(BevelParams *bp, BevVert *bv, bool construct)
       for (EdgeHalf *e3 = e->next; e3 != e2; e3 = e3->next) {
         e3->leftv = e3->rightv = v;
       }
-      int ang_kind = edges_angle_kind(e, e2, bv->v);
+      AngleKind ang_kind = edges_angle_kind(e, e2, bv->v);
 
       /* Are we doing special mitering?
        * There can only be one outer reflex angle, so only one outer miter,
@@ -3088,7 +3105,7 @@ static void build_boundary(BevelParams *bp, BevVert *bv, bool construct)
       }
     }
     else { /* construct == false. */
-      int ang_kind = edges_angle_kind(e, e2, bv->v);
+      AngleKind ang_kind = edges_angle_kind(e, e2, bv->v);
       if ((miter_outer != BEVEL_MITER_SHARP && !emiter && ang_kind == ANGLE_LARGER) ||
           (miter_inner != BEVEL_MITER_SHARP && ang_kind == ANGLE_SMALLER)) {
         if (ang_kind == ANGLE_LARGER) {
@@ -4551,13 +4568,13 @@ static void snap_to_pipe_profile(BoundVert *vpipe, bool midline, float co[3])
   sub_v3_v3v3(edir, e->e->v1->co, e->e->v2->co);
   plane_from_point_normal_v3(plane, co, edir);
 
-  float va0[3], vb0[3], vmid0[3];
-  closest_to_plane_v3(va0, plane, pro->start);
-  closest_to_plane_v3(vb0, plane, pro->end);
-  closest_to_plane_v3(vmid0, plane, pro->middle);
+  float start_plane[3], end_plane[3], middle_plane[3];
+  closest_to_plane_v3(start_plane, plane, pro->start);
+  closest_to_plane_v3(end_plane, plane, pro->end);
+  closest_to_plane_v3(middle_plane, plane, pro->middle);
 
   float m[4][4], minv[4][4];
-  if (make_unit_square_map(va0, vmid0, vb0, m) && invert_m4_m4(minv, m)) {
+  if (make_unit_square_map(start_plane, middle_plane, end_plane, m) && invert_m4_m4(minv, m)) {
     /* Transform co and project it onto superellipse. */
     float p[3];
     mul_v3_m4v3(p, minv, co);
@@ -4568,9 +4585,9 @@ static void snap_to_pipe_profile(BoundVert *vpipe, bool midline, float co[3])
     copy_v3_v3(co, snap);
   }
   else {
-    /* Planar case: just snap to line va0--vb0. */
+    /* Planar case: just snap to line start_plane--end_plane. */
     float p[3];
-    closest_to_line_segment_v3(p, co, va0, vb0);
+    closest_to_line_segment_v3(p, co, start_plane, end_plane);
     copy_v3_v3(co, p);
   }
 }
@@ -4602,7 +4619,7 @@ static VMesh *pipe_adj_vmesh(BevelParams *bp, BevVert *bv, BoundVert *vpipe)
         if (bp->profile_type == BEVEL_PROFILE_CUSTOM) {
           /* Find both profile vertices that correspond to this point. */
           float *profile_point_pipe1, *profile_point_pipe2, f;
-          if (i == ipipe1 || i == ipipe2) {
+          if (ELEM(i, ipipe1, ipipe2)) {
             if (n_bndv == 3 && i == ipipe1) {
               /* This part of the vmesh is the triangular corner between the two pipe profiles. */
               int ring = max_ii(j, k);
@@ -4911,7 +4928,7 @@ static VMesh *square_out_adj_vmesh(BevelParams *bp, BevVert *bv)
     copy_v3_v3(bndco, bndv->nv.co);
     EdgeHalf *e1 = bndv->efirst;
     EdgeHalf *e2 = bndv->elast;
-    int ang_kind = ANGLE_STRAIGHT;
+    AngleKind ang_kind = ANGLE_STRAIGHT;
     if (e1 && e2) {
       ang_kind = edges_angle_kind(e1, e2, bv->v);
     }
@@ -6212,7 +6229,7 @@ static BevVert *bevel_vert_construct(BMesh *bm, BevelParams *bp, BMVert *v)
           break;
         }
       }
-      if (bp->offset_type != BEVEL_AMT_PERCENT && bp->offset_type != BEVEL_AMT_ABSOLUTE) {
+      if (!ELEM(bp->offset_type, BEVEL_AMT_PERCENT, BEVEL_AMT_ABSOLUTE)) {
         e->offset_r_spec = e->offset_l_spec;
       }
       if (bp->use_weights) {
@@ -6754,7 +6771,7 @@ static void bevel_build_edge_polygons(BMesh *bm, BevelParams *bp, BMEdge *bme)
     BMIter iter;
     BMLoop *l;
     BM_ITER_ELEM (l, &iter, r_f, BM_LOOPS_OF_FACE) {
-      if (l->v == verts[0] || l->v == verts[2]) {
+      if (ELEM(l->v, verts[0], verts[2])) {
         BM_elem_flag_enable(l, BM_ELEM_LONG_TAG);
       }
     }
@@ -7215,7 +7232,7 @@ static float geometry_collide_offset(BevelParams *bp, EdgeHalf *eb)
   EdgeHalf *ec;
   BMVert *vd;
   float kc;
-  if (bp->offset_type == BEVEL_AMT_PERCENT || bp->offset_type == BEVEL_AMT_ABSOLUTE) {
+  if (ELEM(bp->offset_type, BEVEL_AMT_PERCENT, BEVEL_AMT_ABSOLUTE)) {
     if (ea->is_bev && ebother != NULL && ebother->prev->is_bev) {
       if (bp->offset_type == BEVEL_AMT_PERCENT) {
         return 50.0f;

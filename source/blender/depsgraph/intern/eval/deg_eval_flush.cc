@@ -69,8 +69,7 @@
 // catch usage of invalid state.
 #undef INVALIDATE_ON_FLUSH
 
-namespace blender {
-namespace deg {
+namespace blender::deg {
 
 enum {
   ID_STATE_NONE = 0,
@@ -145,8 +144,7 @@ inline void flush_handle_component_node(IDNode *id_node,
    * special component where we don't want all operations to be tagged.
    *
    * TODO(sergey): Make this a more generic solution. */
-  if (comp_node->type != NodeType::PARTICLE_SETTINGS &&
-      comp_node->type != NodeType::PARTICLE_SYSTEM) {
+  if (!ELEM(comp_node->type, NodeType::PARTICLE_SETTINGS, NodeType::PARTICLE_SYSTEM)) {
     for (OperationNode *op : comp_node->operations) {
       op->flag |= DEPSOP_FLAG_NEEDS_UPDATE;
     }
@@ -411,5 +409,4 @@ void deg_graph_clear_tags(Depsgraph *graph)
   graph->time_source->tagged_for_update = false;
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg

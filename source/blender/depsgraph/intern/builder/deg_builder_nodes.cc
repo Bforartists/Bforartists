@@ -96,7 +96,6 @@
 #include "BKE_pointcache.h"
 #include "BKE_rigidbody.h"
 #include "BKE_scene.h"
-#include "BKE_sequencer.h"
 #include "BKE_shader_fx.h"
 #include "BKE_simulation.h"
 #include "BKE_sound.h"
@@ -110,6 +109,8 @@
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
 
+#include "SEQ_sequencer.h"
+
 #include "intern/builder/deg_builder.h"
 #include "intern/depsgraph.h"
 #include "intern/depsgraph_type.h"
@@ -119,8 +120,7 @@
 #include "intern/node/deg_node_id.h"
 #include "intern/node/deg_node_operation.h"
 
-namespace blender {
-namespace deg {
+namespace blender::deg {
 
 /* ************ */
 /* Node Builder */
@@ -1199,7 +1199,7 @@ void DepsgraphNodeBuilder::build_particle_systems(Object *object, bool is_object
     /* Keyed particle targets. */
     if (ELEM(part->phystype, PART_PHYS_KEYED, PART_PHYS_BOIDS)) {
       LISTBASE_FOREACH (ParticleTarget *, particle_target, &psys->targets) {
-        if (particle_target->ob == nullptr || particle_target->ob == object) {
+        if (ELEM(particle_target->ob, nullptr, object)) {
           continue;
         }
         build_object(-1, particle_target->ob, DEG_ID_LINKED_INDIRECTLY, is_object_visible);
@@ -1929,5 +1929,4 @@ void DepsgraphNodeBuilder::constraint_walk(bConstraint * /*con*/,
   }
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg

@@ -60,13 +60,14 @@
 #include "BKE_main.h"
 #include "BKE_packedFile.h"
 #include "BKE_scene.h"
-#include "BKE_sequencer.h"
 #include "BKE_sound.h"
 
 #include "DEG_depsgraph.h"
 #include "DEG_depsgraph_query.h"
 
 #include "BLO_read_write.h"
+
+#include "SEQ_sequencer.h"
 
 static void sound_free_audio(bSound *sound);
 
@@ -211,6 +212,8 @@ IDTypeInfo IDType_ID_SO = {
     .blend_read_data = sound_blend_read_data,
     .blend_read_lib = sound_blend_read_lib,
     .blend_read_expand = sound_blend_read_expand,
+
+    .blend_read_undo_preserve = NULL,
 };
 
 #ifdef WITH_AUDASPACE

@@ -659,7 +659,7 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
         layout.separator()
 
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        
+
         split = flow.split()
         col = split.column()
         col.use_property_split = False
@@ -675,9 +675,9 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
             row.prop(system, "sequencer_disk_cache_size_limit")
             row = flow.row()
             row.separator()
-            row.prop(system, "sequencer_disk_cache_compression")            
+            row.prop(system, "sequencer_disk_cache_compression")
         else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')    
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         layout.separator()
 
@@ -1604,10 +1604,6 @@ class USERPREF_PT_navigation_fly_walk(NavigationPanel, CenterAlignMixIn, Panel):
         inputs = prefs.inputs
 
         layout.row().prop(inputs, "navigation_mode", expand=True)
-
-        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-        flow.use_property_split = False
-        flow.prop(inputs, "use_camera_lock_parent")
 
 
 class USERPREF_PT_navigation_fly_walk_navigation(NavigationPanel, CenterAlignMixIn, Panel):

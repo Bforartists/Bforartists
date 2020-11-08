@@ -29,7 +29,6 @@
 #include "BKE_key.h"
 #include "BKE_movieclip.h"
 #include "BKE_node.h"
-#include "BKE_sequencer.h"
 #include "BKE_studiolight.h"
 
 #include "ED_text.h"
@@ -54,6 +53,8 @@
 #include "RNA_define.h"
 
 #include "rna_internal.h"
+
+#include "SEQ_sequencer.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -312,6 +313,22 @@ static const EnumPropertyItem multiview_camera_items[] = {
 #undef V3D_S3D_CAMERA_S3D
 #undef V3D_S3D_CAMERA_VIEWS
 
+const EnumPropertyItem rna_enum_fileselect_params_sort_items[] = {
+    {FILE_SORT_ALPHA, "FILE_SORT_ALPHA", ICON_NONE, "Name", "Sort the file list alphabetically"},
+    {FILE_SORT_EXTENSION,
+     "FILE_SORT_EXTENSION",
+     ICON_NONE,
+     "Extension",
+     "Sort the file list by extension/type"},
+    {FILE_SORT_TIME,
+     "FILE_SORT_TIME",
+     ICON_NONE,
+     "Modified Date",
+     "Sort files by modification time"},
+    {FILE_SORT_SIZE, "FILE_SORT_SIZE", ICON_NONE, "Size", "Sort files by size"},
+    {0, NULL, 0, NULL, NULL},
+};
+
 #ifndef RNA_RUNTIME
 static const EnumPropertyItem stereo3d_eye_items[] = {
     {STEREO_LEFT_ID, "LEFT_EYE", ICON_NONE, "Left Eye"},
@@ -466,22 +483,6 @@ static const EnumPropertyItem fileselectparams_recursion_level_items[] = {
      0,
      "Three Levels",
      "List all sub-directories' content, three levels of recursion"},
-    {0, NULL, 0, NULL, NULL},
-};
-
-const EnumPropertyItem rna_enum_file_sort_items[] = {
-    {FILE_SORT_ALPHA, "FILE_SORT_ALPHA", ICON_NONE, "Name", "Sort the file list alphabetically"},
-    {FILE_SORT_EXTENSION,
-     "FILE_SORT_EXTENSION",
-     ICON_NONE,
-     "Extension",
-     "Sort the file list by extension/type"},
-    {FILE_SORT_TIME,
-     "FILE_SORT_TIME",
-     ICON_NONE,
-     "Modified Date",
-     "Sort files by modification time"},
-    {FILE_SORT_SIZE, "FILE_SORT_SIZE", ICON_NONE, "Size", "Sort files by size"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -2354,8 +2355,8 @@ static void rna_SpaceClipEditor_lock_selection_update(Main *UNUSED(bmain),
 {
   SpaceClip *sc = (SpaceClip *)(ptr->data);
 
-  sc->xlockof = 0.f;
-  sc->ylockof = 0.f;
+  sc->xlockof = 0.0f;
+  sc->ylockof = 0.0f;
 }
 
 static void rna_SpaceClipEditor_view_type_update(Main *UNUSED(bmain),
@@ -3059,6 +3060,7 @@ static void rna_def_space_outliner(BlenderRNA *brna)
       {SO_FILTER_OB_HIDDEN, "HIDDEN", 0, "Hidden", "Show hidden objects"},
       {SO_FILTER_OB_SELECTED, "SELECTED", 0, "Selected", "Show selected objects"},
       {SO_FILTER_OB_ACTIVE, "ACTIVE", 0, "Active", "Show only the active object"},
+      {SO_FILTER_OB_SELECTABLE, "SELECTABLE", 0, "Selectable", "Show only selectable objects"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5847,7 +5849,7 @@ static void rna_def_fileselect_params(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "sort_method", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "sort");
-  RNA_def_property_enum_items(prop, rna_enum_file_sort_items);
+  RNA_def_property_enum_items(prop, rna_enum_fileselect_params_sort_items);
   RNA_def_property_ui_text(prop, "Sort", "");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_FILE_PARAMS, NULL);
 

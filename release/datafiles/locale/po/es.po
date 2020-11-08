@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -41810,24 +41810,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Adherir los fotogramas clave seleccionados al fotograma actual"
 
 
-msgid "Nearest Frame"
-msgstr "Fotograma más cercano"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Adherir los fotogramas clave seleccionados al fotograma (entero) más cercano (usar para corregir desplazamientos accidentales a sub fotogramas)"
 
 
-msgid "Nearest Second"
-msgstr "Segundo más cercano"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Adherir los fotogramas clave seleccionados al segundo más cercano"
-
-
-msgid "Nearest Marker"
-msgstr "Marcador más cercano"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -49940,10 +49928,6 @@ msgstr "Aplicar promedio ponderado de movimiento para hacer que las curvas-f sel
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Adherir los fotogramas clave seleccionados a los tiempos o valores especificados"
-
-
-msgid "Cursor Value"
-msgstr "Valor del cursor"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -82162,12 +82146,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "Adherir a intervalos de 1.0 segundos"
 
 
+msgid "Nearest Frame"
+msgstr "Fotograma más cercano"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "Adherir a los fotogramas reales (tiempo de la acción de ANL)"
 
 
+msgid "Nearest Second"
+msgstr "Segundo más cercano"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "Adherir a los segundos reales (tiempo de la acción de ANL)"
+
+
+msgid "Nearest Marker"
+msgstr "Marcador más cercano"
 
 
 msgid "Snap to nearest marker"
@@ -92487,26 +92483,6 @@ msgstr "Proteger canales"
 msgctxt "Operator"
 msgid "Unprotect Channels"
 msgstr "Desproteger canales"
-
-
-msgctxt "Operator"
-msgid "Current Frame"
-msgstr "Fotograma actual"
-
-
-msgctxt "Operator"
-msgid "Nearest Frame"
-msgstr "Fotog. más cercano"
-
-
-msgctxt "Operator"
-msgid "Nearest Second"
-msgstr "Segundo más cercano"
-
-
-msgctxt "Operator"
-msgid "Nearest Marker"
-msgstr "Marc. más cercano"
 
 
 msgid "Recursions"

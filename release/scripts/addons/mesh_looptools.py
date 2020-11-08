@@ -23,7 +23,7 @@
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch, Vladimir Spivak (cwolf3d)",
-    "version": (4, 7, 3),
+    "version": (4, 7, 4),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
@@ -805,6 +805,21 @@ def move_verts(object, bm, mapping, move, lock, influence):
             mat = object.matrix_world.copy()
         mat_inv = mat.inverted()
 
+    # get all mirror vectors
+    mirror_Vectors = []
+    if object.data.use_mirror_x:
+        mirror_Vectors.append(mathutils.Vector((-1, 1, 1)))
+    if object.data.use_mirror_y:
+        mirror_Vectors.append(mathutils.Vector((1, -1, 1)))
+    if object.data.use_mirror_x and object.data.use_mirror_y:
+        mirror_Vectors.append(mathutils.Vector((-1, -1, 1)))
+    z_mirror_Vectors = []
+    if object.data.use_mirror_z:
+        for v in mirror_Vectors:
+            z_mirror_Vectors.append(mathutils.Vector((1, 1, -1)) * v)
+        mirror_Vectors.extend(z_mirror_Vectors)
+        mirror_Vectors.append(mathutils.Vector((1, 1, -1)))
+
     for loop in move:
         for index, loc in loop:
             if mapping:
@@ -827,7 +842,14 @@ def move_verts(object, bm, mapping, move, lock, influence):
             else:
                 new_loc = loc * (influence / 100) + \
                                  bm.verts[index].co * ((100 - influence) / 100)
+
+            for vert in bm.verts:
+                for mirror_Vector in mirror_Vectors:
+                    if vert.co == mirror_Vector * bm.verts[index].co:
+                        vert.co = mirror_Vector * new_loc
+
             bm.verts[index].co = new_loc
+
     bm.normal_update()
     object.data.update()
 

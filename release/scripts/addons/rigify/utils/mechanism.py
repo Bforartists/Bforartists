@@ -39,9 +39,9 @@ def _set_default_attr(obj, options, attr, value):
         options.setdefault(attr, value)
 
 def make_constraint(
-        owner, type, target=None, subtarget=None, *, insert_index=None,
+        owner, con_type, target=None, subtarget=None, *, insert_index=None,
         space=None, track_axis=None, use_xyz=None, use_limit_xyz=None, invert_xyz=None,
-        **options):
+        targets=None, **options):
     """
     Creates and initializes constraint of the specified type for the owner bone.
 
@@ -55,11 +55,30 @@ def make_constraint(
       use_limit_xyz    : list of 3 items is assigned to use_limit_x/y/z options
       invert_xyz       : list of 3 items is assigned to invert_x, invert_y and invert_z options
       min/max_x/y/z    : a corresponding use_(min/max/limit)_(x/y/z) option is set to True
+      targets          : list of strings, tuples or dicts describing Armature constraint targets
 
     Other keyword arguments are directly assigned to the constraint options.
     Returns the newly created constraint.
     """
-    con = owner.constraints.new(type)
+    con = owner.constraints.new(con_type)
+
+    # For Armature constraints, allow passing a "targets" list as a keyword argument.
+    if targets is not None:
+        assert con.type == 'ARMATURE'
+        for target_info in targets:
+            con_target = con.targets.new()
+            con_target.target = owner.id_data
+            # List element can be a string, a tuple or a dictionary.
+            if isinstance(target_info, str):
+                con_target.subtarget = target_info
+            elif isinstance(target_info, tuple):
+                if len(target_info) == 2:
+                    con_target.subtarget, con_target.weight = target_info
+                else:
+                    con_target.target, con_target.subtarget, con_target.weight = target_info
+            else:
+                for key, val in target_info.items():
+                    setattr(con_target, key, val)
 
     if insert_index is not None:
         owner.constraints.move(len(owner.constraints)-1, insert_index)
