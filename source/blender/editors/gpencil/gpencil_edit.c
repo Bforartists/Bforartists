@@ -1042,7 +1042,7 @@ static void gpencil_add_move_points(bGPDframe *gpf, bGPDstroke *gps)
   /* review points in the middle of stroke to create new strokes */
   for (int i = 0; i < gps->totpoints; i++) {
     /* skip first and last point */
-    if ((i == 0) || (i == gps->totpoints - 1)) {
+    if (ELEM(i, 0, gps->totpoints - 1)) {
       continue;
     }
 
@@ -2741,12 +2741,12 @@ static bool gpencil_snap_poll(bContext *C)
 static int gpencil_snap_to_grid(bContext *C, wmOperator *UNUSED(op))
 {
   bGPdata *gpd = ED_gpencil_data_get_active(C);
-  RegionView3D *rv3d = CTX_wm_region_data(C);
+  ARegion *region = CTX_wm_region(C);
   View3D *v3d = CTX_wm_view3d(C);
   Scene *scene = CTX_data_scene(C);
   Depsgraph *depsgraph = CTX_data_ensure_evaluated_depsgraph(C);
   Object *obact = CTX_data_active_object(C);
-  const float gridf = ED_view3d_grid_view_scale(scene, v3d, rv3d, NULL);
+  const float gridf = ED_view3d_grid_view_scale(scene, v3d, region, NULL);
 
   LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
     /* only editable and visible layers are considered */
@@ -3225,13 +3225,13 @@ static int gpencil_stroke_caps_set_exec(bContext *C, wmOperator *op)
         continue;
       }
 
-      if ((type == GP_STROKE_CAPS_TOGGLE_BOTH) || (type == GP_STROKE_CAPS_TOGGLE_START)) {
+      if (ELEM(type, GP_STROKE_CAPS_TOGGLE_BOTH, GP_STROKE_CAPS_TOGGLE_START)) {
         ++gps->caps[0];
         if (gps->caps[0] >= GP_STROKE_CAP_MAX) {
           gps->caps[0] = GP_STROKE_CAP_ROUND;
         }
       }
-      if ((type == GP_STROKE_CAPS_TOGGLE_BOTH) || (type == GP_STROKE_CAPS_TOGGLE_END)) {
+      if (ELEM(type, GP_STROKE_CAPS_TOGGLE_BOTH, GP_STROKE_CAPS_TOGGLE_END)) {
         ++gps->caps[1];
         if (gps->caps[1] >= GP_STROKE_CAP_MAX) {
           gps->caps[1] = GP_STROKE_CAP_ROUND;
@@ -4402,7 +4402,7 @@ static int gpencil_stroke_separate_exec(bContext *C, wmOperator *op)
   ob_dst->data = (bGPdata *)gpd_dst;
 
   /* Loop old data-block and separate parts. */
-  if ((mode == GP_SEPARATE_POINT) || (mode == GP_SEPARATE_STROKE)) {
+  if (ELEM(mode, GP_SEPARATE_POINT, GP_SEPARATE_STROKE)) {
     CTX_DATA_BEGIN (C, bGPDlayer *, gpl, editable_gpencil_layers) {
       gpl_dst = NULL;
       bGPDframe *init_gpf = (is_multiedit) ? gpl->frames.first : gpl->actframe;

@@ -52,7 +52,6 @@
 #  include "BKE_linestyle.h"
 #  include "BKE_movieclip.h"
 #  include "BKE_node.h"
-#  include "BKE_sequencer.h"
 
 #  include "DEG_depsgraph.h"
 
@@ -60,6 +59,8 @@
 
 #  include "IMB_colormanagement.h"
 #  include "IMB_imbuf.h"
+
+#  include "SEQ_sequencer.h"
 
 static int rna_CurveMapping_curves_length(PointerRNA *ptr)
 {
@@ -941,6 +942,7 @@ static void rna_def_color_ramp_element(BlenderRNA *brna)
   prop = RNA_def_property(srna, "position", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "pos");
   RNA_def_property_range(prop, 0, 1);
+  RNA_def_property_ui_range(prop, 0, 1, 1, 3);
   RNA_def_property_ui_text(prop, "Position", "Set position of selected color stop");
   RNA_def_property_update(prop, 0, "rna_ColorRamp_update");
 }

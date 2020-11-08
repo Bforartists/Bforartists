@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -35665,24 +35665,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Підхопити вибрані ключові кадри до поточного кадру"
 
 
-msgid "Nearest Frame"
-msgstr "Найближчий кадр"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Підхопити вибрані ключові кадри до найближчого (цілого) кадру (використовуйте для усунення випадкових зміщень підкадрів)"
 
 
-msgid "Nearest Second"
-msgstr "Найближчий другий"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Підхопити вибрані ключові кадри до найближчої секунди"
-
-
-msgid "Nearest Marker"
-msgstr "Найближча мітка"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -42635,10 +42623,6 @@ msgstr "Застосувати середньозважені значення �
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Підхопити вибрані ключові кадри до вибраних часу/значень"
-
-
-msgid "Cursor Value"
-msgstr "Значення курсора"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -70931,12 +70915,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "Підхоп до інтервалів в 1.0 сек "
 
 
+msgid "Nearest Frame"
+msgstr "Найближчий кадр"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "Підхоп до фактичних кадрів (час НЛА-дії)"
 
 
+msgid "Nearest Second"
+msgstr "Найближчий другий"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "Підхоп до фактичних секунд (час НЛА-дії)"
+
+
+msgid "Nearest Marker"
+msgstr "Найближча мітка"
 
 
 msgid "Snap to nearest marker"
@@ -79592,26 +79588,6 @@ msgstr "Захистити Канали"
 msgctxt "Operator"
 msgid "Unprotect Channels"
 msgstr "Розхистити Канали"
-
-
-msgctxt "Operator"
-msgid "Current Frame"
-msgstr "Поточний Кадр"
-
-
-msgctxt "Operator"
-msgid "Nearest Frame"
-msgstr "Найближчий Кадр"
-
-
-msgctxt "Operator"
-msgid "Nearest Second"
-msgstr "Найближча Секунда"
-
-
-msgctxt "Operator"
-msgid "Nearest Marker"
-msgstr "Найближча Мітка"
 
 
 msgctxt "Operator"

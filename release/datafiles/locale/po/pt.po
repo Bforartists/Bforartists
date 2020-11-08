@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -30384,24 +30384,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Atrai os fotogramas chave selecionados para o fotograma atual."
 
 
-msgid "Nearest Frame"
-msgstr "Fotogramas mais próximos"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Atrai os fotogramas chave selecionados para os fotogramas (inteiros) mais próximos (use para consertar deslocamentos acidentais de sub-fotogramas)."
 
 
-msgid "Nearest Second"
-msgstr "Segundos mais próximos"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Atrai os fotogramas chave selecionados para os segundos de tempo mais próximos."
-
-
-msgid "Nearest Marker"
-msgstr "Marcadores mais próximos"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -36233,10 +36221,6 @@ msgstr "Aplica um balanceamento nos movimentos de transição entre as chaves se
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Atrai os fotogramas chave selecionados para os valores ou tempos escolhidos."
-
-
-msgid "Cursor Value"
-msgstr "Valor do cursor"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -58855,12 +58839,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "Atrai para intervalos de 1.0 segundo (ou conforme remapeamento de tempo)."
 
 
+msgid "Nearest Frame"
+msgstr "Fotogramas mais próximos"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "Atrai para os fotogramas atuais (tempo da ação na animação não linear)."
 
 
+msgid "Nearest Second"
+msgstr "Segundos mais próximos"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "Atrai para os segundos atuais (tempo da ação na animação não linear)."
+
+
+msgid "Nearest Marker"
+msgstr "Marcadores mais próximos"
 
 
 msgid "Snap to nearest marker"

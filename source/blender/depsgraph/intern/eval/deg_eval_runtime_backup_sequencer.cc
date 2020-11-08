@@ -28,11 +28,11 @@
 
 #include "BLI_assert.h"
 
-#include "BKE_sequencer.h"
 #include "BKE_sound.h"
 
-namespace blender {
-namespace deg {
+#include "SEQ_sequencer.h"
+
+namespace blender::deg {
 
 SequencerBackup::SequencerBackup(const Depsgraph *depsgraph) : depsgraph(depsgraph)
 {
@@ -73,5 +73,4 @@ void SequencerBackup::restore_to_scene(Scene *scene)
   }
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg

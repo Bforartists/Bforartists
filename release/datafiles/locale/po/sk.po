@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2020-10-19 14:23+0200\n"
+"PO-Revision-Date: 2020-10-27 09:43+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: \n"
 "Language: sk_SK\n"
@@ -2732,7 +2732,7 @@ msgstr "Relatívny"
 
 
 msgid "Use the offset of the specified bone from rest pose to compute the handle"
-msgstr "Použije posuv určenej kosti kľudovej pózy pre výpočet manipulátora"
+msgstr "Použije posuv určenej kosti pokojovej pózy pre výpočet manipulátora"
 
 
 msgid "Use the orientation of the specified bone to compute the handle, ignoring the location"
@@ -2900,7 +2900,7 @@ msgstr "Opraviť strih"
 
 
 msgid "Inherit scaling, but remove shearing of the child in the rest orientation"
-msgstr "Zdedenie mierky, ale odstrihnutie potomka vykobanjte v kľudovej orientácii"
+msgstr "Zdedenie mierky, ale odstrihnutie potomka vykobanjte v pokojovej orientácii"
 
 
 msgid "Rotate non-uniform parent scaling to align with the child, applying parent X scale to child X axis, and so forth"
@@ -4604,7 +4604,7 @@ msgstr "Kľudový kľúčový tvar"
 
 
 msgid "Shape key to use the rest spring lengths from"
-msgstr "Kľúčový tvar použitý na kľudovú dĺžku pružiny"
+msgstr "Kľúčový tvar použitý na pokojovú dĺžku pružiny"
 
 
 msgid "Sewing Force Max"
@@ -5461,7 +5461,7 @@ msgstr "Lokálne s rodičom"
 
 
 msgid "The constraint is applied relative to the rest pose local coordinate system of the bone, thus including the parent-induced transformation"
-msgstr "Obmedzenie sa aplikuje relatívne na kľudovú pózu lokálneho súradnicového systému kosti a teda vrátane rodičom vyvolanej transformácie"
+msgstr "Obmedzenie sa aplikuje relatívne na pokojovú pózu lokálneho súradnicového systému kosti a teda vrátane rodičom vyvolanej transformácie"
 
 
 msgid "Local Space"
@@ -5885,7 +5885,7 @@ msgstr "Použiť aktuálnu polohu"
 
 
 msgid "Use the current bone location for envelopes and choosing B-Bone segments instead of rest position"
-msgstr "Použije aktuálnu polohu kosti pre plášte a výber segmentu ohybu kosti namiesto kľudovej polohy"
+msgstr "Použije aktuálnu polohu kosti pre plášte a výber segmentu ohybu kosti namiesto pokojovej polohy"
 
 
 msgid "Preserve Volume"
@@ -7357,7 +7357,7 @@ msgstr "Pôvodná dĺžka"
 
 
 msgid "Length at rest position"
-msgstr "Dĺžka v kľudovej polohe"
+msgstr "Dĺžka v pokojovej polohe"
 
 
 msgid "Maintain the object's volume as it stretches"
@@ -8940,15 +8940,15 @@ msgstr "Priestor používaný na transformácie"
 
 
 msgid "Transforms include effects of parenting/restpose and constraints"
-msgstr "Transformácie zahŕňajú efekty rodičovstva/kľudových polôh a obmedzení"
+msgstr "Transformácie zahŕňajú efekty rodičovstva/pokojových polôh a obmedzení"
 
 
 msgid "Transforms don't include parenting/restpose or constraints"
-msgstr "Transformácie nezahŕňajú efekty rodičovstva/kľudových polôh a obmedzení"
+msgstr "Transformácie nezahŕňajú efekty rodičovstva/pokojových polôh a obmedzení"
 
 
 msgid "Transforms include effects of constraints but not parenting/restpose"
-msgstr "Transformácie zahŕňajú efekty obmedzení, ale nie rodičovstva/kľudových polôh"
+msgstr "Transformácie zahŕňajú efekty obmedzení, ale nie rodičovstva/pokojových polôh"
 
 
 msgid "Driver variable type"
@@ -12307,6 +12307,18 @@ msgstr "Kolekcia síl"
 
 msgid "Limit forces to this collection"
 msgstr "Limit síl do tejto kolekcie"
+
+
+msgid "Obstacle Distance"
+msgstr "Vzdialenosť prekážky"
+
+
+msgid "Determines how far apart fluid and obstacle are (higher values will result in fluid being further away from obstacles, smaller values will let fluid move towards the inside of obstacles)"
+msgstr "Určuje, ako ďaleko sú od seba kvapalina a prekážka (vyššie hodnoty budú mať za následok, že kvapalina bude ďalej od prekážok, menšie hodnoty umožnia kvapaline pohybovať sa smerom dovnútra prekážok)"
+
+
+msgid "Obstacle Threshold"
+msgstr "Prahová hodnota prekážky"
 
 
 msgid "Determines how much fluid is allowed in an obstacle cell (higher values will tag a boundary cell as an obstacle easier and reduce the boundary smoothening effect)"
@@ -22240,6 +22252,10 @@ msgid "Detected duration of movie clip in frames"
 msgstr "Zistená trvanie filmového klipu v snímkach"
 
 
+msgid "Offset of footage first frame relative to its file name (affects only how footage is loading, does not change data associated with a clip)"
+msgstr "Posuv prvého záberu záznamu vzhľadom na jeho názov súboru (ovplyvňuje iba spôsob načítania záznamu, nezmení údaje spojené s klipom)"
+
+
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
 msgstr "Číslo globálnej scény snímky, od ktorej sa spustí prehrávanie tohto filmu (ovplyvní všetky údaje spojené s klipom)"
 
@@ -26611,7 +26627,7 @@ msgstr "Definuje možnosť riešenia opätovného opakovania (zbiehavosť sa spr
 
 
 msgid "The solver does not reiterate, not even on first frame (starts from rest pose)"
-msgstr "Riešenie opätovne neopakuje, a to ani na prvej snímke (začína od kľudovej pózy)"
+msgstr "Riešenie opätovne neopakuje, a to ani na prvej snímke (začína od pokojovej pózy)"
 
 
 msgid "The solver reiterates (converges) on the first frame but not on subsequent frame"
@@ -29837,6 +29853,10 @@ msgid "Parenting settings for masking element"
 msgstr "Nastavenie rodičovstva pre prvok maskovania"
 
 
+msgid "ID-block to which masking element would be parented to or to its property"
+msgstr "ID bloku, ku ktorému má prvok maskovania rodičovstvo, alebo ku jeho vlastnosti"
+
+
 msgid "ID Type"
 msgstr "ID typu"
 
@@ -31726,8 +31746,16 @@ msgid "Convert all polygons to triangles"
 msgstr "Konvertuje všetky polygóny na trojuholníky"
 
 
+msgid "Volume to Mesh"
+msgstr "Objem pre povrchovú sieť"
+
+
 msgid "Weld"
-msgstr "Spojiť"
+msgstr "Zvariť"
+
+
+msgid "Find groups of vertices closer than dist and merges them together"
+msgstr "Hľadá skupiny vrcholov bližších ako vzdialené a zvarí ich"
 
 
 msgid "Wireframe"
@@ -32507,11 +32535,11 @@ msgstr "Naviazať aktuálny tvar"
 
 
 msgid "Rest Source"
-msgstr "Zdroj kľudových"
+msgstr "Zdroj pokojových"
 
 
 msgid "Select the source of rest positions"
-msgstr "Vyberie zdroj kľudových polôh"
+msgstr "Vyberie zdroj pokojových polôh"
 
 
 msgid "Original Coords"
@@ -32519,7 +32547,7 @@ msgstr "Originálne súradnice"
 
 
 msgid "Use base mesh vertex coords as the rest position"
-msgstr "Ako kľudovú polohu použije súradnice vrcholov povrchovej siete"
+msgstr "Ako pokojovú polohu použije súradnice vrcholov povrchovej siete"
 
 
 msgid "Bind Coords"
@@ -32527,7 +32555,7 @@ msgstr "Naviazať súradnice"
 
 
 msgid "Use bind vertex coords for rest position"
-msgstr "Pre kľudovú polohu použije spojnice súradníc vrcholov"
+msgstr "Pre pokojovú polohu použije spojnice súradníc vrcholov"
 
 
 msgid "Compensate for scale applied by other modifiers"
@@ -35574,6 +35602,30 @@ msgstr "Dosah vzorky textúry"
 
 msgid "Smaller values result in better performance but might cut off the volume"
 msgstr "Menšie hodnoty vedú k lepšiemu výkonu, ale môžu znížiť objem"
+
+
+msgid "Volume to Mesh Modifier"
+msgstr "Modifikátor objemu pre povrchovú sieť"
+
+
+msgid "Reduces the final face count by simplifying geometry where detail is not needed"
+msgstr "Znižuje konečný počet plôšok zjednodušením geometrie tam, kde nie sú potrebné podrobnosti"
+
+
+msgid "Grid Name"
+msgstr "Názov mriežky"
+
+
+msgid "Grid in the volume object that is converted to a mesh"
+msgstr "Mriežka v objeme objektu, ktorá je konvertovaná na povrchovú sieť"
+
+
+msgid "Use resolution of the volume grid"
+msgstr "Použiť rozlíšenie mriežky objemu"
+
+
+msgid "Voxels with a larger value are inside the generated mesh"
+msgstr "Voxely s väčšou hodnotou sú vo vnútri generovanej siete"
 
 
 msgid "Warp Modifier"
@@ -42069,24 +42121,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Prichytí vybrané kľúčové snímky k aktuálnej snímke"
 
 
-msgid "Nearest Frame"
-msgstr "Najbližšiu snímku"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Prichytí vybrané kľúče k najbližšej (celej) snímke (používa sa na opravu náhodných medzisnímok)"
 
 
-msgid "Nearest Second"
-msgstr "Najbližšia druhá"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Prichytí vybrané kľúčové snímky k najbližšej druhej"
-
-
-msgid "Nearest Marker"
-msgstr "Najbližšia značka"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -47130,7 +47170,7 @@ msgstr "Kľudová snímka"
 
 
 msgid "Write the rest state at the first frame"
-msgstr "Zapíše kľudový stav po prvej snímke"
+msgstr "Zapíše pokojový stav po prvej snímke"
 
 
 msgctxt "Operator"
@@ -49779,12 +49819,85 @@ msgid "Switch Tint colors"
 msgstr "Prepínanie odtieňov farieb"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "Vysledovať obrázok pre pastelku"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "Extrahuje ťahy pastelky z obrázka"
+
+
+msgid "Resolution of the generated curves"
+msgstr "Rozlíšenie vygenerovaných kriviek"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "Vzdialenosť od bodov vzorky, nula na vypnutie"
+
+
+msgid "Scale of the final stroke"
+msgstr "Mierka finálneho ťahu"
+
+
+msgid "Color Threshold"
+msgstr "Hranica farby"
+
+
+msgid "Determine what is considered white and what black"
+msgstr "Určuje, čo sa považuje za biele a čo za čierne"
+
+
+msgid "Turn Policy"
+msgstr "Politika otočenia"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "Určuje, ako vyriešiť nejasnosti počas rozkladu bitmáp na cestách"
+
+
 msgid "Black"
 msgstr "Čierne"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "Preferuje pripojenie čiernych (popredie) komponentov"
+
+
 msgid "White"
 msgstr "Biele"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "Preferuje pripojenie bielych (pozadie) komponentov"
+
+
+msgid "Always take a left turn"
+msgstr "Vždy odbočiť doľava"
+
+
+msgid "Always take a right turn"
+msgstr "Vždy odbočiť doprava"
+
+
+msgid "Minority"
+msgstr "Menšina"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "Preferuje pripojenie farby (čiernej alebo bielej), ktorá sa vyskytuje najmenej často v lokálnom susedstve aktuálnej polohy"
+
+
+msgid "Majority"
+msgstr "Väčšina"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "Preferuje pripojenie farby (čiernej alebo bielej), ktorá sa vyskytuje najčastejšie v miestnom susedstve aktuálnej polohy"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "Pseudonáhodný výber"
 
 
 msgctxt "Operator"
@@ -50248,10 +50361,6 @@ msgstr "Použije vážený spôsob pohybu, aby boli vybrané F-krivky menej kost
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Prichytí vybrané kľúčové snímky k zvoleným časom/hodnotám"
-
-
-msgid "Cursor Value"
-msgstr "Hodnota kurzora"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -51328,7 +51437,7 @@ msgstr "Odhadnúť originálnu väzbu pózy"
 
 
 msgid "Try to guess the original bind pose for skinned meshes from the inverse bind matrices. When off, use default/rest pose as bind pose"
-msgstr "Pokúsi sa odhadnúť pôvodnú väzbu pózy pre opláštenú povrchovú sieť z inverzných matríc väzby. Ak je vypnutá, použije ako väzbu pózy predvolenú/kľudovú pózu"
+msgstr "Pokúsi sa odhadnúť pôvodnú väzbu pózy pre opláštenú povrchovú sieť z inverzných matríc väzby. Ak je vypnutá, použije ako väzbu pózy predvolenú/pokojovú pózu"
 
 
 msgid "Pack Images"
@@ -51955,6 +52064,10 @@ msgstr "Najprv sa pokúste posunúť odľahčenie namiesto vrcholu"
 msgctxt "Operator"
 msgid "Slide Spline Curvature"
 msgstr "Posunúť oblúk krivky ohybu"
+
+
+msgid "Slide a point on the spline to define its curvature"
+msgstr "Posunom bodu na vodiacej krivke definuje jeho zakrivenie"
 
 
 msgctxt "Operator"
@@ -54135,6 +54248,10 @@ msgid "Sharp Edges"
 msgstr "Ostré hrany"
 
 
+msgid "Calculate sharp edges using custom normal data (when available)"
+msgstr "Vypočíta ostré hrany použitím vlastných údajov kolmíc (ak sú k dispozícii)"
+
+
 msgid "Merge selected to other unselected vertices"
 msgstr "Zlúči vybrané do iných nevybraných vrcholov"
 
@@ -56186,7 +56303,7 @@ msgstr "Priradiť užívateľské hodnoty vlastností ako predvolené"
 
 
 msgid "Assign the current values of custom properties as their defaults, for use as part of the rest pose state in NLA track mixing"
-msgstr "Priradí aktuálne hodnoty užívateľskej vlastnosti ako ich predvolené, na použitie ako súčasť stavu kľudovej pózy v zmiešavaní NLA stôp"
+msgstr "Priradí aktuálne hodnoty užívateľskej vlastnosti ako ich predvolené, na použitie ako súčasť stavu pokojovej pózy v zmiešavaní NLA stôp"
 
 
 msgid "Process bone properties"
@@ -60925,11 +61042,11 @@ msgstr "Odstráni knižnicu pózy z aktívneho objektu"
 
 msgctxt "Operator"
 msgid "Apply Pose as Rest Pose"
-msgstr "Použiť pózu ako kľudovú pózu"
+msgstr "Použiť pózu ako pokojovú pózu"
 
 
 msgid "Apply the current pose as the new rest pose"
-msgstr "Použije aktuálnu pózu ako novú kľudovú pózu"
+msgstr "Použije aktuálnu pózu ako novú pokojovú pózu"
 
 
 msgid "Selected Only"
@@ -61335,11 +61452,11 @@ msgstr "Nadsadí súčasnú pózu v súvislosti s rozkladom póz"
 
 msgctxt "Operator"
 msgid "Push Pose from Rest Pose"
-msgstr "Predsunúť pózu pre kľudovú pózu"
+msgstr "Predsunúť pózu pre pokojovú pózu"
 
 
 msgid "Push the current pose further away from the rest pose"
-msgstr "Potlačí aktuálnu pózu ďalej od kľudovej pózy"
+msgstr "Potlačí aktuálnu pózu ďalej od pokojovej pózy"
 
 
 msgctxt "Operator"
@@ -61362,11 +61479,11 @@ msgstr "Vytvorí súčasnú pózu najviac podobnú svojej póze rozkladu"
 
 msgctxt "Operator"
 msgid "Relax Pose to Rest Pose"
-msgstr "Póza uvoľnenia na kľudovú pózu"
+msgstr "Póza uvoľnenia na pokojovú pózu"
 
 
 msgid "Make the current pose more similar to the rest pose"
-msgstr "Vytvorí súčasnú pózu najviac podobnú kľudovej póze"
+msgstr "Vytvorí súčasnú pózu najviac podobnú pokojovej póze"
 
 
 msgctxt "Operator"
@@ -63749,7 +63866,7 @@ msgstr "Kľudová povrchová sieť"
 
 
 msgid "Relax Face Sets"
-msgstr "Nastavenia kľudových plôšok"
+msgstr "Nastavenia pokojových plôšok"
 
 
 msgid "Smooth the edges of all the Face Sets"
@@ -63953,6 +64070,10 @@ msgid "Use a union boolean operation"
 msgstr "Použije jednotnú booleovskú operáciu"
 
 
+msgid "Join the new mesh as separate geometry, without performing any boolean operation"
+msgstr "Pripojí sa k novej povrchovej sieti ako samostatná geometria bez vykonávania akejkoľvek booleovskej operácie"
+
+
 msgid "Use Cursor for Depth"
 msgstr "Na hĺbku použiť kurzor"
 
@@ -63980,7 +64101,7 @@ msgstr "UV sochárstvo používa štetec"
 
 
 msgid "Switch brush to relax mode for duration of stroke"
-msgstr "Prepne štetec na kľudový režim pre trvanie ťahu"
+msgstr "Prepne štetec na pokojový režim pre trvanie ťahu"
 
 
 msgctxt "Operator"
@@ -66898,7 +67019,7 @@ msgstr "Minimalizovať pnutie"
 
 
 msgid "Reduce UV stretching by relaxing angles"
-msgstr "Zníži UV napnutie podľa kľudových uhlov"
+msgstr "Zníži UV napnutie podľa pokojových uhlov"
 
 
 msgid "Blend factor between stretch minimized and original"
@@ -72572,6 +72693,11 @@ msgstr "Kľudový posuvník"
 
 
 msgctxt "Operator"
+msgid "Boundary"
+msgstr "Okraj"
+
+
+msgctxt "Operator"
 msgid "Cloth"
 msgstr "Tkanina"
 
@@ -72579,6 +72705,11 @@ msgstr "Tkanina"
 msgctxt "Operator"
 msgid "Simplify"
 msgstr "Zjednodušenie"
+
+
+msgctxt "Operator"
+msgid "Multires Displacement Eraser"
+msgstr "Viacnásobné rozlíšenie posunu gumy"
 
 
 msgctxt "Operator"
@@ -73913,7 +74044,7 @@ msgstr "Finálna matica 4x4 po aplikácii obmedzení a ovládačov (priestor obj
 
 
 msgid "Alternative access to location/scale/rotation relative to the parent and own rest bone"
-msgstr "Alternatívny prístup k polohe/mierke/rotácii vzhľadom na rodičovské a vlastné kľudové kosti"
+msgstr "Alternatívny prístup k polohe/mierke/rotácii vzhľadom na rodičovské a vlastné zostatkové kosti"
 
 
 msgid "Channel Matrix"
@@ -74436,12 +74567,28 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "Povolí vývojárom možnosť ladenia cyklov"
 
 
+msgid "New Geometry Nodes"
+msgstr "Nové uzly geometrie"
+
+
+msgid "Enable the new geometry nodes system in the ui"
+msgstr "Povolí nový systém uzlov geometrie v používateľskom rozhraní"
+
+
 msgid "New Hair Type"
 msgstr "Nový typ vlasov"
 
 
 msgid "Enable the new hair type in the ui"
 msgstr "Povolí nový typ vlasov v modeli užívateľského rozhrania"
+
+
+msgid "New Point Cloud Type"
+msgstr "Nový typ mračna bodov"
+
+
+msgid "Enable the new point cloud type in the ui"
+msgstr "Povolí nový typ mračna bodov v modeli užívateľského rozhrania"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -74785,7 +74932,7 @@ msgstr "Mŕtva zóna"
 
 
 msgid "Threshold of initial movement needed from the device's rest position"
-msgstr "Prah počiatočného pohybu potrebného pre zariadenia v kľudovej polohe"
+msgstr "Prah počiatočného pohybu potrebného pre zariadenia v pokojovej polohe"
 
 
 msgid "Helicopter Mode"
@@ -80017,7 +80164,7 @@ msgstr "Tvárnosť"
 
 
 msgid "How much the spring rest length can change after the elastic limit is crossed"
-msgstr "Ako sa môže zmeniť kľudová dĺžka pružnosti po prekročení elastického limitu"
+msgstr "Ako sa môže zmeniť pokojová dĺžka pružnosti po prekročení elastického limitu"
 
 
 msgid "Repulsion Factor"
@@ -80117,7 +80264,7 @@ msgstr "Odpudivosť je faktorom hustoty"
 
 
 msgid "Factor Rest Length"
-msgstr "Faktor kľudovej dĺžky"
+msgstr "Faktor pokojovej dĺžky"
 
 
 msgid "Spring rest length is a factor of 2 * particle size"
@@ -80133,11 +80280,11 @@ msgstr "Hustota viskozity je faktorom normálnej viskozity"
 
 
 msgid "Initial Rest Length"
-msgstr "Počiatočná kľudová dĺžka"
+msgstr "Počiatočná pokojová dĺžka"
 
 
 msgid "Use the initial length as spring rest length instead of 2 * particle size"
-msgstr "Použije počiatočnú dĺžku ako kľudovú dĺžku pružiny namiesto dvojnásobnej veľkosti častíc"
+msgstr "Použije počiatočnú dĺžku ako pokojovú dĺžku pružiny namiesto dvojnásobnej veľkosti častíc"
 
 
 msgid "Use viscoelastic springs instead of Hooke's springs"
@@ -80146,6 +80293,10 @@ msgstr "Namiesto pružín Hooke použije viskózno-elastické pružiny"
 
 msgid "Elastic Limit"
 msgstr "Hranica pružnosti"
+
+
+msgid "How much the spring has to be stretched/compressed in order to change its rest length"
+msgstr "Určuje, o koľko musí byť pružina natiahnutá/stlačená, aby sa zmenila jej pokojová dĺžka"
 
 
 msgid "Light Direction"
@@ -81615,6 +81766,10 @@ msgid "Sequence Color Balance Data"
 msgstr "Sekvencia údajov vyváženia farieb"
 
 
+msgid "Color balance parameters for a sequence strip and its modifiers"
+msgstr "Parametre vyváženia farieb pre sekvenčný pás a jeho modifikátory"
+
+
 msgid "Color balance gain (highlights)"
 msgstr "Zisk vyváženia farby (zvýraznenie)"
 
@@ -82612,11 +82767,11 @@ msgstr "Natiahnutie"
 
 
 msgid "Edge spring stiffness when longer than rest length"
-msgstr "Tuhosť pružiny hrany pri dlhšej ako kľudová dĺžka"
+msgstr "Tuhosť pružiny hrany pri dlhšej ako pokojová dĺžka"
 
 
 msgid "Edge spring stiffness when shorter than rest length"
-msgstr "Tuhosť pružiny hrany pri kratšej ako kľudová dĺžka"
+msgstr "Tuhosť pružiny hrany pri kratšej ako pokojová dĺžka"
 
 
 msgid "Rot Matrix"
@@ -83188,12 +83343,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "Prichytí na interval 1,0 sekundy"
 
 
+msgid "Nearest Frame"
+msgstr "Najbližšiu snímku"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "Prichytí na aktuálne snímky (čas NLA akcie)"
 
 
+msgid "Nearest Second"
+msgstr "Najbližšia druhá"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "Prichytí na aktuálne sekundy (čas NLA akcie)"
+
+
+msgid "Nearest Marker"
+msgstr "Najbližšia značka"
 
 
 msgid "Snap to nearest marker"
@@ -90419,6 +90586,11 @@ msgstr "Sochárčiť"
 
 
 msgctxt "WindowManager"
+msgid "3D View Tool: Sculpt, Face Set Edit"
+msgstr "Nástroj 3D zobrazenia: Sochárstvo, Úprava sústavy plôšok"
+
+
+msgctxt "WindowManager"
 msgid "Particle"
 msgstr "Častica"
 
@@ -90851,10 +91023,6 @@ msgstr "Režimová mapa kvapkadla"
 msgctxt "WindowManager"
 msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Mapa kvapkadla snímania bodu farebného spádu"
-
-
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "Údaje DEM (.hgt) ako povrchová sieť a/alebo obrázok"
 
 
 msgid "Denoising completed"
@@ -92249,6 +92417,10 @@ msgstr "Farba kurzora"
 
 msgid "Lock Frame"
 msgstr "Zamknúť snímku"
+
+
+msgid "Inverse Color"
+msgstr "Inverzná farba"
 
 
 msgid "Unlocked"
@@ -93840,23 +94012,23 @@ msgstr "Zrušiť ochranu kanála"
 
 
 msgctxt "Operator"
-msgid "Current Frame"
-msgstr "Aktuálnu snímku"
+msgid "Selection to Current Frame"
+msgstr "Výber na aktuálnu snímku"
 
 
 msgctxt "Operator"
-msgid "Nearest Frame"
-msgstr "Najbližšiu snímku"
+msgid "Selection to Nearest Frame"
+msgstr "Výber na najbližšiu snímku"
 
 
 msgctxt "Operator"
-msgid "Nearest Second"
-msgstr "Najbližšia druhá"
+msgid "Selection to Nearest Second"
+msgstr "Výber na najbližší druhý"
 
 
 msgctxt "Operator"
-msgid "Nearest Marker"
-msgstr "Najbližšia značka"
+msgid "Selection to Nearest Marker"
+msgstr "Výber na najbližšiu značku"
 
 
 msgid "Recursions"
@@ -93994,6 +94166,11 @@ msgstr "Zdecimovanie (pomer)"
 msgctxt "Operator"
 msgid "Decimate (Allowed Change)"
 msgstr "Zdecimovanie (povolená zmena)"
+
+
+msgctxt "Operator"
+msgid "Selection to Cursor Value"
+msgstr "Výber na hodnotu kurzora"
 
 
 msgctxt "Operator"
@@ -96996,7 +97173,7 @@ msgstr "Automatický názov hore/dole"
 
 msgctxt "Operator"
 msgid "Apply Selected as Rest Pose"
-msgstr "Použiť vybrané ako kľudovú pózu"
+msgstr "Použiť vybrané ako pokojovú pózu"
 
 
 msgctxt "Operator"
@@ -99148,7 +99325,7 @@ msgstr "Nemožno uplatňovať pózu na pripojenú knižnicu kostry"
 
 
 msgid "Actions on this armature will be destroyed by this new rest pose as the transforms stored are relative to the old rest pose"
-msgstr "Akcie na tejto kostry budú zničené podľa tejto novej kľudovej pózy sú uložené ako transformácie v pomere k starej kľudovej póze"
+msgstr "Akcie na tejto kostry budú zničené podľa tejto novej pokojovej pózy sú uložené ako transformácie v pomere k starej pokojovej póze"
 
 
 msgid "No pose to copy"
@@ -103760,6 +103937,10 @@ msgid "Data-block has no users and will be deleted"
 msgstr "Blok údajov nemá žiadnych užívateľov a bude vymazaný"
 
 
+msgid "Change the object in the current mode"
+msgstr "Zmeniť objekt v aktuálnom režime"
+
+
 msgid "Remove from the current mode"
 msgstr "Odstrániť z aktuálneho režimu"
 
@@ -104518,7 +104699,7 @@ msgstr " pozdĺž osi %s Z"
 
 
 msgid "Cannot change Pose when 'Rest Position' is enabled"
-msgstr "Nemožno zmeniť pózu, keď je povolená \"kľudová poloha\""
+msgstr "Nemožno zmeniť pózu, keď je povolená \"pokojová poloha\""
 
 
 msgid "Bone selection count error"
@@ -106040,6 +106221,10 @@ msgid "Curve Object"
 msgstr "Objekt krivky"
 
 
+msgid "Generate Data Layers"
+msgstr "Vygenerovať vrstvy údajov"
+
+
 msgid "Layer Selection"
 msgstr "Výber vrstvy"
 
@@ -106050,6 +106235,14 @@ msgstr "Mapovanie vrstiev"
 
 msgid "Refresh"
 msgstr "Obnoviť"
+
+
+msgid "Recenter"
+msgstr "Vystrediť"
+
+
+msgid "Assign"
+msgstr "Priradiť"
 
 
 msgid "Bisect"
@@ -106173,12 +106366,16 @@ msgid "Outer"
 msgstr "Vonkajší"
 
 
+msgid "Shell"
+msgstr "Schránka"
+
+
 msgid "Adaptive Subdivision"
 msgstr "Adaptívne delenie"
 
 
 msgid "Levels Viewport"
-msgstr "Úrovne Záber"
+msgstr "Úrovne záberu"
 
 
 msgctxt "Operator"
@@ -107219,10 +107416,6 @@ msgstr "Pridať povrchovú sieť"
 
 msgid "Import-Export"
 msgstr "Import-Export"
-
-
-msgid "MakeHuman"
-msgstr "Vytvoriť človeka"
 
 
 msgid "Rigging"

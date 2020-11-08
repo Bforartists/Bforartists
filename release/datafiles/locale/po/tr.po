@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -9950,20 +9950,8 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Seçili kontrol noktalarını seçili gruba ekler.(Ebeveyn ilişkisi ile ilişkilendirdiğiniz kemik nesnelerinin sadece gruplandırdığınız noktaları etkilemesi için kullanılır.)"
 
 
-msgid "Nearest Frame"
-msgstr "En yakın Kare"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Sonraki İşarete Geç"
-
-
-msgid "Nearest Second"
-msgstr "Kare/Saniye"
-
-
-msgid "Nearest Marker"
-msgstr "En Yakın İşaret"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -12421,10 +12409,6 @@ msgstr "Eğrileri sil"
 msgctxt "Operator"
 msgid "Smooth Keys"
 msgstr "Anahtarları Ters Çevir"
-
-
-msgid "Cursor Value"
-msgstr "3D İmleç "
 
 
 msgid "Flatten handles for a smoother transition"
@@ -20893,6 +20877,18 @@ msgstr "Otomatik Normalleştir"
 
 msgid "No Auto-Snap"
 msgstr "Izgarayı yakala:"
+
+
+msgid "Nearest Frame"
+msgstr "En yakın Kare"
+
+
+msgid "Nearest Second"
+msgstr "Kare/Saniye"
+
+
+msgid "Nearest Marker"
+msgstr "En Yakın İşaret"
 
 
 msgid "Snap to nearest marker"

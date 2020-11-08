@@ -32,8 +32,7 @@
 
 #include "BKE_global.h"
 
-namespace blender {
-namespace deg {
+namespace blender::deg {
 
 DepsgraphDebug::DepsgraphDebug()
     : flags(G.debug), is_ever_evaluated(false), graph_evaluation_start_time_(0)
@@ -73,7 +72,7 @@ void DepsgraphDebug::end_graph_evaluation()
   is_ever_evaluated = true;
 }
 
-bool terminal_do_color(void)
+bool terminal_do_color()
 {
   return (G.debug & G_DEBUG_DEPSGRAPH_PRETTY) != 0;
 }
@@ -90,7 +89,7 @@ string color_for_pointer(const void *pointer)
   return string(buffer);
 }
 
-string color_end(void)
+string color_end()
 {
   if (!terminal_do_color()) {
     return "";
@@ -98,5 +97,4 @@ string color_end(void)
   return string(TRUECOLOR_ANSI_COLOR_FINISH);
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg

@@ -105,12 +105,15 @@ def refresh_token_timer():
 
 def update_ad(ad):
     if not ad.get('assetBaseId'):
-        ad['assetBaseId'] = ad['asset_base_id']  # this should stay ONLY for compatibility with older scenes
-        ad['assetType'] = ad['asset_type']  # this should stay ONLY for compatibility with older scenes
-        ad['canDownload'] = ad['can_download']  # this should stay ONLY for compatibility with older scenes
-        ad['verificationStatus'] = ad['verification_status']  # this should stay ONLY for compatibility with older scenes
-        ad['author'] = {}
-        ad['author']['id'] = ad['author_id']  # this should stay ONLY for compatibility with older scenes
+        try:
+            ad['assetBaseId'] = ad['asset_base_id']  # this should stay ONLY for compatibility with older scenes
+            ad['assetType'] = ad['asset_type']  # this should stay ONLY for compatibility with older scenes
+            ad['verificationStatus'] = ad['verification_status']  # this should stay ONLY for compatibility with older scenes
+            ad['author'] = {}
+            ad['author']['id'] = ad['author_id']  # this should stay ONLY for compatibility with older scenes
+            ad['canDownload'] = ad['can_download']  # this should stay ONLY for compatibility with older scenes
+        except Exception as e:
+            print('BLenderKit failed to update older asset data')
     return ad
 
 def update_assets_data():  # updates assets data on scene load.
@@ -131,16 +134,17 @@ def update_assets_data():  # updates assets data on scene load.
 
     dicts = [
         'assets used',
-        'assets rated',
+        # 'assets rated',# assets rated stores only true/false, not asset data.
     ]
     for s in bpy.data.scenes:
-        for k in dicts:
-            d = s.get(k)
+        for bkdict in dicts:
+
+            d = s.get(bkdict)
             if not d:
                 continue;
 
-            for k in d.keys():
-                update_ad(d[k])
+            for asset_id in d.keys():
+                update_ad(d[asset_id])
                 # bpy.context.scene['assets used'][ad] = ad
 
 

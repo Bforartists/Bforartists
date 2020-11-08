@@ -54,8 +54,7 @@
 #include "intern/node/deg_node_operation.h"
 #include "intern/node/deg_node_time.h"
 
-namespace blender {
-namespace deg {
+namespace blender::deg {
 
 namespace {
 
@@ -71,7 +70,7 @@ void schedule_children(DepsgraphEvalState *state,
 
 void schedule_node_to_pool(OperationNode *node, const int UNUSED(thread_id), TaskPool *pool)
 {
-  BLI_task_pool_push(pool, deg_task_run_func, node, false, NULL);
+  BLI_task_pool_push(pool, deg_task_run_func, node, false, nullptr);
 }
 
 /* Denotes which part of dependency graph is being evaluated. */
@@ -416,5 +415,4 @@ void deg_evaluate_on_refresh(Depsgraph *graph)
   graph->debug.end_graph_evaluation();
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg

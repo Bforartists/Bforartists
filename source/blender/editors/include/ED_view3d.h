@@ -459,6 +459,8 @@ void ED_view3d_clipping_calc(struct BoundBox *bb,
                              const struct ARegion *region,
                              const struct Object *ob,
                              const struct rcti *rect);
+bool ED_view3d_clipping_clamp_minmax(const struct RegionView3D *rv3d, float min[3], float max[3]);
+
 void ED_view3d_clipping_local(struct RegionView3D *rv3d, const float mat[4][4]);
 bool ED_view3d_clipping_test(const struct RegionView3D *rv3d,
                              const float co[3],
@@ -693,7 +695,7 @@ void ED_view3d_grid_steps(const struct Scene *scene,
                           float *r_grid_steps);
 float ED_view3d_grid_view_scale(struct Scene *scene,
                                 struct View3D *v3d,
-                                struct RegionView3D *rv3d,
+                                struct ARegion *region,
                                 const char **r_grid_unit);
 
 void ED_scene_draw_fps(const struct Scene *scene, int xoffset, int *yoffset);

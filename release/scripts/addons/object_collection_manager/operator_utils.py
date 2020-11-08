@@ -19,14 +19,11 @@
 # Copyright 2011, Ryan Inch
 import bpy
 
+# For VARS
+from . import internals
+
+# For FUNCTIONS
 from .internals import (
-    layer_collections,
-    qcd_slots,
-    expanded,
-    expand_history,
-    rto_history,
-    copy_buffer,
-    swap_buffer,
     update_property_group,
     get_move_selection,
 )
@@ -157,22 +154,22 @@ def isolate_rto(cls, self, view_layer, rto, *, children=False):
     off = set_off_on[rto]["off"]
     on = set_off_on[rto]["on"]
 
-    laycol_ptr = layer_collections[self.name]["ptr"]
-    target = rto_history[rto][view_layer]["target"]
-    history = rto_history[rto][view_layer]["history"]
+    laycol_ptr = internals.layer_collections[self.name]["ptr"]
+    target = internals.rto_history[rto][view_layer]["target"]
+    history = internals.rto_history[rto][view_layer]["history"]
 
     # get active collections
-    active_layer_collections = [x["ptr"] for x in layer_collections.values()
+    active_layer_collections = [x["ptr"] for x in internals.layer_collections.values()
                                 if get_rto(x["ptr"], rto) == on]
 
     # check if previous state should be restored
     if cls.isolated and self.name == target:
         # restore previous state
-        for x, item in enumerate(layer_collections.values()):
+        for x, item in enumerate(internals.layer_collections.values()):
             set_rto(item["ptr"], rto, history[x])
 
         # reset target and history
-        del rto_history[rto][view_layer]
+        del internals.rto_history[rto][view_layer]
 
         cls.isolated = False
 
@@ -180,24 +177,24 @@ def isolate_rto(cls, self, view_layer, rto, *, children=False):
     elif (len(active_layer_collections) == 1 and
           active_layer_collections[0].name == self.name):
         # activate all collections
-        for item in layer_collections.values():
+        for item in internals.layer_collections.values():
             set_rto(item["ptr"], rto, on)
 
         # reset target and history
-        del rto_history[rto][view_layer]
+        del internals.rto_history[rto][view_layer]
 
         cls.isolated = False
 
     else:
         # isolate collection
 
-        rto_history[rto][view_layer]["target"] = self.name
+        internals.rto_history[rto][view_layer]["target"] = self.name
 
         # reset history
         history.clear()
 
         # save state
-        for item in layer_collections.values():
+        for item in internals.layer_collections.values():
             history.append(get_rto(item["ptr"], rto))
 
         child_states = {}
@@ -209,7 +206,7 @@ def isolate_rto(cls, self, view_layer, rto, *, children=False):
             apply_to_children(laycol_ptr, get_child_states)
 
         # isolate collection
-        for item in layer_collections.values():
+        for item in internals.layer_collections.values():
             if item["name"] != laycol_ptr.name:
                 set_rto(item["ptr"], rto, off)
 
@@ -217,7 +214,7 @@ def isolate_rto(cls, self, view_layer, rto, *, children=False):
 
         if rto not in ["exclude", "holdout", "indirect"]:
             # activate all parents
-            laycol = layer_collections[self.name]
+            laycol = internals.layer_collections[self.name]
             while laycol["id"] != 0:
                 set_rto(laycol["ptr"], rto, on)
                 laycol = laycol["parent"]
@@ -248,10 +245,10 @@ def isolate_rto(cls, self, view_layer, rto, *, children=False):
 
 
 def toggle_children(self, view_layer, rto):
-    laycol_ptr = layer_collections[self.name]["ptr"]
+    laycol_ptr = internals.layer_collections[self.name]["ptr"]
     # clear rto history
-    del rto_history[rto][view_layer]
-    rto_history[rto+"_all"].pop(view_layer, None)
+    del internals.rto_history[rto][view_layer]
+    internals.rto_history[rto+"_all"].pop(view_layer, None)
 
     # toggle rto state
     state = not get_rto(laycol_ptr, rto)
@@ -267,13 +264,13 @@ def activate_all_rtos(view_layer, rto):
     off = set_off_on[rto]["off"]
     on = set_off_on[rto]["on"]
 
-    history = rto_history[rto+"_all"][view_layer]
+    history = internals.rto_history[rto+"_all"][view_layer]
 
     # if not activated, activate all
     if len(history) == 0:
         keep_history = False
 
-        for item in reversed(list(layer_collections.values())):
+        for item in reversed(list(internals.layer_collections.values())):
             if get_rto(item["ptr"], rto) == off:
                 keep_history = True
 
@@ -287,37 +284,37 @@ def activate_all_rtos(view_layer, rto):
         history.reverse()
 
     else:
-        for x, item in enumerate(layer_collections.values()):
+        for x, item in enumerate(internals.layer_collections.values()):
             set_rto(item["ptr"], rto, history[x])
 
         # clear rto history
-        del rto_history[rto+"_all"][view_layer]
+        del internals.rto_history[rto+"_all"][view_layer]
 
 
 def invert_rtos(view_layer, rto):
     if rto == "exclude":
         orig_values = []
 
-        for item in layer_collections.values():
+        for item in internals.layer_collections.values():
             orig_values.append(get_rto(item["ptr"], rto))
 
-        for x, item in enumerate(layer_collections.values()):
+        for x, item in enumerate(internals.layer_collections.values()):
             set_rto(item["ptr"], rto, not orig_values[x])
 
     else:
-        for item in layer_collections.values():
+        for item in internals.layer_collections.values():
             set_rto(item["ptr"], rto, not get_rto(item["ptr"], rto))
 
     # clear rto history
-    rto_history[rto].pop(view_layer, None)
+    internals.rto_history[rto].pop(view_layer, None)
 
 
 def copy_rtos(view_layer, rto):
-    if not copy_buffer["RTO"]:
+    if not internals.copy_buffer["RTO"]:
         # copy
-        copy_buffer["RTO"] = rto
-        for laycol in layer_collections.values():
-            copy_buffer["values"].append(get_off_on[
+        internals.copy_buffer["RTO"] = rto
+        for laycol in internals.layer_collections.values():
+            internals.copy_buffer["values"].append(get_off_on[
                                             get_rto(laycol["ptr"], rto)
                                             ][
                                             rto
@@ -326,29 +323,29 @@ def copy_rtos(view_layer, rto):
 
     else:
         # paste
-        for x, laycol in enumerate(layer_collections.values()):
+        for x, laycol in enumerate(internals.layer_collections.values()):
             set_rto(laycol["ptr"],
                     rto,
                     set_off_on[rto][
-                        copy_buffer["values"][x]
+                        internals.copy_buffer["values"][x]
                         ]
                     )
 
         # clear rto history
-        rto_history[rto].pop(view_layer, None)
-        del rto_history[rto+"_all"][view_layer]
+        internals.rto_history[rto].pop(view_layer, None)
+        del internals.rto_history[rto+"_all"][view_layer]
 
         # clear copy buffer
-        copy_buffer["RTO"] = ""
-        copy_buffer["values"].clear()
+        internals.copy_buffer["RTO"] = ""
+        internals.copy_buffer["values"].clear()
 
 
 def swap_rtos(view_layer, rto):
-    if not swap_buffer["A"]["values"]:
+    if not internals.swap_buffer["A"]["values"]:
         # get A
-        swap_buffer["A"]["RTO"] = rto
-        for laycol in layer_collections.values():
-            swap_buffer["A"]["values"].append(get_off_on[
+        internals.swap_buffer["A"]["RTO"] = rto
+        for laycol in internals.layer_collections.values():
+            internals.swap_buffer["A"]["values"].append(get_off_on[
                                                 get_rto(laycol["ptr"], rto)
                                                 ][
                                                 rto
@@ -357,9 +354,9 @@ def swap_rtos(view_layer, rto):
 
     else:
         # get B
-        swap_buffer["B"]["RTO"] = rto
-        for laycol in layer_collections.values():
-            swap_buffer["B"]["values"].append(get_off_on[
+        internals.swap_buffer["B"]["RTO"] = rto
+        for laycol in internals.layer_collections.values():
+            internals.swap_buffer["B"]["values"].append(get_off_on[
                                                 get_rto(laycol["ptr"], rto)
                                                 ][
                                                 rto
@@ -367,52 +364,52 @@ def swap_rtos(view_layer, rto):
                                             )
 
         # swap A with B
-        for x, laycol in enumerate(layer_collections.values()):
-            set_rto(laycol["ptr"], swap_buffer["A"]["RTO"],
+        for x, laycol in enumerate(internals.layer_collections.values()):
+            set_rto(laycol["ptr"], internals.swap_buffer["A"]["RTO"],
                     set_off_on[
-                        swap_buffer["A"]["RTO"]
+                        internals.swap_buffer["A"]["RTO"]
                         ][
-                        swap_buffer["B"]["values"][x]
+                        internals.swap_buffer["B"]["values"][x]
                         ]
                     )
 
-            set_rto(laycol["ptr"], swap_buffer["B"]["RTO"],
+            set_rto(laycol["ptr"], internals.swap_buffer["B"]["RTO"],
                     set_off_on[
-                        swap_buffer["B"]["RTO"]
+                        internals.swap_buffer["B"]["RTO"]
                         ][
-                        swap_buffer["A"]["values"][x]
+                        internals.swap_buffer["A"]["values"][x]
                         ]
                     )
 
 
         # clear rto history
-        swap_a = swap_buffer["A"]["RTO"]
-        swap_b = swap_buffer["B"]["RTO"]
+        swap_a = internals.swap_buffer["A"]["RTO"]
+        swap_b = internals.swap_buffer["B"]["RTO"]
 
-        rto_history[swap_a].pop(view_layer, None)
-        rto_history[swap_a+"_all"].pop(view_layer, None)
-        rto_history[swap_b].pop(view_layer, None)
-        rto_history[swap_b+"_all"].pop(view_layer, None)
+        internals.rto_history[swap_a].pop(view_layer, None)
+        internals.rto_history[swap_a+"_all"].pop(view_layer, None)
+        internals.rto_history[swap_b].pop(view_layer, None)
+        internals.rto_history[swap_b+"_all"].pop(view_layer, None)
 
         # clear swap buffer
-        swap_buffer["A"]["RTO"] = ""
-        swap_buffer["A"]["values"].clear()
-        swap_buffer["B"]["RTO"] = ""
-        swap_buffer["B"]["values"].clear()
+        internals.swap_buffer["A"]["RTO"] = ""
+        internals.swap_buffer["A"]["values"].clear()
+        internals.swap_buffer["B"]["RTO"] = ""
+        internals.swap_buffer["B"]["values"].clear()
 
 
 def clear_copy(rto):
-    if copy_buffer["RTO"] == rto:
-        copy_buffer["RTO"] = ""
-        copy_buffer["values"].clear()
+    if internals.copy_buffer["RTO"] == rto:
+        internals.copy_buffer["RTO"] = ""
+        internals.copy_buffer["values"].clear()
 
 
 def clear_swap(rto):
-    if swap_buffer["A"]["RTO"] == rto:
-        swap_buffer["A"]["RTO"] = ""
-        swap_buffer["A"]["values"].clear()
-        swap_buffer["B"]["RTO"] = ""
-        swap_buffer["B"]["values"].clear()
+    if internals.swap_buffer["A"]["RTO"] == rto:
+        internals.swap_buffer["A"]["RTO"] = ""
+        internals.swap_buffer["A"]["values"].clear()
+        internals.swap_buffer["B"]["RTO"] = ""
+        internals.swap_buffer["B"]["values"].clear()
 
 
 def link_child_collections_to_parent(laycol, collection, parent_collection):
@@ -454,29 +451,29 @@ def remove_collection(laycol, collection, context):
     bpy.data.collections.remove(collection)
 
     # update references
-    expanded.discard(laycol["name"])
+    internals.expanded.discard(laycol["name"])
 
-    if expand_history["target"] == laycol["name"]:
-        expand_history["target"] = ""
+    if internals.expand_history["target"] == laycol["name"]:
+        internals.expand_history["target"] = ""
 
-    if laycol["name"] in expand_history["history"]:
-        expand_history["history"].remove(laycol["name"])
+    if laycol["name"] in internals.expand_history["history"]:
+        internals.expand_history["history"].remove(laycol["name"])
 
-    if qcd_slots.contains(name=laycol["name"]):
-        qcd_slots.del_slot(name=laycol["name"])
+    if internals.qcd_slots.contains(name=laycol["name"]):
+        internals.qcd_slots.del_slot(name=laycol["name"])
 
-    if laycol["name"] in qcd_slots.overrides:
-        qcd_slots.overrides.remove(laycol["name"])
+    if laycol["name"] in internals.qcd_slots.overrides:
+        internals.qcd_slots.overrides.remove(laycol["name"])
 
     # reset history
-    for rto in rto_history.values():
+    for rto in internals.rto_history.values():
         rto.clear()
 
     # update tree view
     update_property_group(context)
 
     # update selected row
-    laycol = layer_collections.get(selected_row_name, None)
+    laycol = internals.layer_collections.get(selected_row_name, None)
     if laycol:
         cm.cm_list_index = laycol["row_index"]
 
@@ -485,7 +482,7 @@ def remove_collection(laycol, collection, context):
 
         if cm.cm_list_index > -1:
             name = cm.cm_list_collection[cm.cm_list_index].name
-            laycol = layer_collections[name]
+            laycol = internals.layer_collections[name]
             while not laycol["visible"]:
                 laycol = laycol["parent"]
 
@@ -497,7 +494,7 @@ def select_collection_objects(is_master_collection, collection_name, replace, ne
         target_collection = bpy.context.view_layer.layer_collection.collection
 
     else:
-        laycol = layer_collections[collection_name]
+        laycol = internals.layer_collections[collection_name]
         target_collection = laycol["ptr"].collection
 
     if replace:

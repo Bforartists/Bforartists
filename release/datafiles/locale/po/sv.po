@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12628,24 +12628,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Markera Länkad"
 
 
-msgid "Nearest Frame"
-msgstr "Starta Spel"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Markera Länkad"
 
 
-msgid "Nearest Second"
-msgstr "Bana"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Markera Länkad"
-
-
-msgid "Nearest Marker"
-msgstr "Raderings Meny"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -15784,10 +15772,6 @@ msgstr "Jämn"
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Markera Länkad"
-
-
-msgid "Cursor Value"
-msgstr "Bild Displist"
 
 
 msgid "Flatten Handles"
@@ -26443,6 +26427,18 @@ msgstr "Markera Rad"
 
 msgid "Auto Snap"
 msgstr "Auto Handtag"
+
+
+msgid "Nearest Frame"
+msgstr "Starta Spel"
+
+
+msgid "Nearest Second"
+msgstr "Bana"
+
+
+msgid "Nearest Marker"
+msgstr "Raderings Meny"
 
 
 msgid "Snap to nearest marker"

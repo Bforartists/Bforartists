@@ -656,14 +656,17 @@ def get_fake_context(context, area_type='VIEW_3D'):
 
     try:
         context = context.copy()
-    except:
+    except Exception as e:
+        print(e)
+        print('BlenderKit: context.copy() failed. probably a colliding addon.')
         context = {}
 
     if context.get('area') is None or context.get('area').type != area_type:
         w, a, r = get_largest_area(area_type=area_type)
-
-        override = {'window': w, 'screen': w.screen, 'area': a, 'region': r}
-        C_dict.update(override)
+        if w:
+            #sometimes there is no area of the requested type. Let's face it, some people use Blender without 3d view.
+            override = {'window': w, 'screen': w.screen, 'area': a, 'region': r}
+            C_dict.update(override)
         # print(w,a,r)
     return C_dict
 
