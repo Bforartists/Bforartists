@@ -3,7 +3,7 @@ name: BUILD-RELEASE
 # Controls when the action will run. Triggers the workflow on push or pull request
 on:
   schedule:
-    - cron: 0 0 * * 0
+    - cron: 0 0 * * 1
   pull_request:
     branches: [ master ]
 
