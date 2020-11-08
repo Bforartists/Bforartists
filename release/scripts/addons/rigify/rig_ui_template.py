@@ -23,7 +23,6 @@ import bpy
 from collections import OrderedDict
 
 from .utils.animation import SCRIPT_REGISTER_BAKE, SCRIPT_UTILITIES_BAKE
-from .utils.rig import attach_persistent_script
 
 from . import base_generate
 
@@ -1242,4 +1241,4 @@ class ScriptGenerator(base_generate.GeneratorPlugin):
         exec(script.as_string(), {})
 
         # Attach the script to the rig
-        attach_persistent_script(self.obj, script)
+        self.obj['rig_ui'] = script

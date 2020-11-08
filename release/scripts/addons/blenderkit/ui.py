@@ -1822,7 +1822,6 @@ class UndoWithContext(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
 class RunAssetBarWithContext(bpy.types.Operator):
     """Regenerate cobweb"""
     bl_idname = "object.run_assetbar_fix_context"
@@ -1835,7 +1834,8 @@ class RunAssetBarWithContext(bpy.types.Operator):
 
     def execute(self, context):
         C_dict = utils.get_fake_context(context)
-        bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=True, do_search=False)
+        if C_dict.get('window'): # no 3d view, no asset bar.
+            bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=True, do_search=False)
         return {'FINISHED'}
 
 

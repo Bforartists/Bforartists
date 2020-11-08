@@ -2138,7 +2138,7 @@ static void viewzoom_apply_camera(ViewOpsData *vod,
                                      zoomfac_prev,
                                      &vod->prev.time);
 
-  if (zfac != 1.0f && zfac != 0.0f) {
+  if (!ELEM(zfac, 1.0f, 0.0f)) {
     /* calculate inverted, then invert again (needed because of camera zoom scaling) */
     zfac = 1.0f / zfac;
     view_zoom_to_window_xy_camera(vod->scene,
@@ -2382,7 +2382,7 @@ static int viewzoom_invoke(bContext *C, wmOperator *op, const wmEvent *event)
     viewzoom_exec(C, op);
   }
   else {
-    if (event->type == MOUSEZOOM || event->type == MOUSEPAN) {
+    if (ELEM(event->type, MOUSEZOOM, MOUSEPAN)) {
 
       if (U.uiflag & USER_ZOOM_HORIZ) {
         vod->init.event_xy[0] = vod->prev.event_xy[0] = event->x;
@@ -2978,6 +2978,11 @@ static int view3d_all_exec(bContext *C, wmOperator *op)
     return OPERATOR_FINISHED;
   }
 
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
+    /* This is an approximation, see function documentation for details. */
+    ED_view3d_clipping_clamp_minmax(rv3d, min, max);
+  }
+
   if (use_all_regions) {
     view3d_from_minmax_multi(C, v3d, min, max, true, smooth_viewtx);
   }
@@ -3123,6 +3128,11 @@ static int viewselected_exec(bContext *C, wmOperator *op)
 
   if (ok == 0) {
     return OPERATOR_FINISHED;
+  }
+
+  if (RV3D_CLIPPING_ENABLED(v3d, rv3d)) {
+    /* This is an approximation, see function documentation for details. */
+    ED_view3d_clipping_clamp_minmax(rv3d, min, max);
   }
 
   if (use_all_regions) {
@@ -4831,7 +4841,7 @@ void VIEW3D_OT_background_image_add(wmOperatorType *ot)
                                  FILE_OPENFILE,
                                  WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH,
                                  FILE_DEFAULTDISPLAY,
-                                 FILE_SORT_ALPHA);
+                                 FILE_SORT_DEFAULT);
 }
 
 /** \} */

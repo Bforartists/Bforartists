@@ -23,9 +23,7 @@
 
 using namespace std;
 
-namespace Freestyle {
-
-namespace Functions1D {
+namespace Freestyle::Functions1D {
 
 int GetXF1D::operator()(Interface1D &inter)
 {
@@ -219,8 +217,8 @@ void getOccludeeF1D(Interface1D &inter, set<ViewShape *> &oShapes)
   ViewEdge *ve = dynamic_cast<ViewEdge *>(&inter);
   if (ve) {
     ViewShape *aShape = ve->aShape();
-    if (aShape == 0) {
-      oShapes.insert((ViewShape *)0);
+    if (aShape == nullptr) {
+      oShapes.insert((ViewShape *)nullptr);
       return;
     }
     oShapes.insert(aShape);
@@ -266,6 +264,4 @@ void getShapeF1D(Interface1D &inter, set<ViewShape *> &oShapes)
   }
 }
 
-}  // end of namespace Functions1D
-
-} /* namespace Freestyle */
+}  // namespace Freestyle::Functions1D

@@ -220,9 +220,11 @@ class DATA_OT_rigify_add_feature_set(bpy.types.Operator):
             # Call the register callback of the new set
             call_register_function(fixed_dirname, True)
 
-        addon_prefs.machin = bpy.props.EnumProperty(items=(('a',)*3, ('b',)*3, ('c',)*3),)
+            addon_prefs.update_external_rigs()
 
-        addon_prefs.update_external_rigs()
+            new_index = addon_prefs.rigify_feature_sets.find(get_ui_name(fixed_dirname))
+            addon_prefs.active_feature_set_index = new_index
+
         return {'FINISHED'}
 
 
@@ -254,7 +256,10 @@ class DATA_OT_rigify_remove_feature_set(bpy.types.Operator):
                 rmtree(set_path)
 
         addon_prefs.update_external_rigs(force=True)
+        addon_prefs.active_feature_set_index = 0
+
         return {'FINISHED'}
+
 
 def register():
     bpy.utils.register_class(DATA_OT_rigify_add_feature_set)

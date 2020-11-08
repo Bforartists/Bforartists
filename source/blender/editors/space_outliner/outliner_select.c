@@ -56,7 +56,6 @@
 #include "BKE_particle.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_sequencer.h"
 #include "BKE_shader_fx.h"
 #include "BKE_workspace.h"
 
@@ -72,6 +71,8 @@
 #include "ED_select_utils.h"
 #include "ED_sequencer.h"
 #include "ED_undo.h"
+
+#include "SEQ_sequencer.h"
 
 #include "WM_api.h"
 #include "WM_toolsystem.h"
@@ -724,20 +725,9 @@ static eOLDrawState tree_element_active_bone(bContext *C,
 static void tree_element_active_ebone__sel(bContext *C, bArmature *arm, EditBone *ebone, short sel)
 {
   if (sel) {
-    ebone->flag |= BONE_SELECTED | BONE_ROOTSEL | BONE_TIPSEL;
     arm->act_edbone = ebone;
-    /* Flush to parent? */
-    if (ebone->parent && (ebone->flag & BONE_CONNECTED)) {
-      ebone->parent->flag |= BONE_TIPSEL;
-    }
   }
-  else {
-    ebone->flag &= ~(BONE_SELECTED | BONE_ROOTSEL | BONE_TIPSEL);
-    /* Flush to parent? */
-    if (ebone->parent && (ebone->flag & BONE_CONNECTED)) {
-      ebone->parent->flag &= ~BONE_TIPSEL;
-    }
-  }
+  ED_armature_ebone_select_set(ebone, sel);
   WM_event_add_notifier(C, NC_OBJECT | ND_BONE_ACTIVE, CTX_data_edit_object(C));
 }
 static eOLDrawState tree_element_active_ebone(bContext *C,
@@ -1434,7 +1424,7 @@ static bool do_outliner_range_select_recursive(ListBase *lb,
     }
 
     /* Set state for selection */
-    if (te == active || te == cursor) {
+    if (ELEM(te, active, cursor)) {
       selecting = !selecting;
     }
 

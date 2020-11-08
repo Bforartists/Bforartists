@@ -405,20 +405,21 @@ class GPENCIL_MT_cleanup(Menu):
 
         layout = self.layout
 
+        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
+        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS").mode = 'ALL'
+
+        layout.separator()
+
         layout.operator("gpencil.frame_clean_loose", text="Delete Loose Points", icon = "DELETE_LOOSE")
-        layout.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE")
 
         if ob.mode != 'PAINT_GPENCIL':
             layout.operator("gpencil.stroke_merge_by_distance", text="Merge by Distance", icon = "MERGE")
 
         layout.separator()
 
-        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS").mode = 'ALL'
-
+        layout.operator("gpencil.frame_clean_duplicate", text="Delete Duplicated Frames", icon = "DELETE")
+        layout.operator("gpencil.recalc_geometry", text="Recalculate Geometry", icon = "FILE_REFRESH")
         if ob.mode != 'PAINT_GPENCIL':
-            layout.separator()
-
             layout.operator("gpencil.reproject", icon = "REPROJECT")
 
 

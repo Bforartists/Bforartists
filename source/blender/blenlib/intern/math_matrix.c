@@ -274,7 +274,7 @@ void mul_m4_m4m4(float R[4][4], const float A[4][4], const float B[4][4])
 
 void mul_m4_m4m4_uniq(float R[4][4], const float A[4][4], const float B[4][4])
 {
-  BLI_assert(R != A && R != B);
+  BLI_assert(!ELEM(R, A, B));
 
   /* matrix product: R[j][k] = A[j][i] . B[i][k] */
 #ifdef __SSE2__
@@ -319,7 +319,7 @@ void mul_m4_m4m4_uniq(float R[4][4], const float A[4][4], const float B[4][4])
 
 void mul_m4_m4m4_db_uniq(double R[4][4], const double A[4][4], const double B[4][4])
 {
-  BLI_assert(R != A && R != B);
+  BLI_assert(!ELEM(R, A, B));
 
   /* matrix product: R[j][k] = A[j][i] . B[i][k] */
 
@@ -347,7 +347,7 @@ void mul_m4_m4m4_db_uniq(double R[4][4], const double A[4][4], const double B[4]
 void mul_m4db_m4db_m4fl_uniq(double R[4][4], const double A[4][4], const float B[4][4])
 {
   /* Remove second check since types don't match. */
-  BLI_assert(R != A /* && R != B */);
+  BLI_assert(!ELEM(R, A /*, B */));
 
   /* matrix product: R[j][k] = A[j][i] . B[i][k] */
 
@@ -419,7 +419,7 @@ void mul_m3_m3_post(float R[3][3], const float B[3][3])
 
 void mul_m3_m3m3_uniq(float R[3][3], const float A[3][3], const float B[3][3])
 {
-  BLI_assert(R != A && R != B);
+  BLI_assert(!ELEM(R, A, B));
 
   R[0][0] = B[0][0] * A[0][0] + B[0][1] * A[1][0] + B[0][2] * A[2][0];
   R[0][1] = B[0][0] * A[0][1] + B[0][1] * A[1][1] + B[0][2] * A[2][1];
@@ -2223,11 +2223,29 @@ void scale_m4_fl(float R[4][4], float scale)
   R[3][0] = R[3][1] = R[3][2] = 0.0;
 }
 
+void translate_m3(float mat[3][3], float tx, float ty)
+{
+  mat[2][0] += (tx * mat[0][0] + ty * mat[1][0]);
+  mat[2][1] += (tx * mat[0][1] + ty * mat[1][1]);
+}
+
 void translate_m4(float mat[4][4], float Tx, float Ty, float Tz)
 {
   mat[3][0] += (Tx * mat[0][0] + Ty * mat[1][0] + Tz * mat[2][0]);
   mat[3][1] += (Tx * mat[0][1] + Ty * mat[1][1] + Tz * mat[2][1]);
   mat[3][2] += (Tx * mat[0][2] + Ty * mat[1][2] + Tz * mat[2][2]);
+}
+
+void rotate_m3(float mat[3][3], const float angle)
+{
+  const float angle_cos = cosf(angle);
+  const float angle_sin = sinf(angle);
+
+  for (int col = 0; col < 3; col++) {
+    float temp = angle_cos * mat[0][col] + angle_sin * mat[1][col];
+    mat[1][col] = -angle_sin * mat[0][col] + angle_cos * mat[1][col];
+    mat[0][col] = temp;
+  }
 }
 
 /* TODO: enum for axis? */
@@ -2275,6 +2293,12 @@ void rotate_m4(float mat[4][4], const char axis, const float angle)
   }
 }
 
+void rescale_m3(float mat[3][3], const float scale[2])
+{
+  mul_v3_fl(mat[0], scale[0]);
+  mul_v3_fl(mat[1], scale[1]);
+}
+
 /** Scale a matrix in-place. */
 void rescale_m4(float mat[4][4], const float scale[3])
 {
@@ -2303,6 +2327,20 @@ void transform_pivot_set_m4(float mat[4][4], const float pivot[3])
   /* invert the matrix */
   negate_v3(tmat[3]);
   mul_m4_m4m4(mat, mat, tmat);
+}
+
+void transform_pivot_set_m3(float mat[3][3], const float pivot[2])
+{
+  float tmat[3][3];
+
+  unit_m3(tmat);
+
+  copy_v2_v2(tmat[2], pivot);
+  mul_m3_m3m3(mat, tmat, mat);
+
+  /* invert the matrix */
+  negate_v2(tmat[2]);
+  mul_m3_m3m3(mat, mat, tmat);
 }
 
 void blend_m3_m3m3(float out[3][3],
@@ -2482,6 +2520,21 @@ bool equals_m4m4(const float mat1[4][4], const float mat2[4][4])
 {
   return (equals_v4v4(mat1[0], mat2[0]) && equals_v4v4(mat1[1], mat2[1]) &&
           equals_v4v4(mat1[2], mat2[2]) && equals_v4v4(mat1[3], mat2[3]));
+}
+
+/**
+ * Make a 3x3 matrix out of 3 transform components.
+ * Matrices are made in the order: `loc * rot * scale`
+ */
+void loc_rot_size_to_mat3(float R[3][3],
+                          const float loc[2],
+                          const float angle,
+                          const float size[2])
+{
+  unit_m3(R);
+  translate_m3(R, loc[0], loc[1]);
+  rotate_m3(R, angle);
+  rescale_m3(R, size);
 }
 
 /**
@@ -2867,7 +2920,7 @@ void svd_m4(float U[4][4], float s[4], float V[4][4], float A_[4][4])
         if (ks == k) {
           break;
         }
-        t = (ks != p ? fabsf(e[ks]) : 0.f) + (ks != k + 1 ? fabsf(e[ks - 1]) : 0.0f);
+        t = (ks != p ? fabsf(e[ks]) : 0.0f) + (ks != k + 1 ? fabsf(e[ks - 1]) : 0.0f);
         if (fabsf(s[ks]) <= eps * t) {
           s[ks] = 0.0f;
           break;

@@ -313,7 +313,7 @@ static float eval_profile(float r, short falloff_type, float sharpness, float pa
 {
   r = fabsf(r);
 
-  if (falloff_type == SHD_SUBSURFACE_BURLEY || falloff_type == SHD_SUBSURFACE_RANDOM_WALK) {
+  if (ELEM(falloff_type, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
     return burley_profile(r, param) / BURLEY_TRUNCATE_CDF;
   }
   if (falloff_type == SHD_SUBSURFACE_CUBIC) {
@@ -353,7 +353,7 @@ static void compute_sss_kernel(
   /* Christensen-Burley fitting */
   float l[3], d[3];
 
-  if (falloff_type == SHD_SUBSURFACE_BURLEY || falloff_type == SHD_SUBSURFACE_RANDOM_WALK) {
+  if (ELEM(falloff_type, SHD_SUBSURFACE_BURLEY, SHD_SUBSURFACE_RANDOM_WALK)) {
     mul_v3_v3fl(l, rad, 0.25f * M_1_PI);
     const float A = 1.0f;
     const float s = 1.9f - A + 3.5f * (A - 0.8f) * (A - 0.8f);
@@ -582,6 +582,12 @@ ListBase GPU_material_textures(GPUMaterial *material)
 ListBase GPU_material_volume_grids(GPUMaterial *material)
 {
   return material->graph.volume_grids;
+}
+
+GPUUniformAttrList *GPU_material_uniform_attributes(GPUMaterial *material)
+{
+  GPUUniformAttrList *attrs = &material->graph.uniform_attrs;
+  return attrs->count > 0 ? attrs : NULL;
 }
 
 void GPU_material_output_link(GPUMaterial *material, GPUNodeLink *link)

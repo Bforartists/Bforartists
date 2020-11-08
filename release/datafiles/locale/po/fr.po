@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -37340,24 +37340,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Aimanter les images clé sélectionnées à l’image courante"
 
 
-msgid "Nearest Frame"
-msgstr "Frame la plus proche"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Aimanter les images clé sélectionnées à la frame (entière) la plus proche (à utiliser pour régler des décalages sub-frame accidentels)"
 
 
-msgid "Nearest Second"
-msgstr "Seconde la plus proche"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Aimanter les images clé sélectionnées à la seconde la plus proche"
-
-
-msgid "Nearest Marker"
-msgstr "Marqueur le plus proche"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -37402,8 +37390,18 @@ msgid "Clear Fake User and remove copy stashed in this data-block's NLA stack"
 msgstr "Effacer l’utilisateur virtuel et enlever la copie stockée dans la pile NLA de ce bloc de données"
 
 
+msgctxt "Operator"
+msgid "Frame All"
+msgstr "Cadrer tout"
+
+
 msgid "Reset viewable area to show full keyframe range"
 msgstr "Réinitialiser la zone visible pour montrer l’ensemble des images clé"
+
+
+msgctxt "Operator"
+msgid "Frame Selected"
+msgstr "Cadrer sélection"
 
 
 msgid "Reset viewable area to show selected keyframes range"
@@ -43734,10 +43732,6 @@ msgstr "Appliquer une moyenne glissante pondérée pour rendre les F-courbes sé
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Aimanter les images clé sélectionnées aux temps/valeurs choisis"
-
-
-msgid "Cursor Value"
-msgstr "Valeur du curseur"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -51208,6 +51202,10 @@ msgid "Use box selection to select tree elements"
 msgstr "Utiliser la sélection par boîte pour sélectionner des éléments de l’arbre"
 
 
+msgid "Toggle All"
+msgstr "(Dés)activer tout"
+
+
 msgctxt "Operator"
 msgid "Show Active"
 msgstr "Afficher actif"
@@ -51784,6 +51782,10 @@ msgid "Palette"
 msgstr "Palette"
 
 
+msgid "Name of the Palette"
+msgstr "Nom de la palette"
+
+
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "Ajouter nouvelle palette"
@@ -51791,6 +51793,14 @@ msgstr "Ajouter nouvelle palette"
 
 msgid "Add new palette"
 msgstr "Ajouter une nouvelle palette"
+
+
+msgid "Hue, Saturation, Value"
+msgstr "Teinte, Saturation, Valeur"
+
+
+msgid "Saturation, Value, Hue"
+msgstr "Saturation, Valeur, Teinte"
 
 
 msgctxt "Operator"
@@ -68919,12 +68929,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "Aimanter à des intervalles de 1.0 seconde"
 
 
+msgid "Nearest Frame"
+msgstr "Frame la plus proche"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "Aimanter aux vraies images (temps nla-action)"
 
 
+msgid "Nearest Second"
+msgstr "Seconde la plus proche"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "Aimanter aux vraies secondes (temps nla-action)"
+
+
+msgid "Nearest Marker"
+msgstr "Marqueur le plus proche"
 
 
 msgid "Snap to nearest marker"
@@ -82246,6 +82268,18 @@ msgstr "Caméra orthographique"
 
 msgid "Object as Camera"
 msgstr "Objet comme caméra"
+
+
+msgid "User Orthographic"
+msgstr "Orthogonale Utilisateur"
+
+
+msgid "User Perspective"
+msgstr "Perspective Utilisateur"
+
+
+msgid " (Local)"
+msgstr " (Local)"
 
 
 msgid "fps: %.2f"

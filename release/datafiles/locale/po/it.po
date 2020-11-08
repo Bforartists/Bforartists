@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -25992,24 +25992,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "Aggancia i fotogrammi chiave selezionati al fotogramma corrente"
 
 
-msgid "Nearest Frame"
-msgstr "Fotogramma Più Vicino"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Aggancia i fotogrammi chiave selezionati al fotogramma (intero) più vicino (usa per sistemare scostamenti accidentali sub-frame)"
 
 
-msgid "Nearest Second"
-msgstr "Secondo più Vicino"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Aggancia i fotogrammi chiave selezionati al secondo più vicino"
-
-
-msgid "Nearest Marker"
-msgstr "Marcatore più Vicino"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -31102,10 +31090,6 @@ msgstr "Applicare il movimento pesato significa rendere le Curve-F selezionate m
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Aggancia i fotogrammi chiave selezionati a tempi/valori scelti"
-
-
-msgid "Cursor Value"
-msgstr "Valore Cursore"
 
 
 msgid "Flatten Handles"
@@ -51160,6 +51144,18 @@ msgstr "Passo Secondi"
 
 msgid "Snap to 1.0 second intervals"
 msgstr "Snap a intervalli di 1.0 secondi"
+
+
+msgid "Nearest Frame"
+msgstr "Fotogramma Più Vicino"
+
+
+msgid "Nearest Second"
+msgstr "Secondo più Vicino"
+
+
+msgid "Nearest Marker"
+msgstr "Marcatore più Vicino"
 
 
 msgid "Snap to nearest marker"

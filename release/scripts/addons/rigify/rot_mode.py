@@ -26,12 +26,12 @@ blender.stackexchange.com/questions/40711/how-to-convert-quaternions-keyframes-t
 '''
 
 # bl_info = {
-#     "name": "Quat/Euler Rotation Mode Converter",
+#     "name": "Rotation Mode Converter",
 #     "author": "Mario Mey / Mutant Bob",
-#     "version": (0, 1),
-#     "blender": (2, 76, 0),
-#     'location': '',
-#     "description": "Converts bones rotation mode",
+#     "version": (0, 2),
+#     "blender": (2, 91, 0),
+#     'location': 'Pose Mode -> Header -> Pose -> Convert Rotation Modes',
+#     "description": "Converts Animation between different rotation orders",
 #     "warning": "",
 #     "doc_url": "",
 #     "tracker_url": "https://github.com/MarioMey/rotation_mode_addon/",
@@ -40,306 +40,217 @@ blender.stackexchange.com/questions/40711/how-to-convert-quaternions-keyframes-t
 
 import bpy
 from bpy.props import (
-    BoolProperty,
     EnumProperty,
+    StringProperty,
 )
 
 
-class convert():
-    def get_or_create_fcurve(self, action, data_path, array_index=-1, group=None):
-        for fc in action.fcurves:
-            if fc.data_path == data_path and (array_index < 0 or fc.array_index == array_index):
-                return fc
+def get_or_create_fcurve(action, data_path, array_index=-1, group=None):
+    for fc in action.fcurves:
+        if fc.data_path == data_path and (array_index < 0 or fc.array_index == array_index):
+            return fc
 
-        fc = action.fcurves.new(data_path, index=array_index)
-        fc.group = group
-        return fc
+    fc = action.fcurves.new(data_path, index=array_index)
+    fc.group = group
+    return fc
 
-    def add_keyframe_quat(self, action, quat, frame, bone_prefix, group):
-        for i in range(len(quat)):
-            fc = self.get_or_create_fcurve(action, bone_prefix + "rotation_quaternion", i, group)
-            pos = len(fc.keyframe_points)
-            fc.keyframe_points.add(1)
-            fc.keyframe_points[pos].co = [frame, quat[i]]
-            fc.update()
+def add_keyframe_quat(action, quat, frame, bone_prefix, group):
+    for i in range(len(quat)):
+        fc = get_or_create_fcurve(action, bone_prefix + "rotation_quaternion", i, group)
+        pos = len(fc.keyframe_points)
+        fc.keyframe_points.add(1)
+        fc.keyframe_points[pos].co = [frame, quat[i]]
+        fc.update()
 
-    def add_keyframe_euler(self, action, euler, frame, bone_prefix, group):
-        for i in range(len(euler)):
-            fc = self.get_or_create_fcurve(action, bone_prefix + "rotation_euler", i, group)
-            pos = len(fc.keyframe_points)
-            fc.keyframe_points.add(1)
-            fc.keyframe_points[pos].co = [frame, euler[i]]
-            fc.update()
+def add_keyframe_euler(action, euler, frame, bone_prefix, group):
+    for i in range(len(euler)):
+        fc = get_or_create_fcurve(action, bone_prefix + "rotation_euler", i, group)
+        pos = len(fc.keyframe_points)
+        fc.keyframe_points.add(1)
+        fc.keyframe_points[pos].co = [frame, euler[i]]
+        fc.update()
 
-    def frames_matching(self, action, data_path):
-        frames = set()
+def frames_matching(action, data_path):
+    frames = set()
+    for fc in action.fcurves:
+        if fc.data_path == data_path:
+            fri = [kp.co[0] for kp in fc.keyframe_points]
+            frames.update(fri)
+    return frames
+
+def group_qe(obj, action, bone, bone_prefix, order):
+    """Converts only one group/bone in one action - Quat to euler."""
+    pose_bone = bone
+    data_path = bone_prefix + "rotation_quaternion"
+    frames = frames_matching(action, data_path)
+    group = action.groups[bone.name]
+
+    for fr in frames:
+        quat = bone.rotation_quaternion.copy()
         for fc in action.fcurves:
             if fc.data_path == data_path:
-                fri = [kp.co[0] for kp in fc.keyframe_points]
-                frames.update(fri)
-        return frames
+                quat[fc.array_index] = fc.evaluate(fr)
+        euler = quat.to_euler(order)
 
-    # Converts only one group/bone in one action - Quat to euler
-    def group_qe(self, obj, action, bone, bone_prefix, order):
-
-        pose_bone = bone
-        data_path = bone_prefix + "rotation_quaternion"
-        frames = self.frames_matching(action, data_path)
-        group = action.groups[bone.name]
-
-        for fr in frames:
-            quat = bone.rotation_quaternion.copy()
-            for fc in action.fcurves:
-                if fc.data_path == data_path:
-                    quat[fc.array_index] = fc.evaluate(fr)
-            euler = quat.to_euler(order)
-
-            self.add_keyframe_euler(action, euler, fr, bone_prefix, group)
-            bone.rotation_mode = order
-
-    # Converts only one group/bone in one action - Euler to Quat
-    def group_eq(self, obj, action, bone, bone_prefix, order):
-
-        pose_bone = bone
-        data_path = bone_prefix + "rotation_euler"
-        frames = self.frames_matching(action, data_path)
-        group = action.groups[bone.name]
-
-        for fr in frames:
-            euler = bone.rotation_euler.copy()
-            for fc in action.fcurves:
-                if fc.data_path == data_path:
-                    euler[fc.array_index] = fc.evaluate(fr)
-            quat = euler.to_quaternion()
-
-            self.add_keyframe_quat(action, quat, fr, bone_prefix, group)
-            bone.rotation_mode = order
-
-    # One Action - One Bone
-    def one_act_one_bon(self, obj, action, bone, order):
-        do = False
-        bone_prefix = ''
-
-        # What kind of conversion
-        cond1 = order == 'XYZ'
-        cond2 = order == 'XZY'
-        cond3 = order == 'YZX'
-        cond4 = order == 'YXZ'
-        cond5 = order == 'ZXY'
-        cond6 = order == 'ZYX'
-
-        order_euler = cond1 or cond2 or cond3 or cond4 or cond5 or cond6
-        order_quat = order == 'QUATERNION'
-
-        for fcurve in action.fcurves:
-            if fcurve.group.name == bone.name:
-
-                # If To-Euler conversion
-                if order != 'QUATERNION':
-                    if fcurve.data_path.endswith('rotation_quaternion'):
-                        do = True
-                        bone_prefix = fcurve.data_path[:-len('rotation_quaternion')]
-                        break
-
-                # If To-Quat conversion
-                else:
-                    if fcurve.data_path.endswith('rotation_euler'):
-                        do = True
-                        bone_prefix = fcurve.data_path[:-len('rotation_euler')]
-                        break
-
-        # If To-Euler conversion
-        if do and order != 'QUATERNION':
-            # Converts the group/bone from Quat to Euler
-            self.group_qe(obj, action, bone, bone_prefix, order)
-
-            # Removes quaternion fcurves
-            for key in action.fcurves:
-                if key.data_path == 'pose.bones["' + bone.name + '"].rotation_quaternion':
-                    action.fcurves.remove(key)
-
-        # If To-Quat conversion
-        elif do:
-            # Converts the group/bone from Euler to Quat
-            self.group_eq(obj, action, bone, bone_prefix, order)
-
-            # Removes euler fcurves
-            for key in action.fcurves:
-                if key.data_path == 'pose.bones["' + bone.name + '"].rotation_euler':
-                    action.fcurves.remove(key)
-
-        # Changes rotation mode to new one
+        add_keyframe_euler(action, euler, fr, bone_prefix, group)
         bone.rotation_mode = order
 
-    # One Action, selected bones
-    def one_act_sel_bon(self, obj, action, pose_bones, order):
-        for bone in pose_bones:
-            self.one_act_one_bon(obj, action, bone, order)
+def group_eq(obj, action, bone, bone_prefix, order):
+    """Converts only one group/bone in one action - Euler to Quat."""
+    pose_bone = bone
+    data_path = bone_prefix + "rotation_euler"
+    frames = frames_matching(action, data_path)
+    group = action.groups[bone.name]
 
-    # One action, all Bones (in Action)
-    def one_act_every_bon(self, obj, action, order):
+    for fr in frames:
+        euler = bone.rotation_euler.copy()
+        for fc in action.fcurves:
+            if fc.data_path == data_path:
+                euler[fc.array_index] = fc.evaluate(fr)
+        quat = euler.to_quaternion()
 
-        # Collects pose_bones that are in the action
-        pose_bones = set()
-        # Checks all fcurves
-        for fcurve in action.fcurves:
-            # Look for the ones that has rotation_euler
-            if order == 'QUATERNION':
-                if fcurve.data_path.endswith('rotation_euler'):
-                    # If the bone from action really exists
-                    if fcurve.group.name in obj.pose.bones:
-                        if obj.pose.bones[fcurve.group.name] not in pose_bones:
-                            pose_bones.add(obj.pose.bones[fcurve.group.name])
-                    else:
-                        print(fcurve.group.name, 'does not exist in Armature. Fcurve-group is not affected')
+        add_keyframe_quat(action, quat, fr, bone_prefix, group)
+        bone.rotation_mode = order
 
-            # Look for the ones that has rotation_quaternion
-            else:
+def convert_curves_of_bone_in_action(obj, action, bone, order):
+    """Convert given bone's curves in given action to given rotation order."""
+    to_euler = False
+    bone_prefix = ''
+
+    for fcurve in action.fcurves:
+        if fcurve.group.name == bone.name:
+
+            # If To-Euler conversion
+            if order != 'QUATERNION':
                 if fcurve.data_path.endswith('rotation_quaternion'):
-                    # If the bone from action really exists
-                    if fcurve.group.name in obj.pose.bones:
-                        if obj.pose.bones[fcurve.group.name] not in pose_bones:
-                            pose_bones.add(obj.pose.bones[fcurve.group.name])
-                    else:
-                        print(fcurve.group.name, 'does not exist in Armature. Fcurve-group is not affected')
+                    to_euler = True
+                    bone_prefix = fcurve.data_path[:-len('rotation_quaternion')]
+                    break
 
-        # Convert current action and pose_bones that are in each action
-        for bone in pose_bones:
-            self.one_act_one_bon(obj, action, bone, order)
+            # If To-Quat conversion
+            else:
+                if fcurve.data_path.endswith('rotation_euler'):
+                    to_euler = True
+                    bone_prefix = fcurve.data_path[:-len('rotation_euler')]
+                    break
 
-    # All Actions, selected bones
-    def all_act_sel_bon(self, obj, pose_bones, order):
-        for action in bpy.data.actions:
-            for bone in pose_bones:
-                self.one_act_one_bon(obj, action, bone, order)
+    # If To-Euler conversion
+    if to_euler and order != 'QUATERNION':
+        # Converts the group/bone from Quat to Euler
+        group_qe(obj, action, bone, bone_prefix, order)
 
-    # All actions, All Bones (in each Action)
-    def all_act_every_bon(self, obj, order):
-        for action in bpy.data.actions:
-            self.one_act_every_bon(obj, action, order)
+        # Removes quaternion fcurves
+        for key in action.fcurves:
+            if key.data_path == 'pose.bones["' + bone.name + '"].rotation_quaternion':
+                action.fcurves.remove(key)
 
+    # If To-Quat conversion
+    elif to_euler:
+        # Converts the group/bone from Euler to Quat
+        group_eq(obj, action, bone, bone_prefix, order)
 
-convert = convert()
+        # Removes euler fcurves
+        for key in action.fcurves:
+            if key.data_path == 'pose.bones["' + bone.name + '"].rotation_euler':
+                action.fcurves.remove(key)
 
+    # Changes rotation mode to new one
+    bone.rotation_mode = order
 
-class VIEW3D_PT_rigify_rot_mode(bpy.types.Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_category = 'Rigify'
-    bl_context = "posemode"
-    bl_label = 'Rigify Quat/Euler Converter'
+class POSE_OT_convert_rotation(bpy.types.Operator):
+    bl_label = 'Convert Rotation Modes'
+    bl_idname = 'pose.convert_rotation'
+    bl_description = 'Convert animation from any rotation mode to any other'
+    bl_options = {'REGISTER', 'UNDO'}
 
-    # draw the gui
+    # Properties.
+    target_rotation_mode: EnumProperty(
+        items=[
+            ('QUATERNION', 'Quaternion', 'Quaternion'),
+            ('XYZ', 'XYZ', 'XYZ Euler'),
+            ('XZY', 'XZY', 'XZY Euler'),
+            ('YXZ', 'YXZ', 'YXZ Euler'),
+            ('YZX', 'YZX', 'YZX Euler'),
+            ('ZXY', 'ZXY', 'ZXY Euler'),
+            ('ZYX', 'ZYX', 'ZYX Euler')
+        ],
+        name='Convert To',
+        description="The target rotation mode",
+        default='QUATERNION',
+    )
+    affected_bones: EnumProperty(
+        name="Affected Bones",
+        items=[
+            ('SELECT', 'Selected', 'Selected'),
+            ('ALL', 'All', 'All'),
+        ],
+        description="Which bones to affect",
+        default='SELECT',
+    )
+    affected_actions: EnumProperty(
+        name="Affected Action",
+        items=[
+            ('SINGLE', 'Single', 'Single'),
+            ('ALL', 'All', 'All'),
+        ],
+        description="Which Actions to affect",
+        default='SINGLE',
+    )
+    selected_action: StringProperty(name="Action")
+
+    def invoke(self, context, event):
+        ob = context.object
+        if ob and ob.type=='ARMATURE' and ob.animation_data and ob.animation_data.action:
+            self.selected_action = context.object.animation_data.action.name
+        else:
+            self.affected_actions = 'ALL'
+
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
     def draw(self, context):
         layout = self.layout
-        scn = context.scene
-        # ~ toolsettings = context.tool_settings
+        layout.use_property_split = True
+        layout.use_property_decorate = False
 
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        id_store = context.window_manager
+        layout.row().prop(self, 'affected_bones', expand=True)
+        layout.row().prop(self, 'affected_actions', expand=True)
+        if self.affected_actions=='SINGLE':
+            layout.prop_search(self, 'selected_action', bpy.data, 'actions')
+        layout.prop(self, 'target_rotation_mode')
 
-        layout.prop(scn, 'order_list')
+    def execute(self, context):
+        obj = context.active_object
 
-        if id_store.rigify_convert_only_selected:
-            icon = 'OUTLINER_DATA_ARMATURE'
-        else:
-            icon = 'ARMATURE_DATA'
+        actions = [bpy.data.actions.get(self.selected_action)]
+        pose_bones = context.selected_pose_bones
+        if self.affected_bones=='ALL':
+            pose_bones = obj.pose.bones
+        if self.affected_actions=='ALL':
+            actions = bpy.data.actions
 
-        layout.prop(id_store, 'rigify_convert_only_selected', toggle=True, icon=icon)
-
-        col = layout.column(align=True)
-        row = col.row(align=True)
-
-        row.operator('rigify_quat2eu.current', icon='ACTION')
-        row = col.row(align=True)
-        row.operator('rigify_quat2eu.all', icon='NLA')
-
-
-class CONVERT_OT_quat2eu_current_action(bpy.types.Operator):
-    bl_label = 'Convert Current Action'
-    bl_idname = 'rigify_quat2eu.current'
-    bl_description = 'Converts bones in current Action'
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    # on mouse up:
-    def invoke(self, context, event):
-        self.execute(context)
-        return {'FINISHED'}
-
-    def execute(op, context):
-        obj = bpy.context.active_object
-        pose_bones = bpy.context.selected_pose_bones
-        action = obj.animation_data.action
-        order = bpy.context.scene.order_list
-        id_store = context.window_manager
-
-        if id_store.rigify_convert_only_selected:
-            convert.one_act_sel_bon(obj, action, pose_bones, order)
-        else:
-            convert.one_act_every_bon(obj, action, order)
+        for action in actions:
+            for pb in pose_bones:
+                convert_curves_of_bone_in_action(obj, action, pb, self.target_rotation_mode)
 
         return {'FINISHED'}
 
+def draw_convert_rotation(self, context):
+    self.layout.separator()
+    self.layout.operator(POSE_OT_convert_rotation.bl_idname)
 
-class CONVERT_OT_quat2eu_all_actions(bpy.types.Operator):
-    bl_label = 'Convert All Actions'
-    bl_idname = 'rigify_quat2eu.all'
-    bl_description = 'Converts bones in every Action'
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    # on mouse up:
-    def invoke(self, context, event):
-        self.execute(context)
-        return {'FINISHED'}
-
-    def execute(op, context):
-        obj = bpy.context.active_object
-        pose_bones = bpy.context.selected_pose_bones
-        order = bpy.context.scene.order_list
-        id_store = context.window_manager
-
-        if id_store.rigify_convert_only_selected:
-            convert.all_act_sel_bon(obj, pose_bones, order)
-        else:
-            convert.all_act_every_bon(obj, order)
-
-        return {'FINISHED'}
-
-
-### Registering ###
-
-classes = (
-    VIEW3D_PT_rigify_rot_mode,
-    CONVERT_OT_quat2eu_current_action,
-    CONVERT_OT_quat2eu_all_actions,
-)
-
+classes = [
+    POSE_OT_convert_rotation
+]
 
 def register():
     from bpy.utils import register_class
 
-    # Properties.
-    items = [('QUATERNION', 'QUATERNION', 'QUATERNION'),
-             ('XYZ', 'XYZ', 'XYZ'),
-             ('XZY', 'XZY', 'XZY'),
-             ('YXZ', 'YXZ', 'YXZ'),
-             ('YZX', 'YZX', 'YZX'),
-             ('ZXY', 'ZXY', 'ZXY'),
-             ('ZYX', 'ZYX', 'ZYX')]
-    bpy.types.Scene.order_list = EnumProperty(
-        items=items, name='Convert to',
-        description="The target rotation mode", default='QUATERNION')
-
-    IDStore = bpy.types.WindowManager
-    IDStore.rigify_convert_only_selected = BoolProperty(
-        name="Convert Only Selected",
-        description="Convert selected bones only", default=True)
-
     # Classes.
     for cls in classes:
         register_class(cls)
-
+    
+    bpy.types.VIEW3D_MT_pose.append(draw_convert_rotation)
 
 def unregister():
     from bpy.utils import unregister_class
@@ -348,6 +259,4 @@ def unregister():
     for cls in classes:
         unregister_class(cls)
 
-    # Properties.
-    IDStore = bpy.types.WindowManager
-    del IDStore.rigify_convert_only_selected
+    bpy.types.VIEW3D_MT_pose.remove(draw_convert_rotation)

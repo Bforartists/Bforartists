@@ -24,9 +24,7 @@
 #include "StringUtils.h"
 #include "FreestyleConfig.h"
 
-namespace Freestyle {
-
-namespace StringUtils {
+namespace Freestyle::StringUtils {
 
 void getPathName(const string &path, const string &base, vector<string> &pathnames)
 {
@@ -46,7 +44,7 @@ void getPathName(const string &path, const string &base, vector<string> &pathnam
     dir = path.substr(pos, sep - pos);
 
     BLI_strncpy(cleaned, dir.c_str(), FILE_MAX);
-    BLI_path_normalize(NULL, cleaned);
+    BLI_path_normalize(nullptr, cleaned);
     res = string(cleaned);
 
     if (!base.empty()) {
@@ -57,6 +55,4 @@ void getPathName(const string &path, const string &base, vector<string> &pathnam
   }
 }
 
-}  // end of namespace StringUtils
-
-} /* namespace Freestyle */
+}  // namespace Freestyle::StringUtils

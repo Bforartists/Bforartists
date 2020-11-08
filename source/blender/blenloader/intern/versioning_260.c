@@ -61,10 +61,11 @@
 #include "BKE_pointcache.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
-#include "BKE_sequencer.h"
 #include "BKE_text.h" /* for txt_extended_ascii_as_utf8 */
 #include "BKE_texture.h"
 #include "BKE_tracking.h"
+
+#include "SEQ_sequencer.h"
 
 #ifdef WITH_FFMPEG
 #  include "BKE_writeffmpeg.h"
@@ -2065,10 +2066,9 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
         if (srl->freestyleConfig.mode == 0) {
           srl->freestyleConfig.mode = FREESTYLE_CONTROL_EDITOR_MODE;
         }
-        if (srl->freestyleConfig.raycasting_algorithm ==
-                FREESTYLE_ALGO_CULLED_ADAPTIVE_CUMULATIVE ||
-            srl->freestyleConfig.raycasting_algorithm ==
-                FREESTYLE_ALGO_CULLED_ADAPTIVE_TRADITIONAL) {
+        if (ELEM(srl->freestyleConfig.raycasting_algorithm,
+                 FREESTYLE_ALGO_CULLED_ADAPTIVE_CUMULATIVE,
+                 FREESTYLE_ALGO_CULLED_ADAPTIVE_TRADITIONAL)) {
           srl->freestyleConfig.raycasting_algorithm = 0; /* deprecated */
           srl->freestyleConfig.flags |= FREESTYLE_CULLING;
         }

@@ -35,13 +35,10 @@
 #include "intern/depsgraph_relation.h"
 #include "intern/node/deg_node.h"
 
-namespace blender {
-namespace deg {
+namespace blender::deg {
 
 DriverDescriptor::DriverDescriptor(PointerRNA *id_ptr, FCurve *fcu)
-    : rna_prefix(),
-      rna_suffix(),
-      id_ptr_(id_ptr),
+    : id_ptr_(id_ptr),
       fcu_(fcu),
       driver_relations_needed_(false),
       pointer_rna_(),
@@ -254,5 +251,4 @@ void DepsgraphRelationBuilder::build_driver_relations(IDNode *id_node)
   }
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg
