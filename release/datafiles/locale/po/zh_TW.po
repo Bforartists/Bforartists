@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -26632,24 +26632,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "將所選的鍵幀吸附至目前框幀"
 
 
-msgid "Nearest Frame"
-msgstr "最近框幀"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "將所選的鍵幀吸附至最近的 (完整) 框幀 (使來修正意外的細分幀偏移)"
 
 
-msgid "Nearest Second"
-msgstr "次近"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "將選取的鍵幀吸附至第二近的框幀"
-
-
-msgid "Nearest Marker"
-msgstr "最近標記"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -31582,10 +31570,6 @@ msgstr "套用權重化移動代表可讓所選 F 曲線減少凹凸不平"
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "將所選的鍵幀吸附至選擇的時間/值"
-
-
-msgid "Cursor Value"
-msgstr "游標值"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -51266,12 +51250,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "吸附 1.0 幀/秒間隔"
 
 
+msgid "Nearest Frame"
+msgstr "最近框幀"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "吸附實際幀/秒 (nla 動作時間)"
 
 
+msgid "Nearest Second"
+msgstr "次近"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "吸附實際幀/秒 (nla 動作時間)"
+
+
+msgid "Nearest Marker"
+msgstr "最近標記"
 
 
 msgid "Snap to nearest marker"

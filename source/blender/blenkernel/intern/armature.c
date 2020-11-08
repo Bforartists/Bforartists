@@ -329,6 +329,8 @@ IDTypeInfo IDType_ID_AR = {
     .blend_read_data = armature_blend_read_data,
     .blend_read_lib = armature_blend_read_lib,
     .blend_read_expand = armature_blend_read_expand,
+
+    .blend_read_undo_preserve = NULL,
 };
 
 /** \} */
@@ -576,7 +578,7 @@ void BKE_armature_transform(bArmature *arm, const float mat[4][4], const bool do
 /* -------------------------------------------------------------------- */
 /** \name Armature Bone Find by Name
  *
- * Using fast #GHash look-ups when available.
+ * Using fast #GHash lookups when available.
  * \{ */
 
 static Bone *get_named_bone_bonechildren(ListBase *lb, const char *name)
@@ -799,7 +801,7 @@ bool bone_autoside_name(
     while (changed) { /* remove extensions */
       changed = false;
       if (len > 2 && basename[len - 2] == '.') {
-        if (basename[len - 1] == 'L' || basename[len - 1] == 'R') { /* L R */
+        if (ELEM(basename[len - 1], 'L', 'R')) { /* L R */
           basename[len - 2] = '\0';
           len -= 2;
           changed = true;

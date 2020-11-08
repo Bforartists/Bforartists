@@ -70,7 +70,6 @@
 #include "BKE_pointcache.h"
 #include "BKE_report.h"
 #include "BKE_scene.h"
-#include "BKE_sequencer.h"
 #include "BKE_sound.h"
 #include "BKE_writeavi.h" /* <------ should be replaced once with generic movie module */
 
@@ -89,8 +88,10 @@
 #include "RE_pipeline.h"
 #include "RE_render_ext.h"
 
-#include "../../../windowmanager/WM_api.h"    /* XXX */
-#include "../../../windowmanager/wm_window.h" /* XXX */
+#include "SEQ_sequencer.h"
+
+#include "../../windowmanager/WM_api.h"    /* XXX */
+#include "../../windowmanager/wm_window.h" /* XXX */
 #include "GPU_context.h"
 
 #ifdef WITH_FREESTYLE
@@ -101,9 +102,9 @@
 
 /* internal */
 #include "initrender.h"
+#include "pipeline.h"
 #include "render_result.h"
 #include "render_types.h"
-#include "renderpipeline.h"
 
 /* render flow
  *
@@ -1497,27 +1498,27 @@ static void do_render_seq(Render *re)
   tot_views = BKE_scene_multiview_num_views_get(&re->r);
   ibuf_arr = MEM_mallocN(sizeof(ImBuf *) * tot_views, "Sequencer Views ImBufs");
 
-  BKE_sequencer_new_render_data(re->main,
-                                re->pipeline_depsgraph,
-                                re->scene,
-                                re_x,
-                                re_y,
-                                SEQ_RENDER_SIZE_SCENE,
-                                true,
-                                &context);
+  SEQ_render_new_render_data(re->main,
+                             re->pipeline_depsgraph,
+                             re->scene,
+                             re_x,
+                             re_y,
+                             SEQ_RENDER_SIZE_SCENE,
+                             true,
+                             &context);
 
   /* the renderresult gets destroyed during the rendering, so we first collect all ibufs
    * and then we populate the final renderesult */
 
   for (view_id = 0; view_id < tot_views; view_id++) {
     context.view_id = view_id;
-    out = BKE_sequencer_give_ibuf(&context, cfra, 0);
+    out = SEQ_render_give_ibuf(&context, cfra, 0);
 
     if (out) {
       ibuf_arr[view_id] = IMB_dupImBuf(out);
       IMB_metadata_copy(ibuf_arr[view_id], out);
       IMB_freeImBuf(out);
-      BKE_sequencer_imbuf_from_sequencer_space(re->pipeline_scene_eval, ibuf_arr[view_id]);
+      SEQ_render_imbuf_from_sequencer_space(re->pipeline_scene_eval, ibuf_arr[view_id]);
     }
     else {
       ibuf_arr[view_id] = NULL;

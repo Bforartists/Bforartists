@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -38166,24 +38166,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "선택된 키 프레임을 현재 프레임에 스냅"
 
 
-msgid "Nearest Frame"
-msgstr "가까운 프레임"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "선택한 키 프레임을 가장 가까운 (전체) 프레임에 스냅합니다 (우발적인 하위 프레임 오프셋을 고치는 데 사용)"
 
 
-msgid "Nearest Second"
-msgstr "가까운 초"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "선택한 키 프레임을 가장 가까운 초에 스냅"
-
-
-msgid "Nearest Marker"
-msgstr "가까운 마커"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -45544,10 +45532,6 @@ msgstr "가중된 이동 수단을 적용하여 선택한 F-커브를 덜 울퉁
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "선택한 키 프레임을 선택 시간/값에 스냅"
-
-
-msgid "Cursor Value"
-msgstr "커서 값"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -75597,12 +75581,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "1.0 초 간격으로 스냅"
 
 
+msgid "Nearest Frame"
+msgstr "가까운 프레임"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "실제의 프레임들로 스냅 (NLA-액션 시간)"
 
 
+msgid "Nearest Second"
+msgstr "가까운 초"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "실제의 시간 초로 스냅 (NLA-액션 시간)"
+
+
+msgid "Nearest Marker"
+msgstr "가까운 마커"
 
 
 msgid "Snap to nearest marker"
@@ -84949,26 +84945,6 @@ msgstr "채널을 보호"
 msgctxt "Operator"
 msgid "Unprotect Channels"
 msgstr "채널 보호를 해제"
-
-
-msgctxt "Operator"
-msgid "Current Frame"
-msgstr "현재 프레임"
-
-
-msgctxt "Operator"
-msgid "Nearest Frame"
-msgstr "가까운 프레임"
-
-
-msgctxt "Operator"
-msgid "Nearest Second"
-msgstr "가장 가까운 초"
-
-
-msgctxt "Operator"
-msgid "Nearest Marker"
-msgstr "가까운 마커"
 
 
 msgid "Recursions"

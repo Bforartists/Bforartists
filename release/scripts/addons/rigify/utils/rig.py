@@ -95,34 +95,6 @@ def get_resource(resource_name):
     return module
 
 
-def attach_persistent_script(obj, script):
-    """Make sure the ui script always follows the rig around"""
-    skip = False
-    driver = None
-
-    if not obj.animation_data:
-        obj.animation_data_create()
-
-    for fcurve in obj.animation_data.drivers:
-        if fcurve.data_path == 'pass_index':
-            driver = fcurve.driver
-            for variable in driver.variables:
-                if variable.name == script.name:
-                    skip = True
-                    break
-            break
-
-    if not skip:
-        if not driver:
-            fcurve = obj.driver_add("pass_index")
-            driver = fcurve.driver
-
-        variable = driver.variables.new()
-        variable.name = script.name
-        variable.targets[0].id_type = 'TEXT'
-        variable.targets[0].id = script
-
-
 def connected_children_names(obj, bone_name):
     """ Returns a list of bone names (in order) of the bones that form a single
         connected chain starting with the given bone as a parent.

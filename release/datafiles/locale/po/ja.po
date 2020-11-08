@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -12398,6 +12398,21 @@ msgid "Limit forces to this collection"
 msgstr "このコレクションに力を制限します"
 
 
+msgid "Obstacle Distance"
+msgstr "障害物との距離"
+
+
+msgid "Determines how far apart fluid and obstacle are (higher values will result in fluid being further away from obstacles, smaller values will let fluid move towards the inside of obstacles)"
+msgstr ""
+"流体と障害物をどれぐらい離すかを決めます\n"
+"（大きな値で流体が障害物から離れ\n"
+"　小さな値で流体が障害物の内部に侵入します"
+
+
+msgid "Obstacle Threshold"
+msgstr "障害物のしきい値"
+
+
 msgid "Determines how much fluid is allowed in an obstacle cell (higher values will tag a boundary cell as an obstacle easier and reduce the boundary smoothening effect)"
 msgstr ""
 "流体が障害物セル内に流入可能な量を決定します\n"
@@ -22461,8 +22476,16 @@ msgid "Detected duration of movie clip in frames"
 msgstr "動画クリップの探知範囲(フレーム)"
 
 
+msgid "Offset of footage first frame relative to its file name (affects only how footage is loading, does not change data associated with a clip)"
+msgstr ""
+"ファイル名に対する、フッテージの最初のフレームのオフセット\n"
+"（フッテージが読み込まれる量にのみ影響し、クリップに関係するデータは変更しません）"
+
+
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
-msgstr "この動画の再生を開始するシーン全体のフレーム番号（クリップに関連するすべてのデータに影響）"
+msgstr ""
+"この動画の再生を開始するシーン全体のフレーム番号\n"
+"（クリップに関連するすべてのデータに影響）"
 
 
 msgid "Grease pencil data for this movie clip"
@@ -30092,6 +30115,10 @@ msgid "Parenting settings for masking element"
 msgstr "要素をマスクするためのペアレント設定"
 
 
+msgid "ID-block to which masking element would be parented to or to its property"
+msgstr "ペアレントされるマスク要素、またはそのプロパティのIDブロック"
+
+
 msgid "ID Type"
 msgstr "IDタイプ"
 
@@ -31989,8 +32016,16 @@ msgid "Convert all polygons to triangles"
 msgstr "すべてのポリゴンを三角形の面に変換します"
 
 
+msgid "Volume to Mesh"
+msgstr "ボリュームのメッシュ化"
+
+
 msgid "Weld"
 msgstr "溶接"
+
+
+msgid "Find groups of vertices closer than dist and merges them together"
+msgstr "設定距離より近い頂点群を見つけ、一緒にマージします"
 
 
 msgid "Wireframe"
@@ -35162,7 +35197,7 @@ msgstr ""
 
 
 msgid "Thickness of the shell"
-msgstr "殻の厚さ"
+msgstr "シェルの厚さ"
 
 
 msgid "Offset clamp based on geometry scale"
@@ -35854,6 +35889,30 @@ msgstr "テクスチャサンプル範囲"
 
 msgid "Smaller values result in better performance but might cut off the volume"
 msgstr "小さな値でパフォーマンスが向上しますが、ボリュームがカットされる可能性があります"
+
+
+msgid "Volume to Mesh Modifier"
+msgstr "ボリュームのメッシュ化モディファイアー"
+
+
+msgid "Reduces the final face count by simplifying geometry where detail is not needed"
+msgstr "不要な細部のある形状を簡略化し、最終的な面数を減らします"
+
+
+msgid "Grid Name"
+msgstr "グリッド名"
+
+
+msgid "Grid in the volume object that is converted to a mesh"
+msgstr "メッシュに変換するボリュームオブジェクトのグリッド"
+
+
+msgid "Use resolution of the volume grid"
+msgstr "ボリュームグリッドの解像度を使用します"
+
+
+msgid "Voxels with a larger value are inside the generated mesh"
+msgstr "これより大きな値のボクセルが生成されるメッシュ内に入ります"
 
 
 msgid "Warp Modifier"
@@ -42365,24 +42424,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "選択中のキーフレームを現在のフレームにスナップします"
 
 
-msgid "Nearest Frame"
-msgstr "近接するフレーム"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "選択中のキーフレームを最も近いフレームにスナップします(間違えて整数以外のフレームに置いた時に使用します)"
 
 
-msgid "Nearest Second"
-msgstr "近接する秒"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "選択中のキーフレームを最も近い秒にスナップします"
-
-
-msgid "Nearest Marker"
-msgstr "近接するマーカー"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -50140,12 +50187,85 @@ msgid "Switch Tint colors"
 msgstr "チントカラーを切り替えます"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "画像をグリースペンシルにトレス"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "画像からグリースペンシルのストロークを抽出します"
+
+
+msgid "Resolution of the generated curves"
+msgstr "生成されるカーブの解像度"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "サンプリング点からの距離。０で無効"
+
+
+msgid "Scale of the final stroke"
+msgstr "最終ストロークのスケール"
+
+
+msgid "Color Threshold"
+msgstr "カラーのしきい値"
+
+
+msgid "Determine what is considered white and what black"
+msgstr "対象を白や黒と見なすしきい値"
+
+
+msgid "Turn Policy"
+msgstr "ターンポリシー"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "ビットマップをパスに分解する際のあいまいさを解決する方法を決めます"
+
+
 msgid "Black"
 msgstr "黒"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "黒（前面）成分につなげるようにします"
+
+
 msgid "White"
 msgstr "白"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "白（背景）成分につなげるようにします"
+
+
+msgid "Always take a left turn"
+msgstr "常に左側にターンします"
+
+
+msgid "Always take a right turn"
+msgstr "常に右側にターンします"
+
+
+msgid "Minority"
+msgstr "マイノリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が少ない色（黒または白）とつなげるようにします"
+
+
+msgid "Majority"
+msgstr "マジョリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が多い色（黒または白）とつなげるようにします"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "疑似ランダムを選択します"
 
 
 msgctxt "Operator"
@@ -50609,10 +50729,6 @@ msgstr "選択中のFカーブの凹凸を減らすのに加重移動平均を�
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "選択中のキーフレームを時間や値にスナップします"
-
-
-msgid "Cursor Value"
-msgstr "カーソルの値"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -52333,6 +52449,10 @@ msgstr "まず制御点の代わりにフェザーをスライドしようとし
 msgctxt "Operator"
 msgid "Slide Spline Curvature"
 msgstr "スプライン曲率のスライド"
+
+
+msgid "Slide a point on the spline to define its curvature"
+msgstr "スプライン上の制御点をスライドし、曲率を決めます"
 
 
 msgctxt "Operator"
@@ -54517,6 +54637,12 @@ msgstr "頂点を近さで結合します"
 
 msgid "Sharp Edges"
 msgstr "シャープな辺"
+
+
+msgid "Calculate sharp edges using custom normal data (when available)"
+msgstr ""
+"カスタム法線データを（可能なら）使用し\n"
+"シャープ辺を計算します"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -64381,6 +64507,12 @@ msgid "Use a union boolean operation"
 msgstr "統合ブール演算を使用します"
 
 
+msgid "Join the new mesh as separate geometry, without performing any boolean operation"
+msgstr ""
+"ブール演算を実行せず、新規メッシュに\n"
+"構造的に分離した形状として統合します"
+
+
 msgid "Use Cursor for Depth"
 msgstr "カーソル下の深度を使用"
 
@@ -73056,6 +73188,11 @@ msgstr "スライドリラックス"
 
 
 msgctxt "Operator"
+msgid "Boundary"
+msgstr "境界"
+
+
+msgctxt "Operator"
 msgid "Cloth"
 msgstr "クロス"
 
@@ -73063,6 +73200,11 @@ msgstr "クロス"
 msgctxt "Operator"
 msgid "Simplify"
 msgstr "簡略化"
+
+
+msgctxt "Operator"
+msgid "Multires Displacement Eraser"
+msgstr "マルチレゾディスプレイスメント消しゴム"
 
 
 msgctxt "Operator"
@@ -74924,12 +75066,28 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "開発者向けの Cycles デバッグオプションを有効にします"
 
 
+msgid "New Geometry Nodes"
+msgstr "新規ジオメトリノード"
+
+
+msgid "Enable the new geometry nodes system in the ui"
+msgstr "UI で新しいジオメトリノードシステムを有効にします"
+
+
 msgid "New Hair Type"
 msgstr "新しいヘアータイプ"
 
 
 msgid "Enable the new hair type in the ui"
 msgstr "UI で新しいヘアータイプを有効にします"
+
+
+msgid "New Point Cloud Type"
+msgstr "新規ポイントクラウドタイプ"
+
+
+msgid "Enable the new point cloud type in the ui"
+msgstr "UI で新しいポイントクラウドタイプを有効にします"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -80723,6 +80881,10 @@ msgid "Elastic Limit"
 msgstr "弾性限界"
 
 
+msgid "How much the spring has to be stretched/compressed in order to change its rest length"
+msgstr "スプリングの静止長を変更するのに必要な伸縮の割合"
+
+
 msgid "Light Direction"
 msgstr "ライトの方向"
 
@@ -82196,6 +82358,12 @@ msgstr "音声の再生ボリューム"
 
 msgid "Sequence Color Balance Data"
 msgstr "シーケンスのカラーバランスデータ"
+
+
+msgid "Color balance parameters for a sequence strip and its modifiers"
+msgstr ""
+"シーケンスストリップとそのモディファイアー用の\n"
+"カラーバランスパラメーター"
 
 
 msgid "Color balance gain (highlights)"
@@ -83771,12 +83939,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "1.0秒間隔にスナップします"
 
 
+msgid "Nearest Frame"
+msgstr "近接するフレーム"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "実際のフレーム数にスナップします(NLAアクション時間)"
 
 
+msgid "Nearest Second"
+msgstr "近接する秒"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "実際の秒数にスナップします(NLAアクション時間)"
+
+
+msgid "Nearest Marker"
+msgstr "近接するマーカー"
 
 
 msgid "Snap to nearest marker"
@@ -91021,6 +91201,11 @@ msgstr "スカルプト"
 
 
 msgctxt "WindowManager"
+msgid "3D View Tool: Sculpt, Face Set Edit"
+msgstr "3Dビューツール：スカルプト、面セット編集"
+
+
+msgctxt "WindowManager"
 msgid "Particle"
 msgstr "パーティクル"
 
@@ -91453,10 +91638,6 @@ msgstr "スポイトモーダルマップ"
 msgctxt "WindowManager"
 msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "カラーランプのカラーストップ用スポイトマップ"
-
-
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEMデータ(.hgt)をメッシュや画像として"
 
 
 msgid "Denoising completed"
@@ -92859,6 +93040,10 @@ msgstr "カーソルカラー"
 
 msgid "Lock Frame"
 msgstr "フレームをロック"
+
+
+msgid "Inverse Color"
+msgstr "反転時のカラー"
 
 
 msgid "Unlocked"
@@ -94450,23 +94635,23 @@ msgstr "チャンネルの保護を解除"
 
 
 msgctxt "Operator"
-msgid "Current Frame"
-msgstr "現在のフレーム"
+msgid "Selection to Current Frame"
+msgstr "選択物 → 現在のフレーム"
 
 
 msgctxt "Operator"
-msgid "Nearest Frame"
-msgstr "近くのフレーム"
+msgid "Selection to Nearest Frame"
+msgstr "選択物 → 最近フレーム"
 
 
 msgctxt "Operator"
-msgid "Nearest Second"
-msgstr "近くの秒"
+msgid "Selection to Nearest Second"
+msgstr "選択物 → 最近秒数"
 
 
 msgctxt "Operator"
-msgid "Nearest Marker"
-msgstr "近くのマーカー"
+msgid "Selection to Nearest Marker"
+msgstr "選択物 → 最近マーカー"
 
 
 msgid "Recursions"
@@ -94604,6 +94789,11 @@ msgstr "減量（率）"
 msgctxt "Operator"
 msgid "Decimate (Allowed Change)"
 msgstr "減量（変更可）"
+
+
+msgctxt "Operator"
+msgid "Selection to Cursor Value"
+msgstr "選択物 → カーソル値"
 
 
 msgctxt "Operator"
@@ -104380,8 +104570,12 @@ msgid "Data-block has no users and will be deleted"
 msgstr "ユーザーのないデータブロックは後で削除されます"
 
 
+msgid "Change the object in the current mode"
+msgstr "オブジェクトを現在のモードに変更します"
+
+
 msgid "Remove from the current mode"
-msgstr "現在のモードから削除します"
+msgstr "現在のモードから除去します"
 
 
 msgid ""
@@ -106662,6 +106856,10 @@ msgid "Curve Object"
 msgstr "カーブオブジェクト"
 
 
+msgid "Generate Data Layers"
+msgstr "データレイヤーを生成"
+
+
 msgid "Layer Selection"
 msgstr "レイヤー選択"
 
@@ -106672,6 +106870,14 @@ msgstr "レイヤーマッピング"
 
 msgid "Refresh"
 msgstr "更新"
+
+
+msgid "Recenter"
+msgstr "リセンター"
+
+
+msgid "Assign"
+msgstr "割り当て"
 
 
 msgid "Bisect"
@@ -106793,6 +106999,10 @@ msgstr "クリース内側"
 
 msgid "Outer"
 msgstr "外側"
+
+
+msgid "Shell"
+msgstr "シェル"
 
 
 msgid "Adaptive Subdivision"
@@ -107843,10 +108053,6 @@ msgstr "追加メッシュ"
 
 msgid "Import-Export"
 msgstr "インポート/エクスポート"
-
-
-msgid "MakeHuman"
-msgstr "MakeHuman"
 
 
 msgid "Rigging"

@@ -303,8 +303,8 @@ void ED_view3d_clipping_calc(
   /* four clipping planes and bounding volume */
   /* first do the bounding volume */
   for (int val = 0; val < 4; val++) {
-    float xs = (val == 0 || val == 3) ? rect->xmin : rect->xmax;
-    float ys = (val == 0 || val == 1) ? rect->ymin : rect->ymax;
+    float xs = (ELEM(val, 0, 3)) ? rect->xmin : rect->xmax;
+    float ys = (ELEM(val, 0, 1)) ? rect->ymin : rect->ymax;
 
     ED_view3d_unproject(region, xs, ys, 0.0, bb->vec[val]);
     ED_view3d_unproject(region, xs, ys, 1.0, bb->vec[4 + val]);
@@ -326,6 +326,76 @@ void ED_view3d_clipping_calc(
   int flip_sign = (ob) ? is_negative_m4(ob->obmat) : false;
 
   ED_view3d_clipping_calc_from_boundbox(planes, bb, flip_sign);
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name View Clipping Clamp Min/Max
+ * \{ */
+
+struct PointsInPlanesMinMax_UserData {
+  float min[3];
+  float max[3];
+};
+
+static void points_in_planes_minmax_fn(
+    const float co[3], int UNUSED(i), int UNUSED(j), int UNUSED(k), void *user_data_p)
+{
+  struct PointsInPlanesMinMax_UserData *user_data = user_data_p;
+  minmax_v3v3_v3(user_data->min, user_data->max, co);
+}
+
+/**
+ * Clamp min/max by the viewport clipping.
+ *
+ * \note This is an approximation, with the limitation that the bounding box from the (mix, max)
+ * calculation might not have any geometry inside the clipped region.
+ * Performing a clipping test on each vertex would work well enough for most cases,
+ * although it's not perfect either as edges/faces may intersect the clipping without having any
+ * of their vertices inside it.
+ * A more accurate result would be quite involved.
+ *
+ * \return True when the arguments were clamped.
+ */
+bool ED_view3d_clipping_clamp_minmax(const RegionView3D *rv3d, float min[3], float max[3])
+{
+  /* 6 planes for the cube, 4..6 for the current view clipping planes. */
+  float planes[6 + 6][4];
+
+  /* Convert the min/max to 6 planes. */
+  for (int i = 0; i < 3; i++) {
+    float *plane_min = planes[(i * 2) + 0];
+    float *plane_max = planes[(i * 2) + 1];
+    zero_v3(plane_min);
+    zero_v3(plane_max);
+    plane_min[i] = -1.0f;
+    plane_min[3] = +min[i];
+    plane_max[i] = +1.0f;
+    plane_max[3] = -max[i];
+  }
+
+  /* Copy planes from the viewport & flip. */
+  int planes_len = 6;
+  int clip_len = (RV3D_LOCK_FLAGS(rv3d) & RV3D_BOXCLIP) ? 4 : 6;
+  for (int i = 0; i < clip_len; i++) {
+    negate_v4_v4(planes[planes_len], rv3d->clip[i]);
+    planes_len += 1;
+  }
+
+  /* Calculate points intersecting all planes (effectively intersecting two bounding boxes). */
+  struct PointsInPlanesMinMax_UserData user_data;
+  INIT_MINMAX(user_data.min, user_data.max);
+
+  const float eps_coplanar = 1e-4f;
+  const float eps_isect = 1e-6f;
+  if (isect_planes_v3_fn(
+          planes, planes_len, eps_coplanar, eps_isect, points_in_planes_minmax_fn, &user_data)) {
+    copy_v3_v3(min, user_data.min);
+    copy_v3_v3(max, user_data.max);
+    return true;
+  }
+  return false;
 }
 
 /** \} */
@@ -552,7 +622,8 @@ bool ED_view3d_camera_lock_sync(const Depsgraph *depsgraph, View3D *v3d, RegionV
     ObjectTfmProtectedChannels obtfm;
     Object *root_parent;
 
-    if ((U.uiflag & USER_CAM_LOCK_NO_PARENT) == 0 && (root_parent = v3d->camera->parent)) {
+    if (v3d->camera->transflag & OB_TRANSFORM_ADJUST_ROOT_PARENT_FOR_VIEW_LOCK &&
+        (root_parent = v3d->camera->parent)) {
       Object *ob_update;
       float tmat[4][4];
       float imat[4][4];
@@ -655,7 +726,8 @@ bool ED_view3d_camera_lock_autokey(View3D *v3d,
     Scene *scene = CTX_data_scene(C);
     ID *id_key;
     Object *root_parent;
-    if ((U.uiflag & USER_CAM_LOCK_NO_PARENT) == 0 && (root_parent = v3d->camera->parent)) {
+    if (v3d->camera->transflag & OB_TRANSFORM_ADJUST_ROOT_PARENT_FOR_VIEW_LOCK &&
+        (root_parent = v3d->camera->parent)) {
       while (root_parent->parent) {
         root_parent = root_parent->parent;
       }

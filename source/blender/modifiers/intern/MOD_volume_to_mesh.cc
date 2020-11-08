@@ -45,6 +45,8 @@
 #include "BLI_span.hh"
 #include "BLI_timeit.hh"
 
+#include "DEG_depsgraph_query.h"
+
 #ifdef WITH_OPENVDB
 #  include <openvdb/tools/GridTransformer.h>
 #  include <openvdb/tools/VolumeToMesh.h>
@@ -57,7 +59,7 @@ using blender::Span;
 static void initData(ModifierData *md)
 {
   VolumeToMeshModifierData *vmmd = reinterpret_cast<VolumeToMeshModifierData *>(md);
-  vmmd->object = NULL;
+  vmmd->object = nullptr;
   vmmd->threshold = 0.1f;
   strncpy(vmmd->grid_name, "density", MAX_NAME);
   vmmd->adaptivity = 0.0f;
@@ -89,7 +91,7 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 {
   uiLayout *layout = panel->layout;
 
-  PointerRNA *ptr = modifier_panel_get_property_pointers(panel, NULL);
+  PointerRNA *ptr = modifier_panel_get_property_pointers(panel, nullptr);
   VolumeToMeshModifierData *vmmd = static_cast<VolumeToMeshModifierData *>(ptr->data);
 
   uiLayoutSetPropSep(layout, true);
@@ -97,26 +99,26 @@ static void panel_draw(const bContext *UNUSED(C), Panel *panel)
 
   {
     uiLayout *col = uiLayoutColumn(layout, false);
-    uiItemR(col, ptr, "object", 0, NULL, ICON_NONE);
-    uiItemR(col, ptr, "grid_name", 0, NULL, ICON_NONE);
+    uiItemR(col, ptr, "object", 0, nullptr, ICON_NONE);
+    uiItemR(col, ptr, "grid_name", 0, nullptr, ICON_NONE);
   }
 
   {
     uiLayout *col = uiLayoutColumn(layout, false);
-    uiItemR(col, ptr, "resolution_mode", 0, NULL, ICON_NONE);
+    uiItemR(col, ptr, "resolution_mode", 0, nullptr, ICON_NONE);
     if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT) {
-      uiItemR(col, ptr, "voxel_amount", 0, NULL, ICON_NONE);
+      uiItemR(col, ptr, "voxel_amount", 0, nullptr, ICON_NONE);
     }
     else if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE) {
-      uiItemR(col, ptr, "voxel_size", 0, NULL, ICON_NONE);
+      uiItemR(col, ptr, "voxel_size", 0, nullptr, ICON_NONE);
     }
   }
 
   {
     uiLayout *col = uiLayoutColumn(layout, false);
-    uiItemR(col, ptr, "threshold", 0, NULL, ICON_NONE);
-    uiItemR(col, ptr, "adaptivity", 0, NULL, ICON_NONE);
-    uiItemR(col, ptr, "use_smooth_shade", 0, NULL, ICON_NONE);
+    uiItemR(col, ptr, "threshold", 0, nullptr, ICON_NONE);
+    uiItemR(col, ptr, "adaptivity", 0, nullptr, ICON_NONE);
+    uiItemR(col, ptr, "use_smooth_shade", 0, nullptr, ICON_NONE);
   }
 
   modifier_panel_end(layout, ptr);
@@ -237,7 +239,8 @@ static Mesh *new_mesh_from_openvdb_data(Span<openvdb::Vec3s> verts,
     mesh->mpoly[i].loopstart = 3 * i;
     mesh->mpoly[i].totloop = 3;
     for (int j = 0; j < 3; j++) {
-      mesh->mloop[3 * i + j].v = tris[i][j];
+      /* Reverse vertex order to get correct normals. */
+      mesh->mloop[3 * i + j].v = tris[i][2 - j];
     }
   }
 
@@ -248,7 +251,8 @@ static Mesh *new_mesh_from_openvdb_data(Span<openvdb::Vec3s> verts,
     mesh->mpoly[poly_offset + i].loopstart = loop_offset + 4 * i;
     mesh->mpoly[poly_offset + i].totloop = 4;
     for (int j = 0; j < 4; j++) {
-      mesh->mloop[loop_offset + 4 * i + j].v = quads[i][j];
+      /* Reverse vertex order to get correct normals. */
+      mesh->mloop[loop_offset + 4 * i + j].v = quads[i][3 - j];
     }
   }
 
@@ -258,31 +262,39 @@ static Mesh *new_mesh_from_openvdb_data(Span<openvdb::Vec3s> verts,
 }
 #endif
 
+static Mesh *create_empty_mesh(const Mesh *input_mesh)
+{
+  Mesh *new_mesh = BKE_mesh_new_nomain(0, 0, 0, 0, 0);
+  BKE_mesh_copy_settings(new_mesh, input_mesh);
+  return new_mesh;
+}
+
 static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *input_mesh)
 {
 #ifdef WITH_OPENVDB
   VolumeToMeshModifierData *vmmd = reinterpret_cast<VolumeToMeshModifierData *>(md);
   if (vmmd->object == nullptr) {
-    return input_mesh;
+    return create_empty_mesh(input_mesh);
   }
   if (vmmd->object->type != OB_VOLUME) {
-    return input_mesh;
+    return create_empty_mesh(input_mesh);
   }
   if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_SIZE &&
       vmmd->voxel_size == 0.0f) {
-    return input_mesh;
+    return create_empty_mesh(input_mesh);
   }
   if (vmmd->resolution_mode == VOLUME_TO_MESH_RESOLUTION_MODE_VOXEL_AMOUNT &&
       vmmd->voxel_amount == 0) {
-    return input_mesh;
+    return create_empty_mesh(input_mesh);
   }
 
   Volume *volume = static_cast<Volume *>(vmmd->object->data);
 
+  BKE_volume_load(volume, DEG_get_bmain(ctx->depsgraph));
   VolumeGrid *volume_grid = BKE_volume_grid_find(volume, vmmd->grid_name);
   if (volume_grid == nullptr) {
-    BKE_modifier_set_error(vmmd->object, md, "Cannot find '%s' grid", vmmd->grid_name);
-    return input_mesh;
+    BKE_modifier_set_error(ctx->object, md, "Cannot find '%s' grid", vmmd->grid_name);
+    return create_empty_mesh(input_mesh);
   }
 
   const openvdb::GridBase::ConstPtr grid = BKE_volume_grid_openvdb_for_read(volume, volume_grid);
@@ -291,7 +303,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   VolumeToMeshOp to_mesh_op{*grid, *vmmd, *ctx};
   if (!BKE_volume_grid_type_operation(grid_type, to_mesh_op)) {
     BKE_modifier_set_error(ctx->object, md, "Expected a scalar grid");
-    return input_mesh;
+    return create_empty_mesh(input_mesh);
   }
 
   Mesh *mesh = new_mesh_from_openvdb_data(to_mesh_op.verts, to_mesh_op.tris, to_mesh_op.quads);
@@ -303,7 +315,7 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
 #else
   UNUSED_VARS(md);
   BKE_modifier_set_error(ctx->object, md, "Compiled without OpenVDB");
-  return input_mesh;
+  return create_empty_mesh(input_mesh);
 #endif
 }
 
@@ -318,26 +330,26 @@ ModifierTypeInfo modifierType_VolumeToMesh = {
 
     /* copyData */ BKE_modifier_copydata_generic,
 
-    /* deformVerts */ NULL,
-    /* deformMatrices */ NULL,
-    /* deformVertsEM */ NULL,
-    /* deformMatricesEM */ NULL,
+    /* deformVerts */ nullptr,
+    /* deformMatrices */ nullptr,
+    /* deformVertsEM */ nullptr,
+    /* deformMatricesEM */ nullptr,
     /* modifyMesh */ modifyMesh,
-    /* modifyHair */ NULL,
-    /* modifyPointCloud */ NULL,
-    /* modifyVolume */ NULL,
+    /* modifyHair */ nullptr,
+    /* modifyPointCloud */ nullptr,
+    /* modifyVolume */ nullptr,
 
     /* initData */ initData,
-    /* requiredDataMask */ NULL,
-    /* freeData */ NULL,
-    /* isDisabled */ NULL,
+    /* requiredDataMask */ nullptr,
+    /* freeData */ nullptr,
+    /* isDisabled */ nullptr,
     /* updateDepsgraph */ updateDepsgraph,
-    /* dependsOnTime */ NULL,
-    /* dependsOnNormals */ NULL,
+    /* dependsOnTime */ nullptr,
+    /* dependsOnNormals */ nullptr,
     /* foreachIDLink */ foreachIDLink,
-    /* foreachTexLink */ NULL,
-    /* freeRuntimeData */ NULL,
+    /* foreachTexLink */ nullptr,
+    /* freeRuntimeData */ nullptr,
     /* panelRegister */ panelRegister,
-    /* blendWrite */ NULL,
-    /* blendRead */ NULL,
+    /* blendWrite */ nullptr,
+    /* blendRead */ nullptr,
 };

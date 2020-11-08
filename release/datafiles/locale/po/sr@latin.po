@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -12732,18 +12732,6 @@ msgid "Select keyframes beside already selected ones"
 msgstr "Izaberi ključne kadrove mimo isabranih"
 
 
-msgid "Nearest Frame"
-msgstr "Najbliži kadar"
-
-
-msgid "Nearest Second"
-msgstr "Drugi najbliži"
-
-
-msgid "Nearest Marker"
-msgstr "Najbliži marker"
-
-
 msgctxt "Operator"
 msgid "Change Frame"
 msgstr "Promeni kadar"
@@ -15596,10 +15584,6 @@ msgstr "Uključi ručke"
 msgctxt "Operator"
 msgid "Smooth Keys"
 msgstr "Umekšaj ključeve"
-
-
-msgid "Cursor Value"
-msgstr "Vrednost kursora"
 
 
 msgid "Flatten handles for a smoother transition"
@@ -24522,6 +24506,18 @@ msgstr "Bez samolepljenja"
 
 msgid "Second Step"
 msgstr "Drugi korak"
+
+
+msgid "Nearest Frame"
+msgstr "Najbliži kadar"
+
+
+msgid "Nearest Second"
+msgstr "Drugi najbliži"
+
+
+msgid "Nearest Marker"
+msgstr "Najbliži marker"
 
 
 msgid "Snap to nearest marker"

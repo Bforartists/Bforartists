@@ -106,10 +106,6 @@ swap_buffer = {
     }
 
 
-def get_max_lvl():
-    return max_lvl
-
-
 class QCDSlots():
     _slots = {}
     overrides = set()

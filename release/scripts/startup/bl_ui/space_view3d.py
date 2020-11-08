@@ -821,10 +821,12 @@ class VIEW3D_MT_editor_menus(Menu):
         # Select Menu
         if gp_edit:
             if mode_string not in {'PAINT_GPENCIL', 'WEIGHT_GPENCIL'}:
-                if mode_string == 'SCULPT_GPENCIL' and \
-                    (ts.use_gpencil_select_mask_point or
-                     ts.use_gpencil_select_mask_stroke or
-                     ts.use_gpencil_select_mask_segment):
+                if (
+                        mode_string == 'SCULPT_GPENCIL' and
+                        (ts.use_gpencil_select_mask_point or
+                         ts.use_gpencil_select_mask_stroke or
+                         ts.use_gpencil_select_mask_segment)
+                ):
                     layout.menu("VIEW3D_MT_select_gpencil")
                     layout.menu("VIEW3D_MT_sculpt_gpencil_copy")
                 elif mode_string == 'EDIT_GPENCIL':
@@ -7468,8 +7470,10 @@ class VIEW3D_PT_overlay_geometry(Panel):
         row.separator()
         row.prop(overlay, "show_face_orientation")
 
-        if context.mode not in {'EDIT_ARMATURE', 'POSE', 'OBJECT', 'PAINT_GPENCIL',\
-                                'VERTEX_GPENCIL', 'WEIGHT_GPENCIL', 'SCULPT_GPENCIL', 'EDIT_GPENCIL'}:
+        if context.mode not in {
+                'EDIT_ARMATURE', 'POSE', 'OBJECT',
+                'PAINT_GPENCIL', 'VERTEX_GPENCIL', 'WEIGHT_GPENCIL', 'SCULPT_GPENCIL', 'EDIT_GPENCIL',
+        }:
             col = layout.column(align = True)
             col.active = display_all
             split = col.split()
