@@ -44,7 +44,6 @@
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_scene.h"
-#include "BKE_sequencer.h"
 #include "BKE_sound.h"
 
 #include "IMB_colormanagement.h"
@@ -68,6 +67,8 @@
 #include "ED_time_scrub_ui.h"
 
 #include "BIF_glutil.h"
+
+#include "SEQ_sequencer.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -625,7 +626,7 @@ static void draw_seq_text(View2D *v2d,
     name = BKE_sequence_give_name(seq);
   }
 
-  if (seq->type == SEQ_TYPE_META || seq->type == SEQ_TYPE_ADJUSTMENT) {
+  if (ELEM(seq->type, SEQ_TYPE_META, SEQ_TYPE_ADJUSTMENT)) {
     str_len = BLI_snprintf(str, sizeof(str), "%s | %d", name, seq->len);
   }
   else if (seq->type == SEQ_TYPE_SCENE) {
@@ -969,14 +970,14 @@ static void fcurve_batch_add_verts(GPUVertBuf *vbo,
                                    float y1,
                                    float y2,
                                    float y_height,
-                                   int cfra,
+                                   int timeline_frame,
                                    float curve_val,
                                    unsigned int *vert_count)
 {
   float vert_pos[2][2];
 
-  copy_v2_fl2(vert_pos[0], cfra, (curve_val * y_height) + y1);
-  copy_v2_fl2(vert_pos[1], cfra, y2);
+  copy_v2_fl2(vert_pos[0], timeline_frame, (curve_val * y_height) + y1);
+  copy_v2_fl2(vert_pos[1], timeline_frame, y2);
 
   GPU_vertbuf_vert_set(vbo, *vert_count, vert_pos[0]);
   GPU_vertbuf_vert_set(vbo, *vert_count + 1, vert_pos[1]);
@@ -1025,23 +1026,25 @@ static void draw_seq_fcurve(
     float prev_val = INT_MIN;
     bool skip = false;
 
-    for (int cfra = eval_start; cfra <= eval_end; cfra += eval_step) {
-      curve_val = evaluate_fcurve(fcu, cfra);
+    for (int timeline_frame = eval_start; timeline_frame <= eval_end;
+         timeline_frame += eval_step) {
+      curve_val = evaluate_fcurve(fcu, timeline_frame);
       CLAMP(curve_val, 0.0f, 1.0f);
 
       /* Avoid adding adjacent verts that have the same value. */
-      if (curve_val == prev_val && cfra < eval_end - eval_step) {
+      if (curve_val == prev_val && timeline_frame < eval_end - eval_step) {
         skip = true;
         continue;
       }
 
       /* If some frames were skipped above, we need to close the shape.  */
       if (skip) {
-        fcurve_batch_add_verts(vbo, y1, y2, y_height, cfra - eval_step, prev_val, &vert_count);
+        fcurve_batch_add_verts(
+            vbo, y1, y2, y_height, timeline_frame - eval_step, prev_val, &vert_count);
         skip = false;
       }
 
-      fcurve_batch_add_verts(vbo, y1, y2, y_height, cfra, curve_val, &vert_count);
+      fcurve_batch_add_verts(vbo, y1, y2, y_height, timeline_frame, curve_val, &vert_count);
       prev_val = curve_val;
     }
 
@@ -1240,7 +1243,7 @@ ImBuf *sequencer_ibuf_get(struct Main *bmain,
                           struct Depsgraph *depsgraph,
                           Scene *scene,
                           SpaceSeq *sseq,
-                          int cfra,
+                          int timeline_frame,
                           int frame_ofs,
                           const char *viewname)
 {
@@ -1258,13 +1261,13 @@ ImBuf *sequencer_ibuf_get(struct Main *bmain,
     render_size = scene->r.size / 100.0;
   }
   else {
-    render_size = BKE_sequencer_rendersize_to_scale_factor(sseq->render_size);
+    render_size = SEQ_rendersize_to_scale_factor(sseq->render_size);
   }
 
   rectx = roundf(render_size * scene->r.xsch);
   recty = roundf(render_size * scene->r.ysch);
 
-  BKE_sequencer_new_render_data(
+  SEQ_render_new_render_data(
       bmain, depsgraph, scene, rectx, recty, sseq->render_size, false, &context);
   context.view_id = BKE_scene_multiview_view_id_get(&scene->r, viewname);
 
@@ -1284,10 +1287,10 @@ ImBuf *sequencer_ibuf_get(struct Main *bmain,
   }
 
   if (special_seq_update) {
-    ibuf = BKE_sequencer_give_ibuf_direct(&context, cfra + frame_ofs, special_seq_update);
+    ibuf = SEQ_render_give_ibuf_direct(&context, timeline_frame + frame_ofs, special_seq_update);
   }
   else {
-    ibuf = BKE_sequencer_give_ibuf(&context, cfra + frame_ofs, sseq->chanshown);
+    ibuf = SEQ_render_give_ibuf(&context, timeline_frame + frame_ofs, sseq->chanshown);
   }
 
   if (viewport) {
@@ -1765,7 +1768,7 @@ void sequencer_draw_preview(const bContext *C,
                             Scene *scene,
                             ARegion *region,
                             SpaceSeq *sseq,
-                            int cfra,
+                            int timeline_frame,
                             int offset,
                             bool draw_overlay,
                             bool draw_backdrop)
@@ -1787,7 +1790,7 @@ void sequencer_draw_preview(const bContext *C,
 
   /* Get image. */
   ibuf = sequencer_ibuf_get(
-      bmain, region, depsgraph, scene, sseq, cfra, offset, names[sseq->multiview_eye]);
+      bmain, region, depsgraph, scene, sseq, timeline_frame, offset, names[sseq->multiview_eye]);
 
   /* Setup off-screen buffers. */
   GPUViewport *viewport = WM_draw_region_get_viewport(region);
@@ -2085,7 +2088,7 @@ static bool draw_cache_view_init_fn(void *userdata, size_t item_count)
 
 /* Called as a callback */
 static bool draw_cache_view_iter_fn(
-    void *userdata, struct Sequence *seq, int nfra, int cache_type, float UNUSED(cost))
+    void *userdata, struct Sequence *seq, int timeline_frame, int cache_type, float UNUSED(cost))
 {
   CacheDrawData *drawdata = userdata;
   struct View2D *v2d = drawdata->v2d;
@@ -2131,14 +2134,13 @@ static bool draw_cache_view_iter_fn(
     return false;
   }
 
-  int cfra = seq->start + nfra;
   float vert_pos[6][2];
-  copy_v2_fl2(vert_pos[0], cfra, stripe_bot);
-  copy_v2_fl2(vert_pos[1], cfra, stripe_top);
-  copy_v2_fl2(vert_pos[2], cfra + 1, stripe_top);
+  copy_v2_fl2(vert_pos[0], timeline_frame, stripe_bot);
+  copy_v2_fl2(vert_pos[1], timeline_frame, stripe_top);
+  copy_v2_fl2(vert_pos[2], timeline_frame + 1, stripe_top);
   copy_v2_v2(vert_pos[3], vert_pos[2]);
   copy_v2_v2(vert_pos[4], vert_pos[0]);
-  copy_v2_fl2(vert_pos[5], cfra + 1, stripe_bot);
+  copy_v2_fl2(vert_pos[5], timeline_frame + 1, stripe_bot);
 
   for (int i = 0; i < 6; i++) {
     GPU_vertbuf_vert_set(vbo, *vert_count + i, vert_pos[i]);
@@ -2318,9 +2320,9 @@ void draw_timeline_seq(const bContext *C, ARegion *region)
 
   /* Draw overlap frame frame indicator. */
   if (scene->ed && scene->ed->over_flag & SEQ_EDIT_OVERLAY_SHOW) {
-    int cfra_over = (scene->ed->over_flag & SEQ_EDIT_OVERLAY_ABS) ?
-                        scene->ed->over_cfra :
-                        scene->r.cfra + scene->ed->over_ofs;
+    int overlap_frame = (scene->ed->over_flag & SEQ_EDIT_OVERLAY_ABS) ?
+                            scene->ed->over_cfra :
+                            scene->r.cfra + scene->ed->over_ofs;
 
     uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
     immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
@@ -2334,8 +2336,8 @@ void draw_timeline_seq(const bContext *C, ARegion *region)
     immUniformThemeColor(TH_CFRAME);
 
     immBegin(GPU_PRIM_LINES, 2);
-    immVertex2f(pos, cfra_over, v2d->cur.ymin);
-    immVertex2f(pos, cfra_over, v2d->cur.ymax);
+    immVertex2f(pos, overlap_frame, v2d->cur.ymin);
+    immVertex2f(pos, overlap_frame, v2d->cur.ymax);
     immEnd();
 
     immUnbindProgram();

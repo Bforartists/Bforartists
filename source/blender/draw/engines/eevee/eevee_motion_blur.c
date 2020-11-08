@@ -490,7 +490,7 @@ void EEVEE_motion_blur_swap_data(EEVEE_Data *vedata)
   BLI_assert((effects->enabled_effects & EFFECT_MOTION_BLUR) != 0);
 
   /* Camera Data. */
-  effects->motion_blur.camera[MB_PREV] = effects->motion_blur.camera[MB_CURR];
+  effects->motion_blur.camera[MB_PREV] = effects->motion_blur.camera[MB_NEXT];
 
   /* Object Data. */
   for (BLI_ghashIterator_init(&ghi, effects->motion_blur.object);
@@ -521,8 +521,7 @@ void EEVEE_motion_blur_swap_data(EEVEE_Data *vedata)
       case EEVEE_MOTION_DATA_MESH:
         if (mb_geom->batch != NULL) {
           for (int i = 0; i < GPU_BATCH_VBO_MAX_LEN; i++) {
-            if (mb_geom->batch->verts[i] == mb_geom->vbo[MB_PREV] ||
-                mb_geom->batch->verts[i] == mb_geom->vbo[MB_NEXT]) {
+            if (ELEM(mb_geom->batch->verts[i], mb_geom->vbo[MB_PREV], mb_geom->vbo[MB_NEXT])) {
               /* Avoid double reference of the VBOs. */
               mb_geom->batch->verts[i] = NULL;
             }

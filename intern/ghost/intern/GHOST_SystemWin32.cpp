@@ -422,8 +422,8 @@ finished:
 
 /**
  * Dispose of a context.
- * \param   context Pointer to the context to be disposed.
- * \return  Indication of success.
+ * \param context Pointer to the context to be disposed.
+ * \return Indication of success.
  */
 GHOST_TSuccess GHOST_SystemWin32::disposeContext(GHOST_IContext *context)
 {
@@ -1137,11 +1137,6 @@ void GHOST_SystemWin32::processPointerEvent(
       break;
     case WM_POINTERLEAVE:
       window->m_tabletInRange = false;
-      system->pushEvent(new GHOST_EventButton(pointerInfo[0].time,
-                                              GHOST_kEventCursorMove,
-                                              window,
-                                              pointerInfo[0].buttonMask,
-                                              pointerInfo[0].tabletData));
       break;
     default:
       break;

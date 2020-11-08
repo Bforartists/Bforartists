@@ -168,7 +168,8 @@ class AddPyramid(bpy.types.Operator,  object_utils.AddObjectHelper):
 
         if bpy.context.mode == "OBJECT":
             if context.selected_objects != [] and context.active_object and \
-            ('Pyramid' in context.active_object.data.keys()) and (self.change == True):
+                (context.active_object.data is not None) and ('Pyramid' in context.active_object.data.keys()) and \
+                (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name

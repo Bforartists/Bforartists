@@ -214,6 +214,8 @@ IDTypeInfo IDType_ID_KE = {
     .blend_read_data = shapekey_blend_read_data,
     .blend_read_lib = shapekey_blend_read_lib,
     .blend_read_expand = shapekey_blend_read_expand,
+
+    .blend_read_undo_preserve = NULL,
 };
 
 #define KEY_MODE_DUMMY 0 /* use where mode isn't checked for */
@@ -1614,7 +1616,7 @@ int BKE_keyblock_element_count_from_shape(const Key *key, const int shape_index)
   int result = 0;
   int index = 0;
   for (const KeyBlock *kb = key->block.first; kb; kb = kb->next, index++) {
-    if ((shape_index == -1) || (index == shape_index)) {
+    if (ELEM(shape_index, -1, index)) {
       result += kb->totelem;
     }
   }
@@ -1654,7 +1656,7 @@ void BKE_keyblock_data_get_from_shape(const Key *key, float (*arr)[3], const int
   uint8_t *elements = (uint8_t *)arr;
   int index = 0;
   for (const KeyBlock *kb = key->block.first; kb; kb = kb->next, index++) {
-    if ((shape_index == -1) || (index == shape_index)) {
+    if (ELEM(shape_index, -1, index)) {
       const int block_elem_len = kb->totelem * key->elemsize;
       memcpy(elements, kb->data, block_elem_len);
       elements += block_elem_len;
@@ -1684,7 +1686,7 @@ void BKE_keyblock_data_set_with_mat4(Key *key,
 
   int index = 0;
   for (KeyBlock *kb = key->block.first; kb; kb = kb->next, index++) {
-    if ((shape_index == -1) || (index == shape_index)) {
+    if (ELEM(shape_index, -1, index)) {
       const int block_elem_len = kb->totelem;
       float(*block_data)[3] = (float(*)[3])kb->data;
       for (int data_offset = 0; data_offset < block_elem_len; ++data_offset) {
@@ -1708,7 +1710,7 @@ void BKE_keyblock_curve_data_set_with_mat4(
 
   int index = 0;
   for (KeyBlock *kb = key->block.first; kb; kb = kb->next, index++) {
-    if ((shape_index == -1) || (index == shape_index)) {
+    if (ELEM(shape_index, -1, index)) {
       const int block_elem_size = kb->totelem * key->elemsize;
       BKE_keyblock_curve_data_transform(nurb, mat, elements, kb->data);
       elements += block_elem_size;
@@ -1724,7 +1726,7 @@ void BKE_keyblock_data_set(Key *key, const int shape_index, const void *data)
   const uint8_t *elements = data;
   int index = 0;
   for (KeyBlock *kb = key->block.first; kb; kb = kb->next, index++) {
-    if ((shape_index == -1) || (index == shape_index)) {
+    if (ELEM(shape_index, -1, index)) {
       const int block_elem_size = kb->totelem * key->elemsize;
       memcpy(kb->data, elements, block_elem_size);
       elements += block_elem_size;

@@ -513,7 +513,7 @@ static int rna_find_sdna_member(SDNA *sdna,
 
       return 1;
     }
-    else if (cmp == 3) {
+    if (cmp == 3) {
       smember->type = "";
       smember->name = dnaname;
       smember->offset = *offset;
@@ -1407,7 +1407,7 @@ PropertyRNA *RNA_def_property(StructOrFunctionRNA *cont_,
   /* a priori not raw editable */
   prop->rawtype = -1;
 
-  if (type != PROP_COLLECTION && type != PROP_POINTER) {
+  if (!ELEM(type, PROP_COLLECTION, PROP_POINTER)) {
     prop->flag = PROP_EDITABLE;
 
     if (type != PROP_STRING) {
@@ -1843,6 +1843,10 @@ void RNA_def_property_struct_runtime(PropertyRNA *prop, StructRNA *type)
       DefRNA.error = true;
       break;
   }
+
+  if ((type->flag & STRUCT_ID) != 0) {
+    prop->flag |= PROP_PTR_NO_OWNERSHIP;
+  }
 }
 
 void RNA_def_property_enum_native_type(PropertyRNA *prop, const char *native_enum_type)
@@ -2195,15 +2199,13 @@ static PropertyDefRNA *rna_def_property_sdna(PropertyRNA *prop,
       dp->dnaoffset = smember.offset;
       return dp;
     }
-    else {
-      CLOG_ERROR(&LOG,
-                 "\"%s.%s\" (identifier \"%s\") not found. Struct must be in DNA.",
-                 structname,
-                 propname,
-                 prop->identifier);
-      DefRNA.error = true;
-      return NULL;
-    }
+    CLOG_ERROR(&LOG,
+               "\"%s.%s\" (identifier \"%s\") not found. Struct must be in DNA.",
+               structname,
+               propname,
+               prop->identifier);
+    DefRNA.error = true;
+    return NULL;
   }
 
   if (smember.arraylength > 1) {
@@ -4359,9 +4361,8 @@ int rna_parameter_size(PropertyRNA *parm)
           }
           return sizeof(PointerRNA *);
         }
-        else {
-          return sizeof(void *);
-        }
+        return sizeof(void *);
+
 #endif
       }
       case PROP_COLLECTION:

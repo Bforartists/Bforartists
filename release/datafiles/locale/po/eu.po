@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1459,10 +1459,6 @@ msgstr "Geruza guztiak ireki"
 msgctxt "Operator"
 msgid "Set Cursor"
 msgstr "Kurtsorea finkatu"
-
-
-msgid "Cursor Value"
-msgstr "Kurtsorearen balioa"
 
 
 msgid "Lowest frequency"

@@ -3307,7 +3307,6 @@ static void colorband_buttons_layout(uiLayout *layout,
       row = uiLayoutRow(split, false);
       uiItemR(row, &ptr, "position", 0, IFACE_("Pos"), ICON_NONE);
       bt = block->buttons.last;
-      bt->a1 = 1.0f; /* gives a bit more precision for modifying position */
       UI_but_func_set(bt, colorband_update_cb, bt, coba);
 
       row = uiLayoutRow(layout, false);
@@ -3339,7 +3338,6 @@ static void colorband_buttons_layout(uiLayout *layout,
       row = uiLayoutRow(subsplit, false);
       uiItemR(row, &ptr, "position", UI_ITEM_R_SLIDER, IFACE_("Pos"), ICON_NONE);
       bt = block->buttons.last;
-      bt->a1 = 1.0f; /* gives a bit more precision for modifying position */
       UI_but_func_set(bt, colorband_update_cb, bt, coba);
 
       row = uiLayoutRow(split, false);
@@ -4974,7 +4972,7 @@ static void CurveProfile_buttons_layout(uiLayout *layout, PointerRNA *ptr, RNAUp
       selection_y = &point->h2_loc[1];
     }
   }
-  if (i == 0 || i == profile->path_len - 1) {
+  if (ELEM(i, 0, profile->path_len - 1)) {
     point_last_or_first = true;
   }
 

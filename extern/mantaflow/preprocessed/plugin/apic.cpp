@@ -30,7 +30,9 @@ static inline IndexInt indexUFace(const Vec3 &pos, const MACGrid &ref)
 {
   const Vec3i f = toVec3i(pos), c = toVec3i(pos - 0.5);
   const IndexInt index = f.x * ref.getStrideX() + c.y * ref.getStrideY() + c.z * ref.getStrideZ();
-  assertDeb(ref.isInBounds(index), "Grid index out of bounds");
+  assertDeb(ref.isInBounds(index),
+            "U face index out of bounds for particle position [" << pos.x << ", " << pos.y << ", "
+                                                                 << pos.z << "]");
   return (ref.isInBounds(index)) ? index : -1;
 }
 
@@ -38,7 +40,9 @@ static inline IndexInt indexVFace(const Vec3 &pos, const MACGrid &ref)
 {
   const Vec3i f = toVec3i(pos), c = toVec3i(pos - 0.5);
   const IndexInt index = c.x * ref.getStrideX() + f.y * ref.getStrideY() + c.z * ref.getStrideZ();
-  assertDeb(ref.isInBounds(index), "Grid index out of bounds");
+  assertDeb(ref.isInBounds(index),
+            "V face index out of bounds for particle position [" << pos.x << ", " << pos.y << ", "
+                                                                 << pos.z << "]");
   return (ref.isInBounds(index)) ? index : -1;
 }
 
@@ -46,7 +50,9 @@ static inline IndexInt indexWFace(const Vec3 &pos, const MACGrid &ref)
 {
   const Vec3i f = toVec3i(pos), c = toVec3i(pos - 0.5);
   const IndexInt index = c.x * ref.getStrideX() + c.y * ref.getStrideY() + f.z * ref.getStrideZ();
-  assertDeb(ref.isInBounds(index), "Grid index out of bounds");
+  assertDeb(ref.isInBounds(index),
+            "W face index out of bounds for particle position [" << pos.x << ", " << pos.y << ", "
+                                                                 << pos.z << "]");
   return (ref.isInBounds(index)) ? index : -1;
 }
 
@@ -57,7 +63,7 @@ static inline IndexInt indexOffset(
   const IndexInt dY[2] = {0, ref.getStrideY()};
   const IndexInt dZ[2] = {0, ref.getStrideZ()};
   const IndexInt index = gidx + dX[i] + dY[j] + dZ[k];
-  assertDeb(ref.isInBounds(index), "Grid index out of bounds");
+  assertDeb(ref.isInBounds(index), "Offset index " << index << " is out of bounds");
   return (ref.isInBounds(index)) ? index : -1;
 }
 
@@ -265,24 +271,24 @@ void apicMapPartsToMAC(const FlagGrid &flags,
                        const ParticleDataImpl<Vec3> &cpx,
                        const ParticleDataImpl<Vec3> &cpy,
                        const ParticleDataImpl<Vec3> &cpz,
-                       MACGrid *mass = NULL,
-                       const ParticleDataImpl<int> *ptype = NULL,
+                       MACGrid *mass = nullptr,
+                       const ParticleDataImpl<int> *ptype = nullptr,
                        const int exclude = 0,
                        const int boundaryWidth = 0)
 {
   // affine map: let's assume that the particle mass is constant, 1.0
-  if (!mass) {
-    MACGrid tmpmass(vel.getParent());
-    mass = &tmpmass;
-  }
+  MACGrid tmpmass(vel.getParent());
 
-  mass->clear();
+  tmpmass.clear();
   vel.clear();
 
   knApicMapLinearVec3ToMACGrid(
-      parts, *mass, vel, partVel, cpx, cpy, cpz, ptype, exclude, boundaryWidth);
-  mass->stomp(VECTOR_EPSILON);
-  vel.safeDivide(*mass);
+      parts, tmpmass, vel, partVel, cpx, cpy, cpz, ptype, exclude, boundaryWidth);
+  tmpmass.stomp(VECTOR_EPSILON);
+  vel.safeDivide(tmpmass);
+
+  if (mass)
+    (*mass).swap(tmpmass);
 }
 static PyObject *_W_0(PyObject *_self, PyObject *_linargs, PyObject *_kwds)
 {
@@ -291,7 +297,7 @@ static PyObject *_W_0(PyObject *_self, PyObject *_linargs, PyObject *_kwds)
     FluidSolver *parent = _args.obtainParent();
     bool noTiming = _args.getOpt<bool>("notiming", -1, 0);
     pbPreparePlugin(parent, "apicMapPartsToMAC", !noTiming);
-    PyObject *_retval = 0;
+    PyObject *_retval = nullptr;
     {
       ArgLocker _lock;
       const FlagGrid &flags = *_args.getPtr<FlagGrid>("flags", 0, &_lock);
@@ -302,9 +308,9 @@ static PyObject *_W_0(PyObject *_self, PyObject *_linargs, PyObject *_kwds)
       const ParticleDataImpl<Vec3> &cpx = *_args.getPtr<ParticleDataImpl<Vec3>>("cpx", 4, &_lock);
       const ParticleDataImpl<Vec3> &cpy = *_args.getPtr<ParticleDataImpl<Vec3>>("cpy", 5, &_lock);
       const ParticleDataImpl<Vec3> &cpz = *_args.getPtr<ParticleDataImpl<Vec3>>("cpz", 6, &_lock);
-      MACGrid *mass = _args.getPtrOpt<MACGrid>("mass", 7, NULL, &_lock);
+      MACGrid *mass = _args.getPtrOpt<MACGrid>("mass", 7, nullptr, &_lock);
       const ParticleDataImpl<int> *ptype = _args.getPtrOpt<ParticleDataImpl<int>>(
-          "ptype", 8, NULL, &_lock);
+          "ptype", 8, nullptr, &_lock);
       const int exclude = _args.getOpt<int>("exclude", 9, 0, &_lock);
       const int boundaryWidth = _args.getOpt<int>("boundaryWidth", 10, 0, &_lock);
       _retval = getPyNone();
@@ -538,7 +544,7 @@ void apicMapMACGridToParts(ParticleDataImpl<Vec3> &partVel,
                            const BasicParticleSystem &parts,
                            const MACGrid &vel,
                            const FlagGrid &flags,
-                           const ParticleDataImpl<int> *ptype = NULL,
+                           const ParticleDataImpl<int> *ptype = nullptr,
                            const int exclude = 0,
                            const int boundaryWidth = 0)
 {
@@ -552,7 +558,7 @@ static PyObject *_W_1(PyObject *_self, PyObject *_linargs, PyObject *_kwds)
     FluidSolver *parent = _args.obtainParent();
     bool noTiming = _args.getOpt<bool>("notiming", -1, 0);
     pbPreparePlugin(parent, "apicMapMACGridToParts", !noTiming);
-    PyObject *_retval = 0;
+    PyObject *_retval = nullptr;
     {
       ArgLocker _lock;
       ParticleDataImpl<Vec3> &partVel = *_args.getPtr<ParticleDataImpl<Vec3>>(
@@ -564,7 +570,7 @@ static PyObject *_W_1(PyObject *_self, PyObject *_linargs, PyObject *_kwds)
       const MACGrid &vel = *_args.getPtr<MACGrid>("vel", 5, &_lock);
       const FlagGrid &flags = *_args.getPtr<FlagGrid>("flags", 6, &_lock);
       const ParticleDataImpl<int> *ptype = _args.getPtrOpt<ParticleDataImpl<int>>(
-          "ptype", 7, NULL, &_lock);
+          "ptype", 7, nullptr, &_lock);
       const int exclude = _args.getOpt<int>("exclude", 8, 0, &_lock);
       const int boundaryWidth = _args.getOpt<int>("boundaryWidth", 9, 0, &_lock);
       _retval = getPyNone();

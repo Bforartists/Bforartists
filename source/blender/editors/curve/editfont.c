@@ -627,7 +627,7 @@ void FONT_OT_text_paste_from_file(wmOperatorType *ot)
                                  FILE_OPENFILE,
                                  WM_FILESEL_FILEPATH,
                                  FILE_DEFAULTDISPLAY,
-                                 FILE_SORT_ALPHA);
+                                 FILE_SORT_DEFAULT);
 }
 
 /** \} */
@@ -652,7 +652,7 @@ static void txt_add_object(bContext *C,
   int nchars = 0, nbytes = 0;
   char *s;
   int a;
-  const float rot[3] = {0.f, 0.f, 0.f};
+  const float rot[3] = {0.0f, 0.0f, 0.0f};
 
   obedit = BKE_object_add(bmain, view_layer, OB_FONT, NULL);
   base = view_layer->basact;
@@ -1696,8 +1696,8 @@ static int insert_text_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 
   if (event_val && (ascii || event->utf8_buf[0])) {
     /* handle case like TAB (== 9) */
-    if ((ascii > 31 && ascii < 254 && ascii != 127) || (ascii == 13) || (ascii == 10) ||
-        (ascii == 8) || (event->utf8_buf[0])) {
+    if ((ascii > 31 && ascii < 254 && ascii != 127) || (ELEM(ascii, 13, 10)) || (ascii == 8) ||
+        (event->utf8_buf[0])) {
 
       if (accentcode) {
         if (ef->pos > 0) {
@@ -2161,7 +2161,7 @@ void FONT_OT_open(wmOperatorType *ot)
                                  FILE_OPENFILE,
                                  WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH,
                                  FILE_DEFAULTDISPLAY,
-                                 FILE_SORT_ALPHA);
+                                 FILE_SORT_DEFAULT);
 }
 
 /** \} */

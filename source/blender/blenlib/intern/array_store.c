@@ -1313,7 +1313,7 @@ static BChunkList *bchunk_list_from_data_merge(const BArrayInfo *info,
         ASSERT_CHUNKLIST_DATA(chunk_list, data);
 
         /* its likely that the next chunk in the list will be a match, so check it! */
-        while ((cref_found->next != NULL) && (cref_found->next != chunk_list_reference_last)) {
+        while (!ELEM(cref_found->next, NULL, chunk_list_reference_last)) {
           cref_found = cref_found->next;
           BChunk *chunk_found = cref_found->link;
 
@@ -1412,7 +1412,7 @@ static BChunkList *bchunk_list_from_data_merge(const BArrayInfo *info,
  *
  * \param chunk_count: Number of elements to split each chunk into.
  * - A small value increases the ability to de-duplicate chunks,
- *   but adds overhead by increasing the number of chunks to look-up when searching for duplicates,
+ *   but adds overhead by increasing the number of chunks to look up when searching for duplicates,
  *   as well as some overhead constructing the original array again, with more calls to ``memcpy``.
  * - Larger values reduce the *book keeping* overhead,
  *   but increase the chance a small,

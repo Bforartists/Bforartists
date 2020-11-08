@@ -53,13 +53,14 @@
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
-#include "BKE_sequencer.h"
 #include "BKE_studiolight.h"
 
 #include "DEG_depsgraph.h"
 
 #include "RE_pipeline.h"
 #include "RE_render_ext.h"
+
+#include "SEQ_sequencer.h"
 
 #include "BLF_api.h"
 
@@ -99,7 +100,7 @@ void BKE_blender_free(void)
 
   IMB_moviecache_destruct();
 
-  free_nodesystem();
+  BKE_node_system_exit();
 }
 
 /** \} */

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'cf6c0760464f')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12311,6 +12311,18 @@ msgid "Limit forces to this collection"
 msgstr "限制力场至当前集合"
 
 
+msgid "Obstacle Distance"
+msgstr "障碍距离"
+
+
+msgid "Determines how far apart fluid and obstacle are (higher values will result in fluid being further away from obstacles, smaller values will let fluid move towards the inside of obstacles)"
+msgstr "确定流体和障碍物的分离距离(调高数值将导致流体远离障碍物，调小则将使流体向障碍物内部移动）"
+
+
+msgid "Obstacle Threshold"
+msgstr "障碍阈值"
+
+
 msgid "Determines how much fluid is allowed in an obstacle cell (higher values will tag a boundary cell as an obstacle easier and reduce the boundary smoothening effect)"
 msgstr "确定障碍单元中允许的流体量(值越高会更容易将边界单元标记为障碍物并降低边界平滑效果)"
 
@@ -22242,6 +22254,10 @@ msgid "Detected duration of movie clip in frames"
 msgstr "检测到的视频帧区间"
 
 
+msgid "Offset of footage first frame relative to its file name (affects only how footage is loading, does not change data associated with a clip)"
+msgstr "与文件名对应的镜头首帧偏移 (仅影响镜头的读取方式, 不改变剪辑的关联数据)"
+
+
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
 msgstr "此影片在全局场景中的起始播放帧号 (影响所有与剪辑关联的数据)"
 
@@ -29839,6 +29855,10 @@ msgid "Parenting settings for masking element"
 msgstr "遮罩元素的默认设置"
 
 
+msgid "ID-block to which masking element would be parented to or to its property"
+msgstr "遮罩元素的父级或自身属性的 ID 块"
+
+
 msgid "ID Type"
 msgstr "标识类型"
 
@@ -31728,8 +31748,16 @@ msgid "Convert all polygons to triangles"
 msgstr "将所有多边形转换为三角面"
 
 
+msgid "Volume to Mesh"
+msgstr "体积 -> 网格"
+
+
 msgid "Weld"
 msgstr "焊接"
+
+
+msgid "Find groups of vertices closer than dist and merges them together"
+msgstr "查找比距离阈值更靠近的顶点组，然后将其合并"
 
 
 msgid "Wireframe"
@@ -35574,6 +35602,30 @@ msgstr "纹理采样半径"
 
 msgid "Smaller values result in better performance but might cut off the volume"
 msgstr "值越小，性能越好，但可能会切断体积"
+
+
+msgid "Volume to Mesh Modifier"
+msgstr "体积到网格修改器"
+
+
+msgid "Reduces the final face count by simplifying geometry where detail is not needed"
+msgstr "通过简化并不太需要细节的位置的几何结构来降低面数"
+
+
+msgid "Grid Name"
+msgstr "栅格名称"
+
+
+msgid "Grid in the volume object that is converted to a mesh"
+msgstr "转换为网格的体积物体的栅格"
+
+
+msgid "Use resolution of the volume grid"
+msgstr "使用体积栅格的分辨率"
+
+
+msgid "Voxels with a larger value are inside the generated mesh"
+msgstr "值较大的体素位于生成的网格内"
 
 
 msgid "Warp Modifier"
@@ -42069,24 +42121,12 @@ msgid "Snap selected keyframes to the current frame"
 msgstr "将所选关键帧吸附到当前帧位置"
 
 
-msgid "Nearest Frame"
-msgstr "最近帧"
-
-
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "将所选关键帧吸附到最近 (完整) 的帧 (用于修正意外产生的子帧偏移)"
 
 
-msgid "Nearest Second"
-msgstr "最近整秒"
-
-
 msgid "Snap selected keyframes to the nearest second"
 msgstr "将所选关键帧吸附到最近的秒点处"
-
-
-msgid "Nearest Marker"
-msgstr "最近标记"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -49779,12 +49819,85 @@ msgid "Switch Tint colors"
 msgstr "切换染色"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "识别图像至蜡笔"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "从图像中提取蜡笔笔画"
+
+
+msgid "Resolution of the generated curves"
+msgstr "生成的曲线的分辨率"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "到采样点的距离，零为禁用"
+
+
+msgid "Scale of the final stroke"
+msgstr "最终笔画的范围"
+
+
+msgid "Color Threshold"
+msgstr "颜色阈值"
+
+
+msgid "Determine what is considered white and what black"
+msgstr "决定如何判定白色和黑色"
+
+
+msgid "Turn Policy"
+msgstr "转向策略"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "确定在将位图分解为路径时如何解决分歧"
+
+
 msgid "Black"
 msgstr "黑色"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "首选连接黑色(前景)元素"
+
+
 msgid "White"
 msgstr "白色"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "首选连接白色(背景)元素"
+
+
+msgid "Always take a left turn"
+msgstr "总是左转"
+
+
+msgid "Always take a right turn"
+msgstr "总是右转"
+
+
+msgid "Minority"
+msgstr "少数"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "首选连接当前位置的局部邻域中出现频率较低的颜色(黑色或白色)"
+
+
+msgid "Majority"
+msgstr "多数"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "首选连接当前位置的局部邻域中出现频率较高的颜色(黑色或白色)"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "选择伪随机"
 
 
 msgctxt "Operator"
@@ -50248,10 +50361,6 @@ msgstr "应用权重移动用于减少选定函数曲线的扰动"
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "吸附选定的关键帧至选定的时间 / 值"
-
-
-msgid "Cursor Value"
-msgstr "光标的值"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -51955,6 +52064,10 @@ msgstr "优先尝试滑动羽化区, 而非顶点"
 msgctxt "Operator"
 msgid "Slide Spline Curvature"
 msgstr "滑动样条线曲率"
+
+
+msgid "Slide a point on the spline to define its curvature"
+msgstr "滑动样条线上的点来定义它的曲率"
 
 
 msgctxt "Operator"
@@ -54133,6 +54246,10 @@ msgstr "基于靠近程度合并顶点"
 
 msgid "Sharp Edges"
 msgstr "锐边"
+
+
+msgid "Calculate sharp edges using custom normal data (when available)"
+msgstr "使用自定义法向数据计算锐边(如果可用)"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -63953,6 +64070,10 @@ msgid "Use a union boolean operation"
 msgstr "使用求和布尔操作"
 
 
+msgid "Join the new mesh as separate geometry, without performing any boolean operation"
+msgstr "将新网格作为单独的几何体合并，无需执行任何布尔操作"
+
+
 msgid "Use Cursor for Depth"
 msgstr "使用游标作为深度"
 
@@ -72572,6 +72693,11 @@ msgstr "滑动松弛(拓扑)"
 
 
 msgctxt "Operator"
+msgid "Boundary"
+msgstr "边界范围"
+
+
+msgctxt "Operator"
 msgid "Cloth"
 msgstr "布料"
 
@@ -72579,6 +72705,11 @@ msgstr "布料"
 msgctxt "Operator"
 msgid "Simplify"
 msgstr "简化"
+
+
+msgctxt "Operator"
+msgid "Multires Displacement Eraser"
+msgstr "多精度置换橡皮擦"
 
 
 msgctxt "Operator"
@@ -74436,12 +74567,28 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "为开发人员启用Cycles调试选项"
 
 
+msgid "New Geometry Nodes"
+msgstr "新几何节点"
+
+
+msgid "Enable the new geometry nodes system in the ui"
+msgstr "在UI中启用新的几何节点系统"
+
+
 msgid "New Hair Type"
 msgstr "新毛发类型"
 
 
 msgid "Enable the new hair type in the ui"
 msgstr "在UI中启用新毛发类型"
+
+
+msgid "New Point Cloud Type"
+msgstr "新点云类型"
+
+
+msgid "Enable the new point cloud type in the ui"
+msgstr "在UI中启用新点云类型"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -80150,6 +80297,10 @@ msgid "Elastic Limit"
 msgstr "弹力极限"
 
 
+msgid "How much the spring has to be stretched/compressed in order to change its rest length"
+msgstr "改变弹簧的静止长度所需的拉伸/压缩量"
+
+
 msgid "Light Direction"
 msgstr "光照方向"
 
@@ -81610,7 +81761,11 @@ msgstr "声音的回放音量"
 
 
 msgid "Sequence Color Balance Data"
-msgstr "序列色彩平衡"
+msgstr "序列色彩平衡数据"
+
+
+msgid "Color balance parameters for a sequence strip and its modifiers"
+msgstr "序列片段及其修改器的色彩平衡参数"
 
 
 msgid "Color balance gain (highlights)"
@@ -83182,12 +83337,24 @@ msgid "Snap to 1.0 second intervals"
 msgstr "吸附至整数秒"
 
 
+msgid "Nearest Frame"
+msgstr "最近帧"
+
+
 msgid "Snap to actual frames (nla-action time)"
 msgstr "吸附至实际帧 (NLA 的动作时间)"
 
 
+msgid "Nearest Second"
+msgstr "最近整秒"
+
+
 msgid "Snap to actual seconds (nla-action time)"
 msgstr "吸附至实际秒 (NLA 的动作时间)"
+
+
+msgid "Nearest Marker"
+msgstr "最近标记"
 
 
 msgid "Snap to nearest marker"
@@ -90413,6 +90580,11 @@ msgstr "雕刻"
 
 
 msgctxt "WindowManager"
+msgid "3D View Tool: Sculpt, Face Set Edit"
+msgstr "3D视图工具: 雕刻, 面组编辑"
+
+
+msgctxt "WindowManager"
 msgid "Particle"
 msgstr "粒子"
 
@@ -90845,10 +91017,6 @@ msgstr "吸管模态映射"
 msgctxt "WindowManager"
 msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "吸管颜色渐变点采样映射"
-
-
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEM 数据 (.hgt) 作为网格和/或图像"
 
 
 msgid "Denoising completed"
@@ -92243,6 +92411,10 @@ msgstr "游标颜色"
 
 msgid "Lock Frame"
 msgstr "锁定帧"
+
+
+msgid "Inverse Color"
+msgstr "反相颜色"
 
 
 msgid "Unlocked"
@@ -93834,23 +94006,23 @@ msgstr "解除通道保护"
 
 
 msgctxt "Operator"
-msgid "Current Frame"
-msgstr "当前帧"
+msgid "Selection to Current Frame"
+msgstr "选中项至当前帧"
 
 
 msgctxt "Operator"
-msgid "Nearest Frame"
-msgstr "最近帧"
+msgid "Selection to Nearest Frame"
+msgstr "选中项 -> 最近帧"
 
 
 msgctxt "Operator"
-msgid "Nearest Second"
-msgstr "最近整秒"
+msgid "Selection to Nearest Second"
+msgstr "选中项 -> 次近帧"
 
 
 msgctxt "Operator"
-msgid "Nearest Marker"
-msgstr "最近标记"
+msgid "Selection to Nearest Marker"
+msgstr "选中项 -> 最近的标记"
 
 
 msgid "Recursions"
@@ -93988,6 +94160,11 @@ msgstr "精简(比例)"
 msgctxt "Operator"
 msgid "Decimate (Allowed Change)"
 msgstr "精简(受允许修改)"
+
+
+msgctxt "Operator"
+msgid "Selection to Cursor Value"
+msgstr "选中项 -> 游标值"
 
 
 msgctxt "Operator"
@@ -103754,6 +103931,10 @@ msgid "Data-block has no users and will be deleted"
 msgstr "数据块没有用户，将被删除"
 
 
+msgid "Change the object in the current mode"
+msgstr "在当前模式下修改物体"
+
+
 msgid "Remove from the current mode"
 msgstr "从当前模式删除"
 
@@ -106030,6 +106211,10 @@ msgid "Curve Object"
 msgstr "曲线物体"
 
 
+msgid "Generate Data Layers"
+msgstr "生成数据层"
+
+
 msgid "Layer Selection"
 msgstr "层选择"
 
@@ -106040,6 +106225,14 @@ msgstr "层映射"
 
 msgid "Refresh"
 msgstr "刷新"
+
+
+msgid "Recenter"
+msgstr "重回中心"
+
+
+msgid "Assign"
+msgstr "指定"
 
 
 msgid "Bisect"
@@ -106161,6 +106354,10 @@ msgstr "折痕内侧"
 
 msgid "Outer"
 msgstr "外表面"
+
+
+msgid "Shell"
+msgstr "壳"
 
 
 msgid "Adaptive Subdivision"
@@ -107205,10 +107402,6 @@ msgstr "添加网格"
 
 msgid "Import-Export"
 msgstr "导入 - 导出"
-
-
-msgid "MakeHuman"
-msgstr "MakeHuman"
 
 
 msgid "Rigging"
