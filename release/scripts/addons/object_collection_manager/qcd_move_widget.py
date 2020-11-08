@@ -28,12 +28,12 @@ from gpu_extras.batch import batch_for_shader
 
 from bpy.types import Operator
 
-from .internals import (
-    layer_collections,
-    qcd_slots,
-    )
+from . import internals
 
-from . import qcd_operators
+from .qcd_operators import (
+    get_move_selection,
+    get_move_active,
+    )
 
 def spacer():
     spacer = 10
@@ -655,8 +655,8 @@ def allocate_main_ui(self, context):
     self.areas["Button Row 2 B"] = button_row_2_b
 
 
-    selected_objects = qcd_operators.get_move_selection()
-    active_object = qcd_operators.get_move_active()
+    selected_objects = get_move_selection()
+    active_object = get_move_active()
 
 
     # BUTTONS
@@ -666,10 +666,10 @@ def allocate_main_ui(self, context):
         for num in range(button_group):
             slot_num = row_num + num
 
-            qcd_slot_name = qcd_slots.get_name(f"{slot_num}")
+            qcd_slot_name = internals.qcd_slots.get_name(f"{slot_num}")
 
             if qcd_slot_name:
-                qcd_laycol = layer_collections[qcd_slot_name]["ptr"]
+                qcd_laycol = internals.layer_collections[qcd_slot_name]["ptr"]
                 collection_objects = qcd_laycol.collection.objects
 
                 # BUTTON
@@ -789,12 +789,12 @@ def draw_callback_px(self, context):
 
     for num in range(20):
         slot_num = num + 1
-        qcd_slot_name = qcd_slots.get_name(f"{slot_num}")
+        qcd_slot_name = internals.qcd_slots.get_name(f"{slot_num}")
         if qcd_slot_name:
-            qcd_laycol = layer_collections[qcd_slot_name]["ptr"]
+            qcd_laycol = internals.layer_collections[qcd_slot_name]["ptr"]
             collection_objects = qcd_laycol.collection.objects
-            selected_objects = qcd_operators.get_move_selection()
-            active_object = qcd_operators.get_move_active()
+            selected_objects = get_move_selection()
+            active_object = get_move_active()
             button_area = self.areas[f"Button {slot_num}"]
 
             # colors
@@ -826,16 +826,16 @@ def draw_callback_px(self, context):
             rounding = 5
 
             if num < 10:
-                if not qcd_slots.contains(idx=f"{num+2}"):
+                if not internals.qcd_slots.contains(idx=f"{num+2}"):
                     tr = rounding
 
-                if not qcd_slots.contains(idx=f"{num}"):
+                if not internals.qcd_slots.contains(idx=f"{num}"):
                     tl = rounding
             else:
-                if not qcd_slots.contains(idx=f"{num+2}"):
+                if not internals.qcd_slots.contains(idx=f"{num+2}"):
                     br = rounding
 
-                if not qcd_slots.contains(idx=f"{num}"):
+                if not internals.qcd_slots.contains(idx=f"{num}"):
                     bl = rounding
 
             if num in [0,5]:
@@ -921,7 +921,7 @@ def draw_callback_px(self, context):
 
     if in_tooltip_area:
         if self.draw_tooltip:
-            slot_name = qcd_slots.get_name(f"{tooltip_slot_idx}")
+            slot_name = internals.qcd_slots.get_name(f"{tooltip_slot_idx}")
             slot_string = f"QCD Slot {tooltip_slot_idx}: \"{slot_name}\"\n"
             hotkey_string = "  * Shift+LMB - Toggle objects\' slot."
 

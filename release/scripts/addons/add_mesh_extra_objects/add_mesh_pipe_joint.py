@@ -230,7 +230,8 @@ class AddElbowJoint(Operator, object_utils.AddObjectHelper):
 
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
-            ('ElbowJoint' in context.active_object.data.keys()) and (self.change == True):
+                (context.active_object.data is not None) and ('ElbowJoint' in context.active_object.data.keys()) and \
+                (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -496,7 +497,8 @@ class AddTeeJoint(Operator, object_utils.AddObjectHelper):
 
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
-            ('TeeJoint' in context.active_object.data.keys()) and (self.change == True):
+                (context.active_object.data is not None) and ('TeeJoint' in context.active_object.data.keys()) and \
+                (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -779,7 +781,8 @@ class AddWyeJoint(Operator, object_utils.AddObjectHelper):
 
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
-            ('WyeJoint' in context.active_object.data.keys()) and (self.change == True):
+                (context.active_object.data is not None) and ('WyeJoint' in context.active_object.data.keys()) and \
+                (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -1126,7 +1129,8 @@ class AddCrossJoint(Operator, object_utils.AddObjectHelper):
 
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
-            ('CrossJoint' in context.active_object.data.keys()) and (self.change == True):
+                (context.active_object.data is not None) and ('CrossJoint' in context.active_object.data.keys()) and \
+                (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name
@@ -1370,7 +1374,8 @@ class AddNJoint(Operator, object_utils.AddObjectHelper):
 
         if bpy.context.mode == "OBJECT":
             if (context.selected_objects != []) and context.active_object and \
-            ('NJoint' in context.active_object.data.keys()) and (self.change == True):
+                (context.active_object.data is not None) and ('NJoint' in context.active_object.data.keys()) and \
+                (self.change == True):
                 obj = context.active_object
                 oldmesh = obj.data
                 oldmeshname = obj.data.name

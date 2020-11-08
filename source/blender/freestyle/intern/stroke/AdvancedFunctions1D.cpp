@@ -24,10 +24,7 @@
 
 #include "../view_map/SteerableViewMap.h"
 
-namespace Freestyle {
-
-// FIXME
-namespace Functions1D {
+namespace Freestyle::Functions1D {
 
 int GetSteerableViewMapDensityF1D::operator()(Interface1D &inter)
 {
@@ -43,7 +40,7 @@ int GetSteerableViewMapDensityF1D::operator()(Interface1D &inter)
     Interface0D &i0D = (*it);
     Interface0D &i0Dnext = (*itnext);
     fe = i0D.getFEdge(i0Dnext);
-    if (fe == 0) {
+    if (fe == nullptr) {
       cerr << "GetSteerableViewMapDensityF1D warning: no FEdge between " << i0D.getId() << " and "
            << i0Dnext.getId() << endl;
       // compute the direction between these two ???
@@ -127,6 +124,4 @@ int GetViewMapGradientNormF1D::operator()(Interface1D &inter)
   return 0;
 }
 
-}  // namespace Functions1D
-
-} /* namespace Freestyle */
+}  // namespace Freestyle::Functions1D

@@ -37,8 +37,8 @@ struct PointerRNA;
 struct Scene;
 struct SpaceLink;
 struct SpaceType;
-struct uiLayout;
 struct uiBlock;
+struct uiLayout;
 struct wmDrawBuffer;
 struct wmTimer;
 struct wmTooltipState;
@@ -170,9 +170,8 @@ typedef struct Panel {
   /** Panel size excluding children. */
   int blocksizex, blocksizey;
   short labelofs;
-  char _pad[4];
   short flag, runtime_flag;
-  short snap;
+  char _pad[6];
   /** Panels are aligned according to increasing sort-order. */
   int sortorder;
   /** Runtime for panel manipulation. */
@@ -322,10 +321,6 @@ typedef struct uiPreview {
   char _pad1[6];
 } uiPreview;
 
-/* These two lines with # tell makesdna this struct can be excluded.
- * Should be: #ifndef WITH_GLOBAL_AREA_WRITING */
-#
-#
 typedef struct ScrGlobalAreaData {
   /* Global areas have a non-dynamic size. That means, changing the window
    * size doesn't affect their size at all. However, they can still be
@@ -588,15 +583,6 @@ enum {
   /** The panel has been drag-drop reordered and the instanced panel list needs to be rebuilt. */
   PNL_INSTANCED_LIST_ORDER_CHANGED = (1 << 7),
 };
-
-/** #Panel.snap - for snapping to screen edges */
-#define PNL_SNAP_NONE 0
-/* #define PNL_SNAP_TOP     1 */
-/* #define PNL_SNAP_RIGHT       2 */
-#define PNL_SNAP_BOTTOM 4
-/* #define PNL_SNAP_LEFT        8 */
-
-/* #define PNL_SNAP_DIST        9.0 */
 
 /* paneltype flag */
 enum {

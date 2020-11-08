@@ -90,8 +90,9 @@
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_pointcache.h"
-#include "BKE_sequencer.h"
 #include "BKE_sound.h"
+
+#include "SEQ_sequencer.h"
 
 #include "intern/builder/deg_builder.h"
 #include "intern/builder/deg_builder_nodes.h"
@@ -100,8 +101,7 @@
 #include "intern/node/deg_node.h"
 #include "intern/node/deg_node_id.h"
 
-namespace blender {
-namespace deg {
+namespace blender::deg {
 
 #define DEBUG_PRINT \
   if (G.debug & G_DEBUG_DEPSGRAPH_EVAL) \
@@ -304,7 +304,7 @@ bool id_copy_inplace_no_main(const ID *id, ID *newid)
   bool result = (BKE_id_copy_ex(nullptr,
                                 (ID *)id_for_copy,
                                 &newid,
-                                LIB_ID_COPY_LOCALIZE | LIB_ID_CREATE_NO_ALLOCATE) != NULL);
+                                LIB_ID_COPY_LOCALIZE | LIB_ID_CREATE_NO_ALLOCATE) != nullptr);
 
 #ifdef NESTED_ID_NASTY_WORKAROUND
   if (result) {
@@ -333,7 +333,7 @@ bool scene_copy_inplace_no_main(const Scene *scene, Scene *new_scene)
   bool result = (BKE_id_copy_ex(nullptr,
                                 id_for_copy,
                                 (ID **)&new_scene,
-                                LIB_ID_COPY_LOCALIZE | LIB_ID_CREATE_NO_ALLOCATE) != NULL);
+                                LIB_ID_COPY_LOCALIZE | LIB_ID_CREATE_NO_ALLOCATE) != nullptr);
 
 #ifdef NESTED_ID_NASTY_WORKAROUND
   if (result) {
@@ -1126,5 +1126,4 @@ bool deg_copy_on_write_is_needed(const ID_Type id_type)
   return ID_TYPE_IS_COW(id_type);
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg

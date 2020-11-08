@@ -73,8 +73,7 @@ namespace deg = blender::deg;
 /* *********************** */
 /* Update Tagging/Flushing */
 
-namespace blender {
-namespace deg {
+namespace blender::deg {
 
 namespace {
 
@@ -308,7 +307,7 @@ void depsgraph_tag_component(Depsgraph *graph,
 void deg_graph_id_tag_legacy_compat(
     Main *bmain, Depsgraph *depsgraph, ID *id, IDRecalcFlag tag, eUpdateSource update_source)
 {
-  if (tag == ID_RECALC_GEOMETRY || tag == 0) {
+  if (ELEM(tag, ID_RECALC_GEOMETRY, 0)) {
     switch (GS(id->name)) {
       case ID_OB: {
         Object *object = (Object *)id;
@@ -617,7 +616,7 @@ void id_tag_update(Main *bmain, ID *id, int flag, eUpdateSource update_source)
 
   /* Accumulate all tags for an ID between two undo steps, so they can be
    * replayed for undo. */
-  id->recalc_after_undo_push |= deg_recalc_flags_effective(NULL, flag);
+  id->recalc_after_undo_push |= deg_recalc_flags_effective(nullptr, flag);
 }
 
 void graph_id_tag_update(
@@ -676,8 +675,7 @@ void graph_id_tag_update(
   }
 }
 
-}  // namespace deg
-}  // namespace blender
+}  // namespace blender::deg
 
 const char *DEG_update_tag_as_string(IDRecalcFlag flag)
 {

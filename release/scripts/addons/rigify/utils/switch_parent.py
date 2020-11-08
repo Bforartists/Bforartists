@@ -385,19 +385,16 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         # Implement via an Armature constraint
         mch = child['mch_bone']
-        con = self.make_constraint(mch, 'ARMATURE', name='SWITCH_PARENT')
+        con = self.make_constraint(
+            mch, 'ARMATURE', name='SWITCH_PARENT',
+            targets=[ (parent, 0.0) for parent, _ in child['parent_bones'] ]
+        )
 
         prop_var = [(child['prop_bone'], child['prop_id'])]
 
         for i, (parent, parent_name) in enumerate(child['parent_bones']):
-            tgt = con.targets.new()
-
-            tgt.target = self.obj
-            tgt.subtarget = parent
-            tgt.weight = 0.0
-
             expr = 'var == %d' % (i+1)
-            self.make_driver(tgt, 'weight', expression=expr, variables=prop_var)
+            self.make_driver(con.targets[i], 'weight', expression=expr, variables=prop_var)
 
         # Add copy constraints
         copy = child['copy']
