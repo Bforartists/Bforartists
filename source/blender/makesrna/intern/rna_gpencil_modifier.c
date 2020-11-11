@@ -1039,7 +1039,7 @@ static void rna_def_modifier_gpenciltint(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "TintGpencilModifier", "GpencilModifier");
   RNA_def_struct_ui_text(srna, "Tint Modifier", "Tint modifier");
   RNA_def_struct_sdna(srna, "TintGpencilModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_COLOR);
+  RNA_def_struct_ui_icon(srna, ICON_MOD_TINT);
 
   prop = RNA_def_property(srna, "object", PROP_POINTER, PROP_NONE);
   RNA_def_property_ui_text(prop, "Object", "Parent object to define the center of the effect");
