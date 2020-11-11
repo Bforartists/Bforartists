@@ -1245,7 +1245,7 @@ static void rna_def_modifier_gpencilcolor(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ColorGpencilModifier", "GpencilModifier");
   RNA_def_struct_ui_text(srna, "Hue/Saturation Modifier", "Change Hue/Saturation modifier");
   RNA_def_struct_sdna(srna, "ColorGpencilModifierData");
-  RNA_def_struct_ui_icon(srna, ICON_MOD_TINT);
+  RNA_def_struct_ui_icon(srna, ICON_MOD_HUE_SATURATION);
 
   prop = RNA_def_property(srna, "modify_color", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_items(prop, modifier_modify_color_items); /* share the enum */
