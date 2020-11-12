@@ -33,6 +33,26 @@ from bl_ui.properties_grease_pencil_common import (
 )
 
 #######################################
+# DopeSheet Filtering - Header Buttons
+
+# used for DopeSheet, NLA, and Graph Editors
+
+
+def dopesheet_filter(layout, context):
+    dopesheet = context.space_data.dopesheet
+    is_nla = context.area.type == 'NLA_EDITOR'
+
+    row = layout.row(align=True)
+    row.prop(dopesheet, "show_only_selected", text="")
+    row.prop(dopesheet, "show_hidden", text="")
+
+    if is_nla:
+        row.prop(dopesheet, "show_missing_nla", text="")
+    else:  # graph and dopesheet editors - F-Curves and drivers only
+        row.prop(dopesheet, "show_only_errors", text="")
+
+
+#######################################
 # Dopesheet Filtering Popovers
 
 # Generic Layout - Used as base for filtering popovers used in all animation editors
@@ -164,10 +184,6 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
         ds_mode = context.space_data.mode
         st = context.space_data
 
-        layout.prop(dopesheet, "show_summary", text="Summary")
-
-        DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
-
         if ds_mode in {'DOPESHEET', 'ACTION', 'GPENCIL'}:
             layout.separator()
             generic_filters_only = ds_mode != 'DOPESHEET'
@@ -181,6 +197,7 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
             row = layout.row()
             row.separator()
             row.prop(st.dopesheet, "use_multi_word_filter", text="Multi-Word Match Search")
+
 
 ################################ Switch between the editors ##########################################
 
@@ -300,6 +317,10 @@ class DOPESHEET_HT_editor_buttons:
         st = context.space_data
         tool_settings = context.tool_settings
 
+        dopesheet = context.space_data.dopesheet
+        ds_mode = context.space_data.mode
+        st = context.space_data
+
         if st.mode in {'ACTION', 'SHAPEKEY'}:
             # TODO: These buttons need some tidying up -
             # Probably by using a popover, and bypassing the template_id() here
@@ -339,7 +360,17 @@ class DOPESHEET_HT_editor_buttons:
 
         layout.separator_spacer()
 
-        layout.popover(panel="DOPESHEET_PT_filters", text="", icon='FILTER')
+        layout.prop(dopesheet, "show_summary", text="")
+
+        dopesheet_filter(layout, context)
+
+        if st.mode == 'GPENCIL':
+            row = layout.row(align=True)
+            row.prop(st.dopesheet, "show_only_selected", text="")
+            row.prop(st.dopesheet, "show_hidden", text="")
+
+        if ds_mode in {'DOPESHEET'}:
+            layout.popover(panel="DOPESHEET_PT_filters", text="", icon='FILTER')
 
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
         if st.mode != 'GPENCIL':
