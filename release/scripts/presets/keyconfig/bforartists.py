@@ -1,4 +1,4 @@
-keyconfig_version = (2, 92, 1)
+keyconfig_version = (2, 92, 3)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -651,7 +651,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("anim.channels_rename", {"type": 'LEFTMOUSE', "value": 'PRESS', "ctrl": True}, None),
     ("anim.channels_rename", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("anim.channel_select_keys", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("anim.channel_select_keys",
@@ -6722,7 +6721,7 @@ keyconfig_data = \
      ),
     ("info.reports_display_update", {"type": 'TIMER_REPORT', "value": 'ANY', "any": True}, None),
     ("wm.search_menu", {"type": 'F3', "value": 'PRESS', "repeat": True}, None),
-    ("wm.console_toggle", {"type": 'F2', "value": 'PRESS', "repeat": True}, None),
+    ("wm.console_toggle", {"type": 'F5', "value": 'PRESS', "repeat": True}, None),
     ("wm.call_menu",
      {"type": 'F4', "value": 'PRESS', "repeat": True},
      {"properties":
@@ -6730,6 +6729,15 @@ keyconfig_data = \
        ],
       },
      ),
+    ("wm.call_panel",
+     {"type": 'F2', "value": 'PRESS'},
+     {"properties":
+      [("name", 'TOPBAR_PT_name'),
+       ("keep_open", False),
+       ],
+      },
+     ),
+    ("wm.batch_rename", {"type": 'F2', "value": 'PRESS', "ctrl": True}, None),
     ],
    },
   ),
