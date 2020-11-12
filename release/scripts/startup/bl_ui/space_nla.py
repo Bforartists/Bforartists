@@ -23,6 +23,7 @@ from bpy.types import Header, Menu, Panel
 from bpy.app.translations import contexts as i18n_contexts
 from bl_ui.space_dopesheet import (
     DopesheetFilterPopoverBase,
+    dopesheet_filter,
 )
 
 ################################ Switch between the editors ##########################################
@@ -67,11 +68,9 @@ class NLA_HT_header(Header):
 
         layout.separator_spacer()
 
-        layout.popover(
-            panel="NLA_PT_filters",
-            text="",
-            icon='FILTER',
-        )
+        dopesheet_filter(layout, context)
+
+        layout.popover(panel="NLA_PT_filters", text="", icon='FILTER')
 
         layout.prop(st, "auto_snap", text="")
 
@@ -96,8 +95,6 @@ class NLA_PT_filters(DopesheetFilterPopoverBase, Panel):
     def draw(self, context):
         layout = self.layout
 
-        DopesheetFilterPopoverBase.draw_generic_filters(context, layout)
-        layout.separator()
         DopesheetFilterPopoverBase.draw_search_filters(context, layout)
         layout.separator()
         DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
