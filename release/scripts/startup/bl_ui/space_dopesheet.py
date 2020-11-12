@@ -67,7 +67,11 @@ class DopesheetFilterPopoverBase:
 
         if (not generic_filters_only) and bpy.data.collections:
             col = layout.column(align=True)
-            col.prop(dopesheet, "filter_collection", text="")
+            col.label(text = "Filter by Collection:")
+            #col.separator()
+            row = col.row()
+            row.separator()
+            row.prop(dopesheet, "filter_collection", text="")
 
     # Standard = Present in all panels
     @classmethod
@@ -142,7 +146,9 @@ class DopesheetFilterPopoverBase:
         # performance-related options (users will mostly have these enabled)
         col = layout.column(align=True)
         col.label(text="Options:")
-        col.prop(dopesheet, "use_datablock_sort", icon='NONE')
+        row = col.row()
+        row.separator()
+        row.prop(dopesheet, "use_datablock_sort", icon='NONE')
 
 
 # Popover for Dopesheet Editor(s) - Dopesheet, Action, Shapekey, GPencil, Mask, etc.
@@ -172,7 +178,9 @@ class DOPESHEET_PT_filters(DopesheetFilterPopoverBase, Panel):
             layout.separator()
             DopesheetFilterPopoverBase.draw_standard_filters(context, layout)
 
-            layout.prop(st.dopesheet, "use_multi_word_filter", text="Multi-Word Match Search")
+            row = layout.row()
+            row.separator()
+            row.prop(st.dopesheet, "use_multi_word_filter", text="Multi-Word Match Search")
 
 ################################ Switch between the editors ##########################################
 
@@ -331,11 +339,7 @@ class DOPESHEET_HT_editor_buttons:
 
         layout.separator_spacer()
 
-        layout.popover(
-            panel="DOPESHEET_PT_filters",
-            text="",
-            icon='FILTER',
-        )
+        layout.popover(panel="DOPESHEET_PT_filters", text="", icon='FILTER')
 
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
         if st.mode != 'GPENCIL':
