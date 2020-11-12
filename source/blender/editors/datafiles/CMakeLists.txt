@@ -1289,8 +1289,8 @@ togglecaps_both
 togglecaps_default
 togglecaps_end
 togglecaps_start
-#def_icon_blank(1305
-#def_icon_blank(1306
+snap_step
+snap_step_second
 
 # ------------------------- row 23 --------------------------*/
 
