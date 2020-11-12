@@ -360,8 +360,12 @@ static const EnumPropertyItem display_channels_items[] = {
 static const EnumPropertyItem autosnap_items[] = {
     {SACTSNAP_OFF, "NONE", ICON_SNAP_OFF, "No Auto-Snap", ""},
     /* {-1, "", 0, "", ""}, */
-    {SACTSNAP_STEP, "STEP", ICON_SNAP_NEARESTFRAME, "Frame Step", "Snap to 1.0 frame intervals"},
-    {SACTSNAP_TSTEP, "TIME_STEP", ICON_SNAP_NEARESTSECOND, "Second Step", "Snap to 1.0 second intervals"},
+    {SACTSNAP_STEP, "STEP", ICON_SNAP_STEP, "Frame Step", "Snap to 1.0 frame intervals"},
+    {SACTSNAP_TSTEP,
+     "TIME_STEP",
+     ICON_SNAP_STEP_SECOND,
+     "Second Step",
+     "Snap to 1.0 second intervals"},
     /* {-1, "", 0, "", ""}, */
     {SACTSNAP_FRAME, "FRAME", ICON_SNAP_NEARESTFRAME, "Nearest Frame", "Snap to actual frames (nla-action time)"},
     {SACTSNAP_SECOND, "SECOND", ICON_SNAP_NEARESTSECOND,"Nearest Second",
