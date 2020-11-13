@@ -4201,7 +4201,7 @@ static int header_toolbar_image_exec(bContext *C, wmOperator *UNUSED(op))
 static void SCREEN_OT_header_toolbar_image(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Toolbar IMAGE";
+  ot->name = "Toolbar Image";
   ot->idname = "SCREEN_OT_header_toolbar_image";
   ot->description = "Show or Hide the Image toolbars";
 
