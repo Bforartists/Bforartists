@@ -149,6 +149,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     outliner_show_search : BoolProperty(name="Show search", default = False, description = "Show the search form")
 
+    # Toolbar Options
+
+    toolbar_show_quicktoggle : BoolProperty(name="Show Quick Toggle", default = False, description = "Show the quick toggle buttons in the toolbar editor")
+
 
     def draw(self, context):
         layout = self.layout
@@ -318,6 +322,13 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row = layout.row()
         row.prop(self, "outliner_show_search")
+
+    # Toolbar Options
+
+        row = layout.row()
+        row.prop(self, "toolbar_show_quicktoggle")
+
+    toolbar_show_quicktoggle : BoolProperty(name="Show Quick Toggle", default = False, description = "Show the quick toggle buttons in the toolbar editor")
 
 
 class BFA_OT_toolbar_prefs(Operator):
