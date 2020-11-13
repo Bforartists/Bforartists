@@ -1050,6 +1050,7 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if not context.area.misc_toolbars:
             cls.draw_menus(layout, context)
 
+
 class NodeTree(bpy_types.ID, metaclass=RNAMetaPropGroup):
     __slots__ = ()
 
