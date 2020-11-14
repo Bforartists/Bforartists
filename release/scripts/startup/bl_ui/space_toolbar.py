@@ -1089,7 +1089,7 @@ class TOOLBAR_MT_image(Menu):
 
             row = layout.row(align=True)
             row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
-            row.operator("uv.mark_seam", text="", icon ="CLEAR_SEAM").clear = True
+            row.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
             row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
 
             row = layout.row(align=True)
