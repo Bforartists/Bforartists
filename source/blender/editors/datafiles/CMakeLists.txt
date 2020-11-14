@@ -1503,7 +1503,7 @@ node_translucent
 node_transparent
 node_ungroup
 node_uvalongstroke
-#def_icon_blank(1519
+save_usd
 node_value
 node_vector
 node_vector_blur
