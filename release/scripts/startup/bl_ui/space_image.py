@@ -465,7 +465,7 @@ class IMAGE_MT_uvs_split(Menu):
 
 # Tooltip and operator for Clear Seam.
 class IMAGE_MT_uvs_clear_seam(bpy.types.Operator):
-    """Clear Seam\nClears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
+    """Clears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "uv.clear_seam"        # unique identifier for buttons and menu items to reference.
     bl_label = "Clear seam"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
