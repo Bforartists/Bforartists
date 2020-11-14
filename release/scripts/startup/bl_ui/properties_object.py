@@ -153,14 +153,16 @@ class OBJECT_PT_relations(ObjectButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(ob, "parent")
-        sub = col.column()
-        sub.prop(ob, "parent_type")
         parent = ob.parent
-        if parent and ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
-            sub.prop_search(ob, "parent_bone", parent.data, "bones")
-        sub.active = (parent is not None)
-        sub.use_property_split = False
-        sub.prop(ob, "use_camera_lock_parent")
+        if parent:
+            row = col.row()
+            row.separator()
+            sub = row.column()
+            sub.prop(ob, "parent_type")
+            if ob.parent_type == 'BONE' and parent.type == 'ARMATURE':
+                sub.prop_search(ob, "parent_bone", parent.data, "bones")
+            sub.use_property_split = False
+            sub.prop(ob, "use_camera_lock_parent")
 
         col.separator()
 
