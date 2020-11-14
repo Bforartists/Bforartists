@@ -1036,59 +1036,60 @@ void UV_OT_pack_islands(wmOperatorType *ot)
   ot->poll = ED_operator_uvedit;
 
   /* properties */
-  RNA_def_boolean(ot->srna, "rotate", true, "Rotate", "Rotate islands for best fit");
+  /* change the defaults for rotate and margin */
+  RNA_def_boolean(ot->srna, "rotate", false, "Rotate", "Rotate islands for best fit");
   RNA_def_float_factor(
-      ot->srna, "margin", 0.001f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
+      ot->srna, "margin", 0.01f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
 }
 
 /** \} */
 
-/* -------------------------------------------------------------------- */
-/** \name Average UV Islands Scale Operator
- * \{ */
+  /* -------------------------------------------------------------------- */
+  /** \name Average UV Islands Scale Operator
+   * \{ */
 
-static int average_islands_scale_exec(bContext *C, wmOperator *UNUSED(op))
-{
-  const Scene *scene = CTX_data_scene(C);
-  ViewLayer *view_layer = CTX_data_view_layer(C);
-  ToolSettings *ts = scene->toolsettings;
-  const bool synced_selection = (ts->uv_flag & UV_SYNC_SELECTION) != 0;
+  static int average_islands_scale_exec(bContext * C, wmOperator * UNUSED(op))
+  {
+    const Scene *scene = CTX_data_scene(C);
+    ViewLayer *view_layer = CTX_data_view_layer(C);
+    ToolSettings *ts = scene->toolsettings;
+    const bool synced_selection = (ts->uv_flag & UV_SYNC_SELECTION) != 0;
 
-  const UnwrapOptions options = {
-      .topology_from_uvs = true,
-      .only_selected_faces = true,
-      .only_selected_uvs = true,
-      .fill_holes = false,
-      .correct_aspect = true,
-  };
+    const UnwrapOptions options = {
+        .topology_from_uvs = true,
+        .only_selected_faces = true,
+        .only_selected_uvs = true,
+        .fill_holes = false,
+        .correct_aspect = true,
+    };
 
-  uint objects_len = 0;
-  Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
-      view_layer, CTX_wm_view3d(C), &objects_len);
+    uint objects_len = 0;
+    Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data_with_uvs(
+        view_layer, CTX_wm_view3d(C), &objects_len);
 
-  if (!uvedit_have_selection_multi(scene, objects, objects_len, &options)) {
-    MEM_freeN(objects);
-    return OPERATOR_CANCELLED;
-  }
-
-  ParamHandle *handle = construct_param_handle_multi(scene, objects, objects_len, &options);
-  param_average(handle, false);
-  param_flush(handle);
-  param_delete(handle);
-
-  for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
-    Object *obedit = objects[ob_index];
-    BMEditMesh *em = BKE_editmesh_from_object(obedit);
-
-    if (synced_selection && (em->bm->totvertsel == 0)) {
-      continue;
+    if (!uvedit_have_selection_multi(scene, objects, objects_len, &options)) {
+      MEM_freeN(objects);
+      return OPERATOR_CANCELLED;
     }
 
-    DEG_id_tag_update(obedit->data, ID_RECALC_GEOMETRY);
-    WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
-  }
-  MEM_freeN(objects);
-  return OPERATOR_FINISHED;
+    ParamHandle *handle = construct_param_handle_multi(scene, objects, objects_len, &options);
+    param_average(handle, false);
+    param_flush(handle);
+    param_delete(handle);
+
+    for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+      Object *obedit = objects[ob_index];
+      BMEditMesh *em = BKE_editmesh_from_object(obedit);
+
+      if (synced_selection && (em->bm->totvertsel == 0)) {
+        continue;
+      }
+
+      DEG_id_tag_update(obedit->data, ID_RECALC_GEOMETRY);
+      WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
+    }
+    MEM_freeN(objects);
+    return OPERATOR_FINISHED;
 }
 
 void UV_OT_average_islands_scale(wmOperatorType *ot)
@@ -1854,8 +1855,15 @@ void UV_OT_unwrap(wmOperatorType *ot)
       0,
       "Use Subdivision Surface",
       "Map UVs taking vertex position after Subdivision Surface modifier has been applied");
-  RNA_def_float_factor(
-      ot->srna, "margin", 0.001f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
+  RNA_def_float_factor(ot->srna,
+                       "margin",
+                       0.01f,
+                       0.0f,
+                       1.0f,
+                       "Margin",
+                       "Space between islands",
+                       0.0f,
+                       1.0f); /* bfa - change the defaults of uv margin*/
 }
 
 /** \} */
@@ -2851,7 +2859,7 @@ void ED_uvedit_add_simple_uvs(Main *bmain, const Scene *scene, Object *ob)
   ED_uvedit_select_all(bm);
   uvedit_unwrap_cube_project(bm, 1.0, false, NULL);
   /* set the margin really quickly before the packing operation*/
-  scene->toolsettings->uvcalc_margin = 0.001f;
+  scene->toolsettings->uvcalc_margin = 0.01f; /* bfa - change the defaults of uv margin*/
   uvedit_pack_islands(scene, ob, bm);
   BM_mesh_bm_to_me(bmain, bm, me, (&(struct BMeshToMeshParams){0}));
   BM_mesh_free(bm);
