@@ -1690,7 +1690,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *bmain)
 
     for (scene = bmain->scenes.first; scene; scene = scene->id.next) {
       if (scene->toolsettings->uvcalc_margin == 0.0f) {
-        scene->toolsettings->uvcalc_margin = 0.001f;
+        scene->toolsettings->uvcalc_margin = 0.01f; /* bfa - change the defaults of uv margin*/
         scene->toolsettings->unwrapper = 0;
       }
     }
