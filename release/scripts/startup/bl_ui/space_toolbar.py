@@ -391,6 +391,7 @@ class TOOLBAR_MT_file(Menu):
             row = layout.row(align=True)
             row.operator("wm.collada_export", text="", icon='SAVE_DAE')
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
+            row.operator("wm.usd_export", text="", icon='SAVE_USD')
             #row.operator("export_scene.autodesk_3ds", text="", icon='SAVE_3DS') # bfa - not ported to 2.8 yet
             row.operator("export_scene.gltf", text="", icon='SAVE_GITF')
 

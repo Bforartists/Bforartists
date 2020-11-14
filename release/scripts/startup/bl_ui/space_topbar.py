@@ -408,7 +408,7 @@ class TOPBAR_MT_file_export(Menu):
             self.layout.operator("wm.alembic_export", text="Alembic (.abc)", icon = "SAVE_ABC")
         if bpy.app.build_options.usd:
             self.layout.operator(
-                "wm.usd_export", text="Universal Scene Description (.usd, .usdc, .usda)")
+                "wm.usd_export", text="Universal Scene Description (.usd, .usdc, .usda)", icon = "SAVE_USD")
 
 
 class TOPBAR_MT_file_external_data(Menu):
