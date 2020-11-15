@@ -234,6 +234,9 @@ typedef enum eSpaceButtons_Flag {
 /** \name Outliner
  * \{ */
 
+/* Defined in `outliner_intern.h`. */
+typedef struct SpaceOutliner_Runtime SpaceOutliner_Runtime;
+
 /* Outliner */
 typedef struct SpaceOutliner {
   SpaceLink *next, *prev;
@@ -276,6 +279,8 @@ typedef struct SpaceOutliner {
    * Pointers to treestore elements, grouped by (id, type, nr)
    * in hashtable for faster searching */
   void *treehash;
+
+  SpaceOutliner_Runtime *runtime;
 } SpaceOutliner;
 
 /* SpaceOutliner.flag */
@@ -465,7 +470,7 @@ typedef enum eGraphEdit_Flag {
   /* don't draw curves with AA ("beauty-draw") for performance */
   SIPO_BEAUTYDRAW_OFF = (1 << 12),
   /* draw grouped channels with colors set in group */
-  SIPO_NODRAWGCOLORS = (1 << 13),
+  /* SIPO_NODRAWGCOLORS = (1 << 13), DEPRECATED */
   /* normalize curves on display */
   SIPO_NORMALIZE = (1 << 14),
   SIPO_NORMALIZE_FREEZE = (1 << 15),

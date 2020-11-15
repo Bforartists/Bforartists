@@ -1090,7 +1090,7 @@ typedef struct GP_Sculpt_Settings {
   int lock_axis;
   /** Threshold for intersections */
   float isect_threshold;
-  char _pad_[4];
+  char _pad[4];
   /** Multiframe edit falloff effect by frame. */
   struct CurveMapping *cur_falloff;
   /** Curve used for primitive tools. */
@@ -2207,7 +2207,7 @@ typedef enum eSculptFlags {
   SCULPT_HIDE_MASK = (1 << 15),
 
   /* Don't display face sets in viewport. */
-  SCULPT_HIDE_FACE_SETS = (1 << 16),
+  SCULPT_HIDE_FACE_SETS = (1 << 17),
 } eSculptFlags;
 
 /* ImagePaintSettings.mode */
