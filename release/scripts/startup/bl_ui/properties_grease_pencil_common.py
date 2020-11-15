@@ -892,7 +892,8 @@ class GreasePencilLayerDisplayPanel:
         if not use_colors:
             col.label(text="Channel Colors are disabled in Animation preferences")
 
-        row = layout.row(align=True)
+        row = layout.row()
+        row.use_property_split = False
         row.prop(gpl, "use_solo_mode", text="Show Only on Keyframed")
 
 
