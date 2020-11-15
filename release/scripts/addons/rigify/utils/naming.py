@@ -314,4 +314,12 @@ def choose_derived_bone(generator, original, subtype, *, by_owner=True, recursiv
     if len(matching) > 0:
         return matching[0]
 
+    # Try matching bones created by legacy rigs just by name - there is no origin data
+    from ..base_generate import LegacyRig
+
+    if isinstance(generator.bone_owners.get(direct), LegacyRig):
+        if not by_owner or generator.bone_owners.get(original) is generator.bone_owners[direct]:
+            assert direct in bones
+            return direct
+
     return None

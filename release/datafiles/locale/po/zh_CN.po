@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'4960780d76bf')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -42117,16 +42117,32 @@ msgid "Snap selected keyframes to the times specified"
 msgstr "讲选择的关键帧吸附至指定的时间点"
 
 
+msgid "Selection to Current Frame"
+msgstr "选中项 -> 当前帧"
+
+
 msgid "Snap selected keyframes to the current frame"
 msgstr "将所选关键帧吸附到当前帧位置"
+
+
+msgid "Selection to Nearest Frame"
+msgstr "选中项 -> 最近帧"
 
 
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "将所选关键帧吸附到最近 (完整) 的帧 (用于修正意外产生的子帧偏移)"
 
 
+msgid "Selection to Nearest Second"
+msgstr "选中项 -> 次近帧"
+
+
 msgid "Snap selected keyframes to the nearest second"
 msgstr "将所选关键帧吸附到最近的秒点处"
+
+
+msgid "Selection to Nearest Marker"
+msgstr "选中项 -> 最近的标记"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -50361,6 +50377,10 @@ msgstr "应用权重移动用于减少选定函数曲线的扰动"
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "吸附选定的关键帧至选定的时间 / 值"
+
+
+msgid "Selection to Cursor Value"
+msgstr "选中项 -> 游标值"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -72497,18 +72517,6 @@ msgid "Measure"
 msgstr "测量"
 
 
-msgid "Add cube to mesh interactively"
-msgstr "交互式向网格添加立方体"
-
-
-msgid "Add cone to mesh interactively"
-msgstr "交互式向网格添加锥体"
-
-
-msgid "Add cylinder to mesh interactively"
-msgstr "交互式向网格添加柱体"
-
-
 msgctxt "Operator"
 msgid "Breakdowner"
 msgstr "间断"
@@ -90502,11 +90510,6 @@ msgstr "通用工具: 标注擦除"
 msgctxt "WindowManager"
 msgid "3D View Tool: Measure"
 msgstr "3D视图工具: 测量"
-
-
-msgctxt "WindowManager"
-msgid "3D View Tool: Object, Add Primitive"
-msgstr "3D视图工具: 物体，添加基本体"
 
 
 msgctxt "WindowManager"

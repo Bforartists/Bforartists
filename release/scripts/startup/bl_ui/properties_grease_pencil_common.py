@@ -883,12 +883,17 @@ class GreasePencilLayerDisplayPanel:
         gpd = ob.data
         gpl = gpd.layers.active
 
-        col = layout.row(align=True)
-        col.prop(gpl, "channel_color")
+        use_colors = context.preferences.edit.use_anim_channel_group_colors
 
-        col = layout.row(align=True)
-        col.use_property_split = False
-        col.prop(gpl, "use_solo_mode", text="Show Only on Keyframed")
+        col = layout.column(align=True)
+        col.active = use_colors
+        row = col.row(align=True)
+        row.prop(gpl, "channel_color")
+        if not use_colors:
+            col.label(text="Channel Colors are disabled in Animation preferences")
+
+        row = layout.row(align=True)
+        row.prop(gpl, "use_solo_mode", text="Show Only on Keyframed")
 
 
 class GreasePencilFlipTintColors(Operator):
