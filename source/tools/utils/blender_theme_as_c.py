@@ -67,136 +67,6 @@ C_SOURCE_HEADER = r'''/*
 
 '''
 
-# TODO, support arrays properly,
-# these variables hardly change so hard code for now.
-TARM_WORKAROUND = '''\t\t{
-\t\t\t.solid = RGBA(0x9a0000ff),
-\t\t\t.select = RGBA(0xbd1111ff),
-\t\t\t.active = RGBA(0xf70a0aff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0xf74018ff),
-\t\t\t.select = RGBA(0xf66913ff),
-\t\t\t.active = RGBA(0xfa9900ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x1e9109ff),
-\t\t\t.select = RGBA(0x59b70bff),
-\t\t\t.active = RGBA(0x83ef1dff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x0a3694ff),
-\t\t\t.select = RGBA(0x3667dfff),
-\t\t\t.active = RGBA(0x5ec1efff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0xa9294eff),
-\t\t\t.select = RGBA(0xc1416aff),
-\t\t\t.active = RGBA(0xf05d91ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x430c78ff),
-\t\t\t.select = RGBA(0x543aa3ff),
-\t\t\t.active = RGBA(0x8764d5ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x24785aff),
-\t\t\t.select = RGBA(0x3c9579ff),
-\t\t\t.active = RGBA(0x6fb6abff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x4b707cff),
-\t\t\t.select = RGBA(0x6a8691ff),
-\t\t\t.active = RGBA(0x9bc2cdff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0xf4c90cff),
-\t\t\t.select = RGBA(0xeec236ff),
-\t\t\t.active = RGBA(0xf3ff00ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x1e2024ff),
-\t\t\t.select = RGBA(0x484c56ff),
-\t\t\t.active = RGBA(0xffffffff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x6f2f6aff),
-\t\t\t.select = RGBA(0x9845beff),
-\t\t\t.active = RGBA(0xd330d6ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x6c8e22ff),
-\t\t\t.select = RGBA(0x7fb022ff),
-\t\t\t.active = RGBA(0xbbef5bff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x8d8d8dff),
-\t\t\t.select = RGBA(0xb0b0b0ff),
-\t\t\t.active = RGBA(0xdededeff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x834326ff),
-\t\t\t.select = RGBA(0x8b5811ff),
-\t\t\t.active = RGBA(0xbd6a11ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x08310eff),
-\t\t\t.select = RGBA(0x1c430bff),
-\t\t\t.active = RGBA(0x34622bff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x000000ff),
-\t\t\t.select = RGBA(0x000000ff),
-\t\t\t.active = RGBA(0x000000ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x000000ff),
-\t\t\t.select = RGBA(0x000000ff),
-\t\t\t.active = RGBA(0x000000ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x000000ff),
-\t\t\t.select = RGBA(0x000000ff),
-\t\t\t.active = RGBA(0x000000ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x000000ff),
-\t\t\t.select = RGBA(0x000000ff),
-\t\t\t.active = RGBA(0x000000ff),
-\t\t},
-\t\t{
-\t\t\t.solid = RGBA(0x000000ff),
-\t\t\t.select = RGBA(0x000000ff),
-\t\t\t.active = RGBA(0x000000ff),
-\t\t},
-'''
-
-COLLECTION_COLOR_WORKAROUND = '''\t\t{
-\t\t\t.color = RGBA(0xe4312bff),
-\t\t},
-\t\t{
-\t\t\t.color = RGBA(0xef7e42ff),
-\t\t},
-\t\t{
-\t\t\t.color = RGBA(0xe4dd52ff),
-\t\t},
-\t\t{
-\t\t\t.color = RGBA(0x9ac546ff),
-\t\t},
-\t\t{
-\t\t\t.color = RGBA(0x46bcc2ff),
-\t\t},
-\t\t{
-\t\t\t.color = RGBA(0x8b65dcff),
-\t\t},
-\t\t{
-\t\t\t.color = RGBA(0x999999ff),
-\t\t},
-\t\t{
-\t\t\t.color = RGBA(0x06d4432ff),
-\t\t},
-'''
-
 
 def round_float_32(f):
     from struct import pack, unpack
@@ -316,20 +186,10 @@ def write_member(fw, indent, b, theme, ls):
             for i, c in enumerate(path_new[p:]):
                 indent = p + i + 1
                 fw('\t' * indent)
-                attr = c.decode('ascii')
-                fw(f'.{attr} = {{\n')
-
-        # Evil, tarm array workaround.
-        if key[0] == b'tarm':
-            if path_old[0] != b'tarm':
-                fw(TARM_WORKAROUND)
-            path_old = path_new
-            continue
-        if key[0] == b'collection_color':
-            if path_old[0] != b'collection_color':
-                fw(COLLECTION_COLOR_WORKAROUND)
-            path_old = path_new
-            continue
+                if type(c) is bytes:
+                    attr = c.decode('ascii')
+                    fw(f'.{attr} = ')
+                fw('{\n')
 
         if not is_ignore_dna_name(key[-1]):
             indent = '\t' * (len(path_new) + 1)

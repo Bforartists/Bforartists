@@ -796,7 +796,7 @@ static uiTooltipData *ui_tooltip_data_from_button(bContext *C, uiBut *but)
    * Check prefix instead of comparing because the button may include the shortcut. */
   //if (but_label.strinfo && !STRPREFIX(but->drawstr, but_label.strinfo)) { // bfa - turned off this specific check.
   /*bfa - add the prefix everywhere in case it is not null !*/
-  if (but_label.strinfo != NULL) {
+  if (but_label.strinfo && !STRPREFIX(but->drawstr, but_label.strinfo)) {
     uiTooltipField *field = text_field_add(data,
                                            &(uiTooltipFormat){
                                                .style = UI_TIP_STYLE_HEADER,
@@ -806,7 +806,7 @@ static uiTooltipData *ui_tooltip_data_from_button(bContext *C, uiBut *but)
     /*It just shows a dot then where the title should be. So we check for those buttons, and skip adding the button title*/
     if (STRPREFIX(but->drawstr, but_label.strinfo))
       {
-      field->text = BLI_sprintfN(but_label.strinfo);
+	    field->text = BLI_sprintfN("%s", but_label.strinfo);
     }
     else if (!STRPREFIX(but->drawstr, but_label.strinfo)) {
       field->text = BLI_sprintfN("%s.", but_label.strinfo);
