@@ -1003,7 +1003,7 @@ indirect_only_off
 indirect_only_on
 white_balance
 mod_hue_saturation
-#def_icon_blank(1018
+outliner_collection
 mod_noise
 
 # ------------------------- row 18 --------------------------*/
