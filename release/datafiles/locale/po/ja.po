@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'4960780d76bf')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -42420,16 +42420,32 @@ msgid "Snap selected keyframes to the times specified"
 msgstr "選択キーフレームを 指定した時間にスナップします"
 
 
+msgid "Selection to Current Frame"
+msgstr "選択物 → 現在のフレーム"
+
+
 msgid "Snap selected keyframes to the current frame"
 msgstr "選択中のキーフレームを現在のフレームにスナップします"
+
+
+msgid "Selection to Nearest Frame"
+msgstr "選択物 → 最近フレーム"
 
 
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "選択中のキーフレームを最も近いフレームにスナップします(間違えて整数以外のフレームに置いた時に使用します)"
 
 
+msgid "Selection to Nearest Second"
+msgstr "選択物 → 最近秒数"
+
+
 msgid "Snap selected keyframes to the nearest second"
 msgstr "選択中のキーフレームを最も近い秒にスナップします"
+
+
+msgid "Selection to Nearest Marker"
+msgstr "選択物 → 最近マーカー"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -50729,6 +50745,10 @@ msgstr "選択中のFカーブの凹凸を減らすのに加重移動平均を�
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "選択中のキーフレームを時間や値にスナップします"
+
+
+msgid "Selection to Cursor Value"
+msgstr "選択物 → カーソル値"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -72992,18 +73012,6 @@ msgid "Measure"
 msgstr "メジャー"
 
 
-msgid "Add cube to mesh interactively"
-msgstr "メッシュに立方体をインタラクティブに追加します"
-
-
-msgid "Add cone to mesh interactively"
-msgstr "メッシュに円錐をインタラクティブに追加します"
-
-
-msgid "Add cylinder to mesh interactively"
-msgstr "メッシュに円柱をインタラクティブに追加します"
-
-
 msgctxt "Operator"
 msgid "Breakdowner"
 msgstr "ブレイクダウナー"
@@ -91123,11 +91131,6 @@ msgstr "汎用ツール：アノテート消しゴム"
 msgctxt "WindowManager"
 msgid "3D View Tool: Measure"
 msgstr "3Dビューツール：メジャー"
-
-
-msgctxt "WindowManager"
-msgid "3D View Tool: Object, Add Primitive"
-msgstr "3Dビューツール：オブジェクト、プリミティブ追加"
 
 
 msgctxt "WindowManager"

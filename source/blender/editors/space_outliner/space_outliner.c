@@ -53,6 +53,7 @@
 
 #include "GPU_framebuffer.h"
 #include "outliner_intern.h"
+#include "tree/tree_display.h"
 
 static void outliner_main_region_init(wmWindowManager *wm, ARegion *region)
 {
@@ -351,11 +352,22 @@ static void outliner_free(SpaceLink *sl)
   if (space_outliner->treehash) {
     BKE_outliner_treehash_free(space_outliner->treehash);
   }
+
+  if (space_outliner->runtime) {
+    outliner_tree_display_destroy(&space_outliner->runtime->tree_display);
+    MEM_freeN(space_outliner->runtime);
+  }
 }
 
 /* spacetype; init callback */
-static void outliner_init(wmWindowManager *UNUSED(wm), ScrArea *UNUSED(area))
+static void outliner_init(wmWindowManager *UNUSED(wm), ScrArea *area)
 {
+  SpaceOutliner *space_outliner = area->spacedata.first;
+
+  if (space_outliner->runtime == NULL) {
+    space_outliner->runtime = MEM_callocN(sizeof(*space_outliner->runtime),
+                                          "SpaceOutliner_Runtime");
+  }
 }
 
 static SpaceLink *outliner_duplicate(SpaceLink *sl)
@@ -368,6 +380,11 @@ static SpaceLink *outliner_duplicate(SpaceLink *sl)
   space_outliner_new->treehash = NULL;
 
   space_outliner_new->sync_select_dirty = WM_OUTLINER_SYNC_SELECT_FROM_ALL;
+
+  if (space_outliner->runtime) {
+    space_outliner_new->runtime = MEM_dupallocN(space_outliner->runtime);
+    space_outliner_new->runtime->tree_display = NULL;
+  }
 
   return (SpaceLink *)space_outliner_new;
 }

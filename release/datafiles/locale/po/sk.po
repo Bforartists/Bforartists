@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'4960780d76bf')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2020-10-27 09:43+0100\n"
+"PO-Revision-Date: 2020-11-04 09:01+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: \n"
 "Language: sk_SK\n"
@@ -160,7 +160,7 @@ msgstr "Názov"
 
 
 msgid "Select"
-msgstr "Výber"
+msgstr "Vybrať"
 
 
 msgid "Action group is selected"
@@ -3176,7 +3176,7 @@ msgstr "Má chvenie"
 
 
 msgid "Has Crease/Pinch Factor"
-msgstr "Má záhyb/faktor prištipnutia"
+msgstr "Má ryhu/faktor prištipnutia"
 
 
 msgid "Has Persistence"
@@ -7365,7 +7365,7 @@ msgstr "Zachová objem objektu po napnutí"
 
 
 msgid "Track To Constraint"
-msgstr "Obmedzenie stopy"
+msgstr "Obmedziť stopu"
 
 
 msgid "Aim the constrained object toward the target"
@@ -13650,11 +13650,11 @@ msgstr "Vylúči obrys"
 
 
 msgid "Crease"
-msgstr "Záhyb"
+msgstr "Ryha"
 
 
 msgid "Exclude crease edges"
-msgstr "Vylúči záhyby hrán"
+msgstr "Vylúči hrany rýh"
 
 
 msgid "Edge Mark"
@@ -13818,7 +13818,7 @@ msgstr "Vyberie obrysy (vonkajšie siluety každého objektu)"
 
 
 msgid "Select crease edges (those between two faces making an angle smaller than the Crease Angle)"
-msgstr "Vyberie hrany záhybov (medzi dvoma plôškami, ktoré majú uhol menší ako uhol záhybu)"
+msgstr "Vyberie hrany rýh (medzi dvoma plôškami, ktoré majú uhol menší ako uhol záhybu)"
 
 
 msgid "Select edge marks (edges annotated by Freestyle edge marks)"
@@ -17427,7 +17427,7 @@ msgstr "Zavedie chvenie/náhodnosti do ťahov"
 
 
 msgid "Translate the set of points initially within the brush circle"
-msgstr "Presunie sadu počiatočných bodov vnútri štetca"
+msgstr "Presunie sústavu počiatočných bodov vnútri štetca"
 
 
 msgid "Move points out of the way, as if combing them"
@@ -28729,7 +28729,7 @@ msgstr "Cesta sústavy kľúčovania"
 
 
 msgid "Path to a setting for use in a Keying Set"
-msgstr "Cesta na nastavenie pre použitie v sade kľúčovania"
+msgstr "Cesta na nastavenie pre použitie v sústave kľúčovania"
 
 
 msgid "Index to the specific setting if applicable"
@@ -28769,7 +28769,7 @@ msgstr "ID bloku"
 
 
 msgid "ID-Block that keyframes for Keying Set should be added to (for Absolute Keying Sets only)"
-msgstr "ID bloku, ktorý by mal byť pridaný do kľúčovej snímky pre sadu kľúčovania (len pre absolútnu sadu kľúčovania)"
+msgstr "ID bloku, ktorý by mal byť pridaný do kľúčovej snímky pre sústavu kľúčovania (len pre absolútnu sústavu kľúčovania)"
 
 
 msgid "Entire Array"
@@ -29501,7 +29501,7 @@ msgstr "Nová hodnota snímkovania, ktorá sa má použiť pri následných modi
 
 
 msgid "Simplify the stroke set"
-msgstr "Zjednodušiť sadu ťahu"
+msgstr "Zjednodušiť sústavu ťahu"
 
 
 msgid "Distance below which segments will be merged"
@@ -35869,7 +35869,7 @@ msgstr "Relatívny posuv"
 
 
 msgid "Crease hub edges for improved subdivision surface"
-msgstr "Záhyb hrán pre vylepšené delenie povrchu"
+msgstr "Hrany ústia ryhy pre vylepšené rozdelenie povrchu"
 
 
 msgid "Offset Even"
@@ -42117,16 +42117,32 @@ msgid "Snap selected keyframes to the times specified"
 msgstr "Prichytí vybrané kľúčové snímky podľa určených časov"
 
 
+msgid "Selection to Current Frame"
+msgstr "Výber na aktuálnu snímku"
+
+
 msgid "Snap selected keyframes to the current frame"
 msgstr "Prichytí vybrané kľúčové snímky k aktuálnej snímke"
+
+
+msgid "Selection to Nearest Frame"
+msgstr "Výber na najbližšiu snímku"
 
 
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Prichytí vybrané kľúče k najbližšej (celej) snímke (používa sa na opravu náhodných medzisnímok)"
 
 
+msgid "Selection to Nearest Second"
+msgstr "Výber na najbližšiu druhú"
+
+
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Prichytí vybrané kľúčové snímky k najbližšej druhej"
+
+
+msgid "Selection to Nearest Marker"
+msgstr "Výber na najbližšiu značku"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -42497,11 +42513,11 @@ msgstr "Odstráni všetky kľúčové snímky animácie vybraných objektov"
 
 msgctxt "Operator"
 msgid "Delete Keying-Set Keyframe"
-msgstr "Odstrániť sadu kľúčovania kľúčovej snímky"
+msgstr "Odstrániť sústavu kľúčovania kľúčovej snímky"
 
 
 msgid "Delete keyframes on the current frame for all properties in the specified Keying Set"
-msgstr "Odstráni kľúčové snímky na aktuálnej snímke pre všetky vlastnosti v určenej sade kľúčovania"
+msgstr "Odstráni kľúčové snímky na aktuálnej snímke pre všetky vlastnosti v určenej sústave kľúčovania"
 
 
 msgid "Confirm Successful Delete"
@@ -42531,7 +42547,7 @@ msgstr "Odstráni kľúčové snímky zo všetkých prvkov poľa"
 
 msgctxt "Operator"
 msgid "Delete Keying-Set Keyframe (by name)"
-msgstr "Odstrániť sadu kľúčovania kľúčovej snímky (podľa názvu)"
+msgstr "Odstrániť sústavu kľúčovania kľúčovej snímky (podľa názvu)"
 
 
 msgid "Alternate access to 'Delete Keyframe' for keymaps to use"
@@ -42553,7 +42569,7 @@ msgstr "Vložiť kľúčovú snímku"
 
 
 msgid "Insert keyframes on the current frame for all properties in the specified Keying Set"
-msgstr "Vloží kľúčové snímky na aktuálnu snímku pre všetky vlastnosti určených v sade kľúčovania"
+msgstr "Vloží kľúčové snímky na aktuálnu snímku pre všetky vlastnosti určených v sústave kľúčovania"
 
 
 msgid "Confirm Successful Insert"
@@ -42592,7 +42608,7 @@ msgstr "Vložiť ponuku kľúčovej snímky"
 
 
 msgid "Insert Keyframes for specified Keying Set, with menu of available Keying Sets if undefined"
-msgstr "Vloží kľúčové snímky pre určenú sadu kľúčovania, s ponukou dostupných sád kľúčovania, ak nie sú definované"
+msgstr "Vloží kľúčové snímky pre určenú sústavu kľúčovania, s ponukou dostupných sád kľúčovania, ak nie sú definované"
 
 
 msgid "Always Show Menu"
@@ -42605,25 +42621,25 @@ msgstr "Nastaviť voľby aktívnej sústavy kľúčovania"
 
 
 msgid "Select a new keying set as the active one"
-msgstr "Vyberie nové sadu kľúčovania ako aktívne"
+msgstr "Vyberie nové sústavu kľúčovania ako aktívne"
 
 
 msgctxt "Operator"
 msgid "Add Empty Keying Set"
-msgstr "Pridať prázdnu sadu kľúčovania"
+msgstr "Pridať prázdnu sústavu kľúčovania"
 
 
 msgid "Add a new (empty) Keying Set to the active Scene"
-msgstr "Pridá novú (prázdnu) sadu kľúčovania na aktívnu scénu"
+msgstr "Pridá novú (prázdnu) sústavu kľúčovania na aktívnu scénu"
 
 
 msgctxt "Operator"
 msgid "Export Keying Set..."
-msgstr "Exportovať sadu kľúčovania..."
+msgstr "Exportovať sústavu kľúčovania..."
 
 
 msgid "Export Keying Set to a python script"
-msgstr "Exportuje sadu kľúčovania do python skriptu"
+msgstr "Exportuje sústavu kľúčovania do python skriptu"
 
 
 msgid "Filter folders"
@@ -42644,7 +42660,7 @@ msgstr "Pridať cestu prázdnej sústavy kľúčovania"
 
 
 msgid "Add empty path to active Keying Set"
-msgstr "Pridá prázdnu cestu k aktívnej sade kľúčovania"
+msgstr "Pridá prázdnu cestu k aktívnej sústave kľúčovania"
 
 
 msgctxt "Operator"
@@ -42658,11 +42674,11 @@ msgstr "Odstráni aktívnu cestu z aktívnej sústavy kľúčovania"
 
 msgctxt "Operator"
 msgid "Remove Active Keying Set"
-msgstr "Odstrániť aktívnu sadu kľúčovania"
+msgstr "Odstrániť aktívnu sústavu kľúčovania"
 
 
 msgid "Remove the active Keying Set"
-msgstr "Odstráni aktívnu sadu kľúčovania"
+msgstr "Odstráni aktívnu sústavu kľúčovania"
 
 
 msgctxt "Operator"
@@ -42671,7 +42687,7 @@ msgstr "Pridať do sústavy kľúčovania"
 
 
 msgid "Add current UI-active property to current keying set"
-msgstr "Pridá aktuálnu vlastnosť užívateľského rozhrania na aktuálne sadu kľúčovania"
+msgstr "Pridá aktuálnu vlastnosť užívateľského rozhrania na aktuálne sústavu kľúčovania"
 
 
 msgid "Add all elements of the array to a Keying Set"
@@ -50363,6 +50379,10 @@ msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Prichytí vybrané kľúčové snímky k zvoleným časom/hodnotám"
 
 
+msgid "Selection to Cursor Value"
+msgstr "Výber na hodnotu kurzora"
+
+
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
 msgstr "Nastaví hodnoty vybraných kľúčových snímok na hodnotu kurzora (Y/horizontálnu súčasť)"
 
@@ -55321,7 +55341,7 @@ msgstr "Privlastniť"
 
 
 msgid "Ensure that each action is only used once in the set of strips selected"
-msgstr "Zabezpečí, že každá akcia sa použije v sade vybraných pásov iba raz"
+msgstr "Zabezpečí, že každá akcia sa použije v sústave vybraných pásov iba raz"
 
 
 msgctxt "Operator"
@@ -56216,7 +56236,7 @@ msgstr "Zarovnať objekty"
 
 
 msgid "Align Objects"
-msgstr "Zarovnať objekty"
+msgstr "Zarovná objekty"
 
 
 msgid "Align to axis"
@@ -57701,7 +57721,7 @@ msgstr "Deformácia krivky"
 
 
 msgid "Path Constraint"
-msgstr "Obmedzenie cesty"
+msgstr "Obmedziť cestu"
 
 
 msgid "Lattice Deform"
@@ -58585,7 +58605,7 @@ msgstr "Odstrániť sledovanie"
 
 
 msgid "Clear and Keep Transformation (Clear Track)"
-msgstr "Vymaže a zachová transformáciu (zmaže stopu)"
+msgstr "Vymazať a zachovať transformáciu (zmazať stopu)"
 
 
 msgctxt "Operator"
@@ -59683,7 +59703,7 @@ msgstr "Premenuje tú aktívnu položku, nad ktorou skončila myš"
 
 msgctxt "Operator"
 msgid "Keying Set Add Selected"
-msgstr "Pridať vybranú sadu kľúčovania"
+msgstr "Pridať vybranú sústavu kľúčovania"
 
 
 msgid "Add selected items (blue-gray rows) to active Keying Set"
@@ -62407,7 +62427,7 @@ msgstr "Pridať modifikátor priehľadnosti alfa"
 
 
 msgid "Add an alpha transparency modifier to the line style associated with the active lineset"
-msgstr "Pridá modifikátor priehľadnosti alfa do štýlu čiary priradeného k aktívnej sade čiar"
+msgstr "Pridá modifikátor priehľadnosti alfa do štýlu čiary priradeného k aktívnej sústave čiar"
 
 
 msgctxt "Operator"
@@ -62416,7 +62436,7 @@ msgstr "Pridať modifikátor farby čiary"
 
 
 msgid "Add a line color modifier to the line style associated with the active lineset"
-msgstr "Pridá modifikátor farby čiary do štýlu čiary priradeného k aktívnej sade čiar"
+msgstr "Pridá modifikátor farby čiary do štýlu čiary priradeného k aktívnej sústave čiar"
 
 
 msgctxt "Operator"
@@ -62454,30 +62474,30 @@ msgstr "Pridať modifikátor geometrie ťahu"
 
 
 msgid "Add a stroke geometry modifier to the line style associated with the active lineset"
-msgstr "Pridá modifikátor geometrie ťahu do štýlu čiary priradeného k aktívnej sade čiar"
+msgstr "Pridá modifikátor geometrie ťahu do štýlu čiary priradeného k aktívnej sústave čiar"
 
 
 msgctxt "Operator"
 msgid "Add Line Set"
-msgstr "Pridať sadu čiar"
+msgstr "Pridať sústavu čiar"
 
 
 msgid "Add a line set into the list of line sets"
-msgstr "Pridá sadu čiar do zoznamu sústavy čiar"
+msgstr "Pridá sústavu čiar do zoznamu sústavy čiar"
 
 
 msgctxt "Operator"
 msgid "Copy Line Set"
-msgstr "Kopírovať sadu čiar"
+msgstr "Kopírovať sústavu čiar"
 
 
 msgid "Copy the active line set to a buffer"
-msgstr "Kopíruje aktívnej sadu čiary do zásobníka"
+msgstr "Kopíruje aktívnu sústavu čiar do zásobníka"
 
 
 msgctxt "Operator"
 msgid "Move Line Set"
-msgstr "Premiestniť sadu čiar"
+msgstr "Premiestniť sústavu čiar"
 
 
 msgid "Change the position of the active line set within the list of line sets"
@@ -62485,12 +62505,12 @@ msgstr "Zmení polohu aktívnej sústavy čiar v zozname sústavy čiar"
 
 
 msgid "Direction to move the active line set towards"
-msgstr "Smer pohybu smerom k aktívnej sade čiar"
+msgstr "Smer pohybu smerom k aktívnej sústave čiar"
 
 
 msgctxt "Operator"
 msgid "Paste Line Set"
-msgstr "Prilepiť sadu čiar"
+msgstr "Prilepiť sústavu čiar"
 
 
 msgid "Paste the buffer content to the active line set"
@@ -62499,11 +62519,11 @@ msgstr "Prilepí obsah zásobníka do aktívnej sústavy čiar"
 
 msgctxt "Operator"
 msgid "Remove Line Set"
-msgstr "Odstrániť sadu čiar"
+msgstr "Odstrániť sústavu čiar"
 
 
 msgid "Remove the active line set from the list of line sets"
-msgstr "Odstráni aktívnu sadu čiar zo zoznamu sústavy čiar"
+msgstr "Odstráni aktívnu sústavu čiar zo zoznamu sústavy čiar"
 
 
 msgctxt "Operator"
@@ -62599,7 +62619,7 @@ msgstr "Pridať modifikátor hrúbky čiary"
 
 
 msgid "Add a line thickness modifier to the line style associated with the active lineset"
-msgstr "Pridá modifikátor hrúbky čiary k štýlu čiary priradeného k aktívnej sade čiar"
+msgstr "Pridá modifikátor hrúbky čiary k štýlu čiary priradeného k aktívnej sústave čiar"
 
 
 msgctxt "Operator"
@@ -63298,7 +63318,7 @@ msgstr "Použiť nastavenie plôšok"
 
 
 msgid "Apply the filter only to the Face Set under the cursor"
-msgstr "Použije filter iba na sadu plôšok pod kurzorom"
+msgstr "Použije filter iba na sústavu plôšok pod kurzorom"
 
 
 msgctxt "Operator"
@@ -63421,11 +63441,11 @@ msgstr "Zobraziť nastavenia všetkých plôšok"
 
 msgctxt "Operator"
 msgid "Edit Face Set"
-msgstr "Upraviť sadu plôšok"
+msgstr "Upraviť sústavu plôšok"
 
 
 msgid "Edits the current active Face Set"
-msgstr "Upraví aktuálnu aktívnu sadu plôšok"
+msgstr "Upraví aktuálnu aktívnu sústavu plôšok"
 
 
 msgid "Grow Face Set"
@@ -69840,7 +69860,7 @@ msgstr "Ukončiť Blender"
 
 
 msgid "Quit Blender"
-msgstr "Ukončiť Blender"
+msgstr "Ukončí Blender"
 
 
 msgctxt "Operator"
@@ -72497,18 +72517,6 @@ msgid "Measure"
 msgstr "Rozmer"
 
 
-msgid "Add cube to mesh interactively"
-msgstr "Pridá kocku do interaktívnej povrchovej siete"
-
-
-msgid "Add cone to mesh interactively"
-msgstr "Pridá kužeľ do interaktívnej povrchovej siete"
-
-
-msgid "Add cylinder to mesh interactively"
-msgstr "Pridá valec do interaktívnej povrchovej siete"
-
-
 msgctxt "Operator"
 msgid "Breakdowner"
 msgstr "Rozkladač"
@@ -72634,7 +72642,7 @@ msgstr "Vrstva"
 
 msgctxt "Operator"
 msgid "Inflate"
-msgstr "Nadúvanie"
+msgstr "Vydúvanie"
 
 
 msgctxt "Operator"
@@ -72644,7 +72652,7 @@ msgstr "Bublina"
 
 msgctxt "Operator"
 msgid "Crease"
-msgstr "Záhyb"
+msgstr "Ryha"
 
 
 msgctxt "Operator"
@@ -87393,7 +87401,7 @@ msgstr "Skosenie hrany"
 
 
 msgid "Edge Crease"
-msgstr "Záhyb hrany"
+msgstr "Hrana ryhy"
 
 
 msgid "Edge UV Face Select"
@@ -87509,7 +87517,7 @@ msgstr "Motív farebnej sústavy ovládacích prvkov"
 
 
 msgid "Theme settings for widget color sets"
-msgstr "Nastavenia motívu pre farebnú sadu ovládacích prvkov"
+msgstr "Nastavenia motívu pre farebnú sústavu ovládacích prvkov"
 
 
 msgid "Inner"
@@ -88818,11 +88826,11 @@ msgstr "Zobrazí váhy vytvorené modifikátorom skosenia"
 
 
 msgid "Draw Creases"
-msgstr "Záhyby"
+msgstr "Vykresliť ryhy"
 
 
 msgid "Display creases created for Subdivision Surface modifier"
-msgstr "Zobrazí záhyby vytvorené modifikátorom delenia povrchu"
+msgstr "Zobrazí ryhy vytvorené modifikátorom delenia povrchu"
 
 
 msgid "Draw Seams"
@@ -90508,11 +90516,6 @@ msgstr "Generic Tool: Poznámka gumy"
 msgctxt "WindowManager"
 msgid "3D View Tool: Measure"
 msgstr "Nástroj 3D zobrazenia: Rozmer"
-
-
-msgctxt "WindowManager"
-msgid "3D View Tool: Object, Add Primitive"
-msgstr "Nástroj 3D zobrazenia: Objekt, pridať prvotný"
 
 
 msgctxt "WindowManager"
@@ -93452,7 +93455,7 @@ msgstr "Dopplerova rýchlosť"
 
 
 msgid "Active Set Override"
-msgstr "Prepísať aktívnu sadu"
+msgstr "Prepísať aktívnu sústavu"
 
 
 msgid "Target ID-Block"
@@ -96542,7 +96545,7 @@ msgstr "Podľa švu UV"
 
 msgctxt "Operator"
 msgid "By Edge Creases"
-msgstr "Podľa záhybov hrán"
+msgstr "Podľa hrán ryhy"
 
 
 msgctxt "Operator"
@@ -96731,7 +96734,7 @@ msgstr "Preklopiť"
 
 msgctxt "Operator"
 msgid "Set from Faces"
-msgstr "Sústava podľa plôšok"
+msgstr "Nastaviť podľa plôšok"
 
 
 msgctxt "Operator"
@@ -96917,7 +96920,7 @@ msgstr "Pôvodné (všetky)"
 
 
 msgid "Creases"
-msgstr "Záhyby"
+msgstr "Ryhy"
 
 
 msgctxt "Plural"
@@ -98038,7 +98041,7 @@ msgstr "Váha skosenia"
 
 
 msgid "SubSurfCrease"
-msgstr "Rozdelenie záhybu"
+msgstr "Podpovrchové ryhy"
 
 
 msgid "OS Loop"
@@ -98973,7 +98976,7 @@ msgstr "Žiadny blok ID a/alebo údajov animácie na odstránenie z kľúčovej 
 
 
 msgid "No suitable context info for active keying set"
-msgstr "Žiadne vhodné kontextové informácie pre aktívnu kľúčovú sadu"
+msgstr "Žiadne vhodné kontextové informácie pre aktívnu kľúčovú sústavu"
 
 
 msgid "Keying set failed to insert any keyframes"
@@ -99041,7 +99044,7 @@ msgstr "Sústava kľúčovania '%s' - úspešne pridaná %d kľúčovej snímky"
 
 
 msgid "Successfully added %d keyframes for keying set '%s'"
-msgstr "Úspešne pridané %d kľúčové snímky pre sadu kľúčovania '%s'"
+msgstr "Úspešne pridané %d kľúčové snímky pre sústavu kľúčovania '%s'"
 
 
 msgid "Active Keying Set '%s' not found"
@@ -99049,7 +99052,7 @@ msgstr "Aktívna sústava kľúčovania '%s' sa nenašla"
 
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
-msgstr "Úspešne odstránené %d kľúčové snímky pre sadu kľúčovania '%s'"
+msgstr "Úspešne odstránené %d kľúčové snímky pre sústavu kľúčovania '%s'"
 
 
 msgid "Not deleting keyframe for locked F-Curve '%s', object '%s'"
@@ -99085,7 +99088,7 @@ msgstr "Nie je žiadna aktívna sústava kľúčovania na odstránenie"
 
 
 msgid "Cannot remove built in keying set"
-msgstr "Nemožno odstrániť vstavanú sadu kľúčovania"
+msgstr "Nemožno odstrániť vstavanú sústavu kľúčovania"
 
 
 msgid "No active Keying Set to add empty path to"
@@ -99121,7 +99124,7 @@ msgstr "Pridaná vlastnosť do sústavy kľúčovania: '%s'"
 
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
-msgstr "Preskočenie cesty v sade kľúčovania, pretože nemá žiadny ID (KS = '%s', cesta = '%s[%d]')"
+msgstr "Preskočenie cesty v sústave kľúčovania, pretože nemá žiadny ID (KS = '%s', cesta = '%s[%d]')"
 
 
 msgid "No region view3d available"
@@ -99253,7 +99256,7 @@ msgstr "Žiadna aktívna sústava kľúčovania na použitie"
 
 
 msgid "Use another Keying Set, as the active one depends on the currently selected items or cannot find any targets due to unsuitable context"
-msgstr "Použite inú sadu kľúčovania, pretože aktívna je závislá na súčasne vybraných položkách alebo nemôže nájsť žiadne ciele z dôvodu nevhodného kontextu"
+msgstr "Použite inú sústavu kľúčovania, pretože aktívna je závislá na súčasne vybraných položkách alebo nemôže nájsť žiadne ciele z dôvodu nevhodného kontextu"
 
 
 msgid "Keying Set does not contain any paths"
@@ -101844,7 +101847,7 @@ msgstr "Neaktívny objekt"
 
 
 msgid "Use another Keying Set, as the active one depends on the currently selected objects or cannot find any targets due to unsuitable context"
-msgstr "Použite inú sadu kľúčov, pretože aktívna je závislá na aktuálne vybratých objektoch alebo nemôže nájsť žiadne ciele z dôvodu nevhodného kontextu"
+msgstr "Použite inú sústavu kľúčovania, pretože aktívna je závislá na aktuálne vybratých objektoch alebo nemôže nájsť žiadne ciele z dôvodu nevhodného kontextu"
 
 
 msgid "Active object must be a light"
@@ -104003,7 +104006,7 @@ msgstr "Žiadne údaje na prilepenie"
 
 
 msgid "Operation requires an active keying set"
-msgstr "Operácia vyžaduje aktívnu sadu kľúčovania"
+msgstr "Operácia vyžaduje aktívnu sústavu kľúčovania"
 
 
 msgid "No orphaned data-blocks to purge"
@@ -104351,11 +104354,11 @@ msgstr "Údaje hrán:"
 
 
 msgid "Crease:"
-msgstr "Záhyb:"
+msgstr "Ryha:"
 
 
 msgid "Mean Crease:"
-msgstr "Stredný záhyb:"
+msgstr "Stredná ryha:"
 
 
 msgid "Weight:"
@@ -104855,19 +104858,19 @@ msgstr "Úroveň vplyvu skosenia: %.3f %s"
 
 
 msgid "Crease: +%s %s"
-msgstr "Záhyb: +%s %s"
+msgstr "Ryha: +%s %s"
 
 
 msgid "Crease: %s %s"
-msgstr "Záhyb: %s %s"
+msgstr "Ryha: %s %s"
 
 
 msgid "Crease: +%.3f %s"
-msgstr "Záhyb: +%.3f %s"
+msgstr "Ryha: +%.3f %s"
 
 
 msgid "Crease: %.3f %s"
-msgstr "Záhyb: %.3f %s"
+msgstr "Ryha: %.3f %s"
 
 
 msgid "Sequence Slide: %s%s, ("
@@ -105324,7 +105327,7 @@ msgstr "Ovládač '%s[%d]' už existuje"
 
 
 msgid "Invalid context for keying set"
-msgstr "Neplatný kontext pre sadu kľúčovania"
+msgstr "Neplatný kontext pre sústavu kľúčovania"
 
 
 msgid "Incomplete built-in keying set, appears to be missing type info"
@@ -105677,11 +105680,11 @@ msgstr "Úprava"
 
 
 msgid "Negative vertex index in vertex_indices_set"
-msgstr "Záporný index vrcholu v sade indexov vrcholov"
+msgstr "Záporný index vrcholu v sústave indexov vrcholov"
 
 
 msgid "Duplicate index %d in vertex_indices_set"
-msgstr "Duplicitný index %d v sade indexov vrcholov"
+msgstr "Duplicitný index %d v sústave indexov vrcholov"
 
 
 msgid "Unable to create new strip"
@@ -106359,7 +106362,7 @@ msgstr "Lem"
 
 
 msgid "Crease Inner"
-msgstr "Vnútorný záhyb"
+msgstr "Vnútorný ryha"
 
 
 msgid "Outer"
@@ -106409,7 +106412,7 @@ msgstr "Nahradiť originál"
 
 
 msgid "Crease Edges"
-msgstr "Hrany záhybu"
+msgstr "Hrany ryhy"
 
 
 msgid "Convertor"
