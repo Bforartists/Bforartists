@@ -68,14 +68,14 @@ class RelinkConstraintsMixin:
             if len(specs) == 1:
                 specs = repeat(specs[0])
             elif len(specs) != len(con.targets):
-                self.report_error("Constraint {} actually has {} targets", con.name, len(con.targets))
+                self.raise_error("Constraint {} actually has {} targets", con.name, len(con.targets))
 
             for tgt, spec in zip(con.targets, specs):
                 tgt.subtarget = self.find_relink_target(spec, tgt.subtarget)
 
         else:
             if len(specs) > 1:
-                self.report_error("Only the Armature constraint can have multiple '@' targets: {}", con.name)
+                self.raise_error("Only the Armature constraint can have multiple '@' targets: {}", con.name)
 
             con.subtarget = self.find_relink_target(specs[0], con.subtarget)
 
@@ -88,11 +88,11 @@ class RelinkConstraintsMixin:
             if not result:
                 result = choose_derived_bone(self.generator, old_target, spec.lower(), by_owner=False)
             if not result:
-                self.report_error("Cannot find derived {} bone of bone '{}' for relinking", spec, old_target)
+                self.raise_error("Cannot find derived {} bone of bone '{}' for relinking", spec, old_target)
             return result
         else:
             if spec not in self.obj.pose.bones:
-                self.report_error("Cannot find bone '{}' for relinking", spec)
+                self.raise_error("Cannot find bone '{}' for relinking", spec)
             return spec
 
 

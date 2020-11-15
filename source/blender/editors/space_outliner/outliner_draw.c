@@ -109,7 +109,7 @@ static void outliner_tree_dimensions_impl(SpaceOutliner *space_outliner,
   }
 }
 
-static void outliner_tree_dimensions(SpaceOutliner *space_outliner, int *r_width, int *r_height)
+void outliner_tree_dimensions(SpaceOutliner *space_outliner, int *r_width, int *r_height)
 {
   *r_width = 0;
   *r_height = 0;
@@ -2534,7 +2534,7 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
           data.icon = ICON_SCRIPT;
           break;
         case ID_GR:
-          data.icon = ICON_GROUP;
+          data.icon = ICON_OUTLINER_COLLECTION;
           break;
         case ID_HA:
           data.icon = ICON_HAIR_DATA;

@@ -218,6 +218,178 @@ def edit_list_from_file__use_const(_source, data):
     return edits
 
 
+def edit_list_from_file__use_zero_before_float_suffix(_source, data):
+    edits = []
+
+    # Replace:
+    #   1.f
+    # With:
+    #   1.0f
+
+    for match in re.finditer(r"\b(\d+)\.([fF])\b", data):
+        edits.append((
+            match.span(),
+            '%s.0%s' % (match.group(1), match.group(2)),
+            '__ALWAYS_FAIL__',
+        ))
+
+    # Replace:
+    #   1.0F
+    # With:
+    #   1.0f
+
+    for match in re.finditer(r"\b(\d+\.\d+)F\b", data):
+        edits.append((
+            match.span(),
+            '%sf' % (match.group(1),),
+            '__ALWAYS_FAIL__',
+        ))
+
+    return edits
+
+def edit_list_from_file__use_elem_macro(_source, data):
+    edits = []
+
+    # Replace:
+    #   (a == b || a == c)
+    #   (a != b && a != c)
+    # With:
+    #   (ELEM(a, b, c))
+    #   (!ELEM(a, b, c))
+
+    test_equal = (
+        r'[\(]*'
+        r'([^\|\(\)]+)'  # group 1 (no (|))
+        r'\s+==\s+'
+        r'([^\|\(\)]+)'  # group 2 (no (|))
+        r'[\)]*'
+    )
+
+    test_not_equal = (
+        r'[\(]*'
+        r'([^\|\(\)]+)'  # group 1 (no (|))
+        r'\s+!=\s+'
+        r'([^\|\(\)]+)'  # group 2 (no (|))
+        r'[\)]*'
+    )
+
+    for is_equal in (True, False):
+        for n in reversed(range(2, 64)):
+            if is_equal:
+                re_str = r'\(' + r'\s+\|\|\s+'.join([test_equal] * n) + r'\)'
+            else:
+                re_str = r'\(' + r'\s+\&\&\s+'.join([test_not_equal] * n) + r'\)'
+
+            for match in re.finditer(re_str, data):
+                var = match.group(1)
+                var_rest = []
+                groups = match.groups()
+                groups_paired = [(groups[i * 2], groups[i * 2 + 1]) for i in range(len(groups) // 2)]
+                found = True
+                for a, b in groups_paired:
+                    # Unlikely but possible the checks are swapped.
+                    if b == var and a != var:
+                        a, b = b, a
+
+                    if a != var:
+                        found = False
+                        break
+                    var_rest.append(b)
+
+                if found:
+                    edits.append((
+                        match.span(),
+                        '(%sELEM(%s, %s))' % (
+                            ('' if is_equal else '!'),
+                            var,
+                            ', '.join(var_rest),
+                        ),
+                        # Use same expression otherwise this can change values inside assert when it shouldn't.
+                        '(%s__ALWAYS_FAIL__(%s, %s))' % (
+                            ('' if is_equal else '!'),
+                            var,
+                            ', '.join(var_rest),
+                        ),
+                    ))
+
+    return edits
+
+
+def edit_list_from_file__use_str_elem_macro(_source, data):
+    edits = []
+
+    # Replace:
+    #   (STREQ(a, b) || STREQ(a, c))
+    # With:
+    #   (STR_ELEM(a, b, c))
+
+    test_equal = (
+        r'[\(]*'
+        r'STREQ'
+        '\('
+        '([^\|\(\),]+)'  # group 1 (no (|,))
+        ',\s+'
+        '([^\|\(\),]+)'  # group 2 (no (|,))
+        '\)'
+        r'[\)]*'
+    )
+
+    test_not_equal = (
+        r'[\(]*'
+        '!' # Only difference.
+        r'STREQ'
+        '\('
+        '([^\|\(\),]+)'  # group 1 (no (|,))
+        ',\s+'
+        '([^\|\(\),]+)'  # group 2 (no (|,))
+        '\)'
+        r'[\)]*'
+    )
+
+    for is_equal in (True, False):
+        for n in reversed(range(2, 64)):
+            if is_equal:
+                re_str = r'\(' + r'\s+\|\|\s+'.join([test_equal] * n) + r'\)'
+            else:
+                re_str = r'\(' + r'\s+\&\&\s+'.join([test_not_equal] * n) + r'\)'
+
+            for match in re.finditer(re_str, data):
+                if _source == '/src/blender/source/blender/editors/mesh/editmesh_extrude_spin.c':
+                    print(match.groups())
+                var = match.group(1)
+                var_rest = []
+                groups = match.groups()
+                groups_paired = [(groups[i * 2], groups[i * 2 + 1]) for i in range(len(groups) // 2)]
+                found = True
+                for a, b in groups_paired:
+                    # Unlikely but possible the checks are swapped.
+                    if b == var and a != var:
+                        a, b = b, a
+
+                    if a != var:
+                        found = False
+                        break
+                    var_rest.append(b)
+
+                if found:
+                    edits.append((
+                        match.span(),
+                        '(%sSTR_ELEM(%s, %s))' % (
+                            ('' if is_equal else '!'),
+                            var,
+                            ', '.join(var_rest),
+                        ),
+                        # Use same expression otherwise this can change values inside assert when it shouldn't.
+                        '(%s__ALWAYS_FAIL__(%s, %s))' % (
+                            ('' if is_equal else '!'),
+                            var,
+                            ', '.join(var_rest),
+                        ),
+                    ))
+
+    return edits
+
+
 def edit_list_from_file__use_const_vars(_source, data):
     edits = []
 

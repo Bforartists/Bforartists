@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'9e736fc98481')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'4960780d76bf')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -72357,18 +72357,6 @@ msgid "Measure"
 msgstr "Đo"
 
 
-msgid "Add cube to mesh interactively"
-msgstr "Thêm hình lập phương cho mạng lưới kiểu tương tác"
-
-
-msgid "Add cone to mesh interactively"
-msgstr "Thêm hình nón cho mạng lưới kiểu tương tác"
-
-
-msgid "Add cylinder to mesh interactively"
-msgstr "Thêm hình trụ cho mạng lưới kiểu tương tác"
-
-
 msgctxt "Operator"
 msgid "Breakdowner"
 msgstr "Bức Mẫu Phụ"
@@ -90334,11 +90322,6 @@ msgstr "Dụng Cụ Tổng Quát: Ghi Chú Cục Gôm"
 msgctxt "WindowManager"
 msgid "3D View Tool: Measure"
 msgstr "Dụng Cụ Tổng Quát: Đo"
-
-
-msgctxt "WindowManager"
-msgid "3D View Tool: Object, Add Primitive"
-msgstr "Dụng Cụ Màn 3D: Vật Thể, Thêm Đơn Giản"
 
 
 msgctxt "WindowManager"

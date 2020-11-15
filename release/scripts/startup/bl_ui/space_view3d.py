@@ -205,7 +205,23 @@ class VIEW3D_HT_header(Header):
             # Select mode for Editing
             if gpd.use_stroke_edit_mode:
                 row = layout.row(align=True)
-                row.prop(tool_settings, "gpencil_selectmode_edit", text="", expand=True)
+                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='POINT')
+                row.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='STROKE')
+
+                subrow = row.row(align=True)
+                subrow.enabled = not gpd.use_curve_edit
+                subrow.prop_enum(tool_settings, "gpencil_selectmode_edit", text="", value='SEGMENT')
+
+                # Curve edit submode
+                row = layout.row(align=True)
+                row.prop(gpd, "use_curve_edit", text="",
+                         icon='IPO_BEZIER')
+                sub = row.row(align=True)
+                sub.active = gpd.use_curve_edit
+                sub.popover(
+                    panel="VIEW3D_PT_gpencil_curve_edit",
+                    text="Curve Editing",
+                )
 
             # Select mode for Sculpt
             if gpd.is_stroke_sculpt_mode:
@@ -7461,6 +7477,7 @@ class VIEW3D_PT_overlay_geometry(Panel):
         row = split.row(align=True)
         if overlay.show_wireframes or is_wireframes:
             row.prop(overlay, "wireframe_threshold", text="")
+            row.prop(overlay, "wireframe_opacity", text="Opacity")
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
@@ -8278,6 +8295,12 @@ class VIEW3D_PT_overlay_gpencil_options(Panel):
             row.separator()
             row.prop(overlay, "vertex_opacity", text="Vertex Opacity", slider=True)
 
+            # Handles for Curve Edit
+            if context.object.mode == 'EDIT_GPENCIL':
+                gpd = context.object.data
+                if gpd.use_curve_edit:
+                    layout.prop(overlay, "display_handle", text="Handles")
+
         if context.object.mode in {'PAINT_GPENCIL', 'VERTEX_GPENCIL'}:
             layout.label(text="Vertex Paint")
             row = layout.row()
@@ -8440,6 +8463,24 @@ class VIEW3D_PT_gpencil_multi_frame(Panel):
         # Falloff curve
         if gpd.use_multiedit and settings.use_multiframe_falloff:
             layout.template_curve_mapping(settings, "multiframe_falloff_curve", brush=True)
+
+
+# Grease Pencil Object - Curve Editing tools
+class VIEW3D_PT_gpencil_curve_edit(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Curve Editing"
+
+    def draw(self, context):
+        gpd = context.gpencil_data
+        settings = context.tool_settings.gpencil_sculpt
+
+        layout = self.layout
+        col = layout.column(align=True)
+        col.prop(gpd, "edit_curve_resolution")
+        col.prop(gpd, "curve_edit_threshold")
+        col.prop(gpd, "curve_edit_corner_angle")
+        col.prop(gpd, "use_adaptive_curve_resolution")
 
 
 class VIEW3D_MT_gpencil_edit_context_menu(Menu):
@@ -9136,6 +9177,7 @@ classes = (
     VIEW3D_PT_grease_pencil,
     VIEW3D_PT_annotation_onion,
     VIEW3D_PT_gpencil_multi_frame,
+    VIEW3D_PT_gpencil_curve_edit,
     VIEW3D_MT_gpencil_autoweights,
     VIEW3D_MT_gpencil_edit_context_menu,
     VIEW3D_MT_gpencil_sculpt,
