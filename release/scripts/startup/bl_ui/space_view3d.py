@@ -217,11 +217,11 @@ class VIEW3D_HT_header(Header):
                 row.prop(gpd, "use_curve_edit", text="",
                          icon='IPO_BEZIER')
                 sub = row.row(align=True)
-                sub.active = gpd.use_curve_edit
-                sub.popover(
-                    panel="VIEW3D_PT_gpencil_curve_edit",
-                    text="Curve Editing",
-                )
+                if gpd.use_curve_edit:
+                    sub.popover(
+                        panel="VIEW3D_PT_gpencil_curve_edit",
+                        text="Curve Editing",
+                    )
 
             # Select mode for Sculpt
             if gpd.is_stroke_sculpt_mode:
