@@ -144,6 +144,27 @@ const char *BKE_blender_version_string(void)
   return blender_version_string;
 }
 
+/*--- bfa - the bforartists version string calculation --- */
+static char bforartists_version_string[48] = "";
+
+static void bforartists_version_init(void)
+{
+  BLI_snprintf(bforartists_version_string,
+               ARRAY_SIZE(bforartists_version_string),
+
+               "%d.%d.%d",              /*"%d.%02d.%d%s",*/
+               BFORARTISTS_VERSION / 10, /*BLENDER_VERSION / 100*/
+               BFORARTISTS_VERSION % 10, /*BLENDER_VERSION % 100*/
+               BFORARTISTS_VERSION_PATCH);
+}
+
+/*bfa - bforartists version string*/
+const char *BKE_bforartists_version_string(void)
+{
+  return bforartists_version_string;
+}
+/* -------------- bfa - end -----------------*/
+
 bool BKE_blender_version_is_alpha(void)
 {
   bool is_alpha = STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "alpha");
@@ -159,6 +180,7 @@ bool BKE_blender_version_is_alpha(void)
 void BKE_blender_globals_init(void)
 {
   blender_version_init();
+  bforartists_version_init(); /*bfa version string*/
 
   memset(&G, 0, sizeof(Global));
 
