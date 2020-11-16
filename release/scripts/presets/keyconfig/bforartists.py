@@ -1621,8 +1621,20 @@ keyconfig_data = \
  ("File Browser",
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
-   [("wm.context_toggle", {"type": 'T', "value": 'PRESS', "repeat": True}, None),
-    ("screen.region_toggle", {"type": 'T', "value": 'PRESS', "shift": True, "repeat": True}, None),
+   [("wm.context_toggle",
+     {"type": 'T', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("data_path", 'space_data.show_region_toolbar'),
+       ],
+      },
+     ),
+    ("screen.region_toggle",
+     {"type": 'T', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("region_type", 'TOOL_PROPS'),
+       ],
+      },
+     ),
     ("file.parent", {"type": 'UP_ARROW', "value": 'PRESS', "alt": True, "repeat": True}, None),
     ("file.previous", {"type": 'LEFT_ARROW', "value": 'PRESS', "alt": True, "repeat": True}, None),
     ("file.next", {"type": 'RIGHT_ARROW', "value": 'PRESS', "alt": True, "repeat": True}, None),
