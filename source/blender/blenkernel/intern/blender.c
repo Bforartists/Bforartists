@@ -108,35 +108,35 @@ void BKE_blender_free(void)
 /* -------------------------------------------------------------------- */
 /** \name Blender Version Access
  * \{ */
-/*bfa - bforartists version string, not blender*/
+
 static char blender_version_string[48] = "";
 
 static void blender_version_init(void)
 {
   const char *version_cycle = "";
-  if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "alpha")) {
+  if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "alpha")) {
     version_cycle = " Alpha";
   }
-  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "beta")) {
+  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "beta")) {
     version_cycle = " Beta";
   }
-  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "rc")) {
+  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "rc")) {
     version_cycle = " Release Candidate";
   }
-  else if (STREQ(STRINGIFY(BFORARTISTS_VERSION_CYCLE), "release")) {
+  else if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "release")) {
     version_cycle = "";
   }
   else {
-    BLI_assert(!"Invalid Bforartists version cycle");
+    BLI_assert(!"Invalid Blender version cycle");
   }
 
   BLI_snprintf(blender_version_string,
                ARRAY_SIZE(blender_version_string),
-               "%d.%2d.%d",            /*"%d.%02d.%d%s",*/
-               BFORARTISTS_VERSION / 10, /*BLENDER_VERSION / 100*/
-               BFORARTISTS_VERSION % 10, /*BLENDER_VERSION % 100*/
-               BFORARTISTS_VERSION_PATCH);
-               /*version_cycle);*/
+               "%d.%02d.%d%s",
+               BLENDER_VERSION / 100,
+               BLENDER_VERSION % 100,
+               BLENDER_VERSION_PATCH,
+               version_cycle);
 }
 
 const char *BKE_blender_version_string(void)
@@ -149,8 +149,6 @@ bool BKE_blender_version_is_alpha(void)
   bool is_alpha = STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "alpha");
   return is_alpha;
 }
-
-/* end bfa*/
 
 /** \} */
 

@@ -4504,7 +4504,7 @@ static void ed_screens_statusbar_menu_create(uiLayout *layout, void *UNUSED(arg)
   if (GPU_mem_stats_supported()) {
     uiItemR(layout, &ptr, "show_statusbar_vram", 0, IFACE_("Video Memory"), ICON_NONE);
   }
-  uiItemR(layout, &ptr, "show_statusbar_version", 0, IFACE_("Bforartists Version"), ICON_NONE);
+  uiItemR(layout, &ptr, "show_statusbar_version", 0, IFACE_("Blender Version"), ICON_NONE);
 }
 
 static int screen_context_menu_invoke(bContext *C,
