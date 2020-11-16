@@ -1,4 +1,4 @@
-keyconfig_version = (2, 92, 3)
+keyconfig_version = (2, 92, 4)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1819,7 +1819,13 @@ keyconfig_data = \
        ],
       },
      ),
-    ("file.select_all", {"type": 'A', "value": 'PRESS', "repeat": True}, None),
+    ("file.select_all",
+     {"type": 'A', "value": 'PRESS', "repeat": True},
+     {"properties":
+      [("action", 'SELECT'),
+       ],
+      },
+     ),
     ("file.select_all",
      {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
      {"properties":
