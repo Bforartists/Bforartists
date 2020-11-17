@@ -1038,30 +1038,36 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
     uiItemR(col, imfptr, "compression", 0, NULL, ICON_NONE);
   }
 
-  if (ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
+  if (ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {    
     uiItemR(col, imfptr, "exr_codec", 0, NULL, ICON_NONE);
   }
 
   if (BKE_imtype_supports_zbuf(imf->imtype)) {
+    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, imfptr, "use_zbuffer", 0, NULL, ICON_NONE);
+
   }
 
   if (is_render_out && ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
     show_preview = true;
+    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, imfptr, "use_preview", 0, NULL, ICON_NONE);
+    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_JP2) {
     uiItemR(col, imfptr, "jpeg2k_codec", 0, NULL, ICON_NONE);
-
+    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, imfptr, "use_jpeg2k_cinema_preset", 0, NULL, ICON_NONE);
     uiItemR(col, imfptr, "use_jpeg2k_cinema_48", 0, NULL, ICON_NONE);
-
     uiItemR(col, imfptr, "use_jpeg2k_ycc", 0, NULL, ICON_NONE);
+    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_DPX) {
+    uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, imfptr, "use_cineon_log", 0, NULL, ICON_NONE);
+    uiLayoutSetPropSep(col, true); /* bfa - use_property_split = False */
   }
 
   if (imf->imtype == R_IMF_IMTYPE_CINEON) {
