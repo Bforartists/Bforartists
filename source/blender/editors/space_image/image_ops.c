@@ -2590,6 +2590,7 @@ static void image_new_draw(bContext *UNUSED(C), wmOperator *op)
   RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
 
   /* copy of WM_operator_props_dialog_popup() layout */
+  /*bfa - new image dialog in uv editor*/
 
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
@@ -2599,8 +2600,11 @@ static void image_new_draw(bContext *UNUSED(C), wmOperator *op)
   uiItemR(col, &ptr, "width", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "height", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "color", 0, NULL, ICON_NONE);
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
   uiItemR(col, &ptr, "alpha", 0, NULL, ICON_NONE);
+  uiLayoutSetPropSep(col, true); /* bfa - use_property_split = True */
   uiItemR(col, &ptr, "generated_type", 0, NULL, ICON_NONE);
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
   uiItemR(col, &ptr, "float", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "tiled", 0, NULL, ICON_NONE);
 
