@@ -2156,15 +2156,15 @@ class VIEW3D_PT_tools_grease_pencil_brush_mixcolor(View3DPanel, Panel):
         layout.use_property_split = True
         layout.use_property_decorate = False
         col = layout.column()
-        col.enabled = settings.color_mode == 'VERTEXCOLOR' or brush.gpencil_tool == 'TINT'
+        if settings.color_mode == 'VERTEXCOLOR' or brush.gpencil_tool == 'TINT':
 
-        col.template_color_picker(brush, "color", value_slider=True)
+            col.template_color_picker(brush, "color", value_slider=True)
 
-        sub_row = col.row(align=True)
-        sub_row.prop(brush, "color", text="")
-        sub_row.prop(brush, "secondary_color", text="")
+            sub_row = col.row(align=True)
+            sub_row.prop(brush, "color", text="")
+            sub_row.prop(brush, "secondary_color", text="")
 
-        sub_row.operator("gpencil.tint_flip", icon='FILE_REFRESH', text="")
+            sub_row.operator("gpencil.tint_flip", icon='FILE_REFRESH', text="")
 
         if brush.gpencil_tool in {'DRAW', 'FILL'}:
             col.prop(gp_settings, "vertex_mode", text="Mode")
@@ -2207,12 +2207,12 @@ class VIEW3D_PT_tools_grease_pencil_brush_mix_palette(View3DPanel, Panel):
         brush = settings.brush
 
         col = layout.column()
-        col.enabled = settings.color_mode == 'VERTEXCOLOR' or brush.gpencil_tool == 'TINT'
+        if settings.color_mode == 'VERTEXCOLOR' or brush.gpencil_tool == 'TINT':
 
-        row = col.row(align=True)
-        row.template_ID(settings, "palette", new="palette.new")
-        if settings.palette:
-            col.template_palette(settings, "palette", color=True)
+            row = col.row(align=True)
+            row.template_ID(settings, "palette", new="palette.new")
+            if settings.palette:
+                col.template_palette(settings, "palette", color=True)
 
 
 class VIEW3D_PT_tools_grease_pencil_sculpt_options(GreasePencilSculptOptionsPanel, Panel, View3DPanel):
