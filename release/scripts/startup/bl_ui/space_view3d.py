@@ -7380,24 +7380,37 @@ class VIEW3D_PT_overlay_guides(Panel):
         row_el.active = grid_active
         row.prop(overlay, "show_floor", text="Floor")
 
-        if overlay.show_floor or overlay.show_ortho_grid:
-            sub = col.row(align=True)
-            sub.active = (overlay.show_floor and not view.region_3d.is_orthographic_side_view) or (overlay.show_ortho_grid and grid_active)
-            sub.prop(overlay, "grid_scale", text="Scale")
-            sub = sub.row(align=True)
-            if scene.unit_settings.system == 'NONE':
-                sub.prop(overlay, "grid_subdivisions", text="Subdivisions")
-
-        sub = split.column()
-        row = sub.row()
+        split = layout.split()
+        row = split.row()
+        row.separator()
         row.label(text="Axes")
 
-        subrow = row.row(align=True)
-        subrow.prop(overlay, "show_axis_x", text="X", toggle=True)
-        subrow.prop(overlay, "show_axis_y", text="Y", toggle=True)
-        subrow.prop(overlay, "show_axis_z", text="Z", toggle=True)
+        #subrow = row.row(align=True)
+        row = split.row(align=True)
+        row.prop(overlay, "show_axis_x", text="X", toggle=True)
+        row.prop(overlay, "show_axis_y", text="Y", toggle=True)
+        row.prop(overlay, "show_axis_z", text="Z", toggle=True)
 
-        split = col.split()
+        if overlay.show_floor or overlay.show_ortho_grid:
+            col = layout.column()
+            col.use_property_split = True
+            if (overlay.show_floor and not view.region_3d.is_orthographic_side_view) or (overlay.show_ortho_grid and grid_active):
+                row = col.row()
+                row.separator()
+                row.prop(overlay, "grid_scale", text="Scale")
+
+                if scene.unit_settings.system == 'NONE':
+                    col = layout.column()
+                    col.use_property_split = True
+                    row = col.row()
+                    row.separator()
+                    row.prop(overlay, "grid_subdivisions", text="Subdivisions")
+
+        layout.separator()
+
+        layout.label(text = "Options")
+
+        split = layout.split()
         sub = split.column()
         row = sub.row()
         row.separator()
