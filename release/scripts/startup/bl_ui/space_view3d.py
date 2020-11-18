@@ -7385,8 +7385,8 @@ class VIEW3D_PT_overlay_guides(Panel):
             sub.active = (overlay.show_floor and not view.region_3d.is_orthographic_side_view) or (overlay.show_ortho_grid and grid_active)
             sub.prop(overlay, "grid_scale", text="Scale")
             sub = sub.row(align=True)
-            sub.active = scene.unit_settings.system == 'NONE'
-            sub.prop(overlay, "grid_subdivisions", text="Subdivisions")
+            if scene.unit_settings.system == 'NONE':
+                sub.prop(overlay, "grid_subdivisions", text="Subdivisions")
 
         sub = split.column()
         row = sub.row()
