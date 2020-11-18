@@ -251,12 +251,37 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
             row.separator()
             row.prop(mesh, "use_mirror_topology")
 
+        layout.label(text = "Auto Merge")
 
+
+        split = layout.split(factor = 0.55)
+        col = split.column()
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(tool_settings, "use_mesh_automerge", text="Auto Merge", toggle=False)
+        col = split.column()
+        if tool_settings.use_mesh_automerge:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+            col = layout.column(align=True)
+            row = col.row()
+            row.separator()
+            row.separator()
+            row.prop(tool_settings, "use_mesh_automerge_and_split", toggle=False)
+            col.use_property_split = True
+            row = col.row()
+            row.separator()
+            row.separator()
+            row.prop(tool_settings, "double_threshold", text="Threshold")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+# bfa - panel remains for compatibility reasons. Who knows what Blender developers does in the future here ...
 class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
-    bl_category = "Tool"
+    #bl_category = "Tool"
     bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
     bl_label = "Auto Merge"
-    bl_parent_id = "VIEW3D_PT_tools_meshedit_options"
+    #bl_parent_id = "VIEW3D_PT_tools_meshedit_options" #bfa - not longer, we have the two props in the options panel directly.
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
