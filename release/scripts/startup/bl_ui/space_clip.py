@@ -207,6 +207,7 @@ class CLIP_HT_header(Header):
 
                 row.prop(sc, "show_graph_tracks_motion", icon='GRAPH', text="")
                 row.prop(sc, "show_graph_tracks_error", icon='ANIM_DATA', text="")
+                row.popover(panel = "CLIP_PT_options", text = "Options")
 
             elif sc.view == 'DOPESHEET':
                 dopesheet = tracking.dopesheet
@@ -217,8 +218,8 @@ class CLIP_HT_header(Header):
 
                 row = layout.row(align=True)
                 row.prop(dopesheet, "sort_method", text="")
-                row.prop(dopesheet, "use_invert_sort",
-                         text="Invert", toggle=True)
+                row.prop(dopesheet, "use_invert_sort", text="Invert", toggle=True)
+                row.popover(panel = "CLIP_PT_options", text = "Options")
 
     def _draw_masking(self, context):
         layout = self.layout
@@ -267,6 +268,20 @@ class CLIP_HT_header(Header):
             self._draw_tracking(context)
         else:
             self._draw_masking(context)
+
+
+class CLIP_PT_options(Panel):
+    bl_space_type = 'CLIP_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Options"
+
+    def draw(self, context):
+        layout = self.layout
+
+        sc = context.space_data
+        col = layout.column(align = True)
+        col.prop(sc, "show_seconds")
+        col.prop(sc, "show_locked_time")
 
 
 # bfa - show hide the editormenu
@@ -1406,17 +1421,31 @@ class CLIP_MT_view(Menu):
         else:
             if sc.view == 'GRAPH':
                 layout.operator_context = 'INVOKE_REGION_PREVIEW'
-                layout.operator("clip.graph_center_current_frame", icon = "VIEW_SELECTED" )
+                layout.operator("clip.graph_center_current_frame", text = "Frame Selected", icon = "VIEW_SELECTED" )
                 layout.operator("clip.graph_view_all", icon = "VIEWALL")
+
+                layout.separator()
+
+                layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+                layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
                 layout.operator_context = 'INVOKE_DEFAULT'
 
-            layout.prop(sc, "show_seconds")
-            layout.prop(sc, "show_locked_time")
+            if sc.view == 'DOPESHEET':
+                layout.operator_context = 'INVOKE_REGION_PREVIEW'
+                layout.operator("clip.dopesheet_view_all", icon = "VIEWALL")
+
+                layout.separator()
+
+                layout.operator("view2d.zoom_in", text = "Zoom In", icon = "ZOOM_IN")
+                layout.operator("view2d.zoom_out", text = "Zoom Out", icon = "ZOOM_OUT")
+
+                layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
 
         layout.menu("INFO_MT_area")
         layout.menu("CLIP_MT_view_pie_menus")
+
 
 class CLIP_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
@@ -1831,6 +1860,7 @@ class CLIP_MT_reconstruction_pie(Menu):
 
 
 classes = (
+    CLIP_PT_options,
     ALL_MT_editormenu,
     CLIP_UL_tracking_objects,
     CLIP_HT_header,
