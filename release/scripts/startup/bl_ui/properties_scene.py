@@ -88,20 +88,20 @@ class SCENE_PT_unit(SceneButtonsPanel, Panel):
         layout.prop(unit, "system")
 
         col = layout.column()
-        col.enabled = unit.system != 'NONE'
-        col.prop(unit, "scale_length")
+        if unit.system != 'NONE':
+            col.prop(unit, "scale_length")
 
-        col.use_property_split = False
-        col.prop(unit, "use_separate")
+            col.use_property_split = False
+            col.prop(unit, "use_separate")
 
         col = layout.column()
         col.prop(unit, "system_rotation", text="Rotation")
         subcol = col.column()
-        subcol.enabled = unit.system != 'NONE'
-        subcol.prop(unit, "length_unit", text="Length")
-        subcol.prop(unit, "mass_unit", text="Mass")
-        subcol.prop(unit, "time_unit", text="Time")
-        subcol.prop(unit, "temperature_unit", text="Temperature")
+        if unit.system != 'NONE':
+            subcol.prop(unit, "length_unit", text="Length")
+            subcol.prop(unit, "mass_unit", text="Mass")
+            subcol.prop(unit, "time_unit", text="Time")
+            subcol.prop(unit, "temperature_unit", text="Temperature")
 
 
 class SceneKeyingSetsPanel:
