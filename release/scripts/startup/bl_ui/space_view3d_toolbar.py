@@ -251,26 +251,19 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
             row.separator()
             row.prop(mesh, "use_mirror_topology")
 
-        layout.label(text = "Auto Merge")
-
-
-        split = layout.split(factor = 0.55)
+        split = layout.split()
         col = split.column()
         col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(tool_settings, "use_mesh_automerge", text="Auto Merge", toggle=False)
+        col.prop(tool_settings, "use_mesh_automerge", text="Auto Merge", toggle=False)
         col = split.column()
         if tool_settings.use_mesh_automerge:
             col.label(icon='DISCLOSURE_TRI_DOWN')
             col = layout.column(align=True)
             row = col.row()
             row.separator()
-            row.separator()
             row.prop(tool_settings, "use_mesh_automerge_and_split", toggle=False)
             col.use_property_split = True
             row = col.row()
-            row.separator()
             row.separator()
             row.prop(tool_settings, "double_threshold", text="Threshold")
         else:
