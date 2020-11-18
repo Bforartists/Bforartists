@@ -429,11 +429,6 @@ class FILEBROWSER_MT_view(Menu):
 
         layout.separator()
 
-        layout.prop_menu_enum(params, "display_size")
-        layout.prop_menu_enum(params, "recursion_level")
-
-        layout.separator()
-
         layout.menu("INFO_MT_area")
 
 
