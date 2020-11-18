@@ -3597,7 +3597,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "grid_subdivisions", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "gridsubdiv");
-  RNA_def_property_ui_text(prop, "Grid Subdivisions", "Number of subdivisions between grid lines");
+  RNA_def_property_ui_text(prop, "Grid Subdivisions", "Number of subdivisions between grid lines\nJust active with a Unit System of None");
   RNA_def_property_range(prop, 1, 1024);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
