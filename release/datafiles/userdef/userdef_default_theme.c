@@ -611,7 +611,7 @@ const bTheme U_theme_default = {
     .anim_preview_range = RGBA(0xa14d0066),
     .nla_tweaking = RGBA(0x4df31a4d),
     .nla_tweakdupli = RGBA(0xd90000ff),
-    .nla_track = RGBA(0x333333ff),
+    .nla_track = RGBA(0x707070ff),
     .nla_transition = RGBA(0x1c2630ff),
     .nla_transition_sel = RGBA(0x2e75dbff),
     .nla_meta = RGBA(0x332642ff),
@@ -1134,7 +1134,7 @@ const bTheme U_theme_default = {
       .color = RGBA(0x999999ff),
     },
     {
-      .color = RGBA(0x06d4432ff),
+      .color = RGBA(0x6d4432ff),
     },
   },
 };
