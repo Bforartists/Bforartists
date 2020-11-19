@@ -1648,6 +1648,11 @@ class CLIP_MT_tracking_context_menu(Menu):
             layout.operator("clip.delete_track", icon = "DELETE")
 
         elif mode == 'MASK':
+
+            layout.operator("mask.add_vertex_slide", text="Add Vertex and Slide", icon='SLIDE_VERTEX')
+
+            layout.separator()
+
             from .properties_mask_common import draw_mask_context_menu
             draw_mask_context_menu(layout, context)
 
