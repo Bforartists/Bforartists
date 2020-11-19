@@ -366,6 +366,10 @@ class MASK_MT_add(Menu):
         layout.operator("mask.primitive_circle_add", text="Circle", icon='MESH_CIRCLE')
         layout.operator("mask.primitive_square_add", text="Square", icon='MESH_PLANE')
 
+        layout.separator()
+
+        layout.operator("mask.add_vertex_slide", text="Add Vertex and Slide", icon='SLIDE_VERTEX')
+
 
 class MASK_MT_visibility(Menu):
     bl_label = "Show/Hide"
