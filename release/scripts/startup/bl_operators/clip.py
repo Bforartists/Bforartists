@@ -1038,7 +1038,7 @@ class CLIP_OT_track_settings_as_default(Operator):
 
 
 class CLIP_OT_track_settings_to_track(bpy.types.Operator):
-    """Copy Track Settings\nCopy tracking settings from active track to selected tracks"""
+    """Copy tracking settings from active track to selected tracks"""
 
     bl_label = "Copy Track Settings"
     bl_idname = "clip.track_settings_to_track"
