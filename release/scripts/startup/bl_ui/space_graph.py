@@ -157,6 +157,16 @@ class GRAPH_PT_properties_Marker_options(Panel):
     bl_space_type = 'GRAPH_EDITOR'
     bl_region_type = 'UI'
 
+    # animation editors is a wild mix. We need to separate them by the following two defs
+    # markers are just in graph editor or nla, not in driver editor
+    def in_graph_or_nla(context):
+        return context.space_data.mode != 'DRIVERS' # dopesheet, not timeline
+
+    @classmethod
+    def poll(cls, context):
+        # only for graph or nla
+        return cls.in_graph_or_nla(context)
+
     def draw(self, context):
 
         layout = self.layout
@@ -289,7 +299,7 @@ class GRAPH_MT_select_none(bpy.types.Operator):
 class GRAPH_MT_select(Menu):
     bl_label = "Select"
 
-    def draw(self, _context):
+    def draw(self, context):
         layout = self.layout
 
         layout.operator("graph.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
@@ -308,8 +318,10 @@ class GRAPH_MT_select(Menu):
         layout.operator("graph.select_column", text="Columns on Selected Keys", icon = "COLUMNS_KEYS").mode = 'KEYS'
         layout.operator("graph.select_column", text="Column on Current Frame", icon = "COLUMN_CURRENT_FRAME").mode = 'CFRA'
 
-        layout.operator("graph.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
-        layout.operator("graph.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
+        #bfa - just in graph editor. Drivers does not have markers. graph editor = FCURVES
+        if context.space_data.mode == 'FCURVES':
+            layout.operator("graph.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+            layout.operator("graph.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
 
         layout.separator()
 
