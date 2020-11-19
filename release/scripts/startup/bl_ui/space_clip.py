@@ -1490,16 +1490,28 @@ class CLIP_MT_track(Menu):
         props.action = 'ALL'
 
         layout.separator()
+
         layout.operator("clip.lock_tracks", text="Lock", icon = "LOCKED").action = 'LOCK'
         layout.operator("clip.lock_tracks", text="Unlock", icon = "UNLOCKED").action = 'UNLOCK'
 
         layout.separator()
+
         layout.operator("clip.copy_tracks", text= "Copy", icon = "COPYDOWN")
         layout.operator("clip.paste_tracks", text= "Paste", icon = "PASTEDOWN")
 
         layout.separator()
+
+        layout.operator("clip.track_settings_to_track", icon='COPYDOWN')
+        layout.operator("clip.track_copy_color", icon='COPY_ID')
+
+        layout.separator()
+
         layout.operator("clip.keyframe_insert", icon = "KEYFRAMES_INSERT")
         layout.operator("clip.keyframe_delete", icon = "KEYFRAMES_REMOVE")
+
+        layout.separator()
+
+        layout.operator("clip.join_tracks", text="  Join Tracks", icon = "JOIN")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
@@ -1613,7 +1625,7 @@ class CLIP_MT_tracking_context_menu(Menu):
         if mode == 'TRACKING':
 
             layout.operator("clip.track_settings_to_track", icon='COPYDOWN')
-            layout.operator("clip.track_settings_as_default", icon='SETTINGS')
+            layout.operator("clip.track_settings_as_default", text="Copy from Active Track", icon='SETTINGS')
 
             layout.separator()
 
@@ -1739,7 +1751,7 @@ class CLIP_MT_marker_pie(Menu):
         # Copy Settings From Active To Selected
         pie.operator("clip.track_settings_to_track", icon='COPYDOWN')
         # Make Settings Default
-        pie.operator("clip.track_settings_as_default", icon='SETTINGS')
+        pie.operator("clip.track_settings_as_default", text="Copy from Active Track", icon='SETTINGS')
         if track_active:
             # Use Normalization
             pie.prop(track_active, "use_normalization", text="Normalization")
