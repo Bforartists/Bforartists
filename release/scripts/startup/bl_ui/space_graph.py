@@ -201,7 +201,6 @@ class GRAPH_PT_properties_view_options(Panel):
 
         col = layout.column(align = True)
         col.prop(st, "show_sliders")
-        col.prop(st, "show_group_colors")
         col.prop(st, "use_auto_merge_keyframes")
         col.prop(st, "use_beauty_drawing")
 
