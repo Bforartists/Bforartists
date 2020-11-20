@@ -228,6 +228,7 @@ class NODE_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        layout.menu("SCREEN_MT_user_menu", text = "Quick") # Quick favourites menu
         layout.menu("NODE_MT_view")
         layout.menu("NODE_MT_select")
         layout.menu("NODE_MT_add")
