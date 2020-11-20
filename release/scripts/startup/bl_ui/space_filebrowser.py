@@ -76,13 +76,22 @@ class FILEBROWSER_PT_display(Panel):
         if params.display_type == 'THUMBNAIL':
             layout.prop(params, "display_size", text="Size")
         else:
-            col = layout.column(heading="Columns", align=True)
-            col.prop(params, "show_details_size", text="Size")
-            col.prop(params, "show_details_datetime", text="Date")
+
+            col = layout.column(align = True)
+            col.label(text = "Columns")
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(params, "show_details_size", text="Size")
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(params, "show_details_datetime", text="Date")
 
         layout.prop(params, "recursion_level", text="Recursions")
 
         layout.column().prop(params, "sort_method", text="Sort By", expand=True)
+        layout.use_property_split = False
         layout.prop(params, "use_sort_invert")
 
 
