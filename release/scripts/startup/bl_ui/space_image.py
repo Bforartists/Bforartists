@@ -935,7 +935,8 @@ class IMAGE_MT_editor_menus(Menu):
 
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
-
+        
+        layout.menu("SCREEN_MT_user_menu", text = "Quick") # Quick favourites menu
         layout.menu("IMAGE_MT_view")
 
         if show_uvedit:

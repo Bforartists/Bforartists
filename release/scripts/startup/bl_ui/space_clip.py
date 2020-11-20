@@ -306,7 +306,7 @@ class CLIP_MT_tracking_editor_menus(Menu):
         layout = self.layout
         sc = context.space_data
         clip = sc.clip
-
+        layout.menu("SCREEN_MT_user_menu", text = "Quick") # Quick favourites menu
         layout.menu("CLIP_MT_view")
 
         if sc.view == 'CLIP':
@@ -408,6 +408,7 @@ class CLIP_MT_masking_editor_menus(Menu):
         sc = context.space_data
         clip = sc.clip
 
+        layout.menu("SCREEN_MT_user_menu", text = "Quick") # Quick favourites menu
         layout.menu("CLIP_MT_view")
 
         if clip:
