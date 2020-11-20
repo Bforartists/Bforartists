@@ -219,6 +219,7 @@ class GRAPH_MT_editor_menus(Menu):
     def draw(self, context):
         st = context.space_data
         layout = self.layout
+        layout.menu("SCREEN_MT_user_menu", text = "Quick") # Quick favourites menu
         layout.menu("GRAPH_MT_view")
         layout.menu("GRAPH_MT_select")
         if st.mode != 'DRIVERS' and st.show_markers:
