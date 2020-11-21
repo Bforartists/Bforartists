@@ -359,7 +359,7 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
 
         layout.separator()
 
-        layout.prop(scene, "show_keys_from_selected_only")
+        layout.prop(scene, "show_keys_from_selected_only", text = "Only show selected")
         layout.prop(st.dopesheet, "show_only_errors")
 
         layout.separator()
