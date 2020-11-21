@@ -1405,6 +1405,9 @@ static void write_area_regions(BlendWriter *writer, ScrArea *area)
     else if (sl->spacetype == SPACE_INFO) {
       BLO_write_struct(writer, SpaceInfo, sl);
     }
+    else if (sl->spacetype == SPACE_TOOLBAR) { /*bfa - toolbar editor*/
+      BLO_write_struct(writer, SpaceToolbar, sl);
+    }
   }
 }
 
