@@ -202,7 +202,7 @@ class VIEW3D_HT_header(Header):
                 sub.separator(factor=0.4)
                 sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
                 sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="", icon = "MERGE")
+                sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
 
             # Select mode for Editing
             if gpd.use_stroke_edit_mode:
