@@ -611,7 +611,7 @@ const bTheme U_theme_default = {
     .anim_preview_range = RGBA(0xa14d0066),
     .nla_tweaking = RGBA(0x4df31a4d),
     .nla_tweakdupli = RGBA(0xd90000ff),
-    .nla_track = RGBA(0x707070ff),
+    .nla_track = RGBA(0x333333ff),
     .nla_transition = RGBA(0x1c2630ff),
     .nla_transition_sel = RGBA(0x2e75dbff),
     .nla_meta = RGBA(0x332642ff),
@@ -1113,28 +1113,28 @@ const bTheme U_theme_default = {
   },
   .collection_color = {
     {
-      .color = RGBA(0xe4312bff),
+      .color = RGBA(0xe2605bff),
     },
     {
-      .color = RGBA(0xef7e42ff),
+      .color = RGBA(0xf1a355ff),
     },
     {
       .color = RGBA(0xe4dd52ff),
     },
     {
-      .color = RGBA(0x9ac546ff),
+      .color = RGBA(0x7bcc7bff),
     },
     {
-      .color = RGBA(0x46bcc2ff),
+      .color = RGBA(0x5db6eaff),
     },
     {
-      .color = RGBA(0x8b65dcff),
+      .color = RGBA(0x8d59daff),
     },
     {
-      .color = RGBA(0x999999ff),
+      .color = RGBA(0xc673b8ff),
     },
     {
-      .color = RGBA(0x6d4432ff),
+      .color = RGBA(0x7a5441ff),
     },
   },
 };
