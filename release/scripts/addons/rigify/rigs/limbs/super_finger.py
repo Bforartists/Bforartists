@@ -295,8 +295,7 @@ class Rig(SimpleChainRig):
             self.make_constraint(mch, 'COPY_LOCATION', ctrl)
             self.make_constraint(mch, 'COPY_SCALE', ctrl)
 
-        self.make_constraint(mch, 'DAMPED_TRACK', ctrl_next)
-        self.make_constraint(mch, 'STRETCH_TO', ctrl_next, volume='NO_VOLUME')
+        self.make_constraint(mch, 'STRETCH_TO', ctrl_next, volume='NO_VOLUME', keep_axis='SWING_Y')
 
     ##############################
     # ORG chain

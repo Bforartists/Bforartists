@@ -163,8 +163,7 @@ class BaseSpineRig(TweakChainRig):
     def rig_deform_bone(self, i, deform, tweak, next_tweak):
         self.make_constraint(deform, 'COPY_TRANSFORMS', tweak)
         if next_tweak:
-            self.make_constraint(deform, 'DAMPED_TRACK', next_tweak)
-            self.make_constraint(deform, 'STRETCH_TO', next_tweak)
+            self.make_constraint(deform, 'STRETCH_TO', next_tweak, keep_axis='SWING_Y')
 
     @stage.configure_bones
     def configure_bbone_chain(self):

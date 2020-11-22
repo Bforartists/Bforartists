@@ -211,8 +211,7 @@ class Rig(BaseHeadTailRig):
             self.rig_mch_stretch_bone(self.bones.mch.stretch, self.bones.ctrl.head)
 
     def rig_mch_stretch_bone(self, mch, head):
-        self.make_constraint(mch, 'DAMPED_TRACK', head)
-        self.make_constraint(mch, 'STRETCH_TO', head)
+        self.make_constraint(mch, 'STRETCH_TO', head, keep_axis='SWING_Y')
 
     ####################################################
     # MCH IK chain for the long neck

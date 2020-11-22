@@ -648,25 +648,18 @@ class Rig:
 
         if   constraint_type == 'def_tweak':
 
-            const = owner_pb.constraints.new( 'DAMPED_TRACK' )
-            const.target    = self.obj
-            const.subtarget = subtarget
-
             const = owner_pb.constraints.new( 'STRETCH_TO' )
             const.target    = self.obj
             const.subtarget = subtarget
+            const.keep_axis = 'SWING_Y'
 
         elif constraint_type == 'def_lids':
 
-            const = owner_pb.constraints.new( 'DAMPED_TRACK' )
-            const.target    = self.obj
-            const.subtarget = subtarget
-            const.head_tail = 1.0
-
             const = owner_pb.constraints.new( 'STRETCH_TO' )
             const.target    = self.obj
             const.subtarget = subtarget
             const.head_tail = 1.0
+            const.keep_axis = 'SWING_Y'
 
         elif constraint_type == 'mch_eyes':
 
