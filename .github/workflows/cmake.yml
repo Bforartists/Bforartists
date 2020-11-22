@@ -27,7 +27,7 @@ jobs:
           from os import path
           main_dir = path.join(os.getcwd(),'..')
           main_dir = path.abspath(main_dir)
-          print("::set-env name=_MAIN_DIR::{}".format(main_dir))
+          print("::stop-commands::'::set-env name=_MAIN_DIR::{}'".format(main_dir))
     
       - name: Cache build environment
         uses: actions/cache@v2
