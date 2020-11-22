@@ -565,8 +565,7 @@ class BaseLimbRig(BaseRig):
         self.rig_ik_mch_end_bone(mch.ik_end, mch.ik_target, self.bones.ctrl.ik_pole)
 
     def rig_ik_mch_stretch_bone(self, mch_stretch, input_bone):
-        self.make_constraint(mch_stretch, 'DAMPED_TRACK', input_bone, head_tail=self.ik_input_head_tail)
-        self.make_constraint(mch_stretch, 'STRETCH_TO', input_bone, head_tail=self.ik_input_head_tail)
+        self.make_constraint(mch_stretch, 'STRETCH_TO', input_bone, head_tail=self.ik_input_head_tail, keep_axis='SWING_Y')
 
         con = self.make_constraint(mch_stretch, 'LIMIT_SCALE', min_y=0.0, max_y=1.05, owner_space='LOCAL')
 
@@ -765,14 +764,12 @@ class BaseLimbRig(BaseRig):
             self.make_constraint(deform, 'COPY_TRANSFORMS', tweak)
 
             if next_tweak:
-                self.make_constraint(deform, 'DAMPED_TRACK', next_tweak)
-                self.make_constraint(deform, 'STRETCH_TO', next_tweak)
+                self.make_constraint(deform, 'STRETCH_TO', next_tweak, keep_axis='SWING_Y')
 
                 self.rig_deform_easing(i, deform, tweak, next_tweak)
 
             elif next_entry:
-                self.make_constraint(deform, 'DAMPED_TRACK', next_entry.org)
-                self.make_constraint(deform, 'STRETCH_TO', next_entry.org)
+                self.make_constraint(deform, 'STRETCH_TO', next_entry.org, keep_axis='SWING_Y')
 
         else:
             self.make_constraint(deform, 'COPY_TRANSFORMS', entry.org)
