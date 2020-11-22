@@ -209,8 +209,7 @@ class TweakChainRig(SimpleChainRig):
     def rig_org_bone(self, i, org, tweak, next_tweak):
         self.make_constraint(org, 'COPY_TRANSFORMS', tweak)
         if next_tweak:
-            self.make_constraint(org, 'DAMPED_TRACK', next_tweak)
-            self.make_constraint(org, 'STRETCH_TO', next_tweak)
+            self.make_constraint(org, 'STRETCH_TO', next_tweak, keep_axis='SWING_Y')
 
 
 class ConnectingChainRig(TweakChainRig):
@@ -338,8 +337,7 @@ class ConnectingChainRig(TweakChainRig):
 
     def rig_org_bone(self, i, org, tweak, next_tweak):
         if self.use_connect_chain and self.use_connect_reverse:
-            self.make_constraint(org, 'DAMPED_TRACK', tweak)
-            self.make_constraint(org, 'STRETCH_TO', tweak)
+            self.make_constraint(org, 'STRETCH_TO', tweak, keep_axis='SWING_Y')
         else:
             super().rig_org_bone(i, org, tweak, next_tweak)
 

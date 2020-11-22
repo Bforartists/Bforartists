@@ -27,6 +27,10 @@
 #include "DNA_curve_types.h"
 #include "DNA_texture_types.h" /* for MTex */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct CurveMapping;
 struct Image;
 struct MTex;
@@ -871,6 +875,7 @@ typedef enum eBrushUVSculptTool {
         SCULPT_TOOL_DRAW_SHARP, \
         SCULPT_TOOL_SLIDE_RELAX, \
         SCULPT_TOOL_ELASTIC_DEFORM, \
+        SCULPT_TOOL_BOUNDARY, \
         SCULPT_TOOL_POSE, \
         SCULPT_TOOL_DRAW_FACE_SETS, \
         SCULPT_TOOL_PAINT, \
@@ -979,3 +984,7 @@ enum {
 
 #define MAX_BRUSH_PIXEL_RADIUS 500
 #define GP_MAX_BRUSH_PIXEL_RADIUS 1000
+
+#ifdef __cplusplus
+}
+#endif
