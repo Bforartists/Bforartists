@@ -181,8 +181,7 @@ class Rig(BaseLimbRig):
         super().rig_deform_bone(i, deform, entry, next_entry, tweak, next_tweak)
 
         if tweak and not (next_tweak or next_entry):
-            self.make_constraint(deform, 'DAMPED_TRACK', entry.org, head_tail=1.0)
-            self.make_constraint(deform, 'STRETCH_TO', entry.org, head_tail=1.0)
+            self.make_constraint(deform, 'STRETCH_TO', entry.org, head_tail=1.0, keep_axis='SWING_Y')
 
 
     ####################################################

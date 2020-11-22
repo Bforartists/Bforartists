@@ -4311,6 +4311,10 @@ static int pc_cmp(const void *a, const void *b)
   return 0;
 }
 
+/* TODO: Review the usages of this function, currently with COW it will be called for orig object
+ * and then again for COW copies of it, think this is bad since there is no guarantee that we get
+ * the same stack index in both cases? Order is important since this index is used for filenames on
+ * disk. */
 int BKE_object_insert_ptcache(Object *ob)
 {
   LinkData *link = NULL;
@@ -4729,7 +4733,7 @@ static bool constructive_modifier_is_deform_modified(ModifierData *md)
   if (md->type == eModifierType_MeshSequenceCache) {
     /* NOTE: Not ideal because it's unknown whether topology changes or not.
      * This will be detected later, so by assuming it's only deformation
-     * going on here we allow to bake deform-only mesh to Alembic and have
+     * going on here we allow baking deform-only mesh to Alembic and have
      * proper motion blur after that.
      */
     return true;
