@@ -956,7 +956,7 @@ static uiBut *ui_item_with_label(uiLayout *layout,
 #endif
 
   const bool is_keymapitem_ptr = RNA_struct_is_a(ptr->type, &RNA_KeyMapItem);
-  if ((flag & flag & UI_ITEM_R_FULL_EVENT) && !is_keymapitem_ptr) {
+  if ((flag & UI_ITEM_R_FULL_EVENT) && !is_keymapitem_ptr) {
     RNA_warning("Data is not a keymap item struct: %s. Ignoring 'full_event' option.",
                 RNA_struct_identifier(ptr->type));
   }
@@ -5169,13 +5169,23 @@ bool UI_block_apply_search_filter(uiBlock *block, const char *search_filter)
     return false;
   }
 
+  Panel *panel = block->panel;
+
+  if (panel != NULL && panel->type->flag & PANEL_TYPE_NO_SEARCH) {
+    /* Panels for active blocks should always have a type, otherwise they wouldn't be created. */
+    BLI_assert(block->panel->type != NULL);
+    if (panel->type->flag & PANEL_TYPE_NO_SEARCH) {
+      return false;
+    }
+  }
+
   const bool panel_label_matches = block_search_panel_label_matches(block, search_filter);
 
   const bool has_result = (panel_label_matches) ?
                               true :
                               block_search_filter_tag_buttons(block, search_filter);
 
-  if (block->panel != NULL) {
+  if (panel != NULL) {
     if (has_result) {
       ui_panel_tag_search_filter_match(block->panel);
     }

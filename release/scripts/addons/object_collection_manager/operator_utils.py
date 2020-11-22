@@ -490,6 +490,9 @@ def remove_collection(laycol, collection, context):
 
 
 def select_collection_objects(is_master_collection, collection_name, replace, nested, selection_state=None):
+    if bpy.context.mode != 'OBJECT':
+        return
+
     if is_master_collection:
         target_collection = bpy.context.view_layer.layer_collection.collection
 

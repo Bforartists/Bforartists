@@ -140,12 +140,24 @@ class QCDAllBase():
 class EnableAllQCDSlotsMeta(Operator):
     '''QCD All Meta Operator'''
     bl_label = "Quick View Toggles"
-    bl_description = (
-        "  * LMB - Enable all slots/Restore.\n"
-        "  * Alt+LMB - Select all objects in QCD slots.\n"
-        "  * LMB+Hold - Menu"
-        )
     bl_idname = "view3d.enable_all_qcd_slots_meta"
+
+    @classmethod
+    def description(cls, context, properties):
+        selection_hotkeys = ""
+
+        if context.mode == 'OBJECT':
+            selection_hotkeys = (
+            "  * Alt+LMB - Select all objects in QCD slots.\n"
+            )
+
+        hotkey_string = (
+            "  * LMB - Enable all slots/Restore.\n"
+            + selection_hotkeys +
+            "  * LMB+Hold - Menu"
+            )
+
+        return hotkey_string
 
     def invoke(self, context, event):
         qab = QCDAllBase
@@ -551,15 +563,23 @@ class ViewMoveQCDSlot(Operator):
 
     @classmethod
     def description(cls, context, properties):
-        slot_name = qcd_slots.get_name(properties.slot)
+        slot_name = internals.qcd_slots.get_name(properties.slot)
         slot_string = f"QCD Slot {properties.slot}: \"{slot_name}\"\n"
+        selection_hotkeys = ""
+
+        if context.mode == 'OBJECT':
+            selection_hotkeys = (
+                ".\n"
+                "  * Alt+LMB - Select objects in slot.\n"
+                "  * Alt+Shift+LMB - Toggle objects' selection for slot"
+                )
+
         hotkey_string = (
             "  * LMB - Isolate slot.\n"
             "  * Shift+LMB - Toggle slot.\n"
             "  * Ctrl+LMB - Move objects to slot.\n"
-            "  * Ctrl+Shift+LMB - Toggle objects' slot.\n"
-            "  * Alt+LMB - Select objects in slot.\n"
-            "  * Alt+Shift+LMB - Toggle objects' selection for slot"
+            "  * Ctrl+Shift+LMB - Toggle objects' slot"
+            + selection_hotkeys
             )
 
         return f"{slot_string}{hotkey_string}"

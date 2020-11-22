@@ -683,7 +683,7 @@ class VIEW3D_OT_tools_discombobulate(Operator):
     bl_label = "Discombobulator"
     bl_description = ("Easily add sci-fi details to a surface \n"
                       "Needs an existing active Mesh with Faces")
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "UNDO"}
 
     executing = False
 

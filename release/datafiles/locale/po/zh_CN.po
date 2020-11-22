@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'4960780d76bf')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -68275,7 +68275,7 @@ msgstr "在指定方向平移视图"
 
 
 msgid "Pan"
-msgstr "声相"
+msgstr "平移(声相)"
 
 
 msgid "Direction of View Pan"
