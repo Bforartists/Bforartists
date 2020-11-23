@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Toolbar Settings Bforartists",
     "author": "Bforartists",
-    "version": (1, 1, 1),
+    "version": (1, 2, 0),
     "blender": (2, 90, 0),
     "location": "User Preferences > Addons",
     "description": "Toolbar Settings. DO NOT TURN OFF! This addon contains the settings for the toolbar editor",
@@ -156,155 +156,303 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="Here you can turn on or off the single toolbars in the toolbar editor. Don't forget to save User Settings.")
-        layout.label(text="The corresponding toolbar container has to be enabled in the toolbar.")
-
-        layout.separator()
+        col = layout.column(align = True)
+        col.label(text="Here you can turn on or off the single toolbars in the toolbar editor.")
+        col.label(text="The corresponding toolbar container has to be enabled in the toolbar.")
 
         layout.label(text="The File toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "file_load_save")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_recover")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_link_append")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_import_menu")
-
-        row = layout.row()
-
+        row = col.row()
+        row.separator()
         row.prop(self, "file_export_menu")
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "file_import_common")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_import_common2")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_import_uncommon")
-
-
-        row = layout.row()
-
+        row = col.row()
+        row.separator()
         row.prop(self, "file_export_common")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_export_common2")
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "file_export_uncommon")
-
-        row = layout.row()
-
+        row = col.row()
+        row.separator()
         row.prop(self, "file_render")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_render_opengl")
+        row = col.row()
+        row.separator()
         row.prop(self, "file_render_misc")
 
         layout.label(text="The Mesh Edit toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_vertices_splitconnect")
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_vertices_misc")
-
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_edges_subdiv")
-
-        row = layout.row()
-
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_edges_sharp")
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_edges_freestyle")
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_edges_rotate")
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_edges_misc")
-
-        row = layout.row()
-
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_faces_general")
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_faces_freestyle")
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_faces_tris")
-
-        row = layout.row()
-
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_faces_rotatemisc")
+        row = col.row()
+        row.separator()
         row.prop(self, "mesh_cleanup")
 
         layout.label(text="The Primitives toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_mesh")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_curve")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_surface")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_metaball")
 
-        row = layout.row()
+        col = flow.column(align=True)
 
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_gpencil")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_light")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_other")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_empties")
 
-        row = layout.row()
+        col = flow.column(align=True)
 
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_image")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_lightprobe")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_forcefield")
+        row = col.row()
+        row.separator()
         row.prop(self, "primitives_collection")
 
         layout.label(text="The Image toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "image_uv_align")
+        row = col.row()
+        row.separator()
         row.prop(self, "image_uv_unwrap")
+        row = col.row()
+        row.separator()
         row.prop(self, "image_uv_modify")
 
         layout.label(text="The Tools toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_parent")
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_objectdata")
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_link_to_scn")
 
-        row = layout.row()
+        col = flow.column(align=True)
 
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_linked_objects")
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_join")
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_origin")
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_shading")
 
-        row = layout.row()
+        col = flow.column(align=True)
 
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_datatransfer")
+        row = col.row()
+        row.separator()
         row.prop(self, "tools_relations")
 
         layout.label(text="The Animation toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "animation_keyframes")
+        row = col.row()
+        row.separator()
         row.prop(self, "animation_range")
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "animation_play")
+        row = col.row()
+        row.separator()
         row.prop(self, "animation_sync")
 
-        row = layout.row()
+        col = flow.column(align=True)
 
+        row = col.row()
+        row.separator()
         row.prop(self, "animation_keyframetype")
+        row = col.row()
+        row.separator()
         row.prop(self, "animation_keyingset")
 
         layout.label(text="The Edit toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "edit_edit")
+        row = col.row()
+        row.separator()
         row.prop(self, "edit_weightinedit")
+        row = col.row()
+        row.separator()
         row.prop(self, "edit_objectapply")
+        row = col.row()
+        row.separator()
         row.prop(self, "edit_objectapplydeltas")
 
         layout.label(text="The Misc toolbar container")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_undoredo")
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_undohistory")
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_repeat")
+
+        col = flow.column(align=True)
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_scene")
-
-        row = layout.row()
-
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_viewlayer")
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_last")
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_info")
+        row = col.row()
+        row.separator()
         row.prop(self, "misc_operatorsearch")
 
     # THE ONE FLAG IN THE NODE EDITOR!
@@ -312,7 +460,12 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         layout.label(text="THE ONE FLAG IN THE NODE EDITOR! Text or icon buttons in Properties sidebar")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "Node_text_or_icon")
 
 
@@ -320,15 +473,25 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         layout.label(text="The show hide prop for the outliner.")
 
-        row = layout.row()
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
         row.prop(self, "outliner_show_search")
 
     # Toolbar Options
 
-        row = layout.row()
-        row.prop(self, "toolbar_show_quicktoggle")
+        layout.label(text="Toolbar option - show quick toggle")
 
-    toolbar_show_quicktoggle : BoolProperty(name="Show Quick Toggle", default = False, description = "Show the quick toggle buttons in the toolbar editor")
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
+        row.prop(self, "toolbar_show_quicktoggle")
 
 
 class BFA_OT_toolbar_prefs(Operator):
