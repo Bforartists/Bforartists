@@ -274,7 +274,7 @@ class USERPREF_PT_interface_editors(InterfacePanel, CenterAlignMixIn, Panel):
         flow.use_property_split = False
         flow.prop(system, "use_region_overlap")
         flow.prop(view, "show_layout_ui", text="Corner Splitting")
-        flow.prop(view, "show_navigate_ui")
+        #flow.prop(view, "show_navigate_ui")
 
         flow.use_property_split = True
         flow.prop(view, "color_picker_type")
