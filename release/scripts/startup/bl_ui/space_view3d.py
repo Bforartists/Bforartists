@@ -6801,24 +6801,24 @@ class VIEW3D_PT_object_type_visibility(Panel):
 
         attr_object_types = (
             # Geometry
-            ("mesh", "Mesh          "),
-            ("curve", "Curve       "),
-            ("surf", "Surface     "),
-            ("meta", "Meta         "),
-            ("font", "Text           "),
+            ("mesh", "Mesh"),
+            ("curve", "Curve"),
+            ("surf", "Surface"),
+            ("meta", "Meta"),
+            ("font", "Text"),
             ("hair", "Hair"),
             ("pointcloud", "Point Cloud"),
             ("volume", "Volume"),
             ("grease_pencil", "Grease Pencil"),
             (None, None),
             # Other
-            ("armature", "Armature  "),
-            ("lattice", "Lattice      "),
-            ("empty", "Empty        "),
-            ("light", "Light        "),
-            ("light_probe", "Light Probe  "),
-            ("camera", "Camera     "),
-            ("speaker", "Speaker    "),
+            ("armature", "Armature"),
+            ("lattice", "Lattice"),
+            ("empty", "Empty"),
+            ("light", "Light"),
+            ("light_probe", "Light Probe"),
+            ("camera", "Camera"),
+            ("speaker", "Speaker"),
         )
 
         for attr, attr_name in attr_object_types:
@@ -6837,12 +6837,15 @@ class VIEW3D_PT_object_type_visibility(Panel):
             icon_v = 'HIDE_OFF' if getattr(view, attr_v) else 'HIDE_ON'
             icon_s = 'RESTRICT_SELECT_OFF' if getattr(view, attr_s) else 'RESTRICT_SELECT_ON'
 
-            row = col.row(align=True)
-            row.alignment = 'RIGHT'
-
+            split = layout.split(factor = 0.7)
+            row = split.row(align=True)
+            row.alignment = 'LEFT'
             row.label(text=attr_name)
-            row.prop(view, attr_v, text="", icon=icon_v, emboss=False)
+
+            row = split.row(align=True)
+            row.alignment = 'RIGHT'
             rowsub = row.row(align=True)
+            row.prop(view, attr_v, text="", icon=icon_v, emboss=False)
             rowsub.active = getattr(view, attr_v)
             rowsub.prop(view, attr_s, text="", icon=icon_s, emboss=False)
 
