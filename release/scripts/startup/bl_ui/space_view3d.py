@@ -7277,16 +7277,30 @@ class VIEW3D_PT_gizmo_display(Panel):
         scene = context.scene
         view = context.space_data
 
+        prefs = context.preferences
+        prefsview = prefs.view
+
         col = layout.column()
         col.label(text="Viewport Gizmos")
 
         col.separator()
-
         col.active = view.show_gizmo
         colsub = col.column(align = True)
+
         row = colsub.row()
         row.separator()
         row.prop(view, "show_gizmo_navigate", text="Navigate")
+
+        if view.show_gizmo_navigate:
+            row = colsub.row()
+            row.separator()
+            row.separator()
+            row.prop(prefsview, "show_navigate_ui") # bfa - moved from the preferences
+            row = colsub.row()
+            row.separator()
+            row.separator()
+            row.prop(prefsview, "mini_axis_type", text="")
+
         row = colsub.row()
         row.separator()
         row.prop(view, "show_gizmo_tool", text="Active Tools")
