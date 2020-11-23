@@ -527,12 +527,11 @@ class VIEW3D_HT_tool_header(Header):
             else:
                 text = ""
 
-            layout.label(text="Layer:")
             sub = layout.row()
             sub.ui_units_x = 8
             sub.popover(
                 panel="TOPBAR_PT_gpencil_layers",
-                text=text,
+                text = "Layer: " + text,
             )
             if mode_string == 'EDIT_GPENCIL':
                 sub.popover(panel = "VIEW3D_PT_gpencil_edit_options", text = "Options")
