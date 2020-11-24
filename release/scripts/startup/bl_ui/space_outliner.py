@@ -439,6 +439,7 @@ class OUTLINER_PT_filter(Panel):
         if display_mode == 'VIEW_LAYER':
             layout.label(text="Restriction Toggles:")
             row = layout.row(align=True)
+            row.separator()
             row.prop(space, "show_restrict_column_enable", text="")
             row.prop(space, "show_restrict_column_select", text="")
             row.prop(space, "show_restrict_column_hide", text="")
@@ -450,27 +451,28 @@ class OUTLINER_PT_filter(Panel):
         elif display_mode == 'SCENES':
             layout.label(text="Restriction Toggles:")
             row = layout.row(align=True)
+            row.separator()
             row.prop(space, "show_restrict_column_select", text="")
             row.prop(space, "show_restrict_column_hide", text="")
             row.prop(space, "show_restrict_column_viewport", text="")
             row.prop(space, "show_restrict_column_render", text="")
             layout.separator()
 
+
+        col = layout.column(align=True)
         if display_mode != 'DATA_API':
-            col = layout.column(align=True)
             col.prop(space, "use_sort_alpha")
-
-        row = layout.row(align=True)
-        row.prop(space, "use_sync_select", text="Sync Selection")
-
-        row = layout.row(align=True)
-        row.prop(space, "show_mode_column", text="Show Mode Column")
-        layout.separator()
+        col.prop(space, "use_sync_select", text="Sync Selection")
+        col.prop(space, "show_mode_column", text="Show Mode Column")
 
         col = layout.column(align=True)
         col.label(text="Search:")
-        col.prop(space, "use_filter_complete", text="Exact Match")
-        col.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
+        row = col.row()
+        row.separator()
+        row.prop(space, "use_filter_complete", text="Exact Match")
+        row = col.row()
+        row.separator()
+        row.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
 
         if display_mode != 'VIEW_LAYER':
             return
@@ -480,63 +482,91 @@ class OUTLINER_PT_filter(Panel):
         col = layout.column(align=True)
 
         row = col.row()
+        row.separator()
         row.label(icon='OUTLINER_COLLECTION')
         row.prop(space, "use_filter_collection", text="Collections")
 
+        split = col.split(factor = 0.55)
+        col = split.column()
         row = col.row()
+        row.separator()
         row.label(icon='OBJECT_DATAMODE')
         row.prop(space, "use_filter_object", text="Objects")
-        row = col.row(align=True)
-        row.label(icon="BLANK1")
-        row.prop(space, "filter_state", text="")
-        sub = row.row(align=True)
-        sub.enabled = space.filter_state != 'ALL'
-        sub.prop(space, "filter_invert", text="", icon="ARROW_LEFTRIGHT")
+        col = split.column()
+        if space.use_filter_object:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        sub = col.column(align=True)
-        sub.active = space.use_filter_object
+        if space.use_filter_object:
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.separator()
+            row.label(icon="BLANK1")
+            row.separator()
+            row.prop(space, "filter_state", text="")
+            sub = row.row(align=True)
+            if space.filter_state != 'ALL':
+                sub.prop(space, "filter_invert", text="", icon="ARROW_LEFTRIGHT")
+            sub = col.column(align=True)
 
-        row = sub.row()
-        row.label(icon='OBJECT_DATAMODE')
-        row.prop(space, "use_filter_object_content", text="Object Contents")
-        row = sub.row()
-        row.label(icon='CHILD')
-        row.prop(space, "use_filter_children", text="Object Children")
+            row = sub.row()
+            row.separator()
+            row.separator()
+            row.label(icon='OBJECT_DATAMODE')
+            row.prop(space, "use_filter_object_content", text="Object Contents")
+            row = sub.row()
+            row.separator()
+            row.separator()
+            row.label(icon='CHILD')
+            row.prop(space, "use_filter_children", text="Object Children")
 
-        if bpy.data.meshes:
+            if bpy.data.meshes:
+                row = sub.row()
+                row.separator()
+                row.separator()
+                row.label(icon='MESH_DATA')
+                row.prop(space, "use_filter_object_mesh", text="Meshes")
+            if bpy.data.armatures:
+                row = sub.row()
+                row.separator()
+                row.separator()
+                row.label(icon='ARMATURE_DATA')
+                row.prop(space, "use_filter_object_armature", text="Armatures")
+            if bpy.data.lights:
+                row = sub.row()
+                row.separator()
+                row.separator()
+                row.label(icon='LIGHT_DATA')
+                row.prop(space, "use_filter_object_light", text="Lights")
+            if bpy.data.cameras:
+                row = sub.row()
+                row.separator()
+                row.separator()
+                row.label(icon='CAMERA_DATA')
+                row.prop(space, "use_filter_object_camera", text="Cameras")
             row = sub.row()
-            row.label(icon='MESH_DATA')
-            row.prop(space, "use_filter_object_mesh", text="Meshes")
-        if bpy.data.armatures:
-            row = sub.row()
-            row.label(icon='ARMATURE_DATA')
-            row.prop(space, "use_filter_object_armature", text="Armatures")
-        if bpy.data.lights:
-            row = sub.row()
-            row.label(icon='LIGHT_DATA')
-            row.prop(space, "use_filter_object_light", text="Lights")
-        if bpy.data.cameras:
-            row = sub.row()
-            row.label(icon='CAMERA_DATA')
-            row.prop(space, "use_filter_object_camera", text="Cameras")
-        row = sub.row()
-        row.label(icon='EMPTY_DATA')
-        row.prop(space, "use_filter_object_empty", text="Empties")
+            row.separator()
+            row.separator()
+            row.label(icon='EMPTY_DATA')
+            row.prop(space, "use_filter_object_empty", text="Empties")
 
-        if (
-                bpy.data.curves or
-                bpy.data.metaballs or
-                (hasattr(bpy.data, "hairs") and bpy.data.hairs) or
-                (hasattr(bpy.data, "pointclouds") and bpy.data.pointclouds) or
-                bpy.data.volumes or
-                bpy.data.lightprobes or
-                bpy.data.lattices or
-                bpy.data.fonts or
-                bpy.data.speakers
-        ):
-            row = sub.row()
-            row.label(icon='BLANK1')
-            row.prop(space, "use_filter_object_others", text="Others")
+            if (
+                    bpy.data.curves or
+                    bpy.data.metaballs or
+                    (hasattr(bpy.data, "hairs") and bpy.data.hairs) or
+                    (hasattr(bpy.data, "pointclouds") and bpy.data.pointclouds) or
+                    bpy.data.volumes or
+                    bpy.data.lightprobes or
+                    bpy.data.lattices or
+                    bpy.data.fonts or
+                    bpy.data.speakers
+            ):
+                row = sub.row()
+                row.separator()
+                row.separator()
+                row.label(icon='OBJECT_DATAMODE')
+                row.prop(space, "use_filter_object_others", text="Others")
 
 
 classes = (
