@@ -100,7 +100,7 @@ class Rig(SimpleChainRig):
         self.bones.ctrl.fk += [self.make_tip_control_bone(orgs[-1], orgs[0])]
 
     def make_control_bone(self, i, org):
-        return self.copy_bone(org, make_derived_name(org, 'ctrl'), parent=False)
+        return self.copy_bone(org, make_derived_name(org, 'ctrl'), inherit_scale=True)
 
     def make_tip_control_bone(self, org, name_org):
         name = self.copy_bone(org, make_derived_name(name_org, 'ctrl'), parent=False)
@@ -219,7 +219,7 @@ class Rig(SimpleChainRig):
         self.bones.mch.bend = map_list(self.make_mch_bend_bone, self.bones.org)
 
     def make_mch_bend_bone(self, org):
-        return self.copy_bone(org, make_derived_name(org, 'mch', '_drv'), parent=False, scale=0.3)
+        return self.copy_bone(org, make_derived_name(org, 'mch', '_drv'), inherit_scale=True, scale=0.3)
 
     @stage.parent_bones
     def parent_mch_bend_chain(self):

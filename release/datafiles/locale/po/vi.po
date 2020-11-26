@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -12308,6 +12308,18 @@ msgid "Limit forces to this collection"
 msgstr "Hạn chế lực chỉ được tác dụng trong sưu tập này"
 
 
+msgid "Obstacle Distance"
+msgstr "Khoảng Cách Trở Ngại"
+
+
+msgid "Determines how far apart fluid and obstacle are (higher values will result in fluid being further away from obstacles, smaller values will let fluid move towards the inside of obstacles)"
+msgstr "Cho xác định khoảng cách giữa chất lỏng và trở ngại (giá trị cao  giữ chất lỏng xa từ trở ngại, giá trị thấp cho chất lỏng vào trở ngại)"
+
+
+msgid "Obstacle Threshold"
+msgstr "Ngưỡng Trở Ngại"
+
+
 msgid "Determines how much fluid is allowed in an obstacle cell (higher values will tag a boundary cell as an obstacle easier and reduce the boundary smoothening effect)"
 msgstr "Quyết định số lượng chất lỏng được vào một tế bào trở ngại (giá trị càng cao ký dấu một tế bào ranh giới là một tế bào dễ hơn và giảm hiệu ứng mịn hóa ranh giới)"
 
@@ -20502,7 +20514,7 @@ msgstr "Định dạng sử dụng cho lưu lại tệp này"
 
 
 msgid "Output image in bitmap format"
-msgstr "Tên ảnh xuất bằng định dạng điểm ảnh"
+msgstr "Tên ảnh xuất bằng định dạng mảng ảnh"
 
 
 msgid "Iris"
@@ -22237,6 +22249,10 @@ msgstr "Được phát hiện tốc độ bức của đoạn phim (đơn vị b
 
 msgid "Detected duration of movie clip in frames"
 msgstr "Được phát hiện giai đoạn phim bằng bức"
+
+
+msgid "Offset of footage first frame relative to its file name (affects only how footage is loading, does not change data associated with a clip)"
+msgstr "Dịch của bức đầu tiên tương đối với tên tệp của nó (chỉ ảnh hưởng làm sao được nhập đoạn phim, không thay đổi dữ liệu liên quan đến một đoạn phim)"
 
 
 msgid "Global scene frame number at which this movie starts playing (affects all data associated with a clip)"
@@ -28395,6 +28411,10 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Điểm cong Bezier có hai tay cầm được chỉ định một bức mẫu trên một Cong-F"
 
 
+msgid "Coordinates of the control point. Note: Changing this value also updates the handles similar to using the graph editor transform operator"
+msgstr "Tọa độ của điểm điều khiển. Lưu ý: Đổi giá trị này sẽ nâng cấp tay cằm giống như khi dùng thao tác biến hóa của bộ biên tập biểu đồ"
+
+
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "Áp dụng suy nội xoa dịu cho bên nào của đoạn giữa bức mẫu này và bức mẫu tiếp"
 
@@ -29834,6 +29854,10 @@ msgstr "Phụ Huynh Mặt Nạ"
 
 msgid "Parenting settings for masking element"
 msgstr "Cài đặt phụ huynh cho phần tử mặt nạ"
+
+
+msgid "ID-block to which masking element would be parented to or to its property"
+msgstr "Cục ID nào nên làm phụ huynh của phần tử mặt nạ hay đặc tính của nó"
 
 
 msgid "ID Type"
@@ -31725,8 +31749,16 @@ msgid "Convert all polygons to triangles"
 msgstr "Biến đổi tất cả đa giác sang tam giác"
 
 
+msgid "Volume to Mesh"
+msgstr "Thể Tích Sang Mạng Lưới"
+
+
 msgid "Weld"
 msgstr "Hàn"
+
+
+msgid "Find groups of vertices closer than dist and merges them together"
+msgstr "Tìm các nhóm đỉnh gần hơn khoảng cách và gồm với nhau"
 
 
 msgid "Wireframe"
@@ -35573,6 +35605,30 @@ msgid "Smaller values result in better performance but might cut off the volume"
 msgstr "Giá trị càng nhỏ có hiệu suất càng lớn nhưng có thể cắt bớt thể tích"
 
 
+msgid "Volume to Mesh Modifier"
+msgstr "Thể Tích Sang Cụ Sửa Đổi Mạng Lưới"
+
+
+msgid "Reduces the final face count by simplifying geometry where detail is not needed"
+msgstr "Giảm số lượng mặt bằng đơn giản hóa hình dạng tại chổ thì không cần chi tiết"
+
+
+msgid "Grid Name"
+msgstr "Tên Đồ Thị"
+
+
+msgid "Grid in the volume object that is converted to a mesh"
+msgstr "Đồ thị trong vất thể thể tích sau được đổi sang một mạng lưới"
+
+
+msgid "Use resolution of the volume grid"
+msgstr "Dùng độ phân giải của đồ thị thể tích"
+
+
+msgid "Voxels with a larger value are inside the generated mesh"
+msgstr "Thể tích tử có một giá trị lớn hơn ở trong mạng lưới được chế tạo"
+
+
 msgid "Warp Modifier"
 msgstr "Cụ Sửa Đổi Uốn Cong"
 
@@ -37399,14 +37455,6 @@ msgstr "Đoạn NLA trong lằn NLA này"
 
 msgid "Collection of NLA Tracks"
 msgstr "Sưu tập Lằn NLA"
-
-
-msgid "Active Constraint"
-msgstr "Ràng Buộc Hoạt Động"
-
-
-msgid "Active Object constraint"
-msgstr "Ràng buộc Vật Thể Hoạt Động"
 
 
 msgid "Node in a node tree"
@@ -41411,6 +41459,14 @@ msgid "Collection of object constraints"
 msgstr "Sưu tập ràng buộc vật thể"
 
 
+msgid "Active Constraint"
+msgstr "Ràng Buộc Hoạt Động"
+
+
+msgid "Active Object constraint"
+msgstr "Ràng buộc Vật Thể Hoạt Động"
+
+
 msgid "Object cast shadows in the 3d viewport"
 msgstr "Vật thể được phát bóng tối trong màn chiếu 3D"
 
@@ -42062,16 +42118,32 @@ msgid "Snap selected keyframes to the times specified"
 msgstr "Hút dính bức mẫu đến các thời gian được xác định"
 
 
+msgid "Selection to Current Frame"
+msgstr "Sự Lựa Chọn đến Bức Hiện Tại"
+
+
 msgid "Snap selected keyframes to the current frame"
 msgstr "Hút dính bức mẫu được chọn đến bức hiện tại"
+
+
+msgid "Selection to Nearest Frame"
+msgstr "Sự Lựa Chọn đến Bức Gần Nhất"
 
 
 msgid "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame offsets)"
 msgstr "Hút dính bức mẫu được chọn đến bức (toàn bộ) gần nhất (dùng để sửa địch hạ bức không cố ý)"
 
 
+msgid "Selection to Nearest Second"
+msgstr "Sự Lực Chọn đến Giây Gần Nhất"
+
+
 msgid "Snap selected keyframes to the nearest second"
 msgstr "Hút dính bức mẫu được chọn đến giây gần nhất"
+
+
+msgid "Selection to Nearest Marker"
+msgstr "Sự Lựa Chọn đến Ký Hiệu Gần Nhất"
 
 
 msgid "Snap selected keyframes to the nearest marker"
@@ -49764,12 +49836,85 @@ msgid "Switch Tint colors"
 msgstr "Trao Đổi Màu Nhiễm"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "Vẽ Lại Ảnh đến Bút Sáp"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "Rút nét Bút Sáp từ ảnh"
+
+
+msgid "Resolution of the generated curves"
+msgstr "Độ phân giải cửa các đường cong được chế tạo"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "Khoảng cách cho lấy mẫu, đặt = 0 để tắt"
+
+
+msgid "Scale of the final stroke"
+msgstr "Phóng to của nét cuối"
+
+
+msgid "Color Threshold"
+msgstr "Ngưỡng Màu Sắc"
+
+
+msgid "Determine what is considered white and what black"
+msgstr "Cho xác định cái gì là đen, cái gì là trắng"
+
+
+msgid "Turn Policy"
+msgstr "Thủ Tục Quẹo"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "Cho xác  định làm sao được giải quyết vấn đề phân tích mảng ảnh sang đường cong"
+
+
 msgid "Black"
 msgstr "Đèn"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "Ưu tiên kết nối thành phần đèn hơn (cảnh trước)"
+
+
 msgid "White"
 msgstr "Trắng"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "Uư tiên kết nối thành phần trắng hơn (nền)"
+
+
+msgid "Always take a left turn"
+msgstr "Lần nào quẹo trái"
+
+
+msgid "Always take a right turn"
+msgstr "Lần nào quẹo phải"
+
+
+msgid "Minority"
+msgstr "Thiếu Số"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "Uư tiên kết nối thành phần của màu có tần số ít nhất trong khu vực gần vị trí hiện tại"
+
+
+msgid "Majority"
+msgstr "Đa Số"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "Uư tiên kết nối thành phần của màu có tần số nhiều nhất trong khu vực gần vị trí hiện tại"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "Chọn ngẫu nhiên giả dối"
 
 
 msgctxt "Operator"
@@ -50233,6 +50378,10 @@ msgstr "Áp dụng quyền lượng trung bình di chuyền để giảm đô nh
 
 msgid "Snap selected keyframes to the chosen times/values"
 msgstr "Hút dính bức mẫu được chọn đến thời gian/giá trị được chọn"
+
+
+msgid "Selection to Cursor Value"
+msgstr "Sự Lựa Chọn đến Giá Trị Con Trỏ"
 
 
 msgid "Set values of selected keyframes to the cursor value (Y/Horizontal component)"
@@ -51936,6 +52085,10 @@ msgstr "Trước thử trượt phe phẩy thay thế đỉnh"
 msgctxt "Operator"
 msgid "Slide Spline Curvature"
 msgstr "Trượt Độ Cong Mẫu Cong"
+
+
+msgid "Slide a point on the spline to define its curvature"
+msgstr "Trượt một điểm trên mẫu cong để chỉ định độ cong của nó"
 
 
 msgctxt "Operator"
@@ -54114,6 +54267,10 @@ msgstr "Gồm đỉnh tùy khoảng cách xa"
 
 msgid "Sharp Edges"
 msgstr "Cạnh Bén"
+
+
+msgid "Calculate sharp edges using custom normal data (when available)"
+msgstr "Tính cạnh bén bằng dùng dữ liệu pháp tuyến tùy chọn (khi có)"
 
 
 msgid "Merge selected to other unselected vertices"
@@ -63934,6 +64091,10 @@ msgid "Use a union boolean operation"
 msgstr "Dùng một thao tác bool gồm"
 
 
+msgid "Join the new mesh as separate geometry, without performing any boolean operation"
+msgstr "Nối lại mạng lưới mới mà làm hình dạng mới, và không thực hành một thao tác bool nào"
+
+
 msgid "Use Cursor for Depth"
 msgstr "Dùng con trỏ cho Độ Sậu"
 
@@ -66752,7 +66913,7 @@ msgstr "Ảnh PNG (.png)"
 
 
 msgid "Export the UV layout to a bitmap image"
-msgstr "Xuất cài đặt UV vào một ảnh điểm ảnh"
+msgstr "Xuất cài đặt UV vào một mảng ảnh"
 
 
 msgid "Exports UVs from the modified mesh"
@@ -72541,6 +72702,11 @@ msgstr "Giãn Trơn Trượt"
 
 
 msgctxt "Operator"
+msgid "Boundary"
+msgstr "Ranh Giới"
+
+
+msgctxt "Operator"
 msgid "Cloth"
 msgstr "Vải"
 
@@ -72548,6 +72714,11 @@ msgstr "Vải"
 msgctxt "Operator"
 msgid "Simplify"
 msgstr "Đơn Giản Hóa"
+
+
+msgctxt "Operator"
+msgid "Multires Displacement Eraser"
+msgstr "Đồ Bôi Dịch Đa Độ Phân Giải"
 
 
 msgctxt "Operator"
@@ -74405,12 +74576,28 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "Bậc tùy chọn sửa sai lầm Cycles cho lập trình viên"
 
 
+msgid "New Geometry Nodes"
+msgstr "Giao Điểm Hình Dạng Mới"
+
+
+msgid "Enable the new geometry nodes system in the ui"
+msgstr "Bậc hệ thống giao điểm mới trong giao diện"
+
+
 msgid "New Hair Type"
 msgstr "Loại Tóc Mới"
 
 
 msgid "Enable the new hair type in the ui"
 msgstr "Bậc loại tóc mới trong giao diện"
+
+
+msgid "New Point Cloud Type"
+msgstr "Loại Mây Điểm Mới"
+
+
+msgid "Enable the new point cloud type in the ui"
+msgstr "Bậc loại mây điểm mới trong giao diện"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -80117,6 +80304,10 @@ msgid "Elastic Limit"
 msgstr "Gới Hạn Giãn"
 
 
+msgid "How much the spring has to be stretched/compressed in order to change its rest length"
+msgstr "Cần kéo/nén lò xo bao xa để đổi bề dài nghỉ ngơi của nó"
+
+
 msgid "Light Direction"
 msgstr "Hướng Ánh Sáng"
 
@@ -81582,6 +81773,10 @@ msgstr "Âm lượng hát lại âm thanh"
 
 msgid "Sequence Color Balance Data"
 msgstr "Dữ Liệu Thăng Bằng Màu Của Trình Tự"
+
+
+msgid "Color balance parameters for a sequence strip and its modifiers"
+msgstr "Tham số thăng bằng màu sắc cho một đoạn trình tự và các cụ sửa đổi của nó"
 
 
 msgid "Color balance gain (highlights)"
@@ -90395,6 +90590,11 @@ msgstr "Khắc"
 
 
 msgctxt "WindowManager"
+msgid "3D View Tool: Sculpt, Face Set Edit"
+msgstr "Dụng Cụ Màn 3D: Biên Tập Khắc, Tập Hợp Mặt"
+
+
+msgctxt "WindowManager"
 msgid "Particle"
 msgstr "Hạt"
 
@@ -92223,6 +92423,10 @@ msgid "Lock Frame"
 msgstr "Khóa Bức"
 
 
+msgid "Inverse Color"
+msgstr "Đảo Nhgịch Màu"
+
+
 msgid "Unlocked"
 msgstr "Không Khóa"
 
@@ -93811,8 +94015,28 @@ msgid "Unprotect Channels"
 msgstr "Không Bảo Vệ Kênh"
 
 
+msgctxt "Operator"
+msgid "Selection to Current Frame"
+msgstr "Sự Lựa Chọn Đến Bức Hiện Tại"
+
+
+msgctxt "Operator"
+msgid "Selection to Nearest Frame"
+msgstr "Sự Lựa Chọn Đến Bức Gần Nhất"
+
+
+msgctxt "Operator"
+msgid "Selection to Nearest Second"
+msgstr "Sự Lựa Chọn Đến Giây Gần Nhất"
+
+
+msgctxt "Operator"
+msgid "Selection to Nearest Marker"
+msgstr "Sự Lựa Chọn Đến Ký Hiệu Gần Nhất"
+
+
 msgid "Recursions"
-msgstr "Đệ quy"
+msgstr "Đệ Quy"
 
 
 msgid "Sort By"
@@ -93946,6 +94170,11 @@ msgstr "Cắt Chẻ (Tỉ Số)"
 msgctxt "Operator"
 msgid "Decimate (Allowed Change)"
 msgstr "Cắt Chẻ (Được Đổi)"
+
+
+msgctxt "Operator"
+msgid "Selection to Cursor Value"
+msgstr "Sự Lựa Chọn Đến Giá Trị Con Trỏ"
 
 
 msgctxt "Operator"
@@ -103690,6 +103919,10 @@ msgid "Data-block has no users and will be deleted"
 msgstr "Cục dữ liệu không có người dùng và sẽ bị xóa"
 
 
+msgid "Change the object in the current mode"
+msgstr "Đổi vật thể trong chế độ hiện tại"
+
+
 msgid "Remove from the current mode"
 msgstr "Xóa từ chế độ hiện tại"
 
@@ -105970,6 +106203,10 @@ msgid "Curve Object"
 msgstr "Vật Thể Đường Cong"
 
 
+msgid "Generate Data Layers"
+msgstr "Chế Tạo Lớp Dữ Liệu"
+
+
 msgid "Layer Selection"
 msgstr "Sự lựa chọn lớp"
 
@@ -105980,6 +106217,14 @@ msgstr "Ánh Xạ Lớp"
 
 msgid "Refresh"
 msgstr "Nạp Lại"
+
+
+msgid "Recenter"
+msgstr "Đặt Lại Trung Tâm"
+
+
+msgid "Assign"
+msgstr "Chỉ Định"
 
 
 msgid "Bisect"
@@ -106101,6 +106346,10 @@ msgstr "Nhăn Nội"
 
 msgid "Outer"
 msgstr "Ngoại"
+
+
+msgid "Shell"
+msgstr "Vỏ"
 
 
 msgid "Adaptive Subdivision"

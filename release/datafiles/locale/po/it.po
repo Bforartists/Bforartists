@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -23188,14 +23188,6 @@ msgid "Collection of NLA Tracks"
 msgstr "Raccolta di Tracce NLA"
 
 
-msgid "Active Constraint"
-msgstr "Vincolo Attivo"
-
-
-msgid "Active Object constraint"
-msgstr "Vincolo Oggetto Attivo"
-
-
 msgid "Node in a node tree"
 msgstr "Nodo in un albero dei nodi"
 
@@ -25428,6 +25420,14 @@ msgstr "Vincoli Oggetto"
 
 msgid "Collection of object constraints"
 msgstr "Raccolta di Vincoli Oggetto"
+
+
+msgid "Active Constraint"
+msgstr "Vincolo Attivo"
+
+
+msgid "Active Object constraint"
+msgstr "Vincolo Oggetto Attivo"
 
 
 msgid "Object Modifiers"

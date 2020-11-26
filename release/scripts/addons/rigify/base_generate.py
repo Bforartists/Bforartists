@@ -359,6 +359,10 @@ class BaseGenerator:
         self.__run_object_stage('configure_bones')
 
 
+    def invoke_preapply_bones(self):
+        self.__run_object_stage('preapply_bones')
+
+
     def invoke_apply_bones(self):
         self.__run_edit_stage('apply_bones')
 

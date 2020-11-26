@@ -1,17 +1,17 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2020-11-04 09:01+0100\n"
+"PO-Revision-Date: 2020-11-17 14:41+0100\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: \n"
 "Language: sk_SK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);"
 
 
@@ -14310,7 +14310,7 @@ msgstr "Aktuálne zobrazená snímka pre túto vrstvu"
 
 
 msgid "Set annotation Visibility"
-msgstr "Nastaviť viditeľnosť komentára"
+msgstr "Nastaviť viditeľnosť poznámky"
 
 
 msgid "After Color"
@@ -14502,7 +14502,7 @@ msgstr "Nakreslí body, ktoré tvoria ťahy (pre účely ladenia)"
 
 
 msgid "Thickness of annotation strokes"
-msgstr "Hrúbka komentárov ťahov"
+msgstr "Hrúbka ťahov poznámky"
 
 
 msgid "Tint Color"
@@ -16498,7 +16498,7 @@ msgstr "Aktívna poznámka"
 
 
 msgid "Note/Layer to add annotation strokes to"
-msgstr "Poznámka/vrstva pre pridanie komentárov ťahu"
+msgstr "Záznam/vrstva pre pridanie do ťahu poznámky"
 
 
 msgid "Grease Pencil Mask Layers"
@@ -20199,7 +20199,7 @@ msgstr "Povolí alebo zakáže textúrovanie ťahov"
 
 
 msgid "Freehand annotation sketchbook"
-msgstr "Skicár komentárov voľnou rukou"
+msgstr "Skicár poznámok voľnou rukou"
 
 
 msgid "Edit Line Color"
@@ -20227,7 +20227,7 @@ msgstr "Nastavenia mriežky a plátna v 3D zábere"
 
 
 msgid "Annotation"
-msgstr "Vysvetlivka"
+msgstr "Poznámka"
 
 
 msgid "Current datablock is an annotation"
@@ -24681,7 +24681,7 @@ msgstr "Konštantné zrýchlenie v danom smere"
 
 
 msgid "Annotations"
-msgstr "Vysvetlivky"
+msgstr "Poznámky"
 
 
 msgid "Grease Pencil data-block used for annotations in the 3D view"
@@ -28410,6 +28410,10 @@ msgstr "Kolekcia priradenia kláves"
 
 msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Bod Bézierovej krivky s dvoma manipulátormi definovanie kľúčovej snímky na krivke funkcie"
+
+
+msgid "Coordinates of the control point. Note: Changing this value also updates the handles similar to using the graph editor transform operator"
+msgstr "Súradnice ovládacieho bodu. Poznámka: Zmenou tejto hodnoty sa tiež aktualizujú manipulátory podobne pre použitie operátora transformácie editora grafov"
 
 
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
@@ -37197,7 +37201,7 @@ msgstr "Použiť masku stopy pri zobrazení ukážky"
 
 
 msgid "Use a brute-force translation only pre-track before refinement"
-msgstr "Použije násilnú zmenu polohy len pred upresnením prestopovania"
+msgstr "Použije násilnú zmenu polohy len pred upresnením pred-stopovania"
 
 
 msgid "Custom Color"
@@ -37454,14 +37458,6 @@ msgstr "Pásy NLA na tejto stope NLA"
 
 msgid "Collection of NLA Tracks"
 msgstr "Kolekcia stôp NLA"
-
-
-msgid "Active Constraint"
-msgstr "Aktívne obmedzenie"
-
-
-msgid "Active Object constraint"
-msgstr "Obmedzenie aktívneho objektu"
 
 
 msgid "Node in a node tree"
@@ -41466,6 +41462,14 @@ msgid "Collection of object constraints"
 msgstr "Kolekcia obmedzení objektu"
 
 
+msgid "Active Constraint"
+msgstr "Aktívne obmedzenie"
+
+
+msgid "Active Object constraint"
+msgstr "Obmedzenie aktívneho objektu"
+
+
 msgid "Object cast shadows in the 3d viewport"
 msgstr "Objekt vrhá tiene v 3D zábere"
 
@@ -43960,7 +43964,7 @@ msgstr "Vnútri oblasti poznámky"
 
 
 msgid "Place markers only inside areas outlined with the Annotation tool"
-msgstr "Značky umiestni iba do oblastí ohraničených nástrojom na vytváranie poznámok"
+msgstr "Značky umiestni iba do oblastí ohraničených nástrojom Poznámka"
 
 
 msgid "Outside Annotated Area"
@@ -43968,7 +43972,7 @@ msgstr "Mimo oblasť poznámky"
 
 
 msgid "Place markers only outside areas outlined with the Annotation tool"
-msgstr "Značky umiestni iba mimo oblastí ohraničených nástrojom na vytváranie poznámok"
+msgstr "Značky umiestni iba mimo oblastí ohraničených nástrojom Poznámka"
 
 
 msgid "Threshold level to consider feature good enough for tracking"
@@ -48073,7 +48077,7 @@ msgstr "Odstráni aktívnu snímku(y) všetkých upraviteľných vrstiev pastelk
 
 msgctxt "Operator"
 msgid "Annotation Draw"
-msgstr "Kresba vysvetlivky"
+msgstr "Kreslenie poznámky"
 
 
 msgid "Make annotations on the active data"
@@ -48161,7 +48165,7 @@ msgstr "Guma"
 
 
 msgid "Erase Annotation strokes"
-msgstr "Zmaže vysvetlivku ťahu"
+msgstr "Zmaže ťahy poznámky"
 
 
 msgid "Stabilizer Stroke Factor"
@@ -48198,7 +48202,7 @@ msgstr "Pridať novú poznámku"
 
 
 msgid "Add new Annotation data-block"
-msgstr "Pridať nový blok údajov poznámok"
+msgstr "Pridá nový blok údajov poznámky"
 
 
 msgctxt "Operator"
@@ -48458,7 +48462,7 @@ msgstr "Konvertuje 2.7x súbory pastelky na 2.80"
 
 
 msgid "Convert to Annotations"
-msgstr "Konvertovať na vysvetlivky"
+msgstr "Konvertovať na poznámky"
 
 
 msgctxt "Operator"
@@ -48472,11 +48476,11 @@ msgstr "Kopíruje vybrané body a ťahy pastelky"
 
 msgctxt "Operator"
 msgid "Annotation Unlink"
-msgstr "Odpojiť vysvetlivky"
+msgstr "Odpojiť poznámku"
 
 
 msgid "Unlink active Annotation data-block"
-msgstr "Zruší prepojenie aktívneho bloku údajov vysvetlivky"
+msgstr "Zruší prepojenie aktívneho bloku údajov poznámky"
 
 
 msgid "Delete selected Grease Pencil strokes, vertices, or frames"
@@ -67571,11 +67575,11 @@ msgstr "Index obrázka pozadia na odstránenie"
 
 msgctxt "Operator"
 msgid "Align Camera to View"
-msgstr "Zarovnať kameru na zobrazenie"
+msgstr "Zarovnať kameru do pohľadu"
 
 
 msgid "Set camera view to active view"
-msgstr "Nastaví záber kamery na aktívne zobrazenie"
+msgstr "Nastaví záber kamery na aktívny pohľad"
 
 
 msgctxt "Operator"
@@ -69958,7 +69962,7 @@ msgstr "Načítať továrenské nastavenie"
 
 
 msgid "Load factory default startup file and preferences. To make changes permanent, use \"Save Startup File\" and \"Save Preferences\""
-msgstr "Načíta predvolený spúšťací súbor a predvoľby z výroby. Ak chcete vykonať trvalé zmeny, použite možnosti „Uložiť úvodný súbor“ a „Uložiť predvoľby“"
+msgstr "Načíta predvolený spúšťací súbor a predvoľby z výroby. Ak chcete vykonať trvalé zmeny, použite možnosti „Uložiť spúšťací súbor“ a „Uložiť predvoľby“"
 
 
 msgctxt "Operator"
@@ -71599,22 +71603,22 @@ msgstr "Ukážkové hodnoty pixelov pod kurzorom"
 
 msgctxt "Operator"
 msgid "Annotate"
-msgstr "Vysvetlivka"
+msgstr "Poznámka"
 
 
 msgctxt "Operator"
 msgid "Annotate Line"
-msgstr "Riadok vysvetlivky"
+msgstr "Čiara poznámky"
 
 
 msgctxt "Operator"
 msgid "Annotate Polygon"
-msgstr "Vysvetlivka polygónu"
+msgstr "Polygón poznámky"
 
 
 msgctxt "Operator"
 msgid "Annotate Eraser"
-msgstr "Vysvetlivka gumy"
+msgstr "Gumovanie poznámky"
 
 
 msgctxt "Operator"
@@ -74256,11 +74260,11 @@ msgstr "Množstvo nevybratých F-kriviek vyčnievajúcich z pozadia (Editor graf
 
 
 msgid "Annotation Default Color"
-msgstr "Pôvodná farba vysvetlivky"
+msgstr "Pôvodná farba poznámky"
 
 
 msgid "Color of new annotation layers"
-msgstr "Farba vrstiev nových komentárov"
+msgstr "Farba nových vrstiev poznámky"
 
 
 msgid "Grease Pencil Eraser Radius"
@@ -75124,11 +75128,11 @@ msgstr "Pohyb vecí ťahaním myšou sa potvrdzuje pri uvoľnení tlačidla"
 
 
 msgid "Emulate Numpad"
-msgstr "Numerická klávesnica"
+msgstr "Emulácia Numpadu"
 
 
 msgid "Main 1 to 0 keys act as the numpad ones (useful for laptops)"
-msgstr "Hlavné klávesy 1 až 0 pôsobia ako NUM ENTER (užitočné pre laptopy)"
+msgstr "Hlavné klávesy 1 až 0 sa správajú ako numpad (užitočné pre laptopy)"
 
 
 msgid "Continuous Grab"
@@ -82941,7 +82945,7 @@ msgstr "Sledovanie"
 
 
 msgid "Show annotation data-block which belongs to active track"
-msgstr "Zobrazí bloku údajov komentára patriaceho do aktívnej stopy"
+msgstr "Zobrazí bloku údajov poznámky patriaceho do aktívnej stopy"
 
 
 msgid "Lock to Selection"
@@ -83065,7 +83069,7 @@ msgstr "Zobraziť poznámky"
 
 
 msgid "Show annotations for this view"
-msgstr "Zobrazí poznámky pre toto zobrazenie"
+msgstr "Zobrazí poznámky pre tento pohľad"
 
 
 msgid "Show Blue Channel"
@@ -84805,7 +84809,7 @@ msgstr "Stred 3D zobrazenia je uzamknutý k pozícii tejto kosti"
 
 
 msgid "Lock Camera to View"
-msgstr "Zamknúť na záber kamery"
+msgstr "Zamknúť kameru do pohľadu"
 
 
 msgid "Enable view navigation within the camera view"
@@ -87641,11 +87645,11 @@ msgstr "Umiestnenie ťahu (2D zobrazenie)"
 
 
 msgid "Annotation Stroke Placement (3D View)"
-msgstr "Komentár umiestnenia ťahu (3D zobrazenie)"
+msgstr "Umiestnenia ťahu poznámky (3D zobrazenie)"
 
 
 msgid "How annotation strokes are orientated in 3D space"
-msgstr "Orientácia komentárov ťahov v 3D priestore"
+msgstr "Orientácia ťahov poznamky v 3D priestore"
 
 
 msgid "Annotation Stroke Thickness"
@@ -89978,7 +89982,7 @@ msgstr "Záber VR blízko vzdialenosti strihu"
 
 
 msgid "Positional Tracking"
-msgstr "Pozičné stopovanie"
+msgstr "Sledovanie polohy"
 
 
 msgid "Allow VR headsets to affect the location in virtual space, in addition to the rotation"
@@ -95018,7 +95022,7 @@ msgstr "Zobraziť prekrytie snímky"
 
 
 msgid "Show Annotations"
-msgstr "Zobraziť anotácie"
+msgstr "Zobraziť poznámky"
 
 
 msgctxt "Operator"
@@ -95290,7 +95294,7 @@ msgstr ""
 
 
 msgid "Annotation:"
-msgstr "Vysvetlivka:"
+msgstr "Poznámka:"
 
 
 msgid "Style Start"
@@ -95386,7 +95390,7 @@ msgstr "Premenovať aktívnu položku..."
 
 msgctxt "Operator"
 msgid "Preferences..."
-msgstr "Nastavenia..."
+msgstr "Predvoľby..."
 
 
 msgctxt "Operator"
@@ -95436,7 +95440,7 @@ msgstr "Alembic (.abc)"
 
 msgctxt "Operator"
 msgid "Universal Scene Description (.usd, .usdc, .usda)"
-msgstr "Univerzálny popis scény (.usd, .usdc, .usda)"
+msgstr "Universal Scene Description (.usd, .usdc, .usda)"
 
 
 msgctxt "Operator"
@@ -96876,7 +96880,7 @@ msgstr "Inverzia viditeľných"
 
 
 msgid "Camera to View"
-msgstr "Kamera na zobrazenie"
+msgstr "Kamera do pohľadu"
 
 
 msgid "Object Types Visibility"
@@ -99508,23 +99512,23 @@ msgstr "Súbor je príliš dlhý %s"
 
 
 msgid "Annotation Create Poly: LMB click to place next stroke vertex | ESC/Enter to end  (or click outside this area)"
-msgstr "Poznámka vytvorenia polygónu: Kliknite ĽTM na miesto ďalšieho vrcholu ťahu | ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
+msgstr "Vytvorenie polygónu poznámky: Kliknite ĽTM na miesto ďalšieho vrcholu ťahu | ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
 
 
 msgid "Annotation Eraser: Hold and drag LMB or RMB to erase | ESC/Enter to end  (or click outside this area)"
-msgstr "Poznámka gumy: Pridržte a ťahajte ĽTM alebo PTM pre vymazanie | ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
+msgstr "Gumovanie poznámky: Pridržte a ťahajte ĽTM alebo PTM pre vymazanie | ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
 
 
 msgid "Annotation Line Draw: Hold and drag LMB to draw | ESC/Enter to end  (or click outside this area)"
-msgstr "Poznámka kreslenia čiary: Pridržte a ťahajte ĽTM pre kreslenia | ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
+msgstr "Nakreslenie čiary poznámky: Pridržte a ťahajte ĽTM pre kreslenia | ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
 
 
 msgid "Annotation Freehand Draw: Hold and drag LMB to draw | E/ESC/Enter to end  (or click outside this area)"
-msgstr "Poznámka kreslenia voľným štýlom: Pridržte a ťahajte ĽTM pre kreslenie | E/ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
+msgstr "Nakreslenia poznámky voľnou rukou: Pridržte a ťahajte ĽTM pre kreslenie | E/ESC/Enter na ukončenie  (alebo kliknite mimo túto oblasť)"
 
 
 msgid "Annotation Session: ESC/Enter to end   (or click outside this area)"
-msgstr "Poznámka relácie: ESC/Enter na ukončenie   (alebo kliknite mimo tejto oblasti)"
+msgstr "Relácia poznámky: ESC/Enter na ukončenie   (alebo kliknite mimo tejto oblasti)"
 
 
 msgid "Cannot paint stroke"
@@ -99540,7 +99544,7 @@ msgstr "Operátor poznámky je práve aktívny"
 
 
 msgid "Failed to find Annotation data to draw into"
-msgstr "Nepodarilo sa nájsť údaje poznámok na ich natiahnutie"
+msgstr "Nepodarilo sa nájsť údaje poznámok na ich nakreslenie"
 
 
 msgid "Active region not set"
