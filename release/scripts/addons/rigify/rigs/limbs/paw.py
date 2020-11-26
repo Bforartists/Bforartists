@@ -23,6 +23,7 @@ import bpy
 from ...utils.bones import compute_chain_x_axis, align_bone_x_axis, align_bone_z_axis
 from ...utils.bones import align_bone_to_axis, flip_bone
 from ...utils.naming import make_derived_name
+from ...utils.widgets_basic import create_circle_widget, create_limb_widget
 
 from ..widgets import create_foot_widget, create_ballsocket_widget
 
@@ -32,13 +33,19 @@ from .limb_rigs import BaseLimbRig
 
 
 class Rig(BaseLimbRig):
-    """Paw rig."""
+    """Paw rig with an optional second heel control."""
 
     segmented_orgs = 3
+    min_valid_orgs = 4
+    max_valid_orgs = 5
+    toe_bone_index = 3
 
     def initialize(self):
-        if len(self.bones.org.main) != 4:
-            self.raise_error("Input to rig type must be a chain of 4 bones.")
+        self.use_heel2 = len(self.bones.org.main) > 4
+
+        if self.use_heel2:
+            self.toe_bone_index = 4
+            self.fk_name_suffix_cutoff = 3
 
         super().initialize()
 
@@ -61,28 +68,10 @@ class Rig(BaseLimbRig):
                 align_bone_z_axis(self.obj, orgs[2], foot_x)
                 align_bone_z_axis(self.obj, orgs[3], -foot_x)
 
-
     ####################################################
-    # EXTRA BONES
-    #
-    # ctrl:
-    #   heel:
-    #     Foot heel control
-    # mch:
-    #   toe_socket:
-    #     IK toe orientation bone.
-    #
-    ####################################################
+    # Utilities
 
-    ####################################################
-    # IK controls
-
-    def get_extra_ik_controls(self):
-        return super().get_extra_ik_controls() + [self.bones.ctrl.heel]
-
-    def make_ik_control_bone(self, orgs):
-        name = self.copy_bone(orgs[3], make_derived_name(orgs[2], 'ctrl', '_ik'))
-
+    def align_ik_control_bone(self, name):
         if self.params.rotation_axis == 'automatic' or self.params.auto_align_extremity:
             align_bone_to_axis(self.obj, name, 'y', flip=True)
 
@@ -93,7 +82,42 @@ class Rig(BaseLimbRig):
             bone.tail[2] = bone.head[2]
             bone.roll = 0
 
-        vec = self.get_bone(orgs[3]).tail - self.get_bone(orgs[2]).head
+
+    ####################################################
+    # EXTRA BONES
+    #
+    # ctrl:
+    #   heel:
+    #     Foot heel control
+    #   heel2 (optional):
+    #     Second foot heel control
+    # mch:
+    #   toe_socket:
+    #     IK toe orientation bone.
+    #   ik_heel2 (optional):
+    #     Final position of heel2 in the IK output.
+    #
+    ####################################################
+
+    ####################################################
+    # IK controls
+
+    def get_middle_ik_controls(self):
+        return [self.bones.ctrl.heel] if self.use_heel2 else []
+
+    def get_extra_ik_controls(self):
+        extra = [self.bones.ctrl.heel2] if self.use_heel2 else [self.bones.ctrl.heel]
+        return super().get_extra_ik_controls() + extra
+
+    def make_ik_control_bone(self, orgs):
+        return self.make_paw_ik_control_bone(orgs[-2], orgs[-1], orgs[2])
+
+    def make_paw_ik_control_bone(self, org_one, org_two, org_name):
+        name = self.copy_bone(org_two, make_derived_name(org_name, 'ctrl', '_ik'))
+
+        self.align_ik_control_bone(name)
+
+        vec = self.get_bone(org_two).tail - self.get_bone(org_one).head
         self.get_bone(name).length = self.vector_without_z(vec).length
 
         return name
@@ -120,13 +144,15 @@ class Rig(BaseLimbRig):
 
     @stage.parent_bones
     def parent_heel_control_bone(self):
-        self.set_bone_parent(self.bones.ctrl.heel, self.get_ik_control_output())
+        if self.use_heel2:
+            self.set_bone_parent(self.bones.ctrl.heel, self.bones.ctrl.heel2)
+        else:
+            self.set_bone_parent(self.bones.ctrl.heel, self.get_ik_control_output())
 
     @stage.configure_bones
     def configure_heel_control_bone(self):
         bone = self.get_bone(self.bones.ctrl.heel)
         bone.lock_location = True, True, True
-        bone.lock_scale = True, True, True
 
     @stage.generate_widgets
     def generate_heel_control_widget(self):
@@ -134,23 +160,67 @@ class Rig(BaseLimbRig):
 
 
     ####################################################
+    # Second Heel control
+
+    @stage.generate_bones
+    def make_heel2_control_bone(self):
+        if self.use_heel2:
+            org = self.bones.org.main[3]
+            name = self.copy_bone(org, make_derived_name(org, 'ctrl', '_ik'))
+            self.bones.ctrl.heel2 = name
+
+            flip_bone(self.obj, name)
+
+    @stage.parent_bones
+    def parent_heel2_control_bone(self):
+        if self.use_heel2:
+            self.set_bone_parent(self.bones.ctrl.heel2, self.get_ik_control_output())
+
+    @stage.configure_bones
+    def configure_heel2_control_bone(self):
+        if self.use_heel2:
+            bone = self.get_bone(self.bones.ctrl.heel2)
+            bone.lock_location = True, True, True
+
+    @stage.generate_widgets
+    def generate_heel2_control_widget(self):
+        if self.use_heel2:
+            create_ballsocket_widget(self.obj, self.bones.ctrl.heel2)
+
+
+    ####################################################
+    # FK control chain
+
+    def make_fk_control_widget(self, i, ctrl):
+        if i < self.toe_bone_index - 1:
+            create_limb_widget(self.obj, ctrl)
+        elif i == self.toe_bone_index - 1:
+            create_circle_widget(self.obj, ctrl, radius=0.4, head_tail=0.0)
+        else:
+            create_circle_widget(self.obj, ctrl, radius=0.4, head_tail=0.5)
+
+
+    ####################################################
     # FK parents MCH chain
 
     @stage.generate_bones
     def make_toe_socket_bone(self):
-        org = self.bones.org.main[3]
+        org = self.bones.org.main[self.toe_bone_index]
         self.bones.mch.toe_socket = self.copy_bone(org, make_derived_name(org, 'mch', '_ik_socket'))
 
+    @stage.parent_bones
+    def parent_toe_socket_bone(self):
+        self.set_bone_parent(self.bones.mch.toe_socket, self.get_ik_control_output())
+
     def parent_fk_parent_bone(self, i, parent_mch, prev_ctrl, org, prev_org):
-        if i == 3:
+        if i == self.toe_bone_index:
             self.set_bone_parent(parent_mch, prev_org, use_connect=True)
-            self.set_bone_parent(self.bones.mch.toe_socket, self.get_ik_control_output())
 
         else:
             super().parent_fk_parent_bone(i, parent_mch, prev_ctrl, org, prev_org)
 
     def rig_fk_parent_bone(self, i, parent_mch, org):
-        if i == 3:
+        if i == self.toe_bone_index:
             con = self.make_constraint(parent_mch, 'COPY_TRANSFORMS', self.bones.mch.toe_socket)
 
             self.make_driver(con, 'influence', variables=[(self.prop_bone, 'IK_FK')], polynomial=[1.0, -1.0])
@@ -172,6 +242,30 @@ class Rig(BaseLimbRig):
         super().parent_ik_mch_chain()
 
         self.set_bone_parent(self.bones.mch.ik_target, self.bones.ctrl.heel)
+
+
+    ####################################################
+    # IK heel2 output
+
+    def get_ik_output_chain(self):
+        tail = [self.bones.mch.ik_heel2] if self.use_heel2 else []
+        return super().get_ik_output_chain() + tail
+
+    @stage.generate_bones
+    def make_ik_heel2_bone(self):
+        if self.use_heel2:
+            orgs = self.bones.org.main
+            self.bones.mch.ik_heel2 = self.copy_bone(orgs[3], make_derived_name(orgs[3], 'mch', '_ik_out'))
+
+    @stage.parent_bones
+    def parent_ik_heel2_bone(self):
+        if self.use_heel2:
+            self.set_bone_parent(self.bones.mch.ik_heel2, self.bones.ctrl.heel2)
+
+    @stage.rig_bones
+    def rig_ik_heel2_bone(self):
+        if self.use_heel2:
+            self.make_constraint(self.bones.mch.ik_heel2, 'COPY_LOCATION', self.bones.mch.ik_target, head_tail=1)
 
 
     ####################################################
@@ -284,3 +378,5 @@ def create_sample(obj):
         bone.select_head = True
         bone.select_tail = True
         arm.edit_bones.active = bone
+
+    return bones

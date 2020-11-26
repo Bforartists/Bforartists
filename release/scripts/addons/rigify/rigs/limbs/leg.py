@@ -44,6 +44,8 @@ ALL_TRUE = (True, True, True)
 class Rig(BaseLimbRig):
     """Human leg rig."""
 
+    min_valid_orgs = max_valid_orgs = 4
+
     def find_org_bones(self, bone):
         bones = super().find_org_bones(bone)
 
@@ -57,9 +59,6 @@ class Rig(BaseLimbRig):
         return bones
 
     def initialize(self):
-        if len(self.bones.org.main) != 4:
-            self.raise_error("Input to rig type must be a chain of 4 bones.")
-
         super().initialize()
 
         self.pivot_type = self.params.foot_pivot_type

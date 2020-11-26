@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -26973,14 +26973,6 @@ msgid "Collection of NLA Tracks"
 msgstr "Coleção de trilhas de animação não linear"
 
 
-msgid "Active Constraint"
-msgstr "Restrição ativa"
-
-
-msgid "Active Object constraint"
-msgstr "Restrições ativas do objeto"
-
-
 msgid "Node in a node tree"
 msgstr "Nós em uma árvore de nós."
 
@@ -30021,6 +30013,14 @@ msgstr "Restrições de objeto"
 
 msgid "Collection of object constraints"
 msgstr "Coleção de restrições de objeto."
+
+
+msgid "Active Constraint"
+msgstr "Restrição ativa"
+
+
+msgid "Active Object constraint"
+msgstr "Restrições ativas do objeto"
 
 
 msgid "Object Modifiers"

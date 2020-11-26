@@ -191,7 +191,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures, udi
 
         else:
             for texture_info in texturelist:
-                if (os.path.isfile(texture_list[3])):
+                if (os.path.isfile(texture_info[3])):
                     if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
                         if texcoat['color'] == [] and texture_info[1] == '1001':
                             texcoat['color'].append(texture_info[3])

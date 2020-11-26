@@ -121,7 +121,7 @@ def new_bone(obj, bone_name):
         raise MetarigError("Can't add new bone '%s' outside of edit mode" % bone_name)
 
 
-def copy_bone(obj, bone_name, assign_name='', *, parent=False, bbone=False, length=None, scale=None):
+def copy_bone(obj, bone_name, assign_name='', *, parent=False, inherit_scale=False, bbone=False, length=None, scale=None):
     """ Makes a copy of the given bone in the given armature object.
         Returns the resulting bone's name.
     """
@@ -151,6 +151,8 @@ def copy_bone(obj, bone_name, assign_name='', *, parent=False, bbone=False, leng
 
             edit_bone_2.use_inherit_rotation = edit_bone_1.use_inherit_rotation
             edit_bone_2.use_local_location = edit_bone_1.use_local_location
+
+        if parent or inherit_scale:
             edit_bone_2.inherit_scale = edit_bone_1.inherit_scale
 
         if bbone:
@@ -385,9 +387,9 @@ class BoneUtilityMixin(object):
         self.register_new_bone(name)
         return name
 
-    def copy_bone(self, bone_name, new_name='', *, parent=False, bbone=False, length=None, scale=None):
+    def copy_bone(self, bone_name, new_name='', *, parent=False, inherit_scale=False, bbone=False, length=None, scale=None):
         """Copy the bone with the given name, returning the new name."""
-        name = copy_bone(self.obj, bone_name, new_name, parent=parent, bbone=bbone, length=length, scale=scale)
+        name = copy_bone(self.obj, bone_name, new_name, parent=parent, inherit_scale=inherit_scale, bbone=bbone, length=length, scale=scale)
         self.register_new_bone(name, bone_name)
         return name
 
@@ -659,13 +661,15 @@ def align_bone_to_axis(obj, bone_name, axis, *, length=None, roll=0, flip=False)
     bone_e.roll = roll
 
 
-def set_bone_widget_transform(obj, bone_name, transform_bone, use_size=True, scale=1.0):
+def set_bone_widget_transform(obj, bone_name, transform_bone, use_size=True, scale=1.0, target_size=False):
     assert obj.mode != 'EDIT'
 
     bone = obj.pose.bones[bone_name]
 
     if transform_bone and transform_bone != bone_name:
-        bone.custom_shape_transform = obj.pose.bones[transform_bone]
+        bone.custom_shape_transform = bone2 = obj.pose.bones[transform_bone]
+        if use_size and target_size:
+            scale *= bone2.length / bone.length
     else:
         bone.custom_shape_transform = None
 

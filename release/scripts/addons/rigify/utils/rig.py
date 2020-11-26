@@ -23,6 +23,8 @@ import importlib
 import importlib.util
 import os
 
+from bpy.types import bpy_struct, bpy_prop_array, Constraint
+
 RIG_DIR = "rigs"  # Name of the directory where rig types are kept
 METARIG_DIR = "metarigs"  # Name of the directory where metarigs are kept
 TEMPLATE_DIR = "ui_templates"  # Name of the directory where ui templates are kept
@@ -147,6 +149,30 @@ def list_bone_names_depth_first_sorted(obj):
     return result_list
 
 
+def _get_property_value(obj, name):
+    value = getattr(obj, name, None)
+    if isinstance(value, bpy_prop_array):
+        value = tuple(value)
+    return value
+
+def _generate_properties(lines, prefix, obj, base_class, *, defaults={}, objects={}):
+    block_props = set(prop.identifier for prop in base_class.bl_rna.properties) - set(defaults.keys())
+
+    for prop in type(obj).bl_rna.properties:
+        if prop.identifier not in block_props and not prop.is_readonly:
+            cur_value = _get_property_value(obj, prop.identifier)
+
+            if prop.identifier in defaults:
+                if cur_value == defaults[prop.identifier]:
+                    continue
+
+            if isinstance(cur_value, bpy_struct):
+                if cur_value in objects:
+                    lines.append('%s.%s = %s' % (prefix, prop.identifier, objects[cur_value]))
+            else:
+                lines.append('%s.%s = %r' % (prefix, prop.identifier, cur_value))
+
+
 def write_metarig(obj, layers=False, func_name="create", groups=False):
     """
     Write a metarig as a python script, this rig is to have all info needed for
@@ -211,6 +237,8 @@ def write_metarig(obj, layers=False, func_name="create", groups=False):
         code.append("    bone.tail = %.4f, %.4f, %.4f" % bone.tail.to_tuple(4))
         code.append("    bone.roll = %.4f" % bone.roll)
         code.append("    bone.use_connect = %s" % str(bone.use_connect))
+        if bone.inherit_scale != 'FULL':
+            code.append("    bone.inherit_scale = %r" % str(bone.inherit_scale))
         if bone.parent:
             code.append("    bone.parent = arm.edit_bones[bones[%r]]" % bone.parent.name)
         code.append("    bones[%r] = bone.name" % bone.name)
@@ -243,6 +271,29 @@ def write_metarig(obj, layers=False, func_name="create", groups=False):
             code.append("        pbone.rigify_parameters.%s = %s" % (param_name, str(param)))
             code.append("    except AttributeError:")
             code.append("        pass")
+        # Constraints
+        for con in pbone.constraints:
+            code.append("    con = pbone.constraints.new(%r)" % (con.type))
+            code.append("    con.name = %r" % (con.name))
+            # Add target first because of target_space handling
+            if con.type == 'ARMATURE':
+                for tgt in con.targets:
+                    code.append("    tgt = con.targets.new()")
+                    code.append("    tgt.target = obj")
+                    code.append("    tgt.subtarget = %r" % (tgt.subtarget))
+                    code.append("    tgt.weight = %.3f" % (tgt.weight))
+            elif getattr(con, 'target', None) == obj:
+                code.append("    con.target = obj")
+            # Generic properties
+            _generate_properties(
+                code, "    con", con, Constraint,
+                defaults={
+                    'owner_space': 'WORLD', 'target_space': 'WORLD',
+                    'mute': False, 'influence': 1.0,
+                    'target': obj,
+                },
+                objects={obj: 'obj'},
+            )
 
     code.append("\n    bpy.ops.object.mode_set(mode='EDIT')")
     code.append("    for bone in arm.edit_bones:")
