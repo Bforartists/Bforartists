@@ -50,6 +50,8 @@ class BaseLimbRig(BaseRig):
     """Common base for limb rigs."""
 
     segmented_orgs = 2 # Number of org bones to segment
+    min_valid_orgs = None
+    max_valid_orgs = None
 
     def find_org_bones(self, bone):
         return BoneDict(
@@ -59,8 +61,11 @@ class BaseLimbRig(BaseRig):
     def initialize(self):
         orgs = self.bones.org.main
 
-        if len(orgs) < self.segmented_orgs + 1:
-            self.raise_error("Input to rig type must be a chain of at least 3 bones.")
+        min_length = max(self.segmented_orgs + 1, self.min_valid_orgs or 0)
+        if len(orgs) < min_length:
+            self.raise_error("Input to rig type must be a chain of at least {} bones.", min_length)
+        if self.max_valid_orgs and len(orgs) > self.max_valid_orgs:
+            self.raise_error("Input to rig type must be a chain of at most {} bones.", self.max_valid_orgs)
 
         self.segments = self.params.segments
         self.bbone_segments = self.params.bbones
@@ -161,6 +166,8 @@ class BaseLimbRig(BaseRig):
     #     IK stretch switch implementation.
     #   ik_target
     #     Corrected target position.
+    #   ik_base
+    #     Optionally the base of the ik chain (otherwise ctrl.ik_base)
     #   ik_end
     #     End of the IK chain: [ik_base, ik_end]
     # deform[]:
@@ -242,8 +249,10 @@ class BaseLimbRig(BaseRig):
     def make_fk_control_chain(self):
         self.bones.ctrl.fk = map_list(self.make_fk_control_bone, count(0), self.bones.org.main)
 
+    fk_name_suffix_cutoff = 2
+
     def get_fk_name(self, i, org, kind):
-        return make_derived_name(org, kind, '_fk' if i <= 2 else '')
+        return make_derived_name(org, kind, '_fk' if i <= self.fk_name_suffix_cutoff else '')
 
     def make_fk_control_bone(self, i, org):
         return self.copy_bone(org, self.get_fk_name(i, org, 'ctrl'))
@@ -296,7 +305,7 @@ class BaseLimbRig(BaseRig):
         self.bones.mch.fk = map_list(self.make_fk_parent_bone, count(0), self.bones.org.main)
 
     def make_fk_parent_bone(self, i, org):
-        if 2 <= i <= 3:
+        if i >= 2:
             return self.copy_bone(org, self.get_fk_name(i, org, 'mch'), parent=True, scale=1/4)
 
     @stage.parent_bones
@@ -307,7 +316,7 @@ class BaseLimbRig(BaseRig):
             self.parent_fk_parent_bone(*args)
 
     def parent_fk_parent_bone(self, i, parent_mch, prev_ctrl, org, prev_org):
-        if i == 2:
+        if i >= 2:
             self.set_bone_parent(parent_mch, prev_ctrl, use_connect=True, inherit_scale='NONE')
 
     @stage.rig_bones
@@ -316,7 +325,7 @@ class BaseLimbRig(BaseRig):
             self.rig_fk_parent_bone(*args)
 
     def rig_fk_parent_bone(self, i, parent_mch, org):
-        if i == 2:
+        if i >= 2:
             self.make_constraint(parent_mch, 'COPY_SCALE', 'root', use_make_uniform=True)
 
 
@@ -329,10 +338,19 @@ class BaseLimbRig(BaseRig):
         else:
             return []
 
-    def get_all_ik_controls(self):
+    def get_middle_ik_controls(self):
+        return []
+
+    def get_ik_fk_position_chains(self):
+        ik_chain = self.get_ik_output_chain()
+        return ik_chain, self.bones.ctrl.fk[0:len(ik_chain)]
+
+    def get_ik_control_chain(self):
         ctrl = self.bones.ctrl
-        controls = [ctrl.ik_base, ctrl.ik_pole, ctrl.ik]
-        return controls + self.get_extra_ik_controls()
+        return [ctrl.ik_base, ctrl.ik_pole, *self.get_middle_ik_controls(), ctrl.ik]
+
+    def get_all_ik_controls(self):
+        return self.get_ik_control_chain() + self.get_extra_ik_controls()
 
     @stage.generate_bones
     def make_ik_controls(self):
@@ -371,6 +389,9 @@ class BaseLimbRig(BaseRig):
         else:
             return self.bones.ctrl.ik
 
+    def get_ik_pole_parents(self):
+        return [(self.bones.mch.ik_target, self.bones.ctrl.ik)]
+
     def register_switch_parents(self, pbuilder):
         if self.rig_parent_bone:
             pbuilder.register_parent(self, self.rig_parent_bone)
@@ -385,7 +406,6 @@ class BaseLimbRig(BaseRig):
 
         master = lambda: self.bones.ctrl.master
         pcontrols = lambda: [ ctrl.master ] + self.get_all_ik_controls()
-        pole_parents = lambda: [(self.bones.mch.ik_target, ctrl.ik)]
 
         self.register_switch_parents(pbuilder)
 
@@ -395,7 +415,7 @@ class BaseLimbRig(BaseRig):
         )
 
         pbuilder.build_child(
-            self, ctrl.ik_pole, prop_bone=master, extra_parents=pole_parents,
+            self, ctrl.ik_pole, prop_bone=master, extra_parents=self.get_ik_pole_parents,
             prop_id='pole_parent', prop_name='Pole Parent', controls=pcontrols,
             no_fix_rotation=True, no_fix_scale=True,
         )
@@ -409,7 +429,6 @@ class BaseLimbRig(BaseRig):
         base = self.get_bone(self.bones.ctrl.ik_base)
         base.rotation_mode = 'ZXY'
         base.lock_rotation = True, False, True
-        base.ik_stretch = 0.1
 
     @stage.rig_bones
     def rig_ik_controls(self):
@@ -420,6 +439,9 @@ class BaseLimbRig(BaseRig):
         ctrl = self.bones.ctrl
 
         set_bone_widget_transform(self.obj, ctrl.ik, self.get_ik_control_output())
+
+        if self.use_mch_ik_base:
+            set_bone_widget_transform(self.obj, ctrl.ik_base, self.bones.mch.ik_base, target_size=True)
 
         self.make_ik_base_widget(ctrl.ik_base)
         self.make_ik_pole_widget(ctrl.ik_pole)
@@ -475,18 +497,30 @@ class BaseLimbRig(BaseRig):
 
     ik_input_head_tail = 0.0
 
+    use_mch_ik_base = False
+
     def get_ik_input_bone(self):
         return self.get_ik_control_output()
 
+    def get_ik_chain_base(self):
+        return self.bones.mch.ik_base if self.use_mch_ik_base else self.bones.ctrl.ik_base
+
     def get_ik_output_chain(self):
-        return [self.bones.ctrl.ik_base, self.bones.mch.ik_end, self.bones.mch.ik_target]
+        return [self.get_ik_chain_base(), self.bones.mch.ik_end, self.bones.mch.ik_target]
 
     @stage.generate_bones
     def make_ik_mch_chain(self):
         orgs = self.bones.org.main
+
+        if self.use_mch_ik_base:
+            self.bones.mch.ik_base = self.make_ik_mch_base_bone(orgs)
+
         self.bones.mch.ik_stretch = self.make_ik_mch_stretch_bone(orgs)
         self.bones.mch.ik_target = self.make_ik_mch_target_bone(orgs)
         self.bones.mch.ik_end = self.copy_bone(orgs[1], make_derived_name(orgs[1], 'mch', '_ik'))
+
+    def make_ik_mch_base_bone(self, orgs):
+        return self.copy_bone(orgs[0], make_derived_name(orgs[0], 'mch', '_ik'))
 
     def make_ik_mch_stretch_bone(self, orgs):
         name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'mch', '_ik_stretch'))
@@ -498,12 +532,24 @@ class BaseLimbRig(BaseRig):
 
     @stage.parent_bones
     def parent_ik_mch_chain(self):
+        if self.use_mch_ik_base:
+            self.set_bone_parent(self.bones.mch.ik_base, self.bones.ctrl.ik_base, inherit_scale='AVERAGE')
         self.set_bone_parent(self.bones.mch.ik_stretch, self.bones.mch.follow)
         self.set_bone_parent(self.bones.mch.ik_target, self.get_ik_input_bone())
-        self.set_bone_parent(self.bones.mch.ik_end, self.bones.ctrl.ik_base)
+        self.set_bone_parent(self.bones.mch.ik_end, self.get_ik_chain_base())
 
     @stage.configure_bones
     def configure_ik_mch_chain(self):
+        bone = self.get_bone(self.get_ik_chain_base())
+        bone.ik_stretch = 0.1
+
+        bone = self.get_bone(self.bones.mch.ik_end)
+        bone.ik_stretch = 0.1
+        bone.lock_ik_x = bone.lock_ik_y = bone.lock_ik_z = True
+        setattr(bone, 'lock_ik_' + self.main_axis, False)
+
+    @stage.configure_bones
+    def configure_ik_mch_panel(self):
         ctrl = self.bones.ctrl
         panel = self.script.panel_with_selected_check(self, ctrl.flatten())
 
@@ -526,32 +572,34 @@ class BaseLimbRig(BaseRig):
     def add_global_buttons(self, panel, rig_name):
         ctrl = self.bones.ctrl
         ik_chain = self.get_ik_output_chain()
+        fk_chain = ctrl.fk[0:len(ik_chain)]
 
         add_generic_snap_fk_to_ik(
             panel,
-            fk_bones=self.bones.ctrl.fk[0:len(ik_chain)],
-            ik_bones=ik_chain,
+            fk_bones=fk_chain, ik_bones=ik_chain,
             ik_ctrl_bones=self.get_all_ik_controls(),
             rig_name=rig_name
         )
 
+        ik_chain, fk_chain = self.get_ik_fk_position_chains()
+
         add_limb_snap_ik_to_fk(
             panel,
             master=ctrl.master,
-            fk_bones=self.bones.ctrl.fk, ik_bones=ik_chain,
-            ik_ctrl_bones=[ctrl.ik_base, ctrl.ik, ctrl.ik_pole],
+            fk_bones=fk_chain, ik_bones=ik_chain,
+            ik_ctrl_bones=self.get_ik_control_chain(),
             ik_extra_ctrls=self.get_extra_ik_controls(),
             rig_name=rig_name
         )
 
     def add_ik_only_buttons(self, panel, rig_name):
         ctrl = self.bones.ctrl
-        ik_chain = self.get_ik_output_chain()
+        ik_chain, fk_chain = self.get_ik_fk_position_chains()
 
         add_limb_toggle_pole(
             panel, master=ctrl.master,
             ik_bones=ik_chain,
-            ik_ctrl_bones=[ctrl.ik_base, ctrl.ik, ctrl.ik_pole],
+            ik_ctrl_bones=self.get_ik_control_chain(),
             ik_extra_ctrls=self.get_extra_ik_controls(),
         )
 
@@ -560,35 +608,35 @@ class BaseLimbRig(BaseRig):
         mch = self.bones.mch
         input_bone = self.get_ik_input_bone()
 
-        self.rig_ik_mch_stretch_bone(mch.ik_stretch, input_bone)
-        self.rig_ik_mch_target_bone(mch.ik_target, mch.ik_stretch, input_bone)
+        self.rig_ik_mch_stretch_bones(mch.ik_target, mch.ik_stretch, input_bone, self.ik_input_head_tail, 2)
         self.rig_ik_mch_end_bone(mch.ik_end, mch.ik_target, self.bones.ctrl.ik_pole)
 
-    def rig_ik_mch_stretch_bone(self, mch_stretch, input_bone):
-        self.make_constraint(mch_stretch, 'STRETCH_TO', input_bone, head_tail=self.ik_input_head_tail, keep_axis='SWING_Y')
+    def rig_ik_mch_stretch_bones(self, mch_target, mch_stretch, input_bone, head_tail, org_count, bias=1.035):
+        # Compute increase in length to fully straighten
+        orgs = self.bones.org.main[0:org_count]
+        len_cur = (self.get_bone(orgs[-1]).tail - self.get_bone(orgs[0]).head).length
+        len_full = sum(self.get_bone(org).length for org in orgs)
+        len_scale = len_full / len_cur
 
-        con = self.make_constraint(mch_stretch, 'LIMIT_SCALE', min_y=0.0, max_y=1.05, owner_space='LOCAL')
+        # Limited stretch on the stretch bone
+        self.make_constraint(mch_stretch, 'STRETCH_TO', input_bone, head_tail=head_tail, keep_axis='SWING_Y')
+
+        con = self.make_constraint(mch_stretch, 'LIMIT_SCALE', min_y=0.0, max_y=len_scale*bias, owner_space='LOCAL')
 
         self.make_driver(con, "influence", variables=[(self.prop_bone, 'IK_Stretch')], polynomial=[1.0, -1.0])
 
-    def rig_ik_mch_target_bone(self, mch_target, mch_stretch, input_bone):
+        # Snap the target to the end of the stretch bone
         self.make_constraint(mch_target, 'COPY_LOCATION', mch_stretch, head_tail=1.0)
 
-    def rig_ik_mch_end_bone(self, mch_ik, mch_target, ctrl_pole):
-        bone = self.get_bone(mch_ik)
-        bone.ik_stretch = 0.1
-
-        bone.lock_ik_x = bone.lock_ik_y = bone.lock_ik_z = True
-        setattr(bone, 'lock_ik_' + self.main_axis, False)
-
+    def rig_ik_mch_end_bone(self, mch_ik, mch_target, ctrl_pole, chain=2):
         con = self.make_constraint(
-            mch_ik, 'IK', mch_target, chain_count=2,
+            mch_ik, 'IK', mch_target, chain_count=chain,
         )
 
         self.make_driver(con, "mute", variables=[(self.prop_bone, 'pole_vector')], polynomial=[0.0, 1.0])
 
         con_pole = self.make_constraint(
-            mch_ik, 'IK', mch_target, chain_count=2,
+            mch_ik, 'IK', mch_target, chain_count=chain,
             pole_target=self.obj, pole_subtarget=ctrl_pole, pole_angle=self.pole_angle,
         )
 
@@ -901,26 +949,32 @@ class RigifyLimbIk2FkBase:
         if use_pole:
             match_pole_target(
                 context.view_layer,
-                ik_bones[0], ik_bones[1], ctrl_bones[2], matrices[0],
+                ik_bones[0], ik_bones[1], ctrl_bones[1], matrices[0],
                 (ik_bones[0].length + ik_bones[1].length)
             )
 
         else:
-            correct_rotation(context.view_layer, ctrl_bones[0], matrices[0])
+            correct_rotation(context.view_layer, ik_bones[0], matrices[0], ctrl_ik=ctrl_bones[0])
+
+    def assign_middle_controls(self, context, obj, matrices, ik_bones, ctrl_bones, *, lock=False, keyflags=None):
+        for mat, ik, ctrl in reversed(list(zip(matrices[2:-1], ik_bones[2:-1], ctrl_bones[2:-1]))):
+            ctrl.bone.use_inherit_rotation = not lock
+            ctrl.bone.inherit_scale = 'NONE' if lock else 'FULL'
+            context.view_layer.update()
+            mat = convert_pose_matrix_via_rest_delta(mat, ik, ctrl)
+            set_transform_from_matrix(obj, ctrl.name, mat, keyflags=keyflags)
 
     def apply_frame_state(self, context, obj, matrices):
         ik_bones = [ obj.pose.bones[k] for k in self.ik_bone_list ]
         ctrl_bones = [ obj.pose.bones[k] for k in self.ctrl_bone_list ]
 
-        use_pole = len(ctrl_bones) > 2 and self.get_use_pole(obj)
+        use_pole = self.get_use_pole(obj)
 
         # Set the end control position
-        tgt_matrix = ik_bones[2].bone.matrix_local
-        ctrl_matrix = ctrl_bones[1].bone.matrix_local
-        endmat = matrices[2] @ tgt_matrix.inverted() @ ctrl_matrix
+        endmat = convert_pose_matrix_via_rest_delta(matrices[-1], ik_bones[-1], ctrl_bones[-1])
 
         set_transform_from_matrix(
-            obj, self.ctrl_bone_list[1], endmat, keyflags=self.keyflags
+            obj, self.ctrl_bone_list[-1], endmat, keyflags=self.keyflags
         )
 
         # Remove foot heel transform, if present
@@ -937,15 +991,22 @@ class RigifyLimbIk2FkBase:
             no_scale=True, no_rot=use_pole,
         )
 
+        # Lock middle control transforms (first pass)
+        self.assign_middle_controls(context, obj, matrices, ik_bones, ctrl_bones, lock=True)
+
+        # Adjust the base bone state
         self.compute_base_rotation(context, ik_bones, ctrl_bones, matrices, use_pole)
 
-        correct_scale(context.view_layer, ctrl_bones[0], matrices[0])
+        correct_scale(context.view_layer, ik_bones[0], matrices[0], ctrl_ik=ctrl_bones[0])
+
+        # Assign middle control transforms (final pass)
+        self.assign_middle_controls(context, obj, matrices, ik_bones, ctrl_bones, keyflags=self.keyflags)
 
         # Keyframe controls
         if self.keyflags is not None:
             if use_pole:
                 keyframe_transform_properties(
-                    obj, self.ctrl_bone_list[2], self.keyflags,
+                    obj, self.ctrl_bone_list[1], self.keyflags,
                     no_rot=True, no_scale=True,
                 )
 
@@ -1015,10 +1076,16 @@ class RigifyLimbTogglePoleBase(RigifyLimbIk2FkBase):
             keyflags=self.keyflags_switch
         )
 
+        # Lock middle control transforms
+        self.assign_middle_controls(context, obj, matrices, ik_bones, ctrl_bones, lock=True)
+
         # Reset the base bone rotation
         set_pose_rotation(ctrl_bones[0], Matrix.Identity(4))
 
         self.compute_base_rotation(context, ik_bones, ctrl_bones, matrices, self.use_pole)
+
+        # Assign middle control transforms (final pass)
+        self.assign_middle_controls(context, obj, matrices, ik_bones, ctrl_bones, keyflags=self.keyflags)
 
         # Keyframe controls
         if self.keyflags is not None:

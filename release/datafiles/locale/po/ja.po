@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -28664,6 +28664,10 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Fカーブでキーフレームを定義する2 つのハンドルを持つBezier カーブポイント"
 
 
+msgid "Coordinates of the control point. Note: Changing this value also updates the handles similar to using the graph editor transform operator"
+msgstr "制御点の座標。注意：この値を変更すると、グラフエディターのトランスフォームオペレーターの使用と同様に、ハンドルも更新されます"
+
+
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "ここと次のキーフレームの区間のどちらの端にイージング補間を適用するか"
 
@@ -31957,7 +31961,7 @@ msgstr "ローカル X または Y、Z 軸方向に、オブジェクト原点�
 
 
 msgid "Mesh to Volume"
-msgstr "ボリューム変換"
+msgstr "メッシュのボリューム化"
 
 
 msgid "Multiresolution"
@@ -32649,7 +32653,7 @@ msgstr "すべての演算対象メッシュ間の共通部分を維持します
 
 
 msgid "Union"
-msgstr "統合"
+msgstr "合成"
 
 
 msgid "Combine meshes in an additive way"
@@ -33925,7 +33929,7 @@ msgstr "速度ベクトルの長さをコントロールし、時間の調整に
 
 
 msgid "Mesh to Volume Modifier"
-msgstr "ボリューム変換モディファイアー"
+msgstr "メッシュのボリューム化モディファイアー"
 
 
 msgid "Density of the new volume"
@@ -37751,14 +37755,6 @@ msgstr "このNLAトラック上のNLAストリップ"
 
 msgid "Collection of NLA Tracks"
 msgstr "NLAトラックの集合"
-
-
-msgid "Active Constraint"
-msgstr "アクティブコンストレイント"
-
-
-msgid "Active Object constraint"
-msgstr "アクティブオブジェクトコンストレイント"
 
 
 msgid "Node in a node tree"
@@ -41765,6 +41761,14 @@ msgstr "オブジェクトコンストレイント"
 
 msgid "Collection of object constraints"
 msgstr "オブジェクトコンストレイントの集合"
+
+
+msgid "Active Constraint"
+msgstr "アクティブコンストレイント"
+
+
+msgid "Active Object constraint"
+msgstr "アクティブオブジェクトコンストレイント"
 
 
 msgid "Object cast shadows in the 3d viewport"

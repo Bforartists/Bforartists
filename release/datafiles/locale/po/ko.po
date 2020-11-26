@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -33889,14 +33889,6 @@ msgid "Collection of NLA Tracks"
 msgstr "NLA 트랙의 컬렉션"
 
 
-msgid "Active Constraint"
-msgstr "활성 제약"
-
-
-msgid "Active Object constraint"
-msgstr "활성 오브젝트 제약"
-
-
 msgid "Node in a node tree"
 msgstr "노드 트리에서 노드"
 
@@ -37509,6 +37501,14 @@ msgstr "오브젝트 제약"
 
 msgid "Collection of object constraints"
 msgstr "오브젝트 제약의 컬렉션"
+
+
+msgid "Active Constraint"
+msgstr "활성 제약"
+
+
+msgid "Active Object constraint"
+msgstr "활성 오브젝트 제약"
 
 
 msgid "Object cast shadows in the 3d viewport"

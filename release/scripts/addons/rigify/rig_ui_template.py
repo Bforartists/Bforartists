@@ -125,6 +125,11 @@ def get_pose_matrix_in_other_space(mat, pose_bone):
     return pose_bone.id_data.convert_space(matrix=mat, pose_bone=pose_bone, from_space='POSE', to_space='LOCAL')
 
 
+def convert_pose_matrix_via_rest_delta(mat, from_bone, to_bone):
+    """Convert pose of one bone to another bone, preserving the rest pose difference between them."""
+    return mat @ from_bone.bone.matrix_local.inverted() @ to_bone.bone.matrix_local
+
+
 def get_local_pose_matrix(pose_bone):
     """ Returns the local transform matrix of the given pose bone.
     """
@@ -193,39 +198,41 @@ def match_pose_scale(pose_bone, target_bone):
 ## IK/FK snapping functions ##
 ##############################
 
-def correct_rotation(view_layer, bone_ik, target_matrix):
+def correct_rotation(view_layer, bone_ik, target_matrix, *, ctrl_ik=None):
     """ Corrects the ik rotation in ik2fk snapping functions
     """
 
     axis = target_matrix.to_3x3().col[1].normalized()
+    ctrl_ik = ctrl_ik or bone_ik
 
     def distance(angle):
         # Rotate the bone and return the actual angle between bones
-        bone_ik.rotation_euler[1] = angle
+        ctrl_ik.rotation_euler[1] = angle
         view_layer.update()
 
         return -(bone_ik.vector.normalized().dot(axis))
 
-    if bone_ik.rotation_mode in {'QUATERNION', 'AXIS_ANGLE'}:
-        bone_ik.rotation_mode = 'ZXY'
+    if ctrl_ik.rotation_mode in {'QUATERNION', 'AXIS_ANGLE'}:
+        ctrl_ik.rotation_mode = 'ZXY'
 
-    start_angle = bone_ik.rotation_euler[1]
+    start_angle = ctrl_ik.rotation_euler[1]
 
     alfarange = find_min_range(distance, start_angle)
     alfamin = ternarySearch(distance, alfarange[0], alfarange[1], pi / 180)
 
-    bone_ik.rotation_euler[1] = alfamin
+    ctrl_ik.rotation_euler[1] = alfamin
     view_layer.update()
 
 
-def correct_scale(view_layer, bone_ik, target_matrix):
+def correct_scale(view_layer, bone_ik, target_matrix, *, ctrl_ik=None):
     """ Correct the scale of the base IK bone. """
     input_scale = target_matrix.to_scale()
+    ctrl_ik = ctrl_ik or bone_ik
 
     for i in range(3):
         cur_scale = bone_ik.matrix.to_scale()
 
-        bone_ik.scale = [
+        ctrl_ik.scale = [
             v * i / c for v, i, c in zip(bone_ik.scale, input_scale, cur_scale)
         ]
 
@@ -456,8 +463,8 @@ def fk2ik_leg(obj, fk, ik):
         view_layer.update()
 
         # Foot position
-        mat = mfoot.bone.matrix_local.inverted() @ foot.bone.matrix_local
-        footmat = get_pose_matrix_in_other_space(mfooti.matrix, foot) @ mat
+        footmat = get_pose_matrix_in_other_space(mfooti.matrix, foot)
+        footmat = convert_pose_matrix_via_rest_delta(footmat, mfoot, foot)
         set_pose_rotation(foot, footmat)
         set_pose_scale(foot, footmat)
         view_layer.update()
@@ -475,8 +482,8 @@ def fk2ik_leg(obj, fk, ik):
         view_layer.update()
 
         # Foot position
-        mat = mfoot.bone.matrix_local.inverted() @ foot.bone.matrix_local
-        footmat = get_pose_matrix_in_other_space(mfooti.matrix, foot) @ mat
+        footmat = get_pose_matrix_in_other_space(mfooti.matrix, foot)
+        footmat = convert_pose_matrix_via_rest_delta(footmat, mfoot, foot)
         set_pose_rotation(foot, footmat)
         set_pose_scale(foot, footmat)
         view_layer.update()
@@ -516,8 +523,8 @@ def ik2fk_leg(obj, fk, ik):
         view_layer.update()
 
         # Foot position
-        mat = mfooti.bone.matrix_local.inverted() @ footi.bone.matrix_local
-        footmat = get_pose_matrix_in_other_space(foot.matrix, footi) @ mat
+        footmat = get_pose_matrix_in_other_space(foot.matrix, footi)
+        footmat = convert_pose_matrix_via_rest_delta(footmat, mfooti, footi)
         set_pose_translation(footi, footmat)
         set_pose_rotation(footi, footmat)
         set_pose_scale(footi, footmat)
@@ -544,8 +551,8 @@ def ik2fk_leg(obj, fk, ik):
         view_layer.update()
 
         # Foot position
-        mat = mfooti.bone.matrix_local.inverted() @ footi.bone.matrix_local
-        footmat = get_pose_matrix_in_other_space(mfoot.matrix, footi) @ mat
+        footmat = get_pose_matrix_in_other_space(mfoot.matrix, footi)
+        footmat = convert_pose_matrix_via_rest_delta(footmat, mfooti, footi)
         set_pose_translation(footi, footmat)
         set_pose_rotation(footi, footmat)
         set_pose_scale(footi, footmat)

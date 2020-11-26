@@ -27,6 +27,8 @@ from ...base_generate import SubstitutionRig
 
 from itertools import repeat
 
+'''
+Due to T80764, bone name handling for 'limbs.raw_copy' was hard-coded in generate.py
 
 class Rig(SubstitutionRig):
     """ A raw copy rig, preserving the metarig bone as is, without the ORG prefix. """
@@ -37,7 +39,7 @@ class Rig(SubstitutionRig):
         new_name = self.generator.rename_org_bone(self.base_bone, new_name)
 
         return [ self.instantiate_rig(InstanceRig, new_name) ]
-
+'''
 
 class RelinkConstraintsMixin:
     """ Utilities for constraint relinking. """
@@ -119,8 +121,10 @@ class RelinkConstraintsMixin:
             r = layout.row()
             r.prop(params, "parent_bone")
 
+            layout.label(text="Constraint names have special meanings.", icon='ERROR')
 
-class InstanceRig(BaseRig, RelinkConstraintsMixin):
+
+class Rig(BaseRig, RelinkConstraintsMixin):
     def find_org_bones(self, pose_bone):
         return pose_bone.name
 
@@ -146,8 +150,8 @@ class InstanceRig(BaseRig, RelinkConstraintsMixin):
         self.add_relink_constraints_ui(layout, params)
 
 
-add_parameters = InstanceRig.add_parameters
-parameters_ui = InstanceRig.parameters_ui
+#add_parameters = InstanceRig.add_parameters
+#parameters_ui = InstanceRig.parameters_ui
 
 
 def create_sample(obj):
