@@ -184,7 +184,6 @@ class NLA_PT_view_view_options(Panel):
 
         st = context.space_data
 
-        layout.separator()
 
         layout.prop(st, "show_markers")
         layout.prop(st, "show_local_markers")
