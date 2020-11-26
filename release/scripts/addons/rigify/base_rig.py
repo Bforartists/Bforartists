@@ -119,6 +119,13 @@ class GenerateCallbackHost(BaseStagedClass, define_stages=True):
         """
         pass
 
+    def preapply_bones(self):
+        """
+        Read bone matrices for applying to edit mode.
+        Called in Object mode. May not do Edit mode operations.
+        """
+        pass
+
     def apply_bones(self):
         """
         Can be used to apply some constraints to rest pose, and for final parenting.

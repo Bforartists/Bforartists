@@ -30,6 +30,7 @@ from .utils.widgets import WGT_PREFIX
 from .utils.widgets_special import create_root_widget
 from .utils.misc import gamma_correct, select_object
 from .utils.collections import ensure_widget_collection, list_layer_collections, filter_layer_collections_by_object
+from .utils.rig import get_rigify_type
 
 from . import base_generate
 from . import rig_ui_template
@@ -198,9 +199,12 @@ class Generator(base_generate.BaseGenerator):
 
         # Add the ORG_PREFIX to the original bones.
         for i in range(0, len(original_bones)):
-            new_name = make_original_name(original_bones[i])
-            obj.data.bones[original_bones[i]].name = new_name
-            original_bones[i] = new_name
+            bone = obj.pose.bones[original_bones[i]]
+
+            # This rig type is special in that it preserves the name of the bone.
+            if get_rigify_type(bone) != 'basic.raw_copy':
+                bone.name = make_original_name(original_bones[i])
+                original_bones[i] = bone.name
 
         self.original_bones = original_bones
 
@@ -427,6 +431,13 @@ class Generator(base_generate.BaseGenerator):
         self.invoke_configure_bones()
 
         t.tick("Configure bones: ")
+
+        #------------------------------------------
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+        self.invoke_preapply_bones()
+
+        t.tick("Preapply bones: ")
 
         #------------------------------------------
         bpy.ops.object.mode_set(mode='EDIT')

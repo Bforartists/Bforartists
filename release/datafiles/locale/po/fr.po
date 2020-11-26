@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -33627,14 +33627,6 @@ msgid "Collection of NLA Tracks"
 msgstr "Collection de pistes NLA"
 
 
-msgid "Active Constraint"
-msgstr "Contrainte active"
-
-
-msgid "Active Object constraint"
-msgstr "Contrainte d’objet active"
-
-
 msgid "Node in a node tree"
 msgstr "Nœuds dans une arborescence de nœuds"
 
@@ -36731,6 +36723,14 @@ msgstr "Contraintes objet"
 
 msgid "Collection of object constraints"
 msgstr "Collection de contraintes d’objet"
+
+
+msgid "Active Constraint"
+msgstr "Contrainte active"
+
+
+msgid "Active Object constraint"
+msgstr "Contrainte d’objet active"
 
 
 msgid "Collection of object grease pencil modifiers"
