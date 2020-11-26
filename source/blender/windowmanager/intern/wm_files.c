@@ -2810,7 +2810,7 @@ void WM_OT_save_as_mainfile(wmOperatorType *ot)
 
   ot->name = "Save As";
   ot->idname = "WM_OT_save_as_mainfile";
-  ot->description = "Save As saves the current file in the desired location\nSave Copy saves a copy of the current file in the desired location";
+  ot->description = "Save As saves the current file in the desired location";
 
   ot->invoke = wm_save_as_mainfile_invoke;
   ot->exec = wm_save_as_mainfile_exec;
