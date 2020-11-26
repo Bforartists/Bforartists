@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -37456,14 +37456,6 @@ msgid "Collection of NLA Tracks"
 msgstr "NLA 轨道集合"
 
 
-msgid "Active Constraint"
-msgstr "活动约束"
-
-
-msgid "Active Object constraint"
-msgstr "活动物体约束"
-
-
 msgid "Node in a node tree"
 msgstr "节点树中的节点"
 
@@ -41464,6 +41456,14 @@ msgstr "物体约束"
 
 msgid "Collection of object constraints"
 msgstr "物体约束集合"
+
+
+msgid "Active Constraint"
+msgstr "活动约束"
+
+
+msgid "Active Object constraint"
+msgstr "活动物体约束"
 
 
 msgid "Object cast shadows in the 3d viewport"

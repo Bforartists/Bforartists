@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'75af3165ca6b')\n"
+"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -31796,14 +31796,6 @@ msgid "Collection of NLA Tracks"
 msgstr "Колекція доріжок НЛА"
 
 
-msgid "Active Constraint"
-msgstr "Активний примус"
-
-
-msgid "Active Object constraint"
-msgstr "Активний примус об'єкта"
-
-
 msgid "Node in a node tree"
 msgstr "Вузол у дереві вузлів"
 
@@ -35024,6 +35016,14 @@ msgstr "Примуси об'єктів"
 
 msgid "Collection of object constraints"
 msgstr "Колекція примусів об'єктів"
+
+
+msgid "Active Constraint"
+msgstr "Активний примус"
+
+
+msgid "Active Object constraint"
+msgstr "Активний примус об'єкта"
 
 
 msgid "Object cast shadows in the 3d viewport"

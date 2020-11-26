@@ -45,6 +45,7 @@ import ntpath
 import re
 import shutil
 import pathlib
+import stat
 
 
 import time
@@ -59,7 +60,7 @@ from bpy.props import (
         StringProperty,
         PointerProperty,
         )
-
+only_one_time = True
 global_exchange_folder = ''
 foundExchangeFolder = True
 saved_exchange_folder = ''
@@ -72,6 +73,11 @@ def every_3_seconds():
     global global_exchange_folder
     global liveUpdate
     global mTime
+    global only_one_time
+
+    if(only_one_time):
+        only_one_time = False
+        folders.loadExchangeFolder()
     
 
     try:
@@ -87,9 +93,6 @@ def every_3_seconds():
                     tex.updatetextures(objekti)
 
             mTime = os.path.getmtime(Export_folder)
-        
-        if (os.path.normpath(global_exchange_folder) != os.path.normpath(coat3D.exchangeFolder) and coat3D.exchangeFolder != ''):
-            folders.updateExchangeFile(coat3D.exchangeFolder)
 
     except:
         pass
@@ -255,6 +258,32 @@ class SCENE_OT_getback(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SCENE_OT_savenew(bpy.types.Operator):
+    bl_idname = "save_new_export.pilgway_3d_coat"
+    bl_label = "Export your custom property"
+    bl_description = "Export your custom property"
+    bl_options = {'UNDO'}
+    
+    def invoke(self, context, event):
+        
+        coat3D = bpy.context.scene.coat3D
+        platform = os.sys.platform
+    
+        if(platform == 'win32' or platform == 'darwin'):
+            exchangeFile = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender' + os.sep + 'Exchange_folder.txt'
+        else:
+            exchangeFile = os.path.expanduser("~") + os.sep + '3DC2Blender' + os.sep + 'Exchange_folder.txt'
+        if(os.path.isfile(exchangeFile)):
+            folderPath = ''
+        
+        if(os.path.isfile(exchangeFile)):
+            file = open(exchangeFile, "w")
+            file.write("%s"%(coat3D.exchangeFolder))
+            file.close()        
+
+        return {'FINISHED'}
+
+
 class SCENE_OT_folder(bpy.types.Operator):
     bl_idname = "update_exchange_folder.pilgway_3d_coat"
     bl_label = "Export your custom property"
@@ -266,8 +295,7 @@ class SCENE_OT_folder(bpy.types.Operator):
         coat3D = bpy.context.scene.coat3D
         if(os.path.isdir(coat3D.exchangeFolder)):
             foundExchangeFolder= True
-        else:
-            foundExchangeFolder = False
+            folders.updateExchangeFile(coat3D.exchangeFolder)
 
         return {'FINISHED'}
 
@@ -1497,6 +1525,7 @@ class SCENE_PT_Settings_Folders(ObjectButtonsPanel, bpy.types.Panel):
 
         col = flow.column()
         col.prop(coat3D, "exchangeFolder", text="Exchange folder")
+        col.operator("save_new_export.pilgway_3d_coat", text="Save new Exchange folder")
 
         col = flow.column()
         col.prop(coat3D, "defaultfolder", text="Object/Texture folder")
@@ -1918,6 +1947,7 @@ classes = (
     SCENE_OT_opencoat,
     SCENE_OT_export,
     SCENE_OT_getback,
+    SCENE_OT_savenew,
     SCENE_OT_delete_material_nodes,
     SCENE_OT_delete_object_nodes,
     SCENE_OT_delete_collection_nodes,

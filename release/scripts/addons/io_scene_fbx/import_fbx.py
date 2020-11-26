@@ -1079,6 +1079,12 @@ def blen_read_geom_layer_color(fbx_obj, mesh):
 
             # Always init our new layers with full white opaque color.
             color_lay = mesh.vertex_colors.new(name=fbx_layer_name, do_init=False)
+
+            if color_lay is None:
+                print("Failed to add {%r %r} vertex color layer to %r (probably too many of them?)"
+                      "" % (layer_id, fbx_layer_name, mesh.name))
+                continue
+
             blen_data = color_lay.data
 
             # some valid files omit this data
