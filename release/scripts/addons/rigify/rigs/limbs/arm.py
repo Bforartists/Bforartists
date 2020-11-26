@@ -37,10 +37,9 @@ from .limb_rigs import BaseLimbRig
 class Rig(BaseLimbRig):
     """Human arm rig."""
 
-    def initialize(self):
-        if len(self.bones.org.main) != 3:
-            self.raise_error("Input to rig type must be a chain of 3 bones.")
+    min_valid_orgs = max_valid_orgs = 3
 
+    def initialize(self):
         super().initialize()
 
         self.make_wrist_pivot = self.params.make_ik_wrist_pivot

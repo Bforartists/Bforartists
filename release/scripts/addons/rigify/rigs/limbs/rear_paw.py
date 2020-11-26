@@ -1,300 +1,194 @@
+#====================== BEGIN GPL LICENSE BLOCK ======================
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+#======================= END GPL LICENSE BLOCK ========================
+
+# <pep8 compliant>
+
 import bpy
 
-from .paw import Rig as pawRig
+from ...utils.bones import align_bone_roll
+from ...utils.naming import make_derived_name
+from ...utils.misc import map_list
 
+from itertools import count
 
-IMPLEMENTATION = True   # Include and set True if Rig is just an implementation for a wrapper class
-                        # add_parameters and parameters_ui are unused for implementation classes
+from ...base_rig import stage
+
+from .limb_rigs import BaseLimbRig
+from .paw import Rig as pawRig, create_sample as create_paw_sample
 
 
 class Rig(pawRig):
-    pass
+    """Rear paw rig with special IK automation."""
+
+    ####################################################
+    # EXTRA BONES
+    #
+    # mch:
+    #   ik2_stretch, ik2_target
+    #     Three bone IK stretch limit
+    #   ik2_chain[2]
+    #     Second IK system (pre-driving thigh and ik3)
+    #   ik3_chain[2]
+    #     Third IK system (pre-driving heel)
+    #
+    ####################################################
+
+    ####################################################
+    # IK controls
+
+    def get_middle_ik_controls(self):
+        return [self.bones.ctrl.heel]
+
+    def get_ik_fk_position_chains(self):
+        ik_chain, fk_chain = super().get_ik_fk_position_chains()
+        if not self.use_heel2:
+            return [*ik_chain, ik_chain[-1]], [*fk_chain, fk_chain[-1]]
+        return ik_chain, fk_chain
+
+    def get_extra_ik_controls(self):
+        extra = [self.bones.ctrl.heel2] if self.use_heel2 else []
+        return BaseLimbRig.get_extra_ik_controls(self) + extra
+
+    def get_ik_pole_parents(self):
+        return [(self.bones.mch.ik2_target, self.bones.ctrl.ik)]
+
+
+    ####################################################
+    # Heel control
+
+    @stage.parent_bones
+    def parent_heel_control_bone(self):
+        self.set_bone_parent(self.bones.ctrl.heel, self.bones.mch.ik3_chain[-1])
+
+
+    ####################################################
+    # Second IK system (pre-driving thigh)
+
+    use_mch_ik_base = True
+
+    def get_ik2_input_bone(self):
+        return self.bones.ctrl.heel2 if self.use_heel2 else self.bones.mch.toe_socket
+
+    @stage.generate_bones
+    def make_ik2_mch_stretch(self):
+        orgs = self.bones.org.main
+
+        self.bones.mch.ik2_stretch = self.make_ik2_mch_stretch_bone(orgs)
+        self.bones.mch.ik2_target = self.make_ik2_mch_target_bone(orgs)
+
+    def make_ik2_mch_stretch_bone(self, orgs):
+        name = self.copy_bone(orgs[0], make_derived_name(orgs[0], 'mch', '_ik2_stretch'))
+        self.get_bone(name).tail = self.get_bone(orgs[3]).head
+        return name
+
+    def make_ik2_mch_target_bone(self, orgs):
+        return self.copy_bone(orgs[3], make_derived_name(orgs[0], 'mch', '_ik2_target'), scale=1/2)
+
+    @stage.generate_bones
+    def make_ik2_mch_chain(self):
+        orgs = self.bones.org.main
+        chain = map_list(self.make_ik2_mch_bone, count(0), orgs[0:2])
+        self.bones.mch.ik2_chain = chain
+
+        org_bones = map_list(self.get_bone, orgs)
+        chain_bones = map_list(self.get_bone, chain)
+
+        # Extend the base IK control (used in the ik2 chain) with the projected length of org2
+        chain_bones[0].length += org_bones[2].vector.dot(chain_bones[0].vector.normalized())
+        chain_bones[1].head = chain_bones[0].tail
+        chain_bones[1].tail = org_bones[2].tail
+        align_bone_roll(self.obj, chain[1], orgs[1])
+
+    def make_ik2_mch_bone(self, i, org):
+        return self.copy_bone(org, make_derived_name(org, 'mch', '_ik2'))
+
+    @stage.parent_bones
+    def parent_ik2_mch_chain(self):
+        mch = self.bones.mch
+        self.set_bone_parent(mch.ik2_stretch, mch.follow)
+        self.set_bone_parent(mch.ik2_target, self.get_ik2_input_bone())
+        self.set_bone_parent(mch.ik2_chain[0], self.bones.ctrl.ik_base, inherit_scale='AVERAGE')
+        self.parent_bone_chain(mch.ik2_chain, use_connect=True)
+
+    @stage.configure_bones
+    def configure_ik2_mch_chain(self):
+        for i, mch in enumerate(self.bones.mch.ik2_chain):
+            self.configure_ik2_mch_bone(i, mch)
+
+    def configure_ik2_mch_bone(self, i, mch):
+        bone = self.get_bone(mch)
+        bone.ik_stretch = 0.1
+        if i == 1:
+            bone.lock_ik_x = bone.lock_ik_y = bone.lock_ik_z = True
+            setattr(bone, 'lock_ik_' + self.main_axis, False)
+
+    @stage.rig_bones
+    def rig_ik2_mch_chain(self):
+        mch = self.bones.mch
+        input_bone = self.get_ik2_input_bone()
+        head_tail = 1 if self.use_heel2 else 0
+
+        self.rig_ik_mch_stretch_bones(mch.ik2_target, mch.ik2_stretch, input_bone, head_tail, 3)
+        self.rig_ik_mch_end_bone(mch.ik2_chain[-1], mch.ik2_target, self.bones.ctrl.ik_pole)
+
+
+    ####################################################
+    # Third IK system (pre-driving heel control)
+
+    @stage.generate_bones
+    def make_ik3_mch_chain(self):
+        self.bones.mch.ik3_chain = map_list(self.make_ik3_mch_bone, count(0), self.bones.org.main[1:3])
+
+    def make_ik3_mch_bone(self, i, org):
+        return self.copy_bone(org, make_derived_name(org, 'mch', '_ik3'))
+
+    @stage.parent_bones
+    def parent_ik3_mch_chain(self):
+        mch = self.bones.mch
+
+        self.set_bone_parent(mch.ik3_chain[0], mch.ik2_chain[0])
+        self.parent_bone_chain(mch.ik3_chain, use_connect=True)
+
+    @stage.configure_bones
+    def configure_ik3_mch_chain(self):
+        for i, mch in enumerate(self.bones.mch.ik3_chain):
+            self.configure_ik3_mch_bone(i, mch)
+
+    def configure_ik3_mch_bone(self, i, mch):
+        bone = self.get_bone(mch)
+        bone.ik_stretch = 0.1
+        if i == 0:
+            bone.lock_ik_x = bone.lock_ik_y = bone.lock_ik_z = True
+            setattr(bone, 'lock_ik_' + self.main_axis, False)
+
+    @stage.rig_bones
+    def rig_ik3_mch_chain(self):
+        mch = self.bones.mch
+        # Mostly cancel ik2 scaling.
+        self.make_constraint(
+            mch.ik3_chain[0], 'COPY_SCALE', self.bones.ctrl.ik_base,
+            use_make_uniform=True, influence=0.75,
+        )
+        self.make_constraint(mch.ik3_chain[-1], 'IK', mch.ik2_target, chain_count=2)
 
 
 def create_sample(obj):
-    # generated by rigify.utils.write_metarig
-    bpy.ops.object.mode_set(mode='EDIT')
-    arm = obj.data
-
-    bones = {}
-
-    bone = arm.edit_bones.new('thigh.L')
-    bone.head[:] = 0.0291, 0.1181, 0.2460
-    bone.tail[:] = 0.0293, 0.1107, 0.1682
-    bone.roll = 3.1383
-    bone.use_connect = False
-    bones['thigh.L'] = bone.name
-    bone = arm.edit_bones.new('shin.L')
-    bone.head[:] = 0.0293, 0.1107, 0.1682
-    bone.tail[:] = 0.0293, 0.1684, 0.1073
-    bone.roll = 3.1416
-    bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['thigh.L']]
-    bones['shin.L'] = bone.name
-    bone = arm.edit_bones.new('foot.L')
-    bone.head[:] = 0.0293, 0.1684, 0.1073
-    bone.tail[:] = 0.0293, 0.1530, 0.0167
-    bone.roll = 3.1416
-    bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['shin.L']]
-    bones['foot.L'] = bone.name
-    bone = arm.edit_bones.new('r_toe.L')
-    bone.head[:] = 0.0293, 0.1530, 0.0167
-    bone.tail[:] = 0.0293, 0.1224, 0.0167
-    bone.roll = 0.0000
-    bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['foot.L']]
-    bones['r_toe.L'] = bone.name
-    bone = arm.edit_bones.new('r_palm.001.L')
-    bone.head[:] = 0.0220, 0.1457, 0.0123
-    bone.tail[:] = 0.0215, 0.1401, 0.0123
-    bone.roll = 0.0014
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_toe.L']]
-    bones['r_palm.001.L'] = bone.name
-    bone = arm.edit_bones.new('r_palm.002.L')
-    bone.head[:] = 0.0297, 0.1458, 0.0123
-    bone.tail[:] = 0.0311, 0.1393, 0.0123
-    bone.roll = -0.0005
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_toe.L']]
-    bones['r_palm.002.L'] = bone.name
-    bone = arm.edit_bones.new('r_palm.003.L')
-    bone.head[:] = 0.0363, 0.1473, 0.0123
-    bone.tail[:] = 0.0376, 0.1407, 0.0123
-    bone.roll = 0.0000
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_toe.L']]
-    bones['r_palm.003.L'] = bone.name
-    bone = arm.edit_bones.new('r_palm.004.L')
-    bone.head[:] = 0.0449, 0.1501, 0.0123
-    bone.tail[:] = 0.0466, 0.1479, 0.0123
-    bone.roll = -0.0004
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_toe.L']]
-    bones['r_palm.004.L'] = bone.name
-    bone = arm.edit_bones.new('r_index.001.L')
-    bone.head[:] = 0.0215, 0.1367, 0.0087
-    bone.tail[:] = 0.0217, 0.1325, 0.0070
-    bone.roll = -0.3427
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_palm.001.L']]
-    bones['r_index.001.L'] = bone.name
-    bone = arm.edit_bones.new('r_middle.001.L')
-    bone.head[:] = 0.0311, 0.1358, 0.0117
-    bone.tail[:] = 0.0324, 0.1297, 0.0092
-    bone.roll = -1.0029
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_palm.002.L']]
-    bones['r_middle.001.L'] = bone.name
-    bone = arm.edit_bones.new('r_ring.001.L')
-    bone.head[:] = 0.0376, 0.1372, 0.0117
-    bone.tail[:] = 0.0389, 0.1311, 0.0092
-    bone.roll = -1.0029
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_palm.003.L']]
-    bones['r_ring.001.L'] = bone.name
-    bone = arm.edit_bones.new('r_pinky.001.L')
-    bone.head[:] = 0.0466, 0.1444, 0.0083
-    bone.tail[:] = 0.0476, 0.1412, 0.0074
-    bone.roll = -1.7551
-    bone.use_connect = False
-    bone.parent = arm.edit_bones[bones['r_palm.004.L']]
-    bones['r_pinky.001.L'] = bone.name
-    bone = arm.edit_bones.new('r_index.002.L')
-    bone.head[:] = 0.0217, 0.1325, 0.0070
-    bone.tail[:] = 0.0221, 0.1271, 0.0038
-    bone.roll = -0.2465
-    bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['r_index.001.L']]
-    bones['r_index.002.L'] = bone.name
-    bone = arm.edit_bones.new('r_middle.002.L')
-    bone.head[:] = 0.0324, 0.1297, 0.0092
-    bone.tail[:] = 0.0343, 0.1210, 0.0039
-    bone.roll = -0.7479
-    bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['r_middle.001.L']]
-    bones['r_middle.002.L'] = bone.name
-    bone = arm.edit_bones.new('r_ring.002.L')
-    bone.head[:] = 0.0389, 0.1311, 0.0092
-    bone.tail[:] = 0.0407, 0.1229, 0.0042
-    bone.roll = -0.7479
-    bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['r_ring.001.L']]
-    bones['r_ring.002.L'] = bone.name
-    bone = arm.edit_bones.new('r_pinky.002.L')
-    bone.head[:] = 0.0476, 0.1412, 0.0074
-    bone.tail[:] = 0.0494, 0.1351, 0.0032
-    bone.roll = -0.8965
-    bone.use_connect = True
-    bone.parent = arm.edit_bones[bones['r_pinky.001.L']]
-    bones['r_pinky.002.L'] = bone.name
-
-    bpy.ops.object.mode_set(mode='OBJECT')
+    bones = create_paw_sample(obj)
     pbone = obj.pose.bones[bones['thigh.L']]
-    pbone.rigify_type = 'limbs.paw'
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    try:
-        pbone.rigify_parameters.limb_type = "paw"
-    except AttributeError:
-        pass
-    try:
-        pbone.rigify_parameters.fk_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    try:
-        pbone.rigify_parameters.segments = 2
-    except AttributeError:
-        pass
-    pbone = obj.pose.bones[bones['shin.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['foot.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_toe.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_palm.001.L']]
-    pbone.rigify_type = 'limbs.super_palm'
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_palm.002.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_palm.003.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_palm.004.L']]
-    pbone.rigify_type = 'limbs.super_palm'
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_index.001.L']]
-    pbone.rigify_type = 'limbs.simple_tentacle'
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    pbone = obj.pose.bones[bones['r_middle.001.L']]
-    pbone.rigify_type = 'limbs.simple_tentacle'
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    pbone = obj.pose.bones[bones['r_ring.001.L']]
-    pbone.rigify_type = 'limbs.simple_tentacle'
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    pbone = obj.pose.bones[bones['r_pinky.001.L']]
-    pbone.rigify_type = 'limbs.simple_tentacle'
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    try:
-        pbone.rigify_parameters.tweak_layers = [False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-    except AttributeError:
-        pass
-    pbone = obj.pose.bones[bones['r_index.002.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_middle.002.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_ring.002.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-    pbone = obj.pose.bones[bones['r_pinky.002.L']]
-    pbone.rigify_type = ''
-    pbone.lock_location = (False, False, False)
-    pbone.lock_rotation = (False, False, False)
-    pbone.lock_rotation_w = False
-    pbone.lock_scale = (False, False, False)
-    pbone.rotation_mode = 'QUATERNION'
-
-    bpy.ops.object.mode_set(mode='EDIT')
-    for bone in arm.edit_bones:
-        bone.select = False
-        bone.select_head = False
-        bone.select_tail = False
-    for b in bones:
-        bone = arm.edit_bones[bones[b]]
-        bone.select = True
-        bone.select_head = True
-        bone.select_tail = True
-        arm.edit_bones.active = bone
-
-    for eb in arm.edit_bones:
-        if ('thigh' in eb.name) or ('shin' in eb.name) or ('foot' in eb.name) or ('toe' in eb.name):
-            eb.layers = (False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
-        else:
-            eb.layers = (False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
-    arm.layers = (False, False, False, False, False, True, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False)
-
-
-if __name__ == "__main__":
-    create_sample(bpy.context.active_object)
+    pbone.rigify_type = 'limbs.rear_paw'
+    return bones

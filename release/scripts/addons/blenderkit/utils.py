@@ -503,7 +503,8 @@ def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False
     if mat_props.automap:
         tob = bpy.data.objects[target_object]
         # only automap mesh models
-        if tob.type == 'MESH':
+        if tob.type == 'MESH' and len(tob.data.polygons)>0:
+            #check polycount for a rare case where no polys are in editmesh
             actob = bpy.context.active_object
             bpy.context.view_layer.objects.active = tob
 
