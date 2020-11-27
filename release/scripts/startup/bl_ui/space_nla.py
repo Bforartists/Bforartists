@@ -184,20 +184,18 @@ class NLA_PT_view_view_options(Panel):
 
         st = context.space_data
 
-        layout.separator()
 
-        layout.prop(st, "show_markers")
-        layout.prop(st, "show_local_markers")
+        col = layout.column(align=True)
+        col.prop(st, "show_markers")
+        col.prop(st, "show_local_markers")
+        col.separator()
 
-        layout.separator()
+        col.prop(st, "show_seconds")
+        col.prop(st, "show_locked_time")
+        col.separator()
 
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-
-        layout.separator()
-
-        layout.prop(st, "show_strip_curves")
-        layout.prop(st, "use_realtime_update")
+        col.prop(st, "show_strip_curves")
+        col.prop(st, "use_realtime_update")
 
 
 
