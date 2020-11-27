@@ -115,6 +115,10 @@ static void blo_update_defaults_screen(bScreen *screen,
       if (ELEM(region->regiontype, RGN_TYPE_UI, RGN_TYPE_TOOLS, RGN_TYPE_TOOL_PROPS)) {
         region->v2d.flag &= ~V2D_IS_INIT;
       }
+      /* bfa - Timeline/Dope sheet/NLA editors - slider covers button to call sidebar */
+      if (region->regiontype == RGN_TYPE_WINDOW && (region->v2d.scroll & V2D_SCROLL_RIGHT)) {
+        region->v2d.scroll |= V2D_SCROLL_VERTICAL_HANDLES;
+      }
     }
 
     /* Set default folder. */
