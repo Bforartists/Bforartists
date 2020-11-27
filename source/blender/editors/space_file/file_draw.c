@@ -324,7 +324,8 @@ static void file_draw_preview(uiBlock *block,
       icon_color[2] = 255;
     }
     icon_x = xco + (ex / 2.0f) - (icon_size / 2.0f);
-    icon_y = yco + (ey / 2.2f) - (icon_size * ((typeflags & FILE_TYPE_DIR) ? 0.78f : 0.75f)); /* /* bfa - changed mini icon position y from (ey / 2.0f) to (ey / 2.2f)*/
+    /* bfa - changed mini icon position y from (ey / 2.0f) to (ey / 2.2f)*/
+    icon_y = yco + (ey / 2.2f) - (icon_size * ((typeflags & FILE_TYPE_DIR) ? 0.78f : 0.75f));
     UI_icon_draw_ex(
         icon_x, icon_y, icon, icon_aspect / U.dpi_fac, icon_opacity, 0.0f, icon_color, false);
   }
