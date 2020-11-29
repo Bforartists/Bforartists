@@ -1113,6 +1113,8 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
 {
   uiBlock *block = (layout) ? uiLayoutAbsoluteBlock(layout) : NULL;
   TransformProperties *tfp = v3d_transform_props_ensure(v3d);
+  uiLayout *row, *col; /* bfa - use uiLayout when possible */
+  uiBlock *subblock;   /* bfa - helper block for UI */
 
   if (block) {
     BLI_assert(C == NULL);
@@ -1125,29 +1127,23 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
     copy_v3_v3(tfp->ob_scale_orig, ob->scale);
     copy_m4_m4(tfp->ob_obmat_orig, ob->obmat);
 
-    uiDefBut(block,
-             UI_BTYPE_LABEL,
-             0,
-             IFACE_("Dimensions:"),
-             0,
-             yi -= buth,
-             butw,
-             buth,
-             NULL,
-             0,
-             0,
-             0,
-             0,
-             "");
-    UI_block_align_begin(block);
+    row = uiLayoutRow(layout, false);                /* bfa - row = layout.row(align=false)*/
+    col = uiLayoutColumn(row, false);                /* bfa - col = row.column(align=false)*/
+    uiItemL(col, IFACE_("Dimensions X"), ICON_NONE); /* bfa - text in front of the sliders*/
+    uiItemL(col, IFACE_("Y"), ICON_NONE);
+    uiItemL(col, IFACE_("Z"), ICON_NONE);
+
+    col = uiLayoutColumn(row, true);
+    subblock = uiLayoutGetBlock(col);
+
+    UI_block_align_begin(subblock);
     const float lim = FLT_MAX;
     for (int i = 0; i < 3; i++) {
       uiBut *but;
-      const char text[3] = {'X' + i, ':', '\0'};
-      but = uiDefButF(block,
+      but = uiDefButF(subblock,
                       UI_BTYPE_NUM,
                       B_TRANSFORM_PANEL_DIMS,
-                      text,
+                      "",
                       0,
                       yi -= buth,
                       butw,
@@ -1162,7 +1158,7 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
       UI_but_number_precision_set(but, 3);
       UI_but_unit_type_set(but, PROP_UNIT_LENGTH);
     }
-    UI_block_align_end(block);
+    UI_block_align_end(subblock);
   }
   else { /* apply */
     int axis_mask = 0;
