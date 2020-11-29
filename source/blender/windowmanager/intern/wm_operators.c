@@ -1323,7 +1323,7 @@ static uiBlock *wm_block_create_redo(bContext *C, ARegion *region, void *arg_op)
 
   uiLayout *col = uiLayoutColumn(layout, false);
   uiTemplateOperatorPropertyButs(
-      C, col, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
+      C, col, op, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, UI_TEMPLATE_OP_PROPS_SHOW_TITLE);
 
   UI_block_bounds_set_popup(block, 6 * U.dpi_fac, NULL);
 
