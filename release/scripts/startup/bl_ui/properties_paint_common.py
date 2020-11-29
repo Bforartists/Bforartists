@@ -381,7 +381,7 @@ class StrokePanel(BrushPanel):
 
 
 class SmoothStrokePanel(BrushPanel):
-    bl_label = "Stabilize Stroke"
+    bl_label = ""
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -397,8 +397,10 @@ class SmoothStrokePanel(BrushPanel):
     def draw_header(self, context):
         settings = self.paint_settings(context)
         brush = settings.brush
-
-        self.layout.prop(brush, "use_smooth_stroke", text="")
+        # bfa - align props left
+        row = self.layout.row(align=True)
+        row.use_property_split = False
+        row.prop(brush, "use_smooth_stroke", text="Stabilize Stroke")
 
     def draw(self, context):
         layout = self.layout
@@ -480,8 +482,9 @@ class DisplayPanel(BrushPanel):
 
         if self.is_popover:
             row = layout.row(align=True)
-            row.prop(settings, "show_brush", text="")
-            row.label(text="Display Cursor")
+            # bfa - align props left
+            row.use_property_split=False
+            row.prop(settings, "show_brush", text="Display Cursor")
 
         col = layout.column()
         col.active = brush.brush_capabilities.has_overlay and settings.show_brush
