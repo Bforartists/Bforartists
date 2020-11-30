@@ -1189,46 +1189,128 @@ static void node_draw_basis(const bContext *C,
     UI_block_emboss_set(node->block, UI_EMBOSS);
   }
   /* group edit */
-  if (node->type == NODE_GROUP) {
-    uiBut *but;
-    iconofs -= iconbutw;
-    UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
-    but = uiDefIconBut(node->block,
-                       UI_BTYPE_BUT_TOGGLE,
-                       B_REDR,
-                       ICON_NODETREE,
-                       iconofs,
-                       rct->ymax - NODE_DY,
-                       iconbutw,
-                       UI_UNIT_Y,
-                       NULL,
-                       0,
-                       0,
-                       0,
-                       0,
-                       "");
-    UI_but_func_set(but, node_toggle_button_cb, node, (void *)"NODE_OT_group_edit");
-    UI_block_emboss_set(node->block, UI_EMBOSS);
+  int32_t icon = ICON_NONE; /* bfa - select node icon based on type */
+  /* bfa - note: node group is special the icon can be clicked,...*/
+  /* bfa - ...its code is kept intact for the sake of clarity */
+  switch (node->type) {
+    case SH_NODE_AMBIENT_OCCLUSION:
+      icon = ICON_NODE_AMBIENT_OCCLUSION;
+      break;
+    case SH_NODE_ATTRIBUTE:
+      icon = ICON_NODE_ATTRIBUTE;
+      break;
+    case SH_NODE_BEVEL:
+      icon = ICON_BEVEL;
+      break;
+    case SH_NODE_CAMERA:
+      icon = ICON_CAMERA_DATA;
+      break;
+    case SH_NODE_FRESNEL:
+      icon = ICON_NODE_FRESNEL;
+      break;
+    case SH_NODE_NEW_GEOMETRY:
+      icon = ICON_NODE_GEOMETRY;
+      break;
+    case SH_NODE_HAIR_INFO:
+      icon = ICON_NODE_HAIRINFO;
+      break;
+    case SH_NODE_LAYER_WEIGHT:
+      icon = ICON_NODE_LAYERWEIGHT;
+      break;
+    case SH_NODE_LIGHT_PATH:
+      icon = ICON_NODE_LIGHTPATH;
+      break;
+    case SH_NODE_OBJECT_INFO:
+      icon = ICON_NODE_OBJECTINFO;
+      break;
+    case SH_NODE_PARTICLE_INFO:
+      icon = ICON_NODE_PARTICLEINFO;
+      break;
+    case SH_NODE_RGB:
+      icon = ICON_NODE_RGB;
+      break;
+    case SH_NODE_TANGENT:
+      icon = ICON_NODE_TANGENT;
+      break;
+    case SH_NODE_TEX_COORD:
+      icon = ICON_NODE_TEXCOORDINATE;
+      break;
+    case SH_NODE_UVMAP:
+      icon = ICON_GROUP_UVS;
+      break;
+    case SH_NODE_VALUE:
+      icon = ICON_NODE_VALUE;
+      break;
+    case SH_NODE_VERTEX_COLOR:
+      icon = ICON_NODE_VERTEX_COLOR;
+      break;
+    case SH_NODE_VOLUME_INFO:
+      icon = ICON_NODE_VOLUME_INFO;
+      break;
+    case SH_NODE_WIREFRAME:
+      icon = ICON_NODE_WIREFRAME;
+      break;
   }
-  if (node->type == NODE_CUSTOM && node->typeinfo->ui_icon != ICON_NONE) {
-    iconofs -= iconbutw;
-    UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
-    uiDefIconBut(node->block,
-                 UI_BTYPE_BUT,
-                 0,
-                 node->typeinfo->ui_icon,
-                 iconofs,
-                 rct->ymax - NODE_DY,
-                 iconbutw,
-                 UI_UNIT_Y,
-                 NULL,
-                 0,
-                 0,
-                 0,
-                 0,
-                 "");
-    UI_block_emboss_set(node->block, UI_EMBOSS);
-  }
+    if (node->type == NODE_GROUP) {
+      uiBut *but;
+      iconofs -= iconbutw;
+      UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
+      but = uiDefIconBut(node->block,
+                         UI_BTYPE_BUT_TOGGLE,
+                         B_REDR,
+                         ICON_NODETREE,
+                         iconofs,
+                         rct->ymax - NODE_DY,
+                         iconbutw,
+                         UI_UNIT_Y,
+                         NULL,
+                         0,
+                         0,
+                         0,
+                         0,
+                         "");
+      UI_but_func_set(but, node_toggle_button_cb, node, (void *)"NODE_OT_group_edit");
+      UI_block_emboss_set(node->block, UI_EMBOSS);
+    }
+    else if (node->type == NODE_CUSTOM && node->typeinfo->ui_icon != ICON_NONE) {
+      iconofs -= iconbutw;
+      UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
+      uiDefIconBut(node->block,
+                   UI_BTYPE_BUT,
+                   0,
+                   node->typeinfo->ui_icon,
+                   iconofs,
+                   rct->ymax - NODE_DY,
+                   iconbutw,
+                   UI_UNIT_Y,
+                   NULL,
+                   0,
+                   0,
+                   0,
+                   0,
+                   "");
+      UI_block_emboss_set(node->block, UI_EMBOSS);
+    }
+    /* bfa - Add nodes icons to node headers */
+    else if (icon != ICON_NONE) {
+      iconofs -= iconbutw;
+      UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
+      uiDefIconBut(node->block,
+                   UI_BTYPE_BUT,
+                   0,
+                   icon,
+                   iconofs,
+                   rct->ymax - NODE_DY,
+                   iconbutw,
+                   UI_UNIT_Y,
+                   NULL,
+                   0,
+                   0,
+                   0,
+                   0,
+                   "");
+      UI_block_emboss_set(node->block, UI_EMBOSS);
+    }
 
   /* title */
   if (node->flag & SELECT) {
