@@ -193,17 +193,6 @@ class VIEW3D_HT_header(Header):
         if obj and obj.type == 'GPENCIL' and context.gpencil_data:
             gpd = context.gpencil_data
 
-            if gpd.is_stroke_paint_mode:
-                row = layout.row()
-                sub = row.row(align=True)
-                sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
-                sub.separator(factor=0.4)
-                sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
-
             # Select mode for Editing
             if gpd.use_stroke_edit_mode:
                 row = layout.row(align=True)
@@ -253,12 +242,6 @@ class VIEW3D_HT_header(Header):
                     sub = row.row(align=True)
                     sub.popover(panel="VIEW3D_PT_gpencil_multi_frame", text="")
 
-            if gpd.use_stroke_edit_mode or gpd.is_stroke_paint_mode:
-                row = layout.row(align=True)
-                row.popover(
-                    panel="VIEW3D_PT_tools_grease_pencil_interpolate",
-                    text="Interpolate"
-                )
         VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.separator_spacer()
@@ -291,6 +274,25 @@ class VIEW3D_HT_header(Header):
                     sub = row.row(align=True)
                     if settings.use_guide:
                         sub.popover(panel="VIEW3D_PT_gpencil_guide", text="Guides")
+
+              # Grease Pencil
+                if obj and obj.type == 'GPENCIL' and context.gpencil_data:
+                    gpd = context.gpencil_data
+
+                    if gpd.is_stroke_paint_mode:
+                        row = layout.row()
+                        sub = row.row(align=True)
+                        sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
+                        sub.separator(factor=0.4)
+                        sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
+                        sub.separator(factor=0.4)
+                        sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
+                        sub.separator(factor=0.4)
+                        sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
+
+                if gpd.use_stroke_edit_mode or gpd.is_stroke_paint_mode:
+                    row = layout.row(align=True)
+                    row.popover(panel="VIEW3D_PT_tools_grease_pencil_interpolate", text="Interpolate")
 
         elif not show_region_tool_header:
             # Transform settings depending on tool header visibility
