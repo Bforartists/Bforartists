@@ -16,16 +16,23 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# This is the Bforartists 2 version of the script that uses the internal Bforartists icons. 
+# This is the Bforartists 2 version of the script that uses the internal Bforartists icons.
 #It will not work in Blender since the icons doesn't exist there.
 
 import bpy
+from bpy.types import (
+    Header,
+    Menu,
+    Panel,
+)
+from bpy.types import (Operator, AddonPreferences, )
+from bpy.props import BoolProperty
 
 bl_info = {
     "name": "Align View Buttons",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 1, 0),
-    "blender": (2, 80, 0),
+    "version": (2, 0, 0),
+    "blender": (2, 90, 0),
     "location": "Header of the 3D View",
     "description": "Adds a tab button row in the header of the 3D View to switch between views",
     "warning": "",
@@ -35,25 +42,136 @@ bl_info = {
 
 def align_view_buttons(self, context):
     layout = self.layout
-    
-    row = layout.row(align=True)          
-    
-    row.operator("view3d.view_axis", text="", icon ="VIEW_FRONT").type = 'FRONT'
-    row.operator("view3d.view_axis", text="", icon ="VIEW_BACK").type = 'BACK'
-    row.operator("view3d.view_axis", text="", icon ="VIEW_RIGHT").type = 'RIGHT'
-    row.operator("view3d.view_axis", text="", icon ="VIEW_LEFT").type = 'LEFT'
-    row.operator("view3d.view_axis", text="", icon ="VIEW_TOP").type = 'TOP'
-    row.operator("view3d.view_axis", text="", icon ="VIEW_BOTTOM").type = 'BOTTOM'
+    view = context.space_data
 
+    preferences = context.preferences
+    addon_prefs = preferences.addons["align_view_buttons"].preferences
+
+    row = layout.row(align=True)
+
+    if addon_prefs.align_buttons:
+        row.operator("view3d.view_axis", text="", icon ="VIEW_FRONT").type = 'FRONT'
+        row.operator("view3d.view_axis", text="", icon ="VIEW_BACK").type = 'BACK'
+        row.operator("view3d.view_axis", text="", icon ="VIEW_RIGHT").type = 'RIGHT'
+        row.operator("view3d.view_axis", text="", icon ="VIEW_LEFT").type = 'LEFT'
+        row.operator("view3d.view_axis", text="", icon ="VIEW_TOP").type = 'TOP'
+        row.operator("view3d.view_axis", text="", icon ="VIEW_BOTTOM").type = 'BOTTOM'
+
+    if addon_prefs.quad_view:
+        row.operator("screen.region_quadview", text = "", icon = "QUADVIEW")
+
+    if addon_prefs.persp_ortho:
+        row.operator("view3d.view_persportho", text="", icon = "PERSP_ORTHO")
+
+    if addon_prefs.camera_view:
+        row.operator("view3d.view_camera", text="", icon = 'VIEW_SWITCHTOCAM')
+
+    row = layout.row(align=True)
+
+    if addon_prefs.camera_switch:
+        row.operator("view3d.switchactivecamto", text="", icon ="VIEW_SWITCHACTIVECAM")
+
+    if addon_prefs.frame_selected:
+        row.operator("view3d.view_selected", text="", icon = "VIEW_SELECTED").use_all_regions = False
+    if addon_prefs.frame_all:
+        row.operator("view3d.view_all", text = "", icon = "VIEWALL").center = False
+
+    if addon_prefs.reset_3dview:
+        if hasattr(bpy.ops, "reset_3d_view"):
+            row.operator("view3d.reset_3d_view", text="", icon ="VIEW_RESET")
+
+    row.popover(panel = "VIEW3D_PT_align_view_buttons_options", text = "")
+
+
+class VIEW3D_PT_align_view_buttons_options(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'HEADER'
+    bl_label = "Align View Buttons Options"
+
+    def draw(self, context):
+        layout = self.layout
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["align_view_buttons"].preferences
+
+        col = layout.column(align = True)
+        col.label(text="View")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "align_buttons")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "quad_view")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "persp_ortho")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "camera_view")
+
+        col = layout.column(align = True)
+        col.label(text="Navigation")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "camera_switch")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "frame_selected")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "frame_all")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "reset_3dview")
+
+        col = layout.column(align = True)
+        col.label(text="Note!")
+        col.label(text="Align View Buttons is an addon")
+        col.label(text="It can be turned off in the Preferences")
+
+
+class BFA_OT_align_view_buttons_prefs(AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    # align buttons
+    align_buttons : BoolProperty(name="Align Buttons", default=True, description = "Show the align buttons", )
+    quad_view : BoolProperty(name="Toggle Quad View", default=False, description = "Toggle the quad view layout in the 3d view", )
+    persp_ortho : BoolProperty(name="Perspective Orthographic", default=False, description = "Toggle between perspectivic and orthographic projection", )
+
+    # camera
+    camera_view : BoolProperty(name="Active Camera", default=False, description = "Show the view through the camera button", )
+    camera_switch : BoolProperty(name="Set Active Camera", default=False, description = "Set the currently selected camera as the active camera", )
+
+    frame_selected : BoolProperty(name="Frame Selected", default=False, description = "Center the view at the selected object and zoom to fit", )
+    frame_all : BoolProperty(name="Frame All", default=False, description = "Center the view at all content and zoom to fit", )
+
+    reset_3dview : BoolProperty(name="Reset 3D View", default=False, description = "Resets the 3d view to the defaults.\rNote that this is the reset 3dview addon, so this button might not show if the addon is off!", )
+
+
+classes = (
+    VIEW3D_PT_align_view_buttons_options,
+    BFA_OT_align_view_buttons_prefs,
+    )
 
 def register():
 
-    bpy.types.VIEW3D_HT_header.append(align_view_buttons) # Here we add our button in the View 3D header. 
+    from bpy.utils import register_class
+    for cls in classes:
+       register_class(cls)
+
+    bpy.types.VIEW3D_HT_header.append(align_view_buttons) # Add buttons in the View 3D header.
 
 def unregister():
 
+    from bpy.utils import unregister_class
+    for cls in classes:
+       unregister_class(cls)
+
     bpy.types.VIEW3D_HT_header.remove(align_view_buttons)
-     
+
+
 # This allows you to run the script directly from blenders text editor
 # to test the addon without having to install it.
 
