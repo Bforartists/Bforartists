@@ -199,7 +199,7 @@ static void rna_def_hair(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Hair", "ID");
-  RNA_def_struct_ui_text(srna, "Hair", "Hair data-block for hair curves");
+  RNA_def_struct_ui_text(srna, "Hair", "Hair data for hair curves");
   RNA_def_struct_ui_icon(srna, ICON_HAIR_DATA);
 
   /* geometry */

@@ -681,8 +681,8 @@ static void rna_def_depsgraph(BlenderRNA *brna)
   func = RNA_def_function(srna, "update", "rna_Depsgraph_update");
   RNA_def_function_ui_description(
       func,
-      "Re-evaluate any modified data-blocks, for example for animation or modifiers. "
-      "This invalidates all references to evaluated data-blocks from this dependency graph.");
+      "Re-evaluate any modified data, for example for animation or modifiers. "
+      "This invalidates all references to evaluated data from this dependency graph.");
   RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
 
   /* Queries for original datablockls (the ones depsgraph is built for). */

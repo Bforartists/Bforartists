@@ -570,7 +570,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
         id_us_clear_real(id);
         id_fake_user_clear(id);
         id->us = 0;
-        undo_push_label = "Delete Data-Block";
+        undo_push_label = "Delete Data";
       }
 
       break;
@@ -635,7 +635,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
         idptr = RNA_property_pointer_get(&template_ui->ptr, template_ui->prop);
         RNA_property_pointer_set(&template_ui->ptr, template_ui->prop, idptr, NULL);
         RNA_property_update(C, &template_ui->ptr, template_ui->prop);
-        undo_push_label = "Override Data-Block";
+        undo_push_label = "Override Data";
       }
       break;
     case UI_ID_ALONE:
@@ -967,7 +967,7 @@ static void template_ID(const bContext *C,
                            0,
                            0,
                            0,
-                           TIP_("Indirect library data-block, cannot change"));
+                           TIP_("Indirect library data, cannot change"));
         UI_but_flag_enable(but, UI_BUT_DISABLED);
       }
       else {
@@ -986,7 +986,7 @@ static void template_ID(const bContext *C,
                            0,
                            0,
                            0,
-                           TIP_("Direct linked library data-block, click to make local, "
+                           TIP_("Direct linked library data, click to make local, "
                                 "Shift + Click to create a library override"));
         if (disabled) {
           UI_but_flag_enable(but, UI_BUT_DISABLED);
@@ -1011,7 +1011,7 @@ static void template_ID(const bContext *C,
                          0,
                          0,
                          0,
-                         TIP_("Library override of linked data-block, click to make fully local"));
+                         TIP_("Library override of linked data, click to make fully local"));
       UI_but_funcN_set(
           but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_OVERRIDE));
     }

@@ -1434,7 +1434,7 @@ static const EnumPropertyItem prop_object_op_types[] = {
      "REMAP",
      ICON_USER,
      "Remap Users",
-     "Make all users of selected data-blocks to use instead a new chosen one"},
+     "Make all users of selected data to use instead a new chosen one"},
     {OL_OP_RENAME, "RENAME", ICON_RENAME, "Rename", ""},
     {OL_OP_OBJECT_MODE_ENTER, "OBJECT_MODE_ENTER", 0, "Enter Mode", ""},
     {OL_OP_OBJECT_MODE_EXIT, "OBJECT_MODE_EXIT", 0, "Exit Mode", ""},
@@ -1717,18 +1717,18 @@ static const EnumPropertyItem prop_id_op_types[] = {
      "REMAP",
      ICON_USER,
      "Remap Users",
-     "Make all users of selected data-blocks to use instead current (clicked) one"},
+     "Make all users of selected data to use instead current (clicked) one"},
     {0, "", 0, NULL, NULL},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_CREATE,
      "OVERRIDE_LIBRARY_CREATE",
      ICON_LIBRARY_DATA_OVERRIDE,
      "Add Library Override",
-     "Add a local override of this linked data-block"},
+     "Add a local override of this linked data"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_CREATE_HIERARCHY,
      "OVERRIDE_LIBRARY_CREATE_HIERARCHY",
      ICON_LIBRARY_DATA_OVERRIDE,
      "Add Library Override Hierarchy",
-     "Add a local override of this linked data-block, and its hierarchy of dependencies"},
+     "Add a local override of this linked data, and its hierarchy of dependencies"},
     {OUTLINER_IDOP_OVERRIDE_LIBRARY_PROXY_CONVERT,
      "OVERRIDE_LIBRARY_PROXY_CONVERT",
      ICON_RESET,
@@ -1755,7 +1755,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
      ICON_DELETE,
      "Delete Library Override Hierarchy",
      "Delete this local override (including its hierarchy of override dependencies) and relink "
-     "its usages to the linked data-blocks"},
+     "its usages to the linked data"},
     {0, "", 0, NULL, NULL},
     {OUTLINER_IDOP_COPY, "COPY", ICON_COPYDOWN, "Copy", ""},
     {OUTLINER_IDOP_PASTE, "PASTE", ICON_PASTEDOWN, "Paste", ""},
@@ -1764,7 +1764,7 @@ static const EnumPropertyItem prop_id_op_types[] = {
      "ADD_FAKE",
      ICON_FAKE_USER_ON,
      "Add Fake User",
-     "Ensure data-block gets saved even if it isn't in use (e.g. for motion and material "
+     "Ensure data gets saved even if it isn't in use (e.g. for motion and material "
      "libraries)"},
     {OUTLINER_IDOP_FAKE_CLEAR, "CLEAR_FAKE", ICON_FAKE_USER_OFF, "Clear Fake User", ""},
     {OUTLINER_IDOP_RENAME, "RENAME", ICON_RENAME, "Rename", ""},
@@ -2315,8 +2315,8 @@ static int outliner_action_set_exec(bContext *C, wmOperator *op)
      * the user knows what they're doing. */
     BKE_reportf(op->reports,
                 RPT_WARNING,
-                "Action '%s' does not specify what data-blocks it can be used on "
-                "(try setting the 'ID Root Type' setting from the data-blocks editor "
+                "Action '%s' does not specify what data it can be used on "
+                "(try setting the 'ID Root Type' setting from the data editor "
                 "for this action to avoid future problems)",
                 act->id.name + 2);
   }

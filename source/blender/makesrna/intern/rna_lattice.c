@@ -315,7 +315,7 @@ static void rna_def_lattice(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Lattice", "ID");
   RNA_def_struct_ui_text(
-      srna, "Lattice", "Lattice data-block defining a grid for deforming other objects");
+      srna, "Lattice", "Lattice data defining a grid for deforming other objects");
   RNA_def_struct_ui_icon(srna, ICON_LATTICE_DATA);
 
   prop = RNA_def_property(srna, "points_u", PROP_INT, PROP_NONE);

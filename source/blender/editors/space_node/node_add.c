@@ -405,7 +405,7 @@ void NODE_OT_add_file(wmOperatorType *ot)
                                  WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH,
                                  FILE_DEFAULTDISPLAY,
                                  FILE_SORT_DEFAULT);
-  RNA_def_string(ot->srna, "name", "Image", MAX_ID_NAME - 2, "Name", "Data-block name to assign");
+  RNA_def_string(ot->srna, "name", "Image", MAX_ID_NAME - 2, "Name", "Data name to assign");
 }
 
 /* ****************** Add Mask Node Operator  ******************* */
@@ -465,7 +465,7 @@ void NODE_OT_add_mask(wmOperatorType *ot)
   /* flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 
-  RNA_def_string(ot->srna, "name", "Mask", MAX_ID_NAME - 2, "Name", "Data-block name to assign");
+  RNA_def_string(ot->srna, "name", "Mask", MAX_ID_NAME - 2, "Name", "Data name to assign");
 }
 
 /********************** New node tree operator *********************/

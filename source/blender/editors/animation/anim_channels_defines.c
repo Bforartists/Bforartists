@@ -4920,7 +4920,7 @@ static void draw_setting_widget(bAnimContext *ac,
       // icon = ((enabled) ? ICON_SOLO_OFF : ICON_SOLO_ON);
       icon = ICON_SOLO_OFF;
       tooltip = TIP_(
-          "Solo\nNLA Track is the only one evaluated in this animation data-block, with all others "
+          "Solo\nNLA Track is the only one evaluated in this animation data, with all others "
           "muted");
       break;
 
