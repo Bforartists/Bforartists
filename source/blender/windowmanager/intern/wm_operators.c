@@ -3376,10 +3376,10 @@ static int previews_ensure_exec(bContext *C, wmOperator *UNUSED(op))
 
 static void WM_OT_previews_ensure(wmOperatorType *ot)
 {
-  ot->name = "Refresh Data-Block Previews";
+  ot->name = "Refresh Data Set Previews";
   ot->idname = "WM_OT_previews_ensure";
   ot->description =
-      "Ensure data-block previews are available and up-to-date "
+      "Ensure data set previews are available and up-to-date "
       "(to be saved in .blend file, only for some types like materials, textures, etc.)";
 
   ot->exec = previews_ensure_exec;
@@ -3510,10 +3510,10 @@ static int previews_clear_exec(bContext *C, wmOperator *op)
 
 static void WM_OT_previews_clear(wmOperatorType *ot)
 {
-  ot->name = "Clear Data-Block Previews";
+  ot->name = "Clear Data Set Previews";
   ot->idname = "WM_OT_previews_clear";
   ot->description =
-      "Clear data-block previews (only for some types like objects, materials, textures, etc.)";
+      "Clear data set previews (only for some types like objects, materials, textures, etc.)";
 
   ot->exec = previews_clear_exec;
   ot->invoke = WM_menu_invoke;
@@ -3523,7 +3523,7 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
                                preview_id_type_items,
                                PREVIEW_FILTER_ALL,
                                "Data-Block Type",
-                               "Which data-block previews to clear");
+                               "Which data set previews to clear");
 }
 
 /** \} */
