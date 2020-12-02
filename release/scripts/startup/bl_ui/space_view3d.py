@@ -209,10 +209,7 @@ class VIEW3D_HT_header(Header):
                          icon='IPO_BEZIER')
                 sub = row.row(align=True)
                 if gpd.use_curve_edit:
-                    sub.popover(
-                        panel="VIEW3D_PT_gpencil_curve_edit",
-                        text="Curve Editing",
-                    )
+                    sub.popover(panel="VIEW3D_PT_gpencil_curve_edit", text="",)
 
             # Select mode for Sculpt
             if gpd.is_stroke_sculpt_mode:
@@ -8509,11 +8506,31 @@ class VIEW3D_PT_gpencil_curve_edit(Panel):
         settings = context.tool_settings.gpencil_sculpt
 
         layout = self.layout
-        col = layout.column(align=True)
-        col.prop(gpd, "edit_curve_resolution")
-        col.prop(gpd, "curve_edit_threshold")
-        col.prop(gpd, "curve_edit_corner_angle")
-        col.prop(gpd, "use_adaptive_curve_resolution")
+        col = layout.column()
+
+        col.label(text = "Curve Editing:")
+
+        split = layout.split()
+        col = split.column(align = True)
+        row = col.row()
+        row.separator()
+        row.label(text = "Resolution")
+        row = col.row()
+        row.separator()
+        row.label(text = "Threshold")
+        row = col.row()
+        row.separator()
+        row.label(text =  "Corner Angle")
+
+        col = split.column(align = True)
+        col.prop(gpd, "edit_curve_resolution", text = "")
+        col.prop(gpd, "curve_edit_threshold", text = "")
+        col.prop(gpd, "curve_edit_corner_angle", text = "")
+
+        col = layout.column()
+        row = col.row()
+        row.separator()
+        row.prop(gpd, "use_adaptive_curve_resolution")
 
 
 class VIEW3D_MT_gpencil_edit_context_menu(Menu):
