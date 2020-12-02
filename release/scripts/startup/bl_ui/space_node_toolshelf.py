@@ -1916,6 +1916,10 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute          ", icon = "NODE_ATTRIBUTE")
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
+            
+            props = col.operator("node.add_node", text=" Bevel          ", icon = "BEVEL")
+            props.use_transform = True
+            props.type = "ShaderNodeBevel"
 
             props = col.operator("node.add_node", text=" Camera Data   ", icon = "CAMERA_DATA")
             props.use_transform = True
@@ -1957,7 +1961,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTangent"
 
-            props = col.operator("node.add_node", text=" Texture Coordinate ", icon = "NODE_TEXCOORDINATE")
+            props = col.operator("node.add_node", text=" Texture Coordinate", icon = "NODE_TEXCOORDINATE")
             props.use_transform = True
             props.type = "ShaderNodeTexCoord"
 
