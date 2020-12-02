@@ -1188,11 +1188,10 @@ static void node_draw_basis(const bContext *C,
     //          UI_but_flag_enable(but, UI_BUT_DISABLED);
     UI_block_emboss_set(node->block, UI_EMBOSS);
   }
-  /* group edit */
   int32_t icon = ICON_NONE; /* bfa - select node icon based on type */
-  /* bfa - note: node group is special the icon can be clicked,...*/
-  /* bfa - ...its code is kept intact for the sake of clarity */
+  /* bfa - note: switch logic lives here for the sake of clarity */
   switch (node->type) {
+    /* bfa - Input */
     case SH_NODE_AMBIENT_OCCLUSION:
       icon = ICON_NODE_AMBIENT_OCCLUSION;
       break;
@@ -1250,7 +1249,220 @@ static void node_draw_basis(const bContext *C,
     case SH_NODE_WIREFRAME:
       icon = ICON_NODE_WIREFRAME;
       break;
-  }
+    /* bfa - Output */
+    case SH_NODE_OUTPUT_MATERIAL:
+      icon = ICON_MATERIAL;
+      break;
+    /* bfa - Shader */
+    case SH_NODE_ADD_SHADER:
+      icon = ICON_NODE_ADD_SHADER;
+      break;
+    case SH_NODE_BSDF_DIFFUSE:
+      icon = ICON_NODE_DIFFUSESHADER;
+      break;
+    case SH_NODE_EMISSION:
+      icon = ICON_NODE_EMISSION;
+      break;
+    case SH_NODE_BSDF_GLASS:
+      icon = ICON_NODE_GLASSHADER;
+      break;
+    case SH_NODE_BSDF_GLOSSY:
+      icon = ICON_NODE_GLOSSYSHADER;
+      break;
+    case SH_NODE_HOLDOUT:
+      icon = ICON_NODE_HOLDOUTSHADER;
+      break;
+    case SH_NODE_MIX_SHADER:
+      icon = ICON_NODE_MIXSHADER;
+      break;
+    case SH_NODE_BSDF_PRINCIPLED:
+      icon = ICON_NODE_PRINCIPLED;
+      break;
+    case SH_NODE_VOLUME_PRINCIPLED:
+      icon = ICON_NODE_PRINCIPLED;
+      break;
+    case SH_NODE_BSDF_REFRACTION:
+      icon = ICON_NODE_REFRACTIONSHADER;
+      break;
+    case SH_NODE_EEVEE_SPECULAR:
+      icon = ICON_NODE_GLOSSYSHADER;
+      break;
+    case SH_NODE_SUBSURFACE_SCATTERING:
+      icon = ICON_NODE_SSS;
+      break;
+    case SH_NODE_BSDF_TRANSLUCENT:
+      icon = ICON_NODE_TRANSLUCENT;
+      break;
+    case SH_NODE_BSDF_TRANSPARENT:
+      icon = ICON_NODE_TRANSPARENT;
+      break;
+    case SH_NODE_VOLUME_ABSORPTION:
+      icon = ICON_NODE_VOLUMEABSORPTION;
+      break;
+    case SH_NODE_VOLUME_SCATTER:
+      icon = ICON_NODE_VOLUMESCATTER;
+      break;
+    case SH_NODE_BSDF_VELVET:
+      icon = ICON_NODE_VELVET;
+      break;
+    case SH_NODE_BSDF_ANISOTROPIC:
+      icon = ICON_NODE_ANISOTOPIC;
+      break;
+    case SH_NODE_BSDF_HAIR:
+      icon = ICON_HAIR;
+      break;
+    case SH_NODE_BSDF_HAIR_PRINCIPLED:
+      icon = ICON_HAIR;
+      break;
+    case SH_NODE_BSDF_TOON:
+      icon = ICON_NODE_TOONSHADER;
+      break;
+    /* bfa - Texture */
+    case SH_NODE_TEX_BRICK:
+      icon = ICON_NODE_BRICK;
+      break;
+    case SH_NODE_TEX_CHECKER:
+      icon = ICON_NODE_CHECKER;
+      break;
+    case SH_NODE_TEX_ENVIRONMENT:
+      icon = ICON_NODE_ENVIRONMENT;
+      break;
+    case SH_NODE_TEX_GRADIENT:
+      icon = ICON_NODE_GRADIENT;
+      break;
+    case SH_NODE_TEX_IES:
+      icon = ICON_LIGHT;
+      break;
+    case SH_NODE_TEX_IMAGE:
+      icon = ICON_FILE_IMAGE;
+      break;
+    case SH_NODE_TEX_MAGIC:
+      icon = ICON_MAGIC_TEX;
+      break;
+    case SH_NODE_TEX_MUSGRAVE:
+      icon = ICON_MUSGRAVE_TEX;
+      break;
+    case SH_NODE_TEX_NOISE:
+      icon = ICON_NOISE_TEX;
+      break;
+    case SH_NODE_TEX_POINTDENSITY:
+      icon = ICON_NODE_POINTCLOUD;
+      break;
+    case SH_NODE_TEX_SKY:
+      icon = ICON_NODE_SKY;
+      break;
+    case SH_NODE_TEX_VORONOI:
+      icon = ICON_VORONI_TEX;
+      break;
+    case SH_NODE_TEX_WAVE:
+      icon = ICON_NODE_WAVES;
+      break;
+    case SH_NODE_TEX_WHITE_NOISE:
+      icon = ICON_NODE_WHITE_NOISE;
+      break;
+    /* bfa - Color */
+    case SH_NODE_BRIGHTCONTRAST:
+      icon = ICON_BRIGHTNESS_CONTRAST;
+      break;
+    case SH_NODE_GAMMA:
+      icon = ICON_NODE_GAMMA;
+      break;
+    case SH_NODE_HUE_SAT:
+      icon = ICON_NODE_HUESATURATION;
+      break;
+    case SH_NODE_INVERT:
+      icon = ICON_NODE_INVERT;
+      break;
+    case SH_NODE_LIGHT_FALLOFF:
+      icon = ICON_NODE_LIGHTFALLOFF;
+      break;
+    case SH_NODE_MIX_RGB:
+      icon = ICON_NODE_MIXRGB;
+      break;
+    case SH_NODE_CURVE_RGB:
+      icon = ICON_NODE_RGBCURVE;
+      break;
+    /* bfa - Vector */
+    case SH_NODE_BUMP:
+      icon = ICON_NODE_BUMP;
+      break;
+    case SH_NODE_DISPLACEMENT:
+      icon = ICON_MOD_DISPLACE;
+      break;
+    case SH_NODE_MAPPING:
+      icon = ICON_NODE_MAPPING;
+      break;
+    case SH_NODE_NORMAL:
+      icon = ICON_RECALC_NORMALS;
+      break;
+    case SH_NODE_NORMAL_MAP:
+      icon = ICON_NODE_NORMALMAP;
+      break;
+    case SH_NODE_CURVE_VEC:
+      icon = ICON_NODE_VECTOR;
+      break;
+    case SH_NODE_VECTOR_DISPLACEMENT:
+      icon = ICON_MOD_DISPLACE;
+      break;
+    case SH_NODE_VECTOR_ROTATE:
+      icon = ICON_TRANSFORM_ROTATE;
+      break;
+    case SH_NODE_VECT_TRANSFORM:
+      icon = ICON_NODE_VECTOR_TRANSFORM;
+      break;
+    /* bfa - Converter */
+    case SH_NODE_BLACKBODY:
+      icon = ICON_NODE_BLACKBODY;
+      break;
+    case SH_NODE_CLAMP:
+      icon = ICON_NODE_CLAMP;
+      break;
+    case SH_NODE_VALTORGB:
+      icon = ICON_NODE_COLORRAMP;
+      break;
+    case SH_NODE_COMBHSV:
+      icon = ICON_NODE_COMBINEHSV;
+      break;
+    case SH_NODE_COMBRGB:
+      icon = ICON_NODE_COMBINERGB;
+      break;
+    case SH_NODE_COMBXYZ:
+      icon = ICON_NODE_COMBINEXYZ;
+      break;
+    case SH_NODE_MAP_RANGE:
+      icon = ICON_NODE_MAP_RANGE;
+      break;
+    case SH_NODE_MATH:
+      icon = ICON_NODE_MATH;
+      break;
+    case SH_NODE_RGBTOBW:
+      icon = ICON_NODE_RGBTOBW;
+      break;
+    case SH_NODE_SEPHSV:
+      icon = ICON_NODE_SEPARATEHSV;
+      break;
+    case SH_NODE_SEPRGB:
+      icon = ICON_NODE_SEPARATERGB;
+      break;
+    case SH_NODE_SEPXYZ:
+      icon = ICON_NODE_SEPARATEXYZ;
+      break;
+    case SH_NODE_SHADERTORGB:
+      icon = ICON_NODE_RGB;
+      break;
+    case SH_NODE_VECTOR_MATH:
+      icon = ICON_NODE_VECTORMATH;
+      break;
+    case SH_NODE_WAVELENGTH:
+      icon = ICON_NODE_WAVELENGTH;
+      break;
+    /* bfa - Script */
+    case SH_NODE_SCRIPT:
+      icon = ICON_FILE_SCRIPT;
+      break;
+    }
+
+    /* group edit */
     if (node->type == NODE_GROUP) {
       uiBut *but;
       iconofs -= iconbutw;
