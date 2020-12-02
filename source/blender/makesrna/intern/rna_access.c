@@ -2107,14 +2107,14 @@ bool RNA_property_editable_info(PointerRNA *ptr, PropertyRNA *prop, const char *
   if (id) {
     if (ID_IS_LINKED(id) && (prop_type->flag & PROP_LIB_EXCEPTION) == 0) {
       if (!(*r_info)[0]) {
-        *r_info = N_("Can't edit this property from a linked data-block");
+        *r_info = N_("Can't edit this property from a linked data");
       }
       return false;
     }
     if (ID_IS_OVERRIDE_LIBRARY(id)) {
       if (!RNA_property_overridable_get(ptr, prop)) {
         if (!(*r_info)[0]) {
-          *r_info = N_("Can't edit this property from an override data-block");
+          *r_info = N_("Can't edit this property from an override data");
         }
         return false;
       }

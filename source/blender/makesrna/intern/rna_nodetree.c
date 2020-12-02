@@ -3999,13 +3999,13 @@ static const EnumPropertyItem node_principled_hair_items[] = {
 };
 
 static const EnumPropertyItem node_script_mode_items[] = {
-    {NODE_SCRIPT_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data-block"},
+    {NODE_SCRIPT_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"},
     {NODE_SCRIPT_EXTERNAL, "EXTERNAL", 0, "External", "Use external .osl or .oso file"},
     {0, NULL, 0, NULL, NULL},
 };
 
 static EnumPropertyItem node_ies_mode_items[] = {
-    {NODE_IES_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text datablock"},
+    {NODE_IES_INTERNAL, "INTERNAL", 0, "Internal", "Use internal text data"},
     {NODE_IES_EXTERNAL, "EXTERNAL", 0, "External", "Use external .ies file"},
     {0, NULL, 0, NULL, NULL},
 };
@@ -9677,7 +9677,7 @@ static void rna_def_nodetree(BlenderRNA *brna)
   RNA_def_property_pointer_funcs(
       prop, NULL, NULL, NULL, "rna_GPencil_datablocks_annotations_poll");
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
-  RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil data-block");
+  RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil data");
   RNA_def_property_update(prop, NC_NODE, NULL);
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
@@ -9765,10 +9765,10 @@ static void rna_def_nodetree(BlenderRNA *brna)
       func, "result_1", "NodeTree", "Node Tree", "Active node tree from context");
   RNA_def_function_output(func, parm);
   parm = RNA_def_pointer(
-      func, "result_2", "ID", "Owner ID", "ID data-block that owns the node tree");
+      func, "result_2", "ID", "Owner ID", "ID data that owns the node tree");
   RNA_def_function_output(func, parm);
   parm = RNA_def_pointer(
-      func, "result_3", "ID", "From ID", "Original ID data-block selected from the context");
+      func, "result_3", "ID", "From ID", "Original ID data selected from the context");
   RNA_def_function_output(func, parm);
 }
 
@@ -9833,7 +9833,7 @@ static void rna_def_shader_nodetree(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna,
       "Shader Node Tree",
-      "Node tree consisting of linked nodes used for materials (and other shading data-blocks)");
+      "Node tree consisting of linked nodes used for materials (and other shading data)");
   RNA_def_struct_sdna(srna, "bNodeTree");
   RNA_def_struct_ui_icon(srna, ICON_MATERIAL);
 
