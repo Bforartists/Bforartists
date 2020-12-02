@@ -1803,35 +1803,61 @@ class VIEW3D_PT_tools_grease_pencil_interpolate(Panel):
 
         col = layout.column(align=True)
         col.label(text="Interpolate Strokes")
-        col.operator("gpencil.interpolate", text="Interpolate", icon = "INTERPOLATE")
-        col.operator("gpencil.interpolate_sequence", text="Sequence", icon = "SEQUENCE")
-        col.operator("gpencil.interpolate_reverse", text="Remove Breakdowns")
+        row = col.row()
+        row.separator()
+        row.operator("gpencil.interpolate", text="Interpolate", icon = "INTERPOLATE")
+        row = col.row()
+        row.separator()
+        row.operator("gpencil.interpolate_sequence", text="Sequence", icon = "SEQUENCE")
+        row = col.row()
+        row.separator()
+        row.operator("gpencil.interpolate_reverse", text="Remove Breakdowns")
 
         col = layout.column(align=True)
         col.label(text="Options:")
-        col.prop(settings, "interpolate_all_layers")
+        row = col.row()
+        row.separator()
+        row.prop(settings, "interpolate_all_layers")
 
         gpd = context.gpencil_data
         if gpd.use_stroke_edit_mode:
-            col.prop(settings, "interpolate_selected_only")
+            row = col.row()
+            row.separator()
+            row.prop(settings, "interpolate_selected_only")
 
         col = layout.column(align=True)
+        col.use_property_split = True
         col.label(text="Sequence Options:")
-        col.prop(settings, "step")
-        col.prop(settings, "type")
+        row = col.row()
+        row.separator()
+        row.prop(settings, "step")
+        row = col.row()
+        row.use_property_split = False
+        row.separator()
+        row.prop(settings, "type")
         if settings.type == 'CUSTOM':
             # TODO: Options for loading/saving curve presets?
             col.template_curve_mapping(settings, "interpolation_curve", brush=True,
                                        use_negative_slope=True)
         elif settings.type != 'LINEAR':
-            col.prop(settings, "easing")
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(settings, "easing")
 
             if settings.type == 'BACK':
-                layout.prop(settings, "back")
+                row = col.row()
+                row.separator()
+                row.prop(settings, "back")
             elif settings.type == 'ELASTIC':
                 sub = layout.column(align=True)
-                sub.prop(settings, "amplitude")
-                sub.prop(settings, "period")
+                sub.use_property_split = True
+                row = sub.row()
+                row.separator()
+                row.prop(settings, "amplitude")
+                row = sub.row()
+                row.separator()
+                row.prop(settings, "period")
 
 
 # Grease Pencil stroke sculpting tools
