@@ -333,7 +333,7 @@ static void do_item_rename(ARegion *region,
     BKE_report(reports, RPT_WARNING, "Cannot edit external library data");
   }
   else if (ID_IS_OVERRIDE_LIBRARY(tselem->id)) {
-    BKE_report(reports, RPT_WARNING, "Cannot edit name of an override data-block");
+    BKE_report(reports, RPT_WARNING, "Cannot edit name of an override data");
   }
   else if (outliner_is_collection_tree_element(te)) {
     Collection *collection = outliner_collection_from_tree_element(te);
@@ -469,7 +469,7 @@ static void id_delete(bContext *C, ReportList *reports, TreeElement *te, TreeSto
   if (BKE_library_ID_is_indirectly_used(bmain, id) && ID_REAL_USERS(id) <= 1) {
     BKE_reportf(reports,
                 RPT_WARNING,
-                "Cannot delete id '%s', indirectly used data-blocks need at least one user",
+                "Cannot delete id '%s', indirectly used data need at least one user",
                 id->name);
     return;
   }
@@ -553,7 +553,7 @@ static int outliner_id_delete_invoke(bContext *C, wmOperator *op, const wmEvent 
 
 void OUTLINER_OT_id_delete(wmOperatorType *ot)
 {
-  ot->name = "Delete Data-Block";
+  ot->name = "Delete Data";
   ot->idname = "OUTLINER_OT_id_delete";
   ot->description = "Delete the ID under cursor";
 
@@ -598,7 +598,7 @@ static int outliner_id_remap_exec(bContext *C, wmOperator *op)
   if (ID_IS_LINKED(old_id)) {
     BKE_reportf(op->reports,
                 RPT_WARNING,
-                "Old ID '%s' is linked from a library, indirect usages of this data-block will "
+                "Old ID '%s' is linked from a library, indirect usages of this data will "
                 "not be remapped",
                 old_id->name);
   }
@@ -781,14 +781,14 @@ static int outliner_id_copy_exec(bContext *C, wmOperator *op)
 
   const int num_ids = outliner_id_copy_tag(space_outliner, &space_outliner->tree);
   if (num_ids == 0) {
-    BKE_report(op->reports, RPT_INFO, "No selected data-blocks to copy");
+    BKE_report(op->reports, RPT_INFO, "No selected data to copy");
     return OPERATOR_CANCELLED;
   }
 
   BLI_join_dirfile(str, sizeof(str), BKE_tempdir_base(), "copybuffer.blend");
   BKE_copybuffer_save(bmain, str, op->reports);
 
-  BKE_reportf(op->reports, RPT_INFO, "Copied %d selected data-block(s)", num_ids);
+  BKE_reportf(op->reports, RPT_INFO, "Copied %d selected data", num_ids);
 
   return OPERATOR_FINISHED;
 }
@@ -798,7 +798,7 @@ void OUTLINER_OT_id_copy(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Outliner ID Data Copy";
   ot->idname = "OUTLINER_OT_id_copy";
-  ot->description = "Selected data-blocks are copied to the clipboard";
+  ot->description = "Selected data are copied to the clipboard";
 
   /* callbacks */
   ot->exec = outliner_id_copy_exec;
@@ -829,7 +829,7 @@ static int outliner_id_paste_exec(bContext *C, wmOperator *op)
 
   WM_event_add_notifier(C, NC_WINDOW, NULL);
 
-  BKE_reportf(op->reports, RPT_INFO, "%d data-block(s) pasted", num_pasted);
+  BKE_reportf(op->reports, RPT_INFO, "%d data pasted", num_pasted);
 
   return OPERATOR_FINISHED;
 }
@@ -839,7 +839,7 @@ void OUTLINER_OT_id_paste(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Outliner ID Data Paste";
   ot->idname = "OUTLINER_OT_id_paste";
-  ot->description = "Data-blocks from the clipboard are pasted";
+  ot->description = "Data from the clipboard are pasted";
 
   /* callbacks */
   ot->exec = outliner_id_paste_exec;
@@ -2287,12 +2287,12 @@ static int outliner_orphans_purge_invoke(bContext *C, wmOperator *op, const wmEv
   RNA_int_set(op->ptr, "num_deleted", num_tagged[INDEX_ID_NULL]);
 
   if (num_tagged[INDEX_ID_NULL] == 0) {
-    BKE_report(op->reports, RPT_INFO, "No orphaned data-blocks to purge");
+    BKE_report(op->reports, RPT_INFO, "No orphaned data to purge");
     return OPERATOR_CANCELLED;
   }
 
   DynStr *dyn_str = BLI_dynstr_new();
-  BLI_dynstr_append(dyn_str, "Purging unused data-blocks (");
+  BLI_dynstr_append(dyn_str, "Purging unused data (");
   bool is_first = true;
   for (int i = 0; i < INDEX_ID_MAX - 2; i++) {
     if (num_tagged[i] != 0) {
@@ -2334,14 +2334,14 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
     FOREACH_MAIN_ID_END;
 
     if (num_tagged[INDEX_ID_NULL] == 0) {
-      BKE_report(op->reports, RPT_INFO, "No orphaned data-blocks to purge");
+      BKE_report(op->reports, RPT_INFO, "No orphaned data to purge");
       return OPERATOR_CANCELLED;
     }
   }
 
   BKE_id_multi_tagged_delete(bmain);
 
-  BKE_reportf(op->reports, RPT_INFO, "Deleted %d data-block(s)", num_tagged[INDEX_ID_NULL]);
+  BKE_reportf(op->reports, RPT_INFO, "Deleted %d data", num_tagged[INDEX_ID_NULL]);
 
   /* XXX: tree management normally happens from draw_outliner(), but when
    *      you're clicking to fast on Delete object from context menu in
@@ -2363,7 +2363,7 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
   /* identifiers */
   ot->idname = "OUTLINER_OT_orphans_purge";
   ot->name = "Purge All";
-  ot->description = "Clear all orphaned data-blocks without any users from the file";
+  ot->description = "Clear all orphaned data without any users from the file";
 
   /* callbacks */
   ot->invoke = outliner_orphans_purge_invoke;

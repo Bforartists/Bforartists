@@ -3522,7 +3522,7 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
                                "id_type",
                                preview_id_type_items,
                                PREVIEW_FILTER_ALL,
-                               "Data-Block Type",
+                               "Data Type",
                                "Which data set previews to clear");
 }
 

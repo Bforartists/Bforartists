@@ -1963,7 +1963,7 @@ static void rna_def_editor(BlenderRNA *brna)
       {0, NULL, 0, NULL, NULL},
   };
   srna = RNA_def_struct(brna, "SequenceEditor", NULL);
-  RNA_def_struct_ui_text(srna, "Sequence Editor", "Sequence editing data for a Scene data-block");
+  RNA_def_struct_ui_text(srna, "Sequence Editor", "Sequence editing data for a Scene");
   RNA_def_struct_ui_icon(srna, ICON_SEQUENCE);
   RNA_def_struct_sdna(srna, "Editing");
 
@@ -2547,7 +2547,7 @@ static void rna_def_sound(BlenderRNA *brna)
   prop = RNA_def_property(srna, "sound", PROP_POINTER, PROP_NONE);
   RNA_def_property_flag(prop, PROP_EDITABLE);
   RNA_def_property_struct_type(prop, "Sound");
-  RNA_def_property_ui_text(prop, "Sound", "Sound data-block used by this sequence");
+  RNA_def_property_ui_text(prop, "Sound", "Sound data used by this sequence");
   RNA_def_property_update(prop, NC_SCENE | ND_SEQUENCER, "rna_Sequence_sound_update");
 
   prop = RNA_def_property(srna, "volume", PROP_FLOAT, PROP_NONE);
