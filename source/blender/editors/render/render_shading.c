@@ -906,7 +906,7 @@ void WORLD_OT_new(wmOperatorType *ot)
   /* identifiers */
   ot->name = "New World";
   ot->idname = "WORLD_OT_new";
-  ot->description = "Create a new world Data-Block";
+  ot->description = "Create a new world Data";
 
   /* api callbacks */
   ot->exec = new_world_exec;

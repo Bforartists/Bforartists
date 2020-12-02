@@ -93,7 +93,7 @@ static const EnumPropertyItem property_flag_override_items[] = {
      "LIBRARY_OVERRIDABLE",
      0,
      "Library Overridable",
-     "Make that property editable in library overrides of linked data-blocks"},
+     "Make that property editable in library overrides of linked data"},
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -106,7 +106,7 @@ static const EnumPropertyItem property_flag_override_collection_items[] = {
      "LIBRARY_OVERRIDABLE",
      0,
      "Library Overridable",
-     "Make that property editable in library overrides of linked data-blocks"},
+     "Make that property editable in library overrides of linked data"},
     {PROPOVERRIDE_NO_PROP_NAME,
      "NO_PROPERTY_NAME",
      0,

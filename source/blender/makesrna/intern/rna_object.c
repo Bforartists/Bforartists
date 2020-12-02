@@ -2193,7 +2193,7 @@ static void rna_def_material_slot(BlenderRNA *brna)
                                  "rna_MaterialSlot_material_set",
                                  NULL,
                                  "rna_MaterialSlot_material_poll");
-  RNA_def_property_ui_text(prop, "Material", "Material data-block used by this material slot");
+  RNA_def_property_ui_text(prop, "Material", "Material data used by this material slot");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_update");
 
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
@@ -2629,7 +2629,7 @@ static void rna_def_object(BlenderRNA *brna)
   static int boundbox_dimsize[] = {8, 3};
 
   srna = RNA_def_struct(brna, "Object", "ID");
-  RNA_def_struct_ui_text(srna, "Object", "Object data-block defining an object in a scene");
+  RNA_def_struct_ui_text(srna, "Object", "Object data defining an object in a scene");
   RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);
   RNA_def_struct_ui_icon(srna, ICON_OBJECT_DATA);
 

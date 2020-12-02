@@ -40,7 +40,7 @@
 
 #include "rna_internal.h"
 
-/* enum of ID-block types
+/* enum of ID types
  * NOTE: need to keep this in line with the other defines for these
  */
 const EnumPropertyItem rna_enum_id_type_items[] = {
@@ -1150,13 +1150,13 @@ static void rna_def_ID_materials(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "append", "rna_IDMaterials_append_id");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Add a new material to the data-block");
+  RNA_def_function_ui_description(func, "Add a new material to the data");
   parm = RNA_def_pointer(func, "material", "Material", "", "Material to add");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
   func = RNA_def_function(srna, "pop", "rna_IDMaterials_pop_id");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Remove a material from the data-block");
+  RNA_def_function_ui_description(func, "Remove a material from the data");
   parm = RNA_def_int(
       func, "index", -1, -MAXMAT, MAXMAT, "", "Index of material to remove", 0, MAXMAT);
   parm = RNA_def_pointer(func, "material", "Material", "", "Material to remove");
@@ -1164,7 +1164,7 @@ static void rna_def_ID_materials(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "clear", "rna_IDMaterials_clear_id");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
-  RNA_def_function_ui_description(func, "Remove all materials from the data-block");
+  RNA_def_function_ui_description(func, "Remove all materials from the data");
 }
 
 static void rna_def_image_preview(BlenderRNA *brna)
@@ -1448,14 +1448,14 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_struct_ui_text(
       srna,
       "ID",
-      "Base type for data-blocks, defining a unique name, linking from other libraries "
+      "Base type for datas, defining a unique name, linking from other libraries "
       "and garbage collection");
   RNA_def_struct_flag(srna, STRUCT_ID | STRUCT_ID_REFCOUNT);
   RNA_def_struct_refine_func(srna, "rna_ID_refine");
   RNA_def_struct_idprops_func(srna, "rna_ID_idprops");
 
   prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
-  RNA_def_property_ui_text(prop, "Name", "Unique data-block ID name");
+  RNA_def_property_ui_text(prop, "Name", "Unique data ID name");
   RNA_def_property_string_funcs(prop, "rna_ID_name_get", "rna_ID_name_length", "rna_ID_name_set");
   RNA_def_property_string_maxlength(prop, MAX_ID_NAME - 2);
   RNA_def_property_editable_func(prop, "rna_ID_name_editable");
@@ -1465,7 +1465,7 @@ static void rna_def_ID(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "name_full", PROP_STRING, PROP_NONE);
   RNA_def_property_ui_text(
-      prop, "Full Name", "Unique data-block ID name, including library one is any");
+      prop, "Full Name", "Unique data ID name, including library one is any");
   RNA_def_property_string_funcs(prop, "rna_ID_name_full_get", "rna_ID_name_full_length", NULL);
   RNA_def_property_string_maxlength(prop, MAX_ID_FULL_NAME);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -1474,7 +1474,7 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Is Evaluated",
-      "Whether this ID is runtime-only, evaluated data-block, or actual data from .blend file");
+      "Whether this ID is runtime-only, evaluated data, or actual data from .blend file");
   RNA_def_property_boolean_funcs(prop, "rna_ID_is_evaluated_get", NULL);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
@@ -1483,7 +1483,7 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Original ID",
-      "Actual data-block from .blend file (Main database) that generated that evaluated one");
+      "Actual data from .blend file (Main database) that generated that evaluated one");
   RNA_def_property_pointer_funcs(prop, "rna_ID_original_get", NULL, NULL, NULL);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE | PROP_PTR_NO_OWNERSHIP);
   RNA_def_property_flag(prop, PROP_HIDDEN);
@@ -1492,11 +1492,11 @@ static void rna_def_ID(BlenderRNA *brna)
   prop = RNA_def_property(srna, "users", PROP_INT, PROP_UNSIGNED);
   RNA_def_property_int_sdna(prop, NULL, "us");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "Users", "Number of times this data-block is referenced");
+  RNA_def_property_ui_text(prop, "Users", "Number of times this data is referenced");
 
   prop = RNA_def_property(srna, "use_fake_user", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", LIB_FAKEUSER);
-  RNA_def_property_ui_text(prop, "Fake User", "Save this data-block even if it has no users");
+  RNA_def_property_ui_text(prop, "Fake User", "Save this data even if it has no users");
   RNA_def_property_ui_icon(prop, ICON_FAKE_USER_OFF, true);
   RNA_def_property_boolean_funcs(prop, NULL, "rna_ID_fake_user_set");
 
@@ -1506,7 +1506,7 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Embedded Data",
-      "This data-block is not an independent one, but is actually a sub-data of another ID "
+      "This data is not an independent one, but is actually a sub-data of another ID "
       "(typical example: root node trees or master collections)");
 
   prop = RNA_def_property(srna, "tag", PROP_BOOLEAN, PROP_NONE);
@@ -1526,7 +1526,7 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_property_pointer_sdna(prop, NULL, "lib");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
-  RNA_def_property_ui_text(prop, "Library", "Library file the data-block is linked from");
+  RNA_def_property_ui_text(prop, "Library", "Library file the data is linked from");
 
   prop = RNA_def_pointer(
       srna, "override_library", "IDOverrideLibrary", "Library Override", "Library override data");
@@ -1537,7 +1537,7 @@ static void rna_def_ID(BlenderRNA *brna)
       "preview",
       "ImagePreview",
       "Preview",
-      "Preview image and icon of this data-block (None if not supported for this type of data)");
+      "Preview image and icon of this data (None if not supported for this type of data)");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_pointer_funcs(prop, "rna_IDPreview_get", NULL, NULL, NULL);
@@ -1554,15 +1554,15 @@ static void rna_def_ID(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "copy", "rna_ID_copy");
   RNA_def_function_ui_description(
-      func, "Create a copy of this data-block (not supported for all data-blocks)");
+      func, "Create a copy of this data (not supported for all datas)");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
   parm = RNA_def_pointer(func, "id", "ID", "", "New copy of the ID");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "override_create", "rna_ID_override_create");
   RNA_def_function_ui_description(func,
-                                  "Create an overridden local copy of this linked data-block (not "
-                                  "supported for all data-blocks)");
+                                  "Create an overridden local copy of this linked data (not "
+                                  "supported for all datas)");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
   parm = RNA_def_pointer(func, "id", "ID", "", "New overridden local copy of the ID");
   RNA_def_function_return(func, parm);
@@ -1575,7 +1575,7 @@ static void rna_def_ID(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "user_clear", "rna_ID_user_clear");
   RNA_def_function_ui_description(func,
-                                  "Clear the user count of a data-block so its not saved, "
+                                  "Clear the user count of a data so its not saved, "
                                   "on reload the data will be removed");
 
   func = RNA_def_function(srna, "user_remap", "rna_ID_user_remap");
@@ -1612,7 +1612,7 @@ static void rna_def_ID(BlenderRNA *brna)
                      0,
                      INT_MAX,
                      "",
-                     "Number of usages/references of given id by current data-block",
+                     "Number of usages/references of given id by current data",
                      0,
                      INT_MAX);
   RNA_def_function_return(func, parm);
@@ -1680,7 +1680,7 @@ static void rna_def_library(BlenderRNA *brna)
 
   func = RNA_def_function(srna, "reload", "WM_lib_reload");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_CONTEXT);
-  RNA_def_function_ui_description(func, "Reload this library and all its linked data-blocks");
+  RNA_def_function_ui_description(func, "Reload this library and all its linked datas");
 }
 
 /**
