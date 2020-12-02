@@ -457,7 +457,7 @@ static int nlachannels_pushdown_exec(bContext *C, wmOperator *op)
       BKE_report(op->reports,
                  RPT_ERROR,
                  "No active AnimData block to use "
-                 "(select a data-block expander first or set the appropriate flags on an AnimData "
+                 "(select a data expander first or set the appropriate flags on an AnimData "
                  "block)");
       return OPERATOR_CANCELLED;
     }

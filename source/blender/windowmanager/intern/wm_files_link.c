@@ -325,14 +325,14 @@ static bool wm_link_append_item_poll(ReportList *reports,
       if (do_append) {
         BKE_reportf(reports,
                     RPT_ERROR_INVALID_INPUT,
-                    "Can't append data-block '%s' of type '%s'",
+                    "Can't append data '%s' of type '%s'",
                     name,
                     group);
       }
       else {
         BKE_reportf(reports,
                     RPT_ERROR_INVALID_INPUT,
-                    "Can't link data-block '%s' of type '%s'",
+                    "Can't link data '%s' of type '%s'",
                     name,
                     group);
       }
@@ -552,7 +552,7 @@ static void wm_link_append_properties_common(wmOperatorType *ot, bool is_link)
   /* better not save _any_ settings for this operator */
   /* properties */
   prop = RNA_def_boolean(
-      ot->srna, "link", is_link, "Link", "Link the objects or data-blocks rather than appending");
+      ot->srna, "link", is_link, "Link", "Link the objects or data rather than appending");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE | PROP_HIDDEN);
   prop = RNA_def_boolean(ot->srna, "autoselect", true, "Select", "Select new objects");
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
@@ -790,7 +790,7 @@ static void lib_relocate_do_remap(Main *bmain,
     BKE_reportf(
         reports,
         RPT_WARNING,
-        "Lib Reload: Replacing all references to old data-block '%s' by reloaded one failed, "
+        "Lib Reload: Replacing all references to old data '%s' by reloaded one failed, "
         "old one (%d remaining users) had to be kept and was renamed to '%s'",
         new_id->name,
         old_id->us,

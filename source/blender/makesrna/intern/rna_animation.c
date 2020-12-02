@@ -996,7 +996,7 @@ static void rna_def_keyingset_paths(BlenderRNA *brna, PropertyRNA *cprop)
   RNA_def_function_return(func, parm);
   /* ID-block for target */
   parm = RNA_def_pointer(
-      func, "target_id", "ID", "Target ID", "ID data-block for the destination");
+      func, "target_id", "ID", "Target ID", "ID data for the destination");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* rna-path */
   /* XXX hopefully this is long enough */
@@ -1234,7 +1234,7 @@ void rna_def_animdata_common(StructRNA *srna)
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_override_funcs(prop, NULL, NULL, "rna_AnimaData_override_apply");
-  RNA_def_property_ui_text(prop, "Animation Data", "Animation data for this data-block");
+  RNA_def_property_ui_text(prop, "Animation Data", "Animation data for this data");
 }
 
 static void rna_def_animdata(BlenderRNA *brna)
@@ -1243,7 +1243,7 @@ static void rna_def_animdata(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "AnimData", NULL);
-  RNA_def_struct_ui_text(srna, "Animation Data", "Animation data for data-block");
+  RNA_def_struct_ui_text(srna, "Animation Data", "Animation data for data");
   RNA_def_struct_ui_icon(srna, ICON_ANIM_DATA);
 
   /* NLA */
@@ -1262,7 +1262,7 @@ static void rna_def_animdata(BlenderRNA *brna)
   RNA_def_property_pointer_funcs(
       prop, NULL, "rna_AnimData_action_set", NULL, "rna_Action_id_poll");
   RNA_def_property_editable_func(prop, "rna_AnimData_action_editable");
-  RNA_def_property_ui_text(prop, "Action", "Active Action for this data-block");
+  RNA_def_property_ui_text(prop, "Action", "Active Action for this data");
   RNA_def_property_update(prop, NC_ANIMATION | ND_NLA_ACTCHANGE, "rna_AnimData_dependency_update");
 
   /* Active Action Settings */
@@ -1298,7 +1298,7 @@ static void rna_def_animdata(BlenderRNA *brna)
   RNA_def_property_collection_sdna(prop, NULL, "drivers", NULL);
   RNA_def_property_struct_type(prop, "FCurve");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
-  RNA_def_property_ui_text(prop, "Drivers", "The Drivers/Expressions for this data-block");
+  RNA_def_property_ui_text(prop, "Drivers", "The Drivers/Expressions for this data");
 
   rna_api_animdata_drivers(brna, prop);
 

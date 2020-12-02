@@ -359,7 +359,7 @@ static void rna_def_camera_stereo_data(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "CameraStereoData", NULL);
   RNA_def_struct_sdna(srna, "CameraStereoSettings");
   RNA_def_struct_nested(brna, srna, "Camera");
-  RNA_def_struct_ui_text(srna, "Stereo", "Stereoscopy settings for a Camera data-block");
+  RNA_def_struct_ui_text(srna, "Stereo", "Stereoscopy settings for a Camera data");
 
   RNA_define_lib_overridable(true);
 
@@ -515,7 +515,7 @@ void RNA_def_camera(BlenderRNA *brna)
   };
 
   srna = RNA_def_struct(brna, "Camera", "ID");
-  RNA_def_struct_ui_text(srna, "Camera", "Camera data-block for storing camera settings");
+  RNA_def_struct_ui_text(srna, "Camera", "Camera data for storing camera settings");
   RNA_def_struct_ui_icon(srna, ICON_CAMERA_DATA);
 
   RNA_define_lib_overridable(true);

@@ -144,12 +144,12 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      "OUTLINER",
      ICON_OUTLINER,
      "Outliner",
-     "Overview of scene graph and all available data-blocks"},
+     "Overview of scene graph and all available data"},
     {SPACE_PROPERTIES,
      "PROPERTIES",
      ICON_PROPERTIES,
      "Properties",
-     "Edit properties of active object and related data-blocks"},
+     "Edit properties of active object and related data"},
     {SPACE_FILE, "FILE_BROWSER", ICON_FILEBROWSER, "File Browser", "Browse for files and assets"},
     {SPACE_USERPREF,
      "PREFERENCES",
@@ -206,7 +206,7 @@ const EnumPropertyItem rna_enum_space_sequencer_view_type_items[] = {
 #define SACT_ITEM_CACHEFILE \
   { \
     SACTCONT_CACHEFILE, "CACHEFILE", ICON_FILE, "Cache File", \
-        "Edit timings for Cache File data-blocks" \
+        "Edit timings for Cache File data" \
   }
 
 #ifndef RNA_RUNTIME
@@ -3054,7 +3054,7 @@ static void rna_def_space_outliner(BlenderRNA *brna)
        "ORPHAN_DATA",
        ICON_ORPHAN_DATA,
        "Orphan Data",
-       "Display data-blocks which are unused and/or will be lost when the file is reloaded"},
+       "Display data which is unused and/or will be lost when the file is reloaded"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -3224,13 +3224,13 @@ static void rna_def_space_outliner(BlenderRNA *brna)
   /* Libraries filter. */
   prop = RNA_def_property(srna, "use_filter_id_type", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "filter", SO_FILTER_ID_TYPE);
-  RNA_def_property_ui_text(prop, "Filter by Type", "Show only data-blocks of one type");
+  RNA_def_property_ui_text(prop, "Filter by Type", "Show only data of one type");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_OUTLINER, NULL);
 
   prop = RNA_def_property(srna, "filter_id_type", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "filter_id_type");
   RNA_def_property_enum_items(prop, rna_enum_id_type_items);
-  RNA_def_property_ui_text(prop, "Filter by Type", "Data-block type to show");
+  RNA_def_property_ui_text(prop, "Filter by Type", "Data type to show");
   RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_ID);
 }
 
@@ -5117,7 +5117,7 @@ static void rna_def_space_text(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_find_all", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flags", ST_FIND_ALL);
   RNA_def_property_ui_text(
-      prop, "Find All", "Search in all text data-blocks, instead of only the active one");
+      prop, "Find All", "Search in all text data, instead of only the active one");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TEXT, NULL);
 
   prop = RNA_def_property(srna, "use_find_wrap", PROP_BOOLEAN, PROP_NONE);
@@ -5619,93 +5619,93 @@ static void rna_def_fileselect_idfilter(BlenderRNA *brna)
 
   static const struct IDFilterBoolean booleans[] = {
       /* Datablocks */
-      {FILTER_ID_AC, "filter_action", ICON_ANIM_DATA, "Actions", "Show Action data-blocks"},
+      {FILTER_ID_AC, "filter_action", ICON_ANIM_DATA, "Actions", "Show Action data"},
       {FILTER_ID_AR,
        "filter_armature",
        ICON_ARMATURE_DATA,
        "Armatures",
-       "Show Armature data-blocks"},
-      {FILTER_ID_BR, "filter_brush", ICON_BRUSH_DATA, "Brushes", "Show Brushes data-blocks"},
-      {FILTER_ID_CA, "filter_camera", ICON_CAMERA_DATA, "Cameras", "Show Camera data-blocks"},
-      {FILTER_ID_CF, "filter_cachefile", ICON_FILE, "Cache Files", "Show Cache File data-blocks"},
-      {FILTER_ID_CU, "filter_curve", ICON_CURVE_DATA, "Curves", "Show Curve data-blocks"},
+       "Show Armature data"},
+      {FILTER_ID_BR, "filter_brush", ICON_BRUSH_DATA, "Brushes", "Show Brushes data"},
+      {FILTER_ID_CA, "filter_camera", ICON_CAMERA_DATA, "Cameras", "Show Camera data"},
+      {FILTER_ID_CF, "filter_cachefile", ICON_FILE, "Cache Files", "Show Cache File data"},
+      {FILTER_ID_CU, "filter_curve", ICON_CURVE_DATA, "Curves", "Show Curve data"},
       {FILTER_ID_GD,
        "filter_grease_pencil",
        ICON_GREASEPENCIL,
        "Grease Pencil",
-       "Show Grease pencil data-blocks"},
+       "Show Grease pencil data"},
       {FILTER_ID_GR,
        "filter_group",
        ICON_OUTLINER_COLLECTION,
        "Collections",
-       "Show Collection data-blocks"},
-      {FILTER_ID_HA, "filter_hair", ICON_HAIR_DATA, "Hairs", "Show/hide Hair data-blocks"},
-      {FILTER_ID_IM, "filter_image", ICON_IMAGE_DATA, "Images", "Show Image data-blocks"},
-      {FILTER_ID_LA, "filter_light", ICON_LIGHT_DATA, "Lights", "Show Light data-blocks"},
+       "Show Collection data"},
+      {FILTER_ID_HA, "filter_hair", ICON_HAIR_DATA, "Hairs", "Show/hide Hair data"},
+      {FILTER_ID_IM, "filter_image", ICON_IMAGE_DATA, "Images", "Show Image data"},
+      {FILTER_ID_LA, "filter_light", ICON_LIGHT_DATA, "Lights", "Show Light data"},
       {FILTER_ID_LP,
        "filter_light_probe",
        ICON_OUTLINER_DATA_LIGHTPROBE,
        "Light Probes",
-       "Show Light Probe data-blocks"},
+       "Show Light Probe data"},
       {FILTER_ID_LS,
        "filter_linestyle",
        ICON_LINE_DATA,
        "Freestyle Linestyles",
-       "Show Freestyle's Line Style data-blocks"},
-      {FILTER_ID_LT, "filter_lattice", ICON_LATTICE_DATA, "Lattices", "Show Lattice data-blocks"},
+       "Show Freestyle's Line Style data"},
+      {FILTER_ID_LT, "filter_lattice", ICON_LATTICE_DATA, "Lattices", "Show Lattice data"},
       {FILTER_ID_MA,
        "filter_material",
        ICON_MATERIAL_DATA,
        "Materials",
-       "Show Material data-blocks"},
-      {FILTER_ID_MB, "filter_metaball", ICON_META_DATA, "Metaballs", "Show Metaball data-blocks"},
+       "Show Material data"},
+      {FILTER_ID_MB, "filter_metaball", ICON_META_DATA, "Metaballs", "Show Metaball data"},
       {FILTER_ID_MC,
        "filter_movie_clip",
        ICON_TRACKER_DATA,
        "Movie Clips",
-       "Show Movie Clip data-blocks"},
-      {FILTER_ID_ME, "filter_mesh", ICON_MESH_DATA, "Meshes", "Show Mesh data-blocks"},
-      {FILTER_ID_MSK, "filter_mask", ICON_MOD_MASK, "Masks", "Show Mask data-blocks"},
+       "Show Movie Clip data"},
+      {FILTER_ID_ME, "filter_mesh", ICON_MESH_DATA, "Meshes", "Show Mesh data"},
+      {FILTER_ID_MSK, "filter_mask", ICON_MOD_MASK, "Masks", "Show Mask data"},
       {FILTER_ID_NT,
        "filter_node_tree",
        ICON_NODETREE,
        "Node Trees",
-       "Show Node Tree data-blocks"},
-      {FILTER_ID_OB, "filter_object", ICON_OBJECT_DATA, "Objects", "Show Object data-blocks"},
+       "Show Node Tree data"},
+      {FILTER_ID_OB, "filter_object", ICON_OBJECT_DATA, "Objects", "Show Object data"},
       {FILTER_ID_PA,
        "filter_particle_settings",
        ICON_PARTICLE_DATA,
        "Particles Settings",
-       "Show Particle Settings data-blocks"},
-      {FILTER_ID_PAL, "filter_palette", ICON_COLOR, "Palettes", "Show Palette data-blocks"},
+       "Show Particle Settings data"},
+      {FILTER_ID_PAL, "filter_palette", ICON_COLOR, "Palettes", "Show Palette data"},
       {FILTER_ID_PC,
        "filter_paint_curve",
        ICON_CURVE_BEZCURVE,
        "Paint Curves",
-       "Show Paint Curve data-blocks"},
+       "Show Paint Curve data"},
       {FILTER_ID_PT,
        "filter_pointcloud",
        ICON_POINTCLOUD_DATA,
        "Point Clouds",
-       "Show/hide Point Cloud data-blocks"},
-      {FILTER_ID_SCE, "filter_scene", ICON_SCENE_DATA, "Scenes", "Show Scene data-blocks"},
+       "Show/hide Point Cloud data"},
+      {FILTER_ID_SCE, "filter_scene", ICON_SCENE_DATA, "Scenes", "Show Scene data"},
       {FILTER_ID_SIM,
        "filter_simulation",
        ICON_PHYSICS,
        "Simulations",
-       "Show Simulation data-blocks"}, /* TODO: Use correct icon. */
-      {FILTER_ID_SPK, "filter_speaker", ICON_SPEAKER, "Speakers", "Show Speaker data-blocks"},
-      {FILTER_ID_SO, "filter_sound", ICON_SOUND, "Sounds", "Show Sound data-blocks"},
-      {FILTER_ID_TE, "filter_texture", ICON_TEXTURE, "Textures", "Show Texture data-blocks"},
-      {FILTER_ID_TXT, "filter_text", ICON_TEXT, "Texts", "Show Text data-blocks"},
-      {FILTER_ID_VF, "filter_font", ICON_FONT_DATA, "Fonts", "Show Font data-blocks"},
-      {FILTER_ID_VO, "filter_volume", ICON_VOLUME_DATA, "Volumes", "Show/hide Volume data-blocks"},
-      {FILTER_ID_WO, "filter_world", ICON_WORLD, "Worlds", "Show World data-blocks"},
+       "Show Simulation data"}, /* TODO: Use correct icon. */
+      {FILTER_ID_SPK, "filter_speaker", ICON_SPEAKER, "Speakers", "Show Speaker data"},
+      {FILTER_ID_SO, "filter_sound", ICON_SOUND, "Sounds", "Show Sound data"},
+      {FILTER_ID_TE, "filter_texture", ICON_TEXTURE, "Textures", "Show Texture data"},
+      {FILTER_ID_TXT, "filter_text", ICON_TEXT, "Texts", "Show Text data"},
+      {FILTER_ID_VF, "filter_font", ICON_FONT_DATA, "Fonts", "Show Font data"},
+      {FILTER_ID_VO, "filter_volume", ICON_VOLUME_DATA, "Volumes", "Show/hide Volume data"},
+      {FILTER_ID_WO, "filter_world", ICON_WORLD, "Worlds", "Show World data"},
       {FILTER_ID_WS,
        "filter_work_space",
        ICON_WORKSPACE,
        "Workspaces",
-       "Show workspace data-blocks"},
+       "Show workspace data"},
 
       /* Categories */
       {FILTER_ID_SCE, "category_scene", ICON_SCENE_DATA, "Scenes", "Show scenes"},
@@ -6367,13 +6367,13 @@ static void rna_def_space_node(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "id", PROP_POINTER, PROP_NONE);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(prop, "ID", "Data-block whose nodes are being edited");
+  RNA_def_property_ui_text(prop, "ID", "Data whose nodes are being edited");
 
   prop = RNA_def_property(srna, "id_from", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "from");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_ui_text(
-      prop, "ID From", "Data-block from which the edited data-block is linked");
+      prop, "ID From", "Data from which the edited data is linked");
 
 #  ifdef WITH_GEOMETRY_NODES
   prop = RNA_def_property(srna, "simulation", PROP_POINTER, PROP_NONE);
@@ -6392,7 +6392,7 @@ static void rna_def_space_node(BlenderRNA *brna)
   RNA_def_property_collection_sdna(prop, NULL, "treepath", NULL);
   RNA_def_property_struct_type(prop, "NodeTreePath");
   RNA_def_property_ui_text(
-      prop, "Node Tree Path", "Path from the data-block to the currently edited node tree");
+      prop, "Node Tree Path", "Path from the data to the currently edited node tree");
   rna_def_space_node_path_api(brna, prop);
 
   prop = RNA_def_property(srna, "node_tree", PROP_POINTER, PROP_NONE);
@@ -6500,12 +6500,12 @@ static void rna_def_space_clip(BlenderRNA *brna)
        "CLIP",
        0,
        "Clip",
-       "Show annotation data-block which belongs to movie clip"},
+       "Show annotation data which belongs to movie clip"},
       {SC_GPENCIL_SRC_TRACK,
        "TRACK",
        0,
        "Track",
-       "Show annotation data-block which belongs to active track"},
+       "Show annotation data which belongs to active track"},
       {0, NULL, 0, NULL, NULL},
   };
 

@@ -3498,14 +3498,14 @@ static void rna_def_userdef_theme_space_nla(BlenderRNA *brna)
   prop = RNA_def_property(srna, "active_action", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, NULL, "anim_active");
   RNA_def_property_array(prop, 4);
-  RNA_def_property_ui_text(prop, "Active Action", "Animation data-block has active action");
+  RNA_def_property_ui_text(prop, "Active Action", "Animation has active action");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "active_action_unset", PROP_FLOAT, PROP_COLOR_GAMMA);
   RNA_def_property_float_sdna(prop, NULL, "anim_non_active");
   RNA_def_property_array(prop, 4);
   RNA_def_property_ui_text(
-      prop, "No Active Action", "Animation data-block doesn't have active action");
+      prop, "No Active Action", "Animation doesn't have active action");
   RNA_def_property_update(prop, 0, "rna_userdef_theme_update");
 
   prop = RNA_def_property(srna, "preview_range", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -4833,7 +4833,7 @@ static void rna_def_userdef_view(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "transopts", USER_TR_NEWDATANAME);
   RNA_def_property_ui_text(prop,
                            "Translate New Names",
-                           "Translate the names of new data-blocks (objects, materials...)");
+                           "Translate the names of new data (objects, materials...)");
   RNA_def_property_update(prop, 0, "rna_userdef_update");
 
   /* Statusbar. */
@@ -5143,7 +5143,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_duplicate_action", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_ACT);
   RNA_def_property_ui_text(
-      prop, "Duplicate Action", "Causes actions to be duplicated with the data-blocks");
+      prop, "Duplicate Action", "Causes actions to be duplicated with the data");
 
   prop = RNA_def_property(srna, "use_duplicate_particle", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "dupflag", USER_DUP_PSYS);
@@ -5987,8 +5987,8 @@ static void rna_def_userdef_filepaths(BlenderRNA *brna)
   prop = RNA_def_property(srna, "show_hidden_files_datablocks", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_HIDE_DOT);
   RNA_def_property_ui_text(prop,
-                           "Hide Dot Files/Data-blocks",
-                           "Hide files and data-blocks if their name start with a dot (.*)");
+                           "Hide Dot Files/Data",
+                           "Hide files and data if their name start with a dot (.*)");
 
   prop = RNA_def_property(srna, "use_filter_files", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_FILTERFILEEXTS);

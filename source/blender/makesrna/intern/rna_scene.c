@@ -438,7 +438,7 @@ const EnumPropertyItem rna_enum_bake_save_mode_items[] = {
      "INTERNAL",
      0,
      "Internal",
-     "Save the baking map in an internal image data-block"},
+     "Save the baking map in an internal image file"},
     {R_BAKE_SAVE_EXTERNAL, "EXTERNAL", 0, "External", "Save the baking map in an external file"},
     {0, NULL, 0, NULL, NULL},
 };
@@ -4815,7 +4815,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "FreestyleConfig");
   RNA_def_struct_nested(brna, srna, "ViewLayer");
   RNA_def_struct_ui_text(
-      srna, "Freestyle Settings", "Freestyle settings for a ViewLayer data-block");
+      srna, "Freestyle Settings", "Freestyle settings for a ViewLayer");
 
   prop = RNA_def_property(srna, "modules", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "modules", NULL);
@@ -4915,7 +4915,7 @@ static void rna_def_bake_data(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "BakeSettings", NULL);
   RNA_def_struct_sdna(srna, "BakeData");
   RNA_def_struct_nested(brna, srna, "RenderSettings");
-  RNA_def_struct_ui_text(srna, "Bake Data", "Bake data for a Scene data-block");
+  RNA_def_struct_ui_text(srna, "Bake Data", "Bake data for a Scene");
   RNA_def_struct_path_func(srna, "rna_BakeSettings_path");
 
   prop = RNA_def_property(srna, "cage_object", PROP_POINTER, PROP_NONE);
@@ -5812,7 +5812,7 @@ static void rna_def_scene_render_data(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "RenderData");
   RNA_def_struct_nested(brna, srna, "Scene");
   RNA_def_struct_path_func(srna, "rna_RenderSettings_path");
-  RNA_def_struct_ui_text(srna, "Render Data", "Rendering settings for a Scene data-block");
+  RNA_def_struct_ui_text(srna, "Render Data", "Rendering settings for a Scene");
 
   /* Render Data */
   prop = RNA_def_property(srna, "image_settings", PROP_POINTER, PROP_NONE);
@@ -7389,7 +7389,7 @@ void RNA_def_scene(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "Scene", "ID");
   RNA_def_struct_ui_text(srna,
                          "Scene",
-                         "Scene data-block, consisting in objects and "
+                         "Scene, consisting in objects and "
                          "defining time and render related settings");
   RNA_def_struct_ui_icon(srna, ICON_SCENE_DATA);
   RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);
@@ -7775,7 +7775,7 @@ void RNA_def_scene(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_ui_text(
-      prop, "Annotations", "Grease Pencil data-block used for annotations in the 3D view");
+      prop, "Annotations", "Grease Pencil data used for annotations in the 3D view");
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA | NA_EDITED, NULL);
 
   /* active MovieClip */

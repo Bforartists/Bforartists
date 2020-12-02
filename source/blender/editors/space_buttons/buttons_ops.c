@@ -143,7 +143,7 @@ void BUTTONS_OT_toggle_pin(wmOperatorType *ot)
 {
   /* Identifiers. */
   ot->name = "Toggle Pin ID";
-  ot->description = "Keep the current data-block displayed";
+  ot->description = "Keep the current data displayed";
   ot->idname = "BUTTONS_OT_toggle_pin";
 
   /* Callbacks. */
