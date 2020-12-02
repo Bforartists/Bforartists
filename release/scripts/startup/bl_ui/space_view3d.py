@@ -287,9 +287,13 @@ class VIEW3D_HT_header(Header):
                         sub.separator(factor=0.4)
                         sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
 
-        if gpd.use_stroke_edit_mode or gpd.is_stroke_paint_mode:
-            row = layout.row(align=True)
-            row.popover(panel="VIEW3D_PT_tools_grease_pencil_interpolate", text="Interpolate")
+        # Grease Pencil
+        if obj and obj.type == 'GPENCIL' and context.gpencil_data:
+            gpd = context.gpencil_data
+
+            if gpd.use_stroke_edit_mode or gpd.is_stroke_paint_mode:
+                row = layout.row(align=True)
+                row.popover(panel="VIEW3D_PT_tools_grease_pencil_interpolate", text="Interpolate")
 
         elif not show_region_tool_header:
             # Transform settings depending on tool header visibility
