@@ -30,7 +30,7 @@ from bpy.props import (
 
 
 class WM_OT_previews_batch_generate(Operator):
-    """Batch-Generate Previews\nGenerate selected .blend file's previews"""
+    """Generate selected .blend file's previews"""
     bl_idname = "wm.previews_batch_generate"
     bl_label = "Batch-Generate Previews"
     bl_options = {'REGISTER'}
@@ -140,7 +140,7 @@ class WM_OT_previews_batch_generate(Operator):
 
 
 class WM_OT_previews_batch_clear(Operator):
-    """Batch-Clear Previews\nClear selected .blend file's previews"""
+    """Clear selected .blend file's previews"""
     bl_idname = "wm.previews_batch_clear"
     bl_label = "Batch-Clear Previews"
     bl_options = {'REGISTER'}
