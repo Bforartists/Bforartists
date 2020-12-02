@@ -37,7 +37,7 @@ static void rna_def_simulation(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Simulation", "ID");
-  RNA_def_struct_ui_text(srna, "Simulation", "Simulation data-block");
+  RNA_def_struct_ui_text(srna, "Simulation", "Simulation data");
   RNA_def_struct_ui_icon(srna, ICON_PHYSICS); /* TODO: Use correct icon. */
 
   prop = RNA_def_property(srna, "node_tree", PROP_POINTER, PROP_NONE);

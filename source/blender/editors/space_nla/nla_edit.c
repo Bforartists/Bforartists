@@ -618,8 +618,8 @@ static int nlaedit_add_actionclip_exec(bContext *C, wmOperator *op)
      * the user knows what they're doing... */
     BKE_reportf(op->reports,
                 RPT_WARNING,
-                "Action '%s' does not specify what data-blocks it can be used on "
-                "(try setting the 'ID Root Type' setting from the data-blocks editor "
+                "Action '%s' does not specify what data it can be used on "
+                "(try setting the 'ID Root Type' setting from the data editor "
                 "for this action to avoid future problems)",
                 act->id.name + 2);
   }

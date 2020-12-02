@@ -1726,14 +1726,14 @@ static void outliner_draw_userbuts(uiBlock *block,
                       0.0,
                       0,
                       0,
-                      TIP_("Number of users of this data-block"));
+                      TIP_("Number of users of this data"));
         UI_but_flag_enable(bt, but_flag);
 
         if (id->flag & LIB_FAKEUSER) {
-          tip = TIP_("Data-block will be retained using a fake user");
+          tip = TIP_("Data will be retained using a fake user");
         }
         else {
-          tip = TIP_("Data-block has no users and will be deleted");
+          tip = TIP_("Data has no users and will be deleted");
         }
         bt = uiDefIconButBitS(block,
                               UI_BTYPE_ICON_TOGGLE,

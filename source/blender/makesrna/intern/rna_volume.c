@@ -516,13 +516,13 @@ static void rna_def_volume(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "Volume", "ID");
-  RNA_def_struct_ui_text(srna, "Volume", "Volume data-block for 3D volume grids");
+  RNA_def_struct_ui_text(srna, "Volume", "Volume data for 3D volume grids");
   RNA_def_struct_ui_icon(srna, ICON_VOLUME_DATA);
 
   /* File */
   prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-  RNA_def_property_ui_text(prop, "File Path", "Volume file used by this Volume data-block");
+  RNA_def_property_ui_text(prop, "File Path", "Volume file used by this Volume");
   RNA_def_property_update(prop, 0, "rna_Volume_update_filepath");
 
   prop = RNA_def_property(srna, "packed_file", PROP_POINTER, PROP_NONE);

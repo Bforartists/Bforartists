@@ -273,7 +273,7 @@ bool ui_but_anim_expression_create(uiBut *but, const char *str)
   id = but->rnapoin.owner_id;
   if ((id == NULL) || (GS(id->name) == ID_MA) || (GS(id->name) == ID_TE)) {
     if (G.debug & G_DEBUG) {
-      printf("ERROR: create expression failed - invalid data-block for adding drivers (%p)\n", id);
+      printf("ERROR: create expression failed - invalid data for adding drivers (%p)\n", id);
     }
     return false;
   }

@@ -1048,7 +1048,7 @@ static void rna_def_trackingSettings(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Use Mask",
-      "Use a grease pencil data-block as a mask to use only specified areas of pattern "
+      "Use a grease pencil data as a mask to use only specified areas of pattern "
       "when tracking");
   RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
@@ -1547,7 +1547,7 @@ static void rna_def_trackingTrack(BlenderRNA *brna)
   RNA_def_property_ui_text(
       prop,
       "Use Mask",
-      "Use a grease pencil data-block as a mask to use only specified areas of pattern "
+      "Use a grease pencil data as a mask to use only specified areas of pattern "
       "when tracking");
   RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 

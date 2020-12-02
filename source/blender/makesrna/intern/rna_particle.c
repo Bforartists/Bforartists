@@ -2176,7 +2176,7 @@ static void rna_def_particle_settings_mtex(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "MTex");
   RNA_def_struct_ui_text(srna,
                          "Particle Settings Texture Slot",
-                         "Texture slot for textures in a Particle Settings data-block");
+                         "Texture slot for textures in a Particle Settings data");
 
   prop = RNA_def_property(srna, "texture_coords", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "texco");

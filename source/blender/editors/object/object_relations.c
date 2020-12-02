@@ -2290,7 +2290,7 @@ void OBJECT_OT_make_local(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Make Local";
-  ot->description = "Make library linked data-blocks local to this file";
+  ot->description = "Make library linked data local to this file";
   ot->idname = "OBJECT_OT_make_local";
 
   /* api callbacks */
@@ -2484,7 +2484,7 @@ void OBJECT_OT_make_override_library(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Library Override";
-  ot->description = "Make a local override of this library linked data-block\nIterates through the hierarchy of objects and collections based on the selection";
+  ot->description = "Make a local override of this library linked data\nIterates through the hierarchy of objects and collections based on the selection";
   ot->idname = "OBJECT_OT_make_override_library";
 
   /* api callbacks */
@@ -2646,7 +2646,7 @@ void OBJECT_OT_make_single_user(wmOperatorType *ot)
 
   RNA_def_boolean(ot->srna, "object", 0, "Object", "Make single user objects");
   RNA_def_boolean(ot->srna, "obdata", 0, "Object Data", "Make single user object data");
-  RNA_def_boolean(ot->srna, "material", 0, "Materials", "Make materials local to each data-block");
+  RNA_def_boolean(ot->srna, "material", 0, "Materials", "Make materials local to each data");
   RNA_def_boolean(
       ot->srna, "animation", 0, "Object Animation", "Make animation data local to each object");
 }
