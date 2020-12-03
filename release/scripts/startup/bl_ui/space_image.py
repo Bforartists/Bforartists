@@ -198,6 +198,8 @@ class IMAGE_MT_select(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu("IMAGE_MT_select_legacy")
+
         layout.operator("uv.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("uv.select_all_none", text="None", icon = 'SELECT_NONE') # bfa - separated tooltip
         layout.operator("uv.select_all_inverse", text="Inverse", icon = 'INVERSE') # bfa - separated tooltip
@@ -224,6 +226,16 @@ class IMAGE_MT_select(Menu):
 
         layout.operator("uv.select_more", text="More", icon = "SELECTMORE")
         layout.operator("uv.select_less", text="Less", icon = "SELECTLESS")
+
+
+class IMAGE_MT_select_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("uv.select_box", text = "Box Select", icon='BORDER_RECT').pinned = False
+        layout.operator("uv.select_circle", icon = "CIRCLE_SELECT")
 
 
 class IMAGE_MT_select_linked(Menu):
@@ -1735,6 +1747,7 @@ classes = (
     IMAGE_MT_select_inverse,
     IMAGE_MT_select_none,
     IMAGE_MT_select,
+    IMAGE_MT_select_legacy,
     IMAGE_MT_select_linked,
     IMAGE_MT_image,
     IMAGE_MT_image_invert,
