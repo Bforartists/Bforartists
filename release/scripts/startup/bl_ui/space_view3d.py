@@ -1468,6 +1468,8 @@ class VIEW3D_MT_select_object(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_object_legacy")
+
         layout.operator("object.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("object.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("object.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
@@ -1489,6 +1491,15 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.menu("VIEW3D_MT_select_object_more_less")
 
+
+class VIEW3D_MT_select_object_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("view3d.select_box", icon = "BOX_MASK")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
 
 class VIEW3D_MT_select_by_type(Menu):
@@ -1585,6 +1596,8 @@ class VIEW3D_MT_select_pose(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_object_legacy")
+
         layout.operator("pose.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("pose.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("pose.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
@@ -1652,6 +1665,8 @@ class VIEW3D_MT_select_particle(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("particle.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
@@ -1768,6 +1783,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_object_legacy")
+
         # primitive
         layout.operator("mesh.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mesh.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
@@ -1858,6 +1875,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_object_legacy")
+
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("curve.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
@@ -1907,6 +1926,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("curve.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("curve.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
@@ -1991,6 +2012,8 @@ class VIEW3D_MT_select_edit_metaball(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_object_legacy")
+
         layout.operator("mball.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("mball.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("mball.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
@@ -2062,6 +2085,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_object_legacy")
+
         layout.operator("lattice.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("lattice.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("lattice.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
@@ -2109,6 +2134,8 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("armature.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("armature.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
@@ -2182,6 +2209,8 @@ class VIEW3D_MT_select_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_gpencil_legacy")
+
         layout.operator("gpencil.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("gpencil.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("gpencil.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
@@ -2204,6 +2233,16 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.operator("gpencil.select_more", text = "More", icon = "SELECTMORE")
         layout.operator("gpencil.select_less", text = "Less", icon = "SELECTLESS")
+
+
+class VIEW3D_MT_select_gpencil_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("gpencil.select_box", icon = "BOX_MASK")
+        layout.operator("gpencil.select_circle", icon = "CIRCLE_SELECT")
 
 
 class VIEW3D_MT_select_gpencil_grouped(Menu):
@@ -2245,6 +2284,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu ("VIEW3D_MT_select_object_legacy")
+
         layout.operator("paint.face_select_all", text="All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("paint.face_select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("paint.face_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
@@ -2284,6 +2325,8 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
         layout.operator("paint.vert_select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
@@ -3920,6 +3963,8 @@ class VIEW3D_MT_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu("VIEW3D_MT_mask_legacy")
+
         props = layout.operator("paint.mask_flood_fill", text="Invert Mask", icon = "INVERT_MASK")
         props.mode = 'INVERT'
 
@@ -3989,6 +4034,19 @@ class VIEW3D_MT_mask(Menu):
         layout.separator()
 
         props = layout.operator("sculpt.dirty_mask", text='Dirty Mask', icon = "DIRTY_VERTEX")
+
+
+class VIEW3D_MT_mask_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        props = layout.operator("paint.mask_box_gesture", text="Box Mask", icon = "BOX_MASK")
+        props.mode = 'VALUE'
+        props.value = 0
+
+        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
 
 
 class VIEW3D_MT_face_sets(Menu):
@@ -9019,6 +9077,7 @@ classes = (
     VIEW3D_MT_select_object_inverse,
     VIEW3D_MT_select_object_none,
     VIEW3D_MT_select_object,
+    VIEW3D_MT_select_object_legacy,
     VIEW3D_MT_select_by_type,
     VIEW3D_MT_select_grouped,
     VIEW3D_MT_select_linked,
@@ -9054,6 +9113,7 @@ classes = (
     VIEW3D_MT_select_edit_armature_none,
     VIEW3D_MT_select_edit_armature,
     VIEW3D_MT_select_gpencil,
+    VIEW3D_MT_select_gpencil_legacy,
     VIEW3D_MT_select_gpencil_inverse,
     VIEW3D_MT_select_gpencil_none,
     VIEW3D_MT_select_gpencil_grouped,
@@ -9116,6 +9176,7 @@ classes = (
     VIEW3D_MT_sculpt,
     VIEW3D_MT_sculpt_set_pivot,
     VIEW3D_MT_mask,
+    VIEW3D_MT_mask_legacy,
     VIEW3D_MT_face_sets,
     VIEW3D_MT_face_sets_init,
     VIEW3D_MT_hide_mask,
