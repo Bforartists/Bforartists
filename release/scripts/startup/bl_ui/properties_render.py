@@ -494,7 +494,7 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(rd, "filter_size")
-        
+
         col = layout.column()
         split = col.split(factor = 0.35)
         row = split.row()
