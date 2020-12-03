@@ -212,7 +212,7 @@ class _defs_annotate:
         elif tool.idname == "builtin.annotate" and region_type != 'TOOL_HEADER':
             layout.separator()
             props = tool.operator_properties("gpencil.annotate")
-
+                
             split = layout.split(factor = 0.66)
             col = split.column()
             col.use_property_split = False
