@@ -304,13 +304,13 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
 
         col = flow.column()
         col.prop(scene, "audio_volume")
-        
+
         col.separator()
-        
+
         col = col.column(align=True)
         col.prop(scene, "audio_distance_model")
         col.prop(scene, "audio_doppler_speed", text="Doppler Speed")
-        col.prop(scene, "audio_doppler_factor", text="Doppler Factor")     
+        col.prop(scene, "audio_doppler_factor", text="Doppler Factor")
 
         col.separator()
 
