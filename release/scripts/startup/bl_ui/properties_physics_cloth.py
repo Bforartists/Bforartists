@@ -291,9 +291,9 @@ class PHYSICS_PT_cloth_shape(PhysicButtonsPanel, Panel):
         sub.prop(cloth, "pin_stiffness", text="Stiffness")
 
         col.separator()
-        
+
         col = flow.column()
-    
+
         split = flow.split(factor = 0.36)
         col = split.column()
         col.use_property_split = False
@@ -309,7 +309,7 @@ class PHYSICS_PT_cloth_shape(PhysicButtonsPanel, Panel):
 
         col = flow.column()
         row = col.row()
-        row.use_property_split = False   
+        row.use_property_split = False
         row.prop(cloth, "use_dynamic_mesh", text="Dynamic Mesh")
         row.prop_decorator(cloth, "use_dynamic_mesh")
 
