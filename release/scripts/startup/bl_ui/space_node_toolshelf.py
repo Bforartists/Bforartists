@@ -476,6 +476,7 @@ class NODES_PT_Input_shader(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         scene = context.scene
+        engine = context.engine
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -491,6 +492,12 @@ class NODES_PT_Input_shader(bpy.types.Panel):
                 props = col.operator("node.add_node", text=" Principled         ", icon = "NODE_PRINCIPLED")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfPrincipled"
+
+                if engine == 'CYCLES':
+
+                    props = col.operator("node.add_node", text=" Principled Hair        ", icon = "HAIR")
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfHairPrincipled"
 
             elif context.space_data.shader_type == 'WORLD':
 
@@ -547,6 +554,8 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         scene = context.scene
+        engine = context.engine
+
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -584,6 +593,12 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
                 props = col.operator("node.add_node", text=" Refraction         ", icon = "NODE_REFRACTIONSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfRefraction"
+
+                if engine == 'BLENDER_EEVEE':
+
+                    props = col.operator("node.add_node", text=" Specular         ", icon = "NODE_GLOSSYSHADER")
+                    props.use_transform = True
+                    props.type = "ShaderNodeEeveeSpecular"
 
                 props = col.operator("node.add_node", text=" Subsurface Scattering ", icon = "NODE_SSS")
                 props.use_transform = True
@@ -778,6 +793,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
         default_context = bpy.app.translations.contexts.default
 
         scene = context.scene
+        engine = context.engine
 
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
@@ -799,6 +815,10 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Gradient           ", icon = "NODE_GRADIENT")
             props.use_transform = True
             props.type = "ShaderNodeTexGradient"
+
+            props = col.operator("node.add_node", text=" IES Texture        ", icon = "LIGHT")
+            props.use_transform = True
+            props.type = "ShaderNodeTexIES"
 
             props = col.operator("node.add_node", text=" Magic               ", icon = "MAGIC_TEX")
             props.use_transform = True
@@ -1916,7 +1936,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute          ", icon = "NODE_ATTRIBUTE")
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
-            
+
             props = col.operator("node.add_node", text=" Bevel          ", icon = "BEVEL")
             props.use_transform = True
             props.type = "ShaderNodeBevel"
@@ -2525,6 +2545,10 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeBump"
 
+            props = col.operator("node.add_node", text=" Displacement               ", icon = "MOD_DISPLACE")
+            props.use_transform = True
+            props.type = "ShaderNodeDisplacement"
+
             props = col.operator("node.add_node", text=" Mapping           ", icon = "NODE_MAPPING")
             props.use_transform = True
             props.type = "ShaderNodeMapping"
@@ -2538,6 +2562,14 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Vector Curves ", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
+
+            props = col.operator("node.add_node", text=" Vector Displacement ", icon = "MOD_DISPLACE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorDisplacement"
+
+            props = col.operator("node.add_node", text=" Vector Rotate ", icon = "TRANSFORM_ROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
 
             props = col.operator("node.add_node", text=" Vector Transform ", icon = "NODE_VECTOR_TRANSFORM")
             props.use_transform = True
