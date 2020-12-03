@@ -326,6 +326,8 @@ class NODE_MT_select(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu("NODE_MT_select_legacy")
+
         layout.operator("node.select_all",text = "All", icon = 'SELECT_ALL').action = 'SELECT'
         layout.operator("node.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
         layout.operator("node.select_all_inverse", text="Invert", icon='INVERSE') # bfa - separated tooltip
@@ -345,6 +347,16 @@ class NODE_MT_select(Menu):
         layout.separator()
 
         layout.operator("node.find_node", icon='VIEWZOOM')
+
+
+class NODE_MT_select_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("node.select_box", icon = "BOX_MASK").tweak = False
+        layout.operator("node.select_circle", icon = "CIRCLE_SELECT")
 
 class NODE_MT_node_group_separate(Menu):
     bl_label = "Separate"
@@ -835,6 +847,7 @@ classes = (
     NODE_MT_select_inverse,
     NODE_MT_select_none,
     NODE_MT_select,
+    NODE_MT_select_legacy,
     NODE_MT_node_group_separate,
     NODE_MT_node,
     NODE_MT_node_links,
