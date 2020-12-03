@@ -314,7 +314,7 @@ class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
         if is_poly:
             # These settings are below but its easier to have
             # polys set aside since they use so few settings
-            
+
             col.use_property_split = False
 
             col.prop(act_spline, "use_cyclic_u")
@@ -329,7 +329,7 @@ class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
             row = sub.row()
             row.separator()
             row.prop(act_spline, "use_cyclic_u", text="U")
-            
+
             if is_surf:
                 row = sub.row()
                 row.separator()

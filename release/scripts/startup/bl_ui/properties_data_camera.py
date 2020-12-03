@@ -89,7 +89,7 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
                 col.prop(cam, "lens")
             elif cam.lens_unit == 'FOV':
                 col.prop(cam, "angle")
-            
+
         elif cam.type == 'ORTHO':
             col.prop(cam, "ortho_scale")
 
@@ -116,7 +116,7 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
                     col.prop(cam, "lens")
                 elif cam.lens_unit == 'FOV':
                     col.prop(cam, "angle")
-                
+
 
         col = layout.column()
         col.separator()
@@ -381,10 +381,10 @@ class DATA_PT_camera_display(CameraButtonsPanel, Panel):
         col = layout.column(align=True)
         col.prop(cam, "display_size", text="Size")
 
-        col.label( text = "Show")  
-        col.use_property_split = False  
+        col.label( text = "Show")
+        col.use_property_split = False
         row = col.row()
-        row.separator()         
+        row.separator()
         row.prop(cam, "show_limits", text="Limits")
         row.prop_decorator(cam, "show_limits")
         row = col.row()
@@ -399,10 +399,10 @@ class DATA_PT_camera_display(CameraButtonsPanel, Panel):
         row.separator()
         row.prop(cam, "show_name", text="Name")
         row.prop_decorator(cam, "show_name")
-    
+
         split = layout.split(factor = 0.36)
         col = split.column()
-        col.use_property_split = False  
+        col.use_property_split = False
         col.prop(cam, "show_passepartout", text = "Passepartout")
         col = split.column()
         if cam.show_passepartout:
@@ -424,31 +424,31 @@ class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
         cam = context.camera
 
         row = layout.row()
-        row.use_property_split = False    
+        row.use_property_split = False
         row.prop(cam, "show_composition_thirds")
         row.prop_decorator(cam, "show_composition_thirds")
 
         col = layout.column(align=True)
-        col.label( text = "Center")  
-        col.use_property_split = False  
+        col.label( text = "Center")
+        col.use_property_split = False
         row = col.row()
         row.separator()
         row.prop(cam, "show_composition_center")
-        row.prop_decorator(cam, "show_composition_center")    
+        row.prop_decorator(cam, "show_composition_center")
         row = col.row()
-        row.separator() 
+        row.separator()
         row.prop(cam, "show_composition_center_diagonal", text="Diagonal")
         row.prop_decorator(cam, "show_composition_center_diagonal")
 
         col = layout.column(align=True)
-        col.label( text = "Golden")  
+        col.label( text = "Golden")
         col.use_property_split = False
         row = col.row()
         row.separator()
         row.prop(cam, "show_composition_golden", text="Ratio")
         row.prop_decorator(cam, "show_composition_golden")
         row = col.row()
-        row.separator() 
+        row.separator()
         row.prop(cam, "show_composition_golden_tria_a", text="Triangle A")
         row.prop_decorator(cam, "show_composition_golden_tria_a")
         row = col.row()
@@ -457,7 +457,7 @@ class DATA_PT_camera_display_composition_guides(CameraButtonsPanel, Panel):
         row.prop_decorator(cam, "show_composition_golden_tria_b")
 
         col = layout.column(align=True)
-        col.label( text = "Harmony")  
+        col.label( text = "Harmony")
         col.use_property_split = False
         row = col.row()
         row.separator()
