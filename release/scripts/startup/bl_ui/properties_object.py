@@ -52,7 +52,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
 
     def draw(self, context):
         draw4L = False
-
+        
         layout = self.layout
         layout.use_property_split = True
 
@@ -298,7 +298,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
             # Only useful with object having faces/materials...
             col.prop(obj, "color")
-
+           
         split = layout.split(factor = 0.35)
         col = split.column()
         col.use_property_split = False

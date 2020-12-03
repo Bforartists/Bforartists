@@ -261,8 +261,8 @@ class DATA_PT_gpencil_onion_skinning_display(DataButtonsPanel, Panel):
 
         layout = self.layout
         layout.use_property_split = False
-        layout.enabled = gpd.users <= 1
-
+        layout.enabled = gpd.users <= 1     
+        
         col = layout.column(align=True)
         col.prop(gpd, "use_ghosts_always", text="View in Render")
         col.prop(gpd, "use_onion_fade", text="Fade")
@@ -328,7 +328,7 @@ class DATA_PT_gpencil_vertex_groups(ObjectButtonsPanel, Panel):
         col = row.column(align=True)
         col.operator("object.vertex_group_add", icon='ADD', text="")
         col.operator("object.vertex_group_remove", icon='REMOVE', text="").all = False
-
+        
         if ob.mode in {'EDIT_GPENCIL', 'SCULPT_GPENCIL'}:
 
             if ob.vertex_groups:
