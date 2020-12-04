@@ -2241,7 +2241,7 @@ class VIEW3D_MT_select_gpencil_legacy(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("gpencil.select_box", icon = "BOX_MASK")
+        layout.operator("gpencil.select_box", icon = "BORDER_RECT")
         layout.operator("gpencil.select_circle", icon = "CIRCLE_SELECT")
 
 
