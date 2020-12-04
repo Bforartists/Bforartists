@@ -355,7 +355,7 @@ class NODE_MT_select_legacy(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("node.select_box", icon = "BOX_MASK").tweak = False
+        layout.operator("node.select_box", icon = "BORDER_RECT").tweak = False
         layout.operator("node.select_circle", icon = "CIRCLE_SELECT")
 
 class NODE_MT_node_group_separate(Menu):
