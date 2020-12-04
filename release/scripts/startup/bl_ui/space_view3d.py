@@ -4994,6 +4994,8 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        layout.menu ("VIEW3D_MT_edit_mesh_vertices_legacy")
+
         layout.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
         layout.operator("mesh.vert_connect_path", text = "Connect Vertex Path", icon = "VERTEXCONNECTPATH")
         layout.operator("mesh.vert_connect", text = "Connect Vertex Pairs", icon = "VERTEXCONNECT")
@@ -5019,6 +5021,31 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
 
 
+class VIEW3D_MT_edit_mesh_vertices_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        layout.operator("mesh.bevel", text="Bevel Vertices", icon = "BEVEL").affect = 'VERTICES'
+
+        layout.separator()
+
+        props = layout.operator("mesh.rip_move", text="Rip Vertices", icon = "RIP")
+        props.MESH_OT_rip.use_fill = False
+        props = layout.operator("mesh.rip_move", text="Rip Vertices and Fill", icon = "RIP_FILL")
+        props.MESH_OT_rip.use_fill = True
+        layout.operator("mesh.rip_edge_move", text="Rip Vertices and Extend", icon = "EXTEND_VERTICES")
+
+        layout.separator()
+
+        layout.operator("transform.vert_slide", text="Slide Vertices", icon = "SLIDE_VERTEX")
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("mesh.vertices_smooth", text="Smooth Vertices", icon = "SMOOTH_VERTEX").factor = 0.5
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+
 class VIEW3D_MT_edit_mesh_edges_data(Menu):
     bl_label = "Edge Data"
 
@@ -5028,6 +5055,8 @@ class VIEW3D_MT_edit_mesh_edges_data(Menu):
         render = context.scene.render
 
         layout.operator_context = 'INVOKE_REGION_WIN'
+
+        layout.menu ("VIEW3D_MT_edit_mesh_edges")
 
         layout.operator("transform.edge_crease", icon = "CREASE")
         layout.operator("transform.edge_bevelweight", icon = "BEVEL")
@@ -5063,6 +5092,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         with_freestyle = bpy.app.build_options.freestyle
 
         layout.operator_context = 'INVOKE_REGION_WIN'
+
+        layout.menu ("VIEW3D_MT_edit_mesh_edges_legacy")
 
         layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
         layout.operator("mesh.screw", icon = "MOD_SCREW")
@@ -5100,6 +5131,22 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
             layout.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon = "CLEAR_FS_EDGE").clear = True
 
 
+class VIEW3D_MT_edit_mesh_edges_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("mesh.bevel", text="Bevel Edges", icon = "BEVEL").affect = 'EDGES'
+
+        layout.separator()
+
+        layout.operator("transform.edge_slide", icon = "SLIDE_EDGE")
+        props = layout.operator("mesh.loopcut_slide", icon = "LOOP_CUT_AND_SLIDE")
+        props.TRANSFORM_OT_edge_slide.release_confirm = False
+        layout.operator("mesh.offset_edge_loops_slide", icon = "OFFSET_EDGE_SLIDE")
+
+
 class VIEW3D_MT_edit_mesh_faces_data(Menu):
     bl_label = "Face Data"
 
@@ -5134,6 +5181,8 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        layout.menu ("VIEW3D_MT_edit_mesh_faces_legacy")
+
         layout.operator("mesh.poke", icon = "POKEFACES")
 
         layout.separator()
@@ -5162,6 +5211,15 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_faces_data")
+
+
+class VIEW3D_MT_edit_mesh_faces_legacy(Menu):
+    bl_label = "Legacy"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("mesh.inset", icon = "INSET_FACES")
 
 
 # Workaround to separate the tooltips for Recalculate Outside and Recalculate Inside
@@ -9217,9 +9275,12 @@ classes = (
     VIEW3D_MT_edit_mesh_extrude_dupli_rotate,
     VIEW3D_MT_edit_mesh_extrude,
     VIEW3D_MT_edit_mesh_vertices,
+    VIEW3D_MT_edit_mesh_vertices_legacy,
     VIEW3D_MT_edit_mesh_edges,
+    VIEW3D_MT_edit_mesh_edges_legacy,
     VIEW3D_MT_edit_mesh_edges_data,
     VIEW3D_MT_edit_mesh_faces,
+    VIEW3D_MT_edit_mesh_faces_legacy,
     VIEW3D_MT_edit_mesh_faces_data,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_MT_edit_mesh_normals,
