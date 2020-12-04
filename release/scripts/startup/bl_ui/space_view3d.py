@@ -2152,7 +2152,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator("armature.select_linked", text="Linked")
+        layout.operator("armature.select_linked", text="Linked", icon = "LINKED")
 
         layout.separator()
 
