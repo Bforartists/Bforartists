@@ -588,10 +588,6 @@ class TOPBAR_MT_window(Menu):
             layout.separator()
             layout.operator("wm.console_toggle", icon='CONSOLE')
 
-        if context.scene.render.use_multiview:
-            layout.separator()
-            layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
-
 
 class TOPBAR_MT_help(Menu):
     bl_label = "Help"
