@@ -208,7 +208,7 @@ class ANIM_OT_switch_editors_to_dopesheet(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.wm.context_set_enum(data_path="area.type", value="DOPESHEET_EDITOR")
+        bpy.ops.wm.context_set_enum(data_path="area.ui_type", value="DOPESHEET")
         return {'FINISHED'}
 
 
