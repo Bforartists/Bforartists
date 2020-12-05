@@ -354,8 +354,8 @@ class RENDER_PT_output_options(RenderOutputButtonsPanel, Panel):
 
 
 class RENDER_PT_output_views(RenderOutputButtonsPanel, Panel):
-    bl_label = "Views"
-    bl_parent_id = "RENDER_PT_output"
+    bl_label = "Output Views"
+    bl_parent_id = "RENDER_PT_stereoscopy"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
