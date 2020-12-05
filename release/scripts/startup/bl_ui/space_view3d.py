@@ -8534,6 +8534,7 @@ class VIEW3D_PT_view3d_stereo(Panel):
     @classmethod
     def poll(cls, context):
         scene = context.scene
+        wm = bpy.ops.wm
 
         multiview = scene.render.use_multiview
         return multiview
@@ -8563,6 +8564,10 @@ class VIEW3D_PT_view3d_stereo(Panel):
         split.prop(view, "show_stereo_3d_volume")
         split = row.split()
         split.prop(view, "stereo_3d_volume_alpha", text="Alpha")
+        
+        if context.scene.render.use_multiview:
+            layout.separator()
+            layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
 
 
 class VIEW3D_PT_context_properties(Panel):
