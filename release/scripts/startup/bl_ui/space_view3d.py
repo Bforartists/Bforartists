@@ -4947,7 +4947,7 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
         'FACE': lambda layout:
         layout.operator("mesh.extrude_faces_move", text="Extrude Individual Faces (Legacy)", icon='EXTRUDE_REGION'),
         'MANIFOLD': lambda layout:
-        layout.operator("view3d.edit_mesh_extrude_manifold_normal", text="Extrude Manifold", icon='EXTRUDE_REGION'),
+        layout.operator("view3d.edit_mesh_extrude_manifold_normal", text="Extrude Manifold (Legacy)", icon='EXTRUDE_REGION'),
         'DUPLI_EXTRUDE': lambda layout:
             layout.operator("mesh.dupli_extrude_cursor_norotate", text="Dupli Extrude", icon='DUPLI_EXTRUDE'),
         'DUPLI_EX_ROTATE': lambda layout:
