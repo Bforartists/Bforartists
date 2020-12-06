@@ -166,7 +166,7 @@ def start_thumbnailer(self, context):
         return {'FINISHED'}
 
 
-def start_material_thumbnailer(self, context):
+def start_material_thumbnailer(self, context, wait = False):
     # Prepare to save the file
     mat = bpy.context.active_object.active_material
     mat.blenderkit.is_generating_thumbnail = True
@@ -289,6 +289,7 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
     bl_idname = "object.blenderkit_material_thumbnail"
     bl_label = "BlenderKit Material Thumbnail Generator"
     bl_options = {'REGISTER', 'INTERNAL'}
+
 
     @classmethod
     def poll(cls, context):

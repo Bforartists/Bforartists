@@ -267,14 +267,25 @@ class RigUtility(BoneUtilityMixin, MechanismUtilityMixin):
         self.owner.register_new_bone(new_name, old_name)
 
 
-class RigComponent(GenerateCallbackHost, RigUtility):
-    """Base class for utility classes that generate part of a rig using callbacks."""
+class LazyRigComponent(GenerateCallbackHost, RigUtility):
+    """Base class for utility classes that generate part of a rig using callbacks. Starts as disabled."""
     def __init__(self, owner):
         super().__init__(owner)
 
-        self.owner.rigify_sub_objects = objects = self.owner.rigify_sub_objects or []
+        self.is_component_enabled = False
 
-        objects.append(self)
+    def enable_component(self):
+        if not self.is_component_enabled:
+            self.is_component_enabled = True
+            self.owner.rigify_sub_objects = objects = self.owner.rigify_sub_objects or []
+            objects.append(self)
+
+
+class RigComponent(LazyRigComponent):
+    """Base class for utility classes that generate part of a rig using callbacks."""
+    def __init__(self, owner):
+        super().__init__(owner)
+        self.enable_component()
 
 
 #=============================================

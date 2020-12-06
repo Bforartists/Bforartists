@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -3935,10 +3935,6 @@ msgid "Amount of residual error in Blender space unit for constraints that work 
 msgstr "Quantità di errore residuo in unità spazio Blender per i vincoli che lavorano sulla posizione"
 
 
-msgid "Rot error"
-msgstr "Errore rotazione"
-
-
 msgid "Amount of residual error in radians for constraints that work on orientation"
 msgstr "Quantità di errore residuo in radianti per i vincoli che lavorano sull'orientamento"
 
@@ -6183,10 +6179,6 @@ msgid "Include visualization of scene related animation data"
 msgstr "Include la visualizzazione dei dati animazione relativi alla Scena"
 
 
-msgid "Display Shapekeys"
-msgstr "Mostra Chiavi Forma"
-
-
 msgid "Include visualization of shape key related animation data"
 msgstr "Comprende la visione dei dati dell'animazione relativi alla chiave forma"
 
@@ -7589,28 +7581,8 @@ msgid "Lossless"
 msgstr "Senza perdita"
 
 
-msgid "Perceptually lossless"
-msgstr "Percentualmente senza perdita"
-
-
-msgid "High quality"
-msgstr "Alta qualità"
-
-
-msgid "Medium quality"
-msgstr "Media qualità"
-
-
-msgid "Low quality"
-msgstr "Bassa qualità"
-
-
-msgid "Very low quality"
-msgstr "Qualità molto bassa"
-
-
-msgid "Lowest quality"
-msgstr "Qualità più bassa"
+msgid "High Quality"
+msgstr "Alta Qualità"
 
 
 msgid "Tradeoff between encoding speed and compression ratio"
@@ -12136,10 +12108,6 @@ msgid "Output video in AVI Raw format"
 msgstr "Video in formato AVI RAW"
 
 
-msgid "FFmpeg video"
-msgstr "FFmpeg video"
-
-
 msgid "Image/Movie file name"
 msgstr "Nome del file Immagine/Filmato"
 
@@ -13262,12 +13230,24 @@ msgid "High"
 msgstr "Alto"
 
 
+msgid "High quality"
+msgstr "Alta qualità"
+
+
 msgid "Medium"
 msgstr "Medio"
 
 
+msgid "Medium quality"
+msgstr "Media qualità"
+
+
 msgid "Low"
 msgstr "Basso"
+
+
+msgid "Low quality"
+msgstr "Bassa qualità"
 
 
 msgid "Render Quality"
@@ -13827,6 +13807,10 @@ msgstr "Superficie"
 msgctxt "ID"
 msgid "Empty"
 msgstr "Vuoto"
+
+
+msgid "Camera Parent Lock"
+msgstr "Blocco Camera Genitore"
 
 
 msgid "Dynamic Topology Sculpting"
@@ -14969,10 +14953,6 @@ msgid "How to sync playback"
 msgstr "Come sincronizzare la riproduzione"
 
 
-msgid "No Sync"
-msgstr "Nessuna Sincronizzazione"
-
-
 msgid "Do not sync, play every frame"
 msgstr "Non sincronizzare, riproduci ogni fotogramma"
 
@@ -14983,10 +14963,6 @@ msgstr "Scarto Fotogrammi"
 
 msgid "Drop frames if playback is too slow"
 msgstr "Salta fotogrammi se la riproduzione è troppo lenta"
-
-
-msgid "AV-sync"
-msgstr "Sincro-AV"
 
 
 msgid "Sync to audio playback, dropping frames"
@@ -15991,16 +15967,8 @@ msgid "Use standard stucci"
 msgstr "Usa stucco standard"
 
 
-msgid "Wall in"
-msgstr "Scavato"
-
-
 msgid "Create Dimples"
 msgstr "Crea Scanalature"
-
-
-msgid "Wall out"
-msgstr "Rilevato"
 
 
 msgid "Create Ridges"
@@ -18931,10 +18899,6 @@ msgstr "Menu Contesto Testo"
 
 msgid "Interpolate"
 msgstr "Interpola"
-
-
-msgid "Show/hide"
-msgstr "Mostra/nascondi"
 
 
 msgid "Mesh"
@@ -22744,54 +22708,6 @@ msgid "Search Size"
 msgstr "Dimensione Ricerca"
 
 
-msgid "Refine"
-msgstr "Raffina"
-
-
-msgid "Refine focal length"
-msgstr "Affina la lunghezza focale"
-
-
-msgid "Focal length, K1"
-msgstr "Lunghezza focale, K1"
-
-
-msgid "Refine focal length and radial distortion K1"
-msgstr "Affina la lunghezza focale e la distorsione radiale K1"
-
-
-msgid "Focal length, K1, K2"
-msgstr "Lunghezza focale, K1, K2"
-
-
-msgid "Refine focal length and radial distortion K1 and K2"
-msgstr "Affina la lunghezza focale e la distorsione radiale K1 e K2"
-
-
-msgid "Focal Length, Optical Center, K1, K2"
-msgstr "Lunghezza Focale, Centro Ottico, K1, K2"
-
-
-msgid "Refine focal length, optical center and radial distortion K1 and K2"
-msgstr "Affina la lunghezza focale, il centro ottico e la distorsione radiale K1 e K2"
-
-
-msgid "Focal Length, Optical Center"
-msgstr "Lunghezza Focale, Centro dell'Ottica"
-
-
-msgid "Refine focal length and optical center"
-msgstr "Affina la lunghezza focale e il centro ottico"
-
-
-msgid "K1, K2"
-msgstr "K1, K2"
-
-
-msgid "Refine radial distortion K1 and K2"
-msgstr "Affina la distorsione radiale K1 e K2"
-
-
 msgid "Show default options expanded in the user interface"
 msgstr "Mostra le opzioni di default espanse nell'interfaccia utente"
 
@@ -24497,6 +24413,10 @@ msgid "Curved"
 msgstr "Curvo"
 
 
+msgid "Tile Order"
+msgstr "Ordine Tasselli"
+
+
 msgid "Tile order"
 msgstr "Ordine Tasselli"
 
@@ -24509,16 +24429,8 @@ msgid "Random tiles"
 msgstr "Tasselli casuali"
 
 
-msgid "Bottom up"
-msgstr "Inverso"
-
-
 msgid "Expand from bottom"
 msgstr "Espandi dal basso"
-
-
-msgid "Rule of thirds"
-msgstr "Regola dei terzi"
 
 
 msgid "Expand from 9 places"
@@ -26507,10 +26419,6 @@ msgid "Set Start Frame"
 msgstr "Imposta Primo Fotogramma"
 
 
-msgid "Convert To Radians"
-msgstr "Converti a Radianti"
-
-
 msgctxt "Operator"
 msgid "Align Bones"
 msgstr "Allinea Ossa"
@@ -26531,11 +26439,6 @@ msgstr "Cambia i livelli armatura visibili"
 
 msgid "Armature layers to make visible"
 msgstr "Livelli armatura da rendere visibili"
-
-
-msgctxt "Operator"
-msgid "AutoName by Axis"
-msgstr "Auto Nomina per Asse"
 
 
 msgid "Automatically renames the selected bones according to which side of the target axis they fall on"
@@ -26904,16 +26807,12 @@ msgid "Select similar bones by property types"
 msgstr "Seleziona ossa simili per tipo proprietà"
 
 
-msgid "Immediate children"
-msgstr "Figli diretti"
+msgid "Immediate Children"
+msgstr "Figli Diretti"
 
 
 msgid "Siblings"
 msgstr "Fratelli"
-
-
-msgid "Direction (Y axis)"
-msgstr "Direzione (asse Y)"
 
 
 msgid "Prefix"
@@ -27397,20 +27296,8 @@ msgid "Clear action to execute"
 msgstr "Cancella l'azione da eseguire"
 
 
-msgid "Clear up-to"
-msgstr "Cancella fino a"
-
-
 msgid "Clear path up to current frame"
 msgstr "Cancella il percorso fino al fotogramma corrente"
-
-
-msgid "Clear remained"
-msgstr "Cancella tutto il resto"
-
-
-msgid "Clear all"
-msgstr "Cancella tutto"
 
 
 msgid "Clear the whole path"
@@ -27770,24 +27657,12 @@ msgid "Select all tracks from specified group"
 msgstr "Seleziona tutte le tracce dal gruppo specificato"
 
 
-msgid "Estimated tracks"
-msgstr "Tracce stimate"
-
-
 msgid "Select all estimated tracks"
 msgstr "Seleziona tutte le tracce stimate"
 
 
-msgid "Locked tracks"
-msgstr "Tracce bloccate"
-
-
 msgid "Select all locked tracks"
 msgstr "Seleziona tutte le tracce bloccate"
-
-
-msgid "Disabled tracks"
-msgstr "Tracce disabilitate"
 
 
 msgid "Select all disabled tracks"
@@ -27986,11 +27861,6 @@ msgstr "Marcatori della traccia selezionata"
 
 
 msgctxt "Operator"
-msgid "Track Settings As Default"
-msgstr "Impostazioni Tracciamento Come Default"
-
-
-msgctxt "Operator"
 msgid "Copy Track Settings"
 msgstr "Copia Impostazioni Traccia"
 
@@ -28175,11 +28045,6 @@ msgstr "Copia negli Appunti"
 
 msgid "Copy selected text to clipboard"
 msgstr "Copia il testo selezionato negli appunti"
-
-
-msgctxt "Operator"
-msgid "Copy to Clipboard (as script)"
-msgstr "Copia negli Appunti (come script)"
 
 
 msgid "Copy the console contents for use in a script"
@@ -30727,14 +30592,6 @@ msgid "Close or open the selected stroke adding an edge from last to first point
 msgstr "Chiude o apre il tratto selezionato aggiungendo uno spigolo fra l'ultimo ed il primo punto"
 
 
-msgid "Close all"
-msgstr "Chiudi tutto"
-
-
-msgid "Open all"
-msgstr "Apri tutto"
-
-
 msgctxt "Operator"
 msgid "Flip Stroke"
 msgstr "Ribalta Tratto"
@@ -30785,14 +30642,6 @@ msgstr "Unisci punti per distanza"
 msgctxt "Operator"
 msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
-
-
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
 
 
 msgid "Confirm on Release"
@@ -33802,10 +33651,6 @@ msgid "Perimeter"
 msgstr "Perimetro"
 
 
-msgid "Co-planar"
-msgstr "Complanare"
-
-
 msgid "Flat/Smooth"
 msgstr "Piatto/Levigato"
 
@@ -34688,10 +34533,6 @@ msgid "Find Node"
 msgstr "Trova Nodo"
 
 
-msgid "Search for named node and allow to select and activate it"
-msgstr "Cerca un nodo tramite il nome assegnato e permette si selezionarlo ed attivarlo"
-
-
 msgid "Previous"
 msgstr "Precedente"
 
@@ -35097,10 +34938,6 @@ msgstr "Centri"
 
 msgid "Positive Sides"
 msgstr "Lati Positivi"
-
-
-msgid "High Quality"
-msgstr "Alta Qualità"
 
 
 msgid "Enables high quality calculation of the bounding box for perfect results on complex shape meshes with rotation/scale (Slow)"
@@ -36187,10 +36024,6 @@ msgid "Randomize Transform"
 msgstr "Trasformazione Casuale"
 
 
-msgid "Randomize objects loc/rot/scale"
-msgstr "Rende casuale la posizione/rotazione/scala degli oggetti"
-
-
 msgid "Maximum distance the objects can spread over each axis"
 msgstr "La massima distanza in cui gli oggetti si possono propagare per ogni asse"
 
@@ -36279,10 +36112,6 @@ msgstr "Seleziona la camera"
 
 msgid "Select all visible objects grouped by various properties"
 msgstr "Seleziona tutti gli oggetti visibili raggruppati da diverse proprietà"
-
-
-msgid "Immediate Children"
-msgstr "Figli Diretti"
 
 
 msgid "Shared Parent"
@@ -37874,10 +37703,6 @@ msgstr "Collega Capelli"
 
 msgid "Connect hair to the emitter mesh"
 msgstr "Collega i capelli alla mesh emittente"
-
-
-msgid "All hair"
-msgstr "Tutti i capelli"
 
 
 msgid "Connect all hair systems to the emitter mesh"
@@ -40082,11 +39907,6 @@ msgid "Copy"
 msgstr "Copia"
 
 
-msgctxt "Operator"
-msgid "Crossfade sounds"
-msgstr "Dissolvenza incrociata dei suoni"
-
-
 msgid "Do cross-fading volume animation of two selected sound strips"
 msgstr "Esegue la dissolvenza incrociata del volume dell'animazione fra le due spezzoni sonori selezionati"
 
@@ -41027,6 +40847,10 @@ msgid "Open a new text data-block"
 msgstr "Apre un nuovo blocco di dati testo"
 
 
+msgid "Make Internal"
+msgstr "Rendi Interno"
+
+
 msgid "Make text file internal after loading"
 msgstr "Dopo aver caricato il file di testo lo rende interno"
 
@@ -41090,10 +40914,6 @@ msgstr "Come risolvere il conflitto dovuto dalle differenza tra il testo interno
 
 msgid "Ignore"
 msgstr "Ignora"
-
-
-msgid "Make Internal"
-msgstr "Rendi Interno"
 
 
 msgctxt "Operator"
@@ -43520,10 +43340,6 @@ msgid "Save Backups"
 msgstr "Salva Backups"
 
 
-msgid "Mat/Tex/..."
-msgstr "Mat/Tex/..."
-
-
 msgctxt "Operator"
 msgid "Batch-Generate Previews"
 msgstr "Genera Anteprime in Massa"
@@ -44368,10 +44184,6 @@ msgid "Solve"
 msgstr "Risolvi"
 
 
-msgid "Clean up"
-msgstr "Ripulisci"
-
-
 msgid "Transforms"
 msgstr "Trasformazioni"
 
@@ -44751,10 +44563,6 @@ msgid "Border Collisions"
 msgstr "Bordo Collisioni"
 
 
-msgid "Softbody And Cloth"
-msgstr "Corpo Morbido e Stoffa"
-
-
 msgid "Waves"
 msgstr "Onde"
 
@@ -44917,10 +44725,6 @@ msgstr "Apri Al Passaggio del Mouse"
 
 msgid "Pie Menus"
 msgstr "Menu Radiali"
-
-
-msgid "Temporary Windows"
-msgstr "Finestra Temporanea"
 
 
 msgid "Text Rendering"
@@ -45427,10 +45231,6 @@ msgstr "Taglia capelli"
 
 msgid "Weight hair particles"
 msgstr "Peso particelle capelli"
-
-
-msgid "Soft body"
-msgstr "Corpo morbido"
 
 
 msgid "Auto Velocity"
@@ -46001,10 +45801,6 @@ msgid "IK Z Minimum"
 msgstr "Z Minimo IK"
 
 
-msgid "IK Rot Weight"
-msgstr "Peso IK Rotaz."
-
-
 msgid "Weight of rotation constraint for IK"
 msgstr "Peso del vincolo rotazione per la Cinematica Inversa"
 
@@ -46123,10 +45919,6 @@ msgstr "Limita Z IK"
 
 msgid "Limit movement around the Z axis"
 msgstr "Limita il movimento attorno all'asse Z"
-
-
-msgid "IK rot control"
-msgstr "Controllo rot. cinematica inversa"
 
 
 msgid "Apply channel size as IK constraint if stretching is enabled"
@@ -46789,14 +46581,6 @@ msgid "Automatically switch between orthographic and perspective when changing f
 msgstr "Cambia automaticamente tra ortogonale e prospettiva quando si cambia la vista da alto/fronte/lato"
 
 
-msgid "Camera Parent Lock"
-msgstr "Blocco Camera Genitore"
-
-
-msgid "When the camera is locked to the view and in fly mode, transform the parent rather than the camera"
-msgstr "Quando la camera è bloccata sulla vista e in modalità volo, trasforma il genitore piuttosto che la camera"
-
-
 msgid "Release Confirms"
 msgstr "Conferma al rilascio"
 
@@ -47215,14 +46999,6 @@ msgstr "Carattere Interfaccia"
 
 msgid "Path to interface font"
 msgstr "Percorso carattere per l'interfaccia"
-
-
-msgid "Mono-space Font"
-msgstr "Carattere a Larghezza Fissa"
-
-
-msgid "Path to interface mono-space Font"
-msgstr "Percorso carattere a larghezza fissa per l'interfaccia"
 
 
 msgid "Gizmo Size"
@@ -48237,10 +48013,6 @@ msgid "Render Texture Limit"
 msgstr "Limite Texture Render"
 
 
-msgid "Tile Order"
-msgstr "Ordine Tasselli"
-
-
 msgid "Tile order for rendering"
 msgstr "Ordine tasselli da usare per il rendering"
 
@@ -49095,10 +48867,6 @@ msgstr "Modalità Processi"
 
 msgid "Determine the amount of render threads used"
 msgstr "Definisce il numero di processi utilizzati per il rendering"
-
-
-msgid "Auto-detect"
-msgstr "Rileva Automaticamente"
 
 
 msgid "Automatically determine the number of threads, based on CPUs"
@@ -50062,14 +49830,6 @@ msgid "Only display every nth frame"
 msgstr "Mostra solo ogni n-esimo fotogramma"
 
 
-msgid "Use Crop"
-msgstr "Usa Ritaglio"
-
-
-msgid "Crop image before processing"
-msgstr "Ritaglia l'immagine prima di processarla"
-
-
 msgid "Flip on the X axis"
 msgstr "Capovolge sull'asse X"
 
@@ -50542,22 +50302,6 @@ msgid "Sequence Transform"
 msgstr "Trasforma Sequenza"
 
 
-msgid "Offset X"
-msgstr "Scostamento X"
-
-
-msgid "Amount to move the input on the X axis within its boundaries"
-msgstr "Quantità di cui spostare l'ingresso sull'asse X rispetto ai suoi bordi"
-
-
-msgid "Offset Y"
-msgstr "Scostamento Y"
-
-
-msgid "Amount to move the input on the Y axis within its boundaries"
-msgstr "Quantità di cui spostare l'ingresso sull'asse Y rispetto ai suoi bordi"
-
-
 msgid "Collection of Sequences"
 msgstr "Raccolta di Sequenze"
 
@@ -50782,10 +50526,6 @@ msgid "Pull"
 msgstr "Tira"
 
 
-msgid "Rot Matrix"
-msgstr "Matrice Rot"
-
-
 msgid "Scale Matrix"
 msgstr "Matrice Scala"
 
@@ -50865,6 +50605,14 @@ msgstr "Contorno"
 
 msgid "Dash"
 msgstr "Tratteggiato"
+
+
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
 
 
 msgid "Overlay Mode"
@@ -51206,10 +50954,6 @@ msgid "Show the status of cached frames in the timeline"
 msgstr "Mostra lo stato dei fotogrammi memorizzati nella cache nella linea temporale"
 
 
-msgid "Show Group Colors"
-msgstr "Mostra Colori Gruppo"
-
-
 msgid "Show Pose Markers"
 msgstr "Mostra Marcatori Posa"
 
@@ -51220,10 +50964,6 @@ msgstr "Mostra Cursori Scorrevoli"
 
 msgid "Show sliders beside F-Curve channels"
 msgstr "Mostra i cursori scorrevoli di fianco ai canali Curve-F"
-
-
-msgid "AutoMerge Keyframes"
-msgstr "AutoUnione Fotogrammi Chiave"
 
 
 msgid "Automatically merge nearby keyframes"
@@ -51348,6 +51088,10 @@ msgstr "Mostra Maniglie"
 
 msgid "Show handles of Bezier control points"
 msgstr "Mostra maniglie dei punti di controllo Bezier"
+
+
+msgid "AutoMerge Keyframes"
+msgstr "AutoUnione Fotogrammi Chiave"
 
 
 msgid "Auto Normalization"
@@ -55688,6 +55432,10 @@ msgid "Bold & Italic"
 msgstr "Grassetto Corsivo"
 
 
+msgid "Offset X"
+msgstr "Scostamento X"
+
+
 msgctxt "Operator"
 msgid "Show All"
 msgstr "Mostra Tutto"
@@ -55696,11 +55444,6 @@ msgstr "Mostra Tutto"
 msgctxt "Operator"
 msgid "Lock All"
 msgstr "Blocca Tutto"
-
-
-msgctxt "Operator"
-msgid "UnLock All"
-msgstr "Sblocca Tutto"
 
 
 msgid "Before"
@@ -55800,10 +55543,6 @@ msgstr "Opzioni Rilevamento Spigoli:"
 
 msgid "Priority"
 msgstr "Priorità"
-
-
-msgid "Style modules:"
-msgstr "Moduli stile:"
 
 
 msgid "Selection By:"
@@ -56072,10 +55811,6 @@ msgid "Sample Rate"
 msgstr "Frequenza Campionamento"
 
 
-msgid "Edge To Edge"
-msgstr "Da Spigolo A Spigolo"
-
-
 msgid "Source Clone Image"
 msgstr "Sorgente Clona Immagine"
 
@@ -56259,18 +55994,8 @@ msgstr "Campo Forza"
 
 
 msgctxt "Operator"
-msgid "Calculate To Frame"
-msgstr "Calcola Al Fotogramma"
-
-
-msgctxt "Operator"
 msgid "Bake All Dynamics"
 msgstr "Precalcola Tutte le Dinamiche"
-
-
-msgctxt "Operator"
-msgid "Update All To Frame"
-msgstr "Aggiorna Tutto Al Fotogramma"
 
 
 msgid "Cache is disabled until the file is saved"
@@ -56540,14 +56265,6 @@ msgid "No active plane track"
 msgstr "Nessun plane track attivo"
 
 
-msgid "Tracks For Stabilization"
-msgstr "Tracce Per Stabilizzazione"
-
-
-msgid "Tracks For Location"
-msgstr "Tracce Per Posizione"
-
-
 msgctxt "Operator"
 msgid "Set Wall"
 msgstr "Imposta Muro"
@@ -56561,10 +56278,6 @@ msgstr "Inverso"
 msgctxt "Operator"
 msgid "Show Tracks"
 msgstr "Mostra Tracce"
-
-
-msgid "Tracks For Rotation / Scale"
-msgstr "Tracce Per Rotazione / Scala"
 
 
 msgctxt "Operator"
@@ -57282,10 +56995,6 @@ msgid "Clip"
 msgstr "Filmato"
 
 
-msgid "Default fade"
-msgstr "Dissolvenza predefinita"
-
-
 msgid "Unpack"
 msgstr "Estrai"
 
@@ -57300,10 +57009,6 @@ msgstr "Aggiungi Transizione"
 
 msgid "Effect Fader"
 msgstr "Dissolvenza Effetto"
-
-
-msgid "Stretch to input strip length"
-msgstr "Estendi alla lunghezza dello spezzone in ingresso"
 
 
 msgid "Source Channel"
@@ -57609,14 +57314,6 @@ msgid "Sub Level"
 msgstr "Livello Inferiore"
 
 
-msgid "Link Materials to"
-msgstr "Collega Materiali a"
-
-
-msgid "Align to"
-msgstr "Allinea a"
-
-
 msgid "Default Color"
 msgstr "Colore Predefinito"
 
@@ -57722,10 +57419,6 @@ msgid "Excluded Paths:"
 msgstr "Percorsi Esclusi:"
 
 
-msgid "Timer (mins)"
-msgstr "Timer (minuti)"
-
-
 msgid "Double Click Speed"
 msgstr "Velocità Doppio Click"
 
@@ -57736,10 +57429,6 @@ msgstr "Sensibilità Pan"
 
 msgid "Use Light"
 msgstr "Usa Luce"
-
-
-msgid "Natural Trackpad Direction"
-msgstr "Direzione Naturale Trackpad"
 
 
 msgid "Invert Wheel Zoom Direction"
@@ -58310,11 +57999,6 @@ msgstr "Calcola"
 
 
 msgctxt "Operator"
-msgid "Add (With Targets)..."
-msgstr "Aggiungi (Con Obiettivo)..."
-
-
-msgctxt "Operator"
 msgid "Rename Active Bone..."
 msgstr "Rinomina Osso Attivo..."
 
@@ -58532,10 +58216,6 @@ msgid "Zero Weights"
 msgstr "Pesi Nulli"
 
 
-msgid "Snap to"
-msgstr "Snap a"
-
-
 msgid "Display:"
 msgstr "Visualizza:"
 
@@ -58593,11 +58273,6 @@ msgstr "Fascia di Spigoli (ring)"
 msgctxt "Operator"
 msgid "Lattice"
 msgstr "Lattice"
-
-
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Converti a"
 
 
 msgctxt "Operator"
@@ -58668,21 +58343,6 @@ msgstr "Su Fotogrammi Chiave Selezionati"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "Su Marcatori Selezionati"
-
-
-msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "AutoNomina Sinistra/Destra"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "AutoNomina Fronte/Retro"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "AutoNomina Alto/Basso"
 
 
 msgctxt "Operator"
@@ -58928,10 +58588,6 @@ msgstr "Raggi-X"
 
 msgid "Marker Names"
 msgstr "Nomi Marcatori"
-
-
-msgid "Snap with"
-msgstr "Snap con"
 
 
 msgid "Reference Point"
@@ -59484,6 +59140,10 @@ msgid "Undefined Type"
 msgstr "Tipo Indefinito"
 
 
+msgid "LIB: object lost from scene: '%s'"
+msgstr "LIB: oggetto perso dalla scena: '%s'"
+
+
 msgid "RenderView"
 msgstr "VistaRender"
 
@@ -59532,10 +59192,6 @@ msgid "Unable to open"
 msgstr "Impossibile aprire"
 
 
-msgid "LIB: object lost from scene: '%s'"
-msgstr "LIB: oggetto perso dalla scena: '%s'"
-
-
 msgid "Library '%s', '%s' had multiple instances, save and reload!"
 msgstr "La libreria '%s', '%s' ha istanze multiple, salva e ricarica!"
 
@@ -59554,10 +59210,6 @@ msgstr "Impossibile trovare la libreria '%s'"
 
 msgid "Unable to open blend <memory>"
 msgstr "Impossibile aprire blend <memory>"
-
-
-msgid "Warning in console"
-msgstr "Avvertimento nella console"
 
 
 msgid "Failed to read blend file '%s': %s"
@@ -61438,14 +61090,6 @@ msgid "Time:%s "
 msgstr "Tempo:%s "
 
 
-msgid "Ve:%d "
-msgstr "Ve:%d "
-
-
-msgid "Fa:%d "
-msgstr "Fa:%d "
-
-
 msgid "| Mem:%.2fM, Peak: %.2fM "
 msgstr "| Mem:%.2fM, Picco: %.2fM "
 
@@ -61876,14 +61520,6 @@ msgid "No images have been changed"
 msgstr "Nessuna immagine è stata cambiata"
 
 
-msgid "Saved Image '%s'"
-msgstr "Salvata Immagine '%s'"
-
-
-msgid "Cannot save image, path '%s' is not writable"
-msgstr "Impossibile salvare l'immagine, il percorso '%s' non è scrivibile"
-
-
 msgid "%d image(s) will be saved in %s"
 msgstr "%d immagini saranno salvate in %s"
 
@@ -61894,14 +61530,6 @@ msgstr "Salvato %s"
 
 msgid "can't save image while rendering"
 msgstr "impossibile salvare l'immagine durante il rendering"
-
-
-msgid "image file not found"
-msgstr "file immagine non trovato"
-
-
-msgid "image format is read-only"
-msgstr "il formato immagine è di sola lettura"
 
 
 msgid "Unpack 1 File"
@@ -61934,10 +61562,6 @@ msgstr "(Chiave) "
 
 msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
 msgstr "Vert:%s/%s | Spigoli:%s/%s | Facce:%s/%s | Triang:%s"
-
-
-msgid "Verts:%s/%s | Bones:%s/%s"
-msgstr "Vert:%s/%s | Ossa:%s/%s"
 
 
 msgid "Verts:%s/%s"
@@ -62209,10 +61833,6 @@ msgid "(empty)"
 msgstr "(vuoto)"
 
 
-msgid "Current File"
-msgstr "File Corrente"
-
-
 msgid "Movie clip not found"
 msgstr "Filmato non trovato"
 
@@ -62319,10 +61939,6 @@ msgstr "Impossibile riaprire il file"
 
 msgid "Unable to save '%s': %s"
 msgstr "Impossibile salvare '%s': %s"
-
-
-msgid "Saved Text '%s'"
-msgstr "Salvato Testo '%s'"
 
 
 msgid "Text not found: %s"
@@ -62735,14 +62351,6 @@ msgstr "(Casuale)"
 
 msgid "(InvSquare)"
 msgstr "(QuadraticoInv)"
-
-
-msgid "Rot: %s %s %s"
-msgstr "Rot: %s %s %s"
-
-
-msgid "Rot: %.2f%s %s"
-msgstr "Rot: %.2f%s %s"
 
 
 msgid " Proportional size: %.2f"
@@ -63457,6 +63065,10 @@ msgid "To Max"
 msgstr "A Max"
 
 
+msgid "Offset Y"
+msgstr "Scostamento Y"
+
+
 msgid "Undistortion"
 msgstr "De-distorsione"
 
@@ -63775,10 +63387,6 @@ msgstr "Impossibile risolvere il percorso (%s)"
 
 msgid "| Time:%s | "
 msgstr "| Tempo:%s | "
-
-
-msgid "Sce: %s Ve:%d Fa:%d La:%d"
-msgstr "Sce: %s Ve:%d Fa:%d Lu:%d"
 
 
 msgid "Image too small"

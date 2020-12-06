@@ -19,8 +19,8 @@
 bl_info = {
     "name": "BlenderKit Online Asset Library",
     "author": "Vilem Duha, Petr Dlouhy",
-    "version": (1, 0, 32),
-    "blender": (2, 83, 0),
+    "version": (1, 0, 40),
+    "blender": (2, 92, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more). Connects to the internet.",
     "warning": "",
@@ -47,10 +47,11 @@ if "bpy" in locals():
     categories = reload(categories)
     bkit_oauth = reload(bkit_oauth)
     tasks_queue = reload(tasks_queue)
+    resolutions = reload(resolutions)
 else:
     from blenderkit import asset_inspector, search, download, upload, ratings, autothumb, ui, icons, bg_blender, paths, \
         utils, \
-        overrides, ui_panels, categories, bkit_oauth, tasks_queue
+        overrides, ui_panels, categories, bkit_oauth, tasks_queue, resolutions
 
 import os
 import math
@@ -86,7 +87,8 @@ from bpy.types import (
 
 @persistent
 def scene_load(context):
-    search.load_previews()
+    if not bpy.app.background:
+        search.load_previews()
     ui_props = bpy.context.scene.blenderkitUI
     ui_props.assetbar_on = False
     ui_props.turn_off = False
@@ -197,37 +199,7 @@ thumbnail_resolutions = (
 )
 
 
-def get_upload_asset_type(self):
-    typemapper = {
-        BlenderKitModelUploadProps: 'model',
-        BlenderKitSceneUploadProps: 'scene',
-        BlenderKitMaterialUploadProps: 'material',
-        BlenderKitBrushUploadProps: 'brush'
-    }
-    asset_type = typemapper[type(self)]
-    return asset_type
 
-
-def get_subcategory_enums(self, context):
-    wm = bpy.context.window_manager
-    asset_type = get_upload_asset_type(self)
-    items = []
-    if self.category != '':
-        asset_categories = categories.get_category(wm['bkit_categories'], cat_path=(asset_type, self.category,))
-        for c in asset_categories['children']:
-            items.append((c['slug'], c['name'], c['description']))
-
-    return items
-
-
-def get_category_enums(self, context):
-    wm = bpy.context.window_manager
-    asset_type = get_upload_asset_type(self)
-    asset_categories = categories.get_category(wm['bkit_categories'], cat_path=(asset_type,))
-    items = []
-    for c in asset_categories['children']:
-        items.append((c['slug'], c['name'], c['description']))
-    return items
 
 
 def switch_search_results(self, context):
@@ -274,6 +246,8 @@ def asset_type_callback(self, context):
             ('BRUSH', 'Brush', 'Upload a brush to BlenderKit', 'BRUSH_DATA', 3)
         )
     return items
+
+
 
 
 class BlenderKitUIProps(PropertyGroup):
@@ -488,6 +462,29 @@ class BlenderKitCommonSearchProps(object):
         update=search.search_update,
     )
 
+    # resolution download/import settings
+    resolution: EnumProperty(
+        name="Max resolution",
+        description="Cap texture sizes in the file to this resolution",
+        items=
+        (
+            # ('256', '256x256', ''),
+            ('512', '512x512', ''),
+            ('1024', '1024x1024', ''),
+            ('2048', '2048x2048', ''),
+            ('4096', '4096x4096', ''),
+            ('8192', '8192x8192', ''),
+            ('ORIGINAL', 'ORIGINAL FILE', ''),
+
+        ),
+        default='1024',
+    )
+
+    unpack_files: BoolProperty(name="Unpack Files",
+                               description="Unpack files after download",
+                               default=True
+                               )
+
 
 def name_update(self, context):
     ''' checks for name change, because it decides if whole asset has to be re-uploaded. Name is stored in the blend file
@@ -642,12 +639,12 @@ class BlenderKitCommonUploadProps(object):
     category: EnumProperty(
         name="Category",
         description="main category to put into",
-        items=get_category_enums
+        items=categories.get_category_enums
     )
     subcategory: EnumProperty(
         name="Subcategory",
         description="main category to put into",
-        items=get_subcategory_enums
+        items=categories.get_subcategory_enums
     )
 
 
@@ -724,6 +721,16 @@ class BlenderKitMaterialSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
         description="engine not specified by addon",
         default="",
         update=search.search_update,
+    )
+    append_method: EnumProperty(
+        name="Import Method",
+        items=(
+            ('LINK', 'Link', "Link Material - will be in external file and can't be directly edited"),
+            ('APPEND', 'Append', 'Append if you need to edit the material'),
+        ),
+        description="Appended materials are editable in your scene. Linked assets are saved in original files, "
+                    "aren't editable directly, but also don't increase your file size",
+        default="APPEND"
     )
     automap: BoolProperty(name="Auto-Map",
                           description="reset object texture space and also add automatically a cube mapped UV "
@@ -1195,9 +1202,9 @@ class BlenderKitSceneUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
         default=(.25, .25, .5),
     )
 
-    texture_resolution_min: IntProperty(name="Texture Eesolution Min",
+    texture_resolution_min: IntProperty(name="Texture Resolution Min",
                                         description="texture resolution min, autofilled", default=0)
-    texture_resolution_max: IntProperty(name="Texture Eesolution Max",
+    texture_resolution_max: IntProperty(name="Texture Resolution Max",
                                         description="texture resolution max, autofilled", default=0)
 
     pbr: BoolProperty(name="PBR Compatible", description="Is compatible with PBR standard", default=False)

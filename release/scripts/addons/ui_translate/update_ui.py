@@ -233,34 +233,17 @@ class UI_OT_i18n_updatetranslation_svn_init_settings(Operator):
         root_tr_mo = os.path.join(self.settings.TRUNK_DIR, self.settings.MO_PATH_TEMPLATE, self.settings.MO_FILE_NAME)
         if not (os.path.isdir(root_br) and os.path.isdir(root_tr_po)):
             return {'CANCELLED'}
-        isocodes = ((e, os.path.join(root_br, e, e + ".po")) for e in os.listdir(root_br))
-        isocodes = dict(e for e in isocodes if os.path.isfile(e[1]))
-        for num_id, name, uid in self.settings.LANGUAGES[2:]:  # Skip "default" and "en" languages!
-            best_po = utils_i18n.find_best_isocode_matches(uid, isocodes)
-            #print(uid, "->", best_po)
+        for can_use, uid, num_id, name, isocode, po_path_branch in utils_i18n.list_po_dir(root_br, self.settings):
             lng = i18n_sett.langs.add()
+            lng.use = can_use
             lng.uid = uid
             lng.num_id = num_id
             lng.name = name
-            if best_po:
-                lng.use = True
-                isocode = best_po[0]
-                lng.po_path = isocodes[isocode]
+            if can_use:
+                lng.po_path = po_path_branch
                 lng.po_path_trunk = os.path.join(root_tr_po, isocode + ".po")
                 lng.mo_path_trunk = root_tr_mo.format(isocode)
                 lng.po_path_git = os.path.join(root_git_po, isocode + ".po")
-            else:
-                lng.use = False
-                language, _1, _2, language_country, language_variant = utils_i18n.locale_explode(uid)
-                for isocode in (language, language_variant, language_country, uid):
-                    p = os.path.join(root_br, isocode, isocode + ".po")
-                    if not os.path.exists(p):
-                        lng.use = True
-                        lng.po_path = p
-                        lng.po_path_trunk = os.path.join(root_tr_po, isocode + ".po")
-                        lng.mo_path_trunk = root_tr_mo.format(isocode)
-                        lng.po_path_git = os.path.join(root_git_po, isocode + ".po")
-                        break
 
         i18n_sett.pot_path = self.settings.FILE_NAME_POT
         i18n_sett.is_init = True

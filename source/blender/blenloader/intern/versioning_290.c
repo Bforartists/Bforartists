@@ -483,6 +483,13 @@ void do_versions_after_linking_290(Main *bmain, ReportList *UNUSED(reports))
       }
     }
   }
+
+  /* Wet Paint Radius Factor */
+  for (Brush *br = bmain->brushes.first; br; br = br->id.next) {
+    if (br->ob_mode & OB_MODE_SCULPT && br->wet_paint_radius_factor == 0.0f) {
+      br->wet_paint_radius_factor = 1.0f;
+    }
+  }
 }
 
 static void panels_remove_x_closed_flag_recursive(Panel *panel)
@@ -515,6 +522,20 @@ static void do_versions_point_attributes(CustomData *pdata)
     else if (layer->type == CD_RADIUS) {
       STRNCPY(layer->name, "Radius");
       layer->type = CD_PROP_FLOAT;
+    }
+  }
+}
+
+static void do_versions_point_attribute_names(CustomData *pdata)
+{
+  /* Change from capital initial letter to lower case (T82693). */
+  for (int i = 0; i < pdata->totlayer; i++) {
+    CustomDataLayer *layer = &pdata->layers[i];
+    if (layer->type == CD_PROP_FLOAT3 && STREQ(layer->name, "Position")) {
+      STRNCPY(layer->name, "position");
+    }
+    else if (layer->type == CD_PROP_FLOAT && STREQ(layer->name, "Radius")) {
+      STRNCPY(layer->name, "radius");
     }
   }
 }
@@ -1186,6 +1207,36 @@ void blo_do_versions_290(FileData *fd, Library *UNUSED(lib), Main *bmain)
               space_outliner->filter |= SO_FILTER_OB_STATE_INVERSE;
             }
           }
+        }
+      }
+    }
+
+    LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+      LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
+        if (md->type == eModifierType_WeightVGProximity) {
+          WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *)md;
+          if (wmd->cmap_curve == NULL) {
+            wmd->cmap_curve = BKE_curvemapping_add(1, 0.0, 0.0, 1.0, 1.0);
+            BKE_curvemapping_init(wmd->cmap_curve);
+          }
+        }
+      }
+    }
+
+    /* Hair and PointCloud attributes names. */
+    LISTBASE_FOREACH (Hair *, hair, &bmain->hairs) {
+      do_versions_point_attribute_names(&hair->pdata);
+    }
+    LISTBASE_FOREACH (PointCloud *, pointcloud, &bmain->pointclouds) {
+      do_versions_point_attribute_names(&pointcloud->pdata);
+    }
+
+    /* Cryptomatte render pass */
+    if (!DNA_struct_elem_find(fd->filesdna, "ViewLayer", "short", "cryptomatte_levels")) {
+      LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+        LISTBASE_FOREACH (ViewLayer *, view_layer, &scene->view_layers) {
+          view_layer->cryptomatte_levels = 6;
+          view_layer->cryptomatte_flag = VIEW_LAYER_CRYPTOMATTE_ACCURATE;
         }
       }
     }

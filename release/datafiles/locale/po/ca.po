@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1291,10 +1291,6 @@ msgid "Lin error"
 msgstr "Seleccionar fila"
 
 
-msgid "Rot error"
-msgstr "Seleccionar fila"
-
-
 msgid "Proxy Local"
 msgstr "Pintura Vectorial"
 
@@ -2447,10 +2443,6 @@ msgid "Display Scene"
 msgstr "Mostrar propietats de les arestes"
 
 
-msgid "Display Shapekeys"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Display Speaker"
 msgstr "Amagar Seleccionats"
 
@@ -3034,18 +3026,6 @@ msgstr "Duplicar"
 
 msgid "Buffersize"
 msgstr "Buffer Z"
-
-
-msgid "High quality"
-msgstr "Calcular Normals"
-
-
-msgid "Medium quality"
-msgstr "Eines"
-
-
-msgid "Low quality"
-msgstr "Eines"
 
 
 msgid "Container"
@@ -5332,6 +5312,18 @@ msgid "Edit Quality"
 msgstr "Eines"
 
 
+msgid "High quality"
+msgstr "Calcular Normals"
+
+
+msgid "Medium quality"
+msgstr "Eines"
+
+
+msgid "Low quality"
+msgstr "Eines"
+
+
 msgid "Render Quality"
 msgstr "Render"
 
@@ -6736,10 +6728,6 @@ msgstr "Texte"
 
 msgid "Stucci Texture"
 msgstr "Texte"
-
-
-msgid "Wall in"
-msgstr "Calcular Normals"
 
 
 msgid "Create Dimples"
@@ -9172,22 +9160,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "Esborrar"
 
 
-msgid "Refine focal length"
-msgstr "Desparentar"
-
-
-msgid "Focal length, K1"
-msgstr "Esborrar Origen"
-
-
-msgid "Focal length, K1, K2"
-msgstr "Esborrar Origen"
-
-
-msgid "Focal Length, Optical Center"
-msgstr "Esborrar Origen"
-
-
 msgid "Double"
 msgstr "Cíclic"
 
@@ -10272,16 +10244,16 @@ msgid "Curved"
 msgstr "Corba"
 
 
+msgid "Tile Order"
+msgstr "Arxiu"
+
+
 msgid "Tile order"
 msgstr "Arxiu"
 
 
 msgid "Random tiles"
 msgstr "Seleccionar fila"
-
-
-msgid "Bottom up"
-msgstr "Arxiu"
 
 
 msgid "Expand from 9 places"
@@ -11437,10 +11409,6 @@ msgid "Siblings"
 msgstr "Germans"
 
 
-msgid "Direction (Y axis)"
-msgstr "Seleccionar connectats"
-
-
 msgctxt "Operator"
 msgid "Separate Bones"
 msgstr "Separar"
@@ -11606,20 +11574,8 @@ msgid "Clear action to execute"
 msgstr "Esborrar Rotació"
 
 
-msgid "Clear up-to"
-msgstr "Esborrar Tamany"
-
-
 msgid "Clear path up to current frame"
 msgstr "Començar Joc"
-
-
-msgid "Clear remained"
-msgstr "Desparentar"
-
-
-msgid "Clear all"
-msgstr "Desparentar"
 
 
 msgid "Clear the whole path"
@@ -11927,40 +11883,20 @@ msgid "Select all tracks from specified group"
 msgstr "Seleccionar connectats"
 
 
-msgid "Keyframed tracks"
-msgstr "Esborrar"
-
-
 msgid "Select all keyframed tracks"
 msgstr "Seleccionar fila"
-
-
-msgid "Estimated tracks"
-msgstr "Esborrar Rotació"
 
 
 msgid "Select all estimated tracks"
 msgstr "Seleccionar fila"
 
 
-msgid "Tracked tracks"
-msgstr "Crear Pista"
-
-
 msgid "Select all tracked tracks"
 msgstr "Seleccionar fila"
 
 
-msgid "Locked tracks"
-msgstr "Crear Pista"
-
-
 msgid "Select all locked tracks"
 msgstr "Seleccionar fila"
-
-
-msgid "Disabled tracks"
-msgstr "Vista"
 
 
 msgid "Select all disabled tracks"
@@ -12125,11 +12061,6 @@ msgstr "Començar a renderitzar una seqüència"
 
 
 msgctxt "Operator"
-msgid "Track Settings As Default"
-msgstr "Moure a Capa"
-
-
-msgctxt "Operator"
 msgid "Add Tracking Object"
 msgstr "Comprimir Dades"
 
@@ -12249,11 +12180,6 @@ msgstr "Esborrar Posició"
 
 msgctxt "Operator"
 msgid "Copy to Clipboard"
-msgstr "Seleccionar amb límit"
-
-
-msgctxt "Operator"
-msgid "Copy to Clipboard (as script)"
 msgstr "Seleccionar amb límit"
 
 
@@ -13461,14 +13387,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -16414,10 +16332,6 @@ msgid "Randomize Transform"
 msgstr "Esborrar Rotació"
 
 
-msgid "Randomize objects loc/rot/scale"
-msgstr "Seleccionar connectats"
-
-
 msgid "Maximum rotation over each axis"
 msgstr "Image Displist"
 
@@ -18703,6 +18617,10 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "Seleccionar connectats"
 
 
+msgid "Make Internal"
+msgstr "Crear Meta"
+
+
 msgctxt "Operator"
 msgid "Toggle Overwrite"
 msgstr "Render"
@@ -18734,10 +18652,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Resolve Conflict"
 msgstr "Afegir Tira"
-
-
-msgid "Make Internal"
-msgstr "Crear Meta"
 
 
 msgctxt "Operator"
@@ -20148,10 +20062,6 @@ msgid "Solve"
 msgstr "Resoldre"
 
 
-msgid "Clean up"
-msgstr "Esborrar Tamany"
-
-
 msgid "Color Presets"
 msgstr "Render"
 
@@ -20960,10 +20870,6 @@ msgid "IK Lin Weight"
 msgstr "Dreta"
 
 
-msgid "IK Rot Weight"
-msgstr "Dreta"
-
-
 msgid "IK Stretch"
 msgstr "Duplicar"
 
@@ -21496,10 +21402,6 @@ msgid "Number of samples to render for each pixel"
 msgstr "Seleccionar connectats"
 
 
-msgid "Tile Order"
-msgstr "Arxiu"
-
-
 msgid "Tile order for rendering"
 msgstr "Guardar com"
 
@@ -21792,10 +21694,6 @@ msgid "Threads Mode"
 msgstr "Pintura Vectorial"
 
 
-msgid "Auto-detect"
-msgstr "Autocomençar"
-
-
 msgid "Horizontal tile size to use while rendering"
 msgstr "Guardar com"
 
@@ -22072,10 +21970,6 @@ msgid "Only display every nth frame"
 msgstr "Començar Joc"
 
 
-msgid "Use Crop"
-msgstr "Esborrar tot"
-
-
 msgid "Flip on the X axis"
 msgstr "Duplicar"
 
@@ -22090,10 +21984,6 @@ msgstr "Comprimir Dades"
 
 msgid "Reverse Frames"
 msgstr "Començar Joc"
-
-
-msgid "Use Translation"
-msgstr "Seleccionar connectats"
 
 
 msgid "Add Sequence"
@@ -22480,14 +22370,6 @@ msgid "Transform parameters for a sequence strip"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Offset X"
-msgstr "Joc"
-
-
-msgid "Offset Y"
-msgstr "Joc"
-
-
 msgid "Gray Scale"
 msgstr "Desparentar"
 
@@ -22580,10 +22462,6 @@ msgid "Pull"
 msgstr "Tirar"
 
 
-msgid "Rot Matrix"
-msgstr "Càmera"
-
-
 msgid "Estimated rotation matrix"
 msgstr "Esborrar Rotació"
 
@@ -22642,6 +22520,14 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
+
+
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"
@@ -22784,20 +22670,12 @@ msgid "Action Editor"
 msgstr "Image Displist"
 
 
-msgid "Show Group Colors"
-msgstr "Afegir Tira"
-
-
 msgid "Show Pose Markers"
 msgstr "Guardar imatge"
 
 
 msgid "Show Sliders"
 msgstr "Moure a Capa"
-
-
-msgid "AutoMerge Keyframes"
-msgstr "Començar Joc"
 
 
 msgid "Sync Markers"
@@ -22854,6 +22732,10 @@ msgstr "Autotangents"
 
 msgid "Show handles of Bezier control points"
 msgstr "Seleccionar connectats"
+
+
+msgid "AutoMerge Keyframes"
+msgstr "Començar Joc"
 
 
 msgid "Only Selected Curve Keyframes"
@@ -24702,6 +24584,10 @@ msgid "Bold & Italic"
 msgstr "Cíclic"
 
 
+msgid "Offset X"
+msgstr "Joc"
+
+
 msgctxt "Operator"
 msgid "Show All"
 msgstr "Dreta"
@@ -24710,11 +24596,6 @@ msgstr "Dreta"
 msgctxt "Operator"
 msgid "Lock All"
 msgstr "Escalar"
-
-
-msgctxt "Operator"
-msgid "UnLock All"
-msgstr "Afegir Tira"
 
 
 msgid "Before"
@@ -24816,10 +24697,6 @@ msgid "Buffer"
 msgstr "Buffer Z"
 
 
-msgid "Edge To Edge"
-msgstr "Seleccionar fila"
-
-
 msgid "Strand Shape"
 msgstr "Moure a Capa"
 
@@ -24836,11 +24713,6 @@ msgstr "Començar Joc"
 msgctxt "Operator"
 msgid "Force Field"
 msgstr "Guardar com"
-
-
-msgctxt "Operator"
-msgid "Calculate To Frame"
-msgstr "Duplicar"
 
 
 msgctxt "Operator"
@@ -25399,10 +25271,6 @@ msgid "Render Image"
 msgstr "Render"
 
 
-msgid "Align to"
-msgstr "Duplicar"
-
-
 msgid "F-Curve Visibility"
 msgstr "Cíclic"
 
@@ -25803,11 +25671,6 @@ msgstr "Lattice"
 
 
 msgctxt "Operator"
-msgid "Convert to"
-msgstr "Comprimir Dades"
-
-
-msgctxt "Operator"
 msgid "Add Active"
 msgstr "Moure a Capa"
 
@@ -25845,16 +25708,6 @@ msgstr "Començar Joc"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "Menú Esborrar"
-
-
-msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "Dreta"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "Frontal"
 
 
 msgctxt "Operator"
@@ -26876,10 +26729,6 @@ msgid "Cannot save multilayer sequences"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "image file not found"
-msgstr "Guardar imatge"
-
-
 msgid "No valid action to add"
 msgstr "Duplicar"
 
@@ -27328,6 +27177,10 @@ msgstr "Reduir"
 
 msgid "To Max"
 msgstr "Escalar"
+
+
+msgid "Offset Y"
+msgstr "Joc"
 
 
 msgid "Undistortion"
