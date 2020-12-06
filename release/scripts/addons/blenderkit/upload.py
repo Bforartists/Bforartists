@@ -32,9 +32,10 @@ if "bpy" in locals():
     overrides = reload(overrides)
     colors = reload(colors)
     rerequests = reload(rerequests)
+    categories = reload(categories)
 else:
     from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels, ui, \
-        overrides, colors, rerequests
+        overrides, colors, rerequests, categories
 
 import tempfile, os, subprocess, json, re
 
@@ -449,6 +450,118 @@ def get_upload_data(self, context, asset_type):
     return export_data, upload_data, eval_path_computing, eval_path_state, eval_path, props
 
 
+def category_change_thread(asset_id, category, api_key):
+    upload_data = {
+        "category": category
+    }
+    url = paths.get_api_url() + 'assets/' + str(asset_id) + '/'
+    headers = utils.get_headers(api_key)
+    try:
+        r = rerequests.patch(url, json=upload_data, headers=headers, verify=True)  # files = files,
+    except requests.exceptions.RequestException as e:
+        print(e)
+        return {'CANCELLED'}
+    return {'FINISHED'}
+
+
+
+# class OBJECT_MT_blenderkit_fast_category_menu(bpy.types.Menu):
+#     bl_label = "Fast category change"
+#     bl_idname = "OBJECT_MT_blenderkit_fast_category_menu"
+#
+#     def draw(self, context):
+#         layout = self.layout
+#         ui_props = context.scene.blenderkitUI
+#
+#         # sr = bpy.context.scene['search results']
+#         sr = bpy.context.scene['search results']
+#         asset_data = sr[ui_props.active_index]
+#         categories = bpy.context.window_manager['bkit_categories']
+#         wm = bpy.context.win
+#         for c in categories:
+#             if c['name'].lower() == asset_data['assetType']:
+#                 for ch in c['children']:
+#                     op = layout.operator('wm.blenderkit_fast_category', text = ch['name'])
+#                     op = layout.operator('wm.blenderkit_fast_category', text = ch['name'])
+
+
+class FastCategory(bpy.types.Operator):
+    """Fast change of the category of object directly in asset bar."""
+    bl_idname = "wm.blenderkit_fast_category"
+    bl_label = "Update categories"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    category: EnumProperty(
+        name="Category",
+        description="main category to put into",
+        items=categories.get_category_enums
+    )
+    subcategory: EnumProperty(
+        name="Subcategory",
+        description="main category to put into",
+        items=categories.get_subcategory_enums
+    )
+
+    asset_id: StringProperty(
+        name="Asset Base Id",
+        description="Unique name of the asset (hidden)",
+        default="")
+
+    @classmethod
+    def poll(cls, context):
+        scene = bpy.context.scene
+        ui_props = scene.blenderkitUI
+        return ui_props.active_index > -1
+
+    def draw(self, context):
+        layout = self.layout
+        # col = layout.column()
+        layout.label(text=self.message)
+        row = layout.row()
+        # col = row.column()
+        # layout.template_icon_view(bkit_ratings, property, show_labels=False, scale=6.0, scale_popup=5.0)
+        # col.prop(self, 'category')
+
+        layout.prop(self, 'category')#, expand = True)
+        props = bpy.context.scene.blenderkitUI
+        if props.asset_type == 'MODEL':  # by now block this for other asset types.
+            # col = row.column()
+            layout.prop(self, 'subcategory')
+            # layout.prop(self, 'subcategory', expand = True)
+
+    def execute(self, context):
+        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+        props = bpy.context.scene.blenderkitUI
+        if props.asset_type == 'MODEL':
+            category = self.subcategory
+        else:
+            category = self.category
+        thread = threading.Thread(target=category_change_thread,
+                                  args=(self.asset_id, category, user_preferences.api_key))
+        thread.start()
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        scene = bpy.context.scene
+        ui_props = scene.blenderkitUI
+        if ui_props.active_index > -1:
+            sr = bpy.context.scene['search results']
+            asset_data = dict(sr[ui_props.active_index])
+            self.asset_id = asset_data['id']
+            self.asset_type = asset_data['assetType']
+            cat_path = categories.get_category_path(bpy.context.window_manager['bkit_categories'],
+                                                    asset_data['category'])
+            try:
+                if len(cat_path) > 1:
+                    self.category = cat_path[1]
+                if len(cat_path) > 2:
+                    self.subcategory = cat_path[2]
+            except Exception as e:
+                print(e)
+            self.message = f"Recategorize asset {asset_data['name']}"
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
 def verification_status_change_thread(asset_id, state, api_key):
     upload_data = {
         "verificationStatus": state
@@ -608,11 +721,11 @@ def start_upload(self, context, asset_type, reupload, upload_set):
         try:
             if 'MAINFILE' in upload_set:
                 json_metadata["verificationStatus"] = "uploading"
-            r = rerequests.put(url, json=json_metadata, headers=headers, verify=True, immediate=True)  # files = files,
+            r = rerequests.patch(url, json=json_metadata, headers=headers, verify=True, immediate=True)  # files = files,
             ui.add_report('uploaded metadata')
             # parse the request
             # print('uploaded metadata')
-            # print(r.text)
+            print(r.text)
         except requests.exceptions.RequestException as e:
             print(e)
             props.upload_state = str(e)
@@ -786,6 +899,51 @@ class UploadOperator(Operator):
             return self.execute(context)
 
 
+
+class AssetDebugPrint(Operator):
+    """Change verification status"""
+    bl_idname = "object.blenderkit_print_asset_debug"
+    bl_description = "BlenderKit print asset data for debug purposes"
+    bl_label = "BlenderKit print asset data"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    # type of upload - model, material, textures, e.t.c.
+    asset_id: StringProperty(
+        name="asset id",
+    )
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+
+    def execute(self, context):
+        preferences = bpy.context.preferences.addons['blenderkit'].preferences
+
+        if not bpy.context.scene['search results']:
+            print('no search results found')
+            return {'CANCELLED'};
+        # update status in search results for validator's clarity
+        sr = bpy.context.scene['search results']
+        sro = bpy.context.scene['search results orig']['results']
+
+        result = None
+        for r in sr:
+            if r['id'] == self.asset_id:
+                result = r.to_dict()
+        if not result:
+            for r in sro:
+                if r['id'] == self.asset_id:
+                    result = r.to_dict()
+        if not result:
+            ad = bpy.context.active_object.get('asset_data')
+            if ad:
+                result = ad.to_dict()
+        if result:
+            print(json.dumps(result, indent=4, sort_keys=True))
+        return {'FINISHED'}
+
+
 class AssetVerificationStatusChange(Operator):
     """Change verification status"""
     bl_idname = "object.blenderkit_change_status"
@@ -845,9 +1003,15 @@ class AssetVerificationStatusChange(Operator):
 
 def register_upload():
     bpy.utils.register_class(UploadOperator)
+    # bpy.utils.register_class(FastCategoryMenu)
+    bpy.utils.register_class(FastCategory)
+    bpy.utils.register_class(AssetDebugPrint)
     bpy.utils.register_class(AssetVerificationStatusChange)
 
 
 def unregister_upload():
     bpy.utils.unregister_class(UploadOperator)
+    # bpy.utils.unregister_class(FastCategoryMenu)
+    bpy.utils.unregister_class(FastCategory)
+    bpy.utils.unregister_class(AssetDebugPrint)
     bpy.utils.unregister_class(AssetVerificationStatusChange)

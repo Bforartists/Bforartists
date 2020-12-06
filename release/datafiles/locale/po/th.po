@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -638,10 +638,6 @@ msgid "Input"
 msgstr "ป้อนข้อมูล"
 
 
-msgid "Rot error"
-msgstr "การหมุนผิดพลาด"
-
-
 msgid "Disable"
 msgstr "ปิดการใช้งาน"
 
@@ -1020,30 +1016,6 @@ msgstr "MPEG-4 (divx)"
 
 msgid "Lossless"
 msgstr "ไม่สูญเสียข้อมูล"
-
-
-msgid "Perceptually lossless"
-msgstr "ไม่สูญเสียข้อมูลได้มากที่สุด"
-
-
-msgid "High quality"
-msgstr "คุณภาพสูง"
-
-
-msgid "Medium quality"
-msgstr "คุณภาพปานกลาง"
-
-
-msgid "Low quality"
-msgstr "คุณภาพต่ำ"
-
-
-msgid "Very low quality"
-msgstr "คุณภาพต่ำมาก"
-
-
-msgid "Lowest quality"
-msgstr "คุณภาพต่ำมากที่สุด"
 
 
 msgid "Encoding Speed"
@@ -1697,12 +1669,24 @@ msgid "High"
 msgstr "สูง"
 
 
+msgid "High quality"
+msgstr "คุณภาพสูง"
+
+
 msgid "Medium"
 msgstr "ปานกลาง"
 
 
+msgid "Medium quality"
+msgstr "คุณภาพปานกลาง"
+
+
 msgid "Low"
 msgstr "ต่ำ"
+
+
+msgid "Low quality"
+msgstr "คุณภาพต่ำ"
 
 
 msgid "Render Quality"
@@ -1858,10 +1842,6 @@ msgstr "เรนเดอร์ข้อมูล"
 
 msgid "Sync Mode"
 msgstr "โหมดซิงค์"
-
-
-msgid "No Sync"
-msgstr "์ไม่มีการซิงค์"
 
 
 msgid "World"
@@ -3686,14 +3666,6 @@ msgid "Path to interface font"
 msgstr "ตำแหน่งไปยังฟอนต์อินเตอร์เฟส"
 
 
-msgid "Mono-space Font"
-msgstr "ฟอนต์ความกว้างเท่ากัน"
-
-
-msgid "Path to interface mono-space Font"
-msgstr "ตำแหน่งไปยังไฟล์ฟอนต์ความกว้างเท่ากัน"
-
-
 msgid "Automatic (Automatic)"
 msgstr "อัตโนมัติ"
 
@@ -3774,10 +3746,6 @@ msgid "Render Views"
 msgstr "เรนเดอร์มุมมอง"
 
 
-msgid "Auto-detect"
-msgstr "ตรวจจับอัตโนมัติ"
-
-
 msgid "Render Region"
 msgstr "ขอบเขตการเรนเดอร์"
 
@@ -3849,28 +3817,12 @@ msgid "Transform"
 msgstr "การปรับเปลี่ยน"
 
 
-msgid "Use Translation"
-msgstr "ใช้การเลื่อนขนาน"
-
-
 msgid "Text color"
 msgstr "สีข้อความ"
 
 
-msgid "Offset X"
-msgstr "ออฟเซต X"
-
-
-msgid "Offset Y"
-msgstr "ออฟเซต Y"
-
-
 msgid "Mask Color"
 msgstr "สีหน้ากาก"
-
-
-msgid "Rot Matrix"
-msgstr "เมทริกซ์หมุน"
 
 
 msgctxt "MovieClip"
@@ -4255,6 +4207,10 @@ msgid "Render U"
 msgstr "เรนเดอร์ U"
 
 
+msgid "Offset X"
+msgstr "ออฟเซต X"
+
+
 msgid "Detail"
 msgstr "รายละเอียด"
 
@@ -4631,10 +4587,6 @@ msgstr "เบลอเกาส์เซียน"
 msgctxt "Operator"
 msgid "Scene"
 msgstr "ฉาก"
-
-
-msgid "    Cut to"
-msgstr "  ตัดเป็น"
 
 
 msgctxt "Operator"
@@ -5270,10 +5222,6 @@ msgid "Sharp"
 msgstr "แหลม"
 
 
-msgid "Snap to"
-msgstr "ยึดติดกับ"
-
-
 msgid "Display:"
 msgstr "แสดง:"
 
@@ -5770,10 +5718,6 @@ msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
 msgstr "จุดยอด:%s/%s | เส้นขอบ:%s/%s | ด้าน:%s/%s | ส่วนแบ่งสามส่วน:%s"
 
 
-msgid "Verts:%s/%s | Bones:%s/%s"
-msgstr "จุดยอด:%s/%s | กระดูก:%s/%s"
-
-
 msgid "Verts:%s/%s"
 msgstr "จุดยอด:%s/%s"
 
@@ -5801,10 +5745,6 @@ msgstr "). คลิกที่นี่เพื่อดำเนินกา
 
 msgid "(empty)"
 msgstr "(ว่างเปล่า)"
-
-
-msgid "Current File"
-msgstr "ไฟล์ปัจจุบัน"
 
 
 msgid "Open Recent"
@@ -5899,14 +5839,6 @@ msgid "(Random)"
 msgstr "(สุ่ม)"
 
 
-msgid "Rot: %s %s %s"
-msgstr "หมุน: %s %s %s"
-
-
-msgid "Rot: %.2f%s %s"
-msgstr "หมุน: %.2f%s %s"
-
-
 msgid " Proportional size: %.2f"
 msgstr " ขนาดสัดส่วน: %.2f"
 
@@ -5963,6 +5895,10 @@ msgstr "แทนที่อันดั้งเดิม"
 
 msgid "ID value"
 msgstr "ค่า ID"
+
+
+msgid "Offset Y"
+msgstr "ออฟเซต Y"
 
 
 msgid "RGBA"

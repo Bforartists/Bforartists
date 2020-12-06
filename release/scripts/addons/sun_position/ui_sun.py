@@ -84,7 +84,7 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
 
     def draw_panel(self, context, sp, p, layout):
         col = self.layout.column(align=True)
-        col.label(text="Usage mode:")
+        col.label(text="Usage Mode")
         row = col.row()
         row.prop(sp, "usage_mode", expand=True)
         col.separator()
@@ -98,14 +98,12 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
                              even_rows=False, align=False)
 
         col = flow.column(align=True)
-        col.label(text="Environment texture:")
+        col.label(text="Environment Texture")
 
         if context.scene.world is not None:
             if context.scene.world.node_tree is not None:
                 col.prop_search(sp, "hdr_texture",
-                                context.scene.world.node_tree, "nodes")
-                col.prop_search(sp, "sky_texture",
-                                context.scene.world.node_tree, "nodes")
+                                context.scene.world.node_tree, "nodes", text="")
             else:
                 col.label(text="Please activate Use Nodes in the World panel.",
                           icon="ERROR")
@@ -116,7 +114,7 @@ class SUNPOS_PT_Panel(bpy.types.Panel):
         col.separator()
 
         col = flow.column(align=True)
-        col.label(text="Sun object:")
+        col.label(text="Sun Object")
         col.prop_search(sp, "sun_object",
                         context.view_layer, "objects", text="")
         col.separator()
@@ -189,7 +187,7 @@ class SUNPOS_PT_Location(bpy.types.Panel):
         p = context.preferences.addons[__package__].preferences
 
         col = layout.column(align=True)
-        col.label(text="Enter coordinates:")
+        col.label(text="Enter Coordinates")
         col.prop(sp, "co_parser", text='', icon='URL')
 
         layout.separator()

@@ -481,7 +481,7 @@ def Bolt_contex_menu(self, context):
     obj = context.object
     layout = self.layout
 
-    if 'Bolt' in obj.data.keys():
+    if obj.data is not None and 'Bolt' in obj.data.keys():
         props = layout.operator("mesh.bolt_add", text="Change Bolt")
         props.change = True
         for prm in BoltParameters():

@@ -944,36 +944,15 @@ def draw_spline_settings(self):
 
 
 # ------------------------------------------------------------
-# Spline Panel > VIEW_3D
-# ------------------------------------------------------------
-class SplinePanel(Panel):
-    bl_label = "Spline Generator"
-    bl_idname = "VIEW3D_PT_spirofit_spline"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_context = "objectmode"
-    bl_category = "Create"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        col = self.layout.column(align=True)
-        col.operator(SpiroFitSpline.bl_idname, icon="CURVE_DATA")
-        col.operator(BounceSpline.bl_idname, icon="CURVE_DATA")
-        col.operator(CatenaryCurve.bl_idname, icon="CURVE_DATA")
-
-
-# ------------------------------------------------------------
 # Register
 # ------------------------------------------------------------
 def register():
-    bpy.utils.register_class(SplinePanel)
     bpy.utils.register_class(SpiroFitSpline)
     bpy.utils.register_class(BounceSpline)
     bpy.utils.register_class(CatenaryCurve)
 
 
 def unregister():
-    bpy.utils.unregister_class(SplinePanel)
     bpy.utils.unregister_class(SpiroFitSpline)
     bpy.utils.unregister_class(BounceSpline)
     bpy.utils.unregister_class(CatenaryCurve)

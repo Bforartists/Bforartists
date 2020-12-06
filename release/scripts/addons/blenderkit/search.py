@@ -29,8 +29,10 @@ if "bpy" in locals():
     version_checker = reload(version_checker)
     tasks_queue = reload(tasks_queue)
     rerequests = reload(rerequests)
+    resolutions = reload(resolutions)
 else:
-    from blenderkit import paths, utils, categories, ui, colors, bkit_oauth, version_checker, tasks_queue, rerequests
+    from blenderkit import paths, utils, categories, ui, colors, bkit_oauth, version_checker, tasks_queue, rerequests, \
+        resolutions
 
 import blenderkit
 from bpy.app.handlers import persistent
@@ -58,6 +60,8 @@ import threading
 import platform
 import bpy
 import copy
+import json
+import math
 
 search_start_time = 0
 prev_time = 0
@@ -103,18 +107,21 @@ def refresh_token_timer():
 
     return max(3600, user_preferences.api_key_life - 3600)
 
+
 def update_ad(ad):
     if not ad.get('assetBaseId'):
         try:
             ad['assetBaseId'] = ad['asset_base_id']  # this should stay ONLY for compatibility with older scenes
             ad['assetType'] = ad['asset_type']  # this should stay ONLY for compatibility with older scenes
-            ad['verificationStatus'] = ad['verification_status']  # this should stay ONLY for compatibility with older scenes
+            ad['verificationStatus'] = ad[
+                'verification_status']  # this should stay ONLY for compatibility with older scenes
             ad['author'] = {}
             ad['author']['id'] = ad['author_id']  # this should stay ONLY for compatibility with older scenes
             ad['canDownload'] = ad['can_download']  # this should stay ONLY for compatibility with older scenes
         except Exception as e:
             print('BLenderKit failed to update older asset data')
     return ad
+
 
 def update_assets_data():  # updates assets data on scene load.
     '''updates some properties that were changed on scenes with older assets.
@@ -223,9 +230,9 @@ def parse_result(r):
     #     utils.p('asset with no files-size')
     asset_type = r['assetType']
     if len(r['files']) > 0:
-
+        r['available_resolutions'] = []
         allthumbs = []
-        durl, tname, small_tname = '','',''
+        durl, tname, small_tname = '', '', ''
         for f in r['files']:
             if f['fileType'] == 'thumbnail':
                 tname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
@@ -239,6 +246,13 @@ def parse_result(r):
                 durl = f['downloadUrl'].split('?')[0]
                 # fname = paths.extract_filename_from_url(f['filePath'])
 
+            if f['fileType'].find('resolution') > -1:
+                r['available_resolutions'].append(resolutions.resolutions[f['fileType']])
+        r['max_resolution'] = 0
+        if r['available_resolutions']:#should check only for non-empty sequences
+            r['max_resolution'] = max(r['available_resolutions'])
+
+
         tooltip = generate_tooltip(r)
         # for some reason, the id was still int on some occurances. investigate this.
         r['author']['id'] = str(r['author']['id'])
@@ -248,7 +262,7 @@ def parse_result(r):
         asset_data = {'thumbnail': tname,
                       'thumbnail_small': small_tname,
                       # 'thumbnails':allthumbs,
-                      'download_url': durl,
+                      # 'download_url': durl, #made obsolete since files are stored in orig form.
                       # 'id': r['id'],
                       # 'asset_base_id': r['assetBaseId'],#this should stay ONLY for compatibility with older scenes
                       # 'name': r['name'],
@@ -289,8 +303,20 @@ def parse_result(r):
             asset_data['texture_size_meters'] = params.get('textureSizeMeters', 1.0)
 
         asset_data.update(tdict)
-        if r['assetBaseId'] in scene.get('assets used', {}).keys():
+
+        au = scene.get('assets used', {})
+        if au == {}:
+            scene['assets used'] = au
+        if r['assetBaseId'] in au.keys():
             asset_data['downloaded'] = 100
+            # transcribe all urls already fetched from the server
+            r_previous = au[r['assetBaseId']]
+            if r_previous.get('files'):
+                for f in r_previous['files']:
+                    if f.get('url'):
+                        for f1 in r['files']:
+                            if f1['fileType'] == f['fileType']:
+                                f1['url'] = f['url']
 
         # attempt to switch to use original data gradually, since the parsing as itself should become obsolete.
         asset_data.update(r)
@@ -300,9 +326,11 @@ def parse_result(r):
 # @bpy.app.handlers.persistent
 def timer_update():
     # this makes a first search after opening blender. showing latest assets.
+    # utils.p('timer search')
+
     global first_time
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    if first_time:  # first time
+    if first_time and not bpy.app.background:  # first time
         first_time = False
         if preferences.show_on_start:
             # TODO here it should check if there are some results, and only open assetbar if this is the case, not search.
@@ -311,7 +339,7 @@ def timer_update():
             # preferences.first_run = False
         if preferences.tips_on_start:
             utils.get_largest_area()
-            ui.update_ui_size(ui.active_area, ui.active_region)
+            ui.update_ui_size(ui.active_area_pointer, ui.active_region_pointer)
             ui.add_report(text='BlenderKit Tip: ' + random.choice(rtips), timeout=12, color=colors.GREEN)
         return 3.0
 
@@ -385,6 +413,8 @@ def timer_update():
                 props.report = 'Found %i results. ' % (s['search results orig']['count'])
                 if len(s['search results']) == 0:
                     tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
+                # undo push
+                bpy.ops.wm.undo_push_context(message='Get BlenderKit search')
 
             else:
                 print('error', error)
@@ -393,11 +423,11 @@ def timer_update():
 
             # print('finished search thread')
             mt('preview loading finished')
+
     return .3
 
 
 def load_previews():
-
     scene = bpy.context.scene
     # FIRST START SEARCH
     props = scene.blenderkitUI
@@ -566,13 +596,8 @@ def generate_tooltip(mdata):
 
     # write files size - this doesn't reflect true file size, since files size is computed from all asset files, including resolutions.
     if mdata.get('filesSize'):
-        fs = mdata['filesSize']
-        fsmb = fs // (1024 * 1024)
-        fskb = fs % 1024
-        if fsmb == 0:
-            t += 'files size: %iKB\n' % fskb
-        else:
-            t += 'files size: %iMB %iKB\n' % (fsmb, fskb)
+        fs = utils.files_size_to_text(mdata['filesSize'])
+        t += f'files size: {fs}\n'
 
     # t = writeblockm(t, mparams, key='meshPolyType', pretext='mesh type', width = col_w)
     # t = writeblockm(t, mparams, key='objectCount', pretext='nubmber of objects', width = col_w)
@@ -597,6 +622,23 @@ def generate_tooltip(mdata):
     # t += '\n'
     t = writeblockm(t, mdata, key='license', width=col_w)
 
+    fs = mdata.get('files')
+
+    if utils.profile_is_validator():
+        if fs:
+            resolutions = 'resolutions:'
+            for f in fs:
+                if f['fileType'].find('resolution') > -1:
+                    resolutions += f['fileType'][11:] + ' '
+            resolutions += '\n'
+            t += resolutions
+
+        t = writeblockm(t, mdata, key='isFree', width=col_w)
+    else:
+        for f in fs:
+            if f['fileType'].find('resolution')>-1:
+                t+= 'Asset has lower resolutions available\n'
+                break;
     # generator is for both upload preview and search, this is only after search
     # if mdata.get('versionNumber'):
     #     # t = writeblockm(t, mdata, key='versionNumber', pretext='version', width = col_w)
@@ -607,7 +649,7 @@ def generate_tooltip(mdata):
     #             t += generate_author_textblock(adata)
 
     # t += '\n'
-    if len(t.split('\n')) < 6:
+    if len(t.split('\n')) < 11:
         t += '\n'
         t += get_random_tip(mdata)
         t += '\n'
@@ -710,7 +752,7 @@ def write_gravatar(a_id, gravatar_path):
 
 
 def fetch_gravatar(adata):
-    utils.p('fetch gravatar')
+    # utils.p('fetch gravatar')
     if adata.get('gravatarHash') is not None:
         gravatar_path = paths.get_temp_dir(subdir='bkit_g/') + adata['gravatarHash'] + '.jpg'
 
@@ -808,7 +850,7 @@ def get_profile():
 class Searcher(threading.Thread):
     query = None
 
-    def __init__(self, query, params,orig_result):
+    def __init__(self, query, params, orig_result):
         super(Searcher, self).__init__()
         self.query = query
         self.params = params
@@ -885,7 +927,6 @@ class Searcher(threading.Thread):
         if not params['get_next']:
             urlquery = self.query_to_url()
 
-
         try:
             utils.p(urlquery)
             r = rerequests.get(urlquery, headers=headers)  # , params = rparameters)
@@ -897,7 +938,7 @@ class Searcher(threading.Thread):
             reports = e
             # props.report = e
             return
-        mt('response is back ')
+        mt('search response is back ')
         try:
             rdata = r.json()
         except Exception as inst:
@@ -1182,9 +1223,59 @@ def add_search_process(query, params, orig_result):
     thread = Searcher(query, params, orig_result)
     thread.start()
 
-    search_threads.append([thread, tempdir, query['asset_type'],{}])# 4th field is for results
+    search_threads.append([thread, tempdir, query['asset_type'], {}])  # 4th field is for results
 
-    mt('thread started')
+    mt('search thread started')
+
+
+def get_search_simple(parameters, filepath=None, page_size=100, max_results=100000000, api_key=''):
+    '''
+    Searches and returns the
+
+
+    Parameters
+    ----------
+    parameters - dict of blenderkit elastic parameters
+    filepath - a file to save the results. If None, results are returned
+    page_size - page size for retrieved results
+    max_results - max results of the search
+    api_key - BlenderKit api key
+
+    Returns
+    -------
+    Returns search results as a list, and optionally saves to filepath
+
+    '''
+    headers = utils.get_headers(api_key)
+    url = paths.get_api_url() + 'search/'
+    requeststring = url + '?query='
+    for p in parameters.keys():
+        requeststring += f'+{p}:{parameters[p]}'
+
+    requeststring += '&page_size=' + str(page_size)
+    response = rerequests.get(requeststring, headers=headers)  # , params = rparameters)
+    # print(r.json())
+    search_results = response.json()
+
+    results = []
+    results.extend(search_results['results'])
+    page_index = 2
+    page_count = math.ceil(search_results['count'] / page_size)
+    while search_results.get('next') and len(results) < max_results:
+        print(f'getting page {page_index} , total pages {page_count}')
+        response = rerequests.get(search_results['next'], headers=headers)  # , params = rparameters)
+        search_results = response.json()
+        # print(search_results)
+        results.extend(search_results['results'])
+        page_index += 1
+
+    if not filepath:
+        return results
+
+    with open(filepath, 'w') as s:
+        json.dump(results, s)
+    print(f'retrieved {len(results)} assets from elastic search')
+    return results
 
 
 def search(category='', get_next=False, author_id=''):
@@ -1216,20 +1307,17 @@ def search(category='', get_next=False, author_id=''):
         props = scene.blenderkit_mat
         query = build_query_material()
 
-
     if ui_props.asset_type == 'TEXTURE':
         if not hasattr(scene, 'blenderkit_tex'):
             return;
         # props = scene.blenderkit_tex
         # query = build_query_texture()
 
-
     if ui_props.asset_type == 'BRUSH':
         if not hasattr(scene, 'blenderkit_brush'):
             return;
         props = scene.blenderkit_brush
         query = build_query_brush()
-
 
     if props.is_searching and get_next == True:
         return;
@@ -1260,7 +1348,7 @@ def search(category='', get_next=False, author_id=''):
     #     query['keywords'] += '+is_free:true'
     orig_results = scene.get(f'bkit {ui_props.asset_type.lower()} search orig', {})
     if orig_results != {}:
-        #ensure it's a copy in dict for what we are passing to thread:
+        # ensure it's a copy in dict for what we are passing to thread:
         orig_results = orig_results.to_dict()
     add_search_process(query, params, orig_results)
     tasks_queue.add_task((ui.add_report, ('BlenderKit searching....', 2)))

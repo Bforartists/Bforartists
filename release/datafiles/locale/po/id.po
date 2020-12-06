@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -2587,16 +2587,16 @@ msgid "Min Speed"
 msgstr "Ukurang"
 
 
+msgid "Tile Order"
+msgstr "Modus Pahat"
+
+
 msgid "Tile order"
 msgstr "Modus Pahat"
 
 
 msgid "Random tiles"
 msgstr "Acak"
-
-
-msgid "Bottom up"
-msgstr "Bawah"
 
 
 msgid "Int"
@@ -3026,10 +3026,6 @@ msgid "Select Similar"
 msgstr "Seleksi"
 
 
-msgid "Direction (Y axis)"
-msgstr "Orientasi Transformasi"
-
-
 msgctxt "Operator"
 msgid "Separate Bones"
 msgstr "Induk"
@@ -3384,11 +3380,6 @@ msgstr "lokasi"
 
 msgctxt "Operator"
 msgid "Copy to Clipboard"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Copy to Clipboard (as script)"
 msgstr "Warna Standar"
 
 
@@ -6493,10 +6484,6 @@ msgid "Start Resolution"
 msgstr "Gerakan"
 
 
-msgid "Tile Order"
-msgstr "Modus Pahat"
-
-
 msgid "Right to Left"
 msgstr "Kanan"
 
@@ -6691,10 +6678,6 @@ msgstr "Saluran"
 
 msgid "Show Red Channel"
 msgstr "Saluran"
-
-
-msgid "Show Group Colors"
-msgstr "Warna"
 
 
 msgid "System Bookmarks"
@@ -8167,10 +8150,6 @@ msgstr "Orientasi Transformasi"
 
 msgid "Saved %s"
 msgstr "Nilai: %s"
-
-
-msgid "image file not found"
-msgstr "Gambar Latar"
 
 
 msgid "No valid action to add"

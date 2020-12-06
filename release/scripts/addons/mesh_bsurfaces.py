@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel, Vladimir Spivak (cwolf3d)",
-    "version": (1, 7, 9),
+    "version": (1, 8, 0),
     "blender": (2, 80, 0),
     "location": "View3D EditMode > Sidebar > Edit Tab",
     "description": "Modeling and retopology tool",
@@ -62,11 +62,7 @@ from bpy.types import (
 
 # ----------------------------
 # GLOBAL
-global_color = [1.0, 0.0, 0.0, 0.3]
-global_offset = 0.01
-global_in_front = False
 global_shade_smooth = False
-global_show_wire = True
 global_mesh_object = ""
 global_gpencil_object = ""
 global_curve_object = ""
@@ -81,7 +77,7 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
 
     def draw(self, context):
         layout = self.layout
-        scn = context.scene.bsurfaces
+        bs = context.scene.bsurfaces
 
         col = layout.column(align=True)
         row = layout.row()
@@ -90,20 +86,28 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
         col.operator("mesh.surfsk_add_modifiers", text="Add Mirror and others modifiers")
 
         col.label(text="Mesh of BSurface:")
-        col.prop(scn, "SURFSK_mesh", text="")
-        col.prop(scn, "SURFSK_mesh_color")
-        col.prop(scn, "SURFSK_Shrinkwrap_offset")
-        col.prop(scn, "SURFSK_in_front")
-        col.prop(scn, "SURFSK_shade_smooth")
-        col.prop(scn, "SURFSK_show_wire")
+        col.prop(bs, "SURFSK_mesh", text="")
+        if bs.SURFSK_mesh != None:
+            try: mesh_object = bs.SURFSK_mesh
+            except: pass
+            try: col.prop(mesh_object.data.materials[0], "diffuse_color")
+            except: pass
+            try: col.prop(mesh_object.modifiers['Shrinkwrap'], "offset")
+            except: pass
+            try: col.prop(mesh_object, "show_in_front")
+            except: pass
+            try: col.prop(bs, "SURFSK_shade_smooth")
+            except: pass
+            try: col.prop(mesh_object, "show_wire")
+            except: pass
 
         col.label(text="Guide strokes:")
-        col.row().prop(scn, "SURFSK_guide", expand=True)
-        if scn.SURFSK_guide == 'GPencil':
-            col.prop(scn, "SURFSK_gpencil", text="")
+        col.row().prop(bs, "SURFSK_guide", expand=True)
+        if bs.SURFSK_guide == 'GPencil':
+            col.prop(bs, "SURFSK_gpencil", text="")
             col.separator()
-        if scn.SURFSK_guide == 'Curve':
-            col.prop(scn, "SURFSK_curve", text="")
+        if bs.SURFSK_guide == 'Curve':
+            col.prop(bs, "SURFSK_curve", text="")
             col.separator()
 
         col.separator()
@@ -111,29 +115,29 @@ class VIEW3D_PT_tools_SURFSK_mesh(Panel):
         col.operator("mesh.surfsk_edit_surface", text="Edit Surface")
 
         col.separator()
-        if scn.SURFSK_guide == 'GPencil':
+        if bs.SURFSK_guide == 'GPencil':
            col.operator("gpencil.surfsk_add_strokes", text="Add Strokes")
            col.operator("gpencil.surfsk_edit_strokes", text="Edit Strokes")
            col.separator()
            col.operator("gpencil.surfsk_strokes_to_curves", text="Strokes to curves")
 
-        if scn.SURFSK_guide == 'Annotation':
+        if bs.SURFSK_guide == 'Annotation':
            col.operator("gpencil.surfsk_add_annotation", text="Add Annotation")
            col.separator()
            col.operator("gpencil.surfsk_annotations_to_curves", text="Annotation to curves")
 
-        if scn.SURFSK_guide == 'Curve':
+        if bs.SURFSK_guide == 'Curve':
            col.operator("curve.surfsk_edit_curve", text="Edit curve")
 
         col.separator()
         col.label(text="Initial settings:")
-        col.prop(scn, "SURFSK_edges_U")
-        col.prop(scn, "SURFSK_edges_V")
-        col.prop(scn, "SURFSK_cyclic_cross")
-        col.prop(scn, "SURFSK_cyclic_follow")
-        col.prop(scn, "SURFSK_loops_on_strokes")
-        col.prop(scn, "SURFSK_automatic_join")
-        col.prop(scn, "SURFSK_keep_strokes")
+        col.prop(bs, "SURFSK_edges_U")
+        col.prop(bs, "SURFSK_edges_V")
+        col.prop(bs, "SURFSK_cyclic_cross")
+        col.prop(bs, "SURFSK_cyclic_follow")
+        col.prop(bs, "SURFSK_loops_on_strokes")
+        col.prop(bs, "SURFSK_automatic_join")
+        col.prop(bs, "SURFSK_keep_strokes")
 
 class VIEW3D_PT_tools_SURFSK_curve(Panel):
     bl_space_type = 'VIEW_3D'
@@ -3082,39 +3086,6 @@ class MESH_OT_SURFSK_add_surface(Operator):
 
     def update(self):
         try:
-            global global_offset
-            shrinkwrap = self.main_object.modifiers["Shrinkwrap"]
-            shrinkwrap.offset = global_offset
-            bpy.context.scene.bsurfaces.SURFSK_Shrinkwrap_offset = global_offset
-        except:
-            pass
-
-        try:
-            global global_color
-            material = makeMaterial("BSurfaceMesh", global_color)
-            if self.main_object.data.materials:
-                self.main_object.data.materials[0] = material
-            else:
-                self.main_object.data.materials.append(material)
-            bpy.context.scene.bsurfaces.SURFSK_mesh_color = global_color
-        except:
-            pass
-
-        try:
-            global global_in_front
-            self.main_object.show_in_front = global_in_front
-            bpy.context.scene.bsurfaces.SURFSK_in_front = global_in_front
-        except:
-            pass
-
-        try:
-            global global_show_wire
-            self.main_object.show_wire = global_show_wire
-            bpy.context.scene.bsurfaces.SURFSK_show_wire = global_show_wire
-        except:
-            pass
-
-        try:
             global global_shade_smooth
             if global_shade_smooth:
                 bpy.ops.object.shade_smooth()
@@ -3535,10 +3506,6 @@ class MESH_OT_SURFSK_init(Operator):
         if bpy.ops.object.mode_set.poll():
             bpy.ops.object.mode_set('INVOKE_REGION_WIN', mode='OBJECT')
 
-        global global_color
-        global global_offset
-        global global_in_front
-        global global_show_wire
         global global_shade_smooth
         global global_mesh_object
         global global_gpencil_object
@@ -3551,8 +3518,6 @@ class MESH_OT_SURFSK_init(Operator):
             bpy.context.view_layer.objects.active = mesh_object
 
             mesh_object.show_all_edges = True
-            global_in_front = bpy.context.scene.bsurfaces.SURFSK_in_front
-            mesh_object.show_in_front = global_in_front
             mesh_object.display_type = 'SOLID'
             mesh_object.show_wire = True
 
@@ -3562,11 +3527,8 @@ class MESH_OT_SURFSK_init(Operator):
             else:
                 bpy.ops.object.shade_flat()
 
-            global_show_wire = bpy.context.scene.bsurfaces.SURFSK_show_wire
-            mesh_object.show_wire = global_show_wire
-
-            global_color = bpy.context.scene.bsurfaces.SURFSK_mesh_color
-            material = makeMaterial("BSurfaceMesh", global_color)
+            color_red = [1.0, 0.0, 0.0, 0.3]
+            material = makeMaterial("BSurfaceMesh", color_red)
             mesh_object.data.materials.append(material)
             bpy.ops.object.modifier_add(type='SHRINKWRAP')
             modifier = mesh_object.modifiers["Shrinkwrap"]
@@ -3575,8 +3537,6 @@ class MESH_OT_SURFSK_init(Operator):
                 modifier.wrap_method = 'TARGET_PROJECT'
                 modifier.wrap_mode = 'OUTSIDE_SURFACE'
                 modifier.show_on_cage = True
-                global_offset = bpy.context.scene.bsurfaces.SURFSK_Shrinkwrap_offset
-                modifier.offset = global_offset
 
             global_mesh_object = mesh_object.name
             bpy.context.scene.bsurfaces.SURFSK_mesh = bpy.data.objects[global_mesh_object]
@@ -4424,48 +4384,6 @@ def update_curve(self, context):
     except:
         print("Select curve object")
 
-def update_color(self, context):
-    try:
-        global global_color
-        global global_mesh_object
-        material = makeMaterial("BSurfaceMesh", bpy.context.scene.bsurfaces.SURFSK_mesh_color)
-        if bpy.data.objects[global_mesh_object].data.materials:
-            bpy.data.objects[global_mesh_object].data.materials[0] = material
-        else:
-            bpy.data.objects[global_mesh_object].data.materials.append(material)
-        diffuse_color = material.diffuse_color
-        global_color = (diffuse_color[0], diffuse_color[1], diffuse_color[2], diffuse_color[3])
-    except:
-        print("Select mesh object")
-
-def update_Shrinkwrap_offset(self, context):
-    try:
-        global global_offset
-        global_offset = bpy.context.scene.bsurfaces.SURFSK_Shrinkwrap_offset
-        global global_mesh_object
-        modifier = bpy.data.objects[global_mesh_object].modifiers["Shrinkwrap"]
-        modifier.offset = global_offset
-    except:
-        print("Shrinkwrap modifier not found")
-
-def update_in_front(self, context):
-    try:
-        global global_in_front
-        global_in_front = bpy.context.scene.bsurfaces.SURFSK_in_front
-        global global_mesh_object
-        bpy.data.objects[global_mesh_object].show_in_front = global_in_front
-    except:
-        print("Select mesh object")
-
-def update_show_wire(self, context):
-    try:
-        global global_show_wire
-        global_show_wire = bpy.context.scene.bsurfaces.SURFSK_show_wire
-        global global_mesh_object
-        bpy.data.objects[global_mesh_object].show_wire = global_show_wire
-    except:
-        print("Select mesh object")
-
 def update_shade_smooth(self, context):
     try:
         global global_shade_smooth
@@ -4588,35 +4506,6 @@ class BsurfacesProps(PropertyGroup):
                 type=bpy.types.Object,
                 description="Curve object",
                 update=update_curve,
-                )
-    SURFSK_mesh_color: FloatVectorProperty(
-                name="Mesh color",
-                default=(1.0, 0.0, 0.0, 0.3),
-                size=4,
-                subtype="COLOR",
-                min=0,
-                max=1,
-                update=update_color,
-                description="Mesh color",
-                )
-    SURFSK_Shrinkwrap_offset: FloatProperty(
-                name="Shrinkwrap offset",
-                default=0.01,
-                precision=3,
-                description="Distance to keep from the target",
-                update=update_Shrinkwrap_offset,
-                )
-    SURFSK_in_front: BoolProperty(
-                name="In Front",
-                description="Make the object draw in front of others",
-                default=False,
-                update=update_in_front,
-                )
-    SURFSK_show_wire: BoolProperty(
-                name="Show wire",
-                description="Add the object’s wireframe over solid drawing",
-                default=False,
-                update=update_show_wire,
                 )
     SURFSK_shade_smooth: BoolProperty(
                 name="Shade smooth",
