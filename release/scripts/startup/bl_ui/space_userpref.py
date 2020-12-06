@@ -2261,7 +2261,7 @@ class USERPREF_PT_experimental_new_features(ExperimentalPanel, Panel):
             context, (
                 ({"property": "use_sculpt_vertex_colors"}, "T71947"),
                 ({"property": "use_switch_object_operator"}, "T80402"),
-                ({"property": "use_sculpt_tools_tilt"}, "T00000"),
+                ({"property": "use_sculpt_tools_tilt"}, "T82877"),
                 ({"property": "use_object_add_tool"}, "T57210"),
             ),
         )
@@ -2274,8 +2274,6 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
         self._draw_items(
             context, (
                 ({"property": "use_new_hair_type"}, "T68981"),
-                ({"property": "use_new_point_cloud_type"}, "T75717"),
-                ({"property": "use_new_geometry_nodes"}, "project/profile/121"),
             ),
         )
 

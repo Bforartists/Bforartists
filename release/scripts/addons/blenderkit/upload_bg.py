@@ -77,7 +77,7 @@ class upload_in_chunks(object):
 def upload_file(upload_data, f):
     headers = utils.get_headers(upload_data['token'])
     version_id = upload_data['id']
-    bg_blender.progress('uploading %s' % f['type'])
+    bg_blender.progress(f"uploading {f['type']} {os.path.basename(f['file_path'])}")
     upload_info = {
         'assetId': version_id,
         'fileType': f['type'],
@@ -89,7 +89,7 @@ def upload_file(upload_data, f):
     upload = upload.json()
     #
     chunk_size = 1024 * 1024 * 2
-    utils.pprint(upload)
+    # utils.pprint(upload)
     # file gets uploaded here:
     uploaded = False
     # s3 upload is now the only option
@@ -100,7 +100,7 @@ def upload_file(upload_data, f):
                                                data=upload_in_chunks(f['file_path'], chunk_size, f['type']),
                                                stream=True, verify=True)
 
-                if upload_response.status_code == 200:
+                if 250>upload_response.status_code >199:
                     uploaded = True
                 else:
                     print(upload_response.text)
@@ -111,6 +111,7 @@ def upload_file(upload_data, f):
                 time.sleep(1)
 
             # confirm single file upload to bkit server
+            print(upload)
             upload_done_url = paths.get_api_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
             upload_response = rerequests.post(upload_done_url, headers=headers, verify=True)
 
@@ -120,6 +121,7 @@ def upload_file(upload_data, f):
 
 
 def upload_files(upload_data, files):
+    '''uploads several files in one run'''
     uploaded_all = True
     for f in files:
         uploaded = upload_file(upload_data, f)
@@ -130,8 +132,6 @@ def upload_files(upload_data, files):
 
 
 if __name__ == "__main__":
-
-
     try:
         bg_blender.progress('preparing scene - append data')
         with open(BLENDERKIT_EXPORT_DATA, 'r') as s:

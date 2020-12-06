@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -388,6 +388,10 @@ msgid "Y Axis"
 msgstr "Y ריצ"
 
 
+msgid "Tile Order"
+msgstr ":םונילופ תלעמ"
+
+
 msgid "Background"
 msgstr "עקר"
 
@@ -513,10 +517,6 @@ msgstr "עבצ לוהינ"
 
 msgid "Text Style"
 msgstr "האבה הבכש"
-
-
-msgid "Tile Order"
-msgstr ":םונילופ תלעמ"
 
 
 msgid "Progressive Refine"

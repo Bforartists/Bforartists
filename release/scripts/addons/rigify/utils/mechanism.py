@@ -24,6 +24,8 @@ import re
 from rna_prop_ui import rna_idprop_ui_create, rna_idprop_ui_prop_get
 from rna_prop_ui import rna_idprop_quote_path as quote_property
 
+from .misc import force_lazy
+
 #=============================================
 # Constraint creation utilities
 #=============================================
@@ -59,6 +61,8 @@ def make_constraint(
 
     Other keyword arguments are directly assigned to the constraint options.
     Returns the newly created constraint.
+
+    Target bone names can be provided via 'lazy' callable closures without arguments.
     """
     con = owner.constraints.new(con_type)
 
@@ -69,16 +73,17 @@ def make_constraint(
             con_target = con.targets.new()
             con_target.target = owner.id_data
             # List element can be a string, a tuple or a dictionary.
+            target_info = force_lazy(target_info)
             if isinstance(target_info, str):
                 con_target.subtarget = target_info
             elif isinstance(target_info, tuple):
                 if len(target_info) == 2:
-                    con_target.subtarget, con_target.weight = target_info
+                    con_target.subtarget, con_target.weight = map(force_lazy, target_info)
                 else:
-                    con_target.target, con_target.subtarget, con_target.weight = target_info
+                    con_target.target, con_target.subtarget, con_target.weight = map(force_lazy, target_info)
             else:
                 for key, val in target_info.items():
-                    setattr(con_target, key, val)
+                    setattr(con_target, key, force_lazy(val))
 
     if insert_index is not None:
         owner.constraints.move(len(owner.constraints)-1, insert_index)
@@ -87,7 +92,7 @@ def make_constraint(
         con.target = target
 
     if subtarget is not None:
-        con.subtarget = subtarget
+        con.subtarget = force_lazy(subtarget)
 
     if space is not None:
         _set_default_attr(con, options, 'owner_space', space)
@@ -111,7 +116,7 @@ def make_constraint(
             _set_default_attr(con, options, 'use_limit_'+key[-1], True)
 
     for p, v in options.items():
-        setattr(con, p, v)
+        setattr(con, p, force_lazy(v))
 
     return con
 
@@ -155,6 +160,8 @@ def _init_driver_target(drv_target, var_info, target_id):
         else:
             subtarget,*refs = var_info
 
+        subtarget = force_lazy(subtarget)
+
         # Simple path string case.
         if len(refs) == 0:
             # [ (target_id,) path_str ]
@@ -190,7 +197,7 @@ def _init_driver_target(drv_target, var_info, target_id):
             drv_target.id = target_id
 
         for tp, tv in var_info.items():
-            setattr(drv_target, tp, tv)
+            setattr(drv_target, tp, force_lazy(tv))
 
 
 def _add_driver_variable(drv, var_name, var_info, target_id):
@@ -216,7 +223,7 @@ def _add_driver_variable(drv, var_name, var_info, target_id):
                 for i, tdata in enumerate(v):
                     _init_driver_target(var.targets[i], tdata, target_id)
             elif p != 'type':
-                setattr(var, p, v)
+                setattr(var, p, force_lazy(v))
 
 def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables={}, polynomial=None, target_id=None):
     """
@@ -265,6 +272,8 @@ def make_driver(owner, prop, *, index=-1, type='SUM', expression=None, variables
             'targets':[{ 'id': target_id, 'data_path': subtarget.path_from_id() + '.foo["bar"]' }] }
 
     Returns the newly created driver FCurve.
+
+    Target bone names can be provided via 'lazy' callable closures without arguments.
     """
     fcu = owner.driver_add(prop, index)
     drv = fcu.driver
@@ -309,6 +318,8 @@ def driver_var_transform(target, bone=None, *, type='LOC_X', space='WORLD', rota
 
     Usage:
         make_driver(..., variables=[driver_var_transform(...)])
+
+    Target bone name can be provided via a 'lazy' callable closure without arguments.
     """
 
     assert space in {'WORLD', 'TRANSFORM', 'LOCAL'}

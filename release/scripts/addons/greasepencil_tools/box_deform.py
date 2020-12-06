@@ -557,12 +557,11 @@ def register_keymaps():
     km = addon.keymaps.new(name = "Grease Pencil", space_type = "EMPTY", region_type='WINDOW')
     kmi = km.keymap_items.new("gp.latticedeform", type ='T', value = "PRESS", ctrl = True)
     kmi.repeat = False
-    addon_keymaps.append(km)
+    addon_keymaps.append((km, kmi))
 
 def unregister_keymaps():
-    for km in addon_keymaps:
-        for kmi in km.keymap_items:
-            km.keymap_items.remove(kmi)
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
 ### --- REGISTER ---

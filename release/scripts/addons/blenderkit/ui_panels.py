@@ -25,9 +25,10 @@ if "bpy" in locals():
     download = importlib.reload(download)
     categories = importlib.reload(categories)
     icons = importlib.reload(icons)
-    icons = importlib.reload(search)
+    search = importlib.reload(search)
+    resolutions = importlib.reload(resolutions)
 else:
-    from blenderkit import paths, ratings, utils, download, categories, icons, search
+    from blenderkit import paths, ratings, utils, download, categories, icons, search, resolutions
 
 from bpy.types import (
     Panel
@@ -45,6 +46,7 @@ from bpy.props import (
 import bpy
 import os
 import random
+import blenderkit
 
 
 #   this was moved to separate interface:
@@ -370,7 +372,51 @@ class VIEW3D_PT_blenderkit_model_properties(Panel):
             draw_panel_model_rating(self, context)
 
             layout.label(text='Asset tools:')
-            draw_asset_context_menu(self, context, ad)
+            draw_asset_context_menu(self, context, ad, from_panel=True)
+            # if 'rig' in ad['tags']:
+            #     # layout.label(text = 'can make proxy')
+            #     layout.operator('object.blenderkit_make_proxy', text = 'Make Armature proxy')
+        # fast upload, blocked by now
+        # else:
+        #     op = layout.operator("object.blenderkit_upload", text='Store as private', icon='EXPORT')
+        #     op.asset_type = 'MODEL'
+        #     op.fast = True
+        # fun override project, not finished
+        # layout.operator('object.blenderkit_color_corrector')
+
+
+class NODE_PT_blenderkit_material_properties(Panel):
+    bl_category = "BlenderKit"
+    bl_idname = "NODE_PT_blenderkit_material_properties"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_label = "Selected Material"
+    bl_context = "objectmode"
+
+    @classmethod
+    def poll(cls, context):
+        p = bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None
+        return p
+
+    def draw(self, context):
+        # draw asset properties here
+        layout = self.layout
+
+        m = bpy.context.active_object.active_material
+        # o = bpy.context.active_object
+        if m.get('asset_data') is None and m.blenderkit.id == '':
+            utils.label_multiline(layout,
+                                  text='To upload this asset to BlenderKit, go to the Find and Upload Assets panel.')
+            layout.prop(m, 'name')
+
+        if m.get('asset_data') is not None:
+            ad = m['asset_data']
+            layout.label(text=str(ad['name']))
+            layout.label(text='Ratings:')
+            draw_panel_material_ratings(self, context)
+
+            layout.label(text='Asset tools:')
+            draw_asset_context_menu(self, context, ad, from_panel=True)
             # if 'rig' in ad['tags']:
             #     # layout.label(text = 'can make proxy')
             #     layout.operator('object.blenderkit_make_proxy', text = 'Make Armature proxy')
@@ -814,19 +860,27 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
         if ui_props.asset_type == 'MODEL':
             # noinspection PyCallByClass
             props = s.blenderkit_models
-            layout.label(text='Import method:')
-            row = layout.row()
-            row.prop(props, 'append_method', expand=True, icon_only=False)
             layout.prop(props, 'randomize_rotation')
             if props.randomize_rotation:
                 layout.prop(props, 'randomize_rotation_amount')
             layout.prop(props, 'perpendicular_snap')
-            if props.perpendicular_snap:
-                layout.prop(props,'perpendicular_snap_threshold')
+            # if props.perpendicular_snap:
+            #     layout.prop(props,'perpendicular_snap_threshold')
+
+            layout.label(text='Import method:')
+            row = layout.row()
+            row.prop(props, 'append_method', expand=True, icon_only=False)
 
         if ui_props.asset_type == 'MATERIAL':
             props = s.blenderkit_mat
             layout.prop(props, 'automap')
+            layout.label(text='Import method:')
+            row = layout.row()
+
+            row.prop(props, 'append_method', expand=True, icon_only=False)
+
+        layout.prop(props, 'resolution')
+        # layout.prop(props, 'unpack_files')
 
 
 class VIEW3D_PT_blenderkit_unified(Panel):
@@ -1028,13 +1082,13 @@ class BlenderKitWelcomeOperator(bpy.types.Operator):
         return wm.invoke_props_dialog(self)
 
 
-def draw_asset_context_menu(self, context, asset_data):
+def draw_asset_context_menu(self, context, asset_data, from_panel=False):
     layout = self.layout
     ui_props = context.scene.blenderkitUI
 
-    author_id = str(asset_data['author']['id'])
+    author_id = str(asset_data['author'].get('id'))
     wm = bpy.context.window_manager
-    if wm.get('bkit authors') is not None:
+    if wm.get('bkit authors') is not None and author_id is not None:
         a = bpy.context.window_manager['bkit authors'].get(author_id)
         if a is not None:
             # utils.p('author:', a)
@@ -1048,7 +1102,7 @@ def draw_asset_context_menu(self, context, asset_data):
             op.author_id = author_id
 
     op = layout.operator('view3d.blenderkit_search', text='Search Similar')
-    #build search string from description and tags:
+    # build search string from description and tags:
     op.keywords = asset_data['name']
     if asset_data.get('description'):
         op.keywords += ' ' + asset_data.get('description')
@@ -1063,19 +1117,78 @@ def draw_asset_context_menu(self, context, asset_data):
 
             # this checks if the menu got called from right-click in assetbar(then index is 0 - x) or
             # from a panel(then replacement happens from the active model)
-            if ui_props.active_index == -3:
+            if from_panel:
                 # called from addon panel
-                o = utils.get_active_model()
-                op.asset_base_id = o['asset_data']['assetBaseId']
+                op.asset_base_id = asset_data['assetBaseId']
             else:
                 op.asset_index = ui_props.active_index
 
-            op.asset_type = ui_props.asset_type
+            # op.asset_type = ui_props.asset_type
             op.model_location = aob.location
             op.model_rotation = aob.rotation_euler
             op.target_object = aob.name
             op.material_target_slot = aob.active_material_index
             op.replace = True
+            op.replace_resolution = False
+
+        # resolution replacement operator
+        # if asset_data['downloaded'] == 100: # only show for downloaded/used assets
+        # if ui_props.asset_type in ('MODEL', 'MATERIAL'):
+        #     layout.menu(OBJECT_MT_blenderkit_resolution_menu.bl_idname)
+
+        if ui_props.asset_type in ('MODEL', 'MATERIAL') and \
+                utils.get_param(asset_data, 'textureResolutionMax') is not None and \
+                utils.get_param(asset_data, 'textureResolutionMax') > 512:
+
+            s = bpy.context.scene
+
+            col = layout.column()
+            col.operator_context = 'INVOKE_DEFAULT'
+
+            if from_panel:
+                # Called from addon panel
+
+                if asset_data.get('resolution'):
+                    op = col.operator('scene.blenderkit_download', text='Replace asset resolution')
+                    op.asset_base_id = asset_data['assetBaseId']
+                    if asset_data['assetType'] == 'MODEL':
+                        o = utils.get_active_model()
+                        op.model_location = o.location
+                        op.model_rotation = o.rotation_euler
+                        op.target_object = o.name
+                        op.material_target_slot = o.active_material_index
+                    elif asset_data['assetType'] == 'MATERIAL':
+                        aob = bpy.context.active_object
+                        op.model_location = aob.location
+                        op.model_rotation = aob.rotation_euler
+                        op.target_object = aob.name
+                        op.material_target_slot = aob.active_material_index
+                    op.replace_resolution = True
+                    op.invoke_resolution = True
+                    op.max_resolution = asset_data.get('max_resolution',
+                                                       0)  # str(utils.get_param(asset_data, 'textureResolutionMax'))
+
+            elif asset_data['assetBaseId'] in s['assets used'].keys():
+                # called from asset bar:
+                op = col.operator('scene.blenderkit_download', text='Replace asset resolution')
+
+                op.asset_index = ui_props.active_index
+                # op.asset_type = ui_props.asset_type
+                op.replace_resolution = True
+                op.invoke_resolution = True
+                o = utils.get_active_model()
+                if o and o.get('asset_data'):
+                    if o['asset_data']['assetBaseId'] == bpy.context.scene['search results'][ui_props.active_index]:
+                        op.model_location = o.location
+                        op.model_rotation = o.rotation_euler
+                    else:
+                        op.model_location = (0, 0, 0)
+                        op.model_rotation = (0, 0, 0)
+                op.max_resolution = asset_data.get('max_resolution',
+                                                   0)  # str(utils.get_param(asset_data, 'textureResolutionMax'))
+
+            # print('operator res ', resolution)
+            # op.resolution = resolution
 
     wm = bpy.context.window_manager
     profile = wm.get('bkit profile')
@@ -1102,8 +1215,6 @@ def draw_asset_context_menu(self, context, asset_data):
                 op.asset_id = asset_data['id']
                 op.state = 'rejected'
 
-
-
         if author_id == str(profile['user']['id']):
             layout.label(text='Management tools:')
             row = layout.row()
@@ -1119,6 +1230,54 @@ def draw_asset_context_menu(self, context, asset_data):
             op.asset_id = asset_data['id']
             op.asset_type = asset_data['assetType']
 
+            layout.operator_context = 'INVOKE_DEFAULT'
+            op = layout.operator('object.blenderkit_print_asset_debug', text='Print asset debug')
+            op.asset_id = asset_data['id']
+
+
+
+
+
+# def draw_asset_resolution_replace(self, context, resolution):
+#     layout = self.layout
+#     ui_props = bpy.context.scene.blenderkitUI
+#
+#     op = layout.operator('scene.blenderkit_download', text=resolution)
+#     if ui_props.active_index == -3:
+#         # This happens if the command is called from addon panel
+#         o = utils.get_active_model()
+#         op.asset_base_id = o['asset_data']['assetBaseId']
+#
+#     else:
+#         op.asset_index = ui_props.active_index
+#
+#         op.asset_type = ui_props.asset_type
+#     if len(bpy.context.selected_objects) > 0:  # and ui_props.asset_type == 'MODEL':
+#         aob = bpy.context.active_object
+#         op.model_location = aob.location
+#         op.model_rotation = aob.rotation_euler
+#         op.target_object = aob.name
+#         op.material_target_slot = aob.active_material_index
+#     op.replace_resolution = True
+#     print('operator res ', resolution)
+#     op.resolution = resolution
+
+
+# class OBJECT_MT_blenderkit_resolution_menu(bpy.types.Menu):
+#     bl_label = "Replace Asset Resolution"
+#     bl_idname = "OBJECT_MT_blenderkit_resolution_menu"
+#
+#     def draw(self, context):
+#         ui_props = context.scene.blenderkitUI
+#
+#         # sr = bpy.context.scene['search results']
+#
+#         # sr = bpy.context.scene['search results']
+#         # asset_data = sr[ui_props.active_index]
+#
+#         for k in resolutions.resolution_props_to_server.keys():
+#             draw_asset_resolution_replace(self, context, k)
+
 
 class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
     bl_label = "Asset options:"
@@ -1130,7 +1289,7 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
         # sr = bpy.context.scene['search results']
         sr = bpy.context.scene['search results']
         asset_data = sr[ui_props.active_index]
-        draw_asset_context_menu(self, context, asset_data)
+        draw_asset_context_menu(self, context, asset_data, from_panel=False)
 
 
 class OBJECT_MT_blenderkit_login_menu(bpy.types.Menu):
@@ -1320,7 +1479,7 @@ class VIEW3D_PT_blenderkit_downloads(Panel):
 
     def draw(self, context):
         layout = self.layout
-        for i,threaddata in enumerate(download.download_threads):
+        for i, threaddata in enumerate(download.download_threads):
             tcom = threaddata[2]
             asset_data = threaddata[1]
             row = layout.row()
@@ -1376,8 +1535,10 @@ classess = (
     VIEW3D_PT_blenderkit_categories,
     VIEW3D_PT_blenderkit_import_settings,
     VIEW3D_PT_blenderkit_model_properties,
+    NODE_PT_blenderkit_material_properties,
     # VIEW3D_PT_blenderkit_ratings,
     VIEW3D_PT_blenderkit_downloads,
+    # OBJECT_MT_blenderkit_resolution_menu,
     OBJECT_MT_blenderkit_asset_menu,
     OBJECT_MT_blenderkit_login_menu,
     UrlPopupDialog,
