@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -3816,6 +3816,10 @@ msgid "Move Lines"
 msgstr "Verplaats Lijnen"
 
 
+msgid "Make Internal"
+msgstr "Maak Intern"
+
+
 msgctxt "Operator"
 msgid "Toggle Overwrite"
 msgstr "Overschrijven Aan/Uit"
@@ -3843,10 +3847,6 @@ msgstr "Los Conflict Op"
 
 msgid "Ignore"
 msgstr "Negeer"
-
-
-msgid "Make Internal"
-msgstr "Maak Intern"
 
 
 msgctxt "Operator"
@@ -4765,11 +4765,6 @@ msgstr "Vergrendel Alles"
 
 
 msgctxt "Operator"
-msgid "UnLock All"
-msgstr "Ontgrendel Alles"
-
-
-msgctxt "Operator"
 msgid "Hide Others"
 msgstr "Verberg Anderen"
 
@@ -5156,10 +5151,6 @@ msgstr "Sluit af"
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Handleiding"
-
-
-msgid "Timer (mins)"
-msgstr "Stopwatch (mins)"
 
 
 msgid "Author:"
@@ -5761,10 +5752,6 @@ msgstr "Groep"
 
 msgid "(empty)"
 msgstr "(leeg)"
-
-
-msgid "Current File"
-msgstr "Huidig bestand"
 
 
 msgid "Mask not found"

@@ -60,6 +60,7 @@ def add_task(task, wait = 0, only_last = False, fake_context = False, fake_conte
 
 
 def queue_worker():
+    #utils.p('timer queue worker')
     time_step = 2.0
     q = get_queue()
 
@@ -68,6 +69,8 @@ def queue_worker():
     # first round we get all tasks that are supposed to be stashed and run only once (only_last option)
     # stashing finds tasks with the property only_last and same command and executes only the last one.
     while not q.empty():
+        # print('queue while 1')
+
         task = q.get()
         if task.only_last:
             #this now makes the keys not only by task, but also first argument.
@@ -77,6 +80,8 @@ def queue_worker():
             stashed[str(task.command)+str(task.arguments[0])] = task
         else:
             back_to_queue.append(task)
+    if len(stashed.keys())>1:
+        print(stashed)
     #return tasks to que except for stashed
     for task in back_to_queue:
         q.put(task)
@@ -104,6 +109,7 @@ def queue_worker():
             except Exception as e:
                 utils.p('task failed:')
                 print(e)
+        # print('queue while 2')
     for task in back_to_queue:
         q.put(task)
     return 2.0

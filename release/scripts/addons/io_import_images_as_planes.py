@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc)",
-    "version": (3, 3, 2),
+    "version": (3, 4, 0),
     "blender": (2, 91, 0),
     "location": "File > Import > Images as Planes or Add > Mesh > Images as Planes",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
@@ -1014,15 +1014,20 @@ class IMPORT_IMAGE_OT_to_plane(Operator, AddObjectHelper):
             core_shader = node_tree.nodes.new('ShaderNodeBsdfPrincipled')
         elif self.shader == 'SHADELESS':
             core_shader = get_shadeless_node(node_tree)
-        else:  # Emission Shading
-            core_shader = node_tree.nodes.new('ShaderNodeEmission')
-            core_shader.inputs['Strength'].default_value = self.emit_strength
+        elif self.shader == 'EMISSION':
+            core_shader = node_tree.nodes.new('ShaderNodeBsdfPrincipled')
+            core_shader.inputs['Emission Strength'].default_value = self.emit_strength
+            core_shader.inputs['Base Color'].default_value = (0.0, 0.0, 0.0, 1.0)
+            core_shader.inputs['Specular'].default_value = 0.0
 
         # Connect color from texture
-        node_tree.links.new(core_shader.inputs[0], tex_image.outputs['Color'])
+        if self.shader in {'PRINCIPLED', 'SHADELESS'}:
+            node_tree.links.new(core_shader.inputs[0], tex_image.outputs['Color'])
+        elif self.shader == 'EMISSION':
+            node_tree.links.new(core_shader.inputs['Emission'], tex_image.outputs['Color'])
 
         if self.use_transparency:
-            if self.shader == 'PRINCIPLED':
+            if self.shader in {'PRINCIPLED', 'EMISSION'}:
                 node_tree.links.new(core_shader.inputs['Alpha'], tex_image.outputs['Alpha'])
             else:
                 bsdf_transparent = node_tree.nodes.new('ShaderNodeBsdfTransparent')

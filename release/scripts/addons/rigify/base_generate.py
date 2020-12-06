@@ -31,6 +31,7 @@ from .utils.misc import clone_parameters, assign_parameters
 
 from . import base_rig
 
+from itertools import count
 
 #=============================================
 # Generator Plugin
@@ -284,8 +285,19 @@ class BaseGenerator:
 
         self.stage = method_name
 
-        for rig in [*self.rig_list, *self.plugin_list]:
+        for rig in self.rig_list:
             rig.rigify_invoke_stage(method_name)
+
+            assert(self.context.active_object == self.obj)
+            assert(self.obj.mode == 'OBJECT')
+            assert(num_bones == len(self.obj.data.bones))
+
+        # Allow plugins to be added to the end of the list on the fly
+        for i in count(0):
+            if i >= len(self.plugin_list):
+                break
+
+            self.plugin_list[i].rigify_invoke_stage(method_name)
 
             assert(self.context.active_object == self.obj)
             assert(self.obj.mode == 'OBJECT')
@@ -299,8 +311,19 @@ class BaseGenerator:
 
         self.stage = method_name
 
-        for rig in [*self.rig_list, *self.plugin_list]:
+        for rig in self.rig_list:
             rig.rigify_invoke_stage(method_name)
+
+            assert(self.context.active_object == self.obj)
+            assert(self.obj.mode == 'EDIT')
+            assert(num_bones == len(self.obj.data.edit_bones))
+
+        # Allow plugins to be added to the end of the list on the fly
+        for i in count(0):
+            if i >= len(self.plugin_list):
+                break
+
+            self.plugin_list[i].rigify_invoke_stage(method_name)
 
             assert(self.context.active_object == self.obj)
             assert(self.obj.mode == 'EDIT')

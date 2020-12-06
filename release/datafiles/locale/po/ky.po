@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -1196,14 +1196,6 @@ msgid "Sync Mode"
 msgstr "Синхрондоштуруу режими"
 
 
-msgid "No Sync"
-msgstr "Синхрондоштуруусуз"
-
-
-msgid "AV-sync"
-msgstr "AV-синхрондоштуруу"
-
-
 msgid "Tool Settings"
 msgstr "Аспап ырастоолору"
 
@@ -1567,18 +1559,6 @@ msgid "Units"
 msgstr "Ченөө бирдиктери"
 
 
-msgid "Focal length, K1"
-msgstr "Фокус аралыгы, K1"
-
-
-msgid "Focal length, K1, K2"
-msgstr "Фокус аралыгы, K1, K2"
-
-
-msgid "K1, K2"
-msgstr "K1, K2"
-
-
 msgid "Meta"
 msgstr "Мета"
 
@@ -1751,10 +1731,6 @@ msgstr "Маркерди кошуп ташуу"
 
 msgid "Add Marker"
 msgstr "Маркерди кошуу"
-
-
-msgid "Clear all"
-msgstr "Баарын тазалоо"
 
 
 msgctxt "Operator"
@@ -2072,14 +2048,6 @@ msgstr "Текстти коюу"
 
 msgid "Eraser"
 msgstr "Өчүргүч"
-
-
-msgid "Black"
-msgstr "Кара"
-
-
-msgid "White"
-msgstr "Ак"
 
 
 msgctxt "Operator"
@@ -2782,10 +2750,6 @@ msgid "Solve"
 msgstr "Чечим"
 
 
-msgid "Clean up"
-msgstr "Тазалоо"
-
-
 msgid "Tracking Settings"
 msgstr "Трекингдин ырастоолору"
 
@@ -3096,6 +3060,14 @@ msgstr "Сфера өлчөмү"
 
 msgid "Gravitation"
 msgstr "Тартыш"
+
+
+msgid "Black"
+msgstr "Кара"
+
+
+msgid "White"
+msgstr "Ак"
 
 
 msgid "Show Seconds"

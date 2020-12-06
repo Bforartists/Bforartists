@@ -218,21 +218,18 @@ def register_keymaps():
         return
     addon = bpy.context.window_manager.keyconfigs.addon
 
-    km = bpy.context.window_manager.keyconfigs.addon.keymaps.get("3D View")
-    if not km:
-        km = addon.keymaps.new(name = "3D View", space_type = "VIEW_3D")
-    
+    km = addon.keymaps.new(name = "3D View", space_type = "VIEW_3D")
+
     if 'view3d.rotate_canvas' not in km.keymap_items:
         km = addon.keymaps.new(name='3D View', space_type='VIEW_3D')
         kmi = km.keymap_items.new('view3d.rotate_canvas',
         type=pref.mouse_click, value="PRESS", alt=pref.use_alt, ctrl=pref.use_ctrl, shift=pref.use_shift, any=False)
 
-        addon_keymaps.append(km)
+        addon_keymaps.append((km, kmi))
 
 def unregister_keymaps():
-    for km in addon_keymaps:
-        for kmi in km.keymap_items:
-            km.keymap_items.remove(kmi)
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
 

@@ -31,6 +31,7 @@ from mathutils import Vector
 import json
 import os
 import sys
+import shutil
 
 ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000
 BELOW_NORMAL_PRIORITY_CLASS = 0x00004000
@@ -130,6 +131,8 @@ def get_selected_replace_adepts():
     # if no blenderkit - like objects were found, use the original selection.
     if len(parents) == 0:
         parents = obs
+    pprint('replace adepts')
+    pprint(str(parents))
     return parents
 
 
@@ -323,6 +326,15 @@ def get_thumbnail(name):
     return img
 
 
+def files_size_to_text(size):
+    fsmb = size // (1024 * 1024)
+    fskb = size % 1024
+    if fsmb == 0:
+        return f'{fskb}KB'
+    else:
+        return f'{fsmb}MB {fskb}KB'
+
+
 def get_brush_props(context):
     brush = get_active_brush()
     if brush is not None:
@@ -332,11 +344,42 @@ def get_brush_props(context):
 
 def p(text, text1='', text2='', text3='', text4='', text5=''):
     '''debug printing depending on blender's debug value'''
+
     if bpy.app.debug_value != 0:
+        print('\n')
+        # print('-----BKit debug-----\n')
+        # traceback.print_stack()
         print(text, text1, text2, text3, text4, text5)
+        # print('---------------------\n')
 
 
-def pprint(data):
+def copy_asset(fp1, fp2):
+    '''synchronizes the asset between folders, including it's texture subdirectories'''
+    if 1:
+        p('copy asset')
+        p(fp1, fp2)
+        if not os.path.exists(fp2):
+            shutil.copyfile(fp1, fp2)
+            p('copied')
+        source_dir = os.path.dirname(fp1)
+        target_dir = os.path.dirname(fp2)
+        for subdir in os.scandir(source_dir):
+            if not subdir.is_dir():
+                continue
+            target_subdir = os.path.join(target_dir, subdir.name)
+            if os.path.exists(target_subdir):
+                continue
+            p(subdir, target_subdir)
+            shutil.copytree(subdir, target_subdir)
+            p('copied')
+
+    # except Exception as e:
+    #     print('BlenderKit failed to copy asset')
+    #     print(fp1, fp2)
+    #     print(e)
+
+
+def pprint(data, data1=None, data2=None, data3=None, data4=None):
     '''pretty print jsons'''
     p(json.dumps(data, indent=4, sort_keys=True))
 
@@ -345,6 +388,8 @@ def get_hierarchy(ob):
     '''get all objects in a tree'''
     obs = []
     doobs = [ob]
+    # pprint('get hierarchy')
+    pprint(ob.name)
     while len(doobs) > 0:
         o = doobs.pop()
         doobs.extend(o.children)
@@ -362,7 +407,6 @@ def select_hierarchy(ob, state=True):
 def delete_hierarchy(ob):
     obs = get_hierarchy(ob)
     bpy.ops.object.delete({"selected_objects": obs})
-
 
 def get_bounds_snappable(obs, use_modifiers=False):
     # progress('getting bounds of object(s)')
@@ -497,14 +541,13 @@ def scale_uvs(ob, scale=1.0, pivot=Vector((.5, .5))):
 
 # map uv cubic and switch of auto tex space and set it to 1,1,1
 def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False, just_scale=False):
-    from blenderkit import bg_blender as bg
     s = bpy.context.scene
     mat_props = s.blenderkit_mat
     if mat_props.automap:
         tob = bpy.data.objects[target_object]
         # only automap mesh models
-        if tob.type == 'MESH' and len(tob.data.polygons)>0:
-            #check polycount for a rare case where no polys are in editmesh
+        if tob.type == 'MESH' and len(tob.data.polygons) > 0:
+            # check polycount for a rare case where no polys are in editmesh
             actob = bpy.context.active_object
             bpy.context.view_layer.objects.active = tob
 
@@ -571,6 +614,17 @@ def name_update():
     fname = fname.replace('\"', '')
     asset = get_active_asset()
     asset.name = fname
+
+
+def get_param(asset_data, parameter_name):
+    if not asset_data.get('parameters'):
+        # this can appear in older version files.
+        return None
+
+    for p in asset_data['parameters']:
+        if p.get('parameterType') == parameter_name:
+            return p['value']
+    return None
 
 
 def params_to_dict(params):
@@ -644,10 +698,10 @@ def get_largest_area(area_type='VIEW_3D'):
                     for r in a.regions:
                         if r.type == 'WINDOW':
                             region = r
-    global active_area, active_window, active_region
-    active_window = maxw
-    active_area = maxa
-    active_region = region
+    global active_area_pointer, active_window_pointer, active_region_pointer
+    active_window_pointer = maxw.as_pointer()
+    active_area_pointer = maxa.as_pointer()
+    active_region_pointer = region.as_pointer()
     return maxw, maxa, region
 
 
@@ -657,15 +711,16 @@ def get_fake_context(context, area_type='VIEW_3D'):
 
     try:
         context = context.copy()
+        # print('bk context copied successfully')
     except Exception as e:
         print(e)
-        print('BlenderKit: context.copy() failed. probably a colliding addon.')
+        print('BlenderKit: context.copy() failed. Can be a colliding addon.')
         context = {}
 
     if context.get('area') is None or context.get('area').type != area_type:
         w, a, r = get_largest_area(area_type=area_type)
         if w:
-            #sometimes there is no area of the requested type. Let's face it, some people use Blender without 3d view.
+            # sometimes there is no area of the requested type. Let's face it, some people use Blender without 3d view.
             override = {'window': w, 'screen': w.screen, 'area': a, 'region': r}
             C_dict.update(override)
         # print(w,a,r)

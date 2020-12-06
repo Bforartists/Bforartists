@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -3180,10 +3180,6 @@ msgid "Amount of residual error in Blender space unit for constraints that work 
 msgstr "ﺭﺪﻨﻠﺑ ﺱﺎﻴﻗ ﺪﺣﻮﺑ ﻊﻗﻮﻤﻟﺍ ﻰﻠﻋ ﺔﻠﻣﺎﻌﻟﺍ ﺩﻮﻴﻘﻠﻟ ﻲﻘﺒﺘﻤﻟﺍ ﺄﻄﺨﻟﺍ ﺔﻴﻤﻛ"
 
 
-msgid "Rot error"
-msgstr "ﺮﻳﻭﺪﺗ ﺄﻄﺧ"
-
-
 msgid "Amount of residual error in radians for constraints that work on orientation"
 msgstr "ﻩﺎﺠﺗﻹ﻿ﺍ ﻰﻠﻋ ﻞﻤﻌﺗ ﻲﺘﻟﺍ ﺩﻮﻴﻘﻠﻟ ﻥﺎﻳﺩﺍﺮﻟﺎﺑ ﻲﻘﺒﺘﻤﻟﺍ ﺄﻄﺨﻟﺍ ﺔﻴﻤﻛ"
 
@@ -5320,10 +5316,6 @@ msgid "Include visualization of scene related animation data"
 msgstr "ﺪﻬﺸﻤﻟﺎﺑ ﺔﻘﻠﻌﺘﻤﻟﺍ ﺔﻛﺮﺤﻟﺍ ﺕﺎﻧﺎﻴﺒﻟ ﺔﻨﻳﺎﻌﻣ ﻦﻤﻀﺘﻳ"
 
 
-msgid "Display Shapekeys"
-msgstr "ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻣ ﺮﻬﻇﺃ"
-
-
 msgid "Include visualization of shape key related animation data"
 msgstr "ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻤﺑ ﺔﻘﻠﻌﺘﻤﻟﺍ ﺔﻛﺮﺤﻟﺍ ﺕﺎﻧﺎﻴﺒﻟ ﺔﻨﻳﺎﻌﻣ ﻦﻤﻀﺘﻳ"
 
@@ -6621,16 +6613,8 @@ msgid "Theora"
 msgstr "Theora"
 
 
-msgid "High quality"
+msgid "High Quality"
 msgstr "ﺔﻴﻟﺎﻋ ﺓﺩﻮﺟ"
-
-
-msgid "Medium quality"
-msgstr "ﺔﻄﺳﻮﺘﻣ ﺓﺩﻮﺟ"
-
-
-msgid "Low quality"
-msgstr "ﺔﻴﻧﺪﺘﻣ ﺓﺩﻮﺟ"
 
 
 msgid "Realtime"
@@ -12511,12 +12495,24 @@ msgid "High"
 msgstr "ﻲﻟﺎﻋ"
 
 
+msgid "High quality"
+msgstr "ﺔﻴﻟﺎﻋ ﺓﺩﻮﺟ"
+
+
 msgid "Medium"
 msgstr "ﻂﺳﻮﺘﻣ"
 
 
+msgid "Medium quality"
+msgstr "ﺔﻄﺳﻮﺘﻣ ﺓﺩﻮﺟ"
+
+
 msgid "Low"
 msgstr "ﻲﻧﺪﺘﻣ"
+
+
+msgid "Low quality"
+msgstr "ﺔﻴﻧﺪﺘﻣ ﺓﺩﻮﺟ"
 
 
 msgid "Render Quality"
@@ -13037,6 +13033,10 @@ msgstr "ﻦﻴﻠﻟﺍ ﻢﺴﺠﻟﺍ ﺓﺎﻛﺎﺤﻤﻟ ﺕﺍﺩﺍﺪﻋ
 
 msgid "Type of Object"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻉﻮﻧ"
+
+
+msgid "Camera Parent Lock"
+msgstr "ﺍﺮﻤﻜﻟﺍ ﻞﺻﺃ ﻞﻔﻗ"
 
 
 msgid "Dynamic Topology Sculpting"
@@ -14275,10 +14275,6 @@ msgid "How to sync playback"
 msgstr "ﺽﺮﻌﻟﺍ ﻦﻣﺍﺰﺗ ﻒﻴﻛ"
 
 
-msgid "No Sync"
-msgstr "ﺔﻨﻣﺍﺰﻣ ﻥﻭﺪﺑ"
-
-
 msgid "Do not sync, play every frame"
 msgstr "ﺭﺎﻃﺍ ﻞﻛ ﺽﺮﻋﺍ ,ﻦﻣﺍﺰﺗ ﻻ﻿"
 
@@ -14289,10 +14285,6 @@ msgstr "ﺮﻃﻹ﻿ﺍ ﻝﺎﻤﻫﺇ"
 
 msgid "Drop frames if playback is too slow"
 msgstr "ﺎﺌﻴﻄﺑ ﺽﺮﻌﻟﺍ ﻥﺎﻛ ﺍﺫﺍ ﺮﻃﻻ﻿ﺍ ﻞﻤﻫﺃ"
-
-
-msgid "AV-sync"
-msgstr "AV ﺔﻨﻣﺍﺰﻣ"
 
 
 msgid "Sync to audio playback, dropping frames"
@@ -15333,16 +15325,8 @@ msgid "Use standard stucci"
 msgstr "ﻲﺟﺫﻮﻤﻧ ﻲﺸﺗﻮﺘﺳ ﻡﺪﺨﺘﺳﺇ"
 
 
-msgid "Wall in"
-msgstr "ﻞﺧﺍﺪﻟﺍ ﻂﺋﺎﺤﻟﺍ"
-
-
 msgid "Create Dimples"
 msgstr "ﺕﺍﺮﻘﻧ ﺊﺸﻧﺇ"
-
-
-msgid "Wall out"
-msgstr "ﺝﺭﺎﺨﻟﺍ ﻂﺋﺎﺤﻟﺍ"
 
 
 msgid "Create Ridges"
@@ -20014,30 +19998,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻢﻴﺠﺤﺘﻠﻟ ﻦﻴﺘﻣﺰﺣ ﻦﻴﺑ ﺔﻓﺎﺴﻤﻟﺍ"
 
 
-msgid "Refine"
-msgstr "ﻖﻴﻗﺩ ﻂﺒﺿ"
-
-
-msgid "Refine focal length"
-msgstr "ﻱﺭﺆﺒﻟﺍ ﻝﻮﻄﻟﺍ ﺏﺬﺷ"
-
-
-msgid "Focal length, K1"
-msgstr "K1 ,ﻱﺭﺆﺒﻟﺍ ﻝﻮﻄﻟﺍ"
-
-
-msgid "Refine focal length and radial distortion K1"
-msgstr " K1 ﻲﻋﺎﻌﺸﻟﺍ ﻪﻳﻮﺸﺘﻟﺍ ﻭ ﻱﺭﺆﺒﻟﺍ ﺪﻌﺒﻟﺍ ﺏﺬﺷ"
-
-
-msgid "Focal length, K1, K2"
-msgstr "K1, K2 ,ﻱﺭﺆﺒﻟﺍ ﻝﻮﻄﻟﺍ"
-
-
-msgid "Focal Length, Optical Center"
-msgstr "ﻱﺮﺼﺒﻟﺍ ﻒﺼﺘﻨﻤﻟﺍ ,ﻱﺭﺆﺒﻟﺍ ﻝﻮﻄﻟﺍ"
-
-
 msgid "Show default options expanded in the user interface"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻲﻓ ﺔﺣﻮﺘﻔﻣ ﺔﻴﺿﺍﺮﺘﻓﻹ﻿ﺍ ﺕﺍﺭﺎﻴﺨﻟﺍ ﺮﻬﻇﺃ"
 
@@ -21491,20 +21451,16 @@ msgid "Interpolate between frames in a Bezier curve, rather than linearly"
 msgstr "ﺎﻴﻄﺧ ﻦﻣ ﻻ﻿ﺪﺑ ﺮﻴﻳﺰﻴﺑ ﻰﻨﺤﻨﻣ ﻲﻓ ﺮﻃﻻ﻿ﺍ ﻦﻴﺑ ﺪﻟّﻭ"
 
 
+msgid "Tile Order"
+msgstr "ﺔﻨﺒﻠﻟﺍ ﺐﻴﺗﺮﺗ"
+
+
 msgid "Tile order"
 msgstr "ﺔﻨﺒﻠﻟﺍ ﺐﻴﺗﺮﺗ"
 
 
 msgid "Random tiles"
 msgstr "ﺔﻴﺋﺍﻮﺸﻋ ﺕﺎﻨﺒﻟ"
-
-
-msgid "Bottom up"
-msgstr "ﻰﻠﻋﻷ﻿ ﻞﻔﺳﻷ﻿ﺍ ﻦﻣ"
-
-
-msgid "Rule of thirds"
-msgstr "ﻦﻴﺜﻠﺜﻟﺍ ﺓﺪﻋﺎﻗ"
 
 
 msgid "Expand from 9 places"
@@ -22683,11 +22639,6 @@ msgid "Align selected bones to the active bone (or to their parent)"
 msgstr "(ﺎﻬﻟﻮﺻﻷ﻿ ﻭﺃ) ﺔﻟﺎﻌﻔﻟﺍ ﺔﻤﻈﻌﻠﻟ ﺓﺭﺎﺘﺨﻤﻟﺍ ﻡﺎﻈﻌﻟﺍ ﻱﺫﺎﺣ"
 
 
-msgctxt "Operator"
-msgid "AutoName by Axis"
-msgstr "ﺭﻮﺤﻤﻟﺍ ﺐﺴﺣ ﻲﺋﺎﻘﻠﺗ ﻢﺳﺍ"
-
-
 msgid "Front/Back"
 msgstr "ﻒﻠﺧ/ﻡﺎﻣﺍ"
 
@@ -22845,10 +22796,6 @@ msgstr "ﻂﻘﻓ ﻝﺎﻌّﻔﻟﺍ"
 msgctxt "Operator"
 msgid "Select Similar"
 msgstr "ﻞﺋﺎﻤﺘﻤﻟﺍ ﺭﺎﺘﺧﺇ"
-
-
-msgid "Direction (Y axis)"
-msgstr "(X ﺭﻮﺤﻣ) ﻩﺎﺠﺗﺇ"
 
 
 msgctxt "Operator"
@@ -23139,20 +23086,8 @@ msgid "Clear Track Path"
 msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ ﺭﺎﺴﻣ ﻝﺯﺍ"
 
 
-msgid "Clear up-to"
-msgstr "ﻰﺘﺣ ﻝﺯﺃ"
-
-
 msgid "Clear path up to current frame"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﻰﺘﺣ ﺭﺎﺴﻤﻟﺍ ﻝﺯﺍ"
-
-
-msgid "Clear remained"
-msgstr "ﻲﻗﺎﺒﻟﺍ ﻝﺯﺍ"
-
-
-msgid "Clear all"
-msgstr "ﻞﻜﻟﺍ ﻝﺯﺃ"
 
 
 msgid "Clear Active"
@@ -23425,10 +23360,6 @@ msgid "Select all tracks from specified group"
 msgstr "ﺓﺩﺪﺤﻣ ﺔﻋﻮﻤﺠﻣ ﻦﻣ ﺕﺍﺭﺎﺴﻤﻟﺍ ﻞﻛ ﺮﺘﺧﺍ"
 
 
-msgid "Keyframed tracks"
-msgstr "ﺢﻴﺗﺎﻔﻣ ﺎﻬﻴﻓ ﻲﺘﻟﺍ ﺕﺭﺎﺴﻤﻟﺍ"
-
-
 msgid "Select all keyframed tracks"
 msgstr "ﺢﻴﺗﺎﻔﻣ ﺎﻬﻴﻓ ﻲﺘﻟﺍ ﺕﺭﺎﺴﻤﻟﺍ ﺮﺘﺧﺍ"
 
@@ -23437,20 +23368,8 @@ msgid "Select all estimated tracks"
 msgstr "ﺓﺭﺪّﻘﻤﻟﺍ ﺕﺭﺎﺴﻤﻟﺍ ﺮﺘﺧﺍ"
 
 
-msgid "Tracked tracks"
-msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ"
-
-
 msgid "Select all tracked tracks"
 msgstr "ﺔﻘﺣﻼ﻿ﻤﻟﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ ﻞﻛ ﺮﺘﺧﺍ"
-
-
-msgid "Locked tracks"
-msgstr "ﺔﻠﻔﻘﻤﻟﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ"
-
-
-msgid "Disabled tracks"
-msgstr "ﺔﻠﻄﻌﻤﻟﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ"
 
 
 msgid "Select all disabled tracks"
@@ -23621,11 +23540,6 @@ msgstr "ﻞﺴﻠﺴﺘﻟﺍ ﻖﺣﻻ﻿"
 
 
 msgctxt "Operator"
-msgid "Track Settings As Default"
-msgstr "ﺔﻴﺿﺍﺮﺘﻓﻻ﻿ﺍ ﺭﺎﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺍ"
-
-
-msgctxt "Operator"
 msgid "Copy Track Settings"
 msgstr "ﺭﺎﺴﻤﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ ﺦﺴﻧﺍ"
 
@@ -23747,11 +23661,6 @@ msgstr "ﺮﻄﺴﻟﺍ ﻑﺬﺣﺍ"
 msgctxt "Operator"
 msgid "Copy to Clipboard"
 msgstr "ﺓﺮﻛﺍﺬﻟﺍ ﻰﻟﺍ ﺦﺴﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Copy to Clipboard (as script)"
-msgstr "(ﺖﺒﻳﺮﻜﺴﻛ) ﺓﺮﻛﺍﺬﻟﺍ ﻰﻟﺍ ﺦﺴﻧﺍ"
 
 
 msgctxt "Operator"
@@ -27237,10 +27146,6 @@ msgid "Align to axis"
 msgstr "ﺭﻮﺤﻤﻟ ﻱﺫﺎﺣ"
 
 
-msgid "High Quality"
-msgstr "ﺔﻴﻟﺎﻋ ﺓﺩﻮﺟ"
-
-
 msgid "Enables high quality calculation of the bounding box for perfect results on complex shape meshes with rotation/scale (Slow)"
 msgstr "ﺊﻴﻄﺑ - ﻢﻴﺠﺤﺗ/ﻥﺍﺭﻭﺩ ﺎﻬﻳﺪﻟﻭ ﺓﺪﻘﻌﻤﻟﺍ ﻝﺎﻜﺷﻻ﻿ﺍ ﺔﻟﺎﺣ ﻲﻓ ﻞﻀﻓﺍ ﺞﺋﺎﺘﻨﻟ ﺩﺪﺤﻤﻟﺍ ﻕﻭﺪﻨﺼﻠﻟ ﺓﺩﻮﺠﻟﺍ ﻲﻟﺎﻌﻟﺍ ﺏﺎﺴﺤﻟﺍ ﻞﻌﻔﻳ"
 
@@ -29638,11 +29543,6 @@ msgstr "ﺔﻨﻜﻣﻻ﻿ﺍ ﺰﺠﺣ ﻡﺪﺨﺘﺳﺃ"
 msgctxt "Operator"
 msgid "Copy"
 msgstr "ﺦﺴﻧ"
-
-
-msgctxt "Operator"
-msgid "Crossfade sounds"
-msgstr "ﺕﺍﻮﺻﻻ﻿ﺍ ﻞﺧﺍﺩ"
 
 
 msgid "Do cross-fading volume animation of two selected sound strips"
@@ -32280,10 +32180,6 @@ msgid "Weight hair particles"
 msgstr "ﺮﻌﺸﻟﺍ ﺕﺎﺌﻳﺰﺟ ﻞﻘﺛﺃ"
 
 
-msgid "Soft body"
-msgstr "ﻦﻴﻟ ﻢﺴﺟ"
-
-
 msgid "Auto Velocity"
 msgstr "ﺔﻴﺋﺎﻘﻠﺗ ﺔﻋﺮﺳ"
 
@@ -32940,10 +32836,6 @@ msgid "IK Z Minimum"
 msgstr "ﻱﺩﻮﻤﻋ IK ﻰﻧﺩﺃ"
 
 
-msgid "IK Rot Weight"
-msgstr "IK ﺮﻳﻭﺪﺗ ﻥﺯﻭ"
-
-
 msgid "Weight of rotation constraint for IK"
 msgstr "IKﻝ ﺮﻳﻭﺪﺘﻟﺍ ﺩﻮﻴﻗ ﻥﺯﻭ"
 
@@ -33062,10 +32954,6 @@ msgstr "ﺔﻳﺩﻮﻤﻌﻟﺍ IK ﺩﻭﺪﺣ"
 
 msgid "Limit movement around the Z axis"
 msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻝﻮﺣ ﻙﺮﺤﺘﻟﺍ ﻦﻣ ﺪﺤﻟﺍ"
-
-
-msgid "IK rot control"
-msgstr "IK ﻥﺍﺭﻭﺩ ﻢﻜﺤﺘﻣ"
 
 
 msgid "Apply channel size as IK constraint if stretching is enabled"
@@ -33682,14 +33570,6 @@ msgstr "ﻲﺗﺍﺫ ﺭﻮﻈﻣ"
 
 msgid "Automatically switch between orthographic and perspective when changing from top/front/side views"
 msgstr " ﺔﻴﺒﻧﺎﺠﻟﺍ/ﺔﻴﻣﺎﻣﻷ﻿ﺍ/ﺔﻳﻮﻠﻌﻟﺍ ﺮﻇﺎﻨﻤﻟﺍ ﻦﻣ ﺮﻴﻴﻐﺘﻟﺍ ﺪﻨﻋ ﺭﻮﻈﻨﻤﻟﺍ ﻭ ﻱﺩﻮﻤﻌﻟﺍ ﻦﻴﺑ ﺎﻴﺗﺍﺫ ﻝﺪﺑ"
-
-
-msgid "Camera Parent Lock"
-msgstr "ﺍﺮﻤﻜﻟﺍ ﻞﺻﺃ ﻞﻔﻗ"
-
-
-msgid "When the camera is locked to the view and in fly mode, transform the parent rather than the camera"
-msgstr "ﺍﺮﻤﻜﻟﺍ ﻝﺪﺑ ﻞﺻﻷ﻿ﺍ ﻝﻮﺣ ،ﻥﺍﺮﻴﻄﻟﺍ ﻊﺿﻭ ﻲﻓ ﻭ ﺮﻈﻨﻤﻟﺍ ﻰﻟﺇ ﺔﻟﻮﻔﻘﻣ ﺍﺮﻤﻜﻟﺍ ﻥﻮﻜﺗ ﺎﻣﺪﻨﻋ"
 
 
 msgid "Moving things with a mouse drag confirms when releasing the button"
@@ -34556,10 +34436,6 @@ msgid "Number of subsurface scattering samples to render for each AA sample"
 msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ ﺔﻨﻴﻋ ﻞﻜﻟ ﺮﻴﻴﺼﺘﻠﻟ ﻲﺤﻄﺳ-ﺖﺤﺘﻟﺍ ﺭﺎﺸﺘﻧﻹ﻿ﺍ ﺕﺎﻨﻴﻋ ﺩﺪﻋ"
 
 
-msgid "Tile Order"
-msgstr "ﺔﻨﺒﻠﻟﺍ ﺐﻴﺗﺮﺗ"
-
-
 msgid "Tile order for rendering"
 msgstr "ﺮﻴﻴﺼﺘﻠﻟ ﺕﺎﻨﺒﻠﻟﺍ ﺐﻴﺗﺮﺗ"
 
@@ -35220,10 +35096,6 @@ msgid "Determine the amount of render threads used"
 msgstr "ﺔﻠﻤﻌﺘﺴﻤﻟﺍ ﺮﻴﻴﺼﺘﻟﺍ ﺐﻌﺷ ﺭﺍﺪﻘﻣ ﺪﻳﺪﺤﺗ"
 
 
-msgid "Auto-detect"
-msgstr "ﻲﺗﺍﺫ-ﺪﻳﺪﺤﺗ"
-
-
 msgid "Automatically determine the number of threads, based on CPUs"
 msgstr "CPU ﺔﻋﻮﻤﺠﻣ ﻰﻠﻋ ﺍﺩﺎﻤﺘﻋﺍ ،ﺐﻌﺸﻟﺍ ﺩﺪﻌﻟ ﻲﺗﺍﺫ ﺪﻳﺪﺤﺗ"
 
@@ -35865,10 +35737,6 @@ msgid "Only display every nth frame"
 msgstr "ﺭﺎﻃﺍ ﺍﺬﻛ ﻞﻛ ﻂﻘﻓ ﺮﻬﻇﺍ"
 
 
-msgid "Use Crop"
-msgstr "ﺺﻘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
 msgid "Flip on the X axis"
 msgstr "X ﺭﻮﺤﻣ ﻰﻠﻋ ﺐﻠﻗﺍ"
 
@@ -35883,14 +35751,6 @@ msgstr "ﻱﺮﺴﻜﻟ ﻝﻮّﺣ"
 
 msgid "Reverse Frames"
 msgstr "ﺮﻃﻷ﻿ﺍ ﺲﻜﻋﺇ"
-
-
-msgid "Use Translation"
-msgstr "ﺔﺣﺍﺯﻹ﻿ﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Translate image before processing"
-msgstr "ﺔﺠﻟﺎﻌﻤﻟﺍ ﻞﺒﻗ ﺓﺭﻮﺼﻟﺍ ﺡﺯﺍ"
 
 
 msgid "Add Sequence"
@@ -36189,14 +36049,6 @@ msgid "Use a custom directory to store data"
 msgstr "ﺕﺎﻧﺎﻴﺒﻟﺍ ﻦﻳﺰﺨﺘﻟ ﺺﺼﺨﻣ ﺪﻠﺠﻣ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Offset X"
-msgstr "ﻲﻘﻓﻻ﻿ﺍ ﺭﻮﺤﻤﻟﺍ ﻦﻋ ﺡﺯﺃ"
-
-
-msgid "Offset Y"
-msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻦﻋ ﺡﺯﺃ"
-
-
 msgid "Gray Scale"
 msgstr "ﻲﻨﻜﺳ ﺝﺭﺪﺗ"
 
@@ -36484,16 +36336,8 @@ msgid "Show the status of cached frames in the timeline"
 msgstr "ﻦﻣﺰﻟﺍ ﻂﺧ ﻲﻓ ﺎﻘﺒﺴﻣ ﺔﺑﻮﺴﺤﻤﻟﺍ ﺮﻃﻻ﻿ﺍ ﺔﻟﺎﺣ ﺮﻬﻇﺍ"
 
 
-msgid "Show Group Colors"
-msgstr "ﺔﻋﻮﻤﺠﻤﻟﺍ ﻥﺍﻮﻟﺍ ﺮﻬﻇﺍ"
-
-
 msgid "Show sliders beside F-Curve channels"
 msgstr "ﻞﻤﻌﻟﺍ ﺕﺎﻴﻨﺤﻨﻣ ﺕﺍﻮﻨﻗ ﺐﻧﺎﺠﺑ ﺕﺎﻘﻟﺰﻤﻟﺍ ﺮﻬﻇﺃ"
-
-
-msgid "AutoMerge Keyframes"
-msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺎﻴﺗﺍﺫ ﺞﻣﺩﺍ"
 
 
 msgid "Sync Markers with keyframe edits"
@@ -36530,6 +36374,10 @@ msgstr "ﻝﺎﻴﺧ ﺕﺎﻴﻨﺤﻨﻣ ﻪﻳﺪﻟ"
 
 msgid "Edit drivers"
 msgstr "ﺕﺎﻛﺮّﺤﻤﻟﺍ ﺭﺮﺣ"
+
+
+msgid "AutoMerge Keyframes"
+msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺎﻴﺗﺍﺫ ﺞﻣﺩﺍ"
 
 
 msgid "Auto Normalization"
@@ -38917,6 +38765,10 @@ msgid "Bold & Italic"
 msgstr "ﻚﻴﻤﺳ ﻭ ﻞﺛﺎﻣ"
 
 
+msgid "Offset X"
+msgstr "ﻲﻘﻓﻻ﻿ﺍ ﺭﻮﺤﻤﻟﺍ ﻦﻋ ﺡﺯﺃ"
+
+
 msgctxt "Operator"
 msgid "Show All"
 msgstr "ﻞﻜﻟﺍ ﺮﻬﻇﺍ"
@@ -38925,11 +38777,6 @@ msgstr "ﻞﻜﻟﺍ ﺮﻬﻇﺍ"
 msgctxt "Operator"
 msgid "Lock All"
 msgstr "ﻞﻜﻟﺍ ﻞﻔﻗ"
-
-
-msgctxt "Operator"
-msgid "UnLock All"
-msgstr "ﻞﻜﻟﺍ ﺢﺘﻓ"
 
 
 msgid "Before"
@@ -39138,10 +38985,6 @@ msgid "Sample Rate"
 msgstr "ﺕﺎﻨﻴﻌﻟﺍ ﻝﺪﻌﻣ"
 
 
-msgid "Edge To Edge"
-msgstr "ﺔﻓﺎﺣ ﻰﻟﺇ ﺔﻓﺎﺣ"
-
-
 msgid "Source Clone Image"
 msgstr "ﺦﺴﻨﻟﺍ ﺭﺪﺼﻣ ﺓﺭﻮﺻ"
 
@@ -39228,18 +39071,8 @@ msgstr "ﺓﻮﻘﻟﺍ ﻞﻘﺣ"
 
 
 msgctxt "Operator"
-msgid "Calculate To Frame"
-msgstr "ﺭﺎﻃﻺ﻿ﻟ ﺐﺴﺣﺍ"
-
-
-msgctxt "Operator"
 msgid "Bake All Dynamics"
 msgstr "ﺕﻼ﻿ﻋﺎﻔﺘﻟﺍ ﻞﻛ ﻥﺰﺧ"
-
-
-msgctxt "Operator"
-msgid "Update All To Frame"
-msgstr "ﺭﺎﻃﻺ﻿ﻟ ﻞﻜﻟﺍ ﺙﺪﺣ"
 
 
 msgid "Cache is disabled until the file is saved"
@@ -39920,16 +39753,8 @@ msgid "Show Grease Pencil"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻣ ﻢﻠﻗ"
 
 
-msgid "Default fade"
-msgstr "ﻲﺿﺍﺮﺘﻓﺍ ﻲﺷﻼ﻿ﺗ"
-
-
 msgid "Unpack"
 msgstr "ﻍﺮّﻓ"
-
-
-msgid "Stretch to input strip length"
-msgstr " ﺭﺪﺼﻤﻟﺍ ﻂﻳﺮﺸﻟﺍ ﻝﻮﻃ ﻰﻟﺇ ﺩﺪﻣ"
 
 
 msgctxt "Operator"
@@ -40032,10 +39857,6 @@ msgid "Sub Level"
 msgstr "ﻲﻋﺮﻓ ﻯﻮﺘﺴﻣ"
 
 
-msgid "Align to"
-msgstr " ـﻟ ﻱﺫﺎﺣ"
-
-
 msgid "Default Color"
 msgstr "ﻲﺿﺍﺮﺘﻓﻹ﻿ﺍ ﻥﻮﻠﻟﺍ"
 
@@ -40086,10 +39907,6 @@ msgstr "ﺓءﺍﺮﻘﻟﺍ ﺙ.ﺃ.ﻉ"
 
 msgid "Limit Size"
 msgstr "ﻢﺠﺤﻟﺍ ﺪﺣ"
-
-
-msgid "Timer (mins)"
-msgstr "(ﻖﺋﺎﻗﺩ) ﺖﻗﺆﻣ"
 
 
 msgid "Invert Wheel Zoom Direction"
@@ -40518,11 +40335,6 @@ msgstr "ﺏﺎﺴﺣ"
 
 
 msgctxt "Operator"
-msgid "Add (With Targets)..."
-msgstr "...(ﻑﺍﺪﻫﺄﺑ) ﻒﺿﺃ"
-
-
-msgctxt "Operator"
 msgid "Sort Elements..."
 msgstr "...ﺮﺻﺎﻨﻌﻟﺍ ﺐﺗّﺭ"
 
@@ -40610,11 +40422,6 @@ msgstr "ﺔﻜﺒﺷ"
 
 
 msgctxt "Operator"
-msgid "Convert to"
-msgstr "ﻰﻟﺍ ﻝﻮّﺣ"
-
-
-msgctxt "Operator"
 msgid "Add Active"
 msgstr "ﻲﻌﻤﺟ"
 
@@ -40652,21 +40459,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﻰﻠﻋ"
 msgctxt "Operator"
 msgid "On Selected Markers"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻣﻼ﻿ﻌﻟﺍ ﻰﻠﻋ"
-
-
-msgctxt "Operator"
-msgid "AutoName Left/Right"
-msgstr "ﺭﺎﺴﻴﻟﺍ/ﻦﻴﻤﻴﻠﻟ ﺔﻴﺗﺍﺫ ﺔﻴﻤﺴﺗ"
-
-
-msgctxt "Operator"
-msgid "AutoName Front/Back"
-msgstr "ﻒﻠﺨﻟﺍ/ﻡﺎﻣﻸ﻿ﻟ ﺔﻴﺗﺍﺫ ﺔﻴﻤﺴﺗ"
-
-
-msgctxt "Operator"
-msgid "AutoName Top/Bottom"
-msgstr "ﻞﻔﺳﻷ﻿ﺍ/ﻰﻠﻋﻸ﻿ﻟ ﺔﻴﺗﺍﺫ ﺔﻴﻤﺴﺗ"
 
 
 msgctxt "Operator"
@@ -42479,14 +42271,6 @@ msgid "Cannot save multilayer sequences"
 msgstr "ﺭﻮﺻ ﻊﻄﻗ ﻞﺴﻠﺴﺗ ﻦﻣ ﺕﻼ﻿ﺴﻛﻮﻓ ﺪﻴﻟﻮﺗ"
 
 
-msgid "Saved Image '%s'"
-msgstr "'%s‬‪' ﺔﻇﻮﻔﺤﻤﻟﺍ ﺓﺭﻮﺼﻟﺍ"
-
-
-msgid "image file not found"
-msgstr "ﺔﻴﻔﻠﺨﻟﺍ ﻲﻔﺧﺍ"
-
-
 msgid "Unpack 1 File"
 msgstr "ﺪﺣﺍﻭ ﻒﻠﻣ ﻍﺮّﻓ"
 
@@ -42654,10 +42438,6 @@ msgstr "‬%s‪ :ﻥﻮﺜﻳﺎﺑ"
 
 msgid "Mixed selection"
 msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻲﻔﺧﺇ"
-
-
-msgid "Current File"
-msgstr "ﻲﻟﺎﺤﻟﺍ ﻒﻠﻤﻟﺍ"
 
 
 msgid "Movie clip not found"
@@ -43174,6 +42954,10 @@ msgstr "ﻲﻘﻓﺃ ﺭﻮﺤﻣ ﻰﻧﺩﺃ"
 
 msgid "To Max"
 msgstr "ﻲﻘﻓﺃ ﺭﻮﺤﻣ ﻰﺼﻗﺃ"
+
+
+msgid "Offset Y"
+msgstr "Y ﺭﻮﺤﻤﻟﺍ ﻦﻋ ﺡﺯﺃ"
 
 
 msgid "Undistortion"

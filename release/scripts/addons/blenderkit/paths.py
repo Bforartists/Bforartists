@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy, os, sys, tempfile, shutil
-from blenderkit import tasks_queue, ui
+from blenderkit import tasks_queue, ui, utils
 
 _presets = os.path.join(bpy.utils.user_resource('SCRIPTS'), "presets")
 BLENDERKIT_LOCAL = "http://localhost:8001"
@@ -36,6 +36,7 @@ BLENDERKIT_OAUTH_LANDING_URL = "/oauth-landing/"
 BLENDERKIT_SIGNUP_URL = "https://www.blenderkit.com/accounts/register"
 BLENDERKIT_SETTINGS_FILENAME = os.path.join(_presets, "bkit.json")
 
+
 def cleanup_old_folders():
     '''function to clean up any historical folders for BlenderKit. By now removes the temp folder.'''
     orig_temp = os.path.join(os.path.expanduser('~'), 'blenderkit_data', 'temp')
@@ -45,6 +46,7 @@ def cleanup_old_folders():
         except Exception as e:
             print(e)
             print("couldn't delete old temp directory")
+
 
 def get_bkit_url():
     # bpy.app.debug_value = 2
@@ -74,6 +76,7 @@ def get_api_url():
 
 def get_oauth_landing_url():
     return get_bkit_url() + BLENDERKIT_OAUTH_LANDING_URL
+
 
 def get_author_gallery_url(author_id):
     return f'{get_bkit_url()}/asset-gallery?query=author_id:{author_id}'
@@ -114,14 +117,15 @@ def get_temp_dir(subdir=None):
             tasks_queue.add_task((ui.add_report, (message,)))
             return None
         user_preferences.global_dir = p
-        tempdir = get_temp_dir(subdir = subdir)
+        tempdir = get_temp_dir(subdir=subdir)
     return tempdir
+
 
 
 def get_download_dirs(asset_type):
     ''' get directories where assets will be downloaded'''
     subdmapping = {'brush': 'brushes', 'texture': 'textures', 'model': 'models', 'scene': 'scenes',
-                   'material': 'materials'}
+                   'material': 'materials', 'hdr':'hdrs'}
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     dirs = []
@@ -132,13 +136,11 @@ def get_download_dirs(asset_type):
         if not os.path.exists(ddir):
             os.makedirs(ddir)
 
-        subdirs = ['brushes', 'textures', 'models', 'scenes', 'materials']
-        for subd in subdirs:
-            subdir = os.path.join(ddir, subd)
-            if not os.path.exists(subdir):
-                os.makedirs(subdir)
-            if subdmapping[asset_type] == subd:
-                dirs.append(subdir)
+        subd = subdmapping[asset_type]
+        subdir = os.path.join(ddir, subd)
+        if not os.path.exists(subdir):
+            os.makedirs(subdir)
+        dirs.append(subdir)
     if (
             user_preferences.directory_behaviour == 'BOTH' or user_preferences.directory_behaviour == 'LOCAL') and bpy.data.is_saved:  # it's important local get's solved as second, since for the linking process only last filename will be taken. For download process first name will be taken and if 2 filenames were returned, file will be copied to the 2nd path.
         ddir = user_preferences.project_subdir
@@ -147,13 +149,12 @@ def get_download_dirs(asset_type):
             if not os.path.exists(ddir):
                 os.makedirs(ddir)
 
-        subdirs = ['textures', 'models', 'scenes', 'materials']  # brushes get stored only globally.
-        for subd in subdirs:
-            subdir = os.path.join(ddir, subd)
-            if not os.path.exists(subdir):
-                os.makedirs(subdir)
-            if subdmapping[asset_type] == subd:
-                dirs.append(subdir)
+        subd = subdmapping[asset_type]
+
+        subdir = os.path.join(ddir, subd)
+        if not os.path.exists(subdir):
+            os.makedirs(subdir)
+        dirs.append(subdir)
 
     return dirs
 
@@ -165,19 +166,22 @@ def slugify(slug):
     """
     import unicodedata, re
     slug = slug.lower()
-    slug = slug.replace('.', '_')
-    slug = slug.replace('"', '')
-    slug = slug.replace(' ', '_')
+
+    characters = '.," <>()'
+    for ch in characters:
+        slug = slug.replace(ch, '_')
     # import re
     # slug = unicodedata.normalize('NFKD', slug)
     # slug = slug.encode('ascii', 'ignore').lower()
     slug = re.sub(r'[^a-z0-9]+.- ', '-', slug).strip('-')
     slug = re.sub(r'[-]+', '-', slug)
     slug = re.sub(r'/', '_', slug)
+    slug = re.sub(r'\\\'\"', '_', slug)
     return slug
 
 
 def extract_filename_from_url(url):
+    # print(url)
     if url is not None:
         imgname = url.split('/')[-1]
         imgname = imgname.split('?')[0]
@@ -185,37 +189,148 @@ def extract_filename_from_url(url):
     return ''
 
 
-def get_download_filenames(asset_data):
-    dirs = get_download_dirs(asset_data['assetType'])
-    file_names = []
-    # fn = asset_data['file_name'].replace('blend_', '')
-    if asset_data.get('url') is not None:
-        # this means asset is already in scene and we don't need to check
+resolution_suffix = {
+    'blend': '',
+    'resolution_0_5K': '_05k',
+    'resolution_1K': '_1k',
+    'resolution_2K': '_2k',
+    'resolution_4K': '_4k',
+    'resolution_8K': '_8k',
+}
+resolutions = {
+    'resolution_0_5K': 512,
+    'resolution_1K': 1024,
+    'resolution_2K': 2048,
+    'resolution_4K': 4096,
+    'resolution_8K': 8192,
+}
 
-        fn = extract_filename_from_url(asset_data['url'])
-        fn.replace('_blend', '')
-        n = slugify(asset_data['name']) + '_' + fn
-        # n = 'x.blend'
-        # strs = (n, asset_data['name'], asset_data['file_name'])
+
+def round_to_closest_resolution(res):
+    rdist = 1000000
+    #    while res/2>1:
+    #        p2res*=2
+    #        res = res/2
+    #        print(p2res, res)
+    for rkey in resolutions:
+        # print(resolutions[rkey], rdist)
+        d = abs(res - resolutions[rkey])
+        if d < rdist:
+            rdist = d
+            p2res = rkey
+
+    return p2res
+
+
+def get_res_file(asset_data, resolution, find_closest_with_url = False):
+    '''
+    Returns closest resolution that current asset can offer.
+    If there are no resolutions, return orig file.
+    If orig file is requested, return it.
+    params
+    asset_data
+    resolution - ideal resolution
+    find_closest_with_url:
+        returns only resolutions that already containt url in the asset data, used in scenes where asset is/was already present.
+    Returns:
+        resolution file
+        resolution, so that other processess can pass correctly which resolution is downloaded.
+    '''
+    orig = None
+    res = None
+    closest = None
+    target_resolution = resolutions.get(resolution)
+    mindist = 100000000
+
+    for f in asset_data['files']:
+        if f['fileType'] == 'blend':
+            orig = f
+            if resolution == 'blend':
+                #orig file found, return.
+                return orig , 'blend'
+
+        if f['fileType'] == resolution:
+            #exact match found, return.
+            return f, resolution
+        # find closest resolution if the exact match won't be found.
+        rval = resolutions.get(f['fileType'])
+        if rval and target_resolution:
+            rdiff = abs(target_resolution - rval)
+            if rdiff < mindist:
+                closest = f
+                mindist = rdiff
+                # print('\n\n\n\n\n\n\n\n')
+                # print(closest)
+                # print('\n\n\n\n\n\n\n\n')
+    if not res and not closest:
+        # utils.pprint(f'will download blend instead of resolution {resolution}')
+        return orig , 'blend'
+    # utils.pprint(f'found closest resolution {closest["fileType"]} instead of the requested {resolution}')
+    return closest, closest['fileType']
+
+def server_2_local_filename(asset_data, filename):
+    '''
+    Convert file name on server to file name local.
+    This should get replaced
+    '''
+    # print(filename)
+    fn = filename.replace('blend_', '')
+    fn = fn.replace('resolution_', '')
+    # print('after replace ', fn)
+    n = slugify(asset_data['name']) + '_' + fn
+    return n
+
+def get_texture_directory(asset_data, resolution = 'blend'):
+    tex_dir_path = f"//textures{resolution_suffix[resolution]}{os.sep}"
+    return tex_dir_path
+
+def get_download_filepaths(asset_data, resolution='blend', can_return_others = False):
+    '''Get all possible paths of the asset and resolution. Usually global and local directory.'''
+    dirs = get_download_dirs(asset_data['assetType'])
+    res_file, resolution = get_res_file(asset_data, resolution, find_closest_with_url = can_return_others)
+
+    name_slug = slugify(asset_data['name'])
+    asset_folder_name = f"{name_slug}_{asset_data['id']}"
+
+    # utils.pprint('get download filenames ', dict(res_file))
+    file_names = []
+
+    # fn = asset_data['file_name'].replace('blend_', '')
+    if res_file.get('url') is not None:
+        #Tweak the names a bit:
+        # remove resolution and blend words in names
+        #
+        fn = extract_filename_from_url(res_file['url'])
+        n = server_2_local_filename(asset_data,fn)
         for d in dirs:
-            file_name = os.path.join(d, n)
+            asset_folder_path = os.path.join(d,asset_folder_name)
+            if not os.path.exists(asset_folder_path):
+                os.makedirs(asset_folder_path)
+
+            file_name = os.path.join(asset_folder_path, n)
             file_names.append(file_name)
+
+    utils.p('file paths', file_names)
     return file_names
 
 
 def delete_asset_debug(asset_data):
+    '''TODO fix this for resolutions - should get ALL files from ALL resolutions.'''
     from blenderkit import download
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key
 
     download.get_download_url(asset_data, download.get_scene_id(), api_key)
 
-    file_names = get_download_filenames(asset_data)
+    file_names = get_download_filepaths(asset_data)
     for f in file_names:
-        if os.path.isfile(f):
+        asset_dir = os.path.dirname(f)
+
+        if os.path.isdir(asset_dir):
+
             try:
-                print(f)
-                os.remove(f)
+                print(asset_dir)
+                shutil.rmtree(asset_dir)
             except:
                 e = sys.exc_info()[0]
                 print(e)

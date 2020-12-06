@@ -2257,7 +2257,7 @@ class ARCHIPACK_OT_wall2_draw(ArchipackDrawTool, Operator):
                     d.t_part = self.parent
 
                 if bpy.ops.archipack.manipulate.poll():
-                    bpy.ops.archipack.manipulate('INVOKE_DEFAULT')
+                    bpy.ops.archipack.manipulate('INVOKE_DEFAULT', object_name=o.name)
 
             return {'FINISHED'}
 

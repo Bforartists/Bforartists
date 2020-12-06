@@ -93,14 +93,21 @@ def progress(text, n=None):
     else:
         n = ' ' + ' ' + str(int(n * 1000) / 1000) + '% '
     spaces = ' ' * (len(text) + 55)
-    sys.stdout.write('progress{%s%s}\n' % (text, n))
-    sys.stdout.flush()
+    try:
+        sys.stdout.write('progress{%s%s}\n' % (text, n))
+
+        sys.stdout.flush()
+    except Exception as e:
+        print('background progress reporting race condition')
+        print(e)
 
 
 # @bpy.app.handlers.persistent
 def bg_update():
     '''monitoring of background process'''
     text = ''
+    #utils.p('timer search')
+
     s = bpy.context.scene
 
     global bg_processes
@@ -195,8 +202,6 @@ class KillBgProcess(bpy.types.Operator):
             # print(tcom.process_type, self.process_type)
             if tcom.process_type == self.process_type:
                 source = eval(tcom.eval_path)
-                print(source.bl_rna.name, self.process_source)
-                print(source.name)
                 kill = False
                 if source.bl_rna.name == 'Object' and self.process_source == 'MODEL':
                     if source.name == bpy.context.active_object.name:

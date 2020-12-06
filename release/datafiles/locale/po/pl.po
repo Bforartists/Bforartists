@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -2883,10 +2883,6 @@ msgid "Amount of residual error in Blender space unit for constraints that work 
 msgstr "Wielkość szczątkowego błędu w jednostkach Blendera dla ograniczników które działają na położeniu"
 
 
-msgid "Rot error"
-msgstr "Błąd rotacji"
-
-
 msgid "Amount of residual error in radians for constraints that work on orientation"
 msgstr "Wielkość szczątkowego błędu w radianach dla ograniczników które zmieniają orientacje"
 
@@ -4891,10 +4887,6 @@ msgid "Include visualization of scene related animation data"
 msgstr "Pokaż wizualizację sceny związanej z danymi animacji"
 
 
-msgid "Display Shapekeys"
-msgstr "Pokaż klucze kształtu"
-
-
 msgid "Include visualization of shape key related animation data"
 msgstr "Pokaż wizualizacja kluczy kształtu związane z danymi animacji"
 
@@ -6705,10 +6697,6 @@ msgid "Continue"
 msgstr "Kontynuacja"
 
 
-msgid "Auto-detect"
-msgstr "Automatyczne wykrywanie"
-
-
 msgid "Gray Scale"
 msgstr "Odcienie szarości"
 
@@ -7157,10 +7145,6 @@ msgstr "Nie odnaleziono biblioteki '%s'"
 
 msgid "Unable to open blend <memory>"
 msgstr "Otwarcie pliku blend niemożliwe <pamięć>"
-
-
-msgid "Warning in console"
-msgstr "Ostrzeżenie w konsoli"
 
 
 msgid "Failed to read blend file '%s', not a blend file"
@@ -9359,14 +9343,6 @@ msgid "Time:%s "
 msgstr "Czas:%s "
 
 
-msgid "Ve:%d "
-msgstr "Ve:%d "
-
-
-msgid "Fa:%d "
-msgstr "Fa:%d "
-
-
 msgid "| Mem:%.2fM, Peak: %.2fM "
 msgstr "| Pamięć:%.2fM, Szczyt: %.2fM "
 
@@ -9903,10 +9879,6 @@ msgid "No Euler Rotations could be corrected, ensure each rotation has keys for 
 msgstr "Żadna rotacja eulera nie mogła być poprawiona, upewnij się, że każda rotacja ma klatki kluczowe dla wszystkich komponentów, że krzywe F dla nich są w odpowiedniej kolejności XYZ i zaznaczone"
 
 
-msgid "Some Euler Rotations could not be corrected due to missing/unselected/out-of-order F-Curves, ensure each rotation has keys for all components, and that F-Curves for these are in consecutive XYZ order and selected"
-msgstr "Niektóre rotacje eulera nie mogły być poprawione z powodu brakujących/niezaznaczonych/nieuporządkowanych krzywych F, upewnij się, że każda rotacja ma klatki kluczowe dla każdego komponentu i że krzywe F dla nich są w odpowiedniej kolejności XYZ oraz że są zaznaczone"
-
-
 msgid "Modifier could not be added (see console for details)"
 msgstr "Nie można dodać modyfikatora (szczegóły w konsoli)"
 
@@ -9995,14 +9967,6 @@ msgid "Can not set border from a cropped render"
 msgstr "Nie można ustawić obramowania dla przyciętego obrazu"
 
 
-msgid "Saved Image '%s'"
-msgstr "Zapisany obraz '%s'"
-
-
-msgid "Cannot save image, path '%s' is not writable"
-msgstr "Nie można zapisać obrazu, nie da się zapisać w ścieżce '%s'"
-
-
 msgid "%d image(s) will be saved in %s"
 msgstr "Zostanie zapisane %d obrazów w %s"
 
@@ -10013,14 +9977,6 @@ msgstr "Zapisano %s"
 
 msgid "can't save image while rendering"
 msgstr "Nie można zapisać obrazu podczas renderowania"
-
-
-msgid "image file not found"
-msgstr "Nie odnaleziono pliku obrazu"
-
-
-msgid "image path can't be written to"
-msgstr "Nie można zapisać we wskazanej ścieżce"
 
 
 msgid "Unpack 1 File"
@@ -10053,10 +10009,6 @@ msgstr "(Klucz) "
 
 msgid "Verts:%s/%s | Edges:%s/%s | Faces:%s/%s | Tris:%s"
 msgstr "Wierzch:%s%s | Krawęd:%s%s | Ściany:%s/%s | Trójk:%s"
-
-
-msgid "Verts:%s/%s | Bones:%s/%s"
-msgstr "Wierzch:%s%s | Kości:%s%s"
 
 
 msgid "Verts:%s/%s"
@@ -10352,10 +10304,6 @@ msgid "Modal map, not yet"
 msgstr "Modal map, jeszcze nie"
 
 
-msgid "Current File"
-msgstr "Obecny Plik"
-
-
 msgid "Can't reload with running modal operators"
 msgstr "Nie można załadować ponownie gdy działa operator modalny"
 
@@ -10480,10 +10428,6 @@ msgstr "Python wyłączony w tej wersji (build)"
 
 msgid "Unable to save '%s': %s"
 msgstr "Zapisanie '%s': %s nie możliwe"
-
-
-msgid "Saved Text '%s'"
-msgstr "Zachowany Tekst '%s'"
 
 
 msgid "Unable to stat '%s': %s"
@@ -10800,14 +10744,6 @@ msgstr "(Losowo)"
 
 msgid "(InvSquare)"
 msgstr "(Odwrócony Kwadrat)"
-
-
-msgid "Rot: %s %s %s"
-msgstr "Rot: %s %s %s"
-
-
-msgid "Rot: %.2f%s %s"
-msgstr "Rot: %.2f%s %s"
 
 
 msgid " Proportional size: %.2f"
@@ -12019,10 +11955,6 @@ msgstr "iSkala"
 
 msgid "Unknown py-exception, could not convert"
 msgstr "Nieznana py-exception, przetworzenie nie powiodło się"
-
-
-msgid "Sce: %s Ve:%d Fa:%d La:%d"
-msgstr "Sce: %s Ve:%d Fa:%d La:%d"
 
 
 msgid "Image too small"

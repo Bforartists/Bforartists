@@ -474,7 +474,8 @@ class RigifyParameterValidator(object):
                 print("!!! PREVIOUS DEFINITION BY %s:\n\n    %s\n" % (cur_rig, format_property_spec(cur_info)))
 
         # inject a generic update callback that calls the appropriate rig classmethod
-        val[1]['update'] = update_callback(name)
+        if val[0] != bpy.props.CollectionProperty:
+            val[1]['update'] = update_callback(name)
 
         setattr(self.__params, name, val)
         self.__prop_table[name] = (self.__rig_name, new_def)

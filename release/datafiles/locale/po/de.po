@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3295,10 +3295,6 @@ msgid "Constraint modifying the transformation of objects and bones"
 msgstr "Beschränkung, die die Transformation von Objekten und Knochen verändert"
 
 
-msgid "Rot error"
-msgstr "Rotationsfehler"
-
-
 msgid "Influence"
 msgstr "Einfluss"
 
@@ -4771,10 +4767,6 @@ msgid "Include visualization of scene related animation data"
 msgstr "Einschließlich Visualisierung der Szenen bezogenen Animationsdaten"
 
 
-msgid "Display Shapekeys"
-msgstr "Formschlüssel anzeigen"
-
-
 msgid "Include visualization of shape key related animation data"
 msgstr "Debug-Visualisierung zur Hindernis-Simulation aktivieren"
 
@@ -5584,16 +5576,8 @@ msgid "Theora"
 msgstr "Theora"
 
 
-msgid "High quality"
+msgid "High Quality"
 msgstr "Hohe Qualität"
-
-
-msgid "Medium quality"
-msgstr "Mittlere Qualität"
-
-
-msgid "Low quality"
-msgstr "Niedrige Qualität"
 
 
 msgid "Realtime"
@@ -9514,12 +9498,24 @@ msgid "High"
 msgstr "Hoch"
 
 
+msgid "High quality"
+msgstr "Hohe Qualität"
+
+
 msgid "Medium"
 msgstr "Mittel"
 
 
+msgid "Medium quality"
+msgstr "Mittlere Qualität"
+
+
 msgid "Low"
 msgstr "Niedrig"
+
+
+msgid "Low quality"
+msgstr "Niedrige Qualität"
 
 
 msgid "Render Quality"
@@ -9884,6 +9880,10 @@ msgstr "Weiche-Körper-Einstellungen"
 
 msgid "Type of Object"
 msgstr "Typ des Objekts"
+
+
+msgid "Camera Parent Lock"
+msgstr "Elternkamera sperren"
 
 
 msgid "Use Alpha"
@@ -10598,10 +10598,6 @@ msgid "How to sync playback"
 msgstr "Wie die Synchronisation abgespielt wird"
 
 
-msgid "No Sync"
-msgstr "Keine Synchronisation"
-
-
 msgid "Do not sync, play every frame"
 msgstr "Keine Synchronisation, spielt jedes Einzelbild ab"
 
@@ -10612,10 +10608,6 @@ msgstr "Einzelbild überspringen"
 
 msgid "Drop frames if playback is too slow"
 msgstr "Einzelbilder werden bei zu langsamer Wiedergabe übersprungen"
-
-
-msgid "AV-sync"
-msgstr "AV Synchronisieren"
 
 
 msgid "Sync to audio playback, dropping frames"
@@ -12525,10 +12517,6 @@ msgstr "Text Kontextmenü"
 
 msgid "Interpolate"
 msgstr "Interpolieren"
-
-
-msgid "Show/hide"
-msgstr "Zeigen/Verbergen"
 
 
 msgid "Lattice Context Menu"
@@ -14574,54 +14562,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "Entfernung zwischen zwei Knochen oder Objekten"
 
 
-msgid "Refine"
-msgstr "Verbessern"
-
-
-msgid "Do not refine camera intrinsics"
-msgstr "Kameraeigenheiten nicht verbessern"
-
-
-msgid "Refine focal length"
-msgstr "Brennweite verbessern"
-
-
-msgid "Focal length, K1"
-msgstr "Brennweite, K1"
-
-
-msgid "Refine focal length and radial distortion K1"
-msgstr "Brennweite und radiale Verkrümmung K1 verbessern"
-
-
-msgid "Focal length, K1, K2"
-msgstr "Brennweite, K1, K2"
-
-
-msgid "Refine focal length and radial distortion K1 and K2"
-msgstr "Brennweite und radale Verkrümmung K1 und K2 verbessern"
-
-
-msgid "Focal Length, Optical Center, K1, K2"
-msgstr "Brennweite, Optische Mitte, K1, K2"
-
-
-msgid "Refine focal length, optical center and radial distortion K1 and K2"
-msgstr "Brennweite, optische Mitte und radiale Verkrümmung K1 und K2 verbessern"
-
-
-msgid "Focal Length, Optical Center"
-msgstr "Brennweite, Optische Mitte"
-
-
-msgid "Refine focal length and optical center"
-msgstr "Brennweite und optische Mitte verbessern"
-
-
-msgid "Refine radial distortion K1 and K2"
-msgstr "Brennweite und radale Verkrümmung K1 und K2 verbessern"
-
-
 msgid "Fastest"
 msgstr "Schnellstes"
 
@@ -16067,20 +16007,16 @@ msgid "Curved"
 msgstr "Kurven"
 
 
+msgid "Tile Order"
+msgstr "Kacheln"
+
+
 msgid "Tile order"
 msgstr "Kacheln"
 
 
 msgid "Random tiles"
 msgstr "Zufällige Kacheln"
-
-
-msgid "Bottom up"
-msgstr "Unten"
-
-
-msgid "Rule of thirds"
-msgstr "Titel für den Dateibrowser"
 
 
 msgid "Z Combine"
@@ -17405,12 +17341,12 @@ msgid "Select Similar"
 msgstr "Ähnliche auswählen"
 
 
+msgid "Immediate Children"
+msgstr "Unmittelbare Kinder"
+
+
 msgid "Siblings"
 msgstr "Geschwister"
-
-
-msgid "Direction (Y axis)"
-msgstr "Richtung (Y-Achse)"
 
 
 msgid "Prefix"
@@ -17719,20 +17655,8 @@ msgid "Clear tracks after/before current position or clear the whole track"
 msgstr "Spuren nach/vor der aktuellen Position löschen oder die ganze Spur löschen"
 
 
-msgid "Clear up-to"
-msgstr "Löschen bis"
-
-
 msgid "Clear path up to current frame"
 msgstr "Pfad bis zu aktuellem Einzelbild entfernen"
-
-
-msgid "Clear remained"
-msgstr "Verbliebene entfernen"
-
-
-msgid "Clear all"
-msgstr "Alle löschen"
 
 
 msgid "Clear Active"
@@ -18022,44 +17946,20 @@ msgid "Select all tracks from specified group"
 msgstr "Alle Spuren von einer festgelegten Gruppe auswählen"
 
 
-msgid "Keyframed tracks"
-msgstr "Schlüsselbild-Spuren"
-
-
 msgid "Select all keyframed tracks"
 msgstr "Alle Spuren mit Schlüsselbildern auswählen"
-
-
-msgid "Estimated tracks"
-msgstr "Geschätzte Spuren"
 
 
 msgid "Select all estimated tracks"
 msgstr "Kamera auswählen"
 
 
-msgid "Tracked tracks"
-msgstr "Verfolgte Spuren"
-
-
 msgid "Select all tracked tracks"
 msgstr "Alle verfolgten Spuren auswählen"
 
 
-msgid "Locked tracks"
-msgstr "Gesperrte Spuren"
-
-
-msgid "Disabled tracks"
-msgstr "Deaktivierte Spuren"
-
-
 msgid "Select all disabled tracks"
 msgstr "Alle deaktivierten Spuren auswählen"
-
-
-msgid "Tracks with same color"
-msgstr "Spuren mit der selben Farbe"
 
 
 msgid "Select all tracks with same color as active track"
@@ -18213,11 +18113,6 @@ msgstr "Ausgewählte Marker verfolgen"
 
 msgid "Track Sequence"
 msgstr "Spursequenz"
-
-
-msgctxt "Operator"
-msgid "Track Settings As Default"
-msgstr "Spureigenschaften als Vorgabe"
 
 
 msgid "Copy tracking settings from active track to default settings"
@@ -18398,11 +18293,6 @@ msgstr "In Zwischenablage kopieren"
 
 msgid "Copy selected text to clipboard"
 msgstr "Ausgewählten text in die Zwischenablage kopieren"
-
-
-msgctxt "Operator"
-msgid "Copy to Clipboard (as script)"
-msgstr "In Zwischenablage kopieren (als Script)"
 
 
 msgid "Copy the console contents for use in a script"
@@ -19656,14 +19546,6 @@ msgstr "Auswahl an Cursor einrasten"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Auswahl an Raster einrasten"
-
-
-msgid "Black"
-msgstr "Schwarz"
-
-
-msgid "White"
-msgstr "Weiß"
 
 
 msgid "Confirm on Release"
@@ -21263,10 +21145,6 @@ msgid "Perimeter"
 msgstr "Umfang"
 
 
-msgid "Co-planar"
-msgstr "Komplanar"
-
-
 msgid "By Material"
 msgstr "Nach Material"
 
@@ -22157,10 +22035,6 @@ msgid "Positive Sides"
 msgstr "Positive Seite"
 
 
-msgid "High Quality"
-msgstr "Hohe Qualität"
-
-
 msgid "Relative To"
 msgstr "Relativ zu"
 
@@ -22813,10 +22687,6 @@ msgid "Randomize Transform"
 msgstr "Zufällige Transformation"
 
 
-msgid "Randomize objects loc/rot/scale"
-msgstr "Zufällig Objekte positionieren/rotieren/skalieren"
-
-
 msgid "Maximum rotation over each axis"
 msgstr "Projektion über X-Achse"
 
@@ -22865,10 +22735,6 @@ msgstr "Aktive Szene löschen"
 
 msgid "Select all visible objects grouped by various properties"
 msgstr "Alle durch verschiedene Eigenschaften gruppierte sichtbare Objekte auswählen"
-
-
-msgid "Immediate Children"
-msgstr "Unmittelbare Kinder"
 
 
 msgid "Shared Parent"
@@ -25267,6 +25133,10 @@ msgid "Move the currently selected line(s) up/down"
 msgstr "Aktuelle ausgewählte Zeile(n) nach unten/oben verschieben"
 
 
+msgid "Make Internal"
+msgstr "Einbinden"
+
+
 msgctxt "Operator"
 msgid "Toggle Overwrite"
 msgstr "Überschreiben"
@@ -25293,10 +25163,6 @@ msgstr "Text mit dem spezifizierten Text ersetzen"
 
 msgid "Ignore"
 msgstr "Ignorieren"
-
-
-msgid "Make Internal"
-msgstr "Einbinden"
 
 
 msgctxt "Operator"
@@ -26862,10 +26728,6 @@ msgid "Solve"
 msgstr "Erkennen"
 
 
-msgid "Clean up"
-msgstr "Aufräumen"
-
-
 msgid "Mask Tools"
 msgstr "Maskenwerkzeug"
 
@@ -27316,10 +27178,6 @@ msgstr "Kräfte"
 
 msgid "Border Collisions"
 msgstr "Randkollisionen"
-
-
-msgid "Softbody And Cloth"
-msgstr "Weicher-Körper und Stoff"
 
 
 msgid "Waves"
@@ -27880,10 +27738,6 @@ msgid "Add hairs"
 msgstr "Haare hinzufügen"
 
 
-msgid "Soft body"
-msgstr "Weicher Körper"
-
-
 msgid "Interpolate new particles from the existing ones"
 msgstr "Neue Partikel aus den existierenden interpolieren"
 
@@ -28202,10 +28056,6 @@ msgstr "Position des Kopfs des Knochens des Kanals"
 
 msgid "IK Z Maximum"
 msgstr "IK Z Maximum"
-
-
-msgid "IK Rot Weight"
-msgstr "IK-Rot-Gewicht"
 
 
 msgid "Weight of rotation constraint for IK"
@@ -28738,10 +28588,6 @@ msgstr "Automatische Perspektive"
 
 msgid "Automatically switch between orthographic and perspective when changing from top/front/side views"
 msgstr "Automatisch zwischen orthografisch und perspektivisch umschalten, wenn die Ansicht in Oben/Vorne/Seite wechselt"
-
-
-msgid "Camera Parent Lock"
-msgstr "Elternkamera sperren"
 
 
 msgid "Moving things with a mouse drag confirms when releasing the button"
@@ -29556,10 +29402,6 @@ msgid "Number of subsurface scattering samples to render for each AA sample"
 msgstr "Anzahl der Oberflächenstreuungs-Abtastwerte, die für jeden Kantenglättungs-Abtastwert gerendert werden"
 
 
-msgid "Tile Order"
-msgstr "Kacheln"
-
-
 msgid "Tile order for rendering"
 msgstr "Zum Rendern zu verwendende Engine"
 
@@ -30050,10 +29892,6 @@ msgstr "Thread-Modus"
 
 msgid "Determine the amount of render threads used"
 msgstr "Anzahl benutzter Render-Threads"
-
-
-msgid "Auto-detect"
-msgstr "Automatisch"
 
 
 msgid "Automatically determine the number of threads, based on CPUs"
@@ -30916,10 +30754,6 @@ msgid "Multiply Colors"
 msgstr "Farben multiplizieren"
 
 
-msgid "Use Crop"
-msgstr "Nebel benutzen"
-
-
 msgid "Flip on the X axis"
 msgstr "Auf der X-Achse umdrehen"
 
@@ -30930,10 +30764,6 @@ msgstr "Float umwandeln"
 
 msgid "Reverse Frames"
 msgstr "Einzelbilder umkehren"
-
-
-msgid "Use Translation"
-msgstr "Verschieben"
 
 
 msgid "Add Sequence"
@@ -31204,14 +31034,6 @@ msgid "Record Run No Gaps"
 msgstr "Unbenutzte Knoten freigeben"
 
 
-msgid "Offset X"
-msgstr "X-Versatz"
-
-
-msgid "Offset Y"
-msgstr "Y-Versatz"
-
-
 msgid "Gray Scale"
 msgstr "Graustufen"
 
@@ -31304,10 +31126,6 @@ msgid "Pull"
 msgstr "Ziehen"
 
 
-msgid "Rot Matrix"
-msgstr "Rotationsmatrix"
-
-
 msgid "Scale Matrix"
 msgstr "Matrix skalieren"
 
@@ -31359,6 +31177,14 @@ msgstr "Umrandung"
 
 msgid "Dash"
 msgstr "Gepunktet"
+
+
+msgid "Black"
+msgstr "Schwarz"
+
+
+msgid "White"
+msgstr "Weiß"
 
 
 msgid "Overlay Mode"
@@ -31671,20 +31497,12 @@ msgid "Show the status of cached frames in the timeline"
 msgstr "Status der zwischengespeicherten Einzelbilder in der Zeitleiste anzeigen"
 
 
-msgid "Show Group Colors"
-msgstr "Gruppenfarben anzeigen"
-
-
 msgid "Show Pose Markers"
 msgstr "Posen-Marker anzeigen"
 
 
 msgid "Show Sliders"
 msgstr "Regler anzeigen"
-
-
-msgid "AutoMerge Keyframes"
-msgstr "Autom. Schlüsselbilder verschmelzen"
 
 
 msgid "Sync Markers"
@@ -31733,6 +31551,10 @@ msgstr "Griffe anzeigen"
 
 msgid "Show handles of Bezier control points"
 msgstr "Anfasser von Bezier-Kontrollpunkten anzeigen"
+
+
+msgid "AutoMerge Keyframes"
+msgstr "Autom. Schlüsselbilder verschmelzen"
 
 
 msgid "Auto Normalization"
@@ -31899,17 +31721,8 @@ msgid "Blender File"
 msgstr "Blender-Datei"
 
 
-msgctxt "ID"
-msgid "Filter ID Type"
-msgstr "ID-Typ filtern"
-
-
 msgid "Show visible objects"
 msgstr "Sichtbare Objekte anzeigen"
-
-
-msgid "Show hidden objects"
-msgstr "Versteckte Objekte anzeigen"
 
 
 msgid "Show selected objects"
@@ -34312,6 +34125,10 @@ msgid "Render U"
 msgstr "Render U"
 
 
+msgid "Offset X"
+msgstr "X-Versatz"
+
+
 msgctxt "Operator"
 msgid "Show All"
 msgstr "Alles zeigen"
@@ -34320,11 +34137,6 @@ msgstr "Alles zeigen"
 msgctxt "Operator"
 msgid "Lock All"
 msgstr "Alles sperren"
-
-
-msgctxt "Operator"
-msgid "UnLock All"
-msgstr "Alle entsperren"
 
 
 msgid "Before"
@@ -34549,10 +34361,6 @@ msgid "Sample Rate"
 msgstr "Abtastrate"
 
 
-msgid "Edge To Edge"
-msgstr "Kante an Kante"
-
-
 msgid "Roughness 1"
 msgstr "Rauheit 1"
 
@@ -34597,11 +34405,6 @@ msgstr "Kraftfeld"
 msgctxt "Operator"
 msgid "Bake All Dynamics"
 msgstr "Alle Dynamiken backen"
-
-
-msgctxt "Operator"
-msgid "Update All To Frame"
-msgstr "Alles bis zum Einzelbild aktualisieren"
 
 
 msgctxt "Operator"
@@ -35342,14 +35145,6 @@ msgid "New Data"
 msgstr "Neue Daten"
 
 
-msgid "Link Materials to"
-msgstr "Materialien verknüpfen mit"
-
-
-msgid "Align to"
-msgstr "Ausrichten an"
-
-
 msgid "Default Color"
 msgstr "Standardfarbe"
 
@@ -35424,10 +35219,6 @@ msgstr "Renderausgabe"
 
 msgid "I18n Branches"
 msgstr "I18n Branches"
-
-
-msgid "Timer (mins)"
-msgstr "Intervall (Minuten)"
 
 
 msgid "Invert Wheel Zoom Direction"
@@ -35850,11 +35641,6 @@ msgstr "Berechnen"
 
 
 msgctxt "Operator"
-msgid "Add (With Targets)..."
-msgstr "Hinzufügen (mit Zielen)..."
-
-
-msgctxt "Operator"
 msgid "Sort Elements..."
 msgstr "Elemente sortieren..."
 
@@ -35943,11 +35729,6 @@ msgstr "Nicht Mehrfach"
 msgctxt "Operator"
 msgid "Lattice"
 msgstr "Gitter"
-
-
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "Konvertieren in"
 
 
 msgctxt "Operator"
@@ -36384,10 +36165,6 @@ msgstr "Bibliothek '%s', '%s' hat mehrfache Instanzen, speichern und neuladen!"
 
 msgid "Unable to open blend <memory>"
 msgstr "Blenddatei kann nicht geöffnet werden <speicher>"
-
-
-msgid "Warning in console"
-msgstr "Warnung in der Konsole"
 
 
 msgid "Failed to read blend file '%s': %s"
@@ -37675,20 +37452,12 @@ msgid "No images have been changed"
 msgstr "Keine Bilder wurden verändert"
 
 
-msgid "Cannot save image, path '%s' is not writable"
-msgstr "Bild konnte nicht gespeichert werden, Pfad '%s' ist nicht beschreibbar"
-
-
 msgid "%d image(s) will be saved in %s"
 msgstr "%d Bild(er) werden gespeichert in %s"
 
 
 msgid "Saved %s"
 msgstr "Gespeichert %s"
-
-
-msgid "image file not found"
-msgstr "Bilddatei nicht gefunden"
 
 
 msgid "Unpack 1 File"
@@ -37886,10 +37655,6 @@ msgstr "Nicht gefunden: %s"
 
 msgid "Mixed selection"
 msgstr "Auswahl mischen"
-
-
-msgid "Current File"
-msgstr "Aktuelle Datei"
 
 
 msgid "Movie clip not found"
@@ -38538,6 +38303,10 @@ msgstr "Bis Minimum"
 
 msgid "To Max"
 msgstr "Bis Maximum"
+
+
+msgid "Offset Y"
+msgstr "Y-Versatz"
 
 
 msgid "Undistortion"

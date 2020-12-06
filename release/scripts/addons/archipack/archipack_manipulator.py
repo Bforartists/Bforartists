@@ -112,6 +112,12 @@ class ArchipackActiveManip:
         # reference to object manipulable instance
         self.manipulable = None
 
+    def is_snapping(self, ctx):
+        """
+            Check if snap is active
+        """
+        return ctx.active_object and ctx.active_object.name.startswith("Archipack_")
+
     @property
     def dirty(self):
         """
@@ -122,7 +128,8 @@ class ArchipackActiveManip:
         return (
             self.manipulable is None or
             o is None or
-            not o.select_get()
+            # The object is not selected and snap is not active
+            not (self.is_snapping(bpy.context) or o.select_get())
             )
 
     def exit(self):

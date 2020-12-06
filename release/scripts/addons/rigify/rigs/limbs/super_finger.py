@@ -63,7 +63,7 @@ class Rig(SimpleChainRig):
 
         first_bone = self.get_bone(orgs[0])
         last_bone = self.get_bone(orgs[-1])
-        self.get_bone(name).tail += (last_bone.tail - first_bone.head) * 1.25
+        self.get_bone(name).length += (last_bone.tail - first_bone.head).length * 1.25
 
     @stage.configure_bones
     def configure_master_control(self):
