@@ -54,7 +54,7 @@ def Geodesic_contex_menu(self, context):
     obj = context.object
     layout = self.layout
 
-    if 'GeodesicDome' in obj.data.keys():
+    if obj.data is not None and 'GeodesicDome' in obj.data.keys():
         props = layout.operator("mesh.generate_geodesic_dome", text="Change Geodesic Dome")
         props.change = True
         for prm in third_domes_panel_271.GeodesicDomeParameters():

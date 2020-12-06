@@ -131,9 +131,9 @@ class SideZ(enum.IntEnum):
             if parts.side_z[1].lower() == 't':
                 return SideZ.TOP
             else:
-                return Side.BOTTOM
+                return SideZ.BOTTOM
         else:
-            return Side.MIDDLE
+            return SideZ.MIDDLE
 
     @staticmethod
     def to_string(parts, side):

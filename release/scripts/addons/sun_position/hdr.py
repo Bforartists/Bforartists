@@ -37,7 +37,7 @@ out vec2 texCoord_interp;
 void main()
 {
   gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
-  gl_Position.z = 1.0;
+  gl_Position.z = 1.0f;
   texCoord_interp = texCoord;
 }'''
 
@@ -50,7 +50,7 @@ uniform float exposure;
 
 void main()
 {
-  fragColor = texture(image, texCoord_interp) * exposure;
+  fragColor = texture(image, texCoord_interp) * vec4(exposure, exposure, exposure, 1.0f);
 }'''
 
 # shader = gpu.types.GPUShader(vertex_shader, fragment_shader)

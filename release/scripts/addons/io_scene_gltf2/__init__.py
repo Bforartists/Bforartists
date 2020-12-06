@@ -15,7 +15,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 5, 2),
+    "version": (1, 5, 8),
     'blender': (2, 91, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -73,6 +73,8 @@ extension_panel_unregister_functors = []
 def on_export_format_changed(self, context):
     # Update the file extension when the format (.glb/.gltf) changes
     sfile = context.space_data
+    if sfile is None:
+        return # Avoid error when export from background
     operator = sfile.active_operator
     if operator.bl_idname != "EXPORT_SCENE_OT_gltf":
         return

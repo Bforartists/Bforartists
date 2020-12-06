@@ -228,13 +228,13 @@ class ArchipackSnapBase():
         """
         helper = bpy.data.objects.get('Archipack_snap_helper')
         if helper is not None:
-            print("helper found")
+            # print("helper found")
             if context.scene.objects.get('Archipack_snap_helper') is None:
-                print("link helper")
+                # print("link helper")
                 # self.link_object_to_scene(context, helper)
                 context.scene.collection.objects.link(helper)
         else:
-            print("create helper")
+            # print("create helper")
             m = bpy.data.meshes.new("Archipack_snap_helper")
             m.vertices.add(count=1)
             helper = bpy.data.objects.new("Archipack_snap_helper", m)

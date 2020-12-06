@@ -27,6 +27,7 @@ from itertools import count, repeat
 from rigify.utils.rig import is_rig_base_bone
 from rigify.utils.naming import strip_org, make_derived_name, choose_derived_bone
 from rigify.utils.widgets import create_widget
+from rigify.utils.widgets_basic import create_bone_widget
 from rigify.utils.misc import map_list
 
 from rigify.base_rig import BaseRig, stage
@@ -71,6 +72,7 @@ class Rig(BaseRig):
 
         self.palm_rotation_axis = self.params.palm_rotation_axis
         self.make_secondary = self.params.palm_both_sides
+        self.make_fk = self.params.make_extra_control
 
         self.order = 'YXZ' if 'X' in self.palm_rotation_axis else 'YZX'
 
@@ -96,6 +98,11 @@ class Rig(BaseRig):
     #     Main control.
     #   secondary:
     #     Control for the other side.
+    #   fk[]:
+    #     Optional individual FK controls
+    # mch:
+    #   fk_parents[]:
+    #     Parents for the individual FK controls
     # deform[]:
     #   DEF bones
     #
@@ -179,22 +186,62 @@ class Rig(BaseRig):
             mod.levels = 2
 
     ####################################################
-    # ORG bones
+    # FK controls
+
+    @stage.generate_bones
+    def make_fk_controls(self):
+        if self.make_fk:
+            self.bones.ctrl.fk = map_list(self.make_fk_control_bone, count(0), self.bones.org)
+
+    def make_fk_control_bone(self, i, org):
+        return self.copy_bone(org, make_derived_name(org, 'ctrl', '_fk'))
 
     @stage.parent_bones
-    def parent_org_chain(self):
-        for org in self.bones.org:
-            self.set_bone_parent(org, self.rig_parent_bone, inherit_scale='NONE')
+    def parent_fk_controls(self):
+        if self.make_fk:
+            for fk, mch in zip(self.bones.ctrl.fk, self.bones.mch.fk_parents):
+                self.set_bone_parent(fk, mch, inherit_scale='ALIGNED')
+
+    @stage.configure_bones
+    def configure_fk_controls(self):
+        if self.make_fk:
+            for fk, org in zip(self.bones.ctrl.fk, self.bones.org):
+                self.copy_bone_properties(org, fk)
+
+    @stage.generate_widgets
+    def make_fk_control_widgets(self):
+        if self.make_fk:
+            for fk in self.bones.ctrl.fk:
+                create_bone_widget(self.obj, fk)
+
+    ####################################################
+    # FK parent bones
+
+    @stage.generate_bones
+    def make_mch_fk_parents(self):
+        if self.make_fk:
+            self.bones.mch.fk_parents = map_list(self.make_fk_parent_bone, count(0), self.bones.org)
+
+    def make_fk_parent_bone(self, i, org):
+        return self.copy_bone(org, make_derived_name(org, 'mch', '_fk_parent'))
+
+    @stage.parent_bones
+    def parent_mch_fk_parents(self):
+        if self.make_fk:
+            for i, mch in enumerate(self.bones.mch.fk_parents):
+                self.parent_mch_fk_parent_bone(i, mch)
+
+    def parent_mch_fk_parent_bone(self, i, mch):
+        self.set_bone_parent(mch, self.rig_parent_bone, inherit_scale='NONE')
 
     @stage.rig_bones
-    def rig_org_chain(self):
-        orgs = self.bones.org
-        ctrl = self.bones.ctrl
+    def rig_mch_fk_parents(self):
+        if self.make_fk:
+            for i, mch in enumerate(self.bones.mch.fk_parents):
+                self.rig_mch_fk_parent_bone(i, mch)
 
-        for args in zip(count(0), orgs, repeat(len(orgs))):
-            self.rig_org_bone(*args)
-
-    def rig_org_bone(self, i, org, num_orgs):
+    def rig_mch_fk_parent_bone(self, i, org):
+        num_orgs = len(self.bones.org)
         ctrl = self.bones.ctrl
         fac = i / (num_orgs - 1)
 
@@ -221,12 +268,12 @@ class Rig(BaseRig):
 
         self.make_constraint(org, 'COPY_SCALE', self.rig_parent_bone)
 
-        self.rig_org_back_rotation(org, ctrl.master, fac)
+        self.rig_mch_back_rotation(org, ctrl.master, fac)
 
         if self.make_secondary:
-            self.rig_org_back_rotation(org, ctrl.secondary, 1 - fac)
+            self.rig_mch_back_rotation(org, ctrl.secondary, 1 - fac)
 
-    def rig_org_back_rotation(self, org, ctrl, fac):
+    def rig_mch_back_rotation(self, org, ctrl, fac):
         if 0 < fac < 1:
             inf = (fac + 1) * (fac + cos(fac * pi / 2) - 1)
 
@@ -242,6 +289,24 @@ class Rig(BaseRig):
                     invert_z=True, use_xyz=(False,False,True),
                     euler_order=self.order, mix_mode='ADD', influence=inf
                 )
+
+    ####################################################
+    # ORG bones
+
+    @stage.parent_bones
+    def parent_org_chain(self):
+        if self.make_fk:
+            for org, fk in zip(self.bones.org, self.bones.ctrl.fk):
+                self.set_bone_parent(org, fk)
+        else:
+            for i, org in enumerate(self.bones.org):
+                self.parent_mch_fk_parent_bone(i, org)
+
+    @stage.rig_bones
+    def rig_org_chain(self):
+        if not self.make_fk:
+            for i, org in enumerate(self.bones.org):
+                self.rig_mch_fk_parent_bone(i, org)
 
     ####################################################
     # DEF bones
@@ -274,6 +339,11 @@ class Rig(BaseRig):
                 default=False,
                 description="Create controls for both sides of the palm"
                 )
+        params.make_extra_control = bpy.props.BoolProperty(
+                name        = "Extra Control",
+                default     = False,
+                description = "Create an optional control"
+            )
 
     @classmethod
     def parameters_ui(cls, layout, params):
@@ -281,6 +351,7 @@ class Rig(BaseRig):
         r.label(text="Primary rotation axis:")
         r.prop(params, "palm_rotation_axis", text="")
         layout.prop(params, "palm_both_sides")
+        layout.prop(params, "make_extra_control", text="Extra FK Controls")
 
 
 def create_sample(obj):

@@ -76,6 +76,9 @@ def rerequest(method, url, **kwargs):
                         utils.p('reresult', response.status_code)
                         if response.status_code >= 400:
                             utils.p('reresult', response.text)
+                            tasks_queue.add_task((ui.add_report, (
+                                response.text, 10)))
+
                     else:
                         tasks_queue.add_task((ui.add_report, (
                             'Refreshing token failed.Please login manually.', 10)))

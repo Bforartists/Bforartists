@@ -701,7 +701,7 @@ class AddTree(Operator):
         items=objectList,
         update=update_leaves
         )
-    bend = FloatProperty(
+    bend: FloatProperty(
         name='Leaf Bend',
         description='The proportion of bending applied to the leaf (Bend)',
         min=0.0,

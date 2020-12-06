@@ -116,7 +116,7 @@ class EditExternally(Operator):
 
 
 class ProjectEdit(Operator):
-    """Project Edit\nEdit a snapshot of the view-port in an external image editor"""
+    """Project Edit\nEdit a snapshot of the 3D Viewport in an external image editor"""
     bl_idname = "image.project_edit"
     bl_label = "Project Edit"
     bl_options = {'REGISTER'}

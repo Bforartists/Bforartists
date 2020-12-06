@@ -249,7 +249,7 @@ def Extras_contex_menu(self, context):
     obj = context.object
     layout = self.layout
 
-    if obj == None:
+    if obj == None or obj.data is None:
         return
 
     if 'Gear' in obj.data.keys():
