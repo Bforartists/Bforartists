@@ -65,6 +65,32 @@ def filter_categories(categories):
         filter_category(category)
 
 
+def get_category_path(categories, category):
+    '''finds the category in all possible subcategories and returns the path to it'''
+    category_path = []
+    check_categories = categories[:]
+    parents = {}
+    while len(check_categories) > 0:
+        ccheck = check_categories.pop()
+        #        print(ccheck['name'])
+        if not ccheck.get('children'):
+            continue
+
+        for ch in ccheck['children']:
+            #                print(ch['name'])
+            parents[ch['slug']] = ccheck['slug']
+
+            if ch['slug'] == category:
+                category_path = [ch['slug']]
+                slug = ch['slug']
+                while parents.get(slug):
+                    slug = parents.get(slug)
+
+                    category_path.insert(0, slug)
+                return category_path
+            check_categories.append(ch)
+
+
 def get_category(categories, cat_path=()):
     for category in cat_path:
         for c in categories:
@@ -74,6 +100,43 @@ def get_category(categories, cat_path=()):
                     return (c)
                 break;
 
+def get_upload_asset_type(self):
+    typemapper = {
+        bpy.types.Object.blenderkit: 'model',
+        bpy.types.Scene.blenderkit: 'scene',
+        bpy.types.Material.blenderkit: 'material',
+        bpy.types.Brush.blenderkit: 'brush'
+    }
+    asset_type = typemapper[type(self)]
+    return asset_type
+
+
+
+
+def get_category_enums(self, context):
+    wm = bpy.context.window_manager
+    props = bpy.context.scene.blenderkitUI
+    asset_type = props.asset_type.lower()
+    # asset_type = self.asset_type#get_upload_asset_type(self)
+    asset_categories = get_category(wm['bkit_categories'], cat_path=(asset_type,))
+    items = []
+    for c in asset_categories['children']:
+        items.append((c['slug'], c['name'], c['description']))
+    return items
+
+def get_subcategory_enums(self, context):
+    wm = bpy.context.window_manager
+    props = bpy.context.scene.blenderkitUI
+    asset_type  = props.asset_type.lower()
+# asset_type = self.asset_type#get_upload_asset_type(self)
+    # asset_type = get_upload_asset_type(self)
+    items = []
+    if self.category != '':
+        asset_categories = get_category(wm['bkit_categories'], cat_path=(asset_type, self.category,))
+        for c in asset_categories['children']:
+            items.append((c['slug'], c['name'], c['description']))
+
+    return items
 
 def copy_categories():
     # this creates the categories system on only

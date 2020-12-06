@@ -296,17 +296,6 @@ class IV_PT_icons(bpy.types.Panel):
         return prefs().show_panel
 
 
-class IV_HT_icons(bpy.types.Header):
-    bl_space_type = 'CONSOLE'
-
-    def draw(self, context):
-        if not prefs().show_header:
-            return
-        layout = self.layout
-        layout.separator()
-        layout.operator(IV_OT_icons_show.bl_idname)
-
-
 class IV_OT_panel_menu_call(bpy.types.Operator):
     bl_idname = "iv.panel_menu_call"
     bl_label = ""
@@ -487,10 +476,13 @@ class IV_OT_icons_show(bpy.types.Operator):
         return context.window_manager.invoke_props_dialog(
             self, width=self.width)
 
+def draw_console_header(self, context):
+    if not prefs().show_header:
+        return
+    self.layout.operator(IV_OT_icons_show.bl_idname)
 
 classes = (
     IV_PT_icons,
-    IV_HT_icons,
     IV_OT_panel_menu_call,
     IV_OT_icon_select,
     IV_OT_icons_show,
@@ -505,10 +497,14 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.types.CONSOLE_HT_header.append(draw_console_header)
+
 
 def unregister():
     if bpy.app.background:
         return
+
+    bpy.types.CONSOLE_HT_header.remove(draw_console_header)
 
     for cls in classes:
         bpy.utils.unregister_class(cls)

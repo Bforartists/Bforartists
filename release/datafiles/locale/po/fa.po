@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.91.0 Beta (b'6c6a5a72c297')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2166,16 +2166,8 @@ msgid "MPEG-2"
 msgstr "MPEG-2"
 
 
-msgid "High quality"
+msgid "High Quality"
 msgstr "ﻻ﻿ﺎﺑ ﺖﯿﻔﯿﮐ ﺎﺑ"
-
-
-msgid "Medium quality"
-msgstr "ﻂﺳﻮﺘﻣ ﺖﯿﻔﯿﮐ ﺎﺑ"
-
-
-msgid "Low quality"
-msgstr "ﻦﯿﯾﺎﭘ ﺖﯿﻔﯿﮐ ﺎﺑ"
 
 
 msgid "Lossless Output"
@@ -3244,6 +3236,18 @@ msgstr "ﯼﺯﺎﺳ ﻪﯿﺒﺷ"
 
 msgid "Edit Quality"
 msgstr "ﻂﺳﻮﺘﻣ ﺖﯿﻔﯿﮐ ﺎﺑ"
+
+
+msgid "High quality"
+msgstr "ﻻ﻿ﺎﺑ ﺖﯿﻔﯿﮐ ﺎﺑ"
+
+
+msgid "Medium quality"
+msgstr "ﻂﺳﻮﺘﻣ ﺖﯿﻔﯿﮐ ﺎﺑ"
+
+
+msgid "Low quality"
+msgstr "ﻦﯿﯾﺎﭘ ﺖﯿﻔﯿﮐ ﺎﺑ"
 
 
 msgid "Render Quality"
@@ -5245,10 +5249,6 @@ msgid "Search Size"
 msgstr "ﻮﺠﺘﺴﺟ"
 
 
-msgid "Focal length, K1, K2"
-msgstr "ﺍﺯﺍﺭﺩ"
-
-
 msgid "Double"
 msgstr "ﯽﯾﺎﺗﻭﺩ"
 
@@ -6001,16 +6001,16 @@ msgid "Curved"
 msgstr "ﯽﻨﺤﻨﻣ"
 
 
+msgid "Tile Order"
+msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
+
+
 msgid "Tile order"
 msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
 
 
 msgid "Random tiles"
 msgstr "ﯽﻓﺩﺎﺼﺗ"
-
-
-msgid "Bottom up"
-msgstr "ﻦﯿﯾﺎﭘ"
 
 
 msgid "Expand from 9 places"
@@ -6655,10 +6655,6 @@ msgid "Select similar bones by property types"
 msgstr "ﺖﯿﮑﻟﺎﻣ ﻉﻮﻧ ﺎﺑ ﻪﺑﺎﺸﻣ ﯼﺎﻫ‌ﺢﻄﺳ ﺎﯾ ﻭ ﺎﻫ‌ﻪﺒﻟ ٬ﺱﻮﺋﺭ ﺏﺎﺨﺘﻧﺍ"
 
 
-msgid "Direction (Y axis)"
-msgstr "ﺎﺘﺳﺍﺭ"
-
-
 msgctxt "Operator"
 msgid "Separate Bones"
 msgstr "ﺍﺪﺟ"
@@ -6779,18 +6775,6 @@ msgstr "ﯼﺰﯿﺗ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 msgctxt "Operator"
 msgid "Clear Track Path"
 msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgid "Clear up-to"
-msgstr "ﯼﺰﯿﺗ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgid "Clear remained"
-msgstr "ﺯﺭﺩ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgid "Clear all"
-msgstr "ﻪﻤﻫ ﻥﺩﺮﮐ ﮎﺎﭘ"
 
 
 msgid "Clear Active"
@@ -6941,20 +6925,8 @@ msgid "Select Grouped"
 msgstr "ﻝﺎﻌﻓ ﻩﻭﺮﮔ ﻢﯿﻈﻨﺗ"
 
 
-msgid "Keyframed tracks"
-msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ ﻢﯾﺮﻓ ﺎﺑ ﺎﻫ ﮎﺮﺗِ"
-
-
 msgid "Select all keyframed tracks"
 msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ ﻢﯾﺮﻓ ﺎﺑ ﺎﻫ ﮎﺮﺗِ ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Locked tracks"
-msgstr "ﻩﺪﺷ ﻞﻔﻗ ﯼﺎﻫ ﮎﺮﺗِ"
-
-
-msgid "Disabled tracks"
-msgstr "ﻝﺎﻌﻓ ﺮﯿﻏ ﯼﺎﻫ ﮎﺮﺗِ"
 
 
 msgid "Failed Tracks"
@@ -7065,11 +7037,6 @@ msgstr "ﺲﻧﺎﮑﺳ ﯽﺑﺎﯾﺩﺭ"
 
 
 msgctxt "Operator"
-msgid "Track Settings As Default"
-msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
 msgid "Add Tracking Object"
 msgstr "ﯽﺑﺎﯾﺩﺭ ءﯽﺷ ﻥﺩﻭﺰﻓﺍ"
 
@@ -7156,11 +7123,6 @@ msgstr "ﻥﺎﮑﻣ"
 
 msgctxt "Operator"
 msgid "Copy to Clipboard"
-msgstr "ﻦﺘﻣ ﮓﻧﺭ"
-
-
-msgctxt "Operator"
-msgid "Copy to Clipboard (as script)"
 msgstr "ﻦﺘﻣ ﮓﻧﺭ"
 
 
@@ -9245,10 +9207,6 @@ msgstr "ﻥﺩﻭﺰﻓﺍ ﯼﺍﺮﺑ ﯽﺷ ﻡﺎﻧ"
 msgctxt "Operator"
 msgid "Align Objects"
 msgstr "ﯽﺷ ﺶﯾﺍﺮﯾﻭ"
-
-
-msgid "High Quality"
-msgstr "ﻻ﻿ﺎﺑ ﺖﯿﻔﯿﮐ ﺎﺑ"
 
 
 msgctxt "Operator"
@@ -11823,10 +11781,6 @@ msgid "Mask Display"
 msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﻪﻨﯿﺸﯿﺑ"
 
 
-msgid "Clean up"
-msgstr "ﻥﺩﺮﮐ ﮎﺎﭘ"
-
-
 msgid "Color Presets"
 msgstr "ﺎﻫ‌ﮓﻧﺭ:"
 
@@ -12188,10 +12142,6 @@ msgid "Start Resolution"
 msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 
-msgid "Tile Order"
-msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
-
-
 msgid "Tile order for rendering"
 msgstr "ﺭﺪﻧﺭ ﯼﺍﺮﺑ CPU ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
@@ -12356,20 +12306,12 @@ msgid "Multiply Colors"
 msgstr "ﺏﺮﺿ"
 
 
-msgid "Use Crop"
-msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
 msgid "Convert Float"
 msgstr "ﻝﺪﺒﻣ"
 
 
 msgid "Reverse Frames"
 msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
-
-
-msgid "Use Translation"
-msgstr "ﻪﻤﺟﺮﺗ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
 
 
 msgid "Add Sequence"
@@ -12586,10 +12528,6 @@ msgstr "ﺰﻣﺮﻗ ﻝﺎﻧﺎﮐ ﺶﯾﺎﻤﻧ"
 
 msgid "Dopesheet view for tracking data"
 msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgid "Show Group Colors"
-msgstr "ﮓﻧﺭ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
 msgid "Active Operator"
@@ -13163,10 +13101,6 @@ msgid "Sample Rate"
 msgstr "ﻪﻧﻮﻤﻧ ﺖﻋﺮﺳ"
 
 
-msgid "Edge To Edge"
-msgstr "ﻪﺒﻟ ﻪﺑ ﻪﺒﻟ"
-
-
 msgid "Roughness 1"
 msgstr "1 ﯼﺮﺑﺯ"
 
@@ -13659,10 +13593,6 @@ msgid "Limit Size"
 msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
 
 
-msgid "Timer (mins)"
-msgstr "(ﻪﻘﯿﻗﺩ) ﺮﻤﯾﺎﺗ"
-
-
 msgid "Description:"
 msgstr "ﺡﺮﺷ:"
 
@@ -14017,11 +13947,6 @@ msgstr "ﻥﺩﺮﮐ‌ﺏﺎﺴﺣ ﻩﺭﺎﺑﻭﺩ"
 
 
 msgctxt "Operator"
-msgid "Add (With Targets)..."
-msgstr "(ﻑﺪﻫ ﺎﺑ) ﻥﺩﻭﺰﻓﺍ..."
-
-
-msgctxt "Operator"
 msgid "Sharp Edges"
 msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
 
@@ -14071,11 +13996,6 @@ msgstr "ﻪﮑﺒﺷ ﻪﺑ ﺏﺎﺨﺘﻧﺍ"
 msgctxt "Operator"
 msgid "Lattice"
 msgstr "ﻪﮑﺒﺷ"
-
-
-msgctxt "Operator"
-msgid "Convert to"
-msgstr "ﻞﯾﺪﺒﺗ"
 
 
 msgctxt "Operator"
@@ -15226,10 +15146,6 @@ msgstr "ﺮﯾﻮﺼﺗ ﺲﻧﺎﮑﺳ"
 
 msgid "No images have been changed"
 msgstr "ﺩﺮﮑﻧ ﺮﯿﯿﻐﺗ ﯽﺴﮑﻋ ﭻﯿﻫ"
-
-
-msgid "image file not found"
-msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
 
 
 msgid "No valid action to add"

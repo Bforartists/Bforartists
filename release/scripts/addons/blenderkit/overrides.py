@@ -143,7 +143,7 @@ def modelProxy():
             bpy.ops.object.parent_set(type='OBJECT', keep_transform=True)
             return True
         else:  # TODO report this to ui
-            print('not sure what to proxify')
+            utils.p('not sure what to proxify')
     return False
 
 

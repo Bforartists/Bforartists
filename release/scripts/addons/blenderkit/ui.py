@@ -30,8 +30,9 @@ if "bpy" in locals():
     bg_blender = importlib.reload(bg_blender)
     colors = importlib.reload(colors)
     tasks_queue = importlib.reload(tasks_queue)
+    tasks_queue = importlib.reload(ui_panels)
 else:
-    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue
+    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue, ui_panels
 
 import bpy
 
@@ -46,14 +47,14 @@ from bpy_extras import view3d_utils
 import mathutils
 from mathutils import Vector
 import time
+import datetime
 import os
 
 handler_2d = None
 handler_3d = None
-active_area = None
-active_area = None
-active_window = None
-active_region = None
+active_area_pointer = None
+active_window_pointer = None
+active_region_pointer = None
 
 reports = []
 
@@ -138,7 +139,7 @@ class Report():
                     pass;
 
     def draw(self, x, y):
-        if bpy.context.area == active_area:
+        if bpy.context.area.as_pointer() == active_area_pointer:
             ui_bgl.draw_text(self.text, x, y + 8, 16, self.draw_color)
 
 
@@ -234,7 +235,7 @@ def draw_ratings_bgl():
 
     rating_possible, rated, asset, asset_data = is_rating_possible()
     if rating_possible:  # (not rated or ui_props.rating_menu_on):
-        print('rating is pssible', asset_data['name'])
+        # print('rating is pssible', asset_data['name'])
         bkit_ratings = asset.bkit_ratings
         bgcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
         textcol = (1, 1, 1, 1)
@@ -243,7 +244,7 @@ def draw_ratings_bgl():
         font_size = int(ui.rating_ui_scale * 20)
 
         if ui.rating_button_on:
-            print('should draw button')
+            # print('should draw button')
             img = utils.get_thumbnail('star_white.png')
 
             ui_bgl.draw_image(ui.rating_x,
@@ -631,11 +632,25 @@ def draw_callback_2d(self, context):
             draw_callback_2d_upload_preview(self, context)
 
 
-def draw_downloader(x, y, percent=0, img=None):
+def draw_downloader(x, y, percent=0, img=None, text= ''):
     if img is not None:
         ui_bgl.draw_image(x, y, 50, 50, img, .5)
+
     ui_bgl.draw_rect(x, y, 50, int(0.5 * percent), (.2, 1, .2, .3))
     ui_bgl.draw_rect(x - 3, y - 3, 6, 6, (1, 0, 0, .3))
+    # if asset_data is not None:
+    #     ui_bgl.draw_text(asset_data['name'], x, y, colors.TEXT)
+    #     ui_bgl.draw_text(asset_data['filesSize'])
+    if text:
+        ui_bgl.draw_text(text, x, y - 15,12, colors.TEXT)
+        #asset_data and asset_data.get('filesSize'):
+        # fs = asset_data['filesSize']
+        # fsmb = fs // (1024 * 1024)
+        # fskb = fs % 1024
+        # if fsmb == 0:
+        #     t += 'files size: %iKB\n' % fskb
+        # else:
+        #     t += 'files size: %iMB %iKB\n' % (fsmb, fskb)
 
 
 def draw_progress(x, y, text='', percent=None, color=colors.GREEN):
@@ -681,9 +696,9 @@ def draw_callback_2d_progress(self, context):
                 if loc is not None:
                     if asset_data['assetType'] == 'model':
                         # models now draw with star trek mode, no need to draw percent for the image.
-                        draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img)
+                        draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img, text=tcom.report)
                     else:
-                        draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img)
+                        draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img, text=tcom.report)
 
 
         else:
@@ -718,6 +733,21 @@ def draw_callback_2d_upload_preview(self, context):
 
         draw_tooltip(ui_props.bar_x, ui_props.bar_y, text=ui_props.tooltip, img=img)
 
+def is_upload_old(asset_data):
+    '''
+    estimates if the asset is far too long in the 'uploaded' state
+    This returns the number of days the validation is over the limit.
+    '''
+    date_time_str = asset_data["created"][:10]
+    # date_time_str = 'Jun 28 2018 7:40AM'
+    date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d')
+    today = date_time_obj.today()
+    age = today - date_time_obj
+    old = datetime.timedelta(days=7)
+    if age > old:
+        return (age.days - old.days)
+    return 0
+
 
 def draw_callback_2d_search(self, context):
     s = bpy.context.scene
@@ -746,7 +776,7 @@ def draw_callback_2d_search(self, context):
     #                       1,
     #                       img,
     #                       1)
-    if not ui_props.dragging and ui_props.hcount>0:
+    if not ui_props.dragging and ui_props.hcount > 0:
         search_results = s.get('search results')
         search_results_orig = s.get('search results orig')
         if search_results == None:
@@ -804,7 +834,7 @@ def draw_callback_2d_search(self, context):
                     index = a + ui_props.scrolloffset + b * ui_props.wcount
                     iname = utils.previmg_name(index)
                     img = bpy.data.images.get(iname)
-                    if img is not None and img.size[0]>0 and img.size[1]>0:
+                    if img is not None and img.size[0] > 0 and img.size[1] > 0:
                         w = int(ui_props.thumb_size * img.size[0] / max(img.size[0], img.size[1]))
                         h = int(ui_props.thumb_size * img.size[1] / max(img.size[0], img.size[1]))
                         crop = (0, 0, 1, 1)
@@ -825,9 +855,19 @@ def draw_callback_2d_search(self, context):
                     else:
                         ui_bgl.draw_rect(x, y, ui_props.thumb_size, ui_props.thumb_size, white)
 
+
                     result = search_results[index]
+                    #code to inform validators that the validation is waiting too long and should be done asap
+                    if result['verificationStatus'] == 'uploaded':
+                        if utils.profile_is_validator():
+                            over_limit = is_upload_old(result)
+                            if over_limit:
+                                redness = min(over_limit*.05,0.5)
+                                red = (1, 0, 0, redness)
+                                ui_bgl.draw_rect(x, y, ui_props.thumb_size, ui_props.thumb_size, red)
+
                     if result['downloaded'] > 0:
-                        ui_bgl.draw_rect(x, y - 2, int(w * result['downloaded'] / 100.0), 2, green)
+                        ui_bgl.draw_rect(x, y , int(ui_props.thumb_size * result['downloaded'] / 100.0), 2, green)
                     # object type icons - just a test..., adds clutter/ not so userfull:
                     # icons = ('type_finished.png', 'type_template.png', 'type_particle_system.png')
 
@@ -866,7 +906,6 @@ def draw_callback_2d_search(self, context):
                 tpath = os.path.join(directory, r['thumbnail'])
                 if not r['thumbnail']:
                     tpath = paths.get_addon_thumbnail_path('thumbnail_not_available.jpg')
-
 
                 img = bpy.data.images.get(iname)
                 if img == None or img.filepath != tpath:
@@ -957,7 +996,6 @@ def mouse_raycast(context, mx, my):
 
         snapped_rotation = snapped_normal.to_track_quat('Z', 'Y').to_euler()
 
-
         if props.randomize_rotation and snapped_normal.angle(up) < math.radians(10.0):
             randoffset = props.offset_rotation_amount + math.pi + (
                     random.random() - 0.5) * props.randomize_rotation_amount
@@ -1015,7 +1053,7 @@ def is_rating_possible():
     ao = bpy.context.active_object
     ui = bpy.context.scene.blenderkitUI
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    #first test if user is logged in.
+    # first test if user is logged in.
     if preferences.api_key == '':
         return False, False, None, None
     if bpy.context.scene.get('assets rated') is not None and ui.down_up == 'SEARCH':
@@ -1034,7 +1072,7 @@ def is_rating_possible():
                 ad = ao_check.get('asset_data')
                 if ad is not None and ad.get('assetBaseId') is not None:
 
-                    s['assets rated'] = s.get('assets rated',{})
+                    s['assets rated'] = s.get('assets rated', {})
                     rated = s['assets rated'].get(ad['assetBaseId'])
                     # originally hidden for already rated assets
                     return True, rated, ao_check, ad
@@ -1127,7 +1165,7 @@ def interact_rating(r, mx, my, event):
                         bkit_ratings.rating_work_hours = wh
 
                 if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
-                    ui.last_rating_time = time.time() # this prop seems obsolete now?
+                    ui.last_rating_time = time.time()  # this prop seems obsolete now?
                 return True
             else:
                 ui.rating_button_on = True
@@ -1169,6 +1207,8 @@ def mouse_in_region(r, mx, my):
 
 
 def update_ui_size(area, region):
+    if bpy.app.background or not area:
+        return
     ui = bpy.context.scene.blenderkitUI
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     ui_scale = bpy.context.preferences.view.ui_scale
@@ -1206,7 +1246,6 @@ def update_ui_size(area, region):
 
     ui.rating_x = ui.bar_x
     ui.rating_y = ui.bar_y - ui.bar_height
-
 
 
 class AssetBarOperator(bpy.types.Operator):
@@ -1258,13 +1297,12 @@ class AssetBarOperator(bpy.types.Operator):
 
         areas = []
 
-
-        #timers testing - seems timers might be causing crashes. testing it this way now.
+        # timers testing - seems timers might be causing crashes. testing it this way now.
         if not user_preferences.use_timers:
-                search.timer_update()
-                download.timer_update()
-                tasks_queue.queue_worker()
-                bg_blender.bg_update()
+            search.timer_update()
+            download.timer_update()
+            tasks_queue.queue_worker()
+            bg_blender.bg_update()
 
         if bpy.context.scene != self.scene:
             self.exit_modal()
@@ -1299,8 +1337,6 @@ class AssetBarOperator(bpy.types.Operator):
                 return {'CANCELLED'}
 
         update_ui_size(self.area, self.region)
-
-
 
         # this was here to check if sculpt stroke is running, but obviously that didn't help,
         #  since the RELEASE event is cought by operator and thus there is no way to detect a stroke has ended...
@@ -1645,7 +1681,7 @@ class AssetBarOperator(bpy.types.Operator):
                             utils.automap(target_object, target_slot=target_slot,
                                           tex_size=asset_data.get('texture_size_meters', 1.0))
                             bpy.ops.scene.blenderkit_download(True,
-                                                              asset_type=ui_props.asset_type,
+                                                              # asset_type=ui_props.asset_type,
                                                               asset_index=asset_search_index,
                                                               model_location=loc,
                                                               model_rotation=rotation,
@@ -1662,14 +1698,14 @@ class AssetBarOperator(bpy.types.Operator):
                             rotation = s.cursor.rotation_euler
 
                         bpy.ops.scene.blenderkit_download(True,
-                                                          asset_type=ui_props.asset_type,
+                                                          # asset_type=ui_props.asset_type,
                                                           asset_index=asset_search_index,
                                                           model_location=loc,
                                                           model_rotation=rotation,
                                                           target_object=target_object)
 
                     else:
-                        bpy.ops.scene.blenderkit_download(asset_type=ui_props.asset_type,
+                        bpy.ops.scene.blenderkit_download(#asset_type=ui_props.asset_type,
                                                           asset_index=asset_search_index)
 
                     ui_props.dragging = False
@@ -1762,10 +1798,10 @@ class AssetBarOperator(bpy.types.Operator):
             if r.type == 'WINDOW':
                 self.region = r
 
-        global active_window, active_area, active_region
-        active_window = self.window
-        active_area = self.area
-        active_region = self.region
+        global active_window_pointer, active_area_pointer, active_region_pointer
+        active_window_pointer = self.window.as_pointer()
+        active_area_pointer = self.area.as_pointer()
+        active_region_pointer = self.region.as_pointer()
 
         update_ui_size(self.area, self.region)
 
@@ -1812,13 +1848,13 @@ class UndoWithContext(bpy.types.Operator):
 
     def execute(self, context):
         # C_dict = utils.get_fake_context(context)
-        #w, a, r = get_largest_area(area_type=area_type)
+        # w, a, r = get_largest_area(area_type=area_type)
         # wm = bpy.context.window_manager#bpy.data.window_managers[0]
         # w = wm.windows[0]
         #
         # C_dict = {'window': w, 'screen': w.screen}
         # bpy.ops.ed.undo_push(C_dict, 'INVOKE_REGION_WIN', message=self.message)
-        bpy.ops.ed.undo_push( 'INVOKE_REGION_WIN', message=self.message)
+        bpy.ops.ed.undo_push('INVOKE_REGION_WIN', message=self.message)
         return {'FINISHED'}
 
 
@@ -1876,15 +1912,16 @@ def register_ui():
     if not wm.keyconfigs.addon:
         return
     km = wm.keyconfigs.addon.keymaps.new(name="Window", space_type='EMPTY')
-    #asset bar shortcut
+    # asset bar shortcut
     kmi = km.keymap_items.new(AssetBarOperator.bl_idname, 'SEMI_COLON', 'PRESS', ctrl=False, shift=False)
     kmi.properties.keep_running = False
     kmi.properties.do_search = False
     addon_keymapitems.append(kmi)
-    #fast rating shortcut
+    # fast rating shortcut
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps['Window']
     kmi = km.keymap_items.new(ratings.FastRateMenu.bl_idname, 'F', 'PRESS', ctrl=False, shift=False)
+    kmi = km.keymap_items.new(upload.FastCategory.bl_idname, 'F', 'PRESS', ctrl=True, shift=False)
     addon_keymapitems.append(kmi)
 
 
@@ -1902,7 +1939,8 @@ def unregister_ui():
     if not wm.keyconfigs.addon:
         return
 
-    km = wm.keyconfigs.addon.keymaps['Window']
-    for kmi in addon_keymapitems:
-        km.keymap_items.remove(kmi)
+    km = wm.keyconfigs.addon.keymaps.get('Window')
+    if km:
+        for kmi in addon_keymapitems:
+            km.keymap_items.remove(kmi)
     del addon_keymapitems[:]

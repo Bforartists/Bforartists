@@ -48,22 +48,33 @@ def append_material(file_name, matname=None, link=False, fake_user=True):
     # in previous step there's check if the imported material
     # is already in the scene, so we know same name != same material
 
-    mats_before = bpy.data.materials.keys()
+    mats_before = bpy.data.materials[:]
+    try:
+        with bpy.data.libraries.load(file_name, link=link, relative=True) as (data_from, data_to):
+            found = False
+            for m in data_from.materials:
+                if m == matname or matname is None:
+                    data_to.materials = [m]
+                    # print(m, type(m))
+                    matname = m
+                    found = True
+                    break;
 
-    with bpy.data.libraries.load(file_name, link=link, relative=True) as (data_from, data_to):
-        for m in data_from.materials:
-            if m == matname or matname is None:
-                data_to.materials = [m]
-                # print(m, type(m))
-                matname = m
-                break;
+            #not found yet? probably some name inconsistency then.
+            # if not found and len(data_from.materials)>0:
+            #     data_to.materials = data_from.materials[0]
+            #     matname = data_from.materials[0]
+            #     print('had to assign')
+            # print('in the appended file the name is ', matname)
 
+    except Exception as e:
+        print(e)
+        print('failed to open the asset file')
     # we have to find the new material :(
-    for mname in bpy.data.materials.keys():
-        if mname not in mats_before:
-            mat = bpy.data.materials[mname]
+    for m in bpy.data.materials:
+        if m not in mats_before:
+            mat = m
             break
-
     if fake_user:
         mat.use_fake_user = True
 
@@ -88,13 +99,10 @@ def append_scene(file_name, scenename=None, link=False, fake_user=False):
 def link_collection(file_name, obnames=[], location=(0, 0, 0), link=False, parent = None, **kwargs):
     '''link an instanced group - model type asset'''
     sel = utils.selection_get()
-    print('link collection')
-    print(kwargs)
 
     with bpy.data.libraries.load(file_name, link=link, relative=True) as (data_from, data_to):
         scols = []
         for col in data_from.collections:
-            print('linking this ', col)
             if col == kwargs['name']:
                 data_to.collections = [col]
 
@@ -106,7 +114,9 @@ def link_collection(file_name, obnames=[], location=(0, 0, 0), link=False, paren
     main_object = bpy.context.view_layer.objects.active
     main_object.instance_type = 'COLLECTION'
 
-    main_object.parent = parent
+    if parent is not None:
+        main_object.parent = bpy.data.objects.get(parent)
+
     main_object.matrix_world.translation = location
 
     for col in bpy.data.collections:
@@ -201,7 +211,6 @@ def append_objects(file_name, obnames=[], location=(0, 0, 0), link=False, **kwar
         fc = utils.get_fake_context(bpy.context, area_type='VIEW_3D')
         bpy.ops.wm.append(fc, filename=object_name, directory=path)
 
-
         return_obs = []
         for ob in bpy.context.scene.objects:
             if ob.select_get():
@@ -262,8 +271,6 @@ def append_objects(file_name, obnames=[], location=(0, 0, 0), link=False, **kwar
         for ob in hidden_objects:
             ob.hide_viewport = True
 
-    print(return_obs)
-    print(main_object)
     if kwargs.get('rotation') is not None:
         main_object.rotation_euler = kwargs['rotation']
 

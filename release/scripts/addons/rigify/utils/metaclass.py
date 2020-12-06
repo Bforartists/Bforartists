@@ -135,6 +135,7 @@ class StagedMetaclass(type):
 
 class BaseStagedClass(object, metaclass=StagedMetaclass):
     rigify_sub_objects = tuple()
+    rigify_sub_object_run_late = False
 
     def rigify_invoke_stage(self, stage):
         """Call all methods decorated with the given stage, followed by the callback."""
@@ -145,10 +146,15 @@ class BaseStagedClass(object, metaclass=StagedMetaclass):
         getattr(self, stage)()
 
         for sub in self.rigify_sub_objects:
-            sub.rigify_invoke_stage(stage)
+            if not sub.rigify_sub_object_run_late:
+                sub.rigify_invoke_stage(stage)
 
         for method_name in cls.rigify_stage_map[stage]:
             getattr(self, method_name)()
+
+        for sub in self.rigify_sub_objects:
+            if sub.rigify_sub_object_run_late:
+                sub.rigify_invoke_stage(stage)
 
 
 #=============================================

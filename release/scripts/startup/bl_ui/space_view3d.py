@@ -882,13 +882,15 @@ class VIEW3D_MT_editor_menus(Menu):
 
         if gp_edit:
             if obj and obj.mode == 'PAINT_GPENCIL':
-                layout.menu("VIEW3D_MT_paint_gpencil")
+                layout.menu("VIEW3D_MT_draw_gpencil")
             elif obj and obj.mode == 'EDIT_GPENCIL':
                 layout.menu("VIEW3D_MT_edit_gpencil")
                 layout.menu("VIEW3D_MT_edit_gpencil_stroke")
                 layout.menu("VIEW3D_MT_edit_gpencil_point")
             elif obj and obj.mode == 'WEIGHT_GPENCIL':
                 layout.menu("VIEW3D_MT_weight_gpencil")
+            if obj and obj.mode == 'VERTEX_GPENCIL':
+                layout.menu("VIEW3D_MT_paint_gpencil")
 
         elif edit_object:
             layout.menu("VIEW3D_MT_edit_%s" % edit_object.type.lower())
@@ -2202,6 +2204,20 @@ class VIEW3D_MT_select_gpencil_none(bpy.types.Operator):
         bpy.ops.gpencil.select_all(action = 'DESELECT')
         return {'FINISHED'}
 
+class VIEW3D_MT_paint_gpencil(Menu):
+    bl_label = "Paint"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.vertex_color_set", text="Set Vertex Colors")
+        layout.operator("gpencil.stroke_reset_vertex_color")
+        layout.separator()
+        layout.operator("gpencil.vertex_color_invert", text="Invert")
+        layout.operator("gpencil.vertex_color_levels", text="Levels")
+        layout.operator("gpencil.vertex_color_hsv", text="Hue Saturation Value")
+        layout.operator("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast")
+
 
 class VIEW3D_MT_select_gpencil(Menu):
     bl_label = "Select"
@@ -2571,8 +2587,7 @@ class VIEW3D_MT_add(Menu):
         layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
         if context.preferences.experimental.use_new_hair_type:
             layout.operator("object.hair_add", text="Hair", icon='OUTLINER_OB_HAIR')
-        if context.preferences.experimental.use_new_point_cloud_type:
-            layout.operator("object.pointcloud_add", text="Point Cloud", icon='OUTLINER_OB_POINTCLOUD')
+        layout.operator("object.pointcloud_add", text="Point Cloud", icon='OUTLINER_OB_POINTCLOUD')
         layout.menu("VIEW3D_MT_volume_add", text="Volume", icon='OUTLINER_OB_VOLUME')
         layout.operator_menu_enum("object.gpencil_add", "type", text="Grease Pencil", icon='OUTLINER_OB_GREASEPENCIL')
         layout.separator()
@@ -6118,7 +6133,7 @@ class VIEW3D_MT_gpencil_simplify(Menu):
         layout.operator("gpencil.stroke_sample", text="Sample", icon = "MOD_SIMPLIFY")
 
 
-class VIEW3D_MT_paint_gpencil(Menu):
+class VIEW3D_MT_draw_gpencil(Menu):
     bl_label = "Draw"
 
     def draw(self, _context):
@@ -6374,22 +6389,6 @@ class VIEW3D_MT_weight_gpencil(Menu):
             #radial control button brush strength
             myvar = layout.operator("wm.radial_control", text = "Brush Strength", icon = "BRUSHSTRENGTH")
             myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
-
-
-class VIEW3D_MT_vertex_gpencil(Menu):
-    bl_label = "Paint"
-
-    def draw(self, _context):
-        layout = self.layout
-        layout.operator("gpencil.vertex_color_set", text="Set Vertex Colors")
-        layout.separator()
-        layout.operator("gpencil.vertex_color_invert", text="Invert")
-        layout.operator("gpencil.vertex_color_levels", text="Levels")
-        layout.operator("gpencil.vertex_color_hsv", text="Hue Saturation Value")
-        layout.operator("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast")
-
-        layout.separator()
-        layout.menu("VIEW3D_MT_join_palette")
 
 
 class VIEW3D_MT_gpencil_animation(Menu):
@@ -8564,7 +8563,7 @@ class VIEW3D_PT_view3d_stereo(Panel):
         split.prop(view, "show_stereo_3d_volume")
         split = row.split()
         split.prop(view, "stereo_3d_volume_alpha", text="Alpha")
-        
+
         if context.scene.render.use_multiview:
             layout.separator()
             layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
@@ -9303,6 +9302,7 @@ classes = (
     VIEW3D_curve_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,
     VIEW3D_MT_paint_gpencil,
+    VIEW3D_MT_draw_gpencil,
     VIEW3D_MT_edit_gpencil_showhide,
     VIEW3D_MT_assign_material,
     VIEW3D_MT_edit_gpencil,
@@ -9313,7 +9313,6 @@ classes = (
     VIEW3D_MT_edit_gpencil_delete,
     VIEW3D_MT_sculpt_gpencil_copy,
     VIEW3D_MT_weight_gpencil,
-    VIEW3D_MT_vertex_gpencil,
     VIEW3D_MT_gpencil_simplify,
     VIEW3D_MT_gpencil_copy_layer,
     VIEW3D_MT_edit_curve,

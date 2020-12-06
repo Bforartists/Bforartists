@@ -215,7 +215,7 @@ class UI_OT_i18n_updatetranslation_svn_trunk(Operator):
             po_path = os.path.join(self.settings.TRUNK_PO_DIR, po_path)
             if uid and uid not in stats:
                 po = utils_i18n.I18nMessages(uid=uid, kind='PO', src=po_path, settings=self.settings)
-                stats[uid] = po.nbr_trans_msgs / po.nbr_msgs
+                stats[uid] = po.nbr_trans_msgs / po.nbr_msgs if po.nbr_msgs > 0 else 0
         utils_languages_menu.gen_menu_file(stats, self.settings)
         context.window_manager.progress_end()
 
