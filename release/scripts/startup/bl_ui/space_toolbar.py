@@ -1468,7 +1468,7 @@ class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=True, rotation=False, scale=True)
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
         return {'FINISHED'}
 
 class VIEW3D_MT_object_apply_all(bpy.types.Operator):
