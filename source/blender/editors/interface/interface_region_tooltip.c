@@ -794,21 +794,17 @@ static uiTooltipData *ui_tooltip_data_from_button(bContext *C, uiBut *but)
 
   /* Tip Label (only for buttons not already showing the label).
    * Check prefix instead of comparing because the button may include the shortcut. */
-  //if (but_label.strinfo && !STRPREFIX(but->drawstr, but_label.strinfo)) { // bfa - turned off this specific check.
-  /*bfa - add the prefix everywhere in case it is not null !*/
-  if (but_label.strinfo != NULL) {
+  /*bfa - some buttons does not have a explicit button title. Like the properties editor tab button
+   */
+  /*It just shows a dot then where the title should be. So we check for those buttons, and skip
+   * adding the button title*/
+  if (but_label.strinfo && !STRPREFIX(but->drawstr, but_label.strinfo)) {
     uiTooltipField *field = text_field_add(data,
                                            &(uiTooltipFormat){
                                                .style = UI_TIP_STYLE_HEADER,
                                                .color_id = UI_TIP_LC_NORMAL,
                                            });
-    /*bfa - some buttons does not have a explicit button title. Like the properties editor tab button */
-    /*It just shows a dot then where the title should be. So we check for those buttons, and skip adding the button title*/
-    if (STRPREFIX(but->drawstr, but_label.strinfo))
-      {
-      field->text = BLI_sprintfN(but_label.strinfo);
-    }
-    else if (!STRPREFIX(but->drawstr, but_label.strinfo)) {
+    if (!STRPREFIX(but->drawstr, but_label.strinfo)) {
       field->text = BLI_sprintfN("%s.", but_label.strinfo);
     }
   }
