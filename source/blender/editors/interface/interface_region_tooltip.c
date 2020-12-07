@@ -806,7 +806,7 @@ static uiTooltipData *ui_tooltip_data_from_button(bContext *C, uiBut *but)
     /*It just shows a dot then where the title should be. So we check for those buttons, and skip adding the button title*/
     if (STRPREFIX(but->drawstr, but_label.strinfo))
       {
-      field->text = BLI_sprintfN(but_label.strinfo);
+      field->text = BLI_sprintfN("%s", but_label.strinfo);
     }
     else if (!STRPREFIX(but->drawstr, but_label.strinfo)) {
       field->text = BLI_sprintfN("%s.", but_label.strinfo);
