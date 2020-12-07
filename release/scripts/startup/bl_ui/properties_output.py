@@ -126,16 +126,16 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
         col.prop(rd, "pixel_aspect_y", text="Y")
             
             
-        split = layout.split()
-        col = split.column()
-        col.use_property_split = False
-        col.prop(rd, "use_border")
-        col = split.column()
+        split = layout.split(factor=.4)
+        split.use_property_split=False
+        split.prop(rd, "use_border")
+        
+        split.alignment = 'LEFT'
         if rd.use_border:
-            col.use_property_split = False
-            col.prop(rd, "use_crop_to_border")
+            split.use_property_split = False
+            split.prop(rd, "use_crop_to_border")
         else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')            
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
         col = layout.column(align=True)
