@@ -52,7 +52,7 @@
 #include "UI_view2d.h"
 #include "GPU_framebuffer.h"
 
-static SpaceLink *toolbar_create(const ScrArea *UNUSED(area), const Scene *scene)
+static SpaceLink *toolbar_create(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
 {
   ARegion *region;
 	SpaceToolbar *stoolbar;
@@ -77,7 +77,7 @@ static SpaceLink *toolbar_create(const ScrArea *UNUSED(area), const Scene *scene
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void toolbar_main_area_init(wmWindowManager *wm, ARegion *region)
+static void toolbar_main_area_init(wmWindowManager *UNUSED(wm), ARegion *region)
 {
 	UI_view2d_region_reinit(&region->v2d, V2D_COMMONVIEW_CUSTOM, region->winx, region->winy);
 }
