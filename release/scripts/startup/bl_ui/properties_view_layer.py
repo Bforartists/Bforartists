@@ -116,7 +116,9 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         scene = context.scene
         scene_eevee = scene.eevee
 
-        col = layout.column(align = True)
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+
+        col = flow.column(align = True)
         col.label(text = "Diffuse")
         col.use_property_split = False
         row = col.row()
@@ -126,7 +128,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer, "use_pass_diffuse_color", text="Color")
 
-        col = layout.column(align = True)
+        col = flow.column(align = True)
         col.label(text = "Specular")
         col.use_property_split = False
         row = col.row()
@@ -136,7 +138,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer, "use_pass_glossy_color", text="Color")
 
-        col = layout.column(align = True)
+        col = flow.column(align = True)
         col.label(text = "Volume")
         col.use_property_split = False
         row = col.row()
@@ -146,7 +148,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer_eevee, "use_pass_volume_scatter", text="Scatter")
 
-        col = layout.column(align = True)
+        col = flow.column(align = True)
         col.label(text = "Other")
         col.use_property_split = False
         row = col.row()

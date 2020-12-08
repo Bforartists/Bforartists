@@ -863,7 +863,9 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         view_layer = context.view_layer
         cycles_view_layer = view_layer.cycles
 
-        col = layout.column( align=True)
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+
+        col = flow.column( align=True)
         col.label(text = "Include")
         row = col.row()
         row.separator()
@@ -888,7 +890,7 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(cycles_view_layer, "denoising_store_passes", text="Denoising Data")
 
-        col = layout.column(align=True)
+        col = flow.column(align=True)
         col.label(text = "Indexes")
         row = col.row()
         row.separator()
@@ -897,7 +899,7 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer, "use_pass_material_index")
 
-        col = layout.column(align=True)
+        col = flow.column(align=True)
         col.label(text = "Debug")
         row = col.row()
         row.separator()
@@ -926,7 +928,9 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         view_layer = context.view_layer
         cycles_view_layer = view_layer.cycles
 
-        col = layout.column(align=True)
+        flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=False, align=False)
+
+        col = flow.column(align=True)
         col.label(text = "Diffuse")
         row = col.row()
         row.separator()
@@ -938,7 +942,7 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer, "use_pass_diffuse_color", text="Color")
 
-        col = layout.column(align=True)
+        col = flow.column(align=True)
         col.label(text = "Glossy")
         row = col.row()
         row.separator()
@@ -950,7 +954,7 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer, "use_pass_glossy_color", text="Color")
 
-        col = layout.column( align=True)
+        col = flow.column( align=True)
         col.label(text = "Transmission")
         row = col.row()
         row.separator()
@@ -962,7 +966,7 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(view_layer, "use_pass_transmission_color", text="Color")
 
-        col = layout.column(align=True)
+        col = flow.column(align=True)
         col.label(text = "Volume")
         row = col.row()
         row.separator()
@@ -971,7 +975,7 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(cycles_view_layer, "use_pass_volume_indirect", text="Indirect")
 
-        col = layout.column(align=True)
+        col = flow.column(align=True)
         col.label(text = "Other")
         row = col.row()
         row.separator()
