@@ -1205,38 +1205,40 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         layout.use_property_split = True
         col = layout.column()
         col.template_ID(strip, "font", open="font.open", unlink="font.unlink")
-        col.prop(strip, "font_size")
-        col.prop(strip, "color")
 
-        subcol = col.column()
-        subcol.use_property_split = False
-        subcol.use_property_decorate = False
-        row = subcol.row()
-        split = row.split(factor=0.65)
-        split.prop(strip, "use_shadow", text="Shadow")
+        split = col.split(factor=.4, align=True)
+        split.label(text="Size")
+        split.prop(strip, "font_size", text="")
+        
+        split = col.split(factor=.4, align=True)
+        split.label(text="Color")
+        split.prop(strip, "color", text="")
+
+        split = col.split(factor=.4, align=True)
+        row = split.row()
+        row.use_property_decorate = False
+        row.use_property_split = False
+        row = row.prop(strip, "use_shadow", text="Shadow")
         if (strip.use_shadow and (not strip.mute)):
-            row.prop(strip, "shadow_color", text="")
-            row.prop_decorator(strip, "shadow_color")
+            split.prop(strip, "shadow_color", text="")
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
+        
+        split = col.split(factor=.4, align=True)
+        col = split.column(align=True)
+        col.use_property_decorate = False
+        col.use_property_split = False
+        col.prop(strip, "use_box", text="Box")
 
-        subcol = col.column()
-        subcol.use_property_split = False
-        subcol.use_property_decorate = False
-        row = subcol.row()
-        split = row.split(factor=0.65)
-        split.prop(strip, "use_box", text="Box")
+        sub = split.column()
         if (strip.use_box and (not strip.mute)):
-            row.prop(strip, "box_color", text="")
-            row.prop_decorator(strip, "box_color")
-
-            subcol = col.column()
-            row = subcol.row()
-            row.separator()  # bfa - indent
-            row.use_property_decorate = False
-            row.prop(strip, "box_margin", text="Box Margin")
+            sub.prop(strip, "box_color", text="")
+            row = col.row()
+            row.separator()
+            row.label(text="Box Margin")
+            sub.prop(strip, "box_margin", text="")
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')
+            sub.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
