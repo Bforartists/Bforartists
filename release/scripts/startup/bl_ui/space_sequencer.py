@@ -1206,6 +1206,7 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         col = layout.column()
         col.template_ID(strip, "font", open="font.open", unlink="font.unlink")
 
+        col = layout.column()
         split = col.split(factor=.4, align=True)
         split.label(text="Size")
         split.prop(strip, "font_size", text="")
