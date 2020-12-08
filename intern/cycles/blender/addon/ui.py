@@ -1018,10 +1018,11 @@ class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
         col = layout.column()
         if (any((cycles_view_layer.use_pass_crypto_object, 
                           cycles_view_layer.use_pass_crypto_material, 
-                          cycles_view_layer.use_pass_crypto_asset)) and use_cpu(context)):
+                          cycles_view_layer.use_pass_crypto_asset))):
             col.label(icon="DISCLOSURE_TRI_DOWN")
             col.prop(cycles_view_layer, "pass_crypto_depth", text="Levels")
-            col.prop(cycles_view_layer, "pass_crypto_accurate", text="Accurate Mode")
+            if use_cpu(context):
+                col.prop(cycles_view_layer, "pass_crypto_accurate", text="Accurate Mode")
         else:
             col.label(icon="DISCLOSURE_TRI_RIGHT")
 
