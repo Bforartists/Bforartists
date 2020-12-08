@@ -1019,12 +1019,16 @@ class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
         row.separator()
         row.prop(cycles_view_layer, "use_pass_crypto_asset", text="Asset")
 
-        layout.prop(cycles_view_layer, "pass_crypto_depth", text="Levels")
-
-        row = layout.row(align=True)
-        row.active = use_cpu(context)
-        row.use_property_split = False
-        row.prop(cycles_view_layer, "pass_crypto_accurate", text="Accurate Mode")
+        col = layout.column()
+        if (any((cycles_view_layer.use_pass_crypto_object, 
+                          cycles_view_layer.use_pass_crypto_material, 
+                          cycles_view_layer.use_pass_crypto_asset))):
+            col.label(icon="DISCLOSURE_TRI_DOWN")
+            col.prop(cycles_view_layer, "pass_crypto_depth", text="Levels")
+            if use_cpu(context):
+                col.prop(cycles_view_layer, "pass_crypto_accurate", text="Accurate Mode")
+        else:
+            col.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 class CYCLES_RENDER_PT_passes_debug(CyclesButtonsPanel, Panel):

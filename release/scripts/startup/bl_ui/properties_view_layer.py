@@ -227,16 +227,28 @@ class VIEWLAYER_PT_layer_passes_cryptomatte(ViewLayerButtonsPanel, Panel):
 
         view_layer = context.view_layer
 
+        col = layout.column(align=True)
+        col.label(text = "Include")
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_cryptomatte_object", text="Object")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_cryptomatte_material", text="Material")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_pass_cryptomatte_asset", text="Asset")
+
         col = layout.column()
-        col.prop(view_layer, "use_pass_cryptomatte_object", text="Object")
-        col.prop(view_layer, "use_pass_cryptomatte_material", text="Material")
-        col.prop(view_layer, "use_pass_cryptomatte_asset", text="Asset")
-        col = layout.column()
-        col.active = any((view_layer.use_pass_cryptomatte_object, 
+        if (any((view_layer.use_pass_cryptomatte_object, 
                           view_layer.use_pass_cryptomatte_material, 
-                          view_layer.use_pass_cryptomatte_asset))
-        col.prop(view_layer, "pass_cryptomatte_depth", text="Levels")
-        col.prop(view_layer, "use_pass_cryptomatte_accurate", text="Accurate Mode")
+                          view_layer.use_pass_cryptomatte_asset))):
+            col.label(icon="DISCLOSURE_TRI_DOWN")
+            col.prop(view_layer, "pass_cryptomatte_depth", text="Levels")
+            col.prop(view_layer, "use_pass_cryptomatte_accurate", text="Accurate Mode")
+        else:
+            col.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 classes = (
