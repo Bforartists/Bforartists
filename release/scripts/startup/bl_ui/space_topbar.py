@@ -714,7 +714,7 @@ class TOPBAR_PT_name(Panel):
             item = context.active_node
             if item:
                 row = row_with_icon(layout, 'NODE')
-                row.prop(item, "name", text="")
+                row.prop(item, "label", text="")
                 found = True
         else:
             if mode == 'POSE' or (mode == 'WEIGHT_PAINT' and context.pose_object):
