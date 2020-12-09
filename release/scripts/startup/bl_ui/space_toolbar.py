@@ -659,6 +659,9 @@ class TOOLBAR_PT_menu_primitives(Panel):
         col = layout.column(align = True)
         row = col.row()
         row.separator()
+        row.prop(addon_prefs, "primitives_volume")
+        row = col.row()
+        row.separator()
         row.prop(addon_prefs, "primitives_point_cloud")
         row = col.row()
         row.separator()
@@ -751,12 +754,19 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
                 row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                 row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
-                
+
             if addon_prefs.primitives_point_cloud:
 
                 row = layout.row(align=True)
                 row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
-                
+
+
+            if addon_prefs.primitives_volume:
+
+                row = layout.row(align=True)
+                row.operator("object.volume_import", text="", icon='OUTLINER_OB_VOLUME')
+                row.operator("object.volume_add", text="", icon='OUTLINER_OB_VOLUME')
+
             if addon_prefs.primitives_gpencil:
 
                 row = layout.row(align=True)
@@ -877,11 +887,17 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
                     row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                     row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
-                    
+
                 if addon_prefs.primitives_point_cloud:
 
                     row = layout.row(align=True)
                     row.operator("object.pointcloud_add", text="", icon='OUTLINER_OB_POINTCLOUD')
+
+                if addon_prefs.primitives_volume:
+
+                    row = layout.row(align=True)
+                    row.operator("object.volume_import", text="", icon='OUTLINER_OB_VOLUME')
+                    row.operator("object.volume_add", text="", icon='OUTLINER_OB_VOLUME')
 
                 if addon_prefs.primitives_gpencil:
 
