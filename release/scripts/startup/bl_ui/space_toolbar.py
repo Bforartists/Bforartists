@@ -809,7 +809,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.effector_add", text="", icon='FORCE_HARMONIC').type='HARMONIC'
                 row.operator("object.effector_add", text="", icon='FORCE_LENNARDJONES').type='LENNARDJ'
                 row.operator("object.effector_add", text="", icon='FORCE_MAGNETIC').type='MAGNET'
-                row.operator("object.effector_add", text="", icon='FORCE_FLUIDFLOW').type='SMOKE'
+                row.operator("object.effector_add", text="", icon='FORCE_FLUIDFLOW').type='FLUID'
                 row.operator("object.effector_add", text="", icon='FORCE_TEXTURE').type='TEXTURE'
                 row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
                 row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
