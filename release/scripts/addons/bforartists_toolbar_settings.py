@@ -85,6 +85,7 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
     primitives_curve : BoolProperty(name="Curve", default=False, description = "Display the Curve primitive Toolbar\nDisplay is mode dependant", )
     primitives_surface : BoolProperty(name="Surface", default=False, description = "Display the Surface primitive Toolbar\nDisplay is mode dependant", )
     primitives_metaball : BoolProperty(name="Metaball", default=False, description = "Display the Metaball primitive Toolbar\nDisplay is mode dependant", )
+    primitives_point_cloud : BoolProperty(name="Point Cloud", default=False, description = "Display the Point Cloud primitive Toolbar\nDisplay is mode dependant", )
     primitives_gpencil : BoolProperty(name="Grease Pencil", default=True, description = "Display the Greasepencil primitive Toolbar\nDisplay is mode dependant", )
     primitives_light : BoolProperty(name="Light", default=False, description = "Display the Light primitive Toolbar\nDisplay is mode dependant", )
     primitives_other : BoolProperty(name="Other", default=True, description = "Display the Other primitive Toolbar\nDisplay is mode dependant", )
@@ -282,6 +283,9 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row = col.row()
         row.separator()
         row.prop(self, "primitives_metaball")
+        row = col.row()
+        row.separator()
+        row.prop(self, "primitives_point_cloud")
 
         col = flow.column(align=True)
 
