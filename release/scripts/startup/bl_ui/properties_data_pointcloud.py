@@ -55,32 +55,32 @@ class POINTCLOUD_MT_add_attribute(Menu):
     bl_label = "Add Attribute"
 
     @staticmethod
-    def add_standard_attribute(layout, pointcloud, name, data_type, domain):
+    def add_standard_attribute(layout, pointcloud, name, data_type, domain, icon):
         exists = pointcloud.attributes.get(name) is not None
 
         col = layout.column()
         col.enabled = not exists
         col.operator_context = 'EXEC_DEFAULT'
 
-        props = col.operator("geometry.attribute_add", text=name)
+        props = col.operator("geometry.attribute_add", text=name, icon=icon)
         props.name = name
         props.data_type = data_type
         props.domain = domain
+        #props.icon = icon
 
     def draw(self, context):
         layout = self.layout
         pointcloud = context.pointcloud
 
-        self.add_standard_attribute(layout, pointcloud, 'Radius', 'FLOAT', 'POINT')
-        self.add_standard_attribute(layout, pointcloud, 'Color', 'FLOAT_COLOR', 'POINT')
-        self.add_standard_attribute(layout, pointcloud, 'Particle ID', 'INT', 'POINT')
-        self.add_standard_attribute(layout, pointcloud, 'Velocity', 'FLOAT_VECTOR', 'POINT')
+        self.add_standard_attribute(layout, pointcloud, 'Radius', 'FLOAT', 'POINT', 'RADIUS')
+        self.add_standard_attribute(layout, pointcloud, 'Color', 'FLOAT_COLOR', 'POINT', 'COLOR')
+        self.add_standard_attribute(layout, pointcloud, 'Particle ID', 'INT', 'POINT', 'PARTICLE_DATA')
+        self.add_standard_attribute(layout, pointcloud, 'Velocity', 'FLOAT_VECTOR', 'POINT', 'MOD_FLUIDSIM')
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("geometry.attribute_add", text="Custom...")
-
+        layout.operator("geometry.attribute_add", text="Custom", icon = 'ADD')
 
 class POINTCLOUD_UL_attributes(UIList):
     def draw_item(self, context, layout, data, attribute, icon, active_data, active_propname, index):
