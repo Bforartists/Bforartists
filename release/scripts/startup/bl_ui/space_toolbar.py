@@ -764,7 +764,7 @@ class TOOLBAR_MT_primitives(Menu):
             if addon_prefs.primitives_volume:
 
                 row = layout.row(align=True)
-                row.operator("object.volume_import", text="", icon='OUTLINER_OB_VOLUME')
+                row.operator("object.volume_import", text="", icon='FILE_VOLUME')
                 row.operator("object.volume_add", text="", icon='OUTLINER_OB_VOLUME')
 
             if addon_prefs.primitives_gpencil:
@@ -896,7 +896,7 @@ class TOOLBAR_MT_primitives(Menu):
                 if addon_prefs.primitives_volume:
 
                     row = layout.row(align=True)
-                    row.operator("object.volume_import", text="", icon='OUTLINER_OB_VOLUME')
+                    row.operator("object.volume_import", text="", icon='FILE_VOLUME')
                     row.operator("object.volume_add", text="", icon='OUTLINER_OB_VOLUME')
 
                 if addon_prefs.primitives_gpencil:
