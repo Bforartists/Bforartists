@@ -2210,13 +2210,13 @@ class VIEW3D_MT_paint_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.vertex_color_set", text="Set Vertex Colors")
-        layout.operator("gpencil.stroke_reset_vertex_color")
+        layout.operator("gpencil.vertex_color_set", text="Set Vertex Colors", icon = "NODE_VERTEX_COLOR")
+        layout.operator("gpencil.stroke_reset_vertex_color", icon = "RESET")
         layout.separator()
-        layout.operator("gpencil.vertex_color_invert", text="Invert")
-        layout.operator("gpencil.vertex_color_levels", text="Levels")
-        layout.operator("gpencil.vertex_color_hsv", text="Hue Saturation Value")
-        layout.operator("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast")
+        layout.operator("gpencil.vertex_color_invert", text="Invert", icon = "NODE_INVERT")
+        layout.operator("gpencil.vertex_color_levels", text="Levels", icon = "LEVELS")
+        layout.operator("gpencil.vertex_color_hsv", text="Hue Saturation Value", icon = "HUESATVAL")
+        layout.operator("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast", icon = "BRIGHTNESS_CONTRAST")
 
 
 class VIEW3D_MT_select_gpencil(Menu):
