@@ -2559,8 +2559,8 @@ class VIEW3D_MT_volume_add(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.operator("object.volume_import", text="Import OpenVDB...", icon='VOLUME_DATA')
-        layout.operator("object.volume_add", text="Empty", icon='VOLUME_DATA')
+        layout.operator("object.volume_import", text="Import OpenVDB", icon='FILE_VOLUME')
+        layout.operator("object.volume_add", text="Empty", icon='OUTLINER_OB_VOLUME')
 
 
 class VIEW3D_MT_add(Menu):
