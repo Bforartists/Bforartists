@@ -4466,7 +4466,7 @@ keyconfig_data = \
       },
      ),
     ("object.mode_set",
-     {"type": 'SEVEN', "value": 'PRESS'},
+     {"type": 'TWO', "value": 'PRESS', "shift": True},
      {"properties":
       [("mode", 'PAINT_GPENCIL'),
        ],
