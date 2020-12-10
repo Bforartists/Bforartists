@@ -133,6 +133,7 @@ class   OUTLINER_MT_object_collection(Menu):
         layout.operator("collection.objects_add_active", icon='GROUP')
         layout.operator("collection.objects_remove_active", icon = "DELETE")
 
+
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
     bl_label = ""
@@ -145,6 +146,7 @@ class ALL_MT_editormenu(Menu):
 
         row = layout.row(align=True)
         row.template_header() # editor type menus
+
 
 class OUTLINER_MT_editor_menus(Menu):
     bl_idname = "OUTLINER_MT_editor_menus"
@@ -162,7 +164,8 @@ class OUTLINER_MT_editor_menus(Menu):
         if display_mode == 'DATA_API':
             layout.menu("OUTLINER_MT_edit_datablocks")
 
-        elif display_mode == 'VIEW_LAYER':
+        elif display_mode in ('SCENES','VIEW_LAYER' ):
+
             layout.menu("OUTLINER_MT_object_collection", text = "Col")
 
             layout.separator()
