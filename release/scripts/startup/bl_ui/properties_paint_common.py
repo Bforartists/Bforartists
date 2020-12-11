@@ -1227,7 +1227,11 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
 
         sub_row = row.row(align=True)
         if settings.color_mode == 'VERTEXCOLOR' or gp_settings.brush_draw_mode == 'VERTEXCOLOR':
-            sub_row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
+            sub = row.row(align = True)    
+            sub.scale_x = 0.33
+            sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
+            sub.prop(brush, "secondary_color", text="")
+            row.operator("gpencil.tint_flip", icon='FILE_REFRESH', text="")
             row.prop(gp_settings, "pin_draw_mode", text="")
 
     if props:
