@@ -1103,10 +1103,10 @@ node_glossyshader
 node_gradient
 node_groupinsert
 node_hairinfo
-#def_icon_blank(1119
+hue
 node_holdoutshader
 node_huesaturation
-#def_icon_blank(1122
+saturation
 node_impaint
 node_invert
 

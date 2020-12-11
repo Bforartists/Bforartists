@@ -5334,13 +5334,13 @@ static void ui_template_palette_menu(bContext *UNUSED(C), uiLayout *layout, void
 
   uiItemL(layout, IFACE_("Sort By:"), ICON_NONE);
   row = uiLayoutRow(layout, false);
-  uiItemEnumO_value(row, IFACE_("Hue"), ICON_NONE, "PALETTE_OT_sort", "type", 1);
+  uiItemEnumO_value(row, IFACE_("Hue"), ICON_HUE, "PALETTE_OT_sort", "type", 1);
   row = uiLayoutRow(layout, false);
-  uiItemEnumO_value(row, IFACE_("Saturation"), ICON_NONE, "PALETTE_OT_sort", "type", 2);
+  uiItemEnumO_value(row, IFACE_("Saturation"), ICON_SATURATION, "PALETTE_OT_sort", "type", 2);
   row = uiLayoutRow(layout, false);
-  uiItemEnumO_value(row, IFACE_("Value"), ICON_NONE, "PALETTE_OT_sort", "type", 3);
+  uiItemEnumO_value(row, IFACE_("Value"), ICON_NODE_VALUE, "PALETTE_OT_sort", "type", 3);
   row = uiLayoutRow(layout, false);
-  uiItemEnumO_value(row, IFACE_("Luminance"), ICON_NONE, "PALETTE_OT_sort", "type", 4);
+  uiItemEnumO_value(row, IFACE_("Luminance"), ICON_NODE_LUMINANCE, "PALETTE_OT_sort", "type", 4);
 }
 
 void uiTemplatePalette(uiLayout *layout,
@@ -5418,7 +5418,7 @@ void uiTemplatePalette(uiLayout *layout,
 
     /* Menu. */
     uiDefIconMenuBut(
-        block, ui_template_palette_menu, NULL, ICON_SORTSIZE, 0, 0, UI_UNIT_X, UI_UNIT_Y, "");
+        block, ui_template_palette_menu, NULL, ICON_SORTSIZE, 0, 0, UI_UNIT_X, UI_UNIT_Y, "Sort By");
   }
 
   col = uiLayoutColumn(layout, true);
