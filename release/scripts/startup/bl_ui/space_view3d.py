@@ -760,7 +760,11 @@ class _draw_tool_settings_context_mode:
 
         if brush.gpencil_vertex_tool not in {'BLUR', 'AVERAGE', 'SMEAR'}:
             row.separator(factor=0.4)
-            row.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
+            sub = row.row(align = True)
+            sub.scale_x = 0.33
+            sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
+            sub.prop(brush, "secondary_color", text="")
+            row.operator("gpencil.tint_flip", icon='FILE_REFRESH', text="")
 
         from bl_ui.properties_paint_common import (
             brush_basic_gpencil_vertex_settings,
