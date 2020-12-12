@@ -364,11 +364,6 @@ class DOPESHEET_HT_editor_buttons:
 
         dopesheet_filter(layout, context)
 
-        if st.mode == 'GPENCIL':
-            row = layout.row(align=True)
-            row.prop(st.dopesheet, "show_only_selected", text="")
-            row.prop(st.dopesheet, "show_hidden", text="")
-
         if ds_mode in {'DOPESHEET'}:
             layout.popover(panel="DOPESHEET_PT_filters", text="", icon='FILTER')
 
