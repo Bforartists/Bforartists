@@ -123,7 +123,6 @@ class GRAPH_HT_header(Header):
         layout.operator_menu_enum("graph.easing_type", "type", text="", icon = "IPO_EASE_IN_OUT")
         layout.operator_menu_enum("graph.handle_type", "type", text="", icon = "HANDLE_AUTO")
         layout.operator_menu_enum("graph.interpolation_type", "type", text="", icon = "INTERPOLATE")
-        layout.prop(tool_settings, "keyframe_type", text="", icon_only=True)
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
