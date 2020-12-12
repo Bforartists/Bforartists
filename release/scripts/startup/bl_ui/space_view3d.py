@@ -5985,6 +5985,8 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
+        layout.operator_context = 'EXEC_REGION_WIN'
+
         layout.operator("armature.parent_set", text="Make Parent", icon='PARENT_SET')
         layout.operator("armature.parent_clear", text="Clear Parent", icon='PARENT_CLEAR')
 
