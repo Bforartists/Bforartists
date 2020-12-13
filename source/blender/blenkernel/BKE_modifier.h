@@ -244,12 +244,20 @@ typedef struct ModifierTypeInfo {
   struct Mesh *(*modifyMesh)(struct ModifierData *md,
                              const struct ModifierEvalContext *ctx,
                              struct Mesh *mesh);
+
   struct Hair *(*modifyHair)(struct ModifierData *md,
                              const struct ModifierEvalContext *ctx,
                              struct Hair *hair);
-  void (*modifyPointCloud)(struct ModifierData *md,
-                           const struct ModifierEvalContext *ctx,
-                           struct GeometrySet *geometry_set);
+
+  /**
+   * The modifier has to change the geometry set in-place. The geometry set can contain zero or
+   * more geometry components. This callback can be used by modifiers that don't work on any
+   * specific type of geometry (e.g. mesh).
+   */
+  void (*modifyGeometrySet)(struct ModifierData *md,
+                            const struct ModifierEvalContext *ctx,
+                            struct GeometrySet *geometry_set);
+
   struct Volume *(*modifyVolume)(struct ModifierData *md,
                                  const struct ModifierEvalContext *ctx,
                                  struct Volume *volume);
@@ -431,6 +439,8 @@ bool BKE_modifier_is_non_geometrical(ModifierData *md);
 bool BKE_modifier_is_enabled(const struct Scene *scene,
                              struct ModifierData *md,
                              int required_mode);
+bool BKE_modifier_is_nonlocal_in_liboverride(const struct Object *ob,
+                                             const struct ModifierData *md);
 void BKE_modifier_set_error(const struct Object *ob,
                             struct ModifierData *md,
                             const char *format,

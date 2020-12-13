@@ -65,9 +65,7 @@ def filter_layer_collections_by_object(layer_collections, obj):
     return [lc for lc in layer_collections if obj in lc.collection.objects.values()]
 
 
-def ensure_widget_collection(context):
-    wgts_collection_name = "Widgets"
-
+def ensure_widget_collection(context, wgts_collection_name):
     view_layer = context.view_layer
     layer_collection = bpy.context.layer_collection
     collection = layer_collection.collection
@@ -88,6 +86,8 @@ def ensure_widget_collection(context):
         # Add the widget collection to the tree
         collection.children.link(widget_collection)
         widget_layer_collection = [c for c in layer_collection.children if c.collection == widget_collection][0]
+
+        widget_layer_collection.exclude = True
 
     # Make the widget the active collection for the upcoming added (widget) objects
     view_layer.active_layer_collection = widget_layer_collection

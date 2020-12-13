@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -11,6 +11,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit"
+
+
+msgid "Name"
+msgstr "Izena"
+
+
+msgid "Type"
+msgstr "Mota"
+
+
+msgid "Color"
+msgstr "Kolorea"
+
+
+msgid "Value"
+msgstr "Balioa"
 
 
 msgid "Action Group"
@@ -137,10 +153,6 @@ msgid "Action group is locked"
 msgstr "Akzio taldea blokeatuta dago"
 
 
-msgid "Name"
-msgstr "Izena"
-
-
 msgid "Select"
 msgstr "Aukera"
 
@@ -261,16 +273,8 @@ msgid "Indirect"
 msgstr "Zeharkakoa"
 
 
-msgid "Color"
-msgstr "Kolorea"
-
-
 msgid "Weight"
 msgstr "Pisua"
-
-
-msgid "Type"
-msgstr "Mota"
 
 
 msgid "Distance"
@@ -307,10 +311,6 @@ msgstr "Trazua"
 
 msgid "Normal"
 msgstr "Normala"
-
-
-msgid "Value"
-msgstr "Balioa"
 
 
 msgid "Look"

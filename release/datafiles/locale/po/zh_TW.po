@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -14,6 +14,26 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.4\n"
 "X-Poedit-Bookmarks: 11434,-1,-1,-1,-1,-1,-1,-1,-1,-1"
+
+
+msgid "Valid"
+msgstr "有效"
+
+
+msgid "Name"
+msgstr "名稱"
+
+
+msgid "Type"
+msgstr "類型"
+
+
+msgid "Color"
+msgstr "色彩"
+
+
+msgid "Value"
+msgstr "值"
 
 
 msgid "Action F-Curves"
@@ -154,10 +174,6 @@ msgstr "鎖定"
 
 msgid "Action group is locked"
 msgstr "動作群組已上鎖"
-
-
-msgid "Name"
-msgstr "名稱"
 
 
 msgid "Select"
@@ -944,16 +960,12 @@ msgid "Domain"
 msgstr "領域"
 
 
-msgid "Vertex"
-msgstr "頂點"
+msgid "Point"
+msgstr "點"
 
 
 msgid "Edge"
 msgstr "邊線"
-
-
-msgid "Point"
-msgstr "點"
 
 
 msgid "Curve"
@@ -1094,10 +1106,6 @@ msgstr "直接"
 
 msgid "Indirect"
 msgstr "間接"
-
-
-msgid "Color"
-msgstr "色彩"
 
 
 msgid "Diffuse"
@@ -1922,10 +1930,6 @@ msgstr "群集個體規則"
 
 msgid "Boid rule name"
 msgstr "群集個體規則名稱"
-
-
-msgid "Type"
-msgstr "類型"
 
 
 msgid "Goal"
@@ -2910,10 +2914,6 @@ msgstr "壓力隨機度"
 
 msgid "Saturation"
 msgstr "飽和度"
-
-
-msgid "Value"
-msgstr "值"
 
 
 msgid "Use Pressure Jitter"
@@ -4017,10 +4017,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "此代理實體已添加的約束 (例：不屬於來源骨架)"
 
 
-msgid "Valid"
-msgstr "有效"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "約束含有效的設定且可以評估"
 
@@ -4075,6 +4071,10 @@ msgstr "約束以相對方式套用於物體的區域座標系統"
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "約束的面板在使用者介面中擴展"
+
+
+msgid "Sub-Target"
+msgstr "子目標"
 
 
 msgid "Target Space"
@@ -4339,10 +4339,6 @@ msgstr "目標通道範圍的最小值"
 
 msgid "Mix Mode"
 msgstr "混合模式"
-
-
-msgid "Sub-Target"
-msgstr "子目標"
 
 
 msgid "Target"
@@ -7086,6 +7082,10 @@ msgstr "格式"
 
 msgid "Surface Format"
 msgstr "表面格式"
+
+
+msgid "Vertex"
+msgstr "頂點"
 
 
 msgid "Image Sequence"
@@ -13851,10 +13851,6 @@ msgid "Compositing nodes"
 msgstr "合成節點"
 
 
-msgid "Simulation"
-msgstr "模擬"
-
-
 msgid "Compositor Node Tree"
 msgstr "合成器節點樹"
 
@@ -17140,6 +17136,10 @@ msgid "Stateless solver computing pose starting from current action and non-IK c
 msgstr "無狀態性解算器會從目前動作與非 IK 約束計開始算姿勢"
 
 
+msgid "Simulation"
+msgstr "模擬"
+
+
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "完態解算器以實時情境執行，會忽略動作與非 IK 約束"
 
@@ -18867,6 +18867,14 @@ msgid "Matte"
 msgstr "遮景片"
 
 
+msgid "Attribute"
+msgstr "特性"
+
+
+msgid "Mesh"
+msgstr "網格"
+
+
 msgid "Node"
 msgstr "節點"
 
@@ -19016,10 +19024,6 @@ msgstr "特殊字元"
 
 msgid "Interpolate"
 msgstr "插補"
-
-
-msgid "Mesh"
-msgstr "網格"
 
 
 msgid "Edge Data"
@@ -25054,6 +25058,10 @@ msgid "Int"
 msgstr "整數"
 
 
+msgid "Object Info"
+msgstr "物體資訊"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "框幀"
@@ -25097,10 +25105,6 @@ msgstr "材質著色器節點"
 
 msgid "Add Shader"
 msgstr "添加著色器"
-
-
-msgid "Attribute"
-msgstr "特性"
 
 
 msgid "Attribute Name"
@@ -25277,10 +25281,6 @@ msgstr "世界空間法向映射，與 Blender 算繪烘焙相容"
 
 msgid "UV Map for tangent space maps"
 msgstr "切線空間映射的 UV 映射"
-
-
-msgid "Object Info"
-msgstr "物體資訊"
 
 
 msgid "Cycles"
@@ -28508,10 +28508,6 @@ msgid "Set as Background"
 msgstr "設為背景"
 
 
-msgid "Set current movie clip as a camera background in 3D view-port (works only when a 3D view-port is visible)"
-msgstr "設定目前影片剪輯為 3D 視接口 (僅當 3D 視接口可見時能作用) 中的攝影機背景"
-
-
 msgctxt "Operator"
 msgid "Setup Tracking Scene"
 msgstr "設置追蹤用場景"
@@ -31233,6 +31229,14 @@ msgid "Snap Selection to Grid"
 msgstr "吸附選取項至格線"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgid "Confirm on Release"
 msgstr "放開時確認"
 
@@ -31658,10 +31662,6 @@ msgstr "將編輯的影像投影回去物體"
 msgctxt "Operator"
 msgid "Project Edit"
 msgstr "投影編輯"
-
-
-msgid "Edit a snapshot of the view-port in an external image editor"
-msgstr "在外部影像編輯器中編輯視接口的快照"
 
 
 msgctxt "Operator"
@@ -50658,14 +50658,6 @@ msgid "Dash"
 msgstr "虛線"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -54789,11 +54781,6 @@ msgstr "序段器："
 
 
 msgctxt "Operator"
-msgid "Simulation:"
-msgstr "模擬："
-
-
-msgctxt "Operator"
 msgid "Sound:"
 msgstr "聲音："
 
@@ -57179,6 +57166,11 @@ msgstr "相似"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "層級"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "平面"
 
@@ -57360,11 +57352,6 @@ msgstr "物體與資料"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "物體動畫"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "層級"
 
 
 msgctxt "Operator"
@@ -61351,10 +61338,6 @@ msgid "along %s X"
 msgstr "沿 %s X"
 
 
-msgid "locking %s X"
-msgstr "鎖定 %s X"
-
-
 msgid "along Y"
 msgstr "沿 Y"
 
@@ -61363,16 +61346,20 @@ msgid "along %s Y"
 msgstr "沿 %s Y"
 
 
-msgid "locking %s Y"
-msgstr "鎖定 %s Y"
-
-
 msgid "along Z"
 msgstr "沿 Z"
 
 
 msgid "along %s Z"
 msgstr "沿 %s Z"
+
+
+msgid "locking %s X"
+msgstr "鎖定 %s X"
+
+
+msgid "locking %s Y"
+msgstr "鎖定 %s Y"
 
 
 msgid "locking %s Z"

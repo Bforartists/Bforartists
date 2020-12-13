@@ -530,7 +530,11 @@ def create(obj):
     pbone.rotation_mode = 'YXZ'
     pbone.bone.layers = [False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
     try:
-        pbone.rigify_parameters.make_widget = False
+        pbone.rigify_parameters.make_widget = True
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.super_copy_widget_type = "shoulder"
     except AttributeError:
         pass
     pbone = obj.pose.bones[bones['shoulder.R']]
@@ -542,7 +546,11 @@ def create(obj):
     pbone.rotation_mode = 'YXZ'
     pbone.bone.layers = [False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
     try:
-        pbone.rigify_parameters.make_widget = False
+        pbone.rigify_parameters.make_widget = True
+    except AttributeError:
+        pass
+    try:
+        pbone.rigify_parameters.super_copy_widget_type = "shoulder"
     except AttributeError:
         pass
     pbone = obj.pose.bones[bones['breast.L']]

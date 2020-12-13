@@ -359,7 +359,8 @@ def unpack_asset(data):
             image.filepath = fp  # bpy.path.abspath(fp)
             image.filepath_raw = fp  # bpy.path.abspath(fp)
             image.save()
-            image.unpack(method='REMOVE')
+            if len(image.packed_files) > 0:
+                image.unpack(method='REMOVE')
 
     bpy.ops.wm.save_mainfile(compress=False)
     # now try to delete the .blend1 file

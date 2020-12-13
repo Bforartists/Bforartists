@@ -139,19 +139,19 @@ if __name__ == "__main__":
         bpy.context.view_layer.update()
 
         # import blender's HDR here
-        hdr_path = Path('datafiles/studiolights/world/interior.exr')
-        bpath = Path(bpy.utils.resource_path('LOCAL'))
-        ipath = bpath / hdr_path
-        ipath = str(ipath)
+        # hdr_path = Path('datafiles/studiolights/world/interior.exr')
+        # bpath = Path(bpy.utils.resource_path('LOCAL'))
+        # ipath = bpath / hdr_path
+        # ipath = str(ipath)
 
         # this  stuff is for mac and possibly linux. For blender // means relative path.
         # for Mac, // means start of absolute path
-        if ipath.startswith('//'):
-            ipath = ipath[1:]
-
-        img = bpy.data.images['interior.exr']
-        img.filepath = ipath
-        img.reload()
+        # if ipath.startswith('//'):
+        #     ipath = ipath[1:]
+        #
+        # img = bpy.data.images['interior.exr']
+        # img.filepath = ipath
+        # img.reload()
 
         bpy.context.scene.render.resolution_x = int(data['thumbnail_resolution'])
         bpy.context.scene.render.resolution_y = int(data['thumbnail_resolution'])

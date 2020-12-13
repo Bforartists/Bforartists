@@ -2822,9 +2822,9 @@ def appearance_LoadTexture(tex_node, ancestry, node):
 
     if bpyima:  # Loading can still fail
         repeat_s = tex_node.getFieldAsBool('repeatS', True, ancestry)
-        bpyima.use_clight_x = not repeat_s
+        bpyima.use_clamp_x = not repeat_s
         repeat_t = tex_node.getFieldAsBool('repeatT', True, ancestry)
-        bpyima.use_clight_y = not repeat_t
+        bpyima.use_clamp_y = not repeat_t
 
         # Update the desc-based cache
         if desc:

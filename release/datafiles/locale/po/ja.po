@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -13,6 +13,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 1.5.4"
+
+
+msgid "Shader AOV"
+msgstr "シェーダーAOV"
+
+
+msgid "Valid"
+msgstr "有効"
+
+
+msgid "Name"
+msgstr "名前"
+
+
+msgid "Type"
+msgstr "タイプ"
+
+
+msgid "Color"
+msgstr "カラー"
+
+
+msgid "Value"
+msgstr "値"
 
 
 msgid "Action F-Curves"
@@ -153,10 +177,6 @@ msgstr "固定"
 
 msgid "Action group is locked"
 msgstr "アクショングループがロック中です"
-
-
-msgid "Name"
-msgstr "名前"
 
 
 msgid "Select"
@@ -999,12 +1019,12 @@ msgid "Domain of the Attribute"
 msgstr "属性のドメイン"
 
 
-msgid "Vertex"
-msgstr "頂点"
+msgid "Point"
+msgstr "ポイント"
 
 
-msgid "Attribute on mesh vertex"
-msgstr "メッシュ頂点の属性"
+msgid "Attribute on point"
+msgstr "ポイント上の属性"
 
 
 msgid "Edge"
@@ -1029,14 +1049,6 @@ msgstr "ポリゴン"
 
 msgid "Attribute on mesh polygons"
 msgstr "メッシュポリゴンの属性"
-
-
-msgid "Point"
-msgstr "ポイント"
-
-
-msgid "Attribute on point"
-msgstr "ポイント上の属性"
 
 
 msgid "Curve"
@@ -1261,10 +1273,6 @@ msgstr "直接照明"
 
 msgid "Indirect"
 msgstr "間接照明"
-
-
-msgid "Color"
-msgstr "カラー"
 
 
 msgid "Diffuse"
@@ -2173,10 +2181,6 @@ msgstr "ボイドルール"
 
 msgid "Boid rule name"
 msgstr "ボイドルール名"
-
-
-msgid "Type"
-msgstr "タイプ"
 
 
 msgid "Goal"
@@ -3715,10 +3719,6 @@ msgstr "強さのランダム係数"
 
 msgid "Randomness factor strength in new strokes"
 msgstr "新規ストロークの強さのランダム係数"
-
-
-msgid "Value"
-msgstr "値"
 
 
 msgid "Random factor to modify original value"
@@ -5448,10 +5448,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "コンストレイントはこのプロキシインスタンスに追加されました（つまり元のアーマチュアには追加されていません）"
 
 
-msgid "Valid"
-msgstr "有効"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "コンストレイントは有効な設定を持ち、評価することができます"
 
@@ -5510,6 +5506,14 @@ msgstr "コンストレイントがオブジェクトのローカル座標系を
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "コンストレイントパネルを折り畳みします"
+
+
+msgid "Sub-Target"
+msgstr "サブターゲット"
+
+
+msgid "Armature bone, mesh or lattice vertex group, ..."
+msgstr "アーマチュアボーンやメッシュ、ラティス頂点グループなど…"
 
 
 msgid "Target Space"
@@ -5823,14 +5827,6 @@ msgstr ""
 "仮想の子に完全な継承スケールを適用するかのように、\n"
 "オリジナルのトランスフォームの後にアクションチャンネルを適用します。\n"
 "このモードはせん断ができる可能性があり、後方互換性用にのみ提供されます"
-
-
-msgid "Sub-Target"
-msgstr "サブターゲット"
-
-
-msgid "Armature bone, mesh or lattice vertex group, ..."
-msgstr "アーマチュアボーンやメッシュ、ラティス頂点グループなど…"
 
 
 msgid "Target"
@@ -9567,6 +9563,10 @@ msgstr "フォーマット"
 
 msgid "Surface Format"
 msgstr "サーフェス形式"
+
+
+msgid "Vertex"
+msgstr "頂点"
 
 
 msgid "Image Sequence"
@@ -22546,14 +22546,6 @@ msgid "Compositing nodes"
 msgstr "コンポジットノード"
 
 
-msgid "Simulation"
-msgstr "シミュレーション"
-
-
-msgid "Simulation nodes"
-msgstr "シミュレーションノード"
-
-
 msgid "Compositor Node Tree"
 msgstr "コンポジットノードツリー"
 
@@ -22696,14 +22688,6 @@ msgstr "シェーダーノードツリー"
 
 msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
 msgstr "マテリアル(とその他シェーディングデータブロック)で使用されるノードからなるノードツリー"
-
-
-msgid "Simulation Node Tree"
-msgstr "シミュレーションノードツリー"
-
-
-msgid "Node tree consisting of linked nodes used for simulations"
-msgstr "シミュレーションに使用される、ノードのリンクからなるノードツリー"
 
 
 msgid "Texture Node Tree"
@@ -26792,6 +26776,10 @@ msgid "Stateless solver computing pose starting from current action and non-IK c
 msgstr "非IK コンストレイントの現在のアクションからポーズを計算するステートレスソルバー"
 
 
+msgid "Simulation"
+msgstr "シミュレーション"
+
+
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "リアルタイムコンテクストで実行し、アクションと非 IK コンストレイントを無視するステートフルソルバー"
 
@@ -30659,6 +30647,14 @@ msgid "Matte"
 msgstr "マット"
 
 
+msgid "Attribute"
+msgstr "属性"
+
+
+msgid "Mesh"
+msgstr "メッシュ"
+
+
 msgid "Node Context Menu"
 msgstr "ノードコンテクストメニュー"
 
@@ -30888,10 +30884,6 @@ msgstr "補間"
 
 msgid "Lattice Context Menu"
 msgstr "ラティスコンテクストメニュー"
-
-
-msgid "Mesh"
-msgstr "メッシュ"
 
 
 msgid "Edge Data"
@@ -34934,10 +34926,6 @@ msgstr "原点"
 
 msgid "Offset the origin and orientation of the deformation"
 msgstr "変形の原点と方向のオフセット"
-
-
-msgid "Simulation Modifier"
-msgstr "シミュレーションモディファイアー"
 
 
 msgid "Skin Modifier"
@@ -39858,6 +39846,10 @@ msgid "Int"
 msgstr "Int"
 
 
+msgid "Object Info"
+msgstr "オブジェクト情報"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "フレーム"
@@ -39917,10 +39909,6 @@ msgstr "AO計算時、オブジェクト自身のみ考慮します"
 
 msgid "Number of rays to trace per shader evaluation"
 msgstr "シェーダー評価毎にトレースするレイの数"
-
-
-msgid "Attribute"
-msgstr "属性"
 
 
 msgid "Attribute Name"
@@ -40251,10 +40239,6 @@ msgstr "ワールド空間ノーマルマッピング、Blenderのレンダー�
 
 msgid "UV Map for tangent space maps"
 msgstr "タンジェント空間マップ用のUVマップ"
-
-
-msgid "Object Info"
-msgstr "オブジェクト情報"
 
 
 msgid "AOV Output"
@@ -41187,10 +41171,6 @@ msgstr "ピクセルサイズ"
 
 msgid "Use screen pixel size instead of world units"
 msgstr "ワールド単位ではなくスクリーンのピクセルサイズを使用します"
-
-
-msgid "Simulation Node"
-msgstr "シミュレーションノード"
 
 
 msgid "Texture Node"
@@ -44629,10 +44609,6 @@ msgstr "設定するキーフレーム"
 msgctxt "Operator"
 msgid "Set as Background"
 msgstr "背景として設定"
-
-
-msgid "Set current movie clip as a camera background in 3D view-port (works only when a 3D view-port is visible)"
-msgstr "現在の動画クリップを3Dビューのカメラ背景に設定します（3Dビューが表示されている時のみ動作）"
 
 
 msgctxt "Operator"
@@ -49965,6 +49941,14 @@ msgid "Switch Tint colors"
 msgstr "チントカラーを切り替えます"
 
 
+msgid "Black"
+msgstr "黒"
+
+
+msgid "White"
+msgstr "白"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "ストロークフィルをトランスフォーム"
@@ -50729,10 +50713,6 @@ msgstr "編集した画像をオブジェクトに投影します"
 msgctxt "Operator"
 msgid "Project Edit"
 msgstr "投影の編集"
-
-
-msgid "Edit a snapshot of the view-port in an external image editor"
-msgstr "ビューのスナップショットを外部画像エディターで編集します"
 
 
 msgctxt "Operator"
@@ -65151,17 +65131,6 @@ msgstr "シーケンサープレビューのズーム率の変更"
 
 
 msgctxt "Operator"
-msgid "New Simulation"
-msgstr "新規シミュレーション"
-
-
-msgid "Create a new simulation data block and edit it in the opened simulation editor"
-msgstr ""
-"新規シミュレーションデータブロックを作成し\n"
-"開いているシミュレーションエディターで編集します"
-
-
-msgctxt "Operator"
 msgid "Update Animation Cache"
 msgstr "アニメーションキャッシュ更新"
 
@@ -71459,10 +71428,6 @@ msgid "Passes"
 msgstr "パス"
 
 
-msgid "Shader AOV"
-msgstr "シェーダーAOV"
-
-
 msgid "Performance"
 msgstr "パフォーマンス"
 
@@ -74626,28 +74591,12 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "開発者向けの Cycles デバッグオプションを有効にします"
 
 
-msgid "New Geometry Nodes"
-msgstr "新規ジオメトリノード"
-
-
-msgid "Enable the new geometry nodes system in the ui"
-msgstr "UI で新しいジオメトリノードシステムを有効にします"
-
-
 msgid "New Hair Type"
 msgstr "新しいヘアータイプ"
 
 
 msgid "Enable the new hair type in the ui"
 msgstr "UI で新しいヘアータイプを有効にします"
-
-
-msgid "New Point Cloud Type"
-msgstr "新規ポイントクラウドタイプ"
-
-
-msgid "Enable the new point cloud type in the ui"
-msgstr "UI で新しいポイントクラウドタイプを有効にします"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -76996,22 +76945,6 @@ msgid "Denoise the indirect transmission lighting"
 msgstr "間接伝播ライティングのノイズを除去します"
 
 
-msgid "Cryptomatte Accurate"
-msgstr "Cryptomatteの精度"
-
-
-msgid "Generate a more accurate Cryptomatte pass. CPU only, may render slower and use more memory"
-msgstr "より高精度の Cryptomatte パスを生成します。CPU のみで、レンダリング速度が低下しメモリ消費量が増えます"
-
-
-msgid "Cryptomatte Levels"
-msgstr "Cryptomatteレベル"
-
-
-msgid "Sets how many unique objects can be distinguished per pixel"
-msgstr "ピクセル毎にどれぐらい多くのユニークオブジェクトを区別できるかを設定します"
-
-
 msgid "Debug BVH Intersections"
 msgstr "デバッグ用BVH交差数"
 
@@ -77066,36 +76999,6 @@ msgstr "デノイズを使用"
 
 msgid "Denoise the rendered image"
 msgstr "レンダリング画像のノイズを除去します"
-
-
-msgid "Cryptomatte Asset"
-msgstr "Cryptomatteアセット"
-
-
-msgid "Render cryptomatte asset pass, for isolating groups of objects with the same parent"
-msgstr ""
-"Cryptomatte アセットパスをレンダリングします\n"
-"（同じ親を持つオブジェクトの孤立化用）"
-
-
-msgid "Cryptomatte Material"
-msgstr "Cryptomatteマテリアル"
-
-
-msgid "Render cryptomatte material pass, for isolating materials in compositing"
-msgstr ""
-"Cryptomatte マテリアルパスをレンダリングします\n"
-"（コンポジティングでのマテリアルの孤立化用）"
-
-
-msgid "Cryptomatte Object"
-msgstr "Cryptomatteオブジェクト"
-
-
-msgid "Render cryptomatte object pass, for isolating objects in compositing"
-msgstr ""
-"Cryptomatte オブジェクトパスをレンダリングします\n"
-"（コンポジティングでのオブジェクトの孤立化用）"
 
 
 msgid "Volume Direct"
@@ -83042,16 +82945,8 @@ msgid "Display dashed black-white edges"
 msgstr "黒と白の点線を表示します"
 
 
-msgid "Black"
-msgstr "黒"
-
-
 msgid "Display black edges"
 msgstr "黒いエッジを表示します"
-
-
-msgid "White"
-msgstr "白"
 
 
 msgid "Display white edges"
@@ -84093,10 +83988,6 @@ msgstr "ラインスタイルのシェーダノードを編集"
 
 msgid "Use active Viewer Node output as backdrop for compositing nodes"
 msgstr "アクティブビューアーノードの出力を背景画像として使用します"
-
-
-msgid "Simulation that is being edited"
-msgstr "編集中のシミュレーション"
 
 
 msgid "Texture Type"
@@ -89580,6 +89471,14 @@ msgid "Z, Index, normal, UV and vector passes are only affected by surfaces with
 msgstr "このしきい値以上のアルファ透過のサーフェスの Z、インデックス、ノーマル、UV、ベクトルパスのみ影響を受けます"
 
 
+msgid "Cryptomatte Levels"
+msgstr "Cryptomatteレベル"
+
+
+msgid "Sets how many unique objects can be distinguished per pixel"
+msgstr "ピクセル毎にどれぐらい多くのユニークオブジェクトを区別できるかを設定します"
+
+
 msgid "Override number of render samples for this view layer, 0 will use the scene setting"
 msgstr "このビューレイヤーのレンダーサンプル数をオーバーライドします。0 でシーン設定を使用します"
 
@@ -89590,6 +89489,40 @@ msgstr "このビューレイヤーのレンダリングをON/OFFします"
 
 msgid "Render stylized strokes in this Layer"
 msgstr "このレイヤーのFreesyleストロークをレンダリングします"
+
+
+msgid "Cryptomatte Accurate"
+msgstr "Cryptomatteの精度"
+
+
+msgid "Cryptomatte Asset"
+msgstr "Cryptomatteアセット"
+
+
+msgid "Render cryptomatte asset pass, for isolating groups of objects with the same parent"
+msgstr ""
+"Cryptomatte アセットパスをレンダリングします\n"
+"（同じ親を持つオブジェクトの孤立化用）"
+
+
+msgid "Cryptomatte Material"
+msgstr "Cryptomatteマテリアル"
+
+
+msgid "Render cryptomatte material pass, for isolating materials in compositing"
+msgstr ""
+"Cryptomatte マテリアルパスをレンダリングします\n"
+"（コンポジティングでのマテリアルの孤立化用）"
+
+
+msgid "Cryptomatte Object"
+msgstr "Cryptomatteオブジェクト"
+
+
+msgid "Render cryptomatte object pass, for isolating objects in compositing"
+msgstr ""
+"Cryptomatte オブジェクトパスをレンダリングします\n"
+"（コンポジティングでのオブジェクトの孤立化用）"
 
 
 msgid "Deliver bloom pass"
@@ -90376,11 +90309,6 @@ msgstr "スカルプト:"
 msgctxt "Operator"
 msgid "Sequencer:"
 msgstr "シーケンサー:"
-
-
-msgctxt "Operator"
-msgid "Simulation:"
-msgstr "シミュレーション:"
 
 
 msgctxt "Operator"
@@ -91214,14 +91142,6 @@ msgstr "レンダリング時間"
 
 msgid "Sample Count"
 msgstr "サンプル数"
-
-
-msgid "Asset"
-msgstr "アセット"
-
-
-msgid "Accurate Mode"
-msgstr "高精度モード"
 
 
 msgid "Feature Strength"
@@ -93554,6 +93474,14 @@ msgstr "伝播"
 
 msgid "Scatter"
 msgstr "散乱"
+
+
+msgid "Asset"
+msgstr "アセット"
+
+
+msgid "Accurate Mode"
+msgstr "高精度モード"
 
 
 msgid "Unknown add-ons"
@@ -95990,6 +95918,21 @@ msgstr "類似"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "レベル"
+
+
+msgctxt "Operator"
+msgid "Hue Saturation Value"
+msgstr "HSV(色相/彩度/輝度)"
+
+
+msgctxt "Operator"
+msgid "Bright/Contrast"
+msgstr "輝度/コントラスト"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "平面"
 
@@ -96087,6 +96030,11 @@ msgstr "OpenVDBをインポート..."
 msgctxt "Operator"
 msgid "Empty"
 msgstr "エンプティ"
+
+
+msgctxt "Operator"
+msgid "Point Cloud"
+msgstr "ポイントクラウド"
 
 
 msgctxt "Operator"
@@ -96221,21 +96169,6 @@ msgstr "マテリアル"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "オブジェクトアニメーション"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "レベル"
-
-
-msgctxt "Operator"
-msgid "Hue Saturation Value"
-msgstr "HSV(色相/彩度/輝度)"
-
-
-msgctxt "Operator"
-msgid "Bright/Contrast"
-msgstr "輝度/コントラスト"
 
 
 msgctxt "Operator"
@@ -96960,11 +96893,6 @@ msgstr "頂点カラー"
 msgctxt "Operator"
 msgid "Hair"
 msgstr "ヘアー"
-
-
-msgctxt "Operator"
-msgid "Point Cloud"
-msgstr "ポイントクラウド"
 
 
 msgctxt "Operator"
@@ -104486,10 +104414,6 @@ msgid "along %s X"
 msgstr "%sX軸上"
 
 
-msgid "locking %s X"
-msgstr "%sX軸を固定"
-
-
 msgid "along Y"
 msgstr "Y軸上"
 
@@ -104498,16 +104422,20 @@ msgid "along %s Y"
 msgstr "%sY軸上"
 
 
-msgid "locking %s Y"
-msgstr "%sY軸を固定"
-
-
 msgid "along Z"
 msgstr "Z軸上"
 
 
 msgid "along %s Z"
 msgstr "%sZ軸上"
+
+
+msgid "locking %s X"
+msgstr "%sX軸を固定"
+
+
+msgid "locking %s Y"
+msgstr "%sY軸を固定"
 
 
 msgid "locking %s Z"

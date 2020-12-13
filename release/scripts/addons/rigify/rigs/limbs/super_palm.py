@@ -26,7 +26,7 @@ from itertools import count, repeat
 
 from rigify.utils.rig import is_rig_base_bone
 from rigify.utils.naming import strip_org, make_derived_name, choose_derived_bone
-from rigify.utils.widgets import create_widget
+from rigify.utils.widgets import widget_generator, register_widget
 from rigify.utils.widgets_basic import create_bone_widget
 from rigify.utils.misc import map_list
 
@@ -147,43 +147,7 @@ class Rig(BaseRig):
             self.make_control_widget(self.bones.ctrl.secondary)
 
     def make_control_widget(self, ctrl):
-        w = create_widget(self.obj, ctrl)
-        if w is not None:
-            mesh = w.data
-            verts = [
-                (0.1578, 0.0, -0.3),
-                (0.1578, 1.0, -0.2),
-                (-0.1578, 1.0, -0.2),
-                (-0.1578, -0.0, -0.3),
-                (-0.1578, -0.0, 0.3),
-                (-0.1578, 1.0, 0.2),
-                (0.1578, 1.0, 0.2),
-                (0.1578, 0.0, 0.3),
-                (0.1578, 0.25, -0.275),
-                (-0.1578, 0.25, -0.275),
-                (0.1578, 0.75, -0.225),
-                (-0.1578, 0.75, -0.225),
-                (0.1578, 0.75, 0.225),
-                (0.1578, 0.25, 0.275),
-                (-0.1578, 0.25, 0.275),
-                (-0.1578, 0.75, 0.225),
-                ]
-
-            if 'Z' in self.palm_rotation_axis:
-                # Flip x/z coordinates
-                verts = [v[::-1] for v in verts]
-
-            edges = [
-                (1, 2), (0, 3), (4, 7), (5, 6),
-                (8, 0), (9, 3), (10, 1), (11, 2),
-                (12, 6), (13, 7), (4, 14), (15, 5),
-                (10, 8), (11, 9), (15, 14), (12, 13),
-                ]
-            mesh.from_pydata(verts, edges, [])
-            mesh.update()
-
-            mod = w.modifiers.new("subsurf", 'SUBSURF')
-            mod.levels = 2
+        make_palm_widget(self.obj, ctrl, axis=self.palm_rotation_axis, radius=0.4)
 
     ####################################################
     # FK controls
@@ -352,6 +316,27 @@ class Rig(BaseRig):
         r.prop(params, "palm_rotation_axis", text="")
         layout.prop(params, "palm_both_sides")
         layout.prop(params, "make_extra_control", text="Extra FK Controls")
+
+
+@widget_generator(register="palm", subsurf=2)
+def make_palm_widget(geom, axis='X', radius=0.5):
+    sx = radius / 0.4
+    sz = radius / 0.3
+    v = [(0.1578, 0.0, -0.3), (0.1578, 1.0, -0.2), (-0.1578, 1.0, -0.2), (-0.1578, -0.0, -0.3),
+         (-0.1578, -0.0, 0.3), (-0.1578, 1.0, 0.2), (0.1578, 1.0, 0.2), (0.1578, 0.0, 0.3),
+         (0.1578, 0.25, -0.275), (-0.1578, 0.25, -0.275), (0.1578, 0.75, -0.225), (-0.1578, 0.75, -0.225),
+         (0.1578, 0.75, 0.225), (0.1578, 0.25, 0.275), (-0.1578, 0.25, 0.275), (-0.1578, 0.75, 0.225)]
+
+    geom.verts = [(x*sx, y, z*sz) for x,y,z in v]
+
+    if 'Z' in axis:
+        # Flip x/z coordinates
+        geom.verts = [v[::-1] for v in geom.verts]
+
+    geom.edges = [(1, 2), (0, 3), (4, 7), (5, 6), (8, 0), (9, 3), (10, 1), (11, 2), (12, 6),
+                  (13, 7), (4, 14), (15, 5), (10, 8), (11, 9), (15, 14), (12, 13)]
+
+register_widget("palm_z", make_palm_widget, axis='Z')
 
 
 def create_sample(obj):
