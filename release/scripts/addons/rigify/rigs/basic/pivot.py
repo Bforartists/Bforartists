@@ -24,7 +24,8 @@ from ...base_rig import BaseRig
 
 from ...utils.naming import make_derived_name
 from ...utils.bones import set_bone_widget_transform
-from ...utils.widgets_basic import create_cube_widget, create_pivot_widget
+from ...utils.widgets import layout_widget_dropdown, create_registered_widget
+from ...utils.widgets_basic import create_pivot_widget
 from ...utils.switch_parent import SwitchParentBuilder
 
 
@@ -135,7 +136,7 @@ class Rig(BaseRig):
         if self.make_control:
             set_bone_widget_transform(self.obj, self.bones.ctrl.master, self.bones.org)
 
-            create_cube_widget(self.obj, self.bones.ctrl.master, radius=0.5)
+            create_registered_widget(self.obj, self.bones.ctrl.master, self.params.pivot_master_widget_type or 'cube')
 
 
     @classmethod
@@ -144,6 +145,12 @@ class Rig(BaseRig):
             name        = "Control",
             default     = True,
             description = "Create a control bone for the copy"
+        )
+
+        params.pivot_master_widget_type = bpy.props.StringProperty(
+            name        = "Widget Type",
+            default     = 'cube',
+            description = "Choose the type of the widget to create"
         )
 
         params.make_parent_switch = bpy.props.BoolProperty(
@@ -183,6 +190,8 @@ class Rig(BaseRig):
         r.prop(params, "make_extra_control", text="Master Control")
 
         if params.make_extra_control:
+            layout_widget_dropdown(layout, params, "pivot_master_widget_type")
+
             layout.prop(params, "make_parent_switch")
             layout.prop(params, "register_parent")
 

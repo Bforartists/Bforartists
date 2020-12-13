@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -16,6 +16,22 @@ msgstr ""
 "X-Poedit-Country: INDONESIA\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,-1,-1,4"
+
+
+msgid "Name"
+msgstr "Nama"
+
+
+msgid "Type"
+msgstr "Tipe"
+
+
+msgid "Color"
+msgstr "Warna"
+
+
+msgid "Value"
+msgstr "Nilai"
 
 
 msgid "Action Group"
@@ -146,10 +162,6 @@ msgid "Action group is locked"
 msgstr "Hapus"
 
 
-msgid "Name"
-msgstr "Nama"
-
-
 msgid "Select"
 msgstr "Seleksi"
 
@@ -270,10 +282,6 @@ msgid "Object"
 msgstr "Objek"
 
 
-msgid "Color"
-msgstr "Warna"
-
-
 msgid "Transmission"
 msgstr "Orientasi Transformasi"
 
@@ -338,10 +346,6 @@ msgid "Textures"
 msgstr "Tekstur"
 
 
-msgid "Type"
-msgstr "Tipe"
-
-
 msgid "Object to avoid"
 msgstr "Data Objek"
 
@@ -404,10 +408,6 @@ msgstr "Bahan"
 
 msgid "Vertex Color"
 msgstr "Warna Standar"
-
-
-msgid "Value"
-msgstr "Nilai"
 
 
 msgid "Background Image"
@@ -1283,10 +1283,6 @@ msgid "ID Name"
 msgstr "Nama"
 
 
-msgid "Simulation"
-msgstr "lokasi"
-
-
 msgid "Edit Quality"
 msgstr "Modus Sunting"
 
@@ -1645,6 +1641,10 @@ msgstr "Internet:"
 
 msgid "Operator registry"
 msgstr "Kamera"
+
+
+msgid "Simulation"
+msgstr "lokasi"
 
 
 msgid "Reiteration"

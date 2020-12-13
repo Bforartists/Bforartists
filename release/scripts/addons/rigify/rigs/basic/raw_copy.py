@@ -47,10 +47,30 @@ class RelinkConstraintsMixin:
     def relink_bone_constraints(self, bone_name):
         if self.params.relink_constraints:
             for con in self.get_bone(bone_name).constraints:
-                parts = con.name.split('@')
+                self.relink_single_constraint(con)
 
-                if len(parts) > 1:
-                    self.relink_constraint(con, parts[1:])
+
+    relink_unmarked_constraints = False
+
+    def relink_single_constraint(self, con):
+        if self.params.relink_constraints:
+            parts = con.name.split('@')
+
+            if len(parts) > 1:
+                self.relink_constraint(con, parts[1:])
+            elif self.relink_unmarked_constraints:
+                self.relink_constraint(con, [''])
+
+
+    def relink_move_constraints(self, from_bone, to_bone, *, prefix=''):
+        if self.params.relink_constraints:
+            src = self.get_bone(from_bone).constraints
+            dest = self.get_bone(to_bone).constraints
+
+            for con in list(src):
+                if con.name.startswith(prefix):
+                    dest.copy(con)
+                    src.remove(con)
 
 
     def relink_bone_parent(self, bone_name):
@@ -73,13 +93,15 @@ class RelinkConstraintsMixin:
                 self.raise_error("Constraint {} actually has {} targets", con.name, len(con.targets))
 
             for tgt, spec in zip(con.targets, specs):
-                tgt.subtarget = self.find_relink_target(spec, tgt.subtarget)
+                if tgt.target == self.obj:
+                    tgt.subtarget = self.find_relink_target(spec, tgt.subtarget)
 
-        else:
+        elif hasattr(con, 'subtarget'):
             if len(specs) > 1:
                 self.raise_error("Only the Armature constraint can have multiple '@' targets: {}", con.name)
 
-            con.subtarget = self.find_relink_target(specs[0], con.subtarget)
+            if con.target == self.obj:
+                con.subtarget = self.find_relink_target(specs[0], con.subtarget)
 
 
     def find_relink_target(self, spec, old_target):

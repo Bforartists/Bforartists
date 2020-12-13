@@ -213,7 +213,8 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow.use_property_split = False
         flow.prop(view, "show_splash", text="Splash Screen")
         flow.prop(view, "show_tooltips")
-        flow.prop(view, "show_tooltips_python")
+        if view.show_tooltips:
+            flow.prop(view, "show_tooltips_python")
         flow.prop(view, "show_developer_ui")
 
 

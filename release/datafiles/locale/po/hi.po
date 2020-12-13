@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -13,6 +13,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "X-Generator: Poedit 1.6.9"
+
+
+msgid "Valid"
+msgstr "मान्य"
+
+
+msgid "Name"
+msgstr "नाम"
+
+
+msgid "Type"
+msgstr "प्रकार"
+
+
+msgid "Color"
+msgstr "रंग"
+
+
+msgid "Value"
+msgstr "मान"
 
 
 msgid "Action Group"
@@ -137,10 +157,6 @@ msgstr "तालाबंदी"
 
 msgid "Action group is locked"
 msgstr "कार्य समूह अवरोधित है"
-
-
-msgid "Name"
-msgstr "नाम"
 
 
 msgid "Select"
@@ -335,16 +351,12 @@ msgid "Domain"
 msgstr "प्रक्षेत्र"
 
 
-msgid "Vertex"
-msgstr "शिरोबिन्दु"
+msgid "Point"
+msgstr "बिंदु"
 
 
 msgid "Edge"
 msgstr "किनारा"
-
-
-msgid "Point"
-msgstr "बिंदु"
 
 
 msgid "Curve"
@@ -389,10 +401,6 @@ msgstr "कोई नहीं"
 
 msgid "Emit"
 msgstr "स्कंदन"
-
-
-msgid "Color"
-msgstr "रंग"
 
 
 msgid "Diffuse"
@@ -497,10 +505,6 @@ msgstr "पाठ"
 
 msgid "Window Managers"
 msgstr "खिडकी प्रबंधक"
-
-
-msgid "Type"
-msgstr "प्रकार"
 
 
 msgid "Goal"
@@ -681,10 +685,6 @@ msgstr "पुनरूक्तियाँ"
 
 msgid "Hue"
 msgstr "छटा"
-
-
-msgid "Value"
-msgstr "मान"
 
 
 msgid "Background Image"
@@ -886,10 +886,6 @@ msgstr "त्रुटि"
 
 msgid "Influence"
 msgstr "प्रभाव"
-
-
-msgid "Valid"
-msgstr "मान्य"
 
 
 msgid "Copy Location"
@@ -1258,6 +1254,10 @@ msgstr "स्वरूप"
 
 msgid "Surface Format"
 msgstr "सतह स्वरूप"
+
+
+msgid "Vertex"
+msgstr "शिरोबिन्दु"
 
 
 msgid "Image Sequence"
@@ -2905,6 +2905,10 @@ msgid "Matte"
 msgstr "मैट"
 
 
+msgid "Mesh"
+msgstr "जाल"
+
+
 msgid "Node"
 msgstr "ग्रन्थि"
 
@@ -2975,10 +2979,6 @@ msgstr "नाम"
 
 msgid "Bone Roll"
 msgstr "हड्डी पंजी"
-
-
-msgid "Mesh"
-msgstr "जाल"
 
 
 msgid "Face"
@@ -3898,6 +3898,14 @@ msgstr "सीमा"
 
 msgid "Subdivisions"
 msgstr "उप विभाजन"
+
+
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
 
 
 msgid "Highest frequency"
@@ -5231,14 +5239,6 @@ msgstr "खिंचाव"
 
 msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
-
-
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
 
 
 msgctxt "MovieClip"

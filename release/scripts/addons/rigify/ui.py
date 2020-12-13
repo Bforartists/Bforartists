@@ -608,10 +608,10 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
         if rig_name != "":
             try:
                 rig = rig_lists.rigs[rig_name]['module']
-            except (ImportError, AttributeError):
+            except (ImportError, AttributeError, KeyError):
                 row = layout.row()
                 box = row.box()
-                box.label(text="ALERT: type \"%s\" does not exist!" % rig_name)
+                box.label(text="ERROR: type \"%s\" does not exist!" % rig_name, icon='ERROR')
             else:
                 if hasattr(rig.Rig, 'parameters_ui'):
                     rig = rig.Rig
@@ -828,7 +828,7 @@ class Sample(bpy.types.Operator):
             try:
                 rig = rig_lists.rigs[self.metarig_type]["module"]
                 create_sample = rig.create_sample
-            except (ImportError, AttributeError):
+            except (ImportError, AttributeError, KeyError):
                 raise Exception("rig type '" + self.metarig_type + "' has no sample.")
             else:
                 create_sample(context.active_object)
@@ -858,7 +858,7 @@ class EncodeMetarig(bpy.types.Operator):
         else:
             text_block = bpy.data.texts.new(name)
 
-        text = write_metarig(context.active_object, layers=True, func_name="create", groups=True)
+        text = write_metarig(context.active_object, layers=True, func_name="create", groups=True, widgets=True)
         text_block.write(text)
         bpy.ops.object.mode_set(mode='EDIT')
 

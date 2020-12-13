@@ -32,6 +32,7 @@ extern "C" {
 /* internal exports only */
 
 struct ARegion;
+struct bContextDataResult;
 struct EditBone;
 struct ID;
 struct ListBase;
@@ -51,8 +52,8 @@ typedef struct SpaceOutliner_Runtime {
    *  Scenes, Blender File, etc.). */
   struct TreeDisplay *tree_display;
 
-  /** Pointers to treestore elements, grouped by (id, type, nr)
-   *  in hashtable for faster searching */
+  /** Pointers to tree-store elements, grouped by `(id, type, nr)`
+   *  in hash-table for faster searching. */
   struct GHash *treehash;
 } SpaceOutliner_Runtime;
 
@@ -75,6 +76,14 @@ typedef TreeTraversalAction (*TreeTraversalFunc)(struct TreeElement *te, void *c
 
 typedef struct TreeElement {
   struct TreeElement *next, *prev, *parent;
+
+  /**
+   * Handle to the new C++ object (a derived type of base #AbstractTreeElement) that should replace
+   * #TreeElement. Step by step, data should be moved to it and operations based on the type should
+   * become virtual methods of the class hierarchy.
+   */
+  struct TreeElementType *type;
+
   ListBase subtree;
   int xs, ys;                /* Do selection. */
   TreeStoreElem *store_elem; /* Element in tree store. */
@@ -552,6 +561,12 @@ void outliner_tag_redraw_avoid_rebuild_on_open_change(const struct SpaceOutliner
 /* outliner_sync.c ---------------------------------------------- */
 
 void outliner_sync_selection(const struct bContext *C, struct SpaceOutliner *space_outliner);
+
+/* outliner_context.c ------------------------------------------- */
+
+int outliner_context(const struct bContext *C,
+                     const char *member,
+                     struct bContextDataResult *result);
 
 #ifdef __cplusplus
 }

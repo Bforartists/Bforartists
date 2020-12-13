@@ -48,7 +48,7 @@ H3D_CAMERA_FOLLOW = 'CAMERA_FOLLOW_TRANSFORM'
 H3D_VIEW_MATRIX = 'view_matrix'
 
 
-def clight_color(col):
+def clamp_color(col):
     return tuple([max(min(c, 1.0), 0.0) for c in col])
 
 
@@ -372,7 +372,7 @@ def export(file,
             ident_step = ident + (' ' * (-len(ident) + \
             fw('%s<Fog ' % ident)))
             fw('fogType="%s"\n' % ('LINEAR' if (mtype == 'LINEAR') else 'EXPONENTIAL'))
-            fw(ident_step + 'color="%.3f %.3f %.3f"\n' % clight_color(world.horizon_color))
+            fw(ident_step + 'color="%.3f %.3f %.3f"\n' % clamp_color(world.horizon_color))
             fw(ident_step + 'visibilityRange="%.3f"\n' % mparam.depth)
             fw(ident_step + '/>\n')
         else:
@@ -441,7 +441,7 @@ def export(file,
         fw(ident_step + 'radius="%.4f"\n' % radius)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(light.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(light.color))
         fw(ident_step + 'beamWidth="%.4f"\n' % beamWidth)
         fw(ident_step + 'cutOffAngle="%.4f"\n' % cutOffAngle)
         fw(ident_step + 'direction="%.4f %.4f %.4f"\n' % orientation)
@@ -468,7 +468,7 @@ def export(file,
         fw('%s<DirectionalLight ' % ident)))
         fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(light.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(light.color))
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
         fw(ident_step + 'direction="%.4f %.4f %.4f"\n' % orientation)
         fw(ident_step + '/>\n')
@@ -492,7 +492,7 @@ def export(file,
         fw('%s<PointLight ' % ident)))
         fw('DEF=%s\n' % light_id)
         fw(ident_step + 'ambientIntensity="%.4f"\n' % amb_intensity)
-        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clight_color(light.color))
+        fw(ident_step + 'color="%.4f %.4f %.4f"\n' % clamp_color(light.color))
 
         fw(ident_step + 'intensity="%.4f"\n' % intensity)
         fw(ident_step + 'radius="%.4f" \n' % light.distance)
@@ -978,9 +978,9 @@ def export(file,
             ident_step = ident + (' ' * (-len(ident) + \
             fw('%s<Material ' % ident)))
             fw('DEF=%s\n' % material_id)
-            fw(ident_step + 'diffuseColor="%.3f %.3f %.3f"\n' % clight_color(diffuseColor))
-            fw(ident_step + 'specularColor="%.3f %.3f %.3f"\n' % clight_color(specColor))
-            fw(ident_step + 'emissiveColor="%.3f %.3f %.3f"\n' % clight_color(emitColor))
+            fw(ident_step + 'diffuseColor="%.3f %.3f %.3f"\n' % clamp_color(diffuseColor))
+            fw(ident_step + 'specularColor="%.3f %.3f %.3f"\n' % clamp_color(specColor))
+            fw(ident_step + 'emissiveColor="%.3f %.3f %.3f"\n' % clamp_color(emitColor))
             fw(ident_step + 'ambientIntensity="%.3f"\n' % ambient)
             fw(ident_step + 'shininess="%.3f"\n' % shininess)
             fw(ident_step + 'transparency="%s"\n' % transp)
@@ -1307,15 +1307,15 @@ def export(file,
         # XXX World changed a lot in 2.8... For now do minimal get-it-to-work job.
         # ~ blending = world.use_sky_blend, world.use_sky_paper, world.use_sky_real
 
-        # ~ grd_triple = clight_color(world.horizon_color)
-        # ~ sky_triple = clight_color(world.zenith_color)
-        # ~ mix_triple = clight_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
+        # ~ grd_triple = clamp_color(world.horizon_color)
+        # ~ sky_triple = clamp_color(world.zenith_color)
+        # ~ mix_triple = clamp_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
 
         blending = (False, False, False)
 
-        grd_triple = clight_color(world.color)
-        sky_triple = clight_color(world.color)
-        mix_triple = clight_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
+        grd_triple = clamp_color(world.color)
+        sky_triple = clamp_color(world.color)
+        mix_triple = clamp_color((grd_triple[i] + sky_triple[i]) / 2.0 for i in range(3))
 
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<Background ' % ident)))

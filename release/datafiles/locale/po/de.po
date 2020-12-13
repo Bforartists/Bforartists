@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12,6 +12,26 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.2.4"
+
+
+msgid "Valid"
+msgstr "Gültig"
+
+
+msgid "Name"
+msgstr "Name"
+
+
+msgid "Type"
+msgstr "Typ"
+
+
+msgid "Color"
+msgstr "Farbe"
+
+
+msgid "Value"
+msgstr "Wert"
 
 
 msgid "Action Group"
@@ -140,10 +160,6 @@ msgstr "Sperren"
 
 msgid "Action group is locked"
 msgstr "Aktionsgruppe ist gesperrt"
-
-
-msgid "Name"
-msgstr "Name"
 
 
 msgid "Select"
@@ -726,8 +742,8 @@ msgid "Domain"
 msgstr "Wirkungsraum"
 
 
-msgid "Vertex"
-msgstr "Vertex"
+msgid "Point"
+msgstr "Punkt"
 
 
 msgid "Edge"
@@ -740,10 +756,6 @@ msgstr "Ecke"
 
 msgid "Polygon"
 msgstr "Polygon"
-
-
-msgid "Point"
-msgstr "Punkt"
 
 
 msgid "Curve"
@@ -828,10 +840,6 @@ msgstr "Direkt"
 
 msgid "Indirect"
 msgstr "Indirekt"
-
-
-msgid "Color"
-msgstr "Farbe"
 
 
 msgid "Diffuse"
@@ -1580,10 +1588,6 @@ msgstr "Boid-Regeln"
 
 msgid "Boid rule name"
 msgstr "Boid-Regelname"
-
-
-msgid "Type"
-msgstr "Typ"
 
 
 msgid "Goal"
@@ -2558,10 +2562,6 @@ msgid "Saturation"
 msgstr "Sättigung"
 
 
-msgid "Value"
-msgstr "Wert"
-
-
 msgid "Mode Type"
 msgstr "Modustyp"
 
@@ -3299,10 +3299,6 @@ msgid "Influence"
 msgstr "Einfluss"
 
 
-msgid "Valid"
-msgstr "Gültig"
-
-
 msgid "Disable"
 msgstr "Deaktivieren"
 
@@ -3329,6 +3325,10 @@ msgstr "Posenraum"
 
 msgid "Local Space"
 msgstr "Lokaler Raum"
+
+
+msgid "Sub-Target"
+msgstr "Unterziel"
 
 
 msgid "Target Space"
@@ -3461,10 +3461,6 @@ msgstr "Minimaler Wert für Zielkanalspanne"
 
 msgid "Mix Mode"
 msgstr "Mischmodus"
-
-
-msgid "Sub-Target"
-msgstr "Unterziel"
 
 
 msgid "Target"
@@ -5193,6 +5189,10 @@ msgstr "Format"
 
 msgid "Surface Format"
 msgstr "Oberflächenformat"
+
+
+msgid "Vertex"
+msgstr "Vertex"
 
 
 msgid "Image Sequence"
@@ -9474,10 +9474,6 @@ msgid "Compositing nodes"
 msgstr "Compositingknoten"
 
 
-msgid "Simulation"
-msgstr "Simulation"
-
-
 msgid "Compositor Node Tree"
 msgstr "Compositorknotenbaum"
 
@@ -11432,6 +11428,10 @@ msgid "Animation"
 msgstr "Animation"
 
 
+msgid "Simulation"
+msgstr "Simulation"
+
+
 msgid "Reiteration"
 msgstr "Wiederholung"
 
@@ -12367,6 +12367,14 @@ msgid "Matte"
 msgstr "Maske"
 
 
+msgid "Attribute"
+msgstr "Eigenschaft"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
 msgid "Node"
 msgstr "Knoten"
 
@@ -12521,10 +12529,6 @@ msgstr "Interpolieren"
 
 msgid "Lattice Context Menu"
 msgstr "Gitter Kontextmenü"
-
-
-msgid "Mesh"
-msgstr "Mesh"
 
 
 msgid "Edge Data"
@@ -16031,6 +16035,10 @@ msgid "Int"
 msgstr "Int"
 
 
+msgid "Object Info"
+msgstr "Objektinformation"
+
+
 msgid "Label Font Size"
 msgstr "Label-Schriftgröße"
 
@@ -16061,10 +16069,6 @@ msgstr "Material-Shaderknoten"
 
 msgid "Add Shader"
 msgstr "Shader hinzufügen"
-
-
-msgid "Attribute"
-msgstr "Eigenschaft"
 
 
 msgid "Attribute Name"
@@ -16201,10 +16205,6 @@ msgstr "Blender-Objektraum"
 
 msgid "UV Map for tangent space maps"
 msgstr "Alphabuffer für transparente Flächen verwenden"
-
-
-msgid "Object Info"
-msgstr "Objektinformation"
 
 
 msgid "Cycles"
@@ -18050,10 +18050,6 @@ msgid "Set as Background"
 msgstr "Als Hintergrund setzen"
 
 
-msgid "Set current movie clip as a camera background in 3D view-port (works only when a 3D view-port is visible)"
-msgstr "Aktiven Filmclip als Kamerahintergrund im 3D-Ansichtsfenster festlegen (Funktioniert nur, wenn das 3D-Ansichtsfenster sichtbar ist)"
-
-
 msgctxt "Operator"
 msgid "Setup Tracking Scene"
 msgstr "Verfolgerszene einrichten"
@@ -19546,6 +19542,14 @@ msgstr "Auswahl an Cursor einrasten"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Auswahl an Raster einrasten"
+
+
+msgid "Black"
+msgstr "Schwarz"
+
+
+msgid "White"
+msgstr "Weiß"
 
 
 msgid "Confirm on Release"
@@ -31179,14 +31183,6 @@ msgid "Dash"
 msgstr "Gepunktet"
 
 
-msgid "Black"
-msgstr "Schwarz"
-
-
-msgid "White"
-msgstr "Weiß"
-
-
 msgid "Overlay Mode"
 msgstr "Überlagerungsmodus"
 
@@ -33908,10 +33904,6 @@ msgid "Render Time"
 msgstr "Renderzeit"
 
 
-msgid "Asset"
-msgstr "Asset"
-
-
 msgid "No output node"
 msgstr "Kein Ausgabeknoten"
 
@@ -34496,6 +34488,10 @@ msgstr "In Datei exportieren"
 
 msgid "Dimension"
 msgstr "Dimension"
+
+
+msgid "Asset"
+msgstr "Asset"
 
 
 msgid "B/W"
@@ -37901,10 +37897,6 @@ msgid "along %s X"
 msgstr "entlang %s X"
 
 
-msgid "locking %s X"
-msgstr "sperre %s X"
-
-
 msgid "along Y"
 msgstr "entlang Y"
 
@@ -37913,16 +37905,20 @@ msgid "along %s Y"
 msgstr "entlang %s Y"
 
 
-msgid "locking %s Y"
-msgstr "sperre %s Y"
-
-
 msgid "along Z"
 msgstr "entlang Z"
 
 
 msgid "along %s Z"
 msgstr "entlang %s Z"
+
+
+msgid "locking %s X"
+msgstr "sperre %s X"
+
+
+msgid "locking %s Y"
+msgstr "sperre %s Y"
 
 
 msgid "locking %s Z"

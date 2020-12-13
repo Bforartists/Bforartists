@@ -485,6 +485,9 @@ class BlenderKitCommonSearchProps(object):
                                default=True
                                )
 
+    unrated_only: BoolProperty(name="Unrated only", description="Show only unrated models",
+                               default=False, update=search.search_update)
+
 
 def name_update(self, context):
     ''' checks for name change, because it decides if whole asset has to be re-uploaded. Name is stored in the blend file
@@ -967,7 +970,7 @@ class BlenderKitModelUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
         update=autothumb.update_upload_model_preview)
 
     thumbnail_background_lightness: FloatProperty(name="Thumbnail Background Lightness",
-                                                  description="set to make your material stand out", default=.9,
+                                                  description="set to make your material stand out", default=1.0,
                                                   min=0.01, max=10)
 
     thumbnail_angle: EnumProperty(
@@ -1270,6 +1273,7 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
 
     free_only: BoolProperty(name="Free only", description="Show only free models",
                             default=False, update=search.search_update)
+
 
     # CONDITION
     search_condition: EnumProperty(
