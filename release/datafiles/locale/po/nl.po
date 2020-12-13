@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -12,6 +12,18 @@ msgstr ""
 "Last-Translator: \n"
 "Language-Team: \n"
 "X-Generator: Poedit 1.8.4"
+
+
+msgid "Name"
+msgstr "Naam"
+
+
+msgid "Type"
+msgstr "Type"
+
+
+msgid "Color"
+msgstr "Kleur"
 
 
 msgid "Action Group"
@@ -48,10 +60,6 @@ msgstr "Vergrendelen"
 
 msgid "Action group is locked"
 msgstr "Actie groep is vergrendeld"
-
-
-msgid "Name"
-msgstr "Naam"
 
 
 msgid "Select"
@@ -150,16 +158,12 @@ msgid "Vector"
 msgstr "Punt"
 
 
-msgid "Vertex"
+msgid "Point"
 msgstr "Punt"
 
 
 msgid "Edge"
 msgstr "Rand"
-
-
-msgid "Point"
-msgstr "Punt"
 
 
 msgid "Curve"
@@ -184,10 +188,6 @@ msgstr "-Y"
 
 msgid "Object"
 msgstr "Object"
-
-
-msgid "Color"
-msgstr "Kleur"
 
 
 msgid "Split Materials"
@@ -216,10 +216,6 @@ msgstr "Vetkrijt"
 
 msgid "Lights"
 msgstr "Lichten"
-
-
-msgid "Type"
-msgstr "Type"
 
 
 msgid "Speed"
@@ -465,6 +461,10 @@ msgstr "Versnelling"
 
 msgid "Output image resolution"
 msgstr "Resolutie uitvoer afbeelding"
+
+
+msgid "Vertex"
+msgstr "Punt"
 
 
 msgid "Group"

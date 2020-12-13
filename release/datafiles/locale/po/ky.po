@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -17,16 +17,28 @@ msgstr ""
 "X-Generator: Poedit 1.5.4"
 
 
+msgid "Name"
+msgstr "Аты"
+
+
+msgid "Type"
+msgstr "Түрү"
+
+
+msgid "Color"
+msgstr "Түс"
+
+
+msgid "Value"
+msgstr "Мааниси"
+
+
 msgid "Channels"
 msgstr "Каналдар"
 
 
 msgid "Colors"
 msgstr "Түстөр"
-
-
-msgid "Name"
-msgstr "Аты"
 
 
 msgid "Select"
@@ -121,10 +133,6 @@ msgid "Data Type"
 msgstr "Маалыматтар түрү"
 
 
-msgid "Vertex"
-msgstr "Чоку"
-
-
 msgid "Edge"
 msgstr "Кыр"
 
@@ -171,10 +179,6 @@ msgstr "Жок"
 
 msgid "Emit"
 msgstr "Жаркыроосу"
-
-
-msgid "Color"
-msgstr "Түс"
 
 
 msgid "Clear"
@@ -257,10 +261,6 @@ msgid "Worlds"
 msgstr "Дүйнөлөр"
 
 
-msgid "Type"
-msgstr "Түрү"
-
-
 msgid "Speed"
 msgstr "Ылдамдыгы"
 
@@ -327,10 +327,6 @@ msgstr "Тегиз"
 
 msgid "Draw"
 msgstr "Тартуу"
-
-
-msgid "Value"
-msgstr "Мааниси"
 
 
 msgid "Background Image"
@@ -628,6 +624,10 @@ msgstr "UV-текстура"
 
 msgid "Texture"
 msgstr "Текстура"
+
+
+msgid "Vertex"
+msgstr "Чоку"
 
 
 msgid "Anti-Aliasing"
@@ -1439,6 +1439,10 @@ msgid "Edit"
 msgstr "Оңдоо"
 
 
+msgid "Mesh"
+msgstr "Политор"
+
+
 msgid "Node"
 msgstr "Түйүн"
 
@@ -1473,10 +1477,6 @@ msgstr "Импорттоо"
 
 msgid "Help"
 msgstr "Жардам"
-
-
-msgid "Mesh"
-msgstr "Политор"
 
 
 msgid "Face"
@@ -2048,6 +2048,14 @@ msgstr "Текстти коюу"
 
 msgid "Eraser"
 msgstr "Өчүргүч"
+
+
+msgid "Black"
+msgstr "Кара"
+
+
+msgid "White"
+msgstr "Ак"
 
 
 msgctxt "Operator"
@@ -3060,14 +3068,6 @@ msgstr "Сфера өлчөмү"
 
 msgid "Gravitation"
 msgstr "Тартыш"
-
-
-msgid "Black"
-msgstr "Кара"
-
-
-msgid "White"
-msgstr "Ак"
 
 
 msgid "Show Seconds"

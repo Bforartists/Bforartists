@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -12,6 +12,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Country: TURKEY"
+
+
+msgid "Name"
+msgstr "İsim"
+
+
+msgid "Type"
+msgstr "Kesme Biçimi "
+
+
+msgid "Color"
+msgstr "Renk"
+
+
+msgid "Value"
+msgstr "Değer"
 
 
 msgid "Action Group"
@@ -48,10 +64,6 @@ msgstr "Kilit"
 
 msgid "Action group is locked"
 msgstr "Gruba ekle"
-
-
-msgid "Name"
-msgstr "İsim"
 
 
 msgid "Select"
@@ -318,16 +330,12 @@ msgid "Domain"
 msgstr "Alan"
 
 
-msgid "Vertex"
-msgstr "Nokta:"
+msgid "Point"
+msgstr "Nokta"
 
 
 msgid "Edge"
 msgstr "Kenar"
-
-
-msgid "Point"
-msgstr "Nokta"
 
 
 msgid "Curve"
@@ -368,10 +376,6 @@ msgstr "Yönü Çevir"
 
 msgid "Indirect"
 msgstr "Dolaylı"
-
-
-msgid "Color"
-msgstr "Renk"
 
 
 msgid "Diffuse"
@@ -524,10 +528,6 @@ msgstr "Blender Oyun"
 
 msgid "Boid rule name"
 msgstr "İşareti (Tekrar) Adlandır"
-
-
-msgid "Type"
-msgstr "Kesme Biçimi "
 
 
 msgid "Separate"
@@ -904,10 +904,6 @@ msgstr "Hue"
 
 msgid "Saturation"
 msgstr "Doygunluk"
-
-
-msgid "Value"
-msgstr "Değer"
 
 
 msgid "Background Image"
@@ -1287,6 +1283,10 @@ msgid "Local Space"
 msgstr "Yerel Bakış"
 
 
+msgid "Sub-Target"
+msgstr "Hedef değişkeni sil"
+
+
 msgid "Target Space"
 msgstr "Space Handler Scripts"
 
@@ -1385,10 +1385,6 @@ msgstr "Bitiş Zamanı"
 
 msgid "Mix Mode"
 msgstr "Düzenleme Modu"
-
-
-msgid "Sub-Target"
-msgstr "Hedef değişkeni sil"
 
 
 msgid "Target"
@@ -2613,6 +2609,10 @@ msgstr "Biçim"
 
 msgid "Surface Format"
 msgstr "NURBS Yüzey"
+
+
+msgid "Vertex"
+msgstr "Nokta:"
 
 
 msgid "Image Sequence"
@@ -4988,10 +4988,6 @@ msgid "Compositing nodes"
 msgstr "Kompozisyon düğümleri"
 
 
-msgid "Simulation"
-msgstr "Akışkan Simülasyonu"
-
-
 msgid "Chunksize"
 msgstr "Ekstrüzyon Boyutu"
 
@@ -6285,6 +6281,10 @@ msgid "Animation"
 msgstr "Animasyon"
 
 
+msgid "Simulation"
+msgstr "Akışkan Simülasyonu"
+
+
 msgid "Settings for image formats"
 msgstr "Durağan saç-iplik tarzındaki parçacıklar için boyut ve şekil ayarları."
 
@@ -6835,6 +6835,10 @@ msgid "Layout"
 msgstr "Mizanpaj"
 
 
+msgid "Mesh"
+msgstr "Örüntü"
+
+
 msgid "Node"
 msgstr "Düğüm"
 
@@ -6921,10 +6925,6 @@ msgstr "Aktif Kemik Yok"
 
 msgid "Bone Roll"
 msgstr "Kemik Kısıtlamaları"
-
-
-msgid "Mesh"
-msgstr "Örüntü"
 
 
 msgid "Face"
@@ -9351,6 +9351,10 @@ msgid "Expand from 9 places"
 msgstr "Alttaki değerlere bağlı olarak (DupSta, DupEnd, DupOn, DupOff) nesne, dış hattı (yolu) izleyerek çoğaltılacaktır"
 
 
+msgid "Object Info"
+msgstr "Nesne Bilgisi"
+
+
 msgid "Label Font Size"
 msgstr "Yazıtipi boyutu:"
 
@@ -9429,10 +9433,6 @@ msgstr "Space Handler Scripts"
 
 msgid "Object space normal mapping"
 msgstr "Nesne Kısıtlamaları"
-
-
-msgid "Object Info"
-msgstr "Nesne Bilgisi"
 
 
 msgid "Cycles"
@@ -12264,6 +12264,14 @@ msgstr "İmleci Merkez al"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
+
+
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
 
 
 msgid "Confirm on Release"
@@ -20697,14 +20705,6 @@ msgid "Outline"
 msgstr "Anahat"
 
 
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
-
-
 msgid "Pivot center for rotation/scaling"
 msgstr "Çevirme/Ölçekleme Ekseni (Kısayollar: Virgül, Shift Virgül)"
 
@@ -23446,6 +23446,11 @@ msgstr "Aktif Kamera"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Üst seviye"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Düzlem"
 
@@ -23593,11 +23598,6 @@ msgstr "Nesne & Veri"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Animasyon Pencereleri"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Üst seviye"
 
 
 msgctxt "Operator"

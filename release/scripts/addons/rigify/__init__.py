@@ -223,6 +223,14 @@ class RigifyPreferences(AddonPreferences):
 
         set_list = feature_set_list.get_installed_list()
 
+        # Update feature set list
+        self.rigify_feature_sets.clear()
+
+        for s in set_list:
+            list_entry = self.rigify_feature_sets.add()
+            list_entry.name = feature_set_list.get_ui_name(s)
+            list_entry.module_name = s
+
         if force or len(set_list) > 0:
             # Reload rigs
             print('Reloading external rigs...')
@@ -234,13 +242,6 @@ class RigifyPreferences(AddonPreferences):
 
             # Re-register rig parameters
             register_rig_parameters()
-
-            # Update feature set list
-            self.rigify_feature_sets.clear()
-            for s in set_list:
-                list_entry = self.rigify_feature_sets.add()
-                list_entry.name = feature_set_list.get_ui_name(s)
-                list_entry.module_name = s
 
     legacy_mode: BoolProperty(
         name='Legacy Mode',
@@ -275,10 +276,12 @@ class RigifyPreferences(AddonPreferences):
 
         # Clamp active index to ensure it's in bounds.
         self.active_feature_set_index = max(0, min(self.active_feature_set_index, len(self.rigify_feature_sets)-1))
-        active_fs = self.rigify_feature_sets[self.active_feature_set_index]
 
-        if active_fs:
-            draw_feature_set_prefs(layout, context, active_fs)
+        if len(self.rigify_feature_sets) > 0:
+            active_fs = self.rigify_feature_sets[self.active_feature_set_index]
+
+            if active_fs:
+                draw_feature_set_prefs(layout, context, active_fs)
 
 
 def draw_feature_set_prefs(layout, context, featureset: RigifyFeatureSets):
@@ -573,6 +576,8 @@ def register():
     IDStore.rigify_collection = EnumProperty(items=(("All", "All", "All"),), default="All",
         name="Rigify Active Collection",
         description="The selected rig collection")
+
+    IDStore.rigify_widgets = CollectionProperty(type=RigifyName)
 
     IDStore.rigify_types = CollectionProperty(type=RigifyName)
     IDStore.rigify_active_type = IntProperty(name="Rigify Active Type", description="The selected rig type")

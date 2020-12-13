@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -13,6 +13,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Czech\n"
 "X-Poedit-Country: CZECH REPUBLIC"
+
+
+msgid "Valid"
+msgstr "Jasová hodnota "
+
+
+msgid "Name"
+msgstr "Jméno"
+
+
+msgid "Type"
+msgstr "Typ"
+
+
+msgid "Color"
+msgstr "Barva"
+
+
+msgid "Value"
+msgstr "Hodnota"
 
 
 msgid "Action Group"
@@ -137,10 +157,6 @@ msgstr "Zamknout"
 
 msgid "Action group is locked"
 msgstr "Skupina pro akce je zamčena"
-
-
-msgid "Name"
-msgstr "Jméno"
 
 
 msgid "Select"
@@ -471,16 +487,12 @@ msgid "Domain"
 msgstr "Spojit"
 
 
-msgid "Vertex"
-msgstr "Vrchol"
+msgid "Point"
+msgstr "Bod"
 
 
 msgid "Edge"
 msgstr "Hrana"
-
-
-msgid "Point"
-msgstr "Bod"
 
 
 msgid "Curve"
@@ -529,10 +541,6 @@ msgstr "Upravit"
 
 msgid "Direct"
 msgstr "Směr"
-
-
-msgid "Color"
-msgstr "Barva"
 
 
 msgid "Transmission"
@@ -713,10 +721,6 @@ msgstr "Modul"
 
 msgid "Boid rule name"
 msgstr "Název kosti"
-
-
-msgid "Type"
-msgstr "Typ"
 
 
 msgid "Goal"
@@ -1299,10 +1303,6 @@ msgid "Saturation"
 msgstr "Sytost"
 
 
-msgid "Value"
-msgstr "Hodnota"
-
-
 msgid "Background Image"
 msgstr "Obrázek na pozadí"
 
@@ -1872,10 +1872,6 @@ msgid "Proxy Local"
 msgstr "X Lokální"
 
 
-msgid "Valid"
-msgstr "Jasová hodnota "
-
-
 msgid "Disable"
 msgstr "Zakázat"
 
@@ -1914,6 +1910,10 @@ msgstr "Normály "
 
 msgid "The constraint is applied relative to the local coordinate system of the object"
 msgstr "Vazba je použita relativně k celkovému koordinačnímu systému"
+
+
+msgid "Sub-Target"
+msgstr "Cíl:"
 
 
 msgid "Target Space"
@@ -2058,10 +2058,6 @@ msgstr "Vzdálenost meli linkami orientační sítě"
 
 msgid "Mix Mode"
 msgstr "Mód:"
-
-
-msgid "Sub-Target"
-msgstr "Cíl:"
 
 
 msgid "Target"
@@ -3722,6 +3718,10 @@ msgstr "Formát"
 
 msgid "Surface Format"
 msgstr "Ukázkový formát"
+
+
+msgid "Vertex"
+msgstr "Vrchol"
 
 
 msgid "Image Sequence"
@@ -7013,10 +7013,6 @@ msgid "Compositing nodes"
 msgstr "Kompoziční uzly"
 
 
-msgid "Simulation"
-msgstr "Animace"
-
-
 msgid "Compositor Node Tree"
 msgstr "Kompoziční uzly"
 
@@ -9051,6 +9047,10 @@ msgid "Animation"
 msgstr "Animace"
 
 
+msgid "Simulation"
+msgstr "Animace"
+
+
 msgid "Precision"
 msgstr "Původni pozice"
 
@@ -9701,6 +9701,14 @@ msgid "Matte"
 msgstr "Slepecké Znaky"
 
 
+msgid "Attribute"
+msgstr "Kopírovat atributy "
+
+
+msgid "Mesh"
+msgstr "Síť"
+
+
 msgid "Node"
 msgstr "Uzel"
 
@@ -9807,10 +9815,6 @@ msgstr "Znaky"
 
 msgid "Interpolate"
 msgstr "Mód Interpolace"
-
-
-msgid "Mesh"
-msgstr "Síť"
 
 
 msgid "Face"
@@ -13077,6 +13081,10 @@ msgid "Int"
 msgstr "Vnu:"
 
 
+msgid "Object Info"
+msgstr "Informace o obj."
+
+
 msgid "Label Font Size"
 msgstr "Velikost fontu:   8"
 
@@ -13099,10 +13107,6 @@ msgstr "Materiálové uzly"
 
 msgid "Add Shader"
 msgstr "Přidat reproduktor"
-
-
-msgid "Attribute"
-msgstr "Kopírovat atributy "
 
 
 msgid "Attribute Name"
@@ -13187,10 +13191,6 @@ msgstr "Orientace manipulátorů (Klávesová zkratka: Alt Space)"
 
 msgid "UV Map for tangent space maps"
 msgstr "Mixovací mód pro průhledné plošky"
-
-
-msgid "Object Info"
-msgstr "Informace o obj."
 
 
 msgid "Cycles"
@@ -16893,6 +16893,14 @@ msgstr "Přichytit výběr ke kurzoru"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Přichytit výběr k mřížce"
+
+
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
 
 
 msgctxt "Operator"
@@ -28135,14 +28143,6 @@ msgid "Outline"
 msgstr "Obrys"
 
 
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
-
-
 msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
@@ -31561,6 +31561,11 @@ msgstr "Podobný"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Úrovně"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Plocha"
 
@@ -31703,11 +31708,6 @@ msgstr "Objekt & Data objektu"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Animace objektu"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Úrovně"
 
 
 msgctxt "Operator"

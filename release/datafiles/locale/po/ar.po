@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -13,6 +13,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: Poedit 1.8.7"
+
+
+msgid "Valid"
+msgstr "ﺢﻟﺎﺻ"
+
+
+msgid "Name"
+msgstr "ﻢﺳﻹ﻿ﺍ"
+
+
+msgid "Type"
+msgstr "ﻉﻮﻨﻟﺍ"
+
+
+msgid "Color"
+msgstr "ﻥﻮﻠﻟﺍ"
+
+
+msgid "Value"
+msgstr "ﺔﻤﻴﻗ"
 
 
 msgid "Action Group"
@@ -145,10 +165,6 @@ msgstr "ﻞﻔﻗﺍ"
 
 msgid "Action group is locked"
 msgstr "ﺔﻠﻔﻘﻣ ﺙﺪﺤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
-msgid "Name"
-msgstr "ﻢﺳﻹ﻿ﺍ"
 
 
 msgid "Select"
@@ -687,16 +703,12 @@ msgid "Domain"
 msgstr "ﻕﺎﻄﻧ"
 
 
-msgid "Vertex"
+msgid "Point"
 msgstr "ﺔﻄﻘﻧ"
 
 
 msgid "Edge"
 msgstr "ﺔﻓﺎﺣ"
-
-
-msgid "Point"
-msgstr "ﺔﻄﻘﻧ"
 
 
 msgid "Curve"
@@ -825,10 +837,6 @@ msgstr "ﺮﺷﺎﺒﻣ"
 
 msgid "Indirect"
 msgstr "ﺮﺷﺎﺒﻣ ﺮﻴﻏ"
-
-
-msgid "Color"
-msgstr "ﻥﻮﻠﻟﺍ"
 
 
 msgid "Diffuse"
@@ -1197,10 +1205,6 @@ msgstr "!"
 
 msgid "Boid rule name"
 msgstr "ﺪﻳﻮﺒﻟﺍ ﺓﺪﻋﺎﻗ ﻢﺳﺇ"
-
-
-msgid "Type"
-msgstr "ﻉﻮﻨﻟﺍ"
 
 
 msgid "Goal"
@@ -2125,10 +2129,6 @@ msgstr "ﻥﻮﻠﻟﺍ"
 
 msgid "Saturation"
 msgstr "ﺰﻛﺮﻣ"
-
-
-msgid "Value"
-msgstr "ﺔﻤﻴﻗ"
 
 
 msgid "Background Image"
@@ -3200,10 +3200,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "(ﺭﺪﺼﻤﻟﺍ ﻞﻜﻴﻬﻟ ﺩﻮﻌﻳ ﻻ﻿ ﻪﻧﺍ ﺔﻟﺎﺣ ﻲﻓ ﻻ﻿ﺎﺜﻣ) ﺏﻭﺪﻨﻤﻟﺍ ﺍﺬﻫ ﻲﻓ ﺪﻴﻗ ﺔﻓﺎﺿﺍ ﻢﺗ"
 
 
-msgid "Valid"
-msgstr "ﺢﻟﺎﺻ"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "ﻪﻤﻴﻴﻘﺗ ﻦﻜﻤﻳ ﻭ ﺔﺤﻟﺎﺻ ﺕﺍﺩﺍﺪﻋﺇ ﻪﻳﺪﻟ ﺪﻴﻘﻟﺍ"
 
@@ -3258,6 +3254,10 @@ msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﻹ﻿ ﻲﻠﺤﻤﻟﺍ ﻡﺎ
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻲﻓ ﺔﺣﻮﺘﻔﻣ ﺪﻴﻘﻟﺍ ﺔﺣﻮﻟ"
+
+
+msgid "Sub-Target"
+msgstr "ﺔﻴﻋﺮﻓ-ﻑﺍﺪﻫﺃ"
 
 
 msgid "Target Space"
@@ -3514,10 +3514,6 @@ msgstr "ﻑﺪﻬﻟﺍ ﺓﺎﻨﻗ ﻕﺎﻄﻨﻟ ﻰﻧﺩﻷ﻿ﺍ ﺔﻤ�
 
 msgid "Mix Mode"
 msgstr "ﻂﻠﺨﻟﺍ ﻊﺿﻭ"
-
-
-msgid "Sub-Target"
-msgstr "ﺔﻴﻋﺮﻓ-ﻑﺍﺪﻫﺃ"
 
 
 msgid "Target"
@@ -6006,6 +6002,10 @@ msgstr "ﺔﺌﻴﻫ"
 
 msgid "Surface Format"
 msgstr "ﺢﻄﺴﻟﺍ ﻉﻮﻧ"
+
+
+msgid "Vertex"
+msgstr "ﺔﻄﻘﻧ"
 
 
 msgid "Image Sequence"
@@ -12415,10 +12415,6 @@ msgid "Compositing nodes"
 msgstr "ﺐﻴﻛﺮﺘﻟﺍ ﺪﻘﻋ"
 
 
-msgid "Simulation"
-msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ"
-
-
 msgid "Compositor Node Tree"
 msgstr "ﺐﻛﺮﻤﻟﺍ ﺓﺪﻘﻋ ﺓﺮﺠﺷ"
 
@@ -15685,6 +15681,10 @@ msgid "Stateless solver computing pose starting from current action and non-IK c
 msgstr "non-ik ﺩﻮﻴﻗ ﻭ ﻲﻟﺎﺤﻟﺍ ﺙﺪﺤﻟﺍ ﻦﻣ ﺔﻳﺍﺪﺑ ﺔﻔﻗﻮﻟﺍ ﺐﺴﺤﻳ ﻱﺬﻟﺍ ﻭ ﺔﻟﺎﺤﻟﺍ ﻡﺪﻌﻣ ﺞﻟﺎﻌﻣ"
 
 
+msgid "Simulation"
+msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ"
+
+
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "non-ik ﺩﻮﻴﻗ ﻭ ﺙﺍﺪﺣﻸ﻿ﻟ ﻞﻫﺎﺠﺘﻤﻟﺍ ﻭ ﻲﻘﻴﻘﺣ ﺖﻗﻭ ﺕﺍﺫ ﺔﺌﻴﺒﺑ ﻞﻣﺎﻌﻟﺍ ﻭ ﺔﻟﺎﺣ ﻭﺫ ﺞﻟﺎﻌﻣ"
 
@@ -17551,6 +17551,14 @@ msgid "Matte"
 msgstr "ﻲﻔﻄﻣ"
 
 
+msgid "Attribute"
+msgstr "ﺔﻤﺳ"
+
+
+msgid "Mesh"
+msgstr "ﻢﺴﺠﻣ"
+
+
 msgid "Node"
 msgstr "ﺓﺪﻘﻋ"
 
@@ -17649,10 +17657,6 @@ msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
 
 msgid "Interpolate"
 msgstr "ﺪﻟّﻭ"
-
-
-msgid "Mesh"
-msgstr "ﻢﺴﺠﻣ"
 
 
 msgid "Face"
@@ -21497,10 +21501,6 @@ msgstr "ﺔﻣﺎﺧ ﻞﻠﻈﻣ ﺓﺪﻘﻋ"
 
 msgid "Add Shader"
 msgstr "ﺔﻓﺎﺿﺍ ﻞﻠﻈﻣ"
-
-
-msgid "Attribute"
-msgstr "ﺔﻤﺳ"
 
 
 msgid "Attribute Name"
@@ -40067,6 +40067,11 @@ msgstr "ﻪﺑﺎﺸﻣ"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "ﻯﻮﺘﺴﻣ"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "ﺢﻄﺳ"
 
@@ -40228,11 +40233,6 @@ msgstr "ﺕﺎﻧﺎﻴﺒﻟﺍ ﻭ ﻦﺋﺎﻜﻟﺍ"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺙﺪﺣ"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "ﻯﻮﺘﺴﻣ"
 
 
 msgctxt "Operator"

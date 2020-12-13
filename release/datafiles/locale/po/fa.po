@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -14,6 +14,22 @@ msgstr ""
 "X-Poedit-Language: Persian\n"
 "X-Poedit-Country: IRAN, ISLAMIC REPUBLIC OF\n"
 "X-Poedit-SourceCharset: utf-8"
+
+
+msgid "Name"
+msgstr "ﻡﺎﻧ"
+
+
+msgid "Type"
+msgstr "ﻉﻮﻧ"
+
+
+msgid "Color"
+msgstr "ﮓﻧﺭ"
+
+
+msgid "Value"
+msgstr "ﺭﺍﺪﻘﻣ"
 
 
 msgid "Action Group"
@@ -126,10 +142,6 @@ msgstr "ﻞﻔﻗ"
 
 msgid "Action group is locked"
 msgstr "ﺖﺳﺍ ﻩﺪﺷ ﻞﻔﻗ ﺭﺍﺩﺮﮐ ﻩﻭﺮﮔ"
-
-
-msgid "Name"
-msgstr "ﻡﺎﻧ"
 
 
 msgid "Select"
@@ -396,10 +408,6 @@ msgid "Vector"
 msgstr "ﺭﺍﺩﺮﺑ"
 
 
-msgid "Vertex"
-msgstr "ﺱﺃﺭ"
-
-
 msgid "Curve"
 msgstr "ﯽﻨﺤﻨﻣ"
 
@@ -422,10 +430,6 @@ msgstr "ﺎﺘﺳﺍﺭ"
 
 msgid "Indirect"
 msgstr "ﻢﯿﻘﺘﺴﻣ ﺮﯿﻏ"
-
-
-msgid "Color"
-msgstr "ﮓﻧﺭ"
 
 
 msgid "Transmission"
@@ -510,10 +514,6 @@ msgstr "Boid ﻥﻮﻧﺎﻗ"
 
 msgid "Boid rule name"
 msgstr "Boid ﻥﻮﻧﺎﻗ ﻢﺳﺍ"
-
-
-msgid "Type"
-msgstr "ﻉﻮﻧ"
 
 
 msgid "Goal"
@@ -750,10 +750,6 @@ msgstr "ﮓﻧﺭ"
 
 msgid "Saturation"
 msgstr "ﻉﺎﺒﺷﺍ"
-
-
-msgid "Value"
-msgstr "ﺭﺍﺪﻘﻣ"
 
 
 msgid "Background Image"
@@ -2097,6 +2093,10 @@ msgid "Surface Format"
 msgstr "ﻪﻧﻮﻤﻧ ﺖﻣﺮﻓ"
 
 
+msgid "Vertex"
+msgstr "ﺱﺃﺭ"
+
+
 msgid "Image Sequence"
 msgstr "ﺮﯾﻮﺼﺗ ﺲﻧﺎﮑﺳ"
 
@@ -3230,10 +3230,6 @@ msgid "Nodes"
 msgstr "ﺎﻫ ﻩﺮﮔ"
 
 
-msgid "Simulation"
-msgstr "ﯼﺯﺎﺳ ﻪﯿﺒﺷ"
-
-
 msgid "Edit Quality"
 msgstr "ﻂﺳﻮﺘﻣ ﺖﯿﻔﯿﮐ ﺎﺑ"
 
@@ -4179,6 +4175,10 @@ msgid "Animation"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ"
 
 
+msgid "Simulation"
+msgstr "ﯼﺯﺎﺳ ﻪﯿﺒﺷ"
+
+
 msgid "Reiteration"
 msgstr "ﻡﺎﻏﺩﺍ"
 
@@ -4421,6 +4421,10 @@ msgid "Matte"
 msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 
+msgid "Mesh"
+msgstr "ﺶﻣ"
+
+
 msgid "Node Color Specials"
 msgstr "ﮓﻧﺭ ﺖﺸﻧ"
 
@@ -4459,10 +4463,6 @@ msgstr "ﮏﻤﮐ"
 
 msgid "Enabled Modes"
 msgstr "ﻩﺪﺷ ﻝﺎﻌﻓ"
-
-
-msgid "Mesh"
-msgstr "ﺶﻣ"
 
 
 msgid "Apply"
@@ -6021,6 +6021,10 @@ msgid "Int"
 msgstr "ﯽﻠﺧﺍﺩ"
 
 
+msgid "Object Info"
+msgstr "ﯽﺷ ﺕﺎﻋﻼ﻿ﻃﺍ"
+
+
 msgid "Label Font Size"
 msgstr "ﺎﻫ‌ﺖﻧﻮﻓ:"
 
@@ -6087,10 +6091,6 @@ msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 msgid "Object space normal mapping"
 msgstr "ءﯽﺷ ﯼﺎﻀﻓ"
-
-
-msgid "Object Info"
-msgstr "ﯽﺷ ﺕﺎﻋﻼ﻿ﻃﺍ"
 
 
 msgid "Material Output"
@@ -13723,6 +13723,11 @@ msgstr "ﻪﺑﺎﺸﻣ"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "ﺡﻮﻄﺳ"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "ﻪﺤﻔﺻ"
 
@@ -13855,11 +13860,6 @@ msgstr "ﻩﺩﺍﺩ ﻭ ءﯽﺷ"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "ءﯽﺷ ﺖﮐﺮﺣ"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "ﺡﻮﻄﺳ"
 
 
 msgctxt "Operator"

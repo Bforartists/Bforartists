@@ -104,6 +104,12 @@ static void addIdsUsedBySocket(const ListBase *sockets, Set<ID *> &ids)
         ids.add(&object->id);
       }
     }
+    else if (socket->type == SOCK_COLLECTION) {
+      Collection *collection = ((bNodeSocketValueCollection *)socket->default_value)->value;
+      if (collection != nullptr) {
+        ids.add(&collection->id);
+      }
+    }
   }
 }
 
@@ -399,6 +405,11 @@ class GeometryNodesEvaluator {
       blender::bke::PersistentObjectHandle object_handle = handle_map_.lookup(object);
       new (buffer) blender::bke::PersistentObjectHandle(object_handle);
     }
+    else if (bsocket->type == SOCK_COLLECTION) {
+      Collection *collection = ((bNodeSocketValueCollection *)bsocket->default_value)->value;
+      blender::bke::PersistentCollectionHandle collection_handle = handle_map_.lookup(collection);
+      new (buffer) blender::bke::PersistentCollectionHandle(collection_handle);
+    }
     else {
       blender::nodes::socket_cpp_value_get(*bsocket, buffer);
     }
@@ -438,6 +449,8 @@ static IDProperty *socket_add_property(IDProperty *settings_prop_group,
   /* Add the property actually storing the data to the modifier's group. */
   IDProperty *prop = property_type.create_prop(socket, new_prop_name);
   IDP_AddToGroup(settings_prop_group, prop);
+
+  prop->flag |= IDP_FLAG_OVERRIDABLE_LIBRARY;
 
   /* Make the group in the ui container group to hold the property's UI settings. */
   IDProperty *prop_ui_group;
@@ -848,6 +861,9 @@ static void check_property_socket_sync(const Object *ob, ModifierData *md)
       else if (socket->type == SOCK_GEOMETRY) {
         BKE_modifier_set_error(ob, md, "Node group can only have one geometry input");
       }
+      else if (socket->type == SOCK_COLLECTION) {
+        BKE_modifier_set_error(ob, md, "Collection socket can not be exposed in the modifier");
+      }
       else {
         BKE_modifier_set_error(ob, md, "Missing property for input socket \"%s\"", socket->name);
       }
@@ -934,9 +950,9 @@ static Mesh *modifyMesh(ModifierData *md, const ModifierEvalContext *ctx, Mesh *
   return new_mesh;
 }
 
-static void modifyPointCloud(ModifierData *md,
-                             const ModifierEvalContext *ctx,
-                             GeometrySet *geometry_set)
+static void modifyGeometrySet(ModifierData *md,
+                              const ModifierEvalContext *ctx,
+                              GeometrySet *geometry_set)
 {
   modifyGeometry(md, ctx, *geometry_set);
 }
@@ -1063,7 +1079,7 @@ ModifierTypeInfo modifierType_Nodes = {
     /* deformMatricesEM */ nullptr,
     /* modifyMesh */ modifyMesh,
     /* modifyHair */ nullptr,
-    /* modifyPointCloud */ modifyPointCloud,
+    /* modifyGeometrySet */ modifyGeometrySet,
     /* modifyVolume */ nullptr,
 
     /* initData */ initData,

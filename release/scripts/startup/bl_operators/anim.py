@@ -307,7 +307,7 @@ class NLA_OT_bake(Operator):
 
 
 class ClearUselessActions(Operator):
-    """Clear Useless Actions\nMark actions with no F-Curves for deletion after save & reload of """ \
+    """Clear Useless Actions\nMark actions with no F-Curves for deletion after save and reload of """ \
         """file preserving \"action libraries\""""
     bl_idname = "anim.clear_useless_actions"
     bl_label = "Clear Useless Actions"

@@ -73,7 +73,9 @@
 /* ************************************************************************** */
 /* INSERT DUPLICATE AND BAKE KEYFRAMES */
 
-/* ******************** Insert Keyframes Operator ************************* */
+/* -------------------------------------------------------------------- */
+/** \name Insert Keyframes Operator
+ * \{ */
 
 /* Mode defines for insert keyframes tool. */
 typedef enum eGraphKeys_InsertKey_Types {
@@ -291,7 +293,11 @@ void GRAPH_OT_keyframe_insert(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna, "type", prop_graphkeys_insertkey_types, 0, "Type", "");
 }
 
-/* ******************** Click-Insert Keyframes Operator ************************* */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Click-Insert Keyframes Operator
+ * \{ */
 
 static int graphkeys_click_insert_exec(bContext *C, wmOperator *op)
 {
@@ -445,8 +451,13 @@ void GRAPH_OT_click_insert(wmOperatorType *ot)
                   "Extend selection instead of deselecting everything first");
 }
 
-/* ******************** Copy/Paste Keyframes Operator ************************* */
-/* NOTE: the backend code for this is shared with the dopesheet editor */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Copy/Paste Keyframes Operator
+ *
+ * \note the back-end code for this is shared with the dope-sheet editor.
+ * \{ */
 
 static short copy_graph_keys(bAnimContext *ac)
 {
@@ -607,7 +618,11 @@ void GRAPH_OT_paste(wmOperatorType *ot)
   RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
-/* ******************** Duplicate Keyframes Operator ************************* */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Duplicate Keyframes Operator
+ * \{ */
 
 static void duplicate_graph_keys(bAnimContext *ac)
 {
@@ -669,7 +684,11 @@ void GRAPH_OT_duplicate(wmOperatorType *ot)
   RNA_def_enum(ot->srna, "mode", rna_enum_transform_mode_types, TFM_TRANSLATION, "Mode", "");
 }
 
-/* ******************** Delete Keyframes Operator ************************* */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Delete Keyframes Operator
+ * \{ */
 
 static bool delete_graph_keys(bAnimContext *ac)
 {
@@ -748,7 +767,11 @@ void GRAPH_OT_delete(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* ******************** Clean Keyframes Operator ************************* */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Clean Keyframes Operator
+ * \{ */
 
 static void clean_graph_keys(bAnimContext *ac, float thresh, bool clean_chan)
 {
@@ -818,8 +841,13 @@ void GRAPH_OT_clean(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "channels", false, "Channels", "");
 }
 
-/* ******************** Bake F-Curve Operator *********************** */
-/* This operator bakes the data of the selected F-Curves to F-Points */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Bake F-Curve Operator
+ *
+ * This operator bakes the data of the selected F-Curves to F-Points.
+ * \{ */
 
 /* Bake each F-Curve into a set of samples. */
 static void bake_graph_curves(bAnimContext *ac, int start, int end)
@@ -901,8 +929,13 @@ void GRAPH_OT_bake(wmOperatorType *ot)
   /* TODO: add props for start/end frames (Joshua Leung 2009) */
 }
 
-/* ******************** Un-Bake F-Curve Operator *********************** */
-/* This operator unbakes the data of the selected F-Points to F-Curves. */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Un-Bake F-Curve Operator
+ *
+ * This operator un-bakes the data of the selected F-Points to F-Curves.
+ * \{ */
 
 /* Un-Bake F-Points into F-Curves. */
 static void unbake_graph_curves(bAnimContext *ac, int start, int end)
@@ -972,8 +1005,13 @@ void GRAPH_OT_unbake(wmOperatorType *ot)
 
 #ifdef WITH_AUDASPACE
 
-/* ******************** Sound Bake F-Curve Operator *********************** */
-/* This operator bakes the given sound to the selected F-Curves */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Sound Bake F-Curve Operator
+ *
+ * This operator bakes the given sound to the selected F-Curves.
+ * \{ */
 
 /* ------------------- */
 
@@ -1206,10 +1244,14 @@ void GRAPH_OT_sound_bake(wmOperatorType *ot)
                 0.1);
 }
 
-/* ******************** Sample Keyframes Operator *********************** */
-/* This operator 'bakes' the values of the curve into new keyframes between pairs
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Sample Keyframes Operator
+ *
+ * This operator 'bakes' the values of the curve into new keyframes between pairs
  * of selected keyframes. It is useful for creating keyframes for tweaking overlap.
- */
+ * \{ */
 
 /* Evaluates the curves between each selected keyframe on each frame, and keys the value. */
 static void sample_graph_keys(bAnimContext *ac)
@@ -1269,10 +1311,14 @@ void GRAPH_OT_sample(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/** \} */
+
 /* ************************************************************************** */
 /* EXTRAPOLATION MODE AND KEYFRAME HANDLE SETTINGS */
 
-/* ******************** Set Extrapolation-Type Operator *********************** */
+/* -------------------------------------------------------------------- */
+/** \name Set Extrapolation-Type Operator
+ * \{ */
 
 /* Defines for make/clear cyclic extrapolation tools. */
 #define MAKE_CYCLIC_EXPO -1
@@ -1402,7 +1448,11 @@ void GRAPH_OT_extrapolation_type(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna, "type", prop_graphkeys_expo_types, 0, "Type", "");
 }
 
-/* ******************** Set Interpolation-Type Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Set Interpolation-Type Operator
+ * \{ */
 
 /* This function is responsible for setting interpolation mode for keyframes. */
 static void setipo_graph_keys(bAnimContext *ac, short mode)
@@ -1476,7 +1526,11 @@ void GRAPH_OT_interpolation_type(wmOperatorType *ot)
       ot->srna, "type", rna_enum_beztriple_interpolation_mode_items, 0, "Type", "");
 }
 
-/* ******************** Set Easing Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Set Easing Operator
+ * \{ */
 
 static void seteasing_graph_keys(bAnimContext *ac, short mode)
 {
@@ -1547,7 +1601,11 @@ void GRAPH_OT_easing_type(wmOperatorType *ot)
       ot->srna, "type", rna_enum_beztriple_interpolation_easing_items, 0, "Type", "");
 }
 
-/* ******************** Set Handle-Type Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Set Handle-Type Operator
+ * \{ */
 
 /* This function is responsible for setting handle-type of selected keyframes. */
 static void sethandles_graph_keys(bAnimContext *ac, short mode)
@@ -1626,15 +1684,19 @@ void GRAPH_OT_handle_type(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_keyframe_handle_type_items, 0, "Type", "");
 }
 
+/** \} */
+
 /* ************************************************************************** */
 /* EULER FILTER */
 
-/* ***************** 'Euler Filter' Operator **************************** */
-/* Euler filter tools (as seen in Maya), are necessary for working with 'baked'
+/* -------------------------------------------------------------------- */
+/** \name 'Euler Filter' Operator
+ *
+ * Euler filter tools (as seen in Maya), are necessary for working with 'baked'
  * rotation curves (with Euler rotations). The main purpose of such tools is to
  * resolve any discontinuities that may arise in the curves due to the clamping
  * of values to -180 degrees to 180 degrees.
- */
+ * \{ */
 
 /* Set of three euler-rotation F-Curves. */
 typedef struct tEulerFilter {
@@ -1905,7 +1967,7 @@ static int graphkeys_euler_filter_exec(bContext *C, wmOperator *op)
     if (curves_seen < 3) {
       /* Showing the entire error message makes no sense when the artist is only trying to filter
        * one or two curves. */
-      BKE_report(op->reports, RPT_WARNING, "No Euler Rotations could be corrected.");
+      BKE_report(op->reports, RPT_WARNING, "No Euler Rotations could be corrected");
     }
     else {
       BKE_report(op->reports,
@@ -1921,15 +1983,15 @@ static int graphkeys_euler_filter_exec(bContext *C, wmOperator *op)
     BLI_assert(curves_filtered < curves_seen);
     BKE_reportf(op->reports,
                 RPT_INFO,
-                "%d of %d rotation channels were filtered. See the Info window for details.",
+                "%d of %d rotation channels were filtered (see the Info window for details)",
                 curves_filtered,
                 curves_seen);
   }
   else if (curves_seen == 1) {
-    BKE_report(op->reports, RPT_INFO, "The rotation channel was filtered.");
+    BKE_report(op->reports, RPT_INFO, "The rotation channel was filtered");
   }
   else {
-    BKE_reportf(op->reports, RPT_INFO, "All %d rotation channels were filtered.", curves_seen);
+    BKE_reportf(op->reports, RPT_INFO, "All %d rotation channels were filtered", curves_seen);
   }
 
   /* Set notifier that keyframes have changed. */
@@ -1957,10 +2019,14 @@ void GRAPH_OT_euler_filter(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/** \} */
+
 /* ************************************************************************** */
 /* SNAPPING */
 
-/* ***************** Jump to Selected Frames Operator *********************** */
+/* -------------------------------------------------------------------- */
+/** \name Jump to Selected Frames Operator
+ * \{ */
 
 static bool graphkeys_framejump_poll(bContext *C)
 {
@@ -2112,7 +2178,11 @@ void GRAPH_OT_snap_cursor_value(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* ******************** Snap Keyframes Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Snap Keyframes Operator
+ * \{ */
 
 /* Defines for snap keyframes tool. */
 static const EnumPropertyItem prop_graphkeys_snap_types[] = {
@@ -2264,7 +2334,11 @@ void GRAPH_OT_snap(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna, "type", prop_graphkeys_snap_types, 0, "Type", "");
 }
 
-/* ******************** Mirror Keyframes Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Mirror Keyframes Operator
+ * \{ */
 
 /* Defines for mirror keyframes tool. */
 static const EnumPropertyItem prop_graphkeys_mirror_types[] = {
@@ -2423,7 +2497,11 @@ void GRAPH_OT_mirror(wmOperatorType *ot)
   ot->prop = RNA_def_enum(ot->srna, "type", prop_graphkeys_mirror_types, 0, "Type", "");
 }
 
-/* ******************** Smooth Keyframes Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Smooth Keyframes Operator
+ * \{ */
 
 static int graphkeys_smooth_exec(bContext *C, wmOperator *UNUSED(op))
 {
@@ -2477,10 +2555,14 @@ void GRAPH_OT_smooth(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/** \} */
+
 /* ************************************************************************** */
 /* F-CURVE MODIFIERS */
 
-/* ******************** Add F-Modifier Operator *********************** */
+/* -------------------------------------------------------------------- */
+/** \name Add F-Modifier Operator
+ * \{ */
 
 static const EnumPropertyItem *graph_fmodifier_itemf(bContext *C,
                                                      PointerRNA *UNUSED(ptr),
@@ -2598,7 +2680,11 @@ void GRAPH_OT_fmodifier_add(wmOperatorType *ot)
       ot->srna, "only_active", 1, "Only Active", "Only add F-Modifier to active F-Curve");
 }
 
-/* ******************** Copy F-Modifiers Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Copy F-Modifiers Operator
+ * \{ */
 
 static int graph_fmodifier_copy_exec(bContext *C, wmOperator *op)
 {
@@ -2660,7 +2746,11 @@ void GRAPH_OT_fmodifier_copy(wmOperatorType *ot)
 #endif
 }
 
-/* ******************** Paste F-Modifiers Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Paste F-Modifiers Operator
+ * \{ */
 
 static int graph_fmodifier_paste_exec(bContext *C, wmOperator *op)
 {
@@ -2748,10 +2838,14 @@ void GRAPH_OT_fmodifier_paste(wmOperatorType *ot)
       "Replace existing F-Modifiers, instead of just appending to the end of the existing list");
 }
 
+/** \} */
+
 /* ************************************************************************** */
 /* Drivers */
 
-/* ******************** Copy Driver Vars Operator *********************** */
+/* -------------------------------------------------------------------- */
+/** \name Copy Driver Variables Operator
+ * \{ */
 
 static int graph_driver_vars_copy_exec(bContext *C, wmOperator *op)
 {
@@ -2788,7 +2882,11 @@ void GRAPH_OT_driver_variables_copy(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-/* ******************** Paste Driver Vars Operator *********************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Paste Driver Variables Operator
+ * \{ */
 
 static int graph_driver_vars_paste_exec(bContext *C, wmOperator *op)
 {
@@ -2840,7 +2938,11 @@ void GRAPH_OT_driver_variables_paste(wmOperatorType *ot)
                   "existing list");
 }
 
-/* ************************************************************************** */
+/** \} */
+
+/* -------------------------------------------------------------------- */
+/** \name Delete Invalid Drivers Operator
+ * \{ */
 
 static int graph_driver_delete_invalid_exec(bContext *C, wmOperator *op)
 {
@@ -2928,3 +3030,5 @@ void GRAPH_OT_driver_delete_invalid(wmOperatorType *ot)
   /* Flags */
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
+
+/** \} */

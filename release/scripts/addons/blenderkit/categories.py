@@ -128,11 +128,21 @@ def get_subcategory_enums(self, context):
     wm = bpy.context.window_manager
     props = bpy.context.scene.blenderkitUI
     asset_type  = props.asset_type.lower()
-# asset_type = self.asset_type#get_upload_asset_type(self)
-    # asset_type = get_upload_asset_type(self)
     items = []
     if self.category != '':
         asset_categories = get_category(wm['bkit_categories'], cat_path=(asset_type, self.category,))
+        for c in asset_categories['children']:
+            items.append((c['slug'], c['name'], c['description']))
+
+    return items
+
+def get_subcategory1_enums(self, context):
+    wm = bpy.context.window_manager
+    props = bpy.context.scene.blenderkitUI
+    asset_type  = props.asset_type.lower()
+    items = []
+    if self.category != '' and self.subcategory != '':
+        asset_categories = get_category(wm['bkit_categories'], cat_path=(asset_type, self.category, self.subcategory, ))
         for c in asset_categories['children']:
             items.append((c['slug'], c['name'], c['description']))
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -12,6 +12,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.2.4"
+
+
+msgid "Name"
+msgstr "ชื่อ"
+
+
+msgid "Type"
+msgstr "ชนิด"
+
+
+msgid "Color"
+msgstr "สี"
 
 
 msgid "Action F-Curves"
@@ -140,10 +152,6 @@ msgstr "ล็อก"
 
 msgid "Action group is locked"
 msgstr "กลุ่มการกระทำถูกล็อก"
-
-
-msgid "Name"
-msgstr "ชื่อ"
 
 
 msgid "Select"
@@ -314,8 +322,8 @@ msgid "Data Type"
 msgstr "ชนิดข้อมูล"
 
 
-msgid "Vertex"
-msgstr "จุดยอด"
+msgid "Point"
+msgstr "กระจาย"
 
 
 msgid "Edge"
@@ -324,10 +332,6 @@ msgstr "ขอบ"
 
 msgid "Polygon"
 msgstr "โพลิกอน"
-
-
-msgid "Point"
-msgstr "กระจาย"
 
 
 msgid "Curve"
@@ -368,10 +372,6 @@ msgstr "วัตถุ"
 
 msgid "None"
 msgstr "ไม่มี"
-
-
-msgid "Color"
-msgstr "สี"
 
 
 msgid "Internal"
@@ -452,10 +452,6 @@ msgstr "คอลเลกชันกล้อง"
 
 msgid "Main Images"
 msgstr "รูปภาพหลัก"
-
-
-msgid "Type"
-msgstr "ชนิด"
 
 
 msgid "Speed"
@@ -646,6 +642,10 @@ msgid "Local Space"
 msgstr "ปริภูมิท้องถิ่น"
 
 
+msgid "Sub-Target"
+msgstr "เป้าหมายรอง"
+
+
 msgid "Target Space"
 msgstr "ปริภูมิเป้าหมาย"
 
@@ -664,10 +664,6 @@ msgstr "โครงร่าง"
 
 msgid "Mix Mode"
 msgstr "โหมดผสม"
-
-
-msgid "Sub-Target"
-msgstr "เป้าหมายรอง"
 
 
 msgid "Target"
@@ -959,6 +955,10 @@ msgstr "ชั้นข้อมูล"
 
 msgid "Texture"
 msgstr "พื้นผิว"
+
+
+msgid "Vertex"
+msgstr "จุดยอด"
 
 
 msgid "Slow"
@@ -2096,6 +2096,10 @@ msgid "Layout"
 msgstr "เค้าโครง"
 
 
+msgid "Mesh"
+msgstr "เมช"
+
+
 msgid "Node"
 msgstr "โนด"
 
@@ -2162,10 +2166,6 @@ msgstr "บันทึกและโหลด"
 
 msgid "Names"
 msgstr "ชื่อ"
-
-
-msgid "Mesh"
-msgstr "เมช"
 
 
 msgid "Edge Data"
@@ -2441,12 +2441,12 @@ msgid "Translate"
 msgstr "เลื่อนขนาน"
 
 
-msgid "Background"
-msgstr "พื้นหลัง"
-
-
 msgid "Object Info"
 msgstr "ข้อมูลวัตถุ"
+
+
+msgid "Background"
+msgstr "พื้นหลัง"
 
 
 msgid "Cycles"

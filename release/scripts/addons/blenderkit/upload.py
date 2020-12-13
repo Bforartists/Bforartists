@@ -501,6 +501,11 @@ class FastCategory(bpy.types.Operator):
         description="main category to put into",
         items=categories.get_subcategory_enums
     )
+    subcategory1: EnumProperty(
+        name="Subcategory",
+        description="main category to put into",
+        items=categories.get_subcategory1_enums
+    )
 
     asset_id: StringProperty(
         name="Asset Base Id",
@@ -527,6 +532,7 @@ class FastCategory(bpy.types.Operator):
         if props.asset_type == 'MODEL':  # by now block this for other asset types.
             # col = row.column()
             layout.prop(self, 'subcategory')
+            layout.prop(self, 'subcategory1')
             # layout.prop(self, 'subcategory', expand = True)
 
     def execute(self, context):

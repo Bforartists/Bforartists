@@ -233,11 +233,15 @@ def load_prefs():
     # if user_preferences.api_key == '':
     fpath = paths.BLENDERKIT_SETTINGS_FILENAME
     if os.path.exists(fpath):
-        with open(fpath, 'r') as s:
-            prefs = json.load(s)
-            user_preferences.api_key = prefs.get('API_key', '')
-            user_preferences.global_dir = prefs.get('global_dir', paths.default_global_dict())
-            user_preferences.api_key_refresh = prefs.get('API_key_refresh', '')
+        try:
+            with open(fpath, 'r') as s:
+                prefs = json.load(s)
+                user_preferences.api_key = prefs.get('API_key', '')
+                user_preferences.global_dir = prefs.get('global_dir', paths.default_global_dict())
+                user_preferences.api_key_refresh = prefs.get('API_key_refresh', '')
+        except Exception as e:
+            print('failed to read addon preferences.')
+            print(e)
 
 
 def save_prefs(self, context):

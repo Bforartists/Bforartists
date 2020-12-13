@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-04-13 10:11+0700\n"
@@ -12,6 +12,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.6.9"
+
+
+msgid "Shader AOV"
+msgstr "AOV Bộ Tô Sắc"
+
+
+msgid "Valid"
+msgstr "Hợp Lệ"
+
+
+msgid "Name"
+msgstr "Tên"
+
+
+msgid "Type"
+msgstr "Loại"
+
+
+msgid "Color"
+msgstr "Màu"
+
+
+msgid "Value"
+msgstr "Giá Trị"
 
 
 msgid "Action F-Curves"
@@ -152,10 +176,6 @@ msgstr "Khóa"
 
 msgid "Action group is locked"
 msgstr "Nhóm hành động bị khóa"
-
-
-msgid "Name"
-msgstr "Tên"
 
 
 msgid "Select"
@@ -998,12 +1018,12 @@ msgid "Domain of the Attribute"
 msgstr "Phạm vi của đặc điểm"
 
 
-msgid "Vertex"
-msgstr "Đỉnh"
+msgid "Point"
+msgstr "Điểm"
 
 
-msgid "Attribute on mesh vertex"
-msgstr "Đặc điểm trên đỉnh mạng lưới"
+msgid "Attribute on point"
+msgstr "Đặc điểm trên điểm"
 
 
 msgid "Edge"
@@ -1028,14 +1048,6 @@ msgstr "Đa Giác"
 
 msgid "Attribute on mesh polygons"
 msgstr "Đặc điểm trên đa giác mạng lưới"
-
-
-msgid "Point"
-msgstr "Điểm"
-
-
-msgid "Attribute on point"
-msgstr "Đặc điểm trên điểm"
 
 
 msgid "Curve"
@@ -1256,10 +1268,6 @@ msgstr "Thực Tiếp"
 
 msgid "Indirect"
 msgstr "Gián Tiếp"
-
-
-msgid "Color"
-msgstr "Màu"
 
 
 msgid "Diffuse"
@@ -2168,10 +2176,6 @@ msgstr "Quy Tắc Quần Thể"
 
 msgid "Boid rule name"
 msgstr "Tên quy tắc đành thể"
-
-
-msgid "Type"
-msgstr "Loại"
 
 
 msgid "Goal"
@@ -3696,10 +3700,6 @@ msgstr "Sức Ngẫu Nhiên"
 
 msgid "Randomness factor strength in new strokes"
 msgstr "Hệ số ngẫu nhiên của sức khi vẽ nét mới"
-
-
-msgid "Value"
-msgstr "Giá Trị"
 
 
 msgid "Random factor to modify original value"
@@ -5407,10 +5407,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "Thêm ràng buộc vào thực thể đại lý này (nghĩa kà không phải là của Cốt nguồn)"
 
 
-msgid "Valid"
-msgstr "Hợp Lệ"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "Ràng buộc có cài đặt hợp lệ và có thể được tính toán"
 
@@ -5469,6 +5465,14 @@ msgstr "Áp dụng ràng buộc tương đối với hệ thống tọa độ đ
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "Mở rộng bảng ràng buộc trong giao diện"
+
+
+msgid "Sub-Target"
+msgstr "Mục Tiêu Phụ"
+
+
+msgid "Armature bone, mesh or lattice vertex group, ..."
+msgstr "Xương cốt, mạng lưới, hay nhóm định lưới rào, ..."
 
 
 msgid "Target Space"
@@ -5773,14 +5777,6 @@ msgstr "Sau Ban Đầu (Kích Thước Toàn Bộ)"
 
 msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
 msgstr "Áp dụng các kênh hành động sao biến hóa ban đầu, như nó được áp dụng với một con cái ảo được Phóng To Thừu Hưởng Toàn Bộ. Chế độ này có thể chế tạo méo hóa và chỉ được cung cấp vì phù hợp với đồ cũ"
-
-
-msgid "Sub-Target"
-msgstr "Mục Tiêu Phụ"
-
-
-msgid "Armature bone, mesh or lattice vertex group, ..."
-msgstr "Xương cốt, mạng lưới, hay nhóm định lưới rào, ..."
 
 
 msgid "Target"
@@ -9496,6 +9492,10 @@ msgstr "Định Dạng"
 
 msgid "Surface Format"
 msgstr "Định Dạng Bề Mặt"
+
+
+msgid "Vertex"
+msgstr "Đỉnh"
 
 
 msgid "Image Sequence"
@@ -22319,14 +22319,6 @@ msgid "Compositing nodes"
 msgstr "Giao điểm ghép"
 
 
-msgid "Simulation"
-msgstr "Mô phỏng"
-
-
-msgid "Simulation nodes"
-msgstr "Giao điểm mô phỏng"
-
-
 msgid "Compositor Node Tree"
 msgstr "Cây Giao Điểm Bộ Ghép"
 
@@ -22469,14 +22461,6 @@ msgstr "Cây Giao Điểm Bộ Tô Sắc"
 
 msgid "Node tree consisting of linked nodes used for materials (and other shading data-blocks)"
 msgstr "Cây giao điểm xây lên từ giao điểm liên kết được dùng cho vật liệu (và cục dữ liệu tô sắc khác)"
-
-
-msgid "Simulation Node Tree"
-msgstr "Cây giao điểm mô phỏng"
-
-
-msgid "Node tree consisting of linked nodes used for simulations"
-msgstr "Cây giao điểm xăy bằng giao điểm đã liên kết cho mô phỏng"
 
 
 msgid "Texture Node Tree"
@@ -26545,6 +26529,10 @@ msgid "Stateless solver computing pose starting from current action and non-IK c
 msgstr "Bộ giải nghiệm không trạng thái thì đang tính dạng đứng bắt đầu từ hành động hiện tại và ràng buộc vô IK"
 
 
+msgid "Simulation"
+msgstr "Mô phỏng"
+
+
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Bộ giải nghiệm toàn trạng thái chạy trong bối cảnh thời gian thực và không quan tâm hành động và ràng buộc vô IK"
 
@@ -30398,6 +30386,14 @@ msgid "Matte"
 msgstr "Lớp Che"
 
 
+msgid "Attribute"
+msgstr "Đặc Điểm"
+
+
+msgid "Mesh"
+msgstr "Mạng Lưới"
+
+
 msgid "Node Context Menu"
 msgstr "Danh Bạ Bối Cảnh Giao Điểm"
 
@@ -30627,10 +30623,6 @@ msgstr "Suy Nội"
 
 msgid "Lattice Context Menu"
 msgstr "Danh Bạ Bối Cảnh Lưới Rào"
-
-
-msgid "Mesh"
-msgstr "Mạng Lưới"
 
 
 msgid "Edge Data"
@@ -34652,10 +34644,6 @@ msgstr "Gốc Tọa Độ"
 
 msgid "Offset the origin and orientation of the deformation"
 msgstr "Dịch gốc tọa độ và định hướng của méo hóa"
-
-
-msgid "Simulation Modifier"
-msgstr "Cụ Sửa Đổi Mô Phỏng"
 
 
 msgid "Skin Modifier"
@@ -39562,6 +39550,10 @@ msgid "Int"
 msgstr "Số Nguyên"
 
 
+msgid "Object Info"
+msgstr "Thông Tin Vật Thể"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Bức"
@@ -39621,10 +39613,6 @@ msgstr "Chỉ quan tâm vật thể một mình khi tính che khuất bao quanh"
 
 msgid "Number of rays to trace per shader evaluation"
 msgstr "Số lượng tia để phát cho mỗi lần tính toán bộ sắc"
-
-
-msgid "Attribute"
-msgstr "Đặc Điểm"
 
 
 msgid "Attribute Name"
@@ -39953,10 +39941,6 @@ msgstr "Ánh xạ pháp tuyến không gian thế giới, thích hợp với nư
 
 msgid "UV Map for tangent space maps"
 msgstr "Bản Đồ UV cho bản đồ không gian tiếp tuyến"
-
-
-msgid "Object Info"
-msgstr "Thông Tin Vật Thể"
 
 
 msgid "AOV Output"
@@ -40889,10 +40873,6 @@ msgstr "Kích Cỡ Điểm Ảnh"
 
 msgid "Use screen pixel size instead of world units"
 msgstr "Dùng kích cỡ điểm ảnh màn thay thế đơn vị thế giới"
-
-
-msgid "Simulation Node"
-msgstr "Giao Điểm Mô Phỏng"
 
 
 msgid "Texture Node"
@@ -44325,10 +44305,6 @@ msgstr "Số bức để đặt"
 msgctxt "Operator"
 msgid "Set as Background"
 msgstr "Đặt Làm Nền"
-
-
-msgid "Set current movie clip as a camera background in 3D view-port (works only when a 3D view-port is visible)"
-msgstr "Đặt đoạn phim hiện tại cho làm nền máy quay phim trong màn chiếu 3D (chỉ được dùng khi màn chiếu 3D được hiển thị)"
 
 
 msgctxt "Operator"
@@ -49600,6 +49576,14 @@ msgid "Switch Tint colors"
 msgstr "Trao Đổi Màu Nhiễm"
 
 
+msgid "Black"
+msgstr "Đèn"
+
+
+msgid "White"
+msgstr "Trắng"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Biến Hóa Tô Đầy Nét"
@@ -50364,10 +50348,6 @@ msgstr "Chiếu lại ảnh được chỉnh sửa trên vật thể"
 msgctxt "Operator"
 msgid "Project Edit"
 msgstr "Biên Tập Phép Chiếu"
-
-
-msgid "Edit a snapshot of the view-port in an external image editor"
-msgstr "Biên tập một ảnh chụp củ màn chiếu trong một phần mềm biên tập ảnh ở ngoài"
 
 
 msgctxt "Operator"
@@ -64715,15 +64695,6 @@ msgstr "Đổi tỉ số phóng to của dự khán bộ trình tự"
 
 
 msgctxt "Operator"
-msgid "New Simulation"
-msgstr "Mô Phỏng Mới"
-
-
-msgid "Create a new simulation data block and edit it in the opened simulation editor"
-msgstr "Chế tạo một cục dữ liệu mô phỏng và biên tập nó trong bồ biên tập mô phỏng được mở"
-
-
-msgctxt "Operator"
 msgid "Update Animation Cache"
 msgstr "Nâng Cấp Đệm Chứa Hoạt Hình"
 
@@ -70971,10 +70942,6 @@ msgid "Passes"
 msgstr "Các Vòng"
 
 
-msgid "Shader AOV"
-msgstr "AOV Bộ Tô Sắc"
-
-
 msgid "Performance"
 msgstr "Hiệu Suất"
 
@@ -74134,28 +74101,12 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "Bậc tùy chọn sửa sai lầm Cycles cho lập trình viên"
 
 
-msgid "New Geometry Nodes"
-msgstr "Giao Điểm Hình Dạng Mới"
-
-
-msgid "Enable the new geometry nodes system in the ui"
-msgstr "Bậc hệ thống giao điểm mới trong giao diện"
-
-
 msgid "New Hair Type"
 msgstr "Loại Tóc Mới"
 
 
 msgid "Enable the new hair type in the ui"
 msgstr "Bậc loại tóc mới trong giao diện"
-
-
-msgid "New Point Cloud Type"
-msgstr "Loại Mây Điểm Mới"
-
-
-msgid "Enable the new point cloud type in the ui"
-msgstr "Bậc loại mây điểm mới trong giao diện"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -76458,22 +76409,6 @@ msgid "Denoise the indirect transmission lighting"
 msgstr "Bắt huyên náo trong ánh sáng truyền gián tiếp"
 
 
-msgid "Cryptomatte Accurate"
-msgstr "Mặt Nạ Mã Chính Xác"
-
-
-msgid "Generate a more accurate Cryptomatte pass. CPU only, may render slower and use more memory"
-msgstr "Chế tạo một vòng mặt nạ mã chính xác hơn. Chỉ cho CPU, có thể kết xuất chậm hơn và dùng bộ nhớ nhiều hơn"
-
-
-msgid "Cryptomatte Levels"
-msgstr "Tầng Mặt Nạ Mã"
-
-
-msgid "Sets how many unique objects can be distinguished per pixel"
-msgstr "Đặt số lượng vật thể độc đáo được phân biệt tại mỗi điểm ảnh"
-
-
 msgid "Debug BVH Intersections"
 msgstr "Kiểm Tra Sai Lầm Cắt BVH"
 
@@ -76528,30 +76463,6 @@ msgstr "Dùng Bất Huyên Náo"
 
 msgid "Denoise the rendered image"
 msgstr "Bất huyên náo trong ảnh kết xuất"
-
-
-msgid "Cryptomatte Asset"
-msgstr "Tích Sản Mặt Nạ Mã"
-
-
-msgid "Render cryptomatte asset pass, for isolating groups of objects with the same parent"
-msgstr "Kết xuất vòng tích sản mặt nạ mã, cho cô lập nhóm vật thể cùng phụ huynh"
-
-
-msgid "Cryptomatte Material"
-msgstr "Vật Liệu Mặt Nạ Mã"
-
-
-msgid "Render cryptomatte material pass, for isolating materials in compositing"
-msgstr "Kết xuất vòng vật liệu mặt nạ mã, cho cô độc vật liệu khi ghép ảnh"
-
-
-msgid "Cryptomatte Object"
-msgstr "Vật Thể Mặt Nạ Mã"
-
-
-msgid "Render cryptomatte object pass, for isolating objects in compositing"
-msgstr "Kết xuất vòng vặt thể mặt nạ mã, cho cô độc vật thể khi ghép ảnh"
 
 
 msgid "Volume Direct"
@@ -82455,16 +82366,8 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
-msgid "Black"
-msgstr "Đèn"
-
-
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
-
-
-msgid "White"
-msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -83504,10 +83407,6 @@ msgstr "Biên tập giao điểm bộ tô sắc từ Phong Cách Nét"
 
 msgid "Use active Viewer Node output as backdrop for compositing nodes"
 msgstr "Dùng Giao Điểm Khán hoạt động ngõ ra làm nền cho giao điểm ghép"
-
-
-msgid "Simulation that is being edited"
-msgstr "Mô phỏng nào đang biên tập"
 
 
 msgid "Texture Type"
@@ -88979,6 +88878,14 @@ msgid "Z, Index, normal, UV and vector passes are only affected by surfaces with
 msgstr "Vòng Z, chỉ số, pháp tuyến, UV, và vectơ chỉ được ảnh hướng bằng bề mặt có độ đục bằng hoặc cao hơn ngưỡng này"
 
 
+msgid "Cryptomatte Levels"
+msgstr "Tầng Mặt Nạ Mã"
+
+
+msgid "Sets how many unique objects can be distinguished per pixel"
+msgstr "Đặt số lượng vật thể độc đáo được phân biệt tại mỗi điểm ảnh"
+
+
 msgid "Override number of render samples for this view layer, 0 will use the scene setting"
 msgstr "Thay thế số lượng mẫu vật cho lớp hiển thị này, 0 sẽ dùng cài đặt cảnh"
 
@@ -88989,6 +88896,34 @@ msgstr "Bật hay tắt kết xuất Lớp Hiển Thị này"
 
 msgid "Render stylized strokes in this Layer"
 msgstr "Kết xuất nét có phong cách trong Lớp này"
+
+
+msgid "Cryptomatte Accurate"
+msgstr "Mặt Nạ Mã Chính Xác"
+
+
+msgid "Cryptomatte Asset"
+msgstr "Tích Sản Mặt Nạ Mã"
+
+
+msgid "Render cryptomatte asset pass, for isolating groups of objects with the same parent"
+msgstr "Kết xuất vòng tích sản mặt nạ mã, cho cô lập nhóm vật thể cùng phụ huynh"
+
+
+msgid "Cryptomatte Material"
+msgstr "Vật Liệu Mặt Nạ Mã"
+
+
+msgid "Render cryptomatte material pass, for isolating materials in compositing"
+msgstr "Kết xuất vòng vật liệu mặt nạ mã, cho cô độc vật liệu khi ghép ảnh"
+
+
+msgid "Cryptomatte Object"
+msgstr "Vật Thể Mặt Nạ Mã"
+
+
+msgid "Render cryptomatte object pass, for isolating objects in compositing"
+msgstr "Kết xuất vòng vặt thể mặt nạ mã, cho cô độc vật thể khi ghép ảnh"
 
 
 msgid "Deliver bloom pass"
@@ -89770,11 +89705,6 @@ msgstr "Khắc:"
 msgctxt "Operator"
 msgid "Sequencer:"
 msgstr "Bộ_trình_tự:"
-
-
-msgctxt "Operator"
-msgid "Simulation:"
-msgstr "Mô phỏng:"
 
 
 msgctxt "Operator"
@@ -90608,14 +90538,6 @@ msgstr "Thời Gian Kết Xuất"
 
 msgid "Sample Count"
 msgstr "Sô Lượng Mẫu"
-
-
-msgid "Asset"
-msgstr "Tích Sản"
-
-
-msgid "Accurate Mode"
-msgstr "Chế Độ Chính Xác"
 
 
 msgid "Feature Strength"
@@ -92940,6 +92862,14 @@ msgstr "Truyền"
 
 msgid "Scatter"
 msgstr "Tán Xạ"
+
+
+msgid "Asset"
+msgstr "Tích Sản"
+
+
+msgid "Accurate Mode"
+msgstr "Chế Độ Chính Xác"
 
 
 msgid "Unknown add-ons"
@@ -95376,6 +95306,21 @@ msgstr "Giống"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Tầng"
+
+
+msgctxt "Operator"
+msgid "Hue Saturation Value"
+msgstr "Giá Trị Độ Tươi Màu Sắc"
+
+
+msgctxt "Operator"
+msgid "Bright/Contrast"
+msgstr "Độ Sáng/Sự Chênh Lệch"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Mặt Phẳng"
 
@@ -95473,6 +95418,11 @@ msgstr "Nhấp OpenVDB..."
 msgctxt "Operator"
 msgid "Empty"
 msgstr "Vật Thể Rỗng"
+
+
+msgctxt "Operator"
+msgid "Point Cloud"
+msgstr "Mây Điểm"
 
 
 msgctxt "Operator"
@@ -95607,21 +95557,6 @@ msgstr "Vật Liệu"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Hoạt Hình Vật Thể"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Tầng"
-
-
-msgctxt "Operator"
-msgid "Hue Saturation Value"
-msgstr "Giá Trị Độ Tươi Màu Sắc"
-
-
-msgctxt "Operator"
-msgid "Bright/Contrast"
-msgstr "Độ Sáng/Sự Chênh Lệch"
 
 
 msgctxt "Operator"
@@ -96346,11 +96281,6 @@ msgstr "Màu Đỉnh"
 msgctxt "Operator"
 msgid "Hair"
 msgstr "Tóc"
-
-
-msgctxt "Operator"
-msgid "Point Cloud"
-msgstr "Mây Điểm"
 
 
 msgctxt "Operator"
@@ -103840,10 +103770,6 @@ msgid "along %s X"
 msgstr "hươứng %s X"
 
 
-msgid "locking %s X"
-msgstr "đang khóa %s X"
-
-
 msgid "along Y"
 msgstr "hướng Y"
 
@@ -103852,16 +103778,20 @@ msgid "along %s Y"
 msgstr "hướng %s Y"
 
 
-msgid "locking %s Y"
-msgstr "đang khóa %s Y"
-
-
 msgid "along Z"
 msgstr "hướng Z"
 
 
 msgid "along %s Z"
 msgstr "hướng %s Z"
+
+
+msgid "locking %s X"
+msgstr "đang khóa %s X"
+
+
+msgid "locking %s Y"
+msgstr "đang khóa %s Y"
 
 
 msgid "locking %s Z"
