@@ -905,7 +905,7 @@ def any_number_as_int(svalue):
 def load(context,
          filepath,
          *,
-         global_clight_size=0.0,
+         global_clamp_size=0.0,
          use_smooth_groups=True,
          use_edges=True,
          use_split_objects=True,
@@ -1293,7 +1293,7 @@ def load(context,
         axis_min = [1000000000] * 3
         axis_max = [-1000000000] * 3
 
-        if global_clight_size:
+        if global_clamp_size:
             # Get all object bounds
             for ob in new_objects:
                 for v in ob.bound_box:
@@ -1307,7 +1307,7 @@ def load(context,
             max_axis = max(axis_max[0] - axis_min[0], axis_max[1] - axis_min[1], axis_max[2] - axis_min[2])
             scale = 1.0
 
-            while global_clight_size < max_axis * scale:
+            while global_clamp_size < max_axis * scale:
                 scale = scale / 10.0
 
             for obj in new_objects:

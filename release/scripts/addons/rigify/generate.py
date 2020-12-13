@@ -112,35 +112,47 @@ class Generator(base_generate.BaseGenerator):
         return obj
 
 
-    def __create_widget_group(self, new_group_name):
-        context = self.context
-        scene = self.scene
-        id_store = self.id_store
-
-        # Create/find widge collection
-        self.widget_collection = ensure_widget_collection(context)
-
-        # Remove wgts if force update is set
+    def __create_widget_group(self):
+        new_group_name = "WGTS_" + self.obj.name
         wgts_group_name = "WGTS_" + (self.rig_old_name or self.obj.name)
-        if wgts_group_name in scene.objects and self.metarig.data.rigify_force_widget_update:
-            bpy.ops.object.mode_set(mode='OBJECT')
-            bpy.ops.object.select_all(action='DESELECT')
-            for wgt in bpy.data.objects[wgts_group_name].children:
-                wgt.select_set(True)
-            bpy.ops.object.delete(use_global=False)
+
+        # Find the old widgets collection
+        old_collection = bpy.data.collections.get(wgts_group_name)
+
+        if not old_collection:
+            # Update the old 'Widgets' collection
+            legacy_collection = bpy.data.collections.get('Widgets')
+
+            if legacy_collection and wgts_group_name in legacy_collection.objects:
+                legacy_collection.name = wgts_group_name
+                old_collection = legacy_collection
+
+        if old_collection:
+            # Remove widgets if force update is set
+            if self.metarig.data.rigify_force_widget_update:
+                for obj in list(old_collection.objects):
+                    bpy.data.objects.remove(obj)
+
+            # Rename widgets and collection if renaming
             if self.rig_old_name:
-                bpy.data.objects[wgts_group_name].name = new_group_name
+                old_prefix = WGT_PREFIX + self.rig_old_name + "_"
+                new_prefix = WGT_PREFIX + self.obj.name + "_"
 
-        # Create Group widget
-        wgts_group_name = new_group_name
-        if wgts_group_name not in scene.objects:
-            if wgts_group_name in bpy.data.objects:
-                bpy.data.objects[wgts_group_name].user_clear()
-                bpy.data.objects.remove(bpy.data.objects[wgts_group_name])
-            mesh = bpy.data.meshes.new(wgts_group_name)
-            wgts_obj = bpy.data.objects.new(wgts_group_name, mesh)
-            self.widget_collection.objects.link(wgts_obj)
+                for obj in list(old_collection.objects):
+                    if obj.name.startswith(old_prefix):
+                        new_name = new_prefix + obj.name[len(old_prefix):]
+                    elif obj.name == wgts_group_name:
+                        new_name = new_group_name
+                    else:
+                        continue
 
+                    obj.data.name = new_name
+                    obj.name = new_name
+
+                old_collection.name = new_group_name
+
+        # Create/find widget collection
+        self.widget_collection = ensure_widget_collection(self.context, new_group_name)
         self.wgts_group_name = new_group_name
 
 
@@ -250,26 +262,34 @@ class Generator(base_generate.BaseGenerator):
 
 
     def __assign_layers(self):
-        bones = self.obj.data.bones
+        pbones = self.obj.pose.bones
 
-        bones[self.root_bone].layers = ROOT_LAYER
+        pbones[self.root_bone].bone.layers = ROOT_LAYER
 
         # Every bone that has a name starting with "DEF-" make deforming.  All the
         # others make non-deforming.
-        for bone in bones:
+        for pbone in pbones:
+            bone = pbone.bone
             name = bone.name
+            layers = None
 
             bone.use_deform = name.startswith(DEF_PREFIX)
 
             # Move all the original bones to their layer.
             if name.startswith(ORG_PREFIX):
-                bone.layers = ORG_LAYER
+                layers = ORG_LAYER
             # Move all the bones with names starting with "MCH-" to their layer.
             elif name.startswith(MCH_PREFIX):
-                bone.layers = MCH_LAYER
+                layers = MCH_LAYER
             # Move all the bones with names starting with "DEF-" to their layer.
             elif name.startswith(DEF_PREFIX):
-                bone.layers = DEF_LAYER
+                layers = DEF_LAYER
+
+            if layers is not None:
+                bone.layers = layers
+
+                # Remove custom shapes from non-control bones
+                pbone.custom_shape = None
 
             bone.bbone_x = bone.bbone_z = bone.length * 0.05
 
@@ -351,7 +371,7 @@ class Generator(base_generate.BaseGenerator):
 
         #------------------------------------------
         # Create Group widget
-        self.__create_widget_group("WGTS_" + obj.name)
+        self.__create_widget_group()
 
         t.tick("Create main WGTS: ")
 

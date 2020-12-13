@@ -149,6 +149,7 @@ const char *folderlist_peeklastdir(ListBase *folderlist)
 
 int folderlist_clear_next(struct SpaceFile *sfile)
 {
+  const FileSelectParams *params = ED_fileselect_get_active_params(sfile);
   struct FolderList *folder;
 
   /* if there is no folder_next there is nothing we can clear */
@@ -159,7 +160,7 @@ int folderlist_clear_next(struct SpaceFile *sfile)
   /* if previous_folder, next_folder or refresh_folder operators are executed
    * it doesn't clear folder_next */
   folder = sfile->folders_prev->last;
-  if ((!folder) || (BLI_path_cmp(folder->foldername, sfile->params->dir) == 0)) {
+  if ((!folder) || (BLI_path_cmp(folder->foldername, params->dir) == 0)) {
     return 0;
   }
 
@@ -629,7 +630,7 @@ void filelist_setsorting(struct FileList *filelist, const short sort, bool inver
 /* ********** Filter helpers ********** */
 
 /* True if filename is meant to be hidden, eg. starting with period. */
-static bool is_hidden_dot_filename(const char *filename, FileListInternEntry *file)
+static bool is_hidden_dot_filename(const char *filename, const FileListInternEntry *file)
 {
   if (filename[0] == '.' && !ELEM(filename[1], '.', '\0')) {
     return true; /* ignore .file */
@@ -670,8 +671,8 @@ static bool is_hidden_dot_filename(const char *filename, FileListInternEntry *fi
 
 /* True if should be hidden, based on current filtering. */
 static bool is_filtered_hidden(const char *filename,
-                               FileListFilter *filter,
-                               FileListInternEntry *file)
+                               const FileListFilter *filter,
+                               const FileListInternEntry *file)
 {
   if ((filename[0] == '.') && (filename[1] == '\0')) {
     return true; /* Ignore . */
@@ -2620,7 +2621,7 @@ static int filelist_readjob_list_lib(const char *root, ListBase *entries, const 
     nbr_entries++;
   }
 
-  BLI_linklist_free(names, free);
+  BLI_linklist_freeN(names);
 
   return nbr_entries;
 }

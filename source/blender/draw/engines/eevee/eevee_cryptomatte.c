@@ -25,7 +25,7 @@
  * for reference to the cryptomatte specification.
  *
  * The challenge with cryptomatte in EEVEE is the merging and sorting of the samples.
- * User can enable upto 3 cryptomatte layers (Object, Material and Asset).
+ * User can enable up to 3 cryptomatte layers (Object, Material and Asset).
  *
  * Process
  *
@@ -144,9 +144,9 @@ void EEVEE_cryptomatte_output_init(EEVEE_ViewLayerData *UNUSED(sldata),
   const ViewLayer *view_layer = draw_ctx->view_layer;
 
   const int num_cryptomatte_layers = eevee_cryptomatte_layers_count(view_layer);
-  eGPUDataFormat format = (num_cryptomatte_layers == 1) ?
-                              GPU_R32F :
-                              (num_cryptomatte_layers == 2) ? GPU_RG32F : GPU_RGBA32F;
+  eGPUTextureFormat format = (num_cryptomatte_layers == 1) ?
+                                 GPU_R32F :
+                                 (num_cryptomatte_layers == 2) ? GPU_RG32F : GPU_RGBA32F;
   const float *viewport_size = DRW_viewport_size_get();
   const int buffer_size = viewport_size[0] * viewport_size[1];
 
@@ -303,7 +303,7 @@ void EEVEE_cryptomatte_cache_populate(EEVEE_Data *vedata, EEVEE_ViewLayerData *s
     GPUBatch *geom = DRW_cache_object_surface_get(ob);
     if (geom) {
       DRWShadingGroup *grp = eevee_cryptomatte_shading_group_create(
-          vedata, sldata, ob, false, NULL);
+          vedata, sldata, ob, NULL, false);
       DRW_shgroup_call(grp, geom, ob);
     }
   }

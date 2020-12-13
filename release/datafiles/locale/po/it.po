@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -12,6 +12,26 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.2.4"
+
+
+msgid "Valid"
+msgstr "Valido"
+
+
+msgid "Name"
+msgstr "Nome"
+
+
+msgid "Type"
+msgstr "Tipo"
+
+
+msgid "Color"
+msgstr "Colore"
+
+
+msgid "Value"
+msgstr "Valore"
 
 
 msgid "Action F-Curves"
@@ -152,10 +172,6 @@ msgstr "Blocco"
 
 msgid "Action group is locked"
 msgstr "Gruppo Azione è bloccato"
-
-
-msgid "Name"
-msgstr "Nome"
 
 
 msgid "Select"
@@ -858,16 +874,12 @@ msgid "Domain"
 msgstr "Dominio"
 
 
-msgid "Vertex"
-msgstr "Vertice"
+msgid "Point"
+msgstr "Punto"
 
 
 msgid "Edge"
 msgstr "Spigolo"
-
-
-msgid "Point"
-msgstr "Punto"
 
 
 msgid "Curve"
@@ -992,10 +1004,6 @@ msgstr "Diretto"
 
 msgid "Indirect"
 msgstr "Indiretto"
-
-
-msgid "Color"
-msgstr "Colore"
 
 
 msgid "Diffuse"
@@ -1780,10 +1788,6 @@ msgstr "Regola Stormo"
 
 msgid "Boid rule name"
 msgstr "Nome della regola stormo"
-
-
-msgid "Type"
-msgstr "Tipo"
 
 
 msgid "Goal"
@@ -2856,10 +2860,6 @@ msgstr "Tonalità"
 
 msgid "Saturation"
 msgstr "Saturazione"
-
-
-msgid "Value"
-msgstr "Valore"
 
 
 msgid "Show Lines"
@@ -3955,10 +3955,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "Il vincolo è stato applicato in questa istanza proxy (es. non appartengono all'origine dell'Armatura)"
 
 
-msgid "Valid"
-msgstr "Valido"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "Il vincolo ha le impostazioni valide e può essere valutato"
 
@@ -4013,6 +4009,10 @@ msgstr "Il vincolo è applicato relativamente al sistema di coordinate locali de
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "Il pannello dei vincoli è espanso nella UI"
+
+
+msgid "Sub-Target"
+msgstr "Sotto-Obiettivo"
 
 
 msgid "Target Space"
@@ -4273,10 +4273,6 @@ msgstr "Valore minimo per l'intervallo del canale obiettivo"
 
 msgid "Mix Mode"
 msgstr "Modalità Miscela"
-
-
-msgid "Sub-Target"
-msgstr "Sotto-Obiettivo"
 
 
 msgid "Target"
@@ -6962,6 +6958,10 @@ msgstr "Formato"
 
 msgid "Surface Format"
 msgstr "Formato Superficie"
+
+
+msgid "Vertex"
+msgstr "Vertice"
 
 
 msgid "Image Sequence"
@@ -13154,10 +13154,6 @@ msgid "Compositing nodes"
 msgstr "Nodi Composizione"
 
 
-msgid "Simulation"
-msgstr "Simulazione"
-
-
 msgid "Compositor Node Tree"
 msgstr "Composizione Albero Nodi"
 
@@ -16319,6 +16315,10 @@ msgid "Animation"
 msgstr "Animazione"
 
 
+msgid "Simulation"
+msgstr "Simulazione"
+
+
 msgid "Precision"
 msgstr "Precisione"
 
@@ -18737,6 +18737,14 @@ msgid "Matte"
 msgstr "Mascherino"
 
 
+msgid "Attribute"
+msgstr "Attributo"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
 msgid "Node"
 msgstr "Nodo"
 
@@ -18899,10 +18907,6 @@ msgstr "Menu Contesto Testo"
 
 msgid "Interpolate"
 msgstr "Interpola"
-
-
-msgid "Mesh"
-msgstr "Mesh"
 
 
 msgid "Edge Data"
@@ -24449,6 +24453,10 @@ msgid "Int"
 msgstr "Int"
 
 
+msgid "Object Info"
+msgstr "Info Oggetto"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Cornice"
@@ -24484,10 +24492,6 @@ msgstr "Nodo ombreggiatore del materiale"
 
 msgid "Add Shader"
 msgstr "Somma Ombreggiatori"
-
-
-msgid "Attribute"
-msgstr "Attributo"
 
 
 msgid "Attribute Name"
@@ -24668,10 +24672,6 @@ msgstr "Spazio Oggetto Blender"
 
 msgid "Blender World Space"
 msgstr "Spazio Mondo Blender"
-
-
-msgid "Object Info"
-msgstr "Info Oggetto"
 
 
 msgid "Light Output"
@@ -30644,6 +30644,14 @@ msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
 
 
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
+
+
 msgid "Confirm on Release"
 msgstr "Conferma al Rilascio"
 
@@ -31152,10 +31160,6 @@ msgstr "Proietta di nuovo l'immagine modificata sull'oggetto"
 msgctxt "Operator"
 msgid "Project Edit"
 msgstr "Modifica Proiezione"
-
-
-msgid "Edit a snapshot of the view-port in an external image editor"
-msgstr "Modifica un'istantanea della vista in un editor di immagini esterno"
 
 
 msgctxt "Operator"
@@ -50607,14 +50611,6 @@ msgid "Dash"
 msgstr "Tratteggiato"
 
 
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
-
-
 msgid "Overlay Mode"
 msgstr "Modalità Sovrapposizione"
 
@@ -54978,10 +54974,6 @@ msgid "Render Time"
 msgstr "Tempo di Render"
 
 
-msgid "Accurate Mode"
-msgstr "Modalità Accurata"
-
-
 msgid "Feature Strength"
 msgstr "Intensità Caratteristica"
 
@@ -56109,6 +56101,10 @@ msgstr "Mappa"
 
 msgid "Use for Rendering"
 msgstr "Usa per il rendering"
+
+
+msgid "Accurate Mode"
+msgstr "Modalità Accurata"
 
 
 msgid "Unknown add-ons"
@@ -57666,6 +57662,21 @@ msgstr "Simili"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Livelli"
+
+
+msgctxt "Operator"
+msgid "Hue Saturation Value"
+msgstr "Tonalità - Saturazione - Valore"
+
+
+msgctxt "Operator"
+msgid "Bright/Contrast"
+msgstr "Luminosità/Contrasto"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Piano"
 
@@ -57872,21 +57883,6 @@ msgstr "Materiali"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Animazione Oggetto"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Livelli"
-
-
-msgctxt "Operator"
-msgid "Hue Saturation Value"
-msgstr "Tonalità - Saturazione - Valore"
-
-
-msgctxt "Operator"
-msgid "Bright/Contrast"
-msgstr "Luminosità/Contrasto"
 
 
 msgctxt "Operator"
@@ -62249,10 +62245,6 @@ msgid "along %s X"
 msgstr "lungo X %s"
 
 
-msgid "locking %s X"
-msgstr "bloccando X %s"
-
-
 msgid "along Y"
 msgstr "lungo Y"
 
@@ -62261,16 +62253,20 @@ msgid "along %s Y"
 msgstr "lungo Y %s"
 
 
-msgid "locking %s Y"
-msgstr "bloccando Y %s"
-
-
 msgid "along Z"
 msgstr "lungo Z"
 
 
 msgid "along %s Z"
 msgstr "lungo Z %s"
+
+
+msgid "locking %s X"
+msgstr "bloccando X %s"
+
+
+msgid "locking %s Y"
+msgstr "bloccando Y %s"
 
 
 msgid "locking %s Z"

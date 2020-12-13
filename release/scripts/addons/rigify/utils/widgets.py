@@ -20,6 +20,8 @@
 
 import bpy
 import math
+import inspect
+import functools
 
 from mathutils import Matrix
 
@@ -54,40 +56,153 @@ def obj_to_bone(obj, rig, bone_name, bone_transform_name=None):
     obj.matrix_basis = rig.matrix_world @ bone.bone.matrix_local @ Matrix.Scale(scale, 4)
 
 
-def create_widget(rig, bone_name, bone_transform_name=None):
+def create_widget(rig, bone_name, bone_transform_name=None, *, widget_name=None, widget_force_new=False):
     """ Creates an empty widget object for a bone, and returns the object.
     """
-    obj_name = WGT_PREFIX + rig.name + '_' + bone_name
+    assert rig.mode != 'EDIT'
+
+    obj_name = widget_name or WGT_PREFIX + rig.name + '_' + bone_name
     scene = bpy.context.scene
-    collection = ensure_widget_collection(bpy.context)
+    collection = ensure_widget_collection(bpy.context, 'WGTS_' + rig.name)
+    reuse_mesh = None
 
     # Check if it already exists in the scene
-    if obj_name in scene.objects:
-        # Move object to bone position, in case it changed
-        obj = scene.objects[obj_name]
-        obj_to_bone(obj, rig, bone_name, bone_transform_name)
+    if not widget_force_new:
+        if obj_name in scene.objects:
+            # Move object to bone position, in case it changed
+            obj = scene.objects[obj_name]
+            obj_to_bone(obj, rig, bone_name, bone_transform_name)
 
-        return None
-    else:
+            return None
+
         # Delete object if it exists in blend data but not scene data.
         # This is necessary so we can then create the object without
         # name conflicts.
         if obj_name in bpy.data.objects:
-            bpy.data.objects[obj_name].user_clear()
             bpy.data.objects.remove(bpy.data.objects[obj_name])
 
-        # Create mesh object
-        mesh = bpy.data.meshes.new(obj_name)
-        obj = bpy.data.objects.new(obj_name, mesh)
-        collection.objects.link(obj)
+        # Create a linked duplicate of the widget assigned in the metarig
+        reuse_widget = rig.pose.bones[bone_name].custom_shape
+        if reuse_widget:
+            reuse_mesh = reuse_widget.data
 
-        # Move object to bone position and set layers
-        obj_to_bone(obj, rig, bone_name, bone_transform_name)
-        wgts_group_name = 'WGTS_' + rig.name
-        if wgts_group_name in bpy.data.objects.keys():
-            obj.parent = bpy.data.objects[wgts_group_name]
+    # Create mesh object
+    mesh = reuse_mesh or bpy.data.meshes.new(obj_name)
+    obj = bpy.data.objects.new(obj_name, mesh)
+    collection.objects.link(obj)
 
-        return obj
+    # Move object to bone position and set layers
+    obj_to_bone(obj, rig, bone_name, bone_transform_name)
+
+    if reuse_mesh:
+        return None
+
+    return obj
+
+
+#=============================================
+# Widget choice dropdown
+#=============================================
+
+_registered_widgets = {}
+
+
+def _get_valid_args(callback, skip):
+    spec = inspect.getfullargspec(callback)
+    return set(spec.args[skip:] + spec.kwonlyargs)
+
+
+def register_widget(name, callback, **default_args):
+    unwrapped = inspect.unwrap(callback)
+    if unwrapped != callback:
+        valid_args = _get_valid_args(unwrapped, 1)
+    else:
+        valid_args = _get_valid_args(callback, 2)
+
+    _registered_widgets[name] = (callback, valid_args, default_args)
+
+
+def layout_widget_dropdown(layout, props, prop_name, **kwargs):
+    "Create a UI dropdown to select a widget from the known list."
+
+    id_store = bpy.context.window_manager
+    rigify_widgets = id_store.rigify_widgets
+
+    rigify_widgets.clear()
+
+    for name in sorted(_registered_widgets):
+        item = rigify_widgets.add()
+        item.name = name
+
+    layout.prop_search(props, prop_name, id_store, "rigify_widgets", **kwargs)
+
+
+def create_registered_widget(obj, bone_name, widget_id, **kwargs):
+    try:
+        callback, valid_args, default_args = _registered_widgets[widget_id]
+    except KeyError:
+        raise MetarigError("Unknown widget name: " + widget_id)
+
+    # Convert between radius and size
+    if kwargs.get('size') and 'size' not in valid_args:
+        if 'radius' in valid_args and not kwargs.get('radius'):
+            kwargs['radius'] = kwargs['size'] / 2
+
+    elif kwargs.get('radius') and 'radius' not in valid_args:
+        if 'size' in valid_args and not kwargs.get('size'):
+            kwargs['size'] = kwargs['radius'] * 2
+
+    args = { **default_args, **kwargs }
+
+    return callback(obj, bone_name, **{ k:v for k,v in args.items() if k in valid_args})
+
+
+#=============================================
+# Widget geometry
+#=============================================
+
+class GeometryData:
+    def __init__(self):
+        self.verts = []
+        self.edges = []
+        self.faces = []
+
+
+def widget_generator(generate_func=None, *, register=None, subsurf=0):
+    if generate_func is None:
+        return functools.partial(widget_generator, register=register, subsurf=subsurf)
+
+    """
+    Decorator that encapsulates a call to create_widget, and only requires
+    the actual function to fill the provided vertex and edge lists.
+
+    Accepts parameters of create_widget, plus any keyword arguments the
+    wrapped function has.
+    """
+    @functools.wraps(generate_func)
+    def wrapper(rig, bone_name, bone_transform_name=None, widget_name=None, widget_force_new=False, **kwargs):
+        obj = create_widget(rig, bone_name, bone_transform_name, widget_name=widget_name, widget_force_new=widget_force_new)
+        if obj is not None:
+            geom = GeometryData()
+
+            generate_func(geom, **kwargs)
+
+            mesh = obj.data
+            mesh.from_pydata(geom.verts, geom.edges, geom.faces)
+            mesh.update()
+
+            if subsurf:
+                mod = obj.modifiers.new("subsurf", 'SUBSURF')
+                mod.levels = subsurf
+
+            return obj
+        else:
+            return None
+
+    if register:
+        register_widget(register, wrapper)
+
+    return wrapper
 
 
 def create_circle_polygon(number_verts, axis, radius=1.0, head_tail=0.0):
@@ -170,44 +285,39 @@ def adjust_widget_transform_mesh(obj, matrix, local=None):
         obj.data.transform(matrix)
 
 
-def write_widget(obj):
+def write_widget(obj, name='thing', use_size=True):
     """ Write a mesh object as a python script for widget use.
     """
     script = ""
-    script += "def create_thing_widget(rig, bone_name, size=1.0, bone_transform_name=None):\n"
-    script += "    obj = create_widget(rig, bone_name, bone_transform_name)\n"
-    script += "    if obj is not None:\n"
+    script += "@widget_generator\n"
+    script += "def create_"+name+"_widget(geom";
+    if use_size:
+        script += ", *, size=1.0"
+    script += "):\n"
 
     # Vertices
-    script += "        verts = ["
+    szs = "*size" if use_size else ""
+    width = 2 if use_size else 3
+
+    script += "    geom.verts = ["
     for i, v in enumerate(obj.data.vertices):
-        script += "({:g}*size, {:g}*size, {:g}*size),".format(v.co[0], v.co[1], v.co[2])
-        script += "\n                 " if i % 2 == 1 else " "
+        script += "({:g}{}, {:g}{}, {:g}{}),".format(v.co[0], szs, v.co[1], szs, v.co[2], szs)
+        script += "\n                  " if i % width == (width - 1) else " "
     script += "]\n"
 
     # Edges
-    script += "        edges = ["
+    script += "    geom.edges = ["
     for i, e in enumerate(obj.data.edges):
         script += "(" + str(e.vertices[0]) + ", " + str(e.vertices[1]) + "),"
-        script += "\n                 " if i % 10 == 9 else " "
+        script += "\n                  " if i % 10 == 9 else " "
     script += "]\n"
 
     # Faces
-    script += "        faces = ["
-    for i, f in enumerate(obj.data.polygons):
-        script += "("
-        for v in f.vertices:
-            script += str(v) + ", "
-        script += "),"
-        script += "\n                 " if i % 10 == 9 else " "
-    script += "]\n"
-
-    # Build mesh
-    script += "\n        mesh = obj.data\n"
-    script += "        mesh.from_pydata(verts, edges, faces)\n"
-    script += "        mesh.update()\n"
-    script += "        return obj\n"
-    script += "    else:\n"
-    script += "        return None\n"
+    if obj.data.polygons:
+        script += "    geom.faces = ["
+        for i, f in enumerate(obj.data.polygons):
+            script += "(" + ", ".join(str(v) for v in f.vertices) + "),"
+            script += "\n                  " if i % 10 == 9 else " "
+        script += "]\n"
 
     return script
