@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -12,6 +12,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.7.1\n"
 "Language-Team: Polish Blender Course <piotao@polskikursblendera.pl>"
+
+
+msgid "Valid"
+msgstr "Poprawny"
+
+
+msgid "Name"
+msgstr "Nazwa"
+
+
+msgid "Type"
+msgstr "Rodzaj"
+
+
+msgid "Color"
+msgstr "Kolor"
+
+
+msgid "Value"
+msgstr "Wartość"
 
 
 msgid "Action Group"
@@ -144,10 +164,6 @@ msgstr "Blokada"
 
 msgid "Action group is locked"
 msgstr "Grupa akcji jest zablokowana"
-
-
-msgid "Name"
-msgstr "Nazwa"
 
 
 msgid "Select"
@@ -786,10 +802,6 @@ msgid "None"
 msgstr "Nic"
 
 
-msgid "Color"
-msgstr "Kolor"
-
-
 msgid "Save Mode"
 msgstr "Tryb zapisu"
 
@@ -1128,10 +1140,6 @@ msgstr "Reguły boidów"
 
 msgid "Boid rule name"
 msgstr "Nazwa reguły boidów"
-
-
-msgid "Type"
-msgstr "Rodzaj"
 
 
 msgid "Goal"
@@ -1876,10 +1884,6 @@ msgstr "Odcień"
 
 msgid "Saturation"
 msgstr "Nasycenie"
-
-
-msgid "Value"
-msgstr "Wartość"
 
 
 msgid "Background Image"
@@ -2903,10 +2907,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "Ogranicznik został dodany w tej instancji proxy (np. nie należał do źródłowego szkieletu)"
 
 
-msgid "Valid"
-msgstr "Poprawny"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "Ogranicznik ma prawidłowe ustawienia i może zostać wyliczony"
 
@@ -2961,6 +2961,10 @@ msgstr "Ogranicznik jest stosowany w przestrzeni lokalnych współrzędnych obie
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "Pokaż rozwinięty panel ograniczników"
+
+
+msgid "Sub-Target"
+msgstr "Cel podrzędny"
 
 
 msgid "Target Space"
@@ -3209,10 +3213,6 @@ msgstr "Minimum"
 
 msgid "Minimum value for target channel range"
 msgstr "Minimalna wartość dla docelowego zakresu kanału"
-
-
-msgid "Sub-Target"
-msgstr "Cel podrzędny"
 
 
 msgid "Target"
@@ -6401,6 +6401,10 @@ msgid "Distort"
 msgstr "Zniekształć"
 
 
+msgid "Mesh"
+msgstr "Siatka"
+
+
 msgid "Python"
 msgstr "Python"
 
@@ -6415,10 +6419,6 @@ msgstr "Plik"
 
 msgid "External Data"
 msgstr "Zewnętrzne Dane"
-
-
-msgid "Mesh"
-msgstr "Siatka"
 
 
 msgid "Ball"
@@ -10634,10 +10634,6 @@ msgid "along %s X"
 msgstr "wzdłuż X - %s"
 
 
-msgid "locking %s X"
-msgstr "blokada X - %s"
-
-
 msgid "along Y"
 msgstr "wzdłuż Y"
 
@@ -10646,16 +10642,20 @@ msgid "along %s Y"
 msgstr "wzdłuż Y - %s"
 
 
-msgid "locking %s Y"
-msgstr "blokada Y - %s"
-
-
 msgid "along Z"
 msgstr "wzdłuż Z"
 
 
 msgid "along %s Z"
 msgstr "wzdłuż Z - %s"
+
+
+msgid "locking %s X"
+msgstr "blokada X - %s"
+
+
+msgid "locking %s Y"
+msgstr "blokada Y - %s"
 
 
 msgid "locking %s Z"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -12,6 +12,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
+
+
+msgid "Valid"
+msgstr "Действительно"
+
+
+msgid "Name"
+msgstr "Имя"
+
+
+msgid "Type"
+msgstr "Тип"
+
+
+msgid "Color"
+msgstr "Цвет"
+
+
+msgid "Value"
+msgstr "Значение"
 
 
 msgid "Action F-Curves"
@@ -152,10 +172,6 @@ msgstr "Блокировка"
 
 msgid "Action group is locked"
 msgstr "Группа действий заблокирована"
-
-
-msgid "Name"
-msgstr "Имя"
 
 
 msgid "Select"
@@ -978,8 +994,8 @@ msgid "Domain"
 msgstr "Домен"
 
 
-msgid "Vertex"
-msgstr "Вершина"
+msgid "Point"
+msgstr "Точка"
 
 
 msgid "Edge"
@@ -992,10 +1008,6 @@ msgstr "Угол"
 
 msgid "Polygon"
 msgstr "Полигон"
-
-
-msgid "Point"
-msgstr "Точка"
 
 
 msgid "Curve"
@@ -1144,10 +1156,6 @@ msgstr "Прямое"
 
 msgid "Indirect"
 msgstr "Отражённое"
-
-
-msgid "Color"
-msgstr "Цвет"
 
 
 msgid "Diffuse"
@@ -2056,10 +2064,6 @@ msgstr "Правило роя"
 
 msgid "Boid rule name"
 msgstr "Имя правила роя"
-
-
-msgid "Type"
-msgstr "Тип"
 
 
 msgid "Goal"
@@ -3492,10 +3496,6 @@ msgstr "Случайность интенсивности"
 
 msgid "Randomness factor strength in new strokes"
 msgstr "Доля случайности интенсивности в новых штрихах"
-
-
-msgid "Value"
-msgstr "Значение"
 
 
 msgid "Random factor to modify original value"
@@ -5187,10 +5187,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "Ограничитель добавлен к прокси-экземпляру (т. е. не принадлежит к исходной арматуре)"
 
 
-msgid "Valid"
-msgstr "Действительно"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "Ограничитель имеет допустимые значения и может быть рассчитан"
 
@@ -5249,6 +5245,14 @@ msgstr "Ограничитель применён по отношению к л�
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "Панель ограничителя раскрыта в пользовательском интерфейсе"
+
+
+msgid "Sub-Target"
+msgstr "Подцель"
+
+
+msgid "Armature bone, mesh or lattice vertex group, ..."
+msgstr "Кость арматуры, группа вершин меша или решётки, …"
 
 
 msgid "Target Space"
@@ -5549,14 +5553,6 @@ msgstr "После оригинала (полное масштабировани
 
 msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
 msgstr "Применить каналы действий после исходных трансформаций, как если бы они были применены к потомку с включённым полным наследованием масштаба. Этот режим может приводить к сдвигам и существует только для обратной совместимости"
-
-
-msgid "Sub-Target"
-msgstr "Подцель"
-
-
-msgid "Armature bone, mesh or lattice vertex group, ..."
-msgstr "Кость арматуры, группа вершин меша или решётки, …"
 
 
 msgid "Target"
@@ -9260,6 +9256,10 @@ msgstr "Формат"
 
 msgid "Surface Format"
 msgstr "Формат поверхности"
+
+
+msgid "Vertex"
+msgstr "Вершина"
 
 
 msgid "Image Sequence"
@@ -19915,10 +19915,6 @@ msgid "Compositing nodes"
 msgstr "Ноды постобработки"
 
 
-msgid "Simulation"
-msgstr "Симуляция"
-
-
 msgid "Compositor Node Tree"
 msgstr "Нодовая система постобработки"
 
@@ -23953,6 +23949,10 @@ msgid "Stateless solver computing pose starting from current action and non-IK c
 msgstr "Решатель без сохранения состояний для расчёта позы, начиная с текущего действия и с учётом ограничителей, не относящихся к ИК"
 
 
+msgid "Simulation"
+msgstr "Симуляция"
+
+
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Решатель с сохранением состояния, работающий в реальном времени и игнорирующий не-ИК ограничителей"
 
@@ -27671,6 +27671,14 @@ msgid "Matte"
 msgstr "Маска"
 
 
+msgid "Attribute"
+msgstr "Атрибут"
+
+
+msgid "Mesh"
+msgstr "Меш"
+
+
 msgid "Node Context Menu"
 msgstr "Контекстное меню нодов"
 
@@ -27888,10 +27896,6 @@ msgstr "Интерполировать"
 
 msgid "Lattice Context Menu"
 msgstr "Контекстное меню решёток"
-
-
-msgid "Mesh"
-msgstr "Меш"
 
 
 msgid "Edge Data"
@@ -35659,6 +35663,10 @@ msgid "Int"
 msgstr "Целое число"
 
 
+msgid "Object Info"
+msgstr "Информация об объекте"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Рамка"
@@ -35718,10 +35726,6 @@ msgstr "Рассматривать только сам объект при ра�
 
 msgid "Number of rays to trace per shader evaluation"
 msgstr "Количество лучей для трассировки на вычисление шейдера"
-
-
-msgid "Attribute"
-msgstr "Атрибут"
 
 
 msgid "Attribute Name"
@@ -36002,10 +36006,6 @@ msgstr "Отображать нормали в пространстве мира
 
 msgid "UV Map for tangent space maps"
 msgstr "UV-карта для карт пространства касательных"
-
-
-msgid "Object Info"
-msgstr "Информация об объекте"
 
 
 msgid "Light Output"
@@ -40044,10 +40044,6 @@ msgstr "Устанавливаемый ключевой кадр"
 msgctxt "Operator"
 msgid "Set as Background"
 msgstr "Сделать фоном"
-
-
-msgid "Set current movie clip as a camera background in 3D view-port (works only when a 3D view-port is visible)"
-msgstr "Установить текущий видеофрагмент в качестве фона для камеры в области 3D-просмотра (работает только в случае, если видна область 3D-просмотра)"
 
 
 msgctxt "Operator"
@@ -44578,6 +44574,14 @@ msgid "Flip Colors"
 msgstr "Отразить цвета"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
+msgid "White"
+msgstr "Белый"
+
+
 msgid "Confirm on Release"
 msgstr "Подтверждать при отжатии кнопки"
 
@@ -45244,10 +45248,6 @@ msgstr "Проецировать отредактированное изобра
 msgctxt "Operator"
 msgid "Project Edit"
 msgstr "Редактировать проекцию"
-
-
-msgid "Edit a snapshot of the view-port in an external image editor"
-msgstr "Редактировать снимок с области просмотра во внешнем редакторе изображений"
 
 
 msgctxt "Operator"
@@ -68744,22 +68744,6 @@ msgid "Denoise the indirect transmission lighting"
 msgstr "Убирать шум из прохода отражённых лучей светопропускаемости"
 
 
-msgid "Cryptomatte Accurate"
-msgstr "Точность Cryptomatte"
-
-
-msgid "Generate a more accurate Cryptomatte pass. CPU only, may render slower and use more memory"
-msgstr "Генерировать более аккуратный проход Cryptomatte. Только CPU, может рендериться дольше и использовать больше памяти"
-
-
-msgid "Cryptomatte Levels"
-msgstr "Уровни Cryptomatte"
-
-
-msgid "Sets how many unique objects can be distinguished per pixel"
-msgstr "Количество уникальных объектов, которое может быть сохранено в пикселе"
-
-
 msgid "Debug BVH Intersections"
 msgstr "Отладка BVH-пересечений"
 
@@ -68806,30 +68790,6 @@ msgstr "Использовать шумоподавление"
 
 msgid "Denoise the rendered image"
 msgstr "Убирать шум из отрендренного изображения"
-
-
-msgid "Cryptomatte Asset"
-msgstr "Ассет Cryptomatte"
-
-
-msgid "Render cryptomatte asset pass, for isolating groups of objects with the same parent"
-msgstr "Рендерить проход ассетов Сryptomatte, изолирующий группы и объекты с общим родителем"
-
-
-msgid "Cryptomatte Material"
-msgstr "Материал Cryptomatte"
-
-
-msgid "Render cryptomatte material pass, for isolating materials in compositing"
-msgstr "Рендерить проход материалов Сryptomatte, изолирующий материалы в постобработке"
-
-
-msgid "Cryptomatte Object"
-msgstr "Объекты Cryptomatte"
-
-
-msgid "Render cryptomatte object pass, for isolating objects in compositing"
-msgstr "Рендерить проход объектов Сryptomatte, изолирующий объекты в постобработке"
 
 
 msgid "Volume Direct"
@@ -74432,16 +74392,8 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -80292,6 +80244,14 @@ msgid "Z, Index, normal, UV and vector passes are only affected by surfaces with
 msgstr "Пороговое значение прозрачности, при превышении которого проходы Z-буфера, индексов, нормалей, UV и векторов начинают оказывать влияние на поверхность"
 
 
+msgid "Cryptomatte Levels"
+msgstr "Уровни Cryptomatte"
+
+
+msgid "Sets how many unique objects can be distinguished per pixel"
+msgstr "Количество уникальных объектов, которое может быть сохранено в пикселе"
+
+
 msgid "Override number of render samples for this view layer, 0 will use the scene setting"
 msgstr "Переназначить количество сэмплов в этом слое визуализации, 0 — использовать настройки сцены"
 
@@ -80302,6 +80262,34 @@ msgstr "Включить или отключить рендеринг в сло�
 
 msgid "Render stylized strokes in this Layer"
 msgstr "Выполнять рендеринг стилизованных штрихов на этом слое"
+
+
+msgid "Cryptomatte Accurate"
+msgstr "Точность Cryptomatte"
+
+
+msgid "Cryptomatte Asset"
+msgstr "Ассет Cryptomatte"
+
+
+msgid "Render cryptomatte asset pass, for isolating groups of objects with the same parent"
+msgstr "Рендерить проход ассетов Сryptomatte, изолирующий группы и объекты с общим родителем"
+
+
+msgid "Cryptomatte Material"
+msgstr "Материал Cryptomatte"
+
+
+msgid "Render cryptomatte material pass, for isolating materials in compositing"
+msgstr "Рендерить проход материалов Сryptomatte, изолирующий материалы в постобработке"
+
+
+msgid "Cryptomatte Object"
+msgstr "Объекты Cryptomatte"
+
+
+msgid "Render cryptomatte object pass, for isolating objects in compositing"
+msgstr "Рендерить проход объектов Сryptomatte, изолирующий объекты в постобработке"
 
 
 msgid "Unknown"
@@ -81510,14 +81498,6 @@ msgstr "Данные шумоподавления"
 
 msgid "Render Time"
 msgstr "Время рендера"
-
-
-msgid "Asset"
-msgstr "Ассет"
-
-
-msgid "Accurate Mode"
-msgstr "Аккуратный режим"
 
 
 msgid "Feature Strength"
@@ -83472,6 +83452,14 @@ msgstr "Карта"
 
 msgid "Use for Rendering"
 msgstr "Использовать для рендера"
+
+
+msgid "Asset"
+msgstr "Ассет"
+
+
+msgid "Accurate Mode"
+msgstr "Аккуратный режим"
 
 
 msgid "Unknown add-ons"
@@ -85733,6 +85721,21 @@ msgstr "По схожести"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Уровни"
+
+
+msgctxt "Operator"
+msgid "Hue Saturation Value"
+msgstr "Тон/насыщенность/значение"
+
+
+msgctxt "Operator"
+msgid "Bright/Contrast"
+msgstr "Яркость/контраст"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Плоскость"
 
@@ -85830,6 +85833,11 @@ msgstr "Импортировать OpenVDB…"
 msgctxt "Operator"
 msgid "Empty"
 msgstr "Пустышка"
+
+
+msgctxt "Operator"
+msgid "Point Cloud"
+msgstr "Облако точек"
 
 
 msgctxt "Operator"
@@ -85954,21 +85962,6 @@ msgstr "Материалы"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Анимация объекта"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Уровни"
-
-
-msgctxt "Operator"
-msgid "Hue Saturation Value"
-msgstr "Тон/насыщенность/значение"
-
-
-msgctxt "Operator"
-msgid "Bright/Contrast"
-msgstr "Яркость/контраст"
 
 
 msgctxt "Operator"
@@ -86522,11 +86515,6 @@ msgstr "Цвета вершин"
 msgctxt "Operator"
 msgid "Hair"
 msgstr "Волосы"
-
-
-msgctxt "Operator"
-msgid "Point Cloud"
-msgstr "Облако точек"
 
 
 msgctxt "Operator"
@@ -93311,10 +93299,6 @@ msgid "along %s X"
 msgstr "по оси X, %s"
 
 
-msgid "locking %s X"
-msgstr "с фиксацией по оси X, %s"
-
-
 msgid "along Y"
 msgstr "по оси Y"
 
@@ -93323,16 +93307,20 @@ msgid "along %s Y"
 msgstr "по оси Y, %s"
 
 
-msgid "locking %s Y"
-msgstr "с фиксацией по оси Y, %s"
-
-
 msgid "along Z"
 msgstr "по оси Z"
 
 
 msgid "along %s Z"
 msgstr "по оси Z, %s"
+
+
+msgid "locking %s X"
+msgstr "с фиксацией по оси X, %s"
+
+
+msgid "locking %s Y"
+msgstr "с фиксацией по оси Y, %s"
 
 
 msgid "locking %s Z"

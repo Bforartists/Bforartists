@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -13,6 +13,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Virtaal 0.7.0"
+
+
+msgid "Valid"
+msgstr "Исправно"
+
+
+msgid "Name"
+msgstr "Име"
+
+
+msgid "Type"
+msgstr "Врста"
+
+
+msgid "Color"
+msgstr "Боја"
+
+
+msgid "Value"
+msgstr "Вредност"
 
 
 msgid "Action Group"
@@ -141,10 +161,6 @@ msgstr "Закључај"
 
 msgid "Action group is locked"
 msgstr "Група акција је закључана"
-
-
-msgid "Name"
-msgstr "Име"
 
 
 msgid "Select"
@@ -475,16 +491,12 @@ msgid "Domain"
 msgstr "Област"
 
 
-msgid "Vertex"
-msgstr "Теме"
+msgid "Point"
+msgstr "Тачка"
 
 
 msgid "Edge"
 msgstr "Ивица"
-
-
-msgid "Point"
-msgstr "Тачка"
 
 
 msgid "Curve"
@@ -549,10 +561,6 @@ msgstr "Директно"
 
 msgid "Indirect"
 msgstr "Индиректно"
-
-
-msgid "Color"
-msgstr "Боја"
 
 
 msgid "Diffuse"
@@ -849,10 +857,6 @@ msgstr "Дефиниције структуре Блендер РНК"
 
 msgid "Structs"
 msgstr "Структуре"
-
-
-msgid "Type"
-msgstr "Врста"
 
 
 msgid "Goal"
@@ -1377,10 +1381,6 @@ msgstr "Итерације"
 
 msgid "Saturation"
 msgstr "Засићеност"
-
-
-msgid "Value"
-msgstr "Вредност"
 
 
 msgid "Background Image"
@@ -2032,10 +2032,6 @@ msgid "Amount of influence constraint will have on the final solution"
 msgstr "Ниво који ће утицај овог ограничења имати на крајњи резултат"
 
 
-msgid "Valid"
-msgstr "Исправно"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "Ограничење је исправно и може да се примени"
 
@@ -2086,6 +2082,10 @@ msgstr "Примењуј ограничења релативно у односу
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "Панел ограничења је проширен у интерфејсу"
+
+
+msgid "Sub-Target"
+msgstr "Други циљ"
 
 
 msgid "Target Space"
@@ -2230,10 +2230,6 @@ msgstr "Поставља минималну Y вредност рендеров�
 
 msgid "Mix Mode"
 msgstr "Режим мешања"
-
-
-msgid "Sub-Target"
-msgstr "Други циљ"
 
 
 msgid "Target"
@@ -3618,6 +3614,10 @@ msgstr "Формат"
 
 msgid "Surface Format"
 msgstr "Формат површи"
+
+
+msgid "Vertex"
+msgstr "Теме"
 
 
 msgid "Image Sequence"
@@ -6910,10 +6910,6 @@ msgid "Compositing nodes"
 msgstr "Чворови слагања"
 
 
-msgid "Simulation"
-msgstr "Симулација"
-
-
 msgid "Compositor Node Tree"
 msgstr "Дрво чворова слагања"
 
@@ -8684,6 +8680,10 @@ msgid "Animation"
 msgstr "Анимација"
 
 
+msgid "Simulation"
+msgstr "Симулација"
+
+
 msgid "Precision"
 msgstr "Прецизност"
 
@@ -9491,6 +9491,14 @@ msgid "Matte"
 msgstr "Мат"
 
 
+msgid "Attribute"
+msgstr "Атрибут"
+
+
+msgid "Mesh"
+msgstr "Меш"
+
+
 msgid "Node"
 msgstr "Чвор"
 
@@ -9597,10 +9605,6 @@ msgstr "Ролна костију"
 
 msgid "Special Characters"
 msgstr "Специјални знаци"
-
-
-msgid "Mesh"
-msgstr "Меш"
 
 
 msgid "Face"
@@ -12034,6 +12038,10 @@ msgid "Anti-Alias Z"
 msgstr "Умекшавање ивица Z"
 
 
+msgid "Object Info"
+msgstr "Информације о објекту"
+
+
 msgid "Label Font Size"
 msgstr "Величина фонта ознаке"
 
@@ -12048,10 +12056,6 @@ msgstr "Чвор сенчења материјала"
 
 msgid "Add Shader"
 msgstr "Додај сенчење"
-
-
-msgid "Attribute"
-msgstr "Атрибут"
 
 
 msgid "Attribute Name"
@@ -12156,10 +12160,6 @@ msgstr "Основни директоријум са текстурама"
 
 msgid "Blender Object Space"
 msgstr "Простор Blender објекта"
-
-
-msgid "Object Info"
-msgstr "Информације о објекту"
 
 
 msgid "Cycles"
@@ -15428,6 +15428,14 @@ msgstr "Изабор за курсор"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
+
+
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
 
 
 msgctxt "Operator"
@@ -24216,14 +24224,6 @@ msgid "Dash"
 msgstr "Испрекидано"
 
 
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
-
-
 msgid "Alpha Channel"
 msgstr "Алфа канал"
 
@@ -27283,6 +27283,11 @@ msgstr "Сличне"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Нивои"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Плоча"
 
@@ -27454,11 +27459,6 @@ msgstr "Објекат & Подаци"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "АНимација објекта"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Нивои"
 
 
 msgctxt "Operator"

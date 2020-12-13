@@ -31,6 +31,7 @@ from bpy.props import (
     IntProperty,
     StringProperty,
 )
+from bpy.app.translations import pgettext_iface as iface_
 
 # FIXME, we need a way to detect key repeat events.
 # unfortunately checking event previous values isn't reliable.
@@ -1147,10 +1148,11 @@ rna_default = StringProperty(
     maxlen=1024,
 )
 
-rna_property = StringProperty(
+rna_custom_property = StringProperty(
     name="Property Name",
     description="Property name edit",
-    maxlen=1024,
+    # Match `MAX_IDPROP_NAME - 1` in Blender's source.
+    maxlen=63,
 )
 
 rna_min = FloatProperty(
@@ -1196,7 +1198,7 @@ class WM_OT_properties_edit(Operator):
     bl_options = {'REGISTER', 'INTERNAL'}
 
     data_path: rna_path
-    property: rna_property
+    property: rna_custom_property
     value: rna_value
     default: rna_default
     min: rna_min
@@ -1265,6 +1267,7 @@ class WM_OT_properties_edit(Operator):
 
         data_path = self.data_path
         prop = self.property
+        prop_escape = bpy.utils.escape_identifier(prop)
 
         prop_old = getattr(self, "_last_prop", [None])[0]
 
@@ -1289,7 +1292,7 @@ class WM_OT_properties_edit(Operator):
 
         # Reassign
         item[prop] = value_eval
-        item.property_overridable_library_set('["%s"]' % prop, self.is_overridable_library)
+        item.property_overridable_library_set('["%s"]' % prop_escape, self.is_overridable_library)
         rna_idprop_ui_prop_update(item, prop)
 
         self._last_prop[:] = [prop]
@@ -1322,7 +1325,7 @@ class WM_OT_properties_edit(Operator):
 
         # If we have changed the type of the property, update its potential anim curves!
         if prop_type_old != prop_type_new:
-            data_path = '["%s"]' % bpy.utils.escape_identifier(prop)
+            data_path = '["%s"]' % prop_escape
             done = set()
 
             def _update(fcurves):
@@ -1364,13 +1367,16 @@ class WM_OT_properties_edit(Operator):
             rna_idprop_value_item_type
         )
 
+        prop = self.property
+        prop_escape = bpy.utils.escape_identifier(prop)
+
         data_path = self.data_path
 
         if not data_path:
             self.report({'ERROR'}, "Data path not set")
             return {'CANCELLED'}
 
-        self._last_prop = [self.property]
+        self._last_prop = [prop]
 
         item = eval("context.%s" % data_path)
 
@@ -1379,7 +1385,7 @@ class WM_OT_properties_edit(Operator):
             return {'CANCELLED'}
 
         # retrieve overridable static
-        is_overridable = item.is_property_overridable_library('["%s"]' % self.property)
+        is_overridable = item.is_property_overridable_library('["%s"]' % prop_escape)
         self.is_overridable_library = bool(is_overridable)
 
         # default default value
@@ -1390,7 +1396,7 @@ class WM_OT_properties_edit(Operator):
             self.default = ""
 
         # setup defaults
-        prop_ui = rna_idprop_ui_prop_get(item, self.property, False)  # don't create
+        prop_ui = rna_idprop_ui_prop_get(item, prop, False)  # don't create
         if prop_ui:
             self.min = prop_ui.get("min", -1000000000)
             self.max = prop_ui.get("max", 1000000000)
@@ -1548,7 +1554,7 @@ class WM_OT_properties_remove(Operator):
     bl_options = {'UNDO', 'INTERNAL'}
 
     data_path: rna_path
-    property: rna_property
+    property: rna_custom_property
 
     def execute(self, context):
         from rna_prop_ui import (
@@ -2646,26 +2652,28 @@ class WM_MT_splash_about(Menu):
         layout = self.layout
         layout.operator_context = 'EXEC_DEFAULT'
 
-        layout.label(text="Blender is free software")
-        layout.label(text="Licensed under the GNU General Public License")
-        layout.separator()
-        layout.separator()
+        split = layout.split(factor=0.65)
 
-        split = layout.split()
-        split.emboss = 'PULLDOWN_MENU'
-        split.scale_y = 1.3
+        col = split.column(align=True)
+        col.scale_y = 0.8
+        col.label(text=bpy.app.version_string, translate=False)
+        col.separator(factor=2.5)
+        col.label(text=iface_("Date: %s %s") % (bpy.app.build_commit_date.decode('utf-8', 'replace'),
+                                                bpy.app.build_commit_time.decode('utf-8', 'replace')), translate=False)
+        col.label(text=iface_("Hash: %s") % bpy.app.build_hash.decode('ascii'), translate=False)
+        col.label(text=iface_("Branch: %s") % bpy.app.build_branch.decode('utf-8', 'replace'), translate=False)
+        col.separator(factor=2.0)
+        col.label(text="Blender is free software")
+        col.label(text="Licensed under the GNU General Public License")
 
-        col1 = split.column()
-
-        col1.operator("wm.url_open_preset", text="Release Notes", icon='URL').type = 'RELEASE_NOTES'
-        col1.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'
-        col1.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"
-
-        col2 = split.column()
-
-        col2.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
-        col2.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"
-        col2.operator("wm.url_open_preset", text="Development Fund", icon='FUND').type = 'FUND'
+        col = split.column(align=True)
+        col.emboss = 'PULLDOWN_MENU'
+        col.operator("wm.url_open_preset", text="Release Notes", icon='URL').type = 'RELEASE_NOTES'
+        col.operator("wm.url_open_preset", text="Credits", icon='URL').type = 'CREDITS'
+        col.operator("wm.url_open", text="License", icon='URL').url = "https://www.blender.org/about/license/"
+        col.operator("wm.url_open_preset", text="Blender Website", icon='URL').type = 'BLENDER'
+        col.operator("wm.url_open", text="Blender Store", icon='URL').url = "https://store.blender.org"
+        col.operator("wm.url_open_preset", text="Development Fund", icon='FUND').type = 'FUND'
 
 
 class WM_OT_drop_blend_file(Operator):

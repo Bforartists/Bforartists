@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -15,6 +15,26 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 "X-Poedit-Language: Portuguese\n"
 "X-Poedit-Country: PORTUGAL"
+
+
+msgid "Valid"
+msgstr "Válidas"
+
+
+msgid "Name"
+msgstr "Nome"
+
+
+msgid "Type"
+msgstr "Tipo"
+
+
+msgid "Color"
+msgstr "Cor"
+
+
+msgid "Value"
+msgstr "Valor"
 
 
 msgid "Action F-Curves"
@@ -155,10 +175,6 @@ msgstr "Bloquear"
 
 msgid "Action group is locked"
 msgstr "O grupo de ação está bloqueado."
-
-
-msgid "Name"
-msgstr "Nome"
 
 
 msgid "Select"
@@ -861,16 +877,12 @@ msgid "Domain"
 msgstr "Domínio"
 
 
-msgid "Vertex"
-msgstr "Vértices"
+msgid "Point"
+msgstr "Pontos"
 
 
 msgid "Edge"
 msgstr "Arestas"
-
-
-msgid "Point"
-msgstr "Pontos"
 
 
 msgid "Curve"
@@ -1007,10 +1019,6 @@ msgstr "Direto(a)"
 
 msgid "Indirect"
 msgstr "Indireto(a)"
-
-
-msgid "Color"
-msgstr "Cor"
 
 
 msgid "Diffuse"
@@ -1779,10 +1787,6 @@ msgstr "Regras para revoada"
 
 msgid "Boid rule name"
 msgstr "Nome de regra de revoada."
-
-
-msgid "Type"
-msgstr "Tipo"
 
 
 msgid "Goal"
@@ -2875,10 +2879,6 @@ msgstr "Matiz"
 
 msgid "Saturation"
 msgstr "Saturação"
-
-
-msgid "Value"
-msgstr "Valor"
 
 
 msgid "Affect Position"
@@ -4102,10 +4102,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "A restrição não foi adicionada nesta instância de aproximação (ou seja, não pertence a armação fonte)."
 
 
-msgid "Valid"
-msgstr "Válidas"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "A restrição tem definições válidas e pode ser avaliada."
 
@@ -4160,6 +4156,10 @@ msgstr "A restrição é aplicada em relação ao sistema de coordenadas locais 
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "O painel de restrições é expandido na interface de utilizador."
+
+
+msgid "Sub-Target"
+msgstr "Sub-alvo"
 
 
 msgid "Target Space"
@@ -4424,10 +4424,6 @@ msgstr "Valor mínimo para o campo do canal alvo."
 
 msgid "Mix Mode"
 msgstr "Modo de mistura"
-
-
-msgid "Sub-Target"
-msgstr "Sub-alvo"
 
 
 msgid "Target"
@@ -7291,6 +7287,10 @@ msgstr "Formato"
 
 msgid "Surface Format"
 msgstr "Formato de superfície"
+
+
+msgid "Vertex"
+msgstr "Vértices"
 
 
 msgid "Image Sequence"
@@ -14785,10 +14785,6 @@ msgid "Compositing nodes"
 msgstr "Nós de composição."
 
 
-msgid "Simulation"
-msgstr "Simulação"
-
-
 msgid "Compositor Node Tree"
 msgstr "Árvore de nó do compositor"
 
@@ -18183,6 +18179,10 @@ msgid "Stateless solver computing pose starting from current action and non-IK c
 msgstr "Solucionador sem estado computando a pose que inicia a partir da ação atual e restrições que não são de cinemática inversa."
 
 
+msgid "Simulation"
+msgstr "Simulação"
+
+
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Solucionador de estado pleno funcionando em contexto de tempo-real e ignorando as ações e restrições que não sejam do tipo cinemática inversa."
 
@@ -21486,6 +21486,14 @@ msgid "Matte"
 msgstr "Tela"
 
 
+msgid "Attribute"
+msgstr "Atributo"
+
+
+msgid "Mesh"
+msgstr "Malha"
+
+
 msgid "Node"
 msgstr "Nós"
 
@@ -21616,10 +21624,6 @@ msgstr "Caracteres especiais"
 
 msgid "Interpolate"
 msgstr "Interpolar"
-
-
-msgid "Mesh"
-msgstr "Malha"
 
 
 msgid "Edge Data"
@@ -28586,6 +28590,10 @@ msgid "Int"
 msgstr "Inteiro"
 
 
+msgid "Object Info"
+msgstr "Informações de objetos"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Fotograma"
@@ -28629,10 +28637,6 @@ msgstr "Nós de sombreamento de material."
 
 msgid "Add Shader"
 msgstr "Adicionar sombreador"
-
-
-msgid "Attribute"
-msgstr "Atributo"
 
 
 msgid "Attribute Name"
@@ -28829,10 +28833,6 @@ msgstr "Mapeamento das normais no espaço de ambiente (mundo), compatível com a
 
 msgid "UV Map for tangent space maps"
 msgstr "Mapa UV para mapas de espaço de tangente."
-
-
-msgid "Object Info"
-msgstr "Informações de objetos"
 
 
 msgid "True if this node is used as the active output"
@@ -32408,10 +32408,6 @@ msgid "Set as Background"
 msgstr "Definir como plano de fundo"
 
 
-msgid "Set current movie clip as a camera background in 3D view-port (works only when a 3D view-port is visible)"
-msgstr "Define o clipe de filme como um plano de fundo da câmara dentro da porta de visão 3D (funciona somente quando uma porta de visão 3D está visível)."
-
-
 msgctxt "Operator"
 msgid "Setup Tracking Scene"
 msgstr "Definir cena de rastreamento"
@@ -35723,6 +35719,14 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgid "Confirm on Release"
 msgstr "Confirmar ao soltar"
 
@@ -36301,10 +36305,6 @@ msgstr "Projeta a imagem editada de volta no objeto."
 msgctxt "Operator"
 msgid "Project Edit"
 msgstr "Edição de projeção"
-
-
-msgid "Edit a snapshot of the view-port in an external image editor"
-msgstr "Permite a edição de uma cópia de referência da porta de visão em editor de imagens externo."
 
 
 msgctxt "Operator"
@@ -58212,14 +58212,6 @@ msgid "Dash"
 msgstr "Mostrador"
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -65494,6 +65486,21 @@ msgstr "Similares"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Níveis"
+
+
+msgctxt "Operator"
+msgid "Hue Saturation Value"
+msgstr "Matiz, saturação e valor"
+
+
+msgctxt "Operator"
+msgid "Bright/Contrast"
+msgstr "Brilho e contraste"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Plano"
 
@@ -65675,21 +65682,6 @@ msgstr "Objeto e dados"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Animação de objeto"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Níveis"
-
-
-msgctxt "Operator"
-msgid "Hue Saturation Value"
-msgstr "Matiz, saturação e valor"
-
-
-msgctxt "Operator"
-msgid "Bright/Contrast"
-msgstr "Brilho e contraste"
 
 
 msgctxt "Operator"
@@ -70820,10 +70812,6 @@ msgid "along %s X"
 msgstr "- Ao longo do eixo X - %s"
 
 
-msgid "locking %s X"
-msgstr "- Travado no eixo X - %s"
-
-
 msgid "along Y"
 msgstr "- Ao longo do eixo Y"
 
@@ -70832,16 +70820,20 @@ msgid "along %s Y"
 msgstr "- Ao longo do eixo Y - %s"
 
 
-msgid "locking %s Y"
-msgstr "- Travado no eixo Y - %s"
-
-
 msgid "along Z"
 msgstr "- Ao longo do eixo Z"
 
 
 msgid "along %s Z"
 msgstr "- Ao longo do eixo Z - %s"
+
+
+msgid "locking %s X"
+msgstr "- Travado no eixo X - %s"
+
+
+msgid "locking %s Y"
+msgstr "- Travado no eixo Y - %s"
 
 
 msgid "locking %s Z"

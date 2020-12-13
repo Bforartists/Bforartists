@@ -23,6 +23,7 @@ from bl_ui.utils import PresetPanel
 from bpy.types import Panel
 
 from bl_ui.properties_grease_pencil_common import GreasePencilSimplifyPanel
+from bl_ui.properties_view_layer import ViewLayerCryptomattePanel
 
 
 class CYCLES_PT_sampling_presets(PresetPanel, Panel):
@@ -186,7 +187,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
         else:
             col.prop(cscene, "aa_samples", text="Render")
             col.prop(cscene, "preview_aa_samples", text="Viewport")
-        
+
         col = layout.column()
 
         subcol = col.column()
@@ -197,7 +198,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
         if cscene.use_square_samples:
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')  
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
 
         if not use_branched_path(context):
             draw_samples_info(layout, context)
@@ -276,7 +277,7 @@ class CYCLES_RENDER_PT_sampling_denoising(CyclesButtonsPanel, Panel):
 
         scene = context.scene
         cscene = scene.cycles
-        
+
         col = layout.column()
         subcol = col.column()
         subcol.use_property_split = False
@@ -287,7 +288,7 @@ class CYCLES_RENDER_PT_sampling_denoising(CyclesButtonsPanel, Panel):
             split.prop(cscene, "denoiser", text="")
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
-      
+
         col = layout.column()
         subcol = col.column()
         subcol.use_property_split = False
@@ -629,23 +630,23 @@ class CYCLES_RENDER_PT_film_transparency(CyclesButtonsPanel, Panel):
         rd = scene.render
         cscene = scene.cycles
 
-        layout.active = rd.film_transparent     
-        
+        layout.active = rd.film_transparent
+
         split = layout.split()
         col = split.column()
         col.use_property_split = False
         col.prop(cscene, "film_transparent_glass", text="Transparent Glass")
         col = split.column()
         if cscene.film_transparent_glass:
-            col.label(icon='DISCLOSURE_TRI_DOWN') 
+            col.label(icon='DISCLOSURE_TRI_DOWN')
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
-            
-        if cscene.film_transparent_glass: 
+
+        if cscene.film_transparent_glass:
             row = layout.row()
             row.separator()
             row.prop(cscene, "film_transparent_roughness", text="Roughness Threshold")
-                
+
 
 
 class CYCLES_RENDER_PT_film_pixel_filter(CyclesButtonsPanel, Panel):
@@ -991,44 +992,11 @@ class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
         row.prop(view_layer, "use_pass_ambient_occlusion", text="Ambient Occlusion")
 
 
-class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, Panel):
+class CYCLES_RENDER_PT_passes_crypto(CyclesButtonsPanel, ViewLayerCryptomattePanel):
     bl_label = "Cryptomatte"
     bl_context = "view_layer"
     bl_parent_id = "CYCLES_RENDER_PT_passes"
     bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        import _cycles
-
-        layout = self.layout
-        layout.use_property_split = True
-        layout.use_property_decorate = False
-
-        cycles_view_layer = context.view_layer.cycles
-
-        col = layout.column(align=True)
-        col.label(text = "Include")
-        col.use_property_split = False
-        row = col.row()
-        row.separator()
-        row.prop(cycles_view_layer, "use_pass_crypto_object", text="Object")
-        row = col.row()
-        row.separator()
-        row.prop(cycles_view_layer, "use_pass_crypto_material", text="Material")
-        row = col.row()
-        row.separator()
-        row.prop(cycles_view_layer, "use_pass_crypto_asset", text="Asset")
-
-        col = layout.column()
-        if (any((cycles_view_layer.use_pass_crypto_object, 
-                          cycles_view_layer.use_pass_crypto_material, 
-                          cycles_view_layer.use_pass_crypto_asset))):
-            col.label(icon="DISCLOSURE_TRI_DOWN")
-            col.prop(cycles_view_layer, "pass_crypto_depth", text="Levels")
-            if use_cpu(context):
-                col.prop(cycles_view_layer, "pass_crypto_accurate", text="Accurate Mode")
-        else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 class CYCLES_RENDER_PT_passes_debug(CyclesButtonsPanel, Panel):
@@ -1970,10 +1938,6 @@ class CYCLES_RENDER_PT_bake(CyclesButtonsPanel, Panel):
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'CYCLES'}
 
-    @classmethod
-    def poll(cls, context):
-        return CyclesButtonsPanel.poll(context) and not use_optix(context)
-
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = False
@@ -1983,6 +1947,9 @@ class CYCLES_RENDER_PT_bake(CyclesButtonsPanel, Panel):
         cscene = scene.cycles
         cbk = scene.render.bake
         rd = scene.render
+
+        if use_optix(context):
+            layout.label(text="Baking is performed using CUDA instead of OptiX", icon='INFO')
 
         if rd.use_bake_multires:
             layout.operator("object.bake_image", icon='RENDER_STILL')

@@ -26,6 +26,7 @@
 #include "BLI_compiler_attrs.h"
 #include "BLI_sys_types.h" /* size_t */
 #include "RNA_types.h"
+#include "UI_interface_icons.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -1878,6 +1879,7 @@ uiBlock *uiLayoutGetBlock(uiLayout *layout);
 
 void uiLayoutSetFunc(uiLayout *layout, uiMenuHandleFunc handlefunc, void *argv);
 void uiLayoutSetContextPointer(uiLayout *layout, const char *name, struct PointerRNA *ptr);
+struct bContextStore *uiLayoutGetContextStore(uiLayout *layout);
 void uiLayoutContextCopy(uiLayout *layout, struct bContextStore *context);
 struct wmOperatorType *UI_but_operatortype_get_from_enum_menu(struct uiBut *but,
                                                               PropertyRNA **r_prop);
@@ -2430,6 +2432,9 @@ void uiItemTabsEnumR_prop(uiLayout *layout,
 
 /* Only for testing, inspecting layouts. */
 const char *UI_layout_introspect(uiLayout *layout);
+
+/* Helper to add a big icon and create a split layout for alert boxes. */
+uiLayout *uiItemsAlertBox(uiBlock *block, const int size, const eAlertIcon icon);
 
 /* UI Operators */
 typedef struct uiDragColorHandle {

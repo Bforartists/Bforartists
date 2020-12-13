@@ -338,7 +338,7 @@ class BaseGenerator:
         self.__run_edit_stage('prepare_bones')
 
 
-    def __auto_register_bones(self, bones, rig):
+    def __auto_register_bones(self, bones, rig, plugin=None):
         """Find bones just added and not registered by this rig."""
         for bone in bones:
             name = bone.name
@@ -347,8 +347,10 @@ class BaseGenerator:
                 if rig:
                     rig.rigify_new_bones[name] = None
 
-                if not isinstance(rig, LegacyRig):
-                    print("WARNING: rig %s didn't register bone %s\n" % (self.describe_rig(rig), name))
+                    if not isinstance(rig, LegacyRig):
+                        print("WARNING: rig %s didn't register bone %s\n" % (self.describe_rig(rig), name))
+                else:
+                    print("WARNING: plugin %s didn't register bone %s\n" % (plugin, name))
 
 
     def invoke_generate_bones(self):
@@ -365,13 +367,17 @@ class BaseGenerator:
 
             self.__auto_register_bones(self.obj.data.edit_bones, rig)
 
-        for plugin in self.plugin_list:
-            plugin.rigify_invoke_stage('generate_bones')
+        # Allow plugins to be added to the end of the list on the fly
+        for i in count(0):
+            if i >= len(self.plugin_list):
+                break
+
+            self.plugin_list[i].rigify_invoke_stage('generate_bones')
 
             assert(self.context.active_object == self.obj)
             assert(self.obj.mode == 'EDIT')
 
-            self.__auto_register_bones(self.obj.data.edit_bones, None)
+            self.__auto_register_bones(self.obj.data.edit_bones, None, plugin=self.plugin_list[i])
 
 
     def invoke_parent_bones(self):

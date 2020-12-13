@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12,6 +12,26 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1"
+
+
+msgid "Valid"
+msgstr "Valide"
+
+
+msgid "Name"
+msgstr "Nom"
+
+
+msgid "Type"
+msgstr "Type"
+
+
+msgid "Color"
+msgstr "Couleur"
+
+
+msgid "Value"
+msgstr "Valeur"
 
 
 msgid "Action F-Curves"
@@ -152,10 +172,6 @@ msgstr "Verrouiller"
 
 msgid "Action group is locked"
 msgstr "Le groupe d’actions est verrouillé"
-
-
-msgid "Name"
-msgstr "Nom"
 
 
 msgid "Select"
@@ -986,12 +1002,12 @@ msgid "Domain of the Attribute"
 msgstr "Domaine de l´attribut"
 
 
-msgid "Vertex"
-msgstr "Vertex"
+msgid "Point"
+msgstr "Point"
 
 
-msgid "Attribute on mesh vertex"
-msgstr "Attribut sur vertex de mesh"
+msgid "Attribute on point"
+msgstr "Attribut sur point"
 
 
 msgid "Edge"
@@ -1012,14 +1028,6 @@ msgstr "Polygone"
 
 msgid "Attribute on mesh polygons"
 msgstr "Attribut sur polygone de mesh"
-
-
-msgid "Point"
-msgstr "Point"
-
-
-msgid "Attribute on point"
-msgstr "Attribut sur point"
 
 
 msgid "Curve"
@@ -1216,10 +1224,6 @@ msgstr "Direct"
 
 msgid "Indirect"
 msgstr "Indirect"
-
-
-msgid "Color"
-msgstr "Couleur"
 
 
 msgid "Diffuse"
@@ -2084,10 +2088,6 @@ msgstr "Règle de Boïd"
 
 msgid "Boid rule name"
 msgstr "Nom de la règle de boïd"
-
-
-msgid "Type"
-msgstr "Type"
 
 
 msgid "Goal"
@@ -3592,10 +3592,6 @@ msgstr "Niveau de force aléatoire"
 
 msgid "Randomness factor strength in new strokes"
 msgstr "Facteur aléatoire pour la force des nouveaux traits"
-
-
-msgid "Value"
-msgstr "Valeur"
 
 
 msgid "Random factor to modify original value"
@@ -5279,10 +5275,6 @@ msgid "Constraint was added in this proxy instance (i.e. did not belong to sourc
 msgstr "La contrainte est ajoutée dans l'instance de proxy (n'appartient pas à la source Armature)"
 
 
-msgid "Valid"
-msgstr "Valide"
-
-
 msgid "Constraint has valid settings and can be evaluated"
 msgstr "La contrainte a des réglages valides et peut être évaluée"
 
@@ -5341,6 +5333,14 @@ msgstr "La contrainte est appliquée relativement au système de coordonnées lo
 
 msgid "Constraint's panel is expanded in UI"
 msgstr "Le panneau de contrainte est développé dans l’UI"
+
+
+msgid "Sub-Target"
+msgstr "Sous-cible"
+
+
+msgid "Armature bone, mesh or lattice vertex group, ..."
+msgstr "Os d’armature, groupe de vertices de mesh ou de lattice, …"
 
 
 msgid "Target Space"
@@ -5641,14 +5641,6 @@ msgstr "Après original (taille totale)"
 
 msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
 msgstr "Appliquer les canaux d’action avant la transformation originale, comme si appliqués à un parent imaginaire avec Taille totale héritée. Ce mode peut créer des cisaillements et n’est proposé que pour la rétrocompatibilité"
-
-
-msgid "Sub-Target"
-msgstr "Sous-cible"
-
-
-msgid "Armature bone, mesh or lattice vertex group, ..."
-msgstr "Os d’armature, groupe de vertices de mesh ou de lattice, …"
 
 
 msgid "Target"
@@ -9331,6 +9323,10 @@ msgstr "Formater"
 
 msgid "Surface Format"
 msgstr "Format de surface"
+
+
+msgid "Vertex"
+msgstr "Vertex"
 
 
 msgid "Image Sequence"
@@ -20686,10 +20682,6 @@ msgid "Compositing nodes"
 msgstr "Nœuds de compositing"
 
 
-msgid "Simulation"
-msgstr "Simulation"
-
-
 msgid "Compositor Node Tree"
 msgstr "Arborescence de nœuds de compositing"
 
@@ -24519,6 +24511,10 @@ msgid "Stateless solver computing pose starting from current action and non-IK c
 msgstr "Solveur sans état calculant la pose d’après l’action actuelle et les contraintes non-IK"
 
 
+msgid "Simulation"
+msgstr "Simulation"
+
+
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Solveur à état complet s’exécutant en contexte temps réel et ignorant actions et contraintes non-IK"
 
@@ -27947,6 +27943,14 @@ msgid "Matte"
 msgstr "Incrustation"
 
 
+msgid "Attribute"
+msgstr "Attribut"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
 msgid "Node"
 msgstr "Nœud"
 
@@ -28125,10 +28129,6 @@ msgstr "Interpoler"
 
 msgid "Lattice Context Menu"
 msgstr "Menu contextuel - Lattice"
-
-
-msgid "Mesh"
-msgstr "Mesh"
 
 
 msgid "Edge Data"
@@ -35376,6 +35376,10 @@ msgid "Int"
 msgstr "Entier"
 
 
+msgid "Object Info"
+msgstr "Info objet"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Ensemble"
@@ -35423,10 +35427,6 @@ msgstr "Ajouter shader"
 
 msgid "Number of rays to trace per shader evaluation"
 msgstr "Nombre de rayons à tracer par évaluation de shader"
-
-
-msgid "Attribute"
-msgstr "Attribut"
 
 
 msgid "Attribute Name"
@@ -35659,10 +35659,6 @@ msgstr "Placage des normales en espace du monde, compatible avec les pré-calcul
 
 msgid "UV Map for tangent space maps"
 msgstr "Carte UV pour les cartes en espace tangent"
-
-
-msgid "Object Info"
-msgstr "Info objet"
 
 
 msgid "Light Output"
@@ -39401,10 +39397,6 @@ msgstr "Image clé à définir"
 msgctxt "Operator"
 msgid "Set as Background"
 msgstr "Définir comme fond"
-
-
-msgid "Set current movie clip as a camera background in 3D view-port (works only when a 3D view-port is visible)"
-msgstr "Définir le clip vidéo courant comme un fond de caméra dans la vue 3D (ne fonctionne que quand une vue 3D est visible)"
 
 
 msgctxt "Operator"
@@ -43170,6 +43162,14 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
 
 
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Confirm on Release"
 msgstr "Confirmer au relâché"
 
@@ -43819,10 +43819,6 @@ msgstr "Re-projeter une image éditée sur l’objet"
 msgctxt "Operator"
 msgid "Project Edit"
 msgstr "Éditer projection"
-
-
-msgid "Edit a snapshot of the view-port in an external image editor"
-msgstr "Éditer une capture de la vue 3D dans un autre logiciel de traitement d’images"
 
 
 msgid "Read all the current scene's view layers from cache, as needed"
@@ -63992,10 +63988,6 @@ msgid "Denoise the rendered image"
 msgstr "Débruiter l’image rendue"
 
 
-msgid "Cryptomatte Material"
-msgstr "Matériau cryptomatte"
-
-
 msgid "Volume Direct"
 msgstr "Volume direct"
 
@@ -68238,14 +68230,6 @@ msgstr "Contour"
 
 msgid "Dash"
 msgstr "Pointillés"
-
-
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Overlay Mode"
@@ -72591,6 +72575,10 @@ msgid "Render stylized strokes in this Layer"
 msgstr "Rendre des traits stylisés dans ce calque"
 
 
+msgid "Cryptomatte Material"
+msgstr "Matériau cryptomatte"
+
+
 msgid "Unknown"
 msgstr "Inconnu(e)"
 
@@ -76219,6 +76207,21 @@ msgstr "Similaire"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Niveaux"
+
+
+msgctxt "Operator"
+msgid "Hue Saturation Value"
+msgstr "Teinte Saturation Valeur"
+
+
+msgctxt "Operator"
+msgid "Bright/Contrast"
+msgstr "Luminosité/Contraste"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Plan"
 
@@ -76405,21 +76408,6 @@ msgstr "Objet & données"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Animation de l’objet"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Niveaux"
-
-
-msgctxt "Operator"
-msgid "Hue Saturation Value"
-msgstr "Teinte Saturation Valeur"
-
-
-msgctxt "Operator"
-msgid "Bright/Contrast"
-msgstr "Luminosité/Contraste"
 
 
 msgctxt "Operator"
@@ -81871,10 +81859,6 @@ msgid "along %s X"
 msgstr "le long du X de %s"
 
 
-msgid "locking %s X"
-msgstr "verrouillant le X de %s"
-
-
 msgid "along Y"
 msgstr "le long de Y"
 
@@ -81883,16 +81867,20 @@ msgid "along %s Y"
 msgstr "le long du Y de %s"
 
 
-msgid "locking %s Y"
-msgstr "verrouillant le Y de %s"
-
-
 msgid "along Z"
 msgstr "le long de Z"
 
 
 msgid "along %s Z"
 msgstr "le long du Z de %s"
+
+
+msgid "locking %s X"
+msgstr "verrouillant le X de %s"
+
+
+msgid "locking %s Y"
+msgstr "verrouillant le Y de %s"
 
 
 msgid "locking %s Z"

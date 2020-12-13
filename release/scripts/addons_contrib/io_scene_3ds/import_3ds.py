@@ -1146,8 +1146,8 @@ def load_3ds(filepath,
 
     axis_min = [1000000000] * 3
     axis_max = [-1000000000] * 3
-    global_clight_size = IMPORT_CONSTRAIN_BOUNDS
-    if global_clight_size != 0.0:
+    global_clamp_size = IMPORT_CONSTRAIN_BOUNDS
+    if global_clamp_size != 0.0:
         # Get all object bounds
         for ob in imported_objects:
             for v in ob.bound_box:
@@ -1163,7 +1163,7 @@ def load_3ds(filepath,
                        axis_max[2] - axis_min[2])
         scale = 1.0
 
-        while global_clight_size < max_axis * scale:
+        while global_clamp_size < max_axis * scale:
             scale = scale / 10.0
 
         scale_mat = mathutils.Matrix.Scale(scale, 4)

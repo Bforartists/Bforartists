@@ -1071,6 +1071,9 @@ def build_query_common(query, props):
     if props.search_verification_status != 'ALL':
         query_common['verification_status'] = props.search_verification_status.lower()
 
+    if props.unrated_only:
+        query["quality_count"] = 0
+
     if props.search_file_size:
         query_common["files_size_gte"] = props.search_file_size_min * 1024 * 1024
         query_common["files_size_lte"] = props.search_file_size_max * 1024 * 1024
@@ -1095,6 +1098,7 @@ def build_query_model():
 
     if props.free_only:
         query["is_free"] = True
+
 
     # if props.search_advanced:
     if props.search_condition != 'UNSPECIFIED':

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11,6 +11,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit"
+
+
+msgid "Name"
+msgstr "Namn"
+
+
+msgid "Type"
+msgstr "Typ"
+
+
+msgid "Color"
+msgstr "Färg"
+
+
+msgid "Value"
+msgstr "Värde"
 
 
 msgid "Action Group"
@@ -115,10 +131,6 @@ msgstr "Lås"
 
 msgid "Action group is locked"
 msgstr "Markera Rad"
-
-
-msgid "Name"
-msgstr "Namn"
 
 
 msgid "Select"
@@ -373,10 +385,6 @@ msgid "String"
 msgstr "Fjäder"
 
 
-msgid "Vertex"
-msgstr "Vertex"
-
-
 msgid "Edge"
 msgstr "Kant"
 
@@ -411,10 +419,6 @@ msgstr "Objekt"
 
 msgid "Direct"
 msgstr "Riktning"
-
-
-msgid "Color"
-msgstr "Färg"
 
 
 msgid "Diffuse"
@@ -579,10 +583,6 @@ msgstr "Strukturell"
 
 msgid "Boid rule name"
 msgstr "Arkiv"
-
-
-msgid "Type"
-msgstr "Typ"
 
 
 msgid "Avoid Collision"
@@ -1071,10 +1071,6 @@ msgstr "Integrering:"
 
 msgid "Saturation"
 msgstr "Mättnad"
-
-
-msgid "Value"
-msgstr "Värde"
 
 
 msgid "Background Image"
@@ -1622,6 +1618,10 @@ msgid "Local Space"
 msgstr "Beräkna Normaler"
 
 
+msgid "Sub-Target"
+msgstr "Mål:"
+
+
 msgid "Target Space"
 msgstr "Målrymd"
 
@@ -1756,10 +1756,6 @@ msgstr "Frövärde för slumpgeneratorn"
 
 msgid "Mix Mode"
 msgstr "Läge:"
-
-
-msgid "Sub-Target"
-msgstr "Mål:"
 
 
 msgid "Target object"
@@ -3284,6 +3280,10 @@ msgstr "Format"
 
 msgid "Surface Format"
 msgstr "Samplingsfrekvens"
+
+
+msgid "Vertex"
+msgstr "Vertex"
 
 
 msgid "Image Sequence"
@@ -6167,10 +6167,6 @@ msgid "Texture nodes"
 msgstr "Text"
 
 
-msgid "Simulation"
-msgstr "Simulering:"
-
-
 msgid "Compositor Node Tree"
 msgstr "Bild Displist"
 
@@ -8113,6 +8109,10 @@ msgid "Animation"
 msgstr "Animering"
 
 
+msgid "Simulation"
+msgstr "Simulering:"
+
+
 msgid "Precision"
 msgstr "Kompression"
 
@@ -8647,6 +8647,14 @@ msgid "Matte"
 msgstr "Rensa Rotation"
 
 
+msgid "Attribute"
+msgstr "Attribut:"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
 msgid "Node"
 msgstr "Nod"
 
@@ -8757,10 +8765,6 @@ msgstr "Tecken:"
 
 msgid "Interpolate"
 msgstr "Interpolering:"
-
-
-msgid "Mesh"
-msgstr "Mesh"
 
 
 msgid "Face"
@@ -11795,6 +11799,10 @@ msgid "Int"
 msgstr "Info"
 
 
+msgid "Object Info"
+msgstr "Packa Data"
+
+
 msgid "Label Font Size"
 msgstr "Textstorlek"
 
@@ -11817,10 +11825,6 @@ msgstr "Spara som"
 
 msgid "Add Shader"
 msgstr "Högtalare"
-
-
-msgid "Attribute"
-msgstr "Attribut:"
 
 
 msgid "Attribute Name"
@@ -11909,10 +11913,6 @@ msgstr "Rensa Rotation"
 
 msgid "UV Map for tangent space maps"
 msgstr "Verktyg"
-
-
-msgid "Object Info"
-msgstr "Packa Data"
 
 
 msgid "Cycles"
@@ -15539,6 +15539,14 @@ msgstr "Markerade till markör"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Markera Länkad"
+
+
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
 
 
 msgctxt "Operator"
@@ -26165,14 +26173,6 @@ msgid "Dash"
 msgstr "Streckad"
 
 
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
-
-
 msgid "Length of displaying path, in frames"
 msgstr "Längd i antal rutor:"
 
@@ -29319,6 +29319,11 @@ msgstr "Markera Rad"
 
 
 msgctxt "Operator"
+msgid "Levels"
+msgstr "Nivå"
+
+
+msgctxt "Operator"
 msgid "Plane"
 msgstr "Plan"
 
@@ -29466,11 +29471,6 @@ msgstr "Objekt & data"
 msgctxt "Operator"
 msgid "Object Animation"
 msgstr "Objektanimation"
-
-
-msgctxt "Operator"
-msgid "Levels"
-msgstr "Nivå"
 
 
 msgctxt "Operator"
