@@ -2125,7 +2125,7 @@ static void rna_SpaceDopeSheetEditor_action_update(bContext *C, PointerRNA *ptr)
      *      and the user then uses the browse menu to get back to this action,
      *      assigning it as the active action (i.e. the stash strip gets out of sync)
      */
-    BKE_nla_action_stash(adt);
+    BKE_nla_action_stash(adt, ID_IS_OVERRIDE_LIBRARY(id));
   }
 
   BKE_animdata_set_action(NULL, id, saction->action);
@@ -2477,6 +2477,18 @@ static void rna_FileSelectPrams_filter_glob_set(PointerRNA *ptr, const char *val
 static PointerRNA rna_FileSelectParams_filter_id_get(PointerRNA *ptr)
 {
   return rna_pointer_inherit_refine(ptr, &RNA_FileSelectIDFilter, ptr->data);
+}
+
+static PointerRNA rna_FileBrowser_params_get(PointerRNA *ptr)
+{
+  SpaceFile *sfile = ptr->data;
+  FileSelectParams *params = ED_fileselect_get_active_params(sfile);
+
+  if (params) {
+    return rna_pointer_inherit_refine(ptr, &RNA_FileSelectParams, params);
+  }
+
+  return rna_pointer_inherit_refine(ptr, NULL, NULL);
 }
 
 static void rna_FileBrowser_FSMenuEntry_path_get(PointerRNA *ptr, char *value)
@@ -4283,7 +4295,8 @@ static void rna_def_space_view3d(BlenderRNA *brna)
   /* Camera Object Data. */
   prop = RNA_def_property(srna, "show_gizmo_camera_lens", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gizmo_show_camera", V3D_GIZMO_SHOW_CAMERA_LENS);
-  RNA_def_property_ui_text(prop, "Show Camera Lens", "Gizmo to adjust camera lens & ortho size");
+  RNA_def_property_ui_text(
+      prop, "Show Camera Lens", "Gizmo to adjust camera focal length or orthographic scale");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_gizmo_camera_dof_distance", PROP_BOOLEAN, PROP_NONE);
@@ -5504,7 +5517,7 @@ static void rna_def_space_graph(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SIPO_NORMALIZE);
   RNA_def_property_ui_text(prop,
                            "Use Normalization",
-                           "Display curves in normalized to -1..1 range, "
+                           "Display curves in normalized range from -1 to 1, "
                            "for easier editing of multiple curves with different ranges");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
 
@@ -6068,7 +6081,8 @@ static void rna_def_space_filebrowser(BlenderRNA *brna)
   rna_def_space_generic_show_region_toggles(srna, (1 << RGN_TYPE_TOOLS) | (1 << RGN_TYPE_UI));
 
   prop = RNA_def_property(srna, "params", PROP_POINTER, PROP_NONE);
-  RNA_def_property_pointer_sdna(prop, NULL, "params");
+  RNA_def_property_struct_type(prop, "FileSelectParams");
+  RNA_def_property_pointer_funcs(prop, "rna_FileBrowser_params_get", NULL, NULL, NULL);
   RNA_def_property_ui_text(
       prop, "Filebrowser Parameter", "Parameters and Settings for the Filebrowser");
 

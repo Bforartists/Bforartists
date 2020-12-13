@@ -776,7 +776,7 @@ def draw_callback_2d_search(self, context):
     #                       1,
     #                       img,
     #                       1)
-    if not ui_props.dragging and ui_props.hcount > 0:
+    if not ui_props.dragging and ui_props.hcount > 0 and ui_props.wcount>0:
         search_results = s.get('search results')
         search_results_orig = s.get('search results orig')
         if search_results == None:

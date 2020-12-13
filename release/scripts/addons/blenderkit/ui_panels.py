@@ -468,11 +468,11 @@ class VIEW3D_PT_blenderkit_ratings(Panel):
         layout = self.layout
         assets = ratings.get_assets_for_rating()
         if len(assets) > 0:
-            layout.label(text='Help BlenderKit community')
-            layout.label(text='by rating these assets:')
+            utils.label_multiline(layout, text='Please help BlenderKit community by rating these assets:')
 
             for a in assets:
-                draw_rating_asset(self, context, asset=a)
+                if a.bkit_ratings.rating_work_hours==0:
+                    draw_rating_asset(self, context, asset=a)
 
 
 def draw_login_progress(layout):
@@ -946,6 +946,8 @@ class VIEW3D_PT_blenderkit_unified(Panel):
             if utils.profile_is_validator():
                 search_props = utils.get_search_props()
                 layout.prop(search_props, 'search_verification_status')
+                layout.prop(search_props, "unrated_only")
+
             if ui_props.asset_type == 'MODEL':
                 # noinspection PyCallByClass
                 draw_panel_model_search(self, context)

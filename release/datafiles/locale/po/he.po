@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -17,6 +17,14 @@ msgstr ""
 
 msgid "Name"
 msgstr "םש"
+
+
+msgid "Color"
+msgstr "עבצ"
+
+
+msgid "Value"
+msgstr "ךרע"
 
 
 msgid "Action group is selected"
@@ -43,10 +51,6 @@ msgid "Indirect"
 msgstr "ףיקע"
 
 
-msgid "Color"
-msgstr "עבצ"
-
-
 msgid "Speed"
 msgstr "תוריהמ"
 
@@ -69,10 +73,6 @@ msgstr "קלח"
 
 msgid "Saturation"
 msgstr "היוור"
-
-
-msgid "Value"
-msgstr "ךרע"
 
 
 msgid "Rotation"

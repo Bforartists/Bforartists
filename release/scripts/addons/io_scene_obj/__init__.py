@@ -110,7 +110,7 @@ class ImportOBJ(bpy.types.Operator, ImportHelper):
                    ),
             )
 
-    global_clight_size: FloatProperty(
+    global_clamp_size: FloatProperty(
             name="Clamp Size",
             description="Clamp bounds under this value (zero to disable)",
             min=0.0, max=1000.0,
@@ -196,7 +196,7 @@ class OBJ_PT_import_transform(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        layout.prop(operator, "global_clight_size")
+        layout.prop(operator, "global_clamp_size")
         layout.prop(operator, "axis_forward")
         layout.prop(operator, "axis_up")
 

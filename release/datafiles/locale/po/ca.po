@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'c751d40e070c')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12,6 +12,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Catalan"
+
+
+msgid "Name"
+msgstr "Nom"
+
+
+msgid "Color"
+msgstr "Color"
 
 
 msgid "Action Group"
@@ -120,10 +128,6 @@ msgstr "Rotar"
 
 msgid "Action group is locked"
 msgstr "Seleccionar fila"
-
-
-msgid "Name"
-msgstr "Nom"
 
 
 msgid "Select"
@@ -354,10 +358,6 @@ msgid "Domain"
 msgstr "Mostrar propietats de les arestes"
 
 
-msgid "Vertex"
-msgstr "Pintura Vectorial"
-
-
 msgid "Curve"
 msgstr "Corba"
 
@@ -384,10 +384,6 @@ msgstr "Objecte"
 
 msgid "Direct"
 msgstr "Seleccionar connectats"
-
-
-msgid "Color"
-msgstr "Color"
 
 
 msgid "Transmission"
@@ -2821,6 +2817,10 @@ msgstr "Calcular Normals"
 
 msgid "Surface Format"
 msgstr "Superfície"
+
+
+msgid "Vertex"
+msgstr "Pintura Vectorial"
 
 
 msgid "Image Sequence"
@@ -5276,10 +5276,6 @@ msgid "Texture nodes"
 msgstr "Texte"
 
 
-msgid "Simulation"
-msgstr "Finestra de Render"
-
-
 msgid "Compositor Node Tree"
 msgstr "Image Displist"
 
@@ -6902,6 +6898,10 @@ msgid "Animation"
 msgstr "Finestra de Render"
 
 
+msgid "Simulation"
+msgstr "Finestra de Render"
+
+
 msgid "Reiteration"
 msgstr "Esborrar Rotació"
 
@@ -7400,6 +7400,10 @@ msgid "Matte"
 msgstr "Esborrar Rotació"
 
 
+msgid "Mesh"
+msgstr "Malla"
+
+
 msgid "Node"
 msgstr "Image Displist"
 
@@ -7470,10 +7474,6 @@ msgstr "Arxiu"
 
 msgid "Interpolate"
 msgstr "Esborrar Rotació"
-
-
-msgid "Mesh"
-msgstr "Malla"
 
 
 msgid "Normals"
@@ -10264,6 +10264,10 @@ msgid "Int"
 msgstr "Afegir Tira"
 
 
+msgid "Object Info"
+msgstr "Comprimir Dades"
+
+
 msgid "Label Font Size"
 msgstr "Duplicar"
 
@@ -10362,10 +10366,6 @@ msgstr "Esborrar Rotació"
 
 msgid "UV Map for tangent space maps"
 msgstr "Corba NURBS"
-
-
-msgid "Object Info"
-msgstr "Comprimir Dades"
 
 
 msgid "Cycles"
@@ -13387,6 +13387,14 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
+
+
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -22520,14 +22528,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"

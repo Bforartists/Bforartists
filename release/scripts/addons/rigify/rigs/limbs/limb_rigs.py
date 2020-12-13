@@ -206,7 +206,7 @@ class BaseLimbRig(BaseRig):
 
     @stage.generate_widgets
     def make_master_control_widget(self):
-        create_gear_widget(self.obj, self.bones.ctrl.master, size=10)
+        create_gear_widget(self.obj, self.bones.ctrl.master, radius=1)
 
 
     ####################################################

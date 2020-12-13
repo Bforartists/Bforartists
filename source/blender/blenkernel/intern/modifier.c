@@ -574,6 +574,18 @@ bool BKE_modifier_is_enabled(const struct Scene *scene, ModifierData *md, int re
   return true;
 }
 
+/**
+ * Check whether given modifier is not local (i.e. from linked data) when the object is a library
+ * override.
+ *
+ * \param md May be NULL, in which case we consider it as a non-local modifier case.
+ */
+bool BKE_modifier_is_nonlocal_in_liboverride(const Object *ob, const ModifierData *md)
+{
+  return (ID_IS_OVERRIDE_LIBRARY(ob) &&
+          (md == NULL || (md->flag & eModifierFlag_OverrideLibrary_Local) == 0));
+}
+
 CDMaskLink *BKE_modifier_calc_data_masks(struct Scene *scene,
                                          Object *ob,
                                          ModifierData *md,
