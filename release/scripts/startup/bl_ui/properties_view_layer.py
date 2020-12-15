@@ -242,11 +242,25 @@ class ViewLayerCryptomattePanel(ViewLayerButtonsPanel, Panel):
         if (any((view_layer.use_pass_cryptomatte_object,
                           view_layer.use_pass_cryptomatte_material,
                           view_layer.use_pass_cryptomatte_asset))):
-            col.label(icon="DISCLOSURE_TRI_DOWN")
-            col.prop(view_layer, "pass_cryptomatte_depth", text="Levels")
-            col.prop(view_layer, "use_pass_cryptomatte_accurate", text="Accurate Mode")
+            split = layout.split()
+            row = split.row()
+            row.label(text = "Include settings")
+            row = split.row()
+            row.label(icon="DISCLOSURE_TRI_DOWN")
+            col = layout.column()
+            row = col.row()
+            row.separator()
+            row.prop(view_layer, "pass_cryptomatte_depth", text="Levels")
+            row = col.row()
+            row.separator()
+            row.use_property_split = False
+            row.prop(view_layer, "use_pass_cryptomatte_accurate", text="Accurate Mode")
         else:
-            col.label(icon="DISCLOSURE_TRI_RIGHT")
+            split = layout.split()
+            row = split.row()
+            row.label(text = "Include settings")
+            row = split.row()
+            row.label(icon="DISCLOSURE_TRI_RIGHT")
 
 
 class VIEWLAYER_PT_layer_passes_cryptomatte(ViewLayerCryptomattePanel):
