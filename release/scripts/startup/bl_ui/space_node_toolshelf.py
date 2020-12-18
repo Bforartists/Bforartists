@@ -26,7 +26,7 @@ class NODES_PT_Prop(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Display"
-    bl_category = "Iconortext"
+    bl_category = "View"
 
     @staticmethod
     def draw(self, context):
