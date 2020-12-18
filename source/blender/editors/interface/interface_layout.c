@@ -2131,63 +2131,49 @@ void uiItemFullR(uiLayout *layout,
   uiLayout *layout_parent = layout;
 
   if (use_prop_sep) {
-    uiLayout *layout_row = NULL;
+    uiLayout *layout_row;
+
+    layout = uiLayoutColumn(layout, true);
+    // uiItemL(layout, name, ICON_NONE);
+    layout_row = uiLayoutRow(layout, true);
+    // uiItemS(layout_row);
+    layout_row->space = 0;
+
 #ifdef UI_PROP_DECORATE
     if (ui_decorate.use_prop_decorate) {
-      layout_row = uiLayoutRow(layout, true);
-      layout_row->space = 0;
       ui_decorate.len = max_ii(1, len);
     }
 #endif /* UI_PROP_DECORATE */
 
     if ((name[0] == '\0') && !use_split_empty_name) {
       /* Ensure we get a column when text is not set. */
-      layout = uiLayoutColumn(layout_row ? layout_row : layout, true);
+      layout = uiLayoutColumn(layout_row, true);
       layout->space = 0;
       if (heading_layout) {
         ui_layout_heading_label_add(layout, heading_layout, false, false);
       }
     }
     else {
-      uiLayout *layout_split = uiLayoutSplit(
-          layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
-      bool label_added = false;
-      uiLayout *layout_sub = uiLayoutColumn(layout_split, true);
+      uiLayout *layout_split;
+      uiLayout *layout_sub;
+      layout_split = uiLayoutRow(layout_row, true);
+      // layout_split = uiLayoutSplit(layout_row, UI_ITEM_PROP_SEP_DIVIDE, true);
+      layout_sub = uiLayoutColumn(layout_split, true);
       layout_sub->space = 0;
+      // uiLayout *layout_split = uiLayoutSplit(layout_row, UI_ITEM_PROP_SEP_DIVIDE, true);
+      bool label_added = false;
 
       if (!use_prop_sep_split_label) {
         /* Pass */
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
-        char name_with_suffix[UI_MAX_DRAW_STR + 2];
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
-          const bool use_prefix = (a == 0 && name && name[0]);
-          if (use_prefix) {
-            char *s = name_with_suffix;
-            s += STRNCPY_RLEN(name_with_suffix, name);
-            *s++ = ' ';
-            *s++ = str[0];
-            *s++ = '\0';
-          }
-          but = uiDefBut(block,
-                         UI_BTYPE_LABEL,
-                         0,
-                         use_prefix ? name_with_suffix : str,
-                         0,
-                         0,
-                         w,
-                         UI_UNIT_Y,
-                         NULL,
-                         0.0,
-                         0.0,
-                         0,
-                         0,
-                         "");
+          but = uiDefBut(
+              block, UI_BTYPE_LABEL, 0, str, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
           but->drawflag |= UI_BUT_TEXT_RIGHT;
           but->drawflag &= ~UI_BUT_TEXT_LEFT;
-
           label_added = true;
         }
       }
