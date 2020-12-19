@@ -1084,6 +1084,9 @@ class TOOLBAR_MT_image(Menu):
         preferences = context.preferences
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
+        obj = context.active_object
+        mode = 'OBJECT' if obj is None else obj.mode
+
         ## ------------------ image sub toolbars
 
         if addon_prefs.image_uv_align:
@@ -1119,7 +1122,9 @@ class TOOLBAR_MT_image(Menu):
 
             row = layout.row(align=True)
             row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
-            row.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
+            sub = row.row()
+            sub.active = (mode == 'EDIT')
+            sub.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
             row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
 
             row = layout.row(align=True)
@@ -1141,7 +1146,10 @@ class TOOLBAR_MT_image(Menu):
             row = layout.row(align=True)
             row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
             row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
-            row.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
+            sub = row.row()
+            sub.active = (mode == 'EDIT')
+            sub.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
+            sub.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
             #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
 
 
