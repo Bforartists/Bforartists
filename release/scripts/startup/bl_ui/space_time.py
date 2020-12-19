@@ -114,6 +114,7 @@ class TIME_MT_editor_menus(Menu):
         sub.menu("TIME_MT_view")
         if st.show_markers:
             sub.menu("TIME_MT_marker")
+            sub.menu("DOPESHEET_MT_select")
 
 
 class TIME_MT_marker(Menu):
