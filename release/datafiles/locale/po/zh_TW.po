@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -4573,10 +4573,6 @@ msgid "Head/Tail"
 msgstr "頭/尾"
 
 
-msgid "Target along length of bone: Head=0, Tail=1"
-msgstr "沿著骨骼長度的目標：頭=0，尾=1"
-
-
 msgid "Invert X"
 msgstr "反轉 X"
 
@@ -5295,10 +5291,6 @@ msgstr "連結的 Python 指令稿拋出錯誤"
 
 msgid "Number of Targets"
 msgstr "目標數量"
-
-
-msgid "Usually only 1-3 are needed"
-msgstr "通常只需要 1-3 個"
 
 
 msgid "Target Objects"
@@ -7737,24 +7729,12 @@ msgid "Max Rate"
 msgstr "最大比率"
 
 
-msgid "Rate control: max rate (kb/s)"
-msgstr "比率控制：最大比率 (kb/s)"
-
-
 msgid "Min Rate"
 msgstr "最小比率"
 
 
-msgid "Rate control: min rate (kb/s)"
-msgstr "比率控制：最小比率 (kb/s)"
-
-
 msgid "Mux Rate"
 msgstr "雙工率"
-
-
-msgid "Mux rate (bits/s(!))"
-msgstr "雙工率 (bits/s(!))"
 
 
 msgid "Mux Packet Size"
@@ -7779,10 +7759,6 @@ msgstr "無損輸出"
 
 msgid "Use lossless output for video streams"
 msgstr "使用無損輸出作為視訊串流"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "視訊位元率 (kb/s)"
 
 
 msgid "F-Modifier"
@@ -8504,10 +8480,6 @@ msgstr "作為外力的紋理"
 
 msgid "Texture Mode"
 msgstr "紋理模式"
-
-
-msgid "How the texture effect is calculated (RGB & Curl need a RGB texture, else Gradient will be used instead)"
-msgstr "如何計算紋理效果 (「RGB」與「捲曲」需要有 RGB 紋理，否則會改用「漸層」)"
 
 
 msgid "Gradient"
@@ -17108,20 +17080,8 @@ msgid "Epsilon"
 msgstr "Epsilon"
 
 
-msgid "Singular value under which damping is progressively applied (higher values=more stability, less reactivity - default=0.1)"
-msgstr "減緩漸進套用下的單一值 (較高值=較穩定、較少反應 - 預設=0.1)"
-
-
-msgid "Maximum damping coefficient when singular value is nearly 0 (higher values=more stability, less reactivity - default=0.5)"
-msgstr "當單一值幾近 0 時的最大減緩係數 (較高值=較穩定、較少反應 - 預設=0.5)"
-
-
 msgid "Feedback"
 msgstr "回饋"
-
-
-msgid "Feedback coefficient for error correction, average response time is 1/feedback (default=20)"
-msgstr "錯誤校正、平均回應時間的回饋係數為 1/feedback (預設=20)"
 
 
 msgid "Maximum number of iterations for convergence in case of reiteration"
@@ -17212,10 +17172,6 @@ msgid "Automatically determine the optimal number of steps for best performance/
 msgstr "自動決定最佳步數以取得最好效能/精確度"
 
 
-msgid "Maximum joint velocity in rad/s (default=50)"
-msgstr "最高關節速度，單位為弧度/s (預設=50)"
-
-
 msgid "Settings for image formats"
 msgstr "影像格式的設定"
 
@@ -17248,32 +17204,8 @@ msgid "Bit depth per channel"
 msgstr "每個通道的位元深度"
 
 
-msgid "8 bit color channels"
-msgstr "8 位元色彩通道"
-
-
-msgid "10 bit color channels"
-msgstr "10 位元色彩通道"
-
-
-msgid "12 bit color channels"
-msgstr "12 位色彩通道"
-
-
-msgid "16 bit color channels"
-msgstr "16 位元色彩通道"
-
-
-msgid "32 bit color channels"
-msgstr "32 位元色彩通道"
-
-
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "選擇黑白來儲存灰階影像，選擇 RGB 來儲存紅、綠、藍通道，選擇 RGBA 來儲存紅、綠、藍與 alpha 通道"
-
-
-msgid "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"
-msgstr "以 8 位元灰階儲存影像 (僅支持 PNG、JPEG、TGA、TIF)"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -17352,10 +17284,6 @@ msgid "Z Buffer"
 msgstr "Z 緩衝"
 
 
-msgid "Save the z-depth per pixel (32 bit unsigned int z-buffer)"
-msgstr "儲存每個像素的 Z 深度 (32 位元無號整型 Z 緩衝)"
-
-
 msgid "Format of multiview media"
 msgstr "多重視圖媒體的格式"
 
@@ -17376,10 +17304,6 @@ msgid "Icon Pixels"
 msgstr "圖示像素"
 
 
-msgid "Icon pixels, as bytes (always RGBA 32bits)"
-msgstr "圖示像素，單位為位元組 (永遠 RGBA 32 位元)"
-
-
 msgid "Icon Size"
 msgstr "圖示大小"
 
@@ -17390,10 +17314,6 @@ msgstr "寬度與高度，單位為像素"
 
 msgid "Image Pixels"
 msgstr "影像像素"
-
-
-msgid "Image pixels, as bytes (always RGBA 32bits)"
-msgstr "影像像素，單位為位元組 (永遠 RGBA 32 位元)"
 
 
 msgid "Image Size"
@@ -20650,10 +20570,6 @@ msgid "Control playback using time in seconds"
 msgstr "以秒控制播放"
 
 
-msgid "Control playback using a value between [0, 1]"
-msgstr "以介於 [0, 1] 之間的值控制播放"
-
-
 msgid "MeshDeform Modifier"
 msgstr "網格變形修改器"
 
@@ -23229,10 +23145,6 @@ msgid "Cyclic Strip Time"
 msgstr "循環片段時間"
 
 
-msgid "Cycle the animated time within the action start & end"
-msgstr "循環動作開始與結束之內的動畫時間"
-
-
 msgid "Auto Blend In/Out"
 msgstr "自動混入/出"
 
@@ -24137,18 +24049,6 @@ msgid "3 sides"
 msgstr "3 個邊"
 
 
-msgid "F-stop"
-msgstr "F-stop"
-
-
-msgid "Amount of focal blur, 128=infinity=perfect focus, half the value doubles the blur radius"
-msgstr "焦點模糊的量，128=無限=完美焦點，一半的值會讓模糊半徑成倍"
-
-
-msgid "CoC radius threshold, prevents background bleed on in-focus midground, 0=off"
-msgstr "CoC 半徑閾值，預防背景於焦點內中景出血，0=關"
-
-
 msgid "Gamma Correction"
 msgstr "伽瑪校正"
 
@@ -24606,10 +24506,6 @@ msgid "Map Range"
 msgstr "映射範圍"
 
 
-msgid "Clamp result of the node to 0..1 range"
-msgstr "緊固節點至 0..1 區間的結果"
-
-
 msgid "Map UV"
 msgstr "映射 UV"
 
@@ -25052,6 +24948,10 @@ msgstr "當執行 Z 操作時將 Alpha 頻道列入考慮"
 
 msgid "Anti-Alias Z"
 msgstr "抗鋸齒 Z"
+
+
+msgid "Equal"
+msgstr "等於"
 
 
 msgid "Int"
@@ -25535,16 +25435,8 @@ msgid "Particle Age"
 msgstr "粒子年紀"
 
 
-msgid "Lifetime mapped as 0.0 - 1.0 intensity"
-msgstr "生命期映射為 0.0 - 1.0 強度"
-
-
 msgid "Particle Speed"
 msgstr "粒子速度"
-
-
-msgid "Particle speed (absolute magnitude of velocity) mapped as 0.0-1.0 intensity"
-msgstr "粒子速度 (速度的絕對大小) 映射為 0.0-1.0 強度"
 
 
 msgid "Particle Velocity"
@@ -26508,14 +26400,6 @@ msgid "Check if Select Left or Right"
 msgstr "勾選是要選左或選右"
 
 
-msgid "Before current frame"
-msgstr "目前框幀之前"
-
-
-msgid "After current frame"
-msgstr "目前框幀之後"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "縮減選取"
@@ -26789,10 +26673,6 @@ msgid "Clear Useless Actions"
 msgstr "清除無用動作"
 
 
-msgid "Mark actions with no F-Curves for deletion after save & reload of file preserving \"action libraries\""
-msgstr "將那些在儲存之後與重新載入保留的「動作庫」檔案之後，沒有 F 曲線可供刪除的動作標記起來"
-
-
 msgid "Only Unused"
 msgstr "僅未使用"
 
@@ -27050,10 +26930,6 @@ msgstr "為突顯的按鈕在複製/貼上緩衝中貼上驅動器"
 
 
 msgctxt "Operator"
-msgid "Clear Preview Range"
-msgstr "清除預覽範圍"
-
-
 msgid "Clear Preview Range"
 msgstr "清除預覽範圍"
 
@@ -27459,10 +27335,6 @@ msgstr "切割次數"
 msgctxt "Operator"
 msgid "Switch Direction"
 msgstr "切換方向"
-
-
-msgid "Change the direction that a chain of bones points in (head <-> tail swap)"
-msgstr "更改骨骼鏈的方向 (頭 <-> 尾交換)"
 
 
 msgctxt "Operator"
@@ -28736,10 +28608,6 @@ msgid "Zoom out the view"
 msgstr "拉遠視圖"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "游標位置於歸一化 (0.0-1.0) 的座標系中"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "視圖遠近比"
@@ -29483,10 +29351,6 @@ msgid "Select a row of control points including active one"
 msgstr "選取控制點的列，包含作用中項目"
 
 
-msgid "Equal"
-msgstr "等於"
-
-
 msgid "Greater"
 msgstr "大於"
 
@@ -29603,10 +29467,6 @@ msgstr "為所選的點設定柔體目的權重"
 
 msgid "Subdivide selected segments"
 msgstr "細分所選分段"
-
-
-msgid "Number of cuts"
-msgstr "切割次數"
 
 
 msgid "Switch direction of selected splines"
@@ -31608,12 +31468,8 @@ msgid "Default fill color"
 msgstr "預設填入色彩"
 
 
-msgid "32 bit Float"
+msgid "32-bit Float"
 msgstr "32 位元浮點"
-
-
-msgid "Create image with 32 bit floating point bit depth"
-msgstr "建立具有 32 位元浮點位元深度的影像"
 
 
 msgid "Fill the image with a grid for UV map testing"
@@ -32002,10 +31858,6 @@ msgstr "插入動畫用的起始幀"
 msgctxt "Operator"
 msgid "Copy Reports to Clipboard"
 msgstr "複製報告至剪貼簿"
-
-
-msgid "Copy selected reports to Clipboard"
-msgstr "複製選取的報告至剪貼簿"
 
 
 msgctxt "Operator"
@@ -33189,10 +33041,6 @@ msgid "Knife Project"
 msgstr "割刀投影"
 
 
-msgid "Cut through"
-msgstr "切穿"
-
-
 msgid "Cut through all faces, not just visible ones"
 msgstr "切穿所有的面，不僅限於可見到的面"
 
@@ -33931,10 +33779,6 @@ msgid "Multiple Faces"
 msgstr "多面"
 
 
-msgid "Edges shared by 3+ faces"
-msgstr "邊線有 3+ 個面共享"
-
-
 msgid "Non Contiguous"
 msgstr "不連續"
 
@@ -34226,10 +34070,6 @@ msgstr "將三角形結合為四角形"
 msgctxt "Operator"
 msgid "Un-Subdivide"
 msgstr "取消細分"
-
-
-msgid "UnSubdivide selected edges & faces"
-msgstr "對所選邊線與面取消細分"
 
 
 msgid "Number of times to unsubdivide"
@@ -34573,6 +34413,14 @@ msgid "Select strips to the left or the right of the current frame"
 msgstr "選取目前框幀前後左右的片段"
 
 
+msgid "Before current frame"
+msgstr "目前框幀之前"
+
+
+msgid "After current frame"
+msgstr "目前框幀之後"
+
+
 msgctxt "Operator"
 msgid "Include Selected Objects"
 msgstr "包含所選的物體"
@@ -34770,10 +34618,6 @@ msgstr "讓背景影像適應視圖"
 msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "背景幕影像移動"
-
-
-msgid "Move Node backdrop"
-msgstr "移動節點背景幕"
 
 
 msgctxt "Operator"
@@ -35333,10 +35177,6 @@ msgid "Align Objects"
 msgstr "對齊物體"
 
 
-msgid "Align Objects"
-msgstr "對齊物體"
-
-
 msgid "Align to axis"
 msgstr "對齊軸"
 
@@ -35634,10 +35474,6 @@ msgid "Apply modifier and remove from the stack"
 msgstr "套用修改器並從堆疊中移除"
 
 
-msgid "Apply as"
-msgstr "套用為"
-
-
 msgid "How to apply the modifier to the geometry"
 msgstr "如何將修改器套用至幾何外形"
 
@@ -35830,6 +35666,10 @@ msgstr "清除增減"
 msgctxt "Operator"
 msgid "Link Data"
 msgstr "連結資料"
+
+
+msgid "Effects"
+msgstr "效果"
 
 
 msgctxt "Operator"
@@ -36247,10 +36087,6 @@ msgid "Quick Explode"
 msgstr "快速爆炸"
 
 
-msgid "Amount of pieces"
-msgstr "塊數"
-
-
 msgid "Fade the pieces over time"
 msgstr "隨著時間淡化塊"
 
@@ -36295,10 +36131,6 @@ msgstr "算繪時保持煙霧體可見"
 
 msgid "Smoke Style"
 msgstr "煙霧樣式"
-
-
-msgid "Smoke + Fire"
-msgstr "煙霧 + 火燒"
 
 
 msgctxt "Operator"
@@ -36680,10 +36512,6 @@ msgstr "添加一個喇叭至場景中"
 msgctxt "Operator"
 msgid "Subdivision Set"
 msgstr "細分設定"
-
-
-msgid "Sets a Subdivision Surface Level (1-5)"
-msgstr "設定細分表面的等級 (1-5)"
 
 
 msgctxt "Operator"
@@ -37407,10 +37235,6 @@ msgstr "抓取拓製"
 
 msgid "Move the clone source image"
 msgstr "移動拓製來源影像"
-
-
-msgid "Delta offset of clone image in 0.0..1.0 coordinates"
-msgstr "0.0..1.0 座標系中拓製影像的增減偏移"
 
 
 msgctxt "Operator"
@@ -39797,10 +39621,6 @@ msgid "Toggle Quad View"
 msgstr "切換四視圖檢視"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "將所選區域分割為攝影機視圖、前視圖、右視圖及頂視圖"
-
-
 msgctxt "Operator"
 msgid "Scale Region Size"
 msgstr "縮放區塊大小"
@@ -39929,10 +39749,6 @@ msgid "Reload Scripts"
 msgstr "重新載入指令稿"
 
 
-msgid "Reload Scripts"
-msgstr "重新載入指令稿"
-
-
 msgctxt "Operator"
 msgid "Sculpt"
 msgstr "雕塑"
@@ -40054,10 +39870,6 @@ msgstr "取樣細節大小"
 
 msgid "Sample the mesh detail on clicked point"
 msgstr "對點按的點取樣網格細節"
-
-
-msgid "Screen Coordinates of sampling"
-msgstr "取樣的螢幕座標系"
 
 
 msgid "Dyntopo"
@@ -40848,30 +40660,6 @@ msgstr "Waveform 音訊檔案格式"
 
 msgid "Sample format"
 msgstr "取樣格式"
-
-
-msgid "8 bit unsigned"
-msgstr "8 位元無號"
-
-
-msgid "16 bit signed"
-msgstr "16 位元有號"
-
-
-msgid "24 bit signed"
-msgstr "24 位元有號"
-
-
-msgid "32 bit signed"
-msgstr "32 位元有號"
-
-
-msgid "32 bit floating point"
-msgstr "32 位元浮點"
-
-
-msgid "64 bit floating point"
-msgstr "64 位元浮點"
 
 
 msgid "Split channels"
@@ -42453,10 +42241,6 @@ msgstr "清除合縫邊線的縫線"
 
 msgid "Limit distance in normalized coordinates"
 msgstr "距離限制在歸一化座標內"
-
-
-msgid "Snap At Midpoint"
-msgstr "吸附於中點"
 
 
 msgid "UVs are stitched at midpoint instead of at static island"
@@ -44524,10 +44308,6 @@ msgid "Path Animation"
 msgstr "路徑動畫"
 
 
-msgid "Effects"
-msgstr "效果"
-
-
 msgid "Skeleton"
 msgstr "骨骼"
 
@@ -45845,10 +45625,6 @@ msgid "Bone Group this pose channel belongs to"
 msgstr "此姿勢通道所屬的骨骼群組"
 
 
-msgid "Bone Group this pose channel belongs to (0=no group)"
-msgstr "此姿勢通道所屬的骨骼群組 (0=無群組)"
-
-
 msgid "Child of this pose bone"
 msgstr "此姿勢骨骼的子代"
 
@@ -46397,10 +46173,6 @@ msgid "MPlayer"
 msgstr "MPlayer"
 
 
-msgid "Media player for video & png/jpeg/sgi image sequences"
-msgstr "視訊與 png/jpeg/sgi 影像序段的媒體播放器"
-
-
 msgid "Custom animation player executable path"
 msgstr "自訂動畫播放器可執行路徑"
 
@@ -46777,14 +46549,6 @@ msgid "Settings for walk navigation mode"
 msgstr "步行導覽模式設定"
 
 
-msgid "Wheel Scroll Lines"
-msgstr "滾輪捲動列數"
-
-
-msgid "Number of lines scrolled at a time with the mouse wheel"
-msgstr "滑鼠滾輪滾動時要捲動的列數"
-
-
 msgid "Key Config"
 msgstr "按鍵組態"
 
@@ -46881,48 +46645,20 @@ msgid "8-bit Unsigned"
 msgstr "8 位元無號"
 
 
-msgid "Set audio sample format to 8 bit unsigned integer"
-msgstr "設定音訊取樣格式為 8 位元無號整數"
-
-
 msgid "16-bit Signed"
 msgstr "16 位元有號"
-
-
-msgid "Set audio sample format to 16 bit signed integer"
-msgstr "設定音訊取樣格式為 16 位元有號整數"
 
 
 msgid "24-bit Signed"
 msgstr "24 位元有號"
 
 
-msgid "Set audio sample format to 24 bit signed integer"
-msgstr "設定音訊取樣格式為 24 位元有號整數"
-
-
 msgid "32-bit Signed"
 msgstr "32 位元有號"
 
 
-msgid "Set audio sample format to 32 bit signed integer"
-msgstr "設定音訊取樣格式為 32 位元有號整數"
-
-
-msgid "32-bit Float"
-msgstr "32 位元浮點"
-
-
-msgid "Set audio sample format to 32 bit float"
-msgstr "設定音訊取樣格式為 32 位元浮點"
-
-
 msgid "64-bit Float"
 msgstr "64 位元浮點"
-
-
-msgid "Set audio sample format to 64 bit float"
-msgstr "設定音訊取樣格式為 64 位元浮點"
 
 
 msgid "Audio Sample Rate"
@@ -48259,10 +47995,6 @@ msgstr "傳遞光澤間接通遞"
 
 msgid "Deliver material index pass"
 msgstr "傳遞材質索引通遞"
-
-
-msgid "Deliver mist factor pass (0.0-1.0)"
-msgstr "傳遞迷霧係數通遞 (0.0-1.0)"
 
 
 msgid "Deliver normal pass"
@@ -61036,26 +60768,6 @@ msgstr "新特效需要更多輸入片段"
 
 msgid "No active sequence!"
 msgstr "無作用中序段！"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "檔案的頂端"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "檔案的底端"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "上翻頁"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "下翻頁"
 
 
 msgid "File Modified Outside and Inside Blender"

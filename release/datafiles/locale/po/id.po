@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -1657,10 +1657,6 @@ msgstr "Kamera"
 
 msgid "Color Depth"
 msgstr "Warna"
-
-
-msgid "10 bit color channels"
-msgstr "Saluran"
 
 
 msgid "UI Name"
@@ -4461,10 +4457,6 @@ msgstr "Tipe"
 msgctxt "Operator"
 msgid "Un-Subdivide"
 msgstr "Modus Pahat"
-
-
-msgid "UnSubdivide selected edges & faces"
-msgstr "Warna Standar"
 
 
 msgctxt "Operator"

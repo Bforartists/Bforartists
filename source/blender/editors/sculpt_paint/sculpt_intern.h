@@ -39,7 +39,6 @@
 struct AutomaskingCache;
 struct KeyBlock;
 struct Object;
-struct SculptPoseIKChainSegment;
 struct SculptUndoNode;
 struct bContext;
 
@@ -422,6 +421,10 @@ void SCULPT_cloth_plane_falloff_preview_draw(const uint gpuattr,
                                              struct SculptSession *ss,
                                              const float outline_col[3],
                                              float outline_alpha);
+
+PBVHNode **SCULPT_cloth_brush_affected_nodes_gather(SculptSession *ss,
+                                                    Brush *brush,
+                                                    int *r_totnode);
 
 BLI_INLINE bool SCULPT_is_cloth_deform_brush(const Brush *brush)
 {
@@ -922,6 +925,10 @@ typedef struct StrokeCache {
   float mouse_event[2];
 
   float (*prev_colors)[4];
+
+  /* Multires Displacement Smear. */
+  float (*prev_displacement)[3];
+  float (*limit_surface_co)[3];
 
   /* The rest is temporary storage that isn't saved as a property */
 

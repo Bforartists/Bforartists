@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -2826,10 +2826,6 @@ msgstr "Konsol çıktı metodu Seçin"
 
 msgid "Lossless Output"
 msgstr "Konsol çıktı metodu Seçin"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "Video Sıra Editörü"
 
 
 msgid "F-Modifier"
@@ -6295,14 +6291,6 @@ msgstr "Consolda Olayları Günlükle"
 
 msgid "Color Depth"
 msgstr "Ekran Rengi:"
-
-
-msgid "8 bit color channels"
-msgstr "Arabellek rengini yapıştır"
-
-
-msgid "10 bit color channels"
-msgstr "Arabellek rengini yapıştır"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -9906,14 +9894,6 @@ msgid "Select Left/Right"
 msgstr "Otomatik İsimlendir Sol/Sağ"
 
 
-msgid "Before current frame"
-msgstr "Geçerli Karenin Tersine"
-
-
-msgid "After current frame"
-msgstr "Geçerli Karenin Tersine"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "Ters Seçim"
@@ -10166,10 +10146,6 @@ msgstr "Sürücüyü Kaldır"
 
 
 msgctxt "Operator"
-msgid "Clear Preview Range"
-msgstr "Önizleme Biçimi: Küp"
-
-
 msgid "Clear Preview Range"
 msgstr "Önizleme Biçimi: Küp"
 
@@ -11448,10 +11424,6 @@ msgstr "Kesit Sınırı Oluştur"
 
 msgid "Subdivide selected segments"
 msgstr "Seçili İşaretler arasında"
-
-
-msgid "Number of cuts"
-msgstr "Izgara çizgilerinin sayısını ayarlayın"
 
 
 msgid "Switch direction of selected splines"
@@ -13696,10 +13668,6 @@ msgid "Un-Subdivide"
 msgstr "Tekrar Böl"
 
 
-msgid "UnSubdivide selected edges & faces"
-msgstr "Seçilen kenarları vurgulayarak görüntüler"
-
-
 msgid "Number of times to unsubdivide"
 msgstr "Hesaplama için kullanılacak aygıt"
 
@@ -13884,6 +13852,14 @@ msgid "Toggle Muting"
 msgstr "Altı Çizili Yap"
 
 
+msgid "Before current frame"
+msgstr "Geçerli Karenin Tersine"
+
+
+msgid "After current frame"
+msgstr "Geçerli Karenin Tersine"
+
+
 msgctxt "Operator"
 msgid "Snap Strips"
 msgstr "Izgarayı yakala:"
@@ -13972,10 +13948,6 @@ msgstr "Bağlı Malzemeler:"
 msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "Arkaplan Resmi Kullan"
-
-
-msgid "Move Node backdrop"
-msgstr "İşareti Taşı"
 
 
 msgid "Use mouse to sample background image"
@@ -14249,10 +14221,6 @@ msgid "Align Objects"
 msgstr "Nesneleri Birleştir"
 
 
-msgid "Align Objects"
-msgstr "Nesneleri Birleştir"
-
-
 msgid "Align to axis"
 msgstr "Görüntüyü Seçili Olana Hizala"
 
@@ -14414,10 +14382,6 @@ msgstr "Değiştirici Ekle"
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Değiştirici Ekle"
-
-
-msgid "Apply as"
-msgstr "Farklı Kaydet..."
 
 
 msgid "Object Data"
@@ -14801,10 +14765,6 @@ msgid "Quick Explode"
 msgstr "Hızlı Düzenle"
 
 
-msgid "Amount of pieces"
-msgstr "Yansıma miktarı"
-
-
 msgctxt "Operator"
 msgid "Quick Fur"
 msgstr "Hızlı Düzenle"
@@ -15019,10 +14979,6 @@ msgstr "Nesneyi bir Gruba ekle"
 msgctxt "Operator"
 msgid "Subdivision Set"
 msgstr "Özellik Seti"
-
-
-msgid "Sets a Subdivision Surface Level (1-5)"
-msgstr "Yumuşatma seviyesi 5"
 
 
 msgctxt "Operator"
@@ -16373,10 +16329,6 @@ msgid "Reload Scripts"
 msgstr "Betik Penceresi "
 
 
-msgid "Reload Scripts"
-msgstr "Betik Penceresi "
-
-
 msgctxt "Operator"
 msgid "Sculpt"
 msgstr "Heykeltraşlık Modu"
@@ -16707,10 +16659,6 @@ msgstr "Film + Ses (HD)"
 
 msgid "File format"
 msgstr "Dosya adı"
-
-
-msgid "16 bit signed"
-msgstr "Yazıtipi boyutu: 16"
 
 
 msgid "Split channels"
@@ -17451,10 +17399,6 @@ msgstr "NURBS Küre"
 
 msgid "Clear seams of stitched edges"
 msgstr "Seçilen kenarları vurgulayarak görüntüler"
-
-
-msgid "Snap At Midpoint"
-msgstr "Izgarayı yakala:"
 
 
 msgid "Operation Mode"
@@ -19339,14 +19283,6 @@ msgstr "Devamlı"
 
 msgid "Dolly"
 msgstr "Eylem"
-
-
-msgid "Wheel Scroll Lines"
-msgstr "Tekerle Yaklaş/Uzaklaş"
-
-
-msgid "Number of lines scrolled at a time with the mouse wheel"
-msgstr "Fare tekerinin tek hareketi ile kaydırılacak satır sayısı"
 
 
 msgid "Key Config"
@@ -25124,16 +25060,6 @@ msgstr "Seçili İşaretler arasında"
 
 msgid "No active sequence!"
 msgstr "Film Klibi"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Dosya adı"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Dosya adı"
 
 
 msgid "unknown error writing file"

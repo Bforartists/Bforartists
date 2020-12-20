@@ -211,7 +211,7 @@ class USERPREF_PT_interface_display(InterfacePanel, CenterAlignMixIn, Panel):
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.use_property_split = False
-        flow.prop(view, "show_splash", text="Splash Screen")
+        flow.prop(view, "show_splash", text ="Splash Screen")
         flow.prop(view, "show_tooltips")
         if view.show_tooltips:
             flow.prop(view, "show_tooltips_python")
@@ -1391,6 +1391,40 @@ class USERPREF_PT_saveload_autorun(FilePathsPanel, Panel):
             row.operator("preferences.autoexec_path_remove", text="", icon='X', emboss=False).index = i
 
 
+class USERPREF_PT_file_paths_asset_libraries(FilePathsPanel, Panel):
+    bl_label = "Asset Libraries"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = False
+        layout.use_property_decorate = False
+
+        paths = context.preferences.filepaths
+
+        box = layout.box()
+        split = box.split(factor=0.35)
+        name_col = split.column()
+        path_col = split.column()
+
+        row = name_col.row(align=True)  # Padding
+        row.separator()
+        row.label(text="Name")
+
+        row = path_col.row(align=True)  # Padding
+        row.separator()
+        row.label(text="Path")
+
+
+        for i, library in enumerate(paths.asset_libraries):
+            name_col.prop(library, "name", text="")
+            row = path_col.row()
+            row.prop(library, "path", text="")
+            row.operator("preferences.asset_library_remove", text="", icon='X', emboss=False).index = i
+        row = box.row()
+        row.alignment = 'LEFT'
+        row.operator("preferences.asset_library_add", text="", icon='ADD', emboss=False)
+
+
 # -----------------------------------------------------------------------------
 # Save/Load Panels
 
@@ -1597,7 +1631,6 @@ class USERPREF_PT_navigation_zoom(NavigationPanel, CenterAlignMixIn, Panel):
 
         flow.use_property_split = False
         flow.prop(inputs, "invert_zoom_wheel", text="Invert Wheel Zoom Direction")
-        # sub.prop(view, "wheel_scroll_lines", text="Scroll Lines")
         flow.prop(inputs, "use_zoom_to_mouse")
 
 
@@ -1909,12 +1942,12 @@ class USERPREF_PT_addons(AddOnPanel, Panel):
                 is_visible = is_visible and is_enabled
 
             if is_visible:
-                if search and search not in info["name"].lower():
-                    if info["author"]:
-                        if search not in info["author"].lower():
-                            continue
-                    else:
-                        continue
+                if search and not (
+                        (search in info["name"].lower()) or
+                        (info["author"] and (search in info["author"].lower())) or
+                        ((filter == "All") and (search in info["category"].lower()))
+                ):
+                    continue
 
                 # Skip 2.7x add-ons included with Blender, unless in debug mode.
                 is_addon_27x = info.get("blender", (0,)) < (2, 80)
@@ -2275,6 +2308,7 @@ class USERPREF_PT_experimental_prototypes(ExperimentalPanel, Panel):
         self._draw_items(
             context, (
                 ({"property": "use_new_hair_type"}, "T68981"),
+                ({"property": "use_new_point_cloud_type"}, "T75717"),
             ),
         )
 
@@ -2360,6 +2394,7 @@ classes = (
     USERPREF_PT_file_paths_render,
     USERPREF_PT_file_paths_applications,
     USERPREF_PT_file_paths_development,
+    USERPREF_PT_file_paths_asset_libraries,
 
     USERPREF_PT_saveload_blend,
     USERPREF_PT_saveload_blend_autosave,
