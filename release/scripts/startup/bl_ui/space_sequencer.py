@@ -127,17 +127,24 @@ class SEQUENCER_HT_header(Header):
         layout = self.layout
 
         st = context.space_data
+        scene = context.scene
+        sequencer_tool_settings = context.tool_settings.sequencer_tool_settings
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         layout.prop(st, "view_type", text="")
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
 
-        if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
-
+        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
+            layout.separator_spacer()
+            row = layout.row(align=True)
+            row.prop(sequencer_tool_settings, "fit_method", text="")
             layout.separator_spacer()
 
-            layout.prop(st, "display_mode", text="", icon_only=True)
+        if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
+            if st.view_type == 'PREVIEW':
+                layout.separator_spacer()
 
+            layout.prop(st, "display_mode", text="", icon_only=True)
             layout.prop(st, "preview_channels", text="", icon_only=True)
 
             gpd = context.gpencil_data
@@ -149,6 +156,77 @@ class SEQUENCER_HT_header(Header):
                 row.prop(tool_settings, "use_proportional_edit", icon_only=True)
                 if tool_settings.use_proportional_edit:
                     row.prop(tool_settings, "proportional_edit_falloff", icon_only=True)
+
+        row = layout.row(align=True)
+        row.prop(st, "show_strip_overlay", text="", icon='OVERLAY')
+        sub = row.row(align=True)
+        sub.popover(panel="SEQUENCER_PT_overlay", text="")
+        sub.active = st.show_strip_overlay
+
+
+class SEQUENCER_PT_overlay(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_label = "Overlays"
+    bl_ui_units_x = 7
+
+    def draw(self, _context):
+        pass
+
+
+class SEQUENCER_PT_preview_overlay(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = 'SEQUENCER_PT_overlay'
+    bl_label = "Preview Overlays"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        return st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'} and st.display_mode == 'IMAGE'
+
+    def draw(self, context):
+        ed = context.scene.sequence_editor
+        st = context.space_data
+        layout = self.layout
+
+        layout.active = st.show_strip_overlay
+        layout.prop(ed, "show_overlay", text="Frame Overlay")
+        layout.prop(st, "show_safe_areas", text="Safe Areas")
+        layout.prop(st, "show_metadata", text="Metadata")
+        layout.prop(st, "show_annotation", text="Annotations")
+
+
+class SEQUENCER_PT_sequencer_overlay(Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'HEADER'
+    bl_parent_id = 'SEQUENCER_PT_overlay'
+    bl_label = "Sequencer Overlays"
+
+    @classmethod
+    def poll(cls, context):
+        st = context.space_data
+        return st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}
+
+    def draw(self, context):
+        st = context.space_data
+        layout = self.layout
+
+        layout.active = st.show_strip_overlay
+
+        layout.prop(st, "show_strip_name", text="Name")
+        layout.prop(st, "show_strip_source", text="Source")
+        layout.prop(st, "show_strip_duration", text="Duration")
+
+        layout.separator()
+
+        layout.prop(st, "show_strip_offset", text="Offsets")
+        layout.prop(st, "show_fcurves", text="F-Curves")
+
+        layout.separator()
+
+        layout.prop_menu_enum(st, "waveform_display_type")
+
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -302,6 +380,12 @@ class SEQUENCER_MT_view(Menu):
                 layout.operator("view2d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
                 layout.menu("SEQUENCER_MT_preview_zoom")
 
+            if st.display_mode == 'IMAGE':
+                layout.prop(st, "use_zoom_to_fit")
+            elif st.display_mode == 'WAVEFORM':
+                layout.separator()
+                layout.prop(st, "show_separate_color", text="Show Separate Color Channels")
+
             layout.separator()
 
             layout.operator("sequencer.view_all_preview", text="Fit Preview in window", icon = "VIEW_FIT")
@@ -380,6 +464,7 @@ class SEQUENCER_MT_select_none(bpy.types.Operator):
         bpy.ops.sequencer.select_all(action = 'DESELECT')
         return {'FINISHED'}
 
+
 class SEQUENCER_MT_select_handle(Menu):
     bl_label = "Select Handle"
 
@@ -389,6 +474,12 @@ class SEQUENCER_MT_select_handle(Menu):
         layout.operator("sequencer.select_handles", text="Both", icon = "RESTRICT_SELECT_OFF").side = 'BOTH'
         layout.operator("sequencer.select_handles", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
         layout.operator("sequencer.select_handles", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
+
+        layout.separator()
+
+        layout.operator("sequencer.select_handles", text="Both Neighbors").side = 'BOTH_NEIGHBORS'
+        layout.operator("sequencer.select_handles", text="Left Neighbor").side = 'LEFT_NEIGHBOR'
+        layout.operator("sequencer.select_handles", text="Right Neighbor").side = 'RIGHT_NEIGHBOR'
 
 
 class SEQUENCER_MT_select_channel(Menu):
@@ -647,6 +738,23 @@ class SEQUENCER_MT_add_effect(Menu):
         col.enabled = selected_sequences_len(context) != 0
 
 
+class SEQUENCER_MT_strip_image_transform(Menu):
+    bl_label = "Image Transform"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.operator("sequencer.strip_transform_fit", text="Scale To Fit").fit_method = 'FIT'
+        layout.operator("sequencer.strip_transform_fit", text="Scale to Fill").fit_method = 'FILL'
+        layout.operator("sequencer.strip_transform_fit", text="Stretch To Fill").fit_method = 'STRETCH'
+        layout.separator()
+
+        layout.operator("sequencer.strip_transform_clear", text="Clear Position").property = 'POSITION'
+        layout.operator("sequencer.strip_transform_clear", text="Clear Scale").property = 'SCALE'
+        layout.operator("sequencer.strip_transform_clear", text="Clear Rotation").property = 'ROTATION'
+        layout.operator("sequencer.strip_transform_clear", text="Clear All").property = 'ALL'
+
+
 class SEQUENCER_MT_strip_transform(Menu):
     bl_label = "Transform"
 
@@ -738,6 +846,7 @@ class SEQUENCER_MT_strip(Menu):
 
         layout.separator()
         layout.menu("SEQUENCER_MT_strip_transform")
+        layout.menu("SEQUENCER_MT_strip_image_transform")
         layout.operator("sequencer.snap", icon = "SEQ_SNAP_STRIP")
         layout.operator("sequencer.offset_clear", icon = "SEQ_CLEAR_OFFSET")
 
@@ -1210,7 +1319,7 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
         split = col.split(factor=.4, align=True)
         split.label(text="Size")
         split.prop(strip, "font_size", text="")
-        
+
         split = col.split(factor=.4, align=True)
         split.label(text="Color")
         split.prop(strip, "color", text="")
@@ -1224,7 +1333,7 @@ class SEQUENCER_PT_effect_text_style(SequencerButtonsPanel, Panel):
             split.prop(strip, "shadow_color", text="")
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
-        
+
         split = col.split(factor=.4, align=True)
         col = split.column(align=True)
         col.use_property_decorate = False
@@ -1860,9 +1969,6 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
         col.prop(ed, "use_cache_preprocessed")
         col.prop(ed, "use_cache_composite")
         col.prop(ed, "use_cache_final")
-        col.separator()
-        col.use_property_split = True
-        col.prop(ed, "recycle_max_cost")
 
 
 class SEQUENCER_PT_proxy_settings(SequencerButtonsPanel, Panel):
@@ -2363,6 +2469,7 @@ classes = (
     SEQUENCER_MT_strip_effect,
     SEQUENCER_MT_strip_movie,
     SEQUENCER_MT_strip,
+    SEQUENCER_MT_strip_image_transform,
     SEQUENCER_MT_strip_transform,
     SEQUENCER_MT_strip_input,
     SEQUENCER_MT_strip_lock_mute,
@@ -2370,6 +2477,10 @@ classes = (
 
     SEQUENCER_PT_active_tool,
     SEQUENCER_PT_strip,
+
+    SEQUENCER_PT_overlay,
+    SEQUENCER_PT_preview_overlay,
+    SEQUENCER_PT_sequencer_overlay,
 
     SEQUENCER_PT_effect,
     SEQUENCER_PT_scene,

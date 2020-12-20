@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -3370,6 +3370,10 @@ msgid "Curved"
 msgstr "घुमावदार"
 
 
+msgid "Equal"
+msgstr "बराबर"
+
+
 msgid "Bump"
 msgstr "उभार"
 
@@ -3741,10 +3745,6 @@ msgid "Select Next"
 msgstr "अगला का चयन करें"
 
 
-msgid "Equal"
-msgstr "बराबर"
-
-
 msgid "Less"
 msgstr "कम"
 
@@ -3761,10 +3761,6 @@ msgstr "चक्रण"
 
 msgid "Subdivide selected segments"
 msgstr "चयनित क्षेत्रों के प्रितभाग"
-
-
-msgid "Number of cuts"
-msgstr "कटौती की संख्या"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9087,14 +9087,6 @@ msgid "Color Depth"
 msgstr "Sada barev"
 
 
-msgid "10 bit color channels"
-msgstr "32 bitové barevné kanály"
-
-
-msgid "32 bit color channels"
-msgstr "32 bitové barevné kanály"
-
-
 msgid "Codec"
 msgstr "Kodek"
 
@@ -13842,14 +13834,6 @@ msgid "Select Left/Right"
 msgstr "Z prava"
 
 
-msgid "Before current frame"
-msgstr "Další klíč"
-
-
-msgid "After current frame"
-msgstr "Vyrenderovat aktuální frame"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "Vybrat méně"
@@ -14197,10 +14181,6 @@ msgstr "Rodič"
 
 
 msgctxt "Operator"
-msgid "Clear Preview Range"
-msgstr "Uložit změněný obrázek"
-
-
 msgid "Clear Preview Range"
 msgstr "Uložit změněný obrázek"
 
@@ -15308,10 +15288,6 @@ msgid "Zoom out the view"
 msgstr "Hladké "
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Zobrazit normalizované souřadnice"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Rotace"
@@ -15883,10 +15859,6 @@ msgstr "Nastavit váhu cíle"
 
 msgid "Subdivide selected segments"
 msgstr "Rozdělit vybrané úseky"
-
-
-msgid "Number of cuts"
-msgstr "Počet dělení:"
 
 
 msgctxt "Operator"
@@ -17370,10 +17342,6 @@ msgid "Copy Reports to Clipboard"
 msgstr "Kopírovat barvu"
 
 
-msgid "Copy selected reports to Clipboard"
-msgstr "Odstranit označené značky"
-
-
 msgctxt "Operator"
 msgid "Delete Reports"
 msgstr "Odstranit"
@@ -18825,10 +18793,6 @@ msgid "Un-Subdivide"
 msgstr "Rozdělit"
 
 
-msgid "UnSubdivide selected edges & faces"
-msgstr "Rozdělí vybrané hrany"
-
-
 msgid "Number of times to unsubdivide"
 msgstr "Počet opakování pro překreslení"
 
@@ -19075,6 +19039,14 @@ msgid "Select strips to the left or the right of the current frame"
 msgstr "Vybrat nový font pro uživatelské rozhraní"
 
 
+msgid "Before current frame"
+msgstr "Další klíč"
+
+
+msgid "After current frame"
+msgstr "Vyrenderovat aktuální frame"
+
+
 msgctxt "Operator"
 msgid "Snap Strips"
 msgstr "Zarovnat NLA proužky"
@@ -19183,10 +19155,6 @@ msgstr "Zarovnat výběr na mřížku"
 msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "Obrázek na pozadí"
-
-
-msgid "Move Node backdrop"
-msgstr "Vytvořit skupinu uzlů"
 
 
 msgctxt "Operator"
@@ -19548,10 +19516,6 @@ msgid "Align Objects"
 msgstr "Zarovnat objekty"
 
 
-msgid "Align Objects"
-msgstr "Zarovnat objekty"
-
-
 msgid "Align to axis"
 msgstr "Zarovnat k ose"
 
@@ -19784,10 +19748,6 @@ msgstr "Aplikovat modifikátor"
 
 msgid "Apply modifier and remove from the stack"
 msgstr "Aplikovat tento modifikátor a odstranit ho ze zásobníku"
-
-
-msgid "Apply as"
-msgstr "Aplikovat"
 
 
 msgid "Object Data"
@@ -20573,10 +20533,6 @@ msgstr "Přidá objekt reproduktoru do scény"
 
 msgctxt "Operator"
 msgid "Subdivision Set"
-msgstr "Dělené plošky"
-
-
-msgid "Sets a Subdivision Surface Level (1-5)"
 msgstr "Dělené plošky"
 
 
@@ -22309,10 +22265,6 @@ msgid "Toggle Quad View"
 msgstr "Přepnout na čtyři pohledy"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "Rozdělí vybranou oblast na pohled kamery, přední, pravý a vrchní pohled"
-
-
 msgctxt "Operator"
 msgid "Scale Region Size"
 msgstr "Osa Zrcadlení"
@@ -22386,10 +22338,6 @@ msgstr "Načíst tento soubor"
 
 
 msgctxt "Operator"
-msgid "Reload Scripts"
-msgstr "Skripty"
-
-
 msgid "Reload Scripts"
 msgstr "Skripty"
 
@@ -23896,10 +23844,6 @@ msgstr "Skrýt označené plošky"
 
 msgid "Limit distance in normalized coordinates"
 msgstr "Zobrazit normalizované souřadnice"
-
-
-msgid "Snap At Midpoint"
-msgstr "Koncový bod: "
 
 
 msgid "Operation Mode"
@@ -33372,16 +33316,6 @@ msgstr "Jméno skriptu"
 
 msgid "No active sequence!"
 msgstr "Sekvence "
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Začátek souboru"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Konec souboru"
 
 
 msgid "unknown error writing file"

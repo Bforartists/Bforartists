@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1511,10 +1511,6 @@ msgid "Create an image with an alpha channel"
 msgstr "Irudi bat sortu alfa kanalarekin"
 
 
-msgid "32 bit Float"
-msgstr "32 biteko Float"
-
-
 msgid "Image height"
 msgstr "Irudiaren altuera"
 
@@ -2281,26 +2277,6 @@ msgstr "Sarea"
 msgctxt "Mesh"
 msgid "Sphere"
 msgstr "Esfera"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Fitxategiaren Goialdea"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Fitxategiaren Behealdea"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "Orria Gora"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "Orria Behera"
 
 
 msgid "normal"

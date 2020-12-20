@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -3034,10 +3034,6 @@ msgid "Apply Modifier"
 msgstr "นำการปรับแต่งไปใช้"
 
 
-msgid "Apply as"
-msgstr "นำไปใช้เป็น"
-
-
 msgid "New Shape"
 msgstr "รูปร่างใหม่"
 
@@ -5874,10 +5870,6 @@ msgstr "สร้าง %s"
 
 msgid "Overwrite %s"
 msgstr "เขียนทับ %s"
-
-
-msgid "'%s' doesn't contain '%s' with prefix & suffix"
-msgstr "'%s' ไม่มี '%s' พร้อมคำนำหน้า และ คำต่อท้าย"
 
 
 msgctxt "Armature"

@@ -368,6 +368,7 @@ class TIME_PT_view_view_options(TimelinePanelButtons, Panel):
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
 
+
 class TIME_PT_view_view_cache(TimelinePanelButtons, Panel):
     bl_label = "Cache"
     bl_category = "Cache"
