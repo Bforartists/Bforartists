@@ -33,6 +33,7 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
+#include "DNA_collection_types.h"
 #include "DNA_defaults.h"
 #include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
@@ -153,6 +154,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
   }
 
   /* TODO: Add relations for IDs in settings. */
+  /* TODO: Add dependency for collection changes. */
 }
 
 static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *userData)
@@ -299,13 +301,28 @@ class GeometryNodesEvaluator {
   void execute_node(const DNode &node, GeoNodeExecParams params)
   {
     const bNode &bnode = params.node();
+
+    /* Use the geometry-node-execute callback if it exists. */
     if (bnode.typeinfo->geometry_node_execute != nullptr) {
       bnode.typeinfo->geometry_node_execute(params);
       return;
     }
 
-    /* Use the multi-function implementation of the node. */
-    const MultiFunction &fn = *mf_by_node_.lookup(&node);
+    /* Use the multi-function implementation if it exists. */
+    const MultiFunction *multi_function = mf_by_node_.lookup_default(&node, nullptr);
+    if (multi_function != nullptr) {
+      this->execute_multi_function_node(node, params, *multi_function);
+      return;
+    }
+
+    /* Just output default values if no implementation exists. */
+    this->execute_unknown_node(node, params);
+  }
+
+  void execute_multi_function_node(const DNode &node,
+                                   GeoNodeExecParams params,
+                                   const MultiFunction &fn)
+  {
     MFContextBuilder fn_context;
     MFParamsBuilder fn_params{fn, 1};
     Vector<GMutablePointer> input_data;
@@ -336,6 +353,16 @@ class GeometryNodesEvaluator {
         params.set_output_by_move(node.output(i).identifier(), value);
         value.destruct();
         output_index++;
+      }
+    }
+  }
+
+  void execute_unknown_node(const DNode &node, GeoNodeExecParams params)
+  {
+    for (const DOutputSocket *socket : node.outputs()) {
+      if (socket->is_available()) {
+        const CPPType &type = *blender::nodes::socket_cpp_type_get(*socket->typeinfo());
+        params.set_output_by_copy(socket->identifier(), {type, type.default_value()});
       }
     }
   }
@@ -976,8 +1003,12 @@ static void draw_property_for_socket(uiLayout *layout,
   /* IDProperties can be removed with python, so there could be a situation where
    * there isn't a property for a socket or it doesn't have the correct type. */
   if (property != nullptr && property_type->is_correct_type(*property)) {
-    char rna_path[128];
-    BLI_snprintf(rna_path, ARRAY_SIZE(rna_path), "[\"%s\"]", socket.identifier);
+
+    char socket_id_esc[sizeof(socket.identifier) * 2];
+    BLI_str_escape(socket_id_esc, socket.identifier, sizeof(socket_id_esc));
+
+    char rna_path[sizeof(socket_id_esc) + 4];
+    BLI_snprintf(rna_path, ARRAY_SIZE(rna_path), "[\"%s\"]", socket_id_esc);
     uiItemR(layout, settings_ptr, rna_path, 0, socket.name, ICON_NONE);
   }
 }
@@ -998,6 +1029,7 @@ static void panel_draw(const bContext *C, Panel *panel)
                ptr,
                "node_group",
                "node.new_geometry_node_group_assign",
+               nullptr,
                nullptr,
                nullptr,
                0,
@@ -1059,6 +1091,15 @@ static void freeData(ModifierData *md)
   }
 }
 
+static void requiredDataMask(Object *UNUSED(ob),
+                             ModifierData *UNUSED(md),
+                             CustomData_MeshMasks *r_cddata_masks)
+{
+  /* We don't know what the node tree will need. If there are vertex groups, it is likely that the
+   * node tree wants to access them. */
+  r_cddata_masks->vmask |= CD_MASK_MDEFORMVERT;
+}
+
 ModifierTypeInfo modifierType_Nodes = {
     /* name */ "GeometryNodes",
     /* structName */ "NodesModifierData",
@@ -1066,9 +1107,9 @@ ModifierTypeInfo modifierType_Nodes = {
     /* srna */ &RNA_NodesModifier,
     /* type */ eModifierTypeType_Constructive,
     /* flags */
-    static_cast<ModifierTypeFlag>(eModifierTypeFlag_AcceptsMesh |
-                                  eModifierTypeFlag_SupportsEditmode |
-                                  eModifierTypeFlag_EnableInEditmode),
+    static_cast<ModifierTypeFlag>(
+        eModifierTypeFlag_AcceptsMesh | eModifierTypeFlag_SupportsEditmode |
+        eModifierTypeFlag_EnableInEditmode | eModifierTypeFlag_SupportsMapping),
     /* icon */ ICON_NODETREE,
 
     /* copyData */ copyData,
@@ -1083,7 +1124,7 @@ ModifierTypeInfo modifierType_Nodes = {
     /* modifyVolume */ nullptr,
 
     /* initData */ initData,
-    /* requiredDataMask */ nullptr,
+    /* requiredDataMask */ requiredDataMask,
     /* freeData */ freeData,
     /* isDisabled */ isDisabled,
     /* updateDepsgraph */ updateDepsgraph,

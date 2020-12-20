@@ -1625,7 +1625,7 @@ class IMAGE_PT_overlay(Panel):
     bl_ui_units_x = 13
 
     def draw(self, context):
-      pass
+        pass
 
 
 class IMAGE_PT_overlay_uv_edit(Panel):

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -3979,10 +3979,6 @@ msgstr "Без губитка квалитета"
 
 msgid "Use lossless output for video streams"
 msgstr "Користи излаз видеа без губитка квалитета"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "Битски проток видеа (kb/s)"
 
 
 msgid "F-Modifier"
@@ -8716,32 +8712,8 @@ msgid "Bit depth per channel"
 msgstr "Битска дубина по каналу"
 
 
-msgid "8 bit color channels"
-msgstr "8-битни канали боја"
-
-
-msgid "10 bit color channels"
-msgstr "12-битни канали боја"
-
-
-msgid "12 bit color channels"
-msgstr "12-битни канали боја"
-
-
-msgid "16 bit color channels"
-msgstr "16-битни канали боја"
-
-
-msgid "32 bit color channels"
-msgstr "32-битни канали боја"
-
-
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Изаберите BW за чување црно-беле слике, RGB за слике у боји и RGBA за слике у боји са провидношћу (алфа каналом)"
-
-
-msgid "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"
-msgstr "Чувај слике у 8-битним нијансама сиве (само PNG, JPEG, TGA, TIF)"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -12038,6 +12010,10 @@ msgid "Anti-Alias Z"
 msgstr "Умекшавање ивица Z"
 
 
+msgid "Equal"
+msgstr "Једнако"
+
+
 msgid "Object Info"
 msgstr "Информације о објекту"
 
@@ -12254,16 +12230,8 @@ msgid "Particle Age"
 msgstr "Старост честица"
 
 
-msgid "Lifetime mapped as 0.0 - 1.0 intensity"
-msgstr "Животни век је у интервалу од 0.0 до 1.0"
-
-
 msgid "Particle Speed"
 msgstr "Брзина честица"
-
-
-msgid "Particle speed (absolute magnitude of velocity) mapped as 0.0-1.0 intensity"
-msgstr "Брзина честица (апсолутна вредност брзине) у интервалу од 0.0 до 1.0"
 
 
 msgid "Particle Velocity"
@@ -12679,14 +12647,6 @@ msgstr "Бира тачке кључних кадрова користећи л�
 msgctxt "Operator"
 msgid "Select Left/Right"
 msgstr "Изабери лево/десно"
-
-
-msgid "Before current frame"
-msgstr "Испред текућег кадра"
-
-
-msgid "After current frame"
-msgstr "После текућег кадра"
 
 
 msgctxt "Operator"
@@ -13827,10 +13787,6 @@ msgid "Zoom out the view"
 msgstr "Удаљава поглед"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Локација курсора у нормализованим (0.0-1.0) координатама"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Вредност увећања погледа"
@@ -14309,10 +14265,6 @@ msgid "Select Control Point Row"
 msgstr "Изабери низ контролних тачака"
 
 
-msgid "Equal"
-msgstr "Једнако"
-
-
 msgid "Greater"
 msgstr "Веће"
 
@@ -14395,10 +14347,6 @@ msgstr "Раздвој изабране тачке од неизабраних �
 
 msgid "Subdivide selected segments"
 msgstr "Издели изабране сегменте"
-
-
-msgid "Number of cuts"
-msgstr "Број исечака"
 
 
 msgctxt "Operator"
@@ -15605,14 +15553,6 @@ msgid "Default fill color"
 msgstr "Текућа боја испуне"
 
 
-msgid "32 bit Float"
-msgstr "32-битни децимални"
-
-
-msgid "Create image with 32 bit floating point bit depth"
-msgstr "Направи слику са 32-битном децималном дубином."
-
-
 msgid "Image height"
 msgstr "Висина слику"
 
@@ -15808,10 +15748,6 @@ msgstr "Почетни кадар уметнуте анимације"
 msgctxt "Operator"
 msgid "Copy Reports to Clipboard"
 msgstr "Умножи извештај у привремену меморију"
-
-
-msgid "Copy selected reports to Clipboard"
-msgstr "Убацује изабрани извештај међу исечке"
 
 
 msgctxt "Operator"
@@ -17082,6 +17018,14 @@ msgid "Select or deselect all NLA-Strips"
 msgstr "Изабери све/ништа NLA стазе"
 
 
+msgid "Before current frame"
+msgstr "Испред текућег кадра"
+
+
+msgid "After current frame"
+msgstr "После текућег кадра"
+
+
 msgctxt "Operator"
 msgid "Include Selected Objects"
 msgstr "Укључи изабране објекте"
@@ -17481,10 +17425,6 @@ msgid "Align Objects"
 msgstr "Поравнај објекте"
 
 
-msgid "Align Objects"
-msgstr "Поравнај објекте"
-
-
 msgid "Align to axis"
 msgstr "Поравнај по оси"
 
@@ -17663,10 +17603,6 @@ msgstr "Додај модификатор"
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Примени модификатор"
-
-
-msgid "Apply as"
-msgstr "Примени као"
 
 
 msgid "Object Data"
@@ -17980,10 +17916,6 @@ msgstr "Дужина ивице"
 msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Брзо разбијање"
-
-
-msgid "Amount of pieces"
-msgstr "Број делова"
 
 
 msgid "Explode Style"
@@ -19470,10 +19402,6 @@ msgid "Toggle Quad View"
 msgstr "Поглед из четри дела"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "Подели изабрану област на поглед кроз камеру, спреда, са стране и одозго"
-
-
 msgctxt "Operator"
 msgid "Repeat History"
 msgstr "Историјат понављања"
@@ -19511,10 +19439,6 @@ msgstr "Покрени Python датотеку"
 
 
 msgctxt "Operator"
-msgid "Reload Scripts"
-msgstr "Поново учитај скрипте"
-
-
 msgid "Reload Scripts"
 msgstr "Поново учитај скрипте"
 
@@ -19988,10 +19912,6 @@ msgstr "талас"
 
 msgid "Waveform Audio File Format"
 msgstr "Формат звучног записа"
-
-
-msgid "32 bit floating point"
-msgstr "32-битни децимални"
 
 
 msgid "Split channels"
@@ -20721,10 +20641,6 @@ msgstr "Маргине острва"
 msgctxt "Operator"
 msgid "Snap Cursor"
 msgstr "Лепљење курсора"
-
-
-msgid "Snap At Midpoint"
-msgstr "Лепи за средиште"
 
 
 msgid "Snap Islands"
@@ -22789,10 +22705,6 @@ msgstr "Лутка"
 
 msgid "Walk Navigation"
 msgstr "Навигација шетње"
-
-
-msgid "Number of lines scrolled at a time with the mouse wheel"
-msgstr "Број редова померених једним покретом точкића миша"
 
 
 msgid "Anisotropic Filter"
@@ -29120,26 +29032,6 @@ msgstr "Потебно је изабрати 2 траке секвенци"
 
 msgid "No active sequence!"
 msgstr "Без активне секвенце!"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Врх датотеке"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Дно датотеке"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "Страна горе"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "Страна доле"
 
 
 msgid "unknown error writing file"

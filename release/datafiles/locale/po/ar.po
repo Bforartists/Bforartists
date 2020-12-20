@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -3744,10 +3744,6 @@ msgid "Head/Tail"
 msgstr "ﻞﻳﺫ/ﺱﺃﺭ"
 
 
-msgid "Target along length of bone: Head=0, Tail=1"
-msgstr "1=ﻞﻳﺬﻟﺍ ،0=ﺱﺃﺮﻟﺍ :ﻢﻈﻌﻟﺍ ﻝﻮﻃ ﻝﻮﻃ ﻰﻠﻋ ﻑﺪﻬﻟﺍ"
-
-
 msgid "Invert X"
 msgstr "X ﺲﻜﻋﺇ"
 
@@ -4466,10 +4462,6 @@ msgstr "ﺄﻄﺧ ﻦﻋ ﻎﻠّﺑ ﻱﺬﻟﺍ ﻂﺒﺗﺮﻤﻟﺍ ﻥﻮ�
 
 msgid "Number of Targets"
 msgstr "ﻑﺍﺪﻫﻻ﻿ﺍ ﺩﺪﻋ"
-
-
-msgid "Usually only 1-3 are needed"
-msgstr "ﺔﺟﺎﺘﺤﻤﻟﺍ ﻲﻫ 3-1 ﻂﻘﻓ ﺓﺩﺎﻋ"
 
 
 msgid "Target Objects"
@@ -6645,24 +6637,12 @@ msgid "Max Rate"
 msgstr "ﻝﺪﻌﻣ ﻰﻠﻋﺍ"
 
 
-msgid "Rate control: max rate (kb/s)"
-msgstr "(ﺙ/ﺐﻛ) ﻝﺪﻌﻣ ﺮﺒﻛﺍ :ﻝﺪﻌﻤﻟﺎﺑ ﻢﻜﺤﺘﻟﺍ"
-
-
 msgid "Min Rate"
 msgstr "ﻝﺪﻌﻣ ﻞﻗﺃ"
 
 
-msgid "Rate control: min rate (kb/s)"
-msgstr "(ﺙ/ﺐﻛ) ﻝﺪﻌﻣ ﻞﻗﺍ :ﻝﺪﻌﻤﻟﺎﺑ ﻢﻜﺤﺘﻟﺍ"
-
-
 msgid "Mux Rate"
 msgstr "ﺞﻣﺪﻟﺍ ﻝﺪﻌﻣ"
-
-
-msgid "Mux rate (bits/s(!))"
-msgstr "(ﺙ/ﺖﺑ) ﺞﻣﺪﻟﺍ ﻝﺪﻌﻣ"
 
 
 msgid "Mux Packet Size"
@@ -6687,10 +6667,6 @@ msgstr " ﺓﺭﺎﺴﺧ ﻥﻭﺪﺑ ﺝﺮﺧ"
 
 msgid "Use lossless output for video streams"
 msgstr "ﺓﺭﻮﺼﻟﺍ ﻖﻓﺪﺘﻟ ﺪﻘﻓ ﻥﻭﺪﺑ ﺝﺮﺧ ﻡﺪﺨﺘﺳﺍ"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "ﺓﺭﻮﺼﻟﺍ ﺕﺎﺘﺑ ﻝﺪﻌﻣ"
 
 
 msgid "F-Modifier"
@@ -7367,10 +7343,6 @@ msgstr "ﺓﻮﻘﻛ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺞﻴﺴﻨﻟﺍ"
 
 msgid "Texture Mode"
 msgstr "ﺞﻴﺴﻨﻟﺍ ﻂﻤﻧ"
-
-
-msgid "How the texture effect is calculated (RGB & Curl need a RGB texture, else Gradient will be used instead)"
-msgstr "ﺞﻴﺴﻨﻟﺍ ﺮﻴﺛﺄﺗ ﺐﺴﺤﻳ ﻒﻴﻛ"
 
 
 msgid "Gradient"
@@ -10257,10 +10229,6 @@ msgstr "ﺕﺍﺮﻌﺸﺘﺴﻤﻟﺍ ﺮﻬﻇﺃ"
 
 msgid "Show TV title safe and action safe areas in Camera view"
 msgstr "ﺍﺮﻴﻣﺎﻜﻟﺍ ﺮﻈﻨﻣ ﻲﻓ ﺙﺪﺤﻟﺍ ﻥﺎﻣﺍ ﻭ ﻥﺍﻮﻨﻌﻟﺍ ﻥﺎﻣﺍ ﺔﻘﻄﻨﻣ ﺮﻬﻇﺃ"
-
-
-msgid "Show Center-cut safe areas"
-msgstr " ﻦﻣﻵ﻿ﺍ ﻂﺳﻮﻟﺍ ﻊﻄﻗ ﻖﻃﺎﻨﻣ ﺮﻬﻇﺍ"
 
 
 msgid "Show safe areas to fit content in a different aspect ratio"
@@ -13267,10 +13235,6 @@ msgid "Adaptive Subframe Threshold"
 msgstr " ﺔﻴﻋﺮﻔﻟﺍ ﺮﻃﻷ﻿ﺍ ﻢﻠﻗﺄﺗ ﺔﺒﺘﻋ"
 
 
-msgid "The relative distance a particle can move before requiring more subframes (target Courant number); 0.01-0.3 is the recommended range"
-msgstr "0.3-0.01 ﻯﺪﻤﻟﺍ ﻡﺍﺪﺨﺘﺳﺈﺑ ﻰﺻﻮﻳ ؛(ﻑﺪﻬﻠﻟ ﺖﻧﺍﺭﻮﻛ ﻢﻗﺭ) ﺔﻴﻋﺮﻓ ﺮﻃﺃ ﻰﻟﺍ ﺝﺎﺘﺤﻳ ﻥﺍ ﻞﺒﻗ ﺎﻬﻠﻘﺘﻨﻳ ﻥﺍ ءﻱﺰﺠﻠﻟ ﻦﻜﻤﻳ ﻲﺘﻟﺍ ﺔﻴﺒﺴﻨﻟﺍ ﺔﻓﺎﺴﻤﻟﺍ"
-
-
 msgid "Long Hair"
 msgstr "ﻞﻳﻮﻃ ﺮﻌﺷ"
 
@@ -15665,10 +15629,6 @@ msgid "Feedback"
 msgstr "ﺔﻌﺟﺍﺭ ﺔﻳﺬﻐﺗ"
 
 
-msgid "Feedback coefficient for error correction, average response time is 1/feedback (default=20)"
-msgstr "(20 = ﻲﺿﺍﺮﺘﻓﻻ﻿ﺍ) ﺔﻳﺬﻐﺘﻟﺍ/1 = ﺔﺑﺎﺠﺘﺳﻻ﻿ﺍ ﻦﻣﺯ ﻝﺪﻌﻣ ,ءﺎﻄﺧﻷ﻿ﺍ ﺢﻴﺤﺼﺘﻟ ﺔﻌﺟﺍﺮﻟﺍ ﺔﻳﺬﻐﺘﻟﺍ ﻞﻣﺎﻌﻣ"
-
-
 msgid "Maximum number of iterations for convergence in case of reiteration"
 msgstr "ﺭﺮّﻜﺘﻟﺍ ﺔﻟﺎﺣ ﻲﻓ ءﺎﻘﺘﻟﻺ﻿ﻟ ﺕﺍﺭﺍﺮﻜﺘﻟﺍ ﻦﻣ ﺩﺪﻋ ﺮﺒﻛﺍ"
 
@@ -15769,32 +15729,8 @@ msgid "Bit depth per channel"
 msgstr "ﺓﺎﻨﻘﻟﺍ ﻲﻓ ﺖﺒﻟﺍ ﻖﻤﻋ"
 
 
-msgid "8 bit color channels"
-msgstr "ﺖﺑ 8ﺏ ﻥﺍﻮﻟﺃ ﺕﺍﻮﻨﻗ"
-
-
-msgid "10 bit color channels"
-msgstr "ﺖﺑ 12ﺏ ﻥﺍﻮﻟﺃ ﺕﺍﻮﻨﻗ"
-
-
-msgid "12 bit color channels"
-msgstr "ﺖﺑ 12ﺏ ﻥﺍﻮﻟﺃ ﺕﺍﻮﻨﻗ"
-
-
-msgid "16 bit color channels"
-msgstr "ﺖﺑ 16ﺏ ﻥﺍﻮﻟﺃ ﺕﺍﻮﻨﻗ"
-
-
-msgid "32 bit color channels"
-msgstr "ﺖﺑ 32 ﻥﻮﻟ ﺕﺍﻮﻨﻗ"
-
-
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "ﺎﻔﻟﻷ﻿ﺍ ﻭ ﻕﺭﺯﻷ﻿ﺍ ،ﺮﻀﺧﻷ﻿ﺍ ،ﺮﻤﺣﻷ﻿ﺍ ﺕﺍﻮﻨﻗ ﻆﻔﺤﻟ RGBA ﻭ،ﻕﺭﺯﻷ﻿ﺍ ﻭ ﺮﻀﺧﻷ﻿ﺍ،ﺮﻤﺣﻷ﻿ﺍ ﺕﺍﻮﻨﻗ ﻆﻔﺤﻟ RGB ،ﻱﺩﺎﻣﺮﻟﺍ ﻦﻣ ﺔﺟﺭﺪﺘﻤﻟﺍ ﺭﻮﺼﻟﺍ ﻆﻔﺤﻟ ﺩﻮﺳﻷ﻿ﺍ ﻭ ﺾﻴﺑﻷ﻿ﺍ ﻡﺪﺨﺘﺳﺇ"
-
-
-msgid "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"
-msgstr " (PNG, JPEG, TGA, TIF ﻂﻘﻓ) ﺖﺑ 8 ﻱﺩﺎﻣﺮﻟﺍ ﺕﺎﺟﺭﺪﺘﺑ ﺭﻮﺼﻟﺍ ﻞﺠﺴﺗ"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -15859,10 +15795,6 @@ msgstr "ﺪﻠﺠﻤﻟﺍ ﺲﻔﻧ ﻲﻓ JPG ﺔﻨﻳﺎﻌﻣ ﺭﻮﺻ ﻞ
 
 msgid "Z Buffer"
 msgstr "Z ﻥﺰﺨﻣ"
-
-
-msgid "Save the z-depth per pixel (32 bit unsigned int z-buffer)"
-msgstr "(ﺖﺑ 32 ﻥﺰﺨﻣ) ﻞﺴﻜﺑ ﻞﻜﻟ Z ﻖﻤﻋ ﻆﻔﺣﺍ"
 
 
 msgid "Icon Pixels"
@@ -20298,10 +20230,6 @@ msgid "Cyclic Strip Time"
 msgstr "ﻲﻘﻠﺣ ﻂﻳﺮﺷ ﺖﻗﻭ"
 
 
-msgid "Cycle the animated time within the action start & end"
-msgstr "ﺔﻛﺮﺤﻟﺍ ﺔﻳﺎﻬﻧ ﻭ ﺔﻳﺍﺪﺑ ﻊﻣ ﻙﺮﺤﺘﻤﻟﺍ ﺖﻗﻮﻟﺍ ﻖﺴﻧ"
-
-
 msgid "Auto Blend In/Out"
 msgstr "ﻲﺗﺍﺫ ﻲﺟﺭﺎﺧ/ﻲﻠﺧﺍﺩ ﺝﺰﻣ"
 
@@ -20876,10 +20804,6 @@ msgstr "ﻲﺜﻠﺜﻣ"
 
 msgid "3 sides"
 msgstr "ﺐﻧﺍﻮﺟ 3"
-
-
-msgid "F-stop"
-msgstr "ﻱﺮﺼﺒﻟﺍ ﻒﻗﻮﺘﻟﺍ"
 
 
 msgid "Gamma Correction"
@@ -21783,16 +21707,8 @@ msgid "Particle Age"
 msgstr "ءﻱﺰﺠﻟﺍ ﺮﻤﻋ"
 
 
-msgid "Lifetime mapped as 0.0 - 1.0 intensity"
-msgstr " 1.0 ﻭ 0.0 ﻦﻴﺑ ﺓﺭﻮﺼﺤﻣ ﺓﺪﺷ ﻰﻟﺇ ﻝﻮﺤﻣ ﺓﺎﻴﺤﻟﺍ ﺖﻗﻭ"
-
-
 msgid "Particle Speed"
 msgstr "ءﻱﺰﺠﻟﺍ ﺔﻋﺮﺳ"
-
-
-msgid "Particle speed (absolute magnitude of velocity) mapped as 0.0-1.0 intensity"
-msgstr " 1.0 ﻭ 0.0 ﻦﻴﺑ ﺓﺭﻮﺼﺤﻣ ﺓﺪﺷ ﻰﻟﺇ ﻝﻮﺤﻣ (ﺔﻘﻠﻄﻣ ﺔﻋﺮﺳ ﺔﻣﺎﺨﺿ) ءﻱﺰﺠﻟﺍ ﺔﻋﺮﺳ"
 
 
 msgid "Particle Velocity"
@@ -23621,10 +23537,6 @@ msgid "Zoom Out"
 msgstr "ﺪﻌّﺑ"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "(1.0-0.0) ﺔﻤﻈّﻨﻤﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﻻ﻿ﺍ ﻲﻓ ﺮﺷﺆﻤﻟﺍ ﻊﻗﻮﻣ"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﻢﻴﺠﺤﺗ ﻝﺪﻌﻣ"
@@ -24048,10 +23960,6 @@ msgstr "ﻑﺪﻬﻟﺍ ﻥﺯﻭ ﻊﺿ"
 
 msgid "Set softbody goal weight for selected points"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻂﻘﻨﻠﻟ ﻦﻴﻠﻟﺍ ﻢﺴﺠﻟﺍ ﻑﺪﻫ ﻥﺯﻭ ﻊﺿ"
-
-
-msgid "Number of cuts"
-msgstr "ﺕﺎﻌﻴﻄﻘﺘﻟﺍ ﺩﺪﻋ"
 
 
 msgctxt "Operator"
@@ -25039,6 +24947,10 @@ msgstr "ﻢﻠﻔﻟﺍ ﻝﻮﻃ ﺐﺳﺎﻧ"
 msgctxt "Operator"
 msgid "New Image"
 msgstr "ﺓﺪﻳﺪﺟ ﺓﺭﻮﺻ"
+
+
+msgid "32-bit Float"
+msgstr "ﻱﺮﺴﻛ ﺖﺑ-32"
 
 
 msgid "Tiled"
@@ -26505,10 +26417,6 @@ msgid "Un-Subdivide"
 msgstr "ﻢﻌّﻧ"
 
 
-msgid "UnSubdivide selected edges & faces"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﻪﺟﻭﻷ﻿ﺍ ﻒﺧﺃ"
-
-
 msgid "Number of times to unsubdivide"
 msgstr "UV's ـﻟﺍ ﺏﺎﺴﺣ ﻞﺒﻗ ﻢﻴﺴﻘﺘﻟﺍ ﺕﺍﺮﻤﻟﺍ ﺩﺪﻋ"
 
@@ -27138,10 +27046,6 @@ msgid "Align Objects"
 msgstr "ﺕﺎﻨﺋﺎﻜﻟﺍ ﻱﺫﺎﺣ"
 
 
-msgid "Align Objects"
-msgstr "ﺕﺎﻨﺋﺎﻜﻟﺍ ﻱﺫﺎﺣ"
-
-
 msgid "Align to axis"
 msgstr "ﺭﻮﺤﻤﻟ ﻱﺫﺎﺣ"
 
@@ -27626,10 +27530,6 @@ msgstr "ﺔﻓﺎﺤﻟﺍ ﻝﻮﻃ"
 msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "ﻊﻳﺮﺳ ﺭﺎﺠﻔﻧﺍ"
-
-
-msgid "Amount of pieces"
-msgstr "ﻊﻄﻘِﻟﺍ ﺔﻴﻤﻛ"
 
 
 msgid "Explode Style"
@@ -29446,10 +29346,6 @@ msgid "Reload Scripts"
 msgstr "ﺕﺎﺘﺑﺮﻜﺴﻟﺍ ﻞﻴﻤﺤﺗ ﺪﻋﺍ"
 
 
-msgid "Reload Scripts"
-msgstr "ﺲﺑﺎﻘﻤﻟﺍ ﻞﻴﻤﺤﺗ ﺪﻋﺍ"
-
-
 msgctxt "Operator"
 msgid "Sculpt"
 msgstr "ﺖﺤﻨﻟﺍ"
@@ -29836,14 +29732,6 @@ msgstr "mkv"
 
 msgid "mp3"
 msgstr "mp3"
-
-
-msgid "8 bit unsigned"
-msgstr "ﻊﻗﻮﻣ ﺮﻴﻏ ﺖﺑ-8"
-
-
-msgid "16 bit signed"
-msgstr "ﻊﻗﻮﻣ ﺖﺑ 16"
 
 
 msgid "Split channels"
@@ -30540,10 +30428,6 @@ msgstr "ﻂﻴّﺧ"
 
 msgid "Clear seams of stitched edges"
 msgstr "ﺔﻛﺎﺤﻤﻟﺍ ﻑﺍﻮﺤﻠﻟ ﺕﺍﺯﺭﺪﻟﺍ ﻑﺬﺣﺍ"
-
-
-msgid "Snap At Midpoint"
-msgstr "ﻒﺼﺘﻨﻤﻟﺍ ﺔﻄﻘﻨﻟ ﻱﺫﺎﺣ"
 
 
 msgid "Operation Mode"
@@ -32756,10 +32640,6 @@ msgid "Bone Group this pose channel belongs to"
 msgstr "ﻩﺬﻫ ﺔﻔﻗﻮﻟﺍ ﺓﺎﻨﻗ ﺎﻬﻴﻟﺇ ﻲﻤﺘﻨﺗ ﻲﺘﻟﺍ ﻡﺎﻈﻌﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
 
-msgid "Bone Group this pose channel belongs to (0=no group)"
-msgstr "(ﺔﻋﻮﻤﺠﻣ ﻻ﻿ ﻲﻨﻌﺗ 0) ﻩﺬﻫ ﺔﻔﻗﻮﻟﺍ ﺓﺎﻨﻗ ﺎﻬﻴﻟﺇ ﻲﻤﺘﻨﺗ ﻲﺘﻟﺍ ﻡﺎﻈﻌﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
 msgid "Child of this pose bone"
 msgstr "ﻩﺬﻫ ﻢﻈﻌﻟﺍ ﺔﻔﻗﻭ ﻉﺮﻓ"
 
@@ -33284,10 +33164,6 @@ msgid "MPlayer"
 msgstr "MPlayer"
 
 
-msgid "Media player for video & png/jpeg/sgi image sequences"
-msgstr "png/jpeg/sgi ﺭﻮﺻ ﺕﻼ﻿ﺴﻠﺴﺗ ﻭ ﺕﺎﻫﻮﻳﺪﻴﻔﻠﻟ ﻂﺋﺎﺳﻭ ﺽﺭﺎﻋ"
-
-
 msgid "Custom animation player executable path"
 msgstr "ﻱﺬﻴﻔﻨﺘﻟﺍ ﻙﺮّﺤﺘﻟﺍ ﺽﺭﺎﻋ ﻒﻠﻤﻟ ﺺﺼﺨﻣ ﺭﺎﺴﻣ"
 
@@ -33648,14 +33524,6 @@ msgid "Walk Navigation"
 msgstr "ﻲﺸﻤﻟﺍ ﺢﻔّﺼﺗ"
 
 
-msgid "Wheel Scroll Lines"
-msgstr "ﺔﻠﺠﻌﻟﺎﺑ ﺓﺭﺮﻤﻣ ﻁﻮﻄﺧ"
-
-
-msgid "Number of lines scrolled at a time with the mouse wheel"
-msgstr " ﺓﺭﺄﻔﻟﺍ ﺔﻠﺠﻌﺑ ﺓﺮّﻤﻟﺍ ﻲﻓ ﺔﻛﺮّﺤﻤﻟﺍ ﻁﻮﻄﺨﻟﺍ ﺩﺪﻋ"
-
-
 msgid "Key Config"
 msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﺣﻮﻟ ﺩﺍﺪﻋﺇ"
 
@@ -33736,48 +33604,20 @@ msgid "8-bit Unsigned"
 msgstr "ﻊﻗﻮﻣ ﺮﻴﻏ ﺖﺑ-8"
 
 
-msgid "Set audio sample format to 8 bit unsigned integer"
-msgstr "ﻊﻗﻮﻣ ﺮﻴﻏ ﺢﻴﺤﺻ ﺩﺪﻋ ﺖﺑ-8 ﻰﻟﺇ ﺕﻮﺼﻟﺍ ﺔﻨﻴﻋ ﻖﻴﺴﻨﺗ ﺩﺪﺣ"
-
-
 msgid "16-bit Signed"
 msgstr "ﻊﻗﻮﻣ ﺖﺑ-16"
-
-
-msgid "Set audio sample format to 16 bit signed integer"
-msgstr "ﻊﻗﻮﻣ ﺢﻴﺤﺻ ﺩﺪﻋ ﺖﺑ-16 ﻰﻟﺇ ﺕﻮﺼﻟﺍ ﺔﻨﻴﻋ ﻖﻴﺴﻨﺗ ﺩﺪﺣ"
 
 
 msgid "24-bit Signed"
 msgstr "ﻊﻗﻮﻣ ﺖﺑ-24"
 
 
-msgid "Set audio sample format to 24 bit signed integer"
-msgstr "ﻊﻗﻮﻣ ﺢﻴﺤﺻ ﺩﺪﻋ ﺖﺑ-24 ﻰﻟﺇ ﺕﻮﺼﻟﺍ ﺔﻨﻴﻋ ﻖﻴﺴﻨﺗ ﺩﺪﺣ"
-
-
 msgid "32-bit Signed"
 msgstr "ﻊﻗﻮﻣ ﺖﺑ-32"
 
 
-msgid "Set audio sample format to 32 bit signed integer"
-msgstr "ﻊﻗﻮﻣ ﺢﻴﺤﺻ ﺩﺪﻋ ﺖﺑ-32 ﻰﻟﺇ ﺕﻮﺼﻟﺍ ﺔﻨﻴﻋ ﻖﻴﺴﻨﺗ ﺩﺪﺣ"
-
-
-msgid "32-bit Float"
-msgstr "ﻱﺮﺴﻛ ﺖﺑ-32"
-
-
-msgid "Set audio sample format to 32 bit float"
-msgstr "ﻱﺮﺴﻛ ﺩﺪﻋ ﺖﺑ-32 ﻰﻟﺇ ﺕﻮﺼﻟﺍ ﺔﻨﻴﻋ ﻖﻴﺴﻨﺗ ﺩﺪﺣ"
-
-
 msgid "64-bit Float"
 msgstr "ﻱﺮﺴﻛ ﺖﺑ-64"
-
-
-msgid "Set audio sample format to 64 bit float"
-msgstr "ﻱﺮﺴﻛ ﺩﺪﻋ ﺖﺑ-64 ﻰﻟﺇ ﺕﻮﺼﻟﺍ ﺔﻨﻴﻋ ﻖﻴﺴﻨﺗ ﺩﺪﺣ"
 
 
 msgid "Audio Sample Rate"
@@ -34782,10 +34622,6 @@ msgstr "ﺮﺷﺎﺒﻣ ﺮﻴﻐﻟﺍ ﻥﺎﻌﻤﻠﻟﺍ ﺮﻤﻣ ﻞﻘ�
 
 msgid "Deliver material index pass"
 msgstr " ﺕﺎﻣﺎﺨﻟﺍ ﺕﺍﺮﺷﺆﻣ ﺕﺎﻘﺒﻃ ﻊﻳﺯﻮﺗ"
-
-
-msgid "Deliver mist factor pass (0.0-1.0)"
-msgstr "(1.0-0.0) ﺏﺎﺒﻀﻟﺍ ﻞﻣﺎﻋ ﺔﻘﺒﻃ ﻊﻳﺯﻮﺗ"
 
 
 msgid "Deliver normal pass"
@@ -42458,26 +42294,6 @@ msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺔﻃﺮﺷﻷ﻿ﺍ ﻊﻄﻗﺇ"
 
 msgid "No active sequence!"
 msgstr "ﻢﻠﻔﻟﺍ ﻞﺴﻠﺴﺗ"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "ﻒﻠﻤﻟﺍ ﻰﻠﻋﺃ"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "ﻒﻠﻤﻟﺍ ﻞﻔﺳﺃ"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "ﻰﻠﻋﻸ﻿ﻟ ﺔﺤﻔﺻ"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "ﻞﻔﺳﻸ﻿ﻟ ﺔﺤﻔﺻ"
 
 
 msgid "Make text internal"

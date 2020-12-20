@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -4503,10 +4503,6 @@ msgid "Head/Tail"
 msgstr "Testa/Coda"
 
 
-msgid "Target along length of bone: Head=0, Tail=1"
-msgstr "Posizione dell'obiettivo lungo l'estensione dell'osso: Testa=0, Coda=1"
-
-
 msgid "Invert X"
 msgstr "Inverti X"
 
@@ -5217,10 +5213,6 @@ msgstr "Lo script Python collegato ha generato un errore"
 
 msgid "Number of Targets"
 msgstr "Numero di Obiettivi"
-
-
-msgid "Usually only 1-3 are needed"
-msgstr "Di solito sono necessari solo 1-3"
 
 
 msgid "Target Objects"
@@ -7633,10 +7625,6 @@ msgid "Mux Rate"
 msgstr "Velocità Mux"
 
 
-msgid "Mux rate (bits/s(!))"
-msgstr "Mux rate (bits/s(!))"
-
-
 msgid "Mux Packet Size"
 msgstr "Dim. Pacchetto Mux"
 
@@ -7663,10 +7651,6 @@ msgstr "Usa un'uscita senza perdite per i flussi video"
 
 msgid "Set a maximum number of B-frames"
 msgstr "Imposta il numero massimo di B-Frames"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "Bitrate video (kb/s)"
 
 
 msgid "F-Modifier"
@@ -8279,10 +8263,6 @@ msgstr "Texture da usare come forza"
 
 msgid "Texture Mode"
 msgstr "Modalità Texture"
-
-
-msgid "How the texture effect is calculated (RGB & Curl need a RGB texture, else Gradient will be used instead)"
-msgstr "Come l'effetto texture viene calcolato (RGB & Ricciolo necessitano di una texture RGB, altrimenti verrà utilizzato Gradiente al loro posto)"
 
 
 msgid "Gradient"
@@ -12426,10 +12406,6 @@ msgid "Type"
 msgstr "Tipo"
 
 
-msgid "Type of Light"
-msgstr "Tipo di Luce"
-
-
 msgctxt "Light"
 msgid "Point"
 msgstr "Punto"
@@ -14865,12 +14841,8 @@ msgid "Display Settings"
 msgstr "Impostazioni Visualizzazione"
 
 
-msgid "EEVEE"
-msgstr "EEVEE"
-
-
-msgid "EEVEE settings for the scene"
-msgstr "Impostazioni EEVEE per la scena"
+msgid "Eevee"
+msgstr "Eevee"
 
 
 msgid "Current Frame"
@@ -16363,32 +16335,8 @@ msgid "Bit depth per channel"
 msgstr "Profondità colore per canale"
 
 
-msgid "8 bit color channels"
-msgstr "Canali colore a 8 bit"
-
-
-msgid "10 bit color channels"
-msgstr "Canali colore a 10 bit"
-
-
-msgid "12 bit color channels"
-msgstr "Canali colore a 12 bit"
-
-
-msgid "16 bit color channels"
-msgstr "Canali colore a 16 bit"
-
-
-msgid "32 bit color channels"
-msgstr "Canali colore a 32 bit"
-
-
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Scegli BW per salvare immagini in valori di grigio, RGB per salvare con i canali rosso, verde e blu, e RGBA per salvare con i canali rosso, verde, blu e alfa"
-
-
-msgid "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"
-msgstr "Le immagini vengono salvate in formato scala di grigio a 8 bit (solo per PNG, JPEG, TGA, TIF)"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -16473,10 +16421,6 @@ msgstr "Quando renderizza le animazioni, salva un JPG di anteprima nella stessa 
 
 msgid "Z Buffer"
 msgstr "Buffer Z"
-
-
-msgid "Save the z-depth per pixel (32 bit unsigned int z-buffer)"
-msgstr "Salva la profondità-z per pixel (32 bit unsigned int z-buffer)"
 
 
 msgid "Format of multiview media"
@@ -23060,10 +23004,6 @@ msgid "Cyclic Strip Time"
 msgstr "Tempo Spezzone Ciclico"
 
 
-msgid "Cycle the animated time within the action start & end"
-msgstr "Ripete la durata dello spezzone fra l'inizio e la fine dell'azione"
-
-
 msgid "Auto Blend In/Out"
 msgstr "Dissolvenza In/Out automatica"
 
@@ -23824,14 +23764,6 @@ msgid "3 sides"
 msgstr "3 lati"
 
 
-msgid "Amount of focal blur, 128=infinity=perfect focus, half the value doubles the blur radius"
-msgstr "Ammontare della sfocatura focale. 128=infinito=fuoco perfetto, metà del valore raddoppia il raggio di sfocatura"
-
-
-msgid "CoC radius threshold, prevents background bleed on in-focus midground, 0=off"
-msgstr "Soglia del circolo di confusione (CdC), evita che lo sbiadimento dello sfondo coinvolga il campo medio a fuoco (?). 0=spento"
-
-
 msgid "Gamma Correction"
 msgstr "Correzione Gamma"
 
@@ -24127,10 +24059,6 @@ msgstr "Chiave Luminanza"
 
 msgid "Map Range"
 msgstr "Intervallo Mappa"
-
-
-msgid "Clamp result of the node to 0..1 range"
-msgstr "Limita il risultato del nodo fra 0 e 1"
 
 
 msgid "Map UV"
@@ -24449,6 +24377,10 @@ msgid "Anti-Alias Z"
 msgstr "Anti-Alias Z"
 
 
+msgid "Equal"
+msgstr "Uguale"
+
+
 msgid "Int"
 msgstr "Int"
 
@@ -24678,10 +24610,6 @@ msgid "Light Output"
 msgstr "Uscita Luce"
 
 
-msgid "Eevee"
-msgstr "Eevee"
-
-
 msgid "Use shaders for Eevee renderer"
 msgstr "Usa gli ombreggiatori per il rendering Eevee"
 
@@ -24894,16 +24822,8 @@ msgid "Particle Age"
 msgstr "Età Particella"
 
 
-msgid "Lifetime mapped as 0.0 - 1.0 intensity"
-msgstr "Tempo di vita mappato come intensità 0.0 - 1.0"
-
-
 msgid "Particle Speed"
 msgstr "Velocità Particella"
-
-
-msgid "Particle speed (absolute magnitude of velocity) mapped as 0.0-1.0 intensity"
-msgstr "Velocità delle particella (magnitudo assoluta della velocità) mappata come intensità 0.0-1.0"
 
 
 msgid "Particle Velocity"
@@ -25856,14 +25776,6 @@ msgid "Check if Select Left or Right"
 msgstr "Controlla se Selezionato Sinistra o Destra"
 
 
-msgid "Before current frame"
-msgstr "Prima del fotogramma corrente"
-
-
-msgid "After current frame"
-msgstr "Dopo il fotogramma corrente"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "Seleziona Meno"
@@ -26401,10 +26313,6 @@ msgid "Clear Preview Range"
 msgstr "Cancella Intervallo di Anteprima"
 
 
-msgid "Clear Preview Range"
-msgstr "Cancella l'intervallo di anteprima"
-
-
 msgctxt "Operator"
 msgid "Set Preview Range"
 msgstr "Imposta Intervallo di Anteprima"
@@ -26862,10 +26770,6 @@ msgstr "Numero di Tagli"
 msgctxt "Operator"
 msgid "Switch Direction"
 msgstr "Cambia Direzione"
-
-
-msgid "Change the direction that a chain of bones points in (head <-> tail swap)"
-msgstr "Modifica la direzione verso cui punta una catena di ossa (scambio testa <-> coda)"
 
 
 msgctxt "Operator"
@@ -27963,10 +27867,6 @@ msgid "Zoom out the view"
 msgstr "Rimpicciolisce la vista"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Posizione del cursore in coordinate normalizzate (0.0-1.0)"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Rapporto di Zoom Vista"
@@ -28659,10 +28559,6 @@ msgid "Select similar curve points by property type"
 msgstr "Seleziona punti curva simili per tipo proprietà"
 
 
-msgid "Equal"
-msgstr "Uguale"
-
-
 msgid "Greater"
 msgstr "Maggiore"
 
@@ -28783,10 +28679,6 @@ msgstr "Separa i punti selezionati dai punti connessi non selezionati"
 
 msgid "Subdivide selected segments"
 msgstr "Suddivide i segmenti selezionati"
-
-
-msgid "Number of cuts"
-msgstr "Numero di tagli"
 
 
 msgid "Switch direction of selected splines"
@@ -31098,12 +30990,8 @@ msgid "Default fill color"
 msgstr "Colore di riempimento predefinito"
 
 
-msgid "32 bit Float"
-msgstr "32 bit virgola mobile"
-
-
-msgid "Create image with 32 bit floating point bit depth"
-msgstr "Crea un'immagine con una profondità di 32 bit floating"
+msgid "32-bit Float"
+msgstr "32-bit in virgola mobile"
 
 
 msgid "Fill the image with a grid for UV map testing"
@@ -31582,10 +31470,6 @@ msgstr "Fotogramma in cui inserire l'animazione"
 msgctxt "Operator"
 msgid "Copy Reports to Clipboard"
 msgstr "Copia Rapporti negli Appunti"
-
-
-msgid "Copy selected reports to Clipboard"
-msgstr "Copia i rapporti selezionati negli Appunti"
 
 
 msgctxt "Operator"
@@ -32813,10 +32697,6 @@ msgid "Knife Project"
 msgstr "Proiezione Coltello"
 
 
-msgid "Cut through"
-msgstr "Taglia attraverso"
-
-
 msgid "Cut through all faces, not just visible ones"
 msgstr "Taglia attraverso tutte le facce, non solo quelle visibili"
 
@@ -33594,10 +33474,6 @@ msgid "Multiple Faces"
 msgstr "Facce Multiple"
 
 
-msgid "Edges shared by 3+ faces"
-msgstr "Spigoli condivisi da 3 o più facce"
-
-
 msgid "Non Contiguous"
 msgstr "Non Contigui"
 
@@ -33906,10 +33782,6 @@ msgstr "Congiunge i triangoli selezionati in quadrilateri"
 msgctxt "Operator"
 msgid "Un-Subdivide"
 msgstr "De-Suddividi"
-
-
-msgid "UnSubdivide selected edges & faces"
-msgstr "De-Suddivide i bordi e le facce selezionati"
 
 
 msgid "Number of times to unsubdivide"
@@ -34240,6 +34112,14 @@ msgstr "Seleziona o deseleziona tutti gli spezzoni NLA"
 
 msgid "Select strips to the left or the right of the current frame"
 msgstr "Seleziona gli spezzoni a sinistra o a destra del fotogramma corrente"
+
+
+msgid "Before current frame"
+msgstr "Prima del fotogramma corrente"
+
+
+msgid "After current frame"
+msgstr "Dopo il fotogramma corrente"
 
 
 msgctxt "Operator"
@@ -34924,10 +34804,6 @@ msgid "Align Objects"
 msgstr "Allinea Oggetti"
 
 
-msgid "Align Objects"
-msgstr "Allinea Oggetti"
-
-
 msgid "Align to axis"
 msgstr "Allinea agli assi"
 
@@ -35305,10 +35181,6 @@ msgid "Apply modifier and remove from the stack"
 msgstr "Applica il modificatore e lo rimuove dalla lista"
 
 
-msgid "Apply as"
-msgstr "Applica come"
-
-
 msgid "How to apply the modifier to the geometry"
 msgstr "Come applicare il modificatore alla geometria"
 
@@ -35476,10 +35348,6 @@ msgid "Move objects to a new collection"
 msgstr "Muovi oggetti a una nuova raccolta"
 
 
-msgid "Align to view"
-msgstr "Allinea alla vista"
-
-
 msgctxt "Operator"
 msgid "Clear Location"
 msgstr "Cancella Posizione"
@@ -35500,6 +35368,10 @@ msgstr "Collega Dati"
 
 msgid "Apply active object links to other selected objects"
 msgstr "Applica collegamenti dell'oggetto attivo sugli altri oggetti selezionati"
+
+
+msgid "Effects"
+msgstr "Effetti"
 
 
 msgctxt "Operator"
@@ -35969,10 +35841,6 @@ msgid "Quick Explode"
 msgstr "Esplosione Veloce"
 
 
-msgid "Amount of pieces"
-msgstr "Quantità di pezzi"
-
-
 msgid "Fade the pieces over time"
 msgstr "Dissolve i pezzi nel corso del tempo"
 
@@ -36017,10 +35885,6 @@ msgstr "Mantieni gli oggetti fumo visibili durante il rendering"
 
 msgid "Smoke Style"
 msgstr "Stile Fumo"
-
-
-msgid "Smoke + Fire"
-msgstr "Fumo + Fuoco"
 
 
 msgctxt "Operator"
@@ -36366,10 +36230,6 @@ msgstr "Aggiunge un oggetto Altoparlante alla scena"
 msgctxt "Operator"
 msgid "Subdivision Set"
 msgstr "Imposta Suddivisione"
-
-
-msgid "Sets a Subdivision Surface Level (1-5)"
-msgstr "Imposta Livello Suddivisione Superficie (1-5)"
 
 
 msgctxt "Operator"
@@ -37311,11 +37171,6 @@ msgid "Align Handles"
 msgstr "Allinea Maniglie"
 
 
-msgctxt "Operator"
-msgid "Add simple UVs"
-msgstr "Aggiungi una semplice UV"
-
-
 msgid "Add cube map uvs on mesh"
 msgstr "Aggiunge una mappa UV cubica sulla mesh"
 
@@ -37388,10 +37243,6 @@ msgstr "Sposta Clone"
 
 msgid "Move the clone source image"
 msgstr "Muove l'immagine origine del clone"
-
-
-msgid "Delta offset of clone image in 0.0..1.0 coordinates"
-msgstr "Delta spostamento dell'immagine clone in coordinate 0.0..1.0"
 
 
 msgctxt "Operator"
@@ -39567,10 +39418,6 @@ msgid "Toggle Quad View"
 msgstr "Alterna Finestra con 4 Viste"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "Divide l'area selezionata nelle viste camera, frontale, destra e superiore"
-
-
 msgctxt "Operator"
 msgid "Scale Region Size"
 msgstr "Scala la grandezza della regione"
@@ -39702,10 +39549,6 @@ msgstr "Esegue file python"
 msgctxt "Operator"
 msgid "Reload Scripts"
 msgstr "Ricarica Script"
-
-
-msgid "Reload Scripts"
-msgstr "Ricarica script"
 
 
 msgctxt "Operator"
@@ -40553,30 +40396,6 @@ msgstr "Waveform Audio File Format"
 
 msgid "Sample format"
 msgstr "Formato della campionatura"
-
-
-msgid "8 bit unsigned"
-msgstr "8-bit senza segno"
-
-
-msgid "16 bit signed"
-msgstr "16-bit con segno"
-
-
-msgid "24 bit signed"
-msgstr "24-bit con segno"
-
-
-msgid "32 bit signed"
-msgstr "32-bit con segno"
-
-
-msgid "32 bit floating point"
-msgstr "32 bit virgola mobile"
-
-
-msgid "64 bit floating point"
-msgstr "64-bit virgola mobile"
 
 
 msgid "Split channels"
@@ -42103,10 +41922,6 @@ msgstr "Cancella le cuciture degli spigoli ricuciti"
 
 msgid "Limit distance in normalized coordinates"
 msgstr "Distanza limite in coordinate normalizzate"
-
-
-msgid "Snap At Midpoint"
-msgstr "Snap al Punto Medio"
 
 
 msgid "Operation Mode"
@@ -44337,10 +44152,6 @@ msgid "Path Animation"
 msgstr "Animazione Percorso"
 
 
-msgid "Effects"
-msgstr "Effetti"
-
-
 msgid "Skeleton"
 msgstr "Scheletro"
 
@@ -46361,10 +46172,6 @@ msgid "Python Scripts Directory"
 msgstr "Cartella degli Script Python"
 
 
-msgid "Alternate script path, matching the default layout with subdirs: startup, add-ons & modules (requires restart)"
-msgstr "Percorso alternativo per gli script, che rispecchi lo schema predefinito delle sottocartelle: startup, add-ons e modules (richiede riavvio)"
-
-
 msgid "Sounds Directory"
 msgstr "Cartella Suoni"
 
@@ -46673,14 +46480,6 @@ msgid "Settings for walk navigation mode"
 msgstr "Impostazioni per il modo navigazione a camminata"
 
 
-msgid "Wheel Scroll Lines"
-msgstr "Linee Scorse Rotella"
-
-
-msgid "Number of lines scrolled at a time with the mouse wheel"
-msgstr "Il numero di linee da scorrere alla volta con la rotella del mouse"
-
-
 msgid "Key Config"
 msgstr "Configurazione Tasti"
 
@@ -46777,48 +46576,20 @@ msgid "8-bit Unsigned"
 msgstr "8-bit senza segno"
 
 
-msgid "Set audio sample format to 8 bit unsigned integer"
-msgstr "Imposta il formato dei campioni audio ad interi a 8 bit senza segno"
-
-
 msgid "16-bit Signed"
 msgstr "16-bit con segno"
-
-
-msgid "Set audio sample format to 16 bit signed integer"
-msgstr "Imposta il formato dei campioni audio ad interi a 16 bit con segno"
 
 
 msgid "24-bit Signed"
 msgstr "24-bit con segno"
 
 
-msgid "Set audio sample format to 24 bit signed integer"
-msgstr "Imposta il formato dei campioni audio ad interi a 24 bit con segno"
-
-
 msgid "32-bit Signed"
 msgstr "32-bit con segno"
 
 
-msgid "Set audio sample format to 32 bit signed integer"
-msgstr "Imposta il formato dei campioni audio ad interi a 32 bit con segno"
-
-
-msgid "32-bit Float"
-msgstr "32-bit in virgola mobile"
-
-
-msgid "Set audio sample format to 32 bit float"
-msgstr "Imposta il formato dei campioni audio a 32 bit in virgola mobile"
-
-
 msgid "64-bit Float"
 msgstr "64-bit in virgola mobile"
-
-
-msgid "Set audio sample format to 64 bit float"
-msgstr "Imposta il formato dei campioni audio a 64 bit in virgola mobile"
 
 
 msgid "Audio Sample Rate"
@@ -48473,10 +48244,6 @@ msgid "Deliver material index pass"
 msgstr "Produce il passaggio indice materiale"
 
 
-msgid "Deliver mist factor pass (0.0-1.0)"
-msgstr "Produce il passaggio foschia (0.0-1.0)"
-
-
 msgid "Deliver normal pass"
 msgstr "Produce il passaggio normale"
 
@@ -49563,10 +49330,6 @@ msgstr "Soglia Luce"
 
 msgid "Max Roughness"
 msgstr "Rugosità Max"
-
-
-msgid "Use 32bit shadows"
-msgstr "Usa ombre 32bit"
 
 
 msgid "Soft Shadows"
@@ -51100,10 +50863,6 @@ msgstr "Ricalcola automaticamente la normalizzazione della curva ad ogni modific
 
 msgid "Use Normalization"
 msgstr "Usa Normalizzazione"
-
-
-msgid "Display curves in normalized to -1..1 range, for easier editing of multiple curves with different ranges"
-msgstr "Mostra le curve nell'intervallo normalizzato -1..1 per permettere una modifica agevole di curve con intervalli disparati"
 
 
 msgid "Only Selected Curve Keyframes"
@@ -61863,26 +61622,6 @@ msgstr "Nessun sottotitolo (spezzoni di testo) da esportare"
 
 msgid "No active sequence!"
 msgstr "Nessuna sequenza attiva!"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Inizio del File"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Fondo del File"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "Pagina Su"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "Pagina Giù"
 
 
 msgid "File Modified Outside and Inside Blender"

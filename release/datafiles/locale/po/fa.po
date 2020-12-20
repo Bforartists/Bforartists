@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -4201,10 +4201,6 @@ msgstr "G"
 
 msgid "Color Depth"
 msgstr "ﺎﻫ‌ﮓﻧﺭ:"
-
-
-msgid "10 bit color channels"
-msgstr "ﯽﺑﺁ ﻝﺎﻧﺎﮐ"
 
 
 msgid "Z Buffer"
@@ -8807,10 +8803,6 @@ msgstr "ﺖﺳﺍﺭ ﻝﺮﺘﻨﮐ ﺪﯿﻠﮐ"
 msgctxt "Operator"
 msgid "Un-Subdivide"
 msgstr "ﻢﯿﺴﻘﺗ"
-
-
-msgid "UnSubdivide selected edges & faces"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
 msgctxt "Operator"
@@ -15262,11 +15254,6 @@ msgstr "ﯼﺪﯿﻠﮐ ﯼﺎﻫ ﻢﯾﺮﻓ ﺎﺑ ﺎﻫ ﮎﺮﺗِ ﻪﻤ�
 
 msgid "No active sequence!"
 msgstr "ﻢﻠﯿﻓ ﺲﻧﺎﮑﺳ"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "ﻞﯾﺎﻓ ﻦﯿﯾﺎﭘ"
 
 
 msgid "unknown error writing file"
