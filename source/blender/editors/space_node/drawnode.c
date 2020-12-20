@@ -203,42 +203,6 @@ static void node_buts_normal(uiLayout *layout, bContext *UNUSED(C), PointerRNA *
   uiItemR(layout, &sockptr, "default_value", DEFAULT_FLAGS, "", ICON_NONE);
 }
 
-#if 0 /* not used in 2.5x yet */
-static void node_browse_tex_cb(bContext *C, void *ntree_v, void *node_v)
-{
-  Main *bmain = CTX_data_main(C);
-  bNodeTree *ntree = ntree_v;
-  bNode *node = node_v;
-  Tex *tex;
-
-  if (node->menunr < 1) {
-    return;
-  }
-
-  if (node->id) {
-    id_us_min(node->id);
-    node->id = NULL;
-  }
-  tex = BLI_findlink(&bmain->tex, node->menunr - 1);
-
-  node->id = &tex->id;
-  id_us_plus(node->id);
-  BLI_strncpy(node->name, node->id->name + 2, sizeof(node->name));
-
-  nodeSetActive(ntree, node);
-
-  if (ntree->type == NTREE_TEXTURE) {
-    ntreeTexCheckCyclics(ntree);
-  }
-
-  // allqueue(REDRAWBUTSSHADING, 0);
-  // allqueue(REDRAWNODE, 0);
-  NodeTagChanged(ntree, node);
-
-  node->menunr = 0;
-}
-#endif
-
 static void node_buts_texture(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
   bNode *node = ptr->data;
@@ -771,6 +735,7 @@ static void node_shader_buts_tex_image(uiLayout *layout, bContext *C, PointerRNA
                ptr,
                "image",
                "IMAGE_OT_new",
+               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -808,6 +773,7 @@ static void node_shader_buts_tex_environment(uiLayout *layout, bContext *C, Poin
                ptr,
                "image",
                "IMAGE_OT_new",
+               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -1395,6 +1361,7 @@ static void node_composit_buts_image(uiLayout *layout, bContext *C, PointerRNA *
                ptr,
                "image",
                "IMAGE_OT_new",
+               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -1426,7 +1393,8 @@ static void node_composit_buts_viewlayers(uiLayout *layout, bContext *C, Pointer
   bNode *node = ptr->data;
   uiLayout *col, *row;
 
-  uiTemplateID(layout, C, ptr, "scene", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(
+      layout, C, ptr, "scene", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (!node->id) {
     return;
@@ -1548,7 +1516,8 @@ static void node_composit_buts_defocus(uiLayout *layout, bContext *C, PointerRNA
   col = uiLayoutColumn(layout, false);
   uiItemR(col, ptr, "use_preview", DEFAULT_FLAGS, NULL, ICON_NONE);
 
-  uiTemplateID(layout, C, ptr, "scene", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(
+      layout, C, ptr, "scene", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   col = uiLayoutColumn(layout, false);
   uiItemR(col, ptr, "use_zbuffer", DEFAULT_FLAGS, NULL, ICON_NONE);
@@ -2163,8 +2132,17 @@ static void node_composit_buts_ycc(uiLayout *layout, bContext *UNUSED(C), Pointe
 
 static void node_composit_buts_movieclip(uiLayout *layout, bContext *C, PointerRNA *ptr)
 {
-  uiTemplateID(
-      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "clip",
+               NULL,
+               NULL,
+               "CLIP_OT_open",
+               NULL,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               NULL);
 }
 
 static void node_composit_buts_movieclip_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
@@ -2172,8 +2150,17 @@ static void node_composit_buts_movieclip_ex(uiLayout *layout, bContext *C, Point
   bNode *node = ptr->data;
   PointerRNA clipptr;
 
-  uiTemplateID(
-      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "clip",
+               NULL,
+               NULL,
+               "CLIP_OT_open",
+               NULL,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               NULL);
 
   if (!node->id) {
     return;
@@ -2188,8 +2175,17 @@ static void node_composit_buts_stabilize2d(uiLayout *layout, bContext *C, Pointe
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(
-      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "clip",
+               NULL,
+               NULL,
+               "CLIP_OT_open",
+               NULL,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               NULL);
 
   if (!node->id) {
     return;
@@ -2214,8 +2210,17 @@ static void node_composit_buts_moviedistortion(uiLayout *layout, bContext *C, Po
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(
-      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "clip",
+               NULL,
+               NULL,
+               "CLIP_OT_open",
+               NULL,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               NULL);
 
   if (!node->id) {
     return;
@@ -2538,7 +2543,8 @@ static void node_composit_buts_mask(uiLayout *layout, bContext *C, PointerRNA *p
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(layout, C, ptr, "mask", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(
+      layout, C, ptr, "mask", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
   uiItemR(layout, ptr, "use_feather", DEFAULT_FLAGS, NULL, ICON_NONE);
 
   uiItemR(layout, ptr, "size_source", DEFAULT_FLAGS, "", ICON_NONE);
@@ -2559,7 +2565,8 @@ static void node_composit_buts_keyingscreen(uiLayout *layout, bContext *C, Point
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(layout, C, ptr, "clip", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(
+      layout, C, ptr, "clip", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (node->id) {
     MovieClip *clip = (MovieClip *)node->id;
@@ -2595,8 +2602,17 @@ static void node_composit_buts_trackpos(uiLayout *layout, bContext *C, PointerRN
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(
-      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "clip",
+               NULL,
+               NULL,
+               "CLIP_OT_open",
+               NULL,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               NULL);
 
   if (node->id) {
     MovieClip *clip = (MovieClip *)node->id;
@@ -2636,8 +2652,17 @@ static void node_composit_buts_planetrackdeform(uiLayout *layout, bContext *C, P
   bNode *node = ptr->data;
   NodePlaneTrackDeformData *data = node->storage;
 
-  uiTemplateID(
-      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout,
+               C,
+               ptr,
+               "clip",
+               NULL,
+               NULL,
+               "CLIP_OT_open",
+               NULL,
+               UI_TEMPLATE_ID_FILTER_ALL,
+               false,
+               NULL);
 
   if (node->id) {
     MovieClip *clip = (MovieClip *)node->id;
@@ -3072,6 +3097,7 @@ static void node_texture_buts_image(uiLayout *layout, bContext *C, PointerRNA *p
                ptr,
                "image",
                "IMAGE_OT_new",
+               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -3149,6 +3175,15 @@ static void node_geometry_buts_boolean_math(uiLayout *layout, bContext *UNUSED(C
   uiItemR(layout, ptr, "operation", DEFAULT_FLAGS, "", ICON_NONE);
 }
 
+static void node_geometry_buts_attribute_compare(uiLayout *layout,
+                                                 bContext *UNUSED(C),
+                                                 PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "operation", DEFAULT_FLAGS, "", ICON_NONE);
+  uiItemR(layout, ptr, "input_type_a", DEFAULT_FLAGS, IFACE_("Type A"), ICON_NONE);
+  uiItemR(layout, ptr, "input_type_b", DEFAULT_FLAGS, IFACE_("Type B"), ICON_NONE);
+}
+
 static void node_geometry_buts_subdivision_surface(uiLayout *layout,
                                                    bContext *UNUSED(C),
                                                    PointerRNA *UNUSED(ptr))
@@ -3187,6 +3222,9 @@ static void node_geometry_buts_point_instance(uiLayout *layout,
                                               PointerRNA *ptr)
 {
   uiItemR(layout, ptr, "instance_type", DEFAULT_FLAGS | UI_ITEM_R_EXPAND, NULL, ICON_NONE);
+  if (RNA_enum_get(ptr, "instance_type") == GEO_NODE_POINT_INSTANCE_TYPE_COLLECTION) {
+    uiItemR(layout, ptr, "use_whole_collection", DEFAULT_FLAGS, NULL, ICON_NONE);
+  }
 }
 
 static void node_geometry_buts_attribute_fill(uiLayout *layout,
@@ -3208,6 +3246,20 @@ static void node_geometry_buts_attribute_mix(uiLayout *layout,
   uiItemR(col, ptr, "input_type_b", DEFAULT_FLAGS, IFACE_("B"), ICON_NONE);
 }
 
+static void node_geometry_buts_attribute_point_distribute(uiLayout *layout,
+                                                          bContext *UNUSED(C),
+                                                          PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "distribute_method", DEFAULT_FLAGS, "", ICON_NONE);
+}
+
+static void node_geometry_buts_attribute_color_ramp(uiLayout *layout,
+                                                    bContext *UNUSED(C),
+                                                    PointerRNA *ptr)
+{
+  uiTemplateColorRamp(layout, ptr, "color_ramp", 0);
+}
+
 static void node_geometry_set_butfunc(bNodeType *ntype)
 {
   switch (ntype->type) {
@@ -3220,11 +3272,14 @@ static void node_geometry_set_butfunc(bNodeType *ntype)
     case GEO_NODE_TRIANGULATE:
       ntype->draw_buttons = node_geometry_buts_triangulate;
       break;
-    case GEO_NODE_RANDOM_ATTRIBUTE:
+    case GEO_NODE_ATTRIBUTE_RANDOMIZE:
       ntype->draw_buttons = node_geometry_buts_random_attribute;
       break;
     case GEO_NODE_ATTRIBUTE_MATH:
       ntype->draw_buttons = node_geometry_buts_attribute_math;
+      break;
+    case GEO_NODE_ATTRIBUTE_COMPARE:
+      ntype->draw_buttons = node_geometry_buts_attribute_compare;
       break;
     case GEO_NODE_POINT_INSTANCE:
       ntype->draw_buttons = node_geometry_buts_point_instance;
@@ -3234,6 +3289,12 @@ static void node_geometry_set_butfunc(bNodeType *ntype)
       break;
     case GEO_NODE_ATTRIBUTE_MIX:
       ntype->draw_buttons = node_geometry_buts_attribute_mix;
+      break;
+    case GEO_NODE_POINT_DISTRIBUTE:
+      ntype->draw_buttons = node_geometry_buts_attribute_point_distribute;
+      break;
+    case GEO_NODE_ATTRIBUTE_COLOR_RAMP:
+      ntype->draw_buttons = node_geometry_buts_attribute_color_ramp;
       break;
   }
 }
@@ -3257,6 +3318,12 @@ static void node_function_buts_switch(uiLayout *layout, bContext *UNUSED(C), Poi
   uiItemR(layout, ptr, "data_type", DEFAULT_FLAGS, "", ICON_NONE);
 }
 
+static void node_function_buts_input_vector(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiLayout *col = uiLayoutColumn(layout, true);
+  uiItemR(col, ptr, "vector", UI_ITEM_R_EXPAND, "", ICON_NONE);
+}
+
 static void node_function_set_butfunc(bNodeType *ntype)
 {
   switch (ntype->type) {
@@ -3268,6 +3335,9 @@ static void node_function_set_butfunc(bNodeType *ntype)
       break;
     case FN_NODE_SWITCH:
       ntype->draw_buttons = node_function_buts_switch;
+      break;
+    case FN_NODE_INPUT_VECTOR:
+      ntype->draw_buttons = node_function_buts_input_vector;
       break;
   }
 }

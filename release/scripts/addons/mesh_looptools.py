@@ -23,7 +23,7 @@
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch, Vladimir Spivak (cwolf3d)",
-    "version": (4, 7, 4),
+    "version": (4, 7, 5),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
@@ -1504,7 +1504,11 @@ def bridge_create_faces(object, bm, faces, twist):
 
     new_faces = []
     for i in range(len(faces)):
-        new_faces.append(bm.faces.new([bm.verts[v] for v in faces[i]]))
+        try:
+            new_faces.append(bm.faces.new([bm.verts[v] for v in faces[i]]))
+        except:
+            # face already exists
+            pass
     bm.normal_update()
     object.data.update(calc_edges=True)  # calc_edges prevents memory-corruption
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6934,10 +6934,6 @@ msgid "Color Depth"
 msgstr "Desparentar"
 
 
-msgid "10 bit color channels"
-msgstr "Partir"
-
-
 msgid "Z Buffer"
 msgstr "Buffer Z"
 
@@ -10260,6 +10256,10 @@ msgid "Expand from 9 places"
 msgstr "Començar a renderitzar una seqüència"
 
 
+msgid "Equal"
+msgstr "Igual"
+
+
 msgid "Int"
 msgstr "Afegir Tira"
 
@@ -10897,14 +10897,6 @@ msgid "Select Left/Right"
 msgstr "Dreta"
 
 
-msgid "Before current frame"
-msgstr "Esborrar"
-
-
-msgid "After current frame"
-msgstr "Començar Joc"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "Deseleccionar Enllaçats"
@@ -11195,10 +11187,6 @@ msgstr "Esborrar tot"
 
 
 msgctxt "Operator"
-msgid "Clear Preview Range"
-msgstr "Guardar imatge"
-
-
 msgid "Clear Preview Range"
 msgstr "Guardar imatge"
 
@@ -12145,10 +12133,6 @@ msgid "Zoom out the view"
 msgstr "Amagar Seleccionats"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Arxiu"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Esborrar Rotació"
@@ -12534,10 +12518,6 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Select Control Point Row"
 msgstr "Afegir Tira"
-
-
-msgid "Equal"
-msgstr "Igual"
 
 
 msgid "Greater"
@@ -13772,10 +13752,6 @@ msgstr "Començar a renderitzar una seqüència"
 msgctxt "Operator"
 msgid "Copy Reports to Clipboard"
 msgstr "Seleccionar amb límit"
-
-
-msgid "Copy selected reports to Clipboard"
-msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
@@ -15036,10 +15012,6 @@ msgid "Un-Subdivide"
 msgstr "Eines"
 
 
-msgid "UnSubdivide selected edges & faces"
-msgstr "Amagar Seleccionats"
-
-
 msgid "Number of times to unsubdivide"
 msgstr "Seleccionar connectats"
 
@@ -15266,6 +15238,14 @@ msgid "Select strips to the left or the right of the current frame"
 msgstr "Seleccionar connectats"
 
 
+msgid "Before current frame"
+msgstr "Esborrar"
+
+
+msgid "After current frame"
+msgstr "Començar Joc"
+
+
 msgctxt "Operator"
 msgid "Snap Strips"
 msgstr "Afegir Tira"
@@ -15370,10 +15350,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "Guardar imatge"
-
-
-msgid "Move Node backdrop"
-msgstr "Moure teló de fons del node"
 
 
 msgctxt "Operator"
@@ -15711,10 +15687,6 @@ msgid "Align Objects"
 msgstr "Duplicar"
 
 
-msgid "Align Objects"
-msgstr "Duplicar"
-
-
 msgid "Align to axis"
 msgstr "Duplicar"
 
@@ -15899,10 +15871,6 @@ msgstr "Esborrar tot"
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Esborrar tot"
-
-
-msgid "Apply as"
-msgstr "Aplicar Tamany/Rotació"
 
 
 msgid "Object Data"
@@ -18038,10 +18006,6 @@ msgid "Reload Scripts"
 msgstr "Duplicar"
 
 
-msgid "Reload Scripts"
-msgstr "Duplicar"
-
-
 msgctxt "Operator"
 msgid "Sculpt"
 msgstr "Mode d'Edició"
@@ -19249,10 +19213,6 @@ msgstr "Amagar Seleccionats"
 
 msgid "Limit distance in normalized coordinates"
 msgstr "Arxiu"
-
-
-msgid "Snap At Midpoint"
-msgstr "Unir"
 
 
 msgid "Operation Mode"
@@ -26875,11 +26835,6 @@ msgstr "Seleccionar connectats"
 
 msgid "No active sequence!"
 msgstr "Començar a renderitzar una seqüència"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Arxiu"
 
 
 msgid "Control Point:"

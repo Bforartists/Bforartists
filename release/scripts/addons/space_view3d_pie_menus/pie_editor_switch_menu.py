@@ -57,7 +57,7 @@ class PIE_MT_AreaPieEditor(Menu):
         # 8 - TOP
         pie.operator(PIE_OT_SetAreaType.bl_idname, text="3D View", icon="VIEW3D").types = "VIEW_3D"
         # 7 - TOP - LEFT
-        pie.operator(PIE_OT_SetAreaType.bl_idname, text="Image Editor", icon="IMAGE").types = "VIEW"
+        pie.operator(PIE_OT_SetAreaType.bl_idname, text="Image Editor", icon="IMAGE").types = "IMAGE_EDITOR"
         # 9 - TOP - RIGHT
         pie.operator(PIE_OT_SetAreaType.bl_idname, text="UV Editor", icon="UV").types = "UV"
         # 1 - BOTTOM - LEFT

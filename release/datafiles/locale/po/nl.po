@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -1746,10 +1746,6 @@ msgstr "Invoegen Sleutelframe Menu"
 
 
 msgctxt "Operator"
-msgid "Clear Preview Range"
-msgstr "Maak Preview Bereik Leeg"
-
-
 msgid "Clear Preview Range"
 msgstr "Maak Preview Bereik Leeg"
 
@@ -5764,16 +5760,6 @@ msgstr "TODO: wanneer gebeurt dit?"
 
 msgid "No valid inputs to swap"
 msgstr "Geen geldige invoers om om te wisselen"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "Vorige Pagina"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "Volgende Pagina"
 
 
 msgid "Mean Crease:"
