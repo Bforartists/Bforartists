@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -5407,10 +5407,6 @@ msgid "Head/Tail"
 msgstr "Початок/кінець"
 
 
-msgid "Target along length of bone: Head=0, Tail=1"
-msgstr "Ціль вздовж кістки: початок = 0, кінець = 1"
-
-
 msgid "Invert X"
 msgstr "Інвертування X"
 
@@ -6177,10 +6173,6 @@ msgstr "Зв'язаний скрипт Python спричинив помилку"
 
 msgid "Number of Targets"
 msgstr "Кількість цілей"
-
-
-msgid "Usually only 1-3 are needed"
-msgstr "Зазвичай необхідні лише 1-3"
 
 
 msgid "Target Objects"
@@ -9247,24 +9239,12 @@ msgid "Max Rate"
 msgstr "Макс Частота"
 
 
-msgid "Rate control: max rate (kb/s)"
-msgstr "Керування частотою: найбільша частота (кб/сек)"
-
-
 msgid "Min Rate"
 msgstr "Мін Частота"
 
 
-msgid "Rate control: min rate (kb/s)"
-msgstr "Керування частотою: найменша частота (кб/сек)"
-
-
 msgid "Mux Rate"
 msgstr "Частота Багатоспліту"
-
-
-msgid "Mux rate (bits/s(!))"
-msgstr "Частота багатоспліту або мультиплексора (біт/сек(!))"
 
 
 msgid "Mux Packet Size"
@@ -9293,10 +9273,6 @@ msgstr "Використати вивід без втрат для відеоп�
 
 msgid "Set a maximum number of B-frames"
 msgstr "Заадти максимальну кількість В-кадрів"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "Бітрейт відео (кбіт/сек)"
 
 
 msgid "F-Modifier"
@@ -10096,10 +10072,6 @@ msgid "Texture Mode"
 msgstr "Режим Текстур"
 
 
-msgid "How the texture effect is calculated (RGB & Curl need a RGB texture, else Gradient will be used instead)"
-msgstr "Як розраховується ефект текстури (для RGB та Завитка потрібні текстури RGB, інакше буде використано градієнт)"
-
-
 msgid "Gradient"
 msgstr "Градієнт"
 
@@ -10866,10 +10838,6 @@ msgstr "Натяг"
 
 msgid "Temperature Grid"
 msgstr "Сітка Температури"
-
-
-msgid "Smoke temperature grid, range 0..1 represents 0..1000K"
-msgstr "Сітка температури диму, діапазон 0..1 представляє 0..1000К"
 
 
 msgid "Time Scale"
@@ -15069,10 +15037,6 @@ msgid "Show TV title safe and action safe areas in Camera view"
 msgstr "Показати область титрів та область сюжету ТБ у вигляді камери"
 
 
-msgid "Show Center-cut safe areas"
-msgstr "Показати центр кадру - обрізати безпечні області"
-
-
 msgid "Show safe areas to fit content in a different aspect ratio"
 msgstr "Показати безпечні області, збільшуючи та вписуючи їх вміст у кадр при різних пропорціях його боків"
 
@@ -16989,10 +16953,6 @@ msgstr "Множник блікового відбиття"
 msgctxt "Light"
 msgid "Type"
 msgstr "Тип"
-
-
-msgid "Type of Light"
-msgstr "Тип Освітлювача"
 
 
 msgctxt "Light"
@@ -19019,10 +18979,6 @@ msgid "Settings for soft body simulation"
 msgstr "Параметри моделювання м'якого тіла"
 
 
-msgid "Axis that points in 'forward' direction (applies to InstanceFrame when parent 'Follow' is enabled)"
-msgstr "Вісь, що вказує у напрямку 'вперед' (застосовується для кадру примірника, коли для предка увімкнене 'Слідування')"
-
-
 msgctxt "ID"
 msgid "Type"
 msgstr "Тип"
@@ -19040,10 +18996,6 @@ msgstr "Поверхня"
 msgctxt "ID"
 msgid "Empty"
 msgstr "Порожня"
-
-
-msgid "Axis that points in the upward direction (applies to InstanceFrame when parent 'Follow' is enabled)"
-msgstr "Вісь, що вказує у напрямку «уверх» (застосовується для кадру примірника, коли для предка увімкнене 'Слідування')"
 
 
 msgid "Camera Parent Lock"
@@ -19304,10 +19256,6 @@ msgstr "Загальна кількість частинок"
 
 msgid "Adaptive Subframe Threshold"
 msgstr "Адаптивний підкадровий поріг"
-
-
-msgid "The relative distance a particle can move before requiring more subframes (target Courant number); 0.01-0.3 is the recommended range"
-msgstr "Відносна відстань, яку частинка може пройти, перш ніж знадобиться більше підкадрів (ціль - поточна кількість); рекомендований діапазон - 0.01-0.3"
 
 
 msgid "Long Hair"
@@ -20318,12 +20266,8 @@ msgid "Settings of device saved image would be displayed on"
 msgstr "Параметри пристрою, де буде показано збережене зображення"
 
 
-msgid "EEVEE"
-msgstr "EEVEE"
-
-
-msgid "EEVEE settings for the scene"
-msgstr "Устави EEVEE для цієї сцени"
+msgid "Eevee"
+msgstr "Eevee"
 
 
 msgid "Current Frame"
@@ -22112,20 +22056,8 @@ msgid "Epsilon"
 msgstr "Епсилон"
 
 
-msgid "Singular value under which damping is progressively applied (higher values=more stability, less reactivity - default=0.1)"
-msgstr "Сингулярне значення, нижче якого поступово застосовується згасання (більші значення = вища стабільність, менша реактивність; стандартно = 0,1)"
-
-
-msgid "Maximum damping coefficient when singular value is nearly 0 (higher values=more stability, less reactivity - default=0.5)"
-msgstr "Найбільший коефіцієнт згасання, коли сингулярне значення близьке до 0 (більші значення = вища стабільність, менша реактивність; стандартно = 0,5)"
-
-
 msgid "Feedback"
 msgstr "Зворотній зв'язок"
-
-
-msgid "Feedback coefficient for error correction, average response time is 1/feedback (default=20)"
-msgstr "Коефіцієнт зворотного зв'язку для виправлення помилок; середній час відгуку становить 1/значення_відгуку (стандартно = 20)"
 
 
 msgid "Maximum number of iterations for convergence in case of reiteration"
@@ -22216,10 +22148,6 @@ msgid "Automatically determine the optimal number of steps for best performance/
 msgstr "Автоматично визначати оптимальну кількість кроків для досягнення найкращого співвідношення продуктивність/точність"
 
 
-msgid "Maximum joint velocity in rad/s (default=50)"
-msgstr "Найбільша швидкість шарнірів у рад/с (стандартно = 50)"
-
-
 msgid "Settings for image formats"
 msgstr "Параметри форматів зображень"
 
@@ -22252,32 +22180,8 @@ msgid "Bit depth per channel"
 msgstr "Розрядність на канал"
 
 
-msgid "8 bit color channels"
-msgstr "8-бітні колірні канали"
-
-
-msgid "10 bit color channels"
-msgstr "10-бітні колірні канали"
-
-
-msgid "12 bit color channels"
-msgstr "12-бітні колірні канали"
-
-
-msgid "16 bit color channels"
-msgstr "16-бітні колірні канали"
-
-
-msgid "32 bit color channels"
-msgstr "32-бітові колірні канали"
-
-
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Виберіть BW для збереження зображення у відтінках сірого, RGB для збереження червоного, зеленого і синього каналів або RGBA для збереження червоного, зеленого, синього та альфа-каналу"
-
-
-msgid "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"
-msgstr "Зображення зберігаються у 8-біт градацій сірого (лише PNG, JPEG, TGA, TIF)"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -22396,10 +22300,6 @@ msgid "Z Buffer"
 msgstr "Z-буфер"
 
 
-msgid "Save the z-depth per pixel (32 bit unsigned int z-buffer)"
-msgstr "Зберегти Z-глибину на кожен піксель (32-бітовий цілочисельний беззнаковий Z-буфер)"
-
-
 msgid "Format of multiview media"
 msgstr "Формат багатовиглядних медіаданих"
 
@@ -22424,10 +22324,6 @@ msgid "Icon Pixels"
 msgstr "Пікселі іконки"
 
 
-msgid "Icon pixels, as bytes (always RGBA 32bits)"
-msgstr "Пікселі іконки як байти (завжди RGBA 32bits)"
-
-
 msgid "Float Icon Pixels"
 msgstr "Дійсночислові пікселі іконок"
 
@@ -22446,10 +22342,6 @@ msgstr "Ширина і висота у пікселях"
 
 msgid "Image Pixels"
 msgstr "Пікселі зображення"
-
-
-msgid "Image pixels, as bytes (always RGBA 32bits)"
-msgstr "Пікселі зображення як байти (завжди  RGBA 32bits)"
 
 
 msgid "Float Image Pixels"
@@ -28476,10 +28368,6 @@ msgid "Control playback using time in seconds"
 msgstr "Керувати відтворенням, вказуючи час у секундах"
 
 
-msgid "Control playback using a value between [0, 1]"
-msgstr "Керувати відтворенням за допомогою значень з діапазону [0,1]"
-
-
 msgid "MeshDeform Modifier"
 msgstr "Модифікатор Деформація сіті"
 
@@ -29205,16 +29093,8 @@ msgid "Stretch U"
 msgstr "Розтяг U"
 
 
-msgid "Stretch the U coordinates between 0-1 when UV's are present"
-msgstr "Розтягти координати у напрямку U між 0-1 за наявності UV"
-
-
 msgid "Stretch V"
 msgstr "Розтяг V"
-
-
-msgid "Stretch the V coordinates between 0-1 when UV's are present"
-msgstr "Розтягти координати у напрямку V між 0-1 за наявності UV"
 
 
 msgid "Shrinkwrap Modifier"
@@ -31624,10 +31504,6 @@ msgid "Cyclic Strip Time"
 msgstr "Час циклічної смужки"
 
 
-msgid "Cycle the animated time within the action start & end"
-msgstr "Цикл анімаційного часу від початку до кінця дії"
-
-
 msgid "Auto Blend In/Out"
 msgstr "Авто підсилення/затухання"
 
@@ -32604,20 +32480,8 @@ msgid "3 sides"
 msgstr "3 сторони"
 
 
-msgid "F-stop"
-msgstr "Д-число"
-
-
-msgid "Amount of focal blur, 128=infinity=perfect focus, half the value doubles the blur radius"
-msgstr "Величина фокусного розмиття; 128 = нескінченність = ідеальний фокус, половина значення подвоює радіус розмиття"
-
-
 msgid "Scene from which to select the active camera (render scene if undefined)"
 msgstr "Сцена, з якої вибрати активну камеру (якщо не вказано, то сцена рендера)"
-
-
-msgid "CoC radius threshold, prevents background bleed on in-focus midground, 0=off"
-msgstr "Поріг радіусу CoC; запобігає просочуванню фону на область, що у фокусі. 0 - вимкнути"
 
 
 msgid "Gamma Correction"
@@ -33101,10 +32965,6 @@ msgid "Map Range"
 msgstr "Розкладка діапазону"
 
 
-msgid "Clamp result of the node to 0..1 range"
-msgstr "Звести результат вузла до діапазону 0..1"
-
-
 msgid "Map UV"
 msgstr "Розкладка UV"
 
@@ -33349,10 +33209,6 @@ msgid "Length of rays as a factor of the image size"
 msgstr "Довжина променів як множник для розміру зображення"
 
 
-msgid "Source point of rays as a factor of the image width & height"
-msgstr "Джерело променів як множник для ширини і висоти зображення"
-
-
 msgid "Switch"
 msgstr "Перемикач"
 
@@ -33587,6 +33443,10 @@ msgstr "Загладжування Z"
 
 msgid "Anti-alias the z-buffer to try to avoid artifacts, mostly useful for Blender renders"
 msgstr "Загладити Z-буфер, щоб уникнути артефактів; корисно для рендерів сами Blender"
+
+
+msgid "Equal"
+msgstr "Дорівнює"
 
 
 msgid "Int"
@@ -33942,10 +33802,6 @@ msgid "Use shaders for all renderers and viewports, unless there exists a more s
 msgstr "Вживати шейдери для всіх рендерерів та вікон огляду, допоки не існує більш конкретного виводу"
 
 
-msgid "Eevee"
-msgstr "Eevee"
-
-
 msgid "Use shaders for Eevee renderer"
 msgstr "Вживати шейдери для рендерера Eevee"
 
@@ -34266,16 +34122,8 @@ msgid "Particle Age"
 msgstr "Вік частинки"
 
 
-msgid "Lifetime mapped as 0.0 - 1.0 intensity"
-msgstr "Час життя за шкалою 0.0 - 1.0"
-
-
 msgid "Particle Speed"
 msgstr "Швидкість частинки"
-
-
-msgid "Particle speed (absolute magnitude of velocity) mapped as 0.0-1.0 intensity"
-msgstr "Швидкість частинки (абсолютна величина швидкості) за шкалою інтенсивності 0.0-1.0"
 
 
 msgid "Particle Velocity"
@@ -35517,14 +35365,6 @@ msgid "Check if Select Left or Right"
 msgstr "Перевірити, вибрано ліворуч чи праворуч"
 
 
-msgid "Before current frame"
-msgstr "До поточного кадру"
-
-
-msgid "After current frame"
-msgstr "Після поточного кадру"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "Вибрати менше"
@@ -35842,10 +35682,6 @@ msgid "Clear Useless Actions"
 msgstr "Зчистити непотрібні дії"
 
 
-msgid "Mark actions with no F-Curves for deletion after save & reload of file preserving \"action libraries\""
-msgstr "Позначити всі дії без Ф-Кривих для видалення після збереження і перезавантаження файлу, що містить \"бібліотеки дій\""
-
-
 msgid "Only Unused"
 msgstr "Лише невикористане"
 
@@ -36127,10 +35963,6 @@ msgstr "Вставити драйвер для підсвіченої кнопк
 
 
 msgctxt "Operator"
-msgid "Clear Preview Range"
-msgstr "Зчистити діапазон перегляду"
-
-
 msgid "Clear Preview Range"
 msgstr "Зчистити діапазон перегляду"
 
@@ -36637,10 +36469,6 @@ msgstr "Кількість розрізів"
 msgctxt "Operator"
 msgid "Switch Direction"
 msgstr "Змінити напрям"
-
-
-msgid "Change the direction that a chain of bones points in (head <-> tail swap)"
-msgstr "Зміна напряму, куди вказує ланцюг кісток (обмін початок <-> кінець)"
 
 
 msgctxt "Operator"
@@ -38036,10 +37864,6 @@ msgid "Zoom out the view"
 msgstr "Відсунути огляд"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Розташування курсора у нормалізованих (0.0-1.0) координатах"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Пропорція зумування огляду"
@@ -38855,10 +38679,6 @@ msgid "Select similar curve points by property type"
 msgstr "Вибрати подібні точки кривої за типом властивості"
 
 
-msgid "Equal"
-msgstr "Дорівнює"
-
-
 msgid "Greater"
 msgstr "Більше"
 
@@ -38983,10 +38803,6 @@ msgstr "Відокремити вибрані точки від зв'язани�
 
 msgid "Subdivide selected segments"
 msgstr "Поділити вибрані сегменти"
-
-
-msgid "Number of cuts"
-msgstr "Кількість розрізів"
 
 
 msgid "Switch direction of selected splines"
@@ -42660,12 +42476,8 @@ msgid "Default fill color"
 msgstr "Стандартний колір заливки"
 
 
-msgid "32 bit Float"
-msgstr "Дійсне З2-біт"
-
-
-msgid "Create image with 32 bit floating point bit depth"
-msgstr "Створити зображення з глибиною кольору 32-біт з рухомою крапкою"
+msgid "32-bit Float"
+msgstr "32-бітне дійсне"
 
 
 msgid "Fill the image with a grid for UV map testing"
@@ -43500,10 +43312,6 @@ msgstr "Початковий кадр для вставляння анімаці
 msgctxt "Operator"
 msgid "Copy Reports to Clipboard"
 msgstr "Скопіювати звіт до буфера обміну"
-
-
-msgid "Copy selected reports to Clipboard"
-msgstr "Копіювати вибрані звіти до буфера обміну"
 
 
 msgctxt "Operator"
@@ -45014,10 +44822,6 @@ msgid "Knife Project"
 msgstr "Проєкційний ніж"
 
 
-msgid "Cut through"
-msgstr "Розрізати повністю"
-
-
 msgid "Cut through all faces, not just visible ones"
 msgstr "Розрізати всі грані, а не лише видимі"
 
@@ -46058,10 +45862,6 @@ msgid "Multiple Faces"
 msgstr "Декілька граней"
 
 
-msgid "Edges shared by 3+ faces"
-msgstr "Ребра, що належать 3+ граням"
-
-
 msgid "Non Contiguous"
 msgstr "Несуміжні"
 
@@ -46374,10 +46174,6 @@ msgid "Create N-Gons"
 msgstr "Створити N-Бічники"
 
 
-msgid "When disabled, newly created faces are limited to 3-4 sided faces"
-msgstr "При вимкненні, новостворені грані лімітуються 3-4 бічними гранями"
-
-
 msgid "Quad Corner Type"
 msgstr "Тип кутка 4-бічника"
 
@@ -46468,10 +46264,6 @@ msgstr "Сполучити трикутники у чотирикутники"
 msgctxt "Operator"
 msgid "Un-Subdivide"
 msgstr "Зняти поділ"
-
-
-msgid "UnSubdivide selected edges & faces"
-msgstr "Зняти поділ вибраних ребер та граней"
 
 
 msgid "Number of times to unsubdivide"
@@ -46877,6 +46669,14 @@ msgid "Select strips to the left or the right of the current frame"
 msgstr "Вибрати смужки ліворуч або праворуч від поточного кадру"
 
 
+msgid "Before current frame"
+msgstr "До поточного кадру"
+
+
+msgid "After current frame"
+msgstr "Після поточного кадру"
+
+
 msgctxt "Operator"
 msgid "Include Selected Objects"
 msgstr "Включити вибрані об'єкти"
@@ -47094,10 +46894,6 @@ msgstr "Вписати фонове зображення в область пе�
 msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "Переміщення фонового зображення"
-
-
-msgid "Move Node backdrop"
-msgstr "Перемістити тло вузла"
 
 
 msgctxt "Operator"
@@ -47702,10 +47498,6 @@ msgid "Align Objects"
 msgstr "Вирівняти об'єкти"
 
 
-msgid "Align Objects"
-msgstr "Вирівняти об'єкти"
-
-
 msgid "Align to axis"
 msgstr "Вирівняти за віссю"
 
@@ -47740,10 +47532,6 @@ msgstr "Орієнтувальне положення для вирівненн�
 
 msgid "Scene Origin"
 msgstr "Опорна точка сцени"
-
-
-msgid "Use the Scene Origin as the position for the selected objects to align to"
-msgstr "Використати початок сцени як позицію для вирівнення виділених об'єктів"
 
 
 msgid "Use the 3D cursor as the position for the selected objects to align to"
@@ -48282,10 +48070,6 @@ msgid "Apply modifier and remove from the stack"
 msgstr "Застосувати модифікатор і вилучити зі стосу"
 
 
-msgid "Apply as"
-msgstr "Застосувати як"
-
-
 msgid "How to apply the modifier to the geometry"
 msgstr "Як застосувати модифікатор до геометрії"
 
@@ -48568,10 +48352,6 @@ msgid "Add a reference image into the background behind objects"
 msgstr "Додати орієнтирне зображення у фон позаду об'єктів"
 
 
-msgid "Align to view"
-msgstr "Вирівняти за оглядом"
-
-
 msgctxt "Operator"
 msgid "Load Reference Image"
 msgstr "Завантажити Орієнтирне Зображення"
@@ -48614,6 +48394,10 @@ msgstr "Пов'язати дані"
 
 msgid "Apply active object links to other selected objects"
 msgstr "Застосувати зв'язки активного об'єкта до інших вибраних об'єктів"
+
+
+msgid "Effects"
+msgstr "Ефекти"
 
 
 msgctxt "Operator"
@@ -49126,10 +48910,6 @@ msgid "Make selected objects explode"
 msgstr "Зробити на основі вибраних об'єктів вибух"
 
 
-msgid "Amount of pieces"
-msgstr "Кількість уламків"
-
-
 msgid "Fade the pieces over time"
 msgstr "Зникнення частинок з часом"
 
@@ -49182,10 +48962,6 @@ msgstr "Утримувати об'єкти диму видимими у ході
 
 msgid "Smoke Style"
 msgstr "Стиль диму"
-
-
-msgid "Smoke + Fire"
-msgstr "Дим + вогонь"
 
 
 msgctxt "Operator"
@@ -49670,10 +49446,6 @@ msgstr "Додати на сцену гучномовець"
 msgctxt "Operator"
 msgid "Subdivision Set"
 msgstr "Задати поділ"
-
-
-msgid "Sets a Subdivision Surface Level (1-5)"
-msgstr "Задає рівень поділу поверхні (1-5)"
 
 
 msgctxt "Operator"
@@ -50924,8 +50696,8 @@ msgstr "Спробувати вибирати держак точки перед
 
 
 msgctxt "Operator"
-msgid "Add simple UVs"
-msgstr "Додати прості UV"
+msgid "Add Simple UVs"
+msgstr "Додати Прості UV-ти"
 
 
 msgid "Add cube map uvs on mesh"
@@ -51004,10 +50776,6 @@ msgstr "Захопити клони"
 
 msgid "Move the clone source image"
 msgstr "Перемістити зображення, що є джерелом клонування"
-
-
-msgid "Delta offset of clone image in 0.0..1.0 coordinates"
-msgstr "Дельта-зсув клонованого зображення в координатах 0,0..1,0"
 
 
 msgctxt "Operator"
@@ -53736,10 +53504,6 @@ msgid "Toggle Quad View"
 msgstr "Перемкнути Чотирибічний Огляд"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "Розділити вибрану область на огляди з камери, спереду, справа і зверху"
-
-
 msgctxt "Operator"
 msgid "Scale Region Size"
 msgstr "Масштабувати Розмір Регіону"
@@ -53890,10 +53654,6 @@ msgid "Reload Scripts"
 msgstr "Перезавантажити скрипти"
 
 
-msgid "Reload Scripts"
-msgstr "Перезавантажити скрипти"
-
-
 msgctxt "Operator"
 msgid "Sculpt"
 msgstr "Ліплення"
@@ -53940,10 +53700,6 @@ msgstr "Вибірка розміру деталі"
 
 msgid "Sample the mesh detail on clicked point"
 msgstr "Вибірка розміру деталі сіті в точці клацку"
-
-
-msgid "Screen Coordinates of sampling"
-msgstr "Екранні координати відбору"
 
 
 msgid "Dyntopo"
@@ -54855,30 +54611,6 @@ msgstr "Формат файлу форми звукової хвилі"
 
 msgid "Sample format"
 msgstr "Формат вибірки"
-
-
-msgid "8 bit unsigned"
-msgstr "8 біт без знака"
-
-
-msgid "16 bit signed"
-msgstr "16 біт зі знаком"
-
-
-msgid "24 bit signed"
-msgstr "24 біт зі знаком"
-
-
-msgid "32 bit signed"
-msgstr "32-бітне зі знаком"
-
-
-msgid "32 bit floating point"
-msgstr "32 біт дійсне"
-
-
-msgid "64 bit floating point"
-msgstr "64 біт дійсне"
 
 
 msgid "Split channels"
@@ -56822,10 +56554,6 @@ msgstr "Зчистити шви зшитих ребер"
 
 msgid "Limit distance in normalized coordinates"
 msgstr "Гранична відстань у нормалізованих координатах"
-
-
-msgid "Snap At Midpoint"
-msgstr "Підхоп до середньої точки"
 
 
 msgid "UVs are stitched at midpoint instead of at static island"
@@ -60321,10 +60049,6 @@ msgid "Path Animation"
 msgstr "Анімація шляхом"
 
 
-msgid "Effects"
-msgstr "Ефекти"
-
-
 msgid "Skeleton"
 msgstr "Скелет"
 
@@ -60441,10 +60165,6 @@ msgstr "Задати локацію курсора, тягнути для тра
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Масштаб"
-
-
-msgid "Supports any combination of grab, rotate & scale at once"
-msgstr "Підтримує будь-яку комбінацію захоплення, обертання та масштабування одночасно"
 
 
 msgctxt "Operator"
@@ -62398,10 +62118,6 @@ msgid "Bone Group this pose channel belongs to"
 msgstr "Група кісток, якій належить цей канал пози "
 
 
-msgid "Bone Group this pose channel belongs to (0=no group)"
-msgstr "Група кісток, якій належить цей канал пози (0 = немає групи)"
-
-
 msgid "Child of this pose bone"
 msgstr "Нащадок цієї позової кістки"
 
@@ -63054,10 +62770,6 @@ msgid "MPlayer"
 msgstr "MPlayer"
 
 
-msgid "Media player for video & png/jpeg/sgi image sequences"
-msgstr "Медіа-програвач для відео та відеорядів зображень PNG/ JPEG/SGI"
-
-
 msgid "Custom animation player executable path"
 msgstr "Шлях до нетипового програвача анімації"
 
@@ -63146,10 +62858,6 @@ msgid "Python Scripts Directory"
 msgstr "Тека скриптів Python"
 
 
-msgid "Alternate script path, matching the default layout with subdirs: startup, add-ons & modules (requires restart)"
-msgstr "Альтернативний шлях до теки скриптів узгоджено зі стандартними підтеками: startup, addons та modules (потребує перезапуску)"
-
-
 msgid "Hide Dot Files/Data-blocks"
 msgstr "Сховати файли/блоки даних з крапкою на початку"
 
@@ -63184,10 +62892,6 @@ msgstr "Стандартна тека для пошуку текстур"
 
 msgid "Auto Save Temporary Files"
 msgstr "Автозбереження тимчасових файлів"
-
-
-msgid "Automatic saving of temporary files in temp directory, uses process ID (sculpt & edit-mode data won't be saved!)"
-msgstr "Автоматичне збереження тимчасових файлів у тимчасовому каталозі, використовує ідентифікатор процесу (дані ліплення та режиму редагування не буде збережено)"
 
 
 msgid "Compress File"
@@ -63590,14 +63294,6 @@ msgid "Settings for walk navigation mode"
 msgstr "Параметри режиму навігації ходьбою"
 
 
-msgid "Wheel Scroll Lines"
-msgstr "Число ліній для прокручування"
-
-
-msgid "Number of lines scrolled at a time with the mouse wheel"
-msgstr "Кількість рядків, на яку робиться зсув за раз при обертанні коліщатка"
-
-
 msgid "Key Config"
 msgstr "Конфігурація клавіш"
 
@@ -63698,48 +63394,20 @@ msgid "8-bit Unsigned"
 msgstr "8-бітне без знаку"
 
 
-msgid "Set audio sample format to 8 bit unsigned integer"
-msgstr "Встановити формат вибірки звуку 8-бітний цілий без знака"
-
-
 msgid "16-bit Signed"
 msgstr "16-бітне зі знаком"
-
-
-msgid "Set audio sample format to 16 bit signed integer"
-msgstr "Встановити формат вибірки звуку 16-бітний цілий із знаком"
 
 
 msgid "24-bit Signed"
 msgstr "24-бітне зі знаком"
 
 
-msgid "Set audio sample format to 24 bit signed integer"
-msgstr "Встановити формат вибірки звуку 24-бітний цілий із знаком"
-
-
 msgid "32-bit Signed"
 msgstr "32-бітне зі знаком"
 
 
-msgid "Set audio sample format to 32 bit signed integer"
-msgstr "Встановити формат вибірки звуку 32-бітний цілий із знаком"
-
-
-msgid "32-bit Float"
-msgstr "32-бітне дійсне"
-
-
-msgid "Set audio sample format to 32 bit float"
-msgstr "Встановити формат вибірки звуку 32-бітний з рухомою комою"
-
-
 msgid "64-bit Float"
 msgstr "64-бітне дійсне"
-
-
-msgid "Set audio sample format to 64 bit float"
-msgstr "Встановити формат вибірки звуку 64-бітний з рухомою комою"
 
 
 msgid "Audio Sample Rate"
@@ -64280,10 +63948,6 @@ msgstr "Розділення та сполучення редакторів шл
 
 msgid "Navigation Controls"
 msgstr "Керувальники навігації"
-
-
-msgid "Show navigation controls in 2D & 3D views which do not have scroll bars"
-msgstr "Показувати керувальники навігації у 2D та 3D оглядах, які не мають смуг прокрутки"
 
 
 msgid "Display Object Info"
@@ -66238,10 +65902,6 @@ msgid "Deliver material index pass"
 msgstr "Виконати прохід індексів матеріалів"
 
 
-msgid "Deliver mist factor pass (0.0-1.0)"
-msgstr "Виконати прохід коефіцієнта імли (0.0-1.0)"
-
-
 msgid "Deliver normal pass"
 msgstr "Виконати нормальний прохід"
 
@@ -66376,10 +66036,6 @@ msgstr "Запекти нормалі"
 
 msgid "Bake displacement"
 msgstr "Запекти зміщення"
-
-
-msgid "Instead of automatically normalizing to 0..1, apply a user scale to the derivative map"
-msgstr "Замість автоматичної нормалізації до 0..1, застосувати власний масштаб для карти похідних"
 
 
 msgid "Region Maximum X"
@@ -68096,14 +67752,6 @@ msgstr "Понадпрогляд"
 
 msgid "Internally render past the image border to avoid screen-space effects disappearing"
 msgstr "Внутрішньо рендерити границю останнього зображення для запобігання зникненню ефектів простору екрану"
-
-
-msgid "High Bitdepth"
-msgstr "Висока Бітова глибина"
-
-
-msgid "Use 32bit shadows"
-msgstr "Вжити 32бітні тіні"
 
 
 msgid "Soft Shadows"
@@ -70845,10 +70493,6 @@ msgid "Use Normalization"
 msgstr "Вжити Нормалізацію"
 
 
-msgid "Display curves in normalized to -1..1 range, for easier editing of multiple curves with different ranges"
-msgstr "Показувати криві нормалізованими до діапазону -1..1 для простішого редагування декількох кривих з різними діапазонами"
-
-
 msgid "Only Selected Curve Keyframes"
 msgstr "Лише вибрані ключові кадри кривої"
 
@@ -71919,10 +71563,6 @@ msgstr "Гізмо для наладнання фокусної відстані
 
 msgid "Show Camera Lens"
 msgstr "Показ Об'єктива Камери"
-
-
-msgid "Gizmo to adjust camera lens & ortho size"
-msgstr "Гізмо для наладнання розміром об'єктива камери та орто"
 
 
 msgid "Context Gizmo"
@@ -81959,11 +81599,6 @@ msgid "UV Map Needed"
 msgstr "Необхідна Карта UV"
 
 
-msgctxt "Operator"
-msgid "Add Simple UVs"
-msgstr "Додати Прості UV-ти"
-
-
 msgid "Point cache must be baked"
 msgstr "Кеш крапок має бути запечений"
 
@@ -85057,10 +84692,6 @@ msgid "Cannot edit library data"
 msgstr "Неможливо редагувати дані з бібліотеки"
 
 
-msgid "Cannot edit constraints coming from library override"
-msgstr "Неможливо редагувати примуси, що походять від заміщення бібліотеки"
-
-
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
 msgstr "Оператор заморожено, зміни його параметрів не будуть мати сили допоки ви його не розморозите"
 
@@ -85123,10 +84754,6 @@ msgstr "Неможливо додати модифікатори до об'єк�
 
 msgid "Modifier '%s' not in object '%s'"
 msgstr "Модифікатор '%s' відсутній у об'єкта '%s'"
-
-
-msgid "Cannot edit modifiers coming from library override"
-msgstr "Неможливо редагувати модифікатори, що походять від заміщення бібліотеки"
 
 
 msgid "Requires selected vertices or active vertex group"
@@ -87209,26 +86836,6 @@ msgid "No active sequence!"
 msgstr "Немає активної послідовності!"
 
 
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Початок файлу"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Кінець файлу"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "Page Up"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "Page Down"
-
-
 msgid "File Modified Outside and Inside Blender"
 msgstr "Файл змінено за межами та у Blender'і"
 
@@ -88184,10 +87791,6 @@ msgstr "Неможливо редагувати цю властивість із
 
 msgid "Only boolean, int and float properties supported"
 msgstr "Підтримуються лише логічні, цілі та дійсні властивості"
-
-
-msgid "'%s' doesn't contain '%s' with prefix & suffix"
-msgstr "'%s' не містить  '%s' з префіксом і суфіксом"
 
 
 msgid "'%s' doesn't have upper case alpha-numeric prefix"

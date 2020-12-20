@@ -1025,6 +1025,10 @@ def load(context,
 
                 line_start = line_split[0]  # we compare with this a _lot_
 
+                if len(line_split) == 1 and not context_multi_line and line_start != b'end':
+                    print("WARNING, skipping malformatted line: %s" % line.decode('UTF-8', 'replace').rstrip())
+                    continue
+
                 # Handling vertex data are pretty similar, factorize that.
                 # Also, most OBJ files store all those on a single line, so try fast parsing for that first,
                 # and only fallback to full multi-line parsing when needed, this gives significant speed-up

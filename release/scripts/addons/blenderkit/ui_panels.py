@@ -522,7 +522,7 @@ class VIEW3D_PT_blenderkit_profile(Panel):
 
                     row = layout.row()
                     row.label(text='My plan:')
-                    row.label(text='%s plan' % pn, icon_value=my_icon.icon_id)
+                    row.label(text='%s plan' % pn)#, icon_value=my_icon.icon_id)
                     if pn == 'Free':
                         layout.operator("wm.url_open", text="Change plan",
                                         icon='URL').url = paths.get_bkit_url() + paths.BLENDERKIT_PLANS

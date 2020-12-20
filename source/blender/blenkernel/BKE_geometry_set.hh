@@ -32,10 +32,10 @@
 #include "BKE_attribute_access.hh"
 #include "BKE_geometry_set.h"
 
-struct Mesh;
-struct PointCloud;
-struct Object;
 struct Collection;
+struct Mesh;
+struct Object;
+struct PointCloud;
 
 /* Each geometry component has a specific type. The type determines what kind of data the component
  * stores. Functions modifying a geometry will usually just modify a subset of the component types.
@@ -135,6 +135,11 @@ class GeometryComponent {
       const blender::StringRef attribute_name,
       const AttributeDomain domain,
       const CustomDataType data_type) const;
+
+  /* Get a read-only attribute interpolated to the input domain, leaving the data type unchanged.
+   * Returns null when the attribute does not exist. */
+  blender::bke::ReadAttributePtr attribute_try_get_for_read(
+      const blender::StringRef attribute_name, const AttributeDomain domain) const;
 
   /* Get a read-only attribute for the given domain and data type.
    * Returns a constant attribute based on the default value if the attribute does not exist.

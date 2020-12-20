@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8149,14 +8149,6 @@ msgid "Color Depth"
 msgstr "Färguppsättning:"
 
 
-msgid "10 bit color channels"
-msgstr "32-bit Flyttal"
-
-
-msgid "32 bit color channels"
-msgstr "32-bit Flyttal"
-
-
 msgid "Codec"
 msgstr "Kodek"
 
@@ -12544,14 +12536,6 @@ msgid "Check if Select Left or Right"
 msgstr "Höger"
 
 
-msgid "Before current frame"
-msgstr "Radera"
-
-
-msgid "After current frame"
-msgstr "Starta Spel"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "Avmarkera Länkad"
@@ -12923,10 +12907,6 @@ msgstr "Z-Buffer"
 
 
 msgctxt "Operator"
-msgid "Clear Preview Range"
-msgstr "Spara Bild"
-
-
 msgid "Clear Preview Range"
 msgstr "Spara Bild"
 
@@ -14029,10 +14009,6 @@ msgid "Zoom out the view"
 msgstr "Göm Markerad"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Arkiv"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Rensa Rotation"
@@ -14577,10 +14553,6 @@ msgstr "Mjukkroppsmål"
 
 msgid "Subdivide selected segments"
 msgstr "Dela upp markerade segment"
-
-
-msgid "Number of cuts"
-msgstr "Antal klyvningar"
 
 
 msgid "Switch direction of selected splines"
@@ -15786,7 +15758,7 @@ msgid "Default fill color"
 msgstr "Special"
 
 
-msgid "32 bit Float"
+msgid "32-bit Float"
 msgstr "32-bit Flyttal"
 
 
@@ -16014,10 +15986,6 @@ msgstr "Starta rendering av sekvens"
 msgctxt "Operator"
 msgid "Copy Reports to Clipboard"
 msgstr "Ram Markering"
-
-
-msgid "Copy selected reports to Clipboard"
-msgstr "Markera Länkad"
 
 
 msgctxt "Operator"
@@ -17387,10 +17355,6 @@ msgid "Un-Subdivide"
 msgstr "Dela upp"
 
 
-msgid "UnSubdivide selected edges & faces"
-msgstr "Dela upp markerade kanter"
-
-
 msgid "Number of times to unsubdivide"
 msgstr "Bild Displist"
 
@@ -17649,6 +17613,14 @@ msgid "Select strips to the left or the right of the current frame"
 msgstr "Markera Länkad"
 
 
+msgid "Before current frame"
+msgstr "Radera"
+
+
+msgid "After current frame"
+msgstr "Starta Spel"
+
+
 msgctxt "Operator"
 msgid "Snap Strips"
 msgstr "Lägg till Stripp"
@@ -17761,10 +17733,6 @@ msgstr "Markera Länkad"
 msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "Spara Bild"
-
-
-msgid "Move Node backdrop"
-msgstr "Flytta bakgrund"
 
 
 msgctxt "Operator"
@@ -18138,10 +18106,6 @@ msgid "Align Objects"
 msgstr "Räta upp objekt"
 
 
-msgid "Align Objects"
-msgstr "Räta upp objekt"
-
-
 msgid "Align to axis"
 msgstr "Duplicera"
 
@@ -18366,10 +18330,6 @@ msgstr "Radera Allt"
 
 msgid "Apply modifier and remove from the stack"
 msgstr "Duplicera"
-
-
-msgid "Apply as"
-msgstr "Applicera Storlek/Rotation"
 
 
 msgid "How to apply the modifier to the geometry"
@@ -19160,10 +19120,6 @@ msgstr "Packa Data"
 msgctxt "Operator"
 msgid "Subdivision Set"
 msgstr "Uppdelningssats"
-
-
-msgid "Sets a Subdivision Surface Level (1-5)"
-msgstr "Uppdelningsyta"
 
 
 msgctxt "Operator"
@@ -20872,10 +20828,6 @@ msgid "Toggle Quad View"
 msgstr "Växla 4-vägsvy"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "Markera Länkad"
-
-
 msgctxt "Operator"
 msgid "Scale Region Size"
 msgstr "Markera Rad"
@@ -20949,10 +20901,6 @@ msgstr "Python-konsol"
 
 
 msgctxt "Operator"
-msgid "Reload Scripts"
-msgstr "Duplicera"
-
-
 msgid "Reload Scripts"
 msgstr "Duplicera"
 
@@ -21504,14 +21452,6 @@ msgstr "Rensa Rotation"
 
 msgid "Sample format"
 msgstr "Samplingsfrekvens"
-
-
-msgid "32 bit floating point"
-msgstr "32-bit Flyttal"
-
-
-msgid "64 bit floating point"
-msgstr "64-bit Flyttal"
 
 
 msgid "Split channels"
@@ -22459,10 +22399,6 @@ msgstr "Dela upp markerade kanter"
 
 msgid "Limit distance in normalized coordinates"
 msgstr "Arkiv"
-
-
-msgid "Snap At Midpoint"
-msgstr "Markera Rad"
 
 
 msgid "Operation Mode"
@@ -24635,10 +24571,6 @@ msgstr "Duplicera"
 
 msgid "Audio sample format"
 msgstr "Radera"
-
-
-msgid "32-bit Float"
-msgstr "32-bit Flyttal"
 
 
 msgid "64-bit Float"
@@ -30906,16 +30838,6 @@ msgstr "Markera Länkad"
 
 msgid "No active sequence!"
 msgstr "Starta rendering av sekvens"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Början på filen"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Slutet av filen"
 
 
 msgid "unknown error writing file"

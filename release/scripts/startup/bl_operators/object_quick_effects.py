@@ -134,7 +134,7 @@ class QuickExplode(ObjectModeOperator, Operator):
         default='EXPLODE',
     )
     amount: IntProperty(
-        name="Amount of pieces",
+        name="Number of Pieces",
         min=2, max=10000,
         soft_min=2, soft_max=10000,
         default=100,
@@ -572,6 +572,7 @@ class QuickLiquid(Operator):
         node_absorption.inputs["Color"].default_value = (0.8, 0.9, 1.0, 1.0)
 
         return {'FINISHED'}
+
 
 classes = (
     QuickExplode,

@@ -142,7 +142,8 @@ const GHOST_TUns8 *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDi
   }
 
   static string path = "";
-  string command = string("xdg-user-dir ") + type_str;
+  /* Pipe stderr to /dev/null to avoid error prints. We will fail gracefully still. */
+  string command = string("xdg-user-dir ") + type_str + " 2> /dev/null";
 
   FILE *fstream = popen(command.c_str(), "r");
   if (fstream == NULL) {
@@ -153,7 +154,7 @@ const GHOST_TUns8 *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDi
     char c = fgetc(fstream);
     /* xdg-user-dir ends the path with '\n'. */
     if (c == '\n') {
-        break;
+      break;
     }
     path_stream << c;
   }
@@ -163,7 +164,7 @@ const GHOST_TUns8 *GHOST_SystemPathsUnix::getUserSpecialDir(GHOST_TUserSpecialDi
   }
 
   path = path_stream.str();
-  return (const GHOST_TUns8 *)path.c_str();
+  return path[0] ? (const GHOST_TUns8 *)path.c_str() : NULL;
 }
 
 const GHOST_TUns8 *GHOST_SystemPathsUnix::getBinaryDir() const

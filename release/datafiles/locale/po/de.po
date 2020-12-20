@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3663,10 +3663,6 @@ msgid "Head/Tail"
 msgstr "Kopf/Fuß"
 
 
-msgid "Target along length of bone: Head=0, Tail=1"
-msgstr "Ziel entlang der Knochenlänge: Kopf = 0, Fuß = 1"
-
-
 msgid "Invert X"
 msgstr "X Invertieren"
 
@@ -5612,24 +5608,12 @@ msgid "Max Rate"
 msgstr "Max rate"
 
 
-msgid "Rate control: max rate (kb/s)"
-msgstr "Rate kontrollieren: Maximale rate (kb/s)"
-
-
 msgid "Min Rate"
 msgstr "Min Rate"
 
 
-msgid "Rate control: min rate (kb/s)"
-msgstr "Rate kontrollieren: Minimale Rate (kb/s)"
-
-
 msgid "Mux Rate"
 msgstr "Multiplexerrate"
-
-
-msgid "Mux rate (bits/s(!))"
-msgstr "Multiplexerrate (bits/s(!))"
 
 
 msgid "Mux Packet Size"
@@ -5650,10 +5634,6 @@ msgstr "Ausgabe automatisch bei 2GB-Grenze splitten"
 
 msgid "Lossless Output"
 msgstr "Verlustfreie Ausgabe"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "Video Bitrate (kb/s)"
 
 
 msgid "F-Modifier"
@@ -11464,32 +11444,8 @@ msgid "Bit depth per channel"
 msgstr "Bit-Tiefe pro Kanal"
 
 
-msgid "8 bit color channels"
-msgstr "8-Bit-Farbkanäle"
-
-
-msgid "10 bit color channels"
-msgstr "10 bit Farbkanäle"
-
-
-msgid "12 bit color channels"
-msgstr "12 bit Farbkanäle"
-
-
-msgid "16 bit color channels"
-msgstr "16-Bit-Farbkanäle"
-
-
-msgid "32 bit color channels"
-msgstr "32-Bit-Farbkanäle"
-
-
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "S/W zum Speichern von Graustufenbildern, RGB zum Speichern von Rot-, Grün- und Blaukanälen, und RGBA zum Speichern von Rot-, Grün-, Blau- und Alphakanälen wählen"
-
-
-msgid "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"
-msgstr "Bilder werden in 8-Bit-Graustufen gespeichert (nur PNG, JPEG, TGA, TIF)"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -15739,10 +15695,6 @@ msgid "Map Range"
 msgstr "Bereich"
 
 
-msgid "Clamp result of the node to 0..1 range"
-msgstr "Resultat der Knoten in einer 0-1 Spanne halten"
-
-
 msgid "Map Value"
 msgstr "Map Wert"
 
@@ -16837,14 +16789,6 @@ msgid "Select Left/Right"
 msgstr "Links/Rechts auswählen"
 
 
-msgid "Before current frame"
-msgstr "Vor aktuellem Einzelbild"
-
-
-msgid "After current frame"
-msgstr "Nach aktuellem Einzelbild"
-
-
 msgctxt "Operator"
 msgid "Select Less"
 msgstr "Weniger auswählen"
@@ -17180,10 +17124,6 @@ msgid "Clear Preview Range"
 msgstr "Vorschaubereich entfernen"
 
 
-msgid "Clear Preview Range"
-msgstr "Vorschaubereich entfernen"
-
-
 msgctxt "Operator"
 msgid "Set Preview Range"
 msgstr "Vorschaubereich setzen"
@@ -17371,10 +17311,6 @@ msgstr "Unterteilen"
 msgctxt "Operator"
 msgid "Switch Direction"
 msgstr "Richtung wechseln"
-
-
-msgid "Change the direction that a chain of bones points in (head <-> tail swap)"
-msgstr "Richtung ändern, in die Knochenkette zeigt (Kopf <-> Fuß tauschen)"
 
 
 msgctxt "Operator"
@@ -18217,10 +18153,6 @@ msgid "Zoom out the view"
 msgstr "Aus Ansicht auszoomen"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Cursorposition in normalisierten (0.0-1.0) Koordinaten"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Dokumentation ansehen"
@@ -18705,10 +18637,6 @@ msgstr "Bildhöhe"
 
 msgid "Subdivide selected segments"
 msgstr "Ausgewählte Segmente unterteilen"
-
-
-msgid "Number of cuts"
-msgstr "Anzahl der Schnitte"
 
 
 msgid "Switch direction of selected splines"
@@ -19714,6 +19642,10 @@ msgstr "Neues Bild erstellen"
 
 msgid "Create an image with an alpha channel"
 msgstr "Bild mit Alphakanal erstellen"
+
+
+msgid "32-bit Float"
+msgstr "32-Bit Gleitkomma"
 
 
 msgid "Image height"
@@ -21282,10 +21214,6 @@ msgid "Un-Subdivide"
 msgstr "Unterteilen"
 
 
-msgid "UnSubdivide selected edges & faces"
-msgstr "Ausgewählte Kanten unterteilen"
-
-
 msgid "Number of times to unsubdivide"
 msgstr "Anzahl von Knochen im unterteilten Strich"
 
@@ -21469,6 +21397,14 @@ msgid "Select strips to the left or the right of the current frame"
 msgstr "Streifen zur Linken und zur Rechten des aktuellen Einzelbilds auswählen"
 
 
+msgid "Before current frame"
+msgstr "Vor aktuellem Einzelbild"
+
+
+msgid "After current frame"
+msgstr "Nach aktuellem Einzelbild"
+
+
 msgctxt "Operator"
 msgid "Snap Strips"
 msgstr "Streifen einrasten"
@@ -21579,10 +21515,6 @@ msgstr "Aktiven Knoten an ein Einzelbild anhängen"
 msgctxt "Operator"
 msgid "Background Image Move"
 msgstr "Hintergrundbild verschieben"
-
-
-msgid "Move Node backdrop"
-msgstr "Knoten-Hintergrundkulisse verschieben"
 
 
 msgctxt "Operator"
@@ -22019,10 +21951,6 @@ msgid "Align Objects"
 msgstr "Objekte ausrichten"
 
 
-msgid "Align Objects"
-msgstr "Objekte ausrichten"
-
-
 msgid "Align to axis"
 msgstr "An Achse ausrichten"
 
@@ -22239,10 +22167,6 @@ msgid "Apply modifier and remove from the stack"
 msgstr "Modifikator anwenden und vom Stapel entfernen"
 
 
-msgid "Apply as"
-msgstr "Anwenden als"
-
-
 msgid "How to apply the modifier to the geometry"
 msgstr "Wie der Modifikator auf die Geometrie angewandt wird"
 
@@ -22351,6 +22275,10 @@ msgstr "Objektdaten verknüpfen"
 
 msgid "Apply active object links to other selected objects"
 msgstr "Aktive Objektverknüpfungen werden auf andere ausgewählte Objekte angewandt"
+
+
+msgid "Effects"
+msgstr "Effekte"
 
 
 msgctxt "Operator"
@@ -22658,10 +22586,6 @@ msgstr "Kantenlänge"
 msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Schnelle Explosion"
-
-
-msgid "Amount of pieces"
-msgstr "Anzahl der Teile"
 
 
 msgctxt "Operator"
@@ -24382,10 +24306,6 @@ msgid "Toggle Quad View"
 msgstr "Vierer-Ansicht an/aus"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "Ausgewählte Fläche in Ansichten von Kamera, vorne, rechts & links aufteilen"
-
-
 msgctxt "Operator"
 msgid "Scale Region Size"
 msgstr "Schrittweite"
@@ -24909,18 +24829,6 @@ msgstr "wav"
 
 msgid "Waveform Audio File Format"
 msgstr "Waveform-Audiodateiformat"
-
-
-msgid "8 bit unsigned"
-msgstr "8-Bit vorzeichenfrei"
-
-
-msgid "16 bit signed"
-msgstr "16-Bit vorzeichenbehaftet"
-
-
-msgid "64 bit floating point"
-msgstr "64-Bit Gleitkomma"
 
 
 msgid "Split channels"
@@ -25747,10 +25655,6 @@ msgstr "UV-Vertices des Meshes über eine gebogene Oberfläche einer Kugel proji
 
 msgid "Clear seams of stitched edges"
 msgstr "Ausgewählte Knoten löschen"
-
-
-msgid "Snap At Midpoint"
-msgstr "Am Mittelpunkt einrasten"
 
 
 msgid "Operation Mode"
@@ -26897,10 +26801,6 @@ msgid "Path Animation"
 msgstr "Animationspfad"
 
 
-msgid "Effects"
-msgstr "Effekte"
-
-
 msgid "Skeleton"
 msgstr "Skellet"
 
@@ -27034,10 +26934,6 @@ msgstr "Stellt die Cursorposition ein, ziehen zum Transformieren"
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Skalieren"
-
-
-msgid "Supports any combination of grab, rotate & scale at once"
-msgstr "Unterstützt jede Kombination aus Verschieben, Drehen und Skalieren gleichzeitig"
 
 
 msgctxt "Operator"
@@ -28362,10 +28258,6 @@ msgid "MPlayer"
 msgstr "MPlayer"
 
 
-msgid "Media player for video & png/jpeg/sgi image sequences"
-msgstr "Mediaplayer für Videos & png/jpeg/sgi Bildsequenzen"
-
-
 msgid "Custom animation player executable path"
 msgstr "Benutzerdefinierter Animationsplayer, ausführbarer Pfad"
 
@@ -28738,48 +28630,20 @@ msgid "8-bit Unsigned"
 msgstr "8-Bit ohne Vorzeichen"
 
 
-msgid "Set audio sample format to 8 bit unsigned integer"
-msgstr "Audio-Abtastformat auf 8-Bit Ganzzahl ohne Vorzeichen setzen"
-
-
 msgid "16-bit Signed"
 msgstr "16-Bit mit Vorzeichen"
-
-
-msgid "Set audio sample format to 16 bit signed integer"
-msgstr "Audio-Abtastformat auf 16-Bit Ganzzahl mit Vorzeichen setzen"
 
 
 msgid "24-bit Signed"
 msgstr "24-Bit mit Vorzeichen"
 
 
-msgid "Set audio sample format to 24 bit signed integer"
-msgstr "Audio-Abtastformat auf 24-Bit Ganzzahl mit Vorzeichen setzen"
-
-
 msgid "32-bit Signed"
 msgstr "32-Bit mit Vorzeichen"
 
 
-msgid "Set audio sample format to 32 bit signed integer"
-msgstr "Audio-Abtastformat auf 32-Bit Ganzzahl mit Vorzeichen setzen"
-
-
-msgid "32-bit Float"
-msgstr "32-Bit Gleitkomma"
-
-
-msgid "Set audio sample format to 32 bit float"
-msgstr "Audio-Abtastformat auf 32-Bit Gleitkomma setzen"
-
-
 msgid "64-bit Float"
 msgstr "64-Bit Gleitkomma"
-
-
-msgid "Set audio sample format to 64 bit float"
-msgstr "Audio-Abtastformat auf 64-Bit Gleitkomma setzen"
 
 
 msgid "Audio Sample Rate"
@@ -37683,26 +37547,6 @@ msgstr "Bitte zwei Steifen auswählen"
 
 msgid "No active sequence!"
 msgstr "Keine aktive Sequenz!"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Anfang der Datei"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Ende der Datei"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "Bild auf"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "Bild ab"
 
 
 msgid "Make text internal"

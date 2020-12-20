@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'9ac6ef703602')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -3979,10 +3979,6 @@ msgstr "Bez gubitka kvaliteta"
 
 msgid "Use lossless output for video streams"
 msgstr "Koristi izlaz videa bez gubitka kvaliteta"
-
-
-msgid "Video bitrate (kb/s)"
-msgstr "Bitski protok videa (kb/s)"
 
 
 msgid "F-Modifier"
@@ -8716,32 +8712,8 @@ msgid "Bit depth per channel"
 msgstr "Bitska dubina po kanalu"
 
 
-msgid "8 bit color channels"
-msgstr "8-bitni kanali boja"
-
-
-msgid "10 bit color channels"
-msgstr "12-bitni kanali boja"
-
-
-msgid "12 bit color channels"
-msgstr "12-bitni kanali boja"
-
-
-msgid "16 bit color channels"
-msgstr "16-bitni kanali boja"
-
-
-msgid "32 bit color channels"
-msgstr "32-bitni kanali boja"
-
-
 msgid "Choose BW for saving grayscale images, RGB for saving red, green and blue channels, and RGBA for saving red, green, blue and alpha channels"
 msgstr "Izaberite BW za čuvanje crno-bele slike, RGB za slike u boji i RGBA za slike u boji sa providnošću (alfa kanalom)"
-
-
-msgid "Images get saved in 8 bits grayscale (only PNG, JPEG, TGA, TIF)"
-msgstr "Čuvaj slike u 8-bitnim nijansama sive (samo PNG, JPEG, TGA, TIF)"
 
 
 msgid "Images are saved with RGB (color) data"
@@ -12038,6 +12010,10 @@ msgid "Anti-Alias Z"
 msgstr "Umekšavanje ivica Z"
 
 
+msgid "Equal"
+msgstr "Jednako"
+
+
 msgid "Object Info"
 msgstr "Informacije o objektu"
 
@@ -12254,16 +12230,8 @@ msgid "Particle Age"
 msgstr "Starost čestica"
 
 
-msgid "Lifetime mapped as 0.0 - 1.0 intensity"
-msgstr "Životni vek je u intervalu od 0.0 do 1.0"
-
-
 msgid "Particle Speed"
 msgstr "Brzina čestica"
-
-
-msgid "Particle speed (absolute magnitude of velocity) mapped as 0.0-1.0 intensity"
-msgstr "Brzina čestica (apsolutna vrednost brzine) u intervalu od 0.0 do 1.0"
 
 
 msgid "Particle Velocity"
@@ -12679,14 +12647,6 @@ msgstr "Bira tačke ključnih kadrova koristeći laso izbor"
 msgctxt "Operator"
 msgid "Select Left/Right"
 msgstr "Izaberi levo/desno"
-
-
-msgid "Before current frame"
-msgstr "Ispred tekućeg kadra"
-
-
-msgid "After current frame"
-msgstr "Posle tekućeg kadra"
 
 
 msgctxt "Operator"
@@ -13827,10 +13787,6 @@ msgid "Zoom out the view"
 msgstr "Udaljava pogled"
 
 
-msgid "Cursor location in normalized (0.0-1.0) coordinates"
-msgstr "Lokacija kursora u normalizovanim (0.0-1.0) koordinatama"
-
-
 msgctxt "Operator"
 msgid "View Zoom Ratio"
 msgstr "Vrednost uvećanja pogleda"
@@ -14309,10 +14265,6 @@ msgid "Select Control Point Row"
 msgstr "Izaberi niz kontrolnih tačaka"
 
 
-msgid "Equal"
-msgstr "Jednako"
-
-
 msgid "Greater"
 msgstr "Veće"
 
@@ -14395,10 +14347,6 @@ msgstr "Razdvoj izabrane tačke od neizabranih povezanih tačaka"
 
 msgid "Subdivide selected segments"
 msgstr "Izdeli izabrane segmente"
-
-
-msgid "Number of cuts"
-msgstr "Broj isečaka"
 
 
 msgctxt "Operator"
@@ -15605,14 +15553,6 @@ msgid "Default fill color"
 msgstr "Tekuća boja ispune"
 
 
-msgid "32 bit Float"
-msgstr "32-bitni decimalni"
-
-
-msgid "Create image with 32 bit floating point bit depth"
-msgstr "Napravi sliku sa 32-bitnom decimalnom dubinom."
-
-
 msgid "Image height"
 msgstr "Visina sliku"
 
@@ -15808,10 +15748,6 @@ msgstr "Početni kadar umetnute animacije"
 msgctxt "Operator"
 msgid "Copy Reports to Clipboard"
 msgstr "Umnoži izveštaj u privremenu memoriju"
-
-
-msgid "Copy selected reports to Clipboard"
-msgstr "Ubacuje izabrani izveštaj među isečke"
 
 
 msgctxt "Operator"
@@ -17082,6 +17018,14 @@ msgid "Select or deselect all NLA-Strips"
 msgstr "Izaberi sve/ništa NLA staze"
 
 
+msgid "Before current frame"
+msgstr "Ispred tekućeg kadra"
+
+
+msgid "After current frame"
+msgstr "Posle tekućeg kadra"
+
+
 msgctxt "Operator"
 msgid "Include Selected Objects"
 msgstr "Uključi izabrane objekte"
@@ -17481,10 +17425,6 @@ msgid "Align Objects"
 msgstr "Poravnaj objekte"
 
 
-msgid "Align Objects"
-msgstr "Poravnaj objekte"
-
-
 msgid "Align to axis"
 msgstr "Poravnaj po osi"
 
@@ -17663,10 +17603,6 @@ msgstr "Dodaj modifikator"
 msgctxt "Operator"
 msgid "Apply Modifier"
 msgstr "Primeni modifikator"
-
-
-msgid "Apply as"
-msgstr "Primeni kao"
 
 
 msgid "Object Data"
@@ -17980,10 +17916,6 @@ msgstr "Dužina ivice"
 msgctxt "Operator"
 msgid "Quick Explode"
 msgstr "Brzo razbijanje"
-
-
-msgid "Amount of pieces"
-msgstr "Broj delova"
 
 
 msgid "Explode Style"
@@ -19470,10 +19402,6 @@ msgid "Toggle Quad View"
 msgstr "Pogled iz četri dela"
 
 
-msgid "Split selected area into camera, front, right & top views"
-msgstr "Podeli izabranu oblast na pogled kroz kameru, spreda, sa strane i odozgo"
-
-
 msgctxt "Operator"
 msgid "Repeat History"
 msgstr "Istorijat ponavljanja"
@@ -19511,10 +19439,6 @@ msgstr "Pokreni Python datoteku"
 
 
 msgctxt "Operator"
-msgid "Reload Scripts"
-msgstr "Ponovo učitaj skripte"
-
-
 msgid "Reload Scripts"
 msgstr "Ponovo učitaj skripte"
 
@@ -19988,10 +19912,6 @@ msgstr "talas"
 
 msgid "Waveform Audio File Format"
 msgstr "Format zvučnog zapisa"
-
-
-msgid "32 bit floating point"
-msgstr "32-bitni decimalni"
 
 
 msgid "Split channels"
@@ -20721,10 +20641,6 @@ msgstr "Margine ostrva"
 msgctxt "Operator"
 msgid "Snap Cursor"
 msgstr "Lepljenje kursora"
-
-
-msgid "Snap At Midpoint"
-msgstr "Lepi za središte"
 
 
 msgid "Snap Islands"
@@ -22789,10 +22705,6 @@ msgstr "Lutka"
 
 msgid "Walk Navigation"
 msgstr "Navigacija šetnje"
-
-
-msgid "Number of lines scrolled at a time with the mouse wheel"
-msgstr "Broj redova pomerenih jednim pokretom točkića miša"
 
 
 msgid "Anisotropic Filter"
@@ -29120,26 +29032,6 @@ msgstr "Potebno je izabrati 2 trake sekvenci"
 
 msgid "No active sequence!"
 msgstr "Bez aktivne sekvence!"
-
-
-msgctxt "Operator"
-msgid "Top of File"
-msgstr "Vrh datoteke"
-
-
-msgctxt "Operator"
-msgid "Bottom of File"
-msgstr "Dno datoteke"
-
-
-msgctxt "Operator"
-msgid "Page Up"
-msgstr "Strana gore"
-
-
-msgctxt "Operator"
-msgid "Page Down"
-msgstr "Strana dole"
 
 
 msgid "unknown error writing file"
