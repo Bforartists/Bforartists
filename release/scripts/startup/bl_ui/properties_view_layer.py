@@ -143,10 +143,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         col.use_property_split = False
         row = col.row()
         row.separator()
-        row.prop(view_layer_eevee, "use_pass_volume_transmittance", text="Transmittance")
-        row = col.row()
-        row.separator()
-        row.prop(view_layer_eevee, "use_pass_volume_scatter", text="Scatter")
+        col.prop(view_layer_eevee, "use_pass_volume_direct", text="Light")
 
         col = flow.column(align = True)
         col.label(text = "Other")

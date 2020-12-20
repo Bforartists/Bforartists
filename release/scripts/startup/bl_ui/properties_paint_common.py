@@ -556,7 +556,6 @@ def brush_settings(layout, context, brush, popover=False):
         if context.preferences.experimental.use_sculpt_tools_tilt and capabilities.has_tilt:
             layout.prop(brush, "tilt_strength_factor", slider=True)
 
-
         row = layout.row(align=True)
         row.prop(brush, "hardness", slider=True)
         row.prop(brush, "invert_hardness_pressure", text="")
@@ -792,6 +791,10 @@ def brush_settings(layout, context, brush, popover=False):
                 col.prop(brush, "surface_smooth_shape_preservation")
                 col.prop(brush, "surface_smooth_current_vertex")
                 col.prop(brush, "surface_smooth_iterations")
+
+        elif sculpt_tool == 'DISPLACEMENT_SMEAR':
+            col = layout.column()
+            col.prop(brush, "smear_deform_type")
 
         elif sculpt_tool == 'MASK':
             layout.row().prop(brush, "mask_tool", expand=True)
@@ -1265,6 +1268,7 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
         row.prop(brush, "size", text="Radius")
         row.prop(gp_settings, "use_pressure", text="", icon='STYLUS_PRESSURE')
         row.prop(gp_settings, "use_occlude_eraser", text="", icon='XRAY')
+        row.prop(gp_settings, "use_default_eraser", text="")
 
         row = layout.row(align=True)
         row.prop(gp_settings, "eraser_mode", expand=True)
