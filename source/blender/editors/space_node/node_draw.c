@@ -1597,6 +1597,149 @@ static void node_draw_basis(const bContext *C,
     case CMP_NODE_SWITCH_VIEW:
       icon = ICON_VIEW_SWITCHACTIVECAM;
       break;
+    /* Filter */
+    case CMP_NODE_BILATERALBLUR:
+      icon = ICON_NODE_BILATERAL_BLUR;
+      break;
+    case CMP_NODE_BLUR:
+      icon = ICON_NODE_BLUR;
+      break;
+    case CMP_NODE_BOKEHBLUR:
+      icon = ICON_NODE_BOKEH_BLUR;
+      break;
+    case CMP_NODE_DEFOCUS:
+      icon = ICON_NODE_DEFOCUS;
+      break;
+    case CMP_NODE_DENOISE:
+      icon = ICON_NODE_DENOISE;
+      break;
+    case CMP_NODE_DESPECKLE:
+      icon = ICON_NODE_DESPECKLE;
+      break;
+    case CMP_NODE_DILATEERODE:
+      icon = ICON_NODE_ERODE;
+      break;
+    case CMP_NODE_DBLUR:
+      icon = ICON_NODE_DIRECITONALBLUR;
+      break;
+    case CMP_NODE_FILTER:
+      icon = ICON_FILTER;
+      break;
+    case CMP_NODE_GLARE:
+      icon = ICON_NODE_GLARE;
+      break;
+    case CMP_NODE_INPAINT:
+      icon = ICON_NODE_IMPAINT;
+      break;
+    case CMP_NODE_PIXELATE:
+      icon = ICON_NODE_PIXELATED;
+      break;
+    case CMP_NODE_SUNBEAMS:
+      icon = ICON_NODE_SUNBEAMS;
+      break;
+    case CMP_NODE_VECBLUR:
+      icon = ICON_NODE_VECTOR_BLUR;
+      break;
+    /* Vector */
+    case CMP_NODE_MAP_RANGE:
+      icon = ICON_NODE_MAP_RANGE;
+      break;
+    case CMP_NODE_MAP_VALUE:
+      icon = ICON_NODE_VALUE;
+      break;
+    case CMP_NODE_NORMAL:
+      icon = ICON_RECALC_NORMALS;
+      break;
+    case CMP_NODE_NORMALIZE:
+      icon = ICON_NODE_NORMALIZE;
+      break;
+    case CMP_NODE_CURVE_VEC:
+      icon = ICON_NODE_VECTOR;
+      break;
+    /* Matte */
+    case CMP_NODE_MASK_BOX:
+      icon = ICON_NODE_BOXMASK;
+      break;
+    case CMP_NODE_CHANNEL_MATTE:
+      icon = ICON_NODE_CHANNEL;
+      break;
+    case CMP_NODE_CHROMA_MATTE:
+      icon = ICON_NODE_CHROMA;
+      break;
+    case CMP_NODE_COLOR_MATTE:
+      icon = ICON_COLOR;
+      break;
+    case CMP_NODE_COLOR_SPILL:
+      icon = ICON_NODE_SPILL;
+      break;
+    case CMP_NODE_CRYPTOMATTE:
+      icon = ICON_NODE_CHROMA;
+      break;
+    case CMP_NODE_DIFF_MATTE:
+      icon = ICON_SELECT_DIFFERENCE;
+      break;
+    case CMP_NODE_DIST_MATTE:
+      icon = ICON_DRIVER_DISTANCE;
+      break;
+    case CMP_NODE_DOUBLEEDGEMASK:
+      icon = ICON_NODE_DOUBLEEDGEMASK;
+      break;
+    case CMP_NODE_MASK_ELLIPSE:
+      icon = ICON_NODE_ELLIPSEMASK;
+      break;
+    case CMP_NODE_KEYING:
+      icon = ICON_NODE_KEYING;
+      break;
+    case CMP_NODE_KEYINGSCREEN:
+      icon = ICON_NODE_KEYINGSCREEN;
+      break;
+    case CMP_NODE_LUMA_MATTE:
+      icon = ICON_NODE_LUMINANCE;
+      break;
+    /* Distort */
+    case CMP_NODE_CORNERPIN:
+      icon = ICON_NODE_CORNERPIN;
+      break;
+    case CMP_NODE_CROP:
+      icon = ICON_NODE_CROP;
+      break;
+    case CMP_NODE_DISPLACE:
+      icon = ICON_MOD_DISPLACE;
+      break;
+    case CMP_NODE_FLIP:
+      icon = ICON_FLIP;
+      break;
+    case CMP_NODE_LENSDIST:
+      icon = ICON_NODE_LENSDISTORT;
+      break;
+    case CMP_NODE_MAP_UV:
+      icon = ICON_GROUP_UVS;
+      break;
+    case CMP_NODE_MOVIEDISTORTION:
+      icon = ICON_NODE_MOVIEDISTORT;
+      break;
+    case CMP_NODE_PLANETRACKDEFORM:
+      icon = ICON_NODE_PLANETRACKDEFORM;
+      break;
+    case CMP_NODE_ROTATE:
+      icon = ICON_TRANSFORM_ROTATE;
+      break;
+    case CMP_NODE_SCALE:
+      icon = ICON_TRANSFORM_SCALE;
+      break;
+    case CMP_NODE_STABILIZE2D:
+      icon = ICON_NODE_STABILIZE2D;
+      break;
+    case CMP_NODE_TRANSFORM:
+      icon = ICON_NODE_TRANSFORM;
+      break;
+    case CMP_NODE_TRANSLATE:
+      icon = ICON_TRANSFORM_MOVE;
+      break;
+    /* Relation */
+    case CMP_NODE_SWITCH:
+      icon = ICON_SWITCH_DIRECTION;
+      break;
     }
 
   /* group edit */
