@@ -138,7 +138,6 @@ class SEQUENCER_HT_header(Header):
             layout.separator_spacer()
             row = layout.row(align=True)
             row.prop(sequencer_tool_settings, "fit_method", text="")
-            layout.separator_spacer()
 
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             if st.view_type == 'PREVIEW':
@@ -2423,13 +2422,8 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 col.prop(st, "show_backdrop", text="Preview as Backdrop")
             col.prop(st, "show_seconds")
             col.prop(st, "show_locked_time")
-            col.prop(st, "show_strip_offset")
-            col.prop(st, "show_fcurves")
 
             layout.menu("SEQUENCER_MT_view_cache")
-
-            layout.use_property_split = True
-            layout.prop(st, "waveform_display_type")
 
             layout.separator()
 
