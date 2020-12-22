@@ -1192,6 +1192,7 @@ static void node_draw_basis(const bContext *C,
   int32_t icon = ICON_NONE; /* bfa - select node icon based on type */
   /* bfa - note: switch logic lives here for the sake of clarity */
   switch (node->type) {
+    /* bfa - Shader Nodes */
     /* bfa - Input */
     case SH_NODE_AMBIENT_OCCLUSION:
       icon = ICON_NODE_AMBIENT_OCCLUSION;
@@ -1460,6 +1461,281 @@ static void node_draw_basis(const bContext *C,
     /* bfa - Script */
     case SH_NODE_SCRIPT:
       icon = ICON_FILE_SCRIPT;
+      break;
+
+    /* bfa - Compositor */
+    /* bfa Input */
+    case CMP_NODE_BOKEHIMAGE:
+      icon = ICON_NODE_BOKEH_IMAGE;
+      break;
+    case CMP_NODE_IMAGE:
+      icon = ICON_FILE_IMAGE;
+      break;
+    case CMP_NODE_MASK:
+      icon = ICON_MOD_MASK;
+      break;
+    case CMP_NODE_MOVIECLIP:
+      icon = ICON_FILE_MOVIE;
+      break;
+    case CMP_NODE_R_LAYERS:
+      icon = ICON_RENDERLAYERS;
+      break;
+    case CMP_NODE_RGB:
+      icon = ICON_NODE_RGB;
+      break;
+    case CMP_NODE_TEXTURE:
+      icon = ICON_TEXTURE;
+      break;
+    case CMP_NODE_TIME:
+      icon = ICON_TIME;
+      break;
+    case CMP_NODE_TRACKPOS:
+      icon = ICON_NODE_TRACKPOSITION;
+      break;
+    case CMP_NODE_VALUE:
+      icon = ICON_NODE_VALUE;
+      break;
+    /* Output */
+    case CMP_NODE_COMPOSITE:
+      icon = ICON_NODE_COMPOSITING;
+      break;
+    case CMP_NODE_OUTPUT_FILE:
+      icon = ICON_NODE_FILEOUTPUT;
+      break;
+    case CMP_NODE_VIEW_LEVELS:
+      icon = ICON_LEVELS;
+      break;
+    case CMP_NODE_SPLITVIEWER:
+      icon = ICON_NODE_VIWERSPLIT;
+      break;
+    case CMP_NODE_VIEWER:
+      icon = ICON_NODE_VIEWER;
+      break;
+    /* Color */
+    case CMP_NODE_ALPHAOVER:
+      icon = ICON_IMAGE_ALPHA;
+      break;
+    case CMP_NODE_BRIGHTCONTRAST:
+      icon = ICON_BRIGHTNESS_CONTRAST;
+      break;
+    case CMP_NODE_COLORBALANCE:
+      icon = ICON_NODE_COLORBALANCE;
+      break;
+    case CMP_NODE_COLORCORRECTION:
+      icon = ICON_NODE_COLORCORRECTION;
+      break;
+    case CMP_NODE_GAMMA:
+      icon = ICON_NODE_GAMMA;
+      break;
+    case CMP_NODE_HUECORRECT:
+      icon = ICON_NODE_HUESATURATION;
+      break;
+    case CMP_NODE_HUE_SAT:
+      icon = ICON_NODE_HUESATURATION;
+      break;
+    case CMP_NODE_INVERT:
+      icon = ICON_NODE_INVERT;
+      break;
+    case CMP_NODE_MIX_RGB:
+      icon = ICON_NODE_MIXRGB;
+      break;
+    case CMP_NODE_CURVE_RGB:
+      icon = ICON_NODE_RGBCURVE;
+      break;
+    case CMP_NODE_TONEMAP:
+      icon = ICON_NODE_TONEMAP;
+      break;
+    case CMP_NODE_ZCOMBINE:
+      icon = ICON_NODE_ZCOMBINE;
+      break;
+    /* Converter */
+    case CMP_NODE_PREMULKEY:
+      icon = ICON_NODE_ALPHACONVERT;
+      break;
+    case CMP_NODE_VALTORGB:
+      icon = ICON_NODE_COLORRAMP;
+      break;
+    case CMP_NODE_COMBHSVA:
+      icon = ICON_NODE_COMBINEHSV;
+      break;
+    case CMP_NODE_COMBRGBA:
+      icon = ICON_NODE_COMBINERGB;
+      break;
+    case CMP_NODE_COMBYCCA:
+      icon = ICON_NODE_COMBINEYCBCRA;
+      break;
+    case CMP_NODE_COMBYUVA:
+      icon = ICON_NODE_COMBINEYUVA;
+      break;
+    case CMP_NODE_ID_MASK:
+      icon = ICON_MOD_MASK;
+      break;
+    case CMP_NODE_MATH:
+      icon = ICON_NODE_MATH;
+      break;
+    case CMP_NODE_RGBTOBW:
+      icon = ICON_NODE_RGBTOBW;
+      break;
+    case CMP_NODE_SEPHSVA:
+      icon = ICON_NODE_SEPARATEHSV;
+      break;
+    case CMP_NODE_SEPRGBA:
+      icon = ICON_NODE_SEPARATERGB;
+      break;
+    case CMP_NODE_SEPYCCA:
+      icon = ICON_NODE_SEPARATE_YCBCRA;
+      break;
+    case CMP_NODE_SEPYUVA:
+      icon = ICON_NODE_SEPARATE_YUVA;
+      break;
+    case CMP_NODE_SETALPHA:
+      icon = ICON_IMAGE_ALPHA;
+      break;
+    case CMP_NODE_SWITCH_VIEW:
+      icon = ICON_VIEW_SWITCHACTIVECAM;
+      break;
+    /* Filter */
+    case CMP_NODE_BILATERALBLUR:
+      icon = ICON_NODE_BILATERAL_BLUR;
+      break;
+    case CMP_NODE_BLUR:
+      icon = ICON_NODE_BLUR;
+      break;
+    case CMP_NODE_BOKEHBLUR:
+      icon = ICON_NODE_BOKEH_BLUR;
+      break;
+    case CMP_NODE_DEFOCUS:
+      icon = ICON_NODE_DEFOCUS;
+      break;
+    case CMP_NODE_DENOISE:
+      icon = ICON_NODE_DENOISE;
+      break;
+    case CMP_NODE_DESPECKLE:
+      icon = ICON_NODE_DESPECKLE;
+      break;
+    case CMP_NODE_DILATEERODE:
+      icon = ICON_NODE_ERODE;
+      break;
+    case CMP_NODE_DBLUR:
+      icon = ICON_NODE_DIRECITONALBLUR;
+      break;
+    case CMP_NODE_FILTER:
+      icon = ICON_FILTER;
+      break;
+    case CMP_NODE_GLARE:
+      icon = ICON_NODE_GLARE;
+      break;
+    case CMP_NODE_INPAINT:
+      icon = ICON_NODE_IMPAINT;
+      break;
+    case CMP_NODE_PIXELATE:
+      icon = ICON_NODE_PIXELATED;
+      break;
+    case CMP_NODE_SUNBEAMS:
+      icon = ICON_NODE_SUNBEAMS;
+      break;
+    case CMP_NODE_VECBLUR:
+      icon = ICON_NODE_VECTOR_BLUR;
+      break;
+    /* Vector */
+    case CMP_NODE_MAP_RANGE:
+      icon = ICON_NODE_MAP_RANGE;
+      break;
+    case CMP_NODE_MAP_VALUE:
+      icon = ICON_NODE_VALUE;
+      break;
+    case CMP_NODE_NORMAL:
+      icon = ICON_RECALC_NORMALS;
+      break;
+    case CMP_NODE_NORMALIZE:
+      icon = ICON_NODE_NORMALIZE;
+      break;
+    case CMP_NODE_CURVE_VEC:
+      icon = ICON_NODE_VECTOR;
+      break;
+    /* Matte */
+    case CMP_NODE_MASK_BOX:
+      icon = ICON_NODE_BOXMASK;
+      break;
+    case CMP_NODE_CHANNEL_MATTE:
+      icon = ICON_NODE_CHANNEL;
+      break;
+    case CMP_NODE_CHROMA_MATTE:
+      icon = ICON_NODE_CHROMA;
+      break;
+    case CMP_NODE_COLOR_MATTE:
+      icon = ICON_COLOR;
+      break;
+    case CMP_NODE_COLOR_SPILL:
+      icon = ICON_NODE_SPILL;
+      break;
+    case CMP_NODE_CRYPTOMATTE:
+      icon = ICON_NODE_CHROMA;
+      break;
+    case CMP_NODE_DIFF_MATTE:
+      icon = ICON_SELECT_DIFFERENCE;
+      break;
+    case CMP_NODE_DIST_MATTE:
+      icon = ICON_DRIVER_DISTANCE;
+      break;
+    case CMP_NODE_DOUBLEEDGEMASK:
+      icon = ICON_NODE_DOUBLEEDGEMASK;
+      break;
+    case CMP_NODE_MASK_ELLIPSE:
+      icon = ICON_NODE_ELLIPSEMASK;
+      break;
+    case CMP_NODE_KEYING:
+      icon = ICON_NODE_KEYING;
+      break;
+    case CMP_NODE_KEYINGSCREEN:
+      icon = ICON_NODE_KEYINGSCREEN;
+      break;
+    case CMP_NODE_LUMA_MATTE:
+      icon = ICON_NODE_LUMINANCE;
+      break;
+    /* Distort */
+    case CMP_NODE_CORNERPIN:
+      icon = ICON_NODE_CORNERPIN;
+      break;
+    case CMP_NODE_CROP:
+      icon = ICON_NODE_CROP;
+      break;
+    case CMP_NODE_DISPLACE:
+      icon = ICON_MOD_DISPLACE;
+      break;
+    case CMP_NODE_FLIP:
+      icon = ICON_FLIP;
+      break;
+    case CMP_NODE_LENSDIST:
+      icon = ICON_NODE_LENSDISTORT;
+      break;
+    case CMP_NODE_MAP_UV:
+      icon = ICON_GROUP_UVS;
+      break;
+    case CMP_NODE_MOVIEDISTORTION:
+      icon = ICON_NODE_MOVIEDISTORT;
+      break;
+    case CMP_NODE_PLANETRACKDEFORM:
+      icon = ICON_NODE_PLANETRACKDEFORM;
+      break;
+    case CMP_NODE_ROTATE:
+      icon = ICON_TRANSFORM_ROTATE;
+      break;
+    case CMP_NODE_SCALE:
+      icon = ICON_TRANSFORM_SCALE;
+      break;
+    case CMP_NODE_STABILIZE2D:
+      icon = ICON_NODE_STABILIZE2D;
+      break;
+    case CMP_NODE_TRANSFORM:
+      icon = ICON_NODE_TRANSFORM;
+      break;
+    case CMP_NODE_TRANSLATE:
+      icon = ICON_TRANSFORM_MOVE;
+      break;
+    /* Relation */
+    case CMP_NODE_SWITCH:
+      icon = ICON_SWITCH_DIRECTION;
       break;
     }
 
