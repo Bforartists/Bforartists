@@ -914,6 +914,38 @@ class CYCLES_RENDER_PT_passes_data(CyclesButtonsPanel, Panel):
         layout.use_property_split = True
         layout.prop(view_layer, "pass_alpha_threshold")
 
+# bfa - move mist panel to viewlayers
+
+
+class CYCLES_RENDER_PT_passes_mist(CyclesButtonsPanel, Panel):
+    bl_label = "Mist Pass"
+    bl_context = "view_layer"
+    bl_parent_id = "CYCLES_RENDER_PT_passes"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        if CyclesButtonsPanel.poll(context):
+            if context.scene.world:
+                for view_layer in context.scene.view_layers:
+                    if view_layer.use_pass_mist:
+                        return True
+
+        return False
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+
+        world = context.scene.world
+
+        col = layout.column(align=True)
+        col.prop(world.mist_settings, "start")
+        col.prop(world.mist_settings, "depth")
+
+        col = layout.column()
+        col.prop(world.mist_settings, "falloff")
+
 
 class CYCLES_RENDER_PT_passes_light(CyclesButtonsPanel, Panel):
     bl_label = "Light"
@@ -1658,33 +1690,34 @@ class CYCLES_WORLD_PT_ambient_occlusion(CyclesButtonsPanel, Panel):
         col.prop(light, "distance", text="Distance")
 
 
-class CYCLES_WORLD_PT_mist(CyclesButtonsPanel, Panel):
-    bl_label = "Mist Pass"
-    bl_context = "world"
-    bl_options = {'DEFAULT_CLOSED'}
+# bfa - move mist panel to viewlayers
+# class CYCLES_WORLD_PT_mist(CyclesButtonsPanel, Panel):
+#     bl_label = "Mist Pass"
+#     bl_context = "world"
+#     bl_options = {'DEFAULT_CLOSED'}
 
-    @classmethod
-    def poll(cls, context):
-        if CyclesButtonsPanel.poll(context):
-            if context.world:
-                for view_layer in context.scene.view_layers:
-                    if view_layer.use_pass_mist:
-                        return True
+#     @classmethod
+#     def poll(cls, context):
+#         if CyclesButtonsPanel.poll(context):
+#             if context.world:
+#                 for view_layer in context.scene.view_layers:
+#                     if view_layer.use_pass_mist:
+#                         return True
 
-        return False
+#         return False
 
-    def draw(self, context):
-        layout = self.layout
-        layout.use_property_split = True
+#     def draw(self, context):
+#         layout = self.layout
+#         layout.use_property_split = True
 
-        world = context.world
+#         world = context.world
 
-        col = layout.column(align=True)
-        col.prop(world.mist_settings, "start")
-        col.prop(world.mist_settings, "depth")
+#         col = layout.column(align=True)
+#         col.prop(world.mist_settings, "start")
+#         col.prop(world.mist_settings, "depth")
 
-        col = layout.column()
-        col.prop(world.mist_settings, "falloff")
+#         col = layout.column()
+#         col.prop(world.mist_settings, "falloff")
 
 
 class CYCLES_WORLD_PT_ray_visibility(CyclesButtonsPanel, Panel):
@@ -2444,6 +2477,7 @@ classes = (
     CYCLES_RENDER_PT_performance_viewport,
     CYCLES_RENDER_PT_passes,
     CYCLES_RENDER_PT_passes_data,
+    CYCLES_RENDER_PT_passes_mist,  # bfa - move mist panel to viewlayers
     CYCLES_RENDER_PT_passes_light,
     CYCLES_RENDER_PT_passes_crypto,
     CYCLES_RENDER_PT_passes_debug,
@@ -2469,7 +2503,7 @@ classes = (
     CYCLES_WORLD_PT_surface,
     CYCLES_WORLD_PT_volume,
     CYCLES_WORLD_PT_ambient_occlusion,
-    CYCLES_WORLD_PT_mist,
+    #CYCLES_WORLD_PT_mist, # bfa - move mist panel to viewlayers
     CYCLES_WORLD_PT_ray_visibility,
     CYCLES_WORLD_PT_settings,
     CYCLES_WORLD_PT_settings_surface,
