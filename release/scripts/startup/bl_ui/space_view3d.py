@@ -6827,6 +6827,9 @@ class VIEW3D_PT_view3d_cursor(Panel):
 
         cursor = context.scene.cursor
 
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
         layout.column().prop(cursor, "location", text="Location")
         rotation_mode = cursor.rotation_mode
         if rotation_mode == 'QUATERNION':
