@@ -206,6 +206,7 @@ static bool modifier_can_delete(ModifierData *md)
   return true;
 }
 
+/* bfa - Fix Modifiers UI design #1617 */
 static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
 {
   PointerRNA op_ptr;
@@ -219,12 +220,6 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
 
   uiLayoutSetUnitsX(layout, 4.0f);
-
-  /* Apply. */
-  uiItemO(layout,
-          CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
-          ICON_CHECKMARK,
-          "OBJECT_OT_modifier_apply");
 
   /* Apply as shapekey. */
   if (BKE_modifier_is_same_topology(md) && !BKE_modifier_is_non_geometrical(md)) {
@@ -289,9 +284,10 @@ static void modifier_ops_extra_draw(bContext *C, uiLayout *layout, void *md_v)
   }
 }
 
+/* bfa - Fix Modifiers UI design #1617 */
 static void modifier_panel_header(const bContext *C, Panel *panel)
 {
-  uiLayout *row, *sub, *name_row;
+  uiLayout *row, *sub, *name_row, *op_row;
   uiLayout *layout = panel->layout;
 
   /* Don't use #modifier_panel_get_property_pointers, we don't want to lock the header. */
@@ -359,28 +355,32 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
     buttons_number += 2;
   }
 
-  /* Extra operators menu. */
-  uiItemMenuF(row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
+  op_row = uiLayoutRow(layout, true);
+
+  /* Apply. */
+  uiItemO(op_row, "", ICON_CHECKMARK, "OBJECT_OT_modifier_apply");
+  buttons_number++;
 
   /* Delete button. */
   if (modifier_can_delete(md) && !modifier_is_simulation(md)) {
-    sub = uiLayoutRow(row, false);
-    uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
-    uiItemO(sub, "", ICON_X, "OBJECT_OT_modifier_remove");
+    uiItemO(op_row, "", ICON_X, "OBJECT_OT_modifier_remove");
     buttons_number++;
   }
 
   /* Switch context buttons. */
   if (modifier_is_simulation(md) == 1) {
     uiItemStringO(
-        row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS");
+        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PHYSICS");
     buttons_number++;
   }
   else if (modifier_is_simulation(md) == 2) {
     uiItemStringO(
-        row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES");
+        op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES");
     buttons_number++;
   }
+
+  /* Extra operators menu. */
+  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
 
   bool display_name = (panel->sizex / UI_UNIT_X - buttons_number > 5) || (panel->sizex == 0);
   if (display_name) {
