@@ -2637,7 +2637,8 @@ class NODES_PT_Modify_vector_comp(bpy.types.Panel):
 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_RANGE")
+            props = col.operator(
+                "node.add_node", text=" Map Range       ", icon="NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "CompositorNodeMapRange"
 
