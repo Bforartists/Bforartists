@@ -174,7 +174,7 @@ class VIEWLAYER_PT_eevee_layer_passes_light(ViewLayerButtonsPanel, Panel):
         col.use_property_split = False
         row = col.row()
         row.separator()
-        col.prop(view_layer_eevee, "use_pass_volume_direct", text="Light")
+        row.prop(view_layer_eevee, "use_pass_volume_direct", text="Light")
 
         col = flow.column(align = True)
         col.label(text = "Other")
