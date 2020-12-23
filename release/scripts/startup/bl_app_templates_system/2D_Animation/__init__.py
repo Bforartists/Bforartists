@@ -31,14 +31,16 @@ def load_handler(dummy):
     if screen:
         for area in screen.areas:
             # Set Tool settings as default in properties panel.
-            if area.type == 'PROPERTIES':
-                for space in area.spaces:
-                    if space.type != 'PROPERTIES':
-                        continue
-                    space.context = 'TOOL'
+            # bfa - we don't have tools in the properties editor
+            # if area.type == 'PROPERTIES':
+            #     for space in area.spaces:
+            #         if space.type != 'PROPERTIES':
+            #             continue
+            #         space.context = 'TOOL'
 
             # Open sidebar in Dopesheet.
-            elif area.type == 'DOPESHEET_EDITOR':
+            #elif area.type == 'DOPESHEET_EDITOR': # bfa - no if means no elif.
+            if area.type == 'DOPESHEET_EDITOR':
                 for space in area.spaces:
                     if space.type != 'DOPESHEET_EDITOR':
                         continue
