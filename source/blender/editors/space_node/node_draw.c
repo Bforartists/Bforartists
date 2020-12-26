@@ -1670,7 +1670,7 @@ static void node_draw_basis(const bContext *C,
       icon = ICON_NODE_SPILL;
       break;
     case CMP_NODE_CRYPTOMATTE:
-      icon = ICON_NODE_CHROMA;
+      icon = ICON_CRYPTOMATTE;
       break;
     case CMP_NODE_DIFF_MATTE:
       icon = ICON_SELECT_DIFFERENCE;
