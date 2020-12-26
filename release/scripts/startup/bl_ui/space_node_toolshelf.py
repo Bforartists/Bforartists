@@ -1655,6 +1655,11 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
 
             col = layout.column(align=True)
 
+            props = col.operator("node.add_node", text=" Cryptomatte        ", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatte"
+
+
             props = col.operator("node.add_node", text=" Difference Key ", icon = "SELECT_DIFFERENCE")
             props.use_transform = True
             props.type = "CompositorNodeDiffMatte"
@@ -1666,6 +1671,8 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Keying              ", icon = "NODE_KEYING")
             props.use_transform = True
             props.type = "CompositorNodeKeying"
+
+            col = layout.column(align=True)
 
             props = col.operator("node.add_node", text=" Keying Screen  ", icon = "NODE_KEYINGSCREEN")
             props.use_transform = True
@@ -1718,6 +1725,10 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'
 
+            props = col.operator("node.add_node", text="", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatte"
+
             props = row.operator("node.add_node", text = "", icon = "SELECT_DIFFERENCE")
             props.use_transform = True
             props.type = "CompositorNodeDiffMatte"
@@ -1730,12 +1741,12 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeKeying"
 
+            row = layout.row()
+            row.alignment = 'LEFT'
+
             props = row.operator("node.add_node", text = "", icon = "NODE_KEYINGSCREEN")
             props.use_transform = True
             props.type = "CompositorNodeKeyingScreen"
-
-            row = layout.row()
-            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text = "", icon = "NODE_LUMINANCE")
             props.use_transform = True

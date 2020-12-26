@@ -1110,7 +1110,7 @@ saturation
 node_impaint
 node_invert
 
-#def_icon_blank(1125
+cryptomatte
 output
 #def_icon_blank(1127
 #def_icon_blank(1128
