@@ -1595,6 +1595,7 @@ class CYCLES_LIGHT_PT_nodes(CyclesButtonsPanel, Panel):
 
 class CYCLES_LIGHT_PT_spot(CyclesButtonsPanel, Panel):
     bl_label = "Spot Shape"
+    bl_parent_id = "CYCLES_LIGHT_PT_light"
     bl_context = "data"
 
     @classmethod
@@ -1606,7 +1607,6 @@ class CYCLES_LIGHT_PT_spot(CyclesButtonsPanel, Panel):
         layout = self.layout
         light = context.light
         layout.use_property_split = True
-        layout.use_property_decorate = False
 
         col = layout.column()
         col.prop(light, "spot_size", text="Size")
@@ -2147,10 +2147,11 @@ class CYCLES_RENDER_PT_bake_output(CyclesButtonsPanel, Panel):
             if rd.bake_type == 'DISPLACEMENT':
                 layout.prop(rd, "use_bake_lores_mesh")
         else:
+            layout.prop(cbk, "target")
 
-            layout.prop(cbk, "margin")
-            layout.use_property_split = False
-            layout.prop(cbk, "use_clear", text="Clear Image")
+            if cbk.target == 'IMAGE_TEXTURES':
+                layout.prop(cbk, "margin")
+                layout.prop(cbk, "use_clear", text="Clear Image")
 
 
 class CYCLES_RENDER_PT_debug(CyclesButtonsPanel, Panel):
