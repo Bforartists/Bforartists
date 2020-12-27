@@ -2151,6 +2151,7 @@ class CYCLES_RENDER_PT_bake_output(CyclesButtonsPanel, Panel):
 
             if cbk.target == 'IMAGE_TEXTURES':
                 layout.prop(cbk, "margin")
+                layout.use_property_split = False
                 layout.prop(cbk, "use_clear", text="Clear Image")
 
 
