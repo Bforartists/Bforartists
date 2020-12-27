@@ -1705,7 +1705,7 @@ static const EnumPropertyItem prop_actkeys_snap_types[] = {
      "NEAREST_FRAME",
      ICON_SNAP_NEARESTFRAME,
      "Selection to Nearest Frame",
-     "Snap selected keyframes to the nearest (whole) frame (use to fix accidental sub-frame "
+     "Snap selected keyframes to the nearest (whole) frame (use to fix accidental subframe "
      "offsets)"},
     {ACTKEYS_SNAP_NEAREST_SECOND,
      "NEAREST_SECOND",
