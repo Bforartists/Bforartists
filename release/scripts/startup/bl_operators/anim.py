@@ -347,14 +347,14 @@ class ClearUselessActions(Operator):
 
 
 class UpdateAnimatedTransformConstraint(Operator):
-    """Update Animated Transform Constraints\nUpdate fcurves/drivers affecting Transform constraints (use it with files from 2.70 and earlier)"""
+    """Update Animated Transform Constraints\nUpdate f-curves/drivers affecting Transform constraints (use it with files from 2.70 and earlier)"""
     bl_idname = "anim.update_animated_transform_constraints"
     bl_label = "Update Animated Transform Constraints"
     bl_options = {'REGISTER', 'UNDO'}
 
     use_convert_to_radians: BoolProperty(
         name="Convert to Radians",
-        description="Convert fcurves/drivers affecting rotations to radians (Warning: use this only once!)",
+        description="Convert f-curves/drivers affecting rotations to radians (Warning: use this only once!)",
         default=True,
     )
 
