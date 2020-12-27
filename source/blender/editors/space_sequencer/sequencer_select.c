@@ -1312,7 +1312,7 @@ static const EnumPropertyItem sequencer_prop_select_grouped_types[] = {
      "TYPE_BASIC",
      ICON_TYPE,
      "Global Type",
-     "All strips of same basic type (Graphical or Sound)"},
+     "All strips of same basic type (graphical or sound)"},
     {SEQ_SELECT_GROUP_TYPE_EFFECT,
      "TYPE_EFFECT",
      ICON_TYPE,

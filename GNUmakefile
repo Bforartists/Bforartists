@@ -42,6 +42,7 @@ Convenience Targets
    * developer:     Enable faster builds, error checking and tests, recommended for developers.
    * config:        Run cmake configuration tool to set build options.
    * ninja:         Use ninja build tool for faster builds.
+   * ccache:        Use ccache for faster rebuilds.
 
    Note: passing the argument 'BUILD_DIR=path' when calling make will override the default build dir.
    Note: passing the argument 'BUILD_CMAKE_ARGS=args' lets you add cmake arguments.
@@ -246,6 +247,10 @@ ifneq "$(findstring developer, $(MAKECMDGOALS))" ""
 	CMAKE_CONFIG_ARGS:=-C"$(BLENDER_DIR)/build_files/cmake/config/blender_developer.cmake" $(CMAKE_CONFIG_ARGS)
 endif
 
+ifneq "$(findstring ccache, $(MAKECMDGOALS))" ""
+	CMAKE_CONFIG_ARGS:=-DWITH_COMPILER_CCACHE=YES $(CMAKE_CONFIG_ARGS)
+endif
+
 # -----------------------------------------------------------------------------
 # build tool
 
@@ -345,6 +350,7 @@ headless: all
 bpy: all
 developer: all
 ninja: all
+ccache: all
 
 # -----------------------------------------------------------------------------
 # Build dependencies
