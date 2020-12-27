@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8 compliant>f
+# <pep8 compliant>
 import bpy
 from bpy.types import (
     Header,
@@ -4788,7 +4788,7 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
 
             # Deform Operators
             col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
-            col.operator("transform.shrink_fatten", text="Shrink/Fatten", icon = 'SHRINK_FATTEN')
+            col.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
             col.operator("transform.shear", text="Shear", icon = "SHEAR")
             col.operator_context = 'EXEC_REGION_WIN'
             col.operator("transform.vertex_random", text="Randomize Vertices", icon = 'RANDOMIZE')
