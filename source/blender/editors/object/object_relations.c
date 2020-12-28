@@ -1793,7 +1793,7 @@ void OBJECT_OT_make_links_data(wmOperatorType *ot)
       {MAKE_LINKS_DUPLICOLLECTION, "DUPLICOLLECTION", ICON_LINK_DATA, "Instance Collection", ""},
       {MAKE_LINKS_MODIFIERS, "MODIFIERS", ICON_LINK_DATA, "Modifiers", ""},
       {MAKE_LINKS_FONTS, "FONTS", ICON_LINK_DATA, "Fonts", ""},
-      {MAKE_LINKS_SHADERFX, "EFFECTS", 0, "Effects", ""},
+      {MAKE_LINKS_SHADERFX, "EFFECTS", ICON_SHADERFX, "Effects", ""},
       {0, NULL, 0, NULL, NULL},
   };
 
