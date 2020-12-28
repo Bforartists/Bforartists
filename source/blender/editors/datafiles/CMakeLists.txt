@@ -1112,14 +1112,14 @@ node_invert
 
 cryptomatte
 output
-#def_icon_blank(1127
-#def_icon_blank(1128
+increase_kerning
+decrease_kerning
 sphere
 stroke
-#def_icon_blank(1131
+rimlight
 uv
 window
-#def_icon_blank(1134
+swirl
 
 # ------------------------- row 20 --------------------------*/
 
