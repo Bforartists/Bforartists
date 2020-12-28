@@ -470,15 +470,15 @@ class SEQUENCER_MT_select_handle(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("sequencer.select_handles", text="Both", icon = "RESTRICT_SELECT_OFF").side = 'BOTH'
-        layout.operator("sequencer.select_handles", text="Left", icon = "RESTRICT_SELECT_OFF").side = 'LEFT'
-        layout.operator("sequencer.select_handles", text="Right", icon = "RESTRICT_SELECT_OFF").side = 'RIGHT'
+        layout.operator("sequencer.select_handles", text="Both", icon = "SELECT_HANDLE_BOTH").side = 'BOTH'
+        layout.operator("sequencer.select_handles", text="Left", icon = "SELECT_HANDLE_LEFT").side = 'LEFT'
+        layout.operator("sequencer.select_handles", text="Right", icon = "SELECT_HANDLE_RIGHT").side = 'RIGHT'
 
         layout.separator()
 
-        layout.operator("sequencer.select_handles", text="Both Neighbors").side = 'BOTH_NEIGHBORS'
-        layout.operator("sequencer.select_handles", text="Left Neighbor").side = 'LEFT_NEIGHBOR'
-        layout.operator("sequencer.select_handles", text="Right Neighbor").side = 'RIGHT_NEIGHBOR'
+        layout.operator("sequencer.select_handles", text="Both Neighbors", icon = "SELECT_HANDLE_BOTH").side = 'BOTH_NEIGHBORS'
+        layout.operator("sequencer.select_handles", text="Left Neighbor", icon = "SELECT_HANDLE_LEFT").side = 'LEFT_NEIGHBOR'
+        layout.operator("sequencer.select_handles", text="Right Neighbor", icon = "SELECT_HANDLE_RIGHT").side = 'RIGHT_NEIGHBOR'
 
 
 class SEQUENCER_MT_select_channel(Menu):
