@@ -1330,13 +1330,13 @@ hook_recenter
 node_principled
 node_range
 node_refractionshader
-#def_icon_blank(1346
+node_rgbtobw
 node_reroute
 node_rgb
 node_rgbcurve
-node_rgbtobw
-#def_icon_blank(1351
-#def_icon_blank(1352
+select_handle_both
+select_handle_left
+select_handle_right
 
 select_difference
 select_extend
