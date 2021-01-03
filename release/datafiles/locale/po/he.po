@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -556,6 +556,11 @@ msgstr "לדחמ תרירב"
 
 
 msgctxt "Operator"
+msgid "Manual"
+msgstr "ינדי"
+
+
+msgctxt "Operator"
 msgid "Animate Path"
 msgstr ":ץבוק ביתנ"
 
@@ -653,11 +658,6 @@ msgid "Alpha Under"
 msgstr "רמה"
 
 
-msgctxt "Operator"
-msgid "Manual"
-msgstr "ינדי"
-
-
 msgid "Location:"
 msgstr "‏:םוקימ"
 
@@ -679,11 +679,6 @@ msgstr "בוביס"
 msgctxt "Operator"
 msgid "Make"
 msgstr "הכסמ"
-
-
-msgctxt "Operator"
-msgid "Shrink Fatten"
-msgstr "ץווכ"
 
 
 msgctxt "Operator"

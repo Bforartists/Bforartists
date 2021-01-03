@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -129,6 +129,10 @@ msgid "Active Bone"
 msgstr "Активдүү сөөк"
 
 
+msgid "Description"
+msgstr "Баяндама"
+
+
 msgid "Data Type"
 msgstr "Маалыматтар түрү"
 
@@ -179,6 +183,10 @@ msgstr "Жок"
 
 msgid "Emit"
 msgstr "Жаркыроосу"
+
+
+msgid "Target"
+msgstr "Максат"
 
 
 msgid "Clear"
@@ -494,10 +502,6 @@ msgid "Floor"
 msgstr "Пол"
 
 
-msgid "Target"
-msgstr "Максат"
-
-
 msgid "X"
 msgstr "X"
 
@@ -648,10 +652,6 @@ msgstr "Куюн"
 
 msgid "Wind"
 msgstr "Шамал"
-
-
-msgid "Description"
-msgstr "Баяндама"
 
 
 msgid "Icon"
@@ -996,7 +996,7 @@ msgid "Font"
 msgstr "Арип"
 
 
-msgid "Font size"
+msgid "Font Size"
 msgstr "Арип өлчөмү"
 
 
@@ -1862,16 +1862,8 @@ msgid "Resize"
 msgstr "Өлчөмүн өзгөртүү"
 
 
-msgid "Tosphere"
-msgstr "Сферага"
-
-
 msgid "Trackball"
 msgstr "Трекбол"
-
-
-msgid "Bweight"
-msgstr "B-салмак"
 
 
 msgctxt "Operator"
@@ -1981,17 +1973,12 @@ msgstr "Мурунку папка"
 
 
 msgctxt "Operator"
-msgid "Refresh Filelist"
-msgstr "Файлдар тизмесин жаңылоо"
-
-
-msgctxt "Operator"
 msgid "Select Directory"
 msgstr "Каталогду тандоо"
 
 
-msgid "ID name"
-msgstr "ID аты"
+msgid "Previous"
+msgstr "Мурунку"
 
 
 msgid "Delta"
@@ -2148,10 +2135,6 @@ msgid "Construct a circle mesh"
 msgstr "Тегерек политорун жаратуу"
 
 
-msgid "Ngon"
-msgstr "N-бурчтук"
-
-
 msgctxt "Operator"
 msgid "Add Cone"
 msgstr "Конусту кошуу"
@@ -2199,10 +2182,6 @@ msgstr "UV-сфера политорун жаратуу"
 
 msgid "Cursor Distance"
 msgstr "Курсор аралыгы"
-
-
-msgid "Previous"
-msgstr "Мурунку"
 
 
 msgid "Exit"
@@ -2319,10 +2298,6 @@ msgstr "Тез түтүн"
 
 msgid "Smoke Style"
 msgstr "Түтүн стили"
-
-
-msgid "Object Color"
-msgstr "Объект түсү"
 
 
 msgid "Child"
@@ -2501,6 +2476,10 @@ msgstr "Секвенсорду жаңылоо"
 
 msgid "Effect"
 msgstr "Эффект"
+
+
+msgid "Property"
+msgstr "Касиет"
 
 
 msgctxt "Operator"
@@ -2707,10 +2686,6 @@ msgstr "Ишеничтүү булак"
 
 msgid "Operator"
 msgstr "Оператор"
-
-
-msgid "Property"
-msgstr "Касиет"
 
 
 msgctxt "Operator"
@@ -2972,10 +2947,6 @@ msgstr "кадр/с"
 
 msgid "Multiple Engines"
 msgstr "Бир нече кыймылдаткычтар"
-
-
-msgid "Font Size"
-msgstr "Арип өлчөмү"
 
 
 msgid "Text Color"
@@ -3308,6 +3279,16 @@ msgid "Edit"
 msgstr "Оңдоо"
 
 
+msgctxt "Operator"
+msgid "Open..."
+msgstr "Ачуу..."
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "Колдонмо"
+
+
 msgid "To"
 msgstr "Кимге"
 
@@ -3385,11 +3366,6 @@ msgstr "Артынан"
 msgctxt "Operator"
 msgid "New"
 msgstr "Жаңы"
-
-
-msgctxt "Operator"
-msgid "Open..."
-msgstr "Ачуу..."
 
 
 msgctxt "Operator"
@@ -3488,11 +3464,6 @@ msgstr "Чыгуу"
 msgctxt "Operator"
 msgid "Save Copy..."
 msgstr "Көчүрмөсүн сактоо..."
-
-
-msgctxt "Operator"
-msgid "Manual"
-msgstr "Колдонмо"
 
 
 msgctxt "Operator"

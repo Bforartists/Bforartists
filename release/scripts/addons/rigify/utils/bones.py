@@ -196,16 +196,9 @@ def copy_bone_properties(obj, bone_name_1, bone_name_2, transforms=True, props=T
 
         # Copy custom properties
         if props:
-            for key in pose_bone_1.keys():
-                if key != "_RNA_UI" \
-                and key != "rigify_parameters" \
-                and key != "rigify_type":
-                    prop1 = rna_idprop_ui_prop_get(pose_bone_1, key, create=False)
-                    pose_bone_2[key] = pose_bone_1[key]
-                    if prop1 is not None:
-                        prop2 = rna_idprop_ui_prop_get(pose_bone_2, key, create=True)
-                        for key in prop1.keys():
-                            prop2[key] = prop1[key]
+            from .mechanism import copy_custom_properties
+
+            copy_custom_properties(pose_bone_1, pose_bone_2)
 
         if widget:
             pose_bone_2.custom_shape = pose_bone_1.custom_shape

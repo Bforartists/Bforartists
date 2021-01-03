@@ -29,6 +29,8 @@ else:
 
 import requests
 import bpy
+import logging
+bk_logger = logging.getLogger('rerequests')
 
 
 def rerequest(method, url, **kwargs):
@@ -40,8 +42,8 @@ def rerequest(method, url, **kwargs):
     # first normal attempt
     response = requests.request(method, url, **kwargs)
 
-    utils.p(url, kwargs)
-    utils.p(response.status_code)
+    bk_logger.debug(url+ str( kwargs))
+    bk_logger.debug(response.status_code)
 
     if response.status_code == 401:
         try:
@@ -61,7 +63,7 @@ def rerequest(method, url, **kwargs):
                     auth_token, refresh_token, oauth_response = bkit_oauth.refresh_token(
                         user_preferences.api_key_refresh, refresh_url)
 
-                    # utils.p(auth_token, refresh_token)
+                    # bk_logger.debug(auth_token, refresh_token)
                     if auth_token is not None:
                         if immediate == True:
                             # this can write tokens occasionally into prefs. used e.g. in upload. Only possible
@@ -73,9 +75,9 @@ def rerequest(method, url, **kwargs):
 
                         kwargs['headers'] = utils.get_headers(auth_token)
                         response = requests.request(method, url, **kwargs)
-                        utils.p('reresult', response.status_code)
+                        bk_logger.debug('reresult', response.status_code)
                         if response.status_code >= 400:
-                            utils.p('reresult', response.text)
+                            bk_logger.debug('reresult', response.text)
                             tasks_queue.add_task((ui.add_report, (
                                 response.text, 10)))
 

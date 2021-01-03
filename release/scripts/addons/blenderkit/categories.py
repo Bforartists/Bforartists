@@ -34,6 +34,8 @@ import time
 
 import shutil
 import threading
+import logging
+bk_logger = logging.getLogger('blenderkit')
 
 
 def count_to_parent(parent):
@@ -100,17 +102,16 @@ def get_category(categories, cat_path=()):
                     return (c)
                 break;
 
-def get_upload_asset_type(self):
-    typemapper = {
-        bpy.types.Object.blenderkit: 'model',
-        bpy.types.Scene.blenderkit: 'scene',
-        bpy.types.Material.blenderkit: 'material',
-        bpy.types.Brush.blenderkit: 'brush'
-    }
-    asset_type = typemapper[type(self)]
-    return asset_type
-
-
+# def get_upload_asset_type(self):
+#     typemapper = {
+#         bpy.types.Object.blenderkit: 'model',
+#         bpy.types.Scene.blenderkit: 'scene',
+#         bpy.types.Image.blenderkit: 'hdr',
+#         bpy.types.Material.blenderkit: 'material',
+#         bpy.types.Brush.blenderkit: 'brush'
+#     }
+#     asset_type = typemapper[type(self)]
+#     return asset_type
 
 
 def get_category_enums(self, context):
@@ -122,6 +123,8 @@ def get_category_enums(self, context):
     items = []
     for c in asset_categories['children']:
         items.append((c['slug'], c['name'], c['description']))
+    if len(items) == 0:
+        items.append(('NONE', '', 'no categories on this level defined'))
     return items
 
 def get_subcategory_enums(self, context):
@@ -133,7 +136,9 @@ def get_subcategory_enums(self, context):
         asset_categories = get_category(wm['bkit_categories'], cat_path=(asset_type, self.category,))
         for c in asset_categories['children']:
             items.append((c['slug'], c['name'], c['description']))
-
+    if len(items) == 0:
+        items.append(('NONE', '', 'no categories on this level defined'))
+    # print('subcategory', items)
     return items
 
 def get_subcategory1_enums(self, context):
@@ -143,9 +148,11 @@ def get_subcategory1_enums(self, context):
     items = []
     if self.category != '' and self.subcategory != '':
         asset_categories = get_category(wm['bkit_categories'], cat_path=(asset_type, self.category, self.subcategory, ))
-        for c in asset_categories['children']:
-            items.append((c['slug'], c['name'], c['description']))
-
+        if asset_categories:
+            for c in asset_categories['children']:
+                items.append((c['slug'], c['name'], c['description']))
+    if len(items) == 0:
+        items.append(('NONE', '', 'no categories on this level defined'))
     return items
 
 def copy_categories():
@@ -174,6 +181,7 @@ def load_categories():
         wm['active_category'] = {
             'MODEL': ['model'],
             'SCENE': ['scene'],
+            'HDR': ['hdr'],
             'MATERIAL': ['material'],
             'BRUSH': ['brush'],
         }
@@ -195,12 +203,12 @@ def fetch_categories(API_key, force = False):
 
     # global catfetch_counter
     # catfetch_counter += 1
-    # utils.p('fetching categories: ', catfetch_counter)
-    # utils.p('age of cat file', catfile_age)
+    # bk_logger.debug('fetching categories: ', catfetch_counter)
+    # bk_logger.debug('age of cat file', catfile_age)
     try:
         # read categories only once per day maximum, or when forced to do so.
         if catfile_age > 86400 or force:
-            utils.p('requesting categories')
+            bk_logger.debug('requesting categories')
             r = rerequests.get(url, headers=headers)
             rdata = r.json()
             categories = rdata['results']
@@ -210,8 +218,8 @@ def fetch_categories(API_key, force = False):
                 json.dump(categories, s, indent=4)
         tasks_queue.add_task((load_categories, ()))
     except Exception as e:
-        utils.p('category fetching failed')
-        utils.p(e)
+        bk_logger.debug('category fetching failed')
+        bk_logger.exception(e)
         if not os.path.exists(categories_filepath):
             source_path = paths.get_addon_file(subpath='data' + os.sep + 'categories.json')
             shutil.copy(source_path, categories_filepath)
