@@ -32,6 +32,11 @@ import json
 import os
 import sys
 import shutil
+import logging
+import traceback
+import inspect
+
+bk_logger = logging.getLogger('blenderkit')
 
 ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000
 BELOW_NORMAL_PRIORITY_CLASS = 0x00004000
@@ -74,6 +79,13 @@ def get_active_model():
             ob = ob.parent
         return ob
     return None
+
+
+def get_active_HDR():
+    scene = bpy.context.scene
+    ui_props = scene.blenderkitUI
+    image = ui_props.hdr_upload_image
+    return image
 
 
 def get_selected_models():
@@ -150,6 +162,10 @@ def get_search_props():
         if not hasattr(scene, 'blenderkit_scene'):
             return;
         props = scene.blenderkit_scene
+    if uiprops.asset_type == 'HDR':
+        if not hasattr(scene, 'blenderkit_HDR'):
+            return;
+        props = scene.blenderkit_HDR
     if uiprops.asset_type == 'MATERIAL':
         if not hasattr(scene, 'blenderkit_mat'):
             return;
@@ -176,7 +192,8 @@ def get_active_asset():
             return ob
     if ui_props.asset_type == 'SCENE':
         return bpy.context.scene
-
+    if ui_props.asset_type == 'HDR':
+        return get_active_HDR()
     elif ui_props.asset_type == 'MATERIAL':
         if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None:
             return bpy.context.active_object.active_material
@@ -199,6 +216,12 @@ def get_upload_props():
     if ui_props.asset_type == 'SCENE':
         s = bpy.context.scene
         return s.blenderkit
+    if ui_props.asset_type == 'HDR':
+
+        hdr = ui_props.hdr_upload_image#bpy.data.images.get(ui_props.hdr_upload_image)
+        if not hdr:
+            return None
+        return hdr.blenderkit
     elif ui_props.asset_type == 'MATERIAL':
         if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None:
             return bpy.context.active_object.active_material.blenderkit
@@ -272,6 +295,17 @@ def save_prefs(self, context):
             print(e)
 
 
+def uploadable_asset_poll():
+    '''returns true if active asset type can be uploaded'''
+    ui_props = bpy.context.scene.blenderkitUI
+    if ui_props.asset_type == 'MODEL':
+        return bpy.context.view_layer.objects.active is not None
+    if ui_props.asset_type == 'MATERIAL':
+        return bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None
+    if ui_props.asset_type == 'HDR':
+        return ui_props.hdr_upload_image is not None
+    return True
+
 def get_hidden_texture(tpath, bdata_name, force_reload=False):
     i = get_hidden_image(tpath, bdata_name, force_reload=force_reload)
     bdata_name = f".{bdata_name}"
@@ -283,15 +317,16 @@ def get_hidden_texture(tpath, bdata_name, force_reload=False):
     return t
 
 
-def get_hidden_image(tpath, bdata_name, force_reload=False):
-    hidden_name = '.%s' % bdata_name
+def get_hidden_image(tpath, bdata_name, force_reload=False, colorspace = 'sRGB'):
+    if bdata_name[0] == '.':
+        hidden_name = bdata_name
+    else:
+        hidden_name = '.%s' % bdata_name
     img = bpy.data.images.get(hidden_name)
 
     if tpath.startswith('//'):
         tpath = bpy.path.abspath(tpath)
 
-    gap = '\n\n\n'
-    en = '\n'
     if img == None or (img.filepath != tpath):
         if tpath.startswith('//'):
             tpath = bpy.path.abspath(tpath)
@@ -308,12 +343,12 @@ def get_hidden_image(tpath, bdata_name, force_reload=False):
 
                 img.filepath = tpath
                 img.reload()
-        img.colorspace_settings.name = 'sRGB'
+        img.colorspace_settings.name = colorspace
     elif force_reload:
         if img.packed_file is not None:
             img.unpack(method='USE_ORIGINAL')
         img.reload()
-        img.colorspace_settings.name = 'sRGB'
+        img.colorspace_settings.name = colorspace
     return img
 
 
@@ -346,25 +381,30 @@ def get_brush_props(context):
     return None
 
 
-def p(text, text1='', text2='', text3='', text4='', text5=''):
+def p(text, text1='', text2='', text3='', text4='', text5='', level = 'DEBUG'):
     '''debug printing depending on blender's debug value'''
 
-    if bpy.app.debug_value != 0:
-        print('\n')
+    if 1:#bpy.app.debug_value != 0:
         # print('-----BKit debug-----\n')
         # traceback.print_stack()
-        print(text, text1, text2, text3, text4, text5)
+        texts = [text1,text2,text3,text4,text5]
+        text = str(text)
+        for t in texts:
+            if t!= '':
+                text += ' ' + str(t)
+
+        bk_logger.debug(text)
         # print('---------------------\n')
 
 
 def copy_asset(fp1, fp2):
     '''synchronizes the asset between folders, including it's texture subdirectories'''
     if 1:
-        p('copy asset')
-        p(fp1, fp2)
+        bk_logger.debug('copy asset')
+        bk_logger.debug(fp1, fp2)
         if not os.path.exists(fp2):
             shutil.copyfile(fp1, fp2)
-            p('copied')
+            bk_logger.debug('copied')
         source_dir = os.path.dirname(fp1)
         target_dir = os.path.dirname(fp2)
         for subdir in os.scandir(source_dir):
@@ -373,9 +413,9 @@ def copy_asset(fp1, fp2):
             target_subdir = os.path.join(target_dir, subdir.name)
             if os.path.exists(target_subdir):
                 continue
-            p(subdir, target_subdir)
+            bk_logger.debug(subdir, target_subdir)
             shutil.copytree(subdir, target_subdir)
-            p('copied')
+            bk_logger.debug('copied')
 
     # except Exception as e:
     #     print('BlenderKit failed to copy asset')
@@ -411,6 +451,7 @@ def select_hierarchy(ob, state=True):
 def delete_hierarchy(ob):
     obs = get_hierarchy(ob)
     bpy.ops.object.delete({"selected_objects": obs})
+
 
 def get_bounds_snappable(obs, use_modifiers=False):
     # progress('getting bounds of object(s)')
@@ -601,6 +642,9 @@ def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False
 
 
 def name_update():
+    scene = bpy.context.scene
+    ui_props = scene.blenderkitUI
+
     props = get_upload_props()
     if props.name_old != props.name:
         props.name_changed = True
@@ -617,7 +661,9 @@ def name_update():
     fname = fname.replace('\'', '')
     fname = fname.replace('\"', '')
     asset = get_active_asset()
-    asset.name = fname
+    if ui_props.asset_type != 'HDR':
+        # Here we actually rename assets datablocks, but don't do that with HDR's and possibly with others
+        asset.name = fname
 
 
 def get_param(asset_data, parameter_name):
@@ -629,6 +675,7 @@ def get_param(asset_data, parameter_name):
         if p.get('parameterType') == parameter_name:
             return p['value']
     return None
+
 
 
 def params_to_dict(params):
@@ -661,6 +708,29 @@ def dict_to_params(inputs, parameters=None):
             })
     return parameters
 
+def update_tags(self, context):
+    props = self
+
+    commasep = props.tags.split(',')
+    ntags = []
+    for tag in commasep:
+        if len(tag) > 19:
+            short_tags = tag.split(' ')
+            for short_tag in short_tags:
+                if len(short_tag) > 19:
+                    short_tag = short_tag[:18]
+                ntags.append(short_tag)
+        else:
+            ntags.append(tag)
+    if len(ntags) == 1:
+        ntags = ntags[0].split(' ')
+    ns = ''
+    for t in ntags:
+        if t != '':
+            ns += t + ','
+    ns = ns[:-1]
+    if props.tags != ns:
+        props.tags = ns
 
 def user_logged_in():
     a = bpy.context.window_manager.get('bkit profile')

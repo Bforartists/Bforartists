@@ -20,7 +20,9 @@
 
 import bpy
 
-from ...utils.naming import strip_org, strip_prefix, choose_derived_bone
+from ...utils.naming import strip_org, strip_prefix, choose_derived_bone, is_control_bone
+from ...utils.mechanism import copy_custom_properties_with_ui
+from ...utils.widgets import layout_widget_dropdown, create_registered_widget
 
 from ...base_rig import BaseRig
 from ...base_generate import SubstitutionRig
@@ -156,12 +158,30 @@ class Rig(BaseRig, RelinkConstraintsMixin):
     def parent_bones(self):
         self.relink_bone_parent(self.bones.org)
 
+    def configure_bones(self):
+        org = self.bones.org
+        if is_control_bone(org):
+            copy_custom_properties_with_ui(self, org, org, ui_controls=[org])
+
     def rig_bones(self):
         self.relink_bone_constraints(self.bones.org)
+
+    def generate_widgets(self):
+        org = self.bones.org
+        widget = self.params.optional_widget_type
+        if widget and is_control_bone(org):
+            create_registered_widget(self.obj, org, widget)
 
     @classmethod
     def add_parameters(self, params):
         self.add_relink_constraints_params(params)
+
+        params.optional_widget_type = bpy.props.StringProperty(
+            name        = "Widget Type",
+            default     = '',
+            description = "Choose the type of the widget to create"
+        )
+
 
     @classmethod
     def parameters_ui(self, layout, params):
@@ -170,6 +190,11 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         col.label(text='Manually add ORG, MCH or DEF as needed.')
 
         self.add_relink_constraints_ui(layout, params)
+
+        pbone = bpy.context.active_pose_bone
+
+        if pbone and is_control_bone(pbone.name):
+            layout_widget_dropdown(layout, params, "optional_widget_type")
 
 
 #add_parameters = InstanceRig.add_parameters

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -438,6 +438,10 @@ msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 msgid "Internal"
 msgstr "ﻡﺎﻏﺩﺍ"
+
+
+msgid "Target"
+msgstr "ﻑﺪﻫ"
 
 
 msgid "Handle 1"
@@ -1279,10 +1283,6 @@ msgstr "ﯽﺑﺎﯾﺯﺭﺍ NLA ﻩﺪﺷ ﻝﺎﻌﻓ"
 
 msgid "Mix Mode"
 msgstr "ﯽﺒﯿﮐﺮﺗ ﺖﻟﺎﺣ"
-
-
-msgid "Target"
-msgstr "ﻑﺪﻫ"
 
 
 msgid "Target object"
@@ -2442,10 +2442,6 @@ msgid "Frames"
 msgstr "ﺎﻫ‌ﻢﯾﺮﻓ"
 
 
-msgid "Parent Object"
-msgstr "ﯽﺷ ﮏﯾ"
-
-
 msgid "Parent Bone"
 msgstr "ﺪﻟﺍﻭ ﻥﺍﻮﺨﺘﺳﺍ"
 
@@ -2552,6 +2548,10 @@ msgstr "ءﯽﺷ ﯼﺎﻀﻓ"
 
 msgid "Relative Offset"
 msgstr "X ﺖﺴﻓﺍ"
+
+
+msgid "Uniform Scale"
+msgstr "ﻩﺯﺍﺪﻧﺍ ﻥﺩﺮﮐ‌ﯽﮑﯾ"
 
 
 msgid "Build Modifier"
@@ -2764,10 +2764,6 @@ msgstr "ﻪﻠﺻﺎﻓ"
 
 msgid "Custom Icon"
 msgstr "ﯽﺷﺭﺎﻔﺳ ﮏﻧﺭ"
-
-
-msgid "Edge-to-edge"
-msgstr "ﻪﺒﻟ ﻪﺑ ﻪﺒﻟ"
 
 
 msgid "Use Front-Face"
@@ -2992,10 +2988,6 @@ msgstr "X ﺖﺴﻓﺍ"
 
 msgid "Y Offset"
 msgstr "Y ﺖﺴﻓﺍ"
-
-
-msgid "Font size"
-msgstr "ﺎﻫ‌ﺖﻧﻮﻓ:"
 
 
 msgid "Textboxes"
@@ -3430,10 +3422,6 @@ msgid "Settings for soft body simulation"
 msgstr "ﺖﮐﺮﺣ ﻢﺴﺠﺗ ﯼﺍﺮﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Type of Object"
-msgstr "ﯽﺷ ﮏﯾ"
-
-
 msgid "Shape Key Edit Mode"
 msgstr "ﯽﺸﯾﺍﺮﯾﻭ ﺖﻟﺎﺣ"
 
@@ -3520,10 +3508,6 @@ msgstr "ﻩﺯﺍﺪﻧﺍ"
 
 msgid "Distribution"
 msgstr "ﺡﺮﺷ:"
-
-
-msgid "Amount of air-drag"
-msgstr "ﻞﻣﺎﻌﺗ:"
 
 
 msgid "Effector Number"
@@ -3646,12 +3630,12 @@ msgid "Object Z"
 msgstr "ءﯽﺷ"
 
 
-msgid "Size1"
-msgstr "1ﻩﺯﺍﺪﻧﺍ"
+msgid "Roughness 1"
+msgstr "1 ﯼﺮﺑﺯ"
 
 
-msgid "Size2"
-msgstr "2ﻩﺯﺍﺪﻧﺍ"
+msgid "Roughness 2"
+msgstr "2 ﯼﺮﺑﺯ"
 
 
 msgid "Strand shape parameter"
@@ -3668,10 +3652,6 @@ msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
 
 msgid "Random Size"
 msgstr "ﯽﻓﺩﺎﺼﺗ"
-
-
-msgid "Particle Type"
-msgstr "ﺕﺍﺭﺫ ﻉﻮﻧ"
 
 
 msgid "Automatic Subframes"
@@ -3754,16 +3734,8 @@ msgid "Display Settings"
 msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Current Sub-Frame"
-msgstr "ﯽﻠﻌﻓ ﻢﯾﺮﻓ ﻑﺍﺮﻃﺍ ﺭﺩ"
-
-
 msgid "Preview Range Start Frame"
 msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
-
-
-msgid "NLA TweakMode"
-msgstr "NLA ﮎﺮﺗ"
 
 
 msgid "Absolute Keying Sets"
@@ -5349,10 +5321,6 @@ msgid "Interface"
 msgstr "ﻂﺳﺍﻭ"
 
 
-msgid "Convert Premul"
-msgstr "Premul ﻞﯾﺪﺒﺗ"
-
-
 msgid "Color Sigma"
 msgstr "ﺎﻤﮕﯿﺳ ﮓﻧﺭ"
 
@@ -5433,8 +5401,8 @@ msgid "Channel Key"
 msgstr "ﺎﻫ‌ﻝﺎﻧﺎﮐ"
 
 
-msgid "YUV Color Space"
-msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
+msgid "RGB color space"
+msgstr "ﮓﻧﺭ ﯼﺎﻀﻓ"
 
 
 msgid "Limit Channel"
@@ -5629,14 +5597,6 @@ msgid "Color Spill"
 msgstr "ﮓﻧﺭ ﺖﺸﻧ"
 
 
-msgid "Limit by Red"
-msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
-
-
-msgid "Limit by Blue"
-msgstr "ﺯﺎﺠﻣ ﻩﺯﺍﺪﻧﺍ"
-
-
 msgid "R"
 msgstr "R"
 
@@ -5687,10 +5647,6 @@ msgstr "ﺮﭘ"
 
 msgid "Distance Key"
 msgstr "ﻪﻠﺻﺎﻓ"
-
-
-msgid "RGB color space"
-msgstr "ﮓﻧﺭ ﯼﺎﻀﻓ"
 
 
 msgid "Double Edge Mask"
@@ -5895,10 +5851,6 @@ msgstr "ﯼﺯﺎﺳ ﻪﯿﺒﺷ"
 
 msgid "Alpha Convert"
 msgstr "ﻞﯾﺪﺒﺗ"
-
-
-msgid "Straight to Premul"
-msgstr "ﺖﺳﺍﺭ ﻝﺮﺘﻨﮐ ﺪﯿﻠﮐ"
 
 
 msgid "Separate HSVA"
@@ -7558,10 +7510,6 @@ msgid "Reset Recent"
 msgstr "ﺮﯿﺧﺍ"
 
 
-msgid "Reset Recent files"
-msgstr "ﺩﺭﺍﺪﻧ ﺩﻮﺟﻭ ﺮﯿﺧﺍ ﻞﯾﺎﻓ"
-
-
 msgctxt "Operator"
 msgid "(De)select All Files"
 msgstr "ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ/ﺏﺎﺨﺘﻧﺍ"
@@ -7576,10 +7524,6 @@ msgid "Select Directory"
 msgstr "ﺎﺑ ﺏﺎﺨﺘﻧﺍ:"
 
 
-msgid "Prev"
-msgstr "ﻞﺒﻗ"
-
-
 msgctxt "Operator"
 msgid "Smooth Scroll"
 msgstr "ﻑﺎﺻ"
@@ -7588,10 +7532,6 @@ msgstr "ﻑﺎﺻ"
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
-
-
-msgid "ID name"
-msgstr "ﻡﺎﻧ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
@@ -7667,16 +7607,6 @@ msgstr "UV ﺖﻓﺎﺑ"
 msgctxt "Operator"
 msgid "Paste File"
 msgstr "ﺮﺘﻠﯿﻓ ﻉﻮﻧ"
-
-
-msgctxt "Operator"
-msgid "Add Textbox"
-msgstr "ﯽﻨﺘﻣ ﯼﺎﻫ‌ﻪﺒﻌﺟ"
-
-
-msgctxt "Operator"
-msgid "Remove Textbox"
-msgstr "ﻪﻧﻭﺰﻓﺍ ﻑﺬﺣ"
 
 
 msgid "Remove from selection"
@@ -8372,11 +8302,6 @@ msgstr "ﻩﺩﺮﺸﻓ ﺮﮕﻧﺎﺸﻧ"
 
 
 msgctxt "Operator"
-msgid "Clear Sculpt-Mask Data"
-msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgctxt "Operator"
 msgid "Clear Skin Data"
 msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 
@@ -8428,10 +8353,6 @@ msgstr "ﻝﺎﻌﻓ ﻉﻮﻧ ﭻﯾﻮﺳ"
 
 msgctxt "Operator"
 msgid "Select Sharp Edges"
-msgstr "ﻮﺠﺘﺴﺟ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgid "Select all sharp-enough edges"
 msgstr "ﻮﺠﺘﺴﺟ ﺏﺎﺨﺘﻧﺍ"
 
 
@@ -8577,10 +8498,6 @@ msgid "Fill Type"
 msgstr "ﻥﺩﺮﮐ ﺮﭘ ﻉﻮﻧ"
 
 
-msgid "Use ngons"
-msgstr "ﻝﺎﻧﺎﮐ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
-
-
 msgid "Triangle Fan"
 msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﮏﺗ"
 
@@ -8717,11 +8634,6 @@ msgid "Change selection mode"
 msgstr "ﻪﻤﻫ ﺏﺎﺨﺘﻧﺍ ﻡﺪﻋ/ﺏﺎﺨﺘﻧﺍ"
 
 
-msgctxt "Operator"
-msgid "Select Non Manifold"
-msgstr "ﻪﮑﺒﺷ ﻪﺑ ﺏﺎﺨﺘﻧﺍ"
-
-
 msgid "Randomly select vertices"
 msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ ﻪﺑ ﺱﺃﺭ ﺏﺎﺨﺘﻧﺍ"
 
@@ -8768,10 +8680,6 @@ msgid "Seed for random-based operations"
 msgstr "ﮓﻧﺭ ﭗﻣﺭ ﺕﺎﯿﻠﻤﻋ ﭻﯾﻮﺳ"
 
 
-msgid "Type of re-ordering operation to apply"
-msgstr "ﺩﻭﺭ ﺭﺎﮐ ﻪﺑ ﻪﮐ ﯼﺪﻟّﻮﻣ ﻉﻮﻧ"
-
-
 msgid "View Z Axis"
 msgstr "ﺭﻮﺤﻣ x ﺩﻮﺷ ﺲﮑﻋﺮﺑ"
 
@@ -8811,10 +8719,6 @@ msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 
 msgctxt "Operator"
-msgid "Remove UV Map"
-msgstr "UV ﻪﺸﻘﻧ ﻑﺬﺣ"
-
-
 msgid "Remove UV Map"
 msgstr "UV ﻪﺸﻘﻧ ﻑﺬﺣ"
 
@@ -9122,10 +9026,6 @@ msgid "Add File Node Socket"
 msgstr "ﺎﻫ‌ﺖﻔﺟ ﻑﺬﺣ"
 
 
-msgid "Sub-path of the output file"
-msgstr "ﻥﺩﺮﮐ ﺞﮐ"
-
-
 msgctxt "Operator"
 msgid "Move File Node Socket"
 msgstr "ﺎﻫ‌ﺖﻔﺟ ﻑﺬﺣ"
@@ -9276,11 +9176,6 @@ msgstr "ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 msgctxt "Operator"
 msgid "Duplicate Linked"
 msgstr "ﺭﺍﺮﮑﺗ"
-
-
-msgctxt "Operator"
-msgid "Toggle Editmode"
-msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
 msgctxt "Operator"
@@ -10755,10 +10650,6 @@ msgid "Jump to Strip"
 msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
 
 
-msgid "Use strip center"
-msgstr "ﺭﺪﻧﺭ ﻥﺩﺮﮐ ﺩﻭﺪﺤﻣ"
-
-
 msgid "Next Strip"
 msgstr "ﻪﻧﺎﺳﺭ ﻒﻗﻮﺗ"
 
@@ -10776,6 +10667,10 @@ msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 msgctxt "Operator"
 msgid "Remove Strip Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
+
+
+msgid "Property"
+msgstr "ﯽﮔﮋﯾﻭ"
 
 
 msgctxt "Operator"
@@ -11411,11 +11306,6 @@ msgstr "ﻡﺎﻧ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
-msgid "View Persp/Ortho"
-msgstr "ﺕﺎﻤﯿﻈﻨﺗ"
-
-
-msgctxt "Operator"
 msgid "Zoom Camera 1:1"
 msgstr "ﯽﻠﺤﻣ ﻦﯿﺑﺭﻭﺩ:"
 
@@ -11541,6 +11431,10 @@ msgid "Control"
 msgstr "ﻝﺮﺘﻨﮐ"
 
 
+msgid "Prev"
+msgstr "ﻞﺒﻗ"
+
+
 msgid "Pause"
 msgstr "Pause"
 
@@ -11596,10 +11490,6 @@ msgstr "ﺮﺑﺭﺎﮐ ﺐﻠﻘﺗ ﻪﮔﺮﺑ"
 
 msgid "Operator"
 msgstr "ﻞﻣﺎﻋ"
-
-
-msgid "Property"
-msgstr "ﯽﮔﮋﯾﻭ"
 
 
 msgctxt "Operator"
@@ -12382,10 +12272,6 @@ msgid "Translation Unit"
 msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﺪﺣﺍﻭ"
 
 
-msgid "Uniform Scale"
-msgstr "ﻩﺯﺍﺪﻧﺍ ﻥﺩﺮﮐ‌ﯽﮑﯾ"
-
-
 msgid "Wipe Sequence"
 msgstr "ﺞﻨﺳ ﺐﯿﺗﺮﺗ:"
 
@@ -12552,6 +12438,10 @@ msgstr "ﻥﺯ ﻪﯾﺎﺳ ﻉﻮﻧ"
 
 msgid "Blender File"
 msgstr "ﺭﺪﻨﻠﺑ ﻞﯾﺎﻓ ﺶﯾﺎﻤﻧ"
+
+
+msgid "On"
+msgstr "ﻦﺷﻭﺭ"
 
 
 msgid "Overlay Type"
@@ -12944,6 +12834,20 @@ msgid "Edit"
 msgstr "ﺶﯾﺍﺮﯾﻭ"
 
 
+msgid "Active object is not a mesh"
+msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
+
+
+msgctxt "Operator"
+msgid "Open..."
+msgstr "ﻥﺩﺮﮐ ﺯﺎﺑ..."
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "ﺎﻤﻨﻫﺍﺭ ﺏﺎﺘﮐ"
+
+
 msgid "To"
 msgstr "ﻻ﻿ﺎﺑ"
 
@@ -12983,6 +12887,10 @@ msgstr "ﺮﯾﻮﺼﺗ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 msgid "Not Set"
 msgstr "ﻩﺪﺸﻧ ﺺﺨﺸﻣ"
+
+
+msgid "Endpoint"
+msgstr "ﯽﻧﺎﯾﺎﭘ ﻪﻄﻘﻧ"
 
 
 msgctxt "Operator"
@@ -13093,24 +13001,12 @@ msgid "Sample Rate"
 msgstr "ﻪﻧﻮﻤﻧ ﺖﻋﺮﺳ"
 
 
-msgid "Roughness 1"
-msgstr "1 ﯼﺮﺑﺯ"
-
-
-msgid "Roughness 2"
-msgstr "2 ﯼﺮﺑﺯ"
-
-
 msgid "Roughness End"
 msgstr "ﯼﺮﺑﺯ ﻥﺎﯾﺎﭘ"
 
 
 msgid "Strand Shape"
 msgstr "ﯼﺰﯿﺗ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgid "Endpoint"
-msgstr "ﯽﻧﺎﯾﺎﭘ ﻪﻄﻘﻧ"
 
 
 msgctxt "Operator"
@@ -13327,11 +13223,6 @@ msgstr "ﺪﯾﺪﺟ"
 
 
 msgctxt "Operator"
-msgid "Open..."
-msgstr "ﻥﺩﺮﮐ ﺯﺎﺑ..."
-
-
-msgctxt "Operator"
 msgid "Edit Externally"
 msgstr "ﺮﯾﻮﺼﺗ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
@@ -13539,11 +13430,6 @@ msgstr "ﯽﭙﮐ ﻩﺮﯿﺧﺫ..."
 msgctxt "Operator"
 msgid "Render Image"
 msgstr "ﺮﯾﻮﺼﺗ ﺭﺪﻧﺭ"
-
-
-msgctxt "Operator"
-msgid "Manual"
-msgstr "ﺎﻤﻨﻫﺍﺭ ﺏﺎﺘﮐ"
 
 
 msgctxt "Operator"
@@ -14535,10 +14421,6 @@ msgid "Anim Player"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺮﯿﻠﭘ"
 
 
-msgid "Display number of users of this data (click to make a single-user copy)"
-msgstr "(ﺪﯿﻨﮐ ﮏﯿﻠﮐ ﻩﺮﺑﺭﺎﮐ-ﮏﺗ ﻦﺘﺧﺎﺳ ﯼﺍﺮﺑ) ﻩﺪﺑ ﺶﯾﺎﻤﻧ ﺍﺭ ﻩﺩﺍﺩ ﻦﯾﺍ ﻥﺍﺮﺑﺭﺎﮐ ﺩﺍﺪﻌﺗ"
-
-
 msgid "Proxy Protected"
 msgstr "ﻩﺪﺷ ﺖﻇﺎﻔﺣ ﯽﺴﮐﻭﺮﭘ"
 
@@ -14810,10 +14692,6 @@ msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 msgid "Cannot join while in edit mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
-
-
-msgid "Active object is not a mesh"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 
 msgid "Active object is not a selected mesh"
@@ -15531,10 +15409,6 @@ msgstr "C"
 
 msgid "Cr"
 msgstr "C"
-
-
-msgid "On"
-msgstr "ﻦﺷﻭﺭ"
 
 
 msgid "Val"
