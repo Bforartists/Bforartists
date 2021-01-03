@@ -55,7 +55,9 @@ class threadCom:  # object passed to threads to read background process stdout i
 
 
 def threadread(tcom):
-    '''reads stdout of background process, done this way to have it non-blocking. this threads basically waits for a stdout line to come in, fills the data, dies.'''
+    '''reads stdout of background process.
+    this threads basically waits for a stdout line to come in,
+    fills the data, dies.'''
     found = False
     while not found:
         inline = tcom.proc.stdout.readline()
@@ -155,6 +157,7 @@ process_types = (
 process_sources = (
     ('MODEL', 'Model', 'set of objects'),
     ('SCENE', 'Scene', 'set of scenes'),
+    ('HDR', 'HDR', 'HDR image'),
     ('MATERIAL', 'Material', 'any .blend Material'),
     ('TEXTURE', 'Texture', 'a texture, or texture set'),
     ('BRUSH', 'Brush', 'brush, can be any type of blender brush'),
@@ -203,9 +206,18 @@ class KillBgProcess(bpy.types.Operator):
             if tcom.process_type == self.process_type:
                 source = eval(tcom.eval_path)
                 kill = False
+                #TODO HDR - add killing of process
                 if source.bl_rna.name == 'Object' and self.process_source == 'MODEL':
                     if source.name == bpy.context.active_object.name:
                         kill = True
+                if source.bl_rna.name == 'Scene' and self.process_source == 'SCENE':
+                    if source.name == bpy.context.scene.name:
+                        kill = True
+                if source.bl_rna.name == 'Image' and self.process_source == 'HDR':
+                    ui_props = bpy.context.scene.blenderkitUI
+                    if source.name == ui_props.hdr_upload_image.name:
+                        kill = False
+
                 if source.bl_rna.name == 'Material' and self.process_source == 'MATERIAL':
                     if source.name == bpy.context.active_object.active_material.name:
                         kill = True

@@ -36,6 +36,8 @@ import requests
 import shutil, sys, os
 import uuid
 import copy
+import logging
+bk_logger = logging.getLogger('blenderkit')
 
 import bpy
 from bpy.props import (
@@ -241,7 +243,7 @@ def report_usages():
     scene['assets reported'] = assets_reported
 
     if new_assets_count == 0:
-        utils.p('no new assets were added')
+        bk_logger.debug('no new assets were added')
         return;
     usage_report = {
         'scene': sid,
@@ -290,6 +292,8 @@ def udpate_asset_data_in_dicts(asset_data):
     id = asset_data['assetBaseId']
     scene['assets rated'][id] = scene['assets rated'].get(id, False)
     sr = bpy.context.scene['search results']
+    if not sr:
+        return;
     for i, r in enumerate(sr):
         if r['assetBaseId'] == asset_data['assetBaseId']:
             for f in asset_data['files']:
@@ -322,6 +326,11 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         scene = append_link.append_scene(file_names[0], link=False, fake_user=False)
         props = scene.blenderkit
         asset_main = scene
+
+    if asset_data['assetType'] == 'hdr':
+        hdr = append_link.load_HDR(file_name = file_names[0], name = asset_data['name'])
+        props = hdr.blenderkit
+        asset_main = hdr
 
     s = bpy.context.scene
 
@@ -373,7 +382,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
             for downloader in downloaders:
                 # this cares for adding particle systems directly to target mesh, but I had to block it now,
                 # because of the sluggishnes of it. Possibly re-enable when it's possible to do this faster?
-                if 0:  # 'particle_plants' in asset_data['tags']:
+                if 'particle_plants' in asset_data['tags']:
                     append_link.append_particle_system(file_names[-1],
                                                        target_object=kwargs['target_object'],
                                                        rotation=downloader['rotation'],
@@ -506,10 +515,10 @@ def replace_resolution_linked(file_paths, asset_data):
         if not l['asset_data']['assetBaseId'] == asset_data['assetBaseId']:
             continue;
 
-        utils.p('try to re-link library')
+        bk_logger.debug('try to re-link library')
 
         if not os.path.isfile(file_paths[-1]):
-            utils.p('library file doesnt exist')
+            bk_logger.debug('library file doesnt exist')
             break;
         l.filepath = os.path.join(os.path.dirname(l.filepath), file_name)
         l.name = file_name
@@ -542,7 +551,7 @@ def replace_resolution_appended(file_paths, asset_data, resolution):
                 if not os.path.exists(fpabs):
                     # this currently handles .png's that have been swapped to .jpg's during resolution generation process.
                     # should probably also handle .exr's and similar others.
-                    # utils.p('need to find a replacement')
+                    # bk_logger.debug('need to find a replacement')
                     base, ext = os.path.splitext(fp)
                     if resolution == 'blend' and i.get('original_extension'):
                         fp = base + i.get('original_extension')
@@ -565,7 +574,7 @@ def timer_update():
     Finished downloads are processed and linked/appended to scene.
      '''
     global download_threads
-    # utils.p('timer download')
+    # bk_logger.debug('timer download')
 
     if len(download_threads) == 0:
         return 2.0
@@ -594,7 +603,7 @@ def timer_update():
             file_paths = paths.get_download_filepaths(asset_data, tcom.passargs['resolution'])
 
             if len(file_paths) == 0:
-                utils.p('library names not found in asset data after download')
+                bk_logger.debug('library names not found in asset data after download')
                 download_threads.remove(threaddata)
                 break;
 
@@ -604,7 +613,7 @@ def timer_update():
             if ((bpy.context.mode == 'OBJECT' and \
                  (at == 'model' or at == 'material'))) \
                     or ((at == 'brush') \
-                        and wm.get('appendable') == True) or at == 'scene':
+                        and wm.get('appendable') == True) or at == 'scene' or at == 'hdr':
                 # don't do this stuff in editmode and other modes, just wait...
                 download_threads.remove(threaddata)
 
@@ -613,7 +622,7 @@ def timer_update():
                     utils.copy_asset(file_paths[0], file_paths[1])
                     # shutil.copyfile(file_paths[0], file_paths[1])
 
-                utils.p('appending asset')
+                bk_logger.debug('appending asset')
                 # progress bars:
 
                 # we need to check if mouse isn't down, which means an operator can be running.
@@ -646,20 +655,14 @@ def timer_update():
                     if not done:
                         at = asset_data['assetType']
                         tcom.passargs['retry_counter'] = tcom.passargs.get('retry_counter', 0) + 1
-                        if at in ('model', 'material'):
-                            download(asset_data, **tcom.passargs)
-                        elif asset_data['assetType'] == 'material':
-                            download(asset_data, **tcom.passargs)
-                        elif asset_data['assetType'] == 'scene':
-                            download(asset_data, **tcom.passargs)
-                        elif asset_data['assetType'] == 'brush' or asset_data['assetType'] == 'texture':
-                            download(asset_data, **tcom.passargs)
+                        download(asset_data, **tcom.passargs)
+
                     if bpy.context.scene['search results'] is not None and done:
                         for sres in bpy.context.scene['search results']:
                             if asset_data['id'] == sres['id']:
                                 sres['downloaded'] = 100
 
-                utils.p('finished download thread')
+                bk_logger.debug('finished download thread')
     return .5
 
 
@@ -690,7 +693,7 @@ def download_file(asset_data, resolution='blend'):
 
     if check_existing(asset_data, resolution=resolution):
         # this sends the thread for processing, where another check should occur, since the file might be corrupted.
-        utils.p('not downloading, already in db')
+        bk_logger.debug('not downloading, already in db')
         return file_name
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = preferences.api_key
@@ -775,19 +778,19 @@ class Downloader(threading.Thread):
         if check_existing(asset_data, resolution=self.resolution) and not tcom.passargs.get('delete'):
             # this sends the thread for processing, where another check should occur, since the file might be corrupted.
             tcom.downloaded = 100
-            utils.p('not downloading, trying to append again')
-            return;
+            bk_logger.debug('not downloading, trying to append again')
+            return
 
         file_name = paths.get_download_filepaths(asset_data, self.resolution)[0]  # prefer global dir if possible.
         # for k in asset_data:
         #    print(asset_data[k])
         if self.stopped():
-            utils.p('stopping download: ' + asset_data['name'])
-            return;
+            bk_logger.debug('stopping download: ' + asset_data['name'])
+            return
 
         download_canceled = False
         with open(file_name, "wb") as f:
-            utils.p("Downloading %s" % file_name)
+            bk_logger.debug("Downloading %s" % file_name)
             headers = utils.get_headers(api_key)
             res_file_info, self.resolution = paths.get_res_file(asset_data, self.resolution)
             response = requests.get(res_file_info['url'], stream=True)
@@ -798,7 +801,7 @@ class Downloader(threading.Thread):
                 tcom.report = response.content
                 download_canceled = True
             else:
-                # utils.p(total_length)
+                # bk_logger.debug(total_length)
                 if int(total_length) < 1000:  # means probably no file returned.
                     tasks_queue.add_task((ui.add_report, (response.content, 20, colors.RED)))
 
@@ -821,13 +824,13 @@ class Downloader(threading.Thread):
                     tcom.progress = int(100 * tcom.downloaded / tcom.file_size)
                     f.write(data)
                     if self.stopped():
-                        utils.p('stopping download: ' + asset_data['name'])
+                        bk_logger.debug('stopping download: ' + asset_data['name'])
                         download_canceled = True
                         break
 
         if download_canceled:
             delete_unfinished_file(file_name)
-            return;
+            return
         # unpack the file immediately after download
 
         tcom.report = f'Unpacking files'
@@ -861,7 +864,7 @@ def download(asset_data, **kwargs):
         sprops.report = report
         ui.add_report(report, 5, colors.RED)
 
-        utils.p(sprops.report)
+        bk_logger.debug(sprops.report)
         return
 
     # incoming data can be either directly dict from python, or blender id property
@@ -907,7 +910,7 @@ def check_existing(asset_data, resolution='blend', can_return_others=False):
 
     file_names = paths.get_download_filepaths(asset_data, resolution, can_return_others=can_return_others)
 
-    utils.p('check if file already exists', file_names)
+    bk_logger.debug('check if file already exists'+ str( file_names))
     if len(file_names) == 2:
         # TODO this should check also for failed or running downloads.
         # If download is running, assign just the running thread. if download isn't running but the file is wrong size,
@@ -928,7 +931,7 @@ def try_finished_append(asset_data, **kwargs):  # location=None, material_target
      This means probably wrong download, so download should restart'''
     file_names = paths.get_download_filepaths(asset_data, kwargs['resolution'])
     done = False
-    utils.p('try to append already existing asset')
+    bk_logger.debug('try to append already existing asset')
     if len(file_names) > 0:
         if os.path.isfile(file_names[-1]):
             kwargs['name'] = asset_data['name']
@@ -990,7 +993,7 @@ def duplicate_asset(source, **kwargs):
     Duplicate asset when it's already appended in the scene,
     so that blender's append doesn't create duplicated data.
      '''
-    utils.p('duplicate asset instead')
+    bk_logger.debug('duplicate asset instead')
     # we need to save selection
     sel = utils.selection_get()
     bpy.ops.object.select_all(action='DESELECT')
@@ -1128,7 +1131,7 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None, resolution='blend
             tcom.error = True
 
     elif r.status_code >= 500:
-        # utils.p(r.text)
+        # bk_logger.debug(r.text)
         if tcom is not None:
             tcom.report = 'Server error'
             tcom.error = True
@@ -1155,8 +1158,8 @@ def start_download(asset_data, **kwargs):
         # check if there are files already. This check happens 2x once here(for free assets),
         # once in thread(for non-free)
         fexists = check_existing(asset_data, resolution=kwargs['resolution'])
-        utils.p('does file exist?', fexists)
-        utils.p('asset is in scene', ain)
+        bk_logger.debug('does file exist?'+ str( fexists))
+        bk_logger.debug('asset is in scene' + str(ain))
         if ain and not kwargs.get('replace_resolution'):
             # this goes to appending asset - where it should duplicate the original asset already in scene.
             done = try_finished_append(asset_data, **kwargs)
@@ -1170,15 +1173,14 @@ def start_download(asset_data, **kwargs):
                               'rotation': kwargs['model_rotation']}
                 download(asset_data, downloaders=[downloader], **kwargs)
 
-            elif asset_data['assetType'] == 'scene':
-                download(asset_data, **kwargs)
-            elif asset_data['assetType'] == 'brush' or asset_data['assetType'] == 'texture':
+            else:
                 download(asset_data, **kwargs)
 
 
 asset_types = (
     ('MODEL', 'Model', 'set of objects'),
     ('SCENE', 'Scene', 'scene'),
+    ('HDR', 'Hdr', 'hdr'),
     ('MATERIAL', 'Material', 'any .blend Material'),
     ('TEXTURE', 'Texture', 'a texture, or texture set'),
     ('BRUSH', 'Brush', 'brush, can be any type of blender brush'),

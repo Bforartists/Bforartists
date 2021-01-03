@@ -24,6 +24,7 @@ from ...base_rig import BaseRig
 
 from ...utils.naming import make_derived_name
 from ...utils.bones import set_bone_widget_transform
+from ...utils.mechanism import copy_custom_properties_with_ui
 from ...utils.widgets import layout_widget_dropdown, create_registered_widget
 from ...utils.widgets_basic import create_pivot_widget
 from ...utils.switch_parent import SwitchParentBuilder
@@ -114,11 +115,13 @@ class Rig(BaseRig):
 
 
     def configure_bones(self):
-        if self.make_control:
-            self.copy_bone_properties(self.bones.org, self.bones.ctrl.master)
+        org = self.bones.org
+        ctrl = self.bones.ctrl
+        main_ctl = ctrl.master if self.make_control else ctrl.pivot
 
-        else:
-            self.copy_bone_properties(self.bones.org, self.bones.ctrl.pivot)
+        self.copy_bone_properties(org, main_ctl, props=False)
+
+        copy_custom_properties_with_ui(self, org, main_ctl)
 
 
     def rig_bones(self):

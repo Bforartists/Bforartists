@@ -43,6 +43,10 @@ def split_name(name):
     return NameParts(*name_parts.groups())
 
 
+def is_control_bone(name):
+    return not split_name(name).prefix
+
+
 def combine_name(parts, *, prefix=None, base=None, side_z=None, side=None, number=None):
     eff_prefix = prefix if prefix is not None else parts.prefix
     eff_number = number if number is not None else parts.number

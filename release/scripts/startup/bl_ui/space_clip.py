@@ -920,7 +920,7 @@ class CLIP_PT_track_settings(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Track"
-    bl_label = "Tracking Options"
+    bl_label = "Tracking Settings"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -929,17 +929,20 @@ class CLIP_PT_track_settings(CLIP_PT_tracking_panel, Panel):
         layout.use_property_decorate = False
 
         clip = context.space_data.clip
+        active = clip.tracking.tracks.active
+
+        if not active:
+            layout.active = False
+            layout.label(text="No active track")
+            return
 
         col = layout.column()
+        col.prop(active, "motion_model")
+        col.prop(active, "pattern_match", text="Match")
 
-        active = clip.tracking.tracks.active
-        if active:
-            col.prop(active, "motion_model")
-            col.prop(active, "pattern_match", text="Match")
-
-            col.use_property_split = False
-            col.prop(active, "use_brute")
-            col.prop(active, "use_normalization")
+        col.use_property_split = False
+        col.prop(active, "use_brute")
+        col.prop(active, "use_normalization")
 
 
 class CLIP_PT_track_settings_extras(CLIP_PT_tracking_panel, Panel):
