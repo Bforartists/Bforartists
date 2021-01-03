@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -409,6 +409,10 @@ msgstr "व्याप्त"
 
 msgid "Internal"
 msgstr "आंतरिक"
+
+
+msgid "Target"
+msgstr "लक्ष्य"
 
 
 msgid "Clear"
@@ -914,10 +918,6 @@ msgstr "परिवर्तन"
 
 msgid "Floor"
 msgstr "मंच"
-
-
-msgid "Target"
-msgstr "लक्ष्य"
 
 
 msgid "Transform Channel"
@@ -1599,10 +1599,6 @@ msgstr "तैलीय पेंसिल परत"
 
 msgid "Frames"
 msgstr "गठन"
-
-
-msgid "Parent Object"
-msgstr "वस्तु कारण"
 
 
 msgid "Layer"
@@ -2442,12 +2438,12 @@ msgid "Object Z"
 msgstr "वस्तु z"
 
 
-msgid "Size1"
-msgstr "आकार १"
+msgid "Roughness 1"
+msgstr "खुरदरापन १"
 
 
-msgid "Size2"
-msgstr "आकार २"
+msgid "Roughness 2"
+msgstr "खुरदरापन २"
 
 
 msgid "Show particle number"
@@ -3310,10 +3306,6 @@ msgid "Straight Alpha Output"
 msgstr "सीधे पारदर्शिता उत्पादित"
 
 
-msgid "Put Node output buffer to straight alpha instead of premultiplied"
-msgstr "Premultiplied के बजाय सीधे पारदर्शिता के लिए नोड उत्पादित बफ़र डाल"
-
-
 msgid "RGB"
 msgstr "ला.ह.नी."
 
@@ -3732,6 +3724,10 @@ msgid "Duplicate Curve"
 msgstr "अनुकृति वक्र"
 
 
+msgid "Shrink/Fatten"
+msgstr "सिकोड़ें/मोटा करें"
+
+
 msgid "Edge Slide"
 msgstr "किनारी सरकाएँ"
 
@@ -3839,14 +3835,6 @@ msgid "Open"
 msgstr "खोलें"
 
 
-msgid "Dir"
-msgstr "निर्देशिका"
-
-
-msgid "Prev"
-msgstr "पिछ"
-
-
 msgid "Next"
 msgstr "अगला"
 
@@ -3902,10 +3890,6 @@ msgstr "कृष्ण"
 
 msgid "White"
 msgstr "श्वेत"
-
-
-msgid "Highest frequency"
-msgstr "उच्चतम आवृत्ति"
 
 
 msgid "Create a new image"
@@ -3970,10 +3954,6 @@ msgstr "वलय का चयन करें"
 msgctxt "Operator"
 msgid "Select Sharp Edges"
 msgstr "तेज किनारों का चयन करें"
-
-
-msgid "Shrink/Fatten"
-msgstr "सिकोड़ें/मोटा करें"
 
 
 msgid "Extrude Region"
@@ -4163,11 +4143,6 @@ msgstr "वस्तुओं की नकल"
 
 msgid "Duplicate Objects"
 msgstr "वस्तुओं की नकल"
-
-
-msgctxt "Operator"
-msgid "Toggle Editmode"
-msgstr "बंद/बुझ संपादन रूप"
 
 
 msgctxt "Operator"
@@ -4381,6 +4356,10 @@ msgstr "चिपकाएँ"
 
 msgid "Effect"
 msgstr "प्रभाव"
+
+
+msgid "Property"
+msgstr "गुण"
 
 
 msgid "ac3"
@@ -4615,26 +4594,17 @@ msgid "Pan Left"
 msgstr "बाएँ पैन करें"
 
 
-msgid "Pan the view to the Left"
-msgstr "देखने के लिए बाईं ओर पैन करें"
-
-
 msgid "Pan Right"
 msgstr "दाएँ पैन करें"
 
 
 msgctxt "Operator"
-msgid "View Persp/Ortho"
-msgstr "दृश्य परिपेक्ष्य/Ortho"
-
-
-msgid "Export Polygons (Quads & NGons) as Triangles"
-msgstr "बहुभुज (Quads एवं NGons) त्रिकोण के रूप में निर्यात करें"
-
-
-msgctxt "Operator"
 msgid "Demo"
 msgstr "प्रदर्शित करें"
+
+
+msgid "Prev"
+msgstr "पिछ"
 
 
 msgid "Pause"
@@ -4660,10 +4630,6 @@ msgstr "विश्वसनीय स्रोत"
 
 msgid "Operator"
 msgstr "संचालक"
-
-
-msgid "Property"
-msgstr "गुण"
 
 
 msgid "Context"
@@ -4719,14 +4685,6 @@ msgid "Draw Window"
 msgstr "खिडकी चित्रण"
 
 
-msgid "Animation Steps"
-msgstr "अनुप्राणन कदम"
-
-
-msgid "Animation Playback"
-msgstr "अनुप्राणन चलाएँ"
-
-
 msgid "Undo/Redo"
 msgstr "पूर्ववत करें/फिर से करें"
 
@@ -4756,10 +4714,6 @@ msgstr "वर्तमान ब्लेंडर संचिका सहे
 msgctxt "Operator"
 msgid "Search Menu"
 msgstr "खोज विकल्प-सूची"
-
-
-msgid "Open a website in the web-browser"
-msgstr "एक वेबसाइट वेब विचरक में खोलें"
 
 
 msgid "URL"
@@ -5299,6 +5253,10 @@ msgid "Filter based on key bindings"
 msgstr "प्रमुख बाइंडिंग पर आधारित फ़िल्टर करें"
 
 
+msgid "On"
+msgstr "आरंभ"
+
+
 msgid "Reference"
 msgstr "संदर्भ"
 
@@ -5671,6 +5629,16 @@ msgid "Edit"
 msgstr "संपादन"
 
 
+msgctxt "Operator"
+msgid "Open..."
+msgstr "व्यक्त..."
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "नियम पुस्तिका"
+
+
 msgid "After"
 msgstr "के बाद"
 
@@ -5725,6 +5693,10 @@ msgstr " प्रतिपादन u"
 
 msgid "Bold & Italic"
 msgstr "मोटा एवं तिर्यगक्षर"
+
+
+msgid "Endpoint"
+msgstr "समापन बिंदु"
 
 
 msgctxt "Operator"
@@ -5808,24 +5780,12 @@ msgid "Date"
 msgstr "दिनांक"
 
 
-msgid "Roughness 1"
-msgstr "खुरदरापन १"
-
-
-msgid "Roughness 2"
-msgstr "खुरदरापन २"
-
-
 msgid "Roughness End"
 msgstr "खुरदरापन समाप्त"
 
 
 msgid "Spacing: %g"
 msgstr "रिक्ति: %g"
-
-
-msgid "Endpoint"
-msgstr "समापन बिंदु"
 
 
 msgid "%d fluid particles for this frame"
@@ -5960,11 +5920,6 @@ msgstr "और अधिक"
 msgctxt "Operator"
 msgid "New"
 msgstr "नई"
-
-
-msgctxt "Operator"
-msgid "Open..."
-msgstr "व्यक्त..."
 
 
 msgctxt "Operator"
@@ -6111,11 +6066,6 @@ msgstr "त्यागें"
 msgctxt "Operator"
 msgid "Render Image"
 msgstr "छवि  प्रतिपादन"
-
-
-msgctxt "Operator"
-msgid "Manual"
-msgstr "नियम पुस्तिका"
 
 
 msgctxt "Operator"
@@ -7375,10 +7325,6 @@ msgstr "सीबी"
 
 msgid "Cr"
 msgstr "सी. आर."
-
-
-msgid "On"
-msgstr "आरंभ"
 
 
 msgid "BSDF"

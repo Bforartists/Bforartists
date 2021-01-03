@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -382,6 +382,14 @@ msgid "External"
 msgstr "ภายนอก"
 
 
+msgid "Target"
+msgstr "เป้าหมาย"
+
+
+msgid "Vertex Colors"
+msgstr "สีจุดยอด"
+
+
 msgid "Clear"
 msgstr "ล้าง"
 
@@ -664,10 +672,6 @@ msgstr "โครงร่าง"
 
 msgid "Mix Mode"
 msgstr "โหมดผสม"
-
-
-msgid "Target"
-msgstr "เป้าหมาย"
 
 
 msgid "Rotation X"
@@ -1355,6 +1359,10 @@ msgid "Sharp"
 msgstr "แหลม"
 
 
+msgid "Inverse Square"
+msgstr "จัตุรัสผกผัน"
+
+
 msgid "Repeat"
 msgstr "ทำซ้ำ"
 
@@ -1451,7 +1459,7 @@ msgid "Shear"
 msgstr "ตัด"
 
 
-msgid "Font size"
+msgid "Font Size"
 msgstr "ขนาดฟอนต์"
 
 
@@ -1553,10 +1561,6 @@ msgid "Area"
 msgstr "พื้นที่"
 
 
-msgid "Inverse Square"
-msgstr "จัตุรัสผกผัน"
-
-
 msgid "Samples"
 msgstr "ตัวอย่าง"
 
@@ -1595,10 +1599,6 @@ msgstr "เส้นขอบของเมช"
 
 msgid "Texture Mesh"
 msgstr "เมชพื้นผิว"
-
-
-msgid "Vertex Colors"
-msgstr "สีจุดยอด"
 
 
 msgid "Vertices"
@@ -2381,10 +2381,6 @@ msgid "YCbCr"
 msgstr "YCbCr"
 
 
-msgid "YCbCr Color Space"
-msgstr "พื้นที่สี YCbCr"
-
-
 msgid "S"
 msgstr "S"
 
@@ -2399,10 +2395,6 @@ msgstr "เส้นโค้ง RGB"
 
 msgid "Zoom"
 msgstr "ซูม"
-
-
-msgid "YCbCr Suppression"
-msgstr "การหลีกเลี่ยง YCbCr"
 
 
 msgid "-1 is original image only, 0 is exact 50/50 mix, 1 is processed image only"
@@ -2608,6 +2600,10 @@ msgid "Add Bezier Circle"
 msgstr "เพิ่มวงกลมเบซิเยร์"
 
 
+msgid "Enter Edit Mode"
+msgstr "เข้าสู่โหมดแก้ไข"
+
+
 msgctxt "Operator"
 msgid "Add Bezier"
 msgstr "เพิ่มเบซิเยร์"
@@ -2749,11 +2745,6 @@ msgstr "วางไฟล์"
 
 msgid "Paste contents from file"
 msgstr "วางเนื้อหาจากไฟล์"
-
-
-msgctxt "Operator"
-msgid "Add Textbox"
-msgstr "เพิ่มกล่องข้อความ"
 
 
 msgctxt "Operator"
@@ -3203,10 +3194,6 @@ msgid "Show Preferences"
 msgstr "แสดงการตั้งค่า"
 
 
-msgid "Mask speed"
-msgstr "ความเร็วหน้ากาก"
-
-
 msgctxt "Operator"
 msgid "Mask Filter"
 msgstr "กรองหน้ากาก"
@@ -3614,10 +3601,6 @@ msgid "View & Controls"
 msgstr "มุมมองและการควมคุม"
 
 
-msgid "Enter Edit Mode"
-msgstr "เข้าสู่โหมดแก้ไข"
-
-
 msgid "Image Editor"
 msgstr "ตัวแก้ไขรูปภาพ"
 
@@ -3728,10 +3711,6 @@ msgstr "อัตราเฟรม"
 
 msgid "Resolution %"
 msgstr "ความละเอียด ร้อยละ (%)"
-
-
-msgid "Font Size"
-msgstr "ขนาดฟอนต์"
 
 
 msgid "Text Color"
@@ -3910,6 +3889,10 @@ msgstr "API ข้อมูล"
 
 msgid "Show Cameras"
 msgstr "แสดงกล้อง"
+
+
+msgid "On"
+msgstr "เปิด"
 
 
 msgid "Replace Text"
@@ -4178,6 +4161,26 @@ msgid "[{}]: \"{}\" ({})"
 msgstr "[{}]: \"{}\" ({})"
 
 
+msgctxt "Operator"
+msgid "Open..."
+msgstr "เปิด..."
+
+
+msgctxt "Operator"
+msgid "Link..."
+msgstr "เชื่อมโยง..."
+
+
+msgctxt "Operator"
+msgid "Append..."
+msgstr "ผนวก..."
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "คู่มือ"
+
+
 msgid "Frame Numbers"
 msgstr "หมายเลขเฟรม"
 
@@ -4383,11 +4386,6 @@ msgstr "เพิ่มเติม"
 msgctxt "Operator"
 msgid "New"
 msgstr "ใหม่"
-
-
-msgctxt "Operator"
-msgid "Open..."
-msgstr "เปิด..."
 
 
 msgctxt "Operator"
@@ -4634,16 +4632,6 @@ msgstr "ติดตั้งแม่แบบแอปพลิเคชั่
 
 
 msgctxt "Operator"
-msgid "Link..."
-msgstr "เชื่อมโยง..."
-
-
-msgctxt "Operator"
-msgid "Append..."
-msgstr "ผนวก..."
-
-
-msgctxt "Operator"
 msgid "Quit"
 msgstr "ออก"
 
@@ -4746,11 +4734,6 @@ msgstr "เรนเดอร์ภาพ"
 msgctxt "Operator"
 msgid "Operator Search..."
 msgstr "ค้นหาตัวดำเนินการ..."
-
-
-msgctxt "Operator"
-msgid "Manual"
-msgstr "คู่มือ"
 
 
 msgctxt "Operator"
@@ -5903,10 +5886,6 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
-
-
-msgid "On"
-msgstr "เปิด"
 
 
 msgid "Val"

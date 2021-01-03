@@ -25,10 +25,10 @@
 bl_info = {
     "name": "3D Navigation",
     "author": "Demohero, uriel",
-    "version": (1, 2, 5),
-    "blender": (2, 80, 0),
+    "version": (1, 2, 6),
+    "blender": (2, 92, 0),
     "location": "View3D > Sidebar > View Tab",
-    "description": "Navigate the Camera & 3D View from the Toolshelf",
+    "description": "Navigate the Camera & 3D Viewport from the Sidebar",
     "warning": "",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/3d_navigation.html",
     "category": "3D View",
@@ -218,7 +218,7 @@ class VIEW3D_OT_BottomViewpoint1(Operator):
 class VIEW3D_PT_3dnavigationPanel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
-    bl_label = "3D Nav"
+    bl_label = "3D Navigation"
     bl_category = "View"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -228,8 +228,8 @@ class VIEW3D_PT_3dnavigationPanel(Panel):
 
         # Triple buttons
         col = layout.column(align=True)
-        col.operator("view3d.localview", text="View Global / Local")
-        col.operator("view3d.view_persportho", text="View Persp / Ortho")
+        col.operator("view3d.localview", text="View Global/Local")
+        col.operator("view3d.view_persportho", text="Perspective/Orthographic")
         col.operator("view3d.view_camera", text="View Camera", icon='CAMERA_DATA')
 
         # group of 6 buttons

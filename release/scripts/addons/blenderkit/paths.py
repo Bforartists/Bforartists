@@ -31,6 +31,8 @@ BLENDERKIT_MANUAL = "https://youtu.be/1hVgcQhIAo8"
 BLENDERKIT_MODEL_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/upload/"
 BLENDERKIT_MATERIAL_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uploading-material/"
 BLENDERKIT_BRUSH_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uploading-brush/"
+BLENDERKIT_HDR_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uploading-hdr/"
+BLENDERKIT_SCENE_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uploading-scene/"
 BLENDERKIT_LOGIN_URL = "https://www.blenderkit.com/accounts/login"
 BLENDERKIT_OAUTH_LANDING_URL = "/oauth-landing/"
 BLENDERKIT_SIGNUP_URL = "https://www.blenderkit.com/accounts/register"
@@ -295,6 +297,8 @@ def get_download_filepaths(asset_data, resolution='blend', can_return_others = F
     # utils.pprint('get download filenames ', dict(res_file))
     file_names = []
 
+    if not res_file:
+        return file_names
     # fn = asset_data['file_name'].replace('blend_', '')
     if res_file.get('url') is not None:
         #Tweak the names a bit:

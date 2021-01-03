@@ -28,6 +28,9 @@ else:
 
 import bpy
 import requests, threading
+import logging
+
+bk_logger = logging.getLogger('blenderkit')
 
 from bpy.props import (
     IntProperty,
@@ -57,7 +60,7 @@ def pretty_print_POST(req):
 
 def upload_rating_thread(url, ratings, headers):
     ''' Upload rating thread function / disconnected from blender data.'''
-    utils.p('upload rating', url, ratings)
+    bk_logger.debug('upload rating ' + url + str(ratings))
     for rating_name, score in ratings:
         if (score != -1 and score != 0):
             rating_url = url + rating_name + '/'
@@ -162,9 +165,8 @@ def upload_rating(asset):
         ratings = (('quality', bkit_ratings.rating_quality),)
         tasks_queue.add_task((send_rating_to_thread_quality, (url, ratings, headers)), wait=2.5, only_last=True)
     if bkit_ratings.rating_work_hours > 0.1:
-        ratings=(('working_hours', round(bkit_ratings.rating_work_hours, 1)),)
+        ratings = (('working_hours', round(bkit_ratings.rating_work_hours, 1)),)
         tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=2.5, only_last=True)
-
 
     thread = threading.Thread(target=upload_rating_thread, args=(url, ratings, headers))
     thread.start()
@@ -208,6 +210,7 @@ def get_assets_for_rating():
 asset_types = (
     ('MODEL', 'Model', 'set of objects'),
     ('SCENE', 'Scene', 'scene'),
+    ('HDR', 'HDR', 'hdr'),
     ('MATERIAL', 'Material', 'any .blend Material'),
     ('TEXTURE', 'Texture', 'a texture, or texture set'),
     ('BRUSH', 'Brush', 'brush, can be any type of blender brush'),
@@ -269,7 +272,7 @@ def update_quality_ui(self, context):
         # return
         bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
                                     message='Please login/signup to rate assets. Clicking OK takes you to web login.')
-        self.rating_quality_ui = '0'
+        # self.rating_quality_ui = '0'
     self.rating_quality = int(self.rating_quality_ui)
 
 
@@ -281,8 +284,9 @@ def update_ratings_work_hours_ui(self, context):
         # return
         bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
                                     message='Please login/signup to rate assets. Clicking OK takes you to web login.')
-        self.rating_work_hours_ui = '0'
+        # self.rating_work_hours_ui = '0'
     self.rating_work_hours = float(self.rating_work_hours_ui)
+
 
 def update_ratings_work_hours_ui_1_5(self, context):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -292,11 +296,10 @@ def update_ratings_work_hours_ui_1_5(self, context):
         # return
         bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
                                     message='Please login/signup to rate assets. Clicking OK takes you to web login.')
-        self.rating_work_hours_ui_1_5 = '0'
+        # self.rating_work_hours_ui_1_5 = '0'
     # print('updating 1-5')
     # print(float(self.rating_work_hours_ui_1_5))
     self.rating_work_hours = float(self.rating_work_hours_ui_1_5)
-
 
 
 class FastRateMenu(Operator):
@@ -312,7 +315,12 @@ class FastRateMenu(Operator):
 
     asset_id: StringProperty(
         name="Asset Base Id",
-        description="Unique name of the asset (hidden)",
+        description="Unique id of the asset (hidden)",
+        default="")
+
+    asset_name: StringProperty(
+        name="Asset Name",
+        description="Name of the asset (hidden)",
         default="")
 
     asset_type: StringProperty(
@@ -337,7 +345,7 @@ class FastRateMenu(Operator):
     rating_work_hours: FloatProperty(name="Work Hours",
                                      description="How many hours did this work take?",
                                      default=0.00,
-                                     min=0.0, max=1000, update=update_ratings_work_hours
+                                     min=0.0, max=150, update=update_ratings_work_hours
                                      )
 
     rating_work_hours_ui: EnumProperty(name="Work Hours",
@@ -379,9 +387,9 @@ class FastRateMenu(Operator):
 
     @classmethod
     def poll(cls, context):
-        scene = bpy.context.scene
-        ui_props = scene.blenderkitUI
-        return ui_props.active_index > -1
+        # scene = bpy.context.scene
+        # ui_props = scene.blenderkitUI
+        return True  # ui_props.active_index > -1
 
     def draw(self, context):
         layout = self.layout
@@ -393,11 +401,12 @@ class FastRateMenu(Operator):
         row.prop(self, 'rating_quality_ui', expand=True, icon_only=True, emboss=False)
         col.separator()
         col.prop(self, 'rating_work_hours')
-        row = col.row()
-        if self.asset_type == 'model':
-            row.prop(self, 'rating_work_hours_ui', expand=True, icon_only=False, emboss=True)
-        else:
-            row.prop(self, 'rating_work_hours_ui_1_5', expand=True, icon_only=False, emboss=True)
+        if utils.profile_is_validator():
+            row = layout.row()
+            if self.asset_type == 'model':
+                row.prop(self, 'rating_work_hours_ui', expand=True, icon_only=False, emboss=True)
+            else:
+                row.prop(self, 'rating_work_hours_ui_1_5', expand=True, icon_only=False, emboss=True)
 
     def execute(self, context):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -432,9 +441,15 @@ class FastRateMenu(Operator):
             asset_data = dict(sr[ui_props.active_index])
             self.asset_id = asset_data['id']
             self.asset_type = asset_data['assetType']
-            self.message = f"Rate asset {asset_data['name']}"
+
+        self.message = f"Rate asset {self.asset_name}"
         wm = context.window_manager
-        return wm.invoke_props_dialog(self)
+
+        if utils.profile_is_validator() and self.asset_type == 'model':
+            # spawn a wider one for validators for the enum buttons
+            return wm.invoke_props_dialog(self, width=500)
+        else:
+            return wm.invoke_props_dialog(self)
 
 
 def rating_menu_draw(self, context):
@@ -451,9 +466,11 @@ def rating_menu_draw(self, context):
     layout.label(text='Admin rating Tools:')
     col.operator_context = 'INVOKE_DEFAULT'
 
-    op = col.operator('wm.blenderkit_menu_rating_upload', text='Fast rate')
+    op = col.operator('wm.blenderkit_menu_rating_upload', text='Rate')
     op.asset_id = asset_data['id']
+    op.asset_name = asset_data['name']
     op.asset_type = asset_data['assetType']
+
 
 def register_ratings():
     bpy.utils.register_class(UploadRatingOperator)

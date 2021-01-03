@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -907,10 +907,6 @@ msgid "Sphere Radius"
 msgstr "Radius Bola"
 
 
-msgid "Parent Object"
-msgstr "Sunting Objek"
-
-
 msgid "Parent Bone"
 msgstr "Induk"
 
@@ -1131,10 +1127,6 @@ msgid "Text on Curve"
 msgstr "Tekstur"
 
 
-msgid "Font size"
-msgstr "Huruf:"
-
-
 msgid "Textboxes"
 msgstr "Tekstur"
 
@@ -1339,10 +1331,6 @@ msgid "Parent Vertices"
 msgstr "Partikel"
 
 
-msgid "Type of Object"
-msgstr "Sunting Objek"
-
-
 msgid "Shape Key Edit Mode"
 msgstr "Modus Sunting"
 
@@ -1423,24 +1411,12 @@ msgid "Object Z"
 msgstr "Objek"
 
 
-msgid "Size1"
-msgstr "Ukurang"
-
-
-msgid "Size2"
-msgstr "Ukurang"
-
-
 msgid "Strand shape parameter"
 msgstr "Partikel"
 
 
 msgid "Random Size"
 msgstr "Acak"
-
-
-msgid "Particle Type"
-msgstr "Partikel"
 
 
 msgid "Pick Random"
@@ -2254,6 +2230,10 @@ msgid "Channel Key"
 msgstr "Saluran"
 
 
+msgid "RGB color space"
+msgstr "Warna"
+
+
 msgid "Limit Channel"
 msgstr "Saluran"
 
@@ -2408,10 +2388,6 @@ msgstr "Hanya Garis"
 
 msgid "Distance Key"
 msgstr "Jarak"
-
-
-msgid "RGB color space"
-msgstr "Warna"
 
 
 msgid "Buffer Edge Mode"
@@ -3618,10 +3594,6 @@ msgid "Unpack Item"
 msgstr "Gambar Latar"
 
 
-msgid "ID name"
-msgstr "Nama"
-
-
 msgctxt "Operator"
 msgid "Add Fluid Preset"
 msgstr "Kamera"
@@ -3675,16 +3647,6 @@ msgstr "Tekstur"
 msgctxt "Operator"
 msgid "Paste File"
 msgstr "Tipe"
-
-
-msgctxt "Operator"
-msgid "Add Textbox"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Remove Textbox"
-msgstr "Induk"
 
 
 msgid "Remove from selection"
@@ -4208,11 +4170,6 @@ msgstr "Partikel"
 
 
 msgctxt "Operator"
-msgid "Clear Sculpt-Mask Data"
-msgstr "Hapus"
-
-
-msgctxt "Operator"
 msgid "Clear Skin Data"
 msgstr "Kamera"
 
@@ -4259,10 +4216,6 @@ msgstr "Hapus"
 
 msgctxt "Operator"
 msgid "Select Sharp Edges"
-msgstr "Seleksi"
-
-
-msgid "Select all sharp-enough edges"
 msgstr "Seleksi"
 
 
@@ -4355,10 +4308,6 @@ msgid "Fill Type"
 msgstr "Tipe"
 
 
-msgid "Use ngons"
-msgstr "Saluran"
-
-
 msgid "Use triangle fans"
 msgstr "Partikel"
 
@@ -4433,11 +4382,6 @@ msgstr "Bahan"
 
 
 msgctxt "Operator"
-msgid "Select Non Manifold"
-msgstr "Seleksi"
-
-
-msgctxt "Operator"
 msgid "Sort Mesh Elements"
 msgstr "Hapus Titik"
 
@@ -4465,10 +4409,6 @@ msgstr "Grup"
 
 
 msgctxt "Operator"
-msgid "Remove UV Map"
-msgstr "Induk"
-
-
 msgid "Remove UV Map"
 msgstr "Induk"
 
@@ -4685,10 +4625,6 @@ msgid "Copy color to all selected nodes"
 msgstr "Modus Sunting"
 
 
-msgid "Sub-path of the output file"
-msgstr "Tidak dapat membuka dokumen"
-
-
 msgctxt "Operator"
 msgid "Move File Node Socket"
 msgstr "Induk"
@@ -4760,11 +4696,6 @@ msgstr "Hapus"
 msgctxt "Operator"
 msgid "Duplicate Objects"
 msgstr "Sunting Objek"
-
-
-msgctxt "Operator"
-msgid "Toggle Editmode"
-msgstr "Penyunting Teks"
 
 
 msgctxt "Operator"
@@ -5695,10 +5626,6 @@ msgid "Jump to Strip"
 msgstr "Modus Pahat"
 
 
-msgid "Use strip center"
-msgstr "Induk"
-
-
 msgid "Next Strip"
 msgstr "Kamera"
 
@@ -5716,6 +5643,10 @@ msgstr "Modus Sunting"
 msgctxt "Operator"
 msgid "Remove Strip Modifier"
 msgstr "Modus Sunting"
+
+
+msgid "Property"
+msgstr "Properti"
 
 
 msgctxt "Operator"
@@ -6213,10 +6144,6 @@ msgstr "lokasi"
 msgctxt "Operator"
 msgid "View Manual"
 msgstr "Bahan"
-
-
-msgid "Property"
-msgstr "Properti"
 
 
 msgctxt "Operator"
@@ -6925,6 +6852,10 @@ msgstr "Seleksi"
 msgctxt "Operator"
 msgid "Invert Selection"
 msgstr "Seleksi"
+
+
+msgid "Active object is not a mesh"
+msgstr "Atur objek sebagai induk"
 
 
 msgid "To"
@@ -7946,10 +7877,6 @@ msgstr "Penyunting Teks"
 
 msgid "Cannot join while in edit mode"
 msgstr "Penyunting Teks"
-
-
-msgid "Active object is not a mesh"
-msgstr "Atur objek sebagai induk"
 
 
 msgid "Active object is not a selected mesh"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -686,6 +686,10 @@ msgid "Active Bone"
 msgstr "Aktywna Kość"
 
 
+msgid "Description"
+msgstr "Opis"
+
+
 msgid "Vector"
 msgstr "Wektorowy"
 
@@ -806,10 +810,6 @@ msgid "Save Mode"
 msgstr "Tryb zapisu"
 
 
-msgid "Choose how to save the baking map"
-msgstr "Wybierz jak zapisać wyliczoną mapę"
-
-
 msgid "Internal"
 msgstr "Wewnętrznie"
 
@@ -820,6 +820,10 @@ msgstr "Zewnętrznie"
 
 msgid "Save the baking map in an external file"
 msgstr "Zapis wyliczoną mapę do pliku zewnętrznego"
+
+
+msgid "Target"
+msgstr "Cel"
 
 
 msgid "Automatic Name"
@@ -3215,10 +3219,6 @@ msgid "Minimum value for target channel range"
 msgstr "Minimalna wartość dla docelowego zakresu kanału"
 
 
-msgid "Target"
-msgstr "Cel"
-
-
 msgid "Target object"
 msgstr "Obiekt docelowy"
 
@@ -4771,10 +4771,6 @@ msgid "Include visualization of curve related animation data"
 msgstr "Pokaż wizualizację krzywych związanych z danymi animacji"
 
 
-msgid "Show Datablock Filters"
-msgstr "Pokaż filtry bloków danych"
-
-
 msgid "Show options for whether channels related to certain types of data are included"
 msgstr "Pokaż opcje czy kanały powiązane z określonym typem danych są dołączone"
 
@@ -5291,10 +5287,6 @@ msgid "Bone is not able to be transformed when in Edit Mode"
 msgstr "Kość nie może być transformowana gdy znajduje się w Trybie Edycji"
 
 
-msgid "Editbone Matrix"
-msgstr "Macierz edycji kości"
-
-
 msgid "Parent edit bone (in same Armature)"
 msgstr "Edytuj kość nadrzędną (w tym samym szkielecie)"
 
@@ -5425,10 +5417,6 @@ msgstr "Definicja elementów wyliczeniowych"
 
 msgid "Definition of a choice in an RNA enum property"
 msgstr "Definicja wyboru własności w strukturze RNA"
-
-
-msgid "Description"
-msgstr "Opis"
 
 
 msgid "Description of the item's purpose"
@@ -5832,10 +5820,6 @@ msgid "Generate a curve using standard math functions such as sin and cos"
 msgstr "Generuje krzywą używając standardowych funkcji matematycznych takich jak sin lub cos"
 
 
-msgid "Reshape F-Curve values - e.g. change amplitude of movements"
-msgstr "Zmienia kształt krzywej-F za pomocą przeskalowania lub przesunięcia"
-
-
 msgid "Cyclic extend/repeat keyframe sequence"
 msgstr "Cyklicznie rozszerza/powtarza sekwencję klatek kluczowych"
 
@@ -5846,10 +5830,6 @@ msgstr "Dodaje pseudolosowy szum do obecnej krzywej-F"
 
 msgid "Restrict maximum and minimum values of F-Curve"
 msgstr "Ogranicza maksymalne i minimalna zakresy krzywej-F"
-
-
-msgid "Snap values to nearest grid-step - e.g. for a stop-motion look"
-msgstr "Dopasowuje wartości krzywej do najbliższego oczka siatki dla uzyskania zmian skokowych."
 
 
 msgid "Use Influence"
@@ -5982,10 +5962,6 @@ msgstr "Wartość wokół której wycentrowany jest wpływ obwiedni (inaczej mó
 
 msgid "Built-In Function F-Modifier"
 msgstr "Modyfikator-F dla funkcji wbudowanej"
-
-
-msgid "Generate values using a Built-In Function"
-msgstr "Generuj wartości używając funkcji wbudowanej"
 
 
 msgid "Amplitude"
@@ -6174,10 +6150,6 @@ msgstr "Tryb Mieszania"
 
 msgid "Frames"
 msgstr "Klatki"
-
-
-msgid "Parent Object"
-msgstr "Obiekt rodzica"
 
 
 msgid "Onion Skinning"
@@ -6563,10 +6535,6 @@ msgid "Add a constraint to the active object"
 msgstr "Dodaj ogranicznik do aktywnego obiektu"
 
 
-msgid "Clear all the constraints for the active Object only"
-msgstr "Usuń ograniczniki tylko z aktywnego obiektu"
-
-
 msgid "Delete selected objects"
 msgstr "Usuń zaznaczone obiekty"
 
@@ -6585,6 +6553,10 @@ msgstr "Paleta"
 
 msgid "Hinge"
 msgstr "Zawias"
+
+
+msgid "Property"
+msgstr "Właściwość"
 
 
 msgctxt "Operator"
@@ -6607,10 +6579,6 @@ msgstr "Przypięty"
 
 msgid "Play"
 msgstr "Start"
-
-
-msgid "Property"
-msgstr "Właściwość"
 
 
 msgid "Property Name"
@@ -6703,6 +6671,10 @@ msgstr "Animowana"
 
 msgid "Unknown"
 msgstr "Nieznany"
+
+
+msgid "Active object is not a mesh"
+msgstr "Aktywny obiekt nie jest siatką"
 
 
 msgid "To"
@@ -8054,14 +8026,6 @@ msgid "Anim Player"
 msgstr "Odtwarzacz Animacji"
 
 
-msgid "Display number of users of this data (click to make a single-user copy)"
-msgstr "Wyświetl liczbę użytkowników tych danych (kliknij by utworzyć unikalną kopię)"
-
-
-msgid "Packed File, click to unpack"
-msgstr "Plik spakowany, kliknij by rozpakować"
-
-
 msgid "Reset operator defaults"
 msgstr "Resetuj domyślne dla operatora"
 
@@ -8585,10 +8549,6 @@ msgid "Cannot join while in edit mode"
 msgstr "Nie można złączyć w trybie edycji"
 
 
-msgid "Active object is not a mesh"
-msgstr "Aktywny obiekt nie jest siatką"
-
-
 msgid "Active object is not a selected mesh"
 msgstr "Aktywny obiekt nie jest zaznaczoną siatką"
 
@@ -8675,16 +8635,20 @@ msgid "No valid selected objects"
 msgstr "Brak prawidłowych zaznaczonych obiektów"
 
 
-msgid "Current render engine does not support baking"
-msgstr "Obecny silnik renderujący nie obsługuje wypalania"
-
-
 msgid "No active image found, add a material or bake to an external file"
 msgstr "Nie odnaleziono aktywnego obrazu, dodaj materiał lub wypal do pliku zewnętrznego"
 
 
 msgid "No active image found, add a material or bake without the Split Materials option"
 msgstr "Nie odnaleziono aktywnego obrazu, dodaj materiał lub wypal bez opcji Podziel Materiał"
+
+
+msgid "Baking map saved to internal image, save it externally or pack it"
+msgstr "Wypalona mapa zapisana do obrazu wewnętrznego, zapisz ją zewnętrznie lub spakuj"
+
+
+msgid "Current render engine does not support baking"
+msgstr "Obecny silnik renderujący nie obsługuje wypalania"
 
 
 msgid "No valid cage object"
@@ -8697,10 +8661,6 @@ msgstr "Nieprawidłowy obiekt klatki, siatka klatki musi posiadać tę samą lic
 
 msgid "Error handling selected objects"
 msgstr "Błąd przy działaniu na zaznaczonych obiektach"
-
-
-msgid "Baking map saved to internal image, save it externally or pack it"
-msgstr "Wypalona mapa zapisana do obrazu wewnętrznego, zapisz ją zewnętrznie lub spakuj"
 
 
 msgid "Object \"%s\" is not a mesh"
@@ -8731,18 +8691,6 @@ msgid "Uninitialized image %s"
 msgstr "Nie zainicjowany obraz %s"
 
 
-msgid "No UV layer named \"%s\" found in the object \"%s\""
-msgstr "Nie odnaleziono warstwy UV o nazwie \"%s\" w obiekcie \"%s\""
-
-
-msgid "Error baking from object \"%s\""
-msgstr "Problem z wypaleniem z obiektu \"%s\""
-
-
-msgid "Problem baking object \"%s\""
-msgstr "Problem wypalenia obiektu \"%s\""
-
-
 msgid "Problem saving the bake map internally for object \"%s\""
 msgstr "Problem zapisu wypalonej mapy wewnętrznie dla obiektu \"%s\""
 
@@ -8753,6 +8701,18 @@ msgstr "Problem zapisu wypalonej mapy w \"%s\""
 
 msgid "Baking map written to \"%s\""
 msgstr "Wypalenie mapy zapisane do \"%s'\""
+
+
+msgid "No UV layer named \"%s\" found in the object \"%s\""
+msgstr "Nie odnaleziono warstwy UV o nazwie \"%s\" w obiekcie \"%s\""
+
+
+msgid "Error baking from object \"%s\""
+msgstr "Problem z wypaleniem z obiektu \"%s\""
+
+
+msgid "Problem baking object \"%s\""
+msgstr "Problem wypalenia obiektu \"%s\""
 
 
 msgid "Add IK"

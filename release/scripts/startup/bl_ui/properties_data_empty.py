@@ -70,7 +70,7 @@ class DATA_PT_empty(DataButtonsPanel, Panel):
             row.prop(ob, "show_empty_image_only_axis_aligned", text="Only Axis Aligned")
             row.prop_decorator(ob, "show_empty_image_only_axis_aligned")
 
-            col = layout.column(align=False, heading="Transparency")
+            col = layout.column(align=False, heading="Opacity")
             col.use_property_decorate = False
             row = col.row(align=True)
             sub = row.row(align=True)

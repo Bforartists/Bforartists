@@ -387,16 +387,18 @@ def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=
         if key.startswith(prefix) and key not in exclude:
             new_key = dest_prefix + key[len(prefix):]
 
-            dest[new_key] = value
-
             info = rna_idprop_ui_prop_get(src, key, False)
-            if info:
-                info2 = rna_idprop_ui_prop_get(dest, new_key, True)
-                for ki, vi in info.items():
-                    info2[ki] = vi
 
-            if link_driver:
-                make_driver(src, quote_property(key), variables=[(dest.id_data, dest, new_key)])
+            if src != dest or new_key != key:
+                dest[new_key] = value
+
+                if info:
+                    info2 = rna_idprop_ui_prop_get(dest, new_key, True)
+                    for ki, vi in info.items():
+                        info2[ki] = vi
+
+                if link_driver:
+                    make_driver(src, quote_property(key), variables=[(dest.id_data, dest, new_key)])
 
             res.append((key, new_key, value, info))
 
@@ -412,10 +414,21 @@ def copy_custom_properties_with_ui(rig, src, dest_bone, *, ui_controls=None, **o
     mapping = copy_custom_properties(src, bone, **options)
 
     if mapping:
-        panel = rig.script.panel_with_selected_check(rig, ui_controls or rig.bones.ctrl.flatten())
+        panel = rig.script.panel_with_selected_check(rig, ui_controls or rig.bones.flatten('ctrl'))
 
-        for key,new_key,value,info in mapping:
-            name = re.sub(r'[_.-]', ' ', new_key).title()
+        for key,new_key,value,info in sorted(mapping, key=lambda item: item[1]):
+            name = new_key
+
+            # Replace delimiters with spaces
+            if ' ' not in name:
+                name = re.sub(r'[_.-]', ' ', name)
+            # Split CamelCase
+            if ' ' not in name:
+                name = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
+            # Capitalize
+            if name.lower() == name:
+                name = name.title()
+
             slider = type(value) is float and info and info.get("min", None) == 0 and info.get("max", None) == 1
 
             panel.custom_prop(dest_bone, new_key, text=name, slider=slider)

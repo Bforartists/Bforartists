@@ -68,7 +68,7 @@ const EnumPropertyItem rna_enum_fmodifier_type_items[] = {
      "NOISE",
      ICON_NOISE_MODIFIER,
      "Noise",
-     "Add pseudorandom noise on top of F-Curves"},
+     "Add pseudo-random noise on top of F-Curves"},
     /*{FMODIFIER_TYPE_FILTER, "FILTER", 0, "Filter", ""},*/ /* FIXME: not implemented yet! */
     /*{FMODIFIER_TYPE_PYTHON, "PYTHON", 0, "Python", ""},*/ /* FIXME: not implemented yet! */
     {FMODIFIER_TYPE_LIMITS,
