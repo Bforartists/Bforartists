@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'8f3a40197598')\n"
+"Project-Id-Version: Blender 2.92.0 Alpha (b'823f0da702f1')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -190,6 +190,10 @@ msgid "Object"
 msgstr "Object"
 
 
+msgid "Target"
+msgstr "Doel"
+
+
 msgid "Split Materials"
 msgstr "Splits Materialen"
 
@@ -365,10 +369,6 @@ msgstr "Skellet"
 
 msgid "Floor"
 msgstr "Vloer"
-
-
-msgid "Target"
-msgstr "Doel"
 
 
 msgid "Active Clip"
@@ -568,10 +568,6 @@ msgid "Frames"
 msgstr "Frames"
 
 
-msgid "Parent Object"
-msgstr "Ouder Object"
-
-
 msgid "Layer"
 msgstr "Laag"
 
@@ -674,6 +670,10 @@ msgid "Sharp"
 msgstr "Scherp"
 
 
+msgid "Inverse Square"
+msgstr "Inverse Wortel"
+
+
 msgid "Mask"
 msgstr "Mask"
 
@@ -746,10 +746,6 @@ msgid "Edit Format"
 msgstr "Bewerk Formaat"
 
 
-msgid "Font size"
-msgstr "Grote lettertype"
-
-
 msgid "Underline Thickness"
 msgstr "Dikte onderstreping"
 
@@ -784,10 +780,6 @@ msgstr "Film"
 
 msgid "Falloff Type"
 msgstr "Type Afvlakking"
-
-
-msgid "Inverse Square"
-msgstr "Inverse Wortel"
 
 
 msgid "Size Y"
@@ -2270,11 +2262,6 @@ msgstr "Vorige Map"
 
 
 msgctxt "Operator"
-msgid "Refresh Filelist"
-msgstr "Ververs Lijst met Bestanden"
-
-
-msgctxt "Operator"
 msgid "Rename File or Directory"
 msgstr "Hernoem Bestand of Map"
 
@@ -2347,16 +2334,6 @@ msgstr "Plak Tekst"
 msgctxt "Operator"
 msgid "Paste File"
 msgstr "Plak Bestand"
-
-
-msgctxt "Operator"
-msgid "Add Textbox"
-msgstr "Voeg Tekstbox Toe"
-
-
-msgctxt "Operator"
-msgid "Remove Textbox"
-msgstr "Verwijder Tekstbox"
 
 
 msgctxt "Operator"
@@ -3005,11 +2982,6 @@ msgstr "Dupliceer Gekoppeld"
 
 
 msgctxt "Operator"
-msgid "Toggle Editmode"
-msgstr "Bewerkmodus Aan/Uit"
-
-
-msgctxt "Operator"
 msgid "Add Empty"
 msgstr "Voeg leeg object toe"
 
@@ -3340,10 +3312,6 @@ msgstr "Maak Lokaal"
 
 msgid "Reload"
 msgstr "Herlaad"
-
-
-msgid "Toggle render use"
-msgstr "Render gebruik aan/uit"
 
 
 msgid "Select Hierarchy"
@@ -3747,6 +3715,10 @@ msgid "Next Strip"
 msgstr "Volgende Strip"
 
 
+msgid "Property"
+msgstr "Eigenschap"
+
+
 msgctxt "Operator"
 msgid "Swap Strip"
 msgstr "Ruil Strip Om"
@@ -4093,10 +4065,6 @@ msgid "Open a Blender file"
 msgstr "Open een Blender Bestand"
 
 
-msgid "Property"
-msgstr "Eigenschap"
-
-
 msgctxt "Operator"
 msgid "Add Property"
 msgstr "Voeg Eigenschap Toe"
@@ -4180,10 +4148,6 @@ msgstr "Interface"
 msgctxt "Operator"
 msgid "Save System Info"
 msgstr "Systeem Informatie Opslaan"
-
-
-msgid "Open a website in the web-browser"
-msgstr "Opent een website in  de web-browser"
 
 
 msgctxt "Operator"
@@ -4716,6 +4680,16 @@ msgstr "Bewerken"
 
 
 msgctxt "Operator"
+msgid "Open..."
+msgstr "Open..."
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "Handleiding"
+
+
+msgctxt "Operator"
 msgid "Update Paths"
 msgstr "Update Paden"
 
@@ -4748,6 +4722,10 @@ msgstr "Verwijder"
 msgctxt "Operator"
 msgid "Add Image"
 msgstr "Voeg Afbeelding Toe"
+
+
+msgid "Endpoint"
+msgstr "Eindpunt"
 
 
 msgctxt "Operator"
@@ -4878,10 +4856,6 @@ msgid "Old"
 msgstr "Oud"
 
 
-msgid "Endpoint"
-msgstr "Eindpunt"
-
-
 msgctxt "Operator"
 msgid "Remove Canvas"
 msgstr "Verwijder Canvas"
@@ -5003,11 +4977,6 @@ msgstr "Kortste pad"
 msgctxt "Operator"
 msgid "New"
 msgstr "Nieuw"
-
-
-msgctxt "Operator"
-msgid "Open..."
-msgstr "Open..."
 
 
 msgctxt "Operator"
@@ -5142,11 +5111,6 @@ msgstr "Dupliceer Markering"
 msgctxt "Operator"
 msgid "Quit"
 msgstr "Sluit af"
-
-
-msgctxt "Operator"
-msgid "Manual"
-msgstr "Handleiding"
 
 
 msgid "Author:"

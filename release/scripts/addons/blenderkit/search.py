@@ -63,6 +63,9 @@ import copy
 import json
 import math
 
+import logging
+bk_logger = logging.getLogger('blenderkit')
+
 search_start_time = 0
 prev_time = 0
 
@@ -119,7 +122,7 @@ def update_ad(ad):
             ad['author']['id'] = ad['author_id']  # this should stay ONLY for compatibility with older scenes
             ad['canDownload'] = ad['can_download']  # this should stay ONLY for compatibility with older scenes
         except Exception as e:
-            print('BLenderKit failed to update older asset data')
+            bk_logger.error('BLenderKit failed to update older asset data')
     return ad
 
 
@@ -249,9 +252,8 @@ def parse_result(r):
             if f['fileType'].find('resolution') > -1:
                 r['available_resolutions'].append(resolutions.resolutions[f['fileType']])
         r['max_resolution'] = 0
-        if r['available_resolutions']:#should check only for non-empty sequences
+        if r['available_resolutions']:  # should check only for non-empty sequences
             r['max_resolution'] = max(r['available_resolutions'])
-
 
         tooltip = generate_tooltip(r)
         # for some reason, the id was still int on some occurances. investigate this.
@@ -372,6 +374,9 @@ def timer_update():
             if asset_type == 'scene':
                 props = scene.blenderkit_scene
                 # json_filepath = os.path.join(icons_dir, 'scene_searchresult.json')
+            if asset_type == 'hdr':
+                props = scene.blenderkit_HDR
+                # json_filepath = os.path.join(icons_dir, 'scene_searchresult.json')
             if asset_type == 'material':
                 props = scene.blenderkit_mat
                 # json_filepath = os.path.join(icons_dir, 'material_searchresult.json')
@@ -417,7 +422,7 @@ def timer_update():
                 bpy.ops.wm.undo_push_context(message='Get BlenderKit search')
 
             else:
-                print('error', error)
+                bk_logger.error(error)
                 props.report = error
                 props.search_error = True
 
@@ -458,7 +463,11 @@ def load_previews():
                     img.unpack(method='USE_ORIGINAL')
                 img.filepath = tpath
                 img.reload()
-            img.colorspace_settings.name = 'sRGB'
+            if r['assetType'] == 'hdr':
+                # to display hdr thumbnails correctly, we use non-color, otherwise looks shifted
+                img.colorspace_settings.name = 'Non-Color'
+            else:
+                img.colorspace_settings.name = 'sRGB'
 
             i += 1
     # print('previews loaded')
@@ -553,7 +562,7 @@ def generate_tooltip(mdata):
     else:
         mparams = mdata['parameters']
     t = ''
-    t = writeblock(t, mdata['name'], width=col_w)
+    t = writeblock(t, mdata['displayName'], width=col_w)
     t += '\n'
 
     t = writeblockm(t, mdata, key='description', pretext='', width=col_w)
@@ -610,10 +619,12 @@ def generate_tooltip(mdata):
         t += 'texture size: %s\n' % fmt_length(mparams['textureSizeMeters'])
 
     if has(mparams, 'textureResolutionMax') and mparams['textureResolutionMax'] > 0:
-        if mparams['textureResolutionMin'] == mparams['textureResolutionMax']:
+        if not mparams.get('textureResolutionMin'):  # for HDR's
+            t = writeblockm(t, mparams, key='textureResolutionMax', pretext='Resolution', width=col_w)
+        elif mparams.get('textureResolutionMin') == mparams['textureResolutionMax']:
             t = writeblockm(t, mparams, key='textureResolutionMin', pretext='texture resolution', width=col_w)
         else:
-            t += 'tex resolution: %i - %i\n' % (mparams['textureResolutionMin'], mparams['textureResolutionMax'])
+            t += 'tex resolution: %i - %i\n' % (mparams.get('textureResolutionMin'), mparams['textureResolutionMax'])
 
     if has(mparams, 'thumbnailScale'):
         t = writeblockm(t, mparams, key='thumbnailScale', pretext='preview scale', width=col_w)
@@ -635,10 +646,11 @@ def generate_tooltip(mdata):
 
         t = writeblockm(t, mdata, key='isFree', width=col_w)
     else:
-        for f in fs:
-            if f['fileType'].find('resolution')>-1:
-                t+= 'Asset has lower resolutions available\n'
-                break;
+        if fs:
+            for f in fs:
+                if f['fileType'].find('resolution') > -1:
+                    t += 'Asset has lower resolutions available\n'
+                    break;
     # generator is for both upload preview and search, this is only after search
     # if mdata.get('versionNumber'):
     #     # t = writeblockm(t, mdata, key='versionNumber', pretext='version', width = col_w)
@@ -649,6 +661,21 @@ def generate_tooltip(mdata):
     #             t += generate_author_textblock(adata)
 
     # t += '\n'
+    rc = mdata.get('ratingsCount')
+    if utils.profile_is_validator() and rc:
+
+        if rc:
+            rcount = min(rc['quality'], rc['workingHours'])
+        else:
+            rcount = 0
+        if rcount < 10:
+            t += f"Please rate this asset, \nit doesn't have enough ratings.\n"
+        else:
+            t += f"Quality rating: {int(mdata['ratingsAverage']['quality']) * '*'}\n"
+            t += f"Hours saved rating: {int(mdata['ratingsAverage']['workingHours'])}\n"
+        if utils.profile_is_validator():
+            t += f"Ratings count {rc['quality']}*/{rc['workingHours']}wh value " \
+                 f"{mdata['ratingsAverage']['quality']}*/{mdata['ratingsAverage']['workingHours']}wh\n"
     if len(t.split('\n')) < 11:
         t += '\n'
         t += get_random_tip(mdata)
@@ -799,7 +826,7 @@ def get_author(r):
 
 
 def write_profile(adata):
-    utils.p('writing profile')
+    utils.p('writing profile information')
     user = adata['user']
     # we have to convert to MiB here, numbers too big for python int type
     if user.get('sumAssetFilesSize') is not None:
@@ -836,7 +863,7 @@ def fetch_profile(api_key):
         if adata is not None:
             tasks_queue.add_task((write_profile, (adata,)))
     except Exception as e:
-        utils.p(e)
+        bk_logger.error(e)
 
 
 def get_profile():
@@ -881,23 +908,26 @@ class Searcher(threading.Thread):
                 requeststring += q + ':' + str(query[q]).lower()
 
         # result ordering: _score - relevance, score - BlenderKit score
-
+        order = []
+        if params['free_first']:
+            order = ['-is_free',]
         if query.get('query') is None and query.get('category_subtree') == None:
             # assumes no keywords and no category, thus an empty search that is triggered on start.
             # orders by last core file upload
             if query.get('verification_status') == 'uploaded':
                 # for validators, sort uploaded from oldest
-                requeststring += '+order:created'
+                order.append('created')
             else:
-                requeststring += '+order:-last_upload'
+                order.append('-last_upload')
         elif query.get('author_id') is not None and utils.profile_is_validator():
 
-            requeststring += '+order:-created'
+            order.append('-created')
         else:
             if query.get('category_subtree') is not None:
-                requeststring += '+order:-score,_score'
+                order.append('-score,_score')
             else:
-                requeststring += '+order:_score'
+                order.append('_score')
+        requeststring += '+order:' + ','.join(order)
 
         requeststring += '&addon_version=%s' % params['addon_version']
         if params.get('scene_uuid') is not None:
@@ -934,16 +964,16 @@ class Searcher(threading.Thread):
             reports = ''
             # utils.p(r.text)
         except requests.exceptions.RequestException as e:
-            print(e)
+            bk_logger.error(e)
             reports = e
             # props.report = e
             return
         mt('search response is back ')
         try:
             rdata = r.json()
-        except Exception as inst:
+        except Exception as e:
             reports = r.text
-            print(inst)
+            bk_logger.error(e)
 
         mt('data parsed ')
         if not rdata.get('results'):
@@ -1096,9 +1126,9 @@ def build_query_model():
         else:
             query["model_style"] = props.search_style_other
 
-    if props.free_only:
-        query["is_free"] = True
-
+    # the 'free_only' parametr gets moved to the search command and is used for ordering the assets as free first
+    # if props.free_only:
+    #     query["is_free"] = True
 
     # if props.search_advanced:
     if props.search_condition != 'UNSPECIFIED':
@@ -1124,6 +1154,19 @@ def build_query_scene():
     props = bpy.context.scene.blenderkit_scene
     query = {
         "asset_type": 'scene',
+        # "engine": props.search_engine,
+        # "adult": props.search_adult,
+    }
+    build_query_common(query, props)
+    return query
+
+
+def build_query_HDR():
+    '''use all search input to request results from server'''
+
+    props = bpy.context.scene.blenderkit_HDR
+    query = {
+        "asset_type": 'hdr',
         # "engine": props.search_engine,
         # "adult": props.search_adult,
     }
@@ -1221,7 +1264,8 @@ def add_search_process(query, params, orig_result):
     while (len(search_threads) > 0):
         old_thread = search_threads.pop(0)
         old_thread[0].stop()
-        # TODO CARE HERE FOR ALSO KILLING THE THREADS...AT LEAST NOW SEARCH DONE FIRST WON'T REWRITE AN OLDER ONE
+        # TODO CARE HERE FOR ALSO KILLING THE Thumbnail THREADS.?
+        #  AT LEAST NOW SEARCH DONE FIRST WON'T REWRITE AN OLDER ONE
 
     tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
     thread = Searcher(query, params, orig_result)
@@ -1257,6 +1301,7 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
         requeststring += f'+{p}:{parameters[p]}'
 
     requeststring += '&page_size=' + str(page_size)
+    bk_logger.debug(requeststring)
     response = rerequests.get(requeststring, headers=headers)  # , params = rparameters)
     # print(r.json())
     search_results = response.json()
@@ -1266,7 +1311,7 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
     page_index = 2
     page_count = math.ceil(search_results['count'] / page_size)
     while search_results.get('next') and len(results) < max_results:
-        print(f'getting page {page_index} , total pages {page_count}')
+        bk_logger.info(f'getting page {page_index} , total pages {page_count}')
         response = rerequests.get(search_results['next'], headers=headers)  # , params = rparameters)
         search_results = response.json()
         # print(search_results)
@@ -1278,7 +1323,7 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
 
     with open(filepath, 'w') as s:
         json.dump(results, s)
-    print(f'retrieved {len(results)} assets from elastic search')
+    bk_logger.info(f'retrieved {len(results)} assets from elastic search')
     return results
 
 
@@ -1303,6 +1348,12 @@ def search(category='', get_next=False, author_id=''):
             return;
         props = scene.blenderkit_scene
         query = build_query_scene()
+
+    if ui_props.asset_type == 'HDR':
+        if not hasattr(scene, 'blenderkit_HDR'):
+            return;
+        props = scene.blenderkit_HDR
+        query = build_query_HDR()
 
     if ui_props.asset_type == 'MATERIAL':
         if not hasattr(scene, 'blenderkit_mat'):
@@ -1345,7 +1396,8 @@ def search(category='', get_next=False, author_id=''):
         'scene_uuid': bpy.context.scene.get('uuid', None),
         'addon_version': version_checker.get_addon_version(),
         'api_key': user_preferences.api_key,
-        'get_next': get_next
+        'get_next': get_next,
+        'free_first': props.free_only
     }
 
     # if free_only:
@@ -1367,7 +1419,7 @@ def search_update(self, context):
     if ui_props.down_up != 'SEARCH':
         ui_props.down_up = 'SEARCH'
 
-    # here we tweak the input if it comes form the clipboard. we need to get rid of asset type and set it to
+    # here we tweak the input if it comes form the clipboard. we need to get rid of asset type and set it in UI
     sprops = utils.get_search_props()
     instr = 'asset_base_id:'
     atstr = 'asset_type:'
@@ -1376,8 +1428,6 @@ def search_update(self, context):
     ati = kwds.find(atstr)
     # if the asset type already isn't there it means this update function
     # was triggered by it's last iteration and needs to cancel
-    if idi > -1 and ati == -1:
-        return;
     if ati > -1:
         at = kwds[ati:].lower()
         # uncertain length of the remaining string -  find as better method to check the presence of asset type
@@ -1387,12 +1437,19 @@ def search_update(self, context):
             ui_props.asset_type = 'MATERIAL'
         elif at.find('brush') > -1:
             ui_props.asset_type = 'BRUSH'
+        elif at.find('scene') > -1:
+            ui_props.asset_type = 'SCENE'
+        elif at.find('hdr') > -1:
+            ui_props.asset_type = 'HDR'
         # now we trim the input copypaste by anything extra that is there,
         # this is also a way for this function to recognize that it already has parsed the clipboard
         # the search props can have changed and this needs to transfer the data to the other field
         # this complex behaviour is here for the case where the user needs to paste manually into blender?
         sprops = utils.get_search_props()
         sprops.search_keywords = kwds[:ati].rstrip()
+        # return here since writing into search keywords triggers this update function once more.
+        return
+
     search()
 
 

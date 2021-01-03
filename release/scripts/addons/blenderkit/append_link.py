@@ -96,6 +96,82 @@ def append_scene(file_name, scenename=None, link=False, fake_user=False):
     return scene
 
 
+def get_node_sure(node_tree, ntype=''):
+    '''
+    Gets a node of certain type, but creates a new one if not pre
+    '''
+    node = None
+    for n in node_tree.nodes:
+        if ntype == n.bl_rna.identifier:
+            node = n
+            return node
+    if not node:
+        node = node_tree.nodes.new(type=ntype)
+
+    return node
+
+def hdr_swap(name, hdr):
+    '''
+    Try to replace the hdr in current world setup. If this fails, create a new world.
+    :param name: Name of the resulting world (renamse the current one if swap is successfull)
+    :param hdr: Image type
+    :return: None
+    '''
+    w = bpy.context.scene.world
+    if w:
+        w.use_nodes = True
+        w.name = name
+        nt = w.node_tree
+        for n in nt.nodes:
+            if 'ShaderNodeTexEnvironment' == n.bl_rna.identifier:
+                env_node = n
+                env_node.image = hdr
+                return
+    new_hdr_world(name,hdr)
+
+
+def new_hdr_world(name, hdr):
+    '''
+    creates a new world, links in the hdr with mapping node, and links the world to scene
+    :param name: Name of the world datablock
+    :param hdr: Image type
+    :return: None
+    '''
+    w = bpy.data.worlds.new(name=name)
+    w.use_nodes = True
+    bpy.context.scene.world = w
+
+    nt = w.node_tree
+    env_node = nt.nodes.new(type='ShaderNodeTexEnvironment')
+    env_node.image = hdr
+    background = get_node_sure(nt, 'ShaderNodeBackground')
+    tex_coord = get_node_sure(nt, 'ShaderNodeTexCoord')
+    mapping = get_node_sure(nt, 'ShaderNodeMapping')
+
+    nt.links.new(env_node.outputs['Color'], background.inputs['Color'])
+    nt.links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
+    nt.links.new(mapping.outputs['Vector'], env_node.inputs['Vector'])
+    env_node.location.x = -400
+    mapping.location.x = -600
+    tex_coord.location.x = -800
+
+
+def load_HDR(file_name, name):
+    '''Load a HDR into file and link it to scene world. '''
+    already_linked = False
+    for i in bpy.data.images:
+        if i.filepath == file_name:
+            hdr = i
+            already_linked = True
+            break;
+
+    if not already_linked:
+        hdr = bpy.data.images.load(file_name)
+
+    hdr_swap(name, hdr)
+    return hdr
+
+
 def link_collection(file_name, obnames=[], location=(0, 0, 0), link=False, parent = None, **kwargs):
     '''link an instanced group - model type asset'''
     sel = utils.selection_get()
@@ -169,27 +245,43 @@ def append_particle_system(file_name, obnames=[], location=(0, 0, 0), link=False
             for p in target_object.data.polygons:
                 totarea += p.area
             count = int(ps.count * totarea)
+
             if ps.child_type in ('INTERPOLATED', 'SIMPLE'):
                 total_count = count * ps.rendered_child_count
                 disp_count = count * ps.child_nbr
             else:
                 total_count = count
-            threshold = 2000
-            total_max_threshold = 50000
-            # emitting too many parent particles just kills blender now:
-            if count > total_max_threshold:
-                ratio = round(count / total_max_threshold)
 
-                if ps.child_type in ('INTERPOLATED', 'SIMPLE'):
-                    ps.rendered_child_count *= ratio
-                else:
-                    ps.child_type = 'INTERPOLATED'
-                    ps.rendered_child_count = ratio
-                count = max(2, int(count / ratio))
-            ps.display_percentage = min(ps.display_percentage, max(1, int(100 * threshold / total_count)))
+            bbox_threshold = 25000
+            display_threshold = 200000
+            total_max_threshold = 2000000
+            # emitting too many parent particles just kills blender now.
 
+            #this part tuned child count, we'll leave children to artists only.
+            # if count > total_max_threshold:
+            #     ratio = round(count / total_max_threshold)
+            #
+            #     if ps.child_type in ('INTERPOLATED', 'SIMPLE'):
+            #         ps.rendered_child_count *= ratio
+            #     else:
+            #         ps.child_type = 'INTERPOLATED'
+            #         ps.rendered_child_count = ratio
+            #     count = max(2, int(count / ratio))
+
+            #1st level of optimizaton - switch t bounding boxes.
+            if total_count>bbox_threshold:
+                target_object.display_type = 'BOUNDS'
+            # 2nd level of optimization - reduce percentage of displayed particles.
+            ps.display_percentage = min(ps.display_percentage, max(1, int(100 * display_threshold / total_count)))
+            #here we can also tune down number of children displayed.
+            #set the count
             ps.count = count
+            #add the modifier
             bpy.ops.object.particle_system_add()
+            # 3rd level - hide particle system from viewport - is done on the modifier..
+            if total_count > total_max_threshold:
+                target_object.modifiers[-1].show_viewport = False
+
             target_object.particle_systems[-1].settings = ps
 
         target_object.select_set(False)

@@ -32,7 +32,8 @@ if "bpy" in locals():
     tasks_queue = importlib.reload(tasks_queue)
     tasks_queue = importlib.reload(ui_panels)
 else:
-    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue, ui_panels
+    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue, \
+        ui_panels
 
 import bpy
 
@@ -40,7 +41,9 @@ import math, random
 
 from bpy.props import (
     BoolProperty,
-    StringProperty
+    StringProperty,
+    IntProperty,
+    FloatVectorProperty
 )
 
 from bpy_extras import view3d_utils
@@ -49,6 +52,10 @@ from mathutils import Vector
 import time
 import datetime
 import os
+
+import logging
+
+bk_logger = logging.getLogger('blenderkit')
 
 handler_2d = None
 handler_3d = None
@@ -61,6 +68,7 @@ reports = []
 mappingdict = {
     'MODEL': 'model',
     'SCENE': 'scene',
+    'HDR': 'hdr',
     'MATERIAL': 'material',
     'TEXTURE': 'texture',
     'BRUSH': 'brush'
@@ -270,80 +278,6 @@ def draw_ratings_bgl():
             # ui_bgl.draw_text( 'rate asset %s' % asset_data['name'],r.width - rating_button_width + margin, margin, font_size)
             return
 
-        ui_bgl.draw_rect(ui.rating_x,
-                         ui.rating_y - ui.rating_ui_height - 2 * ui.margin - font_size,
-                         ui.rating_ui_width + ui.margin,
-                         ui.rating_ui_height + 2 * ui.margin + font_size,
-                         bgcol)
-        if asset_data['assetType'] == 'model':
-            ui_img_name = 'rating_ui.png'
-        else:
-            ui_img_name = 'rating_ui_empty.png'
-            text = 'Try to estimate how many hours it would take for a professional artist to create this asset:'
-            tx = ui.rating_x + ui.workhours_bar_x
-            # draw_text_block(x=tx, y=ui.rating_y, width=80, font_size=20, line_height=15, text=text, color=colors.TEXT)
-
-        img = utils.get_thumbnail(ui_img_name)
-        ui_bgl.draw_image(ui.rating_x,
-                          ui.rating_y - ui.rating_ui_height - 2 * ui.margin,
-                          ui.rating_ui_width,
-                          ui.rating_ui_height,
-                          img, 1)
-        img = utils.get_thumbnail('star_white.png')
-
-        quality = bkit_ratings.rating_quality
-        work_hours = bkit_ratings.rating_work_hours
-
-        for a in range(0, quality):
-            ui_bgl.draw_image(ui.rating_x + ui.quality_stars_x + a * ui.star_size,
-                              ui.rating_y - ui.rating_ui_height + ui.quality_stars_y,
-                              ui.star_size,
-                              ui.star_size,
-                              img, 1)
-
-        img = utils.get_thumbnail('bar_slider.png')
-        # for a in range(0,11):
-        if work_hours > 0.2:
-            if asset_data['assetType'] == 'model':
-                complexity = math.log2(work_hours) + 2  # real complexity
-                complexity = (1. / 9.) * (complexity - 1) * ui.workhours_bar_x_max
-            else:
-                complexity = work_hours / 5 * ui.workhours_bar_x_max
-            ui_bgl.draw_image(
-                ui.rating_x + ui.workhours_bar_x + int(
-                    complexity),
-                ui.rating_y - ui.rating_ui_height + ui.workhours_bar_y,
-                ui.workhours_bar_slider_size,
-                ui.workhours_bar_slider_size, img, 1)
-            ui_bgl.draw_text(
-                str(round(work_hours, 1)),
-                ui.rating_x + ui.workhours_bar_x - 50,
-                ui.rating_y - ui.rating_ui_height + ui.workhours_bar_y + 10, font_size)
-        # (0.5,1,2,4,8,16,32,64,128,256)
-        # ratings have to be different for models and brushes+materials.
-
-        scalevalues, xs = get_rating_scalevalues(asset_data['assetType'])
-        for v, x in zip(scalevalues, xs):
-            ui_bgl.draw_rect(ui.rating_x + ui.workhours_bar_x + int(
-                x * ui.workhours_bar_x_max) - 1 + ui.workhours_bar_slider_size / 2,
-                             ui.rating_y - ui.rating_ui_height + ui.workhours_bar_y,
-                             2,
-                             5,
-                             textcol)
-            ui_bgl.draw_text(str(v),
-                             ui.rating_x + ui.workhours_bar_x + int(
-                                 x * ui.workhours_bar_x_max),
-                             ui.rating_y - ui.rating_ui_height + ui.workhours_bar_y - 30,
-                             font_size)
-        if work_hours > 0.2 and quality > 0.2:
-            text = 'Thanks for rating asset %s' % asset_data['name']
-        else:
-            text = 'Rate asset %s.' % asset_data['name']
-        ui_bgl.draw_text(text,
-                         ui.rating_x,
-                         ui.rating_y - ui.margin - font_size,
-                         font_size)
-
 
 def draw_text_block(x=0, y=0, width=40, font_size=10, line_height=15, text='', color=colors.TEXT):
     lines = text.split('\n')
@@ -418,7 +352,8 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
     textcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text
     textcol = (textcol[0], textcol[1], textcol[2], 1)
     textcol_mild = (textcol[0] * .8, textcol[1] * .8, textcol[2] * .8, 1)
-    textcol_strong = (textcol[0] * 1.3, textcol[1] * 1.3, textcol[2] * 1.3, 1)
+    textcol_strong = (textcol[0] * 1.3, textcol[1] * 2.3, textcol[2] * 1.3, 1)
+    textcol_strong = (0.4, 1, 0.3, 1)
     white = (1, 1, 1, .1)
 
     # background
@@ -459,9 +394,11 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
             tcol = textcol
             tsize = font_height
         else:
-            if l[:4] == 'Tip:':
-                tcol = textcol_strong
             fsize = font_height
+            if l[:4] == 'Tip:' or l[:11] == 'Please rate':
+                tcol = textcol_strong
+                fsize = font_height + 1
+
         i += 1
         column_lines += 1
         ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
@@ -483,9 +420,11 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
             tcol = textcol
             tsize = font_height
         else:
-            if l[:4] == 'Tip:':
-                tcol = textcol_strong
             fsize = font_height
+            if l[:4] == 'Tip:' or l[:11] == 'Please rate':
+                tcol = textcol_strong
+                fsize = font_height + 1
+
         i += 1
         column_lines += 1
         ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
@@ -604,7 +543,7 @@ def draw_tooltip_old(x, y, text='', author='', img=None):
 
 def draw_callback_2d(self, context):
     if not utils.guard_from_crash():
-        return;
+        return
 
     a = context.area
     w = context.window
@@ -627,12 +566,12 @@ def draw_callback_2d(self, context):
         props = context.scene.blenderkitUI
         if props.down_up == 'SEARCH':
             draw_ratings_bgl()
-            draw_callback_2d_search(self, context)
+            draw_asset_bar(self, context)
         elif props.down_up == 'UPLOAD':
             draw_callback_2d_upload_preview(self, context)
 
 
-def draw_downloader(x, y, percent=0, img=None, text= ''):
+def draw_downloader(x, y, percent=0, img=None, text=''):
     if img is not None:
         ui_bgl.draw_image(x, y, 50, 50, img, .5)
 
@@ -642,8 +581,8 @@ def draw_downloader(x, y, percent=0, img=None, text= ''):
     #     ui_bgl.draw_text(asset_data['name'], x, y, colors.TEXT)
     #     ui_bgl.draw_text(asset_data['filesSize'])
     if text:
-        ui_bgl.draw_text(text, x, y - 15,12, colors.TEXT)
-        #asset_data and asset_data.get('filesSize'):
+        ui_bgl.draw_text(text, x, y - 15, 12, colors.TEXT)
+        # asset_data and asset_data.get('filesSize'):
         # fs = asset_data['filesSize']
         # fsmb = fs // (1024 * 1024)
         # fskb = fs % 1024
@@ -699,12 +638,11 @@ def draw_callback_2d_progress(self, context):
                         draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img, text=tcom.report)
                     else:
                         draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img, text=tcom.report)
-
-
         else:
             draw_progress(x, y - index * 30, text='downloading %s' % asset_data['name'],
                           percent=tcom.progress)
             index += 1
+
     for process in bg_blender.bg_processes:
         tcom = process[1]
         draw_progress(x, y - index * 30, '%s' % tcom.lasttext,
@@ -721,6 +659,11 @@ def draw_callback_2d_upload_preview(self, context):
     ui_props = context.scene.blenderkitUI
 
     props = utils.get_upload_props()
+
+    # assets which don't need asset preview
+    if ui_props.asset_type == 'HDR':
+        return
+
     if props != None and ui_props.draw_tooltip:
 
         if ui_props.asset_type != 'BRUSH':
@@ -732,6 +675,7 @@ def draw_callback_2d_upload_preview(self, context):
         img = utils.get_hidden_image(ui_props.thumbnail_image, 'upload_preview')
 
         draw_tooltip(ui_props.bar_x, ui_props.bar_y, text=ui_props.tooltip, img=img)
+
 
 def is_upload_old(asset_data):
     '''
@@ -749,7 +693,7 @@ def is_upload_old(asset_data):
     return 0
 
 
-def draw_callback_2d_search(self, context):
+def draw_asset_bar(self, context):
     s = bpy.context.scene
     ui_props = context.scene.blenderkitUI
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -776,7 +720,7 @@ def draw_callback_2d_search(self, context):
     #                       1,
     #                       img,
     #                       1)
-    if not ui_props.dragging and ui_props.hcount > 0 and ui_props.wcount>0:
+    if not ui_props.dragging and ui_props.hcount > 0 and ui_props.wcount > 0:
         search_results = s.get('search results')
         search_results_orig = s.get('search results orig')
         if search_results == None:
@@ -855,19 +799,18 @@ def draw_callback_2d_search(self, context):
                     else:
                         ui_bgl.draw_rect(x, y, ui_props.thumb_size, ui_props.thumb_size, white)
 
-
                     result = search_results[index]
-                    #code to inform validators that the validation is waiting too long and should be done asap
+                    # code to inform validators that the validation is waiting too long and should be done asap
                     if result['verificationStatus'] == 'uploaded':
                         if utils.profile_is_validator():
                             over_limit = is_upload_old(result)
                             if over_limit:
-                                redness = min(over_limit*.05,0.5)
+                                redness = min(over_limit * .05, 0.5)
                                 red = (1, 0, 0, redness)
                                 ui_bgl.draw_rect(x, y, ui_props.thumb_size, ui_props.thumb_size, red)
 
                     if result['downloaded'] > 0:
-                        ui_bgl.draw_rect(x, y , int(ui_props.thumb_size * result['downloaded'] / 100.0), 2, green)
+                        ui_bgl.draw_rect(x, y, int(ui_props.thumb_size * result['downloaded'] / 100.0), 2, green)
                     # object type icons - just a test..., adds clutter/ not so userfull:
                     # icons = ('type_finished.png', 'type_template.png', 'type_particle_system.png')
 
@@ -907,27 +850,32 @@ def draw_callback_2d_search(self, context):
                 if not r['thumbnail']:
                     tpath = paths.get_addon_thumbnail_path('thumbnail_not_available.jpg')
 
-                img = bpy.data.images.get(iname)
-                if img == None or img.filepath != tpath:
-                    # TODO replace it with a function
-                    if os.path.exists(tpath):
-
-                        if img is None:
-                            img = bpy.data.images.load(tpath)
-                            img.name = iname
-                        else:
-                            if img.filepath != tpath:
-                                # todo replace imgs reloads with a method that forces unpack for thumbs.
-                                if img.packed_file is not None:
-                                    img.unpack(method='USE_ORIGINAL')
-                                img.filepath = tpath
-                                img.reload()
-                                img.name = iname
-                    else:
-                        iname = utils.previmg_name(ui_props.active_index)
-                        img = bpy.data.images.get(iname)
-                    if img:
-                        img.colorspace_settings.name = 'sRGB'
+                # img = bpy.data.images.get(iname)
+                # if img == None or img.filepath != tpath:
+                #     # TODO replace it with a function
+                #     if os.path.exists(tpath):
+                #
+                #         if img is None:
+                #             img = bpy.data.images.load(tpath)
+                #             img.name = iname
+                #         else:
+                #             if img.filepath != tpath:
+                #                 # todo replace imgs reloads with a method that forces unpack for thumbs.
+                #                 if img.packed_file is not None:
+                #                     img.unpack(method='USE_ORIGINAL')
+                #                 img.filepath = tpath
+                #                 img.reload()
+                #                 img.name = iname
+                #     else:
+                #         iname = utils.previmg_name(ui_props.active_index)
+                #         img = bpy.data.images.get(iname)
+                #     if img:
+                #         img.colorspace_settings.name = 'sRGB'
+                if r['assetType'] == 'hdr':
+                    colorspace = 'Non-Color'
+                else:
+                    colorspace = 'sRGB'
+                img = utils.get_hidden_image(tpath, iname, colorspace=colorspace)
 
                 gimg = None
                 atip = ''
@@ -955,7 +903,7 @@ def draw_callback_2d_search(self, context):
 def draw_callback_3d(self, context):
     ''' Draw snapped bbox while dragging and in the future other blenderkit related stuff. '''
     if not utils.guard_from_crash():
-        return;
+        return
 
     ui = context.scene.blenderkitUI
 
@@ -1079,7 +1027,7 @@ def is_rating_possible():
                 elif ao_check.parent is not None:
                     ao_check = ao_check.parent
                 else:
-                    break;
+                    break
             # check also materials
             m = ao.active_material
             if m is not None:
@@ -1113,63 +1061,12 @@ def interact_rating(r, mx, my, event):
                              ui.rating_y - ui.rating_button_width,
                              ui.rating_button_width * 2,
                              ui.rating_button_width):
-                ui.rating_menu_on = True
-                ui.rating_button_on = False
+                # ui.rating_menu_on = True
+                ctx = utils.get_fake_context(bpy.context, area_type='VIEW_3D')
+                bpy.ops.wm.blenderkit_menu_rating_upload(ctx, 'INVOKE_DEFAULT', asset_name=asset_data['name'],
+                                                         asset_id=asset_data['id'],
+                                                         asset_type=asset_data['assetType'])
                 return True
-        if ui.rating_menu_on:
-            if mouse_in_area(mx, my,
-                             ui.rating_x,
-                             ui.rating_y - ui.rating_ui_height,
-                             ui.rating_ui_width,
-                             ui.rating_ui_height + 25):
-                rmx = mx - (ui.rating_x)
-                rmy = my - (ui.rating_y - ui.rating_ui_height)
-
-                # quality
-                upload_rating = False
-                if (ui.quality_stars_x < rmx and rmx < ui.quality_stars_x + 10 * ui.star_size and \
-                    ui.quality_stars_y < rmy and rmy < ui.quality_stars_y + ui.star_size and event.type == 'LEFTMOUSE' and event.value == 'PRESS') or \
-                        ui.dragging_rating_quality:
-
-                    if event.type == 'LEFTMOUSE':
-                        if event.value == 'PRESS':
-                            ui.dragging_rating = True
-                            ui.dragging_rating_quality = True
-                        elif event.value == 'RELEASE':
-                            ui.dragging_rating = False
-                            ui.dragging_rating_quality = False
-
-                    if ui.dragging_rating_quality:
-                        q = math.ceil((rmx - ui.quality_stars_x) / (float(ui.star_size)))
-                        bkit_ratings.rating_quality = q
-
-                # work hours
-                if (
-                        ui.workhours_bar_x < rmx and rmx < ui.workhours_bar_x + ui.workhours_bar_x_max + ui.workhours_bar_slider_size and \
-                        ui.workhours_bar_y < rmy and rmy < ui.workhours_bar_y + ui.workhours_bar_slider_size and event.type == 'LEFTMOUSE' and event.value == 'PRESS') \
-                        or (ui.dragging_rating_work_hours):
-                    if event.value == 'PRESS':
-                        ui.dragging_rating = True
-                        ui.dragging_rating_work_hours = True
-                    elif event.value == 'RELEASE':
-                        ui.dragging_rating = False
-                        ui.dragging_rating_work_hours = False
-                    if ui.dragging_rating_work_hours:
-                        xv = rmx - ui.workhours_bar_x - ui.workhours_bar_slider_size / 2
-                        ratio = xv / ui.workhours_bar_x_max
-                        if asset_data['assetType'] == 'model':
-                            wh_log2 = ratio * 9 - 1
-                            wh = 2 ** wh_log2
-                        else:
-                            wh = 5 * ratio
-                        bkit_ratings.rating_work_hours = wh
-
-                if event.type == 'LEFTMOUSE' and event.value == 'RELEASE':
-                    ui.last_rating_time = time.time()  # this prop seems obsolete now?
-                return True
-            else:
-                ui.rating_button_on = True
-                ui.rating_menu_on = False
     return False
 
 
@@ -1248,6 +1145,59 @@ def update_ui_size(area, region):
     ui.rating_y = ui.bar_y - ui.bar_height
 
 
+class ParticlesDropDialog(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "object.blenderkit_particles_drop"
+    bl_label = "BlenderKit particle plants object drop"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    asset_search_index: IntProperty(name="Asset index",
+                                    description="Index of the asset in asset bar",
+                                    default=0,
+                                    )
+
+    model_location: FloatVectorProperty(name="Location",
+                                        default=(0, 0, 0))
+
+    model_rotation: FloatVectorProperty(name="Rotation",
+                                        default=(0, 0, 0),
+                                        subtype='QUATERNION')
+
+    target_object: StringProperty(
+        name="Target object",
+        description="The object to which the particles will get applied",
+        default="", options={'SKIP_SAVE'})
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def draw(self, context):
+        layout = self.layout
+        message = 'This asset is a particle setup. BlenderKit can apply particles to the active/drag-drop object.' \
+                  'The number of particles is caluclated automatically, but if there are 2 many particles,' \
+                  ' BlenderKit can do the following steps to make sure Blender continues to run:' \
+                  '\n1.Switch to bounding box view of the particles.' \
+                  '\n2.Turn down number of particles that are shown in the view.' \
+                  '\n3.Hide the particle system completely from the 3D view.' \
+                  "as a result of this, it's possible you'll see the particle setup only in render view or " \
+                  "rendered images. You should still be careful and test particle systems on smaller objects first."
+        utils.label_multiline(layout, text=message, width=400)
+
+    def execute(self, context):
+        bpy.ops.scene.blenderkit_download(True,
+                                          # asset_type=ui_props.asset_type,
+                                          asset_index=self.asset_search_index,
+                                          model_location=self.model_rotation,
+                                          model_rotation=self.model_rotation,
+                                          target_object=self.target_object)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self, width=400)
+
+
 class AssetBarOperator(bpy.types.Operator):
     '''runs search and displays the asset bar at the same time'''
     bl_idname = "view3d.blenderkit_asset_bar"
@@ -1256,7 +1206,7 @@ class AssetBarOperator(bpy.types.Operator):
 
     do_search: BoolProperty(name="Run Search", description='', default=True, options={'SKIP_SAVE'})
     keep_running: BoolProperty(name="Keep Running", description='', default=True, options={'SKIP_SAVE'})
-    free_only: BoolProperty(name="Free Only", description='', default=False, options={'SKIP_SAVE'})
+    free_only: BoolProperty(name="Free first", description='', default=False, options={'SKIP_SAVE'})
 
     category: StringProperty(
         name="Category",
@@ -1328,7 +1278,7 @@ class AssetBarOperator(bpy.types.Operator):
                         if r.type == 'WINDOW':
                             self.region = r
                     newarea = a
-                    break;
+                    break
                     # context.area = a
 
             # we check again and quit if things weren't fixed this way.
@@ -1378,12 +1328,11 @@ class AssetBarOperator(bpy.types.Operator):
                 ao = bpy.context.active_object
                 if ui_props.asset_type == 'MODEL' and ao != None \
                         or ui_props.asset_type == 'MATERIAL' and ao != None and ao.active_material != None \
-                        or ui_props.asset_type == 'BRUSH' and utils.get_active_brush() is not None:
-                    export_data, upload_data, eval_path_computing, eval_path_state, eval_path, props = upload.get_upload_data(
-                        self,
-                        context,
-                        ui_props.asset_type)
-                    ui_props.tooltip = search.generate_tooltip(upload_data)
+                        or ui_props.asset_type == 'BRUSH' and utils.get_active_brush() is not None \
+                        or ui_props.asset_type == 'SCENE' or ui_props.asset_type == 'HDR':
+                    export_data, upload_data = upload.get_upload_data(context=context, asset_type=ui_props.asset_type)
+                    if upload_data:
+                        ui_props.tooltip = search.generate_tooltip(upload_data)
 
             return {'PASS_THROUGH'}
 
@@ -1456,10 +1405,10 @@ class AssetBarOperator(bpy.types.Operator):
             ui_props.mouse_x = mx
             ui_props.mouse_y = my
 
-            if ui_props.dragging_rating or ui_props.rating_menu_on:
-                res = interact_rating(r, mx, my, event)
-                if res == True:
-                    return {'RUNNING_MODAL'}
+            # if ui_props.dragging_rating or ui_props.rating_menu_on:
+            #     res = interact_rating(r, mx, my, event)
+            #     if res == True:
+            #         return {'RUNNING_MODAL'}
 
             if ui_props.drag_init:
                 ui_props.drag_length += 1
@@ -1548,12 +1497,13 @@ class AssetBarOperator(bpy.types.Operator):
 
             ui_props = context.scene.blenderkitUI
             if event.value == 'PRESS' and ui_props.active_index > -1:
+                # start dragging models and materials
                 if ui_props.asset_type == 'MODEL' or ui_props.asset_type == 'MATERIAL':
                     # check if asset is locked and let the user know in that case
                     asset_search_index = ui_props.active_index
                     asset_data = sr[asset_search_index]
                     if not asset_data.get('canDownload'):
-                        message = "Let's support asset creators and Blender development."
+                        message = "Let's support asset creators and Open source."
                         link_text = 'Unlock the asset.'
                         url = paths.get_bkit_url() + '/get-blenderkit/' + asset_data['id'] + '/?from_addon'
                         bpy.ops.wm.blenderkit_url_dialog('INVOKE_REGION_WIN', url=url, message=message,
@@ -1661,8 +1611,8 @@ class AssetBarOperator(bpy.types.Operator):
                         if ao != None and not ao.is_library_indirect:
                             target_object = bpy.context.active_object.name
                             target_slot = bpy.context.active_object.active_material_index
-                            #change snapped location for placing material downloader.
-                            ui_props.snapped_location =  bpy.context.active_object.location
+                            # change snapped location for placing material downloader.
+                            ui_props.snapped_location = bpy.context.active_object.location
                         else:
                             target_object = ''
                             target_slot = ''
@@ -1670,14 +1620,17 @@ class AssetBarOperator(bpy.types.Operator):
 
                 if asset_search_index == -3:
                     return {'RUNNING_MODAL'}
+
                 if asset_search_index > -3:
+                    asset_data = sr[asset_search_index]
+
+                    # picking of assets and using them
                     if ui_props.asset_type == 'MATERIAL':
                         if target_object != '':
                             # position is for downloader:
                             loc = ui_props.snapped_location
                             rotation = (0, 0, 0)
 
-                            asset_data = sr[asset_search_index]
                             utils.automap(target_object, target_slot=target_slot,
                                           tex_size=asset_data.get('texture_size_meters', 1.0))
                             bpy.ops.scene.blenderkit_download(True,
@@ -1697,16 +1650,23 @@ class AssetBarOperator(bpy.types.Operator):
                             loc = s.cursor.location
                             rotation = s.cursor.rotation_euler
 
-                        bpy.ops.scene.blenderkit_download(True,
-                                                          # asset_type=ui_props.asset_type,
-                                                          asset_index=asset_search_index,
-                                                          model_location=loc,
-                                                          model_rotation=rotation,
-                                                          target_object=target_object)
+                        if 'particle_plants' in asset_data['tags']:
+                            bpy.ops.object.blenderkit_particles_drop("INVOKE_DEFAULT",
+                                                                     asset_search_index=asset_search_index,
+                                                                     model_location=loc,
+                                                                     model_rotation=rotation,
+                                                                     target_object=target_object)
+                        else:
+                            bpy.ops.scene.blenderkit_download(True,
+                                                              # asset_type=ui_props.asset_type,
+                                                              asset_index=asset_search_index,
+                                                              model_location=loc,
+                                                              model_rotation=rotation,
+                                                              target_object=target_object)
 
                     else:
-                        bpy.ops.scene.blenderkit_download(#asset_type=ui_props.asset_type,
-                                                          asset_index=asset_search_index)
+                        bpy.ops.scene.blenderkit_download(  # asset_type=ui_props.asset_type,
+                            asset_index=asset_search_index)
 
                     ui_props.dragging = False
                     return {'RUNNING_MODAL'}
@@ -1738,8 +1698,7 @@ class AssetBarOperator(bpy.types.Operator):
             # delete downloaded files for this asset
             sr = bpy.context.scene['search results']
             asset_data = sr[ui_props.active_index]
-            print(asset_data['name'])
-            print('delete')
+            bk_logger.info('delete asset from local drive:' + asset_data['name'])
             paths.delete_asset_debug(asset_data)
             asset_data['downloaded'] = 0
             return {'RUNNING_MODAL'}
@@ -1870,7 +1829,7 @@ class RunAssetBarWithContext(bpy.types.Operator):
 
     def execute(self, context):
         C_dict = utils.get_fake_context(context)
-        if C_dict.get('window'): # no 3d view, no asset bar.
+        if C_dict.get('window'):  # no 3d view, no asset bar.
             bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=True, do_search=False)
         return {'FINISHED'}
 
@@ -1879,7 +1838,8 @@ classess = (
     AssetBarOperator,
     RunAssetBarWithContext,
     TransferBlenderkitData,
-    UndoWithContext
+    UndoWithContext,
+    ParticlesDropDialog
 )
 
 # store keymap items here to access after registration
@@ -1921,7 +1881,8 @@ def register_ui():
     wm = bpy.context.window_manager
     km = wm.keyconfigs.addon.keymaps['Window']
     kmi = km.keymap_items.new(ratings.FastRateMenu.bl_idname, 'F', 'PRESS', ctrl=False, shift=False)
-    kmi = km.keymap_items.new(upload.FastCategory.bl_idname, 'F', 'PRESS', ctrl=True, shift=False)
+    addon_keymapitems.append(kmi)
+    kmi = km.keymap_items.new(upload.FastMetadata.bl_idname, 'F', 'PRESS', ctrl=True, shift=False)
     addon_keymapitems.append(kmi)
 
 

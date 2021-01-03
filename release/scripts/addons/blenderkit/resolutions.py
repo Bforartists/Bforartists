@@ -28,8 +28,9 @@ if "bpy" in locals():
     search = reload(search)
     rerequests = reload(rerequests)
     upload_bg = reload(upload_bg)
+    image_utils = reload(image_utils)
 else:
-    from blenderkit import paths, append_link, bg_blender, utils, download, search, rerequests, upload_bg
+    from blenderkit import paths, append_link, bg_blender, utils, download, search, rerequests, upload_bg, image_utils
 
 import sys, json, os, time
 import subprocess
@@ -179,13 +180,6 @@ def save_image_safely(teximage, filepath):
     orig_color_mode = ims.color_mode
     orig_compression = ims.compression
 
-    ims = rs.image_settings
-
-    orig_file_format = ims.file_format
-    orig_quality = ims.quality
-    orig_color_mode = ims.color_mode
-    orig_compression = ims.compression
-
     ims.file_format = teximage.file_format
     if teximage.file_format == 'PNG':
         ims.color_mode = 'RGBA'
@@ -313,12 +307,13 @@ def downscale(i):
         i.scale(sx, sy)
 
 
-def upload_resolutions(files, data):
+def upload_resolutions(files, asset_data):
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
     upload_data = {
+        "name": asset_data['name'],
         "token": preferences.api_key,
-        "id": data['asset_data']['id']
+        "id": asset_data['id']
     }
 
     uploaded = upload_bg.upload_files(upload_data, files)
@@ -441,6 +436,56 @@ def get_texture_filepath(tex_dir_path, image, resolution='blend'):
     return fpn
 
 
+def generate_lower_resolutions_hdr(asset_data, fpath):
+    '''generates lower resolutions for HDR images'''
+    hdr = bpy.data.images.load(fpath)
+    actres = max(hdr.size[0], hdr.size[1])
+    p2res = paths.round_to_closest_resolution(actres)
+    original_filesize = os.path.getsize(fpath) # for comparison on the original level
+    i = 0
+    finished = False
+    files = []
+    while not finished:
+        dirn = os.path.dirname(fpath)
+        fn_strip, ext = os.path.splitext(fpath)
+        ext = '.exr'
+        if i>0:
+            downscale(hdr)
+
+
+        hdr_resolution_filepath = fn_strip + paths.resolution_suffix[p2res] + ext
+        image_utils.img_save_as(hdr, filepath=hdr_resolution_filepath, file_format='OPEN_EXR', quality=20, color_mode='RGB', compression=15,
+                    view_transform='Raw', exr_codec = 'DWAA')
+
+        if os.path.exists(hdr_resolution_filepath):
+            reduced_filesize = os.path.getsize(hdr_resolution_filepath)
+
+        # compare file sizes
+        print(f'HDR size was reduced from {original_filesize} to {reduced_filesize}')
+        if reduced_filesize < original_filesize:
+            # this limits from uploaidng especially same-as-original resolution files in case when there is no advantage.
+            # usually however the advantage can be big also for same as original resolution
+            files.append({
+                "type": p2res,
+                "index": 0,
+                "file_path": hdr_resolution_filepath
+            })
+
+            print('prepared resolution file: ', p2res)
+
+        if rkeys.index(p2res) == 0:
+            finished = True
+        else:
+            p2res = rkeys[rkeys.index(p2res) - 1]
+        i+=1
+
+    print('uploading resolution files')
+    upload_resolutions(files, asset_data)
+
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    patch_asset_empty(asset_data['id'], preferences.api_key)
+
+
 def generate_lower_resolutions(data):
     asset_data = data['asset_data']
     actres = get_current_resolution()
@@ -523,7 +568,7 @@ def generate_lower_resolutions(data):
                 else:
                     p2res = rkeys[rkeys.index(p2res) - 1]
             print('uploading resolution files')
-            upload_resolutions(files, data)
+            upload_resolutions(files, data['asset_data'])
             preferences = bpy.context.preferences.addons['blenderkit'].preferences
             patch_asset_empty(data['asset_data']['id'], preferences.api_key)
         return
@@ -678,8 +723,9 @@ def load_assets_list(filepath):
 
 
 def check_needs_resolutions(a):
-    if a['verificationStatus'] == 'validated' and a['assetType'] in ('material', 'model', 'scene'):
+    if a['verificationStatus'] == 'validated' and a['assetType'] in ('material', 'model', 'scene', 'hdr'):
         # the search itself now picks the right assets so there's no need to filter more than asset types.
+        # TODO needs to check first if the upload date is older than resolution upload date, for that we need resolution upload date.
         for f in a['files']:
             if f['fileType'].find('resolution') > -1:
                 return False
@@ -704,7 +750,7 @@ def download_asset(asset_data, resolution='blend', unpack=False, api_key=''):
                                         resolution='blend')
     if has_url:
         fpath = download.download_file(asset_data)
-        if fpath and unpack:
+        if fpath and unpack and asset_data['assetType'] != 'hdr':
             send_to_bg(asset_data, fpath, command='unpack', wait=True)
         return fpath
 
@@ -725,13 +771,16 @@ def generate_resolution_thread(asset_data, api_key):
 
     fpath = download_asset(asset_data, unpack=True, api_key=api_key)
     if fpath:
-        print('send to bg ', fpath)
-        proc = send_to_bg(asset_data, fpath, command='generate_resolutions', wait=True);
+        if asset_data['assetType'] != 'hdr':
+            print('send to bg ', fpath)
+            proc = send_to_bg(asset_data, fpath, command='generate_resolutions', wait=True);
+        else:
+            generate_lower_resolutions_hdr(asset_data, fpath)
         # send_to_bg by now waits for end of the process.
         # time.sleep((5))
 
 
-def iterate_for_resolutions(filepath, process_count=12, api_key=''):
+def iterate_for_resolutions(filepath, process_count=12, api_key='', do_checks = True):
     ''' iterate through all assigned assets, check for those which need generation and send them to res gen'''
     assets = load_assets_list(filepath)
     print(len(assets))
@@ -740,21 +789,22 @@ def iterate_for_resolutions(filepath, process_count=12, api_key=''):
         asset_data = search.parse_result(asset_data)
         if asset_data is not None:
 
-            if check_needs_resolutions(asset_data):
+            if not do_checks or check_needs_resolutions(asset_data):
                 print('downloading and generating resolution for  %s' % asset_data['name'])
                 # this is just a quick hack for not using original dirs in blendrkit...
-                thread = threading.Thread(target=generate_resolution_thread, args=(asset_data, api_key))
-                thread.start()
-
-                threads.append(thread)
-                print('processes ', len(threads))
-                while len(threads) > process_count - 1:
-                    for proc in threads:
-                        if not proc.is_alive():
-                            threads.remove(proc)
-                        break;
-                else:
-                    print(f'Failed to retrieve asset from server:{asset_data["name"]}')
+                generate_resolution_thread(asset_data, api_key)
+                # thread = threading.Thread(target=generate_resolution_thread, args=(asset_data, api_key))
+                # thread.start()
+                #
+                # threads.append(thread)
+                # print('processes ', len(threads))
+                # while len(threads) > process_count - 1:
+                #     for t in threads:
+                #         if not t.is_alive():
+                #             threads.remove(t)
+                #         break;
+                # else:
+                #     print(f'Failed to generate resolution:{asset_data["name"]}')
             else:
                 print('not generated resolutions:', asset_data['name'])
 
