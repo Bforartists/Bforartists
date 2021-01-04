@@ -91,6 +91,17 @@ select_tip
 image_aspect
 brushsize
 
+#~ DEF_ICON_BLANK(110)
+#~ DEF_ICON_BLANK(111)
+#~ DEF_ICON_BLANK(112)
+#~ DEF_ICON_BLANK(113)
+#~ DEF_ICON_BLANK(114)
+#~ DEF_ICON_BLANK(115)
+#~ DEF_ICON_BLANK(116)
+#~ DEF_ICON_BLANK(117)
+#~ DEF_ICON_BLANK(118)
+#~ DEF_ICON_BLANK(119)
+
 # ------------------------- row 2 --------------------------*/
 
 fullscreen
@@ -147,6 +158,17 @@ brushangle
 vertcolfromweight
 huecorrect
 particlebrush_none
+
+#~ DEF_ICON_BLANK(178)
+#~ DEF_ICON_BLANK(179)
+#~ DEF_ICON_BLANK(180)
+#~ DEF_ICON_BLANK(181)
+#~ DEF_ICON_BLANK(182)
+#~ DEF_ICON_BLANK(183)
+#~ DEF_ICON_BLANK(184)
+#~ DEF_ICON_BLANK(185)
+#~ DEF_ICON_BLANK(186)
+#~ DEF_ICON_BLANK(187)
 
 # ------------------------- row 3 --------------------------*/
 
@@ -205,6 +227,17 @@ add
 file_3d
 align_center
 
+#~ DEF_ICON_BLANK(246)
+#~ DEF_ICON_BLANK(247)
+#~ DEF_ICON_BLANK(248)
+#~ DEF_ICON_BLANK(249)
+#~ DEF_ICON_BLANK(250)
+#~ DEF_ICON_BLANK(251)
+#~ DEF_ICON_BLANK(252)
+#~ DEF_ICON_BLANK(253)
+#~ DEF_ICON_BLANK(254)
+#~ DEF_ICON_BLANK(255)
+
 # ------------------------- row 4 --------------------------*/
 
 sharpen
@@ -261,6 +294,17 @@ align_top
 decorate
 decorate_animate
 decorate_driver
+
+#~ DEF_ICON_BLANK(314)
+#~ DEF_ICON_BLANK(315)
+#~ DEF_ICON_BLANK(316)
+#~ DEF_ICON_BLANK(317)
+#~ DEF_ICON_BLANK(318)
+#~ DEF_ICON_BLANK(319)
+#~ DEF_ICON_BLANK(320)
+#~ DEF_ICON_BLANK(321)
+#~ DEF_ICON_BLANK(322)
+#~ DEF_ICON_BLANK(323)
 
 # ------------------------- row 5 --------------------------*/
 
@@ -319,6 +363,17 @@ file_new
 filebrowser
 smooth_laplacian
 
+#~ DEF_ICON_BLANK(382)
+#~ DEF_ICON_BLANK(383)
+#~ DEF_ICON_BLANK(384)
+#~ DEF_ICON_BLANK(385)
+#~ DEF_ICON_BLANK(386)
+#~ DEF_ICON_BLANK(387)
+#~ DEF_ICON_BLANK(388)
+#~ DEF_ICON_BLANK(389)
+#~ DEF_ICON_BLANK(390)
+#~ DEF_ICON_BLANK(391)
+
 # ------------------------- row 6 --------------------------*/
 
 object_datamode
@@ -375,6 +430,17 @@ keyframe
 library_data_override
 light
 light_area
+
+#~ DEF_ICON_BLANK(450)
+#~ DEF_ICON_BLANK(451)
+#~ DEF_ICON_BLANK(452)
+#~ DEF_ICON_BLANK(453)
+#~ DEF_ICON_BLANK(454)
+#~ DEF_ICON_BLANK(455)
+#~ DEF_ICON_BLANK(456)
+#~ DEF_ICON_BLANK(457)
+#~ DEF_ICON_BLANK(458)
+#~ DEF_ICON_BLANK(459)
 
 # ------------------------- row 7  --------------------------*/
 
@@ -433,6 +499,17 @@ lightprobe_planar
 view_remove_local
 shape
 
+#~ DEF_ICON_BLANK(518)
+#~ DEF_ICON_BLANK(519)
+#~ DEF_ICON_BLANK(520)
+#~ DEF_ICON_BLANK(521)
+#~ DEF_ICON_BLANK(522)
+#~ DEF_ICON_BLANK(523)
+#~ DEF_ICON_BLANK(524)
+#~ DEF_ICON_BLANK(525)
+#~ DEF_ICON_BLANK(526)
+#~ DEF_ICON_BLANK(527)
+
 # ------------------------- row 8 --------------------------*/
 
 brush_data
@@ -489,6 +566,17 @@ node_side
 node_top
 normals_face
 normals_vertex
+
+#~ DEF_ICON_BLANK(586)
+#~ DEF_ICON_BLANK(587)
+#~ DEF_ICON_BLANK(588)
+#~ DEF_ICON_BLANK(589)
+#~ DEF_ICON_BLANK(590)
+#~ DEF_ICON_BLANK(591)
+#~ DEF_ICON_BLANK(592)
+#~ DEF_ICON_BLANK(593)
+#~ DEF_ICON_BLANK(594)
+#~ DEF_ICON_BLANK(595)
 
 # ------------------------- row 9 --------------------------*/
 
@@ -547,6 +635,17 @@ orientation_view
 orphan_data
 outliner
 
+#~ DEF_ICON_BLANK(654)
+#~ DEF_ICON_BLANK(655)
+#~ DEF_ICON_BLANK(656)
+#~ DEF_ICON_BLANK(657)
+#~ DEF_ICON_BLANK(658)
+#~ DEF_ICON_BLANK(659)
+#~ DEF_ICON_BLANK(660)
+#~ DEF_ICON_BLANK(661)
+#~ DEF_ICON_BLANK(662)
+#~ DEF_ICON_BLANK(663)
+
 # ------------------------- row 10 --------------------------*/
 
 outliner_ob_empty
@@ -604,6 +703,17 @@ pivot_active
 pivot_boundbox
 pivot_cursor
 
+#~ DEF_ICON_BLANK(722)
+#~ DEF_ICON_BLANK(723)
+#~ DEF_ICON_BLANK(724)
+#~ DEF_ICON_BLANK(725)
+#~ DEF_ICON_BLANK(726)
+#~ DEF_ICON_BLANK(727)
+#~ DEF_ICON_BLANK(728)
+#~ DEF_ICON_BLANK(729)
+#~ DEF_ICON_BLANK(730)
+#~ DEF_ICON_BLANK(731)
+
 # ------------------------- row 11 --------------------------*/
 
 outliner_data_empty
@@ -660,6 +770,17 @@ shaderfx
 shading_bbox
 shading_rendered
 shading_solid
+
+#~ DEF_ICON_BLANK(790)
+#~ DEF_ICON_BLANK(791)
+#~ DEF_ICON_BLANK(792)
+#~ DEF_ICON_BLANK(793)
+#~ DEF_ICON_BLANK(794)
+#~ DEF_ICON_BLANK(795)
+#~ DEF_ICON_BLANK(796)
+#~ DEF_ICON_BLANK(797)
+#~ DEF_ICON_BLANK(798)
+#~ DEF_ICON_BLANK(799)
 
 # ------------------------- row 12 --------------------------*/
 
@@ -719,6 +840,17 @@ tracking
 tracking_backwards
 tracking_backwards_single
 
+#~ DEF_ICON_BLANK(859)
+#~ DEF_ICON_BLANK(860)
+#~ DEF_ICON_BLANK(861)
+#~ DEF_ICON_BLANK(862)
+#~ DEF_ICON_BLANK(863)
+#~ DEF_ICON_BLANK(864)
+#~ DEF_ICON_BLANK(865)
+#~ DEF_ICON_BLANK(866)
+#~ DEF_ICON_BLANK(867)
+#~ DEF_ICON_BLANK(868)
+
 # ------------------------- row 13 --------------------------*/
 
 # primitives */
@@ -776,6 +908,17 @@ underline
 user
 view_camera
 view_ortho
+
+#~ DEF_ICON_BLANK(928)
+#~ DEF_ICON_BLANK(929)
+#~ DEF_ICON_BLANK(930)
+#~ DEF_ICON_BLANK(931)
+#~ DEF_ICON_BLANK(932)
+#~ DEF_ICON_BLANK(933)
+#~ DEF_ICON_BLANK(934)
+#~ DEF_ICON_BLANK(935)
+#~ DEF_ICON_BLANK(936)
+#~ DEF_ICON_BLANK(937)
 
 # ------------------------- row 14 --------------------------*/
 
@@ -835,6 +978,17 @@ outliner_data_gp_layer
 workspace
 xray
 
+#~ DEF_ICON_BLANK(997)
+#~ DEF_ICON_BLANK(998)
+#~ DEF_ICON_BLANK(999)
+#~ DEF_ICON_BLANK(1000)
+#~ DEF_ICON_BLANK(1001)
+#~ DEF_ICON_BLANK(1002)
+#~ DEF_ICON_BLANK(1003)
+#~ DEF_ICON_BLANK(1004)
+#~ DEF_ICON_BLANK(1005)
+#~ DEF_ICON_BLANK(1006)
+
 # ------------------------- row 15 --------------------------*/
 
 snaptopixel_center
@@ -891,6 +1045,17 @@ brushes_all
 driver_distance
 driver_rotational_difference
 driver_transform
+
+#~ DEF_ICON_BLANK(1065)
+#~ DEF_ICON_BLANK(1066)
+#~ DEF_ICON_BLANK(1067)
+#~ DEF_ICON_BLANK(1068)
+#~ DEF_ICON_BLANK(1069)
+#~ DEF_ICON_BLANK(1070)
+#~ DEF_ICON_BLANK(1071)
+#~ DEF_ICON_BLANK(1072)
+#~ DEF_ICON_BLANK(1073)
+#~ DEF_ICON_BLANK(1074)
 
 # ------------------------- row 16 --------------------------*/
 
@@ -949,6 +1114,17 @@ gp_only_selected
 gp_select_points
 gp_select_strokes
 
+#~ DEF_ICON_BLANK(1133)
+#~ DEF_ICON_BLANK(1134)
+#~ DEF_ICON_BLANK(1135)
+#~ DEF_ICON_BLANK(1136)
+#~ DEF_ICON_BLANK(1137)
+#~ DEF_ICON_BLANK(1138)
+#~ DEF_ICON_BLANK(1139)
+#~ DEF_ICON_BLANK(1140)
+#~ DEF_ICON_BLANK(1141)
+#~ DEF_ICON_BLANK(1142)
+
 # ------------------------- row 17 --------------------------*/
 
 inset_faces
@@ -1006,6 +1182,17 @@ mod_hue_saturation
 outliner_collection
 mod_noise
 
+#~ DEF_ICON_BLANK(1201)
+#~ DEF_ICON_BLANK(1202)
+#~ DEF_ICON_BLANK(1203)
+#~ DEF_ICON_BLANK(1204)
+#~ DEF_ICON_BLANK(1205)
+#~ DEF_ICON_BLANK(1206)
+#~ DEF_ICON_BLANK(1207)
+#~ DEF_ICON_BLANK(1208)
+#~ DEF_ICON_BLANK(1209)
+#~ DEF_ICON_BLANK(1210)
+
 # ------------------------- row 18 --------------------------*/
 
 modifier
@@ -1062,6 +1249,17 @@ mod_tint
 modifier_off
 modifier_on
 orientation_global
+
+#~ DEF_ICON_BLANK(1269)
+#~ DEF_ICON_BLANK(1270)
+#~ DEF_ICON_BLANK(1271)
+#~ DEF_ICON_BLANK(1272)
+#~ DEF_ICON_BLANK(1273)
+#~ DEF_ICON_BLANK(1274)
+#~ DEF_ICON_BLANK(1275)
+#~ DEF_ICON_BLANK(1276)
+#~ DEF_ICON_BLANK(1277)
+#~ DEF_ICON_BLANK(1278)
 
 # ------------------------- row 19 --------------------------*/
 
@@ -1121,6 +1319,17 @@ uv
 window
 swirl
 
+#~ DEF_ICON_BLANK(1338)
+#~ DEF_ICON_BLANK(1339)
+#~ DEF_ICON_BLANK(1340)
+#~ DEF_ICON_BLANK(1341)
+#~ DEF_ICON_BLANK(1342)
+#~ DEF_ICON_BLANK(1343)
+#~ DEF_ICON_BLANK(1344)
+#~ DEF_ICON_BLANK(1345)
+#~ DEF_ICON_BLANK(1346)
+#~ DEF_ICON_BLANK(1347)
+
 # ------------------------- row 20 --------------------------*/
 
 rec
@@ -1177,6 +1386,17 @@ followquads
 lightmappack
 projectfromview
 sphereproject
+
+#~ DEF_ICON_BLANK(1406)
+#~ DEF_ICON_BLANK(1407)
+#~ DEF_ICON_BLANK(1408)
+#~ DEF_ICON_BLANK(1409)
+#~ DEF_ICON_BLANK(1410)
+#~ DEF_ICON_BLANK(1411)
+#~ DEF_ICON_BLANK(1412)
+#~ DEF_ICON_BLANK(1413)
+#~ DEF_ICON_BLANK(1414)
+#~ DEF_ICON_BLANK(1415)
 
 # ------------------------- row 21 --------------------------*/
 
@@ -1235,6 +1455,17 @@ automerge_off
 automerge_on
 node_white_noise
 
+#~ DEF_ICON_BLANK(1474)
+#~ DEF_ICON_BLANK(1475)
+#~ DEF_ICON_BLANK(1476)
+#~ DEF_ICON_BLANK(1477)
+#~ DEF_ICON_BLANK(1478)
+#~ DEF_ICON_BLANK(1479)
+#~ DEF_ICON_BLANK(1480)
+#~ DEF_ICON_BLANK(1481)
+#~ DEF_ICON_BLANK(1482)
+#~ DEF_ICON_BLANK(1483)
+
 # ------------------------- row 22 --------------------------*/
 
 vertexsel
@@ -1291,6 +1522,17 @@ togglecaps_end
 togglecaps_start
 snap_step
 snap_step_second
+
+#~ DEF_ICON_BLANK(1542)
+#~ DEF_ICON_BLANK(1543)
+#~ DEF_ICON_BLANK(1544)
+#~ DEF_ICON_BLANK(1545)
+#~ DEF_ICON_BLANK(1546)
+#~ DEF_ICON_BLANK(1547)
+#~ DEF_ICON_BLANK(1548)
+#~ DEF_ICON_BLANK(1549)
+#~ DEF_ICON_BLANK(1550)
+#~ DEF_ICON_BLANK(1551)
 
 # ------------------------- row 23 --------------------------*/
 
@@ -1349,6 +1591,17 @@ network_drive
 object_hidden
 desktop
 
+#~ DEF_ICON_BLANK(1610)
+#~ DEF_ICON_BLANK(1611)
+#~ DEF_ICON_BLANK(1612)
+#~ DEF_ICON_BLANK(1613)
+#~ DEF_ICON_BLANK(1614)
+#~ DEF_ICON_BLANK(1615)
+#~ DEF_ICON_BLANK(1616)
+#~ DEF_ICON_BLANK(1617)
+#~ DEF_ICON_BLANK(1618)
+#~ DEF_ICON_BLANK(1619)
+
 # ------------------------- row 24 --------------------------*/
 
 pastedown
@@ -1405,6 +1658,17 @@ con_translike
 con_distlimit
 con_loclimit
 con_rotlimit
+
+#~ DEF_ICON_BLANK(1678)
+#~ DEF_ICON_BLANK(1679)
+#~ DEF_ICON_BLANK(1680)
+#~ DEF_ICON_BLANK(1681)
+#~ DEF_ICON_BLANK(1682)
+#~ DEF_ICON_BLANK(1683)
+#~ DEF_ICON_BLANK(1684)
+#~ DEF_ICON_BLANK(1685)
+#~ DEF_ICON_BLANK(1686)
+#~ DEF_ICON_BLANK(1687)
 
 # ------------------------- row 25 --------------------------*/
 
@@ -1463,6 +1727,17 @@ con_splineik
 con_stretchto
 con_trackto
 
+#~ DEF_ICON_BLANK(1746)
+#~ DEF_ICON_BLANK(1747)
+#~ DEF_ICON_BLANK(1748)
+#~ DEF_ICON_BLANK(1749)
+#~ DEF_ICON_BLANK(1750)
+#~ DEF_ICON_BLANK(1751)
+#~ DEF_ICON_BLANK(1752)
+#~ DEF_ICON_BLANK(1753)
+#~ DEF_ICON_BLANK(1754)
+#~ DEF_ICON_BLANK(1755)
+
 # ------------------------- row 26 --------------------------*/
 
 load_3ds
@@ -1519,6 +1794,17 @@ con_action
 follow_leader
 goal
 protect
+
+#~ DEF_ICON_BLANK(1814)
+#~ DEF_ICON_BLANK(1815)
+#~ DEF_ICON_BLANK(1816)
+#~ DEF_ICON_BLANK(1817)
+#~ DEF_ICON_BLANK(1818)
+#~ DEF_ICON_BLANK(1819)
+#~ DEF_ICON_BLANK(1820)
+#~ DEF_ICON_BLANK(1821)
+#~ DEF_ICON_BLANK(1822)
+#~ DEF_ICON_BLANK(1823)
 
 # ------------------------- row 27  --------------------------*/
 
@@ -1577,6 +1863,17 @@ fight
 flock
 outliner_data_volume
 
+#~ DEF_ICON_BLANK(1882)
+#~ DEF_ICON_BLANK(1883)
+#~ DEF_ICON_BLANK(1884)
+#~ DEF_ICON_BLANK(1885)
+#~ DEF_ICON_BLANK(1886)
+#~ DEF_ICON_BLANK(1887)
+#~ DEF_ICON_BLANK(1888)
+#~ DEF_ICON_BLANK(1889)
+#~ DEF_ICON_BLANK(1890)
+#~ DEF_ICON_BLANK(1891)
+
 # ------------------------- row 28 --------------------------*/
 
 recover_auto
@@ -1633,6 +1930,17 @@ fund
 decorate_library_override
 decorate_linked
 preset_new
+
+#~ DEF_ICON_BLANK(1950)
+#~ DEF_ICON_BLANK(1951)
+#~ DEF_ICON_BLANK(1952)
+#~ DEF_ICON_BLANK(1953)
+#~ DEF_ICON_BLANK(1954)
+#~ DEF_ICON_BLANK(1955)
+#~ DEF_ICON_BLANK(1956)
+#~ DEF_ICON_BLANK(1957)
+#~ DEF_ICON_BLANK(1958)
+#~ DEF_ICON_BLANK(1959)
 
 # ------------------------- row 29 --------------------------*/
 
@@ -1691,6 +1999,17 @@ node_texture
 anim
 trash
 
+#~ DEF_ICON_BLANK(2018)
+#~ DEF_ICON_BLANK(2019)
+#~ DEF_ICON_BLANK(2020)
+#~ DEF_ICON_BLANK(2021)
+#~ DEF_ICON_BLANK(2022)
+#~ DEF_ICON_BLANK(2023)
+#~ DEF_ICON_BLANK(2024)
+#~ DEF_ICON_BLANK(2025)
+#~ DEF_ICON_BLANK(2026)
+#~ DEF_ICON_BLANK(2027)
+
 # ------------------------- row 30 --------------------------*/
 
 seq_sequencer
@@ -1747,6 +2066,17 @@ seq_slip_contents
 seq_remove_gaps
 seq_insert_gaps
 three_dots
+
+#~ DEF_ICON_BLANK(2086)
+#~ DEF_ICON_BLANK(2087)
+#~ DEF_ICON_BLANK(2088)
+#~ DEF_ICON_BLANK(2089)
+#~ DEF_ICON_BLANK(2090)
+#~ DEF_ICON_BLANK(2091)
+#~ DEF_ICON_BLANK(2092)
+#~ DEF_ICON_BLANK(2093)
+#~ DEF_ICON_BLANK(2094)
+#~ DEF_ICON_BLANK(2095)
 )
 
 # This section is maintained by the updating script, keep BEGIN/END comments.
