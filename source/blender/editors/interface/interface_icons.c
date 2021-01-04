@@ -77,7 +77,7 @@
 #include "interface_intern.h"
 
 #ifndef WITH_HEADLESS
-#  define ICON_GRID_COLS 50 /* bfa - Icon sheet row, changed from 26 to 50 */
+#  define ICON_GRID_COLS 60 /* bfa - Icon sheet row, changed from 26 to 60 */
 #  define ICON_GRID_ROWS 30
 
 #  define ICON_MONO_BORDER_OUTSET 2
