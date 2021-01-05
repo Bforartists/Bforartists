@@ -70,6 +70,7 @@ if not os.path.exists(matlib_path):
     shutil.copy2(os.path.join(addon_path, "Liquids.blend"), matlib_path)
     shutil.copy2(os.path.join(addon_path, "Metal.blend"), matlib_path)
     shutil.copy2(os.path.join(addon_path, "Paint.blend"), matlib_path)
+    shutil.copy2(os.path.join(addon_path, "ocean_modifier.blend"), matlib_path)
 
 
 ##debug print variables
@@ -1149,9 +1150,9 @@ class MATLIB_PT_vxPanel(Panel):
         split = col.split(factor=0.55, align=True)
         split.menu("MATLIB_MT_LibsMenu",text=text)
         split.operator("matlib.operator", icon="ADD", text="New Library").cmd = "LIBRARY_ADD"
-            
+
         self.layout.template_preview(context.material) # bfa - preview window
-        
+
         row = layout.row()
         row.scale_y = 1.5
         row.operator("matlib.operator", icon="MATERIAL", text=" Apply").cmd="APPLY" # bfa - fat apply button for usability
