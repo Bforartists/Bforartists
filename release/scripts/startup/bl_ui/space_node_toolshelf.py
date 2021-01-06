@@ -3188,6 +3188,550 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
                 props.type = "CompositorNodeSwitch"
 
 
+# ------------- Node Editor - Add tab -------------------------------
+
+
+#add attribute panel
+class NODES_PT_geom_add_attribute(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Attribute"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Attribute Color Ramp ", icon = "ATTRIBUTE_COLORRAMP")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeColorRamp"
+
+            props = col.operator("node.add_node", text=" Attribute Compare      ", icon = "ATTRIBUTE_COMPARE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeCompare"
+
+            props = col.operator("node.add_node", text=" Attribute Fill                ", icon = "ATTRIBUTE_FILL")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeFill"
+
+            props = col.operator("node.add_node", text=" Attribute Math             ", icon = "ATTRIBUTE_MATH")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeMath"
+
+            props = col.operator("node.add_node", text=" Attribute Mix                ", icon = "ATTRIBUTE_MIX")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeMix"
+
+            props = col.operator("node.add_node", text=" Attribute Randomize    ", icon = "ATTRIBUTE_RANDOMIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeRandomize"
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COLORRAMP")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeColorRamp"
+
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COMPARE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeCompare"
+
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_FILL")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeFill"
+
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MATH")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeMath"
+
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeMix"
+
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeRandomize"
+
+
+#add color panel
+class NODES_PT_geom_add_color(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Color"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" ColorRamp           ", icon = "NODE_COLORRAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeValToRGB"
+
+            props = col.operator("node.add_node", text=" Combine RGB       ", icon = "NODE_COMBINERGB")
+            props.use_transform = True
+            props.type = "ShaderNodeCombineRGB"
+
+            props = col.operator("node.add_node", text=" Separate RGB       ", icon = "NODE_SEPARATERGB")
+            props.use_transform = True
+            props.type = "ShaderNodeSeparateRGB"
+
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeValToRGB"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
+            props.use_transform = True
+            props.type = "ShaderNodeCombineRGB"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
+            props.use_transform = True
+            props.type = "ShaderNodeSeparateRGB"
+
+
+#add geometry panel
+class NODES_PT_geom_add_geometry(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Geometry"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Join                    ", icon = "JOIN")
+            props.use_transform = True
+            props.type = "GeometryNodeJoinGeometry"
+
+            props = col.operator("node.add_node", text=" Transform           ", icon = "NODE_TRANSFORM")
+            props.use_transform = True
+            props.type = "GeometryNodeTransform"
+
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "JOIN")
+            props.use_transform = True
+            props.type = "GeometryNodeJoinGeometry"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
+            props.use_transform = True
+            props.type = "GeometryNodeTransform"
+
+
+#add input panel
+class NODES_PT_geom_add_input(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Input"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+ 
+            props = col.operator("node.add_node", text=" Object Info            ", icon = "NODE_OBJECTINFO")
+            props.use_transform = True
+            props.type = "GeometryNodeObjectInfo"
+
+            props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
+            props.use_transform = True
+            props.type = "FunctionNodeRandomFloat"
+
+            props = col.operator("node.add_node", text=" Value                     ", icon = "NODE_VALUE")
+            props.use_transform = True
+            props.type = "ShaderNodeValue"
+
+            props = col.operator("node.add_node", text=" Vector Curves      ", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeInputVector"
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
+            props.use_transform = True
+            props.type = "GeometryNodeObjectInfo"
+
+            props = row.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
+            props.use_transform = True
+            props.type = "FunctionNodeRandomFloat"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
+            props.use_transform = True
+            props.type = "ShaderNodeValue"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
+            props.use_transform = True
+            props.type = "FunctionNodeInputVector"
+
+
+#add mesh panel
+class NODES_PT_geom_add_mesh(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Mesh"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Boolean                    ", icon = "MOD_BOOLEAN")
+            props.use_transform = True
+            props.type = "GeometryNodeBoolean"
+
+            props = col.operator("node.add_node", text=" Edge Split                ", icon = "SPLITEDGE")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgeSplit"
+
+            props = col.operator("node.add_node", text=" Subdivision Surface", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivisionSurface"
+
+            props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
+            props.use_transform = True
+            props.type = "GeometryNodeTriangulate"
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "MOD_BOOLEAN")
+            props.use_transform = True
+            props.type = "GeometryNodeObjectInfo"
+
+            props = row.operator("node.add_node", text = "", icon = "SPLITEDGE")
+            props.use_transform = True
+            props.type = "GeometryNodeEdgeSplit"
+
+            props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivisionSurface"
+
+            props = row.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
+            props.use_transform = True
+            props.type = "GeometryNodeTriangulate"
+
+
+#add mesh panel
+class NODES_PT_geom_add_point(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Point"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Point Distribute   ", icon = "POINT_DISTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodePointDistribute"
+
+            props = col.operator("node.add_node", text=" Point Instance     ", icon = "POINT_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodePointInstance"
+
+            props = col.operator("node.add_node", text=" Point Separate    ", icon = "POINT_SEPARATE")
+            props.use_transform = True
+            props.type = "GeometryNodePointSeparate"
+
+            props = col.operator("node.add_node", text=" Rotate Points       ", icon = "POINT_ROTATE")
+            props.use_transform = True
+            props.type = "GeometryNodeRotatePoints"
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
+            props.use_transform = True
+            props.type = "GeometryNodePointDistribute"
+
+            props = row.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
+            props.use_transform = True
+            props.type = "GeometryNodePointInstance"
+
+            props = row.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
+            props.use_transform = True
+            props.type = "GeometryNodePointSeparate"
+
+            props = row.operator("node.add_node", text = "", icon = "POINT_ROTATE")
+            props.use_transform = True
+            props.type = "GeometryNodeRotatePoints"
+
+
+#add utilities panel
+class NODES_PT_geom_add_utilities(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Utilities"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
+            props.use_transform = True
+            props.type = "FunctionNodeBooleanMath"
+
+            props = col.operator("node.add_node", text=" Clamp              ", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = col.operator("node.add_node", text=" Float Compare ", icon = "FLOAT_COMPARE")
+            props.use_transform = True
+            props.type = "FunctionNodeFloatCompare"
+
+            props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+
+            props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "ShaderNodeMath"
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
+            props.use_transform = True
+            props.type = "FunctionNodeBooleanMath"
+
+            props = row.operator("node.add_node", text="", icon = "NODE_CLAMP")
+            props.use_transform = True
+            props.type = "ShaderNodeClamp"
+
+            props = row.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
+            props.use_transform = True
+            props.type = "FunctionNodeFloatCompare"
+
+            props = row.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_MATH")
+            props.use_transform = True
+            props.type = "ShaderNodeMath"
+
+
+#add vector panel
+class NODES_PT_geom_add_vector(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Vector"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Combine XYZ   ", icon = "NODE_COMBINEXYZ")
+            props.use_transform = True
+            props.type = "ShaderNodeCombineXYZ"
+
+            props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
+            props.use_transform = True
+            props.type = "ShaderNodeSeparateXYZ"
+
+            props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorMath"
+
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
+            props.use_transform = True
+            props.type = "ShaderNodeCombineXYZ"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
+            props.use_transform = True
+            props.type = "ShaderNodeSeparateXYZ"
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorMath"
+
+
+
+
 classes = (
     NODES_PT_Prop,
     NODES_PT_Input_connect,
@@ -3222,6 +3766,14 @@ classes = (
     NODES_PT_Modify_script,
     NODES_PT_Relations_group,
     NODES_PT_Relations_layout,
+    NODES_PT_geom_add_attribute,
+    NODES_PT_geom_add_color,
+    NODES_PT_geom_add_geometry,
+    NODES_PT_geom_add_input,
+    NODES_PT_geom_add_mesh,
+    NODES_PT_geom_add_point,
+    NODES_PT_geom_add_utilities,
+    NODES_PT_geom_add_vector,
 )
 
 if __name__ == "__main__":  # only for live edit.
