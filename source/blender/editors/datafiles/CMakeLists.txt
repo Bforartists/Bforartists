@@ -1357,7 +1357,7 @@ key_dehlt
 key_hlt
 mute_ipo_off
 mute_ipo_on
-#def_icon_blank(1164
+random_float
 driver_active
 driver
 area
@@ -1368,12 +1368,12 @@ symmetrize
 node_keyingscreen
 node_layerweight
 node_lensdistort
-#def_icon_blank(1175
+boolean_math
 node_lightfalloff
 node_lightpath
 node_linestyle_output
 node_luminance
-#def_icon_blank(1180
+float_compare
 node_makegroup
 
 modifier_data
@@ -1444,13 +1444,13 @@ node_vertex_color
 node_moviedistort
 node_volume_info
 
-mouse_lmb      
-mouse_mmb      
-mouse_rmb      
-mouse_move     
-mouse_lmb_drag 
-mouse_mmb_drag 
-mouse_rmb_drag 
+mouse_lmb
+mouse_mmb
+mouse_rmb
+mouse_move
+mouse_lmb_drag
+mouse_mmb_drag
+mouse_rmb_drag
 automerge_off
 automerge_on
 node_white_noise
@@ -1611,7 +1611,7 @@ pasteflipdown
 slide_edge
 slide_vertex
 smooth_vertex
-#def_icon_blank(1374
+point_separate
 snap_surface
 outliner_ob_hair
 
@@ -1637,7 +1637,7 @@ hook_select
 box_mask
 clear_mask
 
-#def_icon_blank(1400
+point_rotate
 node_separate_ycbcra
 node_separate_yuva
 node_separatehsv
@@ -1646,7 +1646,7 @@ node_separatexyz
 node_sky
 node_sss
 node_stabilize2d
-#def_icon_blank(1409
+point_instance
 
 con_camerasolver
 con_followtrack
@@ -1676,13 +1676,13 @@ checkmark
 file_archive
 snap_face_center
 transform_origins
-#def_icon_blank(1428
+point_distribute
 transfer_uv
 ortho
 push_pull
 shrink_fatten
 
-#def_icon_blank(1434
+attribute_randomize
 view
 tilt
 axis_side
@@ -1706,12 +1706,12 @@ lasso_mask
 
 brightness_contrast
 node_sunbeams
-#def_icon_blank(1458
-#def_icon_blank(1459
+attribute_mix
+attribute_math
 node_tangent
 node_texcoordinate
-#def_icon_blank(1462
-#def_icon_blank(1436
+attribute_fill
+attribute_compare
 node_tonemap
 node_toonshader
 node_trackposition
@@ -1827,7 +1827,7 @@ open_recent
 file_parent
 file_refresh
 file_folder
-#def_icon_blank(1557
+attribute_colorramp
 file_blend
 
 file_image
