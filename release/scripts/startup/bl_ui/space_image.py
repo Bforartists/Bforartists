@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 import bpy
+import math
 
 from bpy.types import (
     Header,
@@ -403,6 +404,13 @@ class IMAGE_MT_uvs_transform(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
+        layout.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
+        layout.operator_context = 'INVOKE_DEFAULT'
+
+        layout.separator()
 
         layout.operator("transform.shear", icon = 'SHEAR')
 
