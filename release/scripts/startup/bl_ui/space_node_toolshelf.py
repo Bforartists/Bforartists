@@ -3121,7 +3121,6 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             row.alignment = 'LEFT'
 
             row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-            row.operator("node.group_edit_exit", text = "", icon = "NODE_EXITEDITGROUP") #bfa - separated tooltip
 
             row = layout.row()
             row.alignment = 'LEFT'
@@ -3416,7 +3415,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
- 
+
             props = col.operator("node.add_node", text=" Object Info            ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
