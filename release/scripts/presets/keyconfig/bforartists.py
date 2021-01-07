@@ -4396,7 +4396,6 @@ keyconfig_data = \
        ],
       },
      ),
-    ("object.shaderfx_copy", {"type": 'D', "value": 'PRESS', "shift": True, "repeat": True}, None),
     ],
    },
   ),
@@ -5028,7 +5027,7 @@ keyconfig_data = \
     ("object.gpencil_modifier_copy", {"type": 'D', "value": 'PRESS', "shift": True}, None),
     ("object.gpencil_modifier_apply", {"type": 'A', "value": 'PRESS', "ctrl": True}, None),
     ("object.shaderfx_remove",
-     {"type": 'X', "value": 'PRESS'},
+     {"type": 'DEL', "value": 'PRESS'},
      {"properties":
       [("report", True),
        ],
