@@ -1,4 +1,4 @@
-keyconfig_version = (2, 92, 4)
+keyconfig_version = (2, 92, 9)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -5033,6 +5033,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("object.shaderfx_copy", {"type": 'D', "value": 'PRESS', "shift": True}, None),
     ],
    },
   ),
@@ -6836,10 +6837,15 @@ keyconfig_data = \
 
 
 if __name__ == "__main__":
+    # Only add keywords that are supported.
+    from bpy.app import version as blender_version
+    keywords = {}
+    if blender_version >= (2, 92, 0):
+        keywords["keyconfig_version"] = keyconfig_version
     import os
     from bl_keymap_utils.io import keyconfig_import_from_data
     keyconfig_import_from_data(
         os.path.splitext(os.path.basename(__file__))[0],
         keyconfig_data,
-        keyconfig_version=keyconfig_version,
+        **keywords,
     )
