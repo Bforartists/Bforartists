@@ -218,7 +218,7 @@ static void rna_def_shader_fx_blur(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxBlur", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Gaussian Blur Effect", "Gaussian Blur effect");
   RNA_def_struct_sdna(srna, "BlurShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_NODE_BLUR);
 
   prop = RNA_def_property(srna, "size", PROP_FLOAT, PROP_XYZ);
   RNA_def_property_float_sdna(prop, NULL, "radius");
@@ -254,7 +254,7 @@ static void rna_def_shader_fx_colorize(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxColorize", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Colorize Effect", "Colorize effect");
   RNA_def_struct_sdna(srna, "ColorizeShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_COLOR);
 
   prop = RNA_def_property(srna, "factor", PROP_FLOAT, PROP_NONE);
   RNA_def_property_float_sdna(prop, NULL, "factor");
@@ -296,7 +296,7 @@ static void rna_def_shader_fx_wave(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxWave", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Wave Deformation Effect", "Wave Deformation effect");
   RNA_def_struct_sdna(srna, "WaveShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_MOD_WAVE);
 
   prop = RNA_def_property(srna, "orientation", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "orientation");
@@ -331,7 +331,7 @@ static void rna_def_shader_fx_pixel(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxPixel", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Pixelate Effect", "Pixelate effect");
   RNA_def_struct_sdna(srna, "PixelShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_NODE_PIXELATED);
 
   prop = RNA_def_property(srna, "size", PROP_INT, PROP_PIXEL);
   RNA_def_property_int_sdna(prop, NULL, "size");
@@ -354,7 +354,7 @@ static void rna_def_shader_fx_rim(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxRim", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Rim Effect", "Rim effect");
   RNA_def_struct_sdna(srna, "RimShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_RIMLIGHT);
 
   prop = RNA_def_property(srna, "offset", PROP_INT, PROP_PIXEL);
   RNA_def_property_int_sdna(prop, NULL, "offset");
@@ -411,7 +411,7 @@ static void rna_def_shader_fx_shadow(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxShadow", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Shadow Effect", "Shadow effect");
   RNA_def_struct_sdna(srna, "ShadowShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_NODE_AMBIENT_OCCLUSION);
 
   prop = RNA_def_property(srna, "object", PROP_POINTER, PROP_NONE);
   RNA_def_property_ui_text(prop, "Object", "Object to determine center of rotation");
@@ -504,7 +504,7 @@ static void rna_def_shader_fx_glow(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxGlow", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Glow Effect", "Glow effect");
   RNA_def_struct_sdna(srna, "GlowShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_LIGHT);
 
   prop = RNA_def_property(srna, "glow_color", PROP_FLOAT, PROP_COLOR);
   RNA_def_property_range(prop, 0.0, 1.0);
@@ -583,7 +583,7 @@ static void rna_def_shader_fx_swirl(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxSwirl", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Swirl Effect", "Swirl effect");
   RNA_def_struct_sdna(srna, "SwirlShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_SWIRL);
 
   prop = RNA_def_property(srna, "radius", PROP_INT, PROP_PIXEL);
   RNA_def_property_int_sdna(prop, NULL, "radius");
@@ -619,7 +619,7 @@ static void rna_def_shader_fx_flip(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "ShaderFxFlip", "ShaderFx");
   RNA_def_struct_ui_text(srna, "Flip Effect", "Flip effect");
   RNA_def_struct_sdna(srna, "FlipShaderFxData");
-  RNA_def_struct_ui_icon(srna, ICON_SHADERFX);
+  RNA_def_struct_ui_icon(srna, ICON_FLIP);
 
   prop = RNA_def_property(srna, "flip_horizontal", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", FX_FLIP_HORIZONTAL);
