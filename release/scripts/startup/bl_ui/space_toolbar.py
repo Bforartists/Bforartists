@@ -18,6 +18,7 @@
 
 # <pep8 compliant>
 import bpy
+import math
 from bpy.types import (
     Header,
     Menu,
@@ -1057,6 +1058,12 @@ class TOOLBAR_PT_menu_image(Panel):
         col = layout.column(align = True)
         row = col.row()
         row.separator()
+        row.prop(addon_prefs, "image_uv_mirror")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "image_uv_rotate")
+        row = col.row()
+        row.separator()
         row.prop(addon_prefs, "image_uv_align")
         row = col.row()
         row.separator()
@@ -1067,6 +1074,68 @@ class TOOLBAR_PT_menu_image(Panel):
 
 
 ############### bfa - menu hidable by the flag in the right click menu
+
+# special classes to call the rotate functionality in the image editor from the toolbar editor
+# Original operators doesn't work directly from toolbar
+class TOOLBAR_MT_image_uv_rotate_clockwise(bpy.types.Operator):
+    """Rotate selected UV geometry clockwise by 90 degrees"""
+    bl_idname = "image.uv_rotate_clockwise"
+    bl_label = "Rotate UV by 90"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'IMAGE_EDITOR':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.transform.rotate(override, value = math.pi/-2 )
+        return {'FINISHED'}
+
+
+class TOOLBAR_MT_image_uv_rotate_counterclockwise(bpy.types.Operator):
+    """Rotate selected UV geometry counter clockwise by 90 degrees"""
+    bl_idname = "image.uv_rotate_counterclockwise"
+    bl_label = "Rotate UV by minus 90"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'IMAGE_EDITOR':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.transform.rotate(override, value = math.pi/2 )
+        return {'FINISHED'}
+
+
+class TOOLBAR_MT_image_uv_mirror_x(bpy.types.Operator):
+    """Mirror selected UV geometry along X axis"""
+    bl_idname = "image.uv_mirror_x"
+    bl_label = "Mirror X"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'IMAGE_EDITOR':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.transform.mirror(override, constraint_axis=(True, False, False))
+        return {'FINISHED'}
+
+
+class TOOLBAR_MT_image_uv_mirror_y(bpy.types.Operator):
+    """Mirror selected UV geometry along Y axis"""
+    bl_idname = "image.uv_mirror_y"
+    bl_label = "Mirror Y"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'IMAGE_EDITOR':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.transform.mirror(override, constraint_axis=(False, True, False))
+        return {'FINISHED'}
+
 
 class TOOLBAR_MT_image(Menu):
     bl_idname = "TOOLBAR_MT_image"
@@ -1089,21 +1158,23 @@ class TOOLBAR_MT_image(Menu):
 
         ## ------------------ image sub toolbars
 
-        if addon_prefs.image_uv_align:
+        if addon_prefs.image_uv_mirror:
 
             row = layout.row(align=True)
 
-            ############################################### doesn't work from toolbar
+            row.operator("image.uv_mirror_x", text="", icon = "MIRROR_X")
+            row.operator("image.uv_mirror_y", text="", icon = "MIRROR_Y")
 
-            #row.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
-            #row.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+        if addon_prefs.image_uv_rotate:
 
-            #row = layout.row(align=True)
+            row = layout.row(align=True)
 
-            #row.operator("transform.rotate", text="", icon = "ROTATE_PLUS_90").value = math.pi / 2
-            #row.operator("transform.rotate", text="", icon = "ROTATE_MINUS_90").value = math.pi / -2
+            row.operator("image.uv_rotate_clockwise", text="", icon = "ROTATE_PLUS_90")
+            row.operator("image.uv_rotate_counterclockwise", text="", icon = "ROTATE_MINUS_90")
 
-            ################################################
+        if addon_prefs.image_uv_align:
+
+            row = layout.row(align=True)
 
             #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # bfa - enum is no good idea in header. It enums below each other. And the header just shows besides ...
 
@@ -1808,7 +1879,10 @@ classes = (
     TOOLBAR_PT_menu_image,
     TOOLBAR_PT_menu_primitives,
     TOOLBAR_PT_menu_meshedit,
-
+    TOOLBAR_MT_image_uv_rotate_clockwise,
+    TOOLBAR_MT_image_uv_rotate_counterclockwise,
+    TOOLBAR_MT_image_uv_mirror_x,
+    TOOLBAR_MT_image_uv_mirror_y,
 )
 
 
