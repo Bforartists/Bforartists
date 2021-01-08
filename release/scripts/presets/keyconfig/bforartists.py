@@ -4007,7 +4007,7 @@ keyconfig_data = \
      {"type": 'LEFTMOUSE', "value": 'PRESS'},
      {"properties":
       [("extend", False),
-       ("deselect_all", True),
+       ("deselect_all", False),
        ],
       },
      ),
@@ -4065,6 +4065,7 @@ keyconfig_data = \
      {"properties":
       [("tweak", True),
        ],
+    "active":False,
       },
      ),
     ("node.select_lasso", {"type": 'EVT_TWEAK_L', "value": 'ANY', "ctrl": True, "alt": True}, None),
@@ -4246,6 +4247,20 @@ keyconfig_data = \
      {"type": 'T', "value": 'PRESS'},
      {"properties":
       [("data_path", 'space_data.show_region_toolbar'),
+       ],
+      },
+     ),
+    ],
+   },
+  ),
+ ("Node Tool: Tweak",
+  {"space_type": 'NODE_EDITOR', "region_type": 'WINDOW'},
+  {"items":
+   [("node.select",
+     {"type": 'LEFTMOUSE', "value": 'RELEASE'},
+     {"properties":
+      [("extend", False),
+       ("deselect_all", True),
        ],
       },
      ),
