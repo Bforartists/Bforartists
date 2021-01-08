@@ -98,6 +98,8 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     # Image
 
+    image_uv_mirror : BoolProperty(name="UV Mirror", default=True, description = "Display the UV Mirror Toolbar\nAll Modes", )
+    image_uv_rotate : BoolProperty(name="UV Rotate", default=True, description = "Display the UV Rotate Toolbar\nAll Modes", )
     image_uv_align : BoolProperty(name="UV Align", default=True, description = "Display the UV Align Toolbar\nAll Modes", )
     image_uv_unwrap : BoolProperty(name="UV Tools - UV Unwrap", default=True, description = "Display the UV Unwrap Toolbar\nAll Modes", )
     image_uv_modify : BoolProperty(name="UV Tools - Modify UV", default=True, description = "Display the UV Modify Toolbar\nAll Modes", )
@@ -329,10 +331,19 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
         row = col.row()
         row.separator()
+        row.prop(self, "image_uv_mirror")
+        row = col.row()
+        row.separator()
+        row.prop(self, "image_uv_rotate")
+        row = col.row()
+        row.separator()
         row.prop(self, "image_uv_align")
         row = col.row()
         row.separator()
         row.prop(self, "image_uv_unwrap")
+
+        col = flow.column(align=True)
+
         row = col.row()
         row.separator()
         row.prop(self, "image_uv_modify")
