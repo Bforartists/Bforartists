@@ -700,7 +700,7 @@ static const char *toolsystem_default_tool(const bToolKey *tkey)
       }
       break;
     case SPACE_NODE: {
-      return "builtin.select"; /*bfa - changed from builtin.select_box to builtin.select*/
+      return "builtin.select_box"; /*bfa - reverted to box, needs to be box after tweak fixes*/
     }
     case SPACE_SEQ: {
       switch (tkey->mode) {
