@@ -2135,7 +2135,6 @@ void uiItemFullR(uiLayout *layout,
 
     layout = uiLayoutColumn(layout, true);
 
-
 #ifdef UI_PROP_DECORATE
     if (ui_decorate.use_prop_decorate) {
       ui_decorate.len = max_ii(1, len);
@@ -2172,13 +2171,26 @@ void uiItemFullR(uiLayout *layout,
         uiItemS(layout_row);
         layout_split = uiLayoutRow(layout_row, true);
         layout_sub = uiLayoutColumn(layout_split, true);
+        uiLayoutSetFixedSize(layout_sub, true);
         layout_sub->space = 0;
 
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
-          but = uiDefBut(
-              block, UI_BTYPE_LABEL, 0, str, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
+          but = uiDefBut(block,
+                         UI_BTYPE_LABEL,
+                         0,
+                         str,
+                         0,
+                         0,
+                         UI_UNIT_X * 75 / 100,
+                         UI_UNIT_Y,
+                         NULL,
+                         0.0,
+                         0.0,
+                         0,
+                         0,
+                         "");
           but->drawflag |= UI_BUT_TEXT_RIGHT;
           but->drawflag &= ~UI_BUT_TEXT_LEFT;
           label_added = true;
