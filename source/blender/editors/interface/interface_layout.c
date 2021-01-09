@@ -2134,10 +2134,7 @@ void uiItemFullR(uiLayout *layout,
     uiLayout *layout_row;
 
     layout = uiLayoutColumn(layout, true);
-    // uiItemL(layout, name, ICON_NONE);
-    layout_row = uiLayoutRow(layout, true);
-    // uiItemS(layout_row);
-    layout_row->space = 0;
+
 
 #ifdef UI_PROP_DECORATE
     if (ui_decorate.use_prop_decorate) {
@@ -2146,6 +2143,9 @@ void uiItemFullR(uiLayout *layout,
 #endif /* UI_PROP_DECORATE */
 
     if ((name[0] == '\0') && !use_split_empty_name) {
+      layout_row = uiLayoutRow(layout, true);
+      layout_row->space = 0;
+
       /* Ensure we get a column when text is not set. */
       layout = uiLayoutColumn(layout_row, true);
       layout->space = 0;
@@ -2156,17 +2156,24 @@ void uiItemFullR(uiLayout *layout,
     else {
       uiLayout *layout_split;
       uiLayout *layout_sub;
-      layout_split = uiLayoutRow(layout_row, true);
-      // layout_split = uiLayoutSplit(layout_row, UI_ITEM_PROP_SEP_DIVIDE, true);
-      layout_sub = uiLayoutColumn(layout_split, true);
-      layout_sub->space = 0;
-      // uiLayout *layout_split = uiLayoutSplit(layout_row, UI_ITEM_PROP_SEP_DIVIDE, true);
+
       bool label_added = false;
 
       if (!use_prop_sep_split_label) {
         /* Pass */
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
+        uiItemL(layout, name, ICON_NONE);
+        
+        layout_row = uiLayoutRow(layout, true);
+        layout_row->space = 0;
+
+        uiItemS(layout_row);
+        uiItemS(layout_row);
+        layout_split = uiLayoutRow(layout_row, true);
+        layout_sub = uiLayoutColumn(layout_split, true);
+        layout_sub->space = 0;
+
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
@@ -2178,6 +2185,13 @@ void uiItemFullR(uiLayout *layout,
         }
       }
       else {
+        layout_row = uiLayoutRow(layout, true);
+        layout_row->space = 0;
+        
+        layout_split = uiLayoutSplit(layout_row, UI_ITEM_PROP_SEP_DIVIDE, true);
+        layout_sub = uiLayoutColumn(layout_split, true);
+        layout_sub->space = 0;
+
         if (name) {
           but = uiDefBut(
               block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
