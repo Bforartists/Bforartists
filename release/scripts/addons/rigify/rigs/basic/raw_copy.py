@@ -21,7 +21,7 @@
 import bpy
 
 from ...utils.naming import strip_org, strip_prefix, choose_derived_bone, is_control_bone
-from ...utils.mechanism import copy_custom_properties_with_ui
+from ...utils.mechanism import copy_custom_properties_with_ui, move_all_constraints
 from ...utils.widgets import layout_widget_dropdown, create_registered_widget
 
 from ...base_rig import BaseRig
@@ -66,13 +66,7 @@ class RelinkConstraintsMixin:
 
     def relink_move_constraints(self, from_bone, to_bone, *, prefix=''):
         if self.params.relink_constraints:
-            src = self.get_bone(from_bone).constraints
-            dest = self.get_bone(to_bone).constraints
-
-            for con in list(src):
-                if con.name.startswith(prefix):
-                    dest.copy(con)
-                    src.remove(con)
+            move_all_constraints(self.obj, from_bone, to_bone, prefix=prefix)
 
 
     def relink_bone_parent(self, bone_name):

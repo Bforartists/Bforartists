@@ -113,7 +113,14 @@ class SliceMesh(bpy.types.Operator):
         self.offset = 0.0
         self.slice_count = 3
         self.mode = 'PITCH'
-        self.execute(context)
+        self.input_obj = bpy.context.object
+        depsgraph = context.evaluated_depsgraph_get()
+        self.mesh = bmesh.new()
+        self.mesh.from_object(self.input_obj, depsgraph, deform=True, cage=False, face_normals=True)
+        self.mesh.transform(bpy.context.scene.cursor.matrix.inverted()@self.input_obj.matrix_world)
+        self.result = internal.addObject('CURVE', 'Slices')
+        self.result.matrix_world = bpy.context.scene.cursor.matrix
+        self.perform(context)
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
 
@@ -148,25 +155,18 @@ class SliceMesh(bpy.types.Operator):
                 self.mode = 'OFFSET'
                 return {'RUNNING_MODAL'}
             elif self.mode == 'OFFSET':
+                self.mesh.free()
                 return {'FINISHED'}
         elif event.type in {'RIGHTMOUSE', 'ESC'}:
+            self.mesh.free()
             bpy.context.scene.collection.objects.unlink(self.result)
+            bpy.context.view_layer.objects.active = self.input_obj
             return {'CANCELLED'}
         else:
             return {'PASS_THROUGH'}
         self.result.data.splines.clear()
         self.perform(context)
         return {'RUNNING_MODAL'}
-
-    def execute(self, context):
-        depsgraph = context.evaluated_depsgraph_get()
-        self.mesh = bmesh.new()
-        self.mesh.from_object(bpy.context.object, depsgraph, deform=True, cage=False, face_normals=True)
-        self.mesh.transform(bpy.context.scene.cursor.matrix.inverted()@bpy.context.object.matrix_world)
-        self.result = internal.addObject('CURVE', 'Slices')
-        self.result.matrix_world = bpy.context.scene.cursor.matrix
-        self.perform(context)
-        return {'FINISHED'}
 
 class DogBone(bpy.types.Operator):
     bl_idname = 'curvetools.add_toolpath_dogbone'

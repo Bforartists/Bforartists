@@ -17,23 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-if "bpy" in locals():
-    import importlib
 
-    paths = importlib.reload(paths)
-    ratings = importlib.reload(ratings)
-    utils = importlib.reload(utils)
-    search = importlib.reload(search)
-    upload = importlib.reload(upload)
-    ui_bgl = importlib.reload(ui_bgl)
-    download = importlib.reload(download)
-    bg_blender = importlib.reload(bg_blender)
-    colors = importlib.reload(colors)
-    tasks_queue = importlib.reload(tasks_queue)
-    tasks_queue = importlib.reload(ui_panels)
-else:
-    from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue, \
-        ui_panels
+from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue, \
+    ui_panels,icons
 
 import bpy
 
@@ -1834,8 +1820,9 @@ class RunAssetBarWithContext(bpy.types.Operator):
         return {'FINISHED'}
 
 
-classess = (
+classes = (
     AssetBarOperator,
+    # AssetBarExperiment,
     RunAssetBarWithContext,
     TransferBlenderkitData,
     UndoWithContext,
@@ -1858,7 +1845,7 @@ def pre_load(context):
 def register_ui():
     global handler_2d, handler_3d
 
-    for c in classess:
+    for c in classes:
         bpy.utils.register_class(c)
 
     args = (None, bpy.context)
@@ -1893,7 +1880,7 @@ def unregister_ui():
     bpy.types.SpaceView3D.draw_handler_remove(handler_2d, 'WINDOW')
     bpy.types.SpaceView3D.draw_handler_remove(handler_3d, 'WINDOW')
 
-    for c in classess:
+    for c in classes:
         bpy.utils.unregister_class(c)
 
     wm = bpy.context.window_manager

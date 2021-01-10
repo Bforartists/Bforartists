@@ -17,27 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-if "bpy" in locals():
-    from importlib import reload
-
-    asset_inspector = reload(asset_inspector)
-    paths = reload(paths)
-    utils = reload(utils)
-    bg_blender = reload(bg_blender)
-    autothumb = reload(autothumb)
-    version_checker = reload(version_checker)
-    search = reload(search)
-    ui_panels = reload(ui_panels)
-    ui = reload(ui)
-    overrides = reload(overrides)
-    colors = reload(colors)
-    rerequests = reload(rerequests)
-    categories = reload(categories)
-    upload_bg = reload(upload_bg)
-    tasks_queue = reload(tasks_queue)
-    image_utils = reload(image_utils)
-else:
-    from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels, ui, \
+from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels, ui, \
         overrides, colors, rerequests, categories, upload_bg, tasks_queue, image_utils
 
 import tempfile, os, subprocess, json, re

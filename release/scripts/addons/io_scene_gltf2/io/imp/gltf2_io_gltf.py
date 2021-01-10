@@ -54,6 +54,7 @@ class glTFImporter():
             'KHR_texture_transform',
             'KHR_materials_clearcoat',
             'KHR_mesh_quantization',
+            'KHR_draco_mesh_compression'
         ]
 
     @staticmethod
@@ -61,7 +62,8 @@ class glTFImporter():
         def bad_constant(val):
             raise ImportError('Bad glTF: json contained %s' % val)
         try:
-            return json.loads(bytes(content), encoding='utf-8', parse_constant=bad_constant)
+            text = str(content, encoding='utf-8')
+            return json.loads(text, parse_constant=bad_constant)
         except ValueError as e:
             raise ImportError('Bad glTF: json error: %s' % e.args[0])
 
