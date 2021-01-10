@@ -1733,9 +1733,77 @@ static void node_draw_basis(const bContext *C,
     case CMP_NODE_TRANSLATE:
       icon = ICON_TRANSFORM_MOVE;
       break;
+
     /* Relation */
     case CMP_NODE_SWITCH:
       icon = ICON_SWITCH_DIRECTION;
+
+    /*Geometry Node Editor */
+    case FN_NODE_BOOLEAN_MATH:
+      icon = ICON_BOOLEAN_MATH;
+      break;
+    case FN_NODE_FLOAT_COMPARE:
+      icon = ICON_FLOAT_COMPARE;
+      break;
+    case FN_NODE_OBJECT_TRANSFORMS:
+      icon = ICON_POINT_DISTRIBUTE;
+      break;
+    case FN_NODE_RANDOM_FLOAT:
+      icon = ICON_RANDOM_FLOAT;
+      break;
+    case FN_NODE_INPUT_VECTOR:
+      icon = ICON_NODE_VECTOR;
+      break;
+    case GEO_NODE_TRIANGULATE:
+      icon = ICON_MOD_TRIANGULATE;
+      break;
+    case GEO_NODE_EDGE_SPLIT:
+      icon = ICON_SPLITEDGE;
+      break;
+    case GEO_NODE_TRANSFORM:
+      icon = ICON_NODE_TRANSFORM;
+      break;
+    case GEO_NODE_SUBDIVISION_SURFACE:
+      icon = ICON_SUBDIVIDE_EDGES;
+      break;
+    case GEO_NODE_BOOLEAN:
+      icon = ICON_MOD_BOOLEAN;
+      break;
+    case GEO_NODE_POINT_DISTRIBUTE:
+      icon = ICON_POINT_DISTRIBUTE;
+      break;
+    case GEO_NODE_POINT_INSTANCE:
+      icon = ICON_POINT_INSTANCE;
+      break;
+    case GEO_NODE_OBJECT_INFO:
+      icon = ICON_NODE_OBJECTINFO;
+      break;
+    case GEO_NODE_ATTRIBUTE_RANDOMIZE:
+      icon = ICON_ATTRIBUTE_RANDOMIZE;
+      break;
+    case GEO_NODE_ATTRIBUTE_MATH:
+      icon = ICON_ATTRIBUTE_MATH;
+      break;
+    case GEO_NODE_JOIN_GEOMETRY:
+      icon = ICON_JOIN;
+      break;
+    case GEO_NODE_ATTRIBUTE_FILL:
+      icon = ICON_ATTRIBUTE_FILL;
+      break;
+    case GEO_NODE_ATTRIBUTE_MIX:
+      icon = ICON_ATTRIBUTE_MIX;
+      break;
+    case GEO_NODE_ATTRIBUTE_COLOR_RAMP:
+      icon = ICON_ATTRIBUTE_COLORRAMP;
+      break;
+    case GEO_NODE_POINT_SEPARATE:
+      icon = ICON_POINT_SEPARATE;
+      break;
+    case GEO_NODE_ATTRIBUTE_COMPARE:
+      icon = ICON_ATTRIBUTE_COMPARE;
+      break;
+    case GEO_NODE_ROTATE_POINTS:
+      icon = ICON_POINT_ROTATE;
       break;
     }
 
