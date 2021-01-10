@@ -17,14 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-if "bpy" in locals():
-    from importlib import reload
-
-    paths = reload(paths)
-    utils = reload(utils)
-    bg_blender = reload(bg_blender)
-else:
-    from blenderkit import paths, utils, bg_blender
+from blenderkit import paths, utils, bg_blender
 
 import tempfile, os, subprocess, json, sys
 
@@ -140,8 +133,6 @@ def start_thumbnailer(self, context):
                 "thumbnail_denoising": bkit.thumbnail_denoising,
             }, s)
 
-
-
         proc = subprocess.Popen([
             binary_path,
             "--background",
@@ -166,7 +157,7 @@ def start_thumbnailer(self, context):
         return {'FINISHED'}
 
 
-def start_material_thumbnailer(self, context, wait = False):
+def start_material_thumbnailer(self, context, wait=False):
     # Prepare to save the file
     mat = bpy.context.active_object.active_material
     mat.blenderkit.is_generating_thumbnail = True
@@ -214,7 +205,6 @@ def start_material_thumbnailer(self, context, wait = False):
                 "adaptive_subdivision": bkit.adaptive_subdivision,
                 "texture_size_meters": bkit.texture_size_meters,
             }, s)
-
 
         proc = subprocess.Popen([
             binary_path,
@@ -276,7 +266,7 @@ class GenerateThumbnailOperator(bpy.types.Operator):
             message = "please save your file first"
 
             def draw_message(self, context):
-                self.layout.label(text = message)
+                self.layout.label(text=message)
 
             bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
             return {'FINISHED'}
@@ -289,7 +279,6 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
     bl_idname = "object.blenderkit_material_thumbnail"
     bl_label = "BlenderKit Material Thumbnail Generator"
     bl_options = {'REGISTER', 'INTERNAL'}
-
 
     @classmethod
     def poll(cls, context):
