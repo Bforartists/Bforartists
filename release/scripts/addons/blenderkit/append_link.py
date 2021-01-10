@@ -17,13 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-if "bpy" in locals():
-    from importlib import reload
-
-    utils = reload(utils)
-    ui = reload(ui)
-else:
-    from blenderkit import utils, ui
+from blenderkit import utils, ui
 
 import bpy
 import uuid
