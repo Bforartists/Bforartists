@@ -16,15 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    from importlib import reload
 
-    paths = reload(paths)
-    utils = reload(utils)
-    tasks_queue = reload(tasks_queue)
-    rerequests = reload(rerequests)
-else:
-    from blenderkit import paths, utils, tasks_queue, rerequests
+from blenderkit import paths, utils, tasks_queue, rerequests
 
 import requests
 import json

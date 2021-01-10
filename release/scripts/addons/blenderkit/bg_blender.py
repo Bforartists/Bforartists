@@ -16,12 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    from importlib import reload
 
-    utils = reload(utils)
-else:
-    from blenderkit import utils
+from blenderkit import utils
 
 import bpy
 import sys, threading, os

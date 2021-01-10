@@ -30,28 +30,55 @@ bl_info = {
 
 if "bpy" in locals():
     from importlib import reload
+    #alphabetically sorted all add-on modules since reload only happens from __init__.
+    # modules with _bg are used for background computations in separate blender instance and that's why they don't need reload.
 
+    append_link = reload(append_link)
     asset_inspector = reload(asset_inspector)
-    search = reload(search)
-    download = reload(download)
-    upload = reload(upload)
-    ratings = reload(ratings)
     autothumb = reload(autothumb)
-    ui = reload(ui)
-    icons = reload(icons)
     bg_blender = reload(bg_blender)
-    paths = reload(paths)
-    utils = reload(utils)
-    overrides = reload(overrides)
-    ui_panels = reload(ui_panels)
-    categories = reload(categories)
     bkit_oauth = reload(bkit_oauth)
-    tasks_queue = reload(tasks_queue)
+    categories = reload(categories)
+    colors = reload(colors)
+    download = reload(download)
+    icons = reload(icons)
+    image_utils = reload(image_utils)
+    oauth = reload(oauth)
+    overrides = reload(overrides)
+    paths = reload(paths)
+    ratings = reload(ratings)
     resolutions = reload(resolutions)
+    search = reload(search)
+    tasks_queue = reload(tasks_queue)
+    ui = reload(ui)
+    ui_bgl = reload(ui_bgl)
+    ui_panels = reload(ui_panels)
+    upload = reload(upload)
+    utils = reload(utils)
 else:
-    from blenderkit import asset_inspector, search, download, upload, ratings, autothumb, ui, icons, bg_blender, paths, \
-        utils, \
-        overrides, ui_panels, categories, bkit_oauth, tasks_queue, resolutions
+    from blenderkit import append_link
+    from blenderkit import asset_inspector
+    from blenderkit import autothumb
+    from blenderkit import bg_blender
+    from blenderkit import bkit_oauth
+    from blenderkit import categories
+    from blenderkit import colors
+    from blenderkit import download
+    from blenderkit import icons
+    from blenderkit import image_utils
+    from blenderkit import oauth
+    from blenderkit import overrides
+    from blenderkit import paths
+    from blenderkit import ratings
+    from blenderkit import resolutions
+    from blenderkit import search
+    from blenderkit import tasks_queue
+    from blenderkit import ui
+    from blenderkit import ui_bgl
+    from blenderkit import ui_panels
+    from blenderkit import upload
+    from blenderkit import utils
+
 
 import os
 import math

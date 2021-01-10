@@ -16,19 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    from importlib import reload
 
-    tasks_queue = reload(tasks_queue)
-    utils = reload(utils)
-    paths = reload(paths)
-    search = reload(search)
-    categories = reload(categories)
-    oauth = reload(oauth)
-    ui = reload(ui)
-    ui = reload(ui_panels)
-else:
-    from blenderkit import tasks_queue, utils, paths, search, categories, oauth, ui, ui_panels
+from blenderkit import tasks_queue, utils, paths, search, categories, oauth, ui, ui_panels
 
 import bpy
 
@@ -188,7 +177,7 @@ class CancelLoginOnline(bpy.types.Operator):
         return {'FINISHED'}
 
 
-classess = (
+classes = (
     RegisterLoginOnline,
     CancelLoginOnline,
     Logout,
@@ -196,10 +185,10 @@ classess = (
 
 
 def register():
-    for c in classess:
+    for c in classes:
         bpy.utils.register_class(c)
 
 
 def unregister():
-    for c in classess:
+    for c in classes:
         bpy.utils.unregister_class(c)

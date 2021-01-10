@@ -16,19 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    from importlib import reload
 
-    paths = reload(paths)
-    append_link = reload(append_link)
-    utils = reload(utils)
-    ui = reload(ui)
-    colors = reload(colors)
-    tasks_queue = reload(tasks_queue)
-    rerequests = reload(rerequests)
-    rerequests = reload(resolutions)
-else:
-    from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions
+from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions
 
 import threading
 import time

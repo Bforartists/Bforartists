@@ -6804,7 +6804,7 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
                     view, "lock_bone", lock_object.data,
                     "edit_bones" if lock_object.mode == 'EDIT'
                     else "bones",
-                    text="",
+                    text="Bone",
                 )
         else:
             col = layout.column(align=True)
