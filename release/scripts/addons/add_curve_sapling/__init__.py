@@ -246,16 +246,21 @@ class AddTree(Operator):
     bl_label = "Sapling: Add Tree"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def objectList(self, context):
-        objects = []
-        bObjects = bpy.data.objects
+    # Keep the strings in memory, see T83360.
+    _objectList_static_strings = []
 
-        for obj in bObjects:
-            if (obj.type in ['MESH', 'CURVE', 'SURFACE']) and (obj.name not in ['tree', 'leaves']):
+    def objectList(self, context):
+        objects = AddTree._objectList_static_strings
+        objects.clear()
+
+        for obj in bpy.data.objects:
+            if (obj.type in {'MESH', 'CURVE', 'SURFACE'}) and (obj.name not in {'tree', 'leaves'}):
                 objects.append((obj.name, obj.name, ""))
 
-        return (objects if objects else
-                [('NONE', "No objects", "No appropriate objects in the Scene")])
+        if not objects:
+            objects.append(('NONE', "No objects", "No appropriate objects in the Scene"))
+
+        return objects
 
     def update_tree(self, context):
         self.do_update = True

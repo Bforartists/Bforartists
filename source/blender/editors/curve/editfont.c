@@ -1777,7 +1777,7 @@ void FONT_OT_text_insert(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Textbox Add Operator
+/** \name Text-Box Add Operator
  * \{ */
 
 static int textbox_add_exec(bContext *C, wmOperator *UNUSED(op))
@@ -1818,7 +1818,7 @@ void FONT_OT_textbox_add(wmOperatorType *ot)
 /** \} */
 
 /* -------------------------------------------------------------------- */
-/** \name Textbox Remove Operator
+/** \name Text-Box Remove Operator
  * \{ */
 
 static int textbox_remove_exec(bContext *C, wmOperator *op)

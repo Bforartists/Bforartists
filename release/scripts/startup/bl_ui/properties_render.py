@@ -494,7 +494,7 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(rd, "filter_size")
-        
+
         col = layout.column()
         split = col.split(factor = 0.35)
         row = split.row()
@@ -504,7 +504,6 @@ class RENDER_PT_eevee_film(RenderButtonsPanel, Panel):
         if props.use_overscan:
             row.use_property_split = False
             row.prop(props, "overscan_size", text="")
-            row.prop_decorator(props, "overscan_size")
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 

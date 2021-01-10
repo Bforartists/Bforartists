@@ -49,12 +49,12 @@ class TextureMenu(Menu):
                 layout.row().prop(tex_slot, "angle",
                                   text=utils_core.PIW + "Angle", slider=True)
 
-                if tex_slot.tex_paint_map_mode in ('RANDOM', 'VIEW_PLANE') and tex_slot.use_random:
+                if tex_slot.map_mode in ('RANDOM', 'VIEW_PLANE') and tex_slot.use_random:
                     layout.row().prop(tex_slot, "random_angle",
                                       text=utils_core.PIW + "Random Angle", slider=True)
 
                 # Operator
-                if tex_slot.tex_paint_map_mode == 'STENCIL':
+                if tex_slot.map_mode == 'STENCIL':
                     if has_brush.texture and has_brush.texture.type == 'IMAGE':
                         layout.row().operator("brush.stencil_fit_image_aspect")
 
@@ -73,8 +73,8 @@ class TextureMenu(Menu):
 
         # Checkboxes
         if tex_slot:
-            if tex_slot.tex_paint_map_mode != '3D':
-                if tex_slot.tex_paint_map_mode in ('RANDOM', 'VIEW_PLANE'):
+            if tex_slot.map_mode != '3D':
+                if tex_slot.map_mode in ('RANDOM', 'VIEW_PLANE'):
                     layout.row().prop(tex_slot, "use_rake", toggle=True)
                     layout.row().prop(tex_slot, "use_random", toggle=True)
 
@@ -82,12 +82,12 @@ class TextureMenu(Menu):
                 layout.row().prop(tex_slot, "angle",
                                   text=utils_core.PIW + "Angle", slider=True)
 
-                if tex_slot.tex_paint_map_mode in ('RANDOM', 'VIEW_PLANE') and tex_slot.use_random:
+                if tex_slot.map_mode in ('RANDOM', 'VIEW_PLANE') and tex_slot.use_random:
                     layout.row().prop(tex_slot, "random_angle",
                                       text=utils_core.PIW + "Random Angle", slider=True)
 
                 # Operator
-                if tex_slot.tex_paint_map_mode == 'STENCIL':
+                if tex_slot.map_mode == 'STENCIL':
                     if has_brush.texture and has_brush.texture.type == 'IMAGE':
                         layout.row().operator("brush.stencil_fit_image_aspect")
 
@@ -110,8 +110,8 @@ class TextureMenu(Menu):
 
         # Checkboxes
         if tex_slot:
-            if tex_slot.tex_paint_map_mode != '3D':
-                if tex_slot.tex_paint_map_mode in ('RANDOM', 'VIEW_PLANE'):
+            if tex_slot.map_mode != '3D':
+                if tex_slot.map_mode in ('RANDOM', 'VIEW_PLANE'):
                     layout.row().prop(tex_slot, "use_rake", toggle=True)
                     layout.row().prop(tex_slot, "use_random", toggle=True)
 
@@ -119,12 +119,12 @@ class TextureMenu(Menu):
                 layout.row().prop(tex_slot, "angle",
                                   text=utils_core.PIW + "Angle", slider=True)
 
-                if tex_slot.tex_paint_map_mode in ('RANDOM', 'VIEW_PLANE') and tex_slot.use_random:
+                if tex_slot.map_mode in ('RANDOM', 'VIEW_PLANE') and tex_slot.use_random:
                     layout.row().prop(tex_slot, "random_angle",
                                       text=utils_core.PIW + "Random Angle", slider=True)
 
                 # Operator
-                if tex_slot.tex_paint_map_mode == 'STENCIL':
+                if tex_slot.map_mode == 'STENCIL':
                     if has_brush.texture and has_brush.texture.type == 'IMAGE':
                         layout.row().operator("brush.stencil_fit_image_aspect")
 
@@ -245,11 +245,11 @@ class TextureMapMode(Menu):
                             disable_icon='RADIOBUT_ON'
                             )
             elif utils_core.get_mode() == 'VERTEX_PAINT':
-                path = "tool_settings.vertex_paint.brush.texture_slot.tex_paint_map_mode"
+                path = "tool_settings.vertex_paint.brush.texture_slot.map_mode"
 
                 # add the menu items
                 for item in has_brush. \
-                  texture_slot.bl_rna.properties['tex_paint_map_mode'].enum_items:
+                  texture_slot.bl_rna.properties['map_mode'].enum_items:
                     utils_core.menuprop(
                             layout.row(), item.name, item.identifier, path,
                             icon='RADIOBUT_OFF',
@@ -257,11 +257,11 @@ class TextureMapMode(Menu):
                             disable_icon='RADIOBUT_ON'
                             )
             else:
-                path = "tool_settings.image_paint.brush.texture_slot.tex_paint_map_mode"
+                path = "tool_settings.image_paint.brush.texture_slot.map_mode"
 
                 # add the menu items
                 for item in has_brush. \
-                  texture_slot.bl_rna.properties['tex_paint_map_mode'].enum_items:
+                  texture_slot.bl_rna.properties['map_mode'].enum_items:
                     utils_core.menuprop(
                             layout.row(), item.name, item.identifier, path,
                             icon='RADIOBUT_OFF',

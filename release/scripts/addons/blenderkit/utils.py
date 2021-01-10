@@ -17,14 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-if "bpy" in locals():
-    from importlib import reload
-
-    paths = reload(paths)
-    rerequests = reload(rerequests)
-
-else:
-    from blenderkit import paths, rerequests
+from blenderkit import paths, rerequests
 
 import bpy
 from mathutils import Vector
@@ -401,7 +394,7 @@ def copy_asset(fp1, fp2):
     '''synchronizes the asset between folders, including it's texture subdirectories'''
     if 1:
         bk_logger.debug('copy asset')
-        bk_logger.debug(fp1, fp2)
+        bk_logger.debug(fp1 +' '+ fp2)
         if not os.path.exists(fp2):
             shutil.copyfile(fp1, fp2)
             bk_logger.debug('copied')
@@ -413,7 +406,7 @@ def copy_asset(fp1, fp2):
             target_subdir = os.path.join(target_dir, subdir.name)
             if os.path.exists(target_subdir):
                 continue
-            bk_logger.debug(subdir, target_subdir)
+            bk_logger.debug(subdir+' '+ target_subdir)
             shutil.copytree(subdir, target_subdir)
             bk_logger.debug('copied')
 

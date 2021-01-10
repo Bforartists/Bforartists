@@ -77,7 +77,7 @@ class UI_OT_i18n_updatetranslation_svn_branches(Operator):
         context.window_manager.progress_update(0)
         if not self.use_skip_pot_gen:
             env = os.environ.copy()
-            env["ASAN_OPTIONS"] = "exitcode=0"
+            env["ASAN_OPTIONS"] = "exitcode=0:" + os.environ.get("ASAN_OPTIONS", "")
             # Generate base pot from RNA messages (we use another blender instance here, to be able to perfectly
             # control our environment (factory startup, specific addons enabled/disabled...)).
             # However, we need to export current user settings about this addon!

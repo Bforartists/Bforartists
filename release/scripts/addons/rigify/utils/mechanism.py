@@ -338,6 +338,48 @@ def driver_var_transform(target, bone=None, *, type='LOC_X', space='WORLD', rota
 
 
 #=============================================
+# Constraint management
+#=============================================
+
+def move_constraint(source, target, con):
+    """
+    Move a constraint from one owner to another, together with drivers.
+    """
+
+    assert source.constraints[con.name] == con
+
+    if isinstance(target, str):
+        target = con.id_data.pose.bones[target]
+
+    con_tgt = target.constraints.copy(con)
+
+    if target.id_data == con.id_data:
+        adt = con.id_data.animation_data
+        if adt:
+            prefix = con.path_from_id()
+            new_prefix = con_tgt.path_from_id()
+            for fcu in adt.drivers:
+                if fcu.data_path.startswith(prefix):
+                    fcu.data_path = new_prefix + fcu.data_path[len(prefix):]
+
+    source.constraints.remove(con)
+
+def move_all_constraints(obj, source, target, *, prefix=''):
+    """
+    Move all constraints with the specified name prefix from one bone to another.
+    """
+
+    if isinstance(source, str):
+        source = obj.pose.bones[source]
+    if isinstance(target, str):
+        target = obj.pose.bones[target]
+
+    for con in list(source.constraints):
+        if con.name.startswith(prefix):
+            move_constraint(source, target, con)
+
+
+#=============================================
 # Custom property management
 #=============================================
 

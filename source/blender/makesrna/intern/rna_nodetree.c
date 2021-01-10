@@ -3245,6 +3245,7 @@ static void rna_NodeGroup_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *
   }
 
   ED_node_tag_update_nodetree(bmain, ntree, node);
+  DEG_relations_tag_update(bmain);
 }
 
 static void rna_NodeGroup_node_tree_set(PointerRNA *ptr,
@@ -6035,6 +6036,32 @@ static void def_cmp_vector_blur(StructRNA *srna)
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
+static void def_cmp_set_alpha(StructRNA *srna)
+{
+  PropertyRNA *prop;
+
+  static const EnumPropertyItem mode_items[] = {
+      {CMP_NODE_SETALPHA_MODE_APPLY,
+       "APPLY",
+       0,
+       "Apply Mask",
+       "Multiply the input image's RGBA channels by the alpha input value"},
+      {CMP_NODE_SETALPHA_MODE_REPLACE_ALPHA,
+       "REPLACE_ALPHA",
+       0,
+       "Replace Alpha",
+       "Replace the input image's alpha channels by the alpha input value"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  RNA_def_struct_sdna_from(srna, "NodeSetAlpha", "storage");
+
+  prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, mode_items);
+  RNA_def_property_ui_text(prop, "Mode", "");
+  RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
 static void def_cmp_levels(StructRNA *srna)
 {
   PropertyRNA *prop;
@@ -8406,8 +8433,7 @@ static void def_geo_triangulate(StructRNA *srna)
   RNA_def_property_enum_sdna(prop, NULL, "custom2");
   RNA_def_property_enum_items(prop, rna_node_geometry_triangulate_ngon_method_items);
   RNA_def_property_enum_default(prop, GEO_NODE_TRIANGULATE_NGON_BEAUTY);
-  RNA_def_property_ui_text(
-      prop, "Polygon Method", "Method for splitting the polygons into triangles");
+  RNA_def_property_ui_text(prop, "N-gon Method", "Method for splitting the n-gons into triangles");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 

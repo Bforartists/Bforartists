@@ -23,7 +23,6 @@ import bpy
 from ...base_rig import BaseRig
 
 from ...utils.naming import strip_org, make_deformer_name
-from ...utils.mechanism import copy_custom_properties_with_ui
 from ...utils.widgets import layout_widget_dropdown, create_registered_widget
 from ...utils.widgets_basic import create_bone_widget
 
@@ -78,9 +77,7 @@ class Rig(BaseRig, RelinkConstraintsMixin):
         bones = self.bones
 
         if self.make_control:
-            self.copy_bone_properties(bones.org, bones.ctrl, props=False)
-
-            copy_custom_properties_with_ui(self, bones.org, bones.ctrl)
+            self.copy_bone_properties(bones.org, bones.ctrl)
 
 
     def rig_bones(self):
