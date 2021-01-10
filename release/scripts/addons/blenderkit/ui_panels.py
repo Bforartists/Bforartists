@@ -16,19 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-if "bpy" in locals():
-    import importlib
 
-    paths = importlib.reload(paths)
-    ratings = importlib.reload(ratings)
-    utils = importlib.reload(utils)
-    download = importlib.reload(download)
-    categories = importlib.reload(categories)
-    icons = importlib.reload(icons)
-    search = importlib.reload(search)
-    resolutions = importlib.reload(resolutions)
-else:
-    from blenderkit import paths, ratings, utils, download, categories, icons, search, resolutions
+from blenderkit import paths, ratings, utils, download, categories, icons, search, resolutions
 
 from bpy.types import (
     Panel
@@ -564,7 +553,7 @@ class VIEW3D_PT_blenderkit_profile(Panel):
 
                     row = layout.row()
                     row.label(text='My plan:')
-                    row.label(text='%s plan' % pn)#, icon_value=my_icon.icon_id)
+                    row.label(text='%s plan' % pn, icon_value=my_icon.icon_id)
                     if pn == 'Free':
                         layout.operator("wm.url_open", text="Change plan",
                                         icon='URL').url = paths.get_bkit_url() + paths.BLENDERKIT_PLANS
@@ -1597,7 +1586,7 @@ def header_search_draw(self, context):
 # however in this example we only store "main"
 preview_collections = {}
 
-classess = (
+classes = (
     SetCategoryOperator,
     VIEW3D_PT_blenderkit_profile,
     VIEW3D_PT_blenderkit_login,
@@ -1619,13 +1608,13 @@ classess = (
 
 
 def register_ui_panels():
-    for c in classess:
+    for c in classes:
         bpy.utils.register_class(c)
     bpy.types.VIEW3D_MT_editor_menus.append(header_search_draw)
 
 
 def unregister_ui_panels():
     bpy.types.VIEW3D_MT_editor_menus.remove(header_search_draw)
-    for c in classess:
+    for c in classes:
         # print('unregister', c)
         bpy.utils.unregister_class(c)
