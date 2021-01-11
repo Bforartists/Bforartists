@@ -1992,6 +1992,9 @@ void uiItemFullR(uiLayout *layout,
   bool use_prop_sep_split_label = use_prop_sep;
   bool use_split_empty_name = (flag & UI_ITEM_R_SPLIT_EMPTY_NAME);
 
+  /* bfa - whether label is added before expanded prop */
+  bool expand_label_added = false;
+
 #ifdef UI_PROP_DECORATE
   struct {
     bool use_prop_decorate;
@@ -2149,35 +2152,50 @@ void uiItemFullR(uiLayout *layout,
       }
     }
     else {
-      uiLayout *layout_split = uiLayoutSplit(
-          layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
+      /* bfa - new expanded prop style */
+      uiLayout *layout_split;
+      uiLayout *layout_sub;
       bool label_added = false;
-      uiLayout *layout_sub = uiLayoutColumn(layout_split, true);
-      layout_sub->space = 0;
 
       if (!use_prop_sep_split_label) {
-        /* Pass */
+        /* bfa - keep other props the same */
+        layout_split = uiLayoutSplit(
+            layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
+        layout_sub = uiLayoutColumn(layout_split, true);
+        layout_sub->space = 0;
       }
       else if (ui_item_rna_is_expand(prop, index, flag)) {
-        char name_with_suffix[UI_MAX_DRAW_STR + 2];
+        /* bfa - create a column so label could be added before */
+        uiLayout *col = uiLayoutColumn(layout_row ? layout_row : layout, true);
+
+        /* bfa - property label */
+        uiItemL(col, name, ICON_NONE);
+        expand_label_added = true;
+
+        /* bfa - replace split with row */
+        layout_split = uiLayoutRow(col, true);
+
+        /* bfa - indent */
+        uiItemS(layout_split);
+        uiItemS(layout_split);
+
+        /* bfa - XYZW column */
+        layout_sub = uiLayoutColumn(layout_split, true);
+        /* bfa - set fixed size, otherwise space is wasted */
+        uiLayoutSetFixedSize(layout_sub, true);
+
         char str[2] = {'\0'};
         for (int a = 0; a < len; a++) {
           str[0] = RNA_property_array_item_char(prop, a);
-          const bool use_prefix = (a == 0 && name && name[0]);
-          if (use_prefix) {
-            char *s = name_with_suffix;
-            s += STRNCPY_RLEN(name_with_suffix, name);
-            *s++ = ' ';
-            *s++ = str[0];
-            *s++ = '\0';
-          }
           but = uiDefBut(block,
                          UI_BTYPE_LABEL,
                          0,
-                         use_prefix ? name_with_suffix : str,
+                         /* bfa - don't prefix X with prop name */
+                         str,
                          0,
                          0,
-                         w,
+                         /* bfa - suitable dynamic size for XYZW char */
+                         UI_UNIT_X * 75 / 100,
                          UI_UNIT_Y,
                          NULL,
                          0.0,
@@ -2192,6 +2210,12 @@ void uiItemFullR(uiLayout *layout,
         }
       }
       else {
+        /* bfa - keep other props the same */
+        layout_split = uiLayoutSplit(
+            layout_row ? layout_row : layout, UI_ITEM_PROP_SEP_DIVIDE, true);
+        layout_sub = uiLayoutColumn(layout_split, true);
+        layout_sub->space = 0;
+
         if (name) {
           but = uiDefBut(
               block, UI_BTYPE_LABEL, 0, name, 0, 0, w, UI_UNIT_Y, NULL, 0.0, 0.0, 0, 0, "");
@@ -2367,6 +2391,10 @@ void uiItemFullR(uiLayout *layout,
     layout_col->space = 0;
     layout_col->emboss = UI_EMBOSS_NONE;
 
+    /* bfa - move decorators down to account for label */
+    if (expand_label_added) {
+      uiItemL(layout_col, "", ICON_BLANK1);
+    }
     int i;
     for (i = 0; i < ui_decorate.len && but_decorate; i++) {
       PointerRNA *ptr_dec = use_blank_decorator ? NULL : &but_decorate->rnapoin;
