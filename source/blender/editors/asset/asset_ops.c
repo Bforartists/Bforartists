@@ -20,6 +20,7 @@
 
 #include <string.h>
 
+
 #include "BKE_asset.h"
 #include "BKE_context.h"
 #include "BKE_report.h"
@@ -220,8 +221,8 @@ static void ASSET_OT_clear(wmOperatorType *ot)
 {
   ot->name = "Clear Asset";
   ot->description =
-      "Delete all asset metadata and turn the selected asset data-blocks back into normal "
-      "data-blocks";
+      "Delete all asset metadata and turn the selected asset data back into normal "
+      "data";
   ot->idname = "ASSET_OT_clear";
 
   ot->exec = asset_clear_exec;
