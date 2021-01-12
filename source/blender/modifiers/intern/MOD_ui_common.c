@@ -366,6 +366,9 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
   uiItemO(op_row, "", ICON_CHECKMARK, "OBJECT_OT_modifier_apply");
   buttons_number++;
 
+  /* Extra operators menu. */
+  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
+
   /* Delete button. */
   if (modifier_can_delete(md) && !modifier_is_simulation(md)) {
     uiItemO(op_row, "", ICON_X, "OBJECT_OT_modifier_remove");
@@ -383,9 +386,6 @@ static void modifier_panel_header(const bContext *C, Panel *panel)
         op_row, "", ICON_PROPERTIES, "WM_OT_properties_context_change", "context", "PARTICLES");
     buttons_number++;
   }
-
-  /* Extra operators menu. */
-  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, modifier_ops_extra_draw, md);
 
   bool display_name = (panel->sizex / UI_UNIT_X - buttons_number > 5) || (panel->sizex == 0);
   if (display_name) {
