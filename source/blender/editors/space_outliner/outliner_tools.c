@@ -1719,8 +1719,8 @@ typedef enum eOutlinerIdOpTypes {
 /* TODO: implement support for changing the ID-block used. */
 static const EnumPropertyItem prop_id_op_types[] = {
     {OUTLINER_IDOP_UNLINK, "UNLINK", ICON_UNLINKED, "Unlink", ""},
-    {OUTLINER_IDOP_MARK_ASSET, "MARK_ASSET", 0, "Mark Asset", ""},
-    {OUTLINER_IDOP_CLEAR_ASSET, "CLEAR_ASSET", 0, "Clear Asset", ""},
+    {OUTLINER_IDOP_MARK_ASSET, "MARK_ASSET", ICON_ASSIGN, "Mark Asset", ""},
+    {OUTLINER_IDOP_CLEAR_ASSET, "CLEAR_ASSET", ICON_CLEAR, "Clear Asset", ""},
     {OUTLINER_IDOP_LOCAL, "LOCAL", ICON_MAKE_LOCAL, "Make Local", ""},
     {OUTLINER_IDOP_SINGLE, "SINGLE", ICON_MAKE_SINGLE_USER, "Make Single User", ""},
     {OUTLINER_IDOP_DELETE, "DELETE", ICON_DELETE, "Delete", ""},
