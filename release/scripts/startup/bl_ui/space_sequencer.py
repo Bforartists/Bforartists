@@ -134,11 +134,6 @@ class SEQUENCER_HT_header(Header):
         layout.prop(st, "view_type", text="")
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
 
-        if st.view_type in {'SEQUENCER', 'SEQUENCER_PREVIEW'}:
-            layout.separator_spacer()
-            row = layout.row(align=True)
-            row.prop(sequencer_tool_settings, "fit_method", text="")
-
         if st.view_type in {'PREVIEW', 'SEQUENCER_PREVIEW'}:
             if st.view_type == 'PREVIEW':
                 layout.separator_spacer()

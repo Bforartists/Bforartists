@@ -1087,8 +1087,6 @@ void *BKE_libblock_alloc(Main *bmain, short type, const char *name, const int fl
       /* alphabetic insertion: is in new_id */
       BKE_main_unlock(bmain);
 
-      BKE_lib_libblock_session_uuid_ensure(id);
-
       /* TODO to be removed from here! */
       if ((flag & LIB_ID_CREATE_NO_DEG_TAG) == 0) {
         DEG_id_type_tag(bmain, type);
@@ -1096,6 +1094,13 @@ void *BKE_libblock_alloc(Main *bmain, short type, const char *name, const int fl
     }
     else {
       BLI_strncpy(id->name + 2, name, sizeof(id->name) - 2);
+    }
+
+    /* We also need to ensure a valid `session_uuid` for some non-main data (like embedded IDs).
+     * IDs not allocated however should not need those (this would e.g. avoid generating session
+     * uuids for depsgraph CoW IDs, if it was using this function). */
+    if ((flag & LIB_ID_CREATE_NO_ALLOCATE) == 0) {
+      BKE_lib_libblock_session_uuid_ensure(id);
     }
   }
 
@@ -1256,10 +1261,17 @@ void BKE_libblock_copy_ex(Main *bmain, const ID *id, ID **r_newid, const int ori
 
   /* We may need our own flag to control that at some point, but for now 'no main' one should be
    * good enough. */
-  if ((orig_flag & LIB_ID_CREATE_NO_MAIN) == 0 && ID_IS_OVERRIDE_LIBRARY(id)) {
-    /* We do not want to copy existing override rules here, as they would break the proper
-     * remapping between IDs. Proper overrides rules will be re-generated anyway. */
-    BKE_lib_override_library_copy(new_id, id, false);
+  if ((orig_flag & LIB_ID_CREATE_NO_MAIN) == 0) {
+    if (ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
+      /* We do not want to copy existing override rules here, as they would break the proper
+       * remapping between IDs. Proper overrides rules will be re-generated anyway. */
+      BKE_lib_override_library_copy(new_id, id, false);
+    }
+    else if (ID_IS_OVERRIDE_LIBRARY_VIRTUAL(id)) {
+      /* Just ensure virtual overrides do get properly tagged, there is not actual override data to
+       * copy here. */
+      new_id->flag |= LIB_EMBEDDED_DATA_LIB_OVERRIDE;
+    }
   }
 
   if (id_can_have_animdata(new_id)) {
