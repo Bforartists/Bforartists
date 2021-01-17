@@ -738,7 +738,6 @@ static void node_shader_buts_tex_image(uiLayout *layout, bContext *C, PointerRNA
                ptr,
                "image",
                "IMAGE_OT_new",
-               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -776,7 +775,6 @@ static void node_shader_buts_tex_environment(uiLayout *layout, bContext *C, Poin
                ptr,
                "image",
                "IMAGE_OT_new",
-               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -1364,7 +1362,6 @@ static void node_composit_buts_image(uiLayout *layout, bContext *C, PointerRNA *
                ptr,
                "image",
                "IMAGE_OT_new",
-               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -1396,8 +1393,7 @@ static void node_composit_buts_viewlayers(uiLayout *layout, bContext *C, Pointer
   bNode *node = ptr->data;
   uiLayout *col, *row;
 
-  uiTemplateID(
-      layout, C, ptr, "scene", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout, C, ptr, "scene", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (!node->id) {
     return;
@@ -1519,8 +1515,7 @@ static void node_composit_buts_defocus(uiLayout *layout, bContext *C, PointerRNA
   col = uiLayoutColumn(layout, false);
   uiItemR(col, ptr, "use_preview", DEFAULT_FLAGS, NULL, ICON_NONE);
 
-  uiTemplateID(
-      layout, C, ptr, "scene", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout, C, ptr, "scene", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   col = uiLayoutColumn(layout, false);
   uiItemR(col, ptr, "use_zbuffer", DEFAULT_FLAGS, NULL, ICON_NONE);
@@ -1884,6 +1879,7 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
   PointerRNA active_input_ptr, op_ptr;
   uiLayout *row, *col;
   const bool multilayer = RNA_enum_get(&imfptr, "file_format") == R_IMF_IMTYPE_MULTILAYER;
+  const bool is_exr = RNA_enum_get(&imfptr, "file_format") == R_IMF_IMTYPE_OPENEXR;
   const bool is_multiview = (scene->r.scemode & R_MULTIVIEW) != 0;
 
   node_composit_buts_file_output(layout, C, ptr);
@@ -1991,8 +1987,15 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
       uiItemL(col, IFACE_("Format:"), ICON_NONE);
       uiItemR(col, &active_input_ptr, "use_node_format", DEFAULT_FLAGS, NULL, ICON_NONE);
 
+      const bool is_socket_exr = RNA_enum_get(&imfptr, "file_format") == R_IMF_IMTYPE_OPENEXR;
+      const bool use_node_format = RNA_boolean_get(&active_input_ptr, "use_node_format");
+
+      if ((!is_exr && use_node_format) || (!is_socket_exr && !use_node_format)) {
+        uiItemR(col, &active_input_ptr, "save_as_render", DEFAULT_FLAGS, NULL, ICON_NONE);
+      }
+
       col = uiLayoutColumn(layout, false);
-      uiLayoutSetActive(col, RNA_boolean_get(&active_input_ptr, "use_node_format") == false);
+      uiLayoutSetActive(col, use_node_format == false);
       uiTemplateImageSettings(col, &imfptr, false);
 
       if (is_multiview) {
@@ -2135,17 +2138,8 @@ static void node_composit_buts_ycc(uiLayout *layout, bContext *UNUSED(C), Pointe
 
 static void node_composit_buts_movieclip(uiLayout *layout, bContext *C, PointerRNA *ptr)
 {
-  uiTemplateID(layout,
-               C,
-               ptr,
-               "clip",
-               NULL,
-               NULL,
-               "CLIP_OT_open",
-               NULL,
-               UI_TEMPLATE_ID_FILTER_ALL,
-               false,
-               NULL);
+  uiTemplateID(
+      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 }
 
 static void node_composit_buts_movieclip_ex(uiLayout *layout, bContext *C, PointerRNA *ptr)
@@ -2153,17 +2147,8 @@ static void node_composit_buts_movieclip_ex(uiLayout *layout, bContext *C, Point
   bNode *node = ptr->data;
   PointerRNA clipptr;
 
-  uiTemplateID(layout,
-               C,
-               ptr,
-               "clip",
-               NULL,
-               NULL,
-               "CLIP_OT_open",
-               NULL,
-               UI_TEMPLATE_ID_FILTER_ALL,
-               false,
-               NULL);
+  uiTemplateID(
+      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (!node->id) {
     return;
@@ -2178,17 +2163,8 @@ static void node_composit_buts_stabilize2d(uiLayout *layout, bContext *C, Pointe
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(layout,
-               C,
-               ptr,
-               "clip",
-               NULL,
-               NULL,
-               "CLIP_OT_open",
-               NULL,
-               UI_TEMPLATE_ID_FILTER_ALL,
-               false,
-               NULL);
+  uiTemplateID(
+      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (!node->id) {
     return;
@@ -2213,17 +2189,8 @@ static void node_composit_buts_moviedistortion(uiLayout *layout, bContext *C, Po
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(layout,
-               C,
-               ptr,
-               "clip",
-               NULL,
-               NULL,
-               "CLIP_OT_open",
-               NULL,
-               UI_TEMPLATE_ID_FILTER_ALL,
-               false,
-               NULL);
+  uiTemplateID(
+      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (!node->id) {
     return;
@@ -2551,8 +2518,7 @@ static void node_composit_buts_mask(uiLayout *layout, bContext *C, PointerRNA *p
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(
-      layout, C, ptr, "mask", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout, C, ptr, "mask", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
   uiItemR(layout, ptr, "use_feather", DEFAULT_FLAGS, NULL, ICON_NONE);
 
   uiItemR(layout, ptr, "size_source", DEFAULT_FLAGS, "", ICON_NONE);
@@ -2573,8 +2539,7 @@ static void node_composit_buts_keyingscreen(uiLayout *layout, bContext *C, Point
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(
-      layout, C, ptr, "clip", NULL, NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
+  uiTemplateID(layout, C, ptr, "clip", NULL, NULL, NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (node->id) {
     MovieClip *clip = (MovieClip *)node->id;
@@ -2610,17 +2575,8 @@ static void node_composit_buts_trackpos(uiLayout *layout, bContext *C, PointerRN
 {
   bNode *node = ptr->data;
 
-  uiTemplateID(layout,
-               C,
-               ptr,
-               "clip",
-               NULL,
-               NULL,
-               "CLIP_OT_open",
-               NULL,
-               UI_TEMPLATE_ID_FILTER_ALL,
-               false,
-               NULL);
+  uiTemplateID(
+      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (node->id) {
     MovieClip *clip = (MovieClip *)node->id;
@@ -2660,17 +2616,8 @@ static void node_composit_buts_planetrackdeform(uiLayout *layout, bContext *C, P
   bNode *node = ptr->data;
   NodePlaneTrackDeformData *data = node->storage;
 
-  uiTemplateID(layout,
-               C,
-               ptr,
-               "clip",
-               NULL,
-               NULL,
-               "CLIP_OT_open",
-               NULL,
-               UI_TEMPLATE_ID_FILTER_ALL,
-               false,
-               NULL);
+  uiTemplateID(
+      layout, C, ptr, "clip", NULL, "CLIP_OT_open", NULL, UI_TEMPLATE_ID_FILTER_ALL, false, NULL);
 
   if (node->id) {
     MovieClip *clip = (MovieClip *)node->id;
@@ -3108,7 +3055,6 @@ static void node_texture_buts_image(uiLayout *layout, bContext *C, PointerRNA *p
                ptr,
                "image",
                "IMAGE_OT_new",
-               NULL,
                "IMAGE_OT_open",
                NULL,
                UI_TEMPLATE_ID_FILTER_ALL,
@@ -3228,6 +3174,35 @@ static void node_geometry_buts_attribute_math(uiLayout *layout,
   uiItemR(layout, ptr, "input_type_b", DEFAULT_FLAGS, IFACE_("Type B"), ICON_NONE);
 }
 
+static void node_geometry_buts_attribute_vector_math(uiLayout *layout,
+                                                     bContext *UNUSED(C),
+                                                     PointerRNA *ptr)
+{
+  bNode *node = (bNode *)ptr->data;
+  NodeAttributeVectorMath *node_storage = (NodeAttributeVectorMath *)node->storage;
+
+  uiItemR(layout, ptr, "operation", DEFAULT_FLAGS, "", ICON_NONE);
+  uiItemR(layout, ptr, "input_type_a", DEFAULT_FLAGS, IFACE_("Type A"), ICON_NONE);
+
+  /* These "use input b / c" checks are copied from the node's code.
+   * They could be de-duplicated if the drawing code was moved to the node's file. */
+  if (!ELEM(node_storage->operation,
+            NODE_VECTOR_MATH_NORMALIZE,
+            NODE_VECTOR_MATH_FLOOR,
+            NODE_VECTOR_MATH_CEIL,
+            NODE_VECTOR_MATH_FRACTION,
+            NODE_VECTOR_MATH_ABSOLUTE,
+            NODE_VECTOR_MATH_SINE,
+            NODE_VECTOR_MATH_COSINE,
+            NODE_VECTOR_MATH_TANGENT,
+            NODE_VECTOR_MATH_LENGTH)) {
+    uiItemR(layout, ptr, "input_type_b", DEFAULT_FLAGS, IFACE_("Type B"), ICON_NONE);
+  }
+  if (ELEM(node_storage->operation, NODE_VECTOR_MATH_WRAP)) {
+    uiItemR(layout, ptr, "input_type_c", DEFAULT_FLAGS, IFACE_("Type C"), ICON_NONE);
+  }
+}
+
 static void node_geometry_buts_point_instance(uiLayout *layout,
                                               bContext *UNUSED(C),
                                               PointerRNA *ptr)
@@ -3271,9 +3246,7 @@ static void node_geometry_buts_attribute_color_ramp(uiLayout *layout,
   uiTemplateColorRamp(layout, ptr, "color_ramp", 0);
 }
 
-static void node_geometry_buts_rotate_points(uiLayout *layout,
-                                             bContext *UNUSED(C),
-                                             PointerRNA *ptr)
+static void node_geometry_buts_point_rotate(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
   NodeGeometryRotatePoints *storage = (NodeGeometryRotatePoints *)((bNode *)ptr->data)->storage;
 
@@ -3281,13 +3254,34 @@ static void node_geometry_buts_rotate_points(uiLayout *layout,
   uiItemR(layout, ptr, "space", DEFAULT_FLAGS | UI_ITEM_R_EXPAND, NULL, ICON_NONE);
 
   uiLayout *col = uiLayoutColumn(layout, false);
-  if (storage->type == GEO_NODE_ROTATE_POINTS_TYPE_AXIS_ANGLE) {
+  if (storage->type == GEO_NODE_POINT_ROTATE_TYPE_AXIS_ANGLE) {
     uiItemR(col, ptr, "input_type_axis", DEFAULT_FLAGS, IFACE_("Axis"), ICON_NONE);
     uiItemR(col, ptr, "input_type_angle", DEFAULT_FLAGS, IFACE_("Angle"), ICON_NONE);
   }
   else {
     uiItemR(col, ptr, "input_type_rotation", DEFAULT_FLAGS, IFACE_("Rotation"), ICON_NONE);
   }
+}
+
+static void node_geometry_buts_align_rotation_to_vector(uiLayout *layout,
+                                                        bContext *UNUSED(C),
+                                                        PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "axis", DEFAULT_FLAGS | UI_ITEM_R_EXPAND, NULL, ICON_NONE);
+  uiLayout *col = uiLayoutColumn(layout, false);
+  uiItemR(col, ptr, "input_type_factor", DEFAULT_FLAGS, IFACE_("Factor"), ICON_NONE);
+  uiItemR(col, ptr, "input_type_vector", DEFAULT_FLAGS, IFACE_("Vector"), ICON_NONE);
+}
+static void node_geometry_buts_point_translate(uiLayout *layout,
+                                               bContext *UNUSED(C),
+                                               PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "input_type", DEFAULT_FLAGS, IFACE_("Type"), ICON_NONE);
+}
+
+static void node_geometry_buts_point_scale(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "input_type", DEFAULT_FLAGS, IFACE_("Type"), ICON_NONE);
 }
 
 static void node_geometry_set_butfunc(bNodeType *ntype)
@@ -3320,14 +3314,26 @@ static void node_geometry_set_butfunc(bNodeType *ntype)
     case GEO_NODE_ATTRIBUTE_MIX:
       ntype->draw_buttons = node_geometry_buts_attribute_mix;
       break;
+    case GEO_NODE_ATTRIBUTE_VECTOR_MATH:
+      ntype->draw_buttons = node_geometry_buts_attribute_vector_math;
+      break;
     case GEO_NODE_POINT_DISTRIBUTE:
       ntype->draw_buttons = node_geometry_buts_attribute_point_distribute;
       break;
     case GEO_NODE_ATTRIBUTE_COLOR_RAMP:
       ntype->draw_buttons = node_geometry_buts_attribute_color_ramp;
       break;
-    case GEO_NODE_ROTATE_POINTS:
-      ntype->draw_buttons = node_geometry_buts_rotate_points;
+    case GEO_NODE_POINT_ROTATE:
+      ntype->draw_buttons = node_geometry_buts_point_rotate;
+      break;
+    case GEO_NODE_ALIGN_ROTATION_TO_VECTOR:
+      ntype->draw_buttons = node_geometry_buts_align_rotation_to_vector;
+      break;
+    case GEO_NODE_POINT_TRANSLATE:
+      ntype->draw_buttons = node_geometry_buts_point_translate;
+      break;
+    case GEO_NODE_POINT_SCALE:
+      ntype->draw_buttons = node_geometry_buts_point_scale;
       break;
   }
 }
@@ -3516,10 +3522,10 @@ void ED_init_custom_node_socket_type(bNodeSocketType *stype)
 
 /* maps standard socket integer type to a color */
 static const float std_node_socket_colors[][4] = {
-    {0.75, 0.75, 0.59, 1.0}, /* SOCK_FLOAT */
+    {0.63, 0.63, 0.63, 1.0}, /* SOCK_FLOAT */
     {0.39, 0.39, 0.78, 1.0}, /* SOCK_VECTOR */
     {0.78, 0.78, 0.16, 1.0}, /* SOCK_RGBA */
-    {0.88, 0.43, 0.46, 1.0}, /* SOCK_SHADER */
+    {0.39, 0.78, 0.39, 1.0}, /* SOCK_SHADER */
     {0.80, 0.65, 0.84, 1.0}, /* SOCK_BOOLEAN */
     {0.0, 0.0, 0.0, 1.0},    /*__SOCK_MESH (deprecated) */
     {0.25, 0.75, 0.26, 1.0}, /* SOCK_INT */
@@ -3665,37 +3671,35 @@ static void std_node_socket_interface_draw(bContext *UNUSED(C), uiLayout *layout
 {
   bNodeSocket *sock = ptr->data;
   int type = sock->typeinfo->type;
-  /*int subtype = sock->typeinfo->subtype;*/
+
+  uiLayout *col = uiLayoutColumn(layout, false);
 
   switch (type) {
     case SOCK_FLOAT: {
-      uiLayout *row;
-      uiItemR(layout, ptr, "default_value", DEFAULT_FLAGS, NULL, 0);
-      row = uiLayoutRow(layout, true);
-      uiItemR(row, ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), 0);
-      uiItemR(row, ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), 0);
+      uiItemR(col, ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), ICON_NONE);
+      uiLayout *sub = uiLayoutColumn(col, true);
+      uiItemR(sub, ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), ICON_NONE);
+      uiItemR(sub, ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), ICON_NONE);
       break;
     }
     case SOCK_INT: {
-      uiLayout *row;
-      uiItemR(layout, ptr, "default_value", DEFAULT_FLAGS, NULL, 0);
-      row = uiLayoutRow(layout, true);
-      uiItemR(row, ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), 0);
-      uiItemR(row, ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), 0);
+      uiItemR(col, ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), ICON_NONE);
+      uiLayout *sub = uiLayoutColumn(col, true);
+      uiItemR(sub, ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), ICON_NONE);
+      uiItemR(sub, ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), ICON_NONE);
       break;
     }
     case SOCK_VECTOR: {
-      uiLayout *row;
-      uiItemR(layout, ptr, "default_value", UI_ITEM_R_EXPAND, NULL, DEFAULT_FLAGS);
-      row = uiLayoutRow(layout, true);
-      uiItemR(row, ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), 0);
-      uiItemR(row, ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), 0);
+      uiItemR(col, ptr, "default_value", UI_ITEM_R_EXPAND, IFACE_("Default"), ICON_NONE);
+      uiLayout *sub = uiLayoutColumn(col, true);
+      uiItemR(sub, ptr, "min_value", DEFAULT_FLAGS, IFACE_("Min"), ICON_NONE);
+      uiItemR(sub, ptr, "max_value", DEFAULT_FLAGS, IFACE_("Max"), ICON_NONE);
       break;
     }
     case SOCK_BOOLEAN:
     case SOCK_RGBA:
     case SOCK_STRING: {
-      uiItemR(layout, ptr, "default_value", DEFAULT_FLAGS, NULL, 0);
+      uiItemR(col, ptr, "default_value", DEFAULT_FLAGS, IFACE_("Default"), 0);
       break;
     }
   }
@@ -3813,9 +3817,9 @@ void draw_nodespace_back_pix(const bContext *C,
 }
 
 /* return quadratic beziers points for a given nodelink and clip if v2d is not NULL. */
-static bool node_link_bezier_handles(View2D *v2d,
-                                     SpaceNode *snode,
-                                     bNodeLink *link,
+static bool node_link_bezier_handles(const View2D *v2d,
+                                     const SpaceNode *snode,
+                                     const bNodeLink *link,
                                      float vec[4][2])
 {
   float cursor[2] = {0.0f, 0.0f};
@@ -3908,8 +3912,11 @@ static bool node_link_bezier_handles(View2D *v2d,
 }
 
 /* if v2d not NULL, it clips and returns 0 if not visible */
-bool node_link_bezier_points(
-    View2D *v2d, SpaceNode *snode, bNodeLink *link, float coord_array[][2], int resol)
+bool node_link_bezier_points(const View2D *v2d,
+                             const SpaceNode *snode,
+                             const bNodeLink *link,
+                             float coord_array[][2],
+                             const int resol)
 {
   float vec[4][2];
 
@@ -4072,7 +4079,7 @@ static char nodelink_get_color_id(int th_col)
   return 0;
 }
 
-static void nodelink_batch_draw(SpaceNode *snode)
+static void nodelink_batch_draw(const SpaceNode *snode)
 {
   if (g_batch_link.count == 0) {
     return;
@@ -4112,7 +4119,7 @@ void nodelink_batch_end(SpaceNode *snode)
   g_batch_link.enabled = false;
 }
 
-static void nodelink_batch_add_link(SpaceNode *snode,
+static void nodelink_batch_add_link(const SpaceNode *snode,
                                     const float p0[2],
                                     const float p1[2],
                                     const float p2[2],
@@ -4144,8 +4151,12 @@ static void nodelink_batch_add_link(SpaceNode *snode,
 }
 
 /* don't do shadows if th_col3 is -1. */
-void node_draw_link_bezier(
-    View2D *v2d, SpaceNode *snode, bNodeLink *link, int th_col1, int th_col2, int th_col3)
+void node_draw_link_bezier(const View2D *v2d,
+                           const SpaceNode *snode,
+                           const bNodeLink *link,
+                           int th_col1,
+                           int th_col2,
+                           int th_col3)
 {
   float vec[4][2];
 

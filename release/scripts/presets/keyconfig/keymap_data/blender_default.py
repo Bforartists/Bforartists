@@ -537,6 +537,9 @@ def km_screen(params):
             ("ed.undo_history", {"type": 'Z', "value": 'PRESS', "ctrl": True, "alt": True}, None),
             ("screen.screen_full_area", {"type": 'UP_ARROW', "value": 'PRESS', "ctrl": True}, None),
             ("screen.screen_full_area", {"type": 'DOWN_ARROW', "value": 'PRESS', "ctrl": True}, None),
+            ("screen.screen_full_area", {"type": 'SPACE', "value": 'PRESS', "shift": True}, None),
+            ("screen.screen_full_area", {"type": 'F10', "value": 'PRESS', "alt": True},
+             {"properties": [("use_hide_panels", True)]}),
             ("screen.screen_set", {"type": 'RIGHT_ARROW', "value": 'PRESS', "ctrl": True},
              {"properties": [("delta", 1)]}),
             ("screen.screen_set", {"type": 'LEFT_ARROW', "value": 'PRESS', "ctrl": True},
@@ -788,9 +791,9 @@ def km_outliner(params):
         ("outliner.select_box", {"type": 'B', "value": 'PRESS'}, None),
         ("outliner.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY'}, {"properties": [("tweak", True)]}),
         ("outliner.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY', "shift": True},
-         {"properties": [("tweak", True), ("mode", "ADD")]}),
+         {"properties": [("tweak", True), ("mode", 'ADD')]}),
         ("outliner.select_box", {"type": 'EVT_TWEAK_L', "value": 'ANY', "ctrl": True},
-         {"properties": [("tweak", True), ("mode", "SUB")]}),
+         {"properties": [("tweak", True), ("mode", 'SUB')]}),
         ("outliner.select_walk", {"type": 'UP_ARROW', "value": 'PRESS', "repeat": True},
          {"properties": [("direction", 'UP')]}),
         ("outliner.select_walk", {"type": 'UP_ARROW', "value": 'PRESS', "shift": True, "repeat": True},
@@ -1445,7 +1448,7 @@ def km_time_scrub(_params):
     )
 
     items.extend([
-        ("anim.change_frame", {"type": "LEFTMOUSE", "value": 'PRESS'}, None),
+        ("anim.change_frame", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -1460,7 +1463,7 @@ def km_time_scrub_clip(_params):
     )
 
     items.extend([
-        ("clip.change_frame", {"type": "LEFTMOUSE", "value": 'PRESS'}, None),
+        ("clip.change_frame", {"type": 'LEFTMOUSE', "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -1591,11 +1594,25 @@ def km_graph_editor(params):
         ("wm.context_toggle", {"type": 'O', "value": 'PRESS'},
          {"properties": [("data_path", 'tool_settings.use_proportional_fcurve')]}),
         op_menu_pie("VIEW3D_MT_proportional_editing_falloff_pie", {"type": 'O', "value": 'PRESS', "shift": True}),
-        op_menu_pie("GRAPH_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
         ("marker.add", {"type": 'M', "value": 'PRESS'}, None),
         ("marker.rename", {"type": 'M', "value": 'PRESS', "ctrl": True}, None),
         *_template_items_context_menu("GRAPH_MT_context_menu", params.context_menu_event),
     ])
+
+    if not params.legacy:
+        items.extend([
+            op_menu_pie("GRAPH_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
+        ])
+    else:
+        items.extend([
+            # Old pivot.
+            ("wm.context_set_enum", {"type": 'COMMA', "value": 'PRESS'},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'BOUNDING_BOX_CENTER')]}),
+            ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS'},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'CURSOR')]}),
+            ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS', "ctrl": True},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'INDIVIDUAL_ORIGINS')]}),
+        ])
 
     if params.select_mouse == 'LEFTMOUSE' and not params.legacy:
         items.extend([
@@ -1697,14 +1714,25 @@ def km_image(params):
              for i in range(9)
              )
         ),
-        op_menu_pie("IMAGE_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
         ("image.render_border", {"type": 'B', "value": 'PRESS', "ctrl": True}, None),
         ("image.clear_render_border", {"type": 'B', "value": 'PRESS', "ctrl": True, "alt": True}, None),
         *_template_items_context_menu("IMAGE_MT_mask_context_menu", params.context_menu_event),
     ])
 
-    if params.legacy:
+    if not params.legacy:
         items.extend([
+            op_menu_pie("IMAGE_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
+        ])
+    else:
+        items.extend([
+            # Old pivot.
+            ("wm.context_set_enum", {"type": 'COMMA', "value": 'PRESS'},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'CENTER')]}),
+            ("wm.context_set_enum", {"type": 'COMMA', "value": 'PRESS', "ctrl": True},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'MEDIAN')]}),
+            ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS'},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'CURSOR')]}),
+
             ("image.view_center_cursor", {"type": 'HOME', "value": 'PRESS', "alt": True}, None),
         ])
 
@@ -2826,14 +2854,25 @@ def km_clip_editor(params):
         ("clip.clear_track_path", {"type": 'T', "value": 'PRESS', "shift": True, "alt": True},
          {"properties": [("action", 'ALL'), ("clear_active", False)]}),
         ("clip.cursor_set", params.cursor_set_event, None),
-        op_menu_pie("CLIP_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
         ("clip.copy_tracks", {"type": 'C', "value": 'PRESS', "ctrl": True}, None),
         ("clip.paste_tracks", {"type": 'V', "value": 'PRESS', "ctrl": True}, None),
         *_template_items_context_menu("CLIP_MT_tracking_context_menu", params.context_menu_event),
     ])
 
-    if params.legacy:
+    if not params.legacy:
+        op_menu_pie("CLIP_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
+    else:
         items.extend([
+            # Old pivot.
+            ("wm.context_set_enum", {"type": 'COMMA', "value": 'PRESS'},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'BOUNDING_BOX_CENTER')]}),
+            ("wm.context_set_enum", {"type": 'COMMA', "value": 'PRESS', "ctrl": True},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'MEDIAN_POINT')]}),
+            ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS'},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'CURSOR')]}),
+            ("wm.context_set_enum", {"type": 'PERIOD', "value": 'PRESS', "ctrl": True},
+             {"properties": [("data_path", 'space_data.pivot_point'), ("value", 'INDIVIDUAL_ORIGINS')]}),
+
             ("clip.view_center_cursor", {"type": 'HOME', "value": 'PRESS', "alt": True}, None),
         ])
 
@@ -4396,9 +4435,9 @@ def km_sculpt(params):
         ("sculpt.mask_expand", {"type": 'W', "value": 'PRESS', "shift": True},
          {"properties": [("use_normals", False), ("keep_previous_mask", False), ("invert", False), ("smooth_iterations", 0), ("create_face_set", True)]}),
         ("sculpt.face_set_edit", {"type": 'W', "value": 'PRESS', "ctrl": True},
-         {"properties": [("mode", "GROW")]}),
+         {"properties": [("mode", 'GROW')]}),
         ("sculpt.face_set_edit", {"type": 'W', "value": 'PRESS', "ctrl": True, "alt": True},
-         {"properties": [("mode", "SHRINK")]}),
+         {"properties": [("mode", 'SHRINK')]}),
         # Subdivision levels
         *_template_items_object_subdivision_set(),
         ("object.subdivision_set", {"type": 'PAGE_UP', "value": 'PRESS', "repeat": True},
@@ -5048,10 +5087,10 @@ def km_transform_modal_map(_params):
     return keymap
 
 
-def km_view3d_interactive_add_tool_modal_map(_params):
+def km_view3d_interactive_add_tool_modal(_params):
     items = []
     keymap = (
-        "View3D Placement Modal Map",
+        "View3D Placement Modal",
         {"space_type": 'EMPTY', "region_type": 'WINDOW', "modal": True},
         {"items": items},
     )
@@ -6958,7 +6997,7 @@ def generate_keymaps(params=None):
         km_eyedropper_modal_map(params),
         km_eyedropper_colorramp_pointsampling_map(params),
         km_transform_modal_map(params),
-        km_view3d_interactive_add_tool_modal_map(params),
+        km_view3d_interactive_add_tool_modal(params),
         km_view3d_gesture_circle(params),
         km_gesture_border(params),
         km_gesture_zoom_border(params),
