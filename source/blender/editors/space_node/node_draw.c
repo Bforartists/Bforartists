@@ -1800,10 +1800,9 @@ static void node_draw_basis(const bContext *C,
     case GEO_NODE_ATTRIBUTE_COMPARE:
       icon = ICON_ATTRIBUTE_COMPARE;
       break;
-     /*bfa - is this node removed again? throws not defined error*/
-    /*case GEO_NODE_ROTATE_POINTS:
+    case GEO_NODE_POINT_ROTATE:
       icon = ICON_POINT_ROTATE;
-      break;*/
+      break;
     }
 
   /* group edit */
