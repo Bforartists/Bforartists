@@ -3618,7 +3618,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodePointSeparate"
 
-            props = col.operator("node.add_node", text=" Rotate Points       ", icon = "POINT_ROTATE")
+            props = col.operator("node.add_node", text=" Point Rotate       ", icon = "POINT_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeRotatePoints"
 
