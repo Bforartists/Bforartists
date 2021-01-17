@@ -593,7 +593,7 @@ class GreasePencilMaterialsPanel:
             if show_full_ui:
                 row = layout.row()
 
-                row.template_ID(ob, "active_material", new="material.new", duplicate="material.duplicate", live_icon=True)
+                row.template_ID(ob, "active_material", new="material.new", live_icon=True)
 
                 slot = context.material_slot
                 if slot:
@@ -760,6 +760,16 @@ class GreasePencilLayerAdjustmentsPanel:
         col = layout.row(align=True)
         col.use_property_split = False
         col.prop(gpl, "lock_material")
+
+        # Transforms
+        row = layout.row(align=True)
+        row.prop(gpl, "location")
+
+        row = layout.row(align=True)
+        row.prop(gpl, "rotation")
+
+        row = layout.row(align=True)
+        row.prop(gpl, "scale")
 
 
 class GPENCIL_UL_masks(UIList):
