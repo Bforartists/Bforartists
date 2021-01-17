@@ -505,12 +505,12 @@ class OUTLINER_PT_filter(Panel):
             col = layout.column(align=True)
             row = col.row(align=True)
             row.separator()
-            row.label(icon="BLANK1")
+            row.label(icon='BLANK1')
             row.separator()
             row.prop(space, "filter_state", text="")
             sub = row.row(align=True)
             if space.filter_state != 'ALL':
-                sub.prop(space, "filter_invert", text="", icon="ARROW_LEFTRIGHT")
+                sub.prop(space, "filter_invert", text="", icon='ARROW_LEFTRIGHT')
             sub = col.column(align=True)
 
             row = sub.row()

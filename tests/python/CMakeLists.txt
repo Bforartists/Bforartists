@@ -228,13 +228,15 @@ add_blender_test(
   --run-all-tests
 )
 
-add_blender_test(
-  physics_ocean
-  ${TEST_SRC_DIR}/physics/ocean_test.blend
-  --python ${TEST_PYTHON_DIR}/physics_ocean.py
-  --
-  --run-all-tests
-)
+if(WITH_MOD_OCEANSIM)
+  add_blender_test(
+    physics_ocean
+    ${TEST_SRC_DIR}/physics/ocean_test.blend
+    --python ${TEST_PYTHON_DIR}/physics_ocean.py
+    --
+    --run-all-tests
+  )
+endif()
 
 
 add_blender_test(
@@ -649,6 +651,9 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
 
     # Cycles
     if(WITH_CYCLES)
+      if(NOT WITH_CYCLES_OSL)
+        set(_cycles_blacklist OSL)
+      endif()
       foreach(_cycles_device ${CYCLES_TEST_DEVICES})
         string(TOLOWER "${_cycles_device}" _cycles_device_lower)
         set(_cycles_render_tests bake;${render_tests};osl)
@@ -662,6 +667,7 @@ if(WITH_CYCLES OR WITH_OPENGL_RENDER_TESTS)
             -idiff "${OPENIMAGEIO_IDIFF}"
             -outdir "${TEST_OUT_DIR}/cycles"
             -device ${_cycles_device}
+            -blacklist ${_cycles_blacklist}
           )
         endforeach()
       endforeach()
