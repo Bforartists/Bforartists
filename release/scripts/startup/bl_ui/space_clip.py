@@ -217,8 +217,9 @@ class CLIP_HT_header(Header):
                 row.prop(dopesheet, "show_hidden", text="")
 
                 row = layout.row(align=True)
-                row.prop(dopesheet, "sort_method", text="")
-                row.prop(dopesheet, "use_invert_sort", text="Invert", toggle=True)
+                row.prop(dopesheet, "sort_method", text="") 
+                row.prop(dopesheet, "use_invert_sort", text = "", icon = "INVERSE", toggle=True)
+                row = layout.row(align=True)
                 row.popover(panel = "CLIP_PT_options", text = "Options")
 
     def _draw_masking(self, context):
