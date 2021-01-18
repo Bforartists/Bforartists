@@ -140,7 +140,7 @@ def CLIP_default_settings_from_track(clip, track, framenr):
 
 
 class CLIP_OT_filter_tracks(bpy.types.Operator):
-    """Filter Tracks\nFilter tracks which has weirdly looking spikes in motion curves"""
+    """Filter tracks which has weirdly looking spikes in motion curves"""
     bl_label = "Filter Tracks"
     bl_idname = "clip.filter_tracks"
     bl_options = {'UNDO', 'REGISTER'}
