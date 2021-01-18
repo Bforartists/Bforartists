@@ -217,7 +217,7 @@ class CLIP_HT_header(Header):
                 row.prop(dopesheet, "show_hidden", text="")
 
                 row = layout.row(align=True)
-                row.prop(dopesheet, "sort_method", text="") 
+                row.prop(dopesheet, "sort_method", text="")
                 row.prop(dopesheet, "use_invert_sort", text = "", icon = "INVERSE", toggle=True)
                 row = layout.row(align=True)
                 row.popover(panel = "CLIP_PT_options", text = "Options")
@@ -1478,15 +1478,15 @@ class CLIP_MT_clip(Menu):
         layout.operator("clip.open", icon = "FILE_FOLDER")
 
         if clip:
-            layout.operator("clip.set_scene_frames")
-            layout.operator("clip.set_center_principal")
+            layout.operator("clip.set_scene_frames", icon = "SET_FRAMES")
+            layout.operator("clip.set_center_principal", text="Set Center", icon = "CENTER")
             layout.operator("clip.prefetch", icon = "PREFETCH")
             layout.operator("clip.reload", icon = "FILE_REFRESH")
 
             layout.separator()
 
-            layout.operator("clip.set_viewport_background")
-            layout.operator("clip.setup_tracking_scene")
+            layout.operator("clip.set_viewport_background", icon='FILE_IMAGE')
+            layout.operator("clip.setup_tracking_scene", icon='SCENE_DATA')
 
 
 class CLIP_MT_track_transform(Menu):
