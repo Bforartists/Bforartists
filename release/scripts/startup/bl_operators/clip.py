@@ -235,7 +235,7 @@ class CLIP_OT_set_active_clip(bpy.types.Operator):
 
 
 class CLIP_OT_track_to_empty(Operator):
-    """Link Empty to Track\nCreate an Empty object which will be copying movement of active track"""
+    """Create an Empty object which will be copying movement of active track"""
 
     bl_idname = "clip.track_to_empty"
     bl_label = "Link Empty to Track"
@@ -285,7 +285,7 @@ class CLIP_OT_track_to_empty(Operator):
 
 
 class CLIP_OT_bundles_to_mesh(Operator):
-    """3D Markers to Mesh\nCreate vertex cloud using coordinates of reconstructed tracks"""
+    """Create vertex cloud using coordinates of reconstructed tracks"""
 
     bl_idname = "clip.bundles_to_mesh"
     bl_label = "3D Markers to Mesh"
@@ -334,7 +334,7 @@ class CLIP_OT_bundles_to_mesh(Operator):
 
 
 class CLIP_OT_delete_proxy(Operator):
-    """Delete Proxy\nDelete movie clip proxy files from the hard drive"""
+    """Delete movie clip proxy files from the hard drive"""
 
     bl_idname = "clip.delete_proxy"
     bl_label = "Delete Proxy"
@@ -438,7 +438,7 @@ class CLIP_OT_set_viewport_background(Operator):
 
 
 class CLIP_OT_constraint_to_fcurve(Operator):
-    """Constraint to F-Curve\nCreate F-Curves for object which will copy """ \
+    """Create F-Curves for object which will copy """ \
         """object's movement caused by this constraint"""
 
     bl_idname = "clip.constraint_to_fcurve"
@@ -552,7 +552,7 @@ class CLIP_OT_constraint_to_fcurve(Operator):
 
 
 class CLIP_OT_setup_tracking_scene(Operator):
-    """Setup Tracking Scene\nPrepare scene for compositing 3D objects into this footage"""
+    """Prepare scene for compositing 3D objects into this footage"""
     # TODO: it will be great to integrate with other engines (other than Cycles)
 
     bl_idname = "clip.setup_tracking_scene"
