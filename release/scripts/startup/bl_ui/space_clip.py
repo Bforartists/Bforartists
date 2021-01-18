@@ -1642,6 +1642,8 @@ class CLIP_MT_track(Menu):
         layout.operator("clip.delete_track", icon = "DELETE")
         layout.operator("clip.delete_marker", icon = "DELETE")
 
+        layout.menu("CLIP_MT_reconstruction")
+
 
 class CLIP_MT_reconstruction(Menu):
     bl_label = "Reconstruction"
@@ -1649,8 +1651,20 @@ class CLIP_MT_reconstruction(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.label(text = "Menu remains for addon compability")
-        layout.operator("clip.apply_solution_scale")
+        layout.operator("clip.set_origin", icon='OBJECT_ORIGIN')
+        layout.operator("clip.set_plane", text="Set Floor", icon='FLOOR').plane = 'FLOOR'
+        layout.operator("clip.set_plane", text="Set Wall", icon = "WALL").plane = 'WALL'
+
+        layout.operator("clip.set_axis", text="Set X Axis", icon='X_ICON').axis = 'X'
+        layout.operator("clip.set_axis", text="Set Y Axis", icon='Y_ICON').axis = 'Y'
+
+        layout.operator("clip.set_scale", icon = "TRANSFORM_SCALE")
+        layout.operator("clip.apply_solution_scale", icon = "APPLYSCALE")
+
+        layout.separator()
+
+        layout.operator("clip.track_to_empty", icon = "LINKED")
+        layout.operator("clip.bundles_to_mesh",  icon = "MARKER_TO_MESH")
 
 
 class CLIP_MT_select_grouped(Menu):
