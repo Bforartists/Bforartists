@@ -1505,19 +1505,19 @@ class CLIP_MT_track_motion(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("clip.track_markers", text="Backwards")
+        props = layout.operator("clip.track_markers", text="Backwards", icon='TRACKING_BACKWARDS_SINGLE')
         props.backwards = True
         props.sequence = True
 
-        props = layout.operator("clip.track_markers", text="Frame Backwards")
+        props = layout.operator("clip.track_markers", text="Frame Backwards", icon='TRACKING_BACKWARDS')
         props.backwards = True
         props.sequence = False
 
-        props = layout.operator("clip.track_markers", text="Forwards")
+        props = layout.operator("clip.track_markers", text="Forwards", icon='TRACKING_FORWARDS')
         props.backwards = False
         props.sequence = True
 
-        props = layout.operator("clip.track_markers", text="Frame Forwards")
+        props = layout.operator("clip.track_markers", text="Frame Forwards", icon='TRACKING_FORWARDS_SINGLE')
         props.backwards = False
         props.sequence = False
 
@@ -1528,21 +1528,21 @@ class CLIP_MT_track_clear(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("clip.clear_track_path", text="Before")
+        props = layout.operator("clip.clear_track_path", text="Before", icon='TRACKING_CLEAR_BACKWARDS')
         props.clear_active = False
         props.action = 'UPTO'
 
-        props = layout.operator("clip.clear_track_path", text="After")
+        props = layout.operator("clip.clear_track_path", text="After", icon='TRACKING_CLEAR_FORWARDS')
         props.clear_active = False
         props.action = 'REMAINED'
 
-        props = layout.operator("clip.clear_track_path", text="Track Path")
+        props = layout.operator("clip.clear_track_path", text="Track Path", icon = "CLEAR")
         props.clear_active = False
         props.action = 'ALL'
 
         layout.separator()
 
-        layout.operator("clip.clear_solution", text="Solution")
+        layout.operator("clip.clear_solution", text="Solution", icon = "CLEAN_CHANNELS")
 
 class CLIP_MT_track_refine(Menu):
     bl_label = "Refine"
@@ -1550,10 +1550,10 @@ class CLIP_MT_track_refine(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        props = layout.operator("clip.refine_markers", text="Backwards")
+        props = layout.operator("clip.refine_markers", text="Backwards", icon='TRACKING_REFINE_BACKWARDS')
         props.backwards = True
 
-        props = layout.operator("clip.refine_markers", text="Fowards")
+        props = layout.operator("clip.refine_markers", text="Fowards", icon='TRACKING_REFINE_FORWARDS')
         props.backwards = False
 
 
@@ -1563,8 +1563,8 @@ class CLIP_MT_track_animation(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("clip.keyframe_insert")
-        layout.operator("clip.keyframe_delete")
+        layout.operator("clip.keyframe_insert", icon = "KEYFRAMES_INSERT")
+        layout.operator("clip.keyframe_delete", icon = "KEYFRAMES_REMOVE")
 
 
 class CLIP_MT_track_visibility(Menu):
@@ -1573,9 +1573,9 @@ class CLIP_MT_track_visibility(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        layout.operator("clip.hide_tracks_clear")
-        layout.operator("clip.hide_tracks", text="Hide Selected").unselected = False
-        layout.operator("clip.hide_tracks", text="Hide Unselected").unselected = True
+        layout.operator("clip.hide_tracks_clear", text="Show Hidden", icon = "HIDE_OFF")
+        layout.operator("clip.hide_tracks", text="Hide Selected", icon = "HIDE_ON").unselected = False
+        layout.operator("clip.hide_tracks", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class CLIP_MT_track_cleanup(Menu):
@@ -1583,6 +1583,9 @@ class CLIP_MT_track_cleanup(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
+        layout.operator("clip.clean_tracks", icon='X')
+        layout.operator("clip.filter_tracks", icon='FILTER')
 
 
 class CLIP_MT_track(Menu):
@@ -1601,19 +1604,19 @@ class CLIP_MT_track(Menu):
 
         layout.separator()
 
-        layout.operator("clip.add_marker_move", text="Add Marker")
-        layout.operator("clip.detect_features")
-        layout.operator("clip.create_plane_track")
+        layout.operator("clip.add_marker_move", text="Add Marker", icon = "MARKER")
+        layout.operator("clip.detect_features", icon = "DETECT")
+        layout.operator("clip.create_plane_track", icon = "PLANETRACK")
 
         layout.separator()
 
         layout.operator("clip.solve_camera",
                      text="Solve Camera Motion" if tracking_object.is_camera
-                     else "Solve Object Motion")
+                     else "Solve Object Motion", icon='OUTLINER_OB_CAMERA')
 
         layout.separator()
 
-        layout.operator("clip.join_tracks")
+        layout.operator("clip.join_tracks", icon = "JOIN")
 
         layout.separator()
 
@@ -1622,8 +1625,8 @@ class CLIP_MT_track(Menu):
 
         layout.separator()
 
-        layout.operator("clip.track_settings_as_default", text="Copy Settings to Defaults")
-        layout.operator("clip.track_settings_to_track", text="Apply Default Settings")
+        layout.operator("clip.track_settings_as_default", text="Copy Settings to Defaults", icon='SETTINGS')
+        layout.operator("clip.track_settings_to_track", text="Apply Default Settings", icon='COPYDOWN')
 
         layout.separator()
 
@@ -1636,8 +1639,8 @@ class CLIP_MT_track(Menu):
 
         layout.separator()
 
-        layout.operator("clip.delete_track")
-        layout.operator("clip.delete_marker")
+        layout.operator("clip.delete_track", icon = "DELETE")
+        layout.operator("clip.delete_marker", icon = "DELETE")
 
 
 class CLIP_MT_reconstruction(Menu):
