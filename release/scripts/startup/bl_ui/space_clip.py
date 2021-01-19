@@ -1731,8 +1731,8 @@ class CLIP_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("clip.stabilize_2d_select")
-        layout.operator("clip.stabilize_2d_rotation_select")
+        layout.operator("clip.stabilize_2d_select", icon = 'SELECT_TRACKS')
+        layout.operator("clip.stabilize_2d_rotation_select", icon = 'SELECT_TRACKS')
 
 
 class CLIP_MT_select_grouped(Menu):
