@@ -3295,6 +3295,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Randomize    ", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
+            
+            props = col.operator("node.add_node", text=" Attribute Vector Math ", icon = "ATTRIBUTE_VECTORMATH")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeVectorMath"
 
         #### Icon Buttons
 
@@ -3326,6 +3330,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeVectorMath"
 
 
 #add color panel
@@ -3605,6 +3613,10 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            
+            props = col.operator("node.add_node", text=" Align Rotation to Vector  ", icon = "ALIGN_ROTATION_TO_VECTOR")
+            props.use_transform = True
+            props.type = "GeometryNodeAlignRotationToVector"
 
             props = col.operator("node.add_node", text=" Point Distribute   ", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
@@ -3612,15 +3624,23 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Point Instance     ", icon = "POINT_INSTANCE")
             props.use_transform = True
-            props.type = "GeometryNodePointInstance"
-
+            props.type = "GeometryNodePointInstance"       
+            
+            props = col.operator("node.add_node", text=" Point Rotate       ", icon = "POINT_ROTATE")
+            props.use_transform = True
+            props.type = "GeometryNodeRotatePoints"    
+            
+            props = col.operator("node.add_node", text=" Point Scale    ", icon = "POINT_SCALE")
+            props.use_transform = True
+            props.type = "GeometryNodePointScale"         
+            
             props = col.operator("node.add_node", text=" Point Separate    ", icon = "POINT_SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodePointSeparate"
-
-            props = col.operator("node.add_node", text=" Point Rotate       ", icon = "POINT_ROTATE")
+            
+            props = col.operator("node.add_node", text=" Point Translate    ", icon = "POINT_TRANSLATE")
             props.use_transform = True
-            props.type = "GeometryNodeRotatePoints"
+            props.type = "GeometryNodePointTranslate"
 
         #### Icon Buttons
 
@@ -3628,7 +3648,11 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-
+            
+            props = row.operator("node.add_node", text = "", icon = "ALIGN_ROTATION_TO_VECTOR")
+            props.use_transform = True
+            props.type = "GeometryNodeAlignRotationToVector"
+            
             props = row.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodePointDistribute"
@@ -3637,13 +3661,21 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodePointInstance"
 
-            props = row.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
-            props.use_transform = True
-            props.type = "GeometryNodePointSeparate"
-
             props = row.operator("node.add_node", text = "", icon = "POINT_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeRotatePoints"
+            
+            props = row.operator("node.add_node", text = "", icon = "POINT_SCALE")
+            props.use_transform = True
+            props.type = "GeometryNodePointScale"
+
+            props = row.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
+            props.use_transform = True
+            props.type = "GeometryNodePointSeparate"
+            
+            props = row.operator("node.add_node", text = "", icon = "POINT_TRANSLATE")
+            props.use_transform = True
+            props.type = "GeometryNodePointTranslate"
 
 
 #add utilities panel
