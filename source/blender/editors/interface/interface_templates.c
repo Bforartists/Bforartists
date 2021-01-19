@@ -825,11 +825,12 @@ static uiBut *template_id_def_new_but(uiBlock *block,
    * is exceeded. */
 
   if (newop) {
+    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD : ICON_ADD */
     but = uiDefIconTextButO(block,
                             but_type,
                             newop,
                             WM_OP_INVOKE_DEFAULT,
-                            (id && !use_tab_but) ? ICON_DUPLICATE : ICON_ADD,
+                            (id && !use_tab_but) ? ICON_ADD : ICON_ADD,
                             (id) ? "" : CTX_IFACE_(template_id_context(type), "New"),
                             0,
                             0,
@@ -840,10 +841,11 @@ static uiBut *template_id_def_new_but(uiBlock *block,
         but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_ADD_NEW));
   }
   else {
+    /*bfa - changed ICON_DUPLICATE : ICON_ADD to ICON_ADD : ICON_ADD */
     but = uiDefIconTextBut(block,
                            but_type,
                            0,
-                           (id && !use_tab_but) ? ICON_DUPLICATE : ICON_ADD,
+                           (id && !use_tab_but) ? ICON_ADD : ICON_ADD,
                            (id) ? "" : CTX_IFACE_(template_id_context(type), "New"),
                            0,
                            0,
