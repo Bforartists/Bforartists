@@ -91,8 +91,8 @@ select_tip
 image_aspect
 brushsize
 
-#~ DEF_ICON_BLANK(110)
-#~ DEF_ICON_BLANK(111)
+point_scale
+point_translate
 #~ DEF_ICON_BLANK(112)
 #~ DEF_ICON_BLANK(113)
 #~ DEF_ICON_BLANK(114)
@@ -1857,7 +1857,7 @@ anchor_center
 anchor_left
 anchor_right
 anchor_top
-#def_icon_blank(1587
+align_rotation_to_vector
 avoid
 fight
 flock
@@ -1991,7 +1991,7 @@ planetrack
 seq_swap_left
 seq_swap_right
 texture_data
-#def_icon_blank(1702
+attribute_vectormath
 toggle_meta
 seq_snap_strip
 world_data
