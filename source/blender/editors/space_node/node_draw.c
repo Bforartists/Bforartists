@@ -1189,6 +1189,7 @@ static void node_draw_basis(const bContext *C,
   }
   int32_t icon = ICON_NONE; /* bfa - select node icon based on type */
   /* bfa - note: switch logic lives here for the sake of clarity */
+  /*for case types see source\blender\nodes\NOD_static_types.h*/
   switch (node->type) {
     /* bfa - Shader Nodes */
     /* bfa - Input */
@@ -1782,6 +1783,9 @@ static void node_draw_basis(const bContext *C,
     case GEO_NODE_ATTRIBUTE_MATH:
       icon = ICON_ATTRIBUTE_MATH;
       break;
+    case GEO_NODE_ATTRIBUTE_VECTOR_MATH:
+      icon = ICON_ATTRIBUTE_VECTORMATH;
+      break;
     case GEO_NODE_JOIN_GEOMETRY:
       icon = ICON_JOIN;
       break;
@@ -1802,6 +1806,15 @@ static void node_draw_basis(const bContext *C,
       break;
     case GEO_NODE_POINT_ROTATE:
       icon = ICON_POINT_ROTATE;
+      break;
+    case GEO_NODE_ALIGN_ROTATION_TO_VECTOR:
+      icon = ICON_ALIGN_ROTATION_TO_VECTOR;
+      break;
+    case GEO_NODE_POINT_SCALE:
+      icon = ICON_POINT_SCALE;
+      break;
+    case GEO_NODE_POINT_TRANSLATE:
+      icon = ICON_POINT_TRANSLATE;
       break;
     }
 
