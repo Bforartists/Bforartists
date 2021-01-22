@@ -428,23 +428,33 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
 
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
 
-    row = uiLayoutRow(layout, false); /* bfa - use high level UI when possible */
-    col = uiLayoutColumn(row, false);
+    /* bfa - new expand prop UI style*/
+    col = uiLayoutColumn(layout, true);
 
     if (tot == 1) {
       if (totcurvedata) {
         /* Curve */
-        uiItemL(col, IFACE_("Control Point X"), ICON_NONE); /* bfa - text in front of the sliders*/
+        uiItemL(col, IFACE_("Control Point"), ICON_NONE);
       }
       else {
         /* Mesh or lattice */
-        uiItemL(col, IFACE_("Vertex X"), ICON_NONE); 
+        uiItemL(col, IFACE_("Vertex"), ICON_NONE);
       }
     }
     else {
-      uiItemL(col, IFACE_("Median X"), ICON_NONE);
+      uiItemL(col, IFACE_("Median"), ICON_NONE);
     }
 
+    row = uiLayoutRow(col, true);
+
+    uiItemS(row);
+    uiItemS(row);
+
+    col = uiLayoutColumn(row, true);
+    uiLayoutSetUnitsX(col, .75);
+    uiLayoutSetFixedSize(col, true);
+
+    uiItemL(col, IFACE_("X"), ICON_NONE);
     uiItemL(col, IFACE_("Y"), ICON_NONE);
     uiItemL(col, IFACE_("Z"), ICON_NONE);
 
