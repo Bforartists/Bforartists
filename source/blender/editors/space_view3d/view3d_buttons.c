@@ -1137,9 +1137,19 @@ static void v3d_object_dimension_buts(bContext *C, uiLayout *layout, View3D *v3d
     copy_v3_v3(tfp->ob_scale_orig, ob->scale);
     copy_m4_m4(tfp->ob_obmat_orig, ob->obmat);
 
-    row = uiLayoutRow(layout, false);                /* bfa - row = layout.row(align=false)*/
-    col = uiLayoutColumn(row, false);                /* bfa - col = row.column(align=false)*/
-    uiItemL(col, IFACE_("Dimensions X"), ICON_NONE); /* bfa - text in front of the sliders*/
+    /* bfa - new expanded prop UI style */
+    col = uiLayoutColumn(layout, true);
+    uiItemL(col, IFACE_("Dimensions"), ICON_NONE);
+
+    row = uiLayoutRow(col, true);
+
+    uiItemS(row);
+    uiItemS(row);
+
+    col = uiLayoutColumn(row, true);
+    uiLayoutSetUnitsX(col, .75);
+    uiLayoutSetFixedSize(col, true);
+    uiItemL(col, IFACE_("X"), ICON_NONE);
     uiItemL(col, IFACE_("Y"), ICON_NONE);
     uiItemL(col, IFACE_("Z"), ICON_NONE);
 
