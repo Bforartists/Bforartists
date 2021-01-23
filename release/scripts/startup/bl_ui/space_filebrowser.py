@@ -390,7 +390,7 @@ class FILEBROWSER_PT_bookmarks_recents(Panel):
 
 class FILEBROWSER_PT_advanced_filter(Panel):
     bl_space_type = 'FILE_BROWSER'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'TOOL_PROPS'
     bl_category = "Filter"
     bl_label = "Advanced Filter"
 
