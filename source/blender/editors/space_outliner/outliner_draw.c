@@ -314,7 +314,7 @@ static void outliner_object_set_flag_recursive_fn(bContext *C,
 
 /**
  * Object properties.
- * */
+ */
 static void outliner__object_set_flag_recursive_fn(bContext *C, void *poin, void *poin2)
 {
   Object *ob = poin;
@@ -324,7 +324,7 @@ static void outliner__object_set_flag_recursive_fn(bContext *C, void *poin, void
 
 /**
  * Base properties.
- * */
+ */
 static void outliner__base_set_flag_recursive_fn(bContext *C, void *poin, void *poin2)
 {
   Base *base = poin;
@@ -697,13 +697,13 @@ static void namebutton_fn(bContext *C, void *tsep, char *oldname)
             DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
           }
           DEG_id_tag_update(&ob->id, ID_RECALC_COPY_ON_WRITE);
-          WM_event_add_notifier(C, NC_ID | NA_RENAME, NULL);
           break;
         }
         default:
-          WM_event_add_notifier(C, NC_ID | NA_RENAME, NULL);
           break;
       }
+      WM_event_add_notifier(C, NC_ID | NA_RENAME, NULL);
+
       /* Check the library target exists */
       if (te->idcode == ID_LI) {
         Library *lib = (Library *)tselem->id;

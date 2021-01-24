@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -22266,10 +22266,6 @@ msgid "Fly Navigation"
 msgstr "Renderings Fönster"
 
 
-msgid "Base"
-msgstr "Bas"
-
-
 msgctxt "Operator"
 msgid "Local View"
 msgstr "Rensa Placering"
@@ -24028,10 +24024,6 @@ msgid "Add/Replace"
 msgstr "Rendera"
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "Modifierare för F-kurva"
-
-
 msgid "New Handles Type"
 msgstr "Auto Handtag"
 
@@ -24990,6 +24982,10 @@ msgstr "Krocktyp"
 
 msgid "Linear Damping"
 msgstr "Linjär"
+
+
+msgid "Base"
+msgstr "Bas"
 
 
 msgid "Settings for particle fluids physics"
@@ -28164,36 +28160,6 @@ msgstr "Skapa Förälder"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Rensa Spår"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Markera Rad"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Baklänges"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Baklänges"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Håll fast framåt"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Baklänges"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Position"
 
@@ -28700,10 +28666,6 @@ msgstr "Visa inställningar för kant"
 
 msgid "Only Insert Available"
 msgstr "Rendera endast aktivt lager"
-
-
-msgid "F-Curve Visibility"
-msgstr "Växla synlighet"
 
 
 msgid "Mixing Buffer"

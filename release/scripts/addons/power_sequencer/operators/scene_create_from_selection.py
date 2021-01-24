@@ -67,7 +67,6 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
             context.window.scene.name = context.selected_sequences[0].name
             new_scene_name = context.window.scene.name
 
-
             ###after full copy also unselected strips are in the sequencer... Delete those strips
             bpy.ops.sequencer.select_all(action="INVERT")
             bpy.ops.power_sequencer.delete_direct()
@@ -85,8 +84,10 @@ class POWER_SEQUENCER_OT_scene_create_from_selection(bpy.types.Operator):
 
             bpy.ops.power_sequencer.delete_direct()
             bpy.ops.sequencer.scene_strip_add(
-                frame_start=selection_start_frame, channel=selection_start_channel, scene=new_scene_name
+                frame_start=selection_start_frame,
+                channel=selection_start_channel,
+                scene=new_scene_name,
             )
             scene_strip = context.selected_sequences[0]
-           # scene_strip.use_sequence = True
+        # scene_strip.use_sequence = True
         return {"FINISHED"}

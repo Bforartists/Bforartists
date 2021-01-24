@@ -1337,11 +1337,22 @@ class VIEW3D_PT_tools_particlemode_options(View3DPanel, Panel):
         col.prop(ob.data, "use_mirror_x")
         if pe.tool == 'ADD':
             col.prop(ob.data, "use_mirror_topology")
-        col.separator()
-        col.prop(pe, "use_preserve_length", text="Preserve Strand Lengths")
-        col.prop(pe, "use_preserve_root", text="Preserve Root Positions")
+
         if not pe.is_hair:
             col.prop(pe, "use_auto_velocity", text="Auto-Velocity")
+
+        if pe.tool == 'ADD':
+            sub.prop(ob.data, "use_mirror_topology")
+
+        col.separator()
+
+        col.label(text = "Preserve")
+        row = col.row()
+        row.separator()
+        row.prop(pe, "use_preserve_length", text="Preserve Strand Lengths")
+        row = col.row()
+        row.separator()
+        row.prop(pe, "use_preserve_root", text="Preserve Root Positions")
 
 
 class VIEW3D_PT_tools_particlemode_options_shapecut(View3DPanel, Panel):

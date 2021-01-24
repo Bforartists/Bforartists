@@ -39,6 +39,10 @@ NORMAL_PRIORITY_CLASS = 0x00000020
 REALTIME_PRIORITY_CLASS = 0x00000100
 
 
+def experimental_enabled():
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    return preferences.experimental_features
+
 def get_process_flags():
     flags = BELOW_NORMAL_PRIORITY_CLASS
     if sys.platform != 'win32':  # TODO test this on windows
@@ -299,14 +303,14 @@ def uploadable_asset_poll():
         return ui_props.hdr_upload_image is not None
     return True
 
-def get_hidden_texture(tpath, bdata_name, force_reload=False):
-    i = get_hidden_image(tpath, bdata_name, force_reload=force_reload)
-    bdata_name = f".{bdata_name}"
-    t = bpy.data.textures.get(bdata_name)
+def get_hidden_texture(img, force_reload=False):
+    # i = get_hidden_image(tpath, bdata_name, force_reload=force_reload)
+    # bdata_name = f".{bdata_name}"
+    t = bpy.data.textures.get(img.name)
     if t is None:
-        t = bpy.data.textures.new('.test', 'IMAGE')
-    if t.image != i:
-        t.image = i
+        t = bpy.data.textures.new(img.name, 'IMAGE')
+    if t.image != img:
+        t.image = img
     return t
 
 
@@ -406,7 +410,7 @@ def copy_asset(fp1, fp2):
             target_subdir = os.path.join(target_dir, subdir.name)
             if os.path.exists(target_subdir):
                 continue
-            bk_logger.debug(subdir+' '+ target_subdir)
+            bk_logger.debug(str(subdir) +' '+ str(target_subdir))
             shutil.copytree(subdir, target_subdir)
             bk_logger.debug('copied')
 

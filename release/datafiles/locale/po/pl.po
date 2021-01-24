@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -2160,10 +2160,6 @@ msgstr "Włącza obliczanie kolizji z samym sobą"
 
 msgid "Selfcollision Vertex Group"
 msgstr "Grupa wierzchołków dla samo-kolizji"
-
-
-msgid "Vertex group to define vertices which are not used during self collisions"
-msgstr "Grupa wierzchołków, która określa które wierzchołki nie będą używane podczas obliczenia kolizji z samym sobą"
 
 
 msgid "Cloth Settings"
@@ -10127,10 +10123,6 @@ msgid "Node tree type %s undefined"
 msgstr "Typ drzewa nodów %s nie zdefiniowany"
 
 
-msgid "Outputs:"
-msgstr "Wyjścia:"
-
-
 msgid "Sockets"
 msgstr "Złącza"
 
@@ -11252,10 +11244,6 @@ msgstr "Nie udało się załadować klipu filmowego"
 
 msgid "Object does not have geometry data"
 msgstr "Obiekt nie posiada danych geometrii"
-
-
-msgid "Scene '%s' is the last, cannot be removed"
-msgstr "Scena '%s' jest ostatnia, nie może zostać usunięta"
 
 
 msgid "ID type '%s' is not valid for an object"

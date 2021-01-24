@@ -27,6 +27,7 @@ icon_collections = {}
 icons_read = {
     'fp.png': 'free',
     'flp.png': 'full',
+    'test.jpg': 'test',
 }
 
 
@@ -43,6 +44,11 @@ def register_icons():
     # load a preview thumbnail of a file and store in the previews collection
     for ir in icons_read.keys():
         pcoll.load(icons_read[ir], os.path.join(icons_dir, ir), 'IMAGE')
+
+        # iprev = pcoll.new(icons_read[ir])
+        # img = bpy.data.images.load(os.path.join(icons_dir, ir))
+        # iprev.image_size = (img.size[0], img.size[1])
+        # iprev.image_pixels_float = img.pixels[:]
 
     icon_collections["main"] = pcoll
 
