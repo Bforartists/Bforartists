@@ -1167,6 +1167,22 @@ typedef struct NodeGeometryPointTranslate {
   char _pad[7];
 } NodeGeometryPointTranslate;
 
+typedef struct NodeGeometryObjectInfo {
+  /* GeometryNodeTransformSpace. */
+  uint8_t transform_space;
+
+  char _pad[7];
+} NodeGeometryObjectInfo;
+
+typedef struct NodeGeometryPointInstance {
+  /* GeometryNodePointInstanceType. */
+  uint8_t instance_type;
+  /* GeometryNodePointInstanceFlag. */
+  uint8_t flag;
+
+  char _pad[6];
+} NodeGeometryPointInstance;
+
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0
 #define NODE_SCRIPT_EXTERNAL 1
@@ -1579,6 +1595,10 @@ typedef enum GeometryNodePointInstanceType {
   GEO_NODE_POINT_INSTANCE_TYPE_COLLECTION = 1,
 } GeometryNodePointInstanceType;
 
+typedef enum GeometryNodePointInstanceFlag {
+  GEO_NODE_POINT_INSTANCE_WHOLE_COLLECTION = (1 << 0),
+} GeometryNodePointInstanceFlag;
+
 typedef enum GeometryNodeAttributeInputMode {
   GEO_NODE_ATTRIBUTE_INPUT_ATTRIBUTE = 0,
   GEO_NODE_ATTRIBUTE_INPUT_FLOAT = 1,
@@ -1607,6 +1627,11 @@ typedef enum GeometryNodeAlignRotationToVectorAxis {
   GEO_NODE_ALIGN_ROTATION_TO_VECTOR_AXIS_Y = 1,
   GEO_NODE_ALIGN_ROTATION_TO_VECTOR_AXIS_Z = 2,
 } GeometryNodeAlignRotationToVectorAxis;
+
+typedef enum GeometryNodeTransformSpace {
+  GEO_NODE_TRANSFORM_SPACE_ORIGINAL = 0,
+  GEO_NODE_TRANSFORM_SPACE_RELATIVE = 1,
+} GeometryNodeTransformSpace;
 
 #ifdef __cplusplus
 }

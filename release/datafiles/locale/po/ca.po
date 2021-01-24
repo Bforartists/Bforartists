@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -19103,10 +19103,6 @@ msgid "Fly Navigation"
 msgstr "Finestra de Render"
 
 
-msgid "Base"
-msgstr "Base"
-
-
 msgctxt "Operator"
 msgid "Local View"
 msgstr "Esborrar Posició"
@@ -20621,10 +20617,6 @@ msgid "Add/Replace"
 msgstr "Render"
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "Comprimir Dades"
-
-
 msgid "New Handles Type"
 msgstr "Autotangents"
 
@@ -21539,6 +21531,10 @@ msgstr "Eines"
 
 msgid "Linear Damping"
 msgstr "Dreta"
+
+
+msgid "Base"
+msgstr "Base"
 
 
 msgid "Interaction Radius"
@@ -24495,31 +24491,6 @@ msgstr "Pintura Vectorial"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Esborrar Pista"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Crear Pista"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Crear Pista"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Crear Pista"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Esborrar Posició"
 
@@ -24952,10 +24923,6 @@ msgstr "Guardar"
 msgctxt "Operator"
 msgid "Render Image"
 msgstr "Render"
-
-
-msgid "F-Curve Visibility"
-msgstr "Cíclic"
 
 
 msgid "View Name"

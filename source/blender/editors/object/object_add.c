@@ -607,7 +607,6 @@ Object *ED_object_add_type_with_obdata(bContext *C,
   Scene *scene = CTX_data_scene(C);
   ViewLayer *view_layer = CTX_data_view_layer(C);
 
-  /* For as long scene has editmode... */
   {
     Object *obedit = OBEDIT_FROM_VIEW_LAYER(view_layer);
     if (obedit != NULL) {
@@ -1730,7 +1729,7 @@ static int object_speaker_add_exec(bContext *C, wmOperator *op)
     BLI_strncpy(nlt->name, DATA_("SoundTrack"), sizeof(nlt->name));
     BKE_nlastrip_validate_name(adt, strip);
 
-    WM_event_add_notifier(C, NC_ANIMATION | ND_NLA | NA_EDITED, NULL);
+    WM_event_add_notifier(C, NC_ANIMATION | ND_NLA | NA_ADDED, NULL);
   }
 
   return OPERATOR_FINISHED;
@@ -3364,6 +3363,9 @@ static int object_add_named_exec(bContext *C, wmOperator *op)
     ED_view3d_cursor3d_position(C, mval, false, basen->object->loc);
   }
 
+  /* object_add_duplicate_internal() doesn't deselect other objects, unlike object_add_common() or
+   * BKE_view_layer_base_deselect_all(). */
+  ED_object_base_deselect_all(view_layer, NULL, BA_DESELECT);
   ED_object_base_select(basen, BA_SELECT);
   ED_object_base_activate(C, basen);
 

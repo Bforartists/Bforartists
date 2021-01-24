@@ -24,12 +24,16 @@
 
 #include "DNA_node_types.h"
 
+struct Depsgraph;
+
 namespace blender::nodes {
 
 using bke::BooleanReadAttribute;
 using bke::BooleanWriteAttribute;
 using bke::Color4fReadAttribute;
 using bke::Color4fWriteAttribute;
+using bke::Float2ReadAttribute;
+using bke::Float2WriteAttribute;
 using bke::Float3ReadAttribute;
 using bke::Float3WriteAttribute;
 using bke::FloatReadAttribute;
@@ -54,18 +58,21 @@ class GeoNodeExecParams {
   GValueMap<StringRef> &output_values_;
   const PersistentDataHandleMap &handle_map_;
   const Object *self_object_;
+  Depsgraph *depsgraph_;
 
  public:
   GeoNodeExecParams(const bNode &node,
                     GValueMap<StringRef> &input_values,
                     GValueMap<StringRef> &output_values,
                     const PersistentDataHandleMap &handle_map,
-                    const Object *self_object)
+                    const Object *self_object,
+                    Depsgraph *depsgraph)
       : node_(node),
         input_values_(input_values),
         output_values_(output_values),
         handle_map_(handle_map),
-        self_object_(self_object)
+        self_object_(self_object),
+        depsgraph_(depsgraph)
   {
   }
 
@@ -161,6 +168,11 @@ class GeoNodeExecParams {
   const Object *self_object() const
   {
     return self_object_;
+  }
+
+  Depsgraph *depsgraph() const
+  {
+    return depsgraph_;
   }
 
   /**

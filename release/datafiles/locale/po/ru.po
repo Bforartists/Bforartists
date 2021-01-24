@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -4116,10 +4116,6 @@ msgstr "Включить самостолкновения"
 
 msgid "Selfcollision Vertex Group"
 msgstr "Вершинная группа для самостолкновения"
-
-
-msgid "Vertex group to define vertices which are not used during self collisions"
-msgstr "Вершинная группа, определяющая вершины, не участвующие при расчёте самостолкновений"
 
 
 msgid "Cloth Settings"
@@ -8598,8 +8594,8 @@ msgstr "Волосы"
 
 
 msgctxt "ID"
-msgid "PointCloud"
-msgstr "Облака точек"
+msgid "Point Cloud"
+msgstr "Облако точек"
 
 
 msgctxt "ID"
@@ -20622,11 +20618,6 @@ msgstr "Поверхность"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "Облако точек"
-
-
-msgctxt "ID"
 msgid "Empty"
 msgstr "Пустышка"
 
@@ -27163,6 +27154,10 @@ msgid "Rotation Track Specials"
 msgstr "Инструменты треков вращения"
 
 
+msgid "Clean Up"
+msgstr "Очистка"
+
+
 msgid "Show/Hide"
 msgstr "Показать/скрыть"
 
@@ -27225,10 +27220,6 @@ msgstr "Функции закладок"
 
 msgid "Files Context Menu"
 msgstr "Контекстное меню файлов"
-
-
-msgid "Clean Up"
-msgstr "Очистка"
 
 
 msgid "Material Specials"
@@ -31105,14 +31096,6 @@ msgstr "Минимум вершин"
 
 msgid "Triangulate only polygons with vertex count greater than or equal to this number"
 msgstr "Триангулировать только полигоны с количеством вершин большим или равным указанному"
-
-
-msgid "Polygon Method"
-msgstr "Для многоугольников"
-
-
-msgid "Method for splitting the polygons into triangles"
-msgstr "Способ разбиения многоугольников в треугольники"
 
 
 msgid "Beauty"
@@ -35155,6 +35138,50 @@ msgid "Int"
 msgstr "Целое число"
 
 
+msgid "Cross Product"
+msgstr "Вект. произведение"
+
+
+msgid "A cross B"
+msgstr "A × B"
+
+
+msgid "Project A onto B"
+msgstr "Проекция A на B"
+
+
+msgid "Reflect"
+msgstr "Отразить"
+
+
+msgid "Dot Product"
+msgstr "Скал. произведение"
+
+
+msgid "A dot B"
+msgstr "A ⋅ B"
+
+
+msgid "Distance between A and B"
+msgstr "Расстояние между A и B"
+
+
+msgid "Length of A"
+msgstr "Длина A"
+
+
+msgid "A multiplied by Scale"
+msgstr "А умноженная на масштаб"
+
+
+msgid "Normalize A"
+msgstr "Нормализовать A"
+
+
+msgid "Round A to the largest integer multiple of B less than or equal A"
+msgstr "Округлить A до наибольшего значения множителя B, меньшего или равного A"
+
+
 msgid "Object Info"
 msgstr "Информация об объекте"
 
@@ -36056,50 +36083,6 @@ msgid "Vector Math"
 msgstr "Векторная математика"
 
 
-msgid "Cross Product"
-msgstr "Вект. произведение"
-
-
-msgid "A cross B"
-msgstr "A × B"
-
-
-msgid "Project A onto B"
-msgstr "Проекция A на B"
-
-
-msgid "Reflect"
-msgstr "Отразить"
-
-
-msgid "Dot Product"
-msgstr "Скал. произведение"
-
-
-msgid "A dot B"
-msgstr "A ⋅ B"
-
-
-msgid "Distance between A and B"
-msgstr "Расстояние между A и B"
-
-
-msgid "Length of A"
-msgstr "Длина A"
-
-
-msgid "A multiplied by Scale"
-msgstr "А умноженная на масштаб"
-
-
-msgid "Normalize A"
-msgstr "Нормализовать A"
-
-
-msgid "Round A to the largest integer multiple of B less than or equal A"
-msgstr "Округлить A до наибольшего значения множителя B, меньшего или равного A"
-
-
 msgid "Z Axis"
 msgstr "Ось Z"
 
@@ -36274,6 +36257,10 @@ msgstr "Слот одного слоя из файла для ноды выво�
 
 msgid "Subpath used for this slot"
 msgstr "Подпуть, используемый этим слотом"
+
+
+msgid "Apply render part of display transform when saving byte image"
+msgstr "Применить настройки управления цветом из рендера при сохранении байтового изображения"
 
 
 msgid "Use Node Format"
@@ -36710,6 +36697,14 @@ msgstr "Удалить ключевые кадры"
 
 msgid "Remove all selected keyframes"
 msgstr "Удалить все выделенные ключевые кадры"
+
+
+msgid "Confirm"
+msgstr "Подтвердить"
+
+
+msgid "Prompt for confirmation"
+msgstr "Запрос подтверждения"
 
 
 msgctxt "Operator"
@@ -41932,14 +41927,6 @@ msgid "Create a new directory"
 msgstr "Создать новую папку"
 
 
-msgid "Confirm"
-msgstr "Подтвердить"
-
-
-msgid "Prompt for confirmation"
-msgstr "Запрос подтверждения"
-
-
 msgid "Name of new directory"
 msgstr "Имя новой папки"
 
@@ -44571,10 +44558,6 @@ msgstr "Создать новый файл изображения без изм�
 
 msgid "Save As Render"
 msgstr "Сохранить как рендер"
-
-
-msgid "Apply render part of display transform when saving byte image"
-msgstr "Применить настройки управления цветом из рендера при сохранении байтового изображения"
 
 
 msgctxt "Operator"
@@ -54522,15 +54505,6 @@ msgid "Reset to the default theme colors"
 msgstr "Сбросить на цвета из темы по умолчанию"
 
 
-msgctxt "Operator"
-msgid "Install Custom Studio Light"
-msgstr "Установить студийный свет"
-
-
-msgid "Install a user defined studio light"
-msgstr "Установить пользовательский студийный свет"
-
-
 msgid "MatCap"
 msgstr "MatCap"
 
@@ -59013,10 +58987,6 @@ msgid "Area Weight"
 msgstr "Влияние площади"
 
 
-msgid "Weight projections vector by faces with larger areas"
-msgstr "Влияние вектора проецирования на грани с большей площадью"
-
-
 msgid "Island Margin"
 msgstr "Отступ для островов"
 
@@ -59389,10 +59359,6 @@ msgstr "Ориентировка в полёте"
 
 msgid "Interactively fly around the scene"
 msgstr "Интерактивный облёт сцены"
-
-
-msgid "Base"
-msgstr "Основа"
 
 
 msgctxt "Operator"
@@ -63113,10 +63079,6 @@ msgid "Onion Skin"
 msgstr "Калькирование"
 
 
-msgid "Proxy & Cache"
-msgstr "Прокси и кэш"
-
-
 msgid "Cache Settings"
 msgstr "Настройки кэша"
 
@@ -65052,14 +65014,6 @@ msgstr "Режим сглаживания новых кривых"
 
 msgid "Auto Handle Smoothing mode used for newly added F-Curves"
 msgstr "Режим автоматического сглаживания, используемый при добавлении новых f-кривых"
-
-
-msgid "Unselected F-Curve Visibility"
-msgstr "Видимость невыбранных f-кривых"
-
-
-msgid "Amount that unselected F-Curves stand out from the background (Graph Editor)"
-msgstr "Величина, на которую невыделенные f-кривые отличаются от фона (в редакторе графов)"
 
 
 msgid "Annotation Default Color"
@@ -70232,6 +70186,10 @@ msgstr "Источник меша"
 
 msgid "Source of the mesh used to create collision shape"
 msgstr "Источник меша, определяющего форму столкновения"
+
+
+msgid "Base"
+msgstr "Основа"
 
 
 msgid "Base mesh"
@@ -82070,36 +82028,6 @@ msgstr "Размер прокси"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Очистить после"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Очистить до"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Трекинг кадров назад"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Обратный трекинг"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Прямой трекинг"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Трекинг кадров вперёд"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Положение"
 
@@ -83783,10 +83711,6 @@ msgstr "Вставлять только доступные"
 
 msgid "Enable in New Scenes"
 msgstr "Включать в новых сценах"
-
-
-msgid "F-Curve Visibility"
-msgstr "Видимость F-кривой"
 
 
 msgid "Default Smoothing Mode"
@@ -90893,10 +90817,6 @@ msgid "Node tree type %s undefined"
 msgstr "Нодовая система с типом %s не определено"
 
 
-msgid "Outputs:"
-msgstr "Выходы:"
-
-
 msgid "Sockets"
 msgstr "Сокеты"
 
@@ -92594,10 +92514,6 @@ msgstr "%s «%s» не находится в главной базе данны�
 
 msgid "%s '%s' must have zero users to be removed, found %d (try with do_unlink=True parameter)"
 msgstr "%s «%s» не должно нигде использоваться, чтобы можно было удалить, найдено пользователей:%d (попробуйте удалить с do_unlink=True)"
-
-
-msgid "Scene '%s' is the last, cannot be removed"
-msgstr "Сцена «%s» является последней и не может быть удалена"
 
 
 msgid "ID type '%s' is not valid for an object"

@@ -420,7 +420,7 @@ def reactivate_custom_properties(obj):
                 fcu.mute = False
 
 
-def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=False):
+def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=False, overridable=True):
     """Copy custom properties with filtering by prefix. Optionally link using drivers."""
     res = []
     exclude = {'_RNA_UI', 'rigify_parameters', 'rigify_type'}
@@ -441,6 +441,9 @@ def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=
 
                 if link_driver:
                     make_driver(src, quote_property(key), variables=[(dest.id_data, dest, new_key)])
+
+            if overridable:
+                dest.property_overridable_library_set(quote_property(new_key), True)
 
             res.append((key, new_key, value, info))
 

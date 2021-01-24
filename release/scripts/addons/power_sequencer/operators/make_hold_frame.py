@@ -77,9 +77,7 @@ class POWER_SEQUENCER_OT_make_hold_frame(bpy.types.Operator):
             try:
                 next_strip_start = next(
                     s
-                    for s in sorted(
-                        context.sequences, key=operator.attrgetter("frame_final_start")
-                    )
+                    for s in sorted(context.sequences, key=operator.attrgetter("frame_final_start"))
                     if s.frame_final_start > active.frame_final_end
                 ).frame_final_start
                 offset = next_strip_start - active.frame_final_end
@@ -90,9 +88,7 @@ class POWER_SEQUENCER_OT_make_hold_frame(bpy.types.Operator):
         source_blend_type = active.blend_type
         sequencer.split(frame=scene.frame_current, type="SOFT", side="RIGHT")
         transform.seq_slide(value=(offset, 0))
-        sequencer.split(
-            frame=scene.frame_current + offset + 1, type="SOFT", side="LEFT"
-        )
+        sequencer.split(frame=scene.frame_current + offset + 1, type="SOFT", side="LEFT")
         transform.seq_slide(value=(-offset, 0))
 
         sequencer.meta_make()
