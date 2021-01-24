@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -25670,10 +25670,6 @@ msgid "Add/Replace"
 msgstr "Nahrazeno "
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "Přidat modifikátor"
-
-
 msgid "Grease Pencil Eraser Radius"
 msgstr "Poloměr mazání pro skicovací tužku"
 
@@ -30419,31 +30415,6 @@ msgstr "Přiřadit rodiče..."
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Odstranit sledování"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Odstranit Rodiče Inverzně"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Stopa dopředu"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Stopa dopředu"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Stopa dopředu"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Umístění"
 
@@ -30946,10 +30917,6 @@ msgstr "Poloměr mazání"
 
 msgid "Only Insert Available"
 msgstr "Vložit hodnotu"
-
-
-msgid "F-Curve Visibility"
-msgstr "Viditelnost"
 
 
 msgid "XYZ to RGB"

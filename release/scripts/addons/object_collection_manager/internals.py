@@ -638,14 +638,14 @@ def get_move_selection(*, names_only=False):
             return {obj for obj in bpy.data.objects if obj.name in move_selection}
 
 
-def get_move_active():
+def get_move_active(*, always=False):
     global move_active
     global move_selection
 
     if not move_active:
         move_active = getattr(bpy.context.view_layer.objects.active, "name", None)
 
-    if move_active not in get_move_selection(names_only=True):
+    if not always and move_active not in get_move_selection(names_only=True):
         move_active = None
 
     return bpy.data.objects[move_active] if move_active else None

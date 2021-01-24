@@ -443,6 +443,16 @@ void UI_draw_roundbox_shade_x(bool filled,
                               float shadetop,
                               float shadedown,
                               const float col[4]);
+void UI_draw_roundbox_4fv_ex(float minx,
+                             float miny,
+                             float maxx,
+                             float maxy,
+                             const float inner1[4],
+                             const float inner2[4],
+                             float shade_dir,
+                             float outline[4],
+                             float outline_width,
+                             float rad);
 
 #if 0 /* unused */
 int UI_draw_roundbox_corner_get(void);
@@ -664,8 +674,7 @@ bool UI_popup_block_name_exists(const struct bScreen *screen, const char *name);
  * Begin/Define Buttons/End/Draw is the typical order in which these
  * function should be called, though for popup blocks Draw is left out.
  * Freeing blocks is done by the screen/ module automatically.
- *
- * */
+ */
 
 uiBlock *UI_block_begin(const struct bContext *C,
                         struct ARegion *region,

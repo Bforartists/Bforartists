@@ -17,8 +17,7 @@
  * All rights reserved.
  *
  * The Original Code is: some of this file.
- *
- * */
+ */
 
 /** \file
  * \ingroup bli
@@ -1439,12 +1438,12 @@ int isect_line_sphere_v3(const float l1[3],
   /* adapted for use in blender by Campbell Barton - 2011
    *
    * atelier iebele abel - 2001
-   * atelier@iebele.nl
+   * <atelier@iebele.nl>
    * http://www.iebele.nl
    *
    * sphere_line_intersection function adapted from:
    * http://astronomy.swin.edu.au/pbourke/geometry/sphereline
-   * Paul Bourke pbourke@swin.edu.au
+   * Paul Bourke <pbourke@swin.edu.au>
    */
 
   const float ldir[3] = {
@@ -3887,7 +3886,7 @@ void interp_weights_quad_v3(float w[4],
  * - 0 if the point is outside of triangle.
  * - 1 if the point is inside triangle.
  * - 2 if it's on the edge.
- * */
+ */
 int barycentric_inside_triangle_v2(const float w[3])
 {
   if (IN_RANGE(w[0], 0.0f, 1.0f) && IN_RANGE(w[1], 0.0f, 1.0f) && IN_RANGE(w[2], 0.0f, 1.0f)) {

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -20605,10 +20605,6 @@ msgid "Interactively fly around the scene"
 msgstr "Интерактиван лет кроз сцену"
 
 
-msgid "Base"
-msgstr "Основа"
-
-
 msgctxt "Operator"
 msgid "Local View"
 msgstr "Локални поглед"
@@ -23309,6 +23305,10 @@ msgstr "Биоскопски"
 
 msgid "Linear Damping"
 msgstr "Линеарно"
+
+
+msgid "Base"
+msgstr "Основа"
 
 
 msgid "All modifiers"
@@ -26252,36 +26252,6 @@ msgstr "Стазе:"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Очисти после"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Очисти пре"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Прати уназад"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Прати уназад"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Прати напред"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Прати кадрове уназад"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Локација"
 
@@ -26741,10 +26711,6 @@ msgstr "Пречник гумице"
 
 msgid "Minimum Grid Spacing"
 msgstr "Најмањи размак мреже"
-
-
-msgid "F-Curve Visibility"
-msgstr "Видљивост F-криве"
 
 
 msgid "XYZ to RGB"
@@ -28678,10 +28644,6 @@ msgstr "Дрво чворова"
 
 msgid "Mask '%s' not found"
 msgstr "Маскиа '%s' није пронађена"
-
-
-msgid "Outputs:"
-msgstr "Излази:"
 
 
 msgid "Sockets"

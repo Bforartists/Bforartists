@@ -141,7 +141,7 @@ typedef struct MovieTrackingTrack {
   /** Count of markers in track. */
   int markersnr;
   /** Most recently used marker. */
-  int last_marker;
+  int _pad;
   /** Markers in track. */
   MovieTrackingMarker *markers;
 
@@ -521,7 +521,6 @@ typedef enum eTrackFrameMatch {
   TRACK_MATCH_KEYFRAME = 0,
   TRACK_MATCH_PREVIOS_FRAME = 1,
 } eTrackFrameMatch;
-
 
 /* MovieTrackingSettings->motion_flag */
 enum {

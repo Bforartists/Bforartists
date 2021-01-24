@@ -441,6 +441,12 @@ static bool bake_object_check(ViewLayer *view_layer,
   }
 
   Mesh *me = (Mesh *)ob->data;
+
+  if (me->totpoly == 0) {
+    BKE_reportf(reports, RPT_ERROR, "No faces found in the object \"%s\"", ob->id.name + 2);
+    return false;
+  }
+
   if (target == R_BAKE_TARGET_VERTEX_COLORS) {
     MPropCol *mcol = CustomData_get_layer(&me->vdata, CD_PROP_COLOR);
     MLoopCol *mloopcol = CustomData_get_layer(&me->ldata, CD_MLOOPCOL);
@@ -1056,10 +1062,10 @@ static bool bake_targets_output_vertex_colors(BakeTargets *targets, Object *ob)
       bake_result_to_rgba(rgba, &result[mloop->v * num_channels], num_channels);
 
       if (is_noncolor) {
-        linearrgb_to_srgb_uchar4(&mloopcol->r, rgba);
+        unit_float_to_uchar_clamp_v4(&mloopcol->r, rgba);
       }
       else {
-        unit_float_to_uchar_clamp_v4(&mloopcol->r, rgba);
+        linearrgb_to_srgb_uchar4(&mloopcol->r, rgba);
       }
     }
   }

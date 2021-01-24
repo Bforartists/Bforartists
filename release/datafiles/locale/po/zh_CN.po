@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4443,10 +4443,6 @@ msgstr "开启自碰撞"
 
 msgid "Selfcollision Vertex Group"
 msgstr "自碰撞的顶点组"
-
-
-msgid "Vertex group to define vertices which are not used during self collisions"
-msgstr "顶点组, 用于定义在自碰撞过程中不使用的顶点"
 
 
 msgid "Cloth Settings"
@@ -9005,7 +9001,7 @@ msgstr "毛发"
 
 
 msgctxt "ID"
-msgid "PointCloud"
+msgid "Point Cloud"
 msgstr "点云"
 
 
@@ -23577,11 +23573,6 @@ msgstr "表面"
 
 
 msgctxt "ID"
-msgid "Point Cloud"
-msgstr "点云"
-
-
-msgctxt "ID"
 msgid "Empty"
 msgstr "空物体"
 
@@ -24772,6 +24763,10 @@ msgstr "虚拟父级"
 
 msgid "Relative amount of virtual parents"
 msgstr "虚拟父级的相对量"
+
+
+msgid "Point Cloud"
+msgstr "点云"
 
 
 msgid "Point cloud data-block"
@@ -30569,6 +30564,14 @@ msgid "Rotation Track Specials"
 msgstr "旋转轨迹专用项"
 
 
+msgid "Clean Up"
+msgstr "清理"
+
+
+msgid "Refine"
+msgstr "改善"
+
+
 msgid "Show/Hide"
 msgstr "显示 / 隐藏"
 
@@ -30631,10 +30634,6 @@ msgstr "书签专用项"
 
 msgid "Files Context Menu"
 msgstr "文件上下文菜单"
-
-
-msgid "Clean Up"
-msgstr "清理"
 
 
 msgid "Grease Pencil Vertex Groups"
@@ -35397,11 +35396,11 @@ msgid "Triangulate only polygons with vertex count greater than or equal to this
 msgstr "仅对顶点数大于或等于该数字的面进行三角化"
 
 
-msgid "Polygon Method"
-msgstr "多边形划分方法"
+msgid "N-gon Method"
+msgstr "多边形方法"
 
 
-msgid "Method for splitting the polygons into triangles"
+msgid "Method for splitting the n-gons into triangles"
 msgstr "拆分多边形为三角面的方式"
 
 
@@ -39629,6 +39628,22 @@ msgid "Set Alpha"
 msgstr "设置 Alpha"
 
 
+msgid "Apply Mask"
+msgstr "应用遮罩"
+
+
+msgid "Multiply the input image's RGBA channels by the alpha input value"
+msgstr "将输入图像的 RGBA 通道与 alpha 输入值相乘"
+
+
+msgid "Replace Alpha"
+msgstr "替换Alpha"
+
+
+msgid "Replace the input image's alpha channels by the alpha input value"
+msgstr "用 Alpha 输入值替换输入图像的 Alpha 通道"
+
+
 msgid "Split Viewer"
 msgstr "对照预览"
 
@@ -40005,6 +40020,10 @@ msgid "Geometry Node"
 msgstr "几何节点"
 
 
+msgid "Input Type Factor"
+msgstr "输入类型系数"
+
+
 msgid "Attribute Color Ramp"
 msgstr "属性颜色渐变"
 
@@ -40033,12 +40052,108 @@ msgid "Attribute Mix"
 msgstr "混合属性"
 
 
-msgid "Input Type Factor"
-msgstr "输入类型系数"
-
-
 msgid "Attribute Randomize"
 msgstr "属性随机化"
+
+
+msgid "Entry-wise multiply"
+msgstr "逐项相乘"
+
+
+msgid "Entry-wise divide"
+msgstr "逐项相除"
+
+
+msgid "Cross Product"
+msgstr "叉乘"
+
+
+msgid "A cross B"
+msgstr "A叉乘B"
+
+
+msgid "Project A onto B"
+msgstr "A投影至B"
+
+
+msgid "Reflect"
+msgstr "反射"
+
+
+msgid "Reflect A around the normal B. B doesn't need to be normalized"
+msgstr "沿向量B反射向量A，B不需要归一化"
+
+
+msgid "Dot Product"
+msgstr "点乘"
+
+
+msgid "A dot B"
+msgstr "A点乘B"
+
+
+msgid "Distance between A and B"
+msgstr "A与B的间距"
+
+
+msgid "Length of A"
+msgstr "A的长度"
+
+
+msgid "A multiplied by Scale"
+msgstr "A以比例"
+
+
+msgid "Normalize A"
+msgstr "规格化A"
+
+
+msgid "Entry-wise absolute"
+msgstr "逐项取绝对值"
+
+
+msgid "Entry-wise minimum"
+msgstr "逐项取最小值"
+
+
+msgid "Entry-wise maximum"
+msgstr "逐项取最大值"
+
+
+msgid "Entry-wise floor"
+msgstr "逐项向下取整"
+
+
+msgid "Entry-wise ceil"
+msgstr "逐项向上取整"
+
+
+msgid "The fraction part of A entry-wise"
+msgstr "对A逐项取小数部分"
+
+
+msgid "Entry-wise modulo using fmod(A,B)"
+msgstr "使用fmod(A,B)逐项求模运算"
+
+
+msgid "Entry-wise wrap(A,B)"
+msgstr "逐项循环"
+
+
+msgid "Round A to the largest integer multiple of B less than or equal A"
+msgstr "将 A 舍为小于或等于 A 的 B 的最大整数倍数"
+
+
+msgid "Entry-wise sin(A)"
+msgstr "逐项求正弦"
+
+
+msgid "Entry-wise cos(A)"
+msgstr "逐项求余弦"
+
+
+msgid "Entry-wise tan(A)"
+msgstr "逐项求正切"
 
 
 msgid "Join Geometry"
@@ -40069,10 +40184,6 @@ msgid "Poisson Disk"
 msgstr "泊松盘"
 
 
-msgid "Project points on the surface evenly with a Poisson disk distribution"
-msgstr "使用泊松盘分布均匀地将点投影在表面上"
-
-
 msgid "Point Instance"
 msgstr "点实例"
 
@@ -40091,10 +40202,6 @@ msgstr "在各点上实例化整个集合"
 
 msgid "Point Separate"
 msgstr "点分隔"
-
-
-msgid "Rotate Points"
-msgstr "旋转点"
 
 
 msgid "Input Type Angle"
@@ -40127,10 +40234,6 @@ msgstr "用于描述旋转的方法"
 
 msgid "Rotate around an axis by an angle"
 msgstr "绕轴旋转一个角度"
-
-
-msgid "Rotate around the x, y and z axis"
-msgstr "围绕x、y和z轴旋转"
 
 
 msgctxt "NodeTree"
@@ -41282,106 +41385,6 @@ msgid "Vector Math"
 msgstr "矢量运算"
 
 
-msgid "Entry-wise multiply"
-msgstr "逐项相乘"
-
-
-msgid "Entry-wise divide"
-msgstr "逐项相除"
-
-
-msgid "Cross Product"
-msgstr "叉乘"
-
-
-msgid "A cross B"
-msgstr "A叉乘B"
-
-
-msgid "Project A onto B"
-msgstr "A投影至B"
-
-
-msgid "Reflect"
-msgstr "反射"
-
-
-msgid "Reflect A around the normal B. B doesn't need to be normalized"
-msgstr "沿向量B反射向量A，B不需要归一化"
-
-
-msgid "Dot Product"
-msgstr "点乘"
-
-
-msgid "A dot B"
-msgstr "A点乘B"
-
-
-msgid "Distance between A and B"
-msgstr "A与B的间距"
-
-
-msgid "Length of A"
-msgstr "A的长度"
-
-
-msgid "A multiplied by Scale"
-msgstr "A以比例"
-
-
-msgid "Normalize A"
-msgstr "规格化A"
-
-
-msgid "Entry-wise absolute"
-msgstr "逐项取绝对值"
-
-
-msgid "Entry-wise minimum"
-msgstr "逐项取最小值"
-
-
-msgid "Entry-wise maximum"
-msgstr "逐项取最大值"
-
-
-msgid "Entry-wise floor"
-msgstr "逐项向下取整"
-
-
-msgid "Entry-wise ceil"
-msgstr "逐项向上取整"
-
-
-msgid "The fraction part of A entry-wise"
-msgstr "对A逐项取小数部分"
-
-
-msgid "Entry-wise modulo using fmod(A,B)"
-msgstr "使用fmod(A,B)逐项求模运算"
-
-
-msgid "Entry-wise wrap(A,B)"
-msgstr "逐项循环"
-
-
-msgid "Round A to the largest integer multiple of B less than or equal A"
-msgstr "将 A 舍为小于或等于 A 的 B 的最大整数倍数"
-
-
-msgid "Entry-wise sin(A)"
-msgstr "逐项求正弦"
-
-
-msgid "Entry-wise cos(A)"
-msgstr "逐项求余弦"
-
-
-msgid "Entry-wise tan(A)"
-msgstr "逐项求正切"
-
-
 msgid "Vector Rotate"
 msgstr "矢量旋转"
 
@@ -41588,6 +41591,10 @@ msgstr "文件输出节点的单独层文件槽"
 
 msgid "Subpath used for this slot"
 msgstr "在当前槽中使用的子路径"
+
+
+msgid "Apply render part of display transform when saving byte image"
+msgstr "保存字节图像时应用渲染部分的显示变换"
 
 
 msgid "Use Node Format"
@@ -42102,6 +42109,14 @@ msgid "Remove all selected keyframes"
 msgstr "删除全部选择关键帧"
 
 
+msgid "Confirm"
+msgstr "确认"
+
+
+msgid "Prompt for confirmation"
+msgstr "确认提示"
+
+
 msgctxt "Operator"
 msgid "Duplicate Keyframes"
 msgstr "复制关键帧"
@@ -42109,15 +42124,6 @@ msgstr "复制关键帧"
 
 msgid "Make a copy of all selected keyframes"
 msgstr "复制选定的关键帧"
-
-
-msgctxt "Operator"
-msgid "Duplicate & Assign Action"
-msgstr "复制和指定动作"
-
-
-msgid "Create a copy of an existing action and assign it"
-msgstr "创建现有动作的副本并指定"
 
 
 msgctxt "Operator"
@@ -42307,10 +42313,6 @@ msgstr "将首个选中的标记参照点, 翻转所选关键帧的时间"
 msgctxt "Operator"
 msgid "New Action"
 msgstr "新建动作"
-
-
-msgid "Create a new action"
-msgstr "创建新的动作"
 
 
 msgctxt "Operator"
@@ -47316,6 +47318,14 @@ msgid "EXPERIMENTAL: Export displacement textures. Uses incomplete \"KHR_materia
 msgstr "实验: 导出置换纹理。使用不完全 \"KHR_materials_displacement\" glTF 扩展"
 
 
+msgid "Color quantization bits"
+msgstr "颜色量化位"
+
+
+msgid "Quantization bits for color values (0 = no quantization)"
+msgstr "颜色值的量化位(0 = 无量化)"
+
+
 msgid "Generic quantization bits"
 msgstr "一般量化位"
 
@@ -47829,14 +47839,6 @@ msgstr "新建文件夹"
 
 msgid "Create a new directory"
 msgstr "创建一个新的文件夹"
-
-
-msgid "Confirm"
-msgstr "确认"
-
-
-msgid "Prompt for confirmation"
-msgstr "确认提示"
 
 
 msgid "Name of new directory"
@@ -51418,10 +51420,6 @@ msgid "Save As Render"
 msgstr "另存为渲染图"
 
 
-msgid "Apply render part of display transform when saving byte image"
-msgstr "保存字节图像时应用渲染部分的显示变换"
-
-
 msgctxt "Operator"
 msgid "Save Sequence"
 msgstr "保存序列"
@@ -52702,15 +52700,6 @@ msgstr "复制材质"
 
 msgid "Copy the material settings and nodes"
 msgstr "复制材质设置与节点"
-
-
-msgctxt "Operator"
-msgid "Duplicate Material"
-msgstr "复制材质"
-
-
-msgid "Duplicate an existing material"
-msgstr "复制现有材质"
 
 
 msgctxt "Operator"
@@ -56549,7 +56538,7 @@ msgid "Assign New Geometry Node Group"
 msgstr "指定新的几何节点组"
 
 
-msgid "Create a new geometry node group and assign it the the active modifier"
+msgid "Create a new geometry node group and assign it to the active modifier"
 msgstr "创建新的几何节点组，并为其指定活动修改器"
 
 
@@ -56838,6 +56827,22 @@ msgid "Add named object"
 msgstr "添加已命名的物体"
 
 
+msgid "Drop X"
+msgstr "落点 X"
+
+
+msgid "X-coordinate (screen space) to place the new object under"
+msgstr "新物体放置的X向坐标(屏幕空间)"
+
+
+msgid "Drop Y"
+msgstr "落点 Y"
+
+
+msgid "Y-coordinate (screen space) to place the new object under"
+msgstr "新物体放置的Y向坐标(屏幕空间)"
+
+
 msgid "Duplicate object but not object data, linking to the original data"
 msgstr "复制物体但不包括数据, 而是连接到原始数据"
 
@@ -57119,19 +57124,15 @@ msgid "Curve from Mesh or Text objects"
 msgstr "网格/文本物体 -> 曲线"
 
 
-msgid "Mesh from Curve, Surface, Metaball, Text, or Pointcloud objects"
-msgstr "从曲线、曲面、融球、文本或点云物体置换为网格"
+msgid "Mesh from Curve, Surface, Metaball, Text, or Point Cloud objects"
+msgstr "从曲线、曲面、融球、文本或点云物体转换为网格"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
 msgstr "曲线/网格 -> 蜡笔"
 
 
-msgid "Pointcloud"
-msgstr "点云"
-
-
-msgid "Pointcloud from Mesh objects"
+msgid "Point Cloud from Mesh objects"
 msgstr "网格 -> 点云"
 
 
@@ -57527,6 +57528,15 @@ msgstr "复制修改器"
 
 msgid "Duplicate modifier at the same position in the stack"
 msgstr "在队列中的相同位置上复制修改器"
+
+
+msgctxt "Operator"
+msgid "Copy Modifier to Selected"
+msgstr "复制修改器到选中项"
+
+
+msgid "Copy the modifier from the active object to all selected objects"
+msgstr "从活动物体复制粒子修改器到所选物体"
 
 
 msgctxt "Operator"
@@ -62529,20 +62539,36 @@ msgstr "复制棚灯光源设置到棚灯编辑器"
 
 
 msgctxt "Operator"
-msgid "Install Custom Studio Light"
-msgstr "安装自定义棚灯"
+msgid "Install Light"
+msgstr "安装灯光"
 
 
-msgid "Install a user defined studio light"
-msgstr "安装用户自定义棚灯"
+msgid "Install a user defined light"
+msgstr "安装用户自定义灯光"
+
+
+msgid "Filter Folders"
+msgstr "过滤文件夹"
 
 
 msgid "MatCap"
 msgstr "快照材质"
 
 
+msgid "Install custom MatCaps"
+msgstr "安装自定义快照材质"
+
+
+msgid "Install custom HDRIs"
+msgstr "安装自定义HDRI"
+
+
 msgid "Studio"
 msgstr "棚灯"
+
+
+msgid "Install custom Studio Lights"
+msgstr "安装自定义棚灯"
 
 
 msgctxt "Operator"
@@ -66149,15 +66175,6 @@ msgstr "创建一个 NURBS 曲面环"
 
 
 msgctxt "Operator"
-msgid "Duplicate Texture"
-msgstr "复制纹理"
-
-
-msgid "Duplicate an existing texture"
-msgstr "复制现有纹理"
-
-
-msgctxt "Operator"
 msgid "New Texture"
 msgstr "新纹理"
 
@@ -68085,7 +68102,7 @@ msgid "Area Weight"
 msgstr "区域权重"
 
 
-msgid "Weight projections vector by faces with larger areas"
+msgid "Weight projection's vector by faces with larger areas"
 msgstr "较大面积面的权重投影矢量"
 
 
@@ -68553,20 +68570,8 @@ msgid "Start placing on the surface, using the 3D cursor position as a fallback"
 msgstr "使用3D游标位置作为回退位置开始放置"
 
 
-msgid "3D Cursor Plane"
-msgstr "3D游标平面"
-
-
 msgid "Start placement using a point projected onto the selected axis at the 3D cursor position"
 msgstr "使用投影到3D游标位置的选定轴上的点开始放置"
-
-
-msgid "3D Cursor View"
-msgstr "3D游标视图"
-
-
-msgid "Start placement using the mouse cursor projected onto the view plane"
-msgstr "使用投影到视图平面上的鼠标光标开始放置"
 
 
 msgid "Use the surface normal (the transform orientation as a fallback)"
@@ -68579,14 +68584,6 @@ msgstr "使用当前变换坐标系"
 
 msgid "The initial position for placement"
 msgstr "放置的初始位置"
-
-
-msgid "Base"
-msgstr "基础(基数)"
-
-
-msgid "Start placing the corner position"
-msgstr "开始放置角位置"
 
 
 msgid "Start placing the center position"
@@ -71391,21 +71388,8 @@ msgstr "工作区向前重排序"
 
 
 msgctxt "Operator"
-msgid "Duplicate World"
-msgstr "复制世界"
-
-
-msgid "Duplicate an existing world data-block"
-msgstr "复制现有的世界数据块"
-
-
-msgctxt "Operator"
 msgid "New World"
 msgstr "新环境"
-
-
-msgid "Create a new world data-block"
-msgstr "创建一个新的世界数据块"
 
 
 msgid "External file packed into the .blend file"
@@ -72915,10 +72899,6 @@ msgstr "插入关键帧设置"
 
 msgid "Onion Skin"
 msgstr "洋葱皮"
-
-
-msgid "Proxy & Cache"
-msgstr "代理 & 缓存"
 
 
 msgid "Cache Settings"
@@ -75095,14 +75075,6 @@ msgid "Auto Handle Smoothing mode used for newly added F-Curves"
 msgstr "用于新添加的函数曲线的自动控制柄平滑模式"
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "未选中的函数曲线的可见性"
-
-
-msgid "Amount that unselected F-Curves stand out from the background (Graph Editor)"
-msgstr "未选中的函数曲线相对于背景的突显量 (曲线图形)"
-
-
 msgid "Annotation Default Color"
 msgstr "标注默认颜色"
 
@@ -75419,6 +75391,10 @@ msgid "Experimental features"
 msgstr "实验特性"
 
 
+msgid "Asset Browser"
+msgstr "资产浏览器"
+
+
 msgid "Cycles Debug"
 msgstr "Cycles调试"
 
@@ -75441,14 +75417,6 @@ msgstr "新点云类型"
 
 msgid "Enable the new point cloud type in the ui"
 msgstr "在UI中启用新点云类型"
-
-
-msgid "Add Object Tool"
-msgstr "添加物体工具"
-
-
-msgid "Show add object tool in the toolbar in Object Mode and Edit Mode"
-msgstr "在物体模式和编辑模式的工具栏中显示添加物体工具"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -80837,6 +80805,10 @@ msgid "Source of the mesh used to create collision shape"
 msgstr "用于创建碰撞外形的网格源"
 
 
+msgid "Base"
+msgstr "基础(基数)"
+
+
 msgid "Base mesh"
 msgstr "基础网格"
 
@@ -84321,10 +84293,6 @@ msgid "Type of the File Editor view (regular file browsing or asset browsing)"
 msgstr "文件编辑器视图的类型(常规文件浏览或资产浏览)"
 
 
-msgid "Asset Browser"
-msgstr "资产浏览器"
-
-
 msgid "Filebrowser Parameter"
 msgstr "文件浏览器参数"
 
@@ -85804,10 +85772,6 @@ msgstr "Gizmo工具"
 
 msgid "Active tool gizmo"
 msgstr "激活Gizmo工具"
-
-
-msgid "Point Cloud"
-msgstr "点云"
 
 
 msgid "Speaker"
@@ -93136,6 +93100,10 @@ msgid "Invalid regular expression (find): "
 msgstr "无效正则表达式(查找): "
 
 
+msgid "Type \"%s\" can not be found"
+msgstr "找不到类型 \"%s\""
+
+
 msgid "Invalid regular expression (replace): "
 msgstr "无效正则表达式(替换): "
 
@@ -95097,10 +95065,6 @@ msgid "Tripod"
 msgstr "三脚架"
 
 
-msgid "Refine"
-msgstr "改善"
-
-
 msgid "Optical Center"
 msgstr "光心"
 
@@ -95152,36 +95116,6 @@ msgstr "建立代理"
 
 msgid "Proxy Size"
 msgstr "代理尺寸"
-
-
-msgctxt "Operator"
-msgid "Clear After"
-msgstr "清除之后的"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "清除之前的"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "向左追踪帧"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "后向追踪"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "前向追踪"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "向右追踪帧"
 
 
 msgctxt "Operator"
@@ -96575,6 +96509,14 @@ msgid "Fractional Preview Zoom"
 msgstr "分(倍)数缩放预览"
 
 
+msgid "Show Frame Overlay"
+msgstr "显示帧叠加"
+
+
+msgid "Show Annotations"
+msgstr "显示标注"
+
+
 msgctxt "Operator"
 msgid "Scene"
 msgstr "场景"
@@ -96828,6 +96770,10 @@ msgstr "深度:"
 
 msgid "Taper Start"
 msgstr "锥化起始"
+
+
+msgid "Weight: %.3f"
+msgstr "权重: %.3f"
 
 
 msgid ""
@@ -97163,10 +97109,6 @@ msgstr "只在可用曲线上插入"
 
 msgid "Enable in New Scenes"
 msgstr "在新场景启用"
-
-
-msgid "F-Curve Visibility"
-msgstr "函数曲线的可见性"
 
 
 msgid "Default Smoothing Mode"
@@ -100747,7 +100689,7 @@ msgstr "链中不可选择的骨骼"
 
 
 msgid "Bone Heat Weighting: failed to find solution for one or more bones"
-msgstr "骨头加权:  为一个或多个骨头解算时出错"
+msgstr "骨骼热度加权: 为一条或更多骨骼解算时出错"
 
 
 msgid "Cannot pose libdata"
@@ -101909,80 +101851,8 @@ msgid "Manual Scale"
 msgstr "手动缩放"
 
 
-msgid "Data-block is not linked"
-msgstr "数据块未关联"
-
-
 msgid "Indirect library data-block, cannot change"
 msgstr "间接的库数据块, 无法更改"
-
-
-msgid "Data-blocks of this type cannot be made local"
-msgstr "无法将此类数据块本地化"
-
-
-msgid "Reset the local override to the state of the overridden data-block"
-msgstr "将本地覆盖重置为被覆盖的数据块的状态"
-
-
-msgid "Data-block is a virtual, not a real override"
-msgstr "数据块是虚拟的，而不是真正的覆盖"
-
-
-msgid "Remove library override and make the library linked data-block fully local to this file"
-msgstr "删除库重写，使库关联的数据块完全本地化到此文件"
-
-
-msgid "Duplicate the data-block and assign the newly created copy"
-msgstr "复制数据块并指定新创建的副本"
-
-
-msgid "Data-block already is a single-user"
-msgstr "数据块已经是单用户"
-
-
-msgid "Data-blocks of this type cannot be copied"
-msgstr "无法复制此类数据块"
-
-
-msgid "Cannot change object data in Edit Mode"
-msgstr "无法在编辑模式下更改物体数据"
-
-
-msgid "When set, ensures the data-block is kept when reloading the file, even if not used at all"
-msgstr "设置后，确保在重新加载文件时保留数据块，即使未使用"
-
-
-msgid "Data-block type does not support fake user"
-msgstr "数据块类型不支持伪用户"
-
-
-msgid "Create a new data-block"
-msgstr "创建一个新的数据块"
-
-
-msgid "Creating a new data-block is not supported here"
-msgstr "此处不支持创建新数据块"
-
-
-msgid "Remove this usage of the data-block"
-msgstr "删除数据块的此用途"
-
-
-msgid "Property must never be in an unlinked state"
-msgstr "属性绝不能处于未关联状态"
-
-
-msgid "Browsing for a new data-block is not supported here"
-msgstr "此处不支持浏览新数据块"
-
-
-msgid "File is not packed"
-msgstr "文件未打包"
-
-
-msgid "Show more operations for the selected data-block"
-msgstr "显示所选数据块的更多操作"
 
 
 msgid "Can't edit external library data"
@@ -102201,39 +102071,6 @@ msgid "Browse ID data to be linked"
 msgstr "浏览要关联的 ID 数据"
 
 
-msgid "Make library linked data-block local to this file"
-msgstr "使关联库数据块本地化到当前文件"
-
-
-msgid "Create a local override of this library linked data-block"
-msgstr "将库关联的数据块重写为本地数据块"
-
-
-msgctxt "Operator"
-msgid "Reset Library Override"
-msgstr "重置库重写"
-
-
-msgctxt "Operator"
-msgid "Make Single-User Copy"
-msgstr "创建单用户副本"
-
-
-msgctxt "Operator"
-msgid "Remove Fake User"
-msgstr "删除伪用户"
-
-
-msgctxt "Operator"
-msgid "Add Fake User"
-msgstr "添加伪用户"
-
-
-msgctxt "Operator"
-msgid "Add Library Override"
-msgstr "添加库重写"
-
-
 msgctxt "Scene"
 msgid "New"
 msgstr "新建"
@@ -102377,151 +102214,6 @@ msgstr "新建"
 msgctxt "Simulation"
 msgid "New"
 msgstr "新建"
-
-
-msgctxt "Scene"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Object"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Mesh"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Curve"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Metaball"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Material"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Texture"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Image"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Lattice"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Light"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Camera"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "World"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Screen"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Text"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Speaker"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Sound"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Armature"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Action"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "NodeTree"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Brush"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "ParticleSettings"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "GPencil"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "FreestyleLineStyle"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "WorkSpace"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "LightProbe"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Hair"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "PointCloud"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Volume"
-msgid "Duplicate"
-msgstr "复制"
-
-
-msgctxt "Simulation"
-msgid "Duplicate"
-msgstr "复制"
 
 
 msgid "%d items"
@@ -103219,6 +102911,10 @@ msgid "Object \"%s\" is not a mesh"
 msgstr "物体 \"%s\" 不是一个网格物体"
 
 
+msgid "No vertex colors layer found in the object \"%s\""
+msgstr "未在物体 \"%s\" 中找到顶点色层"
+
+
 msgid "No active UV layer found in the object \"%s\""
 msgstr "未在物体 \"%s\" 中找到活动的 UV 层"
 
@@ -103447,8 +103143,20 @@ msgid "Applied modifier: %s"
 msgstr "已应用修改器: %s"
 
 
+msgid "Source object '%s' is not a grease pencil object"
+msgstr "源物体 '%s' 不是蜡笔物体"
+
+
+msgid "Destination object '%s' is not a grease pencil object"
+msgstr "目标物体 '%s' 不是蜡笔物体"
+
+
 msgid "Cannot edit modifiers coming from linked data in a library override"
 msgstr "无法编辑来自库重写中关联数据的修改器"
+
+
+msgid "No supported objects were selected"
+msgstr "未选择受支持的物体"
 
 
 msgid "Requires selected vertices or active vertex group"
@@ -103555,6 +103263,22 @@ msgid "Modifier is disabled"
 msgstr "已禁用修改器"
 
 
+msgid "Object '%s' does not support %s modifiers"
+msgstr "物体 '%s' 不支持 %s 修改器"
+
+
+msgid "Modifier can only be added once to object '%s'"
+msgstr "仅可为物体 '%s' 添加一次修改器"
+
+
+msgid "Copying modifier '%s' to object '%s' failed"
+msgstr "将修改器 '%s' 复制到物体 '%s' 失败"
+
+
+msgid "Modifier '%s' was not copied to any objects"
+msgstr "修改器 '%s' 未被复制到任何物体"
+
+
 msgid "%d new levels rebuilt"
 msgstr "已重建 %d 新级数"
 
@@ -103569,6 +103293,18 @@ msgstr "禁止从编辑模式使用该修改器操作"
 
 msgid "Modifiers cannot be applied on override data"
 msgstr "修改器无法应用至重写数据"
+
+
+msgid "Not supported for \"Collision\" or \"Hook\" modifiers"
+msgstr "不支持\"碰撞\"或\"钩挂\"修改器"
+
+
+msgid "No selected object is active"
+msgstr "无选中物体处于活动状态"
+
+
+msgid "Object type of source object is not supported"
+msgstr "源物体的物体类型不受支持"
 
 
 msgid "OK?"
@@ -104193,14 +103929,6 @@ msgstr "跳过已有帧 \"%s\""
 
 msgid "Unable to remove material slot in edit mode"
 msgstr "无法在编辑模式下移除材质槽"
-
-
-msgid "Incorrect context for duplicating a material (did not find material to duplicate)"
-msgstr "复制材质的上下文不正确(未找到要复制的材质)"
-
-
-msgid "Incorrect context for duplicating a texture (did not find texture to duplicate)"
-msgstr "复制纹理的上下文不正确(未找到要复制的纹理)"
 
 
 msgid "Lightcache cannot allocate resources"
@@ -105589,10 +105317,6 @@ msgid "Node tree type %s undefined"
 msgstr "尚未定义节点树类型 %s"
 
 
-msgid "Outputs:"
-msgstr "输出项:"
-
-
 msgid "Sockets"
 msgstr "插口"
 
@@ -106463,7 +106187,7 @@ msgstr "深度值过大"
 
 
 msgid "X-Ray not available in current mode"
-msgstr "X光在此模式下不可用"
+msgstr "在此模式下透视不可用"
 
 
 msgid "Cannot fly a camera from an external library"
@@ -107023,6 +106747,10 @@ msgid "Incorrect context for running data-block fake user toggling"
 msgstr "运行数据块伪用户切换的上下文不正确"
 
 
+msgid "Data-block type does not support fake user"
+msgstr "数据块类型不支持伪用户"
+
+
 msgid "Numeric input evaluation"
 msgstr "数值输入运算"
 
@@ -107532,8 +107260,8 @@ msgid "%s '%s' must have zero users to be removed, found %d (try with do_unlink=
 msgstr "%s '%s' 必须拥有0个用户才能删除, 查找 %d (尝试使用 do_unlink=True 参数)"
 
 
-msgid "Scene '%s' is the last, cannot be removed"
-msgstr "场景 '%s' 是最后一个场景, 无法被删除"
+msgid "Scene '%s' is the last local one, cannot be removed"
+msgstr "场景 '%s' 是最后一个本地场景, 无法被删除"
 
 
 msgid "ID type '%s' is not valid for an object"

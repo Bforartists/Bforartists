@@ -254,7 +254,7 @@ typedef struct IDOverrideLibrary {
 /**
  * ID is the first thing included in all serializable types. It
  * provides a common handle to place all data in double-linked lists.
- * */
+ */
 
 /* 2 characters for ID code and 64 for actual name */
 #define MAX_ID_NAME 66
@@ -685,7 +685,7 @@ typedef enum IDRecalcFlag {
    * redraw update in that case. */
 
   /* Selection of the ID itself or its components (for example, vertices) did
-   * change, and all the drawing data is to eb updated. */
+   * change, and all the drawing data is to be updated. */
   ID_RECALC_SELECT = (1 << 9),
   /* Flags on the base did change, and is to be copied onto all the copies of
    * corresponding objects. */

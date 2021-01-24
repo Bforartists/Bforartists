@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12158,6 +12158,10 @@ msgid "Select Grouped"
 msgstr "Gruppierung auswählen"
 
 
+msgid "Clean Up"
+msgstr "Aufräumen"
+
+
 msgid "Show/Hide"
 msgstr "Zeigen/Verbergen"
 
@@ -12192,10 +12196,6 @@ msgstr "Schlüsselbild"
 
 msgid "Snap"
 msgstr "Einrasten"
-
-
-msgid "Clean Up"
-msgstr "Aufräumen"
 
 
 msgid "Move to Layer"
@@ -15839,6 +15839,14 @@ msgid "Int"
 msgstr "Int"
 
 
+msgid "Cross Product"
+msgstr "Kreuzprodukt"
+
+
+msgid "Dot Product"
+msgstr "Skalarprodukt"
+
+
 msgid "Object Info"
 msgstr "Objektinformation"
 
@@ -16217,14 +16225,6 @@ msgstr "Wellentextur in Ringen verwenden"
 
 msgid "Vector Math"
 msgstr "Mathematischer Vektor"
-
-
-msgid "Cross Product"
-msgstr "Kreuzprodukt"
-
-
-msgid "Dot Product"
-msgstr "Skalarprodukt"
 
 
 msgid "Z Axis"
@@ -27659,10 +27659,6 @@ msgid "Add/Replace"
 msgstr "Hinzufügen/Entfernen"
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "Modifikator entfernen"
-
-
 msgid "Grease Pencil Eraser Radius"
 msgstr "Wachsstift-Radierradius"
 
@@ -34004,36 +34000,6 @@ msgstr "Platzhaltergröße"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Danach entfernen"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Davor entfernen"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Einzelbild rückwärts verfolgen"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Rückwärts verfolgen"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Vorwärts verfolgen"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Einzelbild vorwärts verfolgen"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Position"
 
@@ -34620,10 +34586,6 @@ msgstr "Warnung anzeigen"
 
 msgid "Only Insert Available"
 msgstr "Nur Verfügbare einfügen"
-
-
-msgid "F-Curve Visibility"
-msgstr "F-Kurve Sichtbarkeit"
 
 
 msgid "XYZ to RGB"
@@ -37018,10 +36980,6 @@ msgstr "Masken-Knoten konnte nicht hinzugefügt werden"
 
 msgid "Mask '%s' not found"
 msgstr "Maske '%s' nicht gefunden"
-
-
-msgid "Outputs:"
-msgstr "Ausgabe:"
 
 
 msgid "Clipboard is empty"
