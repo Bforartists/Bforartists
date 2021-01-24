@@ -55,7 +55,7 @@ class PowerSequencerPreferences(bpy.types.AddonPreferences):
         error_message, info = "", ""
         try:
             info: str = subprocess.check_output([path, "-version"]).decode("utf-8")
-            info = info[:info.find("Copyright")]
+            info = info[: info.find("Copyright")]
             print(info)
         except (OSError, subprocess.CalledProcessError):
             error_message = "Path `{}` is not a valid ffmpeg executable".format(path)

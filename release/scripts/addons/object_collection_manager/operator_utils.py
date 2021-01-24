@@ -26,6 +26,7 @@ from . import internals
 from .internals import (
     update_property_group,
     get_move_selection,
+    get_move_active,
 )
 
 mode_converter = {
@@ -242,6 +243,122 @@ def isolate_rto(cls, self, view_layer, rto, *, children=False):
                 apply_to_children(laycol_ptr, deactivate_all_children)
 
         cls.isolated = True
+
+
+def isolate_sel_objs_collections(view_layer, rto, caller, *, use_active=False):
+    selected_objects = get_move_selection()
+
+    if use_active:
+        selected_objects.add(get_move_active(always=True))
+
+    if not selected_objects:
+        return "No selected objects"
+
+    off = set_off_on[rto]["off"]
+    on = set_off_on[rto]["on"]
+
+    if caller == "CM":
+        history = internals.rto_history[rto+"_all"][view_layer]
+
+    elif caller == "QCD":
+        history = internals.qcd_history[view_layer]
+
+
+    # if not isolated, isolate collections of selected objects
+    if len(history) == 0:
+        keep_history = False
+
+        # save history and isolate RTOs
+        for item in internals.layer_collections.values():
+            history.append(get_rto(item["ptr"], rto))
+            rto_state = off
+
+            # check if any of the selected objects are in the collection
+            if not set(selected_objects).isdisjoint(item["ptr"].collection.objects):
+                rto_state = on
+
+            if history[-1] != rto_state:
+                keep_history = True
+
+            if rto == "exclude":
+                set_exclude_state(item["ptr"], rto_state)
+
+            else:
+                set_rto(item["ptr"], rto, rto_state)
+
+                # activate all parents if needed
+                if rto_state == on and rto not in ["holdout", "indirect"]:
+                    laycol = item["parent"]
+                    while laycol["id"] != 0:
+                        set_rto(laycol["ptr"], rto, on)
+                        laycol = laycol["parent"]
+
+
+        if not keep_history:
+            history.clear()
+
+            return "Collection already isolated"
+
+
+    else:
+        for x, item in enumerate(internals.layer_collections.values()):
+            set_rto(item["ptr"], rto, history[x])
+
+        # clear history
+        if caller == "CM":
+            del internals.rto_history[rto+"_all"][view_layer]
+
+        elif caller == "QCD":
+            del internals.qcd_history[view_layer]
+
+
+def disable_sel_objs_collections(view_layer, rto, caller):
+    off = set_off_on[rto]["off"]
+    on = set_off_on[rto]["on"]
+    selected_objects = get_move_selection()
+
+    if caller == "CM":
+        history = internals.rto_history[rto+"_all"][view_layer]
+
+    elif caller == "QCD":
+        history = internals.qcd_history[view_layer]
+
+
+    if not selected_objects and not history:
+        # clear history
+        if caller == "CM":
+            del internals.rto_history[rto+"_all"][view_layer]
+
+        elif caller == "QCD":
+            del internals.qcd_history[view_layer]
+
+        return "No selected objects"
+
+    # if not disabled, disable collections of selected objects
+    if len(history) == 0:
+        # save history and disable RTOs
+        for item in internals.layer_collections.values():
+            history.append(get_rto(item["ptr"], rto))
+
+            # check if any of the selected objects are in the collection
+            if not set(selected_objects).isdisjoint(item["ptr"].collection.objects):
+                if rto == "exclude":
+                    set_exclude_state(item["ptr"], off)
+
+                else:
+                    set_rto(item["ptr"], rto, off)
+
+
+    else:
+        for x, item in enumerate(internals.layer_collections.values()):
+            set_rto(item["ptr"], rto, history[x])
+
+        # clear history
+        if caller == "CM":
+            del internals.rto_history[rto+"_all"][view_layer]
+
+        elif caller == "QCD":
+            del internals.qcd_history[view_layer]
 
 
 def toggle_children(self, view_layer, rto):

@@ -50,9 +50,7 @@ class POWER_SEQUENCER_OT_delete_direct(bpy.types.Operator):
     bl_description = doc_brief(doc["description"])
     bl_options = {"REGISTER", "UNDO"}
 
-    is_removing_transitions: bpy.props.BoolProperty(
-        name="Remove Transitions", default=False
-    )
+    is_removing_transitions: bpy.props.BoolProperty(name="Remove Transitions", default=False)
 
     @classmethod
     def poll(cls, context):
@@ -61,17 +59,12 @@ class POWER_SEQUENCER_OT_delete_direct(bpy.types.Operator):
     def invoke(self, context, event):
         frame, channel = get_mouse_frame_and_channel(context, event)
         if not context.selected_sequences:
-            bpy.ops.power_sequencer.select_closest_to_mouse(
-                frame=frame, channel=channel
-            )
+            bpy.ops.power_sequencer.select_closest_to_mouse(frame=frame, channel=channel)
         return self.execute(context)
 
     def execute(self, context):
         selection = context.selected_sequences
-        if (
-            self.is_removing_transitions
-            and bpy.ops.power_sequencer.transitions_remove.poll()
-        ):
+        if self.is_removing_transitions and bpy.ops.power_sequencer.transitions_remove.poll():
             bpy.ops.power_sequencer.transitions_remove()
         bpy.ops.sequencer.delete()
 

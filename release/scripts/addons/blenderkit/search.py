@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
-
 from blenderkit import paths, utils, categories, ui, colors, bkit_oauth, version_checker, tasks_queue, rerequests, \
     resolutions
 
@@ -51,6 +49,7 @@ import json
 import math
 
 import logging
+
 bk_logger = logging.getLogger('blenderkit')
 
 search_start_time = 0
@@ -320,6 +319,7 @@ def timer_update():
     global first_time
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if first_time and not bpy.app.background:  # first time
+
         first_time = False
         if preferences.show_on_start:
             # TODO here it should check if there are some results, and only open assetbar if this is the case, not search.
@@ -437,11 +437,14 @@ def load_previews():
             if not r['thumbnail_small']:
                 tpath = paths.get_addon_thumbnail_path('thumbnail_not_available.jpg')
 
+            if not os.path.exists(tpath):
+                continue
             iname = utils.previmg_name(i)
 
             # if os.path.exists(tpath):  # sometimes we are unlucky...
             img = bpy.data.images.get(iname)
-            if img is None and os.path.exists(tpath):
+
+            if img is None:
                 img = bpy.data.images.load(tpath)
                 img.name = iname
             elif img.filepath != tpath:
@@ -897,7 +900,7 @@ class Searcher(threading.Thread):
         # result ordering: _score - relevance, score - BlenderKit score
         order = []
         if params['free_first']:
-            order = ['-is_free',]
+            order = ['-is_free', ]
         if query.get('query') is None and query.get('category_subtree') == None:
             # assumes no keywords and no category, thus an empty search that is triggered on start.
             # orders by last core file upload

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -3856,10 +3856,6 @@ msgstr "Дозволити самозіткнення"
 
 msgid "Selfcollision Vertex Group"
 msgstr "Група вершин самозіткнення"
-
-
-msgid "Vertex group to define vertices which are not used during self collisions"
-msgstr "Група вершин, що визначає вершини, які не беруть участі у самозіткнення"
 
 
 msgid "Cloth Settings"
@@ -25350,6 +25346,10 @@ msgid "Rotation Track Specials"
 msgstr "Спеціальне для стежок обертання"
 
 
+msgid "Clean Up"
+msgstr "Вичищення"
+
+
 msgid "Show/Hide"
 msgstr "Показати/приховати"
 
@@ -25404,10 +25404,6 @@ msgstr "Підхоп"
 
 msgid "Bookmarks Specials"
 msgstr "Закладки Спеціальне"
-
-
-msgid "Clean Up"
-msgstr "Вичищення"
 
 
 msgid "Material Specials"
@@ -29211,14 +29207,6 @@ msgstr "Мінімум Вершин"
 
 msgid "Triangulate only polygons with vertex count greater than or equal to this number"
 msgstr "Трикутникувати багатобічники лише з рахунком вершин більшим ніж або рівним цьому числу"
-
-
-msgid "Polygon Method"
-msgstr "Метод поділу багатокутника"
-
-
-msgid "Method for splitting the polygons into triangles"
-msgstr "Метод розділення багатокутника на трикутники"
 
 
 msgid "Beauty"
@@ -33121,6 +33109,14 @@ msgid "Int"
 msgstr "Ціле"
 
 
+msgid "Cross Product"
+msgstr "Векторний добуток"
+
+
+msgid "Dot Product"
+msgstr "Скал. добуток"
+
+
 msgid "Object Info"
 msgstr "Інформація об'єкта"
 
@@ -33950,14 +33946,6 @@ msgid "Vector Math"
 msgstr "Векторна математика"
 
 
-msgid "Cross Product"
-msgstr "Векторний добуток"
-
-
-msgid "Dot Product"
-msgstr "Скал. добуток"
-
-
 msgid "Z Axis"
 msgstr "Вісь Z"
 
@@ -34128,6 +34116,10 @@ msgstr "Гніздо одношарового файлу вузла вивідн
 
 msgid "Subpath used for this slot"
 msgstr "Підшлях, що використовується цим гніздом"
+
+
+msgid "Apply render part of display transform when saving byte image"
+msgstr "Застосувати параметри керування кольором при збереженні байтового зображення"
 
 
 msgid "Use Node Format"
@@ -34548,6 +34540,14 @@ msgstr "Видалити ключові кадри"
 
 msgid "Remove all selected keyframes"
 msgstr "Вилучити всі вибрані ключові кадри"
+
+
+msgid "Confirm"
+msgstr "Підтвердження"
+
+
+msgid "Prompt for confirmation"
+msgstr "Запит на підтвердження"
 
 
 msgctxt "Operator"
@@ -39622,14 +39622,6 @@ msgid "Create a new directory"
 msgstr "Створити нову теку"
 
 
-msgid "Confirm"
-msgstr "Підтвердження"
-
-
-msgid "Prompt for confirmation"
-msgstr "Запит на підтвердження"
-
-
 msgid "Name of new directory"
 msgstr "Назва нової теки"
 
@@ -42108,10 +42100,6 @@ msgstr "Створити новий файл зображення не змін�
 
 msgid "Save As Render"
 msgstr "Зберегти Рендер Як ..."
-
-
-msgid "Apply render part of display transform when saving byte image"
-msgstr "Застосувати параметри керування кольором при збереженні байтового зображення"
 
 
 msgctxt "Operator"
@@ -51629,15 +51617,6 @@ msgid "Reset to the default theme colors"
 msgstr "Скинути до кольорів стандартної теми"
 
 
-msgctxt "Operator"
-msgid "Install Custom Studio Light"
-msgstr "Інсталювати власний студійний освітлювач"
-
-
-msgid "Install a user defined studio light"
-msgstr "Інсталювати визначений користувачем студійний освітлювач"
-
-
 msgid "MatCap"
 msgstr "ПередМатеріал"
 
@@ -55695,10 +55674,6 @@ msgid "Area Weight"
 msgstr "Вагомість площі"
 
 
-msgid "Weight projections vector by faces with larger areas"
-msgstr "Вплив вектора проєкції на грані великої площі"
-
-
 msgid "Island Margin"
 msgstr "Межа острову"
 
@@ -56066,10 +56041,6 @@ msgstr "Навігація польотом"
 
 msgid "Interactively fly around the scene"
 msgstr "Інтерактивний політ навколо сцени"
-
-
-msgid "Base"
-msgstr "База"
 
 
 msgctxt "Operator"
@@ -59636,10 +59607,6 @@ msgid "Onion Skin"
 msgstr "Покрив Калькою"
 
 
-msgid "Proxy & Cache"
-msgstr "Замісник і Кеш"
-
-
 msgid "Cache Settings"
 msgstr "Устави Кешу"
 
@@ -61518,14 +61485,6 @@ msgstr "Режим автоматичного вставляння ключов�
 
 msgid "Add/Replace"
 msgstr "Додати/Замінити"
-
-
-msgid "Unselected F-Curve Visibility"
-msgstr "Видимість невибраних Ф-кривих"
-
-
-msgid "Amount that unselected F-Curves stand out from the background (Graph Editor)"
-msgstr "Величина, на яку невибрані Ф-криві відрізняються від тла (редактор графіків)"
 
 
 msgid "Annotation Default Color"
@@ -66242,6 +66201,10 @@ msgstr "Джерело сіті"
 
 msgid "Source of the mesh used to create collision shape"
 msgstr "Джерело сіті, який використовується для створення форми для зіткнень"
+
+
+msgid "Base"
+msgstr "База"
 
 
 msgid "Base mesh"
@@ -77513,36 +77476,6 @@ msgstr "Розмір Замісника"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Зчистити після"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Зчистити перед"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Відстежити кадр назад"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Відстежити назад"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Відстежити вперед"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Відстежити кадр вперед"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Розташування"
 
@@ -78894,10 +78827,6 @@ msgstr "Вставляти лише доступне"
 
 msgid "Enable in New Scenes"
 msgstr "Увімкнути у Нових Сценах"
-
-
-msgid "F-Curve Visibility"
-msgstr "Видимість Ф-кривої"
 
 
 msgid "Default Interpolation"
@@ -85418,10 +85347,6 @@ msgid "Node tree type %s undefined"
 msgstr "Тип вузлового дерева %s не визначено"
 
 
-msgid "Outputs:"
-msgstr "Виводи:"
-
-
 msgid "Sockets"
 msgstr "Роз'єми"
 
@@ -87060,10 +86985,6 @@ msgstr "%s '%s' є поза головною базою даних і не мо�
 
 msgid "%s '%s' must have zero users to be removed, found %d (try with do_unlink=True parameter)"
 msgstr "%s '%s' повинен мати нуль користувачів, що бути вилученим, а знайдено %d (спробуйте параметр do_unlink=True)"
-
-
-msgid "Scene '%s' is the last, cannot be removed"
-msgstr "Сцена '%s' є останньою. Вилучення неможливе"
 
 
 msgid "ID type '%s' is not valid for an object"

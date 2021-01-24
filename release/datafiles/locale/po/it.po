@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -18468,6 +18468,10 @@ msgid "Rotation Track Specials"
 msgstr "Speciali Rotazione Traccia"
 
 
+msgid "Clean Up"
+msgstr "Ripulisci"
+
+
 msgid "Show/Hide"
 msgstr "Mostra/Nascondi"
 
@@ -18502,10 +18506,6 @@ msgstr "Snap"
 
 msgid "Bookmarks Specials"
 msgstr "Speciali Segnalibri"
-
-
-msgid "Clean Up"
-msgstr "Ripulisci"
 
 
 msgid "Material Specials"
@@ -21465,14 +21465,6 @@ msgid "Triangulate Mesh"
 msgstr "Triangolarizza Mesh"
 
 
-msgid "Polygon Method"
-msgstr "Metodo Poligono"
-
-
-msgid "Method for splitting the polygons into triangles"
-msgstr "Metodo per dividere le facce poligonali in triangoli"
-
-
 msgid "Beauty"
 msgstr "Bellezza"
 
@@ -24193,6 +24185,14 @@ msgid "Int"
 msgstr "Int"
 
 
+msgid "Cross Product"
+msgstr "Prodotto Vettoriale"
+
+
+msgid "Dot Product"
+msgstr "Prodotto Scalare"
+
+
 msgid "Object Info"
 msgstr "Info Oggetto"
 
@@ -24774,14 +24774,6 @@ msgid "Vector Math"
 msgstr "Matematica Vettori"
 
 
-msgid "Cross Product"
-msgstr "Prodotto Vettoriale"
-
-
-msgid "Dot Product"
-msgstr "Prodotto Scalare"
-
-
 msgid "Z Axis"
 msgstr "Asse Z"
 
@@ -24908,6 +24900,10 @@ msgstr "Raccolta di Collegamenti Nodo"
 
 msgid "Output File Slot"
 msgstr "Slot File Uscita"
+
+
+msgid "Apply render part of display transform when saving byte image"
+msgstr "Applica le trasformazioni visuali (gamma, esposizione, curve ecc.) salvando l'immagine"
 
 
 msgid "Use Node Format"
@@ -25159,6 +25155,10 @@ msgstr "Cancella Fotogrammi Chiave"
 
 msgid "Remove all selected keyframes"
 msgstr "Rimuove tutti i fotogrammi chiave selezionati"
+
+
+msgid "Confirm"
+msgstr "Conferma"
 
 
 msgctxt "Operator"
@@ -29134,10 +29134,6 @@ msgid "Create a new directory"
 msgstr "Crea una nuova cartella"
 
 
-msgid "Confirm"
-msgstr "Conferma"
-
-
 msgid "Name of new directory"
 msgstr "Nome della nuova cartella"
 
@@ -30813,10 +30809,6 @@ msgstr "Crea un nuovo file immagine senza modificare l'immagine corrente in blen
 
 msgid "Save As Render"
 msgstr "Salva Come Render"
-
-
-msgid "Apply render part of display transform when saving byte image"
-msgstr "Applica le trasformazioni visuali (gamma, esposizione, curve ecc.) salvando l'immagine"
 
 
 msgctxt "Operator"
@@ -41349,10 +41341,6 @@ msgid "Area Weight"
 msgstr "Peso Area"
 
 
-msgid "Weight projections vector by faces with larger areas"
-msgstr "Peso del vettore di proiezione da facce con aree più grandi"
-
-
 msgid "Island Margin"
 msgstr "Margine Isola"
 
@@ -41669,10 +41657,6 @@ msgstr "Navigazione a Volo d'Uccello"
 
 msgid "Interactively fly around the scene"
 msgstr "Volo interattivo attorno alla scena"
-
-
-msgid "Base"
-msgstr "Base"
 
 
 msgctxt "Operator"
@@ -45244,10 +45228,6 @@ msgid "Add/Replace"
 msgstr "Aggiungi/Sostituisci"
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "Visibilità Curva-F Deselezionata"
-
-
 msgid "Grease Pencil Eraser Radius"
 msgstr "Raggio Cancellatore Matita"
 
@@ -48514,6 +48494,10 @@ msgstr "Origine Mesh"
 
 msgid "Source of the mesh used to create collision shape"
 msgstr "Origine della mesh usata per creare la forma di collisione"
+
+
+msgid "Base"
+msgstr "Base"
 
 
 msgid "Base mesh"
@@ -55319,36 +55303,6 @@ msgstr "Dimensione Proxy"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Pulisci Prima"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Pulisci Dopo"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Traccia Fotogramma all'Indietro"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Traccia all'Indietro"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Traccia in Avanti"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Traccia Fotogramma in Avanti"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Posizione"
 
@@ -56454,10 +56408,6 @@ msgstr "Mostra Avvisi"
 
 msgid "Only Insert Available"
 msgstr "Inserisce Solo Se Disponibile"
-
-
-msgid "F-Curve Visibility"
-msgstr "Visibilità Curva-F"
 
 
 msgid "XYZ to RGB"
@@ -60797,10 +60747,6 @@ msgid "Node tree type %s undefined"
 msgstr "Il tipo di albero nodi %s è indefinito"
 
 
-msgid "Outputs:"
-msgstr "Uscite:"
-
-
 msgid "Sockets"
 msgstr "Connettori"
 
@@ -61902,10 +61848,6 @@ msgstr "L'oggetto non ha dati geometrici"
 
 msgid "%s '%s' must have zero users to be removed, found %d (try with do_unlink=True parameter)"
 msgstr "%s '%s' non deve avere nessun utilizzatore per essere cancellabile, ma ne ha %d (prova col parametro do_unlink=True)"
-
-
-msgid "Scene '%s' is the last, cannot be removed"
-msgstr "La scena '%s' è l'unica presente, impossibile rimuoverla"
 
 
 msgid "ID type '%s' is not valid for an object"

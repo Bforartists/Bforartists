@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -2457,10 +2457,6 @@ msgstr "ﻲﺗﺍﺬﻟﺍ ﻡﺩﺎﺼﺘﻟﺍ ﻞﻌﻓ"
 
 msgid "Selfcollision Vertex Group"
 msgstr " ﻲﺗﺍﺫ ﻡﺍﺪﻄﺻﺍ ﻂﻘﻧ ﺔﻋﻮﻤﺠﻣ"
-
-
-msgid "Vertex group to define vertices which are not used during self collisions"
-msgstr "ﺔﻴﺗﺍﺬﻟﺍ ﺕﺎﻣﺩﺎﺼﺘﻟﺍ ﻝﻼ﻿ﺧ ﺔﻣﺪﺨﺘﺴﻣ ﺮﻴﻐﻟﺍ ﻂﻘﻨﻠﻟ ﺔﻓﺮّﻌﻤﻟﺍ ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
 
 msgid "Cloth Settings"
@@ -30221,10 +30217,6 @@ msgid "Fly Navigation"
 msgstr "ﺭﺎﻴّﻄﻛ ﺢﻔّﺼﺗ"
 
 
-msgid "Base"
-msgstr "ﺱﺎﺳﻷ﻿ﺍ"
-
-
 msgctxt "Operator"
 msgid "Local View"
 msgstr "ﻲﻠّﺤﻣ ﺮﻈﻨﻣ"
@@ -32526,14 +32518,6 @@ msgstr " (ﺓﺪﻳﺪﺠﻟﺍ ﺪﻫﺎﺸﻤﻠﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ �
 
 msgid "Add/Replace"
 msgstr "ﻝﺪّﺑ/ﻒﺿﺃ"
-
-
-msgid "Unselected F-Curve Visibility"
-msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﺮﻴﻐﻟﺍ ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﺡﻮﺿﻭ"
-
-
-msgid "Amount that unselected F-Curves stand out from the background (Graph Editor)"
-msgstr "(ﺕﺎﻴﻨﺤﻨﻤﻟﺍ ﺭﺮﺤﻣ) ﺔﻴﻔﻠﺨﻟﺍ ﻦﻋ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﻴﻐﻟﺍ ﻞﻤﻌﻟﺍ ﺕﺎﻴﻨﺤﻨﻣﺯﻭﺮﺑ ﺔﻴﻤﻛ"
 
 
 msgid "Grease Pencil Eraser Radius"
@@ -34838,6 +34822,10 @@ msgstr "ﻡﺍﺪﻄﺻﻹ﻿ﺍ ﻉﻮﻧ"
 
 msgid "Linear Damping"
 msgstr "ﻲﻄﺧ ﺐﺤﺳ"
+
+
+msgid "Base"
+msgstr "ﺱﺎﺳﻷ﻿ﺍ"
 
 
 msgid "All modifiers"
@@ -38663,36 +38651,6 @@ msgstr "ﺏﻭﺪﻨﻣ ﻲﻨﺑﺍ"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "ﻲﻟﺎﺘﻟﺍ ﻑﺬﺣﺍ"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "ﻖﺑﺎﺴﻟﺍ ﻑﺬﺣﺍ"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr " ءﺍﺭﻮﻟﺍ ﻰﻟﺍ ﺮﻃﻷ﻿ﺍ ﻊﺒﺘﺗ"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "ءﺍﺭﻮﻟﺍ ﻰﻟﺇ ﻊﺒﺘﺗ"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "ﻡﺎﻣﻸ﻿ﻟ ﻖﺣﻻ﻿"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "ﻡﺎﻣﻷ﻿ﺍ ﻰﻟﺇ ﺮﻃﻷ﻿ﺍ ﻊﺒﺘﺗ"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "ﺔﺣﺍﺯﻹ﻿ﺍ"
 
@@ -39311,10 +39269,6 @@ msgstr "ﻂﻘﻓ ﻱﺭﻭﺮﻀﻟﺍ ﻒﺿﺃ"
 
 msgid "Only Insert Available"
 msgstr "ﻂﻘﻓ ﺪﺟﺍﻮﺘﻤﻟﺍ ﻒﺿﺃ"
-
-
-msgid "F-Curve Visibility"
-msgstr "ﻞﻤﻌﻟﺍ ﺕﺎﻴﻨﺤﻨﻣ ﺭﻮﻬﻃ"
 
 
 msgid "XYZ to RGB"
@@ -41804,10 +41758,6 @@ msgstr "ﺪﻘﻋ ﻉﺮﻔﺗ"
 
 msgid "Mask '%s' not found"
 msgstr "ﺩﻮﺟﻮﻣ ﺮﻴﻏ '%s‬‪' ﻉﺎﻨﻘﻟﺍ"
-
-
-msgid "Outputs:"
-msgstr ":ﺝﺭﺎﺨﻤﻟﺍ"
 
 
 msgid "Cannot ungroup"

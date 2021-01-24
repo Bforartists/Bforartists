@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -6323,10 +6323,6 @@ msgid "Auto IK"
 msgstr "Otomatis"
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "Hapus"
-
-
 msgid "Hide System Bookmarks"
 msgstr "Hapus"
 
@@ -6958,21 +6954,6 @@ msgstr "Hapus"
 
 
 msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Tahan Depan"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Lokasi"
 
@@ -7184,10 +7165,6 @@ msgstr "Gambar Latar"
 msgctxt "Operator"
 msgid "Render Image"
 msgstr "Gambar"
-
-
-msgid "F-Curve Visibility"
-msgstr "Penampakan"
 
 
 msgid "Description:"

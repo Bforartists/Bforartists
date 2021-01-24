@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -3319,10 +3319,6 @@ msgstr "Ativa as colisões internas (colisões do objeto consigo mesmo)."
 
 msgid "Selfcollision Vertex Group"
 msgstr "Grupo de vértices de colisão interna"
-
-
-msgid "Vertex group to define vertices which are not used during self collisions"
-msgstr "Grupo de vértices para definir os vértices que não são usados durante colisões do internas do objeto consigo mesmo."
 
 
 msgid "Cloth Settings"
@@ -24410,14 +24406,6 @@ msgid "Triangulate Mesh"
 msgstr "Triangular malha"
 
 
-msgid "Polygon Method"
-msgstr "Método para converter polígonos"
-
-
-msgid "Method for splitting the polygons into triangles"
-msgstr "O método para dividir os polígonos em triângulos."
-
-
 msgid "Beauty"
 msgstr "Embelezar"
 
@@ -28206,6 +28194,14 @@ msgid "Int"
 msgstr "Inteiro"
 
 
+msgid "Cross Product"
+msgstr "Produto vetorial"
+
+
+msgid "Dot Product"
+msgstr "Produto escalar"
+
+
 msgid "Object Info"
 msgstr "Informações de objetos"
 
@@ -28887,14 +28883,6 @@ msgid "Vector Math"
 msgstr "Matemática vetorial"
 
 
-msgid "Cross Product"
-msgstr "Produto vetorial"
-
-
-msgid "Dot Product"
-msgstr "Produto escalar"
-
-
 msgid "Z Axis"
 msgstr "Eixo Z"
 
@@ -29061,6 +29049,10 @@ msgstr "Camada única de compartimento de ficheiro do nó de saída de ficheiro.
 
 msgid "Subpath used for this slot"
 msgstr "Sub-caminho usado por este compartimento."
+
+
+msgid "Apply render part of display transform when saving byte image"
+msgstr "Aplica a parte renderizada do mostrador de transformação ao guardar a imagem de byte."
 
 
 msgid "Use Node Format"
@@ -35787,10 +35779,6 @@ msgstr "Cria um novo ficheiro de imagem sem modificar a imagem atual dentro do B
 
 msgid "Save As Render"
 msgstr "Guardar como renderização"
-
-
-msgid "Apply render part of display transform when saving byte image"
-msgstr "Aplica a parte renderizada do mostrador de transformação ao guardar a imagem de byte."
 
 
 msgctxt "Operator"
@@ -47371,10 +47359,6 @@ msgid "Area Weight"
 msgstr "Peso de área"
 
 
-msgid "Weight projections vector by faces with larger areas"
-msgstr "Vetor de projeções de peso pelas faces com áreas mais largas."
-
-
 msgid "Island Margin"
 msgstr "Margens das ilhas"
 
@@ -47675,10 +47659,6 @@ msgstr "Navegação em voo"
 
 msgid "Interactively fly around the scene"
 msgstr "Permite o voo interativo dentro da cena."
-
-
-msgid "Base"
-msgstr "Base"
 
 
 msgctxt "Operator"
@@ -51459,14 +51439,6 @@ msgstr "Modo de inserção automático de fotogramas chave para objetos e ossos 
 
 msgid "Add/Replace"
 msgstr "Adicionar ou substituir"
-
-
-msgid "Unselected F-Curve Visibility"
-msgstr "Visibilidade das curvas-f não selecionadas"
-
-
-msgid "Amount that unselected F-Curves stand out from the background (Graph Editor)"
-msgstr "Define quanto as curvas-f não selecionadas se destacam do plano de fundo (no editor gráfico)."
 
 
 msgid "Grease Pencil Eraser Radius"
@@ -55335,6 +55307,10 @@ msgstr "Fonte da malha"
 
 msgid "Source of the mesh used to create collision shape"
 msgstr "Fonte da malha usada para criar formatos de colisão."
+
+
+msgid "Base"
+msgstr "Base"
 
 
 msgid "Base mesh"
@@ -63341,36 +63317,6 @@ msgstr "Construir aproximação"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Limpar posterior(es)"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Limpar anterior(es)"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Rastrear fotograma para trás"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Rastrear para trás"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Rastrear para frente"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Rastrear do fotograma para frente"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Localização"
 
@@ -64147,10 +64093,6 @@ msgstr "Inserir somente o necessário"
 
 msgid "Only Insert Available"
 msgstr "Inserir somente nas curvas disponíveis"
-
-
-msgid "F-Curve Visibility"
-msgstr "Visibilidade das curvas-f"
 
 
 msgid "XYZ to RGB"
@@ -69144,10 +69086,6 @@ msgid "Node tree type %s undefined"
 msgstr "Tipo de árvore de nó %s não está definida"
 
 
-msgid "Outputs:"
-msgstr "Saídas:"
-
-
 msgid "Sockets"
 msgstr "Conectores"
 
@@ -70429,10 +70367,6 @@ msgstr "Objeto não possui dados de geometria."
 
 msgid "%s '%s' must have zero users to be removed, found %d (try with do_unlink=True parameter)"
 msgstr "%s '%s'  não deve possuir utilizadores para que possa ser removido, encontrado(s):  %d (tente novamente com o parâmetro \"do_unlink=True\")"
-
-
-msgid "Scene '%s' is the last, cannot be removed"
-msgstr "Cena '%s' é a última, não pode ser removida."
 
 
 msgid "ID type '%s' is not valid for an object"

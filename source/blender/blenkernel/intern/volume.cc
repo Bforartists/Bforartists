@@ -523,6 +523,8 @@ static void volume_copy_data(Main *UNUSED(bmain),
     volume_dst->runtime.grids = OBJECT_GUARDED_NEW(VolumeGridVector, grids_src);
   }
 #endif
+
+  volume_dst->batch_cache = nullptr;
 }
 
 static void volume_free_data(ID *id)
@@ -642,6 +644,8 @@ IDTypeInfo IDType_ID_VO = {
     /* blend_read_expand */ volume_blend_read_expand,
 
     /* blend_read_undo_preserve */ nullptr,
+
+    /* lib_override_apply_post */ nullptr,
 };
 
 void BKE_volume_init_grids(Volume *volume)
@@ -783,21 +787,22 @@ bool BKE_volume_load(Volume *volume, Main *bmain)
 
   /* Get absolute file path at current frame. */
   const char *volume_name = volume->id.name + 2;
-  volume_filepath_get(bmain, volume, grids.filepath);
+  char filepath[FILE_MAX];
+  volume_filepath_get(bmain, volume, filepath);
 
-  CLOG_INFO(&LOG, 1, "Volume %s: load %s", volume_name, grids.filepath);
+  CLOG_INFO(&LOG, 1, "Volume %s: load %s", volume_name, filepath);
 
   /* Test if file exists. */
-  if (!BLI_exists(grids.filepath)) {
+  if (!BLI_exists(filepath)) {
     char filename[FILE_MAX];
-    BLI_split_file_part(grids.filepath, filename, sizeof(filename));
+    BLI_split_file_part(filepath, filename, sizeof(filename));
     grids.error_msg = filename + std::string(" not found");
     CLOG_INFO(&LOG, 1, "Volume %s: %s", volume_name, grids.error_msg.c_str());
     return false;
   }
 
   /* Open OpenVDB file. */
-  openvdb::io::File file(grids.filepath);
+  openvdb::io::File file(filepath);
   openvdb::GridPtrVec vdb_grids;
 
   try {
@@ -814,10 +819,12 @@ bool BKE_volume_load(Volume *volume, Main *bmain)
   /* Add grids read from file to own vector, filtering out any NULL pointers. */
   for (const openvdb::GridBase::Ptr &vdb_grid : vdb_grids) {
     if (vdb_grid) {
-      VolumeFileCache::Entry template_entry(grids.filepath, vdb_grid);
+      VolumeFileCache::Entry template_entry(filepath, vdb_grid);
       grids.emplace_back(template_entry, volume->runtime.default_simplify_level);
     }
   }
+
+  BLI_strncpy(grids.filepath, filepath, FILE_MAX);
 
   return grids.error_msg.empty();
 #else

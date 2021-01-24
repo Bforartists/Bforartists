@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -20605,10 +20605,6 @@ msgid "Interactively fly around the scene"
 msgstr "Interaktivan let kroz scenu"
 
 
-msgid "Base"
-msgstr "Osnova"
-
-
 msgctxt "Operator"
 msgid "Local View"
 msgstr "Lokalni pogled"
@@ -23309,6 +23305,10 @@ msgstr "Bioskopski"
 
 msgid "Linear Damping"
 msgstr "Linearno"
+
+
+msgid "Base"
+msgstr "Osnova"
 
 
 msgid "All modifiers"
@@ -26252,36 +26252,6 @@ msgstr "Staze:"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Očisti posle"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Očisti pre"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Prati unazad"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Prati unazad"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Prati napred"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Prati kadrove unazad"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Lokacija"
 
@@ -26741,10 +26711,6 @@ msgstr "Prečnik gumice"
 
 msgid "Minimum Grid Spacing"
 msgstr "Najmanji razmak mreže"
-
-
-msgid "F-Curve Visibility"
-msgstr "Vidljivost F-krive"
 
 
 msgid "XYZ to RGB"
@@ -28678,10 +28644,6 @@ msgstr "Drvo čvorova"
 
 msgid "Mask '%s' not found"
 msgstr "Maskia '%s' nije pronađena"
-
-
-msgid "Outputs:"
-msgstr "Izlazi:"
 
 
 msgid "Sockets"

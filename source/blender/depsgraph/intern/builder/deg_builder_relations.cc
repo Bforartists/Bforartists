@@ -1226,7 +1226,7 @@ void DepsgraphRelationBuilder::build_constraints(ID *id,
           // TODO: loc vs rot vs scale?
           if (&ct->tar->id == id) {
             /* Constraint targeting own object:
-             * - This case is fine IFF we're dealing with a bone
+             * - This case is fine IF we're dealing with a bone
              *   constraint pointing to its own armature. In that
              *   case, it's just transform -> bone.
              * - If however it is a real self targeting case, just
@@ -1712,12 +1712,17 @@ void DepsgraphRelationBuilder::build_world(World *world)
   /* animation */
   build_animdata(&world->id);
   build_parameters(&world->id);
+
+  /* Animated / driven parameters (without nodetree). */
+  OperationKey world_key(&world->id, NodeType::SHADING, OperationCode::WORLD_UPDATE);
+  ComponentKey parameters_key(&world->id, NodeType::PARAMETERS);
+  add_relation(parameters_key, world_key, "World's parameters");
+
   /* world's nodetree */
   if (world->nodetree != nullptr) {
     build_nodetree(world->nodetree);
     OperationKey ntree_key(
         &world->nodetree->id, NodeType::SHADING, OperationCode::MATERIAL_UPDATE);
-    OperationKey world_key(&world->id, NodeType::SHADING, OperationCode::WORLD_UPDATE);
     add_relation(ntree_key, world_key, "World's NTree");
     build_nested_nodetree(&world->id, world->nodetree);
   }
@@ -1792,7 +1797,7 @@ void DepsgraphRelationBuilder::build_rigidbody(Scene *scene)
                      RELATION_FLAG_GODMODE);
       }
 
-      /* Final transform is whetever solver gave to us. */
+      /* Final transform is whatever the solver gave to us. */
       if (object->rigidbody_object->type == RBO_TYPE_ACTIVE) {
         /* We do not have to update the objects final transform after the simulation if it is
          * passive or controlled by the animation system in blender.
@@ -2470,12 +2475,17 @@ void DepsgraphRelationBuilder::build_material(Material *material)
   /* animation */
   build_animdata(&material->id);
   build_parameters(&material->id);
+
+  /* Animated / driven parameters (without nodetree). */
+  OperationKey material_key(&material->id, NodeType::SHADING, OperationCode::MATERIAL_UPDATE);
+  ComponentKey parameters_key(&material->id, NodeType::PARAMETERS);
+  add_relation(parameters_key, material_key, "Material's paramters");
+
   /* material's nodetree */
   if (material->nodetree != nullptr) {
     build_nodetree(material->nodetree);
     OperationKey ntree_key(
         &material->nodetree->id, NodeType::SHADING, OperationCode::MATERIAL_UPDATE);
-    OperationKey material_key(&material->id, NodeType::SHADING, OperationCode::MATERIAL_UPDATE);
     add_relation(ntree_key, material_key, "Material's NTree");
     build_nested_nodetree(&material->id, material->nodetree);
   }

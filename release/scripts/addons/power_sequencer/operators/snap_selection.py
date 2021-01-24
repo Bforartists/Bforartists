@@ -15,7 +15,7 @@
 # not, see <https://www.gnu.org/licenses/>.
 #
 import bpy
-from .utils.functions import get_sequences_under_cursor, apply_time_offset
+from .utils.functions import get_sequences_under_cursor, move_selection
 from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
 
 
@@ -32,11 +32,7 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
         "demo": "",
         "description": doc_description(__doc__),
         "shortcuts": [
-            (
-                {"type": "S", "value": "PRESS", "alt": True},
-                {},
-                "Snap selection to cursor",
-            )
+            ({"type": "S", "value": "PRESS", "alt": True}, {}, "Snap selection to cursor",)
         ],
         "keymap": "Sequencer",
     }
@@ -55,9 +51,7 @@ class POWER_SEQUENCER_OT_snap_selection(bpy.types.Operator):
             if context.selected_sequences
             else get_sequences_under_cursor(context)
         )
-        frame_first = min(
-            sequences, key=lambda s: s.frame_final_start
-        ).frame_final_start
+        frame_first = min(sequences, key=lambda s: s.frame_final_start).frame_final_start
         time_offset = context.scene.frame_current - frame_first
-        apply_time_offset(context, sequences, time_offset)
+        move_selection(context, sequences, time_offset)
         return {"FINISHED"}

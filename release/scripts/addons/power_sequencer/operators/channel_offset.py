@@ -14,17 +14,12 @@
 # You should have received a copy of the GNU General Public License along with Power Sequencer. If
 # not, see <https://www.gnu.org/licenses/>.
 #
-import bpy
 from operator import attrgetter
 
-from .utils.doc import doc_name, doc_idname, doc_brief, doc_description
-from .utils.functions import (
-    slice_selection,
-    get_frame_range,
-    get_channel_range,
-    trim_strips,
-    find_strips_in_range,
-)
+import bpy
+
+from .utils.doc import doc_brief, doc_description, doc_idname, doc_name
+from .utils.functions import find_strips_in_range, move_selection, trim_strips
 
 
 class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
@@ -39,7 +34,7 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
         "shortcuts": [
             (
                 {"type": "UP_ARROW", "value": "PRESS", "alt": True},
-                {"direction": "up"},
+                {"direction": "up", "trim_target_channel": False},
                 "Move to Open Channel Above",
             ),
             (
@@ -49,7 +44,7 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
             ),
             (
                 {"type": "DOWN_ARROW", "value": "PRESS", "alt": True},
-                {"direction": "down"},
+                {"direction": "down", "trim_target_channel": False},
                 "Move to Open Channel Below",
             ),
             (
@@ -79,35 +74,71 @@ class POWER_SEQUENCER_OT_channel_offset(bpy.types.Operator):
         description="Trim strips to make space in the target channel",
         default=False,
     )
+    keep_selection_offset: bpy.props.BoolProperty(
+        name="Keep selection offset",
+        description="The selected strips preserve their relative positions",
+        default=True,
+    )
 
     @classmethod
     def poll(cls, context):
         return context.selected_sequences
 
     def execute(self, context):
+
+        max_channel = 32
+        min_channel = 1
+
+        if self.direction == "up":
+            channel_offset = +1
+            limit_channel = max_channel
+            comparison_function = min
+
+        if self.direction == "down":
+            channel_offset = -1
+            limit_channel = min_channel
+            comparison_function = max
+
         selection = [s for s in context.selected_sequences if not s.lock]
+
         if not selection:
             return {"FINISHED"}
 
-        selection_blocks = slice_selection(context, selection)
-        for block in selection_blocks:
-            sequences = sorted(block, key=attrgetter("channel", "frame_final_start"))
-            frame_start, frame_end = get_frame_range(sequences)
-            channel_start, channel_end = get_channel_range(sequences)
+        sequences = sorted(selection, key=attrgetter("channel", "frame_final_start"))
+        if self.direction == "up":
+            sequences = [s for s in reversed(sequences)]
 
-            if self.trim_target_channel:
-                to_delete, to_trim = find_strips_in_range(frame_start, frame_end, context.sequences)
-                channel_trim = (
-                    channel_end + 1 if self.direction == "up" else max(1, channel_start - 1)
-                )
-                to_trim = [s for s in to_trim if s.channel == channel_trim]
-                to_delete = [s for s in to_delete if s.channel == channel_trim]
-                trim_strips(context, frame_start, frame_end, to_trim, to_delete)
+        head = sequences[0]
+        if not self.keep_selection_offset or (
+            head.channel != limit_channel and self.keep_selection_offset
+        ):
+            for s in sequences:
+                if self.trim_target_channel:
+                    channel_trim = s.channel + channel_offset
+                    strips_in_trim_channel = [
+                        sequence
+                        for sequence in context.sequences
+                        if (sequence.channel == channel_trim)
+                    ]
+                    if strips_in_trim_channel:
+                        to_delete, to_trim = find_strips_in_range(
+                            s.frame_final_start, s.frame_final_end, strips_in_trim_channel
+                        )
+                        trim_strips(
+                            context, s.frame_final_start, s.frame_final_end, to_trim, to_delete
+                        )
 
-            if self.direction == "up":
-                for s in reversed(sequences):
-                    s.channel += 1
-            elif self.direction == "down":
-                for s in sequences:
-                    s.channel = max(1, s.channel - 1)
+                if not self.keep_selection_offset:
+                    s.channel = comparison_function(limit_channel, s.channel + channel_offset)
+                    if s.channel == limit_channel:
+                        move_selection(context, [s], 0, 0)
+
+            if self.keep_selection_offset:
+                start_frame = head.frame_final_start
+                x_difference = 0
+                while not head.channel == limit_channel:
+                    move_selection(context, sequences, -x_difference, channel_offset)
+                    x_difference = head.frame_final_start - start_frame
+                    if x_difference == 0:
+                        break
         return {"FINISHED"}

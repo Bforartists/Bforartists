@@ -33,11 +33,7 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
         "demo": "",
         "description": doc_description(__doc__),
         "shortcuts": [
-            (
-                {"type": "E", "value": "PRESS", "ctrl": True},
-                {},
-                "Expand to Surrounding Cuts",
-            )
+            ({"type": "E", "value": "PRESS", "ctrl": True}, {}, "Expand to Surrounding Cuts",)
         ],
         "keymap": "Sequencer",
     }
@@ -68,37 +64,24 @@ class POWER_SEQUENCER_OT_expand_to_surrounding_cuts(bpy.types.Operator):
             sequences_frame_start = min(
                 sequences, key=lambda s: s.frame_final_start
             ).frame_final_start
-            sequences_frame_end = max(
-                sequences, key=lambda s: s.frame_final_end
-            ).frame_final_end
+            sequences_frame_end = max(sequences, key=lambda s: s.frame_final_end).frame_final_end
 
             frame_left, frame_right = find_closest_cuts(
                 context, sequences_frame_start, sequences_frame_end
             )
-            if (
-                sequences_frame_start == frame_left
-                and sequences_frame_end == frame_right
-            ):
+            if sequences_frame_start == frame_left and sequences_frame_end == frame_right:
                 continue
 
-            to_extend_left = [
-                s for s in sequences if s.frame_final_start == sequences_frame_start
-            ]
-            to_extend_right = [
-                s for s in sequences if s.frame_final_end == sequences_frame_end
-            ]
+            to_extend_left = [s for s in sequences if s.frame_final_start == sequences_frame_start]
+            to_extend_right = [s for s in sequences if s.frame_final_end == sequences_frame_end]
 
             for s in to_extend_left:
                 s.frame_final_start = (
-                    frame_left
-                    if frame_left < sequences_frame_start
-                    else sequences_frame_start
+                    frame_left if frame_left < sequences_frame_start else sequences_frame_start
                 )
             for s in to_extend_right:
                 s.frame_final_end = (
-                    frame_right
-                    if frame_right > sequences_frame_end
-                    else sequences_frame_end
+                    frame_right if frame_right > sequences_frame_end else sequences_frame_end
                 )
         return {"FINISHED"}
 
@@ -110,8 +93,6 @@ def find_closest_cuts(context, frame_min, frame_max):
     ).frame_final_end
     frame_right = min(
         context.sequences,
-        key=lambda s: s.frame_final_start
-        if s.frame_final_start >= frame_max
-        else 1000000,
+        key=lambda s: s.frame_final_start if s.frame_final_start >= frame_max else 1000000,
     ).frame_final_start
     return frame_left, frame_right

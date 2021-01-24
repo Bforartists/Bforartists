@@ -619,6 +619,7 @@ class CLIP_PT_tools_tracking(CLIP_PT_tracking_panel, Panel):
         row = col.row(align=True)
         row.label(text="Merge:")
         row.operator("clip.join_tracks", text="  Join Tracks", icon = "JOIN")
+        row.operator("clip.average_tracks", text="Average Tracks", icon = "AVERAGEISLANDSCALE")
 
 
 class CLIP_PT_tools_plane_tracking(CLIP_PT_tracking_panel, Panel):
@@ -1554,7 +1555,7 @@ class CLIP_MT_track_refine(Menu):
         props = layout.operator("clip.refine_markers", text="Backwards", icon='TRACKING_REFINE_BACKWARDS')
         props.backwards = True
 
-        props = layout.operator("clip.refine_markers", text="Fowards", icon='TRACKING_REFINE_FORWARDS')
+        props = layout.operator("clip.refine_markers", text="Forwards", icon='TRACKING_REFINE_FORWARDS')
         props.backwards = False
 
 
@@ -1618,6 +1619,7 @@ class CLIP_MT_track(Menu):
         layout.separator()
 
         layout.operator("clip.join_tracks", icon = "JOIN")
+        layout.operator("clip.average_tracks", icon = "AVERAGEISLANDSCALE")
 
         layout.separator()
 
@@ -1794,6 +1796,7 @@ class CLIP_MT_tracking_context_menu(Menu):
             layout.separator()
 
             layout.operator("clip.join_tracks", icon = "JOIN")
+            layout.operator("clip.average_tracks", icon = "AVERAGEISLANDSCALE")
 
             layout.separator()
 

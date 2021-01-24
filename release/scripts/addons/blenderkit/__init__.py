@@ -34,6 +34,7 @@ if "bpy" in locals():
     # modules with _bg are used for background computations in separate blender instance and that's why they don't need reload.
 
     append_link = reload(append_link)
+    asset_bar_op = reload(asset_bar_op)
     asset_inspector = reload(asset_inspector)
     autothumb = reload(autothumb)
     bg_blender = reload(bg_blender)
@@ -55,8 +56,19 @@ if "bpy" in locals():
     ui_panels = reload(ui_panels)
     upload = reload(upload)
     utils = reload(utils)
+
+    bl_ui_label = reload(bl_ui_label)
+    bl_ui_button = reload(bl_ui_button)
+    # bl_ui_checkbox = reload(bl_ui_checkbox)
+    # bl_ui_slider = reload(bl_ui_slider)
+    # bl_ui_up_down = reload(bl_ui_up_down)
+    bl_ui_drag_panel = reload(bl_ui_drag_panel)
+    bl_ui_draw_op = reload(bl_ui_draw_op)
+    # bl_ui_textbox = reload(bl_ui_textbox)
+
 else:
     from blenderkit import append_link
+    from blenderkit import asset_bar_op
     from blenderkit import asset_inspector
     from blenderkit import autothumb
     from blenderkit import bg_blender
@@ -78,6 +90,15 @@ else:
     from blenderkit import ui_panels
     from blenderkit import upload
     from blenderkit import utils
+
+    from blenderkit.bl_ui_widgets import bl_ui_label 
+    from blenderkit.bl_ui_widgets import bl_ui_button 
+    # from blenderkit.bl_ui_widgets import bl_ui_checkbox
+    # from blenderkit.bl_ui_widgets import bl_ui_slider
+    # from blenderkit.bl_ui_widgets import bl_ui_up_down
+    from blenderkit.bl_ui_widgets import bl_ui_drag_panel 
+    from blenderkit.bl_ui_widgets import bl_ui_draw_op 
+    # from blenderkit.bl_ui_widgets import bl_ui_textbox
 
 
 import os
@@ -1787,6 +1808,7 @@ def register():
     overrides.register_overrides()
     bkit_oauth.register()
     tasks_queue.register()
+    asset_bar_op.register()
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if user_preferences.use_timers:
@@ -1818,6 +1840,7 @@ def unregister():
     overrides.unregister_overrides()
     bkit_oauth.unregister()
     tasks_queue.unregister()
+    asset_bar_op.unregister()
 
     del bpy.types.Scene.blenderkit_models
     del bpy.types.Scene.blenderkit_scene
