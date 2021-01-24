@@ -905,6 +905,12 @@ class EnableAllQCDSlotsMenu(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.isolate_selected_objects_collections")
+        if context.mode == 'OBJECT':
+            layout.operator("view3d.disable_selected_objects_collections")
+
+        layout.separator()
+
         layout.operator("view3d.disable_all_non_qcd_slots")
         layout.operator("view3d.disable_all_collections")
 

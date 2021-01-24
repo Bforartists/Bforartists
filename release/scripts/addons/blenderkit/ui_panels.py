@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, ratings, utils, download, categories, icons, search, resolutions
+from blenderkit import paths, ratings, utils, download, categories, icons, search, resolutions, ui
 
 from bpy.types import (
     Panel
@@ -313,11 +313,19 @@ def draw_assetbar_show_hide(layout, props):
     else:
         icon = 'HIDE_ON'
         ttip = 'Click to Show Asset Bar'
-    op = layout.operator('view3d.blenderkit_asset_bar', text='', icon=icon)
-    op.keep_running = False
-    op.do_search = False
 
-    op.tooltip = ttip
+    preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if preferences.experimental_features:
+        op = layout.operator('view3d.blenderkit_asset_bar_widget', text = '', icon = icon)
+        op.keep_running = False
+        op.do_search = False
+        op.tooltip = ttip
+    else:
+        op = layout.operator('view3d.blenderkit_asset_bar', text='', icon=icon)
+        op.keep_running = False
+        op.do_search = False
+
+        op.tooltip = ttip
 
 
 def draw_panel_model_search(self, context):
@@ -403,7 +411,7 @@ class VIEW3D_PT_blenderkit_model_properties(Panel):
             draw_panel_model_rating(self, context)
 
             layout.label(text='Asset tools:')
-            draw_asset_context_menu(self, context, ad, from_panel=True)
+            draw_asset_context_menu(self.layout, context, ad, from_panel=True)
             # if 'rig' in ad['tags']:
             #     # layout.label(text = 'can make proxy')
             #     layout.operator('object.blenderkit_make_proxy', text = 'Make Armature proxy')
@@ -447,7 +455,7 @@ class NODE_PT_blenderkit_material_properties(Panel):
             draw_panel_material_ratings(self, context)
 
             layout.label(text='Asset tools:')
-            draw_asset_context_menu(self, context, ad, from_panel=True)
+            draw_asset_context_menu(self.layout, context, ad, from_panel=True)
             # if 'rig' in ad['tags']:
             #     # layout.label(text = 'can make proxy')
             #     layout.operator('object.blenderkit_make_proxy', text = 'Make Armature proxy')
@@ -934,7 +942,6 @@ class VIEW3D_PT_blenderkit_unified(Panel):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
         wm = bpy.context.window_manager
         layout = self.layout
-
         # layout.prop_tabs_enum(ui_props, "asset_type", icon_only = True)
 
         row = layout.row()
@@ -1122,8 +1129,7 @@ class BlenderKitWelcomeOperator(bpy.types.Operator):
         return wm.invoke_props_dialog(self)
 
 
-def draw_asset_context_menu(self, context, asset_data, from_panel=False):
-    layout = self.layout
+def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
     ui_props = context.scene.blenderkitUI
 
     author_id = str(asset_data['author'].get('id'))
@@ -1269,7 +1275,7 @@ def draw_asset_context_menu(self, context, asset_data, from_panel=False):
                 op.asset_id = asset_data['id']
                 op.state = 'rejected'
 
-        if author_id == str(profile['user']['id']):
+        if author_id == str(profile['user']['id']) or utils.profile_is_validator():
             layout.label(text='Management tools:')
 
             row = layout.row()
@@ -1277,6 +1283,7 @@ def draw_asset_context_menu(self, context, asset_data, from_panel=False):
             op = layout.operator('wm.blenderkit_fast_metadata', text='Fast Edit Metadata')
             op.asset_id = asset_data['id']
 
+        if author_id == str(profile['user']['id']):
             row = layout.row()
             row.operator_context = 'INVOKE_DEFAULT'
             op = row.operator('object.blenderkit_change_status', text='Delete')
@@ -1342,12 +1349,101 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
     def draw(self, context):
         ui_props = context.scene.blenderkitUI
 
-        # sr = bpy.context.scene['search results']
         sr = bpy.context.scene['search results']
         asset_data = sr[ui_props.active_index]
+        draw_asset_context_menu(self.layout, context, asset_data, from_panel=False)
 
-        draw_asset_context_menu(self, context, asset_data, from_panel=False)
+        # ui_props = context.scene.blenderkitUI
+        #
+        # sr = bpy.context.scene['search results']
+        # asset_data = sr[ui_props.active_index]
+        # layout = self.layout
+        # row = layout.row()
+        # split = row.split(factor=0.2)
+        # col = split.column()
+        # op = col.operator('view3d.asset_drag_drop')
+        # op.asset_search_index=ui_props.active_index
+        #
+        # draw_asset_context_menu(col, context, asset_data, from_panel=False)
+        # split = split.split(factor=0.3)
+        # col1 = split.column()
+        # box = col1.box()
+        # utils.label_multiline(box, asset_data['tooltip'])
+        # col2 = split.column()
+        #
+        # pcoll = icons.icon_collections["main"]
+        # my_icon = pcoll['test']
+        # row = col2.row()
+        # row.scale_y = 4
+        # row.template_icon(icon_value=my_icon.icon_id, scale=2.0)
+        # # col2.template_icon(icon_value=self.img.preview.icon_id, scale=10.0)
+        # box2 = col2.box()
+        #
+        # box2.label(text='and heere goes the rating')
+        # box2.label(text='************')
+        # box2.label(text='dadydadadada')
 
+class AssetPopupCard(bpy.types.Operator):
+    """Generate Cycles thumbnail for model assets"""
+    bl_idname = "wm.blenderkit_asset_popup"
+    bl_label = "BlenderKit asset popup"
+    # bl_options = {'REGISTER', 'INTERNAL'}
+    bl_options = {'REGISTER',}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def draw(self, context):
+        ui_props = context.scene.blenderkitUI
+
+        sr = bpy.context.scene['search results']
+        asset_data = sr[ui_props.active_index]
+        layout = self.layout
+        row = layout.row()
+        split = row.split(factor=0.2)
+        col = split.column()
+        op = col.operator('view3d.asset_drag_drop')
+        op.asset_search_index = ui_props.active_index
+        draw_asset_context_menu(col, context, asset_data, from_panel=False)
+        split = split.split(factor=0.5)
+        col1 = split.column()
+        box = col1.box()
+        utils.label_multiline(box,asset_data['tooltip'], width = 300)
+
+        col2 = split.column()
+
+
+        pcoll = icons.icon_collections["main"]
+        my_icon = pcoll['test']
+        col2.template_icon(icon_value=my_icon.icon_id, scale=20.0)
+        # col2.template_icon(icon_value=self.img.preview.icon_id, scale=10.0)
+        box2 = col2.box()
+
+        # draw_ratings(box2, context, asset_data)
+        box2.label(text = 'Ratings')
+        # print(tp, dir(tp))
+        # if not hasattr(self, 'first_draw'):# try to redraw because of template preview which needs update
+        #     for region in context.area.regions:
+        #         region.tag_redraw()
+        #     self.first_draw = True
+
+    def execute(self, context):
+        print('execute')
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        ui_props = context.scene.blenderkitUI
+        ui_props.draw_tooltip = False
+        sr = bpy.context.scene['search results']
+        asset_data = sr[ui_props.active_index]
+        self.img = ui.get_large_thumbnail_image(asset_data)
+        # self.tex = utils.get_hidden_texture(self.img)
+        # self.tex.update_tag()
+
+        bl_label  = asset_data['name']
+        return wm.invoke_props_dialog(self, width = 700)
 
 class OBJECT_MT_blenderkit_login_menu(bpy.types.Menu):
     bl_label = "BlenderKit login/signup:"
@@ -1435,8 +1531,8 @@ class UrlPopupDialog(bpy.types.Operator):
 
 
 class LoginPopupDialog(bpy.types.Operator):
-    """Generate Cycles thumbnail for model assets"""
-    bl_idname = "wm.blenderkit_url_dialog"
+    """Popup a dialog which enables the user to log in after being logged out automatically."""
+    bl_idname = "wm.blenderkit_login_dialog"
     bl_label = "BlenderKit login"
     bl_options = {'REGISTER', 'INTERNAL'}
 
@@ -1502,10 +1598,15 @@ def draw_panel_categories(self, context):
                 row = row.split(factor=.8, align=True)
             # row = split.split()
             ctext = '%s (%i)' % (c['name'], c['assetCount'])
-            op = row.operator('view3d.blenderkit_asset_bar', text=ctext)
-            op.do_search = True
-            op.keep_running = True
-            op.category = c['slug']
+
+            preferences = bpy.context.preferences.addons['blenderkit'].preferences
+            if preferences.experimental_features:
+                op = row.operator('view3d.blenderkit_asset_bar_widget', text=ctext)
+            else:
+                op = row.operator('view3d.blenderkit_asset_bar', text=ctext)
+                op.do_search = True
+                op.keep_running = True
+                op.category = c['slug']
             # TODO enable subcategories, now not working due to some bug on server probably
             if len(c['children']) > 0 and c['assetCount'] > 15:
                 # row = row.split()
@@ -1602,6 +1703,7 @@ classes = (
     # OBJECT_MT_blenderkit_resolution_menu,
     OBJECT_MT_blenderkit_asset_menu,
     OBJECT_MT_blenderkit_login_menu,
+    AssetPopupCard,
     UrlPopupDialog,
     BlenderKitWelcomeOperator,
 )
