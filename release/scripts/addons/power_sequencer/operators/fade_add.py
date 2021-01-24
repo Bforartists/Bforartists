@@ -51,10 +51,7 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     duration_seconds: bpy.props.FloatProperty(
-        name="Fade Duration",
-        description="Duration of the fade in seconds",
-        default=1.0,
-        min=0.01,
+        name="Fade Duration", description="Duration of the fade in seconds", default=1.0, min=0.01,
     )
     type: bpy.props.EnumProperty(
         items=[
@@ -98,12 +95,8 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
                 if s.frame_final_start < context.scene.frame_current < s.frame_final_end
             ]
 
-        max_duration = min(
-            sequences, key=lambda s: s.frame_final_duration
-        ).frame_final_duration
-        max_duration = (
-            floor(max_duration / 2.0) if self.type == "IN_OUT" else max_duration
-        )
+        max_duration = min(sequences, key=lambda s: s.frame_final_duration).frame_final_duration
+        max_duration = floor(max_duration / 2.0) if self.type == "IN_OUT" else max_duration
 
         faded_sequences = []
         for sequence in sequences:
@@ -113,15 +106,9 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
             if not self.is_long_enough(sequence, duration):
                 continue
 
-            animated_property = (
-                "volume" if hasattr(sequence, "volume") else "blend_alpha"
-            )
-            fade_fcurve = fade_find_or_create_fcurve(
-                context, sequence, animated_property
-            )
-            fades = self.calculate_fades(
-                sequence, fade_fcurve, animated_property, duration
-            )
+            animated_property = "volume" if hasattr(sequence, "volume") else "blend_alpha"
+            fade_fcurve = fade_find_or_create_fcurve(context, sequence, animated_property)
+            fades = self.calculate_fades(sequence, fade_fcurve, animated_property, duration)
             fade_animation_clear(context, fade_fcurve, fades)
             fade_animation_create(fade_fcurve, fades)
             faded_sequences.append(sequence)
@@ -129,9 +116,7 @@ class POWER_SEQUENCER_OT_fade_add(bpy.types.Operator):
         sequence_string = "sequence" if len(faded_sequences) == 1 else "sequences"
         self.report(
             {"INFO"},
-            "Added fade animation to {} {}.".format(
-                len(faded_sequences), sequence_string
-            ),
+            "Added fade animation to {} {}.".format(len(faded_sequences), sequence_string),
         )
         return {"FINISHED"}
 
@@ -232,13 +217,9 @@ class Fade:
 
         if type == "IN":
             self.start = Vector((sequence.frame_final_start, 0.0))
-            self.end = Vector(
-                (sequence.frame_final_start + self.duration, self.max_value)
-            )
+            self.end = Vector((sequence.frame_final_start + self.duration, self.max_value))
         elif type == "OUT":
-            self.start = Vector(
-                (sequence.frame_final_end - self.duration, self.max_value)
-            )
+            self.start = Vector((sequence.frame_final_end - self.duration, self.max_value))
             self.end = Vector((sequence.frame_final_end, 0.0))
 
     def calculate_max_value(self, sequence, fade_fcurve):
@@ -253,15 +234,11 @@ class Fade:
         else:
             if self.type == "IN":
                 fade_end = sequence.frame_final_start + self.duration
-                keyframes = (
-                    k for k in fade_fcurve.keyframe_points if k.co[0] >= fade_end
-                )
+                keyframes = (k for k in fade_fcurve.keyframe_points if k.co[0] >= fade_end)
             if self.type == "OUT":
                 fade_start = sequence.frame_final_end - self.duration
                 keyframes = (
-                    k
-                    for k in reversed(fade_fcurve.keyframe_points)
-                    if k.co[0] <= fade_start
+                    k for k in reversed(fade_fcurve.keyframe_points) if k.co[0] <= fade_start
                 )
             try:
                 max_value = next(keyframes).co[1]
@@ -275,6 +252,4 @@ class Fade:
 
 
 def calculate_duration_frames(context, duration_seconds):
-    return round(
-        duration_seconds * context.scene.render.fps / context.scene.render.fps_base
-    )
+    return round(duration_seconds * context.scene.render.fps / context.scene.render.fps_base)

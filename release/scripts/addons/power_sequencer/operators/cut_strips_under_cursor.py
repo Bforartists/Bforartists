@@ -30,9 +30,7 @@ class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
         "name": doc_name(__qualname__),
         "demo": "https://i.imgur.com/ZyEd0jD.gif",
         "description": doc_description(__doc__),
-        "shortcuts": [
-            ({"type": "K", "value": "PRESS"}, {}, "Cut All Strips Under Cursor")
-        ],
+        "shortcuts": [({"type": "K", "value": "PRESS"}, {}, "Cut All Strips Under Cursor")],
         "keymap": "Sequencer",
     }
     bl_idname = doc_idname(__qualname__)
@@ -66,10 +64,5 @@ class POWER_SEQUENCER_OT_split_strips_under_cursor(bpy.types.Operator):
                 deselect = False
         if deselect:
             bpy.ops.sequencer.select_all(action="DESELECT")
-        (
-            context.selected_sequences
-            or bpy.ops.power_sequencer.select_strips_under_cursor()
-        )
-        return bpy.ops.sequencer.split(
-            frame=context.scene.frame_current, side=self.side
-        )
+        (context.selected_sequences or bpy.ops.power_sequencer.select_strips_under_cursor())
+        return bpy.ops.sequencer.split(frame=context.scene.frame_current, side=self.side)

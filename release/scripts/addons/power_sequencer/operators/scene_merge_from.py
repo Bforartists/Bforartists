@@ -73,9 +73,7 @@ class POWER_SEQUENCER_OT_merge_from_scene_strip(bpy.types.Operator):
         context.window.scene = strip_scene
         bpy.ops.scene.delete()
         context.window.scene = start_scene
-        self.report(
-            type={"WARNING"}, message="Merged scenes lose all their animation data."
-        )
+        self.report(type={"WARNING"}, message="Merged scenes lose all their animation data.")
 
         return {"FINISHED"}
 

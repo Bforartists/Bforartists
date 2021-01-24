@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -9223,6 +9223,10 @@ msgid "Expand from 9 places"
 msgstr "Alttaki değerlere bağlı olarak (DupSta, DupEnd, DupOn, DupOff) nesne, dış hattı (yolu) izleyerek çoğaltılacaktır"
 
 
+msgid "Dot Product"
+msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
+
+
 msgid "Object Info"
 msgstr "Nesne Bilgisi"
 
@@ -9449,10 +9453,6 @@ msgstr "Doku Boyama"
 
 msgid "Vector Math"
 msgstr "Vektör Tutamak"
-
-
-msgid "Dot Product"
-msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
 
 msgid "Z Axis"
@@ -18629,10 +18629,6 @@ msgid "Add/Replace"
 msgstr "Varolanla Değiştir..."
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "Eğriyi buna Çevir"
-
-
 msgid "Radius of eraser 'brush'"
 msgstr "Fırça Kütüphanesi"
 
@@ -22410,36 +22406,6 @@ msgstr "Vekil Korumalıdır"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "Kısıtlamaları sil"
-
-
-msgctxt "Operator"
-msgid "Clear Before"
-msgstr "Kısıtlamaları sil"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "Geçerli Karenin Tersine"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "Yolu sil..."
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "Yolu sil..."
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "Geçerli Karenin Tersine"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "Konum"
 
@@ -22921,10 +22887,6 @@ msgstr "Yalnızca Görülen Yüzey"
 
 msgid "Only Insert Available"
 msgstr "Kullanılabilir yazıtiplerini göster"
-
-
-msgid "F-Curve Visibility"
-msgstr "F-Eğrisi Görünürlüğü"
 
 
 msgid "Mixing Buffer"

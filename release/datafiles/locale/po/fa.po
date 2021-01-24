@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Alpha (b'80e720ee4af4')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -11844,10 +11844,6 @@ msgid "Experimental"
 msgstr "ﯽﺸﯾﺎﻣﺯﺁ"
 
 
-msgid "Unselected F-Curve Visibility"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
-
-
 msgid "Built-in animation player"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ ﺶﺨﭘ ﻒﻗﻮﺗ"
 
@@ -13064,31 +13060,6 @@ msgstr "ﯽﺴﮐﻭﺮﭘ ﺖﺧﺎﺳ"
 
 
 msgctxt "Operator"
-msgid "Clear After"
-msgstr "ﺯﺍ ﺪﻌﺑ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
-msgctxt "Operator"
-msgid "Track Frame Backwards"
-msgstr "ﺐﻘﻋ ﻪﺑ ﻢﯾﺮﻓ ﯽﺑﺎﯾﺩﺭ"
-
-
-msgctxt "Operator"
-msgid "Track Backwards"
-msgstr "ﺐﻘﻋ ﻪﺑ ﯽﺑﺎﯾﺩﺭ"
-
-
-msgctxt "Operator"
-msgid "Track Forwards"
-msgstr "ﻮﻠﺟ ﻪﺑ ﯽﺑﺎﯾﺩﺭ"
-
-
-msgctxt "Operator"
-msgid "Track Frame Forwards"
-msgstr "ﺐﻘﻋ ﻪﺑ ﻢﯾﺮﻓ ﯽﺑﺎﯾﺩﺭ"
-
-
-msgctxt "Operator"
 msgid "Location"
 msgstr "ﯽﯾﺎﺠﺑﺎﺟ:"
 
@@ -13445,10 +13416,6 @@ msgstr "ﻥﻮﺘﯾﺎﭘ API ﻊﺟﺮﻣ"
 msgctxt "Operator"
 msgid "Report a Bug"
 msgstr "ﻝﺎﮑﺷﺍ ﮏﯾ ﺵﺭﺍﺰﮔ"
-
-
-msgid "F-Curve Visibility"
-msgstr "ﺪﯾﺩ"
 
 
 msgid "XYZ to RGB"

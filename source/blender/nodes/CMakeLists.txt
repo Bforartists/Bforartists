@@ -146,6 +146,7 @@ set(SRC
   geometry/nodes/node_geo_attribute_fill.cc
   geometry/nodes/node_geo_attribute_math.cc
   geometry/nodes/node_geo_attribute_mix.cc
+  geometry/nodes/node_geo_attribute_sample_texture.cc
   geometry/nodes/node_geo_attribute_randomize.cc
   geometry/nodes/node_geo_attribute_vector_math.cc
   geometry/nodes/node_geo_boolean.cc
@@ -308,6 +309,7 @@ set(SRC
   NOD_derived_node_tree.hh
   NOD_function.h
   NOD_geometry.h
+  NOD_geometry_exec.hh
   NOD_math_functions.hh
   NOD_node_tree_dependencies.hh
   NOD_node_tree_multi_function.hh
@@ -363,6 +365,13 @@ endif()
 
 if(WITH_OPENSUBDIV)
   add_definitions(-DWITH_OPENSUBDIV)
+endif()
+
+if(WITH_OPENVDB)
+  list(APPEND INC_SYS
+    ${OPENVDB_INCLUDE_DIRS}
+  )
+  add_definitions(-DWITH_OPENVDB ${OPENVDB_DEFINITIONS})
 endif()
 
 blender_add_lib(bf_nodes "${SRC}" "${INC}" "${INC_SYS}" "${LIB}")

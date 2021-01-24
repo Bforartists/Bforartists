@@ -32,11 +32,7 @@ class POWER_SEQUENCER_OT_snap(bpy.types.Operator):
         "demo": "",
         "description": doc_description(__doc__),
         "shortcuts": [
-            (
-                {"type": "S", "value": "PRESS", "shift": True},
-                {},
-                "Snap sequences to cursor",
-            )
+            ({"type": "S", "value": "PRESS", "shift": True}, {}, "Snap sequences to cursor",)
         ],
         "keymap": "Sequencer",
     }

@@ -78,16 +78,9 @@ class POWER_SEQUENCER_OT_trim_left_or_right_handles(bpy.types.Operator):
         frame_current = context.scene.frame_current
 
         # Only select sequences under the time cursor
-        sequences = (
-            context.selected_sequences
-            if context.selected_sequences
-            else context.sequences
-        )
+        sequences = context.selected_sequences if context.selected_sequences else context.sequences
         for s in sequences:
-            s.select = (
-                s.frame_final_start <= frame_current
-                and s.frame_final_end >= frame_current
-            )
+            s.select = s.frame_final_start <= frame_current and s.frame_final_end >= frame_current
         sequences = [s for s in sequences if s.select]
         if not sequences:
             return {"FINISHED"}

@@ -1790,20 +1790,21 @@ void OBJECT_OT_make_links_scene(wmOperatorType *ot)
 void OBJECT_OT_make_links_data(wmOperatorType *ot)
 {
   static const EnumPropertyItem make_links_items[] = {
-      {MAKE_LINKS_OBDATA, "OBDATA", ICON_LINK_DATA, "Object Data", ""},
-      {MAKE_LINKS_MATERIALS, "MATERIAL", ICON_LINK_DATA, "Materials", ""},
-      {MAKE_LINKS_ANIMDATA, "ANIMATION", ICON_LINK_DATA, "Animation Data", ""},
-      {MAKE_LINKS_GROUP, "GROUPS", ICON_LINK_DATA, "Collection", ""},
-      {MAKE_LINKS_DUPLICOLLECTION, "DUPLICOLLECTION", ICON_LINK_DATA, "Instance Collection", ""},
-      {MAKE_LINKS_MODIFIERS, "MODIFIERS", ICON_LINK_DATA, "Modifiers", ""},
-      {MAKE_LINKS_FONTS, "FONTS", ICON_LINK_DATA, "Fonts", ""},
-      {MAKE_LINKS_SHADERFX, "EFFECTS", ICON_SHADERFX, "Effects", ""},
+      {MAKE_LINKS_OBDATA, "OBDATA", ICON_LINK_DATA, "Object Data", "Replace assigned Object Data"},
+      {MAKE_LINKS_MATERIALS, "MATERIAL", ICON_LINK_DATA, "Materials", "Replace assigned Materials"},
+      {MAKE_LINKS_ANIMDATA, "ANIMATION", ICON_LINK_DATA, "Animation Data", "Replace assigned Animation Data"},
+      {MAKE_LINKS_GROUP, "GROUPS", ICON_LINK_DATA, "Collection", "Replace assigned Collections"},
+      {MAKE_LINKS_DUPLICOLLECTION, "DUPLICOLLECTION", ICON_LINK_DATA, "Instance Collection", "Replace assigned Collection Instance"},
+      {MAKE_LINKS_FONTS, "FONTS", ICON_OUTLINER_OB_FONT, "Link Fonts to Text", "Replace Text object Fonts"},
+      {0, "", 0, NULL, NULL},
+      {MAKE_LINKS_MODIFIERS, "MODIFIERS", ICON_LINK_DATA, "Modifiers", "Replace Modifiers"},
+      {MAKE_LINKS_SHADERFX, "EFFECTS", ICON_SHADERFX, "Copy Grease Pencil Effects", "Replace Grease Pencil Effects"},
       {0, NULL, 0, NULL, NULL},
   };
 
   /* identifiers */
-  ot->name = "Link Data";
-  ot->description = "Apply active object links to other selected objects";
+  ot->name = "Link/Transfer Data";
+  ot->description = "Transfer data from active object to selected objects";
   ot->idname = "OBJECT_OT_make_links_data";
 
   /* api callbacks */

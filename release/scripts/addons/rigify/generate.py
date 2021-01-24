@@ -172,6 +172,14 @@ class Generator(base_generate.BaseGenerator):
 
         bpy.ops.object.duplicate()
 
+        # Rename org bones in the temporary object
+        temp_obj = context.view_layer.objects.active
+
+        assert temp_obj and temp_obj != metarig
+
+        self.__freeze_driver_vars(temp_obj)
+        self.__rename_org_bones(temp_obj)
+
         # Select the target rig and join
         select_object(context, obj)
 
@@ -192,6 +200,9 @@ class Generator(base_generate.BaseGenerator):
             for track in obj.animation_data.nla_tracks:
                 obj.animation_data.nla_tracks.remove(track)
 
+
+    def __freeze_driver_vars(self, obj):
+        if obj.animation_data:
             # Freeze drivers referring to custom properties
             for d in obj.animation_data.drivers:
                 for var in d.driver.variables:
@@ -202,9 +213,7 @@ class Generator(base_generate.BaseGenerator):
                             tar.data_path = "RIGIFY-" + tar.data_path
 
 
-    def __rename_org_bones(self):
-        obj = self.obj
-
+    def __rename_org_bones(self, obj):
         #----------------------------------
         # Make a list of the original bones so we can keep track of them.
         original_bones = [bone.name for bone in obj.data.bones]
@@ -382,20 +391,12 @@ class Generator(base_generate.BaseGenerator):
             childs[child] = child.parent_bone
 
         #------------------------------------------
-        # Copy bones from metarig to obj
+        # Copy bones from metarig to obj (adds ORG_PREFIX)
         self.__duplicate_rig()
 
         obj.data.use_mirror_x = False
 
         t.tick("Duplicate rig: ")
-
-        #------------------------------------------
-        # Add the ORG_PREFIX to the original bones.
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        self.__rename_org_bones()
-
-        t.tick("Make list of org bones: ")
 
         #------------------------------------------
         # Put the rig_name in the armature custom properties

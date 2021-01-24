@@ -21,6 +21,9 @@ import bpy
 
 from .global_settings import SequenceTypes
 
+max_channel = 32
+min_channel = 1
+
 
 def calculate_distance(x1, y1, x2, y2):
     return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
@@ -34,10 +37,8 @@ def find_linked(context, sequences, selected_sequences):
     """
     Takes a list of sequences and returns a list of all the sequences
     and effects that are linked in time
-
     Args:
-    - sequences: a list of sequences
-
+        - sequences: a list of sequences
     Returns a list of all the linked sequences, but not the sequences passed to the function
     """
     start, end = get_frame_range(sequences, selected_sequences)
@@ -99,7 +100,7 @@ def find_sequences_after(context, sequence):
     """
     Finds the strips following the sequences passed to the function
     Args:
-    - Sequences, the sequences to check
+        - Sequences, the sequences to check
     Returns all the strips after the sequence in the current context
     """
     return [s for s in context.sequences if s.frame_final_start > sequence.frame_final_start]
@@ -133,12 +134,10 @@ def find_snap_candidate(context, frame=0):
 def find_strips_mouse(context, frame, channel, select_linked=False):
     """
     Finds a list of sequences to select based on the frame and channel the mouse cursor is at
-
     Args:
-    - frame: the frame the mouse or cursor is on
-    - channel: the channel the mouse is hovering
-    - select_linked: find and append the sequences linked in time if True
-
+        - frame: the frame the mouse or cursor is on
+        - channel: the channel the mouse is hovering
+        - select_linked: find and append the sequences linked in time if True
     Returns the sequence(s) under the mouse cursor as a list
     Returns an empty list if nothing found
     """
@@ -201,10 +200,9 @@ def get_mouse_frame_and_channel(context, event):
 def is_in_range(context, sequence, start, end):
     """
     Checks if a single sequence's start or end is in the range
-
     Args:
-    - sequence: the sequence to check for
-    - start, end: the start and end frames
+        - sequence: the sequence to check for
+        - start, end: the start and end frames
     Returns True if the sequence is within the range, False otherwise
     """
     s_start = sequence.frame_final_start
@@ -225,47 +223,32 @@ def set_preview_range(context, start, end):
     scene.frame_preview_end = end
 
 
-def slice_selection(context, sequences):
+def slice_selection(context, sequences, range_block=0):
     """
     Takes a list of sequences and breaks it down
     into multiple lists of connected sequences
-
     Returns a list of lists of sequences,
     each list corresponding to a block of sequences
     that are connected in time and sorted by frame_final_start
     """
-    # Find when 2 sequences are not connected in time
     if not sequences:
         return []
 
-    break_ids = [0]
-    sorted_sequences = sorted(sequences, key=attrgetter("frame_final_start"))
-    last_sequence = sorted_sequences[0]
-    last_biggest_frame_end = last_sequence.frame_final_end
-    index = 0
-    for s in sorted_sequences:
-        if s.frame_final_start > last_biggest_frame_end + 1:
-            break_ids.append(index)
-        last_biggest_frame_end = max(last_biggest_frame_end, s.frame_final_end)
-        last_sequence = s
-        index += 1
-
-    # Create lists
-    break_ids.append(len(sorted_sequences))
-    cuts_count = len(break_ids) - 1
+    # Indicates the index number of the lists from the "broken_selection" list
+    index = -1
+    block_end = 0
     broken_selection = []
-    index = 0
-    while index < cuts_count:
-        temp_list = []
-        index_range = range(break_ids[index], break_ids[index + 1] - 1)
-        if len(index_range) == 0:
-            temp_list.append(sorted_sequences[break_ids[index]])
-        else:
-            for counter in range(break_ids[index], break_ids[index + 1]):
-                temp_list.append(sorted_sequences[counter])
-        if temp_list:
-            broken_selection.append(temp_list)
-        index += 1
+    sorted_sequences = sorted(sequences, key=attrgetter("frame_final_start"))
+
+    for s in sorted_sequences:
+        if not broken_selection or (block_end + 1 + range_block < s.frame_final_start):
+            broken_selection.append([s])
+            block_end = s.frame_final_end
+            index += 1
+            continue
+        block_end = max(block_end, s.frame_final_end)
+        broken_selection[index].append(s)
+
     return broken_selection
 
 
@@ -278,8 +261,10 @@ def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
     trim_end = max(frame_start, frame_end)
 
     to_trim = [s for s in to_trim if s.type in SequenceTypes.CUTABLE]
+    initial_selection = context.selected_sequences
 
     for s in to_trim:
+        strips_in_target_channel = []
         # Cut strip longer than the trim range in three
         is_strip_longer_than_trim_range = (
             s.frame_final_start < trim_start and s.frame_final_end > trim_end
@@ -290,6 +275,13 @@ def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
             bpy.ops.sequencer.split(frame=trim_start, type="SOFT", side="RIGHT")
             bpy.ops.sequencer.split(frame=trim_end, type="SOFT", side="LEFT")
             to_delete.append(context.selected_sequences[0])
+            
+            for c in context.sequences:
+                if c.channel == s.channel:
+                    strips_in_target_channel.append(c)
+            
+            if s in initial_selection:
+                initial_selection.append(strips_in_target_channel[0])
             continue
 
         # Resize strips that overlap the trim range
@@ -298,20 +290,12 @@ def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
         elif s.frame_final_end > trim_start and s.frame_final_start < trim_start:
             s.frame_final_end = trim_start
 
-    delete_strips(to_delete)
-    return {"FINISHED"}
-
-
-def delete_strips(to_delete):
-    """
-    Deletes the list of sequences `to_delete`
-    """
-    if not to_delete:
-        return
-    bpy.ops.sequencer.select_all(action="DESELECT")
     for s in to_delete:
+        bpy.context.sequences.remove(s)
+
+    for s in initial_selection:
         s.select = True
-    bpy.ops.sequencer.delete()
+    return {"FINISHED"}
 
 
 def find_closest_surrounding_cuts(context, frame):
@@ -378,30 +362,7 @@ def ripple_move(context, sequences, duration_frames, delete=False):
     else:
         to_ripple = set(to_ripple + sequences)
 
-    # Use the built-in seq_slide operator to move strips, for best performances
-    initial_selection = context.selected_sequences
-    bpy.ops.sequencer.select_all(action="DESELECT")
-    for s in to_ripple:
-        s.select = True
-    bpy.ops.transform.seq_slide(value=(duration_frames, 0))
-    bpy.ops.sequencer.select_all(action="DESELECT")
-    for s in initial_selection:
-        s.select = True
-
-
-def apply_time_offset(context, sequences=[], offset=0):
-    """Offsets a list of sequences in time using bpy.ops.transform.seq_slide. Mutates and restores the
-    user's selection. Use this function to ensure maximum performances and avoid having to figure
-    out the logic to move strips in the right order.
-    """
-    selection = context.selected_sequences
-    bpy.ops.sequencer.select_all(action="DESELECT")
-    for s in sequences:
-        s.select = True
-    bpy.ops.transform.seq_slide(value=(offset, 0))
-    bpy.ops.sequencer.select_all(action="DESELECT")
-    for s in selection:
-        s.select = True
+    move_selection(context, to_ripple, duration_frames, 0)
 
 
 def find_strips_in_range(frame_start, frame_end, sequences, find_overlapping=True):
@@ -409,18 +370,18 @@ def find_strips_in_range(frame_start, frame_end, sequences, find_overlapping=Tru
     Returns a tuple of two lists: (strips_inside_range, strips_overlapping_range)
     strips_inside_range are strips entirely contained in the frame range.
     strips_overlapping_range are strips that only overlap the frame range.
-
     Args:
-    - frame_start, the start of the frame range
-    - frame_end, the end of the frame range
-    - sequences (optional): only work with these sequences.
-    If it doesn't receive any, the function works with all the sequences in the current context
-    - find_overlapping (optional): find and return a list of strips that overlap the
+        - frame_start, the start of the frame range
+        - frame_end, the end of the frame range
+        - sequences (optional): only work with these sequences.
+        If it doesn't receive any, the function works with all the sequences in the current context
+        - find_overlapping (optional): find and return a list of strips that overlap the
         frame range
-
     """
     strips_inside_range = []
     strips_overlapping_range = []
+    if not sequences:
+        sequences = bpy.context.sequences
     for s in sequences:
         if (
             frame_start <= s.frame_final_start <= frame_end
@@ -429,8 +390,8 @@ def find_strips_in_range(frame_start, frame_end, sequences, find_overlapping=Tru
             strips_inside_range.append(s)
         elif find_overlapping:
             if (
-                frame_start <= s.frame_final_end <= frame_end
-                or frame_start <= s.frame_final_start <= frame_end
+                frame_start < s.frame_final_end <= frame_end
+                or frame_start <= s.frame_final_start < frame_end
             ):
                 strips_overlapping_range.append(s)
 
@@ -438,3 +399,19 @@ def find_strips_in_range(frame_start, frame_end, sequences, find_overlapping=Tru
             if s.frame_final_start < frame_start and s.frame_final_end > frame_end:
                 strips_overlapping_range.append(s)
     return strips_inside_range, strips_overlapping_range
+
+
+def move_selection(context, sequences, frame_offset, channel_offset=0):
+    """Offsets the selected `sequences` horizontally and vertically and preserves
+    the current selected sequences.
+    """
+    if not sequences:
+        return
+    initial_selection = context.selected_sequences
+    bpy.ops.sequencer.select_all(action="DESELECT")
+    for s in sequences:
+        s.select = True
+    bpy.ops.transform.seq_slide(value=(frame_offset, channel_offset))
+    bpy.ops.sequencer.select_all(action="DESELECT")
+    for s in initial_selection:
+        s.select = True

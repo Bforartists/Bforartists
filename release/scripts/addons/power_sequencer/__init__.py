@@ -42,7 +42,7 @@ bl_info = {
     "blender": (2, 81, 0),
     "location": "Sequencer",
     "tracker_url": "https://github.com/GDquest/Blender-power-sequencer/issues",
-    "doc_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",
+    "wiki_url": "https://www.gdquest.com/docs/documentation/power-sequencer/",
     "support": "COMMUNITY",
     "category": "Sequencer",
 }
@@ -80,7 +80,7 @@ def register():
     keymaps = register_shortcuts(classes_operator)
     addon_keymaps += keymaps
 
-    # print("Registered {} with {} modules".format(bl_info["name"], len(modules)))
+    print("Registered {} with {} modules".format(bl_info["name"], len(modules)))
 
 
 def unregister():
@@ -104,4 +104,4 @@ def unregister():
     unregister_properties()
     unregister_handlers()
 
-    # print("Unregistered {}".format(bl_info["name"]))
+    print("Unregistered {}".format(bl_info["name"]))
