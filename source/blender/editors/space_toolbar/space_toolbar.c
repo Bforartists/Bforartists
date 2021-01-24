@@ -99,7 +99,7 @@ static void toolbar_main_area_draw(const bContext *C, ARegion *region)
 
   /* scrollers */
   UI_view2d_scrollers_draw(v2d, NULL);
-	
+
 }
 
 static void toolbar_header_area_init(wmWindowManager *UNUSED(wm), ARegion *region)
@@ -112,11 +112,10 @@ static void toolbar_header_area_draw(const bContext *C, ARegion *region)
 	ED_region_header(C, region);
 }
 
-static void toolbar_main_area_listener(wmWindow *UNUSED(win),
-                                       ScrArea *UNUSED(area),
-                                       ARegion *region,
-	wmNotifier *wmn, const Scene *UNUSED(scene))
+static void toolbar_main_area_listener(wmRegionListenerParams *params)
 {
+  ARegion *region = params->region;
+  wmNotifier *wmn = params->notifier;
 	// SpaceInfo *sinfo = sa->spacedata.first;
 
 	/* context changes */
@@ -130,11 +129,10 @@ static void toolbar_main_area_listener(wmWindow *UNUSED(win),
 	}
 }
 
-static void toolbar_header_listener(wmWindow *UNUSED(win),
-                                    ScrArea *UNUSED(area),
-                                    ARegion *region,
-	wmNotifier *wmn, const Scene *UNUSED(scene))
+static void toolbar_header_listener(wmRegionListenerParams *params)
 {
+  ARegion *region = params->region;
+  wmNotifier *wmn = params->notifier;
 	/* context changes */
 	switch (wmn->category) {
 	case NC_WM:
