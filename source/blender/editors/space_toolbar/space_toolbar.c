@@ -112,7 +112,7 @@ static void toolbar_header_area_draw(const bContext *C, ARegion *region)
 	ED_region_header(C, region);
 }
 
-static void toolbar_main_area_listener(wmRegionListenerParams *params)
+static void toolbar_main_area_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
   wmNotifier *wmn = params->notifier;
@@ -129,7 +129,7 @@ static void toolbar_main_area_listener(wmRegionListenerParams *params)
 	}
 }
 
-static void toolbar_header_listener(wmRegionListenerParams *params)
+static void toolbar_header_listener(const wmRegionListenerParams *params)
 {
   ARegion *region = params->region;
   wmNotifier *wmn = params->notifier;
