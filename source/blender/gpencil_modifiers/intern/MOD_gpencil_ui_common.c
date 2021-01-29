@@ -246,7 +246,6 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
   PointerRNA op_ptr;
   uiLayout *row;
   GpencilModifierData *md = (GpencilModifierData *)md_v;
-  const GpencilModifierTypeInfo *mti = BKE_gpencil_modifier_get_info(md->type);
 
   PointerRNA ptr;
   Object *ob = ED_object_active_context(C);
@@ -255,14 +254,6 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
 
   uiLayoutSetUnitsX(layout, 4.0f);
-
-  /* Apply. */
-  if (!(mti->flags & eGpencilModifierTypeFlag_NoApply)) {
-    uiItemO(layout,
-            CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
-            ICON_CHECKMARK,
-            "OBJECT_OT_gpencil_modifier_apply");
-  }
 
   /* Duplicate. */
   uiItemO(layout,
@@ -308,9 +299,10 @@ static void gpencil_modifier_ops_extra_draw(bContext *C, uiLayout *layout, void 
   }
 }
 
+/* bfa - Grease pencil modifiers - put apply into the header #2185 */
 static void gpencil_modifier_panel_header(const bContext *UNUSED(C), Panel *panel)
 {
-  uiLayout *row, *sub;
+  uiLayout *row, *sub, *op_row;
   uiLayout *layout = panel->layout;
 
   PointerRNA *ptr = UI_panel_custom_data_get(panel);
@@ -322,9 +314,9 @@ static void gpencil_modifier_panel_header(const bContext *UNUSED(C), Panel *pane
   bool narrow_panel = (panel->sizex < UI_UNIT_X * 9 && panel->sizex != 0);
 
   /* Modifier Icon. */
-  row = uiLayoutRow(layout, false);
-  if (mti->isDisabled && mti->isDisabled(md, 0)) {
-    uiLayoutSetRedAlert(row, true);
+row = uiLayoutRow(layout, false);
+if (mti->isDisabled && mti->isDisabled(md, 0)) {
+  uiLayoutSetRedAlert(row, true);
   }
   uiItemL(row, "", RNA_struct_ui_icon(ptr->type));
 
@@ -345,14 +337,19 @@ static void gpencil_modifier_panel_header(const bContext *UNUSED(C), Panel *pane
   uiItemR(row, ptr, "show_viewport", 0, "", ICON_NONE);
   uiItemR(row, ptr, "show_render", 0, "", ICON_NONE);
 
+  op_row = uiLayoutRow(layout, true);
+
+  /* Apply. */
+  if (!(mti->flags & eGpencilModifierTypeFlag_NoApply)) {
+    uiItemO(op_row, "", ICON_CHECKMARK, "OBJECT_OT_gpencil_modifier_apply");
+  }
+
   /* Extra operators. */
   // row = uiLayoutRow(layout, true);
-  uiItemMenuF(row, "", ICON_DOWNARROW_HLT, gpencil_modifier_ops_extra_draw, md);
+  uiItemMenuF(op_row, "", ICON_DOWNARROW_HLT, gpencil_modifier_ops_extra_draw, md);
 
   /* Remove button. */
-  sub = uiLayoutRow(row, true);
-  uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
-  uiItemO(sub, "", ICON_X, "OBJECT_OT_gpencil_modifier_remove");
+  uiItemO(op_row, "", ICON_X, "OBJECT_OT_gpencil_modifier_remove");
 
   /* Extra padding. */
   uiItemS(layout);
