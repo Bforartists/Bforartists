@@ -619,22 +619,23 @@ static int node_group_separate_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
-static int node_group_separate_invoke(bContext *C,
-                                      wmOperator *UNUSED(op),
-                                      const wmEvent *UNUSED(event))
-{
-  uiPopupMenu *pup = UI_popup_menu_begin(
-      C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Separate"), ICON_NONE);
-  uiLayout *layout = UI_popup_menu_layout(pup);
+/* Not used by BFA */
+// static int node_group_separate_invoke(bContext *C,
+//                                       wmOperator *UNUSED(op),
+//                                       const wmEvent *UNUSED(event))
+// {
+//   uiPopupMenu *pup = UI_popup_menu_begin(
+//       C, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Separate"), ICON_NONE);
+//   uiLayout *layout = UI_popup_menu_layout(pup);
 
-  uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
-  uiItemEnumO(layout, "NODE_OT_group_separate", NULL, 0, "type", NODE_GS_COPY);
-  uiItemEnumO(layout, "NODE_OT_group_separate", NULL, 0, "type", NODE_GS_MOVE);
+//   uiLayoutSetOperatorContext(layout, WM_OP_EXEC_DEFAULT);
+//   uiItemEnumO(layout, "NODE_OT_group_separate", NULL, 0, "type", NODE_GS_COPY);
+//   uiItemEnumO(layout, "NODE_OT_group_separate", NULL, 0, "type", NODE_GS_MOVE);
 
-  UI_popup_menu_end(C, pup);
+//   UI_popup_menu_end(C, pup);
 
-  return OPERATOR_INTERFACE;
-}
+//   return OPERATOR_INTERFACE;
+// }
 
 void NODE_OT_group_separate(wmOperatorType *ot)
 {
