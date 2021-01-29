@@ -1736,7 +1736,7 @@ static void node_draw_basis(const bContext *C,
     /* Relation */
     case CMP_NODE_SWITCH:
       icon = ICON_SWITCH_DIRECTION;
-
+      break;
     /*Geometry Node Editor */
     case FN_NODE_BOOLEAN_MATH:
       icon = ICON_BOOLEAN_MATH;
