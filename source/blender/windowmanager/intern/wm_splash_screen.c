@@ -72,23 +72,24 @@ static void wm_block_close(bContext *C, void *arg_block, void *UNUSED(arg))
   UI_popup_block_close(C, win, arg_block);
 }
 
-static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
-{
-  if (!(label && label[0])) {
-    return;
-  }
+/* Not used by BFA */
+// static void wm_block_splash_add_label(uiBlock *block, const char *label, int x, int y)
+// {
+//   if (!(label && label[0])) {
+//     return;
+//   }
 
-  UI_block_emboss_set(block, UI_EMBOSS_NONE);
+//   UI_block_emboss_set(block, UI_EMBOSS_NONE);
 
-  uiBut *but = uiDefBut(
-      block, UI_BTYPE_LABEL, 0, label, 0, y, x, UI_UNIT_Y, NULL, 0, 0, 0, 0, NULL);
-  UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
-  UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
+//   uiBut *but = uiDefBut(
+//       block, UI_BTYPE_LABEL, 0, label, 0, y, x, UI_UNIT_Y, NULL, 0, 0, 0, 0, NULL);
+//   UI_but_drawflag_disable(but, UI_BUT_TEXT_LEFT);
+//   UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
 
-  /* 1 = UI_SELECT, internal flag to draw in white. */
-  UI_but_flag_enable(but, 1);
-  UI_block_emboss_set(block, UI_EMBOSS);
-}
+//   /* 1 = UI_SELECT, internal flag to draw in white. */
+//   UI_but_flag_enable(but, 1);
+//   UI_block_emboss_set(block, UI_EMBOSS);
+// }
 
 #ifndef WITH_HEADLESS
 static void wm_block_splash_image_roundcorners_add(ImBuf *ibuf)
