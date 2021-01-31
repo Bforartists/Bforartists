@@ -275,11 +275,11 @@ def trim_strips(context, frame_start, frame_end, to_trim, to_delete=[]):
             bpy.ops.sequencer.split(frame=trim_start, type="SOFT", side="RIGHT")
             bpy.ops.sequencer.split(frame=trim_end, type="SOFT", side="LEFT")
             to_delete.append(context.selected_sequences[0])
-            
+
             for c in context.sequences:
                 if c.channel == s.channel:
                     strips_in_target_channel.append(c)
-            
+
             if s in initial_selection:
                 initial_selection.append(strips_in_target_channel[0])
             continue

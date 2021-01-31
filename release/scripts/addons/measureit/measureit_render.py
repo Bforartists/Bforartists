@@ -112,7 +112,7 @@ def render_main(self, context, animation=False):
             rfborder = scene.measureit_rf_border
             rfline = scene.measureit_rf_line
 
-            bgl.glLineWidth(rfline)
+            imm_set_line_width(rfline)
             x1 = rfborder
             x2 = width - rfborder
             y1 = int(ceil(rfborder / (width / height)))

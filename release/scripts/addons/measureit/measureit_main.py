@@ -1984,7 +1984,6 @@ def draw_main(context):
     # -----------------------
     # restore opengl defaults
     # -----------------------
-    bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
 
 

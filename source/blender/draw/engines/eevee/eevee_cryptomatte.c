@@ -161,6 +161,14 @@ void EEVEE_cryptomatte_output_init(EEVEE_ViewLayerData *UNUSED(sldata),
     g_data->cryptomatte_download_buffer = MEM_malloc_arrayN(
         sizeof(float), buffer_size * num_cryptomatte_layers, __func__);
   }
+  else {
+    /* During multiview rendering the `cryptomatte_accum_buffer` is deallocated after all views
+     * have been rendered. Clear it here to be reused by the next view. */
+    memset(g_data->cryptomatte_accum_buffer,
+           0,
+           buffer_size * eevee_cryptomatte_pixel_stride(view_layer) *
+               sizeof(EEVEE_CryptomatteSample));
+  }
 
   DRW_texture_ensure_fullscreen_2d(&txl->cryptomatte, format, 0);
   GPU_framebuffer_ensure_config(&fbl->cryptomatte_fb,
@@ -355,7 +363,7 @@ static void eevee_cryptomatte_download_buffer(EEVEE_Data *vedata, GPUFrameBuffer
                              download_buffer);
 
   /* Integrate download buffer into the accum buffer.
-   * The download buffer contains upto 3 floats per pixel (one float per cryptomatte layer.
+   * The download buffer contains up to 3 floats per pixel (one float per cryptomatte layer.
    *
    * NOTE: here we deviate from the cryptomatte standard. During integration the standard always
    * sort the samples by its weight to make sure that samples with the lowest weight

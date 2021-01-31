@@ -88,17 +88,16 @@ static int add_marker_exec(bContext *C, wmOperator *op)
   MovieClip *clip = ED_space_clip_get_clip(sc);
   float pos[2];
 
+  ClipViewLockState lock_state;
+  ED_clip_view_lock_state_store(C, &lock_state);
+
   RNA_float_get_array(op->ptr, "location", pos);
 
   if (!add_marker(C, pos[0], pos[1])) {
     return OPERATOR_CANCELLED;
   }
 
-  /* Reset offset from locked position, so frame jumping wouldn't be so
-   * confusing.
-   */
-  sc->xlockof = 0;
-  sc->ylockof = 0;
+  ED_clip_view_lock_state_restore_no_jump(C, &lock_state);
 
   WM_event_add_notifier(C, NC_MOVIECLIP | NA_EDITED, clip);
 
@@ -244,8 +243,6 @@ static int delete_track_exec(bContext *C, wmOperator *UNUSED(op))
       changed = true;
     }
   }
-  /* Nothing selected now, unlock view so it can be scrolled nice again. */
-  sc->flag &= ~SC_LOCK_SELECTION;
   if (changed) {
     WM_event_add_notifier(C, NC_MOVIECLIP | NA_EDITED, clip);
   }
@@ -312,11 +309,6 @@ static int delete_marker_exec(bContext *C, wmOperator *UNUSED(op))
         changed = true;
       }
     }
-  }
-
-  if (!has_selection) {
-    /* Nothing selected now, unlock view so it can be scrolled nice again. */
-    sc->flag &= ~SC_LOCK_SELECTION;
   }
 
   if (!changed) {
@@ -1223,13 +1215,6 @@ static int hide_tracks_exec(bContext *C, wmOperator *op)
   }
   if (act_plane_track != NULL && act_plane_track->flag & TRACK_HIDDEN) {
     clip->tracking.act_plane_track = NULL;
-  }
-
-  if (unselected == 0) {
-    /* No selection on screen now, unlock view so it can be
-     * scrolled nice again.
-     */
-    sc->flag &= ~SC_LOCK_SELECTION;
   }
 
   BKE_tracking_dopesheet_tag_update(tracking);

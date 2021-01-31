@@ -39,7 +39,19 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
+
 shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR') if not bpy.app.background else None
+shader_line = gpu.shader.from_builtin('3D_POLYLINE_UNIFORM_COLOR') if not bpy.app.background else None
+
+imm_line_width = 1.0
+imm_viewport = (0, 0)
+
+def imm_set_line_width(width):
+    global imm_line_width, imm_viewport
+    region = bpy.context.region
+    imm_viewport = (region.width, region.height)
+
+    imm_line_width = width
 
 # -------------------------------------------------------------
 # Draw segments
@@ -327,9 +339,9 @@ def draw_segments(context, myobj, op, region, rv3d):
                     # colour + line setup
                     # ------------------------------------
                     if ovr is False:
-                        bgl.glLineWidth(ms.glwidth)
+                        imm_set_line_width(ms.glwidth)
                     else:
-                        bgl.glLineWidth(ovrline)
+                        imm_set_line_width(ovrline)
 
                     # ------------------------------------
                     # Text (distance)
@@ -877,15 +889,17 @@ def draw_text(myobj, pos2d, display_text, rgba, fsize, align='L', text_rot=0.0):
 #
 # -------------------------------------------------------------
 def draw_line(v1, v2, rgba):
-    coords = [(v1[0], v1[1]), (v2[0], v2[1])]
-    batch = batch_for_shader(shader, 'LINES', {"pos": coords})
+    coords = [(v1[0], v1[1], 0), (v2[0], v2[1], 0)]
+    batch = batch_for_shader(shader_line, 'LINES', {"pos": coords})
 
     # noinspection PyBroadException
     try:
         if v1 is not None and v2 is not None:
-            shader.bind()
-            shader.uniform_float("color", rgba)
-            batch.draw(shader)
+            shader_line.bind()
+            shader_line.uniform_float("color", rgba)
+            shader_line.uniform_float("lineWidth", imm_line_width)
+            shader_line.uniform_float("viewportSize", imm_viewport)
+            batch.draw(shader_line)
     except:
         pass
 
@@ -1180,7 +1194,7 @@ def draw_faces(context, myobj, region, rv3d):
             a_p2 = (a_p1[0] + normal[0] * ln, a_p1[1] + normal[1] * ln, a_p1[2] + normal[2] * ln)
             # line setup
             bgl.glEnable(bgl.GL_BLEND)
-            bgl.glLineWidth(th)
+            imm_set_line_width(th)
             # converting to screen coordinates
             txtpoint2d = get_2d_point(region, rv3d, a_p1)
             point2 = get_2d_point(region, rv3d, a_p2)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -35442,6 +35442,10 @@ msgid "Object Info"
 msgstr "오브젝트 정보"
 
 
+msgid "Original"
+msgstr "원본"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "프레임"
@@ -43130,10 +43134,6 @@ msgstr "타이밍을 무시"
 
 msgid "Simple linear timing"
 msgstr "심플 선형 타이밍"
-
-
-msgid "Original"
-msgstr "원본"
 
 
 msgid "Use the original timing, gaps included"
@@ -56811,10 +56811,6 @@ msgstr "현재 선택을 교체"
 msgctxt "Operator"
 msgid "Set Selected Strip Proxies"
 msgstr "선택된 스트립 플록시를 설정"
-
-
-msgid "Enable selected proxies on all selected Movie, Image and Meta strips"
-msgstr "선택한 모든 무비, 이미지 및 메타 스트립에서 선택된 프록시를 사용"
 
 
 msgctxt "Operator"

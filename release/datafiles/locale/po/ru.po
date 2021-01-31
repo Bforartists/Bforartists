@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -35186,6 +35186,10 @@ msgid "Object Info"
 msgstr "Информация об объекте"
 
 
+msgid "Original"
+msgstr "Оригинал"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Рамка"
@@ -42736,10 +42740,6 @@ msgstr "Игнорировать время"
 
 msgid "Simple linear timing"
 msgstr "Простое линейное время"
-
-
-msgid "Original"
-msgstr "Оригинал"
 
 
 msgid "Use the original timing, gaps included"
@@ -56340,10 +56340,6 @@ msgstr "Заменить текущее выделение"
 msgctxt "Operator"
 msgid "Set Selected Strip Proxies"
 msgstr "Установить прокси выделенных дорожек"
-
-
-msgid "Enable selected proxies on all selected Movie, Image and Meta strips"
-msgstr "Включить выбранные прокси для всех выделенных дорожек видео, изображений и мета-дорожек"
 
 
 msgctxt "Operator"

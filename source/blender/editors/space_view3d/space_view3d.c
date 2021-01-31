@@ -53,6 +53,7 @@
 #include "BKE_screen.h"
 #include "BKE_workspace.h"
 
+#include "ED_render.h"
 #include "ED_screen.h"
 #include "ED_space_api.h"
 #include "ED_transform.h"
@@ -468,16 +469,30 @@ static bool view3d_drop_in_main_region_poll(bContext *C, const wmEvent *event)
   return ED_region_overlap_isect_any_xy(area, &event->x) == false;
 }
 
-static ID *view3d_drop_id_in_main_region_poll_id(bContext *C,
-                                                 wmDrag *drag,
-                                                 const wmEvent *event,
-                                                 ID_Type id_type)
+static ID_Type view3d_drop_id_in_main_region_poll_get_id_type(bContext *C,
+                                                              wmDrag *drag,
+                                                              const wmEvent *event)
 {
-  ScrArea *area = CTX_wm_area(C);
+  const ScrArea *area = CTX_wm_area(C);
+
   if (ED_region_overlap_isect_any_xy(area, &event->x)) {
-    return NULL;
+    return 0;
   }
-  return view3d_drop_in_main_region_poll(C, event) ? WM_drag_get_local_ID(drag, id_type) : NULL;
+  if (!view3d_drop_in_main_region_poll(C, event)) {
+    return 0;
+  }
+
+  ID *local_id = WM_drag_get_local_ID(drag, 0);
+  if (local_id) {
+    return GS(local_id->name);
+  }
+
+  wmDragAsset *asset_drag = WM_drag_get_asset_data(drag, 0);
+  if (asset_drag) {
+    return asset_drag->id_type;
+  }
+
+  return 0;
 }
 
 static bool view3d_drop_id_in_main_region_poll(bContext *C,
@@ -489,7 +504,7 @@ static bool view3d_drop_id_in_main_region_poll(bContext *C,
     return false;
   }
 
-  return WM_drag_get_local_ID(drag, id_type) || WM_drag_get_asset_data(drag, id_type);
+  return WM_drag_is_ID_type(drag, id_type);
 }
 
 static bool view3d_ob_drop_poll(bContext *C,
@@ -521,9 +536,9 @@ static bool view3d_object_data_drop_poll(bContext *C,
                                          const wmEvent *event,
                                          const char **r_tooltip)
 {
-  ID *id = view3d_drop_id_in_main_region_poll_id(C, drag, event, 0);
-  if (id != NULL) {
-    if (BKE_object_obdata_to_type(id) != -1) {
+  ID_Type id_type = view3d_drop_id_in_main_region_poll_get_id_type(C, drag, event);
+  if (id_type) {
+    if (OB_DATA_SUPPORT_ID(id_type)) {
       *r_tooltip = TIP_("Create object instance from object-data");
       return true;
     }
@@ -544,7 +559,7 @@ static bool view3d_ima_drop_poll(bContext *C,
     return (ELEM(drag->icon, 0, ICON_FILE_IMAGE, ICON_FILE_MOVIE));
   }
 
-  return WM_drag_get_local_ID(drag, ID_IM) || WM_drag_get_asset_data(drag, ID_IM);
+  return WM_drag_is_ID_type(drag, ID_IM);
 }
 
 static bool view3d_ima_bg_is_camera_view(bContext *C)
@@ -628,7 +643,7 @@ static void view3d_id_drop_copy(wmDrag *drag, wmDropBox *drop)
 
 static void view3d_id_drop_copy_with_type(wmDrag *drag, wmDropBox *drop)
 {
-  ID *id = WM_drag_get_local_ID(drag, 0);
+  ID *id = WM_drag_get_local_ID_or_import_from_asset(drag, 0);
 
   RNA_string_set(drop->ptr, "name", id->name + 2);
   RNA_enum_set(drop->ptr, "type", GS(id->name));
@@ -785,6 +800,7 @@ static void *view3d_main_region_duplicate(void *poin)
 
 static void view3d_main_region_listener(const wmRegionListenerParams *params)
 {
+  wmWindow *window = params->window;
   ScrArea *area = params->area;
   ARegion *region = params->region;
   wmNotifier *wmn = params->notifier;
@@ -1004,11 +1020,17 @@ static void view3d_main_region_listener(const wmRegionListenerParams *params)
         if (wmn->subtype == NS_VIEW3D_GPU) {
           rv3d->rflag |= RV3D_GPULIGHT_UPDATE;
         }
-#ifdef WITH_XR_OPENXR
         else if (wmn->subtype == NS_VIEW3D_SHADING) {
+#ifdef WITH_XR_OPENXR
           ED_view3d_xr_shading_update(G_MAIN->wm.first, v3d, scene);
-        }
 #endif
+
+          ViewLayer *view_layer = WM_window_get_active_view_layer(window);
+          Depsgraph *depsgraph = BKE_scene_get_depsgraph(scene, view_layer);
+          if (depsgraph) {
+            ED_render_view3d_update(depsgraph, window, area, true);
+          }
+        }
         ED_region_tag_redraw(region);
         WM_gizmomap_tag_refresh(gzmap);
       }
