@@ -2780,11 +2780,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_showhide")
         layout.menu("VIEW3D_MT_object_cleanup")
 
-        # Potrace lib dependency
-        if bpy.app.build_options.potrace:
-            layout.separator()
-            layout.operator("gpencil.trace_image", icon = "FILE_IMAGE")
-
         if obj is None:
             pass
 
@@ -2921,25 +2916,6 @@ class VIEW3D_MT_object(Menu):
             if light.type in ['SPOT', 'SUN', 'AREA']:
                 props = layout.operator("object.transform_axis_target", text="Interactive Light Track", icon = "NODE_LIGHTPATH")
 
-class VIEW3D_MT_object_convert(Menu):
-    bl_label = "Convert To"
-
-    def draw(self, context):
-        layout = self.layout
-
-        obj = context.object
-
-        layout.operator_enum("object.convert", "target")
-
-        # check if object exists at all.
-        if obj is not None and obj.type == 'GPENCIL':
-
-            layout.separator()
-
-            layout.operator("gpencil.convert", text="Gpencil to Path", icon = "CURVE_PATH").type = 'PATH'
-            layout.operator("gpencil.convert", text="Gpencil to Bezier Curves", icon = "OUTLINER_DATA_CURVE").type = 'CURVE'
-            layout.operator("gpencil.convert", text="Gpencil to Mesh", icon = "OUTLINER_DATA_MESH").type = 'POLY'
-
 
 class VIEW3D_MT_object_animation(Menu):
     bl_label = "Animation"
@@ -3031,29 +3007,24 @@ class VIEW3D_MT_object_context_menu(Menu):
 
         if obj is None:
             pass
-        elif obj.type == 'MESH':
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
-
-            layout.operator_context = 'INVOKE_DEFAULT'
-            # If more than one object is selected
-            if selected_objects_len > 1:
-                layout.operator("object.join", icon = "JOIN")
-
-            layout.separator()
 
         elif obj.type == 'CAMERA':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
+        elif obj.type == 'CAMERA':
+            layout.operator_context = 'INVOKE_REGION_WIN'
+
+            layout.operator("view3d.object_as_camera", text="Set Active Camera")
+
             if obj.data.type == 'PERSP':
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle", icon = "LENS_ANGLE")
+                props = layout.operator("wm.context_modal_mouse", text="Adjust Focal Length", icon = "LENS_ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.lens"
                 props.input_scale = 0.1
                 if obj.data.lens_unit == 'MILLIMETERS':
-                    props.header_text = "Camera Lens Angle: %.1fmm"
+                    props.header_text = "Camera Focal Length: %.1fmm"
                 else:
-                    props.header_text = "Camera Lens Angle: %.1f\u00B0"
+                    props.header_text = "Camera Focal Length: %.1f\u00B0"
 
             else:
                 props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale", icon = "LENS_SCALE")
@@ -3066,28 +3037,28 @@ class VIEW3D_MT_object_context_menu(Menu):
                 if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
                     props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                 else:
-                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
+                    props = layout.operator("wm.context_modal_mouse", text="Adjust Focus Distance", icon = "DOF")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.dof_distance"
                     props.input_scale = 0.02
-                    props.header_text = "DOF Distance: %.3f"
+                    props.header_text = "Focus Distance: %.3f"
 
             layout.separator()
 
         elif obj.type in {'CURVE', 'FONT'}:
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Extrude Size", icon = "EXTRUDESIZE")
+            props = layout.operator("wm.context_modal_mouse", text="Adjust Extrusion", icon = "EXTRUDESIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.extrude"
             props.input_scale = 0.01
-            props.header_text = "Extrude Size: %.3f"
+            props.header_text = "Extrude: %.3f"
 
-            props = layout.operator("wm.context_modal_mouse", text="Width Size", icon = "WIDTH_SIZE")
+            props = layout.operator("wm.context_modal_mouse", text="Adjust Offset", icon = "WIDTH_SIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.offset"
             props.input_scale = 0.01
-            props.header_text = "Width Size: %.3f"
+            props.header_text = "Offset: %.3f"
 
             layout.separator()
 
@@ -3109,44 +3080,56 @@ class VIEW3D_MT_object_context_menu(Menu):
         elif obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size", icon = "DRAWSIZE")
+            props = layout.operator("wm.context_modal_mouse", text="Adjust Empty Display Size", icon = "DRAWSIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "empty_display_size"
             props.input_scale = 0.01
-            props.header_text = "Empty Draw Size: %.3f"
+            props.header_text = "Empty Display Size: %.3f"
 
             layout.separator()
+
+            if obj.empty_display_type == 'IMAGE':
+                layout.operator("gpencil.trace_image", icon = "FILE_IMAGE")
+
+                layout.separator()
 
         elif obj.type == 'LIGHT':
             light = obj.data
 
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Power", icon = "LIGHT_STRENGTH")
+            props = layout.operator("wm.context_modal_mouse", text="Adjust Light Power", icon = "LIGHT_STRENGTH")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.energy"
+            props.input_scale = 1.0
             props.header_text = "Light Power: %.3f"
 
             if light.type == 'AREA':
-                props = layout.operator("wm.context_modal_mouse", text="Size X", icon = "LIGHT_SIZE")
+                props = layout.operator("wm.context_modal_mouse", text="Adjust Area Light X Size", icon = "LIGHT_SIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.size"
                 props.header_text = "Light Size X: %.3f"
 
                 if light.shape in {'RECTANGLE', 'ELLIPSE'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Size Y", icon = "LIGHT_SIZE")
+                    props = layout.operator("wm.context_modal_mouse", text="Adjust Area Light Y Size", icon = "LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.size_y"
                     props.header_text = "Light Size Y: %.3f"
 
+                else:
+                    props = layout.operator("wm.context_modal_mouse", text="Adjust Area Light Size", icon = "LIGHT_SIZE")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.size"
+                    props.header_text = "Light Size: %.3f"
+
             elif light.type in {'SPOT', 'POINT'}:
-                props = layout.operator("wm.context_modal_mouse", text="Radius", icon = "RADIUS")
+                props = layout.operator("wm.context_modal_mouse", text="Adjust Light Radius", icon = "RADIUS")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.shadow_soft_size"
                 props.header_text = "Light Radius: %.3f"
 
             elif light.type == 'SUN':
-                props = layout.operator("wm.context_modal_mouse", text="Angle", icon = "ANGLE")
+                props = layout.operator("wm.context_modal_mouse", text="Adjust Sun Light Angle", icon = "ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.angle"
                 props.header_text = "Light Angle: %.3f"
@@ -3154,13 +3137,13 @@ class VIEW3D_MT_object_context_menu(Menu):
             if light.type == 'SPOT':
                 layout.separator()
 
-                props = layout.operator("wm.context_modal_mouse", text="Spot Size", icon = "LIGHT_SIZE")
+                props = layout.operator("wm.context_modal_mouse", text="Adjust Spot Light Size", icon = "LIGHT_SIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_size"
                 props.input_scale = 0.01
                 props.header_text = "Spot Size: %.2f"
 
-                props = layout.operator("wm.context_modal_mouse", text="Spot Blend", icon = "SPOT_BLEND")
+                props = layout.operator("wm.context_modal_mouse", text="Adjust Spot Light Blend", icon = "SPOT_BLEND")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.spot_blend"
                 props.input_scale = -0.01
@@ -3171,6 +3154,35 @@ class VIEW3D_MT_object_context_menu(Menu):
 
             layout.separator()
 
+        # Shared among some object types.
+        if obj is not None:
+            if obj.type in {'MESH', 'CURVE', 'SURFACE'}:
+                layout.operator("object.shade_smooth", text="Shade Smooth")
+                layout.operator("object.shade_flat", text="Shade Flat")
+
+                layout.separator()
+
+            if obj.type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'GPENCIL'}:
+                if selected_objects_len > 1:
+                    layout.operator("object.join")
+
+            if obj.type in {'MESH', 'CURVE', 'SURFACE', 'POINTCLOUD', 'META', 'FONT'}:
+                layout.operator_menu_enum("object.convert", "target")
+
+            if obj.type == 'GPENCIL':
+                layout.operator_menu_enum("gpencil.convert", "type", text="Convert To")
+
+            if (
+                    obj.type in {'MESH', 'CURVE', 'SURFACE', 'GPENCIL', 'LATTICE', 'ARMATURE', 'META'} or
+                    (obj.type == 'EMPTY' and obj.instance_collection is not None)
+            ):
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.operator_menu_enum("object.origin_set", text="Set Origin", property="type")
+                layout.operator_context = 'INVOKE_DEFAULT'
+
+                layout.separator()
+
+        # Shared among all object types
         layout.operator("view3d.copybuffer", text="Copy Objects", icon='COPYDOWN')
         layout.operator("view3d.pastebuffer", text="Paste Objects", icon='PASTEDOWN')
 
@@ -3402,6 +3414,23 @@ class VIEW3D_MT_make_single_user(Menu):
         props = layout.operator("object.make_single_user", text="Object Animation", icon='MAKE_SINGLE_USER')
         props.animation = True
         props.object = props.obdata = props.material = False
+
+
+class VIEW3D_MT_object_convert(Menu):
+    bl_label = "Convert"
+
+    def draw(self, context):
+        layout = self.layout
+        ob = context.active_object
+
+        if ob and ob.type == 'GPENCIL' and context.gpencil_data:
+            layout.operator_enum("gpencil.convert", "type")
+        else:
+            layout.operator_enum("object.convert", "target")
+
+        # Potrace lib dependency.
+        if bpy.app.build_options.potrace:
+            layout.operator("gpencil.trace_image", icon='OUTLINER_OB_GREASEPENCIL')
 
 
 class VIEW3D_MT_make_links(Menu):
@@ -7744,19 +7773,22 @@ class VIEW3D_PT_overlay_edit_mesh(Panel):
         overlay = view.overlay
         display_all = overlay.show_overlays
 
+        is_any_solid_shading = not (shading.show_xray or (shading.type == 'WIREFRAME'))
+
         col = layout.column()
         col.active = display_all
 
         split = col.split()
 
         sub = split.column()
-        sub.active = not ((shading.type == 'WIREFRAME') or shading.show_xray)
+        sub.active = is_any_solid_shading
         row = sub.row()
         row.separator()
         row.prop(overlay, "show_edges", text="Edges")
         sub = split.column()
         sub.prop(overlay, "show_faces", text="Faces")
         sub = split.column()
+        sub.active = is_any_solid_shading
         sub.prop(overlay, "show_face_center", text="Center")
 
         row = col.row(align=True)

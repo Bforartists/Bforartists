@@ -22,6 +22,7 @@ from bpy.props import (
         BoolProperty,
         EnumProperty,
         StringProperty,
+        PointerProperty,
         # IntProperty,
         )
 
@@ -32,6 +33,8 @@ def get_addon_prefs():
     addon_name = os.path.splitext(__name__)[0]
     addon_prefs = bpy.context.preferences.addons[addon_name].preferences
     return (addon_prefs)
+
+from .timeline_scrub import GPTS_timeline_settings, draw_ts_pref
 
 ## Addons Preferences Update Panel
 def update_panel(self, context):
@@ -48,8 +51,10 @@ def auto_rebind(self, context):
     register_keymaps()
 
 class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
-    bl_idname = os.path.splitext(__name__)[0]#'greasepencil-addon' ... __package__ ?
+    bl_idname = os.path.splitext(__name__)[0] #'greasepencil-addon' ... __package__ ?
     # bl_idname = __name__
+
+    ts: PointerProperty(type=GPTS_timeline_settings)
 
     category : StringProperty(
             name="Category",
@@ -69,13 +74,13 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         name='Use click drag directly on points',
         description="Change the active tool to 'tweak' during modal, Allow to direct clic-drag points of the box",
         default=True)
-    
+
     default_deform_type : EnumProperty(
         items=(('KEY_LINEAR', "Linear (perspective mode)", "Linear interpolation, like corner deform / perspective tools of classic 2D", 'IPO_LINEAR',0),
                ('KEY_BSPLINE', "Spline (smooth deform)", "Spline interpolation transformation\nBest when lattice is subdivided", 'IPO_CIRC',1),
                ),
         name='Starting Interpolation', default='KEY_LINEAR', description='Choose default interpolation when entering mode')
-    
+
     # About interpolation : https://docs.blender.org/manual/en/2.83/animation/shape_keys/shape_keys_panel.html#fig-interpolation-type
 
     auto_swap_deform_type : BoolProperty(
@@ -107,7 +112,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             ('MIDDLEMOUSE', 'Mid click', 'Use click on Mid mouse button', 'MOUSE_MMB', 2),
             ),
         update=auto_rebind)
-    
+
     use_shift: BoolProperty(
             name = "combine with shift",
             description = "add shift",
@@ -127,14 +132,15 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             update=auto_rebind)
 
     def draw(self, context):
+            prefs = get_addon_prefs()
             layout = self.layout
             # layout.use_property_split = True
             row= layout.row(align=True)
             row.prop(self, "pref_tabs", expand=True)
 
             if self.pref_tabs == 'PREF':
-                
-                ## TAB CATEGORY 
+
+                ## TAB CATEGORY
                 box = layout.box()
                 row = box.row(align=True)
                 row.label(text="Panel Category:")
@@ -147,7 +153,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 # box.separator()
                 box.prop(self, "default_deform_type")
                 box.label(text="Deformer type can be changed during modal with 'M' key, this is for default behavior", icon='INFO')
-                
+
                 box.prop(self, "auto_swap_deform_type")
                 box.label(text="Once 'M' is hit, auto swap is desactivated to stay in your chosen mode", icon='INFO')
 
@@ -158,7 +164,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                 box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
 
                 if self.canvas_use_shortcut:
-                    
+
                     row = box.row()
                     row.label(text="(Auto rebind when changing shortcut)")#icon=""
                     # row.operator("prefs.rebind_shortcut", text='Bind/Rebind shortcuts', icon='FILE_REFRESH')#EVENT_SPACEKEY
@@ -176,6 +182,9 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
                     box.label(text="view3d.rotate_canvas")
                 box.prop(self, 'canvas_use_hud')
 
+                ## SCRUB TIMELINE
+                box = layout.box()
+                draw_ts_pref(prefs.ts, box)
 
             if self.pref_tabs == 'TUTO':
 
@@ -236,12 +245,19 @@ def unregister_keymaps():
 
 ### REGISTER ---
 
+classes = (
+    GPTS_timeline_settings,
+    GreasePencilAddonPrefs,
+)
+
 def register():
-    bpy.utils.register_class(GreasePencilAddonPrefs)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     # Force box deform running to false
     bpy.context.preferences.addons[os.path.splitext(__name__)[0]].preferences.boxdeform_running = False
     register_keymaps()
 
 def unregister():
     unregister_keymaps()
-    bpy.utils.unregister_class(GreasePencilAddonPrefs)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)

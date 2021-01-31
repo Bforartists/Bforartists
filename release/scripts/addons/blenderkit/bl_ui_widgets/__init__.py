@@ -16,7 +16,7 @@ from bpy.props import *
 addon_keymaps = []
 
 def register():
-    
+
     bpy.utils.register_class(DP_OT_draw_operator)
     kcfg = bpy.context.window_manager.keyconfigs.addon
     if kcfg:
@@ -29,8 +29,8 @@ def unregister():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
-   
+
     bpy.utils.unregister_class(DP_OT_draw_operator)
-    
+
 if __name__ == "__main__":
     register()

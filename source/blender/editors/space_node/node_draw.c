@@ -1155,7 +1155,15 @@ static void node_draw_basis(const bContext *C,
   rctf *rct = &node->totr;
   UI_draw_roundbox_corner_set(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT);
   UI_draw_roundbox_aa(
-      true, rct->xmin, rct->ymax - NODE_DY, rct->xmax, rct->ymax, BASIS_RAD, color);
+      &(const rctf){
+          .xmin = rct->xmin,
+          .xmax = rct->xmax,
+          .ymin = rct->ymax - NODE_DY,
+          .ymax = rct->ymax,
+      },
+      true,
+      BASIS_RAD,
+      color);
 
   /* show/hide icons */
   float iconofs = rct->xmax - 0.35f * U.widget_unit;
@@ -1957,7 +1965,15 @@ static void node_draw_basis(const bContext *C,
 
   UI_draw_roundbox_corner_set(UI_CNR_BOTTOM_LEFT | UI_CNR_BOTTOM_RIGHT);
   UI_draw_roundbox_aa(
-      true, rct->xmin, rct->ymin, rct->xmax, rct->ymax - NODE_DY, BASIS_RAD, color);
+      &(const rctf){
+          .xmin = rct->xmin,
+          .xmax = rct->xmax,
+          .ymin = rct->ymin,
+          .ymax = rct->ymax - NODE_DY,
+      },
+      true,
+      BASIS_RAD,
+      color);
 
   /* outline active and selected emphasis */
   if (node->flag & SELECT) {
@@ -1965,7 +1981,16 @@ static void node_draw_basis(const bContext *C,
         (node->flag & NODE_ACTIVE) ? TH_ACTIVE : TH_SELECT, 0, -40, color);
 
     UI_draw_roundbox_corner_set(UI_CNR_ALL);
-    UI_draw_roundbox_aa(false, rct->xmin, rct->ymin, rct->xmax, rct->ymax, BASIS_RAD, color);
+    UI_draw_roundbox_aa(
+        &(const rctf){
+            .xmin = rct->xmin,
+            .xmax = rct->xmax,
+            .ymin = rct->ymin,
+            .ymax = rct->ymax,
+        },
+        false,
+        BASIS_RAD,
+        color);
   }
 
   /* disable lines */
@@ -2020,14 +2045,14 @@ static void node_draw_hidden(const bContext *C,
     UI_GetThemeColor4fv(color_id, color);
   }
 
-  UI_draw_roundbox_aa(true, rct->xmin, rct->ymin, rct->xmax, rct->ymax, hiddenrad, color);
+  UI_draw_roundbox_aa(rct, true, hiddenrad, color);
 
   /* outline active and selected emphasis */
   if (node->flag & SELECT) {
     UI_GetThemeColorShadeAlpha4fv(
         (node->flag & NODE_ACTIVE) ? TH_ACTIVE : TH_SELECT, 0, -40, color);
 
-    UI_draw_roundbox_aa(false, rct->xmin, rct->ymin, rct->xmax, rct->ymax, hiddenrad, color);
+    UI_draw_roundbox_aa(rct, false, hiddenrad, color);
   }
 
   /* custom color inline */
@@ -2035,14 +2060,17 @@ static void node_draw_hidden(const bContext *C,
     GPU_blend(GPU_BLEND_ALPHA);
     GPU_line_smooth(true);
 
-    UI_draw_roundbox_3fv_alpha(false,
-                               rct->xmin + 1,
-                               rct->ymin + 1,
-                               rct->xmax - 1,
-                               rct->ymax - 1,
-                               hiddenrad,
-                               node->color,
-                               1.0f);
+    UI_draw_roundbox_3fv_alpha(
+        &(const rctf){
+            .xmin = rct->xmin + 1,
+            .xmax = rct->xmax - 1,
+            .ymin = rct->ymin + 1,
+            .ymax = rct->ymax - 1,
+        },
+        false,
+        hiddenrad,
+        node->color,
+        1.0f);
 
     GPU_line_smooth(false);
     GPU_blend(GPU_BLEND_NONE);
@@ -2341,7 +2369,7 @@ static void draw_group_overlay(const bContext *C, ARegion *region)
 
   UI_GetThemeColorShadeAlpha4fv(TH_NODE_GROUP, 0, 0, color);
   UI_draw_roundbox_corner_set(UI_CNR_NONE);
-  UI_draw_roundbox_4fv(true, rect.xmin, rect.ymin, rect.xmax, rect.ymax, 0, color);
+  UI_draw_roundbox_4fv(&rect, true, 0, color);
   GPU_blend(GPU_BLEND_NONE);
 
   /* set the block bounds to clip mouse events from underlying nodes */

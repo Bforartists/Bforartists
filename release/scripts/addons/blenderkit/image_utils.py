@@ -87,5 +87,3 @@ def generate_hdr_thumbnail():
         inew.scale(thumbnailWidth, thumbnailHeight)
 
     img_save_as(inew, filepath=inew.filepath)
-
-
