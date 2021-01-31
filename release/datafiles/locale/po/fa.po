@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -5973,6 +5973,10 @@ msgid "Object Info"
 msgstr "ﯽﺷ ﺕﺎﻋﻼ﻿ﻃﺍ"
 
 
+msgid "Original"
+msgstr "ﯽﻠﺻﺍ"
+
+
 msgid "Label Font Size"
 msgstr "ﺎﻫ‌ﺖﻧﻮﻓ:"
 
@@ -7653,10 +7657,6 @@ msgstr "ﯽﺸﯾﺍﺮﯾﻭ ﺖﻟﺎﺣ"
 
 msgid "Simple linear timing"
 msgstr "ﺖﮐﺮﺣ"
-
-
-msgid "Original"
-msgstr "ﯽﻠﺻﺍ"
 
 
 msgid "Custom Gaps"

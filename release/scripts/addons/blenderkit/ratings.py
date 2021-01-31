@@ -429,7 +429,7 @@ class FastRateMenu(Operator):
         scene = bpy.context.scene
         ui_props = scene.blenderkitUI
         if ui_props.active_index > -1:
-            sr = bpy.context.scene['search results']
+            sr = bpy.context.window_manager['search results']
             asset_data = dict(sr[ui_props.active_index])
             self.asset_id = asset_data['id']
             self.asset_type = asset_data['assetType']
@@ -448,7 +448,7 @@ def rating_menu_draw(self, context):
     layout = self.layout
 
     ui_props = context.scene.blenderkitUI
-    sr = bpy.context.scene['search results orig']
+    sr = bpy.context.window_manager['search results orig']
 
     asset_search_index = ui_props.active_index
     if asset_search_index > -1:

@@ -73,22 +73,22 @@ def updatetextures(objekti): # Update 3DC textures
 
 def testi(objekti, texture_info, index_mat_name, uv_MODE_mat, mat_index):
     if uv_MODE_mat == 'UV':
-        
+
         uv_set_founded = False
         for uvset in objekti.data.uv_layers:
-          
+
             if(uvset.name == texture_info):
                 uv_set_founded = True
-               
+
                 break
-            
+
         if(uv_set_founded):
             for uv_poly in objekti.data.uv_layers[texture_info].id_data.polygons:
                 if(mat_index == uv_poly.material_index):
                     return True
         else:
             return False
-            
+
     elif uv_MODE_mat == 'MAT':
         return (texture_info == index_mat_name)
 
@@ -113,18 +113,18 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures, udi
         if(udim_textures == False):
             for slot_index, texture_info in enumerate(texturelist):
 
-                uv_MODE_mat = 'MAT' 
+                uv_MODE_mat = 'MAT'
                 for index, layer in enumerate(objekti.data.uv_layers):
                     if(layer.name == texturelist[slot_index][0]):
                         uv_MODE_mat = 'UV'
                         break
 
-                
+
                 if(testi(objekti, texturelist[slot_index][0], index_mat.name, uv_MODE_mat, ind)) :
                     if (os.path.isfile(texture_info[3])):
                         if texture_info[2] == 'color' or texture_info[2] == 'diffuse':
                             if(index_mat.material.coat3D_diffuse):
-                                
+
                                 texcoat['color'].append(texture_info[3])
                                 create_nodes = True
                             else:
@@ -187,7 +187,7 @@ def readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures, udi
                                 os.remove(texture_info[3])
 
                         create_group_node = True
-              
+
 
         else:
             for texture_info in texturelist:
@@ -281,8 +281,8 @@ def createnodes(active_mat,texcoat, create_group_node, objekti, ind, is_new, udi
             act_material = node.node_tree
             applink_tree = node
             break
-    
-    
+
+
     for node in act_material.nodes:
         if (node.type != 'GROUP'):
             if (node.type != 'GROUP_OUTPUT'):
@@ -312,7 +312,7 @@ def createnodes(active_mat,texcoat, create_group_node, objekti, ind, is_new, udi
                         bring_alpha = False
                         updateimage.update(texcoat, 'alpha', node, udim_textures, udim_len)
 
-                    
+
         elif (node.type == 'GROUP' and node.name.startswith('3DC_')):
             if (node.name == '3DC_color'):
                 bring_color = False
@@ -481,12 +481,12 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
     load_image = True
 
     for image in bpy.data.images:
-        
+
         if(os.path.normpath(texcoat[type['name']][0]) == os.path.normpath(image.filepath)):
 
             load_image = False
             node.image = image
-            
+
             if(udim_textures):
                 node.image.source = 'TILED'
                 for udim_index in udim_len:
@@ -494,7 +494,7 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
                         node.image.tiles.new(udim_index)
 
             node.image.reload()
-         
+
             break
 
     if (load_image):
@@ -508,7 +508,7 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
             if (udim_index != 1001):
                 node.image.tiles.new(udim_index)
 
-    
+
     if node.image and type['colorspace'] == 'noncolor':
         node.image.colorspace_settings.is_data = True
 
@@ -567,7 +567,7 @@ def CreateTextureLine(type, act_material, main_mat, texcoat, coat3D, notegroup, 
                     if(material.name == '3DC_Emission'):
                         main_material.links.new(applink_tree.outputs[type['input']], material.inputs[0])
                         break
-      
+
         uv_node.location = node.location
         uv_node.location[0] -= 300
         uv_node.location[1] -= 200
@@ -660,19 +660,19 @@ def matlab(objekti,mat_list,texturelist,is_new):
     if(is_new):
         RemoveFbxNodes(objekti)
 
-    updatetextures(objekti) 
+    updatetextures(objekti)
 
-    # Count udim tiles 
+    # Count udim tiles
 
     if(texturelist != []):
-    
+
         udim_textures = False
         udim_count = 0
         udim_indexs = []
 
         if texturelist[0][0].startswith('10') and  len(texturelist[0][0]) == 4:
             udim_textures = True
-        
+
             udim_target = ''
             udim_target  = texturelist[0][2]
             for texture in texturelist:
@@ -680,7 +680,7 @@ def matlab(objekti,mat_list,texturelist,is_new):
                     udim_indexs.append(int(texture[0]))
 
             udim_indexs.sort() # sort tiles list -> 1001, 1002, 1003...
-        
+
         # Main loop for creating nodes
 
         readtexturefolder(objekti, mat_list, texturelist, is_new, udim_textures, udim_indexs)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -4461,8 +4461,20 @@ msgid "Enable self collisions"
 msgstr "自身との衝突を有効にします"
 
 
+msgid "Collision Vertex Group"
+msgstr "コリジョン頂点グループ"
+
+
+msgid "Triangles with all vertices in this group are not used during object collisions"
+msgstr "このグループ内の全頂点の三角面はオブジェクトの衝突判定に使用されません"
+
+
 msgid "Selfcollision Vertex Group"
-msgstr "セルフコリジョンを行う頂点グループ"
+msgstr "セルフコリジョン頂点グループ"
+
+
+msgid "Triangles with all vertices in this group are not used during self collisions"
+msgstr "このグループ内の全頂点の三角面はセルフコリジョンに使用されません"
 
 
 msgid "Cloth Settings"
@@ -6093,75 +6105,75 @@ msgstr "true に設定で、逆行列の再計算をリクエストします"
 
 
 msgid "Location X"
-msgstr "位置X"
+msgstr "位置 X"
 
 
 msgid "Use X Location of Parent"
-msgstr "親のX位置を使用"
+msgstr "親の X 位置を使用"
 
 
 msgid "Location Y"
-msgstr "位置Y"
+msgstr "位置 Y"
 
 
 msgid "Use Y Location of Parent"
-msgstr "親のY位置を使用"
+msgstr "親の Y 位置を使用"
 
 
 msgid "Location Z"
-msgstr "位置Z"
+msgstr "位置 Z"
 
 
 msgid "Use Z Location of Parent"
-msgstr "親のZ位置を使用"
+msgstr "親の Z 位置を使用"
 
 
 msgid "Rotation X"
-msgstr "回転X"
+msgstr "回転 X"
 
 
 msgid "Use X Rotation of Parent"
-msgstr "親のX回転を使用"
+msgstr "親の X 回転を使用"
 
 
 msgid "Rotation Y"
-msgstr "回転Y"
+msgstr "回転 Y"
 
 
 msgid "Use Y Rotation of Parent"
-msgstr "親のY回転を使用"
+msgstr "親の Y 回転を使用"
 
 
 msgid "Rotation Z"
-msgstr "回転Z"
+msgstr "回転 Z"
 
 
 msgid "Use Z Rotation of Parent"
-msgstr "親のZ回転を使用"
+msgstr "親の Z 回転を使用"
 
 
 msgid "Scale X"
-msgstr "拡縮X"
+msgstr "スケール X"
 
 
 msgid "Use X Scale of Parent"
-msgstr "親の拡縮Xを使用"
+msgstr "親のスケール X を使用"
 
 
 msgid "Scale Y"
-msgstr "拡縮Y"
+msgstr "スケール Y"
 
 
 msgid "Use Y Scale of Parent"
-msgstr "親の拡縮Yを使用"
+msgstr "親のスケール Y を使用"
 
 
 msgid "Scale Z"
-msgstr "拡縮Z"
+msgstr "スケール Z"
 
 
 msgid "Use Z Scale of Parent"
-msgstr "親の拡縮Zを使用"
+msgstr "親のスケール Z を使用"
 
 
 msgid "Clamp To Constraint"
@@ -6403,15 +6415,15 @@ msgstr "廃止予定：コピーされた回転に元の回転を追加します
 
 
 msgid "Copy the target's X rotation"
-msgstr "ターゲットのX回転をコピーします"
+msgstr "ターゲットの X 回転をコピーします"
 
 
 msgid "Copy the target's Y rotation"
-msgstr "ターゲットのY回転をコピーします"
+msgstr "ターゲットの Y 回転をコピーします"
 
 
 msgid "Copy the target's Z rotation"
-msgstr "ターゲットのZ回転をコピーします"
+msgstr "ターゲットの Z 回転をコピーします"
 
 
 msgid "Copy Scale Constraint"
@@ -30865,6 +30877,10 @@ msgid "Clean Up"
 msgstr "クリーンアップ"
 
 
+msgid "Track Motion"
+msgstr "トラックモーション"
+
+
 msgid "Refine"
 msgstr "絞り込み"
 
@@ -40356,8 +40372,32 @@ msgid "Geometry Node"
 msgstr "ジオメトリノード"
 
 
+msgid "Align Rotation to Vector"
+msgstr "回転をベクトルに整列"
+
+
+msgid "Axis to align to the vector"
+msgstr "ベクトルに回転を揃える軸"
+
+
+msgid "Align the X axis with the vector"
+msgstr "X 軸をベクトルに揃えます"
+
+
+msgid "Align the Y axis with the vector"
+msgstr "Y 軸をベクトルに揃えます"
+
+
+msgid "Align the Z axis with the vector"
+msgstr "Z 軸をベクトルに揃えます"
+
+
 msgid "Input Type Factor"
-msgstr "入力タイプ係数"
+msgstr "入力タイプ（係数）"
+
+
+msgid "Input Type Vector"
+msgstr "入力タイプ（ベクトル）"
 
 
 msgid "Attribute Color Ramp"
@@ -40390,6 +40430,10 @@ msgstr "属性ミックス"
 
 msgid "Attribute Randomize"
 msgstr "属性ランダム化"
+
+
+msgid "Attribute Vector Math"
+msgstr "属性ベクトル演算"
 
 
 msgid "Entry-wise multiply"
@@ -40500,24 +40544,32 @@ msgid "Object Info"
 msgstr "オブジェクト情報"
 
 
+msgid "Original"
+msgstr "オリジナル"
+
+
 msgid "Point Distribute"
-msgstr "ポイント散乱"
+msgstr "ポイント配置"
 
 
 msgid "Distribution Method"
-msgstr "散乱方法"
+msgstr "配置方法"
 
 
 msgid "Method to use for scattering points"
-msgstr "ポイント散乱に使用される方法"
+msgstr "ポイント配置に使用される方法"
 
 
 msgid "Distribute points randomly on the surface"
-msgstr "表面上にポイントをランダムに散乱します"
+msgstr "サーフェス上にポイントをランダムに配置します"
 
 
 msgid "Poisson Disk"
 msgstr "ポアソンディスク"
+
+
+msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
+msgstr "各ポイント間で最低距離を取りつつ、ポイントをサーフェス上にランダムに配置します"
 
 
 msgid "Point Instance"
@@ -40529,11 +40581,35 @@ msgstr "全ポイントに単一オブジェクトをインスタンス化（複
 
 
 msgid "Instance an entire collection on all points"
-msgstr "全ポイントにコレクション全体をインスタンス化（複製）します"
+msgstr "全ポイントにコレクションの内容をインスタンス化（複製）します"
+
+
+msgid "Instance entire collection on each point"
+msgstr "ポイント毎にコレクション全体をインスタンス化（複製）します"
+
+
+msgid "Point Scale"
+msgstr "ポイントスケール"
+
+
+msgid "Input Type"
+msgstr "入力タイプ"
 
 
 msgid "Point Separate"
 msgstr "ポイント分離"
+
+
+msgid "Point Translate"
+msgstr "ポイント移動"
+
+
+msgid "Point Rotate"
+msgstr "ポイント回転"
+
+
+msgid "Input Type Angle"
+msgstr "入力タイプ（角度）"
 
 
 msgid "Input Type Axis"
@@ -40562,6 +40638,10 @@ msgstr "回転を表現するのに使用する方法"
 
 msgid "Rotate around an axis by an angle"
 msgstr "単一の軸を中心に角度で回転します"
+
+
+msgid "Rotate around the X, Y, and Z axes"
+msgstr "X、Y、Z 軸を中心に回転します"
 
 
 msgctxt "NodeTree"
@@ -41927,8 +42007,12 @@ msgid "Subpath used for this slot"
 msgstr "このスロットで使用されるサブパス"
 
 
+msgid "Save as Render"
+msgstr "レンダーとして保存"
+
+
 msgid "Apply render part of display transform when saving byte image"
-msgstr "非OpenEXR画像保存時、レンダリング表示変換を適用します"
+msgstr "バイト画像の保存時、表示変換のレンダー部分を適用します"
 
 
 msgid "Use Node Format"
@@ -42649,6 +42733,10 @@ msgstr "選択中のキーフレームの時間を、最初に選択したマー
 msgctxt "Operator"
 msgid "New Action"
 msgstr "新規アクション"
+
+
+msgid "Create new action"
+msgstr "新しいアクションを作成します"
 
 
 msgctxt "Operator"
@@ -44413,6 +44501,13 @@ msgid "Accept"
 msgstr "OK"
 
 
+msgid "Open a directory browser, hold Shift to open the file, Alt to browse containing directory"
+msgstr ""
+"ディレクトリブラウザーを開きます\n"
+"＋[Shift]キーでファイルを開く\n"
+"＋[Alt]でディレクトリをブラウズ"
+
+
 msgid "Directory of the file"
 msgstr "ファイルのディレクトリ"
 
@@ -44515,6 +44610,13 @@ msgstr "blendファイルへの相対パスにします"
 
 msgid "File sorting mode"
 msgstr "ファイルの並び順"
+
+
+msgid "Open a file browser, hold Shift to open the file, Alt to browse containing directory"
+msgstr ""
+"ファイルブラウザを開きます\n"
+"＋[Shift]キーでファイルを開く\n"
+"＋[Alt]でディレクトリをブラウズ"
 
 
 msgid "Path to file"
@@ -44675,11 +44777,11 @@ msgstr "指定のフレーム数より少なくトラッキングされたトラ
 
 msgctxt "Operator"
 msgid "Clear Solution"
-msgstr "解をクリア"
+msgstr "ソリューションをクリア"
 
 
 msgid "Clear all calculated data"
-msgstr "計算済みデータをすべてクリア"
+msgstr "計算済みデータをすべてクリアします"
 
 
 msgctxt "Operator"
@@ -49362,10 +49464,6 @@ msgid "Simple linear timing"
 msgstr "シンプルなリニアタイミング"
 
 
-msgid "Original"
-msgstr "オリジナル"
-
-
 msgid "Use the original timing, gaps included"
 msgstr "ギャップを含むオリジナルのタイミングを使用します"
 
@@ -50830,7 +50928,7 @@ msgstr "チントカラーを切り替えます"
 
 msgctxt "Operator"
 msgid "Trace Image to Grease Pencil"
-msgstr "画像をグリースペンシルにトレス"
+msgstr "画像をグリースペンシルにトレース"
 
 
 msgid "Extract Grease Pencil strokes from image"
@@ -50838,15 +50936,15 @@ msgstr "画像からグリースペンシルのストロークを抽出します
 
 
 msgid "Determines if trace simple image or full sequence"
-msgstr "単一画像または連番画像全体のどちらをトレスするかを決めます"
+msgstr "単一画像または連番画像全体のどちらをトレースするかを決めます"
 
 
 msgid "Trace the current frame of the image"
-msgstr "現在のフレームの画像をトレスします"
+msgstr "現在のフレームの画像をトレースします"
 
 
 msgid "Trace full sequence"
-msgstr "連番画像全体をトレスします"
+msgstr "連番画像全体をトレースします"
 
 
 msgid "Resolution of the generated curves"
@@ -64337,6 +64435,10 @@ msgid "Cycle Space Type Set"
 msgstr "スペースタイプを循環/設定"
 
 
+msgid "Set the space type or cycle subtype"
+msgstr "スペースタイプを設定、またはサブタイプを循環します"
+
+
 msgctxt "Operator"
 msgid "Clean Up Space Data"
 msgstr "スペースデータをクリーンアップ"
@@ -64910,6 +65012,10 @@ msgstr "以前のマスクを維持"
 
 msgid "Generate the new mask on top of the current one"
 msgstr "現在のマスクの上に新規マスクを生成します"
+
+
+msgid "Mask Speed"
+msgstr "マスクスピード"
 
 
 msgid "Update Pivot Position"
@@ -65584,10 +65690,6 @@ msgstr "現在の選択を置換します"
 msgctxt "Operator"
 msgid "Set Selected Strip Proxies"
 msgstr "選択ストリップにプロキシを設定"
-
-
-msgid "Enable selected proxies on all selected Movie, Image and Meta strips"
-msgstr "選択中のプロキシを、選択中のすべての動画・画像・メタストリップで有効にします"
 
 
 msgctxt "Operator"
@@ -66321,6 +66423,11 @@ msgid "Reset strip transform location, scale and rotation"
 msgstr "ストリップの位置・スケール・回転のトランスフォームをリセットします"
 
 
+msgctxt "Operator"
+msgid "Strip Transform Set Fit"
+msgstr "ストリップトランスフォームのフィット"
+
+
 msgid "Scale fit fit_method"
 msgstr "スケーリングする方法"
 
@@ -66330,7 +66437,7 @@ msgstr "画像をプレビューに合わせます"
 
 
 msgid "Scale image so it fills preview completely"
-msgstr "画像をプレビューに完全に合わせます"
+msgstr "プレビューの隙間が埋まるよう画像を拡大縮小します"
 
 
 msgid "Stretch image so it fills preview"
@@ -69045,6 +69152,18 @@ msgid "Interactively add an object"
 msgstr "インタラクティブにオブジェクトを追加します"
 
 
+msgid "The initial aspect setting"
+msgstr "初期アスペクト比設定"
+
+
+msgid "Use an unconstrained aspect"
+msgstr "フリーのアスペクト比を使用します"
+
+
+msgid "Use a fixed 1:1 aspect"
+msgstr "1:1の固定アスペクト比を使用します"
+
+
 msgid "Plane Axis"
 msgstr "平面の軸"
 
@@ -69061,12 +69180,12 @@ msgid "Start placing on the surface, using the 3D cursor position as a fallback"
 msgstr "まずサーフェスに配置し、無理なら3Dカーソル位置を使用します"
 
 
-msgid "Start placement using a point projected onto the selected axis at the 3D cursor position"
-msgstr "3Dカーソル位置の選択した軸に投影したポイントを使用して配置を開始します"
+msgid "Cursor Plane"
+msgstr "カーソル平面"
 
 
-msgid "Use the surface normal (the transform orientation as a fallback)"
-msgstr "面の法線を使用（無理な時はトランスフォーム座標系）"
+msgid "Cursor View"
+msgstr "カーソルビュー"
 
 
 msgid "Use the current transform orientation"
@@ -69075,6 +69194,10 @@ msgstr "現在のトランスフォーム座標系を使用します"
 
 msgid "The initial position for placement"
 msgstr "配置の初期位置"
+
+
+msgid "Start placing the edge position"
+msgstr "端から配置を開始します"
 
 
 msgid "Start placing the center position"
@@ -69087,6 +69210,22 @@ msgstr "UV球"
 
 msgid "ICO Sphere"
 msgstr "ICO球"
+
+
+msgid "Snap to"
+msgstr "スナップ先"
+
+
+msgid "The target to use while snapping"
+msgstr "スナップ中に使用する目標"
+
+
+msgid "Snap to all geometry"
+msgstr "全形状にスナップします"
+
+
+msgid "Use the current snap settings"
+msgstr "現在のスナップ設定を使用します"
 
 
 msgctxt "Operator"
@@ -71925,6 +72064,10 @@ msgid "New World"
 msgstr "新規ワールド"
 
 
+msgid "Create a new world Data-Block"
+msgstr "新規ワールドデータブロックを作成します"
+
+
 msgid "External file packed into the .blend file"
 msgstr ".blendファイルにパックされた外部ファイル"
 
@@ -72555,6 +72698,10 @@ msgstr "ボーンコンストレイント"
 
 msgid "Asset Metadata"
 msgstr "アセットメタデータ"
+
+
+msgid "Details"
+msgstr "詳細"
 
 
 msgid "Asset Navigation"
@@ -75616,6 +75763,14 @@ msgid "Auto Handle Smoothing mode used for newly added F-Curves"
 msgstr "新規追加された F カーブの自動ハンドルスムージングモード"
 
 
+msgid "Unselected F-Curve Opacity"
+msgstr "非選択のFカーブの不透明度"
+
+
+msgid "The opacity of unselected F-Curves against the background of the Graph Editor"
+msgstr "非選択 F カーブのグラフエディター背景に対する不透明度"
+
+
 msgid "Annotation Default Color"
 msgstr "アノテーションデフォルトカラー"
 
@@ -75938,6 +76093,12 @@ msgid "Asset Browser"
 msgstr "アセットブラウザー"
 
 
+msgid "Enable Asset Browser editor and operators to manage data-blocks as asset"
+msgstr ""
+"データブロックをアセットとして管理する\n"
+"アセットブラウザーとオペレーターを有効にします"
+
+
 msgid "Cycles Debug"
 msgstr "Cyclesデバッグ"
 
@@ -76122,6 +76283,12 @@ msgstr "マニュアル保存時のバックアップのバージョン数"
 
 msgid "Python Scripts Directory"
 msgstr "Pythonスクリプトディレクトリ"
+
+
+msgid "Alternate script path, matching the default layout with subdirectories: startup, add-ons and modules (requires restart)"
+msgstr ""
+"サブディレクトリ（startup、add-ons、modules）がデフォルト\n"
+"レイアウトの構造と一致する、代替のスクリプトパス（要再起動）"
 
 
 msgid "Hide Dot Files/Data-Blocks"
@@ -85622,6 +85789,10 @@ msgid "Show Library Overrides"
 msgstr "ライブラリオーバーライドを表示"
 
 
+msgid "For libraries with overrides created, show the overridden values"
+msgstr "オーバーライドが作成されたライブラリで、オーバーライドされた値を表示します"
+
+
 msgid "Filter Objects"
 msgstr "オブジェクトをフィルタリング"
 
@@ -92044,6 +92215,11 @@ msgstr "3Dビューツール：メジャー"
 
 
 msgctxt "WindowManager"
+msgid "3D View Tool: Object, Add Primitive"
+msgstr "3Dビューツール：プリミティブ追加"
+
+
+msgctxt "WindowManager"
 msgid "Mesh"
 msgstr "メッシュ"
 
@@ -92151,6 +92327,11 @@ msgstr "ペイントカーブ"
 msgctxt "WindowManager"
 msgid "Object Non-modal"
 msgstr "オブジェクト非モーダル"
+
+
+msgctxt "WindowManager"
+msgid "View3D Placement Modal"
+msgstr "3Dビュー配置モーダル"
 
 
 msgctxt "WindowManager"
@@ -93406,6 +93587,10 @@ msgid "Object '%r' already has '%r' F-Curve(s). Remove these before trying again
 msgstr "オブジェクト「%r」にはすでに「%r」F カーブがあります。削除後に再実行してください"
 
 
+msgid "Object: %s, Mesh: '%s' has %d loops (for %d faces), expected %d"
+msgstr "オブジェクト「%s」のメッシュ「%s」のループが%d個（%d個の面）です（要求は「%d」個）"
+
+
 msgid "Could not add a new UV map to object '%s' (Mesh '%s')"
 msgstr "新規 UV マップを追加できません（オブジェクト「%s」メッシュ「%s」）"
 
@@ -93682,6 +93867,10 @@ msgid "Next"
 msgstr "次"
 
 
+msgid "Getting Started"
+msgstr "公式サイト"
+
+
 msgctxt "Operator"
 msgid "Release Notes"
 msgstr "リリースノート"
@@ -93887,6 +94076,10 @@ msgstr "ピボットオフセット"
 
 msgid "No target bones added"
 msgstr "ターゲットボーンが追加されていません"
+
+
+msgid "Weight Position"
+msgstr "位置のウェイト"
 
 
 msgid "Layers:"
@@ -95774,6 +95967,56 @@ msgstr "プロキシサイズ"
 
 
 msgctxt "Operator"
+msgid "Backwards"
+msgstr "後方"
+
+
+msgctxt "Operator"
+msgid "Frame Backwards"
+msgstr "後方フレーム"
+
+
+msgctxt "Operator"
+msgid "Forwards"
+msgstr "前方"
+
+
+msgctxt "Operator"
+msgid "Frame Forwards"
+msgstr "前方フレーム"
+
+
+msgctxt "Operator"
+msgid "Before"
+msgstr "前"
+
+
+msgctxt "Operator"
+msgid "After"
+msgstr "後"
+
+
+msgctxt "Operator"
+msgid "Track Path"
+msgstr "トラックパス"
+
+
+msgctxt "Operator"
+msgid "Solution"
+msgstr "ソリューション"
+
+
+msgctxt "Operator"
+msgid "Copy Settings to Defaults"
+msgstr "設定をデフォルトにコピー"
+
+
+msgctxt "Operator"
+msgid "Apply Default Settings"
+msgstr "デフォルト設定を適用"
+
+
+msgctxt "Operator"
 msgid "Location"
 msgstr "位置"
 
@@ -97088,6 +97331,11 @@ msgstr "ガウシアンぼかし"
 
 
 msgctxt "Operator"
+msgid "Scale To Fit"
+msgstr "拡大縮小で収める"
+
+
+msgctxt "Operator"
 msgid "Scale to Fill"
 msgstr "拡大縮小で全体表示"
 
@@ -97462,6 +97710,22 @@ msgid "Intersections"
 msgstr "交差"
 
 
+msgid "Add cube to mesh interactively"
+msgstr "立方体をインタラクティブに追加します"
+
+
+msgid "Add cone to mesh interactively"
+msgstr "円錐をインタラクティブに追加します"
+
+
+msgid "Add cylinder to mesh interactively"
+msgstr "円柱をインタラクティブに追加します"
+
+
+msgid "Add sphere to mesh interactively"
+msgstr "球をインタラクティブに追加します"
+
+
 msgctxt "Operator"
 msgid "Install Application Template..."
 msgstr "アプリケーションテンプレートをインストール..."
@@ -97759,6 +98023,10 @@ msgstr "利用可能項目のみ挿入"
 
 msgid "Enable in New Scenes"
 msgstr "新規シーンで有効"
+
+
+msgid "Unselected Opacity"
+msgstr "非選択の不透明度"
 
 
 msgid "Default Smoothing Mode"
@@ -102509,6 +102777,28 @@ msgid "Indirect library data-block, cannot change"
 msgstr "間接ライブラリデータブロック。変更できません"
 
 
+msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
+msgstr "直接リンクライブラリデータブロック。クリックでローカル化、[Shift]＋クリックでライブラリオーバーライドを作成"
+
+
+msgid "Library override of linked data-block, click to make fully local"
+msgstr "リンクデータブロックのライブラリオーバーライド。クリックで完全にローカル化"
+
+
+msgid "Display number of users of this data (click to make a single-user copy)"
+msgstr "このデータのユーザー数を表示（クリックでシングルユーザーのコピーを作成）"
+
+
+msgid "Packed File, click to unpack"
+msgstr "パック済ファイル、クリックでパック解除"
+
+
+msgid "Unlink data-block (Shift + Click to set users to zero, data will then not be saved)"
+msgstr ""
+"データブロックをリンク解除\n"
+"（[Shift]＋クリックでユーザー数を０にし、データが保存されないようにします）"
+
+
 msgid "Can't edit external library data"
 msgstr "外部ライブラリデータは編集できません"
 
@@ -105949,6 +106239,10 @@ msgstr "タイプ B"
 
 msgid "Disabled, built without OpenSubdiv"
 msgstr "無効、OpenSubdiv なしでビルドされています"
+
+
+msgid "Type C"
+msgstr "タイプ C"
 
 
 msgid "Undefined Socket Type"

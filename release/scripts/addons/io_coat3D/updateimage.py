@@ -2,7 +2,7 @@ import bpy
 import os
 
 def update(texcoat,tex_type,node, udim_textures, udim_len):
-    
+
     if (os.path.normpath(texcoat[tex_type][0]) != os.path.normpath(node.image.filepath)):
         tex_found = False
 

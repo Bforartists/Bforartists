@@ -32,7 +32,7 @@ BLENDERKIT_EXPORT_DATA = sys.argv[-4]
 
 
 def get_obnames():
-    with open(BLENDERKIT_EXPORT_DATA, 'r') as s:
+    with open(BLENDERKIT_EXPORT_DATA, 'r',encoding='utf-8') as s:
         data = json.load(s)
     obnames = eval(data['models'])
     return obnames
@@ -79,7 +79,7 @@ def render_thumbnails():
 
 if __name__ == "__main__":
     try:
-        with open(BLENDERKIT_EXPORT_DATA, 'r') as s:
+        with open(BLENDERKIT_EXPORT_DATA, 'r',encoding='utf-8') as s:
             data = json.load(s)
 
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences

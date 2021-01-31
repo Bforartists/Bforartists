@@ -144,6 +144,24 @@ def update_assets_data():  # updates assets data on scene load.
                 # bpy.context.scene['assets used'][ad] = ad
 
 
+def purge_search_results():
+    ''' clean up search results on save/load.'''
+
+    s = bpy.context.scene
+
+    sr_props = [
+        'search results',
+        'search results orig',
+    ]
+    asset_types = ['model', 'material', 'scene', 'hdr', 'brush']
+    for at in asset_types:
+        sr_props.append('bkit {at} search')
+        sr_props.append('bkit {at} search orig')
+    for sr_prop in sr_props:
+        if s.get(sr_prop):
+            del (s[sr_prop])
+
+
 @persistent
 def scene_load(context):
     '''
@@ -151,6 +169,7 @@ def scene_load(context):
     Should (probably)also update asset data from server (after user consent)
     '''
     wm = bpy.context.window_manager
+    purge_search_results()
     fetch_server_data()
     categories.load_categories()
     if not bpy.app.timers.is_registered(refresh_token_timer):
@@ -171,7 +190,7 @@ def fetch_server_data():
         if api_key != '' and bpy.context.window_manager.get('bkit profile') == None:
             get_profile()
         if bpy.context.window_manager.get('bkit_categories') is None:
-            categories.fetch_categories_thread(api_key)
+            categories.fetch_categories_thread(api_key, force = False)
 
 
 first_time = True
@@ -218,7 +237,7 @@ def parse_result(r):
     # except:
     #     utils.p('asset with no files-size')
     asset_type = r['assetType']
-    if len(r['files']) > 0:
+    if len(r['files']) > 0:#TODO remove this condition so all assets are parsed.
         r['available_resolutions'] = []
         allthumbs = []
         durl, tname, small_tname = '', '', ''
@@ -323,7 +342,7 @@ def timer_update():
         first_time = False
         if preferences.show_on_start:
             # TODO here it should check if there are some results, and only open assetbar if this is the case, not search.
-            # if bpy.context.scene.get('search results') is None:
+            # if bpy.context.window_manager.get('search results') is None:
             search()
             # preferences.first_run = False
         if preferences.tips_on_start:
@@ -353,7 +372,7 @@ def timer_update():
             icons_dir = thread[1]
             scene = bpy.context.scene
             # these 2 lines should update the previews enum and set the first result as active.
-            s = bpy.context.scene
+            wm = bpy.context.window_manager
             asset_type = thread[2]
             if asset_type == 'model':
                 props = scene.blenderkit_models
@@ -372,7 +391,7 @@ def timer_update():
                 # json_filepath = os.path.join(icons_dir, 'brush_searchresult.json')
             search_name = f'bkit {asset_type} search'
 
-            s[search_name] = []
+            wm[search_name] = []
 
             global reports
             if reports != '':
@@ -391,10 +410,10 @@ def timer_update():
                         result_field.append(asset_data)
 
                         # results = rdata['results']
-                s[search_name] = result_field
-                s['search results'] = result_field
-                s[search_name + ' orig'] = copy.deepcopy(rdata)
-                s['search results orig'] = s[search_name + ' orig']
+                wm[search_name] = result_field
+                wm['search results'] = result_field
+                wm[search_name + ' orig'] = copy.deepcopy(rdata)
+                wm['search results orig'] = wm[search_name + ' orig']
 
                 load_previews()
                 ui_props = bpy.context.scene.blenderkitUI
@@ -402,8 +421,8 @@ def timer_update():
                     ui_props.scrolloffset = 0
                 props.is_searching = False
                 props.search_error = False
-                props.report = 'Found %i results. ' % (s['search results orig']['count'])
-                if len(s['search results']) == 0:
+                props.report = 'Found %i results. ' % (wm['search results orig']['count'])
+                if len(wm['search results']) == 0:
                     tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
                 # undo push
                 bpy.ops.wm.undo_push_context(message='Get BlenderKit search')
@@ -425,7 +444,7 @@ def load_previews():
     props = scene.blenderkitUI
     directory = paths.get_temp_dir('%s_search' % props.asset_type.lower())
     s = bpy.context.scene
-    results = s.get('search results')
+    results = bpy.context.window_manager.get('search results')
     #
     if results is not None:
         inames = []
@@ -664,6 +683,8 @@ def generate_tooltip(mdata):
             t += f"Quality rating: {int(mdata['ratingsAverage']['quality']) * '*'}\n"
             t += f"Hours saved rating: {int(mdata['ratingsAverage']['workingHours'])}\n"
         if utils.profile_is_validator():
+            t += f"Score: {int(mdata['score'])}\n"
+
             t += f"Ratings count {rc['quality']}*/{rc['workingHours']}wh value " \
                  f"{mdata['ratingsAverage']['quality']}*/{mdata['ratingsAverage']['workingHours']}wh\n"
     if len(t.split('\n')) < 11:
@@ -1017,8 +1038,8 @@ class Searcher(threading.Thread):
         if params['get_next']:
             rdata['results'][0:0] = self.result['results']
         self.result = rdata
-        # with open(json_filepath, 'w') as outfile:
-        #     json.dump(rdata, outfile)
+        # with open(json_filepath, 'w', encoding = 'utf-8') as outfile:
+        #     json.dump(rdata, outfile, ensure_ascii=False, indent=4)
 
         killthreads_sml = []
         for k in thumb_sml_download_threads.keys():
@@ -1256,7 +1277,6 @@ def add_search_process(query, params, orig_result):
         old_thread[0].stop()
         # TODO CARE HERE FOR ALSO KILLING THE Thumbnail THREADS.?
         #  AT LEAST NOW SEARCH DONE FIRST WON'T REWRITE AN OLDER ONE
-
     tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
     thread = Searcher(query, params, orig_result)
     thread.start()
@@ -1311,8 +1331,8 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
     if not filepath:
         return results
 
-    with open(filepath, 'w') as s:
-        json.dump(results, s)
+    with open(filepath, 'w', encoding='utf-8') as s:
+        json.dump(results, s, ensure_ascii=False, indent=4)
     bk_logger.info(f'retrieved {len(results)} assets from elastic search')
     return results
 
@@ -1321,7 +1341,6 @@ def search(category='', get_next=False, author_id=''):
     ''' initialize searching'''
     global search_start_time
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-
     search_start_time = time.time()
     # mt('start')
     scene = bpy.context.scene
@@ -1364,11 +1383,15 @@ def search(category='', get_next=False, author_id=''):
         props = scene.blenderkit_brush
         query = build_query_brush()
 
+    # it's possible get_net was requested more than once.
     if props.is_searching and get_next == True:
         return;
 
     if category != '':
-        query['category_subtree'] = category
+        if utils.profile_is_validator():
+            query['category'] = category
+        else:
+            query['category_subtree'] = category
 
     if author_id != '':
         query['author_id'] = author_id
@@ -1392,7 +1415,7 @@ def search(category='', get_next=False, author_id=''):
 
     # if free_only:
     #     query['keywords'] += '+is_free:true'
-    orig_results = scene.get(f'bkit {ui_props.asset_type.lower()} search orig', {})
+    orig_results = bpy.context.window_manager.get(f'bkit {ui_props.asset_type.lower()} search orig', {})
     if orig_results != {}:
         # ensure it's a copy in dict for what we are passing to thread:
         orig_results = orig_results.to_dict()

@@ -25,8 +25,8 @@ from bpy.props import (
 
 def draw_callback_tooltip(self, context):
     if self.draw_tooltip:
-        s = bpy.context.scene
-        sr = s.get('search results')
+        wm = bpy.context.window_manager
+        sr = wm.get('search results')
         r = sr[self.active_index]
         ui.draw_tooltip_with_author(r, 0, 500)
 
@@ -269,7 +269,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         self.wcount = math.floor(
             (self.bar_width) / (self.button_size))
 
-        search_results = bpy.context.scene.get('search results')
+        search_results = bpy.context.window_manager.get('search results')
         if search_results is not None and self.wcount > 0:
             self.hcount = min(user_preferences.max_assetbar_rows, math.ceil(len(search_results) / self.wcount))
         else:
@@ -310,8 +310,6 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
         self.panel = BL_UI_Drag_Panel(0, 0, self.bar_width, self.bar_height)
         self.panel.bg_color = (0.0, 0.0, 0.0, 0.5)
-
-        sr = bpy.context.scene['search results']
 
         for a in range(0, self.wcount):
             for b in range(0, self.hcount):
@@ -478,7 +476,8 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
         if self.active_index != widget.search_index:
             scene = bpy.context.scene
-            sr = scene['search results']
+            wm = bpy.context.window_manager
+            sr = wm['search results']
             asset_data = sr[widget.search_index + self.scroll_offset]
 
             self.active_index = widget.search_index
@@ -514,11 +513,12 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_asset_menu')
 
     def search_more(self):
-        sro = bpy.context.scene.get('search results orig')
+        sro = bpy.context.window_manager.get('search results orig')
         if sro is not None and sro.get('next') is not None:
             blenderkit.search.search(get_next=True)
+
     def update_images(self):
-        sr = bpy.context.scene['search results']
+        sr = bpy.context.window_manager['search results']
 
         for asset_button in self.asset_buttons:
             asset_button.asset_index = asset_button.button_index + self.scroll_offset
@@ -548,7 +548,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
                 asset_button.validation_icon.visible = False
 
     def scroll_update(self):
-        sr = bpy.context.scene['search results']
+        sr = bpy.context.window_manager['search results']
         self.scroll_offset = min(self.scroll_offset, len(sr) - (self.wcount * self.hcount))
         self.scroll_offset = max(self.scroll_offset, 0)
         self.update_images()
@@ -556,7 +556,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
             self.search_more()
 
     def search_by_author(self, asset_index):
-        sr = bpy.context.scene['search results']
+        sr = bpy.context.window_manager['search results']
         asset_data = sr[asset_index]
         a = asset_data['author']['id']
         if a is not None:
@@ -573,12 +573,10 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         return False
 
     def scroll_up(self, widget):
-        sr = bpy.context.scene['search results']
         self.scroll_offset += self.wcount * self.hcount
         self.scroll_update()
 
     def scroll_down(self, widget):
-        sr = bpy.context.scene['search results']
         self.scroll_offset -= self.wcount * self.hcount
         self.scroll_update()
 

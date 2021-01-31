@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -631,6 +631,10 @@ msgstr "X Ardatza"
 
 msgid "Y Axis"
 msgstr "Y Ardatza"
+
+
+msgid "Original"
+msgstr "Jatorrizkoa"
 
 
 msgid "Layer Weight"
@@ -1338,10 +1342,6 @@ msgstr "Egokitzapenik ez"
 
 msgid "Ignore timing"
 msgstr "Egokitzapena baztertu"
-
-
-msgid "Original"
-msgstr "Jatorrizkoa"
 
 
 msgid "Normalize Weight"

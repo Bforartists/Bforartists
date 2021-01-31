@@ -56,9 +56,9 @@ class SelectionEntry(PropertyGroup):
 class SelectionSet(PropertyGroup):
     name: StringProperty(name="Set Name", override={'LIBRARY_OVERRIDABLE'})
     bone_ids: CollectionProperty(
-        type=SelectionEntry, 
+        type=SelectionEntry,
         override={'LIBRARY_OVERRIDABLE', 'USE_INSERTION'}
-    )  
+    )
     is_selected: BoolProperty(name="Is Selected", override={'LIBRARY_OVERRIDABLE'})
 
 
