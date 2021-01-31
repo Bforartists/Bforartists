@@ -60,7 +60,7 @@ def view_cage(obj):
                 target_frames = [f for f in l.frames if f.select]
             else:
                 target_frames = [l.active_frame]
-            
+
             for f in target_frames:
                 for s in f.strokes:
                     if not s.select:
@@ -77,7 +77,7 @@ def view_cage(obj):
             for s in l.active_frame.strokes:
                 for p in s.points:
                     coords.append(obj.matrix_world @ p.co)
-    
+
     elif bpy.context.mode == 'PAINT_GPENCIL':
         # get last stroke points coordinated
         if not gpl.active or not gpl.active.active_frame:
@@ -85,12 +85,12 @@ def view_cage(obj):
 
         if not len(gpl.active.active_frame.strokes):
             return 'No stroke found to deform'
-        
+
         paint_id = -1
         if bpy.context.scene.tool_settings.use_gpencil_draw_onback:
             paint_id = 0
         coords = [obj.matrix_world @ p.co for p in gpl.active.active_frame.strokes[paint_id].points]
-    
+
     else:
         return 'Wrong mode!'
 
@@ -106,24 +106,24 @@ def view_cage(obj):
 
     if bpy.context.mode == 'EDIT_GPENCIL':
         vg = assign_vg(obj, vg_name)
-    
+
     if bpy.context.mode == 'PAINT_GPENCIL':
         # points cannot be assign to API yet(ugly and slow workaround but only way)
         # -> https://developer.blender.org/T56280 so, hop'in'ops !
-        
+
         # store selection and deselect all
         plist = []
         for s in gpl.active.active_frame.strokes:
             for p in s.points:
                 plist.append([p, p.select])
                 p.select = False
-        
+
         # select
         ## foreach_set does not update
         # gpl.active.active_frame.strokes[paint_id].points.foreach_set('select', [True]*len(gpl.active.active_frame.strokes[paint_id].points))
         for p in gpl.active.active_frame.strokes[paint_id].points:
             p.select = True
-        
+
         # assign
         bpy.ops.object.mode_set(mode='EDIT_GPENCIL')
         vg = assign_vg(obj, vg_name)
@@ -131,7 +131,7 @@ def view_cage(obj):
         # restore
         for pl in plist:
             pl[0].select = pl[1]
-        
+
 
     ## View axis Mode ---
 
@@ -216,7 +216,7 @@ def view_cage(obj):
 
     if initial_mode == 'PAINT_GPENCIL':
         mod.layer = gpl.active.info
-    
+
     # note : if initial was Paint, changed to Edit
     #        so vertex attribution is valid even for paint
     if bpy.context.mode == 'EDIT_GPENCIL':
@@ -226,7 +226,7 @@ def view_cage(obj):
     if bpy.context.mode != 'OBJECT':
         bpy.ops.object.mode_set(mode='OBJECT')
 
-    # Store name of deformed object in case of 'revive modal' 
+    # Store name of deformed object in case of 'revive modal'
     cage.vertex_groups.new(name=obj.name)
 
     ## select and make cage active
@@ -245,7 +245,7 @@ def view_cage(obj):
 def back_to_obj(obj, gp_mode, org_lattice_toolset, context):
     if context.mode == 'EDIT_LATTICE' and org_lattice_toolset:# Tweaktoolcode - restore the active tool used by lattice edit..
         bpy.ops.wm.tool_set_by_id(name = org_lattice_toolset)# Tweaktoolcode
-    
+
     # gp object active and selected
     bpy.ops.object.mode_set(mode='OBJECT')
     obj.select_set(True)
@@ -273,9 +273,9 @@ def cancel_cage(gp_obj, cage):
         gp_obj.grease_pencil_modifiers.remove(mod)
     else:
         print('tmp_lattice modifier not found to remove...')
-    
+
     delete_cage(cage)
-    
+
 
 class GP_OT_latticeGpDeform(bpy.types.Operator):
     """Create a lattice to use as quad corner transform"""
@@ -302,7 +302,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         if event.type in {'Z'} and event.value == 'PRESS' and event.ctrl:
             ## Disable (capture key)
             return {"RUNNING_MODAL"}
-            ## Not found how possible to find modal start point in undo stack to 
+            ## Not found how possible to find modal start point in undo stack to
             # print('ops list', context.window_manager.operators.keys())
             # if context.window_manager.operators:#can be empty
             #     print('\nlast name', context.window_manager.operators[-1].name)
@@ -320,7 +320,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         if event.type in {'H'} and event.value == 'PRESS':
             # self.report({'INFO'}, "Can't hide")
             return {"RUNNING_MODAL"}
-        
+
         if event.type in {'ONE'} and event.value == 'PRESS':# , 'NUMPAD_1'
             self.lat.points_u = self.lat.points_v = 2
             return {"RUNNING_MODAL"}
@@ -361,25 +361,25 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             self.lat.points_u = 2
             self.lat.points_v = 1
             return {"RUNNING_MODAL"}
-        
+
         if event.type in {'RIGHT_ARROW'} and event.value == 'PRESS' and event.ctrl:
             if self.lat.points_u < 20:
-                self.lat.points_u += 1 
+                self.lat.points_u += 1
             return {"RUNNING_MODAL"}
 
         if event.type in {'LEFT_ARROW'} and event.value == 'PRESS' and event.ctrl:
             if self.lat.points_u > 1:
-                self.lat.points_u -= 1 
+                self.lat.points_u -= 1
             return {"RUNNING_MODAL"}
 
         if event.type in {'UP_ARROW'} and event.value == 'PRESS' and event.ctrl:
             if self.lat.points_v < 20:
-                self.lat.points_v += 1 
+                self.lat.points_v += 1
             return {"RUNNING_MODAL"}
 
         if event.type in {'DOWN_ARROW'} and event.value == 'PRESS' and event.ctrl:
             if self.lat.points_v > 1:
-                self.lat.points_v -= 1 
+                self.lat.points_v -= 1
             return {"RUNNING_MODAL"}
 
 
@@ -397,15 +397,15 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
                 self.restore_prefs(context)
                 back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
                 apply_cage(self.gp_obj, self.cage)#must be in object mode
-                
-                # back to original mode 
+
+                # back to original mode
                 if self.gp_mode != 'OBJECT':
                     bpy.ops.object.mode_set(mode=self.gp_mode)
 
                 context.area.header_text_set(None)#reset header
 
                 return {'FINISHED'}
-        
+
         # Abort ---
         # One Warning for Tab cancellation.
         if event.type == 'TAB' and event.value == 'PRESS':
@@ -432,14 +432,14 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         self.restore_prefs(context)
         back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
         cancel_cage(self.gp_obj, self.cage)
-        context.area.header_text_set(None)     
+        context.area.header_text_set(None)
         if self.gp_mode != 'OBJECT':
             bpy.ops.object.mode_set(mode=self.gp_mode)
 
     def store_prefs(self, context):
         # store_valierables <-< preferences
-        self.use_drag_immediately = context.preferences.inputs.use_drag_immediately 
-        self.drag_threshold_mouse = context.preferences.inputs.drag_threshold_mouse 
+        self.use_drag_immediately = context.preferences.inputs.use_drag_immediately
+        self.drag_threshold_mouse = context.preferences.inputs.drag_threshold_mouse
         self.drag_threshold_tablet = context.preferences.inputs.drag_threshold_tablet
         self.use_overlays = context.space_data.overlay.show_overlays
         # maybe store in windows manager to keep around in case of modal revival ?
@@ -450,7 +450,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         context.preferences.inputs.drag_threshold_mouse = self.drag_threshold_mouse
         context.preferences.inputs.drag_threshold_tablet = self.drag_threshold_tablet
         context.space_data.overlay.show_overlays = self.use_overlays
-    
+
     def set_prefs(self, context):
         context.preferences.inputs.use_drag_immediately = True
         context.preferences.inputs.drag_threshold_mouse = 1
@@ -475,8 +475,8 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         self.org_lattice_toolset = None
         ## usability toggles
         if self.prefs.use_clic_drag:#Store the active tool since we will change it
-            self.org_lattice_toolset = bpy.context.workspace.tools.from_space_view3d_mode(bpy.context.mode, create=False).idname# Tweaktoolcode    
-        
+            self.org_lattice_toolset = bpy.context.workspace.tools.from_space_view3d_mode(bpy.context.mode, create=False).idname# Tweaktoolcode
+
         #store (scene properties needed in case of ctrlZ revival)
         self.store_prefs(context)
         self.gp_mode = 'EDIT_GPENCIL'
@@ -502,17 +502,17 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
 
         if context.object.type != 'GPENCIL':
             # self.report({'ERROR'}, "Works only on gpencil objects")
-            ## silent return 
+            ## silent return
             return {'CANCELLED'}
 
         #paint need VG workaround. object need good shortcut
         if context.mode not in ('EDIT_GPENCIL', 'OBJECT', 'PAINT_GPENCIL'):
             # self.report({'WARNING'}, "Works only in following GPencil modes: edit")# ERROR
-            ## silent return 
+            ## silent return
             return {'CANCELLED'}
 
         # bpy.ops.ed.undo_push(message="Box deform step")#don't work as expected (+ might be obsolete)
-        # https://developer.blender.org/D6147 <- undo forget 
+        # https://developer.blender.org/D6147 <- undo forget
 
         self.gp_obj = context.object
         # Clean potential failed previous job (delete tmp lattice)
@@ -529,10 +529,10 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         if [m for m in self.gp_obj.grease_pencil_modifiers if m.type == 'GP_LATTICE']:
             self.report({'ERROR'}, "Grease pencil object already has a lattice modifier (can only have one)")
             return {'CANCELLED'}
-        
+
 
         self.gp_mode = context.mode#store mode for restore
-        
+
         # All good, create lattice and start modal
 
         # Create lattice (and switch to lattice edit) ----
@@ -540,7 +540,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         if isinstance(self.cage, str):#error, cage not created, display error
             self.report({'ERROR'}, self.cage)
             return {'CANCELLED'}
-        
+
         self.lat = self.cage.data
 
         self.set_prefs(context)

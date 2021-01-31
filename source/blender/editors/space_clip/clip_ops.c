@@ -125,7 +125,7 @@ static void sclip_zoom_set(const bContext *C,
     dx = ((location[0] - 0.5f) * w - sc->xof) * (sc->zoom - oldzoom) / sc->zoom;
     dy = ((location[1] - 0.5f) * h - sc->yof) * (sc->zoom - oldzoom) / sc->zoom;
 
-    if (sc->flag & SC_LOCK_SELECTION) {
+    if (clip_view_has_locked_selection(C)) {
       sc->xlockof += dx;
       sc->ylockof += dy;
     }
@@ -396,7 +396,7 @@ static void view_pan_init(bContext *C, wmOperator *op, const wmEvent *event)
   vpd->x = event->x;
   vpd->y = event->y;
 
-  if (sc->flag & SC_LOCK_SELECTION) {
+  if (clip_view_has_locked_selection(C)) {
     vpd->vec = &sc->xlockof;
   }
   else {
@@ -434,7 +434,7 @@ static int view_pan_exec(bContext *C, wmOperator *op)
 
   RNA_float_get_array(op->ptr, "offset", offset);
 
-  if (sc->flag & SC_LOCK_SELECTION) {
+  if (clip_view_has_locked_selection(C)) {
     sc->xlockof += offset[0];
     sc->ylockof += offset[1];
   }
@@ -1841,8 +1841,16 @@ void CLIP_OT_cursor_set(wmOperatorType *ot)
 static int lock_selection_togglee_exec(bContext *C, wmOperator *UNUSED(op))
 {
   SpaceClip *space_clip = CTX_wm_space_clip(C);
+
+  ClipViewLockState lock_state;
+  ED_clip_view_lock_state_store(C, &lock_state);
+
   space_clip->flag ^= SC_LOCK_SELECTION;
+
+  ED_clip_view_lock_state_restore_no_jump(C, &lock_state);
+
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_CLIP, NULL);
+
   return OPERATOR_FINISHED;
 }
 

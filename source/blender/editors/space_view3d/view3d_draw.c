@@ -723,15 +723,24 @@ static void drawviewborder(Scene *scene, Depsgraph *depsgraph, ARegion *region, 
     }
 
     if (ca->flag & CAM_SHOW_SAFE_MARGINS) {
-      UI_draw_safe_areas(
-          shdr_pos, x1, x2, y1, y2, scene->safe_areas.title, scene->safe_areas.action);
+      UI_draw_safe_areas(shdr_pos,
+                         &(const rctf){
+                             .xmin = x1,
+                             .xmax = x2,
+                             .ymin = y1,
+                             .ymax = y2,
+                         },
+                         scene->safe_areas.title,
+                         scene->safe_areas.action);
 
       if (ca->flag & CAM_SHOW_SAFE_CENTER) {
         UI_draw_safe_areas(shdr_pos,
-                           x1,
-                           x2,
-                           y1,
-                           y2,
+                           &(const rctf){
+                               .xmin = x1,
+                               .xmax = x2,
+                               .ymin = y1,
+                               .ymax = y2,
+                           },
                            scene->safe_areas.title_center,
                            scene->safe_areas.action_center);
       }
@@ -1950,6 +1959,16 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(Depsgraph *depsgraph,
     }
   }
 
+  /* XXX(jbakker): `do_color_management` should be controlled by the caller. Currently when doing a
+   * viewport render animation and saving to an 8bit file format, color management would be applied
+   * twice. Once here, and once when saving the saving to disk. In this case the Save As Render
+   * option cannot be controlled either. But when doing an off-screen render you want to do the
+   * color management here.
+   *
+   * This option was added here to increase the performance for quick view-port preview renders.
+   * When using workbench the color differences haven't been reported as a bug. But users also use
+   * the viewport rendering to render Eevee scenes. In the later situation the saved colors are
+   * totally wrong. */
   const bool do_color_management = (ibuf->rect_float == NULL);
   ED_view3d_draw_offscreen(depsgraph,
                            scene,

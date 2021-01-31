@@ -83,22 +83,30 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             if self.in_cam:
                 self.cam.matrix_world = self.cam_matrix
                 self.cam.rotation_euler.rotate_axis("Z", self.angle)
-            
+
             else:#free view
                 context.space_data.region_3d.view_rotation = self._rotation
                 rot = context.space_data.region_3d.view_rotation
                 rot = rot.to_euler()
                 rot.rotate_axis("Z", self.angle)
                 context.space_data.region_3d.view_rotation = rot.to_quaternion()
-        
+
         if event.type in {'RIGHTMOUSE', 'LEFTMOUSE', 'MIDDLEMOUSE'} and event.value == 'RELEASE':
             if not self.angle:
                 # self.report({'INFO'}, 'Reset')
                 aim = context.space_data.region_3d.view_rotation @ mathutils.Vector((0.0, 0.0, 1.0))#view vector
-                context.space_data.region_3d.view_rotation = aim.to_track_quat('Z','Y')#track Z, up Y
+                z_up_quat = aim.to_track_quat('Z','Y')#track Z, up Y
+                if self.in_cam:
+                    if self.cam.parent:
+                        cam_quat = self.cam.parent.matrix_world.inverted().to_quaternion() @ z_up_quat
+                    else:
+                        cam_quat = z_up_quat
+                    self.cam.rotation_euler = cam_quat.to_euler('XYZ')
+                else:
+                    context.space_data.region_3d.view_rotation = z_up_quat
             self.execute(context)
             return {'FINISHED'}
-        
+
         if event.type == 'ESC':#Cancel
             self.execute(context)
             if self.in_cam:
@@ -118,10 +126,10 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         if self.in_cam:
             # Get camera from scene
             self.cam = bpy.context.scene.camera
-            
+
             #return if one element is locked (else bypass location)
             if self.cam.lock_rotation[:] != (False, False, False):
-                self.report({'WARNING'}, 'Camera rotation is locked') 
+                self.report({'WARNING'}, 'Camera rotation is locked')
                 return {'CANCELLED'}
 
             self.center = self.get_center_view(context, self.cam)
@@ -135,21 +143,21 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
 
         else:
             self.center = mathutils.Vector((context.area.width/2, context.area.height/2))
-            
+
             # store current rotation
             self._rotation = context.space_data.region_3d.view_rotation.copy()
 
         # Get current mouse coordination
         self.pos_current = mathutils.Vector((event.mouse_region_x, event.mouse_region_y))
-        
+
         self.initial_pos = self.pos_current# for draw debug, else no need
         # Calculate inital vector
         self.vector_initial = self.pos_current - self.center
         self.vector_initial.normalize()
-        
+
         # Initializes the current vector with the same initial vector.
         self.vector_current = self.vector_initial.copy()
-        
+
         args = (self, context)
         if self.hud:
             self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')

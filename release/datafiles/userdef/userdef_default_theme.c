@@ -666,9 +666,9 @@ const bTheme U_theme_default = {
     .selected_strip = RGBA(0xff8f0dff),
     .gp_vertex_size = 3,
     .gp_vertex_select = RGBA(0xff8500ff),
+    .row_alternate = RGBA(0xffffff0d),
     .anim_preview_range = RGBA(0xa14d0066),
     .metadatatext = RGBA(0xffffffff),
-    .row_alternate = RGBA(0xffffff0d),
   },
   .space_image = {
     .back = RGBA(0x4d4d4d00),

@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, utils, bg_blender
+from blenderkit import paths, utils, bg_blender, ui_panels
 
 import tempfile, os, subprocess, json, sys
 
@@ -120,7 +120,7 @@ def start_thumbnailer(self, context):
         obnames = []
         for ob in obs:
             obnames.append(ob.name)
-        with open(datafile, 'w') as s:
+        with open(datafile, 'w', encoding = 'utf-8') as s:
             bkit = mainmodel.blenderkit
             json.dump({
                 "type": "model",
@@ -131,7 +131,7 @@ def start_thumbnailer(self, context):
                 "thumbnail_resolution": bkit.thumbnail_resolution,
                 "thumbnail_samples": bkit.thumbnail_samples,
                 "thumbnail_denoising": bkit.thumbnail_denoising,
-            }, s)
+            }, s, ensure_ascii=False, indent=4)
 
         proc = subprocess.Popen([
             binary_path,
@@ -190,7 +190,7 @@ def start_material_thumbnailer(self, context, wait=False):
         # save a copy of actual scene but don't interfere with the users models
         bpy.ops.wm.save_as_mainfile(filepath=filepath, compress=False, copy=True)
 
-        with open(datafile, 'w') as s:
+        with open(datafile, 'w', encoding = 'utf-8') as s:
             bkit = mat.blenderkit
             json.dump({
                 "type": "material",
@@ -204,7 +204,7 @@ def start_material_thumbnailer(self, context, wait=False):
                 "thumbnail_denoising": bkit.thumbnail_denoising,
                 "adaptive_subdivision": bkit.adaptive_subdivision,
                 "texture_size_meters": bkit.texture_size_meters,
-            }, s)
+            }, s,  ensure_ascii=False, indent=4)
 
         proc = subprocess.Popen([
             binary_path,
@@ -262,13 +262,10 @@ class GenerateThumbnailOperator(bpy.types.Operator):
     def invoke(self, context, event):
         wm = context.window_manager
         if bpy.data.filepath == '':
-            title = "Can't render thumbnail"
-            message = "please save your file first"
+            ui_panels.ui_message(
+                        title = "Can't render thumbnail",
+                        message = "please save your file first")
 
-            def draw_message(self, context):
-                self.layout.label(text=message)
-
-            bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
             return {'FINISHED'}
 
         return wm.invoke_props_dialog(self)

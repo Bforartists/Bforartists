@@ -87,7 +87,7 @@ def write_tokens(auth_token, refresh_token, oauth_response):
         props.report = ''
     ui.add_report('BlenderKit Re-Login success')
     search.get_profile()
-    categories.fetch_categories_thread(auth_token)
+    categories.fetch_categories_thread(auth_token, force = False)
 
 
 class RegisterLoginOnline(bpy.types.Operator):

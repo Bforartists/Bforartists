@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -21219,6 +21219,10 @@ msgid "Int"
 msgstr "ﺢﻴﺤﺻ ﻢﻗﺭ"
 
 
+msgid "Original"
+msgstr "ﻲﻠﺻﺃ"
+
+
 msgid "Label Font Size"
 msgstr "ﻖﺼﻠﻤﻟﺍ ﻂﺧ ﻢﺠﺣ"
 
@@ -24360,10 +24364,6 @@ msgstr "ﻲﺗﻵ﻿ﺍ"
 
 msgid "Simple linear timing"
 msgstr ":ﻰﻨﺤﻨﻤﻟﺍ ﺔﻤﺋﻼ﻿ﻣ"
-
-
-msgid "Original"
-msgstr "ﻲﻠﺻﺃ"
 
 
 msgid "Use the original timing, gaps included"

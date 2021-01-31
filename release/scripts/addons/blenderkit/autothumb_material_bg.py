@@ -44,7 +44,7 @@ def unhide_collection(cname):
 if __name__ == "__main__":
     try:
         bg_blender.progress('preparing thumbnail scene')
-        with open(BLENDERKIT_EXPORT_DATA, 'r') as s:
+        with open(BLENDERKIT_EXPORT_DATA, 'r',encoding='utf-8') as s:
             data = json.load(s)
             # append_material(file_name, matname = None, link = False, fake_user = True)
         mat = append_link.append_material(file_name=BLENDERKIT_EXPORT_FILE_INPUT, matname=data["material"], link=True,

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-11 16:12+0100\n"
@@ -40165,6 +40165,10 @@ msgid "Object Info"
 msgstr "Info o objekte"
 
 
+msgid "Original"
+msgstr "Originálne"
+
+
 msgid "Point Distribute"
 msgstr "Distribučný bod"
 
@@ -48964,10 +48968,6 @@ msgstr "Ignoruje časovanie"
 
 msgid "Simple linear timing"
 msgstr "Jednoduché lineárne časovanie"
-
-
-msgid "Original"
-msgstr "Originálne"
 
 
 msgid "Use the original timing, gaps included"
@@ -65097,10 +65097,6 @@ msgid "Set Selected Strip Proxies"
 msgstr "Nastaviť vybraný pás náhrady"
 
 
-msgid "Enable selected proxies on all selected Movie, Image and Meta strips"
-msgstr "Povolí vybranú náhradu na všetkých vybraných filmových, obrázkových a meta pásov"
-
-
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Exportovať titulky"
@@ -68569,14 +68565,6 @@ msgstr "Počiatočná hĺbka použitá pri umiestnení kurzora"
 
 msgid "Start placing on the surface, using the 3D cursor position as a fallback"
 msgstr "Začiatok umiestňovania na povrch použitím polohy kurzora 3D ako náhradníka"
-
-
-msgid "Start placement using a point projected onto the selected axis at the 3D cursor position"
-msgstr "Začiatok umiestňovania použitím bodu premietnutého na vybranú os v polohe 3D kurzora"
-
-
-msgid "Use the surface normal (the transform orientation as a fallback)"
-msgstr "Použije normálny povrch (orientácia transformácie ako náhradník)"
 
 
 msgid "Use the current transform orientation"
