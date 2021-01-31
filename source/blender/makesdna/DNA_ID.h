@@ -193,6 +193,10 @@ enum {
   IDOVERRIDE_LIBRARY_FLAG_MANDATORY = 1 << 0,
   /** User cannot change that override operation. */
   IDOVERRIDE_LIBRARY_FLAG_LOCKED = 1 << 1,
+
+  /** For overrides of ID pointers: this override still matches (follows) the hierarchy of the
+   *  reference linked data. */
+  IDOVERRIDE_LIBRARY_FLAG_IDPOINTER_MATCH_REFERENCE = 1 << 8,
 };
 
 /** A single overridden property, contain all operations on this one. */
@@ -449,7 +453,7 @@ typedef enum ID_Type {
   ID_TXT = MAKE_ID2('T', 'X'), /* Text */
   ID_SPK = MAKE_ID2('S', 'K'), /* Speaker */
   ID_SO = MAKE_ID2('S', 'O'),  /* Sound */
-  ID_GR = MAKE_ID2('G', 'R'),  /* Group */
+  ID_GR = MAKE_ID2('G', 'R'),  /* Collection */
   ID_AR = MAKE_ID2('A', 'R'),  /* bArmature */
   ID_AC = MAKE_ID2('A', 'C'),  /* bAction */
   ID_NT = MAKE_ID2('N', 'T'),  /* bNodeTree */
@@ -468,7 +472,7 @@ typedef enum ID_Type {
   ID_HA = MAKE_ID2('H', 'A'),  /* Hair */
   ID_PT = MAKE_ID2('P', 'T'),  /* PointCloud */
   ID_VO = MAKE_ID2('V', 'O'),  /* Volume */
-  ID_SIM = MAKE_ID2('S', 'I'), /* Simulation (currently unused) */
+  ID_SIM = MAKE_ID2('S', 'I'), /* Simulation (geometry node groups) */
 } ID_Type;
 
 /* Only used as 'placeholder' in .blend files for directly linked data-blocks. */

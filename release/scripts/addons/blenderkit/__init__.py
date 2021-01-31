@@ -91,13 +91,13 @@ else:
     from blenderkit import upload
     from blenderkit import utils
 
-    from blenderkit.bl_ui_widgets import bl_ui_label 
-    from blenderkit.bl_ui_widgets import bl_ui_button 
+    from blenderkit.bl_ui_widgets import bl_ui_label
+    from blenderkit.bl_ui_widgets import bl_ui_button
     # from blenderkit.bl_ui_widgets import bl_ui_checkbox
     # from blenderkit.bl_ui_widgets import bl_ui_slider
     # from blenderkit.bl_ui_widgets import bl_ui_up_down
-    from blenderkit.bl_ui_widgets import bl_ui_drag_panel 
-    from blenderkit.bl_ui_widgets import bl_ui_draw_op 
+    from blenderkit.bl_ui_widgets import bl_ui_drag_panel
+    from blenderkit.bl_ui_widgets import bl_ui_draw_op
     # from blenderkit.bl_ui_widgets import bl_ui_textbox
 
 
@@ -138,7 +138,10 @@ from bpy.types import (
 
 @persistent
 def scene_load(context):
+    print('loading in background')
+    print(bpy.context.window_manager)
     if not bpy.app.background:
+
         search.load_previews()
     ui_props = bpy.context.scene.blenderkitUI
     ui_props.assetbar_on = False
@@ -249,37 +252,39 @@ thumbnail_resolutions = (
 def udate_down_up(self, context):
     """Perform a search if results are empty."""
     s = context.scene
+    wm = bpy.context.window_manager
     props = s.blenderkitUI
-    if s['search results'] == None and props.down_up == 'SEARCH':
+    if wm['search results'] == None and props.down_up == 'SEARCH':
         search.search()
 
 def switch_search_results(self, context):
     s = bpy.context.scene
+    wm = bpy.context.window_manager
     props = s.blenderkitUI
     if props.asset_type == 'MODEL':
-        s['search results'] = s.get('bkit model search')
-        s['search results orig'] = s.get('bkit model search orig')
+        wm['search results'] = wm.get('bkit model search')
+        wm['search results orig'] = wm.get('bkit model search orig')
     elif props.asset_type == 'SCENE':
-        s['search results'] = s.get('bkit scene search')
-        s['search results orig'] = s.get('bkit scene search orig')
+        wm['search results'] = wm.get('bkit scene search')
+        wm['search results orig'] = wm.get('bkit scene search orig')
     elif props.asset_type == 'HDR':
-        s['search results'] = s.get('bkit hdr search')
-        s['search results orig'] = s.get('bkit hdr search orig')
+        wm['search results'] = wm.get('bkit hdr search')
+        wm['search results orig'] = wm.get('bkit hdr search orig')
     elif props.asset_type == 'MATERIAL':
-        s['search results'] = s.get('bkit material search')
-        s['search results orig'] = s.get('bkit material search orig')
+        wm['search results'] = wm.get('bkit material search')
+        wm['search results orig'] = wm.get('bkit material search orig')
     elif props.asset_type == 'TEXTURE':
-        s['search results'] = s.get('bkit texture search')
-        s['search results orig'] = s.get('bkit texture search orig')
+        wm['search results'] = wm.get('bkit texture search')
+        wm['search results orig'] = wm.get('bkit texture search orig')
     elif props.asset_type == 'BRUSH':
-        s['search results'] = s.get('bkit brush search')
-        s['search results orig'] = s.get('bkit brush search orig')
+        wm['search results'] = wm.get('bkit brush search')
+        wm['search results orig'] = wm.get('bkit brush search orig')
         if not(context.sculpt_object or context.image_paint_object):
             ui.add_report(
                 'Switch to paint or sculpt mode to search in BlenderKit brushes.')
 
     search.load_previews()
-    if s['search results'] == None and props.down_up == 'SEARCH':
+    if wm['search results'] == None and props.down_up == 'SEARCH':
         search.search()
 
 
@@ -577,16 +582,11 @@ def name_update(self, context):
 def update_free(self, context):
     if self.is_free == False:
         self.is_free = True
-        title = "All BlenderKit materials are free"
-        message = "Any material uploaded to BlenderKit is free." \
+        ui_panels.ui_message(title = "All BlenderKit materials are free",
+                             message = "Any material uploaded to BlenderKit is free." \
                   " However, it can still earn money for the author," \
                   " based on our fair share system. " \
-                  "Part of subscription is sent to artists based on usage by paying users."
-
-        def draw_message(self, context):
-            utils.label_multiline(self.layout, text=message, icon='NONE', width=-1)
-
-        bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
+                  "Part of subscription is sent to artists based on usage by paying users.")
 
 
 class BlenderKitCommonUploadProps(object):
@@ -696,12 +696,14 @@ class BlenderKitCommonUploadProps(object):
     category: EnumProperty(
         name="Category",
         description="main category to put into",
-        items=categories.get_category_enums
+        items=categories.get_category_enums,
+        update=categories.update_category_enums
     )
     subcategory: EnumProperty(
         name="Subcategory",
         description="Subcategory to put into",
-        items=categories.get_subcategory_enums
+        items=categories.get_subcategory_enums,
+        update=categories.update_subcategory_enums
     )
     subcategory1: EnumProperty(
         name="Subcategory lvl2",
@@ -1510,15 +1512,11 @@ def fix_subdir(self, context):
     if self.project_subdir != pp:
         self.project_subdir = pp
 
-        title = "Fixed to relative path"
-        message = "This path should be always realative.\n" \
-                  " It's a directory BlenderKit creates where your .blend is \n " \
-                  "and uses it for storing assets."
+        ui_panels.ui_message(title = "Fixed to relative path",
+                            message = "This path should be always realative.\n" \
+                                       " It's a directory BlenderKit creates where your .blend is \n " \
+                                        "and uses it for storing assets.")
 
-        def draw_message(self, context):
-            utils.label_multiline(self.layout, text=message, icon='NONE', width=400)
-
-        bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
 
 
 class BlenderKitAddonPreferences(AddonPreferences):

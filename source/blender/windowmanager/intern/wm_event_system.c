@@ -544,6 +544,7 @@ void wm_event_do_notifiers(bContext *C)
 
         LISTBASE_FOREACH (ARegion *, region, &screen->regionbase) {
           wmRegionListenerParams region_params = {
+              .window = win,
               .area = NULL,
               .region = region,
               .scene = scene,
@@ -562,6 +563,7 @@ void wm_event_do_notifiers(bContext *C)
           ED_area_do_listen(&area_params);
           LISTBASE_FOREACH (ARegion *, region, &area->regionbase) {
             wmRegionListenerParams region_params = {
+                .window = win,
                 .area = area,
                 .region = region,
                 .scene = scene,
@@ -2806,8 +2808,10 @@ static int wm_handlers_do_intern(bContext *C, wmEvent *event, ListBase *handlers
               LISTBASE_FOREACH (wmDrag *, drag, lb) {
                 const char *tooltip = NULL;
                 if (drop->poll(C, drag, event, &tooltip)) {
-                  /* Optionally copy drag information to operator properties. */
-                  if (drop->copy) {
+                  /* Optionally copy drag information to operator properties. Don't call it if the
+                   * operator fails anyway, it might do more than just set properties (e.g.
+                   * typically import an asset). */
+                  if (drop->copy && WM_operator_poll_context(C, drop->ot, drop->opcontext)) {
                     drop->copy(drag, drop);
                   }
 

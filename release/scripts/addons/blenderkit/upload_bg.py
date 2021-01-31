@@ -126,7 +126,7 @@ def upload_files(upload_data, files):
 if __name__ == "__main__":
     try:
         # bg_blender.progress('preparing scene - append data')
-        with open(BLENDERKIT_EXPORT_DATA, 'r') as s:
+        with open(BLENDERKIT_EXPORT_DATA, 'r',encoding='utf-8') as s:
             data = json.load(s)
 
         bpy.app.debug_value = data.get('debug_value', 0)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -28358,6 +28358,10 @@ msgid "Object Info"
 msgstr "Informações de objetos"
 
 
+msgid "Original"
+msgstr "Original"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Quadro"
@@ -34826,10 +34830,6 @@ msgstr "Ignora a temporização."
 
 msgid "Simple linear timing"
 msgstr "Temporização linear simples."
-
-
-msgid "Original"
-msgstr "Original"
 
 
 msgid "Use the original timing, gaps included"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -4438,8 +4438,20 @@ msgid "Enable self collisions"
 msgstr "Bật tự va chạm"
 
 
+msgid "Collision Vertex Group"
+msgstr "Nhóm Đỉnh Va Chạm"
+
+
+msgid "Triangles with all vertices in this group are not used during object collisions"
+msgstr "Các tam giác có tất cả đỉnh trong nhóm này không được sử dụng trong va chạm vật thể"
+
+
 msgid "Selfcollision Vertex Group"
 msgstr "Nhóm Đỉnh Tự Va Chạm"
+
+
+msgid "Triangles with all vertices in this group are not used during self collisions"
+msgstr "Các tam giác có tất cả đỉnh trong nhóm này không được sử dụng trong va chạm với một mình"
 
 
 msgid "Cloth Settings"
@@ -7980,7 +7992,7 @@ msgstr "Bán Kính Tối Đa"
 
 
 msgid "Radius to use when the maximum pressure is applied (or when a tablet isn't used)"
-msgstr "Sử dụng bán kính nào khi được áp dụng áp suất tối đa (hoặc khi không dùng bàn vẽ)"
+msgstr "Sử dụng bán kính nào khi được áp dụng áp suất tối đa (hoặc khi không dùng bảng vẽ)"
 
 
 msgid "Radius Min"
@@ -8048,7 +8060,7 @@ msgstr "Áp dụng một dịch dẳng (không phóng to bằng bán kính)"
 
 
 msgid "Map tablet pressure to curve radius"
-msgstr "Ánh xạ áp suất bàn vẽ đến bán kính đường cong"
+msgstr "Ánh xạ áp suất bảng vẽ đến bán kính đường cong"
 
 
 msgid "Only First"
@@ -15173,7 +15185,7 @@ msgstr "Tọa Độ"
 
 
 msgid "Pressure of tablet at point when drawing it"
-msgstr "Áp suất trên bàn vẽ tại điểm khi đang vẽ nó"
+msgstr "Áp suất trên bảng vẽ tại điểm khi đang vẽ nó"
 
 
 msgid "Point is selected for viewport editing"
@@ -18514,7 +18526,7 @@ msgstr "Áp Suất Dịch Mặt Phẳng"
 
 
 msgid "Enable tablet pressure sensitivity for offset"
-msgstr "Bật nhảy cảm áp suất của bàn vẽ cho dịch"
+msgstr "Bật nhảy cảm áp suất của bảng vẽ cho dịch"
 
 
 msgid "Original Normal"
@@ -18622,7 +18634,7 @@ msgstr "Áp Suất Hốt Hoảng"
 
 
 msgid "Enable tablet pressure sensitivity for jitter"
-msgstr "Bật nhảy cảm áp suất của bàn vẽ cho hốt hoảng"
+msgstr "Bật nhảy cảm áp suất của bảng vẽ cho hốt hoảng"
 
 
 msgid "Mask Pressure Mode"
@@ -18646,7 +18658,7 @@ msgstr "Áp Suất Kích Cỡ"
 
 
 msgid "Enable tablet pressure sensitivity for size"
-msgstr "Bật nhảy cảm áp suất của bàn vẽ cho kích cỡ"
+msgstr "Bật nhảy cảm áp suất của bảng vẽ cho kích cỡ"
 
 
 msgid "Spacing Pressure"
@@ -18654,7 +18666,7 @@ msgstr "Áp Suất Khoảng Cách"
 
 
 msgid "Enable tablet pressure sensitivity for spacing"
-msgstr "Bật nhảy cảm áp suất của bàn vẽ cho khoảng cách"
+msgstr "Bật nhảy cảm áp suất của bảng vẽ cho khoảng cách"
 
 
 msgid "Strength Pressure"
@@ -18662,7 +18674,7 @@ msgstr "Áp Suất Sức"
 
 
 msgid "Enable tablet pressure sensitivity for strength"
-msgstr "Bật dùng độ nhảy cảm áp suất của bàn vẽ cho sức"
+msgstr "Bật dùng độ nhảy cảm áp suất của bảng vẽ cho sức"
 
 
 msgid "Use Texture Overlay"
@@ -27582,7 +27594,7 @@ msgstr "Hạ DiCuyểnChuột"
 
 msgctxt "UI_Events_KeyMaps"
 msgid "Mouse/Trackpad Pan"
-msgstr "Kéo Chuột/Bàn Vẽ"
+msgstr "Dời Chuột/Bảng Vẽ"
 
 
 msgid "MsPan"
@@ -27591,7 +27603,7 @@ msgstr "DờiChuột"
 
 msgctxt "UI_Events_KeyMaps"
 msgid "Mouse/Trackpad Zoom"
-msgstr "Phóng To Chuột/Bàn Vẽ"
+msgstr "Phóng To Chuột/Bảng Vẽ"
 
 
 msgid "MsZoom"
@@ -27600,7 +27612,7 @@ msgstr "PhóngChuột"
 
 msgctxt "UI_Events_KeyMaps"
 msgid "Mouse/Trackpad Rotate"
-msgstr "Chuột/Bàn Vẽ Xoay"
+msgstr "Chuột/Bảng Vẽ Xoay"
 
 
 msgid "MsRot"
@@ -27609,7 +27621,7 @@ msgstr "XoayChuột"
 
 msgctxt "UI_Events_KeyMaps"
 msgid "Mouse/Trackpad Smart Zoom"
-msgstr "Phóng To Thông Minh Chuột/Bàn Vẽ"
+msgstr "Phóng To Thông Minh Chuột/Bảng Vẽ"
 
 
 msgid "MsSmartZoom"
@@ -30563,6 +30575,10 @@ msgstr "Riêng Biệt Đuổi Theo Xoay"
 
 msgid "Clean Up"
 msgstr "Làm Sạch"
+
+
+msgid "Track Motion"
+msgstr "Theo Dõi Chuyển Động"
 
 
 msgid "Refine"
@@ -40017,8 +40033,32 @@ msgid "Geometry Node"
 msgstr "Giao Điểm Hình Dạng"
 
 
+msgid "Align Rotation to Vector"
+msgstr "Sắp Xếp Xoay với Vectơ"
+
+
+msgid "Axis to align to the vector"
+msgstr "Sắp xếp trục với vectơ"
+
+
+msgid "Align the X axis with the vector"
+msgstr "Sắp xếp trục X với vectơ"
+
+
+msgid "Align the Y axis with the vector"
+msgstr "Sắp xếp trục Y với vectơ"
+
+
+msgid "Align the Z axis with the vector"
+msgstr "Sắp xếp trục Z với vectơ"
+
+
 msgid "Input Type Factor"
-msgstr "Loại Hệ Số ngõ Vào"
+msgstr "Loại Hệ Số Ngõ Vào"
+
+
+msgid "Input Type Vector"
+msgstr "Vectơ Loại Ngõ Vào"
 
 
 msgid "Attribute Color Ramp"
@@ -40051,6 +40091,10 @@ msgstr "Pha Trộn Đặc Điểm"
 
 msgid "Attribute Randomize"
 msgstr "Ngẫu Nhiên Hóa Đặc Điểm"
+
+
+msgid "Attribute Vector Math"
+msgstr "Toán Vectơ Đặc Điểm"
 
 
 msgid "Entry-wise multiply"
@@ -40161,6 +40205,10 @@ msgid "Object Info"
 msgstr "Thông Tin Vật Thể"
 
 
+msgid "Original"
+msgstr "Ban Đầu"
+
+
 msgid "Point Distribute"
 msgstr "Phân Phối Điểm"
 
@@ -40181,6 +40229,10 @@ msgid "Poisson Disk"
 msgstr "Đĩa Poisson"
 
 
+msgid "Distribute the points randomly on the surface while taking a minimum distance between points into account"
+msgstr "Phân phối các điểm ngẫu nhiên trên bề mặt khi xem xét khoảng cách giữa điểm"
+
+
 msgid "Point Instance"
 msgstr "Thực Thể Điểm"
 
@@ -40197,8 +40249,24 @@ msgid "Instance entire collection on each point"
 msgstr "Thực thể toàn bộ sưu tập trên mỗi điểm"
 
 
+msgid "Point Scale"
+msgstr "Phóng To Điểm"
+
+
+msgid "Input Type"
+msgstr "Loại Ngõ Vào"
+
+
 msgid "Point Separate"
 msgstr "Chẻ Điểm"
+
+
+msgid "Point Translate"
+msgstr "Dịch Điểm"
+
+
+msgid "Point Rotate"
+msgstr "Xoay Điểm"
 
 
 msgid "Input Type Angle"
@@ -40231,6 +40299,10 @@ msgstr "Phương pháp cho áp dụng xoay"
 
 msgid "Rotate around an axis by an angle"
 msgstr "Xoay quanh một trục bằng một góc"
+
+
+msgid "Rotate around the X, Y, and Z axes"
+msgstr "Xoay quanh trục X, Y, và Z"
 
 
 msgctxt "NodeTree"
@@ -41590,6 +41662,10 @@ msgid "Subpath used for this slot"
 msgstr "Đường dẫn phụ cho ổ cắm này"
 
 
+msgid "Save as Render"
+msgstr "Lưu bằng Kết Xuất"
+
+
 msgid "Apply render part of display transform when saving byte image"
 msgstr "Áp dụng biến hóa hiển thị của phần kết xuất khi lưu ảnh byte"
 
@@ -42310,6 +42386,10 @@ msgstr "Lật thời gian của các bức mẫu được chọn mà dùng ky hi
 msgctxt "Operator"
 msgid "New Action"
 msgstr "Hành Động Mới"
+
+
+msgid "Create new action"
+msgstr "Chế tạo hành động mới"
 
 
 msgctxt "Operator"
@@ -48960,10 +49040,6 @@ msgstr "Không quan tâm thời tự"
 
 msgid "Simple linear timing"
 msgstr "Thời tự bậc một đơn giản"
-
-
-msgid "Original"
-msgstr "Ban Đầu"
 
 
 msgid "Use the original timing, gaps included"
@@ -65093,10 +65169,6 @@ msgid "Set Selected Strip Proxies"
 msgstr "Đặt Đại Lỵ Đoạn Phim Được Chọn"
 
 
-msgid "Enable selected proxies on all selected Movie, Image and Meta strips"
-msgstr "Bật đại lý được chọn cho hết đoạn Phim, đoạn Ảnh, và đoạn Siêu được chọn"
-
-
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Xuất Phụ Đề"
@@ -68551,6 +68623,18 @@ msgid "Interactively add an object"
 msgstr "Kiểu tương tác thêm một vật thể"
 
 
+msgid "The initial aspect setting"
+msgstr "Tỉ số cạnh khởi động"
+
+
+msgid "Use an unconstrained aspect"
+msgstr "Dùng một tỉ số cạnh không bị hạn chế"
+
+
+msgid "Use a fixed 1:1 aspect"
+msgstr "dùng một tỉ số cạnh đẳng 1:1"
+
+
 msgid "Plane Axis"
 msgstr "Trục Mặt Phẳng"
 
@@ -68567,12 +68651,12 @@ msgid "Start placing on the surface, using the 3D cursor position as a fallback"
 msgstr "Bắt đầu đặt vị trí trên bề mặt, dùng con trỏ 3D nếu có vấn đề"
 
 
-msgid "Start placement using a point projected onto the selected axis at the 3D cursor position"
-msgstr "Bắt đầu đặt vị trí dùng một điểm được chiếu lên trục được chọn tại con trỏ 3D"
+msgid "Cursor Plane"
+msgstr "Mặt Phẳng Con Trỏ"
 
 
-msgid "Use the surface normal (the transform orientation as a fallback)"
-msgstr "Dùng pháp tuyến bề mặt (định hướng của biến hóa nếu có sư cố)"
+msgid "Cursor View"
+msgstr "Màn Nhìn Con Trỏ"
 
 
 msgid "Use the current transform orientation"
@@ -68581,6 +68665,10 @@ msgstr "Dùng định hướng của biến hóa hiện tại"
 
 msgid "The initial position for placement"
 msgstr "Vị trí khởi động cho đặt vị trí"
+
+
+msgid "Start placing the edge position"
+msgstr "Bắt đầu đặt vị trí của cạnh"
 
 
 msgid "Start placing the center position"
@@ -68593,6 +68681,22 @@ msgstr "Hình Cầu UV"
 
 msgid "ICO Sphere"
 msgstr "Hình Cầu Nhị Thập Diện"
+
+
+msgid "Snap to"
+msgstr "Hút Dính đến"
+
+
+msgid "The target to use while snapping"
+msgstr "Mục tiểu khi đang hút dính"
+
+
+msgid "Snap to all geometry"
+msgstr "Hút dính đến hết hình dạng"
+
+
+msgid "Use the current snap settings"
+msgstr "Dùng cài đặt hiện tại"
 
 
 msgctxt "Operator"
@@ -71389,6 +71493,10 @@ msgid "New World"
 msgstr "Thế Giới Mới"
 
 
+msgid "Create a new world Data-Block"
+msgstr "Chế tạo một Cục Dữ liệu thế giới mới"
+
+
 msgid "External file packed into the .blend file"
 msgstr "Tệp ngoài được nén vào tệp .blend"
 
@@ -73022,7 +73130,7 @@ msgstr "NDOF"
 
 
 msgid "Tablet"
-msgstr "Bàn Vẽ"
+msgstr "Bảng Vẽ"
 
 
 msgid "Editors"
@@ -75072,6 +75180,14 @@ msgid "Auto Handle Smoothing mode used for newly added F-Curves"
 msgstr "Chế độ tự động mịn hóa được sử dụng cho các Cong-F mới thêm"
 
 
+msgid "Unselected F-Curve Opacity"
+msgstr "Độ Đục của Cong-F chưa được chọn"
+
+
+msgid "The opacity of unselected F-Curves against the background of the Graph Editor"
+msgstr "Độ đục của các Cong-F chưa được chọn so với nền của Bộ Biên Tập Biều Đồ"
+
+
 msgid "Annotation Default Color"
 msgstr "Màu Mặc Định Lời Ghi Chú"
 
@@ -75392,6 +75508,10 @@ msgid "Asset Browser"
 msgstr "Bộ Trình Duyệt Tích Sản"
 
 
+msgid "Enable Asset Browser editor and operators to manage data-blocks as asset"
+msgstr "Bật bộ biên tập Trình Duyệt Tích Sản và các thao tác để quản lý các cục dữ liệu như tích sản"
+
+
 msgid "Cycles Debug"
 msgstr "Sửa Sai Lầm Cycles"
 
@@ -75421,7 +75541,7 @@ msgstr "Sự Hỗ Trợ Nghiêng Trong Chế Độ Khắc"
 
 
 msgid "Support for pen tablet tilt events in Sculpt Mode"
-msgstr "Hỗ trợ sự kiện bàn vẽ nghiêng trong Chế Độ Khắc"
+msgstr "Hỗ trợ sự kiện bảng vẽ nghiêng trong Chế Độ Khắc"
 
 
 msgid "Use the new Vertex Painting system"
@@ -75677,15 +75797,15 @@ msgstr "Ngưỡng Kéo Chuột"
 
 
 msgid "Number of pixels to drag before a tweak/drag event is triggered for mouse/trackpad input (otherwise click events are detected)"
-msgstr "Số lượng điểm ảnh cần kéo trước một sự kiện chỉnh sửa/kéo được khởi động cho ngõ vào chuột/bàn vẽ (nếu không, được phát hiện sự kiện bấm)"
+msgstr "Số lượng điểm ảnh cần kéo trước một sự kiện chỉnh sửa/kéo được khởi động cho ngõ vào chuột/bảng vẽ (nếu không, được phát hiện sự kiện bấm)"
 
 
 msgid "Tablet Drag Threshold"
-msgstr "Ngưỡng Kéo Bàn Vẽ"
+msgstr "Ngưỡng Kéo Bảng Vẽ"
 
 
 msgid "Number of pixels to drag before a tweak/drag event is triggered for tablet input (otherwise click events are detected)"
-msgstr "Số lượng điểm ảnh cần kéo trước một sự kiện chỉnh sửa/kéo được khởi động cho ngõ vào bàn vẽ (nếu không, được phát hiện sự kiện bấm)"
+msgstr "Số lượng điểm ảnh cần kéo trước một sự kiện chỉnh sửa/kéo được khởi động cho ngõ vào bảng vẽ (nếu không, được phát hiện sự kiện bấm)"
 
 
 msgid "Invert Zoom Direction"
@@ -75889,11 +76009,11 @@ msgstr "Áp suất ngõ vào trực tiếp được xác định là 100% bằng
 
 
 msgid "Tablet API"
-msgstr "API Bàn Vẽ"
+msgstr "API Bảng Vẽ"
 
 
 msgid "Select the tablet API to use for pressure sensitivity"
-msgstr "Chọn API của bàn vẽ để dùng cho độ nhạy cảm của áp suất"
+msgstr "Chọn API của bảng vẽ để dùng cho độ nhạy cảm của áp suất"
 
 
 msgid "Automatically choose Wintab or Windows Ink depending on the device"
@@ -75905,15 +76025,15 @@ msgstr "Mực Cửa Sổ"
 
 
 msgid "Use native Windows Ink API, for modern tablet and pen devices. Requires Windows 8 or newer"
-msgstr "Dùng API (giao diện ứng dụng) Mực Cửa Sổ, cho bàn vẽ và thiết bị bút hiện đại. Yêu cầu Window 8 trở lên"
+msgstr "Dùng API (giao diện ứng dụng) Mực Cửa Sổ, cho bảng vẽ và thiết bị bút hiện đại. Yêu cầu Window 8 trở lên"
 
 
 msgid "Wintab"
-msgstr "Bàn Vẽ Cứa Sổ"
+msgstr "Bảng Vẽ Cứa Sổ"
 
 
 msgid "Use Wintab driver for older tablets and Windows versions"
-msgstr "Dùng trình điều khiển Bàn Vẽ Cứa Sổ cho bàn vẽ cũ và phiên bản Window cũ"
+msgstr "Dùng trình điều khiển Bảng Vẽ Cứa Sổ cho bảng vẽ cũ và phiên bản Window cũ"
 
 
 msgid "Auto Perspective"
@@ -91384,7 +91504,12 @@ msgstr "Dụng Cụ Tổng Quát: Ghi Chú Cục Gôm"
 
 msgctxt "WindowManager"
 msgid "3D View Tool: Measure"
-msgstr "Dụng Cụ Tổng Quát: Đo"
+msgstr "Dụng Cụ Màn Nhìn 3D: Đo"
+
+
+msgctxt "WindowManager"
+msgid "3D View Tool: Object, Add Primitive"
+msgstr "Dụng Cụ Màn Nhìn 3D: Vật Thể, Thêm Đơn Giản"
 
 
 msgctxt "WindowManager"
@@ -91495,6 +91620,11 @@ msgstr "Đường Cong Sơn"
 msgctxt "WindowManager"
 msgid "Object Non-modal"
 msgstr "Vật Thể Không-Cách Thức"
+
+
+msgctxt "WindowManager"
+msgid "View3D Placement Modal"
+msgstr "Cách Thức Đặt Vị Vrí Màn 3D"
 
 
 msgctxt "WindowManager"
@@ -92852,6 +92982,10 @@ msgstr "Mô khối Đã Cài Đặt (%s) từ %r vào %r"
 
 msgid "Add-on path %r could not be found"
 msgstr "Không thể tìm được đường dẫn đồ kèm %r"
+
+
+msgid "Expected a zip-file %r"
+msgstr "Định có một tập tin zip %r"
 
 
 msgid "Template Installed (%s) from %r into %r"
@@ -95118,6 +95252,56 @@ msgstr "Kích Cỡ Đại Lý"
 
 
 msgctxt "Operator"
+msgid "Backwards"
+msgstr "Lùi"
+
+
+msgctxt "Operator"
+msgid "Frame Backwards"
+msgstr "Bức Lùi"
+
+
+msgctxt "Operator"
+msgid "Forwards"
+msgstr "Tới"
+
+
+msgctxt "Operator"
+msgid "Frame Forwards"
+msgstr "Bức Tới"
+
+
+msgctxt "Operator"
+msgid "Before"
+msgstr "Trước"
+
+
+msgctxt "Operator"
+msgid "After"
+msgstr "Sau"
+
+
+msgctxt "Operator"
+msgid "Track Path"
+msgstr "Đường Vết"
+
+
+msgctxt "Operator"
+msgid "Solution"
+msgstr "Đồ Phân Giải"
+
+
+msgctxt "Operator"
+msgid "Copy Settings to Defaults"
+msgstr "Sao Chép Cài Đặt vào Mặc Định"
+
+
+msgctxt "Operator"
+msgid "Apply Default Settings"
+msgstr "Áp Dụng Cài Đặt Mặc Định"
+
+
+msgctxt "Operator"
 msgid "Location"
 msgstr "Vị Trí"
 
@@ -96763,6 +96947,18 @@ msgid "Unable to find toolbar group"
 msgstr "Không thể tìm được nhóm thanh dụng cụ"
 
 
+msgid ""
+"%s\n"
+"• %s toggles snap while dragging.\n"
+"• %s toggles dragging from the center.\n"
+"• %s toggles fixed aspect"
+msgstr ""
+"%s\n"
+"• %s bặt/tắt hút dính khi kéo.\n"
+"• %s bật/tắt kéo từ trung tâm.\n"
+"• %s bật/tắt tỉ số cạnh đẳng"
+
+
 msgid "Depth:"
 msgstr "Độ Sâu:"
 
@@ -96809,6 +97005,22 @@ msgstr "Mũ Tế Ngoại"
 
 msgid "Intersections"
 msgstr "Chỗ Cắt Nhau"
+
+
+msgid "Add cube to mesh interactively"
+msgstr "Thêm hình lập phương vào mạng lưới kiểu thao tác"
+
+
+msgid "Add cone to mesh interactively"
+msgstr "Thêm hìng nón vào mạng lưới kiểu thao tác"
+
+
+msgid "Add cylinder to mesh interactively"
+msgstr "Thêm hình trụ vào mạng lưới kiểu thao tác"
+
+
+msgid "Add sphere to mesh interactively"
+msgstr "Thêm hình cầu vào mạng lưới kiểu thao tác"
 
 
 msgctxt "Operator"
@@ -97108,6 +97320,10 @@ msgstr "Chỉ Chèn Có Thể Dùng"
 
 msgid "Enable in New Scenes"
 msgstr "Bật trong Cảnh Mới"
+
+
+msgid "Unselected Opacity"
+msgstr "Độ Đục Chưa Được Chọn"
 
 
 msgid "Default Smoothing Mode"
@@ -101854,6 +102070,26 @@ msgid "Indirect library data-block, cannot change"
 msgstr "Cục dữ liệu thư viện gián tiếp, không thể đổi"
 
 
+msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
+msgstr "Cục dữ liệu thư viện được liên kết trực tiếp, bấm cho địa phương hóa, Shift + Bấm để tạo một đồ thay thế thư viện"
+
+
+msgid "Library override of linked data-block, click to make fully local"
+msgstr "Đồ thay thế thư viện của cục dữ liệu được liên kết, bấm cho địa phương hóa"
+
+
+msgid "Display number of users of this data (click to make a single-user copy)"
+msgstr "Hiệm số lượng người dùng của dữ liệu này (bấm cho làm một bản sao đơn người dùng)"
+
+
+msgid "Packed File, click to unpack"
+msgstr "Tệp Đước Gói Lại, bấm để rỡ gói"
+
+
+msgid "Unlink data-block (Shift + Click to set users to zero, data will then not be saved)"
+msgstr "Cắt liên kết của cục dữ liệu (Shift + Bấm để xóa hết người dùng, sau này sẽ không lưu dữ liệu của nó)"
+
+
 msgid "Can't edit external library data"
 msgstr "Không thể biên tập dữ lịệu thư viện ngoại bộ"
 
@@ -105292,6 +105528,10 @@ msgid "Disabled, built without OpenSubdiv"
 msgstr "Bị tắt, đã xây dựng thiếu OpenSubdiv (PhânHóaBềMặt Mở)"
 
 
+msgid "Type C"
+msgstr "Loại C"
+
+
 msgid "Undefined Socket Type"
 msgstr "Loại Ổ Cắm Chưa Chỉ Định"
 
@@ -106970,6 +107210,10 @@ msgstr "Cốt '%s' không ở trong chế độ biên tập, không thể xóa m
 
 msgid "Armature '%s' does not contain bone '%s'"
 msgstr "Cốt '%s' không có xương '%s'"
+
+
+msgid "Tag '%s' already present for given asset"
+msgstr "Thẻ '%s' đang tồn tại rồi cho tích sản"
 
 
 msgid "Tag '%s' not found in given asset"
