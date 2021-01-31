@@ -30,7 +30,7 @@ def download_url(url, dest):
     import time
     ssl._create_default_https_context = ssl._create_unverified_context
     start_time = time.time()
-    
+
     try:
         with urllib.request.urlopen(url) as response, open(dest, 'wb') as out_file:
             shutil.copyfileobj(response, out_file)
@@ -53,7 +53,7 @@ def get_brushes(blend_fp):
     ## force fake user for the brushes
     for b in data_to.brushes:
         b.use_fake_user = True
-    
+
     return len(data_to.brushes)
 
 class GP_OT_install_brush_pack(bpy.types.Operator):
@@ -101,12 +101,12 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         if not temp:
             self.report({'ERROR'}, 'no os temporary directory found to download brush pack (using python tempfile.gettempdir())')
             return {"CANCELLED"}
-        
+
         self.temp = Path(temp)
 
         ## download link from gitlab
-        # brush pack project https://gitlab.com/pepe-school-land/gp-brush-pack 
-        repo_url = r'https://gitlab.com/api/v4/projects/21994857' 
+        # brush pack project https://gitlab.com/pepe-school-land/gp-brush-pack
+        repo_url = r'https://gitlab.com/api/v4/projects/21994857'
         tree_url = f'{repo_url}/repository/tree'
 
         ## need to create an SSl context or linux fail and raise unverified ssl
@@ -127,7 +127,7 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
 
             self.report({'ERROR'}, f'Check your internet connexion, Impossible to connect to url: {tree_url}')
             return {"CANCELLED"}
-        
+
         if not html:
             self.report({'ERROR'}, f'No response read from: {tree_url}')
             return {"CANCELLED"}
@@ -154,7 +154,7 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
         dl_url = f"{repo_url}/repository/blobs/{id_num}/raw"
 
         self.brushzip = self.temp / zipname
-        
+
 
         ### Load existing files instead of redownloading if exists and up to date (same hash)
         if self.brushzip.exists():
@@ -167,20 +167,20 @@ class GP_OT_install_brush_pack(bpy.types.Operator):
                 while len(fb) > 0:
                     file_hash.update(fb)
                     fb = f.read(BLOCK_SIZE)
-            
+
             if file_hash.hexdigest() == id_num: # same git SHA1
-                ## is up to date, install 
+                ## is up to date, install
                 print(f'{self.brushzip} is up do date, appending brushes')
                 self._install_from_zip()
                 return {"FINISHED"}
-        
+
         ## Download, unzip, use blend
         print(f'Downloading brushpack in {self.brushzip}')
         ## https://cloud.blender.org/p/gallery/5f235cc297f8815e74ffb90b
 
         fallback_url='https://gitlab.com/pepe-school-land/gp-brush-pack/-/blob/master/Official_GP_brush_pack_v01.zip'
         err = simple_dl_url(dl_url, str(self.brushzip), fallback_url)
-        # err = download_url(dl_url, str(self.brushzip), fallback_url) 
+        # err = download_url(dl_url, str(self.brushzip), fallback_url)
 
         if err:
             self.report({'ERROR'}, 'Could not download brush pack. Check your internet connection. (see console for detail)')

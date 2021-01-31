@@ -27,7 +27,7 @@ class GP_PT_sidebarPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.use_property_split = True
-        
+
         # Box deform ops
         self.layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator('gp.latticedeform', icon ="MOD_MESHDEFORM")# MOD_LATTICE, LATTICE_DATA

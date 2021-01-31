@@ -9,33 +9,33 @@ def InitFolders():
     #    Global variable foundExchangeFolder (True / False) guides these steps
     # 1. Read Exchange_folder.txt, if not success ->
     # 2. Try to find exchange folder from system hard drive, if not success -->
-    # 3. Leave foundExchangeFolder = False 
+    # 3. Leave foundExchangeFolder = False
 
     # 1. #################################################################
 
     if(platform == 'win32' or platform == 'darwin'):
-        DC2Folder = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender' 
+        DC2Folder = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender'
     else:
-        DC2Folder = os.path.expanduser("~") + os.sep + '3DC2Blender' 
-    
+        DC2Folder = os.path.expanduser("~") + os.sep + '3DC2Blender'
+
     exchangeFile = DC2Folder + os.sep + 'Exchange_folder.txt'
 
     if(not os.path.isdir(DC2Folder)):
         os.mkdir(DC2Folder)
-    
+
     if(not os.path.isfile(exchangeFile)):
         file = open(exchangeFile, 'w')
         file.close()
     else:
         savedExchangePath = ''
         folderPath = open(exchangeFile)
-        
+
         for line in folderPath:
             savedExchangePath = line
             break
         folderPath.close()
 
-        
+
         coat3D.exchangeFolder = savedExchangePath
         return True, coat3D.exchangeFolder
 
@@ -50,7 +50,7 @@ def InitFolders():
             exchangeFolder = os.path.expanduser("~") + os.sep + '3D-CoatV3' + os.sep + 'Exchange'
     if(os.path.isdir(exchangeFolder)):
         coat3D.exchangeFolder = exchangeFolder
-        
+
         Blender_folder = ("%s%sBlender"%(exchangeFolder,os.sep))
 
         if(not(os.path.isdir(Blender_folder))):
@@ -68,7 +68,7 @@ def InitFolders():
             file = open(Blender_folder3, "w")
             file.write("Blender Cycles")
             file.close()
-        
+
         file = open(exchangeFile, "w")
         file.write("%s"%(os.path.abspath(coat3D.exchangeFolder)))
         file.close()
@@ -81,14 +81,14 @@ def InitFolders():
 def updateExchangeFile(newPath):
 
     platform = os.sys.platform
-    
+
     if(platform == 'win32' or platform == 'darwin'):
         exchangeFile = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender' + os.sep + 'Exchange_folder.txt'
     else:
         exchangeFile = os.path.expanduser("~") + os.sep + '3DC2Blender' + os.sep + 'Exchange_folder.txt'
     if(os.path.isfile(exchangeFile)):
         folderPath = ''
-    
+
     if(os.path.isfile(exchangeFile)):
         file = open(exchangeFile, "w")
         file.write("%s"%(newPath))
@@ -100,22 +100,22 @@ def loadExchangeFolder():
     coat3D = bpy.context.scene.coat3D
 
     if(platform == 'win32' or platform == 'darwin'):
-        DC2Folder = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender' 
+        DC2Folder = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3DC2Blender'
     else:
-        DC2Folder = os.path.expanduser("~") + os.sep + '3DC2Blender' 
-    
+        DC2Folder = os.path.expanduser("~") + os.sep + '3DC2Blender'
+
     exchangeFile = DC2Folder + os.sep + 'Exchange_folder.txt'
 
     if(not os.path.isdir(DC2Folder)):
         os.mkdir(DC2Folder)
-    
+
     if(not os.path.isfile(exchangeFile)):
         file = open(exchangeFile, 'w')
         file.close()
     else:
         savedExchangePath = ''
         folderPath = open(exchangeFile)
-        
+
         for line in folderPath:
             savedExchangePath = line
             break

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -40161,6 +40161,10 @@ msgid "Object Info"
 msgstr "Información de objeto"
 
 
+msgid "Original"
+msgstr "Original"
+
+
 msgid "Point Distribute"
 msgstr "Distribuir puntos"
 
@@ -48960,10 +48964,6 @@ msgstr "Ignorar temporización"
 
 msgid "Simple linear timing"
 msgstr "Temporización lineal simple"
-
-
-msgid "Original"
-msgstr "Original"
 
 
 msgid "Use the original timing, gaps included"
@@ -65093,10 +65093,6 @@ msgid "Set Selected Strip Proxies"
 msgstr "Definir reemplazos en clips seleccionados"
 
 
-msgid "Enable selected proxies on all selected Movie, Image and Meta strips"
-msgstr "Habilita los reemplazos en todos los clips de película, imágenes y meta-clips seleccionados"
-
-
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Exportar subtítulos"
@@ -68565,14 +68561,6 @@ msgstr "La profundidad inicial usada al posicionar el cursor"
 
 msgid "Start placing on the surface, using the 3D cursor position as a fallback"
 msgstr "Comenzar ubicando sobre la superficie, usando la posición del cursor 3D como alternativa"
-
-
-msgid "Start placement using a point projected onto the selected axis at the 3D cursor position"
-msgstr "Comienza la ubicación usando un punto proyectado sobre el eje seleccionado, en la posición del cursor 3D"
-
-
-msgid "Use the surface normal (the transform orientation as a fallback)"
-msgstr "Usa la normal de la superficie (o la orientación de la transformación, como alternativa)"
 
 
 msgid "Use the current transform orientation"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -24706,6 +24706,10 @@ msgid "Object Info"
 msgstr "物體資訊"
 
 
+msgid "Original"
+msgstr "原始"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "框幀"
@@ -30546,10 +30550,6 @@ msgstr "忽略時機"
 
 msgid "Simple linear timing"
 msgstr "簡單線性時機"
-
-
-msgid "Original"
-msgstr "原始"
 
 
 msgid "Use the original timing, gaps included"

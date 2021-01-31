@@ -15,7 +15,7 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
- 
+
 '''Based on GP_refine_stroke 0.2.4 - Author: Samuel Bernou'''
 
 import bpy
@@ -36,10 +36,10 @@ def vector_len_from_coord(a, b):
     Get two points (that has coordinate 'co' attribute) or Vectors (2D or 3D)
     Return length as float
     '''
-    from mathutils import Vector    
+    from mathutils import Vector
     if type(a) is Vector:
         return (a - b).length
-    else:   
+    else:
         return (a.co - b.co).length
 
 def point_from_dist_in_segment_3d(a, b, ratio):
@@ -53,7 +53,7 @@ def get_stroke_length(s):
     all_len = 0.0
     for i in range(0, len(s.points)-1):
         #print(vector_len_from_coord(s.points[i],s.points[i+1]))
-        all_len += vector_len_from_coord(s.points[i],s.points[i+1])   
+        all_len += vector_len_from_coord(s.points[i],s.points[i+1])
     return (all_len)
 
 ### --- Functions
@@ -63,7 +63,7 @@ def to_straight_line(s, keep_points=True, influence=100, straight_pressure=True)
     keep points : if false only start and end point stay
     straight_pressure : (not available with keep point) take the mean pressure of all points and apply to stroke.
     '''
-    
+
     p_len = len(s.points)
     if p_len <= 2: # 1 or 2 points only, cancel
         return
@@ -83,21 +83,21 @@ def to_straight_line(s, keep_points=True, influence=100, straight_pressure=True)
         full_dist = get_stroke_length(s)
         dist_from_start = 0.0
         coord_list = []
-        
+
         for i in range(1, p_len-1):#all but first and last
             dist_from_start += vector_len_from_coord(s.points[i-1],s.points[i])
             ratio = dist_from_start / full_dist
             # dont apply directly (change line as we measure it in loop)
             coord_list.append( point_from_dist_in_segment_3d(A, B, ratio) )
-        
+
         # apply change
         for i in range(1, p_len-1):
             ## Direct super straight 100%
             #s.points[i].co = coord_list[i-1]
-            
+
             ## With influence
             s.points[i].co = point_from_dist_in_segment_3d(s.points[i].co, coord_list[i-1], influence / 100)
-    
+
     return
 
 def get_last_index(context=None):
@@ -119,9 +119,9 @@ class GP_OT_straightStroke(bpy.types.Operator):
         return context.active_object is not None and context.object.type == 'GPENCIL'
         #and context.mode in ('PAINT_GPENCIL', 'EDIT_GPENCIL')
 
-    influence_val : bpy.props.FloatProperty(name="Straight force", description="Straight interpolation percentage", 
+    influence_val : bpy.props.FloatProperty(name="Straight force", description="Straight interpolation percentage",
     default=100, min=0, max=100, step=2, precision=1, subtype='PERCENTAGE', unit='NONE')
-    
+
     def execute(self, context):
         gp = context.object.data
         gpl = gp.layers
@@ -130,16 +130,16 @@ class GP_OT_straightStroke(bpy.types.Operator):
 
         if context.mode == 'PAINT_GPENCIL':
             if not gpl.active or not gpl.active.active_frame:
-                self.report({'ERROR'}, 'No Grease pencil frame found') 
+                self.report({'ERROR'}, 'No Grease pencil frame found')
                 return {"CANCELLED"}
 
             if not len(gpl.active.active_frame.strokes):
-                self.report({'ERROR'}, 'No strokes found.') 
+                self.report({'ERROR'}, 'No strokes found.')
                 return {"CANCELLED"}
 
             s = gpl.active.active_frame.strokes[get_last_index(context)]
             to_straight_line(s, keep_points=True, influence=self.influence_val)
-        
+
         elif context.mode == 'EDIT_GPENCIL':
             ct = 0
             for l in gpl:
@@ -150,15 +150,15 @@ class GP_OT_straightStroke(bpy.types.Operator):
                     target_frames = [f for f in l.frames if f.select]
                 else:
                     target_frames = [l.active_frame]
-                
+
                 for f in target_frames:
                     for s in f.strokes:
                         if s.select:
                             ct += 1
                             to_straight_line(s, keep_points=True, influence=self.influence_val)
-            
+
             if not ct:
-                self.report({'ERROR'}, 'No selected stroke found.') 
+                self.report({'ERROR'}, 'No selected stroke found.')
                 return {"CANCELLED"}
 
         ## filter method
@@ -172,7 +172,7 @@ class GP_OT_straightStroke(bpy.types.Operator):
         #     to_straight_line(s, keep_points=True, influence = self.influence_val)#, straight_pressure=True
 
         return {"FINISHED"}
-    
+
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "influence_val")

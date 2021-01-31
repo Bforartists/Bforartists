@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -33121,6 +33121,10 @@ msgid "Object Info"
 msgstr "Інформація об'єкта"
 
 
+msgid "Original"
+msgstr "Оригінал"
+
+
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Кадр"
@@ -40370,10 +40374,6 @@ msgstr "Знехтувати хронометраж"
 
 msgid "Simple linear timing"
 msgstr "Простий лінійний хронометраж"
-
-
-msgid "Original"
-msgstr "Оригінал"
 
 
 msgid "Use the original timing, gaps included"
@@ -53193,10 +53193,6 @@ msgstr "Замінити поточний вибір"
 msgctxt "Operator"
 msgid "Set Selected Strip Proxies"
 msgstr "Задати замісники для вибраної смужки"
-
-
-msgid "Enable selected proxies on all selected Movie, Image and Meta strips"
-msgstr "Увімкнути вибрані замісники на всіх вибраних смужках типів Фільм, Зображення та Мета"
 
 
 msgctxt "Operator"

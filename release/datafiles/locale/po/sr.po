@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'2ee2f87f29bb')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -11942,6 +11942,10 @@ msgid "Object Info"
 msgstr "Информације о објекту"
 
 
+msgid "Original"
+msgstr "Оригинал"
+
+
 msgid "Label Font Size"
 msgstr "Величина фонта ознаке"
 
@@ -15023,10 +15027,6 @@ msgstr "Трајање рупе"
 
 msgid "Multiplier for the points' radii (set from stroke width)"
 msgstr "Множилац тачака радиуса (подешава дебљину потеза)"
-
-
-msgid "Original"
-msgstr "Оригинал"
 
 
 msgid "Use the original timing, gaps included"
