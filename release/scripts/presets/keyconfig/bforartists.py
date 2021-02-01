@@ -6086,7 +6086,7 @@ keyconfig_data = \
      ),
     ("text.autocomplete", {"type": 'SPACE', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
     ("text.line_number", {"type": 'TEXTINPUT', "value": 'ANY', "any": True}, None),
-    ("text.insert", {"type": 'TEXTINPUT', "value": 'ANY', "any": True}, None),
+    ("text.insert", {"type": 'TEXTINPUT', "value": 'ANY', "any": True, "repeat": True}, None),
     ],
    },
   ),
