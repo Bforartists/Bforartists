@@ -1206,8 +1206,10 @@ static void template_ID(const bContext *C,
             0,
             0,
             0,
-            TIP_("Unlink data-block "
-                 "(Shift + Click to set users to zero, data will then not be saved)"));
+            TIP_("Remove "
+                 "\nShift + Click to set users to zero, data will then not be saved"
+                 "\nTo delete the file completely make sure it has no Fake User assigned"
+                 "\nThen either restart Bforartists, or Purge the file"));
         UI_but_funcN_set(
             but, template_id_cb, MEM_dupallocN(template_ui), POINTER_FROM_INT(UI_ID_DELETE));
 
