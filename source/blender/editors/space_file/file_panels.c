@@ -81,8 +81,9 @@ static void file_panel_operator(const bContext *C, Panel *panel)
     }
   }
 
+  uiLayout *col = uiLayoutColumn(panel->layout, true);
   uiTemplateOperatorPropertyButs(
-      C, panel->layout, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_EMPTY);
+      C, col, op, UI_BUT_LABEL_ALIGN_NONE, UI_TEMPLATE_OP_PROPS_SHOW_EMPTY);
 
   /* Hack: temporary hide.*/
   for (int i = 0; i < ARRAY_SIZE(hide); i++) {
