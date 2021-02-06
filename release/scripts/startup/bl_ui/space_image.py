@@ -333,8 +333,33 @@ class IMAGE_MT_image(Menu):
             if not show_render:
                 layout.operator("image.replace", text="Replace", icon='FILE_FOLDER')
                 layout.operator("image.reload", text="Reload",icon = "FILE_REFRESH")
+            
+            # bfa TODO: move this to image.external_edit poll
+            # bfa - hide disfunctional tools and settings for render result
+            import os
 
-            layout.operator("image.external_edit", text="Edit Externally", icon = "EDIT_EXTERNAL")
+            can_edit = True
+
+            if ima.packed_file:
+                can_edit = False
+
+            if sima.type == 'IMAGE_EDITOR':
+                filepath = ima.filepath_from_user(image_user=sima.image_user)
+            else:
+                filepath = ima.filepath
+
+            filepath = bpy.path.abspath(filepath, library=ima.library)
+
+            filepath = os.path.normpath(filepath)
+
+            if not filepath:
+                can_edit = False
+            
+            if not os.path.exists(filepath) or not os.path.isfile(filepath):
+                can_edit = False
+            
+            if can_edit:
+                layout.operator("image.external_edit", text="Edit Externally", icon = "EDIT_EXTERNAL")
 
         layout.separator()
 
