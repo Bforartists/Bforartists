@@ -348,25 +348,26 @@ class IMAGE_MT_image(Menu):
 
         layout.operator("image.save_all_modified", text="Save All Images", icon = "SAVE_ALL")
 
+        # bfa - hide disfunctional tools and settings for render result
         if ima:
-            layout.separator()
-
-            layout.menu("IMAGE_MT_image_invert")
-            layout.operator("image.resize", text="Resize", icon = "MAN_SCALE")
-
-        if ima and not show_render:
-            if ima.packed_file:
-                if ima.filepath:
-                    layout.separator()
-                    layout.operator("image.unpack", text="Unpack", icon = "PACKAGE")
-            else:
+            if ima.type != 'RENDER_RESULT':
                 layout.separator()
-                layout.operator("image.pack", text="Pack", icon = "PACKAGE")
 
-        if ima:
-            layout.separator()
-            layout.operator("palette.extract_from_image", text="Extract Palette")
-            layout.operator("gpencil.image_to_grease_pencil", text="Generate Grease Pencil")
+                layout.menu("IMAGE_MT_image_invert")
+                layout.operator("image.resize", text="Resize", icon = "MAN_SCALE")
+
+                if not show_render:
+                    if ima.packed_file:
+                        if ima.filepath:
+                            layout.separator()
+                            layout.operator("image.unpack", text="Unpack", icon = "PACKAGE")
+                    else:
+                        layout.separator()
+                        layout.operator("image.pack", text="Pack", icon = "PACKAGE")
+
+                layout.separator()
+                layout.operator("palette.extract_from_image", text="Extract Palette")
+                layout.operator("gpencil.image_to_grease_pencil", text="Generate Grease Pencil")
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -868,8 +869,16 @@ class IMAGE_HT_header(Header):
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
+        # bfa - hide disfunctional tools and settings for render result
+        is_render = False
+        if ima:
+            is_render = ima.type == 'RENDER_RESULT'
+
         if sima.mode != 'UV':
-            layout.prop(sima, "ui_mode", text="")
+            if is_render:
+                layout.prop(sima, "ui_non_render_mode", text="")
+            else:
+                layout.prop(sima, "ui_mode", text="")
 
         # UV editing.
         if show_uvedit:
