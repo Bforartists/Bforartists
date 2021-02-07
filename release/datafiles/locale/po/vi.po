@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -34284,10 +34284,6 @@ msgid "Node group that controls what this modifier does"
 msgstr "Nhóm giao điểm được kiểm soát hành động của cụ sửa đổi này"
 
 
-msgid "Settings that are passed into the node group"
-msgstr "Cài đặt được đưa cho nhóm giao điểm"
-
-
 msgid "Normal Edit Modifier"
 msgstr "Cụ Sửa Đổi Biên Tập Pháp Tuyến"
 
@@ -41984,10 +41980,6 @@ msgstr "Giao Điểm Hoạt Động"
 
 msgid "Active node in this tree"
 msgstr "Giao điểm hoạt động trong cây này"
-
-
-msgid "Nodes Modifier Settings"
-msgstr "Cài Đặt Cụ Sửa Đổi Giao Điểm"
 
 
 msgid "Object Base"
@@ -89820,10 +89812,6 @@ msgstr "Chi tiết vật thể, gồm sợi dây trống rỗng, máy quay phim 
 
 msgid "Draw Face Center"
 msgstr "Vẽ Trung Tâm Mặt"
-
-
-msgid "Display face center"
-msgstr "Hiển thị trung tâm mặt"
 
 
 msgid "Display Normals"

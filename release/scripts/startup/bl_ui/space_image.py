@@ -333,7 +333,7 @@ class IMAGE_MT_image(Menu):
             if not show_render:
                 layout.operator("image.replace", text="Replace", icon='FILE_FOLDER')
                 layout.operator("image.reload", text="Reload",icon = "FILE_REFRESH")
-            
+
             # bfa TODO: move this to image.external_edit poll
             # bfa - hide disfunctional tools and settings for render result
             import os
@@ -354,10 +354,10 @@ class IMAGE_MT_image(Menu):
 
             if not filepath:
                 can_edit = False
-            
+
             if not os.path.exists(filepath) or not os.path.isfile(filepath):
                 can_edit = False
-            
+
             if can_edit:
                 layout.operator("image.external_edit", text="Edit Externally", icon = "EDIT_EXTERNAL")
 
@@ -380,6 +380,7 @@ class IMAGE_MT_image(Menu):
 
                 layout.menu("IMAGE_MT_image_invert")
                 layout.operator("image.resize", text="Resize", icon = "MAN_SCALE")
+                layout.menu("IMAGE_MT_image_flip")
 
                 if not show_render:
                     if ima.packed_file:
@@ -393,6 +394,14 @@ class IMAGE_MT_image(Menu):
                 layout.separator()
                 layout.operator("palette.extract_from_image", text="Extract Palette")
                 layout.operator("gpencil.image_to_grease_pencil", text="Generate Grease Pencil")
+
+class IMAGE_MT_image_flip(Menu):
+    bl_label = "Flip"
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.operator("image.flip", text="Horizontally", icon = "FLIP_Y").use_flip_horizontal = True
+        layout.operator("image.flip", text="Vertically", icon = "FLIP_X").use_flip_vertical = True
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -1792,6 +1801,7 @@ classes = (
     IMAGE_MT_select_legacy,
     IMAGE_MT_select_linked,
     IMAGE_MT_image,
+    IMAGE_MT_image_flip,
     IMAGE_MT_image_invert,
     IMAGE_MT_uvs_clear_seam,
     IMAGE_MT_uvs,

@@ -96,6 +96,11 @@ void GLBackend::platform_init()
     GPG.device = GPU_DEVICE_SOFTWARE;
     GPG.driver = GPU_DRIVER_SOFTWARE;
   }
+  else if (strstr(vendor, "Apple")) {
+    /* Apple Silicon. */
+    GPG.device = GPU_DEVICE_APPLE;
+    GPG.driver = GPU_DRIVER_OFFICIAL;
+  }
   else if (strstr(renderer, "Apple Software Renderer")) {
     GPG.device = GPU_DEVICE_SOFTWARE;
     GPG.driver = GPU_DRIVER_SOFTWARE;
@@ -303,7 +308,7 @@ static void detect_workarounds()
   if (GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_WIN, GPU_DRIVER_OFFICIAL) && !GLEW_VERSION_4_5) {
     GLContext::copy_image_support = false;
   }
-  /* Special fix for theses specific GPUs.
+  /* Special fix for these specific GPUs.
    * Without this workaround, blender crashes on startup. (see T72098) */
   if (GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_WIN, GPU_DRIVER_OFFICIAL) &&
       (strstr(renderer, "HD Graphics 620") || strstr(renderer, "HD Graphics 630"))) {
@@ -362,14 +367,14 @@ static void detect_workarounds()
     }
   }
 
-  /* Some Intel drivers have issues with using mips as framebuffer targets if
-   * GL_TEXTURE_MAX_LEVEL is higher than the target mip.
+  /* Some Intel drivers have issues with using mips as frame-buffer targets if
+   * GL_TEXTURE_MAX_LEVEL is higher than the target MIP.
    * Only check at the end after all other workarounds because this uses the drawing code.
    * Also after device/driver flags to avoid the check that causes pre GCN Radeon to crash. */
   if (GCaps.mip_render_workaround == false) {
     GCaps.mip_render_workaround = detect_mip_render_workaround();
   }
-  /* Disable multidraw if the base instance cannot be read. */
+  /* Disable multi-draw if the base instance cannot be read. */
   if (GLContext::shader_draw_parameters_support == false) {
     GLContext::multi_draw_indirect_support = false;
   }

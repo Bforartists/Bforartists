@@ -1971,7 +1971,7 @@ void RE_RenderFrame(Render *re,
     if (write_still && !G.is_break) {
       if (BKE_imtype_is_movie(rd.im_format.imtype)) {
         /* operator checks this but in case its called from elsewhere */
-        printf("Error: cant write single images with a movie format!\n");
+        printf("Error: can't write single images with a movie format!\n");
       }
       else {
         char name[FILE_MAX];
@@ -2008,12 +2008,39 @@ void RE_RenderFrame(Render *re,
 }
 
 #ifdef WITH_FREESTYLE
+
+/* Not freestyle specific, currently only used by free-style. */
+static void change_renderdata_engine(Render *re, const char *new_engine)
+{
+  if (!STREQ(re->r.engine, new_engine)) {
+    if (re->engine) {
+      RE_engine_free(re->engine);
+      re->engine = NULL;
+    }
+    BLI_strncpy(re->r.engine, new_engine, sizeof(re->r.engine));
+  }
+}
+
+static bool use_eevee_for_freestyle_render(Render *re)
+{
+  RenderEngineType *type = RE_engines_find(re->r.engine);
+  return !(type->flag & RE_USE_CUSTOM_FREESTYLE);
+}
+
 void RE_RenderFreestyleStrokes(Render *re, Main *bmain, Scene *scene, int render)
 {
   re->result_ok = 0;
   if (render_init_from_main(re, &scene->r, bmain, scene, NULL, NULL, 0, 0)) {
     if (render) {
+      char scene_engine[32];
+      BLI_strncpy(scene_engine, re->r.engine, sizeof(scene_engine));
+      if (use_eevee_for_freestyle_render(re)) {
+        change_renderdata_engine(re, RE_engine_id_BLENDER_EEVEE);
+      }
+
       do_render_3d(re);
+
+      change_renderdata_engine(re, scene_engine);
     }
   }
   re->result_ok = 1;
@@ -2310,7 +2337,7 @@ static int do_write_image_or_movie(Render *re,
   printf(" (Saving: %s)\n", name);
 
   fputc('\n', stdout);
-  fflush(stdout); /* needed for renderd !! (not anymore... (ton)) */
+  fflush(stdout);
 
   return ok;
 }
@@ -2710,7 +2737,7 @@ void RE_init_threadcount(Render *re)
 void RE_layer_load_from_file(
     RenderLayer *layer, ReportList *reports, const char *filename, int x, int y)
 {
-  /* OCIO_TODO: assume layer was saved in defaule color space */
+  /* OCIO_TODO: assume layer was saved in default color space */
   ImBuf *ibuf = IMB_loadiffname(filename, IB_rect, NULL);
   RenderPass *rpass = NULL;
 

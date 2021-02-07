@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -78671,10 +78671,6 @@ msgstr "엠프티 와이어, 카메라 및 기타 시각적 가이드를 포함�
 
 msgid "Draw Face Center"
 msgstr "페이스 중심을 그리기"
-
-
-msgid "Display face center"
-msgstr "패이스 중심을 표시"
 
 
 msgid "Display Normals"

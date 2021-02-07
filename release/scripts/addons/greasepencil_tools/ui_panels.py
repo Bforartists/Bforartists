@@ -41,6 +41,9 @@ class GP_PT_sidebarPanel(bpy.types.Panel):
         row = layout.row(align=True)
         row.operator('view3d.zoom_camera_1_to_1', text = 'Zoom 1:1', icon = 'ZOOM_PREVIOUS')# FULLSCREEN_EXIT?
         row.operator('view3d.view_center_camera', text = 'Zoom Fit', icon = 'FULLSCREEN_ENTER')
+        row = layout.row(align=True)
+        row.operator('view3d.rotate_canvas_reset', text = 'Reset Rotation', icon = 'FILE_REFRESH')
+        row.operator('view3d.rotate_canvas_set', text = 'Save Rotation', icon = 'DRIVER_ROTATIONAL_DIFFERENCE')
 
 
 def menu_boxdeform_entry(self, context):

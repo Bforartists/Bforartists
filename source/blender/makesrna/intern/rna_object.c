@@ -1304,11 +1304,13 @@ static void rna_MaterialSlot_link_set(PointerRNA *ptr, int value)
 
   if (value) {
     ob->matbits[index] = 1;
-    /* ob->colbits |= (1 << index); */ /* DEPRECATED */
+    /* DEPRECATED */
+    // ob->colbits |= (1 << index);
   }
   else {
     ob->matbits[index] = 0;
-    /* ob->colbits &= ~(1 << index); */ /* DEPRECATED */
+    /* DEPRECATED */
+    // ob->colbits &= ~(1 << index);
   }
 }
 
@@ -2120,7 +2122,7 @@ static void rna_def_vertex_group(BlenderRNA *brna)
   func = RNA_def_function(srna, "add", "rna_VertexGroup_vertex_add");
   RNA_def_function_ui_description(func, "Add vertices to the group");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
-  /* TODO, see how array size of 0 works, this shouldnt be used */
+  /* TODO, see how array size of 0 works, this shouldn't be used */
   parm = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
   RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_REQUIRED);
   parm = RNA_def_float(func, "weight", 0, 0.0f, 1.0f, "", "Vertex weight", 0.0f, 1.0f);
@@ -2131,7 +2133,7 @@ static void rna_def_vertex_group(BlenderRNA *brna)
   func = RNA_def_function(srna, "remove", "rna_VertexGroup_vertex_remove");
   RNA_def_function_ui_description(func, "Remove a vertex from the group");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
-  /* TODO, see how array size of 0 works, this shouldnt be used */
+  /* TODO, see how array size of 0 works, this shouldn't be used */
   parm = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
   RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_REQUIRED);
 
@@ -2178,14 +2180,14 @@ static void rna_def_face_map(BlenderRNA *brna)
   func = RNA_def_function(srna, "add", "rna_FaceMap_face_add");
   RNA_def_function_ui_description(func, "Add vertices to the group");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
-  /* TODO, see how array size of 0 works, this shouldnt be used */
+  /* TODO, see how array size of 0 works, this shouldn't be used */
   parm = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
   RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_REQUIRED);
 
   func = RNA_def_function(srna, "remove", "rna_FaceMap_face_remove");
   RNA_def_function_ui_description(func, "Remove a vertex from the group");
   RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
-  /* TODO, see how array size of 0 works, this shouldnt be used */
+  /* TODO, see how array size of 0 works, this shouldn't be used */
   parm = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
   RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_REQUIRED);
 }
