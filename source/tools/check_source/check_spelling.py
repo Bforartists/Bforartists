@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -66,7 +68,9 @@ def hash_of_file_and_len(fp):
     import hashlib
     with open(fp, 'rb') as fh:
         data = fh.read()
-        return hashlib.sha512().digest(), len(data)
+        m = hashlib.sha512()
+        m.update(data)
+        return m.digest(), len(data)
 
 
 import re
@@ -333,13 +337,9 @@ def extract_c_comments(filepath):
         j = text.rfind("\n", 0, i) + 1
         block = (" " * (i - j)) + block
 
-        if not (SINGLE_LINE or ("\n" in block)):
-            ok = False
-
-        if ok:
-            slineno += text.count("\n", i_prev, i)
-            comments.append(Comment(filepath, block, slineno, 'COMMENT'))
-            i_prev = i
+        slineno += text.count("\n", i_prev, i)
+        comments.append(Comment(filepath, block, slineno, 'COMMENT'))
+        i_prev = i
 
     return comments, code_words
 

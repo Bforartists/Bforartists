@@ -167,6 +167,8 @@ static void scene_init_data(ID *id)
                      &gp_primitive_curve->clipr,
                      CURVE_PRESET_BELL,
                      CURVEMAP_SLOPE_POSITIVE);
+  /* Grease pencil interpolate. */
+  scene->toolsettings->gp_interpolate.step = 1;
 
   scene->unit.system = USER_UNIT_METRIC;
   scene->unit.scale_length = 1.0f;
@@ -3454,6 +3456,10 @@ static Depsgraph **scene_ensure_depsgraph_p(Main *bmain, Scene *scene, ViewLayer
 Depsgraph *BKE_scene_get_depsgraph(const Scene *scene, const ViewLayer *view_layer)
 {
   BLI_assert(BKE_scene_has_view_layer(scene, view_layer));
+
+  if (scene->depsgraph_hash == NULL) {
+    return NULL;
+  }
 
   DepsgraphKey key;
   key.view_layer = view_layer;

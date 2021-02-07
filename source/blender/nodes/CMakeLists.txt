@@ -147,11 +147,14 @@ set(SRC
   geometry/nodes/node_geo_attribute_math.cc
   geometry/nodes/node_geo_attribute_mix.cc
   geometry/nodes/node_geo_attribute_sample_texture.cc
+  geometry/nodes/node_geo_attribute_proximity.cc
   geometry/nodes/node_geo_attribute_randomize.cc
   geometry/nodes/node_geo_attribute_vector_math.cc
   geometry/nodes/node_geo_boolean.cc
+  geometry/nodes/node_geo_collection_info.cc
   geometry/nodes/node_geo_common.cc
   geometry/nodes/node_geo_edge_split.cc
+  geometry/nodes/node_geo_is_viewport.cc
   geometry/nodes/node_geo_join_geometry.cc
   geometry/nodes/node_geo_object_info.cc
   geometry/nodes/node_geo_point_distribute.cc
@@ -164,6 +167,7 @@ set(SRC
   geometry/nodes/node_geo_subdivision_surface.cc
   geometry/nodes/node_geo_transform.cc
   geometry/nodes/node_geo_triangulate.cc
+  geometry/nodes/node_geo_volume_to_mesh.cc
   geometry/node_geometry_exec.cc
   geometry/node_geometry_tree.cc
   geometry/node_geometry_util.cc
@@ -347,6 +351,10 @@ endif()
 
 if(WITH_INTERNATIONAL)
   add_definitions(-DWITH_INTERNATIONAL)
+endif()
+
+if(WITH_TBB)
+  add_definitions(-DWITH_TBB)
 endif()
 
 if(WITH_IMAGE_OPENEXR)

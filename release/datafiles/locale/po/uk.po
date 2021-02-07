@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -73861,10 +73861,6 @@ msgstr "Деталі об'єктів, включаючи каркаси поро
 
 msgid "Draw Face Center"
 msgstr "Рисувати Центр Грані"
-
-
-msgid "Display face center"
-msgstr "Показувати центр грані"
 
 
 msgid "Display Normals"

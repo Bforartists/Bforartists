@@ -941,7 +941,7 @@ Mesh *BKE_mesh_new_nomain_from_template_ex(const Mesh *me_src,
 
   Mesh *me_dst = BKE_id_new_nomain(ID_ME, NULL);
 
-  me_dst->mselect = MEM_dupallocN(me_dst->mselect);
+  me_dst->mselect = MEM_dupallocN(me_src->mselect);
 
   me_dst->totvert = verts_len;
   me_dst->totedge = edges_len;
@@ -1219,7 +1219,7 @@ int test_index_face(MFace *mface, CustomData *fdata, int mfindex, int nr)
   }
 
   /* Check corrupt cases, bow-tie geometry,
-   * cant handle these because edge data wont exist so just return 0. */
+   * can't handle these because edge data won't exist so just return 0. */
   if (nr == 3) {
     if (
         /* real edges */

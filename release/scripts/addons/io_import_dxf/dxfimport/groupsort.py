@@ -85,6 +85,10 @@ def by_attributes(entities):
             subd = entity.subdivision_levels
         if entity.dxftype in {"LINE", "POINT"}:
             extrusion = (0.0, 0.0, 1.0)
+        if extrusion is None:
+            # This can happen for entities of type "SPLINE" for example.
+            # But the sort comparison does not work between 'tuple' and 'NoneType'.
+            extrusion = ()
         return entity.thickness, subd, width, extrusion
 
     return itertools.groupby(sorted(entities, key=attributes), key=attributes)
