@@ -12,6 +12,16 @@ import blf
 from gpu_extras.batch import batch_for_shader
 from gpu_extras.presets import draw_circle_2d
 
+def step_value(value, step):
+    '''return the step closer to the passed value''' 
+    abs_angle = abs(value)
+    diff = abs_angle % step
+    lower_step = abs_angle - diff
+    higher_step = lower_step + step
+    if abs_angle - lower_step < higher_step - abs_angle:
+        return math.copysign(lower_step, value)
+    else:
+        return math.copysign(higher_step, value)
 
 def draw_callback_px(self, context):
     # 50% alpha, 2 pixel width line
@@ -70,8 +80,9 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
                 self.cam.rotation_mode = self.org_rotation_mode
         return {'FINISHED'}
 
+
     def modal(self, context, event):
-        if event.type in {'MOUSEMOVE','INBETWEEN_MOUSEMOVE'}:
+        if event.type in {'MOUSEMOVE'}:#,'INBETWEEN_MOUSEMOVE'
             # Get current mouse coordination (region)
             self.pos_current = mathutils.Vector((event.mouse_region_x, event.mouse_region_y))
             # Get current vector
@@ -79,6 +90,19 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
             # Calculates the angle between initial and current vectors
             self.angle = self.vector_initial.angle_signed(self.vector_current)#radian
             # print (math.degrees(self.angle), self.vector_initial, self.vector_current)
+            
+
+            ## handle snap key
+            snap = False
+            if self.snap_ctrl and event.ctrl:
+                snap = True
+            if self.snap_shift and event.shift:
+                snap = True
+            if self.snap_alt and event.alt:
+                snap = True
+            ## Snapping to specific degrees angle
+            if snap:
+                self.angle = step_value(self.angle, self.snap_step)
 
             if self.in_cam:
                 self.cam.matrix_world = self.cam_matrix
@@ -119,7 +143,8 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
     def invoke(self, context, event):
-        self.hud = get_addon_prefs().canvas_use_hud
+        prefs = get_addon_prefs()
+        self.hud = prefs.canvas_use_hud
         self.angle = 0.0
         self.in_cam = context.region_data.view_perspective == 'CAMERA'
 
@@ -158,6 +183,13 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         # Initializes the current vector with the same initial vector.
         self.vector_current = self.vector_initial.copy()
 
+        #Snap keys
+        self.snap_ctrl = not prefs.use_ctrl
+        self.snap_shift = not prefs.use_shift
+        self.snap_alt = not prefs.use_alt
+        # round to closer degree and convert back to radians
+        self.snap_step = math.radians(round(math.degrees(prefs.rc_angle_step)))
+
         args = (self, context)
         if self.hud:
             self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
@@ -165,14 +197,59 @@ class RC_OT_RotateCanvas(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
+## -- Set / Reset rotation buttons
+
+class RC_OT_Set_rotation(bpy.types.Operator):
+    bl_idname = 'view3d.rotate_canvas_set'
+    bl_label = 'Save Rotation'
+    bl_description = 'Save active camera rotation (per camera property)'
+    bl_options = {"REGISTER"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.region_3d.view_perspective == 'CAMERA'
+
+    def execute(self, context):
+        cam_ob = context.scene.camera 
+        cam_ob['stored_rotation'] = cam_ob.rotation_euler
+        if not cam_ob.get('_RNA_UI'):
+            cam_ob['_RNA_UI'] = {}
+            cam_ob['_RNA_UI']["stored_rotation"] = {
+                    "description":"Stored camera rotation (Gpencil tools > rotate canvas operator)",
+                    "subtype":'EULER',
+                    # "is_overridable_library":0,
+                    }
+
+        return {'FINISHED'}
+
+class RC_OT_Reset_rotation(bpy.types.Operator):
+    bl_idname = 'view3d.rotate_canvas_reset'
+    bl_label = 'Restore Rotation'
+    bl_description = 'Restore active camera rotation from previously saved state'
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.region_3d.view_perspective == 'CAMERA' and context.scene.camera.get('stored_rotation')
+
+    def execute(self, context):
+        cam_ob = context.scene.camera 
+        cam_ob.rotation_euler = cam_ob['stored_rotation']
+        return {'FINISHED'}
+
+
 ### --- REGISTER
 
-def register():
-    bpy.utils.register_class(RC_OT_RotateCanvas)
+classes = (
+    RC_OT_RotateCanvas,
+    RC_OT_Set_rotation,
+    RC_OT_Reset_rotation,
+)
 
+def register():
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
 def unregister():
-    bpy.utils.unregister_class(RC_OT_RotateCanvas)
-
-# if __name__ == "__main__":
-#     register()
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)

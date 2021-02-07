@@ -23,6 +23,7 @@ from bpy.props import (
         EnumProperty,
         StringProperty,
         PointerProperty,
+        FloatProperty,
         # IntProperty,
         )
 
@@ -61,13 +62,6 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             description="Choose a name for the category of the panel",
             default="Grease Pencil",
             update=update_panel)
-
-    pref_tabs : EnumProperty(
-        items=(('PREF', "Preferences", "Preferences properties of GP"),
-               ('TUTO', "Tutorial", "How to use the tool"),
-               # ('KEYMAP', "Keymap", "customise the default keymap"),
-               ),
-               default='PREF')
 
     # --- props
     use_clic_drag : BoolProperty(
@@ -131,94 +125,123 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             default = True,
             update=auto_rebind)
 
+    rc_angle_step: FloatProperty(
+        name="Angle Steps",
+        description="Step the rotation using this angle when using rotate canvas step modifier",
+        default=0.0872664600610733, # 5
+        min=0.01745329238474369, # 1
+        max=3.1415927410125732, # # 180
+        soft_min=0.01745329238474369, # 1
+        soft_max=1.5707963705062866, # 90
+        step=10, precision=1, subtype='ANGLE', unit='ROTATION')
+
     def draw(self, context):
             prefs = get_addon_prefs()
             layout = self.layout
             # layout.use_property_split = True
             row= layout.row(align=True)
-            row.prop(self, "pref_tabs", expand=True)
 
-            if self.pref_tabs == 'PREF':
+            ## TAB CATEGORY
+            box = layout.box()
+            row = box.row(align=True)
+            row.label(text="Panel Category:")
+            row.prop(self, "category", text="")
 
-                ## TAB CATEGORY
-                box = layout.box()
-                row = box.row(align=True)
-                row.label(text="Panel Category:")
-                row.prop(self, "category", text="")
+            ## BOX DEFORM
+            box = layout.box()
+            row = box.row(align=True)
+            row.label(text='Box Deform:')
+            row.operator("wm.call_menu", text="", icon='QUESTION').name = "GPT_MT_box_deform_doc"
+            box.prop(self, "use_clic_drag")
+            # box.separator()
+            box.prop(self, "default_deform_type")
+            box.label(text="Deformer type can be changed during modal with 'M' key, this is for default behavior", icon='INFO')
 
-                ## BOX DEFORM
-                box = layout.box()
-                box.label(text='Box Deform:')
-                box.prop(self, "use_clic_drag")
-                # box.separator()
-                box.prop(self, "default_deform_type")
-                box.label(text="Deformer type can be changed during modal with 'M' key, this is for default behavior", icon='INFO')
+            box.prop(self, "auto_swap_deform_type")
+            box.label(text="Once 'M' is hit, auto swap is desactivated to stay in your chosen mode", icon='INFO')
 
-                box.prop(self, "auto_swap_deform_type")
-                box.label(text="Once 'M' is hit, auto swap is desactivated to stay in your chosen mode", icon='INFO')
+            ## ROTATE CANVAS
+            box = layout.box()
+            box.label(text='Rotate canvas:')
 
-                ## ROTATE CANVAS
-                box = layout.box()
-                box.label(text='Rotate canvas:')
+            box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
 
-                box.prop(self, "canvas_use_shortcut", text='Bind Shortcuts')
+            if self.canvas_use_shortcut:
 
-                if self.canvas_use_shortcut:
+                row = box.row()
+                row.label(text="(Auto rebind when changing shortcut)")#icon=""
+                # row.operator("prefs.rebind_shortcut", text='Bind/Rebind shortcuts', icon='FILE_REFRESH')#EVENT_SPACEKEY
+                row = box.row(align = True)
+                row.prop(self, "use_ctrl", text='Ctrl')#, expand=True
+                row.prop(self, "use_alt", text='Alt')#, expand=True
+                row.prop(self, "use_shift", text='Shift')#, expand=True
+                row.prop(self, "mouse_click",text='')#expand=True
 
-                    row = box.row()
-                    row.label(text="(Auto rebind when changing shortcut)")#icon=""
-                    # row.operator("prefs.rebind_shortcut", text='Bind/Rebind shortcuts', icon='FILE_REFRESH')#EVENT_SPACEKEY
+                if not self.use_ctrl and not self.use_alt and not self.use_shift:
+                    box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
+                
+                if not all((self.use_ctrl, self.use_alt, self.use_shift)):
                     row = box.row(align = True)
-                    row.prop(self, "use_ctrl", text='Ctrl')#, expand=True
-                    row.prop(self, "use_alt", text='Alt')#, expand=True
-                    row.prop(self, "use_shift", text='Shift')#, expand=True
-                    row.prop(self, "mouse_click",text='')#expand=True
+                    snap_key_list = []
+                    if not self.use_ctrl:
+                        snap_key_list.append('Ctrl')
+                    if not self.use_shift:
+                        snap_key_list.append('Shift')
+                    if not self.use_alt:
+                        snap_key_list.append('Alt')
 
-                    if not self.use_ctrl and not self.use_alt and not self.use_shift:
-                        box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
+                    row.label(text=f"Step rotation with: {' or '.join(snap_key_list)}", icon='DRIVER_ROTATIONAL_DIFFERENCE')
+                    row.prop(self, "rc_angle_step", text='Angle Steps')
 
-                else:
-                    box.label(text="No hotkey has been set automatically. Following operators needs to be set manually:", icon="ERROR")
-                    box.label(text="view3d.rotate_canvas")
-                box.prop(self, 'canvas_use_hud')
 
-                ## SCRUB TIMELINE
-                box = layout.box()
-                draw_ts_pref(prefs.ts, box)
+            else:
+                box.label(text="No hotkey has been set automatically. Following operators needs to be set manually:", icon="ERROR")
+                box.label(text="view3d.rotate_canvas")
+            box.prop(self, 'canvas_use_hud')
 
-            if self.pref_tabs == 'TUTO':
+            ## SCRUB TIMELINE
+            box = layout.box()
+            draw_ts_pref(prefs.ts, box)
 
-                #**Behavior from context mode**
-                col = layout.column()
-                col.label(text='Box Deform Tool')
-                col.label(text="Usage:", icon='MOD_LATTICE')
-                col.label(text="Use the shortcut 'Ctrl+T' in available modes (listed below)")
-                col.label(text="The lattice box is generated facing your view (be sure to face canvas if you want to stay on it)")
-                col.label(text="Use shortcuts below to deform (a help will be displayed in the topbar)")
 
-                col.separator()
-                col.label(text="Shortcuts:", icon='HAND')
-                col.label(text="Spacebar / Enter : Confirm")
-                col.label(text="Delete / Backspace / Tab(twice) / Ctrl+T : Cancel")
-                col.label(text="M : Toggle between Linear and Spline mode at any moment")
-                col.label(text="1-9 top row number : Subdivide the box")
-                col.label(text="Ctrl + arrows-keys : Subdivide the box incrementally in individual X/Y axis")
+# def box_deform_tuto(layout):
+class GPT_MT_box_deform_doc(bpy.types.Menu):
+    # bl_idname = "OBJECT_MT_custom_menu"
+    bl_label = "Box Deform Infos Sheet"
 
-                col.separator()
-                col.label(text="Modes and deformation target:", icon='PIVOT_BOUNDBOX')
-                col.label(text="- Object mode : The whole GP object is deformed (including all frames)")
-                col.label(text="- GPencil Edit mode : Deform Selected points")
-                col.label(text="- Gpencil Paint : Deform last Strokes")
-                # col.label(text="- Lattice edit : Revive the modal after a ctrl+Z")
+    def draw(self, context):
+        layout = self.layout
+        # call another menu
+        #layout.operator("wm.call_menu", text="Unwrap").name = "VIEW3D_MT_uv_map"
+        #**Behavior from context mode**
+        col = layout.column()
+        col.label(text='Box Deform Tool')
+        col.label(text="Usage:", icon='MOD_LATTICE')
+        col.label(text="Use the shortcut 'Ctrl+T' in available modes (listed below)")
+        col.label(text="The lattice box is generated facing your view (be sure to face canvas if you want to stay on it)")
+        col.label(text="Use shortcuts below to deform (a help will be displayed in the topbar)")
 
-                col.separator()
-                col.label(text="Notes:", icon='TEXT')
-                col.label(text="- If you return in box deform after applying (with a ctrl+Z), you need to hit 'Ctrl+T' again to revive the modal.")
-                col.label(text="- A cancel warning will be displayed the first time you hit Tab")
+        col.separator()
+        col.label(text="Shortcuts:", icon='HAND')
+        col.label(text="Spacebar / Enter : Confirm")
+        col.label(text="Delete / Backspace / Tab(twice) / Ctrl+T : Cancel")
+        col.label(text="M : Toggle between Linear and Spline mode at any moment")
+        col.label(text="1-9 top row number : Subdivide the box")
+        col.label(text="Ctrl + arrows-keys : Subdivide the box incrementally in individual X/Y axis")
 
+        col.separator()
+        col.label(text="Modes and deformation target:", icon='PIVOT_BOUNDBOX')
+        col.label(text="- Object mode : The whole GP object is deformed (including all frames)")
+        col.label(text="- GPencil Edit mode : Deform Selected points")
+        col.label(text="- Gpencil Paint : Deform last Strokes")
+        # col.label(text="- Lattice edit : Revive the modal after a ctrl+Z")
+
+        col.separator()
+        col.label(text="Notes:", icon='TEXT')
+        col.label(text="- If you return in box deform after applying (with a ctrl+Z), you need to hit 'Ctrl+T' again to revive the modal.")
+        col.label(text="- A cancel warning will be displayed the first time you hit Tab")
 
 ### rotate canvas keymap
-
 
 addon_keymaps = []
 def register_keymaps():
@@ -242,11 +265,11 @@ def unregister_keymaps():
     addon_keymaps.clear()
 
 
-
 ### REGISTER ---
 
 classes = (
     GPTS_timeline_settings,
+    GPT_MT_box_deform_doc,
     GreasePencilAddonPrefs,
 )
 

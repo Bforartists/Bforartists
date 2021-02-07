@@ -289,7 +289,7 @@ int ui_searchbox_find_index(ARegion *region, const char *name)
   return UI_search_items_find_index(&data->items, name);
 }
 
-/* x and y in screencoords */
+/* x and y in screen-coords. */
 bool ui_searchbox_inside(ARegion *region, int x, int y)
 {
   uiSearchboxData *data = region->regiondata;
@@ -463,8 +463,11 @@ static void ui_searchbox_update_fn(bContext *C,
                                    const char *str,
                                    uiSearchItems *items)
 {
-  wmWindow *win = CTX_wm_window(C);
-  WM_tooltip_clear(C, win);
+  /* While the button is in text editing mode (searchbox open), remove tooltips on every update. */
+  if (search_but->but.editstr) {
+    wmWindow *win = CTX_wm_window(C);
+    WM_tooltip_clear(C, win);
+  }
   search_but->items_update_fn(C, search_but->arg, str, items);
 }
 
@@ -1057,7 +1060,7 @@ void ui_but_search_refresh(uiButSearch *search_but)
 
   ui_searchbox_update_fn(but->block->evil_C, search_but, but->drawstr, items);
 
-  /* only redalert when we are sure of it, this can miss cases when >10 matches */
+  /* Only red-alert when we are sure of it, this can miss cases when >10 matches. */
   if (items->totitem == 0) {
     UI_but_flag_enable(but, UI_BUT_REDALERT);
   }

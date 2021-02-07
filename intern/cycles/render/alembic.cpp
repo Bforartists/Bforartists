@@ -1317,10 +1317,22 @@ AlembicProcedural::~AlembicProcedural()
   foreach (Node *node, objects) {
     AlembicObject *abc_object = static_cast<AlembicObject *>(node);
 
-    objects_set.insert(abc_object->get_object());
-    geometries_set.insert(abc_object->get_object()->get_geometry());
+    if (abc_object->get_object()) {
+      objects_set.insert(abc_object->get_object());
+
+      if (abc_object->get_object()->get_geometry()) {
+        geometries_set.insert(abc_object->get_object()->get_geometry());
+      }
+    }
 
     delete_node(abc_object);
+  }
+
+  /* We may delete a Procedural before rendering started, so scene_ can be null. */
+  if (!scene_) {
+    assert(geometries_set.empty());
+    assert(objects_set.empty());
+    return;
   }
 
   scene_->delete_nodes(geometries_set, this);
@@ -1334,7 +1346,7 @@ void AlembicProcedural::generate(Scene *scene, Progress &progress)
 
   bool need_shader_updates = false;
 
-  /* check for changes in shaders (newly requested atttributes) */
+  /* Check for changes in shaders (newly requested attributes). */
   foreach (Node *object_node, objects) {
     AlembicObject *object = static_cast<AlembicObject *>(object_node);
 
@@ -1614,7 +1626,7 @@ void AlembicProcedural::read_subd(Scene *scene,
 
   mesh->clear_non_sockets();
 
-  /* udpate sockets */
+  /* Update sockets. */
 
   Object *object = abc_object->get_object();
   cached_data.transforms.copy_to_socket(frame_time, object, object->get_tfm_socket());
@@ -1648,7 +1660,7 @@ void AlembicProcedural::read_subd(Scene *scene,
 
   mesh->set_num_subd_faces(mesh->get_subd_shader().size());
 
-  /* udpate attributes */
+  /* Update attributes. */
 
   update_attributes(mesh->subd_attributes, cached_data, frame_time);
 

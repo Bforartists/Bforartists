@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -25464,7 +25464,7 @@ msgstr "磁盘上的文本文件与内存中的不同"
 
 
 msgid "Lines"
-msgstr "行数"
+msgstr "行数(线)"
 
 
 msgid "Lines of text"
@@ -34287,10 +34287,6 @@ msgid "Node group that controls what this modifier does"
 msgstr "控制此修改器功用的节点组"
 
 
-msgid "Settings that are passed into the node group"
-msgstr "传递进节点组的设置"
-
-
 msgid "Normal Edit Modifier"
 msgstr "法向编辑修改器"
 
@@ -40208,8 +40204,20 @@ msgid "Object Info"
 msgstr "物体信息"
 
 
+msgid "The transformation of the vector and geometry outputs"
+msgstr "矢量和几何输出的变换"
+
+
 msgid "Original"
 msgstr "原始的"
+
+
+msgid "Output the geometry relative to the input object transform, and the location, rotation and scale relative to the world origin"
+msgstr "输出相对于输入物体变换的几何体，以及相对于世界原点的位置、旋转和缩放"
+
+
+msgid "Bring the input object geometry, location, rotation and scale into the modified object, maintaining the relative position between the two objects in the scene"
+msgstr "将输入物体几何体、位置、旋转和比例引入修改后的物体，保持场景中两个物体之间的相对位置"
 
 
 msgid "Point Distribute"
@@ -41987,10 +41995,6 @@ msgstr "活动节点"
 
 msgid "Active node in this tree"
 msgstr "该节点树中的活动节点"
-
-
-msgid "Nodes Modifier Settings"
-msgstr "节点修改器设置"
 
 
 msgid "Object Base"
@@ -55906,7 +55910,7 @@ msgstr "清除父级"
 
 
 msgid "Bake animation onto the object then clear parents (objects only)"
-msgstr "将动画烘烤到对象上，然后清除父级(仅对象)"
+msgstr "将动画烘焙到物体上，然后清除父级(仅对象)"
 
 
 msgid "Only Selected Bones"
@@ -57049,7 +57053,7 @@ msgstr "用于组合结果、漫射、光泽、透射和次表面通道的过滤
 
 
 msgid "Type of pass to bake, some of them may not be supported by the current render engine"
-msgstr "要烘烤的通道，有些通道可能不支持当前的渲染引擎"
+msgstr "要烘焙的通道，有些通道可能不支持当前的渲染引擎"
 
 
 msgid "Combined"
@@ -65172,6 +65176,10 @@ msgid "Set Selected Strip Proxies"
 msgstr "设置已选中剪辑代理"
 
 
+msgid "Enable selected proxies on all selected Movie and Image strips"
+msgstr "对所有选中的影片和图像片段启用选中的代理"
+
+
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "导出字幕"
@@ -68658,8 +68666,20 @@ msgid "Cursor Plane"
 msgstr "游标平面"
 
 
+msgid "Start placement using a point projected onto the orientation axis at the 3D cursor position"
+msgstr "使用投影到3D游标位置的坐标轴上的点开始放置"
+
+
 msgid "Cursor View"
 msgstr "游标视图"
+
+
+msgid "Start placement using a point projected onto the view plane at the 3D cursor position"
+msgstr "使用投影到3D游标位置的视图平面上的点开始放置"
+
+
+msgid "Use the surface normal (using the transform orientation as a fallback)"
+msgstr "使用表面法向(变换坐标系作为回退)"
 
 
 msgid "Use the current transform orientation"
@@ -77786,19 +77806,19 @@ msgstr "仅使用颜色作为输入"
 
 
 msgid "Color + Albedo"
-msgstr "颜色 + Albedo"
+msgstr "颜色 + 反照率"
 
 
 msgid "Use color and albedo data as input"
-msgstr "使用颜色和albedo数据作为输入"
+msgstr "使用颜色和反照率数据作为输入"
 
 
 msgid "Color + Albedo + Normal"
-msgstr "颜色 + Albedo + 法向"
+msgstr "颜色 + 反照率 + 法向"
 
 
 msgid "Use color, albedo and normal data as input"
-msgstr "使用颜色、albedo和法线数据作为输入"
+msgstr "使用颜色、反照率和法线数据作为输入"
 
 
 msgid "Denoising Radius"
@@ -78842,7 +78862,7 @@ msgstr "显示间接透射光渲染通道"
 
 
 msgid "Transmission Color"
-msgstr "传递光颜色"
+msgstr "透射颜色"
 
 
 msgid "Show the Transmission Color render pass"
@@ -89819,10 +89839,6 @@ msgid "Draw Face Center"
 msgstr "绘制面中心"
 
 
-msgid "Display face center"
-msgstr "显示面中心"
-
-
 msgid "Display Normals"
 msgstr "显示法线"
 
@@ -98908,7 +98924,7 @@ msgstr "拉普拉斯平滑"
 
 
 msgid "Mirror Vertices"
-msgstr "镜像"
+msgstr "镜像顶点"
 
 
 msgid "Snap Vertices"
@@ -100532,6 +100548,10 @@ msgid "Marker offset %s"
 msgstr "标记偏移 %s"
 
 
+msgid "Selecting the camera is only supported in object mode"
+msgstr "仅在物体模式下支持选择相机"
+
+
 msgid "Scene not found"
 msgstr "找不到场景"
 
@@ -100910,6 +100930,10 @@ msgstr "无法调整库数据"
 
 msgid "Undo of hiding can only be done with Reveal Selected"
 msgstr "撤消隐藏只能通过\"显示选择\"来完成"
+
+
+msgid "Cannot edit bone groups for proxies or library overrides"
+msgstr "无法编辑代理或库重写的骨骼组"
 
 
 msgid "Add New"
@@ -101482,6 +101506,10 @@ msgstr "在活动层中无法找到一对蜡笔关键帧来做插值"
 
 msgid "Cannot interpolate as current frame already has existing grease pencil frames"
 msgstr "不能对已经是蜡笔关键帧的当前帧使进行插值"
+
+
+msgid "Cannot interpolate in curve edit mode"
+msgstr "无法在曲线编辑模式下插值"
 
 
 msgid "Interpolation requires some editable strokes"
@@ -103141,6 +103169,10 @@ msgstr "物体 \"%s\" 未启用渲染"
 
 msgid "Object \"%s\" is not a mesh"
 msgstr "物体 \"%s\" 不是一个网格物体"
+
+
+msgid "No faces found in the object \"%s\""
+msgstr "未在物体 \"%s\" 中找到面"
 
 
 msgid "No vertex colors layer found in the object \"%s\""
