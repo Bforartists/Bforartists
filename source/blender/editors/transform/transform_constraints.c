@@ -83,6 +83,18 @@ static void projection_matrix_calc(const TransInfo *t, float r_pmtx[3][3])
   mul_m3_m3m3(r_pmtx, t->spacemtx, mat);
 }
 
+static void view_vector_calc(const TransInfo *t, const float focus[3], float r_vec[3])
+{
+  if (t->persp != RV3D_ORTHO) {
+    sub_v3_v3v3(r_vec, t->viewinv[3], focus);
+  }
+  else {
+    copy_v3_v3(r_vec, t->viewinv[2]);
+  }
+  normalize_v3(r_vec);
+}
+
+/* ************************** CONSTRAINTS ************************* */
 #define CONSTRAIN_EPSILON 0.0001f
 
 static void constraint_plane_calc(TransInfo *t, float r_plane[4])
@@ -221,14 +233,14 @@ static void axisProjection(const TransInfo *t,
     float norm_center[3];
     float plane[3];
 
-    getViewVector(t, t_con_center, norm_center);
+    view_vector_calc(t, t_con_center, norm_center);
     cross_v3_v3v3(plane, norm_center, axis);
 
     project_v3_v3v3(vec, in, plane);
     sub_v3_v3v3(vec, in, vec);
 
     add_v3_v3v3(v, vec, t_con_center);
-    getViewVector(t, v, norm);
+    view_vector_calc(t, v, norm);
 
     /* give arbitrary large value if projection is impossible */
     factor = dot_v3v3(axis, norm);
@@ -345,7 +357,7 @@ static bool isPlaneProjectionViewAligned(const TransInfo *t, const float plane[4
 {
   const float eps = 0.001f;
   float view_to_plane[3];
-  getViewVector(t, t->center_global, view_to_plane);
+  view_vector_calc(t, t->center_global, view_to_plane);
 
   float factor = dot_v3v3(plane, view_to_plane);
   return fabsf(factor) < eps;
@@ -356,7 +368,7 @@ static void planeProjection(const TransInfo *t, const float in[3], float out[3])
   float vec[3], factor, norm[3];
 
   add_v3_v3v3(vec, in, t->center_global);
-  getViewVector(t, vec, norm);
+  view_vector_calc(t, vec, norm);
 
   sub_v3_v3v3(vec, out, in);
 
@@ -537,7 +549,10 @@ static void applyObjectConstraintSize(TransInfo *t,
   }
 }
 
-static void constraints_rotation_imp(TransInfo *t, float r_vec[3], float *r_angle)
+static void constraints_rotation_impl(TransInfo *t,
+                                      float axismtx[3][3],
+                                      float r_vec[3],
+                                      float *r_angle)
 {
   BLI_assert(t->con.mode & CON_APPLY);
   int mode = t->con.mode & (CON_AXIS0 | CON_AXIS1 | CON_AXIS2);
@@ -545,20 +560,22 @@ static void constraints_rotation_imp(TransInfo *t, float r_vec[3], float *r_angl
   switch (mode) {
     case CON_AXIS0:
     case (CON_AXIS1 | CON_AXIS2):
-      negate_v3_v3(r_vec, t->spacemtx[0]);
+      copy_v3_v3(r_vec, axismtx[0]);
       break;
     case CON_AXIS1:
     case (CON_AXIS0 | CON_AXIS2):
-      negate_v3_v3(r_vec, t->spacemtx[1]);
+      copy_v3_v3(r_vec, axismtx[1]);
       break;
     case CON_AXIS2:
     case (CON_AXIS0 | CON_AXIS1):
-      negate_v3_v3(r_vec, t->spacemtx[2]);
+      copy_v3_v3(r_vec, axismtx[2]);
       break;
   }
   /* don't flip axis if asked to or if num input */
   if (r_angle && (mode & CON_NOFLIP) == 0 && hasNumInput(&t->num) == 0) {
-    if (dot_v3v3(r_vec, t->viewinv[2]) > 0.0f) {
+    float view_vector[3];
+    view_vector_calc(t, t->center_global, view_vector);
+    if (dot_v3v3(r_vec, view_vector) > 0.0f) {
       *r_angle = -(*r_angle);
     }
   }
@@ -581,7 +598,7 @@ static void applyAxisConstraintRot(
     TransInfo *t, TransDataContainer *UNUSED(tc), TransData *td, float vec[3], float *angle)
 {
   if (!td && t->con.mode & CON_APPLY) {
-    constraints_rotation_imp(t, vec, angle);
+    constraints_rotation_impl(t, t->spacemtx, vec, angle);
   }
 }
 
@@ -602,13 +619,25 @@ static void applyObjectConstraintRot(
     TransInfo *t, TransDataContainer *tc, TransData *td, float vec[3], float *angle)
 {
   if (t->con.mode & CON_APPLY) {
+    float tmp_axismtx[3][3];
+    float(*axismtx)[3];
+
     /* on setup call, use first object */
     if (td == NULL) {
       BLI_assert(tc == NULL);
       tc = TRANS_DATA_CONTAINER_FIRST_OK(t);
       td = tc->data;
     }
-    constraints_rotation_imp(t, vec, angle);
+
+    if (t->flag & T_EDIT) {
+      mul_m3_m3m3(tmp_axismtx, tc->mat3_unit, td->axismtx);
+      axismtx = tmp_axismtx;
+    }
+    else {
+      axismtx = td->axismtx;
+    }
+
+    constraints_rotation_impl(t, axismtx, vec, angle);
   }
 }
 

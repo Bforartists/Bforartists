@@ -2522,7 +2522,7 @@ void node_draw_space(const bContext *C, ARegion *region)
 
   if (snode->treepath.last) {
     if (snode->flag & SNODE_SHOW_GPENCIL) {
-      /* draw grease-pencil (screen strokes, and also paintbuffer) */
+      /* Draw grease-pencil (screen strokes, and also paint-buffer). */
       ED_annotation_draw_view2d(C, false);
     }
   }

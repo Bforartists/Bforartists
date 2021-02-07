@@ -532,7 +532,7 @@ static void protectflag_to_drawflags_ebone(RegionView3D *rv3d, const EditBone *e
 /* could move into BLI_math however this is only useful for display/editing purposes */
 static void axis_angle_to_gimbal_axis(float gmat[3][3], const float axis[3], const float angle)
 {
-  /* X/Y are arbitrary axies, most importantly Z is the axis of rotation */
+  /* X/Y are arbitrary axes, most importantly Z is the axis of rotation. */
 
   float cross_vec[3];
   float quat[4];
@@ -1322,16 +1322,16 @@ void drawDial3d(const TransInfo *t)
     if (tc->mode & CON_APPLY) {
       if (tc->mode & CON_AXIS0) {
         axis_idx = MAN_AXIS_ROT_X;
-        copy_v3_v3(mat_basis[2], t->spacemtx[0]);
+        negate_v3_v3(mat_basis[2], t->spacemtx[0]);
       }
       else if (tc->mode & CON_AXIS1) {
         axis_idx = MAN_AXIS_ROT_Y;
-        copy_v3_v3(mat_basis[2], t->spacemtx[1]);
+        negate_v3_v3(mat_basis[2], t->spacemtx[1]);
       }
       else {
         BLI_assert((tc->mode & CON_AXIS2) != 0);
         axis_idx = MAN_AXIS_ROT_Z;
-        copy_v3_v3(mat_basis[2], t->spacemtx[2]);
+        negate_v3_v3(mat_basis[2], t->spacemtx[2]);
       }
     }
     else {
@@ -1865,7 +1865,10 @@ static void WIDGETGROUP_gizmo_invoke_prepare(const bContext *C,
     PropertyRNA *prop_orient_type = RNA_struct_find_property(ptr, "orient_type");
     const TransformOrientationSlot *orient_slot = BKE_scene_orientation_slot_get_from_flag(
         scene, ggd->twtype_init);
-    if (orient_slot == &scene->orientation_slots[SCE_ORIENT_DEFAULT]) {
+    if ((gz == ggd->gizmos[MAN_AXIS_ROT_C]) ||
+        (orient_slot == &scene->orientation_slots[SCE_ORIENT_DEFAULT])) {
+      /* #MAN_AXIS_ROT_C always uses the #V3D_ORIENT_VIEW orientation,
+       * optionally we could set this orientation instead of unset the property. */
       RNA_property_unset(ptr, prop_orient_type);
     }
     else {
