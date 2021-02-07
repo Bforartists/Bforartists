@@ -243,7 +243,7 @@ void rna_userdef_is_dirty_update(Main *UNUSED(bmain),
   rna_userdef_is_dirty_update_impl();
 }
 
-/** Take care not to use this if we expet 'is_dirty' to be tagged. */
+/** Take care not to use this if we expect 'is_dirty' to be tagged. */
 static void rna_userdef_ui_update(Main *UNUSED(bmain),
                                   Scene *UNUSED(scene),
                                   PointerRNA *UNUSED(ptr))
@@ -863,7 +863,7 @@ static StructRNA *rna_AddonPref_register(Main *bmain,
   PointerRNA dummy_ptr;
   // int have_function[1];
 
-  /* setup dummy addon-pref & addon-pref type to store static properties in */
+  /* Setup dummy add-on preference and it's type to store static properties in. */
   RNA_pointer_create(NULL, &RNA_AddonPreferences, &dummy_addon, &dummy_ptr);
 
   /* validate the python class */
@@ -881,13 +881,13 @@ static StructRNA *rna_AddonPref_register(Main *bmain,
     return NULL;
   }
 
-  /* check if we have registered this addon-pref type before, and remove it */
+  /* Check if we have registered this add-on preference type before, and remove it. */
   apt = BKE_addon_pref_type_find(dummy_addon.module, true);
   if (apt && apt->rna_ext.srna) {
     rna_AddonPref_unregister(bmain, apt->rna_ext.srna);
   }
 
-  /* create a new addon-pref type */
+  /* Create a new add-on preference type. */
   apt = MEM_mallocN(sizeof(bAddonPrefType), "addonpreftype");
   memcpy(apt, &dummy_apt, sizeof(dummy_apt));
   BKE_addon_pref_type_add(apt);
@@ -5654,7 +5654,7 @@ static void rna_def_userdef_input(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem view_zoom_styles[] = {
-      {USER_ZOOM_CONT,
+      {USER_ZOOM_CONTINUE,
        "CONTINUE",
        0,
        "Continue",
@@ -5739,10 +5739,11 @@ static void rna_def_userdef_input(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "use_mouse_continuous", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_CONTINUOUS_MOUSE);
-  RNA_def_property_ui_text(prop,
-                           "Continuous Grab",
-                           "Allow moving the mouse outside the view on some manipulations "
-                           "(transform, ui control drag)");
+  RNA_def_property_ui_text(
+      prop,
+      "Continuous Grab",
+      "Let the mouse wrap around the view boundaries so mouse movements are not limited by the "
+      "screen size (used by transform, dragging of UI controls, etc.)");
 
   prop = RNA_def_property(srna, "use_drag_immediately", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", USER_RELEASECONFIRM);

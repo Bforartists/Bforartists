@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'02404ded80ac')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -34600,10 +34600,6 @@ msgid "Node group that controls what this modifier does"
 msgstr "このモディファイアーの動作をコントロールするノードグループ"
 
 
-msgid "Settings that are passed into the node group"
-msgstr "ノードグループに渡される設定"
-
-
 msgid "Normal Edit Modifier"
 msgstr "法線編集モディファイアー"
 
@@ -40544,8 +40540,20 @@ msgid "Object Info"
 msgstr "オブジェクト情報"
 
 
+msgid "The transformation of the vector and geometry outputs"
+msgstr "ベクトルとジオメトリ出力用のトランスフォーム空間"
+
+
 msgid "Original"
 msgstr "オリジナル"
+
+
+msgid "Output the geometry relative to the input object transform, and the location, rotation and scale relative to the world origin"
+msgstr "入力オブジェクトのトランスフォームに対するジオメトリと、ワールド原点に対する位置、回転、スケールを出力します"
+
+
+msgid "Bring the input object geometry, location, rotation and scale into the modified object, maintaining the relative position between the two objects in the scene"
+msgstr "入力オブジェクトのジオメトリ、位置、回転、スケールを変形するオブジェクトに渡し、シーン内での二つのオブジェクトの相対的な位置を維持します"
 
 
 msgid "Point Distribute"
@@ -42329,10 +42337,6 @@ msgstr "アクティブなノード"
 
 msgid "Active node in this tree"
 msgstr "このツリーのアクティブノード"
-
-
-msgid "Nodes Modifier Settings"
-msgstr "ノードモディファイアー設定"
 
 
 msgid "Object Base"
@@ -65692,6 +65696,10 @@ msgid "Set Selected Strip Proxies"
 msgstr "選択ストリップにプロキシを設定"
 
 
+msgid "Enable selected proxies on all selected Movie and Image strips"
+msgstr "選択中のプロキシを、選択中のすべての動画・画像ストリップで有効にします"
+
+
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "字幕をエクスポート"
@@ -69184,8 +69192,20 @@ msgid "Cursor Plane"
 msgstr "カーソル平面"
 
 
+msgid "Start placement using a point projected onto the orientation axis at the 3D cursor position"
+msgstr "3Dカーソル位置のトランスフォーム座標系に投影されたポイントを使用して配置を開始します"
+
+
 msgid "Cursor View"
 msgstr "カーソルビュー"
+
+
+msgid "Start placement using a point projected onto the view plane at the 3D cursor position"
+msgstr "3Dカーソル位置のビュー平面に投影されたポイントを使用して配置を開始します"
+
+
+msgid "Use the surface normal (using the transform orientation as a fallback)"
+msgstr "面の法線を使用（無理な時はトランスフォーム座標系を使用）します"
 
 
 msgid "Use the current transform orientation"
@@ -90516,10 +90536,6 @@ msgid "Draw Face Center"
 msgstr "面の中心を表示"
 
 
-msgid "Display face center"
-msgstr "面の中心を表示します"
-
-
 msgid "Display Normals"
 msgstr "法線を表示"
 
@@ -101242,6 +101258,10 @@ msgid "Marker offset %s"
 msgstr "マーカーオフセット %s"
 
 
+msgid "Selecting the camera is only supported in object mode"
+msgstr "カメラの選択はオブジェクトモード中のみ対応しています"
+
+
 msgid "Scene not found"
 msgstr "シーンがありません"
 
@@ -101620,6 +101640,10 @@ msgstr "ライブラリはポージングできません"
 
 msgid "Undo of hiding can only be done with Reveal Selected"
 msgstr "「隠す」の取り消しは「選択物を再表示」でのみ可能です"
+
+
+msgid "Cannot edit bone groups for proxies or library overrides"
+msgstr "プロキシやライブラリオーバーライドのボーングループの編集はできません"
 
 
 msgid "Add New"
@@ -102192,6 +102216,10 @@ msgstr "アクティブレイヤーに補間するグリースペンシルフレ
 
 msgid "Cannot interpolate as current frame already has existing grease pencil frames"
 msgstr "現在のフレームにすでにグリースペンシルフレームがある時は補間できません"
+
+
+msgid "Cannot interpolate in curve edit mode"
+msgstr "カーブ編集モードでの補間はできません"
 
 
 msgid "Interpolation requires some editable strokes"
@@ -103853,6 +103881,10 @@ msgstr "オブジェクト「%s」のレンダリングが無効です"
 
 msgid "Object \"%s\" is not a mesh"
 msgstr "オブジェクト「%s」はメッシュではありません"
+
+
+msgid "No faces found in the object \"%s\""
+msgstr "面がオブジェクト「%s」にありません"
 
 
 msgid "No vertex colors layer found in the object \"%s\""

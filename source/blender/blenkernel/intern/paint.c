@@ -127,7 +127,7 @@ static void palette_blend_read_data(BlendDataReader *reader, ID *id)
 
 static void palette_undo_preserve(BlendLibReader *UNUSED(reader), ID *id_new, ID *id_old)
 {
-  /* Whole Palette is preserved accross undo's, and it has no extra pointer, simple. */
+  /* Whole Palette is preserved across undos, and it has no extra pointer, simple. */
   /* Note: We do not care about potential internal references to self here, Palette has none. */
   /* Note: We do not swap IDProperties, as dealing with potential ID pointers in those would be
    *       fairly delicate. */
@@ -1489,6 +1489,14 @@ void BKE_sculptsession_free(Object *ob)
       }
       MEM_SAFE_FREE(ss->pose_ik_chain_preview->segments);
       MEM_SAFE_FREE(ss->pose_ik_chain_preview);
+    }
+
+    if (ss->boundary_preview) {
+      MEM_SAFE_FREE(ss->boundary_preview->vertices);
+      MEM_SAFE_FREE(ss->boundary_preview->edges);
+      MEM_SAFE_FREE(ss->boundary_preview->distance);
+      MEM_SAFE_FREE(ss->boundary_preview->edit_info);
+      MEM_SAFE_FREE(ss->boundary_preview);
     }
 
     BKE_sculptsession_free_vwpaint_data(ob->sculpt);
