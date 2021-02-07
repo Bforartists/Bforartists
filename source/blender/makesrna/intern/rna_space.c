@@ -285,6 +285,13 @@ static const EnumPropertyItem rna_enum_space_image_mode_ui_items[] = {
     {0, NULL, 0, NULL, NULL},
 };
 
+/* bfa - hide disfunctional tools and settings for render result */
+static const EnumPropertyItem rna_enum_space_image_mode_non_render_items[] = {
+    SI_ITEM_VIEW("VIEW", "View", ICON_FILE_IMAGE),
+    SI_ITEM_MASK,
+    {0, NULL, 0, NULL, NULL},
+};
+
 const EnumPropertyItem rna_enum_space_image_mode_items[] = {
     SI_ITEM_VIEW("IMAGE_EDITOR", "Image Editor", ICON_IMAGE),
     SI_ITEM_UV,
@@ -5009,6 +5016,13 @@ static void rna_def_space_image(BlenderRNA *brna)
   prop = RNA_def_property(srna, "ui_mode", PROP_ENUM, PROP_NONE);
   RNA_def_property_enum_sdna(prop, NULL, "mode");
   RNA_def_property_enum_items(prop, rna_enum_space_image_mode_ui_items);
+  RNA_def_property_ui_text(prop, "Mode", "Editing context being displayed");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, "rna_SpaceImageEditor_mode_update");
+
+  /* bfa - hide disfunctional tools and settings for render result */
+  prop = RNA_def_property(srna, "ui_non_render_mode", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_sdna(prop, NULL, "mode");
+  RNA_def_property_enum_items(prop, rna_enum_space_image_mode_non_render_items);
   RNA_def_property_ui_text(prop, "Mode", "Editing context being displayed");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_IMAGE, "rna_SpaceImageEditor_mode_update");
 
