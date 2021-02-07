@@ -128,8 +128,8 @@ def register_keymaps():
     #snap_modalkeymap.assign("MESH_OT_snap_utilities_line")
 def unregister_keymaps():
     keyconfigs = bpy.context.window_manager.keyconfigs
-    defaultmap = keyconfigs.get("blender").keymaps
-    addonmap   = keyconfigs.get("blender addon").keymaps
+    defaultmap = keyconfigs.get("Blender").keymaps
+    addonmap   = keyconfigs.get("Blender addon").keymaps
 
     for keyconfig_data in keys.generate_snap_utilities_global_keymaps():
         km_name, km_args, km_content = keyconfig_data

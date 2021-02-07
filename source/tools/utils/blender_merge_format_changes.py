@@ -32,7 +32,7 @@ if len(sys.argv) >= 2:
         if sys.argv[2] == '--base_branch':
             base_branch = sys.argv[3]
 
-if mode == None:
+if mode is None:
     print("Merge or rebase Blender master (or another base branch) into a branch in 3 steps,")
     print("to automatically merge clang-format changes.")
     print("")

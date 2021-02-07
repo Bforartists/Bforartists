@@ -149,7 +149,7 @@ def benchmarkFile(blender, blendfile, stats):
     pipeline_render_time = "N/A"
     while True:
         line = process.stdout.readline()
-        if line == b"" and process.poll() != None:
+        if line == b"" and process.poll() is not None:
             break
         line = line.decode().strip()
         if line == "":

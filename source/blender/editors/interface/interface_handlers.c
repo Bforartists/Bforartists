@@ -349,7 +349,7 @@ typedef struct uiHandleButtonData {
 #endif
   ColorBand *coba;
 
-  /* tooltip */
+  /* Tool-tip. */
   uint tooltip_force : 1;
 
   /* auto open */
@@ -1617,7 +1617,7 @@ static int ui_handler_region_drag_toggle(bContext *C, const wmEvent *event, void
 static bool ui_but_is_drag_toggle(const uiBut *but)
 {
   return ((ui_drag_toggle_but_is_supported(but) == true) &&
-          /* menu check is importnt so the button dragged over isn't removed instantly */
+          /* Menu check is important so the button dragged over isn't removed instantly. */
           (ui_block_is_menu(but->block) == false));
 }
 
@@ -3710,9 +3710,9 @@ static void ui_do_but_textedit(
 
       case EVT_AKEY:
 
-        /* Ctrl + A: Select all */
+        /* Ctrl-A: Select all. */
 #if defined(__APPLE__)
-        /* OSX uses cmd-a systemwide, so add it */
+        /* OSX uses Command-A system-wide, so add it. */
         if ((event->oskey && !IS_EVENT_MOD(event, shift, alt, ctrl)) ||
             (event->ctrl && !IS_EVENT_MOD(event, shift, alt, oskey)))
 #else
@@ -3726,7 +3726,7 @@ static void ui_do_but_textedit(
         break;
 
       case EVT_TABKEY:
-        /* there is a key conflict here, we can't tab with autocomplete */
+        /* There is a key conflict here, we can't tab with auto-complete. */
         if (but->autocomplete_func || data->searchbox) {
           const int autocomplete = ui_textedit_autocomplete(C, but, data);
           changed = autocomplete != AUTOCOMPLETE_NO_MATCH;
@@ -3735,13 +3735,14 @@ static void ui_do_but_textedit(
             button_activate_state(C, but, BUTTON_STATE_EXIT);
           }
         }
-        /* the hotkey here is not well defined, was G.qual so we check all */
-        else if (IS_EVENT_MOD(event, shift, ctrl, alt, oskey)) {
-          ui_textedit_prev_but(block, but, data);
-          button_activate_state(C, but, BUTTON_STATE_EXIT);
-        }
-        else {
-          ui_textedit_next_but(block, but, data);
+        else if (!IS_EVENT_MOD(event, ctrl, alt, oskey)) {
+          /* Use standard keys for cycling through buttons Tab, Shift-Tab to reverse. */
+          if (event->shift) {
+            ui_textedit_prev_but(block, but, data);
+          }
+          else {
+            ui_textedit_next_but(block, but, data);
+          }
           button_activate_state(C, but, BUTTON_STATE_EXIT);
         }
         retval = WM_UI_HANDLER_BREAK;
@@ -4575,7 +4576,7 @@ static int ui_do_but_TOG(bContext *C, uiBut *but, uiHandleButtonData *data, cons
       return WM_UI_HANDLER_BREAK;
     }
     if (ELEM(event->type, MOUSEPAN, WHEELDOWNMOUSE, WHEELUPMOUSE) && event->ctrl) {
-      /* Support ctrl-wheel to cycle values on expanded enum rows. */
+      /* Support Ctrl-Wheel to cycle values on expanded enum rows. */
       if (but->type == UI_BTYPE_ROW) {
         int type = event->type;
         int val = event->val;
@@ -5086,7 +5087,7 @@ static int ui_do_but_NUM(
     else if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
       if (data->dragchange) {
 #ifdef USE_DRAG_MULTINUM
-        /* if we started multibutton but didn't drag, then edit */
+        /* If we started multi-button but didn't drag, then edit. */
         if (data->multi_data.init == BUTTON_MULTI_INIT_SETUP) {
           click = 1;
         }
@@ -5408,7 +5409,7 @@ static int ui_do_but_SLI(
     else if (event->type == LEFTMOUSE && event->val == KM_RELEASE) {
       if (data->dragchange) {
 #ifdef USE_DRAG_MULTINUM
-        /* if we started multibutton but didn't drag, then edit */
+        /* If we started multi-button but didn't drag, then edit. */
         if (data->multi_data.init == BUTTON_MULTI_INIT_SETUP) {
           click = 1;
         }
@@ -6836,7 +6837,7 @@ static bool ui_numedit_but_CURVE(uiBlock *block,
 
 #ifdef USE_CONT_MOUSE_CORRECT
       /* note: using 'cmp_last' is weak since there may be multiple points selected,
-       * but in practice this isnt really an issue */
+       * but in practice this isn't really an issue */
       if (ui_but_is_cursor_warp(but)) {
         /* OK but can go outside bounds */
         data->ungrab_mval[0] = but->rect.xmin + ((cmp_last->x - cumap->curr.xmin) * zoomx);
@@ -7107,7 +7108,7 @@ static bool ui_numedit_but_CURVEPROFILE(uiBlock *block,
       changed = true;
 #ifdef USE_CONT_MOUSE_CORRECT
       /* note: using 'cmp_last' is weak since there may be multiple points selected,
-       * but in practice this isnt really an issue */
+       * but in practice this isn't really an issue */
       if (ui_but_is_cursor_warp(but)) {
         /* OK but can go outside bounds */
         data->ungrab_mval[0] = but->rect.xmin + ((last_x - profile->view_rect.xmin) * zoomx);
@@ -7822,7 +7823,7 @@ static void ui_blocks_set_tooltips(ARegion *region, const bool enable)
 }
 
 /**
- * Recreate tooltip (use to update dynamic tips)
+ * Recreate tool-tip (use to update dynamic tips)
  */
 void UI_but_tooltip_refresh(bContext *C, uiBut *but)
 {
@@ -7921,7 +7922,7 @@ static void button_activate_state(bContext *C, uiBut *but, uiHandleButtonState s
     return;
   }
 
-  /* highlight has timers for tooltips and auto open */
+  /* Highlight has timers for tool-tips and auto open. */
   if (state == BUTTON_STATE_HIGHLIGHT) {
     but->flag &= ~UI_SELECT;
 
@@ -8261,7 +8262,7 @@ static void button_activate_exit(
     }
   }
 
-  /* disable tooltips until mousemove + last active flag */
+  /* Disable tool-tips until mouse-move + last active flag. */
   LISTBASE_FOREACH (uiBlock *, block_iter, &data->region->uiblocks) {
     LISTBASE_FOREACH (uiBut *, bt, &block_iter->buttons) {
       bt->flag &= ~UI_BUT_LAST_ACTIVE;
@@ -8349,7 +8350,7 @@ static uiBut *ui_context_button_active(const ARegion *region, bool (*but_check_c
 
       but_found = activebut;
 
-      /* recurse into opened menu, like colorpicker case */
+      /* Recurse into opened menu, like color-picker case. */
       if (data && data->menu && (region != data->menu->region)) {
         region = data->menu->region;
       }
@@ -8531,7 +8532,7 @@ void UI_context_update_anim_flag(const bContext *C)
     }
 
     if (activebut) {
-      /* always recurse into opened menu, so all buttons update (like colorpicker) */
+      /* Always recurse into opened menu, so all buttons update (like color-picker). */
       uiHandleButtonData *data = activebut->active;
       if (data && data->menu) {
         region = data->menu->region;
@@ -8573,7 +8574,8 @@ static int ui_handle_button_over(bContext *C, const wmEvent *event, ARegion *reg
       button_activate_init(C, region, but, BUTTON_ACTIVATE_OVER);
 
       if (event->alt && but->active) {
-        /* display tooltips if holding alt on mouseover when tooltips are off in prefs */
+        /* Display tool-tips if holding Alt on mouse-over when tool-tips are disabled in the
+         * preferences. */
         but->active->tooltip_force = true;
       }
     }
@@ -8615,7 +8617,7 @@ void ui_but_activate_event(bContext *C, ARegion *region, uiBut *but)
  * Simulate moving the mouse over a button (or navigating to it with arrow keys).
  *
  * exported so menus can start with a highlighted button,
- * even if the mouse isnt over it
+ * even if the mouse isn't over it
  */
 void ui_but_activate_over(bContext *C, ARegion *region, uiBut *but)
 {
@@ -8795,7 +8797,7 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
           button_activate_state(C, but, BUTTON_STATE_EXIT);
         }
         else if (event->x != event->prevx || event->y != event->prevy) {
-          /* re-enable tooltip on mouse move */
+          /* Re-enable tool-tip on mouse move. */
           ui_blocks_set_tooltips(region, true);
           button_tooltip_timer_reset(C, but);
         }
@@ -8819,7 +8821,7 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
         break;
       }
       /* XXX hardcoded keymap check... but anyway,
-       * while view changes, tooltips should be removed */
+       * while view changes, tool-tips should be removed */
       case WHEELUPMOUSE:
       case WHEELDOWNMOUSE:
       case MIDDLEMOUSE:
@@ -9014,6 +9016,7 @@ static int ui_handle_list_event(bContext *C, const wmEvent *event, ARegion *regi
 {
   int retval = WM_UI_HANDLER_CONTINUE;
   int type = event->type, val = event->val;
+  int scroll_dir = 1;
   bool redraw = false;
 
   uiList *ui_list = listbox->custom_data;
@@ -9029,6 +9032,11 @@ static int ui_handle_list_event(bContext *C, const wmEvent *event, ARegion *regi
   /* Convert pan to scroll-wheel. */
   if (type == MOUSEPAN) {
     ui_pan_to_scroll(event, &type, &val);
+
+    /* 'ui_pan_to_scroll' gives the absolute direction. */
+    if (event->is_direction_inverted) {
+      scroll_dir = -1;
+    }
 
     /* If type still is mouse-pan, we call it handled, since delta-y accumulate. */
     /* also see wm_event_system.c do_wheel_ui hack */
@@ -9124,7 +9132,7 @@ static int ui_handle_list_event(bContext *C, const wmEvent *event, ARegion *regi
     else if (ELEM(type, WHEELUPMOUSE, WHEELDOWNMOUSE)) {
       if (dyn_data->height > dyn_data->visual_height) {
         /* list template will clamp */
-        ui_list->list_scroll += (type == WHEELUPMOUSE) ? -1 : 1;
+        ui_list->list_scroll += scroll_dir * ((type == WHEELUPMOUSE) ? -1 : 1);
 
         redraw = true;
         retval = WM_UI_HANDLER_BREAK;
@@ -9516,7 +9524,7 @@ static int ui_handle_menu_button(bContext *C, const wmEvent *event, uiPopupBlock
       /* pass, skip for dialogs */
     }
     else if (!ui_region_contains_point_px(but->active->region, event->x, event->y)) {
-      /* pass, needed to click-exit outside of non-flaoting menus */
+      /* Pass, needed to click-exit outside of non-floating menus. */
       ui_region_auto_open_clear(but->active->region);
     }
     else if ((!ELEM(event->type, MOUSEMOVE, WHEELUPMOUSE, WHEELDOWNMOUSE, MOUSEPAN)) &&
@@ -10138,7 +10146,7 @@ static int ui_handle_menu_event(bContext *C,
 
           ui_mouse_motion_towards_check(block, menu, &event->x, is_parent_inside == false);
 
-          /* check for all parent rects, enables arrowkeys to be used */
+          /* Check for all parent rects, enables arrow-keys to be used. */
           for (saferct = block->saferct.first; saferct; saferct = saferct->next) {
             /* for mouse move we only check our own rect, for other
              * events we check all preceding block rects too to make
@@ -10412,7 +10420,7 @@ static int ui_pie_handler(bContext *C, const wmEvent *event, uiPopupBlockHandle 
         }
       }
 
-      /* check pie velociy here if gesture has ended */
+      /* Check pie velocity here if gesture has ended. */
       if (block->pie_data.flags & UI_PIE_GESTURE_END_WAIT) {
         float len_sq = 10;
 
@@ -10738,7 +10746,7 @@ static int ui_region_handler(bContext *C, const wmEvent *event, void *UNUSED(use
     }
   }
 
-  /* re-enable tooltips */
+  /* Re-enable tool-tips. */
   if (event->type == MOUSEMOVE && (event->x != event->prevx || event->y != event->prevy)) {
     ui_blocks_set_tooltips(region, true);
   }
@@ -10835,7 +10843,7 @@ static int ui_handler_region_menu(bContext *C, const wmEvent *event, void *UNUSE
     }
   }
 
-  /* re-enable tooltips */
+  /* Re-enable tool-tips. */
   if (event->type == MOUSEMOVE && (event->x != event->prevx || event->y != event->prevy)) {
     ui_blocks_set_tooltips(region, true);
   }
@@ -10929,7 +10937,7 @@ static int ui_popup_handler(bContext *C, const wmEvent *event, void *userdata)
     WM_event_add_mousemove(win);
   }
   else {
-    /* re-enable tooltips */
+    /* Re-enable tool-tips */
     if (event->type == MOUSEMOVE && (event->x != event->prevx || event->y != event->prevy)) {
       ui_blocks_set_tooltips(menu->region, true);
     }
@@ -10939,7 +10947,7 @@ static int ui_popup_handler(bContext *C, const wmEvent *event, void *userdata)
   ui_apply_but_funcs_after(C);
 
   if (reset_pie) {
-    /* reaqcuire window in case pie invalidates it somehow */
+    /* Reacquire window in case pie invalidates it somehow. */
     wmWindow *win = CTX_wm_window(C);
 
     if (win) {
