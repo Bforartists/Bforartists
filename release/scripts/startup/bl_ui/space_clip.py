@@ -1490,17 +1490,6 @@ class CLIP_MT_clip(Menu):
             layout.operator("clip.setup_tracking_scene", icon='SCENE_DATA')
 
 
-class CLIP_MT_track_transform(Menu):
-    bl_label = "Transform"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
-
-
 class CLIP_MT_track_motion(Menu):
     bl_label = "Track Motion"
 
@@ -1686,6 +1675,7 @@ class CLIP_MT_track_transform(Menu):
         layout = self.layout
 
         layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
         layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
 
 
