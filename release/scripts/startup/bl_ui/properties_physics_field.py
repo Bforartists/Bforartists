@@ -128,9 +128,13 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col.separator()
 
             col.prop(field, "strength")
-
-            sub = col.column(heading="Affect")
-            sub.prop(field, "apply_to_location", text="Location")
+            
+            col.label( text = "Affect")
+            col.use_property_split = False
+            row = col.row()
+            row.separator()
+            row.prop(field, "apply_to_location", text="Location")
+            row.prop_decorator(field, "apply_to_location")
 
             col = flow.column()
             col.prop(field, "texture_nabla")
@@ -149,10 +153,17 @@ class PHYSICS_PT_field_settings(PhysicButtonsPanel, Panel):
             col = flow.column()
             col.prop(field, "strength")
             col.prop(field, "flow")
-
-            sub = col.column(heading="Affect")
-            sub.prop(field, "apply_to_location", text="Location")
-            sub.prop(field, "apply_to_rotation", text="Rotation")
+            
+            col.label( text = "Affect")
+            col.use_property_split = False
+            row = col.row()
+            row.separator()
+            row.prop(field, "apply_to_location", text="Location")
+            row.prop_decorator(field, "apply_to_location")
+            row = col.row()
+            row.separator()
+            row.prop(field, "apply_to_rotation", text="Rotation")
+            row.prop_decorator(field, "apply_to_rotation")
 
             col = flow.column()
             col.prop(field, "source_object")
