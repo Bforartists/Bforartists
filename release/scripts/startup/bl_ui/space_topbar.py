@@ -331,50 +331,7 @@ class TOPBAR_MT_file_recover(Menu):
         layout = self.layout
 
         layout.operator("wm.recover_last_session", text="Last Session")
-        layout.operator("wm.recover_auto_save", text="Auto Save...")
-
-
-    @staticmethod
-    def draw_ex(layout, _context, *, use_splash=False, use_more=False):
-        layout.operator_context = 'INVOKE_DEFAULT'
-
-        # Limit number of templates in splash screen, spill over into more menu.
-        paths = TOPBAR_MT_file_new.app_template_paths()
-        splash_limit = 5
-
-        if use_splash:
-            icon = 'FILE_NEW'
-            show_more = len(paths) > (splash_limit - 1)
-            if show_more:
-                paths = paths[:splash_limit - 2]
-        elif use_more:
-            icon = 'FILE_NEW'
-            paths = paths[splash_limit - 2:]
-            show_more = False
-        else:
-            icon = 'NONE'
-            show_more = False
-
-        # Draw application templates.
-        if not use_more:
-            props = layout.operator("wm.read_homefile", text="General", icon=icon)
-            props.app_template = ""
-
-        for d in paths:
-            props = layout.operator(
-                "wm.read_homefile",
-                text=bpy.path.display_name(d),
-                icon=icon,
-            )
-            props.app_template = d
-
-        layout.operator_context = 'EXEC_DEFAULT'
-
-        if show_more:
-            layout.menu("TOPBAR_MT_templates_more", text="...")
-
-    def draw(self, context):
-        TOPBAR_MT_file_new.draw_ex(self.layout, context)
+        layout.operator("wm.recover_auto_save", text="Auto Save")
 
 
 class TOPBAR_MT_templates_more(Menu):
