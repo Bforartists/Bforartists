@@ -524,11 +524,19 @@ class _defs_view3d_add:
             layout.use_property_split = True
 
             layout.label(text="Base")
-            layout.row().prop(props, "plane_origin_base", expand=True)
-            layout.row().prop(props, "plane_aspect_base", expand=True)
+            row = layout.row()
+            row.separator()
+            row.prop(props, "plane_origin_base", expand=True)
+            row = layout.row()
+            row.separator()
+            row.prop(props, "plane_aspect_base", expand=True)
             layout.label(text="Height")
-            layout.row().prop(props, "plane_origin_depth", expand=True)
-            layout.row().prop(props, "plane_aspect_depth", expand=True)
+            row = layout.row()
+            row.separator()
+            row.prop(props, "plane_origin_depth", expand=True)
+            row = layout.row()
+            row.separator()
+            row.prop(props, "plane_aspect_depth", expand=True)
         return show_extra
 
     @ToolDef.from_fn
