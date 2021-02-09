@@ -2148,12 +2148,6 @@ class SEQUENCER_PT_frame_overlay(SequencerButtonsPanel_Output, Panel):
             return False
         return SequencerButtonsPanel_Output.poll(context)
 
-    def draw(self, context):
-        scene = context.scene
-        ed = scene.sequence_editor
-
-        self.layout.prop(ed, "show_overlay", text="")
-
     def draw_header(self, context):
         scene = context.scene
         ed = scene.sequence_editor
