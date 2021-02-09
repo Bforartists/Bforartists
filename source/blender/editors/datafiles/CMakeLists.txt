@@ -2026,7 +2026,7 @@ image_rgb
 image_rgb_alpha
 image_alpha
 image_zdepth
-#def_icon_blank(1723
+palette
 cursortoactive
 cursortocenter
 cursortogrid
