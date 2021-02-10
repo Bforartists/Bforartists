@@ -1824,6 +1824,24 @@ static void node_draw_basis(const bContext *C,
     case GEO_NODE_POINT_TRANSLATE:
       icon = ICON_POINT_TRANSLATE;
       break;
+    case GEO_NODE_ATTRIBUTE_SAMPLE_TEXTURE:
+      icon = ICON_ATTRIBUTE_TEXTURE;
+      break;
+    case GEO_NODE_POINTS_TO_VOLUME:
+      icon = ICON_POINT_TO_VOLUME;
+      break;
+    case GEO_NODE_COLLECTION_INFO:
+      icon = ICON_COLLECTION_INFO;
+      break;
+    case GEO_NODE_IS_VIEWPORT:
+      icon = ICON_VIEW;
+      break;
+    case GEO_NODE_ATTRIBUTE_PROXIMITY:
+      icon = ICON_ATTRIBUTE_PROXIMITY;
+      break;
+    case GEO_NODE_VOLUME_TO_MESH:
+      icon = ICON_VOLUME_TO_MESH;
+      break;
     }
 
   /* group edit */
