@@ -3292,14 +3292,23 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Mix                ", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMix"
+            
+            props = col.operator("node.add_node", text=" Attribute Proximity      ", icon = "ATTRIBUTE_PROXIMITY")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeProximity"
 
             props = col.operator("node.add_node", text=" Attribute Randomize    ", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
             
+            props = col.operator("node.add_node", text=" Attribute Sample Texture ", icon = "ATTRIBUTE_TEXTURE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeSampleTexture"
+            
             props = col.operator("node.add_node", text=" Attribute Vector Math ", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
-            props.type = "GeometryNodeAttributeVectorMath"
+            props.type = "GeometryNodeAttributeVectorMath"    
+
 
         #### Icon Buttons
 
@@ -3327,10 +3336,18 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMix"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_PROXIMITY")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeProximity"
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeSampleTexture"
             
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
@@ -3480,6 +3497,14 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            
+            props = col.operator("node.add_node", text=" Collection Info       ", icon = "COLLECTION_INFO")
+            props.use_transform = True
+            props.type = "GeometryNodeCollectionInfo"
+            
+            props = col.operator("node.add_node", text=" Is Viewport           ", icon = "VIEW")
+            props.use_transform = True
+            props.type = "GeometryNodeIsViewport"
 
             props = col.operator("node.add_node", text=" Object Info            ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
@@ -3489,11 +3514,11 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
 
-            props = col.operator("node.add_node", text=" Value                     ", icon = "NODE_VALUE")
+            props = col.operator("node.add_node", text=" Value                    ", icon = "NODE_VALUE")
             props.use_transform = True
             props.type = "ShaderNodeValue"
 
-            props = col.operator("node.add_node", text=" Vector Curves      ", icon = "NODE_VECTOR")
+            props = col.operator("node.add_node", text=" Vector                   ", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeInputVector"
 
@@ -3504,6 +3529,14 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'
 
+            props = row.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
+            props.use_transform = True
+            props.type = "GeometryNodeCollectionInfo"
+            
+            props = row.operator("node.add_node", text = "", icon = "VIEW")
+            props.use_transform = True
+            props.type = "GeometryNodeIsViewport"
+            
             props = row.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
@@ -3681,6 +3714,59 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "POINT_TRANSLATE")
             props.use_transform = True
             props.type = "GeometryNodePointTranslate"
+            
+            
+#add volume panel
+class NODES_PT_geom_add_volume(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Volume"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Points to Volume     ", icon = "POINT_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToVolume"
+
+            props = col.operator("node.add_node", text=" Volume to Mesh       ", icon = "VOLUME_TO_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeVolumeToMesh"
+
+        #### Icon Buttons
+
+        else:
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            props = row.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
+            props.use_transform = True
+            props.type = "GeometryNodePointsToVolume"
+
+            props = row.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
+            props.use_transform = True
+            props.type = "GeometryNodeVolumeToMesh"
 
 
 #add utilities panel
@@ -3865,6 +3951,7 @@ classes = (
     NODES_PT_geom_add_input,
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_point,
+    NODES_PT_geom_add_volume,
     NODES_PT_geom_add_utilities,
     NODES_PT_geom_add_vector,
 )
