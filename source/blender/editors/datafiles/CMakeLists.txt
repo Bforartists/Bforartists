@@ -93,11 +93,11 @@ brushsize
 
 point_scale
 point_translate
-#~ DEF_ICON_BLANK(112)
-#~ DEF_ICON_BLANK(113)
-#~ DEF_ICON_BLANK(114)
-#~ DEF_ICON_BLANK(115)
-#~ DEF_ICON_BLANK(116)
+attribute_proximity
+attribute_texture
+collection_info
+point_to_volume
+volume_to_mesh
 #~ DEF_ICON_BLANK(117)
 #~ DEF_ICON_BLANK(118)
 #~ DEF_ICON_BLANK(119)
