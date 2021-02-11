@@ -43,7 +43,7 @@ class NodeCategory:
 
 
 class NodeItem:
-    def __init__(self, nodetype, label=None, settings=None, poll=None):
+    def __init__(self, nodetype, label=None, settings=None, poll=None, icon='NONE'):
 
         if settings is None:
             settings = {}
@@ -52,6 +52,7 @@ class NodeItem:
         self._label = label
         self.settings = settings
         self.poll = poll
+        self.icon = icon
 
     @property
     def label(self):
@@ -81,7 +82,7 @@ class NodeItem:
     # NodeItemCustom sets this as a variable attribute in __init__
     @staticmethod
     def draw(self, layout, _context):
-        props = layout.operator("node.add_node", text=self.label, text_ctxt=self.translation_context)
+        props = layout.operator("node.add_node", text=self.label, text_ctxt=self.translation_context, icon=self.icon)
         props.type = self.nodetype
         props.use_transform = True
 
