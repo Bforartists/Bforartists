@@ -1402,6 +1402,12 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                     props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputAOV"
+                    
+                elif engine == 'BLENDER_EEVEE':
+
+                    props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputAOV"
 
             elif context.space_data.shader_type == 'WORLD':
 
@@ -1437,6 +1443,12 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                     props = row.operator("node.add_node", text="", icon = "LIGHT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputLight"
+
+                    props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
+                    props.use_transform = True
+                    props.type = "ShaderNodeOutputAOV"
+                    
+                elif engine == 'BLENDER_EEVEE':
 
                     props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
                     props.use_transform = True
@@ -2205,10 +2217,12 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
+            
+            if engine == 'BLENDER_EEVEE':
 
-            props = col.operator("node.add_node", text=" Shader to RGB   ", icon = "NODE_RGB")
-            props.use_transform = True
-            props.type = "ShaderNodeShaderToRGB"
+                props = col.operator("node.add_node", text=" Shader to RGB   ", icon = "NODE_RGB")
+                props.use_transform = True
+                props.type = "ShaderNodeShaderToRGB"
 
             col = layout.column(align=True)
 
@@ -2279,10 +2293,12 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
+            
+            if engine == 'BLENDER_EEVEE':
 
-            props = row.operator("node.add_node", text="", icon = "NODE_RGB")
-            props.use_transform = True
-            props.type = "ShaderNodeShaderToRGB"
+                props = row.operator("node.add_node", text="", icon = "NODE_RGB")
+                props.use_transform = True
+                props.type = "ShaderNodeShaderToRGB"
 
             row = layout.row()
             row.alignment = 'LEFT'
