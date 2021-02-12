@@ -1258,9 +1258,24 @@ static void node_draw_basis(const bContext *C,
     case SH_NODE_WIREFRAME:
       icon = ICON_NODE_WIREFRAME;
       break;
+    case SH_NODE_UVALONGSTROKE:
+      icon = ICON_NODE_UVALONGSTROKE;
+      break;
     /* bfa - Output */
     case SH_NODE_OUTPUT_MATERIAL:
       icon = ICON_MATERIAL;
+      break;
+    case SH_NODE_OUTPUT_AOV:
+      icon = ICON_NODE_VALUE;
+      break;
+    case SH_NODE_OUTPUT_LIGHT:
+      icon = ICON_LIGHT;
+      break;
+    case SH_NODE_OUTPUT_LINESTYLE:
+      icon = ICON_NODE_LINESTYLE_OUTPUT;
+      break;
+    case SH_NODE_OUTPUT_WORLD:
+      icon = ICON_WORLD;
       break;
     /* bfa - Shader */
     case SH_NODE_ADD_SHADER:
@@ -1325,6 +1340,9 @@ static void node_draw_basis(const bContext *C,
       break;
     case SH_NODE_BSDF_TOON:
       icon = ICON_NODE_TOONSHADER;
+      break;
+    case SH_NODE_BACKGROUND:
+      icon = ICON_NODE_BACKGROUNDSHADER;
       break;
     /* bfa - Texture */
     case SH_NODE_TEX_BRICK:
