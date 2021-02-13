@@ -949,15 +949,17 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   }
   uiItemR(layout, &ptr, "material", 0, NULL, ICON_NONE);
 
+  uiLayoutSetPropSep(layout, false); /*bfa - checkboxes, don't split*/
   col = uiLayoutColumn(layout, true);
   uiItemR(col, &ptr, "harden_normals", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "clamp_overlap", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "loop_slide", 0, NULL, ICON_NONE);
 
-  col = uiLayoutColumnWithHeading(layout, true, IFACE_("Mark"));
+  col = uiLayoutColumn(layout, true);
   uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
-  uiItemR(col, &ptr, "mark_seam", 0, IFACE_("Seams"), ICON_NONE);
-  uiItemR(col, &ptr, "mark_sharp", 0, IFACE_("Sharp"), ICON_NONE);
+  uiItemR(col, &ptr, "mark_seam", 0, IFACE_("Mark Seams"), ICON_NONE);
+  uiItemR(col, &ptr, "mark_sharp", 0, IFACE_("Mark Sharp"), ICON_NONE);
+  uiLayoutSetPropSep(layout, true);/*bfa - checkboxes end. split again*/
 
   uiItemS(layout);
 
