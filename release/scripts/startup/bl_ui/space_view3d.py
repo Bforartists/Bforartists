@@ -2667,7 +2667,7 @@ class VIEW3D_MT_object_relations(Menu):
 
         layout.operator("object.make_override_library", text="Make Library Override", icon = "LIBRARY_DATA_OVERRIDE")
 
-        layout.operator("object.convert_proxy_to_override")
+        layout.operator("object.convert_proxy_to_override", icon='PROXY_OVERRIDE')
 
         layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
 
