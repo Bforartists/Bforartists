@@ -650,12 +650,12 @@ class BlenderKitCommonUploadProps(object):
             ('PUBLIC', 'Public', '"Your asset will go into the validation process automatically')
         ),
         description="If not marked private, your asset will go into the validation process automatically\n"
-                    "Private assets are limited by quota.",
+                    "Private assets are limited by quota",
         default="PUBLIC",
     )
 
     is_procedural: BoolProperty(name="Procedural",
-                                description="Asset is procedural - has no texture.",
+                                description="Asset is procedural - has no texture",
                                 default=True
                                 )
     node_count: IntProperty(name="Node count", description="Total nodes in the asset", default=0)
@@ -664,7 +664,7 @@ class BlenderKitCommonUploadProps(object):
 
     # is_private: BoolProperty(name="Asset is Private",
     #                       description="If not marked private, your asset will go into the validation process automatically\n"
-    #                                   "Private assets are limited by quota.",
+    #                                   "Private assets are limited by quota",
     #                       default=False)
 
     is_free: BoolProperty(name="Free for Everyone",
@@ -870,7 +870,7 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
     thumbnail_resolution: EnumProperty(
         name="Resolution",
         items=thumbnail_resolutions,
-        description="Thumbnail resolution.",
+        description="Thumbnail resolution",
         default="512",
     )
 
@@ -1055,7 +1055,7 @@ class BlenderKitModelUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
     thumbnail_resolution: EnumProperty(
         name="Resolution",
         items=thumbnail_resolutions,
-        description="Thumbnail resolution.",
+        description="Thumbnail resolution",
         default="512",
     )
 
@@ -1402,7 +1402,7 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
         ),
         description="Appended objects are editable in your scene. Linked assets are saved in original files, "
                     "aren't editable but also don't increase your file size",
-        default="LINK_COLLECTION"
+        default="APPEND_OBJECTS"
     )
     append_link: EnumProperty(
         name="How to Attach",
@@ -1446,11 +1446,11 @@ class BlenderKitModelSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
                                         subtype='ANGLE')
 
     perpendicular_snap: BoolProperty(name='Perpendicular snap',
-                                     description="Limit snapping that is close to perpendicular angles to be perpendicular.",
+                                     description="Limit snapping that is close to perpendicular angles to be perpendicular",
                                      default=True)
 
     perpendicular_snap_threshold: FloatProperty(name="Threshold",
-                                                description="Limit perpendicular snap to be below these values.",
+                                                description="Limit perpendicular snap to be below these values",
                                                 default=.25,
                                                 min=0,
                                                 max=.5,
@@ -1498,7 +1498,19 @@ class BlenderKitSceneSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
         default="",
         update=search.search_update
     )
-
+    append_link: EnumProperty(
+        name="Append or link",
+        items=(
+            ('LINK', 'Link', ''),
+            ('APPEND', 'Append', ''),
+        ),
+        description="choose if the scene will be linked or appended",
+        default="APPEND"
+    )
+    switch_after_append: BoolProperty(
+        name = 'Switch to scene after download',
+        default = False
+    )
 
 def fix_subdir(self, context):
     '''Fixes project subdicrectory settings if people input invalid path.'''
@@ -1538,7 +1550,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     api_key_refresh: StringProperty(
         name="BlenderKit refresh API Key",
-        description="API key used to refresh the token regularly.",
+        description="API key used to refresh the token regularly",
         default="",
         subtype="PASSWORD",
     )
@@ -1557,7 +1569,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     refresh_in_progress: BoolProperty(
         name="Api key refresh in progress",
-        description="Api key is currently being refreshed. Don't refresh it again.",
+        description="Api key is currently being refreshed. Don't refresh it again",
         default=False
     )
 
@@ -1664,7 +1676,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     use_timers: BoolProperty(
         name="Use timers",
-        description="Use timers for BlenderKit. Usefull for debugging since timers seem to be unstable.",
+        description="Use timers for BlenderKit. Usefull for debugging since timers seem to be unstable",
         default=True,
         update=utils.save_prefs
     )

@@ -126,7 +126,7 @@ def extend_vertex(context):
 
 
 class PDT_OT_EdgeToFace(bpy.types.Operator):
-    """Extend Selected Edge to Projected Intersection with Selected Face."""
+    """Extend Selected Edge to Projected Intersection with Selected Face"""
 
     bl_idname = "pdt.edge_to_face"
     bl_label = "Extend Edge to Face"

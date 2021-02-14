@@ -171,7 +171,7 @@ def ensure_eevee_transparency(m):
 
 
 class BringToScene(Operator):
-    """Bring linked object hierarchy to scene and make it editable."""
+    """Bring linked object hierarchy to scene and make it editable"""
 
     bl_idname = "object.blenderkit_bring_to_scene"
     bl_label = "BlenderKit bring objects to scene"

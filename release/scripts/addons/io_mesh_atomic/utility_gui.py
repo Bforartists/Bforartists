@@ -158,7 +158,7 @@ class PanelProperties(bpy.types.PropertyGroup):
         description="Distance of 2 objects in Angstrom")
     replace_objs: EnumProperty(
         name="Shape",
-        description="Choose a different atom shape.",
+        description="Choose a different atom shape",
         items=(('0',"Unchanged", "Do not change the shape"),
                ('1a',"Sphere (Mesh)", "Replace with a sphere (Mesh)"),
                ('1b',"Sphere (NURBS)", "Replace with a sphere (NURBS)"),
@@ -179,7 +179,7 @@ class PanelProperties(bpy.types.PropertyGroup):
                default='0',)
     replace_objs_material: EnumProperty(
         name="Material",
-        description="Choose a different material.",
+        description="Choose a different material",
         items=(('0',"Unchanged", "Leave the material unchanged"),
                ('1',"Normal", "Use normal material (no transparency and reflection)"),
                ('2',"Transparent", "Use transparent material"),
@@ -188,7 +188,7 @@ class PanelProperties(bpy.types.PropertyGroup):
                default='0',)
     replace_objs_special: EnumProperty(
         name="Special",
-        description="Choose a special atom shape.",
+        description="Choose a special atom shape",
         items=(('0',"None", "Use no special shape."),
                ('1',"F2+ center", "Replace with a F2+ center"),
                ('2',"F+ center", "Replace with a F+ center"),
@@ -211,7 +211,7 @@ class PanelProperties(bpy.types.PropertyGroup):
                default='0',update=Callback_radius_type)
     radius_type_ionic: EnumProperty(
         name="Charge",
-        description="Charge state of the ions if existing.",
+        description="Charge state of the ions if existing",
         items=(('0',"-4", "Charge state -4"),
                ('1',"-3", "Charge state -3"),
                ('2',"-2", "Charge state -2"),
@@ -262,7 +262,7 @@ class DatafileApply(Operator):
 class DefaultAtom(Operator):
     bl_idname = "atom_blend.default_atoms"
     bl_label = "Default"
-    bl_description = ("Use default shapes and colors for atoms.")
+    bl_description = ("Use default shapes and colors for atoms")
 
     # Are we in the OBJECT mode?
     @classmethod
@@ -288,7 +288,7 @@ class DefaultAtom(Operator):
 class ReplaceAtom(Operator):
     bl_idname = "atom_blend.replace_atom"
     bl_label = "Replace"
-    bl_description = ("Replace selected atoms with atoms of different shape.")
+    bl_description = ("Replace selected atoms with atoms of different shape")
 
     # Are we in the OBJECT mode?
     @classmethod
@@ -337,7 +337,7 @@ class SeparateAtom(Operator):
 class DistanceButton(Operator):
     bl_idname = "atom_blend.button_distance"
     bl_label = "Measure ..."
-    bl_description = "Measure the distance between two atoms (objects)."
+    bl_description = "Measure the distance between two atoms (objects)"
 
     def execute(self, context):
         scn  = bpy.context.scene.atom_blend

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -42027,10 +42027,6 @@ msgstr "ﻲﺋﺍﻮﺸﻋ"
 
 msgid "Edge Slide: "
 msgstr ":ﺔﻓﺎﺤﻟﺍ ﻕﻻ﻿ﺰﻧﺍ"
-
-
-msgid "Shrink/Fatten:"
-msgstr "ﻦﻤّﺳ/ﺺﻠّﻗ"
 
 
 msgid "global"

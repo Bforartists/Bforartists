@@ -118,7 +118,9 @@ typedef struct bNodeSocket {
   /* XXX deprecated, kept for forward compatibility */
   short stack_type DNA_DEPRECATED;
   char display_shape;
-  char _pad[3];
+  char _pad[1];
+  /* Runtime-only cache of the number of input links, for multi-input sockets. */
+  short total_inputs;
 
   /** Custom dynamic defined label, MAX_NAME. */
   char label[64];
@@ -391,13 +393,15 @@ typedef struct bNodeLink {
   bNodeSocket *fromsock, *tosock;
 
   int flag;
-  char _pad[4];
+  /* A runtime storage for automatically sorted links to multi-input sockets. */
+  int multi_input_socket_index;
 } bNodeLink;
 
 /* link->flag */
 #define NODE_LINKFLAG_HILITE (1 << 0) /* link has been successfully validated */
 #define NODE_LINK_VALID (1 << 1)
-#define NODE_LINK_TEST (1 << 2) /* free test flag, undefined */
+#define NODE_LINK_TEST (1 << 2)           /* free test flag, undefined */
+#define NODE_LINK_TEMP_HIGHLIGHT (1 << 3) /* Link is highlighted for picking. */
 
 /* tree->edit_quality/tree->render_quality */
 #define NTREE_QUALITY_HIGH 0
@@ -551,7 +555,6 @@ typedef struct bNodeSocketValueFloat {
 
 typedef struct bNodeSocketValueBoolean {
   char value;
-  char _pad[3];
 } bNodeSocketValueBoolean;
 
 typedef struct bNodeSocketValueVector {
@@ -831,7 +834,6 @@ typedef struct NodeColorspill {
 
 typedef struct NodeDilateErode {
   char falloff;
-  char _pad[7];
 } NodeDilateErode;
 
 typedef struct NodeMask {
@@ -840,7 +842,6 @@ typedef struct NodeMask {
 
 typedef struct NodeSetAlpha {
   char mode;
-  char _pad[7];
 } NodeSetAlpha;
 
 typedef struct NodeTexBase {
@@ -997,7 +998,6 @@ typedef struct NodeTrackPosData {
 typedef struct NodeTranslateData {
   char wrap_axis;
   char relative;
-  char _pad[6];
 } NodeTranslateData;
 
 typedef struct NodePlaneTrackDeformData {
@@ -1076,7 +1076,6 @@ typedef struct NodeCryptomatte {
 
 typedef struct NodeDenoise {
   char hdr;
-  char _pad[7];
 } NodeDenoise;
 
 typedef struct NodeAttributeCompare {
@@ -1098,8 +1097,6 @@ typedef struct NodeAttributeMath {
   uint8_t input_type_a;
   uint8_t input_type_b;
   uint8_t input_type_c;
-
-  char _pad[4];
 } NodeAttributeMath;
 
 typedef struct NodeAttributeMix {
@@ -1112,6 +1109,16 @@ typedef struct NodeAttributeMix {
   uint8_t input_type_b;
 } NodeAttributeMix;
 
+typedef struct NodeAttributeRandomize {
+  /* CustomDataType. */
+  uint8_t data_type;
+  /* AttributeDomain. */
+  uint8_t domain;
+  /* GeometryNodeAttributeRandomizeMode. */
+  uint8_t operation;
+  char _pad[1];
+} NodeAttributeRandomize;
+
 typedef struct NodeAttributeVectorMath {
   /* NodeVectorMathOperation */
   uint8_t operation;
@@ -1120,8 +1127,6 @@ typedef struct NodeAttributeVectorMath {
   uint8_t input_type_a;
   uint8_t input_type_b;
   uint8_t input_type_c;
-
-  char _pad[4];
 } NodeAttributeVectorMath;
 
 typedef struct NodeAttributeColorRamp {
@@ -1159,22 +1164,16 @@ typedef struct NodeGeometryAlignRotationToVector {
 typedef struct NodeGeometryPointScale {
   /* GeometryNodeAttributeInputMode */
   uint8_t input_type;
-
-  char _pad[7];
 } NodeGeometryPointScale;
 
 typedef struct NodeGeometryPointTranslate {
   /* GeometryNodeAttributeInputMode */
   uint8_t input_type;
-
-  char _pad[7];
 } NodeGeometryPointTranslate;
 
 typedef struct NodeGeometryObjectInfo {
   /* GeometryNodeTransformSpace. */
   uint8_t transform_space;
-
-  char _pad[7];
 } NodeGeometryObjectInfo;
 
 typedef struct NodeGeometryPointInstance {
@@ -1182,8 +1181,6 @@ typedef struct NodeGeometryPointInstance {
   uint8_t instance_type;
   /* GeometryNodePointInstanceFlag. */
   uint8_t flag;
-
-  char _pad[6];
 } NodeGeometryPointInstance;
 
 typedef struct NodeGeometryPointsToVolume {
@@ -1191,30 +1188,36 @@ typedef struct NodeGeometryPointsToVolume {
   uint8_t resolution_mode;
   /* GeometryNodeAttributeInputMode */
   uint8_t input_type_radius;
-
-  char _pad[6];
 } NodeGeometryPointsToVolume;
 
 typedef struct NodeGeometryCollectionInfo {
   /* GeometryNodeTransformSpace. */
   uint8_t transform_space;
-
-  char _pad[7];
 } NodeGeometryCollectionInfo;
 
 typedef struct NodeGeometryAttributeProximity {
   /* GeometryNodeAttributeProximityTargetGeometryElement. */
   uint8_t target_geometry_element;
-
-  char _pad[7];
 } NodeGeometryAttributeProximity;
 
 typedef struct NodeGeometryVolumeToMesh {
   /* VolumeToMeshResolutionMode */
   uint8_t resolution_mode;
-
-  char _pad[7];
 } NodeGeometryVolumeToMesh;
+
+typedef struct NodeAttributeCombineXYZ {
+  /* GeometryNodeAttributeInputMode. */
+  uint8_t input_type_x;
+  uint8_t input_type_y;
+  uint8_t input_type_z;
+
+  char _pad[1];
+} NodeAttributeCombineXYZ;
+
+typedef struct NodeAttributeSeparateXYZ {
+  /* GeometryNodeAttributeInputMode. */
+  uint8_t input_type;
+} NodeAttributeSeparateXYZ;
 
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0
@@ -1223,7 +1226,7 @@ typedef struct NodeGeometryVolumeToMesh {
 /* script node flag */
 #define NODE_SCRIPT_AUTO_UPDATE 1
 
-/* ies node mode */
+/* IES node mode. */
 #define NODE_IES_INTERNAL 0
 #define NODE_IES_EXTERNAL 1
 
@@ -1547,7 +1550,7 @@ enum {
 /* image */
 #define CMP_NODE_IMAGE_USE_STRAIGHT_OUTPUT 1
 
-/* viewer and cmposite output */
+/* viewer and composite output. */
 #define CMP_NODE_OUTPUT_IGNORE_ALPHA 1
 
 /* Plane track deform node */
@@ -1644,6 +1647,7 @@ typedef enum GeometryNodeAttributeInputMode {
   GEO_NODE_ATTRIBUTE_INPUT_VECTOR = 2,
   GEO_NODE_ATTRIBUTE_INPUT_COLOR = 3,
   GEO_NODE_ATTRIBUTE_INPUT_BOOLEAN = 4,
+  GEO_NODE_ATTRIBUTE_INPUT_INTEGER = 5,
 } GeometryNodeAttributeInputMode;
 
 typedef enum GeometryNodePointDistributeMethod {
@@ -1655,6 +1659,13 @@ typedef enum GeometryNodeRotatePointsType {
   GEO_NODE_POINT_ROTATE_TYPE_EULER = 0,
   GEO_NODE_POINT_ROTATE_TYPE_AXIS_ANGLE = 1,
 } GeometryNodeRotatePointsType;
+
+typedef enum GeometryNodeAttributeRandomizeMode {
+  GEO_NODE_ATTRIBUTE_RANDOMIZE_REPLACE_CREATE = 0,
+  GEO_NODE_ATTRIBUTE_RANDOMIZE_ADD = 1,
+  GEO_NODE_ATTRIBUTE_RANDOMIZE_SUBTRACT = 2,
+  GEO_NODE_ATTRIBUTE_RANDOMIZE_MULTIPLY = 3,
+} GeometryNodeAttributeRandomizeMode;
 
 typedef enum GeometryNodeRotatePointsSpace {
   GEO_NODE_POINT_ROTATE_SPACE_OBJECT = 0,

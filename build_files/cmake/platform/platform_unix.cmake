@@ -385,7 +385,7 @@ if(WITH_OPENIMAGEIO)
 endif()
 
 if(WITH_OPENCOLORIO)
-  find_package_wrapper(OpenColorIO)
+  find_package_wrapper(OpenColorIO 2.0.0)
 
   set(OPENCOLORIO_LIBRARIES ${OPENCOLORIO_LIBRARIES})
   set(OPENCOLORIO_LIBPATH)  # TODO, remove and reference the absolute path everywhere
@@ -467,6 +467,14 @@ if(WITH_POTRACE)
   if(NOT POTRACE_FOUND)
     message(WARNING "potrace not found, disabling WITH_POTRACE")
     set(WITH_POTRACE OFF)
+  endif()
+endif()
+
+if(WITH_HARU)
+  find_package_wrapper(Haru)
+  if(NOT HARU_FOUND)
+    message(WARNING "Haru not found, disabling WITH_HARU")
+    set(WITH_HARU OFF)
   endif()
 endif()
 

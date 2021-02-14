@@ -128,9 +128,9 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
     rc_angle_step: FloatProperty(
         name="Angle Steps",
         description="Step the rotation using this angle when using rotate canvas step modifier",
-        default=0.0872664600610733, # 5
+        default=0.2617993877991494, # 15
         min=0.01745329238474369, # 1
-        max=3.1415927410125732, # # 180
+        max=3.1415927410125732, # 180
         soft_min=0.01745329238474369, # 1
         soft_max=1.5707963705062866, # 90
         step=10, precision=1, subtype='ANGLE', unit='ROTATION')
@@ -153,7 +153,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             row.label(text='Box Deform:')
             row.operator("wm.call_menu", text="", icon='QUESTION').name = "GPT_MT_box_deform_doc"
             box.prop(self, "use_clic_drag")
-            # box.separator()
+
             box.prop(self, "default_deform_type")
             box.label(text="Deformer type can be changed during modal with 'M' key, this is for default behavior", icon='INFO')
 
@@ -179,7 +179,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
 
                 if not self.use_ctrl and not self.use_alt and not self.use_shift:
                     box.label(text="Choose at least one modifier to combine with click (default: Ctrl+Alt)", icon="ERROR")# INFO
-                
+
                 if not all((self.use_ctrl, self.use_alt, self.use_shift)):
                     row = box.row(align = True)
                     snap_key_list = []
@@ -204,7 +204,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             draw_ts_pref(prefs.ts, box)
 
 
-# def box_deform_tuto(layout):
+
 class GPT_MT_box_deform_doc(bpy.types.Menu):
     # bl_idname = "OBJECT_MT_custom_menu"
     bl_label = "Box Deform Infos Sheet"
