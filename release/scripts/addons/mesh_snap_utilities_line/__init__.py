@@ -118,6 +118,9 @@ def register_keymaps():
     keyconfigs = bpy.context.window_manager.keyconfigs
     kc_defaultconf = keyconfigs.default
     kc_addonconf = keyconfigs.addon
+    # In background mode.
+    if kc_defaultconf is None or kc_addonconf is None:
+        return
 
     # TODO: find the user defined tool_mouse.
     from bl_keymap_utils.io import keyconfig_init_from_data
@@ -128,8 +131,11 @@ def register_keymaps():
     #snap_modalkeymap.assign("MESH_OT_snap_utilities_line")
 def unregister_keymaps():
     keyconfigs = bpy.context.window_manager.keyconfigs
-    defaultmap = keyconfigs.get("Blender").keymaps
-    addonmap   = keyconfigs.get("Blender addon").keymaps
+    defaultmap = getattr(keyconfigs.get("Blender"), "keymaps", None)
+    addonmap = getattr(keyconfigs.get("Blender addon"), "keymaps", None)
+    # In background mode.
+    if defaultmap is None or addonmap is None:
+        return
 
     for keyconfig_data in keys.generate_snap_utilities_global_keymaps():
         km_name, km_args, km_content = keyconfig_data

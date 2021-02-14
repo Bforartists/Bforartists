@@ -367,7 +367,7 @@ def get_autotags():
 
 
 class AutoFillTags(bpy.types.Operator):
-    """Fill tags for asset. Now run before upload, no need to interact from user side."""
+    """Fill tags for asset. Now run before upload, no need to interact from user side"""
     bl_idname = "object.blenderkit_auto_tags"
     bl_label = "Generate Auto Tags for BlenderKit"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}

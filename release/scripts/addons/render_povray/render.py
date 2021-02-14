@@ -5987,7 +5987,7 @@ class PovrayRender(bpy.types.RenderEngine):
 #################################Operators########################################
 ##################################################################################
 class RenderPovTexturePreview(Operator):
-    """Export only files necessary to texture preview and render image."""
+    """Export only files necessary to texture preview and render image"""
 
     bl_idname = "tex.preview_update"
     bl_label = "Update preview"

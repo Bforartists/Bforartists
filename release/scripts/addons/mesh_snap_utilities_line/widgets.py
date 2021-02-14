@@ -164,11 +164,11 @@ class SnapWidgetGroupCommon(bpy.types.GizmoGroup):
         return context_mode_check(context, cls.bl_idname)
 
     def init_tool(self, context, gizmo_name):
-        self.widget = self.gizmos.new(gizmo_name)
+        self._widget = self.gizmos.new(gizmo_name)
 
     def __del__(self):
-        if hasattr(self, "widget"):
-            object.__getattribute__(self.widget, 'end_snapwidget')()
+        if hasattr(self, "_widget"):
+            object.__getattribute__(self._widget, 'end_snapwidget')()
 
 
 class SnapPointWidgetGroup(SnapWidgetGroupCommon):

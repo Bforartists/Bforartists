@@ -63,6 +63,24 @@ def set_bone_layers(bone, layers, combine=False):
 # UI utilities
 #=============================================
 
+
+def layout_layer_buttons(layout, params, option, active_layers):
+    "Draw a layer selection button UI with certain layers marked with dots."
+    outer = layout.row()
+
+    for x in [0, 8]:
+        col = outer.column(align=True)
+
+        for y in [0, 16]:
+            row = col.row(align=True)
+
+            for i in range(x+y, x+y+8):
+                row.prop(
+                    params, option, index=i, toggle=True, text="",
+                    icon="LAYER_ACTIVE" if active_layers[i] else "NONE"
+                )
+
+
 class ControlLayersOption:
     def __init__(self, name, toggle_name=None, toggle_default=True, description="Set of control layers"):
         self.name = name
@@ -131,8 +149,9 @@ class ControlLayersOption:
         if not active:
             return
 
-        row = box.row(align=True)
-        row.prop(params, self.layers_option, text="")
+        active_layers = bpy.context.active_pose_bone.bone.layers[:]
+
+        layout_layer_buttons(box, params, self.layers_option, active_layers)
 
 
 ControlLayersOption.FK = ControlLayersOption('fk', description="Layers for the FK controls to be on")

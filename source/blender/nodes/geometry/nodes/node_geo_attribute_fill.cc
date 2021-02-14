@@ -21,6 +21,9 @@
 #include "DNA_mesh_types.h"
 #include "DNA_pointcloud_types.h"
 
+#include "UI_interface.h"
+#include "UI_resources.h"
+
 static bNodeSocketTemplate geo_node_attribute_fill_in[] = {
     {SOCK_GEOMETRY, N_("Geometry")},
     {SOCK_STRING, N_("Attribute")},
@@ -35,6 +38,12 @@ static bNodeSocketTemplate geo_node_attribute_fill_out[] = {
     {SOCK_GEOMETRY, N_("Geometry")},
     {-1, ""},
 };
+
+static void geo_node_attribute_fill_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "data_type", 0, "", ICON_NONE);
+  // uiItemR(layout, ptr, "domain", 0, "", ICON_NONE);
+}
 
 static void geo_node_attribute_fill_init(bNodeTree *UNUSED(tree), bNode *node)
 {
@@ -58,15 +67,31 @@ static void geo_node_attribute_fill_update(bNodeTree *UNUSED(ntree), bNode *node
 
 namespace blender::nodes {
 
+static AttributeDomain get_result_domain(const GeometryComponent &component,
+                                         const GeoNodeExecParams &params,
+                                         StringRef attribute_name)
+{
+  /* Use the domain of the result attribute if it already exists. */
+  ReadAttributePtr result_attribute = component.attribute_try_get_for_read(attribute_name);
+  if (result_attribute) {
+    return result_attribute->domain();
+  }
+
+  /* Otherwise use the input domain chosen in the interface. */
+  const bNode &node = params.node();
+  return static_cast<AttributeDomain>(node.custom2);
+}
+
 static void fill_attribute(GeometryComponent &component, const GeoNodeExecParams &params)
 {
-  const bNode &node = params.node();
-  const CustomDataType data_type = static_cast<CustomDataType>(node.custom1);
-  const AttributeDomain domain = static_cast<AttributeDomain>(node.custom2);
   const std::string attribute_name = params.get_input<std::string>("Attribute");
   if (attribute_name.empty()) {
     return;
   }
+
+  const bNode &node = params.node();
+  const CustomDataType data_type = static_cast<CustomDataType>(node.custom1);
+  const AttributeDomain domain = get_result_domain(component, params, attribute_name);
 
   OutputAttributePtr attribute = component.attribute_try_get_for_output(
       attribute_name, domain, data_type);
@@ -110,6 +135,8 @@ static void geo_node_attribute_fill_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
+  geometry_set = geometry_set_realize_instances(geometry_set);
+
   if (geometry_set.has<MeshComponent>()) {
     fill_attribute(geometry_set.get_component_for_write<MeshComponent>(), params);
   }
@@ -131,5 +158,6 @@ void register_node_type_geo_attribute_fill()
   node_type_init(&ntype, geo_node_attribute_fill_init);
   node_type_update(&ntype, geo_node_attribute_fill_update);
   ntype.geometry_node_execute = blender::nodes::geo_node_attribute_fill_exec;
+  ntype.draw_buttons = geo_node_attribute_fill_layout;
   nodeRegisterType(&ntype);
 }

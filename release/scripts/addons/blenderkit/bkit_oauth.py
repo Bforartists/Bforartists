@@ -153,7 +153,7 @@ class Logout(bpy.types.Operator):
 
 
 class CancelLoginOnline(bpy.types.Operator):
-    """Cancel login attempt."""
+    """Cancel login attempt"""
 
     bl_idname = "wm.blenderkit_login_cancel"
     bl_label = "BlenderKit login cancel"

@@ -466,9 +466,15 @@ static int gpencil_layer_copy_exec(bContext *C, wmOperator *op)
     return OPERATOR_CANCELLED;
   }
 
-  /* make copy of layer, and add it immediately after the existing layer */
+  /* Make copy of layer, and add it immediately after or before the existing layer. */
   new_layer = BKE_gpencil_layer_duplicate(gpl, true, dup_strokes);
-  BLI_insertlinkafter(&gpd->layers, gpl, new_layer);
+  if (dup_strokes) {
+    BLI_insertlinkafter(&gpd->layers, gpl, new_layer);
+  }
+  else {
+    /* For empty strokes is better add below. */
+    BLI_insertlinkbefore(&gpd->layers, gpl, new_layer);
+  }
 
   /* ensure new layer has a unique name, and is now the active layer */
   BLI_uniquename(&gpd->layers,
@@ -2016,7 +2022,7 @@ static void gpencil_brush_delete_mode_brushes(Main *bmain,
       }
     }
 
-    /* Before delete, unpinn any material of the brush. */
+    /* Before delete, un-pin any material of the brush. */
     if ((brush->gpencil_settings) && (brush->gpencil_settings->material != NULL)) {
       brush->gpencil_settings->material = NULL;
       brush->gpencil_settings->flag &= ~GP_BRUSH_MATERIAL_PINNED;
