@@ -245,7 +245,7 @@ def intersect_all(context):
         return
 
 class PDT_OT_IntersectAllEdges(bpy.types.Operator):
-    """Cut Selected Edges at All Intersections."""
+    """Cut Selected Edges at All Intersections"""
 
     bl_idname = "pdt.intersectall"
     bl_label = "Intersect All Edges"

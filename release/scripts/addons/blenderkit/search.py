@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from blenderkit import paths, utils, categories, ui, colors, bkit_oauth, version_checker, tasks_queue, rerequests, \
-    resolutions
+    resolutions, image_utils
 
 import blenderkit
 from bpy.app.handlers import persistent
@@ -474,9 +474,9 @@ def load_previews():
                 img.reload()
             if r['assetType'] == 'hdr':
                 # to display hdr thumbnails correctly, we use non-color, otherwise looks shifted
-                img.colorspace_settings.name = 'Non-Color'
+                image_utils.set_colorspace(img, 'Non-Color')
             else:
-                img.colorspace_settings.name = 'sRGB'
+                image_utils.set_colorspace(img, 'sRGB')
 
             i += 1
     # print('previews loaded')

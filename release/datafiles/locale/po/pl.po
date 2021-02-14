@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -10830,10 +10830,6 @@ msgstr "Ścinanie: %s %s"
 
 msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "Ścinanie: %.3f %s (Wciśnij X lub Y dla ustalenia osi ścinania)"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Kurcz/Rozszerz"
 
 
 msgid " or Alt) Even Thickness %s"

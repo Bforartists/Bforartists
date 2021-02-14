@@ -295,7 +295,7 @@ def update_ratings_work_hours_ui_1_5(self, context):
 
 
 class FastRateMenu(Operator):
-    """Fast rating of the assets directly in the asset bar - without need to download assets."""
+    """Fast rating of the assets directly in the asset bar - without need to download assets"""
     bl_idname = "wm.blenderkit_menu_rating_upload"
     bl_label = "Send Rating"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
@@ -337,7 +337,7 @@ class FastRateMenu(Operator):
     rating_work_hours: FloatProperty(name="Work Hours",
                                      description="How many hours did this work take?",
                                      default=0.00,
-                                     min=0.0, max=150, update=update_ratings_work_hours
+                                     min=0.0, max=300, update=update_ratings_work_hours
                                      )
 
     rating_work_hours_ui: EnumProperty(name="Work Hours",

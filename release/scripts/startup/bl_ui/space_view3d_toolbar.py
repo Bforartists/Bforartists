@@ -270,12 +270,12 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 # bfa - panel remains for compatibility reasons. Who knows what Blender developers does in the future here ...
-class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
+#class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
     #bl_category = "Tool"
-    bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
-    bl_label = "Auto Merge"
+    #bl_context = ".mesh_edit"  # dot on purpose (access from topbar)
+    #bl_label = "Auto Merge"
     #bl_parent_id = "VIEW3D_PT_tools_meshedit_options" #bfa - not longer, we have the two props in the options panel directly.
-    bl_options = {'DEFAULT_CLOSED'}
+"""     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -299,7 +299,7 @@ class VIEW3D_PT_tools_meshedit_options_automerge(View3DPanel, Panel):
         col.prop(tool_settings, "use_mesh_automerge_and_split", toggle=False)
 
         col.use_property_split = True
-        col.prop(tool_settings, "double_threshold", text="Threshold")
+        col.prop(tool_settings, "double_threshold", text="Threshold") """
 
 
 # ********** default tools for editmode_armature ****************
@@ -1500,7 +1500,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
     bl_parent_id = 'VIEW3D_PT_tools_grease_pencil_brush_settings'
     bl_category = "Tool"
     bl_options = {'DEFAULT_CLOSED'}
-    bl_ui_units_x = 11
+    bl_ui_units_x = 13
 
     @classmethod
     def poll(cls, context):
@@ -1553,7 +1553,12 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
                 row.prop(gp_settings, "fill_layer_mode", text="Layers")
 
                 col.separator()
-                col.prop(gp_settings, "fill_factor")
+                row = col.row(align=True)
+                row.prop(gp_settings, "extend_stroke_factor")
+                row.prop(gp_settings, "show_fill_extend", text="", icon='GRID')
+
+                col.separator()
+                col.prop(gp_settings, "fill_simplify_level", text="Simplify")
                 if gp_settings.fill_draw_mode != 'STROKE':
                     col = layout.column(align=False, heading="Ignore Transparent")
                     col.use_property_decorate = False
@@ -1563,6 +1568,10 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
                     sub = sub.row(align=True)
                     sub.active = gp_settings.show_fill
                     sub.prop(gp_settings, "fill_threshold", text="")
+
+                col.separator()
+                row = col.row(align=True)
+                row.prop(gp_settings, "use_fill_limit")
 
 
 class VIEW3D_PT_tools_grease_pencil_brush_stroke(Panel, View3DPanel):
@@ -2322,7 +2331,7 @@ classes = (
     VIEW3D_PT_tools_object_options,
     VIEW3D_PT_tools_object_options_transform,
     VIEW3D_PT_tools_meshedit_options,
-    VIEW3D_PT_tools_meshedit_options_automerge,
+    #VIEW3D_PT_tools_meshedit_options_automerge, # bfa - remains for compatibility
     VIEW3D_PT_tools_armatureedit_options,
     VIEW3D_PT_tools_posemode_options,
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -70468,10 +70468,6 @@ msgstr "Aparando: %s %s"
 
 msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "Aparando: %.3f %s (Pressione X ou Y para configurar o eixo para aparar)"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Encolher ou estufar:"
 
 
 msgid " or Alt) Even Thickness %s"

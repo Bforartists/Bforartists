@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -28865,10 +28865,6 @@ msgstr "(Сфера)"
 
 msgid "(Random)"
 msgstr "(Насумично)"
-
-
-msgid "Shrink/Fatten:"
-msgstr "Скупи/удебљај:"
 
 
 msgid "global"

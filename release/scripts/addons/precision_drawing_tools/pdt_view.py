@@ -211,7 +211,7 @@ class PDT_OT_ViewIso(Operator):
     bl_idname = "pdt.viewiso"
     bl_label = "Isometric View"
     bl_options = {"REGISTER", "UNDO"}
-    bl_description = "Isometric View."
+    bl_description = "Isometric View"
 
     def execute(self, context):
         """Set Isometric View.
@@ -238,7 +238,7 @@ class PDT_OT_Reset3DView(Operator):
     bl_idname = "pdt.reset_3d_view"
     bl_label = "Reset 3D View"
     bl_options = {"REGISTER", "UNDO"}
-    bl_description = "Reset 3D View to Blender Defaults."
+    bl_description = "Reset 3D View to Blender Defaults"
 
     def execute(self, context):
         """Reset 3D View to Blender Defaults.

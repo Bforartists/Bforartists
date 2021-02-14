@@ -83,7 +83,7 @@ PDT_FeatureError = pdt_exception.FeatureError
 
 
 class PDT_OT_CommandReRun(Operator):
-    """Repeat Current Displayed Command."""
+    """Repeat Current Displayed Command"""
 
     bl_idname = "pdt.command_rerun"
     bl_label = "Re-run Current Command"
