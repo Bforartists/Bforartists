@@ -203,12 +203,24 @@ class RENDER_PT_eevee_depth_of_field(RenderButtonsPanel, Panel):
         col.prop(props, "bokeh_threshold")
         col.prop(props, "bokeh_neighbor_max")
         col.prop(props, "bokeh_denoise_fac")
+        col.use_property_split = False
         col.prop(props, "use_bokeh_high_quality_slight_defocus")
-        col.prop(props, "use_bokeh_jittered")
+        
+        split = layout.split(factor=.4)
+        split.use_property_split=False
+        split.prop(props, "use_bokeh_jittered")
+        
+        split.alignment = 'LEFT'
+        if props.use_bokeh_jittered:
+            split.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')     
 
-        col = layout.column()
-        col.active = props.use_bokeh_jittered
-        col.prop(props, "bokeh_overblur")
+        if props.use_bokeh_jittered:
+            row = layout.row()
+            row.use_property_split = True
+            row.separator()
+            row.prop(props, "bokeh_overblur")
 
 
 class RENDER_PT_eevee_bloom(RenderButtonsPanel, Panel):
