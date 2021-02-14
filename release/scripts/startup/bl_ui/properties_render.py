@@ -206,7 +206,7 @@ class RENDER_PT_eevee_depth_of_field(RenderButtonsPanel, Panel):
         col.use_property_split = False
         col.prop(props, "use_bokeh_high_quality_slight_defocus")
         
-        split = layout.split(factor=.4)
+        split = col.split(factor=.4)
         split.use_property_split=False
         split.prop(props, "use_bokeh_jittered")
         
@@ -217,7 +217,7 @@ class RENDER_PT_eevee_depth_of_field(RenderButtonsPanel, Panel):
             split.label(icon='DISCLOSURE_TRI_RIGHT')     
 
         if props.use_bokeh_jittered:
-            row = layout.row()
+            row = col.row()
             row.use_property_split = True
             row.separator()
             row.prop(props, "bokeh_overblur")
