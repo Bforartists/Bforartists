@@ -14,16 +14,19 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "BLI_kdopbvh.h"
 #include "BLI_kdtree.h"
 #include "BLI_task.hh"
+#include "BLI_timeit.hh"
+
+#include "DNA_mesh_types.h"
 
 #include "BKE_bvhutils.h"
-#include "BLI_kdopbvh.h"
+
+#include "UI_interface.h"
+#include "UI_resources.h"
 
 #include "node_geometry_util.hh"
-
-#include "BLI_timeit.hh"
-#include "DNA_mesh_types.h"
 
 static bNodeSocketTemplate geo_node_attribute_proximity_in[] = {
     {SOCK_GEOMETRY, N_("Geometry")},
@@ -36,6 +39,13 @@ static bNodeSocketTemplate geo_node_attribute_proximity_out[] = {
     {SOCK_GEOMETRY, N_("Geometry")},
     {-1, ""},
 };
+
+static void geo_node_attribute_proximity_layout(uiLayout *layout,
+                                                bContext *UNUSED(C),
+                                                PointerRNA *ptr)
+{
+  uiItemR(layout, ptr, "target_geometry_element", 0, "", ICON_NONE);
+}
 
 static void geo_attribute_proximity_init(bNodeTree *UNUSED(ntree), bNode *node)
 {
@@ -56,6 +66,11 @@ static void proximity_calc(MutableSpan<float> distance_span,
                            const bool bvh_mesh_success,
                            const bool bvh_pointcloud_success)
 {
+  /* The pointcloud loop uses the values already in the span,
+   * which is only set if the mesh BVH is used (because it's first). */
+  if (!bvh_mesh_success) {
+    distance_span.fill(FLT_MAX);
+  }
 
   IndexRange range = positions.index_range();
   parallel_for(range, 512, [&](IndexRange range) {
@@ -74,11 +89,6 @@ static void proximity_calc(MutableSpan<float> distance_span,
                                  &tree_data_mesh);
         distance_span[i] = sqrtf(nearest.dist_sq);
       }
-    }
-
-    /* The next loop(s) use the values already in the span. */
-    if (!bvh_mesh_success) {
-      distance_span.fill(FLT_MAX);
     }
 
     if (bvh_pointcloud_success) {
@@ -138,9 +148,12 @@ static void attribute_calc_proximity(GeometryComponent &component,
                                      GeometrySet &geometry_set_target,
                                      GeoNodeExecParams &params)
 {
+  /* This node works on the "point" domain, since that is where positions are stored. */
+  const AttributeDomain result_domain = ATTR_DOMAIN_POINT;
+
   const std::string result_attribute_name = params.get_input<std::string>("Result");
   OutputAttributePtr distance_attribute = component.attribute_try_get_for_output(
-      result_attribute_name, ATTR_DOMAIN_POINT, CD_PROP_FLOAT);
+      result_attribute_name, result_domain, CD_PROP_FLOAT);
 
   ReadAttributePtr position_attribute = component.attribute_try_get_for_read("position");
   BLI_assert(position_attribute->custom_data_type() == CD_PROP_FLOAT3);
@@ -192,6 +205,12 @@ static void geo_node_attribute_proximity_exec(GeoNodeExecParams params)
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
   GeometrySet geometry_set_target = params.extract_input<GeometrySet>("Target");
 
+  geometry_set = geometry_set_realize_instances(geometry_set);
+
+  /* This isn't required. This node should be rewritten to handle instances
+   * for the target geometry set. However, the generic BVH API complicates this. */
+  geometry_set_target = geometry_set_realize_instances(geometry_set_target);
+
   if (geometry_set.has<MeshComponent>()) {
     attribute_calc_proximity(
         geometry_set.get_component_for_write<MeshComponent>(), geometry_set_target, params);
@@ -220,5 +239,6 @@ void register_node_type_geo_attribute_proximity()
                     node_free_standard_storage,
                     node_copy_standard_storage);
   ntype.geometry_node_execute = blender::nodes::geo_node_attribute_proximity_exec;
+  ntype.draw_buttons = geo_node_attribute_proximity_layout;
   nodeRegisterType(&ntype);
 }

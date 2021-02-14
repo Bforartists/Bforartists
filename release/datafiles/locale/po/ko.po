@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -92336,10 +92336,6 @@ msgstr "전단: %s %s"
 
 msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "전단: %.3f %s (전단 축을 설정하는 X 또는 Y를 누르기)"
-
-
-msgid "Shrink/Fatten:"
-msgstr "수축/팽창:"
 
 
 msgid " or Alt) Even Thickness %s"

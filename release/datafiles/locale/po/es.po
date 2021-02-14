@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4359,11 +4359,11 @@ msgstr "Opciones de simulación de ropa para colisión propia o con otros objeto
 
 
 msgid "Collision Collection"
-msgstr "Colección de colisión"
+msgstr "Colección de colisiones"
 
 
 msgid "Limit colliders to this Collection"
-msgstr "Limita los colisionadores a esta colección"
+msgstr "Limita los colisionadores a objetos en esta colección"
 
 
 msgid "Collision Quality"
@@ -4423,7 +4423,7 @@ msgstr "Fricción o amortiguación por el contacto propio"
 
 
 msgid "Enable Collision"
-msgstr "Habilitar colisión"
+msgstr "Habilitar colisiones"
 
 
 msgid "Enable collisions with other objects"
@@ -4431,11 +4431,11 @@ msgstr "Habilita las colisiones con otros objetos"
 
 
 msgid "Enable Self Collision"
-msgstr "Habilita colisión propia"
+msgstr "Habilitar colisiones propias"
 
 
 msgid "Enable self collisions"
-msgstr "Habilita colisiones propias"
+msgstr "Habilita las colisiones con otra partes del mismo objeto"
 
 
 msgid "Collision Vertex Group"
@@ -4503,7 +4503,7 @@ msgstr "Modelo de ropa con tensores de flexión lineal (antiguo)"
 
 
 msgid "Bending Stiffness"
-msgstr "Resistencia a flexión"
+msgstr "Resistencia a la flexión"
 
 
 msgid "How much the material resists bending"
@@ -4531,7 +4531,7 @@ msgstr "Cantidad de amortiguación en la compresión de los tensores"
 
 
 msgid "Compression Stiffness"
-msgstr "Resistencia a compresión"
+msgstr "Resistencia a la compresión"
 
 
 msgid "How much the material resists compression"
@@ -4539,7 +4539,7 @@ msgstr "Qué tanta resistencia a la compresión presenta el material"
 
 
 msgid "Compression Stiffness Maximum"
-msgstr "Resistencia a compresión máx"
+msgstr "Resistencia máxima a la compresión"
 
 
 msgid "Maximum compression stiffness value"
@@ -4575,15 +4575,15 @@ msgstr "Densidad (en kg/l) del fluido contenido dentro del objeto, usada para cr
 
 
 msgid "Goal Default"
-msgstr "Objetivo predefinido"
+msgstr "Valor objetivo predefinido"
 
 
 msgid "Default Goal (vertex target position) value, when no Vertex Group used"
-msgstr "Valor predefinido objetivo (posición objetivo de los vértices), cuando no se usa ningún grupo de vértices"
+msgstr "Valor predefinido del objetivo (posición objetivo de los vértices), cuando no se usa ningún grupo de vértices"
 
 
 msgid "Goal Damping"
-msgstr "Amortiguación objetivo"
+msgstr "Amortiguación del objetivo"
 
 
 msgid "Goal (vertex target position) friction"
@@ -4591,11 +4591,11 @@ msgstr "Fricción del objetivo (posición objetivo de los vértices)"
 
 
 msgid "Goal Maximum"
-msgstr "Objetivo máximo"
+msgstr "Máximo objetivo"
 
 
 msgid "Goal maximum, vertex group weights are scaled to match this range"
-msgstr "Máximo objetivo, las influencias del grupo de vértices son escaladas para coincidir con este rango"
+msgstr "Máximo objetivo, las influencias del grupo de vértices serán escaladas para coincidir con este rango"
 
 
 msgid "Goal Minimum"
@@ -4603,15 +4603,15 @@ msgstr "Mínimo objetivo"
 
 
 msgid "Goal minimum, vertex group weights are scaled to match this range"
-msgstr "Mínimo del objetivo, las influencias del grupo de vértices son escaladas para coincidir con este rango"
+msgstr "Mínimo objetivo, las influencias del grupo de vértices serán escaladas para coincidir con este rango"
 
 
 msgid "Goal Stiffness"
-msgstr "Resistencia del objetivo"
+msgstr "Rigidez del objetivo"
 
 
 msgid "Goal (vertex target position) spring stiffness"
-msgstr "Resistencia del tensor del objetivo (posición objetivo de los vértices)"
+msgstr "Resistencia de tensores del objetivo (posición objetivo de los vértices)"
 
 
 msgid "Gravity"
@@ -4635,7 +4635,7 @@ msgstr "Qué tanto podrán divergir los rayos que conectan los puntos interiores
 
 
 msgid "Internal Spring Max Length"
-msgstr "Longitud máx. tensor interno"
+msgstr "Longitud máxima de tensores internos"
 
 
 msgid "The maximum length an internal spring can have during creation. If the distance between internal points is greater than this, no internal spring will be created between these points. A length of zero means that there is no length limit"
@@ -4659,7 +4659,7 @@ msgstr "Qué tanta resistencia al estiramiento presenta el material"
 
 
 msgid "Tension Stiffness Maximum"
-msgstr "Resistencia máxima estiramiento"
+msgstr "Resistencia máxima al estiramiento"
 
 
 msgid "Maximum tension stiffness value"
@@ -4675,11 +4675,11 @@ msgstr "La masa de cada vértice del material de ropa"
 
 
 msgid "Pin Stiffness"
-msgstr "Resistencia de fijación"
+msgstr "Intensidad de fijación"
 
 
 msgid "Pin (vertex target position) spring stiffness"
-msgstr "Resistencia del tensor de fijación (posición objetivo de los vértices)"
+msgstr "Intensidad de fijación de los tensores (a la posición de los vértices objetivo)"
 
 
 msgid "Pressure Scale"
@@ -4707,7 +4707,7 @@ msgstr "Forma clave desde la cual tomar las longitudes de reposo de los tensores
 
 
 msgid "Sewing Force Max"
-msgstr "Fuerza máx costura"
+msgstr "Fuerza máxima de costura"
 
 
 msgid "Maximum sewing force"
@@ -4875,7 +4875,7 @@ msgstr "Grupo de vértices para un control fino sobre la rigidez estructural"
 
 
 msgid "Voxel Grid Cell Size"
-msgstr "Tamaño celdas cuadrícula de vóxeles"
+msgstr "Tamaño de vóxeles"
 
 
 msgid "Size of the voxel grid cells for interaction effects"
@@ -5047,7 +5047,7 @@ msgstr "Cantidad de fricción durante la colisión de partículas"
 
 
 msgid "Random Friction"
-msgstr "Fricción aleatoria"
+msgstr "Aleatorizar fricción"
 
 
 msgid "Random variation of friction"
@@ -5059,7 +5059,7 @@ msgstr "Permeabilidad"
 
 
 msgid "Chance that the particle will pass through the mesh"
-msgstr "Chance de que la partícula pase a través de la malla"
+msgstr "Probabilidad de que la partícula pase a través de la malla"
 
 
 msgid "Stickiness"
@@ -5083,7 +5083,7 @@ msgstr "Grosor exterior"
 
 
 msgid "Outer face thickness"
-msgstr "Grosor de la cara externa"
+msgstr "Grosor exterior de caras"
 
 
 msgid "Enabled"
@@ -5407,11 +5407,11 @@ msgstr "Alfa"
 
 
 msgid "Set alpha of selected color stop"
-msgstr "Permite definir el alfa de la parada seleccionada"
+msgstr "Alfa de la parada seleccionada"
 
 
 msgid "Set color of selected color stop"
-msgstr "Permite definir el color de la parada seleccionada"
+msgstr "Color de la parada seleccionada"
 
 
 msgid "Position"
@@ -5419,7 +5419,7 @@ msgstr "Posición"
 
 
 msgid "Set position of selected color stop"
-msgstr "Permite definir la posición de la parada seleccionada"
+msgstr "Posición de la parada de color seleccionada"
 
 
 msgid "Color Ramp Elements"
@@ -5536,7 +5536,7 @@ msgstr "Espacio en el que es evaluado el propietario"
 
 
 msgid "World Space"
-msgstr "Espacio global"
+msgstr "Global"
 
 
 msgid "The constraint is applied relative to the world coordinate system"
@@ -5544,7 +5544,7 @@ msgstr "La restricción se aplicará en relación al sistema de coordenadas glob
 
 
 msgid "Custom Space"
-msgstr "Espacio personalizado"
+msgstr "Personalizado"
 
 
 msgid "The constraint is applied in local space of a custom object/bone/vertex group"
@@ -5552,7 +5552,7 @@ msgstr "La restricción se aplicará en relación al sistema de coordenadas loca
 
 
 msgid "Pose Space"
-msgstr "Espacio de pose"
+msgstr "Pose"
 
 
 msgid "The constraint is applied in Pose Space, the object transformation is ignored"
@@ -5568,7 +5568,7 @@ msgstr "La restricción se aplicará en relación al sistema de coordenadas loca
 
 
 msgid "Local Space"
-msgstr "Espacio local"
+msgstr "Local"
 
 
 msgid "The constraint is applied relative to the local coordinate system of the object"
@@ -5580,7 +5580,7 @@ msgstr "El panel de la restricción está expandido en la IU"
 
 
 msgid "Object for Custom Space"
-msgstr "Objeto para espacio personalizado"
+msgstr "Objeto para definir el espacio personalizado"
 
 
 msgid "Sub-Target"
@@ -5588,7 +5588,7 @@ msgstr "Sub objetivo"
 
 
 msgid "Armature bone, mesh or lattice vertex group, ..."
-msgstr "Hueso de esqueleto, grupo de vértices de malla o jaula, ..."
+msgstr "Hueso de un esqueleto, grupo de vértices de un malla o una jaula, etc."
 
 
 msgid "Target Space"
@@ -5612,7 +5612,7 @@ msgstr "Las transformaciones del objetivo sólo se evaluarán en relación al si
 
 
 msgid "The transformation of the target bone is evaluated relative to its rest pose local coordinate system, thus including the parent-induced transformation"
-msgstr "Las transformaciones del hueso objetivo se evaluarán en relación a su sistema local de coordenadas en reposo, incluyendo por tanto las transformaciones heredadas de su superior"
+msgstr "Las transformaciones del hueso objetivo se evaluarán en relación al sistema local de coordenadas en reposo de su pose, por lo tanto incluyendo las transformaciones heredadas de su superior"
 
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
@@ -6020,7 +6020,7 @@ msgstr "Clip activo"
 
 
 msgid "Use active clip defined in scene"
-msgstr "Usa el clip activo definido en la escena"
+msgstr "Usar el clip activo definido en la escena"
 
 
 msgid "Child Of Constraint"
@@ -6208,7 +6208,7 @@ msgstr "Seguir la forma de los segmentos del hueso flexible al calcular la posic
 
 
 msgid "Add original location into copied location"
-msgstr "Agrega la posición original a la posición copiada"
+msgstr "Adiciona la posición original a la posición copiada"
 
 
 msgid "Copy X"
@@ -6564,11 +6564,11 @@ msgstr "Objeto de profundidad"
 
 
 msgid "Object used to define depth in camera space by projecting onto surface of this object"
-msgstr "Objeto usado para definir la profundidad en espacio de la cámara, proyectándolo sobre su superficie"
+msgstr "Objeto usado para definir la profundidad en el espacio de la cámara, mediante su proyección sobre la superficie de este objeto"
 
 
 msgid "How the footage fits in the camera frame"
-msgstr "Cómo se ajusta la película al cuadro de la cámara"
+msgstr "Cómo se ajusta la película al encuadre de la cámara"
 
 
 msgid "Movie tracking object to follow (if empty, camera object is used)"
@@ -6596,7 +6596,7 @@ msgstr "Sin distorsión"
 
 
 msgid "Parent to undistorted position of 2D track"
-msgstr "Subordina a la posición no distorsionada del rastro 2D"
+msgstr "Subordinar a la posición no distorsionada del rastro 2D"
 
 
 msgid "Kinematic Constraint"
@@ -6612,7 +6612,7 @@ msgstr "Cuántos huesos están incluidos en el efecto de CI - 0 usa todos"
 
 
 msgid "Radius of limiting sphere"
-msgstr "Radio de la esfera límite"
+msgstr "Radio de la esfera de limitación"
 
 
 msgid "IK Type"
@@ -6796,7 +6796,7 @@ msgstr "Limita la posición del objeto restringido"
 
 
 msgid "Maximum X"
-msgstr "Máximo X"
+msgstr "Máximo  X"
 
 
 msgid "Highest X value to allow"
@@ -6804,7 +6804,7 @@ msgstr "Mayor valor en X permitido"
 
 
 msgid "Maximum Y"
-msgstr "Máximo Y"
+msgstr "Máximo  Y"
 
 
 msgid "Highest Y value to allow"
@@ -6812,7 +6812,7 @@ msgstr "Mayor valor en Y permitido"
 
 
 msgid "Maximum Z"
-msgstr "Máximo Z"
+msgstr "Máximo  Z"
 
 
 msgid "Highest Z value to allow"
@@ -6820,7 +6820,7 @@ msgstr "Mayor valor en Z permitido"
 
 
 msgid "Minimum X"
-msgstr "Mínimo X"
+msgstr "Mínimo  X"
 
 
 msgid "Lowest X value to allow"
@@ -6828,7 +6828,7 @@ msgstr "Menor valor en X permitido"
 
 
 msgid "Minimum Y"
-msgstr "Mínimo Y"
+msgstr "Mínimo  Y"
 
 
 msgid "Lowest Y value to allow"
@@ -6836,7 +6836,7 @@ msgstr "Menor valor en Y permitido"
 
 
 msgid "Minimum Z"
-msgstr "Mínimo Z"
+msgstr "Mínimo  Z"
 
 
 msgid "Lowest Z value to allow"
@@ -6880,15 +6880,15 @@ msgstr "Limita la rotación del objeto restringido"
 
 
 msgid "Limit X"
-msgstr "Limitar X"
+msgstr "Limitar  X"
 
 
 msgid "Limit Y"
-msgstr "Limitar Y"
+msgstr "Limitar  Y"
 
 
 msgid "Limit Z"
-msgstr "Limitar Z"
+msgstr "Limitar  Z"
 
 
 msgid "Limit Size Constraint"
@@ -6928,11 +6928,11 @@ msgstr "El eje de escalado libre del objeto"
 
 
 msgid "The way the constraint treats original non-free axis scaling"
-msgstr "La forma en que la restricción trata a la escala original en ejes no libres"
+msgstr "El modo en que la restricción trata a la escala original en ejes no libres"
 
 
 msgid "Strict"
-msgstr "Estricta"
+msgstr "Estricto"
 
 
 msgid "Volume is strictly preserved, overriding the scaling of non-free axes"
@@ -7664,11 +7664,11 @@ msgstr "Permite especificar cómo combinar la nueva posición con la original"
 
 
 msgid "Replace component values"
-msgstr "Reemplazar valores de componentes"
+msgstr "Reemplazar los valores de los componentes"
 
 
 msgid "Add component values together"
-msgstr "Adicionar valores de componentes entre sí"
+msgstr "Adicionar los valores a los ya existentes en los componentes"
 
 
 msgid "Rotation Mix Mode"
@@ -9147,7 +9147,7 @@ msgstr "Alfa de la pintura"
 
 
 msgid "Paint Color"
-msgstr "Color pintura"
+msgstr "Pintar  Color"
 
 
 msgid "Color of the paint"
@@ -9191,11 +9191,11 @@ msgstr "Volumen de la malla"
 
 
 msgid "Paint Wetness"
-msgstr "Humedad pintura"
+msgstr "Pintar humedad"
 
 
 msgid "Paint wetness, visible in wetmap (some effects only affect wet paint)"
-msgstr "Humedad de la pintura, visible en el mapa de humedad (algunos efectos sólo afectan a la pintura húmeda)"
+msgstr "Humedad de la pintura, visible en el mapa de humedad (algunos efectos sólo afectan a la pintura mientra se encuentra húmeda)"
 
 
 msgid "Particle Systems"
@@ -9211,11 +9211,11 @@ msgstr "Tipo de decaimiento de la proximidad"
 
 
 msgid "Ray Direction"
-msgstr "Dirección del rayo"
+msgstr "Dirección"
 
 
 msgid "Ray direction to use for projection (if brush object is located in that direction it's painted)"
-msgstr "Dirección del rayo a usar para la proyección (si el objeto-pincel se encuentra ubicado en esa dirección es pintado)"
+msgstr "Dirección de rayos a usar para proyectar (si el objeto se encontrara ubicado en esa dirección será pintado)"
 
 
 msgid "Canvas Normal"
@@ -9239,7 +9239,7 @@ msgstr "Decaimiento suave agregado luego del radio sólido"
 
 
 msgid "Smudge Strength"
-msgstr "Intensidad manchado"
+msgstr "Intensidad de manchado"
 
 
 msgid "Smudge effect strength"
@@ -9259,7 +9259,7 @@ msgstr "Alfa absoluto"
 
 
 msgid "Only increase alpha value if paint alpha is higher than existing"
-msgstr "Sólo incrementa el valor alfa si el alfa pintado es mayor que el existente"
+msgstr "Sólo incrementa el valor del canal alfa, si el alfa pintado es mayor que el existente"
 
 
 msgid "Negate Volume"
@@ -9275,7 +9275,7 @@ msgstr "Borrar pintura"
 
 
 msgid "Erase / remove paint instead of adding it"
-msgstr "Borra o remueve pintura, en vez de agregar"
+msgstr "Permite borrar la pintura, en vez de agregar"
 
 
 msgid "Use Particle Radius"
@@ -9287,7 +9287,7 @@ msgstr "Usa el radio definido en las opciones de la partícula"
 
 
 msgid "Brush is projected to canvas from defined direction within brush proximity"
-msgstr "El pincel es proyectado hacia el lienzo en la dirección indicada dentro de la proximidad del pincel"
+msgstr "El pincel será proyectado hacia el lienzo, en la dirección indicada y dentro del radio de proximidad del pincel"
 
 
 msgid "Only Use Alpha"
@@ -9303,7 +9303,7 @@ msgstr "Manchar"
 
 
 msgid "Make this brush to smudge existing paint as it moves"
-msgstr "Hace que este pincel manche la pintura existente al moverse"
+msgstr "Hace que este pincel manche, al moverse, la pintura ya existente"
 
 
 msgid "Multiply Alpha"
@@ -9415,7 +9415,7 @@ msgstr "Sólo usar como pinceles objetos pertenecientes a este grupo"
 
 
 msgid "Influence Scale"
-msgstr "Escala de influencia"
+msgstr "Escala de la influencia"
 
 
 msgid "Adjust influence brush objects have on this surface"
@@ -9423,7 +9423,7 @@ msgstr "Ajusta la influencia que los objetos pincel tienen sobre esta superficie
 
 
 msgid "Radius Scale"
-msgstr "Tamaño del radio"
+msgstr "Escala del radio"
 
 
 msgid "Adjust radius of proximity brushes or particles for this surface"
@@ -9431,7 +9431,7 @@ msgstr "Ajusta el radio de proximidad de los pinceles o partículas para esta su
 
 
 msgid "Color Dry"
-msgstr "Color seco"
+msgstr "Secado del color"
 
 
 msgid "The wetness level when colors start to shift to the background"
@@ -9467,7 +9467,7 @@ msgstr "Desplazamiento"
 
 
 msgid "Dissolve Time"
-msgstr "Tiempo disolución"
+msgstr "Tiempo de disolución"
 
 
 msgid "Approximately in how many frames should dissolve happen"
@@ -9479,7 +9479,7 @@ msgstr "Aceleración"
 
 
 msgid "How much surface acceleration affects dripping"
-msgstr "Qué tanto afecta al goteo la aceleración de la superficie"
+msgstr "Qué tanto afecta al derrame la aceleración de la superficie"
 
 
 msgid "Velocity"
@@ -9487,11 +9487,11 @@ msgstr "Velocidad"
 
 
 msgid "How much surface velocity affects dripping"
-msgstr "Qué tanto afecta al goteo la velocidad de la superficie"
+msgstr "Qué tanto afecta al derrame la velocidad de la superficie"
 
 
 msgid "Dry Time"
-msgstr "Tiempo secado"
+msgstr "Tiempo de secado"
 
 
 msgid "Approximately in how many frames should drying happen"
@@ -9507,7 +9507,7 @@ msgstr "Dispersión"
 
 
 msgid "Drip"
-msgstr "Goteo"
+msgstr "Derrame"
 
 
 msgid "Shrink"
@@ -9527,7 +9527,7 @@ msgstr "Sub intervalos"
 
 
 msgid "Do extra frames between scene frames to ensure smooth motion"
-msgstr "Hace fotogramas extra entre los fotogramas de la escena para asgurar un movimiento suave"
+msgstr "Realiza fotogramas extra, entre los fotogramas de la escena, para asegurar un movimiento suave"
 
 
 msgid "File Format"
@@ -9571,11 +9571,11 @@ msgstr "Textura"
 
 
 msgid "Is Active"
-msgstr "Es activo"
+msgstr "Activa"
 
 
 msgid "Toggle whether surface is processed or ignored"
-msgstr "Alterna entre si la superficie es procesada o ignorada"
+msgstr "Define si la superficie es procesada o ignorada"
 
 
 msgid "Use Cache"
@@ -9651,19 +9651,19 @@ msgstr "Habilitar para hacer que los cambios en la superficie desaparezcan con e
 
 
 msgid "Slow"
-msgstr "Lento"
+msgstr "Enlentecer"
 
 
 msgid "Use logarithmic dissolve (makes high values to fade faster than low values)"
-msgstr "Usar desvanecimiento logarítmico (hace que los valores altos se desvanezcan más rápido que los bajos)"
+msgstr "Usar un desvanecimiento logarítmico (haciendo que los valores altos se desvanezcan más rápido que los bajos)"
 
 
 msgid "Use Drip"
-msgstr "Usar goteo"
+msgstr "Usar derrame"
 
 
 msgid "Process drip effect (drip wet paint to gravity direction)"
-msgstr "Procesa el efecto de goteo (la pintura húmeda gotea en la dirección de la gravedad)"
+msgstr "Procesa el efecto de derrame (la pintura húmeda se derramará en la dirección de la gravedad)"
 
 
 msgid "Use logarithmic drying (makes high values to dry faster than low values)"
@@ -9875,7 +9875,7 @@ msgstr "Influencia de efectores de Carga"
 
 
 msgid "Effector Collection"
-msgstr "Efectores en colección"
+msgstr "Colección de efectores"
 
 
 msgid "Limit effectors to this collection"
@@ -9931,7 +9931,7 @@ msgstr "Influencia de efectores de Magneto"
 
 
 msgid "Fluid Flow"
-msgstr "Flujo del fluido"
+msgstr "Flujo de fluido"
 
 
 msgid "Fluid Flow effector weight"
@@ -11161,7 +11161,7 @@ msgstr "Forma"
 
 
 msgid "Shape of clumping"
-msgstr "Forma de mechones"
+msgstr "Forma de los mechones"
 
 
 msgid "Guide-free time from particle life's end"
@@ -11189,7 +11189,7 @@ msgstr "La frecuencia del desplazamiento (1/longitud total)"
 
 
 msgid "Adjust the offset to the beginning/end"
-msgstr "Ajusta el desplazamiento al inicio o final"
+msgstr "Permite introducir un desplazamiento del efecto hacia el inicio o final del pelo"
 
 
 msgid "Kink"
@@ -11321,7 +11321,7 @@ msgstr "El campo se origina en la superficie del objeto"
 
 
 msgid "Every Point"
-msgstr "Cada punto"
+msgstr "En cada punto"
 
 
 msgid "Field originates from all of the vertices of the object"
@@ -11473,7 +11473,7 @@ msgstr "Usar máx"
 
 
 msgid "Use a maximum distance for the field to work"
-msgstr "Usa una distancia máxima de funcionamiento para que el campo"
+msgstr "Usa una distancia máxima de funcionamiento para el campo"
 
 
 msgid "Use Min"
@@ -12173,7 +12173,7 @@ msgstr "Cantidad máxima de celdas adicionales"
 
 
 msgid "Buoyancy Density"
-msgstr "Flotabilidad - Densidad"
+msgstr "Flotabilidad   Densidad"
 
 
 msgid "Buoyant force based on smoke density (higher value results in faster rising smoke)"
@@ -12181,7 +12181,7 @@ msgstr "Fuerza de flotación basada en la densidad del humo (valores mayores pro
 
 
 msgid "Buoyancy Heat"
-msgstr "Flotabilidad - Temperatura"
+msgstr "Temperatura de flotabilidad"
 
 
 msgid "Buoyant force based on smoke heat (higher value results in faster rising smoke)"
@@ -12337,7 +12337,7 @@ msgstr "Cúbica"
 
 
 msgid "Smoothed high quality interpolation, but slower"
-msgstr "Interpolación suave de alta calidad, pero más lento"
+msgstr "Interpolación suave de alta calidad, pero más lenta"
 
 
 msgid "Closest"
@@ -12441,11 +12441,11 @@ msgstr "Vorticidad adicional de las llamas"
 
 
 msgid "FLIP Ratio"
-msgstr "Tasa de FLIP"
+msgstr "Tasa FLIP"
 
 
 msgid "PIC/FLIP Ratio. A value of 1.0 will result in a completely FLIP based simulation. Use a lower value for simulations which should produce smaller splashes"
-msgstr "Tasa de PIC/FLIP. Un valor de 1.0 producirá una simulación completamente basada en FLIP. Usar un valor menor para obtener simulaciones que deberían producir menos salpicaduras"
+msgstr "Tasa PIC/FLIP. Un valor de 1.0 producirá una simulación completamente basada en FLIP. Usar un valor menor para obtener simulaciones que deberían producir menos salpicaduras"
 
 
 msgid "Fluid Collection"
@@ -12577,7 +12577,7 @@ msgstr "Tamaño de guía (valores más altos producirán más vórtices)"
 
 
 msgid "Use velocities from this object for the guiding effect (object needs to have fluid modifier and be of type domain))"
-msgstr "Permite usar las velocidades de este objeto para el efecto de guía (el objeto deberá contener un modificador Fluido de tipo Dominio)"
+msgstr "Permite usar las velocidades del dominio de este objeto como guía (el objeto deberá contener un modificador Fluido de tipo Dominio)"
 
 
 msgid "Guiding source"
@@ -12597,7 +12597,7 @@ msgstr "Efector"
 
 
 msgid "Use guiding (effector) objects to create fluid guiding (guiding objects should be animated and baked once set up completely)"
-msgstr "Permite usar objetos (efectores) para crear guías de fluido (los objetos-guía deberían estar animados y capturados una vez completamente definidos)"
+msgstr "Permite usar el efecto de todos los objetos que contengan campos de fuerza, para crear guías en el fluido (los objetos-guía deberían estar animados y capturados, una vez que hayan sido completamente definidos)"
 
 
 msgid "Velocity Factor"
@@ -12633,7 +12633,7 @@ msgstr "Más cercano"
 
 
 msgid "Lower Concavity"
-msgstr "Concavidad baja"
+msgstr "Concavidad inferior"
 
 
 msgid "Lower mesh concavity bound (high values tend to smoothen and fill out concave regions)"
@@ -12641,7 +12641,7 @@ msgstr "Límite inferior de concavidad de la malla (valores más altos tenderán
 
 
 msgid "Upper Concavity"
-msgstr "Concavidad alta"
+msgstr "Concavidad superior"
 
 
 msgid "Upper mesh concavity bound (high values tend to smoothen and fill out concave regions)"
@@ -12669,7 +12669,7 @@ msgstr "Previsualización"
 
 
 msgid "Use union particle level set (faster but lower quality)"
-msgstr "Usa un nivel de partículas de unión (más rápido pero de menor calidad)"
+msgstr "Usa un nivel de partículas básico (más rápido pero de menor calidad)"
 
 
 msgid "Radius"
@@ -12685,7 +12685,7 @@ msgstr "Escala de la malla"
 
 
 msgid "The mesh simulation is scaled up by this factor (compared to the base resolution of the domain). For best meshing, it is recommended to adjust the mesh particle radius alongside this value"
-msgstr "La simulación de la malla será escalada según este factor (comparado con la resolución de base del dominio). Para obtener una malla de mejor calidad, se recomienda ajustar el radio de las partículas de mallado, conjuntamente con este valor"
+msgstr "La resolución de la simulación de malla será aumentada según este factor (tomando como base la resolución del dominio). Para obtener una malla de mejor calidad, se recomienda ajustar la opción Radio de partículas, conjuntamente con este valor"
 
 
 msgid "Smoothen Neg"
@@ -12721,7 +12721,7 @@ msgstr "Escala del ruido"
 
 
 msgid "The noise simulation is scaled up by this factor (compared to the base resolution of the domain)"
-msgstr "La simulación del ruido será escalada según este factor (comparado con la resolución de base del dominio)"
+msgstr "La resolución de la simulación de ruido será aumentada según este factor (tomando como base la resolución del dominio)"
 
 
 msgid "Strength of noise"
@@ -12785,7 +12785,7 @@ msgstr "Resolución en bits para las partículas de fluido y las cuadrículas (v
 
 
 msgid "Particle (narrow) band width (higher value results in thicker band and more particles)"
-msgstr "Ancho de banda de partículas (un valor más alto producirá en un mayor ancho de banda y más partículas)"
+msgstr "Ancho de banda de partículas (un valor más alto producirá un mayor ancho de banda y mayor cantidad de partículas)"
 
 
 msgid "Maximum number of particles per cell (ensures that each cell has at most this amount of particles)"
@@ -12817,11 +12817,11 @@ msgstr "Factor de aleatoriedad del muestreo de las partículas"
 
 
 msgid "Particle scale"
-msgstr "Escala de partículas"
+msgstr "Aumento de partículas"
 
 
 msgid "The particle simulation is scaled up by this factor (compared to the base resolution of the domain)"
-msgstr "La simulación de partículas será escalada usando este factor (comparada con la resolución de base del dominio)"
+msgstr "La cantidad de partículas en la simulación será aumentada usando este factor (tomando como base la resolución del dominio)"
 
 
 msgid "Maximum Resolution"
@@ -12861,11 +12861,11 @@ msgstr "Usar FLIP como método de simulación (produce un comportamiento con má
 
 
 msgid "Use APIC as the simulation method (more energetic and stable behavior)"
-msgstr "Usar APIC como método de simulación (produce un comportamiento con más energético y estable)"
+msgstr "Usar APIC como método de simulación (produce un comportamiento más energético y estable)"
 
 
 msgid "Adjust slice direction according to the view direction"
-msgstr "Permite ajustar la dirección del rebanado a la dirección de visualización"
+msgstr "Ajusta la dirección del rebanado a la dirección de visualización"
 
 
 msgid "Slice along the X axis"
@@ -12993,7 +12993,7 @@ msgstr "Menor vida posible de las partículas"
 
 
 msgid "Maximum Kinetic Energy Potential"
-msgstr "Máximo de energía cinética potencial"
+msgstr "Potencial máximo de energía cinética"
 
 
 msgid "Upper clamping threshold that indicates the fluid speed where cells no longer emit more particles (higher value results in generally less particles)"
@@ -13001,7 +13001,7 @@ msgstr "Umbral máximo de limitación que indica la velocidad del fluido a la qu
 
 
 msgid "Maximum Trapped Air Potential"
-msgstr "Máximo de aire encapsulado potencial"
+msgstr "Potencial máximo de aire encapsulado"
 
 
 msgid "Upper clamping threshold for marking fluid cells where air is trapped (higher value results in less marked cells)"
@@ -13009,7 +13009,7 @@ msgstr "Umbral máximo de limitación para marcar una celda del fluido como capa
 
 
 msgid "Maximum Wave Crest Potential"
-msgstr "Máximo de cresta de ola potencial"
+msgstr "Potencial máximo de cresta de ola"
 
 
 msgid "Upper clamping threshold for marking fluid cells as wave crests (higher value results in less marked cells)"
@@ -13017,7 +13017,7 @@ msgstr "Umbral máximo de limitación para marcar celdas del fluido como crestas
 
 
 msgid "Minimum Kinetic Energy Potential"
-msgstr "Mínimo de energía cinética potencial"
+msgstr "Potencial mínimo de energía cinética"
 
 
 msgid "Lower clamping threshold that indicates the fluid speed where cells start to emit particles (lower values result in generally more particles)"
@@ -13025,7 +13025,7 @@ msgstr "Umbral mínimo de limitación que indica la velocidad del fluido a la qu
 
 
 msgid "Minimum Trapped Air Potential"
-msgstr "Mínimo de aire encapsulado potencial"
+msgstr "Potencial mínimo de aire encapsulado"
 
 
 msgid "Lower clamping threshold for marking fluid cells where air is trapped (lower value results in more marked cells)"
@@ -13033,7 +13033,7 @@ msgstr "Umbral mínimo de limitación para marcar una celda del fluido como capa
 
 
 msgid "Minimum Wave Crest Potential"
-msgstr "Mínimo de cresta de ola potencial"
+msgstr "Potencial mínimo de cresta de ola"
 
 
 msgid "Lower clamping threshold for marking fluid cells as wave crests (lower value results in more marked cells)"
@@ -13041,7 +13041,7 @@ msgstr "Umbral mínimo de limitación para marcar celdas del fluido como crestas
 
 
 msgid "Potential Radius"
-msgstr "Radio potencial"
+msgstr "Radio de potencial"
 
 
 msgid "Radius to compute potential for each cell (higher values are slower but create smoother potential grids)"
@@ -13049,7 +13049,7 @@ msgstr "Radio para calcular el potencial de cada celda (valores más altos será
 
 
 msgid "Trapped Air Sampling"
-msgstr "Muestreo de aire encapsulado"
+msgstr "Partículas de aire encapsulado"
 
 
 msgid "Maximum number of particles generated per trapped air cell per frame"
@@ -13057,7 +13057,7 @@ msgstr "Cantidad máxima de partículas generadas por celda de aire encapsulado 
 
 
 msgid "Wave Crest Sampling"
-msgstr "Muestreo de cresta de olas"
+msgstr "Partículas de crestas de ola"
 
 
 msgid "Maximum number of particles generated per wave crest cell per frame"
@@ -13069,7 +13069,7 @@ msgstr "Radio de actualización"
 
 
 msgid "Radius to compute position update for each particle (higher values are slower but particles move less chaotic)"
-msgstr "Radio para calcular la actualización de la posición de cada partícula (valores más altos serán más lentos pero producirán menos caos en el movimiento de las partículas)"
+msgstr "Radio para calcular la actualización de la posición de cada partícula (valores más altos serán más lentos, pero producirán menos caos en el movimiento de las partículas)"
 
 
 msgid "p0"
@@ -13177,7 +13177,7 @@ msgstr "Visualización de cuadrícula"
 
 
 msgid "Render a simulation field while mapping its voxels values to the colors of a ramp or using a predefined color code"
-msgstr "Procesa un campo de la simulación mapeando los valores de sus vóxeles a colores de una rampa o usando un código de color predefinido"
+msgstr "Procesa un campo de la simulación, mapeando los valores de sus vóxeles a colores de una rampa o usando un código de color predefinido"
 
 
 msgid "Use Diffusion"
@@ -13241,7 +13241,7 @@ msgstr "Usar malla"
 
 
 msgid "Enable fluid mesh (using amplification)"
-msgstr "Habilita el uso de mallas en el fluido (usando amplificación)"
+msgstr "Habilita el uso de mallas en el fluido (usando aumento de resolución)"
 
 
 msgid "Use Noise"
@@ -13249,7 +13249,7 @@ msgstr "Usar ruido"
 
 
 msgid "Enable fluid noise (using amplification)"
-msgstr "Habilita el uso de ruido en el fluido (usando amplificación)"
+msgstr "Habilita el uso de ruido en el fluido (usando aumento de resolución)"
 
 
 msgid "Slice"
@@ -13257,7 +13257,7 @@ msgstr "Rebanar"
 
 
 msgid "Perform a single slice of the domain object"
-msgstr "Realiza una única rebanada del objeto de dominio"
+msgstr "Produce una única rebanada del objeto de dominio"
 
 
 msgid "Speed Vectors"
@@ -13337,7 +13337,7 @@ msgstr "Velocidad de guía"
 
 
 msgid "Guide velocity field of the fluid domain"
-msgstr "Campo de velocidad de guía del dominio del fluido"
+msgstr "Campo de velocidad de guía del fluido"
 
 
 msgid "Force field of the fluid domain"
@@ -13353,7 +13353,7 @@ msgstr "Magnitud"
 
 
 msgid "Scale vectors with their magnitudes"
-msgstr "Escala los vectores usando sus magnitudes"
+msgstr "Escalar los vectores según su magnitud"
 
 
 msgid "Show X-component of MAC Grid"
@@ -13381,7 +13381,7 @@ msgstr "Viscosidad base"
 
 
 msgid "Viscosity setting: value that is multiplied by 10 to the power of (exponent*-1)"
-msgstr "Propiedad viscosidad: valor que es multiplicado por 10 elevado a la potencia de (exponente*-1)"
+msgstr "Viscosidad del líquido, este valor será multiplicado por 10 elevado a la potencia de (Exponente*-1)"
 
 
 msgid "Viscosity Exponent"
@@ -23504,19 +23504,19 @@ msgstr "Hace que el objeto sea dibujado delante de los otros"
 
 
 msgid "Render Instancer"
-msgstr "Procesar instancias"
+msgstr "Procesar objeto base"
 
 
 msgid "Make instancer visible when rendering"
-msgstr "Hace que las instancias sean visibles durante el procesamiento"
+msgstr "Hace que el objeto emisor sea visible durante el procesamiento"
 
 
 msgid "Display Instancer"
-msgstr "Mostrar instancias"
+msgstr "Mostrar objeto base"
 
 
 msgid "Make instancer visible in the viewport"
-msgstr "Hace que las instancias sean visibles en la vista"
+msgstr "Hace que el objeto emisor sea visible en las vistas 3D"
 
 
 msgid "Display Name"
@@ -23715,7 +23715,7 @@ msgstr "Aplica efectores a las secundarias"
 
 
 msgid "Random Bending Stiffness"
-msgstr "Resistencia aleatoria a flexión"
+msgstr "Resistencia aleatoria a la flexión"
 
 
 msgid "Random stiffness of hairs"
@@ -23727,11 +23727,11 @@ msgstr "Umbral de ramificación"
 
 
 msgid "Brownian"
-msgstr "Mov. browniano"
+msgstr "Mov. Browniano"
 
 
 msgid "Amount of random, erratic particle movement"
-msgstr "Cantidad de movimiento aleatorio o errático de las partículas"
+msgstr "Cantidad de movimiento errático aleatorio de las partículas"
 
 
 msgid "Length of child paths"
@@ -23799,7 +23799,7 @@ msgstr "Un multiplicador para el tamaño de las partículas secundarias"
 
 
 msgid "Random Child Size"
-msgstr "Tamaño de secundarias aleatorio"
+msgstr "Aleatoriedad de tamaño de secundarias"
 
 
 msgid "Random variation to the size of the child particles"
@@ -23959,7 +23959,7 @@ msgstr "Emitir desde"
 
 
 msgid "Where to emit particles from"
-msgstr "De dónde emitir las partículas"
+msgstr "Desde dónde emitir las partículas"
 
 
 msgid "Give the starting velocity a random variation"
@@ -24019,7 +24019,7 @@ msgstr "Crear la cuadrícula en un patrón hexagonal"
 
 
 msgid "Dupli Collection"
-msgstr "Colección a duplicar"
+msgstr "Colección a instanciar"
 
 
 msgid "Show Objects in this collection in place of particles"
@@ -24031,11 +24031,11 @@ msgstr "Mostrar este objeto en la posición de las partículas"
 
 
 msgid "Dupli Collection Weights"
-msgstr "Influencias colección a duplicar"
+msgstr "Influencias colección a instanciar"
 
 
 msgid "Weights for all of the objects in the dupli collection"
-msgstr "Influencias de todos los objetos en la colección duplicada"
+msgstr "Influencias de todos los objetos en la colección instanciada"
 
 
 msgid "Integration"
@@ -24099,7 +24099,7 @@ msgstr "Amplitud mechones"
 
 
 msgid "How much clump affects kink amplitude"
-msgstr "Qué tanto afectan los mechones la amplitud del rizado"
+msgstr "Qué tanto afectan los mechones a la amplitud del rizado"
 
 
 msgid "Amplitude Random"
@@ -24111,7 +24111,7 @@ msgstr "Variación aleatoria de la amplitud"
 
 
 msgid "Axis Random"
-msgstr "Eje aleatorio"
+msgstr "Aleatorizar eje"
 
 
 msgid "Random variation of the orientation"
@@ -24187,7 +24187,7 @@ msgstr "Contenedor de material"
 
 
 msgid "Material slot used for rendering particles"
-msgstr "Contenedor de material usado al procesar las partículas"
+msgstr "Material usado para procesar las partículas"
 
 
 msgid "Dummy"
@@ -24231,7 +24231,7 @@ msgstr "Fin de trayectoria"
 
 
 msgid "End time of drawn path"
-msgstr "Tiempo final de la trayectoria mostrado"
+msgstr "Tiempo final de la trayectoria visible"
 
 
 msgid "Path Start"
@@ -24239,7 +24239,7 @@ msgstr "Inicio de trayectoria"
 
 
 msgid "Starting time of drawn path"
-msgstr "Tiempo inicial de la trayectoria mostrado"
+msgstr "Tiempo inicial de la trayectoria visible"
 
 
 msgid "Rotation around the chosen orientation axis"
@@ -24271,7 +24271,7 @@ msgstr "Animadas"
 
 
 msgid "Diameter Scale"
-msgstr "Escalar diámetro"
+msgstr "Escala del diámetro"
 
 
 msgid "Multiplier of diameter properties"
@@ -24319,7 +24319,7 @@ msgstr "Secundarias procesadas"
 
 
 msgid "Number of children/parent for rendering"
-msgstr "Cantidad de secundarias por cada principal a ser procesadas"
+msgstr "Cantidad de partículas secundarias a ser procesadas por cada partícula principal"
 
 
 msgid "Root Diameter"
@@ -24467,11 +24467,11 @@ msgstr "Tamaño aleatorio"
 
 
 msgid "Give the particle size a random variation"
-msgstr "Dar al tamaño de las partículas una variación aleatoria"
+msgstr "Permite dar al tamaño de las partículas una variación aleatoria"
 
 
 msgid "Subframes to simulate for improved stability and finer granularity simulations (dt = timestep / (subframes + 1))"
-msgstr "Subfotogramas para simulaciones con estabilidad mejorada y granularidad más fina (dt = intervalotiempo / (subfotogramas + 1))"
+msgstr "Subfotogramas para simulaciones con estabilidad mejorada y granularidad más fina (Δt = intervalotiempo / (subfotogramas + 1))"
 
 
 msgid "Let the surface tangent give the particle a starting velocity"
@@ -24559,7 +24559,7 @@ msgstr "Cerrar punta"
 
 
 msgid "Set tip radius to zero"
-msgstr "Define el radio de la punta a cero"
+msgstr "Establece el radio de la punta a cero"
 
 
 msgid "Use Clump Curve"
@@ -24579,11 +24579,11 @@ msgstr "Crea mechones aleatorios alrededor del principal"
 
 
 msgid "Use Count"
-msgstr "Número de usos"
+msgstr "Cantidad de usos"
 
 
 msgid "Use object multiple times in the same collection"
-msgstr "Usar el objeto múltiples veces en la misma colección"
+msgstr "Permite usar un objeto múltiples veces en la misma colección"
 
 
 msgid "Pick Random"
@@ -24627,7 +24627,7 @@ msgstr "Usa una distribución uniforme de las caras basada en el área de las mi
 
 
 msgid "Use object's global coordinates for duplication"
-msgstr "Usar las coordenadas globales del objeto para la duplicación"
+msgstr "Usar las coordenadas globales de los objetos al instanciarlos"
 
 
 msgid "Interpolate hair using B-Splines"
@@ -24691,7 +24691,7 @@ msgstr "Intervalos de dibujo de la trayectoria de la partícula"
 
 
 msgid "Use object's rotation for duplication (global x-axis is aligned particle rotation axis)"
-msgstr "Usar la rotación del objeto para la duplicación (el eje global X es alineado al eje de rotación de las partículas)"
+msgstr "Usar la rotación de los objetos al instanciarlos (su eje global X será alineado al eje de rotación de las partículas)"
 
 
 msgid "Rotations"
@@ -24711,7 +24711,7 @@ msgstr "Permite usar una curva para definir el desorden"
 
 
 msgid "Use object's scale for duplication"
-msgstr "Usa la escala del objeto para la duplicación"
+msgstr "Usar la escala de los objetos al instanciarlos"
 
 
 msgid "Self Effect"
@@ -24723,11 +24723,11 @@ msgstr "Las partículas que funcionen como efectores se afectarán a sí mismas"
 
 
 msgid "Size Deflect"
-msgstr "Tamaño para colisiones"
+msgstr "Usar tamaño"
 
 
 msgid "Use particle's size in deflection"
-msgstr "Usar el tamaño de las partículas para las colisiones"
+msgstr "Usar el tamaño de las partículas al calcular colisiones"
 
 
 msgid "Strand Render"
@@ -24755,7 +24755,7 @@ msgstr "Toda la colección"
 
 
 msgid "Use whole collection at once"
-msgstr "Usar toda la colección de una vez"
+msgstr "Usar toda la colección en conjunto"
 
 
 msgid "Particles/Face"
@@ -26969,7 +26969,7 @@ msgstr "Divide el intervalo entre dos fotogramas en esta cantidad de sub-interva
 
 
 msgid "Max Step"
-msgstr "Intervalo máx"
+msgstr "Intervalo máximo"
 
 
 msgid "Higher bound for timestep in second in case of automatic substeps"
@@ -26977,7 +26977,7 @@ msgstr "Límite superior del intervalo de tiempo en segundos, al usar intervalos
 
 
 msgid "Min Step"
-msgstr "Intervalo mín"
+msgstr "Intervalo mínimo"
 
 
 msgid "Lower bound for timestep in second in case of automatic substeps"
@@ -37349,7 +37349,7 @@ msgstr "Influencia del algoritmo de estabilización sobre la rotación de la pel
 
 
 msgid "Scale Influence"
-msgstr "Influencia escala"
+msgstr "Escalar  Influencia"
 
 
 msgid "Influence of stabilization algorithm on footage scale"
@@ -42075,7 +42075,7 @@ msgstr "Invocar"
 
 
 msgid "True when invoked (even if only the execute callbacks available)"
-msgstr "Verdadero al ser invocado (aún si sólo se encuentran disponibles las llamadas de ejecución)"
+msgstr "Verdadero al ser invocado (aún si sólo se encuentran disponibles las funciones de rellamada de ejecución)"
 
 
 msgid "True when run from the 'Adjust Last Operation' panel"
@@ -42579,19 +42579,19 @@ msgstr "Esperar entrada"
 
 
 msgid "X Max"
-msgstr "X Máx"
+msgstr "X  Máx"
 
 
 msgid "X Min"
-msgstr "X Mín"
+msgstr "X  Mín"
 
 
 msgid "Y Max"
-msgstr "Y Máx"
+msgstr "Y  Máx"
 
 
 msgid "Y Min"
-msgstr "Y Mín"
+msgstr "Y  Mín"
 
 
 msgctxt "Operator"
@@ -44470,11 +44470,11 @@ msgstr "Eliminar sólo el rastreo activo en vez de todos los seleccionados"
 
 msgctxt "Operator"
 msgid "Constraint to F-Curve"
-msgstr "Restricción a curva-f"
+msgstr "Restricción a curvas-f"
 
 
 msgid "Create F-Curves for object which will copy object's movement caused by this constraint"
-msgstr "Crea curvas-f en el objeto que copiarán el movimiento del objeto causado por esta restricción"
+msgstr "Crea curvas-f en el objeto que copiarán el movimiento causado por esta restricción"
 
 
 msgctxt "Operator"
@@ -45802,11 +45802,11 @@ msgstr "Crear una notificación luego de la operación"
 
 msgctxt "Operator"
 msgid "Disable and Keep Transform"
-msgstr "Deshabilitar y mantener transformaciones"
+msgstr "Deshabilitar, manteniendo las transformaciones"
 
 
 msgid "Set the influence of this constraint to zero while trying to maintain the object's transformation. Other active constraints can still influence the final transformation"
-msgstr "Define la influencia de esta restricción a cero, intentando mantener las transformaciones del objeto. Otras restricciones activas aún podrán influenciar las transformaciones finales del objeto"
+msgstr "Lleva la influencia de esta restricción a cero, intentando mantener las transformaciones del objeto. Otras restricciones que se encuentren activas aún podrán influenciar las transformaciones finales del objeto"
 
 
 msgctxt "Operator"
@@ -46612,7 +46612,7 @@ msgstr "Alternar tipo activo"
 
 
 msgid "Toggle whether given type is active or not"
-msgstr "Alternar si el tipo indicado es activo o no"
+msgstr "Permite alternar si el Tipo indicado arriba se encuentra activo o no en el objeto"
 
 
 msgctxt "Operator"
@@ -61432,47 +61432,47 @@ msgstr "Permite duplicar también las opciones, para que el nuevo sistema de par
 
 msgctxt "Operator"
 msgid "Copy Particle Dupliob"
-msgstr "Copiar duplicado partícula"
+msgstr "Copiar instancia partícula"
 
 
 msgid "Duplicate the current dupliobject"
-msgstr "Duplica el objeto duplicado actual"
+msgstr "Duplica el objeto instanciado actual"
 
 
 msgctxt "Operator"
 msgid "Move Down Dupli Object"
-msgstr "Mover abajo objeto duplicado"
+msgstr "Mover instancia abajo"
 
 
 msgid "Move dupli object down in the list"
-msgstr "Mueve el objeto duplicado hacia abajo en la lista"
+msgstr "Mueve el objeto instanciado hacia abajo en la lista"
 
 
 msgctxt "Operator"
 msgid "Move Up Dupli Object"
-msgstr "Mover arriba objeto duplicado"
+msgstr "Mover instancia arriba"
 
 
 msgid "Move dupli object up in the list"
-msgstr "Mueve el objeto duplicado hacia arriba en la lista"
+msgstr "Mueve el objeto instanciado hacia arriba en la lista"
 
 
 msgctxt "Operator"
 msgid "Refresh Dupli Objects"
-msgstr "Refrescar objetos duplicados"
+msgstr "Refrescar instancias"
 
 
 msgid "Refresh list of dupli objects and their weights"
-msgstr "Refresca la lista de objetos duplicados y sus influencias"
+msgstr "Refresca la lista de objetos instanciados y sus influencias"
 
 
 msgctxt "Operator"
 msgid "Remove Particle Dupliobject"
-msgstr "Eliminar objeto duplicado partícula"
+msgstr "Eliminar instancia partícula"
 
 
 msgid "Remove the selected dupliobject"
-msgstr "Remueve el objeto duplicado seleccionado"
+msgstr "Remueve el objeto instanciado seleccionado"
 
 
 msgctxt "Operator"
@@ -61508,11 +61508,11 @@ msgstr "Duplica y simetriza las partículas seleccionadas a lo largo del eje X"
 
 msgctxt "Operator"
 msgid "New Particle Settings"
-msgstr "Opciones de nuevas partículas"
+msgstr "Nuevas opciones de partículas"
 
 
 msgid "Add new particle settings"
-msgstr "Agrega nuevas opciones a la partícula"
+msgstr "Crea un conjunto nuevo de opciones para el sistema de partículas"
 
 
 msgctxt "Operator"
@@ -62720,7 +62720,7 @@ msgstr "Capturar desde caché"
 
 
 msgid "Bake from cache"
-msgstr "Captura desde un caché"
+msgstr "Capturar desde el caché"
 
 
 msgctxt "Operator"
@@ -62914,7 +62914,7 @@ msgstr "Adhiere cuerpos rígidos entre sí"
 
 
 msgid "Constrain rigid bodies to move around common pivot point"
-msgstr "Restringe a los cuerpos rígidos para que se muevan en torno a un punto de pivote en común"
+msgstr "Restringe cuerpos rígidos para que se muevan en torno a un punto de pivote en común"
 
 
 msgid "Hinge"
@@ -62922,7 +62922,7 @@ msgstr "Bisagra"
 
 
 msgid "Restrict rigid body rotation to one axis"
-msgstr "Restringe la rotación del cuerpo rígido a un eje"
+msgstr "Restringe la rotación del cuerpo rígido a un único eje"
 
 
 msgid "Slider"
@@ -62938,7 +62938,7 @@ msgstr "Pistón"
 
 
 msgid "Restrict rigid body translation and rotation to one axis"
-msgstr "Restringe la traslación y rotación del cuerpo rígido a un eje"
+msgstr "Restringe la traslación y rotación del cuerpo rígido a un único eje"
 
 
 msgid "Generic"
@@ -62954,7 +62954,7 @@ msgstr "Genérica con tensores"
 
 
 msgid "Restrict translation and rotation to specified axes with springs"
-msgstr "Restringe la traslación y rotación a los ejes especificados usando tensores"
+msgstr "Restringe la traslación y rotación a los ejes especificados, usando tensores"
 
 
 msgid "Motor"
@@ -63058,7 +63058,7 @@ msgstr "Tipo de cuerpo rígido"
 
 
 msgid "Object is directly controlled by simulation results"
-msgstr "El objeto será controlado directamente por la simulación"
+msgstr "El objeto será controlado por la simulación dinámica"
 
 
 msgid "Passive"
@@ -63066,7 +63066,7 @@ msgstr "Pasivo"
 
 
 msgid "Object is directly controlled by animation system"
-msgstr "El objeto será controlado por el sistema de animación"
+msgstr "El objeto será controlado mediante animación manual"
 
 
 msgctxt "Operator"
@@ -63135,11 +63135,11 @@ msgstr "Malla compuesta sólo de triángulos, que permite interacciones más det
 
 
 msgid "Compound Parent"
-msgstr "Componer subordinados"
+msgstr "Combinar jerarquía"
 
 
 msgid "Combines all of its direct rigid body children into one rigid object"
-msgstr "Combina todos los cuerpos rígidos directamente subordinados a él en un único cuerpo rígido"
+msgstr "Combina todos los cuerpos rígidos directamente subordinados a este objeto, como si fueran un único cuerpo rígido"
 
 
 msgctxt "Operator"
@@ -68651,6 +68651,14 @@ msgid "The axis used for placing the base region"
 msgstr "El eje usado para posicionar la base de la región"
 
 
+msgid "Auto Axis"
+msgstr "Eje automático"
+
+
+msgid "Select the closest axis when placing objects (surface overrides)"
+msgstr "Selecciona el eje más cercano al ubicar objetos (redefiniciones de superficie)"
+
+
 msgid "The initial depth used when placing the cursor"
 msgstr "La profundidad inicial usada al posicionar el cursor"
 
@@ -72823,7 +72831,7 @@ msgstr "Temporización"
 
 
 msgid "Border Collisions"
-msgstr "Colisión con bordes"
+msgstr "Colisión con límites"
 
 
 msgid "Internal Springs"
@@ -72831,7 +72839,7 @@ msgstr "Tensores internos"
 
 
 msgid "Object Collisions"
-msgstr "Colisiones del objeto"
+msgstr "Colisiones con objetos"
 
 
 msgid "Physical Properties"
@@ -72839,7 +72847,7 @@ msgstr "Propiedades dinámicas"
 
 
 msgid "Property Weights"
-msgstr "Influencias de propiedades"
+msgstr "Propiedades - Influencias"
 
 
 msgid "Self Collisions"
@@ -72891,7 +72899,7 @@ msgstr "Sensibilidad"
 
 
 msgid "Surface Response"
-msgstr "Respuesta de superficie"
+msgstr "Respuesta de la superficie"
 
 
 msgid "Override Iterations"
@@ -72919,11 +72927,11 @@ msgstr "Intensidades"
 
 
 msgid "Diagnostics"
-msgstr "Diagnósticos"
+msgstr "Diagnóstico"
 
 
 msgid "Helpers"
-msgstr "Ayudantes"
+msgstr "Utilitarios"
 
 
 msgid "Viscosity"
@@ -74257,7 +74265,7 @@ msgstr "Partículas secundarias generadas por el sistema de partículas"
 
 
 msgid "Child Seed"
-msgstr "Semilla secundarias"
+msgstr "Semilla de secundarias"
 
 
 msgid "Offset in the random number table for child particles, to get a different randomized result"
@@ -74409,7 +74417,7 @@ msgstr "Nombre del sistema de partículas"
 
 
 msgid "Use this object's coordinate system instead of global coordinate system"
-msgstr "Usa las coordenadas de este objeto en vez del sistema de coordenadas globales"
+msgstr "Permite usar las coordenadas de este objeto en vez del sistema global de coordenadas"
 
 
 msgid "Particles generated by the particle system"
@@ -74457,7 +74465,7 @@ msgstr "Usar el tiempo de los claves"
 
 
 msgid "Vertex Group Clump"
-msgstr "Grupo de vértices mechones"
+msgstr "Grupo de vértices de mechones"
 
 
 msgid "Vertex group to control clump"
@@ -74465,7 +74473,7 @@ msgstr "Grupo de vértices para controlar el agrupamiento en mechones"
 
 
 msgid "Vertex Group Density"
-msgstr "Grupo de vértices densidad"
+msgstr "Grupo de vértices de densidad"
 
 
 msgid "Vertex group to control density"
@@ -74473,7 +74481,7 @@ msgstr "Grupo de vértices para controlar la densidad"
 
 
 msgid "Vertex Group Field"
-msgstr "Grupo vértices campo"
+msgstr "Grupo de vértices de campos"
 
 
 msgid "Vertex group to control field"
@@ -74481,7 +74489,7 @@ msgstr "Grupo de vértices para controlar la campos"
 
 
 msgid "Vertex Group Kink"
-msgstr "Grupo vértices rizado"
+msgstr "Grupo vértices de rizado"
 
 
 msgid "Vertex group to control kink"
@@ -74489,7 +74497,7 @@ msgstr "Grupo de vértices para controlar el rizado"
 
 
 msgid "Vertex Group Length"
-msgstr "Grupo vértices longitud"
+msgstr "Grupo vértices de longitud"
 
 
 msgid "Vertex group to control length"
@@ -74497,7 +74505,7 @@ msgstr "Grupo de vértices para controlar la longitud"
 
 
 msgid "Vertex Group Rotation"
-msgstr "Grupo de vértices rotación"
+msgstr "Grupo de vértices de rotación"
 
 
 msgid "Vertex group to control rotation"
@@ -74521,7 +74529,7 @@ msgstr "Grupo de vértices para controlar el desorden 2"
 
 
 msgid "Vertex Group Roughness End"
-msgstr "Grupo de vértices de desorden puntas"
+msgstr "Grupo de vértices de desorden de puntas"
 
 
 msgid "Vertex group to control roughness end"
@@ -74529,7 +74537,7 @@ msgstr "Grupo de vértices para controlar el desorden de las puntas"
 
 
 msgid "Vertex Group Size"
-msgstr "Grupo de vértices tamaño"
+msgstr "Grupo de vértices de tamaño"
 
 
 msgid "Vertex group to control size"
@@ -74537,7 +74545,7 @@ msgstr "Grupo de vértices para controlar el tamaño"
 
 
 msgid "Vertex Group Tangent"
-msgstr "Grupo de vértices tangente"
+msgstr "Grupo de vértices de tangente"
 
 
 msgid "Vertex group to control tangent"
@@ -74545,7 +74553,7 @@ msgstr "Grupo de vértices para controlar la tangente"
 
 
 msgid "Vertex Group Twist"
-msgstr "Grupos de vértices torsión"
+msgstr "Grupos de vértices de torsión"
 
 
 msgid "Vertex group to control twist"
@@ -74553,7 +74561,7 @@ msgstr "Grupo de vértices para controlar la torsión"
 
 
 msgid "Vertex Group Velocity"
-msgstr "Grupo de vértices velocidad"
+msgstr "Grupo de vértices de velocidad"
 
 
 msgid "Vertex group to control velocity"
@@ -74689,7 +74697,7 @@ msgstr "Intervalo del caché"
 
 
 msgid "Number of frames between cached frames"
-msgstr "Cantidad de fotogramas entre fotogramas en caché"
+msgstr "Cantidad de fotogramas de la escena entre cada fotograma almacenado en el caché"
 
 
 msgid "Cache Index"
@@ -74729,7 +74737,7 @@ msgstr "Guarda archivos de caché al disco (el archivo .blend debe ser guardado 
 
 
 msgid "Read cache from an external location"
-msgstr "Leer caché desde una ubicación externa"
+msgstr "Leer el caché desde una ubicación externa"
 
 
 msgid "Library Path"
@@ -80445,7 +80453,7 @@ msgstr "Restricción que ejerce influencia sobre los objetos participantes de la
 
 
 msgid "Breaking Threshold"
-msgstr "Umbral de rompimiento"
+msgstr "Umbral de ruptura"
 
 
 msgid "Impulse threshold that must be reached for the constraint to break"
@@ -80469,7 +80477,7 @@ msgstr "Límite angular inferior X"
 
 
 msgid "Lower limit of X axis rotation"
-msgstr "Límite inferior de la rotación alrededor del eje X"
+msgstr "Límite inferior de rotación alrededor del eje X"
 
 
 msgid "Upper X Angle Limit"
@@ -80477,7 +80485,7 @@ msgstr "Límite angular superior X"
 
 
 msgid "Upper limit of X axis rotation"
-msgstr "Límite superior de la rotación alrededor del eje X"
+msgstr "Límite superior de rotación alrededor del eje X"
 
 
 msgid "Lower Y Angle Limit"
@@ -80485,7 +80493,7 @@ msgstr "Límite angular inferior Y"
 
 
 msgid "Lower limit of Y axis rotation"
-msgstr "Límite inferior de la rotación alrededor del eje Y"
+msgstr "Límite inferior de rotación alrededor del eje Y"
 
 
 msgid "Upper Y Angle Limit"
@@ -80493,7 +80501,7 @@ msgstr "Límite angular superior Y"
 
 
 msgid "Upper limit of Y axis rotation"
-msgstr "Límite superior de la rotación alrededor del eje Y"
+msgstr "Límite superior de rotación alrededor del eje Y"
 
 
 msgid "Lower Z Angle Limit"
@@ -80501,7 +80509,7 @@ msgstr "Límite angular inferior Z"
 
 
 msgid "Lower limit of Z axis rotation"
-msgstr "Límite inferior de la rotación alrededor del eje Z"
+msgstr "Límite inferior de rotación alrededor del eje Z"
 
 
 msgid "Upper Z Angle Limit"
@@ -80509,7 +80517,7 @@ msgstr "Límite angular superior Z"
 
 
 msgid "Upper limit of Z axis rotation"
-msgstr "Límite superior de la rotación alrededor del eje Z"
+msgstr "Límite superior de rotación alrededor del eje Z"
 
 
 msgid "Lower X Limit"
@@ -80517,7 +80525,7 @@ msgstr "Límite inferior X"
 
 
 msgid "Lower limit of X axis translation"
-msgstr "Límite inferior de la traslación a lo largo del eje X"
+msgstr "Límite inferior de traslación a lo largo del eje X"
 
 
 msgid "Upper X Limit"
@@ -80525,7 +80533,7 @@ msgstr "Límite superior X"
 
 
 msgid "Upper limit of X axis translation"
-msgstr "Límite superior de la traslación a lo largo del eje X"
+msgstr "Límite superior de traslación a lo largo del eje X"
 
 
 msgid "Lower Y Limit"
@@ -80533,7 +80541,7 @@ msgstr "Límite inferior Y"
 
 
 msgid "Lower limit of Y axis translation"
-msgstr "Límite inferior de la traslación a lo largo del eje Y"
+msgstr "Límite inferior de traslación a lo largo del eje Y"
 
 
 msgid "Upper Y Limit"
@@ -80541,7 +80549,7 @@ msgstr "Límite superior Y"
 
 
 msgid "Upper limit of Y axis translation"
-msgstr "Límite superior de la traslación a lo largo del eje Y"
+msgstr "Límite superior de traslación a lo largo del eje Y"
 
 
 msgid "Lower Z Limit"
@@ -80549,7 +80557,7 @@ msgstr "Límite inferior Z"
 
 
 msgid "Lower limit of Z axis translation"
-msgstr "Límite inferior de la traslación a lo largo del eje Z"
+msgstr "Límite inferior de traslación a lo largo del eje Z"
 
 
 msgid "Upper Z Limit"
@@ -80557,15 +80565,15 @@ msgstr "Límite superior Z"
 
 
 msgid "Upper limit of Z axis translation"
-msgstr "Límite superior de la traslación a lo largo del eje Z"
+msgstr "Límite superior de traslación a lo largo del eje Z"
 
 
 msgid "Max Impulse"
-msgstr "Impulso máx"
+msgstr "Impulso máximo"
 
 
 msgid "Maximum angular motor impulse"
-msgstr "Impulso máximo del motor angular"
+msgstr "Impulso angular máximo del motor"
 
 
 msgid "Target Velocity"
@@ -80573,15 +80581,15 @@ msgstr "Velocidad objetivo"
 
 
 msgid "Target angular motor velocity"
-msgstr "Velocidad objetivo del motor angular"
+msgstr "Velocidad angular objetivo del motor"
 
 
 msgid "Maximum linear motor impulse"
-msgstr "Impulso máximo del motor lineal"
+msgstr "Impulso lineal máximo del motor"
 
 
 msgid "Target linear motor velocity"
-msgstr "Velocidad objetivo del motor lineal"
+msgstr "Velocidad lineal objetivo del motor"
 
 
 msgid "Object 1"
@@ -80589,7 +80597,7 @@ msgstr "Objeto 1"
 
 
 msgid "First Rigid Body Object to be constrained"
-msgstr "Primer objeto a ser restringido"
+msgstr "Primer cuerpo rígido a ser restringido"
 
 
 msgid "Object 2"
@@ -80597,15 +80605,15 @@ msgstr "Objeto 2"
 
 
 msgid "Second Rigid Body Object to be constrained"
-msgstr "Segundo objeto a ser restringido"
+msgstr "Segundo cuerpo rígido a ser restringido"
 
 
 msgid "Solver Iterations"
-msgstr "Iteraciones del método"
+msgstr "Iteraciones de cálculo"
 
 
 msgid "Number of constraint solver iterations made per simulation step (higher values are more accurate but slower)"
-msgstr "Cantidad de iteraciones del método de resolución de la restricción a calcularse por cada intervalo de la simulación (valores mayores logran una mayor precisión, pero funcionará más lento)"
+msgstr "Cantidad de iteraciones del método de resolución de restricciones, a ser calculadas por cada intervalo de la simulación (valores mayores logran una mayor precisión, pero será más lento)"
 
 
 msgid "Damping X Angle"
@@ -80705,11 +80713,11 @@ msgstr "Rigidez en el eje Z"
 
 
 msgid "Spring Type"
-msgstr "Tipo de tensor"
+msgstr "Tipo de tensores"
 
 
 msgid "Which implementation of spring to use"
-msgstr "Cuál implementación de los tensores usar"
+msgstr "Cuál implementación de tensores usar"
 
 
 msgid "Blender 2.7"
@@ -80793,7 +80801,7 @@ msgstr "Habilita el motor lineal"
 
 
 msgid "Override Solver Iterations"
-msgstr "Redefinir iteraciones del método"
+msgstr "Redefinir iteraciones de cálculo"
 
 
 msgid "Override the number of solver iterations for this constraint"
@@ -80869,7 +80877,7 @@ msgstr "Colecciones de colisión"
 
 
 msgid "Collision collections rigid body belongs to"
-msgstr "Colecciones de colisión a los que pertenece el cuerpo rígido"
+msgstr "Colecciones de colisión a las que pertenece este cuerpo rígido"
 
 
 msgid "Collision Margin"
@@ -80877,7 +80885,7 @@ msgstr "Margen de colisión"
 
 
 msgid "Threshold of distance near surface where collisions are still considered (best results when non-zero)"
-msgstr "Umbral de distancia alrededor de la superficie que ya se considerará como colisión"
+msgstr "Umbral de distancia alrededor de la superficie, donde igualmente se considerará que se ha producido una colisión"
 
 
 msgid "Collision Shape"
@@ -80889,7 +80897,7 @@ msgstr "Forma de colisión del objeto en la simulación de cuerpos rígidos"
 
 
 msgid "Angular Velocity Deactivation Threshold"
-msgstr "Umbral de velocidad angular de desactivación"
+msgstr "Umbral de desactivación de velocidad angular"
 
 
 msgid "Angular Velocity below which simulation stops simulating object"
@@ -80897,7 +80905,7 @@ msgstr "Velocidad angular por debajo de la cual la simulación dejará de simula
 
 
 msgid "Linear Velocity Deactivation Threshold"
-msgstr "Umbral de velocidad lineal de desactivación"
+msgstr "Umbral de desactivación de velocidad lineal"
 
 
 msgid "Linear Velocity below which simulation stops simulating object"
@@ -80917,7 +80925,7 @@ msgstr "Cinemático"
 
 
 msgid "Allow rigid body to be controlled by the animation system"
-msgstr "Permite que el cuerpo rígido sea controlado por el sistema de animación"
+msgstr "Permite que el cuerpo rígido sea controlado manualmente por el sistema de animación"
 
 
 msgid "Linear Damping"
@@ -80961,7 +80969,7 @@ msgstr "Tendencia del objeto a rebotar luego de colisionar con otro (0 = no rebo
 
 
 msgid "Role of object in Rigid Body Simulations"
-msgstr "Rol del objeto el la simulación de cuerpos rígidos"
+msgstr "Rol del objeto en la simulación de cuerpos rígidos"
 
 
 msgid "Enable Deactivation"
@@ -80973,7 +80981,7 @@ msgstr "Habilita la desactivación de cuerpos rígidos estáticos (mejora el ren
 
 
 msgid "Deforming"
-msgstr "Deformación"
+msgstr "Deformable"
 
 
 msgid "Rigid body deforms during simulation"
@@ -80989,7 +80997,7 @@ msgstr "Iniciar desactivado"
 
 
 msgid "Deactivate rigid body at the start of the simulation"
-msgstr "Desdactiva el cuerpo rígido al inicio de la simulación"
+msgstr "La simulación comenzará con el cuerpo rígido desactivado"
 
 
 msgid "Self-contained rigid body simulation environment and settings"
@@ -81001,7 +81009,7 @@ msgstr "Colección que contiene a los objetos participantes en esta simulación"
 
 
 msgid "Collection containing rigid body constraint objects"
-msgstr "Colección que contiene a los objetos en las restricciones de cuerpos rígidos"
+msgstr "Colección que contiene a los objetos de restricciones de cuerpos rígidos"
 
 
 msgid "Simulation will be evaluated"
@@ -83540,15 +83548,15 @@ msgstr "Los bordes reciben una fuerza de elevación al pasar a través del medio
 
 
 msgid "Ball Size"
-msgstr "Tamaño de las esferas"
+msgstr "Tamaño de esferas"
 
 
 msgid "Blending to inelastic collision"
-msgstr "Funde a una colisión inelástica"
+msgstr "Fundido hacia una colisión inelástica"
 
 
 msgid "Absolute ball size or factor if not manually adjusted"
-msgstr "El tamaño absoluto de las esferas o un factor, si no son ajustadas de forma manual"
+msgstr "El tamaño absoluto de esferas o un factor, si no son ajustadas de forma manual"
 
 
 msgid "Ball inflating pressure"
@@ -83660,7 +83668,7 @@ msgstr "Valor genérico de masa"
 
 
 msgid "Permanent deform"
-msgstr "Deformación pemanente"
+msgstr "Deformación permanente"
 
 
 msgid "Pull"
@@ -83692,11 +83700,11 @@ msgstr "Matriz estimada de escala"
 
 
 msgid "Tweak timing for physics to control frequency and speed"
-msgstr "Retocar la temporización de las dinámicas para controlar frecuencia y velocidad"
+msgstr "Permite retocar la temporización de las dinámicas para controlar su frecuencia y velocidad"
 
 
 msgid "Alter spring length to shrink/blow up (unit %) 0 to disable"
-msgstr "Alterar la longitud del tensor para contraerlo o expandirlo (en %). 0 para deshabilitar"
+msgstr "Permite alterar la longitud de los tensores para contraerlos o expandirlos (expresado como %). 0 para deshabilitar"
 
 
 msgid "Maximal # solver steps/frame"
@@ -83712,19 +83720,19 @@ msgstr "Usar las velocidades para determinar automáticamente los tamaños de in
 
 
 msgid "Print Performance to Console"
-msgstr "Imprime el rendimiento a la consola"
+msgstr "Imprimir rendimiento en consola"
 
 
 msgid "Turn on SB diagnose console prints"
-msgstr "Habilitar impresiones de diagnóstico a la consola"
+msgstr "Habilita impresiones de diagnóstico en la consola"
 
 
 msgid "Edge Collision"
-msgstr "Colisión bordes"
+msgstr "Colisionar usando bordes"
 
 
 msgid "Edges collide too"
-msgstr "Los bordes también colisionan"
+msgstr "Se usarán los bordes para calcular las colisiones"
 
 
 msgid "Use Edges"
@@ -83744,11 +83752,11 @@ msgstr "Almacena las transformaciones estimadas en las opciones de cuerpos bland
 
 
 msgid "Face Collision"
-msgstr "Colisión caras"
+msgstr "Colisionar usando caras"
 
 
 msgid "Faces collide too, can be very slow"
-msgstr "Las caras también colisionan, puede ser muy lento"
+msgstr "Se usarán las caras para calcular las colisiones, puede ser muy lento"
 
 
 msgid "Use Goal"
@@ -83784,11 +83792,11 @@ msgstr "Valores de masa de punto de control"
 
 
 msgid "Spring Vertex Group"
-msgstr "Grupo vértices tensor"
+msgstr "Grupo de vértices de tensores"
 
 
 msgid "Control point spring strength values"
-msgstr "Valores de intensidad del tensor del punto de control"
+msgstr "Controla los valores de intensidad de los tensores de puntos"
 
 
 msgid "Space data for a screen area"
@@ -87877,6 +87885,10 @@ msgid "Theme settings for the Properties"
 msgstr "Opciones del tema para las propiedades"
 
 
+msgid "Active Modifier Outline"
+msgstr "Contorno de modificador activo"
+
+
 msgid "Search Match"
 msgstr "Coincidencia de búsqueda"
 
@@ -89840,6 +89852,10 @@ msgstr "Detalles de objetos, incluyendo estructuras, cámaras y otras guías vis
 
 msgid "Draw Face Center"
 msgstr "Mostrar centro de caras"
+
+
+msgid "Display face center when face selection is enabled in solid shading modes"
+msgstr "Muestra el centro de las caras en los modos de sombreado sólido, al estar en modo de selección de caras"
 
 
 msgid "Display Normals"
@@ -93118,7 +93134,7 @@ msgstr "Archivo '%s' no encontrado"
 
 
 msgid "No reference available %r, Update info in 'rna_manual_reference.py' or callback to bpy.utils.manual_map()"
-msgstr "No hay una referencia disponible %r, actualizar la información en 'rna_manual_reference.py' o volver a invocar la función bpy.utils.manual_map()"
+msgstr "No hay una referencia disponible %r, actualizar la información en 'rna_manual_reference.py' o volver a invocar la función de rellamada bpy.utils.manual_map()"
 
 
 msgid "Direct execution not supported"
@@ -93352,19 +93368,19 @@ msgstr "Agregar hueso objetivo"
 
 
 msgid "Z Min"
-msgstr "Z Mín"
+msgstr "Z  Mín"
 
 
 msgid "X Source Axis"
-msgstr "Eje original X"
+msgstr "Origen del eje X"
 
 
 msgid "Y Source Axis"
-msgstr "Eje original Y"
+msgstr "Origen del eje Y"
 
 
 msgid "Z Source Axis"
-msgstr "Eje original Z"
+msgstr "Origen del eje Z"
 
 
 msgid "Align to Normal"
@@ -94172,7 +94188,7 @@ msgstr "Alinear a normal de vértices"
 
 
 msgid "Show Instancer"
-msgstr "Mostrar instancias"
+msgstr "Mostrar objeto base"
 
 
 msgid "Aspect X"
@@ -94370,11 +94386,11 @@ msgstr "Escala del objeto"
 
 
 msgid "Display Amount"
-msgstr "Cantidad en vistas"
+msgstr "Cantidad  Vistas"
 
 
 msgid "Render Amount"
-msgstr "Cantidad en procesamiento"
+msgstr "Cantidad  Procesamiento"
 
 
 msgid "Kink Type"
@@ -94398,11 +94414,11 @@ msgstr "Diámetro    Raíz"
 
 
 msgid "Lifetime Randomness"
-msgstr "Aleatoriedad tiempo de vida"
+msgstr "Aleatoriedad vida"
 
 
 msgid "Hair dynamics disabled"
-msgstr "Dinámicas del pelo deshabilitadas"
+msgstr "Dinámicas de pelo deshabilitadas"
 
 
 msgid "Iterations: %d .. %d (avg. %d)"
@@ -94426,7 +94442,7 @@ msgstr "Mostrar emisor"
 
 
 msgid "Fade Distance"
-msgstr "Distancia de desvanecimiento"
+msgstr "Distancia desvanecimiento"
 
 
 msgid "Strand Steps"
@@ -94446,7 +94462,7 @@ msgstr "Amplitud de aleatorización"
 
 
 msgid "Randomize Axis"
-msgstr "Eje aleatorio"
+msgstr "Aleatorizar eje"
 
 
 msgid "Settings used for fluid"
@@ -94505,11 +94521,11 @@ msgstr "Viscosidad del aire"
 
 
 msgid "Max Spring Creation Length"
-msgstr "Longitud máx al crear tensores"
+msgstr "Longitud máx inicial"
 
 
 msgid "Max Creation Diversion"
-msgstr "Desviación máx al crear"
+msgstr "Desviación máx inicial"
 
 
 msgid "Check Surface Normals"
@@ -94561,7 +94577,7 @@ msgstr "Inclinación máx"
 
 
 msgid "Bending Group"
-msgstr "Grupo de flexión"
+msgstr "Grupo flexión"
 
 
 msgid "Max Bending"
@@ -94569,7 +94585,7 @@ msgstr "Flexión máx"
 
 
 msgid "Shrinking Group"
-msgstr "Grupo de contracción"
+msgstr "Grupo contracción"
 
 
 msgid "Max Shrinking"
@@ -94654,7 +94670,7 @@ msgstr "Borrar captura"
 
 msgctxt "Operator"
 msgid "Bake Image Sequence"
-msgstr "Capturar secuencia de imágenes"
+msgstr "Capturar a secuencia de imágenes"
 
 
 msgctxt "Operator"
@@ -94729,7 +94745,7 @@ msgstr "Intensidad de mechones"
 
 
 msgid "Heat"
-msgstr "Calor"
+msgstr "Temperatura"
 
 
 msgid "Reaction Speed"
@@ -94741,7 +94757,7 @@ msgstr "Humo de la llama"
 
 
 msgid "Temperature Maximum"
-msgstr "Temperatura Máximo"
+msgstr "Temperatura  Máximo"
 
 
 msgid "Flame Color"
@@ -94765,7 +94781,7 @@ msgstr "Resolución adicional"
 
 
 msgid "Upres Factor"
-msgstr "Escala de resolución"
+msgstr "Factor de aumento"
 
 
 msgid "Use Speed Vectors"
@@ -94781,15 +94797,15 @@ msgstr "Burbujas"
 
 
 msgid "Wave Crest Potential Maximum"
-msgstr "Potencial crestas ola  Máximo"
+msgstr "Crestas ola  Potencial Máximo"
 
 
 msgid "Trapped Air Potential Maximum"
-msgstr "Potencial aire encapsulado  Máximo"
+msgstr "Aire encapsulado  Potencial Máximo"
 
 
 msgid "Kinetic Energy Potential Maximum"
-msgstr "Potencial energía cinética  Máximo"
+msgstr "Energía cinética  Potencial Máximo"
 
 
 msgid "Particle Update Radius"
@@ -94797,11 +94813,11 @@ msgstr "Radio actualización partículas"
 
 
 msgid "Wave Crest Particle Sampling"
-msgstr "Muestreo partículas crestas de ola"
+msgstr "Partículas   Crestas ola"
 
 
 msgid "Trapped Air Particle Sampling"
-msgstr "Muestreo partículas aire encapsulado"
+msgstr "Aire encapsulado"
 
 
 msgid "Particle Life Maximum"
@@ -94829,7 +94845,7 @@ msgstr "Formato"
 
 
 msgid "Resolution Divisions"
-msgstr "Divisiones de resolución"
+msgstr "Resolución (celdas)"
 
 
 msgid "CFL Number"
@@ -94853,7 +94869,7 @@ msgstr "Concavidad  Superior"
 
 
 msgid "Guide Parent"
-msgstr "Superior de guía"
+msgstr "Objeto guía"
 
 
 msgid "Compression Volumes"
@@ -94953,11 +94969,11 @@ msgstr "Elasticidad"
 
 
 msgid "Damping Translation"
-msgstr "Amortiguación traslación"
+msgstr "Amortiguación  Traslación"
 
 
 msgid "Velocity Linear"
-msgstr "Velocidad lineal"
+msgstr "Velocidad  Lineal"
 
 
 msgid "This object is part of a compound shape"
@@ -94965,31 +94981,31 @@ msgstr "Este objeto es parte de una forma compuesta"
 
 
 msgid "X Stiffness"
-msgstr "X Resistencia"
+msgstr "X  Resistencia"
 
 
 msgid "Y Stiffness"
-msgstr "Y Resistencia"
+msgstr "Y  Resistencia"
 
 
 msgid "Z Stiffness"
-msgstr "Z Resistencia"
+msgstr "Z  Resistencia"
 
 
 msgid "X Lower"
-msgstr "X Mínimo"
+msgstr "X  Inferior"
 
 
 msgid "Z Lower"
-msgstr "Z Mínimo"
+msgstr "Z  Inferior"
 
 
 msgid "Y Lower"
-msgstr "Y Mínimo"
+msgstr "Y  Inferior"
 
 
 msgid "Collision Edge"
-msgstr "Colisionar usando  Borde"
+msgstr "Colisionar usando bordes"
 
 
 msgid "Calculation Type"
@@ -95001,7 +95017,7 @@ msgstr "Amortiguación"
 
 
 msgid "Step Size Min"
-msgstr "Tamaño intervalo  Mín"
+msgstr "Intervalo  Mín"
 
 
 msgid "Auto-Step"
@@ -97110,6 +97126,11 @@ msgstr "Renombrar elemento activo..."
 
 
 msgctxt "Operator"
+msgid "Batch Rename..."
+msgstr "Renombrar por lotes..."
+
+
+msgctxt "Operator"
 msgid "Preferences..."
 msgstr "Preferencias..."
 
@@ -97339,7 +97360,7 @@ msgstr "Habilitar en nuevas escenas"
 
 
 msgid "Unselected Opacity"
-msgstr "Opacidad no seleccionado"
+msgstr "Opacidad no seleccionadas"
 
 
 msgid "Default Smoothing Mode"
@@ -100055,7 +100076,7 @@ msgstr "%i puntos encontrados!"
 
 
 msgid "No valid data to read!"
-msgstr "No hay datos válidos qué leer!"
+msgstr "¡No hay datos válidos para ser leídos!"
 
 
 msgid "%i cells + High Resolution cached"
@@ -102135,15 +102156,15 @@ msgstr "No es posible editar una restricción protegida por un reemplazo"
 
 
 msgid "Add a new color stop to the color ramp"
-msgstr "Agrega una nueva parada de color a la rampa de color"
+msgstr "Agrega una nueva parada de color a la rampa"
 
 
 msgid "Delete the active position"
-msgstr "Borra la parada de color activa"
+msgstr "Borra la parada de color seleccionada"
 
 
 msgid "Choose active color stop"
-msgstr "Escoger color de parada activo"
+msgstr "Parada de color seleccionada"
 
 
 msgid "Zoom in"
@@ -106845,10 +106866,6 @@ msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "Inclinar: %.3f %s (Presionar X o Y para definir eje)"
 
 
-msgid "Shrink/Fatten:"
-msgstr "Contraer / Expandir:"
-
-
 msgid " or Alt) Even Thickness %s"
 msgstr " o Alt) Grosor uniforme %s"
 
@@ -108090,6 +108107,10 @@ msgstr "Al registrar la clase de manipulador: '%s' es demasiado largo, la longit
 
 msgid "GizmoType '%s' not known"
 msgstr "Tipo de manipulador '%s' desconocido"
+
+
+msgid "GizmoType '%s' is for a 3D gizmo-group. The 'draw_select' callback is set where only 'test_select' will be used"
+msgstr "El tipo de manipulador '%s' es para un grupo de manipuladores 3D. La función de rellamada 'draw_select' se definirá únicamente donde 'test_select' vaya a ser usada"
 
 
 msgid "Registering gizmogroup class: '%s' is too long, maximum length is %d"

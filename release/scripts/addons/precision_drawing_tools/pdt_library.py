@@ -30,7 +30,7 @@ from .pdt_msg_strings import PDT_ERR_NO_LIBRARY, PDT_ERR_OBJECTMODE
 
 
 class PDT_OT_LibShow(Operator):
-    """Show Library File Details."""
+    """Show Library File Details"""
 
     bl_idname = "pdt.lib_show"
     bl_label = "Show Library Details"
@@ -59,7 +59,7 @@ class PDT_OT_LibShow(Operator):
 
 
 class PDT_OT_Append(Operator):
-    """Append from Library at cursor Location."""
+    """Append from Library at cursor Location"""
 
     bl_idname = "pdt.append"
     bl_label = "Append"
@@ -141,7 +141,7 @@ class PDT_OT_Append(Operator):
 
 
 class PDT_OT_Link(Operator):
-    """Link from Library at Object's Origin."""
+    """Link from Library at Object's Origin"""
 
     bl_idname = "pdt.link"
     bl_label = "Link"

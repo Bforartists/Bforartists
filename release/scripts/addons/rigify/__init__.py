@@ -20,7 +20,7 @@
 
 bl_info = {
     "name": "Rigify",
-    "version": (0, 6, 2),
+    "version": (0, 6, 3),
     "author": "Nathan Vegdahl, Lucio Rossi, Ivan Cappiello, Alexander Gavrilov",
     "blender": (2, 82, 0),
     "description": "Automatic rigging from building-block components",
