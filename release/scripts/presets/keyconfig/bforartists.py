@@ -1,4 +1,4 @@
-keyconfig_version = (2, 92, 9)
+keyconfig_version = (2, 93, 8)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -6828,7 +6828,7 @@ keyconfig_data = \
      ),
     ("info.reports_display_update", {"type": 'TIMER_REPORT', "value": 'ANY', "any": True}, None),
     ("wm.search_menu", {"type": 'F3', "value": 'PRESS'}, None),
-    ("wm.console_toggle", {"type": 'F5', "value": 'PRESS'}, None),
+    ("wm.console_toggle", {"type": 'F5', "value": 'PRESS', "alt": True}, None),
     ("wm.call_menu",
      {"type": 'F4', "value": 'PRESS'},
      {"properties":
