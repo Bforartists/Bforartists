@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, rerequests
+from blenderkit import paths, rerequests, image_utils
 
 import bpy
 from mathutils import Vector
@@ -313,7 +313,6 @@ def get_hidden_texture(img, force_reload=False):
         t.image = img
     return t
 
-
 def get_hidden_image(tpath, bdata_name, force_reload=False, colorspace = 'sRGB'):
     if bdata_name[0] == '.':
         hidden_name = bdata_name
@@ -340,12 +339,13 @@ def get_hidden_image(tpath, bdata_name, force_reload=False, colorspace = 'sRGB')
 
                 img.filepath = tpath
                 img.reload()
-        img.colorspace_settings.name = colorspace
+        image_utils.set_colorspace(img,colorspace)
+
     elif force_reload:
         if img.packed_file is not None:
             img.unpack(method='USE_ORIGINAL')
         img.reload()
-        img.colorspace_settings.name = colorspace
+        image_utils.set_colorspace(img,colorspace)
     return img
 
 
@@ -355,7 +355,7 @@ def get_thumbnail(name):
     img = bpy.data.images.get(name)
     if img == None:
         img = bpy.data.images.load(p)
-        img.colorspace_settings.name = 'sRGB'
+        image_utils.set_colorspace(img,'sRGB')
         img.name = name
         img.name = name
 

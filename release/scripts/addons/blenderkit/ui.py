@@ -1672,6 +1672,12 @@ class AssetBarOperator(bpy.types.Operator):
                                 target_slot = temp_mesh.polygons[face_index].material_index
                                 object_eval.to_mesh_clear()
                             else:
+                                if object.is_library_indirect:
+                                    ui_panels.ui_message(title='This object is linked from outer file',
+                                                         message="Please select the model,"
+                                                                 "go to the 'Selected Model' panel "
+                                                                 "in BlenderKit and hit 'Bring to Scene' first.")
+
                                 self.report({'WARNING'}, "Invalid or library object as input:")
                                 target_object = ''
                                 target_slot = ''
@@ -1854,7 +1860,7 @@ class TransferBlenderkitData(bpy.types.Operator):
     """Regenerate cobweb"""
     bl_idname = "object.blenderkit_data_trasnfer"
     bl_label = "Transfer BlenderKit data"
-    bl_description = "Transfer blenderKit metadata from one object to another when fixing uploads with wrong parenting."
+    bl_description = "Transfer blenderKit metadata from one object to another when fixing uploads with wrong parenting"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -1914,6 +1920,12 @@ def draw_callback_3d_dragging(self, context):
         if self.has_hit:
             draw_bbox(self.snapped_location, self.snapped_rotation, self.snapped_bbox_min, self.snapped_bbox_max)
 
+def find_and_activate_instancers(object):
+    for ob in bpy.context.visible_objects:
+        if ob.instance_type == 'COLLECTION' and ob.instance_collection and object.name in ob.instance_collection.objects:
+            utils.activate(ob)
+            return ob
+
 
 class AssetDragOperator(bpy.types.Operator):
     """Draw a line with the mouse"""
@@ -1942,6 +1954,11 @@ class AssetDragOperator(bpy.types.Operator):
         if ui_props.asset_type == 'MATERIAL':
             # first, test if object can have material applied.
             object = bpy.data.objects[self.object_name]
+            # this enables to run Bring to scene automatically when dropping on a linked objects.
+            # it's however quite a slow operation, that's why not enabled (and finished) now.
+            # if object is not None and object.is_library_indirect:
+            #     find_and_activate_instancers(object)
+            #     bpy.ops.object.blenderkit_bring_to_scene()
             if object is not None and not object.is_library_indirect and object.type == 'MESH':
                 target_object = object.name
                 # create final mesh to extract correct material slot
@@ -1953,6 +1970,12 @@ class AssetDragOperator(bpy.types.Operator):
             # elif object.is_library_indirect:#case for bring to scene objects, will be solved through prefs and direct
             # action
             else:
+                if object.is_library_indirect:
+                    ui_panels.ui_message(title = 'This object is linked from outer file',
+                                         message = "Please select the model,"
+                                                   "go to the 'Selected Model' panel "
+                                                   "in BlenderKit and hit 'Bring to Scene' first.")
+
                 self.report({'WARNING'}, "Invalid or library object as input:")
                 target_object = ''
                 target_slot = ''
@@ -2007,6 +2030,11 @@ class AssetDragOperator(bpy.types.Operator):
                                                   target_object=target_object)
 
         else:
+            if ui_props.asset_type =='SCENE':
+                ui_panels.ui_message(title = 'Scene will be appended after download',
+                                     message = 'After the scene is appended, you have to switch to it manually.'
+                                               'If you want to switch to scenes automatically after appending,'
+                                               ' you can set it in import settings.')
             bpy.ops.scene.blenderkit_download(  # asset_type=ui_props.asset_type,
                 asset_index=self.asset_search_index)
 

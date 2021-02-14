@@ -92,10 +92,10 @@ class IMPORT_OT_xyz(Operator, ImportHelper):
         description = "Do you want to load all frames?")
     skip_frames: IntProperty(
         name="", default=0, min=0,
-        description="Number of frames you want to skip.")
+        description="Number of frames you want to skip")
     images_per_key: IntProperty(
         name="", default=1, min=1,
-        description="Choose the number of images between 2 keys.")
+        description="Choose the number of images between 2 keys")
 
     # This thing here just guarantees that the menu entry is not active when the
     # check box in the addon preferences is not activated! See __init__.py

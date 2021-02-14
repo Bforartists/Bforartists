@@ -433,7 +433,7 @@ class RenderPovSettingsScene(PropertyGroup):
         " to scattering in the direction of the light and negative "
         "values lead to scattering in the opposite direction of the "
         "light. Larger values of e (or smaller values in the negative"
-        " case) increase the directional property of the scattering.",
+        " case) increase the directional property of the scattering",
         precision=2,
         step=0.01,
         min=-1.0,

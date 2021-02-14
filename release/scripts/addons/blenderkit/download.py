@@ -26,6 +26,7 @@ import shutil, sys, os
 import uuid
 import copy
 import logging
+
 bk_logger = logging.getLogger('blenderkit')
 
 import bpy
@@ -303,8 +304,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     #####
     # how to do particle  drop:
     # link the group we are interested in( there are more groups in File!!!! , have to get the correct one!)
-    #
-    scene = bpy.context.scene
+    s = bpy.context.scene
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
@@ -312,16 +312,22 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         user_preferences.asset_counter += 1
 
     if asset_data['assetType'] == 'scene':
-        scene = append_link.append_scene(file_names[0], link=False, fake_user=False)
-        props = scene.blenderkit
-        asset_main = scene
+        sprops = s.blenderkit_scene
+
+        scene = append_link.append_scene(file_names[0], link=sprops.append_link == 'LINK', fake_user=False)
+        print('scene appended')
+        if scene is not None:
+            props = scene.blenderkit
+            asset_main = scene
+            print(sprops.switch_after_append)
+            if sprops.switch_after_append:
+                bpy.context.window_manager.windows[0].scene = scene
 
     if asset_data['assetType'] == 'hdr':
-        hdr = append_link.load_HDR(file_name = file_names[0], name = asset_data['name'])
+        hdr = append_link.load_HDR(file_name=file_names[0], name=asset_data['name'])
         props = hdr.blenderkit
         asset_main = hdr
 
-    s = bpy.context.scene
 
     if asset_data['assetType'] == 'model':
         downloaders = kwargs.get('downloaders')
@@ -899,7 +905,7 @@ def check_existing(asset_data, resolution='blend', can_return_others=False):
 
     file_names = paths.get_download_filepaths(asset_data, resolution, can_return_others=can_return_others)
 
-    bk_logger.debug('check if file already exists'+ str( file_names))
+    bk_logger.debug('check if file already exists' + str(file_names))
     if len(file_names) == 2:
         # TODO this should check also for failed or running downloads.
         # If download is running, assign just the running thread. if download isn't running but the file is wrong size,
@@ -1147,7 +1153,7 @@ def start_download(asset_data, **kwargs):
         # check if there are files already. This check happens 2x once here(for free assets),
         # once in thread(for non-free)
         fexists = check_existing(asset_data, resolution=kwargs['resolution'])
-        bk_logger.debug('does file exist?'+ str( fexists))
+        bk_logger.debug('does file exist?' + str(fexists))
         bk_logger.debug('asset is in scene' + str(ain))
         if ain and not kwargs.get('replace_resolution'):
             # this goes to appending asset - where it should duplicate the original asset already in scene.
@@ -1220,7 +1226,7 @@ def show_enum_values(obj, prop_name):
 
 
 class BlenderkitDownloadOperator(bpy.types.Operator):
-    """Download and link asset to scene. Only link if asset already available locally."""
+    """Download and link asset to scene. Only link if asset already available locally"""
     bl_idname = "scene.blenderkit_download"
     bl_label = "BlenderKit Asset Download"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
@@ -1235,7 +1241,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
 
     asset_base_id: StringProperty(
         name="Asset base Id",
-        description="Asset base id, used instead of search result index.",
+        description="Asset base id, used instead of search result index",
         default="")
 
     target_object: StringProperty(

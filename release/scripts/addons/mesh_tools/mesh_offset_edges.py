@@ -483,7 +483,7 @@ def assign_angle_presets(self, context):
     self.angle = angle_presets[self.angle_presets]
 
 class OffsetEdges(bpy.types.Operator):
-    """Offset Edges."""
+    """Offset Edges"""
     bl_idname = "mesh.offset_edges"
     bl_label = "Offset Edges"
     bl_options = {'REGISTER', 'UNDO'}
@@ -531,7 +531,7 @@ class OffsetEdges(bpy.types.Operator):
         name="Flat Face Threshold", default=radians(0.05), precision=5,
         step=1.0e-4, subtype='ANGLE',
         description="If difference of angle between two adjacent faces is "
-                    "below this value, those faces are regarded as flat.",
+                    "below this value, those faces are regarded as flat",
         options={'HIDDEN'})
     caches_valid: bpy.props.BoolProperty(
         name="Caches Valid", default=False,
