@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -50637,7 +50637,7 @@ msgstr "選択部分をカットします"
 
 
 msgid "Flat Caps"
-msgstr "フラットな端"
+msgstr "端をフラットに"
 
 
 msgctxt "Operator"
@@ -69178,6 +69178,16 @@ msgstr "平面の軸"
 
 msgid "The axis used for placing the base region"
 msgstr "ベース領域の配置に使用される軸"
+
+
+msgid "Auto Axis"
+msgstr "自動の軸"
+
+
+msgid "Select the closest axis when placing objects (surface overrides)"
+msgstr ""
+"オブジェクト配置時に一番近い軸を選択します\n"
+"（サーフェスをオーバーライド）"
 
 
 msgid "The initial depth used when placing the cursor"
@@ -88567,6 +88577,10 @@ msgid "Theme settings for the Properties"
 msgstr "プロパティのためテーマ設定"
 
 
+msgid "Active Modifier Outline"
+msgstr "アクティブモディファイアー輪郭"
+
+
 msgid "Search Match"
 msgstr "検索がマッチ"
 
@@ -88668,7 +88682,7 @@ msgstr "タブ(非アクティブ)"
 
 
 msgid "Tab Outline"
-msgstr "タブ枠線"
+msgstr "タブ輪郭"
 
 
 msgid "Text Highlight"
@@ -88780,11 +88794,11 @@ msgstr "ユーザーインターフェイス用のテーマ設定"
 
 
 msgid "Editor Outline"
-msgstr "エディターアウトライン"
+msgstr "エディターの輪郭"
 
 
 msgid "Color of the outline of the editors and their round corners"
-msgstr "エディターのアウトラインとラウンドコーナーの色"
+msgstr "エディターの輪郭と角丸の色"
 
 
 msgid "Gizmo A"
@@ -90534,6 +90548,12 @@ msgstr "エンプティのワイヤ、カメラ、その他ビジュアルガイ
 
 msgid "Draw Face Center"
 msgstr "面の中心を表示"
+
+
+msgid "Display face center when face selection is enabled in solid shading modes"
+msgstr ""
+"ソリッドシェーディングモードで面選択が有効時\n"
+"面の中心を表示します"
 
 
 msgid "Display Normals"
@@ -97678,6 +97698,18 @@ msgid "Unable to find toolbar group"
 msgstr "ツールバーグループが見つかりません"
 
 
+msgid ""
+"%s\n"
+"• %s toggles snap while dragging.\n"
+"• %s toggles dragging from the center.\n"
+"• %s toggles fixed aspect"
+msgstr ""
+"%s\n"
+"• %s ドラッグ中のスナップ切り替え\n"
+"• %s 中心からのドラッグ切り替え\n"
+"• %s 比率の固定切り替え"
+
+
 msgid "Depth:"
 msgstr "深度:"
 
@@ -97810,6 +97842,11 @@ msgstr "メニュー検索..."
 msgctxt "Operator"
 msgid "Rename Active Item..."
 msgstr "アクティブアイテムをリネーム..."
+
+
+msgctxt "Operator"
+msgid "Batch Rename..."
+msgstr "名前を一括変更..."
 
 
 msgctxt "Operator"
@@ -107558,10 +107595,6 @@ msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "せん断：%.3f %s（XまたはYキーでせん断の軸を設定）"
 
 
-msgid "Shrink/Fatten:"
-msgstr "収縮/膨張："
-
-
 msgid " or Alt) Even Thickness %s"
 msgstr "またはAlt）均一な厚さ %s"
 
@@ -108805,6 +108838,10 @@ msgstr "ギズモクラス登録:「%s」が長すぎです(最大長: %d)"
 
 msgid "GizmoType '%s' not known"
 msgstr "「%s」は未知のギズモタイプです"
+
+
+msgid "GizmoType '%s' is for a 3D gizmo-group. The 'draw_select' callback is set where only 'test_select' will be used"
+msgstr "ギズモタイプ「%s」は3Dギズモグループ用です。「draw_select」コールバックは「test_select」が使用される所のみセットされます"
 
 
 msgid "Registering gizmogroup class: '%s' is too long, maximum length is %d"

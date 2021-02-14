@@ -704,8 +704,8 @@ class reaction_diffusion(bpy.types.Operator):
 class edges_deformation(bpy.types.Operator):
     bl_idname = "object.edges_deformation"
     bl_label = "Edges Deformation"
-    bl_description = ("Compute Weight based on the deformation of edges"+
-        "according to visible modifiers.")
+    bl_description = ("Compute Weight based on the deformation of edges "
+                      "according to visible modifiers")
     bl_options = {'REGISTER', 'UNDO'}
 
     bounds : bpy.props.EnumProperty(
@@ -846,8 +846,8 @@ class edges_deformation(bpy.types.Operator):
 class edges_bending(bpy.types.Operator):
     bl_idname = "object.edges_bending"
     bl_label = "Edges Bending"
-    bl_description = ("Compute Weight based on the bending of edges"+
-        "according to visible modifiers.")
+    bl_description = ("Compute Weight based on the bending of edges "
+                      "according to visible modifiers")
     bl_options = {'REGISTER', 'UNDO'}
 
     bounds : bpy.props.EnumProperty(
@@ -1678,7 +1678,7 @@ class vertex_colors_to_vertex_groups(bpy.types.Operator):
     bl_idname = "object.vertex_colors_to_vertex_groups"
     bl_label = "Vertex Color"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Convert the active Vertex Color into a Vertex Group.")
+    bl_description = ("Convert the active Vertex Color into a Vertex Group")
 
     red : bpy.props.BoolProperty(
         name="red channel", default=False, description="convert red channel")
@@ -1770,7 +1770,7 @@ class vertex_group_to_vertex_colors(bpy.types.Operator):
     bl_idname = "object.vertex_group_to_vertex_colors"
     bl_label = "Vertex Group"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Convert the active Vertex Group into a Vertex Color.")
+    bl_description = ("Convert the active Vertex Group into a Vertex Color")
 
     channel : bpy.props.EnumProperty(
         items=[('Blue', 'Blue Channel', 'Convert to Blue Channel'),
@@ -1857,8 +1857,8 @@ class curvature_to_vertex_groups(bpy.types.Operator):
     bl_idname = "object.curvature_to_vertex_groups"
     bl_label = "Curvature"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Generate a Vertex Group based on the curvature of the"
-                      "mesh. Is based on Dirty Vertex Color.")
+    bl_description = ("Generate a Vertex Group based on the curvature of the "
+                      "mesh. Is based on Dirty Vertex Color")
 
     invert : bpy.props.BoolProperty(
         name="invert", default=False, description="invert values")
@@ -1905,8 +1905,8 @@ class face_area_to_vertex_groups(bpy.types.Operator):
     bl_idname = "object.face_area_to_vertex_groups"
     bl_label = "Area"
     bl_options = {'REGISTER', 'UNDO'}
-    bl_description = ("Generate a Vertex Group based on the area of individual"
-                      "faces.")
+    bl_description = ("Generate a Vertex Group based on the area of individual "
+                      "faces")
 
     invert : bpy.props.BoolProperty(
         name="invert", default=False, description="invert values")

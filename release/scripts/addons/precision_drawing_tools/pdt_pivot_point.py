@@ -38,7 +38,7 @@ from .pdt_msg_strings import (
 
 
 class PDT_OT_ModalDrawOperator(bpy.types.Operator):
-    """Show/Hide Pivot Point."""
+    """Show/Hide Pivot Point"""
 
     bl_idname = "pdt.modaldraw"
     bl_label = "PDT Modal Draw"
@@ -113,7 +113,7 @@ class PDT_OT_ModalDrawOperator(bpy.types.Operator):
 
 
 class PDT_OT_ViewPlaneRotate(Operator):
-    """Rotate Selected Vertices about Pivot Point in View Plane."""
+    """Rotate Selected Vertices about Pivot Point in View Plane"""
 
     bl_idname = "pdt.viewplanerot"
     bl_label = "PDT View Rotate"
@@ -177,7 +177,7 @@ class PDT_OT_ViewPlaneRotate(Operator):
 
 
 class PDT_OT_ViewPlaneScale(Operator):
-    """Scale Selected Vertices about Pivot Point."""
+    """Scale Selected Vertices about Pivot Point"""
 
     bl_idname = "pdt.viewscale"
     bl_label = "PDT View Scale"
@@ -246,7 +246,7 @@ class PDT_OT_ViewPlaneScale(Operator):
 
 
 class PDT_OT_PivotToCursor(Operator):
-    """Set The Pivot Point to Cursor Location."""
+    """Set The Pivot Point to Cursor Location"""
 
     bl_idname = "pdt.pivotcursor"
     bl_label = "PDT Pivot To Cursor"
@@ -274,7 +274,7 @@ class PDT_OT_PivotToCursor(Operator):
 
 
 class PDT_OT_CursorToPivot(Operator):
-    """Set The Cursor Location to Pivot Point."""
+    """Set The Cursor Location to Pivot Point"""
 
     bl_idname = "pdt.cursorpivot"
     bl_label = "PDT Cursor To Pivot"
@@ -300,7 +300,7 @@ class PDT_OT_CursorToPivot(Operator):
 
 
 class PDT_OT_PivotSelected(Operator):
-    """Set Pivot Point to Selected Geometry."""
+    """Set Pivot Point to Selected Geometry"""
 
     bl_idname = "pdt.pivotselected"
     bl_label = "PDT Pivot to Selected"
@@ -361,7 +361,7 @@ class PDT_OT_PivotSelected(Operator):
 
 
 class PDT_OT_PivotOrigin(Operator):
-    """Set Pivot Point at Object Origin."""
+    """Set Pivot Point at Object Origin"""
 
     bl_idname = "pdt.pivotorigin"
     bl_label = "PDT Pivot to Object Origin"
@@ -410,7 +410,7 @@ class PDT_OT_PivotOrigin(Operator):
 
 
 class PDT_OT_PivotWrite(Operator):
-    """Write Pivot Point Location to Object."""
+    """Write Pivot Point Location to Object"""
 
     bl_idname = "pdt.pivotwrite"
     bl_label = "PDT Write PP to Object?"
@@ -467,7 +467,7 @@ class PDT_OT_PivotWrite(Operator):
 
 
 class PDT_OT_PivotRead(Operator):
-    """Read Pivot Point Location from Object."""
+    """Read Pivot Point Location from Object"""
 
     bl_idname = "pdt.pivotread"
     bl_label = "PDT Read PP"

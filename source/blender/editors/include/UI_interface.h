@@ -106,7 +106,7 @@ typedef struct uiPopupBlockHandle uiPopupBlockHandle;
 typedef enum eUIEmbossType {
   UI_EMBOSS = 0,          /* use widget style for drawing */
   UI_EMBOSS_NONE = 1,     /* Nothing, only icon and/or text */
-  UI_EMBOSS_PULLDOWN = 2, /* Pulldown menu style */
+  UI_EMBOSS_PULLDOWN = 2, /* Pull-down menu style */
   UI_EMBOSS_RADIAL = 3,   /* Pie Menu */
   /**
    * The same as #UI_EMBOSS_NONE, unless the button has
@@ -1413,6 +1413,8 @@ enum {
 
 int UI_icon_from_id(struct ID *id);
 int UI_icon_from_report_type(int type);
+int UI_icon_colorid_from_report_type(int type);
+int UI_text_colorid_from_report_type(int type);
 
 int UI_icon_from_event_type(short event_type, short event_value);
 int UI_icon_from_keymap_item(const struct wmKeyMapItem *kmi, int r_icon_mod[4]);

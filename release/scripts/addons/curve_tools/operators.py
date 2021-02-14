@@ -142,7 +142,7 @@ class OperatorSegmentsInfo(bpy.types.Operator):
 class OperatorOriginToSpline0Start(bpy.types.Operator):
     bl_idname = "curvetools.operatororigintospline0start"
     bl_label = "OriginToSpline0Start"
-    bl_description = "Sets the origin of the active/selected curve to the starting point of the (first) spline. Nice for curve modifiers."
+    bl_description = "Sets the origin of the active/selected curve to the starting point of the (first) spline. Nice for curve modifiers"
 
 
     @classmethod
@@ -327,7 +327,7 @@ class OperatorSplinesSetResolution(bpy.types.Operator):
 class OperatorSplinesRemoveZeroSegment(bpy.types.Operator):
     bl_idname = "curvetools.operatorsplinesremovezerosegment"
     bl_label = "SplinesRemoveZeroSegment"
-    bl_description = "Removes splines with no segments -- they seem to creep up, sometimes.."
+    bl_description = "Removes splines with no segments -- they seem to creep up, sometimes"
 
 
     @classmethod

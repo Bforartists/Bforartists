@@ -1821,7 +1821,7 @@ class SceneCoat3D(PropertyGroup):
     )
     bake_resolution: EnumProperty(
         name="Bake Resolution",
-        description="Bake resolution.",
+        description="Bake resolution",
         items=(("res_64", "64 x 64", ""),
                ("res_128", "128 x 128", ""),
                ("res_256", "256 x 256", ""),
@@ -1835,7 +1835,7 @@ class SceneCoat3D(PropertyGroup):
     )
     folder_size: EnumProperty(
         name="Applink folder size",
-        description="Applink folder size.",
+        description="Applink folder size",
         items=(("10", "10", ""),
                ("100", "100", ""),
                ("500", "500", ""),

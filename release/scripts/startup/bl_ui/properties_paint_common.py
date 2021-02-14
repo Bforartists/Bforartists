@@ -1291,11 +1291,11 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
         row = layout.row(align=True)
         row.prop(gp_settings, "fill_direction", text="", expand=True)
         row = layout.row(align=True)
+        row.prop(gp_settings, "fill_factor")
+        row = layout.row(align=True)
         row.prop(gp_settings, "fill_leak", text="Leak Size")
         row = layout.row(align=True)
         row.prop(brush, "size", text="Thickness")
-        row = layout.row(align=True)
-        row.prop(gp_settings, "fill_simplify_level", text="Simplify")
 
     else:  # brush.gpencil_tool == 'DRAW/TINT':
         row = layout.row(align=True)

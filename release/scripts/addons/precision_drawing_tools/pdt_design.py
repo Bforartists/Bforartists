@@ -33,7 +33,7 @@ from .pdt_msg_strings import (
 
 
 class PDT_OT_PlacementAbs(Operator):
-    """Use Absolute, or Global Placement."""
+    """Use Absolute, or Global Placement"""
 
     bl_idname = "pdt.absolute"
     bl_label = "Absolute Mode"
@@ -114,7 +114,7 @@ class PDT_OT_PlacementAbs(Operator):
 
 
 class PDT_OT_PlacementDelta(Operator):
-    """Use Delta, or Incremental Placement."""
+    """Use Delta, or Incremental Placement"""
 
     bl_idname = "pdt.delta"
     bl_label = "Delta Mode"
@@ -211,7 +211,7 @@ class PDT_OT_PlacementDelta(Operator):
 
 
 class PDT_OT_PlacementDis(Operator):
-    """Use Directional, or Distance @ Angle Placement."""
+    """Use Directional, or Distance @ Angle Placement"""
 
     bl_idname = "pdt.distance"
     bl_label = "Distance@Angle Mode"
@@ -300,7 +300,7 @@ class PDT_OT_PlacementDis(Operator):
 
 
 class PDT_OT_PlacementPer(Operator):
-    """Use Percentage Placement."""
+    """Use Percentage Placement"""
 
     bl_idname = "pdt.percent"
     bl_label = "Percentage Mode"
@@ -357,7 +357,7 @@ class PDT_OT_PlacementPer(Operator):
 
 
 class PDT_OT_PlacementNormal(Operator):
-    """Use Normal, or Perpendicular Placement."""
+    """Use Normal, or Perpendicular Placement"""
 
     bl_idname = "pdt.normal"
     bl_label = "Normal Mode"
@@ -406,7 +406,7 @@ class PDT_OT_PlacementNormal(Operator):
 
 
 class PDT_OT_PlacementCen(Operator):
-    """Use Placement at Arc Centre."""
+    """Use Placement at Arc Centre"""
 
     bl_idname = "pdt.centre"
     bl_label = "Centre Mode"
@@ -451,7 +451,7 @@ class PDT_OT_PlacementCen(Operator):
 
 
 class PDT_OT_PlacementInt(Operator):
-    """Use Intersection, or Convergence Placement."""
+    """Use Intersection, or Convergence Placement"""
 
     bl_idname = "pdt.intersect"
     bl_label = "Intersect Mode"
@@ -497,7 +497,7 @@ class PDT_OT_PlacementInt(Operator):
 
 
 class PDT_OT_JoinVerts(Operator):
-    """Join 2 Free Vertices into an Edge."""
+    """Join 2 Free Vertices into an Edge"""
 
     bl_idname = "pdt.join"
     bl_label = "Join 2 Vertices"
@@ -531,7 +531,7 @@ class PDT_OT_JoinVerts(Operator):
 
 
 class PDT_OT_Fillet(Operator):
-    """Fillet Edges by Vertex, Set Use Verts to False for Extruded Structure."""
+    """Fillet Edges by Vertex, Set Use Verts to False for Extruded Structure"""
 
     bl_idname = "pdt.fillet"
     bl_label = "Fillet"
@@ -587,7 +587,7 @@ class PDT_OT_Fillet(Operator):
 
 
 class PDT_OT_Angle2(Operator):
-    """Measure Distance and Angle in Working Plane, Also sets Deltas."""
+    """Measure Distance and Angle in Working Plane, Also sets Deltas"""
 
     bl_idname = "pdt.angle2"
     bl_label = "Measure 2D"
@@ -614,7 +614,7 @@ class PDT_OT_Angle2(Operator):
 
 
 class PDT_OT_Angle3(Operator):
-    """Measure Distance and Angle in 3D Space."""
+    """Measure Distance and Angle in 3D Space"""
 
     bl_idname = "pdt.angle3"
     bl_label = "Measure 3D"
@@ -641,7 +641,7 @@ class PDT_OT_Angle3(Operator):
 
 
 class PDT_OT_Origin(Operator):
-    """Move Object Origin to Cursor Location."""
+    """Move Object Origin to Cursor Location"""
 
     bl_idname = "pdt.origin"
     bl_label = "Move Origin"
@@ -668,7 +668,7 @@ class PDT_OT_Origin(Operator):
 
 
 class PDT_OT_Taper(Operator):
-    """Taper Vertices at Angle in Chosen Axis Mode."""
+    """Taper Vertices at Angle in Chosen Axis Mode"""
 
     bl_idname = "pdt.taper"
     bl_label = "Taper"

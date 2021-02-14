@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'5e117b122632')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -40201,8 +40201,20 @@ msgid "Object Info"
 msgstr "Thông Tin Vật Thể"
 
 
+msgid "The transformation of the vector and geometry outputs"
+msgstr "Biến hóa của ngõ ra vectơ và hình dạng"
+
+
 msgid "Original"
 msgstr "Ban Đầu"
+
+
+msgid "Output the geometry relative to the input object transform, and the location, rotation and scale relative to the world origin"
+msgstr "Xuất hình dạng tương đối với ngõ vào biến hóa vật thể, và vị trí, xoay và phóng to tương đối với gốc tọa độ thế giới"
+
+
+msgid "Bring the input object geometry, location, rotation and scale into the modified object, maintaining the relative position between the two objects in the scene"
+msgstr "Đem nhình dạng vật thể ngõ vào, vị trí, xoay và phóng to vào vật thể được sửa đổi, giữ nguyên vị trí tương đối giữa hai vật thể trong cảnh"
 
 
 msgid "Point Distribute"
@@ -65161,6 +65173,10 @@ msgid "Set Selected Strip Proxies"
 msgstr "Đặt Đại Lỵ Đoạn Phim Được Chọn"
 
 
+msgid "Enable selected proxies on all selected Movie and Image strips"
+msgstr "Bật các đại lý được chọn cho hết đoạn Phim và Ảnh"
+
+
 msgctxt "Operator"
 msgid "Export Subtitles"
 msgstr "Xuất Phụ Đề"
@@ -68635,6 +68651,14 @@ msgid "The axis used for placing the base region"
 msgstr "Trục được dùng cho đặt vị trí cho vùng cơ sở"
 
 
+msgid "Auto Axis"
+msgstr "Trục Tự Động"
+
+
+msgid "Select the closest axis when placing objects (surface overrides)"
+msgstr "Chọn trục gần nhất khi đặt vị trí vật thể (đồ thay thế bề mặt)"
+
+
 msgid "The initial depth used when placing the cursor"
 msgstr "Độ sâu khởi động khi đặt vị trí con trỏ"
 
@@ -68647,8 +68671,20 @@ msgid "Cursor Plane"
 msgstr "Mặt Phẳng Con Trỏ"
 
 
+msgid "Start placement using a point projected onto the orientation axis at the 3D cursor position"
+msgstr "Bắt đầu đặt vị trí dùng một điểm được chiếu trên trục định hướng tại vị trí của con trỏ 3D"
+
+
 msgid "Cursor View"
 msgstr "Màn Nhìn Con Trỏ"
+
+
+msgid "Start placement using a point projected onto the view plane at the 3D cursor position"
+msgstr "Bắt đầu đặt vị trí dùng một điểm được chiếu trên mặt phẳng màn nhìn tại vị trí con trỏ 3D"
+
+
+msgid "Use the surface normal (using the transform orientation as a fallback)"
+msgstr "Dùng pháp tuyến bề mặt (dùng định hướng của biến hóa nếu có sự cố)"
 
 
 msgid "Use the current transform orientation"
@@ -87849,6 +87885,10 @@ msgid "Theme settings for the Properties"
 msgstr "Cài đặt phong cách cho Đặc Tính"
 
 
+msgid "Active Modifier Outline"
+msgstr "Mục Lục Cụ Sửa Đổi Hoạt Động"
+
+
 msgid "Search Match"
 msgstr "Tìm Kiếm Giống Hệt"
 
@@ -89812,6 +89852,10 @@ msgstr "Chi tiết vật thể, gồm sợi dây trống rỗng, máy quay phim 
 
 msgid "Draw Face Center"
 msgstr "Vẽ Trung Tâm Mặt"
+
+
+msgid "Display face center when face selection is enabled in solid shading modes"
+msgstr "Hiển thị trung tâm mặt khi bật sự lựa chọn mặt trong các chế độ tô sắc rắn"
 
 
 msgid "Display Normals"
@@ -97082,6 +97126,11 @@ msgstr "Đổi Tên Mặt Hàng Hoạt Động..."
 
 
 msgctxt "Operator"
+msgid "Batch Rename..."
+msgstr "Đổi Tên Đợt..."
+
+
+msgctxt "Operator"
 msgid "Preferences..."
 msgstr "Tùy Chọn..."
 
@@ -100523,6 +100572,10 @@ msgid "Marker offset %s"
 msgstr "Dịch ký hiệu %s"
 
 
+msgid "Selecting the camera is only supported in object mode"
+msgstr "Chỉ hỗ trợ chọn máy quay phim trong chế độ vật thể"
+
+
 msgid "Scene not found"
 msgstr "Không kiếm được cảnh "
 
@@ -100901,6 +100954,10 @@ msgstr "Không đặt được dạng đứng của dữ liệu thư viện"
 
 msgid "Undo of hiding can only be done with Reveal Selected"
 msgstr "Hủy bước ẩn chỉ có thể làm với Hiện Được Chọn"
+
+
+msgid "Cannot edit bone groups for proxies or library overrides"
+msgstr "Không thể biên tập nhóm xương cho đại lý hoặc đồ thay thế cho thư viện"
 
 
 msgid "Add New"
@@ -101473,6 +101530,10 @@ msgstr "Không tìm được hai bức bút sáp để suy nội trong lớp ho�
 
 msgid "Cannot interpolate as current frame already has existing grease pencil frames"
 msgstr "Không thể suy nội bức hiện tại vì nó có bức bút sáp sẵn"
+
+
+msgid "Cannot interpolate in curve edit mode"
+msgstr "Không thể suy nội trong chế độ biên tập"
 
 
 msgid "Interpolation requires some editable strokes"
@@ -103134,12 +103195,16 @@ msgid "Object \"%s\" is not a mesh"
 msgstr "Vật thể \"%s\" không phải là mạng lưới"
 
 
+msgid "No faces found in the object \"%s\""
+msgstr "Không tìm được mật nào trong vật thể \"%s\""
+
+
 msgid "No vertex colors layer found in the object \"%s\""
-msgstr "Không tìm được lớp màu đỉnh trong vật thể \"%s\""
+msgstr "Không tìm được lớp màu đỉnh nào trong vật thể \"%s\""
 
 
 msgid "No active UV layer found in the object \"%s\""
-msgstr "Không tìm được lớp UV hoạt động trong vật thể \"%s\""
+msgstr "Không tìm được lớp UV hoạt động nào trong vật thể \"%s\""
 
 
 msgid "Circular dependency for image \"%s\" from object \"%s\""
@@ -103151,11 +103216,11 @@ msgstr "Ảnh \"%s\" chưa khời động từ vật thể \"%s\""
 
 
 msgid "No active image found in material \"%s\" (%d) for object \"%s\""
-msgstr "Không tìm được ảnh hoạt động trong vật liệu \"%s\" (%d) cho vật thể \"%s\""
+msgstr "Không tìm được ảnh hoạt động nào trong vật liệu \"%s\" (%d) cho vật thể \"%s\""
 
 
 msgid "No active image found in material slot (%d) for object \"%s\""
-msgstr "Không tìm được ảnh hoạt động trong khe vật liệu (%d) cho vật thể \"%s\""
+msgstr "Không tìm được ảnh hoạt động nào trong khe vật liệu (%d) cho vật thể \"%s\""
 
 
 msgid "Object \"%s\" is not a mesh or can't be converted to a mesh (Curve, Text, Surface or Metaball)"
@@ -106779,10 +106844,6 @@ msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "Méo Mó: %.3f %s (Bấm X hay Y để đặt trục méo mó)"
 
 
-msgid "Shrink/Fatten:"
-msgstr "Thu Nhỏ/Phình Ra:"
-
-
 msgid " or Alt) Even Thickness %s"
 msgstr " hay Alt) Bề Dày Đều %s"
 
@@ -108024,6 +108085,10 @@ msgstr "Đăng ký lớp đồ đạc: '%s' quá dài, bề dài tối đa là %
 
 msgid "GizmoType '%s' not known"
 msgstr "Chưa biết đến LoạiĐồĐạc '%s'"
+
+
+msgid "GizmoType '%s' is for a 3D gizmo-group. The 'draw_select' callback is set where only 'test_select' will be used"
+msgstr "LoạiĐồĐạc '%s' được dùng cho một nhóm đồ đạc 3D. Kêu lại 'draw_select' được đặt khi chỉ được dùng 'test_select'"
 
 
 msgid "Registering gizmogroup class: '%s' is too long, maximum length is %d"

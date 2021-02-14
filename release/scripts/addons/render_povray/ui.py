@@ -838,7 +838,7 @@ class LIGHT_MT_POV_presets(Menu):
 
 
 class LIGHT_OT_POV_add_preset(AddPresetBase, Operator):
-    """Use this class to define pov world buttons."""
+    """Use this class to define pov world buttons"""
 
     '''Add a Light Preset'''
     bl_idname = "object.light_preset_add"
@@ -1184,7 +1184,7 @@ del properties_data_light
 
 
 class WORLD_PT_POV_world(WorldButtonsPanel, Panel):
-    """Use this class to define pov world buttons."""
+    """Use this class to define pov world buttons"""
 
     bl_label = "World"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -1564,7 +1564,7 @@ class POV_RADIOSITY_MT_presets(Menu):
 
 
 class RENDER_OT_POV_radiosity_add_preset(AddPresetBase, Operator):
-    """Use this class to define pov radiosity add presets button."""
+    """Use this class to define pov radiosity add presets button"""
 
     '''Add a Radiosity Preset'''
     bl_idname = "scene.radiosity_preset_add"
@@ -4364,7 +4364,7 @@ class CAMERA_PT_POV_replacement_text(CameraDataButtonsPanel, Panel):
 
 
 class TEXT_OT_POV_insert(Operator):
-    """Use this class to create blender text editor operator to insert pov snippets like other pov IDEs."""
+    """Use this class to create blender text editor operator to insert pov snippets like other pov IDEs"""
 
     bl_idname = "text.povray_insert"
     bl_label = "Insert"

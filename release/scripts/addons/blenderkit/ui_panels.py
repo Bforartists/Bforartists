@@ -112,7 +112,7 @@ def draw_upload_common(layout, props, asset_type, context):
         op = layout.operator("object.blenderkit_upload", text=optext, icon='EXPORT')
         op.asset_type = asset_type
         op.reupload = False
-        #make sure everything gets uploaded.
+        # make sure everything gets uploaded.
         op.main_file = True
         op.metadata = True
         op.thumbnail = True
@@ -163,6 +163,7 @@ def prop_needed(layout, props, name, value, is_not_filled=''):
         icon = None
         row.prop(props, name)
 
+
 def draw_panel_hdr_upload(self, context):
     layout = self.layout
     ui_props = bpy.context.scene.blenderkitUI
@@ -171,7 +172,6 @@ def draw_panel_hdr_upload(self, context):
     layout.prop(ui_props, "hdr_upload_image")
 
     hdr = utils.get_active_HDR()
-
 
     if hdr is not None:
         props = hdr.blenderkit
@@ -184,6 +184,7 @@ def draw_panel_hdr_upload(self, context):
         layout.prop(props, 'description')
         layout.prop(props, 'tags')
 
+
 def draw_panel_hdr_search(self, context):
     s = context.scene
     props = s.blenderkit_HDR
@@ -195,6 +196,7 @@ def draw_panel_hdr_search(self, context):
     layout.prop(props, "own_only")
 
     utils.label_multiline(layout, text=props.report)
+
 
 def draw_panel_model_upload(self, context):
     ob = bpy.context.active_object
@@ -316,7 +318,7 @@ def draw_assetbar_show_hide(layout, props):
 
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if preferences.experimental_features:
-        op = layout.operator('view3d.blenderkit_asset_bar_widget', text = '', icon = icon)
+        op = layout.operator('view3d.blenderkit_asset_bar_widget', text='', icon=icon)
         op.keep_running = False
         op.do_search = False
         op.tooltip = ttip
@@ -510,7 +512,7 @@ class VIEW3D_PT_blenderkit_ratings(Panel):
             utils.label_multiline(layout, text='Please help BlenderKit community by rating these assets:')
 
             for a in assets:
-                if a.bkit_ratings.rating_work_hours==0:
+                if a.bkit_ratings.rating_work_hours == 0:
                     draw_rating_asset(self, context, asset=a)
 
 
@@ -546,7 +548,7 @@ class VIEW3D_PT_blenderkit_profile(Panel):
             if me is not None:
                 me = me['user']
                 # user name
-                if len(me['firstName'])>0 or len(me['lastName'])>0:
+                if len(me['firstName']) > 0 or len(me['lastName']) > 0:
                     layout.label(text=f"Me: {me['firstName']} {me['lastName']}")
                 else:
                     layout.label(text=f"Me: {me['email']}")
@@ -781,7 +783,6 @@ class VIEW3D_PT_blenderkit_advanced_model_search(Panel):
         layout.prop(props, "free_only")
         layout.prop(props, "search_style")
 
-
         # DESIGN YEAR
         layout.prop(props, "search_design_year", text='Designed in Year')
         if props.search_design_year:
@@ -897,7 +898,7 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
     def poll(cls, context):
         s = context.scene
         ui_props = s.blenderkitUI
-        return ui_props.down_up == 'SEARCH' and ui_props.asset_type in ['MATERIAL', 'MODEL', 'HDR']
+        return ui_props.down_up == 'SEARCH' and ui_props.asset_type in ['MATERIAL', 'MODEL', 'SCENE', 'HDR']
 
     def draw(self, context):
         layout = self.layout
@@ -926,10 +927,17 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
             row = layout.row()
 
             row.prop(props, 'append_method', expand=True, icon_only=False)
+        if ui_props.asset_type == 'SCENE':
+            props = s.blenderkit_scene
+            layout.prop(props, 'switch_after_append')
+            layout.label(text='Import method:')
+            row = layout.row()
+            row.prop(props, 'append_link', expand=True, icon_only=False)
         if ui_props.asset_type == 'HDR':
             props = s.blenderkit_HDR
 
-        layout.prop(props, 'resolution')
+        if ui_props.asset_type in ['MATERIAL', 'MODEL', 'HDR']:
+            layout.prop(props, 'resolution')
         # layout.prop(props, 'unpack_files')
 
 
@@ -1199,7 +1207,6 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
         # if ui_props.asset_type in ('MODEL', 'MATERIAL'):
         #     layout.menu(OBJECT_MT_blenderkit_resolution_menu.bl_idname)
 
-
         if ui_props.asset_type in ('MODEL', 'MATERIAL', 'HDR') and \
                 utils.get_param(asset_data, 'textureResolutionMax') is not None and \
                 utils.get_param(asset_data, 'textureResolutionMax') > 512:
@@ -1247,7 +1254,8 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
                 op.invoke_resolution = True
                 o = utils.get_active_model()
                 if o and o.get('asset_data'):
-                    if o['asset_data']['assetBaseId'] == bpy.context.window_manager['search results'][ui_props.active_index]:
+                    if o['asset_data']['assetBaseId'] == bpy.context.window_manager['search results'][
+                        ui_props.active_index]:
                         op.model_location = o.location
                         op.model_rotation = o.rotation_euler
                     else:
@@ -1302,12 +1310,8 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
         if utils.profile_is_validator():
             layout.label(text='Admin Tools:')
 
-
             op = layout.operator('object.blenderkit_print_asset_debug', text='Print asset debug')
             op.asset_id = asset_data['id']
-
-
-
 
 
 # def draw_asset_resolution_replace(self, context, resolution):
@@ -1392,12 +1396,13 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
         # box2.label(text='************')
         # box2.label(text='dadydadadada')
 
+
 class AssetPopupCard(bpy.types.Operator):
     """Generate Cycles thumbnail for model assets"""
     bl_idname = "wm.blenderkit_asset_popup"
     bl_label = "BlenderKit asset popup"
     # bl_options = {'REGISTER', 'INTERNAL'}
-    bl_options = {'REGISTER',}
+    bl_options = {'REGISTER', }
 
     @classmethod
     def poll(cls, context):
@@ -1418,10 +1423,9 @@ class AssetPopupCard(bpy.types.Operator):
         split = split.split(factor=0.5)
         col1 = split.column()
         box = col1.box()
-        utils.label_multiline(box,asset_data['tooltip'], width = 300)
+        utils.label_multiline(box, asset_data['tooltip'], width=300)
 
         col2 = split.column()
-
 
         pcoll = icons.icon_collections["main"]
         my_icon = pcoll['test']
@@ -1430,7 +1434,7 @@ class AssetPopupCard(bpy.types.Operator):
         box2 = col2.box()
 
         # draw_ratings(box2, context, asset_data)
-        box2.label(text = 'Ratings')
+        box2.label(text='Ratings')
         # print(tp, dir(tp))
         # if not hasattr(self, 'first_draw'):# try to redraw because of template preview which needs update
         #     for region in context.area.regions:
@@ -1451,8 +1455,9 @@ class AssetPopupCard(bpy.types.Operator):
         # self.tex = utils.get_hidden_texture(self.img)
         # self.tex.update_tag()
 
-        bl_label  = asset_data['name']
-        return wm.invoke_props_dialog(self, width = 700)
+        bl_label = asset_data['name']
+        return wm.invoke_props_dialog(self, width=700)
+
 
 class OBJECT_MT_blenderkit_login_menu(bpy.types.Menu):
     bl_label = "BlenderKit login/signup:"
@@ -1523,14 +1528,14 @@ class UrlPopupDialog(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        utils.label_multiline(layout, text=self.message, width = 300)
+        utils.label_multiline(layout, text=self.message, width=300)
 
         layout.active_default = True
         op = layout.operator("wm.url_open", text=self.link_text, icon='QUESTION')
         if not utils.user_logged_in():
             utils.label_multiline(layout,
                                   text='Already subscribed? You need to login to access your Full Plan.',
-                                  width = 300)
+                                  width=300)
 
             layout.operator_context = 'EXEC_DEFAULT'
             layout.operator("wm.blenderkit_login", text="Login",
@@ -1544,7 +1549,7 @@ class UrlPopupDialog(bpy.types.Operator):
     def invoke(self, context, event):
         wm = context.window_manager
 
-        return wm.invoke_props_dialog(self,width = 300)
+        return wm.invoke_props_dialog(self, width=300)
 
 
 class LoginPopupDialog(bpy.types.Operator):
@@ -1695,16 +1700,19 @@ def header_search_draw(self, context):
         # the center snap menu is in edit and object mode if tool settings are off.
         if context.space_data.show_region_tool_header == True or context.mode[:4] not in ('EDIT', 'OBJE'):
             layout.separator_spacer()
-        layout.prop(ui_props, "asset_type", expand = True, icon_only = True, text='', icon='URL')
+        layout.prop(ui_props, "asset_type", expand=True, icon_only=True, text='', icon='URL')
         layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
         draw_assetbar_show_hide(layout, props)
+
 
 def ui_message(title, message):
     def draw_message(self, context):
         layout = self.layout
-        utils.label_multiline(layout, text=message)
+        utils.label_multiline(layout, text=message, width=400)
 
     bpy.context.window_manager.popup_menu(draw_message, title=title, icon='INFO')
+
+
 # We can store multiple preview collections here,
 # however in this example we only store "main"
 preview_collections = {}
