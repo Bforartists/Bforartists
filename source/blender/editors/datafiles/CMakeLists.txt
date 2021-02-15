@@ -99,8 +99,8 @@ collection_info
 point_to_volume
 volume_to_mesh
 proxy_override
-#~ DEF_ICON_BLANK(118)
-#~ DEF_ICON_BLANK(119)
+attribute_combine_xyz
+attribute_separate_xyz
 
 # ------------------------- row 2 --------------------------*/
 

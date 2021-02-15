@@ -1919,6 +1919,12 @@ static void node_draw_basis(const bContext *C,
     case GEO_NODE_VOLUME_TO_MESH:
       icon = ICON_VOLUME_TO_MESH;
       break;
+    case GEO_NODE_ATTRIBUTE_COMBINE_XYZ:
+      icon = ICON_ATTRIBUTE_COMBINE_XYZ;
+      break;
+    case GEO_NODE_ATTRIBUTE_SEPARATE_XYZ:
+      icon = ICON_ATTRIBUTE_SEPARATE_XYZ;
+      break;
     }
 
   /* group edit */
