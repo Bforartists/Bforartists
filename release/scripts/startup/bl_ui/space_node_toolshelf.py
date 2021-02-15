@@ -3292,6 +3292,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Color Ramp ", icon = "ATTRIBUTE_COLORRAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeColorRamp"
+            
+            props = col.operator("node.add_node", text=" Attribute Combine XYZ", icon = "ATTRIBUTE_COMBINE_XYZ")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeCombineXYZ"
 
             props = col.operator("node.add_node", text=" Attribute Compare      ", icon = "ATTRIBUTE_COMPARE")
             props.use_transform = True
@@ -3321,9 +3325,13 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
             
+            props = col.operator("node.add_node", text=" Attribute Separate XYZ ", icon = "ATTRIBUTE_SEPARATE_XYZ")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeSeparateXYZ"
+            
             props = col.operator("node.add_node", text=" Attribute Vector Math ", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
-            props.type = "GeometryNodeAttributeVectorMath"    
+            props.type = "GeometryNodeAttributeVectorMath"
 
 
         #### Icon Buttons
@@ -3336,6 +3344,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COLORRAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeColorRamp"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COMBINE_XYZ")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeCombineXYZ"
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COMPARE")
             props.use_transform = True
@@ -3364,6 +3376,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_SEPARATE_XYZ")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeSeparateXYZ"
             
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
