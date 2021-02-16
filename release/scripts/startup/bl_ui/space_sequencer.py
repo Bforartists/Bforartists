@@ -394,9 +394,6 @@ class SEQUENCER_MT_view(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
 
-            if context.preferences.view.show_developer_ui:
-                layout.menu("SEQUENCER_MT_view_cache", text="Show Cache")
-
         layout.separator()
 
         layout.operator("render.opengl", text="Sequence Render Image", icon='RENDER_STILL').sequencer = True
