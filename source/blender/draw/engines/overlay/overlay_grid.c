@@ -95,25 +95,44 @@ void OVERLAY_grid_init(OVERLAY_Data *vedata)
 
   /* if perps */
   if (winmat[3][3] == 0.0f || rv3d->view == RV3D_VIEW_USER) {
-    if (show_axis_x) {
-      shd->grid_flag |= PLANE_XY | SHOW_AXIS_X;
-    }
-    if (show_axis_y) {
-      shd->grid_flag |= PLANE_XY | SHOW_AXIS_Y;
-    }
-    if (show_floor) {
-      shd->grid_flag |= PLANE_XY | SHOW_GRID;
+    /*bfa - we show or hide the grid in all views with the ortho grid flag*/
+    if (show_ortho_grid) {
+      if (show_axis_x) {
+        shd->grid_flag |= PLANE_XY | SHOW_AXIS_X;
+      }
+      if (show_axis_y) {
+        shd->grid_flag |= PLANE_XY | SHOW_AXIS_Y;
+      }
+      if (show_floor) {
+        shd->grid_flag |= PLANE_XY | SHOW_GRID;
+      }
     }
   }
+  /*bfa - show floor in ortho view too*/
   else {
     if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_RIGHT, RV3D_VIEW_LEFT)) {
-      shd->grid_flag = PLANE_YZ | SHOW_AXIS_Y | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
+      if (show_floor) {
+        shd->grid_flag = PLANE_YZ | SHOW_AXIS_Y | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
+      }
+      else if (!show_floor) {
+        shd->grid_flag = PLANE_YZ | SHOW_AXIS_Y | SHOW_AXIS_Z;
+      }
     }
     else if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM)) {
-      shd->grid_flag = PLANE_XY | SHOW_AXIS_X | SHOW_AXIS_Y | SHOW_GRID | GRID_BACK;
+      if (show_floor) {
+        shd->grid_flag = PLANE_XY | SHOW_AXIS_X | SHOW_AXIS_Y | SHOW_GRID | GRID_BACK;
+      }
+      else if (!show_floor) {
+        shd->grid_flag = PLANE_XY | SHOW_AXIS_X | SHOW_AXIS_Y;
+      }
     }
     else if (show_ortho_grid && ELEM(rv3d->view, RV3D_VIEW_FRONT, RV3D_VIEW_BACK)) {
-      shd->grid_flag = PLANE_XZ | SHOW_AXIS_X | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
+      if (show_floor) {
+        shd->grid_flag = PLANE_XZ | SHOW_AXIS_X | SHOW_AXIS_Z | SHOW_GRID | GRID_BACK;
+      }
+      else if (!show_floor) {
+        shd->grid_flag = PLANE_XZ | SHOW_AXIS_X | SHOW_AXIS_Z;
+      }
     }
   }
 
