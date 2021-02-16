@@ -6809,6 +6809,7 @@ class VIEW3D_PT_view3d_camera_lock(Panel):
 
         col.use_property_split = False
         col.prop(view, "lock_camera", text="Camera to View")
+        col.prop(context.space_data.region_3d, 'lock_rotation', text='Lock View Rotation')
 
 
 class VIEW3D_PT_view3d_cursor(Panel):
