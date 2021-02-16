@@ -94,7 +94,7 @@ class GPENCIL_MT_layer_context_menu(Menu):
         gpl = gpd.layers.active
 
         layout.operator("gpencil.layer_duplicate", text="Duplicate", icon='DUPLICATE').mode='ALL'
-        layout.operator("gpencil.layer_duplicate", text="Duplicate Empty Keyframes").mode='EMPTY'
+        layout.operator("gpencil.layer_duplicate", text="Duplicate Empty Keyframes", icon='DUPLICATE').mode='EMPTY'
 
         layout.separator()
 
