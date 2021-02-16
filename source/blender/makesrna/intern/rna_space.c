@@ -3825,7 +3825,7 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_ortho_grid", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_ORTHO_GRID);
-  RNA_def_property_ui_text(prop, "Display Grid", "Show grid in orthographic side view");
+  RNA_def_property_ui_text(prop, "Display Grid", "Show the ground grid in the viewport"); /*bfa - we show or hide the grid in all views with the ortho grid flag*/
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_floor", PROP_BOOLEAN, PROP_NONE);

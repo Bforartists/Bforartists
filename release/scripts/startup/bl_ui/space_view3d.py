@@ -7521,48 +7521,53 @@ class VIEW3D_PT_overlay_guides(Panel):
         split = col.split()
         sub = split.column()
 
-        row = sub.row()
-        row.separator()
-        row_el = row.column()
-        row_el.prop(overlay, "show_ortho_grid", text="Grid")
-        grid_active = bool(
-            view.region_quadviews or
-            (view.region_3d.is_orthographic_side_view and not view.region_3d.is_perspective)
-        )
-        row_el.active = grid_active
-        row.prop(overlay, "show_floor", text="Floor")
+        split = col.split()
+        col = split.column()
+        col.use_property_split = False
+        col.prop(overlay, "show_ortho_grid")
+        col = split.column()
+        if overlay.show_ortho_grid:
+            col.prop(overlay, "show_floor", text="Floor")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        split = layout.split()
-        row = split.row()
-        row.separator()
-        row.label(text="Axes")
+        if overlay.show_ortho_grid:
 
-        #subrow = row.row(align=True)
-        row = split.row(align=True)
-        row.prop(overlay, "show_axis_x", text="X", toggle=True)
-        row.prop(overlay, "show_axis_y", text="Y", toggle=True)
-        row.prop(overlay, "show_axis_z", text="Z", toggle=True)
+            split = layout.split()
+            row = split.row()
+            row.active = display_all
+            row.separator()
+            row.label(text="Axes")
 
-        if overlay.show_floor or overlay.show_ortho_grid:
-            col = layout.column()
-            col.use_property_split = True
-            if (overlay.show_floor and not view.region_3d.is_orthographic_side_view) or (overlay.show_ortho_grid and grid_active):
-                row = col.row()
-                row.separator()
-                row.prop(overlay, "grid_scale", text="Scale")
+            #subrow = row.row(align=True)
+            row = split.row(align=True)
+            row.active = display_all
+            row.prop(overlay, "show_axis_x", text="X", toggle=True)
+            row.prop(overlay, "show_axis_y", text="Y", toggle=True)
+            row.prop(overlay, "show_axis_z", text="Z", toggle=True)
 
-                if scene.unit_settings.system == 'NONE':
-                    col = layout.column()
-                    col.use_property_split = True
+            if overlay.show_floor or overlay.show_ortho_grid:
+                col = layout.column()
+                col.active = display_all
+                col.use_property_split = True
+                if (overlay.show_floor) or (overlay.show_ortho_grid):
                     row = col.row()
                     row.separator()
-                    row.prop(overlay, "grid_subdivisions", text="Subdivisions")
+                    row.prop(overlay, "grid_scale", text="Grid Scale")
+
+                    if scene.unit_settings.system == 'NONE':
+                        col = layout.column()
+                        col.use_property_split = True
+                        row = col.row()
+                        row.separator()
+                        row.prop(overlay, "grid_subdivisions", text="Subdivisions")
 
         layout.separator()
 
         layout.label(text = "Options")
 
         split = layout.split()
+        split.active = display_all
         sub = split.column()
         row = sub.row()
         row.separator()
