@@ -7514,6 +7514,7 @@ class VIEW3D_PT_overlay_guides(Panel):
         overlay = view.overlay
         shading = view.shading
         display_all = overlay.show_overlays
+        region = context.area.spaces.active.region_3d
 
         col = layout.column()
         col.active = display_all
@@ -7542,9 +7543,11 @@ class VIEW3D_PT_overlay_guides(Panel):
             #subrow = row.row(align=True)
             row = split.row(align=True)
             row.active = display_all
-            row.prop(overlay, "show_axis_x", text="X", toggle=True)
-            row.prop(overlay, "show_axis_y", text="Y", toggle=True)
-            row.prop(overlay, "show_axis_z", text="Z", toggle=True)
+            subrow = row.row(align=True)
+            subrow.active = region.view_perspective != 'ORTHO'
+            subrow.prop(overlay, "show_axis_x", text="X", toggle=True)
+            subrow.prop(overlay, "show_axis_y", text="Y", toggle=True)
+            subrow.prop(overlay, "show_axis_z", text="Z", toggle=True)
 
             if overlay.show_floor or overlay.show_ortho_grid:
                 col = layout.column()
