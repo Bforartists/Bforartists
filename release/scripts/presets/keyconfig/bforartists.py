@@ -6845,6 +6845,7 @@ keyconfig_data = \
       },
      ),
     ("wm.batch_rename", {"type": 'F2', "value": 'PRESS', "ctrl": True}, None),
+    ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
     ],
    },
   ),
