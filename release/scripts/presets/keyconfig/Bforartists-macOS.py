@@ -6772,13 +6772,6 @@ keyconfig_data = \
   {"items":
    [("wm.read_homefile", {"type": 'N', "value": 'PRESS', "ctrl": True}, None),
     ("wm.open_mainfile", {"type": 'O', "value": 'PRESS', "ctrl": True}, None),
-    ("wm.save_mainfile",
-     {"type": 'S', "value": 'PRESS', "ctrl": True},
-     {"properties":
-      [("check_existing", False),
-       ],
-      },
-     ),
     ("wm.save_as_mainfile", {"type": 'S', "value": 'PRESS', "shift": True, "ctrl": True}, None),
     ("wm.call_menu",
      {"type": 'Q', "value": 'PRESS'},
@@ -6845,7 +6838,7 @@ keyconfig_data = \
       },
      ),
     ("wm.batch_rename", {"type": 'F2', "value": 'PRESS', "ctrl": True}, None),
-    ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "oskey": True, "repeat": True}, None),
+    ("wm.save_mainfile", {"type": 'S', "value": 'PRESS', "oskey": True}, None),
     ],
    },
   ),
