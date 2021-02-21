@@ -14,9 +14,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ##### END GPL LICENSE BLOCK #####
-
-
-import bgl
+import gpu
 import bmesh
 from mathutils import Matrix
 
@@ -176,7 +174,7 @@ class _Mesh_Arrays():
 
 
 class GPU_Indices_Mesh():
-    __slots__ = (
+    __slots__ = (\
         "ob_data",
         "draw_tris",
         "draw_edges",
@@ -189,8 +187,7 @@ class GPU_Indices_Mesh():
         "edge_verts",
         "looseverts",
         "first_index",
-        "users"
-    )
+        "users")
 
     _Hash = {}
     shader = None
@@ -198,7 +195,6 @@ class GPU_Indices_Mesh():
     @classmethod
     def end_opengl(cls):
         del cls.shader
-        del cls.P
 
         del cls
 
@@ -210,27 +206,17 @@ class GPU_Indices_Mesh():
             return
 
         import atexit
-        import gpu
 
         # Make sure we only registered the callback once.
         atexit.unregister(cls.end_opengl)
         atexit.register(cls.end_opengl)
 
-        cls.shader = gpu.types.GPUShader(
-                load_shader("ID_color_vert.glsl"),
-                load_shader("ID_color_frag.glsl"),
-                )
-        #cls.unif_use_clip_planes = cls.shader.uniform_from_name('use_clip_planes')
+        cls.shader = gpu.types.GPUShader(load_shader("ID_color_vert.glsl"),
+                load_shader("ID_color_frag.glsl"),)
+        #cls.unif_use_clip_planes =
+        #cls.shader.uniform_from_name('use_clip_planes')
         #cls.unif_clip_plane = cls.shader.uniform_from_name('clip_plane')
         cls.unif_offset = cls.shader.uniform_from_name('offset')
-
-        cls.P = Matrix()
-
-
-    @staticmethod
-    def set_ModelViewMatrix(MV):
-        import gpu
-        gpu.matrix.load_matrix(MV)
 
 
     def __init__(self, depsgraph, obj, draw_tris, draw_edges, draw_verts):
@@ -240,17 +226,17 @@ class GPU_Indices_Mesh():
             src = GPU_Indices_Mesh._Hash[self.ob_data]
             dst = self
 
-            dst.draw_tris    = src.draw_tris
-            dst.draw_edges   = src.draw_edges
-            dst.draw_verts   = src.draw_verts
-            dst.batch_tris   = src.batch_tris
-            dst.batch_edges  = src.batch_edges
+            dst.draw_tris = src.draw_tris
+            dst.draw_edges = src.draw_edges
+            dst.draw_verts = src.draw_verts
+            dst.batch_tris = src.batch_tris
+            dst.batch_edges = src.batch_edges
             dst.batch_lverts = src.batch_lverts
-            dst.verts_co     = src.verts_co
-            dst.tri_verts    = src.tri_verts
-            dst.edge_verts   = src.edge_verts
-            dst.looseverts   = src.looseverts
-            dst.users        = src.users
+            dst.verts_co = src.verts_co
+            dst.tri_verts = src.tri_verts
+            dst.edge_verts = src.edge_verts
+            dst.looseverts = src.looseverts
+            dst.users = src.users
             dst.users.append(self)
 
             update = False
@@ -258,11 +244,9 @@ class GPU_Indices_Mesh():
         else:
             GPU_Indices_Mesh._Hash[self.ob_data] = self
             self.users = [self]
-            update = True;
+            update = True
 
         if update:
-            import gpu
-
             self.draw_tris = draw_tris
             self.draw_edges = draw_edges
             self.draw_verts = draw_verts
@@ -343,15 +327,35 @@ class GPU_Indices_Mesh():
         self.draw_verts = draw_verts and len(self.looseverts) > 0
 
 
-    def Draw(self, index_offset, depth_offset = -0.00005):
+    def Draw(self, index_offset, ob_mat, depth_offset=0.00005):
         self.first_index = index_offset
+        gpu.matrix.push()
+        gpu.matrix.push_projection()
+        gpu.matrix.multiply_matrix(ob_mat)
         if self.draw_tris:
+            self.shader.bind()
             self.shader.uniform_int("offset", (index_offset,))
             self.batch_tris.draw(self.shader)
             index_offset += len(self.tri_verts)
-            bgl.glDepthRange(depth_offset, 1 + depth_offset)
+
+            winmat = gpu.matrix.get_projection_matrix()
+            is_persp = winmat[3][3] == 0.0
+            if is_persp:
+                near = winmat[2][3] / (winmat[2][2] - 1.0)
+                far_ = winmat[2][3] / (winmat[2][2] + 1.0)
+            else:
+                near = (winmat[2][3] + 1.0) / winmat[2][2]
+                far_ = (winmat[2][3] - 1.0) / winmat[2][2]
+
+            far_ += depth_offset
+            near += depth_offset
+            fn = (far_ - near)
+            winmat[2][2] = -(far_ + near) / fn
+            winmat[2][3] = (-2 * far_ * near) / fn
+            gpu.matrix.load_projection_matrix(winmat)
 
         if self.draw_edges:
+            self.shader.bind()
             self.shader.uniform_int("offset", (index_offset,))
             #bgl.glLineWidth(3.0)
             self.batch_edges.draw(self.shader)
@@ -359,10 +363,12 @@ class GPU_Indices_Mesh():
             index_offset += len(self.edge_verts)
 
         if self.draw_verts:
+            self.shader.bind()
             self.shader.uniform_int("offset", (index_offset,))
             self.batch_lverts.draw(self.shader)
 
-        bgl.glDepthRange(0.0, 1.0)
+        gpu.matrix.pop()
+        gpu.matrix.pop_projection()
 
 
     def get_tri_co(self, index):
@@ -402,21 +408,16 @@ class GPU_Indices_Mesh():
             GPU_Indices_Mesh._Hash.pop(self.ob_data)
 
         #print('mesh_del', self.obj.name)
-
-
-def gpu_Indices_enable_state():
-    import gpu
-
+def gpu_Indices_enable_state(winmat, viewmat):
     GPU_Indices_Mesh.init_opengl()
     gpu.matrix.push()
     gpu.matrix.push_projection()
-    gpu.matrix.load_projection_matrix(GPU_Indices_Mesh.P)
+    gpu.matrix.load_projection_matrix(winmat)
+    gpu.matrix.load_matrix(viewmat)
     GPU_Indices_Mesh.shader.bind()
 
 
 def gpu_Indices_restore_state():
-    import gpu
-
     gpu.matrix.pop()
     gpu.matrix.pop_projection()
 
@@ -434,14 +435,5 @@ def gpu_Indices_use_clip_planes(rv3d, value):
         #bgl.glUniform4fv(GPU_Indices_Mesh.unif_clip_plane, 4, planes)
 
         #_restore_shader_state(PreviousGLState)
-
-
-def gpu_Indices_set_ProjectionMatrix(P):
-    import gpu
-
-    gpu.matrix.load_projection_matrix(P)
-    GPU_Indices_Mesh.P[:] = P
-
-
 def gpu_Indices_mesh_cache_clear():
     GPU_Indices_Mesh._Hash.clear()

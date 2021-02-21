@@ -156,8 +156,8 @@ static void determine_final_data_type_and_domain(Span<const GeometryComponent *>
     }
   }
 
-  *r_type = attribute_data_type_highest_complexity(data_types);
-  *r_domain = attribute_domain_highest_priority(domains);
+  *r_type = bke::attribute_data_type_highest_complexity(data_types);
+  *r_domain = bke::attribute_domain_highest_priority(domains);
 }
 
 static void fill_new_attribute(Span<const GeometryComponent *> src_components,
@@ -221,8 +221,9 @@ static void join_components(Span<const MeshComponent *> src_components, Geometry
   MeshComponent &dst_component = result.get_component_for_write<MeshComponent>();
   dst_component.replace(new_mesh);
 
-  /* The position attribute is handled above already. */
-  join_attributes(to_base_components(src_components), dst_component, {"position"});
+  /* Don't copy attributes that are stored directly in the mesh data structs. */
+  join_attributes(
+      to_base_components(src_components), dst_component, {"position", "material_index"});
 }
 
 static void join_components(Span<const PointCloudComponent *> src_components, GeometrySet &result)

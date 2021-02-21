@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -46493,15 +46493,6 @@ msgstr "新增点的目标位置"
 
 
 msgctxt "Operator"
-msgid "Add AOV"
-msgstr "添加 AOV"
-
-
-msgid "Add an AOV pass"
-msgstr "添加 AOV 通道"
-
-
-msgctxt "Operator"
 msgid "Denoise Animation"
 msgstr "动画降噪"
 
@@ -46541,15 +46532,6 @@ msgstr "用于合并的图像文件路径"
 
 msgid "File path for merged image"
 msgstr "合并后的图像文件路径"
-
-
-msgctxt "Operator"
-msgid "Remove AOV"
-msgstr "删除 AOV"
-
-
-msgid "Remove an AOV pass"
-msgstr "删除 AOV 通道"
 
 
 msgctxt "Operator"
@@ -63548,6 +63530,11 @@ msgid "Add a new view layer with all collections disabled"
 msgstr "添加新视图图层，禁用所有集合"
 
 
+msgctxt "Operator"
+msgid "Add AOV"
+msgstr "添加 AOV"
+
+
 msgid "Add a Shader AOV"
 msgstr "添加着色器AOV"
 
@@ -63559,6 +63546,11 @@ msgstr "删除视图层"
 
 msgid "Remove the selected view layer"
 msgstr "删除选择的视图层"
+
+
+msgctxt "Operator"
+msgid "Remove AOV"
+msgstr "删除 AOV"
 
 
 msgid "Remove Active AOV"
@@ -77409,30 +77401,6 @@ msgid "Use regular expressions to match text in the 'Find' field"
 msgstr "使用正则表达式匹配\"查找\"框中的文本"
 
 
-msgid "Conflict"
-msgstr "冲突"
-
-
-msgid "If there is a conflict with another render passes, message explaining why"
-msgstr "如果与其他渲染通道发生冲突，则发送解释原因的消息"
-
-
-msgid "Name of the pass, to use in the AOV Output shader node"
-msgstr "通道的名称，用于 AOV 输出着色器节点"
-
-
-msgid "Pass data type"
-msgstr "通道数据类型"
-
-
-msgid "Write a Value pass"
-msgstr "写入数值值通道"
-
-
-msgid "Write a Color pass"
-msgstr "写入颜色通道"
-
-
 msgid "Field of view for the fisheye lens"
 msgstr "鱼眼焦距的视野范围"
 
@@ -77747,10 +77715,6 @@ msgstr "使用运动模糊"
 
 msgid "Use motion blur for this object"
 msgstr "对物体使用运动模糊"
-
-
-msgid "Custom render passes that can be output by shader nodes"
-msgstr "可由着色器节点输出的自定义渲染通道"
 
 
 msgid "Diffuse Direct"
@@ -106861,6 +106825,10 @@ msgstr "切变: %s %s"
 
 msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "切变: %.3f %s (按 X 键或 Y 键设置切变轴向)"
+
+
+msgid "Shrink/Fatten: "
+msgstr "法向缩放: "
 
 
 msgid " or Alt) Even Thickness %s"

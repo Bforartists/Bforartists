@@ -40,6 +40,8 @@ static void geo_node_attribute_separate_xyz_layout(uiLayout *layout,
                                                    bContext *UNUSED(C),
                                                    PointerRNA *ptr)
 {
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
   uiItemR(layout, ptr, "input_type", 0, IFACE_("Type"), ICON_NONE);
 }
 
@@ -90,7 +92,7 @@ static AttributeDomain get_result_domain(const GeometryComponent &component,
     output_domains.append(attribute_z->domain());
   }
   if (output_domains.size() > 0) {
-    return attribute_domain_highest_priority(output_domains);
+    return bke::attribute_domain_highest_priority(output_domains);
   }
 
   /* Otherwise use the domain of the input attribute, or the default. */

@@ -14,13 +14,12 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # ##### END GPL LICENSE BLOCK #####
-
-import bgl
+import gpu
 from mathutils import Vector
 
 
 class SnapDrawn():
-    __slots__ = (
+    __slots__ = (\
         'out_color',
         'face_color',
         'edge_color',
@@ -33,11 +32,9 @@ class SnapDrawn():
         'axis_z_color',
         '_format_pos',
         '_format_pos_and_color',
-        '_is_point_size_enabled',
         '_program_unif_col',
         '_program_smooth_col',
-        '_batch_point',
-    )
+        '_batch_point',)
 
     def __init__(self, out_color, face_color,
                  edge_color, vert_color, center_color,
@@ -72,17 +69,11 @@ class SnapDrawn():
 
 
     def _gl_state_push(self):
-        self._is_point_size_enabled = bgl.glIsEnabled(bgl.GL_PROGRAM_POINT_SIZE)
-        if self._is_point_size_enabled:
-            bgl.glDisable(bgl.GL_PROGRAM_POINT_SIZE)
-
-        # draw 3d point OpenGL in the 3D View
-        bgl.glEnable(bgl.GL_BLEND)
+        gpu.state.program_point_size_set(False)
+        gpu.state.blend_set('ALPHA')
 
     def _gl_state_restore(self):
-        bgl.glDisable(bgl.GL_BLEND)
-        if self._is_point_size_enabled:
-            bgl.glEnable(bgl.GL_PROGRAM_POINT_SIZE)
+        gpu.state.blend_set('NONE')
 
     def batch_line_strip_create(self, coords):
         from gpu.types import (
@@ -138,22 +129,29 @@ class SnapDrawn():
 
         if list_verts_co:
             # draw 3d line OpenGL in the 3D View
-            bgl.glDepthRange(0, 0.9999)
-            bgl.glLineWidth(3.0)
+            winmat = gpu.matrix.get_projection_matrix()
+            winmat[3][2] -= 0.0001
+            gpu.matrix.push_projection()
+            gpu.matrix.load_projection_matrix(winmat)
+            gpu.state.line_width_set(3.0)
 
             batch = self.batch_line_strip_create([v.to_tuple() for v in list_verts_co] + [location.to_tuple()])
 
+            self._program_unif_col.bind()
             self._program_unif_col.uniform_float("color", (1.0, 0.8, 0.0, 0.5))
             batch.draw(self._program_unif_col)
+            gpu.matrix.pop_projection()
             del batch
 
-        bgl.glDisable(bgl.GL_DEPTH_TEST)
+        gpu.state.depth_test_set('NONE')
 
         point_batch = self.batch_point_get()
         if vector_constrain:
             if prevloc:
-                bgl.glPointSize(5.0)
+                gpu.state.point_size_set(5.0)
                 gpu.matrix.translate(prevloc)
+
+                self._program_unif_col.bind()
                 self._program_unif_col.uniform_float("color", (1.0, 1.0, 1.0, 0.5))
                 point_batch.draw(self._program_unif_col)
                 gpu.matrix.translate(-prevloc)
@@ -182,17 +180,17 @@ class SnapDrawn():
             else: # type == None
                 Color4f = self.out_color
 
-        bgl.glPointSize(10.0)
+        gpu.state.point_size_set(10.0)
 
         gpu.matrix.translate(location)
+        self._program_unif_col.bind()
         self._program_unif_col.uniform_float("color", Color4f)
         point_batch.draw(self._program_unif_col)
 
         # restore opengl defaults
-        bgl.glDepthRange(0.0, 1.0)
-        bgl.glPointSize(1.0)
-        bgl.glLineWidth(1.0)
-        bgl.glEnable(bgl.GL_DEPTH_TEST)
+        gpu.state.point_size_set(1.0)
+        gpu.state.line_width_set(1.0)
+        gpu.state.depth_test_set('LESS_EQUAL')
 
         gpu.matrix.pop()
         self._gl_state_restore()
@@ -208,7 +206,7 @@ class SnapDrawn():
 
         with gpu.matrix.push_pop():
             self._gl_state_push()
-            bgl.glDisable(bgl.GL_DEPTH_TEST)
+            gpu.state.depth_test_set('NONE')
 
             gpu.matrix.multiply_matrix(snap_obj.mat)
 
@@ -225,24 +223,26 @@ class SnapDrawn():
                     edges.shape = -1
 
                     self._program_smooth_col.bind()
-                    bgl.glLineWidth(3.0)
+                    gpu.state.line_width_set(3.0)
                     batch = self.batch_lines_smooth_color_create(edges["pos"], edges["color"])
                     batch.draw(self._program_smooth_col)
-                    bgl.glLineWidth(1.0)
+                    gpu.state.line_width_set(1.0)
             else:
                 self._program_unif_col.bind()
 
                 if isinstance(elem, BMEdge):
+                    self._program_unif_col.bind()
                     self._program_unif_col.uniform_float("color", self.edge_color)
 
-                    bgl.glLineWidth(3.0)
+                    gpu.state.line_width_set(3.0)
                     batch = self.batch_line_strip_create([v.co for v in elem.verts])
                     batch.draw(self._program_unif_col)
-                    bgl.glLineWidth(1.0)
+                    gpu.state.line_width_set(1.0)
 
                 elif isinstance(elem, BMFace):
                     if len(snap_obj.data) == 2:
                         face_color = self.face_color[0], self.face_color[1], self.face_color[2], self.face_color[3] * 0.2
+                        self._program_unif_col.bind()
                         self._program_unif_col.uniform_float("color", face_color)
 
                         tris = snap_obj.data[1].get_loop_tri_co_by_bmface(bm, elem)
@@ -251,6 +251,6 @@ class SnapDrawn():
                         batch.draw(self._program_unif_col)
 
             # restore opengl defaults
-            bgl.glEnable(bgl.GL_DEPTH_TEST)
+            gpu.state.depth_test_set('LESS_EQUAL')
 
         self._gl_state_restore()

@@ -37,6 +37,7 @@ struct Collection;
 struct ID;
 struct Image;
 struct ListBase;
+struct NodeTreeUIStorage;
 struct bGPdata;
 struct bNodeInstanceHash;
 struct bNodeLink;
@@ -501,6 +502,8 @@ typedef struct bNodeTree {
   int (*test_break)(void *);
   void (*update_draw)(void *);
   void *tbh, *prh, *sdh, *udh;
+
+  struct NodeTreeUIStorage *ui_storage;
 } bNodeTree;
 
 /* ntree->type, index */
@@ -1136,6 +1139,10 @@ typedef struct NodeAttributeColorRamp {
 typedef struct NodeInputVector {
   float vector[3];
 } NodeInputVector;
+
+typedef struct NodeInputString {
+  char *string;
+} NodeInputString;
 
 typedef struct NodeGeometryRotatePoints {
   /* GeometryNodeRotatePointsType */

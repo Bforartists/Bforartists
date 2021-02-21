@@ -43,6 +43,7 @@ def experimental_enabled():
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     return preferences.experimental_features
 
+
 def get_process_flags():
     flags = BELOW_NORMAL_PRIORITY_CLASS
     if sys.platform != 'win32':  # TODO test this on windows
@@ -215,7 +216,7 @@ def get_upload_props():
         return s.blenderkit
     if ui_props.asset_type == 'HDR':
 
-        hdr = ui_props.hdr_upload_image#bpy.data.images.get(ui_props.hdr_upload_image)
+        hdr = ui_props.hdr_upload_image  # bpy.data.images.get(ui_props.hdr_upload_image)
         if not hdr:
             return None
         return hdr.blenderkit
@@ -254,7 +255,7 @@ def load_prefs():
     fpath = paths.BLENDERKIT_SETTINGS_FILENAME
     if os.path.exists(fpath):
         try:
-            with open(fpath, 'r', encoding = 'utf-8') as s:
+            with open(fpath, 'r', encoding='utf-8') as s:
                 prefs = json.load(s)
                 user_preferences.api_key = prefs.get('API_key', '')
                 user_preferences.global_dir = prefs.get('global_dir', paths.default_global_dict())
@@ -286,7 +287,7 @@ def save_prefs(self, context):
             fpath = paths.BLENDERKIT_SETTINGS_FILENAME
             if not os.path.exists(paths._presets):
                 os.makedirs(paths._presets)
-            with open(fpath, 'w', encoding = 'utf-8') as s:
+            with open(fpath, 'w', encoding='utf-8') as s:
                 json.dump(prefs, s, ensure_ascii=False, indent=4)
         except Exception as e:
             print(e)
@@ -303,6 +304,7 @@ def uploadable_asset_poll():
         return ui_props.hdr_upload_image is not None
     return True
 
+
 def get_hidden_texture(img, force_reload=False):
     # i = get_hidden_image(tpath, bdata_name, force_reload=force_reload)
     # bdata_name = f".{bdata_name}"
@@ -313,7 +315,8 @@ def get_hidden_texture(img, force_reload=False):
         t.image = img
     return t
 
-def get_hidden_image(tpath, bdata_name, force_reload=False, colorspace = 'sRGB'):
+
+def get_hidden_image(tpath, bdata_name, force_reload=False, colorspace='sRGB'):
     if bdata_name[0] == '.':
         hidden_name = bdata_name
     else:
@@ -339,13 +342,13 @@ def get_hidden_image(tpath, bdata_name, force_reload=False, colorspace = 'sRGB')
 
                 img.filepath = tpath
                 img.reload()
-        image_utils.set_colorspace(img,colorspace)
+        image_utils.set_colorspace(img, colorspace)
 
     elif force_reload:
         if img.packed_file is not None:
             img.unpack(method='USE_ORIGINAL')
         img.reload()
-        image_utils.set_colorspace(img,colorspace)
+        image_utils.set_colorspace(img, colorspace)
     return img
 
 
@@ -355,7 +358,7 @@ def get_thumbnail(name):
     img = bpy.data.images.get(name)
     if img == None:
         img = bpy.data.images.load(p)
-        image_utils.set_colorspace(img,'sRGB')
+        image_utils.set_colorspace(img, 'sRGB')
         img.name = name
         img.name = name
 
@@ -378,16 +381,16 @@ def get_brush_props(context):
     return None
 
 
-def p(text, text1='', text2='', text3='', text4='', text5='', level = 'DEBUG'):
+def p(text, text1='', text2='', text3='', text4='', text5='', level='DEBUG'):
     '''debug printing depending on blender's debug value'''
 
-    if 1:#bpy.app.debug_value != 0:
+    if 1:  # bpy.app.debug_value != 0:
         # print('-----BKit debug-----\n')
         # traceback.print_stack()
-        texts = [text1,text2,text3,text4,text5]
+        texts = [text1, text2, text3, text4, text5]
         text = str(text)
         for t in texts:
-            if t!= '':
+            if t != '':
                 text += ' ' + str(t)
 
         bk_logger.debug(text)
@@ -398,7 +401,7 @@ def copy_asset(fp1, fp2):
     '''synchronizes the asset between folders, including it's texture subdirectories'''
     if 1:
         bk_logger.debug('copy asset')
-        bk_logger.debug(fp1 +' '+ fp2)
+        bk_logger.debug(fp1 + ' ' + fp2)
         if not os.path.exists(fp2):
             shutil.copyfile(fp1, fp2)
             bk_logger.debug('copied')
@@ -410,7 +413,7 @@ def copy_asset(fp1, fp2):
             target_subdir = os.path.join(target_dir, subdir.name)
             if os.path.exists(target_subdir):
                 continue
-            bk_logger.debug(str(subdir) +' '+ str(target_subdir))
+            bk_logger.debug(str(subdir) + ' ' + str(target_subdir))
             shutil.copytree(subdir, target_subdir)
             bk_logger.debug('copied')
 
@@ -638,11 +641,15 @@ def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False
             bpy.context.view_layer.objects.active = actob
 
 
-def name_update():
+def name_update(props):
+    '''
+    Update asset name function, gets run also before upload. Makes sure name doesn't change in case of reuploads,
+    and only displayName gets written to server.
+    '''
     scene = bpy.context.scene
     ui_props = scene.blenderkitUI
 
-    props = get_upload_props()
+    # props = get_upload_props()
     if props.name_old != props.name:
         props.name_changed = True
         props.name_old = props.name
@@ -672,7 +679,6 @@ def get_param(asset_data, parameter_name):
         if p.get('parameterType') == parameter_name:
             return p['value']
     return None
-
 
 
 def params_to_dict(params):
@@ -705,6 +711,7 @@ def dict_to_params(inputs, parameters=None):
             })
     return parameters
 
+
 def update_tags(self, context):
     props = self
 
@@ -728,6 +735,7 @@ def update_tags(self, context):
     ns = ns[:-1]
     if props.tags != ns:
         props.tags = ns
+
 
 def user_logged_in():
     a = bpy.context.window_manager.get('bkit profile')
@@ -825,6 +833,7 @@ def label_multiline(layout, text='', icon='NONE', width=-1):
             break;
         layout.label(text=l, icon=icon)
         icon = 'NONE'
+
 
 def trace():
     traceback.print_stack()

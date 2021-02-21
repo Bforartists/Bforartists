@@ -408,7 +408,6 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
             #Store values from 3d view context
             self.rv3d = context.region_data
             self.rotMat = self.rv3d.view_matrix.copy()
-            # self.obj_glmatrix = bgl.Buffer(bgl.GL_FLOAT, [4, 4],
             # self.obj_matrix.transposed())
 
             #modals
