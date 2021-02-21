@@ -283,8 +283,9 @@ void EEVEE_renderpasses_postprocess(EEVEE_ViewLayerData *UNUSED(sldata),
   EEVEE_EffectsInfo *effects = stl->effects;
 
   /* Compensate for taa_current_sample being incremented after last drawing in
-   * EEVEE_temporal_sampling_draw. */
-  const int current_sample = effects->taa_current_sample - 1;
+   * EEVEE_temporal_sampling_draw when DRW_state_is_image_render(). */
+  const int current_sample = DRW_state_is_image_render() ? effects->taa_current_sample - 1 :
+                                                           effects->taa_current_sample;
   g_data->renderpass_current_sample = current_sample;
   g_data->renderpass_type = renderpass_type;
   g_data->renderpass_postprocess = PASS_POST_UNDEFINED;
@@ -442,7 +443,7 @@ void EEVEE_renderpasses_draw(EEVEE_ViewLayerData *sldata, EEVEE_Data *vedata)
   EEVEE_EffectsInfo *effects = stl->effects;
   DefaultFramebufferList *dfbl = DRW_viewport_framebuffer_list_get();
 
-  /* We can only draw a single renderpass. Lightpasses also select their color pass
+  /* We can only draw a single render-pass. Light-passes also select their color pass
    * (a second pass). We mask the light pass when a light pass is selected. */
   const eViewLayerEEVEEPassType render_pass =
       ((stl->g_data->render_passes & EEVEE_RENDERPASSES_LIGHT_PASS) != 0) ?

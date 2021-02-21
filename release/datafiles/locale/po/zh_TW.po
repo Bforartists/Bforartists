@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -29148,11 +29148,6 @@ msgstr "新增頂點的位置於何處"
 
 
 msgctxt "Operator"
-msgid "Add AOV"
-msgstr "添加 AOV"
-
-
-msgctxt "Operator"
 msgid "Denoise Animation"
 msgstr "動畫除噪"
 
@@ -29160,11 +29155,6 @@ msgstr "動畫除噪"
 msgctxt "Operator"
 msgid "Merge Images"
 msgstr "合併影像"
-
-
-msgctxt "Operator"
-msgid "Remove AOV"
-msgstr "移除 AOV"
 
 
 msgctxt "Operator"
@@ -38824,6 +38814,16 @@ msgstr "移除算繪視圖"
 
 msgid "Remove the selected render view"
 msgstr "移除所選算繪視圖"
+
+
+msgctxt "Operator"
+msgid "Add AOV"
+msgstr "添加 AOV"
+
+
+msgctxt "Operator"
+msgid "Remove AOV"
+msgstr "移除 AOV"
 
 
 msgctxt "Operator"

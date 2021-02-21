@@ -56,8 +56,10 @@ static void geo_node_attribute_compare_layout(uiLayout *layout,
                                               PointerRNA *ptr)
 {
   uiItemR(layout, ptr, "operation", 0, "", ICON_NONE);
-  uiItemR(layout, ptr, "input_type_a", 0, IFACE_("Type A"), ICON_NONE);
-  uiItemR(layout, ptr, "input_type_b", 0, IFACE_("Type B"), ICON_NONE);
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
+  uiItemR(layout, ptr, "input_type_a", 0, IFACE_("A"), ICON_NONE);
+  uiItemR(layout, ptr, "input_type_b", 0, IFACE_("B"), ICON_NONE);
 }
 
 static void geo_node_attribute_compare_init(bNodeTree *UNUSED(tree), bNode *node)
@@ -230,7 +232,7 @@ static CustomDataType get_data_type(GeometryComponent &component,
   if (operation_tests_equality(node_storage)) {
     /* Convert the input attributes to the same data type for the equality tests. Use the higher
      * complexity attribute type, otherwise information necessary to the comparison may be lost. */
-    return attribute_data_type_highest_complexity({
+    return bke::attribute_data_type_highest_complexity({
         params.get_input_attribute_data_type("A", component, CD_PROP_FLOAT),
         params.get_input_attribute_data_type("B", component, CD_PROP_FLOAT),
     });

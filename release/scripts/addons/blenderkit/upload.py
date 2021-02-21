@@ -467,7 +467,7 @@ def get_upload_data(caller=None, context=None, asset_type=None):
     add_version(upload_data)
 
     # caller can be upload operator, but also asset bar called from tooltip generator
-    if caller and caller.main_file == True:
+    if caller and caller.properties.main_file == True:
         upload_data["name"] = props.name
         upload_data["displayName"] = props.name
     else:
@@ -536,6 +536,32 @@ def patch_individual_metadata(asset_id, metadata_dict, api_key):
 #                     op = layout.operator('wm.blenderkit_fast_metadata', text = ch['name'])
 
 
+def update_free_full(self, context):
+    if self.asset_type == 'material':
+        if self.free_full == 'FULL':
+            self.free_full = 'FREE'
+            ui_panels.ui_message(title = "All BlenderKit materials are free",
+                                 message = "Any material uploaded to BlenderKit is free." \
+                      " However, it can still earn money for the author," \
+                      " based on our fair share system. " \
+                      "Part of subscription is sent to artists based on usage by paying users.")
+
+def can_edit_asset(active_index = -1, asset_data = None):
+    if active_index == -1 and not asset_data:
+        return False
+    profile = bpy.context.window_manager.get('bkit profile')
+    if profile is None:
+        return False
+    if utils.profile_is_validator():
+        return True
+    if not asset_data:
+        sr = bpy.context.window_manager['search results']
+        asset_data = dict(sr[active_index])
+    # print(profile, asset_data)
+    if asset_data['author']['id'] == profile['user']['id']:
+        return True
+    return False
+
 class FastMetadata(bpy.types.Operator):
     """Fast change of the category of object directly in asset bar."""
     bl_idname = "wm.blenderkit_fast_metadata"
@@ -594,11 +620,22 @@ class FastMetadata(bpy.types.Operator):
         default="PUBLIC",
     )
 
+    free_full:EnumProperty(
+        name="Free or Full Plan",
+        items=(
+            ('FREE', 'Free', "You consent you want to release this asset as free for everyone"),
+            ('FULL', 'Full', 'Your asset will be in the full plan')
+        ),
+        description="Choose whether the asset should be free or in the Full Plan",
+        default="FULL",
+        update=update_free_full
+    )
+
     @classmethod
     def poll(cls, context):
         scene = bpy.context.scene
         ui_props = scene.blenderkitUI
-        return ui_props.active_index > -1
+        return can_edit_asset(active_index=ui_props.active_index)
 
     def draw(self, context):
         layout = self.layout
@@ -617,6 +654,7 @@ class FastMetadata(bpy.types.Operator):
         layout.prop(self, 'description')
         layout.prop(self, 'tags')
         layout.prop(self, 'is_private', expand=True)
+        layout.prop(self, 'free_full', expand=True)
         if self.is_private == 'PUBLIC':
             layout.prop(self, 'license')
 
@@ -639,6 +677,7 @@ class FastMetadata(bpy.types.Operator):
             'description': self.description,
             'tags': comma2array(self.tags),
             'isPrivate': self.is_private == 'PRIVATE',
+            'isFree': self.free_full == 'FREE',
             'license': self.license,
         }
 
@@ -661,6 +700,8 @@ class FastMetadata(bpy.types.Operator):
                 if result['id'] == self.asset_id:
                     asset_data = dict(result)
 
+        if not can_edit_asset(asset_data=asset_data):
+            return {'CANCELLED'}
         self.asset_id = asset_data['id']
         self.asset_type = asset_data['assetType']
         cat_path = categories.get_category_path(bpy.context.window_manager['bkit_categories'],
@@ -680,6 +721,11 @@ class FastMetadata(bpy.types.Operator):
             self.is_private = 'PRIVATE'
         else:
             self.is_private = 'PUBLIC'
+
+        if asset_data['isFree']:
+            self.free_full = 'FREE'
+        else:
+            self.free_full = 'FULL'
         self.license = asset_data['license']
 
         wm = context.window_manager
@@ -940,6 +986,10 @@ class Uploader(threading.Thread):
                     "file_path": fpath
                 })
 
+                if not os.path.exists(fpath):
+                    self.send_message ("File packing failed, please try manual packing first")
+                    return {'CANCELLED'}
+
             self.send_message('Uploading files')
 
             uploaded = upload_bg.upload_files(self.upload_data, files)
@@ -994,9 +1044,10 @@ def start_upload(self, context, asset_type, reupload, upload_set):
     '''start upload process, by processing data, then start a thread that cares about the rest of the upload.'''
 
     # fix the name first
-    utils.name_update()
-
     props = utils.get_upload_props()
+
+    utils.name_update(props)
+
     storage_quota_ok = check_storage_quota(props)
     if not storage_quota_ok:
         self.report({'ERROR_INVALID_INPUT'}, props.report)
@@ -1022,8 +1073,7 @@ def start_upload(self, context, asset_type, reupload, upload_set):
         props.id = ''
 
     export_data, upload_data = get_upload_data(caller=self, context=context, asset_type=asset_type)
-    # print(export_data)
-    # print(upload_data)
+
     # check if thumbnail exists, generate for HDR:
     if 'THUMBNAIL' in upload_set:
         if asset_type == 'HDR':
@@ -1138,6 +1188,11 @@ class UploadOperator(Operator):
             if self.main_file:
                 upload_set.append('MAINFILE')
 
+        #this is accessed later in get_upload_data and needs to be written.
+        # should pass upload_set all the way to it probably
+        if 'MAINFILE' in upload_set:
+            self.main_file = True
+
         result = start_upload(self, context, self.asset_type, self.reupload, upload_set=upload_set, )
 
         return {'FINISHED'}
@@ -1215,6 +1270,8 @@ class AssetDebugPrint(Operator):
             if ad:
                 result = ad.to_dict()
         if result:
+            t = bpy.data.texts.new(result['name'])
+            t.write(json.dumps(result, indent=4, sort_keys=True))
             print(json.dumps(result, indent=4, sort_keys=True))
         return {'FINISHED'}
 
