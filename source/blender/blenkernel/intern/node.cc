@@ -49,6 +49,7 @@
 
 #include "BLI_ghash.h"
 #include "BLI_listbase.h"
+#include "BLI_map.hh"
 #include "BLI_math.h"
 #include "BLI_path_util.h"
 #include "BLI_string.h"
@@ -68,6 +69,7 @@
 #include "BKE_lib_query.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
+#include "BKE_node_ui_storage.hh"
 
 #include "BLI_ghash.h"
 #include "BLI_threads.h"
@@ -215,6 +217,10 @@ static void ntree_copy_data(Main *UNUSED(bmain), ID *id_dst, const ID *id_src, c
 
   /* node tree will generate its own interface type */
   ntree_dst->interface_type = nullptr;
+
+  /* Don't copy error messages in the runtime struct.
+   * They should be filled during execution anyway. */
+  ntree_dst->ui_storage = nullptr;
 }
 
 static void ntree_free_data(ID *id)
@@ -268,6 +274,8 @@ static void ntree_free_data(ID *id)
   if (ntree->id.tag & LIB_TAG_LOCALIZED) {
     BKE_libblock_free_data(&ntree->id, true);
   }
+
+  delete ntree->ui_storage;
 }
 
 static void library_foreach_node_socket(LibraryForeachIDData *data, bNodeSocket *sock)
@@ -515,6 +523,13 @@ void ntreeBlendWrite(BlendWriter *writer, bNodeTree *ntree)
         BLO_write_struct_by_name(writer, node->typeinfo->storagename, node->storage);
         MEM_SAFE_FREE(nc->matte_id);
       }
+      else if (node->type == FN_NODE_INPUT_STRING) {
+        NodeInputString *storage = (NodeInputString *)node->storage;
+        if (storage->string) {
+          BLO_write_string(writer, storage->string);
+        }
+        BLO_write_struct_by_name(writer, node->typeinfo->storagename, storage);
+      }
       else if (node->typeinfo != &NodeTypeUndefined) {
         BLO_write_struct_by_name(writer, node->typeinfo->storagename, node->storage);
       }
@@ -557,6 +572,7 @@ static void ntree_blend_write(BlendWriter *writer, ID *id, const void *id_addres
     ntree->interface_type = nullptr;
     ntree->progress = nullptr;
     ntree->execdata = nullptr;
+    ntree->ui_storage = nullptr;
 
     BLO_write_id_struct(writer, bNodeTree, id_address, &ntree->id);
 
@@ -588,6 +604,7 @@ void ntreeBlendReadData(BlendDataReader *reader, bNodeTree *ntree)
 
   ntree->progress = nullptr;
   ntree->execdata = nullptr;
+  ntree->ui_storage = nullptr;
 
   BLO_read_data_address(reader, &ntree->adt);
   BKE_animdata_blend_read_data(reader, ntree->adt);
@@ -673,6 +690,11 @@ void ntreeBlendReadData(BlendDataReader *reader, bNodeTree *ntree)
           ImageUser *iuser = (ImageUser *)node->storage;
           iuser->ok = 1;
           iuser->scene = nullptr;
+          break;
+        }
+        case FN_NODE_INPUT_STRING: {
+          NodeInputString *storage = (NodeInputString *)node->storage;
+          BLO_read_data_address(reader, &storage->string);
           break;
         }
         default:
@@ -1411,18 +1433,24 @@ static void socket_id_user_decrement(bNodeSocket *sock)
   switch ((eNodeSocketDatatype)sock->type) {
     case SOCK_OBJECT: {
       bNodeSocketValueObject *default_value = (bNodeSocketValueObject *)sock->default_value;
-      id_us_min(&default_value->value->id);
+      if (default_value->value != nullptr) {
+        id_us_min(&default_value->value->id);
+      }
       break;
     }
     case SOCK_IMAGE: {
       bNodeSocketValueImage *default_value = (bNodeSocketValueImage *)sock->default_value;
-      id_us_min(&default_value->value->id);
+      if (default_value->value != nullptr) {
+        id_us_min(&default_value->value->id);
+      }
       break;
     }
     case SOCK_COLLECTION: {
       bNodeSocketValueCollection *default_value = (bNodeSocketValueCollection *)
                                                       sock->default_value;
-      id_us_min(&default_value->value->id);
+      if (default_value->value != nullptr) {
+        id_us_min(&default_value->value->id);
+      }
       break;
     }
     case SOCK_FLOAT:
@@ -4778,6 +4806,7 @@ static void registerGeometryNodes()
   register_node_type_geo_points_to_volume();
   register_node_type_geo_sample_texture();
   register_node_type_geo_subdivision_surface();
+  register_node_type_geo_subdivision_surface_simple();
   register_node_type_geo_transform();
   register_node_type_geo_triangulate();
   register_node_type_geo_volume_to_mesh();
@@ -4789,6 +4818,7 @@ static void registerFunctionNodes()
   register_node_type_fn_combine_strings();
   register_node_type_fn_float_compare();
   register_node_type_fn_group_instance_id();
+  register_node_type_fn_input_string();
   register_node_type_fn_input_vector();
   register_node_type_fn_object_transforms();
   register_node_type_fn_random_float();

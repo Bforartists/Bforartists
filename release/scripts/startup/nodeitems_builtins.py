@@ -508,6 +508,7 @@ geometry_node_categories = [
         NodeItem("GeometryNodeCollectionInfo"),
         NodeItem("FunctionNodeRandomFloat"),
         NodeItem("ShaderNodeValue"),
+        NodeItem("FunctionNodeInputString"),
         NodeItem("FunctionNodeInputVector"),
         NodeItem("GeometryNodeIsViewport"),
     ]),
@@ -516,6 +517,7 @@ geometry_node_categories = [
         NodeItem("GeometryNodeTriangulate"),
         NodeItem("GeometryNodeEdgeSplit"),
         NodeItem("GeometryNodeSubdivisionSurface"),
+        NodeItem("GeometryNodeSubdivisionSurfaceSimple"),
     ]),
     GeometryNodeCategory("GEO_POINT", "Point", items=[
         NodeItem("GeometryNodePointDistribute"),
