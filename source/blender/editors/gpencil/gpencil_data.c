@@ -1589,7 +1589,7 @@ static int gpencil_stroke_arrange_exec(bContext *C, wmOperator *op)
                 continue;
               }
             }
-            /* some stroke is already at botom */
+            /* Some stroke is already at bottom. */
             if (ELEM(direction, GP_STROKE_MOVE_BOTTOM, GP_STROKE_MOVE_DOWN)) {
               if (gps == gpf->strokes.first) {
                 gpf_lock = true;
@@ -3418,9 +3418,11 @@ static int gpencil_material_select_exec(bContext *C, wmOperator *op)
 
             if (!deselected) {
               gps->flag |= GP_STROKE_SELECT;
+              BKE_gpencil_stroke_select_index_set(gpd, gps);
             }
             else {
               gps->flag &= ~GP_STROKE_SELECT;
+              BKE_gpencil_stroke_select_index_reset(gps);
             }
             for (i = 0, pt = gps->points; i < gps->totpoints; i++, pt++) {
               if (!deselected) {

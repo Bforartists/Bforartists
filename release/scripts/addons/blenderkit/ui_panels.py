@@ -409,8 +409,8 @@ class VIEW3D_PT_blenderkit_model_properties(Panel):
             layout.label(text=str(ad['name']))
             if o.instance_type == 'COLLECTION' and o.instance_collection is not None:
                 layout.operator('object.blenderkit_bring_to_scene', text='Bring to scene')
-            layout.label(text='Ratings:')
-            draw_panel_model_rating(self, context)
+            # layout.label(text='Ratings:')
+            # draw_panel_model_rating(self, context)
 
             layout.label(text='Asset tools:')
             draw_asset_context_menu(self.layout, context, ad, from_panel=True)
@@ -1067,32 +1067,6 @@ class VIEW3D_PT_blenderkit_unified(Panel):
                     draw_panel_brush_upload(self, context)
                 else:
                     layout.label(text='Switch to paint or sculpt mode.')
-
-        elif ui_props.down_up == 'RATING':  # the poll functions didn't work here, don't know why.
-
-            if ui_props.asset_type == 'MODEL':
-                # TODO improve poll here to parenting structures
-                if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.get(
-                        'asset_data') != None:
-                    ad = bpy.context.active_object.get('asset_data')
-                    layout.label(text=ad['name'])
-                    draw_panel_model_rating(self, context)
-            if ui_props.asset_type == 'MATERIAL':
-                if bpy.context.view_layer.objects.active is not None and \
-                        bpy.context.active_object.active_material is not None and \
-                        bpy.context.active_object.active_material.blenderkit.asset_base_id != '':
-                    layout.label(text=bpy.context.active_object.active_material.blenderkit.name + ' :')
-                    # noinspection PyCallByClass
-                    draw_panel_material_ratings(self, context)
-            if ui_props.asset_type == 'BRUSH':
-                if context.sculpt_object or context.image_paint_object:
-                    props = utils.get_brush_props(context)
-                    if props.asset_base_id != '':
-                        layout.label(text=props.name + ' :')
-                        # noinspection PyCallByClass
-                        draw_panel_brush_ratings(self, context)
-            if ui_props.asset_type == 'TEXTURE':
-                layout.label(text='not yet implemented')
 
 
 class BlenderKitWelcomeOperator(bpy.types.Operator):

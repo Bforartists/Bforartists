@@ -20,6 +20,7 @@
 #
 0:In Progress:
 21:Arabic (ﺔﻴﺑﺮﻌﻟﺍ):ar_EG
+11:Czech (Český):cs_CZ
 5:German (Deutsch):de_DE
 8:French (Français):fr_FR
 4:Italian (Italiano):it_IT
@@ -35,7 +36,6 @@
 # Explicitly forbidden! #37:Amharic (አማርኛ):am_ET
 # Explicitly forbidden! #22:Bulgarian (Български):bg_BG
 10:Catalan (Català):ca_AD
-11:Czech (Český):cs_CZ
 # Explicitly forbidden! #23:Greek (Ελληνικά):el_GR
 35:Esperanto (Esperanto):eo
 # Explicitly forbidden! #36:Spanish from Spain (Español de España):es_ES

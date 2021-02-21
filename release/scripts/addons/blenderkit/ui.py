@@ -338,7 +338,7 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
     textcol = (textcol[0], textcol[1], textcol[2], 1)
     textcol_mild = (textcol[0] * .8, textcol[1] * .8, textcol[2] * .8, 1)
     textcol_strong = (textcol[0] * 1.3, textcol[1] * 2.3, textcol[2] * 1.3, 1)
-    textcol_strong = (0.4, 1, 0.3, 1)
+    # textcol_strong = (0.4, 1, 0.3, 1)
     white = (1, 1, 1, .1)
 
     # background
