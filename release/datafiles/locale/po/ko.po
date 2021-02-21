@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -40948,15 +40948,6 @@ msgstr "다음에서 새로운 버텍스를 추가하는 위치"
 
 
 msgctxt "Operator"
-msgid "Add AOV"
-msgstr "AOV를 추가"
-
-
-msgid "Add an AOV pass"
-msgstr "AOV 패스를 추가"
-
-
-msgctxt "Operator"
 msgid "Denoise Animation"
 msgstr "애니메이션을 디노이즈"
 
@@ -40992,15 +40983,6 @@ msgstr "병합할 이미지의 파일 경로"
 
 msgid "File path for merged image"
 msgstr "병합된 이미지의 파일 경로"
-
-
-msgctxt "Operator"
-msgid "Remove AOV"
-msgstr "AOV를 제거"
-
-
-msgid "Remove an AOV pass"
-msgstr "AOV 패스를 제거"
 
 
 msgctxt "Operator"
@@ -55841,12 +55823,22 @@ msgstr "뷰 레이어를 추가"
 
 
 msgctxt "Operator"
+msgid "Add AOV"
+msgstr "AOV를 추가"
+
+
+msgctxt "Operator"
 msgid "Remove View Layer"
 msgstr "뷰 레이어를 제거"
 
 
 msgid "Remove the selected view layer"
 msgstr "선택한 뷰 레이어를 제거합니다"
+
+
+msgctxt "Operator"
+msgid "Remove AOV"
+msgstr "AOV를 제거"
 
 
 msgctxt "Operator"
@@ -67429,30 +67421,6 @@ msgid "Use regular expressions to match text in the 'Find' field"
 msgstr "'찾기'필드의 텍스트와 일치 시키려면 정규식을 사용하십시오"
 
 
-msgid "Conflict"
-msgstr "충돌"
-
-
-msgid "If there is a conflict with another render passes, message explaining why"
-msgstr "다른 렌더 패스와 충돌하는 경우 이유를 설명하는 메시지"
-
-
-msgid "Name of the pass, to use in the AOV Output shader node"
-msgstr "AOV 출력 셰이더 노드에서 사용할 패스 이름"
-
-
-msgid "Pass data type"
-msgstr "패스 데이터 유형"
-
-
-msgid "Write a Value pass"
-msgstr "값 패스를 쓰기"
-
-
-msgid "Write a Color pass"
-msgstr "컬러 패스를 쓰기"
-
-
 msgid "Field of view for the fisheye lens"
 msgstr "피쉬아이 렌즈에 대한 시야"
 
@@ -67735,10 +67703,6 @@ msgstr "모션 블러를 사용"
 
 msgid "Use motion blur for this object"
 msgstr "이 오브젝트에 대해 모션 블러를 사용"
-
-
-msgid "Custom render passes that can be output by shader nodes"
-msgstr "셰이더 노드로 출력 할 수 있는 커스텀 렌더 패스"
 
 
 msgid "Diffuse Direct"

@@ -40,12 +40,6 @@ def update_qcd_status(self, context):
     if self.enable_qcd:
         qcd_init.register_qcd()
 
-        if self.enable_qcd_view_hotkeys:
-            qcd_init.register_qcd_view_hotkeys()
-
-        if self.enable_qcd_view_edit_mode_hotkeys:
-            qcd_init.register_qcd_view_edit_mode_hotkeys()
-
     else:
         qcd_init.unregister_qcd()
 

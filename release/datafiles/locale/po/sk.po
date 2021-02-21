@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-02-05 13:38+0100\n"
@@ -46494,15 +46494,6 @@ msgstr "Poloha na pridanie nového vrcholu"
 
 
 msgctxt "Operator"
-msgid "Add AOV"
-msgstr "Pridať AOV"
-
-
-msgid "Add an AOV pass"
-msgstr "Pridá prechod AOV"
-
-
-msgctxt "Operator"
 msgid "Denoise Animation"
 msgstr "Znížiť šum animácie"
 
@@ -46542,15 +46533,6 @@ msgstr "Cesta k súboru na zlúčenie obrázka"
 
 msgid "File path for merged image"
 msgstr "Cesta k súboru pre zlúčený obrázok"
-
-
-msgctxt "Operator"
-msgid "Remove AOV"
-msgstr "Odstrániť AOV"
-
-
-msgid "Remove an AOV pass"
-msgstr "Odstráni prechod AOV"
 
 
 msgctxt "Operator"
@@ -63549,6 +63531,11 @@ msgid "Add a new view layer with all collections disabled"
 msgstr "Pridá novú vrstvu zobrazenia so zakázanými všetkými kolekciami"
 
 
+msgctxt "Operator"
+msgid "Add AOV"
+msgstr "Pridať AOV"
+
+
 msgid "Add a Shader AOV"
 msgstr "Pridať shader AOV"
 
@@ -63560,6 +63547,11 @@ msgstr "Odstrániť vrstvu zobrazenia"
 
 msgid "Remove the selected view layer"
 msgstr "Odstráni vybranú vrstvu zobrazenia"
+
+
+msgctxt "Operator"
+msgid "Remove AOV"
+msgstr "Odstrániť AOV"
 
 
 msgid "Remove Active AOV"
@@ -77408,30 +77400,6 @@ msgid "Use regular expressions to match text in the 'Find' field"
 msgstr "Použije obvyklé výrazy na porovnanie textu v poli „Hľadať“"
 
 
-msgid "Conflict"
-msgstr "Konflikt"
-
-
-msgid "If there is a conflict with another render passes, message explaining why"
-msgstr "Správa vysvetľujúca, prečo došlo ku konfliktu s inými prechodmi prekreslenia"
-
-
-msgid "Name of the pass, to use in the AOV Output shader node"
-msgstr "Názov prechodu, ktorý sa má použiť v uzle shadera výstupu AOV"
-
-
-msgid "Pass data type"
-msgstr "Typ údajov prechodu"
-
-
-msgid "Write a Value pass"
-msgstr "Napíše hodnotu prechodu"
-
-
-msgid "Write a Color pass"
-msgstr "Napíše farbu prechodu"
-
-
 msgid "Field of view for the fisheye lens"
 msgstr "Zorné pole pre objektív Rybie oko"
 
@@ -77746,10 +77714,6 @@ msgstr "Použiť rozmazanie pohybu"
 
 msgid "Use motion blur for this object"
 msgstr "Použije pre tento objekt rozmazanie pohybu"
-
-
-msgid "Custom render passes that can be output by shader nodes"
-msgstr "Vlastné prekreslenia prechodov, ktoré môžu byť výstupom uzlov shadera"
 
 
 msgid "Diffuse Direct"
