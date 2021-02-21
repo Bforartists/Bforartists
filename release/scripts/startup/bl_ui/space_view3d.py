@@ -6234,7 +6234,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_gpencil_animation")
-        layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence")
+        layout.operator("gpencil.interpolate_sequence", text="Interpolate Sequence", icon = "SEQUENCE")
 
         layout.separator()
 
