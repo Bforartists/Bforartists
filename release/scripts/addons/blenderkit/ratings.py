@@ -135,7 +135,7 @@ def update_ratings_work_hours(self, context):
         bkit_ratings = self
         url = paths.get_api_url() + f'assets/{self.asset_id}/rating/'
 
-    if bkit_ratings.rating_work_hours > 0.05:
+    if bkit_ratings.rating_work_hours > 0.45:
         ratings = [('working_hours', round(bkit_ratings.rating_work_hours, 1))]
         tasks_queue.add_task((send_rating_to_thread_work_hours, (url, ratings, headers)), wait=2.5, only_last=True)
 
@@ -297,34 +297,39 @@ def update_ratings_work_hours_ui_1_5(self, context):
 class FastRateMenu(Operator):
     """Fast rating of the assets directly in the asset bar - without need to download assets"""
     bl_idname = "wm.blenderkit_menu_rating_upload"
-    bl_label = "Send Rating"
+    bl_label = "Rate asset"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     message: StringProperty(
         name="message",
         description="message",
-        default="Rating asset")
+        default="Rating asset",
+        options={'SKIP_SAVE'})
 
     asset_id: StringProperty(
         name="Asset Base Id",
         description="Unique id of the asset (hidden)",
-        default="")
+        default="",
+        options={'SKIP_SAVE'})
 
     asset_name: StringProperty(
         name="Asset Name",
         description="Name of the asset (hidden)",
-        default="")
+        default="",
+        options={'SKIP_SAVE'})
 
     asset_type: StringProperty(
         name="Asset type",
         description="asset type",
-        default="")
+        default="",
+        options={'SKIP_SAVE'})
 
     rating_quality: IntProperty(name="Quality",
                                 description="quality of the material",
                                 default=0,
                                 min=-1, max=10,
-                                update=update_ratings_quality)
+                                # update=update_ratings_quality,
+                                options={'SKIP_SAVE'})
 
     # the following enum is only to ease interaction - enums support 'drag over' and enable to draw the stars easily.
     rating_quality_ui: EnumProperty(name='rating_quality_ui',
@@ -332,13 +337,17 @@ class FastRateMenu(Operator):
                                     description='Rating stars 0 - 10',
                                     default=0,
                                     update=update_quality_ui,
-                                    )
+                                    options={'SKIP_SAVE'})
 
     rating_work_hours: FloatProperty(name="Work Hours",
                                      description="How many hours did this work take?",
                                      default=0.00,
-                                     min=0.0, max=300, update=update_ratings_work_hours
+                                     min=0.0, max=300,
+                                     # update=update_ratings_work_hours,
+                                     options={'SKIP_SAVE'}
                                      )
+
+    high_rating_warning = "This is a high rating, please be sure to give such rating only to amazing assets"
 
     rating_work_hours_ui: EnumProperty(name="Work Hours",
                                        description="How many hours did this work take?",
@@ -354,13 +363,15 @@ class FastRateMenu(Operator):
                                               ('10', '10', ''),
                                               ('15', '15', ''),
                                               ('20', '20', ''),
-                                              ('50', '50', ''),
-                                              ('100', '100', ''),
-                                              ('150', '150', ''),
-                                              ('200', '200', ''),
-                                              ('250', '250', ''),
+                                              ('30', '30', high_rating_warning),
+                                              ('50', '50', high_rating_warning),
+                                              ('100', '100', high_rating_warning),
+                                              ('150', '150', high_rating_warning),
+                                              ('200', '200', high_rating_warning),
+                                              ('250', '250', high_rating_warning),
                                               ],
-                                       default='0', update=update_ratings_work_hours_ui
+                                       default='0', update=update_ratings_work_hours_ui,
+                                       options = {'SKIP_SAVE'}
                                        )
 
     rating_work_hours_ui_1_5: EnumProperty(name="Work Hours",
@@ -374,7 +385,9 @@ class FastRateMenu(Operator):
                                                   ('4', '4', ''),
                                                   ('5', '5', '')
                                                   ],
-                                           default='0', update=update_ratings_work_hours_ui_1_5
+                                           default='0',
+                                           update=update_ratings_work_hours_ui_1_5,
+                                           options = {'SKIP_SAVE'}
                                            )
 
     @classmethod
@@ -391,14 +404,34 @@ class FastRateMenu(Operator):
         col.label(text=self.message)
         row = col.row()
         row.prop(self, 'rating_quality_ui', expand=True, icon_only=True, emboss=False)
+        # row.label(text=str(self.rating_quality))
         col.separator()
-        col.prop(self, 'rating_work_hours')
-        if utils.profile_is_validator():
+
+        row = layout.row()
+        row.label(text=f"How many hours did this {self.asset_type} save you?")
+
+        if self.asset_type in ('model', 'scene'):
             row = layout.row()
-            if self.asset_type == 'model':
-                row.prop(self, 'rating_work_hours_ui', expand=True, icon_only=False, emboss=True)
-            else:
-                row.prop(self, 'rating_work_hours_ui_1_5', expand=True, icon_only=False, emboss=True)
+            if utils.profile_is_validator():
+                col.prop(self, 'rating_work_hours')
+            row.prop(self, 'rating_work_hours_ui', expand=True, icon_only=False, emboss=True)
+            if float(self.rating_work_hours_ui) > 100:
+                utils.label_multiline(layout,
+                                      text=f"\nThat's huge! please be sure to give such rating only to godly {self.asset_type}s.\n",
+                                      width=500)
+            elif float(self.rating_work_hours_ui) > 18:
+                layout.separator()
+
+                utils.label_multiline(layout,
+                                      text=f"\nThat's a lot! please be sure to give such rating only to amazing {self.asset_type}s.\n",
+                                      width=500)
+
+        else:
+
+
+            row = layout.row()
+            row.prop(self, 'rating_work_hours_ui_1_5', expand=True, icon_only=False, emboss=True)
+
 
     def execute(self, context):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -414,13 +447,13 @@ class FastRateMenu(Operator):
         if self.rating_quality_ui == '':
             self.rating_quality = 0
         else:
-            self.rating_quality = int(self.rating_quality_ui)
+            self.rating_quality = float(self.rating_quality_ui)
 
         if self.rating_quality > 0.1:
             rtgs = (('quality', self.rating_quality),)
             tasks_queue.add_task((send_rating_to_thread_quality, (url, rtgs, headers)), wait=2.5, only_last=True)
 
-        if self.rating_work_hours > 0.1:
+        if self.rating_work_hours > 0.45:
             rtgs = (('working_hours', round(self.rating_work_hours, 1)),)
             tasks_queue.add_task((send_rating_to_thread_work_hours, (url, rtgs, headers)), wait=2.5, only_last=True)
         return {'FINISHED'}
@@ -437,7 +470,7 @@ class FastRateMenu(Operator):
         self.message = f"Rate asset {self.asset_name}"
         wm = context.window_manager
 
-        if utils.profile_is_validator() and self.asset_type == 'model':
+        if self.asset_type in ('model','scene'):
             # spawn a wider one for validators for the enum buttons
             return wm.invoke_props_dialog(self, width=500)
         else:

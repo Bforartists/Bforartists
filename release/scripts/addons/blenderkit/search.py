@@ -660,6 +660,7 @@ def generate_tooltip(mdata):
                 if f['fileType'].find('resolution') > -1:
                     t += 'Asset has lower resolutions available\n'
                     break;
+
     # generator is for both upload preview and search, this is only after search
     # if mdata.get('versionNumber'):
     #     # t = writeblockm(t, mdata, key='versionNumber', pretext='version', width = col_w)
@@ -671,22 +672,27 @@ def generate_tooltip(mdata):
 
     # t += '\n'
     rc = mdata.get('ratingsCount')
-    if utils.profile_is_validator() and rc:
-
+    if rc:
+        t+='\n'
         if rc:
             rcount = min(rc['quality'], rc['workingHours'])
         else:
             rcount = 0
-        if rcount < 10:
-            t += f"Please rate this asset, \nit doesn't have enough ratings.\n"
-        else:
-            t += f"Quality rating: {int(mdata['ratingsAverage']['quality']) * '*'}\n"
-            t += f"Hours saved rating: {int(mdata['ratingsAverage']['workingHours'])}\n"
+
+        show_rating_threshold = 5
+
+        if rcount < show_rating_threshold:
+            t += f"Only assets with enough ratings \nshow the rating value. Please rate.\n"
+        if rc['quality'] >= show_rating_threshold:
+            # t += f"{int(mdata['ratingsAverage']['quality']) * '*'}\n"
+            t += f"* {round(mdata['ratingsAverage']['quality'],1)}\n"
+        if rc['workingHours'] >= show_rating_threshold:
+            t += f"Hours saved: {int(mdata['ratingsAverage']['workingHours'])}\n"
         if utils.profile_is_validator():
             t += f"Score: {int(mdata['score'])}\n"
 
             t += f"Ratings count {rc['quality']}*/{rc['workingHours']}wh value " \
-                 f"{mdata['ratingsAverage']['quality']}*/{mdata['ratingsAverage']['workingHours']}wh\n"
+                 f"{(mdata['ratingsAverage']['quality'],1)}*/{(mdata['ratingsAverage']['workingHours'],1)}wh\n"
     if len(t.split('\n')) < 11:
         t += '\n'
         t += get_random_tip(mdata)

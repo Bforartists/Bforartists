@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -243,11 +243,11 @@ msgstr "Marcador de pose activo para esta acción"
 
 
 msgid "Active Pose Marker Index"
-msgstr "Índice del marcador de pose activo"
+msgstr "Identificador del marcador de pose activo"
 
 
 msgid "Index of active pose marker"
-msgstr "Índice del marcador de pose activo"
+msgstr "Identificador del marcador de pose activo"
 
 
 msgid "Add-on"
@@ -975,7 +975,7 @@ msgstr "Etiqueta activa"
 
 
 msgid "Index of the tag set for editing"
-msgstr "Índice del conjunto de etiquetas a ser editado"
+msgstr "Identificador del conjunto de etiquetas a ser editado"
 
 
 msgid "Description"
@@ -1515,7 +1515,7 @@ msgstr "Alineada"
 
 
 msgid "Auto"
-msgstr "Automático"
+msgstr "Auto"
 
 
 msgid "Handle 2"
@@ -2487,7 +2487,7 @@ msgstr "Regla activa de boid"
 
 
 msgid "Active Boid State Index"
-msgstr "Índice estado boid activo"
+msgstr "Identificador estado boid activo"
 
 
 msgid "Aggression"
@@ -2675,7 +2675,7 @@ msgstr "Estado del boid para cálculos de dinámicas"
 
 
 msgid "Active Boid Rule Index"
-msgstr "Índice de la regla del boid activo"
+msgstr "Identificador de la regla del boid activo"
 
 
 msgid "Falloff"
@@ -3191,11 +3191,11 @@ msgstr "Grupo de huesos activo para esta pose"
 
 
 msgid "Active Bone Group Index"
-msgstr "Índice del grupo de huesos activo"
+msgstr "Identificador del grupo de huesos activo"
 
 
 msgid "Active index in bone groups array"
-msgstr "Índice del grupo activo en la matriz de grupos de huesos"
+msgstr "Identificador del grupo activo en la matriz de grupos de huesos"
 
 
 msgid "Brush Capabilities"
@@ -5720,19 +5720,19 @@ msgstr "Obtiene la matriz de transformaciones desde un archivo externo"
 
 
 msgid "Clamp To"
-msgstr "Limitar a"
+msgstr "Restringir a"
 
 
 msgid "Restrict movements to lie along a curve by remapping location along curve's longest axis"
-msgstr "Restringe los movimientos a una curva, remapeando la posición a lo largo del eje más largo de la misma"
+msgstr "Permite restringir los movimientos del objeto a la superficie de una curva, remapeando su posición a lo largo del eje más largo de la misma"
 
 
 msgid "Damped Track"
-msgstr "Rastreo amortiguado"
+msgstr "Apuntar (amortiguado)"
 
 
 msgid "Point towards a target by performing the smallest rotation necessary"
-msgstr "Apunta hacia un objetivo, realizando la menor rotación posible"
+msgstr "Permite apuntar el objeto hacia un objetivo, siguiendo el camino más corto"
 
 
 msgid "Inverse Kinematics"
@@ -5740,43 +5740,43 @@ msgstr "Cinemática inversa"
 
 
 msgid "Control a chain of bones by specifying the endpoint target (Bones only)"
-msgstr "Controla una cadena de huesos, especificando el objetivo de su extremo (sólo para huesos)"
+msgstr "Permite controlar una cadena de huesos, especificando el objetivo que intentará alcanzar su extremo (sólo para huesos)"
 
 
 msgid "Locked Track"
-msgstr "Rastreo bloqueado"
+msgstr "Apuntar (bloqueado)"
 
 
 msgid "Rotate around the specified ('locked') axis to point towards a target"
-msgstr "Rota alrededor del eje ('bloqueado') especificado para apuntar hacia el objetivo"
+msgstr "Permite rotar al objeto alrededor del eje especificado (o 'bloqueado') para que apunte hacia el objetivo"
 
 
 msgid "Spline IK"
-msgstr "CI curva"
+msgstr "Cinemática inversa (curva)"
 
 
 msgid "Align chain of bones along a curve (Bones only)"
-msgstr "Alínea la cadena de huesos a lo largo de una curva (sólo para huesos)"
+msgstr "Permite alinear la cadena de huesos a lo largo de una curva (sólo para huesos)"
 
 
 msgid "Stretch To"
-msgstr "Estirar hasta"
+msgstr "Apuntar (estirando)"
 
 
 msgid "Stretch along Y-Axis to point towards a target"
-msgstr "Estira a lo largo del eje Y para apuntar hacia el objetivo"
+msgstr "Permite apuntar y estirar el objeto a lo largo de su eje Y en dirección al objetivo"
 
 
 msgid "Track To"
-msgstr "Rastrear"
+msgstr "Apuntar"
 
 
 msgid "Legacy tracking constraint prone to twisting artifacts"
-msgstr "Restricción de rastreo antigua, propensa a defectos de torsión"
+msgstr "Restricción apuntar antigua, propensa a defectos de torsión"
 
 
 msgid "Use transform property of target to look up pose for owner from an Action"
-msgstr "Usa una propiedad de transformación del objetivo para buscar la pose del propietario desde una acción"
+msgstr "Usa una propiedad de transformación del objetivo para buscar la pose para el objeto, desde una acción"
 
 
 msgid "Armature"
@@ -5952,7 +5952,7 @@ msgstr "Acción del objeto"
 
 
 msgid "Bones only: apply the object's transformation channels of the action to the constrained bone, instead of bone's channels"
-msgstr "Sólo para huesos: aplica los canales de transformación de la acción del objeto al hueso restringido, en vez de los canales del hueso"
+msgstr "Sólo para huesos: Aplica los canales de transformación de la acción del objeto al hueso restringido, en vez de los canales del propio hueso"
 
 
 msgid "Use Evaluation Time"
@@ -6000,7 +6000,7 @@ msgstr "Preservar volumen"
 
 
 msgid "Deform rotation interpolation with quaternions"
-msgstr "Deformar la interpolación de rotación con cuaternios"
+msgstr "Permite deformar la interpolación de la rotación usando cuaternios"
 
 
 msgid "Camera Solver Constraint"
@@ -6436,7 +6436,7 @@ msgstr "Aplica las transformaciones copiadas después de las originales, como si
 
 
 msgid "Damped Track Constraint"
-msgstr "Restricción Rastreo amortiguado"
+msgstr "Restricción Apuntar (amortiguado)"
 
 
 msgid "Point toward target by taking the shortest rotation path"
@@ -6444,7 +6444,7 @@ msgstr "Rota, apuntando hacia el objetivo por el ángulo más corto"
 
 
 msgid "Track Axis"
-msgstr "Eje de rastreo"
+msgstr "Apuntar eje"
 
 
 msgid "Axis that points to the target object"
@@ -6528,11 +6528,11 @@ msgstr "El objeto seguirá el rumbo e inclinación de la curva"
 
 
 msgid "Curve Radius"
-msgstr "Radio de curva"
+msgstr "Radio de la curva"
 
 
 msgid "Object is scaled by the curve radius"
-msgstr "El objeto es escalado por el radio de la curva"
+msgstr "El objeto será escalado según el radio de la curva en cada sección"
 
 
 msgid "Fixed Position"
@@ -6540,7 +6540,7 @@ msgstr "Posición fija"
 
 
 msgid "Object will stay locked to a single point somewhere along the length of the curve regardless of time"
-msgstr "El objeto permanecerá fijo a un punto individual en alguna parte de la longitud de la curva, sin tomar en cuenta el tiempo"
+msgstr "El objeto permanecerá fijo a un punto en alguna parte de la longitud de la curva, sin tomar en cuenta el tiempo"
 
 
 msgid "Follow Track Constraint"
@@ -6608,7 +6608,7 @@ msgstr "Longitud de cadena"
 
 
 msgid "How many bones are included in the IK effect - 0 uses all bones"
-msgstr "Cuántos huesos están incluidos en el efecto de CI - 0 usa todos"
+msgstr "Cuántos huesos están incluidos en la cadena de cinemática inversa - 0 para usarlos todos"
 
 
 msgid "Radius of limiting sphere"
@@ -6712,7 +6712,7 @@ msgstr "Influencia orientación"
 
 
 msgid "For Tree-IK: Weight of orientation control for this target"
-msgstr "Para CI ramificada: Influencia del control de orientación para este objetivo"
+msgstr "Para cinemática inversa ramificada: Influencia del control de orientación para este objetivo"
 
 
 msgid "Pole Angle"
@@ -6756,7 +6756,7 @@ msgstr "La cadena sigue la rotación del objetivo"
 
 
 msgid "Enable IK Stretching"
-msgstr "Habilitar estiramiento de CI"
+msgstr "Habilitar cinemática inversa con estiramiento"
 
 
 msgid "Use Tail"
@@ -6768,7 +6768,7 @@ msgstr "Incluir la cola del hueso como último elemento de la cadena"
 
 
 msgid "For Tree-IK: Weight of position control for this target"
-msgstr "Para CI ramificada: Influencia del control de posición para este objetivo"
+msgstr "Para cinemática inversa ramificada: Influencia del control de posición para este objetivo"
 
 
 msgid "Limit Distance Constraint"
@@ -6900,7 +6900,7 @@ msgstr "Limita la escala del objeto restringido"
 
 
 msgid "Locked Track Constraint"
-msgstr "Restricción Rastreo bloqueado"
+msgstr "Restricción Rastrear (bloqueado)"
 
 
 msgid "Point toward the target along the track axis, while locking the other axis"
@@ -6908,7 +6908,7 @@ msgstr "Apunta hacia el objetivo a lo largo del eje de seguimiento, bloqueando l
 
 
 msgid "Locked Axis"
-msgstr "Eje Bloqueado"
+msgstr "Eje bloqueado"
 
 
 msgid "Maintain Volume Constraint"
@@ -7160,7 +7160,7 @@ msgstr "Seleccionar el tipo de algoritmo de envoltura para la posición del obje
 
 
 msgid "Nearest Surface Point"
-msgstr "Punto más cercano a la superficie"
+msgstr "Punto más cercano de la superficie"
 
 
 msgid "Shrink the location to the nearest target surface"
@@ -7184,7 +7184,7 @@ msgstr "Contrae la posición al vértice objetivo más cercano"
 
 
 msgid "Target Normal Project"
-msgstr "Proyectar hacia normales objetivo"
+msgstr "Proyectar hacia normales del objetivo"
 
 
 msgid "Shrink the location to the nearest target surface along the interpolated vertex normals of the target"
@@ -7236,11 +7236,11 @@ msgstr "El punto es restringido a estar en la superficie del objeto objetivo, co
 
 
 msgid "The point is constrained to be inside the target object"
-msgstr "El punto es restringido a estar dentro del objeto objetivo"
+msgstr "El punto es restringido a estar dentro del objetivo"
 
 
 msgid "The point is constrained to be outside the target object"
-msgstr "El punto es restringido a estar fuera del objeto objetivo"
+msgstr "El punto es restringido a estar fuera del objetivo"
 
 
 msgid "Outside Surface"
@@ -7248,7 +7248,7 @@ msgstr "Fuera de la superficie"
 
 
 msgid "The point is constrained to the surface of the target object, with distance offset always to the outside, towards or away from the original location"
-msgstr "El punto es restringido a estar sobre la superficie del objetivo, con un cierto desplazamiento siempre hacia afuera (hacia la posición original del objetivo o en sentido contrario)"
+msgstr "El punto es restringido a estar sobre la superficie del objetivo, con un cierto desplazamiento aplicado siempre hacia afuera (hacia la posición original del objetivo o en sentido contrario)"
 
 
 msgid "Above Surface"
@@ -7256,11 +7256,11 @@ msgstr "Sobre la superficie"
 
 
 msgid "The point is constrained to the surface of the target object, with distance offset applied exactly along the target normal"
-msgstr "El punto es restringido a estar sobre la superficie del objetivo, con un cierto desplazamiento en la dirección de las normales del objetivo"
+msgstr "El punto es restringido a estar sobre la superficie del objetivo, con un cierto desplazamiento aplicado en la dirección de las normales del objetivo"
 
 
 msgid "Spline IK Constraint"
-msgstr "Restricción CI curva"
+msgstr "Restricción Cinemática inversa (curva)"
 
 
 msgid "Align 'n' bones along a curve"
@@ -7292,11 +7292,11 @@ msgstr "Factor mínimo de estiramiento del volumen"
 
 
 msgid "Volume Variation Smoothness"
-msgstr "Suavizado variación volumen"
+msgstr "Suavizado de variación del volumen"
 
 
 msgid "Strength of volume stretching clamping"
-msgstr "Intensidad de la limitación del estiramiento"
+msgstr "Intensidad de la limitación de estiramiento"
 
 
 msgid "How many bones are included in the chain"
@@ -7424,7 +7424,7 @@ msgstr "Usa la escala Y original de los huesos"
 
 
 msgid "Stretch To Constraint"
-msgstr "Restricción Estirar hasta"
+msgstr "Restricción Apuntar (estirando)"
 
 
 msgid "Stretch to meet the target object"
@@ -7456,11 +7456,11 @@ msgstr "Rotar en torno al eje local Z, luego al X"
 
 
 msgid "Swing"
-msgstr "Oscilar"
+msgstr "Balanceo"
 
 
 msgid "Use the smallest single axis rotation, similar to Damped Track"
-msgstr "Usa la rotación más pequeña en uno de los ejes, similar a Rastreo amortiguado"
+msgstr "Usa la rotación más pequeña posible en uno de los ejes, similar a Apuntar (amortiguado)"
 
 
 msgid "Original Length"
@@ -7476,7 +7476,7 @@ msgstr "Mantener el volumen del objeto mientras se estira en"
 
 
 msgid "Track To Constraint"
-msgstr "Restricción Rastrear"
+msgstr "Restricción Apuntar"
 
 
 msgid "Aim the constrained object toward the target"
@@ -7484,11 +7484,11 @@ msgstr "Apunta el objeto restringido hacia el objetivo"
 
 
 msgid "Target Z"
-msgstr "Eje Z del objetivo"
+msgstr "Z del objetivo"
 
 
 msgid "Target's Z axis, not World Z axis, will constraint the Up direction"
-msgstr "El eje Z del objetivo, no el Z global, restringirá la dirección hacia arriba"
+msgstr "El eje Z del objetivo (en vez del global) será el que restrinja la dirección hacia arriba"
 
 
 msgid "Transform Cache Constraint"
@@ -8084,11 +8084,11 @@ msgstr "Ajuste"
 
 
 msgid "Support Loops"
-msgstr "Soportar bucles"
+msgstr "Bucles de soporte"
 
 
 msgid "Loops on each side of the profile"
-msgstr "Bucles en cada extremo del perfil"
+msgstr "Bucles a cada lado del perfil"
 
 
 msgid "Cornice Molding"
@@ -8104,7 +8104,7 @@ msgstr "Intervalos"
 
 
 msgid "A number of steps defined by the segments"
-msgstr "Cierta cantidad de intervalos definidos por los segmentos"
+msgstr "Cierta cantidad de escalones, definidos por segmentos"
 
 
 msgid "Segments"
@@ -8112,11 +8112,11 @@ msgstr "Segmentos"
 
 
 msgid "Segments sampled from control points"
-msgstr "Segmentos muestreados a partir los puntos de control"
+msgstr "Segmentos muestreados a partir de los puntos de control"
 
 
 msgid "Force the path view to fit a defined boundary"
-msgstr "Fuerza a la vista de la curva a ajustarse a un límite definido"
+msgstr "Fuerza a que la visibilidad de la curva se ajuste a un límite definido"
 
 
 msgid "Sample Even Lengths"
@@ -8132,7 +8132,7 @@ msgstr "Muestrear bordes rectos"
 
 
 msgid "Sample edges with vector handles"
-msgstr "Tomar muestras de bordes con asas de tipo vector"
+msgstr "Tomar muestras de bordes usando asas de tipo vector"
 
 
 msgid "Point of a path used to define a profile"
@@ -8168,11 +8168,11 @@ msgstr "Estado de selección del punto de la curva"
 
 
 msgid "Profile Point"
-msgstr "Punto de perfil"
+msgstr "Punto del perfil"
 
 
 msgid "Collection of Profile Points"
-msgstr "Colección de puntos de perfil"
+msgstr "Colección de puntos del perfil"
 
 
 msgid "Curve Splines"
@@ -8260,7 +8260,7 @@ msgstr "Instancia de objeto en la gráfica de dependencias"
 
 
 msgid "Extended information about dependency graph object iterator (WARNING: all data here is *evaluated* one, not original .blend IDs...)"
-msgstr "Información extendida acerca del iterador de objetos de la gráfica de dependencias (ADVERTENCIA: aquí se *evalúan* todos los datos, no los componentes originales del .blend)"
+msgstr "Información extendida acerca del iterador de objetos de la gráfica de dependencias (ADVERTENCIA: aquí se *evalúan* todos los datos, no los ID originales del .blend)"
 
 
 msgid "Instance Object"
@@ -8320,7 +8320,7 @@ msgstr "Identificador persistente para la coincidencia inter-fotograma de objeto
 
 
 msgid "Dupli random id"
-msgstr "ID aleatorio"
+msgstr "ID instancias aleatorio"
 
 
 msgid "Random id for this instance, typically for randomized shading"
@@ -8356,7 +8356,7 @@ msgstr "Actualización de gráfica de dependencias"
 
 
 msgid "Information about ID that was updated"
-msgstr "Información sobre la ID que fue actualizada"
+msgstr "Información sobre el ID que fue actualizado"
 
 
 msgid "ID"
@@ -8712,7 +8712,7 @@ msgstr "Origen"
 
 
 msgid "ID-Block representing source data, usually ID_SCE (i.e. Scene)"
-msgstr "Bloque de ID que representa el origen de los datos, usualmente ID_SCE (escena)"
+msgstr "Bloque de ID que representa el origen de los datos, usualmente ID_SCE (una escena)"
 
 
 msgid "Sort Data-Blocks"
@@ -8828,11 +8828,11 @@ msgstr "Ruta de datos"
 
 
 msgid "RNA Path (from ID-block) to property used"
-msgstr "Ruta RNA (desde el bloque de ID) de la propiedad usada"
+msgstr "Ruta RNA (desde el bloque de ID) a la propiedad usada"
 
 
 msgid "ID-block that the specific property used can be found from (id_type property must be set first)"
-msgstr "Bloque ID en el cual la propiedad específica usada puede ser encontrada (la propiedad id_type debe ser definida antes)"
+msgstr "Bloque de ID en el cual se puede encontrar la propiedad específica usada (la propiedad 'Tipo de ID' debe ser definida antes)"
 
 
 msgctxt "ID"
@@ -9783,7 +9783,7 @@ msgstr "Superficie de pintura dinámica activa para pintar"
 
 
 msgid "Active Point Cache Index"
-msgstr "Índice del caché de puntos activo"
+msgstr "Identificador del caché de puntos activo"
 
 
 msgid "Edit Bone"
@@ -10011,11 +10011,11 @@ msgstr "Curva-f que define valores de un período de tiempo"
 
 
 msgid "RNA Array Index"
-msgstr "Índice de matriz RNA"
+msgstr "Identificador de matriz RNA"
 
 
 msgid "Index to the specific property affected by F-Curve if applicable"
-msgstr "Índice para especificar la propiedad afectada por las curvas-F si es aplicable"
+msgstr "Identificador para especificar la propiedad afectada por las curvas-F, si es aplicable"
 
 
 msgid "Auto Handle Smoothing"
@@ -11049,11 +11049,11 @@ msgstr "Grupo de caras, cada una sólo puede ser parte de un mapa"
 
 
 msgid "Index"
-msgstr "Índice"
+msgstr "Identificador"
 
 
 msgid "Index number of the face map"
-msgstr "Número de índice del mapa de caras"
+msgstr "Identificador numérico del mapa de caras"
 
 
 msgid "Face map name"
@@ -11081,11 +11081,11 @@ msgstr "Mapas de caras del objeto"
 
 
 msgid "Active Face Map Index"
-msgstr "Índice del mapa de caras activo"
+msgstr "Identificador del mapa de caras activo"
 
 
 msgid "Active index in face map array"
-msgstr "Índice del mapa activo en la matriz de mapas de caras"
+msgstr "Identificador del mapa activo en la matriz de mapas de caras"
 
 
 msgid "Field Settings"
@@ -12017,7 +12017,7 @@ msgstr "Mostrar archivos .blend"
 
 
 msgid "Filter Blender IDs"
-msgstr "Filtrar componentes de Blender"
+msgstr "Filtrar elementos de Blender"
 
 
 msgid "Show .blend files items (objects, materials, etc.)"
@@ -14225,11 +14225,11 @@ msgstr "La curva se encuentra seleccionada para su edición en la vista"
 
 
 msgid "Point Index"
-msgstr "Índice del punto"
+msgstr "Identificador del punto"
 
 
 msgid "Index of the corresponding grease pencil stroke point"
-msgstr "Índice del punto correspondiente del trazo de lápiz de cera"
+msgstr "Identificador del punto correspondiente del trazo de lápiz de cera"
 
 
 msgid "Pressure of the grease pencil stroke point"
@@ -14701,11 +14701,11 @@ msgstr "La capa está subordinada a un hueso"
 
 
 msgid "Pass Index"
-msgstr "Índice en pasada"
+msgstr "Identificador en pasada"
 
 
 msgid "Index number for the \"Layer Index\" pass"
-msgstr "Nº de índice en la pasada \"Índice de capas\""
+msgstr "Nº de identificador en la pasada \"Identificador de capas\""
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
@@ -15105,11 +15105,11 @@ msgstr "Grosor del trazo (en píxeles)"
 
 
 msgid "Material Index"
-msgstr "Índice de material"
+msgstr "Identificador de material"
 
 
 msgid "Index of material used in this stroke"
-msgstr "Índice del material usado en este trazo"
+msgstr "Identificador del material usado en este trazo"
 
 
 msgid "Stroke Points"
@@ -15229,15 +15229,15 @@ msgstr "Datos de triangulación para los rellenos de lápiz de cera"
 
 
 msgid "First triangle vertex index"
-msgstr "Índice del primer vértice del triángulo"
+msgstr "Identificador del primer vértice del triángulo"
 
 
 msgid "Second triangle vertex index"
-msgstr "Índice del segundo vértice del triángulo"
+msgstr "Identificador del segundo vértice del triángulo"
 
 
 msgid "Third triangle vertex index"
-msgstr "Índice del tercer vértice del triángulo"
+msgstr "Identificador del tercer vértice del triángulo"
 
 
 msgctxt "Operator"
@@ -15583,7 +15583,7 @@ msgstr "Duplica los trazos en forma simétrica"
 
 
 msgid "Multiple Strokes"
-msgstr "Múltiples trazos"
+msgstr "Trazos múltiples"
 
 
 msgid "Produce multiple strokes along one stroke"
@@ -15639,7 +15639,7 @@ msgstr "Cambia el grosor del trazo"
 
 
 msgid "Time Offset"
-msgstr "Desplazamiento de tiempo"
+msgstr "Desplazar tiempo"
 
 
 msgid "Offset keyframes"
@@ -15755,11 +15755,11 @@ msgstr "Pasada"
 
 
 msgid "Layer pass index"
-msgstr "Índice de la pasada de la capa"
+msgstr "Identificador de la capa en la pasada"
 
 
 msgid "Material used for filtering effect"
-msgstr "Material usado para el efecto de filtrado"
+msgstr "Material usado para filtrar el efecto"
 
 
 msgid "Object Offset"
@@ -15771,7 +15771,7 @@ msgstr "Utiliza la posición y rotación de otro objeto para determinar la dista
 
 
 msgid "Pass index"
-msgstr "Índice en pasada"
+msgstr "Identificador en pasada"
 
 
 msgid "Random Offset"
@@ -15803,7 +15803,7 @@ msgstr "El tamaño de la geometría determinará la distancia entre los elemento
 
 
 msgid "Index of the material used for generated strokes (0 keep original material)"
-msgstr "Índice del material usado para los trazos generados (0 para mantener el material original)"
+msgstr "Identificador del material usado para los trazos generados (0 para mantener el material original)"
 
 
 msgid "Random seed"
@@ -16393,7 +16393,7 @@ msgstr "El modificador afectará al grosor del punto"
 
 
 msgid "The modifier affects the UV rotation factor of the point"
-msgstr "El modificador afectará al factor de rotación de UV del punto"
+msgstr "El modificador afectará al factor de rotación de la UV del punto"
 
 
 msgid "Subdivision Modifier"
@@ -16533,7 +16533,7 @@ msgstr "Usar una curva personalizada para definir los cambios de grosor a lo lar
 
 
 msgid "Time Offset Modifier"
-msgstr "Modificador Desplazamiento de tiempo"
+msgstr "Modificador Desplazar tiempo"
 
 
 msgid "Time offset modifier"
@@ -16577,11 +16577,11 @@ msgstr "Mantener un fotograma estático en el tiempo"
 
 
 msgid "Frame Offset"
-msgstr "Desfasar fotogramas"
+msgstr "Desplazar fotogramas"
 
 
 msgid "Number of frames to offset original keyframe number or frame to fix"
-msgstr "Desfasaje que se introduce como corrección, al número original de fotograma o fotograma clave"
+msgstr "Desplazamiento que se introduce como corrección, al número original de fotogramas o fotogramas clave"
 
 
 msgid "Custom Range"
@@ -16649,7 +16649,7 @@ msgstr "Valor de influencia de un vértice en un grupo de vértices"
 
 
 msgid "Group Index"
-msgstr "Índice del grupo"
+msgstr "Identificador del grupo"
 
 
 msgid "Vertex Weight"
@@ -16709,11 +16709,11 @@ msgstr "Capa activa de lápiz de cera"
 
 
 msgid "Active Layer Index"
-msgstr "Índice de capa activa"
+msgstr "Identificador de capa activa"
 
 
 msgid "Index of active grease pencil layer"
-msgstr "Índice de la capa activa de lápiz de cera"
+msgstr "Identificador de la capa activa de lápiz de cera"
 
 
 msgid "Active Note"
@@ -16733,11 +16733,11 @@ msgstr "Colección de capas de máscara de lápiz de cera"
 
 
 msgid "Active Layer Mask Index"
-msgstr "Índice de capa de máscara activa"
+msgstr "Identificador de capa de máscara activa"
 
 
 msgid "Active index in layer mask array"
-msgstr "Índice de la capa activa en la matriz de capas de máscara"
+msgstr "Identificador de la capa activa en la matriz de capas de máscara"
 
 
 msgid "Hair Curve"
@@ -16749,15 +16749,15 @@ msgstr "Curva de pelo"
 
 
 msgid "First Point Index"
-msgstr "Índice del primer punto"
+msgstr "Identificador del primer punto"
 
 
 msgid "Index of the first loop of this polygon"
-msgstr "Índice del primer bucle de este polígono"
+msgstr "Identificador del primer bucle de este polígono"
 
 
 msgid "Index of this curve"
-msgstr "Índice de esta curva"
+msgstr "Identificador de esta curva"
 
 
 msgid "Number of Points"
@@ -16781,7 +16781,7 @@ msgstr "Punto de control de la curva de pelo"
 
 
 msgid "Index of this points"
-msgstr "Índices de estos puntos"
+msgstr "Identificadores de estos puntos"
 
 
 msgid "Statistical view of the levels of color in an image"
@@ -16841,7 +16841,7 @@ msgstr "Es evaluado"
 
 
 msgid "Whether this ID is runtime-only, evaluated data-block, or actual data from .blend file"
-msgstr "El tipo de este ID: temporal, un bloque de datos evaluado o un dato real del archivo .blend"
+msgstr "El tipo de este ID: si es temporal, un bloque de datos evaluado o un dato real del archivo .blend"
 
 
 msgid "Is Indirect"
@@ -16849,7 +16849,7 @@ msgstr "Es indirecto"
 
 
 msgid "Is this ID block linked indirectly"
-msgstr "Si este ID de bloque está vinculado de forma indirecta"
+msgstr "Si este bloque de ID está vinculado de forma indirecta"
 
 
 msgid "Library"
@@ -16869,7 +16869,7 @@ msgstr "Nombre completo"
 
 
 msgid "Unique data-block ID name, including library one is any"
-msgstr "Nombre único de ID del bloque de datos, incluyendo el de la biblioteca, si corresponde"
+msgstr "Nombre único de ID del bloque de datos, incluyendo el de la biblioteca, si correspondiera"
 
 
 msgid "Original ID"
@@ -18610,7 +18610,7 @@ msgstr "Mantener punto de anclaje"
 
 
 msgid "Keep the position of the last segment in the IK chain fixed"
-msgstr "Mantiene fija la posición del último segmento de la cadena de CI"
+msgstr "Mantiene fija la posición del último segmento de la cadena de cinemática inversa"
 
 
 msgid "Lock Rotation When Scaling"
@@ -19538,11 +19538,11 @@ msgstr "Ajusta el espacio de texturizado del objeto automáticamente al transfor
 
 
 msgid "Bounds Clamp"
-msgstr "Limitar a bordes"
+msgstr "Volumen delimitador"
 
 
 msgid "Option for curve-deform: Use the mesh bounds to clamp the deformation"
-msgstr "Opción para deformación por curvas: Usar los límites de la malla para limitar la deformación"
+msgstr "Opción para Deformar con curva: Usa el volumen delimitador de la malla para limitar la deformación"
 
 
 msgid "Fill Caps"
@@ -19582,11 +19582,11 @@ msgstr "Hace que los subordinados a la curva de trayectoria roten alrededor de l
 
 
 msgid "Option for paths and curve-deform: apply the curve radius with path following it and deforming"
-msgstr "Opción para trayectorias y deformaciones con curvas: aplica el radio de la curva a la trayectoria, siguiéndola y deformando"
+msgstr "Opción para Seguir trayectoria y Deformar con curva: Aplica el radio de la curva a la trayectoria o la deformación"
 
 
 msgid "Option for curve-deform: make deformed child to stretch along entire path"
-msgstr "Opción para deformación por curvas: Hacer que el subordinado deformado se estire a lo largo de toda la trayectoria"
+msgstr "Opción para Deformar con curva: Hace que el subordinado deformado se estire a lo largo de toda la curva"
 
 
 msgid "Surface Curve"
@@ -19858,11 +19858,11 @@ msgstr "Contenedor de la textura activa que se está mostrando"
 
 
 msgid "Active Texture Index"
-msgstr "Índice de textura activa"
+msgstr "Identificador de textura activa"
 
 
 msgid "Index of active texture slot"
-msgstr "Índice del contenedor de texturas activo"
+msgstr "Identificador del contenedor de textura activo"
 
 
 msgid "Alpha Transparency"
@@ -21528,7 +21528,7 @@ msgstr "Resolución del buffer de sombras, valores altos producen sombras más d
 
 
 msgid "Shadow Color"
-msgstr "Color de sombra"
+msgstr "Color de la sombra"
 
 
 msgid "Color of shadows cast by the light"
@@ -21844,11 +21844,11 @@ msgstr "Bloque de datos de máscara que define una máscara para componer"
 
 
 msgid "Active Shape Index"
-msgstr "Índice de forma activa"
+msgstr "Identificador de forma activa"
 
 
 msgid "Index of active layer in list of all mask's layers"
-msgstr "Índice de la capa activa en la lista de capas de máscara"
+msgstr "Identificador de la capa activa en la lista de capas de máscara"
 
 
 msgid "Final frame of the mask (used for sequencer)"
@@ -21972,23 +21972,23 @@ msgstr "Árbol de nodos de materiales basados en nodos"
 
 
 msgid "Active Paint Texture Index"
-msgstr "Índice de textura activa"
+msgstr "Identificador de textura activa"
 
 
 msgid "Index of active texture paint slot"
-msgstr "Índice del contenedor de texturas activo"
+msgstr "Identificador del contenedor de textura activo"
 
 
 msgid "Clone Paint Texture Index"
-msgstr "Índice de clon de textura"
+msgstr "Identificador de clon de textura"
 
 
 msgid "Index of clone texture paint slot"
-msgstr "Índice del contenedor de texturas clonado"
+msgstr "Identificador del contenedor de textura clonado"
 
 
 msgid "Index number for the \"Material Index\" render pass"
-msgstr "Nº de índice del material en la pasada \"Índice de materiales\""
+msgstr "Nº del identificador del material en la pasada \"Identificador de materiales\""
 
 
 msgid "Preview Render Type"
@@ -22260,7 +22260,7 @@ msgstr "Malla para texturizado"
 
 
 msgid "Use another mesh for texture indices (vertex indices must be aligned)"
-msgstr "Usar otra malla para los índices de texturizado (los índices de los vértices deben estar alineados)"
+msgstr "Usar otra malla para los identificadores de texturizado (los identificadores de los vértices deben estar alineados)"
 
 
 msgid "Selected Edge Total"
@@ -22396,7 +22396,7 @@ msgstr "Suaviza las normales al rehacer la malla"
 
 
 msgid "Clone UV Loop Layer"
-msgstr "Clonar capa de UV"
+msgstr "Clonar UV Capa"
 
 
 msgid "UV loop layer to be used as cloning source"
@@ -22404,31 +22404,31 @@ msgstr "Capa de UV a ser usada como origen de la clonación"
 
 
 msgid "Clone UV Loop Layer Index"
-msgstr "Clonar índice de la capa de UV"
+msgstr "Identificador capa Clonar UV"
 
 
 msgid "Clone UV loop layer index"
-msgstr "Clona el índice de la capa de UV"
+msgstr "Identificador de capa para Clonar UV"
 
 
 msgid "Mask UV Loop Layer"
-msgstr "Capa de UV para máscara"
+msgstr "Enmascarar UV Capa"
 
 
 msgid "UV loop layer to mask the painted area"
-msgstr "Capa de UV para enmascarar el área pintada"
+msgstr "Capa de UV para enmascarar el área a ser pintada"
 
 
 msgid "Mask UV Loop Layer Index"
-msgstr "Índice de capa de UV de máscara"
+msgstr "Identificador de capa para Enmascarar UV"
 
 
 msgid "Mask UV loop layer index"
-msgstr "Índice de la capa de UV de la máscara"
+msgstr "Identificador de la capa para Enmascarar UV"
 
 
 msgid "UV Loop Layers"
-msgstr "Capas de UV"
+msgstr "Capas UV"
 
 
 msgid "All UV loop layers"
@@ -22560,7 +22560,7 @@ msgstr "Usar reemplazo / cód. tiempo"
 
 
 msgid "Use a preview proxy and/or timecode index for this clip"
-msgstr "Usar un reemplazo de previsualización y/o un índice de código de tiempo para este clip"
+msgstr "Usar un reemplazo de previsualización y/o un identificador de código de tiempo para este clip"
 
 
 msgid "Proxy Custom Directory"
@@ -22580,7 +22580,7 @@ msgstr "Entrada activa"
 
 
 msgid "Index of the active input"
-msgstr "Índice de la entrada activa"
+msgstr "Identificador de la entrada activa"
 
 
 msgid "Active Output"
@@ -22588,7 +22588,7 @@ msgstr "Salida activa"
 
 
 msgid "Index of the active output"
-msgstr "Índice de la salida activa"
+msgstr "Identificador de la salida activa"
 
 
 msgid "The node tree icon"
@@ -22836,11 +22836,11 @@ msgstr "Material activo siendo visualizado"
 
 
 msgid "Active Material Index"
-msgstr "Índice del material activo"
+msgstr "Identificador del material activo"
 
 
 msgid "Index of active material slot"
-msgstr "Índice del contenedor de material activo"
+msgstr "Identificador del contenedor de material activo"
 
 
 msgid "Active Shape Key"
@@ -22852,11 +22852,11 @@ msgstr "Forma clave actual"
 
 
 msgid "Active Shape Key Index"
-msgstr "Índice de Forma clave activa"
+msgstr "Identificador de Forma clave activa"
 
 
 msgid "Current shape key index"
-msgstr "Índice de Forma clave actual"
+msgstr "Identificador de Forma clave actual"
 
 
 msgid "Bounding Box"
@@ -23328,11 +23328,11 @@ msgstr "Subordinar vértices"
 
 
 msgid "Indices of vertices in case of a vertex parenting relation"
-msgstr "Índices de vértices en caso de relación jerárquica de vértices"
+msgstr "Identificadores de vértices en caso de relación jerárquica de vértices"
 
 
 msgid "Index number for the \"Object Index\" render pass"
-msgstr "Nº de índice del objeto en la pasada \"Índice de objetos\""
+msgstr "Nº de identificador del objeto en la pasada \"Identificador de objetos\""
 
 
 msgid "Current pose for armatures"
@@ -23659,7 +23659,7 @@ msgstr "Objeto duplicado activo"
 
 
 msgid "Active Dupli Object Index"
-msgstr "Índice del objeto duplicado activo"
+msgstr "Identificador del objeto duplicado activo"
 
 
 msgid "Degrees"
@@ -24179,7 +24179,7 @@ msgstr "Masa de las partículas"
 
 
 msgid "Index of material slot used for rendering particles"
-msgstr "Índice del contenedor de material usado al procesar las partículas"
+msgstr "Identificador del contenedor de material usado al procesar las partículas"
 
 
 msgid "Material Slot"
@@ -25397,7 +25397,7 @@ msgstr "Caracter actual"
 
 
 msgid "Index of current character in current line, and also start index of character in selection if one exists"
-msgstr "Índice del caracter actual de la línea actual, y también índice del caracter de inicio de la selección, si esta existe"
+msgstr "Identificador del caracter actual de la línea actual, y también identificador del caracter de inicio de la selección, si existera"
 
 
 msgid "Current Line"
@@ -25409,11 +25409,11 @@ msgstr "Línea actual y línea inicial de la selección, si esta existe"
 
 
 msgid "Current Line Index"
-msgstr "Índice de la línea actual"
+msgstr "Identificador de la línea actual"
 
 
 msgid "Index of current TextLine in TextLine collection"
-msgstr "Índice de la línea de texto actual en la colección de líneas de texto"
+msgstr "Identificador de la línea de texto actual en la colección de líneas de texto"
 
 
 msgid "Filename of the text file"
@@ -25473,7 +25473,7 @@ msgstr "Carácter final de la selección"
 
 
 msgid "Index of character after end of selection in the selection end line"
-msgstr "Índice del caracter luego del fin de la selección en la línea final de la selección"
+msgstr "Identificador del caracter luego del fin de la selección en la línea final de la selección"
 
 
 msgid "Selection End Line"
@@ -25485,11 +25485,11 @@ msgstr "Línea final de la selección"
 
 
 msgid "Select End Line Index"
-msgstr "Seleccionar índice de línea final"
+msgstr "Seleccionar identificador de línea final"
 
 
 msgid "Index of last TextLine in selection"
-msgstr "Índice de la última línea de texto de la selección"
+msgstr "Identificador de la última línea de texto de la selección"
 
 
 msgid "Register"
@@ -26709,11 +26709,11 @@ msgstr "ID materiales"
 
 
 msgid "ID Library Override"
-msgstr "ID biblioteca redefinida"
+msgstr "ID redefinición biblioteca"
 
 
 msgid "Struct gathering all data needed by overridden linked IDs"
-msgstr "Estructura que reúne todos los datos necesitados por los componentes vinculados redefinidos"
+msgstr "Estructura que reúne todos los datos que los ID vinculados redefinidos necesitan"
 
 
 msgid "List of overridden properties"
@@ -26725,7 +26725,7 @@ msgstr "ID referencia"
 
 
 msgid "Linked ID used as reference by this override"
-msgstr "Componente vinculado usado como referencia por esta redefinición"
+msgstr "ID vinculado usado como referencia por esta redefinición"
 
 
 msgid "ID Library Override Property"
@@ -26825,7 +26825,7 @@ msgstr "Inserta un nuevo elemento en la colección antes del referenciado en sub
 
 
 msgid "Subitem Local Index"
-msgstr "Índice de subsistema local"
+msgstr "Identificador de subsistema local"
 
 
 msgid "Used to handle insertions into collection"
@@ -26837,7 +26837,7 @@ msgstr "Nombre de subsistema local"
 
 
 msgid "Subitem Reference Index"
-msgstr "Índice de subsistema referencia"
+msgstr "Identificador de subsistema referencia"
 
 
 msgid "Subitem Reference Name"
@@ -26845,7 +26845,7 @@ msgstr "Nombre de subsistema referencia"
 
 
 msgid "Base type for IK solver parameters"
-msgstr "Tipo base de los parámetros del método de resolución de CI"
+msgstr "Tipo base de los parámetros del método de resolución de cinemática inversa"
 
 
 msgid "IK Solver"
@@ -26853,11 +26853,11 @@ msgstr "Método de CI"
 
 
 msgid "IK solver for which these parameters are defined"
-msgstr "Método de resolución de CI para el cual se definen estos parámetros"
+msgstr "Método de resolución de cinemática inversa para el cual se definen estos parámetros"
 
 
 msgid "Original IK solver"
-msgstr "Método original de CI"
+msgstr "Método original de cinemática inversa"
 
 
 msgid "iTaSC"
@@ -26865,7 +26865,7 @@ msgstr "iTaSC"
 
 
 msgid "Multi constraint, stateful IK solver"
-msgstr "Método estable de resolución de CI, con múltiples restricciones"
+msgstr "Método estable de resolución de cinemática inversa, con múltiples restricciones"
 
 
 msgid "bItasc"
@@ -26873,7 +26873,7 @@ msgstr "bItasc"
 
 
 msgid "Parameters for the iTaSC IK solver"
-msgstr "Parámetros del método iTaSC de resolución de CI"
+msgstr "Parámetros del método iTaSC de resolución de cinemática inversa"
 
 
 msgid "Epsilon"
@@ -26905,7 +26905,7 @@ msgstr "Animación"
 
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
-msgstr "Método de resolución que define la pose partiendo de la acción actual y de otras restricciones, sin ser CI"
+msgstr "Método de resolución que define la pose partiendo de la acción actual y de otras restricciones, excepto las de cinemática inversa"
 
 
 msgid "Simulation"
@@ -26913,7 +26913,7 @@ msgstr "Simulación"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
-msgstr "Método de resolución analítico en tiempo real e ignora acciones y restricciones, salvo a la CI"
+msgstr "Método de resolución analítico en tiempo real, ignorando las acciones y restricciones de cinemática inversa"
 
 
 msgid "Precision"
@@ -26985,7 +26985,7 @@ msgstr "Límite inferior del intervalo de tiempo en segundos, en caso de usarse 
 
 
 msgid "Auto Step"
-msgstr "Intervalo automático"
+msgstr "Intervalos automáticos"
 
 
 msgid "Automatically determine the optimal number of steps for best performance/accuracy trade off"
@@ -28815,7 +28815,7 @@ msgstr "Una descripción breve del conjunto de claves"
 
 
 msgid "If this is set, the Keying Set gets a custom ID, otherwise it takes the name of the class used to define the Keying Set (for example, if the class name is \"BUILTIN_KSI_location\", and bl_idname is not set by the script, then bl_idname = \"BUILTIN_KSI_location\")"
-msgstr "Si se define esto, el conjunto de claves obtiene una ID propia, de otro modo tomará el nombre de la clase usada para definir el conjunto de claves (por ejemplo, si el nombre de la clase fuera \"BUILTIN_KSI_location\" y bl_idname no estuviera definido por el script, entonces bl_idname = \"BUILTIN_KSI_location\")"
+msgstr "Si se define esto, el conjunto de claves obtiene una ID propia, de otro modo tomará el nombre de la clase usada para definir el conjunto de claves (por ejemplo, si el nombre de la clase fuera \"BUILTIN_KSI_location\" y 'bl_idname' no estuviera definido por el script, entonces bl_idname = \"BUILTIN_KSI_location\")"
 
 
 msgid "UI Name"
@@ -29047,7 +29047,7 @@ msgstr "Ruta a una propiedad a ser usada en un conjunto de claves"
 
 
 msgid "Index to the specific setting if applicable"
-msgstr "Índice de la propiedad específica, si es aplicable"
+msgstr "Identificador de la propiedad específica, si es aplicable"
 
 
 msgid "Path to property setting"
@@ -29079,11 +29079,11 @@ msgstr "Nombre del conjunto de claves"
 
 
 msgid "ID-Block"
-msgstr "Bloque ID"
+msgstr "Bloque de ID"
 
 
 msgid "ID-Block that keyframes for Keying Set should be added to (for Absolute Keying Sets only)"
-msgstr "Bloque ID al que los claves del conjunto de claves deberían ser agregados (para conjuntos de claves absolutos solamente)"
+msgstr "Bloque de ID al cual los claves del conjunto de claves deberían ser agregados (sólo para conjuntos de claves absolutos)"
 
 
 msgid "Entire Array"
@@ -29111,11 +29111,11 @@ msgstr "Conjunto de claves activo usado al insertar/borrar fotogramas clave"
 
 
 msgid "Active Path Index"
-msgstr "Índice de ruta del activo"
+msgstr "Identificador de ruta del activo"
 
 
 msgid "Current Keying Set index"
-msgstr "Índice del conjunto de claves actual"
+msgstr "Identificador del conjunto de claves actual"
 
 
 msgid "Keying Sets"
@@ -29127,11 +29127,11 @@ msgstr "Conjuntos de claves de la escena"
 
 
 msgid "Active Keying Set Index"
-msgstr "Índice del conjunto de claves activo"
+msgstr "Identificador del conjunto de claves activo"
 
 
 msgid "Current Keying Set index (negative for 'builtin' and positive for 'absolute')"
-msgstr "Índice del conjunto de claves actual (negativo para 'el predefinido' y positivo para 'absoluto')"
+msgstr "Identificador del conjunto de claves actual (negativo para 'el predefinido' y positivo para 'absoluto')"
 
 
 msgid "Keying Sets All"
@@ -30007,11 +30007,11 @@ msgstr "Conjunto de líneas activo que se está mostrando"
 
 
 msgid "Active Line Set Index"
-msgstr "Índice del conjunto de líneas activo"
+msgstr "Identificador del conjunto de líneas activo"
 
 
 msgid "Index of active line set slot"
-msgstr "Índice del conjunto de líneas activo"
+msgstr "Identificador del conjunto de líneas activo"
 
 
 msgid "Loop Colors"
@@ -30031,11 +30031,11 @@ msgstr "Capa de color de vértices activa"
 
 
 msgid "Active Vertex Color Index"
-msgstr "Índice de capa de color de vértices activa"
+msgstr "Identificador de capa de color de vértices activa"
 
 
 msgid "Active vertex color index"
-msgstr "Índice de capa de color de vértices activa"
+msgstr "Identificador de capa de color de vértices activa"
 
 
 msgid "Single layer used for masking pixels"
@@ -30168,7 +30168,7 @@ msgstr "Opciones jerárquicas del elemento de la máscara"
 
 
 msgid "ID-block to which masking element would be parented to or to its property"
-msgstr "ID del bloque o propiedad a la cual se subordinará el elemento de la máscara"
+msgstr "Bloque de ID o propiedad a la cual se subordinará el elemento de la máscara"
 
 
 msgid "ID Type"
@@ -30184,7 +30184,7 @@ msgstr "Sub superior"
 
 
 msgid "Name of parent sub-object in specified data-block to which parenting happens"
-msgstr "Nombre del sub-objeto superior en el bloque de datos especificado con respecto al cual se producirá la subordinación jerárquica"
+msgstr "Nombre del sub-objeto superior en el bloque de datos especificado, con respecto al cual se producirá la subordinación jerárquica"
 
 
 msgid "Point Track"
@@ -30452,7 +30452,7 @@ msgstr "Dibujar los trazos usando cuadrados separados"
 
 
 msgid "Index number for the \"Color Index\" pass"
-msgstr "Nº de índice en la pasada \"Índice de colores\""
+msgstr "Nº de identificador en la pasada \"Identificador de colores\""
 
 
 msgid "Texture Pixel Size factor along the stroke"
@@ -31253,7 +31253,7 @@ msgstr "Influencia usada por el modificador Subdividir superficie para el plegad
 
 
 msgid "Index of this edge"
-msgstr "Índice de este borde"
+msgstr "Identificador de este borde"
 
 
 msgid "Loose"
@@ -31285,7 +31285,7 @@ msgstr "Borde de costura para el despliegue UV"
 
 
 msgid "Vertex indices"
-msgstr "Índices de vértices"
+msgstr "Identificadores de vértices"
 
 
 msgid "Mesh Edges"
@@ -31305,7 +31305,7 @@ msgstr "Capa de mapa de caras de malla"
 
 
 msgid "Per-face map index"
-msgstr "Índice del mapa de caras"
+msgstr "Identificador del mapa de caras"
 
 
 msgid "Name of face map layer"
@@ -31349,11 +31349,11 @@ msgstr "Signo del vector bitangencial de este vértice para este polígono (debe
 
 
 msgid "Edge index"
-msgstr "Índice del borde"
+msgstr "Identificador del borde"
 
 
 msgid "Index of this loop"
-msgstr "Índice de este bucle"
+msgstr "Identificador de este bucle"
 
 
 msgid "Local space unit length split normal vector of this vertex for this polygon (must be computed beforehand using calc_normals_split or calc_tangents)"
@@ -31365,7 +31365,7 @@ msgstr "Versor tangencial de este vértice para este polígono, en espacio local
 
 
 msgid "Vertex index"
-msgstr "Índice de vértices"
+msgstr "Identificador del vértice"
 
 
 msgid "Mesh Vertex Color"
@@ -31417,11 +31417,11 @@ msgstr "Área de este triángulo"
 
 
 msgid "Index of this loop triangle"
-msgstr "Índice de este triángulo teselado"
+msgstr "Identificador de este triángulo teselado"
 
 
 msgid "Indices of mesh loops that make up the triangle"
-msgstr "Índice de los bordes de la malla que conforman este triángulo"
+msgstr "Identificadores de los bordes de la malla que conforman este triángulo"
 
 
 msgid "Triangle Normal"
@@ -31433,7 +31433,7 @@ msgstr "Versor normal de este triángulo, en espacio local"
 
 
 msgid "Index of mesh polygon that the triangle is a part of"
-msgstr "Índice del polígono de la malla del cual el triángulo es parte"
+msgstr "Identificador del polígono de la malla del cual el triángulo es parte"
 
 
 msgid "Split Normals"
@@ -31445,7 +31445,7 @@ msgstr "Versores normales divididos de los vértices de este triángulo, en espa
 
 
 msgid "Indices of triangle vertices"
-msgstr "Índices de los vértices del triángulo"
+msgstr "Identificadores de los vértices del triángulo"
 
 
 msgid "Mesh Loop Triangles"
@@ -31501,7 +31501,7 @@ msgstr "Centro de este polígono"
 
 
 msgid "Index of this polygon"
-msgstr "Índice de este polígono"
+msgstr "Identificador de este polígono"
 
 
 msgid "Loop Start"
@@ -31753,7 +31753,7 @@ msgstr "Influencia usada por la opción 'Sólo vértices' del modificador Bisela
 
 
 msgid "Index of this vertex"
-msgstr "Índice de este vértice"
+msgstr "Identificador de este vértice"
 
 
 msgid "Vertex Normal"
@@ -32501,7 +32501,7 @@ msgstr "Marca los bordes biselados como definidos"
 
 
 msgid "Material index of generated faces, -1 for automatic"
-msgstr "Índice de material de las caras generadas, -1 significa automático"
+msgstr "Identificador de material de las caras generadas, -1 significa automático"
 
 
 msgid "Inner Miter"
@@ -33137,7 +33137,7 @@ msgstr "Por orden"
 
 
 msgid "Match target data layers to affect by order (indices)"
-msgstr "Hacer coincidir las capas de datos de destino a afectar por su orden (usando su índice)"
+msgstr "Hacer coincidir las capas de datos de destino a afectar por su orden (usando su identificador)"
 
 
 msgid "Source Layers Selection"
@@ -33749,11 +33749,11 @@ msgstr "Curva de decaimiento personalizada"
 
 
 msgid "Vertex Indices"
-msgstr "Índices de vértices"
+msgstr "Identificadores de vértices"
 
 
 msgid "Indices of vertices bound to the modifier. For bezier curves, handles count as additional vertices"
-msgstr "Índices de los vértices enlazados al modificador. Para curvas Bézier, las asas cuentan como vértices adicionales"
+msgstr "Identificadores de los vértices enlazados al modificador. Para curvas Bézier, las asas cuentan como vértices adicionales"
 
 
 msgid "Laplacian Deform Modifier"
@@ -34661,11 +34661,11 @@ msgstr "Eje definido como polo para la rotación"
 
 
 msgid "Index Layer Name"
-msgstr "Nombre capa de índice"
+msgstr "Nombre de identificador de capa"
 
 
 msgid "Custom data layer name for the index"
-msgstr "Nombre de la capa de datos personalizados para el índice"
+msgstr "Nombre de la capa de datos personalizados para el identificador"
 
 
 msgid "Object that has the particle system"
@@ -35162,7 +35162,7 @@ msgstr "Material (despl)"
 
 
 msgid "Offset material index of generated faces"
-msgstr "Índice de desplazamiento del material de las caras generadas"
+msgstr "Desplazamiento del identificador del material de las caras generadas"
 
 
 msgid "Rim Material Offset"
@@ -35170,7 +35170,7 @@ msgstr "Material del canto (despl)"
 
 
 msgid "Offset material index of generated rim faces"
-msgstr "Índice de desplazamiento del material de las caras generadas para el canto"
+msgstr "Identificador de desplazamiento del material de las caras generadas para el canto"
 
 
 msgid "Boundary Shape"
@@ -35985,7 +35985,7 @@ msgstr "Hueso desde el cual transformar"
 
 
 msgid "Radius to apply"
-msgstr "Radio a aplicar"
+msgstr "Radio de aplicación"
 
 
 msgid "Object to transform from"
@@ -36349,7 +36349,7 @@ msgstr "Contador continuo"
 
 
 msgid "Build free run time code index"
-msgstr "Crea un índice de código de tiempo de contabilización continua"
+msgstr "Crea un identificador de código de tiempo de contabilización continua"
 
 
 msgid "Free Run (Rec Date)"
@@ -36357,7 +36357,7 @@ msgstr "Contador continuo (fecha grabación)"
 
 
 msgid "Build free run time code index using Record Date/Time"
-msgstr "Crea un índice de código de tiempo de contabilización continua, usando la fecha y hora de grabación"
+msgstr "Crea un identificador de código de tiempo de contabilización continua, usando la fecha y hora de grabación"
 
 
 msgid "Rec Run"
@@ -36365,7 +36365,7 @@ msgstr "Contador de grabación"
 
 
 msgid "Build record run time code index"
-msgstr "Crea un índice de código de tiempo que contabiliza el tiempo de grabación"
+msgstr "Crea un identificador de código de tiempo que contabiliza el tiempo de grabación"
 
 
 msgid "Build proxy resolution 100% of the original undistorted footage dimension"
@@ -36489,11 +36489,11 @@ msgstr "Datos de rastreo de movimiento"
 
 
 msgid "Active Object Index"
-msgstr "Índice objeto activo"
+msgstr "Identificador objeto activo"
 
 
 msgid "Index of active object"
-msgstr "Índice del objeto activo"
+msgstr "Identificador del objeto activo"
 
 
 msgid "Collection of objects in this tracking data object"
@@ -37285,19 +37285,19 @@ msgstr "Estabilización 2D basada en marcadores de rastreo"
 
 
 msgid "Active Rotation Track Index"
-msgstr "Índice del rastro de rotación activo"
+msgstr "Identificador del rastro de rotación activo"
 
 
 msgid "Index of active track in rotation stabilization tracks list"
-msgstr "Índice del rastro activo en la lista de rastros de rotación de estabilización"
+msgstr "Identificador del rastro activo en la lista de rastros de rotación de estabilización"
 
 
 msgid "Active Track Index"
-msgstr "Índice del rastro activo"
+msgstr "Identificador del rastro activo"
 
 
 msgid "Index of active track in translation stabilization tracks list"
-msgstr "Índice del rastro activo en la lista de rastros de traslación de estabilización"
+msgstr "Identificador del rastro activo en la lista de rastros de traslación de estabilización"
 
 
 msgid "Anchor Frame"
@@ -38997,7 +38997,7 @@ msgstr "ID a máscara"
 
 
 msgid "Pass index number to convert to alpha"
-msgstr "Número del índice de la pasada a convertir en alfa"
+msgstr "Número del identificador en la pasada de entrada, que se desea convertir a alfa"
 
 
 msgid "Apply an anti-aliasing filter to the mask"
@@ -39538,11 +39538,11 @@ msgstr "Archivo"
 
 
 msgid "Active Input Index"
-msgstr "Índice entrada activa"
+msgstr "Identificador entrada activa"
 
 
 msgid "Active input index in details view list"
-msgstr "Índice de entrada activo en la lista de detalles"
+msgstr "Identificador de entrada activo en la lista de detalles"
 
 
 msgid "Base Path"
@@ -40006,7 +40006,7 @@ msgstr "Verdadero cuando ambas entradas no sean aproximadamente iguales"
 
 
 msgid "Group Instance ID"
-msgstr "ID de instancia de grupo"
+msgstr "ID instancia de grupo"
 
 
 msgid "Object Transforms"
@@ -44872,11 +44872,11 @@ msgstr "Precarga fotogramas desde el disco para una reproducción o rastreo más
 
 msgctxt "Operator"
 msgid "Rebuild Proxy and Timecode Indices"
-msgstr "Reconstruir reemplazo e índices de código de tiempo"
+msgstr "Reconstruir reemplazo e identificadores de código de tiempo"
 
 
 msgid "Rebuild all selected proxies and timecode indices in the background"
-msgstr "Reconstruye en segundo plano todos los reemplazos e índices de código de tiempo para lo seleccionado"
+msgstr "Reconstruye en segundo plano todos los reemplazos e identificadores de código de tiempo para lo seleccionado"
 
 
 msgctxt "Operator"
@@ -45594,7 +45594,7 @@ msgstr "Anexa el historial en la posición del cursor"
 
 
 msgid "The index of the cursor"
-msgstr "El índice del cursor"
+msgstr "El identificador del cursor"
 
 
 msgid "Remove Duplicates"
@@ -45846,7 +45846,7 @@ msgstr "Mueve la restricción hacia abajo en la lista de modificadores"
 
 msgctxt "Operator"
 msgid "Move Constraint to Index"
-msgstr "Mover restricción a índice"
+msgstr "Mover restricción a identificador"
 
 
 msgid "Change the constraint's position in the list so it evaluates after the set number of others"
@@ -45854,7 +45854,7 @@ msgstr "Cambia la posición de la restricción en la lista, para que sea evaluad
 
 
 msgid "The index to move the constraint to"
-msgstr "El índice hacia donde mover la restricción"
+msgstr "El identificador hacia donde mover la restricción"
 
 
 msgctxt "Operator"
@@ -45898,7 +45898,7 @@ msgstr "Restablecer longitud original"
 
 
 msgid "Reset original length of bone for Stretch To Constraint"
-msgstr "Restablece la longitud original de los huesos para la restricción 'Estirar hasta'"
+msgstr "Restablece la longitud original de los huesos para la restricción 'Apuntar (estirando)'"
 
 
 msgctxt "Operator"
@@ -46490,21 +46490,12 @@ msgstr "Posición en la cual agregar el nuevo vértice"
 
 
 msgctxt "Operator"
-msgid "Add AOV"
-msgstr "Agregar AOV"
-
-
-msgid "Add an AOV pass"
-msgstr "Agrega una pasada AOV (variable arbitraria de salida)"
-
-
-msgctxt "Operator"
 msgid "Denoise Animation"
 msgstr "Reducir ruido de animación"
 
 
 msgid "Denoise rendered animation sequence using current scene and view layer settings. Requires denoising data passes and output to OpenEXR multilayer files"
-msgstr "Reduce el ruido de una secuencia animada ya procesada usando las opciones de la escena y la capa de visualización actuales. Requiere que la secuencia haya sido procesada a archivos OpenEXR multicapa y que éstos contengan la pasada Datos de reducción de ruidos"
+msgstr "Reduce el ruido de una secuencia animada ya procesada usando las opciones de la escena y la capa de visualización actuales. Requiere que la secuencia haya sido procesada a archivos OpenEXR multicapa y que éstos contengan la pasada 'Datos reducción de ruido'"
 
 
 msgid "Input Filepath"
@@ -46538,15 +46529,6 @@ msgstr "Ruta al archivo de la imagen a fusionar"
 
 msgid "File path for merged image"
 msgstr "Ruta al archivo de la imagen fusionada"
-
-
-msgctxt "Operator"
-msgid "Remove AOV"
-msgstr "Eliminar AOV"
-
-
-msgid "Remove an AOV pass"
-msgstr "Elimina una pasada AOV"
 
 
 msgctxt "Operator"
@@ -52297,7 +52279,7 @@ msgstr "Seleccionar reporte"
 
 
 msgid "Select reports by index"
-msgstr "Selecciona reportes por índice"
+msgstr "Selecciona reportes por identificador"
 
 
 msgid "Extend report selection"
@@ -52305,7 +52287,7 @@ msgstr "Extiende la selección de reportes"
 
 
 msgid "Index of the report"
-msgstr "Índice del reporte"
+msgstr "Identificador del reporte"
 
 
 msgctxt "Operator"
@@ -54076,11 +54058,11 @@ msgstr "Agrega un nuevo bucle entre los ya existentes"
 
 
 msgid "Edge Index"
-msgstr "Índice del borde"
+msgstr "Identificador de borde"
 
 
 msgid "Object Index"
-msgstr "Índice de objetos"
+msgstr "Identificador de objeto"
 
 
 msgctxt "Operator"
@@ -55485,7 +55467,7 @@ msgstr "Ordena los elementos seleccionados del que tiene el número de material 
 
 
 msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
-msgstr "Mueve todos los elementos seleccionados al primer lugar, preservando su orden relativo (CUIDADO: esto puede afectar también a los índices de los elementos no seleccionados)"
+msgstr "Mueve todos los elementos seleccionados al primer lugar, preservando su orden relativo (CUIDADO: esto puede afectar también a los identificadores de los elementos no seleccionados)"
 
 
 msgid "Randomize order of selected elements"
@@ -55823,11 +55805,11 @@ msgstr "Empuja la acción hacia abajo, al comienzo de la lista de ANL, como un n
 
 
 msgid "Channel Index"
-msgstr "Índice de canal"
+msgstr "Identificador del canal"
 
 
 msgid "Index of NLA action channel to perform pushdown operation on"
-msgstr "Índice del canal de la acción de ANL sobre el cual realizar la operación Empujar abajo"
+msgstr "Identificador del canal de la acción de ANL sobre el cual realizar la operación Empujar abajo"
 
 
 msgctxt "Operator"
@@ -56197,11 +56179,11 @@ msgstr "Agrega un nodo al árbol activo y lo vincula a un conector existente"
 
 
 msgid "Link Socket Index"
-msgstr "Índice conector a vincular"
+msgstr "Identificador conector a vincular"
 
 
 msgid "Index of the socket to link"
-msgstr "Índice del conector a vincular"
+msgstr "Identificador del conector a vincular"
 
 
 msgid "Settings to be applied on the newly created node"
@@ -57627,7 +57609,7 @@ msgstr "Mueve el modificador hacia abajo en la lista"
 
 msgctxt "Operator"
 msgid "Move Active Modifier to Index"
-msgstr "Mover modificador activo a índice"
+msgstr "Mover modificador activo a identificador"
 
 
 msgid "Change the modifier's position in the list so it evaluates after the set number of others"
@@ -57635,7 +57617,7 @@ msgstr "Cambiar la posición del modificador en la lista, para que sea evaluado 
 
 
 msgid "The index to move the modifier to"
-msgstr "El índice al cual mover el modificador"
+msgstr "El identificador al cual mover el modificador"
 
 
 msgctxt "Operator"
@@ -57675,11 +57657,11 @@ msgstr "Permite mostrar sólo objetos en una colección (Mayúsculas para extend
 
 
 msgid "Collection Index"
-msgstr "Índice de la colección"
+msgstr "Identificador de la colección"
 
 
 msgid "Index of the collection to change visibility"
-msgstr "Índice de la colección a la que se le cambiará la visibilidad"
+msgstr "Identificador de la colección a la que se le cambiará la visibilidad"
 
 
 msgid "Toggle visibility"
@@ -57881,7 +57863,7 @@ msgstr "Vincula objetos a una colección"
 
 
 msgid "Index of the collection to move to"
-msgstr "Índice de la colección a la cual mover los objetos"
+msgstr "Identificador de la colección a la cual mover los objetos"
 
 
 msgid "Move objects to a new collection"
@@ -58167,7 +58149,7 @@ msgstr "Convertir partículas a un objeto de tipo malla"
 
 
 msgid "Change the modifier's index in the stack so it evaluates after the set number of others"
-msgstr "Cambia el índice del modificador en la lista, para que sea evaluado luego de los otros"
+msgstr "Cambia el identificador del modificador en la lista, para que sea evaluado luego de los otros"
 
 
 msgctxt "Operator"
@@ -58856,7 +58838,7 @@ msgstr "Colección compartida"
 
 
 msgid "Render pass index"
-msgstr "Índice en pasada de procesamiento"
+msgstr "Identificador en pasada de procesamiento"
 
 
 msgid "Object color"
@@ -59071,7 +59053,7 @@ msgstr "Mueve el efecto hacia abajo en la lista"
 
 msgctxt "Operator"
 msgid "Move Effect to Index"
-msgstr "Mover efecto a índice"
+msgstr "Mover efecto a identificador"
 
 
 msgid "Change the effect's position in the list so it evaluates after the set number of others"
@@ -59079,7 +59061,7 @@ msgstr "Cambia la posición del efecto en la lista, para que sea evaluado luego 
 
 
 msgid "The index to move the effect to"
-msgstr "El índice al cual mover el efecto"
+msgstr "El identificador al cual mover el efecto"
 
 
 msgctxt "Operator"
@@ -59335,11 +59317,11 @@ msgstr "Hace que el objeto rastree a otro, usando varios métodos o restriccione
 
 
 msgid "Track to Constraint"
-msgstr "Restricción Rastrear"
+msgstr "Restricción Apuntar"
 
 
 msgid "Lock Track Constraint"
-msgstr "Restricción Rastreo bloqueado"
+msgstr "Restricción Apuntar (bloqueado)"
 
 
 msgctxt "Operator"
@@ -59791,11 +59773,11 @@ msgstr "Borra esta influencia del vértice (deshabilitado si el grupo de vértic
 
 
 msgid "Weight Index"
-msgstr "Índice de influencia"
+msgstr "Identificador de influencia"
 
 
 msgid "Index of source weight in active vertex group"
-msgstr "Índice de la influencia de origen en el grupo de vértices activo"
+msgstr "Identificador de la influencia de origen en el grupo de vértices activo"
 
 
 msgctxt "Operator"
@@ -60228,7 +60210,7 @@ msgstr "Actualiza el estado resaltado de un elemento basado en la posición actu
 
 msgctxt "Operator"
 msgid "Outliner ID Data Copy"
-msgstr "Copia de datos en el Listado"
+msgstr "Copiar datos de ID en el Listado"
 
 
 msgid "Selected data-blocks are copied to the clipboard"
@@ -60241,16 +60223,16 @@ msgstr "Borrar bloque de datos"
 
 
 msgid "Delete the ID under cursor"
-msgstr "Borra al ID bajo el cursor"
+msgstr "Borra el ID bajo el puntero"
 
 
 msgctxt "Operator"
 msgid "Outliner ID Data Operation"
-msgstr "Listado - operación con datos"
+msgstr "Listado - operación con datos de ID"
 
 
 msgid "ID Data Operation"
-msgstr "Operación de datos"
+msgstr "Operación de datos de ID"
 
 
 msgid "Unlink"
@@ -61699,7 +61681,7 @@ msgstr "Aplica la pose especificada de la biblioteca de poses al aparejo"
 
 
 msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib active pose)"
-msgstr "Índice de la pose a aplicar (-2 para no cambiar a pose, -1 para la pose activa de la biblioteca)"
+msgstr "Identificador de la pose a aplicar (-2 para no cambiar a pose, -1 para la pose activa de la biblioteca)"
 
 
 msgctxt "Operator"
@@ -61965,7 +61947,7 @@ msgstr "Agrega los huesos seleccionados al grupo de huesos escogido"
 
 
 msgid "Bone Group Index"
-msgstr "Índice grupo huesos"
+msgstr "Identificador grupo huesos"
 
 
 msgctxt "Operator"
@@ -62036,7 +62018,7 @@ msgstr "Agregar CI a hueso"
 
 
 msgid "Add IK Constraint to the active Bone"
-msgstr "Agrega una restricción de cinemática inversa (CI) al hueso activo"
+msgstr "Agrega una restricción de cinemática inversa al hueso activo"
 
 
 msgid "With Targets"
@@ -62044,7 +62026,7 @@ msgstr "Con objetivos"
 
 
 msgid "Assign IK Constraint with targets derived from the select bones/objects"
-msgstr "Asigna una restricción CI con objetivos derivados de los huesos u objetos seleccionados"
+msgstr "Asigna una restricción de cinemática inversa con objetivos derivados de los huesos u objetos seleccionados"
 
 
 msgctxt "Operator"
@@ -62053,7 +62035,7 @@ msgstr "Eliminar CI"
 
 
 msgid "Remove all IK Constraints from selected bones"
-msgstr "Remueve todas las restricciones de CI de los huesos seleccionados"
+msgstr "Remueve todas las restricciones de cinemática inversa de los huesos seleccionados"
 
 
 msgctxt "Operator"
@@ -63545,6 +63527,11 @@ msgid "Add a new view layer with all collections disabled"
 msgstr "Agrega una nueva capa de visualización con todas las colecciones deshabilitadas"
 
 
+msgctxt "Operator"
+msgid "Add AOV"
+msgstr "Agregar AOV"
+
+
 msgid "Add a Shader AOV"
 msgstr "Agregar AOV de sombreado"
 
@@ -63556,6 +63543,11 @@ msgstr "Eliminar capa de visualización"
 
 msgid "Remove the selected view layer"
 msgstr "Elimina la capa de visualización seleccionada"
+
+
+msgctxt "Operator"
+msgid "Remove AOV"
+msgstr "Eliminar AOV"
 
 
 msgid "Remove Active AOV"
@@ -63973,7 +63965,7 @@ msgstr "Nombre de ID del menú"
 
 
 msgid "ID name of the menu this was called from"
-msgstr "Identificador del menú desde donde esto fue invocado"
+msgstr "Nombre de ID del menú desde donde esto fue invocado"
 
 
 msgctxt "Operator"
@@ -65464,7 +65456,7 @@ msgstr "Reasigna las entradas del clip de efecto"
 
 
 msgid "Rebuild all selected proxies and timecode indices using the job system"
-msgstr "Reconstruir todos los reemplazos e índices de código de tiempo seleccionados usando el sistema de tareas"
+msgstr "Reconstruir todos los reemplazos e identificadores de código de tiempo seleccionados usando el sistema de tareas"
 
 
 msgctxt "Operator"
@@ -67299,7 +67291,7 @@ msgstr "Controla este componente de esta propiedad usando el objetivo indicado"
 
 
 msgid "Match Indices"
-msgstr "Coincidir índices"
+msgstr "Identificadores coincidentes"
 
 
 msgid "Create drivers for each pair of corresponding elements"
@@ -68240,7 +68232,7 @@ msgstr "Une las UV seleccionadas por proximidad"
 
 
 msgid "Index of the active object"
-msgstr "Índice del objeto activo"
+msgstr "Identificador del objeto activo"
 
 
 msgid "Clear seams of stitched edges"
@@ -68470,7 +68462,7 @@ msgstr "Permite eliminar una imagen de fondo de la vista 3D"
 
 
 msgid "Background image index to remove"
-msgstr "Índice de la imagen de fondo a eliminar"
+msgstr "Identificador de la imagen de fondo a eliminar"
 
 
 msgctxt "Operator"
@@ -70568,7 +70560,7 @@ msgstr "Deshabilitar etiqueta UI"
 
 
 msgid "Enable workspace owner ID"
-msgstr "Habilitar ID del propietario del espacio de trabajo"
+msgstr "Habilita el ID al cual pertenece el espacio de trabajo"
 
 
 msgid "UI Tag"
@@ -71277,11 +71269,11 @@ msgstr "Identificador de la herramienta"
 
 msgctxt "Operator"
 msgid "Set Tool by Index"
-msgstr "Herramienta por índice"
+msgstr "Activar herramienta por identificador"
 
 
 msgid "Set the tool by index (for keymaps)"
-msgstr "Define la herramienta por su índice (para mapas de teclado)"
+msgstr "Activar una herramienta mediante su identificador (para mapas de teclado)"
 
 
 msgid "Set the fallback tool instead of the primary"
@@ -71293,7 +71285,7 @@ msgstr "Incluir subgrupos de herramienta"
 
 
 msgid "Index in Toolbar"
-msgstr "Índice en barra de herramientas"
+msgstr "Identificador en barra de herramientas"
 
 
 msgctxt "Operator"
@@ -72030,7 +72022,7 @@ msgstr "El contexto al cual pertenece el panel. (A HACER: explicar las posibles 
 
 
 msgid "If this is set, the panel gets a custom ID, otherwise it takes the name of the class used to define the panel. For example, if the class name is \"OBJECT_PT_hello\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_PT_hello\""
-msgstr "Si esto está definido, el panel obtiene una ID propia, de otro modo tomará el nombre de la clase usada para definir el panel. Por ejemplo, si el nombre de la clase fuera \"OBJECT_PT_hola\" y bl_idname no estuviera definido por el script, entonces bl_idname = \"OBJECT_PT_hola\""
+msgstr "Si esto está definido, el panel obtiene una ID propia, de otro modo tomará el nombre de la clase usada para definir el panel. Por ejemplo, si el nombre de la clase fuera \"OBJECT_PT_hola\" y 'bl_idname' no estuviera definido por el script, entonces bl_idname = \"OBJECT_PT_hola\""
 
 
 msgid "The panel label, shows up in the panel header at the right of the triangle used to collapse the panel"
@@ -74253,7 +74245,7 @@ msgstr "Objetivo activo de la partícula"
 
 
 msgid "Active Particle Target Index"
-msgstr "Índice del objetivo activo de la partícula"
+msgstr "Identificador del objetivo activo de la partícula"
 
 
 msgid "Child Particles"
@@ -74437,7 +74429,7 @@ msgstr "Sistemas de partículas objetivo del reactor"
 
 
 msgid "For reactor systems, index of particle system on the target object"
-msgstr "En sistemas reactivos, índice del sistema de partículas en el objeto objetivo"
+msgstr "En sistemas reactivos, identificador del sistema de partículas en el objeto objetivo"
 
 
 msgid "Offset in the random number table, to get a different randomized result"
@@ -74581,11 +74573,11 @@ msgstr "Sistema de partículas activo que se está mostrando"
 
 
 msgid "Active Particle System Index"
-msgstr "Índice del sistema de partículas activo"
+msgstr "Identificador del sistema de partículas activo"
 
 
 msgid "Index of active particle system slot"
-msgstr "Índice del contenedor del sistema de partículas activo"
+msgstr "Identificador del contenedor del sistema de partículas activo"
 
 
 msgid "Particle Target"
@@ -74625,7 +74617,7 @@ msgstr "Sistema partículas objetivo"
 
 
 msgid "The index of particle system on the target object"
-msgstr "El índice del sistema de partículas en el objetivo"
+msgstr "El identificador del sistema de partículas en el objeto objetivo"
 
 
 msgid "Path Compare"
@@ -74701,11 +74693,11 @@ msgstr "Cantidad de fotogramas de la escena entre cada fotograma almacenado en e
 
 
 msgid "Cache Index"
-msgstr "Índice del caché"
+msgstr "Identificador del caché"
 
 
 msgid "Index number of cache files"
-msgstr "Número de índice de los archivos de caché"
+msgstr "Número de identificador de los archivos de caché"
 
 
 msgid "Cache Info"
@@ -74805,11 +74797,11 @@ msgstr "Parám CI"
 
 
 msgid "Parameters for IK solver"
-msgstr "Parámetros del método de resolución de CI"
+msgstr "Parámetros del método de resolución de cinemática inversa"
 
 
 msgid "Selection of IK solver for IK chain"
-msgstr "Selección de método de resolución de CI para la cadena de CI"
+msgstr "Selección del método de resolución de cinemática inversa para la cadena"
 
 
 msgid "Auto IK"
@@ -74817,7 +74809,7 @@ msgstr "CI automática"
 
 
 msgid "Add temporary IK constraints while grabbing bones in Pose Mode"
-msgstr "Agrega restricciones IK temporales al arrastrar huesos en modo Pose"
+msgstr "Agrega restricciones temporales de cinemática inversa al arrastrar huesos en modo Pose"
 
 
 msgid "Relative Mirror"
@@ -74825,7 +74817,7 @@ msgstr "Simetría relativa"
 
 
 msgid "Apply relative transformations in X-mirror mode (not supported with Auto IK)"
-msgstr "Aplicar transformaciones relativas en modo Simetría en X (no soportado al usar CI automática)"
+msgstr "Aplicar transformaciones relativas en modo Simetría en X (no soportado al usar 'CI automática')"
 
 
 msgid "Pose Bone"
@@ -74889,43 +74881,43 @@ msgstr "Posición de la cabeza del hueso del canal"
 
 
 msgid "IK Lin Weight"
-msgstr "Incluencia lin CI"
+msgstr "Influencia lineal de CI"
 
 
 msgid "Weight of scale constraint for IK"
-msgstr "Influencia de la restricción de escala de CI"
+msgstr "Influencia de la restricción de escala de cinemática inversa"
 
 
 msgid "IK X Maximum"
-msgstr "CI máximo X"
+msgstr "Máximo de CI en X"
 
 
 msgid "Maximum angles for IK Limit"
-msgstr "Ángulos máximos para limitar a la CI"
+msgstr "Ángulos máximos para limitar a la cinemática inversa"
 
 
 msgid "IK Y Maximum"
-msgstr "CI máximo Y"
+msgstr "Máximo de CI en Y"
 
 
 msgid "IK Z Maximum"
-msgstr "CI máximo Z"
+msgstr "Máximo de CI en Z"
 
 
 msgid "IK X Minimum"
-msgstr "CI mínimo X"
+msgstr "Mínimo de CI en X"
 
 
 msgid "Minimum angles for IK Limit"
-msgstr "Ángulos mínimos para limitar a la CI"
+msgstr "Ángulos mínimos para limitar a la cinemática inversa"
 
 
 msgid "IK Y Minimum"
-msgstr "CI mínimo Y"
+msgstr "Mínimo de CI en Y"
 
 
 msgid "IK Z Minimum"
-msgstr "CI mínimo Z"
+msgstr "Mínimo de CI en Z"
 
 
 msgid "IK Rotation Weight"
@@ -74933,31 +74925,31 @@ msgstr "Influencia rotación CI"
 
 
 msgid "Weight of rotation constraint for IK"
-msgstr "Influencia de la restricción de rotación de CI"
+msgstr "Influencia de la restricción de rotación de cinemática inversa"
 
 
 msgid "IK X Stiffness"
-msgstr "CI rigidez X"
+msgstr "Rigidez de CI en X"
 
 
 msgid "IK stiffness around the X axis"
-msgstr "Rigidez de CI alrededor del eje X"
+msgstr "Rigidez de cinemática inversa alrededor del eje X"
 
 
 msgid "IK Y Stiffness"
-msgstr "CI rigidez Y"
+msgstr "Rigidez de CI en Y"
 
 
 msgid "IK stiffness around the Y axis"
-msgstr "Rigidez de CI alrededor del eje Y"
+msgstr "Rigidez de cinemática inversa alrededor del eje Y"
 
 
 msgid "IK Z Stiffness"
-msgstr "CI rigidez Z"
+msgstr "Rigidez de CI en Z"
 
 
 msgid "IK stiffness around the Z axis"
-msgstr "Rigidez de CI alrededor del eje Z"
+msgstr "Rigidez de cinemática inversa alrededor del eje Z"
 
 
 msgid "IK Stretch"
@@ -74965,7 +74957,7 @@ msgstr "Estiramiento de CI"
 
 
 msgid "Allow scaling of the bone for IK"
-msgstr "Permite el estiramiento del hueso durante la CI"
+msgstr "Permite el estiramiento del hueso durante el cálculo de cinemática inversa"
 
 
 msgid "Has IK"
@@ -74973,11 +74965,11 @@ msgstr "Tiene CI"
 
 
 msgid "Is part of an IK chain"
-msgstr "Es parte de una cadena de CI"
+msgstr "Es parte de una cadena de cinemática inversa"
 
 
 msgid "IK X Lock"
-msgstr "CI bloquear X"
+msgstr "Bloquear CI en X"
 
 
 msgid "Disallow movement around the X axis"
@@ -74985,7 +74977,7 @@ msgstr "Impide el movimiento alrededor del eje X"
 
 
 msgid "IK Y Lock"
-msgstr "CI bloquear Y"
+msgstr "Bloquear CI en Y"
 
 
 msgid "Disallow movement around the Y axis"
@@ -74993,7 +74985,7 @@ msgstr "Impide el movimiento alrededor del eje Y"
 
 
 msgid "IK Z Lock"
-msgstr "CI bloquear Z"
+msgstr "Bloquear CI en Z"
 
 
 msgid "Disallow movement around the Z axis"
@@ -75069,7 +75061,7 @@ msgstr "CI control lineal"
 
 
 msgid "Apply channel size as IK constraint if stretching is enabled"
-msgstr "Aplica el canal de escala como una restricción de CI, si se encontrara habilitado el estiramiento"
+msgstr "Aplica el canal de escala como una restricción de cinemática inversa, si se encontrara habilitado el estiramiento"
 
 
 msgid "IK Rotation Control"
@@ -75077,7 +75069,7 @@ msgstr "CI control de rotación"
 
 
 msgid "Apply channel rotation as IK constraint"
-msgstr "Aplica el canal de rotación como una restricción de CI"
+msgstr "Aplica el canal de rotación como una restricción de cinemática inversa"
 
 
 msgid "PoseBone Constraints"
@@ -77013,7 +77005,7 @@ msgstr "Extras para desarrolladores"
 
 
 msgid "Show options for developers (edit source in context menu, geometry indices)"
-msgstr "Muestra opciones para desarrolladores (menú contextual para edición de código fuente, índices de las geometrías)"
+msgstr "Muestra opciones para desarrolladores (menú contextual para edición de código fuente, identificadores de las geometrías)"
 
 
 msgid "Use transform gizmos by default"
@@ -77321,11 +77313,11 @@ msgstr "Rango de colores usado para visualizar influencias en modo de pintura de
 
 
 msgid "ID Property Group"
-msgstr "Grupo de propiedades ID"
+msgstr "Grupo de propiedades del ID"
 
 
 msgid "Group of ID properties"
-msgstr "Grupo de propiedades ID"
+msgstr "Grupo de propiedades del ID"
 
 
 msgid "Upper Case"
@@ -77402,30 +77394,6 @@ msgstr "Buscar con expresión regular"
 
 msgid "Use regular expressions to match text in the 'Find' field"
 msgstr "Usa una expresión regular para buscar coincidencias en el campo 'Buscar'"
-
-
-msgid "Conflict"
-msgstr "Conflicto"
-
-
-msgid "If there is a conflict with another render passes, message explaining why"
-msgstr "Si existiera un conflicto con otras pasadas de procesamiento, mensaje explicando por qué"
-
-
-msgid "Name of the pass, to use in the AOV Output shader node"
-msgstr "Nombre de la pasada, para ser usado en el nodo de sombreado Salida a AOV"
-
-
-msgid "Pass data type"
-msgstr "Tipo de datos de la pasada"
-
-
-msgid "Write a Value pass"
-msgstr "Escribir una pasada de Valores"
-
-
-msgid "Write a Color pass"
-msgstr "Escribir una pasada de Colores"
 
 
 msgid "Field of view for the fisheye lens"
@@ -77742,10 +77710,6 @@ msgstr "Usar desenfoque por movimiento"
 
 msgid "Use motion blur for this object"
 msgstr "Usa desenfoque por movimiento para este objeto"
-
-
-msgid "Custom render passes that can be output by shader nodes"
-msgstr "Pasadas de procesamiento personalizadas que pueden ser producidas por nodos de sombreado"
 
 
 msgid "Diffuse Direct"
@@ -78989,7 +78953,7 @@ msgstr "ID numérico"
 
 
 msgid "Numeric ID (read only!)"
-msgstr "ID numérico (¡solo lectura!)"
+msgstr "ID numérico (¡sólo lectura!)"
 
 
 msgid "PO File Path"
@@ -79033,7 +78997,7 @@ msgstr "Idioma activo"
 
 
 msgid "Index of active language in langs collection"
-msgstr "Índice del idioma activo en la colección de idiomas"
+msgstr "Identificador del idioma activo en la colección de idiomas"
 
 
 msgid "Whether these settings have already been auto-set or not"
@@ -79281,11 +79245,11 @@ msgstr "Elemento UV seleccionado"
 
 
 msgid "Element Index"
-msgstr "Índice del elemento"
+msgstr "Identificador del elemento"
 
 
 msgid "Face Index"
-msgstr "Índice de la cara"
+msgstr "Identificador de la cara"
 
 
 msgid "Base Pose Angle"
@@ -79325,7 +79289,7 @@ msgstr "Permite usar una posición y rotación definida manualmente como pose ba
 
 
 msgid "ID Property"
-msgstr "Propiedad ID"
+msgstr "ID Propiedad"
 
 
 msgid "Property that stores arbitrary, user defined properties"
@@ -79569,7 +79533,7 @@ msgstr "Produce una pasada de reflectividad indirecta"
 
 
 msgid "Deliver material index pass"
-msgstr "Produce una pasada con un índice de materiales"
+msgstr "Produce una pasada con un identificador de materiales"
 
 
 msgid "Deliver mist factor pass (0.0 to 1.0)"
@@ -79581,7 +79545,7 @@ msgstr "Produce una pasada con normales"
 
 
 msgid "Deliver object index pass"
-msgstr "Produce una pasada con un índice de objetos"
+msgstr "Produce una pasada con un identificador de objetos"
 
 
 msgid "Deliver shadow pass"
@@ -80257,7 +80221,7 @@ msgstr "Habilita la simplificación de la escena para procesar previsualizacione
 
 
 msgid "Render Single Layer"
-msgstr "Procesar una única capa"
+msgstr "Una sola capa"
 
 
 msgid "Only render the active layer. Only affects rendering from the interface, ignored for rendering from command line"
@@ -80441,11 +80405,11 @@ msgstr "Vista de procesamiento activa"
 
 
 msgid "Active View Index"
-msgstr "Índice de vista activa"
+msgstr "Identificador de vista activa"
 
 
 msgid "Active index in render view array"
-msgstr "Índice del elemento activo en la matriz de vistas"
+msgstr "Identificador del elemento activo en la matriz de vistas"
 
 
 msgid "Constraint influencing Objects inside Rigid Body Simulation"
@@ -81201,11 +81165,11 @@ msgstr "Qué tanto tiene que ser estirado o comprimido el tensor para que varíe
 
 
 msgid "Light Direction"
-msgstr "Dirección de la luz"
+msgstr "Dirección"
 
 
 msgid "Direction of the light for shadows and highlights"
-msgstr "Dirección de la luz para sombras y brillos"
+msgstr "Dirección de la luz, usada para mostrar sombras y brillos"
 
 
 msgid "Attenuation constant"
@@ -81237,15 +81201,15 @@ msgstr "Opciones de sombreado para el motor de procesamiento OpenGL"
 
 
 msgid "Shadow Focus"
-msgstr "Foco de sombras"
+msgstr "Enfoque"
 
 
 msgid "Shadow factor hardness"
-msgstr "Factor de dureza de las sombras"
+msgstr "Dureza de las sombras"
 
 
 msgid "Shadow Shift"
-msgstr "Desplazamiento de sombras"
+msgstr "Desplazamiento"
 
 
 msgid "Shadow termination angle"
@@ -82115,7 +82079,7 @@ msgstr "Convierte la entrada a datos con coma decimal"
 
 
 msgid "Use a preview proxy and/or time-code index for this strip"
-msgstr "Usar un reemplazo de previsualización y/o un índice de código de tiempo para este clip"
+msgstr "Usar un reemplazo de previsualización y/o un identificador de código de tiempo para este clip"
 
 
 msgid "Reverse Frames"
@@ -82584,11 +82548,11 @@ msgstr "En películas MPEG, precargar esta cantidad de fotogramas"
 
 
 msgid "Stream Index"
-msgstr "Índice del flujo"
+msgstr "Identificador del flujo"
 
 
 msgid "For files with several movie streams, use the stream with the given index"
-msgstr "Para archivos con varios flujos de video, usar el flujo con el índice aquí proporcionado"
+msgstr "Para archivos con varios flujos de video, usar el flujo con el identificador aquí proporcionado"
 
 
 msgid "Mode to load movie views"
@@ -83180,7 +83144,7 @@ msgstr "Usar como profundidad de campo"
 
 
 msgid "Blur using camera depth of field"
-msgstr "Desenfocar usando profundidad de campo de cámara"
+msgstr "Desenfocar usando la profundidad de campo de la cámara"
 
 
 msgid "Colorize Effect"
@@ -83272,7 +83236,7 @@ msgstr "Cantidad de muestras del desenfoque"
 
 
 msgid "Select Color"
-msgstr "Seleccionar color"
+msgstr "Color seleccionado"
 
 
 msgid "Color selected to apply glow"
@@ -84433,7 +84397,7 @@ msgstr "Marcador activo"
 
 
 msgid "Index of active bookmark (-1 if none)"
-msgstr "Índice del marcador activo (-1 si no hubiera ninguno)"
+msgstr "Identificador del marcador activo (-1 si no hubiera ninguno)"
 
 
 msgid "Browsing Mode"
@@ -84461,7 +84425,7 @@ msgstr "Carpeta reciente activa"
 
 
 msgid "Index of active recent folder (-1 if none)"
-msgstr "Índice de la carpeta reciente activa (-1 si no hubiera ninguna)"
+msgstr "Identificador de la carpeta reciente activa (-1 si no hubiera ninguna)"
 
 
 msgid "System Bookmarks"
@@ -84477,7 +84441,7 @@ msgstr "Marcador del sistema activo"
 
 
 msgid "Index of active system bookmark (-1 if none)"
-msgstr "Índice del marcador del sistema activo (-1 si no hubiera ninguno)"
+msgstr "Identificador del marcador del sistema activo (-1 si no hubiera ninguno)"
 
 
 msgid "System Folders"
@@ -84493,7 +84457,7 @@ msgstr "Carpeta del sistema activa"
 
 
 msgid "Index of active system folder (-1 if none)"
-msgstr "Índice de la carpeta del sistema activa (-1 si no hubiera ninguna)"
+msgstr "Identificador de la carpeta del sistema activa (-1 si no hubiera ninguna)"
 
 
 msgid "Space Graph Editor"
@@ -84901,7 +84865,7 @@ msgstr "Bloque de datos cuyos nodos están siendo editados"
 
 
 msgid "ID From"
-msgstr "ID del"
+msgstr "ID Desde"
 
 
 msgid "Data-block from which the edited data-block is linked"
@@ -86198,7 +86162,7 @@ msgstr "Colección de puntos para curvas Bézier solamente"
 
 
 msgid "Character Index"
-msgstr "Índice del carácter"
+msgstr "Identificador del carácter"
 
 
 msgid "Location of this character in the text data (only for text curves)"
@@ -89299,11 +89263,11 @@ msgstr "Celda de imagen activa"
 
 
 msgid "Active Tile Index"
-msgstr "Índice de celda activa"
+msgstr "Identificador de celda activa"
 
 
 msgid "Active index in tiles array"
-msgstr "Índice de la celda activa en la matriz de celdas"
+msgstr "Identificador de la celda activa en la matriz de celdas"
 
 
 msgid "UI list containing the elements of a collection"
@@ -89319,7 +89283,7 @@ msgstr "El valor del indicador de bits reservado 'FILTER_ITEM' (en los valores d
 
 
 msgid "If this is set, the uilist gets a custom ID, otherwise it takes the name of the class used to define the uilist (for example, if the class name is \"OBJECT_UL_vgroups\", and bl_idname is not set by the script, then bl_idname = \"OBJECT_UL_vgroups\")"
-msgstr "Si se define esto, la lista de la IU recibe una ID propia, de otro modo tomará el nombre de la clase usada para definir la lista (por ejemplo, si el nombre de la clase fuera \"OBJECT_UL_vgroups\" y bl_idname no estuviera definido por el script, entonces bl_idname = \"OBJECT_UL_vgroups\")"
+msgstr "Si se define esto, la lista de la IU recibe una ID propia, de otro modo tomará el nombre de la clase usada para definir la lista (por ejemplo, si el nombre de la clase fuera \"OBJECT_UL_vgroups\" y 'bl_idname' no estuviera definido por el script, entonces bl_idname = \"OBJECT_UL_vgroups\")"
 
 
 msgid "Filter by Name"
@@ -89399,11 +89363,11 @@ msgstr "Capa de UV activa"
 
 
 msgid "Active UV Loop Layer Index"
-msgstr "Índice de la capa de UV activa"
+msgstr "Identificador de la capa de UV activa"
 
 
 msgid "Active UV loop layer index"
-msgstr "Índice de la capa de UV activa"
+msgstr "Identificador de la capa de UV activa"
 
 
 msgid "UV projector used by the UV project modifier"
@@ -89591,11 +89555,11 @@ msgstr "Capa de color de vértices de escultura activa"
 
 
 msgid "Active Sculpt Vertex Color Index"
-msgstr "Índice de capa de color de vértices de escultura activa"
+msgstr "Identificador de capa de color de vértices de escultura activa"
 
 
 msgid "Active sculpt vertex color index"
-msgstr "Índice de capa de color de vértices de escultura activa"
+msgstr "Identificador de capa de color de vértices de escultura activa"
 
 
 msgid "Vertex Float Properties"
@@ -89607,7 +89571,7 @@ msgstr "Grupo de vértices, usado para deformación con esqueletos y otros prop�
 
 
 msgid "Index number of the vertex group"
-msgstr "Número de índice del grupo de vértices"
+msgstr "Número de identificador del grupo de vértices"
 
 
 msgid "Maintain the relative weights for the group"
@@ -89623,11 +89587,11 @@ msgstr "Grupo de vértices activo"
 
 
 msgid "Active Vertex Group Index"
-msgstr "Índice del grupo de vértices activo"
+msgstr "Identificador del grupo de vértices activo"
 
 
 msgid "Active index in vertex group array"
-msgstr "Índice del elemento activo en la matriz de grupos de vértices"
+msgstr "Identificador del elemento activo en la matriz de grupos de vértices"
 
 
 msgid "Vertex Int Properties"
@@ -89835,11 +89799,11 @@ msgstr "Mostrar el área de las caras seleccionadas, usando valores globales si 
 
 
 msgid "Indices"
-msgstr "Índices"
+msgstr "Identificadores"
 
 
 msgid "Display the index numbers of selected vertices, edges, and faces"
-msgstr "Mostrar el número de índice de los vértices, bordes y caras seleccionados"
+msgstr "Mostrar el número de identificador de los vértices, bordes y caras seleccionados"
 
 
 msgid "Extras"
@@ -90475,11 +90439,11 @@ msgstr "AOV activa"
 
 
 msgid "Active AOV Index"
-msgstr "Índice de AOV activa"
+msgstr "Identificador de AOV activa"
 
 
 msgid "Index of active aov"
-msgstr "Índice de la AOV (variable arbitraria de salida) activa"
+msgstr "Identificador de la AOV (variable arbitraria de salida) activa"
 
 
 msgid "Active Layer Collection"
@@ -90527,7 +90491,7 @@ msgstr "Umbral alfa"
 
 
 msgid "Z, Index, normal, UV and vector passes are only affected by surfaces with alpha transparency equal to or higher than this threshold"
-msgstr "Las pasadas Z, índice, normal, UV y vector serán afectadas sólo por las superficies con una transparencia alfa igual o mayor que este umbral"
+msgstr "Las pasadas Z, de identificadores, normales, UV y vectores serán afectadas sólo por las superficies con un alfa igual o mayor que este umbral"
 
 
 msgid "Cryptomatte Levels"
@@ -90579,7 +90543,7 @@ msgstr "Cryptomatte - Objeto"
 
 
 msgid "Render cryptomatte object pass, for isolating objects in compositing"
-msgstr "Procesa una pasada de objetos de Cryptomatte, para aislar materiales durante la composición"
+msgstr "Procesa una pasada de objetos de Cryptomatte, para aislar objetos durante la composición"
 
 
 msgid "Deliver bloom pass"
@@ -90743,7 +90707,7 @@ msgstr "Matriz de objeto"
 
 
 msgid "Transformation matrix from voxel index to object space"
-msgstr "Matriz de transformación desde el índice de los vóxeles al espacio del objeto"
+msgstr "Matriz de transformación desde el identificador de los vóxeles al espacio del objeto"
 
 
 msgid "Volume grid name"
@@ -90755,11 +90719,11 @@ msgstr "Cuadrículas volumétricas"
 
 
 msgid "Active Grid Index"
-msgstr "Índice de cuadrícula activa"
+msgstr "Identificador de cuadrícula activa"
 
 
 msgid "Index of active volume grid"
-msgstr "Índice de la cuadrícula volumétrica activa"
+msgstr "Identificador de la cuadrícula volumétrica activa"
 
 
 msgid "If loading grids failed, error message with details"
@@ -92193,11 +92157,11 @@ msgstr "Superficies"
 
 
 msgid "Denoising Data"
-msgstr "Datos de reducción de ruidos"
+msgstr "Datos reducción de ruido"
 
 
 msgid "Indexes"
-msgstr "Índices"
+msgstr "Identificadores"
 
 
 msgid "Render Time"
@@ -93343,7 +93307,7 @@ msgstr "Limitar a región"
 
 
 msgid "Volume Min"
-msgstr "Volumen mín"
+msgstr "Volumen  Mín"
 
 
 msgid "Min/Max"
@@ -93388,7 +93352,7 @@ msgstr "Alinear a normal"
 
 
 msgid "Pivot Offset"
-msgstr "Desplazamiento del pivote"
+msgstr "Desplazamiento pivote"
 
 
 msgid "No target bones added"
@@ -93461,11 +93425,11 @@ msgstr "Asa Final"
 
 
 msgid "Lock IK X"
-msgstr "Bloquear IK en X"
+msgstr "Bloquear CI en  X"
 
 
 msgid "Stiffness X"
-msgstr "Rigidez en X"
+msgstr "Rigidez en  X"
 
 
 msgid "Envelope Distance"
@@ -95088,7 +95052,7 @@ msgstr "Redefinición del conjunto activo"
 
 
 msgid "Target ID-Block"
-msgstr "ID de bloque objetivo"
+msgstr "Bloque de ID objetivo"
 
 
 msgid "Array All Items"
@@ -95165,7 +95129,7 @@ msgstr "Mapa"
 
 
 msgid "Use for Rendering"
-msgstr "Usar en procesamiento"
+msgstr "Procesar"
 
 
 msgid "Asset"
@@ -95398,7 +95362,7 @@ msgstr "Rastros de posición"
 
 
 msgid "Timecode Index"
-msgstr "Índice de código de tiempo"
+msgstr "Identificador de código de tiempo"
 
 
 msgctxt "Operator"
@@ -95773,7 +95737,7 @@ msgstr "Volúmenes"
 
 
 msgid "Blender IDs"
-msgstr "Componentes de Blender"
+msgstr "Elementos de Blender"
 
 
 msgctxt "Operator"
@@ -96264,7 +96228,7 @@ msgstr "Instanciar a escena"
 
 msgctxt "Operator"
 msgid "ID Data"
-msgstr "Datos"
+msgstr "Datos de ID"
 
 
 msgctxt "Operator"
@@ -99079,17 +99043,17 @@ msgstr "Multiplicación"
 
 msgctxt "Operator"
 msgid "Superscript 1"
-msgstr "Superíndice 1"
+msgstr "Super 1"
 
 
 msgctxt "Operator"
 msgid "Superscript 2"
-msgstr "Superíndice 2"
+msgstr "Super 2"
 
 
 msgctxt "Operator"
 msgid "Superscript 3"
-msgstr "Superíndice 3"
+msgstr "Super 3"
 
 
 msgctxt "Operator"
@@ -100625,15 +100589,15 @@ msgstr "No es posible pegar variables de controlador sin un controlador"
 
 
 msgid "Could not add driver, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "No fue posible agregar el controlador, porque la ruta RNA es inválida para la ID proporcionada (ID = %s, ruta = %s)"
+msgstr "No fue posible agregar el controlador, porque la ruta RNA es inválida para el ID proporcionado (ID = %s, ruta = %s)"
 
 
 msgid "Could not find driver to copy, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "No fue posible encontrar el controlador a ser copiado, porque la ruta RNA es inválida para la ID proporcionada (ID = %s, ruta = %s)"
+msgstr "No fue posible encontrar el controlador a ser copiado, porque la ruta RNA es inválida para el ID proporcionado (ID = %s, ruta = %s)"
 
 
 msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "No fue posible pegar el controlador, porque la ruta RNA es inválida para la ID proporcionada (ID = %s, ruta = %s)"
+msgstr "No fue posible pegar el controlador, porque la ruta RNA es inválida para el ID proporcionado (ID = %s, ruta = %s)"
 
 
 msgid "Poly Order:"
@@ -100721,7 +100685,7 @@ msgstr "<Sin puntero de ID>"
 
 
 msgid "<Missing ID block>"
-msgstr "<Bloque ID faltante>"
+msgstr "<Bloque de ID faltante>"
 
 
 msgid "No RNA pointer available to retrieve values for this fcurve"
@@ -100769,7 +100733,7 @@ msgstr "Falla al resolver la ruta a la propiedad, intentar especificar manualmen
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "No fue posible actualizar los indicadores para esta curva, porque la ruta RNA es inválida para la ID proporcionada (ID = %s, ruta = %s)"
+msgstr "No fue posible actualizar los indicadores para esta curva, porque la ruta RNA es inválida para el ID proporcionado (ID = %s, ruta = %s)"
 
 
 msgid "F-Curve with path '%s[%d]' cannot be keyframed, ensure that it is not locked or sampled, and try removing F-Modifiers"
@@ -100777,7 +100741,7 @@ msgstr "No es posible insertar fotogramas clave en la curva-f de ruta '%s[%d]'. 
 
 
 msgid "Could not insert keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "No fue posible insertar el fotograma clave porque la ruta RNA para la ID proporcionada es inválida (ID = %s, ruta = %s)"
+msgstr "No fue posible insertar el fotograma clave porque la ruta RNA para el ID proporcionado es inválida (ID = %s, ruta = %s)"
 
 
 msgid "No ID block to insert keyframe in (path = %s)"
@@ -100789,7 +100753,7 @@ msgstr "No fue posible insertar fotograma clave, porque este tipo no soporta dat
 
 
 msgid "Could not delete keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "No fue posible borrar el fotograma clave porque la ruta RNA para la ID proporcionada es inválida (ID = %s, ruta = %s)"
+msgstr "No fue posible borrar el fotograma clave porque la ruta RNA para el ID proporcionado es inválida (ID = %s, ruta = %s)"
 
 
 msgid "No action to delete keyframes from for ID = %s"
@@ -100801,7 +100765,7 @@ msgstr "No se ha borrado el fotograma clave de la curva-f bloqueada '%s' para %s
 
 
 msgid "Could not clear keyframe, as RNA path is invalid for the given ID (ID = %s, path = %s)"
-msgstr "No fue posible eliminar el fotograma clave porque la ruta RNA para la ID proporcionada es inválida (ID = %s, ruta = %s)"
+msgstr "No fue posible eliminar el fotograma clave porque la ruta RNA para el ID proporcionado es inválida (ID = %s, ruta = %s)"
 
 
 msgid "Not clearing all keyframes from locked F-Curve '%s' for %s '%s'"
@@ -100893,7 +100857,7 @@ msgstr "Propiedad agregada al conjunto de claves: '%s'"
 
 
 msgid "Skipping path in keying set, as it has no ID (KS = '%s', path = '%s[%d]')"
-msgstr "Omitiendo la ruta del conjunto de claves porque no tiene ID (CC = '%s', ruta = '%s[%d]')"
+msgstr "Omitiendo la ruta del conjunto de claves porque no tiene un ID (CC = '%s', ruta = '%s[%d]')"
 
 
 msgid "No region view3d available"
@@ -101001,7 +100965,7 @@ msgstr "El objeto no contiene datos de biblioteca de poses"
 
 
 msgid "Invalid index for pose"
-msgstr "Índice inválido para la pose"
+msgstr "Identificador inválido para la pose"
 
 
 msgid "Pose lib is only for armatures in pose mode"
@@ -101449,11 +101413,11 @@ msgstr "Se ha alcanzado la cantidad máxima de capas de máscara"
 
 
 msgid "Cannot change to non-existent layer (index = %d)"
-msgstr "No es posible cambiar a una capa no existente (índice = %d)"
+msgstr "No es posible cambiar a una capa no existente ( = %d)"
 
 
 msgid "Cannot change to non-existent material (index = %d)"
-msgstr "No es posible cambiar a un material no existente (índice = %d)"
+msgstr "No es posible cambiar a un material no existente ( = %d)"
 
 
 msgid "No active GP data"
@@ -102352,7 +102316,7 @@ msgstr "Explorar simulación a ser vinculada"
 
 
 msgid "Browse ID data to be linked"
-msgstr "Explorar datos del ID a ser vinculado"
+msgstr "Explorar datos de ID a ser vinculados"
 
 
 msgctxt "Scene"
@@ -103328,11 +103292,11 @@ msgstr "Ningún objeto activo al cual agregar la restricción"
 
 
 msgid "Must have an active bone to add IK constraint to"
-msgstr "Debe haber un hueso activo para agregar una restricción de CI"
+msgstr "Debe haber un hueso activo para agregar una restricción de cinemática inversa"
 
 
 msgid "Bone already has an IK constraint"
-msgstr "El hueso ya tiene una restricción de CI"
+msgstr "El hueso ya tiene una restricción de cinemática inversa"
 
 
 msgid "Removed constraint: %s"
@@ -103832,7 +103796,7 @@ msgstr "Modo de edición de jaula no soportado aún"
 
 
 msgid "Invalid vertex group index"
-msgstr "Índice de grupo de vértice inválido"
+msgstr "Identificador de grupo de vértice inválido"
 
 
 msgid "Vertex group is locked"
@@ -103844,7 +103808,7 @@ msgstr "%d influencias de vértices limitadas"
 
 
 msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Copiar grupos de vértices a seleccionado: %d hechos, %d fallaron (los datos del objeto deben tener índices coincidentes)"
+msgstr "Copiar grupos de vértices a seleccionado: %d hechos, %d fallaron (los datos del objeto deben tener s coincidentes)"
 
 
 msgid "No active editable object"
@@ -105122,7 +105086,7 @@ msgstr "Archivo no encontrado '%s'"
 
 
 msgid "Euler Rotation F-Curve has invalid index (ID='%s', Path='%s', Index=%d)"
-msgstr "La curva-f de rotación Euler tiene un índice inválido (ID='%s', Ruta='%s', Índice=%d)"
+msgstr "La curva-f de rotación Euler tiene un identificador inválido (ID='%s', Ruta='%s', Identificador=%d)"
 
 
 msgid "Missing %s%s%s component(s) of euler rotation for ID='%s' and RNA-Path='%s'"
@@ -105246,7 +105210,7 @@ msgstr "No es posible definir el marco a partir de una imagen procesada recortad
 
 
 msgid "Invalid UDIM index range was specified"
-msgstr "Se ha especificado un rango de índices UDIM inválido"
+msgstr "Se ha especificado un rango de s UDIM inválido"
 
 
 msgid "Packed to memory image \"%s\""
@@ -105406,11 +105370,11 @@ msgstr "Seleccionar primero una pista de ANL existente o una línea de acción v
 
 
 msgid "No animation channel found at index %d"
-msgstr "No se encontró un canal de animación con índice %d"
+msgstr "No se encontró un canal de animación con  %d"
 
 
 msgid "Animation channel at index %d is not a NLA 'Active Action' channel"
-msgstr "El canal de animación de índice %d no es un canal de 'Acción activa' de ANL"
+msgstr "El canal de animación de  %d no es un canal de 'Acción activa' de ANL"
 
 
 msgid "No AnimData blocks to enter tweak mode for"
@@ -105446,7 +105410,7 @@ msgstr "La acción '%s' no especifica en qué bloques de datos puede ser usada (
 
 
 msgid "Could not add action '%s' as it cannot be used relative to ID-blocks of type '%s'"
-msgstr "No fue posible agregar la acción '%s' porque no puede ser usada en relación con bloques ID de tipo '%s'"
+msgstr "No fue posible agregar la acción '%s' porque no puede ser usada en relación con bloques de ID de tipo '%s'"
 
 
 msgid "Too many clusters of strips selected in NLA Track (%s): needs exactly 2 to be selected"
@@ -105967,15 +105931,15 @@ msgstr "No es posible borrar el ID '%s', los bloques de datos usados indirectame
 
 
 msgid "Cannot delete currently visible workspace id '%s'"
-msgstr "No es posible borrar el espacio con ID '%s', actualmente visible"
+msgstr "No es posible borrar el espacio con el ID '%s', actualmente visible"
 
 
 msgid "Invalid old/new ID pair ('%s' / '%s')"
-msgstr "Par inválido de IDs nueva/antigua ('%s' / '%s')"
+msgstr "Par inválido de IDs nuevo/antiguo ('%s' / '%s')"
 
 
 msgid "Old ID '%s' is linked from a library, indirect usages of this data-block will not be remapped"
-msgstr "La ID antigua '%s' se encuentra vinculada desde una biblioteca, los usos indirectos de este bloque de datos no serán remapeados"
+msgstr "El ID antiguo '%s' se encuentra vinculado desde una biblioteca, los usos indirectos de este bloque de datos no serán remapeados"
 
 
 msgid "Copied %d selected data-block(s)"
@@ -106866,6 +106830,10 @@ msgid "Shear: %.3f %s (Press X or Y to set shear axis)"
 msgstr "Inclinar: %.3f %s (Presionar X o Y para definir eje)"
 
 
+msgid "Shrink/Fatten: "
+msgstr "Contraer / Expandir: "
+
+
 msgid " or Alt) Even Thickness %s"
 msgstr " o Alt) Grosor uniforme %s"
 
@@ -106907,7 +106875,7 @@ msgstr "Rot. esférica: %.2f %.2f %s"
 
 
 msgid "AutoIK-Len: %d"
-msgstr "Long-CI autom: %d"
+msgstr "Long-CI auto: %d"
 
 
 msgid "right"
@@ -107140,7 +107108,7 @@ msgstr "cardillo y kiwi"
 
 
 msgid "Index out of range"
-msgstr "Índice fuera de rango"
+msgstr "Identificador fuera de rango"
 
 
 msgid "No material to removed"
@@ -107424,7 +107392,7 @@ msgstr "Rango de fotogramas inválido (%d - %d)"
 
 
 msgid "GPencilStrokePoints.pop: index out of range"
-msgstr "GPencilStrokePoints.pop: índice fuera de rango"
+msgstr "GPencilStrokePoints.pop:  fuera de rango"
 
 
 msgid "Stroke not found in grease pencil frame"
@@ -107581,7 +107549,7 @@ msgstr "Cantidad máxima de texturas agregadas %d"
 
 
 msgid "Index %d is invalid"
-msgstr "El índice %d es inválido"
+msgstr "El  %d es inválido"
 
 
 msgid "Currently only single face map layers are supported"
@@ -107625,11 +107593,11 @@ msgstr "Modificar"
 
 
 msgid "Negative vertex index in vertex_indices_set"
-msgstr "Índice de vértice negativo en el conjunto de índices de vértices"
+msgstr "Identificador de vértice negativo en el conjunto de vértices"
 
 
 msgid "Duplicate index %d in vertex_indices_set"
-msgstr "Índice duplicado %d en el conjunto de índices de vértices"
+msgstr "Identificador duplicado %d en el conjunto de vértices"
 
 
 msgid "Unable to create new strip"
@@ -107741,7 +107709,7 @@ msgstr "Restricción '%s' no encontrada en el objeto '%s'"
 
 
 msgid "Could not move constraint from index '%d' to '%d'"
-msgstr "No fue posible mover la restricción desde el índice '%d' al '%d'"
+msgstr "No fue posible mover la restricción desde el  '%d' al '%d'"
 
 
 msgid "Modifier \"%s\" is not in the object's modifier list"
@@ -107785,7 +107753,7 @@ msgstr "Modo de asignación incorrecto"
 
 
 msgid "Bad vertex index in list"
-msgstr "Índice de vértices en lista incorrecto"
+msgstr "Identificador de vértices incorrecto en la lista"
 
 
 msgid "Object '%s' can't be selected because it is not in View Layer '%s'!"
@@ -107878,7 +107846,7 @@ msgstr "¡El hueso '%s' contiene datos de segmentos de hueso flexible antiguos!"
 
 
 msgid "Invalid index %d for B-Bone segments of '%s'!"
-msgstr "¡Índice %d inválido para los segmentos del hueso flexible '%s'!"
+msgstr "¡Identificador %d inválido para los segmentos del hueso flexible '%s'!"
 
 
 msgid "Registering render engine class: '%s' is too long, maximum length is %d"
@@ -107966,7 +107934,7 @@ msgstr "SequenceElements.pop: no se puede hacer emerger el último elemento"
 
 
 msgid "SequenceElements.pop: index out of range"
-msgstr "SequenceElements.pop: índice fuera de rango"
+msgstr "SequenceElements.pop:  fuera de rango"
 
 
 msgid "Sequences.new_effect: effect expects more than 3 inputs (%d, should never happen!)"
@@ -108138,7 +108106,7 @@ msgstr "La propiedad objetivo del manipulador '%s.%s' espera una matriz de longi
 
 
 msgid "Gizmo target property '%s.%s', index %d must be below %d"
-msgstr "La propiedad objetivo del manipulador '%s.%s', el índice %d debe ser inferior a %d"
+msgstr "La propiedad objetivo del manipulador '%s.%s', el  %d debe ser inferior a %d"
 
 
 msgid "%s '%s'"
@@ -108999,7 +108967,7 @@ msgstr "Desenfoque X"
 
 
 msgid "Object Pivot"
-msgstr "Pivote objeto"
+msgstr "Objeto de pivote"
 
 
 msgid "Wave Effect"
@@ -109236,7 +109204,7 @@ msgstr "La propiedad no puede ser a la vez booleana y decimal"
 
 
 msgid "Pointer from path image_id is not an ID"
-msgstr "El puntero de la ruta image_id no es una ID"
+msgstr "El puntero de la ruta image_id no es un ID"
 
 
 msgid "Property must be an integer or a float"

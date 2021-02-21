@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'eccc57aa5c79')\n"
+"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -46490,15 +46490,6 @@ msgstr "Vị trí cho chế tạo đỉnh mới"
 
 
 msgctxt "Operator"
-msgid "Add AOV"
-msgstr "Thêm AOV"
-
-
-msgid "Add an AOV pass"
-msgstr "Thêm một vòng AOV"
-
-
-msgctxt "Operator"
 msgid "Denoise Animation"
 msgstr "Giảm Huyên Náo Hoạt Hình"
 
@@ -46538,15 +46529,6 @@ msgstr "Đường dẫn tệp của ảnh để gồm"
 
 msgid "File path for merged image"
 msgstr "Đường dẫn tệp của ảnh được gồm"
-
-
-msgctxt "Operator"
-msgid "Remove AOV"
-msgstr "Xóa AOV"
-
-
-msgid "Remove an AOV pass"
-msgstr "Xóa một vòng AOV"
 
 
 msgctxt "Operator"
@@ -63545,6 +63527,11 @@ msgid "Add a new view layer with all collections disabled"
 msgstr "Thêm một màn lớp mới mà có hết sưu tập bị tắt"
 
 
+msgctxt "Operator"
+msgid "Add AOV"
+msgstr "Thêm AOV"
+
+
 msgid "Add a Shader AOV"
 msgstr "Thêm một AOV Bộ Tô Sắc"
 
@@ -63556,6 +63543,11 @@ msgstr "Xóa Lớp Màn Chiếu"
 
 msgid "Remove the selected view layer"
 msgstr "Xóa lớp màn chiếu được chọn"
+
+
+msgctxt "Operator"
+msgid "Remove AOV"
+msgstr "Xóa AOV"
 
 
 msgid "Remove Active AOV"
@@ -77404,30 +77396,6 @@ msgid "Use regular expressions to match text in the 'Find' field"
 msgstr "Dùng biểu thức chính quy để tìm văn bản trong hộp 'Tìm'"
 
 
-msgid "Conflict"
-msgstr "Mẫu Thuận"
-
-
-msgid "If there is a conflict with another render passes, message explaining why"
-msgstr "Nếu có một mẫu thuận với vòng kết xuất khác, tin nhắn tại sao có mẫu thuận"
-
-
-msgid "Name of the pass, to use in the AOV Output shader node"
-msgstr "Tên vòng, dùng trong giao điểm Ngõ Ra AOV"
-
-
-msgid "Pass data type"
-msgstr "Loại dữ liệu vòng"
-
-
-msgid "Write a Value pass"
-msgstr "Ghi một vòng Giá Trị"
-
-
-msgid "Write a Color pass"
-msgstr "Ghi một vòng Màu"
-
-
 msgid "Field of view for the fisheye lens"
 msgstr "Trường nhìn cho thấu kính mắt cá"
 
@@ -77742,10 +77710,6 @@ msgstr "Mờ Hóa Chuyển Động"
 
 msgid "Use motion blur for this object"
 msgstr "Dùng mờ hóa cho vật thể này"
-
-
-msgid "Custom render passes that can be output by shader nodes"
-msgstr "Vòng kết xuất thì có thể xuất từ giao điểm tô sắc"
 
 
 msgid "Diffuse Direct"

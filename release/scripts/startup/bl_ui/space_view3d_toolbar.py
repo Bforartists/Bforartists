@@ -1559,7 +1559,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
 
                 col.separator()
                 col.prop(gp_settings, "fill_simplify_level", text="Simplify")
-                if gp_settings.fill_draw_mode != 'STROKE':                
+                if gp_settings.fill_draw_mode != 'STROKE':
                     split = layout.split(factor = 0.4)
                     col = split.column()
                     col.use_property_split = False
@@ -1568,8 +1568,8 @@ class VIEW3D_PT_tools_grease_pencil_brush_advanced(View3DPanel, Panel):
                     if gp_settings.show_fill:
                         col.prop(gp_settings, "fill_threshold", text="")
                     else:
-                        col.label(icon='DISCLOSURE_TRI_RIGHT') 
-                    
+                        col.label(icon='DISCLOSURE_TRI_RIGHT')
+
                 row = layout.row(align=True)
                 row.use_property_split = False
                 row.prop(gp_settings, "use_fill_limit")
@@ -1803,86 +1803,7 @@ class VIEW3D_PT_tools_grease_pencil_brush_paint_falloff(GreasePencilBrushFalloff
         return (settings and settings.brush and settings.brush.curve and tool == 'TINT')
 
 
-# Grease Pencil stroke interpolation tools
-class VIEW3D_PT_tools_grease_pencil_interpolate(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'HEADER'
-    bl_label = "Interpolate"
-
-    @classmethod
-    def poll(cls, context):
-        if context.gpencil_data is None:
-            return False
-
-        gpd = context.gpencil_data
-        valid_mode = bool(gpd.use_stroke_edit_mode or gpd.is_stroke_paint_mode)
-        return bool(context.editable_gpencil_strokes) and valid_mode
-
-    def draw(self, context):
-        layout = self.layout
-        settings = context.tool_settings.gpencil_interpolate
-
-        col = layout.column(align=True)
-        col.label(text="Interpolate Strokes")
-        row = col.row()
-        row.separator()
-        row.operator("gpencil.interpolate", text="Interpolate", icon = "INTERPOLATE")
-        row = col.row()
-        row.separator()
-        row.operator("gpencil.interpolate_sequence", text="Sequence", icon = "SEQUENCE")
-        row = col.row()
-        row.separator()
-        row.operator("gpencil.interpolate_reverse", text="Remove Breakdowns")
-
-        col = layout.column(align=True)
-        col.label(text="Options:")
-        row = col.row()
-        row.separator()
-        row.prop(settings, "interpolate_all_layers")
-
-        gpd = context.gpencil_data
-        if gpd.use_stroke_edit_mode:
-            row = col.row()
-            row.separator()
-            row.prop(settings, "interpolate_selected_only")
-
-        col = layout.column(align=True)
-        col.use_property_split = True
-        col.label(text="Sequence Options:")
-        row = col.row()
-        row.separator()
-        row.prop(settings, "step")
-        row = col.row()
-        row.use_property_split = False
-        row.separator()
-        row.prop(settings, "type")
-        if settings.type == 'CUSTOM':
-            # TODO: Options for loading/saving curve presets?
-            col.template_curve_mapping(settings, "interpolation_curve", brush=True,
-                                       use_negative_slope=True)
-        elif settings.type != 'LINEAR':
-            row = col.row()
-            row.use_property_split = False
-            row.separator()
-            row.prop(settings, "easing")
-
-            if settings.type == 'BACK':
-                row = col.row()
-                row.separator()
-                row.prop(settings, "back")
-            elif settings.type == 'ELASTIC':
-                sub = layout.column(align=True)
-                sub.use_property_split = True
-                row = sub.row()
-                row.separator()
-                row.prop(settings, "amplitude")
-                row = sub.row()
-                row.separator()
-                row.prop(settings, "period")
-
-
 # Grease Pencil stroke sculpting tools
-
 class GreasePencilSculptPanel:
     bl_context = ".greasepencil_sculpt"
     bl_category = "Tool"
@@ -2403,7 +2324,6 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_vertex_paint_select,
     VIEW3D_PT_tools_grease_pencil_vertex_paint_settings,
     VIEW3D_PT_tools_grease_pencil_vertex_appearance,
-    VIEW3D_PT_tools_grease_pencil_interpolate,
     VIEW3D_PT_tools_grease_pencil_brush_mixcolor,
     VIEW3D_PT_tools_grease_pencil_brush_mix_palette,
 

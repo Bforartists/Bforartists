@@ -46,6 +46,8 @@ static bNodeSocketTemplate geo_node_mix_attribute_out[] = {
 
 static void geo_node_attribute_mix_layout(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
+  uiLayoutSetPropSep(layout, true);
+  uiLayoutSetPropDecorate(layout, false);
   uiItemR(layout, ptr, "blend_type", 0, "", ICON_NONE);
   uiLayout *col = uiLayoutColumn(layout, false);
   uiItemR(col, ptr, "input_type_factor", 0, IFACE_("Factor"), ICON_NONE);
@@ -148,7 +150,7 @@ static void attribute_mix_calc(GeometryComponent &component, const GeoNodeExecPa
   /* Use the highest complexity data type among the inputs and outputs, that way the node will
    * never "remove information". Use CD_PROP_BOOL as the lowest complexity data type, but in any
    * real situation it won't be returned. */
-  const CustomDataType result_type = attribute_data_type_highest_complexity({
+  const CustomDataType result_type = bke::attribute_data_type_highest_complexity({
       params.get_input_attribute_data_type("A", component, CD_PROP_BOOL),
       params.get_input_attribute_data_type("B", component, CD_PROP_BOOL),
       params.get_input_attribute_data_type("Result", component, CD_PROP_BOOL),
