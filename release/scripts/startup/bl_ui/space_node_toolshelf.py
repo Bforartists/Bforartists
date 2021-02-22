@@ -3545,6 +3545,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
+            
+            props = col.operator("node.add_node", text=" String                    ", icon = "STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeInputString"
 
             props = col.operator("node.add_node", text=" Value                    ", icon = "NODE_VALUE")
             props.use_transform = True
@@ -3576,6 +3580,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
+        
+            props = row.operator("node.add_node", text = "", icon = "STRING")
+            props.use_transform = True
+            props.type = "FunctionNodeInputString"
 
             props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
             props.use_transform = True
