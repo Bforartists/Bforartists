@@ -3039,7 +3039,7 @@ keyconfig_data = \
    [("wm.radial_control",
      {"type": 'F', "value": 'PRESS', "shift": True},
      {"properties":
-      [("data_path_primary", 'tool_settings.gpencil_sculpt.weight_brush.strength'),
+      [("data_path_primary", 'tool_settings.gpencil_weight_paint.brush.strength'),
        ("release_confirm", True),
        ],
       },
@@ -3047,7 +3047,7 @@ keyconfig_data = \
     ("wm.radial_control",
      {"type": 'F', "value": 'PRESS'},
      {"properties":
-      [("data_path_primary", 'tool_settings.gpencil_sculpt.weight_brush.size'),
+      [("data_path_primary", 'tool_settings.gpencil_weight_paint.brush.size'),
        ("release_confirm", True),
        ],
       },
