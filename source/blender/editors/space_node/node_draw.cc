@@ -1456,6 +1456,9 @@ static void node_draw_basis(const bContext *C,
     case SH_NODE_UVALONGSTROKE:
       icon = ICON_NODE_UVALONGSTROKE;
       break;
+    case FN_NODE_INPUT_STRING:
+      icon = ICON_STRING;
+      break;
     /* bfa - Output */
     case SH_NODE_OUTPUT_MATERIAL:
       icon = ICON_MATERIAL;
