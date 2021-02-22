@@ -1085,7 +1085,7 @@ static void rna_def_brush_texture_slot(BlenderRNA *brna)
   prop = RNA_def_property(srna, "angle", PROP_FLOAT, PROP_ANGLE);
   RNA_def_property_float_sdna(prop, NULL, "rot");
   RNA_def_property_range(prop, 0, M_PI * 2);
-  RNA_def_property_ui_text(prop, "Angle", "Brush texture rotation");
+  RNA_def_property_ui_text(prop, "Angle", "Brush texture rotation\nTexture angle Hotkey in the default keymap: Ctrl + F\nTexture Mask angle Hotkey in the default keymap: Ctrl + Alt + F");
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, 0, "rna_TextureSlot_brush_angle_update");
 
@@ -1292,7 +1292,7 @@ static void rna_def_gpencil_options(BlenderRNA *brna)
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
   RNA_def_property_ui_text(
-      prop, "Strength", "Color strength for new strokes (affect alpha factor of color)");
+      prop, "Strength", "Color strength for new strokes (affect alpha factor of color)\nHotkey in the default keymap: Shift + F");
   RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
   RNA_def_property_update(prop, NC_GPENCIL | ND_DATA, NULL);
 
