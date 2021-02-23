@@ -43,11 +43,16 @@ bl_info = {
 def align_view_buttons(self, context):
     layout = self.layout
     view = context.space_data
+    overlay = view.overlay
 
     preferences = context.preferences
     addon_prefs = preferences.addons["align_view_buttons"].preferences
-
+    
     row = layout.row(align=True)
+    
+    if addon_prefs.groundgrid:
+    
+        row.prop(overlay, "show_ortho_grid", toggle=True, icon_only = True, icon = "GROUNDGRID")
 
     if addon_prefs.align_buttons:
         row.operator("view3d.view_axis", text="", icon ="VIEW_FRONT").type = 'FRONT'
@@ -98,6 +103,9 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         col.label(text="View")
         row = col.row()
         row.separator()
+        row.prop(addon_prefs, "groundgrid")
+        row = col.row()
+        row.separator()
         row.prop(addon_prefs, "align_buttons")
         row = col.row()
         row.separator()
@@ -134,6 +142,9 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
+    
+    #groundgrid
+    groundgrid : BoolProperty(name="Groundgrid", default=False, description = "Show the groundgrid toggle button", )
 
     # align buttons
     align_buttons : BoolProperty(name="Align Buttons", default=True, description = "Show the align buttons", )
