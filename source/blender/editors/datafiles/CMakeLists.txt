@@ -159,7 +159,7 @@ vertcolfromweight
 huecorrect
 particlebrush_none
 
-#~ DEF_ICON_BLANK(178)
+groundgrid
 #~ DEF_ICON_BLANK(179)
 #~ DEF_ICON_BLANK(180)
 #~ DEF_ICON_BLANK(181)
