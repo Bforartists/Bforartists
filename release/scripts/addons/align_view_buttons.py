@@ -67,7 +67,7 @@ def align_view_buttons(self, context):
     if addon_prefs.camera_view:
         row.operator("view3d.view_camera", text="", icon = 'VIEW_SWITCHTOCAM')
 
-    row = layout.row(align=True)
+    row.separator(factor = 0.5)
 
     if addon_prefs.camera_switch:
         row.operator("view3d.switchactivecamto", text="", icon ="VIEW_SWITCHACTIVECAM")
@@ -81,7 +81,7 @@ def align_view_buttons(self, context):
         if hasattr(bpy.ops, "reset_3d_view"):
             row.operator("view3d.reset_3d_view", text="", icon ="VIEW_RESET")
             
-    row = layout.row(align=True)
+    row.separator(factor = 0.5)
             
     if addon_prefs.groundgrid:  
         row.prop(overlay, "show_ortho_grid", toggle=True, icon_only = True, icon = "GROUNDGRID")
