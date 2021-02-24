@@ -49,10 +49,6 @@ def align_view_buttons(self, context):
     addon_prefs = preferences.addons["align_view_buttons"].preferences
     
     row = layout.row(align=True)
-    
-    if addon_prefs.groundgrid:
-    
-        row.prop(overlay, "show_ortho_grid", toggle=True, icon_only = True, icon = "GROUNDGRID")
 
     if addon_prefs.align_buttons:
         row.operator("view3d.view_axis", text="", icon ="VIEW_FRONT").type = 'FRONT'
@@ -84,6 +80,19 @@ def align_view_buttons(self, context):
     if addon_prefs.reset_3dview:
         if hasattr(bpy.ops, "reset_3d_view"):
             row.operator("view3d.reset_3d_view", text="", icon ="VIEW_RESET")
+            
+    row = layout.row(align=True)
+            
+    if addon_prefs.groundgrid:  
+        row.prop(overlay, "show_ortho_grid", toggle=True, icon_only = True, icon = "GROUNDGRID")
+    if addon_prefs.wireframe: 
+        row.prop(overlay, "show_wireframes", toggle=True, icon_only = True, icon = "NODE_WIREFRAME")
+    if addon_prefs.cursor: 
+        row.prop(overlay, "show_cursor", text="", toggle=True, icon_only = True, icon = "CURSOR")
+    if addon_prefs.origin: 
+        row.prop(overlay, "show_object_origins", text="", toggle=True, icon_only = True, icon = "ORIGIN")
+    if addon_prefs.annotations: 
+        row.prop(overlay, "show_annotation", text="", toggle=True, icon_only = True, icon = "GREASEPENCIL")
 
     row.popover(panel = "VIEW3D_PT_align_view_buttons_options", text = "")
 
@@ -101,9 +110,6 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
 
         col = layout.column(align = True)
         col.label(text="View")
-        row = col.row()
-        row.separator()
-        row.prop(addon_prefs, "groundgrid")
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "align_buttons")
@@ -131,6 +137,24 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "reset_3dview")
+        
+        col = layout.column(align = True)
+        col.label(text="Overlay")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "groundgrid")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "wireframe")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "cursor")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "origin")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "annotations")
 
         col = layout.column(align = True)
         col.label(text="Note!")
@@ -142,23 +166,27 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
-    
-    #groundgrid
-    groundgrid : BoolProperty(name="Groundgrid", default=False, description = "Show the groundgrid toggle button", )
 
-    # align buttons
-    align_buttons : BoolProperty(name="Align Buttons", default=True, description = "Show the align buttons", )
+    # View
+    align_buttons : BoolProperty(name="Align Buttons", default=True, description = "Align buttons allows you to switch to orthographic views. Front, left, top ...", )
     quad_view : BoolProperty(name="Toggle Quad View", default=False, description = "Toggle the quad view layout in the 3d view", )
     persp_ortho : BoolProperty(name="Perspective Orthographic", default=False, description = "Toggle between perspectivic and orthographic projection", )
 
-    # camera
-    camera_view : BoolProperty(name="Active Camera", default=False, description = "Show the view through the camera button", )
+    # Navigation
+    camera_view : BoolProperty(name="Active Camera", default=False, description = "View through the render camera or through the viewport camera", )
     camera_switch : BoolProperty(name="Set Active Camera", default=False, description = "Set the currently selected camera as the active camera", )
 
     frame_selected : BoolProperty(name="Frame Selected", default=False, description = "Center the view at the selected object and zoom to fit", )
     frame_all : BoolProperty(name="Frame All", default=False, description = "Center the view at all content and zoom to fit", )
 
     reset_3dview : BoolProperty(name="Reset 3D View", default=False, description = "Resets the 3d view to the defaults.\rNote that this is the reset 3dview addon, so this button might not show if the addon is off!", )
+
+    #Overlay
+    groundgrid : BoolProperty(name="Groundgrid", default=False, description = "Show or hide the groundgrid", )
+    wireframe : BoolProperty(name="Wireframe", default=False, description = "Show or hide the wireframe display in object mode", )
+    cursor : BoolProperty(name="3D Cursor", default=False, description = "Show or hide the 3D cursor", )
+    origin : BoolProperty(name="Origin", default=False, description = "Show or hide the origin", )
+    annotations : BoolProperty(name="Annotations", default=False, description = "Show or hide annotations", )
 
 
 classes = (
