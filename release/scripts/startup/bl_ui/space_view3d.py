@@ -7378,10 +7378,18 @@ class VIEW3D_PT_overlay_object(Panel):
         sub = split.column(align=True)
         sub.prop(overlay, "show_bones", text="Bones")
         sub.prop(overlay, "show_motion_paths")
-        sub.prop(overlay, "show_object_origins", text="Origins")
-        subsub = sub.column()
-        subsub.active = overlay.show_object_origins
-        subsub.prop(overlay, "show_object_origins_all", text="Origins (All)")
+
+        split = col.split()
+        col = split.column()
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(overlay, "show_object_origins", text="Origins")
+        col = split.column()
+        if overlay.show_object_origins:
+            col.prop(overlay, "show_object_origins_all", text="Origins (All)")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class VIEW3D_PT_overlay_geometry(Panel):
@@ -7411,8 +7419,6 @@ class VIEW3D_PT_overlay_geometry(Panel):
         else:
             row.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        col = layout.column(align=True)
-        col.active = display_all
         row = col.row()
         row.separator()
         row.prop(overlay, "show_face_orientation")
