@@ -160,9 +160,9 @@ huecorrect
 particlebrush_none
 
 groundgrid
-#~ DEF_ICON_BLANK(179)
-#~ DEF_ICON_BLANK(180)
-#~ DEF_ICON_BLANK(181)
+nodetree_active
+node_compositing_active
+texture_active
 #~ DEF_ICON_BLANK(182)
 #~ DEF_ICON_BLANK(183)
 #~ DEF_ICON_BLANK(184)
