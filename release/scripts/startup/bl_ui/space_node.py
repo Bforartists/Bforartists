@@ -42,6 +42,92 @@ from bl_ui.properties_data_light import (
 )
 
 
+################################ Switch between the editors ##########################################
+
+class NODE_OT_switch_editors_to_compositor(bpy.types.Operator):
+    """Switch to the Comppositor Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_compositor"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to Compositor Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(
+            data_path="area.ui_type", value="CompositorNodeTree")
+        return {'FINISHED'}
+
+
+class NODE_OT_switch_editors_to_geometry(bpy.types.Operator):
+    """Switch to the Geometry Node Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_geometry"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to Geometry Node Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(
+            data_path="area.ui_type", value="GeometryNodeTree")
+        return {'FINISHED'}
+
+
+class NODE_OT_switch_editors_to_shadereditor(bpy.types.Operator):
+    """Switch to the Shader Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_shadereditor"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to Shader Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(
+            data_path="area.ui_type", value="ShaderNodeTree")
+        return {'FINISHED'}
+
+
+# The blank buttons, we don't want to switch to the editor in which we are already.
+
+
+class NODE_OT_switch_editors_in_compositor(bpy.types.Operator):
+    """Compositor Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_compositor"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "You are in Compositor Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        return {'FINISHED'}
+
+
+class NODE_OT_switch_editors_in_geometry(bpy.types.Operator):
+    """Geometry Node Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_geometry"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "You are in Geometry Node Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        return {'FINISHED'}
+
+
+class NODE_OT_switch_editors_in_shadereditor(bpy.types.Operator):
+    """Shader Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_shadereditor"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "You are in Shader Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        return {'FINISHED'}
+
+
+############################# END ##################################
+
+
 class NODE_HT_header(Header):
     bl_space_type = 'NODE_EDITOR'
 
@@ -61,6 +147,11 @@ class NODE_HT_header(Header):
         # layout.prop(snode, "tree_type", text="")
 
         if snode.tree_type == 'ShaderNodeTree':
+            row = layout.row(align = True)
+            row.operator("wm.switch_editor_to_compositor", text="", icon='NODE_COMPOSITING')
+            row.operator("wm.switch_editor_to_geometry", text="", icon='NODETREE')
+            row.operator("wm.switch_editor_in_shadereditor", text="", icon='TEXTURE_ACTIVE')
+
             layout.prop(snode, "shader_type", text="")
 
             ob = context.object
@@ -122,9 +213,20 @@ class NODE_HT_header(Header):
 
         elif snode.tree_type == 'CompositorNodeTree':
 
+            row = layout.row(align = True)
+            row.operator("wm.switch_editor_in_compositor", text="", icon='NODE_COMPOSITING_ACTIVE')
+            row.operator("wm.switch_editor_to_geometry", text="", icon='NODETREE')
+            row.operator("wm.switch_editor_to_shadereditor", text="", icon='TEXTURE')
+
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
         elif snode.tree_type == 'GeometryNodeTree':
+
+            row = layout.row(align = True)
+            row.operator("wm.switch_editor_to_compositor", text="", icon='NODE_COMPOSITING')
+            row.operator("wm.switch_editor_in_geometry", text="", icon='NODETREE_ACTIVE')
+            row.operator("wm.switch_editor_to_shadereditor", text="", icon='TEXTURE')
+
             NODE_MT_editor_menus.draw_collapsible(context, layout)
             layout.separator_spacer()
 
@@ -237,6 +339,7 @@ class NODE_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
+
         layout.menu("SCREEN_MT_user_menu", text = "Quick") # Quick favourites menu
         layout.menu("NODE_MT_view")
         layout.menu("NODE_MT_select")
@@ -873,6 +976,14 @@ classes = (
     node_panel(DATA_PT_light),
     node_panel(DATA_PT_EEVEE_light),
     NODE_PT_view,
+
+    #bfa - toggles
+    NODE_OT_switch_editors_to_compositor,
+    NODE_OT_switch_editors_to_geometry,
+    NODE_OT_switch_editors_to_shadereditor,
+    NODE_OT_switch_editors_in_compositor,
+    NODE_OT_switch_editors_in_geometry,
+    NODE_OT_switch_editors_in_shadereditor,
 )
 
 
