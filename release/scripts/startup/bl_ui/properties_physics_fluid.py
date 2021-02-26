@@ -1017,7 +1017,7 @@ class PHYSICS_PT_particles(PhysicButtonsPanel, Panel):
         col.separator()
 
         col = flow.column()
-        col.prop(domain, "sndparticle_boundary", text="Particles in Boundary:")
+        col.prop(domain, "sndparticle_boundary", text="Particles in Boundary")
 
         if domain.cache_type == 'MODULAR':
             col.separator()
