@@ -1,4 +1,4 @@
-# Copyright 2018-2019 The glTF-Blender-IO authors.
+# Copyright 2018-2021 The glTF-Blender-IO authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -84,6 +84,10 @@ def __encode_node(node, dll, export_settings):
 def __encode_primitive(primitive, dll, export_settings):
     attributes = primitive.attributes
     indices = primitive.indices
+
+    # Only do TRIANGLES primitives
+    if primitive.mode not in [None, 4]:
+        return
 
     if 'POSITION' not in attributes:
         print_console('WARNING', 'Draco encoder: Primitive without positions encountered. Skipping.')
