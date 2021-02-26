@@ -163,7 +163,7 @@ groundgrid
 nodetree_active
 node_compositing_active
 texture_active
-#~ DEF_ICON_BLANK(182)
+spreadsheet
 #~ DEF_ICON_BLANK(183)
 #~ DEF_ICON_BLANK(184)
 #~ DEF_ICON_BLANK(185)

@@ -442,7 +442,6 @@ struct bNodeTree *ntreeCopyTree(struct Main *bmain, const struct bNodeTree *ntre
 
 struct bNodeTree **BKE_ntree_ptr_from_id(struct ID *id);
 struct bNodeTree *ntreeFromID(struct ID *id);
-struct ID *BKE_node_tree_find_owner_ID(struct Main *bmain, struct bNodeTree *ntree);
 
 void ntreeFreeLocalNode(struct bNodeTree *ntree, struct bNode *node);
 void ntreeFreeLocalTree(struct bNodeTree *ntree);
@@ -778,7 +777,7 @@ void BKE_node_preview_free(struct bNodePreview *preview);
 void BKE_node_preview_init_tree(struct bNodeTree *ntree,
                                 int xsize,
                                 int ysize,
-                                int create_previews);
+                                bool create_previews);
 void BKE_node_preview_free_tree(struct bNodeTree *ntree);
 void BKE_node_preview_remove_unused(struct bNodeTree *ntree);
 void BKE_node_preview_clear(struct bNodePreview *preview);

@@ -81,9 +81,7 @@
 #  include "COM_compositor.h"
 #endif
 
-using blender::Map;
 using blender::Span;
-using blender::StringRef;
 using blender::Vector;
 
 extern "C" {
@@ -304,16 +302,6 @@ void ED_node_sort(bNodeTree *ntree)
   }
 }
 
-static void do_node_internal_buttons(bContext *C, void *UNUSED(node_v), int event)
-{
-  if (event == B_NODE_EXEC) {
-    SpaceNode *snode = CTX_wm_space_node(C);
-    if (snode && snode->id) {
-      ED_node_tag_update_id(snode->id);
-    }
-  }
-}
-
 static void node_uiblocks_init(const bContext *C, bNodeTree *ntree)
 {
   /* Add node uiBlocks in drawing order - prevents events going to overlapping nodes. */
@@ -323,7 +311,6 @@ static void node_uiblocks_init(const bContext *C, bNodeTree *ntree)
     char uiblockstr[32];
     BLI_snprintf(uiblockstr, sizeof(uiblockstr), "node buttons %p", (void *)node);
     node->block = UI_block_begin(C, CTX_wm_region(C), uiblockstr, UI_EMBOSS);
-    UI_block_func_handle_set(node->block, do_node_internal_buttons, node);
 
     /* this cancels events for background nodes */
     UI_block_flag_enable(node->block, UI_BLOCK_CLIP_EVENTS);
@@ -793,7 +780,11 @@ static void node_socket_draw_multi_input(const float color[4],
       &rect, color, nullptr, 1.0f, color_outline, outline_width, width - outline_width * 0.5f);
 }
 
-static void node_socket_outline_color_get(bool selected, float r_outline_color[4])
+static const float virtual_node_socket_outline_color[4] = {0.5, 0.5, 0.5, 1.0};
+
+static void node_socket_outline_color_get(const bool selected,
+                                          const int socket_type,
+                                          float r_outline_color[4])
 {
   if (selected) {
     UI_GetThemeColor4fv(TH_TEXT_HI, r_outline_color);
@@ -802,6 +793,12 @@ static void node_socket_outline_color_get(bool selected, float r_outline_color[4
   else {
     copy_v4_fl(r_outline_color, 0.0f);
     r_outline_color[3] = 0.6f;
+  }
+
+  /* Until there is a better place for per socket color,
+   * the outline color for virtual sockets is set  here. */
+  if (socket_type == SOCK_CUSTOM) {
+    copy_v4_v4(r_outline_color, virtual_node_socket_outline_color);
   }
 }
 
@@ -838,7 +835,7 @@ static void node_socket_draw_nested(const bContext *C,
   float outline_color[4];
 
   node_socket_color_get((bContext *)C, ntree, node_ptr, sock, color);
-  node_socket_outline_color_get(selected, outline_color);
+  node_socket_outline_color_get(selected, sock->type, outline_color);
 
   node_socket_draw(sock,
                    color,
@@ -864,7 +861,7 @@ void ED_node_socket_draw(bNodeSocket *sock, const rcti *rect, const float color[
   rcti draw_rect = *rect;
   float outline_color[4] = {0};
 
-  node_socket_outline_color_get(sock->flag & SELECT, outline_color);
+  node_socket_outline_color_get(sock->flag & SELECT, sock->type, outline_color);
 
   BLI_rcti_resize(&draw_rect, size, size);
 
@@ -1179,7 +1176,7 @@ void node_draw_sockets(const View2D *v2d,
     float color[4];
     float outline_color[4];
     node_socket_color_get((bContext *)C, ntree, &node_ptr, socket, color);
-    node_socket_outline_color_get(selected, outline_color);
+    node_socket_outline_color_get(selected, socket->type, outline_color);
 
     node_socket_draw_multi_input(color, outline_color, width, height, socket->locx, socket->locy);
   }
@@ -1254,34 +1251,10 @@ static char *node_errors_tooltip_fn(bContext *UNUSED(C), void *argN, const char 
 
 #define NODE_HEADER_ICON_SIZE (0.8f * U.widget_unit)
 
-static const NodeUIStorage *node_ui_storage_get_from_context(const bContext *C,
-                                                             const bNodeTree &ntree,
-                                                             const bNode &node)
-{
-  const NodeTreeUIStorage *ui_storage = ntree.ui_storage;
-  if (ui_storage == nullptr) {
-    return nullptr;
-  }
-
-  const Object *active_object = CTX_data_active_object(C);
-  const ModifierData *active_modifier = BKE_object_active_modifier(active_object);
-  if (active_object == nullptr || active_modifier == nullptr) {
-    return nullptr;
-  }
-
-  const NodeTreeEvaluationContext context(*active_object, *active_modifier);
-  const Map<std::string, NodeUIStorage> *storage = ui_storage->context_map.lookup_ptr(context);
-  if (storage == nullptr) {
-    return nullptr;
-  }
-
-  return storage->lookup_ptr_as(StringRef(node.name));
-}
-
 static void node_add_error_message_button(
     const bContext *C, bNodeTree &ntree, bNode &node, const rctf &rect, float &icon_offset)
 {
-  const NodeUIStorage *node_ui_storage = node_ui_storage_get_from_context(C, ntree, node);
+  const NodeUIStorage *node_ui_storage = BKE_node_tree_ui_storage_get_from_context(C, ntree, node);
   if (node_ui_storage == nullptr || node_ui_storage->warnings.is_empty()) {
     return;
   }
@@ -1370,7 +1343,7 @@ static void node_draw_basis(const bContext *C,
     UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
     uiBut *but = uiDefIconBut(node->block,
                               UI_BTYPE_BUT_TOGGLE,
-                              B_REDR,
+                              0,
                               ICON_TOGGLE_NODE_PREVIEW,
                               iconofs,
                               rct->ymax - NODE_DY,
@@ -2072,7 +2045,7 @@ static void node_draw_basis(const bContext *C,
     UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
     uiBut *but = uiDefIconBut(node->block,
                               UI_BTYPE_BUT_TOGGLE,
-                              B_REDR,
+                              0,
                               ICON_NODETREE,
                               iconofs,
                               rct->ymax - NODE_DY,
@@ -2144,7 +2117,7 @@ static void node_draw_basis(const bContext *C,
     UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
     uiBut *but = uiDefBut(node->block,
                           UI_BTYPE_BUT_TOGGLE,
-                          B_REDR,
+                          0,
                           "",
                           rct->xmin + 0.35f * U.widget_unit,
                           rct->ymax - NODE_DY / 2.2f - but_size / 2,
@@ -2319,7 +2292,7 @@ static void node_draw_hidden(const bContext *C,
     UI_block_emboss_set(node->block, UI_EMBOSS_NONE);
     uiBut *but = uiDefBut(node->block,
                           UI_BTYPE_BUT_TOGGLE,
-                          B_REDR,
+                          0,
                           "",
                           rct->xmin + 0.35f * U.widget_unit,
                           centy - but_size / 2,
