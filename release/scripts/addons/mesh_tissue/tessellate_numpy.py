@@ -1921,7 +1921,7 @@ class tessellate(Operator):
             max=1,
             description="Automatically set crease for open edges"
             )
-    working_on : ""
+    # working_on : ""
 
     def draw(self, context):
         allowed_obj = ('MESH', 'CURVE', 'SURFACE', 'FONT', 'META')

@@ -3285,6 +3285,11 @@ static const EnumPropertyItem *merge_type_itemf(bContext *C,
     int totitem = 0;
     BMEditMesh *em = BKE_editmesh_from_object(obedit);
 
+    /* Keep these first so that their automatic shortcuts don't change. */
+    RNA_enum_items_add_value(&item, &totitem, merge_type_items, MESH_MERGE_CENTER);
+    RNA_enum_items_add_value(&item, &totitem, merge_type_items, MESH_MERGE_CURSOR);
+    RNA_enum_items_add_value(&item, &totitem, merge_type_items, MESH_MERGE_COLLAPSE);
+
     /* Only active object supported:
      * In practice it doesn't make sense to run this operation on non-active meshes
      * since selecting will activate - we could have own code-path for these but it's a hassle
@@ -3306,9 +3311,6 @@ static const EnumPropertyItem *merge_type_itemf(bContext *C,
       }
     }
 
-    RNA_enum_items_add_value(&item, &totitem, merge_type_items, MESH_MERGE_CENTER);
-    RNA_enum_items_add_value(&item, &totitem, merge_type_items, MESH_MERGE_CURSOR);
-    RNA_enum_items_add_value(&item, &totitem, merge_type_items, MESH_MERGE_COLLAPSE);
     RNA_enum_item_end(&item, &totitem);
 
     *r_free = true;
@@ -6888,7 +6890,7 @@ void MESH_OT_sort_elements(wmOperatorType *ot)
        "MATERIAL",
        0,
        "Material",
-       "Sort selected elements from smallest to greatest material index (faces only!)"},
+       "Sort selected faces from smallest to greatest material index"},
       {SRT_SELECTED,
        "SELECTED",
        0,
