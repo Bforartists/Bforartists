@@ -262,7 +262,7 @@ const EnumPropertyItem rna_enum_curve_fit_method_items[] = {
 #define R_IMF_ENUM_BMP \
   {R_IMF_IMTYPE_BMP, "BMP", ICON_FILE_IMAGE, "BMP", "Output image in bitmap format"},
 #define R_IMF_ENUM_IRIS \
-  {R_IMF_IMTYPE_IRIS, "IRIS", ICON_FILE_IMAGE, "Iris", "Output image in (old!) SGI IRIS format"},
+  {R_IMF_IMTYPE_IRIS, "IRIS", ICON_FILE_IMAGE, "Iris", "Output image in SGI IRIS format"},
 #define R_IMF_ENUM_PNG \
   {R_IMF_IMTYPE_PNG, "PNG", ICON_FILE_IMAGE, "PNG", "Output image in PNG format"},
 #define R_IMF_ENUM_JPEG \
@@ -7285,16 +7285,16 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SCE_EEVEE_DOF_JITTER);
   RNA_def_property_ui_text(prop,
                            "Jitter Camera",
-                           "Jitter camera position to create accurate bluring "
+                           "Jitter camera position to create accurate blurring "
                            "using render samples");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "bokeh_overblur", PROP_FLOAT, PROP_PERCENTAGE);
   RNA_def_property_ui_text(prop,
-                           "Overblur",
+                           "Over-blur",
                            "Apply blur to each jittered sample to reduce "
-                           "undersampling artifacts");
+                           "under-sampling artifacts");
   RNA_def_property_range(prop, 0, 100);
   RNA_def_property_ui_range(prop, 0.0f, 20.0f, 1, 1);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);

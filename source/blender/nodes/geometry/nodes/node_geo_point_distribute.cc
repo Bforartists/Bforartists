@@ -379,7 +379,7 @@ BLI_NOINLINE static void compute_special_attributes(const Mesh &mesh,
     const float3 v1_pos = mesh.mvert[v1_index].co;
     const float3 v2_pos = mesh.mvert[v2_index].co;
 
-    ids[i] = (int)(bary_coord.hash()) + looptri_index;
+    ids[i] = (int)(bary_coord.hash() + (uint64_t)looptri_index);
     normal_tri_v3(normals[i], v0_pos, v1_pos, v2_pos);
     rotations[i] = normal_to_euler_rotation(normals[i]);
   }
@@ -425,8 +425,8 @@ static void geo_node_point_distribute_exec(GeoNodeExecParams params)
   /* TODO: This node only needs read-only access to input instances. */
   geometry_set = geometry_set_realize_instances(geometry_set);
 
-  GeometryNodePointDistributeMethod distribute_method =
-      static_cast<GeometryNodePointDistributeMethod>(params.node().custom1);
+  GeometryNodePointDistributeMode distribute_method = static_cast<GeometryNodePointDistributeMode>(
+      params.node().custom1);
 
   if (!geometry_set.has_mesh()) {
     params.error_message_add(NodeWarningType::Error, "Geometry must contain a mesh.");

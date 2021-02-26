@@ -39,6 +39,14 @@ VERBOSE = False
 # Print the output of the compiler (_very_ noisy, only useful for troubleshooting compiler issues).
 VERBOSE_COMPILER = False
 
+# Print the result of each attempted edit:
+#
+# - Causes code not to compile.
+# - Compiles but changes the resulting behavior.
+# - Succeeds.
+VERBOSE_EDIT_ACTION = False
+
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SOURCE_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "..", ".."))
@@ -61,6 +69,15 @@ def line_from_span(text, start, end):
     return text[start:end]
 
 
+def files_recursive_with_ext(path, ext):
+    for dirpath, dirnames, filenames in os.walk(path):
+        # skip '.git' and other dot-files.
+        dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+        for filename in filenames:
+            if filename.endswith(ext):
+                yield os.path.join(dirpath, filename)
+
+
 # -----------------------------------------------------------------------------
 # Execution Wrappers
 
@@ -80,10 +97,12 @@ def run(args, *, quiet):
 # Build System Access
 
 def cmake_cache_var(cmake_dir, var):
-    cache_file = open(os.path.join(cmake_dir, "CMakeCache.txt"), encoding='utf-8')
-    lines = [l_strip for l in cache_file for l_strip in (l.strip(),)
-             if l_strip if not l_strip.startswith("//") if not l_strip.startswith("#")]
-    cache_file.close()
+    with open(os.path.join(cmake_dir, "CMakeCache.txt"), encoding='utf-8') as cache_file:
+        lines = [
+            l_strip for l in cache_file
+            if (l_strip := l.strip())
+            if not l_strip.startswith(("//", "#"))
+        ]
 
     for l in lines:
         if l.split(":")[0] == var:
@@ -167,6 +186,26 @@ def find_build_args_make(build_dir):
 #
 # Although this seems like it's not a common use-case.
 
+from collections import namedtuple
+Edit = namedtuple(
+    "Edit", (
+        # Keep first, for sorting.
+        "span",
+
+        "content",
+        "content_fail",
+
+        # Optional.
+        "extra_build_args",
+    ),
+
+    defaults=(
+        # `extra_build_args`.
+        None,
+    )
+)
+del namedtuple
+
 
 class EditGenerator:
     __slots__ = ()
@@ -187,104 +226,126 @@ class edit_generators:
     # fake module.
 
     class sizeof_fixed_array(EditGenerator):
+        """
+        Use fixed size array syntax with `sizeof`:
+
+        Replace:
+          sizeof(float) * 4 * 4
+        With:
+          sizeof(float[4][4])
+        """
         @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
+        def edit_list_from_file(_source, data, _shared_edit_data):
             edits = []
 
             for match in re.finditer(r"sizeof\(([a-zA-Z_]+)\) \* (\d+) \* (\d+)", data):
-                edits.append((
-                    match.span(),
-                    'sizeof(%s[%s][%s])' % (match.group(1), match.group(2), match.group(3)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='sizeof(%s[%s][%s])' % (match.group(1), match.group(2), match.group(3)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
             for match in re.finditer(r"sizeof\(([a-zA-Z_]+)\) \* (\d+)", data):
-                edits.append((
-                    match.span(),
-                    'sizeof(%s[%s])' % (match.group(1), match.group(2)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='sizeof(%s[%s])' % (match.group(1), match.group(2)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
             for match in re.finditer(r"\b(\d+) \* sizeof\(([a-zA-Z_]+)\)", data):
-                edits.append((
-                    match.span(),
-                    'sizeof(%s[%s])' % (match.group(2), match.group(1)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='sizeof(%s[%s])' % (match.group(2), match.group(1)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
             return edits
 
     class use_const(EditGenerator):
+        """
+        Use const variables:
+
+        Replace:
+          float abc[3] = {0, 1, 2};
+        With:
+          const float abc[3] = {0, 1, 2};
+
+        Replace:
+          float abc[3]
+        With:
+          const float abc[3]
+        """
         @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
+        def edit_list_from_file(_source, data, _shared_edit_data):
             edits = []
 
-            # Replace:
-            #   float abc[3] = {0, 1, 2};
-            # With:
-            #   const float abc[3] = {0, 1, 2};
-
+            # `float abc[3] = {0, 1, 2};` -> `const float abc[3] = {0, 1, 2};`
             for match in re.finditer(r"(\(|, |  )([a-zA-Z_0-9]+ [a-zA-Z_0-9]+\[)\b([^\n]+ = )", data):
-                edits.append((
-                    match.span(),
-                    '%s const %s%s' % (match.group(1), match.group(2), match.group(3)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='%s const %s%s' % (match.group(1), match.group(2), match.group(3)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
-            # Replace:
-            #   float abc[3]
-            # With:
-            #   const float abc[3]
+            # `float abc[3]` -> `const float abc[3]`
             for match in re.finditer(r"(\(|, )([a-zA-Z_0-9]+ [a-zA-Z_0-9]+\[)", data):
-                edits.append((
-                    match.span(),
-                    '%s const %s' % (match.group(1), match.group(2)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='%s const %s' % (match.group(1), match.group(2)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
             return edits
 
     class use_zero_before_float_suffix(EditGenerator):
+        """
+        Use zero before the float suffix.
+
+        Replace:
+          1.f
+        With:
+          1.0f
+
+        Replace:
+          1.0F
+        With:
+          1.0f
+        """
         @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
+        def edit_list_from_file(_source, data, _shared_edit_data):
             edits = []
 
-            # Replace:
-            #   1.f
-            # With:
-            #   1.0f
-
+            # `1.f` -> `1.0f`
             for match in re.finditer(r"\b(\d+)\.([fF])\b", data):
-                edits.append((
-                    match.span(),
-                    '%s.0%s' % (match.group(1), match.group(2)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='%s.0%s' % (match.group(1), match.group(2)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
-            # Replace:
-            #   1.0F
-            # With:
-            #   1.0f
-
+            # `1.0F` -> `1.0f`
             for match in re.finditer(r"\b(\d+\.\d+)F\b", data):
-                edits.append((
-                    match.span(),
-                    '%sf' % (match.group(1),),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='%sf' % (match.group(1),),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
             return edits
 
     class use_elem_macro(EditGenerator):
-        @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
-            edits = []
+        """
+        Use the `ELEM` macro for more abbreviated expressions.
 
-            # Replace:
-            #   (a == b || a == c)
-            #   (a != b && a != c)
-            # With:
-            #   (ELEM(a, b, c))
-            #   (!ELEM(a, b, c))
+        Replace:
+          (a == b || a == c)
+          (a != b && a != c)
+        With:
+          (ELEM(a, b, c))
+          (!ELEM(a, b, c))
+        """
+        @staticmethod
+        def edit_list_from_file(_source, data, _shared_edit_data):
+            edits = []
 
             test_equal = (
                 r'[\(]*'
@@ -326,15 +387,15 @@ class edit_generators:
                             var_rest.append(b)
 
                         if found:
-                            edits.append((
-                                match.span(),
-                                '(%sELEM(%s, %s))' % (
+                            edits.append(Edit(
+                                span=match.span(),
+                                content='(%sELEM(%s, %s))' % (
                                     ('' if is_equal else '!'),
                                     var,
                                     ', '.join(var_rest),
                                 ),
                                 # Use same expression otherwise this can change values inside assert when it shouldn't.
-                                '(%s__ALWAYS_FAIL__(%s, %s))' % (
+                                content_fail='(%s__ALWAYS_FAIL__(%s, %s))' % (
                                     ('' if is_equal else '!'),
                                     var,
                                     ', '.join(var_rest),
@@ -344,14 +405,18 @@ class edit_generators:
             return edits
 
     class use_str_elem_macro(EditGenerator):
+        """
+        Use `STR_ELEM` macro:
+
+        Replace:
+          (STREQ(a, b) || STREQ(a, c))
+        With:
+          (STR_ELEM(a, b, c))
+        """
         @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
+        def edit_list_from_file(_source, data, _shared_edit_data):
             edits = []
 
-            # Replace:
-            #   (STREQ(a, b) || STREQ(a, c))
-            # With:
-            #   (STR_ELEM(a, b, c))
 
             test_equal = (
                 r'[\(]*'
@@ -402,15 +467,15 @@ class edit_generators:
                             var_rest.append(b)
 
                         if found:
-                            edits.append((
-                                match.span(),
-                                '(%sSTR_ELEM(%s, %s))' % (
+                            edits.append(Edit(
+                                span=match.span(),
+                                content='(%sSTR_ELEM(%s, %s))' % (
                                     ('' if is_equal else '!'),
                                     var,
                                     ', '.join(var_rest),
                                 ),
                                 # Use same expression otherwise this can change values inside assert when it shouldn't.
-                                '(%s__ALWAYS_FAIL__(%s, %s))' % (
+                                content_fail='(%s__ALWAYS_FAIL__(%s, %s))' % (
                                     ('' if is_equal else '!'),
                                     var,
                                     ', '.join(var_rest),
@@ -421,104 +486,199 @@ class edit_generators:
 
 
     class use_const_vars(EditGenerator):
+        """
+        Use `const` where possible:
+
+        Replace:
+          float abc[3] = {0, 1, 2};
+        With:
+          const float abc[3] = {0, 1, 2};
+        """
         @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
+        def edit_list_from_file(_source, data, _shared_edit_data):
             edits = []
 
-            # Replace:
-            #   float abc[3] = {0, 1, 2};
-            # With:
-            #   const float abc[3] = {0, 1, 2};
-
             # for match in re.finditer(r"(  [a-zA-Z0-9_]+ [a-zA-Z0-9_]+ = [A-Z][A-Z_0-9_]*;)", data):
-            #     edits.append((
-            #         match.span(),
-            #         'const %s' % (match.group(1).lstrip()),
-            #         '__ALWAYS_FAIL__',
+            #     edits.append(Edit(
+            #         span=match.span(),
+            #         content='const %s' % (match.group(1).lstrip()),
+            #         content_fail='__ALWAYS_FAIL__',
             #     ))
 
             for match in re.finditer(r"(  [a-zA-Z0-9_]+ [a-zA-Z0-9_]+ = .*;)", data):
-                edits.append((
-                    match.span(),
-                    'const %s' % (match.group(1).lstrip()),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='const %s' % (match.group(1).lstrip()),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
             return edits
 
 
     class remove_return_parens(EditGenerator):
+        """
+        Remove redundant parenthesis around return arguments:
+
+        Replace:
+          return (value);
+        With:
+          return value;
+        """
         @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
+        def edit_list_from_file(_source, data, _shared_edit_data):
             edits = []
 
             # Remove `return (NULL);`
             for match in re.finditer(r"return \(([a-zA-Z_0-9]+)\);", data):
-                edits.append((
-                    match.span(),
-                    'return %s;' % (match.group(1)),
-                    'return __ALWAYS_FAIL__;',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='return %s;' % (match.group(1)),
+                    content_fail='return __ALWAYS_FAIL__;',
                 ))
             return edits
 
     class use_streq_macro(EditGenerator):
+        """
+        Use `STREQ` macro:
+
+        Replace:
+          strcmp(a, b) == 0
+        With:
+          STREQ(a, b)
+
+        Replace:
+          strcmp(a, b) != 0
+        With:
+          !STREQ(a, b)
+        """
         @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
+        def edit_list_from_file(_source, data, _shared_edit_data):
             edits = []
 
-            # Replace:
-            #   strcmp(a, b) == 0
-            # With:
-            #   STREQ(a, b)
+            # `strcmp(a, b) == 0` -> `STREQ(a, b)`
             for match in re.finditer(r"\bstrcmp\((.*)\) == 0", data):
-                edits.append((
-                    match.span(),
-                    'STREQ(%s)' % (match.group(1)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='STREQ(%s)' % (match.group(1)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
             for match in re.finditer(r"!strcmp\((.*)\)", data):
-                edits.append((
-                    match.span(),
-                    'STREQ(%s)' % (match.group(1)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='STREQ(%s)' % (match.group(1)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
-            # Replace:
-            #   strcmp(a, b) != 0
-            # With:
-            #   !STREQ(a, b)
+            # `strcmp(a, b) != 0` -> `!STREQ(a, b)`
             for match in re.finditer(r"\bstrcmp\((.*)\) != 0", data):
-                edits.append((
-                    match.span(),
-                    '!STREQ(%s)' % (match.group(1)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='!STREQ(%s)' % (match.group(1)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
             for match in re.finditer(r"\bstrcmp\((.*)\)", data):
-                edits.append((
-                    match.span(),
-                    '!STREQ(%s)' % (match.group(1)),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='!STREQ(%s)' % (match.group(1)),
+                    content_fail='__ALWAYS_FAIL__',
                 ))
 
             return edits
 
     class use_array_size_macro(EditGenerator):
-        @staticmethod
-        def edit_list_from_file(_source, data, _setup_data):
-            edits = []
+        """
+        Use macro for an error checked array size:
 
-            # Replace:
-            #   sizeof(foo) / sizeof(*foo)
-            # With:
-            #   ARRAY_SIZE(foo)
-            #
+        Replace:
+          sizeof(foo) / sizeof(*foo)
+        With:
+          ARRAY_SIZE(foo)
+        """
+        @staticmethod
+        def edit_list_from_file(_source, data, _shared_edit_data):
+            edits = []
             # Note that this replacement is only valid in some cases,
             # so only apply with validation that binary output matches.
             for match in re.finditer(r"\bsizeof\((.*)\) / sizeof\([^\)]+\)", data):
-                edits.append((
-                    match.span(),
-                    'ARRAY_SIZE(%s)' % match.group(1),
-                    '__ALWAYS_FAIL__',
+                edits.append(Edit(
+                    span=match.span(),
+                    content='ARRAY_SIZE(%s)' % match.group(1),
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            return edits
+
+    class header_clean(EditGenerator):
+        """
+        Clean headers, ensuring that the headers removed are not used directly or indirectly.
+
+        Note that the `CFLAGS` should be set so missing prototypes error instead of warn:
+        With GCC: `-Werror=missing-prototypes`
+        """
+
+        @staticmethod
+        def _header_guard_from_filename(f):
+            return '__%s__' % os.path.basename(f).replace('.', '_').upper()
+
+
+        @classmethod
+        def setup(cls):
+            # For each file replace `pragma once` with old-style header guard.
+            # This is needed so we can remove the header with the knowledge the source file didn't use it indirectly.
+            files = []
+            shared_edit_data = {
+                'files': files,
+            }
+            for f in files_recursive_with_ext(
+                    os.path.join(SOURCE_DIR, 'source'),
+                    ('.h', '.hh', '.inl', '.hpp', '.hxx'),
+            ):
+                with open(f, 'r', encoding='utf-8') as fh:
+                    data = fh.read()
+
+                for match in re.finditer(r'^[ \t]*#\s*(pragma\s+once)\b', data, flags=re.MULTILINE):
+                    header_guard = cls._header_guard_from_filename(f)
+                    start, end = match.span()
+                    src = data[start:end]
+                    dst = (
+                        '#ifndef %s\n#define %s' % (header_guard, header_guard)
+                    )
+                    dst_footer = '\n#endif /* %s */\n' % header_guard
+                    files.append((f, src, dst, dst_footer))
+                    data = data[:start] + dst + data[end:] + dst_footer
+                    with open(f, 'w', encoding='utf-8') as fh:
+                        fh.write(data)
+                    break
+            return shared_edit_data
+
+        @staticmethod
+        def teardown(shared_edit_data):
+            files = shared_edit_data['files']
+            for f, src, dst, dst_footer in files:
+                with open(f, 'r', encoding='utf-8') as fh:
+                    data = fh.read()
+
+                data = data.replace(
+                    dst, src,
+                ).replace(
+                    dst_footer, '',
+                )
+                with open(f, 'w', encoding='utf-8') as fh:
+                    fh.write(data)
+
+        @classmethod
+        def edit_list_from_file(cls, source, data, _shared_edit_data):
+            edits = []
+
+            # Remove include.
+            for match in re.finditer(r"^(([ \t]*#\s*include\s+\")([^\"]+)(\"[^\n]*\n))", data, flags=re.MULTILINE):
+                header_name = match.group(3)
+                header_guard = cls._header_guard_from_filename(header_name)
+                edits.append(Edit(
+                    span=match.span(),
+                    content='', # Remove the header.
+                    content_fail='%s__ALWAYS_FAIL__%s' % (match.group(2), match.group(4)),
+                    extra_build_args=('-D' + header_guard),
                 ))
 
             return edits
@@ -543,10 +703,12 @@ def test_edit(source, output, output_bytes, build_args, data, data_test, keep_ed
                     fh.write(data)
             return True
         else:
-            print("Changed code, skip...", hex(hash(output_bytes)), hex(hash(output_bytes_test)))
+            if VERBOSE_EDIT_ACTION:
+                print("Changed code, skip...", hex(hash(output_bytes)), hex(hash(output_bytes_test)))
     else:
         if not expect_failure:
-            print("Failed to compile, skip...")
+            if VERBOSE_EDIT_ACTION:
+                print("Failed to compile, skip...")
 
     with open(source, 'w', encoding='utf-8') as fh:
         fh.write(data)
@@ -604,7 +766,7 @@ def wash_source_with_edits(arg_group):
 
     if skip_test:
         # Just apply all edits.
-        for (start, end), text, text_always_fail in edits:
+        for (start, end), text, _text_always_fail, _extra_build_args in edits:
             data = apply_edit(data, text, start, end, verbose=VERBOSE)
         with open(source, 'w', encoding='utf-8') as fh:
             fh.write(data)
@@ -616,21 +778,29 @@ def wash_source_with_edits(arg_group):
     )
     if not os.path.exists(output):
         raise Exception("Failed to produce output file: " + output)
+
     output_bytes = file_as_bytes(output)
 
-    for (start, end), text, text_always_fail in edits:
+    for (start, end), text, text_always_fail, extra_build_args in edits:
+        build_args_for_edit = build_args
+        if extra_build_args:
+            # Add directly after the compile command.
+            a, b = build_args.split(' ', 1)
+            build_args_for_edit = a + ' ' + extra_build_args + ' ' + b
+
         data_test = apply_edit(data, text, start, end, verbose=VERBOSE)
         if test_edit(
-                source, output, output_bytes, build_args, data, data_test,
+                source, output, output_bytes, build_args_for_edit, data, data_test,
                 keep_edits=False,
         ):
             # This worked, check if the change would fail if replaced with 'text_always_fail'.
             data_test_always_fail = apply_edit(data, text_always_fail, start, end, verbose=False)
             if test_edit(
-                    source, output, output_bytes, build_args, data, data_test_always_fail,
+                    source, output, output_bytes, build_args_for_edit, data, data_test_always_fail,
                     expect_failure=True, keep_edits=False,
             ):
-                print("Edit at", (start, end), "doesn't fail, assumed to be ifdef'd out, continuing")
+                if VERBOSE_EDIT_ACTION:
+                    print("Edit at", (start, end), "doesn't fail, assumed to be ifdef'd out, continuing")
                 continue
 
             # Apply the edit.
@@ -681,7 +851,7 @@ def run_edits_on_directory(build_dir, regex_list, edit_to_apply, skip_test=False
             return False
         # Raise an exception since this should never happen,
         # we want to know about it early if it does, as it will cause failure
-        # when attenpting to compile the missing file.
+        # when attempting to compile the missing file.
         if not os.path.exists(c):
             raise Exception("Missing source file: " + c)
 
@@ -739,9 +909,22 @@ def run_edits_on_directory(build_dir, regex_list, edit_to_apply, skip_test=False
 
 
 def create_parser():
+    from textwrap import indent, dedent
+    import argparse
+
     edits_all = edit_function_get_all()
 
-    import argparse
+    # Create docstring for edits.
+    edits_all_docs = []
+    for edit in edits_all:
+        edits_all_docs.append(
+            "  %s\n%s" % (
+                edit,
+                indent(dedent(getattr(edit_generators, edit).__doc__ or '').strip('\n') + '\n', '    '),
+            )
+        )
+    edits_all_docs = "\n".join(edits_all_docs)
+
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawTextHelpFormatter,
@@ -761,9 +944,7 @@ def create_parser():
         "--edit",
         dest="edit",
         choices=edits_all,
-        help=(
-            "Specify the edit preset to run."
-        ),
+        help="Specify the edit preset to run.\n\n" + edits_all_docs + "\n",
         required=True,
     )
     parser.add_argument(
