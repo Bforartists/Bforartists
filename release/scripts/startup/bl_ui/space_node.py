@@ -150,7 +150,7 @@ class NODE_HT_header(Header):
             row = layout.row(align = True)
             row.operator("wm.switch_editor_to_compositor", text="", icon='NODE_COMPOSITING')
             row.operator("wm.switch_editor_to_geometry", text="", icon='NODETREE')
-            row.operator("wm.switch_editor_in_shadereditor", text="", icon='TEXTURE_ACTIVE')
+            row.operator("wm.switch_editor_in_shadereditor", text="", icon='SHADER_ACTIVE')
 
             layout.prop(snode, "shader_type", text="")
 
@@ -216,7 +216,7 @@ class NODE_HT_header(Header):
             row = layout.row(align = True)
             row.operator("wm.switch_editor_in_compositor", text="", icon='NODE_COMPOSITING_ACTIVE')
             row.operator("wm.switch_editor_to_geometry", text="", icon='NODETREE')
-            row.operator("wm.switch_editor_to_shadereditor", text="", icon='TEXTURE')
+            row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -225,7 +225,7 @@ class NODE_HT_header(Header):
             row = layout.row(align = True)
             row.operator("wm.switch_editor_to_compositor", text="", icon='NODE_COMPOSITING')
             row.operator("wm.switch_editor_in_geometry", text="", icon='NODETREE_ACTIVE')
-            row.operator("wm.switch_editor_to_shadereditor", text="", icon='TEXTURE')
+            row.operator("wm.switch_editor_to_shadereditor", text="", icon='NODE_MATERIAL')
 
             NODE_MT_editor_menus.draw_collapsible(context, layout)
             layout.separator_spacer()
