@@ -301,13 +301,13 @@ class CYCLES_RENDER_PT_sampling_denoising(CyclesButtonsPanel, Panel):
         else:
             split.label(icon='DISCLOSURE_TRI_RIGHT')
         if cscene.use_preview_denoising:
-            row = layout.row()
+            col.use_property_split = True
+            row = col.row()
             row.separator()
             row.prop(cscene, "preview_denoising_start_sample", text="Start Sample")
-
-        sub = heading.row(align=True)
-        sub.active = cscene.use_preview_denoising
-        sub.prop(cscene, "preview_denoising_input_passes", text="Input Passes")
+            row = col.row()
+            row.separator()
+            row.prop(cscene, "preview_denoising_input_passes", text="Input Passes")
 
 
 class CYCLES_RENDER_PT_sampling_advanced(CyclesButtonsPanel, Panel):
