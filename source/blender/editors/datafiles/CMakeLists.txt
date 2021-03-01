@@ -164,7 +164,7 @@ nodetree_active
 node_compositing_active
 texture_active
 spreadsheet
-#~ DEF_ICON_BLANK(183)
+shader_active
 #~ DEF_ICON_BLANK(184)
 #~ DEF_ICON_BLANK(185)
 #~ DEF_ICON_BLANK(186)
