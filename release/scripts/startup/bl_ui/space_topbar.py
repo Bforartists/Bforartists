@@ -206,31 +206,31 @@ class TOPBAR_MT_file_cleanup(Menu):
         layout = self.layout
         layout.separator()
 
-        op_props = layout.operator("outliner.orphans_purge", text="Unused Data-Blocks")
+        op_props = layout.operator("outliner.orphans_purge", text="Unused Data", icon = "CLEAN_CHANNELS")
         op_props.do_local_ids = True
         op_props.do_linked_ids = True
         op_props.do_recursive = False
-        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Data-Blocks")
+        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Data", icon = "CLEAN_CHANNELS")
         op_props.do_local_ids = True
         op_props.do_linked_ids = True
         op_props.do_recursive = True
 
         layout.separator()
-        op_props = layout.operator("outliner.orphans_purge", text="Unused Linked Data-Blocks")
+        op_props = layout.operator("outliner.orphans_purge", text="Unused Linked Data", icon = "CLEAN_CHANNELS")
         op_props.do_local_ids = False
         op_props.do_linked_ids = True
         op_props.do_recursive = False
-        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Linked Data-Blocks")
+        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Linked Data", icon = "CLEAN_CHANNELS")
         op_props.do_local_ids = False
         op_props.do_linked_ids = True
         op_props.do_recursive = True
 
         layout.separator()
-        op_props = layout.operator("outliner.orphans_purge", text="Unused Local Data-Blocks")
+        op_props = layout.operator("outliner.orphans_purge", text="Unused Local Data", icon = "CLEAN_CHANNELS")
         op_props.do_local_ids = True
         op_props.do_linked_ids = False
         op_props.do_recursive = False
-        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Local Data-Blocks")
+        op_props = layout.operator("outliner.orphans_purge", text="Recursive Unused Local Data", icon = "CLEAN_CHANNELS")
         op_props.do_local_ids = True
         op_props.do_linked_ids = False
         op_props.do_recursive = True
