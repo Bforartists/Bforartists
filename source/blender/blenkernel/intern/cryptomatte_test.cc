@@ -17,9 +17,17 @@
  */
 #include "testing/testing.h"
 
+#include "BKE_cryptomatte.h"
 #include "BKE_cryptomatte.hh"
+#include "BKE_image.h"
 
-namespace blender::bke::tests {
+#include "DNA_node_types.h"
+
+#include "RE_pipeline.h"
+
+#include "MEM_guardedalloc.h"
+
+namespace blender::bke::cryptomatte::tests {
 
 TEST(cryptomatte, meta_data_key)
 {
@@ -41,4 +49,144 @@ TEST(cryptomatte, extract_layer_name)
   ASSERT_EQ("", BKE_cryptomatte_extract_layer_name(""));
 }
 
-}  // namespace blender::bke::tests
+TEST(cryptomatte, layer)
+{
+  blender::bke::cryptomatte::CryptomatteLayer layer;
+  ASSERT_EQ("{}", layer.manifest());
+
+  layer.add_hash("Object", 123);
+  ASSERT_EQ("{\"Object\":\"0000007b\"}", layer.manifest());
+
+  layer.add_hash("Object2", 123245678);
+  ASSERT_EQ("{\"Object\":\"0000007b\",\"Object2\":\"0758946e\"}", layer.manifest());
+}
+
+TEST(cryptomatte, layer_quoted)
+{
+  blender::bke::cryptomatte::CryptomatteLayer layer;
+  layer.add_hash("\"Object\"", 123);
+  ASSERT_EQ("{\"\\\"Object\\\"\":\"0000007b\"}", layer.manifest());
+}
+
+static void test_cryptomatte_manifest(std::string expected, std::string manifest)
+{
+  EXPECT_EQ(expected,
+            blender::bke::cryptomatte::CryptomatteLayer::read_from_manifest(manifest)->manifest());
+}
+
+TEST(cryptomatte, layer_from_manifest)
+{
+  test_cryptomatte_manifest("{}", "{}");
+  test_cryptomatte_manifest("{\"Object\":\"12345678\"}", "{\"Object\": \"12345678\"}");
+  test_cryptomatte_manifest("{\"Object\":\"12345678\",\"Object2\":\"87654321\"}",
+                            "{\"Object\":\"12345678\",\"Object2\":\"87654321\"}");
+  test_cryptomatte_manifest(
+      "{\"Object\":\"12345678\",\"Object2\":\"87654321\"}",
+      "  {  \"Object\"  :  \"12345678\"  ,  \"Object2\"  :  \"87654321\"  }  ");
+  test_cryptomatte_manifest("{\"Object\\\"01\\\"\":\"12345678\"}",
+                            "{\"Object\\\"01\\\"\": \"12345678\"}");
+  test_cryptomatte_manifest(
+      "{\"Object\\\"01\\\"\":\"12345678\",\"Object\":\"12345678\",\"Object2\":\"87654321\"}",
+      "{\"Object\\\"01\\\"\":\"12345678\",\"Object\":\"12345678\", \"Object2\":\"87654321\"}");
+}
+
+TEST(cryptomatte, extract_layer_hash_from_metadata_key)
+{
+  EXPECT_EQ("eb4c67b",
+            blender::bke::cryptomatte::CryptomatteStampDataCallbackData::extract_layer_hash(
+                "cryptomatte/eb4c67b/conversion"));
+  EXPECT_EQ("qwerty",
+            blender::bke::cryptomatte::CryptomatteStampDataCallbackData::extract_layer_hash(
+                "cryptomatte/qwerty/name"));
+  /* Check if undefined behaviors are handled. */
+  EXPECT_EQ("",
+            blender::bke::cryptomatte::CryptomatteStampDataCallbackData::extract_layer_hash(
+                "cryptomatte/name"));
+  EXPECT_EQ("",
+            blender::bke::cryptomatte::CryptomatteStampDataCallbackData::extract_layer_hash(
+                "cryptomatte/"));
+}
+
+static void validate_cryptomatte_session_from_stamp_data(void *UNUSED(data),
+                                                         const char *propname,
+                                                         char *propvalue,
+                                                         int UNUSED(len))
+{
+  blender::StringRefNull prop_name(propname);
+  if (!prop_name.startswith("cryptomatte/")) {
+    return;
+  }
+
+  if (prop_name == "cryptomatte/87f095e/name") {
+    EXPECT_STREQ("viewlayername.layer1", propvalue);
+  }
+  else if (prop_name == "cryptomatte/87f095e/hash") {
+    EXPECT_STREQ("MurmurHash3_32", propvalue);
+  }
+  else if (prop_name == "cryptomatte/87f095e/conversion") {
+    EXPECT_STREQ("uint32_to_float32", propvalue);
+  }
+  else if (prop_name == "cryptomatte/87f095e/manifest") {
+    EXPECT_STREQ("{\"Object\":\"12345678\"}", propvalue);
+  }
+
+  else if (prop_name == "cryptomatte/c42daa7/name") {
+    EXPECT_STREQ("viewlayername.layer2", propvalue);
+  }
+  else if (prop_name == "cryptomatte/c42daa7/hash") {
+    EXPECT_STREQ("MurmurHash3_32", propvalue);
+  }
+  else if (prop_name == "cryptomatte/c42daa7/conversion") {
+    EXPECT_STREQ("uint32_to_float32", propvalue);
+  }
+  else if (prop_name == "cryptomatte/c42daa7/manifest") {
+    EXPECT_STREQ("{\"Object2\":\"87654321\"}", propvalue);
+  }
+
+  else {
+    EXPECT_EQ("Unhandled", std::string(propname) + ": " + propvalue);
+  }
+}
+
+TEST(cryptomatte, session_from_stamp_data)
+{
+  /* Create CryptomatteSession from stamp data. */
+  RenderResult *render_result = static_cast<RenderResult *>(
+      MEM_callocN(sizeof(RenderResult), __func__));
+  BKE_render_result_stamp_data(render_result, "cryptomatte/qwerty/name", "layer1");
+  BKE_render_result_stamp_data(
+      render_result, "cryptomatte/qwerty/manifest", "{\"Object\":\"12345678\"}");
+  BKE_render_result_stamp_data(render_result, "cryptomatte/uiop/name", "layer2");
+  BKE_render_result_stamp_data(
+      render_result, "cryptomatte/uiop/manifest", "{\"Object2\":\"87654321\"}");
+  CryptomatteSession *session = BKE_cryptomatte_init_from_render_result(render_result);
+  EXPECT_NE(session, nullptr);
+  RE_FreeRenderResult(render_result);
+
+  /* Create StampData from CryptomatteSession. */
+  ViewLayer view_layer;
+  BLI_strncpy(view_layer.name, "viewlayername", sizeof(view_layer.name));
+  RenderResult *render_result2 = static_cast<RenderResult *>(
+      MEM_callocN(sizeof(RenderResult), __func__));
+  BKE_cryptomatte_store_metadata(session, render_result2, &view_layer);
+
+  /* Validate StampData. */
+  BKE_stamp_info_callback(
+      nullptr, render_result2->stamp_data, validate_cryptomatte_session_from_stamp_data, false);
+
+  RE_FreeRenderResult(render_result2);
+  BKE_cryptomatte_free(session);
+}
+
+TEST(cryptomatte, T86026)
+{
+  NodeCryptomatte storage = {{0.0f}};
+  CryptomatteEntry entry = {nullptr};
+  BLI_addtail(&storage.entries, &entry);
+  entry.encoded_hash = 4.76190593e-07;
+  char *matte_id = BKE_cryptomatte_entries_to_matte_id(&storage);
+  EXPECT_STREQ("<4.761905927e-07>", matte_id);
+  MEM_freeN(matte_id);
+}
+
+}  // namespace blender::bke::cryptomatte::tests
