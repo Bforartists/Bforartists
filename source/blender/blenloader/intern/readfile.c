@@ -5242,7 +5242,7 @@ static int has_linked_ids_to_read(Main *mainvar)
 }
 
 static void read_library_linked_id(
-    ReportList *reports, FileData *fd, Main *mainvar, ID *id, ID **r_id)
+    FileData *basefd, FileData *fd, Main *mainvar, ID *id, ID **r_id)
 {
   BHead *bhead = NULL;
   const bool is_valid = BKE_idtype_idcode_is_linkable(GS(id->name)) ||
@@ -5253,7 +5253,7 @@ static void read_library_linked_id(
   }
 
   if (!is_valid) {
-    BLO_reportf_wrap(reports,
+    BLO_reportf_wrap(basefd->reports,
                      RPT_ERROR,
                      TIP_("LIB: %s: '%s' is directly linked from '%s' (parent '%s'), but is a "
                           "non-linkable data type"),
@@ -5272,13 +5272,14 @@ static void read_library_linked_id(
     read_libblock(fd, mainvar, bhead, id->tag, false, r_id);
   }
   else {
-    BLO_reportf_wrap(reports,
-                     RPT_WARNING,
+    BLO_reportf_wrap(basefd->reports,
+                     RPT_INFO,
                      TIP_("LIB: %s: '%s' missing from '%s', parent '%s'"),
                      BKE_idtype_idcode_to_name(GS(id->name)),
                      id->name + 2,
                      mainvar->curlib->filepath_abs,
                      library_parent_filepath(mainvar->curlib));
+    basefd->library_id_missing_count++;
 
     /* Generate a placeholder for this ID (simplified version of read_libblock actually...). */
     if (r_id) {
@@ -5312,7 +5313,7 @@ static void read_library_linked_ids(FileData *basefd,
          * we go back to a single linked data when loading the file. */
         ID **realid = NULL;
         if (!BLI_ghash_ensure_p(loaded_ids, id->name, (void ***)&realid)) {
-          read_library_linked_id(basefd->reports, fd, mainvar, id, realid);
+          read_library_linked_id(basefd, fd, mainvar, id, realid);
         }
 
         /* realid shall never be NULL - unless some source file/lib is broken
@@ -5432,7 +5433,8 @@ static FileData *read_library_file_data(FileData *basefd,
 
   if (fd == NULL) {
     BLO_reportf_wrap(
-        basefd->reports, RPT_WARNING, TIP_("Cannot find lib '%s'"), mainptr->curlib->filepath_abs);
+        basefd->reports, RPT_INFO, TIP_("Cannot find lib '%s'"), mainptr->curlib->filepath_abs);
+    basefd->library_file_missing_count++;
   }
 
   return fd;
@@ -5526,6 +5528,15 @@ static void read_libraries(FileData *basefd, ListBase *mainlist)
     mainptr->curlib->filedata = NULL;
   }
   BKE_main_free(main_newid);
+
+  if (basefd->library_file_missing_count != 0 || basefd->library_id_missing_count != 0) {
+    BKE_reportf(basefd->reports,
+                RPT_WARNING,
+                "LIB: %d libraries and %d linked data-blocks are missing, please check the "
+                "Info and Outliner editors for details",
+                basefd->library_file_missing_count,
+                basefd->library_id_missing_count);
+  }
 }
 
 void *BLO_read_get_new_data_address(BlendDataReader *reader, const void *old_address)
