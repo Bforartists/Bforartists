@@ -26,7 +26,6 @@
 #include "BLI_path_util.h"
 #include "BLI_string.h"
 
-#include "BKE_cryptomatte.hh"
 #include "BKE_global.h"
 #include "BKE_image.h"
 #include "BKE_main.h"
@@ -347,8 +346,9 @@ StampData *OutputOpenExrMultiLayerOperation::createStampData() const
     }
     std::unique_ptr<MetaData> meta_data = layer->imageInput->getMetaData();
     if (meta_data) {
-      blender::StringRef layer_name = blender::BKE_cryptomatte_extract_layer_name(
-          blender::StringRef(layer->name, BLI_strnlen(layer->name, sizeof(layer->name))));
+      blender::StringRef layer_name =
+          blender::bke::cryptomatte::BKE_cryptomatte_extract_layer_name(
+              blender::StringRef(layer->name, BLI_strnlen(layer->name, sizeof(layer->name))));
       meta_data->replaceHashNeutralCryptomatteKeys(layer_name);
       meta_data->addToRenderResult(&render_result);
     }
