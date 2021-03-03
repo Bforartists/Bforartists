@@ -910,10 +910,16 @@ class IMAGE_HT_header(Header):
             is_render = ima.type == 'RENDER_RESULT'
 
         if sima.mode != 'UV':
+            row = layout.row(align = True)
+            row.operator("wm.switch_editor_to_uv", text="", icon='UV')
             if is_render:
                 layout.prop(sima, "ui_non_render_mode", text="")
             else:
                 layout.prop(sima, "ui_mode", text="")
+
+        else:
+            row = layout.row(align = True)
+            row.operator("wm.switch_editor_to_image", text="", icon='IMAGE')
 
         # UV editing.
         if show_uvedit:
@@ -1790,6 +1796,36 @@ class IMAGE_PT_annotation(AnnotationDataPanel, Panel):
 # Grease Pencil drawing tools.
 
 
+# -------------------- tabs to switch between uv and image editor
+
+class IMAGE_OT_switch_editors_to_uv(bpy.types.Operator):
+    """Switch to the UV Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_uv"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to UV Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(
+            data_path="area.ui_type", value="UV")
+        return {'FINISHED'}
+
+
+class IMAGE_OT_switch_editors_to_image(bpy.types.Operator):
+    """Switch to the Image Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_image"        # unique identifier for buttons and menu items to reference.
+    # display name in the interface.
+    bl_label = "Switch to Image Editor"
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    # execute() is called by blender when running the operator.
+    def execute(self, context):
+        bpy.ops.wm.context_set_enum(
+            data_path="area.ui_type", value="IMAGE_EDITOR")
+        return {'FINISHED'}
+
+
 classes = (
     ALL_MT_editormenu,
     IMAGE_MT_view_view_fit,
@@ -1866,6 +1902,9 @@ classes = (
     IMAGE_PT_overlay_uv_edit_geometry,
     IMAGE_PT_overlay_texture_paint,
     IMAGE_PT_overlay_image,
+
+    IMAGE_OT_switch_editors_to_uv,
+    IMAGE_OT_switch_editors_to_image,
 )
 
 
