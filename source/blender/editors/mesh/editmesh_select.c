@@ -747,7 +747,9 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
 
       ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d);
 
-      mesh_foreachScreenFace(
+      /*bfa - select through patch*/
+      /*mesh_foreachScreenFace(*/
+      mesh_foreachScreenFaceCenter(
           vc, find_nearest_face_center__doZBuf, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
 
       *r_dist_center = data.dist;
@@ -798,7 +800,9 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
     data.hit.dist = data.hit_cycle.dist = data.hit.dist_bias = data.hit_cycle.dist_bias = *r_dist;
 
     ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d);
-    mesh_foreachScreenFace(vc, findnearestface__doClosest, &data, clip_flag);
+    /*bfa - select through patch*/
+    /*mesh_foreachScreenFace(vc, findnearestface__doClosest, &data, clip_flag);*/
+    mesh_foreachScreenFaceCenter(vc, findnearestface__doClosest, &data, clip_flag);
 
     hit = (data.use_cycle && data.hit_cycle.face) ? &data.hit_cycle : &data.hit;
 
