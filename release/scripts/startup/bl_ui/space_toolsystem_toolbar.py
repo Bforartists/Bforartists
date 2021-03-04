@@ -404,6 +404,12 @@ class _defs_view3d_select:
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
+
+            # bfa - select through patch
+            if _context.mode == 'EDIT_MESH':
+                tool_settings = _context.tool_settings
+                layout.prop(tool_settings, "mesh_select_through")
+
         return dict(
             idname="builtin.select_box",
             label="Select Box",
@@ -420,6 +426,12 @@ class _defs_view3d_select:
             row = layout.row()
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
+
+            # bfa - select through patch
+            if _context.mode == 'EDIT_MESH':
+                tool_settings = _context.tool_settings
+                layout.prop(tool_settings, "mesh_select_through")
+
         return dict(
             idname="builtin.select_lasso",
             label="Select Lasso",
@@ -443,6 +455,11 @@ class _defs_view3d_select:
             props = tool.operator_properties("view3d.select_circle")
             radius = props.radius
             draw_circle_2d(xy, (1.0,) * 4, radius, 32)
+
+            # bfa - select through patch
+            if _context.mode == 'EDIT_MESH':
+                tool_settings = _context.tool_settings
+                layout.prop(tool_settings, "mesh_select_through")
 
         return dict(
             idname="builtin.select_circle",
