@@ -1402,7 +1402,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                     props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputAOV"
-                    
+
                 elif engine == 'BLENDER_EEVEE':
 
                     props = col.operator("node.add_node", text=" AOV Output    ", icon = "NODE_VALUE")
@@ -1447,7 +1447,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
                     props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputAOV"
-                    
+
                 elif engine == 'BLENDER_EEVEE':
 
                     props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
@@ -1627,7 +1627,7 @@ class NODES_PT_Input_group(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         return (context.space_data.tree_type in node_tree_group_type)
-    
+
     def draw(self, context):
         layout = self.layout
 
@@ -2185,6 +2185,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
+        engine = context.engine
 
         ##### Textbuttons
 
@@ -2217,7 +2218,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
-            
+
             if engine == 'BLENDER_EEVEE':
 
                 props = col.operator("node.add_node", text=" Shader to RGB   ", icon = "NODE_RGB")
@@ -2293,7 +2294,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
-            
+
             if engine == 'BLENDER_EEVEE':
 
                 props = row.operator("node.add_node", text="", icon = "NODE_RGB")
@@ -3292,7 +3293,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Color Ramp ", icon = "ATTRIBUTE_COLORRAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeColorRamp"
-            
+
             props = col.operator("node.add_node", text=" Attribute Combine XYZ", icon = "ATTRIBUTE_COMBINE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCombineXYZ"
@@ -3312,7 +3313,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Mix                ", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMix"
-            
+
             props = col.operator("node.add_node", text=" Attribute Proximity      ", icon = "ATTRIBUTE_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeAttributeProximity"
@@ -3320,15 +3321,15 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Randomize    ", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
-            
+
             props = col.operator("node.add_node", text=" Attribute Sample Texture ", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
-            
+
             props = col.operator("node.add_node", text=" Attribute Separate XYZ ", icon = "ATTRIBUTE_SEPARATE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSeparateXYZ"
-            
+
             props = col.operator("node.add_node", text=" Attribute Vector Math ", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeVectorMath"
@@ -3344,7 +3345,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COLORRAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeColorRamp"
-            
+
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COMBINE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCombineXYZ"
@@ -3364,7 +3365,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMix"
-            
+
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeAttributeProximity"
@@ -3372,15 +3373,15 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
-            
+
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
-            
+
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_SEPARATE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSeparateXYZ"
-            
+
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeVectorMath"
@@ -3529,11 +3530,11 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
-            
+
             props = col.operator("node.add_node", text=" Collection Info       ", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
-            
+
             props = col.operator("node.add_node", text=" Is Viewport           ", icon = "VIEW")
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
@@ -3545,7 +3546,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
-            
+
             props = col.operator("node.add_node", text=" String                    ", icon = "STRING")
             props.use_transform = True
             props.type = "FunctionNodeInputString"
@@ -3568,11 +3569,11 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
-            
+
             props = row.operator("node.add_node", text = "", icon = "VIEW")
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
-            
+
             props = row.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
@@ -3580,7 +3581,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
-        
+
             props = row.operator("node.add_node", text = "", icon = "STRING")
             props.use_transform = True
             props.type = "FunctionNodeInputString"
@@ -3691,7 +3692,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
-            
+
             props = col.operator("node.add_node", text=" Align Rotation to Vector  ", icon = "ALIGN_ROTATION_TO_VECTOR")
             props.use_transform = True
             props.type = "GeometryNodeAlignRotationToVector"
@@ -3702,20 +3703,20 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Point Instance     ", icon = "POINT_INSTANCE")
             props.use_transform = True
-            props.type = "GeometryNodePointInstance"       
-            
+            props.type = "GeometryNodePointInstance"
+
             props = col.operator("node.add_node", text=" Point Rotate       ", icon = "POINT_ROTATE")
             props.use_transform = True
-            props.type = "GeometryNodeRotatePoints"    
-            
+            props.type = "GeometryNodeRotatePoints"
+
             props = col.operator("node.add_node", text=" Point Scale    ", icon = "POINT_SCALE")
             props.use_transform = True
-            props.type = "GeometryNodePointScale"         
-            
+            props.type = "GeometryNodePointScale"
+
             props = col.operator("node.add_node", text=" Point Separate    ", icon = "POINT_SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodePointSeparate"
-            
+
             props = col.operator("node.add_node", text=" Point Translate    ", icon = "POINT_TRANSLATE")
             props.use_transform = True
             props.type = "GeometryNodePointTranslate"
@@ -3726,11 +3727,11 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
 
             row = layout.row()
             row.alignment = 'LEFT'
-            
+
             props = row.operator("node.add_node", text = "", icon = "ALIGN_ROTATION_TO_VECTOR")
             props.use_transform = True
             props.type = "GeometryNodeAlignRotationToVector"
-            
+
             props = row.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodePointDistribute"
@@ -3742,7 +3743,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "POINT_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeRotatePoints"
-            
+
             props = row.operator("node.add_node", text = "", icon = "POINT_SCALE")
             props.use_transform = True
             props.type = "GeometryNodePointScale"
@@ -3750,12 +3751,12 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodePointSeparate"
-            
+
             props = row.operator("node.add_node", text = "", icon = "POINT_TRANSLATE")
             props.use_transform = True
             props.type = "GeometryNodePointTranslate"
-            
-            
+
+
 #add volume panel
 class NODES_PT_geom_add_volume(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
