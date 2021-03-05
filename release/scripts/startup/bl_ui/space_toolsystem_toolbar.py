@@ -408,6 +408,7 @@ class _defs_view3d_select:
             # bfa - select through patch
             if _context.mode == 'EDIT_MESH':
                 tool_settings = _context.tool_settings
+                layout.use_property_split = False
                 layout.prop(tool_settings, "mesh_select_through")
 
         return dict(
@@ -430,6 +431,7 @@ class _defs_view3d_select:
             # bfa - select through patch
             if _context.mode == 'EDIT_MESH':
                 tool_settings = _context.tool_settings
+                layout.use_property_split = False
                 layout.prop(tool_settings, "mesh_select_through")
 
         return dict(
@@ -449,17 +451,18 @@ class _defs_view3d_select:
             row.use_property_split = False
             row.prop(props, "mode", text="", expand=True, icon_only=True)
             layout.prop(props, "radius")
+            
+            # bfa - select through patch
+            if _context.mode == 'EDIT_MESH':
+                tool_settings = _context.tool_settings
+                layout.use_property_split = False
+                layout.prop(tool_settings, "mesh_select_through")
 
         def draw_cursor(_context, tool, xy):
             from gpu_extras.presets import draw_circle_2d
             props = tool.operator_properties("view3d.select_circle")
             radius = props.radius
             draw_circle_2d(xy, (1.0,) * 4, radius, 32)
-
-            # bfa - select through patch
-            if _context.mode == 'EDIT_MESH':
-                tool_settings = _context.tool_settings
-                layout.prop(tool_settings, "mesh_select_through")
 
         return dict(
             idname="builtin.select_circle",
