@@ -446,7 +446,7 @@ void mesh_foreachScreenFaceVerts(ViewContext *vc,
 
   /* This makes only sense on subdivided meshes.*/
   BLI_bitmap *faces_visited;
-  int cage_index = modifiers_getCageIndex(vc->scene, vc->obedit, NULL, 1);
+  int cage_index = BKE_modifiers_get_cage_index(vc->scene, vc->obedit, NULL, 1);
   const bool cage_display = cage_index != -1;
   if (cage_display) {
     faces_visited = BLI_BITMAP_NEW((size_t)mesh->totpoly, __func__);
@@ -541,6 +541,7 @@ void mesh_foreachScreenFaceVerts(ViewContext *vc,
   }
   MEM_freeN(screen_coords);
   MEM_freeN(face_screen_verts);
+}
 
 /* ------------------------------------------------------------------------ */
 
