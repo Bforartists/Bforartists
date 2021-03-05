@@ -2357,6 +2357,42 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *wm_orphans_purge_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  const bool linked = RNA_boolean_get(ptr, "do_linked_ids");
+  const bool local = RNA_boolean_get(ptr, "do_local_ids");
+  const bool recursive = RNA_boolean_get(ptr, "do_recursive");
+
+  /*Unused data*/
+  if (linked && local && !recursive){
+    return BLI_strdup("Remove unused data from the scene");
+  }
+  /*Recursive Unused data*/
+  else if (linked && local && recursive) {
+    return BLI_strdup("Recursively remove unused data from the scene\nChild objects will be removed too");
+  }
+  /*Unused Linked Data*/
+  else if (linked && !local && !recursive) {
+    return BLI_strdup("Remove unused linked Data from the scene\nLocal data will stay intact");
+  }
+  /*Recursive Unused Linked Data*/
+  else if (linked && !local && recursive) {
+    return BLI_strdup("Recursively remove unused linked Data from the scene\nLocal data will stay intact\nChild objects will be removed too");
+  }
+  /*Unused Local Data*/
+  else if (!linked && local && !recursive) {
+    return BLI_strdup("Remove unused local Data from the scene\nLinked data will stay intact");
+  }
+  /*Recursive Unused Local Data*/
+  else if (!linked && local && recursive) {
+    return BLI_strdup("Recursively remove unused local data from the scene\nLinked data will stay intact\nChild objects will be removed too");
+  }
+  return NULL;
+}
+
 void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2367,6 +2403,7 @@ void OUTLINER_OT_orphans_purge(wmOperatorType *ot)
   /* callbacks */
   ot->invoke = outliner_orphans_purge_invoke;
   ot->exec = outliner_orphans_purge_exec;
+  ot->get_description = wm_orphans_purge_get_description; /*bfa - descriptions*/
   ot->poll = ed_operator_outliner_id_orphans_active;
 
   /* flags */
