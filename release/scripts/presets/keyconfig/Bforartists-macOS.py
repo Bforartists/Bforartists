@@ -3620,8 +3620,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("mask.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("mask.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("mask.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("mask.select_all",
+     {"type": 'I', "value": 'PRESS', "oskey": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("mask.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
