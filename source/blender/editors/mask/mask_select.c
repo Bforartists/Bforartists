@@ -229,6 +229,7 @@ static int select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - description*/
 static char *wm_mask_select_all_get_description(bContext *UNUSED(C),
                                                 wmOperatorType *UNUSED(ot),
                                                 PointerRNA *ptr,
