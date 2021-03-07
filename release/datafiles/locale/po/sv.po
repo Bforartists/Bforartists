@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1013,8 +1013,8 @@ msgid "Strokes"
 msgstr "Penselavtryck"
 
 
-msgid "Resolution"
-msgstr "Upplösning"
+msgid "Precision"
+msgstr "Kompression"
 
 
 msgid "Visible"
@@ -3226,6 +3226,10 @@ msgid "Directory to save the textures"
 msgstr "Riktning"
 
 
+msgid "Resolution"
+msgstr "Upplösning"
+
+
 msgid "Output image resolution"
 msgstr "Markera Länkad"
 
@@ -4299,22 +4303,6 @@ msgid "Extreme"
 msgstr "Extrudera"
 
 
-msgid "Step"
-msgstr "Steg"
-
-
-msgid "Custom"
-msgstr "Anpassad"
-
-
-msgid "Quadratic"
-msgstr "Kvadratisk"
-
-
-msgid "Circular"
-msgstr "Cirkel"
-
-
 msgid "Grease Pencil Layer"
 msgstr "Starta Spel"
 
@@ -4391,8 +4379,16 @@ msgid "Layer"
 msgstr "Lager"
 
 
+msgid "Custom"
+msgstr "Anpassad"
+
+
 msgid "Spacing"
 msgstr "Mellanrum:"
+
+
+msgid "Circular"
+msgstr "Cirkel"
 
 
 msgid "Grid"
@@ -4421,10 +4417,6 @@ msgstr "Bild Zoom"
 
 msgid "End Cap"
 msgstr "Aktivera alla Nyckelbilder"
-
-
-msgid "Groups"
-msgstr "Grupper"
 
 
 msgid "Material Index"
@@ -4615,6 +4607,10 @@ msgid "Mirror Modifier"
 msgstr "Radera Allt"
 
 
+msgid "Step"
+msgstr "Steg"
+
+
 msgid "Adaptive"
 msgstr "Flytta Till Lager"
 
@@ -4705,6 +4701,10 @@ msgstr "Bana"
 
 msgid "Frame Range"
 msgstr "Bildruteomfång:"
+
+
+msgid "Groups"
+msgstr "Grupper"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -7521,6 +7521,10 @@ msgid "Create a linear progression"
 msgstr "Rensa Rotation"
 
 
+msgid "Quadratic"
+msgstr "Kvadratisk"
+
+
 msgid "Spherical"
 msgstr "UVsfär"
 
@@ -8055,10 +8059,6 @@ msgstr "Animering"
 
 msgid "Simulation"
 msgstr "Simulering:"
-
-
-msgid "Precision"
-msgstr "Kompression"
 
 
 msgid "Reiteration"
@@ -8695,10 +8695,6 @@ msgid "Special Characters"
 msgstr "Tecken:"
 
 
-msgid "Interpolate"
-msgstr "Interpolering:"
-
-
 msgid "Face"
 msgstr "Yta"
 
@@ -8717,10 +8713,6 @@ msgstr "Metaball"
 
 msgid "Light"
 msgstr "Ljus"
-
-
-msgid "Make Links"
-msgstr "Spara som"
 
 
 msgid "Make Single User"
@@ -10583,6 +10575,10 @@ msgid "Active Track Index"
 msgstr "Byta Stripp"
 
 
+msgid "Interpolate"
+msgstr "Interpolering:"
+
+
 msgid "Bilinear"
 msgstr "Linjär"
 
@@ -11663,12 +11659,12 @@ msgid "Int"
 msgstr "Info"
 
 
-msgid "Object Info"
-msgstr "Packa Data"
-
-
 msgid "Original"
 msgstr "Rensa Ursprung"
+
+
+msgid "Object Info"
+msgstr "Packa Data"
 
 
 msgid "Label Font Size"
@@ -13236,6 +13232,10 @@ msgstr "Markör"
 
 msgid "Distance between selected tracks"
 msgstr "Radera"
+
+
+msgid "Keep Original"
+msgstr "Rensa Ursprung"
 
 
 msgctxt "Operator"
@@ -15286,10 +15286,6 @@ msgstr "Maskera lager:"
 
 msgid "Subdivisions"
 msgstr "Uppdelningar"
-
-
-msgid "Keep Original"
-msgstr "Rensa Ursprung"
 
 
 msgid "Mouse location"
@@ -18171,11 +18167,6 @@ msgstr "Rensa Placering"
 
 msgid "Clear the object's location"
 msgstr "Duplicera"
-
-
-msgctxt "Operator"
-msgid "Link Data"
-msgstr "Packa Data"
 
 
 msgctxt "Operator"
@@ -26148,10 +26139,6 @@ msgid "Properties space data"
 msgstr "Bild Displist"
 
 
-msgid "On"
-msgstr "På"
-
-
 msgid "Space Sequence Editor"
 msgstr "Starta rendering av sekvens"
 
@@ -29144,11 +29131,6 @@ msgstr "Rendera"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Duplicera"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Markera Länkad"
 
@@ -29234,48 +29216,13 @@ msgstr "Tilldela ny grupp"
 
 
 msgctxt "Operator"
-msgid "Remove from All"
-msgstr "Ta bort från samtliga"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Kamerans linsskala"
-
-
-msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "Kamerans linsskala"
 
 
 msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Extruderingshöjd"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Bredd"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Fokusavstånd"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Visa inställningar för kant"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Beräkna Normaler"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "Blanda"
+msgid "Remove from All"
+msgstr "Ta bort från samtliga"
 
 
 msgid "Layer:"
@@ -29393,56 +29340,12 @@ msgid "Cannot re-link markers into the same scene"
 msgstr "Markera Länkad"
 
 
-msgid "Poly Order:"
-msgstr "Slumpfrö"
-
-
-msgid "Before:"
-msgstr "Innan"
-
-
-msgid "After:"
-msgstr "Efter"
-
-
-msgid "Envelope:"
-msgstr "Omslutning:"
-
-
-msgid "Control Points:"
-msgstr "Styr rotation"
-
-
-msgid "Add Point"
-msgstr "Bana"
-
-
-msgid "Max:"
-msgstr "Min/max:"
-
-
-msgid "Power of x"
-msgstr "Fresnel"
-
-
-msgid "Coefficient of x"
-msgstr "Interaktion:"
-
-
-msgid "Second coefficient"
-msgstr "Spel"
-
-
 msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Markera Länkad"
 
 
 msgid "Delete envelope control point"
 msgstr "Lägg till Stripp"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Modifierare för F-kurva"
 
 
 msgid "No selected F-Curves to paste into"
@@ -30767,6 +30670,10 @@ msgstr "Kub"
 
 msgid "Cr"
 msgstr "Beskär"
+
+
+msgid "On"
+msgstr "På"
 
 
 msgid "Val"

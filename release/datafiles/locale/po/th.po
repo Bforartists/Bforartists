@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -534,10 +534,6 @@ msgid "All"
 msgstr "ทั้งหมด"
 
 
-msgid "Resolution"
-msgstr "ความละเอียด"
-
-
 msgid "Pen"
 msgstr "ปากกา"
 
@@ -953,6 +949,10 @@ msgid "Replace Color"
 msgstr "แทนที่สี"
 
 
+msgid "Resolution"
+msgstr "ความละเอียด"
+
+
 msgid "Data Layer"
 msgstr "ชั้นข้อมูล"
 
@@ -1200,20 +1200,16 @@ msgid "Normal keyframe - e.g. for key poses"
 msgstr "คีย์เฟรมเริ่มต้น"
 
 
-msgid "Step"
-msgstr "ขั้นตอน"
-
-
-msgid "Custom"
-msgstr "กำหนดเอง"
-
-
 msgid "Frames"
 msgstr "เฟรม"
 
 
 msgid "Mask Layer"
 msgstr "ชั้นหน้ากาก"
+
+
+msgid "Custom"
+msgstr "กำหนดเอง"
 
 
 msgid "Grid"
@@ -1289,6 +1285,10 @@ msgstr "คงที่"
 
 msgid "Matrix"
 msgstr "เมทริกซ์"
+
+
+msgid "Step"
+msgstr "ขั้นตอน"
 
 
 msgid "Fixed"
@@ -3891,10 +3891,6 @@ msgid "Show Cameras"
 msgstr "แสดงกล้อง"
 
 
-msgid "On"
-msgstr "เปิด"
-
-
 msgid "Replace Text"
 msgstr "แทนที่ข้อความ"
 
@@ -5266,41 +5262,6 @@ msgid "Delete Points"
 msgstr "ลบจุด"
 
 
-msgctxt "Operator"
-msgid "Convert to Path"
-msgstr "แปลงให้เป็นเส้นทาง"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curve"
-msgstr "แปลงให้เป็นเส้นโค้งเบซิเยร์"
-
-
-msgctxt "Operator"
-msgid "Convert to Polygon Curve"
-msgstr "แปลงให้เป็นเส้นโค้งโพลิกอน"
-
-
-msgctxt "Operator"
-msgid "Power"
-msgstr "พลัง"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "ขนาด X"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "ขนาด Y"
-
-
-msgctxt "Operator"
-msgid "Angle"
-msgstr "องศา"
-
-
 msgid "Display Color"
 msgstr "สีที่แสดง"
 
@@ -5344,18 +5305,6 @@ msgstr "ตัวแปร"
 
 msgid "Key %d"
 msgstr "คีย์ %d"
-
-
-msgid "Undefined"
-msgstr "ไม่ได้กำหนดไว้"
-
-
-msgid "Add Point"
-msgstr "เพิ่มจุด"
-
-
-msgid "Max:"
-msgstr "สูงสุด:"
 
 
 msgctxt "Curve"
@@ -5886,6 +5835,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "เปิด"
 
 
 msgid "Val"

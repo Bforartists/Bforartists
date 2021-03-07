@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -860,10 +860,6 @@ msgstr "Kontur Metodu:"
 
 msgid "All"
 msgstr "Tümü"
-
-
-msgid "Resolution"
-msgstr "Çözünürlük"
 
 
 msgid "Marker"
@@ -2555,6 +2551,10 @@ msgid "Directory to save the textures"
 msgstr "Doku için aranacak varsayılan dizin"
 
 
+msgid "Resolution"
+msgstr "Çözünürlük"
+
+
 msgid "Output image resolution"
 msgstr "Görüntü İşlenmedi (F12 ile işleyin)"
 
@@ -3468,10 +3468,6 @@ msgid "Keyframe"
 msgstr "Anahtarkare"
 
 
-msgid "Custom"
-msgstr "Özel"
-
-
 msgid "Grease Pencil Layer"
 msgstr "Eskiz Kalemi Katmanı"
 
@@ -3536,6 +3532,10 @@ msgid "Layer"
 msgstr "Katman"
 
 
+msgid "Custom"
+msgstr "Özel"
+
+
 msgid "Grid"
 msgstr "Izgara"
 
@@ -3562,10 +3562,6 @@ msgstr "Bitiş Zamanı"
 
 msgid "Flat"
 msgstr "Bağlantılı Düz Yüzler"
-
-
-msgid "Groups"
-msgstr "Grup yok"
 
 
 msgid "Material Index"
@@ -3798,6 +3794,10 @@ msgstr "Eğriler"
 
 msgid "Frame Range"
 msgstr "Kare Sil"
+
+
+msgid "Groups"
+msgstr "Grup yok"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -6895,10 +6895,6 @@ msgid "Hooks"
 msgstr "Kanca"
 
 
-msgid "Make Links"
-msgstr "Bağlantılar oluştur"
-
-
 msgid "Make Single User"
 msgstr "Kullanıcı ayarlarını (varsayılanı) kaydet"
 
@@ -9227,12 +9223,12 @@ msgid "Dot Product"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
 
-msgid "Object Info"
-msgstr "Nesne Bilgisi"
-
-
 msgid "Original"
 msgstr "Orijinali Koru"
+
+
+msgid "Object Info"
+msgstr "Nesne Bilgisi"
 
 
 msgid "Label Font Size"
@@ -10370,6 +10366,10 @@ msgstr "İşaret Ekle"
 
 msgid "Distance between selected tracks"
 msgstr "Izgara çizgileri arasındaki mesafeyi ayarlayın"
+
+
+msgid "Keep Original"
+msgstr "Orijinali Koru"
 
 
 msgctxt "Operator"
@@ -12047,6 +12047,10 @@ msgid "Hide unselected rather than selected layers"
 msgstr "Menüyü Göster/Gizle"
 
 
+msgid "Confirm on Release"
+msgstr "Seçili Anahtarlarda"
+
+
 msgctxt "Operator"
 msgid "Add New Layer"
 msgstr "Yeni bir değiştirici ekle"
@@ -12055,10 +12059,6 @@ msgstr "Yeni bir değiştirici ekle"
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Katman Sil"
-
-
-msgid "Keep Original"
-msgstr "Orijinali Koru"
 
 
 msgid "Mouse location"
@@ -12085,10 +12085,6 @@ msgstr "Siyah"
 
 msgid "White"
 msgstr "Beyaz"
-
-
-msgid "Confirm on Release"
-msgstr "Seçili Anahtarlarda"
 
 
 msgctxt "Operator"
@@ -14242,11 +14238,6 @@ msgstr "Konumu Sıfırla"
 
 msgid "Clear the object's location"
 msgstr "Tüm Nesne Merkezleri"
-
-
-msgctxt "Operator"
-msgid "Link Data"
-msgstr "Nesne Verileri"
 
 
 msgctxt "Operator"
@@ -20709,10 +20700,6 @@ msgid "Properties space data"
 msgstr "Bağlama verileri eksik."
 
 
-msgid "On"
-msgstr "Açık"
-
-
 msgid "Pin ID"
 msgstr "ID Özellik Gezgini"
 
@@ -23327,11 +23314,6 @@ msgstr "Aktif Kamera"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Sahne bağlarına gözat"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Görüntüyü Seçili Olana Hizala"
 
@@ -23406,43 +23388,13 @@ msgstr "Yeni Grup Ata"
 
 
 msgctxt "Operator"
-msgid "Remove from All"
-msgstr "Tümünü Sil"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Kamera Lens Açısı"
-
-
-msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "Kamera Lens Ölçeği"
 
 
 msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Ekstrüzyon Boyutu"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Genişlik Boyutu"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Falloff Mesafesi"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Boş Çizim Boyutu"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Ekstrüzyon Boyutu"
+msgid "Remove from All"
+msgstr "Tümünü Sil"
 
 
 msgid "Layer:"
@@ -23582,50 +23534,6 @@ msgstr "Ses Pasif"
 
 msgid "Cannot re-link markers into the same scene"
 msgstr "Nesneyi bir Gruba ekle"
-
-
-msgid "Before:"
-msgstr "Önce:"
-
-
-msgid "After:"
-msgstr "Sonra:"
-
-
-msgid "Envelope:"
-msgstr "Ölçek Zarfı/BBone"
-
-
-msgid "Control Points:"
-msgstr "Kontrol Noktaları:"
-
-
-msgid "Add Point"
-msgstr "Nokta Ekle"
-
-
-msgid "Fra:"
-msgstr "Kre:"
-
-
-msgid "Min:"
-msgstr "Asg:"
-
-
-msgid "Max:"
-msgstr "Azm:"
-
-
-msgid "Coefficient for polynomial"
-msgstr "Merkezi İşlem Birimi Kullanılıyor"
-
-
-msgid "Second coefficient"
-msgstr "Kare/Saniye"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Fark Değiştirici Ekle"
 
 
 msgid "No selected F-Curves to paste into"
@@ -25018,6 +24926,10 @@ msgstr "Küp"
 
 msgid "Cr"
 msgstr "Boyut|Ctrl C, 3"
+
+
+msgid "On"
+msgstr "Açık"
 
 
 msgid "Val"

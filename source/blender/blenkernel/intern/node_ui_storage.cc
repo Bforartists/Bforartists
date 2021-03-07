@@ -16,6 +16,8 @@
 
 #include "CLG_log.h"
 
+#include <mutex>
+
 #include "BLI_map.hh"
 #include "BLI_string_ref.hh"
 #include "BLI_vector.hh"
@@ -33,10 +35,20 @@ using blender::Map;
 using blender::StringRef;
 using blender::Vector;
 
+/* Use a global mutex because otherwise it would have to be stored directly in the
+ * bNodeTree struct in DNA. This could change if the node tree had a runtime struct. */
+static std::mutex global_ui_storage_mutex;
+
 static void ui_storage_ensure(bNodeTree &ntree)
 {
+  /* As an optimization, only acquire a lock if the UI storage doesn't exist,
+   * because it only needs to be allocated once for every node tree. */
   if (ntree.ui_storage == nullptr) {
-    ntree.ui_storage = new NodeTreeUIStorage();
+    std::lock_guard<std::mutex> lock(global_ui_storage_mutex);
+    /* Check again-- another thread may have allocated the storage while this one waited. */
+    if (ntree.ui_storage == nullptr) {
+      ntree.ui_storage = new NodeTreeUIStorage();
+    }
   }
 }
 
@@ -50,8 +62,12 @@ const NodeUIStorage *BKE_node_tree_ui_storage_get_from_context(const bContext *C
   }
 
   const Object *active_object = CTX_data_active_object(C);
+  if (active_object == nullptr) {
+    return nullptr;
+  }
+
   const ModifierData *active_modifier = BKE_object_active_modifier(active_object);
-  if (active_object == nullptr || active_modifier == nullptr) {
+  if (active_modifier == nullptr) {
     return nullptr;
   }
 
@@ -74,6 +90,7 @@ void BKE_nodetree_ui_storage_free_for_context(bNodeTree &ntree,
 {
   NodeTreeUIStorage *ui_storage = ntree.ui_storage;
   if (ui_storage != nullptr) {
+    std::lock_guard<std::mutex> lock(ui_storage->context_map_mutex);
     ui_storage->context_map.remove(context);
   }
 }
@@ -116,6 +133,7 @@ static NodeUIStorage &node_ui_storage_ensure(bNodeTree &ntree,
   ui_storage_ensure(ntree);
   NodeTreeUIStorage &ui_storage = *ntree.ui_storage;
 
+  std::lock_guard<std::mutex> lock(ui_storage.context_map_mutex);
   Map<std::string, NodeUIStorage> &node_tree_ui_storage =
       ui_storage.context_map.lookup_or_add_default(context);
 
