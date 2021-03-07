@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -3147,12 +3147,8 @@ msgid "Use edit lines as fill boundary limits"
 msgstr "채우기 경계 제한으로 편집 라인을 사용"
 
 
-msgid "Resolution"
-msgstr "해상도"
-
-
-msgid "Multiplier for fill resolution, higher resolution is more accurate but slower"
-msgstr "채우기 해상도를 위한 멀티플러, 더 높은 해상도가 더 정확하지만 느림"
+msgid "Precision"
+msgstr "정밀도"
 
 
 msgid "Visible"
@@ -4609,26 +4605,6 @@ msgstr "입력 컬러 공간"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "이미지 파일을 저장하고 불러올 때 변환할 컬러 공간"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "16.5 스톱의 위도와 25 스톱의 다이내믹 레인지를 갖춘 로그 기반의 필름 셰이퍼"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (전체 범위), 블렌더 기본 선형 공간"
-
-
-msgid "ACES linear space"
-msgstr "ACES 선형 공간"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "비-컬러 데이터를 포함하는 이미지에 대해 사용하는 컬러 공간 (다시 말하면 노멀 맵)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "표준 RGB 표시 공간"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -8815,6 +8791,10 @@ msgid "Directory to save the textures"
 msgstr "텍스처를 저장하는 디렉토리"
 
 
+msgid "Resolution"
+msgstr "해상도"
+
+
 msgid "Output image resolution"
 msgstr "이미지 출력 해상도"
 
@@ -10051,10 +10031,6 @@ msgstr "노멀라이즈된 사인"
 
 msgid "sin(x) / x"
 msgstr "사인(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "위상 승수"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -11685,10 +11661,6 @@ msgid "Tension"
 msgstr "장력"
 
 
-msgid "Surface tension of liquid (higher value results in greater hydrophobic behaviour)"
-msgstr "액체의 표면 장력 (값이 높을수록 소수성 거동이 커짐)"
-
-
 msgid "Temperature Grid"
 msgstr "온도 격자"
 
@@ -12705,168 +12677,12 @@ msgid "Settings for Grease Pencil interpolation tools"
 msgstr "그리스 펜슬 보간 도구에 대한 설정"
 
 
-msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "'탄성' 완화를 위해 탄력적인 바운스를 증가 시키는 양"
-
-
-msgid "Amount of overshoot for 'back' easing"
-msgstr "'뒤쪽' 완화에 대한 초과 응답의 양"
-
-
-msgid "Easing"
-msgstr "완화"
-
-
-msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "앞뒤 그리이스 펜슬 프레임 완화 보간 사이 부분의 끝이 다음에 적용됩니다"
-
-
-msgid "Automatic Easing"
-msgstr "자동 완화"
-
-
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "완화 유형은 사용된 보간 유형에 따라 자동으로 선택됩니다 (예: 과도기 유형의 경우 '완화', 동적 효과의 경우 '완화')"
-
-
-msgid "Only on the end closest to the next keyframe"
-msgstr "다음 키 프레임에 끝에 가장 가까운에 만"
-
-
-msgid "Only on the end closest to the first keyframe"
-msgstr "첫 번째 키 프레임 끝에 가장 가까운에 만"
-
-
-msgid "Ease In and Out"
-msgstr "완화 In 및 Out"
-
-
-msgid "Segment between both keyframes"
-msgstr "두 키 프레임 사이의 부분"
-
-
-msgid "Interpolate All Layers"
-msgstr "모든 레이어를 보간"
-
-
-msgid "Interpolate all layers, not only active"
-msgstr "활성 레이어뿐만 아니라 모든 레이어를 보간"
-
-
-msgid "Interpolate Selected Strokes"
-msgstr "선택한 스트로크를 보간"
-
-
-msgid "Interpolate only selected strokes in the original frame"
-msgstr "원래 프레임에서 선택한 스트로크 만 보간"
-
-
 msgid "Interpolation Curve"
 msgstr "보간 커브"
 
 
 msgid "Custom curve to control 'sequence' interpolation between Grease Pencil frames"
 msgstr "그리스 펜슬 프레임 간의 '시퀀스' 보간을 제어하는 커스텀 커브"
-
-
-msgid "Period"
-msgstr "시기"
-
-
-msgid "Time between bounces for elastic easing"
-msgstr "탄성 완화를 위한 바운스 사이의 시간"
-
-
-msgid "Step"
-msgstr "단계"
-
-
-msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
-msgstr "보간 메서드를 사용하여 다음 번에 '보간 시퀀스'가 실행됩니다"
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "A와 B 사이의 직선 보간법 (즉, 완화 in/out 않음)"
-
-
-msgid "Custom"
-msgstr "커스텀"
-
-
-msgid "Custom interpolation defined using a curve map"
-msgstr "커브 맵을 사용하여 정의된 커스텀 보간법"
-
-
-msgid "Sinusoidal"
-msgstr "사인커브"
-
-
-msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "사인커브 이징 (가장 약한, 거의 선형이지만 약간의 곡률을 가짐)"
-
-
-msgid "Quadratic"
-msgstr "이차"
-
-
-msgid "Quadratic easing"
-msgstr "이차 완화"
-
-
-msgid "Cubic easing"
-msgstr "큐빅 완화"
-
-
-msgid "Quartic"
-msgstr "쿼틱"
-
-
-msgid "Quartic easing"
-msgstr "쿼틱 완화"
-
-
-msgid "Quintic"
-msgstr "퀸틱"
-
-
-msgid "Quintic easing"
-msgstr "퀸틱 완화"
-
-
-msgid "Exponential"
-msgstr "지수"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "지수 완화 (드라마틱)"
-
-
-msgid "Circular"
-msgstr "원형"
-
-
-msgid "Circular easing (strongest and most dynamic)"
-msgstr "원형 완화 (가장 강력하고 역동적인)"
-
-
-msgid "Cubic easing with overshoot and settle"
-msgstr "초과 음답 및 정착과 함께 큐빅 완화"
-
-
-msgid "Bounce"
-msgstr "탄력"
-
-
-msgid "Exponentially decaying parabolic bounce, like when objects collide"
-msgstr "지수의 감쇠 포물선 탄력, 오브젝트가 충돌할 때 같은"
-
-
-msgid "Elastic"
-msgstr "탄성"
-
-
-msgid "Exponentially decaying sine wave, like an elastic band"
-msgstr "지수의 감쇠 정현파 웨이브, 탄성 밴드 등"
 
 
 msgid "Grease Pencil Layer"
@@ -12985,6 +12801,10 @@ msgid "Thickness change to apply to current strokes (in pixels)"
 msgstr "현재 획에 적용할 두께를 변경 (픽셀 단위)"
 
 
+msgid "Values for change location"
+msgstr "변경 위치에 대한 값"
+
+
 msgid "Locked"
 msgstr "잠김"
 
@@ -13047,6 +12867,14 @@ msgstr "패스 인덱스"
 
 msgid "Index number for the \"Layer Index\" pass"
 msgstr "\"레이어 인덱스\"패스에 대한 인덱스 번호"
+
+
+msgid "Values for changes in rotation"
+msgstr "회전의 변환에 대한 값"
+
+
+msgid "Values for changes in scale"
+msgstr "축적의 변환에 대한 값"
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
@@ -13161,6 +12989,10 @@ msgid "Use cursor as reference point"
 msgstr "커서를 참조 포인트로 사용"
 
 
+msgid "Custom"
+msgstr "커스텀"
+
+
 msgid "Use custom reference point"
 msgstr "커스텀 참조 포인트를 사용"
 
@@ -13175,6 +13007,10 @@ msgstr "간격"
 
 msgid "Guide spacing"
 msgstr "가이드 간격"
+
+
+msgid "Circular"
+msgstr "원형"
 
 
 msgid "Use single point to create rings"
@@ -13347,14 +13183,6 @@ msgstr "둥근"
 
 msgid "Flat"
 msgstr "플랫"
-
-
-msgid "Groups"
-msgstr "그룹"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "이 버텍스가 다음의 멤버인 버텍스 그룹에 대한 가중치"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -14329,6 +14157,10 @@ msgid "Thickness Factor"
 msgstr "두께 팩터"
 
 
+msgid "Step"
+msgstr "단계"
+
+
 msgid "Number of frames before recalculate random values again"
 msgstr "다시 렌덤 값을 재계산하기 전의 프레임 수"
 
@@ -14339,18 +14171,6 @@ msgstr "오프셋 모디파이어"
 
 msgid "Offset Stroke modifier"
 msgstr "오프셋 스트로크 모디파이어"
-
-
-msgid "Values for change location"
-msgstr "변경 위치에 대한 값"
-
-
-msgid "Values for changes in rotation"
-msgstr "회전의 변환에 대한 값"
-
-
-msgid "Values for changes in scale"
-msgstr "축적의 변환에 대한 값"
 
 
 msgid "Opacity Modifier"
@@ -14795,6 +14615,10 @@ msgstr "프레임 범위"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "이 액션 내의 모든 F-커브의 최종 프레임 범위"
+
+
+msgid "Groups"
+msgstr "그룹"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -15692,6 +15516,10 @@ msgstr "스무스 스트로크 반경"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "스트로크 계속하기 전에 마지막 포인트로부터의 최소 거리"
+
+
+msgid "Elastic"
+msgstr "탄성"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -22409,8 +22237,16 @@ msgid "Create a linear progression"
 msgstr "선형 진행을 생성"
 
 
+msgid "Quadratic"
+msgstr "이차"
+
+
 msgid "Create a quadratic progression"
 msgstr "이차 진행을 생성"
+
+
+msgid "Easing"
+msgstr "완화"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -23567,10 +23403,6 @@ msgstr "시뮬레이션"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "실시간 컨텍스트에서 실행되고 동작 및 비 IK 제약 조건을 무시한 전체 상태 솔버"
-
-
-msgid "Precision"
-msgstr "정밀도"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -25297,8 +25129,40 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "F-커브에 키 프레임을 정의하는 두 개의 핸들이 있는 베지어 커브 포인트"
 
 
+msgid "Amount to boost elastic bounces for 'elastic' easing"
+msgstr "'탄성' 완화를 위해 탄력적인 바운스를 증가 시키는 양"
+
+
+msgid "Amount of overshoot for 'back' easing"
+msgstr "'뒤쪽' 완화에 대한 초과 응답의 양"
+
+
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "이 키 프레임과 다음 키 프레임 완화 보간 사이의 부분 끝이 다음에 적용됩니다"
+
+
+msgid "Automatic Easing"
+msgstr "자동 완화"
+
+
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "완화 유형은 사용된 보간 유형에 따라 자동으로 선택됩니다 (예: 과도기 유형의 경우 '완화', 동적 효과의 경우 '완화')"
+
+
+msgid "Only on the end closest to the next keyframe"
+msgstr "다음 키 프레임에 끝에 가장 가까운에 만"
+
+
+msgid "Only on the end closest to the first keyframe"
+msgstr "첫 번째 키 프레임 끝에 가장 가까운에 만"
+
+
+msgid "Ease In and Out"
+msgstr "완화 In 및 Out"
+
+
+msgid "Segment between both keyframes"
+msgstr "두 키 프레임 사이의 부분"
 
 
 msgid "Left Handle"
@@ -25357,8 +25221,80 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "보간 없음, A 값은 B가 발생할 때까지 유지됩니다"
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "A와 B 사이의 직선 보간법 (즉, 완화 in/out 않음)"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "A와 B 사이의 부드러운 보간, 커브 셰이프에 대한 약간의 제어"
+
+
+msgid "Sinusoidal"
+msgstr "사인커브"
+
+
+msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
+msgstr "사인커브 이징 (가장 약한, 거의 선형이지만 약간의 곡률을 가짐)"
+
+
+msgid "Quadratic easing"
+msgstr "이차 완화"
+
+
+msgid "Cubic easing"
+msgstr "큐빅 완화"
+
+
+msgid "Quartic"
+msgstr "쿼틱"
+
+
+msgid "Quartic easing"
+msgstr "쿼틱 완화"
+
+
+msgid "Quintic"
+msgstr "퀸틱"
+
+
+msgid "Quintic easing"
+msgstr "퀸틱 완화"
+
+
+msgid "Exponential"
+msgstr "지수"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "지수 완화 (드라마틱)"
+
+
+msgid "Circular easing (strongest and most dynamic)"
+msgstr "원형 완화 (가장 강력하고 역동적인)"
+
+
+msgid "Cubic easing with overshoot and settle"
+msgstr "초과 음답 및 정착과 함께 큐빅 완화"
+
+
+msgid "Bounce"
+msgstr "탄력"
+
+
+msgid "Exponentially decaying parabolic bounce, like when objects collide"
+msgstr "지수의 감쇠 포물선 탄력, 오브젝트가 충돌할 때 같은"
+
+
+msgid "Exponentially decaying sine wave, like an elastic band"
+msgstr "지수의 감쇠 정현파 웨이브, 탄성 밴드 등"
+
+
+msgid "Period"
+msgstr "시기"
+
+
+msgid "Time between bounces for elastic easing"
+msgstr "탄성 완화를 위한 바운스 사이의 시간"
 
 
 msgid "Left handle selection status"
@@ -27473,10 +27409,6 @@ msgid "Kerning"
 msgstr "자간"
 
 
-msgid "Interpolate"
-msgstr "보간"
-
-
 msgid "Lattice Context Menu"
 msgstr "래티스 컨텍스트 메뉴"
 
@@ -27555,10 +27487,6 @@ msgstr "라이트"
 
 msgid "Light Probe"
 msgstr "라이트 프로브"
-
-
-msgid "Make Links"
-msgstr "연결을 만들기"
 
 
 msgid "Make Single User"
@@ -28123,6 +28051,10 @@ msgstr "메쉬 데이터 블록에서 버텍스"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "베벨 모디파이어 '버텍스 전용' 옵션에 사용되는 웨이트"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "이 버텍스가 다음의 멤버인 버텍스 그룹에 대한 가중치"
 
 
 msgid "Index of this vertex"
@@ -32785,14 +32717,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "오브젝트 축적 조정을 위해 사용된 두 번들 사이의 거리"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "사용자 인터페이스에서 확장된 기본 옵션을 표시"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "사용자 인터페이스에서 확장된 추가 옵션을 표시"
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "시각적 피드백을 쉽게 하기 위해 트래킹 속력을 제한 (이는 추적 품질에 영향을 주지 않습니다)"
 
@@ -32923,6 +32847,10 @@ msgstr "고정 프레임"
 
 msgid "Reference point to anchor stabilization (other frames will be adjusted relative to this frame's position)"
 msgstr "앵커 안정화 참조 포인트 (다른 프레임은 이 프레임의 위치를 기준으로 조정됩니다)"
+
+
+msgid "Interpolate"
+msgstr "보간"
 
 
 msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilization"
@@ -35438,12 +35366,12 @@ msgid "Round A to the largest integer multiple of B less than or equal A"
 msgstr "A를 A보다 작거나 같은 B의 가장 큰 정수 배수로 반올림"
 
 
-msgid "Object Info"
-msgstr "오브젝트 정보"
-
-
 msgid "Original"
 msgstr "원본"
+
+
+msgid "Object Info"
+msgstr "오브젝트 정보"
 
 
 msgctxt "NodeTree"
@@ -39011,6 +38939,10 @@ msgid "Distance between selected tracks"
 msgstr "선택된 트랙 사이의 거리"
 
 
+msgid "Keep Original"
+msgstr "원본을 유지"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "메쉬에 3D 마커"
@@ -40772,10 +40704,6 @@ msgstr "랜덤 선택"
 
 msgid "Randomly select some control points"
 msgstr "랜덤으로 몇 가지 컨트롤 포인트를 선택"
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "랜덤으로 선택하는 오브젝트의 퍼센트"
 
 
 msgid "Seed for the random number generator"
@@ -43477,13 +43405,12 @@ msgid "Interpolate grease pencil strokes between frames"
 msgstr "프레임 사이 그리스 펜슬 스트로크를 보간"
 
 
+msgid "Confirm on Release"
+msgstr "릴리즈에 대한 확인"
+
+
 msgid "Bias factor for which frame has more influence on the interpolated strokes"
 msgstr "프레임이 보간된 스트로크에 더 많은 영향을 미치는 경향 계수"
-
-
-msgctxt "Operator"
-msgid "Remove Breakdowns"
-msgstr "브렉다운을 제거"
 
 
 msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
@@ -43497,6 +43424,18 @@ msgstr "보간 시퀀스"
 
 msgid "Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames"
 msgstr "그리스 펜슬 프레임 사이를 부드럽게 보간하기 위해 '사이에서' 생성"
+
+
+msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
+msgstr "앞뒤 그리이스 펜슬 프레임 완화 보간 사이 부분의 끝이 다음에 적용됩니다"
+
+
+msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
+msgstr "보간 메서드를 사용하여 다음 번에 '보간 시퀀스'가 실행됩니다"
+
+
+msgid "Custom interpolation defined using a curve map"
+msgstr "커브 맵을 사용하여 정의된 커스텀 보간법"
 
 
 msgctxt "Operator"
@@ -43668,10 +43607,6 @@ msgstr "재투사 스트로크"
 
 msgid "Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)"
 msgstr "새로 그려진 것처럼 현재 뷰포트에서 선택한 스트로크를 다시 투사합니다 (예 : 실수로 3D 커서 이동 또는 우발적 인 뷰포트 변경으로 인한 문제 해결 또는 변형 형상 일치를 위해)"
-
-
-msgid "Keep Original"
-msgstr "원본을 유지"
 
 
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
@@ -44172,10 +44107,6 @@ msgid "White"
 msgstr "화이트"
 
 
-msgid "Confirm on Release"
-msgstr "릴리즈에 대한 확인"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "모든 레이어를 잠금 해제"
@@ -44387,10 +44318,6 @@ msgstr "최대 오차 한계"
 
 msgid "How much the new decimated curve is allowed to deviate from the original"
 msgstr "새로운 데시메이션 커브가 원본에서 벗어난 정도"
-
-
-msgid "The percentage of keyframes to remove"
-msgstr "제거 할 키 프레임의 비율"
 
 
 msgctxt "Operator"
@@ -50865,19 +50792,6 @@ msgstr "오브젝트를 인스턴스화 페이스로 변환"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "데이터를 연결"
-
-
-msgid "Apply active object links to other selected objects"
-msgstr "다른 선택된 오브젝트에 활성 오브젝트 연결을 적용"
-
-
-msgid "Effects"
-msgstr "이펙트"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "오브젝트를 씬에 연결"
 
@@ -53062,14 +52976,6 @@ msgid "Make all users of selected data-blocks to use instead a new chosen one"
 msgstr "선택한 데이터 블록의 모든 유저가 새롭게 선택된 데이터 블록을 사용하도록합니다"
 
 
-msgid "Enter Mode"
-msgstr "모드를 입력"
-
-
-msgid "Exit Mode"
-msgstr "모드를 종료"
-
-
 msgid "Context menu for item operations"
 msgstr "항목 작업을 위한 상황에 맞는 메뉴"
 
@@ -54287,20 +54193,16 @@ msgid "Custom properties"
 msgstr "커스텀 속성"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "키 프레임이 선호에 대한 가중치 펙터"
+
+
 msgid "Next Keyframe"
 msgstr "다음 키 프레임"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "현재 프레임 바로 뒤의 키 프레임의 프레임 번호"
-
-
-msgid "Percentage"
-msgstr "백분율"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "키 프레임이 선호에 대한 가중치 펙터"
 
 
 msgid "Previous Keyframe"
@@ -62996,6 +62898,10 @@ msgid "Path Animation"
 msgstr "경로 애니메이션"
 
 
+msgid "Effects"
+msgstr "이펙트"
+
+
 msgid "Skeleton"
 msgstr "골격"
 
@@ -64196,6 +64102,11 @@ msgstr "박스"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "원형"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "보간"
 
 
 msgid "Expand or contract the radius of the selected points"
@@ -66273,10 +66184,6 @@ msgid "Continuous Grab"
 msgstr "연속 잡기"
 
 
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "일부 조작에 뷰 외부로 마우스 이동을 허용 (변환, UI 제어 드래그)"
-
-
 msgid "Auto Depth"
 msgstr "자동 깊이"
 
@@ -66851,6 +66758,10 @@ msgstr "팩터 값을 표시하는 방법"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "0과 1 사이의 값으로 팩터를 표시"
+
+
+msgid "Percentage"
+msgstr "백분율"
 
 
 msgid "Display factors as percentages"
@@ -74702,10 +74613,6 @@ msgstr "피직스 프로퍼티스"
 
 msgid "Visual Effects Properties"
 msgstr "비주얼 이펙트 프로퍼티스"
-
-
-msgid "On"
-msgstr "On"
 
 
 msgid "Pin ID"
@@ -83810,14 +83717,6 @@ msgid "%dx%d"
 msgstr "%dx%d"
 
 
-msgid "Unpack"
-msgstr "포장 해제"
-
-
-msgid "Pack"
-msgstr "포장"
-
-
 msgid "Original Frame Range"
 msgstr "원본 프레임 범위"
 
@@ -83832,6 +83731,14 @@ msgstr "전환을 추가"
 
 msgid "Effect Fader"
 msgstr "이펙트 페더"
+
+
+msgid "Unpack"
+msgstr "포장 해제"
+
+
+msgid "Pack"
+msgstr "포장"
 
 
 msgid "Source Channel"
@@ -85234,16 +85141,6 @@ msgstr "활성 키 프레임을 복제 (활성 레이어)"
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "보간"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "시퀀스"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "선택된 항목을 보기"
 
@@ -85436,16 +85333,6 @@ msgstr "델타로 모두 변환"
 
 msgid "Visual Geometry to Mesh"
 msgstr "메쉬에 시각적인 지오메트리"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "오브젝트를 씬에..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "오브젝트를 씬에"
 
 
 msgctxt "Operator"
@@ -85916,6 +85803,11 @@ msgstr "B본 축적"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "카메라 렌즈 축적"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "모두에서 제거"
 
@@ -85939,23 +85831,8 @@ msgstr "축적 반경"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "카메라 렌즈 각도"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "카메라 렌즈 축적"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "크기를 돌출"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "폭 크기"
+msgid "DOF Distance (Pick)"
+msgstr "DOF 거리 (선택)"
 
 
 msgid "Ridge"
@@ -85968,76 +85845,6 @@ msgstr "계곡"
 
 msgid "No object selected, using cursor"
 msgstr "커서를 사용하여 오브젝트를 선택하지 않았습니다"
-
-
-msgctxt "Operator"
-msgid "DOF Distance (Pick)"
-msgstr "DOF 거리 (선택)"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "DOF 거리"
-
-
-msgctxt "Operator"
-msgid "Convert to Mesh"
-msgstr "메쉬로 변환"
-
-
-msgctxt "Operator"
-msgid "Convert to Grease Pencil"
-msgstr "그리스 펜슬로 변환"
-
-
-msgctxt "Operator"
-msgid "Convert to Path"
-msgstr "경로로 변환"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curve"
-msgstr "베지어 커브로 변환"
-
-
-msgctxt "Operator"
-msgid "Convert to Polygon Curve"
-msgstr "폴리곤 커브로 변환"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "엠프티 그리기 크기"
-
-
-msgctxt "Operator"
-msgid "Power"
-msgstr "파워"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "크기 X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "스폿 크기"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "스폿 혼합"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "크기 Y"
-
-
-msgctxt "Operator"
-msgid "Angle"
-msgstr "각도"
 
 
 msgid "Layer:"
@@ -86100,24 +85907,8 @@ msgid "Editing Type"
 msgstr "편집 유형"
 
 
-msgid "Preserve Strand Lengths"
-msgstr "가닥 길이를 보존"
-
-
-msgid "Preserve Root Positions"
-msgstr "루트 위치를 보존"
-
-
 msgid "Path Steps"
 msgstr "경로 단계"
-
-
-msgid "Interpolate Strokes"
-msgstr "보간 스트로크"
-
-
-msgid "Sequence Options:"
-msgstr "시퀀스 옵션:"
 
 
 msgid "No Brushes currently available"
@@ -86433,14 +86224,6 @@ msgstr "Nla스트립"
 
 msgid "[Action Stash]"
 msgstr "[액션 제외]"
-
-
-msgid "Undefined"
-msgstr "정의되지 않음"
-
-
-msgid "Undefined Node Tree Type"
-msgstr "정의되지 않은 노드 트리 유형"
 
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
@@ -87024,64 +86807,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "주어진 ID에 대해 RNA 경로가 유효하지 않으므로 드라이버를 붙여 넣을 수 없습니다 (ID = %s, 경로 = %s)"
 
 
-msgid "Poly Order:"
-msgstr "폴리 순서:"
-
-
-msgid "Before:"
-msgstr "이전:"
-
-
-msgid "After:"
-msgstr "이후:"
-
-
-msgid "Envelope:"
-msgstr "엔벨로프:"
-
-
-msgid "Control Points:"
-msgstr "컨트롤 포인트:"
-
-
-msgid "Add Point"
-msgstr "포인트를 추가"
-
-
-msgid "Fra:"
-msgstr "Fra:"
-
-
-msgid "Min:"
-msgstr "최소:"
-
-
-msgid "Max:"
-msgstr "최대:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<Unknown Modifier>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "다항식의 '순서' (n 항을 갖는 다항식의 경우, '순서'는 n-1 임)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "다항식에 대한 계수"
-
-
-msgid "Power of x"
-msgstr "X의 파워"
-
-
-msgid "Coefficient of x"
-msgstr "x의 계수"
-
-
-msgid "Second coefficient"
-msgstr "두 번째 계수"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -87090,10 +86817,6 @@ msgstr "현재 프레임에서 엔벨로프에 새로운 컨트롤 포인트를 
 
 msgid "Delete envelope control point"
 msgstr "엔벨로프 컨트롤 포인트를 삭제"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "F-커브 모디파이어를 삭제"
 
 
 msgid "No animation data in buffer to paste"
@@ -87832,16 +87555,16 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "취소하려면 ESC/RMB, 확인하려면 Enter/LMB 입력, WHEEL/MOVE로 요소 조정"
 
 
+msgid "Easing (by strength)"
+msgstr "완화 (강도에 의해)"
+
+
+msgid "Dynamic Effects"
+msgstr "다이나믹 이펙트"
+
+
 msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
 msgstr "활성 레이어에서 보간하기 위한 그리스 펜슬 프레임 쌍을 찾을 수 없습니다"
-
-
-msgid "Cannot interpolate as current frame already has existing grease pencil frames"
-msgstr "현재 프레임에 이미 기존 그리스 펜슬 프레임이 있으므로 삽입 할 수 없습니다"
-
-
-msgid "Interpolation requires some editable strokes"
-msgstr "보간에는 편집 가능한 스트로크가 필요합니다"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -91514,10 +91237,6 @@ msgid "(empty)"
 msgstr "(엠프티)"
 
 
-msgid "Modal map, not yet"
-msgstr "모달 맵, 아직 없음"
-
-
 msgid "Can't reload with running modal operators"
 msgstr "실행중인 모달 작업자로 다시 불러올 수 없습니다"
 
@@ -92699,14 +92418,6 @@ msgid "Target is not in the constraint target list"
 msgstr "대상이 제약 조건 대상 목록에 없습니다"
 
 
-msgid "Easing (by strength)"
-msgstr "완화 (강도에 의해)"
-
-
-msgid "Dynamic Effects"
-msgstr "다이나믹 이펙트"
-
-
 msgid "Bezier spline cannot have points added"
 msgstr "베지어 스플라인은 포인트 추가 할 수 없습니다"
 
@@ -93556,6 +93267,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "On"
 
 
 msgid "Val"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -51,6 +51,14 @@ msgstr "颜色"
 
 msgid "Value"
 msgstr "值(明度)"
+
+
+msgid "List of AOVs"
+msgstr "AOV列表"
+
+
+msgid "Collection of AOVs"
+msgstr "AOV集合"
 
 
 msgid "Action F-Curves"
@@ -3525,12 +3533,8 @@ msgid "Use edit lines as fill boundary limits"
 msgstr "使用编辑线条作为填充边界限制"
 
 
-msgid "Resolution"
-msgstr "分辨率"
-
-
-msgid "Multiplier for fill resolution, higher resolution is more accurate but slower"
-msgstr "倍增填充精度，精度越高越精确但越慢"
+msgid "Precision"
+msgstr "精度"
 
 
 msgid "Layer Mode"
@@ -5151,26 +5155,6 @@ msgstr "输入色彩空间"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "图像文件中的颜色空间，用于在保存和加载图像时转换"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "基于filmic shaper的log，使用16.5stops的宽容度，以及25 stops的动态范围"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (全范围), Blender 原生线性空间"
-
-
-msgid "ACES linear space"
-msgstr "ACES 线性空间"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "包含非色彩数据的图像所使用的色彩空间 (即, 法线贴图)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "标准 RGB 色彩显示空间"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -9549,6 +9533,10 @@ msgid "Directory to save the textures"
 msgstr "纹理的保存目录"
 
 
+msgid "Resolution"
+msgstr "分辨率"
+
+
 msgid "Output image resolution"
 msgstr "图像输出分辨率"
 
@@ -10566,10 +10554,6 @@ msgid "Modifier for values of F-Curve"
 msgstr "针对函数曲线的修改器值"
 
 
-msgid "F-Curve Modifier is the one being edited"
-msgstr "正在编辑的函数曲线修改器"
-
-
 msgid "Blend In"
 msgstr "淡入"
 
@@ -10857,10 +10841,6 @@ msgstr "规格化的正弦"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "相位倍值"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -13087,10 +13067,6 @@ msgid "Tension"
 msgstr "张力"
 
 
-msgid "Surface tension of liquid (higher value results in greater hydrophobic behaviour)"
-msgstr "液体的表面张力(调高数值会导致更强的疏水表现)"
-
-
 msgid "System Maximum"
 msgstr "系统最大值"
 
@@ -14355,172 +14331,12 @@ msgid "Settings for Grease Pencil interpolation tools"
 msgstr "蜡笔插值工具的设置"
 
 
-msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "为 '弹性' 缓动增加弹性反弹的量"
-
-
-msgid "Amount of overshoot for 'back' easing"
-msgstr "“后”缓动的过冲稳定数量"
-
-
-msgid "Easing"
-msgstr "缓动"
-
-
-msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "在先前和随后蜡笔帧间时间段的哪一端应用缓动插值"
-
-
-msgid "Automatic Easing"
-msgstr "自动缓动"
-
-
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "基于插值使用的类型自动选择缓动类型 (例如 '缓入'为过渡类型, 而‘缓出’为动态效果)"
-
-
-msgid "Only on the end closest to the next keyframe"
-msgstr "仅在最靠近下一个关键帧的末尾"
-
-
-msgid "Only on the end closest to the first keyframe"
-msgstr "仅在最靠近第一个关键帧的末尾"
-
-
-msgid "Ease In and Out"
-msgstr "淡入淡出"
-
-
-msgid "Segment between both keyframes"
-msgstr "两个关键帧之间的分段"
-
-
-msgid "Interpolate All Layers"
-msgstr "对全部图层插值"
-
-
-msgid "Interpolate all layers, not only active"
-msgstr "对全部图层插值，而非仅活动层"
-
-
-msgid "Interpolate Selected Strokes"
-msgstr "插值选中笔画"
-
-
-msgid "Interpolate only selected strokes in the original frame"
-msgstr "仅对原始帧中的选中笔画进行插值"
-
-
 msgid "Interpolation Curve"
 msgstr "插值曲线"
 
 
 msgid "Custom curve to control 'sequence' interpolation between Grease Pencil frames"
 msgstr "使用自定义曲线控制蜡笔关键帧之间的 '序列' 插值"
-
-
-msgid "Period"
-msgstr "周期"
-
-
-msgid "Time between bounces for elastic easing"
-msgstr "弹跳缓冲之间的时间间隔"
-
-
-msgid "Step"
-msgstr "步长"
-
-
-msgid "Number of frames between generated interpolated frames"
-msgstr "生成的插值帧之间的帧数"
-
-
-msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
-msgstr "下次 '插值序列' 使用的插值方法在运行"
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "在A与B之间进行直线内插 (即, 无渐入/渐出)"
-
-
-msgid "Custom"
-msgstr "自定义"
-
-
-msgid "Custom interpolation defined using a curve map"
-msgstr "使用曲线映射来自定义插值"
-
-
-msgid "Sinusoidal"
-msgstr "正弦曲线形"
-
-
-msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "正弦型缓动"
-
-
-msgid "Quadratic"
-msgstr "二次型"
-
-
-msgid "Quadratic easing"
-msgstr "二次型缓动"
-
-
-msgid "Cubic easing"
-msgstr "三次型缓动"
-
-
-msgid "Quartic"
-msgstr "四次型"
-
-
-msgid "Quartic easing"
-msgstr "四次型缓动"
-
-
-msgid "Quintic"
-msgstr "五次型"
-
-
-msgid "Quintic easing"
-msgstr "五次型缓动"
-
-
-msgid "Exponential"
-msgstr "指数型"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "指数型缓动"
-
-
-msgid "Circular"
-msgstr "圆状"
-
-
-msgid "Circular easing (strongest and most dynamic)"
-msgstr "循环型缓动"
-
-
-msgid "Cubic easing with overshoot and settle"
-msgstr "三次方缓动, 采用过冲及稳定时间"
-
-
-msgid "Bounce"
-msgstr "弹跳"
-
-
-msgid "Exponentially decaying parabolic bounce, like when objects collide"
-msgstr "指数衰减抛物线反弹, 类似物体碰撞时"
-
-
-msgid "Elastic"
-msgstr "弹性"
-
-
-msgid "Exponentially decaying sine wave, like an elastic band"
-msgstr "正弦波指数衰减, 类似一条橡皮筋"
 
 
 msgid "Grease Pencil Layer"
@@ -14639,6 +14455,10 @@ msgid "Thickness change to apply to current strokes (in pixels)"
 msgstr "粗细变化适用于当前笔触 (像素)"
 
 
+msgid "Values for change location"
+msgstr "改变位置的值"
+
+
 msgid "Locked"
 msgstr "已锁定"
 
@@ -14709,6 +14529,14 @@ msgstr "通道编号"
 
 msgid "Index number for the \"Layer Index\" pass"
 msgstr "\"图层编号\" 的通道编号"
+
+
+msgid "Values for changes in rotation"
+msgstr "旋转中改变的值"
+
+
+msgid "Values for changes in scale"
+msgstr "缩放中改变的值"
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
@@ -14863,6 +14691,10 @@ msgid "Use cursor as reference point"
 msgstr "使用游标作为参考点"
 
 
+msgid "Custom"
+msgstr "自定义"
+
+
 msgid "Use custom reference point"
 msgstr "使用自定义参考点"
 
@@ -14877,6 +14709,10 @@ msgstr "间隔"
 
 msgid "Guide spacing"
 msgstr "引导线间距"
+
+
+msgid "Circular"
+msgstr "圆状"
 
 
 msgid "Use single point to create rings"
@@ -15073,14 +14909,6 @@ msgstr "圆形"
 
 msgid "Flat"
 msgstr "平展"
-
-
-msgid "Groups"
-msgstr "组"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "用于此顶点所属顶点组的权重值"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -16239,6 +16067,10 @@ msgid "Use random values over time"
 msgstr "使用随时间变化的随机值"
 
 
+msgid "Step"
+msgstr "步长"
+
+
 msgid "Number of frames before recalculate random values again"
 msgstr "重新计算随机值之前的帧数"
 
@@ -16253,18 +16085,6 @@ msgstr "偏移修改器"
 
 msgid "Offset Stroke modifier"
 msgstr "偏移笔画修改器"
-
-
-msgid "Values for change location"
-msgstr "改变位置的值"
-
-
-msgid "Values for changes in rotation"
-msgstr "旋转中改变的值"
-
-
-msgid "Values for changes in scale"
-msgstr "缩放中改变的值"
 
 
 msgid "Opacity Modifier"
@@ -16937,6 +16757,10 @@ msgstr "帧范围"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "当前动作中所有函数曲线的最终帧区间"
+
+
+msgid "Groups"
+msgstr "组"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -18170,6 +17994,10 @@ msgstr "半径衰减"
 
 msgid "Applies the brush falloff in the tip of the brush"
 msgstr "在笔刷尖部中应用笔刷衰减"
+
+
+msgid "Elastic"
+msgstr "弹性"
 
 
 msgid "Modifies the entire mesh using elastic deform"
@@ -23286,12 +23114,12 @@ msgid "Paint Grease Pencil Strokes"
 msgstr "绘制蜡笔笔画"
 
 
-msgid "Grease Pencil Vertex Paint Strokes"
-msgstr "蜡笔顶点绘制笔画"
-
-
 msgid "Grease Pencil Weight Paint Strokes"
 msgstr "蜡笔权重绘制笔画"
+
+
+msgid "Grease Pencil Vertex Paint Strokes"
+msgstr "蜡笔顶点绘制笔画"
 
 
 msgid "Modifiers affecting the geometric data of the object"
@@ -25647,8 +25475,16 @@ msgid "Create a linear progression"
 msgstr "创建一种线性级进样式"
 
 
+msgid "Quadratic"
+msgstr "二次型"
+
+
 msgid "Create a quadratic progression"
 msgstr "创建一种二次型级进样式"
+
+
+msgid "Easing"
+msgstr "缓动"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -26917,10 +26753,6 @@ msgstr "模拟"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "存在状态的解算器, 运行实时的内容, 并忽略动作及非 IK 型约束"
-
-
-msgid "Precision"
-msgstr "精度"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -28717,12 +28549,44 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "具有两个控制柄的贝塞尔曲线点, 定义一个函数曲线上的一个关键帧"
 
 
+msgid "Amount to boost elastic bounces for 'elastic' easing"
+msgstr "为 '弹性' 缓动增加弹性反弹的量"
+
+
+msgid "Amount of overshoot for 'back' easing"
+msgstr "“后”缓动的过冲稳定数量"
+
+
 msgid "Coordinates of the control point. Note: Changing this value also updates the handles similar to using the graph editor transform operator"
 msgstr "控制点的坐标。注意: 更改此值还会更新控制柄，类似于使用图形编辑器的变换操作"
 
 
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "在此和下一关键帧间分段的哪一端, 应用缓冲插值"
+
+
+msgid "Automatic Easing"
+msgstr "自动缓动"
+
+
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "基于插值使用的类型自动选择缓动类型 (例如 '缓入'为过渡类型, 而‘缓出’为动态效果)"
+
+
+msgid "Only on the end closest to the next keyframe"
+msgstr "仅在最靠近下一个关键帧的末尾"
+
+
+msgid "Only on the end closest to the first keyframe"
+msgstr "仅在最靠近第一个关键帧的末尾"
+
+
+msgid "Ease In and Out"
+msgstr "淡入淡出"
+
+
+msgid "Segment between both keyframes"
+msgstr "两个关键帧之间的分段"
 
 
 msgid "Left Handle"
@@ -28781,8 +28645,80 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "无插值, 直到出现B时将A保持住"
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "在A与B之间进行直线内插 (即, 无渐入/渐出)"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "设置两个色彩隔断间的差值算法"
+
+
+msgid "Sinusoidal"
+msgstr "正弦曲线形"
+
+
+msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
+msgstr "正弦型缓动"
+
+
+msgid "Quadratic easing"
+msgstr "二次型缓动"
+
+
+msgid "Cubic easing"
+msgstr "三次型缓动"
+
+
+msgid "Quartic"
+msgstr "四次型"
+
+
+msgid "Quartic easing"
+msgstr "四次型缓动"
+
+
+msgid "Quintic"
+msgstr "五次型"
+
+
+msgid "Quintic easing"
+msgstr "五次型缓动"
+
+
+msgid "Exponential"
+msgstr "指数型"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "指数型缓动"
+
+
+msgid "Circular easing (strongest and most dynamic)"
+msgstr "循环型缓动"
+
+
+msgid "Cubic easing with overshoot and settle"
+msgstr "三次方缓动, 采用过冲及稳定时间"
+
+
+msgid "Bounce"
+msgstr "弹跳"
+
+
+msgid "Exponentially decaying parabolic bounce, like when objects collide"
+msgstr "指数衰减抛物线反弹, 类似物体碰撞时"
+
+
+msgid "Exponentially decaying sine wave, like an elastic band"
+msgstr "正弦波指数衰减, 类似一条橡皮筋"
+
+
+msgid "Period"
+msgstr "周期"
+
+
+msgid "Time between bounces for elastic easing"
+msgstr "弹跳缓冲之间的时间间隔"
 
 
 msgid "Left handle selection status"
@@ -31019,10 +30955,6 @@ msgid "Kerning"
 msgstr "字距"
 
 
-msgid "Interpolate"
-msgstr "插值"
-
-
 msgid "Lattice Context Menu"
 msgstr "晶格上下文菜单"
 
@@ -31109,10 +31041,6 @@ msgstr "灯光"
 
 msgid "Light Probe"
 msgstr "光照探头"
-
-
-msgid "Make Links"
-msgstr "生成关联项"
 
 
 msgid "Make Single User"
@@ -31225,6 +31153,10 @@ msgstr "显示欢迎画面"
 
 msgid "About"
 msgstr "关于"
+
+
+msgid "Quick Setup"
+msgstr "快速设置"
 
 
 msgid "Mesh Cache Velocity"
@@ -31753,6 +31685,10 @@ msgstr "网格数据块中的顶点"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "供倒角修改器的'仅顶点'选项所使用的权重值"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "用于此顶点所属顶点组的权重值"
 
 
 msgid "Index of this vertex"
@@ -37171,14 +37107,6 @@ msgid "Refine tangential coefficients of distortion model during camera solving"
 msgstr "在执行相机解算时优化畸变模型的切向系数"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "在用户界面内扩展显示默认选项"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "在用户界面内扩展显示额外选项"
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "限制追踪速度, 以实现更轻松的目视反馈结果 (这不会影响追踪结果的品质)"
 
@@ -37309,6 +37237,10 @@ msgstr "锚定帧"
 
 msgid "Reference point to anchor stabilization (other frames will be adjusted relative to this frame's position)"
 msgstr "锚定稳定的参考点：其他帧将相对于该帧的位置，方向和比例进行调整。你可能想选择您的主体是一个最佳的方式精选帧数"
+
+
+msgid "Interpolate"
+msgstr "插值"
 
 
 msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilization"
@@ -40084,12 +40016,20 @@ msgid "Attribute Math"
 msgstr "数学属性"
 
 
+msgid "Input Type C"
+msgstr "输入类型 C"
+
+
 msgid "Attribute Mix"
 msgstr "混合属性"
 
 
 msgid "Attribute Randomize"
 msgstr "属性随机化"
+
+
+msgid "Input Type"
+msgstr "输入类型"
 
 
 msgid "Attribute Vector Math"
@@ -40196,6 +40136,10 @@ msgid "Entry-wise tan(A)"
 msgstr "逐项求正切"
 
 
+msgid "Original"
+msgstr "原始的"
+
+
 msgid "Join Geometry"
 msgstr "合并几何"
 
@@ -40206,10 +40150,6 @@ msgstr "物体信息"
 
 msgid "The transformation of the vector and geometry outputs"
 msgstr "矢量和几何输出的变换"
-
-
-msgid "Original"
-msgstr "原始的"
 
 
 msgid "Output the geometry relative to the input object transform, and the location, rotation and scale relative to the world origin"
@@ -40262,10 +40202,6 @@ msgstr "在各点上实例化整个集合"
 
 msgid "Point Scale"
 msgstr "点大小"
-
-
-msgid "Input Type"
-msgstr "输入类型"
 
 
 msgid "Point Separate"
@@ -44387,6 +44323,10 @@ msgid "Distance between selected tracks"
 msgstr "所选轨道的间距"
 
 
+msgid "Keep Original"
+msgstr "保留原件"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "网格 3D 标记"
@@ -46317,10 +46257,6 @@ msgstr "随机选择"
 
 msgid "Randomly select some control points"
 msgstr "随机选择若干控制点"
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "物体的随机选取比例"
 
 
 msgid "Seed for the random number generator"
@@ -49457,13 +49393,12 @@ msgid "Interpolate grease pencil strokes between frames"
 msgstr "对关键帧之间的蜡笔笔画进行插值"
 
 
+msgid "Confirm on Release"
+msgstr "松开时确认"
+
+
 msgid "Bias factor for which frame has more influence on the interpolated strokes"
 msgstr "影响哪一帧对内插笔画影响较大的偏向系数"
-
-
-msgctxt "Operator"
-msgid "Remove Breakdowns"
-msgstr "移除所有间断帧"
 
 
 msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
@@ -49477,6 +49412,22 @@ msgstr "插值顺序"
 
 msgid "Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames"
 msgstr "生成 \"过渡\", 在蜡笔帧之间平滑地插值"
+
+
+msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
+msgstr "在先前和随后蜡笔帧间时间段的哪一端应用缓动插值"
+
+
+msgid "Number of frames between generated interpolated frames"
+msgstr "生成的插值帧之间的帧数"
+
+
+msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
+msgstr "下次 '插值序列' 使用的插值方法在运行"
+
+
+msgid "Custom interpolation defined using a curve map"
+msgstr "使用曲线映射来自定义插值"
 
 
 msgctxt "Operator"
@@ -49868,10 +49819,6 @@ msgstr "重投影笔画"
 
 msgid "Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)"
 msgstr "从当前视点重新投影所选笔画，就像它们是新绘制的一样(比如，修复3D光标意外移动或意外视口更改时的问题，或用于匹配变形几何体)"
-
-
-msgid "Keep Original"
-msgstr "保留原件"
 
 
 msgid "Keep original strokes and create a copy before reprojecting instead of reproject them"
@@ -50585,10 +50532,6 @@ msgid "Transform grease pencil stroke fill"
 msgstr "变换蜡笔笔画填充"
 
 
-msgid "Confirm on Release"
-msgstr "松开时确认"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "解锁全部层"
@@ -50837,10 +50780,6 @@ msgstr "最大边际误差"
 
 msgid "How much the new decimated curve is allowed to deviate from the original"
 msgstr "精简后的新曲线相对原始曲线允许的偏移量"
-
-
-msgid "The percentage of keyframes to remove"
-msgstr "要删除的关键帧的百分比"
 
 
 msgctxt "Operator"
@@ -57926,19 +57865,6 @@ msgstr "将物体转换为实例化的面副本"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "关联数据"
-
-
-msgid "Apply active object links to other selected objects"
-msgstr "将活动物体的关联应用至其他选中物体"
-
-
-msgid "Effects"
-msgstr "效果"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "将物体关联到场景"
 
@@ -60518,14 +60444,6 @@ msgid "Make all users of selected data-blocks to use instead a new chosen one"
 msgstr "使所选数据块的所有用户使用新选择的数据块"
 
 
-msgid "Enter Mode"
-msgstr "进入模式"
-
-
-msgid "Exit Mode"
-msgstr "退出模式"
-
-
 msgid "Context menu for item operations"
 msgstr "项目操作的上下文菜单"
 
@@ -61872,20 +61790,16 @@ msgid "Custom properties"
 msgstr "自定义属性"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "关键帧更倾向的权重系数"
+
+
 msgid "Next Keyframe"
 msgstr "下一关键帧"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "与当前帧紧邻的后一关键帧数"
-
-
-msgid "Percentage"
-msgstr "百分比"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "关键帧更倾向的权重系数"
 
 
 msgid "Previous Keyframe"
@@ -72128,18 +72042,6 @@ msgid "Show the panel on all tabs"
 msgstr "在所有选项卡上显示面板"
 
 
-msgid "Chain Scaling"
-msgstr "链比例"
-
-
-msgid "Fitting"
-msgstr "匹配"
-
-
-msgid "Bone Constraints"
-msgstr "骨骼约束"
-
-
 msgid "Asset Metadata"
 msgstr "资产元数据"
 
@@ -72150,6 +72052,18 @@ msgstr "详细信息"
 
 msgid "Asset Navigation"
 msgstr "资产导览"
+
+
+msgid "Chain Scaling"
+msgstr "链比例"
+
+
+msgid "Fitting"
+msgstr "匹配"
+
+
+msgid "Bone Constraints"
+msgstr "骨骼约束"
 
 
 msgid "Bendy Bones"
@@ -72437,6 +72351,10 @@ msgstr "段"
 
 msgid "Path Animation"
 msgstr "路径动画"
+
+
+msgid "Effects"
+msgstr "效果"
 
 
 msgid "Skeleton"
@@ -73809,6 +73727,11 @@ msgstr "方框"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "圆环"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "插值"
 
 
 msgid "Expand or contract the radius of the selected points"
@@ -76035,10 +75958,6 @@ msgid "Tablet API"
 msgstr "数位板API"
 
 
-msgid "Select the tablet API to use for pressure sensitivity"
-msgstr "选择数位板API来用于压感灵敏度"
-
-
 msgid "Automatically choose Wintab or Windows Ink depending on the device"
 msgstr "根据设备自动选择 Wintab 或 Windows Ink"
 
@@ -76085,10 +76004,6 @@ msgstr "使用1至0键来模拟小键盘(适用于笔记本用户)"
 
 msgid "Continuous Grab"
 msgstr "持续拖拽"
-
-
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "在某些操作过程中 (如移动操作, 界面控制拖拽等), 允许鼠标的移动超出窗口的区域限制"
 
 
 msgid "Auto Depth"
@@ -76769,6 +76684,10 @@ msgstr "系数值的显示方式"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "显示系数为介于0到1之间的数值"
+
+
+msgid "Percentage"
+msgstr "百分比"
 
 
 msgid "Display factors as percentages"
@@ -85282,26 +85201,6 @@ msgid "Outliner Sync"
 msgstr "大纲视图同步"
 
 
-msgid "Sync tabs from outliner datablock selection"
-msgstr "从大纲视图数据块选中项同步选项卡"
-
-
-msgid "On"
-msgstr "开启"
-
-
-msgid "Always sync from outliner editors to this editor"
-msgstr "始终从大纲编辑器同步到此编辑器"
-
-
-msgid "Never sync from outliner editors to this editor"
-msgstr "从不从大纲编辑器同步到此编辑器"
-
-
-msgid "Sync when this editor shares an edge with an outliner editor"
-msgstr "当此编辑器与大纲编辑器共享边缘时同步"
-
-
 msgid "Tab Search Results"
 msgstr "选项卡查找结果"
 
@@ -93049,10 +92948,6 @@ msgid "Renamed %d of %d %s"
 msgstr "已重命名 %d of %d %s"
 
 
-msgid "Quick Setup"
-msgstr "快速设置"
-
-
 msgid "Shortcuts"
 msgstr "快捷键"
 
@@ -96685,14 +96580,6 @@ msgid "Fractional Preview Zoom"
 msgstr "分(倍)数缩放预览"
 
 
-msgid "Show Frame Overlay"
-msgstr "显示帧叠加"
-
-
-msgid "Show Annotations"
-msgstr "显示标注"
-
-
 msgctxt "Operator"
 msgid "Scene"
 msgstr "场景"
@@ -96726,14 +96613,6 @@ msgid "%dx%d"
 msgstr "%dx%d"
 
 
-msgid "Unpack"
-msgstr "解包"
-
-
-msgid "Pack"
-msgstr "打包"
-
-
 msgid "Original Frame Range"
 msgstr "原始帧范围"
 
@@ -96752,6 +96631,14 @@ msgstr "添加过渡"
 
 msgid "Effect Fader"
 msgstr "效果渐变"
+
+
+msgid "Unpack"
+msgstr "解包"
+
+
+msgid "Pack"
+msgstr "打包"
 
 
 msgid "Stretch to Input Strip Length"
@@ -98569,16 +98456,6 @@ msgstr "复制活动层的活动帧"
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "插值"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "序列"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "查看所选"
 
@@ -98827,16 +98704,6 @@ msgstr "可视几何 -> 网格"
 msgctxt "Operator"
 msgid "Limit Total Vertex Groups"
 msgstr "限制总顶点组"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "物体到场景..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "物体到场景"
 
 
 msgctxt "Operator"
@@ -99377,6 +99244,11 @@ msgstr "缩放柔性骨"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "相机镜头比例"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "从所有组中移除"
 
@@ -99400,23 +99272,8 @@ msgstr "缩放半径"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "相机镜头角度"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "相机镜头比例"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "挤出尺寸"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "宽度尺寸"
+msgid "DOF Distance (Pick)"
+msgstr "景深距离(拾取)"
 
 
 msgid "Ridge"
@@ -99429,76 +99286,6 @@ msgstr "谷线"
 
 msgid "No object selected, using cursor"
 msgstr "使用游标，无选中物体"
-
-
-msgctxt "Operator"
-msgid "DOF Distance (Pick)"
-msgstr "景深距离(拾取)"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "景深距离"
-
-
-msgctxt "Operator"
-msgid "Convert to Mesh"
-msgstr "转换为网格"
-
-
-msgctxt "Operator"
-msgid "Convert to Grease Pencil"
-msgstr "转换为蜡笔"
-
-
-msgctxt "Operator"
-msgid "Convert to Path"
-msgstr "转换为路径"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curve"
-msgstr "转换为贝塞尔曲线"
-
-
-msgctxt "Operator"
-msgid "Convert to Polygon Curve"
-msgstr "转换为多段线曲线"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "空物体显示尺寸"
-
-
-msgctxt "Operator"
-msgid "Power"
-msgstr "能量"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "尺寸 X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "聚光尺寸"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "混光程度"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "Y 尺寸"
-
-
-msgctxt "Operator"
-msgid "Angle"
-msgstr "角度"
 
 
 msgid "Layer:"
@@ -99569,24 +99356,8 @@ msgid "Editing Type"
 msgstr "编辑类型"
 
 
-msgid "Preserve Strand Lengths"
-msgstr "维持发股长度"
-
-
-msgid "Preserve Root Positions"
-msgstr "维持根部位置"
-
-
 msgid "Path Steps"
 msgstr "路径步长"
-
-
-msgid "Interpolate Strokes"
-msgstr "插值笔画"
-
-
-msgid "Sequence Options:"
-msgstr "顺序选项:"
 
 
 msgid "No Brushes currently available"
@@ -99938,14 +99709,6 @@ msgstr "NLA 片段"
 
 msgid "[Action Stash]"
 msgstr "[Action Stash]"
-
-
-msgid "Undefined"
-msgstr "未定义"
-
-
-msgid "Undefined Node Tree Type"
-msgstr "尚未定义节点树类型"
 
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
@@ -100597,64 +100360,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "无法粘贴驱动, 因为对于指定的ID无法找到有效的RNA路径(ID = %s, 路径 = %s)"
 
 
-msgid "Poly Order:"
-msgstr "多项式阶数:"
-
-
-msgid "Before:"
-msgstr "之前:"
-
-
-msgid "After:"
-msgstr "之后:"
-
-
-msgid "Envelope:"
-msgstr "骨骼封套:"
-
-
-msgid "Control Points:"
-msgstr "控制点:"
-
-
-msgid "Add Point"
-msgstr "添加点"
-
-
-msgid "Fra:"
-msgstr "帧:"
-
-
-msgid "Min:"
-msgstr "最小值:"
-
-
-msgid "Max:"
-msgstr "最大值:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<未知修改器>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "多项式的'阶'(对于 n 次多项式而言, '阶'为 n-1)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "多项式系数"
-
-
-msgid "Power of x"
-msgstr "x的幂值"
-
-
-msgid "Coefficient of x"
-msgstr "x的系数"
-
-
-msgid "Second coefficient"
-msgstr "附加系数"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -100663,10 +100370,6 @@ msgstr "在当前帧为封套添加一个新的控制点"
 
 msgid "Delete envelope control point"
 msgstr "删除封套控制点"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "删除函数曲线修改器"
 
 
 msgid "No animation data in buffer to paste"
@@ -101089,34 +100792,6 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "程序错误：缺失清除变换的功能或帧设置名称"
 
 
-msgid "Selected data-blocks are already assets (or do not support use as assets)"
-msgstr "选定的数据块已经是资产(或不支持用作资产)"
-
-
-msgid "No data-blocks to create assets for found (or do not support use as assets)"
-msgstr "没有用于创建已找到的资产的数据块(或不支持用作资产)"
-
-
-msgid "No asset data-blocks selected/focused"
-msgstr "未选择/聚焦资产数据块"
-
-
-msgid "Data-block '%s' is now an asset"
-msgstr "数据块 '%s' 现在是资产"
-
-
-msgid "%i data-blocks are now assets"
-msgstr "%i 数据块现在是资产"
-
-
-msgid "Data-block '%s' is no asset anymore"
-msgstr "数据块 '%s' 已非资产"
-
-
-msgid "%i data-blocks are no assets anymore"
-msgstr "%i 数据块已非资产"
-
-
 msgid "No point was selected"
 msgstr "无选中点"
 
@@ -101485,20 +101160,20 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "ESC/RMB 退出, Enter/LMB 确定, WHEEL/MOVE 调节系数"
 
 
+msgid "Easing (by strength)"
+msgstr "缓动 (通过力度)"
+
+
+msgid "Dynamic Effects"
+msgstr "动态效果"
+
+
 msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
 msgstr "在活动层中无法找到一对蜡笔关键帧来做插值"
 
 
-msgid "Cannot interpolate as current frame already has existing grease pencil frames"
-msgstr "不能对已经是蜡笔关键帧的当前帧使进行插值"
-
-
 msgid "Cannot interpolate in curve edit mode"
 msgstr "无法在曲线编辑模式下插值"
-
-
-msgid "Interpolation requires some editable strokes"
-msgstr "插值需要某些可编辑笔画"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -105530,22 +105205,6 @@ msgid "Disabled, CPU with SSE4.1 is required"
 msgstr "已禁用, 需要带SSE4.1的CPU"
 
 
-msgid "Type A"
-msgstr "类型A"
-
-
-msgid "Type B"
-msgstr "类型B"
-
-
-msgid "Disabled, built without OpenSubdiv"
-msgstr "已禁用, 未编译OpenSubdiv"
-
-
-msgid "Type C"
-msgstr "类型 C"
-
-
 msgid "Undefined Socket Type"
 msgstr "未定义的接口类型"
 
@@ -105969,10 +105628,6 @@ msgstr "无片段"
 
 msgid "(empty)"
 msgstr "(空)"
-
-
-msgid "Modal map, not yet"
-msgstr "模态映射, 待定"
 
 
 msgid "Can't reload with running modal operators"
@@ -106988,22 +106643,6 @@ msgid "Overwrite %s"
 msgstr "覆盖 %s"
 
 
-msgid "Can't edit previews of overridden library data"
-msgstr "无法编辑重写库数据的预览"
-
-
-msgid "Data-block does not support previews"
-msgstr "数据块不支持预览"
-
-
-msgid "Incorrect context for running data-block fake user toggling"
-msgstr "运行数据块伪用户切换的上下文不正确"
-
-
-msgid "Data-block type does not support fake user"
-msgstr "数据块类型不支持伪用户"
-
-
 msgid "Numeric input evaluation"
 msgstr "数值输入运算"
 
@@ -107314,14 +106953,6 @@ msgstr "关系"
 
 msgid "Target is not in the constraint target list"
 msgstr "目标不在约束目标列表中"
-
-
-msgid "Easing (by strength)"
-msgstr "缓动 (通过力度)"
-
-
-msgid "Dynamic Effects"
-msgstr "动态效果"
 
 
 msgid "Bezier spline cannot have points added"
@@ -108447,6 +108078,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "开启"
 
 
 msgid "Val"

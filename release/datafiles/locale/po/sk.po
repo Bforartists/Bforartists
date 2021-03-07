@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-02-05 13:38+0100\n"
@@ -3524,12 +3524,8 @@ msgid "Use edit lines as fill boundary limits"
 msgstr "Použije úpravu čiar ako limity vyplnenia okrajov"
 
 
-msgid "Resolution"
-msgstr "Rozlíšenie"
-
-
-msgid "Multiplier for fill resolution, higher resolution is more accurate but slower"
-msgstr "Násobič pre rozlíšenie výplne, väčšie rozlíšenie je presnejšie, ale pomalšie"
+msgid "Precision"
+msgstr "Presnosť"
 
 
 msgid "Layer Mode"
@@ -5150,26 +5146,6 @@ msgstr "Vstupný farebný priestor"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Farebný priestor v súbore obrázka na konvertovanie do a z pri ukladaní a načítavaní obrázka"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Záznam založený filmovým tvorcom s 16,5 uzávierkou pásma a 25 uzávierkou dynamického rozsahu"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "REC. 709 (plný rozsah), natívny lineárny priestor Blendera"
-
-
-msgid "ACES linear space"
-msgstr "Lineárny priestor ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Farebný priestor používaný pre obrázky, ktoré obsahujú nefarebné údaje (mapy normálov)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Štandardný zobrazovací priestor RGB"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -9548,6 +9524,10 @@ msgid "Directory to save the textures"
 msgstr "Priečinok pre uloženie textúry"
 
 
+msgid "Resolution"
+msgstr "Rozlíšenie"
+
+
 msgid "Output image resolution"
 msgstr "Výstupné rozlíšenie obrazu"
 
@@ -10565,10 +10545,6 @@ msgid "Modifier for values of F-Curve"
 msgstr "Modifikátor pre hodnoty F-krivky"
 
 
-msgid "F-Curve Modifier is the one being edited"
-msgstr "Upravuje sa modifikátor F-krivky"
-
-
 msgid "Blend In"
 msgstr "Primiešať"
 
@@ -10856,10 +10832,6 @@ msgstr "Normalizovaný sínus"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "Fáza násobiča"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -13086,10 +13058,6 @@ msgid "Tension"
 msgstr "Napätie"
 
 
-msgid "Surface tension of liquid (higher value results in greater hydrophobic behaviour)"
-msgstr "Povrchové napätie kvapaliny (vyššia hodnota vedie k väčšiemu hydrofóbnemu správaniu)"
-
-
 msgid "System Maximum"
 msgstr "Systémové maximum"
 
@@ -14354,172 +14322,12 @@ msgid "Settings for Grease Pencil interpolation tools"
 msgstr "Nastavenia nástrojov na interpoláciu pastelky"
 
 
-msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "Množstvo zvýšenia elastických odrazov pre 'elastické' zmiernenie"
-
-
-msgid "Amount of overshoot for 'back' easing"
-msgstr "Množstvo presahu pre 'spätné' zmiernenie"
-
-
-msgid "Easing"
-msgstr "Zmiernenie"
-
-
-msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "Ktoré konce segmentu sú aplikované medzi predošlými a následnými snímkami pastelky na zmiernenie interpolácie"
-
-
-msgid "Automatic Easing"
-msgstr "Automatické zmiernenie"
-
-
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "Typ zmiernenia je vybraný automaticky na základe toho, čo typ interpolácie používa (napr. 'vznik zmiernenia' pre prechodné typy, a 'zánik zmiernenia' pre dynamické efekty)"
-
-
-msgid "Only on the end closest to the next keyframe"
-msgstr "Iba na najbližšom konci po ďalšiu kľúčovú snímku"
-
-
-msgid "Only on the end closest to the first keyframe"
-msgstr "Iba na najbližšom konci po predošlú kľúčovú snímku"
-
-
-msgid "Ease In and Out"
-msgstr "Zmiernenie vzniku a zániku"
-
-
-msgid "Segment between both keyframes"
-msgstr "Segment medzi oboma kľúčovými snímkami"
-
-
-msgid "Interpolate All Layers"
-msgstr "Interpolovať všetky vrstvy"
-
-
-msgid "Interpolate all layers, not only active"
-msgstr "Interpolovať všetky vrstvy, nielen aktívne"
-
-
-msgid "Interpolate Selected Strokes"
-msgstr "Interpolovať vybrané ťahy"
-
-
-msgid "Interpolate only selected strokes in the original frame"
-msgstr "Interpolovať iba vybrané ťahy v originálnej snímke"
-
-
 msgid "Interpolation Curve"
 msgstr "Interpolácia krivky"
 
 
 msgid "Custom curve to control 'sequence' interpolation between Grease Pencil frames"
 msgstr "Vlastná krivka na ovládanie 'sekvencie' interpolácie medzi snímkami pastelky"
-
-
-msgid "Period"
-msgstr "Doba"
-
-
-msgid "Time between bounces for elastic easing"
-msgstr "Čas medzi odrazmi pre elastické zmiernenie"
-
-
-msgid "Step"
-msgstr "Krok"
-
-
-msgid "Number of frames between generated interpolated frames"
-msgstr "Počet snímok medzi vygenerovanými interpolovanými snímkami"
-
-
-msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
-msgstr "Metóda interpolácie pre budúce použitie 'interpolácie sekvencie' je spustená"
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "Priamočiara interpolácia medzi A a B (t. j. bez ľahkosti dnu/von)"
-
-
-msgid "Custom"
-msgstr "Vlastná"
-
-
-msgid "Custom interpolation defined using a curve map"
-msgstr "Vlastná interpolácia definovaná použitím mapy krivky"
-
-
-msgid "Sinusoidal"
-msgstr "Sínusové"
-
-
-msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "Sínusové zmiernenie (najslabšie, takmer lineárne, ale s miernym zakrivením)"
-
-
-msgid "Quadratic"
-msgstr "Kvadratické"
-
-
-msgid "Quadratic easing"
-msgstr "Kvadratické zmiernenie"
-
-
-msgid "Cubic easing"
-msgstr "Kubické zmiernenie"
-
-
-msgid "Quartic"
-msgstr "Štvorstupňové"
-
-
-msgid "Quartic easing"
-msgstr "Štvorstupňové zmiernenie"
-
-
-msgid "Quintic"
-msgstr "Päťstupňové"
-
-
-msgid "Quintic easing"
-msgstr "Päťstupňové zmiernenie"
-
-
-msgid "Exponential"
-msgstr "Exponenciálne"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "Exponenciálne zmiernenie"
-
-
-msgid "Circular"
-msgstr "Kruhové"
-
-
-msgid "Circular easing (strongest and most dynamic)"
-msgstr "Kruhové zmiernenie (najsilnejšie a najdynamickejšie)"
-
-
-msgid "Cubic easing with overshoot and settle"
-msgstr "Kubické zmiernenie s presahom a predsadením"
-
-
-msgid "Bounce"
-msgstr "Odskokom"
-
-
-msgid "Exponentially decaying parabolic bounce, like when objects collide"
-msgstr "Exponenciálny rozklad parabolického odskočenia, ako keď sa zrazia objekty"
-
-
-msgid "Elastic"
-msgstr "Elastický"
-
-
-msgid "Exponentially decaying sine wave, like an elastic band"
-msgstr "Exponenciálny rozklad sínusovej vlny, ako elastická stuha"
 
 
 msgid "Grease Pencil Layer"
@@ -14638,6 +14446,10 @@ msgid "Thickness change to apply to current strokes (in pixels)"
 msgstr "Zmena hrúbky použitá na aktuálne ťahy (v pixeloch)"
 
 
+msgid "Values for change location"
+msgstr "Hodnota pre zmenu polohy"
+
+
 msgid "Locked"
 msgstr "Zamknuté"
 
@@ -14708,6 +14520,14 @@ msgstr "Index prechodu"
 
 msgid "Index number for the \"Layer Index\" pass"
 msgstr "Indexové číslo pre \"index vrstvy\" prechodu"
+
+
+msgid "Values for changes in rotation"
+msgstr "Hodnota pre zmeny rotácie"
+
+
+msgid "Values for changes in scale"
+msgstr "Hodnota pre zmeny mierky"
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
@@ -14862,6 +14682,10 @@ msgid "Use cursor as reference point"
 msgstr "Použije kurzor ako referenčný bod"
 
 
+msgid "Custom"
+msgstr "Vlastná"
+
+
 msgid "Use custom reference point"
 msgstr "Použije vlastný referenčný bod"
 
@@ -14876,6 +14700,10 @@ msgstr "Rozostup"
 
 msgid "Guide spacing"
 msgstr "Vodiaci rozostup"
+
+
+msgid "Circular"
+msgstr "Kruhové"
 
 
 msgid "Use single point to create rings"
@@ -15072,14 +14900,6 @@ msgstr "Zaoblené"
 
 msgid "Flat"
 msgstr "Ploché"
-
-
-msgid "Groups"
-msgstr "Skupiny"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "Váhy pre skupinu vrcholov, ktorej tento vrchol je členom"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -16238,6 +16058,10 @@ msgid "Use random values over time"
 msgstr "Použije náhodné hodnoty v priebehu času"
 
 
+msgid "Step"
+msgstr "Krok"
+
+
 msgid "Number of frames before recalculate random values again"
 msgstr "Počet snímok pred opätovným prepočítaním náhodných hodnôt"
 
@@ -16252,18 +16076,6 @@ msgstr "Modifikátor posuvu"
 
 msgid "Offset Stroke modifier"
 msgstr "Modifikátor posuvu ťahu"
-
-
-msgid "Values for change location"
-msgstr "Hodnota pre zmenu polohy"
-
-
-msgid "Values for changes in rotation"
-msgstr "Hodnota pre zmeny rotácie"
-
-
-msgid "Values for changes in scale"
-msgstr "Hodnota pre zmeny mierky"
 
 
 msgid "Opacity Modifier"
@@ -16936,6 +16748,10 @@ msgstr "Rozsah snímky"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "Konečný rozsah snímky všetkých F-kriviek v rámci tejto akcie"
+
+
+msgid "Groups"
+msgstr "Skupiny"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -18169,6 +17985,10 @@ msgstr "Dosah dopadu"
 
 msgid "Applies the brush falloff in the tip of the brush"
 msgstr "Aplikuje dopad štetca v hrote štetca"
+
+
+msgid "Elastic"
+msgstr "Elastický"
 
 
 msgid "Modifies the entire mesh using elastic deform"
@@ -23285,12 +23105,12 @@ msgid "Paint Grease Pencil Strokes"
 msgstr "Maľovanie ťahov pastelky"
 
 
-msgid "Grease Pencil Vertex Paint Strokes"
-msgstr "Maľuje vrcholy ťahmi pastelky"
-
-
 msgid "Grease Pencil Weight Paint Strokes"
 msgstr "Maľovanie váh ťahov pastelky"
+
+
+msgid "Grease Pencil Vertex Paint Strokes"
+msgstr "Maľuje vrcholy ťahmi pastelky"
 
 
 msgid "Modifiers affecting the geometric data of the object"
@@ -25646,8 +25466,16 @@ msgid "Create a linear progression"
 msgstr "Vytvorí lineárne stupňovanie"
 
 
+msgid "Quadratic"
+msgstr "Kvadratické"
+
+
 msgid "Create a quadratic progression"
 msgstr "Vytvorí kvadratické stupňovanie"
+
+
+msgid "Easing"
+msgstr "Zmiernenie"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -26916,10 +26744,6 @@ msgstr "Simulácia"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Plne stavové riešenie bežiace v kontexte reálneho času, ignorovania akcií a bez obmedzenia Inverznej kinematiky"
-
-
-msgid "Precision"
-msgstr "Presnosť"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -28716,12 +28540,44 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Bod Bézierovej krivky s dvoma manipulátormi definovanie kľúčovej snímky na krivke funkcie"
 
 
+msgid "Amount to boost elastic bounces for 'elastic' easing"
+msgstr "Množstvo zvýšenia elastických odrazov pre 'elastické' zmiernenie"
+
+
+msgid "Amount of overshoot for 'back' easing"
+msgstr "Množstvo presahu pre 'spätné' zmiernenie"
+
+
 msgid "Coordinates of the control point. Note: Changing this value also updates the handles similar to using the graph editor transform operator"
 msgstr "Súradnice ovládacieho bodu. Poznámka: Zmenou tejto hodnoty sa tiež aktualizujú manipulátory podobne pre použitie operátora transformácie editora grafov"
 
 
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "Použije na konce segmentu medzi touto a ďalšou kľúčovou snímkou interpoláciu zmiernenia"
+
+
+msgid "Automatic Easing"
+msgstr "Automatické zmiernenie"
+
+
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "Typ zmiernenia je vybraný automaticky na základe toho, čo typ interpolácie používa (napr. 'vznik zmiernenia' pre prechodné typy, a 'zánik zmiernenia' pre dynamické efekty)"
+
+
+msgid "Only on the end closest to the next keyframe"
+msgstr "Iba na najbližšom konci po ďalšiu kľúčovú snímku"
+
+
+msgid "Only on the end closest to the first keyframe"
+msgstr "Iba na najbližšom konci po predošlú kľúčovú snímku"
+
+
+msgid "Ease In and Out"
+msgstr "Zmiernenie vzniku a zániku"
+
+
+msgid "Segment between both keyframes"
+msgstr "Segment medzi oboma kľúčovými snímkami"
 
 
 msgid "Left Handle"
@@ -28780,8 +28636,80 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "Bez interpolácie, hodnota A sa zadrží do výskytu hodnoty B"
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "Priamočiara interpolácia medzi A a B (t. j. bez ľahkosti dnu/von)"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "Vyhladená interpolácia medzi A a B s istou kontrolou tvaru krivky"
+
+
+msgid "Sinusoidal"
+msgstr "Sínusové"
+
+
+msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
+msgstr "Sínusové zmiernenie (najslabšie, takmer lineárne, ale s miernym zakrivením)"
+
+
+msgid "Quadratic easing"
+msgstr "Kvadratické zmiernenie"
+
+
+msgid "Cubic easing"
+msgstr "Kubické zmiernenie"
+
+
+msgid "Quartic"
+msgstr "Štvorstupňové"
+
+
+msgid "Quartic easing"
+msgstr "Štvorstupňové zmiernenie"
+
+
+msgid "Quintic"
+msgstr "Päťstupňové"
+
+
+msgid "Quintic easing"
+msgstr "Päťstupňové zmiernenie"
+
+
+msgid "Exponential"
+msgstr "Exponenciálne"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "Exponenciálne zmiernenie"
+
+
+msgid "Circular easing (strongest and most dynamic)"
+msgstr "Kruhové zmiernenie (najsilnejšie a najdynamickejšie)"
+
+
+msgid "Cubic easing with overshoot and settle"
+msgstr "Kubické zmiernenie s presahom a predsadením"
+
+
+msgid "Bounce"
+msgstr "Odskokom"
+
+
+msgid "Exponentially decaying parabolic bounce, like when objects collide"
+msgstr "Exponenciálny rozklad parabolického odskočenia, ako keď sa zrazia objekty"
+
+
+msgid "Exponentially decaying sine wave, like an elastic band"
+msgstr "Exponenciálny rozklad sínusovej vlny, ako elastická stuha"
+
+
+msgid "Period"
+msgstr "Doba"
+
+
+msgid "Time between bounces for elastic easing"
+msgstr "Čas medzi odrazmi pre elastické zmiernenie"
 
 
 msgid "Left handle selection status"
@@ -31018,10 +30946,6 @@ msgid "Kerning"
 msgstr "Zhustenie znakov"
 
 
-msgid "Interpolate"
-msgstr "Interpolácia"
-
-
 msgid "Lattice Context Menu"
 msgstr "Kontextová ponuka drôtenej mriežky"
 
@@ -31108,10 +31032,6 @@ msgstr "Svetlo"
 
 msgid "Light Probe"
 msgstr "Snímač svetla"
-
-
-msgid "Make Links"
-msgstr "Vytvoriť odkazy"
 
 
 msgid "Make Single User"
@@ -31224,6 +31144,10 @@ msgstr "Úvodná obrazovka"
 
 msgid "About"
 msgstr "&O programe"
+
+
+msgid "Quick Setup"
+msgstr "Rýchle nastavenie"
 
 
 msgid "Mesh Cache Velocity"
@@ -31752,6 +31676,10 @@ msgstr "Vrchol v bloku údajov povrchovej siete"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "Váhy použité voľbou 'Len vrcholy' modifikátora skosenia"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "Váhy pre skupinu vrcholov, ktorej tento vrchol je členom"
 
 
 msgid "Index of this vertex"
@@ -37172,14 +37100,6 @@ msgid "Refine tangential coefficients of distortion model during camera solving"
 msgstr "Spresní tangenciálne koeficienty modelu skreslenia počas riešenia kamery"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "Zobrazí rozvinuté predvolené možnosti v užívateľskom rozhraní"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "Zobrazí rozvinuté extra nastavenia v užívateľskom rozhraní"
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "Limit rýchlosti snímania na vytvorenie zjednodušenia vizuálnej spätnej väzby (neovplyvní to kvalitu snímania)"
 
@@ -37310,6 +37230,10 @@ msgstr "Ukotvenie snímky"
 
 msgid "Reference point to anchor stabilization (other frames will be adjusted relative to this frame's position)"
 msgstr "Referenčný bod stabilizácie ukotvenia (ostatné snímky sa upravia vzhľadom na pozíciu tejto snímky)"
+
+
+msgid "Interpolate"
+msgstr "Interpolácia"
 
 
 msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilization"
@@ -40093,6 +40017,10 @@ msgid "Attribute Randomize"
 msgstr "Atribút náhodnosti"
 
 
+msgid "Input Type"
+msgstr "Typ vstupu"
+
+
 msgid "Attribute Vector Math"
 msgstr "Matematický atribút vektora"
 
@@ -40197,6 +40125,10 @@ msgid "Entry-wise tan(A)"
 msgstr "Chytrý vstup tan(A)"
 
 
+msgid "Original"
+msgstr "Originálne"
+
+
 msgid "Join Geometry"
 msgstr "Prepojenie s geometriou"
 
@@ -40207,10 +40139,6 @@ msgstr "Info o objekte"
 
 msgid "The transformation of the vector and geometry outputs"
 msgstr "Transformácia vektorových a geometrických výstupov"
-
-
-msgid "Original"
-msgstr "Originálne"
 
 
 msgid "Output the geometry relative to the input object transform, and the location, rotation and scale relative to the world origin"
@@ -40263,10 +40191,6 @@ msgstr "Inštancia celej kolekcie vo všetkých bodoch"
 
 msgid "Point Scale"
 msgstr "Mierka bodu"
-
-
-msgid "Input Type"
-msgstr "Typ vstupu"
 
 
 msgid "Point Separate"
@@ -44388,6 +44312,10 @@ msgid "Distance between selected tracks"
 msgstr "Vzdialenosť medzi vybranými stopami"
 
 
+msgid "Keep Original"
+msgstr "Zachovať originálne"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "3D značky na povrchovú sieť"
@@ -46318,10 +46246,6 @@ msgstr "Vybrať náhodný"
 
 msgid "Randomly select some control points"
 msgstr "Náhodne vyberie niektoré riadiace body"
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "Percentuálny podiel objektov náhodného výberu"
 
 
 msgid "Seed for the random number generator"
@@ -49458,13 +49382,12 @@ msgid "Interpolate grease pencil strokes between frames"
 msgstr "Interpoluje ťah pastelky medzi snímkami"
 
 
+msgid "Confirm on Release"
+msgstr "Potvrdiť pri vydaní"
+
+
 msgid "Bias factor for which frame has more influence on the interpolated strokes"
 msgstr "Faktor sklonu, pre ktorý snímka má väčší vplyv na interpolované ťahy"
-
-
-msgctxt "Operator"
-msgid "Remove Breakdowns"
-msgstr "Odstrániť rozpadnuté"
 
 
 msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
@@ -49478,6 +49401,22 @@ msgstr "Sekvencia interpolácie"
 
 msgid "Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames"
 msgstr "Vygeneruje \"uprostred\" vyhladenia interpolácie medzi snímkami pastelky"
+
+
+msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
+msgstr "Ktoré konce segmentu sú aplikované medzi predošlými a následnými snímkami pastelky na zmiernenie interpolácie"
+
+
+msgid "Number of frames between generated interpolated frames"
+msgstr "Počet snímok medzi vygenerovanými interpolovanými snímkami"
+
+
+msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
+msgstr "Metóda interpolácie pre budúce použitie 'interpolácie sekvencie' je spustená"
+
+
+msgid "Custom interpolation defined using a curve map"
+msgstr "Vlastná interpolácia definovaná použitím mapy krivky"
 
 
 msgctxt "Operator"
@@ -49869,10 +49808,6 @@ msgstr "Premietnuť ťahy"
 
 msgid "Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)"
 msgstr "Znova premietne vybrané ťahy podľa aktuálneho miesta pohľadu, akoby boli novo nakreslené (napr. na opravu problémov z náhodného pohybu kurzora 3D alebo náhodných zmien záberu alebo na zodpovedajúcu geometriu deformácie)"
-
-
-msgid "Keep Original"
-msgstr "Zachovať originálne"
 
 
 msgid "Keep original strokes and create a copy before reprojecting instead of reproject them"
@@ -50586,10 +50521,6 @@ msgid "Transform grease pencil stroke fill"
 msgstr "Transformuje výplň ťahu pastelky"
 
 
-msgid "Confirm on Release"
-msgstr "Potvrdiť pri vydaní"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Odomknúť všetky vrstvy"
@@ -50838,10 +50769,6 @@ msgstr "Maximálne chybové rozpätie"
 
 msgid "How much the new decimated curve is allowed to deviate from the original"
 msgstr "Určuje, o koľko sa nová zdecimovaná krivka môže odchyľovať od originálu"
-
-
-msgid "The percentage of keyframes to remove"
-msgstr "Percento kľúčových snímok na odstránenie"
 
 
 msgctxt "Operator"
@@ -57927,19 +57854,6 @@ msgstr "Konvertuje objekty na inštancie plôšok"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "Prepojiť údaje"
-
-
-msgid "Apply active object links to other selected objects"
-msgstr "Použije prepojenie aktívneho objektu na iné vybrané objekty"
-
-
-msgid "Effects"
-msgstr "Efekty"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Prepojiť objekty na scéne"
 
@@ -60519,14 +60433,6 @@ msgid "Make all users of selected data-blocks to use instead a new chosen one"
 msgstr "Vytvorí všetkých užívateľov vybraných blokov údajov na použitie namiesto toho jedného novo vybraného"
 
 
-msgid "Enter Mode"
-msgstr "Režim spustenia"
-
-
-msgid "Exit Mode"
-msgstr "Režim ukončenia"
-
-
 msgid "Context menu for item operations"
 msgstr "Kontextové menu pre operácie položky"
 
@@ -61873,20 +61779,16 @@ msgid "Custom properties"
 msgstr "Vlastné vlastnosti"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Faktor váhy, pre ktorý kľúčová snímka je viacej zvýhodnená"
+
+
 msgid "Next Keyframe"
 msgstr "Ďalší kľúč"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Číslo snímky kľúčovej snímky hneď po aktuálnej snímke"
-
-
-msgid "Percentage"
-msgstr "Percentuálne"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Faktor váhy, pre ktorý kľúčová snímka je viacej zvýhodnená"
 
 
 msgid "Previous Keyframe"
@@ -72129,18 +72031,6 @@ msgid "Show the panel on all tabs"
 msgstr "Zobraziť panel na všetkých kartách"
 
 
-msgid "Chain Scaling"
-msgstr "Reťazová mierka"
-
-
-msgid "Fitting"
-msgstr "Príruba"
-
-
-msgid "Bone Constraints"
-msgstr "Obmedzenia kostí"
-
-
 msgid "Asset Metadata"
 msgstr "Metaúdaje aktív"
 
@@ -72151,6 +72041,18 @@ msgstr "Detaily"
 
 msgid "Asset Navigation"
 msgstr "Navigácia aktív"
+
+
+msgid "Chain Scaling"
+msgstr "Reťazová mierka"
+
+
+msgid "Fitting"
+msgstr "Príruba"
+
+
+msgid "Bone Constraints"
+msgstr "Obmedzenia kostí"
 
 
 msgid "Bendy Bones"
@@ -72438,6 +72340,10 @@ msgstr "Paragraf"
 
 msgid "Path Animation"
 msgstr "Cesta animácie"
+
+
+msgid "Effects"
+msgstr "Efekty"
 
 
 msgid "Skeleton"
@@ -73810,6 +73716,11 @@ msgstr "Schránka"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "Kruh"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "Interpolácia"
 
 
 msgid "Expand or contract the radius of the selected points"
@@ -76036,10 +75947,6 @@ msgid "Tablet API"
 msgstr "Tablet API"
 
 
-msgid "Select the tablet API to use for pressure sensitivity"
-msgstr "Vyberie API rozhranie tabletu, ktoré sa použije pre citlivosť na tlak"
-
-
 msgid "Automatically choose Wintab or Windows Ink depending on the device"
 msgstr "Automaticky vyberie Wintab alebo Windows Ink v závislosti na zariadení"
 
@@ -76086,10 +75993,6 @@ msgstr "Hlavné klávesy 1 až 0 sa správajú ako numpad (užitočné pre lapto
 
 msgid "Continuous Grab"
 msgstr "Zachytiť kontinuálne"
-
-
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "Povolí pohyb myšou mimo zobrazenie pre niektoré manipulácie (transformácia, ovládanie preťahovania UI)"
 
 
 msgid "Auto Depth"
@@ -76770,6 +76673,10 @@ msgstr "Ako sa zobrazujú hodnoty faktora"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Zobraziť faktory ako hodnoty medzi 0 a 1"
+
+
+msgid "Percentage"
+msgstr "Percentuálne"
 
 
 msgid "Display factors as percentages"
@@ -85289,26 +85196,6 @@ msgid "Outliner Sync"
 msgstr "Synchronizácia Líniového prehľadu"
 
 
-msgid "Sync tabs from outliner datablock selection"
-msgstr "Výber synchronizácie Líniového prehľadu"
-
-
-msgid "On"
-msgstr "Zap"
-
-
-msgid "Always sync from outliner editors to this editor"
-msgstr "Vždy synchronizovať výber Líniového prehľadu s ostatnými editormi"
-
-
-msgid "Never sync from outliner editors to this editor"
-msgstr "Nikdy nesynchronizovať výber Líniového prehľadu s ostatnými editormi"
-
-
-msgid "Sync when this editor shares an edge with an outliner editor"
-msgstr "Synchronizovať, keď tento editor zdieľa hranu s editorom líniového prehľadu"
-
-
 msgid "Tab Search Results"
 msgstr "Karta výsledkov vyhľadávania"
 
@@ -93052,10 +92939,6 @@ msgid "Renamed %d of %d %s"
 msgstr "Premenované %d z %d %s"
 
 
-msgid "Quick Setup"
-msgstr "Rýchle nastavenie"
-
-
 msgid "Shortcuts"
 msgstr "Klávesové skratky"
 
@@ -96688,14 +96571,6 @@ msgid "Fractional Preview Zoom"
 msgstr "Frakčné zväčšenie náhľadu"
 
 
-msgid "Show Frame Overlay"
-msgstr "Zobraziť prekrytie snímky"
-
-
-msgid "Show Annotations"
-msgstr "Zobraziť poznámky"
-
-
 msgctxt "Operator"
 msgid "Scene"
 msgstr "Scéna"
@@ -96729,14 +96604,6 @@ msgid "%dx%d"
 msgstr "%dx%d"
 
 
-msgid "Unpack"
-msgstr "Rozbaliť"
-
-
-msgid "Pack"
-msgstr "Zbaliť"
-
-
 msgid "Original Frame Range"
 msgstr "Rozsah pôvodných snímok"
 
@@ -96755,6 +96622,14 @@ msgstr "Pridať prechod"
 
 msgid "Effect Fader"
 msgstr "Efekt vytrácania"
+
+
+msgid "Unpack"
+msgstr "Rozbaliť"
+
+
+msgid "Pack"
+msgstr "Zbaliť"
 
 
 msgid "Stretch to Input Strip Length"
@@ -98572,16 +98447,6 @@ msgstr "Vytvoriť kópiu aktívnej kľúčovej snímky (aktívna vrstva)"
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "Interpolácia"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "Sekvencia"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "Pohľad na vybrané"
 
@@ -98830,16 +98695,6 @@ msgstr "Vizuálna geometria do povrchovej siete"
 msgctxt "Operator"
 msgid "Limit Total Vertex Groups"
 msgstr "Celkový limit skupín vrcholov"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Objekty na scéne..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "Objekty na scéne"
 
 
 msgctxt "Operator"
@@ -99380,6 +99235,11 @@ msgstr "Mierka ohybu kosti"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "Zmena veľkosti objektívu kamery"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "Odstrániť zo všetkých"
 
@@ -99403,23 +99263,8 @@ msgstr "Zmena veľkosti dosahu"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Uhol objektívu kamery"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "Zmena veľkosti objektívu kamery"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Veľkosť vysunutia"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Veľkosť šírky"
+msgid "DOF Distance (Pick)"
+msgstr "Vzdialenosť DOF (pick)"
 
 
 msgid "Ridge"
@@ -99432,76 +99277,6 @@ msgstr "Údolie"
 
 msgid "No object selected, using cursor"
 msgstr "Nie je vybratý žiadny objekt použitím kurzora"
-
-
-msgctxt "Operator"
-msgid "DOF Distance (Pick)"
-msgstr "Vzdialenosť DOF (pick)"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Vzdialenosť DOF"
-
-
-msgctxt "Operator"
-msgid "Convert to Mesh"
-msgstr "Konvertovať na povrchovú sieť"
-
-
-msgctxt "Operator"
-msgid "Convert to Grease Pencil"
-msgstr "Konvertovať na pastelku"
-
-
-msgctxt "Operator"
-msgid "Convert to Path"
-msgstr "Konvertovať na cestu"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curve"
-msgstr "Konvertovať na Bézierovu krivku"
-
-
-msgctxt "Operator"
-msgid "Convert to Polygon Curve"
-msgstr "Konvertovať na polygónovú krivku"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Prázdna veľkosť kresby"
-
-
-msgctxt "Operator"
-msgid "Power"
-msgstr "Sila"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "Veľkosť X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Veľkosť škvrny"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "Prelínanie bodu"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "Veľkosť Y"
-
-
-msgctxt "Operator"
-msgid "Angle"
-msgstr "Uhol"
 
 
 msgid "Layer:"
@@ -99572,24 +99347,8 @@ msgid "Editing Type"
 msgstr "Typ úpravy"
 
 
-msgid "Preserve Strand Lengths"
-msgstr "Zachovať dĺžku vlákna"
-
-
-msgid "Preserve Root Positions"
-msgstr "Zachovať koreňové polohy"
-
-
 msgid "Path Steps"
 msgstr "Kroky cesty"
-
-
-msgid "Interpolate Strokes"
-msgstr "Interpolovať ťahy"
-
-
-msgid "Sequence Options:"
-msgstr "Možnosti sekvencie:"
 
 
 msgid "No Brushes currently available"
@@ -99941,14 +99700,6 @@ msgstr "NlaPas"
 
 msgid "[Action Stash]"
 msgstr "[Skryť akciu]"
-
-
-msgid "Undefined"
-msgstr "Nedefinovaný"
-
-
-msgid "Undefined Node Tree Type"
-msgstr "Typ nedefinovaného uzla stromu"
 
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
@@ -100600,64 +100351,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "Nemožno prilepiť ovládač , pretože cesta RNA je pre daný identifikátor neplatná (ID = %s, cesta = %s)"
 
 
-msgid "Poly Order:"
-msgstr "Poradia mnohočlenov:"
-
-
-msgid "Before:"
-msgstr "Pred:"
-
-
-msgid "After:"
-msgstr "Po:"
-
-
-msgid "Envelope:"
-msgstr "Plášť:"
-
-
-msgid "Control Points:"
-msgstr "Riadiace body:"
-
-
-msgid "Add Point"
-msgstr "Pridať bod"
-
-
-msgid "Fra:"
-msgstr "Sní:"
-
-
-msgid "Min:"
-msgstr "Min:"
-
-
-msgid "Max:"
-msgstr "Max:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<Neznámy modifikátor>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "'Poradie' mnohočlen (pre mnohočlen s n podmienkami, 'objednávka' je n-1)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "Koeficient pre mnohočleny"
-
-
-msgid "Power of x"
-msgstr "Výkon x"
-
-
-msgid "Coefficient of x"
-msgstr "Koeficient x"
-
-
-msgid "Second coefficient"
-msgstr "Druhotný koeficient"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -100666,10 +100361,6 @@ msgstr "Pridá nový riadiaci bod na plášť v aktuálnej snímke"
 
 msgid "Delete envelope control point"
 msgstr "Odstrániť riadiaci bod plášťa"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Odstrániť modifikátor F-krivky"
 
 
 msgid "No animation data in buffer to paste"
@@ -101092,34 +100783,6 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Chyba programovania: chýba jasná funkcia transformácie alebo názov sústavy kľúčovania"
 
 
-msgid "Selected data-blocks are already assets (or do not support use as assets)"
-msgstr "Vybrané bloky údajov sú ž aktívami (alebo nepodporujú použitie ako aktíva)"
-
-
-msgid "No data-blocks to create assets for found (or do not support use as assets)"
-msgstr "Žiadne bloky údajov na vytvorenie podkladov pre nájdené (alebo nepodporujú použitie ako aktívum)"
-
-
-msgid "No asset data-blocks selected/focused"
-msgstr "Nie sú vybrané/zamerané žiadne bloky údajov aktív"
-
-
-msgid "Data-block '%s' is now an asset"
-msgstr "Blok údajov '%s' je teraz aktívom"
-
-
-msgid "%i data-blocks are now assets"
-msgstr "%i bloky údajov sú teraz aktíva"
-
-
-msgid "Data-block '%s' is no asset anymore"
-msgstr "Blok údajov '%s' už nie je viac aktívom"
-
-
-msgid "%i data-blocks are no assets anymore"
-msgstr "Bloky údajov (%i) už nie sú viac aktívami"
-
-
 msgid "No point was selected"
 msgstr "Nebol vybratý žiadny bod"
 
@@ -101488,20 +101151,20 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "ESC/PTM zrušenie, Enter/ĽTM pre potvrdenie, koliesko/posun na nastavenie faktora"
 
 
+msgid "Easing (by strength)"
+msgstr "Zmiernenie (podľa sily)"
+
+
+msgid "Dynamic Effects"
+msgstr "Dynamické efekty"
+
+
 msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
 msgstr "V aktívnej vrstve nemožno nájsť na interpoláciu medzi párom snímok pastelky"
 
 
-msgid "Cannot interpolate as current frame already has existing grease pencil frames"
-msgstr "Nemožno interpolovať, keď aktuálnu snímku má už existujúce snímky pastelky"
-
-
 msgid "Cannot interpolate in curve edit mode"
 msgstr "V režime úprav krivky nemožno interpolovať"
-
-
-msgid "Interpolation requires some editable strokes"
-msgstr "Interpolácia vyžaduje niektoré editovateľné ťahy"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -105533,22 +105196,6 @@ msgid "Disabled, CPU with SSE4.1 is required"
 msgstr "Zakázané, je potrebný procesor s SSE4.1"
 
 
-msgid "Type A"
-msgstr "Typ A"
-
-
-msgid "Type B"
-msgstr "Typ B"
-
-
-msgid "Disabled, built without OpenSubdiv"
-msgstr "Zakázané, zostavené bez OpenSubdiv"
-
-
-msgid "Type C"
-msgstr "Typ C"
-
-
 msgid "Undefined Socket Type"
 msgstr "Nedefinovaný typ zásuvky"
 
@@ -105972,10 +105619,6 @@ msgstr "Žiadny pás"
 
 msgid "(empty)"
 msgstr "(prázdne)"
-
-
-msgid "Modal map, not yet"
-msgstr "Modálne mapy, zatiaľ nie sú"
 
 
 msgid "Can't reload with running modal operators"
@@ -106987,22 +106630,6 @@ msgid "Overwrite %s"
 msgstr "Prepísať %s"
 
 
-msgid "Can't edit previews of overridden library data"
-msgstr "Nemožno upraviť náhľady prepísaných údajov knižnice"
-
-
-msgid "Data-block does not support previews"
-msgstr "Blok údajov nepodporuje náhľady"
-
-
-msgid "Incorrect context for running data-block fake user toggling"
-msgstr "Nesprávny kontext pre spustenie prepínania falošných užívateľov v bloku údajov"
-
-
-msgid "Data-block type does not support fake user"
-msgstr "Typ bloku údajov nepodporuje falošných užívateľov"
-
-
 msgid "Numeric input evaluation"
 msgstr "Vyhodnotenie číselných vstupov"
 
@@ -107313,14 +106940,6 @@ msgstr "Väzba"
 
 msgid "Target is not in the constraint target list"
 msgstr "Cieľ nie je v zozname obmedzení cieľov"
-
-
-msgid "Easing (by strength)"
-msgstr "Zmiernenie (podľa sily)"
-
-
-msgid "Dynamic Effects"
-msgstr "Dynamické efekty"
 
 
 msgid "Bezier spline cannot have points added"
@@ -108450,6 +108069,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "Zap"
 
 
 msgid "Val"

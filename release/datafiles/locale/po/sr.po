@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1315,8 +1315,8 @@ msgid "Strokes"
 msgstr "Потези"
 
 
-msgid "Resolution"
-msgstr "Резолуција"
+msgid "Precision"
+msgstr "Прецизност"
 
 
 msgid "Visible"
@@ -3568,6 +3568,10 @@ msgid "Directory to save the textures"
 msgstr "Основни директоријум са текстурама"
 
 
+msgid "Resolution"
+msgstr "Резолуција"
+
+
 msgid "Output image resolution"
 msgstr "Резолуција излазне слике"
 
@@ -4059,10 +4063,6 @@ msgstr "Нормализован синус"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "Множилац"
 
 
 msgid "Generator F-Modifier"
@@ -4801,38 +4801,6 @@ msgid "Freehand curves defining the sketch on this frame"
 msgstr "Слободоручне криве које формирају цртеж тренутног кадра"
 
 
-msgid "Easing"
-msgstr "Ублажавање"
-
-
-msgid "Period"
-msgstr "Период"
-
-
-msgid "Step"
-msgstr "Корак"
-
-
-msgid "Custom"
-msgstr "Прилагођено"
-
-
-msgid "Quadratic"
-msgstr "Квадратна"
-
-
-msgid "Circular"
-msgstr "Кружно"
-
-
-msgid "Bounce"
-msgstr "Одбијање"
-
-
-msgid "Elastic"
-msgstr "Пластично"
-
-
 msgid "Grease Pencil Layer"
 msgstr "Слој скице"
 
@@ -4921,8 +4889,16 @@ msgid "Layer"
 msgstr "Слој"
 
 
+msgid "Custom"
+msgstr "Прилагођено"
+
+
 msgid "Spacing"
 msgstr "Размак"
+
+
+msgid "Circular"
+msgstr "Кружно"
 
 
 msgid "Grid"
@@ -4947,10 +4923,6 @@ msgstr "Последњи поклопац"
 
 msgid "Flat"
 msgstr "Равно"
-
-
-msgid "Groups"
-msgstr "Групе"
 
 
 msgid "Material Index"
@@ -5174,6 +5146,10 @@ msgid "Lattice object to deform with"
 msgstr "Објекат кавеза за деформисање"
 
 
+msgid "Step"
+msgstr "Корак"
+
+
 msgid "Fixed"
 msgstr "Фиксно"
 
@@ -5264,6 +5240,10 @@ msgstr "Ф-крива"
 
 msgid "Frame Range"
 msgstr "Опсег кадрова:"
+
+
+msgid "Groups"
+msgstr "Групе"
 
 
 msgid "Bones"
@@ -5564,6 +5544,10 @@ msgstr "Умекшај полупречник потеза"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "Минимално растојање од последње тачке до наставка потеза"
+
+
+msgid "Elastic"
+msgstr "Пластично"
 
 
 msgid "Stroke Method"
@@ -8152,8 +8136,16 @@ msgid "Create a linear progression"
 msgstr "Направи линеарну прогресију"
 
 
+msgid "Quadratic"
+msgstr "Квадратна"
+
+
 msgid "Create a quadratic progression"
 msgstr "Направи квадратну прогресију"
+
+
+msgid "Easing"
+msgstr "Ублажавање"
 
 
 msgid "Diagonal"
@@ -8632,10 +8624,6 @@ msgid "Simulation"
 msgstr "Симулација"
 
 
-msgid "Precision"
-msgstr "Прецизност"
-
-
 msgid "Max Step"
 msgstr "Макс. корак"
 
@@ -8926,6 +8914,14 @@ msgstr "Десна ручка"
 
 msgid "Coordinates of the right handle (after the control point)"
 msgstr "Координате десне ручке (после контролне тачке)"
+
+
+msgid "Bounce"
+msgstr "Одбијање"
+
+
+msgid "Period"
+msgstr "Период"
 
 
 msgid "Keying Set"
@@ -9549,10 +9545,6 @@ msgstr "Удице"
 
 msgid "Light"
 msgstr "Светлост"
-
-
-msgid "Make Links"
-msgstr "Направи везе"
 
 
 msgid "Apply"
@@ -11938,12 +11930,12 @@ msgid "Equal"
 msgstr "Једнако"
 
 
-msgid "Object Info"
-msgstr "Информације о објекту"
-
-
 msgid "Original"
 msgstr "Оригинал"
+
+
+msgid "Object Info"
+msgstr "Информације о објекту"
 
 
 msgid "Label Font Size"
@@ -13290,6 +13282,10 @@ msgstr "Додај маркер и клизај"
 
 msgid "Distance between selected tracks"
 msgstr "Растапање између изабраних стаза"
+
+
+msgid "Keep Original"
+msgstr "Сачувај оригинал"
 
 
 msgctxt "Operator"
@@ -15174,10 +15170,6 @@ msgstr "Убаци потезе"
 
 msgid "Subdivisions"
 msgstr "Подела"
-
-
-msgid "Keep Original"
-msgstr "Сачувај оригинал"
 
 
 msgid "Show all Grease Pencil layers"
@@ -17517,11 +17509,6 @@ msgstr "Очисти локацију"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "Повезани подаци"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Повежи обејат са сценом"
 
@@ -18553,10 +18540,6 @@ msgstr "Поставља тренутну позу као почетну"
 
 msgid "Next Keyframe"
 msgstr "Следећи кључни кадар"
-
-
-msgid "Percentage"
-msgstr "Проценат"
 
 
 msgid "Previous Keyframe"
@@ -22643,6 +22626,10 @@ msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Квадратни избор вредности нијансе и клизачем засићености бојом"
 
 
+msgid "Percentage"
+msgstr "Проценат"
+
+
 msgid "New Window"
 msgstr "У новом прозору"
 
@@ -24239,10 +24226,6 @@ msgstr "Метод филтрирања"
 
 msgid "Properties Space"
 msgstr "Простор особина"
-
-
-msgid "On"
-msgstr "Укључено"
 
 
 msgid "Pin ID"
@@ -27208,11 +27191,6 @@ msgstr "Додај пасивни"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Објекти на сцену..."
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "На следећи кључни кадар"
 
@@ -27287,43 +27265,13 @@ msgstr "Очисти слободоручне странице"
 
 
 msgctxt "Operator"
-msgid "Remove from All"
-msgstr "Уклони из свих"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Угао објектива камере"
-
-
-msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "Величина објектива камере"
 
 
 msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Величина извлачења"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Ширина"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Удаљеност DOF-а"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "Величина X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Величина пројекције"
+msgid "Remove from All"
+msgstr "Уклони из свих"
 
 
 msgid "Layer:"
@@ -27475,48 +27423,8 @@ msgid "Scene not found"
 msgstr "Брзина звука"
 
 
-msgid "Before:"
-msgstr "Пре:"
-
-
-msgid "After:"
-msgstr "После:"
-
-
-msgid "Envelope:"
-msgstr "Коверат:"
-
-
-msgid "Control Points:"
-msgstr "Контролне тачке:"
-
-
-msgid "Add Point"
-msgstr "Додај тачку"
-
-
-msgid "Min:"
-msgstr "Мин:"
-
-
-msgid "Max:"
-msgstr "Макс:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<Непознати измењивач>"
-
-
-msgid "Power of x"
-msgstr "Снага по x"
-
-
-msgid "Coefficient of x"
-msgstr "Коефицијент по x"
-
-
-msgid "Second coefficient"
-msgstr "Други коефицијент"
 
 
 msgid "Delete envelope control point"
@@ -29112,6 +29020,10 @@ msgstr "RGBA"
 
 msgid "Degr"
 msgstr "Степен"
+
+
+msgid "On"
+msgstr "Укључено"
 
 
 msgid "Val"

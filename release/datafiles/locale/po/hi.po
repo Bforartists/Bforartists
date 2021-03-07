@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -639,10 +639,6 @@ msgid "All"
 msgstr "सभी"
 
 
-msgid "Resolution"
-msgstr "बिंदू विस्तार"
-
-
 msgid "Marker"
 msgstr "चिन्हक"
 
@@ -825,22 +821,6 @@ msgstr "आंतरिक घर्षण"
 
 msgid "Quality"
 msgstr "गुणवत्ता"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "आरईसी. ७०९ (फुल सीमा), ब्लेंडर देशी रैखिक रिक्त स्थान"
-
-
-msgid "ACES linear space"
-msgstr "इक्के रैखिक रिक्त स्थान"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "रंग रिक्त स्थान छवियों के लिए इस्तेमाल किया जिसमें गैर-रंग डेटा (i, ई, सामान्य मैप्स)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "मानक ला.ह.नी. प्रदर्शित करें रिक्त स्थान"
 
 
 msgid "Gamma"
@@ -1224,6 +1204,10 @@ msgid "Output Path"
 msgstr "उत्पादन पथ"
 
 
+msgid "Resolution"
+msgstr "बिंदू विस्तार"
+
+
 msgid "Output image resolution"
 msgstr "उत्पादित छवि बिंदू विस्तार"
 
@@ -1589,10 +1573,6 @@ msgid "Grease Pencil Frame"
 msgstr "तैलीय पेंसिल गठन"
 
 
-msgid "Step"
-msgstr "कदम"
-
-
 msgid "Grease Pencil Layer"
 msgstr "तैलीय पेंसिल परत"
 
@@ -1700,6 +1680,10 @@ msgstr "मूल"
 msgctxt "Curve"
 msgid "Sharp"
 msgstr "पैना"
+
+
+msgid "Step"
+msgstr "कदम"
 
 
 msgid "Fixed"
@@ -4220,10 +4204,6 @@ msgid "Next Keyframe"
 msgstr "अगले अनुबोधक चिन्ह"
 
 
-msgid "Percentage"
-msgstr "प्रतिशत"
-
-
 msgctxt "Operator"
 msgid "Copy Pose"
 msgstr "मुद्रा की प्रतिलिपि बनाएँ"
@@ -4917,6 +4897,10 @@ msgid "16x"
 msgstr "१६ x"
 
 
+msgid "Percentage"
+msgstr "प्रतिशत"
+
+
 msgid "New Window"
 msgstr "नई खिडकी"
 
@@ -5251,10 +5235,6 @@ msgstr "कुंजी-बंधन"
 
 msgid "Filter based on key bindings"
 msgstr "प्रमुख बाइंडिंग पर आधारित फ़िल्टर करें"
-
-
-msgid "On"
-msgstr "आरंभ"
 
 
 msgid "Reference"
@@ -6296,33 +6276,13 @@ msgstr "समूह को निर्दिष्ट"
 
 
 msgctxt "Operator"
-msgid "Remove from All"
-msgstr "सब से हटाएँ"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "प्रतिबिंबक केन्द्रण-वीक्ष कोण"
-
-
-msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "प्रतिबिंबक केन्द्रण-वीक्ष के प्रंमाण"
 
 
 msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "आकार बिहर्वेधन"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "चौड़ाई आकार"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "DOF दूरी"
+msgid "Remove from All"
+msgstr "सब से हटाएँ"
 
 
 msgid "Layer:"
@@ -6564,64 +6524,8 @@ msgid "Scene not found"
 msgstr "दृश्य नहीं मिला"
 
 
-msgid "Poly Order:"
-msgstr "बहु क्रम:"
-
-
-msgid "Before:"
-msgstr "से पहले:"
-
-
-msgid "After:"
-msgstr "के बाद:"
-
-
-msgid "Envelope:"
-msgstr "लिफाफा:"
-
-
-msgid "Control Points:"
-msgstr "नियंत्रण अंक:"
-
-
-msgid "Add Point"
-msgstr "बिंदु जोड़ें"
-
-
-msgid "Fra:"
-msgstr "Fra:"
-
-
-msgid "Min:"
-msgstr "न्यूनतम:"
-
-
-msgid "Max:"
-msgstr "अधिकतम:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "< अज्ञात संशोधक >"
-
-
-msgid "Coefficient for polynomial"
-msgstr "बहुपद के लिए गुणांक"
-
-
-msgid "Power of x"
-msgstr "एक्स की शक्ति"
-
-
-msgid "Coefficient of x"
-msgstr "एक्स के गुणांक"
-
-
-msgid "Second coefficient"
-msgstr "दूसरा गुणांक"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "F-वक्र संशोधक मिटाएँ"
 
 
 msgid "<Missing ID block>"
@@ -7325,6 +7229,10 @@ msgstr "सीबी"
 
 msgid "Cr"
 msgstr "सी. आर."
+
+
+msgid "On"
+msgstr "आरंभ"
 
 
 msgid "BSDF"

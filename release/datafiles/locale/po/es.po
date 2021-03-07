@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -48,6 +48,14 @@ msgstr "Color"
 
 msgid "Value"
 msgstr "Valor"
+
+
+msgid "List of AOVs"
+msgstr "Lista de AOV"
+
+
+msgid "Collection of AOVs"
+msgstr "Colección de AOV"
 
 
 msgid "Action F-Curves"
@@ -2899,19 +2907,19 @@ msgstr "Cantidad de subdivisiones del hueso (sólo para huesos flexibles)"
 
 
 msgid "B-Bone Display X Width"
-msgstr "Visualización ancho X hueso flexible"
+msgstr "Ancho de visualización en X del hueso flexible"
 
 
 msgid "B-Bone X size"
-msgstr "Tamaño X del hueso flexible"
+msgstr "Tamaño en X del hueso flexible"
 
 
 msgid "B-Bone Display Z Width"
-msgstr "Visualización ancho Z hueso flexible"
+msgstr "Ancho de visualización en Z del hueso flexible"
 
 
 msgid "B-Bone Z size"
-msgstr "Tamaño Y del hueso flexible"
+msgstr "Tamaño en Z del hueso flexible"
 
 
 msgid "Children"
@@ -3127,7 +3135,7 @@ msgstr "Heredar giro final"
 
 
 msgid "Add Roll Out of the Start Handle bone to the Roll In value"
-msgstr "Agrega el Giro Final del hueso del Asa Inicial, al valor del Giro Inicial"
+msgstr "Adiciona el valor de Giro Final del hueso usado como Asa Inicial, al valor de Giro Inicial de este hueso"
 
 
 msgid "Multiply Vertex Group with Envelope"
@@ -3522,12 +3530,8 @@ msgid "Use edit lines as fill boundary limits"
 msgstr "Usa las líneas internas de edición como límites para el relleno"
 
 
-msgid "Resolution"
-msgstr "Resolución"
-
-
-msgid "Multiplier for fill resolution, higher resolution is more accurate but slower"
-msgstr "Multiplicador para la resolución de relleno, una alta resolución será más precisa pero más lenta"
+msgid "Precision"
+msgstr "Precisión"
 
 
 msgid "Layer Mode"
@@ -5148,26 +5152,6 @@ msgstr "Espacio de color original"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Espacio de color en el archivo de imagen, desde el cual convertir al cargar y hacia el cual convertir al guardar la imagen"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Espacio de color fílmico logarítmico, con una latitud de 16,5 paradas y un rango dinámico de 25 paradas"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (rango completo), espacio lineal nativo de Blender"
-
-
-msgid "ACES linear space"
-msgstr "Espacio lineal ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Espacio de color usado para imágenes que no contienen datos de color (p.ej: mapas de normales)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Espacio de visualización estándar RVA"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -9546,6 +9530,10 @@ msgid "Directory to save the textures"
 msgstr "Directorio donde guardar las texturas"
 
 
+msgid "Resolution"
+msgstr "Resolución"
+
+
 msgid "Output image resolution"
 msgstr "Resolución de la imagen producida"
 
@@ -10563,10 +10551,6 @@ msgid "Modifier for values of F-Curve"
 msgstr "Modificador de los valores de la curva-f"
 
 
-msgid "F-Curve Modifier is the one being edited"
-msgstr "El modificador de curva-f es el que está siendo editado"
-
-
 msgid "Blend In"
 msgstr "Fundido entrante"
 
@@ -10854,10 +10838,6 @@ msgstr "Seno normalizado"
 
 msgid "sin(x) / x"
 msgstr "sen(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "Multiplicador de fase"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -13084,10 +13064,6 @@ msgid "Tension"
 msgstr "Tensión"
 
 
-msgid "Surface tension of liquid (higher value results in greater hydrophobic behaviour)"
-msgstr "Tensión superficial del líquido (valores más altos producirán un comportamiento más hidrofóbico)"
-
-
 msgid "System Maximum"
 msgstr "Máximo del sistema"
 
@@ -14352,172 +14328,12 @@ msgid "Settings for Grease Pencil interpolation tools"
 msgstr "Opciones para las herramientas de interpolación de lápiz de cera"
 
 
-msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "Cuánto potenciar los rebotes elásticos de la aceleración de tipo 'Elastica'"
-
-
-msgid "Amount of overshoot for 'back' easing"
-msgstr "Cantidad de rebase de la aceleración de tipo 'Trasera'"
-
-
-msgid "Easing"
-msgstr "Aceleración"
-
-
-msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "A qué extremo del segmento, entre el fotograma anterior y el siguiente del lápiz de cera, se aplicará la interpolación acelerada"
-
-
-msgid "Automatic Easing"
-msgstr "Aceleración automática"
-
-
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "El método de aceleración será escogido automáticamente, basándose en el tipo de interpolación usado (p.ej: 'Aceleración de salida' para tipos de transición y 'Aceleración de entrada' para efectos dinámicos)"
-
-
-msgid "Only on the end closest to the next keyframe"
-msgstr "Sólo en el extremo izquierdo del fotograma clave"
-
-
-msgid "Only on the end closest to the first keyframe"
-msgstr "Sólo en el extremo derecho del fotograma clave"
-
-
-msgid "Ease In and Out"
-msgstr "Aceleración de entrada y salida"
-
-
-msgid "Segment between both keyframes"
-msgstr "A ambos lados del fotograma clave"
-
-
-msgid "Interpolate All Layers"
-msgstr "Interpolar todas las capas"
-
-
-msgid "Interpolate all layers, not only active"
-msgstr "Interpolar todas las capas, no sólo la activa"
-
-
-msgid "Interpolate Selected Strokes"
-msgstr "Interpolar los trazos seleccionados"
-
-
-msgid "Interpolate only selected strokes in the original frame"
-msgstr "Interpolar sólo los trazos seleccionados en el fotograma original"
-
-
 msgid "Interpolation Curve"
 msgstr "Curva de interpolación"
 
 
 msgid "Custom curve to control 'sequence' interpolation between Grease Pencil frames"
 msgstr "Curva personalizada para controlar la interpolación de la 'secuencia' entre los fotogramas del lápiz de cera"
-
-
-msgid "Period"
-msgstr "Período"
-
-
-msgid "Time between bounces for elastic easing"
-msgstr "Tiempo entre rebotes en la aceleración elástica"
-
-
-msgid "Step"
-msgstr "Intervalo"
-
-
-msgid "Number of frames between generated interpolated frames"
-msgstr "Cantidad de fotogramas entre los fotogramas interpolados generados"
-
-
-msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
-msgstr "Método de interpolación a usar la próxima vez que se use el comando 'Interpolar secuencia'"
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "Interpolación lineal recta entre A y B (sin aceleración de entrada/salida)"
-
-
-msgid "Custom"
-msgstr "Personalizado"
-
-
-msgid "Custom interpolation defined using a curve map"
-msgstr "Interpolación personalizada definida mediante una curva"
-
-
-msgid "Sinusoidal"
-msgstr "Sinusoidal"
-
-
-msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "Aceleración sinusoidal (la más débil, casi lineal, pero con una ligera curvatura)"
-
-
-msgid "Quadratic"
-msgstr "Cuadrática"
-
-
-msgid "Quadratic easing"
-msgstr "Aceleración cuadrática"
-
-
-msgid "Cubic easing"
-msgstr "Aceleración cúbica"
-
-
-msgid "Quartic"
-msgstr "De cuarto grado"
-
-
-msgid "Quartic easing"
-msgstr "Aceleración de cuarto grado"
-
-
-msgid "Quintic"
-msgstr "De quinto grado"
-
-
-msgid "Quintic easing"
-msgstr "Aceleración de quinto grado"
-
-
-msgid "Exponential"
-msgstr "Exponencial"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "Aceleración exponencial (drástica)"
-
-
-msgid "Circular"
-msgstr "Circular"
-
-
-msgid "Circular easing (strongest and most dynamic)"
-msgstr "Aceleración circular (la más intensa y dinámica)"
-
-
-msgid "Cubic easing with overshoot and settle"
-msgstr "Aceleración cúbica con rebase y amortiguación"
-
-
-msgid "Bounce"
-msgstr "Rebote"
-
-
-msgid "Exponentially decaying parabolic bounce, like when objects collide"
-msgstr "Rebote parabólico con decaimiento exponencial, como cuando dos objetos colisionan"
-
-
-msgid "Elastic"
-msgstr "Elástica"
-
-
-msgid "Exponentially decaying sine wave, like an elastic band"
-msgstr "Onda sinusoidal con decaimiento exponencial, como una banda elástica"
 
 
 msgid "Grease Pencil Layer"
@@ -14636,6 +14452,10 @@ msgid "Thickness change to apply to current strokes (in pixels)"
 msgstr "Cambio de grosor a aplicar a los trazos actuales (en píxeles)"
 
 
+msgid "Values for change location"
+msgstr "Valores para cambiar la posición"
+
+
 msgid "Locked"
 msgstr "Bloqueado"
 
@@ -14706,6 +14526,14 @@ msgstr "Identificador en pasada"
 
 msgid "Index number for the \"Layer Index\" pass"
 msgstr "Nº de identificador en la pasada \"Identificador de capas\""
+
+
+msgid "Values for changes in rotation"
+msgstr "Valores para cambiar la rotación"
+
+
+msgid "Values for changes in scale"
+msgstr "Valores para cambiar la escala"
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
@@ -14781,7 +14609,7 @@ msgstr "Solo"
 
 
 msgid "In Paint mode display only layers with keyframe in current frame"
-msgstr "En modo Pintar mostrar sólo capas con clave en el fotograma actual"
+msgstr "En modo Pintar, mostrar sólo las capas que contienen un clave en el fotograma actual"
 
 
 msgid "Vertex Paint Opacity"
@@ -14860,6 +14688,10 @@ msgid "Use cursor as reference point"
 msgstr "Usar el cursor como punto de referencia"
 
 
+msgid "Custom"
+msgstr "Personalizado"
+
+
 msgid "Use custom reference point"
 msgstr "Usar un punto de referencia personalizado"
 
@@ -14874,6 +14706,10 @@ msgstr "Espaciado"
 
 msgid "Guide spacing"
 msgstr "Espaciado de las guías"
+
+
+msgid "Circular"
+msgstr "Circular"
 
 
 msgid "Use single point to create rings"
@@ -15070,14 +14906,6 @@ msgstr "Redondeado"
 
 msgid "Flat"
 msgstr "Plano"
-
-
-msgid "Groups"
-msgstr "Grupos"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "Influencias para los grupos de vértices de los cuales este vértice es miembro"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -16236,6 +16064,10 @@ msgid "Use random values over time"
 msgstr "Usar valores aleatorios a lo largo del tiempo"
 
 
+msgid "Step"
+msgstr "Intervalo"
+
+
 msgid "Number of frames before recalculate random values again"
 msgstr "Cantidad de fotogramas antes de recalcular los valores aleatorios nuevamente"
 
@@ -16250,18 +16082,6 @@ msgstr "Modificador Desplazamiento"
 
 msgid "Offset Stroke modifier"
 msgstr "Modificador para desplazar trazos"
-
-
-msgid "Values for change location"
-msgstr "Valores para cambiar la posición"
-
-
-msgid "Values for changes in rotation"
-msgstr "Valores para cambiar la rotación"
-
-
-msgid "Values for changes in scale"
-msgstr "Valores para cambiar la escala"
 
 
 msgid "Opacity Modifier"
@@ -16934,6 +16754,10 @@ msgstr "Rango de fotogramas"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "Rango final de fotogramas de todas las Curvas-F en esta acción"
+
+
+msgid "Groups"
+msgstr "Grupos"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -18167,6 +17991,10 @@ msgstr "Decaimiento del radio"
 
 msgid "Applies the brush falloff in the tip of the brush"
 msgstr "Aplica el decaimiento del pincel en la punta del pincel"
+
+
+msgid "Elastic"
+msgstr "Elástica"
 
 
 msgid "Modifies the entire mesh using elastic deform"
@@ -23283,12 +23111,12 @@ msgid "Paint Grease Pencil Strokes"
 msgstr "Pintar Trazos de lápiz de cera"
 
 
-msgid "Grease Pencil Vertex Paint Strokes"
-msgstr "Pintar vértices Trazos de lápiz de cera"
-
-
 msgid "Grease Pencil Weight Paint Strokes"
 msgstr "Pintar influencias Trazos de lápiz de cera"
+
+
+msgid "Grease Pencil Vertex Paint Strokes"
+msgstr "Pintar vértices Trazos de lápiz de cera"
 
 
 msgid "Modifiers affecting the geometric data of the object"
@@ -25644,8 +25472,16 @@ msgid "Create a linear progression"
 msgstr "Crea una progresión lineal"
 
 
+msgid "Quadratic"
+msgstr "Cuadrática"
+
+
 msgid "Create a quadratic progression"
 msgstr "Crea una progresión cuadrática"
+
+
+msgid "Easing"
+msgstr "Aceleración"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -26914,10 +26750,6 @@ msgstr "Simulación"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Método de resolución analítico en tiempo real, ignorando las acciones y restricciones de cinemática inversa"
-
-
-msgid "Precision"
-msgstr "Precisión"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -28714,12 +28546,44 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Punto de una curva Bézier con dos asas que define un fotograma clave en una curva-f"
 
 
+msgid "Amount to boost elastic bounces for 'elastic' easing"
+msgstr "Cuánto potenciar los rebotes elásticos de la aceleración de tipo 'Elastica'"
+
+
+msgid "Amount of overshoot for 'back' easing"
+msgstr "Cantidad de rebase de la aceleración de tipo 'Trasera'"
+
+
 msgid "Coordinates of the control point. Note: Changing this value also updates the handles similar to using the graph editor transform operator"
 msgstr "Coordenadas del punto de control. Nota: Cambiar este valor también actualizará las asas, de forma similar a si se usaran los operadores de Transformación del Editor de curvas"
 
 
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "A qué extremo del segmento entre este fotograma clave y el siguiente se aplicará la interpolación acelerada"
+
+
+msgid "Automatic Easing"
+msgstr "Aceleración automática"
+
+
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "El método de aceleración será escogido automáticamente, basándose en el tipo de interpolación usado (p.ej: 'Aceleración de salida' para tipos de transición y 'Aceleración de entrada' para efectos dinámicos)"
+
+
+msgid "Only on the end closest to the next keyframe"
+msgstr "Sólo en el extremo izquierdo del fotograma clave"
+
+
+msgid "Only on the end closest to the first keyframe"
+msgstr "Sólo en el extremo derecho del fotograma clave"
+
+
+msgid "Ease In and Out"
+msgstr "Aceleración de entrada y salida"
+
+
+msgid "Segment between both keyframes"
+msgstr "A ambos lados del fotograma clave"
 
 
 msgid "Left Handle"
@@ -28778,8 +28642,80 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "Sin interpolación, el valor de A se mantiene hasta que B es encontrado"
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "Interpolación lineal recta entre A y B (sin aceleración de entrada/salida)"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "Interpolación suave entre A y B, con cierto control sobre la forma de la curva"
+
+
+msgid "Sinusoidal"
+msgstr "Sinusoidal"
+
+
+msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
+msgstr "Aceleración sinusoidal (la más débil, casi lineal, pero con una ligera curvatura)"
+
+
+msgid "Quadratic easing"
+msgstr "Aceleración cuadrática"
+
+
+msgid "Cubic easing"
+msgstr "Aceleración cúbica"
+
+
+msgid "Quartic"
+msgstr "De cuarto grado"
+
+
+msgid "Quartic easing"
+msgstr "Aceleración de cuarto grado"
+
+
+msgid "Quintic"
+msgstr "De quinto grado"
+
+
+msgid "Quintic easing"
+msgstr "Aceleración de quinto grado"
+
+
+msgid "Exponential"
+msgstr "Exponencial"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "Aceleración exponencial (drástica)"
+
+
+msgid "Circular easing (strongest and most dynamic)"
+msgstr "Aceleración circular (la más intensa y dinámica)"
+
+
+msgid "Cubic easing with overshoot and settle"
+msgstr "Aceleración cúbica con rebase y amortiguación"
+
+
+msgid "Bounce"
+msgstr "Rebote"
+
+
+msgid "Exponentially decaying parabolic bounce, like when objects collide"
+msgstr "Rebote parabólico con decaimiento exponencial, como cuando dos objetos colisionan"
+
+
+msgid "Exponentially decaying sine wave, like an elastic band"
+msgstr "Onda sinusoidal con decaimiento exponencial, como una banda elástica"
+
+
+msgid "Period"
+msgstr "Período"
+
+
+msgid "Time between bounces for elastic easing"
+msgstr "Tiempo entre rebotes en la aceleración elástica"
 
 
 msgid "Left handle selection status"
@@ -31016,10 +30952,6 @@ msgid "Kerning"
 msgstr "Espaciado"
 
 
-msgid "Interpolate"
-msgstr "Interpolar"
-
-
 msgid "Lattice Context Menu"
 msgstr "Jaula - menú contextual"
 
@@ -31106,10 +31038,6 @@ msgstr "Luz"
 
 msgid "Light Probe"
 msgstr "Sonda de luz"
-
-
-msgid "Make Links"
-msgstr "Crear vínculos"
 
 
 msgid "Make Single User"
@@ -31222,6 +31150,10 @@ msgstr "Bienvenida"
 
 msgid "About"
 msgstr "Acerca de"
+
+
+msgid "Quick Setup"
+msgstr "Configuración rápida"
 
 
 msgid "Mesh Cache Velocity"
@@ -31750,6 +31682,10 @@ msgstr "Vértice en un bloque de datos de malla"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "Influencia usada por la opción 'Sólo vértices' del modificador Biselar"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "Influencias para los grupos de vértices de los cuales este vértice es miembro"
 
 
 msgid "Index of this vertex"
@@ -37168,14 +37104,6 @@ msgid "Refine tangential coefficients of distortion model during camera solving"
 msgstr "Refinar los coeficientes tangenciales del modelo de distorsión durante la resolución de la cámara"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "Mostrar las opciones predefinidas expandidas en la interfaz de usuario"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "Mostrar las opciones extra expandidas en la interfaz de usuario"
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "Limitar la velocidad del rastreo para una respuesta visual más rápida (no afecta a la calidad del rastreo)"
 
@@ -37306,6 +37234,10 @@ msgstr "Fotograma de anclaje"
 
 msgid "Reference point to anchor stabilization (other frames will be adjusted relative to this frame's position)"
 msgstr "Punto de referencia para anclar la estabilización (los otros fotogramas se ajustarán en relación a la posición en este fotograma)"
+
+
+msgid "Interpolate"
+msgstr "Interpolar"
 
 
 msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilization"
@@ -40081,12 +40013,20 @@ msgid "Attribute Math"
 msgstr "Operar (atributo)"
 
 
+msgid "Input Type C"
+msgstr "Entrada de tipo C"
+
+
 msgid "Attribute Mix"
 msgstr "Mezclar (atributo)"
 
 
 msgid "Attribute Randomize"
 msgstr "Aleatorio (atributo)"
+
+
+msgid "Input Type"
+msgstr "Tipo de entrada"
 
 
 msgid "Attribute Vector Math"
@@ -40193,6 +40133,10 @@ msgid "Entry-wise tan(A)"
 msgstr "Tangente Hadamard,  tan(A)"
 
 
+msgid "Original"
+msgstr "Original"
+
+
 msgid "Join Geometry"
 msgstr "Unir geometría"
 
@@ -40203,10 +40147,6 @@ msgstr "Información de objeto"
 
 msgid "The transformation of the vector and geometry outputs"
 msgstr "La transformación del vector y la geometría de salida"
-
-
-msgid "Original"
-msgstr "Original"
 
 
 msgid "Output the geometry relative to the input object transform, and the location, rotation and scale relative to the world origin"
@@ -40259,10 +40199,6 @@ msgstr "Instancia una colección completa en cada punto"
 
 msgid "Point Scale"
 msgstr "Escalar puntos"
-
-
-msgid "Input Type"
-msgstr "Tipo de entrada"
 
 
 msgid "Point Separate"
@@ -44384,6 +44320,10 @@ msgid "Distance between selected tracks"
 msgstr "Distancia entre los puntos de rastreo seleccionados"
 
 
+msgid "Keep Original"
+msgstr "Conservar original"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "Marcadores 3D a malla"
@@ -46314,10 +46254,6 @@ msgstr "Seleccionar aleatorio"
 
 msgid "Randomly select some control points"
 msgstr "Selecciona algunos =puntos de control aleatoriamente"
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "Porcentaje de objetos a seleccionar aleatoriamente"
 
 
 msgid "Seed for the random number generator"
@@ -49454,13 +49390,12 @@ msgid "Interpolate grease pencil strokes between frames"
 msgstr "Interpola los trazos del lápiz de cera entre los fotogramas existentes"
 
 
+msgid "Confirm on Release"
+msgstr "Confirmar al soltar"
+
+
 msgid "Bias factor for which frame has more influence on the interpolated strokes"
 msgstr "Factor de desviación de la influencia de cada fotograma, durante la interpolación"
-
-
-msgctxt "Operator"
-msgid "Remove Breakdowns"
-msgstr "Eliminar intermedios"
 
 
 msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
@@ -49474,6 +49409,22 @@ msgstr "Interpolar secuencia"
 
 msgid "Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames"
 msgstr "Genera 'intermedios' para interpolar de forma suave los fotogramas del lápiz de cera"
+
+
+msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
+msgstr "A qué extremo del segmento, entre el fotograma anterior y el siguiente del lápiz de cera, se aplicará la interpolación acelerada"
+
+
+msgid "Number of frames between generated interpolated frames"
+msgstr "Cantidad de fotogramas entre los fotogramas interpolados generados"
+
+
+msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
+msgstr "Método de interpolación a usar la próxima vez que se use el comando 'Interpolar secuencia'"
+
+
+msgid "Custom interpolation defined using a curve map"
+msgstr "Interpolación personalizada definida mediante una curva"
 
 
 msgctxt "Operator"
@@ -49865,10 +49816,6 @@ msgstr "Reproyectar trazos"
 
 msgid "Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)"
 msgstr "Reproyecta los trazos seleccionados desde la vista actual como si hubieran sido dibujados nuevamente (p.ej: para corregir problemas debidos al movimiento involuntario del cursor 3D, a cambios accidentales en la vista o para hacerlo coincidir con una geometría que se deforma)"
-
-
-msgid "Keep Original"
-msgstr "Conservar original"
 
 
 msgid "Keep original strokes and create a copy before reprojecting instead of reproject them"
@@ -50582,10 +50529,6 @@ msgid "Transform grease pencil stroke fill"
 msgstr "Permite transformar el relleno de los trazos de lápiz de cera"
 
 
-msgid "Confirm on Release"
-msgstr "Confirmar al soltar"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Desbloquear todas las capas"
@@ -50834,10 +50777,6 @@ msgstr "Margen de error máximo"
 
 msgid "How much the new decimated curve is allowed to deviate from the original"
 msgstr "Cuánto se permitirá que la nueva curva diezmada se desvíe de la original"
-
-
-msgid "The percentage of keyframes to remove"
-msgstr "El porcentaje de claves a eliminar"
 
 
 msgctxt "Operator"
@@ -57923,19 +57862,6 @@ msgstr "Convierte a los objetos en instanciados en caras"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "Vincular datos"
-
-
-msgid "Apply active object links to other selected objects"
-msgstr "Aplica los vínculos del objeto activo a otros objetos seleccionados"
-
-
-msgid "Effects"
-msgstr "Efectos"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Vincular objetos a escena"
 
@@ -59663,7 +59589,7 @@ msgstr "Cantidad de niveles entre 0 y 1"
 
 msgctxt "Operator"
 msgid "Remove Vertex Group"
-msgstr "Eliminar grupo vértices"
+msgstr "Eliminar grupo de vértices"
 
 
 msgid "Delete the active or all vertex groups from the active object"
@@ -60513,14 +60439,6 @@ msgstr "Selecionar jerarquía"
 
 msgid "Make all users of selected data-blocks to use instead a new chosen one"
 msgstr "Permite hacer que todos los usuarios de los bloques de datos seleccionados usen, en vez, uno nuevo indicado"
-
-
-msgid "Enter Mode"
-msgstr "Ingresar al modo"
-
-
-msgid "Exit Mode"
-msgstr "Salir del modo"
 
 
 msgid "Context menu for item operations"
@@ -61869,20 +61787,16 @@ msgid "Custom properties"
 msgstr "Propiedades personalizadas"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Factor de influencia para definir cuál fotograma clave tendrá más predominancia"
+
+
 msgid "Next Keyframe"
 msgstr "F. clave siguiente"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Número de fotograma del fotograma clave inmediatamente posterior al fotograma actual"
-
-
-msgid "Percentage"
-msgstr "Porcentaje"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Factor de influencia para definir cuál fotograma clave tendrá más predominancia"
 
 
 msgid "Previous Keyframe"
@@ -72125,18 +72039,6 @@ msgid "Show the panel on all tabs"
 msgstr "Muestra el panel en todas las solapas"
 
 
-msgid "Chain Scaling"
-msgstr "Escala de cadena"
-
-
-msgid "Fitting"
-msgstr "Ajuste"
-
-
-msgid "Bone Constraints"
-msgstr "Restricciones de huesos"
-
-
 msgid "Asset Metadata"
 msgstr "Metadatos de recurso"
 
@@ -72147,6 +72049,18 @@ msgstr "Detalles"
 
 msgid "Asset Navigation"
 msgstr "Navegación de recursos"
+
+
+msgid "Chain Scaling"
+msgstr "Escala de cadena"
+
+
+msgid "Fitting"
+msgstr "Ajuste"
+
+
+msgid "Bone Constraints"
+msgstr "Restricciones de huesos"
 
 
 msgid "Bendy Bones"
@@ -72434,6 +72348,10 @@ msgstr "Párrafo"
 
 msgid "Path Animation"
 msgstr "Animación de trayectoria"
+
+
+msgid "Effects"
+msgstr "Efectos"
 
 
 msgid "Skeleton"
@@ -73806,6 +73724,11 @@ msgstr "Marco"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "Círculo"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "Interpolar"
 
 
 msgid "Expand or contract the radius of the selected points"
@@ -76032,10 +75955,6 @@ msgid "Tablet API"
 msgstr "API de tableta"
 
 
-msgid "Select the tablet API to use for pressure sensitivity"
-msgstr "Permite seleccionar la API de tableta a ser usada para la sensibilidad a la presión"
-
-
 msgid "Automatically choose Wintab or Windows Ink depending on the device"
 msgstr "Escoger automáticamente Wintab o Windows Ink dependiendo del dispositivo"
 
@@ -76082,10 +76001,6 @@ msgstr "Las teclas del 1 al 0 actúan como las del teclado numérico (útil para
 
 msgid "Continuous Grab"
 msgstr "Arrastre continuo"
-
-
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "Permite mover el ratón por fuera de la vista con algunas manipulaciones (transformaciones, arrastre de controles de la interfaz)"
 
 
 msgid "Auto Depth"
@@ -76766,6 +76681,10 @@ msgstr "Cómo se muestran los valores de factores"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Mostrar factores como valores entre 0 y 1"
+
+
+msgid "Percentage"
+msgstr "Porcentaje"
 
 
 msgid "Display factors as percentages"
@@ -85285,26 +85204,6 @@ msgid "Outliner Sync"
 msgstr "Sincronizar con listado"
 
 
-msgid "Sync tabs from outliner datablock selection"
-msgstr "Sincroniza las solapas con la sección de bloques de datos del Listado"
-
-
-msgid "On"
-msgstr "Activado"
-
-
-msgid "Always sync from outliner editors to this editor"
-msgstr "Siempre sincronizar desde los editores de Listado hacia este editor"
-
-
-msgid "Never sync from outliner editors to this editor"
-msgstr "Nunca sincronizar desde los editores de Listado hacia este editor"
-
-
-msgid "Sync when this editor shares an edge with an outliner editor"
-msgstr "Sincronizar cuando este editor comparta un borde con un editor de Listado"
-
-
 msgid "Tab Search Results"
 msgstr "Resultado de búsqueda en solapas"
 
@@ -93052,10 +92951,6 @@ msgid "Renamed %d of %d %s"
 msgstr "Se renombró %d de %d %s"
 
 
-msgid "Quick Setup"
-msgstr "Configuración rápida"
-
-
 msgid "Shortcuts"
 msgstr "Atajos"
 
@@ -93380,7 +93275,7 @@ msgstr "Formas"
 
 
 msgid "Group Colors"
-msgstr "Colores del grupo"
+msgstr "Colores de grupos"
 
 
 msgctxt "Operator"
@@ -93405,7 +93300,7 @@ msgstr "Intervalos Mín"
 
 
 msgid "Display Size X"
-msgstr "Tamaño de visualización en X"
+msgstr "Tamaño visualización  X"
 
 
 msgid "Curve In X"
@@ -93581,7 +93476,7 @@ msgstr "Antes"
 
 
 msgid "View in Render"
-msgstr "Ver durante el procesamiento"
+msgstr "Mostrar al procesar"
 
 
 msgid "Thickness Scale"
@@ -93619,11 +93514,11 @@ msgstr "Deseleccionar puntos"
 
 
 msgid "Keyframes Before"
-msgstr "F. clave anteriores"
+msgstr "Claves anteriores"
 
 
 msgid "Keyframes After"
-msgstr "F. clave posteriores"
+msgstr "Claves posteriores"
 
 
 msgctxt "Operator"
@@ -93946,7 +93841,7 @@ msgstr "Recalcular geometría"
 
 
 msgid "Show Only on Keyframed"
-msgstr "Mostrar sólo en animados"
+msgstr "Sólo animadas"
 
 
 msgctxt "Operator"
@@ -96688,14 +96583,6 @@ msgid "Fractional Preview Zoom"
 msgstr "Zoom fraccional previsualiz"
 
 
-msgid "Show Frame Overlay"
-msgstr "Mostrar indicador de fotograma"
-
-
-msgid "Show Annotations"
-msgstr "Mostrar anotaciones\v"
-
-
 msgctxt "Operator"
 msgid "Scene"
 msgstr "Escena"
@@ -96729,14 +96616,6 @@ msgid "%dx%d"
 msgstr "%dx%d"
 
 
-msgid "Unpack"
-msgstr "Desempacar"
-
-
-msgid "Pack"
-msgstr "Empacar"
-
-
 msgid "Original Frame Range"
 msgstr "Velocidad de fotogramas original"
 
@@ -96755,6 +96634,14 @@ msgstr "Agregar transición"
 
 msgid "Effect Fader"
 msgstr "Efecto desvanecimiento"
+
+
+msgid "Unpack"
+msgstr "Desempacar"
+
+
+msgid "Pack"
+msgstr "Empacar"
 
 
 msgid "Stretch to Input Strip Length"
@@ -98572,16 +98459,6 @@ msgstr "Duplicar clave activo (capa activa)"
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "Interpolar"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "Secuenciar"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "Ver lo seleccionado"
 
@@ -98830,16 +98707,6 @@ msgstr "Geometría visual a malla"
 msgctxt "Operator"
 msgid "Limit Total Vertex Groups"
 msgstr "Limitar total de grupos de vértices"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Objetos a escena..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "Objetos a escena"
 
 
 msgctxt "Operator"
@@ -99380,6 +99247,11 @@ msgstr "Escalar hueso flexible"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "Tamaño lente de cámara"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "Eliminar de todos"
 
@@ -99403,23 +99275,8 @@ msgstr "Escalar radio"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Ángulo lente de cámara"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "Tamaño lente de cámara"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Tamaño de extrusión"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Ancho"
+msgid "DOF Distance (Pick)"
+msgstr "Distancia prof. campo (escoger)"
 
 
 msgid "Ridge"
@@ -99432,76 +99289,6 @@ msgstr "Valles"
 
 msgid "No object selected, using cursor"
 msgstr "Ningún objeto seleccionado, usando el cursor"
-
-
-msgctxt "Operator"
-msgid "DOF Distance (Pick)"
-msgstr "Distancia prof. campo (escoger)"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Distancia prof. campo"
-
-
-msgctxt "Operator"
-msgid "Convert to Mesh"
-msgstr "Convertir a malla"
-
-
-msgctxt "Operator"
-msgid "Convert to Grease Pencil"
-msgstr "Convertir a lápiz de cera"
-
-
-msgctxt "Operator"
-msgid "Convert to Path"
-msgstr "Convertir a trayectoria"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curve"
-msgstr "Convertir a curva Bézier"
-
-
-msgctxt "Operator"
-msgid "Convert to Polygon Curve"
-msgstr "Convertir a curva poligonal"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Ajustar tamaño del objeto Vacío"
-
-
-msgctxt "Operator"
-msgid "Power"
-msgstr "Potencia"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "Tamaño X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Tamaño del foco"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "Fundido del foco"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "Tamaño Y"
-
-
-msgctxt "Operator"
-msgid "Angle"
-msgstr "Ángulo"
 
 
 msgid "Layer:"
@@ -99572,24 +99359,8 @@ msgid "Editing Type"
 msgstr "Tipo de edición"
 
 
-msgid "Preserve Strand Lengths"
-msgstr "Preservar longitud de hebras"
-
-
-msgid "Preserve Root Positions"
-msgstr "Preservar posición de raíces"
-
-
 msgid "Path Steps"
 msgstr "Intervalos trayectoria"
-
-
-msgid "Interpolate Strokes"
-msgstr "Interpolar trazos"
-
-
-msgid "Sequence Options:"
-msgstr "Opciones de secuencia:"
 
 
 msgid "No Brushes currently available"
@@ -99941,14 +99712,6 @@ msgstr "Clip ANL"
 
 msgid "[Action Stash]"
 msgstr "[Esconder acción]"
-
-
-msgid "Undefined"
-msgstr "No definido"
-
-
-msgid "Undefined Node Tree Type"
-msgstr "Tipo de árbol de nodos no definido"
 
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
@@ -100600,64 +100363,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "No fue posible pegar el controlador, porque la ruta RNA es inválida para el ID proporcionado (ID = %s, ruta = %s)"
 
 
-msgid "Poly Order:"
-msgstr "Orden polinómico:"
-
-
-msgid "Before:"
-msgstr "Antes:"
-
-
-msgid "After:"
-msgstr "Después:"
-
-
-msgid "Envelope:"
-msgstr "Envolvente:"
-
-
-msgid "Control Points:"
-msgstr "Puntos de control:"
-
-
-msgid "Add Point"
-msgstr "Agregar punto"
-
-
-msgid "Fra:"
-msgstr "Fot:"
-
-
-msgid "Min:"
-msgstr "Mín:"
-
-
-msgid "Max:"
-msgstr "Máx:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<modificador desconocido>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "'Orden' del polinómio (para un polinómio con n terminos, el 'orden' es n-1)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "Coeficiente para el polinómio"
-
-
-msgid "Power of x"
-msgstr "Potencia de x"
-
-
-msgid "Coefficient of x"
-msgstr "Coeficiente de x"
-
-
-msgid "Second coefficient"
-msgstr "Segundo coeficiente"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -100666,10 +100373,6 @@ msgstr "Agrega un nuevo punto de control a la envolvente en el fotograma actual"
 
 msgid "Delete envelope control point"
 msgstr "Borra el punto de control de la envolvente"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Borrar modificador de curvas-f"
 
 
 msgid "No animation data in buffer to paste"
@@ -101092,34 +100795,6 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "Error de programación: falta eliminar función de transformación o nombre de conjunto de claves"
 
 
-msgid "Selected data-blocks are already assets (or do not support use as assets)"
-msgstr "Los bloques de datos seleccionados ya son recursos (o no soportan ser usados como recursos)"
-
-
-msgid "No data-blocks to create assets for found (or do not support use as assets)"
-msgstr "No se encontraron bloques de datos a partir de los cuales crear recursos (o no soportan ser usados como recursos)"
-
-
-msgid "No asset data-blocks selected/focused"
-msgstr "Ningún bloque de datos de recurso seleccionado/en foco"
-
-
-msgid "Data-block '%s' is now an asset"
-msgstr "El bloque de datos '%s' es ahora un recurso"
-
-
-msgid "%i data-blocks are now assets"
-msgstr "%i bloques de datos son ahora recursos"
-
-
-msgid "Data-block '%s' is no asset anymore"
-msgstr "El bloque de datos '%s' ya no es un recurso"
-
-
-msgid "%i data-blocks are no assets anymore"
-msgstr "%i bloques de datos ya no son recursos"
-
-
 msgid "No point was selected"
 msgstr "No se ha seleccionado ningún punto"
 
@@ -101488,20 +101163,20 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "Esc/clic Der. para cancelar, Intro/clic Izq. para confirmar, RUEDA/MOVER para ajustar el factor"
 
 
+msgid "Easing (by strength)"
+msgstr "Aceleración (según su intensidad)"
+
+
+msgid "Dynamic Effects"
+msgstr "Efectos dinámicos"
+
+
 msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
 msgstr "No es posible encontrar un par de fotogramas de lápiz de cera, en la capa activa, entre los cuales interpolar"
 
 
-msgid "Cannot interpolate as current frame already has existing grease pencil frames"
-msgstr "No es posible interpolar ya que en el fotograma actual ya existen fotogramas de lápiz de cera"
-
-
 msgid "Cannot interpolate in curve edit mode"
 msgstr "No es posible interpolar en modo Editar como curva"
-
-
-msgid "Interpolation requires some editable strokes"
-msgstr "La interpolación requiere que existan algunos trazos editables"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -105533,22 +105208,6 @@ msgid "Disabled, CPU with SSE4.1 is required"
 msgstr "Deshabilitado, se requiere una CPU con SSE4.1"
 
 
-msgid "Type A"
-msgstr "Tipo A"
-
-
-msgid "Type B"
-msgstr "Tipo B"
-
-
-msgid "Disabled, built without OpenSubdiv"
-msgstr "Deshabilitado, compilado sin soporte para OpenSubdiv"
-
-
-msgid "Type C"
-msgstr "Tipo C"
-
-
 msgid "Undefined Socket Type"
 msgstr "Tipo de conector no definido"
 
@@ -105972,10 +105631,6 @@ msgstr "Ningún clip"
 
 msgid "(empty)"
 msgstr "(vacío)"
-
-
-msgid "Modal map, not yet"
-msgstr "Mapa modal, aún no"
 
 
 msgid "Can't reload with running modal operators"
@@ -106991,22 +106646,6 @@ msgid "Overwrite %s"
 msgstr "Sobrescribir %s"
 
 
-msgid "Can't edit previews of overridden library data"
-msgstr "No es posible editar las previsualizaciones de datos redefinidos de una biblioteca"
-
-
-msgid "Data-block does not support previews"
-msgstr "El bloque de datos no soporta previsualizaciones"
-
-
-msgid "Incorrect context for running data-block fake user toggling"
-msgstr "Contexto incorrecto para accionar la alternancia del usuario ficticio del bloque de datos"
-
-
-msgid "Data-block type does not support fake user"
-msgstr "El tipo de bloque de datos no soporta asignarle un usuario ficticio"
-
-
 msgid "Numeric input evaluation"
 msgstr "Evaluación del ingreso numérico"
 
@@ -107317,14 +106956,6 @@ msgstr "Relación"
 
 msgid "Target is not in the constraint target list"
 msgstr "El objetivo no se encuentra en la lista de objetivos de la restricción"
-
-
-msgid "Easing (by strength)"
-msgstr "Aceleración (según su intensidad)"
-
-
-msgid "Dynamic Effects"
-msgstr "Efectos dinámicos"
 
 
 msgid "Bezier spline cannot have points added"
@@ -108454,6 +108085,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "Activado"
 
 
 msgid "Val"
