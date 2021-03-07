@@ -627,7 +627,6 @@ def brush_settings(layout, context, brush, popover=False):
 
         # use_persistent, set_persistent_base
         if capabilities.has_persistence:
-            ob = context.sculpt_object
 
             layout.separator()
             layout.use_property_split = False
@@ -1242,7 +1241,7 @@ def brush_basic__draw_color_selector(context, layout, brush, gp_settings, props)
 
         sub_row = row.row(align=True)
         if settings.color_mode == 'VERTEXCOLOR' or gp_settings.brush_draw_mode == 'VERTEXCOLOR':
-            sub = row.row(align = True)    
+            sub = row.row(align = True)
             sub.scale_x = 0.33
             sub.prop_with_popover(brush, "color", text="", panel="TOPBAR_PT_gpencil_vertexcolor")
             sub.prop(brush, "secondary_color", text="")
@@ -1356,7 +1355,7 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
                 layout.template_curve_mapping(settings, "thickness_primitive_curve", brush=True)
 
 
-def brush_basic_gpencil_sculpt_settings(layout, context, brush, *, compact=False):
+def brush_basic_gpencil_sculpt_settings(layout, _context, brush, *, compact=False):
     gp_settings = brush.gpencil_settings
     tool = brush.gpencil_sculpt_tool
 
@@ -1391,7 +1390,6 @@ def brush_basic_gpencil_sculpt_settings(layout, context, brush, *, compact=False
 
 
 def brush_basic_gpencil_weight_settings(layout, _context, brush, *, compact=False):
-    gp_settings = brush.gpencil_settings
     layout.prop(brush, "size", slider=True)
 
     row = layout.row(align=True)
