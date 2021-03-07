@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -2789,8 +2789,8 @@ msgid "Strokes"
 msgstr "Traços"
 
 
-msgid "Resolution"
-msgstr "Resolução"
+msgid "Precision"
+msgstr "Precisão"
 
 
 msgid "Visible"
@@ -3767,26 +3767,6 @@ msgstr "Configurações de espaço de cor de entrada."
 
 msgid "Input Color Space"
 msgstr "Espaço de cor de entrada"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Formatador logarítmico com base no sistema \"Filmic\", com 16.5 intervalos de latitude, e 25 intervalos de amplitude dinâmica."
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (espaço completo), espaço linear nativo do Blender."
-
-
-msgid "ACES linear space"
-msgstr "Espaço linear ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "O espaço de cor usado para imagens que não contém dados de cores (por exemplo em mapas das normais)."
-
-
-msgid "Standard RGB Display Space"
-msgstr "Espaço de exibição padrão RGB"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -7209,6 +7189,10 @@ msgid "Directory to save the textures"
 msgstr "Diretório para salvar as texturas."
 
 
+msgid "Resolution"
+msgstr "Resolução"
+
+
 msgid "Output image resolution"
 msgstr "A resolução da imagem de saída."
 
@@ -8284,10 +8268,6 @@ msgstr "Senoide normalizada"
 
 msgid "sin(x) / x"
 msgstr "seno (x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "Multiplicador de fase"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -10206,168 +10186,12 @@ msgid "Settings for Grease Pencil interpolation tools"
 msgstr "Definições para as ferramentas de interpolação de lápis de cera."
 
 
-msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "Quantidade de amplificação de rebatimentos elásticos para uma facilitação tipo elástica"
-
-
-msgid "Amount of overshoot for 'back' easing"
-msgstr "Quantidade de ajuste \"além dos valores\" para adicionar anteriormente e ajudar com a facilitação"
-
-
-msgid "Easing"
-msgstr "Facilitação"
-
-
-msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "Quais terminações do segmento entre os quadros de lápis de cera anteriores e o posteriores a facilitação de interpolação será aplicada."
-
-
-msgid "Automatic Easing"
-msgstr "Facilitação automática"
-
-
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "O tipo de facilitação é escolhido automaticamente com base no tipo de interpolação utilizada (exemplo: 'facilitação de entrada' para tipos transacionais, e 'facilitação de saída' para efeitos dinâmicos)."
-
-
-msgid "Only on the end closest to the next keyframe"
-msgstr "Somente na terminação mais próxima ao próximo quadro-chave."
-
-
-msgid "Only on the end closest to the first keyframe"
-msgstr "Somente na terminação mais próxima ao primeiro quadro-chave."
-
-
-msgid "Ease In and Out"
-msgstr "Facilitar entrada e saída"
-
-
-msgid "Segment between both keyframes"
-msgstr "Segmentos entre ambos os quadros-chave."
-
-
-msgid "Interpolate All Layers"
-msgstr "Interpolar todas as camadas"
-
-
-msgid "Interpolate all layers, not only active"
-msgstr "Interpola todas as camadas, ao invés de interpolar somente a ativa."
-
-
-msgid "Interpolate Selected Strokes"
-msgstr "Interpolar os traços selecionados"
-
-
-msgid "Interpolate only selected strokes in the original frame"
-msgstr "Interpola somente os traços selecionados dentro dos quadros originais."
-
-
 msgid "Interpolation Curve"
 msgstr "Curva de interpolação"
 
 
 msgid "Custom curve to control 'sequence' interpolation between Grease Pencil frames"
 msgstr "Curva personalizada para controlar a interpolação da \"sequência\" entre os quadros de lápis de cera."
-
-
-msgid "Period"
-msgstr "Período"
-
-
-msgid "Time between bounces for elastic easing"
-msgstr "Tempo entre rebatimentos para uma facilitação elástica."
-
-
-msgid "Step"
-msgstr "Passos"
-
-
-msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
-msgstr "O método de interpolação a ser usado na próxima vez que a \"Sequência interpolada\" é executada."
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "Interpolação em linha-reta entre A e B (ex: sem facilitação de entrada ou saída)"
-
-
-msgid "Custom"
-msgstr "Personalizar"
-
-
-msgid "Custom interpolation defined using a curve map"
-msgstr "Uma interpolação personalizada definida usando uma curva como mapa."
-
-
-msgid "Sinusoidal"
-msgstr "Senoidal"
-
-
-msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "Facilitação senoidal (mais fraca, quase linear mas com uma leve curvatura)."
-
-
-msgid "Quadratic"
-msgstr "Quadrático(a)"
-
-
-msgid "Quadratic easing"
-msgstr "Facilitação quadrática."
-
-
-msgid "Cubic easing"
-msgstr "Facilitação cúbica."
-
-
-msgid "Quartic"
-msgstr "Quártico(a)"
-
-
-msgid "Quartic easing"
-msgstr "Facilitação quártica."
-
-
-msgid "Quintic"
-msgstr "Quíntico(a)"
-
-
-msgid "Quintic easing"
-msgstr "Facilitação quíntica."
-
-
-msgid "Exponential"
-msgstr "Exponencial"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "Facilitação exponencial (exagerada)."
-
-
-msgid "Circular"
-msgstr "Circular"
-
-
-msgid "Circular easing (strongest and most dynamic)"
-msgstr "Facilitação circular (mais forte e mais dinâmica)."
-
-
-msgid "Cubic easing with overshoot and settle"
-msgstr "Facilitação cúbica com permissão para ultrapassar valores e ajuste posterior."
-
-
-msgid "Bounce"
-msgstr "Rebatimentos"
-
-
-msgid "Exponentially decaying parabolic bounce, like when objects collide"
-msgstr "Rebatimento parabólico de decaimento exponencial, como quando os objetos colidem."
-
-
-msgid "Elastic"
-msgstr "Elástico"
-
-
-msgid "Exponentially decaying sine wave, like an elastic band"
-msgstr "Onda senoidal de decaimento exponencial, como uma corda elástica."
 
 
 msgid "Grease Pencil Layer"
@@ -10546,8 +10370,16 @@ msgid "Layer"
 msgstr "Camadas"
 
 
+msgid "Custom"
+msgstr "Personalizar"
+
+
 msgid "Spacing"
 msgstr "Espaçamento"
+
+
+msgid "Circular"
+msgstr "Circular"
 
 
 msgid "Grid"
@@ -10620,14 +10452,6 @@ msgstr "Terminação final"
 
 msgid "Flat"
 msgstr "Achatar"
-
-
-msgid "Groups"
-msgstr "Grupos"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "Pesos para os grupos de vértices nos quais este vértice é membro."
 
 
 msgid "Thickness of stroke (in pixels)"
@@ -11028,6 +10852,10 @@ msgid "Mirror Modifier"
 msgstr "Modificador - Espelho"
 
 
+msgid "Step"
+msgstr "Passos"
+
+
 msgid "Fixed"
 msgstr "Fixo"
 
@@ -11242,6 +11070,10 @@ msgstr "Faixa de quadros"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "A faixa final de quadros de todas as curvas-f dentro desta ação."
+
+
+msgid "Groups"
+msgstr "Grupos"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -11851,6 +11683,10 @@ msgstr "Raio de suavização de traço"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "Distância mínima do último ponto antes que o traço continue."
+
+
+msgid "Elastic"
+msgstr "Elástico"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -17103,8 +16939,16 @@ msgid "Create a linear progression"
 msgstr "Cria uma progressão linear."
 
 
+msgid "Quadratic"
+msgstr "Quadrático(a)"
+
+
 msgid "Create a quadratic progression"
 msgstr "Cria uma progressão quadrática."
+
+
+msgid "Easing"
+msgstr "Facilitação"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -18077,10 +17921,6 @@ msgstr "Simulação"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Solucionador de estado pleno funcionando em contexto de tempo-real e ignorando as ações e restrições que não sejam do tipo cinemática inversa."
-
-
-msgid "Precision"
-msgstr "Precisão"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -19710,8 +19550,40 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Ponto de curva Bézier com duas hastes, definindo um quadro-chave dentro de uma curva-f."
 
 
+msgid "Amount to boost elastic bounces for 'elastic' easing"
+msgstr "Quantidade de amplificação de rebatimentos elásticos para uma facilitação tipo elástica"
+
+
+msgid "Amount of overshoot for 'back' easing"
+msgstr "Quantidade de ajuste \"além dos valores\" para adicionar anteriormente e ajudar com a facilitação"
+
+
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "Quais terminações do segmento entre este e o próximo quadro-chave a facilitação de interpolação será aplicada."
+
+
+msgid "Automatic Easing"
+msgstr "Facilitação automática"
+
+
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "O tipo de facilitação é escolhido automaticamente com base no tipo de interpolação utilizada (exemplo: 'facilitação de entrada' para tipos transacionais, e 'facilitação de saída' para efeitos dinâmicos)."
+
+
+msgid "Only on the end closest to the next keyframe"
+msgstr "Somente na terminação mais próxima ao próximo quadro-chave."
+
+
+msgid "Only on the end closest to the first keyframe"
+msgstr "Somente na terminação mais próxima ao primeiro quadro-chave."
+
+
+msgid "Ease In and Out"
+msgstr "Facilitar entrada e saída"
+
+
+msgid "Segment between both keyframes"
+msgstr "Segmentos entre ambos os quadros-chave."
 
 
 msgid "Left Handle"
@@ -19750,8 +19622,80 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "Sem interpolação, valor de A é mantido até que B seja encontrado."
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "Interpolação em linha-reta entre A e B (ex: sem facilitação de entrada ou saída)"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "Interpolação suave entre A e B, com algum controle sobre o formato da curva."
+
+
+msgid "Sinusoidal"
+msgstr "Senoidal"
+
+
+msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
+msgstr "Facilitação senoidal (mais fraca, quase linear mas com uma leve curvatura)."
+
+
+msgid "Quadratic easing"
+msgstr "Facilitação quadrática."
+
+
+msgid "Cubic easing"
+msgstr "Facilitação cúbica."
+
+
+msgid "Quartic"
+msgstr "Quártico(a)"
+
+
+msgid "Quartic easing"
+msgstr "Facilitação quártica."
+
+
+msgid "Quintic"
+msgstr "Quíntico(a)"
+
+
+msgid "Quintic easing"
+msgstr "Facilitação quíntica."
+
+
+msgid "Exponential"
+msgstr "Exponencial"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "Facilitação exponencial (exagerada)."
+
+
+msgid "Circular easing (strongest and most dynamic)"
+msgstr "Facilitação circular (mais forte e mais dinâmica)."
+
+
+msgid "Cubic easing with overshoot and settle"
+msgstr "Facilitação cúbica com permissão para ultrapassar valores e ajuste posterior."
+
+
+msgid "Bounce"
+msgstr "Rebatimentos"
+
+
+msgid "Exponentially decaying parabolic bounce, like when objects collide"
+msgstr "Rebatimento parabólico de decaimento exponencial, como quando os objetos colidem."
+
+
+msgid "Exponentially decaying sine wave, like an elastic band"
+msgstr "Onda senoidal de decaimento exponencial, como uma corda elástica."
+
+
+msgid "Period"
+msgstr "Período"
+
+
+msgid "Time between bounces for elastic easing"
+msgstr "Tempo entre rebatimentos para uma facilitação elástica."
 
 
 msgid "Left handle selection status"
@@ -21474,10 +21418,6 @@ msgid "Special Characters"
 msgstr "Caracteres especiais"
 
 
-msgid "Interpolate"
-msgstr "Interpolar"
-
-
 msgid "Edge Data"
 msgstr "Dados das arestas"
 
@@ -21524,10 +21464,6 @@ msgstr "Ganchos"
 
 msgid "Light"
 msgstr "Leve"
-
-
-msgid "Make Links"
-msgstr "Criar vínculos"
 
 
 msgid "Make Single User"
@@ -22000,6 +21936,10 @@ msgstr "Vértices em um bloco de dados de malha."
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "Pesos de influência usado pelo modificador chanfro com a opção \"Somente vértices\"."
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "Pesos para os grupos de vértices nos quais este vértice é membro."
 
 
 msgid "Index of this vertex"
@@ -26005,14 +25945,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "Distância entre dois feixes usados para alterar a escala do objeto."
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "Mostra as opções padrão expandidas na interface de usuário."
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "Mostra opções extras de maneira expandida na interface de usuário."
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "Limita a velocidade de rastreamento para tornar o efeito de retorno visual mais fácil (isto não afeta a qualidade de rastreamento)."
 
@@ -26143,6 +26075,10 @@ msgstr "Quadro de ancoragem"
 
 msgid "Reference point to anchor stabilization (other frames will be adjusted relative to this frame's position)"
 msgstr "O quadro que serve como ponto de referência para o ancoramento da estabilização (outros quadros serão ajustados com relação a posição presente neste quadro)."
+
+
+msgid "Interpolate"
+msgstr "Interpolar"
 
 
 msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilization"
@@ -28354,12 +28290,12 @@ msgid "Dot Product"
 msgstr "Produto escalar"
 
 
-msgid "Object Info"
-msgstr "Informações de objetos"
-
-
 msgid "Original"
 msgstr "Original"
+
+
+msgid "Object Info"
+msgstr "Informações de objetos"
 
 
 msgctxt "NodeTree"
@@ -31493,6 +31429,10 @@ msgid "Distance between selected tracks"
 msgstr "Distância entre as trilhas selecionadas"
 
 
+msgid "Keep Original"
+msgstr "Manter original"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "Marcadores 3D para a malha"
@@ -33067,10 +33007,6 @@ msgstr "Selecionar aleatoriamente"
 
 msgid "Randomly select some control points"
 msgstr "Seleciona alguns pontos de controle de maneira aleatória."
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "Percentagem de objetos para selecionar aleatoriamente."
 
 
 msgid "Seed for the random number generator"
@@ -34991,13 +34927,12 @@ msgid "Interpolate grease pencil strokes between frames"
 msgstr "Interpola os traços de lápis de cera entre os quadros."
 
 
+msgid "Confirm on Release"
+msgstr "Confirmar ao soltar"
+
+
 msgid "Bias factor for which frame has more influence on the interpolated strokes"
 msgstr "Um fator de ajuste fino (afinidade) para o qual o quadro terá mais influência nos traços interpolados."
-
-
-msgctxt "Operator"
-msgid "Remove Breakdowns"
-msgstr "Remover interruptividades"
 
 
 msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
@@ -35011,6 +34946,18 @@ msgstr "Sequência de interpolação"
 
 msgid "Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames"
 msgstr "Gera valores de inserção intra-quadros para interpolação suavizada entre os quadros de lápis de cera."
+
+
+msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
+msgstr "Quais terminações do segmento entre os quadros de lápis de cera anteriores e o posteriores a facilitação de interpolação será aplicada."
+
+
+msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
+msgstr "O método de interpolação a ser usado na próxima vez que a \"Sequência interpolada\" é executada."
+
+
+msgid "Custom interpolation defined using a curve map"
+msgstr "Uma interpolação personalizada definida usando uma curva como mapa."
 
 
 msgctxt "Operator"
@@ -35132,10 +35079,6 @@ msgstr "Reprojetar traços"
 
 msgid "Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)"
 msgstr "Reprojeta os traços selecionados a partir da porta de visão atual como se eles fossem recém desenhados (por exemplo, para consertos de problemas gerados por movimentos acidentais do cursor 3D ou alterações acidentais da porta de visão, ou para combinação com geometrias deformantes)"
-
-
-msgid "Keep Original"
-msgstr "Manter original"
 
 
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
@@ -35391,10 +35334,6 @@ msgstr "Preto"
 
 msgid "White"
 msgstr "Branco"
-
-
-msgid "Confirm on Release"
-msgstr "Confirmar ao soltar"
 
 
 msgctxt "Operator"
@@ -40629,15 +40568,6 @@ msgstr "Limpa a localização delta em adição a limpeza das transformações n
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "Vincular dados"
-
-
-msgid "Apply active object links to other selected objects"
-msgstr "Aplica os vínculos do objeto ativo em outros objetos selecionados."
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Vincular objetos a cena"
 
@@ -43359,20 +43289,16 @@ msgid "Custom properties"
 msgstr "Propriedades personalizadas"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Fator de pesos de influência para nos quais os quadros-chave são mais favorecidos."
+
+
 msgid "Next Keyframe"
 msgstr "Próximo quadro-chave"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Número do quadro de quadro-chave imediatamente após o quadro atual."
-
-
-msgid "Percentage"
-msgstr "Porcentagem"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Fator de pesos de influência para nos quais os quadros-chave são mais favorecidos."
 
 
 msgid "Previous Keyframe"
@@ -50564,6 +50490,11 @@ msgstr "Círculo"
 
 
 msgctxt "Operator"
+msgid "Interpolate"
+msgstr "Interpolação"
+
+
+msgctxt "Operator"
 msgid "Thickness"
 msgstr "Espessura"
 
@@ -52392,10 +52323,6 @@ msgid "Continuous Grab"
 msgstr "Agarrar continuamente"
 
 
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "Permite a movimentação do mouse fora da vista em alguns manipuladores (transformação, e arrasto de controles da interface)."
-
-
 msgid "Auto Depth"
 msgstr "Profundidade automática"
 
@@ -52770,6 +52697,10 @@ msgstr "Quadrado (MV + S)"
 
 msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Um quadrado mostrando matiz e valor, com um deslizador de saturação."
+
+
+msgid "Percentage"
+msgstr "Porcentagem"
 
 
 msgid "New Window"
@@ -58651,10 +58582,6 @@ msgid "Properties space data"
 msgstr "Espaço de dados de propriedades."
 
 
-msgid "On"
-msgstr "Ligar"
-
-
 msgid "Pin ID"
 msgstr "Afixar identificador"
 
@@ -64497,12 +64424,12 @@ msgid "Clip"
 msgstr "Clipe"
 
 
-msgid "Unpack"
-msgstr "Desempacotar"
-
-
 msgid "Effect Fader"
 msgstr "Esmaecedor de efeitos"
+
+
+msgid "Unpack"
+msgstr "Desempacotar"
 
 
 msgid "Source Channel"
@@ -65221,16 +65148,6 @@ msgstr "Criar"
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "Interpolação"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "Sequências:"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "Visualizar a seleção"
 
@@ -65333,16 +65250,6 @@ msgstr "Todas as transformações para deltas"
 
 msgid "Visual Geometry to Mesh"
 msgstr "Geometria visual para malha"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Objetos para cena..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "Objetos para cena"
 
 
 msgctxt "Operator"
@@ -65535,6 +65442,11 @@ msgstr "Escalonar osso maleável"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "Escala das lentes da câmera"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "Remover de todos"
 
@@ -65550,58 +65462,8 @@ msgstr "Escalonar raio"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Ângulo das lentes de câmera"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "Escala das lentes da câmera"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Tamanho da extrusão"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Tamanho da largura"
-
-
-msgctxt "Operator"
 msgid "DOF Distance (Pick)"
 msgstr "Obter distância DOF"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Distância DOF"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Tamanho de desenho de objeto vazio"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "Tamanho X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Tamanho do foco"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "Mescla do foco"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "Tamanho Y"
 
 
 msgid "Layer:"
@@ -65637,10 +65499,6 @@ msgstr "Aplicar imagem da câmera"
 
 msgid "Path Steps"
 msgstr "Passos de caminho:"
-
-
-msgid "Sequence Options:"
-msgstr "Opções para sequências:"
 
 
 msgid "No Brushes currently available"
@@ -66394,64 +66252,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "Não é possível colar controlador, pois o caminho RNA é inválido para o identificador fornecido (ID = %s, Caminho = %s)"
 
 
-msgid "Poly Order:"
-msgstr "Ordem poligonal:"
-
-
-msgid "Before:"
-msgstr "Antes:"
-
-
-msgid "After:"
-msgstr "Depois:"
-
-
-msgid "Envelope:"
-msgstr "Envelope:"
-
-
-msgid "Control Points:"
-msgstr "Pontos de controle:"
-
-
-msgid "Add Point"
-msgstr "Adicionar ponto"
-
-
-msgid "Fra:"
-msgstr "Quadro: "
-
-
-msgid "Min:"
-msgstr "Mínimo: "
-
-
-msgid "Max:"
-msgstr "Máximo: "
-
-
 msgid "<Unknown Modifier>"
 msgstr "<Modificador desconhecido>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "A \"ordem\" do polinômio (para um polinômio com n termos, \"ordem\" é n-1)."
-
-
-msgid "Coefficient for polynomial"
-msgstr "Coeficiente para polinômio."
-
-
-msgid "Power of x"
-msgstr "Potência de x"
-
-
-msgid "Coefficient of x"
-msgstr "Coeficiente de x"
-
-
-msgid "Second coefficient"
-msgstr "Segundo coeficiente"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -66460,10 +66262,6 @@ msgstr "Adiciona um novo ponto de controle para o envelope no quadro atual."
 
 msgid "Delete envelope control point"
 msgstr "Apaga os pontos de controle do envelope."
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Apagar o modificador de curva-f"
 
 
 msgid "No animation data in buffer to paste"
@@ -66978,16 +66776,16 @@ msgid "There is no layer number %d"
 msgstr "Não existe camada numerada com o índice de número %d"
 
 
+msgid "Easing (by strength)"
+msgstr "Facilitação (por potência)"
+
+
+msgid "Dynamic Effects"
+msgstr "Efeitos dinâmicos"
+
+
 msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
 msgstr "Não é possível encontrar um par de quadros de lápis de cera para a interpolação entre os mesmos na camada ativa."
-
-
-msgid "Cannot interpolate as current frame already has existing grease pencil frames"
-msgstr "Não é possível interpolar pois o quadro atual já possui quadros existentes de lápis de cera."
-
-
-msgid "Interpolation requires some editable strokes"
-msgstr "A interpolação requer alguns traços editáveis."
 
 
 msgid "Custom interpolation curve does not exist"
@@ -69810,10 +69608,6 @@ msgid "(empty)"
 msgstr "(vazio)"
 
 
-msgid "Modal map, not yet"
-msgstr "Mapa modal, ainda indisponível"
-
-
 msgid "Can't reload with running modal operators"
 msgstr "Não é possível recarregar com operadores modais em execução."
 
@@ -70791,14 +70585,6 @@ msgid "Relationship"
 msgstr "Relacionamento"
 
 
-msgid "Easing (by strength)"
-msgstr "Facilitação (por potência)"
-
-
-msgid "Dynamic Effects"
-msgstr "Efeitos dinâmicos"
-
-
 msgid "Bezier spline cannot have points added"
 msgstr "Spline Bézier não pode ter pontos adicionados."
 
@@ -71452,6 +71238,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "Ligar"
 
 
 msgid "Val"

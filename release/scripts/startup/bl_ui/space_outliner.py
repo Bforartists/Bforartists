@@ -19,10 +19,6 @@
 # <pep8 compliant>
 import bpy
 from bpy.types import Header, Menu, Panel
-from bpy.app.translations import (
-    contexts as i18n_contexts,
-    pgettext_iface as iface_,
-)
 
 
 ################################ Switch between the editors ##########################################
@@ -375,7 +371,7 @@ class OUTLINER_MT_collection_new(Menu):
     bl_label = "Collection"
 
     @staticmethod
-    def draw_without_context_menu(context, layout):
+    def draw_without_context_menu(_context, layout):
         layout.operator("outliner.collection_new", text="New Collection", icon = "GROUP").nested = False
         layout.operator("outliner.id_paste", text="Paste Data-Blocks", icon='PASTEDOWN')
 
@@ -398,7 +394,6 @@ class OUTLINER_MT_object(Menu):
         layout = self.layout
 
         space = context.space_data
-        obj = context.active_object
 
         layout.operator("outliner.object_operation", text="Select", icon="RESTRICT_SELECT_OFF").type = 'SELECT'
         layout.operator("outliner.object_operation", text="Select Hierarchy", icon="RESTRICT_SELECT_OFF").type = 'SELECT_HIERARCHY'

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -1315,8 +1315,8 @@ msgid "Strokes"
 msgstr "Potezi"
 
 
-msgid "Resolution"
-msgstr "Rezolucija"
+msgid "Precision"
+msgstr "Preciznost"
 
 
 msgid "Visible"
@@ -3568,6 +3568,10 @@ msgid "Directory to save the textures"
 msgstr "Osnovni direktorijum sa teksturama"
 
 
+msgid "Resolution"
+msgstr "Rezolucija"
+
+
 msgid "Output image resolution"
 msgstr "Rezolucija izlazne slike"
 
@@ -4059,10 +4063,6 @@ msgstr "Normalizovan sinus"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "Množilac"
 
 
 msgid "Generator F-Modifier"
@@ -4801,38 +4801,6 @@ msgid "Freehand curves defining the sketch on this frame"
 msgstr "Slobodoručne krive koje formiraju crtež trenutnog kadra"
 
 
-msgid "Easing"
-msgstr "Ublažavanje"
-
-
-msgid "Period"
-msgstr "Period"
-
-
-msgid "Step"
-msgstr "Korak"
-
-
-msgid "Custom"
-msgstr "Prilagođeno"
-
-
-msgid "Quadratic"
-msgstr "Kvadratna"
-
-
-msgid "Circular"
-msgstr "Kružno"
-
-
-msgid "Bounce"
-msgstr "Odbijanje"
-
-
-msgid "Elastic"
-msgstr "Plastično"
-
-
 msgid "Grease Pencil Layer"
 msgstr "Sloj skice"
 
@@ -4921,8 +4889,16 @@ msgid "Layer"
 msgstr "Sloj"
 
 
+msgid "Custom"
+msgstr "Prilagođeno"
+
+
 msgid "Spacing"
 msgstr "Razmak"
+
+
+msgid "Circular"
+msgstr "Kružno"
 
 
 msgid "Grid"
@@ -4947,10 +4923,6 @@ msgstr "Poslednji poklopac"
 
 msgid "Flat"
 msgstr "Ravno"
-
-
-msgid "Groups"
-msgstr "Grupe"
 
 
 msgid "Material Index"
@@ -5174,6 +5146,10 @@ msgid "Lattice object to deform with"
 msgstr "Objekat kaveza za deformisanje"
 
 
+msgid "Step"
+msgstr "Korak"
+
+
 msgid "Fixed"
 msgstr "Fiksno"
 
@@ -5264,6 +5240,10 @@ msgstr "F-kriva"
 
 msgid "Frame Range"
 msgstr "Opseg kadrova:"
+
+
+msgid "Groups"
+msgstr "Grupe"
 
 
 msgid "Bones"
@@ -5564,6 +5544,10 @@ msgstr "Umekšaj poluprečnik poteza"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "Minimalno rastojanje od poslednje tačke do nastavka poteza"
+
+
+msgid "Elastic"
+msgstr "Plastično"
 
 
 msgid "Stroke Method"
@@ -8152,8 +8136,16 @@ msgid "Create a linear progression"
 msgstr "Napravi linearnu progresiju"
 
 
+msgid "Quadratic"
+msgstr "Kvadratna"
+
+
 msgid "Create a quadratic progression"
 msgstr "Napravi kvadratnu progresiju"
+
+
+msgid "Easing"
+msgstr "Ublažavanje"
 
 
 msgid "Diagonal"
@@ -8632,10 +8624,6 @@ msgid "Simulation"
 msgstr "Simulacija"
 
 
-msgid "Precision"
-msgstr "Preciznost"
-
-
 msgid "Max Step"
 msgstr "Maks. korak"
 
@@ -8926,6 +8914,14 @@ msgstr "Desna ručka"
 
 msgid "Coordinates of the right handle (after the control point)"
 msgstr "Koordinate desne ručke (posle kontrolne tačke)"
+
+
+msgid "Bounce"
+msgstr "Odbijanje"
+
+
+msgid "Period"
+msgstr "Period"
 
 
 msgid "Keying Set"
@@ -9549,10 +9545,6 @@ msgstr "Udice"
 
 msgid "Light"
 msgstr "Svetlost"
-
-
-msgid "Make Links"
-msgstr "Napravi veze"
 
 
 msgid "Apply"
@@ -11938,12 +11930,12 @@ msgid "Equal"
 msgstr "Jednako"
 
 
-msgid "Object Info"
-msgstr "Informacije o objektu"
-
-
 msgid "Original"
 msgstr "Original"
+
+
+msgid "Object Info"
+msgstr "Informacije o objektu"
 
 
 msgid "Label Font Size"
@@ -13290,6 +13282,10 @@ msgstr "Dodaj marker i klizaj"
 
 msgid "Distance between selected tracks"
 msgstr "Rastapanje između izabranih staza"
+
+
+msgid "Keep Original"
+msgstr "Sačuvaj original"
 
 
 msgctxt "Operator"
@@ -15174,10 +15170,6 @@ msgstr "Ubaci poteze"
 
 msgid "Subdivisions"
 msgstr "Podela"
-
-
-msgid "Keep Original"
-msgstr "Sačuvaj original"
 
 
 msgid "Show all Grease Pencil layers"
@@ -17517,11 +17509,6 @@ msgstr "Očisti lokaciju"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "Povezani podaci"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Poveži obejat sa scenom"
 
@@ -18553,10 +18540,6 @@ msgstr "Postavlja trenutnu pozu kao početnu"
 
 msgid "Next Keyframe"
 msgstr "Sledeći ključni kadar"
-
-
-msgid "Percentage"
-msgstr "Procenat"
 
 
 msgid "Previous Keyframe"
@@ -22643,6 +22626,10 @@ msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Kvadratni izbor vrednosti nijanse i klizačem zasićenosti bojom"
 
 
+msgid "Percentage"
+msgstr "Procenat"
+
+
 msgid "New Window"
 msgstr "U novom prozoru"
 
@@ -24239,10 +24226,6 @@ msgstr "Metod filtriranja"
 
 msgid "Properties Space"
 msgstr "Prostor osobina"
-
-
-msgid "On"
-msgstr "Uključeno"
 
 
 msgid "Pin ID"
@@ -27208,11 +27191,6 @@ msgstr "Dodaj pasivni"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Objekti na scenu..."
-
-
-msgctxt "Operator"
 msgid "To Next Keyframe"
 msgstr "Na sledeći ključni kadar"
 
@@ -27287,43 +27265,13 @@ msgstr "Očisti slobodoručne stranice"
 
 
 msgctxt "Operator"
-msgid "Remove from All"
-msgstr "Ukloni iz svih"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Ugao objektiva kamere"
-
-
-msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "Veličina objektiva kamere"
 
 
 msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Veličina izvlačenja"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Širina"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Udaljenost DOF-a"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "Veličina X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Veličina projekcije"
+msgid "Remove from All"
+msgstr "Ukloni iz svih"
 
 
 msgid "Layer:"
@@ -27475,48 +27423,8 @@ msgid "Scene not found"
 msgstr "Brzina zvuka"
 
 
-msgid "Before:"
-msgstr "Pre:"
-
-
-msgid "After:"
-msgstr "Posle:"
-
-
-msgid "Envelope:"
-msgstr "Koverat:"
-
-
-msgid "Control Points:"
-msgstr "Kontrolne tačke:"
-
-
-msgid "Add Point"
-msgstr "Dodaj tačku"
-
-
-msgid "Min:"
-msgstr "Min:"
-
-
-msgid "Max:"
-msgstr "Maks:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<Nepoznati izmenjivač>"
-
-
-msgid "Power of x"
-msgstr "Snaga po x"
-
-
-msgid "Coefficient of x"
-msgstr "Koeficijent po x"
-
-
-msgid "Second coefficient"
-msgstr "Drugi koeficijent"
 
 
 msgid "Delete envelope control point"
@@ -29112,6 +29020,10 @@ msgstr "RGBA"
 
 msgid "Degr"
 msgstr "Stepen"
+
+
+msgid "On"
+msgstr "Uključeno"
 
 
 msgid "Val"

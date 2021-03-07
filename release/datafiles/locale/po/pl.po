@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -2580,22 +2580,6 @@ msgstr "Ustawienia wejściowej przestrzeni kolorów"
 
 msgid "Input Color Space"
 msgstr "Wejściowa przestrzeń kolorów"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Domyślna przestrzeń liniowa Blendera Rec.709 (pełen zakres)"
-
-
-msgid "ACES linear space"
-msgstr "Przestrzeń liniowa ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Przestrzeń liniowa używana dla obrazków, które zawierają dane nie będące kolorami (np. mapy wektorów normalnych)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Standardowa przestrzeń kolorów RGB"
 
 
 msgid "Color Space"
@@ -5996,10 +5980,6 @@ msgid "sin(x) / x"
 msgstr "sin(x)/x"
 
 
-msgid "Phase Multiplier"
-msgstr "Mnożnik fazy"
-
-
 msgid "Scale factor determining the 'speed' of the function"
 msgstr "Czynnik skalujący określający 'prędkość' funkcji"
 
@@ -6160,10 +6140,6 @@ msgid "Flat"
 msgstr "Płaskie"
 
 
-msgid "Groups"
-msgstr "Grupy"
-
-
 msgid "Window"
 msgstr "Okno"
 
@@ -6178,6 +6154,10 @@ msgstr "Stałe"
 
 msgid "Library"
 msgstr "Biblioteka"
+
+
+msgid "Groups"
+msgstr "Grupy"
 
 
 msgid "Envelope"
@@ -7251,60 +7231,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "Nie można było wkleić sterownika ponieważ ścieżka RNA jest nieprawidłowa dla danego ID (ID = %s, path = %s)"
 
 
-msgid "Poly Order:"
-msgstr "Porządek poligonów:"
-
-
-msgid "Before:"
-msgstr "Przed:"
-
-
-msgid "After:"
-msgstr "Po:"
-
-
-msgid "Control Points:"
-msgstr "Punkt Kontrolny"
-
-
-msgid "Add Point"
-msgstr "Dodaj Punkt"
-
-
-msgid "Fra:"
-msgstr "Fra:"
-
-
-msgid "Min:"
-msgstr "Min:"
-
-
-msgid "Max:"
-msgstr "Maks:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<Nieznany Modyfikator>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr ";Porządek' Wielomianowych (dla wielomianowych z n określeniami, 'porządek' wynosi n-1)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "Współczynnik dla wielomianowych"
-
-
-msgid "Power of x"
-msgstr "Potęga x"
-
-
-msgid "Coefficient of x"
-msgstr "Współczynnik dla x"
-
-
-msgid "Second coefficient"
-msgstr "Drugi współczynnik"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -7313,10 +7241,6 @@ msgstr "Dodaj nowy punkt kontrolny do otoczki na obecnej klatce"
 
 msgid "Delete envelope control point"
 msgstr "Usuń punkt kontrolny otoczki"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Usuń Modyfikator krzywej-F"
 
 
 msgid "No animation data in buffer to paste"
@@ -7761,6 +7685,14 @@ msgstr "Brak aktywnej klatki do usunięcia"
 
 msgid "No active area"
 msgstr "Brak aktywnego obszaru"
+
+
+msgid "Easing (by strength)"
+msgstr "Łagodzenie (przez siłę)"
+
+
+msgid "Dynamic Effects"
+msgstr "Efekt Dynamiczny"
 
 
 msgid "Grease Pencil operator is already active"
@@ -10228,10 +10160,6 @@ msgid "(empty)"
 msgstr "(pusty)"
 
 
-msgid "Modal map, not yet"
-msgstr "Modal map, jeszcze nie"
-
-
 msgid "Can't reload with running modal operators"
 msgstr "Nie można załadować ponownie gdy działa operator modalny"
 
@@ -11087,14 +11015,6 @@ msgstr "Niemożliwe dodanie elementu colorband (limit %d)"
 
 msgid "Relationship"
 msgstr "Zależność"
-
-
-msgid "Easing (by strength)"
-msgstr "Łagodzenie (przez siłę)"
-
-
-msgid "Dynamic Effects"
-msgstr "Efekt Dynamiczny"
 
 
 msgid "Bezier spline cannot have points added"

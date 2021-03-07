@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -5969,12 +5969,12 @@ msgid "Int"
 msgstr "ﯽﻠﺧﺍﺩ"
 
 
-msgid "Object Info"
-msgstr "ﯽﺷ ﺕﺎﻋﻼ﻿ﻃﺍ"
-
-
 msgid "Original"
 msgstr "ﯽﻠﺻﺍ"
+
+
+msgid "Object Info"
+msgstr "ﯽﺷ ﺕﺎﻋﻼ﻿ﻃﺍ"
 
 
 msgid "Label Font Size"
@@ -9287,11 +9287,6 @@ msgstr "ﻥﺎﮑﻣ"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "ﺪﻧﻮﯿﭘ"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "ﻪﻨﺤﺻ ﻪﺑ ءﺎﯿﺷﺍ..."
 
@@ -12436,10 +12431,6 @@ msgid "Blender File"
 msgstr "ﺭﺪﻨﻠﺑ ﻞﯾﺎﻓ ﺶﯾﺎﻤﻧ"
 
 
-msgid "On"
-msgstr "ﻦﺷﻭﺭ"
-
-
 msgid "Overlay Type"
 msgstr "ﻢﻬﯾﻭﺭ"
 
@@ -13849,11 +13840,6 @@ msgstr "ﻝﺎﻌﻓ"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "ﻪﻨﺤﺻ ﻪﺑ ءﺎﯿﺷﺍ..."
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
@@ -13904,43 +13890,13 @@ msgstr "ﺪﯾﺪﺟ ﻩﻭﺮﮔ ﻪﺑ ﺹﺎﺼﺘﺧﺍ"
 
 
 msgctxt "Operator"
-msgid "Remove from All"
-msgstr "ﻪﻤﻫ ﺯﺍ ﻑﺬﺣ"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻪﯾﻭﺍﺯ"
-
-
-msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "ﻦﯿﺑﺭﻭﺩ ﺰﻨﻟ ﻩﺯﺍﺪﻧﺍ"
 
 
 msgctxt "Operator"
-msgid "Width Size"
-msgstr "ﺎﻨﻬﭘ ﻩﺯﺍﺪﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "ﺪﯾﺩ ﻥﺍﺪﯿﻣ ﻪﻠﺻﺎﻓ"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "ﻩﺯﺍﺪﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "ﻪﻄﻘﻧ ﻩﺯﺍﺪﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "ﻪﻄﻘﻧ ﺐﯿﮐﺮﺗ"
+msgid "Remove from All"
+msgstr "ﻪﻤﻫ ﺯﺍ ﻑﺬﺣ"
 
 
 msgid "Layer:"
@@ -14052,50 +14008,6 @@ msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 msgid "Cannot re-link markers into the same scene"
 msgstr "ﻪﻨﺤﺻ ﻪﺑ ﻦﯿﺑﺭﻭﺩ ﮏﯾ ﻥﺩﻭﺰﻓﺍ"
-
-
-msgid "Poly Order:"
-msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ"
-
-
-msgid "Before:"
-msgstr "ﯽﻠﺒﻗ:"
-
-
-msgid "After:"
-msgstr "ﯼﺪﻌﺑ:"
-
-
-msgid "Envelope:"
-msgstr "ﺖﮐﺎﭘ:"
-
-
-msgid "Control Points:"
-msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
-
-
-msgid "Add Point"
-msgstr "ﺶﺧﺮﭼ ﻪﻄﻘﻧ"
-
-
-msgid "Fra:"
-msgstr "Fra:"
-
-
-msgid "Min:"
-msgstr "ﻪﻨﯿﻤﮐ:"
-
-
-msgid "Max:"
-msgstr "ﻪﻨﯿﺸﯿﺑ:"
-
-
-msgid "Power of x"
-msgstr "x ﻥﺍﻮﺗ"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
 msgid "No selected F-Curves to paste into"
@@ -15376,6 +15288,10 @@ msgstr "C"
 
 msgid "Cr"
 msgstr "C"
+
+
+msgid "On"
+msgstr "ﻦﺷﻭﺭ"
 
 
 msgid "Val"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -317,10 +317,6 @@ msgid "All"
 msgstr "Баары"
 
 
-msgid "Resolution"
-msgstr "Чечим"
-
-
 msgid "Simplify"
 msgstr "Жөнөкөйлөө"
 
@@ -620,6 +616,10 @@ msgstr "Файл форматы"
 
 msgid "OpenEXR"
 msgstr "OpenEXR"
+
+
+msgid "Resolution"
+msgstr "Чечим"
 
 
 msgid "UV Texture"
