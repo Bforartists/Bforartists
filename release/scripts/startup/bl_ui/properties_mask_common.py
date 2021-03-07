@@ -27,7 +27,7 @@ from bpy.app.translations import contexts as i18n_contexts
 
 
 # Use by both image & clip context menus.
-def draw_mask_context_menu(layout, context):
+def draw_mask_context_menu(layout, _context):
     layout.operator_menu_enum("mask.handle_type_set", "type")
     layout.operator("mask.switch_direction", icon = "SWITCH_DIRECTION")
     layout.operator("mask.cyclic_toggle", icon = "TOGGLE_CYCLIC")

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -2816,8 +2816,8 @@ msgid "Strokes"
 msgstr "筆觸"
 
 
-msgid "Resolution"
-msgstr "解析度"
+msgid "Precision"
+msgstr "精度"
 
 
 msgid "Visible"
@@ -3686,22 +3686,6 @@ msgstr "輸入色彩空間設定"
 
 msgid "Input Color Space"
 msgstr "輸入色彩空間"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (全範圍)，Blender 原生線性空間"
-
-
-msgid "ACES linear space"
-msgstr "ACES 線性空間"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "影像使用的色彩空間，包含非色彩資料 (例如：法向映射)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "標準 RGB 顯示空間"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -6992,6 +6976,10 @@ msgid "Directory to save the textures"
 msgstr "儲存紋理用的目錄"
 
 
+msgid "Resolution"
+msgstr "解析度"
+
+
 msgid "Output image resolution"
 msgstr "輸出影像解析度"
 
@@ -8028,10 +8016,6 @@ msgstr "歸一化 Sine"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "相位乘數"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -9726,50 +9710,6 @@ msgid "Grease Pencil Interpolate Settings"
 msgstr "蠟筆插補設定"
 
 
-msgid "Easing"
-msgstr "緩變"
-
-
-msgid "Period"
-msgstr "週期"
-
-
-msgid "Step"
-msgstr "步"
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "A 與 B 之間直線插補 (例：無緩入/緩出)"
-
-
-msgid "Custom"
-msgstr "自訂"
-
-
-msgid "Quadratic"
-msgstr "二次型"
-
-
-msgid "Exponential"
-msgstr "指數"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "指數變換 (劇烈)"
-
-
-msgid "Circular"
-msgstr "圓"
-
-
-msgid "Bounce"
-msgstr "彈跳"
-
-
-msgid "Elastic"
-msgstr "彈性"
-
-
 msgid "Grease Pencil Layer"
 msgstr "蠟筆分層"
 
@@ -9914,8 +9854,16 @@ msgid "Layer"
 msgstr "層"
 
 
+msgid "Custom"
+msgstr "自訂"
+
+
 msgid "Spacing"
 msgstr "間隔"
+
+
+msgid "Circular"
+msgstr "圓"
 
 
 msgid "Grid"
@@ -9968,14 +9916,6 @@ msgstr "終末蓋帽"
 
 msgid "Flat"
 msgstr "扁平"
-
-
-msgid "Groups"
-msgstr "群組"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "此頂點為何頂點群組成員之一的權重"
 
 
 msgid "Material Index"
@@ -10324,6 +10264,10 @@ msgid "Thickness Factor"
 msgstr "厚度係數"
 
 
+msgid "Step"
+msgstr "步"
+
+
 msgid "Opacity Factor"
 msgstr "不透明度係數"
 
@@ -10502,6 +10446,10 @@ msgstr "框幀區間"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "此動作內所有 F 曲線的最終框幀區間"
+
+
+msgid "Groups"
+msgstr "群組"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -11051,6 +10999,10 @@ msgstr "平滑筆觸半徑"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "在筆觸持續之前與上一個點間的最小距離"
+
+
+msgid "Elastic"
+msgstr "彈性"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -15972,8 +15924,16 @@ msgid "Create a linear progression"
 msgstr "建立一個線性漸進"
 
 
+msgid "Quadratic"
+msgstr "二次型"
+
+
 msgid "Create a quadratic progression"
 msgstr "建立一個二次型漸進"
+
+
+msgid "Easing"
+msgstr "緩變"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -16968,10 +16928,6 @@ msgid "State-full solver running in real-time context and ignoring actions and n
 msgstr "完態解算器以實時情境執行，會忽略動作與非 IK 約束"
 
 
-msgid "Precision"
-msgstr "精度"
-
-
 msgid "Precision of convergence in case of reiteration"
 msgstr "收斂的精準度，避免重復迭代"
 
@@ -17512,8 +17468,28 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "無插補，A 的值會留住直到遭遇 B"
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "A 與 B 之間直線插補 (例：無緩入/緩出)"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "A 與 B 之間平滑插補，以曲線外形做些微控制"
+
+
+msgid "Exponential"
+msgstr "指數"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "指數變換 (劇烈)"
+
+
+msgid "Bounce"
+msgstr "彈跳"
+
+
+msgid "Period"
+msgstr "週期"
 
 
 msgid "Left handle selection status"
@@ -18798,10 +18774,6 @@ msgid "Special Characters"
 msgstr "特殊字元"
 
 
-msgid "Interpolate"
-msgstr "插補"
-
-
 msgid "Edge Data"
 msgstr "邊線資料"
 
@@ -18840,10 +18812,6 @@ msgstr "鉤"
 
 msgid "Light"
 msgstr "光照"
-
-
-msgid "Make Links"
-msgstr "製作連結"
 
 
 msgid "Make Single User"
@@ -19196,6 +19164,10 @@ msgstr "網格頂點"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "倒角修改器「僅頂點」選項使用的權重"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "此頂點為何頂點群組成員之一的權重"
 
 
 msgid "Index of this vertex"
@@ -22569,14 +22541,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "用於物體縮放其兩綁束之間的距離"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "於使用者介面展開顯示預設選項"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "於使用者介面展開顯示額外選項"
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "限制追蹤速度來讓視覺回饋更簡易 (這不會影響追蹤品質)"
 
@@ -22675,6 +22639,10 @@ msgstr "影片追蹤用穩定處理資料"
 
 msgid "Active Track Index"
 msgstr "作用中軌道索引"
+
+
+msgid "Interpolate"
+msgstr "插補"
 
 
 msgid "Bilinear"
@@ -24702,12 +24670,12 @@ msgid "Dot Product"
 msgstr "內積"
 
 
-msgid "Object Info"
-msgstr "物體資訊"
-
-
 msgid "Original"
 msgstr "原始"
+
+
+msgid "Object Info"
+msgstr "物體資訊"
 
 
 msgctxt "NodeTree"
@@ -27464,6 +27432,10 @@ msgid "Distance between selected tracks"
 msgstr "所選軌道之間的距離"
 
 
+msgid "Keep Original"
+msgstr "保留原始"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "3D 標記至網格"
@@ -28984,10 +28956,6 @@ msgstr "選取隨機"
 
 msgid "Randomly select some control points"
 msgstr "隨機選取某些控制點"
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "物體的隨機選取百分比"
 
 
 msgid "Seed for the random number generator"
@@ -30651,6 +30619,10 @@ msgid "Grease Pencil Interpolation"
 msgstr "蠟筆插補"
 
 
+msgid "Confirm on Release"
+msgstr "放開時確認"
+
+
 msgctxt "Operator"
 msgid "Add New Layer"
 msgstr "添加新層"
@@ -30663,10 +30635,6 @@ msgstr "移除遮罩分層"
 
 msgid "Subdivisions"
 msgstr "細分"
-
-
-msgid "Keep Original"
-msgstr "保留原始"
 
 
 msgid "Mouse location"
@@ -30698,10 +30666,6 @@ msgstr "黑色"
 
 msgid "White"
 msgstr "白色"
-
-
-msgid "Confirm on Release"
-msgstr "放開時確認"
 
 
 msgctxt "Operator"
@@ -35140,15 +35104,6 @@ msgstr "清除增減"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "連結資料"
-
-
-msgid "Effects"
-msgstr "效果"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "將物體連結到場景"
 
@@ -37482,10 +37437,6 @@ msgstr "下一鍵幀"
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "與目前框幀緊鄰的後一個鍵幀幀號"
-
-
-msgid "Percentage"
-msgstr "百分比"
 
 
 msgid "Previous Keyframe"
@@ -43620,6 +43571,10 @@ msgid "Path Animation"
 msgstr "路徑動畫"
 
 
+msgid "Effects"
+msgstr "效果"
+
+
 msgid "Skeleton"
 msgstr "骨骼"
 
@@ -44114,6 +44069,11 @@ msgstr "直線"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "圓"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "插補"
 
 
 msgctxt "Operator"
@@ -45777,10 +45737,6 @@ msgid "Continuous Grab"
 msgstr "持續抓取"
 
 
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "允許滑鼠移動超出視窗的區域限制"
-
-
 msgid "Auto Depth"
 msgstr "自動深度"
 
@@ -46131,6 +46087,10 @@ msgstr "係數值的顯示方式"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "係數以 0 至 1 之間的值顯示"
+
+
+msgid "Percentage"
+msgstr "百分比"
 
 
 msgid "Display factors as percentages"
@@ -50623,10 +50583,6 @@ msgstr "屬性空間資料"
 
 msgid "Active Tool and Workspace settings"
 msgstr "作用中工具和工作空間設定"
-
-
-msgid "On"
-msgstr "開"
 
 
 msgid "Pin ID"
@@ -56427,16 +56383,6 @@ msgstr "建立"
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "插補"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "序段"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "檢視所選"
 
@@ -56523,16 +56469,6 @@ msgstr "添加被動"
 
 msgid "All Transforms to Deltas"
 msgstr "所有變換為增減"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "物體至場景..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "物體至場景"
 
 
 msgctxt "Operator"
@@ -56720,6 +56656,11 @@ msgstr "縮放 BBone"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "攝影機鏡頭縮放"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "從全部移除"
 
@@ -56732,56 +56673,6 @@ msgstr "縮放封套距離"
 msgctxt "Operator"
 msgid "Scale Radius"
 msgstr "縮放半徑"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "攝影機鏡頭角度"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "攝影機鏡頭縮放"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "擠出大小"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "寬度大小"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "景深距離"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "空體描繪大小"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "大小 X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "聚光大小"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "聚光混合"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "大小 Y"
 
 
 msgid "Layer:"
@@ -56813,10 +56704,6 @@ msgstr "套用攝影機影像"
 
 msgid "Path Steps"
 msgstr "路徑步數"
-
-
-msgid "Sequence Options:"
-msgstr "序段選項："
 
 
 msgid "Point cache must be baked"
@@ -57309,60 +57196,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "無法貼上驅動器，因為給定 ID 的 RNA 路徑無效 (ID = %s，路徑 = %s)"
 
 
-msgid "Before:"
-msgstr "在這之前："
-
-
-msgid "After:"
-msgstr "在這之後："
-
-
-msgid "Envelope:"
-msgstr "封套："
-
-
-msgid "Control Points:"
-msgstr "控制點："
-
-
-msgid "Add Point"
-msgstr "添加點"
-
-
-msgid "Fra:"
-msgstr "框幀："
-
-
-msgid "Min:"
-msgstr "最小："
-
-
-msgid "Max:"
-msgstr "最大："
-
-
 msgid "<Unknown Modifier>"
 msgstr "<未知修改器>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "多項式的「次數」(對於有 n 項的多項式來說，為 n-1「次」)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "多項式的係數"
-
-
-msgid "Power of x"
-msgstr "x 的次方"
-
-
-msgid "Coefficient of x"
-msgstr "x 的係數"
-
-
-msgid "Second coefficient"
-msgstr "第二係數"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -57371,10 +57206,6 @@ msgstr "添加新的控制點到目前此框幀的封套"
 
 msgid "Delete envelope control point"
 msgstr "刪除封套控制點"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "刪除 F 曲線修改器"
 
 
 msgid "No animation data in buffer to paste"
@@ -57779,6 +57610,14 @@ msgstr "無作用中框幀可刪除"
 
 msgid "No active area"
 msgstr "無作用中區域"
+
+
+msgid "Easing (by strength)"
+msgstr "緩變 (依強度)"
+
+
+msgid "Dynamic Effects"
+msgstr "動態效果"
 
 
 msgid "Grease Pencil operator is already active"
@@ -59886,10 +59725,6 @@ msgid "(empty)"
 msgstr "(空)"
 
 
-msgid "Modal map, not yet"
-msgstr "典範映射，尚未"
-
-
 msgid "Can't reload with running modal operators"
 msgstr "無法以執行中典範操作器重新載入"
 
@@ -60807,14 +60642,6 @@ msgid "Relationship"
 msgstr "關係"
 
 
-msgid "Easing (by strength)"
-msgstr "緩變 (依強度)"
-
-
-msgid "Dynamic Effects"
-msgstr "動態效果"
-
-
 msgid "Bezier spline cannot have points added"
 msgstr "貝茲樣條無法添加點"
 
@@ -61336,6 +61163,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "開"
 
 
 msgid "Missing Data-Block"

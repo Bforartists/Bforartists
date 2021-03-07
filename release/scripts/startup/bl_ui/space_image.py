@@ -534,7 +534,7 @@ class IMAGE_MT_uvs_clear_seam(bpy.types.Operator):
 class IMAGE_MT_uvs_unwrap(Menu):
     bl_label = "Unwrap"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'

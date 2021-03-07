@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-07-02 15:57+0000\n"
@@ -3074,12 +3074,8 @@ msgid "Use edit lines as fill boundary limits"
 msgstr "Вжити лінії редагування як ліміти рубежу заповнення"
 
 
-msgid "Resolution"
-msgstr "Роздільність"
-
-
-msgid "Multiplier for fill resolution, higher resolution is more accurate but slower"
-msgstr "Коефіцієнт роздільності заповнення; вища роздільність точніша, але повільніша"
+msgid "Precision"
+msgstr "Точність"
 
 
 msgid "Visible"
@@ -4456,26 +4452,6 @@ msgstr "Ввідний колірний простір"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Простір кольорів у файлі зображення, для конвертування в який та з якого при збереженні та завантаженні зображення"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Формувач Log based filmic 16.5 стопів ширини і 25 стопів динамічного діапазону."
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (повний діапазон), власний лінійний простір Blender"
-
-
-msgid "ACES linear space"
-msgstr "Лінійний простір ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Колірний простір для зображень, що містять не колірні дані (наприклад, карти нормалей)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Стандартний RGB-простір екрану"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -8330,6 +8306,10 @@ msgid "Directory to save the textures"
 msgstr "Тека для зберігання текстур"
 
 
+msgid "Resolution"
+msgstr "Роздільність"
+
+
 msgid "Output image resolution"
 msgstr "Роздільність вивідного зображення"
 
@@ -9526,10 +9506,6 @@ msgstr "Нормалізований синус"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "Фазовий множник"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -11612,168 +11588,12 @@ msgid "Settings for Grease Pencil interpolation tools"
 msgstr "Параметри для інструментів інтерполяції Нарисного олівця"
 
 
-msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "Рівень підсилення пружних відскоків для «пружного» ослаблення"
-
-
-msgid "Amount of overshoot for 'back' easing"
-msgstr "Величина перевищення для зворотного ослаблення"
-
-
-msgid "Easing"
-msgstr "Ослаблення"
-
-
-msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "Кінці сегмента між попереднім і наступним ключовими кадрами, до яких застосовується ослаблення"
-
-
-msgid "Automatic Easing"
-msgstr "Автоматичне ослаблення"
-
-
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "Обирати тип полегшення автоматично на основі використаного типу інтерполяції (тобто використовувати Ввід Легко для типів переходів і Вивід Легко для динамічних ефектів)"
-
-
-msgid "Only on the end closest to the next keyframe"
-msgstr "Лише на кінці, ближчому до наступного ключового кадру"
-
-
-msgid "Only on the end closest to the first keyframe"
-msgstr "Лише на кінці, ближчому до першого ключового кадру"
-
-
-msgid "Ease In and Out"
-msgstr "Ввід і вивід легко"
-
-
-msgid "Segment between both keyframes"
-msgstr "Проміжок між обома ключовими кадрами"
-
-
-msgid "Interpolate All Layers"
-msgstr "Інтерполювати всі шари"
-
-
-msgid "Interpolate all layers, not only active"
-msgstr "Інтерполювати всі шари, а не лише активний"
-
-
-msgid "Interpolate Selected Strokes"
-msgstr "Інтерполювати вибрані штрихи"
-
-
-msgid "Interpolate only selected strokes in the original frame"
-msgstr "Інтерполювати лише вибрані штрихи з початкового кадру"
-
-
 msgid "Interpolation Curve"
 msgstr "Крива інтерполяції"
 
 
 msgid "Custom curve to control 'sequence' interpolation between Grease Pencil frames"
 msgstr "Нетипова крива для керування інтерполяцією 'відеоряду' між кадрами Нарисного олівця"
-
-
-msgid "Period"
-msgstr "Період"
-
-
-msgid "Time between bounces for elastic easing"
-msgstr "Час між відбиттями при еластичному ослабленні"
-
-
-msgid "Step"
-msgstr "Крок"
-
-
-msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
-msgstr "Метод інтерполяції для використання при наступному запуску 'Інтерполювати відеоряд'"
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "Лінійна інтерполяція між А та В (тобто без плавного входу/виходу)"
-
-
-msgid "Custom"
-msgstr "Нетипове"
-
-
-msgid "Custom interpolation defined using a curve map"
-msgstr "Нетипова інтерполяція, визначена розкладкою кривої"
-
-
-msgid "Sinusoidal"
-msgstr "Синусоїдальна"
-
-
-msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "Синусоїдальне ослаблення (найслабше, майже лінійне, але з невеликою кривиною)"
-
-
-msgid "Quadratic"
-msgstr "Квадратичний"
-
-
-msgid "Quadratic easing"
-msgstr "Квадратичне ослаблення"
-
-
-msgid "Cubic easing"
-msgstr "Кубічне ослаблення"
-
-
-msgid "Quartic"
-msgstr "Квартика"
-
-
-msgid "Quartic easing"
-msgstr "Ослаблення 4-го степеня"
-
-
-msgid "Quintic"
-msgstr "Квінтика"
-
-
-msgid "Quintic easing"
-msgstr "Ослаблення 5-го степеня"
-
-
-msgid "Exponential"
-msgstr "Експонента"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "Експоненційне ослаблення (дуже сильне)"
-
-
-msgid "Circular"
-msgstr "Кругове"
-
-
-msgid "Circular easing (strongest and most dynamic)"
-msgstr "Кругове ослаблення (найсильніше і найбільш динамічне)"
-
-
-msgid "Cubic easing with overshoot and settle"
-msgstr "Кубічне ослаблення з викидами і впадинами"
-
-
-msgid "Bounce"
-msgstr "Відскоки"
-
-
-msgid "Exponentially decaying parabolic bounce, like when objects collide"
-msgstr "Параболічні відскоки, що експоненціально згасають, як при зіткненні об'єктів"
-
-
-msgid "Elastic"
-msgstr "Еластична"
-
-
-msgid "Exponentially decaying sine wave, like an elastic band"
-msgstr "Синусоїдальна хвиля, що експоненціально згасає, як для натягнутої струни"
 
 
 msgid "Grease Pencil Layer"
@@ -11884,6 +11704,10 @@ msgid "Thickness change to apply to current strokes (in pixels)"
 msgstr "Зміна товщини для застосування до поточних штрихів (у пікселях)"
 
 
+msgid "Values for change location"
+msgstr "Значення для зміни локації"
+
+
 msgid "Locked"
 msgstr "Заблоковано"
 
@@ -11946,6 +11770,14 @@ msgstr "Номер проходу"
 
 msgid "Index number for the \"Layer Index\" pass"
 msgstr "Індексний номер для проходу \"Індекс Шару\""
+
+
+msgid "Values for changes in rotation"
+msgstr "Значення для змін в оберті"
+
+
+msgid "Values for changes in scale"
+msgstr "Значення для змін у масштабі"
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
@@ -12060,6 +11892,10 @@ msgid "Use cursor as reference point"
 msgstr "Вжити курсор як орієнтирну точку"
 
 
+msgid "Custom"
+msgstr "Нетипове"
+
+
 msgid "Use custom reference point"
 msgstr "Вжити власну орієнтирну точку"
 
@@ -12074,6 +11910,10 @@ msgstr "Інтервал"
 
 msgid "Guide spacing"
 msgstr "Інтервал напрямної"
+
+
+msgid "Circular"
+msgstr "Кругове"
 
 
 msgid "Use single point to create rings"
@@ -12238,14 +12078,6 @@ msgstr "Округлено"
 
 msgid "Flat"
 msgstr "Плоско"
-
-
-msgid "Groups"
-msgstr "Групи"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "Вагомості для груп вершин, до яких належить ця вершина"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -13172,6 +13004,10 @@ msgid "Thickness Factor"
 msgstr "Фактор Товщини"
 
 
+msgid "Step"
+msgstr "Крок"
+
+
 msgid "Number of frames before recalculate random values again"
 msgstr "Кількість кадрів перед переобчисленням випадкових значень знову"
 
@@ -13182,18 +13018,6 @@ msgstr "Модифікатор Зсув"
 
 msgid "Offset Stroke modifier"
 msgstr "Модифікатор Зсув Штриха"
-
-
-msgid "Values for change location"
-msgstr "Значення для зміни локації"
-
-
-msgid "Values for changes in rotation"
-msgstr "Значення для змін в оберті"
-
-
-msgid "Values for changes in scale"
-msgstr "Значення для змін у масштабі"
 
 
 msgid "Opacity Modifier"
@@ -13614,6 +13438,10 @@ msgstr "Діапазон кадрів"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "Фінальний діапазон кадрів усіх Ф-Кривих у цьому діянні"
+
+
+msgid "Groups"
+msgstr "Групи"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -14283,6 +14111,10 @@ msgstr "Радіус штриха Згладження"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "Найменша відстань від останньої точки для продовження штриха"
+
+
+msgid "Elastic"
+msgstr "Еластична"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -20740,8 +20572,16 @@ msgid "Create a linear progression"
 msgstr "Створити лінійний градієнт"
 
 
+msgid "Quadratic"
+msgstr "Квадратичний"
+
+
 msgid "Create a quadratic progression"
 msgstr "Створити квадратичний градієнт"
+
+
+msgid "Easing"
+msgstr "Ослаблення"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -21898,10 +21738,6 @@ msgstr "Симуляція"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "Обчислювач зі збереженням станів, що працює в режимі реального часу, ігноруючи дії та примуси, не пов'язані з ІК"
-
-
-msgid "Precision"
-msgstr "Точність"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -23603,8 +23439,40 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Точка кривої Безьє з двома ручками, що визначає ключовий кадр на Ф-Кривій"
 
 
+msgid "Amount to boost elastic bounces for 'elastic' easing"
+msgstr "Рівень підсилення пружних відскоків для «пружного» ослаблення"
+
+
+msgid "Amount of overshoot for 'back' easing"
+msgstr "Величина перевищення для зворотного ослаблення"
+
+
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "Кінці сегмента між поточним і наступним ключовими кадрами, до яких застосовується ослаблення"
+
+
+msgid "Automatic Easing"
+msgstr "Автоматичне ослаблення"
+
+
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "Обирати тип полегшення автоматично на основі використаного типу інтерполяції (тобто використовувати Ввід Легко для типів переходів і Вивід Легко для динамічних ефектів)"
+
+
+msgid "Only on the end closest to the next keyframe"
+msgstr "Лише на кінці, ближчому до наступного ключового кадру"
+
+
+msgid "Only on the end closest to the first keyframe"
+msgstr "Лише на кінці, ближчому до першого ключового кадру"
+
+
+msgid "Ease In and Out"
+msgstr "Ввід і вивід легко"
+
+
+msgid "Segment between both keyframes"
+msgstr "Проміжок між обома ключовими кадрами"
 
 
 msgid "Left Handle"
@@ -23663,8 +23531,80 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "Без інтерполяції; значення А утримується доки не трапиться В"
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "Лінійна інтерполяція між А та В (тобто без плавного входу/виходу)"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "Згладжена інтерполяція між A та B з можливістю керувати формою кривої"
+
+
+msgid "Sinusoidal"
+msgstr "Синусоїдальна"
+
+
+msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
+msgstr "Синусоїдальне ослаблення (найслабше, майже лінійне, але з невеликою кривиною)"
+
+
+msgid "Quadratic easing"
+msgstr "Квадратичне ослаблення"
+
+
+msgid "Cubic easing"
+msgstr "Кубічне ослаблення"
+
+
+msgid "Quartic"
+msgstr "Квартика"
+
+
+msgid "Quartic easing"
+msgstr "Ослаблення 4-го степеня"
+
+
+msgid "Quintic"
+msgstr "Квінтика"
+
+
+msgid "Quintic easing"
+msgstr "Ослаблення 5-го степеня"
+
+
+msgid "Exponential"
+msgstr "Експонента"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "Експоненційне ослаблення (дуже сильне)"
+
+
+msgid "Circular easing (strongest and most dynamic)"
+msgstr "Кругове ослаблення (найсильніше і найбільш динамічне)"
+
+
+msgid "Cubic easing with overshoot and settle"
+msgstr "Кубічне ослаблення з викидами і впадинами"
+
+
+msgid "Bounce"
+msgstr "Відскоки"
+
+
+msgid "Exponentially decaying parabolic bounce, like when objects collide"
+msgstr "Параболічні відскоки, що експоненціально згасають, як при зіткненні об'єктів"
+
+
+msgid "Exponentially decaying sine wave, like an elastic band"
+msgstr "Синусоїдальна хвиля, що експоненціально згасає, як для натягнутої струни"
+
+
+msgid "Period"
+msgstr "Період"
+
+
+msgid "Time between bounces for elastic easing"
+msgstr "Час між відбиттями при еластичному ослабленні"
 
 
 msgid "Left handle selection status"
@@ -25716,10 +25656,6 @@ msgid "Kerning"
 msgstr "Кернінг"
 
 
-msgid "Interpolate"
-msgstr "Інтерполювати"
-
-
 msgid "Lattice Context Menu"
 msgstr "Контекстне Меню Решіток"
 
@@ -25798,10 +25734,6 @@ msgstr "Слабко"
 
 msgid "Light Probe"
 msgstr "Проба Освітлення"
-
-
-msgid "Make Links"
-msgstr "Зробити зв'язки"
 
 
 msgid "Make Single User"
@@ -26358,6 +26290,10 @@ msgstr "Вершина у блоці даних сіті"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "Вагомість, використовувана опцією 'Лише вершини'  модифікатора Скіс"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "Вагомості для груп вершин, до яких належить ця вершина"
 
 
 msgid "Index of this vertex"
@@ -30724,14 +30660,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "Відстань між двома пакетами, що використовуються для масштабування об'єкта"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "Розгорнути панель стандартних параметрів"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "Розгорнути панель додаткових параметрів"
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "Обмежити швидкість відстеження для спрощення візуального зворотного зв'язку (не впливає на якість відстеження)"
 
@@ -30862,6 +30790,10 @@ msgstr "Закріплений кадр"
 
 msgid "Reference point to anchor stabilization (other frames will be adjusted relative to this frame's position)"
 msgstr "Орієнтирна точка для закріплення стабілізації (інші кадри будуть наладнуватися відносно позиції цього кадру)"
+
+
+msgid "Interpolate"
+msgstr "Інтерполювати"
 
 
 msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilization"
@@ -33117,12 +33049,12 @@ msgid "Dot Product"
 msgstr "Скал. добуток"
 
 
-msgid "Object Info"
-msgstr "Інформація об'єкта"
-
-
 msgid "Original"
 msgstr "Оригінал"
+
+
+msgid "Object Info"
+msgstr "Інформація об'єкта"
 
 
 msgctxt "NodeTree"
@@ -36525,6 +36457,10 @@ msgid "Distance between selected tracks"
 msgstr "Відстань між вибраними стежками"
 
 
+msgid "Keep Original"
+msgstr "Зберегти оригінал"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "3D-мітки у сіть"
@@ -38200,10 +38136,6 @@ msgstr "Вибрати Випадково"
 
 msgid "Randomly select some control points"
 msgstr "Випадково вибрати деякі керувальні точки"
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "Частка об'єктів для випадкового вибору"
 
 
 msgid "Seed for the random number generator"
@@ -40730,13 +40662,12 @@ msgid "Interpolate grease pencil strokes between frames"
 msgstr "Інтерполювати штрихи Нарисного олівця між кадрами"
 
 
+msgid "Confirm on Release"
+msgstr "Підтвердж. при відпусканні"
+
+
 msgid "Bias factor for which frame has more influence on the interpolated strokes"
 msgstr "Фактор відхилу, на який кадр має більший вплив на інтерпольовані штрихи"
-
-
-msgctxt "Operator"
-msgid "Remove Breakdowns"
-msgstr "Вилучити розбивки"
 
 
 msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
@@ -40750,6 +40681,18 @@ msgstr "Інтерполювати відеоряд"
 
 msgid "Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames"
 msgstr "Генерувати 'між-кадри' для згладженого інтерполювання між кадрами Нарисного олівця"
+
+
+msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
+msgstr "Кінці сегмента між попереднім і наступним ключовими кадрами, до яких застосовується ослаблення"
+
+
+msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
+msgstr "Метод інтерполяції для використання при наступному запуску 'Інтерполювати відеоряд'"
+
+
+msgid "Custom interpolation defined using a curve map"
+msgstr "Нетипова інтерполяція, визначена розкладкою кривої"
 
 
 msgctxt "Operator"
@@ -40900,10 +40843,6 @@ msgstr "Перепроктувати штрихи"
 
 msgid "Reproject the selected strokes from the current viewpoint as if they had been newly drawn (e.g. to fix problems from accidental 3D cursor movement or accidental viewport changes, or for matching deforming geometry)"
 msgstr "Перепроєктувати виділені штрихи із поточного вигляду, ніби вони щойно нарисовані (наприклад, для виправлення проблем з випадковим переміщенням 3D-курсора, з випадковими змінами вигляду або для узгодженням з деформувальною геометрією)"
-
-
-msgid "Keep Original"
-msgstr "Зберегти оригінал"
 
 
 msgid "Reproject the strokes on to the scene geometry, as if drawn using 'Surface' placement"
@@ -41376,10 +41315,6 @@ msgstr "Чорне"
 
 msgid "White"
 msgstr "Біле"
-
-
-msgid "Confirm on Release"
-msgstr "Підтвердж. при відпусканні"
 
 
 msgctxt "Operator"
@@ -47701,19 +47636,6 @@ msgstr "Конвертує об'єкти у примірникові грані"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "Пов'язати дані"
-
-
-msgid "Apply active object links to other selected objects"
-msgstr "Застосувати зв'язки активного об'єкта до інших вибраних об'єктів"
-
-
-msgid "Effects"
-msgstr "Ефекти"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Пов'язати об'єкти зі сценою"
 
@@ -49759,14 +49681,6 @@ msgid "Make all users of selected data-blocks to use instead a new chosen one"
 msgstr "Зробити всіх користувачів виділених блоків даних для використання замість нового обраного"
 
 
-msgid "Enter Mode"
-msgstr "Режим Входу"
-
-
-msgid "Exit Mode"
-msgstr "Режим Виходу"
-
-
 msgid "Context menu for item operations"
 msgstr "Контекстне меню операцій елемента"
 
@@ -50959,20 +50873,16 @@ msgid "Custom properties"
 msgstr "Власні властивості"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Ваговий фактор, для якого більш привілейований ключкадр"
+
+
 msgid "Next Keyframe"
 msgstr "Наступний Ключкадр"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Номер ключового кадру відразу після поточного кадру"
-
-
-msgid "Percentage"
-msgstr "Відсоток"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Ваговий фактор, для якого більш привілейований ключкадр"
 
 
 msgid "Previous Keyframe"
@@ -59102,6 +59012,10 @@ msgid "Path Animation"
 msgstr "Анімація шляхом"
 
 
+msgid "Effects"
+msgstr "Ефекти"
+
+
 msgid "Skeleton"
 msgstr "Скелет"
 
@@ -60182,6 +60096,11 @@ msgstr "Коробка"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "Коло"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "Інтерполювати"
 
 
 msgid "Expand or contract the radius of the selected points"
@@ -62219,10 +62138,6 @@ msgid "Continuous Grab"
 msgstr "Безперервний захоп"
 
 
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "Дозволити переміщення миші поза вікном при деяких маніпуляціях (трансформації, перетягування елементів керування)"
-
-
 msgid "Auto Depth"
 msgstr "Автоглибина"
 
@@ -62769,6 +62684,10 @@ msgstr "Як значення фактора показуються"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Показувати фактори як значення між 0 та 1"
+
+
+msgid "Percentage"
+msgstr "Відсоток"
 
 
 msgid "Display factors as percentages"
@@ -70108,10 +70027,6 @@ msgstr "Дані простору властивостей"
 
 msgid "Active Tool and Workspace settings"
 msgstr "Устави Активного Засобу та Робпростору"
-
-
-msgid "On"
-msgstr "Увім"
 
 
 msgid "Pin ID"
@@ -78480,14 +78395,6 @@ msgid "%dx%d"
 msgstr "%dx%d"
 
 
-msgid "Unpack"
-msgstr "Розпакувати"
-
-
-msgid "Pack"
-msgstr "Упакування"
-
-
 msgid "Original Frame Range"
 msgstr "Оригінальний Діапазон Кадрів"
 
@@ -78498,6 +78405,14 @@ msgstr "Додати Перехід"
 
 msgid "Effect Fader"
 msgstr "Ефект зникання"
+
+
+msgid "Unpack"
+msgstr "Розпакувати"
+
+
+msgid "Pack"
+msgstr "Упакування"
 
 
 msgid "Source Channel"
@@ -79710,16 +79625,6 @@ msgstr "Перемкнути Торці"
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "Інтерполювати"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "Послідовність"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "Показати вибране"
 
@@ -79912,16 +79817,6 @@ msgstr "Усі трансформації у дельти"
 
 msgid "Visual Geometry to Mesh"
 msgstr "Візуальна геометрія у сіть"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Об'єкти до сцени..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "Об'єкти до сцени"
 
 
 msgctxt "Operator"
@@ -80313,6 +80208,11 @@ msgstr "Масштабувати B-кістку"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "Масштаб об'єктива камери"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "Вилучити з усіх"
 
@@ -80336,23 +80236,8 @@ msgstr "Масштабувати радіус"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Кут зору об'єктива камери"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "Масштаб об'єктива камери"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Розмір витискання"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "Ширина"
+msgid "DOF Distance (Pick)"
+msgstr "Відстань глибини різкості (DOF)"
 
 
 msgid "Ridge"
@@ -80365,56 +80250,6 @@ msgstr "Западина"
 
 msgid "No object selected, using cursor"
 msgstr "Жоден об'єкт не виділено, використовується курсор"
-
-
-msgctxt "Operator"
-msgid "DOF Distance (Pick)"
-msgstr "Відстань глибини різкості (DOF)"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Відстань глибини різкості"
-
-
-msgctxt "Operator"
-msgid "Convert to Mesh"
-msgstr "Конвертувати у Сіть"
-
-
-msgctxt "Operator"
-msgid "Convert to Path"
-msgstr "Конвертувати у Шлях"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Розмір прорису порожняка"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "Розмір X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Розмір плями"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "Змішування плями"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "Розмір Y"
-
-
-msgctxt "Operator"
-msgid "Angle"
-msgstr "Кут"
 
 
 msgid "Layer:"
@@ -80464,24 +80299,8 @@ msgid "Editing Type"
 msgstr "Тип Редагування"
 
 
-msgid "Preserve Strand Lengths"
-msgstr "Берегти Довжини Пасм"
-
-
-msgid "Preserve Root Positions"
-msgstr "Берегти Позиції Коренів"
-
-
 msgid "Path Steps"
 msgstr "Кроки шляху"
-
-
-msgid "Interpolate Strokes"
-msgstr "Інтерполювати Штрихи"
-
-
-msgid "Sequence Options:"
-msgstr "Опції відеоряду:"
 
 
 msgid "No Brushes currently available"
@@ -80793,14 +80612,6 @@ msgstr "СмужкаНЛА"
 
 msgid "[Action Stash]"
 msgstr "[Запас Дій]"
-
-
-msgid "Undefined"
-msgstr "Невизначено"
-
-
-msgid "Undefined Node Tree Type"
-msgstr "Невизначений Тип Дерева Вузлів"
 
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
@@ -81372,64 +81183,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "Неможливо вставити драйвер, оскільки шлях RNA неправильний для даного ID (ID = %s, шлях = %s)"
 
 
-msgid "Poly Order:"
-msgstr "Порядок многочлена:"
-
-
-msgid "Before:"
-msgstr "Перед:"
-
-
-msgid "After:"
-msgstr "Після:"
-
-
-msgid "Envelope:"
-msgstr "Оболонка:"
-
-
-msgid "Control Points:"
-msgstr "Керувальні точки:"
-
-
-msgid "Add Point"
-msgstr "Додати точку"
-
-
-msgid "Fra:"
-msgstr "Кадр:"
-
-
-msgid "Min:"
-msgstr "Мін:"
-
-
-msgid "Max:"
-msgstr "Макс:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<Невідомий модифікатор>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "Порядок многочлена (для многочлена з n членів, порядок дорівнює n-1)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "Коефіцієнт многочлена"
-
-
-msgid "Power of x"
-msgstr "Степінь х"
-
-
-msgid "Coefficient of x"
-msgstr "Коефіцієнт х"
-
-
-msgid "Second coefficient"
-msgstr "Другий коефіцієнт"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -81438,10 +81193,6 @@ msgstr "Додати нову керувальну точку до оболон�
 
 msgid "Delete envelope control point"
 msgstr "Видалити керувальну точку оболонки"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Видалити модифікатор Ф-кривої"
 
 
 msgid "No animation data in buffer to paste"
@@ -82180,16 +81931,16 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "ESC/СКМ для касування, Enter/ЛКМ для підтвердження, КОЛІЩА/ПЕРЕСУВ для наладнання фактора"
 
 
+msgid "Easing (by strength)"
+msgstr "Ослаблення (за силою)"
+
+
+msgid "Dynamic Effects"
+msgstr "Динамічні ефекти"
+
+
 msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
 msgstr "Не можу знайти пару кадрів Нарисного олівця для інтерполювання між ними на активному шарі"
-
-
-msgid "Cannot interpolate as current frame already has existing grease pencil frames"
-msgstr "Не можу інтерполювати, оскільки поточний кадр вже має наявні кадри Нарисного олівця"
-
-
-msgid "Interpolation requires some editable strokes"
-msgstr "Інтерполяція вимагає кілька придатних для редагування штрихів"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -85633,10 +85384,6 @@ msgid "(empty)"
 msgstr "(порожньо)"
 
 
-msgid "Modal map, not yet"
-msgstr "Модальна карта, ще не реалізовано"
-
-
 msgid "Can't reload with running modal operators"
 msgstr "Неможливо перезавантажити при активній модальній команді"
 
@@ -86798,14 +86545,6 @@ msgid "Target is not in the constraint target list"
 msgstr "Ціль не є у списку цілей цього примусу"
 
 
-msgid "Easing (by strength)"
-msgstr "Ослаблення (за силою)"
-
-
-msgid "Dynamic Effects"
-msgstr "Динамічні ефекти"
-
-
 msgid "Bezier spline cannot have points added"
 msgstr "Безьє-сплайн не може мати доданих точок"
 
@@ -87615,6 +87354,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "Увім"
 
 
 msgid "Val"

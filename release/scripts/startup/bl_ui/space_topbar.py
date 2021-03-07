@@ -202,7 +202,7 @@ class TOPBAR_MT_editor_menus(Menu):
 class TOPBAR_MT_file_cleanup(Menu):
     bl_label = "Clean Up"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
         layout.separator()
 

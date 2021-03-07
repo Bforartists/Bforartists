@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -848,10 +848,6 @@ msgstr "Afegir Tira"
 
 msgid "Normal"
 msgstr "Calcular Normals"
-
-
-msgid "Resolution"
-msgstr "Seleccionar connectats"
 
 
 msgid "Visible"
@@ -2771,6 +2767,10 @@ msgid "Output Path"
 msgstr "Render"
 
 
+msgid "Resolution"
+msgstr "Seleccionar connectats"
+
+
 msgid "Output image resolution"
 msgstr "Seleccionar connectats"
 
@@ -3672,10 +3672,6 @@ msgid "Extreme"
 msgstr "Extrusionar"
 
 
-msgid "Circular"
-msgstr "Cercle"
-
-
 msgid "Grease Pencil Layer"
 msgstr "Començar Joc"
 
@@ -3736,6 +3732,10 @@ msgid "Spacing"
 msgstr "Seleccionar fila"
 
 
+msgid "Circular"
+msgstr "Cercle"
+
+
 msgid "Grid"
 msgstr "Reixa"
 
@@ -3762,10 +3762,6 @@ msgstr "Zoom d'Imatge"
 
 msgid "End Cap"
 msgstr "Mostrar tots els fotogrames"
-
-
-msgid "Groups"
-msgstr "Seleccionar fila"
 
 
 msgid "Material Index"
@@ -4034,6 +4030,10 @@ msgstr "Corba"
 
 msgid "Frame Range"
 msgstr "Joc"
+
+
+msgid "Groups"
+msgstr "Seleccionar fila"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -7416,10 +7416,6 @@ msgid "Names"
 msgstr "Arxiu"
 
 
-msgid "Interpolate"
-msgstr "Esborrar Rotació"
-
-
 msgid "Normals"
 msgstr "Calcular Normals"
 
@@ -7434,10 +7430,6 @@ msgstr "MetaBall"
 
 msgid "Light"
 msgstr "Dreta"
-
-
-msgid "Make Links"
-msgstr "Guardar com"
 
 
 msgid "Quick Effects"
@@ -9128,6 +9120,10 @@ msgid "Active Track Index"
 msgstr "Canviar Str"
 
 
+msgid "Interpolate"
+msgstr "Esborrar Rotació"
+
+
 msgid "Bilinear"
 msgstr "Seleccionar fila"
 
@@ -10156,12 +10152,12 @@ msgid "Int"
 msgstr "Afegir Tira"
 
 
-msgid "Object Info"
-msgstr "Comprimir Dades"
-
-
 msgid "Original"
 msgstr "Esborrar Origen"
+
+
+msgid "Object Info"
+msgstr "Comprimir Dades"
 
 
 msgid "Label Font Size"
@@ -11412,6 +11408,10 @@ msgstr "Guardar com"
 
 msgid "Distance between selected tracks"
 msgstr "Esborrar"
+
+
+msgid "Keep Original"
+msgstr "Esborrar Origen"
 
 
 msgctxt "Operator"
@@ -13178,10 +13178,6 @@ msgstr "Render"
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Moure a Capa"
-
-
-msgid "Keep Original"
-msgstr "Esborrar Origen"
 
 
 msgid "Mouse location"
@@ -15759,11 +15755,6 @@ msgstr "Esborrar Posició"
 
 msgid "Clear the object's location"
 msgstr "Duplicar"
-
-
-msgctxt "Operator"
-msgid "Link Data"
-msgstr "Comprimir Dades"
 
 
 msgctxt "Operator"
@@ -22609,10 +22600,6 @@ msgid "Properties space data"
 msgstr "Image Displist"
 
 
-msgid "On"
-msgstr "Obrir"
-
-
 msgid "Space Sequence Editor"
 msgstr "Començar a renderitzar una seqüència"
 
@@ -25326,11 +25313,6 @@ msgstr "Render"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Duplicar"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Seleccionar connectats"
 
@@ -25411,38 +25393,13 @@ msgstr "Afegir Tira"
 
 
 msgctxt "Operator"
-msgid "Remove from All"
-msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "Desparentar"
-
-
-msgctxt "Operator"
 msgid "Camera Lens Scale"
 msgstr "Desparentar"
 
 
 msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "Extrusionar"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Calcular Normals"
+msgid "Remove from All"
+msgstr "Seleccionar fila"
 
 
 msgid "Layer:"
@@ -25552,44 +25509,12 @@ msgid "Cannot re-link markers into the same scene"
 msgstr "Seleccionar connectats"
 
 
-msgid "Poly Order:"
-msgstr "Seleccionar fila"
-
-
-msgid "Before:"
-msgstr "Començar Joc"
-
-
-msgid "After:"
-msgstr "Mode d'Edició"
-
-
-msgid "Control Points:"
-msgstr "Esborrar Rotació"
-
-
-msgid "Add Point"
-msgstr "Camí"
-
-
-msgid "Coefficient of x"
-msgstr "Esborrar Rotació"
-
-
-msgid "Second coefficient"
-msgstr "Joc"
-
-
 msgid "Add a new control-point to the envelope on the current frame"
 msgstr "Seleccionar connectats"
 
 
 msgid "Delete envelope control point"
 msgstr "Afegir Tira"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Comprimir Dades"
 
 
 msgid "No selected F-Curves to paste into"
@@ -26825,6 +26750,10 @@ msgstr "Rotar"
 
 msgid "Cb"
 msgstr "Cub"
+
+
+msgid "On"
+msgstr "Obrir"
 
 
 msgid "Val"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
@@ -4757,11 +4757,6 @@ msgstr "lokasi"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "Data Animasi"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "Data Objek"
 
@@ -7389,11 +7384,6 @@ msgstr "Seleksi"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "Data Objek"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Modus Sunting"
 
@@ -7426,21 +7416,6 @@ msgstr "Warna Standar"
 msgctxt "Operator"
 msgid "Remove from All"
 msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "Jarak"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "Ukurang"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "Ukurang"
 
 
 msgid "Layer:"
@@ -7511,18 +7486,6 @@ msgstr "Tidak dapat membuka dokumen"
 
 msgid "Cannot re-link markers into the same scene"
 msgstr "Adegan"
-
-
-msgid "Poly Order:"
-msgstr "Acak"
-
-
-msgid "After:"
-msgstr "Modus Sunting"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Hapus"
 
 
 msgid "No selected F-Curves to paste into"
