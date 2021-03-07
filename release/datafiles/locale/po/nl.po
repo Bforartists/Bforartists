@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -290,10 +290,6 @@ msgid "Dissolve"
 msgstr "Oplossen"
 
 
-msgid "Resolution"
-msgstr "Resolutie"
-
-
 msgid "Visible"
 msgstr "Zichtbaar"
 
@@ -459,6 +455,10 @@ msgid "Acceleration"
 msgstr "Versnelling"
 
 
+msgid "Resolution"
+msgstr "Resolutie"
+
+
 msgid "Output image resolution"
 msgstr "Resolutie uitvoer afbeelding"
 
@@ -552,10 +552,6 @@ msgid "Freestyle Module"
 msgstr "Freestyle Module"
 
 
-msgid "Step"
-msgstr "Stap"
-
-
 msgid "Grease Pencil Layer"
 msgstr "Vetkrijt laag"
 
@@ -644,6 +640,10 @@ msgstr "Constant"
 
 msgid "Mirror Modifier"
 msgstr "Spiegel Aanpasser"
+
+
+msgid "Step"
+msgstr "Stap"
 
 
 msgid "Active Layer"
@@ -1178,10 +1178,6 @@ msgstr "Selecteer Vergelijkbaar"
 
 msgid "Hooks"
 msgstr "Haken"
-
-
-msgid "Make Links"
-msgstr "Maak Koppelingen"
 
 
 msgid "Quick Effects"
@@ -3040,11 +3036,6 @@ msgstr "Samenvoegen"
 
 msgid "Join selected objects into active object"
 msgstr "Voeg geslecteerde obecten samen in actief object"
-
-
-msgctxt "Operator"
-msgid "Link Data"
-msgstr "Koppel Gegevens"
 
 
 msgctxt "Operator"
@@ -5368,16 +5359,6 @@ msgstr "Op Geselecteerde Sleutelframes"
 
 
 msgctxt "Operator"
-msgid "Size X"
-msgstr "Grote X"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "Grote Y"
-
-
-msgctxt "Operator"
 msgid "Quick Edit"
 msgstr "Snel Bewerken"
 
@@ -5394,10 +5375,6 @@ msgstr "var"
 
 msgid "RenderView"
 msgstr "RenderView"
-
-
-msgid "Add Point"
-msgstr "Voeg Punt Toe"
 
 
 msgctxt "Curve"

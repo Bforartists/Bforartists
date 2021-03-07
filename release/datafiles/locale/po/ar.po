@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -2059,7 +2059,7 @@ msgid "Strokes"
 msgstr "ﺕﺎﺒﻄﺸﻟﺍ"
 
 
-msgid "Resolution"
+msgid "Precision"
 msgstr "ﺔﻗﺪﻟﺍ"
 
 
@@ -2881,22 +2881,6 @@ msgstr "ﻥﻮﻠﻟﺍ ﻂﻴﻄﺨﺗ ﺕﺍﺩﺍﺪﻋﺇ"
 
 msgid "Input Color Space"
 msgstr "ﻥﻮﻠﻟﺍ ءﺎﻀﻓ"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "(ﻯﺪﻤﻟﺍ ﻞﻣﺎﻛ) Rec. 709 ,ﻲﻠﺻﻻ﻿ﺍ ﻲﻄﺨﻟﺍ ﺭﺪﻨﻠﺑ ءﺎﻀﻓ"
-
-
-msgid "ACES linear space"
-msgstr "ACES ﻲﻄﺧ ءﺎﻀﻓ"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "(ﻢﻇﺍﻮﻨﻟﺍ ﻂﺋﺍﺮﺧ ,ﻝﺎﺜﻣ) ﺔﻴﻧﻮﻟ-ﺮﻴﻏ ﺕﺎﻧﺎﻴﺑ ﻱﻮﺘﺤﻳ ﻱﺬﻟﺍ ﻭ ﺭﻮﺼﻠﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ ﻥﻮﻠﻟﺍ ءﺎﻀﻓ"
-
-
-msgid "Standard RGB Display Space"
-msgstr "RGB ﻲﺟﺫﻮﻤﻨﻟﺍ ﺽﺮﻌﻟﺍ ءﺎﻀﻓ"
 
 
 msgid "Color Space"
@@ -5920,6 +5904,10 @@ msgid "Directory to save the textures"
 msgstr "ﺔﺠﺴﻧﻻ﻿ﺍ ﻆﻔﺤﻟ ﺪﻠﺠﻣ"
 
 
+msgid "Resolution"
+msgstr "ﺔﻗﺪﻟﺍ"
+
+
 msgid "Output image resolution"
 msgstr "ﺝﺮﺨﻟﺍ ﺓﺭﻮﺻ ﺔﻗﺩ"
 
@@ -6899,10 +6887,6 @@ msgstr "ﻢﻈّﻨﻣ ﺐﻴﺟ"
 
 msgid "sin(x) / x"
 msgstr "x) / x)ﺐﻴﺟ"
-
-
-msgid "Phase Multiplier"
-msgstr "ﺔﻠﺣﺮﻤﻟﺍ ﻒﻋﺎﻀﻣ"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -8505,42 +8489,6 @@ msgid "Freehand curves defining the sketch on this frame"
 msgstr "ﺭﺎﻃﻹ﻿ﺍ ﺍﺬﻫ ﻰﻠﻋ ﺩﻮﺟﻮﻤﻟﺍ ﻢﺳﺮﻠﻟ ﺓﺩﺪﺤﻣ ﺓﺮﺣ ﺕﺎﻴﻨﺤﻨﻣ"
 
 
-msgid "Easing"
-msgstr "ﻞﻴﻬﺴﺘﻟﺍ"
-
-
-msgid "Step"
-msgstr "ﺓﻮﻄﺨﻟﺍ"
-
-
-msgid "Quadratic"
-msgstr "ﻲﻋﺎﺑﺭ"
-
-
-msgid "Quadratic easing"
-msgstr "ﻲﻌﻴﺑﺮﺗ ﻞﻴﻬﺴﺗ"
-
-
-msgid "Quartic"
-msgstr "ﻲﺗﺭﺍﻮﻛ"
-
-
-msgid "Exponential"
-msgstr "ﻲﻔﻋﺎﻀﺗ"
-
-
-msgid "Circular"
-msgstr "ﻱﺮﺋﺍﺩ"
-
-
-msgid "Bounce"
-msgstr "ﺪﺗﺮﻣ"
-
-
-msgid "Elastic"
-msgstr "ﺩﺪﻤﺘﻣ"
-
-
 msgid "Grease Pencil Layer"
 msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺔﻘﺒﻃ"
 
@@ -8669,6 +8617,10 @@ msgid "Spacing"
 msgstr "ﺪﻋﺎﺒﺘﻟﺍ"
 
 
+msgid "Circular"
+msgstr "ﻱﺮﺋﺍﺩ"
+
+
 msgid "Grid"
 msgstr "ﺔﻜﺒﺷ"
 
@@ -8719,14 +8671,6 @@ msgstr "ﺔﻳﺎﻬﻨﻟﺍ ﺓﺮﻴﻜﺴﺗ"
 
 msgid "Flat"
 msgstr "ﺢﻄّﺴﻣ"
-
-
-msgid "Groups"
-msgstr "ﺕﺎﻋﻮﻤﺠﻣ"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "ﺔﻄﻘﻨﻟﺍ ﻩﺬﻫ ﺎﻬﻴﻟﺇ ﻲﻤﺘﻨﺗ ﻲﺘﻟﺍ ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻤﻟ ﻥﺍﺯﻭﻷ﻿ﺍ"
 
 
 msgid "Material Index"
@@ -9003,6 +8947,10 @@ msgid "Mirror Modifier"
 msgstr "ﺔﻠﺛﺎﻤﻤﻟﺍ ﺮﻴﻐﻣ"
 
 
+msgid "Step"
+msgstr "ﺓﻮﻄﺨﻟﺍ"
+
+
 msgid "Fixed"
 msgstr "ﺖﺑﺎﺛ"
 
@@ -9145,6 +9093,10 @@ msgstr "ﺭﺎﻄﻟﺍ ﻯﺪﻣ"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "ﺙﺪﺤﻟﺍ ﺍﺬﻫ ﻲﻓ ﻞﻤﻌﻟﺍ ﺕﺎﻴﻨﺤﻨﻣ ﻞﻜﻟ ﺮﻃﻸ﻿ﻟ ﻲﺋﺎﻬﻨﻟﺍ ﻯﺪﻤﻟﺍ"
+
+
+msgid "Groups"
+msgstr "ﺕﺎﻋﻮﻤﺠﻣ"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -9665,6 +9617,10 @@ msgstr "ﺔﺒﻄﺸﻟﺍ ﺔﻣﻮﻌﻧ ﺮﻄﻗ"
 
 msgid "Minimum distance from last point before stroke continues"
 msgstr "ﺔﺒﻄﺸﻟﺍ ﺔﻠﻤﻜﺗ ﻞﺒﻗ ﺔﻄﻘﻧ ﺮﺧﺍ ﻦﻣ ﺎﻴﻧﺪﻟﺍ ﺔﻓﺎﺴﻤﻟﺍ"
+
+
+msgid "Elastic"
+msgstr "ﺩﺪﻤﺘﻣ"
 
 
 msgid "Spacing between brush daubs as a percentage of brush diameter"
@@ -14569,8 +14525,16 @@ msgid "Create a linear progression"
 msgstr "ﻲﻄّﺧ ﻡﺪﻘﺗ ﺊﺸﻧﺍ"
 
 
+msgid "Quadratic"
+msgstr "ﻲﻋﺎﺑﺭ"
+
+
 msgid "Create a quadratic progression"
 msgstr "ﻲﻋﺎﺑﺭ ﻡﺪّﻘﺗ ﺊﺸﻧﺍ"
+
+
+msgid "Easing"
+msgstr "ﻞﻴﻬﺴﺘﻟﺍ"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -15523,10 +15487,6 @@ msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "non-ik ﺩﻮﻴﻗ ﻭ ﺙﺍﺪﺣﻸ﻿ﻟ ﻞﻫﺎﺠﺘﻤﻟﺍ ﻭ ﻲﻘﻴﻘﺣ ﺖﻗﻭ ﺕﺍﺫ ﺔﺌﻴﺒﺑ ﻞﻣﺎﻌﻟﺍ ﻭ ﺔﻟﺎﺣ ﻭﺫ ﺞﻟﺎﻌﻣ"
-
-
-msgid "Precision"
-msgstr "ﺔﻗﺪﻟﺍ"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -16648,6 +16608,22 @@ msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "ﻥﻮﻠﻟﺍ ﺕﺎﻔﻗﻭ ﻦﻴﺑ ﺪﻴﻟﻮﺘﻟﺍ ﺩﺪﺣ"
 
 
+msgid "Quadratic easing"
+msgstr "ﻲﻌﻴﺑﺮﺗ ﻞﻴﻬﺴﺗ"
+
+
+msgid "Quartic"
+msgstr "ﻲﺗﺭﺍﻮﻛ"
+
+
+msgid "Exponential"
+msgstr "ﻲﻔﻋﺎﻀﺗ"
+
+
+msgid "Bounce"
+msgstr "ﺪﺗﺮﻣ"
+
+
 msgid "Left handle selection status"
 msgstr "ﻝﺎﻤﺸﻟﺍ ﺾﺒﻘﻤﻟﺍ ﺭﺎﺘﺧﺇ ﺔﻟﺎﺣ"
 
@@ -17459,10 +17435,6 @@ msgid "Special Characters"
 msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
 
 
-msgid "Interpolate"
-msgstr "ﺪﻟّﻭ"
-
-
 msgid "Face"
 msgstr "ﻪﺟﻭ"
 
@@ -17497,10 +17469,6 @@ msgstr "ﺕﺎﻓﺎﻄﺧ"
 
 msgid "Light"
 msgstr "ءﻮﺿ"
-
-
-msgid "Make Links"
-msgstr "ﻂﺑﺍﻭﺭ ﺊﺸﻧﺍ"
 
 
 msgid "Make Single User"
@@ -17789,6 +17757,10 @@ msgstr "ﻞﻜﺷ ﺔﻄﻘﻧ"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "'ﻂﻘﻓ ﻂﻘﻧ' ﺭﺎﻴﺧ ﻲﻓ ﺔﻔﻄﺸﻟﺍ ﺮﻴﻐﻣ ﻑﺮﻃ ﻦﻣ ﻞﻤﻌﺘﺴﻤﻟﺍ ﻥﺯﻮﻟﺍ"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "ﺔﻄﻘﻨﻟﺍ ﻩﺬﻫ ﺎﻬﻴﻟﺇ ﻲﻤﺘﻨﺗ ﻲﺘﻟﺍ ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻤﻟ ﻥﺍﺯﻭﻷ﻿ﺍ"
 
 
 msgid "Index of this vertex"
@@ -19794,14 +19766,6 @@ msgid "Distance between two bundles used for object scaling"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﻢﻴﺠﺤﺘﻠﻟ ﻦﻴﺘﻣﺰﺣ ﻦﻴﺑ ﺔﻓﺎﺴﻤﻟﺍ"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻲﻓ ﺔﺣﻮﺘﻔﻣ ﺔﻴﺿﺍﺮﺘﻓﻹ﻿ﺍ ﺕﺍﺭﺎﻴﺨﻟﺍ ﺮﻬﻇﺃ"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻲﻓ ﺔﺣﻮﺘﻔﻣ ﺔﻴﻓﺎﺿﻹ﻿ﺍ ﺕﺍﺭﺎﻴﺨﻟﺍ ﺮﻬﻇﺃ"
-
-
 msgid "Track as fast as it's possible"
 msgstr "ﺔﻨﻜﻤﻣ ﺔﻋﺮﺳ ﻰﻠﻋﺄﺑ ﻖﺣﻻ﻿"
 
@@ -19852,6 +19816,10 @@ msgstr "ﻢﺋﺍﻮﻘﻟﺍ ﻲﺛﻼ﻿ﺛ ﺔﻛﺮﺣ"
 
 msgid "Active Track Index"
 msgstr "ﻝﺎﻌﻔﻟﺍ ﺭﺎﺴﻤﻟﺍ ﻞﻴﻟﺩ"
+
+
+msgid "Interpolate"
+msgstr "ﺪﻟّﻭ"
 
 
 msgid "Bilinear"
@@ -26961,11 +26929,6 @@ msgstr "ﻊﻗﻮﻤﻟﺍ ﻂﺒﺿ ﺪﻋﺍ"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "ﺕﺎﻧﺎﻴﺒﻟﺍ ﻂﺑﺭﺍ"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "ﺪﻬﺸﻤﻠﻟ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻂﺑﺭﺍ"
 
@@ -33068,10 +33031,6 @@ msgid "Continuous Grab"
 msgstr "ﺮﻤﺘﺴﻣ ﻙﺎﺴﻣﺇ"
 
 
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr " (ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻦﻣ ﻢﻜﺤﺘﻣ ﺐﺤﺳ ،ﻞﻳﻮﺤﺗ) ﺕﺍﺭﻭﺎﻨﻤﻟﺍ ﺪﻌﺑ ﻲﻓ ﺮﻈﻨﻤﻟﺍ ﺝﺭﺎﺧ ﺓﺭﺄﻔﻟﺍ ﻚﻳﺮﺤﺘﺑ ﺢﻤﺳﺇ"
-
-
 msgid "Auto Depth"
 msgstr "ﻲﺗﺍﺫ ﻖﻤﻋ"
 
@@ -35902,10 +35861,6 @@ msgstr "ﺎﻳﺪﺠﺑﺃ ﺐﺗﺭ"
 
 msgid "Filter method"
 msgstr "ﺔﻴﻔﺼﺘﻟﺍ ﺔﻘﻳﺮﻃ"
-
-
-msgid "On"
-msgstr "ﻞﻌﻔﻣ"
 
 
 msgid "Use the pinned context"
@@ -39813,11 +39768,6 @@ msgstr "ﺕﺍﺮﻤﻣ"
 
 
 msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "...ﺪﻬﺸﻤﻟﺍ ﻰﻟﺇ ﺕﺎﻨﺋﺎﻛ"
-
-
-msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "ﺭﺎﺘﺨﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ ﺔﻤﻈﻌﻟ ﻑﺎﻄﺧ"
 
@@ -39977,6 +39927,11 @@ msgstr "ﺓﺪﻳﺪﺟ ﺔﻋﻮﻤﺠﻣ ﻰﻟﺇ ﻦﻴﻋ"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "ﺍﺮﻤﻜﻟﺍ ﺔﺳﺪﻋ ﻢﻴﺠﺤﺗ"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "ﻞﻜﻟﺍ ﻦﻣ ﻑﺬﺣﺇ"
 
@@ -39987,53 +39942,8 @@ msgstr "ﺮﻄﻘﻟﺍ ﻒﺼﻧ ﺮﺒّﻛ"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "ﺍﺮﻤﻜﻟﺍ ﺔﺳﺪﻋ ﺔﻳﻭﺍﺯ"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "ﺍﺮﻤﻜﻟﺍ ﺔﺳﺪﻋ ﻢﻴﺠﺤﺗ"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "ﻖﺜﺒﻟﺍ ﻢﺠﺣ"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "ﺽﺮﻌﻟﺍ ﻝﻮﻃ"
-
-
-msgctxt "Operator"
 msgid "DOF Distance (Pick)"
 msgstr "(ﻂﻘﺘﻟﺍ) ﻞﻘﺤﻟﺍ ﻖﻤﻋ ﺪﻌﺑ"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "ﻞﻘﺤﻟﺍ ﻖﻤﻋ ﺔﻓﺎﺴﻣ"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "ﻲﻤﻫﻮﻟﺍ ﻢﺳﺭ ﻢﺠﺣ"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "X ﻢﺠﺣ"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "ﻢﻴﻌﻨﺘﻟﺍ ﻢﺠﺣ"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "Y ﻢﺠﺣ"
 
 
 msgid "Layer:"
@@ -40253,72 +40163,12 @@ msgid "Cannot re-link markers into the same scene"
 msgstr "ﻂﺋﺍﺮﺸﻟﺍ ﺭﺮﺤﻤﻠﻟ ﻢﻠﻓ ﺔﺻﺎﺼﻗ ﻂﻳﺮﺷ ﻒﺿﺃ"
 
 
-msgid "Poly Order:"
-msgstr ":ﺩﺪﻌﺘﻤﻟﺍ ﺐﻴﺗﺮﺗ"
-
-
-msgid "Before:"
-msgstr ":ﻞﺒﻗ"
-
-
-msgid "After:"
-msgstr ":ﺪﻌﺑ"
-
-
-msgid "Envelope:"
-msgstr ":ﻒﻠﻐﻤﻟﺍ"
-
-
-msgid "Control Points:"
-msgstr ":ﻢﻜﺤﺘﻟﺍ ﻂﻘﻧ"
-
-
-msgid "Add Point"
-msgstr "ﺔﻄﻘﻧ ﻒﺿﺍ"
-
-
-msgid "Fra:"
-msgstr "Fra:"
-
-
-msgid "Min:"
-msgstr ":ﻞﻗﺍ"
-
-
-msgid "Max:"
-msgstr ":ﻰﺼﻗﻷ﻿ﺍ"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "(1-ﺍﺬﻛ ﻥﻮﻜﻳ ﺐﻳﺮﺘﻟﺍ ,ﺮﻴﺑﺎﻌﺗ ﺍﺬﻜﺑ ﺩﻭﺪﺤﻟﺍ ﺩﺪﻌﺘﻤﻟ)  ﺩﻭﺪﺤﻟﺍ ﺩﺪﻌﺘﻣ ‘ﺐﻴﺗﺮﺗ‘"
-
-
-msgid "Coefficient for polynomial"
-msgstr "ﺩﻭﺪﺤﻟﺍ ﺩﺪﻌﺘﻤﻟ ﺔﺟﺭﺩ"
-
-
-msgid "Power of x"
-msgstr "X ﺓﻮﻗ"
-
-
-msgid "Coefficient of x"
-msgstr "X ﻞﻣﺎﻌﻣ"
-
-
-msgid "Second coefficient"
-msgstr "ﻲﻧﺎﺜﻟﺍ ﻞﻣﺎﻌﻤﻟﺍ"
-
-
 msgid "Add a new control-point to the envelope on the current frame"
 msgstr "ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﻰﻠﻋ ﻒﻠﻐﻤﻠﻟ ﺓﺪﻳﺪﺟ ﻢﻜﺤﺗ ﺔﻄﻘﻧ ﻒﺿﺍ"
 
 
 msgid "Delete envelope control point"
 msgstr "ﻒﻠﻐﻤﻟﺍ ﻢﻜﺤﺗ ﺔﻄﻘﻧ ﻑﺬﺣﺍ"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "ﻲﻧﺎﻴﺒﻟﺍ ﻂﺨﻟﺍ ﺮﻴﻐﻣ ﻑﺬﺣﺍ"
 
 
 msgid "No animation data in buffer to paste"
@@ -40532,6 +40382,10 @@ msgstr "ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ ﻰﻠﻋ ﻝﺎﻌﻓ ﺭ�
 
 msgid "No active area"
 msgstr "ﺔﻟﺎﻌّﻓ ﺔﻘﻄﻨﻣ ﺪﺟﻮﺗ ﻻ﻿"
+
+
+msgid "Dynamic Effects"
+msgstr "ﺔﻳﻮﻴﺣ ﺕﺍﺮﺛﺆﻣ"
 
 
 msgctxt "Operator"
@@ -42102,10 +41956,6 @@ msgid "Relationship"
 msgstr "ﺔﻗﻼ﻿ﻌﻟﺍ"
 
 
-msgid "Dynamic Effects"
-msgstr "ﺔﻳﻮﻴﺣ ﺕﺍﺮﺛﺆﻣ"
-
-
 msgid "Bezier spline cannot have points added"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻰﻨﺤﻨﻤﻟﺍ ﺾﺑﺎﻘﻣ ﺮﻬﻇﺍ"
 
@@ -42327,6 +42177,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "ﻞﻌﻔﻣ"
 
 
 msgid "Val"

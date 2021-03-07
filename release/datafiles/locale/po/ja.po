@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.92.0 Beta (b'7c864388fc0d')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -49,6 +49,14 @@ msgstr "カラー"
 
 msgid "Value"
 msgstr "値"
+
+
+msgid "List of AOVs"
+msgstr "AOVのリスト"
+
+
+msgid "Collection of AOVs"
+msgstr "AOVの集合"
 
 
 msgid "Action F-Curves"
@@ -3539,12 +3547,8 @@ msgid "Use edit lines as fill boundary limits"
 msgstr "境界を塗りつぶすのに編集ラインを使用します"
 
 
-msgid "Resolution"
-msgstr "解像度"
-
-
-msgid "Multiplier for fill resolution, higher resolution is more accurate but slower"
-msgstr "フィルの解像度の乗数。大きな値で精度が上がりますが低速になります"
+msgid "Precision"
+msgstr "精度"
 
 
 msgid "Layer Mode"
@@ -5193,26 +5197,6 @@ msgstr "入力色空間"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "保存・読み込み時に変換先・変換元となる、画像ファイルの色空間"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "露出寛容度が16.5、ダイナミックレンジが25ストップの対数ベースの映画状 Shaper"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (フルレンジ)、Blender 本来のリニア空間"
-
-
-msgid "ACES linear space"
-msgstr "ACESリニア空間"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "非カラーデータ（ノーマルマップなど）を含む画像用に使用される色空間"
-
-
-msgid "Standard RGB Display Space"
-msgstr "標準RGBディスプレイ空間"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -9621,6 +9605,10 @@ msgid "Directory to save the textures"
 msgstr "テクスチャを保存するディレクトリー"
 
 
+msgid "Resolution"
+msgstr "解像度"
+
+
 msgid "Output image resolution"
 msgstr "出力画像の解像度"
 
@@ -10642,10 +10630,6 @@ msgid "Modifier for values of F-Curve"
 msgstr "Fカーブの値用のモディファイアー"
 
 
-msgid "F-Curve Modifier is the one being edited"
-msgstr "編集中の F カーブモディファイアー"
-
-
 msgid "Blend In"
 msgstr "ブレンドイン"
 
@@ -10935,10 +10919,6 @@ msgstr "正規化サイン"
 
 msgid "sin(x) / x"
 msgstr "sin(x) / x"
-
-
-msgid "Phase Multiplier"
-msgstr "位相乗数"
 
 
 msgid "Scale factor determining the 'speed' of the function"
@@ -13238,10 +13218,6 @@ msgid "Tension"
 msgstr "引張"
 
 
-msgid "Surface tension of liquid (higher value results in greater hydrophobic behaviour)"
-msgstr "液体の表面張力（大きな値で疎水性の挙動が大きくなります）"
-
-
 msgid "System Maximum"
 msgstr "システム最大"
 
@@ -14526,172 +14502,12 @@ msgid "Settings for Grease Pencil interpolation tools"
 msgstr "グリースペンシルの補間ツールの設定"
 
 
-msgid "Amount to boost elastic bounces for 'elastic' easing"
-msgstr "ゴム状イージングのバウンス増加量"
-
-
-msgid "Amount of overshoot for 'back' easing"
-msgstr "「後」イージングが行き過ぎる量"
-
-
-msgid "Easing"
-msgstr "イージング"
-
-
-msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
-msgstr "グリースペンシルフレームの前後のどちら側の区間終端にイージング補間を適用するか"
-
-
-msgid "Automatic Easing"
-msgstr "自動イージング"
-
-
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "使用されている補間タイプを元に、自動的にイージングタイプを選択します（例：遷移するタイプには「イーズイン」、ダイナミックなエフェクトには「イーズアウト」など）"
-
-
-msgid "Only on the end closest to the next keyframe"
-msgstr "次のキーフレームに最も近い端のみ"
-
-
-msgid "Only on the end closest to the first keyframe"
-msgstr "最初のキーフレームに最も近い端のみ"
-
-
-msgid "Ease In and Out"
-msgstr "イーズイン・アウト"
-
-
-msgid "Segment between both keyframes"
-msgstr "両キーフレームの区間"
-
-
-msgid "Interpolate All Layers"
-msgstr "全レイヤーを補間"
-
-
-msgid "Interpolate all layers, not only active"
-msgstr "アクティブレイヤー以外もすべて補間します"
-
-
-msgid "Interpolate Selected Strokes"
-msgstr "選択ストロークを補間"
-
-
-msgid "Interpolate only selected strokes in the original frame"
-msgstr "オリジナルフレーム内の選択中のストロークのみ補間します"
-
-
 msgid "Interpolation Curve"
 msgstr "補間カーブ"
 
 
 msgid "Custom curve to control 'sequence' interpolation between Grease Pencil frames"
 msgstr "グリースペンシルフレーム間の「連続」補間をコントロールするカスタムカーブ"
-
-
-msgid "Period"
-msgstr "期間"
-
-
-msgid "Time between bounces for elastic easing"
-msgstr "ゴム状イージングのバウンス時間"
-
-
-msgid "Step"
-msgstr "ステップ"
-
-
-msgid "Number of frames between generated interpolated frames"
-msgstr "生成される補間フレームのフレーム数"
-
-
-msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
-msgstr "次回の「シーケンス補間」実行時に使用する補間方法"
-
-
-msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
-msgstr "AとBの間を直線で補間します（要はイーズイン・アウトなし）"
-
-
-msgid "Custom"
-msgstr "カスタム"
-
-
-msgid "Custom interpolation defined using a curve map"
-msgstr "カーブマップで設定されたカスタム補間"
-
-
-msgid "Sinusoidal"
-msgstr "正弦曲線"
-
-
-msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
-msgstr "正弦曲線イージング（最弱、ほぼ直線ですが、若干曲がっています）"
-
-
-msgid "Quadratic"
-msgstr "二次式"
-
-
-msgid "Quadratic easing"
-msgstr "二次イージング"
-
-
-msgid "Cubic easing"
-msgstr "三次イージング"
-
-
-msgid "Quartic"
-msgstr "四次式"
-
-
-msgid "Quartic easing"
-msgstr "四次イージング"
-
-
-msgid "Quintic"
-msgstr "五次式"
-
-
-msgid "Quintic easing"
-msgstr "五次イージング"
-
-
-msgid "Exponential"
-msgstr "指数"
-
-
-msgid "Exponential easing (dramatic)"
-msgstr "指数イージング(急激)"
-
-
-msgid "Circular"
-msgstr "円形"
-
-
-msgid "Circular easing (strongest and most dynamic)"
-msgstr "円形イージング（最強かつ最も力強い）"
-
-
-msgid "Cubic easing with overshoot and settle"
-msgstr "行き過ぎと安定のある三次イージング"
-
-
-msgid "Bounce"
-msgstr "バウンス"
-
-
-msgid "Exponentially decaying parabolic bounce, like when objects collide"
-msgstr "物体の衝突のような放物線状跳ね返りの急激な減衰"
-
-
-msgid "Elastic"
-msgstr "ゴム状"
-
-
-msgid "Exponentially decaying sine wave, like an elastic band"
-msgstr "ゴムバンドのようなサイン波状の急激な減衰"
 
 
 msgid "Grease Pencil Layer"
@@ -14810,6 +14626,10 @@ msgid "Thickness change to apply to current strokes (in pixels)"
 msgstr "現在のストロークに変更を適用する幅（ピクセル数）"
 
 
+msgid "Values for change location"
+msgstr "位置を変更する値"
+
+
 msgid "Locked"
 msgstr "ロック"
 
@@ -14880,6 +14700,14 @@ msgstr "パスインデックス"
 
 msgid "Index number for the \"Layer Index\" pass"
 msgstr "「レイヤーインデックス」パスのインデックス番号"
+
+
+msgid "Values for changes in rotation"
+msgstr "回転を変更する値"
+
+
+msgid "Values for changes in scale"
+msgstr "スケールを変更する値"
 
 
 msgid "Layer is selected for editing in the Dope Sheet"
@@ -15036,6 +14864,10 @@ msgid "Use cursor as reference point"
 msgstr "カーソルを参照ポイントとして使用します"
 
 
+msgid "Custom"
+msgstr "カスタム"
+
+
 msgid "Use custom reference point"
 msgstr "カスタム参照ポイントを使用します"
 
@@ -15050,6 +14882,10 @@ msgstr "間隔"
 
 msgid "Guide spacing"
 msgstr "ガイドの間隔"
+
+
+msgid "Circular"
+msgstr "円形"
 
 
 msgid "Use single point to create rings"
@@ -15248,14 +15084,6 @@ msgstr "丸"
 
 msgid "Flat"
 msgstr "フラット"
-
-
-msgid "Groups"
-msgstr "グループ"
-
-
-msgid "Weights for the vertex groups this vertex is member of"
-msgstr "この頂点が属する頂点グループのウェイトです"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -16420,6 +16248,10 @@ msgid "Use random values over time"
 msgstr "時間の経過とともに乱数を使用します"
 
 
+msgid "Step"
+msgstr "ステップ"
+
+
 msgid "Number of frames before recalculate random values again"
 msgstr "ランダム値を再計算するまでの間隔（フレーム数）"
 
@@ -16434,18 +16266,6 @@ msgstr "オフセットモディファイアー"
 
 msgid "Offset Stroke modifier"
 msgstr "ストロークをずらすモディファイアー"
-
-
-msgid "Values for change location"
-msgstr "位置を変更する値"
-
-
-msgid "Values for changes in rotation"
-msgstr "回転を変更する値"
-
-
-msgid "Values for changes in scale"
-msgstr "スケールを変更する値"
 
 
 msgid "Opacity Modifier"
@@ -17123,6 +16943,10 @@ msgstr "フレーム範囲"
 
 msgid "The final frame range of all F-Curves within this action"
 msgstr "このアクション内のすべてのFカーブの最後のフレーム範囲"
+
+
+msgid "Groups"
+msgstr "グループ"
 
 
 msgid "Convenient groupings of F-Curves"
@@ -18372,6 +18196,10 @@ msgstr "半径の減衰"
 
 msgid "Applies the brush falloff in the tip of the brush"
 msgstr "ブラシ先端にブラシの減衰を適用します"
+
+
+msgid "Elastic"
+msgstr "ゴム状"
 
 
 msgid "Modifies the entire mesh using elastic deform"
@@ -23536,12 +23364,12 @@ msgid "Paint Grease Pencil Strokes"
 msgstr "グリースペンシルのストロークペイント"
 
 
-msgid "Grease Pencil Vertex Paint Strokes"
-msgstr "グリースペンシルのストローク頂点ペイント"
-
-
 msgid "Grease Pencil Weight Paint Strokes"
 msgstr "グリースペンシルのストロークウェイトペイント"
+
+
+msgid "Grease Pencil Vertex Paint Strokes"
+msgstr "グリースペンシルのストローク頂点ペイント"
 
 
 msgid "Modifiers affecting the geometric data of the object"
@@ -25918,8 +25746,16 @@ msgid "Create a linear progression"
 msgstr "線形に変化します"
 
 
+msgid "Quadratic"
+msgstr "二次式"
+
+
 msgid "Create a quadratic progression"
 msgstr "二次曲線で変化します"
+
+
+msgid "Easing"
+msgstr "イージング"
 
 
 msgid "Create a progression easing from one step to the next"
@@ -25987,7 +25823,7 @@ msgstr "法線計算時の微分係数のサイズ"
 
 
 msgid "Noise Basis"
-msgstr "ノイズのタイプ"
+msgstr "基本のノイズ"
 
 
 msgid "Noise basis used for turbulence"
@@ -25995,7 +25831,7 @@ msgstr "乱れを生成する基本となるノイズを設定します"
 
 
 msgid "Blender Original"
-msgstr "Blender オリジナル"
+msgstr "Blenderオリジナル"
 
 
 msgid "Noise algorithm - Blender original: Smooth interpolated noise"
@@ -27196,10 +27032,6 @@ msgstr "シミュレーション"
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
 msgstr "リアルタイムコンテクストで実行し、アクションと非 IK コンストレイントを無視するステートフルソルバー"
-
-
-msgid "Precision"
-msgstr "精度"
 
 
 msgid "Precision of convergence in case of reiteration"
@@ -29004,12 +28836,44 @@ msgid "Bezier curve point with two handles defining a Keyframe on an F-Curve"
 msgstr "Fカーブでキーフレームを定義する2 つのハンドルを持つBezier カーブポイント"
 
 
+msgid "Amount to boost elastic bounces for 'elastic' easing"
+msgstr "ゴム状イージングのバウンス増加量"
+
+
+msgid "Amount of overshoot for 'back' easing"
+msgstr "「後」イージングが行き過ぎる量"
+
+
 msgid "Coordinates of the control point. Note: Changing this value also updates the handles similar to using the graph editor transform operator"
 msgstr "制御点の座標。注意：この値を変更すると、グラフエディターのトランスフォームオペレーターの使用と同様に、ハンドルも更新されます"
 
 
 msgid "Which ends of the segment between this and the next keyframe easing interpolation is applied to"
 msgstr "ここと次のキーフレームの区間のどちらの端にイージング補間を適用するか"
+
+
+msgid "Automatic Easing"
+msgstr "自動イージング"
+
+
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "使用されている補間タイプを元に、自動的にイージングタイプを選択します（例：遷移するタイプには「イーズイン」、ダイナミックなエフェクトには「イーズアウト」など）"
+
+
+msgid "Only on the end closest to the next keyframe"
+msgstr "次のキーフレームに最も近い端のみ"
+
+
+msgid "Only on the end closest to the first keyframe"
+msgstr "最初のキーフレームに最も近い端のみ"
+
+
+msgid "Ease In and Out"
+msgstr "イーズイン・アウト"
+
+
+msgid "Segment between both keyframes"
+msgstr "両キーフレームの区間"
 
 
 msgid "Left Handle"
@@ -29068,8 +28932,80 @@ msgid "No interpolation, value of A gets held until B is encountered"
 msgstr "補間なし。Aでの値はBに出会うで維持されます"
 
 
+msgid "Straight-line interpolation between A and B (i.e. no ease in/out)"
+msgstr "AとBの間を直線で補間します（要はイーズイン・アウトなし）"
+
+
 msgid "Smooth interpolation between A and B, with some control over curve shape"
 msgstr "AとBの間をコントロール可能なカーブ形状でスムーズに補間します"
+
+
+msgid "Sinusoidal"
+msgstr "正弦曲線"
+
+
+msgid "Sinusoidal easing (weakest, almost linear but with a slight curvature)"
+msgstr "正弦曲線イージング（最弱、ほぼ直線ですが、若干曲がっています）"
+
+
+msgid "Quadratic easing"
+msgstr "二次イージング"
+
+
+msgid "Cubic easing"
+msgstr "三次イージング"
+
+
+msgid "Quartic"
+msgstr "四次式"
+
+
+msgid "Quartic easing"
+msgstr "四次イージング"
+
+
+msgid "Quintic"
+msgstr "五次式"
+
+
+msgid "Quintic easing"
+msgstr "五次イージング"
+
+
+msgid "Exponential"
+msgstr "指数"
+
+
+msgid "Exponential easing (dramatic)"
+msgstr "指数イージング(急激)"
+
+
+msgid "Circular easing (strongest and most dynamic)"
+msgstr "円形イージング（最強かつ最も力強い）"
+
+
+msgid "Cubic easing with overshoot and settle"
+msgstr "行き過ぎと安定のある三次イージング"
+
+
+msgid "Bounce"
+msgstr "バウンス"
+
+
+msgid "Exponentially decaying parabolic bounce, like when objects collide"
+msgstr "物体の衝突のような放物線状跳ね返りの急激な減衰"
+
+
+msgid "Exponentially decaying sine wave, like an elastic band"
+msgstr "ゴムバンドのようなサイン波状の急激な減衰"
+
+
+msgid "Period"
+msgstr "期間"
+
+
+msgid "Time between bounces for elastic easing"
+msgstr "ゴム状イージングのバウンス時間"
 
 
 msgid "Left handle selection status"
@@ -31316,10 +31252,6 @@ msgid "Kerning"
 msgstr "カーニング"
 
 
-msgid "Interpolate"
-msgstr "補間"
-
-
 msgid "Lattice Context Menu"
 msgstr "ラティスコンテクストメニュー"
 
@@ -31406,10 +31338,6 @@ msgstr "ライト"
 
 msgid "Light Probe"
 msgstr "ライトプローブ"
-
-
-msgid "Make Links"
-msgstr "リンク作成"
 
 
 msgid "Make Single User"
@@ -31522,6 +31450,10 @@ msgstr "スプラッシュ表示"
 
 msgid "About"
 msgstr "Blenderについて"
+
+
+msgid "Quick Setup"
+msgstr "クイックセットアップ"
 
 
 msgid "Mesh Cache Velocity"
@@ -32052,6 +31984,10 @@ msgstr "メッシュデータブロック内の頂点"
 
 msgid "Weight used by the Bevel modifier 'Only Vertices' option"
 msgstr "ベベルモディファイアーの「頂点のみ」オプションで使用されるウェイト"
+
+
+msgid "Weights for the vertex groups this vertex is member of"
+msgstr "この頂点が属する頂点グループのウェイトです"
 
 
 msgid "Index of this vertex"
@@ -37497,14 +37433,6 @@ msgid "Refine tangential coefficients of distortion model during camera solving"
 msgstr "カメラ解析中に接線係数と接線歪みを絞り込みます"
 
 
-msgid "Show default options expanded in the user interface"
-msgstr "UI を展開しデフォルトオプションを表示します"
-
-
-msgid "Show extra options expanded in the user interface"
-msgstr "UI を展開し詳細オプションを表示します"
-
-
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
 msgstr "視覚的なフィードバックを容易にするためのトラッキングの制限速度 (トラッキングの品質には影響しません)"
 
@@ -37639,6 +37567,10 @@ msgid "Reference point to anchor stabilization (other frames will be adjusted re
 msgstr ""
 "アンカースタビライゼーションの参照ポイント\n"
 "（他のフレームはこのフレーム位置と相対的に調整されます）"
+
+
+msgid "Interpolate"
+msgstr "補間"
 
 
 msgid "Interpolation to use for sub-pixel shifts and rotations due to stabilization"
@@ -40420,12 +40352,20 @@ msgid "Attribute Math"
 msgstr "属性演算"
 
 
+msgid "Input Type C"
+msgstr "入力タイプ C"
+
+
 msgid "Attribute Mix"
 msgstr "属性ミックス"
 
 
 msgid "Attribute Randomize"
 msgstr "属性ランダム化"
+
+
+msgid "Input Type"
+msgstr "入力タイプ"
 
 
 msgid "Attribute Vector Math"
@@ -40532,6 +40472,10 @@ msgid "Entry-wise tan(A)"
 msgstr "成分ごとの tan(A)"
 
 
+msgid "Original"
+msgstr "オリジナル"
+
+
 msgid "Join Geometry"
 msgstr "ジオメトリ統合"
 
@@ -40542,10 +40486,6 @@ msgstr "オブジェクト情報"
 
 msgid "The transformation of the vector and geometry outputs"
 msgstr "ベクトルとジオメトリ出力用のトランスフォーム空間"
-
-
-msgid "Original"
-msgstr "オリジナル"
 
 
 msgid "Output the geometry relative to the input object transform, and the location, rotation and scale relative to the world origin"
@@ -40598,10 +40538,6 @@ msgstr "ポイント毎にコレクション全体をインスタンス化（複
 
 msgid "Point Scale"
 msgstr "ポイントスケール"
-
-
-msgid "Input Type"
-msgstr "入力タイプ"
 
 
 msgid "Point Separate"
@@ -44749,6 +44685,10 @@ msgid "Distance between selected tracks"
 msgstr "選択したトラックの間の距離"
 
 
+msgid "Keep Original"
+msgstr "オリジナルを保持"
+
+
 msgctxt "Operator"
 msgid "3D Markers to Mesh"
 msgstr "3Dマーカーをメッシュに"
@@ -46685,10 +46625,6 @@ msgstr "ランダム選択"
 
 msgid "Randomly select some control points"
 msgstr "制御点をいくつかランダムに選択します"
-
-
-msgid "Percentage of objects to select randomly"
-msgstr "ランダムに選択されるオブジェクトの割合"
 
 
 msgid "Seed for the random number generator"
@@ -49878,13 +49814,12 @@ msgid "Interpolate grease pencil strokes between frames"
 msgstr "フレーム間のグリースペンシルのストロークを補間します"
 
 
+msgid "Confirm on Release"
+msgstr "ボタンを離すと適用"
+
+
 msgid "Bias factor for which frame has more influence on the interpolated strokes"
 msgstr "ストロークの補間時、どのフレームへの影響を強くするかを決めるバイアス係数"
-
-
-msgctxt "Operator"
-msgid "Remove Breakdowns"
-msgstr "ブレイクダウンを削除"
 
 
 msgid "Remove breakdown frames generated by interpolating between two Grease Pencil frames"
@@ -49898,6 +49833,22 @@ msgstr "シーケンスを補間"
 
 msgid "Generate 'in-betweens' to smoothly interpolate between Grease Pencil frames"
 msgstr "複数の「インビトウィーン（中割）」を生成し、グリースペンシルフレーム間をスムーズに補間します"
+
+
+msgid "Which ends of the segment between the preceding and following grease pencil frames easing interpolation is applied to"
+msgstr "グリースペンシルフレームの前後のどちら側の区間終端にイージング補間を適用するか"
+
+
+msgid "Number of frames between generated interpolated frames"
+msgstr "生成される補間フレームのフレーム数"
+
+
+msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
+msgstr "次回の「シーケンス補間」実行時に使用する補間方法"
+
+
+msgid "Custom interpolation defined using a curve map"
+msgstr "カーブマップで設定されたカスタム補間"
 
 
 msgctxt "Operator"
@@ -50293,10 +50244,6 @@ msgid "Reproject the selected strokes from the current viewpoint as if they had 
 msgstr ""
 "現在の視点から、選択中のストロークを新しく描かれたかのように再投影します\n"
 "（例：不意に3Dカーソルを移動、またはビューを変更してしまった時の問題の解決や、形状の変形への追従）"
-
-
-msgid "Keep Original"
-msgstr "オリジナルを保持"
 
 
 msgid "Keep original strokes and create a copy before reprojecting instead of reproject them"
@@ -51014,10 +50961,6 @@ msgid "Transform grease pencil stroke fill"
 msgstr "グリースペンシルストロークフィルをトランスフォームします"
 
 
-msgid "Confirm on Release"
-msgstr "ボタンを離すと適用"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "全レイヤーをロック解除"
@@ -51266,10 +51209,6 @@ msgstr "最大エラーマージン"
 
 msgid "How much the new decimated curve is allowed to deviate from the original"
 msgstr "新しく減量化したカーブが、オリジナルから逸脱できる量"
-
-
-msgid "The percentage of keyframes to remove"
-msgstr "削除するキーフレームのパーセンテージ"
 
 
 msgctxt "Operator"
@@ -58390,19 +58329,6 @@ msgstr "オブジェクトを面によるインスタンスに変換します"
 
 
 msgctxt "Operator"
-msgid "Link Data"
-msgstr "データのリンク"
-
-
-msgid "Apply active object links to other selected objects"
-msgstr "他の選択オブジェクトにアクティブオブジェクトをリンクします"
-
-
-msgid "Effects"
-msgstr "エフェクト"
-
-
-msgctxt "Operator"
 msgid "Link Objects to Scene"
 msgstr "シーンにオブジェクトをリンク"
 
@@ -61006,14 +60932,6 @@ msgid "Make all users of selected data-blocks to use instead a new chosen one"
 msgstr "選択中のデータブロックの全ユーザーが、新しく選んだデータブロックを使用するようにします"
 
 
-msgid "Enter Mode"
-msgstr "モードに入る"
-
-
-msgid "Exit Mode"
-msgstr "モードを出る"
-
-
 msgid "Context menu for item operations"
 msgstr "アイテム操作用のコンテクストメニュー"
 
@@ -62370,20 +62288,16 @@ msgid "Custom properties"
 msgstr "カスタムプロパティ"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "どのキーフレームをより大事にするかを決める重み付け係数"
+
+
 msgid "Next Keyframe"
 msgstr "次のキーフレーム"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "現在のフレームの直後のキーフレーム番号"
-
-
-msgid "Percentage"
-msgstr "割合"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "どのキーフレームをより大事にするかを決める重み付け係数"
 
 
 msgid "Previous Keyframe"
@@ -72706,18 +72620,6 @@ msgid "Show the panel on all tabs"
 msgstr "全タブのパネルを表示します"
 
 
-msgid "Chain Scaling"
-msgstr "チェーンのスケール"
-
-
-msgid "Fitting"
-msgstr "フィット"
-
-
-msgid "Bone Constraints"
-msgstr "ボーンコンストレイント"
-
-
 msgid "Asset Metadata"
 msgstr "アセットメタデータ"
 
@@ -72728,6 +72630,18 @@ msgstr "詳細"
 
 msgid "Asset Navigation"
 msgstr "アセットナビゲーション"
+
+
+msgid "Chain Scaling"
+msgstr "チェーンのスケール"
+
+
+msgid "Fitting"
+msgstr "フィット"
+
+
+msgid "Bone Constraints"
+msgstr "ボーンコンストレイント"
 
 
 msgid "Bendy Bones"
@@ -73015,6 +72929,10 @@ msgstr "段落"
 
 msgid "Path Animation"
 msgstr "パスアニメーション"
+
+
+msgid "Effects"
+msgstr "エフェクト"
 
 
 msgid "Skeleton"
@@ -74387,6 +74305,11 @@ msgstr "ボックス"
 msgctxt "Operator"
 msgid "Circle"
 msgstr "円"
+
+
+msgctxt "Operator"
+msgid "Interpolate"
+msgstr "補間"
 
 
 msgid "Expand or contract the radius of the selected points"
@@ -76638,10 +76561,6 @@ msgid "Tablet API"
 msgstr "タブレットAPI"
 
 
-msgid "Select the tablet API to use for pressure sensitivity"
-msgstr "筆圧探知用に使用するタブレット API を選択します"
-
-
 msgid "Automatically choose Wintab or Windows Ink depending on the device"
 msgstr "デバイスに応じて自動的に Wintab または Windows Ink を選択します"
 
@@ -76690,10 +76609,6 @@ msgstr ""
 
 msgid "Continuous Grab"
 msgstr "連続グラブ"
-
-
-msgid "Allow moving the mouse outside the view on some manipulations (transform, ui control drag)"
-msgstr "(トランスフォーム、UIコントロールドラッグなどの)操作で、マウスがビュー外に出ても移動できるようにします"
 
 
 msgid "Auto Depth"
@@ -77382,6 +77297,10 @@ msgstr "係数を表示する方法"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "係数を「0」から「1」までの値として表示します"
+
+
+msgid "Percentage"
+msgstr "割合"
 
 
 msgid "Display factors as percentages"
@@ -85971,26 +85890,6 @@ msgid "Outliner Sync"
 msgstr "アウトライナーを同期"
 
 
-msgid "Sync tabs from outliner datablock selection"
-msgstr "アウトライナーのデータブロックの選択とタブを同期します"
-
-
-msgid "On"
-msgstr "オン"
-
-
-msgid "Always sync from outliner editors to this editor"
-msgstr "常にこのエディターとアウトライナーの選択を同期します"
-
-
-msgid "Never sync from outliner editors to this editor"
-msgstr "このエディターとアウトライナーの選択を同期しません"
-
-
-msgid "Sync when this editor shares an edge with an outliner editor"
-msgstr "このエディターがアウトライナーと端を共有する時に同期します"
-
-
 msgid "Tab Search Results"
 msgstr "タブ検索結果"
 
@@ -93771,10 +93670,6 @@ msgid "Renamed %d of %d %s"
 msgstr "リネームしました（%d/%d）%s"
 
 
-msgid "Quick Setup"
-msgstr "クイックセットアップ"
-
-
 msgid "Shortcuts"
 msgstr "ショートカット"
 
@@ -97407,14 +97302,6 @@ msgid "Fractional Preview Zoom"
 msgstr "フラクタルプレビューズーム"
 
 
-msgid "Show Frame Overlay"
-msgstr "フレームオーバーレイを表示"
-
-
-msgid "Show Annotations"
-msgstr "アノテーションを表示"
-
-
 msgctxt "Operator"
 msgid "Scene"
 msgstr "シーン"
@@ -97448,14 +97335,6 @@ msgid "%dx%d"
 msgstr "%d×%d"
 
 
-msgid "Unpack"
-msgstr "パック解除"
-
-
-msgid "Pack"
-msgstr "パック"
-
-
 msgid "Original Frame Range"
 msgstr "元のフレーム範囲"
 
@@ -97474,6 +97353,14 @@ msgstr "トランジションを追加"
 
 msgid "Effect Fader"
 msgstr "エフェクトフェーダー"
+
+
+msgid "Unpack"
+msgstr "パック解除"
+
+
+msgid "Pack"
+msgstr "パック"
 
 
 msgid "Stretch to Input Strip Length"
@@ -99291,16 +99178,6 @@ msgstr "アクティブキーフレームを複製（アクティブレイヤー
 
 
 msgctxt "Operator"
-msgid "Interpolate"
-msgstr "補間"
-
-
-msgctxt "Operator"
-msgid "Sequence"
-msgstr "シーケンス"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "選択部分を表示"
 
@@ -99549,16 +99426,6 @@ msgstr "表示の形状をメッシュ化"
 msgctxt "Operator"
 msgid "Limit Total Vertex Groups"
 msgstr "頂点グループの合計を制限"
-
-
-msgctxt "Operator"
-msgid "Objects to Scene..."
-msgstr "オブジェクトをシーンへ..."
-
-
-msgctxt "Operator"
-msgid "Objects to Scene"
-msgstr "オブジェクトをシーンへ"
 
 
 msgctxt "Operator"
@@ -100099,6 +99966,11 @@ msgstr "Bボーンを拡大縮小"
 
 
 msgctxt "Operator"
+msgid "Camera Lens Scale"
+msgstr "カメラレンズのスケール"
+
+
+msgctxt "Operator"
 msgid "Remove from All"
 msgstr "全グループから除外"
 
@@ -100122,23 +99994,8 @@ msgstr "半径の拡大縮小"
 
 
 msgctxt "Operator"
-msgid "Camera Lens Angle"
-msgstr "カメラの画角"
-
-
-msgctxt "Operator"
-msgid "Camera Lens Scale"
-msgstr "カメラレンズのスケール"
-
-
-msgctxt "Operator"
-msgid "Extrude Size"
-msgstr "押し出しサイズ"
-
-
-msgctxt "Operator"
-msgid "Width Size"
-msgstr "幅のサイズ"
+msgid "DOF Distance (Pick)"
+msgstr "被写界深度（スポイト）"
 
 
 msgid "Ridge"
@@ -100151,76 +100008,6 @@ msgstr "谷"
 
 msgid "No object selected, using cursor"
 msgstr "オブジェクトが未選択なため、カーソルを使用します"
-
-
-msgctxt "Operator"
-msgid "DOF Distance (Pick)"
-msgstr "被写界深度（スポイト）"
-
-
-msgctxt "Operator"
-msgid "DOF Distance"
-msgstr "被写界深度"
-
-
-msgctxt "Operator"
-msgid "Convert to Mesh"
-msgstr "メッシュに変換"
-
-
-msgctxt "Operator"
-msgid "Convert to Grease Pencil"
-msgstr "グリースペンシルに変換"
-
-
-msgctxt "Operator"
-msgid "Convert to Path"
-msgstr "パスに変換"
-
-
-msgctxt "Operator"
-msgid "Convert to Bezier Curve"
-msgstr "ベジエカーブに変換"
-
-
-msgctxt "Operator"
-msgid "Convert to Polygon Curve"
-msgstr "ポリゴンカーブに変換"
-
-
-msgctxt "Operator"
-msgid "Empty Draw Size"
-msgstr "エンプティの表示サイズ"
-
-
-msgctxt "Operator"
-msgid "Power"
-msgstr "パワー"
-
-
-msgctxt "Operator"
-msgid "Size X"
-msgstr "サイズ X"
-
-
-msgctxt "Operator"
-msgid "Spot Size"
-msgstr "スポットサイズ"
-
-
-msgctxt "Operator"
-msgid "Spot Blend"
-msgstr "スポットブレンド"
-
-
-msgctxt "Operator"
-msgid "Size Y"
-msgstr "サイズ Y"
-
-
-msgctxt "Operator"
-msgid "Angle"
-msgstr "角度"
 
 
 msgid "Layer:"
@@ -100291,24 +100078,8 @@ msgid "Editing Type"
 msgstr "編集タイプ"
 
 
-msgid "Preserve Strand Lengths"
-msgstr "ストランドの長さを維持"
-
-
-msgid "Preserve Root Positions"
-msgstr "根元の位置を維持"
-
-
 msgid "Path Steps"
 msgstr "パスステップ"
-
-
-msgid "Interpolate Strokes"
-msgstr "ストロークを補間"
-
-
-msgid "Sequence Options:"
-msgstr "シーケンスオプション:"
 
 
 msgid "No Brushes currently available"
@@ -100660,14 +100431,6 @@ msgstr "NLAストリップ"
 
 msgid "[Action Stash]"
 msgstr "[保留アクション]"
-
-
-msgid "Undefined"
-msgstr "未定義"
-
-
-msgid "Undefined Node Tree Type"
-msgstr "未定義ノードツリータイプ"
 
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
@@ -101323,64 +101086,8 @@ msgid "Could not paste driver, as RNA path is invalid for the given ID (ID = %s,
 msgstr "貼り付けるドライバーがありませんでした。このIDのRNAパスは無効です(ID＝%s、パス＝%s)"
 
 
-msgid "Poly Order:"
-msgstr "次数:"
-
-
-msgid "Before:"
-msgstr "前:"
-
-
-msgid "After:"
-msgstr "後:"
-
-
-msgid "Envelope:"
-msgstr "エンベロープ:"
-
-
-msgid "Control Points:"
-msgstr "制御点:"
-
-
-msgid "Add Point"
-msgstr "制御点を追加"
-
-
-msgid "Fra:"
-msgstr "フレーム:"
-
-
-msgid "Min:"
-msgstr "最小:"
-
-
-msgid "Max:"
-msgstr "最大:"
-
-
 msgid "<Unknown Modifier>"
 msgstr "<未知のモディファイアー>"
-
-
-msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
-msgstr "多項式の次数 (n項の多項式の場合、次数はn-1)"
-
-
-msgid "Coefficient for polynomial"
-msgstr "多項式の係数"
-
-
-msgid "Power of x"
-msgstr "Xのべき乗"
-
-
-msgid "Coefficient of x"
-msgstr "Xの係数"
-
-
-msgid "Second coefficient"
-msgstr "二次係数"
 
 
 msgid "Add a new control-point to the envelope on the current frame"
@@ -101389,10 +101096,6 @@ msgstr "現在のフレームのエンベロープに新規制御点を追加し
 
 msgid "Delete envelope control point"
 msgstr "エンベロープの制御点を削除"
-
-
-msgid "Delete F-Curve Modifier"
-msgstr "Fカーブモディファイアーを削除"
 
 
 msgid "No animation data in buffer to paste"
@@ -101815,34 +101518,6 @@ msgid "Programming error: missing clear transform function or keying set name"
 msgstr "プログラミングエラー：トランスフォームクリア関数またはキーイングセット名がありません"
 
 
-msgid "Selected data-blocks are already assets (or do not support use as assets)"
-msgstr "選択中のデータブロックはすでにアセットです（またはアセットとしての使用に未対応）"
-
-
-msgid "No data-blocks to create assets for found (or do not support use as assets)"
-msgstr "アセット作成用のデータブロックがありません（またはアセットとしての使用に未対応）"
-
-
-msgid "No asset data-blocks selected/focused"
-msgstr "アセットデータブロックが未選択/フォーカスされていません"
-
-
-msgid "Data-block '%s' is now an asset"
-msgstr "データブロック「%s」がアセットになりました"
-
-
-msgid "%i data-blocks are now assets"
-msgstr "%i個のデータブロックがアセットになっています"
-
-
-msgid "Data-block '%s' is no asset anymore"
-msgstr "データブロック「%s」はもうアセットではありません"
-
-
-msgid "%i data-blocks are no assets anymore"
-msgstr "%i個のデータブロックはもうアセットではありません"
-
-
 msgid "No point was selected"
 msgstr "ポイントが未選択です"
 
@@ -102211,20 +101886,20 @@ msgid "ESC/RMB to cancel, Enter/LMB to confirm, WHEEL/MOVE to adjust factor"
 msgstr "[Esc]/RMB:キャンセル、[Enter]/LMB:確定、ホイール/移動:係数の調整"
 
 
+msgid "Easing (by strength)"
+msgstr "イージング(強さ準拠)"
+
+
+msgid "Dynamic Effects"
+msgstr "ダイナミックエフェクト"
+
+
 msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
 msgstr "アクティブレイヤーに補間するグリースペンシルフレームのペアがありません"
 
 
-msgid "Cannot interpolate as current frame already has existing grease pencil frames"
-msgstr "現在のフレームにすでにグリースペンシルフレームがある時は補間できません"
-
-
 msgid "Cannot interpolate in curve edit mode"
 msgstr "カーブ編集モードでの補間はできません"
-
-
-msgid "Interpolation requires some editable strokes"
-msgstr "補間には編集可能なストロークが必要です"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -106262,22 +105937,6 @@ msgid "Disabled, CPU with SSE4.1 is required"
 msgstr "無効、SSE4.1対応の CPU が必要です"
 
 
-msgid "Type A"
-msgstr "タイプ A"
-
-
-msgid "Type B"
-msgstr "タイプ B"
-
-
-msgid "Disabled, built without OpenSubdiv"
-msgstr "無効、OpenSubdiv なしでビルドされています"
-
-
-msgid "Type C"
-msgstr "タイプ C"
-
-
 msgid "Undefined Socket Type"
 msgstr "未定義ソケットタイプ"
 
@@ -106701,10 +106360,6 @@ msgstr "ストリップなし"
 
 msgid "(empty)"
 msgstr "(なし)"
-
-
-msgid "Modal map, not yet"
-msgstr "モーダルマップ、未"
 
 
 msgid "Can't reload with running modal operators"
@@ -107720,22 +107375,6 @@ msgid "Overwrite %s"
 msgstr "%sを上書き"
 
 
-msgid "Can't edit previews of overridden library data"
-msgstr "オーバーライドされたライブラリデータのプレビューの編集はできません"
-
-
-msgid "Data-block does not support previews"
-msgstr "プレビューに未対応のデータブロックです"
-
-
-msgid "Incorrect context for running data-block fake user toggling"
-msgstr "データブロックのフェイクユーザーの切り替えの実行が無効なコンテクストです"
-
-
-msgid "Data-block type does not support fake user"
-msgstr "データブロックタイプがフェイクユーザーに未対応です"
-
-
 msgid "Numeric input evaluation"
 msgstr "数値入力評価"
 
@@ -108046,14 +107685,6 @@ msgstr "関係"
 
 msgid "Target is not in the constraint target list"
 msgstr "コンストレイントターゲットリスト内にターゲットがありません"
-
-
-msgid "Easing (by strength)"
-msgstr "イージング(強さ準拠)"
-
-
-msgid "Dynamic Effects"
-msgstr "ダイナミックエフェクト"
 
 
 msgid "Bezier spline cannot have points added"
@@ -109185,6 +108816,10 @@ msgstr "Cb"
 
 msgid "Cr"
 msgstr "Cr"
+
+
+msgid "On"
+msgstr "オン"
 
 
 msgid "Val"

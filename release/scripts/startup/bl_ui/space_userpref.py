@@ -96,7 +96,7 @@ class USERPREF_MT_editor_menus(Menu):
 class USERPREF_MT_view(Menu):
     bl_label = "View"
 
-    def draw(self, context):
+    def draw(self, _context):
         layout = self.layout
 
         layout.menu("INFO_MT_area")
@@ -244,7 +244,7 @@ class USERPREF_PT_interface_translation(InterfacePanel, CenterAlignMixIn, Panel)
     bl_translation_context = i18n_contexts.id_windowmanager
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         return bpy.app.build_options.international
 
     def draw_centered(self, context, layout):
@@ -617,7 +617,7 @@ class USERPREF_PT_system_cycles_devices(SystemPanel, CenterAlignMixIn, Panel):
     bl_label = "Cycles Render Devices"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         # No GPU rendering on macOS currently.
         import sys
         return bpy.app.build_options.cycles and sys.platform != "darwin"
@@ -700,6 +700,26 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
 
         flow.prop(system, "vbo_time_out", text="Vbo Time Out")
         flow.prop(system, "vbo_collection_rate", text="Garbage Collection Rate")
+
+
+class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
+    bl_label = "Video Sequencer"
+
+    def draw_centered(self, context, layout):
+        prefs = context.preferences
+        system = prefs.system
+        # edit = prefs.edit
+
+        layout.prop(system, "memory_cache_limit")
+
+        layout.separator()
+
+        layout.prop(system, "use_sequencer_disk_cache")
+        col = layout.column()
+        col.active = system.use_sequencer_disk_cache
+        col.prop(system, "sequencer_disk_cache_dir", text="Directory")
+        col.prop(system, "sequencer_disk_cache_size_limit", text="Cache Limit")
+        col.prop(system, "sequencer_disk_cache_compression", text="Compression")
 
 
 # -----------------------------------------------------------------------------
@@ -2247,7 +2267,7 @@ class ExperimentalPanel:
     url_prefix = "https://developer.blender.org/"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         return bpy.app.version_cycle == 'alpha'
 
     def _draw_items(self, context, items):
@@ -2255,7 +2275,7 @@ class ExperimentalPanel:
         experimental = prefs.experimental
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         for prop_keywords, reference in items:
@@ -2332,7 +2352,7 @@ class USERPREF_PT_experimental_debugging(ExperimentalPanel, Panel):
     bl_label = "Debugging"
 
     @classmethod
-    def poll(cls, context):
+    def poll(cls, _context):
         # Unlike the other experimental panels, the debugging one is always visible
         # even in beta or release.
         return True
@@ -2392,6 +2412,7 @@ classes = (
 
     USERPREF_PT_system_cycles_devices,
     USERPREF_PT_system_memory,
+    USERPREF_PT_system_video_sequencer,
     USERPREF_PT_system_sound,
 
     USERPREF_MT_interface_theme_presets,
