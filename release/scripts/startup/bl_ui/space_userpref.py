@@ -657,35 +657,11 @@ class USERPREF_PT_system_memory(SystemPanel, CenterAlignMixIn, Panel):
         flow.use_property_split = False
         flow.prop(edit, "use_global_undo")
 
-        layout.separator()
-
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        flow.prop(system, "memory_cache_limit", text="Sequencer Cache Limit")
         flow.prop(system, "scrollback", text="Console Scrollback Lines")
 
-        layout.separator()
-
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
-
-        split = flow.split()
-        col = split.column()
-        col.use_property_split = False
-        col.prop(system, "use_sequencer_disk_cache")
-        col = split.column()
-        if system.use_sequencer_disk_cache:
-            col.label(icon='DISCLOSURE_TRI_DOWN')
-            row = flow.row()
-            row.separator()
-            row.prop(system, "sequencer_disk_cache_dir")
-            row = flow.row()
-            row.separator()
-            row.prop(system, "sequencer_disk_cache_size_limit")
-            row = flow.row()
-            row.separator()
-            row.prop(system, "sequencer_disk_cache_compression")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
         layout.separator()
 
@@ -711,15 +687,27 @@ class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
         # edit = prefs.edit
 
         layout.prop(system, "memory_cache_limit")
+        
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
-        layout.separator()
-
-        layout.prop(system, "use_sequencer_disk_cache")
-        col = layout.column()
-        col.active = system.use_sequencer_disk_cache
-        col.prop(system, "sequencer_disk_cache_dir", text="Directory")
-        col.prop(system, "sequencer_disk_cache_size_limit", text="Cache Limit")
-        col.prop(system, "sequencer_disk_cache_compression", text="Compression")
+        split = flow.split()
+        col = split.column()
+        col.use_property_split = False
+        col.prop(system, "use_sequencer_disk_cache")
+        col = split.column()
+        if system.use_sequencer_disk_cache:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+            row = flow.row()
+            row.separator()
+            row.prop(system, "sequencer_disk_cache_dir")
+            row = flow.row()
+            row.separator()
+            row.prop(system, "sequencer_disk_cache_size_limit")
+            row = flow.row()
+            row.separator()
+            row.prop(system, "sequencer_disk_cache_compression")
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 # -----------------------------------------------------------------------------
