@@ -459,7 +459,7 @@ void mesh_foreachScreenFaceVerts(ViewContext *vc,
       continue;
     }
 
-    if (ED_view3d_project_float_object(vc->region, mvert->co, &temp_screen_co, clip_flag) ==
+    if (ED_view3d_project_float_object(vc->region, mvert->co, temp_screen_co, clip_flag) ==
         V3D_PROJ_RET_OK) {
       screen_coords[i][0] = temp_screen_co[0];
       screen_coords[i][1] = temp_screen_co[1];
