@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 from math import fabs
 
@@ -151,7 +151,7 @@ class _Properties:
             name="Allowable Center Deviation",
             description="Allowable center deviation to judge same UV island",
             min=0.000001,
-            max=0.1,
+            max=10.0,
             default=(0.001, 0.001),
             size=2
         )
@@ -159,7 +159,7 @@ class _Properties:
             name="Allowable Size Deviation",
             description="Allowable sizse deviation to judge same UV island",
             min=0.000001,
-            max=0.1,
+            max=10.0,
             default=(0.001, 0.001),
             size=2
         )
@@ -196,12 +196,13 @@ class MUV_OT_PackUV(bpy.types.Operator):
         description="Margin used by default pack UV function",
         min=0,
         max=1,
-        default=0.001)
+        default=0.001
+    )
     allowable_center_deviation = FloatVectorProperty(
         name="Allowable Center Deviation",
         description="Allowable center deviation to judge same UV island",
         min=0.000001,
-        max=0.1,
+        max=10.0,
         default=(0.001, 0.001),
         size=2
     )
@@ -209,7 +210,7 @@ class MUV_OT_PackUV(bpy.types.Operator):
         name="Allowable Size Deviation",
         description="Allowable sizse deviation to judge same UV island",
         min=0.000001,
-        max=0.1,
+        max=10.0,
         default=(0.001, 0.001),
         size=2
     )

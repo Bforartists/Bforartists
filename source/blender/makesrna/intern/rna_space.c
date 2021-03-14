@@ -25,6 +25,8 @@
 
 #include "BLT_translation.h"
 
+#include "BKE_attribute.h"
+#include "BKE_geometry_set.h"
 #include "BKE_image.h"
 #include "BKE_key.h"
 #include "BKE_movieclip.h"
@@ -150,6 +152,11 @@ const EnumPropertyItem rna_enum_space_type_items[] = {
      "Properties",
      "Edit properties of active object and related data"},
     {SPACE_FILE, "FILE_BROWSER", ICON_FILEBROWSER, "File Browser", "Browse for files and assets"},
+    {SPACE_SPREADSHEET,
+     "SPREADSHEET",
+     ICON_SPREADSHEET,
+     "Spreadsheet",
+     "Explore geometry data in a table"},
     {SPACE_USERPREF,
      "PREFERENCES",
      ICON_PREFERENCES,
@@ -590,6 +597,8 @@ static StructRNA *rna_Space_refine(struct PointerRNA *ptr)
       return &RNA_SpaceClipEditor;
     case SPACE_TOOLBAR: /*bfa - the toolbar editor*/
       return &RNA_SpaceToolbarEditor;
+    case SPACE_SPREADSHEET:
+      return &RNA_SpaceSpreadsheet;
 
       /* Currently no type info. */
     case SPACE_SCRIPT:
@@ -2995,6 +3004,56 @@ static void rna_SpaceFileBrowser_browse_mode_update(Main *UNUSED(bmain),
   ED_area_tag_refresh(area);
 }
 
+static void rna_SpaceSpreadsheet_pinned_id_set(PointerRNA *ptr,
+                                               PointerRNA value,
+                                               struct ReportList *UNUSED(reports))
+{
+  SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)ptr->data;
+  sspreadsheet->pinned_id = value.data;
+}
+
+static void rna_SpaceSpreadsheet_geometry_component_type_update(Main *UNUSED(bmain),
+                                                                Scene *UNUSED(scene),
+                                                                PointerRNA *ptr)
+{
+  SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)ptr->data;
+  if (sspreadsheet->geometry_component_type == GEO_COMPONENT_TYPE_POINT_CLOUD) {
+    sspreadsheet->attribute_domain = ATTR_DOMAIN_POINT;
+  }
+}
+
+const EnumPropertyItem *rna_SpaceSpreadsheet_attribute_domain_itemf(bContext *UNUSED(C),
+                                                                    PointerRNA *ptr,
+                                                                    PropertyRNA *UNUSED(prop),
+                                                                    bool *r_free)
+{
+  SpaceSpreadsheet *sspreadsheet = (SpaceSpreadsheet *)ptr->data;
+  EnumPropertyItem *item_array = NULL;
+  int items_len = 0;
+  for (const EnumPropertyItem *item = rna_enum_attribute_domain_items; item->identifier != NULL;
+       item++) {
+    if (sspreadsheet->geometry_component_type == GEO_COMPONENT_TYPE_MESH) {
+      if (!ELEM(item->value,
+                ATTR_DOMAIN_CORNER,
+                ATTR_DOMAIN_EDGE,
+                ATTR_DOMAIN_POINT,
+                ATTR_DOMAIN_POLYGON)) {
+        continue;
+      }
+    }
+    if (sspreadsheet->geometry_component_type == GEO_COMPONENT_TYPE_POINT_CLOUD) {
+      if (item->value != ATTR_DOMAIN_POINT) {
+        continue;
+      }
+    }
+    RNA_enum_item_add(&item_array, &items_len, item);
+  }
+  RNA_enum_item_end(&item_array, &items_len);
+
+  *r_free = true;
+  return item_array;
+}
+
 #else
 
 static const EnumPropertyItem dt_uv_items[] = {
@@ -3155,7 +3214,6 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   static const EnumPropertyItem dt_uvstretch_items[] = {
       {SI_UVDT_STRETCH_AREA, "AREA", 0, "Area", "Area distortion between UV and 3D faces"},
       {SI_UVDT_STRETCH_ANGLE, "ANGLE", 0, "Angle", "Angular distortion between UV and 3D angles"},
-
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -5713,6 +5771,11 @@ static void rna_def_space_graph(BlenderRNA *brna)
       "If any exists, show markers in a separate row at the bottom of the editor");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
 
+  prop = RNA_def_property(srna, "show_extrapolation", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SIPO_NO_DRAW_EXTRAPOLATION);
+  RNA_def_property_ui_text(prop, "Show Extrapolation", "");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_GRAPH, NULL);
+
   /* editing */
   prop = RNA_def_property(srna, "use_auto_merge_keyframes", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SIPO_NOTRANSKEYCULL);
@@ -7210,6 +7273,55 @@ static void rna_def_space_clip(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_CLIP, NULL);
 }
 
+static void rna_def_space_spreadsheet(BlenderRNA *brna)
+{
+  PropertyRNA *prop;
+  StructRNA *srna;
+
+  static const EnumPropertyItem geometry_component_type_items[] = {
+      {GEO_COMPONENT_TYPE_MESH,
+       "MESH",
+       ICON_MESH_DATA,
+       "Mesh",
+       "Mesh component containing point, corner, edge and polygon data"},
+      {GEO_COMPONENT_TYPE_POINT_CLOUD,
+       "POINTCLOUD",
+       ICON_POINTCLOUD_DATA,
+       "Point Cloud",
+       "Point cloud component containing only point data"},
+      {0, NULL, 0, NULL, NULL},
+  };
+
+  srna = RNA_def_struct(brna, "SpaceSpreadsheet", "Space");
+  RNA_def_struct_ui_text(srna, "Space Spreadsheet", "Spreadsheet space data");
+
+  prop = RNA_def_property(srna, "pinned_id", PROP_POINTER, PROP_NONE);
+  RNA_def_property_flag(prop, PROP_EDITABLE);
+  RNA_def_property_pointer_funcs(prop, NULL, "rna_SpaceSpreadsheet_pinned_id_set", NULL, NULL);
+  RNA_def_property_ui_text(prop, "Pinned ID", "Data-block whose values are displayed");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, NULL);
+
+  prop = RNA_def_property(srna, "show_only_selected", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_sdna(prop, NULL, "filter_flag", SPREADSHEET_FILTER_SELECTED_ONLY);
+  RNA_def_property_ui_text(
+      prop, "Show Only Selected", "Only include rows that correspond to selected elements");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, NULL);
+
+  prop = RNA_def_property(srna, "geometry_component_type", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, geometry_component_type_items);
+  RNA_def_property_ui_text(
+      prop, "Geometry Component", "Part of the geometry to display data from");
+  RNA_def_property_update(prop,
+                          NC_SPACE | ND_SPACE_SPREADSHEET,
+                          "rna_SpaceSpreadsheet_geometry_component_type_update");
+
+  prop = RNA_def_property(srna, "attribute_domain", PROP_ENUM, PROP_NONE);
+  RNA_def_property_enum_items(prop, rna_enum_attribute_domain_items);
+  RNA_def_property_enum_funcs(prop, NULL, NULL, "rna_SpaceSpreadsheet_attribute_domain_itemf");
+  RNA_def_property_ui_text(prop, "Attribute Domain", "Attribute domain to display");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, NULL);
+}
+
 void RNA_def_space(BlenderRNA *brna)
 {
   rna_def_space(brna);
@@ -7236,6 +7348,7 @@ void RNA_def_space(BlenderRNA *brna)
   rna_def_node_tree_path(brna);
   rna_def_space_node(brna);
   rna_def_space_clip(brna);
+  rna_def_space_spreadsheet(brna);
 }
 
 #endif

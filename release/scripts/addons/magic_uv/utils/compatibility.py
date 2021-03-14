@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 import bpy
 import bgl
@@ -47,7 +47,9 @@ def make_annotations(cls):
         return cls
 
     # make annotation from attributes
-    props = {k: v for k, v in cls.__dict__.items() if isinstance(v, tuple)}
+    props = {k: v
+             for k, v in cls.__dict__.items()
+             if isinstance(v, getattr(bpy.props, '_PropertyDeferred', tuple))}
     if props:
         if '__annotations__' not in cls.__dict__:
             setattr(cls, '__annotations__', {})

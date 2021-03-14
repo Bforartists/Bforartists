@@ -15,7 +15,7 @@
 bl_info = {
     'name': 'glTF 2.0 format',
     'author': 'Julien Duroure, Scurest, Norbert Nopper, Urs Hanselmann, Moritz Becher, Benjamin Schmithüsen, Jim Eckerlein, and many external contributors',
-    "version": (1, 6, 7),
+    "version": (1, 6, 8),
     'blender': (2, 91, 0),
     'location': 'File > Import-Export',
     'description': 'Import-Export as glTF 2.0',
@@ -456,7 +456,7 @@ class ExportGLTF2_Base:
             except Exception:
                 pass
 
-        self.has_active_extenions = len(extension_panel_unregister_functors) > 0
+        self.has_active_extensions = len(extension_panel_unregister_functors) > 0
         return ExportHelper.invoke(self, context, event)
 
     def save_settings(self, context):
@@ -912,7 +912,7 @@ class GLTF_PT_export_user_extensions(bpy.types.Panel):
         sfile = context.space_data
         operator = sfile.active_operator
 
-        return operator.bl_idname == "EXPORT_SCENE_OT_gltf" and operator.has_active_extenions
+        return operator.bl_idname == "EXPORT_SCENE_OT_gltf" and operator.has_active_extensions
 
     def draw(self, context):
         layout = self.layout

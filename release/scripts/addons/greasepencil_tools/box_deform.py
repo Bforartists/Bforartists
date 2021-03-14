@@ -31,12 +31,15 @@ def region_to_location(viewcoords, depthcoords):
     from bpy_extras import view3d_utils
     return view3d_utils.region_2d_to_location_3d(bpy.context.region, bpy.context.space_data.region_3d, viewcoords, depthcoords)
 
-def assign_vg(obj, vg_name):
+def assign_vg(obj, vg_name, delete=False):
     ## create vertex group
     vg = obj.vertex_groups.get(vg_name)
     if vg:
         # remove to start clean
         obj.vertex_groups.remove(vg)
+    if delete:
+        return
+
     vg = obj.vertex_groups.new(name=vg_name)
     bpy.ops.gpencil.vertex_group_assign()
     return vg
@@ -397,11 +400,11 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
                 self.restore_prefs(context)
                 back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
                 apply_cage(self.gp_obj, self.cage)#must be in object mode
+                assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
 
                 # back to original mode
                 if self.gp_mode != 'OBJECT':
                     bpy.ops.object.mode_set(mode=self.gp_mode)
-
                 context.area.header_text_set(None)#reset header
 
                 return {'FINISHED'}
@@ -432,6 +435,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         self.restore_prefs(context)
         back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
         cancel_cage(self.gp_obj, self.cage)
+        assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
         context.area.header_text_set(None)
         if self.gp_mode != 'OBJECT':
             bpy.ops.object.mode_set(mode=self.gp_mode)

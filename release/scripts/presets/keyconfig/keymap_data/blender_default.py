@@ -2011,7 +2011,6 @@ def km_file_browser_main(params):
         # operator (i.e. in regular editor mode).
         ("file.select", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'},
          {"properties": [("open", True), ("deselect_all", not params.legacy)]}),
-        ("file.refresh", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'}, None),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'PRESS'},
          {"properties": [("open", False), ("deselect_all", not params.legacy)]}),
         ("file.select", {"type": 'LEFTMOUSE', "value": 'CLICK', "ctrl": True},
@@ -2053,6 +2052,7 @@ def km_file_browser_main(params):
          {"properties": [("mode", 'SUB')]}),
         ("file.highlight", {"type": 'MOUSEMOVE', "value": 'ANY', "any": True}, None),
         ("file.sort_column_ui_context", {"type": 'LEFTMOUSE', "value": 'PRESS', "any": True}, None),
+        ("file.view_selected", {"type": 'NUMPAD_PERIOD', "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -2900,7 +2900,9 @@ def km_clip_editor(params):
     ])
 
     if not params.legacy:
-        op_menu_pie("CLIP_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
+        items.extend([
+            op_menu_pie("CLIP_MT_pivot_pie", {"type": 'PERIOD', "value": 'PRESS'}),
+        ])
     else:
         items.extend([
             # Old pivot.
@@ -4509,6 +4511,7 @@ def km_sculpt(params):
         # Dynamic topology
         ("sculpt.dynamic_topology_toggle", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
         ("sculpt.dyntopo_detail_size_edit", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("sculpt.set_detail_size", {"type": 'D', "value": 'PRESS', "shift": True, "alt": True}, None),
         # Remesh
         ("object.voxel_remesh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
         ("object.voxel_size_edit", {"type": 'R', "value": 'PRESS', "shift": True}, None),

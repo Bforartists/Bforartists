@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -1833,10 +1833,6 @@ msgstr "ﺱﺃﺮﻟﺍ ﺭﺎﺘﺧﺇ"
 
 msgid "Select Tail"
 msgstr "ﻞﻳﺬﻟﺍ ﺭﺎﺘﺧﺇ"
-
-
-msgid "Bone is always drawn as Wireframe regardless of viewport draw mode (useful for non-obstructive custom bone shapes)"
-msgstr "(ﻢﻈﻌﻠﻟ ﺔﺒﺟﺎﺣ-ﺮﻴﻏ ﺔﺼﺼﺨﻤﻟﺍ ﻝﺎﻜﺷﻷ﻿ﺍ ﺕﻻ﻿ﺎﺣ ﻲﻓ ﺪﻴﻔﻣ) ﺬﻔﻨﻤﻟﺍ ﺽﺮﻋ ﻂﻤﻧ ﻦﻋ ﺮﻈﻨﻟﺍ ﺾﻐﺑ ﺎﻤﺋﺍﺩ ﺔﻜﺒﺸﻛ ﺔﻤﻈﻌﻟﺍ ﻢﺳﺮﺗ"
 
 
 msgid "Tail"
@@ -8593,16 +8589,8 @@ msgid "Layer is selected for editing in the Dope Sheet"
 msgstr "ﻂﻴﻄﺨﺘﻟﺍ ﺔﻗﺭﻭ ﻲﻓ ﺮﻳﺮﺤﺘﻠﻟ ﺓﺭﺎﺘﺨﻣ ﺔﻘﺒﻄﻟﺍ"
 
 
-msgid "Make the layer draw in front of objects"
-msgstr "ﺕﺎﻨﺋﺎﻜﻟﺍ ﻡﺎﻣﺍ ﺔﻘﺒﻄﻟﺍ ﻢﺳﺭﺍ"
-
-
 msgid "Show Points"
 msgstr "ﻂﻘﻨﻟﺍ ﺮﻬﻇﺃ"
-
-
-msgid "Draw the points which make up the strokes (for debugging purposes)"
-msgstr "(ﺢﻴﺤﺼﺘﻟﺍ ﺽﺍﺮﻏﻷ﻿) ﺕﺎﺒﻄﺸﻠﻟ ﺔﻠﻜّﺸﻤﻟﺍ ﻂﻘﻨﻟﺍ ﻦﻳﻮﻠﺗﺃ"
 
 
 msgid "Onion Skinning"
@@ -8631,10 +8619,6 @@ msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﺔﺒﻄﺷ"
 
 msgid "Freehand curve defining part of a sketch"
 msgstr "ﻢﺳﺭ ﻦﻣ ءﺰﺠﻟ ﺩﺪّﺤﻣ ﺮﺣ ﻰﻨﺤﻨﻣ"
-
-
-msgid "Draw Mode"
-msgstr "ﻢﺳﺮﻟﺍ ﻂﻤﻧ"
 
 
 msgid "Stroke is in screen-space"
@@ -9009,10 +8993,6 @@ msgstr "ﺔﻟﺎﻌّﻔﻟﺍ ﺔﻘﺒﻄﻟﺍ"
 
 msgid "Statistical view of the levels of color in an image"
 msgstr "ﺓﺭﻮﺼﺑ ﻥﺍﻮﻟﻷ﻿ﺍ ﺕﺎﻳﻮﺘﺴﻤﻟ ﻲﺋﺎﺼﺣﺇ ﺽﺮﻋ"
-
-
-msgid "Channels to display when drawing the histogram"
-msgstr "ﺝﺭﺪﻤﻟﺍ ﻢﺳﺮﻟﺍ ﻢﺳﺭ ﺪﻨﻋ ﺓﺮﻫﺎﻈﻟﺍ ﺕﺍﻮﻨﻘﻟﺍ"
 
 
 msgid "Luma"
@@ -11211,10 +11191,6 @@ msgid "Iris"
 msgstr "Iris"
 
 
-msgid "Output image in (old!) SGI IRIS format"
-msgstr "(ﺔﻤﻳﺪﻗ) SGI IRIS ﺔﺌﻴﻬﺑ ﺓﺭﻮﺼﻟﺍ ﺝﺮﺧﺃ"
-
-
 msgid "Output image in PNG format"
 msgstr "PNG ﺔﺌﻴﻬﺑ ﺓﺭﻮﺼﻟﺍ ﺝﺮﺧﺃ"
 
@@ -11603,10 +11579,6 @@ msgid "Point in W direction (can't be changed when there are shape keys)"
 msgstr "(ﻞﻜﺷ ﺢﻴﺗﺎﻔﻣ ﺩﻮﺟﻭ ﺪﻨﻋ ﺎﻫﺮﻴﻴﻐﺗ ﻦﻜﻤﻳ ﻻ﻿) W ﻩﺎﺠﺗﺍ ﻲﻓ ﺔﻄﻘﻧ"
 
 
-msgid "Only draw, and take into account, the outer vertices"
-msgstr "ﺔﻴﺟﺭﺎﺨﻟﺍ ﻂﻘﻨﻟﺍ ﻥﺎﺒﺴﺤﻟﺎﺑ ﺬﺧ ﻭ ﻢﺳﺭﺍ ﻂﻘﻓ"
-
-
 msgid "Vertex group to apply the influence of the lattice"
 msgstr "ﻢﻜﺤﺘﻟﺍ ﺔﻜﺒﺷ ﺮﻴﺛﺄﺘﻟ ﺔﻘﺒﻄﻤﻟﺍ ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
@@ -11729,10 +11701,6 @@ msgstr "ﻱﻮﻣﺎﻌﻟﺍ ﻢﺠﺤﻟﺍ"
 
 msgid "Show Cone"
 msgstr "ﻁﻭﺮﺨﻤﻟﺍ ﺮﻬﻇﺃ"
-
-
-msgid "Draw transparent cone in 3D view to visualize which objects are contained in it"
-msgstr "ﻪﻴﻓ ﺔﻳﻮﺘﺤﻣ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻱﺍ ﺔﻳﺅﺮﻟ ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﻈﻨﻣ ﻲﻓ ﻑﺎﻔﺷ ﻁﻭﺮﺨﻣ ﻢﺳﺭﺍ"
 
 
 msgid "Spot Blend"
@@ -12107,10 +12075,6 @@ msgid "Vertices of the mesh"
 msgstr "ﻢﺴﺠﻤﻟﺍ ﻁﺎﻘﻧ"
 
 
-msgid "Meta elements"
-msgstr "ﺕﺎﻣﻮﻠﻌﻤﻟﺍ ﺮﺻﺎﻨﻋ"
-
-
 msgid "Render Size"
 msgstr "ﺮﻴﻴﺼﺘﻟﺍ ﻢﺠﺣ"
 
@@ -12125,10 +12089,6 @@ msgstr "ﻚﻠﺴﻟﺍ ﻢﺠﺣ"
 
 msgid "Polygonization resolution in the 3D viewport"
 msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﻊﻴﻠﻀﺘﻟﺍ ﺔﻗﺩ"
-
-
-msgid "Influence of meta elements"
-msgstr "ﻞﻋﺎﻔﺘﻟﺍ ﺮﺻﺎﻨﻋ ﺮﻴﺛﺄﺗ"
 
 
 msgid "Update"
@@ -12887,10 +12847,6 @@ msgid "Display the object's texture space"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺞﻴﺴﻧ ءﺎﻀﻓ ﺽﺮﻋﺇ"
 
 
-msgid "Add the object's wireframe over solid drawing"
-msgstr "ﺐﻠﺼﻟﺍ ﻕﻮﻓ ﻦﺋﺎﻜﻠﻟ ﻲﻜﻠﺴﻟﺍ ﻢﺳﺭ ﻒﺿﺍ"
-
-
 msgid "Soft Body Settings"
 msgstr "ﺔﻨﻴﻠﻟﺍ ﻡﺎﺴﺟﻷ﻿ﺍ ﺹﺍﻮﺧ"
 
@@ -12929,14 +12885,6 @@ msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 msgid "Particle settings, reusable by multiple particle systems"
 msgstr "ءﻱﺰﺠﻠﻟ ﺓﺩﺪﻌﺘﻣ ﺔﻤﻈﻧﺍ ﻲﻓ ﻡﺍﺪﺨﺘﺳﻻ﻿ﺍ ﺓﺩﺎﻋﻻ﻿ ﺔﻠﺑﺎﻗ ,ءﻱﺰﺠﻟﺍ ﺕﺍﺩﺍﺪﻋﺍ"
-
-
-msgid "Active Dupli Object"
-msgstr "ﻝﺎﻌﻔﻟﺍ ﺭﺍﺮﻜﺘﻟﺍ ﻦﺋﺎﻛ"
-
-
-msgid "Active Dupli Object Index"
-msgstr "ﻝﺎﻌﻔﻟﺍ ﺭﺍﺮﻜﺘﻟﺍ ﻦﺋﺎﻛ ﻞﻴﻟﺩ"
 
 
 msgid "Degrees"
@@ -13021,10 +12969,6 @@ msgstr "ﻉﺮﻔﻟﺍ ﺭﺎﺴﻣ ﻝﻮﻃ ﻞﺒﻗ ﻦﻣ ﺔﻛﻭﺮﺘ�
 
 msgid "Children Per Parent"
 msgstr "ﻞﺻﺃ ﻞﻜﻟ ﻉﻭﺮﻔﻟﺍ"
-
-
-msgid "Number of children/parent"
-msgstr "ﻞﺻﺍ ﻞﻜﻟ ﻉﻭﺮﻔﻟﺍ ﺩﺪﻋ"
 
 
 msgid "Parting Factor"
@@ -13147,22 +13091,6 @@ msgid "Amount of damping"
 msgstr "ﻝﺅﺎﻀﺘﻟﺍ ﺔﻴﻤﻛ"
 
 
-msgid "Draw Color"
-msgstr "ﻥﻮﻠﻟﺍ ﻢﺳﺭﺍ"
-
-
-msgid "Draw additional particle data as a color"
-msgstr "ﻥﻮﻠﻛ ﺔﻴﻓﺎﺿﻹ﻿ﺍ ءﻱﺰﺠﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻢﺳﺭﺍ"
-
-
-msgid "Particle Drawing"
-msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻢﺳﺭ"
-
-
-msgid "How particles are drawn in viewport"
-msgstr "ﺽﺮﻌﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﺕﺎﺌﻳﺰﺠﻟﺍ ﻢﺳﺮﺗ ﻒﻴﻛ"
-
-
 msgid "Rendered"
 msgstr "ﺓﺮﻴّﺼﻣ"
 
@@ -13177,14 +13105,6 @@ msgstr "ﺽﺮﻋ"
 
 msgid "Percentage of particles to display in 3D view"
 msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺬﻔﻨﻣ ﻲﻓ ﺔﺿﻭﺮﻌﻤﻟﺍ ﺕﺎﺌﻳﺰﺠﻟﺍ ﺔﺒﺴﻧ"
-
-
-msgid "Draw Size"
-msgstr "ﻢﺳﺮﻟﺍ ﻢﺠﺣ"
-
-
-msgid "How many steps paths are drawn with (power of 2)"
-msgstr "(2 ـﻟﺍ ﺕﺎﻔﻋﺎﻀﻣ) ﺕﺍﺭﺎﺴﻤﻟﺍ ﻢﺳﺮﺗ ﺓﻮﻄﺧ ﻢﻜﺑ"
 
 
 msgid "Distribution"
@@ -13275,16 +13195,8 @@ msgid "Create the grid in a hexagonal pattern"
 msgstr "ﻲﻧﺎﻤﺛ ﻲﻌﻠﺿ ﻂﻤﻨﺑ ﺔﻜﺒﺷ ﺊﺸﻧﺃ"
 
 
-msgid "Show this Object in place of particles"
-msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻦﻣ ﻻ﻿ﺪﺑ ﻦﺋﺎﻜﻟﺍ ﺍﺬﻫ ﺮﻬﻇﺃ"
-
-
 msgid "Integration"
 msgstr "ﻞﻣﺎﻜﺘﻟﺍ"
-
-
-msgid "Algorithm used to calculate physics, from the fastest to the most stable/accurate: Midpoint, Euler, Verlet, RK4 (Old)"
-msgstr "(ﺔﻤﻳﺪﻗ)RK4 ,ﺖﻟﺮﻓ ,ﺮﻟﻮﻳ ,ﻂﺳﻮﺘﻟﺍ ﺔﻄﻘﻧ :ﻕﺩﺍ/ﺖﺒﺛﻸ﻿ﻟ ﻉﺮﺳﻻ﻿ﺍ ﻦﻣ ,ﺕﺎﻴﺋﺎﻳﺰﻴﻔﻟﺍ ﺏﺎﺴﺤﻟ  ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺔﻴﻣﺯﺭﺍﻮﺨﻟﺍ"
 
 
 msgid "Euler"
@@ -13447,16 +13359,8 @@ msgid "Path End"
 msgstr "ﺭﺎﺴﻤﻟﺍ ﺔﻳﺎﻬﻧ"
 
 
-msgid "End time of drawn path"
-msgstr "ﻡﻮﺳﺮﻤﻟﺍ ﺭﺎﺴﻤﻟﺍ ءﺎﻬﺘﻧﺇ ﻦﻣﺯ"
-
-
 msgid "Path Start"
 msgstr "ﺭﺎﺴﻤﻟﺍ ﺔﻳﺍﺪﺑ"
-
-
-msgid "Starting time of drawn path"
-msgstr "ﻡﻮﺳﺮﻣ ﺭﺎﺴﻤﻟ ﺔﻳﺍﺪﺒﻟﺍ ﺖﻗﻭ"
 
 
 msgid "Rotation around the chosen orientation axis"
@@ -13523,10 +13427,6 @@ msgid "Rendered Children"
 msgstr "ﺓﺮﻴّﺼﻤﻟﺍ ﻉﻭﺮﻔﻟﺍ"
 
 
-msgid "Number of children/parent for rendering"
-msgstr "ﺮﻴﻴﺼﺘﻠﻟ ﻞﺻﺍ ﻞﻜﻟ ﻉﻭﺮﻔﻟﺍ ﺩﺪﻋ"
-
-
 msgid "Random Orientation"
 msgstr "ﻲﺋﺍﻮﺸﻋ ﻩﺎﺠﺗﺍ"
 
@@ -13585,10 +13485,6 @@ msgstr "ﻞﻴﻟﺪﻟﺍ ﺕﺍﺮﻌﺷ"
 
 msgid "Show guide hairs"
 msgstr "ﻞﻴﻟﺪﻟﺍ ﺕﺍﺮﻌﺷ ﺮﻬﻇﺍ"
-
-
-msgid "Draw boid health"
-msgstr "ﺪﻳﻮﺒﻟﺍ ﺔﺤﺻ ﻢﺳﺭﺍ"
 
 
 msgid "Show particle number"
@@ -13781,10 +13677,6 @@ msgstr "ﻮﻤﻨﻟﺍ ﺪﻋﺃ"
 
 msgid "Regrow hair for each frame"
 msgstr "ﺭﺎﻃﺇ ﻞﻜﻟ ﺮﻌﺸﻟﺍ ﺮﺒّﻛ"
-
-
-msgid "Draw steps of the particle path"
-msgstr "ءﻱﺰﺠﻟﺍ ﺭﺎﺴﻤﻟ ﻢﺳﺮﻟﺍ ﻁﺍﻮﻄﺧ"
 
 
 msgid "Use object's rotation for duplication (global x-axis is aligned particle rotation axis)"
@@ -14239,10 +14131,6 @@ msgid "Inner Cone Angle"
 msgstr "ﺔﻴﻠﺧﺍﺪﻟﺍ ﻁﻭﺮﺨﻤﻟﺍ ﺔﻳﻭﺍﺯ"
 
 
-msgid "Angle of the inner cone, in degrees, inside the cone the volume is 100 %"
-msgstr "%100 ﺓﺭﺎﻬﺠﻟﺍ ﻥﻮﻜﺗ ﻁﻭﺮﺨﻤﻟﺍ ﻞﺧﺍﺩ ,ﺕﺎﺟﺭﺪﻟﺎﺑ ﺔﻴﻠﺧﺍﺪﻟﺍ ﻁﻭﺮﺨﻤﻟﺍ ﺔﻳﻭﺍﺯ"
-
-
 msgid "Outer Cone Angle"
 msgstr "ﺔﻴﺟﺭﺎﺨﻟﺍ ﻁﻭﺮﺨﻤﻟﺍ ﺔﻳﻭﺍﺯ"
 
@@ -14265,10 +14153,6 @@ msgstr "ﻦﺋﺎﻜﻟﺍ ﺪﻌﺑ ﻥﺎﻛ ﺎﻤﻬﻣ ,ﻢﺠﺤﻟﺍ ﻝ
 
 msgid "Reference Distance"
 msgstr "ﻊﺟﺮﻤﻟﺍ ﺔﻓﺎﺴﻣ"
-
-
-msgid "Reference distance at which volume is 100 %"
-msgstr "%100 ﺓﺭﺎﻬﺠﻟﺍ ﻥﻮﻜﻳ ﻩﺪﻨﻋ ﻱﺬﻟﺍ ﻭ ﻲﻌﺟﺮﻤﻟﺍ ﺪﻌﺒﻟﺍ"
 
 
 msgctxt "Sound"
@@ -17801,10 +17685,6 @@ msgstr "ﻢﺴﺠﻤﻟﺍ ﺔﻄﻘﻨﻟ ﺺﻧ ﺔﻴﺻﺎﺧ ﺔﻘﺒﻃ"
 
 msgid "Active Element"
 msgstr "ﻝﺎﻌﻔﻟﺍ ﺮﺼﻨﻌﻟﺍ"
-
-
-msgid "Meta Element"
-msgstr "ﻞﻋﺎﻔﺘﻣ ﺮﺼﻨﻋ"
 
 
 msgid "Hide element"
@@ -25209,19 +25089,6 @@ msgid "Paste Material"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﻖﺼﻟﺍ"
 
 
-msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "ﺕﺎﻣﻮﻠﻌﻤﻟﺍ ﺮﺻﺎﻨﻋ ﺭﺮﻛ"
-
-
-msgid "Duplicate selected metaelement(s)"
-msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﻣﻮﻠﻌﻤﻟﺍ ﺮﺻﺎﻨﻋ ﺭﺮﻛ"
-
-
-msgid "Duplicate Metaelements"
-msgstr "ﺕﺎﻣﻮﻠﻌﻤﻟﺍ ﺮﺻﺎﻨﻋ ﺭﺮﻛ"
-
-
 msgid "Angle limit"
 msgstr "ﺔﻳﻭﺍﺰﻟﺍ ﺪﺣ"
 
@@ -26713,10 +26580,6 @@ msgid "Align to axis"
 msgstr "ﺭﻮﺤﻤﻟ ﻱﺫﺎﺣ"
 
 
-msgid "Enables high quality calculation of the bounding box for perfect results on complex shape meshes with rotation/scale (Slow)"
-msgstr "ﺊﻴﻄﺑ - ﻢﻴﺠﺤﺗ/ﻥﺍﺭﻭﺩ ﺎﻬﻳﺪﻟﻭ ﺓﺪﻘﻌﻤﻟﺍ ﻝﺎﻜﺷﻻ﻿ﺍ ﺔﻟﺎﺣ ﻲﻓ ﻞﻀﻓﺍ ﺞﺋﺎﺘﻨﻟ ﺩﺪﺤﻤﻟﺍ ﻕﻭﺪﻨﺼﻠﻟ ﺓﺩﻮﺠﻟﺍ ﻲﻟﺎﻌﻟﺍ ﺏﺎﺴﺤﻟﺍ ﻞﻌﻔﻳ"
-
-
 msgctxt "Operator"
 msgid "Animated Transforms to Deltas"
 msgstr "ﻕﺭﺍﻮﻔﻟﺍ ﻰﻟﺍ ﺔﻛﺮّﺤﻤﻟﺍ ﺕﻻ﻿ﻮﺤﺘﻟﺍ"
@@ -28112,26 +27975,6 @@ msgstr "ﺢﻴﺗﺎﻔﻤﻟﺍ ﻭﺍ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺕﺎﺌﻳﺰ
 
 msgid "Disconnect all hair systems from the emitter mesh"
 msgstr "ﺚﻋﺎﺒﻟﺍ ﻢﺴﺠﻤﻟﺍ ﻦﻣ ﺮﻌﺸﻟﺍ ﺔﻤﻈﻧﺍ ﻞﻛ ﻞﺼﻓﺍ"
-
-
-msgctxt "Operator"
-msgid "Copy Particle Dupliob"
-msgstr "ءﻱﺰﺠﻟﺍ ﺭﺍﺮﻜﺗ ﻦﺋﺎﻛ ﺦﺴﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Move Down Dupli Object"
-msgstr "ﺭﺍﺮﻜﺘﻟﺍ ﻦﺋﺎﻛ ﻞﻔﺳﻸ﻿ﻟ ﻙﺮّﺣ"
-
-
-msgctxt "Operator"
-msgid "Move Up Dupli Object"
-msgstr "ﺭﺍﺮﻜﺘﻟﺍ ﻦﺋﺎﻛ ﻰﻠﻋﻸ﻿ﻟ ﻙﺮّﺣ"
-
-
-msgctxt "Operator"
-msgid "Remove Particle Dupliobject"
-msgstr "ءﻱﺰﺠﻟﺍ ﺭﺍﺮﻜﺗ ﻦﺋﺎﻛ ﻑﺬﺣﺍ"
 
 
 msgctxt "Operator"
@@ -31535,16 +31378,8 @@ msgid "Puff Volume"
 msgstr "ﺦﻴﻔﻨﺘﻟﺍ ﻢﺠﺣ"
 
 
-msgid "Particle Dupliobject Weight"
-msgstr " ﺥﻮﺴﻨﻣ-ﻦﺋﺎﻛ ﺊﻳﺰﺟ ﻥﺯﻭ"
-
-
 msgid "The number of times this object is repeated with respect to other objects"
 msgstr "ﻯﺮﺧﻷ﻿ﺍ ﺕﺎﻨﺋﺎﻜﻟﺍ ﻡﺍﺮﺘﺣﺍ ﻊﻣ ﻦﺋﺎﻜﻟﺍ ﺍﺬﻫ ﺎﻬﻴﻓ ﺭﺮﻜﻳ ﻲﻟﺍ ﺕﺍﺮﻤﻟﺍ ﺩﺪﻋ"
-
-
-msgid "Particle dupliobject name"
-msgstr "ﺥﻮﺴﻨﻣ-ﻦﺋﺎﻛ ءﻱﺰﺟ ﻢﺳﺇ"
 
 
 msgid "Properties of particle editing mode"
@@ -32231,10 +32066,6 @@ msgid "Custom Object"
 msgstr "ﺺﺼﺨﻣ ﻦﺋﺎﻛ"
 
 
-msgid "Object that defines custom draw type for this bone"
-msgstr "ﻢﻈﻌﻟﺍ ﺍﺬﻬﻟ ﺺﺼﺨﻣ ﻢﺳﺭ ﻉﻮﻧ ﺩﺪﺤﻳ ﻱﺬﻟﺍ ﻦﺋﺎﻜﻟﺍ"
-
-
 msgid "Custom Shape Scale"
 msgstr "ﺺﺼﺨﻤﻟﺍ ﻞﻜﺸﻟﺍ ﻢﺠﺣ"
 
@@ -32711,10 +32542,6 @@ msgid "Built-in animation player"
 msgstr "ﻲﻠﺧﺪﻟﺍ ﻙﺮّﺤﺘﻟﺍ ﺽﺭﺎﻋ"
 
 
-msgid "Open source frame player: http://djv.sourceforge.net"
-msgstr "  http://djv.sourceforge.net :ﺭﺪﺼﻤﻟﺍ ﺡﻮﺘﻔﻣ ﺮﻃﺃ ﺽﺭﺎﻋ"
-
-
 msgid "FrameCycler"
 msgstr "ﺮﻃﻻ﻿ﺍ ﺭﻭﺪﻣ"
 
@@ -32855,16 +32682,8 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "blend. ﺕﺎﻔﻠﻣ ﻞﻴﻤﺤﺗ ﺪﻨﻋ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﺕﺍﺩﺍﺪﻋﺍ ﻞﻤّﺣ"
 
 
-msgid "Default relative path option for the file selector"
-msgstr "ﻒﻠﻤﻟﺍ ﺭﺎﺘﺨﻤﻟ ﻲﺿﺍﺮﺘﻓﻺ﻿ﻟﺍ ﻲﺒﺴﻨﻟﺍ ﺭﺎﺴﻤﻟﺍ ﺭﺎﻴﺧ"
-
-
 msgid "Save Preview Images"
 msgstr "ﺔﻨﻳﺎﻌﻤﻟﺍ ﺭﻮﺻ ﻆﻔﺣﺇ"
-
-
-msgid "Enables automatic saving of preview images in the .blend file"
-msgstr "blend. ﻒﻠﻣ ﻲﻓ ﺔﻨﻳﺎﻌﻤﻟﺍ ﺭﻮﺼﻟ ﻲﺗﺍﺬﻟﺍ ﻆﻔﺤﻟﺍ ﻞﻌّﻓ"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
@@ -33271,10 +33090,6 @@ msgid "Solid Lights"
 msgstr "ﺔﻠﻣﺎﻛ ءﺍﻮﺿﺃ"
 
 
-msgid "Lights user to display objects in solid draw mode"
-msgstr "ﺐﻠﺼﻟﺍ ﻢﺳﺮﻟﺍ ﻊﺿﻭ ﻲﻓ ﺕﺎﻨﺋﺎﻜﻟﺍ ﺭﺎﻬﻇﻹ﻿ ءﺍﻮﺿﻷ﻿ﺍ ﻡﺪﺨﺘﺴﻣ"
-
-
 msgid "Texture Collection Rate"
 msgstr "ﺔﺠﺴﻧﻷ﻿ﺍ ﺕﺎﻋﻮﻤﺠﻣ ﻝﺪﻌﻣ"
 
@@ -33501,10 +33316,6 @@ msgstr "ﺢﺘﻔﻟﺍ ﻩﺎﺠﺗﺍ ﻥﺎﻛ ﺎﻤﻬﻣ ﻦﻴﻤﻴﻟ�
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "ﻰﻠﻋ ﺓﺭﺄﻔﻟﺍ ﻥﻮﻜﺗ ﺎﻣﺪﻨﻋ ﺎﻴﺗﺍﺫ ﺢﺋﺍﻮﻠﻟﺍ ﻭ ﺔﻤﺋﺎﻘﻟﺍ ﺭﺍﺭﺯﺃ ﺢﺘﻓﺇ"
-
-
-msgid "Draw user interface text anti-aliased"
-msgstr "ﺭﻮﻠﺒﺘﻟﺍ-ﺩﺎﻀﻤﺑ ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﺺﻧ ﻢﺳﺭﺃ"
 
 
 msgid "Translate Interface"
@@ -34405,10 +34216,6 @@ msgstr "ﺓﺮﻴّﺼﻤﻟﺍ ﺓﺭﻮﺼﻟﺍ ﻲﻓ ﺔﻳﺩﻮﻤﻌﻟ�
 
 msgid "Sequencer Preview Shading"
 msgstr "ﻞﻴﻠﻈﺘﻟﺍ ﺔﻨﻳﺎﻌﻣ ﻞﺴِﻠﺴﻣ"
-
-
-msgid "Method to draw in the sequencer view"
-msgstr "ﻞﺴِﻠﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻲﻓ ﻢﺳﺮﻟﺍ ﺔﻠﻴﺳﻭ"
 
 
 msgid "Display the object as wire edges"
@@ -36055,6 +35862,10 @@ msgid "Stereo Mode"
 msgstr "ﻮﻳﺮﻴﺘﺳ ﻂﻤﻧ"
 
 
+msgid "Lights user to display objects in solid draw mode"
+msgstr "ﺐﻠﺼﻟﺍ ﻢﺳﺮﻟﺍ ﻊﺿﻭ ﻲﻓ ﺕﺎﻨﺋﺎﻜﻟﺍ ﺭﺎﻬﻇﻹ﻿ ءﺍﻮﺿﻷ﻿ﺍ ﻡﺪﺨﺘﺴﻣ"
+
+
 msgid "X Mapping"
 msgstr "X ءﺎﺴﻛﺇ"
 
@@ -36285,10 +36096,6 @@ msgstr "UV ـﻟﺍ ﺞﻴﺴﻧ ﺕﺎﻴﺛﺍﺪﺣﺈﺑ ءﺎﺴﻛﻺ﻿�
 
 msgid "Amount texture affects particle initial velocity"
 msgstr "ءﻱﺰﺠﻠﻟ ﺔﻴﺋﺪﺒﻤﻟﺍ ﺔﻋﺮﺴﻟﺍ ﻰﻠﻋ ﺞﻴﺴﻨﻟﺍ ﺮﻴﺛﺄﺗ ﺔﻴﻤﻛ"
-
-
-msgid "Theme settings defining draw style and colors in the user interface"
-msgstr "ﻡﺪﺨﺘﺴﻤﻟﺍ ﺔﻬﺟﺍﻭ ﻲﻓ ﻥﺍﻮﻟﻷ﻿ﺍ ﻭ ﻢﺳﺮﻟﺍ ﺏﻮﻠﺳﻷ﻿ ﺓﺩﺪﺤﻤﻟﺍ ﻂﻤﻨﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
 msgid "Clip Editor"
@@ -36543,32 +36350,12 @@ msgid "Sound Strips Selected"
 msgstr "ﺓﺭﺎﺘﺨﻣ ﺕﻮﺼﻟﺍ ﺔﻃﺮﺷﺍ"
 
 
-msgid "Sound Strip - Selected (for timing speaker sounds)"
-msgstr "(ﺔﻋﺎﻤﺴﻟﺍ ﺕﺍﻮﺻﺍ ﺔﻨﻣﺍﺰﻤﻟ) ﺭﺎﺘﺨﻤﻟﺍ ﺕﻮﺼﻟﺍ ﻂﻳﺮﺷ"
-
-
-msgid "Action-Clip Strip - Unselected"
-msgstr "ﺭﺎﺘﺨﻣ ﺮﻴﻏ - ﺔﻛﺮﺤﻟﺍ ﺔﺻﺎﺼﻗ ﻂﻳﺮﺷ "
-
-
-msgid "Action-Clip Strip - Selected"
-msgstr "ﺭﺎﺘﺨﻣ - ﺔﻛﺮﺤﻟﺍ ﺔﺻﺎﺼﻗ ﻂﻳﺮﺷ "
-
-
 msgid "Transitions"
 msgstr "ﺕﻻ﻿ﺎﻘﺘﻧﻻ﻿ﺍ"
 
 
-msgid "Transition Strip - Unselected"
-msgstr "ﺭﺎﺘﺨﻣ ﺮﻴﻏ - ﻝﺎﻘﺘﻧﻻ﻿ﺍ ﻂﻳﺮﺷ"
-
-
 msgid "Transitions Selected"
 msgstr "ﺓﺭﺎﺘﺨﻣ ﺕﻻ﻿ﺎﻘﺘﻧﻻ﻿ﺍ"
-
-
-msgid "Transition Strip - Selected"
-msgstr "ﺭﺎﺘﺨﻣ - ﻝﺎﻘﺘﻧﻻ﻿ﺍ ﻂﻳﺮﺷ"
 
 
 msgid "Tweak Duplicate Flag"
@@ -37359,28 +37146,12 @@ msgid "Display 3D curve normals in editmode"
 msgstr "ﺮﻳﺮﺤﺘﻟﺍ ﻊﺿﻭ ﻲﻓ ﻲﺛﻼ﻿ﺜﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ ﻢﻇﺍﻮﻧ ﺮﻬﻇﺍ"
 
 
-msgid "Draw Bevel Weights"
-msgstr "ﺕﺎﻔﻄﺸﻟﺍ ﻥﺍﺯﻭﺍ ﻢﺳﺭﺍ"
-
-
 msgid "Display weights created for the Bevel modifier"
 msgstr "ﺔﻔﻄﺸﻟﺍ ﺮﻴﻐﻤﻟ ﺓﺄﺸﻨﻤﻟﺍ ﻥﺍﺯﻭﻻ﻿ﺍ ﺮﻬﻇﺍ"
 
 
-msgid "Draw Creases"
-msgstr "ﺕﺍﺪﻌﺠﺘﻟﺍ ﻢﺳﺭﺍ"
-
-
-msgid "Draw Seams"
-msgstr "ﺕﺍﺯﺭﺪﻟﺍ ﻢﺳﺭﺍ"
-
-
 msgid "Display UV unwrapping seams"
 msgstr "UVـﻟﺍ ﺾﻓ ﺕﺍﺯﺭﺩ ﺮﻬﻇﺃ"
-
-
-msgid "Draw Edges"
-msgstr "ﻑﺍﻮﺤﻟﺍ ﻢﺳﺭﺍ"
 
 
 msgid "Edge Angle"
@@ -37415,24 +37186,12 @@ msgid "Display face normals as lines"
 msgstr "ﻁﻮﻄﺨﻛ ﻪﺟﻮﻟﺍ ﻢﻇﺍﻮﻧ ﺽﺮﻋﺇ"
 
 
-msgid "Draw Faces"
-msgstr "ﻪﺟﻭﻷ﻿ﺍ ﻢﺳﺭﺃ"
-
-
 msgid "Display Grid Floor"
 msgstr "ﺔﻴﺿﺭﻻ﻿ﺍ ﺔﻜﺒﺸﻟﺍ ﺮﻬﻇﺍ"
 
 
-msgid "Draw Freestyle Edge Marks"
-msgstr "ﻞﻳﺎﺘﺴﻳﺮﻔﻟ ﺔﻓﺎﺤﻟﺍ ﺕﺎﻣﻼ﻿ﻋ ﻢﺳﺭﺍ"
-
-
 msgid "Display Freestyle edge marks, used with the Freestyle renderer"
 msgstr "ﻞﻳﺎﺘﺴﻳﺮﻓ ﺮﻴّﺼﻣ ﻊﻣ ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ,ﻞﻳﺎﺘﺴﻳﺮﻓ ﺔﻓﺎﺣ ﺕﺎﻣﻼ﻿ﻋ ﺽﺮﻋﺇ"
-
-
-msgid "Draw Freestyle Face Marks"
-msgstr "ﻞﻳﺎﺘﺴﻳﺮﻔﻟ ﻪﺟﻮﻟﺍ ﺕﺎﻣﻼ﻿ﻋ ﻢﺳﺭﺍ"
 
 
 msgid "Display Freestyle face marks, used with the Freestyle renderer"
@@ -39711,10 +39470,6 @@ msgstr "ﺩﺎﺣ"
 
 msgid "Seams"
 msgstr "ﺕﺎﻣﺎﺤﻠﻟﺍ"
-
-
-msgid "Display:"
-msgstr ":ﺮﻬﻇﺃ"
 
 
 msgctxt "Operator"

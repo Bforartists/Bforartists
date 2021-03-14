@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 from collections import defaultdict
 from pprint import pprint
@@ -333,7 +333,7 @@ def get_uvimg_editor_board_size(area):
     return (255.0, 255.0)
 
 
-def calc_polygon_2d_area(points):
+def calc_tris_2d_area(points):
     area = 0.0
     for i, p1 in enumerate(points):
         p2 = points[(i + 1) % len(points)]
@@ -345,7 +345,7 @@ def calc_polygon_2d_area(points):
     return fabs(0.5 * area)
 
 
-def calc_polygon_3d_area(points):
+def calc_tris_3d_area(points):
     area = 0.0
     for i, p1 in enumerate(points):
         p2 = points[(i + 1) % len(points)]
@@ -395,6 +395,23 @@ def get_faces_list(bm, method, only_selected):
     return faces_list
 
 
+def measure_all_faces_mesh_area(bm):
+    if compat.check_version(2, 80, 0) >= 0:
+        triangle_loops = bm.calc_loop_triangles()
+    else:
+        triangle_loops = bm.calc_tessface()
+
+    areas = {face: 0.0 for face in bm.faces}
+
+    for loops in triangle_loops:
+        face = loops[0].face
+        area = areas[face]
+        area += calc_tris_3d_area([l.vert.co for l in loops])
+        areas[face] = area
+
+    return areas
+
+
 def measure_mesh_area(obj, calc_method, only_selected):
     bm = bmesh.from_edit_mesh(obj.data)
     if check_version(2, 73, 0) >= 0:
@@ -406,17 +423,18 @@ def measure_mesh_area(obj, calc_method, only_selected):
 
     areas = []
     for faces in faces_list:
-        areas.append(measure_mesh_area_from_faces(faces))
+        areas.append(measure_mesh_area_from_faces(bm, faces))
 
     return areas
 
 
-def measure_mesh_area_from_faces(faces):
+def measure_mesh_area_from_faces(bm, faces):
+    face_areas = measure_all_faces_mesh_area(bm)
+
     mesh_area = 0.0
     for f in faces:
-        verts = [l.vert.co for l in f.loops]
-        f_mesh_area = calc_polygon_3d_area(verts)
-        mesh_area = mesh_area + f_mesh_area
+        if f in face_areas:
+            mesh_area += face_areas[f]
 
     return mesh_area
 
@@ -486,12 +504,34 @@ def find_images(obj, face=None, tex_layer=None):
     return images
 
 
-def measure_uv_area_from_faces(obj, faces, uv_layer, tex_layer,
+def measure_all_faces_uv_area(bm, uv_layer):
+    if compat.check_version(2, 80, 0) >= 0:
+        triangle_loops = bm.calc_loop_triangles()
+    else:
+        triangle_loops = bm.calc_tessface()
+
+    areas = {face: 0.0 for face in bm.faces}
+
+    for loops in triangle_loops:
+        face = loops[0].face
+        area = areas[face]
+        area += calc_tris_2d_area([l[uv_layer].uv for l in loops])
+        areas[face] = area
+
+    return areas
+
+
+def measure_uv_area_from_faces(obj, bm, faces, uv_layer, tex_layer,
                                tex_selection_method, tex_size):
+
+    face_areas = measure_all_faces_uv_area(bm, uv_layer)
+
     uv_area = 0.0
     for f in faces:
-        uvs = [l[uv_layer].uv for l in f.loops]
-        f_uv_area = calc_polygon_2d_area(uvs)
+        if f not in face_areas:
+            continue
+
+        f_uv_area = face_areas[f]
 
         # user specified
         if tex_selection_method == 'USER_SPECIFIED' and tex_size is not None:
@@ -547,8 +587,8 @@ def measure_uv_area_from_faces(obj, faces, uv_layer, tex_layer,
     return uv_area
 
 
-def measure_uv_area(obj, calc_method, tex_selection_method, tex_size,
-                    only_selected):
+def measure_uv_area(obj, calc_method, tex_selection_method,
+                    tex_size, only_selected):
     bm = bmesh.from_edit_mesh(obj.data)
     if check_version(2, 73, 0) >= 0:
         bm.verts.ensure_lookup_table()
@@ -565,7 +605,8 @@ def measure_uv_area(obj, calc_method, tex_selection_method, tex_size,
     uv_areas = []
     for faces in faces_list:
         uv_area = measure_uv_area_from_faces(
-            obj, faces, uv_layer, tex_layer, tex_selection_method, tex_size)
+            obj, bm, faces, uv_layer, tex_layer,
+            tex_selection_method, tex_size)
         if uv_area is None:
             return None
         uv_areas.append(uv_area)
@@ -946,7 +987,8 @@ class RingBuffer:
 
 # clip: reference polygon
 # subject: tested polygon
-def __do_weiler_atherton_cliping(clip_uvs, subject_uvs, mode):
+def __do_weiler_atherton_cliping(clip_uvs, subject_uvs, mode,
+                                 same_polygon_threshold):
 
     clip_uvs = RingBuffer(clip_uvs)
     if __is_polygon_flipped(clip_uvs):
@@ -961,7 +1003,7 @@ def __do_weiler_atherton_cliping(clip_uvs, subject_uvs, mode):
     debug_print(subject_uvs)
 
     # check if clip and subject is overlapped completely
-    if __is_polygon_same(clip_uvs, subject_uvs):
+    if __is_polygon_same(clip_uvs, subject_uvs, same_polygon_threshold):
         polygons = [subject_uvs.as_list()]
         debug_print("===== Polygons Overlapped Completely =====")
         debug_print(polygons)
@@ -1193,26 +1235,31 @@ def get_uv_editable_objects(context):
     return objs
 
 
-def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list, mode):
+def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list,
+                           mode, same_polygon_threshold=0.0000001):
     # at first, check island overlapped
     isl = []
     for bm, uv_layer, faces in zip(bm_list, uv_layer_list, faces_list):
         info = get_island_info_from_faces(bm, faces, uv_layer)
-        isl.extend([(i, uv_layer) for i in info])
+        isl.extend([(i, uv_layer, bm) for i in info])
 
     overlapped_isl_pairs = []
     overlapped_uv_layer_pairs = []
-    for i, (i1, uv_layer_1) in enumerate(isl):
-        for i2, uv_layer_2 in isl[i + 1:]:
+    overlapped_bm_paris = []
+    for i, (i1, uv_layer_1, bm_1) in enumerate(isl):
+        for i2, uv_layer_2, bm_2 in isl[i + 1:]:
             if (i1["max"].x < i2["min"].x) or (i2["max"].x < i1["min"].x) or \
                (i1["max"].y < i2["min"].y) or (i2["max"].y < i1["min"].y):
                 continue
             overlapped_isl_pairs.append([i1, i2])
             overlapped_uv_layer_pairs.append([uv_layer_1, uv_layer_2])
+            overlapped_bm_paris.append([bm_1, bm_2])
 
     # next, check polygon overlapped
     overlapped_uvs = []
-    for oip, uvlp in zip(overlapped_isl_pairs, overlapped_uv_layer_pairs):
+    for oip, uvlp, bmp in zip(overlapped_isl_pairs,
+                              overlapped_uv_layer_pairs,
+                              overlapped_bm_paris):
         for clip in oip[0]["faces"]:
             f_clip = clip["face"]
             clip_uvs = [l[uvlp[0]].uv.copy() for l in f_clip.loops]
@@ -1228,11 +1275,13 @@ def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list, mode):
 
                 subject_uvs = [l[uvlp[1]].uv.copy() for l in f_subject.loops]
                 # slow operation, apply Weiler-Atherton cliping algorithm
-                result, polygons = __do_weiler_atherton_cliping(clip_uvs,
-                                                                subject_uvs,
-                                                                mode)
+                result, polygons = \
+                    __do_weiler_atherton_cliping(clip_uvs, subject_uvs,
+                                                 mode, same_polygon_threshold)
                 if result:
-                    overlapped_uvs.append({"clip_face": f_clip,
+                    overlapped_uvs.append({"clip_bmesh": bmp[0],
+                                           "subject_bmesh": bmp[1],
+                                           "clip_face": f_clip,
                                            "subject_face": f_subject,
                                            "clip_uv_layer": uvlp[0],
                                            "subject_uv_layer": uvlp[1],
@@ -1242,14 +1291,15 @@ def get_overlapped_uv_info(bm_list, faces_list, uv_layer_list, mode):
     return overlapped_uvs
 
 
-def get_flipped_uv_info(faces_list, uv_layer_list):
+def get_flipped_uv_info(bm_list, faces_list, uv_layer_list):
     flipped_uvs = []
-    for faces, uv_layer in zip(faces_list, uv_layer_list):
+    for bm, faces, uv_layer in zip(bm_list, faces_list, uv_layer_list):
         for f in faces:
             polygon = RingBuffer([l[uv_layer].uv.copy() for l in f.loops])
             if __is_polygon_flipped(polygon):
                 uvs = [l[uv_layer].uv.copy() for l in f.loops]
-                flipped_uvs.append({"face": f,
+                flipped_uvs.append({"bmesh": bm,
+                                    "face": f,
                                     "uv_layer": uv_layer,
                                     "uvs": uvs,
                                     "polygons": [polygon.as_list()]})
@@ -1257,7 +1307,7 @@ def get_flipped_uv_info(faces_list, uv_layer_list):
     return flipped_uvs
 
 
-def __is_polygon_same(points1, points2):
+def __is_polygon_same(points1, points2, threshold):
     if len(points1) != len(points2):
         return False
 
@@ -1267,7 +1317,7 @@ def __is_polygon_same(points1, points2):
     for p1 in pts1:
         for p2 in pts2:
             diff = p2 - p1
-            if diff.length < 0.0000001:
+            if diff.length < threshold:
                 pts2.remove(p2)
                 break
         else:

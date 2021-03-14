@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -2500,10 +2500,6 @@ msgstr "बाहरी शंकु का आयतन"
 
 msgid "Volume outside the outer cone"
 msgstr "बाहरी शंकु के बाहर  का आयतन"
-
-
-msgid "Reference distance at which volume is 100 %"
-msgstr "संदर्भ दूरी जो आयतन पर १००% है"
 
 
 msgctxt "Sound"

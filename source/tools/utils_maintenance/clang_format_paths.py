@@ -46,6 +46,7 @@ def compute_paths(paths, use_default_paths):
             "intern/glew-mx",
             "intern/guardedalloc",
             "intern/iksolver",
+            "intern/libmv",
             "intern/locale",
             "intern/memutil",
             "intern/mikktspace",
