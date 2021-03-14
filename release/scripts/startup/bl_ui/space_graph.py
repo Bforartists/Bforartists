@@ -206,6 +206,7 @@ class GRAPH_PT_properties_view_options(Panel):
         layout.separator()
 
         col = layout.column(align = True)
+        col.prop(st, "show_extrapolation")
         col.prop(st, "show_handles")
         col.prop(st, "use_only_selected_curves_handles")
         col.prop(st, "use_only_selected_keyframe_handles")

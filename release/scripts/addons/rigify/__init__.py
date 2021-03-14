@@ -481,7 +481,7 @@ class RigifyParameterValidator(object):
         if val[0] != bpy.props.CollectionProperty:
             val[1]['update'] = update_callback(name)
 
-        setattr(self.__params, name, val)
+        setattr(self.__params, name, val_original)
         self.__prop_table[name] = (self.__rig_name, new_def)
 
 

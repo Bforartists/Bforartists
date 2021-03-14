@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3540,10 +3540,6 @@ msgid "Grid"
 msgstr "Izgara"
 
 
-msgid "Draw Mode"
-msgstr "Çizim Modu"
-
-
 msgid "3D Space"
 msgstr "Boşluk"
 
@@ -4916,10 +4912,6 @@ msgid "Vertices of the mesh"
 msgstr "Mesh Araçları"
 
 
-msgid "Meta elements"
-msgstr "Meta Küre"
-
-
 msgid "Render Size"
 msgstr "Ekstrüzyon Boyutu"
 
@@ -5312,14 +5304,6 @@ msgid "Particle Settings"
 msgstr "Kemik Ayarları"
 
 
-msgid "Active Dupli Object"
-msgstr "Aktif nesneyi göster."
-
-
-msgid "Active Dupli Object Index"
-msgstr "Seçili Kamerayı Aktif Yap"
-
-
 msgid "Angular Velocity Axis"
 msgstr "Yatay Eksenin Tersine"
 
@@ -5341,10 +5325,6 @@ msgstr "Çocuk (nesne) Ekle"
 
 
 msgid "Children Per Parent"
-msgstr "Ebeveyn Nokta Oluştur"
-
-
-msgid "Number of children/parent"
 msgstr "Ebeveyn Nokta Oluştur"
 
 
@@ -5388,24 +5368,12 @@ msgid "Amount of damping"
 msgstr "Yansıma miktarı"
 
 
-msgid "Draw Color"
-msgstr "Ekran Rengi:"
-
-
-msgid "Particle Drawing"
-msgstr "Çizim Ayarları:"
-
-
 msgid "Rendered"
 msgstr "Görüntü İşlenmedi (F12 ile işleyin)"
 
 
 msgid "Display"
 msgstr "Görüntü:"
-
-
-msgid "Draw Size"
-msgstr "Ekstrüzyon Boyutu"
 
 
 msgid "Jittered"
@@ -5554,10 +5522,6 @@ msgstr "Nesne"
 
 msgid "Strand shape parameter"
 msgstr "Parçacık Modu"
-
-
-msgid "Draw boid health"
-msgstr "Mesh Gölgesini Çiz"
 
 
 msgid "Show particle number"
@@ -7053,10 +7017,6 @@ msgstr "Nokta Boyama"
 
 msgid "Active Element"
 msgstr "Aktif Kamera"
-
-
-msgid "Meta Element"
-msgstr "Meta Küre"
 
 
 msgid "Hide element"
@@ -12741,23 +12701,6 @@ msgid "Paste Material"
 msgstr "Malzeme butonları"
 
 
-msgid "Delete selected metaelement(s)"
-msgstr "Seçili İşaretler arasında"
-
-
-msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "Bağlantılı Çoğalt"
-
-
-msgid "Duplicate selected metaelement(s)"
-msgstr "Seçili İşaretler arasında"
-
-
-msgid "Randomly select metaelements"
-msgstr "Anahtarları Seç"
-
-
 msgid "Angle limit"
 msgstr "Çevirme Açısı: "
 
@@ -13078,20 +13021,20 @@ msgid "Merge method to use"
 msgstr "Hesaplama için kullanılacak aygıt"
 
 
-msgid "At First"
-msgstr "İlk Büyük"
-
-
-msgid "At Last"
-msgstr "Merkezde"
-
-
 msgid "At Center"
 msgstr "Merkezde"
 
 
 msgid "At Cursor"
 msgstr "İmleçte"
+
+
+msgid "At First"
+msgstr "İlk Büyük"
+
+
+msgid "At Last"
+msgstr "Merkezde"
 
 
 msgid "Fill Holes"
@@ -15265,34 +15208,6 @@ msgstr "Seçili İşaretler arasında"
 msgctxt "Operator"
 msgid "Disconnect Hair"
 msgstr "Önizleme Biçimi: Saç-Tel-İplik"
-
-
-msgctxt "Operator"
-msgid "Copy Particle Dupliob"
-msgstr "Fizik Özelliklerini Kopyala"
-
-
-msgid "Duplicate the current dupliobject"
-msgstr "Geçerli Karenin Tersine"
-
-
-msgctxt "Operator"
-msgid "Move Down Dupli Object"
-msgstr "Nesneyi yalnız ortalayarak taşı"
-
-
-msgctxt "Operator"
-msgid "Move Up Dupli Object"
-msgstr "Nesneyi yalnız ortalayarak taşı"
-
-
-msgctxt "Operator"
-msgid "Remove Particle Dupliobject"
-msgstr "Aktif Grubu Sil"
-
-
-msgid "Remove the selected dupliobject"
-msgstr "Seçili İşaretler arasında"
 
 
 msgctxt "Operator"
@@ -18200,14 +18115,6 @@ msgid "Brush steps"
 msgstr "Yol Adımları"
 
 
-msgid "Particle Dupliobject Weight"
-msgstr "Tüm Parçacık sistemlerini güncelle"
-
-
-msgid "Particle dupliobject name"
-msgstr "İşareti (Tekrar) Adlandır"
-
-
 msgid "Keys"
 msgstr "Anahtarları Ters Çevir"
 
@@ -20508,10 +20415,6 @@ msgid "2D Cursor Location"
 msgstr "Seçimi İmlece"
 
 
-msgid "Channels of the image to draw"
-msgstr "İmaj bağlarına gözat"
-
-
 msgid "Color and Alpha"
 msgstr "Eğri ve Yüzey"
 
@@ -20634,6 +20537,10 @@ msgstr "Eğrileri sil"
 
 msgid "Space Node Editor"
 msgstr "Ipo Eğri Editörü "
+
+
+msgid "Channels of the image to draw"
+msgstr "İmaj bağlarına gözat"
 
 
 msgid "Backdrop Zoom"
@@ -21336,27 +21243,11 @@ msgid "Sound Strips Selected"
 msgstr "Seçilenler"
 
 
-msgid "Action-Clip Strip - Unselected"
-msgstr "NLA Strip'i eyleme çevir"
-
-
-msgid "Action-Clip Strip - Selected"
-msgstr "NLA Strip'i eyleme çevir"
-
-
 msgid "Transitions"
 msgstr "Değiştirici Ekle"
 
 
-msgid "Transition Strip - Unselected"
-msgstr "Strip Özellikleri..."
-
-
 msgid "Transitions Selected"
-msgstr "Strip Özellikleri..."
-
-
-msgid "Transition Strip - Selected"
 msgstr "Strip Özellikleri..."
 
 
@@ -21932,32 +21823,12 @@ msgid "Draw Normals"
 msgstr "Normalleri Çiz"
 
 
-msgid "Draw Bevel Weights"
-msgstr "Mesh Gölgesini Çiz"
-
-
-msgid "Draw Creases"
-msgstr "Kenarları Vurgula"
-
-
-msgid "Draw Seams"
-msgstr "Kenarları Vurgula"
-
-
-msgid "Draw Edges"
-msgstr "Kenarları Vurgula"
-
-
 msgid "Edge Angle"
 msgstr "Çevirme Açısı: "
 
 
 msgid "Display face normals as lines"
 msgstr "Yüzey normallerini doğrularla çizer"
-
-
-msgid "Draw Faces"
-msgstr "Yüzeyleri Vurgula"
 
 
 msgid "Display Grid Floor"
@@ -23277,10 +23148,6 @@ msgstr "Yap"
 msgctxt "Operator"
 msgid "View Selected"
 msgstr "Seçileni Göster"
-
-
-msgid "Display:"
-msgstr "Görüntü:"
 
 
 msgctxt "Operator"

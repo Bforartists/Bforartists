@@ -20,8 +20,8 @@
 
 __author__ = "McBuff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 from math import sqrt
 
@@ -97,11 +97,11 @@ def _measure_wsuv_info(obj, calc_method='MESH',
     return uv_areas, mesh_areas, densities
 
 
-def _measure_wsuv_info_from_faces(obj, faces, uv_layer, tex_layer,
+def _measure_wsuv_info_from_faces(obj, bm, faces, uv_layer, tex_layer,
                                   tex_selection_method='FIRST', tex_size=None):
-    mesh_area = common.measure_mesh_area_from_faces(faces)
+    mesh_area = common.measure_mesh_area_from_faces(bm, faces)
     uv_area = common.measure_uv_area_from_faces(
-        obj, faces, uv_layer, tex_layer, tex_selection_method, tex_size)
+        obj, bm, faces, uv_layer, tex_layer, tex_selection_method, tex_size)
 
     if not uv_area:
         return None, mesh_area, None
@@ -376,7 +376,12 @@ class MUV_OT_WorldScaleUV_Measure(bpy.types.Operator):
 
     @staticmethod
     def setup_argument(ops, scene):
-        ops.tgt_texture = scene.muv_world_scale_uv_measure_tgt_texture
+        try:
+            ops.tgt_texture = scene.muv_world_scale_uv_measure_tgt_texture
+        except TypeError:
+            # Workaround for the error raised when the items of EnumProperty
+            # are deleted.
+            ops.tgt_texture = "[Average]"
         ops.only_selected = scene.muv_world_scale_uv_measure_only_selected
 
     def execute(self, context):
@@ -524,7 +529,7 @@ class MUV_OT_WorldScaleUV_ApplyManual(bpy.types.Operator):
             factors = []
             for faces in faces_list:
                 uv_area, _, density = _measure_wsuv_info_from_faces(
-                    obj, faces, uv_layer, tex_layer,
+                    obj, bm, faces, uv_layer, tex_layer,
                     tex_selection_method='USER_SPECIFIED', tex_size=tex_size)
 
                 if not uv_area:
@@ -659,7 +664,12 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
         ops.src_density = scene.muv_world_scale_uv_src_density
         ops.same_density = False
         ops.show_dialog = False
-        ops.tgt_texture = scene.muv_world_scale_uv_apply_tgt_texture
+        try:
+            ops.tgt_texture = scene.muv_world_scale_uv_apply_tgt_texture
+        except TypeError:
+            # Workaround for the error raised when the items of EnumProperty
+            # are deleted.
+            ops.tgt_texture = "[Average]"
         ops.tgt_area_calc_method = \
             scene.muv_world_scale_uv_tgt_area_calc_method
         ops.only_selected = scene.muv_world_scale_uv_apply_only_selected
@@ -688,20 +698,20 @@ class MUV_OT_WorldScaleUV_ApplyScalingDensity(bpy.types.Operator):
             for faces in faces_list:
                 if self.tgt_texture == "[Average]":
                     uv_area, _, density = _measure_wsuv_info_from_faces(
-                        obj, faces, uv_layer, tex_layer,
+                        obj, bm, faces, uv_layer, tex_layer,
                         tex_selection_method='AVERAGE')
                 elif self.tgt_texture == "[Max]":
                     uv_area, _, density = _measure_wsuv_info_from_faces(
-                        obj, faces, uv_layer, tex_layer,
+                        obj, bm, faces, uv_layer, tex_layer,
                         tex_selection_method='MAX')
                 elif self.tgt_texture == "[Min]":
                     uv_area, _, density = _measure_wsuv_info_from_faces(
-                        obj, faces, uv_layer, tex_layer,
+                        obj, bm, faces, uv_layer, tex_layer,
                         tex_selection_method='MIN')
                 else:
                     tgt_texture = bpy.data.images[self.tgt_texture]
                     uv_area, _, density = _measure_wsuv_info_from_faces(
-                        obj, faces, uv_layer, tex_layer,
+                        obj, bm, faces, uv_layer, tex_layer,
                         tex_selection_method='USER_SPECIFIED',
                         tex_size=tgt_texture.size)
 
@@ -859,7 +869,12 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
         ops.src_uv_area = scene.muv_world_scale_uv_src_uv_area
         ops.src_mesh_area = scene.muv_world_scale_uv_src_mesh_area
         ops.show_dialog = False
-        ops.tgt_texture = scene.muv_world_scale_uv_apply_tgt_texture
+        try:
+            ops.tgt_texture = scene.muv_world_scale_uv_apply_tgt_texture
+        except TypeError:
+            # Workaround for the error raised when the items of EnumProperty
+            # are deleted.
+            ops.tgt_texture = "[Average]"
         ops.tgt_area_calc_method = \
             scene.muv_world_scale_uv_tgt_area_calc_method
         ops.only_selected = scene.muv_world_scale_uv_apply_only_selected
@@ -889,23 +904,23 @@ class MUV_OT_WorldScaleUV_ApplyProportionalToMesh(bpy.types.Operator):
                 if self.tgt_texture == "[Average]":
                     uv_area, mesh_area, density = \
                         _measure_wsuv_info_from_faces(
-                            obj, faces, uv_layer, tex_layer,
+                            obj, bm, faces, uv_layer, tex_layer,
                             tex_selection_method='AVERAGE')
                 elif self.tgt_texture == "[Max]":
                     uv_area, mesh_area, density = \
                         _measure_wsuv_info_from_faces(
-                            obj, faces, uv_layer, tex_layer,
+                            obj, bm, faces, uv_layer, tex_layer,
                             tex_selection_method='MAX')
                 elif self.tgt_texture == "[Min]":
                     uv_area, mesh_area, density = \
                         _measure_wsuv_info_from_faces(
-                            obj, faces, uv_layer, tex_layer,
+                            obj, bm, faces, uv_layer, tex_layer,
                             tex_selection_method='MIN')
                 else:
                     tgt_texture = bpy.data.images[self.tgt_texture]
                     uv_area, mesh_area, density = \
                         _measure_wsuv_info_from_faces(
-                            obj, faces, uv_layer, tex_layer,
+                            obj, bm, faces, uv_layer, tex_layer,
                             tex_selection_method='USER_SPECIFIED',
                             tex_size=tgt_texture.size)
                 if not uv_area:

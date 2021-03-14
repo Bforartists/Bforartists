@@ -27,7 +27,7 @@ Example use:
 """
 
 from git_log import GitCommit, GitCommitIter
-
+import unicodedata as ud
 
 # -----------------------------------------------------------------------------
 # Class for generating credits
@@ -52,7 +52,8 @@ class Credits:
         self.users = {}
 
     def process_commit(self, c):
-        author = c.author
+        # Normalize author string into canonical form, prevents duplicate credit users
+        author = ud.normalize('NFC', c.author)
         year = c.date.year
         cu = self.users.get(author)
         if cu is None:
