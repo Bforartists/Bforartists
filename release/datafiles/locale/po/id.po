@@ -1,21 +1,20 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2013-09-26 14:51+0700\n"
-"Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
+"PO-Revision-Date: 2021-03-05 13:49+0700\n"
+"Last-Translator: Adriel\n"
 "Language-Team: Indonesian <>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Poedit-Language: Indonesian\n"
-"X-Poedit-Country: INDONESIA\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,-1,-1,4"
+"X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,-1,-1,4\n"
+"X-Generator: Poedit 2.4.2"
 
 
 msgid "Name"
@@ -287,7 +286,7 @@ msgstr "Orientasi Transformasi"
 
 
 msgid "Internal"
-msgstr "Internet:"
+msgstr "Internal"
 
 
 msgid "Free"
@@ -379,7 +378,7 @@ msgstr "Kamera"
 
 
 msgid "Has Space Attenuation"
-msgstr "lokasi"
+msgstr "Ada Pengurangan Spasi"
 
 
 msgid "Has Height"
@@ -536,27 +535,27 @@ msgstr "Kamera"
 
 
 msgid "Location X"
-msgstr "lokasi"
+msgstr "Lokasi X"
 
 
 msgid "Location Y"
-msgstr "lokasi"
+msgstr "Lokasi Y"
 
 
 msgid "Location Z"
-msgstr "lokasi"
+msgstr "Lokasi Z"
 
 
 msgid "Rotation X"
-msgstr "lokasi"
+msgstr "Rotasi X"
 
 
 msgid "Rotation Y"
-msgstr "lokasi"
+msgstr "Rotasi Y"
 
 
 msgid "Rotation Z"
-msgstr "lokasi"
+msgstr "Rotasi Z"
 
 
 msgid "Target Object (Curves only)"
@@ -584,11 +583,11 @@ msgstr "Orientasi Transformasi"
 
 
 msgid "Floor Location"
-msgstr "lokasi"
+msgstr "Lokasi Lantai"
 
 
 msgid "Use Rotation"
-msgstr "lokasi"
+msgstr "Gunakan Rotasi"
 
 
 msgid "Forward Axis"
@@ -736,7 +735,7 @@ msgstr "Warna"
 
 
 msgid "Acceleration"
-msgstr "lokasi"
+msgstr "Akselerasi"
 
 
 msgid "Simulation start frame"
@@ -800,7 +799,7 @@ msgstr "Ukurang"
 
 
 msgid "Fonts"
-msgstr "Huruf:"
+msgstr "Font"
 
 
 msgid "Additional"
@@ -812,7 +811,7 @@ msgstr "Warna"
 
 
 msgid "res"
-msgstr "Bebas"
+msgstr "res"
 
 
 msgid "Smoke Grid Resolution"
@@ -917,10 +916,6 @@ msgstr "Induk"
 
 msgid "Layer"
 msgstr "Lapisan"
-
-
-msgid "Draw Mode"
-msgstr "Modus"
 
 
 msgid "3D Space"
@@ -1112,7 +1107,7 @@ msgstr "Tekstur"
 
 
 msgid "Center text"
-msgstr "Internet:"
+msgstr "Text Pusat"
 
 
 msgid "Edit Format"
@@ -1251,10 +1246,6 @@ msgid "UV Loop Layers"
 msgstr "Warna Standar"
 
 
-msgid "Meta elements"
-msgstr "Hapus Titik"
-
-
 msgid "Render Size"
 msgstr "Ukurang"
 
@@ -1296,7 +1287,7 @@ msgstr "Data Objek"
 
 
 msgid "Delta Location"
-msgstr "lokasi"
+msgstr "Lokasi Delta"
 
 
 msgid "Textured"
@@ -1348,19 +1339,7 @@ msgstr "Acak"
 
 
 msgid "Interpolated"
-msgstr "Internet:"
-
-
-msgid "Draw Color"
-msgstr "Warna Standar"
-
-
-msgid "Particle Drawing"
-msgstr "Partikel"
-
-
-msgid "Draw Size"
-msgstr "Ukurang"
+msgstr "Diinterpolasi"
 
 
 msgid "Distribution"
@@ -1504,7 +1483,7 @@ msgstr "Penyunting Teks"
 
 
 msgid "Attenuation"
-msgstr "lokasi"
+msgstr "Atenuasi"
 
 
 msgid "Sound"
@@ -1528,7 +1507,7 @@ msgstr "Tekstur"
 
 
 msgid "Depth of the cloud calculation"
-msgstr "lokasi"
+msgstr "Kedalaman kalkulasi awan"
 
 
 msgid "Noise Size"
@@ -1612,7 +1591,7 @@ msgstr "Komunitas Pengguna"
 
 
 msgid "Operators"
-msgstr "Internet:"
+msgstr "Operator"
 
 
 msgid "Operator registry"
@@ -1620,11 +1599,11 @@ msgstr "Kamera"
 
 
 msgid "Simulation"
-msgstr "lokasi"
+msgstr "Simulasi"
 
 
 msgid "Reiteration"
-msgstr "lokasi"
+msgstr "Pengulangan"
 
 
 msgid "Solver"
@@ -1640,15 +1619,15 @@ msgstr "Nama"
 
 
 msgid "Delta Rotation"
-msgstr "lokasi"
+msgstr "Rotasi Delta"
 
 
 msgid "Visual Location"
-msgstr "lokasi"
+msgstr "Lokasi Visual"
 
 
 msgid "Visual Rotation"
-msgstr "lokasi"
+msgstr "Rotasi Visual"
 
 
 msgid "Point selected"
@@ -1704,7 +1683,7 @@ msgstr "Partikel"
 
 
 msgid "Merge Add"
-msgstr "Gabungkan..."
+msgstr "Tambahkan Gabungan"
 
 
 msgid "Invert the mask black/white"
@@ -1744,7 +1723,7 @@ msgstr "Kamera"
 
 
 msgid "Prevent feather from self-intersections"
-msgstr "lokasi"
+msgstr "Mencegah bulu dari persimpangan sendiri"
 
 
 msgid "Weight Interpolation"
@@ -1842,7 +1821,7 @@ msgstr "Ketebalan Min"
 
 
 msgid "Intersect"
-msgstr "Internet:"
+msgstr "Memotong"
 
 
 msgid "UV Select"
@@ -1894,7 +1873,7 @@ msgstr "Modus Pahat"
 
 
 msgid "Integrate"
-msgstr "Internet:"
+msgstr "Integrasi"
 
 
 msgid "Mirror Object"
@@ -2038,7 +2017,7 @@ msgstr "Nama file"
 
 
 msgid "Null action"
-msgstr "lokasi"
+msgstr "Aksi null"
 
 
 msgctxt "Curve"
@@ -2127,11 +2106,11 @@ msgstr "Hapus Titik"
 
 
 msgid "Correlation"
-msgstr "lokasi"
+msgstr "Kolerasi"
 
 
 msgid "Default motion model to use for tracking"
-msgstr "lokasi"
+msgstr "Model gerak default yang digunakan untuk pelacakan"
 
 
 msgid "Pattern Size"
@@ -2199,7 +2178,7 @@ msgstr "Warna"
 
 
 msgid "Aspect Correction"
-msgstr "lokasi"
+msgstr "Aspek Koreksi"
 
 
 msgid "Variable Size"
@@ -2239,11 +2218,11 @@ msgstr "Saluran"
 
 
 msgid "Correction Formula"
-msgstr "lokasi"
+msgstr "Rumus Koreksi"
 
 
 msgid "Color Correction"
-msgstr "lokasi"
+msgstr "Koreksi Warna"
 
 
 msgid "Blue channel active"
@@ -2259,11 +2238,11 @@ msgstr "Penyunting Logika"
 
 
 msgid "Master Contrast"
-msgstr "lokasi"
+msgstr "Master Kontras"
 
 
 msgid "Master Gain"
-msgstr "lokasi"
+msgstr "Master Lokasi"
 
 
 msgid "Master Gamma"
@@ -2279,11 +2258,11 @@ msgstr "Tekstur"
 
 
 msgid "Master Saturation"
-msgstr "lokasi"
+msgstr "Master Saturasi"
 
 
 msgid "Master saturation"
-msgstr "lokasi"
+msgstr "Master saturasi"
 
 
 msgid "Midtones Contrast"
@@ -2379,7 +2358,7 @@ msgstr "Hapus"
 
 
 msgid "Gamma Correction"
-msgstr "lokasi"
+msgstr "Koreksi Gamma"
 
 
 msgid "Edge to inset"
@@ -2407,7 +2386,7 @@ msgstr "Kamera"
 
 
 msgid "Color Modulation"
-msgstr "lokasi"
+msgstr "Modulasi Warna"
 
 
 msgid "Glare Type"
@@ -2415,7 +2394,7 @@ msgstr "Tipe"
 
 
 msgid "Hue Saturation Value"
-msgstr "lokasi"
+msgstr "Nilai Saturasi Hue"
 
 
 msgid "Clip White"
@@ -2520,7 +2499,7 @@ msgstr "Bahan"
 
 
 msgid "Pixelate"
-msgstr "lokasi"
+msgstr "Pixelate"
 
 
 msgid "Separate YCbCrA"
@@ -2548,7 +2527,7 @@ msgstr "Hapus"
 
 
 msgid "Wrapping"
-msgstr "Bahaya:"
+msgstr "Membungkus"
 
 
 msgid "ColorRamp"
@@ -2576,7 +2555,7 @@ msgstr "Informasi"
 
 
 msgid "Label Font Size"
-msgstr "Huruf:"
+msgstr "Label Ukuran Font"
 
 
 msgid "Reroute"
@@ -2640,7 +2619,7 @@ msgstr "Penyimpanan Otomatis"
 
 
 msgid "Method to use for the tangent"
-msgstr "lokasi"
+msgstr "Metode yang digunakan untuk garis singgung"
 
 
 msgid "Brick Texture"
@@ -2776,7 +2755,7 @@ msgstr "Sunting Objek"
 
 msgctxt "Operator"
 msgid "New Action"
-msgstr "lokasi"
+msgstr "Aksi Baru"
 
 
 msgctxt "Operator"
@@ -3010,7 +2989,7 @@ msgstr "Modus Pahat"
 
 msgctxt "Operator"
 msgid "Switch Direction"
-msgstr "lokasi"
+msgstr "Mengganti Arah"
 
 
 msgid "Delete current boid rule"
@@ -3111,7 +3090,7 @@ msgstr "Hapus"
 
 msgctxt "Operator"
 msgid "Clear Solution"
-msgstr "lokasi"
+msgstr "Kosongkan Solusi"
 
 
 msgctxt "Operator"
@@ -3347,7 +3326,7 @@ msgstr "Perkecil"
 
 msgctxt "Operator"
 msgid "Clear Line"
-msgstr "lokasi"
+msgstr "Kosongkan Garis"
 
 
 msgctxt "Operator"
@@ -3367,7 +3346,7 @@ msgstr "Setelah Ini"
 
 msgctxt "Operator"
 msgid "Move Cursor"
-msgstr "lokasi"
+msgstr "Gerakkan Kursor"
 
 
 msgctxt "Operator"
@@ -3438,7 +3417,7 @@ msgstr "Modus Sunting"
 
 
 msgid "Skin Resize"
-msgstr "Huruf:"
+msgstr "Mengubah Ukuran Kulit"
 
 
 msgid "Extrude curve and move result"
@@ -3650,7 +3629,7 @@ msgstr "Tipe"
 
 
 msgid "Remove from selection"
-msgstr "lokasi"
+msgstr "Menghapus dari seleksi"
 
 
 msgid "Toggle Selection"
@@ -3667,7 +3646,7 @@ msgstr "Hapus"
 
 
 msgid "Gap Duration"
-msgstr "lokasi"
+msgstr "Celah Durasi"
 
 
 msgid "Gap Randomness"
@@ -3740,7 +3719,7 @@ msgstr "Tekstur"
 
 msgctxt "Operator"
 msgid "Set Cursor"
-msgstr "lokasi"
+msgstr "Set Kursor"
 
 
 msgctxt "Operator"
@@ -3917,7 +3896,7 @@ msgstr "Hapus Titik"
 
 msgctxt "Operator"
 msgid "Replay Operators"
-msgstr "Internet:"
+msgstr "Operator Replay"
 
 
 msgctxt "Operator"
@@ -4106,15 +4085,6 @@ msgid "Paste Material"
 msgstr "Bahan"
 
 
-msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "Hapus Titik"
-
-
-msgid "Duplicate selected metaelement(s)"
-msgstr "Hapus Titik"
-
-
 msgid "Angle limit"
 msgstr "Kamera"
 
@@ -4128,7 +4098,7 @@ msgstr "Bidang Normal"
 
 
 msgid "Interpolation method"
-msgstr "Internet:"
+msgstr "Metode Interpolasi"
 
 
 msgid "Merge Factor"
@@ -4203,7 +4173,7 @@ msgstr "Modus Sunting"
 
 
 msgid "Remove from the selection"
-msgstr "lokasi"
+msgstr "Menghapus dari seleksi"
 
 
 msgid "Select ring"
@@ -4297,7 +4267,7 @@ msgstr "Seleksi"
 
 msgctxt "Operator"
 msgid "Merge"
-msgstr "Gabungkan..."
+msgstr "Gabungkan"
 
 
 msgid "Merge selected vertices"
@@ -5196,21 +5166,6 @@ msgstr "Partikel"
 
 msgid "Delete selected particles or keys"
 msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Move Down Dupli Object"
-msgstr "Sunting Objek"
-
-
-msgctxt "Operator"
-msgid "Move Up Dupli Object"
-msgstr "Sunting Objek"
-
-
-msgctxt "Operator"
-msgid "Remove Particle Dupliobject"
-msgstr "Induk"
 
 
 msgctxt "Operator"
@@ -6694,20 +6649,12 @@ msgid "Sound Strips Selected"
 msgstr "Hapus"
 
 
-msgid "Action-Clip Strip - Selected"
-msgstr "Hapus"
-
-
 msgid "Transitions"
 msgstr "Orientasi Transformasi"
 
 
 msgid "Transitions Selected"
 msgstr "Orientasi Transformasi"
-
-
-msgid "Transition Strip - Selected"
-msgstr "Hapus"
 
 
 msgid "Tweak Duplicate Flag"

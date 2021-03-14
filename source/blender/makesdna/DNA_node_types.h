@@ -394,7 +394,6 @@ typedef struct bNodeLink {
   bNodeSocket *fromsock, *tosock;
 
   int flag;
-  /* A runtime storage for automatically sorted links to multi-input sockets. */
   int multi_input_socket_index;
 } bNodeLink;
 
@@ -1070,7 +1069,8 @@ typedef struct CryptomatteEntry {
 typedef struct NodeCryptomatte {
   float add[3];
   float remove[3];
-  char *matte_id DNA_DEPRECATED;
+  /* Stores `entries` as a string for opening in 2.80-2.91. */
+  char *matte_id;
   /* Contains `CryptomatteEntry`. */
   ListBase entries;
   int num_inputs;
@@ -1225,6 +1225,14 @@ typedef struct NodeAttributeSeparateXYZ {
   /* GeometryNodeAttributeInputMode. */
   uint8_t input_type;
 } NodeAttributeSeparateXYZ;
+
+typedef struct NodeAttributeConvert {
+  /* CustomDataType. */
+  uint8_t data_type;
+  char _pad[1];
+  /* AttributeDomain. */
+  int16_t domain;
+} NodeAttributeConvert;
 
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0

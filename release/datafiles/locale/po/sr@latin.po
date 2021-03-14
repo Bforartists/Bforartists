@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4873,10 +4873,6 @@ msgid "Type of parent relation"
 msgstr "Tip roditeljske veze"
 
 
-msgid "Make the layer draw in front of objects"
-msgstr "Iscrtavaj sloj ispred ostalih objekata"
-
-
 msgid "Show Points"
 msgstr "Prikaži tačke"
 
@@ -4911,10 +4907,6 @@ msgstr "Potez skice"
 
 msgid "Freehand curve defining part of a sketch"
 msgstr "Slobodoručna kriva kao deo skice"
-
-
-msgid "Draw Mode"
-msgstr "Režim prikaza"
 
 
 msgid "End Cap"
@@ -5192,10 +5184,6 @@ msgstr "Razmera mreže"
 
 msgid "Active Layer"
 msgstr "Aktivni sloj"
-
-
-msgid "Channels to display when drawing the histogram"
-msgstr "Kanali za prikaz u histogrmu"
 
 
 msgid "Red"
@@ -6774,20 +6762,12 @@ msgid "Vertices of the mesh"
 msgstr "Temena meša"
 
 
-msgid "Meta elements"
-msgstr "Meta elementi"
-
-
 msgid "Render Size"
 msgstr "Veličina renderinga"
 
 
 msgid "Wire Size"
 msgstr "Veličina mreže"
-
-
-msgid "Influence of meta elements"
-msgstr "Uticaj meta elemenata"
 
 
 msgid "Update"
@@ -7290,10 +7270,6 @@ msgid "Display the object's texture space"
 msgstr "Prikazuje prostor koji zauzima tekstura"
 
 
-msgid "Add the object's wireframe over solid drawing"
-msgstr "Prikazuje žičani model preko senčenog"
-
-
 msgid "Soft Body Settings"
 msgstr "Podešavanja mekog tela"
 
@@ -7366,10 +7342,6 @@ msgid "Children Per Parent"
 msgstr "Naslednika po roditelju"
 
 
-msgid "Number of children/parent"
-msgstr "Broj naslednika/roditelja"
-
-
 msgid "Child Radius"
 msgstr "Unutrašnji poluprečnik"
 
@@ -7414,18 +7386,6 @@ msgid "Amount of damping"
 msgstr "Vrednost vlaženja"
 
 
-msgid "Draw Color"
-msgstr "Boja crtanja"
-
-
-msgid "Particle Drawing"
-msgstr "Crtanje čestica"
-
-
-msgid "How particles are drawn in viewport"
-msgstr "Način prikaza čestica u prozoru pregledača"
-
-
 msgid "Rendered"
 msgstr "Renderovano"
 
@@ -7440,10 +7400,6 @@ msgstr "Prikaz"
 
 msgid "Percentage of particles to display in 3D view"
 msgstr "Postavlja kraj raspona u kome će se prikazivati 3D objekti (u perspektivi)"
-
-
-msgid "Draw Size"
-msgstr "Veličina prikaza"
 
 
 msgid "Distribution"
@@ -7496,10 +7452,6 @@ msgstr "Dužina kose"
 
 msgid "Number of hair segments"
 msgstr "Broj podela"
-
-
-msgid "Show this Object in place of particles"
-msgstr "Prikaži ovaj objekat na mestu čestica"
 
 
 msgid "Integration"
@@ -7566,16 +7518,8 @@ msgid "Path End"
 msgstr "Kraj putanje"
 
 
-msgid "End time of drawn path"
-msgstr "Krajnje vreme iscrtavanja putanje"
-
-
 msgid "Path Start"
 msgstr "Početak putanje"
-
-
-msgid "Starting time of drawn path"
-msgstr "Početno vreme iscrtavanja putanje"
 
 
 msgid "Rotation around the chosen orientation axis"
@@ -9765,10 +9709,6 @@ msgstr "Nedefinisana lokaciju"
 
 msgid "Active Element"
 msgstr "Aktivni elemenat"
-
-
-msgid "Meta Element"
-msgstr "Meta elemenat"
 
 
 msgid "Hide element"
@@ -15841,23 +15781,6 @@ msgstr "Ubaci materijal"
 
 
 msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "Dupliraj metaelemente"
-
-
-msgid "Duplicate Metaelements"
-msgstr "Dupliraj metaelemente"
-
-
-msgid "Reveal all hidden metaelements"
-msgstr "Otkriva sve sakrivene meta-elemente"
-
-
-msgid "Randomly select metaelements"
-msgstr "Nasumični izbor meta elemenata"
-
-
-msgctxt "Operator"
 msgid "Beautify Faces"
 msgstr "Ulepšaj stranice"
 
@@ -16271,20 +16194,20 @@ msgid "Merge method to use"
 msgstr "Izbor metoda spajanja."
 
 
-msgid "At First"
-msgstr "Za prvo"
-
-
-msgid "At Last"
-msgstr "Za poslednje"
-
-
 msgid "At Center"
 msgstr "U centar"
 
 
 msgid "At Cursor"
 msgstr "Za kursor"
+
+
+msgid "At First"
+msgstr "Za prvo"
+
+
+msgid "At Last"
+msgstr "Za poslednje"
 
 
 msgid "Fill Holes"
@@ -19411,10 +19334,6 @@ msgid "Channel to place this strip into"
 msgstr "Kanal na koji postavljate traku"
 
 
-msgid "Initialize the strip with this color (only used when type='COLOR')"
-msgstr "Postavi traku ove boje (samo za trake bojenja)"
-
-
 msgid "End frame for the color strip"
 msgstr "Krajnji kadar trake bojenja"
 
@@ -22282,10 +22201,6 @@ msgid "Display only files with extensions in the image select window"
 msgstr "Prikaži samo datoteke sa nastavkom u dialogu izbora slika"
 
 
-msgid "Default relative path option for the file selector"
-msgstr "Standardna akcija za srednji taster miša"
-
-
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
 msgstr "Omogući svim .blend datotekama automatsko pokretanje skripti (nije bezbedno za blend datoteke dobijene iz nepoverljivih izvora)"
 
@@ -22672,10 +22587,6 @@ msgstr "Samo sekunde"
 
 msgid "Thin"
 msgstr "Tanko"
-
-
-msgid "Draw user interface text anti-aliased"
-msgstr "Iscrtava umekšane ivice teksta u interfejsu"
 
 
 msgid "Translate Interface"
@@ -24760,27 +24671,11 @@ msgid "Sound Strips Selected"
 msgstr "Izabrane trake"
 
 
-msgid "Action-Clip Strip - Unselected"
-msgstr "Grupa akcija je izabrana"
-
-
-msgid "Action-Clip Strip - Selected"
-msgstr "Grupa akcija je izabrana"
-
-
 msgid "Transitions"
 msgstr "Prelaz"
 
 
-msgid "Transition Strip - Unselected"
-msgstr "Prevedi kratke opise"
-
-
 msgid "Transitions Selected"
-msgstr "Prevedi kratke opise"
-
-
-msgid "Transition Strip - Selected"
 msgstr "Prevedi kratke opise"
 
 
@@ -25324,14 +25219,6 @@ msgid "Display 3D curve normals in editmode"
 msgstr "Prikaži normale 3D krive u režimu izmene"
 
 
-msgid "Draw Bevel Weights"
-msgstr "Prikaži težinu iskošavanja"
-
-
-msgid "Draw Edges"
-msgstr "Crtaj ivice"
-
-
 msgid "Edge Angle"
 msgstr "Ugao ivice"
 
@@ -25348,20 +25235,8 @@ msgid "Display face normals as lines"
 msgstr "Prikaži normale stranica kao linije"
 
 
-msgid "Draw Faces"
-msgstr "Crtaj stranice"
-
-
-msgid "Draw Freestyle Edge Marks"
-msgstr "Crtaj slobodoručne oznake ivica"
-
-
 msgid "Display Freestyle edge marks, used with the Freestyle renderer"
 msgstr "Prikazuje oznake ivica pri slobodoručnom renderingu"
-
-
-msgid "Draw Freestyle Face Marks"
-msgstr "Crtaj slobodoručne oznake stranica"
 
 
 msgid "Display Freestyle face marks, used with the Freestyle renderer"
@@ -26712,10 +26587,6 @@ msgid "Playback FPS"
 msgstr "Učestalost kadrova FPS"
 
 
-msgid "Excluded Paths:"
-msgstr "Isključi putanje:"
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "Obrnuti smer približavanja točkićem"
 
@@ -27144,10 +27015,6 @@ msgstr "Pogled na izabrano"
 msgctxt "Plural"
 msgid "Sharp"
 msgstr "Oštro"
-
-
-msgid "Display:"
-msgstr "Prikaz:"
 
 
 msgctxt "Operator"

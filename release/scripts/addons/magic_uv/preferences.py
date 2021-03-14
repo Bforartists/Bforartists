@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 import bpy
 from bpy.props import (
@@ -241,12 +241,30 @@ class MUV_Preferences(AddonPreferences):
         size=4,
         subtype='COLOR'
     )
+    uv_inspection_overlapped_color_for_v3d = FloatVectorProperty(
+        name="Color (View3D)",
+        description="Color in View3D",
+        default=(0.0, 0.0, 1.0, 0.5),
+        min=0.0,
+        max=1.0,
+        size=4,
+        subtype='COLOR'
+    )
 
     # for Flipped UV
     uv_inspection_flipped_color = FloatVectorProperty(
         name="Color",
         description="Color",
         default=(1.0, 0.0, 0.0, 0.3),
+        min=0.0,
+        max=1.0,
+        size=4,
+        subtype='COLOR'
+    )
+    uv_inspection_flipped_color_for_v3d = FloatVectorProperty(
+        name="Color (View3D)",
+        description="Color in View3D",
+        default=(1.0, 0.0, 0.0, 0.5),
         min=0.0,
         max=1.0,
         size=4,
@@ -458,6 +476,20 @@ class MUV_Preferences(AddonPreferences):
                 col = sp.column()
                 col.label(text="Flipped UV Color:")
                 col.prop(self, "uv_inspection_flipped_color", text="")
+
+                sp = compat.layout_split(layout, 0.05)
+                col = sp.column()  # spacer
+                sp = compat.layout_split(sp, 0.3)
+                col = sp.column()
+                col.label(text="Overlapped UV Color (View3D):")
+                col.prop(self, "uv_inspection_overlapped_color_for_v3d",
+                         text="")
+                sp = compat.layout_split(sp, 0.45)
+                col = sp.column()
+                col.label(text="Flipped UV Color (View3D):")
+                col.prop(self, "uv_inspection_flipped_color_for_v3d",
+                         text="")
+
                 layout.separator()
 
             layout.prop(

@@ -12,25 +12,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * Copyright 2011, Blender Foundation.
  */
 
-#include "COM_ChunkOrderHotspot.h"
-#include <cmath>
+#pragma once
 
-ChunkOrderHotspot::ChunkOrderHotspot(int x, int y, float addition)
-{
-  x = x;
-  y = y;
-  addition = addition;
-}
-
-double ChunkOrderHotspot::calc_distance(int x, int y)
-{
-  int dx = x - x;
-  int dy = y - y;
-  double result = sqrt((double)(dx * dx + dy * dy));
-  result += (double)addition;
-  return result;
-}
+void spreadsheet_operatortypes(void);

@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 import bpy
 
@@ -41,6 +41,7 @@ from ..op.smooth_uv import (
 from ..op.select_uv import (
     MUV_OT_SelectUV_SelectOverlapped,
     MUV_OT_SelectUV_SelectFlipped,
+    MUV_OT_SelectUV_ZoomSelectedUV,
 )
 from ..op.pack_uv import MUV_OT_PackUV
 from ..op.clip_uv import MUV_OT_ClipUV
@@ -176,8 +177,20 @@ class MUV_PT_UVEdit_UVManipulation(bpy.types.Panel):
         box.prop(sc, "muv_select_uv_enabled", text="Select UV")
         if sc.muv_select_uv_enabled:
             row = box.row(align=True)
-            row.operator(MUV_OT_SelectUV_SelectOverlapped.bl_idname)
-            row.operator(MUV_OT_SelectUV_SelectFlipped.bl_idname)
+            ops = row.operator(MUV_OT_SelectUV_SelectOverlapped.bl_idname)
+            MUV_OT_SelectUV_SelectOverlapped.setup_argument(ops, sc)
+            ops = row.operator(MUV_OT_SelectUV_SelectFlipped.bl_idname)
+            MUV_OT_SelectUV_SelectFlipped.setup_argument(ops, sc)
+
+            col = box.column()
+            col.label(text="Same Polygon Threshold:")
+            col.prop(sc, "muv_select_uv_same_polygon_threshold", text="")
+            col.prop(sc, "muv_select_uv_selection_method")
+            col.prop(sc, "muv_select_uv_sync_mesh_selection")
+
+            box.separator()
+
+            box.operator(MUV_OT_SelectUV_ZoomSelectedUV.bl_idname)
 
         box = layout.box()
         box.prop(sc, "muv_pack_uv_enabled", text="Pack UV (Extension)")
