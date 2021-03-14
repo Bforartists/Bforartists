@@ -287,6 +287,9 @@ typedef struct wmNotifier {
 #define NC_TEXT (12 << 24)
 #define NC_WORLD (13 << 24)
 #define NC_ANIMATION (14 << 24)
+/* When passing a space as reference data with this (e.g. `WM_event_add_notifier(..., space)`),
+ * the notifier will only be sent to this space. That avoids unnecessary updates for unrelated
+ * spaces. */
 #define NC_SPACE (15 << 24)
 #define NC_GEOM (16 << 24)
 #define NC_NODE (17 << 24)
@@ -427,7 +430,8 @@ typedef struct wmNotifier {
 #define ND_SPACE_CHANGED (19 << 16) /*sent to a new editor type after it's replaced an old one*/
 #define ND_SPACE_CLIP (20 << 16)
 #define ND_SPACE_FILE_PREVIEW (21 << 16)
-#define ND_SPACE_TOOLBAR (22<<16) // bfa - toolbar editor
+#define ND_SPACE_SPREADSHEET (22 << 16)
+#define ND_SPACE_TOOLBAR (23 << 16) // bfa - toolbar editor
 
 /* subtype, 256 entries too */
 #define NOTE_SUBTYPE 0x0000FF00

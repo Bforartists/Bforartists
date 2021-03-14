@@ -1309,6 +1309,7 @@ def km_file_browser_main(params):
          {"properties": [("mode", 'ADD')]}),
         ("file.highlight", {"type": 'MOUSEMOVE', "value": 'ANY', "any": True}, None),
         ("file.sort_column_ui_context", {"type": 'LEFTMOUSE', "value": 'PRESS', "any": True}, None),
+        ("file.view_selected", {"type": 'F', "value": 'PRESS'}, None),
     ])
 
     return keymap
@@ -3394,7 +3395,8 @@ def km_sculpt(params):
          {"properties": [("data_path", 'scene.tool_settings.sculpt.show_mask')]}),
         # Dynamic topology
         ("sculpt.dynamic_topology_toggle", {"type": 'D', "value": 'PRESS', "ctrl": True}, None),
-        ("sculpt.set_detail_size", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("sculpt.dyntopo_detail_size_edit", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+        ("sculpt.set_detail_size", {"type": 'D', "value": 'PRESS', "shift": True, "alt": True}, None),
         # Remesh
         ("object.voxel_remesh", {"type": 'R', "value": 'PRESS', "ctrl": True}, None),
         ("object.quadriflow_remesh", {"type": 'R', "value": 'PRESS', "ctrl": True, "alt": True}, None),
