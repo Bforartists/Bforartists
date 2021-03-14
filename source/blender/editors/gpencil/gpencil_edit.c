@@ -3099,7 +3099,6 @@ static int gpencil_snap_cursor_to_sel(bContext *C, wmOperator *op)
   const bool is_curve_edit = (bool)GPENCIL_CURVE_EDIT_SESSIONS_ON(gpd);
 
   Scene *scene = CTX_data_scene(C);
-  View3D *v3d = CTX_wm_view3d(C);
 
   float *cursor = scene->cursor.location;
   float centroid[3] = {0.0f};
@@ -3129,7 +3128,7 @@ static int gpencil_snap_cursor_to_sel(bContext *C, wmOperator *op)
     }
 
     DEG_id_tag_update(&scene->id, ID_RECALC_COPY_ON_WRITE);
-    WM_event_add_notifier(C, NC_SPACE | ND_SPACE_VIEW3D, v3d);
+    WM_event_add_notifier(C, NC_SPACE | ND_SPACE_VIEW3D, NULL);
   }
 
   return OPERATOR_FINISHED;

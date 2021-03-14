@@ -3385,7 +3385,12 @@ static void std_node_socket_draw(
         }
       }
       break;
-    case SOCK_RGBA:
+    case SOCK_RGBA: {
+      uiLayout *row = uiLayoutSplit(layout, 0.5f, false);
+      uiItemL(row, text, 0);
+      uiItemR(row, ptr, "default_value", DEFAULT_FLAGS, "", 0);
+      break;
+    }
     case SOCK_STRING: {
       uiLayout *row = uiLayoutSplit(layout, 0.5f, false);
       uiItemL(row, text, 0);
@@ -3588,6 +3593,13 @@ bool node_link_bezier_handles(const View2D *v2d,
   if (link->fromsock) {
     vec[0][0] = link->fromsock->locx;
     vec[0][1] = link->fromsock->locy;
+    if (link->fromsock->flag & SOCK_MULTI_INPUT) {
+      node_link_calculate_multi_input_position(link->fromsock->locx,
+                                               link->fromsock->locy,
+                                               link->fromsock->total_inputs - 1,
+                                               link->fromsock->total_inputs,
+                                               vec[0]);
+    }
     fromreroute = (link->fromnode && link->fromnode->type == NODE_REROUTE);
   }
   else {
@@ -3601,7 +3613,11 @@ bool node_link_bezier_handles(const View2D *v2d,
     vec[3][0] = link->tosock->locx;
     vec[3][1] = link->tosock->locy;
     if (!(link->tonode->flag & NODE_HIDDEN) && link->tosock->flag & SOCK_MULTI_INPUT) {
-      node_link_calculate_multi_input_position(link, vec[3]);
+      node_link_calculate_multi_input_position(link->tosock->locx,
+                                               link->tosock->locy,
+                                               link->multi_input_socket_index,
+                                               link->tosock->total_inputs,
+                                               vec[3]);
     }
     toreroute = (link->tonode && link->tonode->type == NODE_REROUTE);
   }

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -2755,10 +2755,6 @@ msgid "Display Wire"
 msgstr "와이어를 표시"
 
 
-msgid "Bone is always drawn as Wireframe regardless of viewport draw mode (useful for non-obstructive custom bone shapes)"
-msgstr "본은 항상 뷰포트 그리기 모드와 상관없이 와이어 프레임으로 그려집니다 (비 폐쇄적인 커스텀 본 셰이프에 유용함)"
-
-
 msgid "Tail"
 msgstr "테일"
 
@@ -3361,10 +3357,6 @@ msgstr "채우기에 대한 도움 라인들을 표시하여 경계를 표시"
 
 msgid "Show Lasso"
 msgstr "올가미를 표시"
-
-
-msgid "Do not draw fill color while drawing the stroke"
-msgstr "스트로크를 그리는 동안 채우기 컬러를 그리지 않습니다"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -7636,10 +7628,6 @@ msgid "Persistent identifier for inter-frame matching of objects with motion blu
 msgstr "모션 블러와 함께 오브젝트의 프레임 간 일치 시키기 위한 지속적인 식별자"
 
 
-msgid "Dupli random id"
-msgstr "듀플리 렌덤 ID"
-
-
 msgid "Random id for this instance, typically for randomized shading"
 msgstr "이 인스턴스의 랜덤 ID (일반적으로 랜덤화된 셰이딩의 경우)"
 
@@ -10893,16 +10881,8 @@ msgid "File Modification Date"
 msgstr "파일 수정 날짜"
 
 
-msgid "Draw a column listing the date and time of modification for each file"
-msgstr "각 파일의 수정 날짜와 시간이 나열된 열을 그립니다"
-
-
 msgid "File Size"
 msgstr "파일 크기"
-
-
-msgid "Draw a column listing the size of each file"
-msgstr "각 파일의 크기가 나열된 열을 그립니다"
 
 
 msgid "Show hidden dot files"
@@ -11171,10 +11151,6 @@ msgstr "가까운"
 
 msgid "No interpolation"
 msgstr "보간이 없음"
-
-
-msgid "Thickness of smoke drawing in the viewport"
-msgstr "뷰포트에서 그리는 스모크의 두께"
 
 
 msgid "Dissolve Speed"
@@ -12885,16 +12861,8 @@ msgid "In Front"
 msgstr "앞에 표시"
 
 
-msgid "Make the layer draw in front of objects"
-msgstr "오브젝트의 앞에 레이어 그리기를 만들기"
-
-
 msgid "Show Points"
 msgstr "포인트를 표시"
-
-
-msgid "Draw the points which make up the strokes (for debugging purposes)"
-msgstr "스트로크를 구성하는 포인트를 그립니다 (디버깅 목적으로)"
 
 
 msgid "Thickness of annotation strokes"
@@ -13133,10 +13101,6 @@ msgid "Freehand curve defining part of a sketch"
 msgstr "스케치의 일부를 정의하는 자유형 커브"
 
 
-msgid "Draw Mode"
-msgstr "그리기 모드"
-
-
 msgid "Coordinate space that stroke is in"
 msgstr "획이있는 좌표 공간은 다음에서"
 
@@ -13350,18 +13314,6 @@ msgid "Depth bias used for selection"
 msgstr "선택에 사용된 깊이 바이어스"
 
 
-msgid "Draw Hover"
-msgstr "호버를 그리기"
-
-
-msgid "Draw Active"
-msgstr "활성을 그리기"
-
-
-msgid "Draw while dragging"
-msgstr "드래그하는 동안 그리기"
-
-
 msgid "Scale Offset"
 msgstr "축적 오프셋"
 
@@ -13372,10 +13324,6 @@ msgstr "오프셋 매트릭스의 축적 조정 (화면 공간 오프셋 적용�
 
 msgid "Use scale when calculating the matrix"
 msgstr "매트릭스 계산시 축적을 사용"
-
-
-msgid "Draw Value"
-msgstr "값을 그리기"
 
 
 msgid "Show an indicator for the current value while dragging"
@@ -13429,10 +13377,6 @@ msgstr "이 작업자 유형에 대한 옵션"
 
 msgid "Use in 3D viewport"
 msgstr "3D 뷰포트에서 사용"
-
-
-msgid "Scale to respect zoom (otherwise zoom independent draw size)"
-msgstr "기준 줌으로 확대/축소 (그렇지 않으면 줌 독립 그리기 크기)"
 
 
 msgid "Depth 3D"
@@ -14479,10 +14423,6 @@ msgstr "이 폴리곤으로 사용된 루프의 수"
 
 msgid "Statistical view of the levels of color in an image"
 msgstr "이미지에 사용된 컬러 레벨의 통계 보기"
-
-
-msgid "Channels to display when drawing the histogram"
-msgstr "히스토그램을 그릴 때 표시하는 채널"
 
 
 msgid "Luma"
@@ -17730,10 +17670,6 @@ msgid "Iris"
 msgstr "Iris"
 
 
-msgid "Output image in (old!) SGI IRIS format"
-msgstr "SGI IRIS(오래된) 형식으로 이미지를 출력"
-
-
 msgid "Output image in PNG format"
 msgstr "PNG 형식으로 이미지 출력"
 
@@ -18166,10 +18102,6 @@ msgid "Point in W direction (can't be changed when there are shape keys)"
 msgstr "W 방향에서 포인트 (셰이프 키가 있는 경우 변경 될 수 없음)"
 
 
-msgid "Only draw, and take into account, the outer vertices"
-msgstr "외부 버텍스 만 그리고 고려 해야합니다"
-
-
 msgid "Vertex group to apply the influence of the lattice"
 msgstr "래티스의 영향을 적용하는 버텍스 그룹"
 
@@ -18478,10 +18410,6 @@ msgstr "지향성 원뿔 라이트"
 
 msgid "Show Cone"
 msgstr "원뿔을 표시"
-
-
-msgid "Draw transparent cone in 3D view to visualize which objects are contained in it"
-msgstr "3D 뷰에 투명 원뿔을 그려서 어떤 오브젝트가 포함되어 있는지 시각화합니다"
 
 
 msgid "Spot Blend"
@@ -19280,10 +19208,6 @@ msgid "Metaball data-block to defined blobby surfaces"
 msgstr "방울진 표면을 정의하는 메타볼 데이터 블록"
 
 
-msgid "Meta elements"
-msgstr "메타 엘리먼트"
-
-
 msgid "Render Size"
 msgstr "렌더 크기"
 
@@ -19298,10 +19222,6 @@ msgstr "와이어 크기"
 
 msgid "Polygonization resolution in the 3D viewport"
 msgstr "3D 뷰포트에서 폴리고니제이션 해상도"
-
-
-msgid "Influence of meta elements"
-msgstr "메타 요소의 영향"
 
 
 msgid "Update"
@@ -20280,10 +20200,6 @@ msgid "Display image in perspective mode"
 msgstr "원근법 모드로 이미지를 표시"
 
 
-msgid "Make the object draw in front of others"
-msgstr "오브젝트가 다른 대상들 보다 앞에 보여지도록 만들기"
-
-
 msgid "Render Instancer"
 msgstr "인스턴서를 렌더"
 
@@ -20326,10 +20242,6 @@ msgstr "투명을 표시"
 
 msgid "Display material transparency in the object"
 msgstr "오브젝트에서 매테리얼 투명도를 표시합니다"
-
-
-msgid "Add the object's wireframe over solid drawing"
-msgstr "솔리드 그리기를 통해 오브젝트의 와이어프레임을 추가"
 
 
 msgid "Soft Body Settings"
@@ -20405,14 +20317,6 @@ msgstr "파티클 설정"
 
 msgid "Particle settings, reusable by multiple particle systems"
 msgstr "파티클 설정, 다중 파티클 시스템에 의해 재 사용"
-
-
-msgid "Active Dupli Object"
-msgstr "활성 듀플리 오브젝트"
-
-
-msgid "Active Dupli Object Index"
-msgstr "활성 듀플리 오브젝트 인덱스"
 
 
 msgid "Degrees"
@@ -20497,10 +20401,6 @@ msgstr "자식 경로 길이로 온전히 남아 있는 파티클의 양"
 
 msgid "Children Per Parent"
 msgstr "부모 당 자식"
-
-
-msgid "Number of children/parent"
-msgstr "자식/부모의 수"
 
 
 msgid "Parting Factor"
@@ -20627,20 +20527,8 @@ msgid "Amount of damping"
 msgstr "감폭의 양"
 
 
-msgid "Draw Color"
-msgstr "컬러를 그리기"
-
-
-msgid "Draw additional particle data as a color"
-msgstr "컬러으로 추가적인 파티클 데이터를 그리기"
-
-
-msgid "Particle Drawing"
-msgstr "파티클을 그리기"
-
-
-msgid "How particles are drawn in viewport"
-msgstr "뷰포트에서 파티클이 그려지는 방법"
+msgid "Display Color"
+msgstr "표시 컬러"
 
 
 msgid "Rendered"
@@ -20657,18 +20545,6 @@ msgstr "표시"
 
 msgid "Percentage of particles to display in 3D view"
 msgstr "3D 뷰에서 표시하는 파티클의 퍼센트"
-
-
-msgid "Draw Size"
-msgstr "그리기 크기"
-
-
-msgid "Size of particles on viewport in BU"
-msgstr "BU의 뷰포트에 있는 파티클의 크기"
-
-
-msgid "How many steps paths are drawn with (power of 2)"
-msgstr "얼마나 많은 단계 경로가 그려지는지 (2의 거듭 제곱)"
 
 
 msgid "Distribution"
@@ -20763,32 +20639,8 @@ msgid "Create the grid in a hexagonal pattern"
 msgstr "육각형의 패턴에서 격자를 생성"
 
 
-msgid "Dupli Collection"
-msgstr "듀플리 컬렉션"
-
-
-msgid "Show Objects in this collection in place of particles"
-msgstr "이 컬렉션에 있는 파티클 대신 오브젝트를 표시"
-
-
-msgid "Show this Object in place of particles"
-msgstr "파티클의 위치에서 이 오브젝트를 표시"
-
-
-msgid "Dupli Collection Weights"
-msgstr "듀플리 컬렉션 웨이트"
-
-
-msgid "Weights for all of the objects in the dupli collection"
-msgstr "듀플리 콜렉션의 모든 오브젝트에 대한 웨이트"
-
-
 msgid "Integration"
 msgstr "통합"
-
-
-msgid "Algorithm used to calculate physics, from the fastest to the most stable/accurate: Midpoint, Euler, Verlet, RK4 (Old)"
-msgstr "가장 빠른 것부터 가장 안정적인 것까지 피직스를 계산하는 데 사용되는 알고리즘: Midpoint, Euler, Verlet, RK4 (Old)"
 
 
 msgid "Euler"
@@ -20975,16 +20827,8 @@ msgid "Path End"
 msgstr "경로 종료"
 
 
-msgid "End time of drawn path"
-msgstr "그리기 경로의 종료 시간"
-
-
 msgid "Path Start"
 msgstr "경로 시작"
-
-
-msgid "Starting time of drawn path"
-msgstr "그리기 경로의 시작 시간"
 
 
 msgid "Rotation around the chosen orientation axis"
@@ -21055,10 +20899,6 @@ msgid "Rendered Children"
 msgstr "자식을 렌더리드"
 
 
-msgid "Number of children/parent for rendering"
-msgstr "렌더링에 대한 자식/부모의 수"
-
-
 msgid "Random Orientation"
 msgstr "랜덤 오리엔테이션"
 
@@ -21125,10 +20965,6 @@ msgstr "가이드 해어를 보기"
 
 msgid "Show hair simulation grid"
 msgstr "헤어 시뮬레이션 격자를 표시"
-
-
-msgid "Draw boid health"
-msgstr "보이드 건강을 그리기"
 
 
 msgid "Show particle number"
@@ -21357,10 +21193,6 @@ msgstr "각 프레임마다 머리카락을 다시 재성장"
 
 msgid "Adaptive Render"
 msgstr "적응 렌더"
-
-
-msgid "Draw steps of the particle path"
-msgstr "파티클 경로의 단계를 그리기"
 
 
 msgid "Use object's rotation for duplication (global x-axis is aligned particle rotation axis)"
@@ -21907,10 +21739,6 @@ msgid "Inner Cone Angle"
 msgstr "안쪽 원뿔 각도"
 
 
-msgid "Angle of the inner cone, in degrees, inside the cone the volume is 100 %"
-msgstr "안쪽 원뿔의 각도, 디그리 단위, 원뿔의 내부 볼륨은 100%"
-
-
 msgid "Outer Cone Angle"
 msgstr "바깥 원뿔 각도"
 
@@ -21933,10 +21761,6 @@ msgstr "오브젝트가 얼마나 멀리 떨어져 있든지 간에 볼륨 계�
 
 msgid "Reference Distance"
 msgstr "참조 거리"
-
-
-msgid "Reference distance at which volume is 100 %"
-msgstr "볼륨이 100%가 되는 기준 거리"
 
 
 msgctxt "Sound"
@@ -25145,10 +24969,6 @@ msgid "Automatic Easing"
 msgstr "자동 완화"
 
 
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "완화 유형은 사용된 보간 유형에 따라 자동으로 선택됩니다 (예: 과도기 유형의 경우 '완화', 동적 효과의 경우 '완화')"
-
-
 msgid "Only on the end closest to the next keyframe"
 msgstr "다음 키 프레임에 끝에 가장 가까운에 만"
 
@@ -26880,10 +26700,6 @@ msgid "Mix Factor"
 msgstr "조합 팩터"
 
 
-msgid "Select draw mode for stroke"
-msgstr "스트로크에 대한 그리기 모드를 선택"
-
-
 msgid "Draw strokes using a continuous line"
 msgstr "연속 라인을 사용하여 스트로크를 그리기"
 
@@ -27677,10 +27493,6 @@ msgid "Bitangent"
 msgstr "이중접선"
 
 
-msgid "Bitangent vector of this vertex for this polygon (must be computed beforehand using calc_tangents, *use it only if really needed*, slower access than bitangent_sign)"
-msgstr "이 폴리곤에 대한이 버텍스의 이중접선의 벡터 (사전에 calc_tangents를 사용하여 계산해야 함, *실제로 필요한 경우에만 사용*, bitangent_sign보다 느린 액세스)"
-
-
 msgid "Bitangent Sign"
 msgstr "이중접선 기호"
 
@@ -28105,10 +27917,6 @@ msgid "Collection of mesh vertices"
 msgstr "메쉬 버텍스의 컬렉션"
 
 
-msgid "Meta Elements"
-msgstr "메타 요소"
-
-
 msgid "Collection of metaball elements"
 msgstr "메타볼 요소의 컬렉션"
 
@@ -28119,14 +27927,6 @@ msgstr "활성 요소"
 
 msgid "Last selected element"
 msgstr "마지막으로 선택한 요소"
-
-
-msgid "Meta Element"
-msgstr "메타 엘리먼트"
-
-
-msgid "Blobby element in a Metaball data-block"
-msgstr "메타볼 데이터 블록에서 방울진 요소"
 
 
 msgid "Hide element"
@@ -28337,10 +28137,6 @@ msgid "Solidify"
 msgstr "솔리디파이"
 
 
-msgid " Make the surface thick"
-msgstr "표면을 두껍게 만들기"
-
-
 msgid "Subdivision Surface"
 msgstr "섭디비젼 표면"
 
@@ -28463,10 +28259,6 @@ msgstr "왜곡"
 
 msgid "Warp parts of a mesh to a new location in a very flexible way thanks to 2 specified objects"
 msgstr "2 개의 지정된 오브젝트 덕분에 메쉬의 일부를 매우 유연한 방식으로 새로운 위치로 변형합니다"
-
-
-msgid "Adds a ripple-like motion to an object’s geometry"
-msgstr "오브젝트의 지오메트리에 잔물결 같은 움직임을 추가합니다"
 
 
 msgid "Dynamic Paint"
@@ -30281,10 +30073,6 @@ msgid "Copy new normals minus old normals"
 msgstr "새로운 노멀들 빼기 오래된 노멀을 복사"
 
 
-msgid "Copy product of old and new normals (*not* cross product)"
-msgstr "오래되고 래로운 노멀의 생성물을 복사 (교차 생성물이 *아닌*)"
-
-
 msgid "How to affect (generate) normals"
 msgstr "노멀에 영향(발생)을 주는 방법"
 
@@ -31060,10 +30848,6 @@ msgstr "간단한 압출로 메시의 응고된 버전을 출력합니다"
 
 msgid "Complex"
 msgstr "콤플렉스"
-
-
-msgid "Output a manifold mesh even if the base mesh is non-manifold, where edges have 3 or more connecting faces.This method is slower"
-msgstr "베이스 메시가 비-매니폴드 일 경우에도 모서리에 3개 이상의 연결면이 있는 매니폴드 메시를 출력합니다"
 
 
 msgid "Thickness of the shell"
@@ -31921,14 +31705,6 @@ msgid "Line Thickness"
 msgstr "라인 두께"
 
 
-msgid "Line thickness for drawing path"
-msgstr "드로잉 경로의 라인 두께"
-
-
-msgid "Draw straight lines between keyframe points"
-msgstr "키 프레임 포인트 사이에 직선을 그리기"
-
-
 msgid "Motion Path Points"
 msgstr "모션 경로 포인트"
 
@@ -32093,8 +31869,8 @@ msgid "Proxy Render Size"
 msgstr "프록시 렌더 크기"
 
 
-msgid "Draw preview using full resolution or different proxy resolutions"
-msgstr "전체 해상도 또는 다른 프록시 해상도를 사용하여 미리보기를 그리기"
+msgid "Display preview using full resolution or different proxy resolutions"
+msgstr "전체 해상도 또는 다른 프록시 해상도를 사용하여 미리보기를 표시"
 
 
 msgid "None, full render"
@@ -33399,10 +33175,6 @@ msgstr "미리보기를 표시"
 
 msgid "Show Texture"
 msgstr "텍스처를 표시"
-
-
-msgid "Draw node in viewport textured draw mode"
-msgstr "뷰포트 텍스처된 그리기 모드에서 노드를 그리기"
 
 
 msgid "Node type (deprecated, use bl_static_type or bl_idname for the actual identifier string)"
@@ -35927,10 +35699,6 @@ msgid "From Instancer"
 msgstr "인스턴서로부터"
 
 
-msgid "Use the parent of the dupli object if possible"
-msgstr "가능하면 듀플리 오브젝트의 부모를 사용"
-
-
 msgid "Use coordinates from this object (for object texture coordinates output)"
 msgstr "오브젝트에서 좌표를 사용 (오브젝트 텍스처 좌표 출력을 위해)"
 
@@ -37531,10 +37299,6 @@ msgid "Collapse Channels"
 msgstr "채널을 축소"
 
 
-msgid "Collapse (i.e. close) all selected expandable animation channels"
-msgstr "선택된 모든 확장 애니메이션 채널을 축소 (예: 열기)"
-
-
 msgid "Collapse all channels (not just selected ones)"
 msgstr "모든 채널을 축소 (다만 선택된 하나만 제외)"
 
@@ -37564,10 +37328,6 @@ msgstr "사용"
 msgctxt "Operator"
 msgid "Expand Channels"
 msgstr "채널을 확장"
-
-
-msgid "Expand (i.e. open) all selected expandable animation channels"
-msgstr "선택된 모든 확장 애니메이션 채널을 확장 (예: 열기)"
 
 
 msgid "Expand all channels (not just selected ones)"
@@ -43430,6 +43190,10 @@ msgid "Which ends of the segment between the preceding and following grease penc
 msgstr "앞뒤 그리이스 펜슬 프레임 완화 보간 사이 부분의 끝이 다음에 적용됩니다"
 
 
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "완화 유형은 사용된 보간 유형에 따라 자동으로 선택됩니다 (예: 과도기 유형의 경우 '완화', 동적 효과의 경우 '완화')"
+
+
 msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
 msgstr "보간 메서드를 사용하여 다음 번에 '보간 시퀀스'가 실행됩니다"
 
@@ -43841,10 +43605,6 @@ msgstr "레이어의 두께 변경을 스트로크에 적용합니다"
 msgctxt "Operator"
 msgid "Arrange Stroke"
 msgstr "스트로크를 정렬"
-
-
-msgid "Arrange selected strokes up/down in the drawing order of the active layer"
-msgstr "활성 레이어의 그리기 순서에서 선택한 스트로크를 위/아래로 정렬합니다"
 
 
 msgid "Bring to Front"
@@ -46160,43 +45920,6 @@ msgid "Lock the var from being deleted"
 msgstr "Var이 삭제되지 않도록 잠금"
 
 
-msgid "Delete selected metaelement(s)"
-msgstr "선택된 메타 요소(들)을 삭제"
-
-
-msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "메타 요소를 복제"
-
-
-msgid "Duplicate selected metaelement(s)"
-msgstr "선택된 메타 요소(들)를 복제"
-
-
-msgid "Make copies of the selected metaelements and move them"
-msgstr "선택한 메타 요소를 복사하고 이동합니다"
-
-
-msgid "Duplicate Metaelements"
-msgstr "메타 요소를 복제"
-
-
-msgid "Hide (un)selected metaelement(s)"
-msgstr "선택(취소)된 메타 요소(들)을 숨기기"
-
-
-msgid "Reveal all hidden metaelements"
-msgstr "숨겨진 메타 요소를 모두 보이기"
-
-
-msgid "Change selection of all meta elements"
-msgstr "모든 메타 요소의 선택을 변경"
-
-
-msgid "Randomly select metaelements"
-msgstr "메타 요소를 랜덤으로 선택"
-
-
 msgid "Select similar metaballs by property types"
 msgstr "속성 유형으로 비슷한 메타볼을 선택"
 
@@ -47317,20 +47040,20 @@ msgid "Merge method to use"
 msgstr "사용하는 메서드를 병합"
 
 
-msgid "At First"
-msgstr "처음에"
-
-
-msgid "At Last"
-msgstr "마지막에"
-
-
 msgid "At Center"
 msgstr "중심에"
 
 
 msgid "At Cursor"
 msgstr "커서에"
+
+
+msgid "At First"
+msgstr "처음에"
+
+
+msgid "At Last"
+msgstr "마지막에"
 
 
 msgid "Move UVs according to merge"
@@ -48568,10 +48291,6 @@ msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "선택한 요소를 3D 커서에서 가까운 곳에서 먼 곳으로 분류"
 
 
-msgid "Sort selected elements from smallest to greatest material index (faces only!)"
-msgstr "선택한 요소를 가장 작은 매테리얼 인덱스에서 가장 큰 매테리얼 인덱스로 분류 (페이스 전용!)"
-
-
 msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
 msgstr "선택한 모든 요소를 첫 번째 장소로 이동하여 상대적 순서를 유지합니다 (경고: 선택되지 않은 요소의 인덱스에도 영향을 줍니다)."
 
@@ -49750,10 +49469,6 @@ msgid "Use box selection to select nodes"
 msgstr "노드를 선택하는 박스 선택을 사용"
 
 
-msgid "Only activate when mouse is not over a node - useful for tweak gesture"
-msgstr "마우스가 노드 위에 있지 않을 때 만 활성 - 트윅 제스처에 유용"
-
-
 msgid "Use circle selection to select nodes"
 msgstr "노드를 선택하는 원형 선택을 사용"
 
@@ -49935,10 +49650,6 @@ msgstr "중심"
 
 msgid "Positive Sides"
 msgstr "양수 측면"
-
-
-msgid "Enables high quality calculation of the bounding box for perfect results on complex shape meshes with rotation/scale (Slow)"
-msgstr "회전/축적 (느림)을 사용하여 복잡한 지오메트리 메쉬에서 완벽한 결과에 대해 경계 박스를 고품질로 계산할 수 있습니다"
 
 
 msgid "Relative To"
@@ -50174,10 +49885,6 @@ msgid "Transfer Mesh Data"
 msgstr "메쉬 데이터를 전송"
 
 
-msgid "Transfer data layer(s) (weights, edge sharp, ...) from active to selected meshes"
-msgstr "활성으로부터 선택된 메쉬들에게 데이터 레이어(들) (웨이트, 에지, 셰이프, ...)를 전송"
-
-
 msgid "Which data to transfer"
 msgstr "전송할 데이터"
 
@@ -50318,10 +50025,6 @@ msgstr "실제 인스턴스를 만들기"
 
 msgid "Make instanced objects attached to this object real"
 msgstr "이 오브젝트에 연결된 인스턴스 오브젝트를 실제로 만듭니다"
-
-
-msgid "Parent newly created objects to the original duplicator"
-msgstr "원본 복제자로 새로 만들어진 오브젝트를 부모"
 
 
 msgid "Keep Hierarchy"
@@ -51611,10 +51314,6 @@ msgid "Library (Object Data)"
 msgstr "라이브러리 (오브젝트 데이터)"
 
 
-msgid "Select the Mirror objects of the selected object eg. L.sword -> R.sword"
-msgstr "선택된 오브젝트의 미러 오브젝트를 선택, 예. L.sword -> OR.sword"
-
-
 msgid "Select connected parent/child objects"
 msgstr "연결된 부모/자식 오브젝트를 선택"
 
@@ -52471,10 +52170,6 @@ msgid "Disable Collection"
 msgstr "컬렉션을 사용 중지"
 
 
-msgid "Disable viewport drawing in the view layers"
-msgstr "뷰 레이어에서 뷰포트 그리기를 사용 안 함"
-
-
 msgctxt "Operator"
 msgid "Disable Collection in Render"
 msgstr "렌더에서 콜렉션을 사용 안 함"
@@ -52509,10 +52204,6 @@ msgstr "컬렉션, 모든 자식 및 오브젝트를 연결된 오브젝트 데�
 msgctxt "Operator"
 msgid "Enable Collection"
 msgstr "컬렉션 사용"
-
-
-msgid "Enable viewport drawing in the view layers"
-msgstr "뷰 레이어에서 뷰포트 그리기를 사용"
 
 
 msgctxt "Operator"
@@ -53738,51 +53429,6 @@ msgstr "설정을 복제"
 
 msgid "Duplicate settings as well, so the new particle system uses its own settings"
 msgstr "설정이 중복되어 새로운 파티클 시스템이 자체 설정을 사용합니다"
-
-
-msgctxt "Operator"
-msgid "Copy Particle Dupliob"
-msgstr "파티클 듀플리오브를 복사"
-
-
-msgid "Duplicate the current dupliobject"
-msgstr "현재 듀플리 오브젝트를 복제"
-
-
-msgctxt "Operator"
-msgid "Move Down Dupli Object"
-msgstr "듀플리 오브젝트 아래로 이동"
-
-
-msgid "Move dupli object down in the list"
-msgstr "목록에서 듀플리 오브젝트를 아래로 이동"
-
-
-msgctxt "Operator"
-msgid "Move Up Dupli Object"
-msgstr "듀플리 오브젝트 위로 이동"
-
-
-msgid "Move dupli object up in the list"
-msgstr "목록에서 듀플리 오브젝트를 위로 이동"
-
-
-msgctxt "Operator"
-msgid "Refresh Dupli Objects"
-msgstr "듀플리 오브젝트를 새로 고침"
-
-
-msgid "Refresh list of dupli objects and their weights"
-msgstr "듀븦리 오브젝트 및 해당 웨이트 목록을 새로 고침"
-
-
-msgctxt "Operator"
-msgid "Remove Particle Dupliobject"
-msgstr "파티클 듀플리 오브젝트를 제거"
-
-
-msgid "Remove the selected dupliobject"
-msgstr "선택된 듀플리 오브젝트를 제거"
 
 
 msgctxt "Operator"
@@ -56674,10 +56320,6 @@ msgid "Channel to place this strip into"
 msgstr "스트립을 배치하는 채널"
 
 
-msgid "Initialize the strip with this color (only used when type='COLOR')"
-msgstr "이 컬러으로 스트립을 초기화 (유형 = '컬러'일 때만 사용됨)"
-
-
 msgid "End frame for the color strip"
 msgstr "컬러 스트립에 대한 종료 프레임"
 
@@ -59132,10 +58774,6 @@ msgid "Create a new UV map for every mesh packed"
 msgstr "포장 모든 메쉬에 대한 새 UV 맵을 생성"
 
 
-msgid "Objects Share texture space, map all objects into 1 uvmap"
-msgstr "오브젝트 텍스처 공간 공유, 1 언맵으로 모든 오브젝트를 맵"
-
-
 msgid "Mark selected UV edges as seams"
 msgstr "씨임으로 선택된 UV 에지를 마크"
 
@@ -59987,12 +59625,8 @@ msgid "Toggle solid shading"
 msgstr "솔리드 셰이딩을 토글"
 
 
-msgid "LookDev"
-msgstr "LookDev"
-
-
-msgid "Toggle lookdev shading"
-msgstr "LookDev 셰이딩을 토글"
+msgid "Material Preview"
+msgstr "매테리얼 미리보기"
 
 
 msgid "Toggle rendered shading"
@@ -60443,10 +60077,6 @@ msgid "Link the objects or data-blocks rather than appending"
 msgstr "추가가 아닌 오브젝트 또는 데이터-블록을 연결"
 
 
-msgid "Set Fake User for appended items (except Objects and Groups)"
-msgstr "첨부된 항목에 대해 허위 사용자 설정 (오브젝트 및 그룹 제외)"
-
-
 msgid "Localize All"
 msgstr "모두 로컬라이즈"
 
@@ -60462,10 +60092,6 @@ msgstr "배치 이름 바꾸기"
 
 msgid "Type of data to rename"
 msgstr "이름을 바꿀 데이터 유형"
-
-
-msgid "Meta Balls"
-msgstr "메타 볼"
 
 
 msgid "Grease Pencils"
@@ -61534,10 +61160,6 @@ msgstr "블렌더를 끝내기"
 msgctxt "Operator"
 msgid "Radial Control"
 msgstr "방사형의 컨트롤"
-
-
-msgid "Set some size property (like e.g. brush size) with mouse wheel"
-msgstr "마우스 휠을 사용하여 크기 속성 (브러시 크기 등)을 설정"
 
 
 msgid "Color Path"
@@ -64276,20 +63898,8 @@ msgid "Apply puff to unselected end-points (helps maintain hair volume when puff
 msgstr "선택되지 않은 종료 포인트에 퍼프를 적용합니다 (루트를 내릴 경우 머리카락을 유지하는 데 도움)"
 
 
-msgid "Particle Dupliobject Weight"
-msgstr "파티클 듀플리 오브젝트 웨이트"
-
-
-msgid "Weight of a particle dupliobject in a collection"
-msgstr "컬렉션에서 파티클 복제의 웨이트"
-
-
 msgid "The number of times this object is repeated with respect to other objects"
 msgstr "이 오브젝트가 다른 오브젝트와 관련하여 반복되는 횟수"
-
-
-msgid "Particle dupliobject name"
-msgstr "파티클 듀플리 오브젝트 이름"
 
 
 msgid "Properties of particle editing mode"
@@ -65108,10 +64718,6 @@ msgid "Custom Object"
 msgstr "커스텀 오브젝트"
 
 
-msgid "Object that defines custom draw type for this bone"
-msgstr "이 본에 대한 커스텀 그리기 유형을 정의하는 오브젝트"
-
-
 msgid "Custom Shape Scale"
 msgstr "커스텀 셰이프 축적"
 
@@ -65732,10 +65338,6 @@ msgid "Built-in animation player"
 msgstr "내장 애니메이션 플레이어"
 
 
-msgid "Open source frame player: http://djv.sourceforge.net"
-msgstr "오픈 소스 프레임 플레이어: http://djv.sourceforge.net"
-
-
 msgid "FrameCycler"
 msgstr "프레임 사이클러"
 
@@ -65892,16 +65494,8 @@ msgid "Load user interface setup when loading .blend files"
 msgstr ".blend 파일을 불러올 때 사용자 인터페이스 설정을 불러오기"
 
 
-msgid "Default relative path option for the file selector"
-msgstr "파일 선택기에 대한 기본 상대적인 경로 설정값"
-
-
 msgid "Save Preview Images"
 msgstr "미리보기 이미지를 저장"
-
-
-msgid "Enables automatic saving of preview images in the .blend file"
-msgstr ".blend 파일에서 미리보기 이미지의 자동 저장을 사용"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
@@ -66484,14 +66078,6 @@ msgid "2D Texture"
 msgstr "2D 텍스처"
 
 
-msgid "Use CPU for display transform and draw image with 2D texture"
-msgstr "2D 텍스처와 함께 이미지 그리기 및 변환 표시를 위해 CPU를 사용"
-
-
-msgid "Use GLSL shaders for display transform and draw image with 2D texture"
-msgstr "2D 텍스처와 함께 이미지 그리기 및 변환 표시를 위해 GLSL 새이터를 사용"
-
-
 msgid "Legacy Compute Device Type"
 msgstr "레거시 계산 장치 유형"
 
@@ -66544,10 +66130,6 @@ msgid "Solid Lights"
 msgstr "솔리드 라이트"
 
 
-msgid "Lights user to display objects in solid draw mode"
-msgstr "솔리드 그리기 모드에서 오브젝트를 표시하는 사용자 라이트"
-
-
 msgid "Texture Collection Rate"
 msgstr "텍스처 컬렉션 비율"
 
@@ -66568,16 +66150,8 @@ msgid "UI Line Width"
 msgstr "UI 라인 폭"
 
 
-msgid "Suggested line thickness and point size in pixels, for add-ons drawing custom user interface elements, based on operating system settings and Blender UI scale"
-msgstr "운영 체제 설정 및 블렌더 UI 배율을 기반으로 커스텀 사용자 인터페이스 요소를 그리는 추가 기능의 제안된 라인 두께 및 크기 (픽셀 단위)"
-
-
 msgid "UI Scale"
 msgstr "UI 축적"
-
-
-msgid "Size multiplier to use when drawing custom user interface elements, so that they are scaled correctly on screens with different DPI. This value is based on operating system DPI settings and Blender display scale"
-msgstr "커스텀 사용자 인터페이스 요소를 그리는 데 사용할 크기 배율로, 서로 다른 DPI가 있는 화면에서 올바르게 배율이 조정됩니다. 이 값은 운영 체제 DPI 설정 및 블렌더 표시 배율을 기반으로합니다"
 
 
 msgid "Edit-Mode Smooth Wires"
@@ -66598,10 +66172,6 @@ msgstr "앨리어싱을 줄여 오버레이 스무스 와이어를 사용"
 
 msgid "Region Overlap"
 msgstr "지역 겹침"
-
-
-msgid "Draw tool/property regions over the main region"
-msgstr "메인 지역 위에 도구/속성 지역을 그리기"
 
 
 msgid "OpenGL Depth Picking"
@@ -67162,10 +66732,6 @@ msgstr "프롬프트를 저장"
 
 msgid "Ask for confirmation when quitting with unsaved changes"
 msgstr "저장되지 않은 변경 사항을 종료 할 때 확인 요청"
-
-
-msgid "Draw user interface text anti-aliased"
-msgstr "안티 앨리언스된 사용자 인터페이스 텍스트를 그리기"
 
 
 msgid "Translate Interface"
@@ -69612,20 +69178,12 @@ msgid "Sequencer Preview Shading"
 msgstr "시퀀서 미리보기 셰이딩"
 
 
-msgid "Method to draw in the sequencer view"
-msgstr "시퀀서 뷰에서 그리기에 메서드"
-
-
 msgid "Display the object as wire edges"
 msgstr "와이어 에지로 오브젝트를 표시합니다"
 
 
 msgid "Display in solid mode"
 msgstr "솔리드 모드로 표시"
-
-
-msgid "Material Preview"
-msgstr "매테리얼 미리보기"
 
 
 msgid "Display in Material Preview mode"
@@ -73955,10 +73513,6 @@ msgid "Display Channels"
 msgstr "채널을 표시"
 
 
-msgid "Channels of the image to draw"
-msgstr "그릴 이미지의 채널"
-
-
 msgid "Color and Alpha"
 msgstr "컬러&알파"
 
@@ -74189,6 +73743,10 @@ msgstr "공간 노드 에디터"
 
 msgid "Node editor space data"
 msgstr "노드 에디터 공간 정보"
+
+
+msgid "Channels of the image to draw"
+msgstr "그릴 이미지의 채널"
 
 
 msgid "Display alpha transparency channel"
@@ -74659,10 +74217,6 @@ msgid "Overlay Type"
 msgstr "오버레이 유형"
 
 
-msgid "Overlay draw type"
-msgstr "오버레이 그리기 유형"
-
-
 msgid "Show rectangle area overlay"
 msgstr "직사각형 영역 오버레이 을 표시"
 
@@ -74681,14 +74235,6 @@ msgstr "현재"
 
 msgid "Show current frame only"
 msgstr "현재 프레임 만 표시"
-
-
-msgid "Channels of the preview to draw"
-msgstr "그릴 미리보기의 채널"
-
-
-msgid "Display preview using full resolution or different proxy resolutions"
-msgstr "전체 해상도 또는 다른 프록시 해상도를 사용하여 미리보기를 표시"
 
 
 msgid "No display"
@@ -74783,32 +74329,16 @@ msgid "Sequencer/Preview"
 msgstr "시퀀서/미리보기"
 
 
-msgid "How Waveforms are drawn"
-msgstr "파형이 그려지는 방법"
-
-
 msgid "Waveforms Off"
 msgstr "파형 Off"
-
-
-msgid "No waveforms drawn for any sound strips"
-msgstr "사운드 스트립에 대해 그린 파형이 없음"
 
 
 msgid "Waveforms On"
 msgstr "파형 On"
 
 
-msgid "Waveforms drawn for all sound strips"
-msgstr "사운드 스트립에 대한 파형 그리기"
-
-
 msgid "Use Strip Option"
 msgstr "스트립 옵션을 사용"
-
-
-msgid "Waveforms drawn according to strip setting"
-msgstr "스트립 설정으로 파형 그리기"
 
 
 msgid "Space Text Editor"
@@ -75175,10 +74705,6 @@ msgid "Stereo Eye"
 msgstr "스테레오 눈"
 
 
-msgid "Current stereo eye being drawn"
-msgstr "현재 그려지는 스테레오 눈"
-
-
 msgid "Left Eye"
 msgstr "왼쪽 눈"
 
@@ -75227,10 +74753,6 @@ msgid "Display a different set of collections in this viewport"
 msgstr "이 뷰포트에 다른 컬렉션 모음을 표시"
 
 
-msgid "Use a region within the frame size for rendered viewport(when not viewing through the camera)"
-msgstr "렌더리드 뷰포트를 지정된 프레임 크기 안쪽에 사용합니다 (카메라를 통해 보지 않는 경우)"
-
-
 msgid "Show Overlays"
 msgstr "오버레이를 표시"
 
@@ -75249,10 +74771,6 @@ msgstr "이미지 에디터 공간의 UV 에디터 데이터"
 
 msgid "Display Stretch Type"
 msgstr "늘이기 유형을 표시"
-
-
-msgid "Type of stretch to draw"
-msgstr "그릴 늘이기의 유형"
 
 
 msgid "Angular distortion between UV and 3D angles"
@@ -75589,6 +75107,10 @@ msgstr "SH 캐시 경로"
 
 msgid "Path where the spherical harmonics cache is stored"
 msgstr "구형 고조파 캐시가 저장된 경로"
+
+
+msgid "Lights user to display objects in solid draw mode"
+msgstr "솔리드 그리기 모드에서 오브젝트를 표시하는 사용자 라이트"
 
 
 msgid "Collection of studio lights"
@@ -76041,10 +75563,6 @@ msgstr "UV 텍스처 좌표들과 함께 맵핑을 위해 사용되는 UV 맵"
 
 msgid "Amount texture affects particle initial velocity"
 msgstr "파티클 초기 속도에 영향을 주는 어마운트 텍스처"
-
-
-msgid "Theme settings defining draw style and colors in the user interface"
-msgstr "사용자 인터페이스에 스타일 및 컬러 그리기를 정의하는 테마 설정"
 
 
 msgid "Clip Editor"
@@ -76603,16 +76121,8 @@ msgid "Meta Strips"
 msgstr "메타 스트립"
 
 
-msgid "Meta Strip - Unselected (for grouping related strips)"
-msgstr "메타 스트립 - 선택되지 않은 (관련된 스트립을 그룹화하는 데)"
-
-
 msgid "Meta Strips Selected"
 msgstr "메타 스트립 선택됨"
-
-
-msgid "Meta Strip - Selected (for grouping related strips)"
-msgstr "메타 스트립 - 선택된 (관련된 스트립을 그룹화하는 데)"
 
 
 msgid "Nonlinear Animation Track"
@@ -76623,44 +76133,16 @@ msgid "Sound Strips"
 msgstr "사운드 스트립"
 
 
-msgid "Sound Strip - Unselected (for timing speaker sounds)"
-msgstr "사운드 스트립 - 선택되지 않은 (스피커 사운드를 타이밍하는 데)"
-
-
 msgid "Sound Strips Selected"
 msgstr "사운드 스트립 선택됨"
-
-
-msgid "Sound Strip - Selected (for timing speaker sounds)"
-msgstr "사운드 스트립 - 선택된 (스피커 사운드를 타이밍하는 데)"
-
-
-msgid "Action-Clip Strip - Unselected"
-msgstr "액션-클립 스트립 - 선택되지 않은"
-
-
-msgid "Action-Clip Strip - Selected"
-msgstr "액션-클립 스트립 - 선택된"
 
 
 msgid "Transitions"
 msgstr "전환"
 
 
-msgid "Transition Strip - Unselected"
-msgstr "전환 스트립 - 선택되지 않은"
-
-
 msgid "Transitions Selected"
 msgstr "전환 선택됨"
-
-
-msgid "Transition Strip - Selected"
-msgstr "전환 스트립 - 선택됨"
-
-
-msgid "Color for strip/action being 'tweaked' or edited"
-msgstr "트윅되거나 편집되는 스트립/액션에 대한 컬러"
 
 
 msgid "Tweak Duplicate Flag"
@@ -78288,10 +77770,6 @@ msgid "Solid Light"
 msgstr "솔리드 라이트"
 
 
-msgid "Light used for Studio lighting in solid draw mode"
-msgstr "솔리드 그리기 모드에서 스튜디오 라이트닝에 사용되는 라이트"
-
-
 msgid "Color of the light's diffuse highlight"
 msgstr "라이트의 확산 강조 표시의 컬러"
 
@@ -78306,10 +77784,6 @@ msgstr "이 라이트에서 라이트닝을 부드럽게 처리"
 
 msgid "Color of the light's specular highlight"
 msgstr "라이트 반사 강조의 컬러"
-
-
-msgid "Enable this light in solid draw mode"
-msgstr "솔리드 그리기 모드에서 이 광원을 활성화"
 
 
 msgid "Vertex Float Properties"
@@ -78468,24 +77942,12 @@ msgid "Display 3D curve normals in editmode"
 msgstr "에디트 모드에서 3D 커브 노멀을 표시합니다"
 
 
-msgid "Draw Bevel Weights"
-msgstr "베벨 웨이트를 그리기"
-
-
 msgid "Display weights created for the Bevel modifier"
 msgstr "베벨 모디파이어에 대해 만든 웨이트를 표시"
 
 
-msgid "Draw Creases"
-msgstr "크리스를 그리기"
-
-
 msgid "Display creases created for Subdivision Surface modifier"
 msgstr "섭디비젼 표면 모디파이어를 위해 만들어진 크리스를 표시합니다"
-
-
-msgid "Draw Seams"
-msgstr "씨임을 그리기"
 
 
 msgid "Display UV unwrapping seams"
@@ -78494,10 +77956,6 @@ msgstr "UV 펼치는 씨임을 표시합니다"
 
 msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "에지 분할 모디파이어와 함께 사용되는 샤프 에지를 표시"
-
-
-msgid "Draw Edges"
-msgstr "에지를 그리기"
 
 
 msgid "Highlight selected edges"
@@ -78540,10 +77998,6 @@ msgid "Object details, including empty wire, cameras and other visual guides"
 msgstr "엠프티 와이어, 카메라 및 기타 시각적 가이드를 포함한 오브젝트 세부 정보"
 
 
-msgid "Draw Face Center"
-msgstr "페이스 중심을 그리기"
-
-
 msgid "Display Normals"
 msgstr "노멀을 표시"
 
@@ -78560,10 +78014,6 @@ msgid "Show the Face Orientation Overlay"
 msgstr "페이스 오리엔테이션 오버레이를 표시"
 
 
-msgid "Draw Faces"
-msgstr "페이스를 그리기"
-
-
 msgid "Highlight selected faces"
 msgstr "선택된 페이스를 강조"
 
@@ -78576,16 +78026,8 @@ msgid "Show the ground plane grid"
 msgstr "지면 평면 그리드를 표시"
 
 
-msgid "Draw Freestyle Edge Marks"
-msgstr "프리스타일 에지 마크를 그리기"
-
-
 msgid "Display Freestyle edge marks, used with the Freestyle renderer"
 msgstr "프리스타일 에지 마크를 표시, 프리스타일 렌더러와 함께 사용된"
-
-
-msgid "Draw Freestyle Face Marks"
-msgstr "프리스타일 페이스 마크를 그리기"
 
 
 msgid "Display Freestyle face marks, used with the Freestyle renderer"
@@ -78816,10 +78258,6 @@ msgid "Color for custom background color"
 msgstr "커스텀 배경 컬러에 대한 컬러"
 
 
-msgid "Way to draw the background"
-msgstr "배경을 그리기는 방법"
-
-
 msgid "Theme"
 msgstr "테마"
 
@@ -78846,10 +78284,6 @@ msgstr "캐비티 능선을 위한 계수"
 
 msgid "Cavity Type"
 msgstr "캐비티 유형"
-
-
-msgid "Way to draw the cavity shading"
-msgstr "캐비티 셰이딩을 그리는 방법"
 
 
 msgid "Cavity shading computed in world space, useful for larger-scale occlusion"
@@ -81593,10 +81027,6 @@ msgid "Falloff Opacity"
 msgstr "감소 불투명도"
 
 
-msgid "Advanced:"
-msgstr "고급:"
-
-
 msgid "Sample Bias"
 msgstr "샘플 기초"
 
@@ -82113,10 +81543,6 @@ msgstr "갇힌 공기 파티클 샘플링"
 
 msgid "Particle Life Maximum"
 msgstr "파티클 수명 최대"
-
-
-msgid "Particles in Boundary:"
-msgstr "경계의 파티클:"
 
 
 msgid "Surface Tension"
@@ -83337,14 +82763,6 @@ msgid "Sync Selection"
 msgstr "선택을 동기화"
 
 
-msgid "Search:"
-msgstr "검색:"
-
-
-msgid "Filter:"
-msgstr "필터:"
-
-
 msgid "Object Contents"
 msgstr "오브젝트 내용"
 
@@ -83365,10 +82783,6 @@ msgstr "하나의 레벨을 숨기기"
 msgctxt "Operator"
 msgid "Link to Scene"
 msgstr "씬에 연결"
-
-
-msgid "Restriction Toggles:"
-msgstr "제한 토글:"
 
 
 msgid "Others"
@@ -84234,10 +83648,6 @@ msgstr "렌더 캐시"
 
 msgid "I18n Branches"
 msgstr "I18n 분기"
-
-
-msgid "Excluded Paths:"
-msgstr "제외 경로:"
 
 
 msgid "Double Click Speed"
@@ -85226,10 +84636,6 @@ msgid "Zero Weights"
 msgstr "제로 웨이트"
 
 
-msgid "Display:"
-msgstr "표시:"
-
-
 msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "텍스처 공간 이동"
@@ -85670,10 +85076,6 @@ msgid "Marker Names"
 msgstr "마커 이름"
 
 
-msgid "Tracks:"
-msgstr "트랙:"
-
-
 msgid "Developer"
 msgstr "개발자"
 
@@ -85857,10 +85259,6 @@ msgstr "영향 만"
 
 msgid "Locations"
 msgstr "위치"
-
-
-msgid "Display Color"
-msgstr "표시 컬러"
 
 
 msgid "Refine Method"
@@ -92916,10 +92314,6 @@ msgid "Modifier was not found in the stack"
 msgstr "스택에서 모디파이어를 찾을 수 없습니다"
 
 
-msgid "Sequences.new_image: unable to open image file"
-msgstr "Sequences.new_image: 이미지 파일을 열 수 없습니다"
-
-
 msgid "Sequences.new_sound: unable to open sound file"
 msgstr "Sequences.new_image: 사운드 파일을 열 수 없습니다"
 
@@ -93195,10 +92589,6 @@ msgstr "왼쪽 하위"
 
 msgid "Lower Right"
 msgstr "오른쪽 하위"
-
-
-msgid "Pick"
-msgstr "선택"
 
 
 msgid "Albedo"

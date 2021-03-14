@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -2566,10 +2566,6 @@ msgstr "選取頭部"
 
 msgid "Select Tail"
 msgstr "選取尾部"
-
-
-msgid "Bone is always drawn as Wireframe regardless of viewport draw mode (useful for non-obstructive custom bone shapes)"
-msgstr "骨骼總是以線框描繪，而不管視接口的描繪模式 (對於非遮擋自訂骨骼外形來說很有用)"
 
 
 msgid "Tail"
@@ -9814,16 +9810,8 @@ msgid "Layer is selected for editing in the Dope Sheet"
 msgstr "層被選取以在律表中編輯"
 
 
-msgid "Make the layer draw in front of objects"
-msgstr "讓該層描繪於物體之前"
-
-
 msgid "Show Points"
 msgstr "顯示點"
-
-
-msgid "Draw the points which make up the strokes (for debugging purposes)"
-msgstr "描繪構成筆觸的點 (用於除錯用途)"
 
 
 msgid "Tint Factor"
@@ -9876,10 +9864,6 @@ msgstr "蠟筆筆觸"
 
 msgid "Freehand curve defining part of a sketch"
 msgstr "用於定義部分草圖的隨手畫曲線"
-
-
-msgid "Draw Mode"
-msgstr "描繪模式"
 
 
 msgid "Stroke is in screen-space"
@@ -10370,10 +10354,6 @@ msgstr "此多角形使用的迴圈數"
 
 msgid "Statistical view of the levels of color in an image"
 msgstr "將色階的統計視圖以影像顯示"
-
-
-msgid "Channels to display when drawing the histogram"
-msgstr "當描繪長條圖時要顯示的通道"
 
 
 msgid "Red Green Blue"
@@ -12609,10 +12589,6 @@ msgid "Iris"
 msgstr "Iris"
 
 
-msgid "Output image in (old!) SGI IRIS format"
-msgstr "以 (老舊的！) SGI IRIS 格式輸出影像"
-
-
 msgid "Output image in PNG format"
 msgstr "以 PNG 格式輸出影像"
 
@@ -12973,10 +12949,6 @@ msgid "Point in W direction (can't be changed when there are shape keys)"
 msgstr "W 方向的點 (有外形鍵時無法更改)"
 
 
-msgid "Only draw, and take into account, the outer vertices"
-msgstr "僅描繪，並算入外頂點"
-
-
 msgid "Vertex group to apply the influence of the lattice"
 msgstr "要套用晶格影響的頂點群組"
 
@@ -13129,10 +13101,6 @@ msgstr "大小 Y"
 
 msgid "Show Cone"
 msgstr "顯示圓錐"
-
-
-msgid "Draw transparent cone in 3D view to visualize which objects are contained in it"
-msgstr "於 3D 視圖中描繪透明圓錐來看見哪些物體包含在它裡面"
 
 
 msgid "Spot Blend"
@@ -13531,10 +13499,6 @@ msgid "Vertices of the mesh"
 msgstr "網格的頂點"
 
 
-msgid "Meta elements"
-msgstr "變幻元素"
-
-
 msgid "Render Size"
 msgstr "算繪大小"
 
@@ -13549,10 +13513,6 @@ msgstr "線大小"
 
 msgid "Polygonization resolution in the 3D viewport"
 msgstr "3D 視接口中的多角形化解析度"
-
-
-msgid "Influence of meta elements"
-msgstr "變幻元素的影響"
 
 
 msgid "Update"
@@ -14315,10 +14275,6 @@ msgid "Display the object's texture space"
 msgstr "顯示物體的紋理空間"
 
 
-msgid "Add the object's wireframe over solid drawing"
-msgstr "將物體的線框添加在實體描繪之上"
-
-
 msgid "Soft Body Settings"
 msgstr "柔體設定"
 
@@ -14372,14 +14328,6 @@ msgstr "粒子設定"
 
 msgid "Particle settings, reusable by multiple particle systems"
 msgstr "粒子設定，多粒子系統可重復使用"
-
-
-msgid "Active Dupli Object"
-msgstr "作用中複本物體"
-
-
-msgid "Active Dupli Object Index"
-msgstr "作用中複本物體索引"
 
 
 msgid "Degrees"
@@ -14464,10 +14412,6 @@ msgstr "留下不受子代路徑長度碰觸的粒子量"
 
 msgid "Children Per Parent"
 msgstr "每個親代的子代"
-
-
-msgid "Number of children/parent"
-msgstr "子代/親代的數量"
 
 
 msgid "Parting Factor"
@@ -14590,22 +14534,6 @@ msgid "Amount of damping"
 msgstr "減緩的量"
 
 
-msgid "Draw Color"
-msgstr "描繪色彩"
-
-
-msgid "Draw additional particle data as a color"
-msgstr "將額外的粒子資料描繪為色彩"
-
-
-msgid "Particle Drawing"
-msgstr "粒子描繪處理"
-
-
-msgid "How particles are drawn in viewport"
-msgstr "視接口中如何描繪粒子"
-
-
 msgid "Rendered"
 msgstr "算繪"
 
@@ -14620,14 +14548,6 @@ msgstr "顯示"
 
 msgid "Percentage of particles to display in 3D view"
 msgstr "在 3D 視圖中顯示的粒子百分比"
-
-
-msgid "Draw Size"
-msgstr "描繪大小"
-
-
-msgid "How many steps paths are drawn with (power of 2)"
-msgstr "路徑以 (2 的次方) 多少步描繪"
 
 
 msgid "Distribution"
@@ -14718,16 +14638,8 @@ msgid "Create the grid in a hexagonal pattern"
 msgstr "以六角樣式建立格線"
 
 
-msgid "Show this Object in place of particles"
-msgstr "顯示此物體來替代粒子"
-
-
 msgid "Integration"
 msgstr "整合"
-
-
-msgid "Algorithm used to calculate physics, from the fastest to the most stable/accurate: Midpoint, Euler, Verlet, RK4 (Old)"
-msgstr "用來計算物理的演算法，從最快至最穩定/精確：中點、尤拉、Verlet、RK4 (老舊)"
 
 
 msgid "Euler"
@@ -14866,16 +14778,8 @@ msgid "Path End"
 msgstr "路徑結束"
 
 
-msgid "End time of drawn path"
-msgstr "描繪路徑的結束時間"
-
-
 msgid "Path Start"
 msgstr "路徑起始"
-
-
-msgid "Starting time of drawn path"
-msgstr "描繪路徑的起始時間"
 
 
 msgid "Rotation around the chosen orientation axis"
@@ -14942,10 +14846,6 @@ msgid "Rendered Children"
 msgstr "算繪的子代"
 
 
-msgid "Number of children/parent for rendering"
-msgstr "子代/親代算繪的數量"
-
-
 msgid "Random Orientation"
 msgstr "隨機方向"
 
@@ -14996,10 +14896,6 @@ msgstr "導引毛髮"
 
 msgid "Show guide hairs"
 msgstr "顯示導引毛髮"
-
-
-msgid "Draw boid health"
-msgstr "描繪群集個體健康"
 
 
 msgid "Show particle number"
@@ -15176,10 +15072,6 @@ msgstr "重生"
 
 msgid "Regrow hair for each frame"
 msgstr "每幀重生毛髮"
-
-
-msgid "Draw steps of the particle path"
-msgstr "描繪粒子路徑的步數"
 
 
 msgid "Use object's rotation for duplication (global x-axis is aligned particle rotation axis)"
@@ -15642,10 +15534,6 @@ msgid "Inner Cone Angle"
 msgstr "內圓錐角"
 
 
-msgid "Angle of the inner cone, in degrees, inside the cone the volume is 100 %"
-msgstr "內圓錐的角度，單位為度，圓錐內部音量為 100 %"
-
-
 msgid "Outer Cone Angle"
 msgstr "外圓錐角"
 
@@ -15668,10 +15556,6 @@ msgstr "音量計算的最大距離，不管物體距離有多遠"
 
 msgid "Reference Distance"
 msgstr "參照距離"
-
-
-msgid "Reference distance at which volume is 100 %"
-msgstr "參照距離，該處音量為 100 %"
 
 
 msgctxt "Sound"
@@ -19182,16 +19066,8 @@ msgid "Undeformed Location"
 msgstr "未變形的位置"
 
 
-msgid "Meta Elements"
-msgstr "變幻元素"
-
-
 msgid "Active Element"
 msgstr "作用中元素"
-
-
-msgid "Meta Element"
-msgstr "變幻元素"
 
 
 msgid "Hide element"
@@ -22009,10 +21885,6 @@ msgid "Proxy Render Size"
 msgstr "代理算繪大小"
 
 
-msgid "Draw preview using full resolution or different proxy resolutions"
-msgstr "使用完整解析度或不同的代理解析度來描繪預覽"
-
-
 msgid "Render Undistorted"
 msgstr "算繪未扭曲"
 
@@ -23067,10 +22939,6 @@ msgstr "顯示預覽"
 
 msgid "Show Texture"
 msgstr "顯示紋理"
-
-
-msgid "Draw node in viewport textured draw mode"
-msgstr "視接口中紋理描繪模式中的描繪節點"
 
 
 msgid "Node type (deprecated, use bl_static_type or bl_idname for the actual identifier string)"
@@ -25051,10 +24919,6 @@ msgid "Texture Coordinate"
 msgstr "紋理座標"
 
 
-msgid "Use the parent of the dupli object if possible"
-msgstr "如果可以，使用複本物體的親代"
-
-
 msgid "Environment Texture"
 msgstr "環境紋理"
 
@@ -26208,10 +26072,6 @@ msgid "Collapse Channels"
 msgstr "收闔通道"
 
 
-msgid "Collapse (i.e. close) all selected expandable animation channels"
-msgstr "收闔 (或關閉) 所有選取的可開展動畫通道"
-
-
 msgid "Collapse all channels (not just selected ones)"
 msgstr "收闔所有通道 (不只所選的)"
 
@@ -26241,10 +26101,6 @@ msgstr "啟用"
 msgctxt "Operator"
 msgid "Expand Channels"
 msgstr "開展通道"
-
-
-msgid "Expand (i.e. open) all selected expandable animation channels"
-msgstr "開展 (或開啟) 所有選取的可開展動畫通道"
 
 
 msgid "Expand all channels (not just selected ones)"
@@ -31856,39 +31712,6 @@ msgid "Paste the material settings and nodes"
 msgstr "貼上材質設定與節點"
 
 
-msgid "Delete selected metaelement(s)"
-msgstr "刪除選取的變幻元素"
-
-
-msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "製作變幻元素的複本"
-
-
-msgid "Duplicate selected metaelement(s)"
-msgstr "為所選的變幻元素製作複本"
-
-
-msgid "Duplicate Metaelements"
-msgstr "製作變幻元素的複本"
-
-
-msgid "Hide (un)selected metaelement(s)"
-msgstr "隱藏(未)選取的變幻元素"
-
-
-msgid "Reveal all hidden metaelements"
-msgstr "揭開所有隱藏的變幻元素"
-
-
-msgid "Change selection of all meta elements"
-msgstr "變更所有變幻元素的選取"
-
-
-msgid "Randomly select metaelements"
-msgstr "隨機選取變幻元素"
-
-
 msgid "Select similar metaballs by property types"
 msgstr "依屬性類型選取相似的變幻球"
 
@@ -32698,20 +32521,20 @@ msgid "Merge method to use"
 msgstr "要使用的合併方法"
 
 
-msgid "At First"
-msgstr "到第一個"
-
-
-msgid "At Last"
-msgstr "到最後一個"
-
-
 msgid "At Center"
 msgstr "到中心"
 
 
 msgid "At Cursor"
 msgstr "到游標"
+
+
+msgid "At First"
+msgstr "到第一個"
+
+
+msgid "At Last"
+msgstr "到最後一個"
 
 
 msgid "Move UVs according to merge"
@@ -33443,10 +33266,6 @@ msgstr "游標距離"
 
 msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "以距 3D 游標從最近到最遠的方式排序所選元素"
-
-
-msgid "Sort selected elements from smallest to greatest material index (faces only!)"
-msgstr "從最小到最大的材質索引 (僅面！) 排序所選元素"
 
 
 msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
@@ -34472,10 +34291,6 @@ msgid "Use box selection to select nodes"
 msgstr "使用框選選取節點"
 
 
-msgid "Only activate when mouse is not over a node - useful for tweak gesture"
-msgstr "僅當滑鼠從節點上移開時使用 - 對於調校姿勢很有用"
-
-
 msgid "Use circle selection to select nodes"
 msgstr "使用圈選選取節點"
 
@@ -34648,10 +34463,6 @@ msgstr "中心"
 
 msgid "Positive Sides"
 msgstr "正側"
-
-
-msgid "Enables high quality calculation of the bounding box for perfect results on complex shape meshes with rotation/scale (Slow)"
-msgstr "為邊界方塊啟用高品質計算，以獲得旋轉/縮放的複雜外形網格的完美結果 (緩慢)"
 
 
 msgid "Scene Origin"
@@ -34846,10 +34657,6 @@ msgstr "製作物體複本"
 msgctxt "Operator"
 msgid "Duplicate Linked"
 msgstr "製作連結複本"
-
-
-msgid "Parent newly created objects to the original duplicator"
-msgstr "讓新建立的物體認原始複本製作器為親代"
 
 
 msgid "Keep Hierarchy"
@@ -35685,10 +35492,6 @@ msgstr "選取所有連結的可見物體"
 
 msgid "Library (Object Data)"
 msgstr "藏庫 (物體資料)"
-
-
-msgid "Select the Mirror objects of the selected object eg. L.sword -> R.sword"
-msgstr "選取所選物體的鏡像物體，例如 L.sword -> R.sword"
 
 
 msgctxt "Operator"
@@ -37039,42 +36842,6 @@ msgstr "斷開毛髮與發射體網格間的連接"
 
 msgid "Disconnect all hair systems from the emitter mesh"
 msgstr "斷開所有毛髮系統與發射體網格間的連接"
-
-
-msgctxt "Operator"
-msgid "Copy Particle Dupliob"
-msgstr "複製粒子複本物體"
-
-
-msgid "Duplicate the current dupliobject"
-msgstr "複製目前的複本物體"
-
-
-msgctxt "Operator"
-msgid "Move Down Dupli Object"
-msgstr "向下移動複本物體"
-
-
-msgid "Move dupli object down in the list"
-msgstr "在清單中向下移動複本物體"
-
-
-msgctxt "Operator"
-msgid "Move Up Dupli Object"
-msgstr "向上移動複本物體"
-
-
-msgid "Move dupli object up in the list"
-msgstr "在清單中向上移動複本物體"
-
-
-msgctxt "Operator"
-msgid "Remove Particle Dupliobject"
-msgstr "移除粒子複本物體"
-
-
-msgid "Remove the selected dupliobject"
-msgstr "移除選取的複本物體"
 
 
 msgctxt "Operator"
@@ -39467,10 +39234,6 @@ msgid "Channel to place this strip into"
 msgstr "放置此片段的通道"
 
 
-msgid "Initialize the strip with this color (only used when type='COLOR')"
-msgstr "使用此色彩作為片段的初始色彩 (只在類型=「色彩」時使用)"
-
-
 msgid "End frame for the color strip"
 msgstr "色彩片段的結束幀"
 
@@ -41331,10 +41094,6 @@ msgid "Create a new UV map for every mesh packed"
 msgstr "為每個打包的網格建立新的 UV 映射"
 
 
-msgid "Objects Share texture space, map all objects into 1 uvmap"
-msgstr "物體共享紋理空間，將所有物體映射至 1 uvmap"
-
-
 msgid "Mark selected UV edges as seams"
 msgstr "將所選 UV 邊線標記為縫線"
 
@@ -42131,10 +41890,6 @@ msgid "Type of data to rename"
 msgstr "要重新命名的資料類型"
 
 
-msgid "Meta Balls"
-msgstr "變幻球"
-
-
 msgid "Grease Pencils"
 msgstr "蠟筆"
 
@@ -42772,10 +42527,6 @@ msgstr "退出 Blender"
 msgctxt "Operator"
 msgid "Radial Control"
 msgstr "半徑控制"
-
-
-msgid "Set some size property (like e.g. brush size) with mouse wheel"
-msgstr "以滑鼠滾輪設定相同大小的屬性 (例如：筆刷大小)"
 
 
 msgid "Color Path"
@@ -44201,16 +43952,8 @@ msgid "Apply puff to unselected end-points (helps maintain hair volume when puff
 msgstr "套用蓬鬆至未選取的端點 (當根部蓬鬆時能幫助維持毛髮體積)"
 
 
-msgid "Particle Dupliobject Weight"
-msgstr "粒子的複本物體權重"
-
-
 msgid "The number of times this object is repeated with respect to other objects"
 msgstr "相關於其他物體此物體重復的次數"
-
-
-msgid "Particle dupliobject name"
-msgstr "粒子複本物體的名稱"
 
 
 msgid "Properties of particle editing mode"
@@ -44905,10 +44648,6 @@ msgid "Custom Object"
 msgstr "自訂物體"
 
 
-msgid "Object that defines custom draw type for this bone"
-msgstr "為此骨骼定義自訂描繪類型的物體"
-
-
 msgid "Custom Shape Scale"
 msgstr "自訂外形縮放"
 
@@ -45405,10 +45144,6 @@ msgid "Built-in animation player"
 msgstr "內建動畫播放器"
 
 
-msgid "Open source frame player: http://djv.sourceforge.net"
-msgstr "開源框幀播放器：http://djv.sourceforge.net"
-
-
 msgid "FrameCycler"
 msgstr "FrameCycler"
 
@@ -45561,16 +45296,8 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "載入 .blend 檔案時載入使用者介面設置"
 
 
-msgid "Default relative path option for the file selector"
-msgstr "檔案選取器的預設相對路徑選項"
-
-
 msgid "Save Preview Images"
 msgstr "儲存預覽影像"
-
-
-msgid "Enables automatic saving of preview images in the .blend file"
-msgstr "啟用預覽影像自動儲存於 .blend 檔中的功能"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
@@ -45973,14 +45700,6 @@ msgid "2D Texture"
 msgstr "2D 紋理"
 
 
-msgid "Use CPU for display transform and draw image with 2D texture"
-msgstr "使用 CPU 顯示變換並以 2D 紋理描繪影像"
-
-
-msgid "Use GLSL shaders for display transform and draw image with 2D texture"
-msgstr "使用 GLSL 著色器顯示變換並以 2D 紋理描繪影像"
-
-
 msgid "Ambient Color"
 msgstr "周遭色彩"
 
@@ -45999,10 +45718,6 @@ msgstr "用於儲藏主控臺緩衝的最大列數"
 
 msgid "Solid Lights"
 msgstr "實體光照"
-
-
-msgid "Lights user to display objects in solid draw mode"
-msgstr "使用者在實體描繪模式下要顯示物體用的光照"
 
 
 msgid "Texture Collection Rate"
@@ -46315,10 +46030,6 @@ msgstr "無論選單開啟方向為何，都會是上到下，左到右"
 
 msgid "Open menu buttons and pulldowns automatically when the mouse is hovering"
 msgstr "滑鼠停駐時自動開啟選單按鈕或下拉選單"
-
-
-msgid "Draw user interface text anti-aliased"
-msgstr "使用抗鋸齒方式來描繪使用者介面文字"
 
 
 msgid "Translate Interface"
@@ -47487,10 +47198,6 @@ msgstr "算繪的影像中其垂直像素數量"
 
 msgid "Sequencer Preview Shading"
 msgstr "序段編輯器預覽著色處理"
-
-
-msgid "Method to draw in the sequencer view"
-msgstr "序段編輯器視圖的描繪方法"
 
 
 msgid "Display the object as wire edges"
@@ -50209,10 +49916,6 @@ msgid "2D cursor location for this view"
 msgstr "此視圖上的 2D 游標位置"
 
 
-msgid "Channels of the image to draw"
-msgstr "要描繪的影像其通道"
-
-
 msgid "Color and Alpha"
 msgstr "色彩與 Alpha"
 
@@ -50395,6 +50098,10 @@ msgstr "空間節點編輯器"
 
 msgid "Node editor space data"
 msgstr "節點編輯器空間資料"
+
+
+msgid "Channels of the image to draw"
+msgstr "要描繪的影像其通道"
 
 
 msgid "Backdrop Zoom"
@@ -50625,10 +50332,6 @@ msgid "Overlay Type"
 msgstr "疊層類型"
 
 
-msgid "Overlay draw type"
-msgstr "疊層描繪類型"
-
-
 msgid "Show rectangle area overlay"
 msgstr "顯示矩形區域疊層"
 
@@ -50647,10 +50350,6 @@ msgstr "目前"
 
 msgid "Show current frame only"
 msgstr "僅顯示目前框幀"
-
-
-msgid "Channels of the preview to draw"
-msgstr "要描繪的預覽其通道"
 
 
 msgid "No display"
@@ -50725,32 +50424,16 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "序段編輯器視圖的類型 (序段編輯器、預覽，或兩者)"
 
 
-msgid "How Waveforms are drawn"
-msgstr "波形的描繪方式"
-
-
 msgid "Waveforms Off"
 msgstr "波形關"
-
-
-msgid "No waveforms drawn for any sound strips"
-msgstr "任何音效片段皆不描繪波形"
 
 
 msgid "Waveforms On"
 msgstr "波形開"
 
 
-msgid "Waveforms drawn for all sound strips"
-msgstr "所有音效片段皆描繪波形"
-
-
 msgid "Use Strip Option"
 msgstr "使用片段選項"
-
-
-msgid "Waveforms drawn according to strip setting"
-msgstr "根據片段設定描繪的波形"
 
 
 msgid "Space Text Editor"
@@ -50997,10 +50680,6 @@ msgid "Stereo Eye"
 msgstr "立體眼"
 
 
-msgid "Current stereo eye being drawn"
-msgstr "目前以之描繪的立體眼"
-
-
 msgid "Left Eye"
 msgstr "左眼"
 
@@ -51043,10 +50722,6 @@ msgstr "空間 UV 編輯器"
 
 msgid "UV editor data for the image editor space"
 msgstr "影像編輯器空間的 UV 編輯器資料"
-
-
-msgid "Type of stretch to draw"
-msgstr "要描繪的拉伸類型"
 
 
 msgid "Angular distortion between UV and 3D angles"
@@ -51263,6 +50938,10 @@ msgstr "擠壓式框幀"
 
 msgid "Combine both views in a squeezed image"
 msgstr "將兩視圖結合成擠壓式影像"
+
+
+msgid "Lights user to display objects in solid draw mode"
+msgstr "使用者在實體描繪模式下要顯示物體用的光照"
 
 
 msgid "Map X and Y coordinates directly"
@@ -51643,10 +51322,6 @@ msgstr "UV 紋理座標映射使用的 UV 映射"
 
 msgid "Amount texture affects particle initial velocity"
 msgstr "紋理影響粒子初始速度的量"
-
-
-msgid "Theme settings defining draw style and colors in the user interface"
-msgstr "主題設定定義了使用者介面中的描繪樣式與色彩"
 
 
 msgid "Clip Editor"
@@ -52137,16 +51812,8 @@ msgid "Meta Strips"
 msgstr "後設片段"
 
 
-msgid "Meta Strip - Unselected (for grouping related strips)"
-msgstr "後設片段 - 未選取 (用於群組處理相關片段)"
-
-
 msgid "Meta Strips Selected"
 msgstr "選取的後設片段"
-
-
-msgid "Meta Strip - Selected (for grouping related strips)"
-msgstr "後設片段 - 已選取 (用於群組處理相關片段)"
 
 
 msgid "Nonlinear Animation Track"
@@ -52157,44 +51824,16 @@ msgid "Sound Strips"
 msgstr "聲音片段"
 
 
-msgid "Sound Strip - Unselected (for timing speaker sounds)"
-msgstr "聲音片段 - 未選取 (用於計時喇叭音效)"
-
-
 msgid "Sound Strips Selected"
 msgstr "選取的聲音片段"
-
-
-msgid "Sound Strip - Selected (for timing speaker sounds)"
-msgstr "聲音片段 - 已選取 (用於計時喇叭音效)"
-
-
-msgid "Action-Clip Strip - Unselected"
-msgstr "動作剪輯片段 - 未選取"
-
-
-msgid "Action-Clip Strip - Selected"
-msgstr "動作剪輯片段 - 已選取"
 
 
 msgid "Transitions"
 msgstr "過渡"
 
 
-msgid "Transition Strip - Unselected"
-msgstr "過渡片段 - 未選取"
-
-
 msgid "Transitions Selected"
 msgstr "選取的過渡"
-
-
-msgid "Transition Strip - Selected"
-msgstr "過渡片段 - 已選取"
-
-
-msgid "Color for strip/action being 'tweaked' or edited"
-msgstr "正被「調校」或編輯的片段/動作色彩"
 
 
 msgid "Tweak Duplicate Flag"
@@ -53306,28 +52945,12 @@ msgid "Display 3D curve normals in editmode"
 msgstr "在編輯模式中顯示 3D 曲線法線"
 
 
-msgid "Draw Bevel Weights"
-msgstr "描繪倒角權重"
-
-
 msgid "Display weights created for the Bevel modifier"
 msgstr "顯示為倒角修改器建立的權重"
 
 
-msgid "Draw Creases"
-msgstr "描繪皺摺"
-
-
-msgid "Draw Seams"
-msgstr "描繪縫線"
-
-
 msgid "Display UV unwrapping seams"
 msgstr "顯示 UV 拆解縫線"
-
-
-msgid "Draw Edges"
-msgstr "描繪邊線"
 
 
 msgid "Edge Angle"
@@ -53366,24 +52989,12 @@ msgid "Face Orientation"
 msgstr "面向"
 
 
-msgid "Draw Faces"
-msgstr "描繪面"
-
-
 msgid "Display Grid Floor"
 msgstr "顯示格線地面"
 
 
-msgid "Draw Freestyle Edge Marks"
-msgstr "描繪 Freestyle 邊線標記"
-
-
 msgid "Display Freestyle edge marks, used with the Freestyle renderer"
 msgstr "顯示 Freestyle 邊線標記，搭配 Freestyle 算繪器使用"
-
-
-msgid "Draw Freestyle Face Marks"
-msgstr "描繪 Freestyle 面標記"
 
 
 msgid "Display Freestyle face marks, used with the Freestyle renderer"
@@ -55874,10 +55485,6 @@ msgid "Limit Size"
 msgstr "限制大小"
 
 
-msgid "Excluded Paths:"
-msgstr "排除的路徑："
-
-
 msgid "Invert Wheel Zoom Direction"
 msgstr "反轉滾輪遠近調焦方向"
 
@@ -56406,10 +56013,6 @@ msgstr "網格分析"
 
 msgid "Edge Marks"
 msgstr "邊線標記"
-
-
-msgid "Display:"
-msgstr "顯示："
 
 
 msgctxt "Operator"
@@ -60946,10 +60549,6 @@ msgstr "序段類型不支援修改器"
 
 msgid "Modifier was not found in the stack"
 msgstr "堆疊中找不到修改器"
-
-
-msgid "Sequences.new_image: unable to open image file"
-msgstr "Sequences.new_image：無法開啟影像檔"
 
 
 msgid "Sequences.new_sound: unable to open sound file"

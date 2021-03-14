@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -1732,10 +1732,6 @@ msgstr "Zaznacz początek"
 
 msgid "Select Tail"
 msgstr "Zaznacz koniec"
-
-
-msgid "Bone is always drawn as Wireframe regardless of viewport draw mode (useful for non-obstructive custom bone shapes)"
-msgstr "Kość jest zawsze rysowana jako siatka niezależnie od ustawień rysowania dla całego widoku (przydatne dla mało przeszkadzających własnych kształtów kości)"
 
 
 msgid "Tail"
@@ -11389,10 +11385,6 @@ msgstr "Typ sekwencji nie obsługuje modyfikatorów"
 
 msgid "Modifier was not found in the stack"
 msgstr "Nie odnaleziono modyfikatora w stosie"
-
-
-msgid "Sequences.new_image: unable to open image file"
-msgstr "Sequences.new_image: otwarcie pliku obrazka niemożliwe"
 
 
 msgid "Sequences.new_sound: unable to open sound file"

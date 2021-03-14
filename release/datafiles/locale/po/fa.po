@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2466,10 +2466,6 @@ msgid "Spacing"
 msgstr "ﻪﻠﺻﺎﻓ"
 
 
-msgid "Draw Mode"
-msgstr "ﯽﺷﺎﻘﻧ ﺖﻟﺎﺣ"
-
-
 msgid "3D Space"
 msgstr "ﺎﻀﻓ"
 
@@ -3194,10 +3190,6 @@ msgid "UV Loop Layers"
 msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
 
 
-msgid "Meta elements"
-msgstr "ﻁﺎﻘﻧ ﻑﺬﺣ"
-
-
 msgid "Render Size"
 msgstr "ﻪﺤﻔﺻ ﯼﺭﺍﺰﮔﺭﺎﺑ"
 
@@ -3438,10 +3430,6 @@ msgid "Particle Settings"
 msgstr "ﯼﺯﺎﺑ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
-msgid "Active Dupli Object"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
 msgid "Angular Velocity"
 msgstr "ﯼﺍ ﻪﯾﻭﺍﺯ ﺖﻋﺮﺳ"
 
@@ -3490,20 +3478,8 @@ msgid "Amount of damping"
 msgstr "ﻞﻣﺎﻌﺗ:"
 
 
-msgid "Draw Color"
-msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
-
-
-msgid "Particle Drawing"
-msgstr "ﺕﺍﺭﺫ"
-
-
 msgid "Rendered"
 msgstr "ﻩﺪﺷ ﺭﺪﻧﺭ"
-
-
-msgid "Draw Size"
-msgstr "ﻩﺯﺍﺪﻧﺍ"
 
 
 msgid "Distribution"
@@ -8228,15 +8204,6 @@ msgid "Paste Material"
 msgstr "ﻝﺎﻌﻓ ﻩﺩﺎﻣ"
 
 
-msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "ﻁﺎﻘﻧ ﻑﺬﺣ"
-
-
-msgid "Duplicate selected metaelement(s)"
-msgstr "ﻁﺎﻘﻧ ﻑﺬﺣ"
-
-
 msgid "Angle limit"
 msgstr "ﺩﻭﺪﺤﻣ ﻡﺎﻏﺩﺍ"
 
@@ -9945,21 +9912,6 @@ msgstr "ﺕﺍﺭﺫ"
 
 msgid "Delete selected particles or keys"
 msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ ﻪﺑ ﺱﺃﺭ ﺏﺎﺨﺘﻧﺍ"
-
-
-msgctxt "Operator"
-msgid "Move Down Dupli Object"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
-msgctxt "Operator"
-msgid "Move Up Dupli Object"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
-
-
-msgctxt "Operator"
-msgid "Remove Particle Dupliobject"
-msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
 
 msgctxt "Operator"
@@ -12571,28 +12523,12 @@ msgid "Sound Strips Selected"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
-msgid "Action-Clip Strip - Unselected"
-msgstr "ﺖﺳﺍ ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺭﺍﺩﺮﮐ ﻩﻭﺮﮔ"
-
-
-msgid "Action-Clip Strip - Selected"
-msgstr "ﺖﺳﺍ ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺭﺍﺩﺮﮐ ﻩﻭﺮﮔ"
-
-
 msgid "Transitions"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
 
-msgid "Transition Strip - Unselected"
-msgstr "ﺖﺳﺍ ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺭﺍﺩﺮﮐ ﻩﻭﺮﮔ"
-
-
 msgid "Transitions Selected"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﮎﺮﺗ"
-
-
-msgid "Transition Strip - Selected"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
 
 
 msgid "Tweak Duplicate Flag"
@@ -12753,18 +12689,6 @@ msgstr "ﯼﺮﺘﺴﮐﺎﺧ ﺱﺎﯿﻘﻣ"
 
 msgid "Draw Normals"
 msgstr "ﺎﻫ‌ﻝﺎﻣﺮﻧ:"
-
-
-msgid "Draw Bevel Weights"
-msgstr "ﺪﻠﯿﻓ ﯼﺎﻫ‌ﻥﺯﻭ"
-
-
-msgid "Draw Creases"
-msgstr "ﺎﻫ‌ﻦﯿﭼ"
-
-
-msgid "Draw Seams"
-msgstr "ﺎﻫ‌ﺯﺭﺩ"
 
 
 msgid "Use linear progression"
@@ -13803,10 +13727,6 @@ msgstr "ﺎﻫ ﻦﯿﭼ"
 
 msgid "Seams"
 msgstr "ﺎﻫ ﺯﺭﺩ"
-
-
-msgid "Display:"
-msgstr "ﺮﮕﺸﯾﺎﻤﻧ:"
 
 
 msgctxt "Operator"

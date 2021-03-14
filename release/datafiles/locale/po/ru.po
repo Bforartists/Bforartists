@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'32073993a8fc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -2850,10 +2850,6 @@ msgid "Display Wire"
 msgstr "Показать сетку"
 
 
-msgid "Bone is always drawn as Wireframe regardless of viewport draw mode (useful for non-obstructive custom bone shapes)"
-msgstr "Всегда отображать кость как каркас вне зависимости от режима прорисовки вьюпорта (полезно для костей особой формы, перекрывающих основной объект)"
-
-
 msgid "Tail"
 msgstr "Конец"
 
@@ -3500,10 +3496,6 @@ msgstr "Показать вспомогательные линии заливк�
 
 msgid "Show Lasso"
 msgstr "Показать лассо"
-
-
-msgid "Do not draw fill color while drawing the stroke"
-msgstr "Не отрисовывать цвет заливки при рисовании штриха"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -7895,10 +7887,6 @@ msgid "Persistent identifier for inter-frame matching of objects with motion blu
 msgstr "Постоянный идентификатор для межкадрового сопоставления объектов для размытия движения"
 
 
-msgid "Dupli random id"
-msgstr "Дублировать случайный идентификатор"
-
-
 msgid "Random id for this instance, typically for randomized shading"
 msgstr "Случайный идентификатор экземпляра, как правило для случайного шейдинга"
 
@@ -11392,16 +11380,8 @@ msgid "File Modification Date"
 msgstr "Дата изменения файла"
 
 
-msgid "Draw a column listing the date and time of modification for each file"
-msgstr "Вывести столбец с указанием даты и времени изменения каждого файла"
-
-
 msgid "File Size"
 msgstr "Размер файла"
-
-
-msgid "Draw a column listing the size of each file"
-msgstr "Вывести столбец с указанием размера каждого файла"
 
 
 msgid "Show hidden dot files"
@@ -11706,10 +11686,6 @@ msgstr "Ближайший(ая)"
 
 msgid "No interpolation"
 msgstr "Без интерполяции"
-
-
-msgid "Thickness of smoke drawing in the viewport"
-msgstr "Плотность дыма во вьюпорте"
 
 
 msgid "Dissolve Speed"
@@ -13052,16 +13028,8 @@ msgid "In Front"
 msgstr "Спереди"
 
 
-msgid "Make the layer draw in front of objects"
-msgstr "Отображать слой поверх остальных объектов"
-
-
 msgid "Show Points"
 msgstr "Показать точки"
-
-
-msgid "Draw the points which make up the strokes (for debugging purposes)"
-msgstr "Отрисовывать точки, составляющие штрихи (для отладки)"
 
 
 msgid "Thickness of annotation strokes"
@@ -13300,10 +13268,6 @@ msgid "Freehand curve defining part of a sketch"
 msgstr "Кривая, образующая часть наброска"
 
 
-msgid "Draw Mode"
-msgstr "Режим рисования"
-
-
 msgid "Coordinate space that stroke is in"
 msgstr "Координатное пространство, в котором находится штрих"
 
@@ -13517,18 +13481,6 @@ msgid "Depth bias used for selection"
 msgstr "Величина погрешности выделения"
 
 
-msgid "Draw Hover"
-msgstr "Рисовать при наведении"
-
-
-msgid "Draw Active"
-msgstr "Рисовать активный"
-
-
-msgid "Draw while dragging"
-msgstr "Рисовать при перетаскивании"
-
-
 msgid "Scale Offset"
 msgstr "Масштабировать отступ"
 
@@ -13539,10 +13491,6 @@ msgstr "Масштабировать матрицу отступа (исполь
 
 msgid "Use scale when calculating the matrix"
 msgstr "Использовать масштаб при вычислении матрицы"
-
-
-msgid "Draw Value"
-msgstr "Рисовать значение"
 
 
 msgid "Show an indicator for the current value while dragging"
@@ -13596,10 +13544,6 @@ msgstr "Параметры для этого типа оператора"
 
 msgid "Use in 3D viewport"
 msgstr "Использовать в 3D-вьюпорте"
-
-
-msgid "Scale to respect zoom (otherwise zoom independent draw size)"
-msgstr "Изменять размер с учётом масштаба (иначе масштабировать независимо от размера отрисовки)"
 
 
 msgid "Depth 3D"
@@ -14614,10 +14558,6 @@ msgstr "Количество петель, используемых полиго
 
 msgid "Statistical view of the levels of color in an image"
 msgstr "Статистическое представление цветовых уровней изображения"
-
-
-msgid "Channels to display when drawing the histogram"
-msgstr "Отображаемые каналы при прорисовке гистограммы"
 
 
 msgid "Luma"
@@ -17829,10 +17769,6 @@ msgid "Iris"
 msgstr "Iris"
 
 
-msgid "Output image in (old!) SGI IRIS format"
-msgstr "Сохранять изображение в старом формате SGI IRIS"
-
-
 msgid "Output image in PNG format"
 msgstr "Сохранять изображение в формате PNG"
 
@@ -18253,10 +18189,6 @@ msgid "Point in W direction (can't be changed when there are shape keys)"
 msgstr "Количество точек по направлению W (не может быть изменено, если созданы ключи формы)"
 
 
-msgid "Only draw, and take into account, the outer vertices"
-msgstr "Отображать и рассчитывать деформацию только для внешних вершин"
-
-
 msgid "Vertex group to apply the influence of the lattice"
 msgstr "Группа вершин решётки, осуществляющая воздействие"
 
@@ -18565,10 +18497,6 @@ msgstr "Направленный конический источник свет�
 
 msgid "Show Cone"
 msgstr "Отобразить конус"
-
-
-msgid "Draw transparent cone in 3D view to visualize which objects are contained in it"
-msgstr "Отображать прозрачный конус в области 3D-просмотра для выделения объектов, расположенных внутри этого конуса"
 
 
 msgid "Spot Blend"
@@ -19375,10 +19303,6 @@ msgid "Metaball data-block to defined blobby surfaces"
 msgstr "Датаблок метасферы, определяющий каплевидные поверхности"
 
 
-msgid "Meta elements"
-msgstr "Метаэлементы"
-
-
 msgid "Render Size"
 msgstr "Размер рендера"
 
@@ -19393,10 +19317,6 @@ msgstr "Размер сетки"
 
 msgid "Polygonization resolution in the 3D viewport"
 msgstr "Разрешение полигонализации в области 3D-вьюпорта"
-
-
-msgid "Influence of meta elements"
-msgstr "Влияние метаэлементов"
 
 
 msgid "Update"
@@ -20375,10 +20295,6 @@ msgid "Display image in perspective mode"
 msgstr "Отображать изображение в режиме перспективы"
 
 
-msgid "Make the object draw in front of others"
-msgstr "Отображать объект перед другими"
-
-
 msgid "Render Instancer"
 msgstr "Рендер источника экземпляров"
 
@@ -20421,10 +20337,6 @@ msgstr "Отображать с прозрачностью"
 
 msgid "Display material transparency in the object"
 msgstr "Отображать прозрачность материала в объекте"
-
-
-msgid "Add the object's wireframe over solid drawing"
-msgstr "Добавить каркасную сетку объекта поверх сплошного затенения"
 
 
 msgid "Soft Body Settings"
@@ -20500,14 +20412,6 @@ msgstr "Параметры частиц"
 
 msgid "Particle settings, reusable by multiple particle systems"
 msgstr "Настройки частиц, доступные для повторного использования несколькими системами частиц"
-
-
-msgid "Active Dupli Object"
-msgstr "Активный дуплиобъект"
-
-
-msgid "Active Dupli Object Index"
-msgstr "Индекс активного дуплиобъекта"
 
 
 msgid "Degrees"
@@ -20592,10 +20496,6 @@ msgstr "Количество частиц, незатронутых длиной
 
 msgid "Children Per Parent"
 msgstr "Потомков на родителя"
-
-
-msgid "Number of children/parent"
-msgstr "Количество потомков на родителя"
 
 
 msgid "Parting Factor"
@@ -20722,20 +20622,8 @@ msgid "Amount of damping"
 msgstr "Величина затухания"
 
 
-msgid "Draw Color"
-msgstr "Показать в цвете"
-
-
-msgid "Draw additional particle data as a color"
-msgstr "Отображать дополнительные данные частиц в виде цвета"
-
-
-msgid "Particle Drawing"
-msgstr "Отрисовка частиц"
-
-
-msgid "How particles are drawn in viewport"
-msgstr "Способ отрисовки частиц во вьюпорте"
+msgid "Display Color"
+msgstr "Отображаемый цвет"
 
 
 msgid "Rendered"
@@ -20752,18 +20640,6 @@ msgstr "Отображение"
 
 msgid "Percentage of particles to display in 3D view"
 msgstr "Процентное отношение частиц, отображаемых в области просмотра"
-
-
-msgid "Draw Size"
-msgstr "Размер отрисовки"
-
-
-msgid "Size of particles on viewport in BU"
-msgstr "Размер частиц в во вьюпорте в единицах Blender"
-
-
-msgid "How many steps paths are drawn with (power of 2)"
-msgstr "Количество шагов на рисование пути (степень двойки)"
 
 
 msgid "Distribution"
@@ -20858,32 +20734,8 @@ msgid "Create the grid in a hexagonal pattern"
 msgstr "Создать сетку по гексагональному шаблону"
 
 
-msgid "Dupli Collection"
-msgstr "Дупликоллекция"
-
-
-msgid "Show Objects in this collection in place of particles"
-msgstr "Показывать объекты в этой коллекции вместо частиц"
-
-
-msgid "Show this Object in place of particles"
-msgstr "Показать этот объект на месте частиц"
-
-
-msgid "Dupli Collection Weights"
-msgstr "Веса дупликоллекции"
-
-
-msgid "Weights for all of the objects in the dupli collection"
-msgstr "Веса для всех объектов в дупликоллекции"
-
-
 msgid "Integration"
 msgstr "Интегрирование"
-
-
-msgid "Algorithm used to calculate physics, from the fastest to the most stable/accurate: Midpoint, Euler, Verlet, RK4 (Old)"
-msgstr "Алгоритм расчёта физики, от быстрого до наиболее стабильного/точного: медиана, Эйлера, Верле, RK4 (старый)"
 
 
 msgid "Euler"
@@ -21070,16 +20922,8 @@ msgid "Path End"
 msgstr "Конец пути"
 
 
-msgid "End time of drawn path"
-msgstr "Время окончания отрисовки пути"
-
-
 msgid "Path Start"
 msgstr "Начало пути"
-
-
-msgid "Starting time of drawn path"
-msgstr "Время начала рисования пути"
 
 
 msgid "Rotation around the chosen orientation axis"
@@ -21150,10 +20994,6 @@ msgid "Rendered Children"
 msgstr "Потомки на рендере"
 
 
-msgid "Number of children/parent for rendering"
-msgstr "Количество потомков на родителя при рендеринге"
-
-
 msgid "Random Orientation"
 msgstr "Случайная ориентация"
 
@@ -21220,10 +21060,6 @@ msgstr "Показать направляющие волосы"
 
 msgid "Show hair simulation grid"
 msgstr "Показывать сетку симуляции волос"
-
-
-msgid "Draw boid health"
-msgstr "Показать здоровье частиц роя"
 
 
 msgid "Show particle number"
@@ -21452,10 +21288,6 @@ msgstr "Доращивать волосы на каждом кадре"
 
 msgid "Adaptive Render"
 msgstr "Адаптивный рендер"
-
-
-msgid "Draw steps of the particle path"
-msgstr "Отрисовывать шаги пути частицы"
 
 
 msgid "Use object's rotation for duplication (global x-axis is aligned particle rotation axis)"
@@ -22002,10 +21834,6 @@ msgid "Inner Cone Angle"
 msgstr "Угол внутреннего конуса"
 
 
-msgid "Angle of the inner cone, in degrees, inside the cone the volume is 100 %"
-msgstr "Угол внутреннего конуса в градусах, внутри которого громкость составляет 100%"
-
-
 msgid "Outer Cone Angle"
 msgstr "Угол внешнего конуса"
 
@@ -22028,10 +21856,6 @@ msgstr "Максимальное расстояние для расчёта об
 
 msgid "Reference Distance"
 msgstr "Эталонное расстояние"
-
-
-msgid "Reference distance at which volume is 100 %"
-msgstr "Эталонное расстояние, на котором громкость равна 100%"
 
 
 msgctxt "Sound"
@@ -25227,10 +25051,6 @@ msgid "Automatic Easing"
 msgstr "Автоматическое ослабление"
 
 
-msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
-msgstr "Выбирать тип ослабления автоматически на основе используемого типа интерполяции (т. е. использовать вход для переходных типов и выход для динамических эффектов)"
-
-
 msgid "Only on the end closest to the next keyframe"
 msgstr "Только на участке рядом со следующим ключевым кадром"
 
@@ -26960,10 +26780,6 @@ msgid "Mix Factor"
 msgstr "Коэфф. смешения"
 
 
-msgid "Select draw mode for stroke"
-msgstr "Режим рисования для штрихов"
-
-
 msgid "Draw strokes using a continuous line"
 msgstr "Рисовать штрихи с помощью непрерывных линий"
 
@@ -27753,10 +27569,6 @@ msgid "Bitangent"
 msgstr "Бикасательная"
 
 
-msgid "Bitangent vector of this vertex for this polygon (must be computed beforehand using calc_tangents, *use it only if really needed*, slower access than bitangent_sign)"
-msgstr "Бикасательный вектор этой вершины этого полигона (должен быть рассчитан заранее с помощью calc_tangents, *используйте, если только он действительно нужен*; медленней, чем bitangent_sign)"
-
-
 msgid "Bitangent Sign"
 msgstr "Знак бикасательной"
 
@@ -28181,10 +27993,6 @@ msgid "Collection of mesh vertices"
 msgstr "Коллекция вершин меша"
 
 
-msgid "Meta Elements"
-msgstr "Метаэлементы"
-
-
 msgid "Collection of metaball elements"
 msgstr "Коллекция элементов-метасфе"
 
@@ -28195,14 +28003,6 @@ msgstr "Активный элемент"
 
 msgid "Last selected element"
 msgstr "Последний выделенный элемент"
-
-
-msgid "Meta Element"
-msgstr "Метаэлемент"
-
-
-msgid "Blobby element in a Metaball data-block"
-msgstr "Каплевидный элемент в датаблоке метасферы"
 
 
 msgid "Hide element"
@@ -30185,10 +29985,6 @@ msgid "Copy new normals minus old normals"
 msgstr "Копировать новые нормали минус старые нормали"
 
 
-msgid "Copy product of old and new normals (*not* cross product)"
-msgstr "Копировать произведение старых и новых нормалей (не векторное произведение)"
-
-
 msgid "How to affect (generate) normals"
 msgstr "Способ изменения (генерации) нормалей"
 
@@ -31765,14 +31561,6 @@ msgid "Line Thickness"
 msgstr "Толщина линий"
 
 
-msgid "Line thickness for drawing path"
-msgstr "Толщина линий для рисования траекторий"
-
-
-msgid "Draw straight lines between keyframe points"
-msgstr "Рисовать прямые линии между точками ключевых кадров"
-
-
 msgid "Motion Path Points"
 msgstr "Точки траектории движения"
 
@@ -31937,8 +31725,8 @@ msgid "Proxy Render Size"
 msgstr "Размер рендера прокси"
 
 
-msgid "Draw preview using full resolution or different proxy resolutions"
-msgstr "Предпросмотр с полным разрешением или иным разрешением прокси"
+msgid "Display preview using full resolution or different proxy resolutions"
+msgstr "Отображать предпросмотр с полным разрешением или иным разрешением прокси"
 
 
 msgid "None, full render"
@@ -33243,10 +33031,6 @@ msgstr "Предпросмотр"
 
 msgid "Show Texture"
 msgstr "Показать текстуру"
-
-
-msgid "Draw node in viewport textured draw mode"
-msgstr "Показывать ноду в текстурированном режиме отрисовки вьюпорта"
 
 
 msgid "Node type (deprecated, use bl_static_type or bl_idname for the actual identifier string)"
@@ -35631,10 +35415,6 @@ msgid "From Instancer"
 msgstr "От инстансера"
 
 
-msgid "Use the parent of the dupli object if possible"
-msgstr "Использовать родителя дуплиобъекта, если возможно"
-
-
 msgid "Use coordinates from this object (for object texture coordinates output)"
 msgstr "Использовать координаты от этого объекта (для вывода текстурных координат объекта)"
 
@@ -37256,10 +37036,6 @@ msgid "Collapse Channels"
 msgstr "Свернуть каналы"
 
 
-msgid "Collapse (i.e. close) all selected expandable animation channels"
-msgstr "Свернуть (т. е. закрыть) все выделенные разворачиваемые каналы анимации"
-
-
 msgid "Collapse all channels (not just selected ones)"
 msgstr "Свернуть все каналы (а не только выделенные)"
 
@@ -37289,10 +37065,6 @@ msgstr "Включить"
 msgctxt "Operator"
 msgid "Expand Channels"
 msgstr "Развернуть каналы"
-
-
-msgid "Expand (i.e. open) all selected expandable animation channels"
-msgstr "Развернуть (т. е. открыть) все выделенные разворачиваемые каналы анимации"
 
 
 msgid "Expand all channels (not just selected ones)"
@@ -43054,6 +42826,10 @@ msgid "Which ends of the segment between the preceding and following grease penc
 msgstr "К какому концу применять сглаживающую интерполяцию между предшествующим и последующим кадром Grease Pencil"
 
 
+msgid "Easing type is chosen automatically based on what the type of interpolation used (e.g. 'Ease In' for transitional types, and 'Ease Out' for dynamic effects)"
+msgstr "Выбирать тип ослабления автоматически на основе используемого типа интерполяции (т. е. использовать вход для переходных типов и выход для динамических эффектов)"
+
+
 msgid "Interpolation method to use the next time 'Interpolate Sequence' is run"
 msgstr "Метод интерполяции, который будет использоваться при следующей интерполяции последовательности"
 
@@ -43482,10 +43258,6 @@ msgstr "Применить изменение толщины слоя к его 
 msgctxt "Operator"
 msgid "Arrange Stroke"
 msgstr "Выстроить штрихи"
-
-
-msgid "Arrange selected strokes up/down in the drawing order of the active layer"
-msgstr "Выстроить порядок рисования выделенных штрихов активного слоя"
 
 
 msgid "Bring to Front"
@@ -45741,43 +45513,6 @@ msgid "Lock the var from being deleted"
 msgstr "Заблокировать переменные от удаления"
 
 
-msgid "Delete selected metaelement(s)"
-msgstr "Удалить выделенные метаэлементы"
-
-
-msgctxt "Operator"
-msgid "Duplicate Metaelements"
-msgstr "Дублировать метаэлементы"
-
-
-msgid "Duplicate selected metaelement(s)"
-msgstr "Дублировать выделенные метаэлементы"
-
-
-msgid "Make copies of the selected metaelements and move them"
-msgstr "Создать копии выделенных метаэлементов и переместить их"
-
-
-msgid "Duplicate Metaelements"
-msgstr "Дублировать метаэлементы"
-
-
-msgid "Hide (un)selected metaelement(s)"
-msgstr "Скрыть (не)выделенные метаэлементы"
-
-
-msgid "Reveal all hidden metaelements"
-msgstr "Отобразить все скрытые метаэлементы"
-
-
-msgid "Change selection of all meta elements"
-msgstr "Изменить выделение для всех метаэлементов"
-
-
-msgid "Randomly select metaelements"
-msgstr "Выделить случайные метаэлементы"
-
-
 msgid "Select similar metaballs by property types"
 msgstr "Выделить похожие метасферы по типам свойств"
 
@@ -46890,20 +46625,20 @@ msgid "Merge method to use"
 msgstr "Метод объединения"
 
 
-msgid "At First"
-msgstr "К первой"
-
-
-msgid "At Last"
-msgstr "К последней"
-
-
 msgid "At Center"
 msgstr "В центре"
 
 
 msgid "At Cursor"
 msgstr "У курсора"
+
+
+msgid "At First"
+msgstr "К первой"
+
+
+msgid "At Last"
+msgstr "К последней"
 
 
 msgid "Move UVs according to merge"
@@ -48120,10 +47855,6 @@ msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "Сортировать выделенные элементы от ближайшего к наиболее удалённому от 3D-курсора"
 
 
-msgid "Sort selected elements from smallest to greatest material index (faces only!)"
-msgstr "Сортировать выделенные элементы от наименьшего к наибольшему индексу материала (только для граней!)"
-
-
 msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
 msgstr "Переместить все выделенные элементы на передний план, сохранив их относительный порядок (предупреждение: это также влияет на индексы невыделенных элементов!)"
 
@@ -49307,10 +49038,6 @@ msgid "Use box selection to select nodes"
 msgstr "Выделить ноды внутри заданного прямоугольника"
 
 
-msgid "Only activate when mouse is not over a node - useful for tweak gesture"
-msgstr "Активировать только когда мышь не над нодой — полезно для настройки жестов"
-
-
 msgid "Use circle selection to select nodes"
 msgstr "Выделить ноды с помощью выделения кругом"
 
@@ -49492,10 +49219,6 @@ msgstr "Центр"
 
 msgid "Positive Sides"
 msgstr "Положительные стороны"
-
-
-msgid "Enables high quality calculation of the bounding box for perfect results on complex shape meshes with rotation/scale (Slow)"
-msgstr "Обеспечивает высокое качество расчёта габаритного контейнера для идеальных результатов на сетках сложной формы с вращением/масштабированием (медленно)"
 
 
 msgid "Relative To"
@@ -49736,10 +49459,6 @@ msgid "Transfer Mesh Data"
 msgstr "Перенести данные меша"
 
 
-msgid "Transfer data layer(s) (weights, edge sharp, ...) from active to selected meshes"
-msgstr "Перенести слои данных (веса, остроту краёв и др.) от активного меша к выделенным"
-
-
 msgid "Which data to transfer"
 msgstr "Переносимые данные"
 
@@ -49880,10 +49599,6 @@ msgstr "Сделать экземпляры настоящими"
 
 msgid "Make instanced objects attached to this object real"
 msgstr "Заменить экземпляры объектов, присоединённых к этому объекту, оригиналами"
-
-
-msgid "Parent newly created objects to the original duplicator"
-msgstr "Назначить исходный дубликатор родителем для создаваемых объектов"
 
 
 msgid "Keep Hierarchy"
@@ -51170,10 +50885,6 @@ msgid "Library (Object Data)"
 msgstr "Библиотека (данные объекта)"
 
 
-msgid "Select the Mirror objects of the selected object eg. L.sword -> R.sword"
-msgstr "Выделить объекты, симметричные текущим выделенным объектам, например, L.sword → R.sword"
-
-
 msgid "Select connected parent/child objects"
 msgstr "Выделить связанные объекты родителей/потомков"
 
@@ -52030,10 +51741,6 @@ msgid "Disable Collection"
 msgstr "Отключить коллекцию"
 
 
-msgid "Disable viewport drawing in the view layers"
-msgstr "Отключить отображение во вьюпорте в слоях визуализации"
-
-
 msgctxt "Operator"
 msgid "Disable Collection in Render"
 msgstr "Отключить коллекцию на рендере"
@@ -52068,10 +51775,6 @@ msgstr "Рекурсивно дублировать коллекцию, всех
 msgctxt "Operator"
 msgid "Enable Collection"
 msgstr "Включить коллекцию"
-
-
-msgid "Enable viewport drawing in the view layers"
-msgstr "Включить отображение во вьюпорте в слоях визуализации"
 
 
 msgctxt "Operator"
@@ -53297,51 +53000,6 @@ msgstr "Дублировать настройки"
 
 msgid "Duplicate settings as well, so the new particle system uses its own settings"
 msgstr "Дублировать настройки, чтобы система частиц имела собственные настройки"
-
-
-msgctxt "Operator"
-msgid "Copy Particle Dupliob"
-msgstr "Копировать дуплиобъект частицы"
-
-
-msgid "Duplicate the current dupliobject"
-msgstr "Дублировать текущий дуплиобъект"
-
-
-msgctxt "Operator"
-msgid "Move Down Dupli Object"
-msgstr "Переместить дуплиобъект вниз"
-
-
-msgid "Move dupli object down in the list"
-msgstr "Переместить дуплиобъект вниз по списку"
-
-
-msgctxt "Operator"
-msgid "Move Up Dupli Object"
-msgstr "Переместить дуплиобъект вверх"
-
-
-msgid "Move dupli object up in the list"
-msgstr "Переместить дуплиобъект вверх по списку"
-
-
-msgctxt "Operator"
-msgid "Refresh Dupli Objects"
-msgstr "Обновить дублируемые объекты"
-
-
-msgid "Refresh list of dupli objects and their weights"
-msgstr "Обновить лист дублируемых объектов и их веса"
-
-
-msgctxt "Operator"
-msgid "Remove Particle Dupliobject"
-msgstr "Удалить дуплиобъект частицы"
-
-
-msgid "Remove the selected dupliobject"
-msgstr "Удалить выбранный дуплиобъект"
 
 
 msgctxt "Operator"
@@ -56215,10 +55873,6 @@ msgid "Channel to place this strip into"
 msgstr "Канал, на котором нужно разместить эту дорожку"
 
 
-msgid "Initialize the strip with this color (only used when type='COLOR')"
-msgstr "Инициализировать дорожку этим цветом (используется только если type='COLOR')"
-
-
 msgid "End frame for the color strip"
 msgstr "Конечный кадр для дорожки цвета"
 
@@ -58671,10 +58325,6 @@ msgid "Create a new UV map for every mesh packed"
 msgstr "Создать новую UV-карту для каждого упаковываемого меша"
 
 
-msgid "Objects Share texture space, map all objects into 1 uvmap"
-msgstr "Обеспечить совместное использование текстурного пространства, развернув все объекты на одну UV-развёртку"
-
-
 msgid "Mark selected UV edges as seams"
 msgstr "Пометить выделенные UV-рёбра как швы"
 
@@ -59526,12 +59176,8 @@ msgid "Toggle solid shading"
 msgstr "Переключить сплошное затенение"
 
 
-msgid "LookDev"
-msgstr "LookDev"
-
-
-msgid "Toggle lookdev shading"
-msgstr "Переключить затенение LookDev"
+msgid "Material Preview"
+msgstr "Предпросмотр материала"
 
 
 msgid "Toggle rendered shading"
@@ -59974,10 +59620,6 @@ msgid "Link the objects or data-blocks rather than appending"
 msgstr "Связать объекты или датаблоки, а не копировать"
 
 
-msgid "Set Fake User for appended items (except Objects and Groups)"
-msgstr "Установить псевдоиспользование для добавляемых элементов (кроме объектов и групп)"
-
-
 msgid "Localize All"
 msgstr "Локализовать все"
 
@@ -59993,10 +59635,6 @@ msgstr "Массовое переименование"
 
 msgid "Type of data to rename"
 msgstr "Тип данных для переименования"
-
-
-msgid "Meta Balls"
-msgstr "Метасферы"
 
 
 msgid "Grease Pencils"
@@ -61065,10 +60703,6 @@ msgstr "Выйти из Blender"
 msgctxt "Operator"
 msgid "Radial Control"
 msgstr "Радиальное управление"
-
-
-msgid "Set some size property (like e.g. brush size) with mouse wheel"
-msgstr "Установить некоторое свойство (например, размер кисти) с помощью колеса мыши"
 
 
 msgid "Color Path"
@@ -63775,20 +63409,8 @@ msgid "Apply puff to unselected end-points (helps maintain hair volume when puff
 msgstr "Взлохматить невыделенные конечные точки (позволяет поднимать волосы у корня без изменения объёма волос)"
 
 
-msgid "Particle Dupliobject Weight"
-msgstr "Вес дуплиобъекта частицы"
-
-
-msgid "Weight of a particle dupliobject in a collection"
-msgstr "Вес частицы дуплиобъекта в коллекции"
-
-
 msgid "The number of times this object is repeated with respect to other objects"
 msgstr "Количество повторений этого объекта по отношению к другим объектам"
-
-
-msgid "Particle dupliobject name"
-msgstr "Имя дуплиобъекта частицы"
 
 
 msgid "Properties of particle editing mode"
@@ -64607,10 +64229,6 @@ msgid "Custom Object"
 msgstr "Особая форма"
 
 
-msgid "Object that defines custom draw type for this bone"
-msgstr "Объект, определяющий форму для этой кости"
-
-
 msgid "Custom Shape Scale"
 msgstr "Масштаб особой формы"
 
@@ -65239,10 +64857,6 @@ msgid "Built-in animation player"
 msgstr "Встроенный проигрыватель анимации"
 
 
-msgid "Open source frame player: http://djv.sourceforge.net"
-msgstr "Покадровый проигрыватель с открытым исходным кодом: http://djv.sourceforge.net"
-
-
 msgid "FrameCycler"
 msgstr "FrameCycler"
 
@@ -65399,16 +65013,8 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "Загружать настройки интерфейса при загрузке файлов .blend"
 
 
-msgid "Default relative path option for the file selector"
-msgstr "Использовать по умолчанию относительные пути при выборе файлов"
-
-
 msgid "Save Preview Images"
 msgstr "Сохранять предпросмотры"
-
-
-msgid "Enables automatic saving of preview images in the .blend file"
-msgstr "Автоматически сохранять изображения предпросмотра в файл .blend"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
@@ -65991,14 +65597,6 @@ msgid "2D Texture"
 msgstr "2D-текстуры"
 
 
-msgid "Use CPU for display transform and draw image with 2D texture"
-msgstr "Использовать центральный процессор для перемещения участков экрана и для отрисовки 2D-текстур"
-
-
-msgid "Use GLSL shaders for display transform and draw image with 2D texture"
-msgstr "Использовать шейдеры GLSL для перемещения участков экрана и для отрисовки 2D-текстур"
-
-
 msgid "Legacy Compute Device Type"
 msgstr "Тип устаревшего устройства для вычисления"
 
@@ -66051,10 +65649,6 @@ msgid "Solid Lights"
 msgstr "Источники сплошного света"
 
 
-msgid "Lights user to display objects in solid draw mode"
-msgstr "Источники света для отображения объектов в режиме сплошного затенения"
-
-
 msgid "Texture Collection Rate"
 msgstr "Интервал освобождения текстур"
 
@@ -66075,16 +65669,8 @@ msgid "UI Line Width"
 msgstr "Толщина линий интерфейса"
 
 
-msgid "Suggested line thickness and point size in pixels, for add-ons drawing custom user interface elements, based on operating system settings and Blender UI scale"
-msgstr "Предлагаемая толщина линий и размер точек в пикселях, для отрисовки аддонов и элементов пользовательского интерфейса, на основании операционной системы и масштаба интерфейса Blender"
-
-
 msgid "UI Scale"
 msgstr "Масштаб интерфейса"
-
-
-msgid "Size multiplier to use when drawing custom user interface elements, so that they are scaled correctly on screens with different DPI. This value is based on operating system DPI settings and Blender display scale"
-msgstr "Коэффициент масштабирования, используемый в отрисовке элементов интерфейса, для того чтобы он отображался корректно на устройствах с разной плотностью пикселей. Этот коэффициент основан на настройках DPI системы и коэффициента масштабирования Blender"
 
 
 msgid "Edit-Mode Smooth Wires"
@@ -66097,10 +65683,6 @@ msgstr "Включить режим сглаживания краев в реж�
 
 msgid "Region Overlap"
 msgstr "Разрешить перекрытие регионов"
-
-
-msgid "Draw tool/property regions over the main region"
-msgstr "Отрисовывать регионы с инструментами и свойствами поверх основной области"
 
 
 msgid "OpenGL Depth Picking"
@@ -66661,10 +66243,6 @@ msgstr "Предупреждать о сохранении"
 
 msgid "Ask for confirmation when quitting with unsaved changes"
 msgstr "Запрашивать подтверждение при выходе с несохранёнными данными"
-
-
-msgid "Draw user interface text anti-aliased"
-msgstr "Отображать текст пользовательского интерфейса со сглаживанием"
 
 
 msgid "Translate Interface"
@@ -69143,20 +68721,12 @@ msgid "Sequencer Preview Shading"
 msgstr "Затенение при просмотре в видеоредакторе"
 
 
-msgid "Method to draw in the sequencer view"
-msgstr "Метод прорисовки в зоне просмотра видеоредакторе"
-
-
 msgid "Display the object as wire edges"
 msgstr "Отображать объект в виде каркасных граней"
 
 
 msgid "Display in solid mode"
 msgstr "Отображать в режиме сплошного затенения"
-
-
-msgid "Material Preview"
-msgstr "Предпросмотр материала"
 
 
 msgid "Display in Material Preview mode"
@@ -73534,10 +73104,6 @@ msgid "Display Channels"
 msgstr "Отобразить каналы"
 
 
-msgid "Channels of the image to draw"
-msgstr "Отображаемые каналы изображения"
-
-
 msgid "Color and Alpha"
 msgstr "Цвет и прозрачность"
 
@@ -73768,6 +73334,10 @@ msgstr "Пространство редактора нодов"
 
 msgid "Node editor space data"
 msgstr "Данные пространства редактора нодов"
+
+
+msgid "Channels of the image to draw"
+msgstr "Отображаемые каналы изображения"
 
 
 msgid "Display alpha transparency channel"
@@ -74238,10 +73808,6 @@ msgid "Overlay Type"
 msgstr "Тип перекрытия"
 
 
-msgid "Overlay draw type"
-msgstr "Тип отрисовки перекрытия"
-
-
 msgid "Show rectangle area overlay"
 msgstr "Отображать перекрытие прямоуг. области"
 
@@ -74260,14 +73826,6 @@ msgstr "Текущий"
 
 msgid "Show current frame only"
 msgstr "Отображать только текущий кадр"
-
-
-msgid "Channels of the preview to draw"
-msgstr "Отображаемые каналы в предварительном просмотре"
-
-
-msgid "Display preview using full resolution or different proxy resolutions"
-msgstr "Отображать предпросмотр с полным разрешением или иным разрешением прокси"
 
 
 msgid "No display"
@@ -74362,32 +73920,16 @@ msgid "Sequencer/Preview"
 msgstr "Редактор/предпросмотр"
 
 
-msgid "How Waveforms are drawn"
-msgstr "Способ отрисовки формы волн"
-
-
 msgid "Waveforms Off"
 msgstr "Выключить формы волн"
-
-
-msgid "No waveforms drawn for any sound strips"
-msgstr "Не рисовать формы звуковых волн для аудиодорожек"
 
 
 msgid "Waveforms On"
 msgstr "Включить формы волн"
 
 
-msgid "Waveforms drawn for all sound strips"
-msgstr "Рисовать формы звуковых волн для всех аудиодорожек"
-
-
 msgid "Use Strip Option"
 msgstr "Использовать настройки дорожек"
-
-
-msgid "Waveforms drawn according to strip setting"
-msgstr "Рисовать формы звуковых волн согласно настройкам дорожек"
 
 
 msgid "Space Text Editor"
@@ -74754,10 +74296,6 @@ msgid "Stereo Eye"
 msgstr "Стерео"
 
 
-msgid "Current stereo eye being drawn"
-msgstr "Глаз, для которого рисуется изображение"
-
-
 msgid "Left Eye"
 msgstr "Левый глаз"
 
@@ -74806,10 +74344,6 @@ msgid "Display a different set of collections in this viewport"
 msgstr "Отображать другой набор коллекций в этом вьюпорте"
 
 
-msgid "Use a region within the frame size for rendered viewport(when not viewing through the camera)"
-msgstr "Использовать регион внутри кадра для рендера во вьюпорте (при просмотре не через камеру)"
-
-
 msgid "Show Overlays"
 msgstr "Показать наложения"
 
@@ -74828,10 +74362,6 @@ msgstr "Данные UV-редактора для пространства ре�
 
 msgid "Display Stretch Type"
 msgstr "Тип отображаемого растяжения"
-
-
-msgid "Type of stretch to draw"
-msgstr "Тип растяжения для отрисовки"
 
 
 msgid "Angular distortion between UV and 3D angles"
@@ -75160,6 +74690,10 @@ msgstr "Путь к кэшу студ. освещ."
 
 msgid "Path where the spherical harmonics cache is stored"
 msgstr "Директория, где хранится кэш сферических гармоник"
+
+
+msgid "Lights user to display objects in solid draw mode"
+msgstr "Источники света для отображения объектов в режиме сплошного затенения"
 
 
 msgid "Collection of studio lights"
@@ -75612,10 +75146,6 @@ msgstr "UV-карта, используемая для отображения т
 
 msgid "Amount texture affects particle initial velocity"
 msgstr "Величина влияния текстуры на начальную скорость частиц"
-
-
-msgid "Theme settings defining draw style and colors in the user interface"
-msgstr "Настройки темы, определяющие стиль прорисовки и цвета пользовательского интерфейса"
 
 
 msgid "Clip Editor"
@@ -76170,16 +75700,8 @@ msgid "Meta Strips"
 msgstr "Метадорожки"
 
 
-msgid "Meta Strip - Unselected (for grouping related strips)"
-msgstr "Метадорожка — невыделенная (для группировки родственных полос)"
-
-
 msgid "Meta Strips Selected"
 msgstr "Выделенные метадорожки"
-
-
-msgid "Meta Strip - Selected (for grouping related strips)"
-msgstr "Метадорожка — выделенная (для группировки родственных полос)"
 
 
 msgid "Nonlinear Animation Track"
@@ -76190,44 +75712,16 @@ msgid "Sound Strips"
 msgstr "Аудиодорожки"
 
 
-msgid "Sound Strip - Unselected (for timing speaker sounds)"
-msgstr "Аудиодорожка — невыделенная (для синхронизации звуков динамиков)"
-
-
 msgid "Sound Strips Selected"
 msgstr "Выделенные аудиодорожки"
-
-
-msgid "Sound Strip - Selected (for timing speaker sounds)"
-msgstr "Аудиодорожка — выделенная (для синхронизации звуков динамиков)"
-
-
-msgid "Action-Clip Strip - Unselected"
-msgstr "Дорожка клипа действия — невыделенная"
-
-
-msgid "Action-Clip Strip - Selected"
-msgstr "Дорожка клипа действия — выделенная"
 
 
 msgid "Transitions"
 msgstr "Переходы"
 
 
-msgid "Transition Strip - Unselected"
-msgstr "Дорожка перехода — невыделенная"
-
-
 msgid "Transitions Selected"
 msgstr "Выделенные переходы"
-
-
-msgid "Transition Strip - Selected"
-msgstr "Дорожка перехода — выделенная"
-
-
-msgid "Color for strip/action being 'tweaked' or edited"
-msgstr "Цвет настраиваемой или редактируемой дорожки/действия"
 
 
 msgid "Tweak Duplicate Flag"
@@ -77811,10 +77305,6 @@ msgid "Solid Light"
 msgstr "Сплошной свет"
 
 
-msgid "Light used for Studio lighting in solid draw mode"
-msgstr "Свет используемый для студийного освещения в режиме сплошного затенения"
-
-
 msgid "Color of the light's diffuse highlight"
 msgstr "Цвет диффузного освещения"
 
@@ -77829,10 +77319,6 @@ msgstr "Смягчить свет из этого источника света"
 
 msgid "Color of the light's specular highlight"
 msgstr "Цвет зеркального освещения (блика)"
-
-
-msgid "Enable this light in solid draw mode"
-msgstr "Использовать этот свет в режиме сплошного затенения"
 
 
 msgid "Collection of sculpt vertex colors"
@@ -77995,24 +77481,12 @@ msgid "Display 3D curve normals in editmode"
 msgstr "Отображать нормали для 3D-кривых в режиме редактирования"
 
 
-msgid "Draw Bevel Weights"
-msgstr "Отображать веса фасок"
-
-
 msgid "Display weights created for the Bevel modifier"
 msgstr "Отображать веса, созданные для модификатора фаски"
 
 
-msgid "Draw Creases"
-msgstr "Отображать складки"
-
-
 msgid "Display creases created for Subdivision Surface modifier"
 msgstr "Отображать складки, созданные для модификатора подразделения поверхности"
-
-
-msgid "Draw Seams"
-msgstr "Отобразить швы"
 
 
 msgid "Display UV unwrapping seams"
@@ -78021,10 +77495,6 @@ msgstr "Отобразить швы UV-развёртки"
 
 msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "Отображать острые грани, используемые для модификатора разделения рёбер"
-
-
-msgid "Draw Edges"
-msgstr "Рисовать рёбра"
 
 
 msgid "Highlight selected edges"
@@ -78067,10 +77537,6 @@ msgid "Object details, including empty wire, cameras and other visual guides"
 msgstr "Детали объектов, такие как пустая сетка, камеры и другие визуальные элементы"
 
 
-msgid "Draw Face Center"
-msgstr "Рисовать центры граней"
-
-
 msgid "Display Normals"
 msgstr "Отображать нормали"
 
@@ -78087,10 +77553,6 @@ msgid "Show the Face Orientation Overlay"
 msgstr "Отображать наложение ориентации граней"
 
 
-msgid "Draw Faces"
-msgstr "Отобразить грани"
-
-
 msgid "Highlight selected faces"
 msgstr "Подсвечивать выделенные грани"
 
@@ -78103,16 +77565,8 @@ msgid "Show the ground plane grid"
 msgstr "Отображать сетку плоскости пола"
 
 
-msgid "Draw Freestyle Edge Marks"
-msgstr "Отображать метки рёбер Freestyle"
-
-
 msgid "Display Freestyle edge marks, used with the Freestyle renderer"
 msgstr "Отобразить метки рёбер Freestyle, используемые в системе рендеринга Freestyle"
-
-
-msgid "Draw Freestyle Face Marks"
-msgstr "Отображать метки граней Freestyle"
 
 
 msgid "Display Freestyle face marks, used with the Freestyle renderer"
@@ -78339,10 +77793,6 @@ msgid "Color for custom background color"
 msgstr "Цвет настраиваемого фонового цвета"
 
 
-msgid "Way to draw the background"
-msgstr "Способ отрисовки фона"
-
-
 msgid "Theme"
 msgstr "Тема"
 
@@ -78369,10 +77819,6 @@ msgstr "Коэффициент выделения выпуклостей"
 
 msgid "Cavity Type"
 msgstr "Тип неровностей"
-
-
-msgid "Way to draw the cavity shading"
-msgstr "Способ отрисовки эффекта выделения впадин и граней"
 
 
 msgid "Cavity shading computed in world space, useful for larger-scale occlusion"
@@ -82794,14 +82240,6 @@ msgid "Sync Selection"
 msgstr "Синхронизировать выделение"
 
 
-msgid "Search:"
-msgstr "Поиск:"
-
-
-msgid "Filter:"
-msgstr "Фильтр:"
-
-
 msgid "Object Contents"
 msgstr "Содержимое объектов"
 
@@ -82822,10 +82260,6 @@ msgstr "Скрыть один уровень"
 msgctxt "Operator"
 msgid "Link to Scene"
 msgstr "Ссылка в сцену"
-
-
-msgid "Restriction Toggles:"
-msgstr "Переключатели ограничений:"
 
 
 msgid "Others"
@@ -83715,10 +83149,6 @@ msgstr "Кэш рендера"
 
 msgid "I18n Branches"
 msgstr "Ветки i18n"
-
-
-msgid "Excluded Paths:"
-msgstr "Исключаемые папки:"
 
 
 msgid "Recent Locations"
@@ -84740,10 +84170,6 @@ msgid "Zero Weights"
 msgstr "Нулевые веса"
 
 
-msgid "Display:"
-msgstr "Отображение:"
-
-
 msgctxt "Operator"
 msgid "Move Texture Space"
 msgstr "Переместить текстурное пространство"
@@ -85242,10 +84668,6 @@ msgid "Marker Names"
 msgstr "Имена маркеров"
 
 
-msgid "Tracks:"
-msgstr "Треки:"
-
-
 msgid "Developer"
 msgstr "Разработчик"
 
@@ -85429,10 +84851,6 @@ msgstr "Влиять только"
 
 msgid "Locations"
 msgstr "Позиции"
-
-
-msgid "Display Color"
-msgstr "Отображаемый цвет"
 
 
 msgid "Refine Method"
@@ -92528,10 +91946,6 @@ msgid "Modifier was not found in the stack"
 msgstr "Модификатор не найден в стеке"
 
 
-msgid "Sequences.new_image: unable to open image file"
-msgstr "Sequences.new_image: не удалось открыть файл изображения"
-
-
 msgid "Sequences.new_sound: unable to open sound file"
 msgstr "Sequences.new_sound: не удалось открыть звуковой файл"
 
@@ -92931,10 +92345,6 @@ msgstr "Нижний левый"
 
 msgid "Lower Right"
 msgstr "Нижний правый"
-
-
-msgid "Pick"
-msgstr "Выбрать"
 
 
 msgid "Albedo"
