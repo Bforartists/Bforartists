@@ -25,20 +25,20 @@
 
 #include "node_geometry_util.hh"
 
-static bNodeSocketTemplate geo_node_subdivision_surface_simple_in[] = {
+static bNodeSocketTemplate geo_node_subdivide_in[] = {
     {SOCK_GEOMETRY, N_("Geometry")},
     {SOCK_INT, N_("Level"), 1, 0, 0, 0, 0, 6},
     {-1, ""},
 };
 
-static bNodeSocketTemplate geo_node_subdivision_surface_simple_out[] = {
+static bNodeSocketTemplate geo_node_subdivide_out[] = {
     {SOCK_GEOMETRY, N_("Geometry")},
     {-1, ""},
 };
 
 namespace blender::nodes {
 
-static void geo_node_subdivision_surface_simple_exec(GeoNodeExecParams params)
+static void geo_node_subdivide_exec(GeoNodeExecParams params)
 {
   GeometrySet geometry_set = params.extract_input<GeometrySet>("Geometry");
 
@@ -91,7 +91,8 @@ static void geo_node_subdivision_surface_simple_exec(GeoNodeExecParams params)
   Mesh *mesh_out = BKE_subdiv_to_mesh(subdiv, &mesh_settings, mesh_in);
   BKE_mesh_calc_normals(mesh_out);
 
-  geometry_set.replace_mesh(mesh_out);
+  MeshComponent &mesh_component = geometry_set.get_component_for_write<MeshComponent>();
+  mesh_component.replace_mesh_but_keep_vertex_group_names(mesh_out);
 
   BKE_subdiv_free(subdiv);
 
@@ -99,17 +100,12 @@ static void geo_node_subdivision_surface_simple_exec(GeoNodeExecParams params)
 }
 }  // namespace blender::nodes
 
-void register_node_type_geo_subdivision_surface_simple()
+void register_node_type_geo_subdivide()
 {
   static bNodeType ntype;
 
-  geo_node_type_base(&ntype,
-                     GEO_NODE_SUBDIVISION_SURFACE_SIMPLE,
-                     "Simple Subdivision Surface",
-                     NODE_CLASS_GEOMETRY,
-                     0);
-  node_type_socket_templates(
-      &ntype, geo_node_subdivision_surface_simple_in, geo_node_subdivision_surface_simple_out);
-  ntype.geometry_node_execute = blender::nodes::geo_node_subdivision_surface_simple_exec;
+  geo_node_type_base(&ntype, GEO_NODE_SUBDIVIDE, "Subdivide", NODE_CLASS_GEOMETRY, 0);
+  node_type_socket_templates(&ntype, geo_node_subdivide_in, geo_node_subdivide_out);
+  ntype.geometry_node_execute = blender::nodes::geo_node_subdivide_exec;
   nodeRegisterType(&ntype);
 }

@@ -20,8 +20,8 @@
 
 __author__ = "Alexander Milovsky, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 from math import sin, cos, pi
 
@@ -30,7 +30,8 @@ import bmesh
 from bpy.props import (
     FloatProperty,
     FloatVectorProperty,
-    BoolProperty
+    BoolProperty,
+    EnumProperty
 )
 from mathutils import Vector
 
@@ -70,7 +71,9 @@ def _get_uv_layer(ops_obj, bm, assign_uvmap):
     return uv_layer
 
 
-def _apply_box_map(bm, uv_layer, size, offset, rotation, tex_aspect):
+def _apply_box_map(bm, uv_layer, size, offset, rotation,
+                   tex_aspect, force_axis, force_axis_tex_aspect_correction,
+                   force_axis_rotation):
     scale = 1.0 / size
 
     sx = 1.0 * scale
@@ -82,7 +85,10 @@ def _apply_box_map(bm, uv_layer, size, offset, rotation, tex_aspect):
     rx = rotation[0] * pi / 180.0
     ry = rotation[1] * pi / 180.0
     rz = rotation[2] * pi / 180.0
-    aspect = tex_aspect
+
+    farx = force_axis_rotation[0] * pi / 180.0
+    fary = force_axis_rotation[1] * pi / 180.0
+    farz = force_axis_rotation[2] * pi / 180.0
 
     sel_faces = [f for f in bm.faces if f.select]
 
@@ -94,37 +100,116 @@ def _apply_box_map(bm, uv_layer, size, offset, rotation, tex_aspect):
             x = co.x * sx
             y = co.y * sy
             z = co.z * sz
+            aspect = tex_aspect
 
-            # X-plane
-            if abs(n[0]) >= abs(n[1]) and abs(n[0]) >= abs(n[2]):
-                if n[0] >= 0.0:
-                    u = (y - ofy) * cos(rx) + (z - ofz) * sin(rx)
-                    v = -(y * aspect - ofy) * sin(rx) + \
-                        (z * aspect - ofz) * cos(rx)
-                else:
-                    u = -(y - ofy) * cos(rx) + (z - ofz) * sin(rx)
-                    v = (y * aspect - ofy) * sin(rx) + \
-                        (z * aspect - ofz) * cos(rx)
-            # Y-plane
-            elif abs(n[1]) >= abs(n[0]) and abs(n[1]) >= abs(n[2]):
-                if n[1] >= 0.0:
-                    u = -(x - ofx) * cos(ry) + (z - ofz) * sin(ry)
-                    v = (x * aspect - ofx) * sin(ry) + \
-                        (z * aspect - ofz) * cos(ry)
-                else:
-                    u = (x - ofx) * cos(ry) + (z - ofz) * sin(ry)
-                    v = -(x * aspect - ofx) * sin(ry) + \
-                        (z * aspect - ofz) * cos(ry)
-            # Z-plane
-            else:
-                if n[2] >= 0.0:
-                    u = (x - ofx) * cos(rz) + (y - ofy) * sin(rz)
-                    v = -(x * aspect - ofx) * sin(rz) + \
-                        (y * aspect - ofy) * cos(rz)
-                else:
-                    u = -(x - ofx) * cos(rz) - (y + ofy) * sin(rz)
-                    v = -(x * aspect + ofx) * sin(rz) + \
-                        (y * aspect - ofy) * cos(rz)
+            transformed = False
+            if force_axis == 'X':
+                # Use Y-plane
+                if abs(n[1]) < abs(n[0]) and abs(n[1]) >= abs(n[2]):
+                    aspect *= force_axis_tex_aspect_correction
+                    if n[1] >= 0.0:
+                        u = -(x - ofx) * cos(fary) + (z - ofz) * sin(fary)
+                        v = (x * aspect - ofx) * sin(fary) + \
+                            (z * aspect - ofz) * cos(fary)
+                    else:
+                        u = (x - ofx) * cos(fary) + (z - ofz) * sin(fary)
+                        v = -(x * aspect - ofx) * sin(fary) + \
+                            (z * aspect - ofz) * cos(fary)
+                    transformed = True
+                # Use Z-plane
+                elif abs(n[2]) < abs(n[0]) and abs(n[2]) >= abs(n[1]):
+                    aspect *= force_axis_tex_aspect_correction
+                    if n[2] >= 0.0:
+                        u = (x - ofx) * cos(farz) + (y - ofy) * sin(farz)
+                        v = -(x * aspect - ofx) * sin(farz) + \
+                            (y * aspect - ofy) * cos(farz)
+                    else:
+                        u = -(x - ofx) * cos(farz) - (y + ofy) * sin(farz)
+                        v = -(x * aspect + ofx) * sin(farz) + \
+                            (y * aspect - ofy) * cos(farz)
+                    transformed = True
+            elif force_axis == 'Y':
+                # Use X-plane
+                if abs(n[0]) < abs(n[1]) and abs(n[0]) >= abs(n[2]):
+                    aspect *= force_axis_tex_aspect_correction
+                    if n[0] >= 0.0:
+                        u = (y - ofy) * cos(farx) + (z - ofz) * sin(farx)
+                        v = -(y * aspect - ofy) * sin(farx) + \
+                            (z * aspect - ofz) * cos(farx)
+                    else:
+                        u = -(y - ofy) * cos(farx) + (z - ofz) * sin(farx)
+                        v = (y * aspect - ofy) * sin(farx) + \
+                            (z * aspect - ofz) * cos(farx)
+                    transformed = True
+                # Use Z-plane
+                elif abs(n[2]) >= abs(n[0]) and abs(n[2]) < abs(n[1]):
+                    aspect *= force_axis_tex_aspect_correction
+                    if n[2] >= 0.0:
+                        u = (x - ofx) * cos(farz) + (y - ofy) * sin(farz)
+                        v = -(x * aspect - ofx) * sin(farz) + \
+                            (y * aspect - ofy) * cos(farz)
+                    else:
+                        u = -(x - ofx) * cos(farz) - (y + ofy) * sin(farz)
+                        v = -(x * aspect + ofx) * sin(farz) + \
+                            (y * aspect - ofy) * cos(farz)
+                    transformed = True
+            elif force_axis == 'Z':
+                # Use X-plane
+                if abs(n[0]) >= abs(n[1]) and abs(n[0]) < abs(n[2]):
+                    aspect *= force_axis_tex_aspect_correction
+                    if n[0] >= 0.0:
+                        u = (y - ofy) * cos(farx) + (z - ofz) * sin(farx)
+                        v = -(y * aspect - ofy) * sin(farx) + \
+                            (z * aspect - ofz) * cos(farx)
+                    else:
+                        u = -(y - ofy) * cos(farx) + (z - ofz) * sin(farx)
+                        v = (y * aspect - ofy) * sin(farx) + \
+                            (z * aspect - ofz) * cos(farx)
+                    transformed = True
+                # Use Y-plane
+                elif abs(n[1]) >= abs(n[0]) and abs(n[1]) < abs(n[2]):
+                    aspect *= force_axis_tex_aspect_correction
+                    if n[1] >= 0.0:
+                        u = -(x - ofx) * cos(fary) + (z - ofz) * sin(fary)
+                        v = (x * aspect - ofx) * sin(fary) + \
+                            (z * aspect - ofz) * cos(fary)
+                    else:
+                        u = (x - ofx) * cos(fary) + (z - ofz) * sin(fary)
+                        v = -(x * aspect - ofx) * sin(fary) + \
+                            (z * aspect - ofz) * cos(fary)
+                    transformed = True
+
+            if not transformed:
+                # X-plane
+                if abs(n[0]) >= abs(n[1]) and abs(n[0]) >= abs(n[2]):
+                    if n[0] >= 0.0:
+                        u = (y - ofy) * cos(rx) + (z - ofz) * sin(rx)
+                        v = -(y * aspect - ofy) * sin(rx) + \
+                            (z * aspect - ofz) * cos(rx)
+                    else:
+                        u = -(y - ofy) * cos(rx) + (z - ofz) * sin(rx)
+                        v = (y * aspect - ofy) * sin(rx) + \
+                            (z * aspect - ofz) * cos(rx)
+                # Y-plane
+                elif abs(n[1]) >= abs(n[0]) and abs(n[1]) >= abs(n[2]):
+                    if n[1] >= 0.0:
+                        u = -(x - ofx) * cos(ry) + (z - ofz) * sin(ry)
+                        v = (x * aspect - ofx) * sin(ry) + \
+                            (z * aspect - ofz) * cos(ry)
+                    else:
+                        u = (x - ofx) * cos(ry) + (z - ofz) * sin(ry)
+                        v = -(x * aspect - ofx) * sin(ry) + \
+                            (z * aspect - ofz) * cos(ry)
+                # Z-plane
+                elif abs(n[2]) >= abs(n[0]) and abs(n[2]) >= abs(n[1]):
+                    if n[2] >= 0.0:
+                        u = (x - ofx) * cos(rz) + (y - ofy) * sin(rz)
+                        v = -(x * aspect - ofx) * sin(rz) + \
+                            (y * aspect - ofy) * cos(rz)
+                    else:
+                        u = -(x - ofx) * cos(rz) - (y + ofy) * sin(rz)
+                        v = -(x * aspect + ofx) * sin(rz) + \
+                            (y * aspect - ofy) * cos(rz)
 
             l[uv_layer].uv = Vector((u, v))
 
@@ -196,14 +281,16 @@ class MUV_OT_UVW_BoxMap(bpy.types.Operator):
         precision=4
     )
     rotation = FloatVectorProperty(
-        name="XYZ Rotation",
+        name="Rotation",
         size=3,
-        default=(0.0, 0.0, 0.0)
+        default=(0.0, 0.0, 0.0),
+        subtype='XYZ'
     )
     offset = FloatVectorProperty(
-        name="XYZ Offset",
+        name="Offset",
         size=3,
-        default=(0.0, 0.0, 0.0)
+        default=(0.0, 0.0, 0.0),
+        subtype='XYZ'
     )
     tex_aspect = FloatProperty(
         name="Texture Aspect",
@@ -215,6 +302,30 @@ class MUV_OT_UVW_BoxMap(bpy.types.Operator):
         description="Assign UVMap when no UVmaps are available",
         default=True
     )
+    force_axis = EnumProperty(
+        name="Force Axis",
+        description="Axis to force the mapping",
+        items=[
+            ('NONE', "None", "None"),
+            ('X', "X", "Axis X"),
+            ('Y', "Y", "Axis Y"),
+            ('Z', "Z", "Axis Z")
+        ],
+        default='NONE'
+    )
+    force_axis_tex_aspect_correction = FloatProperty(
+        name="Texture Aspect Correction (Force Axis)",
+        description="Texture Aspect correction for the faces mapped forcibly",
+        default=3.14,
+        precision=4
+    )
+    force_axis_rotation = FloatVectorProperty(
+        name="Rotation (Force Axis)",
+        description="Rotation for the faces mapped forcibly",
+        size=3,
+        default=(0.0, 0.0, 0.0),
+        subtype='XYZ'
+    )
 
     @classmethod
     def poll(cls, context):
@@ -222,6 +333,39 @@ class MUV_OT_UVW_BoxMap(bpy.types.Operator):
         if common.is_console_mode():
             return True
         return _is_valid_context(context)
+
+    def draw(self, _):
+        layout = self.layout
+
+        col = layout.column()
+        row = col.row()
+        row.label(text="Size:")
+        row.prop(self, "size", text="")
+
+        layout.label(text="Rotation:")
+        layout.row().prop(self, "rotation", text="")
+
+        layout.label(text="Offset:")
+        layout.row().prop(self, "offset", text="")
+
+        col = layout.column()
+        row = col.row()
+        row.label(text="Texture Aspect:")
+        row.prop(self, "tex_aspect", text="")
+
+        layout.prop(self, "assign_uvmap")
+
+        layout.separator(factor=2.0)
+
+        layout.prop(self, "force_axis")
+        if self.force_axis != 'NONE':
+            col = layout.column()
+            row = col.row()
+            row.label(text="Texture Aspect Correction (Force Axis)")
+            row.prop(self, "force_axis_tex_aspect_correction", text="")
+
+            layout.label(text="Rotation (Force Axis)")
+            layout.row().prop(self, "force_axis_rotation", text="")
 
     def execute(self, context):
         objs = common.get_uv_editable_objects(context)
@@ -237,7 +381,9 @@ class MUV_OT_UVW_BoxMap(bpy.types.Operator):
                 return {'CANCELLED'}
 
             _apply_box_map(bm, uv_layer, self.size, self.offset, self.rotation,
-                           self.tex_aspect)
+                           self.tex_aspect, self.force_axis,
+                           self.force_axis_tex_aspect_correction,
+                           self.force_axis_rotation)
             bmesh.update_edit_mesh(obj.data)
 
         return {'FINISHED'}
@@ -256,11 +402,11 @@ class MUV_OT_UVW_BestPlanerMap(bpy.types.Operator):
         precision=4
     )
     rotation = FloatProperty(
-        name="XY Rotation",
+        name="Rotation",
         default=0.0
     )
     offset = FloatVectorProperty(
-        name="XY Offset",
+        name="Offset",
         size=2,
         default=(0.0, 0.0)
     )

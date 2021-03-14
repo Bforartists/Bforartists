@@ -540,18 +540,11 @@ void ntreeBlendWrite(BlendWriter *writer, bNodeTree *ntree)
       }
       else if ((ntree->type == NTREE_COMPOSIT) && (node->type == CMP_NODE_CRYPTOMATTE)) {
         NodeCryptomatte *nc = (NodeCryptomatte *)node->storage;
-        /* Update the matte_id so the files can be opened in versions that don't
-         * use `CryptomatteEntry`. */
-        MEM_SAFE_FREE(nc->matte_id);
-        nc->matte_id = BKE_cryptomatte_entries_to_matte_id(nc);
-        if (nc->matte_id) {
-          BLO_write_string(writer, nc->matte_id);
-        }
+        BLO_write_string(writer, nc->matte_id);
         LISTBASE_FOREACH (CryptomatteEntry *, entry, &nc->entries) {
           BLO_write_struct(writer, CryptomatteEntry, entry);
         }
         BLO_write_struct_by_name(writer, node->typeinfo->storagename, node->storage);
-        MEM_SAFE_FREE(nc->matte_id);
       }
       else if (node->type == FN_NODE_INPUT_STRING) {
         NodeInputString *storage = (NodeInputString *)node->storage;
@@ -1575,6 +1568,8 @@ const char *nodeStaticSocketType(int type, int subtype)
           return "NodeSocketFloatAngle";
         case PROP_TIME:
           return "NodeSocketFloatTime";
+        case PROP_DISTANCE:
+          return "NodeSocketFloatDistance";
         case PROP_NONE:
         default:
           return "NodeSocketFloat";
@@ -1644,6 +1639,8 @@ const char *nodeStaticSocketInterfaceType(int type, int subtype)
           return "NodeSocketInterfaceFloatAngle";
         case PROP_TIME:
           return "NodeSocketInterfaceFloatTime";
+        case PROP_DISTANCE:
+          return "NodeSocketInterfaceFloatDistance";
         case PROP_NONE:
         default:
           return "NodeSocketInterfaceFloat";
@@ -4795,6 +4792,7 @@ static void registerGeometryNodes()
   register_node_type_geo_attribute_color_ramp();
   register_node_type_geo_attribute_combine_xyz();
   register_node_type_geo_attribute_compare();
+  register_node_type_geo_attribute_convert();
   register_node_type_geo_attribute_fill();
   register_node_type_geo_attribute_math();
   register_node_type_geo_attribute_mix();
@@ -4802,6 +4800,7 @@ static void registerGeometryNodes()
   register_node_type_geo_attribute_randomize();
   register_node_type_geo_attribute_separate_xyz();
   register_node_type_geo_attribute_vector_math();
+  register_node_type_geo_attribute_remove();
   register_node_type_geo_boolean();
   register_node_type_geo_collection_info();
   register_node_type_geo_edge_split();
@@ -4816,8 +4815,8 @@ static void registerGeometryNodes()
   register_node_type_geo_point_translate();
   register_node_type_geo_points_to_volume();
   register_node_type_geo_sample_texture();
-  register_node_type_geo_subdivision_surface();
-  register_node_type_geo_subdivision_surface_simple();
+  register_node_type_geo_subdivide_smooth();
+  register_node_type_geo_subdivide();
   register_node_type_geo_transform();
   register_node_type_geo_triangulate();
   register_node_type_geo_volume_to_mesh();

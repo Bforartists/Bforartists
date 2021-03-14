@@ -159,6 +159,11 @@ def glEnd():
             #shader = gpu.shader.from_builtin('2D_IMAGE')
             vert_shader, frag_shader = _get_transparency_shader()
             shader = gpu.types.GPUShader(vert_shader, frag_shader)
+    elif inst.get_dims() == 3:
+        if len(tex_coords) == 0:
+            shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        else:
+            raise NotImplemented("Texture is not supported in get_dims() == 3")
     else:
         raise NotImplemented("get_dims() != 2")
 
@@ -223,6 +228,12 @@ def glVertex2f(x, y):
     inst.set_dims(2)
 
 
+def glVertex3f(x, y, z):
+    inst = InternalData.get_instance()
+    inst.add_vert([x, y, z])
+    inst.set_dims(3)
+
+
 def glTexCoord2f(u, v):
     inst = InternalData.get_instance()
     inst.add_tex_coord([u, v])
@@ -234,6 +245,7 @@ GL_INT = bgl.GL_INT
 GL_SCISSOR_BOX = bgl.GL_SCISSOR_BOX
 GL_TEXTURE_2D = bgl.GL_TEXTURE_2D
 GL_TEXTURE0 = bgl.GL_TEXTURE0
+GL_DEPTH_TEST = bgl.GL_DEPTH_TEST
 
 GL_TEXTURE_MIN_FILTER = 0
 GL_TEXTURE_MAG_FILTER = 0

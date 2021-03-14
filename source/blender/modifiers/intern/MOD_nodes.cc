@@ -306,12 +306,7 @@ class GeometryNodesEvaluator {
 
     /* Multi-input sockets contain a vector of inputs. */
     if (socket_to_compute->is_multi_input_socket()) {
-      Vector<GMutablePointer> values;
-      for (const DSocket from_socket : from_sockets) {
-        GMutablePointer value = get_input_from_incoming_link(socket_to_compute, from_socket);
-        values.append(value);
-      }
-      return values;
+      return this->get_inputs_from_incoming_links(socket_to_compute, from_sockets);
     }
 
     if (from_sockets.is_empty()) {
@@ -323,6 +318,29 @@ class GeometryNodesEvaluator {
     const DSocket from_socket = from_sockets[0];
     GMutablePointer value = this->get_input_from_incoming_link(socket_to_compute, from_socket);
     return {value};
+  }
+
+  Vector<GMutablePointer> get_inputs_from_incoming_links(const DInputSocket socket_to_compute,
+                                                         const Span<DSocket> from_sockets)
+  {
+    Vector<GMutablePointer> values;
+    for (const int i : from_sockets.index_range()) {
+      const DSocket from_socket = from_sockets[i];
+      const int first_occurence = from_sockets.take_front(i).first_index_try(from_socket);
+      if (first_occurence == -1) {
+        values.append(this->get_input_from_incoming_link(socket_to_compute, from_socket));
+      }
+      else {
+        /* If the same from-socket occurs more than once, we make a copy of the first value. This
+         * can happen when a node linked to a multi-input-socket is muted. */
+        GMutablePointer value = values[first_occurence];
+        const CPPType *type = value.type();
+        void *copy_buffer = allocator_.allocate(type->size(), type->alignment());
+        type->copy_to_uninitialized(value.get(), copy_buffer);
+        values.append({type, copy_buffer});
+      }
+    }
+    return values;
   }
 
   GMutablePointer get_input_from_incoming_link(const DInputSocket socket_to_compute,
@@ -424,6 +442,10 @@ class GeometryNodesEvaluator {
       if (socket_ref->bsocket()->type != SOCK_GEOMETRY) {
         continue;
       }
+      if (socket_ref->is_multi_input_socket()) {
+        /* Not needed currently. */
+        continue;
+      }
 
       bNodeTree *btree_cow = node->btree();
       bNodeTree *btree_original = (bNodeTree *)DEG_get_original_id((ID *)btree_cow);
@@ -496,7 +518,7 @@ class GeometryNodesEvaluator {
     /* For all sockets that are linked with the from_socket push the value to their node. */
     Vector<DInputSocket> to_sockets_all;
     from_socket.foreach_target_socket(
-        [&](DInputSocket to_socket) { to_sockets_all.append(to_socket); });
+        [&](DInputSocket to_socket) { to_sockets_all.append_non_duplicates(to_socket); });
 
     const CPPType &from_type = *value_to_forward.type();
     Vector<DInputSocket> to_sockets_same_type;
@@ -625,7 +647,7 @@ static IDProperty *socket_add_property(IDProperty *settings_prop_group,
 
   prop->flag |= IDP_FLAG_OVERRIDABLE_LIBRARY;
 
-  /* Make the group in the ui container group to hold the property's UI settings. */
+  /* Make the group in the UI container group to hold the property's UI settings. */
   IDProperty *prop_ui_group;
   {
     IDPropertyTemplate idprop = {0};
@@ -1045,8 +1067,8 @@ static GeometrySet compute_geometry(const DerivedNodeTree &tree,
      * modifier. */
     const OutputSocketRef *first_input_socket = group_input_sockets[0];
     if (first_input_socket->bsocket()->type == SOCK_GEOMETRY) {
-      GeometrySet *geometry_set_in = allocator.construct<GeometrySet>(
-          std::move(input_geometry_set));
+      GeometrySet *geometry_set_in =
+          allocator.construct<GeometrySet>(std::move(input_geometry_set)).release();
       group_inputs.add_new({root_context, first_input_socket}, geometry_set_in);
       remaining_input_sockets = remaining_input_sockets.drop_front(1);
     }

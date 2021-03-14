@@ -20,10 +20,11 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 from collections import namedtuple
+from math import sin, cos
 
 import bpy
 import bmesh
@@ -32,6 +33,7 @@ from bpy.props import (
     BoolProperty,
     EnumProperty,
     FloatProperty,
+    FloatVectorProperty,
 )
 import mathutils
 
@@ -56,7 +58,7 @@ def _get_loaded_texture_name(_, __):
     return items
 
 
-def _get_canvas(context, magnitude):
+def _get_canvas(context):
     """
     Get canvas to be renderred texture
     """
@@ -88,11 +90,11 @@ def _get_canvas(context, magnitude):
             len_y = canvas_h
     else:
         if sc.muv_texture_projection_apply_tex_aspect:
-            len_x = tex_w * magnitude
-            len_y = tex_h * magnitude
+            len_x = tex_w
+            len_y = tex_h
         else:
-            len_x = region_w * magnitude
-            len_y = region_h * magnitude
+            len_x = region_w
+            len_y = region_h
 
     x0 = int(center_x - len_x * 0.5)
     y0 = int(center_y - len_y * 0.5)
@@ -121,6 +123,35 @@ def _region_to_canvas(rg_vec, canvas):
     cv_vec.y = (rg_vec.y - cv_rect.y) / cv_rect.height
 
     return cv_vec
+
+
+def _create_affine_matrix(identity, scale, rotate, translate):
+    if identity:
+        return mathutils.Matrix.Identity(3)
+
+    sx = scale[0]
+    sy = scale[1]
+    theta = rotate
+    tx = translate[0]
+    ty = translate[1]
+
+    mat_scale = mathutils.Matrix((
+        (sx, 0.0, 0.0),
+        (0.0, sy, 0.0),
+        (0.0, 0.0, 1.0)
+    ))
+    mat_rotate = mathutils.Matrix((
+        (cos(theta), sin(theta), 0.0),
+        (-sin(theta), cos(theta), 0.0),
+        (0.0, 0.0, 1.0)
+    ))
+    mat_translate = mathutils.Matrix((
+        (1.0, 0.0, tx),
+        (0.0, 1.0, ty),
+        (0.0, 0.0, 1.0)
+    ))
+
+    return compat.matmul(compat.matmul(mat_translate, mat_rotate), mat_scale)
 
 
 def _is_valid_context(context):
@@ -167,12 +198,31 @@ class _Properties:
             set=set_func,
             update=update_func
         )
-        scene.muv_texture_projection_tex_magnitude = FloatProperty(
-            name="Magnitude",
-            description="Texture Magnitude",
-            default=0.5,
-            min=0.0,
-            max=100.0
+        scene.muv_texture_projection_tex_scaling = FloatVectorProperty(
+            name="Scaling",
+            description="Texture Scale",
+            default=(0.5, 0.5),
+            min=-100.0,
+            max=100.0,
+            size=2,
+            subtype='XYZ'
+        )
+        scene.muv_texture_projection_tex_rotation = FloatProperty(
+            name="Rotation",
+            description="Texture Rotate",
+            default=0.0,
+            min=-360.0,
+            max=360.0,
+            subtype='ANGLE'
+        )
+        scene.muv_texture_projection_tex_translation = FloatVectorProperty(
+            name="Translation",
+            description="Texture Translate",
+            default=(0.0, 0.0),
+            min=-2000.0,
+            max=2000.0,
+            size=2,
+            subtype='XYZ'
         )
         scene.muv_texture_projection_tex_image = EnumProperty(
             name="Image",
@@ -188,7 +238,7 @@ class _Properties:
         )
         scene.muv_texture_projection_adjust_window = BoolProperty(
             name="Adjust Window",
-            description="Size of renderered texture is fitted to window",
+            description="Scale of renderered texture is fitted to window",
             default=True
         )
         scene.muv_texture_projection_apply_tex_aspect = BoolProperty(
@@ -205,7 +255,9 @@ class _Properties:
     @classmethod
     def del_props(cls, scene):
         del scene.muv_texture_projection_enabled
-        del scene.muv_texture_projection_tex_magnitude
+        del scene.muv_texture_projection_tex_scaling
+        del scene.muv_texture_projection_tex_rotation
+        del scene.muv_texture_projection_tex_translation
         del scene.muv_texture_projection_tex_image
         del scene.muv_texture_projection_tex_transparency
         del scene.muv_texture_projection_adjust_window
@@ -264,12 +316,33 @@ class MUV_OT_TextureProjection(bpy.types.Operator):
         img = bpy.data.images[sc.muv_texture_projection_tex_image]
 
         # setup rendering region
-        rect = _get_canvas(context, sc.muv_texture_projection_tex_magnitude)
+        rect = _get_canvas(context)
+
+        # Apply affine transformation.
+        center = mathutils.Vector((
+            (rect.x1 + rect.x0) / 2.0,
+            (rect.y1 + rect.y0) / 2.0,
+            0.0,
+        ))
+        p1 = mathutils.Vector((rect.x0 - center.x, rect.y0 - center.y, 1.0))
+        p2 = mathutils.Vector((rect.x0 - center.x, rect.y1 - center.y, 1.0))
+        p3 = mathutils.Vector((rect.x1 - center.x, rect.y1 - center.y, 1.0))
+        p4 = mathutils.Vector((rect.x1 - center.x, rect.y0 - center.y, 1.0))
+        mat_affine = _create_affine_matrix(
+            sc.muv_texture_projection_adjust_window,
+            sc.muv_texture_projection_tex_scaling,
+            sc.muv_texture_projection_tex_rotation,
+            sc.muv_texture_projection_tex_translation)
+        p1 = compat.matmul(mat_affine, p1) + center
+        p2 = compat.matmul(mat_affine, p2) + center
+        p3 = compat.matmul(mat_affine, p3) + center
+        p4 = compat.matmul(mat_affine, p4) + center
+
         positions = [
-            [rect.x0, rect.y0],
-            [rect.x0, rect.y1],
-            [rect.x1, rect.y1],
-            [rect.x1, rect.y0]
+            [p1.x, p1.y],
+            [p2.x, p2.y],
+            [p3.x, p3.y],
+            [p4.x, p4.y]
         ]
         tex_coords = [
             [0.0, 0.0],
@@ -384,13 +457,30 @@ class MUV_OT_TextureProjection_Project(bpy.types.Operator):
                 for f in sel_faces for l in f.loops
             ]
 
+            # Apply affine transformation.
+            rect = _get_canvas(bpy.context)
+            center = mathutils.Vector((
+                (rect.x1 + rect.x0) / 2.0,
+                (rect.y1 + rect.y0) / 2.0,
+                0.0,
+            ))
+            v_screen_transformed = []
+            for v in v_screen:
+                p1 = mathutils.Vector((v.x - center.x, v.y - center.y, 1.0))
+                mat_affine = _create_affine_matrix(
+                    sc.muv_texture_projection_adjust_window,
+                    sc.muv_texture_projection_tex_scaling,
+                    sc.muv_texture_projection_tex_rotation,
+                    sc.muv_texture_projection_tex_translation)
+                p1 = compat.matmul(mat_affine.inverted(), p1) + center
+                v_screen_transformed.append(p1)
+
             # transform screen region to canvas
             v_canvas = [
                 _region_to_canvas(
                     v,
-                    _get_canvas(bpy.context,
-                                sc.muv_texture_projection_tex_magnitude)
-                ) for v in v_screen
+                    rect
+                ) for v in v_screen_transformed
             ]
 
             # assign image

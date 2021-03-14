@@ -1921,7 +1921,8 @@ class tessellate(Operator):
             max=1,
             description="Automatically set crease for open edges"
             )
-    # working_on : ""
+    # NOTE: this was made into an annotation for 2.8x, but should be a class variable.
+    # working_on = ""
 
     def draw(self, context):
         allowed_obj = ('MESH', 'CURVE', 'SURFACE', 'FONT', 'META')

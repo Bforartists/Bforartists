@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "6.4"
-__date__ = "23 Oct 2020"
+__version__ = "6.5"
+__date__ = "6 Mar 2021"
 
 import bpy
 
@@ -92,8 +92,18 @@ class MUV_PT_View3D_UVMapping(bpy.types.Panel):
             row.prop(sc, "muv_texture_projection_adjust_window",
                      text="Adjust Window")
             if not sc.muv_texture_projection_adjust_window:
-                row.prop(sc, "muv_texture_projection_tex_magnitude",
-                         text="Magnitude")
+                sp = compat.layout_split(col, factor=0.5)
+                sub = sp.column()
+                sub.prop(sc, "muv_texture_projection_tex_scaling",
+                         text="Scaling")
+                sp = compat.layout_split(sp, factor=1.0)
+                sub = sp.column()
+                sub.prop(sc, "muv_texture_projection_tex_translation",
+                         text="Translation")
+                row = col.row()
+                row.label(text="Rotation:")
+                row.prop(sc, "muv_texture_projection_tex_rotation", text="")
+                col.separator()
             col.prop(sc, "muv_texture_projection_apply_tex_aspect",
                      text="Texture Aspect Ratio")
             col.prop(sc, "muv_texture_projection_assign_uvmap",
