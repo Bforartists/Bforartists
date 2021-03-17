@@ -2708,9 +2708,9 @@ class VIEW3D_MT_object(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        obj = context.object
-        is_eevee = context.scene.render.engine == 'BLENDER_EEVEE'
-        view = context.space_data
+        obj = _context.object
+        is_eevee = _context.scene.render.engine == 'BLENDER_EEVEE'
+        view = _context.space_data
 
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_origin_set")
