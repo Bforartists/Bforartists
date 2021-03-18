@@ -8530,9 +8530,9 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.separator()
 
             col.operator("gpencil.delete", text="Delete Points", icon = "DELETE").type = 'POINTS'
-            col.operator("gpencil.dissolve", text="Dissolve", icon = "DELETE").type = 'POINTS'
-            col.operator("gpencil.dissolve", text="Dissolve Between", icon = "DELETE").type = 'BETWEEN'
-            col.operator("gpencil.dissolve", text="Dissolve Unselected", icon = "DELETE").type = 'UNSELECT'
+            col.operator("gpencil.dissolve", text="Dissolve", icon = "DISSOLVE_VERTS").type = 'POINTS'
+            col.operator("gpencil.dissolve", text="Dissolve Between", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+            col.operator("gpencil.dissolve", text="Dissolve Unselected", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
         if is_stroke_mode:
 
