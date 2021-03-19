@@ -165,8 +165,8 @@ node_compositing_active
 texture_active
 spreadsheet
 shader_active
-#~ DEF_ICON_BLANK(184)
-#~ DEF_ICON_BLANK(185)
+attribute_remove
+node_vectorrotate
 #~ DEF_ICON_BLANK(186)
 #~ DEF_ICON_BLANK(187)
 
