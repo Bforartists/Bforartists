@@ -3321,6 +3321,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Randomize    ", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
+            
+            props = col.operator("node.add_node", text=" Attribute Remove     ", icon = "ATTRIBUTE_REMOVE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeRemove"
 
             props = col.operator("node.add_node", text=" Attribute Sample Texture ", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
@@ -3373,6 +3377,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_REMOVE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeRemove"
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
@@ -3632,9 +3640,13 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeEdgeSplit"
 
-            props = col.operator("node.add_node", text=" Subdivision Surface", icon = "SUBDIVIDE_EDGES")
+            props = col.operator("node.add_node", text=" Subdivide                ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivisionSurface"
+            props.type = "GeometryNodeSubdivide"
+            
+            props = col.operator("node.add_node", text=" Subdivide Smooth   ", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivideSmooth"
 
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
@@ -3657,7 +3669,11 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
 
             props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivisionSurface"
+            props.type = "GeometryNodeSubdivide"
+            
+            props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeSubdivideSmooth"
 
             props = row.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
@@ -3927,6 +3943,10 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
             props.use_transform = True
             props.type = "ShaderNodeVectorMath"
+            
+            props = col.operator("node.add_node", text=" Vector Rotate     ", icon = "NODE_VECTORROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
 
 
         #### Icon Buttons
@@ -3947,6 +3967,10 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
             props.use_transform = True
             props.type = "ShaderNodeVectorMath"
+            
+            props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
 
 
 
