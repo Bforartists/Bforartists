@@ -1604,7 +1604,7 @@ static void node_draw_basis(const bContext *C,
       icon = ICON_MOD_DISPLACE;
       break;
     case SH_NODE_VECTOR_ROTATE:
-      icon = ICON_TRANSFORM_ROTATE;
+      icon = ICON_NODE_VECTORROTATE;
       break;
     case SH_NODE_VECT_TRANSFORM:
       icon = ICON_NODE_VECTOR_TRANSFORM;
@@ -2034,6 +2034,15 @@ static void node_draw_basis(const bContext *C,
       break;
     case GEO_NODE_ATTRIBUTE_SEPARATE_XYZ:
       icon = ICON_ATTRIBUTE_SEPARATE_XYZ;
+      break;
+    case GEO_NODE_SUBDIVIDE_SMOOTH:
+      icon = ICON_SUBDIVIDE_EDGES;
+      break;
+    case GEO_NODE_SUBDIVIDE:
+      icon = ICON_SUBDIVIDE_EDGES;
+      break;
+    case GEO_NODE_ATTRIBUTE_REMOVE:
+      icon = ICON_ATTRIBUTE_REMOVE;
       break;
     }
 
