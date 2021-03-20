@@ -167,7 +167,7 @@ spreadsheet
 shader_active
 attribute_remove
 node_vectorrotate
-#~ DEF_ICON_BLANK(186)
+mask_slice
 #~ DEF_ICON_BLANK(187)
 
 # ------------------------- row 3 --------------------------*/
