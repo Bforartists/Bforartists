@@ -4019,13 +4019,13 @@ class VIEW3D_MT_random_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("sculpt.mask_init", text='Per Vertex')
+        op = layout.operator("sculpt.mask_init", text='Per Vertex', icon = "SELECT_UNGROUPED_VERTS")
         op.mode = 'RANDOM_PER_VERTEX'
 
-        op = layout.operator("sculpt.mask_init", text='Per Face Set')
+        op = layout.operator("sculpt.mask_init", text='Per Face Set', icon = "FACESEL")
         op.mode = 'RANDOM_PER_FACE_SET'
 
-        op = layout.operator("sculpt.mask_init", text='Per Loose Part')
+        op = layout.operator("sculpt.mask_init", text='Per Loose Part', icon = "SELECT_LOOSE")
         op.mode = 'RANDOM_PER_LOOSE_PART'
 
 
