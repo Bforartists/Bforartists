@@ -273,29 +273,6 @@ class GRAPH_MT_view_pie_menus(Menu):
         layout.operator("wm.call_menu_pie", text = "Snap", icon = "MENU_PANEL").name = 'GRAPH_MT_snap_pie'
 
 
-# Workaround to separate the tooltips
-class GRAPH_MT_select_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "graph.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.graph.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class GRAPH_MT_select_none(bpy.types.Operator):
-    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "graph.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.graph.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class GRAPH_MT_select(Menu):
     bl_label = "Select"
 
@@ -303,8 +280,8 @@ class GRAPH_MT_select(Menu):
         layout = self.layout
 
         layout.operator("graph.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("graph.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("graph.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("graph.select_all", text="None", icon='SELECT_ALL').action = 'DESELECT'
+        layout.operator("graph.select_all", text="Invert", icon='SELECT_ALL').action = 'INVERT'
 
         layout.separator()
 
@@ -673,8 +650,6 @@ classes = (
     GRAPH_MT_editor_menus,
     GRAPH_MT_view,
     GRAPH_MT_view_pie_menus,
-    GRAPH_MT_select_inverse,
-    GRAPH_MT_select_none,
     GRAPH_MT_select,
     GRAPH_MT_marker,
     GRAPH_MT_channel_hide_unselected_curves,
