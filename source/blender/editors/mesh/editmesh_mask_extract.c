@@ -61,6 +61,8 @@
 
 #include "mesh_intern.h" /* own include */
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 static bool geometry_extract_poll(bContext *C)
 {
   Object *ob = CTX_data_active_object(C);
@@ -595,6 +597,29 @@ static int paint_mask_slice_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
+/*bfa - descriptions*/
+static char *wm_paint_mask_slide_get_description(bContext *UNUSED(C),
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
+{
+  const bool fill_holes = RNA_boolean_get(ptr, "fill_holes");
+  const bool new_object = RNA_boolean_get(ptr, "new_object");
+
+  /*Mask Slice*/
+  if (!fill_holes && !new_object) {
+    return BLI_strdup("Slices the paint mask from the mesh");
+  }
+  /*Mask Slice and Fill Holes*/
+  else if (fill_holes && !new_object) {
+    return BLI_strdup(
+        "Slices the paint mask from the mesh and fills existing holes");
+  }
+  /*Mask Slice to New Object*/
+  else if (new_object) {
+    return BLI_strdup("Slices the paint mask from the mesh and separates it into a new object");
+  }
+  return NULL;
+}
 
 void MESH_OT_paint_mask_slice(wmOperatorType *ot)
 {
@@ -607,6 +632,7 @@ void MESH_OT_paint_mask_slice(wmOperatorType *ot)
   /* api callbacks */
   ot->poll = geometry_extract_poll;
   ot->exec = paint_mask_slice_exec;
+  ot->get_description = wm_paint_mask_slide_get_description; /*bfa - descriptions*/
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
