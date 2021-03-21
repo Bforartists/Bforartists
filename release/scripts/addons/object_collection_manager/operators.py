@@ -38,6 +38,8 @@ from . import internals
 # For FUNCTIONS
 from .internals import (
     update_property_group,
+    generate_state,
+    check_state,
     get_modifiers,
     get_move_selection,
     get_move_active,
@@ -1497,5 +1499,50 @@ class CMRestoreDisabledObjectsOperator(Operator):
             if obj.hide_viewport:
                 obj.hide_viewport = False
                 obj.select_set(True)
+
+        return {'FINISHED'}
+
+
+class CMUndoWrapper(Operator):
+    bl_label = "Undo"
+    bl_description = "Undo previous action"
+    bl_idname = "view3d.undo_wrapper"
+
+    @classmethod
+    def poll(self, context):
+        return bpy.ops.ed.undo.poll()
+
+    def execute(self, context):
+        internals.collection_state.clear()
+        internals.collection_state.update(generate_state())
+        bpy.ops.ed.undo()
+        update_property_group(context)
+
+        check_state(context, cm_popup=True)
+
+        # clear buffers
+        internals.copy_buffer["RTO"] = ""
+        internals.copy_buffer["values"].clear()
+
+        internals.swap_buffer["A"]["RTO"] = ""
+        internals.swap_buffer["A"]["values"].clear()
+        internals.swap_buffer["B"]["RTO"] = ""
+        internals.swap_buffer["B"]["values"].clear()
+
+        return {'FINISHED'}
+
+
+class CMRedoWrapper(Operator):
+    bl_label = "Redo"
+    bl_description = "Redo previous action"
+    bl_idname = "view3d.redo_wrapper"
+
+    @classmethod
+    def poll(self, context):
+        return bpy.ops.ed.redo.poll()
+
+    def execute(self, context):
+        bpy.ops.ed.redo()
+        update_property_group(context)
 
         return {'FINISHED'}

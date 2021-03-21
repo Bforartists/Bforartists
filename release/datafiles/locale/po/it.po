@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -21369,12 +21369,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "Modificatore Proiezione UV per impostare le UVs da un proiettore"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Proporzione Orizzontale"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Proporzione Verticale"
+msgid "Aspect X"
+msgstr "Aspetto X"
 
 
 msgid "Number of Projectors"
@@ -21387,14 +21383,6 @@ msgstr "Numero di proiettori da usare"
 
 msgid "Projectors"
 msgstr "Proiettori"
-
-
-msgid "Horizontal Scale"
-msgstr "Scala Orizzontale"
-
-
-msgid "Vertical Scale"
-msgstr "Scala Verticale"
 
 
 msgid "UVWarp Modifier"
@@ -26709,14 +26697,6 @@ msgid "Load a cache file"
 msgstr "Carica un file cache"
 
 
-msgid "Check Existing"
-msgstr "Controlla Preesistenza"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Controlla ed avvisa se si sovrascrive un file esistente"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "Aggiorna Archivio"
@@ -28402,6 +28382,14 @@ msgstr "Esporta Camera & Marcatori"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Salva uno script python che ricrea le camere e i marcatori altrove"
+
+
+msgid "Check Existing"
+msgstr "Controlla Preesistenza"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Controlla ed avvisa se si sovrascrive un file esistente"
 
 
 msgid "Filepath used for exporting the file"
@@ -54528,10 +54516,6 @@ msgid "Align to Vertex Normal"
 msgstr "Allinea a Vettore Normale"
 
 
-msgid "Aspect X"
-msgstr "Aspetto X"
-
-
 msgid "Old"
 msgstr "Vecchio"
 
@@ -56810,16 +56794,6 @@ msgstr "Imposta come Materiale Attivo"
 
 
 msgctxt "Operator"
-msgid "Extrude Points"
-msgstr "Estrudi Punti"
-
-
-msgctxt "Operator"
-msgid "Merge Points"
-msgstr "Unisci Punti"
-
-
-msgctxt "Operator"
 msgid "View Selected"
 msgstr "Mostra Selezionati"
 
@@ -57240,24 +57214,8 @@ msgid "Point Context Menu"
 msgstr "Menu Contesto Punto"
 
 
-msgid "Mirror Points"
-msgstr "Specchia Punti"
-
-
-msgid "Snap Points"
-msgstr "Snap Punti"
-
-
 msgid "Stroke Context Menu"
 msgstr "Menu Contesto Tratti"
-
-
-msgid "Mirror Stroke"
-msgstr "Specchia Tratti"
-
-
-msgid "Snap Stroke"
-msgstr "Snap Tratti"
 
 
 msgctxt "Operator"
@@ -57305,16 +57263,6 @@ msgstr "Posizione Personalizzata"
 
 
 msgctxt "Operator"
-msgid "Delete Points"
-msgstr "Cancella Punti"
-
-
-msgctxt "Operator"
-msgid "Dissolve Points"
-msgstr "Dissolvi Punti"
-
-
-msgctxt "Operator"
 msgid "Dissolve Between"
 msgstr "Dissolvi Tra"
 
@@ -57322,11 +57270,6 @@ msgstr "Dissolvi Tra"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "Dissolvi Deselezionati"
-
-
-msgctxt "Operator"
-msgid "Delete Strokes"
-msgstr "Elimina Tratti"
 
 
 msgctxt "Operator"
@@ -57656,6 +57599,10 @@ msgid "Use existing file (instead of packed): %s"
 msgstr "Usa file esistente (anzichè l'incorporato): %s"
 
 
+msgid "ParticleSystem"
+msgstr "Sistema Particelle"
+
+
 msgid "ParticleSettings"
 msgstr "Impostazioni Particelle"
 
@@ -57834,22 +57781,6 @@ msgstr "Richiede almeno tre vertici"
 
 msgid "No edge rings found"
 msgstr "Nessuna fascia di spigoli trovata"
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "Composizione | Tassello %u-%u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "Composizione | Determinazione risoluzione"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "Composizione | Inizializzazione esecuzione"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "Composizione | De-inizializzazione esecuzione"
 
 
 msgid "Basic"
@@ -61373,10 +61304,6 @@ msgstr "Modo assegnazione scorretto"
 
 msgid "Object '%s' does not support shapes"
 msgstr "L'Oggetto '%s' non supporta le forme"
-
-
-msgid "ParticleSystem"
-msgstr "Sistema Particelle"
 
 
 msgid "Mesh has no UV data"

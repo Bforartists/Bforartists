@@ -102,7 +102,7 @@
 // #define USE_OP_RESET_BUT
 
 /* defines for templateID/TemplateSearch */
-#define TEMPLATE_SEARCH_TEXTBUT_WIDTH (UI_UNIT_X * 6)
+#define TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH (UI_UNIT_X * 6)
 #define TEMPLATE_SEARCH_TEXTBUT_HEIGHT UI_UNIT_Y
 
 void UI_template_fix_linking(void)
@@ -124,6 +124,33 @@ void uiTemplateHeader(uiLayout *layout, bContext *C)
 /* -------------------------------------------------------------------- */
 /** \name Search Menu Helpers
  * \{ */
+
+static int template_search_textbut_width(PointerRNA *ptr, PropertyRNA *name_prop)
+{
+  char str[UI_MAX_DRAW_STR];
+  int buf_len = 0;
+
+  BLI_assert(RNA_property_type(name_prop) == PROP_STRING);
+
+  const char *name = RNA_property_string_get_alloc(ptr, name_prop, str, sizeof(str), &buf_len);
+
+  const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
+  const int margin = UI_UNIT_X * 0.75f;
+  const int estimated_width = UI_fontstyle_string_width(fstyle, name) + margin;
+
+  if (name != str) {
+    MEM_freeN((void *)name);
+  }
+
+  /* Clamp to some min/max width. */
+  return CLAMPIS(
+      estimated_width, TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH, TEMPLATE_SEARCH_TEXTBUT_MIN_WIDTH * 3);
+}
+
+static int template_search_textbut_height(void)
+{
+  return TEMPLATE_SEARCH_TEXTBUT_HEIGHT;
+}
 
 /**
  * Add a block button for the search menu for templateID and templateSearch.
@@ -956,6 +983,10 @@ static void template_ID(const bContext *C,
     char name[UI_MAX_NAME_STR];
     const bool user_alert = (id->us <= 0);
 
+    const int width = template_search_textbut_width(&idptr,
+                                                    RNA_struct_find_property(&idptr, "name"));
+    const int height = template_search_textbut_height();
+
     // text_idbutton(id, name);
     name[0] = '\0';
     but = uiDefButR(block,
@@ -964,8 +995,8 @@ static void template_ID(const bContext *C,
                     name,
                     0,
                     0,
-                    TEMPLATE_SEARCH_TEXTBUT_WIDTH,
-                    TEMPLATE_SEARCH_TEXTBUT_HEIGHT,
+                    width,
+                    height,
                     &idptr,
                     "name",
                     -1,
@@ -1686,16 +1717,10 @@ static void template_search_add_button_name(uiBlock *block,
                                             PointerRNA *active_ptr,
                                             const StructRNA *type)
 {
-  uiDefAutoButR(block,
-                active_ptr,
-                RNA_struct_name_property(type),
-                0,
-                "",
-                ICON_NONE,
-                0,
-                0,
-                TEMPLATE_SEARCH_TEXTBUT_WIDTH,
-                TEMPLATE_SEARCH_TEXTBUT_HEIGHT);
+  PropertyRNA *name_prop = RNA_struct_name_property(type);
+  const int width = template_search_textbut_width(active_ptr, name_prop);
+  const int height = template_search_textbut_height();
+  uiDefAutoButR(block, active_ptr, name_prop, 0, "", ICON_NONE, 0, 0, width, height);
 }
 
 static void template_search_add_button_operator(uiBlock *block,
@@ -2087,11 +2112,11 @@ void uiTemplateConstraints(uiLayout *UNUSED(layout), bContext *C, bool use_bone_
     UI_panels_free_instanced(C, region);
     bConstraint *con = (constraints == NULL) ? NULL : constraints->first;
     for (int i = 0; con; i++, con = con->next) {
-      /* Dont show invalid/legacy constraints. */
+      /* Don't show invalid/legacy constraints. */
       if (con->type == CONSTRAINT_TYPE_NULL) {
         continue;
       }
-      /* Dont show temporary constraints (AutoIK and targetless IK constraints). */
+      /* Don't show temporary constraints (AutoIK and target-less IK constraints). */
       if (con->type == CONSTRAINT_TYPE_KINEMATIC) {
         bKinematicConstraint *data = con->data;
         if (data->flag & CONSTRAINT_IK_TEMP) {
@@ -2120,11 +2145,11 @@ void uiTemplateConstraints(uiLayout *UNUSED(layout), bContext *C, bool use_bone_
     /* Assuming there's only one group of instanced panels, update the custom data pointers. */
     Panel *panel = region->panels.first;
     LISTBASE_FOREACH (bConstraint *, con, constraints) {
-      /* Dont show invalid/legacy constraints. */
+      /* Don't show invalid/legacy constraints. */
       if (con->type == CONSTRAINT_TYPE_NULL) {
         continue;
       }
-      /* Dont show temporary constraints (AutoIK and targetless IK constraints). */
+      /* Don't show temporary constraints (AutoIK and target-less IK constraints). */
       if (con->type == CONSTRAINT_TYPE_KINEMATIC) {
         bKinematicConstraint *data = con->data;
         if (data->flag & CONSTRAINT_IK_TEMP) {
@@ -4673,7 +4698,7 @@ static void CurveProfile_tools_dofunc(bContext *C, void *profile_v, int event)
       BKE_curveprofile_update(profile, PROF_UPDATE_NONE);
       break;
     case UIPROFILE_FUNC_RESET_VIEW: /* reset view to clipping rect */
-      profile->view_rect = profile->clip_rect;
+      BKE_curveprofile_reset_view(profile);
       break;
   }
   ED_undo_push(C, "CurveProfile tools");
@@ -5489,7 +5514,7 @@ void uiTemplatePalette(uiLayout *layout,
   }
 }
 
-void uiTemplateCryptoPicker(uiLayout *layout, PointerRNA *ptr, const char *propname)
+void uiTemplateCryptoPicker(uiLayout *layout, PointerRNA *ptr, const char *propname, int icon)
 {
   PropertyRNA *prop = RNA_struct_find_property(ptr, propname);
 
@@ -5504,7 +5529,7 @@ void uiTemplateCryptoPicker(uiLayout *layout, PointerRNA *ptr, const char *propn
                                  UI_BTYPE_BUT,
                                  "UI_OT_eyedropper_color",
                                  WM_OP_INVOKE_DEFAULT,
-                                 ICON_EYEDROPPER,
+                                 icon,
                                  RNA_property_ui_name(prop),
                                  0,
                                  0,
@@ -5514,10 +5539,6 @@ void uiTemplateCryptoPicker(uiLayout *layout, PointerRNA *ptr, const char *propn
   but->rnapoin = *ptr;
   but->rnaprop = prop;
   but->rnaindex = -1;
-
-  PointerRNA *opptr = UI_but_operator_ptr_get(but);
-  /* Important for crypto-matte operation. */
-  RNA_boolean_set(opptr, "use_accumulate", false);
 }
 
 /** \} */

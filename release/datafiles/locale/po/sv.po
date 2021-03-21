@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9823,12 +9823,8 @@ msgid "UV Project Modifier"
 msgstr "Packa Data"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Storleksförhållande"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Storleksförhållande"
+msgid "Aspect X"
+msgstr "Aspekt X"
 
 
 msgid "Number of Projectors"
@@ -9841,14 +9837,6 @@ msgstr "Antal klyvningar"
 
 msgid "Projectors"
 msgstr "Rensa Placering"
-
-
-msgid "Horizontal Scale"
-msgstr "Markera Rad"
-
-
-msgid "Vertical Scale"
-msgstr "Markera Länkad"
 
 
 msgid "UVWarp Modifier"
@@ -13110,10 +13098,6 @@ msgid "Path to file"
 msgstr "Packa in i .blend-filen"
 
 
-msgid "Check and warn on overwriting existing files"
-msgstr "Överskrivning av/på"
-
-
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "Lägg till renderingsförinställning"
@@ -14413,6 +14397,10 @@ msgstr "Ångra/gör om"
 msgctxt "Operator"
 msgid "Export Camera & Markers"
 msgstr "Rensa Förälder"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Överskrivning av/på"
 
 
 msgid "Filepath used for exporting the file"
@@ -27779,10 +27767,6 @@ msgstr "Alla"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "Invertera"
-
-
-msgid "Aspect X"
-msgstr "Aspekt X"
 
 
 msgid "Old"

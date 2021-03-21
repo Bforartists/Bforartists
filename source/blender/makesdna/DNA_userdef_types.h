@@ -281,7 +281,7 @@ typedef struct ThemeSpace {
   unsigned char edge_seam[4], edge_sharp[4], edge_facesel[4], edge_crease[4], edge_bevel[4];
   /** Solid faces. */
   unsigned char face[4], face_select[4], face_back[4], face_front[4];
-  /**  selected color. */
+  /** Selected color. */
   unsigned char face_dot[4];
   unsigned char extra_edge_len[4], extra_edge_angle[4], extra_face_angle[4], extra_face_area[4];
   unsigned char normal[4];
@@ -922,7 +922,7 @@ typedef struct UserDef {
   int sequencer_disk_cache_compression; /* eUserpref_DiskCacheCompression */
   int sequencer_disk_cache_size_limit;
   short sequencer_disk_cache_flag;
-  char _pad5[2];
+  short sequencer_proxy_setup; /* eUserpref_SeqProxySetup */
 
   float collection_instance_empty_size;
   char _pad10[3];
@@ -1386,6 +1386,11 @@ typedef enum eUserpref_DiskCacheCompression {
   USER_SEQ_DISK_CACHE_COMPRESSION_LOW = 1,
   USER_SEQ_DISK_CACHE_COMPRESSION_HIGH = 2,
 } eUserpref_DiskCacheCompression;
+
+typedef enum eUserpref_SeqProxySetup {
+  USER_SEQ_PROXY_SETUP_MANUAL = 0,
+  USER_SEQ_PROXY_SETUP_AUTOMATIC = 1,
+} eUserpref_SeqProxySetup;
 
 /* Locale Ids. Auto will try to get local from OS. Our default is English though. */
 /** #UserDef.language */

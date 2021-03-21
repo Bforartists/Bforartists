@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -31026,12 +31026,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "프로젝터에서 UV를 설정하는 UV 투영 모디파이어"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "수평의 측면 비율"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "수직 측면 비율"
+msgid "Aspect X"
+msgstr "측면 X"
 
 
 msgid "Number of Projectors"
@@ -31044,14 +31040,6 @@ msgstr "사용하는 프로젝터의 수"
 
 msgid "Projectors"
 msgstr "프로젝터"
-
-
-msgid "Horizontal Scale"
-msgstr "수평의 축적"
-
-
-msgid "Vertical Scale"
-msgstr "수직 축적"
 
 
 msgid "UVWarp Modifier"
@@ -38604,14 +38592,6 @@ msgid "Load a cache file"
 msgstr "캐시 파일을 불러오기"
 
 
-msgid "Check Existing"
-msgstr "기존을 체크"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "확인 및 기존 파일 덮어 쓰기에 대한 경고"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "아카이브를 새로 고침"
@@ -40808,6 +40788,14 @@ msgstr "카메라 & 마커를 내보내기"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "다른 곳에서 카메라와 마커를 재생성하는 Python 스크립트를 저장합니다"
+
+
+msgid "Check Existing"
+msgstr "기존을 체크"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "확인 및 기존 파일 덮어 쓰기에 대한 경고"
 
 
 msgid "Filepath used for exporting the file"
@@ -80979,10 +80967,6 @@ msgid "Align to Vertex Normal"
 msgstr "버텍스 노멀에 정렬"
 
 
-msgid "Aspect X"
-msgstr "측면 X"
-
-
 msgid "Old"
 msgstr "오래된"
 
@@ -84516,11 +84500,6 @@ msgstr "활성 매테리얼로 설정"
 
 
 msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "스트로크를 정렬"
-
-
-msgctxt "Operator"
 msgid "Close"
 msgstr "닫기"
 
@@ -84528,16 +84507,6 @@ msgstr "닫기"
 msgctxt "Operator"
 msgid "Toggle Caps"
 msgstr "캡을 토글"
-
-
-msgctxt "Operator"
-msgid "Extrude Points"
-msgstr "포인트를 돌출"
-
-
-msgctxt "Operator"
-msgid "Merge Points"
-msgstr "포인트를 병합"
 
 
 msgctxt "Operator"
@@ -85040,11 +85009,6 @@ msgstr "레이어로 붙여 넣기"
 
 
 msgctxt "Operator"
-msgid "Smooth Points"
-msgstr "스무스 포인트"
-
-
-msgctxt "Operator"
 msgid "Insert Blank Keyframe (All Layers)"
 msgstr "빈 키 프레임을 삽입 (모든 레이어)"
 
@@ -85092,24 +85056,8 @@ msgid "Point Context Menu"
 msgstr "포인트 컨텍스트 메뉴"
 
 
-msgid "Mirror Points"
-msgstr "포인트를 미러"
-
-
-msgid "Snap Points"
-msgstr "포인트를 스냅"
-
-
 msgid "Stroke Context Menu"
 msgstr "스트로크 컨텍스트 메뉴"
-
-
-msgid "Mirror Stroke"
-msgstr "스트로크를 미러"
-
-
-msgid "Snap Stroke"
-msgstr "스트로크를 스냅"
 
 
 msgctxt "Operator"
@@ -85175,16 +85123,6 @@ msgstr "커스텀 위치"
 
 
 msgctxt "Operator"
-msgid "Delete Points"
-msgstr "포인트를 삭제"
-
-
-msgctxt "Operator"
-msgid "Dissolve Points"
-msgstr "포인트를 디졸브"
-
-
-msgctxt "Operator"
 msgid "Dissolve Between"
 msgstr "사이를 디졸브"
 
@@ -85192,11 +85130,6 @@ msgstr "사이를 디졸브"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "비선택을 디졸브"
-
-
-msgctxt "Operator"
-msgid "Delete Strokes"
-msgstr "스트로크를 삭제"
 
 
 msgctxt "Operator"
@@ -85692,6 +85625,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "개별 라이브러리 파일을 포장 해제할 수 없음, '%s'"
 
 
+msgid "ParticleSystem"
+msgstr "파티클시스템"
+
+
 msgid "ParticleSettings"
 msgstr "파티클 설정"
 
@@ -86043,22 +85980,6 @@ msgstr "연속되는 에지 링 쌍이 존재하지 않음"
 
 msgid "Edge-rings are not connected"
 msgstr "연속되는 에지 링이 존재하지 않음"
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "컴포지팅 | 타일 %u-%u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "컴포지팅 | 해상도 결정"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "컴포지팅 | 초기화 실행"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "컴포지팅 | 초기화 실행 해제"
 
 
 msgid "Basic"
@@ -86959,10 +86880,6 @@ msgstr "완화 (강도에 의해)"
 
 msgid "Dynamic Effects"
 msgstr "다이나믹 이펙트"
-
-
-msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
-msgstr "활성 레이어에서 보간하기 위한 그리스 펜슬 프레임 쌍을 찾을 수 없습니다"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -92231,10 +92148,6 @@ msgstr "오브젝트 '%s'가 가장 가까운 포인트를 찾기 위한 내부 
 
 msgid "Palette '%s' does not contain color given"
 msgstr "파레트 '%s'에 주어진 컬러가 없습니다"
-
-
-msgid "ParticleSystem"
-msgstr "파티클시스템"
 
 
 msgid "Mesh has no UV data"

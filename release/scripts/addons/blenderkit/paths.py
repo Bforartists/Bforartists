@@ -169,7 +169,7 @@ def slugify(slug):
     import unicodedata, re
     slug = slug.lower()
 
-    characters = '.," <>()'
+    characters = '<>:"/\\|?*., ()'
     for ch in characters:
         slug = slug.replace(ch, '_')
     # import re
@@ -179,6 +179,8 @@ def slugify(slug):
     slug = re.sub(r'[-]+', '-', slug)
     slug = re.sub(r'/', '_', slug)
     slug = re.sub(r'\\\'\"', '_', slug)
+    if len(slug)>50:
+        slug = slug[:50]
     return slug
 
 

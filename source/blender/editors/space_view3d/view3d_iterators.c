@@ -716,7 +716,7 @@ void armature_foreachScreenBone(struct ViewContext *vc,
       }
       else {
         screen_co_a[0] = IS_CLIPPED; /* weak */
-        /* screen_co_a[1]: intentionally dont set this so we get errors on misuse */
+        /* screen_co_a[1]: intentionally don't set this so we get errors on misuse */
       }
 
       /* project tail location to screenspace */
@@ -726,7 +726,7 @@ void armature_foreachScreenBone(struct ViewContext *vc,
       }
       else {
         screen_co_b[0] = IS_CLIPPED; /* weak */
-        /* screen_co_b[1]: intentionally dont set this so we get errors on misuse */
+        /* screen_co_b[1]: intentionally don't set this so we get errors on misuse */
       }
 
       if (points_proj_tot) { /* at least one point's projection worked */
@@ -768,7 +768,7 @@ void pose_foreachScreenBone(struct ViewContext *vc,
       }
       else {
         screen_co_a[0] = IS_CLIPPED; /* weak */
-        /* screen_co_a[1]: intentionally dont set this so we get errors on misuse */
+        /* screen_co_a[1]: intentionally don't set this so we get errors on misuse */
       }
 
       /* project tail location to screenspace */
@@ -778,7 +778,7 @@ void pose_foreachScreenBone(struct ViewContext *vc,
       }
       else {
         screen_co_b[0] = IS_CLIPPED; /* weak */
-        /* screen_co_b[1]: intentionally dont set this so we get errors on misuse */
+        /* screen_co_b[1]: intentionally don't set this so we get errors on misuse */
       }
 
       if (points_proj_tot) { /* at least one point's projection worked */
