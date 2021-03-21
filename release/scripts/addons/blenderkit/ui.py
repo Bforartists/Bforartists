@@ -379,6 +379,7 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
             tsize = font_height
         else:
             fsize = font_height
+
             if l[:4] == 'Tip:' or l[:11] == 'Please rate':
                 tcol = textcol_strong
                 fsize = font_height + 1
@@ -389,6 +390,7 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
     xtext += int(isizex / ncolumns)
 
     column_lines = 1
+    i=0
     for l in alines:
         if gravatar is not None:
             if column_lines == 1:
@@ -397,15 +399,20 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
                 xtext -= gsize + textmargin
 
         ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
-        if i == 0:
+        if False:#i == 0:
             ytext = y - name_height + 5 - isizey + texth - textmargin
         elif i == len(lines) - 1:
             ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
             tcol = textcol
             tsize = font_height
+        if (i> 0 and alines[i-1][:7] == 'Author:'):
+            tcol = textcol_strong
+            fsize = font_height + 2
         else:
             fsize = font_height
-            if l[:4] == 'Tip:' or l[:11] == 'Please rate':
+            tcol = textcol
+
+            if l[:4] == 'Tip:' or l[:11] == 'Please rate'  :
                 tcol = textcol_strong
                 fsize = font_height + 1
 
@@ -1486,7 +1493,7 @@ class AssetBarOperator(bpy.types.Operator):
 
             if ui_props.drag_init:
                 ui_props.drag_length += 1
-                if ui_props.drag_length > 0:
+                if ui_props.drag_length > 2:
                     ui_props.dragging = True
                     ui_props.drag_init = False
 
@@ -1617,7 +1624,7 @@ class AssetBarOperator(bpy.types.Operator):
                     return {'RUNNING_MODAL'}
 
                 # Drag-drop interaction
-                if ui_props.dragging and mouse_in_region(r, mx, my):
+                if ui_props.dragging and mouse_in_region(r, mx, my):# and ui_props.drag_length>10:
                     asset_search_index = ui_props.active_index
                     # raycast here
                     ui_props.active_index = -3

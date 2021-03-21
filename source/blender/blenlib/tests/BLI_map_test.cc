@@ -565,6 +565,45 @@ TEST(map, AddOrModifyExceptions)
   EXPECT_ANY_THROW({ map.add_or_modify(3, create_fn, modify_fn); });
 }
 
+namespace {
+enum class TestEnum {
+  A = 0,
+  B = 1,
+  C = 2,
+  D = 1,
+};
+}
+
+TEST(map, EnumKey)
+{
+  Map<TestEnum, int> map;
+  map.add(TestEnum::A, 4);
+  map.add(TestEnum::B, 6);
+  EXPECT_EQ(map.lookup(TestEnum::A), 4);
+  EXPECT_EQ(map.lookup(TestEnum::B), 6);
+  EXPECT_EQ(map.lookup(TestEnum::D), 6);
+  EXPECT_FALSE(map.contains(TestEnum::C));
+  map.lookup(TestEnum::D) = 10;
+  EXPECT_EQ(map.lookup(TestEnum::B), 10);
+}
+
+TEST(map, GenericAlgorithms)
+{
+  Map<int, int> map;
+  map.add(5, 2);
+  map.add(1, 4);
+  map.add(2, 2);
+  map.add(7, 1);
+  map.add(8, 6);
+  EXPECT_TRUE(std::any_of(map.keys().begin(), map.keys().end(), [](int v) { return v == 1; }));
+  EXPECT_TRUE(std::any_of(map.values().begin(), map.values().end(), [](int v) { return v == 1; }));
+  EXPECT_TRUE(std::any_of(
+      map.items().begin(), map.items().end(), [](auto item) { return item.value == 1; }));
+  EXPECT_EQ(std::count(map.values().begin(), map.values().end(), 2), 2);
+  EXPECT_EQ(std::count(map.values().begin(), map.values().end(), 4), 1);
+  EXPECT_EQ(std::count(map.keys().begin(), map.keys().end(), 7), 1);
+}
+
 /**
  * Set this to 1 to activate the benchmark. It is disabled by default, because it prints a lot.
  */

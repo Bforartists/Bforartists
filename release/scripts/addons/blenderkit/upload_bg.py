@@ -91,6 +91,11 @@ def upload_file(upload_data, f):
 
                 if 250 > upload_response.status_code > 199:
                     uploaded = True
+                    upload_done_url = paths.get_api_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
+                    upload_response = rerequests.post(upload_done_url, headers=headers, verify=True)
+                    print(upload_response)
+                    tasks_queue.add_task((ui.add_report, (f"Finished file upload{os.path.basename(f['file_path'])}",)))
+                    return True
                 else:
                     print(upload_response.text)
                     message = f"Upload failed, retry. File : {f['type']} {os.path.basename(f['file_path'])}"
@@ -103,13 +108,11 @@ def upload_file(upload_data, f):
                 time.sleep(1)
 
             # confirm single file upload to bkit server
-            print(upload)
-            upload_done_url = paths.get_api_url() + 'uploads_s3/' + upload['id'] + '/upload-file/'
-            upload_response = rerequests.post(upload_done_url, headers=headers, verify=True)
 
-    tasks_queue.add_task((ui.add_report, (f"Finished file upload{os.path.basename(f['file_path'])}",)))
 
-    return uploaded
+
+
+    return False
 
 
 def upload_files(upload_data, files):

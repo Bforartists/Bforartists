@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15199,12 +15199,8 @@ msgid "UV Project Modifier"
 msgstr "Objektové modifikátory"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Aktivovat materiálové uzly"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Aktivovat materiálové uzly"
+msgid "Aspect X"
+msgstr "Aspekt X"
 
 
 msgid "Number of Projectors"
@@ -15217,14 +15213,6 @@ msgstr "Počet opakování pro překreslení"
 
 msgid "Projectors"
 msgstr "Původni pozice"
-
-
-msgid "Horizontal Scale"
-msgstr "Horizontální"
-
-
-msgid "Vertical Scale"
-msgstr "Vertikální"
 
 
 msgid "UVWarp Modifier"
@@ -17341,10 +17329,6 @@ msgid "Point Rotate"
 msgstr "Bod Rotace"
 
 
-msgid "Simple Subdivision Surface"
-msgstr "Jednoduchý dělení povrchu"
-
-
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Rám"
@@ -19043,10 +19027,6 @@ msgid "Path to file"
 msgstr "Cesta k souboru"
 
 
-msgid "Check Existing"
-msgstr "Opakovat editaci"
-
-
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "Přidá předvolbu pro render"
@@ -20402,6 +20382,10 @@ msgstr "Zpráva"
 msgctxt "Operator"
 msgid "Export Camera & Markers"
 msgstr "Obdelníkové Označení"
+
+
+msgid "Check Existing"
+msgstr "Opakovat editaci"
 
 
 msgid "Filepath used for exporting the file"
@@ -38679,10 +38663,6 @@ msgid "All Edges"
 msgstr "Všechny Hrany"
 
 
-msgid "Aspect X"
-msgstr "Aspekt X"
-
-
 msgid "Old"
 msgstr "Starý"
 
@@ -40948,16 +40928,6 @@ msgstr "Nastavit jako Aktivní materiál"
 
 
 msgctxt "Operator"
-msgid "Extrude Points"
-msgstr "Vysunout body"
-
-
-msgctxt "Operator"
-msgid "Merge Points"
-msgstr "Sloučit body"
-
-
-msgctxt "Operator"
 msgid "Duplicate Active Keyframe (Active Layer)"
 msgstr "Duplikovat Aktivní Klíčový snímek (Aktivní vrstva)"
 
@@ -41291,16 +41261,6 @@ msgstr "Vlastní Umístění"
 
 
 msgctxt "Operator"
-msgid "Delete Points"
-msgstr "Odstranit body"
-
-
-msgctxt "Operator"
-msgid "Dissolve Points"
-msgstr "Rozpustit body"
-
-
-msgctxt "Operator"
 msgid "Dissolve Between"
 msgstr "Rozpustit mezi"
 
@@ -41308,11 +41268,6 @@ msgstr "Rozpustit mezi"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "Rozpustit nevybrané"
-
-
-msgctxt "Operator"
-msgid "Delete Strokes"
-msgstr "Odstranění tahů"
 
 
 msgctxt "Operator"
