@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6910,6 +6910,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "Nie można rozpakować pliku indywidualnej biblioteki, '%s'"
 
 
+msgid "ParticleSystem"
+msgstr "SystemCząsteczek"
+
+
 msgid "ParticleSettings"
 msgstr "DaneCząsteczek"
 
@@ -11320,10 +11324,6 @@ msgstr "Obiekt '%s' nie obsługuje kształtów"
 
 msgid "Object '%s' could not create internal data for finding nearest point"
 msgstr "Obiekt '%s' nie zdołał stworzyć wewnętrznych danych do znalezienia najbliższego punktu"
-
-
-msgid "ParticleSystem"
-msgstr "SystemCząsteczek"
 
 
 msgid "Mesh has no UV data"

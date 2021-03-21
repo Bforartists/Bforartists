@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -21134,12 +21134,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "從投射器設定 UV 的 UV 投射修改器"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "水平寬長比"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "垂直寬長比"
+msgid "Aspect X"
+msgstr "寬長比 X"
 
 
 msgid "Number of Projectors"
@@ -21152,14 +21148,6 @@ msgstr "要使用的投射子數目"
 
 msgid "Projectors"
 msgstr "投射子"
-
-
-msgid "Horizontal Scale"
-msgstr "水平縮放"
-
-
-msgid "Vertical Scale"
-msgstr "水平縮放"
 
 
 msgid "UVWarp Modifier"
@@ -27201,14 +27189,6 @@ msgid "Open Cache File"
 msgstr "開啟快取檔案"
 
 
-msgid "Check Existing"
-msgstr "檢查是否存在"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "檢查並警告是否需要覆寫既有檔案"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "重新整理封存檔"
@@ -29099,6 +29079,14 @@ msgstr "匯出攝影機與標記"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "在其他地方儲存個可重新建立攝影機與標記的 Python 指令稿"
+
+
+msgid "Check Existing"
+msgstr "檢查是否存在"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "檢查並警告是否需要覆寫既有檔案"
 
 
 msgid "Filepath used for exporting the file"
@@ -54511,10 +54499,6 @@ msgid "Invert"
 msgstr "反轉"
 
 
-msgid "Aspect X"
-msgstr "寬長比 X"
-
-
 msgid "Old"
 msgstr "老舊"
 
@@ -56504,6 +56488,10 @@ msgstr "無法打包絕對檔案：「%s」"
 
 msgid "Cannot unpack individual Library file, '%s'"
 msgstr "無法解包個別藏庫檔案，「%s」"
+
+
+msgid "ParticleSystem"
+msgstr "粒子系統"
 
 
 msgid "ParticleSettings"
@@ -60508,10 +60496,6 @@ msgstr "清單中頂點索引不良"
 
 msgid "Object '%s' does not support shapes"
 msgstr "物體「%s」不支援外形"
-
-
-msgid "ParticleSystem"
-msgstr "粒子系統"
 
 
 msgid "Mesh has no UV data"

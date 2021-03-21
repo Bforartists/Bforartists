@@ -21,7 +21,7 @@
 
 inline float colorbalance_lgg(float in, float lift_lgg, float gamma_inv, float gain)
 {
-  /* 1:1 match with the sequencer with linear/srgb conversions, the conversion isnt pretty
+  /* 1:1 match with the sequencer with linear/srgb conversions, the conversion isn't pretty
    * but best keep it this way, since testing for durian shows a similar calculation
    * without lin/srgb conversions gives bad results (over-saturated shadows) with colors
    * slightly below 1.0. some correction can be done but it ends up looking bad for shadows or
@@ -38,9 +38,9 @@ inline float colorbalance_lgg(float in, float lift_lgg, float gamma_inv, float g
 
 ColorBalanceLGGOperation::ColorBalanceLGGOperation()
 {
-  this->addInputSocket(COM_DT_VALUE);
-  this->addInputSocket(COM_DT_COLOR);
-  this->addOutputSocket(COM_DT_COLOR);
+  this->addInputSocket(DataType::Value);
+  this->addInputSocket(DataType::Color);
+  this->addOutputSocket(DataType::Color);
   this->m_inputValueOperation = nullptr;
   this->m_inputColorOperation = nullptr;
   this->setResolutionInputSocketIndex(1);

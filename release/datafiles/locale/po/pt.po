@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -24250,12 +24250,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "Modificador de projeção UV para definir as UVs a partir de um projetor."
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Proporção de aspecto horizontal"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Proporção de aspecto vertical"
+msgid "Aspect X"
+msgstr "Aspecto em X"
 
 
 msgid "Number of Projectors"
@@ -24268,14 +24264,6 @@ msgstr "O número de projetores para usar."
 
 msgid "Projectors"
 msgstr "Projetores"
-
-
-msgid "Horizontal Scale"
-msgstr "Escala horizontal"
-
-
-msgid "Vertical Scale"
-msgstr "Escala vertical"
 
 
 msgid "UVWarp Modifier"
@@ -30946,14 +30934,6 @@ msgid "Load a cache file"
 msgstr "Carrega um ficheiro de cache"
 
 
-msgid "Check Existing"
-msgstr "Verificar existentes"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Verifica e avisa caso esteja sobrescrevendo ficheiros existentes."
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "Atualizar ficheiros"
@@ -32908,6 +32888,14 @@ msgstr "Exportar câmara e marcadores"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Guarda um script python que irá criar novamente as câmaras e marcadores em algum outro local."
+
+
+msgid "Check Existing"
+msgstr "Verificar existentes"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Verifica e avisa caso esteja sobrescrevendo ficheiros existentes."
 
 
 msgid "Filepath used for exporting the file"
@@ -62505,10 +62493,6 @@ msgid "Invert"
 msgstr "Inverter"
 
 
-msgid "Aspect X"
-msgstr "Aspecto em X"
-
-
 msgid "Old"
 msgstr "Antigo(a)"
 
@@ -64835,6 +64819,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "Não é possível descompactar o ficheiro de biblioteca individual, '%s'"
 
 
+msgid "ParticleSystem"
+msgstr "Sistema de partículas"
+
+
 msgid "ParticleSettings"
 msgstr "Definições de partículas"
 
@@ -65114,22 +65102,6 @@ msgstr "Par de anéis de arestas não estão conectados."
 
 msgid "Edge-rings are not connected"
 msgstr "Anéis de arestas não estão conectados."
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "Composição | Ladrilho  %u - %u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "Composição | Determinando resolução"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "Composição | Inicializando execução"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "Composição | Desfazendo inicialização de execução"
 
 
 msgid "Basic"
@@ -65766,10 +65738,6 @@ msgstr "Facilitação (por potência)"
 
 msgid "Dynamic Effects"
 msgstr "Efeitos dinâmicos"
-
-
-msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
-msgstr "Não é possível encontrar um par de fotogramas de lápis de cera para a interpolação entre os mesmos na camada ativa."
 
 
 msgid "Custom interpolation curve does not exist"
@@ -69888,10 +69856,6 @@ msgstr "Objeto '%s' não pode criar dados internos para encontrar o ponto mais p
 
 msgid "Palette '%s' does not contain color given"
 msgstr "A paleta '%s' não contém a cor fornecida."
-
-
-msgid "ParticleSystem"
-msgstr "Sistema de partículas"
 
 
 msgid "Mesh has no UV data"

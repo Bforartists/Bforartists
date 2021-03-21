@@ -709,6 +709,10 @@ class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
+        layout.separator()
+
+        layout.prop(system, "sequencer_proxy_setup")
+
 
 # -----------------------------------------------------------------------------
 # Viewport Panels

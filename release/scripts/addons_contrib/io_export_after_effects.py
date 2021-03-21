@@ -23,7 +23,7 @@ bl_info = {
     "description": "Export cameras, selected objects & camera solution "
         "3D Markers to Adobe After Effects CS3 and above",
     "author": "Bartek Skorupa",
-    "version": (0, 0, 67),
+    "version": (0, 0, 68),
     "blender": (2, 80, 0),
     "location": "File > Export > Adobe After Effects (.jsx)",
     "warning": "",
@@ -301,7 +301,7 @@ def convert_transform_matrix(matrix, width, height, aspect,
     scale_mat = Matrix.Scale(width, 4)
 
     # Get blender transform data for ob
-    b_loc = (scale_mat @ matrix).to_translation()
+    b_loc = matrix.to_translation()
     b_rot = matrix.to_euler('ZYX')  # ZYX euler matches AE's orientation and allows to use x_rot_correction
     b_scale = matrix.to_scale()
 
@@ -309,9 +309,9 @@ def convert_transform_matrix(matrix, width, height, aspect,
     # AE's X is Blender's X,
     # AE's Y is Blender's -Z,
     # AE's Z is Blender's Y
-    x = (b_loc.x * ae_size / 100.0) / aspect + width / 2.0
-    y = (-b_loc.z * ae_size / 100.0) + (height / 2.0)
-    z = (b_loc.y * ae_size / 100.0)
+    x = (b_loc.x * 100.0 / aspect + width / 2.0) * ae_size / 100.0
+    y = (-b_loc.z * 100.0 + height / 2.0) * ae_size / 100.0
+    z = (b_loc.y * 100.0) * ae_size / 100.0
 
     # Convert rotations to match AE's orientation.
     # If not x_rot_correction
@@ -684,6 +684,8 @@ def write_jsx_file(file, data, selection, include_animation,
                 name_ae = convert_name(obj.name)
                 # Convert obj transform properties to AE space
                 plane_matrix = get_plane_matrix(obj)
+                # Scale plane to account for AE's transforms
+                plane_matrix = plane_matrix @ Matrix.Scale(100.0 / data['width'], 4)
                 ae_transform = convert_transform_matrix(
                     plane_matrix, data['width'], data['height'],
                     data['aspect'], True, ae_size)
@@ -814,6 +816,8 @@ def write_jsx_file(file, data, selection, include_animation,
                 name_ae = convert_name(obj.name)
                 # Convert obj transform properties to AE space
                 plane_matrix = get_image_plane_matrix(obj)
+                # Scale plane to account for AE's transforms
+                plane_matrix = plane_matrix @ Matrix.Scale(100.0 / data['width'], 4)
                 ae_transform = convert_transform_matrix(
                     plane_matrix, data['width'], data['height'],
                     data['aspect'], True, ae_size)

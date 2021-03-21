@@ -2035,9 +2035,6 @@ static void node_draw_basis(const bContext *C,
     case GEO_NODE_ATTRIBUTE_SEPARATE_XYZ:
       icon = ICON_ATTRIBUTE_SEPARATE_XYZ;
       break;
-    case GEO_NODE_SUBDIVIDE_SMOOTH:
-      icon = ICON_SUBDIVIDE_EDGES;
-      break;
     case GEO_NODE_SUBDIVIDE:
       icon = ICON_SUBDIVIDE_EDGES;
       break;

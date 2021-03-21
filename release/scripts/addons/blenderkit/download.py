@@ -1267,6 +1267,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
         description='Replace resolution'
     )
 
+    #needs to be passed to the operator to not show all resolution possibilities
     max_resolution: IntProperty(
         name="Max resolution",
         description="",
@@ -1382,13 +1383,14 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
         # only make a pop up in case of switching resolutions
         if self.invoke_resolution:
             # show_enum_values(self, 'resolution')
-            # print('ENUM VALUES')
             self.asset_data = self.get_asset_data(context)
             sprops = utils.get_search_props()
-            if int(sprops.resolution) <= int(self.max_resolution):
+
+            #set initial resolutions enum activation
+            if sprops.resolution != 'ORIGINAL' and int(sprops.resolution) <= int(self.max_resolution):
                 self.resolution = sprops.resolution
             elif int(self.max_resolution) > 0:
-                self.resolution = self.max_resolution
+                self.resolution = str(self.max_resolution)
             else:
                 self.resolution = 'ORIGINAL'
             return wm.invoke_props_dialog(self)

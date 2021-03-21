@@ -24,9 +24,9 @@
 
 DespeckleOperation::DespeckleOperation()
 {
-  this->addInputSocket(COM_DT_COLOR);
-  this->addInputSocket(COM_DT_VALUE);
-  this->addOutputSocket(COM_DT_COLOR);
+  this->addInputSocket(DataType::Color);
+  this->addInputSocket(DataType::Value);
+  this->addOutputSocket(DataType::Color);
   this->setResolutionInputSocketIndex(0);
   this->m_inputOperation = nullptr;
   this->setComplex(true);
@@ -101,7 +101,7 @@ void DespeckleOperation::executePixel(float output[4], int x, int y, void * /*da
   COLOR_ADD(TOT_DIV_ONE)
 
 #if 0
-  this->m_inputOperation->read(in2, x2, y2, NULL);
+  this->m_inputOperation->read(in2, x2, y2, nullptr);
   madd_v4_v4fl(color_mid, in2, this->m_filter[4]);
 #endif
 

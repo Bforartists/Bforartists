@@ -1574,10 +1574,10 @@ uiBut *uiDefAutoButR(uiBlock *block,
                      int index,
                      const char *name,
                      int icon,
-                     int x1,
-                     int y1,
-                     int x2,
-                     int y2);
+                     int x,
+                     int y,
+                     int width,
+                     int height);
 eAutoPropButsReturn uiDefAutoButsRNA(uiLayout *layout,
                                      struct PointerRNA *ptr,
                                      bool (*check_prop)(struct PointerRNA *ptr,
@@ -2078,7 +2078,10 @@ void uiTemplatePalette(uiLayout *layout,
                        struct PointerRNA *ptr,
                        const char *propname,
                        bool colors);
-void uiTemplateCryptoPicker(uiLayout *layout, struct PointerRNA *ptr, const char *propname);
+void uiTemplateCryptoPicker(uiLayout *layout,
+                            struct PointerRNA *ptr,
+                            const char *propname,
+                            int icon);
 void uiTemplateLayers(uiLayout *layout,
                       struct PointerRNA *ptr,
                       const char *propname,

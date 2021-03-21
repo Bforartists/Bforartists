@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8456,11 +8456,7 @@ msgid "UV Project Modifier"
 msgstr "Comprimir Dades"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Moure a Capa"
-
-
-msgid "Vertical Aspect Ratio"
+msgid "Aspect X"
 msgstr "Moure a Capa"
 
 
@@ -8474,14 +8470,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Projectors"
 msgstr "Esborrar Posició"
-
-
-msgid "Horizontal Scale"
-msgstr "Seleccionar fila"
-
-
-msgid "Vertical Scale"
-msgstr "Seleccionar connectats"
 
 
 msgid "UVWarp Modifier"
@@ -24193,10 +24181,6 @@ msgstr "Amagar Seleccionats"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "Esborrar"
-
-
-msgid "Aspect X"
-msgstr "Moure a Capa"
 
 
 msgid "Buffer"
