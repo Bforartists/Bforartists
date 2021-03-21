@@ -1487,13 +1487,19 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             split.prop(scene, "audio_volume", text="")
             sub.use_property_decorate = False
 
-        if strip.scene_input == 'CAMERA':
-            layout = layout.column(heading="Show")
-            layout.prop(strip, "use_grease_pencil", text="Grease Pencil")
+        if strip.scene_input == 'CAMERA':         
+            layout = layout.column(align = True)
+            layout.label(text = "Show")
+            layout.use_property_split = False
+            row = layout.row()
+            row.separator()
+            row.prop(strip, "use_grease_pencil", text="Grease Pencil")
             if scene:
                 # Warning, this is not a good convention to follow.
                 # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
-                layout.prop(scene.render, "film_transparent")
+                row = layout.row()
+                row.separator()
+                row.prop(scene.render, "film_transparent")
 
 
 class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
