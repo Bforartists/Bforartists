@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -4891,14 +4891,6 @@ msgstr "ﻥﺍﻮﺨﺘﺳﺍ ﮏﺗ"
 
 msgid "UV Project Modifier"
 msgstr "ءﯽﺷ ﯼﺎﻫ‌ﺮﮔ ﺡﻼ﻿ﺻﺍ"
-
-
-msgid "Horizontal Scale"
-msgstr "ﻖﻓﺍ ﺵﺮﺘﺴﮔ"
-
-
-msgid "Vertical Scale"
-msgstr "ﯼﺩﻮﻤﻋ"
 
 
 msgid "UVWarp Modifier"

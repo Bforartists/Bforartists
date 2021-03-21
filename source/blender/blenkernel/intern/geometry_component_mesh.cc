@@ -297,6 +297,47 @@ static ReadAttributePtr adapt_mesh_domain_corner_to_polygon(const Mesh &mesh,
 }
 
 template<typename T>
+static void adapt_mesh_domain_corner_to_edge_impl(const Mesh &mesh,
+                                                  Span<T> old_values,
+                                                  MutableSpan<T> r_values)
+{
+  BLI_assert(r_values.size() == mesh.totedge);
+  attribute_math::DefaultMixer<T> mixer(r_values);
+
+  for (const int poly_index : IndexRange(mesh.totpoly)) {
+    const MPoly &poly = mesh.mpoly[poly_index];
+
+    /* For every edge, mix values from the two adjacent corners (the current and next corner). */
+    for (const int loop_index : IndexRange(poly.loopstart, poly.totloop)) {
+      const int loop_index_next = (loop_index + 1) % poly.totloop;
+      const MLoop &loop = mesh.mloop[loop_index];
+      const int edge_index = loop.e;
+      mixer.mix_in(edge_index, old_values[loop_index]);
+      mixer.mix_in(edge_index, old_values[loop_index_next]);
+    }
+  }
+
+  mixer.finalize();
+}
+
+static ReadAttributePtr adapt_mesh_domain_corner_to_edge(const Mesh &mesh,
+                                                         ReadAttributePtr attribute)
+{
+  ReadAttributePtr new_attribute;
+  const CustomDataType data_type = attribute->custom_data_type();
+  attribute_math::convert_to_static_type(data_type, [&](auto dummy) {
+    using T = decltype(dummy);
+    if constexpr (!std::is_void_v<attribute_math::DefaultMixer<T>>) {
+      Array<T> values(mesh.totedge);
+      adapt_mesh_domain_corner_to_edge_impl<T>(mesh, attribute->get_span<T>(), values);
+      new_attribute = std::make_unique<OwnedArrayReadAttribute<T>>(ATTR_DOMAIN_POINT,
+                                                                   std::move(values));
+    }
+  });
+  return new_attribute;
+}
+
+template<typename T>
 void adapt_mesh_domain_polygon_to_point_impl(const Mesh &mesh,
                                              Span<T> old_values,
                                              MutableSpan<T> r_values)
@@ -365,6 +406,42 @@ static ReadAttributePtr adapt_mesh_domain_polygon_to_corner(const Mesh &mesh,
   return new_attribute;
 }
 
+template<typename T>
+void adapt_mesh_domain_polygon_to_edge_impl(const Mesh &mesh,
+                                            const Span<T> old_values,
+                                            MutableSpan<T> r_values)
+{
+  BLI_assert(r_values.size() == mesh.totedge);
+  attribute_math::DefaultMixer<T> mixer(r_values);
+
+  for (const int poly_index : IndexRange(mesh.totpoly)) {
+    const MPoly &poly = mesh.mpoly[poly_index];
+    const T value = old_values[poly_index];
+    for (const int loop_index : IndexRange(poly.loopstart, poly.totloop)) {
+      const MLoop &loop = mesh.mloop[loop_index];
+      mixer.mix_in(loop.e, value);
+    }
+  }
+  mixer.finalize();
+}
+
+static ReadAttributePtr adapt_mesh_domain_polygon_to_edge(const Mesh &mesh,
+                                                          ReadAttributePtr attribute)
+{
+  ReadAttributePtr new_attribute;
+  const CustomDataType data_type = attribute->custom_data_type();
+  attribute_math::convert_to_static_type(data_type, [&](auto dummy) {
+    using T = decltype(dummy);
+    if constexpr (!std::is_void_v<attribute_math::DefaultMixer<T>>) {
+      Array<T> values(mesh.totedge);
+      adapt_mesh_domain_polygon_to_edge_impl<T>(mesh, attribute->get_span<T>(), values);
+      new_attribute = std::make_unique<OwnedArrayReadAttribute<T>>(ATTR_DOMAIN_POINT,
+                                                                   std::move(values));
+    }
+  });
+  return new_attribute;
+}
+
 /**
  * \note Theoretically this interpolation does not need to compute all values at once.
  * However, doing that makes the implementation simpler, and this can be optimized in the future if
@@ -406,6 +483,162 @@ static ReadAttributePtr adapt_mesh_domain_point_to_polygon(const Mesh &mesh,
   return new_attribute;
 }
 
+/**
+ * \note Theoretically this interpolation does not need to compute all values at once.
+ * However, doing that makes the implementation simpler, and this can be optimized in the future if
+ * only some values are required.
+ */
+template<typename T>
+static void adapt_mesh_domain_point_to_edge_impl(const Mesh &mesh,
+                                                 const Span<T> old_values,
+                                                 MutableSpan<T> r_values)
+{
+  BLI_assert(r_values.size() == mesh.totedge);
+  attribute_math::DefaultMixer<T> mixer(r_values);
+
+  for (const int edge_index : IndexRange(mesh.totedge)) {
+    const MEdge &edge = mesh.medge[edge_index];
+    mixer.mix_in(edge_index, old_values[edge.v1]);
+    mixer.mix_in(edge_index, old_values[edge.v2]);
+  }
+
+  mixer.finalize();
+}
+
+static ReadAttributePtr adapt_mesh_domain_point_to_edge(const Mesh &mesh,
+                                                        ReadAttributePtr attribute)
+{
+  ReadAttributePtr new_attribute;
+  const CustomDataType data_type = attribute->custom_data_type();
+  attribute_math::convert_to_static_type(data_type, [&](auto dummy) {
+    using T = decltype(dummy);
+    if constexpr (!std::is_void_v<attribute_math::DefaultMixer<T>>) {
+      Array<T> values(mesh.totedge);
+      adapt_mesh_domain_point_to_edge_impl<T>(mesh, attribute->get_span<T>(), values);
+      new_attribute = std::make_unique<OwnedArrayReadAttribute<T>>(ATTR_DOMAIN_POINT,
+                                                                   std::move(values));
+    }
+  });
+  return new_attribute;
+}
+
+template<typename T>
+void adapt_mesh_domain_edge_to_corner_impl(const Mesh &mesh,
+                                           const Span<T> old_values,
+                                           MutableSpan<T> r_values)
+{
+  BLI_assert(r_values.size() == mesh.totloop);
+  attribute_math::DefaultMixer<T> mixer(r_values);
+
+  for (const int poly_index : IndexRange(mesh.totpoly)) {
+    const MPoly &poly = mesh.mpoly[poly_index];
+
+    /* For every corner, mix the values from the adjacent edges on the polygon. */
+    for (const int loop_index : IndexRange(poly.loopstart, poly.totloop)) {
+      const int loop_index_prev = (loop_index - 1) % poly.totloop;
+      const MLoop &loop = mesh.mloop[loop_index];
+      const MLoop &loop_prev = mesh.mloop[loop_index_prev];
+      mixer.mix_in(loop_index, old_values[loop.e]);
+      mixer.mix_in(loop_index, old_values[loop_prev.e]);
+    }
+  }
+
+  mixer.finalize();
+}
+
+static ReadAttributePtr adapt_mesh_domain_edge_to_corner(const Mesh &mesh,
+                                                         ReadAttributePtr attribute)
+{
+  ReadAttributePtr new_attribute;
+  const CustomDataType data_type = attribute->custom_data_type();
+  attribute_math::convert_to_static_type(data_type, [&](auto dummy) {
+    using T = decltype(dummy);
+    if constexpr (!std::is_void_v<attribute_math::DefaultMixer<T>>) {
+      Array<T> values(mesh.totloop);
+      adapt_mesh_domain_edge_to_corner_impl<T>(mesh, attribute->get_span<T>(), values);
+      new_attribute = std::make_unique<OwnedArrayReadAttribute<T>>(ATTR_DOMAIN_POINT,
+                                                                   std::move(values));
+    }
+  });
+  return new_attribute;
+}
+
+template<typename T>
+static void adapt_mesh_domain_edge_to_point_impl(const Mesh &mesh,
+                                                 const Span<T> old_values,
+                                                 MutableSpan<T> r_values)
+{
+  BLI_assert(r_values.size() == mesh.totvert);
+  attribute_math::DefaultMixer<T> mixer(r_values);
+
+  for (const int edge_index : IndexRange(mesh.totedge)) {
+    const MEdge &edge = mesh.medge[edge_index];
+    const T value = old_values[edge_index];
+    mixer.mix_in(edge.v1, value);
+    mixer.mix_in(edge.v2, value);
+  }
+
+  mixer.finalize();
+}
+
+static ReadAttributePtr adapt_mesh_domain_edge_to_point(const Mesh &mesh,
+                                                        ReadAttributePtr attribute)
+{
+  ReadAttributePtr new_attribute;
+  const CustomDataType data_type = attribute->custom_data_type();
+  attribute_math::convert_to_static_type(data_type, [&](auto dummy) {
+    using T = decltype(dummy);
+    if constexpr (!std::is_void_v<attribute_math::DefaultMixer<T>>) {
+      Array<T> values(mesh.totvert);
+      adapt_mesh_domain_edge_to_point_impl<T>(mesh, attribute->get_span<T>(), values);
+      new_attribute = std::make_unique<OwnedArrayReadAttribute<T>>(ATTR_DOMAIN_POINT,
+                                                                   std::move(values));
+    }
+  });
+  return new_attribute;
+}
+
+/**
+ * \note Theoretically this interpolation does not need to compute all values at once.
+ * However, doing that makes the implementation simpler, and this can be optimized in the future if
+ * only some values are required.
+ */
+template<typename T>
+static void adapt_mesh_domain_edge_to_polygon_impl(const Mesh &mesh,
+                                                   const Span<T> old_values,
+                                                   MutableSpan<T> r_values)
+{
+  BLI_assert(r_values.size() == mesh.totpoly);
+  attribute_math::DefaultMixer<T> mixer(r_values);
+
+  for (const int poly_index : IndexRange(mesh.totpoly)) {
+    const MPoly &poly = mesh.mpoly[poly_index];
+    for (const int loop_index : IndexRange(poly.loopstart, poly.totloop)) {
+      const MLoop &loop = mesh.mloop[loop_index];
+      mixer.mix_in(poly_index, old_values[loop.e]);
+    }
+  }
+
+  mixer.finalize();
+}
+
+static ReadAttributePtr adapt_mesh_domain_edge_to_polygon(const Mesh &mesh,
+                                                          ReadAttributePtr attribute)
+{
+  ReadAttributePtr new_attribute;
+  const CustomDataType data_type = attribute->custom_data_type();
+  attribute_math::convert_to_static_type(data_type, [&](auto dummy) {
+    using T = decltype(dummy);
+    if constexpr (!std::is_void_v<attribute_math::DefaultMixer<T>>) {
+      Array<T> values(mesh.totpoly);
+      adapt_mesh_domain_edge_to_polygon_impl<T>(mesh, attribute->get_span<T>(), values);
+      new_attribute = std::make_unique<OwnedArrayReadAttribute<T>>(ATTR_DOMAIN_POINT,
+                                                                   std::move(values));
+    }
+  });
+  return new_attribute;
+}
+
 }  // namespace blender::bke
 
 ReadAttributePtr MeshComponent::attribute_try_adapt_domain(ReadAttributePtr attribute,
@@ -429,7 +662,10 @@ ReadAttributePtr MeshComponent::attribute_try_adapt_domain(ReadAttributePtr attr
           return blender::bke::adapt_mesh_domain_corner_to_point(*mesh_, std::move(attribute));
         case ATTR_DOMAIN_POLYGON:
           return blender::bke::adapt_mesh_domain_corner_to_polygon(*mesh_, std::move(attribute));
+        case ATTR_DOMAIN_EDGE:
+          return blender::bke::adapt_mesh_domain_corner_to_edge(*mesh_, std::move(attribute));
         default:
+          BLI_assert(false);
           break;
       }
       break;
@@ -440,7 +676,10 @@ ReadAttributePtr MeshComponent::attribute_try_adapt_domain(ReadAttributePtr attr
           return blender::bke::adapt_mesh_domain_point_to_corner(*mesh_, std::move(attribute));
         case ATTR_DOMAIN_POLYGON:
           return blender::bke::adapt_mesh_domain_point_to_polygon(*mesh_, std::move(attribute));
+        case ATTR_DOMAIN_EDGE:
+          return blender::bke::adapt_mesh_domain_point_to_edge(*mesh_, std::move(attribute));
         default:
+          BLI_assert(false);
           break;
       }
       break;
@@ -451,12 +690,30 @@ ReadAttributePtr MeshComponent::attribute_try_adapt_domain(ReadAttributePtr attr
           return blender::bke::adapt_mesh_domain_polygon_to_point(*mesh_, std::move(attribute));
         case ATTR_DOMAIN_CORNER:
           return blender::bke::adapt_mesh_domain_polygon_to_corner(*mesh_, std::move(attribute));
+        case ATTR_DOMAIN_EDGE:
+          return blender::bke::adapt_mesh_domain_polygon_to_edge(*mesh_, std::move(attribute));
         default:
+          BLI_assert(false);
+          break;
+      }
+      break;
+    }
+    case ATTR_DOMAIN_EDGE: {
+      switch (new_domain) {
+        case ATTR_DOMAIN_CORNER:
+          return blender::bke::adapt_mesh_domain_edge_to_corner(*mesh_, std::move(attribute));
+        case ATTR_DOMAIN_POINT:
+          return blender::bke::adapt_mesh_domain_edge_to_point(*mesh_, std::move(attribute));
+        case ATTR_DOMAIN_POLYGON:
+          return blender::bke::adapt_mesh_domain_edge_to_polygon(*mesh_, std::move(attribute));
+        default:
+          BLI_assert(false);
           break;
       }
       break;
     }
     default:
+      BLI_assert(false);
       break;
   }
 
@@ -602,6 +859,28 @@ static WriteAttributePtr make_vertex_color_write_attribute(void *data, const int
   return std::make_unique<
       DerivedArrayWriteAttribute<MLoopCol, Color4f, get_loop_color, set_loop_color>>(
       ATTR_DOMAIN_CORNER, MutableSpan((MLoopCol *)data, domain_size));
+}
+
+static float get_crease(const MEdge &edge)
+{
+  return edge.crease / 255.0f;
+}
+
+static void set_crease(MEdge &edge, const float &value)
+{
+  edge.crease = round_fl_to_uchar_clamp(value * 255.0f);
+}
+
+static ReadAttributePtr make_crease_read_attribute(const void *data, const int domain_size)
+{
+  return std::make_unique<DerivedArrayReadAttribute<MEdge, float, get_crease>>(
+      ATTR_DOMAIN_EDGE, Span((const MEdge *)data, domain_size));
+}
+
+static WriteAttributePtr make_crease_write_attribute(void *data, const int domain_size)
+{
+  return std::make_unique<DerivedArrayWriteAttribute<MEdge, float, get_crease, set_crease>>(
+      ATTR_DOMAIN_EDGE, MutableSpan((MEdge *)data, domain_size));
 }
 
 class VertexWeightWriteAttribute final : public WriteAttribute {
@@ -760,9 +1039,9 @@ class VertexGroupsAttributeProvider final : public DynamicAttributesProvider {
     return true;
   }
 
-  void supported_domains(Vector<AttributeDomain> &r_domains) const final
+  void foreach_domain(const FunctionRef<void(AttributeDomain)> callback) const final
   {
-    r_domains.append_non_duplicates(ATTR_DOMAIN_POINT);
+    callback(ATTR_DOMAIN_POINT);
   }
 };
 
@@ -777,7 +1056,7 @@ class NormalAttributeProvider final : public BuiltinAttributeProvider {
   {
   }
 
-  ReadAttributePtr try_get_for_read(const GeometryComponent &component) const
+  ReadAttributePtr try_get_for_read(const GeometryComponent &component) const final
   {
     const MeshComponent &mesh_component = static_cast<const MeshComponent &>(component);
     const Mesh *mesh = mesh_component.get_for_read();
@@ -804,22 +1083,22 @@ class NormalAttributeProvider final : public BuiltinAttributeProvider {
                                                              std::move(normals));
   }
 
-  WriteAttributePtr try_get_for_write(GeometryComponent &UNUSED(component)) const
+  WriteAttributePtr try_get_for_write(GeometryComponent &UNUSED(component)) const final
   {
     return {};
   }
 
-  bool try_delete(GeometryComponent &UNUSED(component)) const
+  bool try_delete(GeometryComponent &UNUSED(component)) const final
   {
     return false;
   }
 
-  bool try_create(GeometryComponent &UNUSED(component)) const
+  bool try_create(GeometryComponent &UNUSED(component)) const final
   {
     return false;
   }
 
-  bool exists(const GeometryComponent &component) const
+  bool exists(const GeometryComponent &component) const final
   {
     return component.attribute_domain_size(ATTR_DOMAIN_POLYGON) != 0;
   }
@@ -903,6 +1182,18 @@ static ComponentAttributeProviders create_attribute_providers_for_mesh()
                                                      make_shade_smooth_write_attribute,
                                                      nullptr);
 
+  static BuiltinCustomDataLayerProvider crease("crease",
+                                               ATTR_DOMAIN_EDGE,
+                                               CD_PROP_FLOAT,
+                                               CD_MEDGE,
+                                               BuiltinAttributeProvider::NonCreatable,
+                                               BuiltinAttributeProvider::Writable,
+                                               BuiltinAttributeProvider::NonDeletable,
+                                               edge_access,
+                                               make_crease_read_attribute,
+                                               make_crease_write_attribute,
+                                               nullptr);
+
   static NamedLegacyCustomDataProvider uvs(ATTR_DOMAIN_CORNER,
                                            CD_PROP_FLOAT2,
                                            CD_MLOOPUV,
@@ -923,7 +1214,7 @@ static ComponentAttributeProviders create_attribute_providers_for_mesh()
   static CustomDataAttributeProvider edge_custom_data(ATTR_DOMAIN_EDGE, edge_access);
   static CustomDataAttributeProvider polygon_custom_data(ATTR_DOMAIN_POLYGON, polygon_access);
 
-  return ComponentAttributeProviders({&position, &material_index, &shade_smooth, &normal},
+  return ComponentAttributeProviders({&position, &material_index, &shade_smooth, &normal, &crease},
                                      {&uvs,
                                       &vertex_colors,
                                       &corner_custom_data,

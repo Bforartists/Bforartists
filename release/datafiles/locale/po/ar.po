@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -18875,12 +18875,8 @@ msgid "UV Project Modifier"
 msgstr "UV ـﻟﺍ ﻁﺎﻘﺳﺍ ﺮﻴﻐﻣ"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "ﻲﻘﻓﻻ﻿ﺍ ﺔﺒﺴﻨﻟﺍ ﻝﺪﻌﻣ"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "ﻱﺩﻮﻣﺎﻌﻟﺍ ﺔﺒﺴﻨﻟﺍ ﻝﺪﻌﻣ"
+msgid "Aspect X"
+msgstr "ﻲﻘﻓﻻ﻿ﺍ ﺭﻮﺤﻤﻟﺍ ﺔﺒﺴﻧ"
 
 
 msgid "Number of Projectors"
@@ -18893,14 +18889,6 @@ msgstr "ﺔﻣﺪﺨﺘﺴﻤﻟﺍ ﺕﺎﻃﺎﻘﺳﻻ﻿ﺍ ﺩﺪﻋ"
 
 msgid "Projectors"
 msgstr "ﻥﻮﺿﺭﺎﻌﻟﺍ"
-
-
-msgid "Horizontal Scale"
-msgstr "ﻲﻘﻓﻷ﻿ﺍ ﻢﺠﺤﻟﺍ"
-
-
-msgid "Vertical Scale"
-msgstr "ﻱﺩﻮﻣﺎﻌﻟﺍ ﻢﺠﺤﻟﺍ"
 
 
 msgid "UVWarp Modifier"
@@ -38121,10 +38109,6 @@ msgid "Invert"
 msgstr "ﺲﻜﻋﺇ"
 
 
-msgid "Aspect X"
-msgstr "ﻲﻘﻓﻻ﻿ﺍ ﺭﻮﺤﻤﻟﺍ ﺔﺒﺴﻧ"
-
-
 msgid "Old"
 msgstr "ﻢﻳﺪﻗ"
 
@@ -39827,6 +39811,10 @@ msgstr "NLA ﺭﺎﺴﻣ"
 
 msgid "Mball"
 msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
+
+
+msgid "ParticleSystem"
+msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻧ"
 
 
 msgid "ParticleSettings"
@@ -41790,10 +41778,6 @@ msgstr "ﺔﻨﻴﻌﻤﻟﺍ ﺔﻤﻴﻘﻟﺍ"
 
 msgid "Bad vertex index in list"
 msgstr "ﺎﻬﻛﺮّﺣ ﻭ ﺓﺪﻳﺪﺟ ﺔﻄﻘﻧ ﻒﺿﺃ"
-
-
-msgid "ParticleSystem"
-msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻡﺎﻈﻧ"
 
 
 msgctxt "Armature"

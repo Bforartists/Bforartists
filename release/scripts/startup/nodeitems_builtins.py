@@ -390,6 +390,7 @@ compositor_node_categories = [
         NodeItem("CompositorNodeColorMatte"),
         NodeItem("CompositorNodeDoubleEdgeMask"),
         NodeItem("CompositorNodeCryptomatte"),
+        NodeItem("CompositorNodeCryptomatteV2"),
     ]),
     CompositorNodeCategory("CMP_DISTORT", "Distort", items=[
         NodeItem("CompositorNodeScale"),
@@ -517,8 +518,18 @@ geometry_node_categories = [
         NodeItem("GeometryNodeBoolean"),
         NodeItem("GeometryNodeTriangulate"),
         NodeItem("GeometryNodeEdgeSplit"),
-        NodeItem("GeometryNodeSubdivideSmooth"),
+        NodeItem("GeometryNodeSubdivisionSurface"),
         NodeItem("GeometryNodeSubdivide"),
+
+        # These should be in a sub-menu, but that requires a refactor to build the add menu manually.
+        NodeItem("GeometryNodeMeshCube"),
+        NodeItem("GeometryNodeMeshCircle"),
+        NodeItem("GeometryNodeMeshUVSphere"),
+        NodeItem("GeometryNodeMeshIcoSphere"),
+        NodeItem("GeometryNodeMeshCylinder"),
+        NodeItem("GeometryNodeMeshCone"),
+        NodeItem("GeometryNodeMeshLine"),
+        NodeItem("GeometryNodeMeshPlane"),
     ]),
     GeometryNodeCategory("GEO_POINT", "Point", items=[
         NodeItem("GeometryNodePointDistribute"),

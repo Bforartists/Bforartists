@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -30878,12 +30878,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "Модификатор UV-проецирования для установки UV с проектора"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Соотн. сторон по горизонтали"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Соотн. сторон по вертикали"
+msgid "Aspect X"
+msgstr "Соотношение сторон X"
 
 
 msgid "Number of Projectors"
@@ -30896,14 +30892,6 @@ msgstr "Количество используемых проекторов"
 
 msgid "Projectors"
 msgstr "Проекторы"
-
-
-msgid "Horizontal Scale"
-msgstr "Горизонтальное масштабирование"
-
-
-msgid "Vertical Scale"
-msgstr "Вертикальное масштабирование"
 
 
 msgid "UVWarp Modifier"
@@ -38342,14 +38330,6 @@ msgid "Load a cache file"
 msgstr "Загрузить файл кэша"
 
 
-msgid "Check Existing"
-msgstr "Проверять существование"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Проверять и предупреждать при перезаписи существующих файлов"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "Обновить архив"
@@ -40541,6 +40521,14 @@ msgstr "Экспортировать камеру и маркеры"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Сохранить Python-скрипт, воссоздающий камеры и маркеры в другом месте"
+
+
+msgid "Check Existing"
+msgstr "Проверять существование"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Проверять и предупреждать при перезаписи существующих файлов"
 
 
 msgid "Filepath used for exporting the file"
@@ -80566,10 +80554,6 @@ msgid "Align to Vertex Normal"
 msgstr "Выровнять по нормалям вершин"
 
 
-msgid "Aspect X"
-msgstr "Соотношение сторон X"
-
-
 msgid "Old"
 msgstr "Старый"
 
@@ -84050,11 +84034,6 @@ msgstr "Установить как активный материал"
 
 
 msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "Выстроить штрихи"
-
-
-msgctxt "Operator"
 msgid "Close"
 msgstr "Замкнуть"
 
@@ -84062,16 +84041,6 @@ msgstr "Замкнуть"
 msgctxt "Operator"
 msgid "Toggle Caps"
 msgstr "Показать/скрыть концы"
-
-
-msgctxt "Operator"
-msgid "Extrude Points"
-msgstr "Экструдировать точки"
-
-
-msgctxt "Operator"
-msgid "Merge Points"
-msgstr "Объединить точки"
 
 
 msgctxt "Operator"
@@ -84624,11 +84593,6 @@ msgstr "Вставить по слоям"
 
 
 msgctxt "Operator"
-msgid "Smooth Points"
-msgstr "Сгладить точки"
-
-
-msgctxt "Operator"
 msgid "Insert Blank Keyframe (All Layers)"
 msgstr "Вставить пустой ключевой кадр (все слои)"
 
@@ -84684,24 +84648,8 @@ msgid "Point Context Menu"
 msgstr "Контекстное меню точек"
 
 
-msgid "Mirror Points"
-msgstr "Отразить точки"
-
-
-msgid "Snap Points"
-msgstr "Переместить точки"
-
-
 msgid "Stroke Context Menu"
 msgstr "Контекстное меню шрихов"
-
-
-msgid "Mirror Stroke"
-msgstr "Отразить штрихи"
-
-
-msgid "Snap Stroke"
-msgstr "Переместить штрихи"
 
 
 msgctxt "Operator"
@@ -84767,16 +84715,6 @@ msgstr "Настраиваемое положение"
 
 
 msgctxt "Operator"
-msgid "Delete Points"
-msgstr "Удалить точки"
-
-
-msgctxt "Operator"
-msgid "Dissolve Points"
-msgstr "Растворить точки"
-
-
-msgctxt "Operator"
 msgid "Dissolve Between"
 msgstr "Растворить между"
 
@@ -84784,11 +84722,6 @@ msgstr "Растворить между"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "Растворить невыделенное"
-
-
-msgctxt "Operator"
-msgid "Delete Strokes"
-msgstr "Удалить штрихи"
 
 
 msgctxt "Operator"
@@ -85280,6 +85213,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "Невозможно упаковать отдельный файл библиотеки, «%s»"
 
 
+msgid "ParticleSystem"
+msgstr "СистемаЧастиц"
+
+
 msgid "ParticleSettings"
 msgstr "НастройкиЧастиц"
 
@@ -85631,22 +85568,6 @@ msgstr "Пары колец рёбер не соединены"
 
 msgid "Edge-rings are not connected"
 msgstr "Кольца рёбер не соединены"
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "Постобработка | Тайл %u-%u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "Постобработка | Определение разрешения"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "Постобработка | Инициализация процесса"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "Постобработка | Финализация процесса"
 
 
 msgid "Basic"
@@ -86559,10 +86480,6 @@ msgstr "Ослабление (по интенсивности)"
 
 msgid "Dynamic Effects"
 msgstr "Динамические эффекты"
-
-
-msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
-msgstr "Не удалось найти пару кадров Grease Pencil для интерполяции между ними в активном слое"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -91859,10 +91776,6 @@ msgstr "Не удалось создать внутренние данные д�
 
 msgid "Palette '%s' does not contain color given"
 msgstr "Палитра «%s» не содержит указанного цвета"
-
-
-msgid "ParticleSystem"
-msgstr "СистемаЧастиц"
 
 
 msgid "Mesh has no UV data"

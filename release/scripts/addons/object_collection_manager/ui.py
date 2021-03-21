@@ -40,15 +40,12 @@ from .internals import (
     update_collection_tree,
     update_property_group,
     generate_state,
+    check_state,
     get_move_selection,
     get_move_active,
     update_qcd_header,
+    add_vertical_separator_line,
 )
-
-from .qcd_operators import (
-    QCDAllBase,
-)
-
 
 preview_collections = {}
 last_icon_theme_text = None
@@ -79,6 +76,7 @@ class CollectionManager(Operator):
         cm = context.scene.collection_manager
         prefs = context.preferences.addons[__package__].preferences
         view_layer = context.view_layer
+        collection = context.view_layer.layer_collection.collection
 
         if view_layer.name != cls.last_view_layer:
             if prefs.enable_qcd:
@@ -136,6 +134,11 @@ class CollectionManager(Operator):
             renum_sec.alignment = 'LEFT'
             renum_sec.operator("view3d.renumerate_qcd_slots")
 
+        undo_sec = op_sec.row(align=True)
+        undo_sec.alignment = 'LEFT'
+        undo_sec.operator("view3d.undo_wrapper", text="", icon='LOOP_BACK')
+        undo_sec.operator("view3d.redo_wrapper", text="", icon='LOOP_FORWARDS')
+
         # menu & filter
         right_sec = button_row_1.row()
         right_sec.alignment = 'RIGHT'
@@ -162,16 +165,52 @@ class CollectionManager(Operator):
         master_collection_row.separator()
 
         # name
-        name_row = master_collection_row.row()
-        name_row.prop(self, "master_collection", text='')
-        name_row.enabled = False
+        name_row = master_collection_row.row(align=True)
+        name_field = name_row.row(align=True)
+        name_field.prop(self, "master_collection", text='')
+        name_field.enabled = False
 
-        master_collection_row.separator()
+        # set selection
+        setsel = name_row.row(align=True)
+        icon = 'DOT'
+
+        if any((laycol["ptr"].exclude,
+               collection.hide_select,
+               collection.hide_viewport,
+               laycol["ptr"].hide_viewport,
+               not collection.objects,)):
+            # objects cannot be selected
+            setsel.active = False
+
+        else:
+            for obj in collection.objects:
+                if obj.select_get() == False:
+                    # some objects remain unselected
+                    icon = 'LAYER_USED'
+                    break
+
+            if icon != 'LAYER_USED':
+                # all objects are selected
+                icon = 'LAYER_ACTIVE'
+
+        prop = setsel.operator("view3d.select_collection_objects",
+                                   text="",
+                                   icon=icon,
+                                   depress=bool(icon == 'LAYER_ACTIVE')
+                                   )
+        prop.is_master_collection = True
+        prop.collection_name = 'Master Collection'
+
 
         # global rtos
         global_rto_row = master_collection_row.row()
         global_rto_row.alignment = 'RIGHT'
 
+        # used as a separator (actual separator not wide enough)
+        global_rto_row.label()
+
+
+        # set collection
         row_setcol = global_rto_row.row()
         row_setcol.alignment = 'LEFT'
         row_setcol.operator_context = 'INVOKE_DEFAULT'
@@ -183,7 +222,10 @@ class CollectionManager(Operator):
 
         collection = context.view_layer.layer_collection.collection
 
-        icon = 'MESH_CUBE'
+        icon = 'GRID'
+
+        if collection.objects:
+            icon = 'MESH_CUBE'
 
         if selected_objects:
             if active_object and active_object.name in collection.objects:
@@ -193,12 +235,32 @@ class CollectionManager(Operator):
                 icon = 'STICKY_UVS_LOC'
 
         else:
-            row_setcol.enabled = False
+            row_setcol.active = False
 
+
+        # add vertical separator line
+        separator = row_setcol.row()
+        separator.scale_x = 0.2
+        separator.enabled = False
+        separator.operator("view3d.cm_ui_separator_button",
+                            text="",
+                                icon='BLANK1',
+                                )
+
+        # add operator
         prop = row_setcol.operator("view3d.set_collection", text="",
                                    icon=icon, emboss=False)
         prop.is_master_collection = True
         prop.collection_name = 'Master Collection'
+
+        # add vertical separator line
+        separator = row_setcol.row()
+        separator.scale_x = 0.2
+        separator.enabled = False
+        separator.operator("view3d.cm_ui_separator_button",
+                            text="",
+                                icon='BLANK1',
+                                )
 
         copy_icon = 'COPYDOWN'
         swap_icon = 'ARROW_LEFTRIGHT'
@@ -387,58 +449,8 @@ class CollectionManager(Operator):
         if cm.cm_list_index >= len(cm.cm_list_collection):
             cm.cm_list_index = -1
 
-        # check if expanded & history/buffer state still correct
-        if internals.collection_state:
-            new_state = generate_state()
-
-            if new_state["name"] != internals.collection_state["name"]:
-                internals.copy_buffer["RTO"] = ""
-                internals.copy_buffer["values"].clear()
-
-                internals.swap_buffer["A"]["RTO"] = ""
-                internals.swap_buffer["A"]["values"].clear()
-                internals.swap_buffer["B"]["RTO"] = ""
-                internals.swap_buffer["B"]["values"].clear()
-
-                for name in list(internals.expanded):
-                    laycol = internals.layer_collections.get(name)
-                    if not laycol or not laycol["has_children"]:
-                        internals.expanded.remove(name)
-
-                for name in list(internals.expand_history["history"]):
-                    laycol = internals.layer_collections.get(name)
-                    if not laycol or not laycol["has_children"]:
-                        internals.expand_history["history"].remove(name)
-
-                for rto, history in internals.rto_history.items():
-                    if view_layer.name in history:
-                        del history[view_layer.name]
-
-
-            else:
-                for rto in ["exclude", "select", "hide", "disable", "render", "holdout", "indirect"]:
-                    if new_state[rto] != internals.collection_state[rto]:
-                        if view_layer.name in internals.rto_history[rto]:
-                            del internals.rto_history[rto][view_layer.name]
-
-                        if view_layer.name in internals.rto_history[rto+"_all"]:
-                            del internals.rto_history[rto+"_all"][view_layer.name]
-
-        # check if in phantom mode and if it's still viable
-        if cm.in_phantom_mode:
-            if internals.layer_collections.keys() != internals.phantom_history["initial_state"].keys():
-                cm.in_phantom_mode = False
-
-            if view_layer.name != internals.phantom_history["view_layer"]:
-                cm.in_phantom_mode = False
-
-            if not cm.in_phantom_mode:
-                for key, value in internals.phantom_history.items():
-                    try:
-                        value.clear()
-                    except AttributeError:
-                        if key == "view_layer":
-                            internals.phantom_history["view_layer"] = ""
+        # check if history/buffer/phantom state still correct
+        check_state(context, cm_popup=True, phantom_mode=True)
 
         # handle window sizing
         max_width = 960
@@ -583,7 +595,8 @@ class CM_UL_items(UIList):
             QCD.scale_x = 0.4
             QCD.prop(item, "qcd_slot_idx", text="")
 
-        c_name = row.row()
+        # collection name
+        c_name = row.row(align=True)
 
         #if rename[0] and index == cm.cm_list_index:
             #c_name.activate_init = True
@@ -591,16 +604,54 @@ class CM_UL_items(UIList):
 
         c_name.prop(item, "name", text="", expand=True)
 
+        # set selection
+        setsel = c_name.row(align=True)
+        icon = 'DOT'
+
+        if any((laycol["ptr"].exclude,
+               collection.hide_select,
+               collection.hide_viewport,
+               laycol["ptr"].hide_viewport,
+               not collection.objects,)):
+            # objects cannot be selected
+            setsel.active = False
+
+        else:
+            for obj in collection.objects:
+                if obj.select_get() == False:
+                    # some objects remain unselected
+                    icon = 'LAYER_USED'
+                    break
+
+            if icon != 'LAYER_USED':
+                # all objects are selected
+                icon = 'LAYER_ACTIVE'
+
+        prop = setsel.operator("view3d.select_collection_objects",
+                                   text="",
+                                   icon=icon,
+                                   depress=bool(icon == 'LAYER_ACTIVE')
+                                   )
+        prop.is_master_collection = False
+        prop.collection_name = item.name
+
         # used as a separator (actual separator not wide enough)
         row.label()
 
         row = s2 if cm.align_local_ops else s1
 
+
+        add_vertical_separator_line(row)
+
+
         # add set_collection op
         set_obj_col = row.row()
         set_obj_col.operator_context = 'INVOKE_DEFAULT'
 
-        icon = 'MESH_CUBE'
+        icon = 'GRID'
+
+        if collection.objects:
+            icon = 'MESH_CUBE'
 
         if selected_objects:
             if active_object and active_object.name in collection.objects:
@@ -617,6 +668,8 @@ class CM_UL_items(UIList):
                                    icon=icon, emboss=False)
         prop.is_master_collection = False
         prop.collection_name = item.name
+
+        add_vertical_separator_line(row)
 
 
         if cm.show_exclude:
@@ -930,17 +983,7 @@ def view3d_header_qcd_slots(self, context):
     layout = self.layout
     idx = 1
 
-    if internals.qcd_collection_state:
-        view_layer = context.view_layer
-        new_state = generate_state(qcd=True)
-
-        if (new_state["name"] != internals.qcd_collection_state["name"]
-        or  new_state["exclude"] != internals.qcd_collection_state["exclude"]
-        or  new_state["qcd"] != internals.qcd_collection_state["qcd"]):
-            if view_layer.name in internals.qcd_history:
-                del internals.qcd_history[view_layer.name]
-                internals.qcd_collection_state.clear()
-                QCDAllBase.clear()
+    check_state(context, qcd=True)
 
 
     main_row = layout.row(align=True)

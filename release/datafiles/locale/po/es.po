@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -35185,12 +35185,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "Modificador de proyección UV que define las UV desde un punto de proyección"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Proporción horizontal"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Proporción vertical"
+msgid "Aspect X"
+msgstr "Proporción X"
 
 
 msgid "Number of Projectors"
@@ -35203,14 +35199,6 @@ msgstr "Cantidad de proyectores a usar"
 
 msgid "Projectors"
 msgstr "Proyectores"
-
-
-msgid "Horizontal Scale"
-msgstr "Escala horizontal"
-
-
-msgid "Vertical Scale"
-msgstr "Escala vertical"
 
 
 msgid "UVWarp Modifier"
@@ -43985,14 +43973,6 @@ msgid "Load a cache file"
 msgstr "Carga un archivo de caché"
 
 
-msgid "Check Existing"
-msgstr "Comprobar existencia"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Comprobar y advertir antes de sobrescribir archivos existentes"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "Refrescar archivo"
@@ -46394,6 +46374,14 @@ msgstr "Exportar cámara y marcadores"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Guarda un script Python que recrea las cámaras y marcadores en otro lado"
+
+
+msgid "Check Existing"
+msgstr "Comprobar existencia"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Comprobar y advertir antes de sobrescribir archivos existentes"
 
 
 msgid "Filepath used for exporting the file"
@@ -63731,10 +63719,6 @@ msgstr "La topología dinámica permite alterar la topología de la malla mientr
 msgctxt "Operator"
 msgid "Edit Dyntopo Detail Size"
 msgstr "Editar tamaño de detalle de topología dinámica"
-
-
-msgid "Modify the constant detail size of dyntopo interactively"
-msgstr "Permite modificar de forma interactiva el tamaño constante del detalle de la topología dinámica"
 
 
 msgctxt "Operator"
@@ -93464,10 +93448,6 @@ msgid "Show Instancer"
 msgstr "Mostrar objeto base"
 
 
-msgid "Aspect X"
-msgstr "Proporción X"
-
-
 msgid "Old"
 msgstr "Antiguo"
 
@@ -97809,11 +97789,6 @@ msgstr "Definir como material activo"
 
 
 msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "Ordenar trazos"
-
-
-msgctxt "Operator"
 msgid "Close"
 msgstr "Cerrar"
 
@@ -97826,16 +97801,6 @@ msgstr "Modificar extremos"
 msgctxt "Operator"
 msgid "Reset Fill Transform"
 msgstr "Restablecer transformaciones del relleno"
-
-
-msgctxt "Operator"
-msgid "Extrude Points"
-msgstr "Extruir puntos"
-
-
-msgctxt "Operator"
-msgid "Merge Points"
-msgstr "Fusionar puntos"
 
 
 msgctxt "Operator"
@@ -98434,11 +98399,6 @@ msgstr "Pegar por capa"
 
 
 msgctxt "Operator"
-msgid "Smooth Points"
-msgstr "Suavizar puntos"
-
-
-msgctxt "Operator"
 msgid "Insert Blank Keyframe (All Layers)"
 msgstr "Insertar clave en blanco (todas las capas)"
 
@@ -98502,24 +98462,8 @@ msgid "Point Context Menu"
 msgstr "Punto - menú contextual"
 
 
-msgid "Mirror Points"
-msgstr "Simetrizar puntos"
-
-
-msgid "Snap Points"
-msgstr "Adherir puntos"
-
-
 msgid "Stroke Context Menu"
 msgstr "Trazo - menú contextual"
-
-
-msgid "Mirror Stroke"
-msgstr "Simetrizar trazo"
-
-
-msgid "Snap Stroke"
-msgstr "Adherir trazo"
 
 
 msgctxt "Operator"
@@ -98599,16 +98543,6 @@ msgstr "Nombre del material"
 
 
 msgctxt "Operator"
-msgid "Delete Points"
-msgstr "Borrar puntos"
-
-
-msgctxt "Operator"
-msgid "Dissolve Points"
-msgstr "Disolver puntos"
-
-
-msgctxt "Operator"
 msgid "Dissolve Between"
 msgstr "Disolver entre"
 
@@ -98616,11 +98550,6 @@ msgstr "Disolver entre"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "Disolver deseleccionados"
-
-
-msgctxt "Operator"
-msgid "Delete Strokes"
-msgstr "Borrar trazos"
 
 
 msgctxt "Operator"
@@ -99168,6 +99097,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "No es posible desempacar el archivo individual de biblioteca, '%s'"
 
 
+msgid "ParticleSystem"
+msgstr "Sistema_particulas"
+
+
 msgid "ParticleSettings"
 msgstr "Partículas"
 
@@ -99535,22 +99468,6 @@ msgstr "El par de anillos de bordes no está conectado"
 
 msgid "Edge-rings are not connected"
 msgstr "Los anillos de bordes no están conectados"
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "Composición | Celda %u-%u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "Composición | Determinando resolución"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "Composición | Inicializando ejecución"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "Composición | Des inicializando ejecución"
 
 
 msgid "Basic"
@@ -100547,10 +100464,6 @@ msgstr "Aceleración (según su intensidad)"
 
 msgid "Dynamic Effects"
 msgstr "Efectos dinámicos"
-
-
-msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
-msgstr "No es posible encontrar un par de fotogramas de lápiz de cera, en la capa activa, entre los cuales interpolar"
 
 
 msgid "Cannot interpolate in curve edit mode"
@@ -103529,10 +103442,6 @@ msgid "constructive modifier"
 msgstr "modificador de construcción"
 
 
-msgid "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "Mover el ratón para cambiar el tamaño del detalle de la topología dinámica. clic Izq: confirmar tamaño, Esc/clic Der: cancelar"
-
-
 msgid "Object has non-uniform scale, sculpting may be unpredictable"
 msgstr "El objeto tiene una escala no uniforme, esculpir sobre él puede ser impredecible"
 
@@ -103547,6 +103456,10 @@ msgstr "Se encontró topología dinámica: %s, se deshabilitó"
 
 msgid "Click on the mesh to set the detail"
 msgstr "Hacer clic sobre la malla para definir el detalle"
+
+
+msgid "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel"
+msgstr "Mover el ratón para cambiar el tamaño del detalle de la topología dinámica. clic Izq: confirmar tamaño, Esc/clic Der: cancelar"
 
 
 msgid "Warning!"
@@ -106811,10 +106724,6 @@ msgstr "¡El objeto '%s' no es válido para esta operación! Sólo se soportan c
 
 msgid "Palette '%s' does not contain color given"
 msgstr "La paleta '%s' no contiene el color indicado"
-
-
-msgid "ParticleSystem"
-msgstr "Sistema_particulas"
 
 
 msgid "uv_on_emitter() requires a modifier from an evaluated object"

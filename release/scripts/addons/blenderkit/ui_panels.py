@@ -143,14 +143,22 @@ def draw_upload_common(layout, props, asset_type, context):
     layout.prop(props, 'is_private', expand=True)
     if props.is_private == 'PUBLIC':
         layout.prop(props, 'license')
+        layout.prop(props, 'is_free', expand=True)
 
+    prop_needed(layout, props, 'name', props.name)
+    if props.is_private == 'PUBLIC':
+        prop_needed(layout, props, 'description', props.description)
+        prop_needed(layout, props, 'tags', props.tags)
+    else:
+        layout.prop(props, 'description')
+        layout.prop(props, 'tags')
 
 def poll_local_panels():
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     return user_preferences.panel_behaviour == 'BOTH' or user_preferences.panel_behaviour == 'LOCAL'
 
 
-def prop_needed(layout, props, name, value, is_not_filled=''):
+def prop_needed(layout, props, name, value='', is_not_filled=''):
     row = layout.row()
     if value == is_not_filled:
         # row.label(text='', icon = 'ERROR')
@@ -180,9 +188,6 @@ def draw_panel_hdr_upload(self, context):
 
         draw_upload_common(layout, props, 'HDR', context)
 
-        layout.prop(props, 'name')
-        layout.prop(props, 'description')
-        layout.prop(props, 'tags')
 
 
 def draw_panel_hdr_search(self, context):
@@ -208,12 +213,10 @@ def draw_panel_model_upload(self, context):
 
     draw_upload_common(layout, props, 'MODEL', context)
 
-    prop_needed(layout, props, 'name', props.name)
-
     col = layout.column()
     if props.is_generating_thumbnail:
         col.enabled = False
-    prop_needed(col, props, 'thumbnail', props.has_thumbnail, False)
+    prop_needed(col, props, 'thumbnail', props.thumbnail)
     if bpy.context.scene.render.engine in ('CYCLES', 'BLENDER_EEVEE'):
         col.operator("object.blenderkit_generate_thumbnail", text='Generate thumbnail', icon='IMAGE')
 
@@ -227,15 +230,12 @@ def draw_panel_model_upload(self, context):
     elif props.thumbnail_generating_state != '':
         utils.label_multiline(layout, text=props.thumbnail_generating_state)
 
-    layout.prop(props, 'description')
-    layout.prop(props, 'tags')
     # prop_needed(layout, props, 'style', props.style)
     # prop_needed(layout, props, 'production_level', props.production_level)
     layout.prop(props, 'style')
     layout.prop(props, 'production_level')
 
     layout.prop(props, 'condition')
-    layout.prop(props, 'is_free')
     layout.prop(props, 'pbr')
     layout.label(text='design props:')
     layout.prop(props, 'manufacturer')
@@ -272,8 +272,6 @@ def draw_panel_scene_upload(self, context):
     # else:
     #     layout.operator("object.blenderkit_auto_tags", text='Auto fill tags')
 
-    prop_needed(layout, props, 'name', props.name)
-
     col = layout.column()
     # if props.is_generating_thumbnail:
     #     col.enabled = False
@@ -291,9 +289,8 @@ def draw_panel_scene_upload(self, context):
     # elif props.thumbnail_generating_state != '':
     #    utils.label_multiline(layout, text = props.thumbnail_generating_state)
 
-    layout.prop(props, 'is_free')
-    layout.prop(props, 'description')
-    layout.prop(props, 'tags')
+
+
     layout.prop(props, 'style')
     layout.prop(props, 'production_level')
     layout.prop(props, 'use_design_year')
@@ -623,30 +620,16 @@ def draw_panel_material_upload(self, context):
 
     draw_upload_common(layout, props, 'MATERIAL', context)
 
-    prop_needed(layout, props, 'name', props.name)
-    layout.prop(props, 'description')
-    layout.prop(props, 'style')
-    # if props.style == 'OTHER':
-    #     layout.prop(props, 'style_other')
-    # layout.prop(props, 'engine')
-    # if props.engine == 'OTHER':
-    #     layout.prop(props, 'engine_other')
-    layout.prop(props, 'tags')
-    # layout.prop(props,'shaders')#TODO autofill on upload
-    # row = layout.row()
-    layout.prop(props, 'is_free')
-
-    layout.prop(props, 'pbr')
-    layout.prop(props, 'uv')
-    layout.prop(props, 'animated')
-    layout.prop(props, 'texture_size_meters')
-
     # THUMBNAIL
     row = layout.row()
     if props.is_generating_thumbnail:
         row.enabled = False
     prop_needed(row, props, 'thumbnail', props.has_thumbnail, False)
 
+
+
+    if bpy.context.scene.render.engine in ('CYCLES', 'BLENDER_EEVEE'):
+        layout.operator("object.blenderkit_material_thumbnail", text='Render thumbnail with Cycles', icon='EXPORT')
     if props.is_generating_thumbnail:
         row = layout.row(align=True)
         row.label(text=props.thumbnail_generating_state, icon='RENDER_STILL')
@@ -656,8 +639,21 @@ def draw_panel_material_upload(self, context):
     elif props.thumbnail_generating_state != '':
         utils.label_multiline(layout, text=props.thumbnail_generating_state)
 
-    if bpy.context.scene.render.engine in ('CYCLES', 'BLENDER_EEVEE'):
-        layout.operator("object.blenderkit_material_thumbnail", text='Render thumbnail with Cycles', icon='EXPORT')
+    layout.prop(props, 'style')
+    # if props.style == 'OTHER':
+    #     layout.prop(props, 'style_other')
+    # layout.prop(props, 'engine')
+    # if props.engine == 'OTHER':
+    #     layout.prop(props, 'engine_other')
+    # layout.prop(props,'shaders')#TODO autofill on upload
+    # row = layout.row()
+
+    layout.prop(props, 'pbr')
+    layout.prop(props, 'uv')
+    layout.prop(props, 'animated')
+    layout.prop(props, 'texture_size_meters')
+
+
 
     # tname = "." + bpy.context.active_object.active_material.name + "_thumbnail"
     # if props.has_thumbnail and bpy.data.textures.get(tname) is not None:
@@ -700,10 +696,6 @@ def draw_panel_brush_upload(self, context):
         layout = self.layout
 
         draw_upload_common(layout, props, 'BRUSH', context)
-
-        layout.prop(props, 'name')
-        layout.prop(props, 'description')
-        layout.prop(props, 'tags')
 
 
 def draw_panel_brush_search(self, context):
@@ -974,8 +966,20 @@ class VIEW3D_PT_blenderkit_unified(Panel):
         row.scale_x = 1.6
         row.scale_y = 1.6
         # split = row.split(factor=.
-        col = layout.column()
-        col.prop(ui_props, 'asset_type', expand=True, icon_only=False)
+
+        expand_icon = 'TRIA_DOWN'
+        if ui_props.asset_type_expand:
+            expand_icon = 'TRIA_RIGHT'
+        row = layout.row()
+        split = row.split(factor = 0.1)
+        split.prop(ui_props, 'asset_type_expand', icon = expand_icon, icon_only = True, emboss = False)
+        split = split.split(factor = 1.0)
+        if ui_props.asset_type_expand:
+            #expanded interface with names in column
+            split = split.row()
+            split.scale_x = 1.6
+            split.scale_y = 1.6
+        split.prop(ui_props, 'asset_type', expand=True, icon_only=ui_props.asset_type_expand)
         # row = layout.column(align = False)
         # layout.prop(ui_props, 'asset_type', expand=False, text='')
 
@@ -1588,9 +1592,10 @@ def draw_panel_categories(self, context):
     #     op.free_only = True
 
     for c in cats['children']:
-        if c['assetCount'] > 0 or utils.profile_is_validator():
+        if c['assetCount'] > 0 or (utils.profile_is_validator() and user_preferences.categories_fix):
             row = col.row(align=True)
-            if len(c['children']) > 0 and c['assetCount'] > 15 or utils.profile_is_validator():
+            if len(c['children']) > 0 and c['assetCount'] > 15 or (
+                    utils.profile_is_validator() and user_preferences.categories_fix):
                 row = row.split(factor=.8, align=True)
             # row = split.split()
             ctext = '%s (%i)' % (c['name'], c['assetCount'])
@@ -1603,8 +1608,8 @@ def draw_panel_categories(self, context):
                 op.do_search = True
                 op.keep_running = True
                 op.category = c['slug']
-            # TODO enable subcategories, now not working due to some bug on server probably
-            if len(c['children']) > 0 and c['assetCount'] > 15 or utils.profile_is_validator():
+            if len(c['children']) > 0 and c['assetCount'] > 15 or (
+                    utils.profile_is_validator() and user_preferences.categories_fix):
                 # row = row.split()
                 op = row.operator('view3d.blenderkit_set_category', text='>>')
                 op.asset_type = ui_props.asset_type

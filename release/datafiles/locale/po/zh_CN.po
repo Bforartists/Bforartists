@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3105,6 +3105,10 @@ msgid "Display Wire"
 msgstr "显示线框"
 
 
+msgid "Bone is always displayed in wireframe regardless of viewport shading mode (useful for non-obstructive custom bone shapes)"
+msgstr "骨骼永远显示为线框模式，忽略视图绘制模式(对于非闭合的自定义骨骼外形非常有用)"
+
+
 msgid "Tail"
 msgstr "尾端"
 
@@ -3871,6 +3875,10 @@ msgstr "显示笔画延伸辅助线"
 
 msgid "Show Lasso"
 msgstr "显示套索"
+
+
+msgid "Do not display fill color while drawing the stroke"
+msgstr "当绘制笔画时不显示填充色"
 
 
 msgid "Factor of Simplify using adaptive algorithm"
@@ -11979,8 +11987,16 @@ msgid "File Modification Date"
 msgstr "文件修改日期"
 
 
+msgid "Show a column listing the date and time of modification for each file"
+msgstr "显示一列，列出每个文件的修改日期和时间"
+
+
 msgid "File Size"
 msgstr "文件大小"
+
+
+msgid "Show a column listing the size of each file"
+msgstr "显示一列，列出每个文件的大小"
 
 
 msgid "Show hidden dot files"
@@ -12397,6 +12413,10 @@ msgstr "最近"
 
 msgid "No interpolation"
 msgstr "无插值"
+
+
+msgid "Thickness of smoke display in the viewport"
+msgstr "在视图中显示的烟雾厚度"
 
 
 msgid "Dissolve Speed"
@@ -14631,8 +14651,16 @@ msgid "In Front"
 msgstr "在前面"
 
 
+msgid "Make the layer display in front of objects"
+msgstr "在物体的前侧显示该层"
+
+
 msgid "Show Points"
 msgstr "显示控制点"
+
+
+msgid "Show the points which make up the strokes (for debugging purposes)"
+msgstr "显示组成笔画的点(用于调试)"
 
 
 msgid "Thickness of annotation strokes"
@@ -15212,6 +15240,18 @@ msgid "Depth bias used for selection"
 msgstr "选择的深度偏移"
 
 
+msgid "Show Hover"
+msgstr "显示悬停"
+
+
+msgid "Show Active"
+msgstr "显示活动项"
+
+
+msgid "Show while dragging"
+msgstr "当拖拽时显示"
+
+
 msgid "Scale Offset"
 msgstr "缩放偏移"
 
@@ -15222,6 +15262,10 @@ msgstr "缩放偏移矩阵 (用来应用屏幕空间偏移)"
 
 msgid "Use scale when calculating the matrix"
 msgstr "计算矩阵时使用缩放"
+
+
+msgid "Show Value"
+msgstr "显示数值"
 
 
 msgid "Show an indicator for the current value while dragging"
@@ -15283,6 +15327,10 @@ msgstr "操作类型选项"
 
 msgid "Use in 3D viewport"
 msgstr "在3D视图中使用"
+
+
+msgid "Scale to respect zoom (otherwise zoom independent display size)"
+msgstr "遵守比例缩放 (否则缩放到独立显示尺寸)"
 
 
 msgid "Depth 3D"
@@ -16681,6 +16729,10 @@ msgstr "该点的编号"
 
 msgid "Statistical view of the levels of color in an image"
 msgstr "图像统计视图范围"
+
+
+msgid "Channels to display in the histogram"
+msgstr "绘制直方图时所显示的通道"
 
 
 msgid "Luma"
@@ -21176,6 +21228,10 @@ msgid "Point in W direction (can't be changed when there are shape keys)"
 msgstr "在W向生效 (当存在形态键时无法更改)"
 
 
+msgid "Only display and take into account the outer vertices"
+msgstr "仅显示，且仅考虑外围点"
+
+
 msgid "Vertex group to apply the influence of the lattice"
 msgstr "用于影响晶格的顶点组"
 
@@ -21496,6 +21552,10 @@ msgstr "如果光线不受聚光角度限制，那么该光会向整个区域发
 
 msgid "Show Cone"
 msgstr "显示区域"
+
+
+msgid "Display transparent cone in 3D view to visualize which objects are contained in it"
+msgstr "在 3D 视图中显示透明锥体，便于查看所包含的物体"
 
 
 msgid "Spot Blend"
@@ -23390,6 +23450,10 @@ msgid "Display image in perspective mode"
 msgstr "以透视模式显示图像"
 
 
+msgid "Make the object display in front of others"
+msgstr "在其他物体的前方显示该物体"
+
+
 msgid "Render Instancer"
 msgstr "渲染实例"
 
@@ -23436,6 +23500,10 @@ msgstr "显示透明"
 
 msgid "Display material transparency in the object"
 msgstr "在物体中显示材质透明度"
+
+
+msgid "Display the object's wireframe over solid shading"
+msgstr "在实体着色结果上显示物体线框"
 
 
 msgid "Soft Body Settings"
@@ -23765,6 +23833,18 @@ msgid "Display Color"
 msgstr "显示颜色"
 
 
+msgid "Display additional particle data as a color"
+msgstr "将额外的粒子数据以某种颜色显示"
+
+
+msgid "Particle Display"
+msgstr "粒子显示"
+
+
+msgid "How particles are displayed in viewport"
+msgstr "粒子在视图中的显示方式"
+
+
 msgid "Rendered"
 msgstr "渲染"
 
@@ -23783,6 +23863,10 @@ msgstr "在 3D 视图中所显示的粒子百分比"
 
 msgid "Size of particles on viewport"
 msgstr "粒子在视图中的大小"
+
+
+msgid "How many steps paths are displayed with (power of 2)"
+msgstr "路径的显示步数 (2的幂次值)"
 
 
 msgid "Distribution"
@@ -24089,8 +24173,16 @@ msgid "Path End"
 msgstr "路径末端"
 
 
+msgid "End time of path"
+msgstr "路径的结束时间"
+
+
 msgid "Path Start"
 msgstr "路径起始"
+
+
+msgid "Starting time of path"
+msgstr "路径的起始时间"
 
 
 msgid "Rotation around the chosen orientation axis"
@@ -24287,6 +24379,10 @@ msgstr "显示引导毛发"
 
 msgid "Show hair simulation grid"
 msgstr "显示毛发模拟栅格"
+
+
+msgid "Display boid health"
+msgstr "显示群集康度"
 
 
 msgid "Show particle number"
@@ -24531,6 +24627,10 @@ msgstr "毛发在每一帧中重新生长"
 
 msgid "Adaptive Render"
 msgstr "适配渲染"
+
+
+msgid "Display steps of the particle path"
+msgstr "显示粒子轨迹的步长"
 
 
 msgid "Use object's rotation for duplication (global x-axis is aligned particle rotation axis)"
@@ -30390,6 +30490,14 @@ msgid "Mix Stroke Factor"
 msgstr "混合笔画系数"
 
 
+msgid "Line Type"
+msgstr "线型"
+
+
+msgid "Select line type for strokes"
+msgstr "选择用于笔画的线型"
+
+
 msgid "Draw strokes using a continuous line"
 msgstr "使用一条连续线绘制笔画"
 
@@ -32697,6 +32805,10 @@ msgstr "准确"
 
 msgid "Advanced solver for the best result"
 msgstr "可获得最佳结果的高级解算器"
+
+
+msgid "Better results when there are holes (slower)"
+msgstr "存在孔时效果更好(更慢)"
 
 
 msgid "Self"
@@ -35328,6 +35440,10 @@ msgid "Number of subdivisions to perform when rendering"
 msgstr "渲染时所使用的细分级数"
 
 
+msgid "Skip displaying interior subdivided edges"
+msgstr "跳过内部细分边线的显示"
+
+
 msgid "Use Limit Surface"
 msgstr "使用限制表面"
 
@@ -35448,12 +35564,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "UV 投射修改器, 使用投射源进行 UV 设置"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "水平"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "垂直"
+msgid "Aspect X"
+msgstr "宽高比 X"
 
 
 msgid "Number of Projectors"
@@ -35466,14 +35578,6 @@ msgstr "所用投影源的数量"
 
 msgid "Projectors"
 msgstr "投影源"
-
-
-msgid "Horizontal Scale"
-msgstr "水平标度"
-
-
-msgid "Vertical Scale"
-msgstr "垂直缩放"
 
 
 msgid "UVWarp Modifier"
@@ -36257,6 +36361,14 @@ msgstr "缓存的帧数量"
 
 msgid "Line Thickness"
 msgstr "线条宽度"
+
+
+msgid "Line thickness for motion path"
+msgstr "用于运动路径的线条宽度"
+
+
+msgid "Use straight lines between keyframe points"
+msgstr "在关键帧点间绘制直线"
 
 
 msgid "Motion Path Points"
@@ -37833,6 +37945,10 @@ msgstr "显示预览"
 
 msgid "Show Texture"
 msgstr "显示纹理"
+
+
+msgid "Display node in viewport textured shading mode"
+msgstr "在视图纹理着色模式下显示节点"
 
 
 msgid "Node type (deprecated, use bl_static_type or bl_idname for the actual identifier string)"
@@ -40418,10 +40534,6 @@ msgstr "绕轴旋转一个角度"
 
 msgid "Rotate around the X, Y, and Z axes"
 msgstr "围绕 X、Y和Z轴旋转"
-
-
-msgid "Simple Subdivision Surface"
-msgstr "简单表面细分"
 
 
 msgctxt "NodeTree"
@@ -44400,14 +44512,6 @@ msgid "Load a cache file"
 msgstr "加载缓存文件"
 
 
-msgid "Check Existing"
-msgstr "检查是否存在"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "检查并提醒是否需要覆盖现有文件"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "刷新存档"
@@ -46826,6 +46930,14 @@ msgstr "导出相机 & 标记"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "保存一个 python 脚本, 可将相机及标记重建到其他地方"
+
+
+msgid "Check Existing"
+msgstr "检查是否存在"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "检查并提醒是否需要覆盖现有文件"
 
 
 msgid "Filepath used for exporting the file"
@@ -50321,6 +50433,10 @@ msgstr "应用层的宽度变化到自身笔画"
 msgctxt "Operator"
 msgid "Arrange Stroke"
 msgstr "整理笔画"
+
+
+msgid "Arrange selected strokes up/down in the display order of the active layer"
+msgstr "按活动图层的显示顺序上下排列所选笔画"
 
 
 msgid "Bring to Front"
@@ -60210,6 +60326,10 @@ msgid "Disable Collection"
 msgstr "禁用集合"
 
 
+msgid "Disable viewport display in the view layers"
+msgstr "在视图层中禁用视图显示"
+
+
 msgctxt "Operator"
 msgid "Disable Collection in Render"
 msgstr "渲染时禁用集合"
@@ -60244,6 +60364,10 @@ msgstr "用连接物体数据的方式递归复制集合、其所有的子集和
 msgctxt "Operator"
 msgid "Enable Collection"
 msgstr "开启集合"
+
+
+msgid "Enable viewport display in the view layers"
+msgstr "在视图层启用视图显示"
 
 
 msgctxt "Operator"
@@ -64471,8 +64595,89 @@ msgid "Edit Dyntopo Detail Size"
 msgstr "编辑动态拓扑细节尺寸"
 
 
-msgid "Modify the constant detail size of dyntopo interactively"
-msgstr "以交互方式修改动态拓扑的固定细节大小"
+msgctxt "Operator"
+msgid "Expand"
+msgstr "扩展"
+
+
+msgid "Generic sculpt expand operator"
+msgstr "通用雕刻扩展操作"
+
+
+msgid "Initial falloff of the expand operation"
+msgstr "初始化扩展操作的衰减"
+
+
+msgid "Geodesic"
+msgstr "测地线(Geodesic)"
+
+
+msgid "Topology Diagonals"
+msgstr "拓扑对角线"
+
+
+msgid "Boundary Topology"
+msgstr "边界拓扑"
+
+
+msgid "Boundary Face Set"
+msgstr "边界面组"
+
+
+msgid "Active Face Set"
+msgstr "活动面组"
+
+
+msgid "Invert the expand active elements"
+msgstr "反转扩展活动元素"
+
+
+msgid "Max Vertex Count for Geodesic Move Preview"
+msgstr "测地线移动预览的最大顶点数"
+
+
+msgid "Maximum number of vertices in the mesh for using geodesic falloff when moving the origin of expand. If the total number of vertices is greater than this value, the falloff will be set to spherical when moving"
+msgstr "在移动扩展的原点时，用于使用测地线衰减的网格中顶点的最大数量。如果顶点的总数大于该值，则移动时衰减将设置为球面"
+
+
+msgid "Data Target"
+msgstr "数据目标"
+
+
+msgid "Data that is going to be modified in the expand operation"
+msgstr "将在扩展操作中修改的数据"
+
+
+msgid "Falloff Gradient"
+msgstr "衰减梯度"
+
+
+msgid "Expand Using a linear falloff"
+msgstr "使用线性衰减扩展"
+
+
+msgid "Preserve Previous"
+msgstr "保留上一个"
+
+
+msgid "Preserve the previous state of the target data"
+msgstr "保留目标数据的上一状态"
+
+
+msgid "Modify Active"
+msgstr "修改活动项"
+
+
+msgid "Modify the active Face Set instead of creating a new one"
+msgstr "修改活动面组，而非创建新的"
+
+
+msgid "Reposition Pivot"
+msgstr "重新定位轴心"
+
+
+msgid "Reposition the sculpt transform pivot to the boundary of the expand active area"
+msgstr "将雕刻变换原点重新定位到扩展活动区域的边界"
 
 
 msgctxt "Operator"
@@ -69959,6 +70164,10 @@ msgid "Call Menu"
 msgstr "调用菜单"
 
 
+msgid "Open a predefined menu"
+msgstr "打开预定义菜单"
+
+
 msgid "Name of the menu"
 msgstr "菜单名称"
 
@@ -69968,6 +70177,10 @@ msgid "Call Pie Menu"
 msgstr "调用饼菜单"
 
 
+msgid "Open a predefined pie menu"
+msgstr "打开预定义饼菜单"
+
+
 msgid "Name of the pie menu"
 msgstr "饼菜单名称"
 
@@ -69975,6 +70188,10 @@ msgstr "饼菜单名称"
 msgctxt "Operator"
 msgid "Call Panel"
 msgstr "调用菜单"
+
+
+msgid "Open a predefined panel"
+msgstr "打开预定义面板"
 
 
 msgid "Keep Open"
@@ -72357,6 +72574,10 @@ msgstr "允许拉伸和收缩标题中的按钮以填充整个布局宽度"
 
 msgid "Box Style"
 msgstr "框样式"
+
+
+msgid "Display panel with the box widget theme"
+msgstr "使用框部件主题绘制面板"
 
 
 msgid "Order"
@@ -75151,6 +75372,10 @@ msgid "Custom Object"
 msgstr "自定义物体"
 
 
+msgid "Object that defines custom display shape for this bone"
+msgstr "用于定义此骨骼的自定义显示形状的物体"
+
+
 msgid "Custom Shape Scale"
 msgstr "自定义形变变化"
 
@@ -76075,8 +76300,16 @@ msgid "Load user interface setup when loading .blend files"
 msgstr "从工程文件中加载用户的界面设置"
 
 
+msgid "Default relative path option for the file selector, when no path is defined yet"
+msgstr "在未定义路径前，文件选择器的默认相对路径选项"
+
+
 msgid "Save Preview Images"
 msgstr "保存预览图像"
+
+
+msgid "Enables automatic saving of preview images in the .blend file as well as a thumbnail of the .blend"
+msgstr "开启自动保存 .blend文件中的预览图片以及该文件的缩略图"
 
 
 msgid "Allow any .blend file to run scripts automatically (unsafe with blend files from an untrusted source)"
@@ -76735,6 +76968,14 @@ msgid "2D Texture"
 msgstr "2D 纹理"
 
 
+msgid "Use CPU for display transform and display image with 2D texture"
+msgstr "使用CPU进行显示变换并使用二维纹理显示图像"
+
+
+msgid "Use GLSL shaders for display transform and display image with 2D texture"
+msgstr "使用GLSL着色器显示变换并使用二维纹理显示图像"
+
+
 msgid "Legacy Compute Device Type"
 msgstr "传统计算设备类型"
 
@@ -76823,6 +77064,10 @@ msgid "Solid Lights"
 msgstr "实体灯光"
 
 
+msgid "Lights user to display objects in solid shading mode"
+msgstr "允许用户在实体着色模式下显示物体"
+
+
 msgid "Texture Collection Rate"
 msgstr "纹理回收率"
 
@@ -76843,8 +77088,16 @@ msgid "UI Line Width"
 msgstr "用户界面线宽"
 
 
+msgid "Suggested line thickness and point size in pixels, for add-ons displaying custom user interface elements, based on operating system settings and Blender UI scale"
+msgstr "基于操作系统设置和Blender界面缩放，以像素为单位，对插件自定义界面元素，建议的线宽和点大小"
+
+
 msgid "UI Scale"
 msgstr "UI缩放"
+
+
+msgid "Size multiplier to use when displaying custom user interface elements, so that they are scaled correctly on screens with different DPI. This value is based on operating system DPI settings and Blender display scale"
+msgstr "自定义界面元素时使用的大小乘数，这样它们在不同的DPI下才能正确缩放显示。该数值基于操作系统的DPI设置和Blender显示缩放"
 
 
 msgid "Edit-Mode Smooth Wires"
@@ -76865,6 +77118,10 @@ msgstr "启用叠加平滑线框，减少锯齿"
 
 msgid "Region Overlap"
 msgstr "区域重叠"
+
+
+msgid "Display tool/property regions over the main region"
+msgstr "在主区域上方显示工具栏/属性栏"
 
 
 msgid "OpenGL Depth Picking"
@@ -77501,6 +77758,10 @@ msgstr "未保存更改时退出弹出请求确认"
 
 msgid "Text Anti-Aliasing"
 msgstr "文本抗锯齿"
+
+
+msgid "Smooth jagged edges of user interface text"
+msgstr "平滑用户界面文本的锯齿状边缘"
 
 
 msgid "Translate Interface"
@@ -80207,6 +80468,10 @@ msgstr "渲染画面的垂直像素数量"
 
 msgid "Sequencer Preview Shading"
 msgstr "序列预览的着色"
+
+
+msgid "Display method used in the sequencer view"
+msgstr "序列视图的显示方法"
 
 
 msgid "Display the object as wire edges"
@@ -84901,6 +85166,10 @@ msgid "Display Channels"
 msgstr "显示通道"
 
 
+msgid "Channels of the image to display"
+msgstr "图像的显示通道"
+
+
 msgid "Color and Alpha"
 msgstr "色彩和 Alpha"
 
@@ -85670,6 +85939,10 @@ msgid "Overlay Type"
 msgstr "叠加类型"
 
 
+msgid "Overlay display method"
+msgstr "叠加显示方法"
+
+
 msgid "Show rectangle area overlay"
 msgstr "显示矩形区域叠加"
 
@@ -85688,6 +85961,10 @@ msgstr "当前"
 
 msgid "Show current frame only"
 msgstr "仅显示当前帧"
+
+
+msgid "Channels of the preview to display"
+msgstr "预览的显示通道"
 
 
 msgid "No display"
@@ -85814,16 +86091,32 @@ msgid "Waveform Display"
 msgstr "波形图显示"
 
 
+msgid "How Waveforms are displayed"
+msgstr "波形的显示方法"
+
+
 msgid "Waveforms Off"
 msgstr "隐藏波形"
+
+
+msgid "Don't display waveforms for any sound strips"
+msgstr "不为任何片段显示波形"
 
 
 msgid "Waveforms On"
 msgstr "显示波形"
 
 
+msgid "Display waveforms for all sound strips"
+msgstr "为所有声音片段显示波形"
+
+
 msgid "Use Strip Option"
 msgstr "使用片段选项"
+
+
+msgid "Display waveforms depending on strip setting"
+msgstr "根据片段设置显示波形"
 
 
 msgid "Space Text Editor"
@@ -86214,6 +86507,10 @@ msgid "Stereo Eye"
 msgstr "立体眼"
 
 
+msgid "Current stereo eye being displayed"
+msgstr "当前正在显示的立体眼"
+
+
 msgid "Left Eye"
 msgstr "左眼"
 
@@ -86288,6 +86585,10 @@ msgstr "UV 编辑器应用图像编辑时的数据空间"
 
 msgid "Display Stretch Type"
 msgstr "显示拉伸类型"
+
+
+msgid "Type of stretch to display"
+msgstr "拉伸度的显示类型"
 
 
 msgid "Angular distortion between UV and 3D angles"
@@ -87104,6 +87405,10 @@ msgstr "用于映射 UV 纹理坐标的 UV 贴图"
 
 msgid "Amount texture affects particle initial velocity"
 msgstr "纹理对粒子初始速率的影响量"
+
+
+msgid "User interface styling and color settings"
+msgstr "用户界面风格和颜色设置"
 
 
 msgid "Clip Editor"
@@ -89791,6 +90096,10 @@ msgid "Solid Light"
 msgstr "实体灯光"
 
 
+msgid "Light used for Studio lighting in solid shading mode"
+msgstr "在实体着色模式下棚灯所用灯光"
+
+
 msgid "Color of the light's diffuse highlight"
 msgstr "光线的高光亮调颜色"
 
@@ -89805,6 +90114,10 @@ msgstr "平滑来自此灯光的光线"
 
 msgid "Color of the light's specular highlight"
 msgstr "光线的高光亮调颜色"
+
+
+msgid "Enable this light in solid shading mode"
+msgstr "在实体着色模式下启用该灯光"
 
 
 msgid "Vert Colors"
@@ -90011,20 +90324,40 @@ msgid "Display 3D curve normals in editmode"
 msgstr "在编辑模式中显示 3D 曲线法线"
 
 
+msgid "Display Bevel Weights"
+msgstr "显示倒角权重"
+
+
 msgid "Display weights created for the Bevel modifier"
 msgstr "显示用于倒角修改器的权重"
+
+
+msgid "Display Creases"
+msgstr "显示折痕"
 
 
 msgid "Display creases created for Subdivision Surface modifier"
 msgstr "显示细分表面修改器创建的折痕"
 
 
+msgid "Display Seams"
+msgstr "显示缝合线"
+
+
 msgid "Display UV unwrapping seams"
 msgstr "显示 UV 展开缝合边"
 
 
+msgid "Display Sharp"
+msgstr "显示锐边"
+
+
 msgid "Display sharp edges, used with the Edge Split modifier"
 msgstr "显示用于拆边修改器的锐边"
+
+
+msgid "Display Edges"
+msgstr "显示边"
 
 
 msgid "Highlight selected edges"
@@ -90067,6 +90400,10 @@ msgid "Object details, including empty wire, cameras and other visual guides"
 msgstr "包括空物体线框，相机以及其他可见辅助物的物体细节"
 
 
+msgid "Display Face Center"
+msgstr "显示面中心"
+
+
 msgid "Display face center when face selection is enabled in solid shading modes"
 msgstr "在实体着色模式下启用面选择时显示面中心"
 
@@ -90107,8 +90444,16 @@ msgid "Show the ground plane grid"
 msgstr "显示地平面网格"
 
 
+msgid "Display Freestyle Edge Marks"
+msgstr "显示 Freestyle 边标记"
+
+
 msgid "Display Freestyle edge marks, used with the Freestyle renderer"
 msgstr "显示 Freestyle 的标记边, 用于 Freestyle 渲染器"
+
+
+msgid "Display Freestyle Face Marks"
+msgstr "显示 Freestyle 面标记"
 
 
 msgid "Display Freestyle face marks, used with the Freestyle renderer"
@@ -90391,6 +90736,10 @@ msgid "Color for custom background color"
 msgstr "自定义背景颜色"
 
 
+msgid "Way to display the background"
+msgstr "绘制背景的方式"
+
+
 msgid "Theme"
 msgstr "主题"
 
@@ -90417,6 +90766,10 @@ msgstr "cavity脊线系数"
 
 msgid "Cavity Type"
 msgstr "Cavity类型"
+
+
+msgid "Way to display the cavity shading"
+msgstr "Cavity着色显示方法"
 
 
 msgid "Cavity shading computed in world space, useful for larger-scale occlusion"
@@ -90789,6 +91142,10 @@ msgstr "体积显示"
 
 msgid "Volume object display settings for 3D viewport"
 msgstr "在 3D 视图中体积物体的显示设置"
+
+
+msgid "Thickness of volume display in the viewport"
+msgstr "在视图中显示的体积厚度"
 
 
 msgid "Interpolation method to use for volumes in solid mode"
@@ -91831,6 +92188,11 @@ msgstr "标准模态映射"
 msgctxt "WindowManager"
 msgid "Paint Stroke Modal"
 msgstr "绘画笔画模态"
+
+
+msgctxt "WindowManager"
+msgid "Sculpt Expand Modal"
+msgstr "雕刻扩展模态"
 
 
 msgctxt "WindowManager"
@@ -94379,10 +94741,6 @@ msgstr "与顶点法向对齐"
 
 msgid "Show Instancer"
 msgstr "显示实例"
-
-
-msgid "Aspect X"
-msgstr "宽高比 X"
 
 
 msgid "Old"
@@ -98774,11 +99132,6 @@ msgstr "设为活动材质"
 
 
 msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "整理笔画"
-
-
-msgctxt "Operator"
 msgid "Close"
 msgstr "闭合"
 
@@ -98791,16 +99144,6 @@ msgstr "切换封顶类型"
 msgctxt "Operator"
 msgid "Reset Fill Transform"
 msgstr "重置填充变换"
-
-
-msgctxt "Operator"
-msgid "Extrude Points"
-msgstr "挤出点"
-
-
-msgctxt "Operator"
-msgid "Merge Points"
-msgstr "合并点"
 
 
 msgctxt "Operator"
@@ -99404,11 +99747,6 @@ msgstr "按层粘贴"
 
 
 msgctxt "Operator"
-msgid "Smooth Points"
-msgstr "平滑控制点"
-
-
-msgctxt "Operator"
 msgid "Insert Blank Keyframe (All Layers)"
 msgstr "在全部层插入空白帧"
 
@@ -99472,24 +99810,8 @@ msgid "Point Context Menu"
 msgstr "点上下文菜单"
 
 
-msgid "Mirror Points"
-msgstr "镜像点"
-
-
-msgid "Snap Points"
-msgstr "采样点"
-
-
 msgid "Stroke Context Menu"
 msgstr "笔画上下文菜单"
-
-
-msgid "Mirror Stroke"
-msgstr "镜像笔画"
-
-
-msgid "Snap Stroke"
-msgstr "吸附笔画"
 
 
 msgctxt "Operator"
@@ -99574,16 +99896,6 @@ msgstr "材质名称"
 
 
 msgctxt "Operator"
-msgid "Delete Points"
-msgstr "删除点"
-
-
-msgctxt "Operator"
-msgid "Dissolve Points"
-msgstr "融并控制点"
-
-
-msgctxt "Operator"
 msgid "Dissolve Between"
 msgstr "融并其间"
 
@@ -99591,11 +99903,6 @@ msgstr "融并其间"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "融并未选中"
-
-
-msgctxt "Operator"
-msgid "Delete Strokes"
-msgstr "删除笔画"
 
 
 msgctxt "Operator"
@@ -100216,6 +100523,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "无法解包独立的库文件, '%s'"
 
 
+msgid "ParticleSystem"
+msgstr "粒子系统"
+
+
 msgid "ParticleSettings"
 msgstr "粒子设置"
 
@@ -100587,22 +100898,6 @@ msgstr "成对循环边未相连"
 
 msgid "Edge-rings are not connected"
 msgstr "循环边未相连"
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "合成中 | 分块 %u-%u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "合成 | 确定分辨率"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "合成 | 执行初始化"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "合成 | 执行去初始化"
 
 
 msgid "Basic"
@@ -101601,6 +101896,10 @@ msgid "Unable to fill unclosed areas"
 msgstr "无法填充未封闭区域"
 
 
+msgid "No available frame for creating stroke"
+msgstr "无可用于创建笔画的帧"
+
+
 msgid "Active region not valid for filling operator"
 msgstr "活动区域对填充操作无效"
 
@@ -101619,10 +101918,6 @@ msgstr "缓动 (通过力度)"
 
 msgid "Dynamic Effects"
 msgstr "动态效果"
-
-
-msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
-msgstr "在活动层中无法找到一对蜡笔关键帧来做插值"
 
 
 msgid "Cannot interpolate in curve edit mode"
@@ -104613,10 +104908,6 @@ msgid "constructive modifier"
 msgstr "构造修改器"
 
 
-msgid "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "移动鼠标以更改动态拓扑细节大小。LBM：确认大小，ESC/RMB：取消"
-
-
 msgid "Object has non-uniform scale, sculpting may be unpredictable"
 msgstr "物体的缩放比例不均匀, 雕刻可能有不可预知的问题"
 
@@ -104631,6 +104922,10 @@ msgstr "发现动态拓扑: %s, 已禁用"
 
 msgid "Click on the mesh to set the detail"
 msgstr "单击网格设置细节"
+
+
+msgid "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel"
+msgstr "移动鼠标以更改动态拓扑细节大小。LBM：确认大小，ESC/RMB：取消"
 
 
 msgid "Warning!"
@@ -104655,6 +104950,14 @@ msgstr "检测到生成修改器!"
 
 msgid "Keeping the modifiers will increase polycount when returning to object mode"
 msgstr "回到物体模式时, 保留修改器将增加多边形数"
+
+
+msgid "Active brush does not contain any texture to distort the expand boundary"
+msgstr "活动笔刷不包含任何纹理来扭曲扩展边界"
+
+
+msgid "Texture mapping not set to 3D, results may be unpredictable"
+msgstr "纹理映射未设置为3D，结果可能不可预知"
 
 
 msgid "Move the mouse to expand the mask from the active vertex. LMB: confirm mask, ESC/RMB: cancel"
@@ -104731,6 +105034,14 @@ msgstr "上下文无纹理"
 
 msgid "Show texture in texture tab"
 msgstr "在纹理选项卡中显示纹理"
+
+
+msgid "No (unpinned) Properties Editor found to display texture in"
+msgstr "找不到显示纹理的(未钉固的)属性编辑器"
+
+
+msgid "No texture user found"
+msgstr "未找到纹理用户"
 
 
 msgid "Fields"
@@ -107923,10 +108234,6 @@ msgstr "此操作对物体 '%s' 无效！仅支持曲线"
 
 msgid "Palette '%s' does not contain color given"
 msgstr "调色板 '%s' 不包含给定颜色"
-
-
-msgid "ParticleSystem"
-msgstr "粒子系统"
 
 
 msgid "uv_on_emitter() requires a modifier from an evaluated object"
