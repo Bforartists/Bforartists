@@ -2081,13 +2081,16 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         col.prop(st, "proxy_render_size")
 
         col = layout.column()
+        col.use_property_split = False
         prop = col.prop(st, "use_proxies")
         if st.proxy_render_size in ('NONE', 'SCENE'):
             col.enabled = False
 
         col = layout.column()
         if ed:
+            col.use_property_split = False
             col.prop(ed, "use_prefetch")
+            col.use_property_split = True
 
         col.prop(st, "display_channel", text="Channel")
 
@@ -2372,15 +2375,27 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
 
             col = layout.column(align = True)
             if st.view_type == 'SEQUENCER':
+                
+                split = layout.split(factor = 0.6)
+                col = split.column()
+                col.use_property_split = False
                 col.prop(st, "show_backdrop", text="Preview as Backdrop")
+                col = split.column()
+                if st.show_backdrop:
+                    col.label(icon='DISCLOSURE_TRI_DOWN')
+                else:
+                    col.label(icon='DISCLOSURE_TRI_RIGHT')                
+                
             if is_preview or st.show_backdrop:
-                layout.prop(st, "show_transform_preview", text="Preview During Transform")
+                row = layout.row()
+                row.separator()
+                row.prop(st, "show_transform_preview", text="Preview During Transform")
+                
+            col = layout.column(align = True)
             col.prop(st, "show_seconds")
             col.prop(st, "show_locked_time")
 
             layout.menu("SEQUENCER_MT_view_cache")
-
-            layout.separator()
 
             layout.use_property_split = False
             layout.prop(st, "show_markers")
