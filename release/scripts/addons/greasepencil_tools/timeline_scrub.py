@@ -123,6 +123,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         self.key = prefs.keycode
         self.evaluate_gp_obj_key = prefs.evaluate_gp_obj_key
         self.always_snap = prefs.always_snap
+        self.rolling_mode = prefs.rolling_mode
 
         self.dpi = context.preferences.system.dpi
         self.ui_scale = context.preferences.system.ui_scale
@@ -146,7 +147,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         self.init_mouse_x = self.cursor_x = event.mouse_region_x
 
         # self.init_mouse_y = event.mouse_region_y # only to display init frame text
-        self.init_frame = self.new_frame = context.scene.frame_current
+        self.cancel_frame = self.init_frame = self.new_frame = context.scene.frame_current
         self.lock_range = context.scene.lock_frame_selection_to_range
         if context.scene.use_preview_range:
             self.f_start = context.scene.frame_preview_start
@@ -195,10 +196,27 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         if not ob or not self.pos:
             # Disable inverted behavior if no frame to snap
             self.always_snap = False
+            if self.rolling_mode:
+                self.report({'WARNING'}, 'No Keys to flip on')
+                return {'CANCELLED'}
+
+        if self.rolling_mode:
+            # sorted and casted to int list since it's going to work with indexes
+            self.pos = sorted([int(f) for f in self.pos])
+            # find and make current frame the "starting" frame (force snap)
+            active_pos = [i for i, num in enumerate(self.pos) if num <= self.init_frame]
+            if active_pos:
+                self.init_index = active_pos[-1]
+                self.init_frame = self.new_frame = self.pos[self.init_index]
+            else:
+                self.init_index = 0
+                self.init_frame = self.new_frame = self.pos[0]
+                
+            # del active_pos
+            self.index_limit = len(self.pos) - 1
 
         # Also snap on play bounds (sliced off for keyframe display)
         self.pos += [self.f_start, self.f_end]
-
 
         # Disable Onion skin
         self.active_space_data = context.space_data
@@ -241,43 +259,44 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
         self.hud_lines = []
 
-        # frame marks
-        for x in hud_pos_x:
-            self.hud_lines.append((x, my - (frame_height/2)))
-            self.hud_lines.append((x, my + (frame_height/2)))
+        if not self.rolling_mode:
+            # frame marks
+            for x in hud_pos_x:
+                self.hud_lines.append((x, my - (frame_height/2)))
+                self.hud_lines.append((x, my + (frame_height/2)))
 
         # init frame mark
         self.hud_lines += [(self.init_mouse_x, my - (init_height/2)),
                            (self.init_mouse_x, my + (init_height/2))]
 
-        # Add start/end boundary bracket to HUD
+        if not self.rolling_mode:
+            # Add start/end boundary bracket to HUD
+            start_x = self.init_mouse_x + \
+                (self.f_start - self.init_frame) * self.px_step
+            end_x = self.init_mouse_x + \
+                (self.f_end - self.init_frame) * self.px_step
 
-        start_x = self.init_mouse_x + \
-            (self.f_start - self.init_frame) * self.px_step
-        end_x = self.init_mouse_x + \
-            (self.f_end - self.init_frame) * self.px_step
+            # start
+            up = (start_x, my - (bound_h/2))
+            dn = (start_x, my + (bound_h/2))
+            self.hud_lines.append(up)
+            self.hud_lines.append(dn)
 
-        # start
-        up = (start_x, my - (bound_h/2))
-        dn = (start_x, my + (bound_h/2))
-        self.hud_lines.append(up)
-        self.hud_lines.append(dn)
+            self.hud_lines.append(up)
+            self.hud_lines.append((up[0] + bound_bracket_l, up[1]))
+            self.hud_lines.append(dn)
+            self.hud_lines.append((dn[0] + bound_bracket_l, dn[1]))
 
-        self.hud_lines.append(up)
-        self.hud_lines.append((up[0] + bound_bracket_l, up[1]))
-        self.hud_lines.append(dn)
-        self.hud_lines.append((dn[0] + bound_bracket_l, dn[1]))
+            # end
+            up = (end_x, my - (bound_h/2))
+            dn = (end_x, my + (bound_h/2))
+            self.hud_lines.append(up)
+            self.hud_lines.append(dn)
 
-        # end
-        up = (end_x, my - (bound_h/2))
-        dn = (end_x, my + (bound_h/2))
-        self.hud_lines.append(up)
-        self.hud_lines.append(dn)
-
-        self.hud_lines.append(up)
-        self.hud_lines.append((up[0] - bound_bracket_l, up[1]))
-        self.hud_lines.append(dn)
-        self.hud_lines.append((dn[0] - bound_bracket_l, dn[1]))
+            self.hud_lines.append(up)
+            self.hud_lines.append((up[0] - bound_bracket_l, up[1]))
+            self.hud_lines.append(dn)
+            self.hud_lines.append((dn[0] - bound_bracket_l, dn[1]))
 
         # Horizontal line
         self.hud_lines += [(0, my), (width, my)]
@@ -286,16 +305,24 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
         self.batch_timeline = batch_for_shader(
             shader, 'LINES', {"pos": self.hud_lines})
+        
+        if self.rolling_mode:
+            current_id = self.pos.index(self.new_frame)
+            # Add init_frame to "cancel" it in later UI code
+            ui_key_pos = [i - current_id + self.init_frame for i, _f in enumerate(self.pos[:-2])]
+        else:
+            ui_key_pos = self.pos[:-2]
+        
 
         # keyframe display
         if self.keyframe_aspect == 'LINE':
             key_lines = []
             # Slice off position of start/end frame added last (in list for snapping)
-            for i in self.pos[:-2]:
+            for i in ui_key_pos:
                 key_lines.append(
                     (self.init_mouse_x + ((i-self.init_frame) * self.px_step), my - (key_height/2)))
                 key_lines.append(
-                    (self.init_mouse_x + ((i-self.init_frame)*self.px_step), my + (key_height/2)))
+                    (self.init_mouse_x + ((i-self.init_frame) * self.px_step), my + (key_height/2)))
 
             self.batch_keyframes = batch_for_shader(
                 shader, 'LINES', {"pos": key_lines})
@@ -309,7 +336,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             shaped_key = []
             indices = []
             idx_offset = 0
-            for i in self.pos[:-2]:
+            for i in ui_key_pos:
                 center = self.init_mouse_x + ((i-self.init_frame)*self.px_step)
                 if self.keyframe_aspect == 'DIAMOND':
                     # +1 on x is to correct pixel alignement
@@ -339,6 +366,8 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         # convert frame list to array for numpy snap utility
         self.pos = np.asarray(self.pos)
 
+        if self.rolling_mode:
+            context.scene.frame_current = self.new_frame
 
         args = (self, context)
         self.viewtype = None
@@ -383,42 +412,52 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             self.offset = int(px_offset / self.px_step)
             self.new_frame = self.init_frame + self.offset
 
-            mod_snap = False
-            if self.snap_ctrl and event.ctrl:
-                mod_snap = True
-            if self.snap_shift and event.shift:
-                mod_snap = True
-            if self.snap_alt and event.alt:
-                mod_snap = True
+            if self.rolling_mode:
+                # Frame Flipping mode (equidistant scrub snap)
+                self.index = self.init_index + self.offset
+                # clamp to possible index range
+                self.index = min(max(self.index, 0), self.index_limit)
+                self.new_frame = self.pos[self.index]
+                context.scene.frame_current = self.new_frame
+                self.cursor_x = self.init_mouse_x + (self.offset * self.px_step)
 
-            ## Snapping
-            if self.always_snap:
-                # inverted snapping behavior
-                if not self.snap_on and not mod_snap:
-                    self.new_frame = nearest(self.pos, self.new_frame)
             else:
-                if self.snap_on or mod_snap:
-                    self.new_frame = nearest(self.pos, self.new_frame)
+                mod_snap = False
+                if self.snap_ctrl and event.ctrl:
+                    mod_snap = True
+                if self.snap_shift and event.shift:
+                    mod_snap = True
+                if self.snap_alt and event.alt:
+                    mod_snap = True
 
-            # frame range restriction
-            if self.lock_range:
-                if self.new_frame < self.f_start:
-                    self.new_frame = self.f_start
-                elif self.new_frame > self.f_end:
-                    self.new_frame = self.f_end
+                ## Snapping
+                if self.always_snap:
+                    # inverted snapping behavior
+                    if not self.snap_on and not mod_snap:
+                        self.new_frame = nearest(self.pos, self.new_frame)
+                else:
+                    if self.snap_on or mod_snap:
+                        self.new_frame = nearest(self.pos, self.new_frame)
 
-            # context.scene.frame_set(self.new_frame)
-            context.scene.frame_current = self.new_frame
+                # frame range restriction
+                if self.lock_range:
+                    if self.new_frame < self.f_start:
+                        self.new_frame = self.f_start
+                    elif self.new_frame > self.f_end:
+                        self.new_frame = self.f_end
 
-            # - recalculate offset to snap cursor to frame
-            self.offset = self.new_frame - self.init_frame
+                # context.scene.frame_set(self.new_frame)
+                context.scene.frame_current = self.new_frame
 
-            # - calculate cursor pixel position from frame offset
-            self.cursor_x = self.init_mouse_x + (self.offset * self.px_step)
+                # - recalculate offset to snap cursor to frame
+                self.offset = self.new_frame - self.init_frame
+
+                # - calculate cursor pixel position from frame offset
+                self.cursor_x = self.init_mouse_x + (self.offset * self.px_step)
 
         if event.type == 'ESC':
             # frame_set(self.init_frame) ?
-            context.scene.frame_current = self.init_frame
+            context.scene.frame_current = self.cancel_frame
             self._exit_modal(context)
             return {'CANCELLED'}
 
@@ -503,6 +542,11 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
     always_snap: BoolProperty(
         name="Always Snap",
         description="Always snap to keys if any, modifier is used deactivate the snapping\nDisabled if no keyframe found",
+        default=False)
+
+    rolling_mode: BoolProperty(
+        name="Rolling Mode",
+        description="Alternative Gap-less timeline. No time informations to quickly roll/flip over keys\nOverride normal and 'always snap' mode",
         default=False)
 
     use_in_timeline_editor: BoolProperty(
@@ -666,7 +710,7 @@ def draw_ts_pref(prefs, layout):
         snap_text = 'Disable keyframes snap: '
     else:
         snap_text = 'Keyframes snap: '
-
+    
     snap_text += 'Left Mouse' if prefs.keycode == 'RIGHTMOUSE' else 'Right Mouse'
     if not prefs.use_ctrl:
         snap_text += ' or Ctrl'
@@ -674,12 +718,18 @@ def draw_ts_pref(prefs, layout):
         snap_text += ' or Shift'
     if not prefs.use_alt:
         snap_text += ' or Alt'
+    
+    if prefs.rolling_mode:
+        snap_text = 'Gap-less mode (always snap)'
+
     box.label(text=snap_text, icon='SNAP_ON')
     if prefs.keycode in ('LEFTMOUSE', 'RIGHTMOUSE', 'MIDDLEMOUSE') and not prefs.use_ctrl and not prefs.use_alt and not prefs.use_shift:
         box.label(
             text="Recommended to choose at least one modifier to combine with clicks (default: Ctrl+Alt)", icon="ERROR")
 
-    box.prop(prefs, 'always_snap')
+    row = box.row()
+    row.prop(prefs, 'always_snap')
+    row.prop(prefs, 'rolling_mode')
     box.prop(prefs, 'use_in_timeline_editor',
              text='Add same shortcut to scrub within timeline editors')
 

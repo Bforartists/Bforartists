@@ -22,7 +22,6 @@ from blenderkit import paths, append_link, bg_blender, utils, download, search, 
 import sys, json, os, time
 import subprocess
 import tempfile
-import numpy as np
 import bpy
 import requests
 import math
@@ -56,98 +55,9 @@ def get_current_resolution():
     return actres
 
 
-def can_erase_alpha(na):
-    alpha = na[3::4]
-    alpha_sum = alpha.sum()
-    if alpha_sum == alpha.size:
-        print('image can have alpha erased')
-    # print(alpha_sum, alpha.size)
-    return alpha_sum == alpha.size
-
-
-def is_image_black(na):
-    r = na[::4]
-    g = na[1::4]
-    b = na[2::4]
-
-    rgbsum = r.sum() + g.sum() + b.sum()
-
-    # print('rgb sum', rgbsum, r.sum(), g.sum(), b.sum())
-    if rgbsum == 0:
-        print('image can have alpha channel dropped')
-    return rgbsum == 0
-
-
-def is_image_bw(na):
-    r = na[::4]
-    g = na[1::4]
-    b = na[2::4]
-
-    rg_equal = r == g
-    gb_equal = g == b
-    rgbequal = rg_equal.all() and gb_equal.all()
-    if rgbequal:
-        print('image is black and white, can have channels reduced')
-
-    return rgbequal
-
-
-def numpytoimage(a, iname, width=0, height=0, channels=3):
-    t = time.time()
-    foundimage = False
-
-    for image in bpy.data.images:
-
-        if image.name[:len(iname)] == iname and image.size[0] == a.shape[0] and image.size[1] == a.shape[1]:
-            i = image
-            foundimage = True
-    if not foundimage:
-        if channels == 4:
-            bpy.ops.image.new(name=iname, width=width, height=height, color=(0, 0, 0, 1), alpha=True,
-                              generated_type='BLANK', float=True)
-        if channels == 3:
-            bpy.ops.image.new(name=iname, width=width, height=height, color=(0, 0, 0), alpha=False,
-                              generated_type='BLANK', float=True)
-
-    for image in bpy.data.images:
-        # print(image.name[:len(iname)],iname, image.size[0],a.shape[0],image.size[1],a.shape[1])
-        if image.name[:len(iname)] == iname and image.size[0] == width and image.size[1] == height:
-            i = image
-
-    # dropping this re-shaping code -  just doing flat array for speed and simplicity
-    #    d = a.shape[0] * a.shape[1]
-    #    a = a.swapaxes(0, 1)
-    #    a = a.reshape(d)
-    #    a = a.repeat(channels)
-    #    a[3::4] = 1
-    i.pixels.foreach_set(a)  # this gives big speedup!
-    print('\ntime ' + str(time.time() - t))
-    return i
-
-
-def imagetonumpy(i):
-    t = time.time()
-
-    width = i.size[0]
-    height = i.size[1]
-    # print(i.channels)
-
-    size = width * height * i.channels
-    na = np.empty(size, np.float32)
-    i.pixels.foreach_get(na)
-
-    # dropping this re-shaping code -  just doing flat array for speed and simplicity
-    #    na = na[::4]
-    #    na = na.reshape(height, width, i.channels)
-    #    na = na.swapaxnes(0, 1)
-
-    # print('\ntime of image to numpy ' + str(time.time() - t))
-    return na
-
-
 def save_image_safely(teximage, filepath):
     '''
-    Blender makes it really hard to save images... this is to fix it's crazy bad image saving.
+    Blender makes it really hard to save images...
     Would be worth investigating PIL or similar instead
     Parameters
     ----------
@@ -203,95 +113,8 @@ def extxchange_to_resolution(filepath):
         ext = 'jpg'
 
 
-def make_possible_reductions_on_image(teximage, input_filepath, do_reductions=False, do_downscale=False):
-    '''checks the image and saves it to drive with possibly reduced channels.
-    Also can remove the image from the asset if the image is pure black
-    - it finds it's usages and replaces the inputs where the image is used
-    with zero/black color.
-    currently implemented file type conversions:
-    PNG->JPG
-    '''
-    colorspace = teximage.colorspace_settings.name
-    teximage.colorspace_settings.name = 'Non-Color'
-
-    JPEG_QUALITY = 90
-    # is_image_black(na)
-    # is_image_bw(na)
-
-    rs = bpy.context.scene.render
-    ims = rs.image_settings
-
-    orig_file_format = ims.file_format
-    orig_quality = ims.quality
-    orig_color_mode = ims.color_mode
-    orig_compression = ims.compression
-
-    # if is_image_black(na):
-    #     # just erase the image from the asset here, no need to store black images.
-    #     pass;
-
-    # fp = teximage.filepath
-    fp = input_filepath
-    if do_reductions:
-        na = imagetonumpy(teximage)
-
-        if can_erase_alpha(na):
-            print(teximage.file_format)
-            if teximage.file_format == 'PNG':
-                print('changing type of image to JPG')
-                base, ext = os.path.splitext(fp)
-                teximage['original_extension'] = ext
-
-                fp = fp.replace('.png', '.jpg')
-                fp = fp.replace('.PNG', '.jpg')
-
-                teximage.name = teximage.name.replace('.png', '.jpg')
-                teximage.name = teximage.name.replace('.PNG', '.jpg')
-
-                teximage.file_format = 'JPEG'
-                ims.quality = JPEG_QUALITY
-                ims.color_mode = 'RGB'
-
-            if is_image_bw(na):
-                ims.color_mode = 'BW'
-
-    ims.file_format = teximage.file_format
-
-    # all pngs with max compression
-    if ims.file_format == 'PNG':
-        ims.compression = 100
-    # all jpgs brought to reasonable quality
-    if ims.file_format == 'JPG':
-        ims.quality = JPEG_QUALITY
-
-    if do_downscale:
-        downscale(teximage)
-
-    # it's actually very important not to try to change the image filepath and packed file filepath before saving,
-    # blender tries to re-pack the image after writing to image.packed_image.filepath and reverts any changes.
-    teximage.save_render(filepath=bpy.path.abspath(fp), scene=bpy.context.scene)
-    if len(teximage.packed_files) > 0:
-        teximage.unpack(method='REMOVE')
-    teximage.filepath = fp
-    teximage.filepath_raw = fp
-    teximage.reload()
-
-    teximage.colorspace_settings.name = colorspace
-
-    ims.file_format = orig_file_format
-    ims.quality = orig_quality
-    ims.color_mode = orig_color_mode
-    ims.compression = orig_compression
 
 
-def downscale(i):
-    minsize = 128
-
-    sx, sy = i.size[:]
-    sx = round(sx / 2)
-    sy = round(sy / 2)
-    if sx > minsize and sy > minsize:
-        i.scale(sx, sy)
 
 
 def upload_resolutions(files, asset_data):
@@ -340,9 +163,10 @@ def unpack_asset(data):
                 pf.filepath = fp  # bpy.path.abspath(fp)
             image.filepath = fp  # bpy.path.abspath(fp)
             image.filepath_raw = fp  # bpy.path.abspath(fp)
-            image.save()
+            # image.save()
             if len(image.packed_files) > 0:
-                image.unpack(method='REMOVE')
+                # image.unpack(method='REMOVE')
+                image.unpack(method='WRITE_ORIGINAL')
 
     bpy.ops.wm.save_mainfile(compress=False)
     # now try to delete the .blend1 file
@@ -523,11 +347,11 @@ def generate_lower_resolutions(data):
                             # first, let's link the image back to the original one.
                             i['blenderkit_original_path'] = i.filepath
                             # first round also makes reductions on the image, while keeping resolution
-                            make_possible_reductions_on_image(i, fp, do_reductions=True, do_downscale=False)
+                            image_utils.make_possible_reductions_on_image(i, fp, do_reductions=True, do_downscale=False)
 
                         else:
                             # lower resolutions only downscale
-                            make_possible_reductions_on_image(i, fp, do_reductions=False, do_downscale=True)
+                            image_utils.make_possible_reductions_on_image(i, fp, do_reductions=False, do_downscale=True)
 
                         abspath = bpy.path.abspath(i.filepath)
                         if os.path.exists(abspath):
@@ -555,7 +379,7 @@ def generate_lower_resolutions(data):
                 else:
                     p2res = rkeys[rkeys.index(p2res) - 1]
             print('uploading resolution files')
-            upload_resolutions(files, data['asset_data'])
+            #upload_resolutions(files, data['asset_data'])
             preferences = bpy.context.preferences.addons['blenderkit'].preferences
             patch_asset_empty(data['asset_data']['id'], preferences.api_key)
         return
@@ -665,41 +489,6 @@ def get_materials_for_validation(page_size=100, max_results=100000000):
     return filepath
 
 
-# This gets all assets in the database through the/assets endpoint. Currently not used, since we use elastic for everything.
-# def get_assets_list():
-#     bpy.app.debug_value = 2
-#
-#     results = []
-#     preferences = bpy.context.preferences.addons['blenderkit'].preferences
-#     url = paths.get_api_url() + 'assets/all'
-#     i = 0
-#     while url is not None:
-#         headers = utils.get_headers(preferences.api_key)
-#         print('fetching assets from assets endpoint')
-#         print(url)
-#         retries = 0
-#         while retries < 3:
-#             r = rerequests.get(url, headers=headers)
-#
-#             try:
-#                 adata = r.json()
-#                 url = adata.get('next')
-#                 print(i)
-#                 i += 1
-#             except Exception as e:
-#                 print(e)
-#                 print('failed to get next')
-#                 if retries == 2:
-#                     url = None
-#             if adata.get('results') != None:
-#                 results.extend(adata['results'])
-#                 retries = 3
-#             print(f'fetched page {i}')
-#             retries += 1
-#
-#     fpath = assets_db_path()
-#     with open(fpath, 'w', encoding = 'utf-8') as s:
-#         json.dump(results, s, ensure_ascii=False, indent=4)
 
 
 def load_assets_list(filepath):
@@ -757,6 +546,7 @@ def generate_resolution_thread(asset_data, api_key):
     '''
 
     fpath = download_asset(asset_data, unpack=True, api_key=api_key)
+
     if fpath:
         if asset_data['assetType'] != 'hdr':
             print('send to bg ', fpath)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -7759,12 +7759,8 @@ msgid "UV Project Modifier"
 msgstr "Fark Değiştirici Ekle"
 
 
-msgid "Horizontal Aspect Ratio"
+msgid "Aspect X"
 msgstr "En/Boy oranı(Yatay eksen)"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "En/Boy oranı(Dikey eksen)"
 
 
 msgid "Number of Projectors"
@@ -7773,14 +7769,6 @@ msgstr "Izgara çizgilerinin sayısını ayarlayın"
 
 msgid "Number of projectors to use"
 msgstr "Hesaplama için kullanılacak aygıt"
-
-
-msgid "Horizontal Scale"
-msgstr "Döndürme & Ölçek"
-
-
-msgid "Vertical Scale"
-msgstr "Döndürme & Ölçek"
 
 
 msgid "UVWarp Modifier"
@@ -10302,10 +10290,6 @@ msgid "Path to file"
 msgstr "Dosya kaydı olanaksız"
 
 
-msgid "Check Existing"
-msgstr "Varolanla Değiştir..."
-
-
 msgctxt "Operator"
 msgid "Add Camera Preset"
 msgstr "Kamera Uçuş Modu"
@@ -11352,6 +11336,10 @@ msgstr "Mesaj"
 msgctxt "Operator"
 msgid "Export Camera & Markers"
 msgstr "Seçili İşaretler arasında"
+
+
+msgid "Check Existing"
+msgstr "Varolanla Değiştir..."
 
 
 msgid "End frame for export"
@@ -22140,10 +22128,6 @@ msgstr "Tümü"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "Yaklaş/Uzaklaş"
-
-
-msgid "Aspect X"
-msgstr "En/Boy oranı(Yatay eksen)"
 
 
 msgid "Date"

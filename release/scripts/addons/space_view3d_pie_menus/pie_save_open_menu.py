@@ -41,6 +41,22 @@ class PIE_MT_SaveOpen(Menu):
     bl_idname = "PIE_MT_saveopen"
     bl_label = "Pie Save/Open"
 
+    @staticmethod
+    def _save_as_mainfile_calc_incremental_name():
+        import re
+        dirname, base_name = os.path.split(bpy.data.filepath)
+        base_name_no_ext, ext = os.path.splitext(base_name)
+        match = re.match(r"(.*)_([\d]+)$", base_name_no_ext)
+        if match:
+            prefix, number = match.groups()
+            number = int(number) + 1
+        else:
+            prefix, number = base_name_no_ext, 1
+        prefix = os.path.join(dirname, prefix)
+        while os.path.isfile(output := "%s_%03d%s" % (prefix, number, ext)):
+            number += 1
+        return output
+
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
@@ -57,7 +73,16 @@ class PIE_MT_SaveOpen(Menu):
         # 9 - TOP - RIGHT
         pie.operator("wm.save_as_mainfile", text="Save As...", icon='NONE')
         # 1 - BOTTOM - LEFT
-        pie.operator("file.save_incremental", text="Incremental Save", icon='NONE')
+        if bpy.data.is_saved:
+            default_operator_contest = layout.operator_context
+            layout.operator_context = 'EXEC_DEFAULT'
+            pie.operator(
+                "wm.save_as_mainfile", text="Incremental Save", icon='NONE',
+            ).filepath = self._save_as_mainfile_calc_incremental_name()
+            layout.operator_context = default_operator_contest
+        else:
+            pie.box().label(text="Incremental Save (unsaved)")
+
         # 3 - BOTTOM - RIGHT
         pie.menu("PIE_MT_recover", text="Recovery Menu", icon='RECOVER_LAST')
 
@@ -109,60 +134,8 @@ class PIE_MT_fileio(Menu):
         box.menu("TOPBAR_MT_file_export", icon='EXPORT')
 
 
-# Save Incremental
-class PIE_OT_FileIncrementalSave(Operator):
-    bl_idname = "file.save_incremental"
-    bl_label = "Save Incremental"
-    bl_description = "Save First! then Incremental, .blend will get _001 extension"
-    bl_options = {"REGISTER"}
-
-    @classmethod
-    def poll(cls, context):
-        return (bpy.data.filepath != "")
-
-    def execute(self, context):
-        f_path = bpy.data.filepath
-        b_name = bpy.path.basename(f_path)
-
-        if b_name and b_name.find("_") != -1:
-            # except in cases when there is an underscore in the name like my_file.blend
-            try:
-                str_nb = b_name.rpartition("_")[-1].rpartition(".blend")[0]
-                int_nb = int(str(str_nb))
-                new_nb = str_nb.replace(str(int_nb), str(int_nb + 1))
-                output = f_path.replace(str_nb, new_nb)
-
-                i = 1
-                while os.path.isfile(output):
-                    str_nb = b_name.rpartition("_")[-1].rpartition(".blend")[0]
-                    i += 1
-                    new_nb = str_nb.replace(str(int_nb), str(int_nb + i))
-                    output = f_path.replace(str_nb, new_nb)
-            except ValueError:
-                output = f_path.rpartition(".blend")[0] + "_001" + ".blend"
-        else:
-            # no underscore in the name or saving a nameless (.blend) file
-            output = f_path.rpartition(".blend")[0] + "_001" + ".blend"
-
-        # fix for saving in a directory without privileges
-        try:
-            bpy.ops.wm.save_as_mainfile(filepath=output)
-        except:
-            self.report({'WARNING'},
-                        "File could not be saved. Check the System Console for errors")
-            return {'CANCELLED'}
-
-        self.report(
-                {'INFO'}, "File: {0} - Created at: {1}".format(
-                    output[len(bpy.path.abspath("//")):],
-                    output[:len(bpy.path.abspath("//"))]),
-                )
-        return {'FINISHED'}
-
-
 classes = (
     PIE_MT_SaveOpen,
-    PIE_OT_FileIncrementalSave,
     PIE_MT_fileio,
     PIE_MT_recover,
     PIE_MT_link,
