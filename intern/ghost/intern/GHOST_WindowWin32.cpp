@@ -282,7 +282,7 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
           m_wintab.maxAzimuth = Orientation[0].axMax;
           m_wintab.maxAltitude = Orientation[1].axMax;
         }
-        else { /* no so dont do tilt stuff */
+        else { /* No so don't do tilt stuff. */
           m_wintab.maxAzimuth = m_wintab.maxAltitude = 0;
         }
       }
@@ -541,6 +541,8 @@ GHOST_TSuccess GHOST_WindowWin32::setState(GHOST_TWindowState state)
       break;
   }
   ::SetWindowLongPtr(m_hWnd, GWL_STYLE, style);
+  /* SetWindowLongPtr Docs: frame changes not visible until SetWindowPos with SWP_FRAMECHANGED. */
+  ::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
   return ::SetWindowPlacement(m_hWnd, &wp) == TRUE ? GHOST_kSuccess : GHOST_kFailure;
 }
 
@@ -1057,7 +1059,7 @@ void GHOST_WindowWin32::processWin32TabletInitEvent()
         m_wintab.maxAzimuth = Orientation[0].axMax;
         m_wintab.maxAltitude = Orientation[1].axMax;
       }
-      else { /* no so dont do tilt stuff */
+      else { /* No so don't do tilt stuff. */
         m_wintab.maxAzimuth = m_wintab.maxAltitude = 0;
       }
     }

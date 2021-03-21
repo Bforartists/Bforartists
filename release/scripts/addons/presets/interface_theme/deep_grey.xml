@@ -818,6 +818,7 @@
         metadatabg="#333333"
         metadatatext="#b8b8b8"
         preview_range="#a14d0066"
+        row_alternate="#ffffff0d"
         >
         <space>
           <ThemeSpaceGeneric
@@ -854,6 +855,7 @@
     <properties>
       <ThemeProperties
         match="#c85130"
+        active_modifier="#c85130ff"
         >
         <space>
           <ThemeSpaceGeneric
@@ -962,6 +964,8 @@
         script_node="#141414"
         pattern_node="#008db6"
         layout_node="#3c3c3c"
+        geometry_node="#00d7a4"
+        attribute_node="#3f5980"
         >
         <space>
           <ThemeSpaceGeneric
@@ -1312,6 +1316,42 @@
         </space>
       </ThemeStatusBar>
     </statusbar>
+    <spreadsheet>
+      <ThemeSpreadsheet
+        row_alternate="#4f4f4fff"
+        >
+        <space>
+          <ThemeSpaceGeneric
+            back="#474747"
+            title="#ffffff"
+            text="#c3c3c3"
+            text_hi="#ffffff"
+            header="#454545ff"
+            header_text="#eeeeee"
+            header_text_hi="#ffffff"
+            button="#424242ff"
+            button_title="#ffffff"
+            button_text="#e5e5e5"
+            button_text_hi="#ffffff"
+            navigation_bar="#00000000"
+            execution_buts="#00000000"
+            tab_active="#4b4b4b"
+            tab_inactive="#2b2b2b"
+            tab_back="#232323ff"
+            tab_outline="#232323"
+            >
+            <panelcolors>
+              <ThemePanelColors
+                header="#424242cc"
+                back="#333333b3"
+                sub_back="#0000003e"
+                >
+              </ThemePanelColors>
+            </panelcolors>
+          </ThemeSpaceGeneric>
+        </space>
+      </ThemeSpreadsheet>
+    </spreadsheet>
     <bone_color_sets>
       <ThemeBoneColorSet
         normal="#9a0000"

@@ -295,7 +295,7 @@ def update_ratings_work_hours_ui_1_5(self, context):
 
 
 class FastRateMenu(Operator):
-    """Fast rating of the assets directly in the asset bar - without need to download assets"""
+    """Rating of the assets , also directly from the asset bar - without need to download assets"""
     bl_idname = "wm.blenderkit_menu_rating_upload"
     bl_label = "Rate asset"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}

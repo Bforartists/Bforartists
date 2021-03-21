@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -5211,10 +5211,6 @@ msgid "X-Ray"
 msgstr "มองผ่าน"
 
 
-msgid "Snap Points"
-msgstr "ยึดติดจุด"
-
-
 msgctxt "Operator"
 msgid "Assign to Group"
 msgstr "ตั้งให้เป็นกลุ่ม"
@@ -5243,11 +5239,6 @@ msgstr "ต่อแผ่นผิว"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "ลบแผ่นผิว"
-
-
-msgctxt "Operator"
-msgid "Delete Points"
-msgstr "ลบจุด"
 
 
 msgctxt "Operator"

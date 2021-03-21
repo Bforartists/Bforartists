@@ -18,7 +18,7 @@
 
 
 from blenderkit import asset_inspector, paths, utils, bg_blender, autothumb, version_checker, search, ui_panels, ui, \
-        overrides, colors, rerequests, categories, upload_bg, tasks_queue, image_utils
+    overrides, colors, rerequests, categories, upload_bg, tasks_queue, image_utils
 
 import tempfile, os, subprocess, json, re
 
@@ -47,6 +47,7 @@ licenses = (
     ('cc_zero', 'Creative Commons Zero', 'Creative Commons Zero'),
 )
 
+
 def comma2array(text):
     commasep = text.split(',')
     ar = []
@@ -71,50 +72,32 @@ def add_version(data):
 
 
 def write_to_report(props, text):
-    props.report = props.report + text + '\n'
+    props.report = props.report + ' - '+ text + '\n\n'
 
 
 def check_missing_data_model(props):
-    props.report = ''
     autothumb.update_upload_model_preview(None, None)
-
-    if props.name == '':
-        write_to_report(props, 'Set model name')
-    # if props.tags == '':
-    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
-
         props.report += props.thumbnail_generating_state + '\n'
     if props.engine == 'NONE':
         write_to_report(props, 'Set at least one rendering/output engine')
-    if not any(props.dimensions):
-        write_to_report(props, 'Run autotags operator or fill in dimensions manually')
+
+    # if not any(props.dimensions):
+    #     write_to_report(props, 'Run autotags operator or fill in dimensions manually')
 
 
 def check_missing_data_scene(props):
-    props.report = ''
     autothumb.update_upload_model_preview(None, None)
-
-    if props.name == '':
-        write_to_report(props, 'Set scene name')
-    # if props.tags == '':
-    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
-
         props.report += props.thumbnail_generating_state + '\n'
     if props.engine == 'NONE':
         write_to_report(props, 'Set at least one rendering/output engine')
 
 
 def check_missing_data_material(props):
-    props.report = ''
     autothumb.update_upload_material_preview(None, None)
-    if props.name == '':
-        write_to_report(props, 'Set material name')
-    # if props.tags == '':
-    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
         props.report += props.thumbnail_generating_state
@@ -124,14 +107,54 @@ def check_missing_data_material(props):
 
 def check_missing_data_brush(props):
     autothumb.update_upload_brush_preview(None, None)
-    props.report = ''
-    if props.name == '':
-        write_to_report(props, 'Set brush name')
-    # if props.tags == '':
-    #     write_to_report(props, 'Write at least 3 tags')
     if not props.has_thumbnail:
         write_to_report(props, 'Add thumbnail:')
         props.report += props.thumbnail_generating_state
+
+
+def check_missing_data(asset_type, props):
+    '''
+    checks if user did everything allright for particular assets and notifies him back if not.
+    Parameters
+    ----------
+    asset_type
+    props
+
+    Returns
+    -------
+
+    '''
+    props.report = ''
+
+    if props.name == '':
+        write_to_report(props, f'Set {asset_type.lower()} name.\n'
+                               f'It has to be in English and \n'
+                               f'can not be  longer than 40 letters.\n')
+    if len(props.name) > 40:
+        write_to_report(props, f'The name is too long. maximum is 40 letters')
+
+    if props.is_private == 'PUBLIC':
+
+        if len(props.description) < 20:
+            write_to_report(props, "The description is too short or empty. \n"
+                                   "Please write a description that describes \n "
+                                   "your asset as good as possible.\n"
+                                   "Description helps to bring your asset up\n in relevant search results. ")
+        if props.tags == '':
+            write_to_report(props, 'Write at least 3 tags.\n'
+                                   'Tags help to bring your asset up in relevant search results.')
+
+    if asset_type == 'MODEL':
+        check_missing_data_model(props)
+    if asset_type == 'SCENE':
+        check_missing_data_scene(props)
+    elif asset_type == 'MATERIAL':
+        check_missing_data_material(props)
+    elif asset_type == 'BRUSH':
+        check_missing_data_brush(props)
+
+    if props.report != '':
+        props.report = f'Please fix these issues before {props.is_private.lower()} upload:\n\n' + props.report
 
 
 def sub_to_camel(content):
@@ -514,8 +537,6 @@ def patch_individual_metadata(asset_id, metadata_dict, api_key):
     return {'FINISHED'}
 
 
-
-
 # class OBJECT_MT_blenderkit_fast_metadata_menu(bpy.types.Menu):
 #     bl_label = "Fast category change"
 #     bl_idname = "OBJECT_MT_blenderkit_fast_metadata_menu"
@@ -540,13 +561,14 @@ def update_free_full(self, context):
     if self.asset_type == 'material':
         if self.free_full == 'FULL':
             self.free_full = 'FREE'
-            ui_panels.ui_message(title = "All BlenderKit materials are free",
-                                 message = "Any material uploaded to BlenderKit is free." \
-                      " However, it can still earn money for the author," \
-                      " based on our fair share system. " \
-                      "Part of subscription is sent to artists based on usage by paying users.")
+            ui_panels.ui_message(title="All BlenderKit materials are free",
+                                 message="Any material uploaded to BlenderKit is free." \
+                                         " However, it can still earn money for the author," \
+                                         " based on our fair share system. " \
+                                         "Part of subscription is sent to artists based on usage by paying users.")
 
-def can_edit_asset(active_index = -1, asset_data = None):
+
+def can_edit_asset(active_index=-1, asset_data=None):
     if active_index == -1 and not asset_data:
         return False
     profile = bpy.context.window_manager.get('bkit profile')
@@ -561,6 +583,7 @@ def can_edit_asset(active_index = -1, asset_data = None):
     if asset_data['author']['id'] == profile['user']['id']:
         return True
     return False
+
 
 class FastMetadata(bpy.types.Operator):
     """Fast change of the category of object directly in asset bar."""
@@ -597,7 +620,7 @@ class FastMetadata(bpy.types.Operator):
         name="Subcategory",
         description="main category to put into",
         items=categories.get_subcategory_enums,
-        update = categories.update_subcategory_enums
+        update=categories.update_subcategory_enums
     )
     subcategory1: EnumProperty(
         name="Subcategory",
@@ -620,7 +643,7 @@ class FastMetadata(bpy.types.Operator):
         default="PUBLIC",
     )
 
-    free_full:EnumProperty(
+    free_full: EnumProperty(
         name="Free or Full Plan",
         items=(
             ('FREE', 'Free', "You consent you want to release this asset as free for everyone"),
@@ -648,7 +671,7 @@ class FastMetadata(bpy.types.Operator):
             layout.prop(self, 'subcategory')
         if self.subcategory != 'NONE' and self.subcategory1 != 'NONE':
             enums = categories.get_subcategory1_enums(self, context)
-            if enums[0][0]!='NONE':
+            if enums[0][0] != 'NONE':
                 layout.prop(self, 'subcategory1')
         layout.prop(self, 'name')
         layout.prop(self, 'description')
@@ -657,8 +680,6 @@ class FastMetadata(bpy.types.Operator):
         layout.prop(self, 'free_full', expand=True)
         if self.is_private == 'PUBLIC':
             layout.prop(self, 'license')
-
-
 
     def execute(self, context):
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -685,7 +706,7 @@ class FastMetadata(bpy.types.Operator):
                                   args=(self.asset_id, mdict, user_preferences.api_key))
         thread.start()
         tasks_queue.add_task((ui.add_report, (f'Uploading metadata for {self.name}. '
-                                             f'Refreash search results to see that changes applied correctly.', 8,)))
+                                              f'Refresh search results to see that changes applied correctly.', 8,)))
 
         return {'FINISHED'}
 
@@ -730,7 +751,7 @@ class FastMetadata(bpy.types.Operator):
 
         wm = context.window_manager
 
-        return wm.invoke_props_dialog(self, width = 600)
+        return wm.invoke_props_dialog(self, width=600)
 
 
 def verification_status_change_thread(asset_id, state, api_key):
@@ -944,7 +965,7 @@ class Uploader(threading.Thread):
                     }
                     datafile = os.path.join(self.export_data['temp_dir'], BLENDERKIT_EXPORT_DATA_FILE)
 
-                    with open(datafile, 'w', encoding = 'utf-8') as s:
+                    with open(datafile, 'w', encoding='utf-8') as s:
                         json.dump(data, s, ensure_ascii=False, indent=4)
 
                     # non waiting method - not useful here..
@@ -987,7 +1008,7 @@ class Uploader(threading.Thread):
                 })
 
                 if not os.path.exists(fpath):
-                    self.send_message ("File packing failed, please try manual packing first")
+                    self.send_message("File packing failed, please try manual packing first")
                     return {'CANCELLED'}
 
             self.send_message('Uploading files')
@@ -1018,28 +1039,6 @@ class Uploader(threading.Thread):
             return {'CANCELLED'}
 
 
-def check_missing_data(asset_type, props):
-    '''
-    checks if user did everything allright for particular assets and notifies him back if not.
-    Parameters
-    ----------
-    asset_type
-    props
-
-    Returns
-    -------
-
-    '''
-    if asset_type == 'MODEL':
-        check_missing_data_model(props)
-    if asset_type == 'SCENE':
-        check_missing_data_scene(props)
-    elif asset_type == 'MATERIAL':
-        check_missing_data_material(props)
-    elif asset_type == 'BRUSH':
-        check_missing_data_brush(props)
-
-
 def start_upload(self, context, asset_type, reupload, upload_set):
     '''start upload process, by processing data, then start a thread that cares about the rest of the upload.'''
 
@@ -1065,7 +1064,6 @@ def start_upload(self, context, asset_type, reupload, upload_set):
     check_missing_data(asset_type, props)
     # if previous check did find any problems then
     if props.report != '':
-        self.report({'ERROR_INVALID_INPUT'}, props.report)
         return {'CANCELLED'}
 
     if not reupload:
@@ -1188,14 +1186,18 @@ class UploadOperator(Operator):
             if self.main_file:
                 upload_set.append('MAINFILE')
 
-        #this is accessed later in get_upload_data and needs to be written.
+        # this is accessed later in get_upload_data and needs to be written.
         # should pass upload_set all the way to it probably
         if 'MAINFILE' in upload_set:
             self.main_file = True
 
         result = start_upload(self, context, self.asset_type, self.reupload, upload_set=upload_set, )
 
-        return {'FINISHED'}
+        if props.report != '':
+            # self.report({'ERROR_INVALID_INPUT'}, props.report)
+            self.report({'ERROR_INVALID_CONTEXT'}, props.report)
+
+        return result
 
     def draw(self, context):
         props = utils.get_upload_props()

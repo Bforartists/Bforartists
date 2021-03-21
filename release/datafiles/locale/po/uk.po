@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -35445,12 +35445,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "Модифікатор UV-проєкції для встановлення UV з проєктора"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Пропорція Боків Горизонтально"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Пропорція Боків Вертикально"
+msgid "Aspect X"
+msgstr "Пропорція Боків X"
 
 
 msgid "Number of Projectors"
@@ -35463,14 +35459,6 @@ msgstr "Кількість використовуваних прокторів"
 
 msgid "Projectors"
 msgstr "Проєктори"
-
-
-msgid "Horizontal Scale"
-msgstr "Горизонтальний масштаб"
-
-
-msgid "Vertical Scale"
-msgstr "Вертикальний масштаб"
 
 
 msgid "UVWarp Modifier"
@@ -40417,10 +40405,6 @@ msgid "Rotate around the X, Y, and Z axes"
 msgstr "Обертати навколо X, Y та Z осей"
 
 
-msgid "Simple Subdivision Surface"
-msgstr "Проста Поверхня Підподілення"
-
-
 msgctxt "NodeTree"
 msgid "Frame"
 msgstr "Кадр"
@@ -44397,14 +44381,6 @@ msgid "Load a cache file"
 msgstr "Завантажит файл кешу"
 
 
-msgid "Check Existing"
-msgstr "Перевірка наявних"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Перевіряти і попереджати про перезапис наявних файлів"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "Оновити архів"
@@ -46823,6 +46799,14 @@ msgstr "Експорт камери та міток"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Зберегти Python-скрипт, який відтворює камери та мітки в іншому місці"
+
+
+msgid "Check Existing"
+msgstr "Перевірка наявних"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Перевіряти і попереджати про перезапис наявних файлів"
 
 
 msgid "Filepath used for exporting the file"
@@ -64466,10 +64450,6 @@ msgstr "При ліпленні динамічна топологія замін
 msgctxt "Operator"
 msgid "Edit Dyntopo Detail Size"
 msgstr "Редагувати Розмір Детальності Динтопо"
-
-
-msgid "Modify the constant detail size of dyntopo interactively"
-msgstr "Модифікувати сталий розмір детальності динамічної топології інтерактивно"
 
 
 msgctxt "Operator"
@@ -94376,10 +94356,6 @@ msgid "Show Instancer"
 msgstr "Показ Примірникоутворювача"
 
 
-msgid "Aspect X"
-msgstr "Пропорція Боків X"
-
-
 msgid "Old"
 msgstr "Старе"
 
@@ -98769,11 +98745,6 @@ msgstr "Задати як Активний Матеріал"
 
 
 msgctxt "Operator"
-msgid "Arrange Strokes"
-msgstr "Упорядкувати Штрихи"
-
-
-msgctxt "Operator"
 msgid "Close"
 msgstr "Закриття"
 
@@ -98786,16 +98757,6 @@ msgstr "Перемкнути Торці"
 msgctxt "Operator"
 msgid "Reset Fill Transform"
 msgstr "Скинути Трансформу Заповнення"
-
-
-msgctxt "Operator"
-msgid "Extrude Points"
-msgstr "Видавити Точки"
-
-
-msgctxt "Operator"
-msgid "Merge Points"
-msgstr "Злити Точки"
 
 
 msgctxt "Operator"
@@ -99399,11 +99360,6 @@ msgstr "Вставити за Шаром"
 
 
 msgctxt "Operator"
-msgid "Smooth Points"
-msgstr "Згладити Точки"
-
-
-msgctxt "Operator"
 msgid "Insert Blank Keyframe (All Layers)"
 msgstr "Вставити Порожній Ключкадр (Усі Шари)"
 
@@ -99467,24 +99423,8 @@ msgid "Point Context Menu"
 msgstr "Контекстне Меню Точок"
 
 
-msgid "Mirror Points"
-msgstr "Дзеркалити Точки"
-
-
-msgid "Snap Points"
-msgstr "Підхоп Точок"
-
-
 msgid "Stroke Context Menu"
 msgstr "Контекстне Меню Штрихів"
-
-
-msgid "Mirror Stroke"
-msgstr "Дзеркалити Штрих"
-
-
-msgid "Snap Stroke"
-msgstr "Підхоп Штриха"
 
 
 msgctxt "Operator"
@@ -99569,16 +99509,6 @@ msgstr "Назва матеріалу"
 
 
 msgctxt "Operator"
-msgid "Delete Points"
-msgstr "Видалити Точки"
-
-
-msgctxt "Operator"
-msgid "Dissolve Points"
-msgstr "Розчинити Точки"
-
-
-msgctxt "Operator"
 msgid "Dissolve Between"
 msgstr "Розчинення Між"
 
@@ -99586,11 +99516,6 @@ msgstr "Розчинення Між"
 msgctxt "Operator"
 msgid "Dissolve Unselected"
 msgstr "Розчинити Невибране"
-
-
-msgctxt "Operator"
-msgid "Delete Strokes"
-msgstr "Видалити Штрихи"
 
 
 msgctxt "Operator"
@@ -100211,6 +100136,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "Неможливо розпакувати окремий бібліотечний файл, '%s'"
 
 
+msgid "ParticleSystem"
+msgstr "СистемаЧастинок"
+
+
 msgid "ParticleSettings"
 msgstr "ПараметриЧастинок"
 
@@ -100582,22 +100511,6 @@ msgstr "Пара кілець ребер не з'єднана"
 
 msgid "Edge-rings are not connected"
 msgstr "Кільця ребер не з'єднані"
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "Компонування | Плитка %u-%u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "Компонування | Визначення роздільності"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "Компонування | Ініціалізація виконання"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "Компонування | Де-ініціалізація виконання"
 
 
 msgid "Basic"
@@ -101614,10 +101527,6 @@ msgstr "Ослаблення (за силою)"
 
 msgid "Dynamic Effects"
 msgstr "Динамічні ефекти"
-
-
-msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
-msgstr "Не можу знайти пару кадрів Нарисного олівця для інтерполювання між ними на активному шарі"
 
 
 msgid "Cannot interpolate in curve edit mode"
@@ -104608,10 +104517,6 @@ msgid "constructive modifier"
 msgstr "модифікатор конструктивності"
 
 
-msgid "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "Перемістити мишу для зміни розміру деталей динтопо. LMB: підтвердити розмір, ESC/RMB: касування"
-
-
 msgid "Object has non-uniform scale, sculpting may be unpredictable"
 msgstr "Об'єкт має неоднорідний масштаб, ліплення може бути непередбачуваним"
 
@@ -104626,6 +104531,10 @@ msgstr "Знайдена Динамічна топологія: %s, вимкне
 
 msgid "Click on the mesh to set the detail"
 msgstr "Клацнути на сіті для задання детальності"
+
+
+msgid "Move the mouse to change the dyntopo detail size. LMB: confirm size, ESC/RMB: cancel"
+msgstr "Перемістити мишу для зміни розміру деталей динтопо. LMB: підтвердити розмір, ESC/RMB: касування"
 
 
 msgid "Warning!"
@@ -107907,10 +107816,6 @@ msgstr "Об'єкт '%s' не дійсний для цієї операції! �
 
 msgid "Palette '%s' does not contain color given"
 msgstr "Палітра '%s' не містить даного кольору"
-
-
-msgid "ParticleSystem"
-msgstr "СистемаЧастинок"
 
 
 msgid "uv_on_emitter() requires a modifier from an evaluated object"

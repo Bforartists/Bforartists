@@ -366,12 +366,12 @@ def get_thumbnail(name):
 
 
 def files_size_to_text(size):
-    fsmb = size // (1024 * 1024)
+    fsmb = size / (1024 * 1024)
     fskb = size % 1024
     if fsmb == 0:
-        return f'{fskb}KB'
+        return f'{round(fskb)}KB'
     else:
-        return f'{fsmb}MB {fskb}KB'
+        return f'{round(fsmb, 1)}MB'
 
 
 def get_brush_props(context):

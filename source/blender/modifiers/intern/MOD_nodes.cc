@@ -304,15 +304,15 @@ class GeometryNodesEvaluator {
     Vector<DSocket> from_sockets;
     socket_to_compute.foreach_origin_socket([&](DSocket socket) { from_sockets.append(socket); });
 
-    /* Multi-input sockets contain a vector of inputs. */
-    if (socket_to_compute->is_multi_input_socket()) {
-      return this->get_inputs_from_incoming_links(socket_to_compute, from_sockets);
-    }
-
     if (from_sockets.is_empty()) {
       /* The input is not connected, use the value from the socket itself. */
       const CPPType &type = *blender::nodes::socket_cpp_type_get(*socket_to_compute->typeinfo());
       return {get_unlinked_input_value(socket_to_compute, type)};
+    }
+
+    /* Multi-input sockets contain a vector of inputs. */
+    if (socket_to_compute->is_multi_input_socket()) {
+      return this->get_inputs_from_incoming_links(socket_to_compute, from_sockets);
     }
 
     const DSocket from_socket = from_sockets[0];
@@ -456,9 +456,13 @@ class GeometryNodesEvaluator {
 
       for (const GeometryComponent *component : components) {
         component->attribute_foreach(
-            [&](StringRefNull attribute_name, const AttributeMetaData &UNUSED(meta_data)) {
-              BKE_nodetree_attribute_hint_add(
-                  *btree_original, context, *node->bnode(), attribute_name);
+            [&](StringRefNull attribute_name, const AttributeMetaData &meta_data) {
+              BKE_nodetree_attribute_hint_add(*btree_original,
+                                              context,
+                                              *node->bnode(),
+                                              attribute_name,
+                                              meta_data.domain,
+                                              meta_data.data_type);
               return true;
             });
       }
@@ -582,12 +586,12 @@ class GeometryNodesEvaluator {
     void *buffer = allocator_.allocate(type.size(), type.alignment());
 
     if (bsocket->type == SOCK_OBJECT) {
-      Object *object = ((bNodeSocketValueObject *)bsocket->default_value)->value;
+      Object *object = socket->default_value<bNodeSocketValueObject>()->value;
       PersistentObjectHandle object_handle = handle_map_.lookup(object);
       new (buffer) PersistentObjectHandle(object_handle);
     }
     else if (bsocket->type == SOCK_COLLECTION) {
-      Collection *collection = ((bNodeSocketValueCollection *)bsocket->default_value)->value;
+      Collection *collection = socket->default_value<bNodeSocketValueCollection>()->value;
       PersistentCollectionHandle collection_handle = handle_map_.lookup(collection);
       new (buffer) PersistentCollectionHandle(collection_handle);
     }
@@ -606,7 +610,7 @@ class GeometryNodesEvaluator {
       return {required_type, converted_buffer};
     }
     void *default_buffer = allocator_.allocate(required_type.size(), required_type.alignment());
-    type.copy_to_uninitialized(type.default_value(), default_buffer);
+    required_type.copy_to_uninitialized(required_type.default_value(), default_buffer);
     return {required_type, default_buffer};
   }
 };

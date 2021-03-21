@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'74c50d0c773c')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -30799,12 +30799,8 @@ msgid "UV projection modifier to set UVs from a projector"
 msgstr "Modificateur de projection UV pour définir des UVs d’après un projecteur"
 
 
-msgid "Horizontal Aspect Ratio"
-msgstr "Proportion horizontale"
-
-
-msgid "Vertical Aspect Ratio"
-msgstr "Proportion verticale"
+msgid "Aspect X"
+msgstr "Proportions X"
 
 
 msgid "Number of Projectors"
@@ -30817,14 +30813,6 @@ msgstr "Nombre de projecteurs à utiliser"
 
 msgid "Projectors"
 msgstr "Projecteurs"
-
-
-msgid "Horizontal Scale"
-msgstr "Échelle horizontale"
-
-
-msgid "Vertical Scale"
-msgstr "Échelle verticale"
 
 
 msgid "UVWarp Modifier"
@@ -37724,14 +37712,6 @@ msgid "Load a cache file"
 msgstr "Charger un fichier cache"
 
 
-msgid "Check Existing"
-msgstr "Vérifier existant"
-
-
-msgid "Check and warn on overwriting existing files"
-msgstr "Prévenir la réécriture de fichiers existants"
-
-
 msgctxt "Operator"
 msgid "Refresh Archive"
 msgstr "Rafraîchir archive"
@@ -39789,6 +39769,14 @@ msgstr "Exporter caméra et marqueurs"
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
 msgstr "Enregistrer un script python qui recrée les caméras et marqueurs ailleurs"
+
+
+msgid "Check Existing"
+msgstr "Vérifier existant"
+
+
+msgid "Check and warn on overwriting existing files"
+msgstr "Prévenir la réécriture de fichiers existants"
 
 
 msgid "Filepath used for exporting the file"
@@ -72541,10 +72529,6 @@ msgid "Align to Vertex Normal"
 msgstr "Aligner sur normales de vertices"
 
 
-msgid "Aspect X"
-msgstr "Proportions X"
-
-
 msgid "Old"
 msgstr "Ancien"
 
@@ -75329,6 +75313,10 @@ msgid "Cannot unpack individual Library file, '%s'"
 msgstr "Impossible de dépaqueter le fichier de bibliothèque individuel, “%s”"
 
 
+msgid "ParticleSystem"
+msgstr "SystèmeParticules"
+
+
 msgid "ParticleSettings"
 msgstr "RéglagesParticules"
 
@@ -75608,22 +75596,6 @@ msgstr "La paire d’anneaux d’arêtes n’est pas connectée"
 
 msgid "Edge-rings are not connected"
 msgstr "Les anneaux d’arêtes ne sont pas connectés"
-
-
-msgid "Compositing | Tile %u-%u"
-msgstr "Compositing | tuile %u-%u"
-
-
-msgid "Compositing | Determining resolution"
-msgstr "Compositing | Détermination de la résolution"
-
-
-msgid "Compositing | Initializing execution"
-msgstr "Compositing | Initialisation de l’exécution"
-
-
-msgid "Compositing | De-initializing execution"
-msgstr "Compositing | Dés-initialisation de l’exécution"
 
 
 msgid "Basic"
@@ -76272,10 +76244,6 @@ msgstr "Fondu (par force)"
 
 msgid "Dynamic Effects"
 msgstr "Effets dynamiques"
-
-
-msgid "Cannot find a pair of grease pencil frames to interpolate between in active layer"
-msgstr "Impossible de trouver une paire d’images clé de crayon gras entre lesquelles interpoler, dans le calque actif"
 
 
 msgid "Custom interpolation curve does not exist"
@@ -80768,10 +80736,6 @@ msgstr "L’objet “%s” n’a pu créer les données internes nécessaires po
 
 msgid "Palette '%s' does not contain color given"
 msgstr "La palette “%s” ne contient pas la couleur donnée"
-
-
-msgid "ParticleSystem"
-msgstr "SystèmeParticules"
 
 
 msgid "Mesh has no UV data"

@@ -77,6 +77,7 @@ addon_disable_objects_hotkey_keymaps = []
 classes = (
     internals.CMListCollection,
     internals.CMSendReport,
+    internals.CMUISeparatorButton,
     operators.SetActiveCollection,
     operators.ExpandAllOperator,
     operators.ExpandSublevelOperator,
@@ -104,6 +105,8 @@ classes = (
     operators.CMDisableObjectsOperator,
     operators.CMDisableUnSelectedObjectsOperator,
     operators.CMRestoreDisabledObjectsOperator,
+    operators.CMUndoWrapper,
+    operators.CMRedoWrapper,
     preferences.CMPreferences,
     ui.CM_UL_items,
     ui.CollectionManager,
