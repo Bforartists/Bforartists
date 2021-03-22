@@ -1981,13 +1981,19 @@ class SEQUENCER_PT_strip_proxy(SequencerButtonsPanel, Panel):
             proxy = strip.proxy
 
             if ed.proxy_storage == 'PER_STRIP':
-                flow.prop(proxy, "use_proxy_custom_directory")
-                flow.prop(proxy, "use_proxy_custom_file")
-                flow.use_property_split = True
+                col = layout.column(align = True)
+                col.label(text = "Custom Proxy")
+                row = col.row()
+                row.separator()
+                row.prop(proxy, "use_proxy_custom_directory")
+                row = col.row()
+                row.separator()
+                row.prop(proxy, "use_proxy_custom_file")
+                col.use_property_split = True
                 if proxy.use_proxy_custom_directory and not proxy.use_proxy_custom_file:
-                    flow.prop(proxy, "directory")
+                    col.prop(proxy, "directory")
                 if proxy.use_proxy_custom_file:
-                    flow.prop(proxy, "filepath")
+                    col.prop(proxy, "filepath")
 
             layout.use_property_split = True
             row = layout.row(heading="Resolutions", align=True)
