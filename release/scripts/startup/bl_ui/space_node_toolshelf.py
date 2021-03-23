@@ -3652,9 +3652,9 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeSubdivide"
             
-            props = col.operator("node.add_node", text=" Subdivide Smooth   ", icon = "SUBDIVIDE_EDGES")
+            props = col.operator("node.add_node", text=" Subdivision Surface  ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivideSmooth"
+            props.type = "GeometryNodeSubdivisionSurface"
 
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
@@ -3681,7 +3681,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             
             props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivideSmooth"
+            props.type = "GeometryNodeSubdivisionSurface"
 
             props = row.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
