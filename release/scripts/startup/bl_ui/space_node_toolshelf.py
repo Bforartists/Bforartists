@@ -1720,8 +1720,12 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
             props.type = "CompositorNodeColorSpill"
 
             col = layout.column(align=True)
+            
+            props = col.operator("node.add_node", text=" Cryptomatte", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatteV2"
 
-            props = col.operator("node.add_node", text=" Cryptomatte        ", icon = "CRYPTOMATTE")
+            props = col.operator("node.add_node", text=" Cryptomatte (Legacy)", icon = "CRYPTOMATTE")
             props.use_transform = True
             props.type = "CompositorNodeCryptomatte"
 
@@ -1794,6 +1798,10 @@ class NODES_PT_Modify_matte(bpy.types.Panel):
             props = col.operator("node.add_node", text="", icon = "CRYPTOMATTE")
             props.use_transform = True
             props.type = "CompositorNodeCryptomatte"
+            
+            props = col.operator("node.add_node", text="", icon = "CRYPTOMATTE")
+            props.use_transform = True
+            props.type = "CompositorNodeCryptomatteV2"
 
             props = row.operator("node.add_node", text = "", icon = "SELECT_DIFFERENCE")
             props.use_transform = True
