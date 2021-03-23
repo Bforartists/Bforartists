@@ -1869,6 +1869,9 @@ static void node_draw_basis(const bContext *C,
     case CMP_NODE_CRYPTOMATTE:
       icon = ICON_CRYPTOMATTE;
       break;
+    case CMP_NODE_CRYPTOMATTE_LEGACY:
+      icon = ICON_CRYPTOMATTE;
+      break;
     case CMP_NODE_DIFF_MATTE:
       icon = ICON_SELECT_DIFFERENCE;
       break;
