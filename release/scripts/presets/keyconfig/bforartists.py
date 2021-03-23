@@ -1,4 +1,4 @@
-keyconfig_version = (2, 93, 8)
+keyconfig_version = (2, 93, 13)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -2191,7 +2191,6 @@ keyconfig_data = \
        ],
       },
      ),
-
     ("graph.select_all",
      {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
      {"properties":
@@ -2206,7 +2205,6 @@ keyconfig_data = \
        ],
       },
      ),
-
     ("graph.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
@@ -4491,6 +4489,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("node.links_mute", {"type": 'RIGHTMOUSE', "value": 'PRESS', "ctrl": True, "alt": True}, None),
     ],
    },
   ),
