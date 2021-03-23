@@ -46,7 +46,7 @@ class COLLECTION_PT_collection_flags(CollectionButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         collection = context.collection
