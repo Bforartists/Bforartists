@@ -669,6 +669,9 @@ class TOOLBAR_PT_menu_primitives(Panel):
         row.prop(addon_prefs, "primitives_gpencil")
         row = col.row()
         row.separator()
+        row.prop(addon_prefs, "primitives_gpencil_lineart")
+        row = col.row()
+        row.separator()
         row.prop(addon_prefs, "primitives_light")
         row = col.row()
         row.separator()
@@ -774,6 +777,12 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
                 row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
                 row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
+                
+            if addon_prefs.primitives_gpencil_lineart:
+
+                row = layout.row(align=True)
+                row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
+                row.operator("object.gpencil_add", text="", icon='LINEART_COLLECTION').type= 'LRT_COLLECTION'
 
             if addon_prefs.primitives_light:
 
@@ -906,6 +915,13 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
                     row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
                     row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
+                    
+                if addon_prefs.primitives_gpencil_lineart:
+
+                    row = layout.row(align=True)
+                    row.operator("object.gpencil_add", text="", icon='LINEART_SCENE').type= 'LRT_SCENE'
+                    row.operator("object.gpencil_add", text="", icon='STROKE').type= 'LRT_COLLECTION'
+                    #row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'LRT_OBJECT'
 
                 if addon_prefs.primitives_light:
 
