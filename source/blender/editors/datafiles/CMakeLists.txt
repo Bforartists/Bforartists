@@ -227,9 +227,9 @@ add
 file_3d
 align_center
 
-#~ DEF_ICON_BLANK(246)
-#~ DEF_ICON_BLANK(247)
-#~ DEF_ICON_BLANK(248)
+lineart_collection
+lineart_scene
+lineart_object
 #~ DEF_ICON_BLANK(249)
 #~ DEF_ICON_BLANK(250)
 #~ DEF_ICON_BLANK(251)
