@@ -3373,6 +3373,9 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMath"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
@@ -3393,6 +3396,9 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_SEPARATE_XYZ")
             props.use_transform = True
@@ -3601,6 +3607,9 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "STRING")
             props.use_transform = True
             props.type = "FunctionNodeInputString"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
             props.use_transform = True
@@ -3643,22 +3652,55 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Boolean                    ", icon = "MOD_BOOLEAN")
             props.use_transform = True
             props.type = "GeometryNodeBoolean"
+            
+            props = col.operator("node.add_node", text=" Circle                       ", icon = "MESH_CIRCLE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCircle"
+            
+            props = col.operator("node.add_node", text=" Cone                       ", icon = "MESH_CONE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCone"
+            
+            props = col.operator("node.add_node", text=" Cube                       ", icon = "MESH_CUBE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCube"
+            
+            props = col.operator("node.add_node", text=" Cylinder                   ", icon = "MESH_CYLINDER")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCylinder"
 
             props = col.operator("node.add_node", text=" Edge Split                ", icon = "SPLITEDGE")
             props.use_transform = True
             props.type = "GeometryNodeEdgeSplit"
+            
+            props = col.operator("node.add_node", text=" Ico Sphere               ", icon = "MESH_ICOSPHERE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshIcoSphere"
+            
+            props = col.operator("node.add_node", text=" Line                        ", icon = "MESH_LINE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshLine"
+            
+            props = col.operator("node.add_node", text=" Plane                      ", icon = "MESH_PLANE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshPlane"
 
             props = col.operator("node.add_node", text=" Subdivide                ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivide"
             
-            props = col.operator("node.add_node", text=" Subdivision Surface  ", icon = "SUBDIVIDE_EDGES")
+            props = col.operator("node.add_node", text=" Subdivision Surface ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivisionSurface"
 
             props = col.operator("node.add_node", text=" Triangulate              ", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
+            
+            props = col.operator("node.add_node", text=" UV Sphere                ", icon = "MESH_UVSPHERE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshUVSphere"
+
 
         #### Icon Buttons
 
@@ -3670,14 +3712,48 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "MOD_BOOLEAN")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_CIRCLE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCircle"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_CONE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCone"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_CUBE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCube"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_CYLINDER")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCylinder"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text = "", icon = "SPLITEDGE")
             props.use_transform = True
             props.type = "GeometryNodeEdgeSplit"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_ICOSPHERE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshIcoSphere"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_LINE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshLine"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_PLANE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshPlane"
 
             props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivide"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
             
             props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
@@ -3686,6 +3762,10 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
+            
+            props = row.operator("node.add_node", text = "", icon = "MESH_UVSPHERE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshUVSphere"
 
 
 #add mesh panel
@@ -3771,6 +3851,9 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "POINT_SCALE")
             props.use_transform = True
             props.type = "GeometryNodePointScale"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
             props.use_transform = True
