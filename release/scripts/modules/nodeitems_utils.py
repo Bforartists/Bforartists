@@ -43,16 +43,16 @@ class NodeCategory:
 
 
 class NodeItem:
-    def __init__(self, nodetype, label=None, settings=None, poll=None, icon='NONE'):
+    def __init__(self, nodetype, label=None, icon='NONE', settings=None, poll=None):
 
         if settings is None:
             settings = {}
 
         self.nodetype = nodetype
         self._label = label
+        self._icon = icon
         self.settings = settings
         self.poll = poll
-        self.icon = icon
 
     @property
     def label(self):
@@ -65,6 +65,17 @@ class NodeItem:
                 return bl_rna.name
             else:
                 return "Unknown"
+    
+    @property
+    def icon(self):
+        if self._icon != 'NONE':
+            return self._icon
+        else:
+            bl_rna = bpy.types.Node.bl_rna_get_subclass(self.nodetype)
+            if bl_rna is not None:
+                return bl_rna.icon
+            else:
+                return 'NONE'
 
     @property
     def translation_context(self):
