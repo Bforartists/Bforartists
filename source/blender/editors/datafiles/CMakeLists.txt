@@ -168,7 +168,7 @@ shader_active
 attribute_remove
 node_vectorrotate
 mask_slice
-#~ DEF_ICON_BLANK(187)
+mesh_line
 
 # ------------------------- row 3 --------------------------*/
 
