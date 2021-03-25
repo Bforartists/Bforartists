@@ -11993,6 +11993,31 @@ static int node_type_to_icon(int type)
     case CMP_NODE_EXPOSURE:
       icon = ICON_EXPOSURE;
       break;
+      /*primitives*/
+    case GEO_NODE_MESH_PRIMITIVE_CUBE:
+      icon = ICON_MESH_CUBE;
+      break;
+    case GEO_NODE_MESH_PRIMITIVE_CIRCLE:
+      icon = ICON_MESH_CIRCLE;
+      break;
+    case GEO_NODE_MESH_PRIMITIVE_UV_SPHERE:
+      icon = ICON_MESH_UVSPHERE;
+      break;
+    case GEO_NODE_MESH_PRIMITIVE_CYLINDER:
+      icon = ICON_MESH_CYLINDER;
+      break;
+    case GEO_NODE_MESH_PRIMITIVE_ICO_SPHERE:
+      icon = ICON_MESH_ICOSPHERE;
+      break;
+    case GEO_NODE_MESH_PRIMITIVE_CONE:
+      icon = ICON_MESH_CONE;
+      break;
+    case GEO_NODE_MESH_PRIMITIVE_LINE:
+      icon = ICON_MESH_LINE;
+      break;
+    case GEO_NODE_MESH_PRIMITIVE_PLANE:
+      icon = ICON_MESH_PLANE;
+      break;
     }
   return icon;
 }
