@@ -11987,6 +11987,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_REMOVE:
       icon = ICON_ATTRIBUTE_REMOVE;
       break;
+    case CMP_NODE_EXPOSURE:
+      icon = ICON_EXPOSURE;
+      break;
     }
   return icon;
 }
