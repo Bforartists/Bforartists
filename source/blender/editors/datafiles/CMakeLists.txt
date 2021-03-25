@@ -232,8 +232,8 @@ lineart_scene
 lineart_object
 exposure
 attribute_convert
-#~ DEF_ICON_BLANK(251)
-#~ DEF_ICON_BLANK(252)
+groupinput
+groupoutput
 #~ DEF_ICON_BLANK(253)
 #~ DEF_ICON_BLANK(254)
 #~ DEF_ICON_BLANK(255)
