@@ -11942,6 +11942,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_COMPARE:
       icon = ICON_ATTRIBUTE_COMPARE;
       break;
+    case GEO_NODE_ATTRIBUTE_CONVERT:
+      icon = ICON_ATTRIBUTE_CONVERT;
+      break;
     case GEO_NODE_POINT_ROTATE:
       icon = ICON_POINT_ROTATE;
       break;

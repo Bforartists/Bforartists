@@ -231,7 +231,7 @@ lineart_collection
 lineart_scene
 lineart_object
 exposure
-#~ DEF_ICON_BLANK(250)
+attribute_convert
 #~ DEF_ICON_BLANK(251)
 #~ DEF_ICON_BLANK(252)
 #~ DEF_ICON_BLANK(253)
