@@ -3318,6 +3318,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Compare      ", icon = "ATTRIBUTE_COMPARE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCompare"
+            
+            props = col.operator("node.add_node", text=" Attribute Convert      ", icon = "ATTRIBUTE_CONVERT")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeConvert"
 
             props = col.operator("node.add_node", text=" Attribute Fill                ", icon = "ATTRIBUTE_FILL")
             props.use_transform = True
@@ -3374,6 +3378,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COMPARE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCompare"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_CONVERT")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeConvert"
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_FILL")
             props.use_transform = True
