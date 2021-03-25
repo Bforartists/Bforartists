@@ -12018,6 +12018,23 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_PRIMITIVE_PLANE:
       icon = ICON_MESH_PLANE;
       break;
+      /*group*/
+    case NODE_GROUP:
+      icon = ICON_NODE_MAKEGROUP;
+      break;
+    case NODE_GROUP_INPUT:
+      icon = ICON_GROUPINPUT;
+      break;
+    case NODE_GROUP_OUTPUT:
+      icon = ICON_GROUPOUTPUT;
+      break;
+      /*layout*/
+    case NODE_FRAME:
+      icon = ICON_NODE_FRAME;
+      break;
+    case NODE_REROUTE:
+      icon = ICON_NODE_REROUTE;
+      break;
     }
   return icon;
 }
