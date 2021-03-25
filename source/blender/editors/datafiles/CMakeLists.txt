@@ -230,7 +230,7 @@ align_center
 lineart_collection
 lineart_scene
 lineart_object
-#~ DEF_ICON_BLANK(249)
+exposure
 #~ DEF_ICON_BLANK(250)
 #~ DEF_ICON_BLANK(251)
 #~ DEF_ICON_BLANK(252)

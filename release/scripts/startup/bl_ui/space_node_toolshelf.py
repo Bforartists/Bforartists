@@ -1144,6 +1144,10 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Z Combine      ", icon = "NODE_ZCOMBINE")
             props.use_transform = True
             props.type = "CompositorNodeZcombine"
+            
+            props = col.operator("node.add_node", text=" Exposure         ", icon = "EXPOSURE")
+            props.use_transform = True
+            props.type = "CompositorNodeExposure"
 
         #### Image Buttons
 
@@ -1178,6 +1182,11 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_ZCOMBINE")
             props.use_transform = True
             props.type = "CompositorNodeZcombine"
+            
+            props = row.operator("node.add_node", text = "", icon = "EXPOSURE")
+            props.use_transform = True
+            props.type = "CompositorNodeExposure"
+
 
 
 #Input nodes tab, Color panel. Just in texture mode
