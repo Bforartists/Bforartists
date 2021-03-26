@@ -67,8 +67,8 @@ class GeometryNodeCategory(SortedNodeCategory):
 
 # menu entry for node group tools
 def group_tools_draw(self, layout, context):
-    layout.operator("node.group_make")
-    layout.operator("node.group_ungroup")
+    layout.operator("node.group_make", icon = "NODE_MAKEGROUP")
+    layout.operator("node.group_ungroup", icon = "NODE_UNGROUP")
     layout.separator()
 
 
