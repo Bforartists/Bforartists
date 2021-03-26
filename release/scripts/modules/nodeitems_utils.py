@@ -43,7 +43,7 @@ class NodeCategory:
 
 
 class NodeItem:
-    def __init__(self, nodetype, label=None, icon='NONE', settings=None, poll=None):
+    def __init__(self, nodetype, label=None, settings=None, poll=None, icon='NONE'):
 
         if settings is None:
             settings = {}
