@@ -3188,9 +3188,18 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             col = layout.column(align=True)
             col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
             col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
+            
+            col = layout.column(align=True)          
+            props = col.operator("node.add_node", text = " Group Input      ", icon = "GROUPINPUT")
+            props.use_transform = True
+            props.type = "NodeGroupInput"   
+            
+            props = col.operator("node.add_node", text = " Group Output    ", icon = "GROUPOUTPUT")
+            props.use_transform = True
+            props.type = "NodeGroupOutput"
 
             col = layout.column(align=True)
-            col.operator("node.group_edit", text=" Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
+            col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
 
             col = layout.column(align=True)
             col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
@@ -3204,14 +3213,19 @@ class NODES_PT_Relations_group(bpy.types.Panel):
 
             row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
             row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
+            
+            props = row.operator("node.add_node", text = "", icon = "GROUPINPUT")
+            props.use_transform = True
+            props.type = "NodeGroupInput"   
+            
+            props = row.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
+            props.use_transform = True
+            props.type = "NodeGroupOutput"
 
             row = layout.row()
             row.alignment = 'LEFT'
 
             row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-
-            row = layout.row()
-            row.alignment = 'LEFT'
 
             row.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
 
