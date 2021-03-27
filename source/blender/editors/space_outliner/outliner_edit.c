@@ -73,6 +73,8 @@
 
 #include "outliner_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 static void outliner_show_active(SpaceOutliner *space_outliner,
                                  ARegion *region,
                                  TreeElement *te,
@@ -1177,6 +1179,27 @@ static int outliner_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *outliner_ot_select_all_get_description(bContext *UNUSED(C),
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect everything");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
+
 void OUTLINER_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1186,6 +1209,7 @@ void OUTLINER_OT_select_all(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = outliner_select_all_exec;
+  ot->get_description = outliner_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_outliner_active;
 
   /* no undo or registry */
