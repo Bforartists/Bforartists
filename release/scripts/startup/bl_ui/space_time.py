@@ -155,18 +155,6 @@ class TIME_MT_view(Menu):
         layout.menu("INFO_MT_area")
 
 
-# Workaround to separate the tooltips
-class TIME_MT_marker_jump_previous(bpy.types.Operator):
-    """Jumps to previous marker """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "screen.marker_jump_previous"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Jump to previous Marker"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.screen.marker_jump(next = False)
-        return {'FINISHED'}
-
-
 def marker_menu_generic(layout, context):
 
     # layout.operator_context = 'EXEC_REGION_WIN'
@@ -195,7 +183,7 @@ def marker_menu_generic(layout, context):
     layout.separator()
 
     layout.operator("screen.marker_jump", text="Jump to Next Marker", icon = "NEXT_KEYFRAME").next = True
-    layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker", icon = "PREV_KEYFRAME") # bfa - the separated tooltip
+    layout.operator("screen.marker_jump", text="Jump to Previous Marker", icon = "PREV_KEYFRAME").next = False
 
 
 ###################################
@@ -442,7 +430,6 @@ classes = (
     TIME_MT_editor_menus,
     TIME_MT_marker,
     TIME_MT_view,
-    TIME_MT_marker_jump_previous,
     TIME_PT_playback,
     TIME_PT_keyframing_settings,
     TIME_PT_view_marker_options,

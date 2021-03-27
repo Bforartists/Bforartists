@@ -3055,14 +3055,27 @@ static int marker_jump_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
+/*bfa - descriptions*/
+static char *screen_ot_marker_jump_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "next")) {
+    return BLI_strdup(
+        "Jump to next marker");
+  }
+  return NULL;
+}
+
 
 static void SCREEN_OT_marker_jump(wmOperatorType *ot)
 {
   ot->name = "Jump to Marker";
-  ot->description = "Jump to previous/next marker";
+  ot->description = "Jump to previous marker";
   ot->idname = "SCREEN_OT_marker_jump";
 
   ot->exec = marker_jump_exec;
+  ot->get_description = screen_ot_marker_jump_get_description;/*bfa - descriptions*/
 
   ot->poll = ED_operator_screenactive_norender;
   ot->flag = OPTYPE_UNDO_GROUPED;
