@@ -4151,8 +4151,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("nla.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("nla.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("nla.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("nla.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("nla.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
