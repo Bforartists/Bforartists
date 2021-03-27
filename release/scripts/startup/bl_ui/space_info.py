@@ -92,18 +92,6 @@ class ALL_MT_editormenu(Menu):
         row.template_header() # editor type menus
 
 
-# Workaround to separate the tooltips for Toggle Maximize Area
-class INFO_OT_Toggle_Maximize_Area(bpy.types.Operator):
-    """Toggle display selected area as maximized"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "screen.toggle_maximized_area"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Toggle Maximize Area"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.screen.screen_full_area(use_hide_panels = False)
-        return {'FINISHED'}
-
-
 class INFO_MT_area(Menu):
     bl_label = "Area"
 
@@ -119,7 +107,7 @@ class INFO_MT_area(Menu):
 
         layout.separator()
 
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip.
+        layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA')
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon='FULLSCREEN_ENTER').use_hide_panels = True
 
 
@@ -136,7 +124,6 @@ class INFO_MT_context_menu(Menu):
 classes = (
     ALL_MT_editormenu,
     INFO_HT_header,
-    INFO_OT_Toggle_Maximize_Area,
     INFO_MT_editor_menus,
     INFO_MT_area,
     INFO_MT_view,
