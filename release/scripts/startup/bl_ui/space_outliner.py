@@ -186,29 +186,6 @@ class OUTLINER_MT_view_hide_one_level(bpy.types.Operator):
         return {'FINISHED'}
 
 
-# Workaround to separate the tooltips
-class OUTLINER_MT_view_select_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "outliner.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.outliner.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class OUTLINER_MT_view_select_none(bpy.types.Operator):
-    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "outliner.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.outliner.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class OUTLINER_MT_view(Menu):
     bl_label = "View"
 
@@ -233,8 +210,8 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
 
         layout.operator("outliner.select_all", text = "Select All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("outliner.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("outliner.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("outliner.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("outliner.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -581,8 +558,6 @@ classes = (
     ALL_MT_editormenu,
     OUTLINER_MT_editor_menus,
     OUTLINER_MT_view_hide_one_level,
-    OUTLINER_MT_view_select_inverse,
-    OUTLINER_MT_view_select_none,
     OUTLINER_MT_view,
     OUTLINER_MT_edit_datablocks,
     OUTLINER_MT_collection,
