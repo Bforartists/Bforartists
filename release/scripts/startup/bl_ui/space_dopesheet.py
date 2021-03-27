@@ -508,84 +508,45 @@ class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
         bpy.ops.action.select_leftright(extend=False, mode='RIGHT')
 
 
-# Workaround to separate the tooltips
-class DOPESHEET_MT_select_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.action.select_all(action='INVERT')
-        return {'FINISHED'}
-
-
-# Workaround to separate the tooltips
-class DOPESHEET_MT_select_none(bpy.types.Operator):
-    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.action.select_all(action='DESELECT')
-        return {'FINISHED'}
-
-
 class DOPESHEET_MT_select(Menu):
     bl_label = "Select"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("action.select_all", text="All",
-                        icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("action.select_all_none", text="None",
-                        icon='SELECT_NONE')  # bfa - separated tooltip
-        layout.operator("action.select_all_inverse", text="Inverse",
-                        icon='INVERSE')  # bfa - separated tooltip
+        layout.operator("action.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
+        layout.operator("action.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("action.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
+
 
         layout.separator()
-        layout.operator("action.select_box",
-                        icon='BORDER_RECT').axis_range = False
-        layout.operator("action.select_box", text="Box Select (Axis Range)",
-                        icon='BORDER_RECT').axis_range = True
+        layout.operator("action.select_box", icon='BORDER_RECT').axis_range = False
+        layout.operator("action.select_box", text="Box Select (Axis Range)", icon='BORDER_RECT').axis_range = True
 
         layout.operator("action.select_circle", icon='CIRCLE_SELECT')
 
         layout.separator()
-        layout.operator("action.select_column", text="Columns on Selected Keys",
-                        icon="COLUMNS_KEYS").mode = 'KEYS'
-        layout.operator("action.select_column", text="Column on Current Frame",
-                        icon="COLUMN_CURRENT_FRAME").mode = 'CFRA'
+        layout.operator("action.select_column", text="Columns on Selected Keys", icon="COLUMNS_KEYS").mode = 'KEYS'
+        layout.operator("action.select_column", text="Column on Current Frame", icon="COLUMN_CURRENT_FRAME").mode = 'CFRA'
 
-        layout.operator("action.select_column", text="Columns on Selected Markers",
-                        icon="COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
-        layout.operator("action.select_column", text="Between Selected Markers",
-                        icon="BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
+        layout.operator("action.select_column", text="Columns on Selected Markers", icon="COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+        layout.operator("action.select_column", text="Between Selected Markers", icon="BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
 
         layout.separator()
 
         if context.space_data.mode != 'GPENCIL':
-            layout.operator("action.select_linked",
-                            text="Linked", icon="CONNECTED")
+            layout.operator("action.select_linked", text="Linked", icon="CONNECTED")
 
             layout.separator()
 
-        layout.operator("action.select_leftright_before", text="Before Current Frame",
-                        icon="BEFORE_CURRENT_FRAME")  # bfa - the separated tooltip
-        layout.operator("action.select_leftright_after", text="After Current Frame",
-                        icon="AFTER_CURRENT_FRAME")  # bfa - the separated tooltip
+        layout.operator("action.select_leftright_before", text="Before Current Frame", icon="BEFORE_CURRENT_FRAME")  # bfa - the separated tooltip
+        layout.operator("action.select_leftright_after", text="After Current Frame", icon="AFTER_CURRENT_FRAME")  # bfa - the separated tooltip
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
             layout.separator()
-            layout.operator("action.select_more",
-                            text="More", icon="SELECTMORE")
-            layout.operator("action.select_less",
-                            text="Less", icon="SELECTLESS")
+            layout.operator("action.select_more", text="More", icon="SELECTMORE")
+            layout.operator("action.select_less", text="Less", icon="SELECTLESS")
 
 
 class DOPESHEET_MT_marker(Menu):
@@ -1101,8 +1062,6 @@ classes = (
     DOPESHEET_MT_view_pie_menus,
     DOPESHEET_MT_select_before_current_frame,
     DOPESHEET_MT_select_after_current_frame,
-    DOPESHEET_MT_select_inverse,
-    DOPESHEET_MT_select_none,
     DOPESHEET_MT_select,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
