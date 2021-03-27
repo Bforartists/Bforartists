@@ -1511,6 +1511,18 @@ static int actkeys_select_leftright_invoke(bContext *C, wmOperator *op, const wm
   return actkeys_select_leftright_exec(C, op);
 }
 
+/*bfa - descriptions*/
+static char *action_ot_select_leftright_get_description(bContext *UNUSED(C),
+                                                       wmOperatorType *UNUSED(ot),
+                                                       PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "mode") == ACTKEYS_LRSEL_LEFT) {
+
+    return BLI_strdup("Select keyframes to the left of the current frame");
+  }
+  return NULL;
+}
+
 void ACTION_OT_select_leftright(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -1518,11 +1530,12 @@ void ACTION_OT_select_leftright(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Left/Right";
   ot->idname = "ACTION_OT_select_leftright";
-  ot->description = "Select keyframes to the left or the right of the current frame";
+  ot->description = "Select keyframes to the right of the current frame";
 
   /* api callbacks  */
   ot->invoke = actkeys_select_leftright_invoke;
   ot->exec = actkeys_select_leftright_exec;
+  ot->get_description = action_ot_select_leftright_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_action_active;
 
   /* flags */

@@ -483,31 +483,6 @@ class DOPESHEET_MT_view_pie_menus(Menu):
                         icon="MENU_PANEL").name = 'DOPESHEET_MT_snap_pie'
 
 
-# Workaround to separate the tooltips
-class DOPESHEET_MT_select_before_current_frame(bpy.types.Operator):
-    """Selects the keyframes before the current frame """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.select_leftright_before"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Before Current Frame"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.action.select_leftright(extend=False, mode='LEFT')
-        return {'FINISHED'}
-
-
-# Workaround to separate the tooltips
-class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
-    """Selects the keyframes after the current frame """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.select_leftright_after"        # unique identifier for buttons and menu items to reference.
-    bl_label = "After Current Frame"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.action.select_leftright(extend=False, mode='RIGHT')
-
-
 class DOPESHEET_MT_select(Menu):
     bl_label = "Select"
 
@@ -539,8 +514,12 @@ class DOPESHEET_MT_select(Menu):
 
             layout.separator()
 
-        layout.operator("action.select_leftright_before", text="Before Current Frame", icon="BEFORE_CURRENT_FRAME")  # bfa - the separated tooltip
-        layout.operator("action.select_leftright_after", text="After Current Frame", icon="AFTER_CURRENT_FRAME")  # bfa - the separated tooltip
+        props = layout.operator("action.select_leftright", text="Before Current Frame", icon="BEFORE_CURRENT_FRAME")
+        props.extend = False
+        props.mode = 'LEFT'
+        props = layout.operator("action.select_leftright", text="After Current Frame", icon="AFTER_CURRENT_FRAME")
+        props.extend = False
+        props.mode = 'RIGHT'
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
@@ -1060,8 +1039,6 @@ classes = (
     DOPESHEET_MT_editor_menus,
     DOPESHEET_MT_view,
     DOPESHEET_MT_view_pie_menus,
-    DOPESHEET_MT_select_before_current_frame,
-    DOPESHEET_MT_select_after_current_frame,
     DOPESHEET_MT_select,
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
