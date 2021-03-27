@@ -280,8 +280,8 @@ class GRAPH_MT_select(Menu):
         layout = self.layout
 
         layout.operator("graph.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("graph.select_all", text="None", icon='SELECT_ALL').action = 'DESELECT'
-        layout.operator("graph.select_all", text="Invert", icon='SELECT_ALL').action = 'INVERT'
+        layout.operator("graph.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("graph.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
