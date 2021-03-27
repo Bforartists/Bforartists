@@ -1593,6 +1593,18 @@ static int outliner_one_level_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *outliner_ot_show_one_level_get_description(bContext *UNUSED(C),
+                                                   wmOperatorType *UNUSED(ot),
+                                                   PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "open")) {
+    return BLI_strdup("Expand all entries by one level");
+  }
+  return NULL;
+}
+
+
 void OUTLINER_OT_show_one_level(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -1600,10 +1612,11 @@ void OUTLINER_OT_show_one_level(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Show/Hide One Level";
   ot->idname = "OUTLINER_OT_show_one_level";
-  ot->description = "Expand/collapse all entries by one level";
+  ot->description = "Collapse all entries by one level";
 
   /* callbacks */
   ot->exec = outliner_one_level_exec;
+  ot->get_description = outliner_ot_show_one_level_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_outliner_active;
 
   /* no undo or registry, UI option */
