@@ -1440,6 +1440,30 @@ static int graphkeys_select_leftright_invoke(bContext *C, wmOperator *op, const 
   return graphkeys_select_leftright_exec(C, op);
 }
 
+static char *wm_save_as_mainfile_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "copy")) {
+    return BLI_strdup(
+        "Save the current file in the desired location but do not make the saved file active");
+  }
+  return NULL;
+}
+
+/*bfa - descriptions*/
+static char *graph_ot_select_leftright_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_enum_get(ptr, "mode") == GRAPHKEYS_LRSEL_LEFT) {
+
+    return BLI_strdup(
+        "Select keyframes to the left of the current frame");
+  }
+  return NULL;
+}
+
 void GRAPH_OT_select_leftright(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -1447,11 +1471,12 @@ void GRAPH_OT_select_leftright(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Select Left/Right";
   ot->idname = "GRAPH_OT_select_leftright";
-  ot->description = "Select keyframes to the left or the right of the current frame";
+  ot->description = "Select keyframes to the right of the current frame";
 
   /* api callbacks  */
   ot->invoke = graphkeys_select_leftright_invoke;
   ot->exec = graphkeys_select_leftright_exec;
+  ot->get_description = graph_ot_select_leftright_get_description;/*bfa - descriptions*/
   ot->poll = graphop_visible_keyframes_poll;
 
   /* flags */
