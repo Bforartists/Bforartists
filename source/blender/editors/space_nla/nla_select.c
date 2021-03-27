@@ -51,6 +51,8 @@
 
 #include "nla_intern.h" /* own include */
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* ******************** Utilities ***************************************** */
 
 /* Convert SELECT_* flags to ACHANNEL_SETFLAG_* flags */
@@ -189,6 +191,27 @@ static int nlaedit_deselectall_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *nla_ot_select_all_get_description(bContext *UNUSED(C),
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Toggle selection of all keyframes");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all keyframes");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Invert selection of the selected keyframes");
+  }
+  return NULL;
+}
+
+
 void NLA_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -198,6 +221,7 @@ void NLA_OT_select_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = nlaedit_deselectall_exec;
+  ot->get_description = nla_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = nlaop_poll_tweakmode_off;
 
   /* flags */
