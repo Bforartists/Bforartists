@@ -63,6 +63,8 @@
 
 #include "action_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* ************************************************************************** */
 /* KEYFRAMES STUFF */
 
@@ -351,6 +353,26 @@ static int actkeys_deselectall_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *action_ot_select_all_get_description(bContext *UNUSED(C),
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Toggle selection of all keyframes");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all keyframes");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Invert selection of the selected keyframes");
+  }
+  return NULL;
+}
+
 void ACTION_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -360,6 +382,7 @@ void ACTION_OT_select_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = actkeys_deselectall_exec;
+  ot->get_description = action_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_action_active;
 
   /* flags */
