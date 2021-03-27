@@ -49,6 +49,8 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* ************************** view-based operators **********************************/
 /* XXX should these really be here? */
 
@@ -316,6 +318,17 @@ static int graphview_curves_hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static char *graph_ot_hide_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return BLI_strdup(
+        "Hide unselected curves from Graph Editor view");
+  }
+  return NULL;
+}
+/*bfa - descriptions*/
 static void GRAPH_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
@@ -325,6 +338,7 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = graphview_curves_hide_exec;
+  ot->get_description = graph_ot_hide_get_description;/*bfa - descriptions*/
   ot->poll = ED_operator_graphedit_active;
 
   /* flags */
