@@ -3160,6 +3160,18 @@ static bool screen_maximize_area_poll(bContext *C)
          !WM_window_is_temp_screen(win);
 }
 
+/*bfa - descriptions*/
+static char *screen_ot_screen_full_area_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_hide_panels")) {
+    return BLI_strdup(
+        "Toggle display selected area as maximized");
+  }
+  return NULL;
+}
+
 static void SCREEN_OT_screen_full_area(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -3169,6 +3181,7 @@ static void SCREEN_OT_screen_full_area(wmOperatorType *ot)
   ot->idname = "SCREEN_OT_screen_full_area";
 
   ot->exec = screen_maximize_area_exec;
+  ot->get_description = screen_ot_screen_full_area_get_description; /*bfa - descriptions*/
   ot->poll = screen_maximize_area_poll;
   ot->flag = 0;
 
