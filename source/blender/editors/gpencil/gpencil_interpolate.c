@@ -1270,6 +1270,7 @@ static int gpencil_interpolate_seq_exec(bContext *C, wmOperator *op)
   }
 
   /* loop all layer to check if need interpolation */
+  bool use_select_order = false;
   LISTBASE_FOREACH (bGPDlayer *, gpl, &gpd->layers) {
     /* all layers or only active */
     if ((!all_layers) && (gpl != active_gpl)) {
@@ -1294,7 +1295,6 @@ static int gpencil_interpolate_seq_exec(bContext *C, wmOperator *op)
     /* Create a table with source and target pair of strokes. */
     GHash *used_strokes = BLI_ghash_ptr_new(__func__);
     GHash *pair_strokes = BLI_ghash_ptr_new(__func__);
-
     LISTBASE_FOREACH (bGPDstroke *, gps_from, &prevFrame->strokes) {
       bGPDstroke *gps_to = NULL;
       /* Only selected. */
@@ -1313,6 +1313,7 @@ static int gpencil_interpolate_seq_exec(bContext *C, wmOperator *op)
       /* Try to get the related stroke. */
       if ((is_multiedit) && (gps_from->select_index > 0)) {
         gps_to = gpencil_stroke_get_related(used_strokes, nextFrame, gps_from->select_index);
+        use_select_order = true;
       }
       /* If not found, get final stroke to interpolate using position in the array. */
       if (gps_to == NULL) {
@@ -1390,7 +1391,13 @@ static int gpencil_interpolate_seq_exec(bContext *C, wmOperator *op)
         bGPDframe *interFrame = BKE_gpencil_layer_frame_get(gpl, cframe, GP_GETFRAME_ADD_NEW);
         interFrame->key_type = BEZT_KEYTYPE_BREAKDOWN;
 
-        BLI_addtail(&interFrame->strokes, new_stroke);
+        /* If not using the selection order, the iter is inversed. */
+        if (use_select_order) {
+          BLI_addtail(&interFrame->strokes, new_stroke);
+        }
+        else {
+          BLI_addhead(&interFrame->strokes, new_stroke);
+        }
       }
     }
 
@@ -1427,15 +1434,26 @@ static void gpencil_interpolate_seq_ui(bContext *C, wmOperator *op)
 
   uiLayoutSetPropSep(layout, true);
   uiLayoutSetPropDecorate(layout, false);
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, &ptr, "step", 0, NULL, ICON_NONE);
+
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, &ptr, "layers", 0, NULL, ICON_NONE);
+
+  if (CTX_data_mode_enum(C) == CTX_MODE_EDIT_GPENCIL) {
+    row = uiLayoutRow(layout, true);
+    uiItemR(row, &ptr, "interpolate_selected_only", 0, NULL, ICON_NONE);
+  }
+
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, &ptr, "flip", 0, NULL, ICON_NONE);
 
   col = uiLayoutColumn(layout, true);
-  uiItemR(col, &ptr, "step", 0, NULL, ICON_NONE);
-  uiItemR(col, &ptr, "layers", 0, NULL, ICON_NONE);
-  uiItemR(col, &ptr, "interpolate_selected_only", 0, NULL, ICON_NONE);
-  uiItemR(col, &ptr, "flip", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "smooth_factor", 0, NULL, ICON_NONE);
   uiItemR(col, &ptr, "smooth_steps", 0, NULL, ICON_NONE);
-  uiItemR(col, &ptr, "type", 0, NULL, ICON_NONE);
+
+  row = uiLayoutRow(layout, true);
+  uiItemR(row, &ptr, "type", 0, NULL, ICON_NONE);
 
   if (type == GP_IPO_CURVEMAP) {
     /* Get an RNA pointer to ToolSettings to give to the custom curve. */

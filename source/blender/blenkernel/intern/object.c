@@ -1858,7 +1858,7 @@ bool BKE_object_data_is_in_editmode(const ID *id)
     case ID_AR:
       return ((const bArmature *)id)->edbo != NULL;
     default:
-      BLI_assert(0);
+      BLI_assert_unreachable();
       return false;
   }
 }
@@ -1905,7 +1905,7 @@ char *BKE_object_data_editmode_flush_ptr_get(struct ID *id)
       return &arm->needs_flush_to_id;
     }
     default:
-      BLI_assert(0);
+      BLI_assert_unreachable();
       return NULL;
   }
   return NULL;
@@ -2620,11 +2620,7 @@ Object *BKE_object_duplicate(Main *bmain,
 
   Material ***matarar;
 
-  Object *obn = (Object *)BKE_id_copy(bmain, &ob->id);
-  id_us_min(&obn->id);
-  if (is_subprocess) {
-    ID_NEW_SET(ob, obn);
-  }
+  Object *obn = (Object *)BKE_id_copy_for_duplicate(bmain, &ob->id, dupflag);
 
   /* 0 == full linked. */
   if (dupflag == 0) {
@@ -4885,7 +4881,7 @@ static bool object_deforms_in_time(Object *object)
   return object_moves_in_time(object);
 }
 
-static bool constructive_modifier_is_deform_modified(ModifierData *md)
+static bool constructive_modifier_is_deform_modified(Object *ob, ModifierData *md)
 {
   /* TODO(sergey): Consider generalizing this a bit so all modifier logic
    * is concentrated in MOD_{modifier}.c file,
@@ -4900,7 +4896,8 @@ static bool constructive_modifier_is_deform_modified(ModifierData *md)
   }
   if (md->type == eModifierType_Mirror) {
     MirrorModifierData *mmd = (MirrorModifierData *)md;
-    return mmd->mirror_ob != NULL && object_moves_in_time(mmd->mirror_ob);
+    return mmd->mirror_ob != NULL &&
+           (object_moves_in_time(mmd->mirror_ob) || object_moves_in_time(ob));
   }
   if (md->type == eModifierType_Screw) {
     ScrewModifierData *smd = (ScrewModifierData *)md;
@@ -4984,7 +4981,7 @@ int BKE_object_is_deform_modified(Scene *scene, Object *ob)
     bool can_deform = mti->type == eModifierTypeType_OnlyDeform || is_modifier_animated;
 
     if (!can_deform) {
-      can_deform = constructive_modifier_is_deform_modified(md);
+      can_deform = constructive_modifier_is_deform_modified(ob, md);
     }
 
     if (can_deform) {

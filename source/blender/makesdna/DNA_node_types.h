@@ -1108,6 +1108,14 @@ typedef struct NodeDenoise {
   char hdr;
 } NodeDenoise;
 
+typedef struct NodeAttributeClamp {
+  /* CustomDataType. */
+  uint8_t data_type;
+
+  /* NodeClampOperation. */
+  uint8_t operation;
+} NodeAttributeClamp;
+
 typedef struct NodeAttributeCompare {
   /* FloatCompareOperation. */
   uint8_t operation;
@@ -1118,6 +1126,14 @@ typedef struct NodeAttributeCompare {
 
   char _pad[5];
 } NodeAttributeCompare;
+
+typedef struct NodeAttributeMapRange {
+  /* GeometryNodeAttributeDataType */
+  uint8_t data_type;
+
+  /* NodeMapRangeType. */
+  uint8_t interpolation_type;
+} NodeAttributeMapRange;
 
 typedef struct NodeAttributeMath {
   /* NodeMathOperation. */
@@ -1550,6 +1566,8 @@ typedef enum NodeVectorMathOperation {
   NODE_VECTOR_MATH_SINE = 21,
   NODE_VECTOR_MATH_COSINE = 22,
   NODE_VECTOR_MATH_TANGENT = 23,
+  NODE_VECTOR_MATH_REFRACT = 24,
+  NODE_VECTOR_MATH_FACEFORWARD = 25,
 } NodeVectorMathOperation;
 
 /* Boolean math node operations. */

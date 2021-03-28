@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -14204,6 +14204,14 @@ msgid "Strength of modifier effect"
 msgstr "Интенсивность эффекта модификатора"
 
 
+msgid "Source Object"
+msgstr "Объект-источник"
+
+
+msgid "Mask"
+msgstr "Маска"
+
+
 msgid "Mirror Modifier"
 msgstr "Модификатор симметрии"
 
@@ -15301,10 +15309,6 @@ msgid "Soften"
 msgstr "Смягчение"
 
 
-msgid "Mask"
-msgstr "Маска"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Колебание положения кисти при рисовании"
 
@@ -16387,6 +16391,10 @@ msgstr "Смещение экземпляра"
 
 msgid "Offset from the origin to use when instancing"
 msgstr "Смещение экземпляра от исходного объекта"
+
+
+msgid "Include"
+msgstr "Включить"
 
 
 msgid "Objects that are directly in this collection"
@@ -29117,10 +29125,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "Перемножить значения источника и получателя, используя порог в качестве коэффициента"
 
 
-msgid "Source Object"
-msgstr "Объект-источник"
-
-
 msgid "Object to transfer data from"
 msgstr "Объект, с которого переносятся данные"
 
@@ -33661,10 +33665,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "Подать на выход изображение нового размера, а не просто очищать цвет по краям"
 
 
-msgid "Cryptomatte"
-msgstr "Cryptomatte"
-
-
 msgid "Add object or material to matte, by picking a color from the Pick output"
 msgstr "Добавить объект или материал в матте с помощью выбора цвета на выходе выбора"
 
@@ -33683,6 +33683,38 @@ msgstr "Удалить"
 
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "Удалить объект или материал из матте с помощью выбора цвета на выходе выбора"
+
+
+msgid "Cryptomatte"
+msgstr "Cryptomatte"
+
+
+msgid "Has Layers"
+msgstr "Есть слои"
+
+
+msgid "True if this image has any named layer"
+msgstr "Истина, если у изображения есть хотя бы один именованный слой"
+
+
+msgid "Has View"
+msgstr "Есть виды"
+
+
+msgid "True if this image has multiple views"
+msgstr "Истина, если у изображения несколько видов"
+
+
+msgid "Placeholder"
+msgstr "Заполнитель"
+
+
+msgid "Asset"
+msgstr "Ассет"
+
+
+msgid "Auto-Refresh"
+msgstr "Автообновление"
 
 
 msgid "RGB Curves"
@@ -34067,30 +34099,6 @@ msgstr "Номер передаваемого индекса, преобразу
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "Применить сглаживающий фильтр к маске"
-
-
-msgid "Has Layers"
-msgstr "Есть слои"
-
-
-msgid "True if this image has any named layer"
-msgstr "Истина, если у изображения есть хотя бы один именованный слой"
-
-
-msgid "Has View"
-msgstr "Есть виды"
-
-
-msgid "True if this image has multiple views"
-msgstr "Истина, если у изображения несколько видов"
-
-
-msgid "Placeholder"
-msgstr "Заполнитель"
-
-
-msgid "Auto-Refresh"
-msgstr "Автообновление"
 
 
 msgid "Straight Alpha Output"
@@ -34884,6 +34892,10 @@ msgstr "Округлить A до наибольшего значения мно
 
 msgid "Original"
 msgstr "Оригинал"
+
+
+msgid "Fill Type"
+msgstr "Тип заполнения"
 
 
 msgid "Object Info"
@@ -35909,10 +35921,6 @@ msgstr "Имя сокета"
 
 msgid "Data type of the socket"
 msgstr "Тип данных сокета"
-
-
-msgid "Link is valid"
-msgstr "Связь действительна"
 
 
 msgid "From node"
@@ -46976,10 +46984,6 @@ msgid "Generate a default UV map"
 msgstr "Сгенерировать стандартную UV карту"
 
 
-msgid "Fill Type"
-msgstr "Тип заполнения"
-
-
 msgid "Don't fill at all"
 msgstr "Не заполнять"
 
@@ -48531,6 +48535,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "Запустить оператор трансформации после вставки ноды"
 
 
+msgid "Data-block name to assign"
+msgstr "Назначаемое имя датаблока"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Добавить ноду файла"
@@ -48538,10 +48546,6 @@ msgstr "Добавить ноду файла"
 
 msgid "Add a file node to the current node editor"
 msgstr "Добавить ноду файла в текущий нодовый редактор"
-
-
-msgid "Data-block name to assign"
-msgstr "Назначаемое имя датаблока"
 
 
 msgctxt "Operator"
@@ -52028,14 +52032,6 @@ msgstr "Переназначить пользователей"
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "Переключить всех пользователей выделенных датаблоков на использование текущего (выбранного кликом)"
-
-
-msgid "Add Library Override"
-msgstr "Добавить переопределение библиотеки"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "Добавить локальное переопределение этого связанного датаблока"
 
 
 msgid "Paste"
@@ -62073,10 +62069,6 @@ msgid "Bake Animation"
 msgstr "Запечь анимацию"
 
 
-msgid "Include"
-msgstr "Включить"
-
-
 msgid "Advanced Filter"
 msgstr "Дополнительные фильтры"
 
@@ -65441,10 +65433,6 @@ msgid "Audio output device"
 msgstr "Подсистема вывода звука"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Нет устройства - используйте для отключения вывода звука"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Размер буфера аудиомикшера"
 
@@ -65631,6 +65619,10 @@ msgstr "GLSL-вычисления"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Максимальное количество строк, сохраняемых в буфере консоли"
+
+
+msgid "Manual"
+msgstr "Руководство"
 
 
 msgid "Solid Lights"
@@ -67795,10 +67787,6 @@ msgstr "Не учитывать в просчёте фон, быстрее, но
 
 msgid "Automatically try to determine the best setting"
 msgstr "Попробовать определить наилучшую настройку автоматически"
-
-
-msgid "Manual"
-msgstr "Руководство"
 
 
 msgid "Manually set the resolution of the sampling map, higher values are slower and require more memory but reduce noise"
@@ -73818,30 +73806,6 @@ msgstr "Отображать только текущий кадр"
 
 msgid "No display"
 msgstr "Без отображения"
-
-
-msgid "Scene render size"
-msgstr "Размер рендера сцены"
-
-
-msgid "Proxy size 25%"
-msgstr "Размер прокси в 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Размер прокси в 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Размер прокси в 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Размер прокси в 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Без прокси, полный рендер"
 
 
 msgid "Use Backdrop"
@@ -81262,10 +81226,6 @@ msgid "Use for Rendering"
 msgstr "Использовать для рендера"
 
 
-msgid "Asset"
-msgstr "Ассет"
-
-
 msgid "Accurate Mode"
 msgstr "Аккуратный режим"
 
@@ -82528,10 +82488,6 @@ msgstr "Выключить невыделенные дорожки"
 msgctxt "Operator"
 msgid "Unmute Deselected Strips"
 msgstr "Включить невыделенные дорожки"
-
-
-msgid "Show Grease Pencil"
-msgstr "Отображать Grease Pencil"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -84359,6 +84315,11 @@ msgstr "Установить остроту из вершин"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Очистить ребро Freestyle"
+
+
+msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "Фаска рёбер"
 
@@ -84690,11 +84651,6 @@ msgstr "Мост из граней"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "Удалить грани"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Очистить ребро Freestyle"
 
 
 msgctxt "Operator"

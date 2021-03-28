@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3700,6 +3700,10 @@ msgid "Strength of modifier effect"
 msgstr "Fark Değiştirici Ekle"
 
 
+msgid "Mask"
+msgstr "Maske"
+
+
 msgid "Mirror Modifier"
 msgstr "Değiştirici Ekle"
 
@@ -3934,10 +3938,6 @@ msgstr "Vida Aracını çalıştırır"
 
 msgid "Soften"
 msgstr "Yumuşat"
-
-
-msgid "Mask"
-msgstr "Maske"
 
 
 msgid "Mask Tool"
@@ -8731,6 +8731,10 @@ msgid "Remove"
 msgstr "Çıkar"
 
 
+msgid "Auto-Refresh"
+msgstr "Otomatik Yenile"
+
+
 msgid "RGB Curves"
 msgstr "Eğri Önayarı"
 
@@ -8881,10 +8885,6 @@ msgstr "Doygunluk"
 
 msgid "ID Mask"
 msgstr "ID Özellik Gezgini"
-
-
-msgid "Auto-Refresh"
-msgstr "Otomatik Yenile"
 
 
 msgid "Inpaint"
@@ -9173,6 +9173,10 @@ msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli d
 
 msgid "Original"
 msgstr "Orijinali Koru"
+
+
+msgid "Fill Type"
+msgstr "Kesme Biçimi "
 
 
 msgid "Object Info"
@@ -13051,10 +13055,6 @@ msgstr "Orantılı Düzenleme"
 
 msgid "Construct a circle mesh"
 msgstr "Mesh Gölgesini Çiz"
-
-
-msgid "Fill Type"
-msgstr "Kesme Biçimi "
 
 
 msgid "Use triangle fans"
@@ -18919,6 +18919,10 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "İst. BAKE Belleği:"
 
 
+msgid "Manual"
+msgstr "Kullanım Kılavuzu"
+
+
 msgid "Solid Lights"
 msgstr "OpenGL Katı "
 
@@ -19245,10 +19249,6 @@ msgstr "Ekran Rengi:"
 
 msgid "Transmission Color"
 msgstr "Ekran Rengi:"
-
-
-msgid "Manual"
-msgstr "Kullanım Kılavuzu"
 
 
 msgid "MO File Path"
@@ -20633,26 +20633,6 @@ msgstr "Geçerli Karenin Tersine"
 
 msgid "No display"
 msgstr "Ekran Rengi:"
-
-
-msgid "Scene render size"
-msgstr "Ayarlanan boyutun %50 si ölçeğinde işle"
-
-
-msgid "Proxy size 25%"
-msgstr "Yazıtipi Boyutu Seçin:"
-
-
-msgid "Proxy size 50%"
-msgstr "Yazıtipi Boyutu Seçin:"
-
-
-msgid "Proxy size 75%"
-msgstr "Yazıtipi Boyutu Seçin:"
-
-
-msgid "Proxy size 100%"
-msgstr "Yazıtipi Boyutu Seçin:"
 
 
 msgid "Show Overexposed"
@@ -22628,10 +22608,6 @@ msgstr "Hız Kontrol"
 msgctxt "Operator"
 msgid "Glow"
 msgstr "Parlama"
-
-
-msgid "Show Grease Pencil"
-msgstr "Eskiz Kalemi"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -227,6 +227,10 @@ msgid "Mirror"
 msgstr "הארמ"
 
 
+msgid "Mask"
+msgstr "הכסמ"
+
+
 msgid "Red"
 msgstr "םודא"
 
@@ -237,10 +241,6 @@ msgstr "קורי"
 
 msgid "Blue"
 msgstr "לוחכ"
-
-
-msgid "Mask"
-msgstr "הכסמ"
 
 
 msgid "Space"
@@ -519,12 +519,12 @@ msgid "Text Style"
 msgstr "האבה הבכש"
 
 
-msgid "Progressive Refine"
-msgstr "תומדקתה"
-
-
 msgid "Manual"
 msgstr "ינדי"
+
+
+msgid "Progressive Refine"
+msgstr "תומדקתה"
 
 
 msgid "MO File Path"
