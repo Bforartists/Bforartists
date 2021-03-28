@@ -285,12 +285,11 @@ class VIEW3D_HT_header(Header):
                         sub = row.row(align=True)
                         sub.prop(tool_settings, "use_gpencil_draw_onback", text="", icon='MOD_OPACITY')
                         sub.separator(factor=0.4)
+                        sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
+                        sub.separator(factor=0.4)
                         sub.prop(tool_settings, "use_gpencil_weight_data_add", text="", icon='WPAINT_HLT')
                         sub.separator(factor=0.4)
                         sub.prop(tool_settings, "use_gpencil_draw_additive", text="", icon='FREEZE')
-                        sub.separator(factor=0.4)
-                        sub.prop(tool_settings, "use_gpencil_automerge_strokes", text="")
-
 
         elif not show_region_tool_header:
             # Transform settings depending on tool header visibility
@@ -4610,7 +4609,6 @@ class VIEW3D_MT_edit_mesh_context_menu(Menu):
             col.operator("mesh.delete", text="Delete Vertices", icon = "DELETE").type = 'VERT'
 
         if is_edge_mode:
-            render = context.scene.render
 
             col = row.column(align=True)
             col.label(text="Edge Context Menu", icon='EDGESEL')
@@ -4869,8 +4867,6 @@ class VIEW3D_MT_edit_mesh_edges_data(Menu):
 
     def draw(self, context):
         layout = self.layout
-
-        render = context.scene.render
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 

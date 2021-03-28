@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11839,6 +11839,14 @@ msgid "Strength of modifier effect"
 msgstr "Stärke des Kraftfelds"
 
 
+msgid "Source Object"
+msgstr "Quellobjekt"
+
+
+msgid "Mask"
+msgstr "Maske"
+
+
 msgid "Mirror Modifier"
 msgstr "Spiegel Modifikator"
 
@@ -12704,10 +12712,6 @@ msgid "Soften"
 msgstr "Weichzeichnen"
 
 
-msgid "Mask"
-msgstr "Maske"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Flimmern der Pinselposition während des Malens"
 
@@ -13394,6 +13398,10 @@ msgstr "Deaktivieren im Ansichtsfenster"
 
 msgid "Instance Offset"
 msgstr "Instanzversatz"
+
+
+msgid "Include"
+msgstr "Einschließen"
 
 
 msgid "Bevel Depth"
@@ -20856,10 +20864,6 @@ msgid "Only replace destination elements where data is below given threshold (ex
 msgstr "Ersetzen Sie nur Zielelemente, bei denen die Daten unter dem angegebenen Schwellenwert liegen (das genaue Verhalten hängt vom Datentyp ab)"
 
 
-msgid "Source Object"
-msgstr "Quellobjekt"
-
-
 msgid "Object to transfer data from"
 msgstr "Objekt zum Übertragen von Daten von"
 
@@ -23688,6 +23692,34 @@ msgid "Remove"
 msgstr "Entfernen"
 
 
+msgid "Has Layers"
+msgstr "Hat Ebenen"
+
+
+msgid "True if this image has any named layer"
+msgstr "Wahr, wenn dieses Bild eine benannte Ebene hat"
+
+
+msgid "Has View"
+msgstr "Hat Ansicht"
+
+
+msgid "True if this image has multiple views"
+msgstr "Wahr, wenn dieses Bild mehrere Ansichten hat"
+
+
+msgid "Placeholder"
+msgstr "Platzhalter"
+
+
+msgid "Asset"
+msgstr "Asset"
+
+
+msgid "Auto-Refresh"
+msgstr "Automatisch aktualisieren"
+
+
 msgid "RGB Curves"
 msgstr "RGB Kurve"
 
@@ -23978,30 +24010,6 @@ msgstr "Farbe/Sättigung"
 
 msgid "ID Mask"
 msgstr "ID-Maske"
-
-
-msgid "Has Layers"
-msgstr "Hat Ebenen"
-
-
-msgid "True if this image has any named layer"
-msgstr "Wahr, wenn dieses Bild eine benannte Ebene hat"
-
-
-msgid "Has View"
-msgstr "Hat Ansicht"
-
-
-msgid "True if this image has multiple views"
-msgstr "Wahr, wenn dieses Bild mehrere Ansichten hat"
-
-
-msgid "Placeholder"
-msgstr "Platzhalter"
-
-
-msgid "Auto-Refresh"
-msgstr "Automatisch aktualisieren"
 
 
 msgid "Inpaint"
@@ -24799,6 +24807,18 @@ msgstr "Ist Ansichtsfenster"
 
 msgid "Join Geometry"
 msgstr "Geometrie verbinden"
+
+
+msgid "Fill Type"
+msgstr "Fülltyp"
+
+
+msgid "End Points"
+msgstr "Endpunkte"
+
+
+msgid "UV Sphere"
+msgstr "UV Kugel"
 
 
 msgid "Object Info"
@@ -31993,10 +32013,6 @@ msgid "Generate UVs"
 msgstr "UVs erzeugen"
 
 
-msgid "Fill Type"
-msgstr "Fülltyp"
-
-
 msgid "Use n-gons"
 msgstr "N-Gons verwenden"
 
@@ -38714,10 +38730,6 @@ msgid "Cursor View"
 msgstr "Cursoransicht"
 
 
-msgid "UV Sphere"
-msgstr "UV Kugel"
-
-
 msgid "ICO Sphere"
 msgstr "ICO Kugel"
 
@@ -40429,10 +40441,6 @@ msgstr "Filter"
 
 msgid "Bake Animation"
 msgstr "Animation backen"
-
-
-msgid "Include"
-msgstr "Einschließen"
 
 
 msgid "Advanced Filter"
@@ -42975,10 +42983,6 @@ msgid "Audio output device"
 msgstr "Audioausgabe-Gerät"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Nullgerät - keine Audioausgabe"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Audiomix-Puffer"
 
@@ -43217,6 +43221,10 @@ msgstr "Festplattenpufferbegrenzung"
 
 msgid "Disk cache limit (in gigabytes)"
 msgstr "Festplattenpufferbegrenzung (in Gigabytes)"
+
+
+msgid "Manual"
+msgstr "Handbuch"
 
 
 msgid "Number of seconds between each run of the GL texture garbage collector"
@@ -44313,10 +44321,6 @@ msgstr "Objektsichtbarkeit für Volumenstreustrahlen"
 
 msgid "Map Resolution"
 msgstr "Texturauflösung"
-
-
-msgid "Manual"
-msgstr "Handbuch"
 
 
 msgid "Interpolation method to use for volumes"
@@ -47819,30 +47823,6 @@ msgid "Show current frame only"
 msgstr "Nur aktuelles Einzelbild anzeigen"
 
 
-msgid "Scene render size"
-msgstr "Szenen-Rendergröße"
-
-
-msgid "Proxy size 25%"
-msgstr "Stellvetretergröße 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Stellvetretergröße 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Stellvetretergröße 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Stellvetretergröße 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Kein Stellvertreter, Vollrendern"
-
-
 msgid "Show F-Curves"
 msgstr "F-Kurven anzeigen"
 
@@ -49509,10 +49489,6 @@ msgstr "Alle Strichpunkte selektieren"
 
 msgid "All Points"
 msgstr "Alle Punkte"
-
-
-msgid "End Points"
-msgstr "Endpunkte"
 
 
 msgid "New Keyframe Type"
@@ -53693,10 +53669,6 @@ msgid "Use for Rendering"
 msgstr "Benutze zum rendern"
 
 
-msgid "Asset"
-msgstr "Asset"
-
-
 msgid "Accurate Mode"
 msgstr "Präziser Modus"
 
@@ -54994,10 +54966,6 @@ msgid "Move/Extend from Current Frame"
 msgstr "Bewege/Strecke von aktuellem Einzelbild"
 
 
-msgid "Show Grease Pencil"
-msgstr "Zeige Wachsstift"
-
-
 msgid "Tracker"
 msgstr "Verfolger"
 
@@ -56281,10 +56249,6 @@ msgstr "Maske zerschneiden und Löcher füllen"
 msgctxt "Operator"
 msgid "Mask Slice to New Object"
 msgstr "Maske schneiden zu neuen Obejkt"
-
-
-msgid "Init Face Sets"
-msgstr "Initialisiere Oberflächen Sets"
 
 
 msgctxt "Operator"

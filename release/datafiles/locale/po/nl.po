@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -638,6 +638,10 @@ msgid "Constant"
 msgstr "Constant"
 
 
+msgid "Mask"
+msgstr "Mask"
+
+
 msgid "Mirror Modifier"
 msgstr "Spiegel Aanpasser"
 
@@ -672,10 +676,6 @@ msgstr "Scherp"
 
 msgid "Inverse Square"
 msgstr "Inverse Wortel"
-
-
-msgid "Mask"
-msgstr "Mask"
 
 
 msgid "Rotate"
@@ -4272,6 +4272,10 @@ msgid "Continue"
 msgstr "Verder"
 
 
+msgid "Manual"
+msgstr "Handleiding"
+
+
 msgid "Interface Font"
 msgstr "Interface Lettertype"
 
@@ -4282,10 +4286,6 @@ msgstr "Taal gebruikt voor vertaling"
 
 msgid "Translate Interface"
 msgstr "Vertaal de Interface"
-
-
-msgid "Manual"
-msgstr "Handleiding"
 
 
 msgid "Apply Scale"
@@ -5078,10 +5078,6 @@ msgstr "Alpha Over"
 msgctxt "Operator"
 msgid "Alpha Under"
 msgstr "Alpha Onder"
-
-
-msgid "Show Grease Pencil"
-msgstr "Toon Vetkrijt"
 
 
 msgctxt "Operator"

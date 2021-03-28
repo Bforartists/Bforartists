@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -5941,6 +5941,10 @@ msgid "Original"
 msgstr "ﯽﻠﺻﺍ"
 
 
+msgid "Fill Type"
+msgstr "ﻥﺩﺮﮐ ﺮﭘ ﻉﻮﻧ"
+
+
 msgid "Object Info"
 msgstr "ﯽﺷ ﺕﺎﻋﻼ﻿ﻃﺍ"
 
@@ -8451,10 +8455,6 @@ msgstr "ﯽﻓﺩﺎﺼﺗ ﺕﺭﻮﺻ ﻪﺑ ﺱﺃﺭ ﺏﺎﺨﺘﻧﺍ"
 
 msgid "Constant falloff"
 msgstr "ﺖﺑﺎﺛ ﻝﻭﺰﻧ"
-
-
-msgid "Fill Type"
-msgstr "ﻥﺩﺮﮐ ﺮﭘ ﻉﻮﻧ"
 
 
 msgid "Triangle Fan"
@@ -11843,6 +11843,10 @@ msgid "Ambient Color"
 msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
 
+msgid "Manual"
+msgstr "ﺎﻤﻨﻫﺍﺭ ﺏﺎﺘﮐ"
+
+
 msgid "New Window"
 msgstr "ﺪﯾﺪﺟ ﻩﺮﺠﻨﭘ"
 
@@ -11993,10 +11997,6 @@ msgstr "ﮓﻧﺭ ﯽﭙﮐ"
 
 msgid "Map Resolution"
 msgstr "ﺶﯾﺎﻤﻨﺸﯿﭘ"
-
-
-msgid "Manual"
-msgstr "ﺎﻤﻨﻫﺍﺭ ﺏﺎﺘﮐ"
 
 
 msgid "MO File Path"
@@ -13241,10 +13241,6 @@ msgstr "ﻞﯾﺪﺒﺗ"
 msgctxt "Operator"
 msgid "Alpha Under"
 msgstr "ﻞﯾﺪﺒﺗ"
-
-
-msgid "Show Grease Pencil"
-msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ"
 
 
 msgctxt "Operator"

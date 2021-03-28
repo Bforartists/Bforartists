@@ -123,7 +123,7 @@ class RenderLayersProg : public NodeOperation {
   void deinitExecution() override;
   void executePixelSampled(float output[4], float x, float y, PixelSampler sampler) override;
 
-  std::unique_ptr<MetaData> getMetaData() const override;
+  std::unique_ptr<MetaData> getMetaData() override;
 };
 
 class RenderLayersAOOperation : public RenderLayersProg {
@@ -132,7 +132,7 @@ class RenderLayersAOOperation : public RenderLayersProg {
       : RenderLayersProg(passName, type, elementsize)
   {
   }
-  void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+  void executePixelSampled(float output[4], float x, float y, PixelSampler sampler) override;
 };
 
 class RenderLayersAlphaProg : public RenderLayersProg {
@@ -141,7 +141,7 @@ class RenderLayersAlphaProg : public RenderLayersProg {
       : RenderLayersProg(passName, type, elementsize)
   {
   }
-  void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+  void executePixelSampled(float output[4], float x, float y, PixelSampler sampler) override;
 };
 
 class RenderLayersDepthProg : public RenderLayersProg {
@@ -150,5 +150,5 @@ class RenderLayersDepthProg : public RenderLayersProg {
       : RenderLayersProg(passName, type, elementsize)
   {
   }
-  void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+  void executePixelSampled(float output[4], float x, float y, PixelSampler sampler) override;
 };
