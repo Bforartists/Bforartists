@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6144,6 +6144,10 @@ msgid "Lattice"
 msgstr "Kratownica"
 
 
+msgid "Mask"
+msgstr "Maska"
+
+
 msgid "Fixed"
 msgstr "Stałe"
 
@@ -6162,10 +6166,6 @@ msgstr "Obwiednia"
 
 msgid "Local"
 msgstr "Lokalnie"
-
-
-msgid "Mask"
-msgstr "Maska"
 
 
 msgid "Brush"

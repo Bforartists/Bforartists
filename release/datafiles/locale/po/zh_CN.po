@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -883,6 +883,14 @@ msgstr "文件浏览器"
 
 msgid "Browse for files and assets"
 msgstr "浏览文件和资产"
+
+
+msgid "Spreadsheet"
+msgstr "电子表格"
+
+
+msgid "Explore geometry data in a table"
+msgstr "在表中浏览几何数据"
 
 
 msgid "Preferences"
@@ -16067,6 +16075,14 @@ msgid "Strength of modifier effect"
 msgstr "修改器的效果强度"
 
 
+msgid "Source Object"
+msgstr "源物体"
+
+
+msgid "Mask"
+msgstr "遮罩"
+
+
 msgid "Mirror Modifier"
 msgstr "镜像修改器"
 
@@ -17712,10 +17728,6 @@ msgid "Soften"
 msgstr "柔化"
 
 
-msgid "Mask"
-msgstr "遮罩"
-
-
 msgid "Invert Pressure for Density"
 msgstr "反转压力对密度的作用"
 
@@ -19206,6 +19218,10 @@ msgstr "实例偏移"
 
 msgid "Offset from the origin to use when instancing"
 msgstr "实例化时相对于原点的偏移量"
+
+
+msgid "Include"
+msgstr "包括"
 
 
 msgid "Objects that are directly in this collection"
@@ -25254,7 +25270,7 @@ msgstr "内侧锥角"
 
 
 msgid "Angle of the inner cone, in degrees, inside the cone the volume is 100%"
-msgstr "内锥的角度，以度为单位。在锥体内，体积为100％。"
+msgstr "内锥的角度，以度为单位。在锥体内，体积为100％"
 
 
 msgid "Outer Cone Angle"
@@ -31223,6 +31239,10 @@ msgid "Proportional Editing Falloff"
 msgstr "衰减编辑的衰减方式"
 
 
+msgid "Random Mask"
+msgstr "随机遮罩"
+
+
 msgid "Sculpt"
 msgstr "雕刻模式"
 
@@ -32807,6 +32827,10 @@ msgid "Advanced solver for the best result"
 msgstr "可获得最佳结果的高级解算器"
 
 
+msgid "Hole Tolerant"
+msgstr "孔洞容忍"
+
+
 msgid "Better results when there are holes (slower)"
 msgstr "存在孔时效果更好(更慢)"
 
@@ -33345,10 +33369,6 @@ msgstr "用给定的阈值作为系数，令源值减去目标物体的值"
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "用给定的阈值作为系数，将源值与目标物体的值相乘"
-
-
-msgid "Source Object"
-msgstr "源物体"
 
 
 msgid "Object to transfer data from"
@@ -35568,6 +35588,18 @@ msgid "Aspect X"
 msgstr "宽高比 X"
 
 
+msgid "Horizontal aspect ratio (only used for camera projectors)"
+msgstr "水平宽高比(仅用于相机投射源)"
+
+
+msgid "Aspect Y"
+msgstr "宽高比 Y"
+
+
+msgid "Vertical aspect ratio (only used for camera projectors)"
+msgstr "垂直宽高比(仅用于相机投射源)"
+
+
 msgid "Number of Projectors"
 msgstr "投射源数量"
 
@@ -35578,6 +35610,14 @@ msgstr "所用投影源的数量"
 
 msgid "Projectors"
 msgstr "投影源"
+
+
+msgid "Horizontal scale (only used for camera projectors)"
+msgstr "水平比例(仅用于相机投射源)"
+
+
+msgid "Vertical scale (only used for camera projectors)"
+msgstr "垂直比例(仅用于相机投射源)"
 
 
 msgid "UVWarp Modifier"
@@ -38667,10 +38707,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "是否裁剪导入图像的尺寸"
 
 
-msgid "Cryptomatte"
-msgstr "Cryptomatte"
-
-
 msgid "Add object or material to matte, by picking a color from the Pick output"
 msgstr "添加物体或者材质来蒙版，通过拾取拾取输出的一个颜色"
 
@@ -38689,6 +38725,38 @@ msgstr "移除"
 
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "从拾取输出内拾取一个颜色来移除物体或者材质的蒙版"
+
+
+msgid "Cryptomatte"
+msgstr "Cryptomatte"
+
+
+msgid "Has Layers"
+msgstr "有层"
+
+
+msgid "True if this image has any named layer"
+msgstr "如果此图像存在任何已命名的层则为真"
+
+
+msgid "Has View"
+msgstr "有视图"
+
+
+msgid "True if this image has multiple views"
+msgstr "如果此图像存在任何已命名的层则为真"
+
+
+msgid "Placeholder"
+msgstr "建立文件存储区"
+
+
+msgid "Asset"
+msgstr "资源"
+
+
+msgid "Auto-Refresh"
+msgstr "自动刷新"
 
 
 msgid "RGB Curves"
@@ -39085,30 +39153,6 @@ msgstr "用于转换为 Alpha 的通道编号"
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "为遮罩应用一个抗锯齿滤镜"
-
-
-msgid "Has Layers"
-msgstr "有层"
-
-
-msgid "True if this image has any named layer"
-msgstr "如果此图像存在任何已命名的层则为真"
-
-
-msgid "Has View"
-msgstr "有视图"
-
-
-msgid "True if this image has multiple views"
-msgstr "如果此图像存在任何已命名的层则为真"
-
-
-msgid "Placeholder"
-msgstr "建立文件存储区"
-
-
-msgid "Auto-Refresh"
-msgstr "自动刷新"
 
 
 msgid "Straight Alpha Output"
@@ -40196,6 +40240,18 @@ msgid "Input Type B"
 msgstr "输入类型 B"
 
 
+msgid "Attribute Convert"
+msgstr "属性转换"
+
+
+msgid "The data type to save the result attribute with"
+msgstr "保存结果属性的数据类型"
+
+
+msgid "The geometry domain to save the result attribute in"
+msgstr "保存结果属性的几何域"
+
+
 msgid "Attribute Fill"
 msgstr "填充属性"
 
@@ -40258,6 +40314,10 @@ msgstr "从现有属性值中减去随机值"
 
 msgid "Multiply the existing attribute values with the random values"
 msgstr "将现有属性值与随机值相乘"
+
+
+msgid "Attribute Remove"
+msgstr "属性删除"
 
 
 msgid "Attribute Sample Texture"
@@ -40406,6 +40466,22 @@ msgstr "是否视图"
 
 msgid "Join Geometry"
 msgstr "合并几何"
+
+
+msgid "Fill Type"
+msgstr "填充类型"
+
+
+msgid "N-Gon"
+msgstr "多边形"
+
+
+msgid "End Points"
+msgstr "端点"
+
+
+msgid "UV Sphere"
+msgstr "经纬球"
 
 
 msgid "Object Info"
@@ -41843,10 +41919,6 @@ msgstr "插槽数量"
 
 msgid "Data type of the socket"
 msgstr "槽位的数据类型"
-
-
-msgid "Link is valid"
-msgstr "连接有效"
 
 
 msgid "From node"
@@ -47055,27 +47127,27 @@ msgstr "导出为带有法线、顶点颜色和纹理坐标的斯坦福 PLY"
 
 
 msgid "X Forward"
-msgstr "X 前进"
+msgstr "X 向前"
 
 
 msgid "Y Forward"
-msgstr "Y 前进"
+msgstr "Y 向前"
 
 
 msgid "Z Forward"
-msgstr "Z 前进"
+msgstr "Z 向前"
 
 
 msgid "-X Forward"
-msgstr "-X 前进"
+msgstr "-X 向前"
 
 
 msgid "-Y Forward"
-msgstr "-Y 前进"
+msgstr "-Y 向前"
 
 
 msgid "-Z Forward"
-msgstr "-Z 前进"
+msgstr "-Z 向前"
 
 
 msgid "X Up"
@@ -48491,6 +48563,10 @@ msgstr "打开一个 Blender 文件"
 
 msgid "Unpack all used Blender library files from this .blend file"
 msgstr "将所有使用 Blender 库文件的文件解包 .blend 文件中"
+
+
+msgid "Scroll the selected files into view"
+msgstr "将所选文件滚动到视图中"
 
 
 msgctxt "Operator"
@@ -54864,16 +54940,8 @@ msgid "Generate a default UV map"
 msgstr "生成默认UV映射"
 
 
-msgid "Fill Type"
-msgstr "填充类型"
-
-
 msgid "Don't fill at all"
 msgstr "不使用填充"
-
-
-msgid "N-Gon"
-msgstr "多边形"
 
 
 msgid "Use n-gons"
@@ -56527,6 +56595,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "节点插入后的起始变换操作"
 
 
+msgid "Data-block name to assign"
+msgstr "要指定的数据块名称"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "添加文件节点"
@@ -56534,10 +56606,6 @@ msgstr "添加文件节点"
 
 msgid "Add a file node to the current node editor"
 msgstr "在当前节点编辑器中添加一个节点"
-
-
-msgid "Data-block name to assign"
-msgstr "要指定的数据块名称"
 
 
 msgctxt "Operator"
@@ -60669,22 +60737,6 @@ msgid "Make all users of selected data-blocks to use instead current (clicked) o
 msgstr "使已选中的数据块的所有用户使用当前(点击的)数据块"
 
 
-msgid "Add Library Override"
-msgstr "添加库重写"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "添加一个此外链数据块的本地覆盖"
-
-
-msgid "Add Library Override Hierarchy"
-msgstr "添加库重写层级"
-
-
-msgid "Add a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "添加该被关联数据块及其依赖项层级的本地覆盖"
-
-
 msgid "Convert Proxy to Override"
 msgstr "转换代理为覆盖"
 
@@ -60715,6 +60767,14 @@ msgstr "重新同步库重写层级"
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies"
 msgstr "重建来自其关联参考的本地覆盖及其依赖层级为关联数值"
+
+
+msgid "Resync Library Override Hierarchy Enforce"
+msgstr "强制重新同步库重写层级"
+
+
+msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
+msgstr "从其关联引用以及依赖关系的层次结构中重建此本地重写，强制该层次结构匹配关联数据(即忽略数据块指针属性上的退出重写)"
 
 
 msgid "Delete Library Override Hierarchy"
@@ -63624,7 +63684,7 @@ msgstr "按选中项填充范围"
 
 
 msgid "Fill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object "
-msgstr "根据所选网格对象和源对象之间的最小/最大距离，填充范围最小/最大条目"
+msgstr "根据所选网格对象和源对象之间的最小/最大距离，填充范围最小/最大条目 "
 
 
 msgid "Name of the modifier to work on"
@@ -64595,6 +64655,10 @@ msgid "Edit Dyntopo Detail Size"
 msgstr "编辑动态拓扑细节尺寸"
 
 
+msgid "Modify the detail size of dyntopo interactively"
+msgstr "交互式修改动态拓扑的细节尺寸"
+
+
 msgctxt "Operator"
 msgid "Expand"
 msgstr "扩展"
@@ -64902,8 +64966,16 @@ msgid "Create a Face Set per Face Map"
 msgstr "为每个面映射创建面组"
 
 
+msgid "Face Sets from Face Set Boundaries"
+msgstr "从面组边界创建面组"
+
+
+msgid "Create a Face Set per isolated Face Set"
+msgstr "为每个孤立面组创建一个面组"
+
+
 msgid "Minimum value to consider a certain attribute a boundary when creating the Face Sets"
-msgstr "创建面集时，将某一属性视为边界的最小值"
+msgstr "创建面组时，将某一属性视为边界的最小值"
 
 
 msgctxt "Operator"
@@ -65093,6 +65165,27 @@ msgstr "降低绘制遮罩的对比度"
 
 msgid "Number of times that the filter is going to be applied"
 msgstr "要应用滤镜的次数"
+
+
+msgctxt "Operator"
+msgid "Init Mask"
+msgstr "初始化遮罩"
+
+
+msgid "Creates a new mask for the entire mesh"
+msgstr "为整个网格创建新遮罩"
+
+
+msgid "Random per Vertex"
+msgstr "逐顶点随机"
+
+
+msgid "Random per Face Set"
+msgstr "逐面组随机"
+
+
+msgid "Random per Loose Part"
+msgstr "逐松散块随机"
 
 
 msgctxt "Operator"
@@ -66690,6 +66783,15 @@ msgstr "更新动画"
 
 msgid "Update animation flags"
 msgstr "更新动画标志"
+
+
+msgctxt "Operator"
+msgid "Toggle Pin"
+msgstr "切换钉固"
+
+
+msgid "Turn on or off pinning"
+msgstr "打开或关闭钉固"
 
 
 msgctxt "Operator"
@@ -69196,10 +69298,6 @@ msgstr "开始放置边位置"
 
 msgid "Start placing the center position"
 msgstr "开始放置中心位置"
-
-
-msgid "UV Sphere"
-msgstr "经纬球"
 
 
 msgid "ICO Sphere"
@@ -72967,10 +73065,6 @@ msgid "Bake Animation"
 msgstr "烘焙动画"
 
 
-msgid "Include"
-msgstr "包括"
-
-
 msgid "Advanced Filter"
 msgstr "高级过滤"
 
@@ -76044,6 +76138,14 @@ msgid "Experimental features"
 msgstr "实验特性"
 
 
+msgid "Override Auto Resync"
+msgstr "重写自动重新同步"
+
+
+msgid "Enable library overrides automatic resync detection and process on file load. Disable when dealing with older .blend files that need manual Resync (Enforce) handling"
+msgstr "启用文件加载时库重写自动重新同步检测和的处理。处理需要手动重新同步(强制)处理的旧.blend文件时禁用"
+
+
 msgid "Asset Browser"
 msgstr "资产浏览器"
 
@@ -76768,10 +76870,6 @@ msgid "Audio output device"
 msgstr "设置音频的输出设备"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "无驱动 - 无音频输出"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "音频的混音缓冲区"
 
@@ -77060,12 +77158,12 @@ msgid "Disk cache limit (in gigabytes)"
 msgstr "磁盘缓存限制(单位GB)"
 
 
+msgid "Manual"
+msgstr "手动"
+
+
 msgid "Solid Lights"
 msgstr "实体灯光"
-
-
-msgid "Lights user to display objects in solid shading mode"
-msgstr "允许用户在实体着色模式下显示物体"
 
 
 msgid "Texture Collection Rate"
@@ -79448,10 +79546,6 @@ msgstr "不要对背景进行采样,速度更快,但可能会导致非实体背�
 
 msgid "Automatically try to determine the best setting"
 msgstr "自动尝试确定最佳设置"
-
-
-msgid "Manual"
-msgstr "手动"
 
 
 msgid "Manually set the resolution of the sampling map, higher values are slower and require more memory but reduce noise"
@@ -85094,6 +85188,10 @@ msgid "Show 2D cursor"
 msgstr "显示二维游标"
 
 
+msgid "Show Extrapolation"
+msgstr "显示外插"
+
+
 msgid "Show Handles"
 msgstr "显示控制柄"
 
@@ -85971,30 +86069,6 @@ msgid "No display"
 msgstr "无显示"
 
 
-msgid "Scene render size"
-msgstr "场景渲染尺寸"
-
-
-msgid "Proxy size 25%"
-msgstr "代理尺寸 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "代理尺寸 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "代理尺寸 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "代理尺寸 100%"
-
-
-msgid "No proxy, full render"
-msgstr "无代理, 完全渲染"
-
-
 msgid "Use Backdrop"
 msgstr "使用背景图"
 
@@ -86119,8 +86193,68 @@ msgid "Display waveforms depending on strip setting"
 msgstr "根据片段设置显示波形"
 
 
+msgid "Space Spreadsheet"
+msgstr "空间电子表格"
+
+
+msgid "Spreadsheet space data"
+msgstr "电子表格空间数据"
+
+
+msgid "Attribute Domain"
+msgstr "属性域"
+
+
+msgid "Attribute domain to display"
+msgstr "要显示的属性域"
+
+
+msgid "Geometry Component"
+msgstr "几何组件"
+
+
+msgid "Part of the geometry to display data from"
+msgstr "要显示数据的部分几何元素"
+
+
+msgid "Mesh component containing point, corner, edge and polygon data"
+msgstr "包含点、角、边和多边形数据的网格组件"
+
+
+msgid "Point cloud component containing only point data"
+msgstr "点云组件仅包含点数据"
+
+
+msgid "Object Evaluation State"
+msgstr "物体解算状态"
+
+
+msgid "Use data from object with all modifiers applied"
+msgstr "使用已应用所有修改器的物体数据"
+
+
+msgid "Use data from original object without any modifiers applied"
+msgstr "使用来自原始物体的数据，无需应用任何修改器"
+
+
+msgid "Pinned ID"
+msgstr "已钉固ID"
+
+
+msgid "Data-block whose values are displayed"
+msgstr "已显示数值的数据块"
+
+
+msgid "Show Only Selected"
+msgstr "仅显示已选中"
+
+
+msgid "Only include rows that correspond to selected elements"
+msgstr "仅包括与选定元素相对应的行"
+
+
 msgid "Space Text Editor"
-msgstr "文本编辑器"
+msgstr "空间文本编辑器"
 
 
 msgid "Text editor space data"
@@ -88563,6 +88697,14 @@ msgid "Source List Title"
 msgstr "源列表文字标题"
 
 
+msgid "Theme Spreadsheet"
+msgstr "主题电子表格"
+
+
+msgid "Theme settings for the Spreadsheet"
+msgstr "用于电子表格的主题设置"
+
+
 msgid "Theme Status Bar"
 msgstr "主题状态栏"
 
@@ -89217,10 +89359,6 @@ msgstr "全部点"
 
 msgid "Snap to all points"
 msgstr "吸附全部点"
-
-
-msgid "End Points"
-msgstr "端点"
 
 
 msgid "Snap to first and last points and interpolate"
@@ -91916,6 +92054,11 @@ msgstr "声音:"
 
 
 msgctxt "Operator"
+msgid "Spreadsheet:"
+msgstr "电子表格:"
+
+
+msgctxt "Operator"
 msgid "Surface:"
 msgstr "曲面:"
 
@@ -93408,7 +93551,7 @@ msgstr "%d 个副本被发现位于 %d 个网格中，镜像可能不完整"
 
 
 msgid "Node has no attribute "
-msgstr "节点没有属性"
+msgstr "节点没有属性 "
 
 
 msgid "No camera found"
@@ -94377,7 +94520,7 @@ msgstr "优先级"
 
 
 msgid "Style Modules:"
-msgstr "样式模块:F"
+msgstr "样式模块:"
 
 
 msgid "Selection By:"
@@ -95706,10 +95849,6 @@ msgstr "映至"
 
 msgid "Use for Rendering"
 msgstr "用于渲染"
-
-
-msgid "Asset"
-msgstr "资源"
 
 
 msgid "Accurate Mode"
@@ -97232,10 +97371,6 @@ msgstr "取消屏蔽弃选片段"
 msgctxt "Operator"
 msgid "Hold Split"
 msgstr "硬剪切"
-
-
-msgid "Show Grease Pencil"
-msgstr "显示蜡笔"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -98788,10 +98923,6 @@ msgid "Face Set from Edit Mode Selection"
 msgstr "从编辑模式选中项创建面组"
 
 
-msgid "Init Face Sets"
-msgstr "初始化面组"
-
-
 msgctxt "Operator"
 msgid "Grow Face Set"
 msgstr "扩展面组"
@@ -98853,6 +98984,11 @@ msgstr "按松散块"
 
 
 msgctxt "Operator"
+msgid "By Face Set Boundaries"
+msgstr "按面组边界"
+
+
+msgctxt "Operator"
 msgid "By Materials"
 msgstr "按材质"
 
@@ -98885,6 +99021,21 @@ msgstr "按锐边"
 msgctxt "Operator"
 msgid "By Face Maps"
 msgstr "根据面映射"
+
+
+msgctxt "Operator"
+msgid "Per Vertex"
+msgstr "逐顶点"
+
+
+msgctxt "Operator"
+msgid "Per Face Set"
+msgstr "逐面组"
+
+
+msgctxt "Operator"
+msgid "Per Loose Part"
+msgstr "逐松散块"
 
 
 msgctxt "Operator"
@@ -99132,6 +99283,11 @@ msgstr "设为活动材质"
 
 
 msgctxt "Operator"
+msgid "Arrange"
+msgstr "排列"
+
+
+msgctxt "Operator"
 msgid "Close"
 msgstr "闭合"
 
@@ -99139,6 +99295,10 @@ msgstr "闭合"
 msgctxt "Operator"
 msgid "Toggle Caps"
 msgstr "切换封顶类型"
+
+
+msgid "Scale Thickness"
+msgstr "缩放厚度"
 
 
 msgctxt "Operator"
@@ -99513,6 +99673,11 @@ msgstr "为顶点标记锐边"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "清除 Freestyle 边"
+
+
+msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "边线倒角"
 
@@ -99815,6 +99980,11 @@ msgstr "笔画上下文菜单"
 
 
 msgctxt "Operator"
+msgid "Reproject"
+msgstr "重投影"
+
+
+msgctxt "Operator"
 msgid "Frame Selected (Quad View)"
 msgstr "框显所选(四格视图)"
 
@@ -99867,11 +100037,6 @@ msgstr "桥接面"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "删除面"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "清除 Freestyle 边"
 
 
 msgctxt "Operator"
@@ -100409,6 +100574,10 @@ msgstr "键 %d"
 
 msgid "AOV"
 msgstr "AOV"
+
+
+msgid "Data corruption: data-block '%s' is using itself as library override reference"
+msgstr "数据损坏: 数据块 '%s' 正在将自身用作库重写引用"
 
 
 msgid "MaskLayer"
@@ -101920,6 +102089,10 @@ msgid "Dynamic Effects"
 msgstr "动态效果"
 
 
+msgid "Cannot find valid keyframes to interpolate (Breakdowns keyframes are not allowed)"
+msgstr "找不到有效的关键帧进行插值(不允许间断关键帧)"
+
+
 msgid "Cannot interpolate in curve edit mode"
 msgstr "无法在曲线编辑模式下插值"
 
@@ -102210,6 +102383,11 @@ msgstr "全部复制到选中项"
 msgctxt "Operator"
 msgid "Copy Single to Selected"
 msgstr "复制单个到选中项"
+
+
+msgctxt "Operator"
+msgid "Copy Full Data Path"
+msgstr "复制完整数据路径"
 
 
 msgctxt "Operator"
@@ -105237,7 +105415,7 @@ msgstr "文件路径"
 
 
 msgid "Library not found"
-msgstr "找不到库!."
+msgstr "找不到库!"
 
 
 msgid "Set up the library or edit libraries in the Preferences, File Paths section"

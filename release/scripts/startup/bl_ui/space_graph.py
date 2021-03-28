@@ -200,6 +200,8 @@ class GRAPH_PT_properties_view_options(Panel):
 
         col = layout.column(align = True)
         col.prop(st, "show_sliders")
+        if bpy.app.version < (2, 93):
+            layout.operator("anim.show_group_colors_deprecated", icon='CHECKBOX_HLT')
         col.prop(st, "use_auto_merge_keyframes")
         col.prop(st, "use_beauty_drawing")
 

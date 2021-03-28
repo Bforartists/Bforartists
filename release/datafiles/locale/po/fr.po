@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15094,6 +15094,14 @@ msgid "Strength of modifier effect"
 msgstr "Force de l’effet du modificateur"
 
 
+msgid "Source Object"
+msgstr "Objet source"
+
+
+msgid "Mask"
+msgstr "Masquer"
+
+
 msgid "Mirror Modifier"
 msgstr "Modificateur miroir"
 
@@ -16181,10 +16189,6 @@ msgstr "Outil de peinture d’image"
 
 msgid "Soften"
 msgstr "Adoucir"
-
-
-msgid "Mask"
-msgstr "Masquer"
 
 
 msgid "Jitter the position of the brush while painting"
@@ -29166,10 +29170,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "Multiplier la valeur source avec celle de destination, en utilisant le seuil donné comme facteur"
 
 
-msgid "Source Object"
-msgstr "Objet source"
-
-
 msgid "Object to transfer data from"
 msgstr "Objet duquel transférer les données"
 
@@ -33506,6 +33506,30 @@ msgid "Remove"
 msgstr "Enlever"
 
 
+msgid "Has Layers"
+msgstr "A des calques"
+
+
+msgid "True if this image has any named layer"
+msgstr "Vrai si cette image a des calques nommés"
+
+
+msgid "Has View"
+msgstr "A des vues"
+
+
+msgid "True if this image has multiple views"
+msgstr "Vrai si cette image a de multiples vues"
+
+
+msgid "Placeholder"
+msgstr "Placeholder"
+
+
+msgid "Auto-Refresh"
+msgstr "Auto-actualiser"
+
+
 msgid "RGB Curves"
 msgstr "Courbes RGB"
 
@@ -33868,30 +33892,6 @@ msgstr "Numéro d’indice de passe à convertir en alpha"
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "Appliquer un filtre d’anti-aliasing au masque"
-
-
-msgid "Has Layers"
-msgstr "A des calques"
-
-
-msgid "True if this image has any named layer"
-msgstr "Vrai si cette image a des calques nommés"
-
-
-msgid "Has View"
-msgstr "A des vues"
-
-
-msgid "True if this image has multiple views"
-msgstr "Vrai si cette image a de multiples vues"
-
-
-msgid "Placeholder"
-msgstr "Placeholder"
-
-
-msgid "Auto-Refresh"
-msgstr "Auto-actualiser"
 
 
 msgid "Straight Alpha Output"
@@ -34545,6 +34545,10 @@ msgstr "Produit scalaire"
 
 msgid "Original"
 msgstr "Originelle"
+
+
+msgid "Fill Type"
+msgstr "Type de remplissage"
 
 
 msgid "Object Info"
@@ -35434,10 +35438,6 @@ msgstr "Nom de la prise"
 
 msgid "Data type of the socket"
 msgstr "Type de données de la prise"
-
-
-msgid "Link is valid"
-msgstr "Le lien est valide"
 
 
 msgid "From node"
@@ -45044,10 +45044,6 @@ msgid "Generate a default UV map"
 msgstr "Générer une carte UV par défaut"
 
 
-msgid "Fill Type"
-msgstr "Type de remplissage"
-
-
 msgid "Don't fill at all"
 msgstr "Ne pas remplir du tout"
 
@@ -46467,6 +46463,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "Lancer l’opérateur de transformation après insertion du nœud"
 
 
+msgid "Data-block name to assign"
+msgstr "Nom du bloc de données à assigner"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Ajouter nœud Fichier"
@@ -46474,10 +46474,6 @@ msgstr "Ajouter nœud Fichier"
 
 msgid "Add a file node to the current node editor"
 msgstr "Ajouter un nœud de fichier à l’éditeur de nœuds courant"
-
-
-msgid "Data-block name to assign"
-msgstr "Nom du bloc de données à assigner"
 
 
 msgctxt "Operator"
@@ -61158,10 +61154,6 @@ msgid "Audio output device"
 msgstr "Périphérique de sortie audio"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Périphérique nul – il n’y aura pas de sortie audio"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Tampon de mixage audio"
 
@@ -61340,6 +61332,10 @@ msgstr "Calculs GLSL"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Nombre maximum de lignes à conserver dans le tampon de la console"
+
+
+msgid "Manual"
+msgstr "Manuel (en)"
 
 
 msgid "Solid Lights"
@@ -63064,10 +63060,6 @@ msgstr "Nombre maximum de rebonds effectués par la lumière d’arrière-plan d
 
 msgid "Map Resolution"
 msgstr "Résolution de la carte"
-
-
-msgid "Manual"
-msgstr "Manuel (en)"
 
 
 msgid "Interpolation method to use for volumes"
@@ -67635,30 +67627,6 @@ msgstr "N’afficher que la frame courante"
 
 msgid "No display"
 msgstr "Pas d’affichage"
-
-
-msgid "Scene render size"
-msgstr "Taille du rendu de la scène"
-
-
-msgid "Proxy size 25%"
-msgstr "Taille du proxy à 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Taille du proxy à 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Taille du proxy à 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Taille du proxy à 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Pas de proxy, rendu complet"
 
 
 msgid "Use Backdrop"
@@ -73630,10 +73598,6 @@ msgid "Reload Strips and Adjust Length"
 msgstr "Recharger bandes et ajuster longueurs"
 
 
-msgid "Show Grease Pencil"
-msgstr "Afficher crayon gras"
-
-
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Intervalle de frame original : %d–%d (%d)"
 
@@ -74740,6 +74704,11 @@ msgstr "Effacer dureté"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Effacer arête Freestyle"
+
+
+msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "Tourner arête à droite"
 
@@ -74886,11 +74855,6 @@ msgstr "Assigner à groupe"
 msgctxt "Operator"
 msgid "Delete Vertices"
 msgstr "Supprimer vertices"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Effacer arête Freestyle"
 
 
 msgctxt "Operator"

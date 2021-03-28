@@ -729,6 +729,9 @@ class DOPESHEET_PT_view_view_options(bpy.types.Panel):
         col = col.column(align=True)
         col.active = context.space_data.mode != 'SHAPEKEY'
         col.prop(st, "show_sliders")
+
+        if bpy.app.version < (2, 93):
+            col.operator("anim.show_group_colors_deprecated", icon='CHECKBOX_HLT')
         col.prop(st, "show_interpolation")
         col.prop(st, "show_extremes")
         col.prop(st, "use_auto_merge_keyframes")
@@ -897,24 +900,22 @@ class DOPESHEET_MT_channel_context_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("anim.channels_setting_enable",
-                        text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
-        layout.operator("anim.channels_setting_disable",
-                        text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
+        # This menu is used from the graph editor too.
+        is_graph_editor = context.area.type == 'GRAPH_EDITOR'
+
+        layout.operator("anim.channels_setting_enable", text="Mute Channels", icon='MUTE_IPO_ON').type = 'MUTE'
+        layout.operator("anim.channels_setting_disable", text="Unmute Channels", icon='MUTE_IPO_OFF').type = 'MUTE'
         layout.separator()
-        layout.operator("anim.channels_setting_enable",
-                        text="Protect Channels", icon='LOCKED').type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable",
-                        text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_setting_enable", text="Protect Channels", icon='LOCKED').type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text="Unprotect Channels", icon='UNLOCKED').type = 'PROTECT'
 
         layout.separator()
         layout.operator("anim.channels_group", icon='NEW_GROUP')
         layout.operator("anim.channels_ungroup", icon='REMOVE_ALL_GROUPS')
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle",
-                        icon='RESTRICT_SELECT_ON')
-        if bpy.ops.graph.extrapolation_type.poll(context.copy()):
+        layout.operator("anim.channels_editable_toggle", icon='RESTRICT_SELECT_ON')
+        if is_graph_editor:
             operator = "graph.extrapolation_type"
         else:
             operator = "action.extrapolation_type"
@@ -925,8 +926,7 @@ class DOPESHEET_MT_channel_context_menu(Menu):
         layout.operator("anim.channels_collapse", icon='COLLAPSEMENU')
 
         layout.separator()
-        layout.operator_menu_enum(
-            "anim.channels_move", "direction", text="Move...")
+        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
 

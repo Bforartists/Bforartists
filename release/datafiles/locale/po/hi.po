@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1682,6 +1682,10 @@ msgid "Sharp"
 msgstr "पैना"
 
 
+msgid "Mask"
+msgstr "आवरण"
+
+
 msgid "Step"
 msgstr "कदम"
 
@@ -1812,10 +1816,6 @@ msgstr "कीलक"
 
 msgid "Soften"
 msgstr "मॄदु"
-
-
-msgid "Mask"
-msgstr "आवरण"
 
 
 msgid "Brush"
@@ -4893,6 +4893,10 @@ msgid "16x"
 msgstr "१६ x"
 
 
+msgid "Manual"
+msgstr "नियम पुस्तिका"
+
+
 msgid "Percentage"
 msgstr "प्रतिशत"
 
@@ -4903,10 +4907,6 @@ msgstr "नई खिडकी"
 
 msgid "Glossy Color"
 msgstr "चमकदार रंग"
-
-
-msgid "Manual"
-msgstr "नियम पुस्तिका"
 
 
 msgid "Settings/info about a language"
