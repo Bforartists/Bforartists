@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11043,6 +11043,14 @@ msgid "Remove"
 msgstr "Ta bort"
 
 
+msgid "Placeholder"
+msgstr "Visa inställningar för kant"
+
+
+msgid "Auto-Refresh"
+msgstr "Uppdatera"
+
+
 msgid "RGB Curves"
 msgstr "NURBS Kurva"
 
@@ -11229,14 +11237,6 @@ msgstr "Mättnad"
 
 msgid "Pass index number to convert to alpha"
 msgstr "Markera Rad"
-
-
-msgid "Placeholder"
-msgstr "Visa inställningar för kant"
-
-
-msgid "Auto-Refresh"
-msgstr "Uppdatera"
 
 
 msgid "Inpaint"
@@ -11581,6 +11581,10 @@ msgstr "Info"
 
 msgid "Original"
 msgstr "Rensa Ursprung"
+
+
+msgid "Fill Type"
+msgstr "Arkiv"
 
 
 msgid "Object Info"
@@ -16525,10 +16529,6 @@ msgstr "Bild Displist"
 
 msgid "Construct a circle mesh"
 msgstr "&gt;Nurbs Cirkel"
-
-
-msgid "Fill Type"
-msgstr "Arkiv"
 
 
 msgid "Triangle Fan"
@@ -24038,6 +24038,10 @@ msgid "Ambient Color"
 msgstr "Markera Rad"
 
 
+msgid "Manual"
+msgstr "Manual"
+
+
 msgid "Texture Time Out"
 msgstr "Zooma Ut"
 
@@ -24360,10 +24364,6 @@ msgstr "Packa Data"
 
 msgid "Map Resolution"
 msgstr "Upplösning"
-
-
-msgid "Manual"
-msgstr "Manual"
 
 
 msgid "MO File Path"
@@ -26008,14 +26008,6 @@ msgstr "Radera"
 
 msgid "No display"
 msgstr "Visa inställningar för kant"
-
-
-msgid "Scene render size"
-msgstr "Sätt Ram"
-
-
-msgid "Proxy size 100%"
-msgstr "Sätt Ram"
 
 
 msgid "Separate Colors"
@@ -28326,10 +28318,6 @@ msgstr "Glöd"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Starta rendering av sekvens"
-
-
-msgid "Show Grease Pencil"
-msgstr "Starta Spel"
 
 
 msgctxt "Operator"

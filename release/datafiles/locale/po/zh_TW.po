@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -10236,6 +10236,14 @@ msgid "Strength of modifier effect"
 msgstr "修改器效果的強度"
 
 
+msgid "Source Object"
+msgstr "來源物體"
+
+
+msgid "Mask"
+msgstr "遮罩"
+
+
 msgid "Mirror Modifier"
 msgstr "鏡像修改器"
 
@@ -10767,10 +10775,6 @@ msgstr "影像繪製工具"
 
 msgid "Soften"
 msgstr "柔化"
-
-
-msgid "Mask"
-msgstr "遮罩"
 
 
 msgid "Jitter the position of the brush while painting"
@@ -19742,10 +19746,6 @@ msgid "Below Threshold"
 msgstr "低於閾值"
 
 
-msgid "Source Object"
-msgstr "來源物體"
-
-
 msgid "Object to transfer data from"
 msgstr "資料傳輸的來源物體"
 
@@ -23537,6 +23537,14 @@ msgid "Remove"
 msgstr "移除"
 
 
+msgid "Placeholder"
+msgstr "佔位子"
+
+
+msgid "Auto-Refresh"
+msgstr "自動重新整理"
+
+
 msgid "RGB Curves"
 msgstr "RGB 曲線"
 
@@ -23895,14 +23903,6 @@ msgstr "要轉換至 alpha 的通遞索引編號"
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "套用抗鋸齒過濾器至遮罩"
-
-
-msgid "Placeholder"
-msgstr "佔位子"
-
-
-msgid "Auto-Refresh"
-msgstr "自動重新整理"
 
 
 msgid "Straight Alpha Output"
@@ -24528,6 +24528,10 @@ msgstr "內積"
 
 msgid "Original"
 msgstr "原始"
+
+
+msgid "Fill Type"
+msgstr "填入類型"
 
 
 msgid "Object Info"
@@ -25233,10 +25237,6 @@ msgstr "接口的名稱"
 
 msgid "Data type of the socket"
 msgstr "接口的資料類型"
-
-
-msgid "Link is valid"
-msgstr "連結無效"
 
 
 msgid "From node"
@@ -32593,10 +32593,6 @@ msgstr "投影 (2D)"
 
 msgid "Construct a circle mesh"
 msgstr "建立一個圓形網格"
-
-
-msgid "Fill Type"
-msgstr "填入類型"
 
 
 msgid "Don't fill at all"
@@ -45552,10 +45548,6 @@ msgid "Audio output device"
 msgstr "音訊輸出裝置"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "空裝置 - 沒有音訊輸出"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "音訊混合緩衝"
 
@@ -45702,6 +45694,10 @@ msgstr "記憶體快取限制 (單位為 MB)"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "用於儲藏主控臺緩衝的最大列數"
+
+
+msgid "Manual"
+msgstr "手冊"
 
 
 msgid "Solid Lights"
@@ -46602,10 +46598,6 @@ msgstr "穿透光線的物體可見性"
 
 msgid "Map Resolution"
 msgstr "映射解析度"
-
-
-msgid "Manual"
-msgstr "手冊"
 
 
 msgid "Settings/info about a language"
@@ -50342,30 +50334,6 @@ msgstr "僅顯示目前框幀"
 
 msgid "No display"
 msgstr "無顯示"
-
-
-msgid "Scene render size"
-msgstr "場景算繪大小"
-
-
-msgid "Proxy size 25%"
-msgstr "代理大小 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "代理大小 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "代理大小 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "代理大小 100%"
-
-
-msgid "No proxy, full render"
-msgstr "無代理，完整算繪"
 
 
 msgid "Use Backdrop"
@@ -55286,10 +55254,6 @@ msgid "Reload Strips and Adjust Length"
 msgstr "重新載入片段並調整長度"
 
 
-msgid "Show Grease Pencil"
-msgstr "顯示蠟筆"
-
-
 msgid "Original frame range: %d-%d (%d)"
 msgstr "原始框幀區間：%d-%d (%d)"
 
@@ -56094,6 +56058,11 @@ msgstr "清除銳利"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "清除 Freestyle 邊線"
+
+
+msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "順時針旋轉邊線"
 
@@ -56225,11 +56194,6 @@ msgstr "X 光"
 msgctxt "Operator"
 msgid "Assign to Group"
 msgstr "指派至群組"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "清除 Freestyle 邊線"
 
 
 msgctxt "Operator"

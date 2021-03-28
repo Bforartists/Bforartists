@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -16016,6 +16016,14 @@ msgid "Strength of modifier effect"
 msgstr "Сила ефекту модифікатора"
 
 
+msgid "Source Object"
+msgstr "Об'єкт-джерело"
+
+
+msgid "Mask"
+msgstr "Маска"
+
+
 msgid "Mirror Modifier"
 msgstr "Модифікатор Дзеркалення"
 
@@ -17657,10 +17665,6 @@ msgid "Soften"
 msgstr "М'якшення"
 
 
-msgid "Mask"
-msgstr "Маска"
-
-
 msgid "Invert Pressure for Density"
 msgstr "Інвертувати Натиск для Щільності"
 
@@ -19151,6 +19155,10 @@ msgstr "Зсув Примірника"
 
 msgid "Offset from the origin to use when instancing"
 msgstr "Зсув від початку для використання при примірникуванні"
+
+
+msgid "Include"
+msgstr "Включення"
 
 
 msgid "Objects that are directly in this collection"
@@ -33232,10 +33240,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "Перемножити джерельні значення з цільовими, помноживши на значення порогу"
 
 
-msgid "Source Object"
-msgstr "Об'єкт-джерело"
-
-
 msgid "Object to transfer data from"
 msgstr "Об'єкт, з якого переносяться дані"
 
@@ -38536,10 +38540,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "Чи обрізати розмір ввідного зображення"
 
 
-msgid "Cryptomatte"
-msgstr "Cryptomatte"
-
-
 msgid "Add object or material to matte, by picking a color from the Pick output"
 msgstr "Додати об'єкт або матеріал у матте, підібравши колір на виводі Підбір"
 
@@ -38558,6 +38558,38 @@ msgstr "Вилучення"
 
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "Вилучити об'єкт або матеріал з матте, підібравши колір на виводі Підбір"
+
+
+msgid "Cryptomatte"
+msgstr "Cryptomatte"
+
+
+msgid "Has Layers"
+msgstr "Має шари"
+
+
+msgid "True if this image has any named layer"
+msgstr "Істина, якщо зображення має хоча б один іменований шар"
+
+
+msgid "Has View"
+msgstr "Має вигляд"
+
+
+msgid "True if this image has multiple views"
+msgstr "Істина, якщо зображення має багато-вигляди"
+
+
+msgid "Placeholder"
+msgstr "Заповнювач"
+
+
+msgid "Asset"
+msgstr "Актив"
+
+
+msgid "Auto-Refresh"
+msgstr "Автоматичне оновлення"
 
 
 msgid "RGB Curves"
@@ -38954,30 +38986,6 @@ msgstr "Переданий номер індексу для перетворен
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "Застосувати до маски загладжувальний фільтр"
-
-
-msgid "Has Layers"
-msgstr "Має шари"
-
-
-msgid "True if this image has any named layer"
-msgstr "Істина, якщо зображення має хоча б один іменований шар"
-
-
-msgid "Has View"
-msgstr "Має вигляд"
-
-
-msgid "True if this image has multiple views"
-msgstr "Істина, якщо зображення має багато-вигляди"
-
-
-msgid "Placeholder"
-msgstr "Заповнювач"
-
-
-msgid "Auto-Refresh"
-msgstr "Автоматичне оновлення"
 
 
 msgid "Straight Alpha Output"
@@ -40275,6 +40283,22 @@ msgstr "Є Оглядвікном"
 
 msgid "Join Geometry"
 msgstr "Сполучення Геометрії"
+
+
+msgid "Fill Type"
+msgstr "Тип заповнення"
+
+
+msgid "N-Gon"
+msgstr "N-Кутник"
+
+
+msgid "End Points"
+msgstr "Точки Кінців"
+
+
+msgid "UV Sphere"
+msgstr "Сфера UV"
 
 
 msgid "Object Info"
@@ -41712,10 +41736,6 @@ msgstr "Назва роз'єму"
 
 msgid "Data type of the socket"
 msgstr "Тип даних роз'єму"
-
-
-msgid "Link is valid"
-msgstr "Зв'язок дійсний"
 
 
 msgid "From node"
@@ -54729,16 +54749,8 @@ msgid "Generate a default UV map"
 msgstr "Генерувати стандартну розкладку UV"
 
 
-msgid "Fill Type"
-msgstr "Тип заповнення"
-
-
 msgid "Don't fill at all"
 msgstr "Не заповнювати"
-
-
-msgid "N-Gon"
-msgstr "N-Кутник"
 
 
 msgid "Use n-gons"
@@ -56392,6 +56404,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "Запустити трансформації після вставляння вузла"
 
 
+msgid "Data-block name to assign"
+msgstr "Назва блоку даних для призначення"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Додати вузол файлу"
@@ -56399,10 +56415,6 @@ msgstr "Додати вузол файлу"
 
 msgid "Add a file node to the current node editor"
 msgstr "Додати вузол файлу до поточного редактора вузлів"
-
-
-msgid "Data-block name to assign"
-msgstr "Назва блоку даних для призначення"
 
 
 msgctxt "Operator"
@@ -60524,22 +60536,6 @@ msgstr "Перерозкласти користувачів"
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "Зробити усіх користувачів виділених блоків даних для використання замість поточного (клацнутого)"
-
-
-msgid "Add Library Override"
-msgstr "Додати заміщення бібліотеки"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "Додати локальне заміщення цього пов'язаного блока даних"
-
-
-msgid "Add Library Override Hierarchy"
-msgstr "Додати Ієрархію Заміщення Бібліотеки"
-
-
-msgid "Add a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "Додати локальне заміщення цього пов'язаного блоку даних та його ієрархію залежностей"
 
 
 msgid "Convert Proxy to Override"
@@ -68970,10 +68966,6 @@ msgid "Start placing the center position"
 msgstr "Почати розміщення позиції центра"
 
 
-msgid "UV Sphere"
-msgstr "Сфера UV"
-
-
 msgid "ICO Sphere"
 msgstr "Сфера ICO"
 
@@ -72721,10 +72713,6 @@ msgstr "Фільтри"
 
 msgid "Bake Animation"
 msgstr "Запекти Анімацію"
-
-
-msgid "Include"
-msgstr "Включення"
 
 
 msgid "Advanced Filter"
@@ -76512,10 +76500,6 @@ msgid "Audio output device"
 msgstr "Пристрій виводу звуку"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Нульовий пристрій - звук буде відсутній"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Буфер Мікшування Аудіо"
 
@@ -76794,6 +76778,10 @@ msgstr "Ліміт кешу на диску"
 
 msgid "Disk cache limit (in gigabytes)"
 msgstr "Ліміт кешу на диску (в гігабайтах)"
+
+
+msgid "Manual"
+msgstr "Вручну"
 
 
 msgid "Solid Lights"
@@ -79162,10 +79150,6 @@ msgstr "Не відбирати фон, швидше, але може сприч
 
 msgid "Automatically try to determine the best setting"
 msgstr "Автоматично намагатися визначати найкращі устави"
-
-
-msgid "Manual"
-msgstr "Вручну"
 
 
 msgid "Manually set the resolution of the sampling map, higher values are slower and require more memory but reduce noise"
@@ -85669,30 +85653,6 @@ msgid "No display"
 msgstr "Не показувати"
 
 
-msgid "Scene render size"
-msgstr "Розмір рендера сцени"
-
-
-msgid "Proxy size 25%"
-msgstr "Розмір замісника 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Розмір замісника 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Розмір замісника 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Розмір замісника 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Без замісника, повний рендер"
-
-
 msgid "Use Backdrop"
 msgstr "Вжити тло"
 
@@ -88887,10 +88847,6 @@ msgstr "Усі Точки"
 
 msgid "Snap to all points"
 msgstr "Підхоплювати до всіх точок"
-
-
-msgid "End Points"
-msgstr "Точки Кінців"
 
 
 msgid "Snap to first and last points and interpolate"
@@ -95321,10 +95277,6 @@ msgid "Use for Rendering"
 msgstr "Вжити для Рендерингу"
 
 
-msgid "Asset"
-msgstr "Актив"
-
-
 msgid "Accurate Mode"
 msgstr "Точний Режим"
 
@@ -96845,10 +96797,6 @@ msgstr "Знеглушити Зневибрані Смужки"
 msgctxt "Operator"
 msgid "Hold Split"
 msgstr "Тримати Розділ"
-
-
-msgid "Show Grease Pencil"
-msgstr "Показ Нарисний Олівець"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -98401,10 +98349,6 @@ msgid "Face Set from Edit Mode Selection"
 msgstr "Набір Граней з Вибрання Режиму Редагування"
 
 
-msgid "Init Face Sets"
-msgstr "Ініціювати Набори Граней"
-
-
 msgctxt "Operator"
 msgid "Grow Face Set"
 msgstr "Розростити Набір Граней"
@@ -99126,6 +99070,11 @@ msgstr "Відмітити Гострим з Вершин"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Зчистити Ребро Freestyle"
+
+
+msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "Скіс Ребер"
 
@@ -99480,11 +99429,6 @@ msgstr "Міст між Гранями"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "Видалити Грані"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Зчистити Ребро Freestyle"
 
 
 msgctxt "Operator"

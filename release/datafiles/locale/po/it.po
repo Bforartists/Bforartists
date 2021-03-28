@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -9959,6 +9959,14 @@ msgid "Strength of modifier effect"
 msgstr "Forza dell'effetto del modificatore"
 
 
+msgid "Source Object"
+msgstr "Oggetto Sorgente"
+
+
+msgid "Mask"
+msgstr "Maschera"
+
+
 msgid "Mirror Modifier"
 msgstr "Modificatore Specchia"
 
@@ -10466,10 +10474,6 @@ msgstr "Strumento Pittura Immagine"
 
 msgid "Soften"
 msgstr "Ammorbidisci"
-
-
-msgid "Mask"
-msgstr "Maschera"
 
 
 msgid "Jitter the position of the brush while painting"
@@ -19953,10 +19957,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "Moltiplica il valore della sorgente a quello di destinazione, usando la soglia data come fattore"
 
 
-msgid "Source Object"
-msgstr "Oggetto Sorgente"
-
-
 msgid "Object to transfer data from"
 msgstr "Oggetto da cui trasferire i dati"
 
@@ -23328,6 +23328,22 @@ msgid "Remove"
 msgstr "Rimuovi"
 
 
+msgid "Has Layers"
+msgstr "Ha Livelli"
+
+
+msgid "Has View"
+msgstr "Ha Vista"
+
+
+msgid "Placeholder"
+msgstr "Segnaposto"
+
+
+msgid "Auto-Refresh"
+msgstr "Aggiornamento Automatico"
+
+
 msgid "RGB Curves"
 msgstr "Curve RGB"
 
@@ -23586,22 +23602,6 @@ msgstr "Tonalità - Saturazione - Valore"
 
 msgid "ID Mask"
 msgstr "ID Maschera"
-
-
-msgid "Has Layers"
-msgstr "Ha Livelli"
-
-
-msgid "Has View"
-msgstr "Ha Vista"
-
-
-msgid "Placeholder"
-msgstr "Segnaposto"
-
-
-msgid "Auto-Refresh"
-msgstr "Aggiornamento Automatico"
 
 
 msgid "Inpaint"
@@ -24035,6 +24035,10 @@ msgstr "Prodotto Scalare"
 
 msgid "Original"
 msgstr "Originale"
+
+
+msgid "Fill Type"
+msgstr "Tipo Riempimento"
 
 
 msgid "Object Info"
@@ -24708,10 +24712,6 @@ msgstr "Modello Connettore"
 
 msgid "Name of the socket"
 msgstr "Nome del connettore"
-
-
-msgid "Link is valid"
-msgstr "Connessione valida"
 
 
 msgid "From node"
@@ -32371,10 +32371,6 @@ msgstr "Genera UVs"
 
 msgid "Generate a default UV map"
 msgstr "Genera una mappatura UV standard"
-
-
-msgid "Fill Type"
-msgstr "Tipo Riempimento"
 
 
 msgid "Don't fill at all"
@@ -45595,10 +45591,6 @@ msgid "Audio output device"
 msgstr "Dispositivo di uscita audio"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Dispositivo nullo - non ci sarà uscita audio"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Buffer Mixaggio Audio"
 
@@ -45761,6 +45753,10 @@ msgstr "OpenMP"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Numero massimo di linee da memorizzare per il buffer della console"
+
+
+msgid "Manual"
+msgstr "Manuale"
 
 
 msgid "Solid Lights"
@@ -47025,10 +47021,6 @@ msgstr "Massimo numero di rimbalzi con cui la luce di sfondo contribuisce al ren
 
 msgid "Map Resolution"
 msgstr "Risoluzione Mappa"
-
-
-msgid "Manual"
-msgstr "Manuale"
 
 
 msgid "Interpolation method to use for volumes"
@@ -50338,30 +50330,6 @@ msgstr "Mostra solo fotogramma corrente"
 
 msgid "No display"
 msgstr "Nessuna visualizzazione"
-
-
-msgid "Scene render size"
-msgstr "Dimensione del rendering della scena"
-
-
-msgid "Proxy size 25%"
-msgstr "Dimensione Proxy 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Dimensione Proxy 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Dimensione Proxy 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Dimensione Proxy 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Nessun proxy, render completo"
 
 
 msgid "Use Backdrop"
@@ -55651,10 +55619,6 @@ msgid "Reload Strips and Adjust Length"
 msgstr "Ricarica Spezzoni e Aggiusta Lunghezza"
 
 
-msgid "Show Grease Pencil"
-msgstr "Mostra Matita"
-
-
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Intervallo fotogrammi originale: %d-%d (%d)"
 
@@ -57006,6 +56970,11 @@ msgstr "Smarca come Netto"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Smarca Spigolo come Freestyle"
+
+
+msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "Smussa Spigoli"
 
@@ -57246,11 +57215,6 @@ msgstr "Elimina Spigoli"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "Elimina Facce"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Smarca Spigolo come Freestyle"
 
 
 msgctxt "Operator"

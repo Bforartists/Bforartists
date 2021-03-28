@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15900,6 +15900,14 @@ msgid "Strength of modifier effect"
 msgstr "Intensidad del efecto del modificador"
 
 
+msgid "Source Object"
+msgstr "Objeto de origen"
+
+
+msgid "Mask"
+msgstr "Máscara"
+
+
 msgid "Mirror Modifier"
 msgstr "Modificador Simetrizar"
 
@@ -17529,10 +17537,6 @@ msgid "Soften"
 msgstr "Suavizar"
 
 
-msgid "Mask"
-msgstr "Máscara"
-
-
 msgid "Invert Pressure for Density"
 msgstr "Invertir presión para Densidad"
 
@@ -19023,6 +19027,10 @@ msgstr "Desplazamiento de instancias"
 
 msgid "Offset from the origin to use when instancing"
 msgstr "Desplazamiento desde el origen al instanciar"
+
+
+msgid "Include"
+msgstr "Incluir"
 
 
 msgid "Objects that are directly in this collection"
@@ -33004,10 +33012,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "Multiplicar el valor de origen por el del destino, usando el umbral indicado como factor de mezcla"
 
 
-msgid "Source Object"
-msgstr "Objeto de origen"
-
-
 msgid "Object to transfer data from"
 msgstr "Objeto desde el cual transferir los datos"
 
@@ -38276,10 +38280,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "Recorta el tamaño de la imagen de entrada"
 
 
-msgid "Cryptomatte"
-msgstr "Cryptomatte"
-
-
 msgid "Add object or material to matte, by picking a color from the Pick output"
 msgstr "Agregar un objeto o material al mate, escogiendo un color con el cuentagotas"
 
@@ -38298,6 +38298,38 @@ msgstr "Eliminar"
 
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "Elimina un objeto o material del mate, al escoger un color con el cuentagotas"
+
+
+msgid "Cryptomatte"
+msgstr "Cryptomatte"
+
+
+msgid "Has Layers"
+msgstr "Tiene capas"
+
+
+msgid "True if this image has any named layer"
+msgstr "Verdadero si la imagen contiene capa nombradas"
+
+
+msgid "Has View"
+msgstr "Tiene vistas"
+
+
+msgid "True if this image has multiple views"
+msgstr "Verdadero si la imagen contiene múltiples vistas"
+
+
+msgid "Placeholder"
+msgstr "Marcador de posición"
+
+
+msgid "Asset"
+msgstr "Recurso"
+
+
+msgid "Auto-Refresh"
+msgstr "Refrescar autom."
 
 
 msgid "RGB Curves"
@@ -38694,30 +38726,6 @@ msgstr "Número del identificador en la pasada de entrada, que se desea converti
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "Aplicar un filtro de suavizado de bordes a la máscara"
-
-
-msgid "Has Layers"
-msgstr "Tiene capas"
-
-
-msgid "True if this image has any named layer"
-msgstr "Verdadero si la imagen contiene capa nombradas"
-
-
-msgid "Has View"
-msgstr "Tiene vistas"
-
-
-msgid "True if this image has multiple views"
-msgstr "Verdadero si la imagen contiene múltiples vistas"
-
-
-msgid "Placeholder"
-msgstr "Marcador de posición"
-
-
-msgid "Auto-Refresh"
-msgstr "Refrescar autom."
 
 
 msgid "Straight Alpha Output"
@@ -39899,6 +39907,22 @@ msgstr "Original"
 
 msgid "Join Geometry"
 msgstr "Unir geometría"
+
+
+msgid "Fill Type"
+msgstr "Tipo de relleno"
+
+
+msgid "N-Gon"
+msgstr "Enégonos"
+
+
+msgid "End Points"
+msgstr "Extremos"
+
+
+msgid "UV Sphere"
+msgstr "Esfera"
 
 
 msgid "Object Info"
@@ -41312,10 +41336,6 @@ msgstr "Nombre del conector"
 
 msgid "Data type of the socket"
 msgstr "Tipo de dato del conector"
-
-
-msgid "Link is valid"
-msgstr "El vínculo es válido"
 
 
 msgid "From node"
@@ -54189,16 +54209,8 @@ msgid "Generate a default UV map"
 msgstr "Generar un mapa UV predefinido"
 
 
-msgid "Fill Type"
-msgstr "Tipo de relleno"
-
-
 msgid "Don't fill at all"
 msgstr "No rellenar"
-
-
-msgid "N-Gon"
-msgstr "Enégonos"
 
 
 msgid "Use n-gons"
@@ -55848,6 +55860,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "Inicia el operador de transformación luego de insertar el nodo"
 
 
+msgid "Data-block name to assign"
+msgstr "Nombre a asignar al bloque de datos"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Agregar nodo de archivo"
@@ -55855,10 +55871,6 @@ msgstr "Agregar nodo de archivo"
 
 msgid "Add a file node to the current node editor"
 msgstr "Agrega un nodo de archivo al editor de nodos actual"
-
-
-msgid "Data-block name to assign"
-msgstr "Nombre a asignar al bloque de datos"
 
 
 msgctxt "Operator"
@@ -59862,22 +59874,6 @@ msgstr "Remapear usuarios"
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "Hace que todos los usuarios de los bloques de datos seleccionados usen en su lugar al bloque de datos actual (el resaltado)"
-
-
-msgid "Add Library Override"
-msgstr "Agregar redefinición de biblioteca"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "Agrega una redefinición local a este bloque de datos vinculado a una biblioteca"
-
-
-msgid "Add Library Override Hierarchy"
-msgstr "Agregar redefinición de biblioteca a jerarquía"
-
-
-msgid "Add a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "Agrega una redefinición local a este bloque de datos vinculado a una biblioteca y a su jerarquía de dependencias"
 
 
 msgid "Convert Proxy to Override"
@@ -68231,10 +68227,6 @@ msgid "Start placing the center position"
 msgstr "Comenzar posicionando el centro"
 
 
-msgid "UV Sphere"
-msgstr "Esfera"
-
-
 msgid "ICO Sphere"
 msgstr "Esfera geodésica"
 
@@ -71962,10 +71954,6 @@ msgstr "Filtros"
 
 msgid "Bake Animation"
 msgstr "Capturar animación"
-
-
-msgid "Include"
-msgstr "Incluir"
 
 
 msgid "Advanced Filter"
@@ -75725,10 +75713,6 @@ msgid "Audio output device"
 msgstr "Dispositivo de salida de audio"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Dispositivo nulo - no habrá salida de audio"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Buffer mezcla audio"
 
@@ -76007,6 +75991,10 @@ msgstr "Límite del caché en disco"
 
 msgid "Disk cache limit (in gigabytes)"
 msgstr "Límite de disco para el caché (en GB)"
+
+
+msgid "Manual"
+msgstr "Manual"
 
 
 msgid "Solid Lights"
@@ -78363,10 +78351,6 @@ msgstr "No muestrear el entorno, más rápido pero puede causar ruido en fondos 
 
 msgid "Automatically try to determine the best setting"
 msgstr "Intentar determinar las mejores opciones de forma automática"
-
-
-msgid "Manual"
-msgstr "Manual"
 
 
 msgid "Manually set the resolution of the sampling map, higher values are slower and require more memory but reduce noise"
@@ -84806,30 +84790,6 @@ msgid "No display"
 msgstr "No mostrar"
 
 
-msgid "Scene render size"
-msgstr "Tamaño de procesamiento de la escena"
-
-
-msgid "Proxy size 25%"
-msgstr "Tamaño reemplazo 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Tamaño reemplazo 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Tamaño reemplazo 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Tamaño reemplazo 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Sin reemplazo, procesar completamente"
-
-
 msgid "Use Backdrop"
 msgstr "Usar fondo"
 
@@ -87984,10 +87944,6 @@ msgstr "Todos"
 
 msgid "Snap to all points"
 msgstr "Adherir a todos los puntos"
-
-
-msgid "End Points"
-msgstr "Extremos"
 
 
 msgid "Snap to first and last points and interpolate"
@@ -94413,10 +94369,6 @@ msgid "Use for Rendering"
 msgstr "Procesar"
 
 
-msgid "Asset"
-msgstr "Recurso"
-
-
 msgid "Accurate Mode"
 msgstr "Modo preciso"
 
@@ -95923,10 +95875,6 @@ msgstr "Habilitar clips no seleccionados"
 msgctxt "Operator"
 msgid "Hold Split"
 msgstr "Dividir y congelar"
-
-
-msgid "Show Grease Pencil"
-msgstr "Mostrar lápiz de cera"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -97445,10 +97393,6 @@ msgid "Face Set from Edit Mode Selection"
 msgstr "Conjunto de caras desde selección en modo Edición"
 
 
-msgid "Init Face Sets"
-msgstr "Inicializar conjuntos de caras"
-
-
 msgctxt "Operator"
 msgid "Grow Face Set"
 msgstr "Expandir conjunto de caras"
@@ -98165,6 +98109,11 @@ msgstr "Marcar como definido a partir de vértices"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Desmarcar como borde de Freestyle"
+
+
+msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "Biselar bordes"
 
@@ -98514,11 +98463,6 @@ msgstr "Puentear caras"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "Borrar caras"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Desmarcar como borde de Freestyle"
 
 
 msgctxt "Operator"

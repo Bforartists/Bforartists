@@ -54,12 +54,12 @@ static void add_columns_for_instances(const InstancesComponent &instances_compon
         const InstancedData &data = instance_data[index];
         if (data.type == INSTANCE_DATA_TYPE_OBJECT) {
           if (data.data.object != nullptr) {
-            r_cell_value.value = ObjectCellValue{data.data.object};
+            r_cell_value.value_object = ObjectCellValue{data.data.object};
           }
         }
         else if (data.type == INSTANCE_DATA_TYPE_COLLECTION) {
           if (data.data.collection != nullptr) {
-            r_cell_value.value = CollectionCellValue{data.data.collection};
+            r_cell_value.value_collection = CollectionCellValue{data.data.collection};
           }
         }
       }));
@@ -71,7 +71,7 @@ static void add_columns_for_instances(const InstancesComponent &instances_compon
     std::string name = std::string("Position ") + axis_char[i];
     columns.append(spreadsheet_column_from_function(
         name, [transforms, i](int index, CellValue &r_cell_value) {
-          r_cell_value.value = transforms[index].translation()[i];
+          r_cell_value.value_float = transforms[index].translation()[i];
         }));
   }
 
@@ -79,7 +79,7 @@ static void add_columns_for_instances(const InstancesComponent &instances_compon
     std::string name = std::string("Rotation ") + axis_char[i];
     columns.append(spreadsheet_column_from_function(
         name, [transforms, i](int index, CellValue &r_cell_value) {
-          r_cell_value.value = transforms[index].to_euler()[i];
+          r_cell_value.value_float = transforms[index].to_euler()[i];
         }));
   }
 
@@ -87,7 +87,7 @@ static void add_columns_for_instances(const InstancesComponent &instances_compon
     std::string name = std::string("Scale ") + axis_char[i];
     columns.append(spreadsheet_column_from_function(
         name, [transforms, i](int index, CellValue &r_cell_value) {
-          r_cell_value.value = transforms[index].scale()[i];
+          r_cell_value.value_float = transforms[index].scale()[i];
         }));
   }
 
@@ -129,7 +129,7 @@ static void add_columns_for_attribute(const ReadAttribute *attribute,
           attribute_name, [attribute](int index, CellValue &r_cell_value) {
             float value;
             attribute->get(index, &value);
-            r_cell_value.value = value;
+            r_cell_value.value_float = value;
           }));
       break;
     }
@@ -141,7 +141,7 @@ static void add_columns_for_attribute(const ReadAttribute *attribute,
             name, [attribute, i](int index, CellValue &r_cell_value) {
               float2 value;
               attribute->get(index, &value);
-              r_cell_value.value = value[i];
+              r_cell_value.value_float = value[i];
             }));
       }
       break;
@@ -154,7 +154,7 @@ static void add_columns_for_attribute(const ReadAttribute *attribute,
             name, [attribute, i](int index, CellValue &r_cell_value) {
               float3 value;
               attribute->get(index, &value);
-              r_cell_value.value = value[i];
+              r_cell_value.value_float = value[i];
             }));
       }
       break;
@@ -167,7 +167,7 @@ static void add_columns_for_attribute(const ReadAttribute *attribute,
             name, [attribute, i](int index, CellValue &r_cell_value) {
               Color4f value;
               attribute->get(index, &value);
-              r_cell_value.value = value[i];
+              r_cell_value.value_float = value[i];
             }));
       }
       break;
@@ -177,7 +177,7 @@ static void add_columns_for_attribute(const ReadAttribute *attribute,
           attribute_name, [attribute](int index, CellValue &r_cell_value) {
             int value;
             attribute->get(index, &value);
-            r_cell_value.value = value;
+            r_cell_value.value_int = value;
           }));
       break;
     }
@@ -186,7 +186,7 @@ static void add_columns_for_attribute(const ReadAttribute *attribute,
           attribute_name, [attribute](int index, CellValue &r_cell_value) {
             bool value;
             attribute->get(index, &value);
-            r_cell_value.value = value;
+            r_cell_value.value_bool = value;
           }));
       break;
     }
@@ -275,9 +275,9 @@ static void get_selected_corner_indices(const Mesh &mesh,
   }
 }
 
-static void get_selected_polygon_indices(const Mesh &mesh,
-                                         const IsVertexSelectedFn is_vertex_selected_fn,
-                                         Vector<int64_t> &r_polygon_indices)
+static void get_selected_face_indices(const Mesh &mesh,
+                                      const IsVertexSelectedFn is_vertex_selected_fn,
+                                      Vector<int64_t> &r_face_indices)
 {
   for (const int poly_index : IndexRange(mesh.totpoly)) {
     const MPoly &poly = mesh.mpoly[poly_index];
@@ -290,7 +290,7 @@ static void get_selected_polygon_indices(const Mesh &mesh,
       }
     }
     if (is_selected) {
-      r_polygon_indices.append(poly_index);
+      r_face_indices.append(poly_index);
     }
   }
 }
@@ -315,8 +315,8 @@ static void get_selected_indices_on_domain(const Mesh &mesh,
   switch (domain) {
     case ATTR_DOMAIN_POINT:
       return get_selected_vertex_indices(mesh, is_vertex_selected_fn, r_indices);
-    case ATTR_DOMAIN_POLYGON:
-      return get_selected_polygon_indices(mesh, is_vertex_selected_fn, r_indices);
+    case ATTR_DOMAIN_FACE:
+      return get_selected_face_indices(mesh, is_vertex_selected_fn, r_indices);
     case ATTR_DOMAIN_CORNER:
       return get_selected_corner_indices(mesh, is_vertex_selected_fn, r_indices);
     case ATTR_DOMAIN_EDGE:
