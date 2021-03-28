@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -1287,6 +1287,10 @@ msgid "Matrix"
 msgstr "เมทริกซ์"
 
 
+msgid "Mask"
+msgstr "หน้ากาก"
+
+
 msgid "Step"
 msgstr "ขั้นตอน"
 
@@ -1365,10 +1369,6 @@ msgstr "จัตุรัสผกผัน"
 
 msgid "Repeat"
 msgstr "ทำซ้ำ"
-
-
-msgid "Mask"
-msgstr "หน้ากาก"
 
 
 msgid "Mask Texture"
@@ -3633,6 +3633,10 @@ msgid "192 kHz"
 msgstr "192 kHz"
 
 
+msgid "Manual"
+msgstr "ด้วยตนเอง"
+
+
 msgid "UI Line Width"
 msgstr "ความหนาเส้น UI"
 
@@ -3695,10 +3699,6 @@ msgstr "ชนิดทัศนียภาพ"
 
 msgid "Right to Left"
 msgstr "ขวาไปซ้าย"
-
-
-msgid "Manual"
-msgstr "ด้วยตนเอง"
 
 
 msgid "View layer name"

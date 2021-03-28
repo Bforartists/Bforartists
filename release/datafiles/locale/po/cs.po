@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7768,6 +7768,10 @@ msgid "Strength of modifier effect"
 msgstr "Velikost štětce"
 
 
+msgid "Mask"
+msgstr "Maska"
+
+
 msgid "Mirror Modifier"
 msgstr "Kopírovat modifikátor"
 
@@ -8142,10 +8146,6 @@ msgstr "Nástroj malování obrazu"
 
 msgid "Soften"
 msgstr "Zjemnit"
-
-
-msgid "Mask"
-msgstr "Maska"
 
 
 msgid "Jitter the position of the brush while painting"
@@ -8778,6 +8778,10 @@ msgstr "Globálně zakázat ve výřezech"
 
 msgid "Instance Offset"
 msgstr "Posun instance"
+
+
+msgid "Include"
+msgstr "Zahrnout"
 
 
 msgid "Bevel Depth"
@@ -16505,6 +16509,14 @@ msgid "Remove"
 msgstr "Odstranit"
 
 
+msgid "Placeholder"
+msgstr "Filtry"
+
+
+msgid "Auto-Refresh"
+msgstr "Obnovit"
+
+
 msgid "RGB Curves"
 msgstr "Křivky RGB"
 
@@ -16723,14 +16735,6 @@ msgstr "Plošky"
 
 msgid "Pass index number to convert to alpha"
 msgstr "Odstranit skupinu vertexů"
-
-
-msgid "Placeholder"
-msgstr "Filtry"
-
-
-msgid "Auto-Refresh"
-msgstr "Obnovit"
 
 
 msgid "Inpaint"
@@ -17291,6 +17295,10 @@ msgstr "Původ"
 
 msgid "Join Geometry"
 msgstr "Spojit Geometrii"
+
+
+msgid "Fill Type"
+msgstr "Fill Type"
 
 
 msgid "Object Info"
@@ -22870,10 +22878,6 @@ msgstr "Vytvořit UV"
 
 msgid "Generate a default UV map"
 msgstr "Vytvořit výchozí UV mapu"
-
-
-msgid "Fill Type"
-msgstr "Fill Type"
 
 
 msgid "Triangle Fan"
@@ -30365,10 +30369,6 @@ msgid "Bake Animation"
 msgstr "Bake Animaci"
 
 
-msgid "Include"
-msgstr "Zahrnout"
-
-
 msgid "Advanced Filter"
 msgstr "Rozšířený filtr"
 
@@ -32532,6 +32532,10 @@ msgid "Memory cache limit (in megabytes)"
 msgstr "Limit cache paměti"
 
 
+msgid "Manual"
+msgstr "Návod"
+
+
 msgid "Solid Lights"
 msgstr "Barva speculární složky difůzního světla"
 
@@ -33214,10 +33218,6 @@ msgstr "Barva oblohy"
 
 msgid "Map Resolution"
 msgstr "Rozlišení"
-
-
-msgid "Manual"
-msgstr "Návod"
 
 
 msgid "MO File Path"
@@ -35780,14 +35780,6 @@ msgstr "Další klíč"
 
 msgid "No display"
 msgstr "Zobrazit:"
-
-
-msgid "Scene render size"
-msgstr "Nastavit okraje renderování"
-
-
-msgid "Proxy size 100%"
-msgstr "Nastavit okraje renderování"
 
 
 msgid "Show TV title safe and action safe areas in preview"
@@ -39731,10 +39723,6 @@ msgstr "Záře"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Přidat vazbu aktivní kosti"
-
-
-msgid "Show Grease Pencil"
-msgstr "Skicovací tužka"
 
 
 msgid "Resolutions"

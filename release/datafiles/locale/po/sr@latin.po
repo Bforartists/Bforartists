@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -5138,6 +5138,10 @@ msgid "Lattice object to deform with"
 msgstr "Objekat kaveza za deformisanje"
 
 
+msgid "Mask"
+msgstr "Maska"
+
+
 msgid "Step"
 msgstr "Korak"
 
@@ -5412,10 +5416,6 @@ msgstr "Alatke bojenja slike"
 
 msgid "Soften"
 msgstr "Umekšanje"
-
-
-msgid "Mask"
-msgstr "Maska"
 
 
 msgid "Brush"
@@ -11390,6 +11390,10 @@ msgid "Remove"
 msgstr "Ukloni"
 
 
+msgid "Auto-Refresh"
+msgstr "Auto-osveži"
+
+
 msgid "RGB Curves"
 msgstr "RGB kriva"
 
@@ -11556,10 +11560,6 @@ msgstr "Korekcija tona"
 
 msgid "Hue Saturation Value"
 msgstr "Vredsnot tona i zasićenosti"
-
-
-msgid "Auto-Refresh"
-msgstr "Auto-osveži"
 
 
 msgid "Inpaint"
@@ -11856,6 +11856,10 @@ msgstr "Jednako"
 
 msgid "Original"
 msgstr "Original"
+
+
+msgid "Fill Type"
+msgstr "Vrsta uklapanja"
 
 
 msgid "Object Info"
@@ -16212,10 +16216,6 @@ msgstr "Nasumično opadanje"
 
 msgid "Proportional Editing"
 msgstr "Proporcionalna izmena"
-
-
-msgid "Fill Type"
-msgstr "Vrsta uklapanja"
 
 
 msgid "Triangle Fan"
@@ -22345,10 +22345,6 @@ msgid "Audio output device"
 msgstr "Ulazni zvučni uređaj"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Null uređaj - bez audio izlaza"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Bafer mešanja zvuka"
 
@@ -22479,6 +22475,10 @@ msgstr "Veličina memorijske ostave (u megabajtima)"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Maksimalan broj linija za čuvanje u ostavi konzole"
+
+
+msgid "Manual"
+msgstr "Ručno"
 
 
 msgid "Solid Lights"
@@ -22811,10 +22811,6 @@ msgstr "Pri renderovanju zapremine, računaj da je gustina svuda ista (ne korist
 
 msgid "Map Resolution"
 msgstr "Rezolucija"
-
-
-msgid "Manual"
-msgstr "Ručno"
 
 
 msgid "MO File Path"
@@ -24153,10 +24149,6 @@ msgstr "Tekuće"
 
 msgid "Show current frame only"
 msgstr "Prikaži samo tekući kadar"
-
-
-msgid "Scene render size"
-msgstr "Veličina screne za rendering"
 
 
 msgid "Replace Text"
@@ -26449,10 +26441,6 @@ msgid "Glow"
 msgstr "Sjaj"
 
 
-msgid "Show Grease Pencil"
-msgstr "Prikaži skiciranje"
-
-
 msgctxt "Operator"
 msgid "Top"
 msgstr "Odozgo"
@@ -27062,6 +27050,11 @@ msgstr "Ubaci pozu izvrnutu po X osi"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Očisti slobodoručne ivice"
+
+
+msgctxt "Operator"
 msgid "Recalculate Outside"
 msgstr "Preračunaj ka spolja"
 
@@ -27103,11 +27096,6 @@ msgstr "X-zrak"
 msgctxt "Operator"
 msgid "Assign to Group"
 msgstr "Pridruži novoj grupi"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Očisti slobodoručne ivice"
 
 
 msgctxt "Operator"

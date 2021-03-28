@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -10824,6 +10824,14 @@ msgid "Strength of modifier effect"
 msgstr "Força do efeito do modificador."
 
 
+msgid "Source Object"
+msgstr "Objeto fonte"
+
+
+msgid "Mask"
+msgstr "Máscara"
+
+
 msgid "Mirror Modifier"
 msgstr "Modificador - Espelho"
 
@@ -11447,10 +11455,6 @@ msgstr "Ferramenta de pintura de imagem"
 
 msgid "Soften"
 msgstr "Atenuar"
-
-
-msgid "Mask"
-msgstr "Máscara"
 
 
 msgid "Jitter the position of the brush while painting"
@@ -22822,10 +22826,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "Multiplica os valores da fonte com os da destinação, usando um determinado ajuste como fator."
 
 
-msgid "Source Object"
-msgstr "Objeto fonte"
-
-
 msgid "Object to transfer data from"
 msgstr "Objeto a partir do qual transferir dados."
 
@@ -27077,6 +27077,30 @@ msgid "Remove"
 msgstr "Remover"
 
 
+msgid "Has Layers"
+msgstr "Possui camadas"
+
+
+msgid "True if this image has any named layer"
+msgstr "Verdadeiro caso esta imagem possua quaisquer camadas nomeadas."
+
+
+msgid "Has View"
+msgstr "Possui visualização"
+
+
+msgid "True if this image has multiple views"
+msgstr "Verdadeiro caso esta imagem possua múltiplas visualizações."
+
+
+msgid "Placeholder"
+msgstr "Manter lugar"
+
+
+msgid "Auto-Refresh"
+msgstr "Atualizar automaticamente"
+
+
 msgid "RGB Curves"
 msgstr "Curvas de cores"
 
@@ -27439,30 +27463,6 @@ msgstr "Número de índice de passo para converter para alfa."
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "Aplica efeito de antisserrilhamento para a máscara."
-
-
-msgid "Has Layers"
-msgstr "Possui camadas"
-
-
-msgid "True if this image has any named layer"
-msgstr "Verdadeiro caso esta imagem possua quaisquer camadas nomeadas."
-
-
-msgid "Has View"
-msgstr "Possui visualização"
-
-
-msgid "True if this image has multiple views"
-msgstr "Verdadeiro caso esta imagem possua múltiplas visualizações."
-
-
-msgid "Placeholder"
-msgstr "Manter lugar"
-
-
-msgid "Auto-Refresh"
-msgstr "Atualizar automaticamente"
 
 
 msgid "Straight Alpha Output"
@@ -28116,6 +28116,10 @@ msgstr "Produto escalar"
 
 msgid "Original"
 msgstr "Original"
+
+
+msgid "Fill Type"
+msgstr "Tipo de preenchimento"
 
 
 msgid "Object Info"
@@ -28961,10 +28965,6 @@ msgstr "Nome do conector"
 
 msgid "Data type of the socket"
 msgstr "Tipo de dados do conector."
-
-
-msgid "Link is valid"
-msgstr "As ligações são válidas."
 
 
 msgid "From node"
@@ -37775,10 +37775,6 @@ msgid "Generate a default UV map"
 msgstr "Gera um mapa UV padrão"
 
 
-msgid "Fill Type"
-msgstr "Tipo de preenchimento"
-
-
 msgid "Don't fill at all"
 msgstr "Não preenche nenhuma das terminações."
 
@@ -39139,6 +39135,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "Inicia o operador de transformação após a inserção do nó."
 
 
+msgid "Data-block name to assign"
+msgstr "Nome do bloco de dados para atribuir."
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Adicionar nó de arquivo"
@@ -39146,10 +39146,6 @@ msgstr "Adicionar nó de arquivo"
 
 msgid "Add a file node to the current node editor"
 msgstr "Adiciona um nó de arquivo ao editor de nó atual."
-
-
-msgid "Data-block name to assign"
-msgstr "Nome do bloco de dados para atribuir."
 
 
 msgctxt "Operator"
@@ -52098,10 +52094,6 @@ msgid "Audio output device"
 msgstr "Dispositivo de saída de áudio"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Dispositivo nulo - não haverá saída de áudio."
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Contingenciador de mixagem de áudio"
 
@@ -52276,6 +52268,10 @@ msgstr "Computação GLSL"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "Número máximo de linhas para guardar para o contingenciador de console."
+
+
+msgid "Manual"
+msgstr "Manual"
 
 
 msgid "Solid Lights"
@@ -53860,10 +53856,6 @@ msgstr "Número máximo de rebatimentos com os quais a luz de plano de fundo con
 
 msgid "Map Resolution"
 msgstr "Resolução de mapa"
-
-
-msgid "Manual"
-msgstr "Manual"
 
 
 msgid "Interpolation method to use for volumes"
@@ -58299,30 +58291,6 @@ msgstr "Mostra somente o quadro atual."
 
 msgid "No display"
 msgstr "Sem exibição"
-
-
-msgid "Scene render size"
-msgstr "Tamanho de renderização da cena"
-
-
-msgid "Proxy size 25%"
-msgstr "Tamanho da aproximação 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Tamanho da aproximação 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Tamanho da aproximação 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Tamanho da aproximação 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Sem aproximação, renderização completa"
 
 
 msgid "Use Backdrop"
@@ -63957,10 +63925,6 @@ msgid "Reload Strips and Adjust Length"
 msgstr "Recarregar as faixas e ajustar comprimento"
 
 
-msgid "Show Grease Pencil"
-msgstr "Mostrar lápis de cera"
-
-
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Intervalo de quadros original: %d-%d (%d)"
 
@@ -64840,6 +64804,11 @@ msgstr "Limpar marcações de ressaltos"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Limpar marcações de arestas Freestyle"
+
+
+msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "Rotacionar aresta no sentido horário"
 
@@ -64971,11 +64940,6 @@ msgstr "Raio-X"
 msgctxt "Operator"
 msgid "Assign to Group"
 msgstr "Atribuir a um grupo"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Limpar marcações de arestas Freestyle"
 
 
 msgctxt "Operator"

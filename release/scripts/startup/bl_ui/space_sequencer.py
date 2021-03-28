@@ -113,16 +113,18 @@ class SEQUENCER_HT_tool_header(Header):
     def draw_tool_settings(self, context):
         pass
 
-        # Currently unused.
-        '''
         layout = self.layout
 
         # Active Tool
         # -----------
         from bl_ui.space_toolsystem_common import ToolSelectPanelHelper
+        # Most callers assign the `tool` & `tool_mode`, currently the result is not used.
+        """
         tool = ToolSelectPanelHelper.draw_active_tool_header(context, layout)
         tool_mode = context.mode if tool is None else tool.mode
-        '''
+        """
+        # Only draw the header.
+        ToolSelectPanelHelper.draw_active_tool_header(context, layout)
 
 
 class SEQUENCER_HT_header(Header):
@@ -1487,7 +1489,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             split.prop(scene, "audio_volume", text="")
             sub.use_property_decorate = False
 
-        if strip.scene_input == 'CAMERA':         
+        if strip.scene_input == 'CAMERA':
             layout = layout.column(align = True)
             layout.label(text = "Show")
             layout.use_property_split = False
@@ -2089,7 +2091,7 @@ class SEQUENCER_PT_view(SequencerButtonsPanel_Output, Panel):
         col = layout.column()
         col.use_property_split = False
         prop = col.prop(st, "use_proxies")
-        if st.proxy_render_size in ('NONE', 'SCENE'):
+        if st.proxy_render_size in {'NONE', 'SCENE'}:
             col.enabled = False
 
         col = layout.column()
@@ -2381,7 +2383,7 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
 
             col = layout.column(align = True)
             if st.view_type == 'SEQUENCER':
-                
+
                 split = layout.split(factor = 0.6)
                 col = split.column()
                 col.use_property_split = False
@@ -2390,13 +2392,13 @@ class SEQUENCER_PT_view_options(bpy.types.Panel):
                 if st.show_backdrop:
                     col.label(icon='DISCLOSURE_TRI_DOWN')
                 else:
-                    col.label(icon='DISCLOSURE_TRI_RIGHT')                
-                
+                    col.label(icon='DISCLOSURE_TRI_RIGHT')
+
             if is_preview or st.show_backdrop:
                 row = layout.row()
                 row.separator()
                 row.prop(st, "show_transform_preview", text="Preview During Transform")
-                
+
             col = layout.column(align = True)
             col.prop(st, "show_seconds")
             col.prop(st, "show_locked_time")

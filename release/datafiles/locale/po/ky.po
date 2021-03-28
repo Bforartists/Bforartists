@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -892,6 +892,10 @@ msgid "Matrix"
 msgstr "Матрица"
 
 
+msgid "Mask"
+msgstr "Маска"
+
+
 msgid "Catmull-Clark"
 msgstr "Катмулл-Кларк"
 
@@ -910,10 +914,6 @@ msgstr "Көк"
 
 msgid "Users"
 msgstr "Колдонуучулар"
-
-
-msgid "Mask"
-msgstr "Маска"
 
 
 msgid "Brush"
@@ -2897,16 +2897,16 @@ msgid "Memory Cache Limit"
 msgstr "Эс кэшинин чектөөсү"
 
 
+msgid "Manual"
+msgstr "Колдонмо"
+
+
 msgid "New Window"
 msgstr "Жаңы терезе"
 
 
 msgid "Translate Interface"
 msgstr "Интерфейсти которуу"
-
-
-msgid "Manual"
-msgstr "Колдонмо"
 
 
 msgid "Language Name"
