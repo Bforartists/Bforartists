@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -8927,6 +8927,14 @@ msgid "Strength of modifier effect"
 msgstr "ﺮﻴﻐﻤﻟﺍ ﺮﻴﺛﺎﺗ ﺓﺪﺷ"
 
 
+msgid "Source Object"
+msgstr "ﺭﺪﺼﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ"
+
+
+msgid "Mask"
+msgstr "ءﺎﻄﻏ"
+
+
 msgid "Mirror Modifier"
 msgstr "ﺔﻠﺛﺎﻤﻤﻟﺍ ﺮﻴﻐﻣ"
 
@@ -9401,10 +9409,6 @@ msgstr "ﺭﻮﺼﻟﺍ ﻢﺳﺭ ﺓﺍﺩﺍ"
 
 msgid "Soften"
 msgstr "ﻒﻄّﻟ"
-
-
-msgid "Mask"
-msgstr "ءﺎﻄﻏ"
 
 
 msgid "Jitter the position of the brush while painting"
@@ -18087,10 +18091,6 @@ msgid "Below Threshold"
 msgstr "ﺔﺒﺘﻌﻟﺍ ﺖﺤﺗ"
 
 
-msgid "Source Object"
-msgstr "ﺭﺪﺼﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ"
-
-
 msgid "Object to transfer data from"
 msgstr "ﺕﺎﻧﺎﻴﺒﻠﻟ ﺭﺪﺼﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ"
 
@@ -20418,6 +20418,30 @@ msgid "Remove"
 msgstr "ﺔﻟﺍﺯﺇ"
 
 
+msgid "Has Layers"
+msgstr "ﺕﺎﻘﺒﻃ ﺎﻬﻳﺪﻟ"
+
+
+msgid "True if this image has any named layer"
+msgstr "ﻢﺳﺈﺑ ﺔﻘﺒﻃ ﻱﺃ ﺓﺭﻮﺼﻟﺍ ﻩﺬﻬﻟ ﺖﻧﺎﻛ ﺍﺫﺍ ﺢﻴﺤﺻ"
+
+
+msgid "Has View"
+msgstr "ﺮﻈﻨﻣ ﺎﻬﻳﺪﻟ"
+
+
+msgid "True if this image has multiple views"
+msgstr "ﺮﻇﺎﻨﻣ ﺓﺪﻋ ﺓﺭﻮﺼﻟﺍ ﻩﺬﻬﻟ ﺖﻧﺎﻛ ﺍﺫﺍ ﺢﻴﺤﺻ"
+
+
+msgid "Placeholder"
+msgstr "ﻊﺿﻮﻣ ﺰﺟﺎﺣ"
+
+
+msgid "Auto-Refresh"
+msgstr "ﻲﺋﺎﻘﻠﺗ ﺚﻳﺪﺤﺗ"
+
+
 msgid "RGB Curves"
 msgstr "ﻥﻮﻠﻟﺍ ﻰﻨﺤﻨﻣ"
 
@@ -20640,30 +20664,6 @@ msgstr "ﺰﻴﻛﺮﺘﻟﺍ/ﺯﺎﻴﺤﻧﻻ﻿ﺍ"
 
 msgid "ID Mask"
 msgstr "ﻉﺎﻨﻘﻟﺍ ﻑﺮّﻌﻣ"
-
-
-msgid "Has Layers"
-msgstr "ﺕﺎﻘﺒﻃ ﺎﻬﻳﺪﻟ"
-
-
-msgid "True if this image has any named layer"
-msgstr "ﻢﺳﺈﺑ ﺔﻘﺒﻃ ﻱﺃ ﺓﺭﻮﺼﻟﺍ ﻩﺬﻬﻟ ﺖﻧﺎﻛ ﺍﺫﺍ ﺢﻴﺤﺻ"
-
-
-msgid "Has View"
-msgstr "ﺮﻈﻨﻣ ﺎﻬﻳﺪﻟ"
-
-
-msgid "True if this image has multiple views"
-msgstr "ﺮﻇﺎﻨﻣ ﺓﺪﻋ ﺓﺭﻮﺼﻟﺍ ﻩﺬﻬﻟ ﺖﻧﺎﻛ ﺍﺫﺍ ﺢﻴﺤﺻ"
-
-
-msgid "Placeholder"
-msgstr "ﻊﺿﻮﻣ ﺰﺟﺎﺣ"
-
-
-msgid "Auto-Refresh"
-msgstr "ﻲﺋﺎﻘﻠﺗ ﺚﻳﺪﺤﺗ"
 
 
 msgid "Inpaint"
@@ -21057,6 +21057,10 @@ msgstr "ﺢﻴﺤﺻ ﻢﻗﺭ"
 
 msgid "Original"
 msgstr "ﻲﻠﺻﺃ"
+
+
+msgid "Fill Type"
+msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﻉﻮﻧ"
 
 
 msgid "Label Font Size"
@@ -25572,10 +25576,6 @@ msgstr "ﻲﺋﺍﻮﺸﻋ ﻲﺷﻼ﻿ﺗ"
 
 msgid "Proportional Size"
 msgstr "ﻲﺒﺴﻨﻟﺍ ﻢﺠﺤﻟﺍ"
-
-
-msgid "Fill Type"
-msgstr "ﺔﺌﺒﻌﺘﻟﺍ ﻉﻮﻧ"
 
 
 msgid "Don't fill at all"
@@ -32918,10 +32918,6 @@ msgid "Audio output device"
 msgstr "ﺕﻮﺼﻟﺍ ﺝﺮﺧ ﺯﺎﻬﺟ"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "ﺕﻮﺼﻠﻟ ﺝﺮﺧ ﻚﻟﺎﻨﻫ ﻥﻮﻜﻳ ﻦﻟ - ﻡﺪﻌﻨﻣ ﺯﺎﻬﺟ"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "ﺕﻮﺼﻟﺍ ﺝﺰﻣ ﻥﺰﺨﻣ"
 
@@ -33072,6 +33068,10 @@ msgstr "GLSL ﺏﺎﺴﺣ"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr " ﺮﻣﺍﻭﻷ﻿ﺍ ﺔﺣﻮﻟ ﻥﺰﺨﻣ ﻲﻓ ﻆﻔﺤﻠﻟ ﻁﻮﻄﺧ ﺩﺪﻋ ﻰﺼﻗﺃ"
+
+
+msgid "Manual"
+msgstr "ﻞﻴﻟﺪﻟﺍ"
 
 
 msgid "Solid Lights"
@@ -33732,10 +33732,6 @@ msgstr "ﺙﺎﻌﺒﻧﻻ﻿ﺍ ﺔﻌﺷﻻ﻿ ﻦﺋﺎﻜﻟﺍ ﺔﻳﺅﺭ
 
 msgid "Map Resolution"
 msgstr "ﺔﻄﻳﺮﺨﻟﺍ ﺔﻗﺩ"
-
-
-msgid "Manual"
-msgstr "ﻞﻴﻟﺪﻟﺍ"
 
 
 msgid "MO File Path"
@@ -35680,14 +35676,6 @@ msgstr "ﻲﻟﺎﺤﻟﺍ"
 
 msgid "Show current frame only"
 msgstr "ﻂﻘﻓ ﻲﻟﺎﺤﻟﺍ ﺭﺎﻃﻻ﻿ﺍ ﺮﻬﻇﺍ"
-
-
-msgid "Scene render size"
-msgstr "ﺪﻬﺸﻤﻟﺍ ﺮﻴﻴﺼﺗ ﻢﺠﺣ"
-
-
-msgid "Proxy size 50%"
-msgstr "%50 ﺏﻭﺪﻨﻣ ﻢﺠﺣ"
 
 
 msgid "Show TV title safe and action safe areas in preview"
@@ -38840,10 +38828,6 @@ msgstr "ﺎﻴﺳﻭﺎﻏ ﺐﺒﺿ"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "ﻝﻮﻄﻟﺍ ﻞﻳﺪﻌﺗ ﻭ ﺔﻃﺮﺷﻷ﻿ﺍ ﺚﻳﺪﺤﺗ"
-
-
-msgid "Show Grease Pencil"
-msgstr "ﺕﺎﻈﺣﻼ﻿ﻣ ﻢﻠﻗ"
 
 
 msgid "Unpack"

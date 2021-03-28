@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -16064,6 +16064,14 @@ msgid "Strength of modifier effect"
 msgstr "Sức của hiệu ứng cụ sửa đổi"
 
 
+msgid "Source Object"
+msgstr "Vật Thể Nguồn"
+
+
+msgid "Mask"
+msgstr "Mặt Nạ"
+
+
 msgid "Mirror Modifier"
 msgstr "Cụ Sửa Đổi Gương"
 
@@ -17709,10 +17717,6 @@ msgid "Soften"
 msgstr "Mềm Hóa"
 
 
-msgid "Mask"
-msgstr "Mặt Nạ"
-
-
 msgid "Invert Pressure for Density"
 msgstr "Đảo Nghịch Áp Suất Cho Tỉ Trọng"
 
@@ -19203,6 +19207,10 @@ msgstr "Dịch Thực Thể"
 
 msgid "Offset from the origin to use when instancing"
 msgstr "Sử dụng dịch từ gốc tọa độ khi đang làm thực thể"
+
+
+msgid "Include"
+msgstr "Gồm"
 
 
 msgid "Objects that are directly in this collection"
@@ -33344,10 +33352,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "Nhân giá trị nguồn với giá trị đích, dùng ngưỡng được xác định làm hệ số"
 
 
-msgid "Source Object"
-msgstr "Vật Thể Nguồn"
-
-
 msgid "Object to transfer data from"
 msgstr "Truyền dữ liệu từ vật thể nào"
 
@@ -38664,10 +38668,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "Nên cắt kích cỡ của ảnh ngõ vào hay không"
 
 
-msgid "Cryptomatte"
-msgstr "Mặ Nạ Mã"
-
-
 msgid "Add object or material to matte, by picking a color from the Pick output"
 msgstr "Thêm vật thể hay vật liệu vào mặt nạ, bằng chọn màu từ Sự Rút ngõ ra"
 
@@ -38686,6 +38686,38 @@ msgstr "Xóa"
 
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "Xá vật thể hay vật liệu từ mặt nạ, bằng chọn một màu từ Sự Rút ngõ ra"
+
+
+msgid "Cryptomatte"
+msgstr "Mặ Nạ Mã"
+
+
+msgid "Has Layers"
+msgstr "Có Lớp"
+
+
+msgid "True if this image has any named layer"
+msgstr "Đúng nếu ảnh này có lớp nào được đặt tên"
+
+
+msgid "Has View"
+msgstr "Có Màn"
+
+
+msgid "True if this image has multiple views"
+msgstr "Đúng nếu ảnh này có đa màn"
+
+
+msgid "Placeholder"
+msgstr "Chỗ Chứa"
+
+
+msgid "Asset"
+msgstr "Tích Sản"
+
+
+msgid "Auto-Refresh"
+msgstr "Tự Động Nạp Lại"
 
 
 msgid "RGB Curves"
@@ -39082,30 +39114,6 @@ msgstr "Chỉ số vòng cho biến đổi thành độ đục"
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "Áp dụng bộ lọc khử răng cưa"
-
-
-msgid "Has Layers"
-msgstr "Có Lớp"
-
-
-msgid "True if this image has any named layer"
-msgstr "Đúng nếu ảnh này có lớp nào được đặt tên"
-
-
-msgid "Has View"
-msgstr "Có Màn"
-
-
-msgid "True if this image has multiple views"
-msgstr "Đúng nếu ảnh này có đa màn"
-
-
-msgid "Placeholder"
-msgstr "Chỗ Chứa"
-
-
-msgid "Auto-Refresh"
-msgstr "Tự Động Nạp Lại"
 
 
 msgid "Straight Alpha Output"
@@ -40403,6 +40411,22 @@ msgstr "Là Màn Chiếu"
 
 msgid "Join Geometry"
 msgstr "Kết Nối Hình Dạng"
+
+
+msgid "Fill Type"
+msgstr "Loại Đầy"
+
+
+msgid "N-Gon"
+msgstr "Đa Giác"
+
+
+msgid "End Points"
+msgstr "Điểm Kết Thúc"
+
+
+msgid "UV Sphere"
+msgstr "Hình Cầu UV"
 
 
 msgid "Object Info"
@@ -41840,10 +41864,6 @@ msgstr "Tên của ổ cắm"
 
 msgid "Data type of the socket"
 msgstr "Dữ liệu của ổ cắm"
-
-
-msgid "Link is valid"
-msgstr "Liên kết hợp lệ"
 
 
 msgid "From node"
@@ -54861,16 +54881,8 @@ msgid "Generate a default UV map"
 msgstr "Chế tạo một bản đồ UV mặc định"
 
 
-msgid "Fill Type"
-msgstr "Loại Đầy"
-
-
 msgid "Don't fill at all"
 msgstr "Hoàn toàn đừng đầy"
-
-
-msgid "N-Gon"
-msgstr "Đa Giác"
 
 
 msgid "Use n-gons"
@@ -56524,6 +56536,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "Bắt đầu thao tác biến hóa sau chèn giao điểm"
 
 
+msgid "Data-block name to assign"
+msgstr "Tên cục dữ liệu để chỉ định"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "Thêm Giao Điểm Tệp"
@@ -56531,10 +56547,6 @@ msgstr "Thêm Giao Điểm Tệp"
 
 msgid "Add a file node to the current node editor"
 msgstr "Thêm một giao điểm tệp trong bộ biên tập giao điểm hiện tại"
-
-
-msgid "Data-block name to assign"
-msgstr "Tên cục dữ liệu để chỉ định"
 
 
 msgctxt "Operator"
@@ -60664,22 +60676,6 @@ msgstr "Ánh Xạ Lại Người Dùng"
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "Làm cho hết người dùng các cục dữ liệu được chọn dùng cục dữ liệu hiện tại (đã bấm)"
-
-
-msgid "Add Library Override"
-msgstr "Thêm Đồ Thay Thế Thư Viện"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "Chế tạo một đồ thay thế địa phương của cục dữ liệu thư viện được liên kết này"
-
-
-msgid "Add Library Override Hierarchy"
-msgstr "Thêm Tầng Bậc Đồ Thay Thế Thư Viện"
-
-
-msgid "Add a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "Thêm một đồ thay thế địa phương của cục dữ liệu được liên kết này, và tầng bậc nhờ của nó"
 
 
 msgid "Convert Proxy to Override"
@@ -69195,10 +69191,6 @@ msgid "Start placing the center position"
 msgstr "Bắt đầu đặt vị trí của trung tâm"
 
 
-msgid "UV Sphere"
-msgstr "Hình Cầu UV"
-
-
 msgid "ICO Sphere"
 msgstr "Hình Cầu Nhị Thập Diện"
 
@@ -72962,10 +72954,6 @@ msgstr "Bộ Lọc"
 
 msgid "Bake Animation"
 msgstr "Nướng Hoạt Hình"
-
-
-msgid "Include"
-msgstr "Gồm"
 
 
 msgid "Advanced Filter"
@@ -76765,10 +76753,6 @@ msgid "Audio output device"
 msgstr "Thiết bị phát âm thanh"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Thiết bị rỗng - sẽ không phát âm thanh"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "Đệm Pha Trộn Âm Thanh"
 
@@ -77057,12 +77041,12 @@ msgid "Disk cache limit (in gigabytes)"
 msgstr "Giới hạn đệm chứa đĩa (gigabyte)"
 
 
+msgid "Manual"
+msgstr "Bằng Tay"
+
+
 msgid "Solid Lights"
 msgstr "Đèn Rắn"
-
-
-msgid "Lights user to display objects in solid shading mode"
-msgstr "Đèn dùng cho hiển thị vật thể trong chế độ tô sắc rắn"
 
 
 msgid "Texture Collection Rate"
@@ -79443,10 +79427,6 @@ msgstr "Không lấy mẫu vật từ cảnh hậu, nhánh hơn nhưng có thể
 
 msgid "Automatically try to determine the best setting"
 msgstr "Tự động xác định đặc tính tốt nhất"
-
-
-msgid "Manual"
-msgstr "Bằng Tay"
 
 
 msgid "Manually set the resolution of the sampling map, higher values are slower and require more memory but reduce noise"
@@ -85966,30 +85946,6 @@ msgid "No display"
 msgstr "Không hiển thị"
 
 
-msgid "Scene render size"
-msgstr "Kích cỡ kết xuất cảnh"
-
-
-msgid "Proxy size 25%"
-msgstr "Kích cỡ đại lý 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "Kích cỡ đại lý 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "Kích cỡ đại lý 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "Kích cỡ đại lý 100%"
-
-
-msgid "No proxy, full render"
-msgstr "Không dùng đại lý, kết xuất toàn phần"
-
-
 msgid "Use Backdrop"
 msgstr "Ảnh Nền"
 
@@ -89212,10 +89168,6 @@ msgstr "Tất Cả Điểm"
 
 msgid "Snap to all points"
 msgstr "Hút dính đến hết điểm"
-
-
-msgid "End Points"
-msgstr "Điểm Kết Thúc"
 
 
 msgid "Snap to first and last points and interpolate"
@@ -95703,10 +95655,6 @@ msgid "Use for Rendering"
 msgstr "Dùng cho Kết Xuất"
 
 
-msgid "Asset"
-msgstr "Tích Sản"
-
-
 msgid "Accurate Mode"
 msgstr "Chế Độ Chính Xác"
 
@@ -97227,10 +97175,6 @@ msgstr "Bật Tiếng Các Đoạn Chưa Chọn"
 msgctxt "Operator"
 msgid "Hold Split"
 msgstr "Giữ Chẻ"
-
-
-msgid "Show Grease Pencil"
-msgstr "Hiện Bút Sáp"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -98783,10 +98727,6 @@ msgid "Face Set from Edit Mode Selection"
 msgstr "Tập Hợp Mặt Từ Sự Lựa Chọn Của Chế Độ Biên Tập"
 
 
-msgid "Init Face Sets"
-msgstr "Khởi Động Tập Hợp Mặt"
-
-
 msgctxt "Operator"
 msgid "Grow Face Set"
 msgstr "Tăng Tập Hợp Mặt"
@@ -99508,6 +99448,11 @@ msgstr "Ký Bén Từ Các Đỉnh"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Xóa Cạnh Phong Cách Tự Do"
+
+
+msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "Xiên Cạnh"
 
@@ -99862,11 +99807,6 @@ msgstr "Cầu Mặt"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "Xóa Mặt"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Xóa Cạnh Phong Cách Tự Do"
 
 
 msgctxt "Operator"

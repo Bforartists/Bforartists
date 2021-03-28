@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -14045,6 +14045,14 @@ msgid "Strength of modifier effect"
 msgstr "모디파이어 이펙트의 강도"
 
 
+msgid "Source Object"
+msgstr "소스 오브젝트"
+
+
+msgid "Mask"
+msgstr "마스크"
+
+
 msgid "Mirror Modifier"
 msgstr "미러 모디파이어"
 
@@ -15190,10 +15198,6 @@ msgid "Soften"
 msgstr "부드럽게"
 
 
-msgid "Mask"
-msgstr "마스크"
-
-
 msgid "Invert to Scrape or Fill"
 msgstr "스크랩 또는 채우기로 반전"
 
@@ -16284,6 +16288,10 @@ msgstr "인스턴스 오프셋"
 
 msgid "Offset from the origin to use when instancing"
 msgstr "인스턴스 할 때 오리진에서 오프셋"
+
+
+msgid "Include"
+msgstr "포함"
 
 
 msgid "Objects that are directly in this collection"
@@ -29201,10 +29209,6 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "목적지 하나로 소스 값을 곱하기, 다른 팩터로 주어진 임계 값을 사용하여"
 
 
-msgid "Source Object"
-msgstr "소스 오브젝트"
-
-
 msgid "Object to transfer data from"
 msgstr "다음에서 데이터를 전송할 오브젝트"
 
@@ -33805,10 +33809,6 @@ msgid "Whether to crop the size of the input image"
 msgstr "입력 이미지의 크기를 자르는 여부"
 
 
-msgid "Cryptomatte"
-msgstr "크립토마테"
-
-
 msgid "Add object or material to matte, by picking a color from the Pick output"
 msgstr "선택 출력에서 색상을 골라 매트 또는 대상에 오브젝트를 추가합니다"
 
@@ -33827,6 +33827,38 @@ msgstr "제거"
 
 msgid "Remove object or material from matte, by picking a color from the Pick output"
 msgstr "선택 출력에서 색상을 골라 매트 또는 대상에서 매테리얼을 제거합니다"
+
+
+msgid "Cryptomatte"
+msgstr "크립토마테"
+
+
+msgid "Has Layers"
+msgstr "가지고 있는 레이어"
+
+
+msgid "True if this image has any named layer"
+msgstr "이 이미지에 명명된 레이어가 있는 경우는 True"
+
+
+msgid "Has View"
+msgstr "뷰를 가지고 있는"
+
+
+msgid "True if this image has multiple views"
+msgstr "이 이미지가 다중의 뷰를 가지고 있는 경우 True"
+
+
+msgid "Placeholder"
+msgstr "자리 표시자"
+
+
+msgid "Asset"
+msgstr "에셋"
+
+
+msgid "Auto-Refresh"
+msgstr "자동 새로 고침"
 
 
 msgid "RGB Curves"
@@ -34211,30 +34243,6 @@ msgstr "알파로 변환할 인덱스 번호를 패스"
 
 msgid "Apply an anti-aliasing filter to the mask"
 msgstr "마스크에 안티앨리어싱 필터를 적용"
-
-
-msgid "Has Layers"
-msgstr "가지고 있는 레이어"
-
-
-msgid "True if this image has any named layer"
-msgstr "이 이미지에 명명된 레이어가 있는 경우는 True"
-
-
-msgid "Has View"
-msgstr "뷰를 가지고 있는"
-
-
-msgid "True if this image has multiple views"
-msgstr "이 이미지가 다중의 뷰를 가지고 있는 경우 True"
-
-
-msgid "Placeholder"
-msgstr "자리 표시자"
-
-
-msgid "Auto-Refresh"
-msgstr "자동 새로 고침"
 
 
 msgid "Straight Alpha Output"
@@ -35128,6 +35136,10 @@ msgstr "A를 A보다 작거나 같은 B의 가장 큰 정수 배수로 반올림
 
 msgid "Original"
 msgstr "원본"
+
+
+msgid "Fill Type"
+msgstr "채우기 유형"
 
 
 msgid "Object Info"
@@ -36197,10 +36209,6 @@ msgstr "소켓의 이름"
 
 msgid "Data type of the socket"
 msgstr "소켓의 데이터 유형"
-
-
-msgid "Link is valid"
-msgstr "연결가 유효함"
 
 
 msgid "From node"
@@ -47412,10 +47420,6 @@ msgid "Generate a default UV map"
 msgstr "기본 UV 맵을 생성"
 
 
-msgid "Fill Type"
-msgstr "채우기 유형"
-
-
 msgid "Don't fill at all"
 msgstr "아예 작성하지 않음"
 
@@ -48962,6 +48966,10 @@ msgid "Start transform operator after inserting the node"
 msgstr "노드를 삽입한 이후에 작업자를 변환 시작"
 
 
+msgid "Data-block name to assign"
+msgstr "할당하는 데이터 블록 이름"
+
+
 msgctxt "Operator"
 msgid "Add File Node"
 msgstr "파일 노드를 추가"
@@ -48969,10 +48977,6 @@ msgstr "파일 노드를 추가"
 
 msgid "Add a file node to the current node editor"
 msgstr "현재 노드 에디터에 파일 노드를 추가"
-
-
-msgid "Data-block name to assign"
-msgstr "할당하는 데이터 블록 이름"
 
 
 msgctxt "Operator"
@@ -52457,14 +52461,6 @@ msgstr "유저를 재배치"
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
 msgstr "선택한 데이터-블록의 모든 유저가 현재 (클릭된) 블록을 대신 사용하도록합니다"
-
-
-msgid "Add Library Override"
-msgstr "라이브러리 덮어 쓰기를 추가"
-
-
-msgid "Add a local override of this linked data-block"
-msgstr "이 링크된 데이터 블록의 로컬 재정의를 추가"
 
 
 msgid "Paste"
@@ -62528,10 +62524,6 @@ msgid "Bake Animation"
 msgstr "에니메이션을 베이크"
 
 
-msgid "Include"
-msgstr "포함"
-
-
 msgid "Advanced Filter"
 msgstr "고급 필터"
 
@@ -65922,10 +65914,6 @@ msgid "Audio output device"
 msgstr "오디오 출력 장치"
 
 
-msgid "Null device - there will be no audio output"
-msgstr "Null 장치 - 오디오가 출력 되지 않음"
-
-
 msgid "Audio Mixing Buffer"
 msgstr "오디오 믹싱 버퍼"
 
@@ -66112,6 +66100,10 @@ msgstr "GLSL 계산"
 
 msgid "Maximum number of lines to store for the console buffer"
 msgstr "콘솔 버퍼에 저장할 라인의 최대치 수"
+
+
+msgid "Manual"
+msgstr "메뉴얼"
 
 
 msgid "Solid Lights"
@@ -68248,10 +68240,6 @@ msgstr "배경을 샘플링하지 마십시오. 빠르지만 단색이 아닌 �
 
 msgid "Automatically try to determine the best setting"
 msgstr "최적의 설정을 자동으로 결정합니다"
-
-
-msgid "Manual"
-msgstr "메뉴얼"
 
 
 msgid "Manually set the resolution of the sampling map, higher values are slower and require more memory but reduce noise"
@@ -74227,30 +74215,6 @@ msgstr "현재 프레임 만 표시"
 
 msgid "No display"
 msgstr "표시 없음"
-
-
-msgid "Scene render size"
-msgstr "씬 렌더 크기"
-
-
-msgid "Proxy size 25%"
-msgstr "프록시 크기 25%"
-
-
-msgid "Proxy size 50%"
-msgstr "프록시 크기 50%"
-
-
-msgid "Proxy size 75%"
-msgstr "프록시 크기 75%"
-
-
-msgid "Proxy size 100%"
-msgstr "프록시 크기 100%"
-
-
-msgid "No proxy, full render"
-msgstr "프록시 없음, 전체 렌더"
 
 
 msgid "Use Backdrop"
@@ -81820,10 +81784,6 @@ msgid "Use for Rendering"
 msgstr "렌더링에 사용"
 
 
-msgid "Asset"
-msgstr "에셋"
-
-
 msgid "Accurate Mode"
 msgstr "정확한 모드"
 
@@ -83056,10 +83016,6 @@ msgstr "선택되지 않은 스트립을 음소거"
 msgctxt "Operator"
 msgid "Unmute Deselected Strips"
 msgstr "선택 해제된 스트립 음소거를 해제"
-
-
-msgid "Show Grease Pencil"
-msgstr "그리스 펜슬을 표시"
 
 
 msgid "Original frame range: %d-%d (%d)"
@@ -84800,6 +84756,11 @@ msgstr "버텍스에서 샤프를 마크"
 
 
 msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "프리스타일 에지를 지우기"
+
+
+msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "에지를 베벨"
 
@@ -85098,11 +85059,6 @@ msgstr "페이스를 브릿지"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "페이스를 삭제"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "프리스타일 에지를 지우기"
 
 
 msgctxt "Operator"

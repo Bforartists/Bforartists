@@ -53,9 +53,7 @@ void NodeOperationBuilder::convertToOperations(ExecutionSystem *system)
   /* interface handle for nodes */
   NodeConverter converter(this);
 
-  for (int index = 0; index < m_graph.nodes().size(); index++) {
-    Node *node = (Node *)m_graph.nodes()[index];
-
+  for (Node *node : m_graph.nodes()) {
     m_current_node = node;
 
     DebugInfo::node_to_operations(node);
@@ -195,7 +193,9 @@ PreviewOperation *NodeOperationBuilder::make_preview_operation() const
   bNodeInstanceHash *previews = m_context->getPreviewHash();
   if (previews) {
     PreviewOperation *operation = new PreviewOperation(m_context->getViewSettings(),
-                                                       m_context->getDisplaySettings());
+                                                       m_context->getDisplaySettings(),
+                                                       m_current_node->getbNode()->preview_xsize,
+                                                       m_current_node->getbNode()->preview_ysize);
     operation->setbNodeTree(m_context->getbNodeTree());
     operation->verifyPreview(previews, m_current_node->getInstanceKey());
     return operation;
@@ -399,7 +399,7 @@ void NodeOperationBuilder::determineResolutions()
   {
     blender::Vector<Link> convert_links;
     for (const Link &link : m_links) {
-      if (link.to()->getResizeMode() != COM_SC_NO_RESIZE) {
+      if (link.to()->getResizeMode() != ResizeMode::None) {
         NodeOperation &from_op = link.from()->getOperation();
         NodeOperation &to_op = link.to()->getOperation();
         if (from_op.getWidth() != to_op.getWidth() || from_op.getHeight() != to_op.getHeight()) {

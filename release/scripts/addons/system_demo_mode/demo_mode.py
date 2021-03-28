@@ -274,17 +274,18 @@ def demo_mode_update():
         if global_config["anim_screen_switch"]:
             # print(time_delta, 1)
             if time_delta > global_config["anim_screen_switch"]:
-
-                screen = bpy.context.window.screen
-                index = bpy.data.screens.keys().index(screen.name)
-                screen_new = bpy.data.screens[(index if index > 0 else len(bpy.data.screens)) - 1]
-                bpy.context.window.screen = screen_new
+                window = bpy.context.window
+                scene = window.scene
+                workspace = window.workspace
+                index = bpy.data.workspaces.keys().index(workspace.name)
+                workspace_new = bpy.data.workspaces[(index + 1) % len(bpy.data.workspaces)]
+                window.workspace = workspace_new
 
                 global_state["last_switch"] = time_current
 
-                # if we also switch scenes then reset last frame
-                # otherwise it could mess up cycle calc.
-                if screen.scene != screen_new.scene:
+                # If we also switch scenes then reset last frame
+                # otherwise it could mess up cycle calculation.
+                if scene != window.scene:
                     global_state["last_frame"] = -1
 
                 #if global_config["mode"] == 'PLAY':

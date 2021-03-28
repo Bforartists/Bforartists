@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'1b29e84c18dc')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9584,6 +9584,14 @@ msgid "Crop Image Size"
 msgstr "Image Displist"
 
 
+msgid "Placeholder"
+msgstr "Mostrar propietats de les arestes"
+
+
+msgid "Auto-Refresh"
+msgstr "Render"
+
+
 msgid "RGB Curves"
 msgstr "Corba NURBS"
 
@@ -9746,14 +9754,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Pass index number to convert to alpha"
 msgstr "Seleccionar fila"
-
-
-msgid "Placeholder"
-msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Auto-Refresh"
-msgstr "Render"
 
 
 msgid "Inpaint"
@@ -10086,6 +10086,10 @@ msgstr "Afegir Tira"
 
 msgid "Original"
 msgstr "Esborrar Origen"
+
+
+msgid "Fill Type"
+msgstr "Arxiu"
 
 
 msgid "Object Info"
@@ -14327,10 +14331,6 @@ msgstr "Image Displist"
 
 msgid "Construct a circle mesh"
 msgstr "&gt;Cercle Nurbs"
-
-
-msgid "Fill Type"
-msgstr "Arxiu"
 
 
 msgid "Triangle Fan"
@@ -22507,14 +22507,6 @@ msgid "No display"
 msgstr "Mostrar propietats de les arestes"
 
 
-msgid "Scene render size"
-msgstr "Fixar Límits"
-
-
-msgid "Proxy size 100%"
-msgstr "Fixar Límits"
-
-
 msgid "Separate Colors"
 msgstr "Separar"
 
@@ -24662,10 +24654,6 @@ msgstr "Créixer"
 msgctxt "Operator"
 msgid "Reload Strips and Adjust Length"
 msgstr "Començar a renderitzar una seqüència"
-
-
-msgid "Show Grease Pencil"
-msgstr "Començar Joc"
 
 
 msgctxt "Operator"
