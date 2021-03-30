@@ -3503,7 +3503,8 @@ static void std_node_socket_interface_draw(bContext *UNUSED(C), uiLayout *layout
     }
   }
 
-  uiItemR(layout, ptr, "hide_value", DEFAULT_FLAGS, NULL, 0);
+  uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
+  uiItemR(col, ptr, "hide_value", DEFAULT_FLAGS, NULL, 0);
 }
 
 void ED_init_standard_node_socket_type(bNodeSocketType *stype)
