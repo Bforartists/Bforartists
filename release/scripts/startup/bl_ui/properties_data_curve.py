@@ -200,15 +200,19 @@ class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
         sub.prop(curve, "extrude")
 
         col.prop(curve, "taper_object")
-        col.prop(curve, "taper_radius_mode")
+        if curve.taper_object is not None:
+            row = col.row()
+            row.separator()
+            row.prop(curve, "taper_radius_mode")
 
         if type(curve) is not TextCurve:
             # This setting makes no sense for texts, since we have no control over start/end of the bevel object curve.
-            row = layout.row()
-            row.active = curve.taper_object is not None
-            row.use_property_split = False
-            row.prop(curve, "use_map_taper")
-            row.prop_decorator(curve, "use_map_taper")
+            row = col.row()
+            if curve.taper_object is not None:
+                row.use_property_split = False
+                row.separator()
+                row.prop(curve, "use_map_taper")
+                row.prop_decorator(curve, "use_map_taper")
 
 
 class DATA_PT_geometry_curve_bevel(CurveButtonsPanelCurve, Panel):
