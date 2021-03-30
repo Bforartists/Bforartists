@@ -234,9 +234,9 @@ exposure
 attribute_convert
 groupinput
 groupoutput
-#~ DEF_ICON_BLANK(253)
-#~ DEF_ICON_BLANK(254)
-#~ DEF_ICON_BLANK(255)
+save_svg
+save_pdf
+load_svg_gpencil
 
 # ------------------------- row 4 --------------------------*/
 

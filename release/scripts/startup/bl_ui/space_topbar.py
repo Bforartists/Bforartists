@@ -379,7 +379,7 @@ class TOPBAR_MT_file_import(Menu):
         if bpy.app.build_options.alembic:
             self.layout.operator("wm.alembic_import", text="Alembic (.abc)", icon = "LOAD_ABC")
 
-        self.layout.operator("wm.gpencil_import_svg", text="SVG as Grease Pencil")
+        self.layout.operator("wm.gpencil_import_svg", text="SVG as Grease Pencil", icon = "LOAD_SVG_GPENCIL")
 
 
 class TOPBAR_MT_file_export(Menu):
@@ -398,10 +398,10 @@ class TOPBAR_MT_file_export(Menu):
 
         # Pugixml lib dependency
         if bpy.app.build_options.pugixml:
-            self.layout.operator("wm.gpencil_export_svg", text="Grease Pencil as SVG")
+            self.layout.operator("wm.gpencil_export_svg", text="Grease Pencil as SVG", icon = "SAVE_SVG")
         # Haru lib dependency
         if bpy.app.build_options.haru:
-            self.layout.operator("wm.gpencil_export_pdf", text="Grease Pencil as PDF")
+            self.layout.operator("wm.gpencil_export_pdf", text="Grease Pencil as PDF", icon = "SAVE_PDF")
 
 
 class TOPBAR_MT_file_external_data(Menu):
