@@ -3321,6 +3321,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
 
             col = layout.column(align=True)
 
+            props = col.operator("node.add_node", text=" Attribute Clamp         ", icon = "ATTRIBUTE_CLAMP")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeClamp"
+
             props = col.operator("node.add_node", text=" Attribute Color Ramp ", icon = "ATTRIBUTE_COLORRAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeColorRamp"
@@ -3333,13 +3337,17 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeAttributeCompare"
             
-            props = col.operator("node.add_node", text=" Attribute Convert      ", icon = "ATTRIBUTE_CONVERT")
+            props = col.operator("node.add_node", text=" Attribute Convert       ", icon = "ATTRIBUTE_CONVERT")
             props.use_transform = True
             props.type = "GeometryNodeAttributeConvert"
 
             props = col.operator("node.add_node", text=" Attribute Fill                ", icon = "ATTRIBUTE_FILL")
             props.use_transform = True
             props.type = "GeometryNodeAttributeFill"
+            
+            props = col.operator("node.add_node", text=" Attribute Map Range   ", icon = "ATTRIBUTE_MAPRANGE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeMapRange"
 
             props = col.operator("node.add_node", text=" Attribute Math             ", icon = "ATTRIBUTE_MATH")
             props.use_transform = True
@@ -3357,11 +3365,11 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
             
-            props = col.operator("node.add_node", text=" Attribute Remove     ", icon = "ATTRIBUTE_REMOVE")
+            props = col.operator("node.add_node", text=" Attribute Remove       ", icon = "ATTRIBUTE_REMOVE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRemove"
 
-            props = col.operator("node.add_node", text=" Attribute Sample Texture ", icon = "ATTRIBUTE_TEXTURE")
+            props = col.operator("node.add_node", text=" Attribute Sample Texture", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
 
@@ -3381,6 +3389,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'
 
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_CLAMP")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeClamp"
+            
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COLORRAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeColorRamp"
@@ -3396,17 +3408,21 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_CONVERT")
             props.use_transform = True
             props.type = "GeometryNodeAttributeConvert"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_FILL")
             props.use_transform = True
             props.type = "GeometryNodeAttributeFill"
+            
+            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MAPRANGE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeMapRange"   
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMath"
-            
-            row = layout.row()
-            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
@@ -3415,6 +3431,9 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeAttributeProximity"
+            
+            row = layout.row()
+            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
@@ -3427,9 +3446,6 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
-            
-            row = layout.row()
-            row.alignment = 'LEFT'
 
             props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_SEPARATE_XYZ")
             props.use_transform = True
