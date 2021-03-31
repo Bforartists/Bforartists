@@ -12035,6 +12035,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_PRIMITIVE_LINE:
       icon = ICON_MESH_LINE;
       break;
+    case GEO_NODE_MESH_PRIMITIVE_GRID:
+      icon = ICON_MESH_GRID;
+      break;
       /*group*/
     case NODE_GROUP:
       icon = ICON_NODE_MAKEGROUP;
