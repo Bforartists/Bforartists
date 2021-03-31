@@ -295,8 +295,8 @@ decorate
 decorate_animate
 decorate_driver
 
-#~ DEF_ICON_BLANK(314)
-#~ DEF_ICON_BLANK(315)
+attribute_clamp
+attribute_maprange
 #~ DEF_ICON_BLANK(316)
 #~ DEF_ICON_BLANK(317)
 #~ DEF_ICON_BLANK(318)
