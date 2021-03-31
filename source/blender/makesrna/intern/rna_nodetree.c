@@ -11893,6 +11893,7 @@ static int node_type_to_icon(int type)
       icon = ICON_SWITCH_DIRECTION;
       break;
     /*Geometry Node Editor */
+    /*-----------------------*/
     case FN_NODE_BOOLEAN_MATH:
       icon = ICON_BOOLEAN_MATH;
       break;
@@ -11926,6 +11927,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_OBJECT_INFO:
       icon = ICON_NODE_OBJECTINFO;
       break;
+      /*attribute nodes*/
     case GEO_NODE_ATTRIBUTE_RANDOMIZE:
       icon = ICON_ATTRIBUTE_RANDOMIZE;
       break;
@@ -11934,9 +11936,6 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_ATTRIBUTE_VECTOR_MATH:
       icon = ICON_ATTRIBUTE_VECTORMATH;
-      break;
-    case GEO_NODE_JOIN_GEOMETRY:
-      icon = ICON_JOIN;
       break;
     case GEO_NODE_ATTRIBUTE_FILL:
       icon = ICON_ATTRIBUTE_FILL;
@@ -11947,14 +11946,42 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_COLOR_RAMP:
       icon = ICON_ATTRIBUTE_COLORRAMP;
       break;
-    case GEO_NODE_POINT_SEPARATE:
-      icon = ICON_POINT_SEPARATE;
-      break;
     case GEO_NODE_ATTRIBUTE_COMPARE:
       icon = ICON_ATTRIBUTE_COMPARE;
       break;
     case GEO_NODE_ATTRIBUTE_CONVERT:
       icon = ICON_ATTRIBUTE_CONVERT;
+      break;
+    case GEO_NODE_ATTRIBUTE_SAMPLE_TEXTURE:
+      icon = ICON_ATTRIBUTE_TEXTURE;
+      break;
+    case GEO_NODE_ATTRIBUTE_PROXIMITY:
+      icon = ICON_ATTRIBUTE_PROXIMITY;
+      break;
+    case GEO_NODE_ATTRIBUTE_COMBINE_XYZ:
+      icon = ICON_ATTRIBUTE_COMBINE_XYZ;
+      break;
+    case GEO_NODE_ATTRIBUTE_SEPARATE_XYZ:
+      icon = ICON_ATTRIBUTE_SEPARATE_XYZ;
+      break;
+    case GEO_NODE_ATTRIBUTE_REMOVE:
+      icon = ICON_ATTRIBUTE_REMOVE;
+      break;
+    case GEO_NODE_ATTRIBUTE_MAP_RANGE:
+      icon = ICON_ATTRIBUTE_MAPRANGE;
+      break;
+    case GEO_NODE_ATTRIBUTE_CLAMP:
+      icon = ICON_ATTRIBUTE_CLAMP;
+      break;
+
+    case GEO_NODE_JOIN_GEOMETRY:
+      icon = ICON_JOIN;
+      break;
+    case GEO_NODE_POINT_SEPARATE:
+      icon = ICON_POINT_SEPARATE;
+      break;
+    case GEO_NODE_VOLUME_TO_MESH:
+      icon = ICON_VOLUME_TO_MESH;
       break;
     case GEO_NODE_POINT_ROTATE:
       icon = ICON_POINT_ROTATE;
@@ -11968,9 +11995,6 @@ static int node_type_to_icon(int type)
     case GEO_NODE_POINT_TRANSLATE:
       icon = ICON_POINT_TRANSLATE;
       break;
-    case GEO_NODE_ATTRIBUTE_SAMPLE_TEXTURE:
-      icon = ICON_ATTRIBUTE_TEXTURE;
-      break;
     case GEO_NODE_POINTS_TO_VOLUME:
       icon = ICON_POINT_TO_VOLUME;
       break;
@@ -11980,26 +12004,11 @@ static int node_type_to_icon(int type)
     case GEO_NODE_IS_VIEWPORT:
       icon = ICON_VIEW;
       break;
-    case GEO_NODE_ATTRIBUTE_PROXIMITY:
-      icon = ICON_ATTRIBUTE_PROXIMITY;
-      break;
-    case GEO_NODE_VOLUME_TO_MESH:
-      icon = ICON_VOLUME_TO_MESH;
-      break;
-    case GEO_NODE_ATTRIBUTE_COMBINE_XYZ:
-      icon = ICON_ATTRIBUTE_COMBINE_XYZ;
-      break;
-    case GEO_NODE_ATTRIBUTE_SEPARATE_XYZ:
-      icon = ICON_ATTRIBUTE_SEPARATE_XYZ;
-      break;
     case GEO_NODE_SUBDIVIDE:
       icon = ICON_SUBDIVIDE_EDGES;
       break;
     case GEO_NODE_SUBDIVISION_SURFACE:
       icon = ICON_SUBDIVIDE_EDGES;
-      break;
-    case GEO_NODE_ATTRIBUTE_REMOVE:
-      icon = ICON_ATTRIBUTE_REMOVE;
       break;
     case CMP_NODE_EXPOSURE:
       icon = ICON_EXPOSURE;
