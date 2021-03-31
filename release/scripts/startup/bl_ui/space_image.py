@@ -124,6 +124,7 @@ class IMAGE_MT_view(Menu):
                 layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
         elif sima.mode == 'UV':
             layout.operator("image.view_center_cursor", text="Center View to Cursor", icon = "CENTERTOCURSOR")
+            layout.operator("image.view_cursor_center", icon='CURSORTOCENTER')
 
         layout.separator()
 
