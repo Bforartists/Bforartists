@@ -2921,7 +2921,7 @@ static void do_mesh_box_select__doSelectEdge_pass0(
 {
   struct BoxSelectUserData_ForMeshEdge *data_for_edge = userData;
   BoxSelectUserData *data = data_for_edge->data;
-  ToolSettings *ts = data->vc->scene->toolsettings;/*bfa - select through patch*/
+  //ToolSettings *ts = data->vc->scene->toolsettings;/*bfa - select through patch, throws not used warning, so off*/
   bool is_visible = true;
   if (data_for_edge->backbuf_offset) {
     uint bitmap_inedx = data_for_edge->backbuf_offset + index - 1;
@@ -3051,7 +3051,7 @@ static bool do_mesh_box_select(ViewContext *vc,
   /*bfa - select through patch*/
  /* const bool use_zbuf = !XRAY_FLAG_ENABLED(vc->v3d);*/
   const bool use_zbuf = !(ts->mesh_select_through || XRAY_FLAG_ENABLED(vc->v3d));
-  const bool show_face_dots = (vc->v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) != 0;
+  //const bool show_face_dots = (vc->v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) != 0;/*bfa - select through patch, throws not used warning, so off*/
 
   struct EditSelectBuf_Cache *esel = wm_userdata->data;
   if (use_zbuf) {
@@ -3625,7 +3625,7 @@ static void mesh_circle_doSelectEdge(void *userData,
                                      int UNUSED(index))
 {
   CircleSelectUserData *data = userData;
-  ToolSettings *ts = data->vc->scene->toolsettings;/*bfa - select through patch*/
+  //ToolSettings *ts = data->vc->scene->toolsettings;/*bfa - select through patch, throws not used warning, so off*/
 
   if (edge_inside_circle(data->mval_fl, data->radius, screen_co_a, screen_co_b)) {
     BM_edge_select_set(data->vc->em->bm, eed, data->select);
