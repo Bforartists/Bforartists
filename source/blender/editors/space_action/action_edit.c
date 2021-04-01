@@ -72,6 +72,8 @@
 
 #include "action_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* ************************************************************************** */
 /* POSE MARKERS STUFF */
 
@@ -1103,6 +1105,17 @@ static int actkeys_clean_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static char *action_ot_clean_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "channels")) {
+    return BLI_strdup(
+        "Simplify F-Curves by removing closely spaced keyframes in selected channels");
+  }
+  return NULL;
+}
+
 void ACTION_OT_clean(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1113,6 +1126,7 @@ void ACTION_OT_clean(wmOperatorType *ot)
   /* api callbacks */
   // ot->invoke =  /* XXX we need that number popup for this! */
   ot->exec = actkeys_clean_exec;
+  ot->get_description = action_ot_clean_get_description;
   ot->poll = ED_operator_action_active;
 
   /* flags */
