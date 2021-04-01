@@ -1045,8 +1045,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("clip.graph_select_all_markers_none", {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("clip.graph_select_all_markers_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("clip.graph_select_all_markers",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("clip.graph_select_all_markers",
+     {"type": 'I', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("clip.graph_select_all_markers",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
