@@ -323,28 +323,6 @@ class CLIP_MT_tracking_editor_menus(Menu):
                 layout.menu("CLIP_GRAPH_MT_select")
                 layout.menu("CLIP_GRAPH_MT_graph")
 
-# Workaround to separate the tooltips
-class CLIP_GRAPH_MT_select_inverse(bpy.types.Operator):
-    """Inverts the current marker selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "clip.graph_select_all_markers_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Markers Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.clip.graph_select_all_markers(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class CLIP_GRAPH_MT_select_none(bpy.types.Operator):
-    """Deselects all markers """       # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "clip.graph_select_all_markers_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Markers None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.clip.graph_select_all_markers(action = 'DESELECT')
-        return {'FINISHED'}
-
 
 class CLIP_GRAPH_MT_select(Menu):
     bl_label = "Select"
@@ -354,9 +332,10 @@ class CLIP_GRAPH_MT_select(Menu):
 
         layout.operator_context = 'INVOKE_REGION_PREVIEW'
 
-        layout.operator("clip.graph_select_all_markers", icon = 'SELECT_ALL').action = 'SELECT'
-        layout.operator("clip.graph_select_all_markers_inverse", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("clip.graph_select_all_markers_none", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("clip.graph_select_all_markers", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
+
+        layout.operator("clip.graph_select_all_markers", text = "None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("clip.graph_select_all_markers", text = "Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -2018,8 +1997,6 @@ classes = (
     CLIP_PT_clip_display,
     CLIP_PT_marker_display,
     CLIP_MT_tracking_editor_menus,
-    CLIP_GRAPH_MT_select_inverse,
-    CLIP_GRAPH_MT_select_none,
     CLIP_GRAPH_MT_select,
     CLIP_GRAPH_MT_graph,
     CLIP_MT_masking_editor_menus,
