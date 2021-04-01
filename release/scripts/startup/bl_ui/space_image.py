@@ -74,18 +74,6 @@ class IMAGE_PT_active_tool(Panel, ToolActivePanelHelper):
     bl_category = "Tool"
 
 
-# Workaround to separate the tooltips for Toggle Maximize Area
-class IMAGE_MT_view_view_fit(bpy.types.Operator):
-    """Fits the content area into the window"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "image.view_all_fit"        # unique identifier for buttons and menu items to reference.
-    bl_label = "View Fit"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.image.view_all(fit_view = True)
-        return {'FINISHED'}
-
-
 class IMAGE_MT_view(Menu):
     bl_label = "View"
 
@@ -117,7 +105,7 @@ class IMAGE_MT_view(Menu):
             layout.operator("image.view_selected", text = "View Selected", icon='VIEW_SELECTED')
 
         layout.operator("image.view_all", text="Frame All", icon = "VIEWALL")
-        layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT") # bfa - separated tooltip
+        layout.operator("image.view_all", text="View Fit", icon = "VIEW_FIT").fit_view = True
 
         if sima.mode != 'UV':
             if sima.ui_mode == 'MASK':
@@ -141,6 +129,7 @@ class IMAGE_MT_view(Menu):
 
         layout.menu("INFO_MT_area")
         layout.menu("IMAGE_MT_view_pie_menus")
+
 
 class IMAGE_MT_view_pie_menus(Menu):
     bl_label = "Pie menus"
@@ -1830,7 +1819,6 @@ class IMAGE_OT_switch_editors_to_image(bpy.types.Operator):
 
 classes = (
     ALL_MT_editormenu,
-    IMAGE_MT_view_view_fit,
     IMAGE_MT_view,
     IMAGE_MT_view_pie_menus,
     IMAGE_MT_view_zoom,
