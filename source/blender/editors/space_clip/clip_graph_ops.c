@@ -46,6 +46,8 @@
 
 #include "clip_intern.h" /* own include */
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /******************** common graph-editing utilities ********************/
 
 static bool ED_space_clip_graph_poll(bContext *C)
@@ -504,6 +506,26 @@ static int graph_select_all_markers_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *clip_ot_graph_select_all_markers_get_description(bContext *UNUSED(C),
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all markers");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselects all markers");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current marker selection");
+  }
+  return NULL;
+}
+
 void CLIP_OT_graph_select_all_markers(wmOperatorType *ot)
 {
   /* identifiers */
@@ -513,6 +535,7 @@ void CLIP_OT_graph_select_all_markers(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = graph_select_all_markers_exec;
+  ot->get_description = clip_ot_graph_select_all_markers_get_description; /*bfa - descriptions*/
   ot->poll = clip_graph_knots_poll;
 
   /* flags */
