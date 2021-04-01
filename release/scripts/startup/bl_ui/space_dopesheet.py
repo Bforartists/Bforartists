@@ -607,19 +607,6 @@ class DOPESHEET_MT_channel_extrapolation(Menu):
                         icon="EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
 
 
-# Workaround to separate the tooltips
-class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
-    """Simplify F-Curves by removing closely spaced keyframes in selected channels"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.clean_channels"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Clean Channels"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    # execute() is called by blender when running the operator.
-    def execute(self, context):
-        bpy.ops.action.clean(channels=True)
-        return {'FINISHED'}
-
-
 class DOPESHEET_MT_key(Menu):
     bl_label = "Key"
 
@@ -641,10 +628,8 @@ class DOPESHEET_MT_key(Menu):
         layout.separator()
 
         layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
-        layout.operator("action.paste", text="Paste Keyframes",
-                        icon='PASTEDOWN')
-        layout.operator("action.paste", text="Paste Flipped",
-                        icon='PASTEFLIPDOWN').flipped = True
+        layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
+        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
         layout.separator()
 
@@ -653,14 +638,13 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum(
-            "action.easing_type", "type", text="Easing Mode")
+        layout.operator_menu_enum("action.easing_type", "type", text="Easing Mode")
 
         layout.separator()
 
         layout.operator("action.clean", icon="CLEAN_KEYS").channels = False
-        layout.operator("action.clean_channels", text="Clean Channels",
-                        icon="CLEAN_CHANNELS")  # bfa -  separated tooltips
+        layout.operator("action.clean", text = "Clean Channels", icon="CLEAN_CHANNELS").channels = True
+
         layout.operator("action.sample", icon="SAMPLE_KEYFRAMES")
 
 
@@ -1043,7 +1027,6 @@ classes = (
     DOPESHEET_MT_marker,
     DOPESHEET_MT_channel,
     DOPESHEET_MT_channel_extrapolation,
-    DOPESHEET_MT_key_clean_channels,
     DOPESHEET_MT_key,
     DOPESHEET_PT_view_marker_options,
     DOPESHEET_PT_view_view_options,
