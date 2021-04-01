@@ -812,6 +812,17 @@ static int image_view_all_exec(bContext *C, wmOperator *op)
 
   return OPERATOR_FINISHED;
 }
+/*bfa - descriptions*/
+static char *image_ot_view_all_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "fit_view")) {
+    return BLI_strdup(
+        "Fits the content area into the window");
+  }
+  return NULL;
+}
 
 void IMAGE_OT_view_all(wmOperatorType *ot)
 {
@@ -824,6 +835,7 @@ void IMAGE_OT_view_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = image_view_all_exec;
+  ot->get_description = image_ot_view_all_get_description;  /*bfa - descriptions*/
   ot->poll = space_image_main_region_poll;
 
   /* flags */
