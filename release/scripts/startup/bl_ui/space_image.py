@@ -160,29 +160,6 @@ class IMAGE_MT_view_zoom(Menu):
             ).ratio = a / b
 
 
-# Workaround to separate the tooltips
-class IMAGE_MT_select_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "uv.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.uv.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class IMAGE_MT_select_none(bpy.types.Operator):
-    """Deselects everything """         # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "uv.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.uv.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class IMAGE_MT_select(Menu):
     bl_label = "Select"
 
@@ -192,8 +169,9 @@ class IMAGE_MT_select(Menu):
         layout.menu("IMAGE_MT_select_legacy")
 
         layout.operator("uv.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("uv.select_all_none", text="None", icon = 'SELECT_NONE') # bfa - separated tooltip
-        layout.operator("uv.select_all_inverse", text="Inverse", icon = 'INVERSE') # bfa - separated tooltip
+
+        layout.operator("uv.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("uv.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -1822,8 +1800,6 @@ classes = (
     IMAGE_MT_view,
     IMAGE_MT_view_pie_menus,
     IMAGE_MT_view_zoom,
-    IMAGE_MT_select_inverse,
-    IMAGE_MT_select_none,
     IMAGE_MT_select,
     IMAGE_MT_select_legacy,
     IMAGE_MT_select_linked,
