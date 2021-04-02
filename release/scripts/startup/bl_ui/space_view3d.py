@@ -1155,6 +1155,7 @@ class VIEW3D_MT_uv_map(Menu):
 
 # ********** View menus **********
 
+# bfa - set active camera does not exist in blender
 class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
     """Sets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
     bl_idname = "view3d.switchactivecamto"
@@ -1223,7 +1224,7 @@ class VIEW3D_MT_view(Menu):
         layout.operator("view3d.view_all", text="Frame All", icon = "VIEWALL").center = False
         if view.region_quadviews:
             layout.operator("view3d.view_all", text="Frame All (Quad View)", icon = "VIEWALL").use_all_regions = True
-        layout.operator("view3d.view_all", text="Center Cursor and Frame All", icon = "VIEWALL").center = True
+        layout.operator("view3d.view_all", text="Center Cursor and Frame All", icon = "VIEWALL_RESETCURSOR").center = True
 
         layout.separator()
 
