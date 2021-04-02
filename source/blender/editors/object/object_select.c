@@ -83,6 +83,8 @@
 
 #include "object_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* -------------------------------------------------------------------- */
 /** \name Public Object Selection API
  * \{ */
@@ -1180,6 +1182,26 @@ static int object_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static char *object_ot_select_all_get_description(bContext *UNUSED(C),
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all visible objects in scene");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all visible objects in scene");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
 void OBJECT_OT_select_all(wmOperatorType *ot)
 {
 
@@ -1190,6 +1212,7 @@ void OBJECT_OT_select_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = object_select_all_exec;
+  ot->get_description = object_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = objects_selectable_poll;
 
   /* flags */
