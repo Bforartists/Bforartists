@@ -1156,18 +1156,6 @@ class VIEW3D_MT_uv_map(Menu):
 # ********** View menus **********
 
 
-    # Workaround to separate the tooltips
-class VIEW3D_MT_view_view_selected_all_regions(bpy.types.Operator):
-    """Move the View to the selection center in all Quad View views"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "view3d.view_selected_all_regions"        # unique identifier for buttons and menu items to reference.
-    bl_label = "View Selected All Regions"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.view3d.view_selected(use_all_regions = True)
-        return {'FINISHED'}
-
-
 # Workaround to separate the tooltips
 class VIEW3D_MT_view_all_all_regions(bpy.types.Operator):
     """View all objects in scene in all four Quad View views\nJust relevant for Quad View """      # blender will use this as a tooltip for menu items and buttons.
@@ -1252,9 +1240,9 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.view_selected", text="View Selected", icon = "VIEW_SELECTED").use_all_regions = False
+        layout.operator("view3d.view_selected", text="Frame Selected", icon = "VIEW_SELECTED").use_all_regions = False
         if view.region_quadviews:
-            layout.operator("view3d.view_selected_all_regions", text="View Selected (Quad View)", icon = "ALIGNCAMERA_ACTIVE")
+            layout.operator("view3d.view_selected", text="Frame Selected (Quad View)", icon = "ALIGNCAMERA_ACTIVE").use_all_regions = True
         layout.operator("view3d.view_all", text="Frame All", icon = "VIEWALL").center = False
         if view.region_quadviews:
             layout.operator("view3d.view_all_all_regions", text = "View All (Quad View)", icon = "VIEWALL" ) # bfa - separated tooltip
@@ -8933,7 +8921,6 @@ classes = (
     VIEW3D_MT_snap,
     VIEW3D_MT_uv_map_clear_seam,
     VIEW3D_MT_uv_map,
-    VIEW3D_MT_view_view_selected_all_regions,
     VIEW3D_MT_view_all_all_regions,
     VIEW3D_MT_view_center_cursor_and_view_all,
     VIEW3D_MT_switchactivecamto,
