@@ -1308,8 +1308,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("curve.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("curve.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("curve.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("curve.select_all",
+     {"type": 'I', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("curve.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
