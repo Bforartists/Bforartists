@@ -59,6 +59,8 @@
 /* Own include. */
 #include "sequencer_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* -------------------------------------------------------------------- */
 /** \name Selection Utilities
  * \{ */
@@ -439,6 +441,26 @@ static int sequencer_de_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *sequencer_ot_select_all_get_description(bContext *UNUSED(C),
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all strips");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all strips");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
 void SEQUENCER_OT_select_all(struct wmOperatorType *ot)
 {
   /* Identifiers. */
@@ -448,6 +470,7 @@ void SEQUENCER_OT_select_all(struct wmOperatorType *ot)
 
   /* Api callbacks. */
   ot->exec = sequencer_de_select_all_exec;
+  ot->get_description = sequencer_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = sequencer_edit_poll;
 
   /* Flags. */
