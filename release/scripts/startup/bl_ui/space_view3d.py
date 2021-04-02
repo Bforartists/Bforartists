@@ -1155,17 +1155,6 @@ class VIEW3D_MT_uv_map(Menu):
 
 # ********** View menus **********
 
-    # Workaround to separate the tooltips
-class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
-    """Views all objects in scene and centers the 3D cursor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "view3d.view_all_center_cursor"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Center Cursor and Frame All"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.view3d.view_all(center = True)
-        return {'FINISHED'}
-
 class VIEW3D_MT_switchactivecamto(bpy.types.Operator):
     """Sets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
     bl_idname = "view3d.switchactivecamto"
@@ -1234,7 +1223,7 @@ class VIEW3D_MT_view(Menu):
         layout.operator("view3d.view_all", text="Frame All", icon = "VIEWALL").center = False
         if view.region_quadviews:
             layout.operator("view3d.view_all", text="Frame All (Quad View)", icon = "VIEWALL").use_all_regions = True
-        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and Frame All", icon = "VIEWALL_RESETCURSOR") # bfa - separated tooltip
+        layout.operator("view3d.view_all", text="Center Cursor and Frame All", icon = "VIEWALL").center = True
 
         layout.separator()
 
@@ -8909,7 +8898,6 @@ classes = (
     VIEW3D_MT_snap,
     VIEW3D_MT_uv_map_clear_seam,
     VIEW3D_MT_uv_map,
-    VIEW3D_MT_view_center_cursor_and_view_all,
     VIEW3D_MT_switchactivecamto,
     VIEW3D_MT_view,
     VIEW3D_MT_view_pie_menus,
