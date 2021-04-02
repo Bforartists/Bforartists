@@ -5719,8 +5719,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("sequencer.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True}, None),
-    ("sequencer.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+    ("sequencer.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("sequencer.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("sequencer.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
