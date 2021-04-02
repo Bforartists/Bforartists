@@ -432,29 +432,6 @@ class SEQUENCER_MT_export(Menu):
         layout.operator("sequencer.export_subtitles", text="Export Subtitles", icon='EXPORT')
 
 
-# Workaround to separate the tooltips
-class SEQUENCER_MT_select_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "sequencer.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.sequencer.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class SEQUENCER_MT_select_none(bpy.types.Operator):
-    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "sequencer.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.sequencer.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class SEQUENCER_MT_select_handle(Menu):
     bl_label = "Select Handle"
 
@@ -502,8 +479,8 @@ class SEQUENCER_MT_select(Menu):
         layout = self.layout
 
         layout.operator("sequencer.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("sequencer.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("sequencer.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("sequencer.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("sequencer.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -2430,8 +2407,6 @@ classes = (
     SEQUENCER_MT_select_channel,
     SEQUENCER_MT_select_linked,
     SEQUENCER_MT_select,
-    SEQUENCER_MT_select_none,
-    SEQUENCER_MT_select_inverse,
     SEQUENCER_MT_marker,
     SEQUENCER_MT_navigation,
     SEQUENCER_MT_add,
