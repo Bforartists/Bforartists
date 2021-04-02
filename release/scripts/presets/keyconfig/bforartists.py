@@ -3848,8 +3848,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("mesh.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True}, None),
-    ("mesh.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+    ("mesh.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("mesh.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("mesh.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
