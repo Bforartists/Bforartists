@@ -1653,29 +1653,6 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
         layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
 
 
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "mesh.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.mesh.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_edit_mesh_none(bpy.types.Operator):
-    """Deselects everything """       # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "mesh.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.mesh.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_select_edit_mesh(Menu):
     bl_label = "Select"
 
@@ -1686,8 +1663,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         # primitive
         layout.operator("mesh.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("mesh.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("mesh.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("mesh.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("mesh.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -8848,8 +8825,6 @@ classes = (
     VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_more_less,
-    VIEW3D_MT_select_edit_mesh_inverse,
-    VIEW3D_MT_select_edit_mesh_none,
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve_inverse,
     VIEW3D_MT_select_edit_curve_none,
