@@ -4601,8 +4601,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("object.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True}, None),
-    ("object.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+    ("object.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("object.select_all",
+     {"type": 'I', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("object.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
