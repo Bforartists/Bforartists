@@ -52,6 +52,8 @@
 #include "clip_intern.h"         /* own include */
 #include "tracking_ops_intern.h" /* own include */
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 static float dist_to_crns(const float co[2], const float pos[2], const float crns[4][2]);
 
 /********************** mouse select operator *********************/
@@ -887,6 +889,26 @@ static int select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *clip_ot_select_all_get_description(bContext *UNUSED(C),
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all tracking markers");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all tracking markers");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
 void CLIP_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -896,6 +918,7 @@ void CLIP_OT_select_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = select_all_exec;
+  ot->get_description = clip_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_space_clip_tracking_poll;
 
   /* flags */
