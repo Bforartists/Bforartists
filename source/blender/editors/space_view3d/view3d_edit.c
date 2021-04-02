@@ -2995,6 +2995,18 @@ static int view3d_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static char *view3d_ot_view_all_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_all_regions")) {
+    return BLI_strdup(
+        "View all objects in scene in all four Quad View views\nJust relevant for Quad View");
+  }
+  return NULL;
+}
+
+
 void VIEW3D_OT_view_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -3004,6 +3016,7 @@ void VIEW3D_OT_view_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = view3d_all_exec;
+  ot->get_description = view3d_ot_view_all_get_description;
   ot->poll = ED_operator_region_view3d_active;
 
   /* flags */
