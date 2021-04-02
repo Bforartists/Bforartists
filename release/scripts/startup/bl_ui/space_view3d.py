@@ -1512,29 +1512,6 @@ class VIEW3D_MT_select_linked(Menu):
         layout.operator("object.select_linked", text= "Library (Object Data)", icon = "LIBRARY_OBJECT").type = 'LIBRARY_OBDATA'
 
 
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "pose.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.pose.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_pose_none(bpy.types.Operator):
-    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "pose.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.pose.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_select_pose(Menu):
     bl_label = "Select"
 
@@ -1544,8 +1521,8 @@ class VIEW3D_MT_select_pose(Menu):
         layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("pose.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("pose.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("pose.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("pose.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("pose.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -8888,8 +8865,6 @@ classes = (
     VIEW3D_MT_select_grouped,
     VIEW3D_MT_select_linked,
     VIEW3D_MT_select_object_more_less,
-    VIEW3D_MT_select_pose_inverse,
-    VIEW3D_MT_select_pose_none,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_particle_inverse,
     VIEW3D_MT_select_particle_none,
