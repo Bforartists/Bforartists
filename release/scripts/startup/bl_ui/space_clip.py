@@ -1658,29 +1658,6 @@ class CLIP_MT_track_transform(Menu):
         layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
 
 
-# Workaround to separate the tooltips
-class CLIP_MT_select_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "clip.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.clip.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class CLIP_MT_select_none(bpy.types.Operator):
-    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "clip.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.clip.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class CLIP_MT_select(Menu):
     bl_label = "Select"
 
@@ -1688,8 +1665,8 @@ class CLIP_MT_select(Menu):
         layout = self.layout
 
         layout.operator("clip.select_all", text = "All", icon = 'SELECT_ALL').action = 'SELECT'
-        layout.operator("clip.select_all_none", text = "None", icon = 'SELECT_NONE') # bfa - separated tooltip
-        layout.operator("clip.select_all_inverse", text = "Inverse", icon = 'INVERSE') # bfa - separated tooltip
+        layout.operator("clip.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("clip.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -2044,8 +2021,6 @@ classes = (
     CLIP_MT_track_animation,
     CLIP_MT_track_visibility,
     CLIP_MT_track_cleanup,
-    CLIP_MT_select_inverse,
-    CLIP_MT_select_none,
     CLIP_MT_select,
     CLIP_MT_select_grouped,
     CLIP_MT_tracking_context_menu,
