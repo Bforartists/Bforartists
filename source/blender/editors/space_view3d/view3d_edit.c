@@ -3003,6 +3003,10 @@ static char *view3d_ot_view_all_get_description(bContext *UNUSED(C),
     return BLI_strdup(
         "View all objects in scene in all four Quad View views\nJust relevant for Quad View");
   }
+  else if (RNA_boolean_get(ptr, "center")) {
+    return BLI_strdup(
+        "Views all objects in scene and centers the 3D cursor");
+  }
   return NULL;
 }
 
