@@ -1559,29 +1559,6 @@ class VIEW3D_MT_select_pose(Menu):
         props.direction = 'CHILD'
 
 
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "particle.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.particle.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_particle_none(bpy.types.Operator):
-    """Deselects everything """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "particle.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.particle.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_select_particle(Menu):
     bl_label = "Select"
 
@@ -1591,8 +1568,8 @@ class VIEW3D_MT_select_particle(Menu):
         layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("particle.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("particle.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("particle.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("particle.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("particle.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -8866,8 +8843,6 @@ classes = (
     VIEW3D_MT_select_linked,
     VIEW3D_MT_select_object_more_less,
     VIEW3D_MT_select_pose,
-    VIEW3D_MT_select_particle_inverse,
-    VIEW3D_MT_select_particle_none,
     VIEW3D_MT_select_particle,
     VIEW3D_MT_edit_mesh,
     VIEW3D_MT_edit_mesh_sort_elements,
