@@ -5204,8 +5204,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("particle.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True}, None),
-    ("particle.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+    ("particle.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("particle.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("particle.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
