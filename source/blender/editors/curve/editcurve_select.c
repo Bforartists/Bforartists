@@ -56,6 +56,8 @@
 
 #include "DEG_depsgraph.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* returns 1 in case (de)selection was successful */
 bool select_beztriple(BezTriple *bezt, bool selstatus, uint8_t flag, eVisible_Types hidden)
 {
@@ -594,6 +596,27 @@ static int de_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *curve_ot_select_all_get_description(bContext *UNUSED(C),
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all control points");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all control points");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
+
 void CURVE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -603,6 +626,7 @@ void CURVE_OT_select_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = de_select_all_exec;
+  ot->get_description = curve_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editsurfcurve;
 
   /* flags */
