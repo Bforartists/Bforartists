@@ -1869,29 +1869,6 @@ class VIEW3D_MT_select_edit_metaball_select_similar(Menu):
         layout.operator("mball.select_similar", text="Rotation", icon = "ROTATE").type = 'ROTATION'
 
 
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_edit_lattice_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "lattice.select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.lattice.select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_edit_lattice_none(bpy.types.Operator):
-    """Deselects everything """        # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "lattice.select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.lattice.select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_edit_lattice_context_menu(Menu):
     bl_label = "Lattice Context Menu"
 
@@ -1918,8 +1895,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("lattice.select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("lattice.select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("lattice.select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("lattice.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("lattice.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -8787,8 +8764,6 @@ classes = (
     VIEW3D_MT_select_edit_metaball,
     VIEW3D_MT_edit_lattice_context_menu,
     VIEW3D_MT_select_edit_metaball_select_similar,
-    VIEW3D_MT_select_edit_lattice_inverse,
-    VIEW3D_MT_select_edit_lattice_none,
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature_inverse,
     VIEW3D_MT_select_edit_armature_none,
