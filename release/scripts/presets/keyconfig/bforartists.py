@@ -4071,8 +4071,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("mball.delete_metaelems", {"type": 'DEL', "value": 'PRESS'}, None),
-    ("mball.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
+    ("mball.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("mball.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("mball.select_all",
      {"type": 'A', "value": 'PRESS'},
      {"properties":
