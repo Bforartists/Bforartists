@@ -2425,8 +2425,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("gpencil.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("gpencil.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("gpencil.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("gpencil.select_all",
+     {"type": 'I', "value": 'PRESS', "oskey": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("gpencil.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
