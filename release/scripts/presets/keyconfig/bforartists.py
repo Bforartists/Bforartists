@@ -3553,8 +3553,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("lattice.select_all_none", {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("lattice.select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
+    ("lattice.select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("lattice.select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("lattice.select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
