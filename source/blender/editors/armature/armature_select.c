@@ -60,6 +60,8 @@
 #include "UI_interface.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 #include "UI_resources.h" /*bfa - include UI stuff to get the icons in the grouped enum displayed*/
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* utility macros for storing a temp int in the bone (selection flag) */
 #define EBONE_PREV_FLAG_GET(ebone) ((void)0, (ebone)->temp.i)
 #define EBONE_PREV_FLAG_SET(ebone, val) ((ebone)->temp.i = val)
@@ -1341,6 +1343,26 @@ static int armature_de_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *armature_ot_select_all_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all bones");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all bones");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
 void ARMATURE_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1350,6 +1372,7 @@ void ARMATURE_OT_select_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = armature_de_select_all_exec;
+  ot->get_description = armature_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editarmature;
 
   /* flags */
