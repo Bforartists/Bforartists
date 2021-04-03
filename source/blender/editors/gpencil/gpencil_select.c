@@ -69,6 +69,8 @@
 
 #include "gpencil_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* -------------------------------------------------------------------- */
 /** \name Shared Utilities
  * \{ */
@@ -282,6 +284,26 @@ static int gpencil_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *gpencil_ot_select_all_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all visible Grease Pencil strokes");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all visible Grease Pencil strokes");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
 void GPENCIL_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -291,6 +313,7 @@ void GPENCIL_OT_select_all(wmOperatorType *ot)
 
   /* callbacks */
   ot->exec = gpencil_select_all_exec;
+  ot->get_description = gpencil_ot_select_all_get_description; /*bfa - descriptions*/
   ot->poll = gpencil_select_all_poll;
 
   /* flags */
