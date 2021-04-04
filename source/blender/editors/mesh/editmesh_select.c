@@ -270,7 +270,8 @@ static void findnearestvert__doClosest(void *userData,
 /**
  * Nearest vertex under the cursor.
  *
- * \param r_dist: (in/out), minimal distance to the nearest and at the end, actual distance
+ * \param dist_px_manhattan_p: (in/out), minimal distance to the nearest and at the end,
+ * actual distance.
  * \param use_select_bias:
  * - When true, selected vertices are given a 5 pixel bias
  *   to make them further than unselect verts.
@@ -278,7 +279,7 @@ static void findnearestvert__doClosest(void *userData,
  * \param use_cycle: Cycle over elements within #FIND_NEAR_CYCLE_THRESHOLD_MIN in order of index.
  */
 BMVert *EDBM_vert_find_nearest_ex(ViewContext *vc,
-                                  float *r_dist,
+                                  float *dist_px_manhattan_p,
                                   const bool use_select_bias,
                                   bool use_cycle,
                                   Base **bases,
@@ -288,7 +289,8 @@ BMVert *EDBM_vert_find_nearest_ex(ViewContext *vc,
   uint base_index = 0;
 
   if (!XRAY_FLAG_ENABLED(vc->v3d)) {
-    uint dist_px = (uint)ED_view3d_backbuf_sample_size_clamp(vc->region, *r_dist);
+    uint dist_px_manhattan_test = (uint)ED_view3d_backbuf_sample_size_clamp(vc->region,
+                                                                            *dist_px_manhattan_p);
     uint index;
     BMVert *eve;
 
@@ -297,7 +299,7 @@ BMVert *EDBM_vert_find_nearest_ex(ViewContext *vc,
       DRW_select_buffer_context_create(bases, bases_len, SCE_SELECT_VERTEX);
 
       index = DRW_select_buffer_find_nearest_to_point(
-          vc->depsgraph, vc->region, vc->v3d, vc->mval, 1, UINT_MAX, &dist_px);
+          vc->depsgraph, vc->region, vc->v3d, vc->mval, 1, UINT_MAX, &dist_px_manhattan_test);
 
       if (index) {
         eve = (BMVert *)edbm_select_id_bm_elem_get(bases, index, &base_index);
@@ -308,11 +310,11 @@ BMVert *EDBM_vert_find_nearest_ex(ViewContext *vc,
     }
 
     if (eve) {
-      if (dist_px < *r_dist) {
+      if (dist_px_manhattan_test < *dist_px_manhattan_p) {
         if (r_base_index) {
           *r_base_index = base_index;
         }
-        *r_dist = dist_px;
+        *dist_px_manhattan_p = dist_px_manhattan_test;
         return eve;
       }
     }
@@ -350,18 +352,19 @@ BMVert *EDBM_vert_find_nearest_ex(ViewContext *vc,
       data.cycle_index_prev = 0;
     }
 
-    data.hit.dist = data.hit_cycle.dist = data.hit.dist_bias = data.hit_cycle.dist_bias = *r_dist;
+    data.hit.dist = data.hit_cycle.dist = data.hit.dist_bias = data.hit_cycle.dist_bias =
+        *dist_px_manhattan_p;
 
     ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d);
     mesh_foreachScreenVert(vc, findnearestvert__doClosest, &data, clip_flag);
 
     hit = (data.use_cycle && data.hit_cycle.vert) ? &data.hit_cycle : &data.hit;
 
-    if (hit->dist < *r_dist) {
+    if (hit->dist < *dist_px_manhattan_p) {
       if (r_base_index) {
         *r_base_index = base_index;
       }
-      *r_dist = hit->dist;
+      *dist_px_manhattan_p = hit->dist;
       prev_select_bm = vc->em->bm;
     }
   }
@@ -377,10 +380,10 @@ BMVert *EDBM_vert_find_nearest_ex(ViewContext *vc,
   return hit->vert;
 }
 
-BMVert *EDBM_vert_find_nearest(ViewContext *vc, float *r_dist)
+BMVert *EDBM_vert_find_nearest(ViewContext *vc, float *dist_px_manhattan_p)
 {
   Base *base = BKE_view_layer_base_find(vc->view_layer, vc->obact);
-  return EDBM_vert_find_nearest_ex(vc, r_dist, false, false, &base, 1, NULL);
+  return EDBM_vert_find_nearest_ex(vc, dist_px_manhattan_p, false, false, &base, 1, NULL);
 }
 
 /* find the distance to the edge we already have */
@@ -419,7 +422,7 @@ struct NearestEdgeUserData_Hit {
 
   /* edges only, un-biased manhattan distance to which ever edge we pick
    * (not used for choosing) */
-  float dist_center;
+  float dist_center_px_manhattan;
 };
 
 struct NearestEdgeUserData {
@@ -479,7 +482,7 @@ static void find_nearest_edge__doClosest(
     data->hit.edge = eed;
 
     mid_v2_v2v2(screen_co_mid, screen_co_a, screen_co_b);
-    data->hit.dist_center = len_manhattan_v2v2(data->mval_fl, screen_co_mid);
+    data->hit.dist_center_px_manhattan = len_manhattan_v2v2(data->mval_fl, screen_co_mid);
   }
 
   if (data->use_cycle) {
@@ -493,14 +496,14 @@ static void find_nearest_edge__doClosest(
       data->hit_cycle.edge = eed;
 
       mid_v2_v2v2(screen_co_mid, screen_co_a, screen_co_b);
-      data->hit_cycle.dist_center = len_manhattan_v2v2(data->mval_fl, screen_co_mid);
+      data->hit_cycle.dist_center_px_manhattan = len_manhattan_v2v2(data->mval_fl, screen_co_mid);
     }
   }
 }
 
 BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
-                                  float *r_dist,
-                                  float *r_dist_center,
+                                  float *dist_px_manhattan_p,
+                                  float *r_dist_center_px_manhattan,
                                   const bool use_select_bias,
                                   bool use_cycle,
                                   BMEdge **r_eed_zbuf,
@@ -511,7 +514,8 @@ BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
   uint base_index = 0;
 
   if (!XRAY_FLAG_ENABLED(vc->v3d)) {
-    uint dist_px = (uint)ED_view3d_backbuf_sample_size_clamp(vc->region, *r_dist);
+    uint dist_px_manhattan_test = (uint)ED_view3d_backbuf_sample_size_clamp(vc->region,
+                                                                            *dist_px_manhattan_p);
     uint index;
     BMEdge *eed;
 
@@ -520,7 +524,7 @@ BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
       DRW_select_buffer_context_create(bases, bases_len, SCE_SELECT_EDGE);
 
       index = DRW_select_buffer_find_nearest_to_point(
-          vc->depsgraph, vc->region, vc->v3d, vc->mval, 1, UINT_MAX, &dist_px);
+          vc->depsgraph, vc->region, vc->v3d, vc->mval, 1, UINT_MAX, &dist_px_manhattan_test);
 
       if (index) {
         eed = (BMEdge *)edbm_select_id_bm_elem_get(bases, index, &base_index);
@@ -535,7 +539,7 @@ BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
     }
 
     /* exception for faces (verts don't need this) */
-    if (r_dist_center && eed) {
+    if (r_dist_center_px_manhattan && eed) {
       struct NearestEdgeUserData_ZBuf data;
 
       data.mval_fl[0] = vc->mval[0];
@@ -548,16 +552,16 @@ BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
       mesh_foreachScreenEdge(
           vc, find_nearest_edge_center__doZBuf, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
 
-      *r_dist_center = data.dist;
+      *r_dist_center_px_manhattan = data.dist;
     }
     /* end exception */
 
     if (eed) {
-      if (dist_px < *r_dist) {
+      if (dist_px_manhattan_test < *dist_px_manhattan_p) {
         if (r_base_index) {
           *r_base_index = base_index;
         }
-        *r_dist = dist_px;
+        *dist_px_manhattan_p = dist_px_manhattan_test;
         return eed;
       }
     }
@@ -595,18 +599,19 @@ BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
       data.cycle_index_prev = 0;
     }
 
-    data.hit.dist = data.hit_cycle.dist = data.hit.dist_bias = data.hit_cycle.dist_bias = *r_dist;
+    data.hit.dist = data.hit_cycle.dist = data.hit.dist_bias = data.hit_cycle.dist_bias =
+        *dist_px_manhattan_p;
 
     ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d);
     mesh_foreachScreenEdge(vc, find_nearest_edge__doClosest, &data, clip_flag);
 
     hit = (data.use_cycle && data.hit_cycle.edge) ? &data.hit_cycle : &data.hit;
 
-    if (hit->dist < *r_dist) {
+    if (hit->dist < *dist_px_manhattan_p) {
       if (r_base_index) {
         *r_base_index = base_index;
       }
-      *r_dist = hit->dist;
+      *dist_px_manhattan_p = hit->dist;
       prev_select_bm = vc->em->bm;
     }
   }
@@ -615,8 +620,8 @@ BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
     return NULL;
   }
 
-  if (r_dist_center) {
-    *r_dist_center = hit->dist_center;
+  if (r_dist_center_px_manhattan) {
+    *r_dist_center_px_manhattan = hit->dist_center_px_manhattan;
   }
 
   prev_select.index = hit->index;
@@ -626,16 +631,17 @@ BMEdge *EDBM_edge_find_nearest_ex(ViewContext *vc,
   return hit->edge;
 }
 
-BMEdge *EDBM_edge_find_nearest(ViewContext *vc, float *r_dist)
+BMEdge *EDBM_edge_find_nearest(ViewContext *vc, float *dist_px_manhattan_p)
 {
   Base *base = BKE_view_layer_base_find(vc->view_layer, vc->obact);
-  return EDBM_edge_find_nearest_ex(vc, r_dist, NULL, false, false, NULL, &base, 1, NULL);
+  return EDBM_edge_find_nearest_ex(
+      vc, dist_px_manhattan_p, NULL, false, false, NULL, &base, 1, NULL);
 }
 
 /* find the distance to the face we already have */
 struct NearestFaceUserData_ZBuf {
   float mval_fl[2];
-  float dist;
+  float dist_px_manhattan;
   const BMFace *face_test;
 };
 
@@ -649,8 +655,8 @@ static void find_nearest_face_center__doZBuf(void *userData,
   if (efa == data->face_test) {
     const float dist_test = len_manhattan_v2v2(data->mval_fl, screen_co);
 
-    if (dist_test < data->dist) {
-      data->dist = dist_test;
+    if (dist_test < data->dist_px_manhattan) {
+      data->dist_px_manhattan = dist_test;
     }
   }
 }
@@ -704,9 +710,17 @@ static void findnearestface__doClosest(void *userData,
   }
 }
 
+/**
+ * \param use_zbuf_single_px: Special case, when using the back-buffer selection,
+ * only use the pixel at `vc->mval` instead of using `dist_px_manhattan_p` to search over a larger
+ * region. This is needed because historically selection worked this way for a long time, however
+ * it's reasonable that some callers might want to expand the region too. So add an argument to do
+ * this,
+ */
 BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
-                                  float *r_dist,
+                                  float *dist_px_manhattan_p,
                                   float *r_dist_center,
+                                  const bool use_zbuf_single_px,
                                   const bool use_select_bias,
                                   bool use_cycle,
                                   BMFace **r_efa_zbuf,
@@ -717,14 +731,28 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
   uint base_index = 0;
 
   if (!XRAY_FLAG_ENABLED(vc->v3d)) {
-    float dist_test = 0.0f;
+    float dist_test;
     uint index;
     BMFace *efa;
 
     {
+      uint dist_px_manhattan_test = 0;
+      if (*dist_px_manhattan_p != 0.0f && (use_zbuf_single_px == false)) {
+        dist_px_manhattan_test = (uint)ED_view3d_backbuf_sample_size_clamp(vc->region,
+                                                                           *dist_px_manhattan_p);
+      }
+
       DRW_select_buffer_context_create(bases, bases_len, SCE_SELECT_FACE);
 
-      index = DRW_select_buffer_sample_point(vc->depsgraph, vc->region, vc->v3d, vc->mval);
+      if (dist_px_manhattan_test == 0) {
+        index = DRW_select_buffer_sample_point(vc->depsgraph, vc->region, vc->v3d, vc->mval);
+        dist_test = 0.0f;
+      }
+      else {
+        index = DRW_select_buffer_find_nearest_to_point(
+            vc->depsgraph, vc->region, vc->v3d, vc->mval, 1, UINT_MAX, &dist_px_manhattan_test);
+        dist_test = dist_px_manhattan_test;
+      }
 
       if (index) {
         efa = (BMFace *)edbm_select_id_bm_elem_get(bases, index, &base_index);
@@ -744,7 +772,7 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
 
       data.mval_fl[0] = vc->mval[0];
       data.mval_fl[1] = vc->mval[1];
-      data.dist = FLT_MAX;
+      data.dist_px_manhattan = FLT_MAX;
       data.face_test = efa;
 
       ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d);
@@ -754,16 +782,16 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
       mesh_foreachScreenFaceCenter(
           vc, find_nearest_face_center__doZBuf, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
 
-      *r_dist_center = data.dist;
+      *r_dist_center = data.dist_px_manhattan;
     }
     /* end exception */
 
     if (efa) {
-      if (dist_test < *r_dist) {
+      if (dist_test < *dist_px_manhattan_p) {
         if (r_base_index) {
           *r_base_index = base_index;
         }
-        *r_dist = dist_test;
+        *dist_px_manhattan_p = dist_test;
         return efa;
       }
     }
@@ -799,7 +827,8 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
       data.cycle_index_prev = 0;
     }
 
-    data.hit.dist = data.hit_cycle.dist = data.hit.dist_bias = data.hit_cycle.dist_bias = *r_dist;
+    data.hit.dist = data.hit_cycle.dist = data.hit.dist_bias = data.hit_cycle.dist_bias =
+        *dist_px_manhattan_p;
 
     ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d);
     /*bfa - select through patch*/
@@ -808,11 +837,11 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
 
     hit = (data.use_cycle && data.hit_cycle.face) ? &data.hit_cycle : &data.hit;
 
-    if (hit->dist < *r_dist) {
+    if (hit->dist < *dist_px_manhattan_p) {
       if (r_base_index) {
         *r_base_index = base_index;
       }
-      *r_dist = hit->dist;
+      *dist_px_manhattan_p = hit->dist;
       prev_select_bm = vc->em->bm;
     }
   }
@@ -832,10 +861,11 @@ BMFace *EDBM_face_find_nearest_ex(ViewContext *vc,
   return hit->face;
 }
 
-BMFace *EDBM_face_find_nearest(ViewContext *vc, float *r_dist)
+BMFace *EDBM_face_find_nearest(ViewContext *vc, float *dist_px_manhattan_p)
 {
   Base *base = BKE_view_layer_base_find(vc->view_layer, vc->obact);
-  return EDBM_face_find_nearest_ex(vc, r_dist, NULL, false, false, NULL, &base, 1, NULL);
+  return EDBM_face_find_nearest_ex(
+      vc, dist_px_manhattan_p, NULL, false, false, false, NULL, &base, 1, NULL);
 }
 
 #undef FIND_NEAR_SELECT_BIAS
@@ -889,7 +919,7 @@ static bool unified_findnearest(ViewContext *vc,
     uint base_index = 0;
     BMFace *efa_zbuf = NULL;
     BMFace *efa_test = EDBM_face_find_nearest_ex(
-        vc, &dist, dist_center_p, true, use_cycle, &efa_zbuf, bases, bases_len, &base_index);
+        vc, &dist, dist_center_p, true, true, use_cycle, &efa_zbuf, bases, bases_len, &base_index);
 
     if (efa_test && dist_center_p) {
       dist = min_ff(dist_margin, dist_center);
@@ -4822,15 +4852,8 @@ static int edbm_select_axis_exec(bContext *C, wmOperator *op)
   float axis_mat[3][3];
 
   /* 3D view variables may be NULL, (no need to check in poll function). */
-  ED_transform_calc_orientation_from_type_ex(C,
-                                             axis_mat,
-                                             scene,
-                                             CTX_wm_region_view3d(C),
-                                             obedit,
-                                             obedit,
-                                             orientation,
-                                             0,
-                                             V3D_AROUND_ACTIVE);
+  ED_transform_calc_orientation_from_type_ex(
+      C, axis_mat, scene, CTX_wm_region_view3d(C), obedit, obedit, orientation, V3D_AROUND_ACTIVE);
 
   const float *axis_vector = axis_mat[axis];
 

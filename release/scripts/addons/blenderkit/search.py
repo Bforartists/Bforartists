@@ -108,7 +108,7 @@ def update_ad(ad):
             ad['author']['id'] = ad['author_id']  # this should stay ONLY for compatibility with older scenes
             ad['canDownload'] = ad['can_download']  # this should stay ONLY for compatibility with older scenes
         except Exception as e:
-            bk_logger.error('BLenderKit failed to update older asset data')
+            bk_logger.error('BlenderKit failed to update older asset data')
     return ad
 
 
@@ -243,21 +243,37 @@ def parse_result(r):
         r['available_resolutions'] = []
         allthumbs = []
         durl, tname, small_tname = '', '', ''
-        for f in r['files']:
-            if f['fileType'] == 'thumbnail':
-                tname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
-                small_tname = paths.extract_filename_from_url(f['fileThumbnail'])
-                allthumbs.append(tname)  # TODO just first thumb is used now.
 
-            tdict = {}
-            for i, t in enumerate(allthumbs):
-                tdict['thumbnail_%i'] = t
+        if r['assetType'] == 'hdr':
+            tname = paths.extract_filename_from_url(r['thumbnailMiddleUrlNonsquared'])
+        else:
+            tname = paths.extract_filename_from_url(r['thumbnailMiddleUrl'])
+        small_tname = paths.extract_filename_from_url(r['thumbnailSmallUrl'])
+        allthumbs.append(tname)  # TODO just first thumb is used now.
+        # if r['fileType'] == 'thumbnail':
+        #     tname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
+        #     small_tname = paths.extract_filename_from_url(f['fileThumbnail'])
+        #     allthumbs.append(tname)  # TODO just first thumb is used now.
+
+        for f in r['files']:
+            # if f['fileType'] == 'thumbnail':
+            #     tname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
+            #     small_tname = paths.extract_filename_from_url(f['fileThumbnail'])
+            #     allthumbs.append(tname)  # TODO just first thumb is used now.
+
+
             if f['fileType'] == 'blend':
                 durl = f['downloadUrl'].split('?')[0]
                 # fname = paths.extract_filename_from_url(f['filePath'])
 
             if f['fileType'].find('resolution') > -1:
                 r['available_resolutions'].append(resolutions.resolutions[f['fileType']])
+
+        #code for more thumbnails
+        # tdict = {}
+        # for i, t in enumerate(allthumbs):
+        #     tdict['thumbnail_%i'] = t
+
         r['max_resolution'] = 0
         if r['available_resolutions']:  # should check only for non-empty sequences
             r['max_resolution'] = max(r['available_resolutions'])
@@ -311,7 +327,7 @@ def parse_result(r):
         if asset_type == 'material':
             asset_data['texture_size_meters'] = params.get('textureSizeMeters', 1.0)
 
-        asset_data.update(tdict)
+        # asset_data.update(tdict)
 
         au = scene.get('assets used', {})
         if au == {}:
@@ -1019,25 +1035,44 @@ class Searcher(threading.Thread):
         thumb_full_filepaths = []
         # END OF PARSING
         for d in rdata.get('results', []):
+            thumb_small_urls.append(d["thumbnailSmallUrl"])
+            imgname = paths.extract_filename_from_url(d['thumbnailSmallUrl'])
+            imgpath = os.path.join(self.tempdir, imgname)
+            thumb_small_filepaths.append(imgpath)
 
-            for f in d['files']:
-                # TODO move validation of published assets to server, too manmy checks here.
-                if f['fileType'] == 'thumbnail' and f['fileThumbnail'] != None and f['fileThumbnailLarge'] != None:
-                    if f['fileThumbnail'] == None:
-                        f['fileThumbnail'] = 'NONE'
-                    if f['fileThumbnailLarge'] == None:
-                        f['fileThumbnailLarge'] = 'NONE'
 
-                    thumb_small_urls.append(f['fileThumbnail'])
-                    thumb_full_urls.append(f['fileThumbnailLarge'])
 
-                    imgname = paths.extract_filename_from_url(f['fileThumbnail'])
-                    imgpath = os.path.join(self.tempdir, imgname)
-                    thumb_small_filepaths.append(imgpath)
+            if d["assetType"] == 'hdr':
+                larege_thumb_url = d['thumbnailMiddleUrlNonsquared']
 
-                    imgname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
-                    imgpath = os.path.join(self.tempdir, imgname)
-                    thumb_full_filepaths.append(imgpath)
+            else:
+                larege_thumb_url = d['thumbnailMiddleUrl']
+
+            thumb_full_urls.append(larege_thumb_url)
+            imgname = paths.extract_filename_from_url(larege_thumb_url)
+            imgpath = os.path.join(self.tempdir, imgname)
+            thumb_full_filepaths.append(imgpath)
+
+
+
+            # for f in d['files']:
+            #     # TODO move validation of published assets to server, too manmy checks here.
+            #     if f['fileType'] == 'thumbnail' and f['fileThumbnail'] != None and f['fileThumbnailLarge'] != None:
+            #         if f['fileThumbnail'] == None:
+            #             f['fileThumbnail'] = 'NONE'
+            #         if f['fileThumbnailLarge'] == None:
+            #             f['fileThumbnailLarge'] = 'NONE'
+            #
+            #         thumb_small_urls.append(f['fileThumbnail'])
+            #         thumb_full_urls.append(f['fileThumbnailLarge'])
+            #
+            #         imgname = paths.extract_filename_from_url(f['fileThumbnail'])
+            #         imgpath = os.path.join(self.tempdir, imgname)
+            #         thumb_small_filepaths.append(imgpath)
+            #
+            #         imgname = paths.extract_filename_from_url(f['fileThumbnailLarge'])
+            #         imgpath = os.path.join(self.tempdir, imgname)
+            #         thumb_full_filepaths.append(imgpath)
 
         sml_thbs = zip(thumb_small_filepaths, thumb_small_urls)
         full_thbs = zip(thumb_full_filepaths, thumb_full_urls)
@@ -1530,6 +1565,10 @@ class SearchOperator(Operator):
             sprops.search_keywords = ''
         if self.keywords != '':
             sprops.search_keywords = self.keywords
+        #crop long searches
+        if len(self.keywords) > 150:
+            idx = self.keywords.find(' ', 142)
+            self.keywords = self.keywords[:idx]
 
         search(category=self.category, get_next=self.get_next, author_id=self.author_id)
         # bpy.ops.view3d.blenderkit_asset_bar()

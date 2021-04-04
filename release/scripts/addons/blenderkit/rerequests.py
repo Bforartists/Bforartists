@@ -32,7 +32,10 @@ def rerequest(method, url, **kwargs):
         immediate = kwargs['immediate']
         kwargs.pop('immediate')
     # first normal attempt
-    response = requests.request(method, url, **kwargs)
+    try:
+        response = requests.request(method, url, **kwargs)
+    except:
+        return rerequest(method, url, **kwargs)
 
     bk_logger.debug(url+ str( kwargs))
     bk_logger.debug(response.status_code)
