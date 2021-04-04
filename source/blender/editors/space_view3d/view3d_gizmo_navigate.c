@@ -385,8 +385,8 @@ static void WIDGETGROUP_navigate_draw_prepare(const bContext *C, wmGizmoGroup *g
     if (navgroup->state.rv3d.is_camera == true) {
       gz = navgroup->gz_array[(v3d->flag2 & V3D_LOCK_CAMERA) ? GZ_INDEX_CAMERA_UNLOCK :
                                                                GZ_INDEX_CAMERA_LOCK];
-      gz->matrix_basis[3][0] = roundf(co[0]);
-      gz->matrix_basis[3][1] = roundf(co[1] - (icon_offset_mini * icon_mini_slot++));
+      gz->matrix_basis[3][0] = roundf(co[0]) - (icon_offset_mini * icon_mini_slot++);/* bfa- changed back navigation buttons to horizontal*/
+      gz->matrix_basis[3][1] = roundf(co[1]);/* bfa- changed back navigation buttons to horizontal*/
       WM_gizmo_set_flag(gz, WM_GIZMO_HIDDEN, false);
     }
   }
