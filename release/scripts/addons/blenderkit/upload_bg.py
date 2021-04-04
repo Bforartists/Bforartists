@@ -167,6 +167,10 @@ if __name__ == "__main__":
         bpy.ops.file.pack_all()
 
         main_source.blenderkit.uploading = False
+        #write ID here.
+        main_source.blenderkit.asset_base_id = export_data['assetBaseId']
+        main_source.blenderkit.id = export_data['id']
+
         fpath = os.path.join(export_data['temp_dir'], upload_data['assetBaseId'] + '.blend')
 
         bpy.ops.wm.save_as_mainfile(filepath=fpath, compress=True, copy=False)

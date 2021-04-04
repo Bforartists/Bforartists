@@ -530,10 +530,10 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             print('Deleted remaining lattice object')
             delete_cage(phantom_obj)
 
-        if [m for m in self.gp_obj.grease_pencil_modifiers if m.type == 'GP_LATTICE']:
-            self.report({'ERROR'}, "Grease pencil object already has a lattice modifier (can only have one)")
-            return {'CANCELLED'}
-
+        if bpy.app.version < (2,93,0):
+            if [m for m in self.gp_obj.grease_pencil_modifiers if m.type == 'GP_LATTICE']:
+                self.report({'ERROR'}, "Grease pencil object already has a lattice modifier (multi-lattices are enabled in blender 2.93+)")
+                return {'CANCELLED'}
 
         self.gp_mode = context.mode#store mode for restore
 

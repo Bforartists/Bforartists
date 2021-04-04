@@ -261,7 +261,7 @@ def generate_lower_resolutions_hdr(asset_data, fpath):
         fn_strip, ext = os.path.splitext(fpath)
         ext = '.exr'
         if i>0:
-            downscale(hdr)
+            image_utils.downscale(hdr)
 
 
         hdr_resolution_filepath = fn_strip + paths.resolution_suffix[p2res] + ext
@@ -379,7 +379,7 @@ def generate_lower_resolutions(data):
                 else:
                     p2res = rkeys[rkeys.index(p2res) - 1]
             print('uploading resolution files')
-            #upload_resolutions(files, data['asset_data'])
+            upload_resolutions(files, data['asset_data'])
             preferences = bpy.context.preferences.addons['blenderkit'].preferences
             patch_asset_empty(data['asset_data']['id'], preferences.api_key)
         return
