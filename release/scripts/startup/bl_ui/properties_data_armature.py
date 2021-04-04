@@ -93,10 +93,6 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
         row.prop_decorator(arm, "show_names")
         row = col.row()
         row.separator()
-        row.prop(arm, "show_axes", text="Axes")
-        row.prop_decorator(arm, "show_axes")
-        row = col.row()
-        row.separator()
         row.prop(arm, "show_bone_custom_shapes", text="Shapes")
         row.prop_decorator(arm, "show_bone_custom_shapes")
         row = col.row()
@@ -110,12 +106,24 @@ class DATA_PT_display(ArmatureButtonsPanel, Panel):
             row.prop(ob, "show_in_front", text="In Front")
             row.prop_decorator(ob, "show_in_front")
 
-        col = layout.column(align=False, heading="Axes")
-        row = col.row(align=True)
-        row.prop(arm, "show_axes", text="")
-        sub = row.row(align=True)
-        sub.active = arm.show_axes
-        sub.prop(arm, "axes_position", text="Position")
+        split = col.split(factor = 0.38)
+        col = split.column()
+        col.use_property_split = False
+        row = col.row()
+        row.separator()
+        row.prop(arm, "show_axes", text="Axes")
+        col = split.column()
+        if arm.show_axes:
+            row = col.row()
+            row.use_property_split = False
+            row.prop(arm, "axes_position", text="")
+
+        else:
+            row = col.row()
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+        subrow = row.row()
+        subrow.alignment='RIGHT'
+        subrow.prop_decorator(arm, "show_axes")
 
 
 class DATA_MT_bone_group_context_menu(Menu):
