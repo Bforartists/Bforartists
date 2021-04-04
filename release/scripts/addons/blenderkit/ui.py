@@ -390,7 +390,7 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
     xtext += int(isizex / ncolumns)
 
     column_lines = 1
-    i=0
+    i = 0
     for l in alines:
         if gravatar is not None:
             if column_lines == 1:
@@ -399,20 +399,20 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
                 xtext -= gsize + textmargin
 
         ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
-        if False:#i == 0:
+        if False:  # i == 0:
             ytext = y - name_height + 5 - isizey + texth - textmargin
         elif i == len(lines) - 1:
             ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
             tcol = textcol
             tsize = font_height
-        if (i> 0 and alines[i-1][:7] == 'Author:'):
+        if (i > 0 and alines[i - 1][:7] == 'Author:'):
             tcol = textcol_strong
             fsize = font_height + 2
         else:
             fsize = font_height
             tcol = textcol
 
-            if l[:4] == 'Tip:' or l[:11] == 'Please rate'  :
+            if l[:4] == 'Tip:' or l[:11] == 'Please rate':
                 tcol = textcol_strong
                 fsize = font_height + 1
 
@@ -710,6 +710,8 @@ def get_large_thumbnail_image(asset_data):
     iname = utils.previmg_name(ui_props.active_index, fullsize=True)
     directory = paths.get_temp_dir('%s_search' % mappingdict[ui_props.asset_type])
     tpath = os.path.join(directory, asset_data['thumbnail'])
+    if asset_data['assetType'] == 'hdr':
+        tpath = os.path.join(directory, asset_data['thumbnail'])
     if not asset_data['thumbnail']:
         tpath = paths.get_addon_thumbnail_path('thumbnail_not_available.jpg')
 
@@ -890,15 +892,16 @@ def draw_callback_3d(self, context):
         if ui.draw_snapped_bounds:
             draw_bbox(ui.snapped_location, ui.snapped_rotation, ui.snapped_bbox_min, ui.snapped_bbox_max)
 
+
 def object_in_particle_collection(o):
     '''checks if an object is in a particle system as instance, to not snap to it and not to try to attach material.'''
     for p in bpy.data.particles:
-        if p.render_type =='COLLECTION':
+        if p.render_type == 'COLLECTION':
             if p.instance_collection:
                 for o1 in p.instance_collection.objects:
                     if o1 == o:
                         return True
-        if p.render_type =='COLLECTION':
+        if p.render_type == 'COLLECTION':
             if p.instance_object == o:
                 return True
     return False
@@ -921,11 +924,13 @@ def deep_ray_cast(depsgraph, ray_origin, vec):
         try_has_hit, try_snapped_location, try_snapped_normal, try_face_index, try_object, try_matrix = bpy.context.scene.ray_cast(
             depsgraph, ray_origin, vec)
         if try_has_hit:
-            #this way only good hits are returned, otherwise
+            # this way only good hits are returned, otherwise
             has_hit, snapped_location, snapped_normal, face_index, object, matrix = try_has_hit, try_snapped_location, try_snapped_normal, try_face_index, try_object, try_matrix
-    if not (object.display_type == 'BOUNDS' or object_in_particle_collection(try_object)):# or not object.visible_get()):
+    if not (object.display_type == 'BOUNDS' or object_in_particle_collection(
+            try_object)):  # or not object.visible_get()):
         return has_hit, snapped_location, snapped_normal, face_index, object, matrix
     return empty_set
+
 
 def mouse_raycast(context, mx, my):
     r = context.region
@@ -938,7 +943,7 @@ def mouse_raycast(context, mx, my):
         view_position = rv3d.view_matrix.inverted().translation
         ray_origin = view3d_utils.region_2d_to_location_3d(r, rv3d, coord, depth_location=view_position)
     else:
-        ray_origin = view3d_utils.region_2d_to_origin_3d(r, rv3d, coord, clamp = 1.0)
+        ray_origin = view3d_utils.region_2d_to_origin_3d(r, rv3d, coord, clamp=1.0)
 
     ray_target = ray_origin + (view_vector * 1000000000)
 
@@ -947,8 +952,8 @@ def mouse_raycast(context, mx, my):
     has_hit, snapped_location, snapped_normal, face_index, object, matrix = deep_ray_cast(
         bpy.context.view_layer.depsgraph, ray_origin, vec)
 
-    #backface snapping inversion
-    if view_vector.angle(snapped_normal)<math.pi/2:
+    # backface snapping inversion
+    if view_vector.angle(snapped_normal) < math.pi / 2:
         snapped_normal = -snapped_normal
     # print(has_hit, snapped_location, snapped_normal, face_index, object, matrix)
     # rote = mathutils.Euler((0, 0, math.pi))
@@ -1102,7 +1107,6 @@ def mouse_in_area(mx, my, x, y, w, h):
 
 
 def mouse_in_asset_bar(mx, my):
-
     ui_props = bpy.context.scene.blenderkitUI
     # search_results = bpy.context.window_manager.get('search results')
     # if search_results == None:
@@ -1219,6 +1223,7 @@ class ParticlesDropDialog(bpy.types.Operator):
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self, width=400)
+
 
 # class MaterialDropDialog(bpy.types.Operator):
 #     """Tooltip"""
@@ -1624,7 +1629,7 @@ class AssetBarOperator(bpy.types.Operator):
                     return {'RUNNING_MODAL'}
 
                 # Drag-drop interaction
-                if ui_props.dragging and mouse_in_region(r, mx, my):# and ui_props.drag_length>10:
+                if ui_props.dragging and mouse_in_region(r, mx, my):  # and ui_props.drag_length>10:
                     asset_search_index = ui_props.active_index
                     # raycast here
                     ui_props.active_index = -3
@@ -1727,7 +1732,8 @@ class AssetBarOperator(bpy.types.Operator):
                                                               model_location=loc,
                                                               model_rotation=rotation,
                                                               target_object=target_object,
-                                                              material_target_slot=target_slot)
+                                                              material_target_slot=target_slot,
+                                                              )
 
 
                     elif ui_props.asset_type == 'MODEL':
@@ -1752,9 +1758,17 @@ class AssetBarOperator(bpy.types.Operator):
                                                               model_rotation=rotation,
                                                               target_object=target_object)
 
+                    elif ui_props.asset_type == 'HDR':
+                        bpy.ops.scene.blenderkit_download('INVOKE_DEFAULT',
+                                                          asset_index=asset_search_index,
+                                                          # replace_resolution=True,
+                                                          invoke_resolution=True,
+                                                          max_resolution = asset_data.get('max_resolution', 0)
+                        )
                     else:
                         bpy.ops.scene.blenderkit_download(  # asset_type=ui_props.asset_type,
-                            asset_index=asset_search_index)
+                            asset_index=asset_search_index,
+                        )
 
                     ui_props.dragging = False
                     return {'RUNNING_MODAL'}
@@ -1927,6 +1941,7 @@ def draw_callback_3d_dragging(self, context):
         if self.has_hit:
             draw_bbox(self.snapped_location, self.snapped_rotation, self.snapped_bbox_min, self.snapped_bbox_max)
 
+
 def find_and_activate_instancers(object):
     for ob in bpy.context.visible_objects:
         if ob.instance_type == 'COLLECTION' and ob.instance_collection and object.name in ob.instance_collection.objects:
@@ -1978,10 +1993,10 @@ class AssetDragOperator(bpy.types.Operator):
             # action
             else:
                 if object.is_library_indirect:
-                    ui_panels.ui_message(title = 'This object is linked from outer file',
-                                         message = "Please select the model,"
-                                                   "go to the 'Selected Model' panel "
-                                                   "in BlenderKit and hit 'Bring to Scene' first.")
+                    ui_panels.ui_message(title='This object is linked from outer file',
+                                         message="Please select the model,"
+                                                 "go to the 'Selected Model' panel "
+                                                 "in BlenderKit and hit 'Bring to Scene' first.")
 
                 self.report({'WARNING'}, "Invalid or library object as input:")
                 target_object = ''
@@ -2037,11 +2052,11 @@ class AssetDragOperator(bpy.types.Operator):
                                                   target_object=target_object)
 
         else:
-            if ui_props.asset_type =='SCENE':
-                ui_panels.ui_message(title = 'Scene will be appended after download',
-                                     message = 'After the scene is appended, you have to switch to it manually.'
-                                               'If you want to switch to scenes automatically after appending,'
-                                               ' you can set it in import settings.')
+            if ui_props.asset_type == 'SCENE':
+                ui_panels.ui_message(title='Scene will be appended after download',
+                                     message='After the scene is appended, you have to switch to it manually.'
+                                             'If you want to switch to scenes automatically after appending,'
+                                             ' you can set it in import settings.')
             bpy.ops.scene.blenderkit_download(  # asset_type=ui_props.asset_type,
                 asset_index=self.asset_search_index)
 

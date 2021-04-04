@@ -293,6 +293,19 @@ def update_ratings_work_hours_ui_1_5(self, context):
     # print(float(self.rating_work_hours_ui_1_5))
     self.rating_work_hours = float(self.rating_work_hours_ui_1_5)
 
+def update_ratings_work_hours_ui_1_10(self, context):
+    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    if user_preferences.api_key == '':
+        # ui_panels.draw_not_logged_in(self, message='Please login/signup to rate assets.')
+        # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_login_menu')
+        # return
+        bpy.ops.wm.blenderkit_login('INVOKE_DEFAULT',
+                                    message='Please login/signup to rate assets. Clicking OK takes you to web login.')
+        # self.rating_work_hours_ui_1_5 = '0'
+    # print('updating 1-5')
+    # print(float(self.rating_work_hours_ui_1_5))
+    self.rating_work_hours = float(self.rating_work_hours_ui_1_10)
+
 
 class FastRateMenu(Operator):
     """Rating of the assets , also directly from the asset bar - without need to download assets"""
@@ -390,11 +403,30 @@ class FastRateMenu(Operator):
                                            options = {'SKIP_SAVE'}
                                            )
 
+    rating_work_hours_ui_1_10: EnumProperty(name="Work Hours",
+                                           description="How many hours did this work take?",
+                                           items=[('0', '0', ''),
+                                                  ('1', '1', ''),
+                                                  ('2', '2', ''),
+                                                  ('3', '3', ''),
+                                                  ('4', '4', ''),
+                                                  ('5', '5', ''),
+                                                  ('6', '6', ''),
+                                                  ('7', '7', ''),
+                                                  ('8', '8', ''),
+                                                  ('9', '9', ''),
+                                                  ('10', '10', '')
+                                                  ],
+                                           default='0',
+                                           update=update_ratings_work_hours_ui_1_10,
+                                           options={'SKIP_SAVE'}
+                                           )
+
     @classmethod
     def poll(cls, context):
-        # scene = bpy.context.scene
-        # ui_props = scene.blenderkitUI
-        return True  # ui_props.active_index > -1
+        scene = bpy.context.scene
+        ui_props = scene.blenderkitUI
+        return ui_props.active_index > -1
 
     def draw(self, context):
         layout = self.layout
@@ -426,9 +458,10 @@ class FastRateMenu(Operator):
                                       text=f"\nThat's a lot! please be sure to give such rating only to amazing {self.asset_type}s.\n",
                                       width=500)
 
+        elif self.asset_type == 'hdr':
+            row = layout.row()
+            row.prop(self, 'rating_work_hours_ui_1_10', expand=True, icon_only=False, emboss=True)
         else:
-
-
             row = layout.row()
             row.prop(self, 'rating_work_hours_ui_1_5', expand=True, icon_only=False, emboss=True)
 

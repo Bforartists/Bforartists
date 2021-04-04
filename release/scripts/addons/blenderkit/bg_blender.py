@@ -126,7 +126,8 @@ def bg_update():
             tcom.lasttext = tcom.outtext
             if tcom.outtext != '':
                 tcom.outtext = ''
-                estring = tcom.eval_path_state + ' = tcom.lasttext'
+                text =tcom.lasttext.replace("'","")
+                estring = tcom.eval_path_state + ' = text'
 
                 exec(estring)
             # print(tcom.lasttext)

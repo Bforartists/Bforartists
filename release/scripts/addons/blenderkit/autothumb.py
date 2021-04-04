@@ -272,7 +272,7 @@ class GenerateThumbnailOperator(bpy.types.Operator):
 
 
 class GenerateMaterialThumbnailOperator(bpy.types.Operator):
-    """Tooltip"""
+    """Generate default thumbnail with Cycles renderer."""
     bl_idname = "object.blenderkit_material_thumbnail"
     bl_label = "BlenderKit Material Thumbnail Generator"
     bl_options = {'REGISTER', 'INTERNAL'}
