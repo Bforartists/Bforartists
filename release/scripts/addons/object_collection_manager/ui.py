@@ -173,30 +173,52 @@ class CollectionManager(Operator):
         # set selection
         setsel = name_row.row(align=True)
         icon = 'DOT'
+        some_selected = False
 
-        if any((laycol["ptr"].exclude,
-               collection.hide_select,
-               collection.hide_viewport,
-               laycol["ptr"].hide_viewport,
-               not collection.objects,)):
-            # objects cannot be selected
+        if not collection.objects:
+            icon = 'BLANK1'
             setsel.active = False
 
         else:
+            all_selected = None
+            all_unreachable = None
+
             for obj in collection.objects:
+                if not obj.visible_get() or obj.hide_select:
+                    if all_unreachable != False:
+                        all_unreachable = True
+
+                else:
+                    all_unreachable = False
+
                 if obj.select_get() == False:
                     # some objects remain unselected
-                    icon = 'LAYER_USED'
-                    break
+                    icon = 'KEYFRAME'
+                    all_selected = False
 
-            if icon != 'LAYER_USED':
+                else:
+                    some_selected = True
+
+                    if all_selected == False:
+                        break
+
+                    all_selected = True
+
+
+            if all_selected:
                 # all objects are selected
-                icon = 'LAYER_ACTIVE'
+                icon = 'KEYFRAME_HLT'
+
+            if all_unreachable:
+                if collection.objects:
+                    icon = 'DOT'
+
+                setsel.active = False
 
         prop = setsel.operator("view3d.select_collection_objects",
                                    text="",
                                    icon=icon,
-                                   depress=bool(icon == 'LAYER_ACTIVE')
+                                   depress=some_selected,
                                    )
         prop.is_master_collection = True
         prop.collection_name = 'Master Collection'
@@ -607,30 +629,60 @@ class CM_UL_items(UIList):
         # set selection
         setsel = c_name.row(align=True)
         icon = 'DOT'
+        some_selected = False
+
+        if not collection.objects:
+            icon = 'BLANK1'
+            setsel.active = False
 
         if any((laycol["ptr"].exclude,
                collection.hide_select,
                collection.hide_viewport,
-               laycol["ptr"].hide_viewport,
-               not collection.objects,)):
+               laycol["ptr"].hide_viewport,)):
             # objects cannot be selected
             setsel.active = False
 
         else:
+            all_selected = None
+            all_unreachable = None
+
             for obj in collection.objects:
+                if not obj.visible_get() or obj.hide_select:
+                    if all_unreachable != False:
+                        all_unreachable = True
+
+                else:
+                    all_unreachable = False
+
                 if obj.select_get() == False:
                     # some objects remain unselected
-                    icon = 'LAYER_USED'
-                    break
+                    icon = 'KEYFRAME'
+                    all_selected = False
 
-            if icon != 'LAYER_USED':
+                else:
+                    some_selected = True
+
+                    if all_selected == False:
+                        break
+
+                    all_selected = True
+
+
+            if all_selected:
                 # all objects are selected
-                icon = 'LAYER_ACTIVE'
+                icon = 'KEYFRAME_HLT'
+
+            if all_unreachable:
+                if collection.objects:
+                    icon = 'DOT'
+
+                setsel.active = False
+
 
         prop = setsel.operator("view3d.select_collection_objects",
                                    text="",
                                    icon=icon,
-                                   depress=bool(icon == 'LAYER_ACTIVE')
+                                   depress=some_selected
                                    )
         prop.is_master_collection = False
         prop.collection_name = item.name

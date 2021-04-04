@@ -72,7 +72,7 @@ def add_version(data):
 
 
 def write_to_report(props, text):
-    props.report = props.report + ' - '+ text + '\n\n'
+    props.report = props.report + ' - ' + text + '\n\n'
 
 
 def check_missing_data_model(props):
@@ -509,7 +509,7 @@ def get_upload_data(caller=None, context=None, asset_type=None):
         upload_data["category"] = props.subcategory1
 
     upload_data["license"] = props.license
-    upload_data["isFree"] = props.is_free
+    upload_data["isFree"] = props.is_free == 'FREE'
     upload_data["isPrivate"] = props.is_private == 'PRIVATE'
     upload_data["token"] = user_preferences.api_key
 
@@ -569,7 +569,7 @@ def update_free_full(self, context):
 
 
 def can_edit_asset(active_index=-1, asset_data=None):
-    if active_index == -1 and not asset_data:
+    if active_index < 0 and not asset_data:
         return False
     profile = bpy.context.window_manager.get('bkit profile')
     if profile is None:
@@ -857,7 +857,8 @@ class Uploader(threading.Thread):
         return self._stop_event.is_set()
 
     def send_message(self, message):
-        message = str(message)
+        message = str(message).replace("'", "")
+
         # this adds a UI report but also writes above the upload panel fields.
         tasks_queue.add_task((ui.add_report, (message,)))
         estring = f"{self.export_data['eval_path_state']} = '{message}'"
@@ -943,6 +944,8 @@ class Uploader(threading.Thread):
                 estring = f"{self.export_data['eval_path']}.blenderkit.id = '{rj['id']}'"
                 tasks_queue.add_task((exec, (estring,)))
                 # after that, the user's file needs to be saved to save the
+                # estring = f"bpy.ops.wm.save_as_mainfile(filepath={self.export_data['source_filepath']}, compress=False, copy=True)"
+                # tasks_queue.add_task((exec, (estring,)))
 
             self.upload_data['assetBaseId'] = self.export_data['assetBaseId']
             self.upload_data['id'] = self.export_data['id']
@@ -968,16 +971,6 @@ class Uploader(threading.Thread):
                     with open(datafile, 'w', encoding='utf-8') as s:
                         json.dump(data, s, ensure_ascii=False, indent=4)
 
-                    # non waiting method - not useful here..
-                    # proc = subprocess.Popen([
-                    #     binary_path,
-                    #     "--background",
-                    #     "-noaudio",
-                    #     clean_file_path,
-                    #     "--python", os.path.join(script_path, "upload_bg.py"),
-                    #     "--", datafile  # ,filepath, tempdir
-                    # ], bufsize=5000, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-                    # tasks_queue.add_task((ui.add_report, ('preparing scene - running blender instance',)))
                     self.send_message('preparing scene - running blender instance')
 
                     proc = subprocess.run([
@@ -1124,7 +1117,7 @@ class UploadOperator(Operator):
     bl_description = "Upload or re-upload asset + thumbnail + metadata"
 
     bl_label = "BlenderKit asset upload"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+    bl_options = {'REGISTER', 'INTERNAL'}
 
     # type of upload - model, material, textures, e.t.c.
     asset_type: EnumProperty(
@@ -1214,11 +1207,24 @@ class UploadOperator(Operator):
             layout.label(text="For updates of thumbnail or model use reupload.")
 
         if props.is_private == 'PUBLIC':
-            utils.label_multiline(layout, text='public assets are validated several hours'
-                                               ' or days after upload. Remember always to '
-                                               'test download your asset to a clean file'
-                                               ' to see if it uploaded correctly.'
-                                  , width=300)
+            if self.asset_type == 'MODEL':
+                utils.label_multiline(layout, text='You marked the asset as public.\n'
+                                                   'This means it will be validated by our team.\n\n'
+                                                   'Please test your upload after it finishes:\n'
+                                                   '-   Open a new file\n'
+                                                   '-   Find the asset and download it\n'
+                                                   '-   Check if it snaps correctly to surfaces\n'
+                                                   '-   Check if it has all textures and renders as expected\n'
+                                                   '-   Check if it has correct size in world units (for models)'
+                                      , width=400)
+            else:
+                utils.label_multiline(layout, text='You marked the asset as public.\n'
+                                                   'This means it will be validated by our team.\n\n'
+                                                   'Please test your upload after it finishes:\n'
+                                                   '-   Open a new file\n'
+                                                   '-   Find the asset and download it\n'
+                                                   '-   Check if it works as expected\n'
+                                      , width=400)
 
     def invoke(self, context, event):
         props = utils.get_upload_props()

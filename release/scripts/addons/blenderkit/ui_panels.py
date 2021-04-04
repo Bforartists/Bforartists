@@ -968,18 +968,24 @@ class VIEW3D_PT_blenderkit_unified(Panel):
         # split = row.split(factor=.
 
         expand_icon = 'TRIA_DOWN'
-        if ui_props.asset_type_expand:
+        if ui_props.asset_type_fold:
             expand_icon = 'TRIA_RIGHT'
         row = layout.row()
-        split = row.split(factor = 0.1)
-        split.prop(ui_props, 'asset_type_expand', icon = expand_icon, icon_only = True, emboss = False)
-        split = split.split(factor = 1.0)
-        if ui_props.asset_type_expand:
+        split = row.split(factor = 0.15)
+        split.prop(ui_props, 'asset_type_fold', icon = expand_icon, icon_only = True, emboss = False)
+
+        if ui_props.asset_type_fold:
+            pass
             #expanded interface with names in column
             split = split.row()
-            split.scale_x = 1.6
-            split.scale_y = 1.6
-        split.prop(ui_props, 'asset_type', expand=True, icon_only=ui_props.asset_type_expand)
+            split.scale_x = 8
+            split.scale_y =1.6
+            # split = row
+            # split = layout.row()
+        else:
+            split = split.column()
+
+        split.prop(ui_props, 'asset_type', expand=True, icon_only=ui_props.asset_type_fold)
         # row = layout.column(align = False)
         # layout.prop(ui_props, 'asset_type', expand=False, text='')
 
@@ -1154,8 +1160,9 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
     # build search string from description and tags:
     op.keywords = asset_data['name']
     if asset_data.get('description'):
-        op.keywords += ' ' + asset_data.get('description')
+        op.keywords += ' ' + asset_data.get('description')+' '
     op.keywords += ' '.join(asset_data.get('tags'))
+
 
     if asset_data.get('canDownload') != 0:
         if len(bpy.context.selected_objects) > 0 and ui_props.asset_type == 'MODEL':
@@ -1220,7 +1227,8 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
                     op.max_resolution = asset_data.get('max_resolution',
                                                        0)  # str(utils.get_param(asset_data, 'textureResolutionMax'))
 
-            elif asset_data['assetBaseId'] in s['assets used'].keys():
+            elif asset_data['assetBaseId'] in s['assets used'].keys() and asset_data['assetType'] != 'hdr':
+                #HDRs are excluded from replacement, since they are always replaced.
                 # called from asset bar:
                 print('context menu')
                 op = col.operator('scene.blenderkit_download', text='Replace asset resolution')
@@ -1607,6 +1615,7 @@ def draw_panel_categories(self, context):
                 op = row.operator('view3d.blenderkit_asset_bar', text=ctext)
                 op.do_search = True
                 op.keep_running = True
+                op.tooltip = f"Browse {c['name']} category"
                 op.category = c['slug']
             if len(c['children']) > 0 and c['assetCount'] > 15 or (
                     utils.profile_is_validator() and user_preferences.categories_fix):
