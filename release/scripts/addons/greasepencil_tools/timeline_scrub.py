@@ -233,6 +233,12 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
 
         self.hud = prefs.use_hud
         if not self.hud:
+            ## Same as end settings when HUD is On
+            if self.lock_range:
+                self.pos = [i for i in self.pos if self.f_start <= i <= self.f_end]
+            self.pos = np.asarray(self.pos)
+            if self.rolling_mode:
+                context.scene.frame_current = self.new_frame
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
 

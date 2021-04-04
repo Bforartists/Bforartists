@@ -175,7 +175,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         description="search only subtree of this category",
         default="", options={'SKIP_SAVE'})
 
-    tooltip: bpy.props.StringProperty(default='runs search and displays the asset bar at the same time')
+    tooltip: bpy.props.StringProperty(default='Runs search and displays the asset bar at the same time')
 
     @classmethod
     def description(cls, context, properties):
