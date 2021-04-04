@@ -126,13 +126,13 @@ static struct NavigateGizmoInfo g_navigate_params[GZ_INDEX_TOTAL] = {
     {
         .opname = "WM_OT_context_toggle", /* GZ_INDEX_CAMERA_LOCK. Lock Camera to View. */
         .gizmo = "GIZMO_GT_button_2d",
-        .icon = ICON_UNLOCKED,
+        .icon = ICON_LOCK_TO_CAMVIEW, /*bfa - navigate the passepartout*/
         .op_prop_fn = navigate_context_toggle_camera_lock_init,
     },
     {
         .opname = "WM_OT_context_toggle", /* GZ_INDEX_CAMERA_UNLOCK. Unlock Camera to View. */
         .gizmo = "GIZMO_GT_button_2d",
-        .icon = ICON_LOCKED,
+        .icon = ICON_LOCK_TO_CAMVIEW_ON, /*bfa - navigate in the camera view*/
         .op_prop_fn = navigate_context_toggle_camera_lock_init,
     },
 };
