@@ -299,6 +299,7 @@ class MATERIAL_PT_viewport(MaterialButtonsPanel, Panel):
 class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
     bl_label = "Line Art"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_order = 10
 
     @classmethod
     def poll(cls, context):
