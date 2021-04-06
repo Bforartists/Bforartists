@@ -57,6 +57,11 @@ def align_view_buttons(self, context):
         row.operator("view3d.view_axis", text="", icon ="VIEW_LEFT").type = 'LEFT'
         row.operator("view3d.view_axis", text="", icon ="VIEW_TOP").type = 'TOP'
         row.operator("view3d.view_axis", text="", icon ="VIEW_BOTTOM").type = 'BOTTOM'
+        
+    if addon_prefs.lock_camera_to_view:
+        if context.space_data.region_3d.view_perspective == "CAMERA":
+            row.separator()
+            row.prop(view, "lock_camera", icon = "LOCK_TO_CAMVIEW", icon_only=True )
 
     if addon_prefs.quad_view:
         row.operator("screen.region_quadview", text = "", icon = "QUADVIEW")
@@ -104,6 +109,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
 
     def draw(self, context):
         layout = self.layout
+        view = context.space_data
 
         preferences = context.preferences
         addon_prefs = preferences.addons["align_view_buttons"].preferences
@@ -122,9 +128,12 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "camera_view")
-
+        
         col = layout.column(align = True)
         col.label(text="Navigation")
+        row = col.row()
+        row.separator()
+        row.prop(addon_prefs, "lock_camera_to_view")
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "camera_switch")
@@ -173,6 +182,7 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
     persp_ortho : BoolProperty(name="Perspective Orthographic", default=False, description = "Toggle between perspectivic and orthographic projection", )
 
     # Navigation
+    lock_camera_to_view : BoolProperty(name="Lock Caymera to View", default=False, description = "Navigate either the camera passepartout or the camera content\nJust active in camera view", )
     camera_view : BoolProperty(name="Active Camera", default=False, description = "View through the render camera or through the viewport camera", )
     camera_switch : BoolProperty(name="Set Active Camera", default=False, description = "Set the currently selected camera as the active camera", )
 
