@@ -1943,10 +1943,10 @@ typedef enum eSpace_Type {
   SPACE_CLIP = 20,
   SPACE_TOPBAR = 21,
   SPACE_STATUSBAR = 22,
-  SPACE_SPREADSHEET = 23,
-  SPACE_TOOLBAR = 30, /*bfa - toolbar*/
+  SPACE_TOOLBAR = 23, /*bfa - toolbar*/
+  SPACE_SPREADSHEET = 24,
 
-#define SPACE_TYPE_LAST SPACE_TOOLBAR
+#define SPACE_TYPE_LAST SPACE_SPREADSHEET
 } eSpace_Type;
 
 /* use for function args */
