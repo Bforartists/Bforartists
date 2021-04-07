@@ -1075,14 +1075,20 @@ class VIEW3D_PT_tools_weightpaint_symmetry(Panel, View3DPaintPanel):
         tool_settings = context.tool_settings
         wpaint = tool_settings.weight_paint
         mesh = context.object.data
-
-        layout.prop(mesh, 'use_mirror_vertex_groups')
+        
+        col = layout.column(align = True)
+        col.use_property_split = False
+        col.prop(mesh, 'use_mirror_vertex_groups')
+        
+        row = col.row()
+        if mesh.use_mirror_vertex_groups:
+            row.separator ()
+            row.use_property_split = False
+            row.prop(mesh, "use_mirror_topology")
+        
+        layout.use_property_split = True
 
         draw_vpaint_symmetry(layout, wpaint, context.object)
-
-        row = layout.row()
-        row.active = mesh.use_mirror_vertex_groups
-        row.prop(mesh, "use_mirror_topology")
 
 
 class VIEW3D_PT_tools_weightpaint_symmetry_for_topbar(Panel):
