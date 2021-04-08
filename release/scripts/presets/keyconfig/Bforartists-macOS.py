@@ -4122,13 +4122,6 @@ keyconfig_data = \
     ("mball.delete_metaelems", {"type": 'DEL', "value": 'PRESS'}, None),
     ("mball.duplicate_move", {"type": 'D', "value": 'PRESS', "shift": True}, None),
     ("mball.select_all",
-     {"type": 'A', "value": 'PRESS'},
-     {"properties":
-      [("action", 'SELECT'),
-       ],
-      },
-     ),
-    ("mball.select_all",
      {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
      {"properties":
       [("action", 'DESELECT'),
@@ -4139,6 +4132,13 @@ keyconfig_data = \
      {"type": 'I', "value": 'PRESS', "oskey": True, "repeat": True},
      {"properties":
       [("action", 'INVERT'),
+       ],
+      },
+     ),
+    ("mball.select_all",
+     {"type": 'A', "value": 'PRESS'},
+     {"properties":
+      [("action", 'SELECT'),
        ],
       },
      ),
@@ -5358,7 +5358,13 @@ keyconfig_data = \
        ],
       },
      ),
-    ("particle.hide_unselected", {"type": 'H', "value": 'PRESS', "shift": True}, None),
+    ("particle.hide",
+     {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True},
+     {"properties":
+      [("unselected", True),
+       ],
+      },
+     ),
     ],
    },
   ),

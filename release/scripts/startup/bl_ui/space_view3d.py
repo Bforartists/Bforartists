@@ -7,7 +7,7 @@
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
@@ -3008,18 +3008,6 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_liquid", icon = "MOD_FLUIDSIM")
 
 
-# Workaround to separate the tooltips for Show Hide
-class VIEW3D_hide_view_set_unselected(bpy.types.Operator):
-    """Hides the unselected Object(s)"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "object.hide_unselected"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Hide Unselected"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.object.hide_view_set(unselected = True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_object_showhide(Menu):
     bl_label = "Show/Hide"
 
@@ -3032,9 +3020,6 @@ class VIEW3D_MT_object_showhide(Menu):
 
         layout.operator("object.hide_view_set", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("object.hide_view_set", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
-
-
-        layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
 class VIEW3D_MT_object_cleanup(Menu):
@@ -3817,18 +3802,6 @@ class VIEW3D_MT_particle_context_menu(Menu):
             layout.operator("particle.select_linked", text="Select Linked", icon = "LINKED")
 
 
-# Workaround to separate the tooltips for Show Hide for Particles in Particle mode
-class VIEW3D_particle_hide_unselected(bpy.types.Operator):
-    """Hide the unselected Particles"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "particle.hide_unselected"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Hide Unselected"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.particle.hide(unselected = True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_particle_show_hide(Menu):
     bl_label = "Show/Hide"
 
@@ -3837,7 +3810,7 @@ class VIEW3D_MT_particle_show_hide(Menu):
 
         layout.operator("particle.reveal", text="Show Hidden", icon = "HIDE_OFF")
         layout.operator("particle.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
-        layout.operator("particle.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
+        layout.operator("particle.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_pose(Menu):
@@ -8701,7 +8674,6 @@ classes = (
     VIEW3D_MT_object_collection,
     VIEW3D_MT_object_constraints,
     VIEW3D_MT_object_quick_effects,
-    VIEW3D_hide_view_set_unselected,
     VIEW3D_MT_object_showhide,
     VIEW3D_MT_object_cleanup,
     VIEW3D_MT_make_single_user,
@@ -8730,7 +8702,6 @@ classes = (
     VIEW3D_MT_hide_mask,
     VIEW3D_MT_particle,
     VIEW3D_MT_particle_context_menu,
-    VIEW3D_particle_hide_unselected,
     VIEW3D_MT_particle_show_hide,
     VIEW3D_MT_pose,
     VIEW3D_MT_pose_transform,
