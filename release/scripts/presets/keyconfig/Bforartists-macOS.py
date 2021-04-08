@@ -4271,14 +4271,14 @@ keyconfig_data = \
        ],
       },
      ),
-    ("graph.select_all",
+    ("nla.select_all",
      {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
      {"properties":
       [("action", 'DESELECT'),
        ],
       },
      ),
-    ("graph.select_all",
+    ("nla.select_all",
      {"type": 'I', "value": 'PRESS', "oskey": True, "repeat": True},
      {"properties":
       [("action", 'INVERT'),
@@ -4775,9 +4775,15 @@ keyconfig_data = \
        ],
       },
      ),
+    ("object.hide_view_set",
+   {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True},
+     {"properties":
+      [("unselected", True),
+       ],
+      },
+     ),
     ("anim.keyframe_insert_menu", {"type": 'I', "value": 'PRESS'}, None),
     ("anim.keyframe_delete_v3d", {"type": 'I', "value": 'PRESS', "alt": True}, None),
-    ("object.hide_unselected", {"type": 'H', "value": 'PRESS', "shift": True}, None),
     ("wm.call_menu",
      {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
