@@ -2029,29 +2029,6 @@ class VIEW3D_MT_select_gpencil_grouped(Menu):
         layout.operator("gpencil.select_grouped", text="Color", icon = "COLOR").type = 'MATERIAL'
 
 
-# Workaround to separate the tooltips -  Not to catch in the C code yet. SEL_SELECT does not work.
-class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "paint.face_select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.paint.face_select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_paint_mask_none(bpy.types.Operator):
-    """Deselects everything """        # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "paint.face_select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.paint.face_select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_select_paint_mask(Menu):
     bl_label = "Select"
 
@@ -2061,8 +2038,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("paint.face_select_all", text="All", icon = 'SELECT_ALL').action = 'SELECT'
-        layout.operator("paint.face_select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("paint.face_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("paint.face_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("paint.face_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -8689,8 +8666,6 @@ classes = (
     VIEW3D_MT_select_gpencil,
     VIEW3D_MT_select_gpencil_legacy,
     VIEW3D_MT_select_gpencil_grouped,
-    VIEW3D_MT_select_paint_mask_inverse,
-    VIEW3D_MT_select_paint_mask_none,
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_vertex,
     VIEW3D_MT_angle_control,
