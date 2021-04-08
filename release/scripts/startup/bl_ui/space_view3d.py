@@ -2029,7 +2029,7 @@ class VIEW3D_MT_select_gpencil_grouped(Menu):
         layout.operator("gpencil.select_grouped", text="Color", icon = "COLOR").type = 'MATERIAL'
 
 
-# Workaround to separate the tooltips
+# Workaround to separate the tooltips -  Not to catch in the C code yet. SEL_SELECT does not work.
 class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
     """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "paint.face_select_all_inverse"        # unique identifier for buttons and menu items to reference.
@@ -2446,18 +2446,6 @@ class VIEW3D_MT_origin_set(Menu):
 
 # ********** Object menu **********
 
-# Workaround to separate the tooltips
-class VIEW3D_MT_object_delete_global(bpy.types.Operator):
-    """Deletes the selected object(s) globally in all opened scenes"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "object.delete_global"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Delete Global"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.object.delete(use_global = True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_object(Menu):
     bl_context = "objectmode"
     bl_label = "Object"
@@ -2488,7 +2476,9 @@ class VIEW3D_MT_object(Menu):
         myvar = layout.operator("object.delete", text="Delete", icon = "DELETE")
         myvar.use_global = False
         myvar.confirm = False
-        layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
+        myvar = layout.operator("object.delete", text="Delete Global", icon = "DELETE")
+        myvar.use_global = True
+        myvar.confirm = False
 
         layout.separator()
 
@@ -8744,7 +8734,6 @@ classes = (
     VIEW3D_MT_add,
     VIEW3D_MT_image_add,
     VIEW3D_MT_origin_set,
-    VIEW3D_MT_object_delete_global,
     VIEW3D_MT_object,
     VIEW3D_MT_object_convert,
     VIEW3D_MT_object_animation,
