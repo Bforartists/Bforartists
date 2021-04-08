@@ -2499,6 +2499,17 @@ static int hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *particle_ot_hide_get_description(bContext *UNUSED(C),
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return BLI_strdup("Hide unselected particles");
+  }
+  return NULL;
+}
+
 void PARTICLE_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2508,6 +2519,7 @@ void PARTICLE_OT_hide(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = hide_exec;
+  ot->get_description = particle_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = PE_poll;
 
   /* flags */
