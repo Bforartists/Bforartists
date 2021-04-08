@@ -3031,6 +3031,9 @@ class VIEW3D_MT_object_showhide(Menu):
         layout.separator()
 
         layout.operator("object.hide_view_set", text="Hide Selected", icon = "HIDE_ON").unselected = False
+        layout.operator("object.hide_view_set", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
+
+
         layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
 
 
