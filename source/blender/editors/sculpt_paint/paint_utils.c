@@ -714,6 +714,26 @@ static int face_select_all_exec(bContext *C, wmOperator *op)
   return OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static char *paint_ot_face_select_all_get_description(bContext *UNUSED(C),
+                                                      wmOperatorType *UNUSED(ot),
+                                                      PointerRNA *ptr)
+{
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all faces");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all faces");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Inverts the current selection");
+  }
+  return NULL;
+}
+
 void PAINT_OT_face_select_all(wmOperatorType *ot)
 {
   ot->name = "(De)select All";
@@ -721,6 +741,7 @@ void PAINT_OT_face_select_all(wmOperatorType *ot)
   ot->idname = "PAINT_OT_face_select_all";
 
   ot->exec = face_select_all_exec;
+  ot->get_description = paint_ot_face_select_all_get_description; /*bfa - descriptions*/
   ot->poll = facemask_paint_poll;
 
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
