@@ -2071,29 +2071,6 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
 
 
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_paint_mask_vertex_inverse(bpy.types.Operator):
-    """Inverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "paint.vert_select_all_inverse"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select Inverse"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.paint.vert_select_all(action = 'INVERT')
-        return {'FINISHED'}
-
-# Workaround to separate the tooltips
-class VIEW3D_MT_select_paint_mask_vertex_none(bpy.types.Operator):
-    """Deselects everything """       # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "paint.vert_select_all_none"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Select None"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.paint.vert_select_all(action = 'DESELECT')
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
     bl_label = "Select"
 
@@ -2103,8 +2080,8 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.menu ("VIEW3D_MT_select_object_legacy")
 
         layout.operator("paint.vert_select_all", text="All", icon='SELECT_ALL').action = 'SELECT'
-        layout.operator("paint.vert_select_all_none", text="None", icon='SELECT_NONE') # bfa - separated tooltip
-        layout.operator("paint.vert_select_all_inverse", text="Inverse", icon='INVERSE') # bfa - separated tooltip
+        layout.operator("paint.vert_select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
+        layout.operator("paint.vert_select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -8715,8 +8692,6 @@ classes = (
     VIEW3D_MT_select_paint_mask_inverse,
     VIEW3D_MT_select_paint_mask_none,
     VIEW3D_MT_select_paint_mask,
-    VIEW3D_MT_select_paint_mask_vertex_inverse,
-    VIEW3D_MT_select_paint_mask_vertex_none,
     VIEW3D_MT_select_paint_mask_vertex,
     VIEW3D_MT_angle_control,
     VIEW3D_MT_mesh_add,

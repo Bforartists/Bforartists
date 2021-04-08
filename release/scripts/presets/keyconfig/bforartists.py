@@ -7204,8 +7204,20 @@ keyconfig_data = \
        ],
       },
      ),
-    ("paint.vert_select_all_none", {"type": 'A', "value": 'PRESS', "alt": True}, None),
-    ("paint.vert_select_all_inverse", {"type": 'I', "value": 'PRESS', "ctrl": True}, None),
+    ("paint.vert_select_all",
+     {"type": 'A', "value": 'PRESS', "alt": True, "repeat": True},
+     {"properties":
+      [("action", 'DESELECT'),
+       ],
+      },
+     ),
+    ("paint.vert_select_all",
+     {"type": 'I', "value": 'PRESS', "ctrl": True, "repeat": True},
+     {"properties":
+      [("action", 'INVERT'),
+       ],
+      },
+     ),
     ("paint.vert_select_all",
      {"type": 'A', "value": 'DOUBLE_CLICK'},
      {"properties":
