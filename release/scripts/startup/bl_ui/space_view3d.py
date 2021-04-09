@@ -5115,7 +5115,6 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
         layout.operator("curve.delete", text="Delete Point", icon = "DELETE").type = 'VERT'
 
 
-
 class VIEW3D_MT_edit_curve_delete(Menu):
     bl_label = "Delete"
 
@@ -5126,18 +5125,6 @@ class VIEW3D_MT_edit_curve_delete(Menu):
         layout.operator("curve.delete", text="Segment", icon = "DELETE").type = 'SEGMENT'
 
 
-# Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
-class VIEW3D_curve_hide_unselected(bpy.types.Operator):
-    """Hide unselected Control Points"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "curve.hide_unselected"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Hide Unselected"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.curve.hide(unselected = True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_edit_curve_show_hide(Menu):
     bl_label = "Show/Hide"
 
@@ -5146,7 +5133,7 @@ class VIEW3D_MT_edit_curve_show_hide(Menu):
 
         layout.operator("curve.reveal", text="Show Hidden", icon = "HIDE_OFF")
         layout.operator("curve.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
-        layout.operator("curve.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
+        layout.operator("curve.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_edit_surface(Menu):
@@ -8706,7 +8693,6 @@ classes = (
     VIEW3D_MT_edit_mesh_merge,
     VIEW3D_MT_edit_mesh_split,
     VIEW3D_MT_edit_mesh_dissolve,
-    VIEW3D_curve_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,
     VIEW3D_MT_paint_gpencil,
     VIEW3D_MT_draw_gpencil,
