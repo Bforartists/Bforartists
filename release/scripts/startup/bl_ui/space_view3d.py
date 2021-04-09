@@ -5410,18 +5410,6 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("armature.dissolve", icon = "DELETE")
 
 
-# Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
-class VIEW3D_armature_hide_unselected(bpy.types.Operator):
-    """Hide unselected Bones in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "armature.hide_unselected"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Hide Unselected"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.armature.hide(unselected = True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_armature_show_hide(Menu):
     bl_label = "Show/Hide"
 
@@ -5430,7 +5418,7 @@ class VIEW3D_MT_armature_show_hide(Menu):
 
         layout.operator("armature.reveal", text="Show Hidden", icon = "HIDE_OFF")
         layout.operator("armature.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
-        layout.operator("armature.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
+        layout.operator("armature.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_armature_context_menu(Menu):
@@ -8715,7 +8703,6 @@ classes = (
     VIEW3D_MT_edit_lattice,
     VIEW3D_MT_edit_lattice_flip,
     VIEW3D_MT_edit_armature,
-    VIEW3D_armature_hide_unselected,
     VIEW3D_MT_armature_show_hide,
     VIEW3D_MT_armature_context_menu,
     VIEW3D_MT_edit_armature_roll,
