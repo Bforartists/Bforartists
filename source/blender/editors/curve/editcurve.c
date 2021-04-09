@@ -76,6 +76,8 @@
 #include "RNA_define.h"
 #include "RNA_enum_types.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 void selectend_nurb(Object *obedit, enum eEndPoint_Types selfirst, bool doswap, bool selstatus);
 static void adduplicateflagNurb(
     Object *obedit, View3D *v3d, ListBase *newnurb, const uint8_t flag, const bool split);
@@ -3290,15 +3292,27 @@ static int hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *curve_ot_hide_get_description(bContext *UNUSED(C),
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return BLI_strdup("Hide unselected control points");
+  }
+  return NULL;
+}
+
 void CURVE_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "CURVE_OT_hide";
-  ot->description = "Hide (un)selected control points";
+  ot->description = "Hide selected control points";
 
   /* api callbacks */
   ot->exec = hide_exec;
+  ot->get_description = curve_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editsurfcurve;
 
   /* flags */
