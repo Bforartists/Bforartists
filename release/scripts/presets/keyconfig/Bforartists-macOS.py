@@ -4161,7 +4161,13 @@ keyconfig_data = \
        ],
       },
      ),
-    ("mball.hide_metaelems_unselected", {"type": 'H', "value": 'PRESS', "shift": True}, None),
+    ("mball.hide_metaelems",
+     {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True},
+     {"properties":
+      [("unselected", True),
+       ],
+      },
+     ),
     ("wm.call_menu",
      {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
