@@ -4701,18 +4701,6 @@ class VIEW3D_MT_edit_mesh_faces_legacy(Menu):
         layout.operator("mesh.inset", icon = "INSET_FACES")
 
 
-# Workaround to separate the tooltips for Recalculate Outside and Recalculate Inside
-class VIEW3D_normals_make_consistent_inside(bpy.types.Operator):
-    """Make selected faces and normals point inside the mesh"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "mesh.normals_recalculate_inside"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Recalculate Inside"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.mesh.normals_make_consistent(inside=True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_edit_mesh_normals_select_strength(Menu):
     bl_label = "Select by Face Strength"
 
@@ -4769,7 +4757,7 @@ class VIEW3D_MT_edit_mesh_normals(Menu):
         layout = self.layout
 
         layout.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon = 'RECALC_NORMALS').inside = False
-        layout.operator("mesh.normals_recalculate_inside", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE') # bfa - separated tooltip
+        layout.operator("mesh.normals_make_consistent", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE').inside = True
         layout.operator("mesh.flip_normals", text = "Flip", icon = 'FLIP_NORMALS')
 
         layout.separator()
@@ -8720,7 +8708,6 @@ classes = (
     VIEW3D_MT_edit_mesh_faces,
     VIEW3D_MT_edit_mesh_faces_legacy,
     VIEW3D_MT_edit_mesh_faces_data,
-    VIEW3D_normals_make_consistent_inside,
     VIEW3D_MT_edit_mesh_normals,
     VIEW3D_MT_edit_mesh_normals_select_strength,
     VIEW3D_MT_edit_mesh_normals_set_strength,

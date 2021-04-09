@@ -2465,6 +2465,17 @@ static int edbm_normals_make_consistent_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *mesh_ot_normals_make_consistent_get_description(bContext *UNUSED(C),
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "inside")) {
+    return BLI_strdup("Make selected face and vertex normals point inside the mesh");
+  }
+  return NULL;
+}
+
 void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 {
   /* identifiers */
@@ -2475,6 +2486,7 @@ void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = edbm_normals_make_consistent_exec;
+  ot->get_description = mesh_ot_normals_make_consistent_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* flags */
