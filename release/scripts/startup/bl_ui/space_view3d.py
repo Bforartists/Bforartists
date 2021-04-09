@@ -4871,18 +4871,6 @@ class VIEW3D_MT_edit_mesh_dissolve(Menu):
         layout.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
 
 
-# Workaround to separate the tooltips for Show Hide for Mesh in Edit Mode
-class VIEW3D_mesh_hide_unselected(bpy.types.Operator):
-    """Hide unselected geometry in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "mesh.hide_unselected"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Hide Unselected"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.mesh.hide(unselected = True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_edit_mesh_merge(Menu):
     bl_label = "Merge"
 
@@ -4917,8 +4905,7 @@ class VIEW3D_MT_edit_mesh_show_hide(Menu):
 
         layout.operator("mesh.reveal", text="Show Hidden", icon = "HIDE_OFF")
         layout.operator("mesh.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
-        layout.operator("mesh.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
-
+        layout.operator("mesh.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 class VIEW3D_MT_edit_gpencil_delete(Menu):
     bl_label = "Delete"
@@ -8719,7 +8706,6 @@ classes = (
     VIEW3D_MT_edit_mesh_merge,
     VIEW3D_MT_edit_mesh_split,
     VIEW3D_MT_edit_mesh_dissolve,
-    VIEW3D_mesh_hide_unselected,
     VIEW3D_curve_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,
     VIEW3D_MT_paint_gpencil,
