@@ -711,15 +711,27 @@ static int hide_metaelems_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *mball_ot_hide_metaelems_get_description(bContext *UNUSED(C),
+                                                             wmOperatorType *UNUSED(ot),
+                                                             PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return BLI_strdup("Hide unselected metaball element(s)");
+  }
+  return NULL;
+}
+
 void MBALL_OT_hide_metaelems(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
-  ot->description = "Hide (un)selected metaball element(s)";
+  ot->description = "Hide selected metaball element(s)";
   ot->idname = "MBALL_OT_hide_metaelems";
 
   /* callback functions */
   ot->exec = hide_metaelems_exec;
+  ot->get_description = mball_ot_hide_metaelems_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmball;
 
   /* flags */
