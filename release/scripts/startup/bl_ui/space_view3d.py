@@ -4003,18 +4003,6 @@ class VIEW3D_MT_pose_names(Menu):
         layout.operator("pose.flip_names", icon = "FLIP")
 
 
-# Workaround to separate the tooltips for Show Hide for Armature in Pose mode
-class VIEW3D_MT_pose_hide_unselected(bpy.types.Operator):
-    """Hide unselected Bones"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "pose.hide_unselected"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Hide Unselected"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.pose.hide(unselected = True)
-        return {'FINISHED'}
-
-
 class VIEW3D_MT_pose_show_hide(Menu):
     bl_label = "Show/Hide"
 
@@ -4023,7 +4011,7 @@ class VIEW3D_MT_pose_show_hide(Menu):
 
         layout.operator("pose.reveal", text="Show Hidden", icon = "HIDE_OFF")
         layout.operator("pose.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
-        layout.operator("pose.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # bfa - separated tooltip
+        layout.operator("pose.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class VIEW3D_MT_pose_apply(Menu):
@@ -8713,7 +8701,6 @@ classes = (
     VIEW3D_MT_pose_ik,
     VIEW3D_MT_pose_constraints,
     VIEW3D_MT_pose_names,
-    VIEW3D_MT_pose_hide_unselected,
     VIEW3D_MT_pose_show_hide,
     VIEW3D_MT_pose_apply,
     VIEW3D_MT_pose_context_menu,

@@ -5436,7 +5436,13 @@ keyconfig_data = \
      ),
     ("anim.keyframe_insert_menu", {"type": 'I', "value": 'PRESS', "repeat": True}, None),
     ("anim.keyframe_delete_v3d", {"type": 'I', "value": 'PRESS', "alt": True, "repeat": True}, None),
-    ("pose.hide_unselected", {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True}, None),
+    ("pose.hide",
+     {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True},
+     {"properties":
+      [("unselected", True),
+       ],
+      },
+     ),
     ("wm.call_menu",
      {"type": 'RIGHTMOUSE', "value": 'DOUBLE_CLICK'},
      {"properties":
