@@ -2354,15 +2354,28 @@ static int edbm_hide_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+/*bfa - descriptions*/
+static char *mesh_ot_hide_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return BLI_strdup(
+        "Hide unselected vertices, edges or faces");
+  }
+  return NULL;
+}
+
 void MESH_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "MESH_OT_hide";
-  ot->description = "Hide (un)selected vertices, edges or faces";
+  ot->description = "Hide selected vertices, edges or faces";
 
   /* api callbacks */
   ot->exec = edbm_hide_exec;
+  ot->get_description = mesh_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* flags */
