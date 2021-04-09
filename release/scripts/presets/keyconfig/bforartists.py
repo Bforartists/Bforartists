@@ -3993,7 +3993,13 @@ keyconfig_data = \
      ),
     ("mesh.clear_seam", {"type": 'N', "value": 'PRESS'}, None),
     ("mesh.dissolve_contextual_bfa", {"type": 'DEL', "value": 'PRESS'}, None),
-    ("mesh.hide_unselected", {"type": 'H', "value": 'PRESS', "shift": True}, None),
+    ("mesh.hide",
+     {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True},
+     {"properties":
+      [("unselected", True),
+       ],
+      },
+     ),
     ("object.subdivision_set",
      {"type": 'ZERO', "value": 'PRESS', "ctrl": True},
      {"properties":
