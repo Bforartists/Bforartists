@@ -65,6 +65,8 @@
 
 #include "armature_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 #undef DEBUG_TIME
 
 #include "PIL_time.h"
@@ -1078,15 +1080,27 @@ static int pose_hide_exec(bContext *C, wmOperator *op)
   return changed_multi ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
+/*bfa - descriptions*/
+static char *pose_ot_hide_get_description(bContext *UNUSED(C),
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "unselected")) {
+    return BLI_strdup("Hide unselected bones in Pose Mode");
+  }
+  return NULL;
+}
+
 void POSE_OT_hide(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Hide Selected";
   ot->idname = "POSE_OT_hide";
-  ot->description = "Tag selected bones to not be visible in Pose Mode";
+  ot->description = "Hide selected bones in Pose Mode";
 
   /* api callbacks */
   ot->exec = pose_hide_exec;
+  ot->get_description = pose_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_posemode;
 
   /* flags */
