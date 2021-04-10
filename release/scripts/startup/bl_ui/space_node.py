@@ -312,8 +312,13 @@ class NODE_HT_header(Header):
             row = layout.row(align=True)
             row.prop(snode, "show_backdrop", toggle=True)
             sub = row.row(align=True)
-            sub.active = snode.show_backdrop
-            sub.prop(snode, "backdrop_channels", icon_only=True, text="", expand=True)
+            if snode.show_backdrop:
+                sub.operator("node.backimage_move", text="", icon ='TRANSFORM_MOVE')
+                sub.operator("node.backimage_zoom", text="", icon = "ZOOM_IN").factor = 1.2
+                sub.operator("node.backimage_zoom", text="", icon = "ZOOM_OUT").factor = 1.0 / 1.2
+                sub.operator("node.backimage_fit", text="", icon = "VIEW_FIT")
+                sub.separator()
+                sub.prop(snode, "backdrop_channels", icon_only=True, text="", expand=True)
 
         # Snap
         row = layout.row(align=True)
@@ -396,12 +401,6 @@ class NODE_MT_view(Menu):
         layout.operator("node.view_all", icon = "VIEWALL" )
 
         if context.space_data.show_backdrop:
-            layout.separator()
-
-            layout.operator("node.backimage_move", text="Backdrop Move", icon ='TRANSFORM_MOVE')
-            layout.operator("node.backimage_zoom", text="Backdrop Zoom In", icon = "ZOOM_IN").factor = 1.2
-            layout.operator("node.backimage_zoom", text="Backdrop Zoom Out", icon = "ZOOM_OUT").factor = 1.0 / 1.2
-            layout.operator("node.backimage_fit", text="Fit Backdrop", icon = "VIEW_FIT")
 
             layout.separator()
 
@@ -807,15 +806,9 @@ class NODE_PT_backdrop(Panel):
 
         col = layout.column()
 
-        col.prop(snode, "backdrop_channels", text="Channels")
         col.prop(snode, "backdrop_zoom", text="Zoom")
 
         col.prop(snode, "backdrop_offset", text="Offset")
-
-        col.separator()
-
-        col.operator("node.backimage_move", text="Move")
-        col.operator("node.backimage_fit", text="Fit")
 
 
 class NODE_PT_quality(bpy.types.Panel):
