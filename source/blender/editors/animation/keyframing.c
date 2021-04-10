@@ -2438,6 +2438,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
   const AnimationEvalContext anim_eval_context = BKE_animsys_eval_context_construct(
       CTX_data_depsgraph_pointer(C), (float)CFRA);
   bool changed = false;
+  bool changed_any = false;
   int index;
   const bool all = RNA_boolean_get(op->ptr, "all");
   eInsertKeyFlags flag = INSERTKEY_NOFLAGS;
@@ -2496,6 +2497,11 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         const char *identifier = RNA_property_identifier(prop);
         const char *group = NULL;
 
+        if (all) {
+          /* -1 indicates operating on the entire array (or the property itself otherwise) */
+          index = -1;
+        }
+
         /* Special exception for keyframing transforms:
          * Set "group" for this manually, instead of having them appearing at the bottom
          * (ungrouped) part of the channels list.
@@ -2506,6 +2512,11 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         if (ptr.type == &RNA_PoseBone) {
           bPoseChannel *pchan = ptr.data;
           group = pchan->name;
+          //CTX_data_selected_pose_bones_from_active_object(C, &selected_objects);
+          //path = RNA_path_resolve_from_type_to_property(&ptr, prop, &RNA_PoseBone);
+          // printf(RNA_path_from_ID_to_struct(&ptr));
+          // printf(path);
+          
         }
         else if ((ptr.type == &RNA_Object) &&
                  (strstr(identifier, "location") || strstr(identifier, "rotation") ||
@@ -2514,24 +2525,52 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
            * keyingsets_utils.py :: get_transform_generators_base_info()
            */
           group = "Object Transforms";
+          ListBase selected_objects;
+          CTX_data_selected_objects(C, &selected_objects);
+          LISTBASE_FOREACH(CollectionPointerLink *, link, &selected_objects) {
+            changed = (insert_keyframe(bmain,
+                                      op->reports,
+                                      link->ptr.data,
+                                      NULL,
+                                      group,
+                                      path,
+                                      index,
+                                      &anim_eval_context,
+                                      ts->keyframe_type,
+                                      NULL,
+                                      flag) != 0);
+            changed_any = changed || changed_any;
+            if (changed) {
+              AnimData *adt = BKE_animdata_from_id(link->ptr.data);
+              if (adt->action != NULL) {
+                DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
+              }
+              DEG_id_tag_update(link->ptr.data, ID_RECALC_ANIMATION_NO_FLUSH);
+            }
+          }
+          BLI_freelistN(&selected_objects);
         }
-
-        if (all) {
-          /* -1 indicates operating on the entire array (or the property itself otherwise) */
-          index = -1;
+        else {
+          changed = (insert_keyframe(bmain,
+                     op->reports,
+                     ptr.owner_id,
+                     NULL,
+                     group,
+                     path,
+                     index,
+                     &anim_eval_context,
+                     ts->keyframe_type,
+                     NULL,
+                     flag) != 0);
+          
+          if (changed) {
+            AnimData *adt = BKE_animdata_from_id(ptr.owner_id);
+            if (adt->action != NULL) {
+              DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
+            }
+            DEG_id_tag_update(ptr.owner_id, ID_RECALC_ANIMATION_NO_FLUSH);
+          }
         }
-
-        changed = (insert_keyframe(bmain,
-                                   op->reports,
-                                   ptr.owner_id,
-                                   NULL,
-                                   group,
-                                   path,
-                                   index,
-                                   &anim_eval_context,
-                                   ts->keyframe_type,
-                                   NULL,
-                                   flag) != 0);
 
         MEM_freeN(path);
       }
@@ -2560,22 +2599,17 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
     }
   }
 
-  if (changed) {
-    ID *id = ptr.owner_id;
-    AnimData *adt = BKE_animdata_from_id(id);
-    if (adt->action != NULL) {
-      DEG_id_tag_update(&adt->action->id, ID_RECALC_ANIMATION_NO_FLUSH);
-    }
-    DEG_id_tag_update(id, ID_RECALC_ANIMATION_NO_FLUSH);
-
+  if (changed || changed_any) {
     /* send updates */
     UI_context_update_anim_flag(C);
 
     /* send notifiers that keyframes have been changed */
     WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_ADDED, NULL);
+
+    return OPERATOR_FINISHED;
   }
 
-  return (changed) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+  return OPERATOR_CANCELLED;
 }
 
 void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
@@ -2607,6 +2641,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
   char *path;
   float cfra = (float)CFRA; /* XXX for now, don't bother about all the yucky offset crap */
   bool changed = false;
+  bool changed_any = false;
   int index;
   const bool all = RNA_boolean_get(op->ptr, "all");
 
@@ -2663,8 +2698,29 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
           /* -1 indicates operating on the entire array (or the property itself otherwise) */
           index = -1;
         }
+        if (ptr.type == &RNA_PoseBone) {
 
-        changed = delete_keyframe(bmain, op->reports, ptr.owner_id, NULL, path, index, cfra) != 0;
+          
+        }
+        else if (ptr.type == &RNA_Object) {
+          /* bfa - Apply Animation to all selected through UI Animate property buttons */
+          ListBase selected_objects;
+          CTX_data_selected_objects(C, &selected_objects);
+          LISTBASE_FOREACH(CollectionPointerLink *, link, &selected_objects) {
+            Object *ob_iter = link->ptr.data;
+            AnimData *adt = BKE_animdata_from_id(&ob_iter->id);
+            if (adt){
+              if (adt->action){
+                changed = delete_keyframe(bmain, op->reports, &ob_iter->id, NULL, path, index, cfra) != 0;
+                changed_any = changed || changed_any;
+              }
+            }
+          }
+          BLI_freelistN(&selected_objects);
+        }
+        else {
+          changed = delete_keyframe(bmain, op->reports, ptr.owner_id, NULL, path, index, cfra) != 0;
+        }
         MEM_freeN(path);
       }
       else if (G.debug & G_DEBUG) {
@@ -2676,15 +2732,17 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
     printf("ptr.data = %p, prop = %p\n", ptr.data, (void *)prop);
   }
 
-  if (changed) {
+  if (changed || changed_any) {
     /* send updates */
     UI_context_update_anim_flag(C);
 
     /* send notifiers that keyframes have been changed */
     WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_REMOVED, NULL);
+
+    return OPERATOR_FINISHED;
   }
 
-  return (changed) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+  return OPERATOR_CANCELLED;
 }
 
 void ANIM_OT_keyframe_delete_button(wmOperatorType *ot)
