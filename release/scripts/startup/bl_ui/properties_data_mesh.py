@@ -203,6 +203,13 @@ class DATA_PT_normals(MeshButtonsPanel, Panel):
         else:
             col.label(icon='DISCLOSURE_TRI_RIGHT')
 
+        col = layout.column()
+
+        if mesh.has_custom_normals:
+            col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
+        else:
+            col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
+
 
 class DATA_PT_normals_auto_smooth(MeshButtonsPanel, Panel):
     bl_label = "Auto Smooth"
@@ -576,11 +583,6 @@ class DATA_PT_customdata(MeshButtonsPanel, Panel):
 
         col.operator("mesh.customdata_mask_clear", icon='X')
         col.operator("mesh.customdata_skin_clear", icon='X')
-
-        if me.has_custom_normals:
-            col.operator("mesh.customdata_custom_splitnormals_clear", icon='X')
-        else:
-            col.operator("mesh.customdata_custom_splitnormals_add", icon='ADD')
 
         layout.separator()
 
