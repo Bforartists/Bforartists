@@ -18,6 +18,12 @@
 
 # <pep8 compliant>
 import bpy
+import os 
+from pathlib import Path
+
+user_path = Path(bpy.utils.resource_path('USER')).parent
+local_path = Path(bpy.utils.resource_path('LOCAL')).parent
+
 from bpy.types import Header, Menu, Panel
 
 
@@ -547,6 +553,11 @@ class TOPBAR_MT_edit(Menu):
         layout.separator()
 
         layout.operator("screen.userpref_show", text="Preferences", icon='PREFERENCES')
+
+        if os.path.isdir(Path(bpy.utils.resource_path('USER'))): 
+            layout.operator("wm.path_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").filepath = str(user_path)
+        else:
+            layout.operator("wm.path_open", text="Open Preferences Folder", icon = "FOLDER_REDIRECT").filepath = str(local_path)
 
 
 class TOPBAR_MT_window(Menu):
