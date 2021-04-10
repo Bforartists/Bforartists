@@ -7151,7 +7151,7 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "volumetric_samples", PROP_INT, PROP_NONE);
   RNA_def_property_ui_text(prop, "Samples", "Number of samples to compute volumetric effects");
-  RNA_def_property_range(prop, 1, 256);
+  RNA_def_property_range(prop, 1, 512); /* BFA - doubled*/
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
@@ -7190,7 +7190,7 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
   prop = RNA_def_property(srna, "volumetric_shadow_samples", PROP_INT, PROP_NONE);
-  RNA_def_property_range(prop, 1, 128);
+  RNA_def_property_range(prop, 1, 256); /* BFA - doubled*/
   RNA_def_property_ui_text(
       prop, "Volumetric Shadow Samples", "Number of samples to compute volumetric shadowing");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
