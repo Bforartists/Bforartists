@@ -932,9 +932,6 @@ def try_finished_append(asset_data, **kwargs):  # location=None, material_target
     if len(file_names) > 0:
         if os.path.isfile(file_names[-1]):
             kwargs['name'] = asset_data['name']
-            append_asset(asset_data, **kwargs)
-            done = True
-            return done
             try:
                 append_asset(asset_data, **kwargs)
                 done = True

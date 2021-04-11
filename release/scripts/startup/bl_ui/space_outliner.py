@@ -85,13 +85,13 @@ class OUTLINER_HT_header(Header):
             row.prop(space, "use_sync_select", icon='UV_SYNC_SELECT', text="")
 
         row = layout.row(align=True)
-        if display_mode in {'SCENES', 'VIEW_LAYER'}:
+        if display_mode in {'SCENES', 'VIEW_LAYER', 'LIBRARY_OVERRIDES'}:
             row.popover(
                 panel="OUTLINER_PT_filter",
                 text="",
                 icon='FILTER',
             )
-        elif display_mode in {'LIBRARIES', 'ORPHAN_DATA'}:
+        if display_mode in {'LIBRARIES', 'LIBRARY_OVERRIDES', 'ORPHAN_DATA'}:
             row.prop(space, "use_filter_id_type", text="", icon='FILTER')
             sub = row.row(align=True)
             if space.use_filter_id_type:
@@ -426,8 +426,9 @@ class OUTLINER_PT_filter(Panel):
         col = layout.column(align=True)
         if display_mode != 'DATA_API':
             col.prop(space, "use_sort_alpha")
-        col.prop(space, "use_sync_select", text="Sync Selection")
-        col.prop(space, "show_mode_column", text="Show Mode Column")
+        if display_mode not in {'LIBRARY_OVERRIDES'}:
+            col.prop(space, "use_sync_select", text="Sync Selection")
+            col.prop(space, "show_mode_column", text="Show Mode Column")
 
         col = layout.column(align=True)
         col.label(text="Search")
@@ -438,7 +439,13 @@ class OUTLINER_PT_filter(Panel):
         row.separator()
         row.prop(space, "use_filter_case_sensitive", text="Case Sensitive")
 
-        if display_mode != 'VIEW_LAYER':
+        if display_mode in {'LIBRARY_OVERRIDES'} and bpy.data.libraries:
+            col.separator()
+            row = col.row()
+            row.label(icon='LIBRARY_DATA_OVERRIDE')
+            row.prop(space, "use_filter_lib_override_system", text="System Overrides")
+
+        if display_mode not in {'VIEW_LAYER'}:
             return
 
         layout.label(text="Filter")
@@ -514,12 +521,6 @@ class OUTLINER_PT_filter(Panel):
             row.separator()
             row.label(icon='EMPTY_DATA')
             row.prop(space, "use_filter_object_empty", text="Empties")
-            row = sub.row()
-            if bpy.data.libraries:
-                row.separator()
-                row.separator()
-                row.label(icon='LIBRARY_DATA_OVERRIDE')
-                row.prop(space, "use_filter_lib_override", text="Library Overrides")
 
             if (
                     bpy.data.curves or
@@ -537,6 +538,15 @@ class OUTLINER_PT_filter(Panel):
                 row.separator()
                 row.label(icon='OBJECT_DATAMODE')
                 row.prop(space, "use_filter_object_others", text="Others")
+
+            if bpy.data.libraries:
+                col.separator()
+                row = col.row()
+                row.label(icon='LIBRARY_DATA_OVERRIDE')
+                row.prop(space, "use_filter_lib_override", text="Library Overrides")
+                row = col.row()
+                row.label(icon='LIBRARY_DATA_OVERRIDE')
+                row.prop(space, "use_filter_lib_override_system", text="System Overrides")
 
 
 classes = (
