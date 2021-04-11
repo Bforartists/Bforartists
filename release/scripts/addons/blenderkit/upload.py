@@ -596,6 +596,11 @@ class FastMetadata(bpy.types.Operator):
         description="Unique name of the asset (hidden)",
         default=""
     )
+    asset_type: StringProperty(
+        name="Asset Type",
+        description="Asset Type",
+        default=""
+    )
     name: StringProperty(
         name="Name",
         description="Main name of the asset",
@@ -658,7 +663,7 @@ class FastMetadata(bpy.types.Operator):
     def poll(cls, context):
         scene = bpy.context.scene
         ui_props = scene.blenderkitUI
-        return can_edit_asset(active_index=ui_props.active_index)
+        return True
 
     def draw(self, context):
         layout = self.layout
@@ -717,9 +722,9 @@ class FastMetadata(bpy.types.Operator):
             sr = bpy.context.window_manager['search results']
             asset_data = dict(sr[ui_props.active_index])
         else:
-            for result in bpy.context.window_manager['search results']:
-                if result['id'] == self.asset_id:
-                    asset_data = dict(result)
+
+            active_asset = utils.get_active_asset_by_type(asset_type = self.asset_type)
+            asset_data = active_asset.get('asset_data')
 
         if not can_edit_asset(asset_data=asset_data):
             return {'CANCELLED'}

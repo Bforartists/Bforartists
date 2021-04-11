@@ -426,7 +426,7 @@ class FastRateMenu(Operator):
     def poll(cls, context):
         scene = bpy.context.scene
         ui_props = scene.blenderkitUI
-        return ui_props.active_index > -1
+        return True;
 
     def draw(self, context):
         layout = self.layout
@@ -500,6 +500,8 @@ class FastRateMenu(Operator):
             self.asset_id = asset_data['id']
             self.asset_type = asset_data['assetType']
 
+        if self.asset_id == '':
+            return {'CANCELLED'}
         self.message = f"Rate asset {self.asset_name}"
         wm = context.window_manager
 

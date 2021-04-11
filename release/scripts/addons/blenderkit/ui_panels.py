@@ -1285,6 +1285,7 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
             row.operator_context = 'INVOKE_DEFAULT'
             op = layout.operator('wm.blenderkit_fast_metadata', text='Fast Edit Metadata')
             op.asset_id = asset_data['id']
+            op.asset_type = asset_data['assetType']
 
         if author_id == str(profile['user']['id']):
             row = layout.row()
@@ -1579,9 +1580,6 @@ def draw_panel_categories(self, context):
     layout = self.layout
     # row = layout.row()
     # row.prop(ui_props, 'asset_type', expand=True, icon_only=True)
-    layout.separator()
-
-    layout.label(text='Categories')
     wm = bpy.context.window_manager
     if wm.get('bkit_categories') == None:
         return
