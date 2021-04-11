@@ -181,6 +181,27 @@ def get_search_props():
     return props
 
 
+def get_active_asset_by_type(asset_type = 'model'):
+    asset_type =asset_type.lower()
+    if asset_type == 'model':
+        if bpy.context.view_layer.objects.active is not None:
+            ob = get_active_model()
+            return ob
+    if asset_type == 'scene':
+        return bpy.context.scene
+    if asset_type == 'hdr':
+        return get_active_HDR()
+    if asset_type == 'material':
+        if bpy.context.view_layer.objects.active is not None and bpy.context.active_object.active_material is not None:
+            return bpy.context.active_object.active_material
+    if asset_type == 'texture':
+        return None
+    if asset_type == 'brush':
+        b = get_active_brush()
+        if b is not None:
+            return b
+    return None
+
 def get_active_asset():
     scene = bpy.context.scene
     ui_props = scene.blenderkitUI

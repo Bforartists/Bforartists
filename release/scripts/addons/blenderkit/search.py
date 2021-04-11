@@ -47,6 +47,7 @@ import bpy
 import copy
 import json
 import math
+import unicodedata
 
 import logging
 
@@ -417,7 +418,6 @@ def timer_update():
                 return .2
 
             rdata = thread[0].result
-
             result_field = []
             ok, error = check_errors(rdata)
             if ok:
@@ -435,7 +435,8 @@ def timer_update():
 
                 load_previews()
                 ui_props = bpy.context.scene.blenderkitUI
-                if len(result_field) < ui_props.scrolloffset:
+                if len(result_field) < ui_props.scrolloffset or not(thread[0].params.get('get_next')):
+                    #jump back
                     ui_props.scrolloffset = 0
                 props.is_searching = False
                 props.search_error = False
@@ -1434,6 +1435,15 @@ def search(category='', get_next=False, author_id=''):
         props = scene.blenderkit_brush
         query = build_query_brush()
 
+    # crop long searches
+    if query.get('query'):
+        if len(query['query']) > 50:
+            query['query'] = strip_accents(query['query'])
+
+        if len(query['query']) > 150:
+            idx = query['query'].find(' ', 142)
+            query['query'] = query['query'][:idx]
+
     # it's possible get_net was requested more than once.
     if props.is_searching and get_next == True:
         return;
@@ -1464,8 +1474,6 @@ def search(category='', get_next=False, author_id=''):
         'free_first': props.free_only
     }
 
-    # if free_only:
-    #     query['keywords'] += '+is_free:true'
     orig_results = bpy.context.window_manager.get(f'bkit {ui_props.asset_type.lower()} search orig', {})
     if orig_results != {}:
         # ensure it's a copy in dict for what we are passing to thread:
@@ -1516,6 +1524,10 @@ def search_update(self, context):
 
     search()
 
+# accented_string is of type 'unicode'
+def strip_accents(s):
+    return ''.join(c for c in unicodedata.normalize('NFD', s)
+                   if unicodedata.category(c) != 'Mn')
 
 class SearchOperator(Operator):
     """Tooltip"""
@@ -1565,10 +1577,7 @@ class SearchOperator(Operator):
             sprops.search_keywords = ''
         if self.keywords != '':
             sprops.search_keywords = self.keywords
-        #crop long searches
-        if len(self.keywords) > 150:
-            idx = self.keywords.find(' ', 142)
-            self.keywords = self.keywords[:idx]
+
 
         search(category=self.category, get_next=self.get_next, author_id=self.author_id)
         # bpy.ops.view3d.blenderkit_asset_bar()
