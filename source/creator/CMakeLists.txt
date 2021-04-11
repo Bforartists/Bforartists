@@ -463,8 +463,8 @@ if(UNIX AND NOT APPLE)
       add_custom_target(
         bforartists_man_page ALL
         COMMAND ${CMAKE_SOURCE_DIR}/doc/manpage/bforartists.1.py
-                ${EXECUTABLE_OUTPUT_PATH}/bforartists
-                ${CMAKE_CURRENT_BINARY_DIR}/bforartists.1)
+                --bforartists ${EXECUTABLE_OUTPUT_PATH}/bforartists
+                --output ${CMAKE_CURRENT_BINARY_DIR}/bforartists.1)
       add_dependencies(bforartists_man_page bforartists)
     endif()
   endif()

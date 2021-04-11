@@ -1497,8 +1497,8 @@ class AssetBarOperator(bpy.types.Operator):
             #         return {'RUNNING_MODAL'}
 
             if ui_props.drag_init:
-                ui_props.drag_length += 1
-                if ui_props.drag_length > 2:
+                ui_props.drag_length = abs(self.drag_start_x - mx) + abs(self.drag_start_y - my)
+                if ui_props.drag_length > 5:
                     ui_props.dragging = True
                     ui_props.drag_init = False
 
@@ -1579,8 +1579,8 @@ class AssetBarOperator(bpy.types.Operator):
         if event.type == 'LEFTMOUSE':
 
             r = self.region
-            mx = event.mouse_x - r.x
-            my = event.mouse_y - r.y
+            mx = event.mouse_region_x
+            my = event.mouse_region_y
 
             ui_props = context.scene.blenderkitUI
             if event.value == 'PRESS' and ui_props.active_index > -1:
@@ -1601,6 +1601,8 @@ class AssetBarOperator(bpy.types.Operator):
                     bpy.context.window.cursor_set("NONE")
                     ui_props.draw_tooltip = False
                     ui_props.drag_length = 0
+                    self.drag_start_x = mx
+                    self.drag_start_y = my
 
             if ui_props.rating_on:
                 res = interact_rating(r, mx, my, event)
