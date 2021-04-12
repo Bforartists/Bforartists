@@ -286,10 +286,10 @@ class NLA_MT_edit(Menu):
         layout.separator()
         # TODO: names of these tools for 'tweak-mode' need changing?
         if scene.is_nla_tweakmode:
-            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action", icon = "ACTION_TWEAK_SOLO").isolate_action = True
             #layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions", icon = "ACTION_TWEAK")
         else:
-            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK_SOLO").isolate_action = True
             #layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions", icon = "ACTION_TWEAK")
 
 
@@ -349,10 +349,10 @@ class NLA_MT_context_menu(Menu):
         scene = context.scene
 
         if scene.is_nla_tweakmode:
-            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action", icon = "ACTION_TWEAK_SOLO").isolate_action = True
             layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions", icon = "ACTION_TWEAK")
         else:
-            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK_SOLO").isolate_action = True
             layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions", icon = "ACTION_TWEAK")
 
         layout.separator()
