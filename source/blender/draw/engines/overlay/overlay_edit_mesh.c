@@ -72,12 +72,8 @@ void OVERLAY_edit_mesh_cache_init(OVERLAY_Data *vedata)
   bool select_edge = pd->edit_mesh.select_edge = (tsettings->selectmode & SCE_SELECT_EDGE) != 0;
 
   bool do_occlude_wire = (v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_OCCLUDE_WIRE) != 0;
-
-  /*bfa - select through patch*/
-  /*bool show_face_dots = (v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) != 0 ||
-                        pd->edit_mesh.do_zbufclip;*/
-  bool show_face_dots = (!tsettings->mesh_select_through && pd->edit_mesh.do_zbufclip) ||
-                        (v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) != 0;
+  bool show_face_dots = (v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) != 0 ||
+                        pd->edit_mesh.do_zbufclip;
 
   pd->edit_mesh.do_faces = true;
   pd->edit_mesh.do_edges = true;
