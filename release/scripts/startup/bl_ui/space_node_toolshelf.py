@@ -3546,6 +3546,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            
+            props = col.operator("node.add_node", text=" Bounding Box     ", icon = "PIVOT_BOUNDBOX")
+            props.use_transform = True
+            props.type = "GeometryNodeBoundBox"
 
             props = col.operator("node.add_node", text=" Join                    ", icon = "JOIN")
             props.use_transform = True
@@ -3562,6 +3566,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
 
             row = layout.row()
             row.alignment = 'LEFT'
+            
+            props = row.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
+            props.use_transform = True
+            props.type = "GeometryNodeBoundBox"
 
             props = row.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
