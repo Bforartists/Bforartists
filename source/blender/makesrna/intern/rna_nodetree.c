@@ -12050,7 +12050,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_CLAMP:
       icon = ICON_ATTRIBUTE_CLAMP;
       break;
-
+    case GEO_NODE_BOUNDING_BOX:
+      icon = ICON_PIVOT_BOUNDBOX;
+      break;
     case GEO_NODE_JOIN_GEOMETRY:
       icon = ICON_JOIN;
       break;
