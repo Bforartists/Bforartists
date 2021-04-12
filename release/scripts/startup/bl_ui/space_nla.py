@@ -50,6 +50,8 @@ class NLA_HT_header(Header):
 
         st = context.space_data
 
+        scene = context.scene
+
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         ########################### Switch between the editors
@@ -62,7 +64,17 @@ class NLA_HT_header(Header):
         row.operator("wm.switch_editor_to_driver", text="", icon='DRIVER')
         row.operator("wm.switch_editor_in_nla", text="", icon='NLA_ACTIVE')
 
-        ###########################
+        ########################### tweak strip actions
+
+
+        if scene.is_nla_tweakmode:
+            layout.active_default = True
+            layout.operator("nla.tweakmode_exit", text="Tweak", icon = "ACTION_TWEAK")
+        else:
+            layout.operator("nla.tweakmode_enter", text="Tweak", icon = "ACTION_TWEAK")
+
+
+        ##########################
 
         NLA_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -275,10 +287,10 @@ class NLA_MT_edit(Menu):
         # TODO: names of these tools for 'tweak-mode' need changing?
         if scene.is_nla_tweakmode:
             layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
-            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions", icon = "ACTION_TWEAK")
+            #layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions", icon = "ACTION_TWEAK")
         else:
             layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
-            layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions", icon = "ACTION_TWEAK")
+            #layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions", icon = "ACTION_TWEAK")
 
 
 class NLA_MT_add(Menu):
