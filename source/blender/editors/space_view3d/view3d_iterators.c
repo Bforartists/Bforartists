@@ -48,9 +48,6 @@
 
 #include "ED_armature.h"
 #include "ED_screen.h"
-
-#include "MEM_guardedalloc.h" /*bfa - select through patch*/
-
 #include "ED_view3d.h"
 
 typedef struct foreachScreenObjectVert_userData {
@@ -80,16 +77,12 @@ typedef struct foreachScreenEdge_userData {
   eV3DProjTest clip_flag;
 } foreachScreenEdge_userData;
 
-/*bfa - select through patch*/
-/*typedef struct foreachScreenFace_userData {*/
-typedef struct foreachScreenFaceCenter_userData {
+typedef struct foreachScreenFace_userData {
   void (*func)(void *userData, BMFace *efa, const float screen_co_b[2], int index);
   void *userData;
   ViewContext vc;
   eV3DProjTest clip_flag;
-/*} foreachScreenFace_userData;*/
-} foreachScreenFaceCenter_userData;
-
+} foreachScreenFace_userData;
 
 /**
  * \note foreach funcs should be called while drawing or directly after
@@ -358,19 +351,13 @@ void mesh_foreachScreenEdge_clip_bb_segment(ViewContext *vc,
 }
 
 /* ------------------------------------------------------------------------ */
-/*bfa - select through patch*/
-/*static void mesh_foreachScreenFace__mapFunc(void *userData,
+
+static void mesh_foreachScreenFace__mapFunc(void *userData,
                                             int index,
                                             const float cent[3],
-                                            const float UNUSED(no[3]))*/
-
-static void mesh_foreachScreenFaceCenter__mapFunc(void *userData,
-                                                  int index,
-                                                  const float cent[3],
-                                                  const float UNUSED(no[3]))
+                                            const float UNUSED(no[3]))
 {
-  /*foreachScreenFace_userData *data = userData;*/
-  foreachScreenFaceCenter_userData *data = userData;
+  foreachScreenFace_userData *data = userData;
   BMFace *efa = BM_face_at_index(data->vc.em->bm, index);
 
   if (!BM_elem_flag_test(efa, BM_ELEM_HIDDEN)) {
@@ -381,16 +368,14 @@ static void mesh_foreachScreenFaceCenter__mapFunc(void *userData,
     }
   }
 }
-/*bfa - select through patch*/
-/*void mesh_foreachScreenFace(*/
-void mesh_foreachScreenFaceCenter(
+
+void mesh_foreachScreenFace(
     ViewContext *vc,
     void (*func)(void *userData, BMFace *efa, const float screen_co_b[2], int index),
     void *userData,
     const eV3DProjTest clip_flag)
 {
-  /*foreachScreenFace_userData data;*/
-  foreachScreenFaceCenter_userData data;
+  foreachScreenFace_userData data;
 
   Mesh *me = editbmesh_get_eval_cage_from_orig(
       vc->depsgraph, vc->scene, vc->obedit, &CD_MASK_BAREMESH);
@@ -405,142 +390,12 @@ void mesh_foreachScreenFaceCenter(
 
   if (BKE_modifiers_uses_subsurf_facedots(vc->scene, vc->obedit)) {
     BKE_mesh_foreach_mapped_subdiv_face_center(
-        /*me, mesh_foreachScreenFace__mapFunc, &data, MESH_FOREACH_NOP);*/
-        me, mesh_foreachScreenFaceCenter__mapFunc, &data, MESH_FOREACH_NOP);
+        me, mesh_foreachScreenFace__mapFunc, &data, MESH_FOREACH_NOP);
   }
   else {
     BKE_mesh_foreach_mapped_face_center(
-        /*me, mesh_foreachScreenFace__mapFunc, &data, MESH_FOREACH_NOP);*/
-        me, mesh_foreachScreenFaceCenter__mapFunc, &data, MESH_FOREACH_NOP);
+        me, mesh_foreachScreenFace__mapFunc, &data, MESH_FOREACH_NOP);
   }
-}
-
-/*bfa - select through patch*/
-void mesh_foreachScreenFaceVerts(ViewContext *vc,
-                                 void (*func)(void *userData,
-                                              BMFace *efa,
-                                              const float screen_co[][2],
-                                              int total_count,
-                                              rctf *screen_rect,
-                                              bool *face_hit),
-                                 void *userData,
-                                 const eV3DProjTest clip_flag)
-{
-  Mesh *mesh = editbmesh_get_eval_cage_from_orig(
-      vc->depsgraph, vc->scene, vc->obedit, &CD_MASK_BAREMESH);
-  ED_view3d_check_mats_rv3d(vc->rv3d);
-
-  BM_mesh_elem_table_ensure(vc->em->bm, BM_FACE);
-
-  const MVert *mvert = mesh->mvert;
-  const MPoly *mp = mesh->mpoly;
-  const MLoop *ml;
-  const BMFace *efa;
-
-  float temp_screen_co[2];
-  int total_length = 0;
-
-  float(*screen_coords)[2] = MEM_mallocN(sizeof(int) * 2 * mesh->totvert, __func__);
-  int face_screen_verts_size = 4;
-  float(*face_screen_verts)[2] = MEM_mallocN(sizeof(int) * 2 * face_screen_verts_size, __func__);
-
-  /* This makes only sense on subdivided meshes.*/
-  BLI_bitmap *faces_visited;
-  int cage_index = BKE_modifiers_get_cage_index(vc->scene, vc->obedit, NULL, 1);
-  const bool cage_display = cage_index != -1;
-  if (cage_display) {
-    faces_visited = BLI_BITMAP_NEW((size_t)mesh->totpoly, __func__);
-  }
-
-  /* Transform and store all visible verts into screen coords. */
-  for (int i = 0; i < mesh->totvert; i++, mvert++) {
-
-    if (mvert->flag & ME_HIDE) {
-      continue;
-    }
-
-    if (ED_view3d_project_float_object(vc->region, mvert->co, temp_screen_co, clip_flag) ==
-        V3D_PROJ_RET_OK) {
-      screen_coords[i][0] = temp_screen_co[0];
-      screen_coords[i][1] = temp_screen_co[1];
-    }
-    else {
-      screen_coords[i][0] = 0.0f;
-      screen_coords[i][1] = 0.0f;
-    }
-  }
-
-  const int *poly_index = CustomData_get_layer(&mesh->pdata, CD_ORIGINDEX);
-  const bool use_original_index = poly_index != 0;
-
-  rctf poly_rect_data;
-  rctf *poly_rect = &poly_rect_data;
-  bool face_hit = false;
-
-  /* Collect polygon verts and send off per poly callback. */
-  for (int i = 0; i < mesh->totpoly; i++, mp++) {
-    int original_index = i;
-    if (use_original_index) {
-      original_index = *poly_index++;
-      if (original_index == ORIGINDEX_NONE) {
-        continue;
-      }
-    }
-
-    if (cage_display && BLI_BITMAP_TEST(faces_visited, original_index)) {
-      continue;
-    }
-
-    efa = BM_face_at_index(vc->em->bm, original_index);
-    if (!BM_elem_flag_test(efa, BM_ELEM_HIDDEN)) {
-
-      if (mp->totloop > face_screen_verts_size) {
-        face_screen_verts_size = mp->totloop;
-        MEM_freeN(face_screen_verts);
-        face_screen_verts = MEM_mallocN(sizeof(float) * 2 * face_screen_verts_size, __func__);
-      }
-
-      total_length = 0;
-      BLI_rctf_init_minmax(poly_rect);
-      ml = &mesh->mloop[mp->loopstart];
-
-      bool skip = false;
-
-      for (int j = 0; j < mp->totloop; j++, ml++) {
-        face_screen_verts[j][0] = screen_coords[ml->v][0];
-        face_screen_verts[j][1] = screen_coords[ml->v][1];
-
-        /* Ignore polygons with invalid screen coords. */
-        if (face_screen_verts[j][0] == 0.0f && face_screen_verts[j][1] == 0.0f) {
-          skip = true;
-          break;
-        }
-
-        total_length++;
-
-        BLI_rctf_do_minmax_v(poly_rect, screen_coords[ml->v]);
-      }
-
-      if (skip) {
-        continue;
-      }
-
-      face_hit = false;
-
-      func(
-          userData, efa, (const float(*)[2])face_screen_verts, total_length, poly_rect, &face_hit);
-
-      if (cage_display && face_hit) {
-        BLI_BITMAP_ENABLE(faces_visited, original_index);
-      }
-    }
-  }
-
-  if (cage_display) {
-    MEM_freeN(faces_visited);
-  }
-  MEM_freeN(screen_coords);
-  MEM_freeN(face_screen_verts);
 }
 
 /* ------------------------------------------------------------------------ */
