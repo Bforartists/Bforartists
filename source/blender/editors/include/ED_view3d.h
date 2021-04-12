@@ -233,25 +233,12 @@ void mesh_foreachScreenEdge_clip_bb_segment(struct ViewContext *vc,
                                                          int index),
                                             void *userData,
                                             const eV3DProjTest clip_flag);
-/*bfa - select through patch*/
-/*void mesh_foreachScreenFace(*/
-void mesh_foreachScreenFaceCenter(
+
+void mesh_foreachScreenFace(
     struct ViewContext *vc,
     void (*func)(void *userData, struct BMFace *efa, const float screen_co[2], int index),
     void *userData,
     const eV3DProjTest clip_flag);
-
-/*bfa - select through patch*/
-void mesh_foreachScreenFaceVerts(struct ViewContext *vc,
-                                 void (*func)(void *userData,
-                                              struct BMFace *efa,
-                                              const float screen_co[][2],
-                                              int total_count,
-                                              struct rctf *poly_rect,
-                                              bool *face_hit),
-                                 void *userData,
-                                 const eV3DProjTest clip_flag);
-
 void nurbs_foreachScreenVert(struct ViewContext *vc,
                              void (*func)(void *userData,
                                           struct Nurb *nu,
