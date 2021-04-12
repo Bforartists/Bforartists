@@ -3434,11 +3434,6 @@ static void rna_def_tool_settings(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_update(prop, 0, "rna_Scene_editmesh_select_mode_update");
 
-  /*bfa - select through patch*/
-  prop = RNA_def_property(srna, "mesh_select_through", PROP_BOOLEAN, PROP_NONE);
-  RNA_def_property_boolean_sdna(prop, NULL, "mesh_select_through", 0);
-  RNA_def_property_ui_text(prop, "Select through", "Selects occluded elements");
-
   prop = RNA_def_property(srna, "vertex_group_weight", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "vgroup_weight");
   RNA_def_property_ui_text(prop, "Vertex Group Weight", "Weight to assign in vertex groups\nHotkey in default keymap: CTRL+F");
