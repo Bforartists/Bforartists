@@ -1449,9 +1449,7 @@ typedef struct ToolSettings {
 
   char edge_mode_live_unwrap;
 
-  /*bfa - select through patch*/
-  /*char _pad1[1];*/
-  char mesh_select_through;
+  char _pad1[1];
 
   /* Transform */
   char transform_pivot_point;

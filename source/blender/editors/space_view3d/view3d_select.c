@@ -106,12 +106,6 @@
 #include "DRW_engine.h"
 #include "DRW_select_buffer.h"
 
-/*bfa - select through patch*/
-//#define DEBUG_TIME
-#ifdef DEBUG_TIME
-#  include "PIL_time.h"
-#endif
-
 #include "view3d_intern.h" /* own include */
 
 // #include "PIL_time_utildefines.h"
@@ -801,15 +795,10 @@ static void do_lasso_select_mesh__doSelectEdge_pass1(void *user_data,
   }
 }
 
-/*bfa - select through patch*/
-/*static void do_lasso_select_mesh__doSelectFace(void *userData,
+static void do_lasso_select_mesh__doSelectFace(void *userData,
                                                BMFace *efa,
                                                const float screen_co[2],
-                                               int UNUSED(index))*/
-static void do_lasso_select_mesh__doSelectFaceCenter(void *userData,
-                                                     BMFace *efa,
-                                                     const float screen_co[2],
-                                                     int UNUSED(index))
+                                               int UNUSED(index))
 {
   LassoSelectUserData *data = userData;
   const bool is_select = BM_elem_flag_test(efa, BM_ELEM_SELECT);
@@ -824,62 +813,12 @@ static void do_lasso_select_mesh__doSelectFaceCenter(void *userData,
   }
 }
 
-/*bfa - select through patch*/
-static void do_lasso_select_mesh__doSelectFace(void *user_data,
-                                               BMFace *efa,
-                                               const float screen_co[][2],
-                                               int total_count,
-                                               rctf *screen_rect,
-                                               bool *face_hit)
-{
-  LassoSelectUserData *data = user_data;
-
-  if (!BLI_rctf_isect(data->rect_fl, screen_rect, NULL))
-    return;
-
-  bool inside = false;
-  for (int i = 0; i < total_count; i++) {
-
-    int a = i;
-    int b = (i + 1) % total_count;
-
-    inside = BLI_lasso_is_edge_inside(
-        data->mcoords, data->mcoords_len, UNPACK2(screen_co[a]), UNPACK2(screen_co[b]), IS_CLIPPED);
-    if (inside) {
-      break;
-    }
-  }
-
-  /* Single point check should be suffienct as we only care if the lasso is inside of the
-  poly. */
-
-  if (!inside) {
-    float point[2] = {data->mcoords[0][0], data->mcoords[0][1]};
-    inside = isect_point_poly_v2(point, screen_co, total_count, true);
-  }
-
-  *face_hit = inside;
-
-  const bool is_select = BM_elem_flag_test(efa, BM_ELEM_SELECT);
-  const int sel_op_result = ED_select_op_action_deselected(data->sel_op, is_select, inside);
-
-  if (sel_op_result != -1) {
-    BM_face_select_set(data->vc->em->bm, efa, sel_op_result);
-    data->is_changed = true;
-  }
-}
-
-
 static bool do_lasso_select_mesh(ViewContext *vc,
                                  wmGenericUserData *wm_userdata,
                                  const int mcoords[][2],
                                  const int mcoords_len,
                                  const eSelectOp sel_op)
 {
-/*bfa - select through patch*/
-#ifdef DEBUG_TIME
-  double t1 = PIL_check_seconds_timer();
-#endif
   LassoSelectUserData data;
   ToolSettings *ts = vc->scene->toolsettings;
   rcti rect;
@@ -903,9 +842,7 @@ static bool do_lasso_select_mesh(ViewContext *vc,
 
   GPU_matrix_set(vc->rv3d->viewmat);
 
-  /*bfa - select through patch*/
-  /*const bool use_zbuf = !XRAY_FLAG_ENABLED(vc->v3d);*/
-  const bool use_zbuf = !(ts->mesh_select_through || XRAY_FLAG_ENABLED(vc->v3d));
+  const bool use_zbuf = !XRAY_FLAG_ENABLED(vc->v3d);
 
   struct EditSelectBuf_Cache *esel = wm_userdata->data;
   if (use_zbuf) {
@@ -934,19 +871,13 @@ static bool do_lasso_select_mesh(ViewContext *vc,
         .esel = use_zbuf ? esel : NULL,
         .backbuf_offset = use_zbuf ? DRW_select_buffer_context_offset_for_object_elem(
                                          vc->depsgraph, vc->obedit, SCE_SELECT_EDGE) :
-                                     0};/*bfa - select through patch*/
+                                     0,
+    };
 
     const eV3DProjTest clip_flag = V3D_PROJ_TEST_CLIP_NEAR |
                                    (use_zbuf ? 0 : V3D_PROJ_TEST_CLIP_BB);
-
-    /*bfa - select through patch*/
-    /*mesh_foreachScreenEdge_clip_bb_segment(
-        vc, do_lasso_select_mesh__doSelectEdge_pass0, &data_for_edge, clip_flag);*/
-    /* For select through we always want the intersect test, and not the fully inside test. */
-    if (ts->selectmode & SCE_SELECT_EDGE && !ts->mesh_select_through) {
-      mesh_foreachScreenEdge_clip_bb_segment(
-          vc, do_lasso_select_mesh__doSelectEdge_pass0, &data_for_edge, clip_flag);
-    }
+    mesh_foreachScreenEdge_clip_bb_segment(
+        vc, do_lasso_select_mesh__doSelectEdge_pass0, &data_for_edge, clip_flag);
     if (data.is_done == false) {
       mesh_foreachScreenEdge_clip_bb_segment(
           vc, do_lasso_select_mesh__doSelectEdge_pass1, &data_for_edge, clip_flag);
@@ -954,38 +885,19 @@ static bool do_lasso_select_mesh(ViewContext *vc,
   }
 
   if (ts->selectmode & SCE_SELECT_FACE) {
-    /*bfa - select through patch*/
-    /*if (use_zbuf) {
+    if (use_zbuf) {
       data.is_changed |= edbm_backbuf_check_and_select_faces(
-          esel, vc->depsgraph, vc->obedit, vc->em, sel_op);*/
-    if (ts->mesh_select_through) {
-      mesh_foreachScreenFaceVerts(
-          vc, do_lasso_select_mesh__doSelectFace, &data, V3D_PROJ_TEST_CLIP_NEAR | V3D_PROJ_TEST_CLIP_BB);
+          esel, vc->depsgraph, vc->obedit, vc->em, sel_op);
     }
     else {
-      /*mesh_foreachScreenFace(
-          vc, do_lasso_select_mesh__doSelectFace, &data, V3D_PROJ_TEST_CLIP_DEFAULT);*/
-      if (use_zbuf) {
-        data.is_changed |= edbm_backbuf_check_and_select_faces(
-            esel, vc->depsgraph, vc->obedit, vc->em, sel_op);
-      }
-      /* Xray Mode with face center selection */
-      else {
-        mesh_foreachScreenFaceCenter(
-            vc, do_lasso_select_mesh__doSelectFaceCenter, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
-      }
+      mesh_foreachScreenFace(
+          vc, do_lasso_select_mesh__doSelectFace, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
     }
   }
 
   if (data.is_changed) {
     EDBM_selectmode_flush(vc->em);
   }
-/*bfa - select through patch*/
-#ifdef DEBUG_TIME
-  double t2 = PIL_check_seconds_timer();
-  printf("lasso select: %lf\n", t2 - t1);
-#endif
-
   return data.is_changed;
 }
 
@@ -3164,17 +3076,15 @@ static void do_mesh_box_select__doSelectEdge_pass0(
 {
   struct BoxSelectUserData_ForMeshEdge *data_for_edge = userData;
   BoxSelectUserData *data = data_for_edge->data;
-  //ToolSettings *ts = data->vc->scene->toolsettings;/*bfa - select through patch, throws not used warning, so off*/
   bool is_visible = true;
   if (data_for_edge->backbuf_offset) {
     uint bitmap_inedx = data_for_edge->backbuf_offset + index - 1;
     is_visible = BLI_BITMAP_TEST_BOOL(data_for_edge->esel->select_bitmap, bitmap_inedx);
   }
 
-  /*const bool is_select = BM_elem_flag_test(eed, BM_ELEM_SELECT);*//*bfa - select through patch*/
+  const bool is_select = BM_elem_flag_test(eed, BM_ELEM_SELECT);
   const bool is_inside = (is_visible &&
                           edge_fully_inside_rect(data->rect_fl, screen_co_a, screen_co_b));
-  const bool is_select = BM_elem_flag_test(eed, BM_ELEM_SELECT);/*bfa - select through patch*/
   const int sel_op_result = ED_select_op_action_deselected(data->sel_op, is_select, is_inside);
   if (sel_op_result != -1) {
     BM_edge_select_set(data->vc->em->bm, eed, sel_op_result);
@@ -3201,59 +3111,11 @@ static void do_mesh_box_select__doSelectEdge_pass1(
     data->is_changed = true;
   }
 }
-
-/*bfa - select through patch*/
-/*static void do_mesh_box_select__doSelectFace(void *userData,
-                                             BMFace *efa,
-                                             const float screen_co[2],
-                                             int UNUSED(index))*/
 static void do_mesh_box_select__doSelectFace(void *userData,
                                              BMFace *efa,
-                                             const float screen_co[][2],
-                                             int total_count,
-                                             rctf *screen_rect,
-                                             bool *face_hit)
+                                             const float screen_co[2],
+                                             int UNUSED(index))
 {
-  BoxSelectUserData *data = userData;
-
-  if (!BLI_rctf_isect(data->rect_fl, screen_rect, NULL))
-    return;
-
-  bool inside = false;
-  for (int i = 0; i < total_count; i++) {
-
-    int a = i;
-    int b = (i + 1) % total_count;
-
-    inside = edge_inside_rect(data->rect_fl, screen_co[a], screen_co[b]);
-    if (inside) {
-      break;
-    }
-  }
-  /* Single point check should be suffienct as we only care if the box rect is inside of the
-  polygon. */
-  if (!inside) {
-    float point[2] = {data->rect_fl->xmax, data->rect_fl->ymax};
-    inside = isect_point_poly_v2(point, screen_co, total_count, true);
-  }
-
-  *face_hit = inside;
-
-  const bool is_select = BM_elem_flag_test(efa, BM_ELEM_SELECT);
-  const int sel_op_result = ED_select_op_action_deselected(data->sel_op, is_select, inside);
-
-  if (sel_op_result != -1) {
-    BM_face_select_set(data->vc->em->bm, efa, sel_op_result);
-    data->is_changed = true;
-  }
-}
-
-static void do_mesh_box_select__doSelectFaceCenter(void *userData,
-                                                   BMFace *efa,
-                                                   const float screen_co[2],
-                                                   int UNUSED(index))
-/*bfa select through patch end */
-  {
   BoxSelectUserData *data = userData;
   const bool is_select = BM_elem_flag_test(efa, BM_ELEM_SELECT);
   const bool is_inside = BLI_rctf_isect_pt_v(data->rect_fl, screen_co);
@@ -3268,12 +3130,6 @@ static bool do_mesh_box_select(ViewContext *vc,
                                const rcti *rect,
                                const eSelectOp sel_op)
 {
-
-/*bfa - select through patch*/
-#ifdef DEBUG_TIME
-  double t1 = PIL_check_seconds_timer();
-#endif
-
   BoxSelectUserData data;
   ToolSettings *ts = vc->scene->toolsettings;
 
@@ -3291,10 +3147,7 @@ static bool do_mesh_box_select(ViewContext *vc,
 
   GPU_matrix_set(vc->rv3d->viewmat);
 
-  /*bfa - select through patch*/
- /* const bool use_zbuf = !XRAY_FLAG_ENABLED(vc->v3d);*/
-  const bool use_zbuf = !(ts->mesh_select_through || XRAY_FLAG_ENABLED(vc->v3d));
-  //const bool show_face_dots = (vc->v3d->overlay.edit_flag & V3D_OVERLAY_EDIT_FACE_DOT) != 0;/*bfa - select through patch, throws not used warning, so off*/
+  const bool use_zbuf = !XRAY_FLAG_ENABLED(vc->v3d);
 
   struct EditSelectBuf_Cache *esel = wm_userdata->data;
   if (use_zbuf) {
@@ -3317,7 +3170,7 @@ static bool do_mesh_box_select(ViewContext *vc,
     }
   }
   if (ts->selectmode & SCE_SELECT_EDGE) {
-    /* Does both use_zbuf and non-use_zbuf versions (need screen pos for both) */
+    /* Does both use_zbuf and non-use_zbuf versions (need screen cos for both) */
     struct BoxSelectUserData_ForMeshEdge cb_data = {
         .data = &data,
         .esel = use_zbuf ? esel : NULL,
@@ -3328,16 +3181,8 @@ static bool do_mesh_box_select(ViewContext *vc,
 
     const eV3DProjTest clip_flag = V3D_PROJ_TEST_CLIP_NEAR |
                                    (use_zbuf ? 0 : V3D_PROJ_TEST_CLIP_BB);
-
-    /*bfa - select through patch*/
-    /*mesh_foreachScreenEdge_clip_bb_segment(
-        vc, do_mesh_box_select__doSelectEdge_pass0, &cb_data, clip_flag);*/
-    /* For select through we always want the intersect test, and not the fully inside test. */
-    if (ts->selectmode & SCE_SELECT_EDGE && !ts->mesh_select_through) {
-      mesh_foreachScreenEdge_clip_bb_segment(
-          vc, do_mesh_box_select__doSelectEdge_pass0, &cb_data, clip_flag);
-    }
-
+    mesh_foreachScreenEdge_clip_bb_segment(
+        vc, do_mesh_box_select__doSelectEdge_pass0, &cb_data, clip_flag);
     if (data.is_done == false) {
       mesh_foreachScreenEdge_clip_bb_segment(
           vc, do_mesh_box_select__doSelectEdge_pass1, &cb_data, clip_flag);
@@ -3345,27 +3190,13 @@ static bool do_mesh_box_select(ViewContext *vc,
   }
 
   if (ts->selectmode & SCE_SELECT_FACE) {
-    /*bfa - select through patch*/
-    /*if (use_zbuf) {
+    if (use_zbuf) {
       data.is_changed |= edbm_backbuf_check_and_select_faces(
-          esel, vc->depsgraph, vc->obedit, vc->em, sel_op);*/
-    if (ts->mesh_select_through) {
-        mesh_foreachScreenFaceVerts(
-            vc, do_mesh_box_select__doSelectFace, &data, V3D_PROJ_TEST_CLIP_NEAR | V3D_PROJ_TEST_CLIP_BB);
+          esel, vc->depsgraph, vc->obedit, vc->em, sel_op);
     }
     else {
-      /*bfa - select through patch*/
-      /*mesh_foreachScreenFace(
-          vc, do_mesh_box_select__doSelectFace, &data, V3D_PROJ_TEST_CLIP_DEFAULT);*/
-      if (use_zbuf) {
-        data.is_changed |= edbm_backbuf_check_and_select_faces(
-            esel, vc->depsgraph, vc->obedit, vc->em, sel_op);
-      }
-      /* Xray Mode with face center selection */
-      else {
-        mesh_foreachScreenFaceCenter(
-            vc, do_mesh_box_select__doSelectFaceCenter, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
-      }
+      mesh_foreachScreenFace(
+          vc, do_mesh_box_select__doSelectFace, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
     }
   }
 
@@ -3373,13 +3204,6 @@ static bool do_mesh_box_select(ViewContext *vc,
     EDBM_selectmode_flush(vc->em);
   }
   return data.is_changed;
-
-/*bfa - select through patch*/
-#ifdef DEBUG_TIME
-  double t2 = PIL_check_seconds_timer();
-  printf("box select: %lf\n", t2 - t1);
-#endif
-
 }
 
 static bool do_meta_box_select(ViewContext *vc, const rcti *rect, const eSelectOp sel_op)
@@ -3868,22 +3692,16 @@ static void mesh_circle_doSelectEdge(void *userData,
                                      int UNUSED(index))
 {
   CircleSelectUserData *data = userData;
-  //ToolSettings *ts = data->vc->scene->toolsettings;/*bfa - select through patch, throws not used warning, so off*/
 
   if (edge_inside_circle(data->mval_fl, data->radius, screen_co_a, screen_co_b)) {
     BM_edge_select_set(data->vc->em->bm, eed, data->select);
     data->is_changed = true;
   }
 }
-/*bfa - select through patch*/
-/*static void mesh_circle_doSelectFace(void *userData,
+static void mesh_circle_doSelectFace(void *userData,
                                      BMFace *efa,
                                      const float screen_co[2],
-                                     int UNUSED(index))*/
-static void mesh_circle_doSelectFaceCenter(void *userData,
-                                           BMFace *efa,
-                                           const float screen_co[2],
-                                           int UNUSED(index))
+                                     int UNUSED(index))
 {
   CircleSelectUserData *data = userData;
 
@@ -3892,55 +3710,13 @@ static void mesh_circle_doSelectFaceCenter(void *userData,
     data->is_changed = true;
   }
 }
-/*bfa - select through patch*/
-static void mesh_circle_doSelectFace(void *userData,
-                                     BMFace *efa,
-                                     const float screen_co[][2],
-                                     int total_count,
-                                     rctf *screen_rect,
-                                     bool *face_hit)
-{
-  struct CircleSelectUserData *data = userData;
 
-  if (!BLI_rctf_isect_circle(screen_rect, data->mval_fl, data->radius)) {
-    return;
-  }
-
-  bool inside = false;
-  for (int i = 0; i < total_count; i++) {
-
-    int a = i;
-    int b = (i + 1) % total_count;
-
-    inside = edge_inside_circle(data->mval_fl, data->radius, screen_co[a], screen_co[b]);
-    if (inside)
-      break;
-  }
-
-  if (!inside) {
-    inside = isect_point_poly_v2(data->mval_fl, screen_co, total_count, true);
-  }
-
-  *face_hit = inside;
-
-  if (inside) {
-    BM_face_select_set(data->vc->em->bm, efa, data->select);
-    data->is_changed = true;
-  }
-}
-/*bfa - end select through patch*/
 static bool mesh_circle_select(ViewContext *vc,
                                wmGenericUserData *wm_userdata,
                                eSelectOp sel_op,
                                const int mval[2],
                                float rad)
 {
-
-/*bfa - select through patch*/
-#ifdef DEBUG_TIME
-  double t1 = PIL_check_seconds_timer();
-#endif
-
   ToolSettings *ts = vc->scene->toolsettings;
   CircleSelectUserData data;
   vc->em = BKE_editmesh_from_object(vc->obedit);
@@ -3958,9 +3734,7 @@ static bool mesh_circle_select(ViewContext *vc,
 
   view3d_userdata_circleselect_init(&data, vc, select, mval, rad);
 
-  /*bfa - select through patch*/
-  /*const bool use_zbuf = !XRAY_FLAG_ENABLED(vc->v3d);*/
-  const bool use_zbuf = !(ts->mesh_select_through || XRAY_FLAG_ENABLED(vc->v3d));
+  const bool use_zbuf = !XRAY_FLAG_ENABLED(vc->v3d);
 
   if (use_zbuf) {
     if (wm_userdata->data == NULL) {
@@ -4002,30 +3776,14 @@ static bool mesh_circle_select(ViewContext *vc,
   }
 
   if (ts->selectmode & SCE_SELECT_FACE) {
-
-    /*bfa - select through patch*/
-    /*if (use_zbuf) {
+    if (use_zbuf) {
       if (esel->select_bitmap != NULL) {
         changed |= edbm_backbuf_check_and_select_faces(
             esel, vc->depsgraph, vc->obedit, vc->em, select ? SEL_OP_ADD : SEL_OP_SUB);
-      }*/
-
-    if (ts->mesh_select_through) {
-      mesh_foreachScreenFaceVerts(
-          vc, mesh_circle_doSelectFace, &data, V3D_PROJ_TEST_CLIP_NEAR | V3D_PROJ_TEST_CLIP_BB);
+      }
     }
     else {
-      /*mesh_foreachScreenFace(vc, mesh_circle_doSelectFace, &data, V3D_PROJ_TEST_CLIP_DEFAULT);*/
-      if (use_zbuf) {
-        if (esel->select_bitmap != NULL) {
-          changed |= edbm_backbuf_check_and_select_faces(
-              esel, vc->depsgraph, vc->obedit, vc->em, select ? SEL_OP_ADD : SEL_OP_SUB);
-        }
-      }
-      else {
-        mesh_foreachScreenFaceCenter(
-            vc, mesh_circle_doSelectFaceCenter, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
-      }
+      mesh_foreachScreenFace(vc, mesh_circle_doSelectFace, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
     }
   }
 
@@ -4034,13 +3792,6 @@ static bool mesh_circle_select(ViewContext *vc,
   if (changed) {
     EDBM_selectmode_flush(vc->em);
   }
-
-/*bfa - select through patch*/
-#ifdef DEBUG_TIME
-  double t2 = PIL_check_seconds_timer();
-  printf("circle select: %lf\n", t2 - t1);
-#endif
-
   return changed;
 }
 
