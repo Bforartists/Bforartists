@@ -9,7 +9,7 @@
 import bpy
 
 class MyData(bpy.types.PropertyGroup):
-    checkbox_bool = bpy.props.BoolProperty(name="A checkbox", description="Do this or that", default = False) # Our prop
+    checkbox_bool : bpy.props.BoolProperty(name="A checkbox", description="Do this or that", default = False) # Our prop
 
 class CheckboxpropPanel(bpy.types.Panel):
     bl_label = "Checkbox prop"
