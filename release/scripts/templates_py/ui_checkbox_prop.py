@@ -4,7 +4,7 @@
 
 import bpy
 
-class CheckboxpropPanel(bpy.types.Panel):
+class XX_PT_checkboxpropPanel(bpy.types.Panel):
     bl_label = "Checkbox prop"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -45,7 +45,7 @@ class CheckboxpropPanel(bpy.types.Panel):
             col.operator("mesh.primitive_torus_add", text="Torus", icon='MESH_TORUS')
 
 def register():
-    bpy.utils.register_class(CheckboxpropPanel)
+    bpy.utils.register_class(XX_PT_checkboxpropPanel)
     #Our prop
     bpy.types.Scene.my_prop = bpy.props.BoolProperty( name="Prop name", description="Some tooltip", default = True)
 
