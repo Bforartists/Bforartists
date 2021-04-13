@@ -11,7 +11,7 @@ import bpy
 class MyData(bpy.types.PropertyGroup):
     checkbox_bool : bpy.props.BoolProperty(name="A checkbox", description="Do this or that", default = False) # Our prop
 
-class CheckboxpropPanel(bpy.types.Panel):
+class XX_PT_checkboxpropPanel(bpy.types.Panel):
     bl_label = "Checkbox prop"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -52,7 +52,7 @@ class CheckboxpropPanel(bpy.types.Panel):
             col.operator("mesh.primitive_torus_add", text="Torus", icon='MESH_TORUS')
 
 def register():
-    bpy.utils.register_class(CheckboxpropPanel)
+    bpy.utils.register_class(XX_PT_checkboxpropPanel)
     #Our data block
     bpy.utils.register_class(MyData) # Our data block
     bpy.types.Scene.my_addon_data = bpy.props.PointerProperty(type=MyData) # Bind reference of type of our data block to type Scene objects
@@ -60,7 +60,7 @@ def register():
 def unregister():
     del bpy.types.Scene.my_addon_data # Unregister our data block when unregister.
     bpy.utils.unregister_class(MyData) # Our data block
-    bpy.utils.unregister_class(CheckboxpropPanel)
+    bpy.utils.unregister_class(XX_PT_checkboxpropPanel)
 
 if __name__ == "__main__":
     register()
