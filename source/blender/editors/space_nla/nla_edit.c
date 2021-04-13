@@ -68,6 +68,8 @@
 #include "nla_intern.h"  /* own include */
 #include "nla_private.h" /* FIXME... maybe this shouldn't be included? */
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+
 /* -------------------------------------------------------------------- */
 /** \name Public Utilities
  * \{ */
@@ -174,6 +176,17 @@ static int nlaedit_enable_tweakmode_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+static char *nla_ot_tweakmode_enter_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "isolate_action")) {
+    return BLI_strdup(
+        "Enter tweak mode to edit the keyframes of just the selected action strip of this object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to NLA editor and leave tweak mode");
+  }
+  return NULL;
+}
+
 void NLA_OT_tweakmode_enter(wmOperatorType *ot)
 {
   PropertyRNA *prop;
@@ -182,10 +195,11 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
   ot->name = "Enter Tweak Mode";
   ot->idname = "NLA_OT_tweakmode_enter";
   ot->description =
-      "Enter tweaking mode for the action referenced by the active strip to edit its keyframes";
+      "Enter tweak mode to edit the keyframes of the action strips of this object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to NLA editor and leave tweak mode";
 
   /* api callbacks */
   ot->exec = nlaedit_enable_tweakmode_exec;
+  ot->get_description = nla_ot_tweakmode_enter_get_description;
   ot->poll = nlaop_poll_tweakmode_off;
 
   /* flags */
