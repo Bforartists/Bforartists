@@ -158,6 +158,10 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
 
     toolbar_show_quicktoggle : BoolProperty(name="Show Quick Toggle", default = False, description = "Show the quick toggle buttons in the toolbar editor")
 
+    # NLA Editor, switch tweak methods
+
+    nla_tweak_isolate_action : BoolProperty(name="Isolate", default = False, description = "Edit action in isolate mode")
+
 
     def draw(self, context):
         layout = self.layout
@@ -515,6 +519,18 @@ class BFA_OT_toolbar_settings_prefs(AddonPreferences):
         row = col.row()
         row.separator()
         row.prop(self, "toolbar_show_quicktoggle")
+
+    # NLA Options
+
+        layout.label(text="NLA option - toggle between action tweak mode all and isolated")
+
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+
+        col = flow.column(align=True)
+
+        row = col.row()
+        row.separator()
+        row.prop(self, "nla_tweak_isolate_action")
 
 
 class BFA_OT_toolbar_prefs(Operator):
