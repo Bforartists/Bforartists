@@ -6523,7 +6523,7 @@ static void rna_def_fileselect_asset_params(BlenderRNA *brna)
        "Show images, movie clips, sounds and masks"},
       {FILTER_ID_CA | FILTER_ID_LA | FILTER_ID_LP | FILTER_ID_SPK | FILTER_ID_WO,
        "ENVIRONMENTS",
-       ICON_WORLD_DATA,
+       ICON_WORLD,
        "Environment",
        "Show worlds, lights, cameras and speakers"},
       {FILTER_ID_BR | FILTER_ID_GD | FILTER_ID_PA | FILTER_ID_PAL | FILTER_ID_PC | FILTER_ID_TXT |
