@@ -307,11 +307,16 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
         prefs = context.preferences
         view = prefs.view
 
-        col = layout.column(heading="Show")
-        col.prop(view, "show_statusbar_stats", text="Scene Statistics")
-        col.prop(view, "show_statusbar_memory", text="System Memory")
-        col.prop(view, "show_statusbar_vram", text="Video Memory")
-        col.prop(view, "show_statusbar_version", text="Bforartists Version")
+        col = layout.column()
+        col.label(text = "Show:")
+        
+        flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
+
+        flow.use_property_split = False
+        flow.prop(view, "show_statusbar_stats", text="Scene Statistics")
+        flow.prop(view, "show_statusbar_memory", text="System Memory")
+        flow.prop(view, "show_statusbar_vram", text="Video Memory")
+        flow.prop(view, "show_statusbar_version", text="Bforartists Version")
 
 
 class USERPREF_PT_interface_menus(InterfacePanel, Panel):
