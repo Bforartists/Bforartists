@@ -25,8 +25,7 @@ bl_info = {
     "location": "View3D > Object > Bevel/Taper",
     "description": "Adds bevel and/or taper curve to active curve",
     "warning": "",
-    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
-               "Py/Scripts/Curve/Bevel_-Taper_Curve",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
     "category": "Curve",
 }
 

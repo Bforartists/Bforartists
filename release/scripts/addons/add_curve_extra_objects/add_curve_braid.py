@@ -9,7 +9,7 @@ bl_info = {
     "location": "View3D > Add > Mesh > New Braid",
     "description": "Adds a new Braid",
     "warning": "",
-    "doc_url": "",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
     "category": "Add Mesh",
 }
 """
