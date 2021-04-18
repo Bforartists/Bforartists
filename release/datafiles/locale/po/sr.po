@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -505,6 +505,10 @@ msgstr "Тачка"
 
 msgid "Edge"
 msgstr "Ивица"
+
+
+msgid "Face"
+msgstr "Страница"
 
 
 msgid "Curve"
@@ -9467,10 +9471,6 @@ msgid "Special Characters"
 msgstr "Специјални знаци"
 
 
-msgid "Face"
-msgstr "Страница"
-
-
 msgid "Normals"
 msgstr "Нормале"
 
@@ -15172,14 +15172,6 @@ msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
 
 
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
-
-
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "Придружи групу темена"
@@ -20458,6 +20450,11 @@ msgstr "Индекс позадинске слике за уклањање "
 
 
 msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Мени извора"
+
+
+msgctxt "Operator"
 msgid "Set 3D Cursor"
 msgstr "Подеси 3D курсор"
 
@@ -20535,11 +20532,6 @@ msgstr "Набрајање"
 
 msgid "List objects under the mouse (object mode only)"
 msgstr "Листа објеката под мишем (само у режиму објекта)"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Мени извора"
 
 
 msgid "Object Name"
@@ -23738,6 +23730,14 @@ msgid "Dash"
 msgstr "Испрекидано"
 
 
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
+
+
 msgid "Alpha Channel"
 msgstr "Алфа канал"
 
@@ -25031,10 +25031,6 @@ msgid "Automatically merge vertices moved to the same location"
 msgstr "Самостално спајај темена премештена на исту локацију"
 
 
-msgid "WPaint Multi-Paint"
-msgstr "Бојење утицаја"
-
-
 msgid "Layered"
 msgstr "Слојевито"
 
@@ -25744,12 +25740,12 @@ msgid "Protected Layers:"
 msgstr "Заштићени слојеви:"
 
 
-msgid "Axes"
-msgstr "Осе"
-
-
 msgid "Shapes"
 msgstr "Облици"
+
+
+msgid "Axes"
+msgstr "Осе"
 
 
 msgctxt "Operator"
@@ -25980,10 +25976,6 @@ msgstr "Није још у функцији"
 
 msgid "Structural"
 msgstr "Структурно"
-
-
-msgid "Enable physics for:"
-msgstr "Укључи физику за:"
 
 
 msgctxt "Operator"
@@ -27454,11 +27446,6 @@ msgstr "Врати све на почетне вредности"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Врати један на почетну вредност"
-
-
-msgctxt "Operator"
-msgid "Unset"
-msgstr "Поништи"
 
 
 msgctxt "Operator"
