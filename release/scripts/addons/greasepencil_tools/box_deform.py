@@ -262,8 +262,22 @@ def delete_cage(cage):
 
 def apply_cage(gp_obj, cage):
     mod = gp_obj.grease_pencil_modifiers.get('tmp_lattice')
+    multi_user = None
     if mod:
+        if gp_obj.data.users > 1:
+            old = gp_obj.data
+            multi_user = old.name
+            other_user = [o for o in bpy.data.objects if o is not gp_obj and o.data is old]
+            gp_obj.data = gp_obj.data.copy()
+
         bpy.ops.object.gpencil_modifier_apply(apply_as='DATA', modifier=mod.name)
+
+        if multi_user:
+            for o in other_user: # relink
+                o.data = gp_obj.data
+            bpy.data.grease_pencils.remove(old)
+            gp_obj.data.name = multi_user
+
     else:
         print('tmp_lattice modifier not found to apply...')
 
