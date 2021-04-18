@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -994,12 +994,8 @@ msgid "Edge"
 msgstr "Ребро"
 
 
-msgid "Corner"
-msgstr "Угол"
-
-
-msgid "Polygon"
-msgstr "Полигон"
+msgid "Face"
+msgstr "Грань"
 
 
 msgid "Curve"
@@ -7795,10 +7791,6 @@ msgid "Object Instances"
 msgstr "Экземпляры объектов"
 
 
-msgid "All object instances to display or render (WARNING: only use this as an iterator, never as a sequence, and do not keep any references to its items)"
-msgstr "Все экземпляры объекта для отображения или рендеринга (предупреждение: используйте только как итератор, а не последовательность; никогда не сохраняйте ссылки на элементы)"
-
-
 msgid "Evaluated objects in the dependency graph"
 msgstr "Вычисленные объекты в графе зависимостей"
 
@@ -7825,10 +7817,6 @@ msgstr "Исходный слой визуализации, для которо�
 
 msgid "Dependency Graph Object Instance"
 msgstr "Экземпляр объекта графа зависимостей"
-
-
-msgid "Extended information about dependency graph object iterator (WARNING: all data here is *evaluated* one, not original .blend IDs...)"
-msgstr "Расширенная информация об итераторе по объектам графа зависимостей (предупреждение: все данные здесь являются *вычисленными*, а не исходными .blend ID-объектами…)"
 
 
 msgid "Instance Object"
@@ -8281,10 +8269,6 @@ msgstr "Инвертировать"
 
 msgid "Multi-Word Fuzzy Filter"
 msgstr "Фильтр для фрагментов слов"
-
-
-msgid "Perform fuzzy/multi-word matching (WARNING: May be slow)"
-msgstr "Выполнять полнотестовый поиск по фрагментам слов (может быть медленным)"
 
 
 msgid "Driver for the value of a setting based on an external value"
@@ -19199,6 +19183,10 @@ msgid "Use topology based mirroring (for when both sides of mesh have matching, 
 msgstr "Использовать симметрию, основанную на топологии (когда обе стороны соответствуют друг другу)"
 
 
+msgid "Mirror Vertex Groups"
+msgstr "Симметрия групп вершин"
+
+
 msgid "Paint Mask"
 msgstr "Маска рисования"
 
@@ -19767,10 +19755,6 @@ msgid "Extra scaling added to the scale of the object"
 msgstr "Дополнительное масштабирование объекта после выполнения основного"
 
 
-msgid "Absolute bounding box dimensions of the object (WARNING: assigning to it or its members multiple consecutive times will not work correctly, as this needs up-to-date evaluated data)"
-msgstr "Абсолютные размеры габаритного контейнера этого объекта (внимание: назначение ему или его составных частей несколько раз подряд может работать некорректно, так как для этого нужны обновленные данные)"
-
-
 msgid "Object Display"
 msgstr "Показ объекта"
 
@@ -20025,10 +20009,6 @@ msgstr "Матрица, определяющая положение, враще�
 
 msgid "Local Matrix"
 msgstr "Локальная матрица"
-
-
-msgid "Parent relative transformation matrix - WARNING: Only takes into account 'Object' parenting, so e.g. in case of bone parenting you get a matrix relative to the Armature object, not to the actual parent bone"
-msgstr "Матрица трансформации по отношению к родителю; Предупреждение: работает только для связей между объектами, то есть в случае родительской связи между костями возвращается матрица по отношению к объекту арматуры, а не по отношению к родительской кости"
 
 
 msgid "Parent Inverse Matrix"
@@ -27317,10 +27297,6 @@ msgid "Edge Data"
 msgstr "Данные рёбер"
 
 
-msgid "Face"
-msgstr "Грань"
-
-
 msgid "Face Data"
 msgstr "Данные граней"
 
@@ -27667,6 +27643,10 @@ msgstr "Нормаль треугольника"
 
 msgid "Local space unit length normal vector for this triangle"
 msgstr "Единичный вектор нормали в локальном пространстве этого треугольника"
+
+
+msgid "Polygon"
+msgstr "Полигон"
 
 
 msgid "Index of mesh polygon that the triangle is a part of"
@@ -29865,10 +29845,6 @@ msgid "Mirror the V texture coordinate around the flip offset point"
 msgstr "Отразить текстурные координаты по V относительно смещённой точки отражения"
 
 
-msgid "Mirror Vertex Groups"
-msgstr "Симметрия групп вершин"
-
-
 msgid "Mirror vertex groups (e.g. .R->.L)"
 msgstr "Отражать группы вершин (например, .R → .L)"
 
@@ -30816,10 +30792,6 @@ msgstr "Преобразовать в треугольники"
 
 msgid "Keep Normals"
 msgstr "Сохранять нормали"
-
-
-msgid "Try to preserve custom normals (WARNING: depending on chosen triangulation method, shading may not be fully preserved, 'Fixed' method usually gives the best result here)"
-msgstr "Попытаться сохранить настраиваемые нормали (предупреждение: в зависимости от выбранного метода триангуляции затенение может быть сохранено не полностью; для наилучшего результата используйте фиксированное разбиение)"
 
 
 msgid "Minimum Vertices"
@@ -34842,10 +34814,6 @@ msgid "Equal"
 msgstr "Равно"
 
 
-msgid "Int"
-msgstr "Целое число"
-
-
 msgid "Cross Product"
 msgstr "Вект. произведение"
 
@@ -35921,6 +35889,10 @@ msgstr "Имя сокета"
 
 msgid "Data type of the socket"
 msgstr "Тип данных сокета"
+
+
+msgid "Int"
+msgstr "Целое число"
 
 
 msgid "From node"
@@ -37497,10 +37469,6 @@ msgid "Update Animated Transform Constraints"
 msgstr "Обновить анимированные ограничители трансформаций"
 
 
-msgid "Convert fcurves/drivers affecting rotations to radians (Warning: use this only once!)"
-msgstr "Преобразовать F-кривые/драйвера, затрагивающие вращение, в радианы (предупреждение: используйте только один раз!)"
-
-
 msgctxt "Operator"
 msgid "Align Bones"
 msgstr "Выровнять кости"
@@ -37736,10 +37704,6 @@ msgstr "Отразить (и исправить) осевые суффиксы �
 
 msgid "Strip Numbers"
 msgstr "Обрезать числа"
-
-
-msgid "Try to remove right-most dot-number from flipped names (WARNING: may result in incoherent naming in some cases)"
-msgstr "Попытаться удалить числа после точки у отражённых имён (предупреждение: в некоторых случаях это может привести к несогласованным именам)"
 
 
 msgctxt "Operator"
@@ -43513,14 +43477,6 @@ msgid "Flip Colors"
 msgstr "Отразить цвета"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
-msgid "White"
-msgstr "Белый"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Разблокировать все слои"
@@ -47847,10 +47803,6 @@ msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "Сортировать выделенные элементы от ближайшего к наиболее удалённому от 3D-курсора"
 
 
-msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
-msgstr "Переместить все выделенные элементы на передний план, сохранив их относительный порядок (предупреждение: это также влияет на индексы невыделенных элементов!)"
-
-
 msgid "Randomize order of selected elements"
 msgstr "Установить случайный порядок выделенных элементов"
 
@@ -49473,10 +49425,6 @@ msgstr "Коэффициент, используемый для применен
 
 msgid "Auto Transform"
 msgstr "Авто-преобразование"
-
-
-msgid "Automatically compute transformation to get the best possible match between source and destination meshes (WARNING: results will never be as good as manual matching of objects)"
-msgstr "Автоматически вычислять трансформацию чтобы получить наилучшее соответствие между мешем источника и получателя (предуреждение: результат никогда не будет так хорош, как ручное совмещение объектов)"
 
 
 msgid "Create Data"
@@ -52156,10 +52104,6 @@ msgstr "Операция с библиотекой в структуре про�
 
 msgid "Library Operation"
 msgstr "Операция с библиотекой"
-
-
-msgid "Delete this library and all its item from Blender - WARNING: no undo"
-msgstr "Удалить библиотеку и все ее элементы из сцены. Внимание: отмена невозможна"
 
 
 msgid "Relocate"
@@ -58780,6 +58724,11 @@ msgstr "Индекс удаляемого фонового изображени�
 
 
 msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Меню выделения"
+
+
+msgctxt "Operator"
 msgid "Align Camera to View"
 msgstr "Выровнять камеру по виду"
 
@@ -59053,11 +59002,6 @@ msgstr "Выделить элементы с помощью выделяющей
 
 msgid "Select items using lasso selection"
 msgstr "Выделить элементы при помощи выделяющего лассо"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Меню выделения"
 
 
 msgid "Menu object selection"
@@ -61889,10 +61833,6 @@ msgid "Aperture"
 msgstr "Диафрагма"
 
 
-msgid "Spot Shape"
-msgstr "Форма светового пятна"
-
-
 msgid "Ray Visibility"
 msgstr "Видимость лучей"
 
@@ -62051,6 +61991,10 @@ msgstr "Эффекты"
 
 msgid "Skeleton"
 msgstr "Скелет"
+
+
+msgid "Spot Shape"
+msgstr "Форма светового пятна"
 
 
 msgid "Text Boxes"
@@ -66869,10 +66813,6 @@ msgid "AO Bounces"
 msgstr "Отражений AO"
 
 
-msgid "Approximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature"
-msgstr "Приблизить отражённый свет с глобальным освещением цвета фона на указанном отскоке; 0 отключает эту функцию"
-
-
 msgid "AO Bounces Render"
 msgstr "Отражений AO на рендере"
 
@@ -68903,10 +68843,6 @@ msgstr "Перезаписывать существующие кадры во в
 
 msgid "Persistent Data"
 msgstr "Не выгружать данные"
-
-
-msgid "Keep render data around for faster re-renders"
-msgstr "Сохранять данные в памяти для ускорения повторных рендеров"
 
 
 msgid "Placeholders"
@@ -72377,8 +72313,16 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
+
+
+msgid "White"
+msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -74346,6 +74290,10 @@ msgstr "Перемещать UV по пикселям во время редак
 
 msgid "Don't snap to pixels"
 msgstr "Не привязываться к пикселям"
+
+
+msgid "Corner"
+msgstr "Угол"
 
 
 msgid "Snap to pixel corners"
@@ -76673,10 +76621,6 @@ msgid "Unified Paint Settings"
 msgstr "Общие настройки рисования"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "Автонормализовать веса"
-
-
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "Обеспечить верхнюю границу в 1.0 для всех групп вершин деформации кости при рисовании весов"
 
@@ -76779,10 +76723,6 @@ msgstr "Разделять рёбра и грани"
 
 msgid "Automatically split edges and faces"
 msgstr "Автоматически разделять рёбра и грани"
-
-
-msgid "WPaint Multi-Paint"
-msgstr "Мультирисование веса"
 
 
 msgid "Paint across the weights of all selected bones, maintaining their relative influence"
@@ -79245,10 +79185,6 @@ msgid "Tiles X"
 msgstr "Плитка по X"
 
 
-msgid "Persistent Images"
-msgstr "Не выгружать изображения"
-
-
 msgid "Start Pixels"
 msgstr "Стартовые пиксели"
 
@@ -79764,6 +79700,10 @@ msgid "Append..."
 msgstr "Добавить…"
 
 
+msgid "Assign"
+msgstr "Назначить"
+
+
 msgctxt "Operator"
 msgid "Manual"
 msgstr "Руководство"
@@ -79863,16 +79803,16 @@ msgid "Protected Layers:"
 msgstr "Защищённые слои:"
 
 
-msgid "Axes"
-msgstr "Оси"
-
-
 msgid "Shapes"
 msgstr "Формы"
 
 
 msgid "Group Colors"
 msgstr "Цвета групп"
+
+
+msgid "Axes"
+msgstr "Оси"
 
 
 msgctxt "Operator"
@@ -80849,10 +80789,6 @@ msgstr "Количество шума"
 
 msgid "Min Distance"
 msgstr "Мин. расстояние"
-
-
-msgid "Enable physics for:"
-msgstr "Включить физику для:"
 
 
 msgctxt "Operator"
@@ -82180,10 +82116,6 @@ msgid "Paste Data-Blocks"
 msgstr "Вставить датаблоки"
 
 
-msgid "Sync Selection"
-msgstr "Синхронизировать выделение"
-
-
 msgid "Object Contents"
 msgstr "Содержимое объектов"
 
@@ -82204,6 +82136,10 @@ msgstr "Скрыть один уровень"
 msgctxt "Operator"
 msgid "Link to Scene"
 msgstr "Ссылка в сцену"
+
+
+msgid "Sync Selection"
+msgstr "Синхронизировать выделение"
 
 
 msgid "Others"
@@ -86645,11 +86581,6 @@ msgstr "Сбросить всё на значения по умолчанию"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Сбросить одиночно на значение по умолчанию"
-
-
-msgctxt "Operator"
-msgid "Unset"
-msgstr "Очистить"
 
 
 msgctxt "Operator"
@@ -92017,10 +91948,6 @@ msgstr "Настройки можно задать на вкладке физи�
 
 msgid "Refresh"
 msgstr "Обновить"
-
-
-msgid "Assign"
-msgstr "Назначить"
 
 
 msgid "Bisect"

@@ -1,6 +1,8 @@
 # GPL # original by Buerbaum Martin (Pontiac), Elod Csirmaz
 
 import bpy
+import math
+import numpy
 from mathutils import *
 from math import *
 from bpy.types import Operator
@@ -13,13 +15,18 @@ from bpy.props import (
 
 
 # List of safe functions for eval()
-safe_list = ['math', 'acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'cosh',
+safe_list = ['acos', 'asin', 'atan', 'atan2', 'ceil', 'cos', 'cosh',
     'degrees', 'e', 'exp', 'fabs', 'floor', 'fmod', 'frexp', 'hypot',
     'ldexp', 'log', 'log10', 'modf', 'pi', 'pow', 'radians',
-    'sin', 'sinh', 'sqrt', 'tan', 'tanh']
+    'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'gcd']
 
 # Use the list to filter the local namespace
 safe_dict = dict((k, globals().get(k, None)) for k in safe_list)
+safe_dict['math'] = math
+safe_dict['numpy'] = safe_dict['np'] = numpy
+safe_dict['lcm'] = numpy.lcm
+safe_dict['max'] = max
+safe_dict['min'] = min
 
 
 # Stores the values of a list of properties and the

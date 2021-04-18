@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -31,6 +31,10 @@ msgstr "Аҭацәы"
 
 msgid "Edge"
 msgstr "Акьыԥшь"
+
+
+msgid "Face"
+msgstr "Ахаҿы"
 
 
 msgid "Curve"
@@ -274,10 +278,6 @@ msgstr "Ашәҟәы"
 
 msgid "Help"
 msgstr "Аилыркаа"
-
-
-msgid "Face"
-msgstr "Ахаҿы"
 
 
 msgid "Metaball"
