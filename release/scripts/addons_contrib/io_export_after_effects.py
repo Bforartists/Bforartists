@@ -23,7 +23,7 @@ bl_info = {
     "description": "Export cameras, selected objects & camera solution "
         "3D Markers to Adobe After Effects CS3 and above",
     "author": "Bartek Skorupa",
-    "version": (0, 0, 68),
+    "version": (0, 0, 69),
     "blender": (2, 80, 0),
     "location": "File > Export > Adobe After Effects (.jsx)",
     "warning": "",
@@ -350,9 +350,14 @@ def convert_transform_matrix(matrix, width, height, aspect,
 # Calculations are made using sensor's size and scene/comp dimension (width or height).
 # If camera.sensor_fit is set to 'HORIZONTAL':
 #     sensor = camera.data.sensor_width, dimension = width.
-# If camera.sensor_fit is set to 'AUTO'
-# and the vertical size is greater than the horizontal size:
-#     sensor = camera.data.sensor_width, dimension = width.
+#
+# If camera.sensor_fit is set to 'AUTO':
+#     sensor = camera.data.sensor_width
+# (actually, it just means to use the first value)
+# In AUTO, if the vertical size is greater than the horizontal size:
+#     dimension = width
+# else:
+#     dimension = height
 #
 # If camera.sensor_fit is set to 'VERTICAL':
 #    sensor = camera.data.sensor_height, dimension = height
@@ -384,13 +389,16 @@ def convert_transform_matrix(matrix, width, height, aspect,
 
 
 def convert_lens(camera, width, height, aspect):
-    if (camera.data.sensor_fit == 'VERTICAL'
-            or camera.data.sensor_fit == 'AUTO'
-            and (width / height) * aspect < 0):
+    if camera.data.sensor_fit == 'VERTICAL':
         sensor = camera.data.sensor_height
-        dimension = height
     else:
         sensor = camera.data.sensor_width
+
+    if (camera.data.sensor_fit == 'VERTICAL'
+            or camera.data.sensor_fit == 'AUTO'
+            and (width / height) * aspect < 1.0):
+        dimension = height
+    else:
         dimension = width
 
     zoom = camera.data.lens * dimension / sensor * aspect

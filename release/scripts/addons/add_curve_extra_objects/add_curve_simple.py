@@ -24,8 +24,7 @@ bl_info = {
     "location": "View3D > Add > Curve",
     "description": "Adds Simple Curve",
     "warning": "",
-    "doc_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
-               "Py/Scripts/Curve/Simple_curves",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
     "category": "Add Curve",
 }
 
