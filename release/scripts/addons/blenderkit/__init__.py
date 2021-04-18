@@ -24,7 +24,7 @@ bl_info = {
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more). Connects to the internet.",
     "warning": "",
-    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_mesh/blenderkit.html",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/3d_view/blenderkit.html",
     "category": "3D View",
 }
 

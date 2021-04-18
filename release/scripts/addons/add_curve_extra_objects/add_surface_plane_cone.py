@@ -8,7 +8,7 @@ bl_info = {
     "blender": (2, 80, 0),
     "location": "View3D > Add > Surface",
     "warning": "",
-    "doc_url": "",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
     "category": "Add Mesh"
 }
 
