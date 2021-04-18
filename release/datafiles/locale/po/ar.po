@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -717,6 +717,10 @@ msgstr "ﺔﻄﻘﻧ"
 
 msgid "Edge"
 msgstr "ﺔﻓﺎﺣ"
+
+
+msgid "Face"
+msgstr "ﻪﺟﻭ"
 
 
 msgid "Curve"
@@ -12027,6 +12031,10 @@ msgid "Use topology based mirroring (for when both sides of mesh have matching, 
 msgstr "(ﺓﺪﻳﺮﻓ ﺔﻴﻠﻜﻴﻫ ,ﻖﺑﺎﻄﺗ ﻢﺴﺠﻤﻟﺍ ﻲﺒﻧﺎﺠﻟ ﻥﻮﻜﻳ ﺎﻣﺪﻨﻋ) ﺔﻴﻠﻜﻴﻬﻟﺍ ﻰﻠﻋ ﺪﻤﺘﻌﻣ ﻞﺛﺎﻤﺗ ﻡﺪﺨﺘﺳﺍ"
 
 
+msgid "Mirror Vertex Groups"
+msgstr "ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻣ ﻞﺋﺎﻣ"
+
+
 msgid "Paint Mask"
 msgstr "ﻢﺳﺮﻟﺍ ﻲﻓﺎﺧ"
 
@@ -12633,10 +12641,6 @@ msgstr "ﻝﻮﺻﻻ﻿ﺍ ﻭ ﺩﻮﻴﻘﻟﺍ ﻖﺒّﻄﺗ ﻥﺍ ﻞﺒ�
 
 msgid "Local Matrix"
 msgstr "ﺔﻴﻠﺤﻤﻟﺍ ﺔﻓﻮﻔﺼﻤﻟﺍ"
-
-
-msgid "Parent relative transformation matrix - WARNING: Only takes into account 'Object' parenting, so e.g. in case of bone parenting you get a matrix relative to the Armature object, not to the actual parent bone"
-msgstr "ﻞﺻﻻ﻿ﺍ ﺔﻤﻈﻌﻟ ﺲﻴﻟ ﻭ ,ﻞﻜﻴﻬﻟﺍ ﻦﺋﺎﻜﻟ ﺔﻴﺒﺴﻧ ﺔﻓﻮﻔﺼﻣ ﻰﻠﻋ ﻞﺼﺤﺘﺳ ﻡﺎﻈﻌﻟﺍ ﻞﺻﺄﺗ ﺔﻟﺎﺣ ﻲﻓ ﻼ﻿ﺜﻣ ,ﻂﻘﻓ ﻦﺋﺎﻜﻟﺍ ﻞﺻﺍ ﺏﺎﺴﺤﻟﺎﺑ ﺬﺧﺄﺗ :ﺮﻳﺬﺤﺗ - ﻞﺻﻸ﻿ﻟ ﺔﻴﺒﺴﻨﻟﺍ ﻝﻮّﺤﺘﻟﺍ ﺔﻓﻮﻔﺼﻣ"
 
 
 msgid "Inverse of object's parent matrix at time of parenting"
@@ -17323,10 +17327,6 @@ msgid "Special Characters"
 msgstr "ﺔﺻﺎﺧ ﻑﺮﺣﺃ"
 
 
-msgid "Face"
-msgstr "ﻪﺟﻭ"
-
-
 msgid "Face Data"
 msgstr "ﻪﺟﻮﻟﺍ ﺕﺎﻧﺎﻴﺑ"
 
@@ -18365,10 +18365,6 @@ msgstr "U ﻞﺛﺎﻣ"
 
 msgid "Mirror V"
 msgstr "V ﻞﺛﺎﻣ"
-
-
-msgid "Mirror Vertex Groups"
-msgstr "ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻣ ﻞﺋﺎﻣ"
 
 
 msgid "Multires Modifier"
@@ -21051,10 +21047,6 @@ msgid "Anti-Alias Z"
 msgstr "Z ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ"
 
 
-msgid "Int"
-msgstr "ﺢﻴﺤﺻ ﻢﻗﺭ"
-
-
 msgid "Original"
 msgstr "ﻲﻠﺻﺃ"
 
@@ -21505,6 +21497,10 @@ msgstr "ﺔﺤﺘﻓ ﺐﻟﺎﻗ"
 
 msgid "Name of the socket"
 msgstr "ﺔﺤﺘﻔﻟﺍ ﻢﺳﺇ"
+
+
+msgid "Int"
+msgstr "ﺢﻴﺤﺻ ﻢﻗﺭ"
 
 
 msgid "From node"
@@ -25910,10 +25906,6 @@ msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "ﻲﺛﻼ﻿ﺜﻟﺍ ﺮﺷﺆﻣ ﻦﻋ ﺪﻌﺑﻻ﻿ﺍ ﻰﻟﺍ ﺏﺮﻗﻻ﻿ﺍ ﻦﻣ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﺐﺗﺭ"
 
 
-msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
-msgstr "(ﺎﻀﻳﺍ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﻴﻐﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﺕﺍﺮﺷﺆﻣ ﻰﻠﻋ ﺮﺛﺆﻴﺳ ﺍﺬﻫ :ﺮﻳﺬﺤﺗ) ﻲﺒﺴﻨﻟﺍ ﻢﻬﺒﻴﺗﺮﺗ ﻰﻠﻋ ﺎﻈﻓﺎﺤﻣ ،ﻰﻟﻭﻷ﻿ﺍ ﺔﻨﻜﻣﻷ﻿ﺍ ﻲﻓ ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﻞﻛ ﻞﻘﻧﺍ"
-
-
 msgid "Randomize order of selected elements"
 msgstr "ﺓﺭﺎﺘﺨﻤﻟﺍ ﺮﺻﺎﻨﻌﻟﺍ ﺎﻴﺋﺍﻮﺸﻋ ﺐﺗّﺭ"
 
@@ -29969,6 +29961,11 @@ msgid "Background image index to remove"
 msgstr "ﻑﺬﺤﻠﻟ ﺔﻴﻔﻠﺨﻟﺍ ﺓﺭﻮﺼﻟﺍ ﻞﻴﻟﺩ"
 
 
+msgctxt "Operator"
+msgid "Select Menu"
+msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﺔﻤﺋﺎﻗ"
+
+
 msgid "Set camera view to active view"
 msgstr "ﻝﺎﻌّﻔﻟﺍ ﺮﻈﻨﻤﻟﺍ ﻰﻟﺇ ﺍﺮﻴﻤﻜﻟﺍ ﺮﻈﻨﻣ ﻊﺿ"
 
@@ -30047,11 +30044,6 @@ msgstr "ﺮﻈﻨﻤﻟﺍ ﺭﻭّﺩ"
 
 msgid "Enumerate"
 msgstr "ﺩﺪﻋ"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﺔﻤﺋﺎﻗ"
 
 
 msgid "Menu object selection"
@@ -30931,10 +30923,6 @@ msgid "Cloth Presets"
 msgstr "ﺵﺎﻤﻘﻠﻟ ﺔﺒﺴﻣ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
-msgid "Spot Shape"
-msgstr "ءﻮﻀﻟﺍ ﺔﻌﻘﺑ ﻞﻜﺷ"
-
-
 msgid "Ray Visibility"
 msgstr "ﻉﺎﻌﺸﻟﺍ ﺭﻮﻬﻇ"
 
@@ -31017,6 +31005,10 @@ msgstr "ﺭﺎﺴﻤﻟﺍ ﺔﻛﺮﺣ"
 
 msgid "Skeleton"
 msgstr "ﻞﻜﻴﻫ"
+
+
+msgid "Spot Shape"
+msgstr "ءﻮﻀﻟﺍ ﺔﻌﻘﺑ ﻞﻜﺷ"
 
 
 msgid "Text Boxes"
@@ -36790,10 +36782,6 @@ msgid "Unified Paint Settings"
 msgstr "ﻢﻈﺘﻨﻤﻟﺍ ﻢﺳﺮﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "ﻥﺯﻮﻟﺍ ﻢﺳﺮﻟ ﻲﺗﺍﺫ ﻢﻴﻈﻨﺗ"
-
-
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "ﻥﺯﻮﻟﺍ ﻦﻳﻮﻠﺗ ﺪﻨﻋ 1.0 ﻒﻴﻀﺗ ﺔﻋﻮّﻄﻤﻟﺍ ﻡﺎﻈﻌﻟﺍ ﻂﻘﻧ ﺕﺎﻋﻮﻤﺠﻣ ﻞﻛ ﻥﺃ ﻦﻣ ﺪﻛﺄﺗ"
 
@@ -36820,10 +36808,6 @@ msgstr "ﻂﻘﻓ ﺔﻟﺎﻌّﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤ�
 
 msgid "Automatically merge vertices moved to the same location"
 msgstr "ﻊﻗﻮﻤﻟﺍ ﺲﻔﻧ ﻰﻟﺇ ﺔﻟﻮﻘﻨﻤﻟﺍ ﻂﻘﻨﻟﺍ ﺎﻴﺗﺍﺫ ﺞﻣﺩﺇ"
-
-
-msgid "WPaint Multi-Paint"
-msgstr "ﻥﺯﻮﻟﺍ ﻢﺳﺮﻟ ﺩﺪﻌﺘﻣ ﻢﺳﺭ"
 
 
 msgid "Proportional Editing Actions"
@@ -37650,10 +37634,6 @@ msgid "Tiles X"
 msgstr "X ﺕﺎﻨﺒﻟ"
 
 
-msgid "Persistent Images"
-msgstr "ﺮﻤﺘﺴﻣ"
-
-
 msgid "No output node"
 msgstr "ﺝﺮﺧ ﺓﺪﻘﻋ ﺪﺟﻮﺗ ﻻ﻿"
 
@@ -37859,12 +37839,12 @@ msgid "Protected Layers:"
 msgstr ":ﺔﻴﻤﺤﻤﻟﺍ ﺕﺎﻘﺒﻄﻟﺍ"
 
 
-msgid "Axes"
-msgstr "ﺭﻭﺎﺤﻣ"
-
-
 msgid "Shapes"
 msgstr "ﻝﺎﻜﺷﻷ﻿ﺍ"
+
+
+msgid "Axes"
+msgstr "ﺭﻭﺎﺤﻣ"
 
 
 msgctxt "Operator"
@@ -38170,10 +38150,6 @@ msgstr "ﻞﻜﻟﺍ ﻞﺼﻓﺍ"
 
 msgid "Structural"
 msgstr "ﻲﺋﺎﻨﺑ"
-
-
-msgid "Enable physics for:"
-msgstr ":ﻝ ﺕﺎﻴﺋﺎﻳﺰﻔﻟﺍ ﻞﻌﻓ"
 
 
 msgctxt "Operator"
@@ -40188,11 +40164,6 @@ msgstr "ﺔﺿﺮﺘﻔﻤﻟﺍ ﺔﻤﻴﻘﻠﻟ ﻞﻜﻟﺍ ﻂﺒﺿ ﺪ�
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "ﺔﺿﺮﺘﻔﻤﻟﺍ ﺔﻤﻴﻘﻠﻟ ﺍﺩﺮﻔﻨﻣ ﻂﺒﻀﻟﺍ ﺪﻋﺍ"
-
-
-msgctxt "Operator"
-msgid "Unset"
-msgstr "ﻎﻟﺇ"
 
 
 msgctxt "Operator"
