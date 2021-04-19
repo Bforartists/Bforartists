@@ -1316,6 +1316,42 @@
         </space>
       </ThemeStatusBar>
     </statusbar>
+    <spreadsheet>
+      <ThemeSpreadsheet
+        row_alternate="#ffffff06"
+        >
+        <space>
+          <ThemeSpaceGeneric
+            back="#404040"
+            title="#ffffff"
+            text="#c3c3c3"
+            text_hi="#ffffff"
+            header="#454545ff"
+            header_text="#eeeeee"
+            header_text_hi="#ffffff"
+            button="#424242ff"
+            button_title="#ffffff"
+            button_text="#e5e5e5"
+            button_text_hi="#ffffff"
+            navigation_bar="#00000000"
+            execution_buts="#00000000"
+            tab_active="#4b4b4b"
+            tab_inactive="#2b2b2b"
+            tab_back="#232323ff"
+            tab_outline="#232323"
+            >
+            <panelcolors>
+              <ThemePanelColors
+                header="#424242cc"
+                back="#333333b3"
+                sub_back="#0000003e"
+                >
+              </ThemePanelColors>
+            </panelcolors>
+          </ThemeSpaceGeneric>
+        </space>
+      </ThemeSpreadsheet>
+    </spreadsheet>
     <bone_color_sets>
       <ThemeBoneColorSet
         normal="#9a0000"
