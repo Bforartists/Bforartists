@@ -16,7 +16,22 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-def operation_wrap(args):
+from typing import (
+    Callable,
+    Generator,
+    Optional,
+    Sequence,
+    Tuple,
+)
+
+TextOpFn = Callable[
+    # file_name, data_src
+    [str, str],
+    # data_dst or None when no change is made.
+    Optional[str]
+]
+
+def operation_wrap(args: Tuple[str, TextOpFn]) -> None:
     fn, text_operation = args
     with open(fn, "r", encoding="utf-8") as f:
         data_src = f.read()
@@ -29,16 +44,16 @@ def operation_wrap(args):
         f.write(data_dst)
 
 def run(*,
-        directories,
-        is_text,
-        text_operation,
-        use_multiprocess,
-):
+        directories: Sequence[str],
+        is_text: Callable[[str], bool],
+        text_operation: TextOpFn,
+        use_multiprocess: bool,
+) -> None:
     print(directories)
 
     import os
 
-    def source_files(path):
+    def source_files(path: str) -> Generator[str, None, None]:
         for dirpath, dirnames, filenames in os.walk(path):
             dirnames[:] = [d for d in dirnames if not d.startswith(".")]
             for filename in filenames:
