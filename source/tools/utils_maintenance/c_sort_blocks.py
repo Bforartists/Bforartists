@@ -26,6 +26,10 @@ sys.path.append(os.path.join(PWD, "modules"))
 
 from batch_edit_text import run
 
+from typing import (
+    Optional,
+)
+
 SOURCE_DIR = os.path.normpath(os.path.abspath(os.path.normpath(os.path.join(PWD, "..", "..", ".."))))
 
 # TODO, move to config file
@@ -42,7 +46,7 @@ SOURCE_EXT = (
 )
 
 
-def sort_struct_lists(fn, data_src):
+def sort_struct_lists(fn: str, data_src: str) -> Optional[str]:
     import re
 
     # eg:
@@ -63,7 +67,7 @@ def sort_struct_lists(fn, data_src):
 
     lines = data_src.splitlines(keepends=True)
 
-    def can_sort(l):
+    def can_sort(l: str) -> Optional[int]:
         if re_match_struct.match(l):
             return 1
         if re_match_struct_type.match(l):
@@ -94,6 +98,7 @@ def sort_struct_lists(fn, data_src):
     data_dst = "".join(lines)
     if data_src != data_dst:
         return data_dst
+    return None
 
 
 run(
