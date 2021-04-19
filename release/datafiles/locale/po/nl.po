@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -164,6 +164,10 @@ msgstr "Punt"
 
 msgid "Edge"
 msgstr "Rand"
+
+
+msgid "Face"
+msgstr "Vlak"
 
 
 msgid "Curve"
@@ -1162,10 +1166,6 @@ msgstr "Help"
 
 msgid "Edge Data"
 msgstr "Rand Gegevens"
-
-
-msgid "Face"
-msgstr "Vlak"
 
 
 msgid "Normals"
@@ -3970,6 +3970,11 @@ msgstr "Naai"
 
 
 msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Selecteer Menu"
+
+
+msgctxt "Operator"
 msgid "Fly Navigation"
 msgstr "Vlieg Navigatie"
 
@@ -3985,11 +3990,6 @@ msgstr "Draai de view"
 
 msgid "List objects under the mouse (object mode only)"
 msgstr "Lijst van objecten onder de muis (alleen object modus)"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Selecteer Menu"
 
 
 msgctxt "Operator"

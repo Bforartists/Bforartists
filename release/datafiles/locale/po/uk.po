@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -1118,20 +1118,8 @@ msgid "Attribute on mesh edge"
 msgstr "Атрибут на ребрі сіті"
 
 
-msgid "Corner"
-msgstr "Куток"
-
-
-msgid "Attribute on mesh polygon corner"
-msgstr "Атрибут на кутку полігону сіті"
-
-
-msgid "Polygon"
-msgstr "Багатобічник"
-
-
-msgid "Attribute on mesh polygons"
-msgstr "Атрибут на полігонах сіті"
+msgid "Face"
+msgstr "Грань"
 
 
 msgid "Curve"
@@ -8259,10 +8247,6 @@ msgid "Object Instances"
 msgstr "Примірники Об'єктів"
 
 
-msgid "All object instances to display or render (WARNING: only use this as an iterator, never as a sequence, and do not keep any references to its items)"
-msgstr "Усі примірники об'єктів для показу або рендера (УВАГА: використовуйте це лише як ітератор, ніколи як послідовність, і не утримуйте будь-які посилання на ці елементи)"
-
-
 msgid "Evaluated objects in the dependency graph"
 msgstr "Оцінені об'єкти у графі залежностей"
 
@@ -8293,10 +8277,6 @@ msgstr "Граф залежностей, вибудований для ориг�
 
 msgid "Dependency Graph Object Instance"
 msgstr "Примірник Графа Залежностей Об'єкта"
-
-
-msgid "Extended information about dependency graph object iterator (WARNING: all data here is *evaluated* one, not original .blend IDs...)"
-msgstr "Розширена інформація про ітератор графа залежностей об'єкта (УВАГА: усі дані тут *оцінюються*, а не оригінальні ідентифікатори .blend...)"
 
 
 msgid "Instance Object"
@@ -8769,10 +8749,6 @@ msgstr "Інвертувати фільтр пошуку"
 
 msgid "Multi-Word Fuzzy Filter"
 msgstr "Фільтр багато-слівної розпливчастості"
-
-
-msgid "Perform fuzzy/multi-word matching (WARNING: May be slow)"
-msgstr "Здійснює узгодження за критерієм багатослівної розпливчастості (УВАГА: Може оброблятися повільно)"
 
 
 msgid "Driver for the value of a setting based on an external value"
@@ -22211,12 +22187,8 @@ msgid "Use topology based mirroring (for when both sides of mesh have matching, 
 msgstr "Вжити віддзеркалення на основі топології (тоді, коли обидві сторони сіті мають однакову топологію)"
 
 
-msgid "Vertex Groups X Symmetry"
-msgstr "Симетрія Груп Вершин по X"
-
-
-msgid "Mirror the left/right vertex groups when painting"
-msgstr "Дзеркалити ліві/праві групи вершин при малюванні"
+msgid "Mirror Vertex Groups"
+msgstr "Віддзеркалити групи вершин"
 
 
 msgid "Enable symmetry in the X axis"
@@ -22835,10 +22807,6 @@ msgid "Extra scaling added to the scale of the object"
 msgstr "Додаткове масштабування, додане до масштабу об'єкта"
 
 
-msgid "Absolute bounding box dimensions of the object (WARNING: assigning to it or its members multiple consecutive times will not work correctly, as this needs up-to-date evaluated data)"
-msgstr "Абсолютні розмірності габаритної коробки об'єкта (УВАГА: присвоєння цього або його складових кілька одночасно разів поспіль не буде працювати правильно, оскільки це потребує актуальних обчислених даних)"
-
-
 msgid "Object Display"
 msgstr "Показ Об'єкта"
 
@@ -23113,10 +23081,6 @@ msgstr "Матриця доступу до місця, оберту і масш�
 
 msgid "Local Matrix"
 msgstr "Локальна Матриця"
-
-
-msgid "Parent relative transformation matrix - WARNING: Only takes into account 'Object' parenting, so e.g. in case of bone parenting you get a matrix relative to the Armature object, not to the actual parent bone"
-msgstr "Матриця трансформування відносного приріднення - УВАГА: Враховує тільки приріднення об'єктів 'Object', тобто, наприклад у випадку приріднення кісток ви отримуєте матрицю відносно об'єкта Арматури, а не фактичної кістки-предка"
 
 
 msgid "Parent Inverse Matrix"
@@ -30980,10 +30944,6 @@ msgid "Edge Data"
 msgstr "Дані ребер"
 
 
-msgid "Face"
-msgstr "Грань"
-
-
 msgid "Face Data"
 msgstr "Дані граней"
 
@@ -31390,6 +31350,10 @@ msgstr "Нормаль Трикутника"
 
 msgid "Local space unit length normal vector for this triangle"
 msgstr "Вектор нормалі для цього трикутника в одиницях довжини локального  простору"
+
+
+msgid "Polygon"
+msgstr "Багатобічник"
 
 
 msgid "Index of mesh polygon that the triangle is a part of"
@@ -34104,10 +34068,6 @@ msgid "Mirror the V texture coordinate around the flip offset point"
 msgstr "Віддзеркалити текстурну координату V відносно точки зсуву переверту"
 
 
-msgid "Mirror Vertex Groups"
-msgstr "Віддзеркалити групи вершин"
-
-
 msgid "Mirror vertex groups (e.g. .R->.L)"
 msgstr "Віддзеркалити групи вершин (наприклад, .R->.L)"
 
@@ -35375,10 +35335,6 @@ msgstr "Тріангулювати сіть"
 
 msgid "Keep Normals"
 msgstr "Утримати Нормалі"
-
-
-msgid "Try to preserve custom normals (WARNING: depending on chosen triangulation method, shading may not be fully preserved, 'Fixed' method usually gives the best result here)"
-msgstr "Спробувати зберігати власні нормалі (ПОПЕРЕДЖЕННЯ: залежно від обраного методу трикутникування, відтінення може бути не повністю збережене, тут метод 'Фіксовано' зазвичай дає кращий результат)"
 
 
 msgid "Minimum Vertices"
@@ -39917,10 +39873,6 @@ msgid "Outputs the opposite of the input"
 msgstr "Виводить протилежне до уводу"
 
 
-msgid "Combine Strings"
-msgstr "Комбінувати Рядки"
-
-
 msgid "Float Compare"
 msgstr "Порівняння Дійсночислових"
 
@@ -39965,24 +39917,8 @@ msgid "True when both inputs are not approximately equal"
 msgstr "Істина, коли обидва уводи не є приблизно рівними"
 
 
-msgid "Group Instance ID"
-msgstr "Ідентифікатор Примірника Групи"
-
-
-msgid "Object Transforms"
-msgstr "Трансформи Об'єкта"
-
-
 msgid "Random Float"
 msgstr "Випадкове Дійсночислове"
-
-
-msgid "Data type for inputs and outputs"
-msgstr "Тип даних для уводів та виводів"
-
-
-msgid "Int"
-msgstr "Ціле"
 
 
 msgid "Geometry Node"
@@ -40041,6 +39977,10 @@ msgid "Rotate around the local Z axis"
 msgstr "Обертати навколо локальної осі Z"
 
 
+msgid "Min Max"
+msgstr "Мін Макс"
+
+
 msgid "Attribute Color Ramp"
 msgstr "Градієнт Кольорів Атрибуту"
 
@@ -40075,6 +40015,38 @@ msgstr "Тип B Уводу"
 
 msgid "Attribute Fill"
 msgstr "Заповнення Атрибутом"
+
+
+msgid "Interpolation Type"
+msgstr "Тип Інтерполяції"
+
+
+msgid "Linear interpolation between From Min and From Max values"
+msgstr "Лінеарна інтерполяція між значеннями From Min та From Max"
+
+
+msgid "Stepped Linear"
+msgstr "Покроково Лінеарно"
+
+
+msgid "Stepped linear interpolation between From Min and From Max values"
+msgstr "Покрокова лінеарна інтерполяція між значеннями From Min та From Max"
+
+
+msgid "Smooth Step"
+msgstr "Згладжений Крок"
+
+
+msgid "Smooth Hermite edge interpolation between From Min and From Max values"
+msgstr "Згладжена Ермітова інтерполяція країв між значеннями From Min та From Max"
+
+
+msgid "Smoother Step"
+msgstr "Згладженіший Крок"
+
+
+msgid "Smoother Hermite edge interpolation between From Min and From Max values"
+msgstr "Згладженіша Ермітова інтерполяція країв між значеннями From Min та From Max"
 
 
 msgid "Attribute Math"
@@ -40666,18 +40638,6 @@ msgid "Clamp Type"
 msgstr "Тип Затиску"
 
 
-msgid "Min Max"
-msgstr "Мін Макс"
-
-
-msgid "Clamp values using Min and Max values"
-msgstr "Затиснути значення, використовуючи значення Min та Max"
-
-
-msgid "Clamp values between Min and Max range"
-msgstr "Затиснути значення у діапазоні між Min та Max"
-
-
 msgid "Combine HSV"
 msgstr "Звести HSV"
 
@@ -40740,38 +40700,6 @@ msgstr "Шлях Освітлення"
 
 msgid "Clamp the result to the target range [To Min, To Max]"
 msgstr "Обмежити результат цільовим діапазоном [To Min, To Max]"
-
-
-msgid "Interpolation Type"
-msgstr "Тип Інтерполяції"
-
-
-msgid "Linear interpolation between From Min and From Max values"
-msgstr "Лінеарна інтерполяція між значеннями From Min та From Max"
-
-
-msgid "Stepped Linear"
-msgstr "Покроково Лінеарно"
-
-
-msgid "Stepped linear interpolation between From Min and From Max values"
-msgstr "Покрокова лінеарна інтерполяція між значеннями From Min та From Max"
-
-
-msgid "Smooth Step"
-msgstr "Згладжений Крок"
-
-
-msgid "Smooth Hermite edge interpolation between From Min and From Max values"
-msgstr "Згладжена Ермітова інтерполяція країв між значеннями From Min та From Max"
-
-
-msgid "Smoother Step"
-msgstr "Згладженіший Крок"
-
-
-msgid "Smoother Hermite edge interpolation between From Min and From Max values"
-msgstr "Згладженіша Ермітова інтерполяція країв між значеннями From Min та From Max"
 
 
 msgid "Type of vector that the mapping transforms"
@@ -41736,6 +41664,10 @@ msgstr "Назва роз'єму"
 
 msgid "Data type of the socket"
 msgstr "Тип даних роз'єму"
+
+
+msgid "Int"
+msgstr "Ціле"
 
 
 msgid "From node"
@@ -43415,15 +43347,6 @@ msgstr "Інтерактивно визначити діапазон кадрі�
 
 
 msgctxt "Operator"
-msgid "Show Group Colors"
-msgstr "Показ Кольори Груп"
-
-
-msgid "This option moved to Preferences > Animation"
-msgstr "Ця опція переміщена в Уподобання > Анімація"
-
-
-msgctxt "Operator"
 msgid "Set Start Frame"
 msgstr "Встановити початковий кадр"
 
@@ -43443,10 +43366,6 @@ msgstr "Оновити Ф-криві/драйвери, що впливають �
 
 msgid "Convert to Radians"
 msgstr "Конвертувати в Радіани"
-
-
-msgid "Convert fcurves/drivers affecting rotations to radians (Warning: use this only once!)"
-msgstr "Перевести у радіани Ф-криві/драйвери, що впливають на оберти (Попередження: застосовуйте лише один раз!)"
 
 
 msgctxt "Operator"
@@ -43697,10 +43616,6 @@ msgstr "Перевертає (і виправляє) осьові суфікси
 
 msgid "Strip Numbers"
 msgstr "Номери Смужок"
-
-
-msgid "Try to remove right-most dot-number from flipped names (WARNING: may result in incoherent naming in some cases)"
-msgstr "Спробувати вилучити номер після крапки найбільш справа з перевернутих імен (ПОПЕРЕДЖЕННЯ: може давати незв'язне іменування у деяких випадках)"
 
 
 msgctxt "Operator"
@@ -50670,107 +50585,6 @@ msgstr "Перемкнути кольори підбарвлення"
 
 
 msgctxt "Operator"
-msgid "Trace Image to Grease Pencil"
-msgstr "Простеження Зображення у Нарисний Олівець"
-
-
-msgid "Extract Grease Pencil strokes from image"
-msgstr "Витягти штрихи Нарисного Олівця із зображення"
-
-
-msgid "Determines if trace simple image or full sequence"
-msgstr "Визначає, чи простежувати просте зображення або повністю послідовність"
-
-
-msgid "Trace the current frame of the image"
-msgstr "Простежити поточний кадр зображення"
-
-
-msgid "Trace full sequence"
-msgstr "Простежити повністю послідовність"
-
-
-msgid "Resolution of the generated curves"
-msgstr "Роздільність генерованих кривих"
-
-
-msgid "Distance to sample points, zero to disable"
-msgstr "Відстань до точок вибірки, нуль для вимкнення"
-
-
-msgid "Scale of the final stroke"
-msgstr "Масштаб фінального штриха"
-
-
-msgid "Color Threshold"
-msgstr "Поріг Кольору"
-
-
-msgid "Determine the lightness threshold above which strokes are generated"
-msgstr "Визначає поріг світлості, вище якого штрихи генеруються"
-
-
-msgid "Turn Policy"
-msgstr "Політика Перетворення"
-
-
-msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
-msgstr "Визначає, як вирішувати неоднозначності під час декомпозиції растрів у шляхи"
-
-
-msgid "Black"
-msgstr "Чорне"
-
-
-msgid "Prefers to connect black (foreground) components"
-msgstr "Воліє з'єднуватися з чорними (на передньоплані) компонентами"
-
-
-msgid "White"
-msgstr "Біле"
-
-
-msgid "Prefers to connect white (background) components"
-msgstr "Воліє з'єднуватися з білими (на задньоплані) компонентами"
-
-
-msgid "Always take a left turn"
-msgstr "Завжди брати перетворення вліво"
-
-
-msgid "Always take a right turn"
-msgstr "Завжди брати перетворення управо"
-
-
-msgid "Minority"
-msgstr "Меншість"
-
-
-msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
-msgstr "Воліє з'єднуватися з кольором (білим або чорним), що трапляється найменш часто у локальному сусідстві від відносної позиції"
-
-
-msgid "Majority"
-msgstr "Більшість"
-
-
-msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
-msgstr "Воліє з'єднуватися з кольором (чорним або білим), що трапляється найбільш часто у локальному сусідстві від поточної позиції"
-
-
-msgid "Choose pseudo-randomly"
-msgstr "Обирати псевдо-випадково"
-
-
-msgid "Start At Current Frame"
-msgstr "Старт На Поточному Кадрі"
-
-
-msgid "Trace Image starting in current image frame"
-msgstr "Стартувати Простеження Зображення у поточному кадрі зображення"
-
-
-msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Трансформа Заповнення Штриха"
 
@@ -55668,10 +55482,6 @@ msgid "Sort selected faces from smallest to greatest material index"
 msgstr "Сортувати вибрані грані від найменшого до найбільшого індексу матеріалу"
 
 
-msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
-msgstr "Перемістити всі вибрані елементи на перші місця, зберігши їх відносний порядок (УВАГА: це змінить також індекси невибраних елементів!)"
-
-
 msgid "Randomize order of selected elements"
 msgstr "Рандомізувати порядок виділених елементів"
 
@@ -57496,10 +57306,6 @@ msgstr "Коефіцієнт, що використовується при за�
 
 msgid "Auto Transform"
 msgstr "Авто-трансформації"
-
-
-msgid "Automatically compute transformation to get the best possible match between source and destination meshes (WARNING: results will never be as good as manual matching of objects)"
-msgstr "Автоматично обчислити трансформацію для отримання найкращого можливого узгодження між джерельною та цільовою сітями (УВАГА: результати ніколи не будуть настільки хороші, як при ручному узгодженні об'єктів)"
 
 
 msgid "Create Data"
@@ -60704,10 +60510,6 @@ msgstr "Операція бібліотеки структуратора"
 
 msgid "Library Operation"
 msgstr "Операція бібліотеки"
-
-
-msgid "Delete this library and all its item from Blender - WARNING: no undo"
-msgstr "Видалити цю бібліотеку та всі її елементи з Blender'а — УВАГА: без касувань"
 
 
 msgid "Relocate"
@@ -68737,6 +68539,11 @@ msgstr "Індекс фонового зображення для вилучен
 
 
 msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Меню вибору"
+
+
+msgctxt "Operator"
 msgid "Align Camera to View"
 msgstr "Вирівняти Камеру за Оглядом"
 
@@ -69154,11 +68961,6 @@ msgstr "Вибрати елементи колом"
 
 msgid "Select items using lasso selection"
 msgstr "Вибір елементів за допомогою петлі"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Меню вибору"
 
 
 msgid "Menu object selection"
@@ -72531,10 +72333,6 @@ msgid "Aperture"
 msgstr "Апертура"
 
 
-msgid "Spot Shape"
-msgstr "Форма Плями"
-
-
 msgid "Ray Visibility"
 msgstr "Видимість Променя"
 
@@ -72697,6 +72495,10 @@ msgstr "Ефекти"
 
 msgid "Skeleton"
 msgstr "Скелет"
+
+
+msgid "Spot Shape"
+msgstr "Форма Плями"
 
 
 msgid "Text Boxes"
@@ -76016,10 +75818,6 @@ msgid "Auto Save Temporary Files"
 msgstr "Автозбереження тимчасових файлів"
 
 
-msgid "Automatic saving of temporary files in temp directory, uses process ID (sculpt and edit mode data won't be saved)"
-msgstr "Автоматичне збереження тимчасових файлів у тимчасовому каталозі, використовує ідентифікатор процесу (дані ліплення та режиму редагування не буде збережено)"
-
-
 msgid "Compress File"
 msgstr "Стискати файл"
 
@@ -78170,10 +77968,6 @@ msgstr "Крок рівня шуму для зупинки відбору, ни�
 
 msgid "AO Bounces"
 msgstr "Відскоки Навколишнього Перекриття"
-
-
-msgid "Approximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature"
-msgstr "Приблизне побічне освітлення з фоном підбарвленим навколишнім перекриттям з визначеним значенням відскоків, 0 вимикає цю опцію"
 
 
 msgid "AO Bounces Render"
@@ -80406,10 +80200,6 @@ msgstr "Перезаписувати наявні файли при рендер
 
 msgid "Persistent Data"
 msgstr "Постійні дані"
-
-
-msgid "Keep render data around for faster re-renders"
-msgstr "Утримувати дані в пам'яті для прискорення повторних рендерів"
 
 
 msgid "Placeholders"
@@ -84129,8 +83919,16 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
+msgid "Black"
+msgstr "Чорне"
+
+
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
+
+
+msgid "White"
+msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -85268,6 +85066,10 @@ msgid "Display low level Blender data and its properties"
 msgstr "Показувати дані нижнього рівня Blender'а та їх властивості"
 
 
+msgid "Library Overrides"
+msgstr "Заміщення Бібліотек"
+
+
 msgid "Orphan Data"
 msgstr "Одинокі дані"
 
@@ -86255,6 +86057,10 @@ msgstr "Підхоплювати UV-ти до пікселів при редаг
 
 msgid "Don't snap to pixels"
 msgstr "Не підхоплювати до пікселів"
+
+
+msgid "Corner"
+msgstr "Куток"
 
 
 msgid "Snap to pixel corners"
@@ -89018,10 +88824,6 @@ msgid "Unified Paint Settings"
 msgstr "Єдині параметри малювання"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "Автоматична нормалізація при малюванні вагомостей"
-
-
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "Забезпечити при малюванні вагомості верхню межу 1,0 для всіх груп вершин  деформації кістки"
 
@@ -89130,10 +88932,6 @@ msgid "Automatic keyframe insertion using active Keying Set only"
 msgstr "Автоматична вставка ключових кадрів з використанням лише активного набору ключів"
 
 
-msgid "WPaint Lock-Relative"
-msgstr "Малювання Вагомостей Відносно Вигляду"
-
-
 msgid "Display bone-deforming groups as if all locked deform groups were deleted, and the remaining ones were re-normalized"
 msgstr "Показувати групи кісток деформування, ніби всі блоковані групи деформи були видалені, а ті, що залишилися, були пере-нормалізовані"
 
@@ -89152,10 +88950,6 @@ msgstr "Розділити Ребра та Грані"
 
 msgid "Automatically split edges and faces"
 msgstr "Автоматично розділяти ребра та грані"
-
-
-msgid "WPaint Multi-Paint"
-msgstr "Мультималювання вагомостей"
 
 
 msgid "Paint across the weights of all selected bones, maintaining their relative influence"
@@ -92300,10 +92094,6 @@ msgid "Tiles X"
 msgstr "Плитки X"
 
 
-msgid "Persistent Images"
-msgstr "Постійні Зображення"
-
-
 msgid "Start Pixels"
 msgstr "Стартові Пікселі"
 
@@ -93344,6 +93134,10 @@ msgid "Append..."
 msgstr "Прилучення..."
 
 
+msgid "Assign"
+msgstr "Призначення"
+
+
 msgid "Operator not found: bpy.ops.%s"
 msgstr "Оператор не знайдено: bpy.ops.%s"
 
@@ -93523,16 +93317,16 @@ msgid "Protected Layers:"
 msgstr "Захищені Шари:"
 
 
-msgid "Axes"
-msgstr "Осі"
-
-
 msgid "Shapes"
 msgstr "Форми"
 
 
 msgid "Group Colors"
 msgstr "Кольори Груп"
+
+
+msgid "Axes"
+msgstr "Осі"
 
 
 msgctxt "Operator"
@@ -94715,10 +94509,6 @@ msgstr "Величина Шуму"
 
 msgid "Min Distance"
 msgstr "Мін Відстань"
-
-
-msgid "Enable physics for:"
-msgstr "Увімкнути фізику для:"
 
 
 msgctxt "Operator"
@@ -96387,10 +96177,6 @@ msgid "Paste Data-Blocks"
 msgstr "Вставити Блоки Даних"
 
 
-msgid "Sync Selection"
-msgstr "Синхронізувати Вибрання"
-
-
 msgid "Object Contents"
 msgstr "Вміст Об'єкта"
 
@@ -96417,8 +96203,8 @@ msgid "Restriction Toggles"
 msgstr "Перемикачі Обмежень"
 
 
-msgid "Library Overrides"
-msgstr "Заміщення Бібліотек"
+msgid "Sync Selection"
+msgstr "Синхронізувати Вибрання"
 
 
 msgid "Others"
@@ -99606,10 +99392,6 @@ msgid "Tile Offset"
 msgstr "Зсув Плиток"
 
 
-msgid "Vertex Group X"
-msgstr "Група Вершин по X"
-
-
 msgid "Auto Normalize"
 msgstr "Авто Нормалізування"
 
@@ -101748,11 +101530,6 @@ msgstr "Скинути Все до Стандартних Значень"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Скинути Одиничне до Стандартного Значення"
-
-
-msgctxt "Operator"
-msgid "Unset"
-msgstr "Скинути у попереднє"
 
 
 msgctxt "Operator"
@@ -108121,10 +107898,6 @@ msgstr "Освіження"
 
 msgid "Recenter"
 msgstr "Перецентрування"
-
-
-msgid "Assign"
-msgstr "Призначення"
 
 
 msgid "Bisect"
