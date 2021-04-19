@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5144,6 +5144,10 @@ msgid "Store Edge Bevel Weight"
 msgstr "Dreta"
 
 
+msgid "Mirror Vertex Groups"
+msgstr "Pintura Vectorial"
+
+
 msgid "Paint Mask"
 msgstr "Image Displist"
 
@@ -8008,10 +8012,6 @@ msgid "Mirror V"
 msgstr "Seleccionar fila"
 
 
-msgid "Mirror Vertex Groups"
-msgstr "Pintura Vectorial"
-
-
 msgid "Mirror vertex groups (e.g. .R->.L)"
 msgstr "Pintura Vectorial"
 
@@ -10080,10 +10080,6 @@ msgid "Equal"
 msgstr "Igual"
 
 
-msgid "Int"
-msgstr "Afegir Tira"
-
-
 msgid "Original"
 msgstr "Esborrar Origen"
 
@@ -10378,6 +10374,10 @@ msgstr "Corba"
 
 msgid "Value to Normal"
 msgstr "Calcular Normals"
+
+
+msgid "Int"
+msgstr "Afegir Tira"
 
 
 msgid "From node"
@@ -13132,14 +13132,6 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgctxt "Operator"
@@ -18941,6 +18933,11 @@ msgstr "Mostrar fotogrames per segon i perfil"
 
 
 msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Seleccionar fila"
+
+
+msgctxt "Operator"
 msgid "Camera Fit Frame to Selected"
 msgstr "Amagar Seleccionats"
 
@@ -19017,11 +19014,6 @@ msgstr "Enumerar"
 
 msgid "Select items using circle selection"
 msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Seleccionar fila"
 
 
 msgid "Menu object selection"
@@ -19647,10 +19639,6 @@ msgid "Cloth Presets"
 msgstr "Render"
 
 
-msgid "Spot Shape"
-msgstr "Moure a Capa"
-
-
 msgid "Ray Visibility"
 msgstr "Cíclic"
 
@@ -19717,6 +19705,10 @@ msgstr "Mostrar propietats de les arestes"
 
 msgid "Path Animation"
 msgstr "Finestra de Render"
+
+
+msgid "Spot Shape"
+msgstr "Moure a Capa"
 
 
 msgid "Text Boxes"
@@ -22063,6 +22055,14 @@ msgid "Outline"
 msgstr "Perfilar"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgid "Length of displaying path, in frames"
 msgstr "Esborrar"
 
@@ -23671,10 +23671,6 @@ msgid "Unified Paint Settings"
 msgstr "Guardar preferències"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "Calcular Normals"
-
-
 msgid "Only Endpoints"
 msgstr "Corba"
 
@@ -23685,10 +23681,6 @@ msgstr "Moure a Capa"
 
 msgid "Auto Keyframe Insert Keying Set"
 msgstr "Esborrar"
-
-
-msgid "WPaint Multi-Paint"
-msgstr "Pintura Vectorial"
 
 
 msgid "Proportional Editing Objects"
@@ -23949,10 +23941,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Tiles X"
 msgstr "Arxiu"
-
-
-msgid "Persistent Images"
-msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1"
+"X-Generator: Poedit 2.4.2"
 
 
 msgid "Valid"
@@ -966,12 +966,32 @@ msgid "Float"
 msgstr "Flottant"
 
 
+msgid "Floating-point value"
+msgstr "Valeur (nombre flottant)"
+
+
 msgid "Integer"
 msgstr "Intégrer"
 
 
+msgid "32-bit integer"
+msgstr "Entier 32-bit"
+
+
 msgid "Vector"
 msgstr "Vecteur"
+
+
+msgid "3D vector with floating-point values"
+msgstr "Vecteur 3D avec valeurs en nombres flottants"
+
+
+msgid "RGBA color with floating-point precisions"
+msgstr "Couleur RGBA avec précisions en nombres flottants"
+
+
+msgid "Byte Color"
+msgstr "Couleur (octet)"
 
 
 msgid "RGBA color with 8-bit precision"
@@ -988,6 +1008,18 @@ msgstr "Chaîne de texte"
 
 msgid "Boolean"
 msgstr "Booléen"
+
+
+msgid "True or false"
+msgstr "Vrai ou faux"
+
+
+msgid "2D Vector"
+msgstr "Vecteur 2D"
+
+
+msgid "2D vector with floating-point values"
+msgstr "Vecteur 2D avec des valeurs en virgule flottante"
 
 
 msgid "Domain"
@@ -1014,16 +1046,8 @@ msgid "Attribute on mesh edge"
 msgstr "Attribut sur arête de mesh"
 
 
-msgid "Attribute on mesh polygon corner"
-msgstr "Attribut sur coin de polygone de mesh"
-
-
-msgid "Polygon"
-msgstr "Polygone"
-
-
-msgid "Attribute on mesh polygons"
-msgstr "Attribut sur polygone de mesh"
+msgid "Face"
+msgstr "Face"
 
 
 msgid "Curve"
@@ -1038,12 +1062,20 @@ msgid "Name of the Attribute"
 msgstr "Nom de l'attribut"
 
 
+msgid "Bool Attribute"
+msgstr "Attribut Booléen"
+
+
 msgid "Color geometry attribute, with 8-bit precision"
 msgstr "Attribut de géométrie de couleur, entier 8 bit"
 
 
 msgid "Float Vector Attribute"
 msgstr "Attribut de vecteur flottant"
+
+
+msgid "Int Attribute"
+msgstr "Attribut Entier"
 
 
 msgid "Integer geometry attribute"
@@ -1438,6 +1470,10 @@ msgid "Softbody goal weight"
 msgstr "Poids du but du corps souple"
 
 
+msgid "Blend-File Data"
+msgstr "Données fichier Blend"
+
+
 msgid "Main data structure representing a .blend file and all its data-blocks"
 msgstr "Structure de données principale représentant un fichier .blend et tous ses blocs de données"
 
@@ -1688,6 +1724,14 @@ msgstr "Clés de forme"
 
 msgid "Shape Key data-blocks"
 msgstr "Blocs de données clé de forme"
+
+
+msgid "Simulations"
+msgstr "Simulations"
+
+
+msgid "Simulation data-blocks"
+msgstr "Blocs de données de simulation"
 
 
 msgid "Sounds"
@@ -7875,10 +7919,6 @@ msgid "Object Instances"
 msgstr "Instances d’objet"
 
 
-msgid "All object instances to display or render (WARNING: only use this as an iterator, never as a sequence, and do not keep any references to its items)"
-msgstr "Toutes les instances d’objet à afficher ou rendre (ATTENTION : n’utiliser ceci que comme un itérateur, jamais comme une séquence, et ne pas conserver de références à ses éléments)"
-
-
 msgid "Evaluated objects in the dependency graph"
 msgstr "Objets évalués dans le graphe de dépendance"
 
@@ -7905,10 +7945,6 @@ msgstr "Calque de vue original pour lequel le graphe de dépendance a été cons
 
 msgid "Dependency Graph Object Instance"
 msgstr "Instance d’objet du graphe de dépendance"
-
-
-msgid "Extended information about dependency graph object iterator (WARNING: all data here is *evaluated* one, not original .blend IDs...)"
-msgstr "Informations étendues sur l’itérateur d’objet du graphe de dépendance (ATTENTION : toutes les données ici sont *évaluées*, pas des IDs originaux du .blend…)"
 
 
 msgid "Instance Object"
@@ -8353,10 +8389,6 @@ msgstr "Inverser"
 
 msgid "Multi-Word Fuzzy Filter"
 msgstr "Filtre flou multi-mondes"
-
-
-msgid "Perform fuzzy/multi-word matching (WARNING: May be slow)"
-msgstr "Effectuer une correspondance floue/multi-mondes (ATTENTION : peut être lent)"
 
 
 msgid "Driver for the value of a setting based on an external value"
@@ -19981,6 +20013,10 @@ msgid "Use topology based mirroring (for when both sides of mesh have matching, 
 msgstr "Utiliser un miroir basé sur la topologie (pour quand les deux côtés du mesh ont une topologie correspondante, unique)"
 
 
+msgid "Mirror Vertex Groups"
+msgstr "Miroir des groupes de vertices"
+
+
 msgid "Paint Mask"
 msgstr "Masque de peinture"
 
@@ -20517,10 +20553,6 @@ msgid "Extra scaling added to the scale of the object"
 msgstr "Redimensionnement supplémentaire ajouté à l’échelle de l’objet"
 
 
-msgid "Absolute bounding box dimensions of the object (WARNING: assigning to it or its members multiple consecutive times will not work correctly, as this needs up-to-date evaluated data)"
-msgstr "Dimensions absolues de la boîte englobante de l’objet (ATTENTION : lui assigner une valeur (à elle ou à ses membres) plusieurs fois de suite ne fonctionnera pas correctement, car cela nécessite des données évaluées à jour)"
-
-
 msgid "Object Display"
 msgstr "Affichage objet"
 
@@ -20775,10 +20807,6 @@ msgstr "Accès matriciel aux position, rotation et taille (y compris différenti
 
 msgid "Local Matrix"
 msgstr "Matrice locale"
-
-
-msgid "Parent relative transformation matrix - WARNING: Only takes into account 'Object' parenting, so e.g. in case of bone parenting you get a matrix relative to the Armature object, not to the actual parent bone"
-msgstr "Matrice de transformation relative au parent - ATTENTION: ne prend en compte que l’apparentement 'objet', donc par ex. en cas d’apparentement à un os vous obtenez une matrice relative à l’objet armature, pas au vrai os parent"
 
 
 msgid "Inverse of object's parent matrix at time of parenting"
@@ -27538,10 +27566,6 @@ msgid "Edge Data"
 msgstr "Données d’arête"
 
 
-msgid "Face"
-msgstr "Face"
-
-
 msgid "Face Data"
 msgstr "Données de face"
 
@@ -27608,6 +27632,10 @@ msgstr "Rendre utilisateur unique"
 
 msgid "Apply"
 msgstr "Appliquer"
+
+
+msgid "Object Context Menu"
+msgstr "Menu contextuel de l'objet"
 
 
 msgid "Quick Effects"
@@ -27680,6 +27708,10 @@ msgstr "Écran d’accueil"
 
 msgid "About"
 msgstr "À propos"
+
+
+msgid "Quick Setup"
+msgstr "Configuration rapide"
 
 
 msgid "Mesh Edge"
@@ -27844,6 +27876,10 @@ msgstr "Normale du triangle"
 
 msgid "Local space unit length normal vector for this triangle"
 msgstr "Vecteur normal de ce triangle, unitaire et dans l’espace local"
+
+
+msgid "Polygon"
+msgstr "Polygone"
 
 
 msgid "Split Normals"
@@ -29872,10 +29908,6 @@ msgstr "Miroir V"
 
 msgid "Mirror the V texture coordinate around the flip offset point"
 msgstr "Inverser les coordonnées de texture en V autour du point d’inversion décalé"
-
-
-msgid "Mirror Vertex Groups"
-msgstr "Miroir des groupes de vertices"
 
 
 msgid "Mirror vertex groups (e.g. .R->.L)"
@@ -34531,10 +34563,6 @@ msgid "Equal"
 msgstr "Égal"
 
 
-msgid "Int"
-msgstr "Entier"
-
-
 msgid "Cross Product"
 msgstr "Produit vectoriel"
 
@@ -35438,6 +35466,10 @@ msgstr "Nom de la prise"
 
 msgid "Data type of the socket"
 msgstr "Type de données de la prise"
+
+
+msgid "Int"
+msgstr "Entier"
 
 
 msgid "From node"
@@ -36906,10 +36938,6 @@ msgstr "Définir frame de début"
 msgctxt "Operator"
 msgid "Update Animated Transform Constraints"
 msgstr "Mettre à jour les contraintes Transformation"
-
-
-msgid "Convert fcurves/drivers affecting rotations to radians (Warning: use this only once!)"
-msgstr "Convertir les fcourbes/contrôleurs affectant les rotations en radians (Attention : à n’utiliser qu’une seule fois !)"
 
 
 msgctxt "Operator"
@@ -42145,14 +42173,6 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
 
 
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Déverrouiller tous les calques"
@@ -45800,10 +45820,6 @@ msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "Trier les éléments sélectionnés depuis les plus proches aux plus éloignés du curseur 3D"
 
 
-msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
-msgstr "Déplacer tous les éléments sélectionnés en premier, en préservant leur ordre relatif (ATTENTION : cela affectera aussi les indices des éléments non-sélectionnés!)"
-
-
 msgid "Randomize order of selected elements"
 msgstr "Randomiser l’ordre des éléments sélectionnés"
 
@@ -47342,10 +47358,6 @@ msgstr "Facteur à utiliser lors de l’application des données à la destinati
 
 msgid "Auto Transform"
 msgstr "Auto-transformation"
-
-
-msgid "Automatically compute transformation to get the best possible match between source and destination meshes (WARNING: results will never be as good as manual matching of objects)"
-msgstr "Calculer automatiquement la transformation pour obtenir la meilleure correspondance entre les meshes de source et de destination (ATTENTION : les résultats ne seront jamais aussi bon qu’avec une disposition manuelle des objets)"
 
 
 msgid "Create Data"
@@ -49514,10 +49526,6 @@ msgid "Library Operation"
 msgstr "Opération de bibliothèque"
 
 
-msgid "Delete this library and all its item from Blender - WARNING: no undo"
-msgstr "Supprimer cette bibliothèque et tous ses éléments de Blender – ATTENTION : pas d’annulation"
-
-
 msgid "Relocate"
 msgstr "Relocaliser"
 
@@ -49585,6 +49593,18 @@ msgstr "Menu contextuel pour les opérations sur l’élément"
 msgctxt "Operator"
 msgid "Purge All"
 msgstr "Purger tous"
+
+
+msgid "Clear all orphaned data-blocks without any users from the file"
+msgstr "Effacer du fichier tous les blocs de données orphelins inutilisés"
+
+
+msgid "Linked Data-blocks"
+msgstr "Blocs de données liés"
+
+
+msgid "Local Data-blocks"
+msgstr "Blocs de données locaux"
 
 
 msgid "Drag to clear parent in Outliner"
@@ -55452,6 +55472,11 @@ msgid "Background image index to remove"
 msgstr "Indice de l’image d’arrière-plan à enlever"
 
 
+msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Menu de sélection"
+
+
 msgid "Set camera view to active view"
 msgstr "Définir la vue caméra d’après la vue active"
 
@@ -55669,11 +55694,6 @@ msgstr "Sélectionner des éléments avec la sélection par cercle"
 
 msgid "Select items using lasso selection"
 msgstr "Sélectionner des éléments avec la sélection par lasso"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Menu de sélection"
 
 
 msgid "Menu object selection"
@@ -56652,7 +56672,7 @@ msgstr "Exécuter une fois et quitter"
 
 
 msgid "Play"
-msgstr "Lire/jouer"
+msgstr "Lire"
 
 
 msgid "Random Order"
@@ -57348,6 +57368,10 @@ msgid "URL to open"
 msgstr "URL à ouvrir"
 
 
+msgid "Open a preset website in the web browser"
+msgstr "Ouvre un site web prédéfini dans le navigateur web"
+
+
 msgid "UV Maps"
 msgstr "Cartes UV"
 
@@ -57994,10 +58018,6 @@ msgid "Aperture"
 msgstr "Ouverture"
 
 
-msgid "Spot Shape"
-msgstr "Forme de spot"
-
-
 msgid "Ray Visibility"
 msgstr "Visibilité de rayon"
 
@@ -58140,6 +58160,10 @@ msgstr "Effets"
 
 msgid "Skeleton"
 msgstr "Squelette"
+
+
+msgid "Spot Shape"
+msgstr "Forme de spot"
 
 
 msgid "Text Boxes"
@@ -58674,6 +58698,10 @@ msgstr "Ouvrir au survol de la souris"
 
 msgid "Pie Menus"
 msgstr "Menus camembert"
+
+
+msgid "Temporary Editors"
+msgstr "Editeurs temporaires"
 
 
 msgid "Text Rendering"
@@ -61466,8 +61494,20 @@ msgid "Factor Display Type"
 msgstr "Type d’affichage de facteur"
 
 
+msgid "How factor values are displayed"
+msgstr "Définit la manière dont les valeurs des facteurs sont affichées"
+
+
+msgid "Display factors as values between 0 and 1"
+msgstr "Afficher les facteurs sous la forme de valeurs entre 0 et 1"
+
+
 msgid "Percentage"
 msgstr "Pourcentage"
+
+
+msgid "Display factors as percentages"
+msgstr "Afficher les facteurs en pourcentage"
 
 
 msgid "New Window"
@@ -61488,6 +61528,14 @@ msgstr "Diamètre du gizmo"
 
 msgid "Header Position"
 msgstr "Position de l’en-tête"
+
+
+msgid "Keep Existing"
+msgstr "Conserver l'existant"
+
+
+msgid "Keep existing header alignment"
+msgstr "Conserver l'alignement de l'en-tête existant"
 
 
 msgid "Language used for translation"
@@ -62264,10 +62312,6 @@ msgstr "Nombre d’échantillons d’antialiasing à rendre pour chaque pixel"
 
 msgid "AO Bounces"
 msgstr "Rebonds OA"
-
-
-msgid "Approximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature"
-msgstr "Approximer l’éclairage indirect par de l’occlusion ambiante teintée par l’arrière-plan, au rebond spécifié, 0 désactive cette option"
 
 
 msgid "AO Bounces Render"
@@ -63888,10 +63932,6 @@ msgstr "Écraser les fichiers existants pendant le rendu"
 
 msgid "Persistent Data"
 msgstr "Données persistantes"
-
-
-msgid "Keep render data around for faster re-renders"
-msgstr "Conserver les données de rendu, pour des re-rendus plus rapides"
 
 
 msgid "Placeholders"
@@ -66444,6 +66484,14 @@ msgstr "Contour"
 
 msgid "Dash"
 msgstr "Pointillés"
+
+
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
 
 
 msgid "Overlay Mode"
@@ -69857,6 +69905,14 @@ msgid "Prevent marker editing"
 msgstr "Empêcher édition de marqueur"
 
 
+msgid "Lock Object Modes"
+msgstr "Verrouiller les objets dans les modes"
+
+
+msgid "Restrict select to the current mode"
+msgstr "Restreindre la sélection dans le mode actuel"
+
+
 msgid "Mesh Selection Mode"
 msgstr "Mode de sélection de mesh"
 
@@ -69953,10 +70009,6 @@ msgid "Unified Paint Settings"
 msgstr "Réglages de peinture unifiés"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "PPeinture auto-normaliser"
-
-
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "S’assurer que tous les groupes de vertices déformant des os ont toujours une somme unitaire, pendant la peinture"
 
@@ -70007,10 +70059,6 @@ msgstr "Insertion automatique d’images clé uniquement dans l’ensemble de cl
 
 msgid "Automatically merge vertices moved to the same location"
 msgstr "Fusionner automatiquement les vertices déplacés au même emplacement"
-
-
-msgid "WPaint Multi-Paint"
-msgstr "PPeinture multi-peinture"
 
 
 msgid "Paint across the weights of all selected bones, maintaining their relative influence"
@@ -71554,10 +71602,6 @@ msgid "Tiles X"
 msgstr "Tuiles X"
 
 
-msgid "Persistent Images"
-msgstr "Images persistantes"
-
-
 msgid "Feature Strength"
 msgstr "Force d’éléments"
 
@@ -71941,9 +71985,40 @@ msgid "Active object is not a mesh"
 msgstr "L’objet actif n’est pas un mesh"
 
 
+msgid "Shortcuts"
+msgstr "Raccourcis"
+
+
 msgctxt "Operator"
 msgid "Open..."
 msgstr "Ouvrir…"
+
+
+msgid "Select With"
+msgstr "Sélectionner avec"
+
+
+msgid "Spacebar"
+msgstr "Barre d’espace"
+
+
+msgctxt "Operator"
+msgid "Save New Settings"
+msgstr "Enregistrer les nouveaux paramètres"
+
+
+msgid "Getting Started"
+msgstr "Pour commencer"
+
+
+msgctxt "Operator"
+msgid "Release Notes"
+msgstr "Notes de version"
+
+
+msgctxt "Operator"
+msgid "Development Fund"
+msgstr "Fonds de développement"
 
 
 msgctxt "Operator"
@@ -72034,12 +72109,12 @@ msgid "Protected Layers:"
 msgstr "Calques protégés :"
 
 
-msgid "Axes"
-msgstr "Axes"
-
-
 msgid "Shapes"
 msgstr "Formes"
+
+
+msgid "Axes"
+msgstr "Axes"
 
 
 msgctxt "Operator"
@@ -72480,6 +72555,11 @@ msgstr "Tout"
 
 
 msgctxt "Operator"
+msgid "None"
+msgstr "Aucun"
+
+
+msgctxt "Operator"
 msgid "Invert"
 msgstr "Inverser"
 
@@ -72703,10 +72783,6 @@ msgstr "Contraction max"
 
 msgid "Structural"
 msgstr "Structurelle"
-
-
-msgid "Enable physics for:"
-msgstr "Activer physiques pour :"
 
 
 msgctxt "Operator"
@@ -73730,6 +73806,11 @@ msgstr "Installer patron d’application…"
 
 
 msgctxt "Operator"
+msgid "Unused Data-Blocks"
+msgstr "Blocs de données inutilisés"
+
+
+msgctxt "Operator"
 msgid "Quit"
 msgstr "Quitter"
 
@@ -73790,6 +73871,11 @@ msgstr "Renommer l'élément actif..."
 
 
 msgctxt "Operator"
+msgid "Batch Rename..."
+msgstr "Renommer en masse..."
+
+
+msgctxt "Operator"
 msgid "Preferences..."
 msgstr "Préférences..."
 
@@ -73840,6 +73926,11 @@ msgstr "Tutoriels"
 
 
 msgctxt "Operator"
+msgid "User Communities"
+msgstr "Communautés d'utilisateurs"
+
+
+msgctxt "Operator"
 msgid "Developer Community"
 msgstr "Communauté des développeurs"
 
@@ -73866,8 +73957,24 @@ msgid "New Data"
 msgstr "Nouvelles données"
 
 
+msgid "Render In"
+msgstr "Effectuer le rendu dans"
+
+
 msgid "Scene Statistics"
 msgstr "Statistiques de la scène"
+
+
+msgid "System Memory"
+msgstr "Mémoire système"
+
+
+msgid "Video Memory"
+msgstr "Mémoire vidéo"
+
+
+msgid "Blender Version"
+msgstr "Version de Blender"
 
 
 msgid "Top Level"
@@ -76334,11 +76441,6 @@ msgstr "Tout réinitialiser aux valeurs par défaut"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Réinitialiser unique à valeur par défaut"
-
-
-msgctxt "Operator"
-msgid "Unset"
-msgstr "Dé-définir"
 
 
 msgctxt "Operator"

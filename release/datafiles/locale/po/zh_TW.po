@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -974,6 +974,10 @@ msgstr "點"
 
 msgid "Edge"
 msgstr "邊線"
+
+
+msgid "Face"
+msgstr "面"
 
 
 msgid "Curve"
@@ -13443,6 +13447,10 @@ msgid "Use topology based mirroring (for when both sides of mesh have matching, 
 msgstr "使用基於鏡像處理的拓樸 (用於網格兩側有相符、獨一的拓樸時)"
 
 
+msgid "Mirror Vertex Groups"
+msgstr "鏡像頂點群組"
+
+
 msgid "Paint Mask"
 msgstr "繪圖遮罩"
 
@@ -18666,10 +18674,6 @@ msgid "Edge Data"
 msgstr "邊線資料"
 
 
-msgid "Face"
-msgstr "面"
-
-
 msgid "Face Data"
 msgstr "面資料"
 
@@ -20320,10 +20324,6 @@ msgstr "鏡像 U"
 
 msgid "Mirror V"
 msgstr "鏡像 V"
-
-
-msgid "Mirror Vertex Groups"
-msgstr "鏡像頂點群組"
 
 
 msgid "Mirror vertex groups (e.g. .R->.L)"
@@ -24514,8 +24514,8 @@ msgid "Equal"
 msgstr "等於"
 
 
-msgid "Int"
-msgstr "整數"
+msgid "Min Max"
+msgstr "最小最大"
 
 
 msgid "Cross Product"
@@ -24653,10 +24653,6 @@ msgstr "凹凸"
 
 msgid "Camera Data"
 msgstr "攝影機資料"
-
-
-msgid "Min Max"
-msgstr "最小最大"
 
 
 msgid "Combine HSV"
@@ -25237,6 +25233,10 @@ msgstr "接口的名稱"
 
 msgid "Data type of the socket"
 msgstr "接口的資料類型"
+
+
+msgid "Int"
+msgstr "整數"
 
 
 msgid "From node"
@@ -30504,14 +30504,6 @@ msgid "Snap Selection to Grid"
 msgstr "吸附選取項至格線"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "指派至頂點群組"
@@ -33250,10 +33242,6 @@ msgstr "游標距離"
 
 msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "以距 3D 游標從最近到最遠的方式排序所選元素"
-
-
-msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
-msgstr "移動所有選取的元素至第一位置，保留其他相對順序 (警告：這也會影響未選取的元素索引！)"
 
 
 msgid "Randomize order of selected elements"
@@ -41501,6 +41489,11 @@ msgid "Background image index to remove"
 msgstr "要移除的背景影像索引"
 
 
+msgctxt "Operator"
+msgid "Select Menu"
+msgstr "選取選單"
+
+
 msgid "Set camera view to active view"
 msgstr "將攝影機視圖設為作用中視圖"
 
@@ -41643,11 +41636,6 @@ msgstr "使用圈選來選取項目"
 
 msgid "Select items using lasso selection"
 msgstr "使用套索選取來選取項目"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "選取選單"
 
 
 msgid "Menu object selection"
@@ -43202,10 +43190,6 @@ msgid "Aperture"
 msgstr "光圈"
 
 
-msgid "Spot Shape"
-msgstr "聚光外形"
-
-
 msgid "Ray Visibility"
 msgstr "光線可見性"
 
@@ -43312,6 +43296,10 @@ msgstr "效果"
 
 msgid "Skeleton"
 msgstr "骨骼"
+
+
+msgid "Spot Shape"
+msgstr "聚光外形"
 
 
 msgid "Text Boxes"
@@ -47320,10 +47308,6 @@ msgid "Persistent Data"
 msgstr "永恆資料"
 
 
-msgid "Keep render data around for faster re-renders"
-msgstr "保留算繪資料以加速後續算繪"
-
-
 msgid "Placeholders"
 msgstr "佔位器"
 
@@ -49307,6 +49291,14 @@ msgstr "外框"
 
 msgid "Dash"
 msgstr "虛線"
+
+
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
 
 
 msgid "Overlay Mode"
@@ -52489,10 +52481,6 @@ msgid "Unified Paint Settings"
 msgstr "統一繪畫設定"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "自動歸一化權重繪製"
-
-
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "確保所有骨骼變形頂點群組當權重繪製時添加高至 1.0"
 
@@ -52519,10 +52507,6 @@ msgstr "僅使用作用中鍵處理集作自動鍵幀插入"
 
 msgid "Automatically merge vertices moved to the same location"
 msgstr "自動把移動至相同位置的頂點合併起來"
-
-
-msgid "WPaint Multi-Paint"
-msgstr "權重繪製多繪製"
 
 
 msgid "Proportional Editing using connected geometry only"
@@ -53786,10 +53770,6 @@ msgid "Tiles X"
 msgstr "鋪排 X"
 
 
-msgid "Persistent Images"
-msgstr "永恆影像"
-
-
 msgid "No output node"
 msgstr "無輸出節點"
 
@@ -54151,12 +54131,12 @@ msgid "Protected Layers:"
 msgstr "保護分層："
 
 
-msgid "Axes"
-msgstr "軸"
-
-
 msgid "Shapes"
 msgstr "外形"
+
+
+msgid "Axes"
+msgstr "軸"
 
 
 msgctxt "Operator"
@@ -54555,10 +54535,6 @@ msgstr "動態網格"
 
 msgid "Structural"
 msgstr "結構"
-
-
-msgid "Enable physics for:"
-msgstr "啟用何種物理運算："
 
 
 msgctxt "Operator"
@@ -57256,11 +57232,6 @@ msgstr "全部重設回預設值"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "重設單項回預設值"
-
-
-msgctxt "Operator"
-msgid "Unset"
-msgstr "取消設定"
 
 
 msgctxt "Operator"

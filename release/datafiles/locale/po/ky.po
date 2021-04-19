@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -139,6 +139,10 @@ msgstr "Маалыматтар түрү"
 
 msgid "Edge"
 msgstr "Кыр"
+
+
+msgid "Face"
+msgstr "Каптал"
 
 
 msgid "Curve"
@@ -1475,10 +1479,6 @@ msgid "Help"
 msgstr "Жардам"
 
 
-msgid "Face"
-msgstr "Каптал"
-
-
 msgid "Apply"
 msgstr "Колдонуу"
 
@@ -2031,14 +2031,6 @@ msgstr "Текстти коюу"
 
 msgid "Eraser"
 msgstr "Өчүргүч"
-
-
-msgid "Black"
-msgstr "Кара"
-
-
-msgid "White"
-msgstr "Ак"
 
 
 msgctxt "Operator"
@@ -3035,6 +3027,14 @@ msgstr "Сфера өлчөмү"
 
 msgid "Gravitation"
 msgstr "Тартыш"
+
+
+msgid "Black"
+msgstr "Кара"
+
+
+msgid "White"
+msgstr "Ак"
 
 
 msgid "Show Seconds"
