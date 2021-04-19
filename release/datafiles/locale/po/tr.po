@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -340,6 +340,10 @@ msgstr "Nokta"
 
 msgid "Edge"
 msgstr "Kenar"
+
+
+msgid "Face"
+msgstr "Yüzey Alanı"
 
 
 msgid "Curve"
@@ -4892,6 +4896,10 @@ msgid "Topology Mirror"
 msgstr "Aynalama Ekseni "
 
 
+msgid "Mirror Vertex Groups"
+msgstr "Tüm Grupları Sil"
+
+
 msgid "Paint Mask"
 msgstr "Çoklu-Boyama"
 
@@ -6839,10 +6847,6 @@ msgid "Bone Roll"
 msgstr "Kemik Kısıtlamaları"
 
 
-msgid "Face"
-msgstr "Yüzey Alanı"
-
-
 msgid "Normals"
 msgstr "Normaller"
 
@@ -7429,10 +7433,6 @@ msgstr "Aynala"
 
 msgid "Mirror V"
 msgstr "Aynala"
-
-
-msgid "Mirror Vertex Groups"
-msgstr "Tüm Grupları Sil"
 
 
 msgid "Mirror vertex groups (e.g. .R->.L)"
@@ -12029,14 +12029,6 @@ msgstr "İmleci Merkez al"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
-
-
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
 
 
 msgctxt "Operator"
@@ -17146,6 +17138,11 @@ msgid "Remove a background image from the 3D view"
 msgstr "Arka plan resmi ekleme. Sadece kamera bakışında yada ön, yan ve üst bakışta görünür.  "
 
 
+msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Ters Seçim"
+
+
 msgid "Set camera view to active view"
 msgstr "Kamerayı Görüntüye Hizala"
 
@@ -17214,11 +17211,6 @@ msgstr "Görüntüyü Çevir"
 
 msgid "Rotate the view"
 msgstr "Görüntüyü Çevir"
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Ters Seçim"
 
 
 msgid "Menu object selection"
@@ -17838,10 +17830,6 @@ msgid "Lens"
 msgstr "Kamera Lens Ölçeği"
 
 
-msgid "Spot Shape"
-msgstr "Şekil Anahtarı Ekle"
-
-
 msgid "Ray Visibility"
 msgstr "Işın İzleme"
 
@@ -17876,6 +17864,10 @@ msgstr "Falloff Mesafesi"
 
 msgid "Path Animation"
 msgstr "Animasyon Pencereleri"
+
+
+msgid "Spot Shape"
+msgstr "Şekil Anahtarı Ekle"
 
 
 msgid "Text Boxes"
@@ -20203,6 +20195,14 @@ msgid "Outline"
 msgstr "Anahat"
 
 
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
+
+
 msgid "Pivot center for rotation/scaling"
 msgstr "Çevirme/Ölçekleme Ekseni (Kısayollar: Virgül, Shift Virgül)"
 
@@ -21635,20 +21635,12 @@ msgid "Unified Paint Settings"
 msgstr "Fabrika Ayarlarını Yükle"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "Geçici Dosyaları Otomatik Kaydet..."
-
-
 msgid "Only Endpoints"
 msgstr "Yalnız Kenarlar"
 
 
 msgid "Auto Keying"
 msgstr "Otomatik Normalleştir"
-
-
-msgid "WPaint Multi-Paint"
-msgstr "Çarpıtarak Çoklu Bölümleme"
 
 
 msgid "Proportional Editing Objects"
@@ -21857,10 +21849,6 @@ msgstr "Doğrusal Bozulma"
 
 msgid "Transparency"
 msgstr "Saydamlık"
-
-
-msgid "Persistent Images"
-msgstr "Kesit Sınırı Oluştur"
 
 
 msgctxt "Operator"
@@ -22136,10 +22124,6 @@ msgstr "Yansıma miktarı"
 
 msgid "Use Timing"
 msgstr "Kırpma Kullan"
-
-
-msgid "Enable physics for:"
-msgstr "Fizik Bilgilerini Göster"
 
 
 msgctxt "Operator"

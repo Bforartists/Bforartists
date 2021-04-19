@@ -18,15 +18,15 @@
 
 
 bl_info = {
-    "name": "SpiroFit, BounceSpline and Catenary",
+    "name": "SpiroFit, Bounce Spline, and Catenary",
     "author": "Antonio Osprite, Liero, Atom, Jimmy Hazevoet",
     "version": (0, 2, 2),
     "blender": (2, 80, 0),
-    "location": "Sidebar > Create Tab",
+    "location": "Add > Curve > Knots",
     "description": "SpiroFit, BounceSpline and Catenary adds "
                    "splines to selected mesh or objects",
     "warning": "",
-    "doc_url": "",
+    "doc_url": "{BLENDER_MANUAL_URL}/addons/add_curve/extra_objects.html",
     "category": "Object",
 }
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -357,6 +357,10 @@ msgstr "बिंदु"
 
 msgid "Edge"
 msgstr "किनारा"
+
+
+msgid "Face"
+msgstr "फलक"
 
 
 msgid "Curve"
@@ -2957,10 +2961,6 @@ msgid "Bone Roll"
 msgstr "हड्डी पंजी"
 
 
-msgid "Face"
-msgstr "फलक"
-
-
 msgid "Hooks"
 msgstr "खूँटी"
 
@@ -3862,14 +3862,6 @@ msgstr "सीमा"
 
 msgid "Subdivisions"
 msgstr "उप विभाजन"
-
-
-msgid "Black"
-msgstr "कृष्ण"
-
-
-msgid "White"
-msgstr "श्वेत"
 
 
 msgid "Create a new image"
@@ -5171,6 +5163,14 @@ msgid "Spring Vertex Group"
 msgstr "लचक शिरोबिन्दु समूह"
 
 
+msgid "Black"
+msgstr "कृष्ण"
+
+
+msgid "White"
+msgstr "श्वेत"
+
+
 msgctxt "MovieClip"
 msgid "View"
 msgstr "दृश्य"
@@ -5641,12 +5641,12 @@ msgid "Layers:"
 msgstr "परत:"
 
 
-msgid "Axes"
-msgstr "अक्ष"
-
-
 msgid "Shapes"
 msgstr "आकृतियाँ"
+
+
+msgid "Axes"
+msgstr "अक्ष"
 
 
 msgctxt "Operator"
@@ -5774,10 +5774,6 @@ msgstr "समय का उपयोग करें"
 
 msgid "Structural"
 msgstr "संरचनात्मक"
-
-
-msgid "Enable physics for:"
-msgstr "भौतिकी के लिए सक्षम करें:"
 
 
 msgctxt "Operator"
