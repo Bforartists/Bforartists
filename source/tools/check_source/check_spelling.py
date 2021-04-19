@@ -32,6 +32,25 @@ Currently only python source is checked.
 """
 
 import os
+import argparse
+
+from typing import (
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Set,
+    Tuple,
+)
+
+
+# Report: word, line, column.
+Report = Tuple[str, int, int]
+# Cache: {filepath: length, hash, reports}.
+CacheData = Dict[str, Tuple[int, bytes, List[Report]]]
+# Map word to suggestions.
+SuggestMap = Dict[str, str]
 
 ONLY_ONCE = True
 USE_COLOR = True
@@ -40,7 +59,7 @@ _words_visited = set()
 _files_visited = set()
 
 # Lowercase word -> suggestion list.
-_suggest_map = {}
+_suggest_map: SuggestMap = {}
 
 VERBOSE_CACHE = False
 
@@ -64,7 +83,7 @@ from check_spelling_c_config import (
 # -----------------------------------------------------------------------------
 # General Utilities
 
-def hash_of_file_and_len(fp):
+def hash_of_file_and_len(fp: str) -> Tuple[bytes, int]:
     import hashlib
     with open(fp, 'rb') as fh:
         data = fh.read()
@@ -129,11 +148,11 @@ re_words = re.compile(
 re_not_newline = re.compile("[^\n]")
 
 
-def words_from_text(text):
+def words_from_text(text: str) -> List[Tuple[str, int]]:
     """ Extract words to treat as English for spell checking.
     """
     # Replace non-newlines with white-space, so all alignment is kept.
-    def replace_ignore(match):
+    def replace_ignore(match: re.Match[str]) -> str:
         start, end = match.span()
         return re_not_newline.sub(" ", match.string[start:end])
 
@@ -148,7 +167,7 @@ def words_from_text(text):
     for match in re_words.finditer(text):
         words.append((match.group(0), match.start()))
 
-    def word_ok(w):
+    def word_ok(w: str) -> bool:
         # Ignore all uppercase words.
         if w.isupper():
             return False
@@ -165,16 +184,16 @@ class Comment:
         "type",
     )
 
-    def __init__(self, file, text, line, type):
+    def __init__(self, file: str, text: str, line: int, type: str):
         self.file = file
         self.text = text
         self.line = line
         self.type = type
 
-    def parse(self):
+    def parse(self) -> List[Tuple[str, int]]:
         return words_from_text(self.text)
 
-    def line_and_column_from_comment_offset(self, pos):
+    def line_and_column_from_comment_offset(self, pos: int) -> Tuple[int, int]:
         text = self.text
         slineno = self.line + text.count("\n", 0, pos)
         # Allow for -1 to be not found.
@@ -187,7 +206,7 @@ class Comment:
         return slineno, scol
 
 
-def extract_code_strings(filepath):
+def extract_code_strings(filepath: str) -> Tuple[List[Comment], Set[str]]:
     import pygments
     from pygments import lexers
     from pygments.token import Token
@@ -219,7 +238,7 @@ def extract_code_strings(filepath):
     return comments, code_words
 
 
-def extract_py_comments(filepath):
+def extract_py_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
 
     import token
     import tokenize
@@ -248,7 +267,7 @@ def extract_py_comments(filepath):
     return comments, code_words
 
 
-def extract_c_comments(filepath):
+def extract_c_comments(filepath: str) -> Tuple[List[Comment], Set[str]]:
     """
     Extracts comments like this:
 
@@ -344,7 +363,7 @@ def extract_c_comments(filepath):
     return comments, code_words
 
 
-def spell_check_report(filepath, report):
+def spell_check_report(filepath: str, report: Report) -> None:
     w, slineno, scol = report
     w_lower = w.lower()
 
@@ -369,7 +388,10 @@ def spell_check_report(filepath, report):
     ))
 
 
-def spell_check_file(filepath, check_type='COMMENTS'):
+def spell_check_file(
+        filepath: str,
+        check_type: str = 'COMMENTS',
+) -> Generator[Report, None, None]:
     if check_type == 'COMMENTS':
         if filepath.endswith(".py"):
             comment_list, code_words = extract_py_comments(filepath)
@@ -396,11 +418,15 @@ def spell_check_file(filepath, check_type='COMMENTS'):
                 yield (w, slineno, scol)
 
 
-def spell_check_file_recursive(dirpath, check_type='COMMENTS', cache_data=None):
+def spell_check_file_recursive(
+        dirpath: str,
+        check_type: str = 'COMMENTS',
+        cache_data: Optional[CacheData]=None,
+) -> None:
     import os
     from os.path import join, splitext
 
-    def source_list(path, filename_check=None):
+    def source_list(path: str, filename_check: Optional[Callable[[str], bool]]=None) -> Generator[str, None, None]:
         for dirpath, dirnames, filenames in os.walk(path):
             # skip '.git'
             dirnames[:] = [d for d in dirnames if not d.startswith(".")]
@@ -411,7 +437,7 @@ def spell_check_file_recursive(dirpath, check_type='COMMENTS', cache_data=None):
                 if filename_check is None or filename_check(filepath):
                     yield filepath
 
-    def is_source(filename):
+    def is_source(filename: str) -> bool:
         ext = splitext(filename)[1]
         return (ext in {
             ".c",
@@ -447,22 +473,26 @@ def spell_check_file_recursive(dirpath, check_type='COMMENTS', cache_data=None):
 # )
 #
 
-def spell_cache_read(cache_filepath):
+def spell_cache_read(cache_filepath: str) -> Tuple[CacheData, SuggestMap]:
     import pickle
-    cache_data = {}, {}
+    cache_store: Tuple[CacheData, SuggestMap] = {}, {}
     if os.path.exists(cache_filepath):
         with open(cache_filepath, 'rb') as fh:
-            cache_data = pickle.load(fh)
-    return cache_data
+            cache_store = pickle.load(fh)
+    return cache_store
 
 
-def spell_cache_write(cache_filepath, cache_data):
+def spell_cache_write(cache_filepath: str, cache_store: Tuple[CacheData, SuggestMap]) -> None:
     import pickle
     with open(cache_filepath, 'wb') as fh:
-        pickle.dump(cache_data, fh)
+        pickle.dump(cache_store, fh)
 
 
-def spell_check_file_with_cache_support(filepath, check_type='COMMENTS', cache_data=None):
+def spell_check_file_with_cache_support(
+        filepath: str,
+        check_type: str = 'COMMENTS',
+        cache_data: Optional[CacheData] = None,
+) -> Generator[Report, None, None]:
     """
     Iterator each item is a report: (word, line_number, column_number)
     """
@@ -502,8 +532,7 @@ def spell_check_file_with_cache_support(filepath, check_type='COMMENTS', cache_d
 # -----------------------------------------------------------------------------
 # Main & Argument Parsing
 
-def argparse_create():
-    import argparse
+def argparse_create() -> argparse.ArgumentParser:
 
     # When --help or no args are given, print this help
     description = __doc__
@@ -543,7 +572,7 @@ def argparse_create():
     return parser
 
 
-def main():
+def main() -> None:
     global _suggest_map
 
     import os
@@ -553,7 +582,7 @@ def main():
     check_type = args.extract
     cache_filepath = args.cache_file
 
-    cache_data = None
+    cache_data: Optional[CacheData] = None
     if cache_filepath:
         cache_data, _suggest_map = spell_cache_read(cache_filepath)
         clear_stale_cache = True
@@ -573,6 +602,7 @@ def main():
         clear_stale_cache = False
 
     if cache_filepath:
+        assert(cache_data is not None)
         if VERBOSE_CACHE:
             print("Writing cache:", len(cache_data))
 

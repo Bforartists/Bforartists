@@ -23,8 +23,8 @@
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 1, 4),
-    "blender": (2, 80, 0),
+    "version": (0, 1, 5),
+    "blender": (2, 93, 0),
     "location": "View3D > Add > Curve > Extra Objects",
     "description": "Add extra curve object types",
     "warning": "",
@@ -159,11 +159,6 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
             description="Show/Hide the Add Menu items",
             default=False
             )
-    show_panel_list : BoolProperty(
-            name="Panels List",
-            description="Show/Hide the Panel items",
-            default=False
-            )
 
     def draw(self, context):
         layout = self.layout
@@ -198,30 +193,19 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
             box.label(text="Knots:", icon="LAYER_ACTIVE")
             box.label(text="Torus Knots Plus, Celtic Links, Braid Knot",
                       icon="LAYER_USED")
+            box.label(text="SpiroFit, Bounce Spline, Catenary", icon="LAYER_USED")
             box.label(text="Curly Curve", icon="LAYER_ACTIVE")
             box.label(text="Bevel/Taper:", icon="LAYER_ACTIVE")
             box.label(text="Add Curve as Bevel, Add Curve as Taper",
                       icon="LAYER_USED")
+            box.label(text="Simple Curve:", icon="LAYER_ACTIVE")
+            box.label(text="Available if the Active Object is a Curve was created with 2D Objects",
+                     icon="LAYER_USED")
 
             box.label(text="Items located in the Add Menu > Surface (default shortcut Ctrl + A):",
                       icon="LAYER_USED")
             box.label(text="Wedge, Cone, Star, Plane",
                       icon="LAYER_ACTIVE")
-
-        icon_2 = "TRIA_RIGHT" if not self.show_panel_list else "TRIA_DOWN"
-        box = layout.box()
-        box.prop(self, "show_panel_list", emboss=False, icon=icon_2)
-
-        if self.show_panel_list:
-            box.label(text="Panel located in 3D View Tools Region > Create:",
-                      icon="LAYER_ACTIVE")
-            box.label(text="Spline:", icon="LAYER_ACTIVE")
-            box.label(text="SpiroFit, Bounce Spline, Catenary", icon="LAYER_USED")
-            box.label(text="Panel located in 3D View Tools Region > Tools:",
-                      icon="LAYER_ACTIVE")
-            box.label(text="Simple Curve:", icon="LAYER_ACTIVE")
-            box.label(text="Available if the Active Object is a Curve was created with 2D Objects",
-                     icon="LAYER_USED")
 
 
 class INFO_MT_curve_knots_add(Menu):
@@ -254,6 +238,10 @@ def menu_func(self, context):
         return None
     layout.separator()
     layout.menu(INFO_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
+    layout.separator()
+    layout.operator("curve.bevelcurve")
+    layout.operator("curve.tapercurve")
+    layout.operator("curve.simple")
 
 def menu_surface(self, context):
     self.layout.separator()
