@@ -17,6 +17,20 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from bpy.types import Header, Menu, Panel
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class SPREADSHEET_HT_header(bpy.types.Header):
@@ -26,7 +40,8 @@ class SPREADSHEET_HT_header(bpy.types.Header):
         layout = self.layout
         space = context.space_data
 
-        layout.template_header()
+        #layout.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         if len(space.context_path) == 0:
             self.draw_without_context_path(layout)
@@ -104,6 +119,7 @@ class SPREADSHEET_HT_header(bpy.types.Header):
 
 classes = (
     SPREADSHEET_HT_header,
+    ALL_MT_editormenu,
 )
 
 if __name__ == "__main__":  # Only for live edit.
