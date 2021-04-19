@@ -1013,7 +1013,7 @@ const bTheme U_theme_default = {
     .gp_vertex_size = 3,
   },
   .space_spreadsheet = {
-    .back = RGBA(0x28282800),
+    .back = RGBA(0x40404000),
     .title = RGBA(0xffffffff),
     .text = RGBA(0xc3c3c3ff),
     .text_hi = RGBA(0xffffffff),
@@ -1042,7 +1042,7 @@ const bTheme U_theme_default = {
     .selected_object = RGBA(0xe96a00ff),
     .active_object = RGBA(0xffaf29ff),
     .edited_object = RGBA(0x00806266),
-    .row_alternate = RGBA(0xffffff07),
+    .row_alternate = RGBA(0xffffff06),
   },
   .tarm = {
     {
