@@ -27,6 +27,10 @@ Sorts CMake path lists
 import os
 import sys
 
+from typing import (
+    Optional,
+)
+
 PWD = os.path.dirname(__file__)
 sys.path.append(os.path.join(PWD, "modules"))
 
@@ -47,11 +51,11 @@ SOURCE_EXT = (
     ".m", ".mm",
 )
 
-def sort_cmake_file_lists(fn, data_src):
+def sort_cmake_file_lists(fn: str, data_src: str) -> Optional[str]:
     fn_dir = os.path.dirname(fn)
     lines = data_src.splitlines(keepends=True)
 
-    def can_sort(l):
+    def can_sort(l: str) -> bool:
         l = l.split("#", 1)[0].strip()
         # Source files.
         if l.endswith(SOURCE_EXT):
@@ -63,8 +67,9 @@ def sort_cmake_file_lists(fn, data_src):
         # Libs.
         if l.startswith(("bf_", "extern_")) and "." not in l and "/" not in l:
             return True
+        return False
 
-    def can_sort_compat(a, b):
+    def can_sort_compat(a: str, b: str) -> bool:
         # Strip comments.
         a = a.split("#", 1)[0]
         b = b.split("#", 1)[0]
@@ -74,14 +79,14 @@ def sort_cmake_file_lists(fn, data_src):
             # return False
 
             # Compare loading paths.
-            a = a.split("/")
-            b = b.split("/")
-            if len(a) == 1 and len(b) == 1:
+            a_ls = a.split("/")
+            b_ls = b.split("/")
+            if len(a_ls) == 1 and len(b_ls) == 1:
                 return True
-            if len(a) == len(b):
-                if len(a) == 1:
+            if len(a_ls) == len(b_ls):
+                if len(a_ls) == 1:
                     return True
-                if a[:-1] == b[:-1]:
+                if a_ls[:-1] == b_ls[:-1]:
                     return True
         return False
 
@@ -103,6 +108,7 @@ def sort_cmake_file_lists(fn, data_src):
     data_dst = "".join(lines)
     if data_src != data_dst:
         return data_dst
+    return None
 
 
 run(

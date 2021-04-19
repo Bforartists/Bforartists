@@ -29,6 +29,11 @@ import os
 import sys
 import re
 
+from typing import (
+    Dict,
+    Optional,
+)
+
 PWD = os.path.dirname(__file__)
 sys.path.append(os.path.join(PWD, "modules"))
 
@@ -52,12 +57,12 @@ SOURCE_EXT = (
 re_words = re.compile("[A-Za-z_][A-Za-z_0-9]*")
 re_match_struct = re.compile(r"struct\s+([A-Za-z_][A-Za-z_0-9]*)\s*;")
 
-def clean_structs(fn, data_src):
+def clean_structs(fn: str, data_src: str) -> Optional[str]:
     import re
 
-    word_occurance = {}
-    for w in re_words.finditer(data_src):
-        w = w.group(0)
+    word_occurance: Dict[str, int] = {}
+    for w_match in re_words.finditer(data_src):
+        w = w_match.group(0)
         try:
             word_occurance[w] += 1
         except KeyError:
@@ -80,6 +85,7 @@ def clean_structs(fn, data_src):
     data_dst = "".join(lines)
     if data_src != data_dst:
         return data_dst
+    return None
 
 run(
     directories=[os.path.join(SOURCE_DIR, d) for d in SOURCE_DIRS],
