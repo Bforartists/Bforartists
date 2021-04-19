@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -330,8 +330,8 @@ msgid "Edge"
 msgstr "ขอบ"
 
 
-msgid "Polygon"
-msgstr "โพลิกอน"
+msgid "Face"
+msgstr "ด้าน"
 
 
 msgid "Curve"
@@ -2176,10 +2176,6 @@ msgid "Edge Data"
 msgstr "ข้อมูลขอบ"
 
 
-msgid "Face"
-msgstr "ด้าน"
-
-
 msgid "Face Data"
 msgstr "ข้อมูลด้าน"
 
@@ -2254,6 +2250,10 @@ msgstr "รอยต่อ"
 
 msgid "Triangle Area"
 msgstr "พื้นที่สามเหลี่ยม"
+
+
+msgid "Polygon"
+msgstr "โพลิกอน"
 
 
 msgid "Polygon Area"

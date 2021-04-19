@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'14caab725799')\n"
+"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -891,6 +891,10 @@ msgstr "Pontos"
 
 msgid "Edge"
 msgstr "Arestas"
+
+
+msgid "Face"
+msgstr "Faces"
 
 
 msgid "Curve"
@@ -6436,10 +6440,6 @@ msgstr "Inverter"
 
 msgid "Multi-Word Fuzzy Filter"
 msgstr "Filtro múltiplo para palavras difusas "
-
-
-msgid "Perform fuzzy/multi-word matching (WARNING: May be slow)"
-msgstr "Perfaz uma pesquisa que busca combinações de múltiplas palavras difundidas. AVISO: Pode ser lento."
 
 
 msgid "Driver for the value of a setting based on an external value"
@@ -14253,6 +14253,10 @@ msgid "Use topology based mirroring (for when both sides of mesh have matching, 
 msgstr "Usa o espelhamento com base em topologia (para quanto ambos os lados da malha possuírem uma topologia única, similar)."
 
 
+msgid "Mirror Vertex Groups"
+msgstr "Espelhar o grupo de vértices"
+
+
 msgid "Paint Mask"
 msgstr "Máscara de pintura"
 
@@ -14879,10 +14883,6 @@ msgstr "Acesso da matriz para localização, rotação e escala (incluindo os de
 
 msgid "Local Matrix"
 msgstr "Matriz local"
-
-
-msgid "Parent relative transformation matrix - WARNING: Only takes into account 'Object' parenting, so e.g. in case of bone parenting you get a matrix relative to the Armature object, not to the actual parent bone"
-msgstr "Matriz de transformação relativa ao parente do objeto - AVISO: Leva em consideração somente o parentesco do \"Objeto\", portanto, por exemplo em caso de parentesco de ossos você obterá uma matriz relacionada ao objeto de armação, e não ao osso atual definido como o parente."
 
 
 msgid "Inverse of object's parent matrix at time of parenting"
@@ -21218,10 +21218,6 @@ msgid "Edge Data"
 msgstr "Dados das arestas"
 
 
-msgid "Face"
-msgstr "Faces"
-
-
 msgid "Face Data"
 msgstr "Dados das faces"
 
@@ -23376,10 +23372,6 @@ msgstr "Espelhar U"
 
 msgid "Mirror V"
 msgstr "Espelhar V"
-
-
-msgid "Mirror Vertex Groups"
-msgstr "Espelhar o grupo de vértices"
 
 
 msgid "Mirror vertex groups (e.g. .R->.L)"
@@ -27950,10 +27942,6 @@ msgid "Equal"
 msgstr "Igual"
 
 
-msgid "Int"
-msgstr "Inteiro"
-
-
 msgid "Cross Product"
 msgstr "Produto vetorial"
 
@@ -28765,6 +28753,10 @@ msgstr "Nome do conector"
 
 msgid "Data type of the socket"
 msgstr "Tipo de dados do conector."
+
+
+msgid "Int"
+msgstr "Inteiro"
 
 
 msgid "From node"
@@ -30150,10 +30142,6 @@ msgstr "Definir fotograma inicial"
 msgctxt "Operator"
 msgid "Update Animated Transform Constraints"
 msgstr "Atualizar as restrições de transformações de animação"
-
-
-msgid "Convert fcurves/drivers affecting rotations to radians (Warning: use this only once!)"
-msgstr "Converte controladores ou curvas-f que afetam as conversões de rotações para radianos. AVISO: use somente uma vez !"
 
 
 msgctxt "Operator"
@@ -34915,14 +34903,6 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Desbloquear todas as camadas"
@@ -38253,10 +38233,6 @@ msgid "Sort selected elements from nearest to farthest from 3D cursor"
 msgstr "Ordena os elementos selecionados a partir do mais próximo ao mais distante a partir do cursor 3D."
 
 
-msgid "Move all selected elements in first places, preserving their relative order (WARNING: this will affect unselected elements' indices as well!)"
-msgstr "Move todos os elementos selecionados para os primeiros lugares, preservando a sua ordem relativa (AVISO: Isso irá afetar também os índices de elementos não selecionados !)"
-
-
 msgid "Randomize order of selected elements"
 msgstr "Aleatoriza a ordem dos elementos selecionados."
 
@@ -39703,10 +39679,6 @@ msgstr "Fator a ser utilizado durante a aplicação dos dados na destinação (o
 
 msgid "Auto Transform"
 msgstr "Transformações automáticas"
-
-
-msgid "Automatically compute transformation to get the best possible match between source and destination meshes (WARNING: results will never be as good as manual matching of objects)"
-msgstr "Computa as transformações automaticamente para obter a melhor combinação possível entre as malhas de fonte e destinação (AVISO: os resultados nunca serão tão bons quanto a combinação manual de objetos)."
 
 
 msgid "Create Data"
@@ -41568,10 +41540,6 @@ msgstr "Operação de bibliotecas no organizador"
 
 msgid "Library Operation"
 msgstr "Operações para bibliotecas"
-
-
-msgid "Delete this library and all its item from Blender - WARNING: no undo"
-msgstr "Apaga esta biblioteca e todos os seus itens presentes no Blender - AVISO: Operação não poderá ser desfeita !"
 
 
 msgid "Relocate"
@@ -47227,6 +47195,11 @@ msgid "Background image index to remove"
 msgstr "Índice de imagem de plano de fundo para remover."
 
 
+msgctxt "Operator"
+msgid "Select Menu"
+msgstr "Menu para seleção"
+
+
 msgid "Set camera view to active view"
 msgstr "Define a visão de câmara para a vista ativa."
 
@@ -47378,11 +47351,6 @@ msgstr "Permite selecionar os itens usando um círculo para a pintura de abrang�
 
 msgid "Select items using lasso selection"
 msgstr "Permite selecionar os itens usando o desenho de um laço com formato de abrangência livre."
-
-
-msgctxt "Operator"
-msgid "Select Menu"
-msgstr "Menu para seleção"
 
 
 msgid "Menu object selection"
@@ -49457,10 +49425,6 @@ msgid "Cloth Presets"
 msgstr "Predefinições de tecido"
 
 
-msgid "Spot Shape"
-msgstr "Formato do foco"
-
-
 msgid "Ray Visibility"
 msgstr "Visibilidade dos raios projetados"
 
@@ -49567,6 +49531,10 @@ msgstr "Animação de caminho"
 
 msgid "Skeleton"
 msgstr "Esqueleto"
+
+
+msgid "Spot Shape"
+msgstr "Formato do foco"
 
 
 msgid "Text Boxes"
@@ -52695,10 +52663,6 @@ msgid "AO Bounces"
 msgstr "Rebatimentos para OA"
 
 
-msgid "Approximate indirect light with background tinted ambient occlusion at the specified bounce, 0 disables this feature"
-msgstr "A iluminação indireta aproximada fornecida pelo tingimento presente no plano de fundo através da oclusão ambiente, pela quantidade de rebatimentos definida. Um valor 0 (zero) desabilita esta funcionalidade."
-
-
 msgid "AO Bounces Render"
 msgstr "Rebatimentos de renderização para OA"
 
@@ -54225,10 +54189,6 @@ msgstr "Sobrescreve os ficheiros existentes durante a renderização."
 
 msgid "Persistent Data"
 msgstr "Dados persistentes"
-
-
-msgid "Keep render data around for faster re-renders"
-msgstr "Mantém os dados de renderização alocados para re-renderizações rápidas."
 
 
 msgid "Placeholders"
@@ -56703,6 +56663,14 @@ msgstr "Contorno"
 
 msgid "Dash"
 msgstr "Mostrador"
+
+
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
 
 
 msgid "Overlay Mode"
@@ -60116,10 +60084,6 @@ msgid "Unified Paint Settings"
 msgstr "Definições unificadas de pintura"
 
 
-msgid "WPaint Auto-Normalize"
-msgstr "Normalização automática de pintura de pesos"
-
-
 msgid "Ensure all bone-deforming vertex groups add up to 1.0 while weight painting"
 msgstr "Assegura que todos os grupos de vértices de deformação por ossos adicionam até 1.0 durante a pintura de pesos."
 
@@ -60170,10 +60134,6 @@ msgstr "Inserção automática de fotograma chave usando somente o conjunto de i
 
 msgid "Automatically merge vertices moved to the same location"
 msgstr "Funde automaticamente os vértices movidos para a mesma localização ou sobrepostos."
-
-
-msgid "WPaint Multi-Paint"
-msgstr "Pintura múltipla para pintura de pesos"
 
 
 msgid "Paint across the weights of all selected bones, maintaining their relative influence"
@@ -61672,10 +61632,6 @@ msgid "Tiles X"
 msgstr "Ladrilhos em X"
 
 
-msgid "Persistent Images"
-msgstr "Imagens persistentes"
-
-
 msgid "Feature Strength"
 msgstr "Força das funcionalidades"
 
@@ -62114,12 +62070,12 @@ msgid "Protected Layers:"
 msgstr "Camadas protegidas:"
 
 
-msgid "Axes"
-msgstr "Eixos"
-
-
 msgid "Shapes"
 msgstr "Formatos"
+
+
+msgid "Axes"
+msgstr "Eixos"
 
 
 msgctxt "Operator"
@@ -62575,10 +62531,6 @@ msgstr "Malha dinâmica"
 
 msgid "Structural"
 msgstr "Rigidez estrutural"
-
-
-msgid "Enable physics for:"
-msgstr "Ativar físicas para:"
 
 
 msgctxt "Operator"
@@ -65823,11 +65775,6 @@ msgstr "Redefinir tudo para os valores padrão"
 msgctxt "Operator"
 msgid "Reset Single to Default Value"
 msgstr "Redefinir único ao seu valor padrão"
-
-
-msgctxt "Operator"
-msgid "Unset"
-msgstr "Não definido"
 
 
 msgctxt "Operator"
