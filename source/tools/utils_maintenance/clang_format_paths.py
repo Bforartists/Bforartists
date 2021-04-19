@@ -5,7 +5,7 @@ import os
 import sys
 import subprocess
 
-VERSION_MIN = (6, 0, 0)
+VERSION_MIN = (8, 0, 0)
 VERSION_MAX_RECOMMENDED = (9, 0, 1)
 CLANG_FORMAT_CMD = "clang-format"
 
