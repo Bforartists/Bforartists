@@ -117,19 +117,31 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
         rd = scene.render
 
         col = layout.column(align=True)
-        col.prop(rd, "resolution_x", text="Resolution X")
-        col.prop(rd, "resolution_y", text="Y")
-        col.prop(rd, "resolution_percentage", text="%")
+        col.label(text = "Resolution")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "resolution_x", text="X")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "resolution_y", text="Y")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "resolution_percentage", text="Percent %")
 
         col = layout.column(align=True)
-        col.prop(rd, "pixel_aspect_x", text="Aspect X")
-        col.prop(rd, "pixel_aspect_y", text="Y")
-            
-            
+        col.label(text = "Aspect")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "pixel_aspect_x", text="X")
+        row = col.row()
+        row.separator()
+        row.prop(rd, "pixel_aspect_y", text="Y")
+
+
         split = layout.split(factor=.4)
         split.use_property_split=False
         split.prop(rd, "use_border")
-        
+
         split.alignment = 'LEFT'
         if rd.use_border:
             split.use_property_split = False
@@ -139,9 +151,16 @@ class RENDER_PT_dimensions(RenderOutputButtonsPanel, Panel):
 
 
         col = layout.column(align=True)
-        col.prop(scene, "frame_start", text="Frame Start")
-        col.prop(scene, "frame_end", text="End")
-        col.prop(scene, "frame_step", text="Step")
+        col.label(text = "Frame")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "frame_start", text="Start")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "frame_end", text="End")
+        row = col.row()
+        row.separator()
+        row.prop(scene, "frame_step", text="Step")
 
         col = layout.column(heading="Frame Rate")
         self.draw_framerate(col, rd)
@@ -442,7 +461,7 @@ class RENDER_PT_encoding_video(RenderOutputButtonsPanel, Panel):
         layout.prop(ffmpeg, "ffmpeg_preset")
         # I-frames
         layout.prop(ffmpeg, "gopsize")
-        # B-Frames      
+        # B-Frames
         split = layout.split( factor = 0.39)
         col = split.column()
         col.use_property_split = False
