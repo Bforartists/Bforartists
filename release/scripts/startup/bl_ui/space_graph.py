@@ -237,7 +237,7 @@ class GRAPH_MT_view(Menu):
         layout = self.layout
 
         st = context.space_data
-
+        layout.prop(st, "show_region_channels") # bfa - channels
         layout.prop(st, "show_region_ui")
         layout.prop(st, "show_region_hud")
 
