@@ -152,6 +152,7 @@ class NLA_MT_view(Menu):
 
         st = context.space_data
 
+        layout.prop(st, "show_region_channels") # bfa - channels
         layout.prop(st, "show_region_ui")
 
         layout.separator()
