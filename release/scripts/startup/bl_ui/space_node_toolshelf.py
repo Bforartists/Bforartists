@@ -3807,7 +3807,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Grid                      ", icon = "MESH_GRID")
             props.use_transform = True
-            props.type = "GeometryNodeMeshPlane"
+            props.type = "GeometryNodeMeshGrid"
 
             props = col.operator("node.add_node", text=" UV Sphere                ", icon = "MESH_UVSPHERE")
             props.use_transform = True
@@ -3850,7 +3850,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
 
             props = row.operator("node.add_node", text = "", icon = "MESH_GRID")
             props.use_transform = True
-            props.type = "GeometryNodeMeshPlane"
+            props.type = "GeometryNodeMeshGrid"
 
             props = row.operator("node.add_node", text = "", icon = "MESH_UVSPHERE")
             props.use_transform = True
