@@ -5880,6 +5880,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("object.transfer_mode", {"type": 'D', "value": 'RELEASE'}, None),
     ],
    },
   ),
