@@ -1,4 +1,4 @@
-keyconfig_version = (2, 93, 13)
+keyconfig_version = (3, 0, 0)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -4800,7 +4800,7 @@ keyconfig_data = \
       },
      ),
     ("object.hide_view_set",
-   {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True},
+     {"type": 'H', "value": 'PRESS', "shift": True, "repeat": True},
      {"properties":
       [("unselected", True),
        ],
@@ -5880,6 +5880,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("object.transfer_mode", {"type": 'D', "value": 'RELEASE'}, None),
     ],
    },
   ),

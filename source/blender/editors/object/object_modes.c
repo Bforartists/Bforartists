@@ -548,8 +548,9 @@ void OBJECT_OT_transfer_mode(wmOperatorType *ot)
   ot->name = "Transfer Mode";
   ot->idname = "OBJECT_OT_transfer_mode";
   ot->description =
-      "Switches the active object and assigns the same mode to a new one under the mouse cursor, "
-      "leaving the active mode in the current one";
+      "Switch to another object without leaving the mode\nHotkey in the default keymap: D\nThe "
+      "menu operator calls an object picker\nThe hotkey switches directly to the object under the "
+      "mouse";
 
   /* api callbacks */
   ot->invoke = object_transfer_mode_invoke;
