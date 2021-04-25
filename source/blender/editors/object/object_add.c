@@ -3126,23 +3126,21 @@ static int object_convert_exec(bContext *C, wmOperator *op)
 static void object_convert_ui(bContext *UNUSED(C), wmOperator *op)
 {
   uiLayout *layout = op->layout;
-  PointerRNA ptr;
 
-  RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
   uiLayoutSetPropSep(layout, true); /*bfa - split*/
-  uiItemR(layout, &ptr, "target", 0, NULL, ICON_NONE);
+  uiItemR(layout, op->ptr, "target", 0, NULL, ICON_NONE);
   uiLayoutSetPropSep(layout, false); /*bfa - boolean, don't split*/
-  uiItemR(layout, &ptr, "keep_original", 0, NULL, ICON_NONE);
+  uiItemR(layout, op->ptr, "keep_original", 0, NULL, ICON_NONE);
 
-  if (RNA_enum_get(&ptr, "target") == OB_GPENCIL) {
+  if (RNA_enum_get(op->ptr, "target") == OB_GPENCIL) {
     uiLayoutSetPropSep(layout, true); /*bfa - split*/
-    uiItemR(layout, &ptr, "thickness", 0, NULL, ICON_NONE);
-    uiItemR(layout, &ptr, "angle", 0, NULL, ICON_NONE);
-    uiItemR(layout, &ptr, "offset", 0, NULL, ICON_NONE);
+    uiItemR(layout, op->ptr, "thickness", 0, NULL, ICON_NONE);
+    uiItemR(layout, op->ptr, "angle", 0, NULL, ICON_NONE);
+    uiItemR(layout, op->ptr, "offset", 0, NULL, ICON_NONE);
 
     uiLayoutSetPropSep(layout, false); /*bfa - boolean, don't split*/
-    uiItemR(layout, &ptr, "seams", 0, NULL, ICON_NONE);
-    uiItemR(layout, &ptr, "faces", 0, NULL, ICON_NONE);
+    uiItemR(layout, op->ptr, "seams", 0, NULL, ICON_NONE);
+    uiItemR(layout, op->ptr, "faces", 0, NULL, ICON_NONE);
   }
 }
 
