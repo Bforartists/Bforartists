@@ -110,6 +110,10 @@ class INFO_MT_area(Menu):
         layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA')
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon='FULLSCREEN_ENTER').use_hide_panels = True
 
+        layout.separator()
+
+        layout.operator("screen.area_close", icon = "PANEL_CLOSE")
+
 
 class INFO_MT_context_menu(Menu):
     bl_label = "Info Context Menu"
