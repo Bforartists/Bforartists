@@ -173,7 +173,7 @@ def SVGParseTransform(transform):
     """
 
     m = Matrix()
-    r = re.compile('\s*([A-z]+)\s*\((.*?)\)')
+    r = re.compile(r'\s*([A-z]+)\s*\((.*?)\)')
 
     for match in r.finditer(transform):
         func = match.group(1)
@@ -195,7 +195,7 @@ def SVGGetMaterial(color, context):
     """
 
     materials = context['materials']
-    rgb_re = re.compile('^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,(\d+)\s*\)\s*$')
+    rgb_re = re.compile(r'^\s*rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,(\d+)\s*\)\s*$')
 
     if color in materials:
         return materials[color]
@@ -405,6 +405,7 @@ class SVGPathData:
 
         spaces = ' ,\t'
         commands = {'m', 'l', 'h', 'v', 'c', 's', 'q', '', 't', 'a', 'z'}
+        current_command = ''
         tokens = []
 
         i = 0
@@ -416,8 +417,22 @@ class SVGPathData:
                 pass
             elif c.lower() in commands:
                 tokens.append(c)
+                current_command = c
+                arg_index = 1
             elif c in ['-', '.'] or c.isdigit():
-                token, last_char = read_float(d, i)
+                # Special case for 'a/A' commands.
+                # Arguments 4 and 5 are either 0 or 1 and might not
+                # be separated from the next argument with space or comma.
+                if current_command.lower() == 'a':
+                    if arg_index % 7 in [4,5]:
+                        token = d[i]
+                        last_char = i + 1
+                    else:
+                        token, last_char = read_float(d, i)
+                else:
+                    token, last_char = read_float(d, i)
+
+                arg_index += 1
                 tokens.append(token)
 
                 # in most cases len(token) and (last_char - i) are the same
