@@ -6936,6 +6936,7 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem eevee_volumetric_tile_size_items[] = {
+      {2, "1", 0, "1 px", ""},
       {2, "2", 0, "2 px", ""},
       {4, "4", 0, "4 px", ""},
       {8, "8", 0, "8 px", ""},
@@ -7149,7 +7150,8 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   RNA_def_property_ui_text(prop,
                            "Tile Size",
                            "Control the quality of the volumetric effects "
-                           "(lower size increase vram usage and quality)");
+                           "(lower sizes increase quality, vram usage"
+                           "and render times)");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 
