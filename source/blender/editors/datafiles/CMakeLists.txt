@@ -300,7 +300,7 @@ attribute_maprange
 lock_to_camview_on
 action_tweak_solo
 transfer_sculpt
-#~ DEF_ICON_BLANK(319)
+switch
 #~ DEF_ICON_BLANK(320)
 #~ DEF_ICON_BLANK(321)
 #~ DEF_ICON_BLANK(322)

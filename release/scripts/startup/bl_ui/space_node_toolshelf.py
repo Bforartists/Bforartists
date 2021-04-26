@@ -4054,6 +4054,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
+            
+            props = col.operator("node.add_node", text=" Switch               ", icon = "SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeSwitch"
 
         #### Icon Buttons
 
@@ -4081,6 +4085,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
+            
+            props = row.operator("node.add_node", text = "", icon = "SWITCH")
+            props.use_transform = True
+            props.type = "GeometryNodeSwitch"
 
 
 #add vector panel
