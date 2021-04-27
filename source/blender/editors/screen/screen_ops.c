@@ -4162,7 +4162,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
   uiItemFullO(layout,
               "SCREEN_OT_area_split",
               IFACE_("Vertical Split"),
-              ICON_NONE,
+              ICON_SPLIT_VERTICAL,
               NULL,
               WM_OP_INVOKE_DEFAULT,
               0,
@@ -4175,7 +4175,7 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
   uiItemFullO(layout,
               "SCREEN_OT_area_split",
               IFACE_("Horizontal Split"),
-              ICON_NONE,
+              ICON_SPLIT_HORIZONTAL,
               NULL,
               WM_OP_INVOKE_DEFAULT,
               0,
@@ -4189,14 +4189,14 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
   if (area->spacetype != SPACE_FILE) {
     uiItemO(layout,
             area->full ? IFACE_("Restore Areas") : IFACE_("Maximize Area"),
-            ICON_NONE,
+            ICON_MAXIMIZE_AREA,
             "SCREEN_OT_screen_full_area");
 
     if (!area->full) {
       uiItemFullO(layout,
                   "SCREEN_OT_screen_full_area",
                   IFACE_("Full Screen Area"),
-                  ICON_NONE,
+                  ICON_FULLSCREEN_ENTER,
                   NULL,
                   WM_OP_INVOKE_DEFAULT,
                   0,
@@ -4205,9 +4205,9 @@ static void screen_area_menu_items(ScrArea *area, uiLayout *layout)
     }
   }
 
-  uiItemO(layout, NULL, ICON_NONE, "SCREEN_OT_area_dupli");
+  uiItemO(layout, NULL, ICON_NEW_WINDOW, "SCREEN_OT_area_dupli");
   uiItemS(layout);
-  uiItemO(layout, NULL, ICON_NONE, "SCREEN_OT_area_close");
+  uiItemO(layout, NULL, ICON_PANEL_CLOSE, "SCREEN_OT_area_close");
 }
 
 // bfa - show hide the editorsmenu
@@ -4470,7 +4470,7 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
 
    if (!ELEM(area->spacetype, SPACE_TOPBAR)) {
     uiItemS(layout);
-    uiItemO(layout, but_flip_str, ICON_NONE, "SCREEN_OT_region_flip");
+     uiItemO(layout, but_flip_str, ICON_FLIP, "SCREEN_OT_region_flip");
     /* bfa - show hide the editortypemenu*/
     uiItemO(layout,
             IFACE_("Hide Editortype menu"),
