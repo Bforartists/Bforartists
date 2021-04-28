@@ -418,10 +418,6 @@ class SEQUENCER_MT_view(Menu):
         props.value_2 = 'PREVIEW'
         layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.separator()
-
-        layout.menu("INFO_MT_area")
-
 
 class SEQUENCER_MT_export(Menu):
     bl_label = "Export"
