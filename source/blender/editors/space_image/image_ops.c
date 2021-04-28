@@ -2053,17 +2053,27 @@ static bool image_save_as_poll(bContext *C)
   return true;
 }
 
+/*bfa - descriptions*/
+static char *image_ot_save_as_get_description(bContext *UNUSED(C),
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "copy")) {
+    return BLI_strdup("Saves a copy of the current Image");
+  }
+  return NULL;
+}
+
 void IMAGE_OT_save_as(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Save As Image";
   ot->idname = "IMAGE_OT_save_as";
-  ot->description =
-      "Sace as Image saves the image with another name and/or settings\n "
-      "Save a Copy saves a copy of the current Image";
+  ot->description = "Saves the image with another name and/or settings"; /*bfa - descriptions*/
 
   /* api callbacks */
   ot->exec = image_save_as_exec;
+  ot->get_description = image_ot_save_as_get_description;
   ot->check = image_save_as_check;
   ot->invoke = image_save_as_invoke;
   ot->cancel = image_save_as_cancel;
