@@ -162,8 +162,8 @@ class TEXT_PT_properties(Panel):
 
         text = st.text
         if text:
-            layout.prop(text, "indentation")    
-        
+            layout.prop(text, "indentation")
+
         flow = layout.column_flow()
         split = flow.split(factor = 0.66)
         split.use_property_split = False
@@ -171,8 +171,8 @@ class TEXT_PT_properties(Panel):
         if st.show_margin:
             split.label(icon='DISCLOSURE_TRI_DOWN')
         else:
-            split.label(icon='DISCLOSURE_TRI_RIGHT')  
-        
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
         if st.show_margin:
 
             col = flow.column()
@@ -230,10 +230,6 @@ class TEXT_MT_view(Menu):
 
         layout.operator("text.move", text="Top of File", icon = "MOVE_UP").type = 'FILE_TOP'
         layout.operator("text.move", text="Bottom of File",icon = "MOVE_DOWN").type = 'FILE_BOTTOM'
-
-        layout.separator()
-
-        layout.menu("INFO_MT_area")
 
 
 #Redraw timer sub menu - Debug stuff

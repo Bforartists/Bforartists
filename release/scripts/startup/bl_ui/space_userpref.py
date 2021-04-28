@@ -89,17 +89,7 @@ class USERPREF_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
-        layout.menu("USERPREF_MT_view")
         layout.menu("USERPREF_MT_save_load", text="Preferences")
-
-
-class USERPREF_MT_view(Menu):
-    bl_label = "View"
-
-    def draw(self, _context):
-        layout = self.layout
-
-        layout.menu("INFO_MT_area")
 
 
 class USERPREF_MT_save_load(Menu):
@@ -309,7 +299,7 @@ class USERPREF_PT_interface_statusbar(InterfacePanel, CenterAlignMixIn, Panel):
 
         col = layout.column()
         col.label(text = "Show:")
-        
+
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         flow.use_property_split = False
@@ -692,7 +682,7 @@ class USERPREF_PT_system_video_sequencer(SystemPanel, CenterAlignMixIn, Panel):
         # edit = prefs.edit
 
         layout.prop(system, "memory_cache_limit")
-        
+
         flow = layout.grid_flow(row_major=False, columns=0, even_columns=True, even_rows=False, align=False)
 
         split = flow.split()
@@ -2376,7 +2366,6 @@ classes = (
     USERPREF_PT_navigation_bar,
     USERPREF_PT_save_preferences,
     USERPREF_MT_editor_menus,
-    USERPREF_MT_view,
     USERPREF_MT_save_load,
 
     USERPREF_PT_interface_display,
