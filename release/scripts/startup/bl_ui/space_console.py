@@ -90,8 +90,6 @@ class CONSOLE_MT_console(Menu):
 
         layout.separator()
 
-        layout.menu("INFO_MT_area")
-
 class CONSOLE_MT_edit(Menu):
     bl_label = "Edit"
 
