@@ -127,7 +127,6 @@ class IMAGE_MT_view(Menu):
 
             layout.separator()
 
-        layout.menu("INFO_MT_area")
         layout.menu("IMAGE_MT_view_pie_menus")
 
 
