@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -10342,8 +10342,8 @@ msgid "Onion Skinning"
 msgstr "Transparência (papel vegetal) "
 
 
-msgid "Mask Layer"
-msgstr "Camada de máscara"
+msgid "Use Mask"
+msgstr "Usar máscara"
 
 
 msgid "Layer"
@@ -20678,6 +20678,10 @@ msgid "Active vertex color index"
 msgstr "O índice ativo de cores de vértices."
 
 
+msgid "Mask Layer"
+msgstr "Camada de máscara"
+
+
 msgid "Single layer used for masking pixels"
 msgstr "Camada única usada para mascarar pixeis."
 
@@ -25825,10 +25829,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "Usa o canal verde da filmagem para rastreamento."
 
 
-msgid "Use Mask"
-msgstr "Usar máscara"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Usa um bloco de dados de lápis de cera como máscara para usar somente áreas especificadas como padrão durante os rastreamentos."
 
@@ -29035,6 +29035,10 @@ msgid "Input or output socket of a node"
 msgstr "Conector de entrada ou saída de um nó."
 
 
+msgid "Tooltip"
+msgstr "Dica de ferramenta"
+
+
 msgid "Socket shape"
 msgstr "Formato de conector"
 
@@ -30699,8 +30703,8 @@ msgstr "Selecionar todos os conectados"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Inverter o osso ativo ou selecionado"
+msgid "Select Mirror"
+msgstr "Selecionar espelhamento"
 
 
 msgid "Mirror the bone selection"
@@ -35128,6 +35132,14 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdivide entre os pontos contínuos selecionados dos traços adicionando pontos medianos de caminhos entre eles."
 
 
+msgid "Black"
+msgstr "Preto"
+
+
+msgid "White"
+msgstr "Branco"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Desbloquear todas as camadas"
@@ -36215,11 +36227,6 @@ msgstr "Inverte a seleção de todos os pontos de controle UVW."
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "De-seleciona vértices nas extremidades de cada região da seleção."
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Selecionar espelhamento"
 
 
 msgid "Select mirrored lattice points"
@@ -48806,10 +48813,6 @@ msgid "Edit Property"
 msgstr "Edição de propriedades"
 
 
-msgid "Tooltip"
-msgstr "Dica de ferramenta"
-
-
 msgid "Property Name"
 msgstr "Nome das propriedades"
 
@@ -57146,14 +57149,6 @@ msgid "Dash"
 msgstr "Mostrador"
 
 
-msgid "Black"
-msgstr "Preto"
-
-
-msgid "White"
-msgstr "Branco"
-
-
 msgid "Overlay Mode"
 msgstr "Modo de sobreposição"
 
@@ -64214,11 +64209,6 @@ msgstr "Estender às crianças"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Selecionar por padrão de nomes"
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Inverter ativo"
 
 
 msgctxt "Operator"

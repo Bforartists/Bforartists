@@ -304,7 +304,12 @@ static void update_visible_columns(ListBase &columns, DataSource &data_source)
       continue;
     }
 
-    used_ids.add(*column->id);
+    if (!used_ids.add(*column->id)) {
+      /* Remove duplicate columns for now. */
+      BLI_remlink(&columns, column);
+      spreadsheet_column_free(column);
+      continue;
+    }
   }
 
   data_source.foreach_default_column_ids([&](const SpreadsheetColumnID &column_id) {
@@ -399,6 +404,7 @@ static void spreadsheet_main_region_listener(const wmRegionListenerParams *param
       }
       break;
     }
+    case NC_TEXTURE:
     case NC_GEOM: {
       ED_region_tag_redraw(region);
       break;

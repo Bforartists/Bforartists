@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -13842,12 +13842,8 @@ msgid "Enable the use of lights on stroke and fill materials"
 msgstr "Activer l'usage des lumières pour les matériaux de trait et de remplissage"
 
 
-msgid "Mask Layer"
-msgstr "Calque de masquage"
-
-
-msgid "Mask pixels from underlying layers drawing"
-msgstr "Enlever tous les pixels en-dehors du dessin des calques sous-jacents"
+msgid "Use Mask"
+msgstr "Utiliser masque"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -26854,6 +26850,10 @@ msgid "Active vertex color index"
 msgstr "Indice de la couleur de vertices active"
 
 
+msgid "Mask Layer"
+msgstr "Calque de masquage"
+
+
 msgid "Single layer used for masking pixels"
 msgstr "Calque unique utilisé pour masquer les pixels"
 
@@ -32290,10 +32290,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "Utiliser le canal vert du plan pour le tracking"
 
 
-msgid "Use Mask"
-msgstr "Utiliser masque"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Utiliser un bloc de données crayon gras comme masque pour n’utiliser que les zones spécifiées du motif lors du tracking"
 
@@ -35548,6 +35544,10 @@ msgid "Input or output socket of a node"
 msgstr "Prise d’entrée ou de sortie d’un nœud"
 
 
+msgid "Tooltip"
+msgstr "Infobulle"
+
+
 msgid "Socket shape"
 msgstr "Forme de prise"
 
@@ -37295,8 +37295,8 @@ msgstr "Sélectionner tous liés"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Activer/sélectionner l’os en mirroir"
+msgid "Select Mirror"
+msgstr "Sélectionner en miroir"
 
 
 msgid "Mirror the bone selection"
@@ -42173,6 +42173,14 @@ msgid "Subdivide between continuous selected points of the stroke adding a point
 msgstr "Subdiviser les segments de traits en ajoutant un point entre ceux sélectionnés"
 
 
+msgid "Black"
+msgstr "Noir"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Déverrouiller tous les calques"
@@ -43420,11 +43428,6 @@ msgstr "Modifier la sélection de tous les points de contrôle UVW"
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "Désélectionner les vertices aux bords de chacune des régions sélectionnées"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Sélectionner en miroir"
 
 
 msgid "Select mirrored lattice points"
@@ -56964,10 +56967,6 @@ msgid "Edit Property"
 msgstr "Éditer propriété"
 
 
-msgid "Tooltip"
-msgstr "Infobulle"
-
-
 msgid "Property Name"
 msgstr "Nom de la propriété"
 
@@ -66486,14 +66485,6 @@ msgid "Dash"
 msgstr "Pointillés"
 
 
-msgid "Black"
-msgstr "Noir"
-
-
-msgid "White"
-msgstr "Blanc"
-
-
 msgid "Overlay Mode"
 msgstr "Mode de superposition"
 
@@ -74237,11 +74228,6 @@ msgstr "Sélectionner la caméra active"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Motif de sélection…"
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Inverser actif"
 
 
 msgctxt "Operator"
