@@ -436,6 +436,9 @@ def obGrp(ob, active, context):
 
 
 def obWei(ob, active, context):
+    # sanity check: are source and target both mesh objects?
+    if ob.type != 'MESH' or active.type != 'MESH':
+        return('ERROR', "objects have to be of mesh type, doing nothing")
     me_source = active.data
     me_target = ob.data
     # sanity check: do source and target have the same amount of verts?

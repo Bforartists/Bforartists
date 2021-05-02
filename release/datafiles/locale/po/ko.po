@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -12877,8 +12877,8 @@ msgid "Display annotation onion skins before and after the current frame"
 msgstr "현재 프레임 앞뒤에 어니언 스킨 주석을 표시합니다"
 
 
-msgid "Mask Layer"
-msgstr "마스크 레이어"
+msgid "Use Mask"
+msgstr "마스크를 사용"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -26299,6 +26299,10 @@ msgid "Active vertex color index"
 msgstr "활성 버텍스 컬러 인덱스"
 
 
+msgid "Mask Layer"
+msgstr "마스크 레이어"
+
+
 msgid "Single layer used for masking pixels"
 msgstr "마스킹 픽셀에 대해 사용된 싱글 레이어"
 
@@ -32517,10 +32521,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "트래킹 하는 푸티지에서 그린 채널을 사용"
 
 
-msgid "Use Mask"
-msgstr "마스크를 사용"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "트래킹 할 때 패턴의 지정된 영역 만을 사용하는 마스크로 그리스 팬슬 데이터 블럭을 사용"
 
@@ -36251,6 +36251,10 @@ msgid "Input or output socket of a node"
 msgstr "노드의 입력 또는 출력 소켓"
 
 
+msgid "Tooltip"
+msgstr "도움말"
+
+
 msgid "Socket shape"
 msgstr "소켓 모양"
 
@@ -38087,8 +38091,8 @@ msgstr "연결된 모두 선택"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "활성/선택된 본을 뒤집기"
+msgid "Select Mirror"
+msgstr "선택 미러"
 
 
 msgid "Mirror the bone selection"
@@ -43811,6 +43815,14 @@ msgid "Trim selected stroke to first loop or intersection"
 msgstr "선택한 스트로크을 첫 번째 루프 또는 교차로 다듬기"
 
 
+msgid "Black"
+msgstr "블랙"
+
+
+msgid "White"
+msgstr "화이트"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "모든 레이어를 잠금 해제"
@@ -45374,11 +45386,6 @@ msgstr "모든 UVW 컨트롤 포인트의 선택을 변경"
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "각 선택 지역의 경계에서 버텍스를 선택 해제"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "선택 미러"
 
 
 msgid "Select mirrored lattice points"
@@ -61031,10 +61038,6 @@ msgid "Default value of the property. Important for NLA mixing"
 msgstr "속성의 기본값입니다. NLA 믹싱에 중요"
 
 
-msgid "Tooltip"
-msgstr "도움말"
-
-
 msgid "Is Library Overridable"
 msgstr "Is 라이브러리 재정의성"
 
@@ -72706,16 +72709,8 @@ msgid "Display dashed black-white edges"
 msgstr "점선 흑백 에지를 표시"
 
 
-msgid "Black"
-msgstr "블랙"
-
-
 msgid "Display black edges"
 msgstr "블랙 에지를 표시"
-
-
-msgid "White"
-msgstr "화이트"
 
 
 msgid "Display white edges"
@@ -83713,18 +83708,8 @@ msgstr "활성 카메라를 선택"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "미러 선택"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "패턴을 선택..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "활성을 뒤집기"
 
 
 msgctxt "Operator"

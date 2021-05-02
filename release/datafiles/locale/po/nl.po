@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -1803,8 +1803,8 @@ msgstr "Selecteer Hiearchie"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Flip Actieve/Geselecteerde Botten"
+msgid "Select Mirror"
+msgstr "Selecteer Spiegel"
 
 
 msgctxt "Operator"
@@ -2603,11 +2603,6 @@ msgstr "Selecteer Rapport"
 msgctxt "Operator"
 msgid "Make Regular"
 msgstr "Maak Regulier"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Selecteer Spiegel"
 
 
 msgctxt "Operator"

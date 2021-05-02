@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4371,8 +4371,8 @@ msgid "Onion Skinning"
 msgstr "Lökskal"
 
 
-msgid "Mask Layer"
-msgstr "Maskera lager:"
+msgid "Use Mask"
+msgstr "Använd maximum"
 
 
 msgid "Layer"
@@ -8273,6 +8273,10 @@ msgid "Orientation"
 msgstr "Rensa Rotation"
 
 
+msgid "Mask Layer"
+msgstr "Maskera lager:"
+
+
 msgid "Render Opacity"
 msgstr "Genomskinlighet"
 
@@ -10475,10 +10479,6 @@ msgid "Use Green Channel"
 msgstr "Renderings Fönster"
 
 
-msgid "Use Mask"
-msgstr "Använd maximum"
-
-
 msgid "Normalize"
 msgstr "Normalisera"
 
@@ -11951,6 +11951,10 @@ msgid "Node Socket"
 msgstr "Markera Rad"
 
 
+msgid "Tooltip"
+msgstr "Verktygstips"
+
+
 msgid "Hide the socket"
 msgstr "Radera"
 
@@ -12911,6 +12915,11 @@ msgstr "Markera Länkad"
 msgctxt "Operator"
 msgid "Select Linked All"
 msgstr "Avmarkera Länkad"
+
+
+msgctxt "Operator"
+msgid "Select Mirror"
+msgstr "Markera Rad"
 
 
 msgctxt "Operator"
@@ -15218,6 +15227,14 @@ msgid "Snap Selection to Grid"
 msgstr "Markera Länkad"
 
 
+msgid "Black"
+msgstr "Svart"
+
+
+msgid "White"
+msgstr "Vitt"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Markera Rad"
@@ -15725,11 +15742,6 @@ msgstr "Skapa kant/yta"
 
 msgid "Change selection of all UVW control points"
 msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Markera Rad"
 
 
 msgctxt "Operator"
@@ -22580,10 +22592,6 @@ msgid "Edit Property"
 msgstr "Bild Displist"
 
 
-msgid "Tooltip"
-msgstr "Verktygstips"
-
-
 msgid "Property Name"
 msgstr "Egenskapens namn"
 
@@ -25528,14 +25536,6 @@ msgstr "Kontur"
 
 msgid "Dash"
 msgstr "Streckad"
-
-
-msgid "Black"
-msgstr "Svart"
-
-
-msgid "White"
-msgstr "Vitt"
 
 
 msgid "Length of displaying path, in frames"
@@ -28523,11 +28523,6 @@ msgstr "Markera Rad"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Markera Rad"
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Flytta Till Lager"
 
 
 msgctxt "Operator"

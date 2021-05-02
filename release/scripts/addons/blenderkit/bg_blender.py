@@ -56,6 +56,9 @@ def threadread(tcom):
     fills the data, dies.'''
     found = False
     while not found:
+        if tcom.proc.poll() is not None:
+            #process terminated
+            return
         inline = tcom.proc.stdout.readline()
         # print('readthread', time.time())
         inline = str(inline)
@@ -111,7 +114,15 @@ def bg_update():
     global bg_processes
     if len(bg_processes) == 0:
         return 2
+    #cleanup dead processes first
+    remove_processes = []
+    for p in bg_processes:
+        if p[1].proc.poll() is not None:
+            remove_processes.append(p)
+    for p in remove_processes:
+        bg_processes.remove(p)
 
+    #Parse process output
     for p in bg_processes:
         # proc=p[1].proc
         readthread = p[0]
@@ -119,26 +130,29 @@ def bg_update():
         if not readthread.is_alive():
             readthread.join()
             # readthread.
+            estring = None
             if tcom.error:
                 estring = tcom.eval_path_computing + ' = False'
-                exec(estring)
-
             tcom.lasttext = tcom.outtext
             if tcom.outtext != '':
                 tcom.outtext = ''
                 text =tcom.lasttext.replace("'","")
                 estring = tcom.eval_path_state + ' = text'
-
-                exec(estring)
             # print(tcom.lasttext)
             if 'finished successfully' in tcom.lasttext:
                 bg_processes.remove(p)
                 estring = tcom.eval_path_computing + ' = False'
-                exec(estring)
             else:
                 readthread = threading.Thread(target=threadread, args=([tcom]), daemon=True)
                 readthread.start()
                 p[0] = readthread
+            if estring:
+                try:
+                    exec(estring)
+                except Exception as e:
+                    print('Exception while reading from background process')
+                    print(e)
+
     # if len(bg_processes) == 0:
     #     bpy.app.timers.unregister(bg_update)
     if len(bg_processes) > 0:

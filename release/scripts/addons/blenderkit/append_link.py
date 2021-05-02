@@ -55,23 +55,28 @@ def append_material(file_name, matname=None, link=False, fake_user=True):
                     break;
 
             #not found yet? probably some name inconsistency then.
-            # if not found and len(data_from.materials)>0:
-            #     data_to.materials = data_from.materials[0]
-            #     matname = data_from.materials[0]
-            #     print('had to assign')
+            if not found and len(data_from.materials)>0:
+                data_to.materials = [data_from.materials[0]]
+                matname = data_from.materials[0]
+                print(f"the material wasn't found under the exact name, appended another one: {matname}")
             # print('in the appended file the name is ', matname)
 
     except Exception as e:
         print(e)
         print('failed to open the asset file')
-    # we have to find the new material :(
+    # we have to find the new material , due to possible name changes
+    mat = None
     for m in bpy.data.materials:
+        print(m.name)
         if m not in mats_before:
             mat = m
-            break
+            break;
+    #still not found?
+    if mat is None:
+        mat = bpy.data.materials.get(matname)
+
     if fake_user:
         mat.use_fake_user = True
-
     return mat
 
 

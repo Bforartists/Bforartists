@@ -655,7 +655,10 @@ def draw_callback_2d_progress(self, context):
 
     for process in bg_blender.bg_processes:
         tcom = process[1]
-        draw_progress(x, y - index * 30, '%s' % tcom.lasttext,
+        n=''
+        if tcom.name is not None:
+            n = tcom.name +': '
+        draw_progress(x, y - index * 30, '%s' % n+tcom.lasttext,
                       tcom.progress)
         index += 1
     global reports
@@ -1873,6 +1876,11 @@ class AssetBarOperator(bpy.types.Operator):
 
         context.window_manager.modal_handler_add(self)
         ui_props.assetbar_on = True
+
+        #in an exceptional case these were accessed before  drag start.
+        self.drag_start_x = 0
+        self.drag_start_y = 0
+
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
@@ -2151,6 +2159,9 @@ class RunAssetBarWithContext(bpy.types.Operator):
     bl_description = "Run assetbar with fixed context"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
+    keep_running: BoolProperty(name="Keep Running", description='', default=True, options={'SKIP_SAVE'})
+    do_search: BoolProperty(name="Run Search", description='', default=False, options={'SKIP_SAVE'})
+
     # def modal(self, context, event):
     #     return {'RUNNING_MODAL'}
 
@@ -2159,11 +2170,11 @@ class RunAssetBarWithContext(bpy.types.Operator):
         if C_dict.get('window'):  # no 3d view, no asset bar.
             preferences = bpy.context.preferences.addons['blenderkit'].preferences
             if preferences.experimental_features:
-                bpy.ops.view3d.blenderkit_asset_bar_widget(C_dict, 'INVOKE_REGION_WIN', keep_running=True,
-                                                           do_search=False)
+                bpy.ops.view3d.blenderkit_asset_bar_widget(C_dict, 'INVOKE_REGION_WIN', keep_running=self.keep_running,
+                                                           do_search=self.do_search)
 
             else:
-                bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=True, do_search=False)
+                bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=self.keep_running, do_search=self.do_search)
         return {'FINISHED'}
 
 
@@ -2208,7 +2219,7 @@ def register_ui():
         return
     km = wm.keyconfigs.addon.keymaps.new(name="Window", space_type='EMPTY')
     # asset bar shortcut
-    kmi = km.keymap_items.new(AssetBarOperator.bl_idname, 'SEMI_COLON', 'PRESS', ctrl=False, shift=False)
+    kmi = km.keymap_items.new("object.run_assetbar_fix_context", 'SEMI_COLON', 'PRESS', ctrl=False, shift=False)
     kmi.properties.keep_running = False
     kmi.properties.do_search = False
     addon_keymapitems.append(kmi)

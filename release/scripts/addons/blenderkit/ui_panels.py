@@ -17,7 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, ratings, utils, download, categories, icons, search, resolutions, ui
+from blenderkit import paths, ratings, utils, download, categories, icons, search, resolutions, ui, tasks_queue, \
+    autothumb
 
 from bpy.types import (
     Panel
@@ -35,7 +36,10 @@ from bpy.props import (
 import bpy
 import os
 import random
+import logging
 import blenderkit
+
+bk_logger = logging.getLogger('blenderkit')
 
 
 #   this was moved to separate interface:
@@ -153,6 +157,7 @@ def draw_upload_common(layout, props, asset_type, context):
         layout.prop(props, 'description')
         layout.prop(props, 'tags')
 
+
 def poll_local_panels():
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     return user_preferences.panel_behaviour == 'BOTH' or user_preferences.panel_behaviour == 'LOCAL'
@@ -189,7 +194,6 @@ def draw_panel_hdr_upload(self, context):
         draw_upload_common(layout, props, 'HDR', context)
 
 
-
 def draw_panel_hdr_search(self, context):
     s = context.scene
     props = s.blenderkit_HDR
@@ -202,6 +206,15 @@ def draw_panel_hdr_search(self, context):
 
     utils.label_multiline(layout, text=props.report)
 
+
+
+def draw_thumbnail_upload_panel(layout, props):
+    update = False
+    tex = autothumb.get_texture_ui(props.thumbnail, '.upload_preview')
+    if not tex or not tex.image:
+        return
+    box = layout.box()
+    box.template_icon(icon_value=tex.image.preview.icon_id, scale=6.0)
 
 def draw_panel_model_upload(self, context):
     ob = bpy.context.active_object
@@ -216,6 +229,9 @@ def draw_panel_model_upload(self, context):
     col = layout.column()
     if props.is_generating_thumbnail:
         col.enabled = False
+
+    draw_thumbnail_upload_panel(col, props)
+
     prop_needed(col, props, 'thumbnail', props.thumbnail)
     if bpy.context.scene.render.engine in ('CYCLES', 'BLENDER_EEVEE'):
         col.operator("object.blenderkit_generate_thumbnail", text='Generate thumbnail', icon='IMAGE')
@@ -275,6 +291,8 @@ def draw_panel_scene_upload(self, context):
     col = layout.column()
     # if props.is_generating_thumbnail:
     #     col.enabled = False
+    draw_thumbnail_upload_panel(col, props)
+
     prop_needed(col, props, 'thumbnail', props.has_thumbnail, False)
     # if bpy.context.scene.render.engine == 'CYCLES':
     #     col.operator("object.blenderkit_generate_thumbnail", text='Generate thumbnail', icon='IMAGE_COL')
@@ -288,8 +306,6 @@ def draw_panel_scene_upload(self, context):
     #     op.process_type = 'THUMBNAILER'
     # elif props.thumbnail_generating_state != '':
     #    utils.label_multiline(layout, text = props.thumbnail_generating_state)
-
-
 
     layout.prop(props, 'style')
     layout.prop(props, 'production_level')
@@ -621,15 +637,16 @@ def draw_panel_material_upload(self, context):
     draw_upload_common(layout, props, 'MATERIAL', context)
 
     # THUMBNAIL
-    row = layout.row()
+    row = layout.column()
     if props.is_generating_thumbnail:
         row.enabled = False
+
+    draw_thumbnail_upload_panel(row, props)
+
     prop_needed(row, props, 'thumbnail', props.has_thumbnail, False)
 
-
-
     if bpy.context.scene.render.engine in ('CYCLES', 'BLENDER_EEVEE'):
-        layout.operator("object.blenderkit_material_thumbnail", text='Render thumbnail with Cycles', icon='EXPORT')
+        layout.operator("object.blenderkit_generate_material_thumbnail", text='Render thumbnail with Cycles', icon='EXPORT')
     if props.is_generating_thumbnail:
         row = layout.row(align=True)
         row.label(text=props.thumbnail_generating_state, icon='RENDER_STILL')
@@ -652,8 +669,6 @@ def draw_panel_material_upload(self, context):
     layout.prop(props, 'uv')
     layout.prop(props, 'animated')
     layout.prop(props, 'texture_size_meters')
-
-
 
     # tname = "." + bpy.context.active_object.active_material.name + "_thumbnail"
     # if props.has_thumbnail and bpy.data.textures.get(tname) is not None:
@@ -971,15 +986,15 @@ class VIEW3D_PT_blenderkit_unified(Panel):
         if ui_props.asset_type_fold:
             expand_icon = 'TRIA_RIGHT'
         row = layout.row()
-        split = row.split(factor = 0.15)
-        split.prop(ui_props, 'asset_type_fold', icon = expand_icon, icon_only = True, emboss = False)
+        split = row.split(factor=0.15)
+        split.prop(ui_props, 'asset_type_fold', icon=expand_icon, icon_only=True, emboss=False)
 
         if ui_props.asset_type_fold:
             pass
-            #expanded interface with names in column
+            # expanded interface with names in column
             split = split.row()
             split.scale_x = 8
-            split.scale_y =1.6
+            split.scale_y = 1.6
             # split = row
             # split = layout.row()
         else:
@@ -1160,9 +1175,8 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
     # build search string from description and tags:
     op.keywords = asset_data['name']
     if asset_data.get('description'):
-        op.keywords += ' ' + asset_data.get('description')+' '
+        op.keywords += ' ' + asset_data.get('description') + ' '
     op.keywords += ' '.join(asset_data.get('tags'))
-
 
     if asset_data.get('canDownload') != 0:
         if len(bpy.context.selected_objects) > 0 and ui_props.asset_type == 'MODEL':
@@ -1228,7 +1242,7 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
                                                        0)  # str(utils.get_param(asset_data, 'textureResolutionMax'))
 
             elif asset_data['assetBaseId'] in s['assets used'].keys() and asset_data['assetType'] != 'hdr':
-                #HDRs are excluded from replacement, since they are always replaced.
+                # HDRs are excluded from replacement, since they are always replaced.
                 # called from asset bar:
                 print('context menu')
                 op = col.operator('scene.blenderkit_download', text='Replace asset resolution')
@@ -1286,6 +1300,16 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
             op = layout.operator('wm.blenderkit_fast_metadata', text='Fast Edit Metadata')
             op.asset_id = asset_data['id']
             op.asset_type = asset_data['assetType']
+
+            if asset_data['assetType'] == 'model':
+                op = layout.operator('object.blenderkit_regenerate_thumbnail', text='Regenerate thumbnail')
+                op.asset_index = ui_props.active_index
+
+            if asset_data['assetType'] == 'material':
+                op = layout.operator('object.blenderkit_regenerate_material_thumbnail', text='Regenerate thumbnail')
+                op.asset_index = ui_props.active_index
+                # op.asset_id = asset_data['id']
+                # op.asset_type = asset_data['assetType']
 
         if author_id == str(profile['user']['id']):
             row = layout.row()

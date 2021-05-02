@@ -71,9 +71,11 @@ class Colr:
     yellow = 1.0, 1.0, 0.0, 0.6
 
 
-# Transformation Data
-# values stored here get used for translation, scale, and rotation
 class TransDat:
+    '''
+    Transformation Data
+    values stored here get used for translation, scale, and rotation
+    '''
     placeholder = True
 
 
@@ -88,11 +90,13 @@ def set_transform_data_none():
     TransDat.arc_pts = None
 
 
-# Refreshes mesh drawing in 3D view and updates mesh coordinate
-# data so ref_pts are drawn at correct locations.
-# Using editmode_toggle to do this seems hackish, but editmode_toggle seems
-# to be the only thing that updates both drawing and coordinate info.
 def editmode_refresh():
+    '''
+    Refreshes mesh drawing in 3D view and updates mesh coordinate
+    data so ref_pts are drawn at correct locations.
+    Using editmode_toggle to do this seems hackish, but editmode_toggle seems
+    to be the only thing that updates both drawing and coordinate info.
+    '''
     if bpy.context.mode == "EDIT_MESH":
         bpy.ops.object.editmode_toggle()
         bpy.ops.object.editmode_toggle()
@@ -136,6 +140,14 @@ def flts_alm_eq(flt_a, flt_b):
     return flt_a > (flt_b - tol) and flt_a < (flt_b + tol)
 
 
+# assume both float lists are same size?
+def flt_lists_alm_eq(ls_a, ls_b, tol=0.001):
+    for i in range(len(ls_a)):
+        if not (ls_a[i] > (ls_b[i] - tol) and ls_a[i] < (ls_b[i] + tol)):
+            return False
+    return True
+
+
 # todo : replace with flt_lists_alm_eq?
 def vec3s_alm_eq(vec_a, vec_b):
     X, Y, Z = 0, 1, 2
@@ -144,14 +156,6 @@ def vec3s_alm_eq(vec_a, vec_b):
             if flts_alm_eq(vec_a[Z], vec_b[Z]):
                 return True
     return False
-
-
-# assume both float lists are same size?
-def flt_lists_alm_eq(ls_a, ls_b, tol=0.001):
-    for i in range(len(ls_a)):
-        if not (ls_a[i] > (ls_b[i] - tol) and ls_a[i] < (ls_b[i] + tol)):
-            return False
-    return True
 
 
 class MenuStore:
@@ -539,11 +543,13 @@ class TempPoint():
             print("  [" + str(i) + "]:", [self.ls[i]])
 
 
-# Basically this is just a "wrapper" around a 3D coordinate (Vector type)
-# to centralize certain Reference Point features and make them easier to
-# work with.
-# note: if co3d is None, point does not "exist"
 class ReferencePoint:
+    '''
+    Basically this is just a "wrapper" around a 3D coordinate (Vector type)
+    to centralize certain Reference Point features and make them easier to
+    work with.
+    note: if co3d is None, point does not "exist"
+    '''
     def __init__(self, ptype, colr, co3d=None):
         self.ptype = ptype  # debug?
         self.colr = colr  # color (tuple), for displaying point in 3D view
@@ -722,10 +728,12 @@ def set_meas_btn(self):
         return
 
 
-# For adding multi point without first needing a reference point
-# todo : clean up TempPoint so this function isn't needed
-# todo : find way to merge this with add_select_multi
 def new_select_multi(self):
+    '''
+    For adding multi point without first needing a reference point
+    '''
+    # todo : clean up TempPoint so this function isn't needed
+    # todo : find way to merge this with add_select_multi
     def enable_multi_mode(self):
         if self.grab_pt is not None:
             self.multi_tmp.__init__()
@@ -788,10 +796,12 @@ def exit_multi_mode(self):
     set_help_text(self, "CLICK")
 
 
-# Returns the closest object origin or vertex to the supplied 2D location
-# as 3D Vector.
-# Returns None if no found coordinate closer than minimum distance.
 def find_closest_point(loc):
+    '''
+    Returns the closest object origin or vertex to the supplied
+    2D location as a 3D Vector.
+    Returns None if no coordinates are found within the minimum distance.
+    '''
     region = bpy.context.region
     rv3d = bpy.context.region_data
     shortest_dist = 40.0  # minimum distance from loc
@@ -874,11 +884,13 @@ def closest_to_point(pt, pts):
     return closest, pt_idx
 
 
-# Can a transformation be performed? Called after measure button is clicked
-# to let user know if valid options are set before enabling pop-up to get
-# user input.
-# todo, move transf_type assignment to "point add" part of code?
 def can_transf(self):
+    '''
+    Can a transformation be performed? Called after measure button
+    is clicked to let the user know if valid options are set before
+    creating a pop-up dialog to get user input.
+    '''
+    # todo, move transf_type assignment to "point add" part of code?
     global curr_meas_stor
     success = False
     if self.pt_cnt == 2:
@@ -909,17 +921,19 @@ def can_transf(self):
     return success
 
 
-# For making sure rise over run doesn't get flipped.
 def slope_check(pt1, pt2):
+    '''For making sure rise over run doesn't get flipped.'''
     cmp_ls = []
     for i in range(len(pt1)):
         cmp_ls.append(flts_alm_eq(pt1[i], pt2[i]) or pt1[i] > pt2[i])
     return cmp_ls
 
 
-# Finds 3D location that shares same slope of line connecting Anchor and
-# Free or that is on axis line going through Anchor.
 def get_new_3d_co(self, old_dis, new_dis):
+    '''
+    Finds 3D location that shares same slope of line connecting Anchor
+    and Free or that is on axis line going through Anchor.
+    '''
     pt_anc, pt_fr = self.pts[1].co3d, self.pts[0].co3d
     if TransDat.axis_lock is None:
         if new_dis == 0:
@@ -1031,13 +1045,16 @@ def set_arc_pts(ref_pts):
     TransDat.arc_pts = arc_pts
 
 
-# Takes a ref_pts (ReferencePoints class) argument and modifies its member
-# variable lp_ls (lock pt list). The lp_ls variable is assigned a modified list
-# of 3D coordinates (if an axis lock was provided), the contents of the
-# ref_pts' rp_ls var (if no axis lock was provided), or an empty list (if there
-# wasn't enough ref_pts or there was a problem creating the modified list).
-# todo : move inside ReferencePoints class ?
 def set_lock_pts(ref_pts, pt_cnt):
+    '''
+    Takes a ref_pts (ReferencePoints class) argument and modifies
+    its member variable lp_ls (lock pt list). The lp_ls variable is
+    assigned a modified list of 3D coordinates (if an axis lock was
+    provided), the contents of the ref_pts' rp_ls var (if no axis
+    lock was provided), or an empty list (if there wasn't enough
+    ref_pts or there was a problem creating the modified list).
+    '''
+    # todo : move inside ReferencePoints class ?
     if pt_cnt < 2:
         TransDat.lock_pts = []
     elif TransDat.axis_lock is None:
@@ -1092,21 +1109,25 @@ def set_lock_pts(ref_pts, pt_cnt):
                 set_arc_pts(ref_pts)
 
 
-# Takes  new_co (Vector) and old_co (Vector) as arguments. Calculates
-# difference between the 3D locations in new_co and old_co to determine
-# the translation to apply to the selected geometry.
 def do_translation(new_co, old_co):
+    '''
+    Takes new_co (Vector) and old_co (Vector) as arguments. Calculates
+    difference between the 3D locations in new_co and old_co
+    to determine the translation to apply to the selected geometry.
+    '''
     co_chg = -(old_co - new_co)
     bpy.ops.transform.translate(value=co_chg)
 
 
-# Performs a scale transformation using the provided s_fac (scale factor)
-# argument. The scale factor is the result from dividing the user input
-# measure (new_meas_stor) by the distance between the Anchor and Free
-# (curr_meas_stor). After the scale is performed, settings are returned to
-# their "pre-scaled" state.
-# takes:  ref_pts (ReferencePoints), s_fac (float)
 def do_scale(ref_pts, s_fac):
+    '''
+    Performs a scale transformation using the provided s_fac (scale
+    factor) argument. The scale factor is the result from dividing the
+    user input measure (new_meas_stor) by the distance between the
+    Anchor and Free (curr_meas_stor). After the scale is performed,
+    settings are returned to their "pre-scaled" state.
+    takes:  ref_pts (ReferencePoints), s_fac (float)
+    '''
     # back up settings before changing them
     piv_back = deepcopy(bpy.context.tool_settings.transform_pivot_point)
     curs_back = bpy.context.scene.cursor.location.copy()
@@ -1127,18 +1148,22 @@ def do_scale(ref_pts, s_fac):
     bpy.context.tool_settings.transform_pivot_point = deepcopy(piv_back)
 
 
-# end_a, piv_pt, and end_b are Vector based 3D coordinates
-# coordinates must share a common center "pivot" point (piv_pt)
 def get_line_ang_3d(end_a, piv_pt, end_b):
+    '''
+    end_a, piv_pt, and end_b are Vector based 3D coordinates
+    coordinates must share a common center "pivot" point (piv_pt)
+    '''
     algn_a = end_a - piv_pt
     algn_b = end_b - piv_pt
     return algn_a.angle(algn_b)
 
 
-# Checks if the 3 Vector coordinate arguments (end_a, piv_pt, end_b)
-# will create an angle with a measurement matching the value in the
-# argument exp_ang (expected angle measurement).
 def ang_match3d(end_a, piv_pt, end_b, exp_ang):
+    '''
+    Checks if the 3 Vector coordinate arguments (end_a, piv_pt, end_b)
+    will create an angle with a measurement matching the value in the
+    argument exp_ang (expected angle measurement).
+    '''
     ang_meas = get_line_ang_3d(end_a, piv_pt, end_b)
     #print("end_a", end_a)  # debug
     #print("piv_pt", piv_pt)  # debug
@@ -1148,17 +1173,19 @@ def ang_match3d(end_a, piv_pt, end_b, exp_ang):
     return flts_alm_eq(ang_meas, exp_ang)
 
 
-# Calculates rotation around axis or face normal at Pivot's location.
-# Takes two 3D coordinate Vectors (piv_co and mov_co), rotation angle in
-# radians (ang_diff_rad), and rotation data storage object (rot_dat).
-# Aligns mov_co to world origin (0, 0, 0) and rotates aligned
-# mov_co (mov_aligned) around axis stored in rot_dat. After rotation,
-# removes world-origin alignment.
 def get_rotated_pt(piv_co, ang_diff_rad, mov_co):
+    '''
+    Calculates rotation around axis or face normal at Pivot's location.
+    Takes two 3D coordinate Vectors (piv_co and mov_co), rotation angle in
+    radians (ang_diff_rad), and rotation data storage object (rot_dat).
+    Aligns mov_co to world origin (0, 0, 0) and rotates aligned
+    mov_co (mov_aligned) around axis stored in rot_dat. After rotation,
+    removes world-origin alignment.
+    '''
     mov_aligned = mov_co - piv_co
     rot_val, axis_lock = [], TransDat.axis_lock
     if   axis_lock is None:  # arbitrary axis / spherical rotations
-        #print('  RotDat.piv_norm', RotDat.piv_norm,  # debug
+        #print('  TransDat.piv_norm', TransDat.piv_norm,  # debug
         #        '\n  ang_diff_rad', ang_diff_rad)  # debug
         rot_val = Quaternion(TransDat.piv_norm, ang_diff_rad)
     elif axis_lock == 'X':
@@ -1171,9 +1198,11 @@ def get_rotated_pt(piv_co, ang_diff_rad, mov_co):
     return mov_aligned + piv_co
 
 
-# Finds out whether positive TransDat.new_ang_r or negative TransDat.new_ang_r
-# will result in the desired rotation angle.
 def find_correct_rot(ref_pts, pt_cnt):
+    '''
+    Finds out whether positive TransDat.new_ang_r or negative
+    TransDat.new_ang_r will result in the desired rotation angle.
+    '''
     ang_diff_rad, new_ang_rad = TransDat.ang_diff_r, TransDat.new_ang_r
     piv_pt, move_pt = ref_pts[2].co3d, ref_pts[0].co3d
 
@@ -1182,23 +1211,25 @@ def find_correct_rot(ref_pts, pt_cnt):
     set_lock_pts(ref_pts, pt_cnt)
     lock_pts = TransDat.lock_pts
     if ang_match3d(lock_pts[1].co3d, lock_pts[2].co3d, t_co_pos, new_ang_rad):
-        #print("matched t_co_pos:", t_co_pos, ang_diff_rad)
+        #print("matched t_co_pos:", t_co_pos, "ang_diff_rad:", ang_diff_rad)
         return t_co_pos, ang_diff_rad
     else:
-        #print("matched t_co_neg:", t_co_neg, -ang_diff_rad)
+        #print("matched t_co_neg:", t_co_neg, "ang_diff_rad:", -ang_diff_rad)
         return t_co_neg, -ang_diff_rad
 
 
-# Takes 2D Pivot Point (piv) for piv to temp lines, 2 possible rotation
-# coordinates to choose between (rot_co3d_pos, rot_co3d_neg), and a
-# 2D mouse location (mouse_co) for determining which rotation coordinate
-# is closest to the cursor.
-# Returns the rotation coordinate closest to the 2d mouse position and the
-# rotation angles used to obtain the coordinates (rot_ang_rad).
-# rot_co3d_pos == rotated coordinate positive,  rot_co3d_neg == rot coor Negative
-# todo : make rot_pos_co2d and rot_neg_co2d VertObj types ?
-#def choose_0_or_180(piv, rot_co3d_pos, rot_pos_ang_rad, rot_co3d_neg, r_n_ang_r, mouse_co):
 def choose_0_or_180(piv, rot_co3d_pos, rot_co3d_neg, rot_ang_rad, mouse_co):
+    '''
+    Takes 2D Pivot Point (piv) for piv to temp lines, 2 possible rotation
+    coordinates to choose between (rot_co3d_pos, rot_co3d_neg), and a
+    2D mouse location (mouse_co) for determining which rotation coordinate
+    is closest to the cursor.
+    Returns the rotation coordinate closest to the 2d mouse position and
+    the rotation angles used to obtain the coordinates (rot_ang_rad).
+    rot_co3d_pos == rotated coordinate positive
+    rot_co3d_neg == rot coor Negative
+    '''
+    # todo : make rot_pos_co2d and rot_neg_co2d VertObj types ?
     #global reg_rv3d
     #region, rv3d = reg_rv3d[0], reg_rv3d[1]
     region = bpy.context.region
@@ -1226,10 +1257,12 @@ def choose_0_or_180(piv, rot_co3d_pos, rot_co3d_neg, rot_ang_rad, mouse_co):
     return None, None
 
 
-# Reduces the provided rotation amount (new_ms_stor) to an "equivalent" value
-# less than or equal to 180 degrees. Calculates the angle offset from
-# curr_ms_stor to achieve a new_ms_stor value.
 def prep_rotation_info(curr_ms_stor, new_ms_stor):
+    '''
+    Reduces the provided rotation amount (new_ms_stor) to an "equivalent" 
+    value less than or equal to 180 degrees. Calculates the angle offset
+    from curr_ms_stor to achieve a new_ms_stor value.
+    '''
     # workaround for negative angles and angles over 360 degrees
     if new_ms_stor < 0 or new_ms_stor > 360:
         new_ms_stor = new_ms_stor % 360
@@ -1261,15 +1294,19 @@ def create_z_orient(rot_vec):
                    (new_x.z, new_y.z, new_z.z)))
 
 
-# Uses axis_lock or piv_norm from TransDat to obtain rotation axis.
-# Then rotates selected objects or selected vertices around the
-# 3D cursor using TransDat's ang_diff_r radian value.
 def do_rotate(pivot_co):
+    '''
+    Uses axis_lock or piv_norm from TransDat to obtain rotation axis.
+    Then rotates selected objects or selected vertices around the
+    3D cursor using TransDat's ang_diff_r radian value.
+    '''
     #print("def do_rotate(self):")  # debug
 
     axis_lock = TransDat.axis_lock
     pivot = pivot_co.copy()
     constr_ax = False, False, False
+    #print("axis_lock:", axis_lock)  # debug
+    #print("TransDat.piv_norm:", TransDat.piv_norm)  # debug
     if axis_lock is None:
         constr_ax = False, False, True
         #rot_matr = Matrix.Rotation(TransDat.ang_diff_r, 4, TransDat.piv_norm)
@@ -1307,10 +1344,12 @@ def do_rotate(pivot_co):
     editmode_refresh()
 
 
-# Uses axis_lock or piv_norm from TransDat to obtain rotation axis.
-# Then rotates selected objects or selected vertices around the
-# 3D cursor using TransDat's ang_diff_r radian value.
 def do_rotate_old(self):
+    '''
+    Uses axis_lock or piv_norm from TransDat to obtain rotation axis.
+    Then rotates selected objects or selected vertices around the
+    3D cursor using TransDat's ang_diff_r radian value.
+    '''
     # back up settings before changing them
     piv_back = deepcopy(bpy.context.tool_settings.transform_pivot_point)
     curs_back = bpy.context.scene.cursor.location.copy()
@@ -1334,9 +1373,11 @@ def do_rotate_old(self):
     bpy.context.tool_settings.transform_pivot_point = deepcopy(piv_back)
 
 
-# Updates lock points and changes curr_meas_stor to use measure based on
-# lock points instead of ref_pts (for axis constrained transformations).
 def updatelock_pts(self, ref_pts):
+    '''
+    Updates lock points and changes curr_meas_stor to use measure based on
+    lock points instead of ref_pts (for axis constrained transformations).
+    '''
     global curr_meas_stor
     set_lock_pts(ref_pts, self.pt_cnt)
     if TransDat.lock_pts == []:
@@ -1356,9 +1397,11 @@ def updatelock_pts(self, ref_pts):
         curr_meas_stor = degrees(line_ang_r)
 
 
-# See if key was pressed that would require updating the axis lock info.
-# If one was, update the lock points to use new info.
 def axis_key_check(self, new_axis):
+    '''
+    See if key was pressed that would require updating the axis lock info.
+    If one was, update the lock points to use new info.
+    '''
     if self.pt_cnt > 1:
         if new_axis != TransDat.axis_lock:
             TransDat.axis_lock = new_axis
@@ -1366,8 +1409,8 @@ def axis_key_check(self, new_axis):
             set_meas_btn(self)
 
 
-# Adjusts settings so proc_click can run again for next possible transform
 def reset_settings(self):
+    '''Adjusts settings so proc_click can run again for next possible transform'''
     #print("reset_settings")  # debug
     global new_meas_stor
     new_meas_stor = None
@@ -1402,10 +1445,12 @@ def reset_settings(self):
     #    create_snap_pt(self.left_click_co, self.sel_backup)
 
 
-# runs transformation functions depending on which options are set.
-# transform functions cannot be called directly due to use of pop-up for
-# getting user input
 def do_transform(self):
+    '''
+    runs transformation functions depending on which options are set.
+    transform functions cannot be called directly due to use of pop-up
+    for getting user input
+    '''
     #print("do_transform")  # debug
     global curr_meas_stor, new_meas_stor
 
@@ -1435,10 +1480,12 @@ def do_transform(self):
         reset_settings(self)
 
 
-# Run after XEDIT_OT_meas_inp_dlg pop-up disables popup_active.
-# Checks to see if a valid number was input into the pop-up dialog and
-# determines what to do based on what value was supplied to the pop-up.
 def process_popup_input(self):
+    '''
+    Run after XEDIT_OT_meas_inp_dlg pop-up disables popup_active.
+    Checks to see if a valid number was input into the pop-up dialog and
+    determines what to do based on what value was supplied to the pop-up.
+    '''
     global curr_meas_stor, new_meas_stor
     #print("process_popup_input")  # debug
     #print("curr_meas_stor", curr_meas_stor, " new_meas_stor", new_meas_stor)  # debug
@@ -1483,8 +1530,8 @@ def draw_rot_arc(colr):
             last = p2d
 
 
-# Called when add-on mode changes and every time point is added or removed.
 def set_help_text(self, mode):
+    '''Called when add-on mode changes and every time point is added or removed.'''
     text = ""
     if mode == "CLICK":
         if self.pt_cnt == 0:
@@ -1524,6 +1571,20 @@ def draw_callback_px(self, context):
 
     lk_pts2d = None  # lock points 2D
     self.meas_btn.is_drawn = False  # todo : cleaner btn activation
+
+    # if the addon_mode is WAIT_FOR_POPUP, wait on POPUP to disable
+    # popup_active, then run process_popup_input
+    # would prefer not to do pop-up check inside draw_callback, but not sure
+    # how else to check for input. need higher level "input handler" class?
+    if self.addon_mode == WAIT_FOR_POPUP:
+        global popup_active
+        if not popup_active:
+            process_popup_input(self)
+            set_help_text(self, "CLICK")
+
+    elif self.addon_mode == GET_0_OR_180:
+        choose_0_or_180(TransDat.lock_pts[2], TransDat.rot_pt_pos,
+                TransDat.rot_pt_neg, TransDat.ang_diff_r, self.mouse_co)
 
     # note, can't chain above if-elif block in with one below as
     # it breaks axis lock drawing
@@ -1619,8 +1680,8 @@ def exit_addon(self):
     #print("\n\nAdd-On Exited\n")  # debug
 
 
-# Checks if "use_region_overlap" is enabled and X offset is needed.
 def get_reg_overlap():
+    '''Checks if "use_region_overlap" is enabled and X offset is needed.'''
     rtoolsw = 0  # region tools (toolbar) width
     #ruiw = 0  # region ui (Number/n-panel) width
     system = bpy.context.preferences.system
@@ -1664,13 +1725,13 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
                 self.shift_held = False
                 #print("\nShift released")  # debug
 
-        if event.type == 'RIGHTMOUSE' and event.value == 'PRESS':
-            if self.lmb_held:
-                bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
-                exit_addon(self)
-                return {'CANCELLED'}
-            else:
-                return {'PASS_THROUGH'}
+        if event.type == 'RIGHTMOUSE':
+            if event.value == 'PRESS':
+                if self.lmb_held:
+                    bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
+                    exit_addon(self)
+                    return {'CANCELLED'}
+            return {'PASS_THROUGH'}
 
         if event.type == 'LEFTMOUSE' and event.value == 'PRESS':
             self.lmb_held = True
@@ -1926,19 +1987,6 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             exit_addon(self)
             return {'FINISHED'}
-
-        # if the addon_mode is WAIT_FOR_POPUP, wait on POPUP to disable
-        # popup_active, then run process_popup_input
-        # would prefer not to do pop-up check inside draw_callback, but not sure
-        # how else to check for input. need higher level "input handler" class?
-        if self.addon_mode == WAIT_FOR_POPUP:
-            if not popup_active:
-                process_popup_input(self)
-                set_help_text(self, "CLICK")
-
-        elif self.addon_mode == GET_0_OR_180:
-            choose_0_or_180(TransDat.lock_pts[2], TransDat.rot_pt_pos,
-                    TransDat.rot_pt_neg, TransDat.ang_diff_r, self.mouse_co)
 
         return {'RUNNING_MODAL'}
 
