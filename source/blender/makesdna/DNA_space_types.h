@@ -1874,8 +1874,6 @@ typedef struct SpaceToolbar {
 
 typedef struct SpreadsheetColumnID {
   char *name;
-  int index;
-  char _pad[4];
 } SpreadsheetColumnID;
 
 typedef struct SpreadsheetColumn {

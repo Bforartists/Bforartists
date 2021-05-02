@@ -659,6 +659,11 @@ class FastMetadata(bpy.types.Operator):
         update=update_free_full
     )
 
+
+    ####################
+
+
+
     @classmethod
     def poll(cls, context):
         scene = bpy.context.scene
@@ -739,6 +744,7 @@ class FastMetadata(bpy.types.Operator):
                 self.subcategory = cat_path[2]
         except Exception as e:
             print(e)
+
         self.message = f"Fast edit metadata of {asset_data['name']}"
         self.name = asset_data['displayName']
         self.description = asset_data['description']

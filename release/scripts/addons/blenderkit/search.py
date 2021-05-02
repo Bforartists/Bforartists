@@ -48,7 +48,7 @@ import copy
 import json
 import math
 import unicodedata
-
+import queue
 import logging
 
 bk_logger = logging.getLogger('blenderkit')
@@ -75,7 +75,7 @@ def check_errors(rdata):
 search_threads = []
 thumb_sml_download_threads = {}
 thumb_full_download_threads = {}
-reports = ''
+reports_queue = queue.Queue()
 
 rtips = ['Click or drag model or material in scene to link/append ',
          "Please rate responsively and plentifully. This helps us distribute rewards to the authors.",
@@ -412,9 +412,10 @@ def timer_update():
 
             wm[search_name] = []
 
-            global reports
-            if reports != '':
-                props.report = str(reports)
+            global reports_queue
+
+            while not reports_queue.empty():
+                props.report = str(reports_queue.get())
                 return .2
 
             rdata = thread[0].result
@@ -628,7 +629,7 @@ def generate_tooltip(mdata):
         t += 'Size: %s x %s x %sm\n' % (fmt_length(mparams['dimensionX']),
                                      fmt_length(mparams['dimensionY']),
                                      fmt_length(mparams['dimensionZ']))
-    if has(mparams, 'faceCount'):
+    if has(mparams, 'faceCount') and mdata['assetType'] == 'model':
         t += 'Face count: %s\n' % (mparams['faceCount'])
         # t += 'face count: %s, render: %s\n' % (mparams['faceCount'], mparams['faceCountRender'])
 
@@ -709,7 +710,7 @@ def generate_tooltip(mdata):
 
         show_rating_threshold = 5
 
-        if rcount < show_rating_threshold:
+        if rcount < show_rating_threshold and mdata['assetType'] != 'hdr':
             t += f"Only assets with enough ratings \nshow the rating value. Please rate.\n"
         if rc['quality'] >= show_rating_threshold:
             # t += f"{int(mdata['ratingsAverage']['quality']) * '*'}\n"
@@ -765,26 +766,6 @@ def generate_author_textblock(adata):
     return t
 
 
-def get_items_models(self, context):
-    global search_items_models
-    return search_items_models
-
-
-def get_items_brushes(self, context):
-    global search_items_brushes
-    return search_items_brushes
-
-
-def get_items_materials(self, context):
-    global search_items_materials
-    return search_items_materials
-
-
-def get_items_textures(self, context):
-    global search_items_textures
-    return search_items_textures
-
-
 class ThumbDownloader(threading.Thread):
     query = None
 
@@ -801,7 +782,12 @@ class ThumbDownloader(threading.Thread):
         return self._stop_event.is_set()
 
     def run(self):
-        r = rerequests.get(self.url, stream=False)
+        print('thumb downloader', self.url)
+        try:
+            r = requests.get(self.url, stream=False)
+        except Exception as e:
+            bk_logger.error('Thumbnail download failed')
+            bk_logger.error(str(e))
         if r.status_code == 200:
             with open(self.path, 'wb') as f:
                 f.write(r.content)
@@ -962,6 +948,11 @@ def query_to_url(query = {}, params = {}):
     urlquery = url + requeststring
     return urlquery
 
+def parse_html_formated_error(text):
+    report = text[text.find('<title>') + 7: text.find('</title>')]
+
+    return report
+
 class Searcher(threading.Thread):
     query = None
 
@@ -982,10 +973,12 @@ class Searcher(threading.Thread):
         return self._stop_event.is_set()
 
     def run(self):
+        global reports_queue
+
         maxthreads = 50
         query = self.query
         params = self.params
-        global reports
+
 
         t = time.time()
         mt('search thread started')
@@ -999,21 +992,21 @@ class Searcher(threading.Thread):
         try:
             utils.p(self.urlquery)
             r = rerequests.get(self.urlquery, headers=self.headers)  # , params = rparameters)
-            # print(r.url)
-            reports = ''
-            # utils.p(r.text)
         except requests.exceptions.RequestException as e:
             bk_logger.error(e)
-            reports = e
-            # props.report = e
+            reports_queue.put(str(e))
             return
+
         mt('search response is back ')
         try:
             rdata = r.json()
         except Exception as e:
-            reports = r.text
-            bk_logger.error(e)
+            error_description = parse_html_formated_error(r.text)
+            reports_queue.put(error_description)
+            tasks_queue.add_task((ui.add_report, (error_description, 10, colors.RED)))
 
+            bk_logger.error(e)
+            return
         mt('data parsed ')
         if not rdata.get('results'):
             utils.pprint(rdata)

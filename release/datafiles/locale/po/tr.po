@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3528,8 +3528,8 @@ msgid "Show Points"
 msgstr "Kontrol Noktaları:"
 
 
-msgid "Mask Layer"
-msgstr "Katman Sil"
+msgid "Use Mask"
+msgstr "Kırpma Kullan"
 
 
 msgid "Layer"
@@ -6513,6 +6513,10 @@ msgid "Orientation"
 msgstr "Yönelim"
 
 
+msgid "Mask Layer"
+msgstr "Katman Sil"
+
+
 msgid "Render Opacity"
 msgstr "Sunum Sonucu"
 
@@ -8203,10 +8207,6 @@ msgid "Use Green Channel"
 msgstr "Arkaplan Resmi Kullan"
 
 
-msgid "Use Mask"
-msgstr "Kırpma Kullan"
-
-
 msgid "Normalize"
 msgstr "Normalleştir"
 
@@ -9467,6 +9467,10 @@ msgid "Node Socket"
 msgstr "Düğüm Editörü"
 
 
+msgid "Tooltip"
+msgstr "İpuçları"
+
+
 msgid "Hide the socket"
 msgstr "Aktif Grubu Sil"
 
@@ -10153,6 +10157,11 @@ msgstr "Seçim Çevresi"
 msgctxt "Operator"
 msgid "Select Linked All"
 msgstr "Tümünü Seç/Bırak"
+
+
+msgctxt "Operator"
+msgid "Select Mirror"
+msgstr "Aynalama Ekseni "
 
 
 msgctxt "Operator"
@@ -12031,6 +12040,14 @@ msgid "Snap Selection to Grid"
 msgstr "Nesneleri ızgara birimlerince ölçekle"
 
 
+msgid "Black"
+msgstr "Siyah"
+
+
+msgid "White"
+msgstr "Beyaz"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Yeni bir nokta grubu oluşturur"
@@ -12427,11 +12444,6 @@ msgstr "Z Eks"
 msgctxt "Operator"
 msgid "Make Regular"
 msgstr "Gerçek Yap"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Aynalama Ekseni "
 
 
 msgctxt "Operator"
@@ -17612,10 +17624,6 @@ msgid "Edit Property"
 msgstr "Düzenleme Modu"
 
 
-msgid "Tooltip"
-msgstr "İpuçları"
-
-
 msgid "Property Name"
 msgstr "Dosya adı"
 
@@ -20193,14 +20201,6 @@ msgstr "Diğer Pencerelerde Zamanı Kilitle"
 
 msgid "Outline"
 msgstr "Anahat"
-
-
-msgid "Black"
-msgstr "Siyah"
-
-
-msgid "White"
-msgstr "Beyaz"
 
 
 msgid "Pivot center for rotation/scaling"
@@ -22788,11 +22788,6 @@ msgstr "Çocuğu Uzat"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Seçim Kalıbı..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Aktif Çevir"
 
 
 msgctxt "Operator"

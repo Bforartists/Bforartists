@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -14708,12 +14708,8 @@ msgid "Enable the use of lights on stroke and fill materials"
 msgstr "Bật sùng đèn trên vật liệu nét và tô đầy"
 
 
-msgid "Mask Layer"
-msgstr "Lớp Mặt Nạ"
-
-
-msgid "Mask pixels from underlying layers drawing"
-msgstr "Xóa điểm ảnh từ các lớp ở phía dưới"
+msgid "Use Mask"
+msgstr "Dùng Mặt Nạ"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -30466,6 +30462,10 @@ msgid "Active vertex color index"
 msgstr "Chỉ số màu đỉnh hoạt động"
 
 
+msgid "Mask Layer"
+msgstr "Lớp Mặt Nạ"
+
+
 msgid "Single layer used for masking pixels"
 msgstr "Một lớp để làm mặt nạ điểm ảnh"
 
@@ -37720,10 +37720,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "Dùng kênh màu lục từ đoạn phim cho theo dỏi"
 
 
-msgid "Use Mask"
-msgstr "Dùng Mặt Nạ"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Dùng một cục dữ liệu bút sáp làm mặt nạ cho dùng chỉ khu vực gương mẫu được xác định khi theo dõi"
 
@@ -42462,6 +42458,10 @@ msgid "Input or output socket of a node"
 msgstr "Ổ cắm ngõ vào hay ra của một giao điểm"
 
 
+msgid "Tooltip"
+msgstr "Đề Thị Dụng Cụ"
+
+
 msgid "Socket shape"
 msgstr "Dạng Ổ Cắm"
 
@@ -44532,8 +44532,8 @@ msgstr "Chọn (thả) xương được kết nối bởi phụ huynh/con cái �
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Lặt Xương Hoạt Động/Được Chọn"
+msgid "Select Mirror"
+msgstr "Chọn Gương"
 
 
 msgid "Mirror the bone selection"
@@ -51360,6 +51360,14 @@ msgid "Switch tint colors"
 msgstr "Trao đổi màu nhiễm"
 
 
+msgid "Black"
+msgstr "Đèn"
+
+
+msgid "White"
+msgstr "Trắng"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Biến Hóa Tô Đầy Nét"
@@ -53139,11 +53147,6 @@ msgstr "Đổi sự lựa chọn của hết điểm kiểm soát UVW"
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "Thả đỉnh tại biên giới của mỗi vùng được chọn"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Chọn Gương"
 
 
 msgid "Select mirrored lattice points"
@@ -60272,15 +60275,6 @@ msgstr "Trói mạng lưới với mục đích trong cụ sửa đổi méo hó
 
 
 msgctxt "Operator"
-msgid "Switch Object"
-msgstr "Trao Đổi Vật Thể"
-
-
-msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
-msgstr "Trao đổi vật thể hoạt động và chỉ định cùng chế độ đến một cái mới ở dưới con trỏ, giữ nguyên chế độ hoạt động trong chế độ hiện tại"
-
-
-msgctxt "Operator"
 msgid "Add Text"
 msgstr "Thêm Văn Bản"
 
@@ -60321,6 +60315,10 @@ msgstr "Theo Dõi đến Ràng Buộc"
 
 msgid "Lock Track Constraint"
 msgstr "Khóa Ràng Buộc Theo Dõi"
+
+
+msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
+msgstr "Trao đổi vật thể hoạt động và chỉ định cùng chế độ đến một cái mới ở dưới con trỏ, giữ nguyên chế độ hoạt động trong chế độ hiện tại"
 
 
 msgctxt "Operator"
@@ -71945,10 +71943,6 @@ msgid "Default value of the property. Important for NLA mixing"
 msgstr "Giá trị mặc định của đặc tính. "
 
 
-msgid "Tooltip"
-msgstr "Đề Thị Dụng Cụ"
-
-
 msgid "Is Library Overridable"
 msgstr "Có Thể Thay Thế Cho Thư Viện"
 
@@ -76819,14 +76813,6 @@ msgstr "Hỗ trợ sự kiện bảng vẽ nghiêng trong Chế Độ Khắc"
 
 msgid "Use the new Vertex Painting system"
 msgstr "Dùng hệ thống Sơn Đỉnh mới"
-
-
-msgid "Switch Object Operator"
-msgstr "Trao Đổi Thao Tác Vật thể"
-
-
-msgid "Enable the operator to switch objects by pressing D"
-msgstr "Bật thao tác để trao đổi vật thể bằng bấm D"
 
 
 msgid "Undo Legacy"
@@ -85186,16 +85172,8 @@ msgid "Display dashed black-white edges"
 msgstr "Hiển thị cạnh bằng gạch ngang màu trắng đen"
 
 
-msgid "Black"
-msgstr "Đèn"
-
-
 msgid "Display black edges"
 msgstr "Hiển thị cạnh màu đen"
-
-
-msgid "White"
-msgstr "Trắng"
 
 
 msgid "Display white edges"
@@ -86930,20 +86908,8 @@ msgid "Object Evaluation State"
 msgstr "Tráng Thái Tính Toán Vật Thể"
 
 
-msgid "Use data from object with all modifiers applied"
-msgstr "Dùng dữ liệu của vật thể có áp dụng hết cụ sửa đổi"
-
-
 msgid "Use data from original object without any modifiers applied"
 msgstr "Dùng dữ liệu của vật thể ban gốc mà không có cụ sửa đổi nào được áp dụng"
-
-
-msgid "Pinned ID"
-msgstr "ID Đã Đóng Đinh"
-
-
-msgid "Data-block whose values are displayed"
-msgstr "Các giá trị của cục dữ liệu nào được hiển thị"
 
 
 msgid "Show Only Selected"
@@ -99151,18 +99117,8 @@ msgstr "Chọn Máy Quay Phim Hoạt Động"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "Sự Lựa Chọn Kiểu Gương"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Chọn Gương Mẫu..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Lật Hoạt Động"
 
 
 msgctxt "Operator"
@@ -99620,11 +99576,6 @@ msgstr "Giảm Chênh Lệch"
 msgctxt "Operator"
 msgid "Expand Mask by Topology"
 msgstr "Mở Rộng Mặt Nạ bằng Hình Dạng Học"
-
-
-msgctxt "Operator"
-msgid "Expand Mask by Curvature"
-msgstr "Mở Rộng Mặt Nạ bằng Độ Cong"
 
 
 msgctxt "Operator"

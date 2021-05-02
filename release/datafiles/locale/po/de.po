@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11260,8 +11260,8 @@ msgid "Use Lights"
 msgstr "Lichter verwenden"
 
 
-msgid "Mask Layer"
-msgstr "Maskenebene"
+msgid "Use Mask"
+msgstr "Maske benutzen"
 
 
 msgid "Solo Mode"
@@ -19527,6 +19527,10 @@ msgid "Active vertex color layer"
 msgstr "Aktive Punkt-Farbebene"
 
 
+msgid "Mask Layer"
+msgstr "Maskenebene"
+
+
 msgid "Render Opacity"
 msgstr "Render-Transparenz"
 
@@ -23320,10 +23324,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "Grünkanal vom Filmmaterial zum Verfolgen verwenden"
 
 
-msgid "Use Mask"
-msgstr "Maske benutzen"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Verwenden Sie einen Wachsstift-Datenblock als Maske, um nur bestimmte Musterbereiche beim Tracking zu verwenden"
 
@@ -26170,6 +26170,10 @@ msgid "Input or output socket of a node"
 msgstr "Eingabe- oder Ausgabebuchse eines Knotens"
 
 
+msgid "Tooltip"
+msgstr "Tooltipp"
+
+
 msgid "Socket shape"
 msgstr "Buchsenform"
 
@@ -27264,6 +27268,11 @@ msgstr "Auswahl von Knochen auf der Begrenzung jeder ausgewählten Region aufheb
 msgctxt "Operator"
 msgid "Select Linked All"
 msgstr "Verknüpfte auswählen"
+
+
+msgctxt "Operator"
+msgid "Select Mirror"
+msgstr "Spiegel auswählen"
 
 
 msgid "Select those bones connected to the initial selection"
@@ -31056,6 +31065,14 @@ msgid "Flip Colors"
 msgstr "Farben umdrehen"
 
 
+msgid "Black"
+msgstr "Schwarz"
+
+
+msgid "White"
+msgstr "Weiß"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Alle Ebenen entsperreng"
@@ -31871,11 +31888,6 @@ msgstr "W (Z)-Achse"
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "Punkte an der Begrenzung jeder ausgewählten Region abwählen"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Spiegel auswählen"
 
 
 msgid "Select vertex directly linked to already selected ones"
@@ -40630,10 +40642,6 @@ msgid "Edit Property"
 msgstr "Eigenschaft bearbeiten"
 
 
-msgid "Tooltip"
-msgstr "Tooltipp"
-
-
 msgid "Property Name"
 msgstr "Eigenschaftsname"
 
@@ -48145,16 +48153,8 @@ msgid "Display dashed black-white edges"
 msgstr "Gepunktete schwarz-weiße Kanten anzeigen"
 
 
-msgid "Black"
-msgstr "Schwarz"
-
-
 msgid "Display black edges"
 msgstr "Schwarze Kanten anzeigen"
-
-
-msgid "White"
-msgstr "Weiß"
 
 
 msgid "Display white edges"
@@ -49130,10 +49130,6 @@ msgstr "Wellenformen Ein"
 
 msgid "Attribute Domain"
 msgstr "Attributdomäne"
-
-
-msgid "Pinned ID"
-msgstr "Angepinnte ID"
 
 
 msgid "Find Text"
@@ -57102,18 +57098,8 @@ msgstr "Aktive Kamera auswählen"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "Spiegelung selektion"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Nach Muster auswählen..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Aktiven umdrehen"
 
 
 msgctxt "Operator"

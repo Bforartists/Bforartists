@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2456,6 +2456,10 @@ msgstr "ﺖﯾﺩﻭﺪﺤﻣ ﻉﻮﻧ"
 
 msgid "Onion Skinning"
 msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ"
+
+
+msgid "Use Mask"
+msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
 
 
 msgid "Layer"
@@ -5189,10 +5193,6 @@ msgid "Double"
 msgstr "ﯽﯾﺎﺗﻭﺩ"
 
 
-msgid "Use Mask"
-msgstr "ﺎﻫﺮﯿﺴﻣ ﻥﺩﺮﮐ‌ﮎﺎﭘ"
-
-
 msgid "Normalize"
 msgstr "ﯼﺯﺎﺳ ﯼﺩﺎﻋ"
 
@@ -6153,6 +6153,10 @@ msgid "Output File Layer Slot"
 msgstr "ﯽﺟﻭﺮﺧ ﻞﯾﺎﻓ"
 
 
+msgid "Tooltip"
+msgstr "ﺭﺍﺰﺑﺍ:"
+
+
 msgid "Hide the socket"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﺮﮕﻧﺎﺸﻧ"
 
@@ -6568,6 +6572,11 @@ msgstr "ﻮﺠﺘﺴﺟ ﺏﺎﺨﺘﻧﺍ"
 msgctxt "Operator"
 msgid "Select Linked All"
 msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
+
+
+msgctxt "Operator"
+msgid "Select Mirror"
+msgstr "ﯽﻠﻣﺎﻌﺗ ﻪﻨﯾﺁ"
 
 
 msgctxt "Operator"
@@ -7991,11 +8000,6 @@ msgstr "Z ﺭﻮﺤﻣ"
 msgctxt "Operator"
 msgid "Make Regular"
 msgstr "ﻦﮐ ﺩﺎﺠﯾﺍ ﯽﻌﻗﺍﻭ"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "ﯽﻠﻣﺎﻌﺗ ﻪﻨﯾﺁ"
 
 
 msgctxt "Operator"
@@ -11446,10 +11450,6 @@ msgid "Edit Property"
 msgstr "ﯽﮔﮋﯾﻭ"
 
 
-msgid "Tooltip"
-msgstr "ﺭﺍﺰﺑﺍ:"
-
-
 msgid "Property Name"
 msgstr "ﯽﮔﮋﯾﻭ ﻡﺎﻧ"
 
@@ -13424,11 +13424,6 @@ msgstr "ﺪﻧﺯﺮﻓ ﺵﺮﺘﺴﮔ"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "ﻮﮕﻟﺍ ﺏﺎﺨﺘﻧﺍ..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "ﻝﺎﻌﻓ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
 
 
 msgctxt "Operator"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -8599,6 +8599,10 @@ msgstr "ﻂﻘﻨﻟﺍ ﺮﻬﻇﺃ"
 
 msgid "Onion Skinning"
 msgstr "ﺔﻴﻓﺎﻔﺸﻟﺍ ﻞﻴﻌﻔﺗ"
+
+
+msgid "Use Mask"
+msgstr "ﻉﺎﻨﻘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 
 msgid "Layer"
@@ -19650,10 +19654,6 @@ msgid "Use Blue Channel"
 msgstr "ءﺎﻗﺭﺰﻟﺍ ﺓﺎﻨﻘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
 
 
-msgid "Use Mask"
-msgstr "ﻉﺎﻨﻘﻟﺍ ﻡﺪﺨﺘﺳﺍ"
-
-
 msgid "Normalize"
 msgstr "ﻱﻮّﺳ"
 
@@ -21547,6 +21547,10 @@ msgid "Input or output socket of a node"
 msgstr "ﺪﻘﻌﻟ ﺝﺮﺨﻣ ﻭﺃ ﻞﺧﺪﻣ ﺲﺒﻘﻣ"
 
 
+msgid "Tooltip"
+msgstr "ﺕﺎﻣﻮﻠﻌﻣ ﺐﻠﻋ"
+
+
 msgid "Enable the socket"
 msgstr "ﺔﺤﺘﻔﻟﺍ ﻞﻌﻓ"
 
@@ -22339,6 +22343,11 @@ msgstr "ﺔﻴﻠﻜﻴﻬﻟﺍ ﺭﺎﺘﺧﺇ"
 msgctxt "Operator"
 msgid "Select Linked All"
 msgstr "ﺔﻄﺒﺗﺮﻤﻟﺍ ﻞﻛ ﺮﺘﺧﺍ"
+
+
+msgctxt "Operator"
+msgid "Select Mirror"
+msgstr "ﻞﺛﺎﻤﻤﻟﺍ ﺭﺎﺘﺧﺍ"
 
 
 msgid "Active Only"
@@ -24784,11 +24793,6 @@ msgstr "Z ﺭﻮﺤﻣ"
 msgctxt "Operator"
 msgid "Make Regular"
 msgstr "ﻱﺩﺎﻴﺘﻋﺍ ﻞﻌﺟﺇ"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "ﻞﺛﺎﻤﻤﻟﺍ ﺭﺎﺘﺧﺍ"
 
 
 msgid "Randomly select UVW control points"
@@ -30527,10 +30531,6 @@ msgstr "ﻕﺎﻴﺳ"
 msgctxt "Operator"
 msgid "Edit Property"
 msgstr "ﺔﻤﺴﻟﺍ ﻝﺪﻋ"
-
-
-msgid "Tooltip"
-msgstr "ﺕﺎﻣﻮﻠﻌﻣ ﺐﻠﻋ"
 
 
 msgid "Property Name"
@@ -39063,11 +39063,6 @@ msgstr "ﻉﺮﻔﻟﺍ ﻊﻴﺳﻮﺗ"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻂﻤﻧ"
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "ﻲﻟﺎﺤﻟﺍ ﺐﻠﻗ"
 
 
 msgctxt "Operator"
