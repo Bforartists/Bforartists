@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -404,6 +404,10 @@ msgid "Emission"
 msgstr "הטילפ"
 
 
+msgid "Tooltip"
+msgstr "םילכ"
+
+
 msgid "Down"
 msgstr "הטמ"
 
@@ -501,10 +505,6 @@ msgstr "תופקתשה"
 msgctxt "Operator"
 msgid "Rotate View"
 msgstr "בוביס"
-
-
-msgid "Tooltip"
-msgstr "םילכ"
 
 
 msgid "Detail Size"

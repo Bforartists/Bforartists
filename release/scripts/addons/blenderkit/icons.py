@@ -51,6 +51,7 @@ def register_icons():
         # iprev.image_pixels_float = img.pixels[:]
 
     icon_collections["main"] = pcoll
+    icon_collections["previews"] = bpy.utils.previews.new()
 
 
 def unregister_icons():

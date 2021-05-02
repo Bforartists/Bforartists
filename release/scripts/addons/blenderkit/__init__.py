@@ -227,26 +227,10 @@ mesh_poly_types = (
     ('OTHER', 'other', ''),
 )
 
-thumbnail_angles = (
-    ('DEFAULT', 'default', ''),
-    ('FRONT', 'front', ''),
-    ('SIDE', 'side', ''),
-    ('TOP', 'top', ''),
-)
 
-thumbnail_snap = (
-    ('GROUND', 'ground', ''),
-    ('WALL', 'wall', ''),
-    ('CEILING', 'ceiling', ''),
-    ('FLOAT', 'floating', ''),
-)
 
-thumbnail_resolutions = (
-    ('256', '256', ''),
-    ('512', '512', ''),
-    ('1024', '1024 - minimum for public', ''),
-    ('2048', '2048', ''),
-)
+
+
 
 
 def udate_down_up(self, context):
@@ -588,8 +572,30 @@ def update_free(self, context):
                                      " based on our fair share system. " \
                                      "Part of subscription is sent to artists based on usage by paying users.\n")
 
+# common_upload_props = [
+#     {
+#         'identifier':'id',
+#         'name':"Asset Version Id",
+#         'type':'StringProperty',
+#         'description':'Unique name of the asset version(hidden)',
+#         'default':''
+# }
+# {
+#         'identifier':'id',
+#         'name':"Asset Version Id",
+#         'type':'StringProperty',
+#         'description':'Unique name of the asset version(hidden)',
+#         'default':''
+# }
+# ]
+
+
+
 
 class BlenderKitCommonUploadProps(object):
+    # for p in common_upload_props:
+    #     exec(f"{p['identifier']}: {p['type']}(name='{p['name']}',description='{p['description']}',default='{p['default']}')")
+
     id: StringProperty(
         name="Asset Version Id",
         description="Unique name of the asset version(hidden)",
@@ -888,7 +894,7 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
 
     thumbnail_resolution: EnumProperty(
         name="Resolution",
-        items=thumbnail_resolutions,
+        items=autothumb.thumbnail_resolutions,
         description="Thumbnail resolution",
         default="1024",
     )
@@ -1064,21 +1070,21 @@ class BlenderKitModelUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
 
     thumbnail_angle: EnumProperty(
         name='Thumbnail Angle',
-        items=thumbnail_angles,
+        items=autothumb.thumbnail_angles,
         default='DEFAULT',
         description='thumbnailer angle',
     )
 
     thumbnail_snap_to: EnumProperty(
         name='Model Snaps To:',
-        items=thumbnail_snap,
+        items=autothumb.thumbnail_snap,
         default='GROUND',
         description='typical placing of the interior. Leave on ground for most objects that respect gravity :)',
     )
 
     thumbnail_resolution: EnumProperty(
         name="Resolution",
-        items=thumbnail_resolutions,
+        items=autothumb.thumbnail_resolutions,
         description="Thumbnail resolution",
         default="1024",
     )
