@@ -18,16 +18,14 @@
 
 
 
-from blenderkit import utils, append_link, bg_blender
+from blenderkit import utils, append_link, bg_blender, upload_bg, download
 
 import sys, json, math
 import bpy
 from pathlib import Path
 
-BLENDERKIT_EXPORT_TEMP_DIR = sys.argv[-1]
-BLENDERKIT_THUMBNAIL_PATH = sys.argv[-2]
-BLENDERKIT_EXPORT_FILE_INPUT = sys.argv[-3]
-BLENDERKIT_EXPORT_DATA = sys.argv[-4]
+
+BLENDERKIT_EXPORT_DATA = sys.argv[-1]
 
 
 def render_thumbnails():
@@ -44,13 +42,26 @@ def unhide_collection(cname):
 if __name__ == "__main__":
     try:
         bg_blender.progress('preparing thumbnail scene')
+        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+
         with open(BLENDERKIT_EXPORT_DATA, 'r',encoding='utf-8') as s:
             data = json.load(s)
             # append_material(file_name, matname = None, link = False, fake_user = True)
-        mat = append_link.append_material(file_name=BLENDERKIT_EXPORT_FILE_INPUT, matname=data["material"], link=True,
+        if data.get('do_download'):
+            asset_data = data['asset_data']
+            has_url = download.get_download_url(asset_data, download.get_scene_id(), user_preferences.api_key, tcom=None,
+                                                resolution='blend')
+            if not has_url:
+                bg_blender.progress("couldn't download asset for thumnbail re-rendering")
+                exit()
+            # download first, or rather make sure if it's already downloaded
+            bg_blender.progress('downloading asset')
+            fpath = download.download_asset_file(asset_data)
+            data['filepath'] = fpath
+
+        mat = append_link.append_material(file_name=data['filepath'], matname=data["asset_name"], link=True,
                                           fake_user=False)
 
-        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
         s = bpy.context.scene
 
@@ -61,7 +72,6 @@ if __name__ == "__main__":
             'CLOTH': 'Cloth',
             'HAIR': 'Hair'
         }
-
         unhide_collection(colmapdict[data["thumbnail_type"]])
         if data['thumbnail_background']:
             unhide_collection('Background')
@@ -70,6 +80,9 @@ if __name__ == "__main__":
         tscale = data["thumbnail_scale"]
         bpy.context.view_layer.objects['scaler'].scale = (tscale, tscale, tscale)
         bpy.context.view_layer.update()
+        print('we have this materialB')
+        print(mat)
+
         for ob in bpy.context.visible_objects:
             if ob.name[:15] == 'MaterialPreview':
                 ob.material_slots[0].material = mat
@@ -86,6 +99,7 @@ if __name__ == "__main__":
                 if data["thumbnail_type"] in ['BALL', 'BALL_COMPLEX', 'CLOTH']:
                    utils.automap(ob.name, tex_size = ts / tscale, just_scale = True, bg_exception=True)
         bpy.context.view_layer.update()
+        print('got to C')
 
         s.cycles.volume_step_size = tscale * .1
 
@@ -113,9 +127,24 @@ if __name__ == "__main__":
         bpy.context.scene.render.resolution_x = int(data['thumbnail_resolution'])
         bpy.context.scene.render.resolution_y = int(data['thumbnail_resolution'])
 
-        bpy.context.scene.render.filepath = BLENDERKIT_THUMBNAIL_PATH
+        bpy.context.scene.render.filepath = data['thumbnail_path']
         bg_blender.progress('rendering thumbnail')
         render_thumbnails()
+        if data.get('upload_after_render') and data.get('asset_data'):
+            bg_blender.progress('uploading thumbnail')
+            preferences = bpy.context.preferences.addons['blenderkit'].preferences
+
+            file = {
+                "type": "thumbnail",
+                "index": 0,
+                "file_path": data['thumbnail_path'] + '.png'
+            }
+            upload_data = {
+                "name": data['asset_data']['name'],
+                "token": preferences.api_key,
+                "id": data['asset_data']['id']
+            }
+            upload_bg.upload_file(upload_data, file)
         bg_blender.progress('background autothumbnailer finished successfully')
 
 

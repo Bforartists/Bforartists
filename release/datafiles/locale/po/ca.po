@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3724,8 +3724,8 @@ msgid "Show Points"
 msgstr "Esborrar Str"
 
 
-msgid "Mask Layer"
-msgstr "Moure a Capa"
+msgid "Use Mask"
+msgstr "Esborrar Pista"
 
 
 msgid "Spacing"
@@ -7062,6 +7062,10 @@ msgid "Orientation"
 msgstr "Esborrar Rotació"
 
 
+msgid "Mask Layer"
+msgstr "Moure a Capa"
+
+
 msgid "Render Opacity"
 msgstr "Render"
 
@@ -9032,10 +9036,6 @@ msgid "Use Green Channel"
 msgstr "Finestra de Render"
 
 
-msgid "Use Mask"
-msgstr "Esborrar Pista"
-
-
 msgid "Normalize"
 msgstr "Calcular Normals"
 
@@ -10416,6 +10416,10 @@ msgid "Node Socket"
 msgstr "Seleccionar fila"
 
 
+msgid "Tooltip"
+msgstr "Eines"
+
+
 msgid "Hide the socket"
 msgstr "Esborrar"
 
@@ -11190,6 +11194,11 @@ msgstr "Seleccionar connectats"
 msgctxt "Operator"
 msgid "Select Linked All"
 msgstr "Deseleccionar Enllaçats"
+
+
+msgctxt "Operator"
+msgid "Select Mirror"
+msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
@@ -13134,6 +13143,14 @@ msgid "Snap Selection to Grid"
 msgstr "Seleccionar connectats"
 
 
+msgid "Black"
+msgstr "Negre"
+
+
+msgid "White"
+msgstr "Blanc"
+
+
 msgctxt "Operator"
 msgid "Deselect Vertex Group"
 msgstr "Seleccionar fila"
@@ -13571,11 +13588,6 @@ msgstr "Crear aresta/cara"
 
 msgid "Change selection of all UVW control points"
 msgstr "Seleccionar connectats"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
@@ -19350,10 +19362,6 @@ msgid "Edit Property"
 msgstr "Mode d'Edició"
 
 
-msgid "Tooltip"
-msgstr "Eines"
-
-
 msgid "Property Name"
 msgstr "Image Displist"
 
@@ -22053,14 +22061,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Outline"
 msgstr "Perfilar"
-
-
-msgid "Black"
-msgstr "Negre"
-
-
-msgid "White"
-msgstr "Blanc"
 
 
 msgid "Length of displaying path, in frames"
@@ -24791,11 +24791,6 @@ msgstr "Seleccionar fila"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Moure a Capa"
 
 
 msgctxt "Operator"

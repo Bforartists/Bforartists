@@ -69,8 +69,11 @@ class Colr:
     yellow = 1.0, 1.0, 0.0, 0.6
 
 
-# Transformation Data
 class TransDat:
+    '''
+    Transformation Data
+    values stored here get used for rotation
+    '''
     placeholder = True
 
 
@@ -85,11 +88,13 @@ def set_transform_data_none():
     TransDat.arc_pts = None
 
 
-# Refreshes mesh drawing in 3D view and updates mesh coordinate
-# data so ref_pts are drawn at correct locations.
-# Using editmode_toggle to do this seems hackish, but editmode_toggle seems
-# to be the only thing that updates both drawing and coordinate info.
 def editmode_refresh():
+    '''
+    Refreshes mesh drawing in 3D view and updates mesh coordinate
+    data so ref_pts are drawn at correct locations.
+    Using editmode_toggle to do this seems hackish, but editmode_toggle seems
+    to be the only thing that updates both drawing and coordinate info.
+    '''
     if bpy.context.mode == "EDIT_MESH":
         bpy.ops.object.editmode_toggle()
         bpy.ops.object.editmode_toggle()
@@ -445,11 +450,13 @@ class TempPoint():
             print("  [" + str(i) + "]:", [self.ls[i]])
 
 
-# Basically this is just a "wrapper" around a 3D coordinate (Vector type)
-# to centralize certain Reference Point features and make them easier to
-# work with.
-# note: if co3d is None, point does not "exist"
 class ReferencePoint:
+    '''
+    Basically this is just a "wrapper" around a 3D coordinate (Vector type)
+    to centralize certain Reference Point features and make them easier to
+    work with.
+    note: if co3d is None, point does not "exist"
+    '''
     def __init__(self, ptype, colr, co3d=None):
         self.ptype = ptype  # debug?
         self.colr = colr  # color (tuple), for displaying point in 3D view
@@ -619,10 +626,12 @@ def swap_ref_pts(self, pt1, pt2):
     self.pts[pt2].co3d = temp
 
 
-# For adding multi point without first needing a reference point
-# todo : clean up TempPoint so this function isn't needed
-# todo : find way to merge this with add_select_multi
 def new_select_multi(self):
+    '''
+    For adding multi point without first needing a reference point
+    '''
+    # todo : clean up TempPoint so this function isn't needed
+    # todo : find way to merge this with add_select_multi
     def enable_multi_mode(self):
         if self.grab_pt is not None:
             self.multi_tmp.__init__()
@@ -716,10 +725,12 @@ def get_axis_line_co(p1, p2, x_max, y_max):
             if len(ln_pts) > 1: return ln_pts
 
 
-# Returns the closest object origin or vertex to the supplied 2D location
-# as 3D Vector.
-# Returns None if no found coordinate closer than minimum distance.
 def find_closest_point(loc):
+    '''
+    Returns the closest object origin or vertex to the supplied
+    2D location as a 3D Vector.
+    Returns None if no coordinates are found within the minimum distance.
+    '''
     region = bpy.context.region
     rv3d = bpy.context.region_data
     shortest_dist = 40.0  # minimum distance from loc
@@ -867,13 +878,16 @@ def set_arc_pts(ref_pts):
     TransDat.arc_pts = arc_pts
 
 
-# Takes a ref_pts (ReferencePoints class) argument and modifies its member
-# variable lp_ls (lock pt list). The lp_ls variable is assigned a modified list
-# of 3D coordinates (if an axis lock was provided), the contents of the
-# ref_pts' rp_ls var (if no axis lock was provided), or an empty list (if there
-# wasn't enough ref_pts or there was a problem creating the modified list).
-# todo : move inside ReferencePoints class ?
 def set_lock_pts(ref_pts, pt_cnt):
+    '''
+    Takes a ref_pts (ReferencePoints class) argument and modifies
+    its member variable lp_ls (lock pt list). The lp_ls variable is
+    assigned a modified list of 3D coordinates (if an axis lock was
+    provided), the contents of the ref_pts' rp_ls var (if no axis
+    lock was provided), or an empty list (if there wasn't enough
+    ref_pts or there was a problem creating the modified list).
+    '''
+    # todo : move inside ReferencePoints class ?
     if pt_cnt < 2:
         TransDat.lock_pts = []
     elif TransDat.axis_lock is None:
@@ -882,18 +896,22 @@ def set_lock_pts(ref_pts, pt_cnt):
             set_arc_pts(ref_pts)
 
 
-# end_a, piv_pt, and end_b are Vector based 3D coordinates
-# coordinates must share a common center "pivot" point (piv_pt)
 def get_line_ang_3d(end_a, piv_pt, end_b):
+    '''
+    end_a, piv_pt, and end_b are Vector based 3D coordinates
+    coordinates must share a common center "pivot" point (piv_pt)
+    '''
     algn_a = end_a - piv_pt
     algn_b = end_b - piv_pt
     return algn_a.angle(algn_b)
 
 
-# Checks if the 3 Vector coordinate arguments (end_a, piv_pt, end_b)
-# will create an angle with a measurement matching the value in the
-# argument exp_ang (expected angle measurement).
 def ang_match3d(end_a, piv_pt, end_b, exp_ang):
+    '''
+    Checks if the 3 Vector coordinate arguments (end_a, piv_pt, end_b)
+    will create an angle with a measurement matching the value in the
+    argument exp_ang (expected angle measurement).
+    '''
     ang_meas = get_line_ang_3d(end_a, piv_pt, end_b)
     #print("end_a", end_a)  # debug
     #print("piv_pt", piv_pt)  # debug
@@ -922,9 +940,11 @@ def create_z_orient(rot_vec):
                    (new_x.z, new_y.z, new_z.z)))
 
 
-# Updates lock points and changes curr_meas_stor to use measure based on
-# lock points instead of ref_pts (for axis constrained transformations).
 def updatelock_pts(self, ref_pts):
+    '''
+    Updates lock points and changes curr_meas_stor to use measure based on
+    lock points instead of ref_pts (for axis constrained transformations).
+    '''
     global curr_meas_stor
     set_lock_pts(ref_pts, self.pt_cnt)
     if TransDat.lock_pts == []:
@@ -935,9 +955,11 @@ def updatelock_pts(self, ref_pts):
         TransDat.axis_lock = None
 
 
-# See if key was pressed that would require updating the axis lock info.
-# If one was, update the lock points to use new info.
 def axis_key_check(self, new_axis):
+    '''
+    See if key was pressed that would require updating the axis lock info.
+    If one was, update the lock points to use new info.
+    '''
     if self.pt_cnt == 1:
         if new_axis != TransDat.axis_lock:
             TransDat.axis_lock = new_axis
@@ -955,8 +977,8 @@ def draw_rot_arc(colr):
             last = p2d
 
 
-# Called when add-on mode changes and every time point is added or removed.
 def set_help_text(self, mode):
+    '''Called when add-on mode changes and every time point is added or removed.'''
     text = ""
     if mode == "CLICK":
         if self.pt_cnt == 0:
@@ -1113,8 +1135,8 @@ def exit_addon(self):
     #print("\n\nAdd-On Exited\n")  # debug
 
 
-# Checks if "use_region_overlap" is enabled and X offset is needed.
 def get_reg_overlap():
+    '''Checks if "use_region_overlap" is enabled and X offset is needed.'''
     rtoolsw = 0  # region tools (toolbar) width
     #ruiw = 0  # region ui (Number/n-panel) width
     system = bpy.context.preferences.system

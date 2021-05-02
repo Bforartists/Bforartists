@@ -52,6 +52,11 @@ BL_UI_Widget.get_area_height = get_area_height
 
 
 def asset_bar_modal(self, context, event):
+    ui_props = bpy.context.scene.blenderkitUI
+    if ui_props.turn_off:
+        ui_props.turn_off = False
+        self.finish()
+
     if self._finished:
         return {'FINISHED'}
 
@@ -76,7 +81,9 @@ def asset_bar_modal(self, context, event):
         self.scroll_update()
         return {'RUNNING_MODAL'}
 
-
+    if self.check_ui_resized(context):
+        self.update_ui_size(context)
+        self.update_layout(context)
     return {"PASS_THROUGH"}
 
 def asset_bar_invoke(self, context, event):
@@ -235,6 +242,27 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         for w in self.tooltip_widgets:
             w.visible = True
 
+    def check_ui_resized(self,context):
+        region = context.region
+        area = context.area
+        ui_props = bpy.context.scene.blenderkitUI
+        ui_scale = bpy.context.preferences.view.ui_scale
+
+        reg_multiplier = 1
+        if not bpy.context.preferences.system.use_region_overlap:
+            reg_multiplier = 0
+
+        for r in area.regions:
+            if r.type == 'TOOLS':
+                self.bar_x = r.width * reg_multiplier + self.margin + ui_props.bar_x_offset * ui_scale
+            elif r.type == 'UI':
+                self.bar_end = r.width * reg_multiplier + 100 * ui_scale
+
+        bar_width = region.width - self.bar_x - self.bar_end
+        if bar_width != self.bar_width:
+            return True
+        return False
+
     def update_ui_size(self, context):
 
         if bpy.app.background or not context.area:
@@ -264,16 +292,18 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
             elif r.type == 'UI':
                 self.bar_end = r.width * reg_multiplier + 100 * ui_scale
 
-        self.bar_width = region.width - ui_props.bar_x - ui_props.bar_end
+        self.bar_width = region.width - self.bar_x - self.bar_end
 
         self.wcount = math.floor(
             (self.bar_width) / (self.button_size))
 
         search_results = bpy.context.window_manager.get('search results')
-        if search_results is not None and self.wcount > 0:
-            self.hcount = min(user_preferences.max_assetbar_rows, math.ceil(len(search_results) / self.wcount))
-        else:
-            self.hcount = 1
+        # we need to init all possible thumb previews in advance/
+        self.hcount = user_preferences.max_assetbar_rows
+        # if search_results is not None and self.wcount > 0:
+        #     self.hcount = min(user_preferences.max_assetbar_rows, math.ceil(len(search_results) / self.wcount))
+        # else:
+        #     self.hcount = 1
 
         self.bar_height = (self.button_size) * self.hcount + 2 * self.assetbar_margin
         # self.bar_y = region.height - ui_props.bar_y_offset * ui_scale
@@ -284,6 +314,9 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         else:
             self.reports_y = self.bar_y - self.bar_height - 100
             self.reports_x = self.bar_x
+
+    def update_layout(self, context):
+        pass;
 
     def __init__(self):
         super().__init__()
@@ -490,7 +523,14 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
             if img:
                 self.tooltip_image.set_image(img.filepath)
             self.asset_name.text = asset_data['name']
-            self.tooltip_panel.update(widget.x_screen + widget.width, widget.y_screen + widget.height)
+
+            properties_width = 0
+            for r in bpy.context.area.regions:
+                if r.type == 'UI':
+                    properties_width = r.width
+            tooltip_x = min(widget.x_screen + widget.width, bpy.context.region.width - self.tooltip_panel.width -properties_width)
+
+            self.tooltip_panel.update(tooltip_x, widget.y_screen + widget.height)
             self.tooltip_panel.layout_widgets()
 
     def exit_button(self, widget):
@@ -518,8 +558,9 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
             blenderkit.search.search(get_next=True)
 
     def update_images(self):
-        sr = bpy.context.window_manager['search results']
-
+        sr = bpy.context.window_manager.get('search results')
+        if not sr:
+            return
         for asset_button in self.asset_buttons:
             asset_button.asset_index = asset_button.button_index + self.scroll_offset
             if asset_button.asset_index < len(sr):
@@ -579,6 +620,15 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
     def scroll_down(self, widget):
         self.scroll_offset -= self.wcount * self.hcount
         self.scroll_update()
+
+    def update_sizes(self):
+        properties_width = 0
+        for r in bpy.context.area.regions:
+            if r.type == 'UI':
+                properties_width = r.width
+        tooltip_x = min(widget.x_screen + widget.width,
+                        bpy.context.region.width - self.tooltip_panel.width - properties_width)
+        print(widget.x_screen + widget.width, bpy.context.region.width - self.tooltip_panel.width)
 
 
 def register():

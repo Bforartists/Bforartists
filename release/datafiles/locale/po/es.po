@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5220,6 +5220,26 @@ msgstr "Espacio de color original"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Espacio de color en el archivo de imagen, desde el cual convertir al cargar y hacia el cual convertir al guardar la imagen"
+
+
+msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
+msgstr "Espacio de color cinematográfico de tipo logarítmico con 16,5 paradas de latitud y 25 paradas de rango dinámico"
+
+
+msgid "Rec. 709 (Full Range), Blender native linear space"
+msgstr "Rec. 709 (de rango completo), espacio lineal nativo de Blender"
+
+
+msgid "ACES linear space"
+msgstr "Espacio lineal ACES"
+
+
+msgid "Color space used for images which contains non-color data (i,e, normal maps)"
+msgstr "Espacio de color usado para imágenes que contengan información que no represente colores (p.ej: mapas de normales)"
+
+
+msgid "Standard RGB Display Space"
+msgstr "Espacio de visualización RVA predefinido"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -14708,12 +14728,8 @@ msgid "Enable the use of lights on stroke and fill materials"
 msgstr "Habilita el uso de luces sobre los materiales de trazos y rellenos"
 
 
-msgid "Mask Layer"
-msgstr "Capa de máscara"
-
-
-msgid "Mask pixels from underlying layers drawing"
-msgstr "Enmascara los píxeles de las capas inferiores del dibujo"
+msgid "Use Mask"
+msgstr "Usar máscara"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -17171,6 +17187,14 @@ msgstr "Bloque de datos de esqueleto conteniendo una jerarquía de huesos, norma
 
 msgid "Animation data for this data-block"
 msgstr "Datos de animación de este bloque de datos"
+
+
+msgid "Axes Position"
+msgstr "Posición de ejes"
+
+
+msgid "The position for the axes on the bone. Increasing the value moves it closer to the tip; decreasing moves it closer to the root"
+msgstr "La posición de los ejes del hueso. Al aumentar el valor éstos se desplazarán hacia la cola; al disminuirlo lo harán hacia la cabeza"
 
 
 msgid "Bones"
@@ -21863,6 +21887,10 @@ msgid "Size of the area of the area light in the Y direction for rectangle shape
 msgstr "Tamaño del área de la luz, tamaño en Y para formas rectangulares"
 
 
+msgid "How widely the emitted light fans out, as in the case of a gridded softbox"
+msgstr "Ancho de dispersión de la luz emitida, tal como sucede al usar un softbox con una rejilla difusora"
+
+
 msgid "Contact Shadow"
 msgstr "Sombra de contacto"
 
@@ -22619,6 +22647,10 @@ msgid "Mirror Vertex Groups"
 msgstr "Simetrizar grupos vértices"
 
 
+msgid "Mirror the left/right vertex groups when painting. The symmetry axis is determined by the symmetry settings"
+msgstr "Simetriza los grupos de vertices a izquierda/derecha al pintar. El eje de simetría es determinado por las opciones de simetría"
+
+
 msgid "Enable symmetry in the X axis"
 msgstr "Habilita la simetría en el eje X"
 
@@ -23240,7 +23272,7 @@ msgid ""
 "Warning: Assigning to it or its members multiple consecutive times will not work correctly, as this needs up-to-date evaluated data"
 msgstr ""
 "Dimensiones absolutas del volumen delimitador del objeto.\n"
-"Advertencia: Asignarlo a él o a sus miembros varias veces consecutivas no funcionará correctamente, dado que necesita datos actualizados para evaluar."
+"Advertencia: Asignarlo a él o a sus miembros varias veces consecutivas no funcionará correctamente, dado que necesita datos actualizados para evaluar"
 
 
 msgid "Object Display"
@@ -23936,6 +23968,18 @@ msgstr "Orientar usando las normales"
 
 msgid "Rotate instance according to vertex normal"
 msgstr "Rota las instancias según la normal de los vértices"
+
+
+msgid "Enable mesh symmetry in the X axis"
+msgstr "Habilita la simetría de malla en el eje X"
+
+
+msgid "Enable mesh symmetry in the Y axis"
+msgstr "Habilita la simetría de malla en el eje Y"
+
+
+msgid "Enable mesh symmetry in the Z axis"
+msgstr "Habilita la simetría de malla en el eje Z"
 
 
 msgid "Shape Key Edit Mode"
@@ -26373,11 +26417,11 @@ msgstr "Simetriza la repetición de la imagen en la dirección Y"
 
 
 msgid "Normal Map"
-msgstr "Mapa normal"
+msgstr "Mapa de normales"
 
 
 msgid "Use image RGB values for normal mapping"
-msgstr "Usa los valores RVA de la imagen para el mapeado de las normales"
+msgstr "Usa los valores RVA de la imagen para el mapeo de normales"
 
 
 msgid "Magic Texture"
@@ -30464,6 +30508,10 @@ msgstr "Identificador de capa de color de vértices activa"
 
 msgid "Active vertex color index"
 msgstr "Identificador de capa de color de vértices activa"
+
+
+msgid "Mask Layer"
+msgstr "Capa de máscara"
 
 
 msgid "Single layer used for masking pixels"
@@ -35878,7 +35926,7 @@ msgid ""
 "Warning: Depending on chosen triangulation method, shading may not be fully preserved, \"Fixed\" method usually gives the best result here"
 msgstr ""
 "Intenta preservar las normales personalizadas.\n"
-"Advertencia: Dependiendo del método de triangulación escogido, puede que no sea posible preservar completamente el sombreado, el método 'Fijo' es el que usualmente da los mejores resultados."
+"Advertencia: Dependiendo del método de triangulación escogido, puede que no sea posible preservar completamente el sombreado, el método 'Fijo' es el que usualmente da los mejores resultados"
 
 
 msgid "Minimum Vertices"
@@ -37718,10 +37766,6 @@ msgstr "Usar Canal Verde"
 
 msgid "Use green channel from footage for tracking"
 msgstr "Usar el canal verde de la imagen para el rastreo"
-
-
-msgid "Use Mask"
-msgstr "Usar máscara"
 
 
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
@@ -40933,6 +40977,14 @@ msgid "Bring the input collection geometry into the modified object, maintaining
 msgstr "Trae la geometría de la colección de entrada al objeto modificado, manteniendo la posición relativa entre los objetos en la escena"
 
 
+msgid "Geometry Custom Group"
+msgstr "Grupo personalizado de geometría"
+
+
+msgid "Custom Geometry Group Node for Python nodes"
+msgstr "Nodo de grupo personalizado de geometría para nodos Python"
+
+
 msgid "Is Viewport"
 msgstr "Es vista"
 
@@ -41447,15 +41499,15 @@ msgstr "Espacio tangencial"
 
 
 msgid "Tangent space normal mapping"
-msgstr "Mapeo normal en espacio tangencial"
+msgstr "Mapeo de normales en espacio tangencial"
 
 
 msgid "Object space normal mapping"
-msgstr "Mapeo normal en espacio del objeto"
+msgstr "Mapeo de normales en espacio del objeto"
 
 
 msgid "World space normal mapping"
-msgstr "Mapeo normal en espacio global"
+msgstr "Mapeo de normales en espacio global"
 
 
 msgid "Blender Object Space"
@@ -42462,6 +42514,10 @@ msgid "Input or output socket of a node"
 msgstr "Conector de entrada o salida de un nodo"
 
 
+msgid "Tooltip"
+msgstr "Descripción"
+
+
 msgid "Socket shape"
 msgstr "Forma del conector"
 
@@ -42508,6 +42564,14 @@ msgstr "Vinculados"
 
 msgid "True if the socket is connected"
 msgstr "Verdadero si el conector está conectado"
+
+
+msgid "Multi Input"
+msgstr "Entrada múltiple"
+
+
+msgid "True if the socket can accept multiple ordered input links"
+msgstr "Verdadero si el conector es capaz de aceptar múltiples conexiones de entrada"
 
 
 msgid "Is Output"
@@ -44532,8 +44596,8 @@ msgstr "(De)selecciona los huesos bajo el puntero, vinculados jerárquicamente"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Invertir hueso activo/seleccionado"
+msgid "Select Mirror"
+msgstr "Seleccionar simétrico"
 
 
 msgid "Mirror the bone selection"
@@ -51360,6 +51424,14 @@ msgid "Switch tint colors"
 msgstr "Da vuelta los colores de tinte"
 
 
+msgid "Black"
+msgstr "Negro"
+
+
+msgid "White"
+msgstr "Blanco"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Transformar relleno de trazo"
@@ -53139,11 +53211,6 @@ msgstr "Cambia la selección de todos los puntos de control UVW"
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "Deselecciona los vértices en el límite exterior de cada región seleccionada"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Seleccionar simétrico"
 
 
 msgid "Select mirrored lattice points"
@@ -56975,6 +57042,15 @@ msgstr "Restablece el área visible para mostrar el rango de clips seleccionados
 
 
 msgctxt "Operator"
+msgid "Toggle Active Preview"
+msgstr "Previsualizar"
+
+
+msgid "Toggle active preview state of node"
+msgstr "Alterna el estado de previsualización del nodo"
+
+
+msgctxt "Operator"
 msgid "Add and Link Node"
 msgstr "Agregar y vincular nodo"
 
@@ -60272,15 +60348,6 @@ msgstr "Enlaza la malla al objetivo en el modificador Deformar superficie"
 
 
 msgctxt "Operator"
-msgid "Switch Object"
-msgstr "Cambiar objeto"
-
-
-msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
-msgstr "Cambia el objeto activo al que se encuentre bajo el puntero del ratón, manteniendo el modo actual"
-
-
-msgctxt "Operator"
 msgid "Add Text"
 msgstr "Agregar texto"
 
@@ -60321,6 +60388,10 @@ msgstr "Restricción Apuntar"
 
 msgid "Lock Track Constraint"
 msgstr "Restricción Apuntar (bloqueado)"
+
+
+msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
+msgstr "Cambia el objeto activo al que se encuentre bajo el puntero del ratón, manteniendo el modo actual"
 
 
 msgctxt "Operator"
@@ -69616,6 +69687,10 @@ msgid "Select Menu"
 msgstr "Menú Seleccionar"
 
 
+msgid "Menu bone selection"
+msgstr "Menú de selección de huesos"
+
+
 msgctxt "Operator"
 msgid "Align Camera to View"
 msgstr "Alinear cámara a la vista"
@@ -71945,10 +72020,6 @@ msgid "Default value of the property. Important for NLA mixing"
 msgstr "Valor predefinido de la propiedad. Importante para la mezcla con ANL"
 
 
-msgid "Tooltip"
-msgstr "Descripción"
-
-
 msgid "Is Library Overridable"
 msgstr "Es redefinible"
 
@@ -73504,6 +73575,10 @@ msgid "Aperture"
 msgstr "Apertura"
 
 
+msgid "Beam Shape"
+msgstr "Forma del haz"
+
+
 msgid "Ray Visibility"
 msgstr "Visibilidad a los rayos"
 
@@ -73548,8 +73623,12 @@ msgid "Clamping"
 msgstr "Limitación"
 
 
+msgid "Fast GI Approximation"
+msgstr "Aceleración de iluminación global"
+
+
 msgid "Max Bounces"
-msgstr "Rebotes máx"
+msgstr "Rebotes máximos"
 
 
 msgid "Shutter Curve"
@@ -76821,14 +76900,6 @@ msgid "Use the new Vertex Painting system"
 msgstr "Usa el nuevo sistema de pintura de vértices"
 
 
-msgid "Switch Object Operator"
-msgstr "Operador Cambiar objeto"
-
-
-msgid "Enable the operator to switch objects by pressing D"
-msgstr "Habilita el operador para cambiar el objeto editable mediante la tecla D"
-
-
 msgid "Undo Legacy"
 msgstr "Deshacer antiguo"
 
@@ -79229,6 +79300,10 @@ msgid "AO Bounces"
 msgstr "Rebotes de OA"
 
 
+msgid "After this number of light bounces, use approximate global illumination. 0 disables this feature"
+msgstr "Luego de alcanzar esta cantidad de rebotes de luz, usar una aproximación de la iluminación global. 0 deshabilita esta característica"
+
+
 msgid "AO Bounces Render"
 msgstr "Rebotes de OA en procesamiento"
 
@@ -79987,6 +80062,10 @@ msgstr "Permite que los objetos sean descartados basándose en el tronco de la c
 
 msgid "Allow objects to be culled based on the distance from camera"
 msgstr "Permite que los objetos sean descartados basándose en la distancia desde la cámara"
+
+
+msgid "Approximate diffuse indirect light with background tinted ambient occlusion. This provides fast alternative to full global illumination, for interactive viewport rendering or final renders with reduced quality"
+msgstr "Aproxima la luz difusa indirecta usando una oclusión ambiental teñida del color de fondo. Esto proporciona una alternativa rápida a la iluminación global completa, útil para procesamiento interactivo en las vistas o para un procesamiento final de calidad limitada"
 
 
 msgid "Layer Samples"
@@ -81463,6 +81542,10 @@ msgstr "Sobrescribir archivos existentes durante el procesamiento"
 
 msgid "Persistent Data"
 msgstr "Datos persistentes"
+
+
+msgid "Keep render data around for faster re-renders and animation renders, at the cost of increased memory usage"
+msgstr "Mantiene los datos usados durante el procesamiento disponibles, posibilitando así un reprocesamiento más veloz, a costa de un mayor consumo de memoria"
 
 
 msgid "Placeholders"
@@ -85190,16 +85273,8 @@ msgid "Display dashed black-white edges"
 msgstr "Dibuja bordes discontinuos en blanco y negro"
 
 
-msgid "Black"
-msgstr "Negro"
-
-
 msgid "Display black edges"
 msgstr "Dibuja bordes negros"
-
-
-msgid "White"
-msgstr "Blanco"
 
 
 msgid "Display white edges"
@@ -86326,7 +86401,7 @@ msgstr "Muestra colecciones y objetos en la capa de visualización"
 
 
 msgid "Display data belonging to the Video Sequencer"
-msgstr "Muestra datos pertenecientes al editor de video"
+msgstr "Muestra bloques de datos pertenecientes al editor de video"
 
 
 msgid "Blender File"
@@ -86334,7 +86409,7 @@ msgstr "Archivo de Blender"
 
 
 msgid "Display data of current file and linked libraries"
-msgstr "Muestra los datos del archivo actual y sus bibliotecas vinculadas"
+msgstr "Muestra bloques de datos del archivo actual y sus bibliotecas vinculadas"
 
 
 msgid "Data API"
@@ -86342,11 +86417,15 @@ msgstr "API de datos"
 
 
 msgid "Display low level Blender data and its properties"
-msgstr "Muestra datos de bajo nivel de Blender y sus propiedades"
+msgstr "Muestra bloques de datos de bajo nivel de Blender y sus propiedades"
 
 
 msgid "Library Overrides"
 msgstr "Redefiniciones de biblioteca"
+
+
+msgid "Display data-blocks with library overrides and list their overridden properties"
+msgstr "Muestra bloques de datos que contengan redefiniciones de biblioteca y un listado de sus propiedades redefinidas"
 
 
 msgid "Orphan Data"
@@ -86354,7 +86433,7 @@ msgstr "Datos huérfanos"
 
 
 msgid "Display data-blocks which are unused and/or will be lost when the file is reloaded"
-msgstr "Muestra los bloques de datos no usados y que serán descartados cuando el archivo vuelva a ser cargado"
+msgstr "Muestra bloques de datos no usados, que serán descartados cuando el archivo vuelva a ser cargado"
 
 
 msgctxt "ID"
@@ -86456,6 +86535,14 @@ msgstr "Mostrar redefiniciones de biblioteca"
 
 msgid "For libraries with overrides created, show the overridden values"
 msgstr "Muestra los valores redefinidos, para bibliotecas que contengan valores que hayan sido redefinidos"
+
+
+msgid "Show System Overrides"
+msgstr "Mostrar redefiniciones del sistema"
+
+
+msgid "For libraries with overrides created, show the overridden values that are defined/controlled automatically (e.g. to make users of an overridden data-block point to the override data, not the original linked data)"
+msgstr "Para bibliotecas con redefiniciones creadas, muestra los valores redefinidos que están siendo definidos/controlados automáticamente (p.ej: para crear usuarios de los datos redefinidos de un cierto punto de un bloque de datos, y no de los datos originales)"
 
 
 msgid "Filter Objects"
@@ -86934,20 +87021,8 @@ msgid "Object Evaluation State"
 msgstr "Estado de evaluación del objeto"
 
 
-msgid "Use data from object with all modifiers applied"
-msgstr "Usar datos del objeto con sus modificadores ya aplicados"
-
-
 msgid "Use data from original object without any modifiers applied"
 msgstr "Usar datos del objeto sin sus modificadores aplicados"
-
-
-msgid "Pinned ID"
-msgstr "ID fijo"
-
-
-msgid "Data-block whose values are displayed"
-msgstr "Bloque de datos cuyos valores están siendo mostrados"
 
 
 msgid "Show Only Selected"
@@ -93467,6 +93542,10 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Cuentagotas - Mapa punto banda de color"
 
 
+msgid "DEM data (.hgt) as Mesh and/or Image"
+msgstr "Datos DEM (.hgt) como malla y/o imagen"
+
+
 msgid "Denoising completed"
 msgstr "Reducción de ruidos finalizada"
 
@@ -93569,6 +93648,14 @@ msgstr "Reflectivas"
 
 msgid "Refractive"
 msgstr "Refractivas"
+
+
+msgid "Viewport Bounces"
+msgstr "Rebotes vistas"
+
+
+msgid "Render Bounces"
+msgstr "Rebotes procesamiento"
 
 
 msgid "Rolling Shutter"
@@ -93685,6 +93772,10 @@ msgstr "%s OA, %s Luz de mallas, %s Translum, %s Volumetría"
 
 msgid "Curve Subdivisions"
 msgstr "Subdivisiones de curvas"
+
+
+msgid "AO Distance"
+msgstr "Distancia de OA"
 
 
 msgid "Incompatible output node"
@@ -97709,6 +97800,10 @@ msgid "Sync Selection"
 msgstr "Sincronizar selección"
 
 
+msgid "System Overrides"
+msgstr "Redefiniciones del sistema"
+
+
 msgid "Others"
 msgstr "Otros"
 
@@ -99155,18 +99250,8 @@ msgstr "Seleccionar cámara activa"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "Seleccionar simétrico"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Patrón de selección..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Invertir activo"
 
 
 msgctxt "Operator"
@@ -99624,11 +99709,6 @@ msgstr "Disminuir contraste"
 msgctxt "Operator"
 msgid "Expand Mask by Topology"
 msgstr "Expandir máscara según topología"
-
-
-msgctxt "Operator"
-msgid "Expand Mask by Curvature"
-msgstr "Expandir máscara según curvatura"
 
 
 msgctxt "Operator"
@@ -107239,6 +107319,22 @@ msgid "Data-block has no users and will be deleted"
 msgstr "El bloque de datos no tiene usuarios y será eliminado"
 
 
+msgid "This override data-block is not needed anymore, but was detected as user-edited"
+msgstr "Este bloque de datos redefinido no se necesita más, pero ha sido detectado como editado por el usuario"
+
+
+msgid "This override data-block is unused"
+msgstr "Este bloque de datos redefinido se encuentra inutilizado"
+
+
+msgid "This override property does not exist in current data, it will be removed on next .blend file save"
+msgstr "Esta propiedad redefinida no existe en los datos actuales, será removida la próxima vez que el archivo .blend sea guardado"
+
+
+msgid "Some sub-items require attention"
+msgstr "Algunos sub-elementos requieren atención"
+
+
 msgid "Change the object in the current mode"
 msgstr "Cambia el objeto en el modo actual"
 
@@ -108859,6 +108955,10 @@ msgstr "No se encontró la máscara en la lista de máscaras"
 
 msgid "Frame already exists on this frame number %d"
 msgstr "Ya existe un fotograma en este número de fotograma %d"
+
+
+msgid "Cannot assign material '%s', it has to be used by the grease pencil object already"
+msgstr "No es posible asignar el material '%s', debería estar siendo usado de antemano por el objeto de lápiz de cera"
 
 
 msgid "Could not acquire buffer from image"
@@ -110806,6 +110906,10 @@ msgstr "Adición de mallas"
 
 msgid "Import-Export"
 msgstr "Importación-Exportación"
+
+
+msgid "MakeHuman"
+msgstr "MakeHuman"
 
 
 msgid "Rigging"

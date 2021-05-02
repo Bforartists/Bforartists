@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -9517,8 +9517,8 @@ msgid "Onion Skinning"
 msgstr "Strati a Cipolla"
 
 
-msgid "Mask Layer"
-msgstr "Livello Maschera"
+msgid "Use Mask"
+msgstr "Usa Maschera"
 
 
 msgid "Layer"
@@ -18098,6 +18098,10 @@ msgid "Collection of vertex colors"
 msgstr "Raccolta di colori vertice"
 
 
+msgid "Mask Layer"
+msgstr "Livello Maschera"
+
+
 msgid "Render Opacity"
 msgstr "Opacità Render"
 
@@ -22412,10 +22416,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "Usa il canale del verde del filmato originale per il tracciamento"
 
 
-msgid "Use Mask"
-msgstr "Usa Maschera"
-
-
 msgid "Normalize"
 msgstr "Normalizza"
 
@@ -24766,6 +24766,10 @@ msgid "Input or output socket of a node"
 msgstr "Connettore Input o Output di un nodo"
 
 
+msgid "Tooltip"
+msgstr "Suggerimenti"
+
+
 msgid "Socket shape"
 msgstr "Forma connettore"
 
@@ -26298,8 +26302,8 @@ msgstr "Seleziona Tutti Collegati"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Ribalta Osso Attivo/Selezionato"
+msgid "Select Mirror"
+msgstr "Seleziona Specchio"
 
 
 msgid "Mirror the bone selection"
@@ -30057,6 +30061,14 @@ msgid "Subdivide Stroke"
 msgstr "Suddivide Tratto"
 
 
+msgid "Black"
+msgstr "Nero"
+
+
+msgid "White"
+msgstr "Bianco"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Sblocca Tutti i Livelli"
@@ -30999,11 +31011,6 @@ msgstr "Cambia la selezione di tutti i punti di controllo UVW"
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "Deseleziona i vertici al bordo di ogni regione di selezione"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Seleziona Specchio"
 
 
 msgid "Select mirrored lattice points"
@@ -42310,10 +42317,6 @@ msgid "Edit Property"
 msgstr "Modifica Proprietà"
 
 
-msgid "Tooltip"
-msgstr "Suggerimenti"
-
-
 msgid "Property Name"
 msgstr "Nome Proprietà"
 
@@ -49393,14 +49396,6 @@ msgid "Dash"
 msgstr "Tratteggiato"
 
 
-msgid "Black"
-msgstr "Nero"
-
-
-msgid "White"
-msgstr "Bianco"
-
-
 msgid "Overlay Mode"
 msgstr "Modalità Sovrapposizione"
 
@@ -56188,16 +56183,6 @@ msgstr "Estendi Figlio"
 msgctxt "Operator"
 msgid "Select Active Camera"
 msgstr "Seleziona Camera Attiva"
-
-
-msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "Selezione a Specchio"
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Alterna Attiva"
 
 
 msgctxt "Operator"

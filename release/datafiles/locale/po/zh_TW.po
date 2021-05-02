@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -9830,8 +9830,8 @@ msgid "Onion Skinning"
 msgstr "洋蔥皮化"
 
 
-msgid "Mask Layer"
-msgstr "遮罩分層"
+msgid "Use Mask"
+msgstr "使用遮罩"
 
 
 msgid "Vertex Paint mix factor"
@@ -18104,6 +18104,10 @@ msgid "Change line thickness based on a material attribute"
 msgstr "根據材質特性來變更線條厚度"
 
 
+msgid "Mask Layer"
+msgstr "遮罩分層"
+
+
 msgid "Single layer used for masking pixels"
 msgstr "用於遮罩像素的單一層"
 
@@ -22461,10 +22465,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "從連續鏡頭使用綠色通道供追蹤"
 
 
-msgid "Use Mask"
-msgstr "使用遮罩"
-
-
 msgid "Normalize"
 msgstr "歸一化"
 
@@ -25307,6 +25307,10 @@ msgid "Input or output socket of a node"
 msgstr "節點的輸入或輸出接口"
 
 
+msgid "Tooltip"
+msgstr "提示框"
+
+
 msgid "Enable the socket"
 msgstr "啟用接口"
 
@@ -26775,8 +26779,8 @@ msgstr "選取所有連結項"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "翻轉作用中/選取的骨骼"
+msgid "Select Mirror"
+msgstr "選取鏡像"
 
 
 msgid "Active Only"
@@ -30504,6 +30508,14 @@ msgid "Snap Selection to Grid"
 msgstr "吸附選取項至格線"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgctxt "Operator"
 msgid "Assign to Vertex Group"
 msgstr "指派至頂點群組"
@@ -31303,11 +31315,6 @@ msgstr "統一所有 UVW 控制點間距"
 
 msgid "Change selection of all UVW control points"
 msgstr "更改所有 UVW 控制點的選取"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "選取鏡像"
 
 
 msgid "Select vertex directly linked to already selected ones"
@@ -42462,10 +42469,6 @@ msgid "Edit Property"
 msgstr "編輯屬性"
 
 
-msgid "Tooltip"
-msgstr "提示框"
-
-
 msgid "Property Name"
 msgstr "屬性名稱"
 
@@ -49293,14 +49296,6 @@ msgid "Dash"
 msgstr "虛線"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
-msgid "White"
-msgstr "白色"
-
-
 msgid "Overlay Mode"
 msgstr "疊層模式"
 
@@ -55533,11 +55528,6 @@ msgstr "擴展子代"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "選取樣式..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "翻轉作用項"
 
 
 msgctxt "Operator"

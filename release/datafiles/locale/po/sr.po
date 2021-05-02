@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4881,8 +4881,8 @@ msgid "Show Points"
 msgstr "Прикажи тачке"
 
 
-msgid "Mask Layer"
-msgstr "Маскирај слој"
+msgid "Use Mask"
+msgstr "Користи маску"
 
 
 msgid "Layer"
@@ -9124,6 +9124,10 @@ msgid "Minimum thickness"
 msgstr "Најмања дебљина"
 
 
+msgid "Mask Layer"
+msgstr "Маскирај слој"
+
+
 msgid "Render Opacity"
 msgstr "Рендеруј провидност"
 
@@ -11010,10 +11014,6 @@ msgid "Use Green Channel"
 msgstr "Користи зелени канал"
 
 
-msgid "Use Mask"
-msgstr "Користи маску"
-
-
 msgid "Normalize"
 msgstr "Нормализуј"
 
@@ -12208,6 +12208,10 @@ msgstr "Користи формат чвора"
 
 msgid "Output File Layer Slot"
 msgstr "Слот слоја излазне датотеке"
+
+
+msgid "Tooltip"
+msgstr "Описи"
 
 
 msgid "Enable the socket"
@@ -15170,6 +15174,14 @@ msgstr "Изабор за курсор"
 msgctxt "Operator"
 msgid "Snap Selection to Grid"
 msgstr "Изабрано за мрежу"
+
+
+msgid "Black"
+msgstr "Црно"
+
+
+msgid "White"
+msgstr "Бела"
 
 
 msgctxt "Operator"
@@ -20898,10 +20910,6 @@ msgid "Edit Property"
 msgstr "Измени особину"
 
 
-msgid "Tooltip"
-msgstr "Описи"
-
-
 msgid "Property Name"
 msgstr "Назив особине"
 
@@ -23728,14 +23736,6 @@ msgstr "Стаза"
 
 msgid "Dash"
 msgstr "Испрекидано"
-
-
-msgid "Black"
-msgstr "Црно"
-
-
-msgid "White"
-msgstr "Бела"
 
 
 msgid "Alpha Channel"
@@ -26656,11 +26656,6 @@ msgstr "Наставак"
 msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Изабери мустру ..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Изврни активно"
 
 
 msgctxt "Operator"

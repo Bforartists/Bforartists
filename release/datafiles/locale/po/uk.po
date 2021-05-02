@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -14644,12 +14644,8 @@ msgid "Enable the use of lights on stroke and fill materials"
 msgstr "Увімкнути використання освітлювачів на матеріалах штриха та заповнення"
 
 
-msgid "Mask Layer"
-msgstr "Маскувальний шар"
-
-
-msgid "Mask pixels from underlying layers drawing"
-msgstr "Маскувати пікселі від рисування основоположних шарів"
+msgid "Use Mask"
+msgstr "Вжити маску"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -29962,6 +29958,10 @@ msgid "Active vertex color index"
 msgstr "Індекс активного кольору вершин"
 
 
+msgid "Mask Layer"
+msgstr "Маскувальний шар"
+
+
 msgid "Single layer used for masking pixels"
 msgstr "Окремий шар, що використовується для маскування пікселів"
 
@@ -37148,10 +37148,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "Використати для відстеження зелений канал з відео"
 
 
-msgid "Use Mask"
-msgstr "Вжити маску"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Використати блок даних нарисного олівця як маску на основі лише обведених штрихами Нарисного Олівця ділянок області патерну міток у ході відстеження"
 
@@ -41750,6 +41746,10 @@ msgid "Input or output socket of a node"
 msgstr "Ввідний або вивідний роз'єм вузла"
 
 
+msgid "Tooltip"
+msgstr "Підказка"
+
+
 msgid "Socket shape"
 msgstr "Форма роз'єму"
 
@@ -43764,8 +43764,8 @@ msgstr "(Зне)вибрати кістки, пов'язані відношен�
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Перевернути вибір/активність кісток"
+msgid "Select Mirror"
+msgstr "Вибрати дзеркалення"
 
 
 msgid "Mirror the bone selection"
@@ -50584,6 +50584,14 @@ msgid "Switch tint colors"
 msgstr "Перемкнути кольори підбарвлення"
 
 
+msgid "Black"
+msgstr "Чорне"
+
+
+msgid "White"
+msgstr "Біле"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "Трансформа Заповнення Штриха"
@@ -52354,11 +52362,6 @@ msgstr "Змінити вибір всіх контрольних точок UVW
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "Зняти вибір з вершин на межі кожної з вибраних областей"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Вибрати дзеркалення"
 
 
 msgid "Select mirrored lattice points"
@@ -59366,15 +59369,6 @@ msgstr "Прив'язати сіть до цілі у модифікаторі �
 
 
 msgctxt "Operator"
-msgid "Switch Object"
-msgstr "Перемкнути Об'єкт"
-
-
-msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
-msgstr "Перемикає активний об'єкт та призначає той самий режим для нового під курсором миші, залишаючи активний режим в поточному"
-
-
-msgctxt "Operator"
 msgid "Add Text"
 msgstr "Додати текст"
 
@@ -59415,6 +59409,10 @@ msgstr "Примус Відстеження за"
 
 msgid "Lock Track Constraint"
 msgstr "Примус Стеження з блокуванням"
+
+
+msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
+msgstr "Перемикає активний об'єкт та призначає той самий режим для нового під курсором миші, залишаючи активний режим в поточному"
 
 
 msgctxt "Operator"
@@ -70782,10 +70780,6 @@ msgid "Default value of the property. Important for NLA mixing"
 msgstr "Стандартне значення властивості. Важливо для мішання НЛА"
 
 
-msgid "Tooltip"
-msgstr "Підказка"
-
-
 msgid "Is Library Overridable"
 msgstr "Є заміщуваноздатною бібліотекою"
 
@@ -75628,14 +75622,6 @@ msgstr "Підтримка для подій відхилу графічного
 
 msgid "Use the new Vertex Painting system"
 msgstr "Вжити нову систему Малювання Вершин"
-
-
-msgid "Switch Object Operator"
-msgstr "Оператор Перемикання Об'єктів"
-
-
-msgid "Enable the operator to switch objects by pressing D"
-msgstr "Увімкнути оператор для перемикання об'єктів шляхом натискання D"
 
 
 msgid "Undo Legacy"
@@ -83919,16 +83905,8 @@ msgid "Display dashed black-white edges"
 msgstr "Показувати пунктирні чорно-білі краї"
 
 
-msgid "Black"
-msgstr "Чорне"
-
-
 msgid "Display black edges"
 msgstr "Показувати чорні краї"
-
-
-msgid "White"
-msgstr "Біле"
 
 
 msgid "Display white edges"
@@ -97634,18 +97612,8 @@ msgstr "Вибрати Активну Камеру"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "Дзеркалити Вибрання"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Патерн Вибору..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Переверт Активного"
 
 
 msgctxt "Operator"
@@ -98103,11 +98071,6 @@ msgstr "Зменшити Контраст"
 msgctxt "Operator"
 msgid "Expand Mask by Topology"
 msgstr "Розгорнути Маску За Топологією"
-
-
-msgctxt "Operator"
-msgid "Expand Mask by Curvature"
-msgstr "Розгорнути Маску За Кривиною"
 
 
 msgctxt "Operator"
