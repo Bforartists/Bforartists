@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7956,8 +7956,8 @@ msgid "Show Points"
 msgstr "Přiřadit rodiče"
 
 
-msgid "Mask Layer"
-msgstr "Vrstvy masky"
+msgid "Use Mask"
+msgstr "Maximalní X limitace"
 
 
 msgid "Layer"
@@ -14408,6 +14408,10 @@ msgid "Allow thickness to be assigned asymmetrically"
 msgstr "Povolit asymetrické přiřazení tloušťky"
 
 
+msgid "Mask Layer"
+msgstr "Vrstvy masky"
+
+
 msgid "Render Opacity"
 msgstr "Sytost"
 
@@ -17106,10 +17110,6 @@ msgid "Use Green Channel"
 msgstr "Kanál textury"
 
 
-msgid "Use Mask"
-msgstr "Maximalní X limitace"
-
-
 msgid "Normalize"
 msgstr "Normalizovat"
 
@@ -19299,6 +19299,10 @@ msgid "Node Socket"
 msgstr "Kopírovat atributy"
 
 
+msgid "Tooltip"
+msgstr "Nápověda"
+
+
 msgid "Diamond"
 msgstr "Diamant"
 
@@ -20417,8 +20421,8 @@ msgstr "Vybrat Propojené"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Převrátit Aktivní/Označenou Kost"
+msgid "Select Mirror"
+msgstr "Vybrat více"
 
 
 msgctxt "Operator"
@@ -23634,6 +23638,14 @@ msgid "Flip Colors"
 msgstr "Překlopit Barvy"
 
 
+msgid "Black"
+msgstr "Bod"
+
+
+msgid "White"
+msgstr "Kontrolní body"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Odemknout Všechny Vrstvy"
@@ -24257,11 +24269,6 @@ msgstr "Přiřadit rodiče"
 
 msgid "Change selection of all UVW control points"
 msgstr "Vzbrat vše podle typu"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Vybrat více"
 
 
 msgctxt "Operator"
@@ -33079,10 +33086,6 @@ msgid "Edit the attributes of the property"
 msgstr "Upravit atributy vlastnosti"
 
 
-msgid "Tooltip"
-msgstr "Nápověda"
-
-
 msgid "Is Library Overridable"
 msgstr "Je Knihovna Přepsatelná"
 
@@ -39016,14 +39019,6 @@ msgid "Outline"
 msgstr "Obrys"
 
 
-msgid "Black"
-msgstr "Bod"
-
-
-msgid "White"
-msgstr "Kontrolní body"
-
-
 msgid "Editing context being displayed"
 msgstr "Aktivovat materiálové uzly"
 
@@ -39826,10 +39821,6 @@ msgstr "Instance"
 
 msgid "Instances of objects or collections"
 msgstr "Instance objektů nebo kolekcí"
-
-
-msgid "Use data from object with all modifiers applied"
-msgstr "Použít data z objektu s aplikovanými všemi modifikátory"
 
 
 msgid "Show Only Selected"
@@ -45228,18 +45219,8 @@ msgstr "Vybrat aktivní kameru"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "Zrcadlit výběr"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Vybrat podle vzoru..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Převrátit aktivní"
 
 
 msgctxt "Operator"

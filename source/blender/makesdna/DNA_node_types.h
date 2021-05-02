@@ -1280,10 +1280,9 @@ typedef struct NodeAttributeSeparateXYZ {
 
 typedef struct NodeAttributeConvert {
   /* CustomDataType. */
-  uint8_t data_type;
-  char _pad[1];
+  int8_t data_type;
   /* AttributeDomain. */
-  int16_t domain;
+  int8_t domain;
 } NodeAttributeConvert;
 
 typedef struct NodeGeometryMeshCircle {
@@ -1312,6 +1311,13 @@ typedef struct NodeSwitch {
   /* NodeSwitch. */
   uint8_t input_type;
 } NodeSwitch;
+
+typedef struct NodeGeometryAttributeTransfer {
+  /* AttributeDomain. */
+  int8_t domain;
+  /* GeometryNodeAttributeTransferMapMode. */
+  uint8_t mapping;
+} NodeGeometryAttributeTransfer;
 
 /* script node mode */
 #define NODE_SCRIPT_INTERNAL 0
@@ -1806,6 +1812,11 @@ typedef enum GeometryNodeMeshLineCountMode {
   GEO_NODE_MESH_LINE_COUNT_TOTAL = 0,
   GEO_NODE_MESH_LINE_COUNT_RESOLUTION = 1,
 } GeometryNodeMeshLineCountMode;
+
+typedef enum GeometryNodeAttributeTransferMapMode {
+  GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST_FACE_INTERPOLATED = 0,
+  GEO_NODE_ATTRIBUTE_TRANSFER_NEAREST = 1,
+} GeometryNodeAttributeTransferMapMode;
 
 #ifdef __cplusplus
 }

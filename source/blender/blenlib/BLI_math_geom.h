@@ -119,10 +119,10 @@ float dist_signed_to_plane_v3(const float p[3], const float plane[4]);
 float dist_to_plane_v3(const float p[3], const float plane[4]);
 
 /* plane3 versions */
-float dist_signed_squared_to_plane3_v3(const float p[3], const float plane[4]);
-float dist_squared_to_plane3_v3(const float p[3], const float plane[4]);
-float dist_signed_to_plane3_v3(const float p[3], const float plane[4]);
-float dist_to_plane3_v3(const float p[3], const float plane[4]);
+float dist_signed_squared_to_plane3_v3(const float p[3], const float plane[3]);
+float dist_squared_to_plane3_v3(const float p[3], const float plane[3]);
+float dist_signed_to_plane3_v3(const float p[3], const float plane[3]);
+float dist_to_plane3_v3(const float p[3], const float plane[3]);
 
 float dist_squared_to_line_segment_v3(const float p[3], const float l1[3], const float l2[3]);
 float dist_to_line_segment_v3(const float p[3], const float l1[3], const float l2[3]);
@@ -778,7 +778,7 @@ MINLINE float dot_shsh(const float a[9], const float b[9]);
 MINLINE float eval_shv3(float r[9], const float v[3]);
 MINLINE float diffuse_shv3(float r[9], const float v[3]);
 MINLINE void vec_fac_to_sh(float r[9], const float v[3], const float f);
-MINLINE void madd_sh_shfl(float r[9], const float sh[3], const float f);
+MINLINE void madd_sh_shfl(float r[9], const float sh[9], const float f);
 
 /********************************* Form Factor *******************************/
 

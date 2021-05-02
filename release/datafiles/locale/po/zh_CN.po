@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5223,6 +5223,26 @@ msgstr "输入色彩空间"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "图像文件中的颜色空间，用于在保存和加载图像时转换"
+
+
+msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
+msgstr "基于filmic shaper的log，使用16.5stops的宽容度，以及25 stops的动态范围"
+
+
+msgid "Rec. 709 (Full Range), Blender native linear space"
+msgstr "Rec. 709 (全范围), Blender 原生线性空间"
+
+
+msgid "ACES linear space"
+msgstr "ACES 线性空间"
+
+
+msgid "Color space used for images which contains non-color data (i,e, normal maps)"
+msgstr "包含非色彩数据(即, 法线贴图)的图像所使用的色彩空间"
+
+
+msgid "Standard RGB Display Space"
+msgstr "标准RGB显示空间"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -14711,12 +14731,8 @@ msgid "Enable the use of lights on stroke and fill materials"
 msgstr "在笔画和填充材质上启用灯光"
 
 
-msgid "Mask Layer"
-msgstr "遮罩层"
-
-
-msgid "Mask pixels from underlying layers drawing"
-msgstr "从层绘制上遮蔽像素"
+msgid "Use Mask"
+msgstr "使用遮罩"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -15966,7 +15982,7 @@ msgstr "钩挂修改器, 用于修改顶点位置"
 
 
 msgid "Hook Center"
-msgstr "勾镰中心"
+msgstr "钩挂中心"
 
 
 msgid "Falloff Curve"
@@ -17174,6 +17190,14 @@ msgstr "包含一个骨骼层级的骨架数据块, 通常用于绑定角色"
 
 msgid "Animation data for this data-block"
 msgstr "数据块的动画数据"
+
+
+msgid "Axes Position"
+msgstr "轴位置"
+
+
+msgid "The position for the axes on the bone. Increasing the value moves it closer to the tip; decreasing moves it closer to the root"
+msgstr "骨骼上轴的位置。调高该值使其更接近尖端，调低将移至更靠近根部"
 
 
 msgid "Bones"
@@ -21866,6 +21890,10 @@ msgid "Size of the area of the area light in the Y direction for rectangle shape
 msgstr "面光灯的尺寸, 若为矩形, 则为 Y 向尺寸"
 
 
+msgid "How widely the emitted light fans out, as in the case of a gridded softbox"
+msgstr "发出的灯光详扇面范围， 如同栅格软盒中的情形"
+
+
 msgid "Contact Shadow"
 msgstr "接触阴影"
 
@@ -22620,6 +22648,10 @@ msgstr "使用基于拓扑的镜像方式 (当网格两侧具有匹配且唯一�
 
 msgid "Mirror Vertex Groups"
 msgstr "镜像顶点组"
+
+
+msgid "Mirror the left/right vertex groups when painting. The symmetry axis is determined by the symmetry settings"
+msgstr "绘制时镜像左/右顶点组。对称轴由对称设置决定"
 
 
 msgid "Enable symmetry in the X axis"
@@ -23939,6 +23971,18 @@ msgstr "朝向法向"
 
 msgid "Rotate instance according to vertex normal"
 msgstr "按顶点法线旋转副本"
+
+
+msgid "Enable mesh symmetry in the X axis"
+msgstr "在 X 轴向上启用网格对称"
+
+
+msgid "Enable mesh symmetry in the Y axis"
+msgstr "在 Y 轴向上启用网格对称"
+
+
+msgid "Enable mesh symmetry in the Z axis"
+msgstr "在 Z 轴向上启用网格对称"
 
 
 msgid "Shape Key Edit Mode"
@@ -30467,6 +30511,10 @@ msgstr "顶点色编号"
 
 msgid "Active vertex color index"
 msgstr "顶点色编号"
+
+
+msgid "Mask Layer"
+msgstr "遮罩层"
 
 
 msgid "Single layer used for masking pixels"
@@ -37723,10 +37771,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "使用镜头的绿色通道进行追踪"
 
 
-msgid "Use Mask"
-msgstr "使用遮罩"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "将蜡笔数据块用作遮罩以便在追踪时仅使用特定的图块"
 
@@ -40936,6 +40980,14 @@ msgid "Bring the input collection geometry into the modified object, maintaining
 msgstr "将输入集合几何体引入修改后的物体，保持场景物体之间的相对位置"
 
 
+msgid "Geometry Custom Group"
+msgstr "几何自定义群组"
+
+
+msgid "Custom Geometry Group Node for Python nodes"
+msgstr "用于Python节点的自定义几何群组节点"
+
+
 msgid "Is Viewport"
 msgstr "是否视图"
 
@@ -42465,6 +42517,10 @@ msgid "Input or output socket of a node"
 msgstr "一个节点的输入或输出接口"
 
 
+msgid "Tooltip"
+msgstr "工具提示"
+
+
 msgid "Socket shape"
 msgstr "至接口"
 
@@ -42511,6 +42567,14 @@ msgstr "关联"
 
 msgid "True if the socket is connected"
 msgstr "当接口已连接时为真"
+
+
+msgid "Multi Input"
+msgstr "多输入"
+
+
+msgid "True if the socket can accept multiple ordered input links"
+msgstr "如果接口可以接受多个有序输入，则为真"
 
 
 msgid "Is Output"
@@ -44535,8 +44599,8 @@ msgstr "(取消)选择鼠标光标下的以父/子关系关联的骨骼"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "翻转活动的 / 选中的骨骼"
+msgid "Select Mirror"
+msgstr "选择镜像"
 
 
 msgid "Mirror the bone selection"
@@ -45184,7 +45248,7 @@ msgstr "将选择的迹均化到活动轨迹"
 
 
 msgid "Keep Original"
-msgstr "保留原件"
+msgstr "保留原有"
 
 
 msgid "Keep original tracks"
@@ -51363,6 +51427,14 @@ msgid "Switch tint colors"
 msgstr "切换染色"
 
 
+msgid "Black"
+msgstr "黑色"
+
+
+msgid "White"
+msgstr "白色"
+
+
 msgctxt "Operator"
 msgid "Transform Stroke Fill"
 msgstr "变换笔画填充"
@@ -53142,11 +53214,6 @@ msgstr "改变所有 UVW 控制点的选取状态"
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "取消选择那些位于各选区边界上的骨骼"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "选择镜像"
 
 
 msgid "Select mirrored lattice points"
@@ -56978,6 +57045,15 @@ msgstr "自适应显示选择的片段范围"
 
 
 msgctxt "Operator"
+msgid "Toggle Active Preview"
+msgstr "切换活动预览"
+
+
+msgid "Toggle active preview state of node"
+msgstr "切换节点的活动预览状态"
+
+
+msgctxt "Operator"
 msgid "Add and Link Node"
 msgstr "添加并联接节点"
 
@@ -60275,15 +60351,6 @@ msgstr "将网格绑定至表面形变修改器的目标"
 
 
 msgctxt "Operator"
-msgid "Switch Object"
-msgstr "切换物体"
-
-
-msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
-msgstr "切换活动物体并将相同的模式分配给鼠标光标下的新物体，使活动模式处于当前模式"
-
-
-msgctxt "Operator"
 msgid "Add Text"
 msgstr "添加文本"
 
@@ -60324,6 +60391,10 @@ msgstr "标准跟随约束"
 
 msgid "Lock Track Constraint"
 msgstr "锁定跟踪约束"
+
+
+msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
+msgstr "切换活动物体并将相同的模式分配给鼠标光标下的新物体，使活动模式处于当前模式"
 
 
 msgctxt "Operator"
@@ -69619,6 +69690,10 @@ msgid "Select Menu"
 msgstr "选择菜单"
 
 
+msgid "Menu bone selection"
+msgstr "选中骨骼的菜单"
+
+
 msgctxt "Operator"
 msgid "Align Camera to View"
 msgstr "对齐相机至视图"
@@ -71948,10 +72023,6 @@ msgid "Default value of the property. Important for NLA mixing"
 msgstr "属性的默认值. 对 NLA 混合非常重要"
 
 
-msgid "Tooltip"
-msgstr "工具提示"
-
-
 msgid "Is Library Overridable"
 msgstr "库是否可覆盖"
 
@@ -73133,7 +73204,7 @@ msgstr "每次雕刻施加的重力量"
 
 
 msgid "Object whose Z axis defines orientation of gravity"
-msgstr "z轴定义重力方向的物体"
+msgstr "Z轴定义重力方向的物体"
 
 
 msgid "Lock X"
@@ -73507,6 +73578,10 @@ msgid "Aperture"
 msgstr "光圈"
 
 
+msgid "Beam Shape"
+msgstr "光束形状"
+
+
 msgid "Ray Visibility"
 msgstr "射线可见性"
 
@@ -73549,6 +73624,10 @@ msgstr "焦散"
 
 msgid "Clamping"
 msgstr "钳制"
+
+
+msgid "Fast GI Approximation"
+msgstr "快速GI近似"
 
 
 msgid "Max Bounces"
@@ -76824,14 +76903,6 @@ msgid "Use the new Vertex Painting system"
 msgstr "使用新的顶点绘制系统"
 
 
-msgid "Switch Object Operator"
-msgstr "切换物体操作"
-
-
-msgid "Enable the operator to switch objects by pressing D"
-msgstr "启用该操作，通过按键D切换物体"
-
-
 msgid "Undo Legacy"
 msgstr "撤消(旧版)"
 
@@ -79230,6 +79301,10 @@ msgid "AO Bounces"
 msgstr "AO反弹"
 
 
+msgid "After this number of light bounces, use approximate global illumination. 0 disables this feature"
+msgstr "在该次数的光反弹后，使用近似的全局照明。0为禁用此功能"
+
+
 msgid "AO Bounces Render"
 msgstr "AO反弹渲染"
 
@@ -79988,6 +80063,10 @@ msgstr "允许基于摄像头的视锥体剔除物体"
 
 msgid "Allow objects to be culled based on the distance from camera"
 msgstr "允许基于与相机间的距离剔除物体"
+
+
+msgid "Approximate diffuse indirect light with background tinted ambient occlusion. This provides fast alternative to full global illumination, for interactive viewport rendering or final renders with reduced quality"
+msgstr "近似带有背景染色环境遮挡的散射间接光。这提供了全局照明的快速替代方案，用于牺牲质量的交互式视图渲染或最终渲染"
 
 
 msgid "Layer Samples"
@@ -81464,6 +81543,10 @@ msgstr "渲染时覆盖现有文件"
 
 msgid "Persistent Data"
 msgstr "持久数据"
+
+
+msgid "Keep render data around for faster re-renders and animation renders, at the cost of increased memory usage"
+msgstr "以增加内存使用量为代价，保留渲染数据，以更快地重新渲染和动画渲染"
 
 
 msgid "Placeholders"
@@ -85191,16 +85274,8 @@ msgid "Display dashed black-white edges"
 msgstr "绘制混合的黑白边"
 
 
-msgid "Black"
-msgstr "黑色"
-
-
 msgid "Display black edges"
 msgstr "绘制黑色边线"
-
-
-msgid "White"
-msgstr "白色"
 
 
 msgid "Display white edges"
@@ -86350,6 +86425,10 @@ msgid "Library Overrides"
 msgstr "库覆写"
 
 
+msgid "Display data-blocks with library overrides and list their overridden properties"
+msgstr "显示带有库覆写的数据块，并列出其覆写属性"
+
+
 msgid "Orphan Data"
 msgstr "孤立的数据"
 
@@ -86457,6 +86536,14 @@ msgstr "显示库覆写"
 
 msgid "For libraries with overrides created, show the overridden values"
 msgstr "对于已创建覆写的库，显示覆写值"
+
+
+msgid "Show System Overrides"
+msgstr "显示系统覆写"
+
+
+msgid "For libraries with overrides created, show the overridden values that are defined/controlled automatically (e.g. to make users of an overridden data-block point to the override data, not the original linked data)"
+msgstr "对于已创建覆写的库，显示自动定义/控制的覆写值(比如，使覆写数据块的用户指向覆写数据，而非原始关联数据)"
 
 
 msgid "Filter Objects"
@@ -86935,20 +87022,8 @@ msgid "Object Evaluation State"
 msgstr "物体解算状态"
 
 
-msgid "Use data from object with all modifiers applied"
-msgstr "使用已应用所有修改器的物体数据"
-
-
 msgid "Use data from original object without any modifiers applied"
 msgstr "使用来自原始物体的数据，无需应用任何修改器"
-
-
-msgid "Pinned ID"
-msgstr "已钉固ID"
-
-
-msgid "Data-block whose values are displayed"
-msgstr "已显示数值的数据块"
 
 
 msgid "Show Only Selected"
@@ -93468,6 +93543,10 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "吸管颜色渐变点采样映射"
 
 
+msgid "DEM data (.hgt) as Mesh and/or Image"
+msgstr "DEM 数据 (.hgt) 作为网格和/或图像"
+
+
 msgid "Denoising completed"
 msgstr "降噪已完成"
 
@@ -93570,6 +93649,14 @@ msgstr "反射"
 
 msgid "Refractive"
 msgstr "折射"
+
+
+msgid "Viewport Bounces"
+msgstr "视图反弹"
+
+
+msgid "Render Bounces"
+msgstr "渲染反弹"
 
 
 msgid "Rolling Shutter"
@@ -93686,6 +93773,10 @@ msgstr "%s AO, %s 网格光源, %s 次表面, %s 体积"
 
 msgid "Curve Subdivisions"
 msgstr "曲线细分"
+
+
+msgid "AO Distance"
+msgstr "AO距离"
 
 
 msgid "Incompatible output node"
@@ -94796,7 +94887,7 @@ msgstr "未添加目标骨骼"
 
 
 msgid "Weight Position"
-msgstr "重量位置"
+msgstr "位置权重"
 
 
 msgid "Layers:"
@@ -95238,7 +95329,7 @@ msgstr "选取依据:"
 
 
 msgid "Edge Types"
-msgstr "边型"
+msgstr "边类型"
 
 
 msgid "Face Marks"
@@ -97112,7 +97203,7 @@ msgstr "清理"
 
 msgctxt "Operator"
 msgid "Back"
-msgstr "后退"
+msgstr "后视图"
 
 
 msgctxt "Operator"
@@ -97708,6 +97799,10 @@ msgstr "限制切换"
 
 msgid "Sync Selection"
 msgstr "选区同步"
+
+
+msgid "System Overrides"
+msgstr "系统覆写"
 
 
 msgid "Others"
@@ -99156,18 +99251,8 @@ msgstr "选择活动相机"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "镜像选择"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "按名称..."
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "翻转活动项"
 
 
 msgctxt "Operator"
@@ -99625,11 +99710,6 @@ msgstr "降低对比度"
 msgctxt "Operator"
 msgid "Expand Mask by Topology"
 msgstr "按拓扑展开遮罩"
-
-
-msgctxt "Operator"
-msgid "Expand Mask by Curvature"
-msgstr "按曲率展开遮罩"
 
 
 msgctxt "Operator"
@@ -107240,6 +107320,22 @@ msgid "Data-block has no users and will be deleted"
 msgstr "数据块没有用户，将被删除"
 
 
+msgid "This override data-block is not needed anymore, but was detected as user-edited"
+msgstr "此覆写数据块不再需要，但被检测为用户编辑"
+
+
+msgid "This override data-block is unused"
+msgstr "此覆写数据块未被使用"
+
+
+msgid "This override property does not exist in current data, it will be removed on next .blend file save"
+msgstr "此覆写属性不存在于当前数据中，它将在下一次.blend文件保存时删除"
+
+
+msgid "Some sub-items require attention"
+msgstr "有些子项目需要注意"
+
+
 msgid "Change the object in the current mode"
 msgstr "在当前模式下修改物体"
 
@@ -108860,6 +108956,10 @@ msgstr "未在遮罩列表找到遮罩"
 
 msgid "Frame already exists on this frame number %d"
 msgstr "在第 %d 帧中已存在帧"
+
+
+msgid "Cannot assign material '%s', it has to be used by the grease pencil object already"
+msgstr "不能指定材质 '%s'， 它必须已经被蜡笔物体使用"
 
 
 msgid "Could not acquire buffer from image"
@@ -110803,6 +110903,10 @@ msgstr "添加网格"
 
 msgid "Import-Export"
 msgstr "导入 - 导出"
+
+
+msgid "MakeHuman"
+msgstr "MakeHuman"
 
 
 msgid "Rigging"

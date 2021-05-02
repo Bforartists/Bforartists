@@ -410,7 +410,7 @@ def regenerate_thumbnail_material(data):
     # preferences = bpy.context.preferences.addons['blenderkit'].preferences
     # layout.prop(preferences, "thumbnail_use_gpu")
     # TODO: here it should call start_material_thumbnailer , but with the wait property on, so it can upload afterwards.
-    bpy.ops.object.blenderkit_material_thumbnail()
+    bpy.ops.object.blenderkit_generate_material_thumbnail()
     time.sleep(130)
     # save
     # this does the actual job
@@ -525,7 +525,7 @@ def download_asset(asset_data, resolution='blend', unpack=False, api_key=''):
     has_url = download.get_download_url(asset_data, download.get_scene_id(), api_key, tcom=None,
                                         resolution='blend')
     if has_url:
-        fpath = download.download_file(asset_data)
+        fpath = download.download_asset_file(asset_data, api_key = api_key)
         if fpath and unpack and asset_data['assetType'] != 'hdr':
             send_to_bg(asset_data, fpath, command='unpack', wait=True)
         return fpath

@@ -492,6 +492,8 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     udpate_asset_data_in_dicts(asset_data)
 
     asset_main['asset_data'] = asset_data  # TODO remove this??? should write to blenderkit Props?
+    asset_main.blenderkit.asset_base_id = asset_data['assetBaseId']
+    asset_main.blenderkit.id = asset_data['id']
     bpy.ops.wm.undo_push_context(message='add %s to scene' % asset_data['name'])
     # moving reporting to on save.
     # report_use_success(asset_data['id'])
@@ -683,7 +685,7 @@ def delete_unfinished_file(file_name):
     return
 
 
-def download_file(asset_data, resolution='blend'):
+def download_asset_file(asset_data, resolution='blend', api_key = ''):
     # this is a simple non-threaded way to download files for background resolution genenration tool
     file_name = paths.get_download_filepaths(asset_data, resolution)[0]  # prefer global dir if possible.
 
@@ -691,14 +693,11 @@ def download_file(asset_data, resolution='blend'):
         # this sends the thread for processing, where another check should occur, since the file might be corrupted.
         bk_logger.debug('not downloading, already in db')
         return file_name
-    preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    api_key = preferences.api_key
 
     download_canceled = False
 
     with open(file_name, "wb") as f:
         print("Downloading %s" % file_name)
-        headers = utils.get_headers(api_key)
         res_file_info, resolution = paths.get_res_file(asset_data, resolution)
         response = requests.get(res_file_info['url'], stream=True)
         total_length = response.headers.get('Content-Length')
@@ -1110,18 +1109,18 @@ def get_download_url(asset_data, scene_id, api_key, tcom=None, resolution='blend
     tasks_queue.add_task((ui.add_report, (str(r), 10, colors.RED)))
 
     if r.status_code == 403:
-        r = 'You need Full plan to get this item.'
+        report = 'You need Full plan to get this item.'
         # r1 = 'All materials and brushes are available for free. Only users registered to Standard plan can use all models.'
         # tasks_queue.add_task((ui.add_report, (r1, 5, colors.RED)))
         if tcom is not None:
-            tcom.report = r
+            tcom.report = report
             tcom.error = True
 
     if r.status_code == 404:
-        r = 'Url not found - 404.'
+        report = 'Url not found - 404.'
         # r1 = 'All materials and brushes are available for free. Only users registered to Standard plan can use all models.'
         if tcom is not None:
-            tcom.report = r
+            tcom.report = report
             tcom.error = True
 
     elif r.status_code >= 500:

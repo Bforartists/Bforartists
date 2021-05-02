@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Alpha (b'71cb0bdc4336')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -13044,8 +13044,8 @@ msgid "Display annotation onion skins before and after the current frame"
 msgstr "Показывать полупрозрачные аннотации от предшествующих и последующих кадров"
 
 
-msgid "Mask Layer"
-msgstr "Слой-маска"
+msgid "Use Mask"
+msgstr "Использовать маску"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -26379,6 +26379,10 @@ msgid "Active vertex color index"
 msgstr "Индекс активного цвета вершины"
 
 
+msgid "Mask Layer"
+msgstr "Слой-маска"
+
+
 msgid "Single layer used for masking pixels"
 msgstr "Слой, используемый для маскировки (скрытия) пикселей"
 
@@ -32373,10 +32377,6 @@ msgid "Use green channel from footage for tracking"
 msgstr "Использовать зелёный канал из исходного видеофрагмента для трекинга"
 
 
-msgid "Use Mask"
-msgstr "Использовать маску"
-
-
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
 msgstr "Использовать датаблок Grease Pencil чтобы задать маску областей шаблонов при отслеживании"
 
@@ -35971,6 +35971,10 @@ msgid "Input or output socket of a node"
 msgstr "Входной или выходной сокет ноды"
 
 
+msgid "Tooltip"
+msgstr "Подсказка"
+
+
 msgid "Socket shape"
 msgstr "Форма сокета"
 
@@ -37832,8 +37836,8 @@ msgstr "Выделить все связанные"
 
 
 msgctxt "Operator"
-msgid "Flip Active/Selected Bone"
-msgstr "Отразить выделенность/активность костей"
+msgid "Select Mirror"
+msgstr "Выделить симметрично"
 
 
 msgid "Mirror the bone selection"
@@ -43477,6 +43481,14 @@ msgid "Flip Colors"
 msgstr "Отразить цвета"
 
 
+msgid "Black"
+msgstr "Чёрный"
+
+
+msgid "White"
+msgstr "Белый"
+
+
 msgctxt "Operator"
 msgid "Unlock All Layers"
 msgstr "Разблокировать все слои"
@@ -44975,11 +44987,6 @@ msgstr "Переключить выделение всех контрольны�
 
 msgid "Deselect vertices at the boundary of each selection region"
 msgstr "Снять выделение с вершин на границе каждого выделенного участка"
-
-
-msgctxt "Operator"
-msgid "Select Mirror"
-msgstr "Выделить симметрично"
 
 
 msgid "Select mirrored lattice points"
@@ -60582,10 +60589,6 @@ msgid "Default value of the property. Important for NLA mixing"
 msgstr "Значение по умолчанию для свойства. Важно для сведения треков НЛА"
 
 
-msgid "Tooltip"
-msgstr "Подсказка"
-
-
 msgid "Is Library Overridable"
 msgstr "Является ли библиотека переопределяемой"
 
@@ -72313,16 +72316,8 @@ msgid "Display dashed black-white edges"
 msgstr "Отображать границы чёрно-белой штриховкой"
 
 
-msgid "Black"
-msgstr "Чёрный"
-
-
 msgid "Display black edges"
 msgstr "Отображать границы чёрными"
-
-
-msgid "White"
-msgstr "Белый"
 
 
 msgid "Display white edges"
@@ -83259,18 +83254,8 @@ msgstr "Выделить активную камеру"
 
 
 msgctxt "Operator"
-msgid "Mirror Selection"
-msgstr "Отразить выделение"
-
-
-msgctxt "Operator"
 msgid "Select Pattern..."
 msgstr "Выделить по шаблону…"
-
-
-msgctxt "Operator"
-msgid "Flip Active"
-msgstr "Отразить активное"
 
 
 msgctxt "Operator"
