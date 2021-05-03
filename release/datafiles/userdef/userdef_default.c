@@ -168,6 +168,7 @@ const UserDef U_default = {
     .glalphaclip = 0.004,
     .autokey_mode = (AUTOKEY_MODE_NORMAL & ~AUTOKEY_ON),
     .autokey_flag = AUTOKEY_FLAG_XYZ2RGB,
+    .animation_flag = USER_ANIM_SHOW_CHANNEL_GROUP_COLORS, /*bfa - channel group colors on. use_anim_channel_group_colors*/
     .text_render = 0,
     .navigation_mode = VIEW_NAVIGATION_WALK,
     .view_rotate_sensitivity_turntable = DEG2RAD(0.4),
