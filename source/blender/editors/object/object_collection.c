@@ -453,7 +453,7 @@ static int collection_add_exec(bContext *C, wmOperator *UNUSED(op))
 void OBJECT_OT_collection_add(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Add to Collection";
+  ot->name = "Add to New Collection";
   ot->idname = "OBJECT_OT_collection_add";
   ot->description = "Add an object to a new collection";
 

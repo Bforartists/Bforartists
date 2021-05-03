@@ -200,10 +200,10 @@ class OBJECT_PT_collections(ObjectButtonsPanel, Panel):
 
         row = layout.row(align=True)
         if bpy.data.collections:
-            row.operator("object.collection_link", text="Add to Collection")
+            row.operator("object.collection_link", text="Link to existing Collection")
+            row.operator("object.collection_add", text="", icon='ADD')
         else:
-            row.operator("object.collection_add", text="Add to Collection")
-        row.operator("object.collection_add", text="", icon='ADD')
+            row.operator("object.collection_add", text="Add to New Collection")    
 
         obj_name = obj.name
         for collection in bpy.data.collections:
