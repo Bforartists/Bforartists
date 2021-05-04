@@ -31,7 +31,7 @@
 /* WARNING! If you edit those strings, please do the same in relevant nodes files (under blender/nodes/...)! */
 
 /*       Tree type       Node ID                  RNA def function        Enum name         Struct name       UI Name              UI Description */
-DefNode(Node,           NODE_FRAME,              def_frame,              "FRAME",          Frame,            "Frame",             ""              )
+DefNode(Node,           NODE_FRAME,              def_frame,              "FRAME",          Frame,            "Frame",             "Collect nodes together inside a frame"              )
 DefNode(Node,           NODE_GROUP,              def_group,              "GROUP",          Group,            "Group",             ""              )
 DefNode(Node,           NODE_GROUP_INPUT,        def_group_input,        "GROUP_INPUT",    GroupInput,       "Group Input",       ""              )
 DefNode(Node,           NODE_GROUP_OUTPUT,       def_group_output,       "GROUP_OUTPUT",   GroupOutput,      "Group Output",      ""              )

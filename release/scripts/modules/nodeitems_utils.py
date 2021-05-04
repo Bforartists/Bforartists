@@ -43,7 +43,7 @@ class NodeCategory:
 
 
 class NodeItem:
-    def __init__(self, nodetype, label=None, settings=None, poll=None, icon='NONE'):
+    def __init__(self, nodetype, label=None, settings=None, poll=None, icon='NONE', description=""):
 
         if settings is None:
             settings = {}
@@ -51,6 +51,7 @@ class NodeItem:
         self.nodetype = nodetype
         self._label = label
         self._icon = icon
+        self._description = description
         self.settings = settings
         self.poll = poll
 
@@ -76,6 +77,15 @@ class NodeItem:
                 return bl_rna.icon
             else:
                 return 'NONE'
+    
+    @property
+    def description(self):
+        if self._description != "":
+            return self._description
+        bl_rna = bpy.types.Node.bl_rna_get_subclass(self.nodetype)
+        if bl_rna is not None:
+            return bl_rna.description
+        return ""
 
     @property
     def translation_context(self):
@@ -95,6 +105,7 @@ class NodeItem:
     def draw(self, layout, _context):
         props = layout.operator("node.add_node", text=self.label, text_ctxt=self.translation_context, icon=self.icon)
         props.type = self.nodetype
+        props.ui_desc = self.description
         props.use_transform = True
 
         for setting in self.settings.items():

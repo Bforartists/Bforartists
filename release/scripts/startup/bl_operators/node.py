@@ -49,6 +49,10 @@ class NodeAddOperator:
         name="Node Type",
         description="Node type",
     )
+    ui_desc: StringProperty(
+        name="UI Description",
+        description="UI Description For Node Add Tooltip"
+    )
     use_transform: BoolProperty(
         name="Use Transform",
         description="Start transform operator after inserting the node",
@@ -122,6 +126,10 @@ class NodeAddOperator:
         # needs active node editor and a tree to add nodes to
         return ((space.type == 'NODE_EDITOR') and
                 space.edit_tree and not space.edit_tree.library)
+    
+    @classmethod
+    def description(cls, context, properties):
+        return properties.ui_desc
 
     # Default execute simply adds a node
     def execute(self, context):
@@ -146,7 +154,6 @@ class NodeAddOperator:
 
 # Simple basic operator for adding a node
 class NODE_OT_add_node(NodeAddOperator, Operator):
-    '''Add a node to the active tree'''
     bl_idname = "node.add_node"
     bl_label = "Add Node"
     bl_options = {'REGISTER', 'UNDO'}
