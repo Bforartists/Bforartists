@@ -189,5 +189,12 @@ void ED_spacetype_toolbar(void)
 
 	BLI_addhead(&st->regiontypes, art);
 
+	/* tool header */
+	/* bfa - readd tabs to tools area, fix toolbar area warning */
+	art = MEM_callocN(sizeof(ARegionType), "spacetype toolbar region");
+	art->regionid = RGN_TYPE_TOOL_HEADER;
+
+	BLI_addhead(&st->regiontypes, art);
+
 	BKE_spacetype_register(st);
 }
