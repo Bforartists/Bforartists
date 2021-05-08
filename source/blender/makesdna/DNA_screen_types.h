@@ -662,7 +662,8 @@ typedef enum eRegionType {
 #define RGN_TYPE_ANY -1
 
 /* Region supports panel tabs (categories). */
-#define RGN_TYPE_HAS_CATEGORY_MASK (1 << RGN_TYPE_UI)
+/* bfa - readd tabs to tools area */
+#define RGN_TYPE_HAS_CATEGORY_MASK (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_TOOLS)
 
 /* Check for any kind of header region. */
 #define RGN_TYPE_IS_HEADER_ANY(regiontype) \
