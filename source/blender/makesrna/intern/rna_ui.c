@@ -300,7 +300,8 @@ static StructRNA *rna_Panel_register(Main *bmain,
   }
   else {
     if (dummypt.category[0] != '\0') {
-      if ((1 << dummypt.space_type) & WM_TOOLSYSTEM_SPACE_MASK) {
+      /* bfa - readd tabs to tools area */
+      if ((1 << dummypt.space_type)) {
         BKE_reportf(reports,
                     RPT_ERROR,
                     "Registering panel class: '%s' has category '%s' ",
