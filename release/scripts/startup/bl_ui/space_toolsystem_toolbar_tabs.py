@@ -86,20 +86,27 @@ class VIEW3D_PT_snappanel_toolshelf(Panel):
 
             col = layout.column(align=True)
             col.label(text="Selection to :")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
+            col.scale_x = 1.75
+            col.scale_y = 1.75
 
+            row = col.row(align=True)
+            row.alignment = 'CENTER'
             row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOR").use_offset = False
             row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+
+            row = col.row(align=True)
+            row.alignment = 'CENTER'
             row.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
             row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
 
             col.label(text="Cursor to :")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-
+            row = col.row(align=True)
+            row.alignment = 'CENTER'
             row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
             row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
+
+            row = col.row(align=True)
+            row.alignment = 'CENTER'
             row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
             row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
