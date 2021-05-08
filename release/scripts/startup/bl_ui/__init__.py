@@ -74,6 +74,8 @@ _modules = [
     # Depends on DNA_WORKSPACE_TOOL (C define).
     "space_toolsystem_common",
     "space_toolsystem_toolbar",
+    #bfa - toolbar tabs panels
+    "space_toolsystem_toolbar_tabs",
 
     "space_clip",
     "space_console",
@@ -96,6 +98,7 @@ _modules = [
     "space_view3d",
     "space_view3d_toolbar",
     "space_toolbar",
+    # bfa - node toolshelf
     "space_node_toolshelf",
 
     # XXX, keep last so panels show after all other tool options.
