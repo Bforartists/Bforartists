@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5223,26 +5223,6 @@ msgstr "输入色彩空间"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "图像文件中的颜色空间，用于在保存和加载图像时转换"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "基于filmic shaper的log，使用16.5stops的宽容度，以及25 stops的动态范围"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (全范围), Blender 原生线性空间"
-
-
-msgid "ACES linear space"
-msgstr "ACES 线性空间"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "包含非色彩数据(即, 法线贴图)的图像所使用的色彩空间"
-
-
-msgid "Standard RGB Display Space"
-msgstr "标准RGB显示空间"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -14733,6 +14713,10 @@ msgstr "在笔画和填充材质上启用灯光"
 
 msgid "Use Mask"
 msgstr "使用遮罩"
+
+
+msgid "The visibility of drawings on this layer is affected by the layers in its masks list"
+msgstr "此图层上的绘制的可见性受其遮罩列表中的图层的影响"
 
 
 msgid "Display onion skins before and after the current frame"
@@ -34559,6 +34543,14 @@ msgid "Mirroring modifier"
 msgstr "镜像修改器"
 
 
+msgid "Bisect Distance"
+msgstr "切分距离"
+
+
+msgid "Distance from the bisect plane within which vertices are removed"
+msgstr "与被切除顶点的切分平面的距离"
+
+
 msgid "Distance within which mirrored vertices are merged"
 msgstr "与镜像顶点的合并间距"
 
@@ -38329,6 +38321,14 @@ msgstr "活动NLA轨道"
 
 msgid "Node in a node tree"
 msgstr "节点树中的节点"
+
+
+msgid "Active Preview"
+msgstr "活动预览"
+
+
+msgid "Node is previewed in other editor"
+msgstr "在其他编辑器中预览的节点"
 
 
 msgid "The node icon"
@@ -42519,6 +42519,10 @@ msgstr "一个节点的输入或输出接口"
 
 msgid "Tooltip"
 msgstr "工具提示"
+
+
+msgid "Socket tooltip"
+msgstr "接口工具提示"
 
 
 msgid "Socket shape"
@@ -51427,12 +51431,105 @@ msgid "Switch tint colors"
 msgstr "切换染色"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "识别图像至蜡笔"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "从图像提取蜡笔笔画"
+
+
+msgid "Determines if trace simple image or full sequence"
+msgstr "确定是识别简单图像还是完整序列"
+
+
+msgid "Trace the current frame of the image"
+msgstr "识别图像的当前帧"
+
+
+msgid "Trace full sequence"
+msgstr "识别完整序列"
+
+
+msgid "Resolution of the generated curves"
+msgstr "生成的曲线的分辨率"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "到采样点的距离，零为禁用"
+
+
+msgid "Scale of the final stroke"
+msgstr "最终笔画的范围"
+
+
+msgid "Color Threshold"
+msgstr "颜色阈值"
+
+
+msgid "Determine the lightness threshold above which strokes are generated"
+msgstr "确定生成笔画上方的光度阈值"
+
+
+msgid "Turn Policy"
+msgstr "转向策略"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "确定在将位图分解为路径时如何解决分歧"
+
+
 msgid "Black"
 msgstr "黑色"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "首选连接黑色(前景)元素"
+
+
 msgid "White"
 msgstr "白色"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "首选连接白色(背景)元素"
+
+
+msgid "Always take a left turn"
+msgstr "总是左转"
+
+
+msgid "Always take a right turn"
+msgstr "总是右转"
+
+
+msgid "Minority"
+msgstr "少数"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "首选连接当前位置的局部邻域中出现频率较低的颜色(黑色或白色)"
+
+
+msgid "Majority"
+msgstr "多数"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "首选连接当前位置的局部邻域中出现频率较高的颜色(黑色或白色)"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "选择伪随机"
+
+
+msgid "Start At Current Frame"
+msgstr "从当前帧开始"
+
+
+msgid "Trace Image starting in current image frame"
+msgstr "从当前图像帧开始跟踪图像"
 
 
 msgctxt "Operator"
@@ -60393,8 +60490,21 @@ msgid "Lock Track Constraint"
 msgstr "锁定跟踪约束"
 
 
+msgctxt "Operator"
+msgid "Transfer Mode"
+msgstr "传递模式"
+
+
 msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
 msgstr "切换活动物体并将相同的模式分配给鼠标光标下的新物体，使活动模式处于当前模式"
+
+
+msgid "Use Eyedropper"
+msgstr "使用吸管"
+
+
+msgid "Pick the object to switch to using an eyedropper"
+msgstr "选择要切换到使用吸管的物体"
 
 
 msgctxt "Operator"
@@ -86994,6 +87104,18 @@ msgid "Attribute domain to display"
 msgstr "要显示的属性域"
 
 
+msgid "Context Path"
+msgstr "上下文路径"
+
+
+msgid "Context path to the data being displayed"
+msgstr "显示数据的上下文路径"
+
+
+msgid "Display Context Path Collapsed"
+msgstr "显示上下文路径已折叠"
+
+
 msgid "Geometry Component"
 msgstr "几何组件"
 
@@ -87018,8 +87140,24 @@ msgid "Instances of objects or collections"
 msgstr "物体或集合的实例"
 
 
+msgid "Is Pinned"
+msgstr "已钉固"
+
+
+msgid "Context path is pinned"
+msgstr "上下文路径已钉固"
+
+
 msgid "Object Evaluation State"
 msgstr "物体解算状态"
+
+
+msgid "Evaluated"
+msgstr "已解算"
+
+
+msgid "Use data from fully or partially evaluated object"
+msgstr "使用来自已完全或部分解算的数据"
 
 
 msgid "Use data from original object without any modifiers applied"
@@ -87800,6 +87938,22 @@ msgstr "样条线控制点"
 
 msgid "Collection of spline points"
 msgstr "样条线控制点集合"
+
+
+msgid "Spreadsheet Context"
+msgstr "电子表格上下文"
+
+
+msgid "Element of spreadsheet context path"
+msgstr "电子表格上下文路径的元素"
+
+
+msgid "Type of the context"
+msgstr "上下文的类型"
+
+
+msgid "Node Name"
+msgstr "节点名称"
 
 
 msgid "Stereo 3D Display"
@@ -93543,10 +93697,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "吸管颜色渐变点采样映射"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEM 数据 (.hgt) 作为网格和/或图像"
-
-
 msgid "Denoising completed"
 msgstr "降噪已完成"
 
@@ -98292,6 +98442,14 @@ msgid "Two or more channels are needed below this strip"
 msgstr "此片段下需要两个或更多的通道"
 
 
+msgid "No active context"
+msgstr "无活动上下文"
+
+
+msgid "<no object>"
+msgstr "<no object>"
+
+
 msgctxt "Operator"
 msgid "Word"
 msgstr "单词"
@@ -99663,6 +99821,11 @@ msgstr "设置轴心点"
 
 
 msgctxt "Operator"
+msgid "Transfer Sculpt Mode"
+msgstr "传递雕刻模式"
+
+
+msgctxt "Operator"
 msgid "Invert Mask"
 msgstr "反转遮罩"
 
@@ -99713,6 +99876,11 @@ msgstr "按拓扑展开遮罩"
 
 
 msgctxt "Operator"
+msgid "Expand Mask by Normals"
+msgstr "按法向展开遮罩"
+
+
+msgctxt "Operator"
 msgid "Mask Slice and Fill Holes"
 msgstr "遮蔽切片并填充孔"
 
@@ -99749,6 +99917,16 @@ msgstr "扩展面组"
 msgctxt "Operator"
 msgid "Shrink Face Set"
 msgstr "收缩面组"
+
+
+msgctxt "Operator"
+msgid "Expand Face Set by Topology"
+msgstr "按拓扑展开面组"
+
+
+msgctxt "Operator"
+msgid "Expand Active Face Set"
+msgstr "展开活动面组"
 
 
 msgctxt "Operator"
@@ -104874,6 +105052,10 @@ msgid "Could not find hook modifier"
 msgstr "未能找到钩挂修改器"
 
 
+msgid "Click in the viewport to select an object"
+msgstr "在视图中单击以选择物体"
+
+
 msgid "Unable to execute '%s', error changing modes"
 msgstr "无法执行  '%s', 改变模式时出错"
 
@@ -107036,6 +107218,18 @@ msgid "Could not add a mask node"
 msgstr "无法添加一个遮罩节点"
 
 
+msgid ""
+"Can not add node group '%s' to '%s':\n"
+"  %s"
+msgstr ""
+"无法添加节点组 '%s' 至 '%s':\n"
+"  %s"
+
+
+msgid "Can not add node group '%s' to '%s'"
+msgstr "无法添加节点组 '%s' 至 '%s'"
+
+
 msgid "Mask '%s' not found"
 msgstr "未找到遮罩 '%s'"
 
@@ -107064,6 +107258,14 @@ msgid "Text not used by any node, no update done"
 msgstr "文本没有被节点使用, 无更新"
 
 
+msgid ""
+"Cannot add node %s into node tree %s:\n"
+"  %s"
+msgstr ""
+"无法将节点 %s 添加至节点树 %s:\n"
+"  %s"
+
+
 msgid "Cannot add node %s into node tree %s"
 msgstr "无法将 %s 类型的节点添加到节点树 %s 中"
 
@@ -107078,6 +107280,14 @@ msgstr "不在节点组内"
 
 msgid "Cannot separate nodes"
 msgstr "无法分离节点"
+
+
+msgid ""
+"Can not add node '%s' in a group:\n"
+"  %s"
+msgstr ""
+"无法添加节点 '%s' 在组内:\n"
+"  %s"
 
 
 msgid "Can not add node '%s' in a group"
@@ -109199,6 +109409,14 @@ msgid "Node type %s undefined"
 msgstr "尚未定义节点类型 '%s'"
 
 
+msgid ""
+"Cannot add node of type %s to node tree '%s'\n"
+"  %s"
+msgstr ""
+"无法将 %s 类型的节点添加至节点树 '%s'\n"
+"  %s"
+
+
 msgid "Cannot add node of type %s to node tree '%s'"
 msgstr "无法将 '%s' 类型的节点添加到节点树 '%s' 中"
 
@@ -109851,6 +110069,10 @@ msgstr "自适应细分"
 
 msgid "Levels Viewport"
 msgstr "视图层级"
+
+
+msgid "This modifier can only deform control points, not the filled curve/surface"
+msgstr "此修改器只能使控制点变形，而不能改变已填充曲线/曲面形状"
 
 
 msgctxt "Operator"
@@ -110903,10 +111125,6 @@ msgstr "添加网格"
 
 msgid "Import-Export"
 msgstr "导入 - 导出"
-
-
-msgid "MakeHuman"
-msgstr "MakeHuman"
 
 
 msgid "Rigging"
