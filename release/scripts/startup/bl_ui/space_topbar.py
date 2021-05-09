@@ -425,6 +425,11 @@ class TOPBAR_MT_file_external_data(Menu):
         pack_all.operator("file.pack_all", icon = "PACKAGE")
         pack_all.active = not bpy.data.use_autopack
 
+        layout.separator()
+
+        layout.operator("file.pack_libraries")
+        layout.operator("file.unpack_libraries")
+
         unpack_all = layout.row()
         unpack_all.operator("file.unpack_all", icon = "PACKAGE")
         unpack_all.active = not bpy.data.use_autopack
@@ -433,6 +438,9 @@ class TOPBAR_MT_file_external_data(Menu):
 
         layout.operator("file.make_paths_relative", icon = "RELATIVEPATH")
         layout.operator("file.make_paths_absolute", icon = "ABSOLUTEPATH")
+
+        layout.separator()
+
         layout.operator("file.report_missing_files", icon = "ERROR")
         layout.operator("file.find_missing_files", icon = "VIEWZOOM")
 

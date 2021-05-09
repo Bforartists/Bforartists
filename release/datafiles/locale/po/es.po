@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5220,26 +5220,6 @@ msgstr "Espacio de color original"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "Espacio de color en el archivo de imagen, desde el cual convertir al cargar y hacia el cual convertir al guardar la imagen"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "Espacio de color cinematográfico de tipo logarítmico con 16,5 paradas de latitud y 25 paradas de rango dinámico"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709 (de rango completo), espacio lineal nativo de Blender"
-
-
-msgid "ACES linear space"
-msgstr "Espacio lineal ACES"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "Espacio de color usado para imágenes que contengan información que no represente colores (p.ej: mapas de normales)"
-
-
-msgid "Standard RGB Display Space"
-msgstr "Espacio de visualización RVA predefinido"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -93542,10 +93522,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "Cuentagotas - Mapa punto banda de color"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "Datos DEM (.hgt) como malla y/o imagen"
-
-
 msgid "Denoising completed"
 msgstr "Reducción de ruidos finalizada"
 
@@ -110906,10 +110882,6 @@ msgstr "Adición de mallas"
 
 msgid "Import-Export"
 msgstr "Importación-Exportación"
-
-
-msgid "MakeHuman"
-msgstr "MakeHuman"
 
 
 msgid "Rigging"
