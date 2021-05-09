@@ -1780,13 +1780,7 @@ keyconfig_data = \
  ("File Browser Main",
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
-   [("file.execute",
-     {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'},
-     {"properties":
-      [("need_active", True),
-       ],
-      },
-     ),
+   [("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
      {"properties":
