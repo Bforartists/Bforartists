@@ -74,7 +74,7 @@ void FILE_OT_pack_libraries(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Pack Linked Libraries";
   ot->idname = "FILE_OT_pack_libraries";
-  ot->description = "Pack all used Blender library files into the current .blend";
+  ot->description = "Pack all linked library files in use into the current .blend";
 
   /* api callbacks */
   ot->exec = pack_libraries_exec;
