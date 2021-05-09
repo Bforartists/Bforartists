@@ -427,8 +427,8 @@ class TOPBAR_MT_file_external_data(Menu):
 
         layout.separator()
 
-        layout.operator("file.pack_libraries")
-        layout.operator("file.unpack_libraries")
+        layout.operator("file.pack_libraries", icon = "PACKAGE")
+        layout.operator("file.unpack_libraries", icon = "PACKAGE")
 
         unpack_all = layout.row()
         unpack_all.operator("file.unpack_all", icon = "PACKAGE")
