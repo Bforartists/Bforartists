@@ -1134,8 +1134,12 @@ class _defs_edit_mesh:
             layout.prop(props, "use_fill")
             layout.prop(props, "clear_inner")
             layout.prop(props, "clear_outer")
-            layout.use_property_split = True
-            layout.prop(props, "threshold")
+            split = layout.split(factor = 0.45)
+            row = split.row()
+            row.label(text = "Axis Threshold:")
+            row = split.row()
+            row.prop(props, "threshold", text = "")
+
         return dict(
             idname="builtin.bisect",
             label="Bisect",
