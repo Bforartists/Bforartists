@@ -509,7 +509,7 @@ static Sequence *sequence_get_by_transform(Editing *ed, StripTransform *transfor
   data.data = transform;
 
   /* irritating we need to search for our sequence! */
-  SEQ_iterator_seqbase_recursive_apply(&ed->seqbase, transform_seq_cmp_fn, &data);
+  SEQ_seqbase_recursive_apply(&ed->seqbase, transform_seq_cmp_fn, &data);
 
   return data.seq;
 }
@@ -561,7 +561,7 @@ static Sequence *sequence_get_by_crop(Editing *ed, StripCrop *crop)
   data.data = crop;
 
   /* irritating we need to search for our sequence! */
-  SEQ_iterator_seqbase_recursive_apply(&ed->seqbase, crop_seq_cmp_fn, &data);
+  SEQ_seqbase_recursive_apply(&ed->seqbase, crop_seq_cmp_fn, &data);
 
   return data.seq;
 }
@@ -955,7 +955,7 @@ static Sequence *sequence_get_by_proxy(Editing *ed, StripProxy *proxy)
   data.seq = NULL;
   data.data = proxy;
 
-  SEQ_iterator_seqbase_recursive_apply(&ed->seqbase, seqproxy_seq_cmp_fn, &data);
+  SEQ_seqbase_recursive_apply(&ed->seqbase, seqproxy_seq_cmp_fn, &data);
   return data.seq;
 }
 
@@ -1020,7 +1020,7 @@ static Sequence *sequence_get_by_colorbalance(Editing *ed,
   data.data = cb;
 
   /* irritating we need to search for our sequence! */
-  SEQ_iterator_seqbase_recursive_apply(&ed->seqbase, colbalance_seq_cmp_fn, &data);
+  SEQ_seqbase_recursive_apply(&ed->seqbase, colbalance_seq_cmp_fn, &data);
 
   *r_smd = data.smd;
 
@@ -1144,7 +1144,7 @@ static Sequence *sequence_get_by_modifier(Editing *ed, SequenceModifierData *smd
   data.data = smd;
 
   /* irritating we need to search for our sequence! */
-  SEQ_iterator_seqbase_recursive_apply(&ed->seqbase, modifier_seq_cmp_fn, &data);
+  SEQ_seqbase_recursive_apply(&ed->seqbase, modifier_seq_cmp_fn, &data);
 
   return data.seq;
 }
