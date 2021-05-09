@@ -2818,10 +2818,8 @@ static bool panel_add_check(const bContext *C,
 
 static bool region_uses_category_tabs(const ScrArea *area, const ARegion *region)
 {
-  /* XXX, should use some better check? */
-  /* For now also has hardcoded check for clip editor until it supports actual toolbar. */
-  return ((1 << region->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK) ||
-         (region->regiontype == RGN_TYPE_TOOLS && area->spacetype == SPACE_CLIP);
+  /* bfa - readd tabs to tools area */
+  return ((1 << region->regiontype) & RGN_TYPE_HAS_CATEGORY_MASK);
 }
 
 static const char *region_panels_collect_categories(ARegion *region,
