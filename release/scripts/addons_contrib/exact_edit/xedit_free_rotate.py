@@ -138,6 +138,14 @@ def flts_alm_eq(flt_a, flt_b):
     return flt_a > (flt_b - tol) and flt_a < (flt_b + tol)
 
 
+# assume both float lists are same size?
+def flt_lists_alm_eq(ls_a, ls_b, tol=0.001):
+    for i in range(len(ls_a)):
+        if not (ls_a[i] > (ls_b[i] - tol) and ls_a[i] < (ls_b[i] + tol)):
+            return False
+    return True
+
+
 # todo : replace with flt_lists_alm_eq?
 def vec3s_alm_eq(vec_a, vec_b):
     X, Y, Z = 0, 1, 2
@@ -146,14 +154,6 @@ def vec3s_alm_eq(vec_a, vec_b):
             if flts_alm_eq(vec_a[Z], vec_b[Z]):
                 return True
     return False
-
-
-# assume both float lists are same size?
-def flt_lists_alm_eq(ls_a, ls_b, tol=0.001):
-    for i in range(len(ls_a)):
-        if not (ls_a[i] > (ls_b[i] - tol) and ls_a[i] < (ls_b[i] + tol)):
-            return False
-    return True
 
 
 class MenuStore:
@@ -523,7 +523,7 @@ def add_pt(self, co3d):
         self.pt_cnt += 1
         self.menu.change_menu(self.pt_cnt)
         if self.pt_cnt > 1:
-            updatelock_pts(self, self.pts)
+            update_lock_pts(self, self.pts)
         set_mouse_highlight(self)
         ''' Begin Debug
         cnt = self.pt_cnt - 1
@@ -548,7 +548,7 @@ def rem_ref_pt(self, idx):
     for j in range(self.pt_cnt, 3):
         self.pts[j].co3d = None
     if self.pt_cnt > 1:
-        updatelock_pts(self, self.pts)
+        update_lock_pts(self, self.pts)
     else:
         TransDat.axis_lock = None
     self.highlight_mouse = True
@@ -687,7 +687,7 @@ def exit_multi_mode(self):
     else:
         self.pts[self.mod_pt].co3d = m_co3d
         if self.pt_cnt > 1:
-            updatelock_pts(self, self.pts)
+            update_lock_pts(self, self.pts)
         set_mouse_highlight(self)
     self.mod_pt = None
     set_help_text(self, "CLICK")
@@ -940,7 +940,7 @@ def create_z_orient(rot_vec):
                    (new_x.z, new_y.z, new_z.z)))
 
 
-def updatelock_pts(self, ref_pts):
+def update_lock_pts(self, ref_pts):
     '''
     Updates lock points and changes curr_meas_stor to use measure based on
     lock points instead of ref_pts (for axis constrained transformations).
@@ -1303,7 +1303,7 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
                             swap_ref_pts(self, self.grab_pt, self.swap_pt)
                             self.swap_pt = None
                     self.grab_pt = None
-                    updatelock_pts(self, self.pts)
+                    update_lock_pts(self, self.pts)
                     set_piv(self)
                 else:  # no grab or mod point
                     if self.shift_held:
@@ -1334,7 +1334,7 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
                                     self.pts[self.grab_pt].co3d = found_pt
                             self.grab_pt = None
                             if self.pt_cnt > 1:
-                                updatelock_pts(self, self.pts)
+                                update_lock_pts(self, self.pts)
                             set_mouse_highlight(self)
                             set_piv(self)
                             set_help_text(self, "CLICK")
@@ -1347,7 +1347,7 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
                                     self.menu.change_menu(self.pt_cnt)
                                     if self.pt_cnt > 1:
                                         TransDat.axis_lock = None
-                                        updatelock_pts(self, self.pts)
+                                        update_lock_pts(self, self.pts)
                                         set_piv(self)
                                         #if self.pt_cnt
                                     set_mouse_highlight(self)
@@ -1367,7 +1367,7 @@ class XEDIT_OT_free_rotate(bpy.types.Operator):
                                 swap_ref_pts(self, self.grab_pt, self.overlap_idx)
                             self.grab_pt = None
                             if self.pt_cnt > 1:
-                                updatelock_pts(self, self.pts)
+                                update_lock_pts(self, self.pts)
                             set_mouse_highlight(self)
                             set_piv(self)
                             set_help_text(self, "CLICK")
