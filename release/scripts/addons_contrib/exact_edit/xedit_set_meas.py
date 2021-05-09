@@ -610,7 +610,7 @@ def add_pt(self, co3d):
         self.pt_cnt += 1
         self.menu.change_menu(self.pt_cnt)
         if self.pt_cnt > 1:
-            updatelock_pts(self, self.pts)
+            update_lock_pts(self, self.pts)
         set_mouse_highlight(self)
         set_meas_btn(self)
         ''' Begin Debug
@@ -636,7 +636,7 @@ def rem_ref_pt(self, idx):
     for j in range(self.pt_cnt, 3):
         self.pts[j].co3d = None
     if self.pt_cnt > 1:
-        updatelock_pts(self, self.pts)
+        update_lock_pts(self, self.pts)
     else:
         TransDat.axis_lock = None
     self.highlight_mouse = True
@@ -789,7 +789,7 @@ def exit_multi_mode(self):
     else:
         self.pts[self.mod_pt].co3d = m_co3d
         if self.pt_cnt > 1:
-            updatelock_pts(self, self.pts)
+            update_lock_pts(self, self.pts)
         set_mouse_highlight(self)
     self.mod_pt = None
     set_meas_btn(self)
@@ -929,7 +929,7 @@ def slope_check(pt1, pt2):
     return cmp_ls
 
 
-def get_new_3d_co(self, old_dis, new_dis):
+def get_new_3d_co_on_slope(self, old_dis, new_dis):
     '''
     Finds 3D location that shares same slope of line connecting Anchor
     and Free or that is on axis line going through Anchor.
@@ -1373,7 +1373,7 @@ def do_rotate_old(self):
     bpy.context.tool_settings.transform_pivot_point = deepcopy(piv_back)
 
 
-def updatelock_pts(self, ref_pts):
+def update_lock_pts(self, ref_pts):
     '''
     Updates lock points and changes curr_meas_stor to use measure based on
     lock points instead of ref_pts (for axis constrained transformations).
@@ -1405,7 +1405,7 @@ def axis_key_check(self, new_axis):
     if self.pt_cnt > 1:
         if new_axis != TransDat.axis_lock:
             TransDat.axis_lock = new_axis
-            updatelock_pts(self, self.pts)
+            update_lock_pts(self, self.pts)
             set_meas_btn(self)
 
 
@@ -1421,7 +1421,7 @@ def reset_settings(self):
         self.meas_btn.is_drawn = False
         set_lock_pts(self.pts, self.pt_cnt)
     else:
-        updatelock_pts(self, self.pts)
+        update_lock_pts(self, self.pts)
         self.meas_btn.is_drawn = True
         set_meas_btn(self)
     #self.snap_btn_act = True
@@ -1457,7 +1457,7 @@ def do_transform(self):
     # Onto Transformations...
     if self.transf_type == MOVE:
         #print("  MOVE!!")  # debug
-        new_coor = get_new_3d_co(self, curr_meas_stor, new_meas_stor)
+        new_coor = get_new_3d_co_on_slope(self, curr_meas_stor, new_meas_stor)
         if new_coor is not None:
             do_translation(new_coor, self.pts[0].co3d)
             self.pts[0].co3d = new_coor.copy()
@@ -1465,7 +1465,7 @@ def do_transform(self):
 
     elif self.transf_type == SCALE:
         #print("  SCALE!!")  # debug
-        new_coor = get_new_3d_co(self, curr_meas_stor, new_meas_stor)
+        new_coor = get_new_3d_co_on_slope(self, curr_meas_stor, new_meas_stor)
         if new_coor is not None:
             scale_factor = new_meas_stor / curr_meas_stor
             do_scale(self.pts, scale_factor)
@@ -1572,17 +1572,7 @@ def draw_callback_px(self, context):
     lk_pts2d = None  # lock points 2D
     self.meas_btn.is_drawn = False  # todo : cleaner btn activation
 
-    # if the addon_mode is WAIT_FOR_POPUP, wait on POPUP to disable
-    # popup_active, then run process_popup_input
-    # would prefer not to do pop-up check inside draw_callback, but not sure
-    # how else to check for input. need higher level "input handler" class?
-    if self.addon_mode == WAIT_FOR_POPUP:
-        global popup_active
-        if not popup_active:
-            process_popup_input(self)
-            set_help_text(self, "CLICK")
-
-    elif self.addon_mode == GET_0_OR_180:
+    if self.addon_mode == GET_0_OR_180:
         choose_0_or_180(TransDat.lock_pts[2], TransDat.rot_pt_pos,
                 TransDat.rot_pt_neg, TransDat.ang_diff_r, self.mouse_co)
 
@@ -1827,7 +1817,7 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
                             swap_ref_pts(self, self.grab_pt, self.swap_pt)
                             self.swap_pt = None
                     self.grab_pt = None
-                    updatelock_pts(self, self.pts)
+                    update_lock_pts(self, self.pts)
                     set_meas_btn(self)
                 else:  # no grab or mod point
                     if self.shift_held:
@@ -1858,7 +1848,7 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
                                     self.pts[self.grab_pt].co3d = found_pt
                             self.grab_pt = None
                             if self.pt_cnt > 1:
-                                updatelock_pts(self, self.pts)
+                                update_lock_pts(self, self.pts)
                             set_mouse_highlight(self)
                             set_meas_btn(self)
                             set_help_text(self, "CLICK")
@@ -1870,7 +1860,7 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
                                     self.pt_cnt += 1
                                     self.menu.change_menu(self.pt_cnt)
                                     if self.pt_cnt > 1:
-                                        updatelock_pts(self, self.pts)
+                                        update_lock_pts(self, self.pts)
                                         #if self.pt_cnt
                                     set_mouse_highlight(self)
                                     set_meas_btn(self)
@@ -1891,7 +1881,7 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
                                 set_meas_btn(self)
                             self.grab_pt = None
                             if self.pt_cnt > 1:
-                                updatelock_pts(self, self.pts)
+                                update_lock_pts(self, self.pts)
                             set_mouse_highlight(self)
                             set_meas_btn(self)
                             set_help_text(self, "CLICK")
@@ -1987,6 +1977,15 @@ class XEDIT_OT_set_meas(bpy.types.Operator):
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
             exit_addon(self)
             return {'FINISHED'}
+
+        # if the addon_mode is WAIT_FOR_POPUP, wait on POPUP to disable
+        # popup_active, then run process_popup_input
+        # todo: look into sure how else to check for POPUP input?
+        #       need higher level "input handler" class?
+        if self.addon_mode == WAIT_FOR_POPUP:
+            if not popup_active:
+                process_popup_input(self)
+                set_help_text(self, "CLICK")
 
         return {'RUNNING_MODAL'}
 

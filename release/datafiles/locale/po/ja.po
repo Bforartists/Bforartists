@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a17ea1a66919')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -5268,26 +5268,6 @@ msgstr "入力色空間"
 
 msgid "Color space in the image file, to convert to and from when saving and loading the image"
 msgstr "保存・読み込み時に変換先・変換元となる、画像ファイルの色空間"
-
-
-msgid "Log based filmic shaper with 16.5 stops of latitude, and 25 stops of dynamic range"
-msgstr "露出寛容度16.5、ダイナミックレンジ25の、対数ベースの Filmic shaper"
-
-
-msgid "Rec. 709 (Full Range), Blender native linear space"
-msgstr "Rec. 709（フルレンジ）、Blender ネイティブのリニア空間"
-
-
-msgid "ACES linear space"
-msgstr "ACES リニア空間"
-
-
-msgid "Color space used for images which contains non-color data (i,e, normal maps)"
-msgstr "非カラーデータ（ノーマルマップなど）の画像に使用される色空間"
-
-
-msgid "Standard RGB Display Space"
-msgstr "標準的な RGB 表示空間"
 
 
 msgid "Do not perform any color transform on load, treat colors as in scene linear space already"
@@ -14911,6 +14891,12 @@ msgid "Use Mask"
 msgstr "マスクを使用"
 
 
+msgid "The visibility of drawings on this layer is affected by the layers in its masks list"
+msgstr ""
+"このレイヤーのドローイングの可視性は\n"
+"そのマスクリスト中のレイヤーにより影響を受けます"
+
+
 msgid "Display onion skins before and after the current frame"
 msgstr "現在のフレーム前後のオニオンスキンを表示します"
 
@@ -23801,6 +23787,16 @@ msgstr "位置、回転、スケールにアクセスする、（差異を含む
 
 msgid "Local Matrix"
 msgstr "ローカル行列"
+
+
+msgid ""
+"Parent relative transformation matrix.\n"
+"Warning: Only takes into account object parenting, so e.g. in case of bone parenting you get a matrix relative to the Armature object, not to the actual parent bone"
+msgstr ""
+"親との相対的なトランスフォーム行列\n"
+"（注：オブジェクトのペアレント時のみ考慮されます\n"
+"例えばボーンをペアレントした場合、実際の親ボーンではなく\n"
+"アーマチュアオブジェクトに対する行列を取得します）"
 
 
 msgid "Parent Inverse Matrix"
@@ -34859,6 +34855,14 @@ msgid "Mirroring modifier"
 msgstr "ミラー化するモディファイアー"
 
 
+msgid "Bisect Distance"
+msgstr "分割平面との距離"
+
+
+msgid "Distance from the bisect plane within which vertices are removed"
+msgstr "二分割する平面からの、頂点を削除する距離"
+
+
 msgid "Distance within which mirrored vertices are merged"
 msgstr "この距離内にある対称の頂点を結合します"
 
@@ -38649,6 +38653,14 @@ msgstr "アクティブNLAトラック"
 
 msgid "Node in a node tree"
 msgstr "ノードツリーのノード"
+
+
+msgid "Active Preview"
+msgstr "アクティブプレビュー"
+
+
+msgid "Node is previewed in other editor"
+msgstr "他のエディター内でノードがプレビューされます"
 
 
 msgid "The node icon"
@@ -42845,6 +42857,10 @@ msgstr "ノードの入力または出力ソケット"
 
 msgid "Tooltip"
 msgstr "ツールチップ"
+
+
+msgid "Socket tooltip"
+msgstr "ソケットツールチップ"
 
 
 msgid "Socket shape"
@@ -51842,12 +51858,105 @@ msgid "Switch tint colors"
 msgstr "チントカラーを切り替えます"
 
 
+msgctxt "Operator"
+msgid "Trace Image to Grease Pencil"
+msgstr "画像をグリースペンシルにトレース"
+
+
+msgid "Extract Grease Pencil strokes from image"
+msgstr "画像からグリースペンシルのストロークを抽出します"
+
+
+msgid "Determines if trace simple image or full sequence"
+msgstr "単一画像または連番画像のどちらをトレースするかを決めます"
+
+
+msgid "Trace the current frame of the image"
+msgstr "現在のフレームの画像をトレースします"
+
+
+msgid "Trace full sequence"
+msgstr "連番画像全体をトレースします"
+
+
+msgid "Resolution of the generated curves"
+msgstr "生成するカーブの解像度"
+
+
+msgid "Distance to sample points, zero to disable"
+msgstr "サンプルポイントの距離。０で無効"
+
+
+msgid "Scale of the final stroke"
+msgstr "最終ストロークのスケール"
+
+
+msgid "Color Threshold"
+msgstr "色のしきい値"
+
+
+msgid "Determine the lightness threshold above which strokes are generated"
+msgstr "この輝度のしきい値より上の位置のストロークを生成します"
+
+
+msgid "Turn Policy"
+msgstr "ターンポリシー"
+
+
+msgid "Determines how to resolve ambiguities during decomposition of bitmaps into paths"
+msgstr "ビットマップをパスに分解する際のあいまいさを解決する方法を決めます"
+
+
 msgid "Black"
 msgstr "黒"
 
 
+msgid "Prefers to connect black (foreground) components"
+msgstr "黒（前面）成分につなげるようにします"
+
+
 msgid "White"
 msgstr "白"
+
+
+msgid "Prefers to connect white (background) components"
+msgstr "白（背景）成分につなげるようにします"
+
+
+msgid "Always take a left turn"
+msgstr "常に左側にターンします"
+
+
+msgid "Always take a right turn"
+msgstr "常に右側にターンします"
+
+
+msgid "Minority"
+msgstr "マイノリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs least frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が少ない色（黒または白）とつなげるようにします"
+
+
+msgid "Majority"
+msgstr "マジョリティ"
+
+
+msgid "Prefers to connect the color (black or white) that occurs most frequently in the local neighborhood of the current position"
+msgstr "現在の位置の近くで最も頻度が多い色（黒または白）とつなげるようにします"
+
+
+msgid "Choose pseudo-randomly"
+msgstr "疑似乱数で選択します"
+
+
+msgid "Start At Current Frame"
+msgstr "現在のフレームから開始"
+
+
+msgid "Trace Image starting in current image frame"
+msgstr "現在のフレームの画像からトレースを開始します"
 
 
 msgctxt "Operator"
@@ -60692,7 +60801,7 @@ msgstr "絶対シェイプキーのタイミングをリセットします"
 
 msgctxt "Operator"
 msgid "Transfer Shape Key"
-msgstr "シェイプキーの転送"
+msgstr "シェイプキーを転送"
 
 
 msgid "Copy the active shape key of another selected object to this one"
@@ -60859,10 +60968,23 @@ msgid "Lock Track Constraint"
 msgstr "軸固定トラック（コンストレイント）"
 
 
+msgctxt "Operator"
+msgid "Transfer Mode"
+msgstr "モードを転送"
+
+
 msgid "Switches the active object and assigns the same mode to a new one under the mouse cursor, leaving the active mode in the current one"
 msgstr ""
 "アクティブオブジェクトを切り替え、同じモードをマウスカーソル下の新しい物に割り当てます\n"
-"以前のオブジェクトはアクティブモードから抜けます"
+"現在のオブジェクトはアクティブモードから抜けます"
+
+
+msgid "Use Eyedropper"
+msgstr "スポイトを使用"
+
+
+msgid "Pick the object to switch to using an eyedropper"
+msgstr "スポイトを使用し、切り替えるオブジェクトを取得します"
 
 
 msgctxt "Operator"
@@ -87669,6 +87791,18 @@ msgid "Attribute domain to display"
 msgstr "表示する属性ドメイン"
 
 
+msgid "Context Path"
+msgstr "コンテクストパス"
+
+
+msgid "Context path to the data being displayed"
+msgstr "表示中のデータへのコンテクストパス"
+
+
+msgid "Display Context Path Collapsed"
+msgstr "非表示のコンテクストパスを表示"
+
+
 msgid "Geometry Component"
 msgstr "ジオメトリ成分"
 
@@ -87693,8 +87827,24 @@ msgid "Instances of objects or collections"
 msgstr "オブジェクトまたはコレクションのインスタンス"
 
 
+msgid "Is Pinned"
+msgstr "ピン止め"
+
+
+msgid "Context path is pinned"
+msgstr "コンテクストパスは固定中です"
+
+
 msgid "Object Evaluation State"
 msgstr "オブジェクトの評価状態"
+
+
+msgid "Evaluated"
+msgstr "評価済"
+
+
+msgid "Use data from fully or partially evaluated object"
+msgstr "完全または一部が評価済みのオブジェクトのデータを使用します"
 
 
 msgid "Use data from original object without any modifiers applied"
@@ -88475,6 +88625,22 @@ msgstr "スプライン制御点"
 
 msgid "Collection of spline points"
 msgstr "スプライン制御点の集合"
+
+
+msgid "Spreadsheet Context"
+msgstr "スプレッドシートコンテクスト"
+
+
+msgid "Element of spreadsheet context path"
+msgstr "スプレッドシートコンテクストパスの要素"
+
+
+msgid "Type of the context"
+msgstr "コンテクストのタイプP"
+
+
+msgid "Node Name"
+msgstr "ノード名"
 
 
 msgid "Stereo 3D Display"
@@ -94237,10 +94403,6 @@ msgid "Eyedropper ColorRamp PointSampling Map"
 msgstr "カラーランプのカラーストップ用スポイトマップ"
 
 
-msgid "DEM data (.hgt) as Mesh and/or Image"
-msgstr "DEM データ（.hgt）をメッシュまたは画像へ"
-
-
 msgid "Denoising completed"
 msgstr "デノイジング完了"
 
@@ -98994,6 +99156,14 @@ msgid "Two or more channels are needed below this strip"
 msgstr "このストリップの下に二つ以上のチャンネルが必要です"
 
 
+msgid "No active context"
+msgstr "アクティブコンテクストがありません"
+
+
+msgid "<no object>"
+msgstr "<オブジェクトなし>"
+
+
 msgctxt "Operator"
 msgid "Word"
 msgstr "単語"
@@ -100365,6 +100535,11 @@ msgstr "ピボットを設定"
 
 
 msgctxt "Operator"
+msgid "Transfer Sculpt Mode"
+msgstr "スカルプトモードを転送"
+
+
+msgctxt "Operator"
 msgid "Invert Mask"
 msgstr "マスクを反転"
 
@@ -100415,6 +100590,11 @@ msgstr "トポロジーでマスク拡大"
 
 
 msgctxt "Operator"
+msgid "Expand Mask by Normals"
+msgstr "法線でマスク拡大"
+
+
+msgctxt "Operator"
 msgid "Mask Slice and Fill Holes"
 msgstr "マスクスライス（穴埋め）"
 
@@ -100451,6 +100631,16 @@ msgstr "面セットを拡大"
 msgctxt "Operator"
 msgid "Shrink Face Set"
 msgstr "面セットを縮小"
+
+
+msgctxt "Operator"
+msgid "Expand Face Set by Topology"
+msgstr "トポロジーで面セット拡大"
+
+
+msgctxt "Operator"
+msgid "Expand Active Face Set"
+msgstr "アクティブ面セットを拡大"
 
 
 msgctxt "Operator"
@@ -105582,6 +105772,10 @@ msgid "Could not find hook modifier"
 msgstr "フックモディファイアーがありません"
 
 
+msgid "Click in the viewport to select an object"
+msgstr "ビューポートをクリックしてオブジェクトを選択してください"
+
+
 msgid "Unable to execute '%s', error changing modes"
 msgstr "「%s」を実行できません。モード変更にエラー"
 
@@ -107748,6 +107942,18 @@ msgid "Could not add a mask node"
 msgstr "マスクノードを追加できませんでした"
 
 
+msgid ""
+"Can not add node group '%s' to '%s':\n"
+"  %s"
+msgstr ""
+"ノードグループ「%s」を「%s」に追加できません:\n"
+"  %s"
+
+
+msgid "Can not add node group '%s' to '%s'"
+msgstr "ノードグループ「%s」を「%s」に追加できません"
+
+
 msgid "Mask '%s' not found"
 msgstr "マスク「%s」がありません"
 
@@ -107776,6 +107982,14 @@ msgid "Text not used by any node, no update done"
 msgstr "どのノードからも使用されないテキストです。更新しません"
 
 
+msgid ""
+"Cannot add node %s into node tree %s:\n"
+"  %s"
+msgstr ""
+"ノード %s をノードツリー %s に追加できません:\n"
+"  %s"
+
+
 msgid "Cannot add node %s into node tree %s"
 msgstr "ノード %s をノードツリー %s に追加できません"
 
@@ -107790,6 +108004,14 @@ msgstr "ノードグループ内ではありません"
 
 msgid "Cannot separate nodes"
 msgstr "ノードを分離できません"
+
+
+msgid ""
+"Can not add node '%s' in a group:\n"
+"  %s"
+msgstr ""
+"ノード「%s」をグループ内に追加できません:\n"
+"  %s"
 
 
 msgid "Can not add node '%s' in a group"
@@ -109911,6 +110133,14 @@ msgid "Node type %s undefined"
 msgstr "ノードタイプ %s が未定義です"
 
 
+msgid ""
+"Cannot add node of type %s to node tree '%s'\n"
+"  %s"
+msgstr ""
+"タイプ %s のノードをノードツリー「%s」に追加できません\n"
+"  %s"
+
+
 msgid "Cannot add node of type %s to node tree '%s'"
 msgstr "タイプ %s のノードをノードツリー「%s」に追加できません"
 
@@ -110565,6 +110795,10 @@ msgstr "適応サブディビジョン"
 
 msgid "Levels Viewport"
 msgstr "ビューポートのレベル数"
+
+
+msgid "This modifier can only deform control points, not the filled curve/surface"
+msgstr "このモディファイアーは制御点のみ変形可能で、フィルされたカーブやサーフェスは変形しません"
 
 
 msgctxt "Operator"
@@ -111623,10 +111857,6 @@ msgstr "追加メッシュ"
 
 msgid "Import-Export"
 msgstr "インポート/エクスポート"
-
-
-msgid "MakeHuman"
-msgstr "MakeHuman"
 
 
 msgid "Rigging"
