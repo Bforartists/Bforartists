@@ -12230,6 +12230,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_MATH:
       icon = ICON_ATTRIBUTE_MATH;
       break;
+    case GEO_NODE_ATTRIBUTE_TRANSFER:
+      icon = ICON_ATTRIBUTE_TRANSFER;
+      break;
     case GEO_NODE_ATTRIBUTE_VECTOR_MATH:
       icon = ICON_ATTRIBUTE_VECTORMATH;
       break;
@@ -12247,6 +12250,9 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_ATTRIBUTE_CONVERT:
       icon = ICON_ATTRIBUTE_CONVERT;
+      break;
+    case GEO_NODE_ATTRIBUTE_CURVE_MAP:
+      icon = ICON_ATTRIBUTE_CURVEMAP;
       break;
     case GEO_NODE_ATTRIBUTE_SAMPLE_TEXTURE:
       icon = ICON_ATTRIBUTE_TEXTURE;
@@ -12355,6 +12361,13 @@ static int node_type_to_icon(int type)
       break;
     case NODE_REROUTE:
       icon = ICON_NODE_REROUTE;
+      break;
+      /*curve*/
+    case GEO_NODE_CURVE_TO_MESH:
+      icon = ICON_OUTLINER_OB_MESH;
+      break;
+    case GEO_NODE_CURVE_RESAMPLE:
+      icon = ICON_CURVE_RESAMPLE;
       break;
     }
   return icon;
