@@ -301,9 +301,9 @@ lock_to_camview_on
 action_tweak_solo
 transfer_sculpt
 switch
-#~ DEF_ICON_BLANK(320)
-#~ DEF_ICON_BLANK(321)
-#~ DEF_ICON_BLANK(322)
+attribute_curvemap
+attribute_transfer
+curve_resample
 #~ DEF_ICON_BLANK(323)
 
 # ------------------------- row 5 --------------------------*/
