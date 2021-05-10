@@ -579,6 +579,7 @@ class FILEBROWSER_MT_context_menu(Menu):
 class ASSETBROWSER_PT_navigation_bar(asset_utils.AssetBrowserPanel, Panel):
     bl_label = "Asset Navigation"
     bl_region_type = 'TOOLS'
+    bl_category = "Asset Category"
     bl_options = {'HIDE_HEADER'}
 
     def draw(self, context):
