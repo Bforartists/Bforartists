@@ -8,6 +8,8 @@ The project page, the binary downloads and further information can be found at t
 
 Please use the tracker to add issues, bug reports and requests. The tracker can be found here: https://github.com/Bforartists/Bforartists/issues
 
+![alt text](https://www.bforartists.de/wp-content/uploads/2020/04/modelingbfa2.jpg)
+
 Why choose Bforartists, and not Blender? Because we have the better UI!
 
 The main Differences between Bforartists 2 and Blender 2.8x are:
