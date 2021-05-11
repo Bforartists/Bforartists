@@ -21,7 +21,7 @@
 import bpy
 from bpy.types import Panel
 
-class VIEW3D_tabs_HelloWorldPanel(Panel):
+class VIEW3D_PT_tabs_HelloWorldPanel(Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Hello World Panel"
     bl_space_type = 'VIEW_3D'
@@ -35,11 +35,15 @@ class VIEW3D_tabs_HelloWorldPanel(Panel):
         row.label(text="Hello world!", icon='WORLD') # bfa - removed icon WORLD_DATA
 
 
-class VIEW3D_PT_snappanel_toolshelf(Panel):
+class VIEW3D_PT_snappanel_toolshelf( Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Object"
+
+    @classmethod
+    def tools_all(cls):
+        yield from cls._tools.items()
 
     @staticmethod
     def ts_width(layout, region, scale_y):
@@ -56,63 +60,109 @@ class VIEW3D_PT_snappanel_toolshelf(Panel):
         )
         width_scale = region.width * view2d_scale / system.ui_scale
 
-        if width_scale > 160.0:
-            show_text = True
-        else:
-            show_text = False
+        # how many rows. 4 is text buttons.
 
-        return show_text
+        if width_scale > 160.0:
+            column_count = 4
+        elif width_scale > 120.0:
+            column_count = 3
+        elif width_scale > 80:
+            column_count = 2
+        else:
+            column_count = 1
+
+        return column_count
 
     def draw(self, _context):
         layout = self.layout
 
-        show_text = self.ts_width(layout, _context.region, scale_y= 1.75)   # Get the state of the show_text flag
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+        
+        #text buttons
+        if column_count == 4:
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.9
 
-        if show_text is True:
+            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
+            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+            col.operator("view3d.snap_selected_to_active", text="Selection to Active", icon = "SELECTIONTOACTIVE")
+            col.operator("view3d.snap_selected_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
 
-            layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
-            layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
-            layout.operator("view3d.snap_selected_to_active", text="Selection to Active", icon = "SELECTIONTOACTIVE")
-            layout.operator("view3d.snap_selected_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
+            col.separator()
 
-            layout.separator()
-
-            layout.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon = "CURSORTOSELECTION")
-            layout.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")
-            layout.operator("view3d.snap_cursor_to_active", text="Cursor to Active", icon = "CURSORTOACTIVE")
-            layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
-
+            col.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon = "CURSORTOSELECTION")
+            col.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")
+            col.operator("view3d.snap_cursor_to_active", text="Cursor to Active", icon = "CURSORTOACTIVE")
+            col.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
+        
+        # icon buttons
         else:
 
             col = layout.column(align=True)
-            col.label(text="Selection to :")
-            col.scale_x = 1.75
-            col.scale_y = 1.75
+            col.scale_x = 1.9
+            col.scale_y = 1.9
 
-            row = col.row(align=True)
-            row.alignment = 'CENTER'
-            row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOR").use_offset = False
-            row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+            if column_count == 3:
 
-            row = col.row(align=True)
-            row.alignment = 'CENTER'
-            row.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
-            row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
+                row = col.row(align=True)
+                row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOR").use_offset = False
+                row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+                row.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
 
-            col.label(text="Cursor to :")
-            row = col.row(align=True)
-            row.alignment = 'CENTER'
-            row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
-            row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
+                row = col.row(align=True)
+                row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
+                
+                col.separator(factor = 0.5)
+                
+                row = col.row(align=True)
+                row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
+                row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")           
+                row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
+                
+                row = col.row(align=True)
+                row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
-            row = col.row(align=True)
-            row.alignment = 'CENTER'
-            row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
-            row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
+            if column_count == 2:
+
+                row = col.row(align=True)
+
+                row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOR").use_offset = False
+                row.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+
+                row = col.row(align=True)
+
+                row.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
+                row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
+                
+                col.separator(factor = 0.5)
+                
+                row = col.row(align=True)
+                row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
+                row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
+                
+                row = col.row(align=True)       
+                row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")        
+                row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
+
+            elif column_count == 1:
+
+                col.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOR").use_offset = False
+                col.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+                col.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
+                col.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
+                
+                col.separator(factor = 0.5)
+                
+                col.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
+                col.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")    
+                col.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")        
+                col.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
+                
 
 
 classes = (
-    VIEW3D_tabs_HelloWorldPanel,
+    VIEW3D_PT_tabs_HelloWorldPanel,
     VIEW3D_PT_snappanel_toolshelf,
 )
 
