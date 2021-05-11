@@ -27,8 +27,6 @@ The main Differences between Bforartists 2 and Blender 2.8x are:
 - Some neat addons to improve usability, like the reset 3D View addon or the Set Dimensions addon with which you can scale in world coordinates in edit mode.
 - And lots more small details like not so much confirm dialogs.
 
-Here you can find some examples of the differences: https://www.bforartists.de/the-differences-to-blender/
-
 A detailed list of the changes can be found in the release notes: www.bforartists.de/wiki/release-notes
 
 But the code is just half of the show. Another important bit are the non code things.
@@ -36,6 +34,8 @@ But the code is just half of the show. Another important bit are the non code th
 - The target audience for Bforartists are hobbyists and indie developers. Blender tries to target professionals. But most of them don’t care for various reasons.
 - We have a improved manual. The Blender manual is in big parts unsearchable, has an odd structure, and still now relies heavily at the Blender keymap to name just a few flaws. This makes it nearly  unusable for users. And that’s why we rewrite it, piece by piece.
 - We are not not bound to the Blender bubble. Bforartists has its own eco system.
+
+Here you can find some examples of the vital differences between Blender and Bforartists: https://www.bforartists.de/the-differences-to-blender/
 
 This youtube video describes the differences by showing them.
 
