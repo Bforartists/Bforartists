@@ -10,7 +10,7 @@ Please use the tracker to add issues, bug reports and requests. The tracker can 
 
 ![alt text](https://www.bforartists.de/wp-content/uploads/2020/04/modelingbfa2.jpg)
 
-Why choose Bforartists, and not Blender? Because we have the better UI!
+Why choose Bforartists, and not Blender? Because our UI  is streamlined, cleaner, better organized, has colored icons, left aligned text, and much more of all those things that makes a good UI and the life easier. Bforartists is fully compatible with Blender. You can use both asides to make yourself a picture. The files are transferable. So try it, you loose nothing.
 
 The main Differences between Bforartists 2 and Blender 2.8x are:
 
