@@ -21,18 +21,18 @@
 import bpy
 from bpy.types import Panel
 
-class VIEW3D_PT_tabs_HelloWorldPanel(Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Hello World Panel"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = "Object"
+#class VIEW3D_PT_tabs_HelloWorldPanel(Panel):
+#    """Creates a Panel in the Object properties window"""
+#    bl_label = "Hello World Panel"
+#    bl_space_type = 'VIEW_3D'
+#    bl_region_type = 'TOOLS'
+#    bl_category = "Object"
 
-    def draw(self, context):
-        layout = self.layout
+#    def draw(self, context):
+#        layout = self.layout
 
-        row = layout.row()
-        row.label(text="Hello world!", icon='WORLD') # bfa - removed icon WORLD_DATA
+#        row = layout.row()
+#        row.label(text="Hello world!", icon='WORLD')
 
 
 class VIEW3D_PT_snappanel_toolshelf( Panel):
@@ -82,7 +82,7 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
         if column_count == 4:
             
             col = layout.column(align=True)
-            col.scale_y = 1.9
+            col.scale_y = 2
 
             col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
             col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Keep Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
@@ -100,8 +100,8 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
         else:
 
             col = layout.column(align=True)
-            col.scale_x = 1.9
-            col.scale_y = 1.9
+            col.scale_x = 2
+            col.scale_y = 2
 
             if column_count == 3:
 
@@ -123,7 +123,7 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
                 row = col.row(align=True)
                 row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
-            if column_count == 2:
+            elif column_count == 2:
 
                 row = col.row(align=True)
 
@@ -162,7 +162,7 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
 
 
 classes = (
-    VIEW3D_PT_tabs_HelloWorldPanel,
+#    VIEW3D_PT_tabs_HelloWorldPanel,
     VIEW3D_PT_snappanel_toolshelf,
 )
 
