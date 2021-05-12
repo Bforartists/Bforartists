@@ -77,10 +77,10 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
         layout = self.layout
 
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
-        
+
         #text buttons
         if column_count == 4:
-            
+
             col = layout.column(align=True)
             col.scale_y = 2
 
@@ -95,7 +95,7 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
             col.operator("view3d.snap_cursor_to_center", text="Cursor to World Origin", icon = "CURSORTOCENTER")
             col.operator("view3d.snap_cursor_to_active", text="Cursor to Active", icon = "CURSORTOACTIVE")
             col.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
-        
+
         # icon buttons
         else:
 
@@ -112,14 +112,14 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
 
                 row = col.row(align=True)
                 row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
-                
+
                 col.separator(factor = 0.5)
-                
+
                 row = col.row(align=True)
                 row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
-                row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")           
+                row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
                 row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
-                
+
                 row = col.row(align=True)
                 row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
@@ -134,15 +134,15 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
 
                 row.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
                 row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
-                
+
                 col.separator(factor = 0.5)
-                
+
                 row = col.row(align=True)
                 row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
                 row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
-                
-                row = col.row(align=True)       
-                row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")        
+
+                row = col.row(align=True)
+                row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
                 row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
             elif column_count == 1:
@@ -151,14 +151,14 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
                 col.operator("view3d.snap_selected_to_cursor", text = "", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
                 col.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
                 col.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
-                
+
                 col.separator(factor = 0.5)
-                
+
                 col.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
-                col.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")    
-                col.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")        
+                col.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
+                col.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
                 col.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
-                
+
 
 
 classes = (
