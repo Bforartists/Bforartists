@@ -41,6 +41,13 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Object"
 
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
     @classmethod
     def tools_all(cls):
         yield from cls._tools.items()
