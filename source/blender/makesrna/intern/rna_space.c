@@ -4058,6 +4058,12 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_ui_text(prop, "Display Grid Floor", "Show the ground plane grid");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
+  /*bfa - the toolshelf tabs*/
+	prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
+  RNA_def_property_boolean_negative_sdna(prop, NULL, "gridflag", V3D_SHOW_TOOLSHELF_TABS);
+  RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show the tabs in the tool shelf");
+  RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+
   prop = RNA_def_property(srna, "show_axis_x", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_X);
   RNA_def_property_ui_text(prop, "Display X Axis", "Show the X axis line in perspectivic view.\nNote that in orthographic view this button has no effect");
