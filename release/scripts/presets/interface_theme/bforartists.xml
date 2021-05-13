@@ -1011,8 +1011,8 @@
     <outliner>
       <ThemeOutliner
         match="#337f33"
-        selected_highlight="#223a5b"
-        active="#3b5689"
+        selected_highlight="#5b4633"
+        active="#5680c2"
         selected_object="#e96a00"
         active_object="#ffaf29"
         edited_object="#00806266"
