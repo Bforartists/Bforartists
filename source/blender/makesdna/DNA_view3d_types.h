@@ -582,6 +582,7 @@ enum {
 #define V3D_SHOW_Y (1 << 2)
 #define V3D_SHOW_Z (1 << 3)
 #define V3D_SHOW_ORTHO_GRID (1 << 4)
+#define V3D_SHOW_TOOLSHELF_TABS (1 << 5) /*bfa - added our toolshelf tabs toggle here*/
 
 /** #TransformOrientationSlot.type */
 enum {
