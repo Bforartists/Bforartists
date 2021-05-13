@@ -20,6 +20,9 @@
 import bpy
 from bpy import context
 
+#Input nodes tab, Node Group panel
+from nodeitems_builtins import node_tree_group_type
+
 # The text or icon prop is in the properties sidebar
 class NODES_PT_Prop(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
@@ -1613,59 +1616,6 @@ class NODES_PT_Input_output_tex(bpy.types.Panel):
             props.use_transform = True
             props.type = "TextureNodeViewer"
 
-
-#Input nodes tab, Group panel
-from nodeitems_builtins import node_tree_group_type
-
-# from nodeitems_builtin, not directly importable
-def contains_group(nodetree, group):
-    if nodetree == group:
-        return True
-    else:
-        for node in nodetree.nodes:
-            if node.bl_idname in node_tree_group_type.values() and node.node_tree is not None:
-                if contains_group(node.node_tree, group):
-                    return True
-    return False
-class NODES_PT_Input_group(bpy.types.Panel):
-    bl_label = "Group"
-    bl_space_type = 'NODE_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Input"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data.tree_type in node_tree_group_type)
-
-    def draw(self, context):
-        layout = self.layout
-
-        if context is None:
-            return
-        space = context.space_data
-        if not space:
-            return
-        ntree = space.edit_tree
-        if not ntree:
-            return
-
-        for group in context.blend_data.node_groups:
-            if group.bl_idname != ntree.bl_idname:
-                continue
-            # filter out recursive groups
-            if contains_group(group, ntree):
-                continue
-            # filter out hidden nodetrees
-            if group.name.startswith('.'):
-                continue
-
-            props = layout.operator("node.add_node", text=group.name, icon="NODETREE")
-            props.use_transform = True
-            props.type = node_tree_group_type[group.bl_idname]
-
-            ops = props.settings.add()
-            ops.name = "node_tree"
-            ops.value = "bpy.data.node_groups['{0}']".format(group.name)
 
 
 # ------------- Modify tab -------------------------------
@@ -4236,6 +4186,63 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
 
 
 
+# from nodeitems_builtin, not directly importable
+def contains_group(nodetree, group):
+    if nodetree == group:
+        return True
+    else:
+        for node in nodetree.nodes:
+            if node.bl_idname in node_tree_group_type.values() and node.node_tree is not None:
+                if contains_group(node.node_tree, group):
+                    return True
+    return False
+
+class NODES_PT_Input_node_group(bpy.types.Panel):
+    bl_label = "Node Group"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type in node_tree_group_type)
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.label( text = "Add Node Group:")
+
+        if context is None:
+            return
+        space = context.space_data
+        if not space:
+            return
+        ntree = space.edit_tree
+        if not ntree:
+            return
+
+        for group in context.blend_data.node_groups:
+            if group.bl_idname != ntree.bl_idname:
+                continue
+            # filter out recursive groups
+            if contains_group(group, ntree):
+                continue
+            # filter out hidden nodetrees
+            if group.name.startswith('.'):
+                continue
+
+            props = layout.operator("node.add_node", text=group.name, icon="NODETREE")
+            props.use_transform = True
+            props.type = node_tree_group_type[group.bl_idname]
+
+            ops = props.settings.add()
+            ops.name = "node_tree"
+            ops.value = "bpy.data.node_groups['{0}']".format(group.name)
+
+
+
+
 
 classes = (
     NODES_PT_Prop,
@@ -4257,7 +4264,6 @@ classes = (
     NODES_PT_Input_output_shader,
     NODES_PT_Input_output_comp,
     NODES_PT_Input_output_tex,
-    NODES_PT_Input_group,
     NODES_PT_Modify_matte,
     NODES_PT_Modify_filter,
     NODES_PT_Modify_input,
@@ -4283,6 +4289,7 @@ classes = (
     NODES_PT_geom_add_volume,
     NODES_PT_geom_add_utilities,
     NODES_PT_geom_add_vector,
+    NODES_PT_Input_node_group,
 )
 
 if __name__ == "__main__":  # only for live edit.
