@@ -236,7 +236,7 @@ class OUTLINER_MT_context_menu_view(Menu):
 
         layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
         layout.operator("outliner.show_one_level", text = "Show One Level", icon = "HIERARCHY_DOWN")
-        layout.operator("outliner.hide_one_level", text = "Hide One Level", icon = "HIERARCHY_UP") # bfa - separated tooltip
+        layout.operator("outliner.show_one_level", text = "Hide One Level", icon = "HIERARCHY_UP").open = False
 
 
 class OUTLINER_MT_edit_datablocks(Menu):
