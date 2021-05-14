@@ -20,16 +20,20 @@
 import bpy
 from bpy import context
 
-#Input nodes tab, Node Group panel
+#Add tab, Node Group panel
 from nodeitems_builtins import node_tree_group_type
 
-# The text or icon prop is in the properties sidebar
-class NODES_PT_Prop(bpy.types.Panel):
+# Icon or text buttons in shader editor and compositor
+class NODES_PT_Textoricon_input(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Display"
-    bl_category = "View"
+    bl_category = "Input"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type in {'ShaderNodeTree', 'CompositorNodeTree'})
 
     @staticmethod
     def draw(self, context):
@@ -40,7 +44,55 @@ class NODES_PT_Prop(bpy.types.Panel):
         addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
 
         scene = context.scene
-        layout.prop(addon_prefs,"Node_text_or_icon")
+        layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
+
+
+# Icon or text buttons in shader editor and compositor
+class NODES_PT_Textoricon_modify(bpy.types.Panel):
+    """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_label = "Display"
+    bl_category = "Modify"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type in {'ShaderNodeTree', 'CompositorNodeTree'})
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+        layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
+
+
+# Icon or text buttons in geometry node editor
+class NODES_PT_Textoricon_geom(bpy.types.Panel):
+    """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_label = "Display"
+    bl_category = "Add"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type in 'GeometryNodeTree')
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+        layout.prop(addon_prefs,"Node_text_or_icon", text = "Icon Buttons")
 
 
 ###-------------- Input tab --------------
@@ -329,9 +381,6 @@ class NODES_PT_Input_input_tex(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "TEXTURE")
             props.use_transform = True
             props.type = "TextureNodeTexture"
-
-
-
 
 
 #Input nodes tab, textures advanced panel. Just in Texture mode
@@ -4241,11 +4290,10 @@ class NODES_PT_Input_node_group(bpy.types.Panel):
             ops.value = "bpy.data.node_groups['{0}']".format(group.name)
 
 
-
-
-
 classes = (
-    NODES_PT_Prop,
+    NODES_PT_Textoricon_input,
+    NODES_PT_Textoricon_modify,
+    NODES_PT_Textoricon_geom,
     NODES_PT_Input_connect,
     NODES_PT_Input_input_shader,
     NODES_PT_Input_input_comp,
