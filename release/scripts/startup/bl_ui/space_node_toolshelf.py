@@ -3185,10 +3185,14 @@ class NODES_PT_Relations_group(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
+            
             col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
             col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
+            
             props = col.operator("node.add_node", text = " Group Input      ", icon = "GROUPINPUT")
             props.use_transform = True
             props.type = "NodeGroupInput"
@@ -3198,35 +3202,34 @@ class NODES_PT_Relations_group(bpy.types.Panel):
             props.type = "NodeGroupOutput"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
             col.operator("node.group_edit", text = " Toggle Edit Group", icon = "NODE_EDITGROUP").exit = False
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
             col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
 
         #### Icon Buttons
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
-            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
+            flow.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
+            flow.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
 
-            props = row.operator("node.add_node", text = "", icon = "GROUPINPUT")
+            props = flow.operator("node.add_node", text = "", icon = "GROUPINPUT")
             props.use_transform = True
             props.type = "NodeGroupInput"
 
-            props = row.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
+            props = flow.operator("node.add_node", text = "", icon = "GROUPOUTPUT")
             props.use_transform = True
             props.type = "NodeGroupOutput"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-
-            row.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
+            flow.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
+            flow.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
 
 
 #Relations tab, Relations Panel
@@ -3252,6 +3255,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Frame               ", icon = "NODE_FRAME")
             props.use_transform = True
@@ -3263,6 +3267,7 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
 
             if context.space_data.tree_type == 'CompositorNodeTree':
                 col = layout.column(align=True)
+                col.scale_y = 1.5
                 props = col.operator("node.add_node", text=" Switch              ", icon = "SWITCH_DIRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
@@ -3271,19 +3276,20 @@ class NODES_PT_Relations_layout(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_FRAME")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_FRAME")
             props.use_transform = True
             props.type = "NodeFrame"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_REROUTE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_REROUTE")
             props.use_transform = True
             props.type = "NodeReroute"
 
             if context.space_data.tree_type == 'CompositorNodeTree':
-                props = row.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
+                props = flow.operator("node.add_node", text="", icon = "SWITCH_DIRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
 
@@ -3319,6 +3325,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Attribute Clamp         ", icon = "ATTRIBUTE_CLAMP")
             props.use_transform = True
@@ -3394,83 +3401,75 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_CLAMP")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CLAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeClamp"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COLORRAMP")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_COLORRAMP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeColorRamp"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COMBINE_XYZ")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_COMBINE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCombineXYZ"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_COMPARE")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_COMPARE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCompare"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_CONVERT")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CONVERT")
             props.use_transform = True
             props.type = "GeometryNodeAttributeConvert"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_CURVEMAP")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_CURVEMAP")
             props.use_transform = True
             props.type = "GeometryNodeAttributeCurveMap"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_FILL")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_FILL")
             props.use_transform = True
             props.type = "GeometryNodeAttributeFill"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MAPRANGE")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_MAPRANGE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMapRange"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MATH")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_MATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMath"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMix"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_PROXIMITY")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_PROXIMITY")
             props.use_transform = True
             props.type = "GeometryNodeAttributeProximity"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_RANDOMIZE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRandomize"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_REMOVE")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_REMOVE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeRemove"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TEXTURE")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSampleTexture"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_SEPARATE_XYZ")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_SEPARATE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSeparateXYZ"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
             props.type = "GeometryNodeAttributeTransfer"
 
-            props = row.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeVectorMath"
 
@@ -3503,6 +3502,7 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" ColorRamp           ", icon = "NODE_COLORRAMP")
             props.use_transform = True
@@ -3521,18 +3521,19 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "ShaderNodeCombineRGB"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
             props.use_transform = True
             props.type = "ShaderNodeSeparateRGB"
 
@@ -3565,6 +3566,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Curve to Mesh          ", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
@@ -3579,14 +3581,15 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
+            props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
 
-            props = row.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
 
@@ -3619,6 +3622,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Bounding Box     ", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
@@ -3636,19 +3640,20 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
         #### Icon Buttons
 
         else:
+            
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
+            props = flow.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
 
-            props = row.operator("node.add_node", text = "", icon = "JOIN")
+            props = flow.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeTransform"
 
@@ -3680,6 +3685,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Collection Info       ", icon = "COLLECTION_INFO")
             props.use_transform = True
@@ -3713,37 +3719,35 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
+            props = flow.operator("node.add_node", text = "", icon = "COLLECTION_INFO")
             props.use_transform = True
             props.type = "GeometryNodeCollectionInfo"
 
-            props = row.operator("node.add_node", text = "", icon = "VIEW")
+            props = flow.operator("node.add_node", text = "", icon = "VIEW")
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
-            props = row.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
+            props = flow.operator("node.add_node", text = "", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
 
-            props = row.operator("node.add_node", text = "", icon = "STRING")
+            props = flow.operator("node.add_node", text = "", icon = "STRING")
             props.use_transform = True
             props.type = "FunctionNodeInputString"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
             props.use_transform = True
             props.type = "ShaderNodeValue"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeInputVector"
 
@@ -3776,6 +3780,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Boolean                    ", icon = "MOD_BOOLEAN")
             props.use_transform = True
@@ -3801,26 +3806,27 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "MOD_BOOLEAN")
+            props = flow.operator("node.add_node", text = "", icon = "MOD_BOOLEAN")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
-            props = row.operator("node.add_node", text = "", icon = "SPLITEDGE")
+            props = flow.operator("node.add_node", text = "", icon = "SPLITEDGE")
             props.use_transform = True
             props.type = "GeometryNodeEdgeSplit"
 
-            props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
+            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivide"
 
-            props = row.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
+            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivisionSurface"
 
-            props = row.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
+            props = flow.operator("node.add_node", text = "", icon = "MOD_TRIANGULATE")
             props.use_transform = True
             props.type = "GeometryNodeTriangulate"
 
@@ -3853,6 +3859,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Circle                       ", icon = "MESH_CIRCLE")
             props.use_transform = True
@@ -3891,41 +3898,39 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "MESH_CIRCLE")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_CIRCLE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCircle"
 
-            props = row.operator("node.add_node", text = "", icon = "MESH_CONE")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_CONE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCone"
 
-            props = row.operator("node.add_node", text = "", icon = "MESH_CUBE")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_CUBE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCube"
 
-            props = row.operator("node.add_node", text = "", icon = "MESH_CYLINDER")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_CYLINDER")
             props.use_transform = True
             props.type = "GeometryNodeMeshCylinder"
 
-            props = row.operator("node.add_node", text = "", icon = "MESH_ICOSPHERE")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_ICOSPHERE")
             props.use_transform = True
             props.type = "GeometryNodeMeshIcoSphere"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "MESH_LINE")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_LINE")
             props.use_transform = True
             props.type = "GeometryNodeMeshLine"
 
-            props = row.operator("node.add_node", text = "", icon = "MESH_GRID")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_GRID")
             props.use_transform = True
             props.type = "GeometryNodeMeshGrid"
 
-            props = row.operator("node.add_node", text = "", icon = "MESH_UVSPHERE")
+            props = flow.operator("node.add_node", text = "", icon = "MESH_UVSPHERE")
             props.use_transform = True
             props.type = "GeometryNodeMeshUVSphere"
 
@@ -3958,6 +3963,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Align Rotation to Vector  ", icon = "ALIGN_ROTATION_TO_VECTOR")
             props.use_transform = True
@@ -3991,37 +3997,35 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "ALIGN_ROTATION_TO_VECTOR")
+            props = flow.operator("node.add_node", text = "", icon = "ALIGN_ROTATION_TO_VECTOR")
             props.use_transform = True
             props.type = "GeometryNodeAlignRotationToVector"
 
-            props = row.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
+            props = flow.operator("node.add_node", text = "", icon = "POINT_DISTRIBUTE")
             props.use_transform = True
             props.type = "GeometryNodePointDistribute"
 
-            props = row.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
+            props = flow.operator("node.add_node", text = "", icon = "POINT_INSTANCE")
             props.use_transform = True
             props.type = "GeometryNodePointInstance"
 
-            props = row.operator("node.add_node", text = "", icon = "POINT_ROTATE")
+            props = flow.operator("node.add_node", text = "", icon = "POINT_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeRotatePoints"
 
-            props = row.operator("node.add_node", text = "", icon = "POINT_SCALE")
+            props = flow.operator("node.add_node", text = "", icon = "POINT_SCALE")
             props.use_transform = True
             props.type = "GeometryNodePointScale"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
+            props = flow.operator("node.add_node", text = "", icon = "POINT_SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodePointSeparate"
 
-            props = row.operator("node.add_node", text = "", icon = "POINT_TRANSLATE")
+            props = flow.operator("node.add_node", text = "", icon = "POINT_TRANSLATE")
             props.use_transform = True
             props.type = "GeometryNodePointTranslate"
 
@@ -4054,6 +4058,7 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Points to Volume     ", icon = "POINT_TO_VOLUME")
             props.use_transform = True
@@ -4067,14 +4072,15 @@ class NODES_PT_geom_add_volume(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
+            props = flow.operator("node.add_node", text = "", icon = "POINT_TO_VOLUME")
             props.use_transform = True
             props.type = "GeometryNodePointsToVolume"
 
-            props = row.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
+            props = flow.operator("node.add_node", text="", icon = "VOLUME_TO_MESH")
             props.use_transform = True
             props.type = "GeometryNodeVolumeToMesh"
 
@@ -4107,6 +4113,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Boolean Math  ", icon = "BOOLEAN_MATH")
             props.use_transform = True
@@ -4136,30 +4143,31 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
+            props = flow.operator("node.add_node", text = "", icon = "BOOLEAN_MATH")
             props.use_transform = True
             props.type = "FunctionNodeBooleanMath"
 
-            props = row.operator("node.add_node", text="", icon = "NODE_CLAMP")
+            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
 
-            props = row.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
+            props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeFloatCompare"
 
-            props = row.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
+            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_MATH")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
 
-            props = row.operator("node.add_node", text = "", icon = "SWITCH")
+            props = flow.operator("node.add_node", text = "", icon = "SWITCH")
             props.use_transform = True
             props.type = "GeometryNodeSwitch"
 
@@ -4192,6 +4200,7 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Combine XYZ   ", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
@@ -4214,22 +4223,23 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeCombineXYZ"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
             props.use_transform = True
             props.type = "ShaderNodeVectorMath"
 
-            props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORROTATE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORROTATE")
             props.use_transform = True
             props.type = "ShaderNodeVectorRotate"
 
