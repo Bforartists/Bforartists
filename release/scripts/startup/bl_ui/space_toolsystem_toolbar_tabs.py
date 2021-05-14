@@ -21,42 +21,12 @@
 import bpy
 from bpy.types import Panel
 
-#class VIEW3D_PT_tabs_HelloWorldPanel(Panel):
-#    """Creates a Panel in the Object properties window"""
-#    bl_label = "Hello World Panel"
-#    bl_space_type = 'VIEW_3D'
-#    bl_region_type = 'TOOLS'
-#    bl_category = "Object"
 
-#    def draw(self, context):
-#        layout = self.layout
-
-#        row = layout.row()
-#        row.label(text="Hello world!", icon='WORLD')
-
-
-class VIEW3D_PT_snappanel_toolshelf( Panel):
-    bl_label = "Snap"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = "Object"
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True
-
-    @classmethod
-    def tools_all(cls):
-        yield from cls._tools.items()
+class toolshelf_calculate( Panel):
 
     @staticmethod
     def ts_width(layout, region, scale_y):
-        """
-        Choose an appropriate layout for the toolbar.
-        """
+
         # Currently this just checks the width,
         # we could have different layouts as preferences too.
         system = bpy.context.preferences.system
@@ -79,6 +49,115 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
             column_count = 1
 
         return column_count
+
+class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
+    bl_label = "Transform"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, context.region, scale_y= 1.75)
+
+        obj = context.object
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+            col.operator("transform.shear", text="Shear", icon = "SHEAR")
+            col.operator("transform.bend", text="Bend", icon = "BEND")
+            col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
+
+            if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
+                                'EDIT_LATTICE', 'EDIT_METABALL'}:
+                col.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE').offset = 0.1
+                col.operator_context = 'INVOKE_REGION_WIN'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("transform.tosphere", text="", icon = "TOSPHERE")
+                row.operator("transform.shear", text="", icon = "SHEAR")
+                row.operator("transform.bend", text="", icon = "BEND")
+
+                row = col.row(align=True)
+                row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
+
+                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
+                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                    row = col.row(align=True)
+                    row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
+                    row.operator_context = 'EXEC_REGION_WIN'
+                    row.operator("transform.vertex_random", text="", icon = 'RANDOMIZE').offset = 0.1
+                    row.operator_context = 'INVOKE_REGION_WIN'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("transform.tosphere", text="", icon = "TOSPHERE")
+                row.operator("transform.shear", text="", icon = "SHEAR")
+
+                row = col.row(align=True)
+                row.operator("transform.bend", text="", icon = "BEND")
+                row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
+
+                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
+                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                    row = col.row(align=True)
+                    row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
+                    row.operator_context = 'EXEC_REGION_WIN'
+                    row.operator("transform.vertex_random", text="", icon = 'RANDOMIZE').offset = 0.1
+                    row.operator_context = 'INVOKE_REGION_WIN'
+
+            elif column_count == 1:
+
+                col.operator("transform.tosphere", text="", icon = "TOSPHERE")
+                col.operator("transform.shear", text="", icon = "SHEAR")
+                col.operator("transform.bend", text="", icon = "BEND")
+                col.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
+
+                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
+                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                    col.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
+                    col.operator_context = 'EXEC_REGION_WIN'
+                    col.operator("transform.vertex_random", text="", icon = 'RANDOMIZE').offset = 0.1
+                    col.operator_context = 'INVOKE_REGION_WIN'
+
+
+class VIEW3D_PT_snappanel_toolshelf(toolshelf_calculate, Panel):
+    bl_label = "Snap"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
         layout = self.layout
@@ -166,10 +245,8 @@ class VIEW3D_PT_snappanel_toolshelf( Panel):
                 col.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
                 col.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
-
-
 classes = (
-#    VIEW3D_PT_tabs_HelloWorldPanel,
+    VIEW3D_PT_snappanel_transform,
     VIEW3D_PT_snappanel_toolshelf,
 )
 
