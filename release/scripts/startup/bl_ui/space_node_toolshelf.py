@@ -3361,6 +3361,9 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Convert       ", icon = "ATTRIBUTE_CONVERT")
             props.use_transform = True
             props.type = "GeometryNodeAttributeConvert"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Attribute Curvemap   ", icon = "ATTRIBUTE_CURVEMAP")
             props.use_transform = True
@@ -3381,6 +3384,9 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Mix                ", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMix"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Attribute Proximity      ", icon = "ATTRIBUTE_PROXIMITY")
             props.use_transform = True
@@ -3401,6 +3407,9 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Separate XYZ ", icon = "ATTRIBUTE_SEPARATE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSeparateXYZ"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Attribute Transfer        ", icon = "ATTRIBUTE_TRANSFER")
             props.use_transform = True
@@ -3717,6 +3726,9 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" String                    ", icon = "STRING")
             props.use_transform = True
@@ -3891,6 +3903,9 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Cylinder                   ", icon = "MESH_CYLINDER")
             props.use_transform = True
             props.type = "GeometryNodeMeshCylinder"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Ico Sphere               ", icon = "MESH_ICOSPHERE")
             props.use_transform = True
@@ -3995,6 +4010,9 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Point Rotate       ", icon = "POINT_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeRotatePoints"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Point Scale    ", icon = "POINT_SCALE")
             props.use_transform = True
@@ -4145,6 +4163,9 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
             props.use_transform = True
