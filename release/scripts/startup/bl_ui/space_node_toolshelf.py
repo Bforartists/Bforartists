@@ -157,7 +157,7 @@ class NODES_PT_Input_connect(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
             props.use_transform = True
             props.type = "ShaderNodeNormalMap"
-    
+
 
 #Input nodes tab, textures common panel. Shader Mode
 class NODES_PT_Input_input_shader(bpy.types.Panel):
@@ -568,7 +568,7 @@ class NODES_PT_Input_shader(bpy.types.Panel):
         #### Icon Buttons
 
         else:
-            
+
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
@@ -710,7 +710,7 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
                 props = flow.operator("node.add_node", text = "", icon = "NODE_REFRACTIONSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfRefraction"
-                
+
                 if engine == 'BLENDER_EEVEE':
 
                     props = flow.operator("node.add_node", text="", icon = "NODE_GLOSSYSHADER")
@@ -798,14 +798,14 @@ class NODES_PT_Input_shader_advanced(bpy.types.Panel):
         #### Icon Buttons
 
         else:
-            
+
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
 
-  
+
                 props = flow.operator("node.add_node", text = "", icon = "NODE_ANISOTOPIC")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfAnisotropic"
@@ -904,7 +904,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Wave                ", icon = "NODE_WAVES")
             props.use_transform = True
             props.type = "ShaderNodeTexWave"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -1384,7 +1384,7 @@ class NODES_PT_Input_color_advanced(bpy.types.Panel):
 
                 props = col.operator("node.add_node", text=" Invert              ", icon = "NODE_INVERT")
                 props.use_transform = True
-                props.type = "CompositorNodeInvert"        
+                props.type = "CompositorNodeInvert"
 
                 props = col.operator("node.add_node", text=" Tonemap         ", icon = "NODE_TONEMAP")
                 props.use_transform = True
@@ -2670,7 +2670,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_BUMP")
             props.use_transform = True
             props.type = "ShaderNodeBump"
-            
+
             props = flow.operator("node.add_node", text="", icon = "MOD_DISPLACE")
             props.use_transform = True
             props.type = "ShaderNodeDisplacement"
@@ -2686,7 +2686,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
-            
+
             props = flow.operator("node.add_node", text="", icon = "MOD_DISPLACE")
             props.use_transform = True
             props.type = "ShaderNodeVectorDisplacement"
@@ -3173,13 +3173,13 @@ class NODES_PT_Relations_group(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
             col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text = " Group Input      ", icon = "GROUPINPUT")
             props.use_transform = True
             props.type = "NodeGroupInput"
@@ -3333,7 +3333,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Convert       ", icon = "ATTRIBUTE_CONVERT")
             props.use_transform = True
             props.type = "GeometryNodeAttributeConvert"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -3356,7 +3356,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Mix                ", icon = "ATTRIBUTE_MIX")
             props.use_transform = True
             props.type = "GeometryNodeAttributeMix"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -3379,7 +3379,7 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Separate XYZ ", icon = "ATTRIBUTE_SEPARATE_XYZ")
             props.use_transform = True
             props.type = "GeometryNodeAttributeSeparateXYZ"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -3636,7 +3636,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
         #### Icon Buttons
 
         else:
-            
+
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
@@ -3698,7 +3698,7 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -3875,7 +3875,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Cylinder                   ", icon = "MESH_CYLINDER")
             props.use_transform = True
             props.type = "GeometryNodeMeshCylinder"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -3982,7 +3982,7 @@ class NODES_PT_geom_add_point(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Point Rotate       ", icon = "POINT_ROTATE")
             props.use_transform = True
             props.type = "GeometryNodeRotatePoints"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -4135,7 +4135,7 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
