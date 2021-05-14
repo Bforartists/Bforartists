@@ -124,6 +124,7 @@ class NODES_PT_Input_connect(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Add                   ", icon = "NODE_ADD_SHADER")
             props.use_transform = True
@@ -141,20 +142,22 @@ class NODES_PT_Input_connect(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_ADD_SHADER")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_ADD_SHADER")
             props.use_transform = True
             props.type = "ShaderNodeAddShader"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
             props.use_transform = True
             props.type = "ShaderNodeMixShader"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
             props.use_transform = True
             props.type = "ShaderNodeNormalMap"
+    
 
 #Input nodes tab, textures common panel. Shader Mode
 class NODES_PT_Input_input_shader(bpy.types.Panel):
@@ -185,6 +188,7 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
         ##### --------------------------------- Textures common ------------------------------------------- ####
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Image               ", icon = "FILE_IMAGE")
             props.use_transform = True
@@ -206,23 +210,23 @@ class NODES_PT_Input_input_shader(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "FILE_IMAGE")
-
+            props = flow.operator("node.add_node", text = "", icon = "FILE_IMAGE")
             props.use_transform = True
             props.type = "ShaderNodeTexImage"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
             props.use_transform = True
             props.type = "ShaderNodeTexEnvironment"
 
-            props = row.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
+            props = flow.operator("node.add_node", text="", icon = "NODE_VOLUME_INFO")
             props.use_transform = True
             props.type = "ShaderNodeVolumeInfo"
 
-            props = row.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
+            props = flow.operator("node.add_node", text="", icon = "NODE_VERTEX_COLOR")
             props.use_transform = True
             props.type = "ShaderNodeVertexColor"
 
@@ -540,6 +544,7 @@ class NODES_PT_Input_shader(bpy.types.Panel):
             if context.space_data.shader_type == 'OBJECT':
 
                 col = layout.column(align=True)
+                col.scale_y = 1.5
 
                 props = col.operator("node.add_node", text=" Principled         ", icon = "NODE_PRINCIPLED")
                 props.use_transform = True
@@ -554,6 +559,7 @@ class NODES_PT_Input_shader(bpy.types.Panel):
             elif context.space_data.shader_type == 'WORLD':
 
                 col = layout.column(align=True)
+                col.scale_y = 1.5
 
                 props = col.operator("node.add_node", text=" Background    ", icon = "NODE_BACKGROUNDSHADER")
                 props.use_transform = True
@@ -567,22 +573,20 @@ class NODES_PT_Input_shader(bpy.types.Panel):
         #### Icon Buttons
 
         else:
+            
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
 
-                row = layout.row()
-                row.alignment = 'LEFT'
-
-                props = row.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
+                props = flow.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfPrincipled"
 
             elif context.space_data.shader_type == 'WORLD':
 
-                row = layout.row()
-                row.alignment = 'LEFT'
-
-                props = row.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBackground"
 
@@ -619,6 +623,7 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
             if context.space_data.shader_type == 'OBJECT':
 
                 col = layout.column(align=True)
+                col.scale_y = 1.5
 
                 props = col.operator("node.add_node", text=" Diffuse               ", icon = "NODE_DIFFUSESHADER")
                 props.use_transform = True
@@ -637,6 +642,7 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
                 props.type = "ShaderNodeBsdfGlass"
 
                 col = layout.column(align=True)
+                col.scale_y = 1.5
 
                 props = col.operator("node.add_node", text=" Glossy                ", icon = "NODE_GLOSSYSHADER")
                 props.use_transform = True
@@ -648,7 +654,7 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
 
                 if engine == 'BLENDER_EEVEE':
 
-                    props = col.operator("node.add_node", text=" Specular         ", icon = "NODE_GLOSSYSHADER")
+                    props = col.operator("node.add_node", text=" Specular             ", icon = "NODE_GLOSSYSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeEeveeSpecular"
 
@@ -661,6 +667,7 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
                 props.type = "ShaderNodeBsdfToon"
 
                 col = layout.column(align=True)
+                col.scale_y = 1.5
 
                 props = col.operator("node.add_node", text=" Translucent       ", icon = "NODE_TRANSLUCENT")
                 props.use_transform = True
@@ -681,56 +688,57 @@ class NODES_PT_Input_shader_common(bpy.types.Panel):
 
             if context.space_data.shader_type == 'OBJECT':
 
-                row = layout.row()
-                row.alignment = 'LEFT'
+                flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+                flow.scale_x = 1.5
+                flow.scale_y = 1.5
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_DIFFUSESHADER")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_DIFFUSESHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfDiffuse"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_EMISSION")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_EMISSION")
                 props.use_transform = True
                 props.type = "ShaderNodeEmission"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_FRESNEL")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_FRESNEL")
                 props.use_transform = True
                 props.type = "ShaderNodeFresnel"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_GLASSHADER")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_GLASSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfGlass"
 
-                row = layout.row()
-                row.alignment = 'LEFT'
-
-                props = row.operator("node.add_node", text = "", icon = "NODE_GLOSSYSHADER")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_GLOSSYSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfGlossy"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_REFRACTIONSHADER")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_REFRACTIONSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfRefraction"
+                
+                if engine == 'BLENDER_EEVEE':
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_SSS")
+                    props = flow.operator("node.add_node", text="", icon = "NODE_GLOSSYSHADER")
+                    props.use_transform = True
+                    props.type = "ShaderNodeEeveeSpecular"
+
+                props = flow.operator("node.add_node", text = "", icon = "NODE_SSS")
                 props.use_transform = True
                 props.type = "ShaderNodeSubsurfaceScattering"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_TOONSHADER")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_TOONSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfToon"
 
-                row = layout.row()
-                row.alignment = 'LEFT'
-
-                props = row.operator("node.add_node", text = "", icon = "NODE_TRANSLUCENT")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSLUCENT")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfTranslucent"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_TRANSPARENT")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSPARENT")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfTransparent"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_VELVET")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_VELVET")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfVelvet"
 
@@ -763,6 +771,7 @@ class NODES_PT_Input_shader_advanced(bpy.types.Panel):
             if context.space_data.shader_type == 'OBJECT':
 
                 col = layout.column(align=True)
+                col.scale_y = 1.5
 
                 props = col.operator("node.add_node", text=" Ambient Occlusion  ", icon = "NODE_AMBIENT_OCCLUSION")
                 props.use_transform = True
@@ -781,6 +790,7 @@ class NODES_PT_Input_shader_advanced(bpy.types.Panel):
                 props.type = "ShaderNodeHoldout"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Volume Absorption ", icon = "NODE_VOLUMEABSORPTION")
             props.use_transform = True
@@ -793,36 +803,36 @@ class NODES_PT_Input_shader_advanced(bpy.types.Panel):
         #### Icon Buttons
 
         else:
+            
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
 
-                row = layout.row()
-                row.alignment = 'LEFT'
-
-                props = row.operator("node.add_node", text = "", icon = "NODE_ANISOTOPIC")
+  
+                props = flow.operator("node.add_node", text = "", icon = "NODE_ANISOTOPIC")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfAnisotropic"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_AMBIENT_OCCLUSION")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_AMBIENT_OCCLUSION")
                 props.use_transform = True
                 props.type = "ShaderNodeAmbientOcclusion"
 
-                props = row.operator("node.add_node", text = "", icon = "HAIR")
+                props = flow.operator("node.add_node", text = "", icon = "HAIR")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfHair"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_HOLDOUTSHADER")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_HOLDOUTSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeHoldout"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_VOLUMEABSORPTION")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VOLUMEABSORPTION")
             props.use_transform = True
             props.type = "ShaderNodeVolumeAbsorption"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_VOLUMESCATTER")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VOLUMESCATTER")
             props.use_transform = True
             props.type = "ShaderNodeVolumeScatter"
 
@@ -855,6 +865,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Brick                ", icon = "NODE_BRICK")
             props.use_transform = True
@@ -877,6 +888,7 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props.type = "ShaderNodeTexMagic"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Musgrave         ", icon = "MUSGRAVE_TEX")
             props.use_transform = True
@@ -894,11 +906,12 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeTexPointDensity"
 
-            col = layout.column(align=True)
-
             props = col.operator("node.add_node", text=" Wave                ", icon = "NODE_WAVES")
             props.use_transform = True
             props.type = "ShaderNodeTexWave"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Voronoi             ", icon = "VORONI_TEX")
             props.use_transform = True
@@ -912,56 +925,51 @@ class NODES_PT_Input_textures_shader(bpy.types.Panel):
         #### Icon Buttons
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_BRICK")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_BRICK")
             props.use_transform = True
             props.type = "ShaderNodeTexBrick"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_CHECKER")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_CHECKER")
             props.use_transform = True
             props.type = "ShaderNodeTexChecker"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
             props.use_transform = True
             props.type = "ShaderNodeTexGradient"
 
-            props = row.operator("node.add_node", text = "", icon = "MAGIC_TEX")
+            props = flow.operator("node.add_node", text = "", icon = "MAGIC_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexMagic"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "MUSGRAVE_TEX")
+            props = flow.operator("node.add_node", text = "", icon = "MUSGRAVE_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexMusgrave"
 
-            props = row.operator("node.add_node", text = "", icon = "NOISE_TEX")
+            props = flow.operator("node.add_node", text = "", icon = "NOISE_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexNoise"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_POINTCLOUD")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_POINTCLOUD")
             props.use_transform = True
             props.type = "ShaderNodeTexPointDensity"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_SKY")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SKY")
             props.use_transform = True
             props.type = "ShaderNodeTexSky"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_WAVES")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_WAVES")
             props.use_transform = True
             props.type = "ShaderNodeTexWave"
 
-            props = row.operator("node.add_node", text = "", icon = "VORONI_TEX")
+            props = flow.operator("node.add_node", text = "", icon = "VORONI_TEX")
             props.use_transform = True
             props.type = "ShaderNodeTexVoronoi"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_WHITE_NOISE")
             props.use_transform = True
             props.type = "ShaderNodeTexWhiteNoise"
 
@@ -1447,6 +1455,7 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
 
@@ -1490,44 +1499,45 @@ class NODES_PT_Input_output_shader(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
             if context.space_data.shader_type == 'OBJECT':
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_MATERIAL")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_MATERIAL")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputMaterial"
 
                 if engine == 'CYCLES':
 
-                    props = row.operator("node.add_node", text="", icon = "LIGHT")
+                    props = flow.operator("node.add_node", text="", icon = "LIGHT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputLight"
 
-                    props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
+                    props = flow.operator("node.add_node", text="", icon = "NODE_VALUE")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputAOV"
 
                 elif engine == 'BLENDER_EEVEE':
 
-                    props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
+                    props = flow.operator("node.add_node", text="", icon = "NODE_VALUE")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputAOV"
 
             elif context.space_data.shader_type == 'WORLD':
 
-                props = row.operator("node.add_node", text = "", icon = "WORLD")
+                props = flow.operator("node.add_node", text = "", icon = "WORLD")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputWorld"
 
-                props = row.operator("node.add_node", text="", icon = "NODE_VALUE")
+                props = flow.operator("node.add_node", text="", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputAOV"
 
             elif context.space_data.shader_type == 'LINESTYLE':
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_LINESTYLE_OUTPUT")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_LINESTYLE_OUTPUT")
                 props.use_transform = True
                 props.type = "ShaderNodeOutputLineStyle"
 
@@ -2025,12 +2035,13 @@ class NODES_PT_Modify_input(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Attribute          ", icon = "NODE_ATTRIBUTE")
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
 
-            props = col.operator("node.add_node", text=" Bevel          ", icon = "BEVEL")
+            props = col.operator("node.add_node", text=" Bevel             ", icon = "BEVEL")
             props.use_transform = True
             props.type = "ShaderNodeBevel"
 
@@ -2043,6 +2054,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props.type = "ShaderNodeNewGeometry"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Hair Info           ", icon = "NODE_HAIRINFO")
             props.use_transform = True
@@ -2061,6 +2073,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props.type = "ShaderNodeObjectInfo"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Particle Info     ", icon = "NODE_PARTICLEINFO")
             props.use_transform = True
@@ -2079,6 +2092,7 @@ class NODES_PT_Modify_input(bpy.types.Panel):
             props.type = "ShaderNodeTexCoord"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" UV Map            ", icon = "GROUP_UVS")
             props.use_transform = True
@@ -2104,77 +2118,69 @@ class NODES_PT_Modify_input(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_ATTRIBUTE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_ATTRIBUTE")
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
 
-            props = row.operator("node.add_node", text = "", icon = "CAMERA_DATA")
+            props = flow.operator("node.add_node", text = "", icon = "CAMERA_DATA")
             props.use_transform = True
             props.type = "ShaderNodeCameraData"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_GEOMETRY")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_GEOMETRY")
             props.use_transform = True
             props.type = "ShaderNodeNewGeometry"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_HAIRINFO")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_HAIRINFO")
             props.use_transform = True
             props.type = "ShaderNodeHairInfo"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_LAYERWEIGHT")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_LAYERWEIGHT")
             props.use_transform = True
             props.type = "ShaderNodeLayerWeight"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_LIGHTPATH")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_LIGHTPATH")
             props.use_transform = True
             props.type = "ShaderNodeLightPath"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "ShaderNodeObjectInfo"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_PARTICLEINFO")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_PARTICLEINFO")
             props.use_transform = True
             props.type = "ShaderNodeParticleInfo"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_RGB")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RGB")
             props.use_transform = True
             props.type = "ShaderNodeRGB"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_TANGENT")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TANGENT")
             props.use_transform = True
             props.type = "ShaderNodeTangent"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_TEXCOORDINATE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_TEXCOORDINATE")
             props.use_transform = True
             props.type = "ShaderNodeTexCoord"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "GROUP_UVS")
+            props = flow.operator("node.add_node", text = "", icon = "GROUP_UVS")
             props.use_transform = True
             props.type = "ShaderNodeUVMap"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VALUE")
             props.use_transform = True
             props.type = "ShaderNodeValue"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_WIREFRAME")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_WIREFRAME")
             props.use_transform = True
             props.type = "ShaderNodeWireframe"
 
             if context.space_data.shader_type == 'LINESTYLE':
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_UVALONGSTROKE")
+                props = flow.operator("node.add_node", text = "", icon = "NODE_UVALONGSTROKE")
                 props.use_transform = True
                 props.type = "ShaderNodeUVALongStroke"
 
@@ -2208,6 +2214,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Combine HSV   ", icon = "NODE_COMBINEHSV")
             props.use_transform = True
@@ -2222,6 +2229,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.type = "ShaderNodeCombineXYZ"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Separate HSV   ", icon = "NODE_SEPARATEHSV")
             props.use_transform = True
@@ -2242,6 +2250,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
                 props.type = "ShaderNodeShaderToRGB"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Blackbody        ", icon = "NODE_BLACKBODY")
             props.use_transform = True
@@ -2260,6 +2269,7 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
             props.type = "ShaderNodeRGBToBW"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
             props.use_transform = True
@@ -2281,77 +2291,69 @@ class NODES_PT_Modify_converter_shader(bpy.types.Panel):
         ##### Icon Buttons
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEHSV")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEHSV")
             props.use_transform = True
             props.type = "ShaderNodeCombineHSV"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "ShaderNodeCombineRGB"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeCombineXYZ"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEHSV")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEHSV")
             props.use_transform = True
             props.type = "ShaderNodeSeparateHSV"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
             props.use_transform = True
             props.type = "ShaderNodeSeparateRGB"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
             props.use_transform = True
             props.type = "ShaderNodeSeparateXYZ"
 
             if engine == 'BLENDER_EEVEE':
 
-                props = row.operator("node.add_node", text="", icon = "NODE_RGB")
+                props = flow.operator("node.add_node", text="", icon = "NODE_RGB")
                 props.use_transform = True
                 props.type = "ShaderNodeShaderToRGB"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon= "NODE_BLACKBODY")
+            props = flow.operator("node.add_node", text = "", icon= "NODE_BLACKBODY")
             props.use_transform = True
             props.type = "ShaderNodeBlackbody"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
             props.use_transform = True
             props.type = "ShaderNodeValToRGB"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_MATH")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MATH")
             props.use_transform = True
             props.type = "ShaderNodeMath"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
             props.use_transform = True
             props.type = "ShaderNodeRGBToBW"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
             props.use_transform = True
             props.type = "ShaderNodeVectorMath"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_WAVELENGTH")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_WAVELENGTH")
             props.use_transform = True
             props.type = "ShaderNodeWavelength"
 
-            props = row.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
+            props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
             props.use_transform = True
             props.type = "ShaderNodeMapRange"
 
-            props = row.operator("node.add_node", text="", icon = "NODE_CLAMP")
+            props = flow.operator("node.add_node", text="", icon = "NODE_CLAMP")
             props.use_transform = True
             props.type = "ShaderNodeClamp"
 
@@ -2638,6 +2640,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Bump               ", icon = "NODE_BUMP")
             props.use_transform = True
@@ -2656,6 +2659,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
             props.type = "ShaderNodeNormal"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Vector Curves ", icon = "NODE_VECTOR")
             props.use_transform = True
@@ -2679,29 +2683,39 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
 
             ##### --------------------------------- Vector ------------------------------------------- ####
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_BUMP")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_BUMP")
             props.use_transform = True
             props.type = "ShaderNodeBump"
+            
+            props = flow.operator("node.add_node", text="", icon = "MOD_DISPLACE")
+            props.use_transform = True
+            props.type = "ShaderNodeDisplacement"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_MAPPING")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MAPPING")
             props.use_transform = True
             props.type = "ShaderNodeMapping"
 
-            props = row.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
+            props = flow.operator("node.add_node", text = "", icon = "RECALC_NORMALS")
             props.use_transform = True
             props.type = "ShaderNodeNormal"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
+            
+            props = flow.operator("node.add_node", text="", icon = "MOD_DISPLACE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorDisplacement"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR_TRANSFORM")
+            props = flow.operator("node.add_node", text="", icon = "TRANSFORM_ROTATE")
+            props.use_transform = True
+            props.type = "ShaderNodeVectorRotate"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR_TRANSFORM")
             props.use_transform = True
             props.type = "ShaderNodeVectorTransform"
 
@@ -3043,6 +3057,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Bright / Contrast ", icon = "BRIGHTNESS_CONTRAST")
             props.use_transform = True
@@ -3061,6 +3076,7 @@ class NODES_PT_Modify_color(bpy.types.Panel):
             props.type = "ShaderNodeInvert"
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Light Falloff      ", icon = "NODE_LIGHTFALLOFF")
             props.use_transform = True
@@ -3079,38 +3095,35 @@ class NODES_PT_Modify_color(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
+            props = flow.operator("node.add_node", text = "", icon = "BRIGHTNESS_CONTRAST")
             props.use_transform = True
             props.type = "ShaderNodeBrightContrast"
 
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_GAMMA")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_GAMMA")
             props.use_transform = True
             props.type = "ShaderNodeGamma"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
             props.use_transform = True
             props.type = "ShaderNodeHueSaturation"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_INVERT")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_INVERT")
             props.use_transform = True
             props.type = "ShaderNodeInvert"
 
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            props = row.operator("node.add_node", text = "", icon = "NODE_LIGHTFALLOFF")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_LIGHTFALLOFF")
             props.use_transform = True
             props.type = "ShaderNodeLightFalloff"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
             props.use_transform = True
             props.type = "ShaderNodeMixRGB"
 
-            props = row.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
+            props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
@@ -3143,6 +3156,7 @@ class NODES_PT_Modify_script(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Script               ", icon = "FILE_SCRIPT")
             props.use_transform = True
@@ -3152,10 +3166,11 @@ class NODES_PT_Modify_script(bpy.types.Panel):
 
         else:
 
-            row = layout.row()
-            row.alignment = 'LEFT'
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
 
-            props = row.operator("node.add_node", text = "", icon = "FILE_SCRIPT")
+            props = flow.operator("node.add_node", text = "", icon = "FILE_SCRIPT")
             props.use_transform = True
             props.type = "ShaderNodeScript"
 
