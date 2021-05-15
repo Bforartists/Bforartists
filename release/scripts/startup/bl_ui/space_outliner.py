@@ -172,6 +172,7 @@ class OUTLINER_MT_editor_menus(Menu):
             layout.separator()
 
             layout.operator("outliner.orphans_purge", text="Clean Up")
+            layout.menu("TOPBAR_MT_file_cleanup", text = "", icon = "DOWNARROW_HLT")
 
 
 class OUTLINER_MT_view(Menu):
