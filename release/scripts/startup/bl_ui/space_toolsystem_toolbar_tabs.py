@@ -83,10 +83,70 @@ class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
 
             if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
                                 'EDIT_LATTICE', 'EDIT_METABALL'}:
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+
                 col.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
                 col.operator_context = 'EXEC_REGION_WIN'
                 col.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE').offset = 0.1
                 col.operator_context = 'INVOKE_REGION_WIN'
+
+            if context.mode == 'EDIT_MESH':
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+                col.operator("transform.shrink_fatten", text="Shrink Fatten", icon = 'SHRINK_FATTEN')
+                col.operator("transform.skin_resize", icon = "MOD_SKIN")
+
+            if context.mode == 'EDIT_CURVE':
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+                col.operator("transform.transform", text="Radius", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
+
+            if obj.type != 'ARMATURE':
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+                col.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+                col.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+            elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+                col.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+                col.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+            if context.mode == 'OBJECT':
+                col = layout.column(align=True)
+                col.scale_y = 2
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                # XXX see alignmenu() in edit.c of b2.4x to get this working
+                col.operator("transform.transform", text="Align to Transform Orientation", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'
+                col.operator("object.randomize_transform", icon = "RANDOMIZE_TRANSFORM")
+                col.operator("object.align", icon = "ALIGN")
+
+            # armature specific extensions follow
+
+            if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+                if obj.data.display_type == 'BBONE':
+                    col.operator("transform.transform", text="Scale BBone", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+
+                elif obj.data.display_type == 'ENVELOPE':
+                    col.operator("transform.transform", text="Scale Envelope Distance", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+                    col.operator("transform.transform", text="Scale Radius", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
+
+            if context.edit_object and context.edit_object.type == 'ARMATURE':
+
+                col.operator("armature.align", icon = "ALIGN")
+                
+            layout.operator("ED_OT_SetDimensions")
 
         # icon buttons
         else:
@@ -105,13 +165,74 @@ class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
+
+
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
                                     'EDIT_LATTICE', 'EDIT_METABALL'}:
+
+                    col.separator( factor = 0.5)
                     row = col.row(align=True)
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
                     row.operator("transform.vertex_random", text="", icon = 'RANDOMIZE').offset = 0.1
                     row.operator_context = 'INVOKE_REGION_WIN'
+
+                if context.mode == 'EDIT_MESH':
+
+                    col.separator( factor = 0.5)
+                    row = col.row(align=True)
+                    row.operator("transform.shrink_fatten", text="", icon = 'SHRINK_FATTEN')
+                    row.operator("transform.skin_resize", text="", icon = "MOD_SKIN")
+
+                if context.mode == 'EDIT_CURVE':
+
+                    col.separator( factor = 0.5)
+                    row = col.row(align=True)
+                    row.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
+
+                if obj.type != 'ARMATURE':
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    row.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
+                    row.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+                elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    row.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
+                    row.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+
+                if context.mode == 'OBJECT':
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    row.operator_context = 'EXEC_REGION_WIN'
+                    # XXX see alignmenu() in edit.c of b2.4x to get this working
+                    row.operator("transform.transform", text="", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'
+                    row.operator("object.randomize_transform", text = "", icon = "RANDOMIZE_TRANSFORM")
+                    row.operator("object.align", text = "", icon = "ALIGN")
+
+                if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    if obj.data.display_type == 'BBONE':
+                        row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+
+                    elif obj.data.display_type == 'ENVELOPE':
+                        row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+                        row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
+
+                if context.edit_object and context.edit_object.type == 'ARMATURE':
+
+                    row.operator("armature.align", text="", icon = "ALIGN")
 
             elif column_count == 2:
 
@@ -125,11 +246,70 @@ class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
 
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
                                     'EDIT_LATTICE', 'EDIT_METABALL'}:
+                    col.separator( factor = 0.5)
                     row = col.row(align=True)
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
                     row.operator("transform.vertex_random", text="", icon = 'RANDOMIZE').offset = 0.1
                     row.operator_context = 'INVOKE_REGION_WIN'
+
+                if context.mode == 'EDIT_MESH':
+
+                    col.separator( factor = 0.5)
+                    row = col.row(align=True)
+                    row.operator("transform.shrink_fatten", text="", icon = 'SHRINK_FATTEN')
+                    row.operator("transform.skin_resize", text="", icon = "MOD_SKIN")
+
+                if context.mode == 'EDIT_CURVE':
+
+                    col.separator( factor = 0.5)
+                    row = col.row(align=True)
+                    row.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
+
+                if obj.type != 'ARMATURE':
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    row.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
+                    row.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+                elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    row.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
+                    row.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+                if context.mode == 'OBJECT':
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    row.operator_context = 'EXEC_REGION_WIN'
+                    # XXX see alignmenu() in edit.c of b2.4x to get this working
+                    row.operator("transform.transform", text="", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'
+                    row.operator("object.randomize_transform", text = "", icon = "RANDOMIZE_TRANSFORM")
+                    row = col.row(align=True)
+                    row.operator("object.align", text = "", icon = "ALIGN")
+
+                if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+
+                    col.separator( factor = 0.5)
+
+                    row = col.row(align=True)
+                    if obj.data.display_type == 'BBONE':
+                        row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+
+                    elif obj.data.display_type == 'ENVELOPE':
+                        row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+                        row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
+                        row = col.row(align=True)
+
+                if context.edit_object and context.edit_object.type == 'ARMATURE':
+
+                    row.operator("armature.align", text="", icon = "ALIGN")
 
             elif column_count == 1:
 
@@ -138,12 +318,59 @@ class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
                 col.operator("transform.bend", text="", icon = "BEND")
                 col.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
-                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
-                                    'EDIT_LATTICE', 'EDIT_METABALL'}:
+                if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL'}:
+                    col.separator( factor = 0.5)
                     col.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     col.operator_context = 'EXEC_REGION_WIN'
                     col.operator("transform.vertex_random", text="", icon = 'RANDOMIZE').offset = 0.1
                     col.operator_context = 'INVOKE_REGION_WIN'
+
+                if context.mode == 'EDIT_MESH':
+
+                    col.separator( factor = 0.5)
+                    col.operator("transform.shrink_fatten", text="", icon = 'SHRINK_FATTEN')
+                    col.operator("transform.skin_resize", text="", icon = "MOD_SKIN")
+
+                if context.mode == 'EDIT_CURVE':
+
+                    col.separator( factor = 0.5)
+                    col.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
+
+                if obj.type != 'ARMATURE':
+
+                    col.separator( factor = 0.5)
+                    col.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
+                    col.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+                elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+
+                    col.separator( factor = 0.5)
+                    col.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
+                    col.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+                if context.mode == 'OBJECT':
+
+                    col.separator( factor = 0.5)
+                    col.operator_context = 'EXEC_REGION_WIN'
+                    # XXX see alignmenu() in edit.c of b2.4x to get this working
+                    col.operator("transform.transform", text="", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'
+                    col.operator("object.randomize_transform", text = "", icon = "RANDOMIZE_TRANSFORM")
+                    col.operator("object.align", text = "", icon = "ALIGN")
+
+                if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+
+                    col.separator( factor = 0.5)
+
+                    if obj.data.display_type == 'BBONE':
+                        col.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+
+                    elif obj.data.display_type == 'ENVELOPE':
+                        col.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
+                        col.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
+
+                if context.edit_object and context.edit_object.type == 'ARMATURE':
+
+                    col.operator("armature.align", text="", icon = "ALIGN")
 
 
 class VIEW3D_PT_snappanel_toolshelf(toolshelf_calculate, Panel):
