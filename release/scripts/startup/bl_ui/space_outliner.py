@@ -171,7 +171,7 @@ class OUTLINER_MT_editor_menus(Menu):
         elif display_mode == 'ORPHAN_DATA':
             layout.separator()
 
-            layout.operator("outliner.orphans_purge", text="Purge")
+            layout.operator("outliner.orphans_purge", text="Clean Up")
 
 
 class OUTLINER_MT_view(Menu):
