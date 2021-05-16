@@ -143,10 +143,13 @@ class VIEW3D_PT_print3d_export(View3DPrintPanel, Panel):
         print_3d = context.scene.print_3d
 
         layout.prop(print_3d, "export_path", text="")
+        layout.prop(print_3d, "export_format")
 
         col = layout.column()
         col.prop(print_3d, "use_apply_scale")
         col.prop(print_3d, "use_export_texture")
+        sub = col.column()
+        sub.active = print_3d.export_format != "STL"
+        sub.prop(print_3d, "use_data_layers")
 
-        layout.prop(print_3d, "export_format")
         layout.operator("mesh.print3d_export", text="Export", icon='EXPORT')
