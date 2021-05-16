@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Language: zh_CN\n"
 "=====X-Generator: Poedit 1.6.9\n"
 "Language: zh_CN>>>>>> .r306\n"
-"X-Generator: Poedit 2.4.2"
+"X-Generator: Poedit 2.4.3"
 
 
 msgid "Shader AOV"
@@ -15525,6 +15525,14 @@ msgid "Create duplication of strokes"
 msgstr "创建笔画副本"
 
 
+msgid "Line Art"
+msgstr "线条画"
+
+
+msgid "Generate line art strokes from selected source"
+msgstr "从选定的来源生成线条画笔画"
+
+
 msgid "Mirror"
 msgstr "镜像"
 
@@ -15551,14 +15559,6 @@ msgstr "细分"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "细分笔画添加更多控制点"
-
-
-msgid "Line Art"
-msgstr "线条画"
-
-
-msgid "Generate line art strokes from selected source"
-msgstr "从选定的来源生成线条画笔画"
 
 
 msgid "Deform stroke points using armature object"
@@ -31640,7 +31640,7 @@ msgstr "随机遮罩"
 
 
 msgid "Sculpt"
-msgstr "雕刻模式"
+msgstr "雕刻"
 
 
 msgid "Automasking"
@@ -35044,7 +35044,7 @@ msgstr "模拟域尺寸 (单位: 米), 以及所生成几何体的尺寸 (单位
 
 
 msgid "Spectrum"
-msgstr "色谱"
+msgstr "海浪谱"
 
 
 msgid "Spectrum to use"
@@ -35056,11 +35056,11 @@ msgstr "湍流海洋"
 
 
 msgid "Use for turbulent seas with foam"
-msgstr "用于创建带水沫的湍流海洋"
+msgstr "用于带水沫的湍流海洋"
 
 
 msgid "Established Ocean"
-msgstr "创建大洋(尖海浪)"
+msgstr "稳固大洋"
 
 
 msgid "Use for a large area, established ocean (Pierson-Moskowitz method)"
@@ -35068,11 +35068,11 @@ msgstr "用于创建较大规模的大洋(Pierson-Moskowitz算法)"
 
 
 msgid "Established Ocean (Sharp Peaks)"
-msgstr "创建大洋(尖海浪)"
+msgstr "稳固大洋(尖海浪)"
 
 
 msgid "Use for sharp peaks ('JONSWAP', Pierson-Moskowitz method) with peak sharpening"
-msgstr "用于创建带有海浪锐化的尖海浪('JONSWAP', 'TMA' - Texel-Marsen-Arsloe算法)"
+msgstr "用于带有海浪锐化的尖海浪('JONSWAP', 'TMA' - Texel-Marsen-Arsloe算法)"
 
 
 msgid "Shallow Water"
@@ -41278,7 +41278,7 @@ msgstr "多重散射GGX"
 
 
 msgid "Ashikhmin-Shirley"
-msgstr "不支持贝克曼、Ashikhmin-Shirley和多重散射GGX"
+msgstr "Ashikhmin-Shirley"
 
 
 msgid "Diffuse BSDF"
@@ -81048,7 +81048,7 @@ msgstr "传递次表面颜色通道"
 
 
 msgid "Subsurface Direct"
-msgstr "直接 SSS"
+msgstr "直接次表面"
 
 
 msgid "Deliver subsurface direct pass"
@@ -93923,6 +93923,10 @@ msgstr "%s AO, %s 网格光源, %s 次表面, %s 体积"
 
 msgid "Curve Subdivisions"
 msgstr "曲线细分"
+
+
+msgid "AO Factor"
+msgstr "AO 系数"
 
 
 msgid "AO Distance"

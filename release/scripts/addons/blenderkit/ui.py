@@ -231,11 +231,6 @@ def draw_ratings_bgl():
     if rating_possible:  # (not rated or ui_props.rating_menu_on):
         # print('rating is pssible', asset_data['name'])
         bkit_ratings = asset.bkit_ratings
-        bgcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
-        textcol = (1, 1, 1, 1)
-
-        r = bpy.context.region
-        font_size = int(ui.rating_ui_scale * 20)
 
         if ui.rating_button_on:
             # print('should draw button')
@@ -261,7 +256,6 @@ def draw_ratings_bgl():
                               ui.rating_button_width,
                               ui.rating_button_width,
                               img, 1)
-            # ui_bgl.draw_text( 'rate asset %s' % asset_data['name'],r.width - rating_button_width + margin, margin, font_size)
             return
 
 
@@ -278,50 +272,41 @@ def draw_text_block(x=0, y=0, width=40, font_size=10, line_height=15, text='', c
         ui_bgl.draw_text(l, x, ytext, font_size, color)
 
 
-def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
+def draw_tooltip(x, y, name='', author='', quality = '-', img=None, gravatar=None):
     region = bpy.context.region
     scale = bpy.context.preferences.view.ui_scale
     t = time.time()
 
-    ttipmargin = 5
-    textmargin = 10
-
-    font_height = int(12 * scale)
-    line_height = int(15 * scale)
-    nameline_height = int(23 * scale)
-
-    lines = text.split('\n')
-    alines = author.split('\n')
-    ncolumns = 2
-    # nlines = math.ceil((len(lines) - 1) / ncolumns)
-    nlines = max(len(lines) - 1, len(alines))  # math.ceil((len(lines) - 1) / ncolumns)
-
-    texth = line_height * nlines + nameline_height
-
     if not img or max(img.size[0], img.size[1]) == 0:
         return;
-    isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
-    isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
 
-    estimated_height = 2 * ttipmargin + textmargin + isizey
+    x += 20
+    y -= 20
+    #first get image size scaled
+    isizex = int(512 * scale * img.size[0] / min(img.size[0], img.size[1]))
+    isizey = int(512 * scale * img.size[1] / min(img.size[0], img.size[1]))
+
+    ttipmargin = 5 * scale
+    #then do recurrent re-scaling, to know where to fit the tooltip
+    estimated_height = 2 * ttipmargin + isizey
     if estimated_height > y:
         scaledown = y / (estimated_height)
         scale *= scaledown
-        # we need to scale these down to have correct size if the tooltip wouldn't fit.
-        font_height = int(12 * scale)
-        line_height = int(15 * scale)
-        nameline_height = int(23 * scale)
 
-        lines = text.split('\n')
+        isizex = int(512 * scale * img.size[0] / min(img.size[0], img.size[1]))
+        isizey = int(512 * scale * img.size[1] / min(img.size[0], img.size[1]))
 
-        texth = line_height * nlines + nameline_height
-        isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
-        isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
+    ttipmargin = 5 * scale
+    textmargin = 12 * scale
 
-    name_height = int(18 * scale)
+    if gravatar is not None:
+        overlay_height_base = 90
+    else:
+        overlay_height_base = 70
 
-    x += 2 * ttipmargin
-    y -= 2 * ttipmargin
+
+    overlay_height = overlay_height_base * scale
+    name_height = int(20 * scale)
 
     width = isizex + 2 * ttipmargin
 
@@ -330,116 +315,58 @@ def draw_tooltip(x, y, text='', author='', img=None, gravatar=None):
         if r.type == 'UI':
             properties_width = r.width
 
+    # limit to area borders
     x = min(x + width, region.width - properties_width) - width
 
-    bgcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
-    bgcol1 = (bgcol[0], bgcol[1], bgcol[2], .6)
+    # define_colors
+    background_color = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
+    background_overlay = (background_color[0], background_color[1], background_color[2], .8)
     textcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text
     textcol = (textcol[0], textcol[1], textcol[2], 1)
-    textcol_mild = (textcol[0] * .8, textcol[1] * .8, textcol[2] * .8, 1)
-    textcol_strong = (textcol[0] * 1.3, textcol[1] * 2.3, textcol[2] * 1.3, 1)
-    # textcol_strong = (0.4, 1, 0.3, 1)
-    white = (1, 1, 1, .1)
 
     # background
     ui_bgl.draw_rect(x - ttipmargin,
                      y - 2 * ttipmargin - isizey,
                      isizex + ttipmargin * 2,
                      2 * ttipmargin + isizey,
-                     bgcol)
+                     background_color)
+
     # main preview image
     ui_bgl.draw_image(x, y - isizey - ttipmargin, isizex, isizey, img, 1)
+
     # text overlay background
     ui_bgl.draw_rect(x - ttipmargin,
                      y - 2 * ttipmargin - isizey,
                      isizex + ttipmargin * 2,
-                     2 * ttipmargin + texth,
-                     bgcol1)
+                     ttipmargin + overlay_height ,
+                     background_overlay)
+
+    #draw name
+    name_x = x + textmargin
+    name_y = y - isizey + overlay_height - textmargin - name_height
+    ui_bgl.draw_text(name, name_x, name_y, name_height, textcol)
+
+
     # draw gravatar
-    gsize = 40
+    author_x_text = x + isizex - textmargin
+    gravatar_size = overlay_height - 2 * textmargin
+    gravatar_y = y - isizey - ttipmargin + textmargin
     if gravatar is not None:
-        # ui_bgl.draw_image(x + isizex - gsize - textmargin, y - isizey + texth - gsize - nameline_height - textmargin,
-        #                   gsize, gsize, gravatar, 1)
-        ui_bgl.draw_image(x + isizex / 2 + textmargin, y - isizey + texth - gsize - nameline_height - textmargin,
-                          gsize, gsize, gravatar, 1)
+        author_x_text -= gravatar_size + textmargin
+        ui_bgl.draw_image(x + isizex - gravatar_size - textmargin,
+                          gravatar_y,  # + textmargin,
+                          gravatar_size, gravatar_size, gravatar, 1)
 
-    i = 0
-    column_lines = -1  # start minus one for the name
-    xtext = x + textmargin
-    fsize = name_height
-    tcol = textcol
+    #draw author's name
+    author_text_size = int(name_height * .7)
+    ui_bgl.draw_text(author, author_x_text, gravatar_y, author_text_size, textcol, ralign=True)
 
-    for l in lines:
-        ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
-        if i == 0:
-            ytext = y - name_height + 5 - isizey + texth - textmargin
-        elif i == len(lines) - 1:
-            ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
-            tcol = textcol
-            tsize = font_height
-        else:
-            fsize = font_height
+    # draw quality
+    quality_text_size = int(name_height * 1)
+    img = utils.get_thumbnail('star_grey.png')
+    ui_bgl.draw_image(name_x, gravatar_y, quality_text_size, quality_text_size, img, .6)
+    ui_bgl.draw_text(str(quality), name_x + quality_text_size + 5, gravatar_y, quality_text_size, textcol)
 
-            if l[:4] == 'Tip:' or l[:11] == 'Please rate':
-                tcol = textcol_strong
-                fsize = font_height + 1
-
-        i += 1
-        column_lines += 1
-        ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
-    xtext += int(isizex / ncolumns)
-
-    column_lines = 1
-    i = 0
-    for l in alines:
-        if gravatar is not None:
-            if column_lines == 1:
-                xtext += gsize + textmargin
-            if column_lines == 4:
-                xtext -= gsize + textmargin
-
-        ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
-        if False:  # i == 0:
-            ytext = y - name_height + 5 - isizey + texth - textmargin
-        elif i == len(lines) - 1:
-            ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
-            tcol = textcol
-            tsize = font_height
-        if (i > 0 and alines[i - 1][:7] == 'Author:'):
-            tcol = textcol_strong
-            fsize = font_height + 2
-        else:
-            fsize = font_height
-            tcol = textcol
-
-            if l[:4] == 'Tip:' or l[:11] == 'Please rate':
-                tcol = textcol_strong
-                fsize = font_height + 1
-
-        i += 1
-        column_lines += 1
-        ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
-
-    # for l in lines:
-    #     if column_lines >= nlines:
-    #         xtext += int(isizex / ncolumns)
-    #         column_lines = 0
-    #     ytext = y - column_lines * line_height - nameline_height - ttipmargin - textmargin - isizey + texth
-    #     if i == 0:
-    #         ytext = y - name_height + 5 - isizey + texth - textmargin
-    #     elif i == len(lines) - 1:
-    #         ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin * 2 - isizey + texth
-    #         tcol = textcol
-    #         tsize = font_height
-    #     else:
-    #         if l[:4] == 'Tip:':
-    #             tcol = textcol_strong
-    #         fsize = font_height
-    #     i += 1
-    #     column_lines += 1
-    #     ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
-
-    t = time.time()
 
 
 def draw_tooltip_with_author(asset_data, x, y):
@@ -453,102 +380,23 @@ def draw_tooltip_with_author(asset_data, x, y):
         if a is not None and a != '':
             if a.get('gravatarImg') is not None:
                 gimg = utils.get_hidden_image(a['gravatarImg'], a['gravatarHash'])
-            atip = a['tooltip']
 
-    # scene = bpy.context.scene
-    # ui_props = scene.blenderkitUI
-    draw_tooltip(x, y, text=asset_data['tooltip'], author=atip, img=img,
+    aname = asset_data['displayName']
+    aname = aname[0].upper() + aname[1:]
+    if len(aname)>36:
+        aname = f"{aname[:33]}..."
+
+    rc = asset_data.get('ratingsCount')
+    show_rating_threshold = 0
+    rcount = 0
+    quality = '-'
+    if rc:
+        rcount = min(rc['quality'], rc['workingHours'])
+    if rcount>show_rating_threshold:
+        quality = round(asset_data['ratingsAverage'].get('quality'))
+
+    draw_tooltip(x, y, name=aname, author=f"by {a['firstName']} {a['lastName']}", quality= quality,  img=img,
                  gravatar=gimg)
-
-
-def draw_tooltip_old(x, y, text='', author='', img=None):
-    region = bpy.context.region
-    scale = bpy.context.preferences.view.ui_scale
-    t = time.time()
-
-    ttipmargin = 10
-
-    font_height = int(12 * scale)
-    line_height = int(15 * scale)
-    nameline_height = int(23 * scale)
-
-    lines = text.split('\n')
-    ncolumns = 2
-    nlines = math.ceil((len(lines) - 1) / ncolumns)
-    texth = line_height * nlines + nameline_height
-
-    isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
-    isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
-
-    estimated_height = texth + 3 * ttipmargin + isizey
-
-    if estimated_height > y:
-        scaledown = y / (estimated_height)
-        scale *= scaledown
-        # we need to scale these down to have correct size if the tooltip wouldn't fit.
-        font_height = int(12 * scale)
-        line_height = int(15 * scale)
-        nameline_height = int(23 * scale)
-
-        lines = text.split('\n')
-        ncolumns = 2
-        nlines = math.ceil((len(lines) - 1) / ncolumns)
-        texth = line_height * nlines + nameline_height
-
-        isizex = int(512 * scale * img.size[0] / max(img.size[0], img.size[1]))
-        isizey = int(512 * scale * img.size[1] / max(img.size[0], img.size[1]))
-
-    name_height = int(18 * scale)
-
-    x += 2 * ttipmargin
-    y -= 2 * ttipmargin
-
-    width = isizex + 2 * ttipmargin
-
-    properties_width = 0
-    for r in bpy.context.area.regions:
-        if r.type == 'UI':
-            properties_width = r.width
-
-    x = min(x + width, region.width - properties_width) - width
-
-    bgcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.inner
-    textcol = bpy.context.preferences.themes[0].user_interface.wcol_tooltip.text
-    textcol = (textcol[0], textcol[1], textcol[2], 1)
-    textcol1 = (textcol[0] * .8, textcol[1] * .8, textcol[2] * .8, 1)
-    white = (1, 1, 1, .1)
-
-    ui_bgl.draw_rect(x - ttipmargin,
-                     y - texth - 2 * ttipmargin - isizey,
-                     isizex + ttipmargin * 2,
-                     texth + 3 * ttipmargin + isizey,
-                     bgcol)
-
-    i = 0
-    column_lines = -1  # start minus one for the name
-    xtext = x
-    fsize = name_height
-    tcol = textcol
-    for l in lines:
-        if column_lines >= nlines:
-            xtext += int(isizex / ncolumns)
-            column_lines = 0
-        ytext = y - column_lines * line_height - nameline_height - ttipmargin
-        if i == 0:
-            ytext = y - name_height + 5
-        elif i == len(lines) - 1:
-            ytext = y - (nlines - 1) * line_height - nameline_height - ttipmargin
-            tcol = textcol
-            tsize = font_height
-        else:
-            if l[:5] == 'tags:':
-                tcol = textcol1
-            fsize = font_height
-        i += 1
-        column_lines += 1
-        ui_bgl.draw_text(l, xtext, ytext, fsize, tcol)
-    t = time.time()
-    ui_bgl.draw_image(x, y - texth - isizey - ttipmargin, isizex, isizey, img, 1)
 
 
 def draw_callback_2d(self, context):
@@ -592,14 +440,6 @@ def draw_downloader(x, y, percent=0, img=None, text=''):
     #     ui_bgl.draw_text(asset_data['filesSize'])
     if text:
         ui_bgl.draw_text(text, x, y - 15, 12, colors.TEXT)
-        # asset_data and asset_data.get('filesSize'):
-        # fs = asset_data['filesSize']
-        # fsmb = fs // (1024 * 1024)
-        # fskb = fs % 1024
-        # if fsmb == 0:
-        #     t += 'files size: %iKB\n' % fskb
-        # else:
-        #     t += 'files size: %iMB %iKB\n' % (fsmb, fskb)
 
 
 def draw_progress(x, y, text='', percent=None, color=colors.GREEN):
@@ -655,10 +495,10 @@ def draw_callback_2d_progress(self, context):
 
     for process in bg_blender.bg_processes:
         tcom = process[1]
-        n=''
+        n = ''
         if tcom.name is not None:
-            n = tcom.name +': '
-        draw_progress(x, y - index * 30, '%s' % n+tcom.lasttext,
+            n = tcom.name + ': '
+        draw_progress(x, y - index * 30, '%s' % n + tcom.lasttext,
                       tcom.progress)
         index += 1
     global reports
@@ -687,7 +527,7 @@ def draw_callback_2d_upload_preview(self, context):
 
         img = utils.get_hidden_image(ui_props.thumbnail_image, 'upload_preview')
 
-        draw_tooltip(ui_props.bar_x, ui_props.bar_y, text=ui_props.tooltip, img=img)
+        draw_tooltip(ui_props.bar_x, ui_props.bar_y, name=ui_props.tooltip, img=img)
 
 
 def is_upload_old(asset_data):
@@ -851,6 +691,8 @@ def draw_asset_bar(self, context):
                         img = utils.get_thumbnail('locked.png')
                         ui_bgl.draw_image(x + 2, y + 2, 24, 24, img, 1)
 
+                    # pcoll = icons.icon_collections["main"]
+                    # v_icon = pcoll['rejected']
                     v_icon = verification_icons[result.get('verificationStatus', 'validated')]
                     if v_icon is not None:
                         img = utils.get_thumbnail(v_icon)
@@ -1290,6 +1132,7 @@ class ParticlesDropDialog(bpy.types.Operator):
 #         wm = context.window_manager
 #         return wm.invoke_props_dialog(self, width=400)
 
+
 class AssetBarOperator(bpy.types.Operator):
     '''runs search and displays the asset bar at the same time'''
     bl_idname = "view3d.blenderkit_asset_bar"
@@ -1333,6 +1176,7 @@ class AssetBarOperator(bpy.types.Operator):
         ui_props.assetbar_on = False
 
     def modal(self, context, event):
+
         # This is for case of closing the area or changing type:
         ui_props = context.scene.blenderkitUI
         user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -1421,7 +1265,8 @@ class AssetBarOperator(bpy.types.Operator):
                         or ui_props.asset_type == 'SCENE' or ui_props.asset_type == 'HDR':
                     export_data, upload_data = upload.get_upload_data(context=context, asset_type=ui_props.asset_type)
                     if upload_data:
-                        ui_props.tooltip = search.generate_tooltip(upload_data)
+                        # print(upload_data)
+                        ui_props.tooltip = upload_data['displayName']#search.generate_tooltip(upload_data)
 
             return {'PASS_THROUGH'}
 
@@ -1575,8 +1420,12 @@ class AssetBarOperator(bpy.types.Operator):
             my = event.mouse_y - r.y
 
             if event.value == 'PRESS' and mouse_in_asset_bar(mx, my):
-                # bpy.ops.wm.blenderkit_asset_popup('INVOKE_DEFAULT')
-                bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_asset_menu')
+                # context.window.cursor_warp(event.mouse_x - 300, event.mouse_y - 10);
+
+                bpy.ops.wm.blenderkit_asset_popup('INVOKE_DEFAULT')
+                # context.window.cursor_warp(event.mouse_x, event.mouse_y);
+
+                # bpy.ops.wm.call_menu(name='OBJECT_MT_blenderkit_asset_menu')
                 return {'RUNNING_MODAL'}
 
         if event.type == 'LEFTMOUSE':
@@ -1768,8 +1617,8 @@ class AssetBarOperator(bpy.types.Operator):
                                                           asset_index=asset_search_index,
                                                           # replace_resolution=True,
                                                           invoke_resolution=True,
-                                                          max_resolution = asset_data.get('max_resolution', 0)
-                        )
+                                                          max_resolution=asset_data.get('max_resolution', 0)
+                                                          )
                     else:
                         bpy.ops.scene.blenderkit_download(  # asset_type=ui_props.asset_type,
                             asset_index=asset_search_index,
@@ -1877,7 +1726,7 @@ class AssetBarOperator(bpy.types.Operator):
         context.window_manager.modal_handler_add(self)
         ui_props.assetbar_on = True
 
-        #in an exceptional case these were accessed before  drag start.
+        # in an exceptional case these were accessed before  drag start.
         self.drag_start_x = 0
         self.drag_start_y = 0
 
@@ -1960,7 +1809,7 @@ def find_and_activate_instancers(object):
 
 
 class AssetDragOperator(bpy.types.Operator):
-    """Draw a line with the mouse"""
+    """Drag & drop assets into scene."""
     bl_idname = "view3d.asset_drag_drop"
     bl_label = "BlenderKit asset drag drop"
 
@@ -2174,7 +2023,8 @@ class RunAssetBarWithContext(bpy.types.Operator):
                                                            do_search=self.do_search)
 
             else:
-                bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=self.keep_running, do_search=self.do_search)
+                bpy.ops.view3d.blenderkit_asset_bar(C_dict, 'INVOKE_REGION_WIN', keep_running=self.keep_running,
+                                                    do_search=self.do_search)
         return {'FINISHED'}
 
 

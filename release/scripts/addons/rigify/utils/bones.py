@@ -682,4 +682,4 @@ def set_bone_widget_transform(obj, bone_name, transform_bone, use_size=True, sca
         bone.custom_shape_transform = None
 
     bone.use_custom_shape_bone_size = use_size
-    bone.custom_shape_scale = scale
+    bone.custom_shape_scale_xyz = (scale, scale, scale)
