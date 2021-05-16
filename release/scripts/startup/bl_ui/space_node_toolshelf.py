@@ -3390,6 +3390,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Attribute Vector Math ", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeVectorMath"
+            
+            props = col.operator("node.add_node", text=" Attribute Vector Rotate ", icon = "ATTRIBUTE_VECTOR_ROTATE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeVectorRotate"
 
 
 
@@ -3468,6 +3472,10 @@ class NODES_PT_geom_add_attribute(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTORMATH")
             props.use_transform = True
             props.type = "GeometryNodeAttributeVectorMath"
+            
+            props = flow.operator("node.add_node", text="", icon = "ATTRIBUTE_VECTOR_ROTATE")
+            props.use_transform = True
+            props.type = "GeometryNodeAttributeVectorRotate"
 
 
 #add color panel

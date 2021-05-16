@@ -12356,6 +12356,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_ATTRIBUTE_VECTOR_MATH:
       icon = ICON_ATTRIBUTE_VECTORMATH;
       break;
+    case GEO_NODE_ATTRIBUTE_VECTOR_ROTATE:
+      icon = ICON_ATTRIBUTE_VECTOR_ROTATE;
+      break;
     case GEO_NODE_ATTRIBUTE_FILL:
       icon = ICON_ATTRIBUTE_FILL;
       break;
