@@ -120,10 +120,14 @@ def draw_image(x, y, width, height, image, transparency, crop=(0, 0, 1, 1)):
     bgl.glDisable(bgl.GL_TEXTURE_2D)
 
 
-def draw_text(text, x, y, size, color=(1, 1, 1, 0.5)):
-    font_id = 0
+def draw_text(text, x, y, size, color=(1, 1, 1, 0.5), ralign = False):
+    font_id = 1
     # bgl.glColor4f(*color)
     blf.color(font_id, color[0], color[1], color[2], color[3])
-    blf.position(font_id, x, y, 0)
     blf.size(font_id, size, 72)
+    if ralign:
+        width,height = blf.dimensions(font_id, text)
+        x-=width
+    blf.position(font_id, x, y, 0)
+
     blf.draw(font_id, text)

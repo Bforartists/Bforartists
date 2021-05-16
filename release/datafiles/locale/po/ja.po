@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -15711,6 +15711,14 @@ msgid "Create duplication of strokes"
 msgstr "ストロークのコピーを作成します"
 
 
+msgid "Line Art"
+msgstr "ラインアート"
+
+
+msgid "Generate line art strokes from selected source"
+msgstr "選択中のソースからラインアートストロークを生成します"
+
+
 msgid "Mirror"
 msgstr "ミラー"
 
@@ -15737,14 +15745,6 @@ msgstr "細分化"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "ストロークを分割し、コントロールポイントを追加します"
-
-
-msgid "Line Art"
-msgstr "ラインアート"
-
-
-msgid "Generate line art strokes from selected source"
-msgstr "選択中のソースからラインアートストロークを生成します"
 
 
 msgid "Deform stroke points using armature object"
@@ -94631,6 +94631,10 @@ msgid "Curve Subdivisions"
 msgstr "カーブの分割数"
 
 
+msgid "AO Factor"
+msgstr "AOの係数"
+
+
 msgid "AO Distance"
 msgstr "AOの距離"
 
@@ -109613,7 +109617,7 @@ msgstr "boolean、int、float のみ対応"
 
 
 msgid "'%s' does not contain '%s' with prefix and suffix"
-msgstr "「%s」に「%s」と接頭辞や接尾辞が含まれていません"
+msgstr "「%s」に「%s」と、接頭辞や接尾辞が含まれていません"
 
 
 msgid "'%s' doesn't have upper case alpha-numeric prefix"

@@ -723,7 +723,7 @@ static void lib_override_library_create_post_process(Main *bmain,
           switch (GS(id_ref->name)) {
             case ID_GR: {
               /* Adding the object to a specific collection outside of the root overridden one is a
-               * fairly bad idea (it breaks the override hierarchy concept). But htere is no other
+               * fairly bad idea (it breaks the override hierarchy concept). But there is no other
                * way to do this currently (we cannot add new collections to overridden root one,
                * this is not currently supported).
                * Since that will be fairly annoying and noisy, only do that in case the override
@@ -1669,7 +1669,7 @@ bool BKE_lib_override_library_property_operation_operands_validate(
   return true;
 }
 
-/** Check against potential  \a bmain. */
+/** Check against potential \a bmain. */
 void BKE_lib_override_library_validate(Main *UNUSED(bmain), ID *id, ReportList *reports)
 {
   if (id->override_library == NULL) {
@@ -1703,7 +1703,7 @@ void BKE_lib_override_library_validate(Main *UNUSED(bmain), ID *id, ReportList *
   }
 }
 
-/** Check against potential  \a bmain. */
+/** Check against potential \a bmain. */
 void BKE_lib_override_library_main_validate(Main *bmain, ReportList *reports)
 {
   ID *id;
