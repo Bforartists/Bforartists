@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15518,6 +15518,14 @@ msgid "Create duplication of strokes"
 msgstr "Crea una duplicación de trazos"
 
 
+msgid "Line Art"
+msgstr "Arte lineal"
+
+
+msgid "Generate line art strokes from selected source"
+msgstr "Permite generar trazos de arte lineal a partir del origen seleccionado"
+
+
 msgid "Mirror"
 msgstr "Simetrizar"
 
@@ -15544,14 +15552,6 @@ msgstr "Subdividir"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "Subdivide el trazo agregando más puntos de control"
-
-
-msgid "Line Art"
-msgstr "Arte lineal"
-
-
-msgid "Generate line art strokes from selected source"
-msgstr "Permite generar trazos de arte lineal a partir del origen seleccionado"
 
 
 msgid "Deform stroke points using armature object"

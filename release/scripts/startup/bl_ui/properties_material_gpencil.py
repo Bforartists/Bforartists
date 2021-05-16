@@ -46,16 +46,19 @@ class GPENCIL_MT_material_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("object.material_slot_remove_unused", icon='DELETE')
-        layout.operator("gpencil.stroke_merge_material", text="Merge Similar", icon='MERGE')
-
         layout.separator()
         layout.operator("gpencil.material_to_vertex_color", text="Convert Materials to Vertex Color", icon='NODE_VERTEX_COLOR')
         layout.operator("gpencil.extract_palette_vertex", text="Extract Palette from Vertex Color", icon='MATERIAL_DATA')
 
         layout.separator()
-        layout.menu("VIEW3D_MT_gpencil_append_active_material")
-        layout.menu("VIEW3D_MT_gpencil_append_all_materials")
+
+        layout.operator("gpencil.materials_copy_to_object", text="Copy Material to Selected", icon = "COPYDOWN").only_active = True
+        layout.operator("gpencil.materials_copy_to_object", text="Copy All Materials to Selected",  icon = "COPYDOWN").only_active = False
+
+        layout.separator()
+
+        layout.operator("gpencil.stroke_merge_material", text="Merge Similar", icon = "MERGE")
+        layout.operator("object.material_slot_remove_unused", icon = "DELETE")
 
 
 class GPENCIL_UL_matslots(UIList):

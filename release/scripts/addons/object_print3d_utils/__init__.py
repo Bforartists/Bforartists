@@ -61,10 +61,10 @@ class SceneProperties(PropertyGroup):
         name="Format",
         description="Format type to export to",
         items=(
-            ('STL', "STL", ""),
-            ('PLY', "PLY", ""),
-            ('X3D', "X3D", ""),
             ('OBJ', "OBJ", ""),
+            ('PLY', "PLY", ""),
+            ('STL', "STL", ""),
+            ('X3D', "X3D", ""),
         ),
         default='STL',
     )
@@ -77,6 +77,13 @@ class SceneProperties(PropertyGroup):
         name="Apply Scale",
         description="Apply scene scale setting on export",
         default=False,
+    )
+    use_data_layers: BoolProperty(
+        name="Data Layers",
+        description=(
+            "Export normals, UVs, vertex colors and materials for formats that support it "
+            "significantly increasing filesize"
+        ),
     )
     export_path: StringProperty(
         name="Export Directory",

@@ -225,9 +225,9 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         self.asset_name = name_label
         self.tooltip_widgets.append(name_label)
         offset_y = 16 + self.margin
-        label = self.new_text('Left click or drag to append/link. Right click for more options.', self.assetbar_margin*2, labels_start + offset_y,
-                              text_size=14)
-        self.tooltip_widgets.append(label)
+        # label = self.new_text('Left click or drag to append/link. Right click for more options.', self.assetbar_margin*2, labels_start + offset_y,
+        #                       text_size=14)
+        # self.tooltip_widgets.append(label)
 
 
         self.hide_tooltip()
@@ -505,6 +505,9 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
     # handlers
 
     def enter_button(self, widget):
+        # context.window.cursor_warp(event.mouse_x, event.mouse_y - 20);
+
+
         self.show_tooltip()
 
         if self.active_index != widget.search_index:
@@ -532,6 +535,8 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
             self.tooltip_panel.update(tooltip_x, widget.y_screen + widget.height)
             self.tooltip_panel.layout_widgets()
+            # bpy.ops.wm.blenderkit_asset_popup('INVOKE_DEFAULT')
+
 
     def exit_button(self, widget):
         # this condition checks if there wasn't another button already entered, which can happen with small button gaps

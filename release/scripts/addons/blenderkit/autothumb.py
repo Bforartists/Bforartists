@@ -156,7 +156,7 @@ def start_thumbnailer(self=None, json_args=None, props=None, wait=False, add_bg_
         eval_path_state = "bpy.data.objects['%s'].blenderkit.thumbnail_generating_state" % json_args['asset_name']
         eval_path = "bpy.data.objects['%s']" % json_args['asset_name']
 
-        bg_blender.add_bg_process(eval_path_computing=eval_path_computing, eval_path_state=eval_path_state,
+        bg_blender.add_bg_process(name = f"{json_args['asset_name']} thumbnailer" ,eval_path_computing=eval_path_computing, eval_path_state=eval_path_state,
                                   eval_path=eval_path, process_type='THUMBNAILER', process=proc)
 
 
@@ -206,7 +206,7 @@ def start_material_thumbnailer(self=None, json_args=None, props=None, wait=False
         eval_path_state = "bpy.data.materials['%s'].blenderkit.thumbnail_generating_state" % json_args['asset_name']
         eval_path = "bpy.data.materials['%s']" % json_args['asset_name']
 
-        bg_blender.add_bg_process(name=json_args['asset_name'], eval_path_computing=eval_path_computing,
+        bg_blender.add_bg_process(name=f"{json_args['asset_name']} thumbnailer", eval_path_computing=eval_path_computing,
                                   eval_path_state=eval_path_state,
                                   eval_path=eval_path, process_type='THUMBNAILER', process=proc)
         if props:
@@ -328,7 +328,10 @@ class GenerateThumbnailOperator(bpy.types.Operator):
 
 
 class ReGenerateThumbnailOperator(bpy.types.Operator):
-    """Generate Cycles thumbnail for model assets"""
+    """
+        Generate default thumbnail with Cycles renderer and upload it.
+        Works also for assets from search results, without being downloaded before.
+    """
     bl_idname = "object.blenderkit_regenerate_thumbnail"
     bl_label = "BlenderKit Thumbnail Re-generate"
     bl_options = {'REGISTER', 'INTERNAL'}
@@ -371,11 +374,9 @@ class ReGenerateThumbnailOperator(bpy.types.Operator):
         return True  # bpy.context.view_layer.objects.active is not None
 
     def draw(self, context):
-        ob = bpy.context.active_object
-        while ob.parent is not None:
-            ob = ob.parent
         props = self
         layout = self.layout
+        # layout.label('This will re-generate thumbnail and directly upload it to server. You should see your updated thumbnail online depending ')
         layout.label(text='thumbnailer settings')
         layout.prop(props, 'thumbnail_background_lightness')
         layout.prop(props, 'thumbnail_angle')
@@ -424,8 +425,6 @@ class ReGenerateThumbnailOperator(bpy.types.Operator):
         start_thumbnailer(self,
                           json_args=args_dict,
                           wait=False)
-        return {'FINISHED'}
-        start_thumbnailer(self, context)
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -521,8 +520,8 @@ class GenerateMaterialThumbnailOperator(bpy.types.Operator):
 
 class ReGenerateMaterialThumbnailOperator(bpy.types.Operator):
     """
-        Generate default thumbnail with Cycles renderer.
-        Works also for assets from search results, without being downloaded before.
+        Generate default thumbnail with Cycles renderer and upload it.
+        Works also for assets from search results, without being downloaded before
     """
     bl_idname = "object.blenderkit_regenerate_material_thumbnail"
     bl_label = "BlenderKit Material Thumbnail Re-Generator"
