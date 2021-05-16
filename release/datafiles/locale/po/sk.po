@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-04-29 10:20+0200\n"
@@ -15523,6 +15523,14 @@ msgid "Create duplication of strokes"
 msgstr "Vytvorí kópie ťahov"
 
 
+msgid "Line Art"
+msgstr "Čiarová grafika"
+
+
+msgid "Generate line art strokes from selected source"
+msgstr "Vygeneruje čiarovú grafiku z vybraného zdroja"
+
+
 msgid "Mirror"
 msgstr "Zrkadlo"
 
@@ -15549,14 +15557,6 @@ msgstr "Rozdeliť"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "Rozdelí ťah pridaním ďalších riadiacich bodov"
-
-
-msgid "Line Art"
-msgstr "Čiarová grafika"
-
-
-msgid "Generate line art strokes from selected source"
-msgstr "Vygeneruje čiarovú grafiku z vybraného zdroja"
 
 
 msgid "Deform stroke points using armature object"

@@ -81,6 +81,7 @@ def write_mesh(context, report_cb):
     path_mode = 'COPY' if print_3d.use_export_texture else 'AUTO'
     export_path = bpy.path.abspath(print_3d.export_path)
     obj = layer.objects.active
+    export_data_layers = print_3d.use_data_layers
 
     # Create name 'export_path/blendname-objname'
     # add the filename component
@@ -129,9 +130,13 @@ def write_mesh(context, report_cb):
         filepath = bpy.path.ensure_ext(filepath, ".ply")
         ret = bpy.ops.export_mesh.ply(
             filepath=filepath,
+            use_ascii=False,
             use_mesh_modifiers=True,
             use_selection=True,
             global_scale=global_scale,
+            use_normals=export_data_layers,
+            use_uv_coords=export_data_layers,
+            use_colors=export_data_layers,
         )
     elif export_format == 'X3D':
         addon_ensure("io_scene_x3d")
@@ -140,8 +145,9 @@ def write_mesh(context, report_cb):
             filepath=filepath,
             use_mesh_modifiers=True,
             use_selection=True,
-            path_mode=path_mode,
             global_scale=global_scale,
+            path_mode=path_mode,
+            use_normals=export_data_layers,
         )
     elif export_format == 'OBJ':
         addon_ensure("io_scene_obj")
@@ -150,16 +156,18 @@ def write_mesh(context, report_cb):
             filepath=filepath,
             use_mesh_modifiers=True,
             use_selection=True,
-            path_mode=path_mode,
             global_scale=global_scale,
+            path_mode=path_mode,
+            use_normals=export_data_layers,
+            use_uvs=export_data_layers,
+            use_materials=export_data_layers,
         )
     else:
         assert 0
 
     # for formats that don't support images
-    if export_format in {'STL', 'PLY'}:
-        if path_mode == 'COPY':
-            image_copy_guess(filepath, context.selected_objects)
+    if path_mode == 'COPY' and export_format in {'STL', 'PLY'}:
+        image_copy_guess(filepath, context.selected_objects)
 
     if 'FINISHED' in ret:
         if report_cb is not None:

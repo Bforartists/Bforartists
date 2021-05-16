@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'a53d34a28a9d')\n"
+"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -15522,6 +15522,14 @@ msgid "Create duplication of strokes"
 msgstr "Chế tạo bản sao của các nét"
 
 
+msgid "Line Art"
+msgstr "Nghệ Thuật Đường Nét"
+
+
+msgid "Generate line art strokes from selected source"
+msgstr "Chế tạo nghệ thuất đường nét từ nguồn được chọn"
+
+
 msgid "Mirror"
 msgstr "Gương"
 
@@ -15548,14 +15556,6 @@ msgstr "Phân Hóa"
 
 msgid "Subdivide stroke adding more control points"
 msgstr "Phân hóa nét bằng tăng số lượng điểm kiểm soát"
-
-
-msgid "Line Art"
-msgstr "Nghệ Thuật Đường Nét"
-
-
-msgid "Generate line art strokes from selected source"
-msgstr "Chế tạo nghệ thuất đường nét từ nguồn được chọn"
 
 
 msgid "Deform stroke points using armature object"

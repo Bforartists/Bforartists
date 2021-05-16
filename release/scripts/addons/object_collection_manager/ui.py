@@ -143,8 +143,13 @@ class CollectionManager(Operator):
         right_sec = button_row_1.row()
         right_sec.alignment = 'RIGHT'
 
-        right_sec.menu("VIEW3D_MT_CM_specials_menu")
-        right_sec.popover(panel="COLLECTIONMANAGER_PT_display_options",
+        specials_menu = right_sec.row()
+        specials_menu.alignment = 'RIGHT'
+        specials_menu.menu("VIEW3D_MT_CM_specials_menu")
+
+        display_options = right_sec.row()
+        display_options.alignment = 'RIGHT'
+        display_options.popover(panel="COLLECTIONMANAGER_PT_display_options",
                            text="", icon='FILTER')
 
         mc_box = layout.box()
@@ -449,12 +454,16 @@ class CollectionManager(Operator):
 
         if cm.in_phantom_mode:
             view.enabled = False
+
             if prefs.enable_qcd:
                 renum_sec.enabled = False
 
+            undo_sec.enabled = False
+            specials_menu.enabled = False
+
             c_icon.enabled = False
             row_setcol.enabled = False
-            addcollec_row.enabled = False
+            button_row_2.enabled = False
 
 
     def execute(self, context):

@@ -23,7 +23,7 @@ import math
 import inspect
 import functools
 
-from mathutils import Matrix
+from mathutils import Matrix, Vector, Euler
 
 from .errors import MetarigError
 from .collections import ensure_widget_collection
@@ -42,7 +42,10 @@ def obj_to_bone(obj, rig, bone_name, bone_transform_name=None):
         raise MetarigError("obj_to_bone(): does not work while in edit mode")
 
     bone = rig.pose.bones[bone_name]
-    scale = bone.custom_shape_scale
+
+    loc = bone.custom_shape_translation
+    rot = bone.custom_shape_rotation_euler
+    scale = Vector(bone.custom_shape_scale_xyz)
 
     if bone.use_custom_shape_bone_size:
         scale *= bone.length
@@ -52,8 +55,10 @@ def obj_to_bone(obj, rig, bone_name, bone_transform_name=None):
     elif bone.custom_shape_transform:
         bone = bone.custom_shape_transform
 
+    shape_mat = Matrix.Translation(loc) @ (Euler(rot).to_matrix() @ Matrix.Diagonal(scale)).to_4x4()
+
     obj.rotation_mode = 'XYZ'
-    obj.matrix_basis = rig.matrix_world @ bone.bone.matrix_local @ Matrix.Scale(scale, 4)
+    obj.matrix_basis = rig.matrix_world @ bone.bone.matrix_local @ shape_mat
 
 
 def create_widget(rig, bone_name, bone_transform_name=None, *, widget_name=None, widget_force_new=False):

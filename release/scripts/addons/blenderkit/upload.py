@@ -567,6 +567,14 @@ def update_free_full(self, context):
                                          " based on our fair share system. " \
                                          "Part of subscription is sent to artists based on usage by paying users.")
 
+def user_is_owner(asset_data=None):
+    '''Checks if the current logged in user is owner of the asset'''
+    profile = bpy.context.window_manager.get('bkit profile')
+    if profile is None:
+        return False
+    if int(asset_data['author']['id']) == int(profile['user']['id']):
+        return True
+    return False
 
 def can_edit_asset(active_index=-1, asset_data=None):
     if active_index < 0 and not asset_data:
@@ -580,13 +588,13 @@ def can_edit_asset(active_index=-1, asset_data=None):
         sr = bpy.context.window_manager['search results']
         asset_data = dict(sr[active_index])
     # print(profile, asset_data)
-    if asset_data['author']['id'] == profile['user']['id']:
+    if int(asset_data['author']['id']) == int(profile['user']['id']):
         return True
     return False
 
 
 class FastMetadata(bpy.types.Operator):
-    """Fast change of the category of object directly in asset bar."""
+    """Edit metadata of the asset"""
     bl_idname = "wm.blenderkit_fast_metadata"
     bl_label = "Update metadata"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
@@ -731,6 +739,7 @@ class FastMetadata(bpy.types.Operator):
             active_asset = utils.get_active_asset_by_type(asset_type = self.asset_type)
             asset_data = active_asset.get('asset_data')
 
+        print('can edit asset?', can_edit_asset(asset_data=asset_data))
         if not can_edit_asset(asset_data=asset_data):
             return {'CANCELLED'}
         self.asset_id = asset_data['id']
@@ -1298,7 +1307,7 @@ class AssetDebugPrint(Operator):
 class AssetVerificationStatusChange(Operator):
     """Change verification status"""
     bl_idname = "object.blenderkit_change_status"
-    bl_description = "Change asset ststus"
+    bl_description = "Change asset status"
     bl_label = "Change verification status"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
