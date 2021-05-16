@@ -304,7 +304,7 @@ switch
 attribute_curvemap
 attribute_transfer
 curve_resample
-#~ DEF_ICON_BLANK(323)
+attribute_vector_rotate
 
 # ------------------------- row 5 --------------------------*/
 
