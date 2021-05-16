@@ -255,7 +255,7 @@ class QCDSlots():
 
                 x += 1
 
-                if self.length() > 20:
+                if self.length() == 20:
                     break
 
         else:
@@ -279,7 +279,7 @@ class QCDSlots():
 
                 x += 1
 
-                if self.length() > 20:
+                if self.length() == 20:
                     break
 
 

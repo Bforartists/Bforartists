@@ -2120,7 +2120,7 @@ static void gpencil_paint_initstroke(tGPsdata *p,
   /* get active layer (or add a new one if non-existent) */
   p->gpl = BKE_gpencil_layer_active_get(p->gpd);
   if (p->gpl == NULL) {
-    p->gpl = BKE_gpencil_layer_addnew(p->gpd, DATA_("GP_Layer"), true);
+    p->gpl = BKE_gpencil_layer_addnew(p->gpd, DATA_("GP_Layer"), true, false);
     changed = true;
     if (p->custom_color[3]) {
       copy_v3_v3(p->gpl->color, p->custom_color);
@@ -3676,14 +3676,6 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
        *   as animators may be working "to camera", so having this working
        *   is essential for ensuring that they can quickly return to that view
        */
-    }
-    else if ((event->type == EVT_BKEY) && (event->val == KM_RELEASE)) {
-      /* Add Blank Frame
-       * - Since this operator is non-modal, we can just call it here, and keep going...
-       * - This operator is especially useful when animating
-       */
-      WM_operator_name_call(C, "GPENCIL_OT_blank_frame_add", WM_OP_EXEC_DEFAULT, NULL);
-      estate = OPERATOR_RUNNING_MODAL;
     }
     else if ((!ELEM(p->paintmode, GP_PAINTMODE_ERASER, GP_PAINTMODE_SET_CP))) {
       gpencil_guide_event_handling(C, op, event, p);

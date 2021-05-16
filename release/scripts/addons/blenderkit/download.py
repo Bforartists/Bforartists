@@ -1278,6 +1278,9 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
         description="",
         default="")
 
+    # close_window: BoolProperty(name='Close window',
+    #                            description='Try to close the window below mouse before download',
+    #                            default=False)
     # @classmethod
     # def poll(cls, context):
     #     return bpy.context.window_manager.BlenderKitModelThumbnails is not ''
@@ -1376,6 +1379,9 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
         layout.prop(self, 'resolution', expand=True, icon_only=False)
 
     def invoke(self, context, event):
+        # if self.close_window:
+        #     context.window.cursor_warp(event.mouse_x-1000, event.mouse_y - 1000);
+
         print(self.asset_base_id)
         wm = context.window_manager
         # only make a pop up in case of switching resolutions
@@ -1392,6 +1398,15 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
             else:
                 self.resolution = 'ORIGINAL'
             return wm.invoke_props_dialog(self)
+
+        # if self.close_window:
+        #     time.sleep(0.1)
+        #     context.area.tag_redraw()
+        #     time.sleep(0.1)
+        #
+        #     context.window.cursor_warp(event.mouse_x, event.mouse_y);
+
+        return self.execute(context)
 
 
 def register_download():
