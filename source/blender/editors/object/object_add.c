@@ -1474,7 +1474,9 @@ static void object_add_ui(bContext *UNUSED(C), wmOperator *op)
 
   int type = RNA_enum_get(op->ptr, "type");
   if (type == GP_LRT_COLLECTION || type == GP_LRT_OBJECT || type == GP_LRT_SCENE) {
+    uiLayoutSetPropSep(layout, false); /* bfa - use_property_split = False */
     uiItemR(layout, op->ptr, "use_in_front", 0, NULL, ICON_NONE);
+    uiLayoutSetPropSep(layout, true); /* bfa - use_property_split = True */
     bool in_front = RNA_boolean_get(op->ptr, "use_in_front");
     uiLayout *row = uiLayoutRow(layout, false);
     uiLayoutSetActive(row, !in_front);
