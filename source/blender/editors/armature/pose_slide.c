@@ -1154,20 +1154,20 @@ static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
       break;
     case PS_TFM_PROPS:
       BLI_strncpy(limits_str,
-                  TIP_("G/R/S/B/[C] - Custom Properties only (C to clear) | %s"),
+                  TIP_("W/E/R/B/[C] - Custom Properties only (C to clear) | %s"),
                   sizeof(limits_str));
       break;
     default:
       BLI_strncpy(
-          limits_str, TIP_("G/R/S/B/C - Limit to Transform/Property Set"), sizeof(limits_str));
+          limits_str, TIP_("W/E/R/B/C - Limit to Transform/Property Set"), sizeof(limits_str));
       break;
   }
 
   if (pso->overshoot) {
-    BLI_strncpy(overshoot_str, TIP_("[E] - Disable overshoot"), sizeof(overshoot_str));
+    BLI_strncpy(overshoot_str, TIP_("[S] - Disable overshoot"), sizeof(overshoot_str));
   }
   else {
-    BLI_strncpy(overshoot_str, TIP_("E - Enable overshoot"), sizeof(overshoot_str));
+    BLI_strncpy(overshoot_str, TIP_("S - Enable overshoot"), sizeof(overshoot_str));
   }
 
   if (pso->precision) {
