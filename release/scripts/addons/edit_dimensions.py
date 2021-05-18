@@ -114,7 +114,7 @@ def add_button(self, context):
     self.layout.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")
 
 classes = (
-    ED_OT_SetDimensions,	
+    ED_OT_SetDimensions,
 )
 
 def register():
@@ -122,7 +122,7 @@ def register():
     for cls in classes:
        register_class(cls)
     bpy.types.VIEW3D_MT_transform.append(add_button)
-    #bpy.types.VIEW3D_PT_transform.append(add_button)
+    bpy.types.VIEW3D_PT_objecttab_transform.append(add_button)
 
 
 def unregister():
@@ -130,7 +130,7 @@ def unregister():
     for cls in classes:
        unregister_class(cls)
     bpy.types.VIEW3D_MT_transform.remove(add_button)
-    #bpy.types.VIEW3D_PT_transform.remove(add_button)
+    bpy.types.VIEW3D_PT_objecttab_transform.remove(add_button)
 
 
 if __name__ == "__main__":
