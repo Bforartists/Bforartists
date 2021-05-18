@@ -50,7 +50,7 @@ class toolshelf_calculate( Panel):
 
         return column_count
 
-class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     bl_label = "Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -145,7 +145,7 @@ class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
             if context.edit_object and context.edit_object.type == 'ARMATURE':
 
                 col.operator("armature.align", icon = "ALIGN")
-                
+
             layout.operator("ED_OT_SetDimensions")
 
         # icon buttons
@@ -373,7 +373,7 @@ class VIEW3D_PT_snappanel_transform(toolshelf_calculate, Panel):
                     col.operator("armature.align", text="", icon = "ALIGN")
 
 
-class VIEW3D_PT_snappanel_toolshelf(toolshelf_calculate, Panel):
+class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -473,8 +473,8 @@ class VIEW3D_PT_snappanel_toolshelf(toolshelf_calculate, Panel):
                 col.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
 classes = (
-    VIEW3D_PT_snappanel_transform,
-    VIEW3D_PT_snappanel_toolshelf,
+    VIEW3D_PT_objecttab_transform,
+    VIEW3D_PT_objecttab_snap,
 )
 
 if __name__ == "__main__":  # only for live edit.
