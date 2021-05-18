@@ -105,8 +105,6 @@ class GPENCIL_MT_layer_context_menu(Menu):
 
         layout.operator("gpencil.lock_all", icon='LOCKED', text="Lock All")
         layout.operator("gpencil.unlock_all", icon='UNLOCKED', text="Unlock All")
-        layout.prop(gpd, "use_autolock_layers", text="Autolock Inactive Layers")
-        layout.prop(gpl, "lock_material")
 
         layout.separator()
 
@@ -168,7 +166,6 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
                 sub.operator("gpencil.layer_isolate", icon='LOCKED', text="").affect_visibility = False
 
         # Layer main properties
-        row = layout.row()
         col = layout.column(align=True)
 
         if gpl:
@@ -186,6 +183,11 @@ class DATA_PT_gpencil_layers(DataButtonsPanel, Panel):
             col = layout.row(align=True)
             col.use_property_split = False
             col.prop(gpl, "use_lights")
+
+        col = layout.column(align = True)
+        col.use_property_split = False
+        col.prop(gpd, "use_autolock_layers", text="Autolock Inactive Layers")
+        col.prop(gpl, "lock_material")
 
 
 class DATA_PT_gpencil_layer_masks(LayerDataButtonsPanel, GreasePencilLayerMasksPanel, Panel):
