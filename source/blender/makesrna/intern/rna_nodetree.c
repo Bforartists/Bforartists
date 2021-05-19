@@ -11845,7 +11845,7 @@ static int node_type_to_icon(int type)
       icon = ICON_NODE_PRINCIPLED;
       break;
     case SH_NODE_VOLUME_PRINCIPLED:
-      icon = ICON_NODE_PRINCIPLED;
+      icon = ICON_NODE_VOLUMEPRINCIPLED;
       break;
     case SH_NODE_BSDF_REFRACTION:
       icon = ICON_NODE_REFRACTIONSHADER;
@@ -11971,7 +11971,7 @@ static int node_type_to_icon(int type)
       icon = ICON_NODE_VECTOR;
       break;
     case SH_NODE_VECTOR_DISPLACEMENT:
-      icon = ICON_MOD_DISPLACE;
+      icon = ICON_VECTOR_DISPLACE;
       break;
     case SH_NODE_VECTOR_ROTATE:
       icon = ICON_NODE_VECTORROTATE;
