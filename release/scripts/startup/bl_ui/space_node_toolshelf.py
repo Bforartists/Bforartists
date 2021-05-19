@@ -560,7 +560,7 @@ class NODES_PT_Input_shader(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeBackground"
 
-            props = col.operator("node.add_node", text=" Principled Volume       ", icon = "NODE_PRINCIPLED")
+            props = col.operator("node.add_node", text=" Principled Volume       ", icon = "NODE_VOLUMEPRINCIPLED")
             props.use_transform = True
             props.type = "ShaderNodeVolumePrincipled"
 
@@ -584,8 +584,8 @@ class NODES_PT_Input_shader(bpy.types.Panel):
                 props = flow.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBackground"
-                
-            props = flow.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
+
+            props = flow.operator("node.add_node", text="", icon = "NODE_VOLUMEPRINCIPLED")
             props.use_transform = True
             props.type = "ShaderNodeVolumePrincipled"
 
@@ -2649,7 +2649,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
 
-            props = col.operator("node.add_node", text=" Vector Displacement ", icon = "MOD_DISPLACE")
+            props = col.operator("node.add_node", text=" Vector Displacement ", icon = "VECTOR_DISPLACE")
             props.use_transform = True
             props.type = "ShaderNodeVectorDisplacement"
 
@@ -2691,7 +2691,7 @@ class NODES_PT_Modify_vector_shader(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeVectorCurve"
 
-            props = flow.operator("node.add_node", text="", icon = "MOD_DISPLACE")
+            props = flow.operator("node.add_node", text="", icon = "VECTOR_DISPLACE")
             props.use_transform = True
             props.type = "ShaderNodeVectorDisplacement"
 
