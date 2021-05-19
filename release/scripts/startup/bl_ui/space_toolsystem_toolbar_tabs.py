@@ -50,11 +50,13 @@ class toolshelf_calculate( Panel):
 
         return column_count
 
+
 class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     bl_label = "Transform"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Object"
+    bl_options = {'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -372,6 +374,75 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     col.operator("armature.align", text="", icon = "ALIGN")
 
 
+class VIEW3D_PT_objecttab_set_origin(toolshelf_calculate, Panel):
+    bl_label = "Set Origin"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.origin_set", text = "Geometry to Origin", icon ='GEOMETRY_TO_ORIGIN').type='GEOMETRY_ORIGIN'
+            col.operator("object.origin_set", text = "Origin to Geometry", icon ='ORIGIN_TO_GEOMETRY').type='ORIGIN_GEOMETRY'
+            col.operator("object.origin_set", text = "Origin to 3D Cursor", icon ='ORIGIN_TO_CURSOR').type='ORIGIN_CURSOR'
+            col.operator("object.origin_set", text = "Origin to Center of Mass (Surface)", icon ='ORIGIN_TO_CENTEROFMASS').type='ORIGIN_CENTER_OF_MASS'
+            col.operator("object.origin_set", text = "Origin to Center of Mass (Volume)", icon ='ORIGIN_TO_VOLUME').type='ORIGIN_CENTER_OF_VOLUME'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("object.origin_set", text = "", icon ='GEOMETRY_TO_ORIGIN').type='GEOMETRY_ORIGIN'
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_GEOMETRY').type='ORIGIN_GEOMETRY'
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CURSOR').type='ORIGIN_CURSOR'
+                row = col.row(align=True)
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CENTEROFMASS').type='ORIGIN_CENTER_OF_MASS'
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_VOLUME').type='ORIGIN_CENTER_OF_VOLUME'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("object.origin_set", text = "", icon ='GEOMETRY_TO_ORIGIN').type='GEOMETRY_ORIGIN'
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_GEOMETRY').type='ORIGIN_GEOMETRY'
+                row = col.row(align=True)
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CURSOR').type='ORIGIN_CURSOR'
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CENTEROFMASS').type='ORIGIN_CENTER_OF_MASS'
+                row = col.row(align=True)
+                row.operator("object.origin_set", text = "", icon ='ORIGIN_TO_VOLUME').type='ORIGIN_CENTER_OF_VOLUME'
+
+            elif column_count == 1:
+
+                col.operator("object.origin_set", text = "", icon ='GEOMETRY_TO_ORIGIN').type='GEOMETRY_ORIGIN'
+                col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_GEOMETRY').type='ORIGIN_GEOMETRY'
+                col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CURSOR').type='ORIGIN_CURSOR'
+                col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CENTEROFMASS').type='ORIGIN_CENTER_OF_MASS'
+                col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_VOLUME').type='ORIGIN_CENTER_OF_VOLUME'
+
+
 class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
@@ -471,8 +542,10 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
                 col.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
                 col.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
+
 classes = (
     VIEW3D_PT_objecttab_transform,
+    VIEW3D_PT_objecttab_set_origin,
     VIEW3D_PT_objecttab_snap,
 )
 
