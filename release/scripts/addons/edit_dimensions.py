@@ -27,7 +27,7 @@ from bpy.props import FloatProperty, PointerProperty
 bl_info = {
     "name": "Mesh Tools - Bforartists version",
     "author": "Jake Dube",
-    "version": (1, 1),
+    "version": (1, 1, 1),
     "blender": (2, 80, 0),
     "location": "View3D > Mesh > Transform > Set Dimensions",
     "description": "Sets dimensions for selected vertices.",
@@ -83,6 +83,8 @@ class ED_OT_SetDimensions(Operator):
     new_y : FloatProperty(name="Y", min=0, default=1, unit='LENGTH')
     new_z : FloatProperty(name="Z", min=0, default=1, unit='LENGTH')
 
+
+
     def invoke(self, context, event):
         bounds = calc_bounds()
         self.new_x = bounds[0] - bounds[1]
@@ -111,7 +113,9 @@ class ED_OT_SetDimensions(Operator):
 
 
 def add_button(self, context):
-    self.layout.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")
+
+    if context.mode in {'EDIT_MESH'}:
+        self.layout.operator(ED_OT_SetDimensions.bl_idname, icon="PLUGIN")
 
 classes = (
     ED_OT_SetDimensions,
