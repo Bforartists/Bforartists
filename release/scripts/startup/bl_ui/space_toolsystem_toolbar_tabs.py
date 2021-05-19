@@ -106,14 +106,14 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 col.scale_y = 2
                 col.operator("transform.transform", text="Radius", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
-            if obj.type != 'ARMATURE':
+            if context.active_object is not None and obj.type != 'ARMATURE':
 
                 col = layout.column(align=True)
                 col.scale_y = 2
                 col.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
                 col.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
 
-            elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+            elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
 
                 col = layout.column(align=True)
                 col.scale_y = 2
@@ -132,7 +132,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
 
             # armature specific extensions follow
 
-            if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+            if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
 
                 col = layout.column(align=True)
                 col.scale_y = 2
@@ -143,11 +143,10 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     col.operator("transform.transform", text="Scale Envelope Distance", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
                     col.operator("transform.transform", text="Scale Radius", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
 
-            if context.edit_object and context.edit_object.type == 'ARMATURE':
+            if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
 
                 col.operator("armature.align", icon = "ALIGN")
 
-            layout.operator("ED_OT_SetDimensions")
 
         # icon buttons
         else:
@@ -191,7 +190,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     row = col.row(align=True)
                     row.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
-                if obj.type != 'ARMATURE':
+                if context.active_object is not None and obj.type != 'ARMATURE':
 
                     col.separator( factor = 0.5)
 
@@ -199,7 +198,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     row.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
                     row.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
 
-                elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+                elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
 
                     col.separator( factor = 0.5)
 
@@ -219,7 +218,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     row.operator("object.randomize_transform", text = "", icon = "RANDOMIZE_TRANSFORM")
                     row.operator("object.align", text = "", icon = "ALIGN")
 
-                if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+                if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
 
                     col.separator( factor = 0.5)
 
@@ -231,7 +230,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                         row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
                         row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
 
-                if context.edit_object and context.edit_object.type == 'ARMATURE':
+                if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
 
                     row.operator("armature.align", text="", icon = "ALIGN")
 
@@ -267,7 +266,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     row = col.row(align=True)
                     row.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
-                if obj.type != 'ARMATURE':
+                if context.active_object is not None and obj.type != 'ARMATURE':
 
                     col.separator( factor = 0.5)
 
@@ -275,7 +274,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     row.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
                     row.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
 
-                elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+                elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
 
                     col.separator( factor = 0.5)
 
@@ -295,7 +294,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     row = col.row(align=True)
                     row.operator("object.align", text = "", icon = "ALIGN")
 
-                if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+                if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
 
                     col.separator( factor = 0.5)
 
@@ -308,7 +307,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                         row.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
                         row = col.row(align=True)
 
-                if context.edit_object and context.edit_object.type == 'ARMATURE':
+                if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
 
                     row.operator("armature.align", text="", icon = "ALIGN")
 
@@ -337,13 +336,13 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     col.separator( factor = 0.5)
                     col.operator("transform.transform", text="", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
 
-                if obj.type != 'ARMATURE':
+                if context.active_object is not None and obj.type != 'ARMATURE':
 
                     col.separator( factor = 0.5)
                     col.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
                     col.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
 
-                elif obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
+                elif context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'OBJECT'}:
 
                     col.separator( factor = 0.5)
                     col.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
@@ -358,7 +357,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                     col.operator("object.randomize_transform", text = "", icon = "RANDOMIZE_TRANSFORM")
                     col.operator("object.align", text = "", icon = "ALIGN")
 
-                if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+                if context.active_object is not None and obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
 
                     col.separator( factor = 0.5)
 
@@ -369,7 +368,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                         col.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_SIZE'
                         col.operator("transform.transform", text="", icon='TRANSFORM_SCALE').mode = 'BONE_ENVELOPE'
 
-                if context.edit_object and context.edit_object.type == 'ARMATURE':
+                if context.active_object is not None and context.edit_object and context.edit_object.type == 'ARMATURE':
 
                     col.operator("armature.align", text="", icon = "ALIGN")
 
