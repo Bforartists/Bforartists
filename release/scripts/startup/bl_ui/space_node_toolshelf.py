@@ -584,6 +584,10 @@ class NODES_PT_Input_shader(bpy.types.Panel):
                 props = flow.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBackground"
+                
+            props = flow.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
+            props.use_transform = True
+            props.type = "ShaderNodeVolumePrincipled"
 
 
 #Input nodes tab, Shader common panel. Just in shader mode with Object mode
