@@ -363,8 +363,8 @@ file_new
 filebrowser
 smooth_laplacian
 
-#~ DEF_ICON_BLANK(382)
-#~ DEF_ICON_BLANK(383)
+node_volumeprincipled
+vector_displace
 #~ DEF_ICON_BLANK(384)
 #~ DEF_ICON_BLANK(385)
 #~ DEF_ICON_BLANK(386)
