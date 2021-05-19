@@ -3822,6 +3822,8 @@ class VIEW3D_MT_pose(Menu):
     def draw(self, _context):
         layout = self.layout
 
+        layout.menu("VIEW3D_MT_transform_armature")
+
         layout.menu("VIEW3D_MT_pose_transform")
         layout.menu("VIEW3D_MT_pose_apply")
 
