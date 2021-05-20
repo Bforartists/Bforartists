@@ -387,7 +387,7 @@ class VIEW3D_PT_objecttab_set_origin(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
         layout = self.layout
@@ -441,6 +441,195 @@ class VIEW3D_PT_objecttab_set_origin(toolshelf_calculate, Panel):
                 col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CURSOR').type='ORIGIN_CURSOR'
                 col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_CENTEROFMASS').type='ORIGIN_CENTER_OF_MASS'
                 col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_VOLUME').type='ORIGIN_CENTER_OF_VOLUME'
+
+
+class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
+    bl_label = "Mirror"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("transform.mirror", text="Interactive Mirror", icon='TRANSFORM_MIRROR')
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            props = col.operator("transform.mirror", text="X Global", icon = "MIRROR_X")
+            props.constraint_axis = (True, False, False)
+            props.orient_type = 'GLOBAL'
+            props = col.operator("transform.mirror", text="Y Global", icon = "MIRROR_Y")
+            props.constraint_axis = (False, True, False)
+            props.orient_type = 'GLOBAL'
+            props = col.operator("transform.mirror", text="Z Global", icon = "MIRROR_Z")
+            props.constraint_axis = (False, False, True)
+            props.orient_type = 'GLOBAL'
+
+            if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+                col.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("transform.mirror", text="", icon='TRANSFORM_MIRROR')
+
+                row.operator_context = 'EXEC_REGION_WIN'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
+                props.constraint_axis = (True, False, False)
+                props.orient_type = 'GLOBAL'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
+                props.constraint_axis = (False, True, False)
+                props.orient_type = 'GLOBAL'
+                row = col.row(align=True)
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
+                props.constraint_axis = (False, False, True)
+                props.orient_type = 'GLOBAL'
+
+                if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+                    row.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("transform.mirror", text="", icon='TRANSFORM_MIRROR')
+
+                row.operator_context = 'EXEC_REGION_WIN'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
+                props.constraint_axis = (True, False, False)
+                row = col.row(align=True)
+                props.orient_type = 'GLOBAL'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
+                props.constraint_axis = (False, True, False)
+                props.orient_type = 'GLOBAL'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
+                props.constraint_axis = (False, False, True)
+                props.orient_type = 'GLOBAL'
+
+                if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+                    row = col.row(align=True)
+                    row.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
+
+            elif column_count == 1:
+
+                col.operator("transform.mirror", text="", icon='TRANSFORM_MIRROR')
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                props = col.operator("transform.mirror", text="", icon = "MIRROR_X")
+                props.constraint_axis = (True, False, False)
+                props.orient_type = 'GLOBAL'
+                props = col.operator("transform.mirror", text="", icon = "MIRROR_Y")
+                props.constraint_axis = (False, True, False)
+                props.orient_type = 'GLOBAL'
+                props = col.operator("transform.mirror", text="", icon = "MIRROR_Z")
+                props.constraint_axis = (False, False, True)
+                props.orient_type = 'GLOBAL'
+
+                if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
+                    col.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
+
+
+class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
+    bl_label = "Local"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_parent_id = "VIEW3D_PT_objecttab_mirror"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            props = col.operator("transform.mirror", text="X Global", icon = "MIRROR_X")
+            props.constraint_axis = (True, False, False)
+            props.orient_type = 'LOCAL'
+            props = col.operator("transform.mirror", text="Y Global", icon = "MIRROR_Y")
+            props.constraint_axis = (False, True, False)
+            props.orient_type = 'LOCAL'
+            props = col.operator("transform.mirror", text="Z Global", icon = "MIRROR_Z")
+            props.constraint_axis = (False, False, True)
+            props.orient_type = 'LOCAL'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator_context = 'EXEC_REGION_WIN'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
+                props.constraint_axis = (True, False, False)
+                props.orient_type = 'LOCAL'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
+                props.constraint_axis = (False, True, False)
+                props.orient_type = 'LOCAL'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
+                props.constraint_axis = (False, False, True)
+                props.orient_type = 'LOCAL'
+
+
+            elif column_count == 2:
+                row = col.row(align=True)
+                row.operator_context = 'EXEC_REGION_WIN'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
+                props.constraint_axis = (True, False, False)
+                props.orient_type = 'LOCAL'
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
+                props.constraint_axis = (False, True, False)
+                props.orient_type = 'LOCAL'
+                row = col.row(align=True)
+                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
+                props.constraint_axis = (False, False, True)
+                props.orient_type = 'LOCAL'
+
+            elif column_count == 1:
+
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                props = col.operator("transform.mirror", text="", icon = "MIRROR_X")
+                props.constraint_axis = (True, False, False)
+                props.orient_type = 'LOCAL'
+                props = col.operator("transform.mirror", text="", icon = "MIRROR_Y")
+                props.constraint_axis = (False, True, False)
+                props.orient_type = 'LOCAL'
+                props = col.operator("transform.mirror", text="", icon = "MIRROR_Z")
+                props.constraint_axis = (False, False, True)
+                props.orient_type = 'LOCAL'
 
 
 class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
@@ -546,6 +735,8 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
 classes = (
     VIEW3D_PT_objecttab_transform,
     VIEW3D_PT_objecttab_set_origin,
+    VIEW3D_PT_objecttab_mirror,
+    VIEW3D_PT_objecttab_mirror_local,
     VIEW3D_PT_objecttab_snap,
 )
 
