@@ -632,6 +632,78 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
                 props.orient_type = 'LOCAL'
 
 
+class VIEW3D_PT_objecttab_clear(toolshelf_calculate, Panel):
+    bl_label = "Clear"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.location_clear", text="Location", icon = "CLEARMOVE").clear_delta = False
+            col.operator("object.rotation_clear", text="Rotation", icon = "CLEARROTATE").clear_delta = False
+            col.operator("object.scale_clear", text="Scale", icon = "CLEARSCALE").clear_delta = False
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.origin_clear", text="Origin", icon = "CLEARORIGIN")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("object.location_clear", text="", icon = "CLEARMOVE").clear_delta = False
+                row.operator("object.rotation_clear", text="", icon = "CLEARROTATE").clear_delta = False
+                row.operator("object.scale_clear", text="", icon = "CLEARSCALE").clear_delta = False
+
+                row = col.row(align=True)
+                row.operator("object.origin_clear", text="", icon = "CLEARORIGIN")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("object.location_clear", text="", icon = "CLEARMOVE").clear_delta = False
+                row.operator("object.rotation_clear", text="", icon = "CLEARROTATE").clear_delta = False
+
+                row = col.row(align=True)
+                row.operator("object.scale_clear", text="", icon = "CLEARSCALE").clear_delta = False
+                row.operator("object.origin_clear", text="", icon = "CLEARORIGIN")
+
+            elif column_count == 1:
+
+                col.operator("object.location_clear", text="", icon = "CLEARMOVE").clear_delta = False
+                col.operator("object.rotation_clear", text="", icon = "CLEARROTATE").clear_delta = False
+                col.operator("object.scale_clear", text="", icon = "CLEARSCALE").clear_delta = False
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.origin_clear", text="", icon = "CLEARORIGIN")
+
+
 class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
@@ -737,6 +809,7 @@ classes = (
     VIEW3D_PT_objecttab_set_origin,
     VIEW3D_PT_objecttab_mirror,
     VIEW3D_PT_objecttab_mirror_local,
+    VIEW3D_PT_objecttab_clear,
     VIEW3D_PT_objecttab_snap,
 )
 
