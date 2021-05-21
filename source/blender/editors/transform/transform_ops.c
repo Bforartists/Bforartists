@@ -53,10 +53,6 @@
 #include "transform.h"
 #include "transform_convert.h"
 
-#include "transform_orientations.h"
-
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
-
 typedef struct TransformModeItem {
   const char *idname;
   int mode;
@@ -1027,24 +1023,6 @@ static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot)
   Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP | P_GPENCIL_EDIT | P_CENTER);
 }
 
-/*bfa - descriptions*/
-static char *transform_ot_mirror_get_description(bContext *UNUSED(C),
-                                                               wmOperatorType *UNUSED(ot),
-                                                               PointerRNA *ptr)
-{
-  if (RNA_boolean_get(ptr, "constraint_axis") == (true, false, false)) {
-      return BLI_strdup(
-          "Mirror selected items around the X axis in global space");
-  }
-  else if (RNA_boolean_get(ptr, "constraint_axis") == (false, true, false)) {
-    return BLI_strdup("Mirror selected items around the Y axis in global space");
-  }
-  else if (RNA_boolean_get(ptr, "constraint_axis") == (false, false, true)) {
-    return BLI_strdup("Mirror selected items around the Z axis in global space");
-  }
-  return NULL;
-}
-
 static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
 {
   /* identifiers */
@@ -1056,7 +1034,6 @@ static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
   /* api callbacks */
   ot->invoke = transform_invoke;
   ot->exec = transform_exec;
-  ot->get_description = transform_ot_mirror_get_description; /*bfa - descriptions*/
   ot->modal = transform_modal;
   ot->cancel = transform_cancel;
   ot->poll = ED_operator_screenactive;
