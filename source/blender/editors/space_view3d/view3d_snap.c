@@ -58,6 +58,10 @@
 
 #include "view3d_intern.h"
 
+#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+#include "BLT_translation.h" /*bfa - needed for CTX_IFACE_ */
+
+
 static bool snap_curs_to_sel_ex(bContext *C, float cursor[3]);
 static bool snap_calc_active_center(bContext *C, const bool select_only, float r_center[3]);
 
@@ -590,6 +594,30 @@ static int snap_selected_to_cursor_exec(bContext *C, wmOperator *op)
   return snap_selected_to_location(C, snap_target_global, use_offset);
 }
 
+
+/*bfa - tool name*/
+static const char *view3d_ot_snap_selected_to_cursor_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_offset")) {
+    return CTX_IFACE_(ot->translation_context, "Snap Selection to Cursor(Keep Offset)");
+  }
+  return NULL;
+}
+
+/*bfa - descriptions*/
+static char *view3d_ot_snap_selected_to_cursor_get_description(bContext *UNUSED(C),
+                                                               wmOperatorType *UNUSED(ot),
+                                                               PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_offset")) {
+    return BLI_strdup(
+        "Snap selected item(s) to the 3D cursor\nBut keep the offset of the selected items to "
+        "each other");
+  }
+  return NULL;
+}
+
+
 void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 {
   /* identifiers */
@@ -599,6 +627,8 @@ void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = snap_selected_to_cursor_exec;
+  ot->get_name = view3d_ot_snap_selected_to_cursor_get_name;               /*bfa - tool name*/
+  ot->get_description = view3d_ot_snap_selected_to_cursor_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_view3d_active;
 
   /* flags */
