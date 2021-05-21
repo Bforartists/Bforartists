@@ -21,6 +21,8 @@
 import bpy
 from bpy.types import Panel
 
+from bpy.app.translations import contexts as i18n_contexts
+
 
 class toolshelf_calculate( Panel):
 
@@ -704,6 +706,209 @@ class VIEW3D_PT_objecttab_clear(toolshelf_calculate, Panel):
                 col.operator("object.origin_clear", text="", icon = "CLEARORIGIN")
 
 
+class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
+    bl_label = "Apply"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_context = "objectmode"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            props = col.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
+            props.location, props.rotation, props.scale = True, False, False
+
+            props = col.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
+            props.location, props.rotation, props.scale = False, True, False
+
+            props = col.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
+            props.location, props.rotation, props.scale = False, False, True
+
+            props = col.operator("object.transform_apply", text="All Transforms", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
+            props.location, props.rotation, props.scale = True, True, True
+
+            props = col.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
+            props.location, props.rotation, props.scale = False, True, True
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+            col.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
+                props.location, props.rotation, props.scale = True, False, False
+
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
+                props.location, props.rotation, props.scale = False, True, False
+
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
+                props.location, props.rotation, props.scale = False, False, True
+
+                row = col.row(align=True)
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
+                props.location, props.rotation, props.scale = True, True, True
+
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
+                props.location, props.rotation, props.scale = False, True, True
+
+                row = col.row(align=True)
+                row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+                row.operator("object.duplicates_make_real", text="", icon = "MAKEDUPLIREAL")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
+                props.location, props.rotation, props.scale = True, False, False
+
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
+                props.location, props.rotation, props.scale = False, True, False
+
+                row = col.row(align=True)
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
+                props.location, props.rotation, props.scale = False, False, True
+
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
+                props.location, props.rotation, props.scale = True, True, True
+
+                row = col.row(align=True)
+                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
+                props.location, props.rotation, props.scale = False, True, True
+
+                row = col.row(align=True)
+                row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+                row.operator("object.duplicates_make_real", text="", icon = "MAKEDUPLIREAL")
+
+            elif column_count == 1:
+
+                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
+                props.location, props.rotation, props.scale = True, False, False
+
+                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
+                props.location, props.rotation, props.scale = False, True, False
+
+                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
+                props.location, props.rotation, props.scale = False, False, True
+
+                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
+                props.location, props.rotation, props.scale = True, True, True
+
+                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
+                props.location, props.rotation, props.scale = False, True, True
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+                col.operator("object.duplicates_make_real", text="", icon = "MAKEDUPLIREAL")
+
+
+class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
+    bl_label = "Apply Deltas"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_context = "objectmode"
+    bl_parent_id = "VIEW3D_PT_objecttab_apply"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.transforms_to_deltas", text="Location to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
+            col.operator("object.transforms_to_deltas", text="Rotation to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+            col.operator("object.transforms_to_deltas", text="Scale to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
+            col.operator("object.transforms_to_deltas", text="All Transforms to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.anim_transforms_to_deltas", icon = "APPLYANIDELTA")
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
+
+                row = col.row(align=True)
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+                row.operator("object.anim_transforms_to_deltas", text="", icon = "APPLYANIDELTA")
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+
+                row = col.row(align=True)
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
+                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+
+                row = col.row(align=True)
+                row.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
+
+            elif column_count == 1:
+
+                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
+                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
+                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.anim_transforms_to_deltas", text="", icon = "APPLYANIDELTA")
+
 class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
@@ -810,6 +1015,8 @@ classes = (
     VIEW3D_PT_objecttab_mirror,
     VIEW3D_PT_objecttab_mirror_local,
     VIEW3D_PT_objecttab_clear,
+    VIEW3D_PT_objecttab_apply,
+    VIEW3D_PT_objecttab_apply_delta,
     VIEW3D_PT_objecttab_snap,
 )
 
