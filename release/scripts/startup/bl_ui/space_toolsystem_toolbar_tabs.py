@@ -1196,6 +1196,105 @@ class VIEW3D_PT_meshtab_parts_separate(toolshelf_calculate, Panel):
                 col.operator("mesh.separate", text="", icon = "SEPARATE").type = 'LOOSE'
 
 
+class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
+    bl_label = "Tools"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mesh"
+    bl_context = "mesh_edit"
+
+    def draw(self, _context):
+        layout = self.layout
+        from math import pi
+        with_bullet = bpy.app.build_options.bullet
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.extrude_repeat", icon = "REPEAT")
+            col.operator("mesh.spin", icon = "SPIN").angle = pi * 2
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.knife_project", icon='KNIFE_PROJECT')
+
+            if with_bullet:
+                col.operator("mesh.convex_hull", icon = "CONVEXHULL")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.symmetrize", icon = "SYMMETRIZE", text = "Symmetrize")
+            col.operator("mesh.symmetry_snap", icon = "SNAP_SYMMETRY")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.extrude_repeat", text = "", icon = "REPEAT")
+                row.operator("mesh.spin", text = "", icon = "SPIN").angle = pi * 2
+
+                col.separator( factor = 0.5)
+                row = col.row(align=True)
+                row.operator("mesh.knife_project", text = "", icon='KNIFE_PROJECT')
+
+                if with_bullet:
+                    row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
+
+
+                col.separator( factor = 0.5)
+                row = col.row(align=True)
+                row.operator("mesh.symmetrize", text = "", icon = "SYMMETRIZE")
+                row.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
+
+
+            elif column_count == 2:
+
+
+                row = col.row(align=True)
+                row.operator("mesh.extrude_repeat", text = "", icon = "REPEAT")
+                row.operator("mesh.spin", text = "", icon = "SPIN").angle = pi * 2
+
+                col.separator( factor = 0.5)
+                row = col.row(align=True)
+                row.operator("mesh.knife_project", text = "", icon='KNIFE_PROJECT')
+
+                if with_bullet:
+                    row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
+
+                col.separator( factor = 0.5)
+                row = col.row(align=True)
+                row.operator("mesh.symmetrize", text = "", icon = "SYMMETRIZE")
+                row.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
+
+            elif column_count == 1:
+
+                col.operator("mesh.extrude_repeat", text = "", icon = "REPEAT")
+                col.operator("mesh.spin", text = "", icon = "SPIN").angle = pi * 2
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.knife_project", text = "", icon='KNIFE_PROJECT')
+
+                if with_bullet:
+                    col.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.symmetrize", text = "", icon = "SYMMETRIZE")
+                col.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
+
+
 classes = (
 
     #object menu
@@ -1213,6 +1312,7 @@ classes = (
     VIEW3D_PT_meshtab_parts_merge,
     VIEW3D_PT_meshtab_parts_split,
     VIEW3D_PT_meshtab_parts_separate,
+    VIEW3D_PT_meshtab_tools,
 
 )
 
