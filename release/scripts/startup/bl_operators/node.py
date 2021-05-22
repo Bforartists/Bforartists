@@ -115,6 +115,10 @@ class NodeAddOperator:
         tree.nodes.active = node
         node.location = space.cursor_location
         return node
+    
+    @classmethod
+    def description(cls, context, properties):
+        return bpy.types.Node.bl_rna_get_subclass(properties.type).description
 
     @classmethod
     def poll(cls, context):
