@@ -365,7 +365,7 @@ smooth_laplacian
 
 node_volumeprincipled
 vector_displace
-#~ DEF_ICON_BLANK(384)
+lock_rotation
 #~ DEF_ICON_BLANK(385)
 #~ DEF_ICON_BLANK(386)
 #~ DEF_ICON_BLANK(387)
