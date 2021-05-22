@@ -118,7 +118,9 @@ class NodeAddOperator:
     
     @classmethod
     def description(cls, context, properties):
-        return bpy.types.Node.bl_rna_get_subclass(properties.type).description
+        if properties.type:
+            return bpy.types.Node.bl_rna_get_subclass(properties.type).description
+        return ""
 
     @classmethod
     def poll(cls, context):
