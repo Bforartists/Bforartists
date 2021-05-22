@@ -48,6 +48,7 @@ def align_view_buttons(self, context):
     preferences = context.preferences
     addon_prefs = preferences.addons["align_view_buttons"].preferences
     
+    #View
     row = layout.row(align=True)
 
     if addon_prefs.align_buttons:
@@ -57,11 +58,14 @@ def align_view_buttons(self, context):
         row.operator("view3d.view_axis", text="", icon ="VIEW_LEFT").type = 'LEFT'
         row.operator("view3d.view_axis", text="", icon ="VIEW_TOP").type = 'TOP'
         row.operator("view3d.view_axis", text="", icon ="VIEW_BOTTOM").type = 'BOTTOM'
+        row.separator()
         
     if addon_prefs.lock_camera_to_view:
         if context.space_data.region_3d.view_perspective == "CAMERA":
-            row.separator()
             row.prop(view, "lock_camera", icon = "LOCK_TO_CAMVIEW", icon_only=True )
+            
+    if addon_prefs.lock_view_rotation:
+        row.prop(context.space_data.region_3d, 'lock_rotation', icon = "LOCK_ROTATION", icon_only=True )
 
     if addon_prefs.quad_view:
         row.operator("screen.region_quadview", text = "", icon = "QUADVIEW")
@@ -72,6 +76,7 @@ def align_view_buttons(self, context):
     if addon_prefs.camera_view:
         row.operator("view3d.view_camera", text="", icon = 'VIEW_SWITCHTOCAM')
 
+    #navigation
     row.separator(factor = 0.5)
 
     if addon_prefs.camera_switch:
@@ -86,6 +91,7 @@ def align_view_buttons(self, context):
         if hasattr(bpy.ops, "reset_3d_view"):
             row.operator("view3d.reset_3d_view", text="", icon ="VIEW_RESET")
             
+    #overlay
     row.separator(factor = 0.5)
             
     if addon_prefs.groundgrid:  
@@ -114,6 +120,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         preferences = context.preferences
         addon_prefs = preferences.addons["align_view_buttons"].preferences
 
+        #view
         col = layout.column(align = True)
         col.label(text="View")
         row = col.row()
@@ -129,11 +136,15 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row.separator()
         row.prop(addon_prefs, "camera_view")
         
+        #navigation
         col = layout.column(align = True)
         col.label(text="Navigation")
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "lock_camera_to_view")
+        row = col.row()
+        row.separator()        
+        row.prop(addon_prefs, "lock_view_rotation")
         row = col.row()
         row.separator()
         row.prop(addon_prefs, "camera_switch")
@@ -147,6 +158,7 @@ class VIEW3D_PT_align_view_buttons_options(Panel):
         row.separator()
         row.prop(addon_prefs, "reset_3dview")
         
+        #overlay
         col = layout.column(align = True)
         col.label(text="Overlay")
         row = col.row()
@@ -183,6 +195,7 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
 
     # Navigation
     lock_camera_to_view : BoolProperty(name="Lock Caymera to View", default=False, description = "Navigate either the camera passepartout or the camera content\nJust active in camera view", )
+    lock_view_rotation : BoolProperty(name="Lock View Rotation", default=False, description = "Lock the view rotations in side views", )
     camera_view : BoolProperty(name="Active Camera", default=False, description = "View through the render camera or through the viewport camera", )
     camera_switch : BoolProperty(name="Set Active Camera", default=False, description = "Set the currently selected camera as the active camera", )
 
