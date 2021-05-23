@@ -1382,9 +1382,13 @@ class CMNewCollectionOperator(Operator):
 
 
 class CMPhantomModeOperator(Operator):
-    '''Toggle Phantom Mode'''
     bl_label = "Toggle Phantom Mode"
     bl_idname = "view3d.toggle_phantom_mode"
+    bl_description = (
+        "Phantom Mode\n"
+        "Saves the state of all RTOs and only allows changes to them, on exit all RTOs are returned to their saved state.\n"
+        "Note: modifying collections (except RTOs) externally will exit Phantom Mode and your initial state will be lost"
+        )
 
     def execute(self, context):
         cm = context.scene.collection_manager

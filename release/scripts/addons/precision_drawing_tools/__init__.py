@@ -29,8 +29,8 @@
 bl_info = {
     "name": "Precision Drawing Tools (PDT)",
     "author": "Alan Odom (Clockmender), Rune Morling (ermo)",
-    "version": (1, 4, 0),
-    "blender": (2, 83, 0),
+    "version": (1, 5, 1),
+    "blender": (2, 90, 0),
     "location": "View3D > UI > PDT",
     "description": "Precision Drawing Tools for Acccurate Modelling",
     "warning": "",
@@ -430,7 +430,7 @@ class PDTSceneProperties(PropertyGroup):
 
     # Was filletrad
     fillet_radius: FloatProperty(
-        name="Fillet Radius", min=0.0, default=1.0, description=PDT_DES_FILLETRAD
+        name="Fillet Radius", min=0.0, default=1.0, unit="LENGTH", description=PDT_DES_FILLETRAD
     )
     # Was filletnum
     fillet_segments: IntProperty(
@@ -454,10 +454,10 @@ class PDTSceneProperties(PropertyGroup):
         name="Coordst2", default=(0.0, 0.0, 0.0), subtype="XYZ", description=PDT_DES_TANCEN2
     )
     tangent_radius0: FloatProperty(
-        name="Arc Radius 1", min=0.00001,  default=1, description=PDT_DES_RADIUS1
+        name="Arc Radius 1", min=0.00001,  default=1, unit="LENGTH", description=PDT_DES_RADIUS1
     )
     tangent_radius1: FloatProperty(
-        name="Arc Radius 2", min=0.00001, default=1, description=PDT_DES_RADIUS2
+        name="Arc Radius 2", min=0.00001, default=1, unit="LENGTH", description=PDT_DES_RADIUS2
     )
     tangent_point2: FloatVectorProperty(
         name="Coordst3", default=(0.0, 0.0, 0.0), subtype="XYZ", description=PDT_DES_TANCEN3
@@ -520,6 +520,7 @@ classes = (
     pdt_design.PDT_OT_PlacementAbs,
     pdt_design.PDT_OT_PlacementDelta,
     pdt_design.PDT_OT_PlacementDis,
+    pdt_design.PDT_OT_PlacementView,
     pdt_design.PDT_OT_PlacementCen,
     pdt_design.PDT_OT_PlacementPer,
     pdt_design.PDT_OT_PlacementNormal,

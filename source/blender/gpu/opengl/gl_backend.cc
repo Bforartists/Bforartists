@@ -205,7 +205,7 @@ static bool detect_mip_render_workaround()
   return enable_workaround;
 }
 
-const char *gl_extension_get(int i)
+static const char *gl_extension_get(int i)
 {
   return (char *)glGetStringi(GL_EXTENSIONS, i);
 }
@@ -293,9 +293,9 @@ static void detect_workarounds()
         strstr(renderer, " RX 560 ") || strstr(renderer, " RX 560X ") ||
         strstr(renderer, " RX 570 ") || strstr(renderer, " RX 580 ") ||
         strstr(renderer, " RX 580X ") || strstr(renderer, " RX 590 ") ||
-        strstr(renderer, " RX550/550 ") || strstr(renderer, " (TM) 520  ") ||
-        strstr(renderer, " (TM) 530  ") || strstr(renderer, " R5 ") || strstr(renderer, " R7 ") ||
-        strstr(renderer, " R9 ")) {
+        strstr(renderer, " RX550/550 ") || strstr(renderer, "(TM) 520 ") ||
+        strstr(renderer, "(TM) 530 ") || strstr(renderer, "(TM) 535 ") ||
+        strstr(renderer, " R5 ") || strstr(renderer, " R7 ") || strstr(renderer, " R9 ")) {
       GCaps.use_hq_normals_workaround = true;
     }
   }

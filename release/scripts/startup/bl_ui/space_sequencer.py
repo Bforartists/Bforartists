@@ -1468,7 +1468,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
             layout.use_property_split = False
             row = layout.row()
             row.separator()
-            row.prop(strip, "use_grease_pencil", text="Grease Pencil")
+            layout.prop(strip, "use_annotations", text="Annotations")
             if scene:
                 # Warning, this is not a good convention to follow.
                 # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
