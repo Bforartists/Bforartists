@@ -194,7 +194,7 @@ class BFA_OT_align_view_buttons_prefs(AddonPreferences):
     persp_ortho : BoolProperty(name="Perspective Orthographic", default=False, description = "Toggle between perspectivic and orthographic projection", )
 
     # Navigation
-    lock_camera_to_view : BoolProperty(name="Lock Caymera to View", default=False, description = "Navigate either the camera passepartout or the camera content\nJust active in camera view", )
+    lock_camera_to_view : BoolProperty(name="Lock Camera to View", default=False, description = "Navigate either the camera passepartout or the camera content\nJust active in camera view", )
     lock_view_rotation : BoolProperty(name="Lock View Rotation", default=False, description = "Lock the view rotations in side views", )
     camera_view : BoolProperty(name="Active Camera", default=False, description = "View through the render camera or through the viewport camera", )
     camera_switch : BoolProperty(name="Set Active Camera", default=False, description = "Set the currently selected camera as the active camera", )
