@@ -58,19 +58,7 @@ def upload_review_thread(url, reviews, headers):
     #     print('reviews upload failed: %s' % str(e))
 
 
-def get_rating(asset_id):
-    # this function isn't used anywhere,should probably get removed.
-    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-    api_key = user_preferences.api_key
-    headers = utils.get_headers(api_key)
-    rl = paths.get_api_url() + 'assets/' + asset['asset_data']['id'] + '/rating/'
-    rtypes = ['quality', 'working_hours']
-    for rt in rtypes:
-        params = {
-            'rating_type': rt
-        }
-        r = rerequests.get(r1, params=data, verify=True, headers=headers)
-        print(r.text)
+
 
 
 def upload_rating(asset):
@@ -180,7 +168,7 @@ def draw_ratings_menu(self, context, layout):
 
     profile_name = ''
     profile = bpy.context.window_manager.get('bkit profile')
-    if profile:
+    if profile and len(profile['user']['firstName'])>0:
         profile_name = ' ' + profile['user']['firstName']
 
     col = layout.column()

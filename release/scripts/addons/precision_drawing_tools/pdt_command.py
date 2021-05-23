@@ -220,9 +220,9 @@ def command_run(self, context):
     mode = command[1].lower()
     if (
             (operation == "F" and mode not in {"v", "e", "i"})
-            or (operation in {"D", "E"} and mode not in {"d", "i"})
+            or (operation in {"D", "E"} and mode not in {"d", "i", "n"}) #new
             or (operation == "M" and mode not in {"a", "d", "i", "p", "o", "x", "y", "z"})
-            or (operation not in {"D", "E", "F", "M"} and mode not in {"a", "d", "i", "p"})
+            or (operation not in {"D", "E", "F", "M"} and mode not in {"a", "d", "i", "p", "n"}) #new
         ):
         pg.error = f"'{mode}' {PDT_ERR_NON_VALID} '{operation}'"
         context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
@@ -322,15 +322,15 @@ def pdt_help(self, context):
     label = self.layout.label
     label(text="Primary Letters (Available Secondary Letters):")
     label(text="")
-    label(text="C: Cursor (a, d, i, p)")
-    label(text="D: Duplicate Geometry (d, i)")
-    label(text="E: Extrude Geometry (d, i)")
+    label(text="C: Cursor (a, d, i, p, v)")
+    label(text="D: Duplicate Geometry (d, i, v)")
+    label(text="E: Extrude Geometry (d, i, v)")
     label(text="F: Fillet (v, e, i)")
-    label(text="G: Grab (Move) (a, d, i, p)")
-    label(text="N: New Vertex (a, d, i, p)")
+    label(text="G: Grab (Move) (a, d, i, p, v)")
+    label(text="N: New Vertex (a, d, i, p, v)")
     label(text="M: Maths Functions (a, d, p, o, x, y, z)")
-    label(text="P: Pivot Point (a, d, i, p)")
-    label(text="V: Extrude Vertice Only (a, d, i, p)")
+    label(text="P: Pivot Point (a, d, i, p, v)")
+    label(text="V: Extrude Vertice Only (a, d, i, p, v)")
     label(text="S: Split Edges (a, d, i, p)")
     label(text="?: Quick Help")
     label(text="")
@@ -341,6 +341,8 @@ def pdt_help(self, context):
     label(text="d: Delta (Relative) Coordinates, e.g. 0.5,0,1.2")
     label(text="i: Directional (Polar) Coordinates e.g. 2.6,45")
     label(text="p: Percent e.g. 67.5")
+    label(text="n: Work in View Normal Axis")
+    label(text="")
     label(text="- Fillet Options:")
     label(text="v: Fillet Vertices")
     label(text="e: Fillet Edges")
@@ -438,6 +440,19 @@ def command_parse(context):
         except ValueError:
             values[ind] = "0.0"
         ind = ind + 1
+    if mode == "n":
+        # View relative mode
+        if pg.plane == "XZ":
+            values = [0.0, values[0], 0.0]
+        elif pg.plane == "YZ":
+            values = [values[0], 0.0, 0.0]
+        elif pg.plane == "XY":
+            values = [0.0, 0.0, values[0]]
+        else:
+            if "-" in values[0]:
+                values = [0.0, 0.0, values[0][1:]]
+            else:
+                values = [0.0, 0.0, f"-{values[0]}"]
     # Apply System Rounding
     decimal_places = context.preferences.addons[__package__].preferences.pdt_input_round
     values_out = [str(round(float(v), decimal_places)) for v in values]
@@ -507,7 +522,7 @@ def move_cursor_pivot(context, pg, operation, mode, obj, verts, values):
     """
 
     # Absolute/Global Coordinates, or Delta/Relative Coordinates
-    if mode in {"a", "d"}:
+    if mode in {"a", "d", "n"}:
         try:
             vector_delta = vector_build(context, pg, obj, operation, values, 3)
         except:
@@ -537,8 +552,8 @@ def move_cursor_pivot(context, pg, operation, mode, obj, verts, values):
             scene.cursor.location = vector_delta
         elif operation == "P":
             pg.pivot_loc = vector_delta
-    elif mode in {"d", "i"}:
-        if pg.plane == "LO" and mode == "d":
+    elif mode in {"d", "i", "n"}:
+        if pg.plane == "LO" and mode in  {"d", "n"}:
             vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
         elif pg.plane == "LO" and mode == "i":
             vector_delta = view_dir(pg.distance, pg.angle)
@@ -598,7 +613,7 @@ def move_entities(context, pg, operation, mode, obj, bm, verts, values):
         except:
             raise PDT_InvalidVector
         if obj.mode == "EDIT":
-            for v in verts:
+            for v in [v for v in bm.verts if v.select]:
                 v.co = vector_delta - obj_loc
             bmesh.ops.remove_doubles(
                 bm, verts=[v for v in bm.verts if v.select], dist=0.0001
@@ -607,8 +622,8 @@ def move_entities(context, pg, operation, mode, obj, bm, verts, values):
             for ob in context.view_layer.objects.selected:
                 ob.location = vector_delta
 
-    elif mode in {"d", "i"}:
-        if mode == "d":
+    elif mode in {"d", "i", "n"}:
+        if mode in {"d", "n"}:
             # Delta/Relative Coordinates
             try:
                 vector_delta = vector_build(context, pg, obj, operation, values, 3)
@@ -621,7 +636,7 @@ def move_entities(context, pg, operation, mode, obj, bm, verts, values):
             except:
                 raise PDT_InvalidVector
 
-        if pg.plane == "LO" and mode == "d":
+        if pg.plane == "LO" and mode in {"d", "n"}:
             vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
         elif pg.plane == "LO" and mode == "i":
             vector_delta = view_dir(pg.distance, pg.angle)
@@ -678,7 +693,7 @@ def add_new_vertex(context, pg, operation, mode, obj, bm, verts, values):
             raise PDT_InvalidVector
         new_vertex = bm.verts.new(vector_delta - obj_loc)
     # Delta/Relative Coordinates
-    elif mode == "d":
+    elif mode in  {"d", "n"}:
         try:
             vector_delta = vector_build(context, pg, obj, operation, values, 3)
         except:
@@ -852,7 +867,7 @@ def extrude_vertices(context, pg, operation, mode, obj, obj_loc, bm, verts, valu
             bm, verts=[v for v in bm.verts if v.select], dist=0.0001
         )
     # Delta/Relative Coordinates
-    elif mode == "d":
+    elif mode in {"d", "n"}:
         try:
             vector_delta = vector_build(context, pg, obj, operation, values, 3)
         except:
@@ -920,7 +935,7 @@ def extrude_geometry(context, pg, operation, mode, obj, bm, values):
         context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
         return
     # Delta/Relative Coordinates
-    if mode == "d":
+    if mode in {"d", "n"}:
         try:
             vector_delta = vector_build(context, pg, obj, operation, values, 3)
         except:
@@ -947,7 +962,7 @@ def extrude_geometry(context, pg, operation, mode, obj, bm, values):
     faces_extr = [f for f in geom_extr if isinstance(f, bmesh.types.BMFace)]
     del ret
 
-    if pg.plane == "LO" and mode == "d":
+    if pg.plane == "LO" and mode in {"d", "n"}:
         vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
     elif pg.plane == "LO" and mode == "i":
         vector_delta = view_dir(pg.distance, pg.angle)
@@ -979,7 +994,7 @@ def duplicate_geometry(context, pg, operation, mode, obj, bm, values):
         context.window_manager.popup_menu(oops, title="Error", icon="ERROR")
         return
     # Delta/Relative Coordinates
-    if mode == "d":
+    if mode in {"d", "n"}:
         try:
             vector_delta = vector_build(context, pg, obj, operation, values, 3)
         except:
@@ -1006,7 +1021,7 @@ def duplicate_geometry(context, pg, operation, mode, obj, bm, values):
     faces_dupe = [f for f in geom_dupe if isinstance(f, bmesh.types.BMFace)]
     del ret
 
-    if pg.plane == "LO" and mode == "d":
+    if pg.plane == "LO" and mode in  {"d", "n"}:
         vector_delta = view_coords(vector_delta.x, vector_delta.y, vector_delta.z)
     elif pg.plane == "LO" and mode == "i":
         vector_delta = view_dir(pg.distance, pg.angle)

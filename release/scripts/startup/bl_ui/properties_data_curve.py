@@ -302,6 +302,11 @@ class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
         # these are for paths only
         row = layout.row()
         row.use_property_split = False
+        row.prop(curve, "use_path_clamp")
+        row.prop_decorator(curve, "use_path_clamp")
+
+        row = layout.row()
+        row.use_property_split = False
         row.prop(curve, "use_path_follow")
         row.prop_decorator(curve, "use_path_follow")
 
