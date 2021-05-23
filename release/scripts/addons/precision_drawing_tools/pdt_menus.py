@@ -62,7 +62,8 @@ from .pdt_msg_strings import (
     PDT_LAB_TAPERAXES,
     PDT_LAB_TOOLS,
     PDT_LAB_USEVERTS,
-    PDT_LAB_VARIABLES
+    PDT_LAB_VARIABLES,
+    PDT_LAB_VIEW
 )
 
 def ui_width():
@@ -148,6 +149,8 @@ class PDT_PT_PanelDesign(Panel):
         row.prop(pdt_pg, "angle", text=PDT_LAB_ANGLEVALUE)
         row = box.row()
         row.operator("pdt.distance", icon="EMPTY_AXIS", text=f"{PDT_LAB_DIR} »")
+        row.operator("pdt.view_axis", icon="EMPTY_AXIS", text=f"{PDT_LAB_VIEW} »")
+        row = box.row()
         row.prop(pdt_pg, "flip_angle", text=PDT_LAB_FLIPANGLE)
 
         # ---------------------
@@ -437,7 +440,7 @@ class PDT_PT_PanelTangent(Panel):
         row.label(text=f"Working {PDT_LAB_PLANE}:")
         row.prop(pdt_pg, "plane", text="")
         row = layout.row()
-        row.label(text="Tan Mode")
+        row.label(text="Tangent Mode")
         row.prop(pdt_pg, "tangent_mode", text="")
         row = layout.row()
         row.operator("pdt.tangentoperatesel", text="Tangents from Selection", icon="NONE")
@@ -448,7 +451,7 @@ class PDT_PT_PanelTangent(Panel):
         box = layout.box()
         row = box.row()
         split = row.split(factor=0.35, align=True)
-        split.label(text="Tan Point")
+        split.label(text="Tangent Point")
         split.prop(pdt_pg, "tangent_point2", text="")
         row = box.row()
         row.operator("pdt.tangentset3", text="from Cursor")

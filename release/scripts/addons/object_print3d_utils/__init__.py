@@ -21,7 +21,7 @@
 bl_info = {
     "name": "3D-Print Toolbox",
     "author": "Campbell Barton",
-    "blender": (2, 82, 0),
+    "blender": (3, 0, 0),
     "location": "3D View > Sidebar",
     "description": "Utilities for 3D printing",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/mesh/3d_print_toolbox.html",
@@ -34,7 +34,8 @@ if "bpy" in locals():
     import importlib
     importlib.reload(ui)
     importlib.reload(operators)
-    importlib.reload(mesh_helpers)
+    if "mesh_helpers" in locals():
+        importlib.reload(mesh_helpers)
     if "export" in locals():
         importlib.reload(export)
 else:

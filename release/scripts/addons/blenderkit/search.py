@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from blenderkit import paths, utils, categories, ui, colors, bkit_oauth, version_checker, tasks_queue, rerequests, \
-    resolutions, image_utils
+    resolutions, image_utils, ratings_utils
 
 import blenderkit
 from bpy.app.handlers import persistent
@@ -419,15 +419,24 @@ def timer_update():
 
             rdata = thread[0].result
             result_field = []
+
             ok, error = check_errors(rdata)
             if ok:
                 bpy.ops.object.run_assetbar_fix_context()
+
+                user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+                api_key = user_preferences.api_key
+                headers = utils.get_headers(api_key)
+
                 for r in rdata['results']:
                     asset_data = parse_result(r)
                     if asset_data != None:
                         result_field.append(asset_data)
 
-                        # results = rdata['results']
+                    if utils.profile_is_validator() and ratings_utils.get_rating_local(asset_data['id']) is None:
+                        thread = threading.Thread(target=ratings_utils.get_rating, args=([asset_data['id'], headers]), daemon=True)
+                        thread.start()
+
                 wm[search_name] = result_field
                 wm['search results'] = result_field
                 wm[search_name + ' orig'] = copy.deepcopy(rdata)
