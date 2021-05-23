@@ -540,14 +540,14 @@ class CM_UL_items(UIList):
     filter_by_selected: BoolProperty(
                         name="Filter By Selected",
                         default=False,
-                        description="Filter collections by selected items",
+                        description="Filter collections to only show the ones that contain the selected objects",
                         update=lambda self, context:
                             CM_UL_items.new_collections.clear(),
                         )
     filter_by_qcd: BoolProperty(
                         name="Filter By QCD",
                         default=False,
-                        description="Filter collections to only show QCD slots",
+                        description="Filter collections to only show the ones that are QCD slots",
                         update=lambda self, context:
                             CM_UL_items.new_collections.clear(),
                         )

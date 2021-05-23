@@ -503,7 +503,7 @@ void EEVEE_volumes_cache_object_add(EEVEE_ViewLayerData *sldata,
                                     Scene *scene,
                                     Object *ob)
 {
-  Material *ma = BKE_object_material_get(ob, 1);
+  Material *ma = BKE_object_material_get_eval(ob, 1);
 
   if (ma == NULL) {
     if (ob->type == OB_VOLUME) {

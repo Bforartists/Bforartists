@@ -80,6 +80,7 @@ PDT_LAB_PIVOTWIDTH = ""  # Intentionally left blank
 PDT_LAB_PIVOTALPHA = ""  # Intentionally left blank
 PDT_LAB_PIVOTLOC = ""  # Intentionally left blank
 PDT_LAB_PIVOTLOCH = "Location"
+PDT_LAB_VIEW = "View Normal Axis"
 #
 # Error Message
 #

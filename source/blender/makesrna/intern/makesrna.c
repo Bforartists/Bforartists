@@ -684,6 +684,29 @@ static char *rna_def_property_get_func(
         }
       }
     }
+
+    /* Check log scale sliders for negative range. */
+    if (prop->type == PROP_FLOAT) {
+      FloatPropertyRNA *fprop = (FloatPropertyRNA *)prop;
+      /* NOTE: UI_BTYPE_NUM_SLIDER can't have a softmin of zero. */
+      if ((fprop->ui_scale_type == PROP_SCALE_LOG) && (fprop->hardmin < 0 || fprop->softmin < 0)) {
+        CLOG_ERROR(
+            &LOG, "\"%s.%s\", range for log scale < 0.", srna->identifier, prop->identifier);
+        DefRNA.error = true;
+        return NULL;
+      }
+    }
+    if (prop->type == PROP_INT) {
+      IntPropertyRNA *iprop = (IntPropertyRNA *)prop;
+      /* Only UI_BTYPE_NUM_SLIDER is implemented and that one can't have a softmin of zero. */
+      if ((iprop->ui_scale_type == PROP_SCALE_LOG) &&
+          (iprop->hardmin <= 0 || iprop->softmin <= 0)) {
+        CLOG_ERROR(
+            &LOG, "\"%s.%s\", range for log scale <= 0.", srna->identifier, prop->identifier);
+        DefRNA.error = true;
+        return NULL;
+      }
+    }
   }
 
   func = rna_alloc_function_name(srna->identifier, rna_safe_id(prop->identifier), "get");
@@ -3935,6 +3958,8 @@ static void rna_generate_property(FILE *f, StructRNA *srna, const char *nest, Pr
               rna_function_string(iprop->getarray_ex),
               rna_function_string(iprop->setarray_ex),
               rna_function_string(iprop->range_ex));
+      rna_int_print(f, iprop->ui_scale_type);
+      fprintf(f, ", ");
       rna_int_print(f, iprop->softmin);
       fprintf(f, ", ");
       rna_int_print(f, iprop->softmax);
@@ -3969,6 +3994,8 @@ static void rna_generate_property(FILE *f, StructRNA *srna, const char *nest, Pr
               rna_function_string(fprop->getarray_ex),
               rna_function_string(fprop->setarray_ex),
               rna_function_string(fprop->range_ex));
+      rna_float_print(f, fprop->ui_scale_type);
+      fprintf(f, ", ");
       rna_float_print(f, fprop->softmin);
       fprintf(f, ", ");
       rna_float_print(f, fprop->softmax);
@@ -4341,7 +4368,7 @@ static RNAProcessItem PROCESS_ITEMS[] = {
     {"rna_screen.c", NULL, RNA_def_screen},
     {"rna_sculpt_paint.c", NULL, RNA_def_sculpt_paint},
     {"rna_sequencer.c", "rna_sequencer_api.c", RNA_def_sequencer},
-#ifdef WITH_GEOMETRY_NODES
+#ifdef WITH_SIMULATION_DATABLOCK
     {"rna_simulation.c", NULL, RNA_def_simulation},
 #endif
     {"rna_space.c", "rna_space_api.c", RNA_def_space},

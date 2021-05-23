@@ -31,25 +31,53 @@ from bpy.props import (
 )
 import bmesh
 
-from . import (
-    mesh_helpers,
-    report,
-)
+from . import report
 
 
-def clean_float(text):
-    # strip trailing zeros: 0.000 -> 0.0
+def clean_float(value: float, precision: int = 0) -> str:
+    # Avoid scientific notation and strip trailing zeros: 0.000 -> 0.0
+
+    text = f"{value:.{precision}f}"
     index = text.rfind(".")
+
     if index != -1:
         index += 2
         head, tail = text[:index], text[index:]
         tail = tail.rstrip("0")
         text = head + tail
+
     return text
+
+
+def get_unit(unit_system: str, unit: str) -> tuple[float, str]:
+    # Returns unit length relative to meter and unit symbol
+
+    units = {
+        "METRIC": {
+            "KILOMETERS": (1000.0, "km"),
+            "METERS": (1.0, "m"),
+            "CENTIMETERS": (0.01, "cm"),
+            "MILLIMETERS": (0.001, "mm"),
+            "MICROMETERS": (0.000001, "µm"),
+        },
+        "IMPERIAL": {
+            "MILES": (1609.344, "mi"),
+            "FEET": (0.3048, "\'"),
+            "INCHES": (0.0254, "\""),
+            "THOU": (0.0000254, "thou"),
+        },
+    }
+
+    try:
+        return units[unit_system][unit]
+    except KeyError:
+        fallback_unit = "CENTIMETERS" if unit_system == "METRIC" else "INCHES"
+        return units[unit_system][fallback_unit]
 
 
 # ---------
 # Mesh Info
+
 
 class MESH_OT_print3d_info_volume(Operator):
     bl_idname = "mesh.print3d_info_volume"
@@ -57,6 +85,8 @@ class MESH_OT_print3d_info_volume(Operator):
     bl_description = "Report the volume of the active mesh"
 
     def execute(self, context):
+        from . import mesh_helpers
+
         scene = context.scene
         unit = scene.unit_settings
         scale = 1.0 if unit.system == 'NONE' else unit.scale_length
@@ -66,14 +96,14 @@ class MESH_OT_print3d_info_volume(Operator):
         volume = bm.calc_volume()
         bm.free()
 
-        if unit.system == 'METRIC':
-            volume_cm = volume * (scale ** 3.0) / (0.01 ** 3.0)
-            volume_fmt = "{} cm".format(clean_float(f"{volume_cm:.4f}"))
-        elif unit.system == 'IMPERIAL':
-            volume_inch = volume * (scale ** 3.0) / (0.0254 ** 3.0)
-            volume_fmt = '{} "'.format(clean_float(f"{volume_inch:.4f}"))
+        if unit.system == 'NONE':
+            volume_fmt = clean_float(volume, 8)
         else:
-            volume_fmt = clean_float(f"{volume:.8f}")
+            length, symbol = get_unit(unit.system, unit.length_unit)
+
+            volume_unit = volume * (scale ** 3.0) / (length ** 3.0)
+            volume_str = clean_float(volume_unit, 4)
+            volume_fmt = f"{volume_str} {symbol}"
 
         report.update((f"Volume: {volume_fmt}³", None))
 
@@ -86,6 +116,8 @@ class MESH_OT_print3d_info_area(Operator):
     bl_description = "Report the surface area of the active mesh"
 
     def execute(self, context):
+        from . import mesh_helpers
+
         scene = context.scene
         unit = scene.unit_settings
         scale = 1.0 if unit.system == 'NONE' else unit.scale_length
@@ -95,14 +127,14 @@ class MESH_OT_print3d_info_area(Operator):
         area = mesh_helpers.bmesh_calc_area(bm)
         bm.free()
 
-        if unit.system == 'METRIC':
-            area_cm = area * (scale ** 2.0) / (0.01 ** 2.0)
-            area_fmt = "{} cm".format(clean_float(f"{area_cm:.4f}"))
-        elif unit.system == 'IMPERIAL':
-            area_inch = area * (scale ** 2.0) / (0.0254 ** 2.0)
-            area_fmt = '{} "'.format(clean_float(f"{area_inch:.4f}"))
+        if unit.system == 'NONE':
+            area_fmt = clean_float(area, 8)
         else:
-            area_fmt = clean_float(f"{area:.8f}")
+            length, symbol = get_unit(unit.system, unit.length_unit)
+
+            area_unit = area * (scale ** 2.0) / (length ** 2.0)
+            area_str = clean_float(area_unit, 4)
+            area_fmt = f"{area_str} {symbol}"
 
         report.update((f"Area: {area_fmt}²", None))
 
@@ -137,6 +169,7 @@ class MESH_OT_print3d_check_solid(Operator):
     @staticmethod
     def main_check(obj, info):
         import array
+        from . import mesh_helpers
 
         bm = mesh_helpers.bmesh_copy_from_object(obj, transform=False, triangulate=False)
 
@@ -162,6 +195,8 @@ class MESH_OT_print3d_check_intersections(Operator):
 
     @staticmethod
     def main_check(obj, info):
+        from . import mesh_helpers
+
         faces_intersect = mesh_helpers.bmesh_check_self_intersect_object(obj)
         info.append((f"Intersect Face: {len(faces_intersect)}", (bmesh.types.BMFace, faces_intersect)))
 
@@ -180,6 +215,7 @@ class MESH_OT_print3d_check_degenerate(Operator):
     @staticmethod
     def main_check(obj, info):
         import array
+        from . import mesh_helpers
 
         scene = bpy.context.scene
         print_3d = scene.print_3d
@@ -207,6 +243,7 @@ class MESH_OT_print3d_check_distorted(Operator):
     @staticmethod
     def main_check(obj, info):
         import array
+        from . import mesh_helpers
 
         scene = bpy.context.scene
         print_3d = scene.print_3d
@@ -238,6 +275,8 @@ class MESH_OT_print3d_check_thick(Operator):
 
     @staticmethod
     def main_check(obj, info):
+        from . import mesh_helpers
+
         scene = bpy.context.scene
         print_3d = scene.print_3d
 
@@ -255,6 +294,8 @@ class MESH_OT_print3d_check_sharp(Operator):
 
     @staticmethod
     def main_check(obj, info):
+        from . import mesh_helpers
+
         scene = bpy.context.scene
         print_3d = scene.print_3d
         angle_sharp = print_3d.angle_sharp
@@ -282,6 +323,7 @@ class MESH_OT_print3d_check_overhang(Operator):
     @staticmethod
     def main_check(obj, info):
         from mathutils import Vector
+        from . import mesh_helpers
 
         scene = bpy.context.scene
         print_3d = scene.print_3d
@@ -355,6 +397,8 @@ class MESH_OT_print3d_clean_distorted(Operator):
     )
 
     def execute(self, context):
+        from . import mesh_helpers
+
         obj = context.active_object
         bm = mesh_helpers.bmesh_from_object(obj)
         bm.normal_update()
@@ -589,7 +633,7 @@ def _scale(scale, report=None, report_suffix=""):
     if scale != 1.0:
         bpy.ops.transform.resize(value=(scale,) * 3)
     if report is not None:
-        scale_fmt = clean_float(f"{scale:.6f}")
+        scale_fmt = clean_float(scale, 6)
         report({'INFO'}, f"Scaled by {scale_fmt}{report_suffix}")
 
 
@@ -611,7 +655,7 @@ class MESH_OT_print3d_scale_to_volume(Operator):
 
     def execute(self, context):
         scale = math.pow(self.volume, 1 / 3) / math.pow(self.volume_init, 1 / 3)
-        scale_fmt = clean_float(f"{scale:.6f}")
+        scale_fmt = clean_float(scale, 6)
         self.report({'INFO'}, f"Scaled by {scale_fmt}")
         _scale(scale, self.report)
         return {'FINISHED'}
@@ -619,6 +663,8 @@ class MESH_OT_print3d_scale_to_volume(Operator):
     def invoke(self, context, event):
 
         def calc_volume(obj):
+            from . import mesh_helpers
+
             bm = mesh_helpers.bmesh_copy_from_object(obj, apply_modifiers=True)
             volume = bm.calc_volume(signed=True)
             bm.free()

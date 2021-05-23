@@ -18,7 +18,7 @@
 
 
 from blenderkit import paths, ratings, utils, search, upload, ui_bgl, download, bg_blender, colors, tasks_queue, \
-    ui_panels, icons
+    ui_panels, icons, ratings_utils
 
 import bpy
 
@@ -272,7 +272,7 @@ def draw_text_block(x=0, y=0, width=40, font_size=10, line_height=15, text='', c
         ui_bgl.draw_text(l, x, ytext, font_size, color)
 
 
-def draw_tooltip(x, y, name='', author='', quality = '-', img=None, gravatar=None):
+def draw_tooltip(x, y, name='', author='', quality='-', img=None, gravatar=None):
     region = bpy.context.region
     scale = bpy.context.preferences.view.ui_scale
     t = time.time()
@@ -282,12 +282,12 @@ def draw_tooltip(x, y, name='', author='', quality = '-', img=None, gravatar=Non
 
     x += 20
     y -= 20
-    #first get image size scaled
+    # first get image size scaled
     isizex = int(512 * scale * img.size[0] / min(img.size[0], img.size[1]))
     isizey = int(512 * scale * img.size[1] / min(img.size[0], img.size[1]))
 
     ttipmargin = 5 * scale
-    #then do recurrent re-scaling, to know where to fit the tooltip
+    # then do recurrent re-scaling, to know where to fit the tooltip
     estimated_height = 2 * ttipmargin + isizey
     if estimated_height > y:
         scaledown = y / (estimated_height)
@@ -303,7 +303,6 @@ def draw_tooltip(x, y, name='', author='', quality = '-', img=None, gravatar=Non
         overlay_height_base = 90
     else:
         overlay_height_base = 70
-
 
     overlay_height = overlay_height_base * scale
     name_height = int(20 * scale)
@@ -338,14 +337,13 @@ def draw_tooltip(x, y, name='', author='', quality = '-', img=None, gravatar=Non
     ui_bgl.draw_rect(x - ttipmargin,
                      y - 2 * ttipmargin - isizey,
                      isizex + ttipmargin * 2,
-                     ttipmargin + overlay_height ,
+                     ttipmargin + overlay_height,
                      background_overlay)
 
-    #draw name
+    # draw name
     name_x = x + textmargin
     name_y = y - isizey + overlay_height - textmargin - name_height
     ui_bgl.draw_text(name, name_x, name_y, name_height, textcol)
-
 
     # draw gravatar
     author_x_text = x + isizex - textmargin
@@ -357,7 +355,7 @@ def draw_tooltip(x, y, name='', author='', quality = '-', img=None, gravatar=Non
                           gravatar_y,  # + textmargin,
                           gravatar_size, gravatar_size, gravatar, 1)
 
-    #draw author's name
+    # draw author's name
     author_text_size = int(name_height * .7)
     ui_bgl.draw_text(author, author_x_text, gravatar_y, author_text_size, textcol, ralign=True)
 
@@ -366,7 +364,6 @@ def draw_tooltip(x, y, name='', author='', quality = '-', img=None, gravatar=Non
     img = utils.get_thumbnail('star_grey.png')
     ui_bgl.draw_image(name_x, gravatar_y, quality_text_size, quality_text_size, img, .6)
     ui_bgl.draw_text(str(quality), name_x + quality_text_size + 5, gravatar_y, quality_text_size, textcol)
-
 
 
 def draw_tooltip_with_author(asset_data, x, y):
@@ -383,7 +380,7 @@ def draw_tooltip_with_author(asset_data, x, y):
 
     aname = asset_data['displayName']
     aname = aname[0].upper() + aname[1:]
-    if len(aname)>36:
+    if len(aname) > 36:
         aname = f"{aname[:33]}..."
 
     rc = asset_data.get('ratingsCount')
@@ -392,10 +389,10 @@ def draw_tooltip_with_author(asset_data, x, y):
     quality = '-'
     if rc:
         rcount = min(rc['quality'], rc['workingHours'])
-    if rcount>show_rating_threshold:
+    if rcount > show_rating_threshold:
         quality = round(asset_data['ratingsAverage'].get('quality'))
 
-    draw_tooltip(x, y, name=aname, author=f"by {a['firstName']} {a['lastName']}", quality= quality,  img=img,
+    draw_tooltip(x, y, name=aname, author=f"by {a['firstName']} {a['lastName']}", quality=quality, img=img,
                  gravatar=gimg)
 
 
@@ -694,6 +691,12 @@ def draw_asset_bar(self, context):
                     # pcoll = icons.icon_collections["main"]
                     # v_icon = pcoll['rejected']
                     v_icon = verification_icons[result.get('verificationStatus', 'validated')]
+
+                    if v_icon is None and utils.profile_is_validator():
+                        # poke for validators to rate 
+                        if ratings_utils.get_rating_local(result['id']) in (None, {}):
+                            v_icon = 'star_grey.png'
+
                     if v_icon is not None:
                         img = utils.get_thumbnail(v_icon)
                         ui_bgl.draw_image(x + ui_props.thumb_size - 26, y + 2, 24, 24, img, 1)
@@ -1266,7 +1269,7 @@ class AssetBarOperator(bpy.types.Operator):
                     export_data, upload_data = upload.get_upload_data(context=context, asset_type=ui_props.asset_type)
                     if upload_data:
                         # print(upload_data)
-                        ui_props.tooltip = upload_data['displayName']#search.generate_tooltip(upload_data)
+                        ui_props.tooltip = upload_data['displayName']  # search.generate_tooltip(upload_data)
 
             return {'PASS_THROUGH'}
 
@@ -1419,7 +1422,7 @@ class AssetBarOperator(bpy.types.Operator):
             mx = event.mouse_x - r.x
             my = event.mouse_y - r.y
 
-            if event.value == 'PRESS' and mouse_in_asset_bar(mx, my):
+            if event.value == 'PRESS' and mouse_in_asset_bar(mx, my) and ui_props.active_index > -1:
                 # context.window.cursor_warp(event.mouse_x - 300, event.mouse_y - 10);
 
                 bpy.ops.wm.blenderkit_asset_popup('INVOKE_DEFAULT')

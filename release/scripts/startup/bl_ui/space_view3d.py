@@ -7027,6 +7027,11 @@ class VIEW3D_PT_overlay_geometry(Panel):
         row.separator()
         row.prop(overlay, "show_face_orientation")
 
+        # These properties should be always available in the UI for all modes
+        # other than Object.
+        # Even when the Fade Inactive Geometry overlay is not affecting the
+        # current active object depending on its mode, it will always affect
+        # the rest of the scene.
         if context.mode != 'OBJECT':
             col = layout.column(align = True)
             col.active = display_all
