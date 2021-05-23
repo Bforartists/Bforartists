@@ -68,11 +68,47 @@ def send_rating_to_thread_work_hours(url, ratings, headers):
     thread.start()
 
 
+def store_rating_local_empty(asset_id):
+    context = bpy.context
+    context.window_manager['asset ratings'] = context.window_manager.get('asset ratings', {})
+    context.window_manager['asset ratings'][asset_id] = context.window_manager['asset ratings'].get(asset_id, {})
+
+
 def store_rating_local(asset_id, type='quality', value=0):
     context = bpy.context
     context.window_manager['asset ratings'] = context.window_manager.get('asset ratings', {})
     context.window_manager['asset ratings'][asset_id] = context.window_manager['asset ratings'].get(asset_id, {})
     context.window_manager['asset ratings'][asset_id][type] = value
+
+
+def get_rating(asset_id, headers):
+    '''
+    Retrieve ratings from BlenderKit server. Can be run from a thread
+    Parameters
+    ----------
+    asset_id
+    headers
+
+    Returns
+    -------
+    ratings - dict of type:value ratings
+    '''
+    url = paths.get_api_url() + 'assets/' + asset_id + '/rating/'
+    params = {}
+    r = rerequests.get(url, params=params, verify=True, headers=headers)
+    print(r.text)
+    rj = r.json()
+    ratings = {}
+    # store ratings - send them to task queue
+    for r in rj['results']:
+        ratings[r['ratingType']] = r['score']
+        tasks_queue.add_task((store_rating_local,(asset_id, r['ratingType'], r['score'])))
+        # store_rating_local(asset_id, type = r['ratingType'], value = r['score'])
+
+    if len(rj['results'])==0:
+        # store empty ratings too, so that server isn't checked repeatedly
+        tasks_queue.add_task((store_rating_local_empty,(asset_id,)))
+    return ratings
 
 
 def get_rating_local(asset_id):
@@ -246,61 +282,67 @@ class RatingsProperties():
 
     high_rating_warning = "This is a high rating, please be sure to give such rating only to amazing assets"
 
+    possible_wh_values = [0,.5,1,2,3,4,5,6,8,10,15,20,30,50,100,150,200,250]
+    items_models = [('0', '0', ''),
+                    ('.5', '0.5', ''),
+                    ('1', '1', ''),
+                    ('2', '2', ''),
+                    ('3', '3', ''),
+                    ('4', '4', ''),
+                    ('5', '5', ''),
+                    ('6', '6', ''),
+                    ('8', '8', ''),
+                    ('10', '10', ''),
+                    ('15', '15', ''),
+                    ('20', '20', ''),
+                    ('30', '30', high_rating_warning),
+                    ('50', '50', high_rating_warning),
+                    ('100', '100', high_rating_warning),
+                    ('150', '150', high_rating_warning),
+                    ('200', '200', high_rating_warning),
+                    ('250', '250', high_rating_warning),
+                    ]
     rating_work_hours_ui: EnumProperty(name="Work Hours",
                                        description="How many hours did this work take?",
-                                       items=[('0', '0', ''),
-                                              ('.5', '0.5', ''),
-                                              ('1', '1', ''),
-                                              ('2', '2', ''),
-                                              ('3', '3', ''),
-                                              ('4', '4', ''),
-                                              ('5', '5', ''),
-                                              ('6', '6', ''),
-                                              ('8', '8', ''),
-                                              ('10', '10', ''),
-                                              ('15', '15', ''),
-                                              ('20', '20', ''),
-                                              ('30', '30', high_rating_warning),
-                                              ('50', '50', high_rating_warning),
-                                              ('100', '100', high_rating_warning),
-                                              ('150', '150', high_rating_warning),
-                                              ('200', '200', high_rating_warning),
-                                              ('250', '250', high_rating_warning),
-                                              ],
+                                       items=items_models,
                                        default='0', update=update_ratings_work_hours_ui,
                                        options={'SKIP_SAVE'}
                                        )
+    possible_wh_values_1_5 = [0,.2, .5,1,2,3,4,5]
 
+    items_1_5 = [('0', '0', ''),
+                 ('.2', '0.2', ''),
+                 ('.5', '0.5', ''),
+                 ('1', '1', ''),
+                 ('2', '2', ''),
+                 ('3', '3', ''),
+                 ('4', '4', ''),
+                 ('5', '5', '')
+                 ]
     rating_work_hours_ui_1_5: EnumProperty(name="Work Hours",
                                            description="How many hours did this work take?",
-                                           items=[('0', '0', ''),
-                                                  ('.2', '0.2', ''),
-                                                  ('.5', '0.5', ''),
-                                                  ('1', '1', ''),
-                                                  ('2', '2', ''),
-                                                  ('3', '3', ''),
-                                                  ('4', '4', ''),
-                                                  ('5', '5', '')
-                                                  ],
+                                           items=items_1_5,
                                            default='0',
                                            update=update_ratings_work_hours_ui_1_5,
                                            options={'SKIP_SAVE'}
                                            )
+    possible_wh_values_1_10 = [0,1,2,3,4,5,6,7,8,9,10]
 
+    items_1_10= [('0', '0', ''),
+       ('1', '1', ''),
+       ('2', '2', ''),
+       ('3', '3', ''),
+       ('4', '4', ''),
+       ('5', '5', ''),
+       ('6', '6', ''),
+       ('7', '7', ''),
+       ('8', '8', ''),
+       ('9', '9', ''),
+       ('10', '10', '')
+       ]
     rating_work_hours_ui_1_10: EnumProperty(name="Work Hours",
                                             description="How many hours did this work take?",
-                                            items=[('0', '0', ''),
-                                                   ('1', '1', ''),
-                                                   ('2', '2', ''),
-                                                   ('3', '3', ''),
-                                                   ('4', '4', ''),
-                                                   ('5', '5', ''),
-                                                   ('6', '6', ''),
-                                                   ('7', '7', ''),
-                                                   ('8', '8', ''),
-                                                   ('9', '9', ''),
-                                                   ('10', '10', '')
-                                                   ],
+                                            items= items_1_10,
                                             default='0',
                                             update=update_ratings_work_hours_ui_1_10,
                                             options={'SKIP_SAVE'}
@@ -313,8 +355,10 @@ class RatingsProperties():
             self.rating_quality = ratings['quality']
         if ratings and ratings.get('working_hours'):
             wh = int(ratings['working_hours'])
-            self.rating_work_hours_ui = str(wh)
-            if wh < 6:
-                self.rating_work_hours_ui_1_5 = str(int(ratings['working_hours']))
-            if wh < 11:
-                self.rating_work_hours_ui_1_10 = str(int(ratings['working_hours']))
+            whs = str(wh)
+            if wh in self.possible_wh_values:
+                self.rating_work_hours_ui = whs
+            if wh < 6 and wh in self.possible_wh_values_1_5:
+                self.rating_work_hours_ui_1_5 = whs
+            if wh < 11 and wh in self.possible_wh_values_1_10:
+                self.rating_work_hours_ui_1_10 = whs
