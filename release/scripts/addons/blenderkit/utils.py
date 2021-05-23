@@ -784,6 +784,14 @@ def profile_is_validator():
         return True
     return False
 
+def user_is_owner(asset_data=None):
+    '''Checks if the current logged in user is owner of the asset'''
+    profile = bpy.context.window_manager.get('bkit profile')
+    if profile is None:
+        return False
+    if int(asset_data['author']['id']) == int(profile['user']['id']):
+        return True
+    return False
 
 def guard_from_crash():
     '''

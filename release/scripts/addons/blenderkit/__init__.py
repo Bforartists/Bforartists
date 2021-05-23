@@ -319,7 +319,7 @@ class BlenderKitUIProps(PropertyGroup):
         update=udate_down_up
     )
     asset_type: EnumProperty(
-        name="BlenderKit Active Asset Type",
+        name=" ",
         items=asset_type_callback,
         description="",
         default=None,
@@ -445,7 +445,7 @@ class BlenderKitCommonSearchProps(object):
                                  default=False)
     search_done: BoolProperty(name="Search Completed", description="at least one search did run (internal)",
                               default=False)
-    own_only: BoolProperty(name="My Assets", description="Search only for your assets",
+    own_only: BoolProperty(name="My Assets Only", description="Search only for your assets",
                            default=False, update=search.search_update)
     search_advanced: BoolProperty(name="Advanced Search Options", description="use advanced search properties",
                                   default=False, update=search.search_update)

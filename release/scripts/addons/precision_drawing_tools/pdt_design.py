@@ -184,7 +184,7 @@ class PDT_OT_PlacementDelta(Operator):
                 f",{str(round(pg.cartesian_coords.z, decimal_places))}"
             )
         elif operation == "EV":
-            # Extrue Vertices
+            # Extrude Vertices
             pg.command = (
                 f"vd{str(round(pg.cartesian_coords.x, decimal_places))}"
                 f",{str(round(pg.cartesian_coords.y, decimal_places))}"
@@ -198,7 +198,7 @@ class PDT_OT_PlacementDelta(Operator):
                 f",{str(round(pg.cartesian_coords.z, decimal_places))}"
             )
         elif operation == "EG":
-            # Extrue Geometry
+            # Extrude Geometry
             pg.command = (
                 f"ed{str(round(pg.cartesian_coords.x, decimal_places))}"
                 f",{str(round(pg.cartesian_coords.y, decimal_places))}"
@@ -295,6 +295,82 @@ class PDT_OT_PlacementDis(Operator):
             )
         else:
             error_message = f"{operation} {PDT_ERR_NON_VALID} {PDT_LAB_DIR}"
+            self.report({"ERROR"}, error_message)
+        return {"FINISHED"}
+
+
+class PDT_OT_PlacementView(Operator):
+    """Use Distance Input for View Normal Axis Operations"""
+
+    bl_idname = "pdt.view_axis"
+    bl_label = "View Normal Axis Mode"
+    bl_options = {"REGISTER", "UNDO"}
+
+    def execute(self, context):
+        """Manipulates Geometry, or Objects by View Normal Axis Offset (Increment).
+
+        Note:
+            - Reads pg.operation from Operation Mode Selector as 'operation'
+            - Reads pg.select, pg.plane, pg.cartesian_coords scene variables to:
+            -- set position of CUrsor       (CU)
+            -- set position of Pivot Point  (PP)
+            -- MoVe geometry/objects        (MV)
+            -- Extrude Vertices             (EV)
+            -- Split Edges                  (SE)
+            -- add a New Vertex             (NV)
+            -- Duplicate Geometry           (DG)
+            -- Extrude Geometry             (EG)
+
+            Invalid Options result in self.report Error.
+
+        Args:
+            context: Blender bpy.context instance.
+
+        Returns:
+            Status Set.
+        """
+
+        pg = context.scene.pdt_pg
+        operation = pg.operation
+        decimal_places = context.preferences.addons[__package__].preferences.pdt_input_round
+
+        if operation == "CU":
+            # Cursor
+            pg.command = (
+                f"cn{str(round(pg.distance, decimal_places))}"
+            )
+        elif operation == "PP":
+            # Pivot Point
+            pg.command = (
+                f"pn{str(round(pg.distance, decimal_places))}"
+            )
+        elif operation == "MV":
+            # Move Entities
+            pg.command = (
+                f"gn{str(round(pg.distance, decimal_places))}"
+            )
+        elif operation == "NV":
+            # New Vertex
+            pg.command = (
+                f"nn{str(round(pg.distance, decimal_places))}"
+            )
+        elif operation == "EV":
+            # Extrude Vertices
+            pg.command = (
+                f"vn{str(round(pg.distance, decimal_places))}"
+            )
+        elif operation == "DG":
+            # Duplicate Entities
+            pg.command = (
+                f"dn{str(round(pg.distance, decimal_places))}"
+            )
+        elif operation == "EG":
+            # Extrude Geometry
+            pg.command = (
+                f"en{str(round(pg.distance, decimal_places))}"
+            )
+        else:
+            error_message = f"{operation} {PDT_ERR_NON_VALID} {PDT_LAB_DEL}"
             self.report({"ERROR"}, error_message)
         return {"FINISHED"}
 
@@ -703,3 +779,9 @@ class PDT_OT_Taper(Operator):
         pg = context.scene.pdt_pg
         pg.command = f"tap"
         return {"FINISHED"}
+
+#class PDT_Extrude_Modal(Operator):
+#    """Extrude Modal Plane Along Normal Axis"""
+#    bl_idname = "pdt.extrude_modal"
+#    bl_label = "Extrude Modal Normal"
+#    bl_options = {"REGISTER", "UNDO"}
