@@ -1039,14 +1039,13 @@ void uiTemplateImageSettings(uiLayout *layout, PointerRNA *imfptr, bool color_ma
     uiItemR(col, imfptr, "compression", 0, NULL, ICON_NONE);
   }
 
-  if (ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {    
+  if (ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {
     uiItemR(col, imfptr, "exr_codec", 0, NULL, ICON_NONE);
   }
 
   if (BKE_imtype_supports_zbuf(imf->imtype)) {
     uiLayoutSetPropSep(col, false); /* bfa - use_property_split = False */
     uiItemR(col, imfptr, "use_zbuffer", 0, NULL, ICON_NONE);
-
   }
 
   if (is_render_out && ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER)) {

@@ -226,9 +226,8 @@ static void rna_Main_scenes_remove(
 static Object *rna_Main_objects_new(Main *bmain, ReportList *reports, const char *name, ID *data)
 {
   if (data != NULL && (data->tag & LIB_TAG_NO_MAIN)) {
-    BKE_report(reports,
-               RPT_ERROR,
-               "Can not create object in main database with an evaluated data");
+    BKE_report(
+        reports, RPT_ERROR, "Can not create object in main database with an evaluated data");
     return NULL;
   }
 
@@ -1329,11 +1328,8 @@ void RNA_def_main_images(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string_file_path(
       func, "filepath", "File Path", 0, "", "Path of the file to load");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(func,
-                  "check_existing",
-                  false,
-                  "",
-                  "Using existing data if this file is already loaded");
+  RNA_def_boolean(
+      func, "check_existing", false, "", "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "image", "Image", "", "New image data");
   RNA_def_function_return(func, parm);
@@ -1505,11 +1501,8 @@ void RNA_def_main_fonts(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string_file_path(
       func, "filepath", "File Path", 0, "", "path of the font to load");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(func,
-                  "check_existing",
-                  false,
-                  "",
-                  "Using existing data if this file is already loaded");
+  RNA_def_boolean(
+      func, "check_existing", false, "", "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "vfont", "VectorFont", "", "New font data");
   RNA_def_function_return(func, parm);
@@ -1778,8 +1771,7 @@ void RNA_def_main_texts(BlenderRNA *brna, PropertyRNA *cprop)
   func = RNA_def_function(srna, "load", "rna_Main_texts_load");
   RNA_def_function_flag(func, FUNC_USE_REPORTS);
   RNA_def_function_ui_description(func, "Add a new text to the main database from a file");
-  parm = RNA_def_string_file_path(
-      func, "filepath", "Path", FILE_MAX, "", "path for the data");
+  parm = RNA_def_string_file_path(func, "filepath", "Path", FILE_MAX, "", "path for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   parm = RNA_def_boolean(
       func, "internal", 0, "Make internal", "Make text file internal after loading");
@@ -1806,14 +1798,10 @@ void RNA_def_main_sounds(BlenderRNA *brna, PropertyRNA *cprop)
   /* load func */
   func = RNA_def_function(srna, "load", "rna_Main_sounds_load");
   RNA_def_function_ui_description(func, "Add a new sound to the main database from a file");
-  parm = RNA_def_string_file_path(
-      func, "filepath", "Path", FILE_MAX, "", "path for the data");
+  parm = RNA_def_string_file_path(func, "filepath", "Path", FILE_MAX, "", "path for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(func,
-                  "check_existing",
-                  false,
-                  "",
-                  "Using existing data if this file is already loaded");
+  RNA_def_boolean(
+      func, "check_existing", false, "", "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "sound", "Sound", "", "New text data");
   RNA_def_function_return(func, parm);
@@ -1935,8 +1923,7 @@ void RNA_def_main_particles(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string(func, "name", "ParticleSettings", 0, "", "New name for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* return type */
-  parm = RNA_def_pointer(
-      func, "particle", "ParticleSettings", "", "New particle settings data");
+  parm = RNA_def_pointer(func, "particle", "ParticleSettings", "", "New particle settings data");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Main_ID_remove");
@@ -2056,8 +2043,7 @@ void RNA_def_main_gpencil(BlenderRNA *brna, PropertyRNA *cprop)
   parm = RNA_def_string(func, "name", "GreasePencil", 0, "", "New name for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* return type */
-  parm = RNA_def_pointer(
-      func, "grease_pencil", "GreasePencil", "", "New grease pencil data");
+  parm = RNA_def_pointer(func, "grease_pencil", "GreasePencil", "", "New grease pencil data");
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "remove", "rna_Main_ID_remove");
@@ -2117,14 +2103,10 @@ void RNA_def_main_movieclips(BlenderRNA *brna, PropertyRNA *cprop)
       "Add a new movie clip to the main database from a file "
       "(while ``check_existing`` is disabled for consistency with other load functions, "
       "behavior with multiple movie-clips using the same file may incorrectly generate proxies)");
-  parm = RNA_def_string_file_path(
-      func, "filepath", "Path", FILE_MAX, "", "path for the data");
+  parm = RNA_def_string_file_path(func, "filepath", "Path", FILE_MAX, "", "path for the data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  RNA_def_boolean(func,
-                  "check_existing",
-                  false,
-                  "",
-                  "Using existing data if this file is already loaded");
+  RNA_def_boolean(
+      func, "check_existing", false, "", "Using existing data if this file is already loaded");
   /* return type */
   parm = RNA_def_pointer(func, "clip", "MovieClip", "", "New movie clip data");
   RNA_def_function_return(func, parm);
@@ -2148,8 +2130,7 @@ void RNA_def_main_masks(BlenderRNA *brna, PropertyRNA *cprop)
   /* new func */
   func = RNA_def_function(srna, "new", "rna_Main_mask_new");
   RNA_def_function_ui_description(func, "Add a new mask with a given name to the main database");
-  parm = RNA_def_string(
-      func, "name", NULL, MAX_ID_NAME - 2, "Mask", "Name of new mask data");
+  parm = RNA_def_string(func, "name", NULL, MAX_ID_NAME - 2, "Mask", "Name of new mask data");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   /* return type */
   parm = RNA_def_pointer(func, "mask", "Mask", "", "New mask data");

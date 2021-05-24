@@ -215,7 +215,7 @@ DEF_ICON_COLOR(RECOVER_LAST)
 DEF_ICON_COLOR(DUPLICATE)
 DEF_ICON_COLOR(FULLSCREEN_ENTER)
 DEF_ICON_COLOR(FULLSCREEN_EXIT)
-DEF_ICON_COLOR(BLANK1)  /* Not actually blank - this is used all over the place */
+DEF_ICON_COLOR(BLANK1) /* Not actually blank - this is used all over the place */
 DEF_ICON_COLOR(LOAD_GITF)
 DEF_ICON_COLOR(SAVE_GITF)
 DEF_ICON_COLOR(STUCCI_TEX)
@@ -325,19 +325,19 @@ DEF_ICON_COLOR(ATTRIBUTE_VECTOR_ROTATE)
 /* ------------------------- Row 5 --------------------------*/
 
 DEF_ICON_COLOR(VIEW3D)
-DEF_ICON_COLOR(IPO)   /* Graph Editor */
-DEF_ICON_COLOR(OOPS)  /* Outliner */
-DEF_ICON_COLOR(BUTS)  /* Properties */
+DEF_ICON_COLOR(IPO)  /* Graph Editor */
+DEF_ICON_COLOR(OOPS) /* Outliner */
+DEF_ICON_COLOR(BUTS) /* Properties */
 DEF_ICON_COLOR(DISSOLVE_BETWEEN)
 DEF_ICON_COLOR(DISSOLVE_UNSELECTED)
-DEF_ICON_COLOR(INFO)      /* Info Editor */
-DEF_ICON_COLOR(SEQUENCE)  /* Sequencer */
-DEF_ICON_COLOR(TEXT)      /* Text */
-DEF_ICON_COLOR(IMASEL)    /* Image Selector? Not an editor! */
+DEF_ICON_COLOR(INFO)     /* Info Editor */
+DEF_ICON_COLOR(SEQUENCE) /* Sequencer */
+DEF_ICON_COLOR(TEXT)     /* Text */
+DEF_ICON_COLOR(IMASEL)   /* Image Selector? Not an editor! */
 
-DEF_ICON_COLOR(SOUND)   /* Sound? Deprecated? */
-DEF_ICON_COLOR(ACTION)  /* Dope Sheet */
-DEF_ICON_COLOR(NLA)     /* NLA Editor */
+DEF_ICON_COLOR(SOUND)  /* Sound? Deprecated? */
+DEF_ICON_COLOR(ACTION) /* Dope Sheet */
+DEF_ICON_COLOR(NLA)    /* NLA Editor */
 DEF_ICON_COLOR(SCRIPTWIN)
 DEF_ICON_COLOR(TIME)
 DEF_ICON_COLOR(NODETREE)
@@ -347,7 +347,7 @@ DEF_ICON_COLOR(PREFERENCES)
 DEF_ICON_COLOR(CLIP)
 
 DEF_ICON_COLOR(ASSET_MANAGER)
-DEF_ICON_COLOR(TOOLBAR)  /* The toolbar editor */
+DEF_ICON_COLOR(TOOLBAR) /* The toolbar editor */
 DEF_ICON_COLOR(CIRCLE_SELECT)
 DEF_ICON_COLOR(INVERSE)
 DEF_ICON_COLOR(SELECT_ALL)
@@ -414,8 +414,8 @@ DEF_ICON_COLOR(VERTEXCONNECTPATH)
 DEF_ICON_COLOR(VERTEXCONNECT)
 DEF_ICON_COLOR(MARKSHARPEDGES)
 
-DEF_ICON_COLOR(BUTS_ACTIVE)  /* Properties */
-DEF_ICON_COLOR(OOPS_ACTIVE)  /* Outliner */
+DEF_ICON_COLOR(BUTS_ACTIVE) /* Properties */
+DEF_ICON_COLOR(OOPS_ACTIVE) /* Outliner */
 DEF_ICON_COLOR(NLA_ACTIVE)
 DEF_ICON_COLOR(DOPESHEET_ACTIVE)
 DEF_ICON_COLOR(GRAPH_ACTIVE)
@@ -471,7 +471,8 @@ DEF_ICON_COLOR(LATTICE_DATA)
 DEF_ICON_COLOR(APPLY_ROTSCALE)
 DEF_ICON_COLOR(MATERIAL_DATA)
 
-DEF_ICON_COLOR(OUTLINER_DATA_CAMERA) /*bfa - don't remove this version, it is required by an addon*/
+DEF_ICON_COLOR(
+    OUTLINER_DATA_CAMERA) /*bfa - don't remove this version, it is required by an addon*/
 DEF_ICON_COLOR(ANIM_DATA)
 DEF_ICON_COLOR(CAMERA_DATA)
 DEF_ICON_COLOR(PARTICLE_DATA)
@@ -1506,8 +1507,8 @@ DEF_ICON_COLOR(NOCURVE)
 DEF_ICON_COLOR(RNDCURVE)
 DEF_ICON_COLOR(PROP_OFF) /*bfa- don't change the order of the prop icons*/
 
-DEF_ICON_COLOR(PROP_ON)/*bfa- don't change the order of the prop icons*/
-DEF_ICON_COLOR(PROP_CON)/*bfa- don't change the order of the prop icons*/
+DEF_ICON_COLOR(PROP_ON)  /*bfa- don't change the order of the prop icons*/
+DEF_ICON_COLOR(PROP_CON) /*bfa- don't change the order of the prop icons*/
 DEF_ICON_COLOR(CLEAR_TRACK)
 DEF_ICON_COLOR(PARTICLE_POINT)
 DEF_ICON_COLOR(PARTICLE_TIP)

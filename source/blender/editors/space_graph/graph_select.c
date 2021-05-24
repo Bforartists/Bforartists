@@ -476,8 +476,8 @@ static int graphkeys_deselectall_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *wm_graph_ot_select_all_get_description(bContext *UNUSED(C),
-                                                wmOperatorType *UNUSED(ot),
-                                                PointerRNA *ptr)
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
@@ -1453,13 +1453,12 @@ static char *wm_save_as_mainfile_get_description(bContext *UNUSED(C),
 
 /*bfa - descriptions*/
 static char *graph_ot_select_leftright_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                                       wmOperatorType *UNUSED(ot),
+                                                       PointerRNA *ptr)
 {
   if (RNA_enum_get(ptr, "mode") == GRAPHKEYS_LRSEL_LEFT) {
 
-    return BLI_strdup(
-        "Select keyframes to the left of the current frame");
+    return BLI_strdup("Select keyframes to the left of the current frame");
   }
   return NULL;
 }
@@ -1476,7 +1475,7 @@ void GRAPH_OT_select_leftright(wmOperatorType *ot)
   /* api callbacks  */
   ot->invoke = graphkeys_select_leftright_invoke;
   ot->exec = graphkeys_select_leftright_exec;
-  ot->get_description = graph_ot_select_leftright_get_description;/*bfa - descriptions*/
+  ot->get_description = graph_ot_select_leftright_get_description; /*bfa - descriptions*/
   ot->poll = graphop_visible_keyframes_poll;
 
   /* flags */

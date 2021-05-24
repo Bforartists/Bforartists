@@ -1148,7 +1148,7 @@ static void pose_slide_draw_status(bContext *C, tPoseSlideOp *pso)
     case PS_TFM_BBONE_SHAPE:
       BLI_strncpy(limits_str,
                   TIP_("W/E/R/[B]/C - Bendy Bone properties only (B to clear) | %s"),
-                  sizeof(limits_str));/*bfa - changed keys from grs to wer*/
+                  sizeof(limits_str)); /*bfa - changed keys from grs to wer*/
       break;
     case PS_TFM_PROPS:
       BLI_strncpy(limits_str,
@@ -1521,7 +1521,7 @@ static int pose_slide_modal(bContext *C, wmOperator *op, const wmEvent *event)
             break;
           }
 
-          /* Overshoot. */
+            /* Overshoot. */
             /*bfa - changed the new hardcoded key from E to S*/
           case EVT_SKEY: {
             pso->overshoot = !pso->overshoot;

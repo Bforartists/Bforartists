@@ -2601,7 +2601,12 @@ void uiTemplateOperatorRedoProperties(uiLayout *layout, const bContext *C)
 
     UI_block_func_handle_set(block, ED_undo_operator_repeat_cb_evt, op);
     template_operator_property_buts_draw_recursive(
-        C, op, layout, UI_BUT_LABEL_ALIGN_SPLIT_COLUMN, layout_flags, NULL /* &has_advanced */);/* bfa - align left if boolean prop */
+        C,
+        op,
+        layout,
+        UI_BUT_LABEL_ALIGN_SPLIT_COLUMN,
+        layout_flags,
+        NULL /* &has_advanced */); /* bfa - align left if boolean prop */
     /* Warning! this leaves the handle function for any other users of this block. */
 
 #if 0
@@ -5476,8 +5481,15 @@ void uiTemplatePalette(uiLayout *layout,
     RNA_enum_set(but->opptr, "type", 1);
 
     /* Menu. */
-    uiDefIconMenuBut(
-        block, ui_template_palette_menu, NULL, ICON_SORTSIZE, 0, 0, UI_UNIT_X, UI_UNIT_Y, "Sort By");
+    uiDefIconMenuBut(block,
+                     ui_template_palette_menu,
+                     NULL,
+                     ICON_SORTSIZE,
+                     0,
+                     0,
+                     UI_UNIT_X,
+                     UI_UNIT_Y,
+                     "Sort By");
   }
 
   col = uiLayoutColumn(layout, true);

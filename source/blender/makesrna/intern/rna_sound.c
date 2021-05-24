@@ -56,8 +56,7 @@ static void rna_def_sound(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Sound", "ID");
   RNA_def_struct_sdna(srna, "bSound");
-  RNA_def_struct_ui_text(
-      srna, "Sound", "Sound data referencing an external or packed sound file");
+  RNA_def_struct_ui_text(srna, "Sound", "Sound data referencing an external or packed sound file");
   RNA_def_struct_ui_icon(srna, ICON_SOUND);
 
   /*rna_def_ipo_common(srna); */

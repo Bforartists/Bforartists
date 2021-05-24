@@ -598,7 +598,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
         subblock = uiLayoutGetBlock(col);
         UI_block_layout_set_current(subblock, col);
 
-                but = uiDefButF(block,
+        but = uiDefButF(block,
                         UI_BTYPE_NUM,
                         B_TRANSFORM_PANEL_MEDIAN,
                         "",
@@ -1416,12 +1416,12 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       drawLocation = false; /* bfa - hide location for child bones */
     }
   }
-  
-  if (drawLocation){
+
+  if (drawLocation) {
     col = uiLayoutColumn(layout, false);               /* bfa - col = layout.column() */
     row = uiLayoutRow(col, true);                      /* bfa - row = col.row(align=True) */
     uiItemR(row, ptr, "location", 0, NULL, ICON_NONE); /* bfa - row.prop(ob, "location") */
-    uiLayoutSetPropDecorate(row, false);               /* bfa - row.use_property_decorate = False */
+    uiLayoutSetPropDecorate(row, false); /* bfa - row.use_property_decorate = False */
     /* bfa - row.prop(ob, "lock_location", text="", emboss=False, icon='DECORATE_UNLOCKED') */
     uiLayoutSetEmboss(row, UI_EMBOSS_NONE); /* bfa - emboss=False */
     uiItemR(row,

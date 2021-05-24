@@ -343,16 +343,14 @@ static int object_hide_view_set_exec(bContext *C, wmOperator *op)
 }
 /*bfa - descriptions*/
 static char *object_ot_hide_view_set_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup(
-        "Temporarily hide unselected objects from the viewport");
+    return BLI_strdup("Temporarily hide unselected objects from the viewport");
   }
   return NULL;
 }
-
 
 void OBJECT_OT_hide_view_set(wmOperatorType *ot)
 {

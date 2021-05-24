@@ -1082,8 +1082,8 @@ static int pose_hide_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *pose_ot_hide_get_description(bContext *UNUSED(C),
-                                                     wmOperatorType *UNUSED(ot),
-                                                     PointerRNA *ptr)
+                                          wmOperatorType *UNUSED(ot),
+                                          PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
     return BLI_strdup("Hide unselected bones in Pose Mode");

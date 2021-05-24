@@ -1559,8 +1559,7 @@ static void VIEW2D_OT_zoom_border(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Zoom Border";
-  ot->description =
-      "Drawing rectangle with LMB zooms in. Drawing rectangle with MMB zooms out";
+  ot->description = "Drawing rectangle with LMB zooms in. Drawing rectangle with MMB zooms out";
   ot->idname = "VIEW2D_OT_zoom_border";
 
   /* api callbacks */

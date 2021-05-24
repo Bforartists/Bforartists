@@ -59,11 +59,7 @@ const EnumPropertyItem rna_enum_particle_edit_hair_brush_items[] = {
 
 #ifndef RNA_RUNTIME
 static const EnumPropertyItem rna_enum_gpencil_lock_axis_items[] = {
-    {GP_LOCKAXIS_VIEW,
-     "VIEW",
-     ICON_VIEW,
-     "View",
-     "Align strokes to current view plane"},
+    {GP_LOCKAXIS_VIEW, "VIEW", ICON_VIEW, "View", "Align strokes to current view plane"},
     {GP_LOCKAXIS_Y,
      "AXIS_Y",
      ICON_AXIS_FRONT,
@@ -788,8 +784,10 @@ static void rna_def_sculpt(BlenderRNA *brna)
   prop = RNA_def_property(srna, "detail_size", PROP_FLOAT, PROP_PIXEL);
   RNA_def_property_ui_range(prop, 0.5, 40.0, 0.1, 2);
   RNA_def_property_ui_scale_type(prop, PROP_SCALE_CUBIC);
-  RNA_def_property_ui_text(
-      prop, "Detail Size", "Maximum edge length for dynamic topology sculpting (in pixels)\nHotkey in the default keymap: Shift D");
+  RNA_def_property_ui_text(prop,
+                           "Detail Size",
+                           "Maximum edge length for dynamic topology sculpting (in "
+                           "pixels)\nHotkey in the default keymap: Shift D");
   RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL);
 
   prop = RNA_def_property(srna, "detail_percent", PROP_FLOAT, PROP_PERCENTAGE);
@@ -1279,11 +1277,13 @@ static void rna_def_particle_edit(BlenderRNA *brna)
   prop = RNA_def_property(srna, "size", PROP_INT, PROP_PIXEL);
   RNA_def_property_range(prop, 1, SHRT_MAX);
   RNA_def_property_ui_range(prop, 1, MAX_BRUSH_PIXEL_RADIUS, 10, 3);
-  RNA_def_property_ui_text(prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: F");
+  RNA_def_property_ui_text(
+      prop, "Radius", "Radius of the brush in pixels\nHotkey in the default keymap: F");
 
   prop = RNA_def_property(srna, "strength", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_range(prop, 0.001, 1.0);
-  RNA_def_property_ui_text(prop, "Strength", "Brush strength\nHotkey in the default keymap: Shift + F");
+  RNA_def_property_ui_text(
+      prop, "Strength", "Brush strength\nHotkey in the default keymap: Shift + F");
 
   prop = RNA_def_property(srna, "count", PROP_INT, PROP_NONE);
   RNA_def_property_range(prop, 1, 1000);
