@@ -373,8 +373,8 @@ typedef struct ScrArea {
 
   char spacetype; /* eSpace_Type (SPACE_FOO) */
   /* Temporarily used while switching area type, otherwise this should be
-	 * SPACE_EMPTY. Also, versioning uses it to nicely replace deprecated
-	 * editors. It's been there for ages, name doesn't fit any more... */
+   * SPACE_EMPTY. Also, versioning uses it to nicely replace deprecated
+   * editors. It's been there for ages, name doesn't fit any more... */
   /** #eSpace_Type (SPACE_FOO). */
   char butspacetype;
   short butspacetype_subtype;

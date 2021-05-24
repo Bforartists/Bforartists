@@ -324,9 +324,9 @@ static void gpencil_modifier_panel_header(const bContext *UNUSED(C), Panel *pane
   bool narrow_panel = (panel->sizex < UI_UNIT_X * 9 && panel->sizex != 0);
 
   /* Modifier Icon. */
-row = uiLayoutRow(layout, false);
-if (mti->isDisabled && mti->isDisabled(md, 0)) {
-  uiLayoutSetRedAlert(row, true);
+  row = uiLayoutRow(layout, false);
+  if (mti->isDisabled && mti->isDisabled(md, 0)) {
+    uiLayoutSetRedAlert(row, true);
   }
   uiItemL(row, "", RNA_struct_ui_icon(ptr->type));
 

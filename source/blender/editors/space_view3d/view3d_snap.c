@@ -58,9 +58,8 @@
 
 #include "view3d_intern.h"
 
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+#include "BLI_string.h"      /*bfa - needed for BLI_strdup */
 #include "BLT_translation.h" /*bfa - needed for CTX_IFACE_ */
-
 
 static bool snap_curs_to_sel_ex(bContext *C, float cursor[3]);
 static bool snap_calc_active_center(bContext *C, const bool select_only, float r_center[3]);
@@ -594,7 +593,6 @@ static int snap_selected_to_cursor_exec(bContext *C, wmOperator *op)
   return snap_selected_to_location(C, snap_target_global, use_offset);
 }
 
-
 /*bfa - tool name*/
 static const char *view3d_ot_snap_selected_to_cursor_get_name(wmOperatorType *ot, PointerRNA *ptr)
 {
@@ -616,7 +614,6 @@ static char *view3d_ot_snap_selected_to_cursor_get_description(bContext *UNUSED(
   }
   return NULL;
 }
-
 
 void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 {

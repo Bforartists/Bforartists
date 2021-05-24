@@ -508,8 +508,8 @@ static int graph_select_all_markers_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *clip_ot_graph_select_all_markers_get_description(bContext *UNUSED(C),
-                                                    wmOperatorType *UNUSED(ot),
-                                                    PointerRNA *ptr)
+                                                              wmOperatorType *UNUSED(ot),
+                                                              PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {

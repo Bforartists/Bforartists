@@ -599,8 +599,8 @@ static int paint_mask_slice_exec(bContext *C, wmOperator *op)
 }
 /*bfa - descriptions*/
 static char *wm_paint_mask_slide_get_description(bContext *UNUSED(C),
-                                                wmOperatorType *UNUSED(ot),
-                                                PointerRNA *ptr)
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
 {
   const bool fill_holes = RNA_boolean_get(ptr, "fill_holes");
   const bool new_object = RNA_boolean_get(ptr, "new_object");
@@ -611,8 +611,7 @@ static char *wm_paint_mask_slide_get_description(bContext *UNUSED(C),
   }
   /*Mask Slice and Fill Holes*/
   else if (fill_holes && !new_object) {
-    return BLI_strdup(
-        "Slices the paint mask from the mesh and fills existing holes");
+    return BLI_strdup("Slices the paint mask from the mesh and fills existing holes");
   }
   /*Mask Slice to New Object*/
   else if (new_object) {

@@ -24,17 +24,15 @@
 static bNodeSocketTemplate sh_node_bsdf_principled_in[] = {
     {SOCK_RGBA, N_("Base Color"), 0.8f, 0.8f, 0.8f, 1.0f, 0.0f, 1.0f},
     {SOCK_FLOAT, N_("Subsurface"), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},
-         {
-             SOCK_VECTOR,
-             N_("Subsurface Radius (R,G,B)"),
-             1.0f,
-             0.2f,
-             0.1f,
-             0.0f,
-             0.0f,
-             100.0f,
-             PROP_NONE
-         },
+    {SOCK_VECTOR,
+     N_("Subsurface Radius (R,G,B)"),
+     1.0f,
+     0.2f,
+     0.1f,
+     0.0f,
+     0.0f,
+     100.0f,
+     PROP_NONE},
     /* SOCK_COMPACT}, */ /*bfa - show subsurface radius expanded*/
     {SOCK_RGBA, N_("Subsurface Color"), 0.8f, 0.8f, 0.8f, 1.0f, 0.0f, 1.0f},
     {SOCK_FLOAT, N_("Metallic"), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_FACTOR},

@@ -472,8 +472,8 @@ static int lattice_select_all_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *lattice_ot_select_all_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                                   wmOperatorType *UNUSED(ot),
+                                                   PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
