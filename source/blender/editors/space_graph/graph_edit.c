@@ -1526,7 +1526,8 @@ void GRAPH_OT_interpolation_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Interpolation";
   ot->idname = "GRAPH_OT_interpolation_type";
   ot->description =
-      "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the selected keyframes";
+      "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the "
+      "selected keyframes";
 
   /* API callbacks */
   ot->invoke = WM_menu_invoke;

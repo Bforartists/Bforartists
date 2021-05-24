@@ -2996,20 +2996,18 @@ static int view3d_all_exec(bContext *C, wmOperator *op)
 }
 
 static char *view3d_ot_view_all_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                                wmOperatorType *UNUSED(ot),
+                                                PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_all_regions")) {
     return BLI_strdup(
         "View all objects in scene in all four Quad View views\nJust relevant for Quad View");
   }
   else if (RNA_boolean_get(ptr, "center")) {
-    return BLI_strdup(
-        "Views all objects in scene and centers the 3D cursor");
+    return BLI_strdup("Views all objects in scene and centers the 3D cursor");
   }
   return NULL;
 }
-
 
 void VIEW3D_OT_view_all(wmOperatorType *ot)
 {
@@ -3164,12 +3162,11 @@ static int viewselected_exec(bContext *C, wmOperator *op)
 }
 /*bfa - descriptions*/
 static char *view3d_ot_view_selected_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_all_regions")) {
-    return BLI_strdup(
-        "Move the View to the selection center in all Quad View views");
+    return BLI_strdup("Move the View to the selection center in all Quad View views");
   }
   return NULL;
 }
@@ -3183,7 +3180,7 @@ void VIEW3D_OT_view_selected(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = viewselected_exec;
-  ot->get_description = view3d_ot_view_selected_get_description;/*bfa - descriptions*/
+  ot->get_description = view3d_ot_view_selected_get_description; /*bfa - descriptions*/
   ot->poll = view3d_zoom_or_dolly_poll;
 
   /* flags */
@@ -3552,7 +3549,9 @@ void VIEW3D_OT_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Render Region";
   ot->description =
-      "Box select a portion of the Viewport to render a part of it\nRequires Viewport shading rendered \nViewport and Camera Render Region rectangle are independant\nWorks in Viewport just with Cycles";
+      "Box select a portion of the Viewport to render a part of it\nRequires Viewport shading "
+      "rendered \nViewport and Camera Render Region rectangle are independant\nWorks in Viewport "
+      "just with Cycles";
   ot->idname = "VIEW3D_OT_render_border";
 
   /* api callbacks */
@@ -3613,7 +3612,9 @@ void VIEW3D_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And
+                                                      // UNDERSTANDABLE! That's how a tooltip
+                                                      // should look like.
   ot->idname = "VIEW3D_OT_clear_render_border";
 
   /* api callbacks */

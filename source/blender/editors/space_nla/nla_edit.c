@@ -177,12 +177,14 @@ static int nlaedit_enable_tweakmode_exec(bContext *C, wmOperator *op)
 }
 
 static char *nla_ot_tweakmode_enter_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "isolate_action")) {
     return BLI_strdup(
-        "Enter tweak mode to edit the keyframes of just the selected action strip of this object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to NLA editor and leave tweak mode");
+        "Enter tweak mode to edit the keyframes of just the selected action strip of this "
+        "object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to NLA "
+        "editor and leave tweak mode");
   }
   return NULL;
 }
@@ -195,7 +197,9 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
   ot->name = "Enter Tweak Mode";
   ot->idname = "NLA_OT_tweakmode_enter";
   ot->description =
-      "Enter tweak mode to edit the keyframes of the action strips of this object\nSwitch to Dope Sheet editor to edit the keyframes\nWhen done switch back to NLA editor and leave tweak mode";
+      "Enter tweak mode to edit the keyframes of the action strips of this object\nSwitch to Dope "
+      "Sheet editor to edit the keyframes\nWhen done switch back to NLA editor and leave tweak "
+      "mode";
 
   /* api callbacks */
   ot->exec = nlaedit_enable_tweakmode_exec;
@@ -2331,10 +2335,22 @@ void NLA_OT_clear_scale(wmOperatorType *ot)
 static const EnumPropertyItem prop_nlaedit_snap_types[] = {
     {NLAEDIT_SNAP_CFRA, "CFRA", ICON_SNAP_CURRENTFRAME, "Selection to Current Frame", ""},
     /* XXX as single entry? */
-    {NLAEDIT_SNAP_NEAREST_FRAME, "NEAREST_FRAME", ICON_SNAP_NEARESTFRAME, "Selection to Nearest Frame", ""},
+    {NLAEDIT_SNAP_NEAREST_FRAME,
+     "NEAREST_FRAME",
+     ICON_SNAP_NEARESTFRAME,
+     "Selection to Nearest Frame",
+     ""},
     /* XXX as single entry? */
-    {NLAEDIT_SNAP_NEAREST_SECOND, "NEAREST_SECOND", ICON_SNAP_NEARESTSECOND, "Selection to Nearest Second", ""},
-    {NLAEDIT_SNAP_NEAREST_MARKER, "NEAREST_MARKER", ICON_SNAP_NEARESTMARKER, "Selection to Nearest Marker", ""},
+    {NLAEDIT_SNAP_NEAREST_SECOND,
+     "NEAREST_SECOND",
+     ICON_SNAP_NEARESTSECOND,
+     "Selection to Nearest Second",
+     ""},
+    {NLAEDIT_SNAP_NEAREST_MARKER,
+     "NEAREST_MARKER",
+     ICON_SNAP_NEARESTMARKER,
+     "Selection to Nearest Marker",
+     ""},
     {0, NULL, 0, NULL, NULL},
 };
 

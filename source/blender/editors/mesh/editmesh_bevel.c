@@ -956,7 +956,7 @@ static void edbm_bevel_ui(bContext *C, wmOperator *op)
   uiLayoutSetActive(col, affect_type == BEVEL_AFFECT_EDGES);
   uiItemR(col, op->ptr, "mark_seam", 0, IFACE_("Mark Seams"), ICON_NONE);
   uiItemR(col, op->ptr, "mark_sharp", 0, IFACE_("Mark Sharp"), ICON_NONE);
-  uiLayoutSetPropSep(layout, true);/*bfa - checkboxes end. split again*/
+  uiLayoutSetPropSep(layout, true); /*bfa - checkboxes end. split again*/
 
   uiItemS(layout);
 
@@ -1067,7 +1067,8 @@ void MESH_OT_bevel(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Bevel";
   ot->description =
-      "Cut into selected items at an angle to create bevel or chamfer\nVertex Bevel is a separated tool, but has the "
+      "Cut into selected items at an angle to create bevel or chamfer\nVertex Bevel is a "
+      "separated tool, but has the "
       "same functionality\nActivate the tool, then drag mouse until the geometry changes\nFiner "
       "adjustments can be done in the Last operator panel then";
   ot->idname = "MESH_OT_bevel";

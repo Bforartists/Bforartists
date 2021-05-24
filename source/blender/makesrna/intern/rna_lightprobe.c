@@ -75,8 +75,7 @@ static void rna_def_lightprobe(BlenderRNA *brna)
   PropertyRNA *prop;
 
   srna = RNA_def_struct(brna, "LightProbe", "ID");
-  RNA_def_struct_ui_text(
-      srna, "LightProbe", "Light Probe data for lighting capture objects");
+  RNA_def_struct_ui_text(srna, "LightProbe", "Light Probe data for lighting capture objects");
   RNA_def_struct_ui_icon(srna, ICON_OUTLINER_DATA_LIGHTPROBE);
 
   prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);

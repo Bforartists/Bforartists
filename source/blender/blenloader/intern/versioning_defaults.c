@@ -151,8 +151,8 @@ static void blo_update_defaults_screen(bScreen *screen,
 
       /* Reset size so it uses consistent defaults from the region types. */
       /*bfa - NEVER ! - this is the cause for single row tool shelf factory default*/
-      //region->sizex = 0;
-      //region->sizey = 0;
+      // region->sizex = 0;
+      // region->sizey = 0;
     }
 
     if (area->spacetype == SPACE_IMAGE) {
@@ -314,7 +314,7 @@ static void blo_update_defaults_scene(Main *bmain, Scene *scene)
 
   /* bfa - NOPE. WE TURN USE NODES ON BY DEFAULT!*/
   ///* Don't enable compositing nodes. */
-  //if (scene->nodetree) {
+  // if (scene->nodetree) {
   //  ntreeFreeEmbeddedTree(scene->nodetree);
   //  MEM_freeN(scene->nodetree);
   //  scene->nodetree = NULL;

@@ -3444,7 +3444,9 @@ static void rna_def_tool_settings(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "vertex_group_weight", PROP_FLOAT, PROP_FACTOR);
   RNA_def_property_float_sdna(prop, NULL, "vgroup_weight");
-  RNA_def_property_ui_text(prop, "Vertex Group Weight", "Weight to assign in vertex groups\nHotkey in default keymap: CTRL+F");
+  RNA_def_property_ui_text(prop,
+                           "Vertex Group Weight",
+                           "Weight to assign in vertex groups\nHotkey in default keymap: CTRL+F");
 
   prop = RNA_def_property(srna, "use_edge_path_live_unwrap", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "edge_mode_live_unwrap", 1);
@@ -3588,7 +3590,8 @@ static void rna_def_unified_paint_settings(BlenderRNA *brna)
   RNA_def_property_flag(prop, PROP_CONTEXT_UPDATE);
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_ui_range(prop, 0.0f, 1.0f, 0.001, 3);
-  RNA_def_property_ui_text(prop, "Weight", "Weight to assign in vertex groups\nHotkey in default keymap: CTRL+F");
+  RNA_def_property_ui_text(
+      prop, "Weight", "Weight to assign in vertex groups\nHotkey in default keymap: CTRL+F");
   RNA_def_property_update(prop, 0, "rna_UnifiedPaintSettings_update");
 
   prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR_GAMMA);
@@ -4887,8 +4890,7 @@ void rna_def_freestyle_settings(BlenderRNA *brna)
   srna = RNA_def_struct(brna, "FreestyleSettings", NULL);
   RNA_def_struct_sdna(srna, "FreestyleConfig");
   RNA_def_struct_nested(brna, srna, "ViewLayer");
-  RNA_def_struct_ui_text(
-      srna, "Freestyle Settings", "Freestyle settings for a ViewLayer");
+  RNA_def_struct_ui_text(srna, "Freestyle Settings", "Freestyle settings for a ViewLayer");
 
   prop = RNA_def_property(srna, "modules", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "modules", NULL);
@@ -7178,7 +7180,9 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   prop = RNA_def_property(srna, "use_volumetric_blending", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "flag", SCE_EEVEE_VOLUMETRIC_BLENDING);
   RNA_def_property_ui_text(
-      prop, "Volumetric Blending", "Enable volumes blending with previous frame in Viewport\nRender result is not affected");
+      prop,
+      "Volumetric Blending",
+      "Enable volumes blending with previous frame in Viewport\nRender result is not affected");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_OVERRIDABLE_LIBRARY);
   RNA_def_property_update(prop, NC_SCENE | ND_RENDER_OPTIONS, NULL);
 

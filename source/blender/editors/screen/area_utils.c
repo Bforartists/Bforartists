@@ -64,7 +64,8 @@ int ED_region_generic_tools_region_snap_size(const ARegion *region, int size, in
   /* bfa - readd tabs to tools area, take tabs' width into account when snapping*/
   float offset = 0.0;
   // check if panel has tabs visible
-  if (region->panels_category.first && region->panels_category.first != region->panels_category.last) {
+  if (region->panels_category.first &&
+      region->panels_category.first != region->panels_category.last) {
     if (RGN_ALIGN_ENUM_FROM_MASK(region->alignment) != RGN_ALIGN_RIGHT) {
       offset = 20;
     }

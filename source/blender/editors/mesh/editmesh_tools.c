@@ -2356,12 +2356,11 @@ static int edbm_hide_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *mesh_ot_hide_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                          wmOperatorType *UNUSED(ot),
+                                          PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup(
-        "Hide unselected vertices, edges or faces");
+    return BLI_strdup("Hide unselected vertices, edges or faces");
   }
   return NULL;
 }
@@ -2480,8 +2479,8 @@ static int edbm_normals_make_consistent_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *mesh_ot_normals_make_consistent_get_description(bContext *UNUSED(C),
-                                                     wmOperatorType *UNUSED(ot),
-                                                     PointerRNA *ptr)
+                                                             wmOperatorType *UNUSED(ot),
+                                                             PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "inside")) {
     return BLI_strdup("Make selected face and vertex normals point inside the mesh");
@@ -2493,8 +2492,7 @@ void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Recalculate Normals Outside";
-  ot->description =
-      "Make selected face and vertex normals point outside the mesh";
+  ot->description = "Make selected face and vertex normals point outside the mesh";
   ot->idname = "MESH_OT_normals_make_consistent";
 
   /* api callbacks */
