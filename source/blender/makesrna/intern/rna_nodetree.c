@@ -12462,6 +12462,16 @@ static int node_type_to_icon(int type)
     case CMP_NODE_EXPOSURE:
       icon = ICON_EXPOSURE;
       break;
+    case GEO_NODE_INPUT_MATERIAL:
+      icon = ICON_NODE_MATERIAL;
+      break;
+    case GEO_NODE_MATERIAL_ASSIGN:
+      icon = ICON_MATERIAL_ADD;
+      break;
+    case GEO_NODE_MATERIAL_REPLACE:
+      icon = ICON_MATERIAL_REPLACE;
+      break;
+
       /*primitives*/
     case GEO_NODE_MESH_PRIMITIVE_CUBE:
       icon = ICON_MESH_CUBE;
