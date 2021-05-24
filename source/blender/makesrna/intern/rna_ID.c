@@ -1634,8 +1634,7 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_struct_name_property(srna, prop);
 
   prop = RNA_def_property(srna, "name_full", PROP_STRING, PROP_NONE);
-  RNA_def_property_ui_text(
-      prop, "Full Name", "Unique data ID name, including library one is any");
+  RNA_def_property_ui_text(prop, "Full Name", "Unique data ID name, including library one is any");
   RNA_def_property_string_funcs(prop, "rna_ID_name_full_get", "rna_ID_name_full_length", NULL);
   RNA_def_property_string_maxlength(prop, MAX_ID_FULL_NAME);
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -1728,8 +1727,8 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "copy", "rna_ID_copy");
-  RNA_def_function_ui_description(
-      func, "Create a copy of this data (not supported for all datas)");
+  RNA_def_function_ui_description(func,
+                                  "Create a copy of this data (not supported for all datas)");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
   parm = RNA_def_pointer(func, "id", "ID", "", "New copy of the ID");
   RNA_def_function_return(func, parm);
@@ -1849,7 +1848,7 @@ static void rna_def_library(BlenderRNA *brna)
   prop = RNA_def_property(srna, "parent", PROP_POINTER, PROP_NONE);
   RNA_def_property_struct_type(prop, "Library");
   RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
- RNA_def_property_ui_text(prop, "Parent", "Parent");
+  RNA_def_property_ui_text(prop, "Parent", "Parent");
 
   prop = RNA_def_property(srna, "packed_file", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "packedfile");

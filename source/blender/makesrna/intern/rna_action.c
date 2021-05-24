@@ -417,9 +417,8 @@ static void rna_def_dopesheet(BlenderRNA *brna)
   /* NLA Specific Settings */
   prop = RNA_def_property(srna, "show_missing_nla", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "filterflag", ADS_FILTER_NLA_NOACT);
-  RNA_def_property_ui_text(prop,
-                           "Include Missing NLA",
-                           "Include animation data with no NLA data (NLA editor only)");
+  RNA_def_property_ui_text(
+      prop, "Include Missing NLA", "Include animation data with no NLA data (NLA editor only)");
   RNA_def_property_ui_icon(prop, ICON_ACTION, 0);
   RNA_def_property_update(prop, NC_ANIMATION | ND_ANIMCHAN | NA_EDITED, NULL);
 

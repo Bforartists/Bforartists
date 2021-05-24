@@ -355,8 +355,8 @@ static int actkeys_deselectall_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *action_ot_select_all_get_description(bContext *UNUSED(C),
-                                                    wmOperatorType *UNUSED(ot),
-                                                    PointerRNA *ptr)
+                                                  wmOperatorType *UNUSED(ot),
+                                                  PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
@@ -1513,8 +1513,8 @@ static int actkeys_select_leftright_invoke(bContext *C, wmOperator *op, const wm
 
 /*bfa - descriptions*/
 static char *action_ot_select_leftright_get_description(bContext *UNUSED(C),
-                                                       wmOperatorType *UNUSED(ot),
-                                                       PointerRNA *ptr)
+                                                        wmOperatorType *UNUSED(ot),
+                                                        PointerRNA *ptr)
 {
   if (RNA_enum_get(ptr, "mode") == ACTKEYS_LRSEL_LEFT) {
 

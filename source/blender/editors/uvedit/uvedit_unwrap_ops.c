@@ -1907,8 +1907,15 @@ void UV_OT_unwrap(wmOperatorType *ot)
       0,
       "Use Subdivision Surface",
       "Map UVs taking vertex position after Subdivision Surface modifier has been applied");
-  RNA_def_float_factor(
-      ot->srna, "margin", 0.01f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);/* bfa - change the defaults of uv margin*/
+  RNA_def_float_factor(ot->srna,
+                       "margin",
+                       0.01f,
+                       0.0f,
+                       1.0f,
+                       "Margin",
+                       "Space between islands",
+                       0.0f,
+                       1.0f); /* bfa - change the defaults of uv margin*/
 }
 
 /** \} */

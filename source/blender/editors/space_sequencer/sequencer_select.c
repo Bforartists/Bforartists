@@ -442,8 +442,8 @@ static int sequencer_de_select_all_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *sequencer_ot_select_all_get_description(bContext *UNUSED(C),
-                                                wmOperatorType *UNUSED(ot),
-                                                PointerRNA *ptr)
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
@@ -1234,7 +1234,11 @@ void SEQUENCER_OT_select_side_of_frame(wmOperatorType *ot)
   static const EnumPropertyItem sequencer_select_left_right_types[] = {
       {-1, "LEFT", ICON_RESTRICT_SELECT_OFF, "Left", "Select to the left of the current frame"},
       {1, "RIGHT", ICON_RESTRICT_SELECT_OFF, "Right", "Select to the right of the current frame"},
-      {2, "CURRENT", ICON_RESTRICT_SELECT_OFF, "Current Frame", "Select intersecting with the current frame"},
+      {2,
+       "CURRENT",
+       ICON_RESTRICT_SELECT_OFF,
+       "Current Frame",
+       "Select intersecting with the current frame"},
       {0, NULL, 0, NULL, NULL},
   };
 

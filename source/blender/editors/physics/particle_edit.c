@@ -1850,8 +1850,8 @@ static int pe_select_all_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *particle_ot_select_all_get_description(bContext *UNUSED(C),
-                                                wmOperatorType *UNUSED(ot),
-                                                PointerRNA *ptr)
+                                                    wmOperatorType *UNUSED(ot),
+                                                    PointerRNA *ptr)
 {
   /*Select*/
   if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
@@ -2501,8 +2501,8 @@ static int hide_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *particle_ot_hide_get_description(bContext *UNUSED(C),
-                                                     wmOperatorType *UNUSED(ot),
-                                                     PointerRNA *ptr)
+                                              wmOperatorType *UNUSED(ot),
+                                              PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
     return BLI_strdup("Hide unselected particles");

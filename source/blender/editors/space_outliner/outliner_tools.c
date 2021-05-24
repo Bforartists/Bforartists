@@ -426,7 +426,11 @@ typedef enum eOutliner_PropSceneOps {
 } eOutliner_PropSceneOps;
 
 static const EnumPropertyItem prop_scene_op_types[] = {
-    {OL_SCENE_OP_DELETE, "DELETE", ICON_DELETE, "Delete", ""}, /*bfa - replaced the ICON_X by ICON_DELETE*/
+    {OL_SCENE_OP_DELETE,
+     "DELETE",
+     ICON_DELETE,
+     "Delete",
+     ""}, /*bfa - replaced the ICON_X by ICON_DELETE*/
     {0, NULL, 0, NULL, NULL},
 };
 
@@ -2816,7 +2820,7 @@ static int outliner_operator_menu(bContext *C, const char *opname)
   uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_REGION_WIN);
   uiItemsEnumO(layout, ot->idname, RNA_property_identifier(ot->prop));
 
-/* bfa - removed the OUTLINER_MT_context menu*/
+  /* bfa - removed the OUTLINER_MT_context menu*/
   /*uiItemS(layout);
 
   uiItemMContents(layout, "OUTLINER_MT_context_menu");*/

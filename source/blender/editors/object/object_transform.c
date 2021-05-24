@@ -1565,8 +1565,7 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
 
   /* identifiers */
   ot->name = "Set Origin";
-  ot->description =
-      "Set the object's origin by the following method";
+  ot->description = "Set the object's origin by the following method";
   ot->idname = "OBJECT_OT_origin_set";
 
   /* api callbacks */

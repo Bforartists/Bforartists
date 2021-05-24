@@ -714,15 +714,16 @@ void IMAGE_OT_view_zoom(wmOperatorType *ot)
   ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR_XY | OPTYPE_LOCK_BYPASS;
 
   /* properties */
-  prop = RNA_def_float(ot->srna,
-                       "factor",
-                       0.0f,
-                       -FLT_MAX,
-                       FLT_MAX,
-                       "Factor",
-                       "Factor\nZoom factor, values higher than 1.0 zoom in, lower values zoom out",
-                       -FLT_MAX,
-                       FLT_MAX);
+  prop = RNA_def_float(
+      ot->srna,
+      "factor",
+      0.0f,
+      -FLT_MAX,
+      FLT_MAX,
+      "Factor",
+      "Factor\nZoom factor, values higher than 1.0 zoom in, lower values zoom out",
+      -FLT_MAX,
+      FLT_MAX);
   RNA_def_property_flag(prop, PROP_HIDDEN);
 
   WM_operator_properties_use_cursor_init(ot);
@@ -813,12 +814,11 @@ static int image_view_all_exec(bContext *C, wmOperator *op)
 }
 /*bfa - descriptions*/
 static char *image_ot_view_all_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                               wmOperatorType *UNUSED(ot),
+                                               PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "fit_view")) {
-    return BLI_strdup(
-        "Fits the content area into the window");
+    return BLI_strdup("Fits the content area into the window");
   }
   return NULL;
 }
@@ -834,7 +834,7 @@ void IMAGE_OT_view_all(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = image_view_all_exec;
-  ot->get_description = image_ot_view_all_get_description;  /*bfa - descriptions*/
+  ot->get_description = image_ot_view_all_get_description; /*bfa - descriptions*/
   ot->poll = space_image_main_region_poll;
 
   /* flags */
@@ -2055,8 +2055,8 @@ static bool image_save_as_poll(bContext *C)
 
 /*bfa - descriptions*/
 static char *image_ot_save_as_get_description(bContext *UNUSED(C),
-                                                    wmOperatorType *UNUSED(ot),
-                                                    PointerRNA *ptr)
+                                              wmOperatorType *UNUSED(ot),
+                                              PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "copy")) {
     return BLI_strdup("Saves a copy of the current Image");
@@ -3211,8 +3211,7 @@ void IMAGE_OT_unpack(wmOperatorType *ot)
   RNA_def_enum(
       ot->srna, "method", rna_enum_unpack_method_items, PF_USE_LOCAL, "Method", "How to unpack");
   /* XXX, weak!, will fail with library, name collisions */
-  RNA_def_string(
-      ot->srna, "id", NULL, MAX_ID_NAME - 2, "Image Name", "Image name to unpack");
+  RNA_def_string(ot->srna, "id", NULL, MAX_ID_NAME - 2, "Image Name", "Image name to unpack");
 }
 
 /** \} */
@@ -3848,7 +3847,9 @@ void IMAGE_OT_clear_render_border(wmOperatorType *ot)
   /* identifiers */
   ot->name = "Clear Render Region";
   ot->description =
-      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
+      "Removes an existing Render Region rectangle";  // Short, pregnant, working. And
+                                                      // UNDERSTANDABLE! That's how a tooltip
+                                                      // should look like.
   ot->idname = "IMAGE_OT_clear_render_border";
 
   /* api callbacks */

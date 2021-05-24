@@ -46,8 +46,8 @@
 
 #include "DEG_depsgraph.h"
 
+#include "BLI_string.h"  /*bfa - needed for BLI_strdup */
 #include "mask_intern.h" /* own include */
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
 
 /* -------------------------------------------------------------------- */
 /** \name Public Mask Selection API
@@ -234,22 +234,18 @@ static char *wm_mask_select_all_get_description(bContext *UNUSED(C),
                                                 wmOperatorType *UNUSED(ot),
                                                 PointerRNA *ptr)
 {
-    /*Select*/
-   if (RNA_enum_get (ptr, "action") == SEL_SELECT)
-    {
-      return BLI_strdup(
-          "Select all curve points");
-    }
-   /*Deselect*/
-   else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
-     return BLI_strdup(
-         "Deselect all curve points");
-   }
-   /*Invert*/
-   else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
-     return BLI_strdup(
-         "Invert selection of the selected curve points");
-   }
+  /*Select*/
+  if (RNA_enum_get(ptr, "action") == SEL_SELECT) {
+    return BLI_strdup("Select all curve points");
+  }
+  /*Deselect*/
+  else if (RNA_enum_get(ptr, "action") == SEL_DESELECT) {
+    return BLI_strdup("Deselect all curve points");
+  }
+  /*Invert*/
+  else if (RNA_enum_get(ptr, "action") == SEL_INVERT) {
+    return BLI_strdup("Invert selection of the selected curve points");
+  }
   return NULL;
 }
 
