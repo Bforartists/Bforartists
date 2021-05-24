@@ -92,7 +92,7 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
   style->paneltitle.shadx = 0;
   style->paneltitle.shady = -1;
   style->paneltitle.shadowalpha = 0.15f; /* bfa 0.5f*/
-  style->paneltitle.shadowcolor = 1.0f; /* bfa 0.0f*/
+  style->paneltitle.shadowcolor = 1.0f;  /* bfa 0.0f*/
 
   style->grouplabel.uifont_id = uifont_id;
   style->grouplabel.points = UI_DEFAULT_TITLE_POINTS;
@@ -109,15 +109,15 @@ static uiStyle *ui_style_new(ListBase *styles, const char *name, short uifont_id
   style->widgetlabel.shadow = 3;
   style->widgetlabel.shadx = 0;
   style->widgetlabel.shady = -1;
-  style->widgetlabel.shadowalpha = 0.15f;/* bfa 0.5f*/
-  style->widgetlabel.shadowcolor = 1.0f;/* bfa 0.0f*/
+  style->widgetlabel.shadowalpha = 0.15f; /* bfa 0.5f*/
+  style->widgetlabel.shadowcolor = 1.0f;  /* bfa 0.0f*/
 
   style->widget.uifont_id = uifont_id;
   style->widget.points = UI_DEFAULT_TEXT_POINTS;
   style->widget.kerning = 1;
-  style->widget.shadow = 0; /* bfa 1*/
-  style->widget.shady = 0; /* bfa -1*/
-  style->widget.shadowalpha = 0.25f;/* bfa 0.5f*/
+  style->widget.shadow = 0;          /* bfa 1*/
+  style->widget.shady = 0;           /* bfa -1*/
+  style->widget.shadowalpha = 0.25f; /* bfa 0.5f*/
   style->widget.shadowcolor = 0.0f;
 
   style->columnspace = 8;

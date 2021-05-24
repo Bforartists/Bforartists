@@ -23,7 +23,6 @@
 #include "MEM_guardedalloc.h"
 
 #include <string.h>
-#include <string.h>
 
 #include "BKE_action.h"
 #include "BKE_anim_data.h"

@@ -7833,9 +7833,7 @@ static void def_cmp_zcombine(StructRNA *srna)
   prop = RNA_def_property(srna, "use_antialias_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "custom2", 0);
   RNA_def_property_ui_text(
-      prop,
-      "Anti-Alias Z",
-      "Anti-alias the z-buffer to try to avoid artifacts");
+      prop, "Anti-Alias Z", "Anti-alias the z-buffer to try to avoid artifacts");
   RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
@@ -11644,8 +11642,7 @@ static void rna_def_nodetree(BlenderRNA *brna)
   parm = RNA_def_pointer(
       func, "result_1", "NodeTree", "Node Tree", "Active node tree from context");
   RNA_def_function_output(func, parm);
-  parm = RNA_def_pointer(
-      func, "result_2", "ID", "Owner ID", "ID data that owns the node tree");
+  parm = RNA_def_pointer(func, "result_2", "ID", "Owner ID", "ID data that owns the node tree");
   RNA_def_function_output(func, parm);
   parm = RNA_def_pointer(
       func, "result_3", "ID", "From ID", "Original ID data selected from the context");
@@ -11762,7 +11759,7 @@ static void rna_def_geometry_nodetree(BlenderRNA *brna)
 static int node_type_to_icon(int type)
 {
   int icon = ICON_NONE;
-    switch (type) {
+  switch (type) {
     /* bfa - Shader Nodes */
     /* bfa - Input */
     case SH_NODE_AMBIENT_OCCLUSION:
@@ -12517,7 +12514,7 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_RESAMPLE:
       icon = ICON_CURVE_RESAMPLE;
       break;
-    }
+  }
   return icon;
 }
 
@@ -12527,8 +12524,7 @@ static StructRNA *define_specific_node(BlenderRNA *brna,
                                        const char *ui_name,
                                        const char *ui_desc,
                                        const int ui_icon,
-                                       void (*def_func)(StructRNA *)
-                                       )
+                                       void (*def_func)(StructRNA *))
 {
   StructRNA *srna;
   FunctionRNA *func;
@@ -12624,8 +12620,13 @@ void RNA_def_nodetree(BlenderRNA *brna)
 
 #  define DefNode(Category, ID, DefFunc, EnumName, StructName, UIName, UIDesc) \
     { \
-      srna = define_specific_node( \
-          brna, #Category #StructName, #Category, UIName, UIDesc, node_type_to_icon(ID), DefFunc); \
+      srna = define_specific_node(brna, \
+                                  #Category #StructName, \
+                                  #Category, \
+                                  UIName, \
+                                  UIDesc, \
+                                  node_type_to_icon(ID), \
+                                  DefFunc); \
       if (ID == CMP_NODE_OUTPUT_FILE) { \
         /* needs brna argument, can't use NOD_static_types.h */ \
         def_cmp_output_file(brna, srna); \
@@ -12641,9 +12642,11 @@ void RNA_def_nodetree(BlenderRNA *brna)
    * individually. Cannot use the static types header for this, since they share the same int id.
    */
   define_specific_node(brna, "ShaderNodeGroup", "ShaderNode", "Group", "", ICON_NONE, def_group);
-  define_specific_node(brna, "CompositorNodeGroup", "CompositorNode", "Group", "", ICON_NONE, def_group);
+  define_specific_node(
+      brna, "CompositorNodeGroup", "CompositorNode", "Group", "", ICON_NONE, def_group);
   define_specific_node(brna, "TextureNodeGroup", "TextureNode", "Group", "", ICON_NONE, def_group);
-  define_specific_node(brna, "GeometryNodeGroup", "GeometryNode", "Group", "", ICON_NONE, def_group);
+  define_specific_node(
+      brna, "GeometryNodeGroup", "GeometryNode", "Group", "", ICON_NONE, def_group);
   def_custom_group(brna,
                    "ShaderNodeCustomGroup",
                    "ShaderNode",

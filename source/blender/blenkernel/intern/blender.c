@@ -152,7 +152,7 @@ static void bforartists_version_init(void)
   BLI_snprintf(bforartists_version_string,
                ARRAY_SIZE(bforartists_version_string),
 
-               "%d.%d.%d",              /*"%d.%02d.%d%s",*/
+               "%d.%d.%d",               /*"%d.%02d.%d%s",*/
                BFORARTISTS_VERSION / 10, /*BLENDER_VERSION / 100*/
                BFORARTISTS_VERSION % 10, /*BLENDER_VERSION % 100*/
                BFORARTISTS_VERSION_PATCH);

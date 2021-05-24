@@ -464,8 +464,7 @@ static void vicon_collection_color_draw(
 
   const float aspect = (float)ICON_DEFAULT_WIDTH / (float)w;
 
-  UI_icon_draw_ex(
-      x, y, ICON_GROUP_BRIGHT, aspect, 1.0f, 0.0f, collection_color->color, true);
+  UI_icon_draw_ex(x, y, ICON_GROUP_BRIGHT, aspect, 1.0f, 0.0f, collection_color->color, true);
 }
 
 #  define DEF_ICON_COLLECTION_COLOR_DRAW(index, color) \

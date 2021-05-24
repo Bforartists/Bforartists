@@ -159,9 +159,23 @@ static const EnumPropertyItem rna_enum_object_empty_image_depth_items[] = {
 };
 
 const EnumPropertyItem rna_enum_object_gpencil_type_items[] = {
-    {GP_EMPTY, "EMPTY", ICON_EMPTY_AXIS, "Blank", "Create an empty grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"},
-    {GP_STROKE, "STROKE", ICON_STROKE, "Stroke", "Create a simple stroke with basic colors\nSwitch to Draw mode to draw grease pencil strokes"},
-    {GP_MONKEY, "MONKEY", ICON_MONKEY, "Monkey", "Construct a Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"},
+    {GP_EMPTY,
+     "EMPTY",
+     ICON_EMPTY_AXIS,
+     "Blank",
+     "Create an empty grease pencil object\nSwitch to Draw mode to draw grease pencil strokes"},
+    {GP_STROKE,
+     "STROKE",
+     ICON_STROKE,
+     "Stroke",
+     "Create a simple stroke with basic colors\nSwitch to Draw mode to draw grease pencil "
+     "strokes"},
+    {GP_MONKEY,
+     "MONKEY",
+     ICON_MONKEY,
+     "Monkey",
+     "Construct a Suzanne grease pencil object\nSwitch to Draw mode to draw grease pencil "
+     "strokes"},
     {0, "", 0, NULL, NULL},
     {GP_LRT_SCENE,
      "LRT_SCENE",
@@ -3375,7 +3389,10 @@ static void rna_def_object(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
   RNA_def_property_ui_text(
-      prop, "Color", "The color to display the object in the viewport\nYou need to be in Viewport Shading Solid\nAnd the Color type in the viewport shading settings must be Object");
+      prop,
+      "Color",
+      "The color to display the object in the viewport\nYou need to be in Viewport Shading "
+      "Solid\nAnd the Color type in the viewport shading settings must be Object");
   RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_Object_internal_update_draw");
 
   /* physics */
