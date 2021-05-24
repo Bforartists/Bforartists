@@ -891,7 +891,7 @@ bool ui_popup_context_menu_for_button(bContext *C, uiBut *but)
                      "all",
                      1);
     }
- 
+
     if (is_idprop && !is_array && ELEM(type, PROP_INT, PROP_FLOAT)) {
       uiItemO(layout,
               CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Assign Value as Default"),

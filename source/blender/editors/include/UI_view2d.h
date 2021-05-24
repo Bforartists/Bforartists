@@ -64,8 +64,10 @@ enum eView2D_CommonViewTypes {
 /* ------ Defines for Scrollers ----- */
 
 /** Scroll bar area. */
-#define V2D_SCROLL_HEIGHT (0.55f * U.widget_unit) /*bfa - scrollbar width vertical - changed from 0.45 to 0.55*/
-#define V2D_SCROLL_WIDTH (0.55f * U.widget_unit) /*bfa - scrollbar width vertical - changed from 0.45 to 0.55*/
+#define V2D_SCROLL_HEIGHT \
+  (0.55f * U.widget_unit) /*bfa - scrollbar width vertical - changed from 0.45 to 0.55*/
+#define V2D_SCROLL_WIDTH \
+  (0.55f * U.widget_unit) /*bfa - scrollbar width vertical - changed from 0.45 to 0.55*/
 /** Scroll bars with 'handles' used for scale (zoom). */
 #define V2D_SCROLL_HANDLE_HEIGHT (0.6f * U.widget_unit)
 #define V2D_SCROLL_HANDLE_WIDTH (0.6f * U.widget_unit)

@@ -699,7 +699,8 @@ static int object_add_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_add(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Add Lattice Object";  // bfa - Original was Add Object. But is used to create a Lattice object. Not sure if this gets reused somewhere.
+  ot->name = "Add Lattice Object";  // bfa - Original was Add Object. But is used to create a
+                                    // Lattice object. Not sure if this gets reused somewhere.
   ot->description = "Add an Lattice object to the scene";
   ot->idname = "OBJECT_OT_add";
 
@@ -2089,12 +2090,11 @@ static int object_delete_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *object_ot_delete_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                              wmOperatorType *UNUSED(ot),
+                                              PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "use_global")) {
-    return BLI_strdup(
-        "Delete selected objects from all scenes");
+    return BLI_strdup("Delete selected objects from all scenes");
   }
   return NULL;
 }
@@ -2107,7 +2107,8 @@ void OBJECT_OT_delete(wmOperatorType *ot)
   ot->idname = "OBJECT_OT_delete";
 
   /* api callbacks */
-  //ot->invoke = WM_operator_confirm_or_exec; // bfa - turned off the confirmation dialog for deleting an object in object mode.
+  // ot->invoke = WM_operator_confirm_or_exec; // bfa - turned off the confirmation dialog for
+  // deleting an object in object mode.
   ot->exec = object_delete_exec;
   ot->get_description = object_ot_delete_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_objectmode;

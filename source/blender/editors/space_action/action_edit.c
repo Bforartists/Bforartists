@@ -53,9 +53,9 @@
 #include "BKE_nla.h"
 #include "BKE_report.h"
 
-#include "UI_view2d.h"
 #include "UI_interface.h" /*bfa - needed for the icons*/
 #include "UI_resources.h" /*bfa - needed for the icons*/
+#include "UI_view2d.h"
 
 #include "ED_anim_api.h"
 #include "ED_gpencil.h"
@@ -1120,8 +1120,8 @@ static int actkeys_clean_exec(bContext *C, wmOperator *op)
 }
 
 static char *action_ot_clean_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                             wmOperatorType *UNUSED(ot),
+                                             PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "channels")) {
     return BLI_strdup(
@@ -1390,7 +1390,8 @@ void ACTION_OT_interpolation_type(wmOperatorType *ot)
   ot->name = "Set Keyframe Interpolation";
   ot->idname = "ACTION_OT_interpolation_type";
   ot->description =
-      "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the selected keyframes";
+      "Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the "
+      "selected keyframes";
 
   /* api callbacks */
   ot->invoke = WM_menu_invoke;

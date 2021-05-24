@@ -609,7 +609,7 @@ extern StructRNA RNA_SpaceSpreadsheet;
 extern StructRNA RNA_SpaceTextEditor;
 extern StructRNA RNA_SpaceUVEditor;
 extern StructRNA RNA_SpaceView3D;
-extern StructRNA RNA_SpaceToolbarEditor; // bfa -toolbar editor
+extern StructRNA RNA_SpaceToolbarEditor;  // bfa -toolbar editor
 extern StructRNA RNA_Speaker;
 extern StructRNA RNA_SpeedControlSequence;
 extern StructRNA RNA_Spline;

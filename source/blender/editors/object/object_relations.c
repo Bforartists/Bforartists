@@ -1096,7 +1096,8 @@ static int parent_set_invoke_menu(bContext *C, wmOperatorType *ot)
 #if 0
   uiItemEnumO_ptr(layout, ot, NULL, 0, "type", PAR_OBJECT);
 #else
-  uiItemFullO_ptr(layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, NULL, WM_OP_EXEC_DEFAULT, 0, &opptr);
+  uiItemFullO_ptr(
+      layout, ot, IFACE_("Object"), ICON_PARENT_OBJECT, NULL, WM_OP_EXEC_DEFAULT, 0, &opptr);
   RNA_enum_set(&opptr, "type", PAR_OBJECT);
   RNA_boolean_set(&opptr, "keep_transform", false);
 
@@ -1792,14 +1793,34 @@ void OBJECT_OT_make_links_data(wmOperatorType *ot)
 {
   static const EnumPropertyItem make_links_items[] = {
       {MAKE_LINKS_OBDATA, "OBDATA", ICON_LINK_DATA, "Object Data", "Replace assigned Object Data"},
-      {MAKE_LINKS_MATERIALS, "MATERIAL", ICON_LINK_DATA, "Materials", "Replace assigned Materials"},
-      {MAKE_LINKS_ANIMDATA, "ANIMATION", ICON_LINK_DATA, "Animation Data", "Replace assigned Animation Data"},
+      {MAKE_LINKS_MATERIALS,
+       "MATERIAL",
+       ICON_LINK_DATA,
+       "Materials",
+       "Replace assigned Materials"},
+      {MAKE_LINKS_ANIMDATA,
+       "ANIMATION",
+       ICON_LINK_DATA,
+       "Animation Data",
+       "Replace assigned Animation Data"},
       {MAKE_LINKS_GROUP, "GROUPS", ICON_LINK_DATA, "Collection", "Replace assigned Collections"},
-      {MAKE_LINKS_DUPLICOLLECTION, "DUPLICOLLECTION", ICON_LINK_DATA, "Instance Collection", "Replace assigned Collection Instance"},
-      {MAKE_LINKS_FONTS, "FONTS", ICON_OUTLINER_OB_FONT, "Link Fonts to Text", "Replace Text object Fonts"},
+      {MAKE_LINKS_DUPLICOLLECTION,
+       "DUPLICOLLECTION",
+       ICON_LINK_DATA,
+       "Instance Collection",
+       "Replace assigned Collection Instance"},
+      {MAKE_LINKS_FONTS,
+       "FONTS",
+       ICON_OUTLINER_OB_FONT,
+       "Link Fonts to Text",
+       "Replace Text object Fonts"},
       {0, "", 0, NULL, NULL},
       {MAKE_LINKS_MODIFIERS, "MODIFIERS", ICON_LINK_DATA, "Modifiers", "Replace Modifiers"},
-      {MAKE_LINKS_SHADERFX, "EFFECTS", ICON_SHADERFX, "Copy Grease Pencil Effects", "Replace Grease Pencil Effects"},
+      {MAKE_LINKS_SHADERFX,
+       "EFFECTS",
+       ICON_SHADERFX,
+       "Copy Grease Pencil Effects",
+       "Replace Grease Pencil Effects"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -2295,7 +2316,11 @@ void OBJECT_OT_make_local(wmOperatorType *ot)
 {
   static const EnumPropertyItem type_items[] = {
       {MAKE_LOCAL_SELECT_OB, "SELECT_OBJECT", ICON_MAKE_LOCAL, "Selected Objects", ""},
-      {MAKE_LOCAL_SELECT_OBDATA, "SELECT_OBDATA", ICON_MAKE_LOCAL, "Selected Objects and Data", ""},
+      {MAKE_LOCAL_SELECT_OBDATA,
+       "SELECT_OBDATA",
+       ICON_MAKE_LOCAL,
+       "Selected Objects and Data",
+       ""},
       {MAKE_LOCAL_SELECT_OBDATA_MATERIAL,
        "SELECT_OBDATA_MATERIAL",
        ICON_MAKE_LOCAL,
@@ -2501,7 +2526,9 @@ void OBJECT_OT_make_override_library(wmOperatorType *ot)
 {
   /* identifiers */
   ot->name = "Make Library Override";
-  ot->description = "Make a local override of this library linked data\nIterates through the hierarchy of objects and collections based on the selection";
+  ot->description =
+      "Make a local override of this library linked data\nIterates through the hierarchy of "
+      "objects and collections based on the selection";
   ot->idname = "OBJECT_OT_make_override_library";
 
   /* api callbacks */

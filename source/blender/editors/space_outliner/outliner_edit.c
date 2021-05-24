@@ -1203,7 +1203,6 @@ static char *outliner_ot_select_all_get_description(bContext *UNUSED(C),
   return NULL;
 }
 
-
 void OUTLINER_OT_select_all(wmOperatorType *ot)
 {
   /* identifiers */
@@ -1599,15 +1598,14 @@ static int outliner_one_level_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *outliner_ot_show_one_level_get_description(bContext *UNUSED(C),
-                                                   wmOperatorType *UNUSED(ot),
-                                                   PointerRNA *ptr)
+                                                        wmOperatorType *UNUSED(ot),
+                                                        PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "open")) {
     return BLI_strdup("Expand all entries by one level");
   }
   return NULL;
 }
-
 
 void OUTLINER_OT_show_one_level(wmOperatorType *ot)
 {
@@ -2361,20 +2359,21 @@ static int outliner_orphans_purge_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *wm_orphans_purge_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                              wmOperatorType *UNUSED(ot),
+                                              PointerRNA *ptr)
 {
   const bool linked = RNA_boolean_get(ptr, "do_linked_ids");
   const bool local = RNA_boolean_get(ptr, "do_local_ids");
   const bool recursive = RNA_boolean_get(ptr, "do_recursive");
 
   /*Unused data*/
-  if (linked && local && !recursive){
+  if (linked && local && !recursive) {
     return BLI_strdup("Remove unused data from the scene");
   }
   /*Recursive Unused data*/
   else if (linked && local && recursive) {
-    return BLI_strdup("Recursively remove unused data from the scene\nChild objects will be removed too");
+    return BLI_strdup(
+        "Recursively remove unused data from the scene\nChild objects will be removed too");
   }
   /*Unused Linked Data*/
   else if (linked && !local && !recursive) {
@@ -2382,7 +2381,9 @@ static char *wm_orphans_purge_get_description(bContext *UNUSED(C),
   }
   /*Recursive Unused Linked Data*/
   else if (linked && !local && recursive) {
-    return BLI_strdup("Recursively remove unused linked Data from the scene\nLocal data will stay intact\nChild objects will be removed too");
+    return BLI_strdup(
+        "Recursively remove unused linked Data from the scene\nLocal data will stay intact\nChild "
+        "objects will be removed too");
   }
   /*Unused Local Data*/
   else if (!linked && local && !recursive) {
@@ -2390,7 +2391,9 @@ static char *wm_orphans_purge_get_description(bContext *UNUSED(C),
   }
   /*Recursive Unused Local Data*/
   else if (!linked && local && recursive) {
-    return BLI_strdup("Recursively remove unused local data from the scene\nLinked data will stay intact\nChild objects will be removed too");
+    return BLI_strdup(
+        "Recursively remove unused local data from the scene\nLinked data will stay intact\nChild "
+        "objects will be removed too");
   }
   return NULL;
 }

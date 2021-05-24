@@ -319,12 +319,11 @@ static int graphview_curves_hide_exec(bContext *C, wmOperator *op)
 }
 
 static char *graph_ot_hide_get_description(bContext *UNUSED(C),
-                                                 wmOperatorType *UNUSED(ot),
-                                                 PointerRNA *ptr)
+                                           wmOperatorType *UNUSED(ot),
+                                           PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
-    return BLI_strdup(
-        "Hide unselected curves from Graph Editor view");
+    return BLI_strdup("Hide unselected curves from Graph Editor view");
   }
   return NULL;
 }
@@ -338,7 +337,7 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
 
   /* api callbacks */
   ot->exec = graphview_curves_hide_exec;
-  ot->get_description = graph_ot_hide_get_description;/*bfa - descriptions*/
+  ot->get_description = graph_ot_hide_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_graphedit_active;
 
   /* flags */

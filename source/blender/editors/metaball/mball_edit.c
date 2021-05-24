@@ -713,8 +713,8 @@ static int hide_metaelems_exec(bContext *C, wmOperator *op)
 
 /*bfa - descriptions*/
 static char *mball_ot_hide_metaelems_get_description(bContext *UNUSED(C),
-                                                             wmOperatorType *UNUSED(ot),
-                                                             PointerRNA *ptr)
+                                                     wmOperatorType *UNUSED(ot),
+                                                     PointerRNA *ptr)
 {
   if (RNA_boolean_get(ptr, "unselected")) {
     return BLI_strdup("Hide unselected metaball element(s)");

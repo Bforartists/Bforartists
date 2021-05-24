@@ -932,10 +932,10 @@ struct SpaceTopBar *CTX_wm_space_topbar(const bContext *C)
 // bfa - toolbar editor
 struct SpaceToolbar *CTX_wm_space_toolbar(const bContext *C)
 {
-	ScrArea *sa = CTX_wm_area(C);
-	if (sa && sa->spacetype == SPACE_TOOLBAR)
-		return sa->spacedata.first;
-	return NULL;
+  ScrArea *sa = CTX_wm_area(C);
+  if (sa && sa->spacetype == SPACE_TOOLBAR)
+    return sa->spacedata.first;
+  return NULL;
 }
 
 struct SpaceSpreadsheet *CTX_wm_space_spreadsheet(const bContext *C)

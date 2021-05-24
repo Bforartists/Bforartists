@@ -221,8 +221,7 @@ const EnumPropertyItem rna_enum_space_file_browse_mode_items[] = {
   }
 #define SACT_ITEM_CACHEFILE \
   { \
-    SACTCONT_CACHEFILE, "CACHEFILE", ICON_FILE, "Cache File", \
-        "Edit timings for Cache File data" \
+    SACTCONT_CACHEFILE, "CACHEFILE", ICON_FILE, "Cache File", "Edit timings for Cache File data" \
   }
 
 #ifndef RNA_RUNTIME
@@ -390,11 +389,22 @@ static const EnumPropertyItem autosnap_items[] = {
      "Second Step",
      "Snap to 1.0 second intervals"},
     /* {-1, "", 0, "", ""}, */
-    {SACTSNAP_FRAME, "FRAME", ICON_SNAP_NEARESTFRAME, "Nearest Frame", "Snap to actual frames (nla-action time)"},
-    {SACTSNAP_SECOND, "SECOND", ICON_SNAP_NEARESTSECOND,"Nearest Second",
+    {SACTSNAP_FRAME,
+     "FRAME",
+     ICON_SNAP_NEARESTFRAME,
+     "Nearest Frame",
+     "Snap to actual frames (nla-action time)"},
+    {SACTSNAP_SECOND,
+     "SECOND",
+     ICON_SNAP_NEARESTSECOND,
+     "Nearest Second",
      "Snap to actual seconds (nla-action time)"},
     /* {-1, "", 0, "", ""}, */
-    {SACTSNAP_MARKER, "MARKER", ICON_SNAP_NEARESTMARKER, "Nearest Marker", "Snap to nearest marker"},
+    {SACTSNAP_MARKER,
+     "MARKER",
+     ICON_SNAP_NEARESTMARKER,
+     "Nearest Marker",
+     "Snap to nearest marker"},
     {0, NULL, 0, NULL, NULL},
 };
 #endif
@@ -3370,7 +3380,11 @@ static void rna_def_space_image_uv(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem pixel_snap_mode_items[] = {
-      {SI_PIXEL_SNAP_DISABLED, "DISABLED", ICON_SNAPTOPIXEL_OFF, "Disabled", "Don't snap to pixels"},
+      {SI_PIXEL_SNAP_DISABLED,
+       "DISABLED",
+       ICON_SNAPTOPIXEL_OFF,
+       "Disabled",
+       "Don't snap to pixels"},
       {SI_PIXEL_SNAP_CORNER, "CORNER", ICON_SNAPTOPIXEL_CORNER, "Corner", "Snap to pixel corners"},
       {SI_PIXEL_SNAP_CENTER, "CENTER", ICON_SNAPTOPIXEL_CENTER, "Center", "Snap to pixel centers"},
       {0, NULL, 0, NULL, NULL},
@@ -4050,7 +4064,11 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "show_ortho_grid", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_ORTHO_GRID);
-  RNA_def_property_ui_text(prop, "Display Grid", "Show the ground grid in the viewport"); /*bfa - we show or hide the grid in all views with the ortho grid flag*/
+  RNA_def_property_ui_text(
+      prop,
+      "Display Grid",
+      "Show the ground grid in the viewport"); /*bfa - we show or hide the grid in all views with
+                                                  the ortho grid flag*/
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_floor", PROP_BOOLEAN, PROP_NONE);
@@ -4059,24 +4077,33 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   /*bfa - the toolshelf tabs*/
-	prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
+  prop = RNA_def_property(srna, "show_toolshelf_tabs", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "gridflag", V3D_SHOW_TOOLSHELF_TABS);
   RNA_def_property_ui_text(prop, "Toolshelf Tabs", "Show the tabs in the tool shelf");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_axis_x", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_X);
-  RNA_def_property_ui_text(prop, "Display X Axis", "Show the X axis line in perspectivic view.\nNote that in orthographic view this button has no effect");
+  RNA_def_property_ui_text(prop,
+                           "Display X Axis",
+                           "Show the X axis line in perspectivic view.\nNote that in orthographic "
+                           "view this button has no effect");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_axis_y", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_Y);
-  RNA_def_property_ui_text(prop, "Display Y Axis", "Show the Y axis line in perspectivic view.\nNote that in orthographic view this button has no effect");
+  RNA_def_property_ui_text(prop,
+                           "Display Y Axis",
+                           "Show the Y axis line in perspectivic view.\nNote that in orthographic "
+                           "view this button has no effect");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "show_axis_z", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_Z);
-  RNA_def_property_ui_text(prop, "Display Z Axis", "Show the Z axis line in perspectivic view.\nNote that in orthographic view this button has no effect");
+  RNA_def_property_ui_text(prop,
+                           "Display Z Axis",
+                           "Show the Z axis line in perspectivic view.\nNote that in orthographic "
+                           "view this button has no effect");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
   prop = RNA_def_property(srna, "grid_scale", PROP_FLOAT, PROP_NONE);
@@ -4096,7 +4123,10 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
 
   prop = RNA_def_property(srna, "grid_subdivisions", PROP_INT, PROP_NONE);
   RNA_def_property_int_sdna(prop, NULL, "gridsubdiv");
-  RNA_def_property_ui_text(prop, "Grid Subdivisions", "Number of subdivisions between grid lines\nJust active with a Unit System of None");
+  RNA_def_property_ui_text(
+      prop,
+      "Grid Subdivisions",
+      "Number of subdivisions between grid lines\nJust active with a Unit System of None");
   RNA_def_property_range(prop, 1, 1024);
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
@@ -4538,7 +4568,8 @@ static void rna_def_space_view3d_overlay(BlenderRNA *brna)
   RNA_def_property_float_sdna(prop, NULL, "overlay.gpencil_vertex_paint_opacity");
   RNA_def_property_range(prop, 0.0f, 1.0f);
   RNA_def_property_float_default(prop, 1.0f);
-  RNA_def_property_ui_text(prop, "Opacity", "Vertex Paint mix factor\nNot in wireframe or render shading mode");
+  RNA_def_property_ui_text(
+      prop, "Opacity", "Vertex Paint mix factor\nNot in wireframe or render shading mode");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, "rna_GPencil_update");
 }
 
@@ -5733,7 +5764,8 @@ static void rna_def_space_dopesheet(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "SpaceAction");
   RNA_def_struct_ui_text(srna, "Space Dope Sheet Editor", "Dope Sheet space data");
 
-  rna_def_space_generic_show_region_toggles(srna, (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_CHANNELS)); /*bfa - channels */
+  rna_def_space_generic_show_region_toggles(
+      srna, (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_CHANNELS)); /*bfa - channels */
 
   /* data */
   prop = RNA_def_property(srna, "action", PROP_POINTER, PROP_NONE);
@@ -5900,8 +5932,9 @@ static void rna_def_space_graph(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "SpaceGraph");
   RNA_def_struct_ui_text(srna, "Space Graph Editor", "Graph Editor space data");
 
-  rna_def_space_generic_show_region_toggles(
-      srna, (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_HUD) | (1 << RGN_TYPE_CHANNELS)); /*bfa - channels*/
+  rna_def_space_generic_show_region_toggles(srna,
+                                            (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_HUD) |
+                                                (1 << RGN_TYPE_CHANNELS)); /*bfa - channels*/
 
   /* mode */
   prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
@@ -6047,8 +6080,8 @@ static void rna_def_space_nla(BlenderRNA *brna)
   RNA_def_struct_sdna(srna, "SpaceNla");
   RNA_def_struct_ui_text(srna, "Space Nla Editor", "NLA editor space data");
 
-  rna_def_space_generic_show_region_toggles(srna,
-                                            (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_CHANNELS)); /*bfa - channels*/
+  rna_def_space_generic_show_region_toggles(
+      srna, (1 << RGN_TYPE_UI) | (1 << RGN_TYPE_CHANNELS)); /*bfa - channels*/
 
   /* display */
   prop = RNA_def_property(srna, "show_seconds", PROP_BOOLEAN, PROP_NONE);
@@ -6194,11 +6227,7 @@ static void rna_def_fileselect_idfilter(BlenderRNA *brna)
   static const struct IDFilterBoolean booleans[] = {
       /* Datablocks */
       {FILTER_ID_AC, "filter_action", ICON_ANIM_DATA, "Actions", "Show Action data"},
-      {FILTER_ID_AR,
-       "filter_armature",
-       ICON_ARMATURE_DATA,
-       "Armatures",
-       "Show Armature data"},
+      {FILTER_ID_AR, "filter_armature", ICON_ARMATURE_DATA, "Armatures", "Show Armature data"},
       {FILTER_ID_BR, "filter_brush", ICON_BRUSH_DATA, "Brushes", "Show Brushes data"},
       {FILTER_ID_CA, "filter_camera", ICON_CAMERA_DATA, "Cameras", "Show Camera data"},
       {FILTER_ID_CF, "filter_cachefile", ICON_FILE, "Cache Files", "Show Cache File data"},
@@ -6227,11 +6256,7 @@ static void rna_def_fileselect_idfilter(BlenderRNA *brna)
        "Freestyle Linestyles",
        "Show Freestyle's Line Style data"},
       {FILTER_ID_LT, "filter_lattice", ICON_LATTICE_DATA, "Lattices", "Show Lattice data"},
-      {FILTER_ID_MA,
-       "filter_material",
-       ICON_MATERIAL_DATA,
-       "Materials",
-       "Show Material data"},
+      {FILTER_ID_MA, "filter_material", ICON_MATERIAL_DATA, "Materials", "Show Material data"},
       {FILTER_ID_MB, "filter_metaball", ICON_META_DATA, "Metaballs", "Show Metaball data"},
       {FILTER_ID_MC,
        "filter_movie_clip",
@@ -6240,11 +6265,7 @@ static void rna_def_fileselect_idfilter(BlenderRNA *brna)
        "Show Movie Clip data"},
       {FILTER_ID_ME, "filter_mesh", ICON_MESH_DATA, "Meshes", "Show Mesh data"},
       {FILTER_ID_MSK, "filter_mask", ICON_MOD_MASK, "Masks", "Show Mask data"},
-      {FILTER_ID_NT,
-       "filter_node_tree",
-       ICON_NODETREE,
-       "Node Trees",
-       "Show Node Tree data"},
+      {FILTER_ID_NT, "filter_node_tree", ICON_NODETREE, "Node Trees", "Show Node Tree data"},
       {FILTER_ID_OB, "filter_object", ICON_OBJECT_DATA, "Objects", "Show Object data"},
       {FILTER_ID_PA,
        "filter_particle_settings",
@@ -6275,11 +6296,7 @@ static void rna_def_fileselect_idfilter(BlenderRNA *brna)
       {FILTER_ID_VF, "filter_font", ICON_FONT_DATA, "Fonts", "Show Font data"},
       {FILTER_ID_VO, "filter_volume", ICON_VOLUME_DATA, "Volumes", "Show/hide Volume data"},
       {FILTER_ID_WO, "filter_world", ICON_WORLD, "Worlds", "Show World data"},
-      {FILTER_ID_WS,
-       "filter_work_space",
-       ICON_WORKSPACE,
-       "Workspaces",
-       "Show workspace data"},
+      {FILTER_ID_WS, "filter_work_space", ICON_WORKSPACE, "Workspaces", "Show workspace data"},
 
       /* Categories */
       {FILTER_ID_SCE, "category_scene", ICON_SCENE_DATA, "Scenes", "Show scenes"},
@@ -7071,8 +7088,7 @@ static void rna_def_space_node(BlenderRNA *brna)
   prop = RNA_def_property(srna, "id_from", PROP_POINTER, PROP_NONE);
   RNA_def_property_pointer_sdna(prop, NULL, "from");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-  RNA_def_property_ui_text(
-      prop, "ID From", "Data from which the edited data is linked");
+  RNA_def_property_ui_text(prop, "ID From", "Data from which the edited data is linked");
 
   prop = RNA_def_property(srna, "path", PROP_COLLECTION, PROP_NONE);
   RNA_def_property_collection_sdna(prop, NULL, "treepath", NULL);
@@ -7184,11 +7200,7 @@ static void rna_def_space_clip(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem annotation_source_items[] = {
-      {SC_GPENCIL_SRC_CLIP,
-       "CLIP",
-       0,
-       "Clip",
-       "Show annotation data which belongs to movie clip"},
+      {SC_GPENCIL_SRC_CLIP, "CLIP", 0, "Clip", "Show annotation data which belongs to movie clip"},
       {SC_GPENCIL_SRC_TRACK,
        "TRACK",
        0,

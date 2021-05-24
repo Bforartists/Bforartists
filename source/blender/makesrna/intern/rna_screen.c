@@ -388,7 +388,9 @@ static void rna_def_area(BlenderRNA *brna)
   // bfa - show hide the editortype menu
   prop = RNA_def_property(srna, "show_editortypemenu", PROP_BOOLEAN, PROP_NONE);
   RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_NO_EDITORTYPEMENU);
-  RNA_def_property_ui_text(prop, "Show Editortype menu", "Shows or hides the Editortype menu to change the editor type");
+  RNA_def_property_ui_text(prop,
+                           "Show Editortype menu",
+                           "Shows or hides the Editortype menu to change the editor type");
 
   // bfa - show hide the File toolbars
   prop = RNA_def_property(srna, "file_toolbars", PROP_BOOLEAN, PROP_NONE);
@@ -635,8 +637,7 @@ static void rna_def_screen(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Screen", "ID");
   RNA_def_struct_sdna(srna, "Screen"); /* it is actually bScreen but for 2.5 the dna is patched! */
-  RNA_def_struct_ui_text(
-      srna, "Screen", "Screen data, defining the layout of areas in a window");
+  RNA_def_struct_ui_text(srna, "Screen", "Screen data, defining the layout of areas in a window");
   RNA_def_struct_ui_icon(srna, ICON_WORKSPACE);
 
   /* collections */

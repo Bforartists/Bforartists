@@ -94,7 +94,11 @@ const EnumPropertyItem rna_enum_texture_type_items[] = {
      "Noise",
      "Procedural - random noise, gives a different result every time, for every frame, for every "
      "pixel"},
-    {TEX_STUCCI, "STUCCI", ICON_STUCCI_TEX, "Stucci", "Procedural - create a fractal noise texture"},
+    {TEX_STUCCI,
+     "STUCCI",
+     ICON_STUCCI_TEX,
+     "Stucci",
+     "Procedural - create a fractal noise texture"},
     {TEX_VORONOI,
      "VORONOI",
      ICON_VORONI_TEX,
@@ -1548,8 +1552,7 @@ static void rna_def_texture(BlenderRNA *brna)
 
   srna = RNA_def_struct(brna, "Texture", "ID");
   RNA_def_struct_sdna(srna, "Tex");
-  RNA_def_struct_ui_text(
-      srna, "Texture", "Texture used by materials, lights, worlds and brushes");
+  RNA_def_struct_ui_text(srna, "Texture", "Texture used by materials, lights, worlds and brushes");
   RNA_def_struct_ui_icon(srna, ICON_TEXTURE);
   RNA_def_struct_refine_func(srna, "rna_Texture_refine");
 

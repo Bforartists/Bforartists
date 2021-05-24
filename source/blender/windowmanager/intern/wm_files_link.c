@@ -324,18 +324,12 @@ static bool wm_link_append_item_poll(ReportList *reports,
   if (!BKE_idtype_idcode_is_linkable(idcode) && (do_append || idcode != ID_WS)) {
     if (reports) {
       if (do_append) {
-        BKE_reportf(reports,
-                    RPT_ERROR_INVALID_INPUT,
-                    "Can't append data '%s' of type '%s'",
-                    name,
-                    group);
+        BKE_reportf(
+            reports, RPT_ERROR_INVALID_INPUT, "Can't append data '%s' of type '%s'", name, group);
       }
       else {
-        BKE_reportf(reports,
-                    RPT_ERROR_INVALID_INPUT,
-                    "Can't link data '%s' of type '%s'",
-                    name,
-                    group);
+        BKE_reportf(
+            reports, RPT_ERROR_INVALID_INPUT, "Can't link data '%s' of type '%s'", name, group);
       }
     }
     return false;
@@ -788,14 +782,13 @@ static void lib_relocate_do_remap(Main *bmain,
 
     id_sort_by_name(which_libbase(bmain, GS(old_id->name)), old_id, NULL);
 
-    BKE_reportf(
-        reports,
-        RPT_WARNING,
-        "Lib Reload: Replacing all references to old data '%s' by reloaded one failed, "
-        "old one (%d remaining users) had to be kept and was renamed to '%s'",
-        new_id->name,
-        old_id->us,
-        old_id->name);
+    BKE_reportf(reports,
+                RPT_WARNING,
+                "Lib Reload: Replacing all references to old data '%s' by reloaded one failed, "
+                "old one (%d remaining users) had to be kept and was renamed to '%s'",
+                new_id->name,
+                old_id->us,
+                old_id->name);
   }
 }
 

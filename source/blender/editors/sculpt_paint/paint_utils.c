@@ -80,9 +80,8 @@
 
 #include "paint_intern.h"
 
-#include "BLI_string.h" /*bfa - needed for BLI_strdup */
+#include "BLI_string.h"      /*bfa - needed for BLI_strdup */
 #include "ED_select_utils.h" /*bfa - needed to retreive SEL_SELECT */
-
 
 /* Convert the object-space axis-aligned bounding box (expressed as
  * its minimum and maximum corners) into a screen-space rectangle,

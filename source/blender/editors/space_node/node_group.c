@@ -645,7 +645,7 @@ void NODE_OT_group_separate(wmOperatorType *ot)
   ot->idname = "NODE_OT_group_separate";
 
   /* api callbacks */
-  //ot->invoke = node_group_separate_invoke; // BFA turned off the separate popup menu
+  // ot->invoke = node_group_separate_invoke; // BFA turned off the separate popup menu
   ot->exec = node_group_separate_exec;
   ot->poll = node_group_operator_editable;
 
