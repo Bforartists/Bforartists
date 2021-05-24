@@ -3703,16 +3703,20 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
 
+            props = col.operator("node.add_node", text=" Material              ", icon = "NODE_MATERIAL")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMaterial"
+
             props = col.operator("node.add_node", text=" Object Info            ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
 
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
             props = col.operator("node.add_node", text=" Random Float       ", icon = "RANDOM_FLOAT")
             props.use_transform = True
             props.type = "FunctionNodeRandomFloat"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" String                    ", icon = "STRING")
             props.use_transform = True
@@ -3742,6 +3746,10 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeIsViewport"
 
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MATERIAL")
+            props.use_transform = True
+            props.type = "GeometryNodeInputMaterial"
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "GeometryNodeObjectInfo"
@@ -3761,6 +3769,61 @@ class NODES_PT_geom_add_input(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_VECTOR")
             props.use_transform = True
             props.type = "FunctionNodeInputVector"
+
+
+#add input panel
+class NODES_PT_geom_add_material(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Material"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Material Assign      ", icon = "MATERIAL_ADD")
+            props.use_transform = True
+            props.type = "GeometryNodeMaterialAssign"
+
+            props = col.operator("node.add_node", text=" Material Replace      ", icon = "MATERIAL_REPLACE")
+            props.use_transform = True
+            props.type = "GeometryNodeMaterialReplace"
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_ADD")
+            props.use_transform = True
+            props.type = "GeometryNodeMaterialAssign"
+
+            props = flow.operator("node.add_node", text = "", icon = "MATERIAL_REPLACE")
+            props.use_transform = True
+            props.type = "GeometryNodeMaterialReplace"
 
 
 #add mesh panel
@@ -4361,6 +4424,7 @@ classes = (
     NODES_PT_geom_add_curve,
     NODES_PT_geom_add_geometry,
     NODES_PT_geom_add_input,
+    NODES_PT_geom_add_material,
     NODES_PT_geom_add_mesh,
     NODES_PT_geom_add_mesh_primitives,
     NODES_PT_geom_add_point,
