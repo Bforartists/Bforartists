@@ -366,8 +366,8 @@ smooth_laplacian
 node_volumeprincipled
 vector_displace
 lock_rotation
-#~ DEF_ICON_BLANK(385)
-#~ DEF_ICON_BLANK(386)
+material_add
+material_replace
 #~ DEF_ICON_BLANK(387)
 #~ DEF_ICON_BLANK(388)
 #~ DEF_ICON_BLANK(389)
