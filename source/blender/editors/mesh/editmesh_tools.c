@@ -1898,10 +1898,10 @@ void MESH_OT_edge_split(wmOperatorType *ot)
 
   /* properties */
   static const EnumPropertyItem merge_type_items[] = {
-      {BM_EDGE, "EDGE", ICON_SPLIT, "Faces by Edges", "Split faces along selected edges"},
+      {BM_EDGE, "EDGE", ICON_SPLITEDGE, "Faces by Edges", "Split faces along selected edges"},
       {BM_VERT,
        "VERT",
-       ICON_SPLIT,
+       ICON_SPLIT_BYVERTICES,
        "Faces & Edges by Vertices",
        "Split faces and edges connected to selected vertices"},
       {0, NULL, 0, NULL, NULL},
@@ -3287,8 +3287,8 @@ static int edbm_merge_exec(bContext *C, wmOperator *op)
 static const EnumPropertyItem merge_type_items[] = {
     {MESH_MERGE_FIRST, "FIRST", ICON_MERGE, "At First", ""},
     {MESH_MERGE_LAST, "LAST", ICON_MERGE, "At Last", ""},
-    {MESH_MERGE_CENTER, "CENTER", ICON_MERGE, "At Center", ""},
-    {MESH_MERGE_CURSOR, "CURSOR", ICON_MERGE, "At Cursor", ""},
+    {MESH_MERGE_CENTER, "CENTER", ICON_MERGE_CENTER, "At Center", ""},
+    {MESH_MERGE_CURSOR, "CURSOR", ICON_MERGE_CURSOR, "At Cursor", ""},
     {MESH_MERGE_COLLAPSE, "COLLAPSE", ICON_MERGE, "Collapse", ""},
     {0, NULL, 0, NULL, NULL},
 };
@@ -4616,8 +4616,8 @@ void MESH_OT_separate(wmOperatorType *ot)
 {
   static const EnumPropertyItem prop_separate_types[] = {
       {MESH_SEPARATE_SELECTED, "SELECTED", ICON_SEPARATE, "Selection", ""},
-      {MESH_SEPARATE_MATERIAL, "MATERIAL", ICON_SEPARATE, "By Material", ""},
-      {MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE, "By loose parts", ""},
+      {MESH_SEPARATE_MATERIAL, "MATERIAL", ICON_SEPARATE_BYMATERIAL, "By Material", ""},
+      {MESH_SEPARATE_LOOSE, "LOOSE", ICON_SEPARATE_LOOSE, "By loose parts", ""},
       {0, NULL, 0, NULL, NULL},
   };
 

@@ -368,11 +368,11 @@ vector_displace
 lock_rotation
 material_add
 material_replace
-#~ DEF_ICON_BLANK(387)
-#~ DEF_ICON_BLANK(388)
-#~ DEF_ICON_BLANK(389)
-#~ DEF_ICON_BLANK(390)
-#~ DEF_ICON_BLANK(391)
+merge_center
+merge_cursor
+split_byvertices
+separate_bymaterial
+separate_loose
 
 # ------------------------- row 6 --------------------------*/
 
