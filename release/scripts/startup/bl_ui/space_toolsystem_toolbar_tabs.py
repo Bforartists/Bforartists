@@ -1012,12 +1012,13 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
 
 # -------------------------------------- Mesh
 
-class VIEW3D_PT_meshtab_parts_merge(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
     bl_label = "Merge"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1072,12 +1073,13 @@ class VIEW3D_PT_meshtab_parts_merge(toolshelf_calculate, Panel):
                 col.operator("mesh.remove_doubles", text="", icon = "REMOVE_DOUBLES")
 
 
-class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_split(toolshelf_calculate, Panel):
     bl_label = "Split"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1123,12 +1125,13 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
                 col.operator("mesh.edge_split", text="", icon = "SPLIT_BYVERTICES").type = 'VERT'
 
 
-class VIEW3D_PT_meshtab_parts_separate(toolshelf_calculate, Panel):
+class VIEW3D_PT_meshtab_separate(toolshelf_calculate, Panel):
     bl_label = "Separate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1180,6 +1183,7 @@ class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, _context):
         layout = self.layout
@@ -1273,6 +1277,58 @@ class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
                 col.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
 
 
+class VIEW3D_PT_meshtab_normals(toolshelf_calculate, Panel):
+    bl_label = "Normals"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mesh"
+    bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.normals_make_consistent", text="Recalculate Outside", icon = 'RECALC_NORMALS').inside = False
+            col.operator("mesh.normals_make_consistent", text="Recalculate Inside", icon = 'RECALC_NORMALS_INSIDE').inside = True
+            col.operator("mesh.flip_normals", text = "Flip", icon = 'FLIP_NORMALS')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.normals_make_consistent", text="", icon = 'RECALC_NORMALS').inside = False
+                row.operator("mesh.normals_make_consistent", text="", icon = 'RECALC_NORMALS_INSIDE').inside = True
+                row.operator("mesh.flip_normals", text = "", icon = 'FLIP_NORMALS')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.normals_make_consistent", text="", icon = 'RECALC_NORMALS').inside = False
+                row.operator("mesh.normals_make_consistent", text="", icon = 'RECALC_NORMALS_INSIDE').inside = True
+                row = col.row(align=True)
+                row.operator("mesh.flip_normals", text = "", icon = 'FLIP_NORMALS')
+
+            elif column_count == 1:
+
+                col.operator("mesh.normals_make_consistent", text="", icon = 'RECALC_NORMALS').inside = False
+                col.operator("mesh.normals_make_consistent", text="", icon = 'RECALC_NORMALS_INSIDE').inside = True
+                col.operator("mesh.flip_normals", text = "", icon = 'FLIP_NORMALS')
+
+
 classes = (
 
     #object menu
@@ -1286,10 +1342,11 @@ classes = (
     VIEW3D_PT_objecttab_snap,
 
     #mesh menu
-    VIEW3D_PT_meshtab_parts_merge,
-    VIEW3D_PT_meshtab_parts_split,
-    VIEW3D_PT_meshtab_parts_separate,
+    VIEW3D_PT_meshtab_merge,
+    VIEW3D_PT_meshtab_split,
+    VIEW3D_PT_meshtab_separate,
     VIEW3D_PT_meshtab_tools,
+    VIEW3D_PT_meshtab_normals,
 
 )
 
