@@ -910,6 +910,7 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
 
                 col.operator("object.anim_transforms_to_deltas", text="", icon = "APPLYANIDELTA")
 
+
 class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     bl_label = "Snap"
     bl_space_type = 'VIEW_3D'
@@ -1008,6 +1009,65 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
                 col.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
                 col.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
                 col.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
+
+
+class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
+    bl_label = "Shading"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Object"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        obj = context.object
+        if obj is None:
+            return
+        elif obj.type == 'MESH':
+            pass
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("object.shade_smooth", icon ='SHADING_SMOOTH')
+            col.operator("object.shade_flat", icon ='SHADING_FLAT')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("object.shade_smooth", text = "", icon ='SHADING_SMOOTH')
+                row.operator("object.shade_flat", text = "", icon ='SHADING_FLAT')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("object.shade_smooth", text = "", icon ='SHADING_SMOOTH')
+                row.operator("object.shade_flat", text = "", icon ='SHADING_FLAT')
+
+            elif column_count == 1:
+
+                col.operator("object.shade_smooth", text = "", icon ='SHADING_SMOOTH')
+                col.operator("object.shade_flat", text = "", icon ='SHADING_FLAT')
+
 
 
 # -------------------------------------- Mesh
@@ -1340,6 +1400,7 @@ classes = (
     VIEW3D_PT_objecttab_apply,
     VIEW3D_PT_objecttab_apply_delta,
     VIEW3D_PT_objecttab_snap,
+    VIEW3D_PT_objecttab_shading,
 
     #mesh menu
     VIEW3D_PT_meshtab_merge,
