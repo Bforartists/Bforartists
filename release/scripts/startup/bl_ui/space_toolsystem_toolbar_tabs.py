@@ -1012,32 +1012,12 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
 
 # -------------------------------------- Mesh
 
-class VIEW3D_PT_meshtab_parts(toolshelf_calculate, Panel):
-    bl_label = "Parts"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_category = "Mesh"
-    bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    # just show when the toolshelf tabs toggle in the view menu is on.
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True
-
-    def draw(self, _context):
-        layout = self.layout
-
-
 class VIEW3D_PT_meshtab_parts_merge(toolshelf_calculate, Panel):
     bl_label = "Merge"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_parent_id = "VIEW3D_PT_meshtab_parts"
 
     def draw(self, _context):
         layout = self.layout
@@ -1098,7 +1078,6 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_parent_id = "VIEW3D_PT_meshtab_parts"
 
     def draw(self, _context):
         layout = self.layout
@@ -1112,7 +1091,7 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("mesh.split", text="Selection", icon = "SPLIT")
-            col.operator("mesh.edge_split", text="Faces by edges", icon = "SPLIT").type = 'EDGE'
+            col.operator("mesh.edge_split", text="Faces by edges", icon = "SPLITEDGE").type = 'EDGE'
             col.operator("mesh.edge_split", text="Faces/Edges by Vertices", icon = "SPLIT").type = 'VERT'
 
         # icon buttons
@@ -1126,7 +1105,7 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("mesh.split", text="", icon = "SPLIT")
-                row.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'EDGE'
+                row.operator("mesh.edge_split", text="", icon = "SPLITEDGE").type = 'EDGE'
                 row.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'VERT'
 
             elif column_count == 2:
@@ -1134,13 +1113,13 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mesh.split", text="", icon = "SPLIT")
                 row = col.row(align=True)
-                row.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'EDGE'
+                row.operator("mesh.edge_split", text="", icon = "SPLITEDGE").type = 'EDGE'
                 row.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'VERT'
 
             elif column_count == 1:
 
                 col.operator("mesh.split", text="", icon = "SPLIT")
-                col.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'EDGE'
+                col.operator("mesh.edge_split", text="", icon = "SPLITEDGE").type = 'EDGE'
                 col.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'VERT'
 
 
@@ -1150,7 +1129,6 @@ class VIEW3D_PT_meshtab_parts_separate(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_parent_id = "VIEW3D_PT_meshtab_parts"
 
     def draw(self, _context):
         layout = self.layout
@@ -1164,8 +1142,8 @@ class VIEW3D_PT_meshtab_parts_separate(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("mesh.separate", text="Selection", icon = "SEPARATE").type = 'SELECTED'
-            col.operator("mesh.separate", text="Faces by edges", icon = "SEPARATE").type = 'MATERIAL'
-            col.operator("mesh.separate", text="Faces/Edges by Vertices", icon = "SEPARATE").type = 'LOOSE'
+            col.operator("mesh.separate", text="By Material", icon = "SEPARATE").type = 'MATERIAL'
+            col.operator("mesh.separate", text="By Loose Parts", icon = "SEPARATE").type = 'LOOSE'
 
         # icon buttons
         else:
@@ -1308,7 +1286,6 @@ classes = (
     VIEW3D_PT_objecttab_snap,
 
     #mesh menu
-    VIEW3D_PT_meshtab_parts,
     VIEW3D_PT_meshtab_parts_merge,
     VIEW3D_PT_meshtab_parts_split,
     VIEW3D_PT_meshtab_parts_separate,
