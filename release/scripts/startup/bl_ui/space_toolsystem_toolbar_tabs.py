@@ -1044,8 +1044,8 @@ class VIEW3D_PT_meshtab_parts_merge(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("mesh.merge", text="", icon = "MERGE").type = 'CENTER'
-                row.operator("mesh.merge", text="", icon = "MERGE").type = 'CURSOR'
+                row.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
+                row.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
                 row.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'
 
                 row = col.row(align=True)
@@ -1054,8 +1054,8 @@ class VIEW3D_PT_meshtab_parts_merge(toolshelf_calculate, Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("mesh.merge", text="", icon = "MERGE").type = 'CENTER'
-                row.operator("mesh.merge", text="", icon = "MERGE").type = 'CURSOR'
+                row.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
+                row.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
 
                 row = col.row(align=True)
                 row.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'
@@ -1063,8 +1063,8 @@ class VIEW3D_PT_meshtab_parts_merge(toolshelf_calculate, Panel):
 
             elif column_count == 1:
 
-                col.operator("mesh.merge", text="", icon = "MERGE").type = 'CENTER'
-                col.operator("mesh.merge", text="", icon = "MERGE").type = 'CURSOR'
+                col.operator("mesh.merge", text="", icon = "MERGE_CENTER").type = 'CENTER'
+                col.operator("mesh.merge", text="", icon = "MERGE_CURSOR").type = 'CURSOR'
                 col.operator("mesh.merge", text="", icon = "MERGE").type = 'COLLAPSE'
 
                 col.separator(factor = 0.5)
@@ -1092,7 +1092,7 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
 
             col.operator("mesh.split", text="Selection", icon = "SPLIT")
             col.operator("mesh.edge_split", text="Faces by edges", icon = "SPLITEDGE").type = 'EDGE'
-            col.operator("mesh.edge_split", text="Faces/Edges by Vertices", icon = "SPLIT").type = 'VERT'
+            col.operator("mesh.edge_split", text="Faces/Edges by Vertices", icon = "SPLIT_BYVERTICES").type = 'VERT'
 
         # icon buttons
         else:
@@ -1106,7 +1106,7 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mesh.split", text="", icon = "SPLIT")
                 row.operator("mesh.edge_split", text="", icon = "SPLITEDGE").type = 'EDGE'
-                row.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'VERT'
+                row.operator("mesh.edge_split", text="", icon = "SPLIT_BYVERTICES").type = 'VERT'
 
             elif column_count == 2:
 
@@ -1114,13 +1114,13 @@ class VIEW3D_PT_meshtab_parts_split(toolshelf_calculate, Panel):
                 row.operator("mesh.split", text="", icon = "SPLIT")
                 row = col.row(align=True)
                 row.operator("mesh.edge_split", text="", icon = "SPLITEDGE").type = 'EDGE'
-                row.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'VERT'
+                row.operator("mesh.edge_split", text="", icon = "SPLIT_BYVERTICES").type = 'VERT'
 
             elif column_count == 1:
 
                 col.operator("mesh.split", text="", icon = "SPLIT")
                 col.operator("mesh.edge_split", text="", icon = "SPLITEDGE").type = 'EDGE'
-                col.operator("mesh.edge_split", text="", icon = "SPLIT").type = 'VERT'
+                col.operator("mesh.edge_split", text="", icon = "SPLIT_BYVERTICES").type = 'VERT'
 
 
 class VIEW3D_PT_meshtab_parts_separate(toolshelf_calculate, Panel):
@@ -1142,8 +1142,8 @@ class VIEW3D_PT_meshtab_parts_separate(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("mesh.separate", text="Selection", icon = "SEPARATE").type = 'SELECTED'
-            col.operator("mesh.separate", text="By Material", icon = "SEPARATE").type = 'MATERIAL'
-            col.operator("mesh.separate", text="By Loose Parts", icon = "SEPARATE").type = 'LOOSE'
+            col.operator("mesh.separate", text="By Material", icon = "SEPARATE_BYMATERIAL").type = 'MATERIAL'
+            col.operator("mesh.separate", text="By Loose Parts", icon = "SEPARATE_LOOSE").type = 'LOOSE'
 
         # icon buttons
         else:
@@ -1156,22 +1156,22 @@ class VIEW3D_PT_meshtab_parts_separate(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("mesh.separate", text="", icon = "SEPARATE").type = 'SELECTED'
-                row.operator("mesh.separate", text="", icon = "SEPARATE").type = 'MATERIAL'
-                row.operator("mesh.separate", text="", icon = "SEPARATE").type = 'LOOSE'
+                row.operator("mesh.separate", text="", icon = "SEPARATE_BYMATERIAL").type = 'MATERIAL'
+                row.operator("mesh.separate", text="", icon = "SEPARATE_LOOSE").type = 'LOOSE'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("mesh.separate", text="", icon = "SEPARATE").type = 'SELECTED'
                 row = col.row(align=True)
-                row.operator("mesh.separate", text="", icon = "SEPARATE").type = 'MATERIAL'
-                row.operator("mesh.separate", text="", icon = "SEPARATE").type = 'LOOSE'
+                row.operator("mesh.separate", text="", icon = "SEPARATE_BYMATERIAL").type = 'MATERIAL'
+                row.operator("mesh.separate", text="", icon = "SEPARATE_LOOSE").type = 'LOOSE'
 
             elif column_count == 1:
 
                 col.operator("mesh.separate", text="", icon = "SEPARATE").type = 'SELECTED'
-                col.operator("mesh.separate", text="", icon = "SEPARATE").type = 'MATERIAL'
-                col.operator("mesh.separate", text="", icon = "SEPARATE").type = 'LOOSE'
+                col.operator("mesh.separate", text="", icon = "SEPARATE_BYMATERIAL").type = 'MATERIAL'
+                col.operator("mesh.separate", text="", icon = "SEPARATE_LOOSE").type = 'LOOSE'
 
 
 class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
