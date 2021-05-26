@@ -1478,6 +1478,87 @@ class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
                 col.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SHARP').use_verts = True
 
 
+class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
+    bl_label = "Dissolve"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mesh"
+    bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
+            col.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES')
+            col.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED')
+            col.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION')
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+                row.operator("mesh.dissolve_edges", text = "", icon='DISSOLVE_EDGES')
+                row.operator("mesh.dissolve_faces", text = "", icon='DISSOLVE_FACES')
+
+                row = col.row(align=True)
+                row.operator("mesh.dissolve_limited", text = "", icon='DISSOLVE_LIMITED')
+                row.operator("mesh.dissolve_mode", text = "", icon='DISSOLVE_SELECTION')
+                row.operator("mesh.edge_collapse", text = "", icon='EDGE_COLLAPSE')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+                row.operator("mesh.dissolve_edges", text = "", icon='DISSOLVE_EDGES')
+
+                row = col.row(align=True)
+                row.operator("mesh.dissolve_faces", text = "", icon='DISSOLVE_FACES')
+                row.operator("mesh.dissolve_limited", text = "", icon='DISSOLVE_LIMITED')
+
+                row = col.row(align=True)
+                row.operator("mesh.dissolve_mode", text = "", icon='DISSOLVE_SELECTION')
+                row.operator("mesh.edge_collapse", text = "", icon='EDGE_COLLAPSE')
+
+            elif column_count == 1:
+
+                col.operator("mesh.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+                col.operator("mesh.dissolve_edges", text = "", icon='DISSOLVE_EDGES')
+                col.operator("mesh.dissolve_faces", text = "", icon='DISSOLVE_FACES')
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.dissolve_limited", text = "", icon='DISSOLVE_LIMITED')
+                col.operator("mesh.dissolve_mode", text = "", icon='DISSOLVE_SELECTION')
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.edge_collapse", text = "", icon='EDGE_COLLAPSE')
+
+
 
 classes = (
 
@@ -1499,6 +1580,7 @@ classes = (
     VIEW3D_PT_meshtab_tools,
     VIEW3D_PT_meshtab_normals,
     VIEW3D_PT_meshtab_shading,
+    VIEW3D_PT_meshtab_dissolve,
 
 )
 
