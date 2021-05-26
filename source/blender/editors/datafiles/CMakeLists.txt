@@ -435,9 +435,9 @@ shading_edge_sharp
 shading_edge_smooth
 shading_vert_sharp
 shading_vert_smooth
-#~ DEF_ICON_BLANK(454)
-#~ DEF_ICON_BLANK(455)
-#~ DEF_ICON_BLANK(456)
+clearsharpverts
+marksharpverts
+rotateccw
 #~ DEF_ICON_BLANK(457)
 #~ DEF_ICON_BLANK(458)
 #~ DEF_ICON_BLANK(459)
