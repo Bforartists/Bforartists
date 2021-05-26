@@ -2450,11 +2450,11 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_make_links")
 
-        # shading just for mesh objects
+        # shading just for mesh and curve objects
         if obj is None:
             pass
 
-        elif obj.type == 'MESH':
+        elif obj.type in {'MESH', 'CURVE', 'SURFACE'}:
 
             layout.separator()
 
