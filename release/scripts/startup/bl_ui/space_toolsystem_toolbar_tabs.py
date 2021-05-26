@@ -1559,6 +1559,109 @@ class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
                 col.operator("mesh.edge_collapse", text = "", icon='EDGE_COLLAPSE')
 
 
+class VIEW3D_PT_verticestab_vertices(toolshelf_calculate, Panel):
+    bl_label = "Vertices"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Vertex"
+    bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.edge_face_add", text="Make Edge/Face", icon='MAKE_EDGEFACE')
+            col.operator("mesh.vert_connect_path", text = "Connect Vertex Path", icon = "VERTEXCONNECTPATH")
+            col.operator("mesh.vert_connect", text = "Connect Vertex Pairs", icon = "VERTEXCONNECT")
+
+            col.separator(factor = 0.5)
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("mesh.vertices_smooth_laplacian", text="Smooth Laplacian", icon = "SMOOTH_LAPLACIAN")
+            col.operator_context = 'INVOKE_REGION_WIN'
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
+            col.operator("mesh.shape_propagate_to_all", text="Propagate to Shapes", icon = "SHAPEPROPAGATE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.edge_face_add", text="", icon='MAKE_EDGEFACE')
+                row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
+                row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
+
+                row = col.row(align=True)
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("mesh.vertices_smooth_laplacian", text="", icon = "SMOOTH_LAPLACIAN")
+                row.operator_context = 'INVOKE_REGION_WIN'
+
+                row.operator("mesh.blend_from_shape", text="", icon = "BLENDFROMSHAPE")
+                row.operator("mesh.shape_propagate_to_all", text="", icon = "SHAPEPROPAGATE")
+
+                row = col.row(align=True)
+                row.operator("object.vertex_parent_set", text="", icon = "VERTEX_PARENT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.edge_face_add", text="", icon='MAKE_EDGEFACE')
+                row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
+
+                row = col.row(align=True)
+                row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("mesh.vertices_smooth_laplacian", text="", icon = "SMOOTH_LAPLACIAN")
+                row.operator_context = 'INVOKE_REGION_WIN'
+
+                row = col.row(align=True)
+                row.operator("mesh.blend_from_shape", text="", icon = "BLENDFROMSHAPE")
+                row.operator("mesh.shape_propagate_to_all", text="", icon = "SHAPEPROPAGATE")
+
+                row = col.row(align=True)
+                row.operator("object.vertex_parent_set", text="", icon = "VERTEX_PARENT")
+
+            elif column_count == 1:
+
+                col.operator("mesh.edge_face_add", text="", icon='MAKE_EDGEFACE')
+                col.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
+                col.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
+
+                col.separator(factor = 0.5)
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("mesh.vertices_smooth_laplacian", text="", icon = "SMOOTH_LAPLACIAN")
+                col.operator_context = 'INVOKE_REGION_WIN'
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.blend_from_shape", text="", icon = "BLENDFROMSHAPE")
+                col.operator("mesh.shape_propagate_to_all", text="", icon = "SHAPEPROPAGATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.vertex_parent_set", text="", icon = "VERTEX_PARENT")
+
 
 classes = (
 
@@ -1581,6 +1684,9 @@ classes = (
     VIEW3D_PT_meshtab_normals,
     VIEW3D_PT_meshtab_shading,
     VIEW3D_PT_meshtab_dissolve,
+
+    #mesh edit mode
+    VIEW3D_PT_verticestab_vertices,
 
 )
 
