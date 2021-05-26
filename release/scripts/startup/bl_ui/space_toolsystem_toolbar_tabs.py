@@ -1389,6 +1389,96 @@ class VIEW3D_PT_meshtab_normals(toolshelf_calculate, Panel):
                 col.operator("mesh.flip_normals", text = "", icon = 'FLIP_NORMALS')
 
 
+class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
+    bl_label = "Shading"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mesh"
+    bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH')
+            col.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT')
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.mark_sharp", text="Smooth Edges", icon = 'SHADING_EDGE_SMOOTH').clear = True
+            col.operator("mesh.mark_sharp", text="Sharp Edges", icon = 'SHADING_EDGE_SHARP')
+
+            col.separator(factor = 0.5)
+
+            props = col.operator("mesh.mark_sharp", text="Smooth Vertices", icon = 'SHADING_VERT_SMOOTH')
+            props.use_verts = True
+            props.clear = True
+            col.operator("mesh.mark_sharp", text="Sharp Vertices", icon = 'SHADING_VERT_SHARP').use_verts = True
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.faces_shade_smooth", text="", icon = 'SHADING_SMOOTH')
+                row.operator("mesh.faces_shade_flat", text="", icon = 'SHADING_FLAT')
+                row.operator("mesh.mark_sharp", text="", icon = 'SHADING_EDGE_SMOOTH').clear = True
+
+                row = col.row(align=True)
+                row.operator("mesh.mark_sharp", text="", icon = 'SHADING_EDGE_SHARP')
+                props = row.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SMOOTH')
+                props.use_verts = True
+                props.clear = True
+                row.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SHARP').use_verts = True
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.faces_shade_smooth", text="", icon = 'SHADING_SMOOTH')
+                row.operator("mesh.faces_shade_flat", text="", icon = 'SHADING_FLAT')
+
+                row = col.row(align=True)
+                row.operator("mesh.mark_sharp", text="", icon = 'SHADING_EDGE_SMOOTH').clear = True
+                row.operator("mesh.mark_sharp", text="", icon = 'SHADING_EDGE_SHARP')
+
+                row = col.row(align=True)
+                props = row.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SMOOTH')
+                props.use_verts = True
+                props.clear = True
+                row.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SHARP').use_verts = True
+
+            elif column_count == 1:
+
+                col.operator("mesh.faces_shade_smooth", text="", icon = 'SHADING_SMOOTH')
+                col.operator("mesh.faces_shade_flat", text="", icon = 'SHADING_FLAT')
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.mark_sharp", text="", icon = 'SHADING_EDGE_SMOOTH').clear = True
+                col.operator("mesh.mark_sharp", text="", icon = 'SHADING_EDGE_SHARP')
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SMOOTH')
+                props.use_verts = True
+                props.clear = True
+                col.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SHARP').use_verts = True
+
+
+
 classes = (
 
     #object menu
@@ -1408,6 +1498,7 @@ classes = (
     VIEW3D_PT_meshtab_separate,
     VIEW3D_PT_meshtab_tools,
     VIEW3D_PT_meshtab_normals,
+    VIEW3D_PT_meshtab_shading,
 
 )
 
