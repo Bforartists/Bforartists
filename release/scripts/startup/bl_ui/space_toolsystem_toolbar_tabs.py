@@ -1430,7 +1430,6 @@ class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1608,13 +1607,12 @@ class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
                 col.operator("mesh.edge_collapse", text = "", icon='EDGE_COLLAPSE')
 
 
-class VIEW3D_PT_verticestab_vertices(toolshelf_calculate, Panel):
-    bl_label = "Vertices"
+class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
+    bl_label = "Vertex"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Vertex"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1719,6 +1717,186 @@ class VIEW3D_PT_verticestab_vertices(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text="", icon = "VERTEX_PARENT")
 
 
+class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
+    bl_label = "Edge"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Edge"
+    bl_context = "mesh_edit"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        with_freestyle = bpy.app.build_options.freestyle
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
+            col.operator("mesh.screw", icon = "MOD_SCREW")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES')
+            col.operator("mesh.subdivide_edgering", icon = "SUBDIV_EDGERING")
+            col.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
+            col.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
+
+            col.separator(factor = 0.5)
+
+            col.operator("transform.edge_crease", icon = "CREASE")
+            col.operator("transform.edge_bevelweight", icon = "BEVEL")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
+            col.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
+
+            col.operator("mesh.mark_sharp", text="Mark Sharp from Vertices", icon = "MARKSHARPEDGES").use_verts = True
+            props = col.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon = "CLEARSHARPEDGES")
+            props.use_verts = True
+            props.clear = True
+
+            if with_freestyle:
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.mark_freestyle_edge", icon = "MARK_FS_EDGE").clear = False
+                col.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon = "CLEAR_FS_EDGE").clear = True
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.bridge_edge_loops", text="", icon = "BRIDGE_EDGELOOPS")
+                row.operator("mesh.screw", text="", icon = "MOD_SCREW")
+                row.operator("mesh.subdivide", text="", icon='SUBDIVIDE_EDGES')
+
+                row = col.row(align=True)
+                row.operator("mesh.subdivide_edgering", text="", icon = "SUBDIV_EDGERING")
+                row.operator("mesh.unsubdivide", text="", icon = "UNSUBDIVIDE")
+                row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = False
+
+                row = col.row(align=True)
+                row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = True
+                row.operator("transform.edge_crease", text="", icon = "CREASE")
+                row.operator("transform.edge_bevelweight", text="", icon = "BEVEL")
+
+                row = col.row(align=True)
+                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES")
+                row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES").clear = True
+                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
+                row = col.row(align=True)
+                props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
+                props.use_verts = True
+                props.clear = True
+
+                if with_freestyle:
+
+                    row.operator("mesh.mark_freestyle_edge", text="", icon = "MARK_FS_EDGE").clear = False
+                    row.operator("mesh.mark_freestyle_edge", text="", icon = "CLEAR_FS_EDGE").clear = True
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.bridge_edge_loops", text="", icon = "BRIDGE_EDGELOOPS")
+                row.operator("mesh.screw", text="", icon = "MOD_SCREW")
+
+                row = col.row(align=True)
+                row.operator("mesh.subdivide", text="", icon='SUBDIVIDE_EDGES')
+                row.operator("mesh.subdivide_edgering", text="", icon = "SUBDIV_EDGERING")
+                row = col.row(align=True)
+                row.operator("mesh.unsubdivide", text="", icon = "UNSUBDIVIDE")
+
+                row = col.row(align=True)
+                row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = False
+                row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = True
+
+                row = col.row(align=True)
+                row.operator("transform.edge_crease", text="", icon = "CREASE")
+                row.operator("transform.edge_bevelweight", text="", icon = "BEVEL")
+
+                row = col.row(align=True)
+                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES")
+                row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES").clear = True
+
+                row = col.row(align=True)
+                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
+                props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
+                props.use_verts = True
+                props.clear = True
+
+                if with_freestyle:
+
+                    row = col.row(align=True)
+                    row.operator("mesh.mark_freestyle_edge", text="", icon = "MARK_FS_EDGE").clear = False
+                    row.operator("mesh.mark_freestyle_edge", text="", icon = "CLEAR_FS_EDGE").clear = True
+
+            elif column_count == 1:
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+
+                col.operator("mesh.bridge_edge_loops", text="", icon = "BRIDGE_EDGELOOPS")
+                col.operator("mesh.screw", text="", icon = "MOD_SCREW")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.subdivide", text="", icon='SUBDIVIDE_EDGES')
+                col.operator("mesh.subdivide_edgering", text="", icon = "SUBDIV_EDGERING")
+                col.operator("mesh.unsubdivide", text="", icon = "UNSUBDIVIDE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = False
+                col.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = True
+
+                col.separator(factor = 0.5)
+
+                col.operator("transform.edge_crease", text="", icon = "CREASE")
+                col.operator("transform.edge_bevelweight", text="", icon = "BEVEL")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES")
+                col.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES").clear = True
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
+                props = col.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
+                props.use_verts = True
+                props.clear = True
+
+                if with_freestyle:
+
+                    col.separator(factor = 0.5)
+                    col.operator("mesh.mark_freestyle_edge", text="", icon = "MARK_FS_EDGE").clear = False
+                    col.operator("mesh.mark_freestyle_edge", text="", icon = "CLEAR_FS_EDGE").clear = True
+
+
 classes = (
 
     #object menu
@@ -1742,7 +1920,8 @@ classes = (
     VIEW3D_PT_meshtab_dissolve,
 
     #mesh edit mode
-    VIEW3D_PT_verticestab_vertices,
+    VIEW3D_PT_vertextab_vertex,
+    VIEW3D_PT_edgetab_Edge,
 
 )
 
