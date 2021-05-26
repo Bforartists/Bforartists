@@ -1080,6 +1080,13 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
 
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
     def draw(self, _context):
         layout = self.layout
 
@@ -1141,6 +1148,13 @@ class VIEW3D_PT_meshtab_split(toolshelf_calculate, Panel):
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
 
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
     def draw(self, _context):
         layout = self.layout
 
@@ -1193,6 +1207,13 @@ class VIEW3D_PT_meshtab_separate(toolshelf_calculate, Panel):
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
 
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
     def draw(self, _context):
         layout = self.layout
 
@@ -1244,6 +1265,13 @@ class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
     bl_category = "Mesh"
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
         layout = self.layout
@@ -1345,6 +1373,13 @@ class VIEW3D_PT_meshtab_normals(toolshelf_calculate, Panel):
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
 
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
     def draw(self, _context):
         layout = self.layout
 
@@ -1396,6 +1431,13 @@ class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
     bl_category = "Mesh"
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
         layout = self.layout
@@ -1486,6 +1528,13 @@ class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
 
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
     def draw(self, _context):
         layout = self.layout
 
@@ -1566,6 +1615,13 @@ class VIEW3D_PT_verticestab_vertices(toolshelf_calculate, Panel):
     bl_category = "Vertex"
     bl_context = "mesh_edit"
     bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
         layout = self.layout
