@@ -431,10 +431,10 @@ library_data_override
 light
 light_area
 
-#~ DEF_ICON_BLANK(450)
-#~ DEF_ICON_BLANK(451)
-#~ DEF_ICON_BLANK(452)
-#~ DEF_ICON_BLANK(453)
+shading_edge_sharp
+shading_edge_smooth
+shading_vert_sharp
+shading_vert_smooth
 #~ DEF_ICON_BLANK(454)
 #~ DEF_ICON_BLANK(455)
 #~ DEF_ICON_BLANK(456)
