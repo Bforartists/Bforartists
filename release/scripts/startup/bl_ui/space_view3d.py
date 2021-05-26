@@ -4802,16 +4802,16 @@ class VIEW3D_MT_edit_mesh_shading(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.mark_sharp", text="Smooth Edges", icon = 'SHADING_SMOOTH').clear = True
-        layout.operator("mesh.mark_sharp", text="Sharp Edges", icon = 'SHADING_FLAT')
+        layout.operator("mesh.mark_sharp", text="Smooth Edges", icon = 'SHADING_EDGE_SMOOTH').clear = True
+        layout.operator("mesh.mark_sharp", text="Sharp Edges", icon = 'SHADING_EDGE_SHARP')
 
         layout.separator()
 
-        props = layout.operator("mesh.mark_sharp", text="Smooth Vertices", icon = 'SHADING_SMOOTH')
+        props = layout.operator("mesh.mark_sharp", text="Smooth Vertices", icon = 'SHADING_VERT_SMOOTH')
         props.use_verts = True
         props.clear = True
 
-        layout.operator("mesh.mark_sharp", text="Sharp Vertices", icon = 'SHADING_FLAT').use_verts = True
+        layout.operator("mesh.mark_sharp", text="Sharp Vertices", icon = 'SHADING_VERT_SHARP').use_verts = True
 
 
 class VIEW3D_MT_edit_mesh_weights(Menu):
