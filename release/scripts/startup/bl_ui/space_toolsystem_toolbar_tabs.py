@@ -1737,12 +1737,13 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
         with_freestyle = bpy.app.build_options.freestyle
-        layout.operator_context = 'INVOKE_REGION_WIN'
 
         #text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
+            col.operator_context = 'INVOKE_REGION_WIN'
+
             col.scale_y = 2
 
             col.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
@@ -1784,6 +1785,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
         else:
 
             col = layout.column(align=True)
+            col.operator_context = 'INVOKE_REGION_WIN'
             col.scale_x = 2
             col.scale_y = 2
 
@@ -1897,6 +1899,143 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
                     col.operator("mesh.mark_freestyle_edge", text="", icon = "CLEAR_FS_EDGE").clear = True
 
 
+class VIEW3D_PT_facetab_face(toolshelf_calculate, Panel):
+    bl_label = "Face"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Face"
+    bl_context = "mesh_edit"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator_context = 'INVOKE_REGION_WIN'
+
+            col.operator("mesh.poke", icon = "POKEFACES")
+
+            col.separator(factor = 0.5)
+
+            props = col.operator("mesh.quads_convert_to_tris", icon = "TRIANGULATE")
+            props.quad_method = props.ngon_method = 'BEAUTY'
+            col.operator("mesh.tris_convert_to_quads", icon = "TRISTOQUADS")
+            col.operator("mesh.solidify", text="Solidify Faces", icon = "SOLIDIFY")
+            col.operator("mesh.wireframe", icon = "WIREFRAME")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.fill", icon = "FILL")
+            col.operator("mesh.fill_grid", icon = "GRIDFILL")
+            col.operator("mesh.beautify_fill", icon = "BEAUTIFY")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.intersect", icon = "INTERSECT")
+            col.operator("mesh.intersect_boolean", icon = "BOOLEAN_INTERSECT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.face_split_by_edges", icon = "SPLITBYEDGES")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.operator_context = 'INVOKE_REGION_WIN'
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.poke", text = "", icon = "POKEFACES")
+                props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+                props.quad_method = props.ngon_method = 'BEAUTY'
+                row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
+
+                row = col.row(align=True)
+                row.operator("mesh.solidify", text="", icon = "SOLIDIFY")
+                row.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
+                row.operator("mesh.fill", text = "", icon = "FILL")
+
+                row = col.row(align=True)
+                row.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
+                row.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
+
+                row.operator("mesh.intersect", text = "", icon = "INTERSECT")
+
+                row = col.row(align=True)
+                row.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
+                row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.poke", text = "", icon = "POKEFACES")
+                props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+                props.quad_method = props.ngon_method = 'BEAUTY'
+
+                row = col.row(align=True)
+                row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
+                row.operator("mesh.solidify", text="", icon = "SOLIDIFY")
+
+                row = col.row(align=True)
+                row.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
+                row.operator("mesh.fill", text = "", icon = "FILL")
+
+                row = col.row(align=True)
+                row.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
+                row.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
+
+                row = col.row(align=True)
+                row.operator("mesh.intersect", text = "", icon = "INTERSECT")
+
+                row = col.row(align=True)
+                row.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
+                row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
+
+            elif column_count == 1:
+
+                col.operator("mesh.poke", text = "", icon = "POKEFACES")
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+                props.quad_method = props.ngon_method = 'BEAUTY'
+                col.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
+                col.operator("mesh.solidify", text = "", icon = "SOLIDIFY")
+                col.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.fill", text = "", icon = "FILL")
+                col.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
+                col.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.intersect", text = "", icon = "INTERSECT")
+                col.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
+
+
 classes = (
 
     #object menu
@@ -1922,6 +2061,7 @@ classes = (
     #mesh edit mode
     VIEW3D_PT_vertextab_vertex,
     VIEW3D_PT_edgetab_Edge,
+    VIEW3D_PT_facetab_face,
 
 )
 
