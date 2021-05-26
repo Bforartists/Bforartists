@@ -2036,6 +2036,167 @@ class VIEW3D_PT_facetab_face(toolshelf_calculate, Panel):
                 col.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
 
 
+class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
+    bl_label = "UV"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "UV"
+    bl_context = "mesh_edit"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+            col.operator("uv.unwrap", text = "Unwrap Conformal", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+            col.separator(factor = 0.5)
+
+            col.operator_context = 'INVOKE_DEFAULT'
+            col.operator("uv.smart_project", icon = "MOD_UVPROJECT")
+            col.operator("uv.lightmap_pack", icon = "LIGHTMAPPACK")
+            col.operator("uv.follow_active_quads", icon = "FOLLOWQUADS")
+
+            col.separator(factor = 0.5)
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("uv.cube_project", icon = "CUBEPROJECT")
+            col.operator("uv.cylinder_project", icon = "CYLINDERPROJECT")
+            col.operator("uv.sphere_project", icon = "SPHEREPROJECT")
+
+            col.separator(factor = 0.5)
+
+            col.operator_context = 'INVOKE_REGION_WIN'
+            col.operator("uv.project_from_view", icon = "PROJECTFROMVIEW").scale_to_bounds = False
+            col.operator("uv.project_from_view", text="Project from View (Bounds)", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.mark_seam", icon = "MARK_SEAM").clear = False
+            col.operator("mesh.clear_seam", text="Clear Seam", icon = 'CLEAR_SEAM')
+
+            col.separator(factor = 0.5)
+
+            col.operator("uv.reset", icon = "RESET")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+                row.operator_context = 'INVOKE_DEFAULT'
+                row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
+
+                row = col.row(align=True)
+                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
+                row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+
+                row = col.row(align=True)
+                row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+                row.operator_context = 'INVOKE_REGION_WIN'
+                row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
+
+                row = col.row(align=True)
+                row.operator("uv.project_from_view", text="", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+                row.operator("mesh.mark_seam", text = "", icon = "MARK_SEAM").clear = False
+                row.operator("mesh.clear_seam", text = "", icon = 'CLEAR_SEAM')
+
+                row = col.row(align=True)
+                row.operator("uv.reset", text = "", icon = "RESET")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+                row = col.row(align=True)
+                row.operator_context = 'INVOKE_DEFAULT'
+                row.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
+                row.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
+
+                row = col.row(align=True)
+                row.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+
+                row = col.row(align=True)
+                row.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
+                row.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+
+                row = col.row(align=True)
+                row.operator_context = 'INVOKE_REGION_WIN'
+                row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
+                row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+
+                row = col.row(align=True)
+                row.operator("mesh.mark_seam", text = "", icon = "MARK_SEAM").clear = False
+                row.operator("mesh.clear_seam", text = "", icon = 'CLEAR_SEAM')
+
+                row = col.row(align=True)
+                row.operator("uv.reset", text = "", icon = "RESET")
+
+            elif column_count == 1:
+
+                col.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method = 'ANGLE_BASED'
+                col.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method = 'CONFORMAL'
+
+                col.separator(factor = 0.5)
+
+                col.operator_context = 'INVOKE_DEFAULT'
+                col.operator("uv.smart_project", text = "", icon = "MOD_UVPROJECT")
+                col.operator("uv.lightmap_pack", text = "", icon = "LIGHTMAPPACK")
+                col.operator("uv.follow_active_quads", text = "", icon = "FOLLOWQUADS")
+
+                col.separator(factor = 0.5)
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("uv.cube_project", text = "", icon = "CUBEPROJECT")
+                col.operator("uv.cylinder_project", text = "", icon = "CYLINDERPROJECT")
+                col.operator("uv.sphere_project", text = "", icon = "SPHEREPROJECT")
+
+                col.separator(factor = 0.5)
+
+                col.operator_context = 'INVOKE_REGION_WIN'
+                col.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
+                col.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.mark_seam", text = "", icon = "MARK_SEAM").clear = False
+                col.operator("mesh.clear_seam", text = "", icon = 'CLEAR_SEAM')
+
+                col.separator(factor = 0.5)
+
+                col.operator("uv.reset", text = "", icon = "RESET")
+
+
+
 classes = (
 
     #object menu
@@ -2062,6 +2223,7 @@ classes = (
     VIEW3D_PT_vertextab_vertex,
     VIEW3D_PT_edgetab_Edge,
     VIEW3D_PT_facetab_face,
+    VIEW3D_PT_uvtab_uv,
 
 )
 
