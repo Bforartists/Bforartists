@@ -1757,7 +1757,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
             col.separator(factor = 0.5)
 
             col.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
-            col.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECW").use_ccw = True
+            col.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECCW").use_ccw = True
 
             col.separator(factor = 0.5)
 
@@ -1769,8 +1769,8 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
             col.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
             col.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
 
-            col.operator("mesh.mark_sharp", text="Mark Sharp from Vertices", icon = "MARKSHARPEDGES").use_verts = True
-            props = col.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon = "CLEARSHARPEDGES")
+            col.operator("mesh.mark_sharp", text="Mark Sharp from Vertices", icon = "MARKSHARPVERTS").use_verts = True
+            props = col.operator("mesh.mark_sharp", text="Clear Sharp from Vertices", icon = "CLEARSHARPVERTS")
             props.use_verts = True
             props.clear = True
 
@@ -1800,16 +1800,16 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
                 row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = False
 
                 row = col.row(align=True)
-                row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = True
+                row.operator("mesh.edge_rotate", text="", icon = "ROTATECCW").use_ccw = True
                 row.operator("transform.edge_crease", text="", icon = "CREASE")
                 row.operator("transform.edge_bevelweight", text="", icon = "BEVEL")
 
                 row = col.row(align=True)
                 row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES")
                 row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES").clear = True
-                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
+                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPVERTS").use_verts = True
                 row = col.row(align=True)
-                props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
+                props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPVERTS")
                 props.use_verts = True
                 props.clear = True
 
@@ -1832,7 +1832,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = False
-                row.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = True
+                row.operator("mesh.edge_rotate", text="", icon = "ROTATECCW").use_ccw = True
 
                 row = col.row(align=True)
                 row.operator("transform.edge_crease", text="", icon = "CREASE")
@@ -1843,8 +1843,8 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
                 row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES").clear = True
 
                 row = col.row(align=True)
-                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
-                props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
+                row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPVERTS").use_verts = True
+                props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPVERTS")
                 props.use_verts = True
                 props.clear = True
 
@@ -1871,7 +1871,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 col.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = False
-                col.operator("mesh.edge_rotate", text="", icon = "ROTATECW").use_ccw = True
+                col.operator("mesh.edge_rotate", text="", icon = "ROTATECCW").use_ccw = True
 
                 col.separator(factor = 0.5)
 
@@ -1885,8 +1885,8 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
-                props = col.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
+                col.operator("mesh.mark_sharp", text="", icon = "MARKSHARPVERTS").use_verts = True
+                props = col.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPVERTS")
                 props.use_verts = True
                 props.clear = True
 
