@@ -169,13 +169,9 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
 
-
-
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
                                     'EDIT_LATTICE', 'EDIT_METABALL'}:
 
-                    col.separator( factor = 0.5)
-                    row = col.row(align=True)
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
                     row.operator("transform.vertex_random", text="", icon = 'RANDOMIZE').offset = 0.1
@@ -197,7 +193,6 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
                 if context.active_object is not None and obj.type != 'ARMATURE':
 
                     col.separator( factor = 0.5)
-
                     row = col.row(align=True)
                     row.operator("transform.translate", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
                     row.operator("transform.resize", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
@@ -250,7 +245,6 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
 
                 if context.mode in {'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE',
                                     'EDIT_LATTICE', 'EDIT_METABALL'}:
-                    col.separator( factor = 0.5)
                     row = col.row(align=True)
                     row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
                     row.operator_context = 'EXEC_REGION_WIN'
@@ -963,15 +957,11 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
-
-                col.separator(factor = 0.5)
-
-                row = col.row(align=True)
                 row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
                 row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")
-                row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
 
                 row = col.row(align=True)
+                row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
                 row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
             elif column_count == 2:
@@ -985,8 +975,6 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
 
                 row.operator("view3d.snap_selected_to_active", text = "", icon = "SELECTIONTOACTIVE")
                 row.operator("view3d.snap_selected_to_grid", text = "", icon = "SELECTIONTOGRID")
-
-                col.separator(factor = 0.5)
 
                 row = col.row(align=True)
                 row.operator("view3d.snap_cursor_to_selected", text = "", icon = "CURSORTOSELECTION")
@@ -1313,36 +1301,26 @@ class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mesh.extrude_repeat", text = "", icon = "REPEAT")
                 row.operator("mesh.spin", text = "", icon = "SPIN").angle = pi * 2
-
-                col.separator( factor = 0.5)
-                row = col.row(align=True)
                 row.operator("mesh.knife_project", text = "", icon='KNIFE_PROJECT')
 
+                row = col.row(align=True)
                 if with_bullet:
                     row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
-
-
-                col.separator( factor = 0.5)
-                row = col.row(align=True)
                 row.operator("mesh.symmetrize", text = "", icon = "SYMMETRIZE")
                 row.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
 
-
             elif column_count == 2:
-
 
                 row = col.row(align=True)
                 row.operator("mesh.extrude_repeat", text = "", icon = "REPEAT")
                 row.operator("mesh.spin", text = "", icon = "SPIN").angle = pi * 2
 
-                col.separator( factor = 0.5)
                 row = col.row(align=True)
                 row.operator("mesh.knife_project", text = "", icon='KNIFE_PROJECT')
 
                 if with_bullet:
                     row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
 
-                col.separator( factor = 0.5)
                 row = col.row(align=True)
                 row.operator("mesh.symmetrize", text = "", icon = "SYMMETRIZE")
                 row.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
