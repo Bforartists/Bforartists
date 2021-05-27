@@ -438,7 +438,7 @@ shading_vert_smooth
 clearsharpverts
 marksharpverts
 rotateccw
-#~ DEF_ICON_BLANK(457)
+projectfromview_bounds
 #~ DEF_ICON_BLANK(458)
 #~ DEF_ICON_BLANK(459)
 

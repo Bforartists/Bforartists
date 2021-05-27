@@ -1839,7 +1839,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("transform.edge_crease", text="", icon = "CREASE")
                 row.operator("transform.edge_bevelweight", text="", icon = "BEVEL")
-
+                
                 row = col.row(align=True)
                 row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES")
                 row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES").clear = True
@@ -2082,7 +2082,7 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
 
             col.operator_context = 'INVOKE_REGION_WIN'
             col.operator("uv.project_from_view", icon = "PROJECTFROMVIEW").scale_to_bounds = False
-            col.operator("uv.project_from_view", text="Project from View (Bounds)", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+            col.operator("uv.project_from_view", text="Project from View (Bounds)", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
 
             col.separator(factor = 0.5)
 
@@ -2122,7 +2122,7 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
                 row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
 
                 row = col.row(align=True)
-                row.operator("uv.project_from_view", text="", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+                row.operator("uv.project_from_view", text="", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
                 row.operator("mesh.mark_seam", text = "", icon = "MARK_SEAM").clear = False
                 row.operator("mesh.clear_seam", text = "", icon = 'CLEAR_SEAM')
 
@@ -2152,7 +2152,7 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator_context = 'INVOKE_REGION_WIN'
                 row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
-                row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+                row.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
 
                 row = col.row(align=True)
                 row.operator("mesh.mark_seam", text = "", icon = "MARK_SEAM").clear = False
@@ -2184,7 +2184,7 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
 
                 col.operator_context = 'INVOKE_REGION_WIN'
                 col.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = False
-                col.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+                col.operator("uv.project_from_view", text = "", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
 
                 col.separator(factor = 0.5)
 

@@ -1140,7 +1140,7 @@ class VIEW3D_MT_uv_map(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("uv.project_from_view", icon = "PROJECTFROMVIEW").scale_to_bounds = False
-        layout.operator("uv.project_from_view", text="Project from View (Bounds)", icon = "PROJECTFROMVIEW").scale_to_bounds = True
+        layout.operator("uv.project_from_view", text="Project from View (Bounds)", icon = "PROJECTFROMVIEW_BOUNDS").scale_to_bounds = True
 
         layout.separator()
 
