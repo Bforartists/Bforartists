@@ -1519,6 +1519,106 @@ class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
                 col.operator("mesh.mark_sharp", text="", icon = 'SHADING_VERT_SHARP').use_verts = True
 
 
+class VIEW3D_PT_meshtab_cleanup(toolshelf_calculate, Panel):
+    bl_label = "Clean Up"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mesh"
+    bl_context = "mesh_edit"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("mesh.delete_loose", icon = "DELETE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.decimate", icon = "DECIMATE")
+            col.operator("mesh.dissolve_degenerate", icon = "DEGENERATE_DISSOLVE")
+            col.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED')
+            col.operator("mesh.face_make_planar", icon = "MAKE_PLANAR")
+
+            col.separator(factor = 0.5)
+
+            col.operator("mesh.vert_connect_nonplanar", icon = "SPLIT_NONPLANAR")
+            col.operator("mesh.vert_connect_concave", icon = "SPLIT_CONCAVE")
+            col.operator("mesh.fill_holes", icon = "FILL_HOLE")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("mesh.delete_loose", text = "", icon = "DELETE")
+                row.operator("mesh.decimate", text = "", icon = "DECIMATE")
+                row.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
+
+                row = col.row(align=True)
+                row.operator("mesh.dissolve_limited", text = "", icon='DISSOLVE_LIMITED')
+                row.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
+                row.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
+
+                row = col.row(align=True)
+                row.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
+                row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("mesh.delete_loose", text = "", icon = "DELETE")
+                row.operator("mesh.decimate", text = "", icon = "DECIMATE")
+
+                row = col.row(align=True)
+                row.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
+                row.operator("mesh.dissolve_limited", text = "", icon='DISSOLVE_LIMITED')
+
+                row = col.row(align=True)
+                row.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
+                row.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
+
+                row = col.row(align=True)
+                row.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
+                row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
+
+            elif column_count == 1:
+
+                col.operator("mesh.delete_loose", text = "", icon = "DELETE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.decimate", text = "", icon = "DECIMATE")
+                col.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
+                col.operator("mesh.dissolve_limited", text = "", icon='DISSOLVE_LIMITED')
+                col.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
+
+                col.separator(factor = 0.5)
+
+                col.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
+                col.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
+                col.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
+
+
 class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
@@ -1839,7 +1939,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("transform.edge_crease", text="", icon = "CREASE")
                 row.operator("transform.edge_bevelweight", text="", icon = "BEVEL")
-                
+
                 row = col.row(align=True)
                 row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES")
                 row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES").clear = True
@@ -2217,6 +2317,7 @@ classes = (
     VIEW3D_PT_meshtab_tools,
     VIEW3D_PT_meshtab_normals,
     VIEW3D_PT_meshtab_shading,
+    VIEW3D_PT_meshtab_cleanup,
     VIEW3D_PT_meshtab_dissolve,
 
     #mesh edit mode
