@@ -2279,15 +2279,38 @@ static int edbm_edge_rotate_selected_exec(bContext *C, wmOperator *op)
   return OPERATOR_FINISHED;
 }
 
+  /*bfa - tool name*/
+static const char *mesh_ot_edge_rotate_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_ccw")) {
+    return CTX_IFACE_(ot->translation_context, "Rotate Edge CCW");
+  }
+  return NULL;
+}
+
+/*bfa - descriptions*/
+static char *mesh_ot_edge_rotate_get_description(bContext *UNUSED(C),
+                                          wmOperatorType *UNUSED(ot),
+                                          PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "use_ccw")) {
+    return BLI_strdup(
+        "Rotate selected edge in counter clock wise direction");
+  }
+  return NULL;
+}
+
 void MESH_OT_edge_rotate(wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Rotate Selected Edge";
-  ot->description = "Rotate selected edge or adjoining faces";
+  ot->name = "Rotate Edge CW";
+  ot->description = "Rotate selected edge in clock wise direction";
   ot->idname = "MESH_OT_edge_rotate";
 
   /* api callbacks */
   ot->exec = edbm_edge_rotate_selected_exec;
+  ot->get_name = mesh_ot_edge_rotate_get_name;        /*bfa - tool name*/
+  ot->get_description = mesh_ot_edge_rotate_get_description; /*bfa - descriptions*/
   ot->poll = ED_operator_editmesh;
 
   /* flags */
