@@ -27,6 +27,7 @@
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
+#include "BLI_string.h"
 
 #include "BKE_context.h"
 #include "BKE_editmesh.h"
@@ -1023,17 +1024,47 @@ static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot)
   Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP | P_GPENCIL_EDIT | P_CENTER);
 }
 
+  /*bfa - tool name*/
+static const char *transform_ot_mirror_get_name(wmOperatorType *ot, PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "orient_type")) {
+    return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Local");
+  }
+  else {
+      return CTX_IFACE_(ot->translation_context, "Mirror X Y Z Global");
+  }
+
+  return NULL;
+}
+
+/*bfa - descriptions*/
+static char *transform_ot_mirror_get_description(bContext *UNUSED(C),
+                                                 wmOperatorType *UNUSED(ot),
+                                                 PointerRNA *ptr)
+{
+  if (RNA_boolean_get(ptr, "orient_type")) {
+    return BLI_strdup("Mirror selected items around the selected axis in local space");
+  }
+  else {
+    return BLI_strdup("Mirror selected items around the selected axis in global space");
+  }
+  return NULL;
+}
+
+
 static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
 {
   /* identifiers */
-  ot->name = "Mirror";
-  ot->description = "Mirror selected items around one or more axes";
+  ot->name = "Interactive Mirror";
+  ot->description = "Mirror selected items";
   ot->idname = OP_MIRROR;
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
   /* api callbacks */
   ot->invoke = transform_invoke;
   ot->exec = transform_exec;
+  ot->get_name = transform_ot_mirror_get_name;              /*bfa - tool name*/
+  ot->get_description = transform_ot_mirror_get_description; /*bfa - descriptions*/
   ot->modal = transform_modal;
   ot->cancel = transform_cancel;
   ot->poll = ED_operator_screenactive;
