@@ -489,6 +489,10 @@ class TOPBAR_MT_render(Menu):
         layout.operator("render.view_show", text="Show/Hide Render", icon = 'HIDE_RENDERVIEW')
         layout.operator("render.play_rendered_anim", text="Play rendered Animation", icon='PLAY')
 
+        layout.separator()
+
+        layout.prop(rd, "use_lock_interface", text="Lock Interface")
+
 
 class TOPBAR_MT_opengl_render(Menu):
     bl_label = "OpenGL Render Options"
