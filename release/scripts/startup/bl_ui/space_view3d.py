@@ -5023,7 +5023,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
                 layout.separator()
 
-            layout.operator("curve.smooth", icon = 'SHADING_SMOOTH')
+            layout.operator("curve.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
             if edit_object.type == 'CURVE':
                 layout.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
                 layout.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
@@ -5086,7 +5086,7 @@ class VIEW3D_MT_edit_curve_context_menu(Menu):
         layout.operator("transform.transform", text = "Radius", icon = 'SHRINK_FATTEN').mode = 'CURVE_SHRINKFATTEN'
         layout.operator("transform.tilt", icon = 'TILT')
         layout.operator("curve.tilt_clear", icon = "CLEAR_TILT")
-        layout.operator("curve.smooth", icon = 'SHADING_SMOOTH')
+        layout.operator("curve.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
         layout.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
         layout.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
 
