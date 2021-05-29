@@ -2286,7 +2286,7 @@ class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'EDIT_CURVE'}
+        return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
         layout = self.layout
@@ -2397,7 +2397,7 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'EDIT_CURVE'}
+        return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
         layout = self.layout
@@ -2519,14 +2519,14 @@ class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Segments"
-    bl_context = "curve_edit"
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'EDIT_CURVE'}
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True and context.mode in {'EDIT_SURFACE','EDIT_CURVE'}
 
     def draw(self, _context):
         layout = self.layout
