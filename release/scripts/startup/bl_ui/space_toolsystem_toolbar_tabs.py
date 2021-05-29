@@ -2514,6 +2514,84 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
                 col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
 
+class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
+    bl_label = "Surface"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Surface"
+    bl_context = "surface_edit"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.spin", icon = 'SPIN')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.split", icon = "SPLIT")
+            col.operator("curve.separate", icon = "SEPARATE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.spin", text = "", icon = 'SPIN')
+                row.operator("curve.split", text = "", icon = "SPLIT")
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                row = col.row(align=True)
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.spin", text = "", icon = 'SPIN')
+                row.operator("curve.split", text = "", icon = "SPLIT")
+
+                row = col.row(align=True)
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+            elif column_count == 1:
+
+                col.operator("curve.spin", text = "", icon = 'SPIN')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.split", text = "", icon = "SPLIT")
+                col.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+
+
 class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
     bl_label = "Segments"
     bl_space_type = 'VIEW_3D'
@@ -2599,6 +2677,7 @@ classes = (
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
     VIEW3D_PT_curvetab_controlpoints,
+    VIEW3D_PT_surfacetab_surface,
     VIEW3D_PT_segmentstab_segments,
 
 )
