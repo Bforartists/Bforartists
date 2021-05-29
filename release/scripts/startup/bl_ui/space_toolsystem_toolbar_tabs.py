@@ -2320,7 +2320,6 @@ class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
 
             col.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
 
-
         # icon buttons
         else:
 
@@ -2386,6 +2385,134 @@ class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
                 col.operator("curve.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
 
 
+class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
+    bl_label = "Control Points"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Control Points"
+    bl_context = "curve_edit"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'EDIT_CURVE'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.extrude_move", text = "Extrude Curve", icon = 'EXTRUDE_REGION')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("transform.tilt", icon = 'TILT')
+            col.operator("curve.tilt_clear",icon = "CLEAR_TILT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.smooth", icon = 'SHADING_SMOOTH')
+            col.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
+            col.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
+            col.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+                row.operator("transform.tilt", text = "", icon = 'TILT')
+
+                row = col.row(align=True)
+                row.operator("curve.tilt_clear", text = "",icon = "CLEAR_TILT")
+                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+                row.operator("curve.smooth", text = "", icon = 'SHADING_SMOOTH')
+
+                row = col.row(align=True)
+                row.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
+                row.operator("curve.smooth_radius", text = "", icon = "SMOOTH_RADIUS")
+                row.operator("curve.smooth_tilt", text = "", icon = "SMOOTH_TILT")
+
+                row = col.row(align=True)
+                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+                row.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+
+                row = col.row(align=True)
+                row.operator("transform.tilt", text = "", icon = 'TILT')
+                row.operator("curve.tilt_clear", text = "",icon = "CLEAR_TILT")
+
+                row = col.row(align=True)
+                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+                row.operator("curve.smooth", text = "", icon = 'SHADING_SMOOTH')
+
+                row = col.row(align=True)
+                row.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
+                row.operator("curve.smooth_radius", text = "", icon = "SMOOTH_RADIUS")
+
+                row = col.row(align=True)
+                row.operator("curve.smooth_tilt", text = "", icon = "SMOOTH_TILT")
+                row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
+            elif column_count == 1:
+
+                col.operator("curve.extrude_move", text = "", icon = 'EXTRUDE_REGION')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.make_segment", text = "", icon = "MAKE_CURVESEGMENT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("transform.tilt", text = "", icon = 'TILT')
+                col.operator("curve.tilt_clear", text = "",icon = "CLEAR_TILT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.smooth", text = "", icon = 'SHADING_SMOOTH')
+                col.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
+                col.operator("curve.smooth_radius", text = "", icon = "SMOOTH_RADIUS")
+                col.operator("curve.smooth_tilt", text = "", icon = "SMOOTH_TILT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
+
 classes = (
 
     #object menu
@@ -2417,6 +2544,7 @@ classes = (
 
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
+    VIEW3D_PT_curvetab_controlpoints,
 
 )
 
