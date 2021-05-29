@@ -2513,6 +2513,60 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
 
                 col.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT")
 
+
+class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
+    bl_label = "Segments"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Segments"
+    bl_context = "curve_edit"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'EDIT_CURVE'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES')
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                row.operator("curve.switch_direction", text = "", icon = 'SWITCH_DIRECTION')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                row.operator("curve.switch_direction", text = "", icon = 'SWITCH_DIRECTION')
+
+            elif column_count == 1:
+
+                col.operator("curve.subdivide", text = "", icon = 'SUBDIVIDE_EDGES')
+                col.operator("curve.switch_direction", text = "", icon = 'SWITCH_DIRECTION')
+
+
 classes = (
 
     #object menu
@@ -2545,6 +2599,7 @@ classes = (
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
     VIEW3D_PT_curvetab_controlpoints,
+    VIEW3D_PT_segmentstab_segments,
 
 )
 
