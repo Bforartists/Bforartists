@@ -2427,7 +2427,7 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("curve.smooth", icon = 'SHADING_SMOOTH')
+            col.operator("curve.smooth", icon = 'PARTICLEBRUSH_SMOOTH')
             col.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
             col.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
             col.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
@@ -2453,7 +2453,7 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("curve.tilt_clear", text = "",icon = "CLEAR_TILT")
                 row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
-                row.operator("curve.smooth", text = "", icon = 'SHADING_SMOOTH')
+                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
 
                 row = col.row(align=True)
                 row.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
@@ -2475,7 +2475,7 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
-                row.operator("curve.smooth", text = "", icon = 'SHADING_SMOOTH')
+                row.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
 
                 row = col.row(align=True)
                 row.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
@@ -2504,7 +2504,7 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("curve.smooth", text = "", icon = 'SHADING_SMOOTH')
+                col.operator("curve.smooth", text = "", icon = 'PARTICLEBRUSH_SMOOTH')
                 col.operator("curve.smooth_weight", text = "", icon = "SMOOTH_WEIGHT")
                 col.operator("curve.smooth_radius", text = "", icon = "SMOOTH_RADIUS")
                 col.operator("curve.smooth_tilt", text = "", icon = "SMOOTH_TILT")
