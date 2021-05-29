@@ -2274,6 +2274,117 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
                 col.operator("uv.reset", text = "", icon = "RESET")
 
 
+class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
+    bl_label = "Curve"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Curve"
+    bl_context = "curve_edit"
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True and context.mode in {'EDIT_CURVE'}
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("curve.split", icon = "SPLIT")
+            col.operator("curve.separate", icon = "SEPARATE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+            col.operator("curve.decimate", icon = "DECIMATE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("transform.tilt", icon = "TILT")
+            col.operator("curve.tilt_clear", icon = "CLEAR_TILT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
+
+            col.separator(factor = 0.5)
+
+            col.operator("curve.dissolve_verts", icon='DISSOLVE_VERTS')
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("curve.split", text = "", icon = "SPLIT")
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+
+                row = col.row(align=True)
+                row.operator("curve.decimate", text = "", icon = "DECIMATE")
+                row.operator("transform.tilt", text = "", icon = "TILT")
+                row.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
+
+                row = col.row(align=True)
+                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+                row.operator("curve.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("curve.split", text = "", icon = "SPLIT")
+                row.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                row = col.row(align=True)
+                row.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+                row.operator("curve.decimate", text = "", icon = "DECIMATE")
+
+                row = col.row(align=True)
+                row.operator("transform.tilt", text = "", icon = "TILT")
+                row.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
+
+                row = col.row(align=True)
+                row.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+                row.operator("curve.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+
+            elif column_count == 1:
+
+                col.operator("curve.split", text = "", icon = "SPLIT")
+                col.operator("curve.separate", text = "", icon = "SEPARATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.cyclic_toggle", text = "", icon = 'TOGGLE_CYCLIC')
+                col.operator("curve.decimate", text = "", icon = "DECIMATE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("transform.tilt", text = "", icon = "TILT")
+                col.operator("curve.tilt_clear", text = "", icon = "CLEAR_TILT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.normals_make_consistent", text = "", icon = 'RECALC_NORMALS')
+
+                col.separator(factor = 0.5)
+
+                col.operator("curve.dissolve_verts", text = "", icon='DISSOLVE_VERTS')
+
 
 classes = (
 
@@ -2303,6 +2414,9 @@ classes = (
     VIEW3D_PT_edgetab_Edge,
     VIEW3D_PT_facetab_face,
     VIEW3D_PT_uvtab_uv,
+
+    #curve edit mode
+    VIEW3D_PT_curvetab_curve,
 
 )
 
