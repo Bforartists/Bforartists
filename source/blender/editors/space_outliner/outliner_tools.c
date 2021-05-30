@@ -744,7 +744,7 @@ static void id_local_fn(bContext *C,
       BKE_lib_id_clear_library_data(bmain, tselem->id);
     }
     else {
-      BKE_main_id_clear_newpoins(bmain);
+      BKE_main_id_newptr_and_tag_clear(bmain);
     }
   }
   else if (ID_IS_OVERRIDE_LIBRARY_REAL(tselem->id)) {
@@ -856,7 +856,7 @@ static void id_override_library_create_fn(bContext *C,
       success = BKE_lib_override_library_create_from_id(bmain, id_root, true) != NULL;
 
       /* Cleanup. */
-      BKE_main_id_clear_newpoins(bmain);
+      BKE_main_id_newptr_and_tag_clear(bmain);
       BKE_main_id_tag_all(bmain, LIB_TAG_DOIT, false);
     }
 

@@ -167,7 +167,7 @@ class _defs_annotate:
             gpl = context.active_annotation_layer
             if gpl is not None:
                 layout.label(text="Annotation:")
-                if context.space_data.type == 'VIEW_3D':
+                if context.space_data.type in {'VIEW_3D', 'SEQUENCE_EDITOR'}:
                     if region_type == 'TOOL_HEADER':
                         sub = layout.split(align=True, factor=0.5)
                         sub.ui_units_x = 6.5
@@ -209,26 +209,22 @@ class _defs_annotate:
                 col = layout.row().column(align=True)
                 col.prop(props, "arrowstyle_start", text="Style Start")
                 col.prop(props, "arrowstyle_end", text="End")
-        elif tool.idname == "builtin.annotate" and region_type != 'TOOL_HEADER':
-            layout.separator()
+        elif tool.idname == "builtin.annotate":
             props = tool.operator_properties("gpencil.annotate")
-
-            split = layout.split(factor = 0.66)
-            col = split.column()
-            col.use_property_split = False
-            col.prop(props, "use_stabilizer", text="Stabilize Stroke")
-            col = split.column()
-            if props.use_stabilizer:
-                col.label(icon='DISCLOSURE_TRI_DOWN')
-                col = layout.column()
-                row = col.row()
-                row.separator()
-                row.prop(props, "stabilizer_radius", text="Radius", slider=True)
-                row = col.row()
-                row.separator()
-                row.prop(props, "stabilizer_factor", text="Factor", slider=True)
+            if region_type == 'TOOL_HEADER':
+                row = layout.row()
+                row.prop(props, "use_stabilizer", text="Stabilize Stroke")
+                subrow = layout.row(align=False)
+                subrow.active = props.use_stabilizer
+                subrow.prop(props, "stabilizer_radius", text="Radius", slider=True)
+                subrow.prop(props, "stabilizer_factor", text="Factor", slider=True)
             else:
-                col.label(icon='DISCLOSURE_TRI_RIGHT')
+                layout.separator()
+                layout.prop(props, "use_stabilizer", text="Stabilize Stroke")
+                col = layout.column(align=False)
+                col.active = props.use_stabilizer
+                col.prop(props, "stabilizer_radius", text="Radius", slider=True)
+                col.prop(props, "stabilizer_factor", text="Factor", slider=True)
 
 
     @ToolDef.from_fn.with_args(draw_settings=draw_settings_common)
