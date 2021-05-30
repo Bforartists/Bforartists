@@ -1137,7 +1137,7 @@ static void rna_ImagePreview_icon_reload(PreviewImage *prv)
 static PointerRNA rna_IDPreview_get(PointerRNA *ptr)
 {
   ID *id = (ID *)ptr->data;
-  PreviewImage *prv_img = BKE_previewimg_id_ensure(id);
+  PreviewImage *prv_img = BKE_previewimg_id_get(id);
 
   return rna_pointer_inherit_refine(ptr, &RNA_ImagePreview, prv_img);
 }
@@ -1706,12 +1706,12 @@ static void rna_def_ID(BlenderRNA *brna)
       srna, "override_library", "IDOverrideLibrary", "Library Override", "Library override data");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
-  prop = RNA_def_pointer(
-      srna,
-      "preview",
-      "ImagePreview",
-      "Preview",
-      "Preview image and icon of this data (None if not supported for this type of data)");
+  prop = RNA_def_pointer(srna,
+                         "preview",
+                         "ImagePreview",
+                         "Preview",
+                         "Preview image and icon of this data (always None if not supported "
+                         "for this type of data)");
   RNA_def_property_clear_flag(prop, PROP_EDITABLE);
   RNA_def_property_override_flag(prop, PROPOVERRIDE_NO_COMPARISON);
   RNA_def_property_pointer_funcs(prop, "rna_IDPreview_get", NULL, NULL, NULL);
@@ -1727,8 +1727,8 @@ static void rna_def_ID(BlenderRNA *brna)
   RNA_def_function_return(func, parm);
 
   func = RNA_def_function(srna, "copy", "rna_ID_copy");
-  RNA_def_function_ui_description(func,
-                                  "Create a copy of this data (not supported for all datas)");
+  RNA_def_function_ui_description(
+      func, "Create a copy of this data(not supported for all data)");
   RNA_def_function_flag(func, FUNC_USE_MAIN);
   parm = RNA_def_pointer(func, "id", "ID", "", "New copy of the ID");
   RNA_def_function_return(func, parm);
@@ -1824,6 +1824,13 @@ static void rna_def_ID(BlenderRNA *brna)
                                   "Tag the ID to update its display data, "
                                   "e.g. when calling :class:`bpy.types.Scene.update`");
   RNA_def_enum_flag(func, "refresh", update_flag_items, 0, "", "Type of updates to perform");
+
+  func = RNA_def_function(srna, "preview_ensure", "BKE_previewimg_id_ensure");
+  RNA_def_function_ui_description(func,
+                                  "Ensure that this ID has preview data (if ID type supports it)");
+  parm = RNA_def_pointer(
+      func, "preview_image", "ImagePreview", "", "The existing or created preview");
+  RNA_def_function_return(func, parm);
 
 #  ifdef WITH_PYTHON
   RNA_def_struct_register_funcs(srna, NULL, NULL, "rna_ID_instance");
