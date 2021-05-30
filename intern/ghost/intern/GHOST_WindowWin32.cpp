@@ -124,7 +124,6 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
   /* Constrain requested size and position to fit within this monitor. */
   width = min(monitor.rcWork.right - monitor.rcWork.left, win_rect.right - win_rect.left);
   height = min(monitor.rcWork.bottom - monitor.rcWork.top, win_rect.bottom - win_rect.top);
-
   win_rect.left = min(max(monitor.rcWork.left, win_rect.left), monitor.rcWork.right - width);
   win_rect.right = win_rect.left + width;
   win_rect.top = min(max(monitor.rcWork.top, win_rect.top), monitor.rcWork.bottom - height);
