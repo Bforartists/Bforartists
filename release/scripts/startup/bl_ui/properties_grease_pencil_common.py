@@ -860,8 +860,11 @@ class GreasePencilLayerRelationsPanel:
 
         col = layout.row(align=True)
         # Only enable this property when a view layer is selected.
-        col.enabled = bool(gpl.viewlayer_render)
-        col.prop(gpl, "use_viewlayer_masks")
+        if bool(gpl.viewlayer_render):
+            row = col.row()
+            row.use_property_split = False
+            row.separator()
+            row.prop(gpl, "use_viewlayer_masks")
 
 class GreasePencilLayerDisplayPanel:
 
