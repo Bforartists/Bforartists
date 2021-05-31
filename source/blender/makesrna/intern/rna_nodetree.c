@@ -12047,6 +12047,8 @@ static int node_type_to_icon(int type)
     case SH_NODE_WAVELENGTH:
       icon = ICON_NODE_WAVELENGTH;
       break;
+
+
     /* bfa - Script */
     case SH_NODE_SCRIPT:
       icon = ICON_FILE_SCRIPT;
@@ -12520,6 +12522,9 @@ static int node_type_to_icon(int type)
       /*curve*/
     case GEO_NODE_CURVE_TO_MESH:
       icon = ICON_OUTLINER_OB_MESH;
+      break;
+    case GEO_NODE_MESH_TO_CURVE:
+      icon = ICON_OUTLINER_OB_CURVE;
       break;
     case GEO_NODE_CURVE_RESAMPLE:
       icon = ICON_CURVE_RESAMPLE;
