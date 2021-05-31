@@ -119,6 +119,10 @@ if(WITH_GMP)
   add_definitions(-DWITH_GMP)
 endif()
 
+if(WITH_OPENCOLORIO)
+  add_definitions(-DWITH_OCIO)
+endif()
+
 # Setup the exe sources and buildinfo
 set(SRC
   creator.c
@@ -285,6 +289,15 @@ if(WITH_PYTHON_MODULE)
 
 else()
   add_executable(bforartists ${EXETYPE} ${SRC})
+  if(WIN32)
+      add_executable(blender-launcher WIN32
+        blender_launcher_win32.c
+        ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.rc
+        ${CMAKE_BINARY_DIR}/blender.exe.manifest
+      )
+      target_compile_definitions (blender-launcher PRIVATE -D_UNICODE -DUNICODE)
+      target_link_libraries(blender-launcher Pathcch.lib)
+  endif()
 endif()
 
 if(WITH_BUILDINFO)
