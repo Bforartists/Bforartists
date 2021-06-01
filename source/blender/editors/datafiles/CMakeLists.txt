@@ -439,8 +439,8 @@ clearsharpverts
 marksharpverts
 rotateccw
 projectfromview_bounds
-#~ DEF_ICON_BLANK(458)
-#~ DEF_ICON_BLANK(459)
+join_areas
+swap_areas
 
 # ------------------------- row 7  --------------------------*/
 
