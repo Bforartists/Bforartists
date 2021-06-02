@@ -4466,8 +4466,9 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
             IFACE_("Hide Editortype menu"),
             (area->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
             "SCREEN_OT_header_toggle_editortypemenu");
-    uiItemS(layout);
-    screen_area_menu_items(area, layout);
+    /*bfa - we don't show the area items in the rmb menu*/
+    /*uiItemS(layout);
+     screen_area_menu_items(area, layout);*/
   }
 }
 
