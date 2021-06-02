@@ -408,6 +408,10 @@ class NODE_MT_view(Menu):
             layout.operator("node.viewer_border", text = "Set Viewer Region", icon = "RENDERBORDER")
             layout.operator("node.clear_viewer_border", text = "Clear Viewer Region", icon = "RENDERBORDER_CLEAR")
 
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
 
 class NODE_MT_select(Menu):
     bl_label = "Select"

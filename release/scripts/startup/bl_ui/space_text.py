@@ -231,6 +231,10 @@ class TEXT_MT_view(Menu):
         layout.operator("text.move", text="Top of File", icon = "MOVE_UP").type = 'FILE_TOP'
         layout.operator("text.move", text="Bottom of File",icon = "MOVE_DOWN").type = 'FILE_BOTTOM'
 
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
 
 #Redraw timer sub menu - Debug stuff
 class TEXT_MT_redraw_timer(Menu):
