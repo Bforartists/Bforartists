@@ -1247,6 +1247,7 @@ static void panel_draw_aligned_backdrop(const Panel *panel,
   const bool draw_box_style = panel->type->flag & PANEL_TYPE_DRAW_BOX;
   const bool is_subpanel = panel->type->parent != NULL;
   const bool is_open = !UI_panel_is_closed(panel);
+  const float hide_bg = panel->type->flag & PANEL_HIDE_BG;
 
   if (is_subpanel && !is_open) {
     return;
@@ -1323,7 +1324,13 @@ static void panel_draw_aligned_backdrop(const Panel *panel,
 
     /* Panel backdrop. */
     if (is_open || panel->type->flag & PANEL_TYPE_NO_HEADER) {
-      immUniformThemeColor(is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK);
+      /* bfa - transparent toolbar background */
+      if (hide_bg) {
+        immUniformThemeColorAlpha(is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK, 0.f);
+      }
+      else {
+        immUniformThemeColor(is_subpanel ? TH_PANEL_SUB_BACK : TH_PANEL_BACK);
+      }
       immRectf(pos, rect->xmin, rect->ymin, rect->xmax, rect->ymax);
     }
 
