@@ -203,6 +203,10 @@ class OUTLINER_MT_view(Menu):
         layout.operator("outliner.select_all", text="None", icon='SELECT_NONE').action = 'DESELECT'
         layout.operator("outliner.select_all", text="Invert", icon='INVERSE').action = 'INVERT'
 
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
 
 class OUTLINER_MT_context_menu(Menu):
     bl_label = "Outliner Context Menu"
@@ -212,6 +216,8 @@ class OUTLINER_MT_context_menu(Menu):
         layout.menu("OUTLINER_MT_context_menu_view")
 
         layout.separator()
+
+        layout.menu("INFO_MT_area")
 
     def draw(self, context):
         space = context.space_data

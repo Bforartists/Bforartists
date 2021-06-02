@@ -1233,6 +1233,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
+        layout.menu("INFO_MT_area")
         layout.menu("VIEW3D_MT_view_pie_menus")
 
 
