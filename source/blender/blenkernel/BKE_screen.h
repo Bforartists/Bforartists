@@ -305,6 +305,8 @@ enum {
   PANEL_TYPE_DRAW_BOX = (1 << 6),
   /** Don't search panels with this type during property search. */
   PANEL_TYPE_NO_SEARCH = (1 << 7),
+  /** Make panel background fully transparent **/
+  PANEL_HIDE_BG = (1 << 8),
 };
 
 /* uilist types */
