@@ -37,7 +37,17 @@ class INFO_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        layout.menu("INFO_MT_view")
         layout.menu("INFO_MT_info")
+
+
+class INFO_MT_view(Menu):
+    bl_label = "View"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.menu("INFO_MT_area")
 
 
 class INFO_MT_info(Menu):
@@ -82,6 +92,29 @@ class ALL_MT_editormenu(Menu):
         row.template_header() # editor type menus
 
 
+class INFO_MT_area(Menu):
+    bl_label = "Area"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("screen.area_split", text="Horizontal Split", icon = "SPLIT_HORIZONTAL").direction = 'HORIZONTAL'
+        layout.operator("screen.area_split", text="Vertical Split", icon = "SPLIT_VERTICAL").direction = 'VERTICAL'
+
+        layout.separator()
+
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+
+        layout.separator()
+
+        layout.operator("screen.screen_full_area", icon='MAXIMIZE_AREA')
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon='FULLSCREEN_ENTER').use_hide_panels = True
+
+        layout.separator()
+
+        layout.operator("screen.area_close", icon = "PANEL_CLOSE")
+
+
 class INFO_MT_context_menu(Menu):
     bl_label = "Info Context Menu"
 
@@ -96,6 +129,8 @@ classes = (
     ALL_MT_editormenu,
     INFO_HT_header,
     INFO_MT_editor_menus,
+    INFO_MT_area,
+    INFO_MT_view,
     INFO_MT_info,
     INFO_MT_context_menu,
 )

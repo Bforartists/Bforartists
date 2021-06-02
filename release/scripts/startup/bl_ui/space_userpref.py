@@ -89,7 +89,17 @@ class USERPREF_MT_editor_menus(Menu):
 
     def draw(self, _context):
         layout = self.layout
+        layout.menu("USERPREF_MT_view")
         layout.menu("USERPREF_MT_save_load", text="Preferences")
+
+
+class USERPREF_MT_view(Menu):
+    bl_label = "View"
+
+    def draw(self, _context):
+        layout = self.layout
+
+        layout.menu("INFO_MT_area")
 
 
 class USERPREF_MT_save_load(Menu):
@@ -2366,6 +2376,7 @@ classes = (
     USERPREF_PT_navigation_bar,
     USERPREF_PT_save_preferences,
     USERPREF_MT_editor_menus,
+    USERPREF_MT_view,
     USERPREF_MT_save_load,
 
     USERPREF_PT_interface_display,
