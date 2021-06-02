@@ -519,6 +519,10 @@ class FILEBROWSER_MT_view(Menu):
         layout.prop(st, "show_region_ui", text="File Path")
         layout.operator("file.view_selected")
 
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
 
 class FILEBROWSER_MT_select(Menu):
     bl_label = "Select"
