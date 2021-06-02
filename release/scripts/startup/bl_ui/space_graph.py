@@ -261,6 +261,7 @@ class GRAPH_MT_view(Menu):
 
         layout.separator()
 
+        layout.menu("INFO_MT_area")
         layout.menu("GRAPH_MT_view_pie_menus")
 
 

@@ -1427,6 +1427,9 @@ class CLIP_MT_view(Menu):
 
                 layout.operator_context = 'INVOKE_DEFAULT'
 
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
         layout.menu("CLIP_MT_view_pie_menus")
 
 

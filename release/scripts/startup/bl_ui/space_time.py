@@ -150,6 +150,10 @@ class TIME_MT_view(Menu):
         layout.operator("action.view_all", icon = "VIEWALL")
         layout.operator("action.view_frame", icon = "VIEW_FRAME" )
 
+        layout.separator()
+
+        layout.menu("INFO_MT_area")
+
 
 def marker_menu_generic(layout, context):
 
