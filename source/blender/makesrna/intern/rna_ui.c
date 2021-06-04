@@ -1360,6 +1360,8 @@ static void rna_def_panel(BlenderRNA *brna)
        "Expand Header Layout",
        "Allow buttons in the header to stretch and shrink to fill the entire layout width"},
       {PANEL_TYPE_DRAW_BOX, "DRAW_BOX", 0, "Box Style", "Display panel with the box widget theme"},
+      /* bfa - transparent toolsystem panels bg */
+      {PANEL_HIDE_BG, "HIDE_BG", 0, "Make panel background fully transparent"},
       {0, NULL, 0, NULL, NULL},
   };
 
