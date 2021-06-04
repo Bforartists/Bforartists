@@ -2678,7 +2678,7 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     bl_region_type = 'TOOLS'
     bl_label = "Tools"
     bl_category = "Tools"
-    bl_options = {'HIDE_HEADER'}
+    bl_options = {'HIDE_BG'}
 
     # Satisfy the 'ToolSelectPanelHelper' API.
     keymap_prefix = "3D View Tool:"
