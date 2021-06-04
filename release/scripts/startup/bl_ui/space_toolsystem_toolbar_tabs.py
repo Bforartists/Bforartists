@@ -549,11 +549,10 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
 
 
 class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
-    bl_label = "Local"
+    bl_label = "Mirror Local"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Object"
-    bl_parent_id = "VIEW3D_PT_objecttab_mirror"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     def draw(self, _context):
@@ -830,7 +829,6 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context = "objectmode"
-    bl_parent_id = "VIEW3D_PT_objecttab_apply"
     bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
