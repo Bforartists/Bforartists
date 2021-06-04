@@ -2278,6 +2278,398 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
                 col.operator("uv.reset", text = "", icon = "RESET")
 
 
+class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
+    bl_label = "Mask"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mask"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            props = col.operator("paint.mask_flood_fill", text="Invert Mask", icon = "INVERT_MASK")
+            props.mode = 'INVERT'
+
+            props = col.operator("paint.mask_flood_fill", text="Fill Mask", icon = "FILL_MASK")
+            props.mode = 'VALUE'
+            props.value = 1
+
+            props = col.operator("paint.mask_flood_fill", text="Clear Mask", icon = "CLEAR_MASK")
+            props.mode = 'VALUE'
+            props.value = 0
+
+            col.separator(factor = 0.5)
+
+            props = col.operator("sculpt.mask_filter", text='Smooth Mask', icon = "PARTICLEBRUSH_SMOOTH")
+            props.filter_type = 'SMOOTH'
+            props.auto_iteration_count = True
+
+            props = col.operator("sculpt.mask_filter", text='Sharpen Mask', icon = "SHARPEN")
+            props.filter_type = 'SHARPEN'
+            props.auto_iteration_count = True
+
+            props = col.operator("sculpt.mask_filter", text='Grow Mask', icon = "SELECTMORE")
+            props.filter_type = 'GROW'
+            props.auto_iteration_count = True
+
+            props = col.operator("sculpt.mask_filter", text='Shrink Mask', icon = "SELECTLESS")
+            props.filter_type = 'SHRINK'
+            props.auto_iteration_count = True
+
+            props = col.operator("sculpt.mask_filter", text='Increase Contrast', icon = "INC_CONTRAST")
+            props.filter_type = 'CONTRAST_INCREASE'
+            props.auto_iteration_count = False
+
+            props = col.operator("sculpt.mask_filter", text='Decrease Contrast', icon = "DEC_CONTRAST")
+            props.filter_type = 'CONTRAST_DECREASE'
+            props.auto_iteration_count = False
+
+            col.separator(factor = 0.5)
+
+            props = col.operator("sculpt.expand", text="Expand Mask by Topology", icon = "MESH_DATA")
+            props.target = 'MASK'
+            props.falloff_type = 'GEODESIC'
+            props.invert = True
+
+            props = col.operator("sculpt.expand", text="Expand Mask by Curvature", icon = "CURVE_DATA")
+            props.target = 'MASK'
+            props.falloff_type = 'NORMALS'
+            props.invert = False
+
+            col.separator(factor = 0.5)
+
+            props = col.operator("mesh.paint_mask_extract", text="Mask Extract", icon = "PACKAGE")
+
+            col.separator(factor = 0.5)
+
+            props = col.operator("mesh.paint_mask_slice", text="Mask Slice", icon = "MASK_SLICE")
+            props.fill_holes = False
+            props.new_object = False
+            props = col.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE")
+            props.new_object = False
+            props = col.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MASK_SLICE")
+
+            col.separator(factor = 0.5)
+
+            props = col.operator("sculpt.dirty_mask", text='Dirty Mask', icon = "DIRTY_VERTEX")
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                props = row.operator("paint.mask_flood_fill", text="", icon = "INVERT_MASK")
+                props.mode = 'INVERT'
+
+                props = row.operator("paint.mask_flood_fill", text="", icon = "FILL_MASK")
+                props.mode = 'VALUE'
+                props.value = 1
+
+                props = row.operator("paint.mask_flood_fill", text="", icon = "CLEAR_MASK")
+                props.mode = 'VALUE'
+                props.value = 0
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mask_filter", text='', icon = "PARTICLEBRUSH_SMOOTH")
+                props.filter_type = 'SMOOTH'
+                props.auto_iteration_count = True
+
+                props = row.operator("sculpt.mask_filter", text='', icon = "SHARPEN")
+                props.filter_type = 'SHARPEN'
+                props.auto_iteration_count = True
+
+                props = row.operator("sculpt.mask_filter", text='', icon = "SELECTMORE")
+                props.filter_type = 'GROW'
+                props.auto_iteration_count = True
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mask_filter", text='', icon = "SELECTLESS")
+                props.filter_type = 'SHRINK'
+                props.auto_iteration_count = True
+
+                props = row.operator("sculpt.mask_filter", text='', icon = "INC_CONTRAST")
+                props.filter_type = 'CONTRAST_INCREASE'
+                props.auto_iteration_count = False
+
+                props = row.operator("sculpt.mask_filter", text='', icon = "DEC_CONTRAST")
+                props.filter_type = 'CONTRAST_DECREASE'
+                props.auto_iteration_count = False
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.expand", text="", icon = "MESH_DATA")
+                props.target = 'MASK'
+                props.falloff_type = 'GEODESIC'
+                props.invert = True
+
+                props = row.operator("sculpt.expand", text="", icon = "CURVE_DATA")
+                props.target = 'MASK'
+                props.falloff_type = 'NORMALS'
+                props.invert = False
+
+                props = row.operator("mesh.paint_mask_extract", text="", icon = "PACKAGE")
+
+                row = col.row(align=True)
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props.fill_holes = False
+                props.new_object = False
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props.new_object = False
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
+
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                props = row.operator("paint.mask_flood_fill", text="", icon = "INVERT_MASK")
+                props.mode = 'INVERT'
+
+                props = row.operator("paint.mask_flood_fill", text="", icon = "FILL_MASK")
+                props.mode = 'VALUE'
+                props.value = 1
+
+                row = col.row(align=True)
+                props = row.operator("paint.mask_flood_fill", text="", icon = "CLEAR_MASK")
+                props.mode = 'VALUE'
+                props.value = 0
+
+                props = row.operator("sculpt.mask_filter", text='', icon = "PARTICLEBRUSH_SMOOTH")
+                props.filter_type = 'SMOOTH'
+                props.auto_iteration_count = True
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mask_filter", text='', icon = "SHARPEN")
+                props.filter_type = 'SHARPEN'
+                props.auto_iteration_count = True
+
+                props = row.operator("sculpt.mask_filter", text='', icon = "SELECTMORE")
+                props.filter_type = 'GROW'
+                props.auto_iteration_count = True
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mask_filter", text='', icon = "SELECTLESS")
+                props.filter_type = 'SHRINK'
+                props.auto_iteration_count = True
+
+                props = row.operator("sculpt.mask_filter", text='', icon = "INC_CONTRAST")
+                props.filter_type = 'CONTRAST_INCREASE'
+                props.auto_iteration_count = False
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.mask_filter", text='', icon = "DEC_CONTRAST")
+                props.filter_type = 'CONTRAST_DECREASE'
+                props.auto_iteration_count = False
+
+                props = row.operator("sculpt.expand", text="", icon = "MESH_DATA")
+                props.target = 'MASK'
+                props.falloff_type = 'GEODESIC'
+                props.invert = True
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.expand", text="", icon = "CURVE_DATA")
+                props.target = 'MASK'
+                props.falloff_type = 'NORMALS'
+                props.invert = False
+
+                props = row.operator("mesh.paint_mask_extract", text="", icon = "PACKAGE")
+
+                row = col.row(align=True)
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props.fill_holes = False
+                props.new_object = False
+
+                row = col.row(align=True)
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props.new_object = False
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+
+                row = col.row(align=True)
+                props = row.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
+
+            elif column_count == 1:
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+
+                props = col.operator("paint.mask_flood_fill", text="", icon = "INVERT_MASK")
+                props.mode = 'INVERT'
+
+                props = col.operator("paint.mask_flood_fill", text="", icon = "FILL_MASK")
+                props.mode = 'VALUE'
+                props.value = 1
+
+                props = col.operator("paint.mask_flood_fill", text="", icon = "CLEAR_MASK")
+                props.mode = 'VALUE'
+                props.value = 0
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("sculpt.mask_filter", text='', icon = "PARTICLEBRUSH_SMOOTH")
+                props.filter_type = 'SMOOTH'
+                props.auto_iteration_count = True
+
+                props = col.operator("sculpt.mask_filter", text='', icon = "SHARPEN")
+                props.filter_type = 'SHARPEN'
+                props.auto_iteration_count = True
+
+                props = col.operator("sculpt.mask_filter", text='', icon = "SELECTMORE")
+                props.filter_type = 'GROW'
+                props.auto_iteration_count = True
+
+                props = col.operator("sculpt.mask_filter", text='', icon = "SELECTLESS")
+                props.filter_type = 'SHRINK'
+                props.auto_iteration_count = True
+
+                props = col.operator("sculpt.mask_filter", text='', icon = "INC_CONTRAST")
+                props.filter_type = 'CONTRAST_INCREASE'
+                props.auto_iteration_count = False
+
+                props = col.operator("sculpt.mask_filter", text='', icon = "DEC_CONTRAST")
+                props.filter_type = 'CONTRAST_DECREASE'
+                props.auto_iteration_count = False
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("sculpt.expand", text="", icon = "MESH_DATA")
+                props.target = 'MASK'
+                props.falloff_type = 'GEODESIC'
+                props.invert = True
+
+                props = col.operator("sculpt.expand", text="", icon = "CURVE_DATA")
+                props.target = 'MASK'
+                props.falloff_type = 'NORMALS'
+                props.invert = False
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("mesh.paint_mask_extract", text="", icon = "PACKAGE")
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props.fill_holes = False
+                props.new_object = False
+                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props.new_object = False
+                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+
+                col.separator(factor = 0.5)
+
+                props = col.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
+
+
+class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
+    bl_label = "Random Mask"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Mask"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            op = col.operator("sculpt.mask_init", text='Per Vertex', icon = "SELECT_UNGROUPED_VERTS")
+            op.mode = 'RANDOM_PER_VERTEX'
+
+            op = col.operator("sculpt.mask_init", text='Per Face Set', icon = "FACESEL")
+            op.mode = 'RANDOM_PER_FACE_SET'
+
+            op = col.operator("sculpt.mask_init", text='Per Loose Part', icon = "SELECT_LOOSE")
+            op.mode = 'RANDOM_PER_LOOSE_PART'
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.mask_init", text='', icon = "SELECT_UNGROUPED_VERTS")
+                op.mode = 'RANDOM_PER_VERTEX'
+
+                op = row.operator("sculpt.mask_init", text='', icon = "FACESEL")
+                op.mode = 'RANDOM_PER_FACE_SET'
+
+                op = row.operator("sculpt.mask_init", text='', icon = "SELECT_LOOSE")
+                op.mode = 'RANDOM_PER_LOOSE_PART'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.mask_init", text='', icon = "SELECT_UNGROUPED_VERTS")
+                op.mode = 'RANDOM_PER_VERTEX'
+
+                op = row.operator("sculpt.mask_init", text='', icon = "FACESEL")
+                op.mode = 'RANDOM_PER_FACE_SET'
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.mask_init", text='', icon = "SELECT_LOOSE")
+                op.mode = 'RANDOM_PER_LOOSE_PART'
+
+
+            elif column_count == 1:
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+
+                col = layout.column(align=True)
+                col.scale_y = 2
+
+                op = col.operator("sculpt.mask_init", text='', icon = "SELECT_UNGROUPED_VERTS")
+                op.mode = 'RANDOM_PER_VERTEX'
+
+                op = col.operator("sculpt.mask_init", text='', icon = "FACESEL")
+                op.mode = 'RANDOM_PER_FACE_SET'
+
+                op = col.operator("sculpt.mask_init", text='', icon = "SELECT_LOOSE")
+                op.mode = 'RANDOM_PER_LOOSE_PART'
+
+
 class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     bl_label = "Curve"
     bl_space_type = 'VIEW_3D'
@@ -2764,6 +3156,10 @@ classes = (
     VIEW3D_PT_edgetab_Edge,
     VIEW3D_PT_facetab_face,
     VIEW3D_PT_uvtab_uv,
+
+    #mesh sculpt mode
+    VIEW3D_PT_masktab_mask,
+    VIEW3D_PT_masktab_random_mask,
 
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
