@@ -59,7 +59,7 @@ class VIEW3D_PT_objecttab_transform(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Object"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -377,7 +377,7 @@ class VIEW3D_PT_objecttab_set_origin(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context = "objectmode"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -445,7 +445,7 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Object"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -554,7 +554,7 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_parent_id = "VIEW3D_PT_objecttab_mirror"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     def draw(self, _context):
         layout = self.layout
@@ -635,7 +635,7 @@ class VIEW3D_PT_objecttab_clear(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context = "objectmode"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -707,7 +707,7 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Object"
     bl_context = "objectmode"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -831,7 +831,7 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
     bl_category = "Object"
     bl_context = "objectmode"
     bl_parent_id = "VIEW3D_PT_objecttab_apply"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -910,6 +910,7 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Object"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1004,7 +1005,7 @@ class VIEW3D_PT_objecttab_shading(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Object"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1066,7 +1067,7 @@ class VIEW3D_PT_meshtab_merge(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1134,7 +1135,7 @@ class VIEW3D_PT_meshtab_split(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1193,7 +1194,7 @@ class VIEW3D_PT_meshtab_separate(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1252,7 +1253,7 @@ class VIEW3D_PT_meshtab_tools(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1349,7 +1350,7 @@ class VIEW3D_PT_meshtab_normals(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1408,6 +1409,7 @@ class VIEW3D_PT_meshtab_shading(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1503,7 +1505,7 @@ class VIEW3D_PT_meshtab_cleanup(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1603,7 +1605,7 @@ class VIEW3D_PT_meshtab_dissolve(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Mesh"
     bl_context = "mesh_edit"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1691,6 +1693,7 @@ class VIEW3D_PT_vertextab_vertex(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Vertex"
     bl_context = "mesh_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1801,6 +1804,7 @@ class VIEW3D_PT_edgetab_Edge(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Edge"
     bl_context = "mesh_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -1983,6 +1987,7 @@ class VIEW3D_PT_facetab_face(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Face"
     bl_context = "mesh_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -2120,6 +2125,7 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "UV"
     bl_context = "mesh_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -2280,6 +2286,7 @@ class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Curve"
     bl_context = "curve_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -2391,6 +2398,7 @@ class VIEW3D_PT_curvetab_controlpoints(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Control Points"
     bl_context = "curve_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -2520,6 +2528,7 @@ class VIEW3D_PT_surfacetab_surface(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Surface"
     bl_context = "surface_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -2597,6 +2606,7 @@ class VIEW3D_PT_curvetab_controlpoints_surface(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Control Points"
     bl_context = "surface_edit"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -2679,6 +2689,7 @@ class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_category = "Segments"
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
