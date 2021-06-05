@@ -499,8 +499,8 @@ lightprobe_planar
 view_remove_local
 shape
 
-#~ DEF_ICON_BLANK(518)
-#~ DEF_ICON_BLANK(519)
+mask_slice_fill
+mask_slice_new
 #~ DEF_ICON_BLANK(520)
 #~ DEF_ICON_BLANK(521)
 #~ DEF_ICON_BLANK(522)
