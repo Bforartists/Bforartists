@@ -2368,9 +2368,9 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
             props = col.operator("mesh.paint_mask_slice", text="Mask Slice", icon = "MASK_SLICE")
             props.fill_holes = False
             props.new_object = False
-            props = col.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE")
+            props = col.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE_FILL")
             props.new_object = False
-            props = col.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MASK_SLICE")
+            props = col.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MASK_SLICE_NEW")
 
             col.separator(factor = 0.5)
 
@@ -2441,9 +2441,9 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
                 props.fill_holes = False
                 props.new_object = False
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 row = col.row(align=True)
                 props = row.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
@@ -2510,9 +2510,9 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props.new_object = False
 
                 row = col.row(align=True)
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
-                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = row.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 row = col.row(align=True)
                 props = row.operator("sculpt.dirty_mask", text='', icon = "DIRTY_VERTEX")
@@ -2580,9 +2580,9 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
                 props.fill_holes = False
                 props.new_object = False
-                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_FILL")
                 props.new_object = False
-                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE")
+                props = col.operator("mesh.paint_mask_slice", text="", icon = "MASK_SLICE_NEW")
 
                 col.separator(factor = 0.5)
 
