@@ -3528,9 +3528,9 @@ class VIEW3D_MT_mask(Menu):
         props = layout.operator("mesh.paint_mask_slice", text="Mask Slice", icon = "MASK_SLICE")
         props.fill_holes = False
         props.new_object = False
-        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE")
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice and Fill Holes", icon = "MASK_SLICE_FILL")
         props.new_object = False
-        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MASK_SLICE")
+        props = layout.operator("mesh.paint_mask_slice", text="Mask Slice to New Object", icon = "MASK_SLICE_NEW")
 
         layout.separator()
 
