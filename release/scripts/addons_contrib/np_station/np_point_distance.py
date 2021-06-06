@@ -133,7 +133,7 @@ class NP020PD:
 # Defining the first of the classes from the macro, that will gather the
 # current system settings set by the user. Some of the system settings
 # will be changed during the process, and will be restored when macro has
-# completed. It also aquires the list of selected objects and storing them
+# completed. It also acquires the list of selected objects and storing them
 # for later re-call (the addon doesn't need them for operation):
 
 class NP020PDGetSelection(bpy.types.Operator):

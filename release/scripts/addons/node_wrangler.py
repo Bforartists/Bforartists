@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Node Wrangler",
     "author": "Bartek Skorupa, Greg Zaal, Sebastian Koenig, Christian Brinkmann, Florian Meyer",
-    "version": (3, 37),
-    "blender": (2, 83, 0),
+    "version": (3, 38),
+    "blender": (2, 93, 0),
     "location": "Node Editor Toolbar or Shift-W",
     "description": "Various tools to enhance and speed up node-based workflow",
     "warning": "",
@@ -43,6 +43,7 @@ from bpy.props import (
 from bpy_extras.io_utils import ImportHelper, ExportHelper
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector
+from nodeitems_utils import node_categories_iter
 from math import cos, sin, pi, hypot
 from os import path
 from glob import glob
@@ -54,7 +55,7 @@ from collections import namedtuple
 #################
 # rl_outputs:
 # list of outputs of Input Render Layer
-# with attributes determinig if pass is used,
+# with attributes determining if pass is used,
 # and MultiLayer EXR outputs names and corresponding render engines
 #
 # rl_outputs entry = (render_pass, rl_output_name, exr_output_name, in_eevee, in_cycles)
@@ -90,7 +91,7 @@ rl_outputs = (
 # shader nodes
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 shaders_input_nodes_props = (
     ('ShaderNodeAmbientOcclusion', 'AMBIENT_OCCLUSION', 'Ambient Occlusion'),
     ('ShaderNodeAttribute', 'ATTRIBUTE', 'Attribute'),
@@ -115,7 +116,7 @@ shaders_input_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 shaders_output_nodes_props = (
     ('ShaderNodeOutputAOV', 'OUTPUT_AOV', 'AOV Output'),
     ('ShaderNodeOutputLight', 'OUTPUT_LIGHT', 'Light Output'),
@@ -124,7 +125,7 @@ shaders_output_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 shaders_shader_nodes_props = (
     ('ShaderNodeAddShader', 'ADD_SHADER', 'Add Shader'),
     ('ShaderNodeBsdfAnisotropic', 'BSDF_ANISOTROPIC', 'Anisotropic BSDF'),
@@ -149,7 +150,7 @@ shaders_shader_nodes_props = (
     ('ShaderNodeVolumeScatter', 'VOLUME_SCATTER', 'Volume Scatter'),
 )
 # (rna_type.identifier, type, rna_type.name)
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
 shaders_texture_nodes_props = (
     ('ShaderNodeTexBrick', 'TEX_BRICK', 'Brick Texture'),
@@ -169,7 +170,7 @@ shaders_texture_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 shaders_color_nodes_props = (
     ('ShaderNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright Contrast'),
     ('ShaderNodeGamma', 'GAMMA', 'Gamma'),
@@ -181,7 +182,7 @@ shaders_color_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 shaders_vector_nodes_props = (
     ('ShaderNodeBump', 'BUMP', 'Bump'),
     ('ShaderNodeDisplacement', 'DISPLACEMENT', 'Displacement'),
@@ -194,7 +195,7 @@ shaders_vector_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 shaders_converter_nodes_props = (
     ('ShaderNodeBlackbody', 'BLACKBODY', 'Blackbody'),
     ('ShaderNodeClamp', 'CLAMP', 'Clamp'),
@@ -213,7 +214,7 @@ shaders_converter_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 shaders_layout_nodes_props = (
     ('NodeFrame', 'FRAME', 'Frame'),
     ('NodeReroute', 'REROUTE', 'Reroute'),
@@ -222,7 +223,7 @@ shaders_layout_nodes_props = (
 # compositing nodes
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_input_nodes_props = (
     ('CompositorNodeBokehImage', 'BOKEHIMAGE', 'Bokeh Image'),
     ('CompositorNodeImage', 'IMAGE', 'Image'),
@@ -237,7 +238,7 @@ compo_input_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_output_nodes_props = (
     ('CompositorNodeComposite', 'COMPOSITE', 'Composite'),
     ('CompositorNodeOutputFile', 'OUTPUT_FILE', 'File Output'),
@@ -247,7 +248,7 @@ compo_output_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_color_nodes_props = (
     ('CompositorNodeAlphaOver', 'ALPHAOVER', 'Alpha Over'),
     ('CompositorNodeBrightContrast', 'BRIGHTCONTRAST', 'Bright/Contrast'),
@@ -264,7 +265,7 @@ compo_color_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_converter_nodes_props = (
     ('CompositorNodePremulKey', 'PREMULKEY', 'Alpha Convert'),
     ('CompositorNodeValToRGB', 'VALTORGB', 'ColorRamp'),
@@ -284,7 +285,7 @@ compo_converter_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_filter_nodes_props = (
     ('CompositorNodeBilateralblur', 'BILATERALBLUR', 'Bilateral Blur'),
     ('CompositorNodeBlur', 'BLUR', 'Blur'),
@@ -303,7 +304,7 @@ compo_filter_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_vector_nodes_props = (
     ('CompositorNodeMapRange', 'MAP_RANGE', 'Map Range'),
     ('CompositorNodeMapValue', 'MAP_VALUE', 'Map Value'),
@@ -313,7 +314,7 @@ compo_vector_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_matte_nodes_props = (
     ('CompositorNodeBoxMask', 'BOXMASK', 'Box Mask'),
     ('CompositorNodeChannelMatte', 'CHANNEL_MATTE', 'Channel Key'),
@@ -331,7 +332,7 @@ compo_matte_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_distort_nodes_props = (
     ('CompositorNodeCornerPin', 'CORNERPIN', 'Corner Pin'),
     ('CompositorNodeCrop', 'CROP', 'Crop'),
@@ -349,7 +350,7 @@ compo_distort_nodes_props = (
 )
 # (rna_type.identifier, type, rna_type.name)
 # Keeping mixed case to avoid having to translate entries when adding new nodes in operators.
-# Keeping things in alphabetical orde so we don't need to sort later.
+# Keeping things in alphabetical order so we don't need to sort later.
 compo_layout_nodes_props = (
     ('NodeFrame', 'FRAME', 'Frame'),
     ('NodeReroute', 'REROUTE', 'Reroute'),
@@ -529,7 +530,7 @@ operations = [
     ('COSH', 'Hyperbolic Cosine', 'Hyperbolic Cosine Mode'),
     ('TANH', 'Hyperbolic Tangent', 'Hyperbolic Tangent Mode'),
     ('POWER', 'Power', 'Power Mode'),
-    ('LOGARITHM', 'Logatithm', 'Logarithm Mode'),
+    ('LOGARITHM', 'Logarithm', 'Logarithm Mode'),
     ('SQRT', 'Square Root', 'Square Root Mode'),
     ('INVERSE_SQRT', 'Inverse Square Root', 'Inverse Square Root Mode'),
     ('EXPONENT', 'Exponent', 'Exponent Mode'),
@@ -553,6 +554,14 @@ operations = [
     ('TRUNCATE', 'Truncate', 'Truncate Mode'),
     ('RADIANS', 'To Radians', 'To Radians Mode'),
     ('DEGREES', 'To Degrees', 'To Degrees Mode'),
+]
+
+# Operations used by the geometry boolean node and join geometry node
+geo_combine_operations = [
+    ('JOIN', 'Join Geometry', 'Join Geometry Mode'),
+    ('INTERSECT', 'Intersect', 'Intersect Mode'),
+    ('UNION', 'Union', 'Union Mode'),
+    ('DIFFERENCE', 'Difference', 'Difference Mode'),
 ]
 
 # in NWBatchChangeNodes additional types/operations. Can be used as 'items' for EnumProperty.
@@ -597,6 +606,11 @@ draw_color_sets = {
 }
 
 viewer_socket_name = "tmp_viewer"
+
+def get_nodes_from_category(category_name, context):
+    for category in node_categories_iter(context):
+        if category.name == category_name:
+            return sorted(category.items(context), key=lambda node: node.label)
 
 def is_visible_socket(socket):
     return not socket.hide and socket.enabled and socket.type != 'CUSTOM'
@@ -680,40 +694,41 @@ def node_mid_pt(node, axis):
 
 def autolink(node1, node2, links):
     link_made = False
-
-    for outp in node1.outputs:
-        for inp in node2.inputs:
+    available_inputs = [inp for inp in node2.inputs if inp.enabled]
+    available_outputs = [outp for outp in node1.outputs if outp.enabled]
+    for outp in available_outputs:
+        for inp in available_inputs:
             if not inp.is_linked and inp.name == outp.name:
                 link_made = True
                 links.new(outp, inp)
                 return True
 
-    for outp in node1.outputs:
-        for inp in node2.inputs:
+    for outp in available_outputs:
+        for inp in available_inputs:
             if not inp.is_linked and inp.type == outp.type:
                 link_made = True
                 links.new(outp, inp)
                 return True
 
     # force some connection even if the type doesn't match
-    for outp in node1.outputs:
-        for inp in node2.inputs:
+    if available_outputs:
+        for inp in available_inputs:
             if not inp.is_linked:
                 link_made = True
-                links.new(outp, inp)
+                links.new(available_outputs[0], inp)
                 return True
 
     # even if no sockets are open, force one of matching type
-    for outp in node1.outputs:
-        for inp in node2.inputs:
+    for outp in available_outputs:
+        for inp in available_inputs:
             if inp.type == outp.type:
                 link_made = True
                 links.new(outp, inp)
                 return True
 
     # do something!
-    for outp in node1.outputs:
-        for inp in node2.inputs:
+    for outp in available_outputs:
+        for inp in available_inputs:
             link_made = True
             links.new(outp, inp)
             return True
@@ -1236,7 +1251,7 @@ class NWNodeWrangler(bpy.types.AddonPreferences):
 
 def nw_check(context):
     space = context.space_data
-    valid_trees = ["ShaderNodeTree", "CompositorNodeTree", "TextureNodeTree"]
+    valid_trees = ["ShaderNodeTree", "CompositorNodeTree", "TextureNodeTree", "GeometryNodeTree"]
 
     valid = False
     if space.type == 'NODE_EDITOR' and space.node_tree is not None and space.tree_type in valid_trees:
@@ -1598,14 +1613,17 @@ class NWSwapLinks(Operator, NWBase):
 
         # Swap Inputs
         elif len(selected_nodes) == 1:
+            if n1.inputs and n1.inputs[0].is_multi_input:
+                self.report({'WARNING'}, "Can't swap inputs of a multi input socket!")
+                return {'FINISHED'}
             if n1.inputs:
                 types = []
                 i=0
                 for i1 in n1.inputs:
-                    if i1.is_linked:
+                    if i1.is_linked and not i1.is_multi_input:
                         similar_types = 0
                         for i2 in n1.inputs:
-                            if i1.type == i2.type and i2.is_linked:
+                            if i1.type == i2.type and i2.is_linked and not i2.is_multi_input:
                                 similar_types += 1
                         types.append ([i1, similar_types, i])
                     i += 1
@@ -1686,10 +1704,10 @@ class NWAddAttrNode(Operator, NWBase):
         nodes.active.attribute_name = self.attr_name
         return {'FINISHED'}
 
-class NWEmissionViewer(Operator, NWBase):
-    bl_idname = "node.nw_emission_viewer"
-    bl_label = "Emission Viewer"
-    bl_description = "Connect active node to Emission Shader for shadeless previews"
+class NWPreviewNode(Operator, NWBase):
+    bl_idname = "node.nw_preview_node"
+    bl_label = "Preview Node"
+    bl_description = "Connect active node to Emission Shader for shadeless previews, or to the geometry node tree's output"
     bl_options = {'REGISTER', 'UNDO'}
 
     def __init__(self):
@@ -1701,7 +1719,7 @@ class NWEmissionViewer(Operator, NWBase):
     def poll(cls, context):
         if nw_check(context):
             space = context.space_data
-            if space.tree_type == 'ShaderNodeTree':
+            if space.tree_type == 'ShaderNodeTree' or space.tree_type == 'GeometryNodeTree':
                 if context.active_node:
                     if context.active_node.type != "OUTPUT_MATERIAL" or context.active_node.type != "OUTPUT_WORLD":
                         return True
@@ -1772,11 +1790,13 @@ class NWEmissionViewer(Operator, NWBase):
             groupout.location.x = loc_x
             groupout.location.y = loc_y
             groupout.select = False
+            # So that we don't keep on adding new group outputs
+            groupout.is_active_output = True
         return groupout
 
     @classmethod
     def search_sockets(cls, node, sockets, index=None):
-        #recursevley scan nodes for viewer sockets and store in list
+        # recursively scan nodes for viewer sockets and store in list
         for i, input_socket in enumerate(node.inputs):
             if index and i != index:
                 continue
@@ -1855,6 +1875,98 @@ class NWEmissionViewer(Operator, NWBase):
             nodes, links = active_tree.nodes, active_tree.links
             base_node_tree = space.node_tree
             active = nodes.active
+
+            # For geometry node trees we just connect to the group output,
+            # because there is no "viewer node" yet.
+            if space.tree_type == "GeometryNodeTree":
+                valid = False
+                if active:
+                    for out in active.outputs:
+                        if is_visible_socket(out):
+                            valid = True
+                            break
+                # Exit early
+                if not valid:
+                    return {'FINISHED'}
+                
+                delete_sockets = []
+
+                # Scan through all nodes in tree including nodes inside of groups to find viewer sockets
+                self.scan_nodes(base_node_tree, delete_sockets)
+
+                # Find (or create if needed) the output of this node tree
+                geometryoutput = self.ensure_group_output(base_node_tree)
+
+                # Analyze outputs, make links
+                out_i = None
+                valid_outputs = []
+                for i, out in enumerate(active.outputs):
+                    if is_visible_socket(out) and out.type == 'GEOMETRY':
+                        valid_outputs.append(i)
+                if valid_outputs:
+                    out_i = valid_outputs[0]  # Start index of node's outputs
+                for i, valid_i in enumerate(valid_outputs):
+                    for out_link in active.outputs[valid_i].links:
+                        if is_viewer_link(out_link, geometryoutput):
+                            if nodes == base_node_tree.nodes or self.link_leads_to_used_socket(out_link):
+                                if i < len(valid_outputs) - 1:
+                                    out_i = valid_outputs[i + 1]
+                                else:
+                                    out_i = valid_outputs[0]
+
+                make_links = []  # store sockets for new links
+                delete_nodes = [] # store unused nodes to delete in the end
+                if active.outputs:
+                    # If there is no 'GEOMETRY' output type - We can't preview the node
+                    if out_i is None:
+                        return {'FINISHED'}
+                    socket_type = 'GEOMETRY'
+                    # Find an input socket of the output of type geometry 
+                    geometryoutindex = None
+                    for i,inp in enumerate(geometryoutput.inputs):
+                        if inp.type == socket_type:
+                            geometryoutindex = i
+                            break
+                    if geometryoutindex is None:
+                        # Create geometry socket
+                        geometryoutput.inputs.new(socket_type, 'Geometry')
+                        geometryoutindex = len(geometryoutput.inputs) - 1
+
+                    make_links.append((active.outputs[out_i], geometryoutput.inputs[geometryoutindex]))
+                    output_socket = geometryoutput.inputs[geometryoutindex]
+                    for li_from, li_to in make_links:
+                        base_node_tree.links.new(li_from, li_to)
+                    tree = base_node_tree
+                    link_end = output_socket
+                    while tree.nodes.active != active:
+                        node = tree.nodes.active
+                        index = self.ensure_viewer_socket(node,'NodeSocketGeometry', connect_socket=active.outputs[out_i] if node.node_tree.nodes.active == active else None)
+                        link_start = node.outputs[index]
+                        node_socket = node.node_tree.outputs[index]
+                        if node_socket in delete_sockets:
+                            delete_sockets.remove(node_socket)
+                        tree.links.new(link_start, link_end)
+                        # Iterate
+                        link_end = self.ensure_group_output(node.node_tree).inputs[index]
+                        tree = tree.nodes.active.node_tree
+                    tree.links.new(active.outputs[out_i], link_end)
+
+                # Delete sockets
+                for socket in delete_sockets:
+                    tree = socket.id_data
+                    tree.outputs.remove(socket)
+
+                # Delete nodes
+                for tree, node in delete_nodes:
+                    tree.nodes.remove(node)
+
+                nodes.active = active
+                active.select = True
+                force_update(context)
+                return {'FINISHED'}
+
+
+            # What follows is code for the shader editor
             output_types = [x[1] for x in shaders_output_nodes_props]
             valid = False
             if active:
@@ -2021,10 +2133,21 @@ class NWFrameSelected(Operator, NWBase):
         return {'FINISHED'}
 
 
-class NWReloadImages(Operator, NWBase):
+class NWReloadImages(Operator):
     bl_idname = "node.nw_reload_images"
     bl_label = "Reload Images"
     bl_description = "Update all the image nodes to match their files on disk"
+
+    @classmethod
+    def poll(cls, context):
+        valid = False
+        if nw_check(context) and context.space_data.tree_type != 'GeometryNodeTree':
+            if context.active_node is not None:
+                for out in context.active_node.outputs:
+                    if is_visible_socket(out):
+                        valid = True
+                        break
+        return valid
 
     def execute(self, context):
         nodes, links = get_nodes_links(context)
@@ -2094,9 +2217,16 @@ class NWSwitchNodeType(Operator, NWBase):
         list(texture_layout_nodes_props)
     )
 
+    geo_to_type: StringProperty(
+        name="Switch to type",
+        default = '',
+    )
+
     def execute(self, context):
         nodes, links = get_nodes_links(context)
         to_type = self.to_type
+        if self.geo_to_type != '':
+            to_type = self.geo_to_type
         # Those types of nodes will not swap.
         src_excludes = ('NodeFrame')
         # Those attributes of nodes will be copied if possible
@@ -2275,8 +2405,8 @@ class NWMergeNodes(Operator, NWBase):
 
     mode: EnumProperty(
         name="mode",
-        description="All possible blend types and math operations",
-        items=blend_types + [op for op in operations if op not in blend_types],
+        description="All possible blend types, boolean operations and math operations",
+        items= blend_types + [op for op in geo_combine_operations if op not in blend_types] + [op for op in operations if op not in blend_types],
     )
     merge_type: EnumProperty(
         name="merge type",
@@ -2284,12 +2414,81 @@ class NWMergeNodes(Operator, NWBase):
         items=(
             ('AUTO', 'Auto', 'Automatic Output Type Detection'),
             ('SHADER', 'Shader', 'Merge using ADD or MIX Shader'),
+            ('GEOMETRY', 'Geometry', 'Merge using Boolean or Join Geometry Node'),
             ('MIX', 'Mix Node', 'Merge using Mix Nodes'),
             ('MATH', 'Math Node', 'Merge using Math Nodes'),
             ('ZCOMBINE', 'Z-Combine Node', 'Merge using Z-Combine Nodes'),
             ('ALPHAOVER', 'Alpha Over Node', 'Merge using Alpha Over Nodes'),
         ),
     )
+
+    # Check if the link connects to a node that is in selected_nodes
+    # If not, then check recursively for each link in the nodes outputs.
+    # If yes, return True. If the recursion stops without finding a node
+    # in selected_nodes, it returns False. The depth is used to prevent 
+    # getting stuck in a loop because of an already present cycle.
+    @staticmethod
+    def link_creates_cycle(link, selected_nodes, depth=0)->bool:
+        if depth > 255:
+            # We're stuck in a cycle, but that cycle was already present,
+            # so we return False. 
+            # NOTE: The number 255 is arbitrary, but seems to work well.
+            return False
+        node = link.to_node
+        if node in selected_nodes:
+            return True
+        if not node.outputs:
+            return False
+        for output in node.outputs:
+            if output.is_linked:
+                for olink in output.links:
+                    if NWMergeNodes.link_creates_cycle(olink, selected_nodes, depth+1):
+                        return True
+        # None of the outputs found a node in selected_nodes, so there is no cycle.
+        return False
+    
+    # Merge the nodes in `nodes_list` with a node of type `node_name` that has a multi_input socket.
+    # The parameters `socket_indices` gives the indices of the node sockets in the order that they should
+    # be connected. The last one is assumed to be a multi input socket.
+    # For convenience the node is returned.
+    @staticmethod
+    def merge_with_multi_input(nodes_list, merge_position,do_hide, loc_x, links, nodes, node_name, socket_indices):
+        # The y-location of the last node
+        loc_y = nodes_list[-1][2]
+        if merge_position == 'CENTER':
+            # Average the y-location
+            for i in range(len(nodes_list)-1):
+                loc_y += nodes_list[i][2]
+            loc_y = loc_y/len(nodes_list)
+        new_node = nodes.new(node_name)
+        new_node.hide = do_hide
+        new_node.location.x = loc_x
+        new_node.location.y = loc_y
+        selected_nodes = [nodes[node_info[0]] for node_info in nodes_list]
+        prev_links = []
+        outputs_for_multi_input = []
+        for i,node in enumerate(selected_nodes):
+            node.select = False
+            # Search for the first node which had output links that do not create
+            # a cycle, which we can then reconnect afterwards.
+            if prev_links == [] and node.outputs[0].is_linked:
+                prev_links = [link for link in node.outputs[0].links if not NWMergeNodes.link_creates_cycle(link, selected_nodes)]
+            # Get the index of the socket, the last one is a multi input, and is thus used repeatedly
+            # To get the placement to look right we need to reverse the order in which we connect the
+            # outputs to the multi input socket.
+            if i < len(socket_indices) - 1:
+                ind = socket_indices[i]
+                links.new(node.outputs[0], new_node.inputs[ind])
+            else:
+                outputs_for_multi_input.insert(0, node.outputs[0])
+        if outputs_for_multi_input != []:
+            ind = socket_indices[-1]
+            for output in outputs_for_multi_input:
+                links.new(output, new_node.inputs[ind])
+        if prev_links != []:
+            for link in prev_links:
+                links.new(new_node.outputs[0], link.to_node.inputs[0])
+        return new_node
 
     def execute(self, context):
         settings = context.preferences.addons[__name__].preferences
@@ -2305,6 +2504,8 @@ class NWMergeNodes(Operator, NWBase):
             do_hide = True
 
         tree_type = context.space_data.node_tree.type
+        if tree_type == 'GEOMETRY':
+            node_type = 'GeometryNode'
         if tree_type == 'COMPOSITING':
             node_type = 'CompositorNode'
         elif tree_type == 'SHADER':
@@ -2320,9 +2521,16 @@ class NWMergeNodes(Operator, NWBase):
         if (merge_type == 'ZCOMBINE' or merge_type == 'ALPHAOVER') and tree_type != 'COMPOSITING':
             merge_type = 'MIX'
             mode = 'MIX'
+        if (merge_type != 'MATH' and merge_type != 'GEOMETRY') and tree_type == 'GEOMETRY':
+            merge_type = 'AUTO'
+        # The math nodes used for geometry nodes are of type 'ShaderNode'
+        if merge_type == 'MATH' and tree_type == 'GEOMETRY':
+            node_type = 'ShaderNode'
         selected_mix = []  # entry = [index, loc]
         selected_shader = []  # entry = [index, loc]
+        selected_geometry = [] # entry = [index, loc]
         selected_math = []  # entry = [index, loc]
+        selected_vector = [] # entry = [index, loc]
         selected_z = []  # entry = [index, loc]
         selected_alphaover = []  # entry = [index, loc]
 
@@ -2331,17 +2539,29 @@ class NWMergeNodes(Operator, NWBase):
                 if merge_type == 'AUTO':
                     for (type, types_list, dst) in (
                             ('SHADER', ('MIX', 'ADD'), selected_shader),
+                            ('GEOMETRY', [t[0] for t in geo_combine_operations], selected_geometry),
                             ('RGBA', [t[0] for t in blend_types], selected_mix),
                             ('VALUE', [t[0] for t in operations], selected_math),
+                            ('VECTOR', [], selected_vector),
                     ):
                         output_type = node.outputs[0].type
                         valid_mode = mode in types_list
+                        # When mode is 'MIX' we have to cheat since the mix node is not used in
+                        # geometry nodes.
+                        if tree_type == 'GEOMETRY':
+                            if mode == 'MIX':
+                                if output_type == 'VALUE' and type == 'VALUE':
+                                    valid_mode = True
+                                elif output_type == 'VECTOR' and type == 'VECTOR':
+                                    valid_mode = True
+                                elif type == 'GEOMETRY':
+                                    valid_mode = True
                         # When mode is 'MIX' use mix node for both 'RGBA' and 'VALUE' output types.
                         # Cheat that output type is 'RGBA',
                         # and that 'MIX' exists in math operations list.
                         # This way when selected_mix list is analyzed:
                         # Node data will be appended even though it doesn't meet requirements.
-                        if output_type != 'SHADER' and mode == 'MIX':
+                        elif output_type != 'SHADER' and mode == 'MIX':
                             output_type = 'RGBA'
                             valid_mode = True
                         if output_type == type and valid_mode:
@@ -2349,6 +2569,7 @@ class NWMergeNodes(Operator, NWBase):
                 else:
                     for (type, types_list, dst) in (
                             ('SHADER', ('MIX', 'ADD'), selected_shader),
+                            ('GEOMETRY', [t[0] for t in geo_combine_operations], selected_geometry),
                             ('MIX', [t[0] for t in blend_types], selected_mix),
                             ('MATH', [t[0] for t in operations], selected_math),
                             ('ZCOMBINE', ('MIX', ), selected_z),
@@ -2362,158 +2583,191 @@ class NWMergeNodes(Operator, NWBase):
         if selected_mix and selected_math and merge_type == 'AUTO':
             selected_mix += selected_math
             selected_math = []
-
-        for nodes_list in [selected_mix, selected_shader, selected_math, selected_z, selected_alphaover]:
-            if nodes_list:
-                count_before = len(nodes)
-                # sort list by loc_x - reversed
-                nodes_list.sort(key=lambda k: k[1], reverse=True)
-                # get maximum loc_x
-                loc_x = nodes_list[0][1] + nodes_list[0][3] + 70
-                nodes_list.sort(key=lambda k: k[2], reverse=True)
-                if merge_position == 'CENTER':
-                    loc_y = ((nodes_list[len(nodes_list) - 1][2]) + (nodes_list[len(nodes_list) - 2][2])) / 2  # average yloc of last two nodes (lowest two)
-                    if nodes_list[len(nodes_list) - 1][-1] == True:  # if last node is hidden, mix should be shifted up a bit
-                        if do_hide:
-                            loc_y += 40
-                        else:
-                            loc_y += 80
+        for nodes_list in [selected_mix, selected_shader, selected_geometry, selected_math, selected_vector, selected_z, selected_alphaover]:
+            if not nodes_list:
+                continue
+            count_before = len(nodes)
+            # sort list by loc_x - reversed
+            nodes_list.sort(key=lambda k: k[1], reverse=True)
+            # get maximum loc_x
+            loc_x = nodes_list[0][1] + nodes_list[0][3] + 70
+            nodes_list.sort(key=lambda k: k[2], reverse=True)
+            
+            # Change the node type for math nodes in a geometry node tree.
+            if tree_type == 'GEOMETRY':
+                if nodes_list is selected_math or nodes_list is selected_vector:
+                    node_type = 'ShaderNode'
+                    if mode == 'MIX':
+                        mode = 'ADD'
                 else:
-                    loc_y = nodes_list[len(nodes_list) - 1][2]
-                offset_y = 100
-                if not do_hide:
-                    offset_y = 200
-                if nodes_list == selected_shader and not do_hide_shader:
-                    offset_y = 150.0
-                the_range = len(nodes_list) - 1
-                if len(nodes_list) == 1:
-                    the_range = 1
-                for i in range(the_range):
-                    if nodes_list == selected_mix:
-                        add_type = node_type + 'MixRGB'
+                    node_type = 'GeometryNode'
+            if merge_position == 'CENTER':
+                loc_y = ((nodes_list[len(nodes_list) - 1][2]) + (nodes_list[len(nodes_list) - 2][2])) / 2  # average yloc of last two nodes (lowest two)
+                if nodes_list[len(nodes_list) - 1][-1] == True:  # if last node is hidden, mix should be shifted up a bit
+                    if do_hide:
+                        loc_y += 40
+                    else:
+                        loc_y += 80
+            else:
+                loc_y = nodes_list[len(nodes_list) - 1][2]
+            offset_y = 100
+            if not do_hide:
+                offset_y = 200
+            if nodes_list == selected_shader and not do_hide_shader:
+                offset_y = 150.0
+            the_range = len(nodes_list) - 1
+            if len(nodes_list) == 1:
+                the_range = 1
+            was_multi = False
+            for i in range(the_range):
+                if nodes_list == selected_mix:
+                    add_type = node_type + 'MixRGB'
+                    add = nodes.new(add_type)
+                    add.blend_type = mode
+                    if mode != 'MIX':
+                        add.inputs[0].default_value = 1.0
+                    add.show_preview = False
+                    add.hide = do_hide
+                    if do_hide:
+                        loc_y = loc_y - 50
+                    first = 1
+                    second = 2
+                    add.width_hidden = 100.0
+                elif nodes_list == selected_math:
+                    add_type = node_type + 'Math'
+                    add = nodes.new(add_type)
+                    add.operation = mode
+                    add.hide = do_hide
+                    if do_hide:
+                        loc_y = loc_y - 50
+                    first = 0
+                    second = 1
+                    add.width_hidden = 100.0
+                elif nodes_list == selected_shader:
+                    if mode == 'MIX':
+                        add_type = node_type + 'MixShader'
                         add = nodes.new(add_type)
-                        add.blend_type = mode
-                        if mode != 'MIX':
-                            add.inputs[0].default_value = 1.0
-                        add.show_preview = False
-                        add.hide = do_hide
-                        if do_hide:
+                        add.hide = do_hide_shader
+                        if do_hide_shader:
                             loc_y = loc_y - 50
                         first = 1
                         second = 2
                         add.width_hidden = 100.0
-                    elif nodes_list == selected_math:
-                        add_type = node_type + 'Math'
+                    elif mode == 'ADD':
+                        add_type = node_type + 'AddShader'
                         add = nodes.new(add_type)
-                        add.operation = mode
-                        add.hide = do_hide
-                        if do_hide:
+                        add.hide = do_hide_shader
+                        if do_hide_shader:
                             loc_y = loc_y - 50
                         first = 0
                         second = 1
                         add.width_hidden = 100.0
-                    elif nodes_list == selected_shader:
-                        if mode == 'MIX':
-                            add_type = node_type + 'MixShader'
-                            add = nodes.new(add_type)
-                            add.hide = do_hide_shader
-                            if do_hide_shader:
-                                loc_y = loc_y - 50
-                            first = 1
-                            second = 2
-                            add.width_hidden = 100.0
-                        elif mode == 'ADD':
-                            add_type = node_type + 'AddShader'
-                            add = nodes.new(add_type)
-                            add.hide = do_hide_shader
-                            if do_hide_shader:
-                                loc_y = loc_y - 50
-                            first = 0
-                            second = 1
-                            add.width_hidden = 100.0
-                    elif nodes_list == selected_z:
-                        add = nodes.new('CompositorNodeZcombine')
-                        add.show_preview = False
-                        add.hide = do_hide
-                        if do_hide:
-                            loc_y = loc_y - 50
-                        first = 0
-                        second = 2
-                        add.width_hidden = 100.0
-                    elif nodes_list == selected_alphaover:
-                        add = nodes.new('CompositorNodeAlphaOver')
-                        add.show_preview = False
-                        add.hide = do_hide
-                        if do_hide:
-                            loc_y = loc_y - 50
-                        first = 1
-                        second = 2
-                        add.width_hidden = 100.0
-                    add.location = loc_x, loc_y
-                    loc_y += offset_y
-                    add.select = True
-                count_adds = i + 1
-                count_after = len(nodes)
-                index = count_after - 1
-                first_selected = nodes[nodes_list[0][0]]
-                # "last" node has been added as first, so its index is count_before.
-                last_add = nodes[count_before]
-                # Special case:
-                # Two nodes were selected and first selected has no output links, second selected has output links.
-                # Then add links from last add to all links 'to_socket' of out links of second selected.
-                if len(nodes_list) == 2:
-                    if not first_selected.outputs[0].links:
-                        second_selected = nodes[nodes_list[1][0]]
-                        for ss_link in second_selected.outputs[0].links:
-                            # Prevent cyclic dependencies when nodes to be marged are linked to one another.
-                            # Create list of invalid indexes.
-                            invalid_i = [n[0] for n in (selected_mix + selected_math + selected_shader + selected_z)]
-                            # Link only if "to_node" index not in invalid indexes list.
-                            if ss_link.to_node not in [nodes[i] for i in invalid_i]:
-                                links.new(last_add.outputs[0], ss_link.to_socket)
-                # add links from last_add to all links 'to_socket' of out links of first selected.
-                for fs_link in first_selected.outputs[0].links:
-                    # Prevent cyclic dependencies when nodes to be marged are linked to one another.
-                    # Create list of invalid indexes.
-                    invalid_i = [n[0] for n in (selected_mix + selected_math + selected_shader + selected_z)]
-                    # Link only if "to_node" index not in invalid indexes list.
-                    if fs_link.to_node not in [nodes[i] for i in invalid_i]:
-                        links.new(last_add.outputs[0], fs_link.to_socket)
-                # add link from "first" selected and "first" add node
-                node_to = nodes[count_after - 1]
-                links.new(first_selected.outputs[0], node_to.inputs[first])
-                if node_to.type == 'ZCOMBINE':
-                    for fs_out in first_selected.outputs:
-                        if fs_out != first_selected.outputs[0] and fs_out.name in ('Z', 'Depth'):
-                            links.new(fs_out, node_to.inputs[1])
-                            break
-                # add links between added ADD nodes and between selected and ADD nodes
-                for i in range(count_adds):
-                    if i < count_adds - 1:
-                        node_from = nodes[index]
-                        node_to = nodes[index - 1]
-                        node_to_input_i = first
-                        node_to_z_i = 1  # if z combine - link z to first z input
-                        links.new(node_from.outputs[0], node_to.inputs[node_to_input_i])
-                        if node_to.type == 'ZCOMBINE':
-                            for from_out in node_from.outputs:
-                                if from_out != node_from.outputs[0] and from_out.name in ('Z', 'Depth'):
-                                    links.new(from_out, node_to.inputs[node_to_z_i])
-                    if len(nodes_list) > 1:
-                        node_from = nodes[nodes_list[i + 1][0]]
-                        node_to = nodes[index]
-                        node_to_input_i = second
-                        node_to_z_i = 3  # if z combine - link z to second z input
-                        links.new(node_from.outputs[0], node_to.inputs[node_to_input_i])
-                        if node_to.type == 'ZCOMBINE':
-                            for from_out in node_from.outputs:
-                                if from_out != node_from.outputs[0] and from_out.name in ('Z', 'Depth'):
-                                    links.new(from_out, node_to.inputs[node_to_z_i])
-                    index -= 1
-                # set "last" of added nodes as active
-                nodes.active = last_add
-                for i, x, y, dx, h in nodes_list:
-                    nodes[i].select = False
+                elif nodes_list == selected_geometry:
+                    if mode in ('JOIN', 'MIX'):
+                        add_type = node_type + 'JoinGeometry'
+                        add = self.merge_with_multi_input(nodes_list, merge_position, do_hide, loc_x, links, nodes, add_type,[0])
+                    else:
+                        add_type = node_type + 'Boolean'
+                        indices = [0,1] if mode == 'DIFFERENCE' else [1]
+                        add = self.merge_with_multi_input(nodes_list, merge_position, do_hide, loc_x, links, nodes, add_type,indices)
+                        add.operation = mode
+                    was_multi = True
+                    break
+                elif nodes_list == selected_vector:
+                    add_type = node_type + 'VectorMath'
+                    add = nodes.new(add_type)
+                    add.operation = mode
+                    add.hide = do_hide
+                    if do_hide:
+                        loc_y = loc_y - 50
+                    first = 0
+                    second = 1
+                    add.width_hidden = 100.0
+                elif nodes_list == selected_z:
+                    add = nodes.new('CompositorNodeZcombine')
+                    add.show_preview = False
+                    add.hide = do_hide
+                    if do_hide:
+                        loc_y = loc_y - 50
+                    first = 0
+                    second = 2
+                    add.width_hidden = 100.0
+                elif nodes_list == selected_alphaover:
+                    add = nodes.new('CompositorNodeAlphaOver')
+                    add.show_preview = False
+                    add.hide = do_hide
+                    if do_hide:
+                        loc_y = loc_y - 50
+                    first = 1
+                    second = 2
+                    add.width_hidden = 100.0
+                add.location = loc_x, loc_y
+                loc_y += offset_y
+                add.select = True
+            
+            # This has already been handled separately
+            if was_multi:
+                continue
+            count_adds = i + 1
+            count_after = len(nodes)
+            index = count_after - 1
+            first_selected = nodes[nodes_list[0][0]]
+            # "last" node has been added as first, so its index is count_before.
+            last_add = nodes[count_before]
+            # Create list of invalid indexes.
+            invalid_nodes = [nodes[n[0]] for n in (selected_mix + selected_math + selected_shader + selected_z + selected_geometry)]
+            
+            # Special case:
+            # Two nodes were selected and first selected has no output links, second selected has output links.
+            # Then add links from last add to all links 'to_socket' of out links of second selected.
+            if len(nodes_list) == 2:
+                if not first_selected.outputs[0].links:
+                    second_selected = nodes[nodes_list[1][0]]
+                    for ss_link in second_selected.outputs[0].links:
+                        # Prevent cyclic dependencies when nodes to be merged are linked to one another.
+                        # Link only if "to_node" index not in invalid indexes list.
+                        if not self.link_creates_cycle(ss_link, invalid_nodes):
+                            links.new(last_add.outputs[0], ss_link.to_socket)
+            # add links from last_add to all links 'to_socket' of out links of first selected.
+            for fs_link in first_selected.outputs[0].links:
+                # Link only if "to_node" index not in invalid indexes list.
+                if not self.link_creates_cycle(fs_link, invalid_nodes):
+                    links.new(last_add.outputs[0], fs_link.to_socket)
+            # add link from "first" selected and "first" add node
+            node_to = nodes[count_after - 1]
+            links.new(first_selected.outputs[0], node_to.inputs[first])
+            if node_to.type == 'ZCOMBINE':
+                for fs_out in first_selected.outputs:
+                    if fs_out != first_selected.outputs[0] and fs_out.name in ('Z', 'Depth'):
+                        links.new(fs_out, node_to.inputs[1])
+                        break
+            # add links between added ADD nodes and between selected and ADD nodes
+            for i in range(count_adds):
+                if i < count_adds - 1:
+                    node_from = nodes[index]
+                    node_to = nodes[index - 1]
+                    node_to_input_i = first
+                    node_to_z_i = 1  # if z combine - link z to first z input
+                    links.new(node_from.outputs[0], node_to.inputs[node_to_input_i])
+                    if node_to.type == 'ZCOMBINE':
+                        for from_out in node_from.outputs:
+                            if from_out != node_from.outputs[0] and from_out.name in ('Z', 'Depth'):
+                                links.new(from_out, node_to.inputs[node_to_z_i])
+                if len(nodes_list) > 1:
+                    node_from = nodes[nodes_list[i + 1][0]]
+                    node_to = nodes[index]
+                    node_to_input_i = second
+                    node_to_z_i = 3  # if z combine - link z to second z input
+                    links.new(node_from.outputs[0], node_to.inputs[node_to_input_i])
+                    if node_to.type == 'ZCOMBINE':
+                        for from_out in node_from.outputs:
+                            if from_out != node_from.outputs[0] and from_out.name in ('Z', 'Depth'):
+                                links.new(from_out, node_to.inputs[node_to_z_i])
+                index -= 1
+            # set "last" of added nodes as active
+            nodes.active = last_add
+            for i, x, y, dx, h in nodes_list:
+                nodes[i].select = False
 
         return {'FINISHED'}
 
@@ -2534,12 +2788,10 @@ class NWBatchChangeNodes(Operator, NWBase):
     )
 
     def execute(self, context):
-
-        nodes, links = get_nodes_links(context)
         blend_type = self.blend_type
         operation = self.operation
         for node in context.selected_nodes:
-            if node.type == 'MIX_RGB':
+            if node.type == 'MIX_RGB' or node.bl_idname == 'GeometryNodeAttributeMix':
                 if not blend_type in [nav[0] for nav in navs]:
                     node.blend_type = blend_type
                 else:
@@ -2558,7 +2810,7 @@ class NWBatchChangeNodes(Operator, NWBase):
                         else:
                             node.blend_type = blend_types[index - 1][0]
 
-            if node.type == 'MATH':
+            if node.type == 'MATH' or node.bl_idname == 'GeometryNodeAttributeMath':
                 if not operation in [nav[0] for nav in navs]:
                     node.operation = operation
                 else:
@@ -3478,7 +3730,7 @@ class NWDetachOutputs(Operator, NWBase):
         return {'FINISHED'}
 
 
-class NWLinkToOutputNode(Operator, NWBase):
+class NWLinkToOutputNode(Operator):
     """Link to Composite node or Material Output node"""
     bl_idname = "node.nw_link_out"
     bl_label = "Connect to Output"
@@ -3487,7 +3739,7 @@ class NWLinkToOutputNode(Operator, NWBase):
     @classmethod
     def poll(cls, context):
         valid = False
-        if nw_check(context):
+        if nw_check(context) and context.space_data.tree_type != 'GeometryNodeTree':
             if context.active_node is not None:
                 for out in context.active_node.outputs:
                     if is_visible_socket(out):
@@ -3993,7 +4245,8 @@ def drawlayout(context, layout, mode='non-panel'):
 
     col = layout.column(align=True)
     col.menu(NWLinkActiveToSelectedMenu.bl_idname, text="Link Active To Selected", icon='LINKED')
-    col.operator(NWLinkToOutputNode.bl_idname, icon='DRIVER')
+    if tree_type != 'GeometryNodeTree':
+        col.operator(NWLinkToOutputNode.bl_idname, icon='DRIVER')
     col.separator()
 
     col = layout.column(align=True)
@@ -4012,7 +4265,8 @@ def drawlayout(context, layout, mode='non-panel'):
     col = layout.column(align=True)
     if tree_type == 'CompositorNodeTree':
         col.operator(NWResetBG.bl_idname, icon='ZOOM_PREVIOUS')
-    col.operator(NWReloadImages.bl_idname, icon='FILE_REFRESH')
+    if tree_type != 'GeometryNodeTree':
+        col.operator(NWReloadImages.bl_idname, icon='FILE_REFRESH')
     col.separator()
 
     col = layout.column(align=True)
@@ -4067,15 +4321,29 @@ class NWMergeNodesMenu(Menu, NWBase):
         layout = self.layout
         if type == 'ShaderNodeTree':
             layout.menu(NWMergeShadersMenu.bl_idname, text="Use Shaders")
-        layout.menu(NWMergeMixMenu.bl_idname, text="Use Mix Nodes")
-        layout.menu(NWMergeMathMenu.bl_idname, text="Use Math Nodes")
-        props = layout.operator(NWMergeNodes.bl_idname, text="Use Z-Combine Nodes")
-        props.mode = 'MIX'
-        props.merge_type = 'ZCOMBINE'
-        props = layout.operator(NWMergeNodes.bl_idname, text="Use Alpha Over Nodes")
-        props.mode = 'MIX'
-        props.merge_type = 'ALPHAOVER'
+        if type == 'GeometryNodeTree':
+            layout.menu(NWMergeGeometryMenu.bl_idname, text="Use Geometry Nodes")
+            layout.menu(NWMergeMathMenu.bl_idname, text="Use Math Nodes")
+        else:
+            layout.menu(NWMergeMixMenu.bl_idname, text="Use Mix Nodes")
+            layout.menu(NWMergeMathMenu.bl_idname, text="Use Math Nodes")
+            props = layout.operator(NWMergeNodes.bl_idname, text="Use Z-Combine Nodes")
+            props.mode = 'MIX'
+            props.merge_type = 'ZCOMBINE'
+            props = layout.operator(NWMergeNodes.bl_idname, text="Use Alpha Over Nodes")
+            props.mode = 'MIX'
+            props.merge_type = 'ALPHAOVER'
 
+class NWMergeGeometryMenu(Menu, NWBase):
+    bl_idname = "NODE_MT_nw_merge_geometry_menu"
+    bl_label = "Merge Selected Nodes using Geometry Nodes"
+    def draw(self, context):
+        layout = self.layout
+        # The boolean node + Join Geometry node
+        for type, name, description in geo_combine_operations:
+            props = layout.operator(NWMergeNodes.bl_idname, text=name)
+            props.mode = type
+            props.merge_type = 'GEOMETRY'
 
 class NWMergeShadersMenu(Menu, NWBase):
     bl_idname = "NODE_MT_nw_merge_shaders_menu"
@@ -4110,18 +4378,12 @@ class NWConnectionListOutputs(Menu, NWBase):
         nodes, links = get_nodes_links(context)
 
         n1 = nodes[context.scene.NWLazySource]
-
-        if n1.type == "R_LAYERS":
-            index=0
-            for o in n1.outputs:
-                if o.enabled:  # Check which passes the render layer has enabled
-                    layout.operator(NWCallInputsMenu.bl_idname, text=o.name, icon="RADIOBUT_OFF").from_socket=index
-                index+=1
-        else:
-            index=0
-            for o in n1.outputs:
+        index=0
+        for o in n1.outputs:
+            # Only show sockets that are exposed. 
+            if o.enabled:
                 layout.operator(NWCallInputsMenu.bl_idname, text=o.name, icon="RADIOBUT_OFF").from_socket=index
-                index+=1
+            index+=1
 
 
 class NWConnectionListInputs(Menu, NWBase):
@@ -4136,10 +4398,15 @@ class NWConnectionListInputs(Menu, NWBase):
 
         index = 0
         for i in n2.inputs:
-            op = layout.operator(NWMakeLink.bl_idname, text=i.name, icon="FORWARD")
-            op.from_socket = context.scene.NWSourceSocket
-            op.to_socket = index
-            index+=1
+            # Only show sockets that are exposed.
+            # This prevents, for example, the scale value socket
+            # of the vector math node being added to the list when
+            # the mode is not 'SCALE'. 
+            if i.enabled:
+                op = layout.operator(NWMakeLink.bl_idname, text=i.name, icon="FORWARD")
+                op.from_socket = context.scene.NWSourceSocket
+                op.to_socket = index
+                index+=1
 
 
 class NWMergeMathMenu(Menu, NWBase):
@@ -4351,6 +4618,17 @@ class NWSwitchNodeTypeMenu(Menu, NWBase):
             layout.menu(NWSwitchTexConverterSubmenu.bl_idname)
             layout.menu(NWSwitchTexDistortSubmenu.bl_idname)
             layout.menu(NWSwitchTexLayoutSubmenu.bl_idname)
+        if tree.type == 'GEOMETRY':
+            categories = [c for c in node_categories_iter(context)
+                      if c.name not in ['Group', 'Script']]
+            for cat in categories:
+                idname = f"NODE_MT_nw_switch_{cat.identifier}_submenu"
+                if hasattr(bpy.types, idname):
+                    layout.menu(idname)
+                else:
+                    layout.label(text="Unable to load altered node lists.")
+                    layout.label(text="Please re-enable Node Wrangler.")
+                    break
 
 
 class NWSwitchShadersInputSubmenu(Menu, NWBase):
@@ -4697,6 +4975,17 @@ class NWSwitchTexLayoutSubmenu(Menu, NWBase):
                 props = layout.operator(NWSwitchNodeType.bl_idname, text=rna_name)
                 props.to_type = ident
 
+def draw_switch_category_submenu(self, context):
+    layout = self.layout
+    if self.category.name == 'Layout':
+        for node in self.category.items(context):
+            if node.nodetype != 'NodeFrame':
+                props = layout.operator(NWSwitchNodeType.bl_idname, text=node.label)
+                props.to_type = node.nodetype
+    else:
+        for node in self.category.items(context):
+            props = layout.operator(NWSwitchNodeType.bl_idname, text=node.label)
+            props.geo_to_type = node.nodetype
 
 #
 #  APPENDAGES TO EXISTING UI
@@ -4754,7 +5043,7 @@ def reset_nodes_button(self, context):
 #
 #  REGISTER/UNREGISTER CLASSES AND KEYMAP ITEMS
 #
-
+switch_category_menus = []
 addon_keymaps = []
 # kmi_defs entry: (identifier, key, action, CTRL, SHIFT, ALT, props, nice name)
 # props entry: (property name, property value)
@@ -4916,8 +5205,8 @@ kmi_defs = (
     (NWFrameSelected.bl_idname, 'P', 'PRESS', False, True, False, None, "Frame selected nodes"),
     # Swap Outputs
     (NWSwapLinks.bl_idname, 'S', 'PRESS', False, False, True, None, "Swap Outputs"),
-    # Emission Viewer
-    (NWEmissionViewer.bl_idname, 'LEFTMOUSE', 'PRESS', True, True, False, None, "Connect to Cycles Viewer node"),
+    # Preview Node
+    (NWPreviewNode.bl_idname, 'LEFTMOUSE', 'PRESS', True, True, False, None, "Preview node output"),
     # Reload Images
     (NWReloadImages.bl_idname, 'R', 'PRESS', False, False, True, None, "Reload images"),
     # Lazy Mix
@@ -4951,7 +5240,7 @@ classes = (
     NWSwapLinks,
     NWResetBG,
     NWAddAttrNode,
-    NWEmissionViewer,
+    NWPreviewNode,
     NWFrameSelected,
     NWReloadImages,
     NWSwitchNodeType,
@@ -4981,6 +5270,7 @@ classes = (
     NodeWranglerMenu,
     NWMergeNodesMenu,
     NWMergeShadersMenu,
+    NWMergeGeometryMenu,
     NWMergeMixMenu,
     NWConnectionListOutputs,
     NWConnectionListInputs,
@@ -5081,6 +5371,23 @@ def register():
     bpy.types.NODE_PT_active_node_generic.prepend(reset_nodes_button)
     bpy.types.NODE_MT_node.prepend(reset_nodes_button)
 
+    # switch submenus
+    switch_category_menus.clear()
+    for cat in node_categories_iter(None):
+        if cat.name not in ['Group', 'Script'] and cat.identifier.startswith('GEO'):
+            idname = f"NODE_MT_nw_switch_{cat.identifier}_submenu"
+            switch_category_type = type(idname, (bpy.types.Menu,), {
+                "bl_space_type": 'NODE_EDITOR',
+                "bl_label": cat.name,
+                "category": cat,
+                "poll": cat.poll,
+                "draw": draw_switch_category_submenu,
+            })
+
+            switch_category_menus.append(switch_category_type)
+
+            bpy.utils.register_class(switch_category_type)
+
 
 def unregister():
     from bpy.utils import unregister_class
@@ -5091,6 +5398,10 @@ def unregister():
     del bpy.types.Scene.NWLazyTarget
     del bpy.types.Scene.NWSourceSocket
     del bpy.types.NodeSocketInterface.NWViewerSocket
+
+    for cat_types in switch_category_menus:
+        bpy.utils.unregister_class(cat_types)
+    switch_category_menus.clear()
 
     # keymaps
     for km, kmi in addon_keymaps:

@@ -1390,6 +1390,8 @@ class SVGGeometryRECT(SVGGeometry):
         ob = SVGCreateCurve(self._context)
         cu = ob.data
 
+        id_names_from_node(self._node, ob)
+
         if self._styles['useFill']:
             cu.dimensions = '2D'
             cu.fill_mode = 'BOTH'
