@@ -139,7 +139,7 @@ class ImportSTL(Operator, ImportHelper):
             bpy.ops.object.select_all(action='DESELECT')
 
         for path in paths:
-            objName = bpy.path.display_name(os.path.basename(path))
+            objName = bpy.path.display_name_from_filepath(path)
             tris, tri_nors, pts = stl_utils.read_stl(path)
             tri_nors = tri_nors if self.use_facet_normal else None
             blender_utils.create_and_link_mesh(objName, tris, tri_nors, pts, global_matrix)

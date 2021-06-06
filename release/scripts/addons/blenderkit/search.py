@@ -424,18 +424,22 @@ def timer_update():
             if ok:
                 bpy.ops.object.run_assetbar_fix_context()
 
-                user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-                api_key = user_preferences.api_key
-                headers = utils.get_headers(api_key)
+
 
                 for r in rdata['results']:
                     asset_data = parse_result(r)
                     if asset_data != None:
                         result_field.append(asset_data)
 
-                    if utils.profile_is_validator() and ratings_utils.get_rating_local(asset_data['id']) is None:
-                        thread = threading.Thread(target=ratings_utils.get_rating, args=([asset_data['id'], headers]), daemon=True)
-                        thread.start()
+                # Get ratings from BlenderKit server
+                if utils.profile_is_validator():
+                    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+                    api_key = user_preferences.api_key
+                    headers = utils.get_headers(api_key)
+                    for r in rdata['results']:
+                        if ratings_utils.get_rating_local(asset_data['id']) is None:
+                            thread = threading.Thread(target=ratings_utils.get_rating, args=([r['id'], headers]), daemon=True)
+                            thread.start()
 
                 wm[search_name] = result_field
                 wm['search results'] = result_field

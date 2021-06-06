@@ -19,8 +19,8 @@
 # -*- coding: utf-8 -*-
 
 import bpy
+from bpy.props import FloatProperty, FloatVectorProperty
 import gpu
-import bgl
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector
 from math import sqrt, pi, atan2, asin
@@ -60,6 +60,7 @@ def draw_callback_px(self, context):
     nt = context.scene.world.node_tree.nodes
     env_tex_node = nt.get(context.scene.sun_pos_properties.hdr_texture)
     image = env_tex_node.image
+    texture = gpu.texture.from_image(image)
 
     if self.area != context.area:
         return
@@ -82,16 +83,12 @@ def draw_callback_px(self, context):
         {"pos" : coords,
          "texCoord" : uv_coords})
 
-    bgl.glActiveTexture(bgl.GL_TEXTURE0)
-    bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
-
-
     with gpu.matrix.push_pop():
         gpu.matrix.translate(position)
         gpu.matrix.scale(scale)
 
         shader.bind()
-        shader.uniform_int("image", 0)
+        shader.uniform_sampler("image", texture)
         shader.uniform_float("exposure", self.exposure)
         batch.draw(shader)
 
@@ -119,7 +116,9 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
     bl_idname = "world.sunpos_show_hdr"
     bl_label = "Sync Sun to Texture"
 
-    exposure = 1.0
+    exposure: FloatProperty(name="Exposure", default=1.0)
+    scale: FloatProperty(name="Scale", default=1.0)
+    offset: FloatVectorProperty(name="Offset", default=(0.0, 0.0), size=2, subtype='COORDINATES')
 
     @classmethod
     def poll(self, context):
@@ -267,8 +266,6 @@ class SUNPOS_OT_ShowHdr(bpy.types.Operator):
         self.is_panning = False
         self.mouse_prev_x = 0.0
         self.mouse_prev_y = 0.0
-        self.offset = Vector((0.0, 0.0))
-        self.scale = 1.0
 
         # Get at least one 3D View
         area_3d = None

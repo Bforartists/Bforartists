@@ -1018,7 +1018,7 @@ def draw_callback_px(self, context):
         ms_colr = self.pts[self.pt_cnt].colr
 
     if self.grab_pt is not None:  # not enabled if mod_pt active
-        line_beg = pts2d[self.grab_pt]  # backup orignal co for move line
+        line_beg = pts2d[self.grab_pt]  # backup original co for move line
         pts2d[self.grab_pt] = None  # prevent check on grabbed pt
         closest_pt, self.overlap_idx = closest_to_point(self.mouse_co, pts2d)
         pts2d[self.grab_pt] = self.mouse_co
