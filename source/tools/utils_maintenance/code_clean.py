@@ -304,6 +304,18 @@ class edit_generators:
           float abc[3]
         With:
           const float abc[3]
+
+        As well as casts.
+
+        Replace:
+          (float *)
+        With:
+          (const float *)
+
+        Replace:
+          (float (*))
+        With:
+          (const float (*))
         """
         @staticmethod
         def edit_list_from_file(_source: str, data: str, _shared_edit_data: Any) -> List[Edit]:
@@ -322,6 +334,22 @@ class edit_generators:
                 edits.append(Edit(
                     span=match.span(),
                     content='%s const %s' % (match.group(1), match.group(2)),
+                    content_fail='__ALWAYS_FAIL__',
+                ))
+
+            # `(float *)`      -> `(const float *)`
+            # `(float (*))`    -> `(const float (*))`
+            # `(float (*)[4])` -> `(const float (*)[4])`
+            for match in re.finditer(
+                    r"(\()"
+                    r"([a-zA-Z_0-9]+\s*)"
+                    r"(\*+\)|\(\*+\))"
+                    r"(|\[[a-zA-Z_0-9]+\])",
+                    data,
+            ):
+                edits.append(Edit(
+                    span=match.span(),
+                    content='%sconst %s%s%s' % (match.group(1), match.group(2), match.group(3), match.group(4)),
                     content_fail='__ALWAYS_FAIL__',
                 ))
 

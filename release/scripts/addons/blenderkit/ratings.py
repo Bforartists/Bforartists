@@ -50,15 +50,11 @@ def pretty_print_POST(req):
     ))
 
 
-
 def upload_review_thread(url, reviews, headers):
     r = rerequests.put(url, data=reviews, verify=True, headers=headers)
 
     # except requests.exceptions.RequestException as e:
     #     print('reviews upload failed: %s' % str(e))
-
-
-
 
 
 def upload_rating(asset):
@@ -76,10 +72,12 @@ def upload_rating(asset):
 
     if bkit_ratings.rating_quality > 0.1:
         ratings = (('quality', bkit_ratings.rating_quality),)
-        tasks_queue.add_task((ratings_utils.send_rating_to_thread_quality, (url, ratings, headers)), wait=2.5, only_last=True)
+        tasks_queue.add_task((ratings_utils.send_rating_to_thread_quality, (url, ratings, headers)), wait=2.5,
+                             only_last=True)
     if bkit_ratings.rating_work_hours > 0.1:
         ratings = (('working_hours', round(bkit_ratings.rating_work_hours, 1)),)
-        tasks_queue.add_task((ratings_utils.send_rating_to_thread_work_hours, (url, ratings, headers)), wait=2.5, only_last=True)
+        tasks_queue.add_task((ratings_utils.send_rating_to_thread_work_hours, (url, ratings, headers)), wait=2.5,
+                             only_last=True)
 
     thread = threading.Thread(target=ratings_utils.upload_rating_thread, args=(url, ratings, headers))
     thread.start()
@@ -168,22 +166,22 @@ def draw_ratings_menu(self, context, layout):
 
     profile_name = ''
     profile = bpy.context.window_manager.get('bkit profile')
-    if profile and len(profile['user']['firstName'])>0:
+    if profile and len(profile['user']['firstName']) > 0:
         profile_name = ' ' + profile['user']['firstName']
 
     col = layout.column()
     # layout.template_icon_view(bkit_ratings, property, show_labels=False, scale=6.0, scale_popup=5.0)
     row = col.row()
-    row.label(text='Quality:', icon = 'SOLO_ON')
+    row.label(text='Quality:', icon='SOLO_ON')
     row = col.row()
     row.label(text='Please help the community by rating quality:')
 
     row = col.row()
     row.prop(self, 'rating_quality_ui', expand=True, icon_only=True, emboss=False)
-    if self.rating_quality>0:
+    if self.rating_quality > 0:
         # row = col.row()
 
-        row.label(text=f'    Thanks{profile_name}!', icon = 'FUND')
+        row.label(text=f'    Thanks{profile_name}!', icon='FUND')
     # row.label(text=str(self.rating_quality))
     col.separator()
     col.separator()
@@ -220,16 +218,16 @@ def draw_ratings_menu(self, context, layout):
         row = col.row()
         row.prop(self, 'rating_work_hours_ui_1_5', expand=True, icon_only=False, emboss=True)
 
-    if self.rating_work_hours>0:
+    if self.rating_work_hours > 0:
         row = col.row()
         row.label(text=f'Thanks{profile_name}, you are amazing!', icon='FUND')
+
 
 class FastRateMenu(Operator, ratings_utils.RatingsProperties):
     """Rating of the assets , also directly from the asset bar - without need to download assets"""
     bl_idname = "wm.blenderkit_menu_rating_upload"
-    bl_label = ""
+    bl_label = "Ratings"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
 
     @classmethod
     def poll(cls, context):
@@ -239,39 +237,12 @@ class FastRateMenu(Operator, ratings_utils.RatingsProperties):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text=self.message)
-        layout.separator()
-
         draw_ratings_menu(self, context, layout)
 
     def execute(self, context):
-        user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-        api_key = user_preferences.api_key
-        headers = utils.get_headers(api_key)
-
-        url = paths.get_api_url() + f'assets/{self.asset_id}/rating/'
-
-        rtgs = [
-
-        ]
-
-        if self.rating_quality_ui == '':
-            self.rating_quality = 0
-        else:
-            self.rating_quality = float(self.rating_quality_ui)
-
-        if self.rating_quality > 0.1:
-            rtgs = (('quality', self.rating_quality),)
-            tasks_queue.add_task((ratings_utils.send_rating_to_thread_quality, (url, rtgs, headers)), wait=2.5, only_last=True)
-
-        if self.rating_work_hours > 0.45:
-            rtgs = (('working_hours', round(self.rating_work_hours, 1)),)
-            tasks_queue.add_task((ratings_utils.send_rating_to_thread_work_hours, (url, rtgs, headers)), wait=2.5, only_last=True)
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
         scene = bpy.context.scene
         ui_props = scene.blenderkitUI
+        #get asset id
         if ui_props.active_index > -1:
             sr = bpy.context.window_manager['search results']
             asset_data = dict(sr[ui_props.active_index])
@@ -280,15 +251,16 @@ class FastRateMenu(Operator, ratings_utils.RatingsProperties):
 
         if self.asset_id == '':
             return {'CANCELLED'}
-        self.message = f"{self.asset_name}"
+
         wm = context.window_manager
+
         self.prefill_ratings()
 
         if self.asset_type in ('model', 'scene'):
             # spawn a wider one for validators for the enum buttons
-            return wm.invoke_props_dialog(self, width=500)
+            return wm.invoke_popup(self, width=500)
         else:
-            return wm.invoke_props_dialog(self)
+            return wm.invoke_popup(self)
 
 
 def rating_menu_draw(self, context):

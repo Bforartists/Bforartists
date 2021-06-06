@@ -155,10 +155,10 @@ def report_personal_weekly_get(time_start, time_end):
     commits = {}
     confirmed = {}
     resolved = {}
-    invalid = {}
+    archived = {}
     duplicate = {}
     needs_info = {}
-    needs_reproduce = {}
+    needs_info_dev = {}
 
     # Total number of actions.
     task_txn_count = 0
@@ -181,14 +181,14 @@ def report_personal_weekly_get(time_start, time_end):
             add_to_catalog(confirmed, transaction)
         if transaction.action == 'closed' and transaction.action_effect == 'Resolved':
             add_to_catalog(resolved, transaction)
-        if transaction.action == 'closed' and transaction.action_effect == 'Invalid':
-            add_to_catalog(invalid, transaction)
+        if transaction.action == 'closed' and transaction.action_effect == 'Archived':
+            add_to_catalog(archived, transaction)
         if transaction.action == 'merged task':
             add_to_catalog(duplicate, transaction)
         if transaction.action_effect == 'Needs Information from User':
             add_to_catalog(needs_info, transaction)
-        if transaction.action_effect == 'Needs Developer to Reproduce':
-            add_to_catalog(needs_reproduce, transaction)
+        if transaction.action_effect == 'Needs Information from Developers':
+            add_to_catalog(needs_info_dev, transaction)
 
     # Get all own diffs
     constraints = {
@@ -203,6 +203,7 @@ def report_personal_weekly_get(time_start, time_end):
         review.pop(diff_id, None)
 
     # Get open own diffs
+    constraints['modifiedStart'] = time_start
     result = phab.differential.revision.search(queryKey="open", constraints=constraints)
     data = result["data"]
 
@@ -216,10 +217,10 @@ def report_personal_weekly_get(time_start, time_end):
     print("\'\'\'Involved in %s reports:\'\'\'" % len(tasks))
     print("* Confirmed: %s" % len(confirmed))
     print("* Closed as Resolved: %s" % len(resolved))
-    print("* Closed as Invalid: %s" % len(invalid))
+    print("* Closed as Archived: %s" % len(archived))
     print("* Closed as Duplicate: %s" % len(duplicate))
     print("* Needs Info from User: %s" % len(needs_info))
-    print("* Needs Developer to Reproduce: %s" % len(needs_reproduce))
+    print("* Needs Info from Developers: %s" % len(needs_info_dev))
     print("* Actions total: %s" % task_txn_count)
     print()
 
@@ -238,7 +239,7 @@ def report_personal_weekly_get(time_start, time_end):
     print()
 
     # Print open diffs
-    print("\'\'\'Own solutions in review: %s\'\'\'" % sum_diffs)
+    print("\'\'\'Patches worked on: %s\'\'\'" % sum_diffs)
     for diff in sorted(data, key=lambda i: i['fields']['status']['name']):
         if diff["fields"]["status"]['closed']:
             continue

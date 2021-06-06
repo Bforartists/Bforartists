@@ -39,6 +39,7 @@ def save_chan(context, filepath, y_up, rot_ord):
 
     # prepare the correcting matrix
     rot_mat = Matrix.Rotation(radians(-90.0), 4, 'X').to_4x4()
+    previous_rotation = Euler()
 
     filehandle = open(filepath, 'w')
     fw = filehandle.write
@@ -65,9 +66,12 @@ def save_chan(context, filepath, y_up, rot_ord):
         fw("%f\t%f\t%f\t" % t[:])
 
         # create rotation component
-        r = mat.to_euler(rot_ord)
+        r = mat.to_euler(rot_ord, previous_rotation)
 
         fw("%f\t%f\t%f\t" % (degrees(r[0]), degrees(r[1]), degrees(r[2])))
+
+        # store previous rotation for compatibility
+        previous_rotation = r
 
         # if the selected object is a camera export vertical fov also
         if camera:
