@@ -756,13 +756,27 @@ class LayerInit(bpy.types.Operator):
         return {'FINISHED'}
 
 
+def is_metarig(obj):
+    if not (obj and obj.data and obj.type == 'ARMATURE'):
+        return False
+    if 'rig_id' in obj.data:
+        return False
+    for b in obj.pose.bones:
+        if b.rigify_type != "":
+            return True
+    return False
+
 class Generate(bpy.types.Operator):
     """Generates a rig from the active metarig armature"""
 
     bl_idname = "pose.rigify_generate"
     bl_label = "Rigify Generate Rig"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_options = {'UNDO'}
     bl_description = 'Generates a rig from the active metarig armature'
+
+    @classmethod
+    def poll(cls, context):
+        return is_metarig(context.object)
 
     def execute(self, context):
         try:
@@ -818,40 +832,60 @@ class Sample(bpy.types.Operator):
     """Create a sample metarig to be modified before generating the final rig"""
 
     bl_idname = "armature.metarig_sample_add"
-    bl_label = "Add a sample metarig for a rig type"
-    bl_options = {'UNDO', 'INTERNAL'}
+    bl_label = "Add Metarig Sample"
+    bl_options = {'UNDO'}
 
     metarig_type: StringProperty(
         name="Type",
         description="Name of the rig type to generate a sample of",
         maxlen=128,
+        options={'SKIP_SAVE'}
     )
 
+    @classmethod
+    def poll(cls, context):
+        return context.mode == 'EDIT_ARMATURE'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+        col = layout.column()
+        build_type_list(context, context.window_manager.rigify_types)
+        col.prop(context.object.data, "active_feature_set")
+        col.prop_search(self, "metarig_type", context.window_manager, "rigify_types")
+
+    def invoke(self, context, event):
+        if self.metarig_type == "":
+            return context.window_manager.invoke_props_dialog(self)
+        return self.execute(context)
+
     def execute(self, context):
-        if context.mode == 'EDIT_ARMATURE' and self.metarig_type != "":
-            try:
-                rig = rig_lists.rigs[self.metarig_type]["module"]
-                create_sample = rig.create_sample
-            except (ImportError, AttributeError, KeyError):
-                raise Exception("rig type '" + self.metarig_type + "' has no sample.")
-            else:
-                create_sample(context.active_object)
-            finally:
-                bpy.ops.object.mode_set(mode='EDIT')
+        if self.metarig_type == "":
+            self.report({'ERROR'}, "You must select a rig type to create a sample of.")
+            return {'CANCELLED'}
+        try:
+            rig = rig_lists.rigs[self.metarig_type]["module"]
+            create_sample = rig.create_sample
+        except (ImportError, AttributeError, KeyError):
+            raise Exception("rig type '" + self.metarig_type + "' has no sample.")
+        else:
+            create_sample(context.active_object)
+        finally:
+            bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
 
 
 class EncodeMetarig(bpy.types.Operator):
-    """ Creates Python code that will generate the selected metarig.
-    """
+    """Creates Python code that will generate the selected metarig"""
     bl_idname = "armature.rigify_encode_metarig"
     bl_label = "Rigify Encode Metarig"
     bl_options = {'UNDO'}
 
     @classmethod
     def poll(self, context):
-        return context.mode == 'EDIT_ARMATURE'
+        return context.mode == 'EDIT_ARMATURE' and is_metarig(context.object)
 
     def execute(self, context):
         name = "metarig.py"
@@ -865,21 +899,19 @@ class EncodeMetarig(bpy.types.Operator):
         text = write_metarig(context.active_object, layers=True, func_name="create", groups=True, widgets=True)
         text_block.write(text)
         bpy.ops.object.mode_set(mode='EDIT')
-
+        self.report({'INFO'}, f"Metarig written to text datablock: {text_block.name}")
         return {'FINISHED'}
 
 
 class EncodeMetarigSample(bpy.types.Operator):
-    """ Creates Python code that will generate the selected metarig
-        as a sample.
-    """
+    """Creates Python code that will generate the selected metarig as a sample"""
     bl_idname = "armature.rigify_encode_metarig_sample"
     bl_label = "Rigify Encode Metarig Sample"
     bl_options = {'UNDO'}
 
     @classmethod
     def poll(self, context):
-        return context.mode == 'EDIT_ARMATURE'
+        return context.mode == 'EDIT_ARMATURE' and is_metarig(context.object)
 
     def execute(self, context):
         name = "metarig_sample.py"
@@ -894,8 +926,30 @@ class EncodeMetarigSample(bpy.types.Operator):
         text_block.write(text)
         bpy.ops.object.mode_set(mode='EDIT')
 
+        self.report({'INFO'}, f"Metarig Sample written to text datablock: {text_block.name}")
         return {'FINISHED'}
 
+
+class VIEW3D_MT_rigify(bpy.types.Menu):
+    bl_label = "Rigify"
+    bl_idname = "VIEW3D_MT_rigify"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator(Generate.bl_idname, text="Generate")
+        
+        if context.mode == 'EDIT_ARMATURE':
+            layout.separator()
+            layout.operator(Sample.bl_idname)
+            layout.separator()
+            layout.operator(EncodeMetarig.bl_idname, text="Encode Metarig")
+            layout.operator(EncodeMetarigSample.bl_idname, text="Encode Metarig Sample")
+
+
+def draw_rigify_menu(self, context):
+    if is_metarig(context.object):
+        self.layout.menu(VIEW3D_MT_rigify.bl_idname)
 
 class EncodeWidget(bpy.types.Operator):
     """ Creates Python code that will generate the selected metarig.
@@ -922,6 +976,10 @@ class EncodeWidget(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='EDIT')
 
         return {'FINISHED'}
+
+def draw_mesh_edit_menu(self, context):
+    self.layout.operator(EncodeWidget.bl_idname)
+    self.layout.separator()
 
 
 def FktoIk(rig, window='ALL'):
@@ -1338,6 +1396,7 @@ classes = (
     UpgradeMetarigTypes,
     SwitchToLegacy,
     Sample,
+    VIEW3D_MT_rigify,
     EncodeMetarig,
     EncodeMetarigSample,
     EncodeWidget,
@@ -1359,6 +1418,9 @@ def register():
     for cls in classes:
         register_class(cls)
 
+    bpy.types.VIEW3D_MT_editor_menus.append(draw_rigify_menu)
+    bpy.types.VIEW3D_MT_edit_mesh.prepend(draw_mesh_edit_menu)
+
     # Sub-modules.
     rot_mode.register()
 
@@ -1372,5 +1434,8 @@ def unregister():
     # Classes.
     for cls in classes:
         unregister_class(cls)
+
+    bpy.types.VIEW3D_MT_editor_menus.remove(draw_rigify_menu)
+    bpy.types.VIEW3D_MT_edit_mesh.remove(draw_mesh_edit_menu)
 
     animation_unregister()

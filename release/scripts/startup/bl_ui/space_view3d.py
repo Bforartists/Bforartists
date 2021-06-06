@@ -5710,6 +5710,11 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
 
         layout.operator_menu_enum("gpencil.reproject", property="type", text="Reproject Strokes")
 
+        layout.operator("gpencil.stroke_normalize", text="Normalize Thickness").mode = 'THICKNESS'
+        layout.operator("gpencil.stroke_normalize", text="Normalize Opacity").mode = 'OPACITY'
+
+        layout.separator()
+
         layout.separator()
         layout.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon = "RESET")
 

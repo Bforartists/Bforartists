@@ -428,7 +428,8 @@ bool BKE_lib_override_library_create_from_tag(Main *bmain,
 
         /* If other ID is a linked one, but not from the same library as our reference, then we
          * consider we should also remap it, as part of recursive resync. */
-        if ((other_id->tag & LIB_TAG_DOIT) != 0 && other_id->lib != reference_id->lib) {
+        if ((other_id->tag & LIB_TAG_DOIT) != 0 && other_id->lib != reference_id->lib &&
+            other_id != local_id) {
           BKE_libblock_relink_ex(bmain,
                                  other_id,
                                  reference_id,
@@ -468,6 +469,8 @@ typedef struct LibOverrideGroupTagData {
   ID *id_root;
   uint tag;
   uint missing_tag;
+  /* Whether we are looping on override data, or their references (linked) one. */
+  bool is_override;
 } LibOverrideGroupTagData;
 
 /* Tag all IDs in dependency relationships within an override hierarchy/group.
@@ -480,6 +483,7 @@ static bool lib_override_hierarchy_dependencies_recursive_tag(LibOverrideGroupTa
 {
   Main *bmain = data->bmain;
   ID *id = data->id_root;
+  const bool is_override = data->is_override;
 
   MainIDRelationsEntry *entry = BLI_ghash_lookup(bmain->relations->relations_from_pointers, id);
   BLI_assert(entry != NULL);
@@ -501,16 +505,16 @@ static bool lib_override_hierarchy_dependencies_recursive_tag(LibOverrideGroupTa
     }
     /* We only consider IDs from the same library. */
     ID *to_id = *to_id_entry->id_pointer.to;
-    if (!ID_IS_LINKED(to_id) && !ID_IS_OVERRIDE_LIBRARY(to_id)) {
-      /* Pure local data is a barrier of dependency in override cases. */
+    if (to_id == NULL || to_id->lib != id->lib ||
+        (is_override && !ID_IS_OVERRIDE_LIBRARY(to_id))) {
+      /* IDs from different libraries, or non-override IDs in case we are processing overrides, are
+       * both barriers of dependency. */
       continue;
     }
-    if (to_id != NULL && to_id->lib == id->lib) {
-      LibOverrideGroupTagData sub_data = *data;
-      sub_data.id_root = to_id;
-      if (lib_override_hierarchy_dependencies_recursive_tag(&sub_data)) {
-        id->tag |= data->tag;
-      }
+    LibOverrideGroupTagData sub_data = *data;
+    sub_data.id_root = to_id;
+    if (lib_override_hierarchy_dependencies_recursive_tag(&sub_data)) {
+      id->tag |= data->tag;
     }
   }
 
@@ -522,6 +526,7 @@ static void lib_override_linked_group_tag_recursive(LibOverrideGroupTagData *dat
   Main *bmain = data->bmain;
   ID *id_owner = data->id_root;
   BLI_assert(ID_IS_LINKED(id_owner));
+  BLI_assert(!data->is_override);
   const uint tag = data->tag;
   const uint missing_tag = data->missing_tag;
 
@@ -587,6 +592,7 @@ static void lib_override_linked_group_tag(LibOverrideGroupTagData *data)
 {
   Main *bmain = data->bmain;
   ID *id_root = data->id_root;
+  BLI_assert(!data->is_override);
 
   if ((id_root->tag & LIB_TAG_MISSING)) {
     id_root->tag |= data->missing_tag;
@@ -613,11 +619,12 @@ static void lib_override_linked_group_tag(LibOverrideGroupTagData *data)
   }
 }
 
-static void lib_override_local_group_tag_recursive(LibOverrideGroupTagData *data)
+static void lib_override_overrides_group_tag_recursive(LibOverrideGroupTagData *data)
 {
   Main *bmain = data->bmain;
   ID *id_owner = data->id_root;
   BLI_assert(ID_IS_OVERRIDE_LIBRARY(id_owner));
+  BLI_assert(data->is_override);
   const uint tag = data->tag;
   const uint missing_tag = data->missing_tag;
 
@@ -665,15 +672,16 @@ static void lib_override_local_group_tag_recursive(LibOverrideGroupTagData *data
     /* Recursively process the dependencies. */
     LibOverrideGroupTagData sub_data = *data;
     sub_data.id_root = to_id;
-    lib_override_local_group_tag_recursive(&sub_data);
+    lib_override_overrides_group_tag_recursive(&sub_data);
   }
 }
 
 /* This will tag all override IDs of an override group defined by the given `id_root`. */
-static void lib_override_local_group_tag(LibOverrideGroupTagData *data)
+static void lib_override_overrides_group_tag(LibOverrideGroupTagData *data)
 {
   ID *id_root = data->id_root;
   BLI_assert(ID_IS_OVERRIDE_LIBRARY_REAL(id_root));
+  BLI_assert(data->is_override);
 
   if ((id_root->override_library->reference->tag & LIB_TAG_MISSING)) {
     id_root->tag |= data->missing_tag;
@@ -683,14 +691,17 @@ static void lib_override_local_group_tag(LibOverrideGroupTagData *data)
   }
 
   /* Tag all local overrides in id_root's group. */
-  lib_override_local_group_tag_recursive(data);
+  lib_override_overrides_group_tag_recursive(data);
 }
 
 static bool lib_override_library_create_do(Main *bmain, ID *id_root)
 {
   BKE_main_relations_create(bmain, 0);
-  LibOverrideGroupTagData data = {
-      .bmain = bmain, .id_root = id_root, .tag = LIB_TAG_DOIT, .missing_tag = LIB_TAG_MISSING};
+  LibOverrideGroupTagData data = {.bmain = bmain,
+                                  .id_root = id_root,
+                                  .tag = LIB_TAG_DOIT,
+                                  .missing_tag = LIB_TAG_MISSING,
+                                  .is_override = false};
   lib_override_linked_group_tag(&data);
 
   BKE_main_relations_tag_set(bmain, MAINIDRELATIONS_ENTRY_TAGS_PROCESSED, false);
@@ -827,7 +838,7 @@ static void lib_override_library_create_post_process(Main *bmain,
 /**
  * Advanced 'smart' function to create fully functional overrides.
  *
- * \note Currently it only does special things if given \a id_root is an object of collection, more
+ * \note Currently it only does special things if given \a id_root is an object or collection, more
  * specific behaviors may be added in the future for other ID types.
  *
  * \note It will override all IDs tagged with \a LIB_TAG_DOIT, and it does not clear that tag at
@@ -837,15 +848,28 @@ static void lib_override_library_create_post_process(Main *bmain,
  * \param id_reference: Some reference ID used to do some post-processing after overrides have been
  * created, may be NULL. Typically, the Empty object instantiating the linked collection we
  * override, currently.
+ * \param r_id_root_override if not NULL, the override generated for the given \a id_root.
  * \return true if override was successfully created.
  */
-bool BKE_lib_override_library_create(
-    Main *bmain, Scene *scene, ViewLayer *view_layer, ID *id_root, ID *id_reference)
+bool BKE_lib_override_library_create(Main *bmain,
+                                     Scene *scene,
+                                     ViewLayer *view_layer,
+                                     ID *id_root,
+                                     ID *id_reference,
+                                     ID **r_id_root_override)
 {
+  if (r_id_root_override != NULL) {
+    *r_id_root_override = NULL;
+  }
+
   const bool success = lib_override_library_create_do(bmain, id_root);
 
   if (!success) {
     return success;
+  }
+
+  if (r_id_root_override != NULL) {
+    *r_id_root_override = id_root->newid;
   }
 
   lib_override_library_create_post_process(
@@ -917,7 +941,7 @@ bool BKE_lib_override_library_proxy_convert(Main *bmain,
 
   DEG_id_tag_update(&ob_proxy->id, ID_RECALC_COPY_ON_WRITE);
 
-  return BKE_lib_override_library_create(bmain, scene, view_layer, id_root, id_reference);
+  return BKE_lib_override_library_create(bmain, scene, view_layer, id_root, id_reference, NULL);
 }
 
 /**
@@ -941,12 +965,16 @@ bool BKE_lib_override_library_resync(Main *bmain,
   ID *id_root_reference = id_root->override_library->reference;
 
   BKE_main_relations_create(bmain, 0);
-  LibOverrideGroupTagData data = {
-      .bmain = bmain, .id_root = id_root, .tag = LIB_TAG_DOIT, .missing_tag = LIB_TAG_MISSING};
-  lib_override_local_group_tag(&data);
+  LibOverrideGroupTagData data = {.bmain = bmain,
+                                  .id_root = id_root,
+                                  .tag = LIB_TAG_DOIT,
+                                  .missing_tag = LIB_TAG_MISSING,
+                                  .is_override = true};
+  lib_override_overrides_group_tag(&data);
 
   BKE_main_relations_tag_set(bmain, MAINIDRELATIONS_ENTRY_TAGS_PROCESSED, false);
   data.id_root = id_root_reference;
+  data.is_override = false;
   lib_override_linked_group_tag(&data);
 
   BKE_main_relations_tag_set(bmain, MAINIDRELATIONS_ENTRY_TAGS_PROCESSED, false);
@@ -1059,6 +1087,10 @@ bool BKE_lib_override_library_resync(Main *bmain,
         BLI_assert(/*id_override_new->lib == NULL || */ id_override_new->lib == id->lib);
         BLI_assert(id_override_old == NULL || id_override_old->lib == id_root->lib);
         id_override_new->lib = id_root->lib;
+        /* Remap step below will tag directly linked ones properly as needed. */
+        if (ID_IS_LINKED(id_override_new)) {
+          id_override_new->tag |= LIB_TAG_INDIRECT;
+        }
 
         if (id_override_old != NULL) {
           /* Swap the names between old override ID and new one. */
@@ -1284,6 +1316,117 @@ bool BKE_lib_override_library_resync(Main *bmain,
   return success;
 }
 
+/* Also tag ancestors overrides for resync.
+ *
+ * WARNING: Expects `bmain` to have valid relation data.
+ *
+ * NOTE: Related to `lib_override_library_main_resync_find_root_recurse` below.
+ *
+ * TODO: This is a sub-optimal, simple solution. At some point, we should rather find a way to
+ * resync a set of 'sub-roots' overrides, instead of having to 'go back' to the real root and
+ * resync the whole hierarchy.
+ */
+static void lib_override_resync_tagging_finalize_recurse(Main *bmain,
+                                                         ID *id,
+                                                         const int library_indirect_level)
+{
+  if (id->lib != NULL && id->lib->temp_index > library_indirect_level) {
+    CLOG_ERROR(
+        &LOG,
+        "While processing indirect level %d, ID %s from lib %s of indirect level %d detected "
+        "as needing resync.",
+        library_indirect_level,
+        id->name,
+        id->lib->filepath,
+        id->lib->temp_index);
+  }
+
+  MainIDRelationsEntry *entry = BLI_ghash_lookup(bmain->relations->relations_from_pointers, id);
+  BLI_assert(entry != NULL);
+
+  if (entry->tags & MAINIDRELATIONS_ENTRY_TAGS_PROCESSED) {
+    /* This ID has already been processed. */
+    return;
+  }
+  /* This way we won't process again that ID, should we encounter it again through another
+   * relationship hierarchy. */
+  entry->tags |= MAINIDRELATIONS_ENTRY_TAGS_PROCESSED;
+
+  for (MainIDRelationsEntryItem *entry_item = entry->from_ids; entry_item != NULL;
+       entry_item = entry_item->next) {
+    if (entry_item->usage_flag &
+        (IDWALK_CB_OVERRIDE_LIBRARY_NOT_OVERRIDABLE | IDWALK_CB_LOOPBACK)) {
+      continue;
+    }
+    ID *id_from = entry_item->id_pointer.from;
+
+    /* Case where this ID pointer was to a linked ID, that now needs to be overridden. */
+    if (id_from != id && ID_IS_OVERRIDE_LIBRARY_REAL(id_from) && id_from->lib == id->lib) {
+      id_from->tag |= LIB_TAG_LIB_OVERRIDE_NEED_RESYNC;
+      CLOG_INFO(&LOG,
+                4,
+                "ID %s (%p) now tagged as needing resync because they use %s (%p) that needs to "
+                "be overridden",
+                id_from->name,
+                id_from->lib,
+                id->name,
+                id->lib);
+      lib_override_resync_tagging_finalize_recurse(bmain, id_from, library_indirect_level);
+    }
+  }
+}
+
+/* Ensures parent collection (or objects) in the same override group are also tagged for resync.
+ *
+ * This is needed since otherwise, some (new) ID added in one sub-collection might be used in
+ * another unrelated sub-collection, if 'root' collection is not resynced separated resync of those
+ * sub-collections would be unaware that this is the same ID, and would re-generate several
+ * overrides for it.
+ *
+ * NOTE: Related to `lib_override_resync_tagging_finalize` above.
+ */
+static ID *lib_override_library_main_resync_find_root_recurse(ID *id, int *level)
+{
+  (*level)++;
+  ID *return_id = id;
+
+  switch (GS(id->name)) {
+    case ID_GR: {
+      /* Find the highest valid collection in the parenting hierarchy.
+       * Note that in practice, in any decent common case there is only one well defined root
+       * collection anyway. */
+      int max_level = *level;
+      Collection *collection = (Collection *)id;
+      LISTBASE_FOREACH (CollectionParent *, collection_parent_iter, &collection->parents) {
+        Collection *collection_parent = collection_parent_iter->collection;
+        if (ID_IS_OVERRIDE_LIBRARY_REAL(collection_parent) &&
+            collection_parent->id.lib == id->lib) {
+          int tmp_level = *level;
+          ID *tmp_id = lib_override_library_main_resync_find_root_recurse(&collection_parent->id,
+                                                                          &tmp_level);
+          if (tmp_level > max_level) {
+            max_level = tmp_level;
+            return_id = tmp_id;
+          }
+        }
+      }
+      break;
+    }
+    case ID_OB: {
+      Object *object = (Object *)id;
+      if (object->parent != NULL && ID_IS_OVERRIDE_LIBRARY_REAL(object->parent) &&
+          object->parent->id.lib == id->lib) {
+        return_id = lib_override_library_main_resync_find_root_recurse(&object->parent->id, level);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  return return_id;
+}
+
 /* Ensure resync of all overrides at one level of indirect usage.
  *
  * We need to handle each level independently, since an override at level n may be affected by
@@ -1319,7 +1462,8 @@ static void lib_override_library_main_resync_on_library_indirect_level(
     LibOverrideGroupTagData data = {.bmain = bmain,
                                     .id_root = id->override_library->reference,
                                     .tag = LIB_TAG_DOIT,
-                                    .missing_tag = LIB_TAG_MISSING};
+                                    .missing_tag = LIB_TAG_MISSING,
+                                    .is_override = false};
     lib_override_linked_group_tag(&data);
     BKE_main_relations_tag_set(bmain, MAINIDRELATIONS_ENTRY_TAGS_PROCESSED, false);
     lib_override_hierarchy_dependencies_recursive_tag(&data);
@@ -1329,6 +1473,7 @@ static void lib_override_library_main_resync_on_library_indirect_level(
 
   /* Now check existing overrides, those needing resync will be the one either already tagged as
    * such, or the one using linked data that is now tagged as needing override. */
+  BKE_main_relations_tag_set(bmain, MAINIDRELATIONS_ENTRY_TAGS_PROCESSED, false);
   FOREACH_MAIN_ID_BEGIN (bmain, id) {
     if (!ID_IS_OVERRIDE_LIBRARY_REAL(id)) {
       continue;
@@ -1336,16 +1481,7 @@ static void lib_override_library_main_resync_on_library_indirect_level(
 
     if (id->tag & LIB_TAG_LIB_OVERRIDE_NEED_RESYNC) {
       CLOG_INFO(&LOG, 4, "ID %s (%p) was already tagged as needing resync", id->name, id->lib);
-      if (id->lib != NULL && id->lib->temp_index > library_indirect_level) {
-        CLOG_ERROR(
-            &LOG,
-            "While processing indirect level %d, ID %s from lib %s of indirect level %d detected "
-            "as needing resync.",
-            library_indirect_level,
-            id->name,
-            id->lib ? id->lib->filepath : "<LOCAL>",
-            id->lib ? id->lib->temp_index : 0);
-      }
+      lib_override_resync_tagging_finalize_recurse(bmain, id, library_indirect_level);
       continue;
     }
 
@@ -1370,16 +1506,7 @@ static void lib_override_library_main_resync_on_library_indirect_level(
                   id->lib,
                   id_to->name,
                   id_to->lib);
-        if (id->lib != NULL && id->lib->temp_index > library_indirect_level) {
-          CLOG_ERROR(&LOG,
-                     "While processing indirect level %d, ID %s from lib %s of indirect level %d "
-                     "detected "
-                     "as needing resync.",
-                     library_indirect_level,
-                     id->name,
-                     id->lib ? id->lib->filepath : "<LOCAL>",
-                     id->lib ? id->lib->temp_index : 0);
-        }
+        lib_override_resync_tagging_finalize_recurse(bmain, id, library_indirect_level);
         break;
       }
     }
@@ -1403,15 +1530,18 @@ static void lib_override_library_main_resync_on_library_indirect_level(
             (!ID_IS_LINKED(id) && library_indirect_level != 0)) {
           continue;
         }
-        BLI_assert(ID_IS_OVERRIDE_LIBRARY_REAL(id));
-        do_continue = true;
 
+        int level = 0;
         /* In complex non-supported cases, with several different override hierarchies sharing
          * relations between each-other, we may end up not actually updating/replacing the given
          * root id (see e.g. pro/shots/110_rextoria/110_0150_A/110_0150_A.anim.blend of sprites
          * project repository, r2687).
          * This can lead to infinite loop here, at least avoid this. */
         id->tag &= ~LIB_TAG_LIB_OVERRIDE_NEED_RESYNC;
+        id = lib_override_library_main_resync_find_root_recurse(id, &level);
+        id->tag &= ~LIB_TAG_LIB_OVERRIDE_NEED_RESYNC;
+        BLI_assert(ID_IS_OVERRIDE_LIBRARY_REAL(id));
+        do_continue = true;
 
         CLOG_INFO(&LOG, 2, "Resyncing %s (%p)...", id->name, id->lib);
         const bool success = BKE_lib_override_library_resync(
@@ -1557,9 +1687,12 @@ void BKE_lib_override_library_delete(Main *bmain, ID *id_root)
 
   /* Tag all library overrides in the chains of dependencies from the given root one. */
   BKE_main_relations_create(bmain, 0);
-  LibOverrideGroupTagData data = {
-      .bmain = bmain, .id_root = id_root, .tag = LIB_TAG_DOIT, .missing_tag = LIB_TAG_MISSING};
-  lib_override_local_group_tag(&data);
+  LibOverrideGroupTagData data = {.bmain = bmain,
+                                  .id_root = id_root,
+                                  .tag = LIB_TAG_DOIT,
+                                  .missing_tag = LIB_TAG_MISSING,
+                                  .is_override = true};
+  lib_override_overrides_group_tag(&data);
 
   BKE_main_relations_free(bmain);
 

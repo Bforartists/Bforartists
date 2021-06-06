@@ -34,8 +34,8 @@
 bl_info = {
     "name": "Sun Position",
     "author": "Michael Martin",
-    "version": (3, 1, 1),
-    "blender": (2, 80, 0),
+    "version": (3, 1, 2),
+    "blender": (3, 0, 0),
     "location": "World > Sun Position",
     "description": "Show sun position with objects and/or sky texture",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/lighting/sun_position.html",

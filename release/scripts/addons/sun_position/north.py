@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import bgl
 import math
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -94,9 +93,8 @@ else:
         shader.uniform_float("u_ViewProjectionMatrix", matrix)
         shader.uniform_float("u_Resolution", (bpy.context.region.width, bpy.context.region.height))
         shader.uniform_float("u_Color", color)
-        bgl.glLineWidth(2.0)
+        gpu.state.line_width_set(2.0)
         batch.draw(shader)
-
 
     _handle = None
 

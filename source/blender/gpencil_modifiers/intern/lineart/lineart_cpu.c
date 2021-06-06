@@ -780,10 +780,10 @@ static void lineart_triangle_cull_single(LineartRenderBuffer *rb,
   e = new_e;
 
 #define INCREASE_EDGE \
-  e_count++; \
   v1_obi = e->v1_obindex; \
   v2_obi = e->v2_obindex; \
   new_e = &((LineartEdge *)e_eln->pointer)[e_count]; \
+  e_count++; \
   e = new_e; \
   e->v1_obindex = v1_obi; \
   e->v2_obindex = v2_obi; \
@@ -2064,7 +2064,11 @@ static bool lineart_triangle_edge_image_space_occlusion(SpinLock *UNUSED(spl),
   dot_r = dot_v3v3_db(Rv, tri->gn);
   dot_f = dot_v3v3_db(Cv, tri->gn);
 
-  if (!dot_f) {
+  /* NOTE(Yiming): When we don't use `dot_f==0` here, it's theoretically possible that _some_
+   * faces in perspective mode would get erroneously caught in this condition where they really are
+   * legit faces that would produce occlusion, but haven't encountered those yet in my test files.
+   */
+  if (fabs(dot_f) < FLT_EPSILON) {
     return false;
   }
 
