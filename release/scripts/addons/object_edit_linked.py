@@ -22,8 +22,8 @@ bl_info = {
     "author": "Jason van Gumster (Fweeb), Bassam Kurdali, Pablo Vazquez, Rainer Trummer",
     "version": (0, 9, 2),
     "blender": (2, 80, 0),
-    "location": "File > External Data / View3D > Sidebar > Item Tab",
-    "description": "Allows editing of assets linked from a .blend library.",
+    "location": "File > External Data / View3D > Sidebar > Item Tab / Node Editor > Sidebar > Node Tab",
+    "description": "Allows editing of objects, collections, and node groups linked from a .blend library.",
     "doc_url": "{BLENDER_MANUAL_URL}/addons/object/edit_linked_library.html",
     "category": "Object",
 }
@@ -110,7 +110,8 @@ class OBJECT_OT_EditLinked(bpy.types.Operator):
                 bpy.ops.wm.save_mainfile()
 
             settings["original_file"] = bpy.data.filepath
-            settings["linked_file"] = bpy.path.abspath(targetpath)
+            # Using both bpy and os abspath functions because Windows doesn't like relative routes as part of an absolute path
+            settings["linked_file"] = os.path.abspath(bpy.path.abspath(targetpath))
 
             if self.use_instance:
                 import subprocess
@@ -169,7 +170,8 @@ class NODE_OT_EditLinked(bpy.types.Operator):
                 bpy.ops.wm.save_mainfile()
 
             settings["original_file"] = bpy.data.filepath
-            settings["linked_file"] = bpy.path.abspath(targetpath)
+            # Using both bpy and os abspath functions because Windows doesn't like relative routes as part of an absolute path
+            settings["linked_file"] = os.path.abspath(bpy.path.abspath(targetpath))
 
             if self.use_instance:
                 import subprocess
@@ -311,7 +313,10 @@ class NODE_PT_PanelLinkedEdit(bpy.types.Panel):
     bl_label = "Edit Linked Library"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_category = "Node"
+    if bpy.app.version >= (2, 93, 0):
+        bl_category = "Node"
+    else:
+        bl_category = "Item"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
