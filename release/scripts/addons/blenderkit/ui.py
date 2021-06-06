@@ -391,8 +391,11 @@ def draw_tooltip_with_author(asset_data, x, y):
         rcount = min(rc['quality'], rc['workingHours'])
     if rcount > show_rating_threshold:
         quality = round(asset_data['ratingsAverage'].get('quality'))
+    author_text = ''
+    if len(a['firstName'])>0 or len(a['lastName'])>0:
+        author_text = f"by {a['firstName']} {a['lastName']}"
 
-    draw_tooltip(x, y, name=aname, author=f"by {a['firstName']} {a['lastName']}", quality=quality, img=img,
+    draw_tooltip(x, y, name=aname, author=author_text, quality=quality, img=img,
                  gravatar=gimg)
 
 
@@ -693,7 +696,7 @@ def draw_asset_bar(self, context):
                     v_icon = verification_icons[result.get('verificationStatus', 'validated')]
 
                     if v_icon is None and utils.profile_is_validator():
-                        # poke for validators to rate 
+                        # poke for validators to rate
                         if ratings_utils.get_rating_local(result['id']) in (None, {}):
                             v_icon = 'star_grey.png'
 

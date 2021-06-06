@@ -492,13 +492,6 @@ static struct proxy_output_ctx *alloc_proxy_output_ffmpeg(
   rv->c = avcodec_alloc_context3(NULL);
   rv->c->codec_type = AVMEDIA_TYPE_VIDEO;
   rv->c->codec_id = AV_CODEC_ID_H264;
-  rv->c->width = width;
-  rv->c->height = height;
-  rv->c->gop_size = 10;
-  rv->c->max_b_frames = 0;
-  /* Correct wrong default ffmpeg param which crash x264. */
-  rv->c->qmin = 10;
-  rv->c->qmax = 51;
 
   rv->of->oformat->video_codec = rv->c->codec_id;
   rv->codec = avcodec_find_encoder(rv->c->codec_id);
@@ -513,6 +506,13 @@ static struct proxy_output_ctx *alloc_proxy_output_ffmpeg(
     return NULL;
   }
 
+  avcodec_get_context_defaults3(rv->c, rv->codec);
+
+  rv->c->width = width;
+  rv->c->height = height;
+  rv->c->gop_size = 10;
+  rv->c->max_b_frames = 0;
+
   if (rv->codec->pix_fmts) {
     rv->c->pix_fmt = rv->codec->pix_fmts[0];
   }
@@ -526,8 +526,8 @@ static struct proxy_output_ctx *alloc_proxy_output_ffmpeg(
   rv->c->time_base.num = 1;
   rv->st->time_base = rv->c->time_base;
 
-  /* This range matches eFFMpegCrf. Crf_range_min corresponds to lowest quality, crf_range_max to
-   * highest quality. */
+  /* This range matches #eFFMpegCrf. `crf_range_min` corresponds to lowest quality,
+   * `crf_range_max` to highest quality. */
   const int crf_range_min = 32;
   const int crf_range_max = 17;
   int crf = round_fl_to_int((quality / 100.0f) * (crf_range_max - crf_range_min) + crf_range_min);
@@ -535,8 +535,11 @@ static struct proxy_output_ctx *alloc_proxy_output_ffmpeg(
   AVDictionary *codec_opts = NULL;
   /* High quality preset value. */
   av_dict_set_int(&codec_opts, "crf", crf, 0);
-  /* Prefer smaller file-size. */
-  av_dict_set(&codec_opts, "preset", "slow", 0);
+  /* Prefer smaller file-size. Presets from `veryslow` to `veryfast` produce output with very
+   * similar file-size, but there is big difference in performance.
+   * In some cases `veryfast` preset will produce smallest file-size. */
+  av_dict_set(&codec_opts, "preset", "veryfast", 0);
+  av_dict_set(&codec_opts, "tune", "fastdecode", 0);
 
   if (rv->codec->capabilities & AV_CODEC_CAP_AUTO_THREADS) {
     rv->c->thread_count = 0;

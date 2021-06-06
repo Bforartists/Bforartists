@@ -70,6 +70,7 @@
 #include "SEQ_proxy.h"
 #include "SEQ_render.h"
 #include "SEQ_sequencer.h"
+#include "SEQ_time.h"
 #include "SEQ_utils.h"
 
 #include "effects.h"
@@ -309,7 +310,7 @@ static SeqCollection *query_strips_at_frame(ListBase *seqbase, const int timelin
   SeqCollection *collection = SEQ_collection_create();
 
   LISTBASE_FOREACH (Sequence *, seq, seqbase) {
-    if ((seq->startdisp <= timeline_frame) && (seq->enddisp > timeline_frame)) {
+    if (SEQ_time_strip_intersects_frame(seq, timeline_frame)) {
       SEQ_collection_append_strip(seq, collection);
     }
   }
@@ -1124,8 +1125,6 @@ static ImBuf *seq_render_movie_strip_view(const SeqRenderData *context,
   ImBuf *ibuf = NULL;
   IMB_Proxy_Size psize = SEQ_rendersize_to_proxysize(context->preview_render_size);
 
-  IMB_anim_set_preseek(sanim->anim, seq->anim_preseek);
-
   if (SEQ_can_use_proxy(context, seq, psize)) {
     /* Try to get a proxy image.
      * Movie proxies are handled by ImBuf module with exception of `custom file` setting. */
@@ -1237,6 +1236,12 @@ static ImBuf *seq_render_movie_strip(const SeqRenderData *context,
   }
 
   if (*r_is_proxy_image == false) {
+    if (sanim && sanim->anim) {
+      short fps_denom;
+      float fps_num;
+      IMB_anim_get_fps(sanim->anim, &fps_denom, &fps_num, true);
+      seq->strip->stripdata->orig_fps = fps_denom / fps_num;
+    }
     seq->strip->stripdata->orig_width = ibuf->x;
     seq->strip->stripdata->orig_height = ibuf->y;
   }

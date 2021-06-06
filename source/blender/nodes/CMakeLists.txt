@@ -162,8 +162,10 @@ set(SRC
   geometry/nodes/node_geo_bounding_box.cc
   geometry/nodes/node_geo_collection_info.cc
   geometry/nodes/node_geo_common.cc
+  geometry/nodes/node_geo_curve_length.cc  
   geometry/nodes/node_geo_curve_to_mesh.cc
   geometry/nodes/node_geo_curve_resample.cc
+  geometry/nodes/node_geo_delete_geometry.cc
   geometry/nodes/node_geo_edge_split.cc
   geometry/nodes/node_geo_input_material.cc
   geometry/nodes/node_geo_is_viewport.cc
