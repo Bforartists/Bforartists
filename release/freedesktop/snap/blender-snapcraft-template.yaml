@@ -10,12 +10,7 @@ description: |
     scientists, students, VFX experts, animators, game artists, modders, and
     the list goes on.
 
-    The standard snap channels are used in the following way:
-
-           stable - Latest stable release.
-        candidate - Test builds for the upcoming stable release.
-
-icon: ../icons/scalable/apps/bforartists.svg
+icon: @ICON_PATH@
 
 passthrough:
     license: GPL-3.0
@@ -33,7 +28,7 @@ grade: @GRADE@
 parts:
     blender:
         plugin: dump
-        source: @URL@
+        source: @PACKAGE_PATH@
         build-attributes: [keep-execstack, no-patchelf]
         override-build: |
             snapcraftctl build
@@ -47,7 +42,7 @@ parts:
             - libxrender1
             - libxxf86vm1
     wrapper:
-        plugin: copy
+        plugin: dump
         source: .
-        files:
-            bforartists-wrapper: bforartists-wrapper
+        stage:
+            - ./bforartists-wrapper
