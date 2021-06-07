@@ -2676,6 +2676,193 @@ class VIEW3D_PT_masktab_random_mask(toolshelf_calculate, Panel):
                 op.mode = 'RANDOM_PER_LOOSE_PART'
 
 
+class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
+    bl_label = "Face Sets"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Face Sets"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            op = col.operator("sculpt.face_sets_create", text='Face Set from Masked', icon = "MOD_MASK")
+            op.mode = 'MASKED'
+
+            op = col.operator("sculpt.face_sets_create", text='Face Set from Visible', icon = "FILL_MASK")
+            op.mode = 'VISIBLE'
+
+            op = col.operator("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon = "EDITMODE_HLT")
+            op.mode = 'SELECTION'
+
+            col.separator(factor = 0.5)
+
+            op = col.operator("sculpt.face_set_edit", text='Grow Face Set', icon = 'SELECTMORE')
+            op.mode = 'GROW'
+
+            op = col.operator("sculpt.face_set_edit", text='Shrink Face Set', icon = 'SELECTLESS')
+            op.mode = 'SHRINK'
+
+            col.separator(factor = 0.5)
+
+            op = col.operator("mesh.face_set_extract", text='Extract Face Set', icon = "SEPARATE")
+
+            col.separator(factor = 0.5)
+
+            op = col.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK")
+            op.mode = 'INVERT'
+
+            op = col.operator("sculpt.face_set_change_visibility", text='Show All Face Sets', icon = "HIDE_OFF")
+            op.mode = 'SHOW_ALL'
+            op = col.operator("sculpt.face_set_change_visibility", text='Toggle Visibility', icon = "HIDE_UNSELECTED")
+            op.mode = 'TOGGLE'
+            op = col.operator("sculpt.face_set_change_visibility", text='Hide Active Face Sets', icon = "HIDE_ON")
+            op.mode = 'HIDE_ACTIVE'
+
+            col.separator(factor = 0.5)
+
+            op = col.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon = "COLOR")
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_sets_create", text='', icon = "MOD_MASK")
+                op.mode = 'MASKED'
+
+                op = row.operator("sculpt.face_sets_create", text='', icon = "FILL_MASK")
+                op.mode = 'VISIBLE'
+
+                op = row.operator("sculpt.face_sets_create", text='', icon = "EDITMODE_HLT")
+                op.mode = 'SELECTION'
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_set_edit", text='', icon = 'SELECTMORE')
+                op.mode = 'GROW'
+
+                op = row.operator("sculpt.face_set_edit", text='', icon = 'SELECTLESS')
+                op.mode = 'SHRINK'
+
+                op = row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK")
+                op.mode = 'INVERT'
+
+                op = row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_OFF")
+                op.mode = 'SHOW_ALL'
+                op = row.operator("sculpt.face_set_change_visibility", text='T', icon = "HIDE_UNSELECTED")
+                op.mode = 'TOGGLE'
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_ON")
+                op.mode = 'HIDE_ACTIVE'
+                op = row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_sets_create", text='', icon = "MOD_MASK")
+                op.mode = 'MASKED'
+
+                op = row.operator("sculpt.face_sets_create", text='', icon = "FILL_MASK")
+                op.mode = 'VISIBLE'
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_sets_create", text='', icon = "EDITMODE_HLT")
+                op.mode = 'SELECTION'
+
+                op = row.operator("sculpt.face_set_edit", text='', icon = 'SELECTMORE')
+                op.mode = 'GROW'
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_set_edit", text='', icon = 'SELECTLESS')
+                op.mode = 'SHRINK'
+
+                op = row.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK")
+                op.mode = 'INVERT'
+
+                op = row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_OFF")
+                op.mode = 'SHOW_ALL'
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_UNSELECTED")
+                op.mode = 'TOGGLE'
+
+                op = row.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_ON")
+                op.mode = 'HIDE_ACTIVE'
+
+                row = col.row(align=True)
+                op = row.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
+
+
+            elif column_count == 1:
+
+                op = col.operator("sculpt.face_sets_create", text='', icon = "MOD_MASK")
+                op.mode = 'MASKED'
+
+                op = col.operator("sculpt.face_sets_create", text='', icon = "FILL_MASK")
+                op.mode = 'VISIBLE'
+
+                op = col.operator("sculpt.face_sets_create", text='', icon = "EDITMODE_HLT")
+                op.mode = 'SELECTION'
+
+                col.separator(factor = 0.5)
+
+                op = col.operator("sculpt.face_set_edit", text='', icon = 'SELECTMORE')
+                op.mode = 'GROW'
+
+                op = col.operator("sculpt.face_set_edit", text='', icon = 'SELECTLESS')
+                op.mode = 'SHRINK'
+
+                col.separator(factor = 0.5)
+
+                op = col.operator("mesh.face_set_extract", text='', icon = "SEPARATE")
+
+                col.separator(factor = 0.5)
+
+                op = col.operator("sculpt.face_set_change_visibility", text='', icon = "INVERT_MASK")
+                op.mode = 'INVERT'
+
+                op = col.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_OFF")
+                op.mode = 'SHOW_ALL'
+                op = col.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_UNSELECTED")
+                op.mode = 'TOGGLE'
+                op = col.operator("sculpt.face_set_change_visibility", text='', icon = "HIDE_ON")
+                op.mode = 'HIDE_ACTIVE'
+
+                col.separator(factor = 0.5)
+
+                op = col.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
+
+
+
 class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     bl_label = "Curve"
     bl_space_type = 'VIEW_3D'
@@ -3166,6 +3353,7 @@ classes = (
     #mesh sculpt mode
     VIEW3D_PT_masktab_mask,
     VIEW3D_PT_masktab_random_mask,
+    VIEW3D_PT_facesetstab_facesets,
 
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
