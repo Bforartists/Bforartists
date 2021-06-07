@@ -12541,8 +12541,14 @@ static int node_type_to_icon(int type)
       icon = ICON_NODE_REROUTE;
       break;
       /*curve*/
+    case GEO_NODE_CURVE_LENGTH:
+      icon = ICON_PARTICLEBRUSH_LENGTH;
+      break;
     case GEO_NODE_CURVE_TO_MESH:
       icon = ICON_OUTLINER_OB_MESH;
+      break;
+    case GEO_NODE_DELETE_GEOMETRY:
+      icon = ICON_DELETE;
       break;
     case GEO_NODE_MESH_TO_CURVE:
       icon = ICON_OUTLINER_OB_CURVE;
