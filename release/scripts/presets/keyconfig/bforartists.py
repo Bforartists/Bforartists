@@ -1,18 +1,10 @@
-keyconfig_version = (3, 0, 0)
+keyconfig_version = (3, 0, 3)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
   {"items":
    [("view3d.reset_3d_view", {"type": 'NUMPAD_ASTERIX', "value": 'PRESS', "repeat": True}, None),
     ("view3d.cursor3d", {"type": 'RIGHTMOUSE', "value": 'PRESS', "alt": True}, None),
-    ("transform.translate",
-     {"type": 'EVT_TWEAK_R', "value": 'ANY', "shift": True},
-     {"properties":
-      [("cursor_transform", True),
-       ("release_confirm", True),
-       ],
-      },
-     ),
     ("view3d.localview", {"type": 'NUMPAD_SLASH', "value": 'PRESS', "repeat": True}, None),
     ("view3d.localview_remove_from", {"type": 'NUMPAD_SLASH', "value": 'PRESS', "ctrl": True, "repeat": True}, None),
     ("view3d.rotate", {"type": 'RIGHTMOUSE', "value": 'PRESS'}, None),
