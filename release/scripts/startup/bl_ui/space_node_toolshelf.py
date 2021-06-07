@@ -3519,7 +3519,7 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Combine RGB       ", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "ShaderNodeCombineRGB"
-            
+
             props = col.operator("node.add_node", text=" RGB Curves       ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
@@ -3544,7 +3544,7 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "ShaderNodeCombineRGB"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
@@ -3584,10 +3584,14 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Curve Length            ", icon = "PARTICLEBRUSH_LENGTH")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveLength"
+
             props = col.operator("node.add_node", text=" Curve to Mesh          ", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
-            
+
             props = col.operator("node.add_node", text=" Mesh to Curve          ", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeMeshToCurve"
@@ -3605,10 +3609,14 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
+            props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveLength"
+
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeMeshToCurve"
@@ -3648,15 +3656,19 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Bounding Box     ", icon = "PIVOT_BOUNDBOX")
+            props = col.operator("node.add_node", text=" Bounding Box       ", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
 
-            props = col.operator("node.add_node", text=" Join                    ", icon = "JOIN")
+            props = col.operator("node.add_node", text=" Delete Geometry ", icon = "DELETE")
+            props.use_transform = True
+            props.type = "GeometryNodeDeleteGeometry"
+
+            props = col.operator("node.add_node", text=" Join                      ", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
 
-            props = col.operator("node.add_node", text=" Transform           ", icon = "NODE_TRANSFORM")
+            props = col.operator("node.add_node", text=" Transform             ", icon = "NODE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeTransform"
 
@@ -3673,6 +3685,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
 
+            props = flow.operator("node.add_node", text = "", icon = "DELETE")
+            props.use_transform = True
+            props.type = "GeometryNodeDeleteGeometry"
+
             props = flow.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
@@ -3680,6 +3696,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
             props.use_transform = True
             props.type = "GeometryNodeTransform"
+
 
 
 #add input panel
