@@ -3020,6 +3020,162 @@ class VIEW3D_PT_painttab_colorpicker(toolshelf_calculate, Panel):
                 col.operator("paint.sample_color", text = "", icon='EYEDROPPER')
 
 
+class VIEW3D_PT_weightstab_weights(toolshelf_calculate, Panel):
+    bl_label = "Weights"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Weights"
+    bl_context = "weightpaint"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("paint.weight_from_bones", text = "Assign Automatic from Bones", icon = "BONE_DATA").type = 'AUTOMATIC'
+            col.operator("paint.weight_from_bones", text = "Assign from Bone Envelopes", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.vertex_group_normalize_all", text = "Normalize All", icon='WEIGHT_NORMALIZE_ALL')
+            col.operator("object.vertex_group_normalize", text = "Normalize", icon='WEIGHT_NORMALIZE')
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.vertex_group_mirror", text="Mirror", icon='WEIGHT_MIRROR')
+            col.operator("object.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
+            col.operator("object.vertex_group_clean", text="Clean", icon='WEIGHT_CLEAN')
+
+            col.separator(factor = 0.5)
+
+            col.operator("object.vertex_group_quantize", text = "Quantize", icon = "WEIGHT_QUANTIZE")
+            col.operator("object.vertex_group_levels", text = "Levels", icon = 'WEIGHT_LEVELS')
+            col.operator("object.vertex_group_smooth", text = "Smooth", icon='WEIGHT_SMOOTH')
+
+            props = col.operator("object.data_transfer", text="Transfer Weights", icon = 'WEIGHT_TRANSFER_WEIGHTS')
+            props.use_reverse_transfer = True
+            props.data_type = 'VGROUP_WEIGHTS'
+
+            col.operator("object.vertex_group_limit_total", text="Limit Total", icon='WEIGHT_LIMIT_TOTAL')
+            col.operator("object.vertex_group_fix", text="Fix Deforms", icon='WEIGHT_FIX_DEFORMS')
+
+            col.separator(factor = 0.5)
+
+            col.operator("paint.weight_set", icon = "MOD_VERTEX_WEIGHT")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("paint.weight_from_bones", text = "", icon = "BONE_DATA").type = 'AUTOMATIC'
+                row.operator("paint.weight_from_bones", text = "", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+                row.operator("object.vertex_group_normalize_all", text = "", icon='WEIGHT_NORMALIZE_ALL')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_normalize", text = "", icon='WEIGHT_NORMALIZE')
+                row.operator("object.vertex_group_mirror", text="", icon='WEIGHT_MIRROR')
+                row.operator("object.vertex_group_invert", text="", icon='WEIGHT_INVERT')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_clean", text="", icon='WEIGHT_CLEAN')
+                row.operator("object.vertex_group_quantize", text = "", icon = "WEIGHT_QUANTIZE")
+                row.operator("object.vertex_group_levels", text = "", icon = 'WEIGHT_LEVELS')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_smooth", text = "", icon='WEIGHT_SMOOTH')
+                props = row.operator("object.data_transfer", text="", icon = 'WEIGHT_TRANSFER_WEIGHTS')
+                props.use_reverse_transfer = True
+                props.data_type = 'VGROUP_WEIGHTS'
+                row.operator("object.vertex_group_limit_total", text="", icon='WEIGHT_LIMIT_TOTAL')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_fix", text="", icon='WEIGHT_FIX_DEFORMS')
+                row.operator("paint.weight_set", text="", icon = "MOD_VERTEX_WEIGHT")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("paint.weight_from_bones", text = "", icon = "BONE_DATA").type = 'AUTOMATIC'
+                row.operator("paint.weight_from_bones", text = "", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_normalize_all", text = "", icon='WEIGHT_NORMALIZE_ALL')
+                row.operator("object.vertex_group_normalize", text = "", icon='WEIGHT_NORMALIZE')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_mirror", text="", icon='WEIGHT_MIRROR')
+                row.operator("object.vertex_group_invert", text="", icon='WEIGHT_INVERT')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_clean", text="", icon='WEIGHT_CLEAN')
+                row.operator("object.vertex_group_quantize", text = "", icon = "WEIGHT_QUANTIZE")
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_levels", text = "", icon = 'WEIGHT_LEVELS')
+                row.operator("object.vertex_group_smooth", text = "", icon='WEIGHT_SMOOTH')
+
+                row = col.row(align=True)
+                props = row.operator("object.data_transfer", text="", icon = 'WEIGHT_TRANSFER_WEIGHTS')
+                props.use_reverse_transfer = True
+                props.data_type = 'VGROUP_WEIGHTS'
+                row.operator("object.vertex_group_limit_total", text="", icon='WEIGHT_LIMIT_TOTAL')
+
+                row = col.row(align=True)
+                row.operator("object.vertex_group_fix", text="", icon='WEIGHT_FIX_DEFORMS')
+                row.operator("paint.weight_set", text="", icon = "MOD_VERTEX_WEIGHT")
+
+            elif column_count == 1:
+
+                col.operator("paint.weight_from_bones", text = "", icon = "BONE_DATA").type = 'AUTOMATIC'
+                col.operator("paint.weight_from_bones", text = "", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.vertex_group_normalize_all", text = "", icon='WEIGHT_NORMALIZE_ALL')
+                col.operator("object.vertex_group_normalize", text = "", icon='WEIGHT_NORMALIZE')
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.vertex_group_mirror", text="", icon='WEIGHT_MIRROR')
+                col.operator("object.vertex_group_invert", text="", icon='WEIGHT_INVERT')
+                col.operator("object.vertex_group_clean", text="", icon='WEIGHT_CLEAN')
+
+                col.separator(factor = 0.5)
+
+                col.operator("object.vertex_group_quantize", text = "", icon = "WEIGHT_QUANTIZE")
+                col.operator("object.vertex_group_levels", text = "", icon = 'WEIGHT_LEVELS')
+                col.operator("object.vertex_group_smooth", text = "", icon='WEIGHT_SMOOTH')
+
+                props = col.operator("object.data_transfer", text="", icon = 'WEIGHT_TRANSFER_WEIGHTS')
+                props.use_reverse_transfer = True
+                props.data_type = 'VGROUP_WEIGHTS'
+
+                col.operator("object.vertex_group_limit_total", text="", icon='WEIGHT_LIMIT_TOTAL')
+                col.operator("object.vertex_group_fix", text="", icon='WEIGHT_FIX_DEFORMS')
+
+                col.separator(factor = 0.5)
+
+                col.operator("paint.weight_set", text="", icon = "MOD_VERTEX_WEIGHT")
+
 
 class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     bl_label = "Curve"
@@ -3517,6 +3673,9 @@ classes = (
     #mesh vertex paint mode
     VIEW3D_PT_painttab_paint,
     VIEW3D_PT_painttab_colorpicker,
+
+    #mesh weight paint mode
+    VIEW3D_PT_weightstab_weights,
 
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
