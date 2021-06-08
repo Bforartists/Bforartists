@@ -3635,6 +3635,152 @@ class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
                 col.operator("curve.switch_direction", text = "", icon = 'SWITCH_DIRECTION')
 
 
+class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
+    bl_label = "Stroke"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_edit"
+    bl_category = "Stroke"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES").only_selected = False
+            col.operator("gpencil.stroke_trim", text="Trim", icon = "CUT")
+
+            col.separator(factor = 0.5)
+
+            col.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
+            col.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOIN").type = 'JOINCOPY'
+
+            col.separator(factor = 0.5)
+
+            col.operator("gpencil.set_active_material", text="Set as Active Material", icon = "MATERIAL")
+
+            col.separator(factor = 0.5)
+
+            # Convert
+            op = col.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CYCLIC')
+            op.type = 'CLOSE'
+            op.geometry = True
+            col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
+            col.operator("gpencil.stroke_flip", text="Switch Direction", icon = "FLIP")
+
+            col.separator(factor = 0.5)
+
+            col.operator("gpencil.stroke_normalize", text="Normalize Thickness", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+            col.operator("gpencil.stroke_normalize", text="Normalize Opacity", icon = "MOD_OPACITY").mode = 'OPACITY'
+
+            col.separator(factor = 0.5)
+
+            col.separator(factor = 0.5)
+            col.operator("gpencil.reset_transform_fill", text="Reset Fill Transform", icon = "RESET")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
+                row.operator("gpencil.stroke_trim", text="", icon = "CUT")
+                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOINCOPY'
+                row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
+                # Convert
+                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC')
+                op.type = 'CLOSE'
+                op.geometry = True
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
+                row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
+                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+
+                row = col.row(align=True)
+                row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
+                row.operator("gpencil.stroke_trim", text="", icon = "CUT")
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
+                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOINCOPY'
+
+                row = col.row(align=True)
+                row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
+                # Convert
+                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC')
+                op.type = 'CLOSE'
+                op.geometry = True
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
+                row.operator("gpencil.stroke_flip", text="", icon = "FLIP")
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                row.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+
+            elif column_count == 1:
+
+                col.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES").only_selected = False
+                col.operator("gpencil.stroke_trim", text="", icon = "CUT")
+
+                col.separator(factor = 0.5)
+
+                col.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
+                col.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOINCOPY'
+
+                col.separator(factor = 0.5)
+
+                col.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
+
+                col.separator(factor = 0.5)
+
+                # Convert
+                op = col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC')
+                op.type = 'CLOSE'
+                op.geometry = True
+                col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
+                col.operator("gpencil.stroke_flip", text="", icon = "FLIP")
+
+                col.separator(factor = 0.5)
+
+                col.operator("gpencil.stroke_normalize", text="", icon = "MOD_THICKNESS").mode = 'THICKNESS'
+                col.operator("gpencil.stroke_normalize", text="", icon = "MOD_OPACITY").mode = 'OPACITY'
+
+                col.separator(factor = 0.5)
+
+                col.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
+
+
 classes = (
 
     #object menu
@@ -3683,6 +3829,9 @@ classes = (
     VIEW3D_PT_surfacetab_surface,
     VIEW3D_PT_curvetab_controlpoints_surface,
     VIEW3D_PT_segmentstab_segments,
+
+    # grease pencil edit mode
+    VIEW3D_PT_stroketab_stroke,
 
 )
 
