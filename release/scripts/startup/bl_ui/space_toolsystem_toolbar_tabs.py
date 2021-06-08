@@ -2877,6 +2877,101 @@ class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
                 col.operator("sculpt.face_sets_init", text='', icon = "FACE_MAPS").mode = 'FACE_MAPS'
 
 
+class VIEW3D_PT_painttab_paint(toolshelf_calculate, Panel):
+    bl_label = "Paint"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Paint"
+    bl_context = "vertexpaint"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("paint.vertex_color_set", icon = "COLOR")
+            col.operator("paint.vertex_color_smooth", icon = "PARTICLEBRUSH_SMOOTH")
+            col.operator("paint.vertex_color_dirt", icon = "DIRTY_VERTEX")
+            col.operator("paint.vertex_color_from_weight", icon = "VERTCOLFROMWEIGHT")
+
+            col.separator( factor = 0.5)
+
+            col.operator("paint.vertex_color_invert", text="Invert", icon = "REVERSE_COLORS")
+            col.operator("paint.vertex_color_levels", text="Levels", icon = "LEVELS")
+            col.operator("paint.vertex_color_hsv", text="Hue Saturation Value", icon = "HUESATVAL")
+            col.operator("paint.vertex_color_brightness_contrast", text="Bright/Contrast", icon = "BRIGHTNESS_CONTRAST")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("paint.vertex_color_set", text="", icon = "COLOR")
+                row.operator("paint.vertex_color_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
+                row.operator("paint.vertex_color_dirt", text="", icon = "DIRTY_VERTEX")
+
+                row = col.row(align=True)
+                row.operator("paint.vertex_color_from_weight", text="", icon = "VERTCOLFROMWEIGHT")
+                row.operator("paint.vertex_color_invert", text="", icon = "REVERSE_COLORS")
+                row.operator("paint.vertex_color_levels", text="", icon = "LEVELS")
+
+                row = col.row(align=True)
+                row.operator("paint.vertex_color_hsv", text="", icon = "HUESATVAL")
+                row.operator("paint.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("paint.vertex_color_set", text="", icon = "COLOR")
+                row.operator("paint.vertex_color_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
+
+                row = col.row(align=True)
+                row.operator("paint.vertex_color_dirt", text="", icon = "DIRTY_VERTEX")
+                row.operator("paint.vertex_color_from_weight", text="", icon = "VERTCOLFROMWEIGHT")
+
+                row = col.row(align=True)
+                row.operator("paint.vertex_color_invert", text="", icon = "REVERSE_COLORS")
+                row.operator("paint.vertex_color_levels", text="", icon = "LEVELS")
+
+                row = col.row(align=True)
+                row.operator("paint.vertex_color_hsv", text="", icon = "HUESATVAL")
+                row.operator("paint.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
+
+            elif column_count == 1:
+
+                col.operator("paint.vertex_color_set", text="", icon = "COLOR")
+                col.operator("paint.vertex_color_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH")
+                col.operator("paint.vertex_color_dirt", text="", icon = "DIRTY_VERTEX")
+                col.operator("paint.vertex_color_from_weight", text="", icon = "VERTCOLFROMWEIGHT")
+
+                col.separator( factor = 0.5)
+
+                col.operator("paint.vertex_color_invert", text="", icon = "REVERSE_COLORS")
+                col.operator("paint.vertex_color_levels", text="", icon = "LEVELS")
+                col.operator("paint.vertex_color_hsv", text="", icon = "HUESATVAL")
+                col.operator("paint.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
+
+
+
 class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
     bl_label = "Curve"
     bl_space_type = 'VIEW_3D'
@@ -3369,6 +3464,9 @@ classes = (
     VIEW3D_PT_masktab_random_mask,
     VIEW3D_PT_facesetstab_facesets,
     VIEW3D_PT_facesetstab_init_facesets,
+
+    #mesh vertex paint mode
+    VIEW3D_PT_painttab_paint,
 
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
