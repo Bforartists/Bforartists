@@ -3560,14 +3560,9 @@ class VIEW3D_MT_face_sets(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("sculpt.face_sets_create", text='Face Set from Masked', icon = "MOD_MASK")
-        op.mode = 'MASKED'
-
-        op = layout.operator("sculpt.face_sets_create", text='Face Set from Visible', icon = "FILL_MASK")
-        op.mode = 'VISIBLE'
-
-        op = layout.operator("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon = "EDITMODE_HLT")
-        op.mode = 'SELECTION'
+        layout.operator("sculpt.face_sets_create", text='Face Set from Masked', icon = "MOD_MASK").mode = 'MASKED'
+        layout.operator("sculpt.face_sets_create", text='Face Set from Visible', icon = "FILL_MASK").mode = 'VISIBLE'
+        layout.operator("sculpt.face_sets_create", text='Face Set from Edit Mode Selection', icon = "EDITMODE_HLT").mode = 'SELECTION'
 
         layout.separator()
 
@@ -3575,31 +3570,23 @@ class VIEW3D_MT_face_sets(Menu):
 
         layout.separator()
 
-        op = layout.operator("sculpt.face_set_edit", text='Grow Face Set', icon = 'SELECTMORE')
-        op.mode = 'GROW'
-
-        op = layout.operator("sculpt.face_set_edit", text='Shrink Face Set', icon = 'SELECTLESS')
-        op.mode = 'SHRINK'
+        layout.operator("sculpt.face_set_edit", text='Grow Face Set', icon = 'SELECTMORE').mode = 'GROW'
+        layout.operator("sculpt.face_set_edit", text='Shrink Face Set', icon = 'SELECTLESS').mode = 'SHRINK'
 
         layout.separator()
 
-        op = layout.operator("mesh.face_set_extract", text='Extract Face Set', icon = "SEPARATE")
+        layout.operator("mesh.face_set_extract", text='Extract Face Set', icon = "SEPARATE")
 
         layout.separator()
 
-        op = layout.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK")
-        op.mode = 'INVERT'
-
-        op = layout.operator("sculpt.face_set_change_visibility", text='Show All Face Sets', icon = "HIDE_OFF")
-        op.mode = 'SHOW_ALL'
-        op = layout.operator("sculpt.face_set_change_visibility", text='Toggle Visibility', icon = "HIDE_UNSELECTED")
-        op.mode = 'TOGGLE'
-        op = layout.operator("sculpt.face_set_change_visibility", text='Hide Active Face Sets', icon = "HIDE_ON")
-        op.mode = 'HIDE_ACTIVE'
+        layout.operator("sculpt.face_set_change_visibility", text='Invert Visible Face Sets', icon = "INVERT_MASK").mode = 'INVERT'
+        layout.operator("sculpt.face_set_change_visibility", text='Show All Face Sets', icon = "HIDE_OFF").mode = 'SHOW_ALL'
+        layout.operator("sculpt.face_set_change_visibility", text='Toggle Visibility', icon = "HIDE_UNSELECTED").mode = 'TOGGLE'
+        layout.operator("sculpt.face_set_change_visibility", text='Hide Active Face Sets', icon = "HIDE_ON").mode = 'HIDE_ACTIVE'
 
         layout.separator()
 
-        op = layout.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon = "COLOR")
+        layout.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon = "COLOR")
 
 
 class VIEW3D_MT_sculpt_set_pivot(Menu):
@@ -3679,32 +3666,15 @@ class VIEW3D_MT_face_sets_init(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("sculpt.face_sets_init", text='By Loose Parts', icon = "SELECT_LOOSE")
-        op.mode = 'LOOSE_PARTS'
-
-        op = layout.operator("sculpt.face_sets_init", text='By Face Set Boundaries', icon = "SELECT_BOUNDARY")
-        op.mode = 'FACE_SET_BOUNDARIES'
-
-        op = layout.operator("sculpt.face_sets_init", text='By Materials', icon = "MATERIAL_DATA")
-        op.mode = 'MATERIALS'
-
-        op = layout.operator("sculpt.face_sets_init", text='By Normals', icon = "RECALC_NORMALS")
-        op.mode = 'NORMALS'
-
-        op = layout.operator("sculpt.face_sets_init", text='By UV Seams', icon = "MARK_SEAM")
-        op.mode = 'UV_SEAMS'
-
-        op = layout.operator("sculpt.face_sets_init", text='By Edge Creases', icon = "CREASE")
-        op.mode = 'CREASES'
-
-        op = layout.operator("sculpt.face_sets_init", text='By Edge Bevel Weight', icon = "BEVEL")
-        op.mode = 'BEVEL_WEIGHT'
-
-        op = layout.operator("sculpt.face_sets_init", text='By Sharp Edges', icon = "SELECT_SHARPEDGES")
-        op.mode = 'SHARP_EDGES'
-
-        op = layout.operator("sculpt.face_sets_init", text='By Face Maps', icon = "FACE_MAPS")
-        op.mode = 'FACE_MAPS'
+        layout.operator("sculpt.face_sets_init", text='By Loose Parts', icon = "SELECT_LOOSE").mode = 'LOOSE_PARTS'
+        layout.operator("sculpt.face_sets_init", text='By Face Set Boundaries', icon = "SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
+        layout.operator("sculpt.face_sets_init", text='By Materials', icon = "MATERIAL_DATA").mode = 'MATERIALS'
+        layout.operator("sculpt.face_sets_init", text='By Normals', icon = "RECALC_NORMALS").mode = 'NORMALS'
+        layout.operator("sculpt.face_sets_init", text='By UV Seams', icon = "MARK_SEAM").mode = 'UV_SEAMS'
+        layout.operator("sculpt.face_sets_init", text='By Edge Creases', icon = "CREASE").mode = 'CREASES'
+        layout.operator("sculpt.face_sets_init", text='By Edge Bevel Weight', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
+        layout.operator("sculpt.face_sets_init", text='By Sharp Edges', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
+        layout.operator("sculpt.face_sets_init", text='By Face Maps', icon = "FACE_MAPS").mode = 'FACE_MAPS'
 
 
 class VIEW3D_MT_random_mask(Menu):
@@ -3713,14 +3683,9 @@ class VIEW3D_MT_random_mask(Menu):
     def draw(self, _context):
         layout = self.layout
 
-        op = layout.operator("sculpt.mask_init", text='Per Vertex', icon = "SELECT_UNGROUPED_VERTS")
-        op.mode = 'RANDOM_PER_VERTEX'
-
-        op = layout.operator("sculpt.mask_init", text='Per Face Set', icon = "FACESEL")
-        op.mode = 'RANDOM_PER_FACE_SET'
-
-        op = layout.operator("sculpt.mask_init", text='Per Loose Part', icon = "SELECT_LOOSE")
-        op.mode = 'RANDOM_PER_LOOSE_PART'
+        layout.operator("sculpt.mask_init", text='Per Vertex', icon = "SELECT_UNGROUPED_VERTS").mode = 'RANDOM_PER_VERTEX'
+        layout.operator("sculpt.mask_init", text='Per Face Set', icon = "FACESEL").mode = 'RANDOM_PER_FACE_SET'
+        layout.operator("sculpt.mask_init", text='Per Loose Part', icon = "SELECT_LOOSE").mode = 'RANDOM_PER_LOOSE_PART'
 
 
 class VIEW3D_MT_particle(Menu):
@@ -6002,17 +5967,10 @@ class VIEW3D_MT_sculpt_face_sets_edit_pie(Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        op = pie.operator("sculpt.face_sets_create", text='Face Set from Masked')
-        op.mode = 'MASKED'
-
-        op = pie.operator("sculpt.face_sets_create", text='Face Set from Visible')
-        op.mode = 'VISIBLE'
-
-        op = pie.operator("sculpt.face_set_change_visibility", text='Invert Visible')
-        op.mode = 'INVERT'
-
-        op = pie.operator("sculpt.face_set_change_visibility", text='Show All')
-        op.mode = 'SHOW_ALL'
+        pie.operator("sculpt.face_sets_create", text='Face Set from Masked').mode = 'MASKED'
+        pie.operator("sculpt.face_sets_create", text='Face Set from Visible').mode = 'VISIBLE'
+        pie.operator("sculpt.face_set_change_visibility", text='Invert Visible').mode = 'INVERT'
+        pie.operator("sculpt.face_set_change_visibility", text='Show All').mode = 'SHOW_ALL'
 
 
 class VIEW3D_MT_wpaint_vgroup_lock_pie(Menu):
