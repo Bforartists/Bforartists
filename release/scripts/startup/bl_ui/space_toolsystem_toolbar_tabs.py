@@ -3635,6 +3635,67 @@ class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
                 col.operator("curve.switch_direction", text = "", icon = 'SWITCH_DIRECTION')
 
 
+class VIEW3D_PT_gpenciltab_dissolve(toolshelf_calculate, Panel):
+    bl_label = "Dissolve"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_edit"
+    bl_category = "Gpencil"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.dissolve", text="Dissolve", icon = "DISSOLVE_VERTS").type = 'POINTS'
+            col.operator("gpencil.dissolve", text="Dissolve Between", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+            col.operator("gpencil.dissolve", text="Dissolve Unselected", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
+                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
+                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+
+                row = col.row(align=True)
+                row.operator("gpencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+
+            elif column_count == 1:
+
+                col.operator("gpencil.dissolve", text="", icon = "DISSOLVE_VERTS").type = 'POINTS'
+                col.operator("gpencil.dissolve", text="", icon = "DISSOLVE_BETWEEN").type = 'BETWEEN'
+                col.operator("gpencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
+
+
 class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
     bl_label = "Stroke"
     bl_space_type = 'VIEW_3D'
@@ -3781,6 +3842,7 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
                 col.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
 
 
+
 classes = (
 
     #object menu
@@ -3831,6 +3893,7 @@ classes = (
     VIEW3D_PT_segmentstab_segments,
 
     # grease pencil edit mode
+    VIEW3D_PT_gpenciltab_dissolve,
     VIEW3D_PT_stroketab_stroke,
 
 )
