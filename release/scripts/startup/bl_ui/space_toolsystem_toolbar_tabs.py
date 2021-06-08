@@ -2703,7 +2703,6 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
 
             col.operator("sculpt.face_sets_randomize_colors", text='Randomize Colors', icon = "COLOR")
 
-
         # icon buttons
         else:
 
@@ -2782,6 +2781,100 @@ class VIEW3D_PT_facesetstab_facesets(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 col.operator("sculpt.face_sets_randomize_colors", text='', icon = "COLOR")
+
+
+class VIEW3D_PT_facesetstab_init_facesets(toolshelf_calculate, Panel):
+    bl_label = "Initialize Face Sets"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_category = "Face Sets"
+    bl_context = "sculpt_mode"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("sculpt.face_sets_init", text='By Loose Parts', icon = "SELECT_LOOSE").mode = 'LOOSE_PARTS'
+            col.operator("sculpt.face_sets_init", text='By Face Set Boundaries', icon = "SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
+            col.operator("sculpt.face_sets_init", text='By Materials', icon = "MATERIAL_DATA").mode = 'MATERIALS'
+            col.operator("sculpt.face_sets_init", text='By Normals', icon = "RECALC_NORMALS").mode = 'NORMALS'
+            col.operator("sculpt.face_sets_init", text='By UV Seams', icon = "MARK_SEAM").mode = 'UV_SEAMS'
+            col.operator("sculpt.face_sets_init", text='By Edge Creases', icon = "CREASE").mode = 'CREASES'
+            col.operator("sculpt.face_sets_init", text='By Edge Bevel Weight', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
+            col.operator("sculpt.face_sets_init", text='By Sharp Edges', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
+            col.operator("sculpt.face_sets_init", text='By Face Maps', icon = "FACE_MAPS").mode = 'FACE_MAPS'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "SELECT_LOOSE").mode = 'LOOSE_PARTS'
+                row.operator("sculpt.face_sets_init", text='', icon = "SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
+                row.operator("sculpt.face_sets_init", text='', icon = "MATERIAL_DATA").mode = 'MATERIALS'
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "RECALC_NORMALS").mode = 'NORMALS'
+                row.operator("sculpt.face_sets_init", text='', icon = "MARK_SEAM").mode = 'UV_SEAMS'
+                row.operator("sculpt.face_sets_init", text='', icon = "CREASE").mode = 'CREASES'
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
+                row.operator("sculpt.face_sets_init", text='', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
+                row.operator("sculpt.face_sets_init", text='', icon = "FACE_MAPS").mode = 'FACE_MAPS'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "SELECT_LOOSE").mode = 'LOOSE_PARTS'
+                row.operator("sculpt.face_sets_init", text='', icon = "SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "MATERIAL_DATA").mode = 'MATERIALS'
+                row.operator("sculpt.face_sets_init", text='', icon = "RECALC_NORMALS").mode = 'NORMALS'
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "MARK_SEAM").mode = 'UV_SEAMS'
+                row.operator("sculpt.face_sets_init", text='', icon = "CREASE").mode = 'CREASES'
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
+                row.operator("sculpt.face_sets_init", text='', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
+
+                row = col.row(align=True)
+                row.operator("sculpt.face_sets_init", text='', icon = "FACE_MAPS").mode = 'FACE_MAPS'
+
+            elif column_count == 1:
+
+                col.operator("sculpt.face_sets_init", text='', icon = "SELECT_LOOSE").mode = 'LOOSE_PARTS'
+                col.operator("sculpt.face_sets_init", text='', icon = "SELECT_BOUNDARY").mode = 'FACE_SET_BOUNDARIES'
+                col.operator("sculpt.face_sets_init", text='', icon = "MATERIAL_DATA").mode = 'MATERIALS'
+                col.operator("sculpt.face_sets_init", text='', icon = "RECALC_NORMALS").mode = 'NORMALS'
+                col.operator("sculpt.face_sets_init", text='', icon = "MARK_SEAM").mode = 'UV_SEAMS'
+                col.operator("sculpt.face_sets_init", text='', icon = "CREASE").mode = 'CREASES'
+                col.operator("sculpt.face_sets_init", text='', icon = "BEVEL").mode = 'BEVEL_WEIGHT'
+                col.operator("sculpt.face_sets_init", text='', icon = "SELECT_SHARPEDGES").mode = 'SHARP_EDGES'
+                col.operator("sculpt.face_sets_init", text='', icon = "FACE_MAPS").mode = 'FACE_MAPS'
 
 
 class VIEW3D_PT_curvetab_curve(toolshelf_calculate, Panel):
@@ -3275,6 +3368,7 @@ classes = (
     VIEW3D_PT_masktab_mask,
     VIEW3D_PT_masktab_random_mask,
     VIEW3D_PT_facesetstab_facesets,
+    VIEW3D_PT_facesetstab_init_facesets,
 
     #curve edit mode
     VIEW3D_PT_curvetab_curve,
