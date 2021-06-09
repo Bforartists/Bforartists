@@ -4810,6 +4810,76 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(toolshelf_calculate, Panel):
                 col.operator("armature.calculate_roll", text= "", icon = "CURSOR").type = 'CURSOR'
 
 
+class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
+    bl_label = "Pose"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "posemode"
+    bl_category = "Pose"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("pose.quaternions_flip", icon = "FLIP")
+
+            col.separator( factor = 0.5)
+
+            col.operator_context = 'INVOKE_AREA'
+            col.operator("armature.armature_layers", text="Change Armature Layers", icon = "LAYER")
+            col.operator("pose.bone_layers", text="Change Bone Layers", icon = "LAYER")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("pose.quaternions_flip", text="", icon = "FLIP")
+                row.operator_context = 'INVOKE_AREA'
+                row.operator("armature.armature_layers", text="", icon = "LAYER")
+                row.operator("pose.bone_layers", text="", icon = "LAYER")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("pose.quaternions_flip", text="", icon = "FLIP")
+                row.operator_context = 'INVOKE_AREA'
+                row.operator("armature.armature_layers", text="", icon = "LAYER")
+
+                row = col.row(align=True)
+                row.operator("pose.bone_layers", text="", icon = "LAYER")
+
+            elif column_count == 1:
+
+                col.operator("pose.quaternions_flip", text="", icon = "FLIP")
+
+                col.separator( factor = 0.5)
+
+                col.operator_context = 'INVOKE_AREA'
+                col.operator("armature.armature_layers", text="", icon = "LAYER")
+                col.operator("pose.bone_layers", text="", icon = "LAYER")
+
+
 classes = (
 
     #object menu
@@ -4879,6 +4949,9 @@ classes = (
     # armature edit mode
     VIEW3D_PT_gp_armaturetab_armature,
     VIEW3D_PT_gp_armaturetab_recalcboneroll,
+
+    #armature pose mode
+    VIEW3D_PT_gp_posetab_pose,
 
 )
 
