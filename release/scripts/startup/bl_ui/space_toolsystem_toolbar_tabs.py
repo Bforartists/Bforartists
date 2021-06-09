@@ -4000,6 +4000,67 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
                 col.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
 
 
+class VIEW3D_PT_stroketab_simplify(toolshelf_calculate, Panel):
+    bl_label = "Simplify"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_edit"
+    bl_category = "Stroke"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.stroke_simplify_fixed", text="Fixed", icon = "MOD_SIMPLIFY")
+            col.operator("gpencil.stroke_simplify", text="Adaptative", icon = "SIMPLIFY_ADAPTIVE")
+            col.operator("gpencil.stroke_sample", text="Sample", icon = "SIMPLIFY_SAMPLE")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_simplify_fixed", text="", icon = "MOD_SIMPLIFY")
+                row.operator("gpencil.stroke_simplify", text="", icon = "SIMPLIFY_ADAPTIVE")
+                row.operator("gpencil.stroke_sample", text="", icon = "SIMPLIFY_SAMPLE")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_simplify_fixed", text="", icon = "MOD_SIMPLIFY")
+                row.operator("gpencil.stroke_simplify", text="", icon = "SIMPLIFY_ADAPTIVE")
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_sample", text="", icon = "SIMPLIFY_SAMPLE")
+
+            elif column_count == 1:
+
+                col.operator("gpencil.stroke_simplify_fixed", text="", icon = "MOD_SIMPLIFY")
+                col.operator("gpencil.stroke_simplify", text="", icon = "SIMPLIFY_ADAPTIVE")
+                col.operator("gpencil.stroke_sample", text="", icon = "SIMPLIFY_SAMPLE")
+
+
 
 classes = (
 
@@ -4055,6 +4116,7 @@ classes = (
     VIEW3D_PT_gpenciltab_cleanup,
     VIEW3D_PT_gpenciltab_separate,
     VIEW3D_PT_stroketab_stroke,
+    VIEW3D_PT_stroketab_simplify,
 
 )
 
