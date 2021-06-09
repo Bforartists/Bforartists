@@ -3702,7 +3702,7 @@ class VIEW3D_PT_gpenciltab_cleanup(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_context = "greasepencil_edit"
     bl_category = "Gpencil"
-    bl_options = {'HIDE_BG'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -3799,7 +3799,7 @@ class VIEW3D_PT_gpenciltab_separate(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_context = "greasepencil_edit"
     bl_category = "Gpencil"
-    bl_options = {'HIDE_BG'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -4006,7 +4006,7 @@ class VIEW3D_PT_stroketab_simplify(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_context = "greasepencil_edit"
     bl_category = "Stroke"
-    bl_options = {'HIDE_BG'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -4067,7 +4067,7 @@ class VIEW3D_PT_stroketab_togglecaps(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_context = "greasepencil_edit"
     bl_category = "Stroke"
-    bl_options = {'HIDE_BG'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -4128,6 +4128,85 @@ class VIEW3D_PT_stroketab_togglecaps(toolshelf_calculate, Panel):
                 col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
 
 
+class VIEW3D_PT_stroketab_reproject(toolshelf_calculate, Panel):
+    bl_label = "Reproject Strokes"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_edit"
+    bl_category = "Stroke"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.reproject", text="Front", icon = "VIEW_FRONT").type = 'FRONT'
+            col.operator("gpencil.reproject", text="Side", icon = "VIEW_LEFT").type = 'SIDE'
+            col.operator("gpencil.reproject", text="Top", icon = "VIEW_TOP").type = 'TOP'
+            col.operator("gpencil.reproject", text="View", icon = "VIEW").type = 'VIEW'
+            col.operator("gpencil.reproject", text="Surface", icon = "REPROJECT").type = 'SURFACE'
+            col.operator("gpencil.reproject", text="Cursor", icon = "CURSOR").type = 'CURSOR'
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.reproject", text="", icon = "VIEW_FRONT").type = 'FRONT'
+                row.operator("gpencil.reproject", text="", icon = "VIEW_LEFT").type = 'SIDE'
+                row.operator("gpencil.reproject", text="", icon = "VIEW_TOP").type = 'TOP'
+
+                row = col.row(align=True)
+                row.operator("gpencil.reproject", text="", icon = "VIEW").type = 'VIEW'
+                row.operator("gpencil.reproject", text="", icon = "REPROJECT").type = 'SURFACE'
+                row.operator("gpencil.reproject", text="", icon = "CURSOR").type = 'CURSOR'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.reproject", text="", icon = "VIEW_FRONT").type = 'FRONT'
+                row.operator("gpencil.reproject", text="", icon = "VIEW_LEFT").type = 'SIDE'
+
+                row = col.row(align=True)
+                row.operator("gpencil.reproject", text="", icon = "VIEW_TOP").type = 'TOP'
+                row.operator("gpencil.reproject", text="", icon = "VIEW").type = 'VIEW'
+
+                row = col.row(align=True)
+                row.operator("gpencil.reproject", text="", icon = "REPROJECT").type = 'SURFACE'
+                row.operator("gpencil.reproject", text="", icon = "CURSOR").type = 'CURSOR'
+
+            elif column_count == 1:
+
+                col.operator("gpencil.reproject", text="", icon = "VIEW_FRONT").type = 'FRONT'
+                col.operator("gpencil.reproject", text="", icon = "VIEW_LEFT").type = 'SIDE'
+                col.operator("gpencil.reproject", text="", icon = "VIEW_TOP").type = 'TOP'
+                col.operator("gpencil.reproject", text="", icon = "VIEW").type = 'VIEW'
+                col.operator("gpencil.reproject", text="", icon = "REPROJECT").type = 'SURFACE'
+                col.operator("gpencil.reproject", text="", icon = "CURSOR").type = 'CURSOR'
+
+
+
 classes = (
 
     #object menu
@@ -4183,6 +4262,8 @@ classes = (
     VIEW3D_PT_gpenciltab_separate,
     VIEW3D_PT_stroketab_stroke,
     VIEW3D_PT_stroketab_simplify,
+    VIEW3D_PT_stroketab_togglecaps,
+    VIEW3D_PT_stroketab_reproject,
 
 )
 
