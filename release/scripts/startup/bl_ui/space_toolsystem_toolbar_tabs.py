@@ -921,7 +921,7 @@ class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL'}
+        return overlay.show_toolshelf_tabs == True and context.mode in {'OBJECT', 'EDIT_MESH', 'EDIT_ARMATURE', 'EDIT_SURFACE', 'EDIT_CURVE', 'EDIT_LATTICE', 'EDIT_METABALL', 'EDIT_GPENCIL', 'POSE'}
 
     def draw(self, _context):
         layout = self.layout
@@ -4968,6 +4968,152 @@ class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
                 col.operator("pose.user_transforms_clear", text="", icon = "RESET")
 
 
+class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
+    bl_label = "Apply"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "posemode"
+    bl_category = "Pose"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("pose.armature_apply", icon = "MOD_ARMATURE")
+            col.operator("pose.armature_apply", text="Apply Selected as Rest Pose", icon = "MOD_ARMATURE").selected = True
+            col.operator("pose.visual_transform_apply", icon = "APPLYMOVE")
+
+            col.separator( factor = 0.5)
+
+            props = col.operator("object.assign_property_defaults", icon = "ASSIGN")
+            props.process_bones = True
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE")
+                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE").selected = True
+                row.operator("pose.visual_transform_apply", text="", icon = "APPLYMOVE")
+                props = row.operator("object.assign_property_defaults", text="", icon = "ASSIGN")
+                props.process_bones = True
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE")
+                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE").selected = True
+
+                row = col.row(align=True)
+                row.operator("pose.visual_transform_apply", text="", icon = "APPLYMOVE")
+                props = row.operator("object.assign_property_defaults", text="", icon = "ASSIGN")
+                props.process_bones = True
+
+            elif column_count == 1:
+
+                col.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE")
+                col.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE").selected = True
+                col.operator("pose.visual_transform_apply", text="", icon = "APPLYMOVE")
+
+                col.separator( factor = 0.5)
+
+                props = col.operator("object.assign_property_defaults", text="", icon = "ASSIGN")
+                props.process_bones = True
+
+
+class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
+    bl_label = "In-Betweens"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "posemode"
+    bl_category = "Pose"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("pose.push_rest", icon = 'PUSH_POSE')
+            col.operator("pose.relax_rest", icon = 'RELAX_POSE')
+            col.operator("pose.push", icon = 'PUSH_POSE')
+            col.operator("pose.relax", icon = 'RELAX_POSE')
+            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
+                row.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
+                row.operator("pose.push", text = "", icon = 'PUSH_POSE')
+
+                row = col.row(align=True)
+                row.operator("pose.relax", text = "", icon = 'RELAX_POSE')
+                row.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
+                row.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
+
+                row = col.row(align=True)
+                row.operator("pose.push", text = "", icon = 'PUSH_POSE')
+                row.operator("pose.relax", text = "", icon = 'RELAX_POSE')
+
+                row = col.row(align=True)
+                row.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+
+            elif column_count == 1:
+
+                col.operator("pose.push_rest", text = "", icon = 'PUSH_POSE')
+                col.operator("pose.relax_rest", text = "", icon = 'RELAX_POSE')
+                col.operator("pose.push", text = "", icon = 'PUSH_POSE')
+                col.operator("pose.relax", text = "", icon = 'RELAX_POSE')
+                col.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
+
+
 classes = (
 
     #object menu
@@ -5041,6 +5187,8 @@ classes = (
     #armature pose mode
     VIEW3D_PT_gp_posetab_pose,
     VIEW3D_PT_gp_posetab_cleartransform,
+    VIEW3D_PT_gp_posetab_apply,
+    VIEW3D_PT_gp_posetab_inbetweens,
 
 )
 
