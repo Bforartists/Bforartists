@@ -3648,7 +3648,6 @@ class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -3709,7 +3708,6 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -3806,7 +3804,6 @@ class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -3867,7 +3864,6 @@ class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -4013,7 +4009,6 @@ class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -4074,7 +4069,6 @@ class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -4141,7 +4135,6 @@ class VIEW3D_PT_gp_stroketab_reproject(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -4218,7 +4211,6 @@ class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -4279,7 +4271,6 @@ class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -4352,7 +4343,6 @@ class VIEW3D_PT_gp_weightstab_generate_weights(toolshelf_calculate, Panel):
     def poll(cls, context):
         view = context.space_data
         overlay = view.overlay
-        # curve and surface object in edit mode by poll, not by bl_context
         return overlay.show_toolshelf_tabs == True
 
     def draw(self, _context):
@@ -4393,6 +4383,89 @@ class VIEW3D_PT_gp_weightstab_generate_weights(toolshelf_calculate, Panel):
 
                 col.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'NAME'
                 col.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
+
+
+class VIEW3D_PT_gp_painttab_paint(toolshelf_calculate, Panel):
+    bl_label = "Paint"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_vertex"
+    bl_category = "Paint"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.vertex_color_set", text="Set Vertex Colors", icon = "NODE_VERTEX_COLOR")
+            col.operator("gpencil.stroke_reset_vertex_color", icon = "RESET")
+
+            col.separator(factor = 0.5)
+
+            col.operator("gpencil.vertex_color_invert", text="Invert", icon = "NODE_INVERT")
+            col.operator("gpencil.vertex_color_levels", text="Levels", icon = "LEVELS")
+            col.operator("gpencil.vertex_color_hsv", text="Hue Saturation Value", icon = "HUESATVAL")
+            col.operator("gpencil.vertex_color_brightness_contrast", text="Bright/Contrast", icon = "BRIGHTNESS_CONTRAST")
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_color_set", text="", icon = "NODE_VERTEX_COLOR")
+                row.operator("gpencil.stroke_reset_vertex_color", text="", icon = "RESET")
+                row.operator("gpencil.vertex_color_invert", text="", icon = "NODE_INVERT")
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_color_levels", text="", icon = "LEVELS")
+                row.operator("gpencil.vertex_color_hsv", text="", icon = "HUESATVAL")
+                row.operator("gpencil.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_color_set", text="", icon = "NODE_VERTEX_COLOR")
+                row.operator("gpencil.stroke_reset_vertex_color", text="", icon = "RESET")
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_color_invert", text="", icon = "NODE_INVERT")
+                row.operator("gpencil.vertex_color_levels", text="", icon = "LEVELS")
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_color_hsv", text="", icon = "HUESATVAL")
+                row.operator("gpencil.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
+
+            elif column_count == 1:
+
+                col.operator("gpencil.vertex_color_set", text="", icon = "NODE_VERTEX_COLOR")
+                col.operator("gpencil.stroke_reset_vertex_color", text="", icon = "RESET")
+
+                col.separator(factor = 0.5)
+
+                col.operator("gpencil.vertex_color_invert", text="", icon = "NODE_INVERT")
+                col.operator("gpencil.vertex_color_levels", text="", icon = "LEVELS")
+                col.operator("gpencil.vertex_color_hsv", text="", icon = "HUESATVAL")
+                col.operator("gpencil.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
 
 
 
@@ -4458,6 +4531,9 @@ classes = (
     # grease pencil weights mode
     VIEW3D_PT_gp_weightstab_weights,
     VIEW3D_PT_gp_weightstab_generate_weights,
+
+    # grease pencil vertex paint
+    VIEW3D_PT_gp_painttab_paint,
 
 )
 
