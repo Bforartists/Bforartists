@@ -96,6 +96,9 @@
 
 #include "gpencil_intern.h"
 
+#include "UI_interface.h" /*bfa - needed for the icons*/
+#include "UI_resources.h" /*bfa - needed for the icons*/
+
 /* -------------------------------------------------------------------- */
 /** \name Stroke Edit Mode Management
  * \{ */
@@ -4764,17 +4767,17 @@ void GPENCIL_OT_stroke_separate(wmOperatorType *ot)
   static const EnumPropertyItem separate_type[] = {
       {GP_SEPARATE_POINT,
        "POINT",
-       ICON_SEPARATE,
+       ICON_SEPARATE_GP_POINTS,
        "Selected Points",
        "Separate the selected points"},
       {GP_SEPARATE_STROKE,
        "STROKE",
-       ICON_SEPARATE,
+       ICON_SEPARATE_GP_STROKES,
        "Selected Strokes",
        "Separate the selected strokes"},
       {GP_SEPARATE_LAYER,
        "LAYER",
-       ICON_SEPARATE,
+       ICON_SEPARATE_GP_LAYER,
        "Active Layer",
        "Separate the strokes of the current layer"},
       {0, NULL, 0, NULL, NULL},
