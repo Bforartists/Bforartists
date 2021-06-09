@@ -3826,7 +3826,7 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
             col.separator(factor = 0.5)
 
             col.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
-            col.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOIN").type = 'JOINCOPY'
+            col.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOINCOPY").type = 'JOINCOPY'
 
             col.separator(factor = 0.5)
 
@@ -3835,7 +3835,7 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
             col.separator(factor = 0.5)
 
             # Convert
-            op = col.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CYCLIC')
+            op = col.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CLOSE')
             op.type = 'CLOSE'
             op.geometry = True
             col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
@@ -3866,10 +3866,10 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
                 row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
 
                 row = col.row(align=True)
-                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOINCOPY'
+                row.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
                 row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
                 # Convert
-                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC')
+                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
                 op.type = 'CLOSE'
                 op.geometry = True
 
@@ -3889,12 +3889,12 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
-                row.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOINCOPY'
+                row.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
 
                 row = col.row(align=True)
                 row.operator("gpencil.set_active_material", text="", icon = "MATERIAL")
                 # Convert
-                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC')
+                op = row.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
                 op.type = 'CLOSE'
                 op.geometry = True
 
@@ -3914,7 +3914,7 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 col.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
-                col.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOINCOPY'
+                col.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
 
                 col.separator(factor = 0.5)
 
@@ -3923,7 +3923,7 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
                 col.separator(factor = 0.5)
 
                 # Convert
-                op = col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC')
+                op = col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CLOSE')
                 op.type = 'CLOSE'
                 op.geometry = True
                 col.operator("gpencil.stroke_cyclical_set", text="", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
