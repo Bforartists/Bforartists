@@ -3722,7 +3722,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS").mode = 'ALL'
+            col.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
 
             col.separator(factor = 0.5)
 
@@ -3746,7 +3746,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ALL'
+                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
                 row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
 
                 row = col.row(align=True)
@@ -3761,7 +3761,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ALL'
+                row.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
 
                 row = col.row(align=True)
                 row.operator("gpencil.frame_clean_loose", text="", icon = "DELETE_LOOSE")
@@ -3777,7 +3777,7 @@ class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
             elif column_count == 1:
 
                 col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-                col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS").mode = 'ALL'
+                col.operator("gpencil.frame_clean_fill", text="", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
 
                 col.separator(factor = 0.5)
 
@@ -4525,7 +4525,7 @@ class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
 
             col.operator_context = 'INVOKE_REGION_WIN'
             col.operator("armature.armature_layers", icon = "LAYER")
-            col.operator("armature.bone_layers", icon = "LAYER")
+            col.operator("armature.bone_layers", icon = "BONE_LAYER")
 
             col.separator(factor = 0.5)
 
@@ -4566,7 +4566,7 @@ class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
                 row.operator("armature.armature_layers", text="", icon = "LAYER")
 
                 row = col.row(align=True)
-                row.operator("armature.bone_layers", text="", icon = "LAYER")
+                row.operator("armature.bone_layers", text="", icon = "BONE_LAYER")
                 row.operator_context = 'EXEC_REGION_WIN'
                 row.operator("armature.parent_set", text="", icon='PARENT_SET')
                 row.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
@@ -4600,7 +4600,7 @@ class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
                 row.operator("armature.armature_layers", text="", icon = "LAYER")
 
                 row = col.row(align=True)
-                row.operator("armature.bone_layers", text="", icon = "LAYER")
+                row.operator("armature.bone_layers", text="", icon = "BONE_LAYER")
                 row.operator_context = 'EXEC_REGION_WIN'
                 row.operator("armature.parent_set", text="", icon='PARENT_SET')
 
@@ -4637,7 +4637,7 @@ class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
 
                 col.operator_context = 'INVOKE_REGION_WIN'
                 col.operator("armature.armature_layers", text="", icon = "LAYER")
-                col.operator("armature.bone_layers", text="", icon = "LAYER")
+                col.operator("armature.bone_layers", text="", icon = "BONE_LAYER")
 
                 col.separator(factor = 0.5)
 
@@ -4816,7 +4816,7 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_context = "posemode"
     bl_category = "Pose"
-    bl_options = {'HIDE_BG'}
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
@@ -4907,7 +4907,7 @@ class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("pose.transforms_clear", text="All", icon = "CLEAR")
-            col.operator("pose.user_transforms_clear", icon = "CLEAR")
+            col.operator("pose.user_transforms_clear", icon = "NODE_TRANSFORM_CLEAR")
 
             col.separator(factor = 0.5)
 
@@ -4930,7 +4930,7 @@ class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.transforms_clear", text="", icon = "CLEAR")
-                row.operator("pose.user_transforms_clear", text="", icon = "CLEAR")
+                row.operator("pose.user_transforms_clear", text="", icon = "NODE_TRANSFORM_CLEAR")
                 row.operator("pose.loc_clear", text="", icon = "CLEARMOVE")
 
                 row = col.row(align=True)
@@ -4942,7 +4942,7 @@ class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.transforms_clear", text="", icon = "CLEAR")
-                row.operator("pose.user_transforms_clear", text="", icon = "CLEAR")
+                row.operator("pose.user_transforms_clear", text="", icon = "NODE_TRANSFORM_CLEAR")
 
                 row = col.row(align=True)
                 row.operator("pose.loc_clear", text="", icon = "CLEARMOVE")
@@ -4955,7 +4955,7 @@ class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
             elif column_count == 1:
 
                 col.operator("pose.transforms_clear", text="", icon = "CLEAR")
-                col.operator("pose.user_transforms_clear", text="", icon = "CLEAR")
+                col.operator("pose.user_transforms_clear", text="", icon = "NODE_TRANSFORM_CLEAR")
 
                 col.separator(factor = 0.5)
 
@@ -4995,7 +4995,7 @@ class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator("pose.armature_apply", icon = "MOD_ARMATURE")
-            col.operator("pose.armature_apply", text="Apply Selected as Rest Pose", icon = "MOD_ARMATURE").selected = True
+            col.operator("pose.armature_apply", text="Apply Selected as Rest Pose", icon = "MOD_ARMATURE_SELECTED").selected = True
             col.operator("pose.visual_transform_apply", icon = "APPLYMOVE")
 
             col.separator( factor = 0.5)
@@ -5014,7 +5014,7 @@ class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE")
-                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE").selected = True
+                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE_SELECTED").selected = True
                 row.operator("pose.visual_transform_apply", text="", icon = "APPLYMOVE")
                 props = row.operator("object.assign_property_defaults", text="", icon = "ASSIGN")
                 props.process_bones = True
@@ -5023,7 +5023,7 @@ class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE")
-                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE").selected = True
+                row.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE_SELECTED").selected = True
 
                 row = col.row(align=True)
                 row.operator("pose.visual_transform_apply", text="", icon = "APPLYMOVE")
@@ -5033,7 +5033,7 @@ class VIEW3D_PT_gp_posetab_apply(toolshelf_calculate, Panel):
             elif column_count == 1:
 
                 col.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE")
-                col.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE").selected = True
+                col.operator("pose.armature_apply", text="", icon = "MOD_ARMATURE_SELECTED").selected = True
                 col.operator("pose.visual_transform_apply", text="", icon = "APPLYMOVE")
 
                 col.separator( factor = 0.5)
@@ -5144,16 +5144,16 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
 
             col.separator(factor = 0.5)
 
-            col.operator("pose.propagate", text="To Next Keyframe", icon = "PROPAGATE").mode = 'NEXT_KEY'
-            col.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon = "PROPAGATE").mode = 'LAST_KEY'
+            col.operator("pose.propagate", text="To Next Keyframe", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
+            col.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
 
             col.separator(factor = 0.5)
 
-            col.operator("pose.propagate", text="On Selected Keyframes", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+            col.operator("pose.propagate", text="On Selected Keyframes", icon = "PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
 
             col.separator(factor = 0.5)
 
-            col.operator("pose.propagate", text="On Selected Markers", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+            col.operator("pose.propagate", text="On Selected Markers", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
         # icon buttons
         else:
@@ -5166,25 +5166,25 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'NEXT_KEY'
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'LAST_KEY'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
 
                 row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'NEXT_KEY'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
 
                 row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'LAST_KEY'
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
 
                 row = col.row(align=True)
-                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
             elif column_count == 1:
 
@@ -5192,16 +5192,16 @@ class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
 
                 col.separator(factor = 0.5)
 
-                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'NEXT_KEY'
-                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'LAST_KEY'
+                col.operator("pose.propagate", text="", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
+                col.operator("pose.propagate", text="", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
 
                 col.separator(factor = 0.5)
 
-                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+                col.operator("pose.propagate", text="", icon = "PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
 
                 col.separator(factor = 0.5)
 
-                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+                col.operator("pose.propagate", text="", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
 
 class VIEW3D_PT_gp_posetab_poselibrary(toolshelf_calculate, Panel):

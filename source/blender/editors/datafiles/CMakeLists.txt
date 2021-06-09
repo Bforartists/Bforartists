@@ -507,8 +507,8 @@ toggle_close
 separate_gp_strokes
 separate_gp_points
 separate_gp_layer
-#~ DEF_ICON_BLANK(526)
-#~ DEF_ICON_BLANK(527)
+bone_layer
+clean_channels_frames
 
 # ------------------------- row 8 --------------------------*/
 
@@ -567,12 +567,12 @@ node_top
 normals_face
 normals_vertex
 
-#~ DEF_ICON_BLANK(586)
-#~ DEF_ICON_BLANK(587)
-#~ DEF_ICON_BLANK(588)
-#~ DEF_ICON_BLANK(589)
-#~ DEF_ICON_BLANK(590)
-#~ DEF_ICON_BLANK(591)
+mod_armature_selected
+node_transform_clear
+propagate_marker
+propagate_next
+propagate_previous
+propagate_selected
 #~ DEF_ICON_BLANK(592)
 #~ DEF_ICON_BLANK(593)
 #~ DEF_ICON_BLANK(594)
