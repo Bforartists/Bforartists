@@ -3635,7 +3635,7 @@ class VIEW3D_PT_segmentstab_segments(toolshelf_calculate, Panel):
                 col.operator("curve.switch_direction", text = "", icon = 'SWITCH_DIRECTION')
 
 
-class VIEW3D_PT_gpenciltab_dissolve(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_gpenciltab_dissolve(toolshelf_calculate, Panel):
     bl_label = "Dissolve"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3696,7 +3696,7 @@ class VIEW3D_PT_gpenciltab_dissolve(toolshelf_calculate, Panel):
                 col.operator("gpencil.dissolve", text="", icon = "DISSOLVE_UNSELECTED").type = 'UNSELECT'
 
 
-class VIEW3D_PT_gpenciltab_cleanup(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_gpenciltab_cleanup(toolshelf_calculate, Panel):
     bl_label = "Clean Up"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3793,7 +3793,7 @@ class VIEW3D_PT_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 col.operator("gpencil.reproject", text = "", icon = "REPROJECT")
 
 
-class VIEW3D_PT_gpenciltab_separate(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_gpenciltab_separate(toolshelf_calculate, Panel):
     bl_label = "Separate"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -3854,7 +3854,7 @@ class VIEW3D_PT_gpenciltab_separate(toolshelf_calculate, Panel):
                 col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
 
 
-class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_stroke(toolshelf_calculate, Panel):
     bl_label = "Stroke"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4000,7 +4000,7 @@ class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
                 col.operator("gpencil.reset_transform_fill", text="", icon = "RESET")
 
 
-class VIEW3D_PT_stroketab_simplify(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_simplify(toolshelf_calculate, Panel):
     bl_label = "Simplify"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4061,7 +4061,7 @@ class VIEW3D_PT_stroketab_simplify(toolshelf_calculate, Panel):
                 col.operator("gpencil.stroke_sample", text="", icon = "SIMPLIFY_SAMPLE")
 
 
-class VIEW3D_PT_stroketab_togglecaps(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_togglecaps(toolshelf_calculate, Panel):
     bl_label = "Toggle Caps"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4128,7 +4128,7 @@ class VIEW3D_PT_stroketab_togglecaps(toolshelf_calculate, Panel):
                 col.operator("gpencil.stroke_caps_set", text="", icon = "TOGGLECAPS_DEFAULT").type = 'DEFAULT'
 
 
-class VIEW3D_PT_stroketab_reproject(toolshelf_calculate, Panel):
+class VIEW3D_PT_gp_stroketab_reproject(toolshelf_calculate, Panel):
     bl_label = "Reproject Strokes"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -4161,7 +4161,6 @@ class VIEW3D_PT_stroketab_reproject(toolshelf_calculate, Panel):
             col.operator("gpencil.reproject", text="View", icon = "VIEW").type = 'VIEW'
             col.operator("gpencil.reproject", text="Surface", icon = "REPROJECT").type = 'SURFACE'
             col.operator("gpencil.reproject", text="Cursor", icon = "CURSOR").type = 'CURSOR'
-
 
         # icon buttons
         else:
@@ -4204,6 +4203,196 @@ class VIEW3D_PT_stroketab_reproject(toolshelf_calculate, Panel):
                 col.operator("gpencil.reproject", text="", icon = "VIEW").type = 'VIEW'
                 col.operator("gpencil.reproject", text="", icon = "REPROJECT").type = 'SURFACE'
                 col.operator("gpencil.reproject", text="", icon = "CURSOR").type = 'CURSOR'
+
+
+class VIEW3D_PT_gp_pointtab_point(toolshelf_calculate, Panel):
+    bl_label = "Point"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_edit"
+    bl_category = "Point"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.extrude_move", text="Extrude", icon = "EXTRUDE_REGION")
+            col.operator("gpencil.stroke_smooth", text="Smooth", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+            col.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                row.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+                row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                row.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+
+            elif column_count == 1:
+
+                col.operator("gpencil.extrude_move", text="", icon = "EXTRUDE_REGION")
+                col.operator("gpencil.stroke_smooth", text="", icon = "PARTICLEBRUSH_SMOOTH").only_selected = True
+                col.operator("gpencil.stroke_merge", text="", icon = "MERGE")
+
+
+class VIEW3D_PT_gp_weightstab_weights(toolshelf_calculate, Panel):
+    bl_label = "Weights"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_weight"
+    bl_category = "Weights"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.vertex_group_normalize_all", text="Normalize All", icon = "WEIGHT_NORMALIZE_ALL")
+            col.operator("gpencil.vertex_group_normalize", text="Normalize", icon = "WEIGHT_NORMALIZE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("gpencil.vertex_group_invert", text="Invert", icon='WEIGHT_INVERT')
+            col.operator("gpencil.vertex_group_smooth", text="Smooth", icon='WEIGHT_SMOOTH')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_group_normalize_all", text="", icon = "WEIGHT_NORMALIZE_ALL")
+                row.operator("gpencil.vertex_group_normalize", text="", icon = "WEIGHT_NORMALIZE")
+                row.operator("gpencil.vertex_group_invert", text="", icon='WEIGHT_INVERT')
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_group_smooth", text="", icon='WEIGHT_SMOOTH')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_group_normalize_all", text="", icon = "WEIGHT_NORMALIZE_ALL")
+                row.operator("gpencil.vertex_group_normalize", text="", icon = "WEIGHT_NORMALIZE")
+
+                row = col.row(align=True)
+                row.operator("gpencil.vertex_group_invert", text="", icon='WEIGHT_INVERT')
+                row.operator("gpencil.vertex_group_smooth", text="", icon='WEIGHT_SMOOTH')
+
+            elif column_count == 1:
+
+                col.operator("gpencil.vertex_group_normalize_all", text="", icon = "WEIGHT_NORMALIZE_ALL")
+                col.operator("gpencil.vertex_group_normalize", text="", icon = "WEIGHT_NORMALIZE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("gpencil.vertex_group_invert", text="", icon='WEIGHT_INVERT')
+                col.operator("gpencil.vertex_group_smooth", text="", icon='WEIGHT_SMOOTH')
+
+
+class VIEW3D_PT_gp_weightstab_generate_weights(toolshelf_calculate, Panel):
+    bl_label = "Generate Weights"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_weight"
+    bl_category = "Weights"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.generate_weights", text="With Empty Groups", icon = "PARTICLEBRUSH_WEIGHT").mode = 'NAME'
+            col.operator("gpencil.generate_weights", text="With Automatic Weights", icon = "PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'NAME'
+                row.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'NAME'
+                row.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
+
+            elif column_count == 1:
+
+                col.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'NAME'
+                col.operator("gpencil.generate_weights", text="", icon = "PARTICLEBRUSH_WEIGHT").mode = 'AUTO'
 
 
 
@@ -4257,13 +4446,18 @@ classes = (
     VIEW3D_PT_segmentstab_segments,
 
     # grease pencil edit mode
-    VIEW3D_PT_gpenciltab_dissolve,
-    VIEW3D_PT_gpenciltab_cleanup,
-    VIEW3D_PT_gpenciltab_separate,
-    VIEW3D_PT_stroketab_stroke,
-    VIEW3D_PT_stroketab_simplify,
-    VIEW3D_PT_stroketab_togglecaps,
-    VIEW3D_PT_stroketab_reproject,
+    VIEW3D_PT_gp_gpenciltab_dissolve,
+    VIEW3D_PT_gp_gpenciltab_cleanup,
+    VIEW3D_PT_gp_gpenciltab_separate,
+    VIEW3D_PT_gp_stroketab_stroke,
+    VIEW3D_PT_gp_stroketab_simplify,
+    VIEW3D_PT_gp_stroketab_togglecaps,
+    VIEW3D_PT_gp_stroketab_reproject,
+    VIEW3D_PT_gp_pointtab_point,
+
+    # grease pencil weights mode
+    VIEW3D_PT_gp_weightstab_weights,
+    VIEW3D_PT_gp_weightstab_generate_weights,
 
 )
 
