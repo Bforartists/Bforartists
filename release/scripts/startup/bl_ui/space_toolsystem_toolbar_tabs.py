@@ -4468,6 +4468,182 @@ class VIEW3D_PT_gp_painttab_paint(toolshelf_calculate, Panel):
                 col.operator("gpencil.vertex_color_brightness_contrast", text="", icon = "BRIGHTNESS_CONTRAST")
 
 
+class VIEW3D_PT_gp_armaturetab_armature(toolshelf_calculate, Panel):
+    bl_label = "Armature"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        edit_object = _context.edit_object
+        arm = edit_object.data
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("transform.transform", text="Set Bone Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
+            col.operator("armature.roll_clear", text="Clear Bone Roll", icon = "CLEAR_ROLL")
+
+            col.separator(factor = 0.5)
+
+            col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION')
+
+            if arm.use_mirror_x:
+                col.operator("armature.extrude_forked", icon = "EXTRUDE_REGION")
+
+            col.operator("armature.duplicate_move", icon = "DUPLICATE")
+            col.operator("armature.fill", icon = "FILLBETWEEN")
+
+            col.separator(factor = 0.5)
+
+            col.operator("armature.split", icon = "SPLIT")
+            col.operator("armature.separate", icon = "SEPARATE")
+            col.operator("armature.symmetrize", icon = "SYMMETRIZE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("armature.subdivide", text="Subdivide", icon = 'SUBDIVIDE_EDGES')
+            col.operator("armature.switch_direction", text="Switch Direction", icon = "SWITCH_DIRECTION")
+
+            col.separator(factor = 0.5)
+
+            col.operator_context = 'INVOKE_REGION_WIN'
+            col.operator("armature.armature_layers", icon = "LAYER")
+            col.operator("armature.bone_layers", icon = "LAYER")
+
+            col.separator(factor = 0.5)
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("armature.parent_set", text="Make Parent", icon='PARENT_SET')
+            col.operator("armature.parent_clear", text="Clear Parent", icon='PARENT_CLEAR')
+
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("transform.transform", text="", icon = "SET_ROLL").mode = 'BONE_ROLL'
+                row.operator("armature.roll_clear", text="", icon = "CLEAR_ROLL")
+                row.operator("armature.extrude_move", text="", icon = 'EXTRUDE_REGION')
+
+                row = col.row(align=True)
+                if arm.use_mirror_x:
+                    row.operator("armature.extrude_forked", text="", icon = "EXTRUDE_REGION")
+                row.operator("armature.duplicate_move", text="", icon = "DUPLICATE")
+                row.operator("armature.fill", text="", icon = "FILLBETWEEN")
+
+                row = col.row(align=True)
+                row.operator("armature.split", text="", icon = "SPLIT")
+                row.operator("armature.separate", text="", icon = "SEPARATE")
+                row.operator("armature.symmetrize", text="", icon = "SYMMETRIZE")
+
+                row = col.row(align=True)
+                row.operator("armature.subdivide", text="", icon = 'SUBDIVIDE_EDGES')
+                row.operator("armature.switch_direction", text="", icon = "SWITCH_DIRECTION")
+                row.operator_context = 'INVOKE_REGION_WIN'
+                row.operator("armature.armature_layers", text="", icon = "LAYER")
+
+                row = col.row(align=True)
+                row.operator("armature.bone_layers", text="", icon = "LAYER")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("armature.parent_set", text="", icon='PARENT_SET')
+                row.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("transform.transform", text="", icon = "SET_ROLL").mode = 'BONE_ROLL'
+                row.operator("armature.roll_clear", text="", icon = "CLEAR_ROLL")
+
+                row = col.row(align=True)
+                row.operator("armature.extrude_move", text="", icon = 'EXTRUDE_REGION')
+                if arm.use_mirror_x:
+                    row.operator("armature.extrude_forked", text="", icon = "EXTRUDE_REGION")
+
+                row = col.row(align=True)
+                row.operator("armature.duplicate_move", text="", icon = "DUPLICATE")
+                row.operator("armature.fill", text="", icon = "FILLBETWEEN")
+
+                row = col.row(align=True)
+                row.operator("armature.split", text="", icon = "SPLIT")
+                row.operator("armature.separate", text="", icon = "SEPARATE")
+
+                row = col.row(align=True)
+                row.operator("armature.symmetrize", text="", icon = "SYMMETRIZE")
+                row.operator("armature.subdivide", text="", icon = 'SUBDIVIDE_EDGES')
+
+                row = col.row(align=True)
+                row.operator("armature.switch_direction", text="", icon = "SWITCH_DIRECTION")
+                row.operator_context = 'INVOKE_REGION_WIN'
+                row.operator("armature.armature_layers", text="", icon = "LAYER")
+
+                row = col.row(align=True)
+                row.operator("armature.bone_layers", text="", icon = "LAYER")
+                row.operator_context = 'EXEC_REGION_WIN'
+                row.operator("armature.parent_set", text="", icon='PARENT_SET')
+
+                row = col.row(align=True)
+                row.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
+
+            elif column_count == 1:
+
+                col.operator("transform.transform", text="", icon = "SET_ROLL").mode = 'BONE_ROLL'
+                col.operator("armature.roll_clear", text="", icon = "CLEAR_ROLL")
+
+                col.separator(factor = 0.5)
+
+                col.operator("armature.extrude_move", text="", icon = 'EXTRUDE_REGION')
+
+                if arm.use_mirror_x:
+                    col.operator("armature.extrude_forked", text="", icon = "EXTRUDE_REGION")
+
+                col.operator("armature.duplicate_move", text="", icon = "DUPLICATE")
+                col.operator("armature.fill", text="", icon = "FILLBETWEEN")
+
+                col.separator(factor = 0.5)
+
+                col.operator("armature.split", text="", icon = "SPLIT")
+                col.operator("armature.separate", text="", icon = "SEPARATE")
+                col.operator("armature.symmetrize", text="", icon = "SYMMETRIZE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("armature.subdivide", text="", icon = 'SUBDIVIDE_EDGES')
+                col.operator("armature.switch_direction", text="", icon = "SWITCH_DIRECTION")
+
+                col.separator(factor = 0.5)
+
+                col.operator_context = 'INVOKE_REGION_WIN'
+                col.operator("armature.armature_layers", text="", icon = "LAYER")
+                col.operator("armature.bone_layers", text="", icon = "LAYER")
+
+                col.separator(factor = 0.5)
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("armature.parent_set", text="", icon='PARENT_SET')
+                col.operator("armature.parent_clear", text="", icon='PARENT_CLEAR')
 
 classes = (
 
@@ -4534,6 +4710,9 @@ classes = (
 
     # grease pencil vertex paint
     VIEW3D_PT_gp_painttab_paint,
+
+    # armature edit mode
+    VIEW3D_PT_gp_armaturetab_armature,
 
 )
 
