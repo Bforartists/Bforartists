@@ -3451,7 +3451,7 @@ void GPENCIL_OT_stroke_caps_set(wmOperatorType *ot)
       {GP_STROKE_CAPS_TOGGLE_START, "START", ICON_TOGGLECAPS_START, "Start", ""},
       {GP_STROKE_CAPS_TOGGLE_END, "END", ICON_TOGGLECAPS_END, "End", ""},
       {GP_STROKE_CAPS_TOGGLE_DEFAULT,
-       "TOGGLE",
+       "DEFAULT",
        ICON_TOGGLECAPS_DEFAULT,
        "Default",
        "Set as default rounded"},
