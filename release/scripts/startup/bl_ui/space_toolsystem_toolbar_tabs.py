@@ -4816,7 +4816,7 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
     bl_region_type = 'TOOLS'
     bl_context = "posemode"
     bl_category = "Pose"
-    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+    bl_options = {'HIDE_BG'}
 
     # just show when the toolshelf tabs toggle in the view menu is on.
     @classmethod
