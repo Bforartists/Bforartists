@@ -5504,8 +5504,8 @@ class VIEW3D_MT_gpencil_simplify(Menu):
     def draw(self, _context):
         layout = self.layout
         layout.operator("gpencil.stroke_simplify_fixed", text="Fixed", icon = "MOD_SIMPLIFY")
-        layout.operator("gpencil.stroke_simplify", text="Adaptative", icon = "MOD_SIMPLIFY")
-        layout.operator("gpencil.stroke_sample", text="Sample", icon = "MOD_SIMPLIFY")
+        layout.operator("gpencil.stroke_simplify", text="Adaptative", icon = "SIMPLIFY_ADAPTIVE")
+        layout.operator("gpencil.stroke_sample", text="Sample", icon = "SIMPLIFY_SAMPLE")
 
 
 class VIEW3D_MT_draw_gpencil(Menu):
@@ -5652,7 +5652,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.separator()
 
         layout.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
-        layout.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOIN").type = 'JOINCOPY'
+        layout.operator("gpencil.stroke_join", text="Join and Copy", icon = "JOINCOPY").type = 'JOINCOPY'
 
         layout.separator()
 
@@ -5664,7 +5664,7 @@ class VIEW3D_MT_edit_gpencil_stroke(Menu):
         layout.separator()
 
         # Convert
-        op = layout.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CYCLIC')
+        op = layout.operator("gpencil.stroke_cyclical_set", text="Close", icon = 'TOGGLE_CLOSE')
         op.type = 'CLOSE'
         op.geometry = True
         layout.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = 'TOGGLE_CYCLIC').type = 'TOGGLE'
@@ -8073,7 +8073,7 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.operator("gpencil.stroke_merge", text="Merge", icon = "MERGE")
             col.operator("gpencil.stroke_merge_by_distance", icon = "MERGE").use_unselected = False
             col.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
-            col.operator("gpencil.stroke_separate", text="Separate", icon = "SEPARATE").mode = 'POINT'
+            col.operator("gpencil.stroke_separate", text="Separate", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
 
             col.separator()
 
@@ -8125,7 +8125,7 @@ class VIEW3D_MT_gpencil_edit_context_menu(Menu):
             col.operator("gpencil.stroke_merge_by_distance", icon = "MERGE").use_unselected = True
             col.operator_menu_enum("gpencil.stroke_join", "type", text="Join", icon ='JOIN')
             col.operator("gpencil.stroke_split", text="Split", icon = "SPLIT")
-            col.operator("gpencil.stroke_separate", text="Separate", icon = "SEPARATE").mode = 'STROKE'
+            col.operator("gpencil.stroke_separate", text="Separate", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
 
             col.separator()
 
@@ -8368,7 +8368,7 @@ class VIEW3D_MT_gpencil_sculpt(Menu):
 
         layout.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
         layout.operator("gpencil.stroke_simplify_fixed", text="Simplify", icon = "MOD_SIMPLIFY")
-        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon = "MOD_SIMPLIFY")
+        layout.operator("gpencil.stroke_simplify", text="Simplify Adaptative", icon = "SIMPLIFY_ADAPTIVE")
 
         if context.mode == 'WEIGHT_GPENCIL':
             layout.separator()

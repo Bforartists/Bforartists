@@ -501,12 +501,12 @@ shape
 
 mask_slice_fill
 mask_slice_new
-#~ DEF_ICON_BLANK(520)
-#~ DEF_ICON_BLANK(521)
-#~ DEF_ICON_BLANK(522)
-#~ DEF_ICON_BLANK(523)
-#~ DEF_ICON_BLANK(524)
-#~ DEF_ICON_BLANK(525)
+simplify_sample
+simplify_adaptive
+toggle_close
+separate_gp_strokes
+separate_gp_points
+separate_gp_layer
 #~ DEF_ICON_BLANK(526)
 #~ DEF_ICON_BLANK(527)
 
