@@ -4880,6 +4880,94 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
                 col.operator("pose.bone_layers", text="", icon = "LAYER")
 
 
+class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
+    bl_label = "Clear Transform"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "posemode"
+    bl_category = "Pose"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("pose.transforms_clear", text="All", icon = "CLEAR")
+            col.operator("pose.user_transforms_clear", icon = "CLEAR")
+
+            col.separator(factor = 0.5)
+
+            col.operator("pose.loc_clear", text="Location", icon = "CLEARMOVE")
+            col.operator("pose.rot_clear", text="Rotation", icon = "CLEARROTATE")
+            col.operator("pose.scale_clear", text="Scale", icon = "CLEARSCALE")
+
+            col.separator(factor = 0.5)
+
+            col.operator("pose.user_transforms_clear", text="Reset Unkeyed", icon = "RESET")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("pose.transforms_clear", text="", icon = "CLEAR")
+                row.operator("pose.user_transforms_clear", text="", icon = "CLEAR")
+                row.operator("pose.loc_clear", text="", icon = "CLEARMOVE")
+
+                row = col.row(align=True)
+                row.operator("pose.rot_clear", text="", icon = "CLEARROTATE")
+                row.operator("pose.scale_clear", text="", icon = "CLEARSCALE")
+                row.operator("pose.user_transforms_clear", text="", icon = "RESET")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("pose.transforms_clear", text="", icon = "CLEAR")
+                row.operator("pose.user_transforms_clear", text="", icon = "CLEAR")
+
+                row = col.row(align=True)
+                row.operator("pose.loc_clear", text="", icon = "CLEARMOVE")
+                row.operator("pose.rot_clear", text="", icon = "CLEARROTATE")
+
+                row = col.row(align=True)
+                row.operator("pose.scale_clear", text="", icon = "CLEARSCALE")
+                row.operator("pose.user_transforms_clear", text="", icon = "RESET")
+
+            elif column_count == 1:
+
+                col.operator("pose.transforms_clear", text="", icon = "CLEAR")
+                col.operator("pose.user_transforms_clear", text="", icon = "CLEAR")
+
+                col.separator(factor = 0.5)
+
+                col.operator("pose.loc_clear", text="", icon = "CLEARMOVE")
+                col.operator("pose.rot_clear", text="", icon = "CLEARROTATE")
+                col.operator("pose.scale_clear", text="", icon = "CLEARSCALE")
+
+                col.separator(factor = 0.5)
+
+                col.operator("pose.user_transforms_clear", text="", icon = "RESET")
+
+
 classes = (
 
     #object menu
@@ -4952,6 +5040,7 @@ classes = (
 
     #armature pose mode
     VIEW3D_PT_gp_posetab_pose,
+    VIEW3D_PT_gp_posetab_cleartransform,
 
 )
 
