@@ -366,7 +366,7 @@ class GPENCIL_MT_cleanup(Menu):
         layout = self.layout
 
         layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes", icon = "CLEAN_CHANNELS").mode = 'ACTIVE'
-        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS").mode = 'ALL'
+        layout.operator("gpencil.frame_clean_fill", text="Boundary Strokes all Frames", icon = "CLEAN_CHANNELS_FRAMES").mode = 'ALL'
 
         layout.separator()
 

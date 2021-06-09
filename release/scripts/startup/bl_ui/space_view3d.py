@@ -2615,7 +2615,7 @@ class VIEW3D_MT_object_animation(Menu):
         layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe", icon= 'KEYFRAMES_INSERT')
         layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes", icon= 'KEYFRAMES_REMOVE')
         layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes", icon= 'KEYFRAMES_CLEAR')
-        layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon='TRIA_RIGHT')
+        layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon='KEYINGSET')
 
         layout.separator()
 
@@ -3847,7 +3847,7 @@ class VIEW3D_MT_pose_transform(Menu):
         layout = self.layout
 
         layout.operator("pose.transforms_clear", text="All", icon = "CLEAR")
-        layout.operator("pose.user_transforms_clear", icon = "CLEAR")
+        layout.operator("pose.user_transforms_clear", icon = "NODE_TRANSFORM_CLEAR")
 
         layout.separator()
 
@@ -3883,16 +3883,16 @@ class VIEW3D_MT_pose_propagate(Menu):
 
         layout.separator()
 
-        layout.operator("pose.propagate", text="To Next Keyframe", icon = "PROPAGATE").mode = 'NEXT_KEY'
-        layout.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon = "PROPAGATE").mode = 'LAST_KEY'
+        layout.operator("pose.propagate", text="To Next Keyframe", icon = "PROPAGATE_NEXT").mode = 'NEXT_KEY'
+        layout.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon = "PROPAGATE_PREVIOUS").mode = 'LAST_KEY'
 
         layout.separator()
 
-        layout.operator("pose.propagate", text="On Selected Keyframes", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+        layout.operator("pose.propagate", text="On Selected Keyframes", icon = "PROPAGATE_SELECTED").mode = 'SELECTED_KEYS'
 
         layout.separator()
 
-        layout.operator("pose.propagate", text="On Selected Markers", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+        layout.operator("pose.propagate", text="On Selected Markers", icon = "PROPAGATE_MARKER").mode = 'SELECTED_MARKERS'
 
 
 class VIEW3D_MT_pose_library(Menu):
@@ -3993,7 +3993,7 @@ class VIEW3D_MT_pose_apply(Menu):
         layout = self.layout
 
         layout.operator("pose.armature_apply", icon = "MOD_ARMATURE")
-        layout.operator("pose.armature_apply", text="Apply Selected as Rest Pose", icon = "MOD_ARMATURE").selected = True
+        layout.operator("pose.armature_apply", text="Apply Selected as Rest Pose", icon = "MOD_ARMATURE_SELECTED").selected = True
         layout.operator("pose.visual_transform_apply", icon = "APPLYMOVE")
 
         layout.separator()
@@ -4042,7 +4042,7 @@ class VIEW3D_MT_pose_context_menu(Menu):
 
         layout.separator()
 
-        layout.operator("pose.user_transforms_clear", icon = "CLEAR")
+        layout.operator("pose.user_transforms_clear", icon = "NODE_TRANSFORM_CLEAR")
 
 
 class BoneOptions:
@@ -5363,7 +5363,7 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("armature.armature_layers", icon = "LAYER")
-        layout.operator("armature.bone_layers", icon = "LAYER")
+        layout.operator("armature.bone_layers", icon = "BONE_LAYER")
 
         layout.separator()
 
