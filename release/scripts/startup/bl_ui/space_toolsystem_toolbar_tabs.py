@@ -5114,6 +5114,222 @@ class VIEW3D_PT_gp_posetab_inbetweens(toolshelf_calculate, Panel):
                 col.operator("pose.breakdown", text = "", icon = 'BREAKDOWNER_POSE')
 
 
+class VIEW3D_PT_gp_posetab_propagate(toolshelf_calculate, Panel):
+    bl_label = "Propagate"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "posemode"
+    bl_category = "Pose"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("pose.propagate", icon = "PROPAGATE").mode = 'WHILE_HELD'
+
+            col.separator(factor = 0.5)
+
+            col.operator("pose.propagate", text="To Next Keyframe", icon = "PROPAGATE").mode = 'NEXT_KEY'
+            col.operator("pose.propagate", text="To Last Keyframe (Make Cyclic)", icon = "PROPAGATE").mode = 'LAST_KEY'
+
+            col.separator(factor = 0.5)
+
+            col.operator("pose.propagate", text="On Selected Keyframes", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+
+            col.separator(factor = 0.5)
+
+            col.operator("pose.propagate", text="On Selected Markers", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'NEXT_KEY'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'LAST_KEY'
+
+                row = col.row(align=True)
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'NEXT_KEY'
+
+                row = col.row(align=True)
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'LAST_KEY'
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+
+                row = col.row(align=True)
+                row.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+
+            elif column_count == 1:
+
+                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'WHILE_HELD'
+
+                col.separator(factor = 0.5)
+
+                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'NEXT_KEY'
+                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'LAST_KEY'
+
+                col.separator(factor = 0.5)
+
+                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_KEYS'
+
+                col.separator(factor = 0.5)
+
+                col.operator("pose.propagate", text="", icon = "PROPAGATE").mode = 'SELECTED_MARKERS'
+
+
+class VIEW3D_PT_gp_posetab_poselibrary(toolshelf_calculate, Panel):
+    bl_label = "Pose Library"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "posemode"
+    bl_category = "Pose"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("poselib.browse_interactive", text="Browse Poses", icon = "FILEBROWSER")
+
+            col.separator(factor = 0.5)
+
+            col.operator("poselib.pose_add", text="Add Pose", icon = "LIBRARY")
+            col.operator("poselib.pose_rename", text="Rename Pose", icon='RENAME')
+            col.operator("poselib.pose_remove", text="Remove Pose", icon = "DELETE")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("poselib.browse_interactive", text="", icon = "FILEBROWSER")
+                row.operator("poselib.pose_add", text="", icon = "LIBRARY")
+                row.operator("poselib.pose_rename", text="", icon='RENAME')
+
+                row = col.row(align=True)
+                row.operator("poselib.pose_remove", text="", icon = "DELETE")
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("poselib.browse_interactive", text="", icon = "FILEBROWSER")
+                row.operator("poselib.pose_add", text="", icon = "LIBRARY")
+
+                row = col.row(align=True)
+                row.operator("poselib.pose_rename", text="", icon='RENAME')
+                row.operator("poselib.pose_remove", text="", icon = "DELETE")
+
+            elif column_count == 1:
+
+                col.operator("poselib.browse_interactive", text="", icon = "FILEBROWSER")
+
+                col.separator(factor = 0.5)
+
+                col.operator("poselib.pose_add", text="", icon = "LIBRARY")
+                col.operator("poselib.pose_rename", text="", icon='RENAME')
+                col.operator("poselib.pose_remove", text="", icon = "DELETE")
+
+
+class VIEW3D_PT_gp_posetab_motionpaths(toolshelf_calculate, Panel):
+    bl_label = "Motion Paths"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "posemode"
+    bl_category = "Pose"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("pose.paths_calculate", text="Calculate", icon ='MOTIONPATHS_CALCULATE')
+            col.operator("pose.paths_clear", text="Clear", icon ='MOTIONPATHS_CLEAR')
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("pose.paths_calculate", text="", icon ='MOTIONPATHS_CALCULATE')
+                row.operator("pose.paths_clear", text="", icon ='MOTIONPATHS_CLEAR')
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("pose.paths_calculate", text="", icon ='MOTIONPATHS_CALCULATE')
+                row.operator("pose.paths_clear", text="", icon ='MOTIONPATHS_CLEAR')
+
+            elif column_count == 1:
+
+                col.operator("pose.paths_calculate", text="", icon ='MOTIONPATHS_CALCULATE')
+                col.operator("pose.paths_clear", text="", icon ='MOTIONPATHS_CLEAR')
+
+
 classes = (
 
     #object menu
@@ -5189,6 +5405,9 @@ classes = (
     VIEW3D_PT_gp_posetab_cleartransform,
     VIEW3D_PT_gp_posetab_apply,
     VIEW3D_PT_gp_posetab_inbetweens,
+    VIEW3D_PT_gp_posetab_propagate,
+    VIEW3D_PT_gp_posetab_poselibrary,
+    VIEW3D_PT_gp_posetab_motionpaths,
 
 )
 
