@@ -3793,6 +3793,67 @@ class VIEW3D_PT_gpenciltab_cleanup(toolshelf_calculate, Panel):
                 col.operator("gpencil.reproject", text = "", icon = "REPROJECT")
 
 
+class VIEW3D_PT_gpenciltab_separate(toolshelf_calculate, Panel):
+    bl_label = "Separate"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "greasepencil_edit"
+    bl_category = "Gpencil"
+    bl_options = {'HIDE_BG'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        # curve and surface object in edit mode by poll, not by bl_context
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator("gpencil.stroke_separate", text="Separate Selected Points", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
+            col.operator("gpencil.stroke_separate", text="Separate Selected Strokes", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
+            col.operator("gpencil.stroke_separate", text="Separate Active Layer", icon = "SEPARATE_GP_STROKES").mode = 'LAYER'
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
+                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
+                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+
+            elif column_count == 2:
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
+                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
+
+                row = col.row(align=True)
+                row.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+
+            elif column_count == 1:
+
+                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_POINTS").mode = 'POINT'
+                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_STROKES").mode = 'STROKE'
+                col.operator("gpencil.stroke_separate", text="", icon = "SEPARATE_GP_LAYER").mode = 'LAYER'
+
+
 class VIEW3D_PT_stroketab_stroke(toolshelf_calculate, Panel):
     bl_label = "Stroke"
     bl_space_type = 'VIEW_3D'
@@ -3992,6 +4053,7 @@ classes = (
     # grease pencil edit mode
     VIEW3D_PT_gpenciltab_dissolve,
     VIEW3D_PT_gpenciltab_cleanup,
+    VIEW3D_PT_gpenciltab_separate,
     VIEW3D_PT_stroketab_stroke,
 
 )
