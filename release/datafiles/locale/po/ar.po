@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -723,8 +723,8 @@ msgid "Face"
 msgstr "ﻪﺟﻭ"
 
 
-msgid "Curve"
-msgstr "ﻰﻨﺤﻨﻣ"
+msgid "Spline"
+msgstr "ﻲﺑ-ﻰﻨﺤﻨﻣ"
 
 
 msgid "Bake Data"
@@ -2893,6 +2893,10 @@ msgstr "ﻞﺴﻠﺴﻤﻟﺍ ﻪﻴﻓ ﻞﻤﻌﻳ ﻱﺬﻟﺍ ﻥﻮﻠﻟ�
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "ﻖﺼﻠﻤﻟﺍ ﺽﺮﻌﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ ﻂﺨﻟﺍ ﻢﺠﺣ"
+
+
+msgid "Curve"
+msgstr "ﻰﻨﺤﻨﻣ"
 
 
 msgid "Color curve mapping applied before display transform"
@@ -10191,10 +10195,6 @@ msgid "End Mapping Type"
 msgstr "ﺭﻮﺤﺘﻟﺍ ﺔﻳﺎﻬﻧ ﻉﻮﻧ"
 
 
-msgid "Spline"
-msgstr "ﻲﺑ-ﻰﻨﺤﻨﻣ"
-
-
 msgid "Start Mapping Type"
 msgstr "ﺭﻮﺤﺘﻟﺍ ﺔﻳﺍﺪﺑ ﻉﻮﻧ"
 
@@ -12361,6 +12361,10 @@ msgstr "ﻲﻧﺪﺘﻣ"
 
 msgid "Low quality"
 msgstr "ﺔﻴﻧﺪﺘﻣ ﺓﺩﻮﺟ"
+
+
+msgid "Tiled"
+msgstr "ﺕﺎﻨﺒﻟ ﻭﺫ"
 
 
 msgid "Render Quality"
@@ -21047,6 +21051,10 @@ msgid "Anti-Alias Z"
 msgstr "Z ﺭﻮﻠﺒﺘﻟﺍ-ﺪﺿ"
 
 
+msgid "Z Axis"
+msgstr "Z ﺭﻮﺤﻣ"
+
+
 msgid "Original"
 msgstr "ﻲﻠﺻﺃ"
 
@@ -21455,10 +21463,6 @@ msgid "Vector Math"
 msgstr "ﻲﺑﺎﺴﺣ ﻪﺠﺘﻣ"
 
 
-msgid "Z Axis"
-msgstr "Z ﺭﻮﺤﻣ"
-
-
 msgid "Vector Transform"
 msgstr "ﻲﻬﺠﺘﻣ ﻝﻮّﺤﺗ"
 
@@ -21497,10 +21501,6 @@ msgstr "ﺔﺤﺘﻓ ﺐﻟﺎﻗ"
 
 msgid "Name of the socket"
 msgstr "ﺔﺤﺘﻔﻟﺍ ﻢﺳﺇ"
-
-
-msgid "Int"
-msgstr "ﺢﻴﺤﺻ ﻢﻗﺭ"
 
 
 msgid "From node"
@@ -23928,19 +23928,6 @@ msgid "Move to next folder"
 msgstr "ﻲﻟﺎﺘﻟﺍ ﺪﻠﺠﻤﻟﺍ ﻰﻟﺍ ﻞﻘﻧﺍ"
 
 
-msgid "Pack all used external files into the .blend"
-msgstr "blend. ـﻟﺍ ﻒﻠﻣ ﻲﻓ ﺔﻴﺟﺭﺎﺨﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻞﻛ ﻥﺰﺧ"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "ﺭﺪﻨﻠﺒﻟﺍ ﻒﻠﻣ ﻆﻔﺣﺍ"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "blend. ـﻟﺍ ﻒﻠﻣ ﻲﻓ ﺔﻴﺟﺭﺎﺨﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻞﻛ ﻥﺰﺧ"
-
-
 msgctxt "Operator"
 msgid "Parent File"
 msgstr "ﻞﺻﻻ﻿ﺍ ﻒﻠﻣ"
@@ -23996,11 +23983,6 @@ msgid "Smooth scroll to make editable file visible"
 msgstr "ﺍﺮﻫﺎﻇ ﺭﺮﺤﻤﻟﺍ ﻒﻠﻤﻟﺍ ﻞﻌﺠﻟ ﻕﻻ﻿ﺰﻧﻻ﻿ﺍ ﻢﻌّﻧ"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "ﺕﺎﻔﻠﻣ ﻰﻟﺇ ﻞﻜﻟﺍ ﻍﺮﻓ"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr "ﺝﺭﺎﺨﻟﺍ ﻰﻟﺍ blend. ـﻟﺍ ﺍﺬﻫ ﻲﻓ ﺔﻧﺰﺨﻤﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻞﻛ ﻍﺮّﻓ"
 
@@ -24020,10 +24002,6 @@ msgstr "ﺓﺭﻮﺼﻟﺍ ﻦﻳﺰﺨﺗ ﻍﺮﻓ"
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "(ﺓﺩﻮﺟﻮﻤﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻝﺪﺒﺘﺳﺍ) ﻲﻠﺻﻻ﻿ﺍ ﻊﻗﻮﻤﻟﺍ ﻲﻓ ﺕﺎﻔﻠﻤﻟﺍ ﺐﺘﻛﺍ"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "blend. ـﻟﺍ ﻒﻠﻣ ﻲﻓ ﺔﻴﺟﺭﺎﺨﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﻞﻛ ﻥﺰﺧ"
 
 
 msgctxt "Operator"
@@ -24292,6 +24270,10 @@ msgid "Duplicate Layer"
 msgstr "ﺔﻘﺒﻄﻟﺍ ﺭﺮﻛ"
 
 
+msgid "Only Active"
+msgstr "ﻝﺎﻌﻔﻟﺍ ﻂﻘﻓ"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "ﻉﺎﻨﻘﻟﺍ ﺔﻘﺒﻃ ﻑﺬﺣﺍ"
@@ -24449,10 +24431,6 @@ msgid "Add F-Curve Modifier"
 msgstr "ﻞﻤﻌﻟﺍ ﻰﻨﺤﻨﻣ ﺮﻴﻐﻣ ﻒﺿﺍ"
 
 
-msgid "Only Active"
-msgstr "ﻝﺎﻌﻔﻟﺍ ﻂﻘﻓ"
-
-
 msgctxt "Operator"
 msgid "Copy F-Modifiers"
 msgstr "ﻞﻤﻌﻟﺍ ﺕﺍﺮﻴﻐﻣ ﺦﺴﻧﺍ"
@@ -24545,10 +24523,6 @@ msgstr "ﺓﺪﻳﺪﺟ ﺓﺭﻮﺻ"
 
 msgid "32-bit Float"
 msgstr "ﻱﺮﺴﻛ ﺖﺑ-32"
-
-
-msgid "Tiled"
-msgstr "ﺕﺎﻨﺒﻟ ﻭﺫ"
 
 
 msgctxt "Operator"
@@ -35111,10 +35085,6 @@ msgid "Movie Sequence"
 msgstr "ﻢﻠﻔﻟﺍ ﻞﺴﻠﺴﺗ"
 
 
-msgid "MPEG Preseek"
-msgstr "MPEG ـﻟ ﻖﺒﺴﻤﻟﺍ ﻞﻘﻨﺘﻟﺍ"
-
-
 msgid "Stream Index"
 msgstr "ﻖﻓﺪﺘﻟﺍ ﺮﺷﺆﻣ"
 
@@ -35129,10 +35099,6 @@ msgstr "ﺍﺮﻴﻣﺎﻜﻟﺍ ﺯﻭﺎﺠﺗ"
 
 msgid "Override the scenes active camera"
 msgstr "ﺔﻟﺎﻌّﻔﻟﺍ ﺪﻬﺸﻤﻟﺍ ﺍﺮﻴﻤﻛ ﻯﺪﻌﺗ"
-
-
-msgid "Use Grease Pencil"
-msgstr "ﺕﺎﻈﺣﻼ﻿ﻤﻟﺍ ﻢﻠﻗ ﻡﺪﺨﺘﺳﺇ"
 
 
 msgid "Sound Sequence"
@@ -39699,6 +39665,10 @@ msgid "UVMap"
 msgstr "UV ﺔﻄﻳﺮﺧ"
 
 
+msgid "Int"
+msgstr "ﺢﻴﺤﺻ ﻢﻗﺭ"
+
+
 msgid "ShapeKey"
 msgstr "ﻞﻜﺸﻟﺍ ﺡﺎﺘﻔﻣ"
 
@@ -40076,6 +40046,10 @@ msgstr "ﺕﺎﻈﺣﻼ﻿ﻣ ﻢﻠﻗ ﺕﺎﻧﺎﻴﺑ"
 
 msgid "No active frame to delete"
 msgstr "ﻲﻧﺎﻴﺒﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ ﻰﻠﻋ ﻝﺎﻌﻓ ﺭﺎﻃﺇ ﺪﺟﻮﻳ ﻻ﻿"
+
+
+msgid "Nothing selected"
+msgstr "ﺭﺎﺘﺨﻣ ءﻲﺷ ﻻ﻿"
 
 
 msgid "No active area"
@@ -40605,10 +40579,6 @@ msgid "Mouse path too short"
 msgstr "ﺓﺎﺷﺮﻔﻟﺍ ﺔﻧﻮﻘﻳﺍ ﻒﻠﻣ ﺭﺎﺴﻣ"
 
 
-msgid "Nothing selected"
-msgstr "ﺭﺎﺘﺨﻣ ءﻲﺷ ﻻ﻿"
-
-
 msgid "Selection not supported in object mode"
 msgstr "ﺖﺤﻨﻟﺍ ﻂﻤﻧ ﻲﻓ ﻡﻮﻋﺪﻣ ﺮﻴﻏ"
 
@@ -40903,20 +40873,16 @@ msgid "Blender Render"
 msgstr "ﺭﺪﻨﻠﺑ ﺮﻴّﺼﻣ"
 
 
+msgid "Maximize Area"
+msgstr "ﻪﺟﻮﻟﺍ ﺔﻘﻄﻨﻣ "
+
+
 msgid "Flip to Bottom"
 msgstr "NDOF ﻞﻔﺳﺃ"
 
 
 msgid "Flip to Top"
 msgstr "ﻥﺍﻮﻟﻷ﻿ﺍ ﻢﻠﺳ ﺲﻜﻋﺍ"
-
-
-msgid "Tile Area"
-msgstr "ﺔﻨﺒﻠﻟﺍ ﺐﻴﺗﺮﺗ"
-
-
-msgid "Maximize Area"
-msgstr "ﻪﺟﻮﻟﺍ ﺔﻘﻄﻨﻣ "
 
 
 msgid "No more keyframes to jump to in this direction"
@@ -41209,134 +41175,6 @@ msgstr "ﻥﻻ﻿ﺃ"
 
 msgid "No valid action to add"
 msgstr "ﻁﺎﺒﺗﺭﻺ﻿ﻟ ﺪﻌﻤﻟﺍ ﺙﺪﺤﻟﺍ ﺢﻔّﺼﺗ"
-
-
-msgid "Sta"
-msgstr "Sta"
-
-
-msgid "Label Size"
-msgstr "ﻖﺼﻠﻤﻟﺍ ﻢﺠﺣ"
-
-
-msgid "Frame: %d"
-msgstr "‬%d‪ :ﺭﺎﻃﺍ"
-
-
-msgid "Squash"
-msgstr "ﺱﺪﻜﺘﻟﺍ"
-
-
-msgid "Center:"
-msgstr "ﺰﻛﺮﻤﻟﺍ"
-
-
-msgid "Bokeh Type:"
-msgstr ":ﻪﻴﻛﻮﺒﻟﺍ ﻉﻮﻧ"
-
-
-msgid "Speed:"
-msgstr ":ﺔﻋﺮﺴﻟﺍ"
-
-
-msgid "Inner Edge:"
-msgstr ":ﺔﻴﻠﺧﺍﺪﻟﺍ ﺔﻓﺎﺤﻟﺍ"
-
-
-msgid "Buffer Edge:"
-msgstr ":ﻥﺰﺨﻤﻟﺍ ﺔﻓﺎﺣ"
-
-
-msgid "Color Space:"
-msgstr ":ﻥﻮﻠﻟﺍ ﻝﺎﺠﻣ"
-
-
-msgid "Despill Channel:"
-msgstr ":Despill ﺓﺎﻨﻗ"
-
-
-msgid "Limiting Channel:"
-msgstr ":ﺮﺼﺤﻟﺍ ﺓﺎﻨﻗ"
-
-
-msgid "Key Channel:"
-msgstr ":ﺡﺎﺘﻔﻤﻟﺍ ﺓﺎﻨﻗ"
-
-
-msgid "Path:"
-msgstr ":ﺭﺎﺴﻤﻟﺍ"
-
-
-msgid "Base Path:"
-msgstr ":ﻲﺳﺎﺳﻻ﻿ﺍ ﺭﺎﺴﻤﻟﺍ"
-
-
-msgid "Add Input"
-msgstr "ﻞﺧﺩ ﻒﺿﺍ"
-
-
-msgid "File Subpath:"
-msgstr ":ﻒﻠﻤﻠﻟ ﻲﻋﺮﻔﻟﺍ ﺭﺎﺴﻤﻟﺍ"
-
-
-msgid "Format:"
-msgstr ":ﻖﻴﺴﻨﺗ"
-
-
-msgid "Master"
-msgstr "ﻲﺴﻴﺋﺮﻟﺍ"
-
-
-msgid "Highlights"
-msgstr "ﻉﻮﻄﺴﻟﺍ"
-
-
-msgid "Midtones"
-msgstr "ﻰﻄﺳﻮﻟﺍ ﺕﺎﺟﺭﺪﻟﺍ"
-
-
-msgid "Undefined Socket Type"
-msgstr "ﻑﺮﻌﻣ ﺮﻴﻏ ﺲﺒﻘﻣ ﻉﻮﻧ"
-
-
-msgid "NodeTree"
-msgstr "ﺪﻘﻋ ﻉﺮﻔﺗ"
-
-
-msgid "Mask '%s' not found"
-msgstr "ﺩﻮﺟﻮﻣ ﺮﻴﻏ '%s‬‪' ﻉﺎﻨﻘﻟﺍ"
-
-
-msgid "Cannot ungroup"
-msgstr "ﺕﺍﻮﻨﻗ ﺔﻋﻮﻤﺠﻣ"
-
-
-msgid "Not inside node group"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺪﻘﻌﻟﺍ ﺔﻋﻮﻤﺠﻣ ﻰﻟﺍ ﻞﺧﺩﺍ"
-
-
-msgid "Cannot separate nodes"
-msgstr "ﻡﺎﻈﻌﻟﺍ ﻞﺼﻓﺇ"
-
-
-msgid "Disconnect"
-msgstr "ﻞﺼﻓﺍ"
-
-
-msgid "Dependency Loop"
-msgstr "ﺩﺎﻤﺘﻋﺍ ﻞﺴﻠﺴﺗ"
-
-
-msgid "Add node to input"
-msgstr "ﻞﺧﺪﻠﻟ ﺓﺪﻘﻋ ﻒﺿﺍ"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "ﻞﺧﺪﻠﻟ ﺔﻄﺒﺗﺮﻤﻟﺍ ﺪﻘﻌﻟﺍ ﻑﺬﺣﺍ"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "ﻞﺧﺪﻟﺎﺑ ﺔﻠﺼﺘﻤﻟﺍ ﺪﻘﻌﻟﺍ ﻞﺼﻓﺍ"
 
 
 msgctxt "Action"

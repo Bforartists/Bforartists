@@ -77,6 +77,7 @@ typedef enum eMRIterType {
 ENUM_OPERATORS(eMRIterType, MR_ITER_LVERT)
 
 typedef enum eMRDataType {
+  MR_DATA_NONE = 0,
   MR_DATA_POLY_NOR = 1 << 1,
   MR_DATA_LOOP_NOR = 1 << 2,
   MR_DATA_LOOPTRI = 1 << 3,
@@ -89,7 +90,7 @@ ENUM_OPERATORS(eMRDataType, MR_DATA_TAN_LOOP_NOR)
 extern "C" {
 #endif
 
-BLI_INLINE int mesh_render_mat_len_get(Mesh *me)
+BLI_INLINE int mesh_render_mat_len_get(const Mesh *me)
 {
   /* In edit mode, the displayed mesh is stored in the edit-mesh. */
   if (me->edit_mesh && me->edit_mesh->mesh_eval_final) {

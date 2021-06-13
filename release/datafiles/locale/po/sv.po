@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -399,10 +399,6 @@ msgstr "Kant"
 
 msgid "Face"
 msgstr "Yta"
-
-
-msgid "Curve"
-msgstr "Bana"
 
 
 msgid "Bake Data"
@@ -1451,6 +1447,10 @@ msgstr "Starta rendering av sekvens"
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "Sökväg att skriva till"
+
+
+msgid "Curve"
+msgstr "Bana"
 
 
 msgid "Exposure"
@@ -6189,6 +6189,10 @@ msgstr "Styrka"
 
 msgid "Low quality"
 msgstr "Kvalitet"
+
+
+msgid "Tiled"
+msgstr "Arkiv"
 
 
 msgid "Render Quality"
@@ -11575,6 +11579,10 @@ msgid "Expand from 9 places"
 msgstr "(Av)Markera Alla"
 
 
+msgid "Z Axis"
+msgstr "Zooma In"
+
+
 msgid "Original"
 msgstr "Rensa Ursprung"
 
@@ -11883,10 +11891,6 @@ msgid "Vector Math"
 msgstr "Vektor Handtag"
 
 
-msgid "Z Axis"
-msgstr "Zooma In"
-
-
 msgid "Texture Node"
 msgstr "Texturläge"
 
@@ -11901,10 +11905,6 @@ msgstr "Bana"
 
 msgid "Value to Normal"
 msgstr "Beräkna Normaler"
-
-
-msgid "Int"
-msgstr "Info"
 
 
 msgid "From node"
@@ -14723,10 +14723,6 @@ msgid "Execute selected file"
 msgstr "Göm Markerad"
 
 
-msgid "Need Active"
-msgstr "Flytta Till Lager"
-
-
 msgctxt "Operator"
 msgid "Find Missing Files"
 msgstr "Flytta Till Lager"
@@ -14754,18 +14750,8 @@ msgid "Highlight selected file(s)"
 msgstr "Göm Markerad"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "Duplicera"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "Markera Länkad"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Duplicera"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -14779,19 +14765,6 @@ msgstr "Nästa"
 
 msgid "Move to next folder"
 msgstr "Flytta Till Lager"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "Packa in i .blend-filen"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Öppna ett Blenderdokument"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Packa in i .blend-filen"
 
 
 msgctxt "Operator"
@@ -14877,15 +14850,6 @@ msgstr "Packa in i .blend-filen"
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Spara Bild"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Öppna ett Blenderdokument"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "Packa in i .blend-filen"
 
 
 msgctxt "Operator"
@@ -15200,6 +15164,10 @@ msgid "Add New Layer"
 msgstr "Text"
 
 
+msgid "Only Active"
+msgstr "Flytta Till Lager"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Maskera lager:"
@@ -15310,10 +15278,6 @@ msgstr "Markera Länkad"
 msgctxt "Operator"
 msgid "Add F-Curve Modifier"
 msgstr "Modifierare för F-kurva"
-
-
-msgid "Only Active"
-msgstr "Flytta Till Lager"
 
 
 msgid "Only add F-Modifier to active F-Curve"
@@ -15458,10 +15422,6 @@ msgstr "32-bit Flyttal"
 
 msgid "Image height"
 msgstr "Bild Aspekt"
-
-
-msgid "Tiled"
-msgstr "Arkiv"
 
 
 msgid "Image width"
@@ -19886,10 +19846,6 @@ msgid "Target Path"
 msgstr "Bana"
 
 
-msgid "User Prefs"
-msgstr "Yta"
-
-
 msgctxt "Operator"
 msgid "Refresh"
 msgstr "Uppdatera"
@@ -20663,17 +20619,9 @@ msgid "Make Meta Strip"
 msgstr "Lägg till Stripp"
 
 
-msgid "Group selected strips into a metastrip"
-msgstr "Markera Länkad"
-
-
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "Meta-remsa"
-
-
-msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "Starta rendering av sekvens"
 
 
 msgctxt "Operator"
@@ -25194,10 +25142,6 @@ msgid "Sequence strip to load a video"
 msgstr "Spara Bild"
 
 
-msgid "MPEG Preseek"
-msgstr "MPEG-framsökning"
-
-
 msgid "Stream Index"
 msgstr "Spara som"
 
@@ -29002,6 +28946,10 @@ msgid "No AnimData to set action on"
 msgstr "Rensa Rotation"
 
 
+msgid "Int"
+msgstr "Info"
+
+
 msgid "Cannot bake non-'image sequence' formats"
 msgstr "Starta rendering av sekvens"
 
@@ -29228,6 +29176,10 @@ msgstr "Starta Spel"
 
 msgid "No active frame to delete"
 msgstr "Markera Länkad"
+
+
+msgid "Nothing selected"
+msgstr "Avmarkera Länkad"
 
 
 msgctxt "Operator"
@@ -29513,10 +29465,6 @@ msgid "Mouse path too short"
 msgstr "Förvalt övertoning"
 
 
-msgid "Nothing selected"
-msgstr "Avmarkera Länkad"
-
-
 msgid "Selection not supported in object mode"
 msgstr "Antal uppdelningar mellan rutnätets linjer"
 
@@ -29705,20 +29653,16 @@ msgid "Blender Render"
 msgstr "Rendera"
 
 
+msgid "Maximize Area"
+msgstr "NURBS Kurva"
+
+
 msgid "Flip to Bottom"
 msgstr "Arkiv"
 
 
 msgid "Flip to Top"
 msgstr "Krockgränser"
-
-
-msgid "Tile Area"
-msgstr "Arkiv"
-
-
-msgid "Maximize Area"
-msgstr "NURBS Kurva"
 
 
 msgid "No active mesh object"
@@ -29903,114 +29847,6 @@ msgstr "Packa in i .blend-filen"
 
 msgid "No valid action to add"
 msgstr "Rendera"
-
-
-msgid "Sta"
-msgstr "Starta Spel"
-
-
-msgid "Label Size"
-msgstr "Textstorlek"
-
-
-msgid "Squash"
-msgstr "Mängd"
-
-
-msgid "Center:"
-msgstr "Mitten"
-
-
-msgid "Bokeh Type:"
-msgstr "Markera Rad"
-
-
-msgid "Speed:"
-msgstr "Hastighet"
-
-
-msgid "Inner Edge:"
-msgstr "Redigerings Läge"
-
-
-msgid "Buffer Edge:"
-msgstr "Rensa Rotation"
-
-
-msgid "Color Space:"
-msgstr "Färgrymd:"
-
-
-msgid "Despill Channel:"
-msgstr "Göm Markerad"
-
-
-msgid "Limiting Channel:"
-msgstr "Renderings Fönster"
-
-
-msgid "Key Channel:"
-msgstr "4 Kanaler"
-
-
-msgid "Path:"
-msgstr "Bana:"
-
-
-msgid "Base Path:"
-msgstr "Arkiv"
-
-
-msgid "Add Input"
-msgstr "Text"
-
-
-msgid "Format:"
-msgstr "Format"
-
-
-msgid "Master"
-msgstr "Duplicera"
-
-
-msgid "Highlights"
-msgstr "Dela"
-
-
-msgid "Midtones"
-msgstr "Markera Rad"
-
-
-msgid "NodeTree"
-msgstr "Bild Displist"
-
-
-msgid "Cannot ungroup"
-msgstr "Bengrupper"
-
-
-msgid "Not inside node group"
-msgstr "Markera Rad"
-
-
-msgid "Cannot separate nodes"
-msgstr "Separera"
-
-
-msgid "Disconnect"
-msgstr "Enstaka ben"
-
-
-msgid "Dependency Loop"
-msgstr "Relationer:"
-
-
-msgid "Add node to input"
-msgstr "Lägg till Stripp"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Duplicera"
 
 
 msgid "Operation requires an active keying set"

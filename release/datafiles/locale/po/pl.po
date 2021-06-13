@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -696,10 +696,6 @@ msgstr "Wektorowy"
 
 msgid "Point"
 msgstr "Punkt"
-
-
-msgid "Curve"
-msgstr "Krzywa"
 
 
 msgid "Bake Data"
@@ -2588,6 +2584,10 @@ msgstr "Przestrzeń kolorów, w której działa sekwenser"
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "Ustawienia zarządzania kolorami używane do wyświetlania obrazków na ekranie"
+
+
+msgid "Curve"
+msgstr "Krzywa"
 
 
 msgid "Color curve mapping applied before display transform"
@@ -6421,6 +6421,10 @@ msgid "Y Axis"
 msgstr "Oś Y"
 
 
+msgid "Z Axis"
+msgstr "Oś Z"
+
+
 msgid "Layer Weight"
 msgstr "Waga warstwy"
 
@@ -6438,10 +6442,6 @@ msgstr "Oś Y"
 
 
 msgid "Z axis"
-msgstr "Oś Z"
-
-
-msgid "Z Axis"
 msgstr "Oś Z"
 
 
@@ -6694,10 +6694,6 @@ msgstr "Warstwa:"
 
 msgid "Const"
 msgstr "Stała"
-
-
-msgid "blend_data"
-msgstr "blend_data"
 
 
 msgid "UVMap"
@@ -7683,6 +7679,10 @@ msgid "No active frame to delete"
 msgstr "Brak aktywnej klatki do usunięcia"
 
 
+msgid "Nothing selected"
+msgstr "Nic nie zaznaczono"
+
+
 msgid "No active area"
 msgstr "Brak aktywnego obszaru"
 
@@ -8390,10 +8390,6 @@ msgstr "Brak zaznaczonych krawędzi, na których można działać"
 
 msgid "Mouse path too short"
 msgstr "Za krótka ścieżka myszy"
-
-
-msgid "Nothing selected"
-msgstr "Nic nie zaznaczono"
 
 
 msgid "Selection not supported in object mode"
@@ -9270,20 +9266,16 @@ msgid "No active line style in the current scene"
 msgstr "Brak aktywnego stylu linii w aktualnej scenie"
 
 
+msgid "Maximize Area"
+msgstr "Maksymalizuj Obszar"
+
+
 msgid "Flip to Bottom"
 msgstr "Przerzuć w dół"
 
 
 msgid "Flip to Top"
 msgstr "Przerzuć na górę"
-
-
-msgid "Tile Area"
-msgstr "Obszar Kafla"
-
-
-msgid "Maximize Area"
-msgstr "Maksymalizuj Obszar"
 
 
 msgid "Can only scale region size from an action zone"
@@ -9954,164 +9946,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Modyfikator nie mógł być dodany to (%s : %s) (szczegóły w konsoli)"
 
 
-msgid "Sta"
-msgstr "Sta"
-
-
-msgid "Label Size"
-msgstr "Rozmiar Etykiety"
-
-
-msgid "Frame: %d"
-msgstr "Klatka: %d"
-
-
-msgid "Squash"
-msgstr "Zgniatać"
-
-
-msgid "Center:"
-msgstr "Środek:"
-
-
-msgid "Bokeh Type:"
-msgstr "Typ Bokeh"
-
-
-msgid "Speed:"
-msgstr "Prędkość:"
-
-
-msgid "Inner Edge:"
-msgstr "Wewnętrzna krawędź"
-
-
-msgid "Buffer Edge:"
-msgstr "Buffer Krawędź"
-
-
-msgid "Despill Channel:"
-msgstr "Kanał Despill"
-
-
-msgid "Limiting Channel:"
-msgstr "Kanał ograniczający"
-
-
-msgid "Key Channel:"
-msgstr "Kanał klucza"
-
-
-msgid "Base Path:"
-msgstr "Ścieżka bazowa"
-
-
-msgid "Add Input"
-msgstr "Dodaj Wejście"
-
-
-msgid "File Subpath:"
-msgstr "Podścieżka pliku"
-
-
-msgid "Master"
-msgstr "Master"
-
-
-msgid "Highlights"
-msgstr "Światła"
-
-
-msgid "Midtones"
-msgstr "Półtony"
-
-
-msgid "Undefined Socket Type"
-msgstr "Niezdefiniowany typ złącza"
-
-
-msgid "NodeTree"
-msgstr "Drzewo nodów"
-
-
-msgid "Could not add an image node"
-msgstr "Nie udało się dodać noda Obraz"
-
-
-msgid "Could not add a mask node"
-msgstr "Nie udało się dodać noda Maska"
-
-
-msgid "Mask '%s' not found"
-msgstr "Nie odnaleziono maski '%s'"
-
-
-msgid "Node tree type %s undefined"
-msgstr "Typ drzewa nodów %s nie zdefiniowany"
-
-
 msgid "Sockets"
 msgstr "Złącza"
-
-
-msgid "Clipboard is empty"
-msgstr "Schowek jest pusty"
-
-
-msgid "Clipboard nodes are an incompatible type"
-msgstr "Nody w schowku mają niekompatybilny typ"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "Niektóre odniesienia do nodów nie mogły być odtworzone, pozostaną puste"
-
-
-msgid "Text not used by any node, no update done"
-msgstr "Tekst nie jest używany przez żaden node, aktualizacja nie dokonana"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "Nie można dodać noda %s do drzewa nodów %s"
-
-
-msgid "Cannot ungroup"
-msgstr "Rozgrupowanie niemożliwe"
-
-
-msgid "Not inside node group"
-msgstr "Nie wewnątrz grupy nodów"
-
-
-msgid "Cannot separate nodes"
-msgstr "Nie można rozdzielić nodów"
-
-
-msgid "Can not add node '%s' in a group"
-msgstr "Nie można dodać noda '%s' w grupie"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "LPM: ciągnij link, PPM: rezygnuj"
-
-
-msgid "Disconnect"
-msgstr "Odłącz"
-
-
-msgid "Dependency Loop"
-msgstr "Pętla zależności"
-
-
-msgid "Add node to input"
-msgstr "Dodaj noda do wejścia"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Usuń nody przyłączone do tego wejścia"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "Odłącz nody przyłączone do tego wejścia"
 
 
 msgctxt "Action"
