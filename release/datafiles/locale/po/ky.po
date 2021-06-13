@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -143,10 +143,6 @@ msgstr "Кыр"
 
 msgid "Face"
 msgstr "Каптал"
-
-
-msgid "Curve"
-msgstr "Ийри"
 
 
 msgid "Margin"
@@ -423,6 +419,10 @@ msgstr "Кездеме ырастоолору"
 
 msgid "Gravity"
 msgstr "Тартыш"
+
+
+msgid "Curve"
+msgstr "Ийри"
 
 
 msgid "Exposure"
@@ -3944,14 +3944,6 @@ msgstr " + Z"
 
 msgid "(Key) "
 msgstr "(Ачкыч) "
-
-
-msgid "Path:"
-msgstr "Жолу:"
-
-
-msgid "Format:"
-msgstr "Форматы:"
 
 
 msgctxt "Action"

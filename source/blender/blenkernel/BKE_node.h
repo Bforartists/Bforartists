@@ -1432,6 +1432,8 @@ int ntreeTexExecTree(struct bNodeTree *ntree,
 #define GEO_NODE_MESH_TO_CURVE 1052
 #define GEO_NODE_DELETE_GEOMETRY 1053
 #define GEO_NODE_CURVE_LENGTH 1054
+#define GEO_NODE_SELECT_BY_MATERIAL 1055
+#define GEO_NODE_CONVEX_HULL 1056
 
 /** \} */
 

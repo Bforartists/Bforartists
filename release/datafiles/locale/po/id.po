@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-05-07 19:36+0700\n"
+"PO-Revision-Date: 2021-05-31 17:54+0700\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
 "Language: id\n"
@@ -239,6 +239,10 @@ msgstr "Penanda Pose yang Aktif"
 
 msgid "Active pose marker for this action"
 msgstr "Penanda pose yang aktif untuk aksi ini"
+
+
+msgid "Active Pose Marker Index"
+msgstr "Indeks Penanda Pose Aktif"
 
 
 msgid "Index of active pose marker"
@@ -979,14 +983,6 @@ msgstr "Wajah"
 
 msgid "Face Corner"
 msgstr "Ujung Wajah"
-
-
-msgid "Curve"
-msgstr "Lengkungan"
-
-
-msgid "Attribute on hair curve"
-msgstr "Atribut di lengkungan rambut"
 
 
 msgid "Name of the Attribute"
@@ -2481,6 +2477,42 @@ msgid "In Y"
 msgstr "Dalam Y"
 
 
+msgid "Out X"
+msgstr "Luar X"
+
+
+msgid "Out Y"
+msgstr "Luar Y"
+
+
+msgid "B-Bone End Handle"
+msgstr "Pegangan Akhir B-Tulang"
+
+
+msgid "Bone that serves as the end handle for the B-Bone curve"
+msgstr "Tulang yang berfungsi sebagai pegangan akhir untuk kurva B-Tulang"
+
+
+msgid "B-Bone Start Handle"
+msgstr "Pegangan Awal B-Tulang"
+
+
+msgid "Bone that serves as the start handle for the B-Bone curve"
+msgstr "Tulang yang berfungsi sebagai pegangan awal untuk kurva B-Tulang"
+
+
+msgid "Ease In"
+msgstr "Permudah Ke Dalam"
+
+
+msgid "Ease Out"
+msgstr "Permudah Ke Luar"
+
+
+msgid "B-Bone End Handle Type"
+msgstr "Tipe Pegangan Akhir B-Tulang"
+
+
 msgid "Automatic"
 msgstr "Otomatis"
 
@@ -2495,6 +2527,14 @@ msgstr "Absolut"
 
 msgid "Relative"
 msgstr "Relatif"
+
+
+msgid "Use the offset of the specified bone from rest pose to compute the handle"
+msgstr "Gunakan offset tulang spesifik dari pose sisanya untuk menghitung pegangan"
+
+
+msgid "B-Bone Start Handle Type"
+msgstr "Tipe Pegangan Awal B-Tulang"
 
 
 msgid "Roll In"
@@ -2605,6 +2645,42 @@ msgid "None (Legacy)"
 msgstr "Tidak Ada (Legacy)"
 
 
+msgid "Ignore parent scaling without compensating for parent shear. Replicates the effect of disabling the original Inherit Scale checkbox"
+msgstr "Mengabaikan penskalaan induk tanpa kompensasi untuk "
+
+
+msgid "Layers"
+msgstr "Layer"
+
+
+msgid "Layers bone exists in"
+msgstr "Layer tulang berada di"
+
+
+msgid "Length"
+msgstr "Panjang"
+
+
+msgid "Length of the bone"
+msgstr "Panjang tulang"
+
+
+msgid "Bone Matrix"
+msgstr "Matriks Tulang"
+
+
+msgid "3x3 bone matrix"
+msgstr "3x3 matriks tulang"
+
+
+msgid "Bone Armature-Relative Matrix"
+msgstr "Matriks Relatif-Armatur Tulang"
+
+
+msgid "4x4 bone matrix relative to armature"
+msgstr "4x4 relatif matriks tulang ke armatur"
+
+
 msgid "Parent"
 msgstr "Induk"
 
@@ -2633,6 +2709,14 @@ msgid "Location of tail end of the bone relative to its parent"
 msgstr "Lokasi ekor di akhir tulang relatif ke induknya"
 
 
+msgid "Armature-Relative Tail"
+msgstr "Ekor Relatif-Armatur"
+
+
+msgid "Location of tail end of the bone relative to armature"
+msgstr "Lokasi akhir ekor tulang relatif ke armatur"
+
+
 msgid "Connected"
 msgstr "Terkoneksi"
 
@@ -2641,24 +2725,76 @@ msgid "Deform"
 msgstr "Merusak bentuk"
 
 
-msgid "Relative Parenting"
-msgstr "Kamera"
+msgid "Object children will use relative transform, like deform"
+msgstr "Anak objek akan meggunakan transformasi relatif, seperti merusak bentuk"
+
+
+msgid "Bone Group"
+msgstr "Kelompok Tulang"
+
+
+msgid "Groups of Pose Channels (Bones)"
+msgstr "Kelompok Saluran Pose (Tulang)"
+
+
+msgid "Bone Groups"
+msgstr "Kelompok Tulang"
+
+
+msgid "Collection of bone groups"
+msgstr "Koleksi kelompok tulang"
+
+
+msgid "Active Bone Group"
+msgstr "Kelompok Tulang Aktif"
+
+
+msgid "Active bone group for this pose"
+msgstr "Kelompok tulang aktif untuk pose ini"
+
+
+msgid "Active Bone Group Index"
+msgstr "Indeks Kelompok Tulang Aktif"
+
+
+msgid "Active index in bone groups array"
+msgstr "Indeks aktif di larik kelompok tulang"
+
+
+msgid "Bool Attribute Value"
+msgstr "Nilai Atribut Bool"
+
+
+msgid "Bool value in geometry attribute"
+msgstr "Nilai bool di atribut geometri"
 
 
 msgid "Brush Capabilities"
 msgstr "Kemampuan Kuas"
 
 
+msgid "Read-only indications of supported operations"
+msgstr "Baca-saja indikasi operasi yang terdukung"
+
+
 msgid "Has Overlay"
 msgstr "Punya Overlay"
 
 
+msgid "Has Random Texture Angle"
+msgstr "Punya Sudut Teksur Acak"
+
+
 msgid "Has Smooth Stroke"
-msgstr "Ada Garis Luar Halus"
+msgstr "Punya Garis Luar Halus"
 
 
 msgid "Has Spacing"
 msgstr "Punya Spasi"
+
+
+msgid "Image Paint Capabilities"
+msgstr "Kapabilitas Cat Gambar"
 
 
 msgid "Has Accumulate"
@@ -2731,6 +2867,14 @@ msgstr "Punya Tekanan Kekuatan"
 
 msgid "Has Tilt"
 msgstr "Punya Kemiringan"
+
+
+msgid "Vertex Paint Capabilities"
+msgstr "Kemampuan Cat Vertex"
+
+
+msgid "Weight Paint Capabilities"
+msgstr "Kemampuan Cat Beban"
 
 
 msgid "Has Weight"
@@ -3049,6 +3193,10 @@ msgid "Airbrush"
 msgstr "Kuasudara"
 
 
+msgid "Chisel"
+msgstr "Pahat"
+
+
 msgid "Fill"
 msgstr "Isi"
 
@@ -3141,6 +3289,10 @@ msgid "Saturation"
 msgstr "Saturasi"
 
 
+msgid "Random factor to modify original saturation"
+msgstr "Faktor acak untuk modifikasi saturasi asli"
+
+
 msgid "Show Fill"
 msgstr "Tampilkan Isi"
 
@@ -3189,6 +3341,10 @@ msgid "Use Pressure"
 msgstr "Gunakan Tekanan"
 
 
+msgid "Use tablet pressure"
+msgstr "Gunakan tekanan tablet"
+
+
 msgid "Use Post-Process Settings"
 msgstr "Menggunakan Pengaturan Pasca-Proses"
 
@@ -3206,7 +3362,15 @@ msgstr "Gunakan Kekuatan Tekanan"
 
 
 msgid "Stroke Random"
-msgstr "Stroke Acak"
+msgstr "Garis Luar Acak"
+
+
+msgid "UV Random"
+msgstr "UV Acak"
+
+
+msgid "Mode Type"
+msgstr "Tipe Mode"
 
 
 msgid "Stroke and Fill"
@@ -3253,8 +3417,16 @@ msgid "Frame Method"
 msgstr "Dalam Jarak"
 
 
+msgid "How the image fits in the camera frame"
+msgstr "Bagaimana gambar mencukupi frame kamera"
+
+
 msgid "Stretch"
 msgstr "Rentangkan"
+
+
+msgid "Fit"
+msgstr "Cukup"
 
 
 msgid "Crop"
@@ -3265,6 +3437,10 @@ msgid "Image"
 msgstr "Gambar"
 
 
+msgid "Image displayed and edited in this space"
+msgstr "Gambar ditampilkan dan diedit di spasi ini"
+
+
 msgid "Image User"
 msgstr "Gambar Pengguna"
 
@@ -3273,12 +3449,32 @@ msgid "Rotation"
 msgstr "Rotasi"
 
 
+msgid "Scale"
+msgstr "Skala"
+
+
+msgid "Scale the background image"
+msgstr "Skalakan gambar latar belakang"
+
+
 msgid "Show Background Image"
-msgstr "Gambar Latar"
+msgstr "Tampilkan Gambar Latar Belakang"
 
 
 msgid "Show this image as background"
-msgstr "Gambar Latar"
+msgstr "Tampilkan gambar ini sebagai latar belakang"
+
+
+msgid "Show Expanded"
+msgstr "Tampilkan yang Diekspansi"
+
+
+msgid "Show the expanded in the user interface"
+msgstr "Tampilkan yang diekspansi di antarmuka pengguna"
+
+
+msgid "Show On Foreground"
+msgstr "Tampilkan Di Latar Depan"
 
 
 msgid "Show this image in front of objects in viewport"
@@ -3289,12 +3485,20 @@ msgid "Background Source"
 msgstr "Gambar Latar"
 
 
+msgid "Data source used for background"
+msgstr "Sumber data digunakan untuk latar belakang"
+
+
 msgid "Movie Clip"
 msgstr "Klip Film"
 
 
 msgid "Camera Clip"
 msgstr "Klip Kamera"
+
+
+msgid "Use movie clip from active scene camera"
+msgstr "Gunakan klip film dari kamera adegan aktif"
 
 
 msgid "Flip Horizontally"
@@ -3327,6 +3531,14 @@ msgstr "Kedalaman Lapangan"
 
 msgid "Depth of Field settings"
 msgstr "Pengaturan Kedalaman Lapangan"
+
+
+msgid "Blades"
+msgstr "Pedang"
+
+
+msgid "Ratio"
+msgstr "Rasio"
 
 
 msgid "Focus Distance"
@@ -3421,12 +3633,112 @@ msgid "Linear"
 msgstr "Linier"
 
 
+msgid "Collider Friction"
+msgstr "Friksi Tabrakan"
+
+
+msgid "Target Density Strength"
+msgstr "Kekuatan Densitas Target"
+
+
+msgid "Influence of target density on the simulation"
+msgstr "Pengaruh densitas target di simulasi"
+
+
+msgid "Target Density"
+msgstr "Densitas Target"
+
+
+msgid "Maximum density of hair"
+msgstr "Maksimum densitas rambut"
+
+
+msgid "Effector Weights"
+msgstr "Beban Efektor"
+
+
+msgid "Fluid Density"
+msgstr "Densitas Cairan"
+
+
+msgid "Density (kg/l) of the fluid contained inside the object, used to create a hydrostatic pressure gradient simulating the weight of the internal fluid, or buoyancy from the surrounding fluid if negative"
+msgstr "Densitas (kg/l) cairan yang terkandung dalam objek, digunakan untuk membuat gradien tekanan hidrostatis menstimulasi beban cairan internal, atau kemampuan mengapung dari cairan sekitar jika negatif"
+
+
+msgid "Goal Default"
+msgstr "Tujuan Default"
+
+
+msgid "Default Goal (vertex target position) value, when no Vertex Group used"
+msgstr "Nilai Default Tujuan (posisi target vertex), saat tidak ada Kelompok Vertex yang digunakan"
+
+
+msgid "Goal (vertex target position) friction"
+msgstr "Friksi tujuan (posisi target vertex)"
+
+
+msgid "Goal Maximum"
+msgstr "Tujuan Maksimum"
+
+
+msgid "Goal maximum, vertex group weights are scaled to match this range"
+msgstr "Tujuan maksimum, beban kelompok vertex diskalakan agar cocok dengan jarak ini"
+
+
+msgid "Goal Minimum"
+msgstr "Tujuan Minimum"
+
+
+msgid "Goal minimum, vertex group weights are scaled to match this range"
+msgstr "Tujuan minimum, beban kelompok vertex diskalakan agar cocok dengan jarak ini"
+
+
+msgid "Goal Stiffness"
+msgstr "Kekakuan Tujuan"
+
+
+msgid "Gravity"
+msgstr "Gravitasi"
+
+
+msgid "Gravity or external force vector"
+msgstr "Gravitasi atau vektor gaya eksternal"
+
+
+msgid "Internal Friction"
+msgstr "Friksi Internal"
+
+
+msgid "Pressure Scale"
+msgstr "Skala Tekanan"
+
+
 msgid "Quality"
 msgstr "Kualitas"
 
 
+msgid "Shrink Factor"
+msgstr "Faktor Memperkecil"
+
+
+msgid "Target Volume"
+msgstr "Volume Target"
+
+
+msgid "Pressure"
+msgstr "Tekanan"
+
+
 msgid "Vertex Group for pinning of vertices"
 msgstr "Kelompok Vertex saat pin sudut"
+
+
+msgid "Vertex Group for where to apply pressure. Zero weight means no pressure while a weight of one means full pressure. Faces with a vertex that has zero weight will be excluded from the volume calculation"
+msgstr "Kelompok Vertex untuk dimana menerapkan tekanan. Nol beban artinya tidak ada tekanan sedangkan beban satu artinya tekanan penuh. Muka dengan vertex yang punya nol beban akan dikecualikan dari kalkulasi volume"
+
+
+msgid "Shrink Vertex Group"
+msgstr "Perkecil Kelompok Vertex"
 
 
 msgid "Solver Result"
@@ -3657,6 +3969,10 @@ msgid "Color management settings used for displaying images on the display"
 msgstr "Pengaturan manajemen warna digunakan untuk menampilkan gambar di tampilan"
 
 
+msgid "Curve"
+msgstr "Lengkungan"
+
+
 msgid "Exposure"
 msgstr "Eksposur"
 
@@ -3701,8 +4017,20 @@ msgid "Color mapping settings"
 msgstr "Pengaturan pemetaan warna"
 
 
+msgid "Blend color to mix with texture output color"
+msgstr "Campurkan warna agar campur dengan tekstur warna keluaran"
+
+
+msgid "Blend Factor"
+msgstr "Faktor Campuran"
+
+
+msgid "Blend Type"
+msgstr "Tipe Campuran"
+
+
 msgid "Mix"
-msgstr "Campur"
+msgstr "Campur/Mix"
 
 
 msgid "Darken"
@@ -3806,6 +4134,14 @@ msgid "Text in the line"
 msgstr "Teks di garis"
 
 
+msgid "Output"
+msgstr "Keluaran"
+
+
+msgid "Input"
+msgstr "Masukan"
+
+
 msgid "Error"
 msgstr "Error"
 
@@ -3842,40 +4178,168 @@ msgid "Local Space"
 msgstr "Spasi Lokal"
 
 
+msgid "Object for Custom Space"
+msgstr "Objek untuk Ruang Kustom"
+
+
+msgid "Sub-Target"
+msgstr "Sub-Target"
+
+
 msgid "Target Space"
-msgstr "Spasi Target"
+msgstr "Ruang Target"
+
+
+msgid "The transformation of the target bone is evaluated relative to its rest pose local coordinate system, thus including the parent-induced transformation"
+msgstr "Transformasi tulang target dievaluasi relatif ke sisa sistem koordinasi lokal pose, jadinya memasukkan transformasi diinduksi induk"
 
 
 msgid "Camera Solver"
-msgstr "Kamera"
+msgstr "Pemecah Kamera"
 
 
 msgid "Object Solver"
-msgstr "Modus Objek"
+msgstr "Pemecah Objek"
+
+
+msgid "Copy Location"
+msgstr "Salin Lokasi"
+
+
+msgid "Copy the location of a target (with an optional offset), so that they move together"
+msgstr "Salin lokasi target (dengan offset opsional), supaya mereka dapat pindah bersama"
+
+
+msgid "Copy Rotation"
+msgstr "Salin Rotasi"
+
+
+msgid "Copy the rotation of a target (with an optional offset), so that they rotate together"
+msgstr "Salin rotasi target (dengan offset opsional), supaya mereka dapat rotasi bersama"
+
+
+msgid "Copy Scale"
+msgstr "Salin Skala"
+
+
+msgid "Copy the scale factors of a target (with an optional offset), so that they are scaled by the same amount"
+msgstr "Salin faktor skala target (dengan offset opsional), supaya mereka dapat diskalakan oleh jumlah sama"
+
+
+msgid "Copy Transforms"
+msgstr "Salin Transformasi"
+
+
+msgid "Copy all the transformations of a target, so that they move together"
+msgstr "Salin semua transformasi target, supaya mereka pindah bersama"
+
+
+msgid "Limit Distance"
+msgstr "Membatasi Jarak"
+
+
+msgid "Restrict movements to within a certain distance of a target (at the time of constraint evaluation only)"
+msgstr "Membatasi gerakan ke dalam jarak tertentu target (saat waktu evaluasi pembatas saja)"
+
+
+msgid "Limit Location"
+msgstr "Membatasi Lokasi"
+
+
+msgid "Restrict movement along each axis within given ranges"
+msgstr "Membatasi pergerakan sepanjang setiap axis dalam jarak yang diberikan"
+
+
+msgid "Limit Rotation"
+msgstr "Membatasi Rotasi"
+
+
+msgid "Restrict rotation along each axis within given ranges"
+msgstr "Membatasi rotasi sepanjang setiap axis dalam jarak yang diberikan"
 
 
 msgid "Limit Scale"
-msgstr "Skala Batas"
+msgstr "Membatasi Skala"
+
+
+msgid "Restrict scaling along each axis with given ranges"
+msgstr "Membatasi penskalaan sepanjang setiap axis dalam jarak yang diberikan"
+
+
+msgid "Maintain Volume"
+msgstr "Mempertahankan Volume"
+
+
+msgid "Transformation"
+msgstr "Transformasi"
+
+
+msgid "Transform Cache"
+msgstr "Cache Transfromasi"
+
+
+msgid "Stretch To"
+msgstr "Meregang Ke"
+
+
+msgid "Track To"
+msgstr "Lacak Ke"
+
+
+msgid "Use transform property of target to look up pose for owner from an Action"
+msgstr "Gunakan properti transformasi target untuk melihat pose untuk pemilik dari sebuah Aksi"
 
 
 msgid "Armature"
 msgstr "Armatur"
 
 
+msgid "Child Of"
+msgstr "Anak"
+
+
+msgid "Floor"
+msgstr "Lantai"
+
+
+msgid "Follow Path"
+msgstr "Ikuti Jalur"
+
+
+msgid "Use to animate an object/bone following a path"
+msgstr "Gunakan ke membuat animasi objek/tulang mengikuti jalur"
+
+
 msgid "Restrict movements to surface of target mesh"
 msgstr "Membatasi gerakan ke permukaan mesh target"
+
+
+msgid "Action Constraint"
+msgstr "Pembatas Aksi"
+
+
+msgid "Evaluation Time"
+msgstr "Waktu Evaluasi"
 
 
 msgid "Maximum"
 msgstr "Maksimum"
 
 
+msgid "Maximum value for target channel range"
+msgstr "Nilai maksimum untuk jarak saluran target"
+
+
 msgid "Minimum"
 msgstr "Minimum"
 
 
+msgid "Minimum value for target channel range"
+msgstr "Nilai minimum untuk jarak saluran target"
+
+
 msgid "Mix Mode"
-msgstr "Modus Sunting"
+msgstr "Mode Campur"
 
 
 msgid "Before Original"
@@ -3891,7 +4355,11 @@ msgstr "Setelah yang Asli (Skala Penuh)"
 
 
 msgid "Target object"
-msgstr "Sunting Objek"
+msgstr "Objek target"
+
+
+msgid "Transform Channel"
+msgstr "Saluran Transformasi"
 
 
 msgid "X Location"
@@ -3931,15 +4399,35 @@ msgstr "Skala Z"
 
 
 msgid "Object Action"
-msgstr "Modus Objek"
+msgstr "Aksi Objek"
 
 
 msgid "Use Evaluation Time"
 msgstr "Menggunakan Waktu Evaluasi"
 
 
+msgid "Armature Constraint"
+msgstr "Pembatas Armatur"
+
+
+msgid "Targets"
+msgstr "Target"
+
+
+msgid "Target Bones"
+msgstr "Tulang Target"
+
+
+msgid "Use Envelopes"
+msgstr "Gunakan Surat"
+
+
+msgid "Preserve Volume"
+msgstr "Menjaga Volume"
+
+
 msgid "Camera Solver Constraint"
-msgstr "Kamera"
+msgstr "Pembatas Pemecah Kamera"
 
 
 msgid "Movie Clip to get tracking data from"
@@ -3950,28 +4438,92 @@ msgid "Active Clip"
 msgstr "Klip Aktif"
 
 
+msgid "Use active clip defined in scene"
+msgstr "Gunakan klip aktif yang didefinisikan di adegan"
+
+
+msgid "Child Of Constraint"
+msgstr "Anak Pembatas"
+
+
 msgid "Location X"
 msgstr "Lokasi X"
+
+
+msgid "Use X Location of Parent"
+msgstr "Gunakan Lokasi X Induk"
 
 
 msgid "Location Y"
 msgstr "Lokasi Y"
 
 
+msgid "Use Y Location of Parent"
+msgstr "Gunakan Lokasi Y Induk"
+
+
 msgid "Location Z"
 msgstr "Lokasi Z"
+
+
+msgid "Use Z Location of Parent"
+msgstr "Gunakan Lokasi Z Induk"
 
 
 msgid "Rotation X"
 msgstr "Rotasi X"
 
 
+msgid "Use X Rotation of Parent"
+msgstr "Gunakan Rotasi X Induk"
+
+
 msgid "Rotation Y"
 msgstr "Rotasi Y"
 
 
+msgid "Use Y Rotation of Parent"
+msgstr "Gunakan Rotasi Y Induk"
+
+
 msgid "Rotation Z"
 msgstr "Rotasi Z"
+
+
+msgid "Use Z Rotation of Parent"
+msgstr "Gunakan Rotasi Z Induk"
+
+
+msgid "Scale X"
+msgstr "Skala X"
+
+
+msgid "Use X Scale of Parent"
+msgstr "Gunakan Skala X Induk"
+
+
+msgid "Scale Y"
+msgstr "Skala Y"
+
+
+msgid "Use Y Scale of Parent"
+msgstr "Gunakan Skala Y Induk"
+
+
+msgid "Scale Z"
+msgstr "Skala Z"
+
+
+msgid "Use Z Scale of Parent"
+msgstr "Gunakan Skala Z Induk"
+
+
+msgid "Main Axis"
+msgstr "Sumbu Utama"
+
+
+msgid "Main axis of movement"
+msgstr "Sumbu utama pergerakan"
 
 
 msgid "X"
@@ -3988,6 +4540,42 @@ msgstr "Z"
 
 msgid "Target Object (Curves only)"
 msgstr "Target Objek (Kurva saja)"
+
+
+msgid "Copy Location Constraint"
+msgstr "Salin Pembatas Lokasi"
+
+
+msgid "Copy the location of the target"
+msgstr "Salin lokasi target"
+
+
+msgid "Head/Tail"
+msgstr "Kepala/Ekor"
+
+
+msgid "Invert X"
+msgstr "Balikkan X"
+
+
+msgid "Invert the X location"
+msgstr "Balikkan lokasi X"
+
+
+msgid "Invert Y"
+msgstr "Balikkan Y"
+
+
+msgid "Invert the Y location"
+msgstr "Balikkan lokasi Y"
+
+
+msgid "Invert Z"
+msgstr "Balikkan Z"
+
+
+msgid "Invert the Z location"
+msgstr "Balikkan lokasi Z"
 
 
 msgid "Copy X"
@@ -4022,6 +4610,10 @@ msgid "Copy the rotation of the target"
 msgstr "Salin rotasi target"
 
 
+msgid "Euler Order"
+msgstr "Urutan Euler"
+
+
 msgid "Default"
 msgstr "Default"
 
@@ -4030,24 +4622,48 @@ msgid "XYZ Euler"
 msgstr "Euler XYZ"
 
 
+msgid "Euler using the XYZ rotation order"
+msgstr "Euler menggunakan urutan rotasi XYZ"
+
+
 msgid "XZY Euler"
 msgstr "Euler XZY"
+
+
+msgid "Euler using the XZY rotation order"
+msgstr "Euler menggunakan urutan rotasi XZY"
 
 
 msgid "YXZ Euler"
 msgstr "Euler YXZ"
 
 
+msgid "Euler using the YXZ rotation order"
+msgstr "Euler menggunakan urutan rotasi YXZ"
+
+
 msgid "YZX Euler"
 msgstr "Euler YZX"
+
+
+msgid "Euler using the YZX rotation order"
+msgstr "Euler menggunakan urutan rotasi YZX"
 
 
 msgid "ZXY Euler"
 msgstr "Euler ZXY"
 
 
+msgid "Euler using the ZXY rotation order"
+msgstr "Euler menggunakan urutan rotasi ZXY"
+
+
 msgid "ZYX Euler"
 msgstr "Euler ZYX"
+
+
+msgid "Euler using the ZYX rotation order"
+msgstr "Euler menggunakan urutan rotasi ZYX"
 
 
 msgid "Invert the X rotation"
@@ -4068,6 +4684,10 @@ msgstr "Menggantikan rotasi original dengan yang tersalin"
 
 msgid "Add euler component values together"
 msgstr "Tambahkan nilai komponen euler bersama-sama"
+
+
+msgid "Offset (Legacy)"
+msgstr "Offset (Legacy)"
 
 
 msgid "Copy the target's X rotation"
@@ -4115,11 +4735,19 @@ msgstr "Salin skala Z target"
 
 
 msgid "Track Axis"
-msgstr "Lacak Axis"
+msgstr "Lacak Sumbu"
+
+
+msgid "Axis that points to the target object"
+msgstr "Sumbu yang menunjuk ke objek target"
 
 
 msgid "Floor Location"
 msgstr "Lokasi Lantai"
+
+
+msgid "Location of target that object will not pass through"
+msgstr "Lokasi target dimana objek tidak akan dapat melewati"
 
 
 msgid "Use Rotation"
@@ -4154,6 +4782,10 @@ msgid "Curve Radius"
 msgstr "Radius Kurva"
 
 
+msgid "Object is scaled by the curve radius"
+msgstr "Objek diskalakan oleh radius kurva"
+
+
 msgid "Fixed Position"
 msgstr "Posisi Tetap"
 
@@ -4170,8 +4802,16 @@ msgid "Object used to define depth in camera space by projecting onto surface of
 msgstr "Objek digunakan untuk mendefinisikan kedalaman di spasi kamera dengan proyeksi ke permukaan objek ini"
 
 
+msgid "Track"
+msgstr "Lacak"
+
+
 msgid "3D Position"
-msgstr "Penjelasan"
+msgstr "Posisi 3D"
+
+
+msgid "Use 3D position of track to parent to"
+msgstr "Gunakan posisi 3D untuk melacak ke induk ke"
 
 
 msgid "IK Type"
@@ -4180,6 +4820,14 @@ msgstr "Tipe IK"
 
 msgid "Copy Pose"
 msgstr "Salin Pose"
+
+
+msgid "Maximum number of solving iterations"
+msgstr "Angka maksimum memecahkan pengulangan"
+
+
+msgid "Limit Mode"
+msgstr "Mode Limit"
 
 
 msgid "Inside"
@@ -4252,6 +4900,10 @@ msgstr "Orientasi Transformasi"
 
 msgid "Axis Reference"
 msgstr "Referensi Sumbu"
+
+
+msgid "Bone"
+msgstr "Tulang"
 
 
 msgid "Include bone's tail as last element in chain"
@@ -4498,6 +5150,22 @@ msgid "Align the specified axis to the surface normal"
 msgstr "Sejajarkan sumbu spesifik ke permukaan normal"
 
 
+msgid "Volume Variation Maximum"
+msgstr "Maksimum Variasi Volume"
+
+
+msgid "Maximum volume stretching factor"
+msgstr "Faktor peregangan volume maksimum"
+
+
+msgid "Volume Variation Minimum"
+msgstr "Minimum Variasi Volume"
+
+
+msgid "Minimum volume stretching factor"
+msgstr "Faktor peregangan volume minimum"
+
+
 msgid "Volume Variation Smoothness"
 msgstr "Kehalusan Variasi Volume"
 
@@ -4507,11 +5175,15 @@ msgstr "Berapa banyak tulang dimuatkan ke rantai"
 
 
 msgid "Chain Offset"
-msgstr "Kamera"
+msgstr "Offset Rantai"
 
 
 msgid "Use Curve Radius"
-msgstr "Partikel"
+msgstr "Gunakan Radius Kurva"
+
+
+msgid "Use Original Scale"
+msgstr "Gunakan Skala Original"
 
 
 msgid "XZ Scale Mode"
@@ -4522,16 +5194,36 @@ msgid "Bone Original"
 msgstr "Tulang Asli"
 
 
+msgid "Don't scale in the Y axis"
+msgstr "Jangan skalakan di sumbu Y"
+
+
 msgid "Fit Curve"
 msgstr "Hapus"
+
+
+msgid "Keep Axis"
+msgstr "Tetapkan Sumbu"
+
+
+msgid "The rotation type and axis order to use"
+msgstr "Tipe rotasi dan urutan sumbu untuk digunakan"
 
 
 msgid "XZ"
 msgstr "XZ"
 
 
+msgid "Rotate around local X, then Z"
+msgstr "Rotasi sekitar lokal X, lalu Z"
+
+
 msgid "ZX"
 msgstr "ZX"
+
+
+msgid "Rotate around local Z, then X"
+msgstr "Rotasi sekitar lokal Z, lalu X"
 
 
 msgid "Swing"
@@ -4542,8 +5234,20 @@ msgid "Original Length"
 msgstr "Panjang Original"
 
 
+msgid "Track To Constraint"
+msgstr "Lacak Ke Pembatas"
+
+
 msgid "Target Z"
 msgstr "Z Target"
+
+
+msgid "Cache File"
+msgstr "Dokumen Cache"
+
+
+msgid "Transformation Constraint"
+msgstr "Pembatas Transformasi"
 
 
 msgid "From Maximum X"
@@ -4572,6 +5276,10 @@ msgstr "Dari Z Minimum"
 
 msgid "From Mode"
 msgstr "Dari Mode"
+
+
+msgid "Auto Euler"
+msgstr "Euler Otomatis"
 
 
 msgid "Quaternion rotation"
@@ -4620,6 +5328,30 @@ msgstr "Petakan Ke Z Dari"
 
 msgid "Rotation Mix Mode"
 msgstr "Mode Mencampurkan Rotasi"
+
+
+msgid "To Order"
+msgstr "Ke Urut"
+
+
+msgid "To Maximum X"
+msgstr "Ke Maksimum X"
+
+
+msgid "To Maximum Y"
+msgstr "Ke Maksimum Y"
+
+
+msgid "To Maximum Z"
+msgstr "Ke Maksimum Z"
+
+
+msgid "Handle Type"
+msgstr "TIpe Pegangan"
+
+
+msgid "Auto Handle"
+msgstr "Pegangan Otomatis"
 
 
 msgid "Standard"
@@ -4890,6 +5622,10 @@ msgid "Variables"
 msgstr "Variabel"
 
 
+msgid "Name of PoseBone to use as target"
+msgstr "Nama TulangPose digunakan sebagai target"
+
+
 msgctxt "ID"
 msgid "ID Type"
 msgstr "Tipe ID"
@@ -5071,6 +5807,10 @@ msgstr "Mode Rotasi"
 
 msgid "Transform Space"
 msgstr "Spasi Transformasi"
+
+
+msgid "W Rotation"
+msgstr "Rotasi W"
 
 
 msgid "Average Scale"
@@ -5255,6 +5995,10 @@ msgstr "Ikon"
 
 msgid "Icon of the item"
 msgstr "Ikon item"
+
+
+msgid "RNA Array Index"
+msgstr "Indeks Larik RNA"
 
 
 msgid "Group"
@@ -5455,6 +6199,10 @@ msgstr "Index"
 
 msgid "Face Maps"
 msgstr "Peta Wajah"
+
+
+msgid "Active index in face map array"
+msgstr "Indeks aktif di larik peta wajah"
 
 
 msgid "Shape"
@@ -6793,8 +7541,20 @@ msgid "Footer"
 msgstr "Footer"
 
 
+msgid "Set modifier expanded in the user interface"
+msgstr "Set pengubah yang diekspansi di antarmuka pengguna"
+
+
 msgid "Edit Mode"
 msgstr "Modus Sunting"
+
+
+msgid "Array"
+msgstr "Larik"
+
+
+msgid "Create array of duplicate instances"
+msgstr "Buat larik instansi duplikat"
 
 
 msgid "Mirror"
@@ -6813,12 +7573,24 @@ msgid "Constant Offset"
 msgstr "Kamera"
 
 
+msgid "Count"
+msgstr "Hitung"
+
+
 msgid "Object Offset"
 msgstr "Data Objek"
 
 
+msgid "Use the location and rotation of another object to determine the distance and rotational change between arrayed items"
+msgstr "Gunakan lokasi dan rotasi objek lain mendeterminasi jarak dan perubahan rotasional antara item larik"
+
+
 msgid "Relative Offset"
 msgstr "Kamera"
+
+
+msgid "The size of the geometry will determine the distance between arrayed items"
+msgstr "Ukuran geometri akan determinasi jarak antara item larik"
 
 
 msgid "Color Hue"
@@ -6873,6 +7645,22 @@ msgid "Constant"
 msgstr "Konstan"
 
 
+msgid "Source Collection"
+msgstr "Koleksi Sumber"
+
+
+msgid "Source Object"
+msgstr "Objek Sumber"
+
+
+msgid "Source Type"
+msgstr "Tipe Sumber"
+
+
+msgid "Target Layer"
+msgstr "Layer Target"
+
+
 msgid "Use Intersection"
 msgstr "Gunakan Persimpangan"
 
@@ -6901,6 +7689,10 @@ msgid "Adaptive"
 msgstr "Adaptif"
 
 
+msgid "Sample"
+msgstr "Sampel"
+
+
 msgid "Merge"
 msgstr "Menggabungkan"
 
@@ -6919,6 +7711,10 @@ msgstr "Layer Aktif"
 
 msgid "Active grease pencil layer"
 msgstr "Layer aktif pensil grease"
+
+
+msgid "Active index in layer mask array"
+msgstr "Aktif indeks di larik masker layer"
 
 
 msgid "Hair Curve"
@@ -7004,6 +7800,10 @@ msgstr "Tambah alpha saat melukis"
 
 msgid "Blur Mode"
 msgstr "Mode Blur"
+
+
+msgid "Bend"
+msgstr "Membengkokkan"
 
 
 msgid "Clone Image"
@@ -7214,6 +8014,10 @@ msgid "Depth Of Field"
 msgstr "Kedalaman Lapangan"
 
 
+msgid "Unit to edit lens in for the user interface"
+msgstr "Unit mengedit lensa untuk antarmuka pengguna"
+
+
 msgid "Millimeters"
 msgstr "Milimeter"
 
@@ -7422,12 +8226,56 @@ msgid "Integration Type"
 msgstr "Jenis Integrasi"
 
 
+msgid "Mean"
+msgstr "Rata-rata"
+
+
+msgid "The value computed for the chain is the mean of the values obtained for chain vertices"
+msgstr "Nilai yang dihitung untuk rantai merupakan rata-rata nilai yang diperoleh untuk sudut rantai"
+
+
 msgid "Min"
 msgstr "Min"
 
 
+msgid "The value computed for the chain is the minimum of the values obtained for chain vertices"
+msgstr "Nilai yang dihitung untuk rantai merupakan nilai minimum yang diperoleh untuk sudut rantai"
+
+
 msgid "Max"
 msgstr "Maks"
+
+
+msgid "The value computed for the chain is the maximum of the values obtained for chain vertices"
+msgstr "Nilai yang dihitung untuk rantai merupakan nilai maksimum yang diperoleh untuk sudut rantai"
+
+
+msgid "First"
+msgstr "Pertama"
+
+
+msgid "The value computed for the chain is the value obtained for the first chain vertex"
+msgstr "Nilai yang dihitung untuk rantai merupakan nilai yang diperoleh untuk vertex rantai pertama"
+
+
+msgid "Last"
+msgstr "Terakhir"
+
+
+msgid "The value computed for the chain is the value obtained for the last chain vertex"
+msgstr "Nilai yang dihitung untuk rantai merupakan nilai yang diperoleh untuk vertex rantai terakhir"
+
+
+msgid "Max 2D Length"
+msgstr "Panjang 2D Maks"
+
+
+msgid "Min 2D Length"
+msgstr "Panjang 2D Min"
+
+
+msgid "Node Tree"
+msgstr "Pohon Node"
 
 
 msgid "Panel"
@@ -7438,6 +8286,10 @@ msgid "Rounds"
 msgstr "Rounds"
 
 
+msgid "2D Length"
+msgstr "Panjang 2D"
+
+
 msgid "Thickness Position"
 msgstr "Posisi Ketebalan"
 
@@ -7446,12 +8298,44 @@ msgid "Same Object"
 msgstr "Objek Sama"
 
 
+msgid "Sorting"
+msgstr "Penyortiran"
+
+
 msgid "Use Textures"
-msgstr "Tekstur"
+msgstr "Gunakan Tekstur"
+
+
+msgid "Curve Resolution"
+msgstr "Resolusi Kurva"
+
+
+msgid "Edit Line Color"
+msgstr "Edit Warna Garis"
+
+
+msgid "Annotation"
+msgstr "Anotasi"
+
+
+msgid "Selected"
+msgstr "Terseleksi"
+
+
+msgid "3D Location"
+msgstr "Lokasi 3D"
+
+
+msgid "Adaptive Resolution"
+msgstr "Resolusi Adaptif"
 
 
 msgid "Ghosts are shown in renders and animation playback. Useful for special effects (e.g. motion blur)"
 msgstr "Hantu ditampilkan di render dan playback animasi. Berguna untuk efek spesial (e.g blur gerakan)"
+
+
+msgid "Stroke Edit Mode"
+msgstr "Mode Edit Garis Luar"
 
 
 msgid "Straight"
@@ -7462,8 +8346,44 @@ msgid "Color Space Settings"
 msgstr "Partikel"
 
 
+msgid "JPEG 2000"
+msgstr "JPEG 2000"
+
+
+msgid "AVI JPEG"
+msgstr "AVI JPEG"
+
+
 msgid "Generated Type"
 msgstr "Tipe"
+
+
+msgid "Blank"
+msgstr "Kosong"
+
+
+msgid "UV Grid"
+msgstr "Grid UV"
+
+
+msgid "Dirty"
+msgstr "Kotor"
+
+
+msgid "Pixels"
+msgstr "Pixel"
+
+
+msgid "Movie"
+msgstr "Film"
+
+
+msgid "Movie file"
+msgstr "Dokumen film"
+
+
+msgid "Generated image"
+msgstr "Gambar yang dihasilkan"
 
 
 msgid "Viewer"
@@ -7478,8 +8398,41 @@ msgid "Individual"
 msgstr "Individual"
 
 
+msgid "Reference Key"
+msgstr "Kunci Referensi"
+
+
+msgid "User"
+msgstr "Pengguna"
+
+
+msgctxt "Light"
+msgid "Light"
+msgstr "Cahaya"
+
+
 msgid "Light color"
 msgstr "Warna Standar"
+
+
+msgctxt "Light"
+msgid "Type"
+msgstr "Tipe"
+
+
+msgctxt "Light"
+msgid "Point"
+msgstr "Titik"
+
+
+msgctxt "Light"
+msgid "Sun"
+msgstr "Matahari"
+
+
+msgctxt "Light"
+msgid "Area"
+msgstr "Daerah"
 
 
 msgid "Shadow Color"
@@ -7918,6 +8871,10 @@ msgid "Wood Texture"
 msgstr "Tekstur"
 
 
+msgid "Window manager data-block defining open windows and other user interface data"
+msgstr "Manajer jendela data-blok mendefinisikan jendela terbuka dan data antarmuka pengguna lainnya"
+
+
 msgid "Search"
 msgstr "Cari"
 
@@ -8064,6 +9021,14 @@ msgstr "Ukuran Ikon"
 
 msgid "Image Size"
 msgstr "Ukuran Gambar"
+
+
+msgid "Children expanded in the user interface"
+msgstr "Anak diekspansi di antarmuka pengguna"
+
+
+msgid "Expanded in the user interface"
+msgstr "Diekspansi di antarmuka pengguna"
 
 
 msgid "Alt"
@@ -8408,6 +9373,10 @@ msgid "Property Value"
 msgstr "Nilai Properti"
 
 
+msgid "Show key map event and property details in the user interface"
+msgstr "Tampilkan kejadian peta kunci dan detail properti di antarmuka pengguna"
+
+
 msgid "Click"
 msgstr "Klik"
 
@@ -8520,6 +9489,14 @@ msgid "Visual Scale"
 msgstr "Skala Visual"
 
 
+msgid "Entire Array"
+msgstr "Seluruh Larik"
+
+
+msgid "When an 'array/vector' type is chosen (Location, Rotation, Color, etc.), entire array is to be used"
+msgstr "Saat tipe 'larik/vektor' dipilih (Lokasi, Rotasi, Warn, etc.), seluruh larik untuk digunakan"
+
+
 msgid "Active Path Index"
 msgstr "Indeks Jalur Aktif"
 
@@ -8608,28 +9585,128 @@ msgid "Value Min"
 msgstr "Nilai Min"
 
 
+msgid "Orientation"
+msgstr "Orientasi"
+
+
+msgid "Max Thickness"
+msgstr "Ketebalan Maks"
+
+
+msgid "Maximum thickness in the main direction"
+msgstr "Maksimum ketebalan di arah utama"
+
+
+msgid "Min Thickness"
+msgstr "Ketebalan Min"
+
+
+msgid "Maximum thickness"
+msgstr "Maksimum Ketebalan"
+
+
+msgid "Minimum thickness"
+msgstr "Minimum Ketebalan"
+
+
+msgid "Change line thickness based on the distance from the camera"
+msgstr "Ganti ketebalan garis berdasarkan jarak dari kamera"
+
+
+msgid "Change line thickness based on the distance from an object"
+msgstr "Ganti ketebalan garis berdasarkan jarak dari objek"
+
+
+msgid "Change line thickness based on a material attribute"
+msgstr "Ganti ketebalan garis berdasarkan atribut material"
+
+
+msgid "Line thickness based on random noise"
+msgstr "Ketebalan garis berdasarkan noise acak"
+
+
+msgid "Asymmetric"
+msgstr "Asimetris"
+
+
+msgid "Allow thickness to be assigned asymmetrically"
+msgstr "Perbolehkan ketebalan ke yang ditugaskan secara asimetris"
+
+
+msgid "Collection of texture slots"
+msgstr "Koleksi slot tekstur"
+
+
+msgid "Active Line Set"
+msgstr "Set Garis Aktif"
+
+
+msgid "Active Line Set Index"
+msgstr "Indeks Set Garis Aktif"
+
+
+msgid "Index of active line set slot"
+msgstr "Indeks slot set garis aktif"
+
+
+msgid "Loop Colors"
+msgstr "Warna Loop"
+
+
+msgid "Collection of vertex colors"
+msgstr "Koleksi warna vertex"
+
+
 msgid "Mask Layer"
 msgstr "Layer Masker"
 
 
 msgid "Render Opacity"
-msgstr "Partikel"
+msgstr "Opasitas Render"
+
+
+msgid "Method of blending mask layers"
+msgstr "Metode pencampuran layer masker"
 
 
 msgid "Merge Add"
 msgstr "Tambahkan Gabungan"
 
 
+msgid "Merge Subtract"
+msgstr "Kurangi Gabungan"
+
+
 msgid "Invert the mask black/white"
-msgstr "Saluran"
+msgstr "Balikkan masker hitam/putih"
+
+
+msgid "Unique name of layer"
+msgstr "Nama unik layer"
+
+
+msgid "Calculate Holes"
+msgstr "Hitung Lubang"
 
 
 msgid "Mask Layers"
 msgstr "Lapisan"
 
 
+msgid "Collection of layers used by mask"
+msgstr "Koleksi layer digunakan oleh masker"
+
+
+msgid "Active Shape"
+msgstr "Bentuk Aktif"
+
+
+msgid "Active layer in this mask"
+msgstr "Layer aktif di masker ini"
+
+
 msgid "Mask Parent"
-msgstr "Induk"
+msgstr "Induk Masker"
 
 
 msgid "Sub Parent"
@@ -8652,8 +9729,16 @@ msgid "Feather Offset"
 msgstr "Kamera"
 
 
+msgid "Even"
+msgstr "Rata"
+
+
 msgid "Calculate even feather offset"
 msgstr "Kamera"
+
+
+msgid "Collection of points"
+msgstr "Koleksi titik"
 
 
 msgid "Prevent feather from self-intersections"
@@ -8676,12 +9761,56 @@ msgid "Weight of feather point"
 msgstr "Kamera"
 
 
+msgid "Grease Pencil Color"
+msgstr "Warna Pensil Grease"
+
+
+msgid "Alignment"
+msgstr "Penjajaran"
+
+
+msgid "Fill Color"
+msgstr "Isi Warna"
+
+
+msgid "Fill Style"
+msgstr "Isi Gaya"
+
+
 msgid "Fill area with solid color"
 msgstr "Fill area dengan warna solid"
 
 
+msgid "Flip"
+msgstr "Balikkan"
+
+
 msgid "Gradient Type"
-msgstr "Tipe"
+msgstr "Tipe Gradien"
+
+
+msgid "Mix Color"
+msgstr "Campurkan Warna"
+
+
+msgid "Mix Factor"
+msgstr "Campurkan Faktor"
+
+
+msgid "Mix Stroke Factor"
+msgstr "Campurkan Faktor Garis Luar"
+
+
+msgid "Line Type"
+msgstr "Tipe Garis"
+
+
+msgid "Show Stroke"
+msgstr "Tampilkan Garis Luar"
+
+
+msgid "Stroke Style"
+msgstr "Gaya Garis Luar"
 
 
 msgid "Draw strokes with solid color"
@@ -8690,16 +9819,104 @@ msgstr "Menggambar stroke dengan warna solid"
 
 msgctxt "MovieClip"
 msgid "Clip"
-msgstr "Buka"
+msgstr "Klip"
+
+
+msgid "Tracking"
+msgstr "Pelacakan"
+
+
+msgid "Console"
+msgstr "Konsol"
+
+
+msgid "Console Context Menu"
+msgstr "Menu Konteks Konsol"
+
+
+msgid "Languages..."
+msgstr "Bahasa..."
+
+
+msgid "Channel"
+msgstr "Saluran"
+
+
+msgid "Key"
+msgstr "Kunci"
+
+
+msgid "Snap"
+msgstr "Jepret"
+
+
+msgid "Files Context Menu"
+msgstr "Menu Konteks Dokumen"
+
+
+msgid "Grease Pencil Vertex Groups"
+msgstr "Kelompok Vertex Pensil Grease"
+
+
+msgid "Change Active Layer"
+msgstr "Gantikan Layer Aktif"
+
+
+msgid "Layer Specials"
+msgstr "Spesial Layer"
+
+
+msgid "Change Active Material"
+msgstr "Gantikan Material Aktif"
+
+
+msgid "Material Specials"
+msgstr "Spesial Material"
+
+
+msgid "Move to Layer"
+msgstr "Pindah ke Layer"
+
+
+msgid "Add Attribute"
+msgstr "Tambahkan Atribut"
 
 
 msgid "Select Linked"
-msgstr "Seleksi"
+msgstr "Seleksi yang Terhubung"
+
+
+msgid "UV"
+msgstr "UV"
 
 
 msgctxt "Operator"
 msgid "Add"
-msgstr "Baru"
+msgstr "Tambahkan"
+
+
+msgid "Shape Key Specials"
+msgstr "Spesial Kunci Bentuk"
+
+
+msgid "Vertex Group Specials"
+msgstr "Spesial Kelompok Vertex"
+
+
+msgid "NLA Channel Context Menu"
+msgstr "Menu Konteks Saluran NLA"
+
+
+msgid "NLA Context Menu"
+msgstr "Menu Konteks NLA"
+
+
+msgid "Edit"
+msgstr "Edit"
+
+
+msgid "Converter"
+msgstr "Pengubah"
 
 
 msgid "Layout"
@@ -8707,15 +9924,39 @@ msgstr "Tata Letak"
 
 
 msgid "Matte"
-msgstr "Warna"
+msgstr "Matte"
+
+
+msgid "Utilities"
+msgstr "Utilitas"
+
+
+msgid "Node Context Menu"
+msgstr "Menu Konteks Node"
+
+
+msgid "Node"
+msgstr "Node"
 
 
 msgid "Node Color Specials"
-msgstr "Warna"
+msgstr "Spesial Warna Node"
+
+
+msgid "Outliner Context Menu"
+msgstr "Menu Konteks Outliner"
+
+
+msgid "Particle Specials"
+msgstr "Spesial Partikel"
 
 
 msgid "Frame Rate Presets"
 msgstr "Preset Frame Rate"
+
+
+msgid "Effect Strip"
+msgstr "Strip Efek"
 
 
 msgid "Change"
@@ -8728,6 +9969,14 @@ msgstr "Navigasi"
 
 msgid "Select Channel"
 msgstr "Pilih Saluran"
+
+
+msgid "Select Handle"
+msgstr "Pilih Pegangan"
+
+
+msgid "Strip"
+msgstr "Strip"
 
 
 msgid "Image Transform"
@@ -8762,20 +10011,100 @@ msgid "Open Shading Language"
 msgstr "Buka Bahasa Bayangan"
 
 
+msgid "Python"
+msgstr "Python"
+
+
 msgid "Text"
 msgstr "Teks"
+
+
+msgid "Blender"
+msgstr "Blender"
+
+
+msgid "System"
+msgstr "Sistem"
 
 
 msgid "File"
 msgstr "Dokumen"
 
 
+msgid "File Context Menu"
+msgstr "Menu Konteks Dokumen"
+
+
+msgid "Export"
+msgstr "Ekspor"
+
+
+msgid "External Data"
+msgstr "Data Eksternal"
+
+
+msgid "Import"
+msgstr "Impor"
+
+
+msgid "New File"
+msgstr "Dokumen Baru"
+
+
+msgid "Data Previews"
+msgstr "Preview Data"
+
+
+msgid "Help"
+msgstr "Bantuan"
+
+
+msgid "Presets"
+msgstr "Preset"
+
+
+msgid "KeyPresets"
+msgstr "PresetKunci"
+
+
+msgid "Save & Load"
+msgstr "Simpan & Buka"
+
+
+msgid "Assign Material"
+msgstr "Tetapkan Material"
+
+
 msgid "Enabled Modes"
 msgstr "Modus Sunting"
 
 
+msgid "Names"
+msgstr "Nama"
+
+
+msgid "Text Context Menu"
+msgstr "Menu Konteks Teks"
+
+
+msgid "Normals"
+msgstr "Normal"
+
+
+msgid "Hooks"
+msgstr "Kait"
+
+
+msgid "Add Image"
+msgstr "Tambah Gambar"
+
+
+msgid "Light"
+msgstr "Cahaya"
+
+
 msgid "Apply"
-msgstr "Setujui"
+msgstr "Tetapkan"
 
 
 msgid "Edge index"
@@ -8822,12 +10151,44 @@ msgid "UV Select"
 msgstr "Seleksi"
 
 
-msgid "Multi Modifier"
-msgstr "Modus Pahat"
+msgid "Bend the mesh using a curve object"
+msgstr "Membengkokkan mesh menggunakan objek kurva"
+
+
+msgid "Array Modifier"
+msgstr "Pengubah Larik"
+
+
+msgid "Array duplication modifier"
+msgstr "Pengubah duplikasi larik"
+
+
+msgid "Value for the distance between arrayed items"
+msgstr "Nilai untuk jarak antara item larik"
+
+
+msgid "Curve object to fit array length to"
+msgstr "Kurva objek mencukupi panjang larik ke"
+
+
+msgid "Length to fit array within"
+msgstr "Panjang mencukupi larik dalam"
 
 
 msgid "Fit Type"
-msgstr "Tipe"
+msgstr "Tipe Cukup"
+
+
+msgid "Array length calculation method"
+msgstr "Metode kalkulasi panjang larik"
+
+
+msgid "Amount to offset array UVs on the U axis"
+msgstr "Jumlah UV larik offset di sumbu U"
+
+
+msgid "Amount to offset array UVs on the V axis"
+msgstr "Jumlah UV larik offset di sumbu V"
 
 
 msgid "New"
@@ -8854,6 +10215,22 @@ msgid "EdgeSplit Modifier"
 msgstr "Modus Sunting"
 
 
+msgid "Particle UV"
+msgstr "Partikel UV"
+
+
+msgid "Protect"
+msgstr "Lindungi"
+
+
+msgid "Alive"
+msgstr "Hidup"
+
+
+msgid "Dead"
+msgstr "Mati"
+
+
 msgid "Bound"
 msgstr "Suara"
 
@@ -8868,6 +10245,10 @@ msgstr "Modus Pahat"
 
 msgid "Integrate"
 msgstr "Integrasi"
+
+
+msgid "Resolution Mode"
+msgstr "Mode Resoulsi"
 
 
 msgid "Mirror Object"
@@ -8934,16 +10315,28 @@ msgid "Project Limit"
 msgstr "Objek"
 
 
+msgid "Bend the mesh over the Z axis of the modifier space"
+msgstr "Membengkokkan mesh di atas sumbu Z spasi pengubah"
+
+
+msgid "Limits"
+msgstr "Batas"
+
+
+msgid "Origin"
+msgstr "Asal"
+
+
 msgid "Skin Modifier"
-msgstr "Modus Pahat"
+msgstr "Pengubah Kulit"
 
 
 msgid "Generate Skin"
-msgstr "Tipe"
+msgstr "Hasilkan Kulit"
 
 
 msgid "Branch Smoothing"
-msgstr "Tampilan 3D"
+msgstr "Penghalusan Cabang"
 
 
 msgid "Rim Crease"
@@ -8958,8 +10351,16 @@ msgid "Rim Material Offset"
 msgstr "Kamera"
 
 
+msgid "Complex"
+msgstr "Kompleks"
+
+
 msgid "Vertex Group Factor"
-msgstr "Warna Standar"
+msgstr "Faktor Kelompok Vertex"
+
+
+msgid "Flat Faces"
+msgstr "Wajah Datar"
 
 
 msgid "Flip Normals"
@@ -8978,6 +10379,10 @@ msgid "Keep Normals"
 msgstr "Menetapi Normal"
 
 
+msgid "Minimum Vertices"
+msgstr "Minimum Sudut"
+
+
 msgid "UV Project Modifier"
 msgstr "Modus Objek"
 
@@ -8987,31 +10392,56 @@ msgstr "Modus Pahat"
 
 
 msgid "U-Axis"
-msgstr "Kiri"
+msgstr "U-Axis"
 
 
 msgid "V-Axis"
-msgstr "Kiri"
+msgstr "V-Axis"
+
+
+msgid "Bone From"
+msgstr "Tulang Dari"
+
+
+msgid "Bone defining offset"
+msgstr "Tulang mendefinisikan tulang"
+
+
+msgid "Bone To"
+msgstr "Tulang Ke"
 
 
 msgid "UV Center"
-msgstr "Tampilan 3D"
+msgstr "Pusat UV"
+
+
+msgid "Object From"
+msgstr "Objek Dari"
 
 
 msgid "Object defining offset"
-msgstr "Data Objek"
+msgstr "Objek mendefisikan offset"
+
+
+msgid "Object To"
+msgstr "Objek Ke"
 
 
 msgid "UV Layer"
-msgstr "Lapisan"
+msgstr "Layer UV"
 
 
 msgid "UV Layer name"
-msgstr "Nama dokumen"
+msgstr "Nama layer UV"
 
 
 msgid "Null action"
 msgstr "Aksi null"
+
+
+msgctxt "Curve"
+msgid "Custom Curve"
+msgstr "Kurva Kustom"
 
 
 msgctxt "Curve"
@@ -9020,7 +10450,7 @@ msgstr "Acak"
 
 
 msgid "Use Channel"
-msgstr "Saluran"
+msgstr "Gunakan Saluran"
 
 
 msgid "Group Add"
@@ -9032,39 +10462,143 @@ msgstr "Warna Standar"
 
 
 msgid "VGroup A"
-msgstr "Grup"
+msgstr "KelompokV A"
+
+
+msgid "Affect vertices in VGroup A"
+msgstr "Pengaruhi sudut di KelompokV A"
 
 
 msgid "VGroup B"
-msgstr "Grup"
+msgstr "KelompokV B"
+
+
+msgid "Affect vertices in VGroup B (might add some to VGroup A)"
+msgstr "Pengaruhi sudut di KelompokV B"
 
 
 msgid "VGroup A or B"
-msgstr "Grup"
+msgstr "KelompokV A atau B"
+
+
+msgid "Affect vertices in at least one of both VGroups (might add some to VGroup A)"
+msgstr "Pengaruhi sudut di setidaknya satu dari kedua KelompokV (mungkin menambahkan beberapa ke KelompokV A)"
 
 
 msgid "VGroup A and B"
-msgstr "Grup"
+msgstr "KelompokV A dan B"
+
+
+msgid "Affect vertices in both groups"
+msgstr "Pengaruhi sudut di kedua kelompok"
 
 
 msgid "Vertex Group A"
-msgstr "Warna Standar"
+msgstr "Kelompok Vertex A"
+
+
+msgid "First vertex group name"
+msgstr "Nama kelompok vertex pertama"
 
 
 msgid "Vertex Group B"
-msgstr "Warna Standar"
+msgstr "Kelompok Vertex B"
+
+
+msgid "Second vertex group name"
+msgstr "Nama kelompok vertex kedua"
+
+
+msgid "WeightVG Proximity Modifier"
+msgstr "Pengubah Kedekatan BebanKV"
 
 
 msgid "Highest"
 msgstr "Tertinggi"
 
 
+msgid "Distance mapping to weight 1.0"
+msgstr "Jarak pemetaan ke beban 1.0"
+
+
+msgid "Lowest"
+msgstr "Terendah"
+
+
+msgid "Distance mapping to weight 0.0"
+msgstr "Jarak pemetaan ke beban 0.0"
+
+
+msgid "Proximity Geometry"
+msgstr "Kedekatan Geometri"
+
+
 msgid "Proximity Mode"
-msgstr "Modus Sunting"
+msgstr "Mode Kedekatan"
+
+
+msgid "Target Object"
+msgstr "Objek Target"
+
+
+msgid "Object to calculate vertices distances from"
+msgstr "Objek ke kalkulasi jarak sudut dari"
+
+
+msgid "Grid Name"
+msgstr "Nama Grid"
+
+
+msgid "Start Position Y"
+msgstr "Mulai Posisi Y"
+
+
+msgid "X Normal"
+msgstr "Normal X"
+
+
+msgid "Y Normal"
+msgstr "Normal Y"
+
+
+msgid "Z Normal"
+msgstr "Normal Z"
+
+
+msgid "Face Area"
+msgstr "Area Wajah"
+
+
+msgid "Thickness factor"
+msgstr "Faktor ketebalan"
 
 
 msgid "Offset Even"
 msgstr "Kamera"
+
+
+msgid "Edit Path"
+msgstr "Edit Jalur"
+
+
+msgid "Line Thickness"
+msgstr "Ketebalan Garis"
+
+
+msgid "Use Bone Heads"
+msgstr "Gunakan Kepala Tulang"
+
+
+msgid "Custom Colors"
+msgstr "Warna Kustom"
+
+
+msgid "Movie Clip Proxy"
+msgstr "Proxy Klip Film"
+
+
+msgid "Proxy Render Size"
+msgstr "Ukuran Render Proxy"
 
 
 msgid "None, full render"
@@ -9079,6 +10613,50 @@ msgid "Plane Tracks"
 msgstr "Bidang Lintasan"
 
 
+msgid "Divisions"
+msgstr "Divisi"
+
+
+msgid "Nuke"
+msgstr "Nuklir"
+
+
+msgid "Brown"
+msgstr "Cokelat"
+
+
+msgid "Pixel Aspect Ratio"
+msgstr "Rasio Aspek Pixel"
+
+
+msgid "Pixel aspect ratio"
+msgstr "Rasio aspek pixel"
+
+
+msgid "Sensor"
+msgstr "Sensor"
+
+
+msgid "Units"
+msgstr "Unit"
+
+
+msgid "Units used for camera focal length"
+msgstr "Unit digunakan untuk panjang fokal kamera"
+
+
+msgid "px"
+msgstr "px"
+
+
+msgid "Use pixels for units of focal length"
+msgstr "Gunakan pixel untuk unit jarak fokal"
+
+
+msgid "mm"
+msgstr "mm"
+
+
 msgid "Movie Tracking Dopesheet"
 msgstr "Sunting Objek"
 
@@ -9089,6 +10667,10 @@ msgstr "Suara"
 
 msgid "Pattern Corners"
 msgstr "Adegan"
+
+
+msgid "Image Opacity"
+msgstr "Opasitas Gambar"
 
 
 msgid "Auto Keyframe"
@@ -9107,64 +10689,120 @@ msgid "Correlation"
 msgstr "Kolerasi"
 
 
+msgid "Motion Model"
+msgstr "Model Gerakan"
+
+
 msgid "Default motion model to use for tracking"
 msgstr "Model gerak default yang digunakan untuk pelacakan"
 
 
 msgid "Pattern Size"
-msgstr "Adegan"
+msgstr "Ukuran Pola"
 
 
 msgid "Search Size"
-msgstr "Adegan"
+msgstr "Ukuran Pencarian"
+
+
+msgid "Fastest"
+msgstr "Tercepat"
+
+
+msgid "Double"
+msgstr "Dua Kali Lipat"
+
+
+msgid "Quarter"
+msgstr "Seperempat"
+
+
+msgid "Normalize"
+msgstr "Normalisasi"
+
+
+msgid "Normalize light intensities while tracking (slower)"
+msgstr "Normalisasi intensitas cahaya saat pelacakan (lebih lambat"
 
 
 msgid "Use Red Channel"
-msgstr "Saluran"
+msgstr "Gunakan Saluran Merah"
 
 
 msgid "Keyframe Selection"
-msgstr "Keyframe Terpilih"
+msgstr "Seleksi Keyframe"
 
 
 msgid "Tripod Motion"
-msgstr "Gerakan"
+msgstr "Gerakan Tripod"
+
+
+msgid "Bilinear"
+msgstr "Bilinear"
+
+
+msgid "Location Influence"
+msgstr "Lokasi Pengaruh"
+
+
+msgid "Rotation Influence"
+msgstr "Rotasi Pengaruh"
+
+
+msgid "Scale Influence"
+msgstr "Skala Pengaruh"
+
+
+msgid "Maximal Scale"
+msgstr "Maksimal Skala"
+
+
+msgid "Expected Position"
+msgstr "Posisi Ekspektasi"
+
+
+msgid "Expected Rotation"
+msgstr "Rotasi Ekspektasi"
+
+
+msgid "Expected Scale"
+msgstr "Skala Ekspektasi"
 
 
 msgid "Autoscale"
-msgstr "Penyimpanan Otomatis"
+msgstr "Penskalaan Otomatis"
 
 
-msgid "Select Anchor"
-msgstr "Seleksi"
+msgid "Stabilize Rotation"
+msgstr "Stabilisasi Rotasi"
+
+
+msgid "Stabilize Scale"
+msgstr "Stabilisasi Skala"
 
 
 msgid "Select Search"
-msgstr "Seleksi"
+msgstr "Seleksi Pencarian"
+
+
+msgid "Custom Color"
+msgstr "Warna Kustom"
+
+
+msgid "Blending"
+msgstr "Pencampuran"
 
 
 msgid "Static Type"
-msgstr "Jenis Statis"
-
-
-msgid "Height of the node"
-msgstr "Kamera"
-
-
-msgid "Node selection state"
-msgstr "Keadaan Simpul Terpilih"
+msgstr "Jenis Statik"
 
 
 msgid "Show Options"
-msgstr "Perbesar"
+msgstr "Tampilkan Opsi"
 
 
 msgid "Show Texture"
-msgstr "Tekstur"
-
-
-msgid "Width of the node"
-msgstr "Kamera"
+msgstr "Tampilkan Tekstur"
 
 
 msgid "Bilateral Blur"
@@ -9172,7 +10810,11 @@ msgstr "Blur Bilateral"
 
 
 msgid "Color Sigma"
-msgstr "Warna"
+msgstr "Sigma Warna"
+
+
+msgid "Space Sigma"
+msgstr "Sigma Spasi"
 
 
 msgid "Aspect Correction"
@@ -9211,36 +10853,64 @@ msgid "Bokeh Image"
 msgstr "Gambar Bokeh"
 
 
-msgid "Number of flaps"
-msgstr "Partikel"
-
-
-msgid "Rounding"
-msgstr "Suara"
-
-
-msgid "Box Mask"
-msgstr "Hapus"
+msgid "Mask Type"
+msgstr "Tipe Masker"
 
 
 msgid "Bright/Contrast"
-msgstr "Penyunting Logika"
+msgstr "Terang/Kontras"
 
 
 msgid "Channel Key"
-msgstr "Saluran"
+msgstr "Kunci Saluran"
 
 
 msgid "RGB color space"
-msgstr "Warna"
+msgstr "Spasi warna RGB"
+
+
+msgid "HSV color space"
+msgstr "Spasi warna HSV"
+
+
+msgid "YUV color space"
+msgstr "Spasi warna YUV"
+
+
+msgid "YCbCr"
+msgstr "YCbCr"
+
+
+msgid "YCbCr color space"
+msgstr "Spasi warna YCbCr"
 
 
 msgid "Limit Channel"
-msgstr "Saluran"
+msgstr "Batas Saluran"
+
+
+msgid "Algorithm"
+msgstr "Algoritma"
+
+
+msgid "Single"
+msgstr "Tunggal"
+
+
+msgid "Acceptance"
+msgstr "Penerimaan"
+
+
+msgid "Color Balance"
+msgstr "Keseimbangan Warna"
 
 
 msgid "Correction Formula"
 msgstr "Rumus Koreksi"
+
+
+msgid "Basis"
+msgstr "Basis"
 
 
 msgid "Color Correction"
@@ -9248,35 +10918,15 @@ msgstr "Koreksi Warna"
 
 
 msgid "Blue channel active"
-msgstr "Saluran"
+msgstr "Saluran biru aktif"
 
 
 msgid "Green channel active"
-msgstr "Saluran"
-
-
-msgid "Highlights Saturation"
-msgstr "Penyunting Logika"
+msgstr "Saluran hijau aktif"
 
 
 msgid "Master Contrast"
 msgstr "Master Kontras"
-
-
-msgid "Master Gain"
-msgstr "Master Lokasi"
-
-
-msgid "Master Gamma"
-msgstr "Tekstur"
-
-
-msgid "Master gamma"
-msgstr "Tekstur"
-
-
-msgid "Master Lift"
-msgstr "Tekstur"
 
 
 msgid "Master Saturation"
@@ -9285,10 +10935,6 @@ msgstr "Master Saturasi"
 
 msgid "Master saturation"
 msgstr "Master saturasi"
-
-
-msgid "Midtones Contrast"
-msgstr "Penyunting Logika"
 
 
 msgid "Midtones End"
@@ -10212,10 +11858,6 @@ msgid "Texture Node"
 msgstr "Tekstur"
 
 
-msgid "Int"
-msgstr "Informasi"
-
-
 msgid "Use Node Format"
 msgstr "Situs Blender"
 
@@ -10984,8 +12626,13 @@ msgstr "Konsol Python"
 
 
 msgctxt "Operator"
-msgid "(De)select First"
-msgstr "Seleksi"
+msgid "Remove Target"
+msgstr "Hapus Target"
+
+
+msgctxt "Operator"
+msgid "Draw Curve"
+msgstr "Gambar Kurva"
 
 
 msgctxt "Operator"
@@ -11114,6 +12761,14 @@ msgid "Lamp"
 msgstr "Lampu"
 
 
+msgid "Renderable Objects"
+msgstr "Objek yang Dapat Dirender"
+
+
+msgid "Visible Objects"
+msgstr "Objek yang Terlihat"
+
+
 msgctxt "Operator"
 msgid "Delete Bookmark"
 msgstr "Hapus"
@@ -11136,11 +12791,6 @@ msgstr "Buka"
 msgctxt "Operator"
 msgid "Next Folder"
 msgstr "Warna Standar"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Situs Blender"
 
 
 msgctxt "Operator"
@@ -11218,58 +12868,98 @@ msgid "Paste File"
 msgstr "Tipe"
 
 
+msgctxt "Operator"
+msgid "Add Text Box"
+msgstr "Tambah Kotak Teks"
+
+
+msgid "Add a new text box"
+msgstr "Tambah kotak Teks"
+
+
+msgctxt "Operator"
+msgid "Remove Text Box"
+msgstr "Hapus Kotak Teks"
+
+
+msgid "Remove the text box"
+msgstr "Hapus kotak teks"
+
+
 msgid "Remove from selection"
 msgstr "Menghapus dari seleksi"
 
 
-msgid "Toggle Selection"
-msgstr "Hapus"
-
-
-msgid "Toggle the selection"
-msgstr "Hapus"
+msgctxt "Operator"
+msgid "Delete Active Frame"
+msgstr "Hapus Frame Aktif"
 
 
 msgctxt "Operator"
-msgid "Delete Active Frame"
-msgstr "Hapus"
+msgid "Delete All Active Frames"
+msgstr "Hapus Semua Frame Aktif"
+
+
+msgid "Segment"
+msgstr "Segmen"
+
+
+msgid "Eraser"
+msgstr "Penghapus"
+
+
+msgid "Stabilizer Stroke Factor"
+msgstr "Stabilisasi Faktor Garis Luar"
+
+
+msgid "Stabilizer Stroke Radius"
+msgstr "Stabilisasi Radius Garis Luar"
+
+
+msgid "Stabilize Stroke"
+msgstr "Stabilisasi Garis Luar"
+
+
+msgid "Target Frame"
+msgstr "Frame Target"
 
 
 msgid "Gap Duration"
 msgstr "Celah Durasi"
 
 
-msgid "Gap Randomness"
-msgstr "Acak"
+msgid "Delete selected strokes"
+msgstr "Hapus garis luar yang terseleksi"
 
 
-msgid "Timing Mode"
-msgstr "Modus Sunting"
+msgid "Delete active frame"
+msgstr "Hapus frame aktif"
 
 
-msgid "Simple linear timing"
-msgstr "Gerakan"
+msgid "No Straight lines"
+msgstr "Tidak Ada Garis Lurus"
 
 
-msgid "Link Strokes"
-msgstr "Batal"
-
-
-msgid "Normalize Weight"
-msgstr "Orientasi Transformasi"
+msgctxt "Operator"
+msgid "Duplicate Strokes"
+msgstr "Duplikasi Garis Luar"
 
 
 msgid "Limit"
 msgstr "Batas"
 
 
-msgid "Hide unselected rather than selected layers"
-msgstr "Warna Standar"
+msgid "Generate Mask"
+msgstr "Menghasilkan Masker"
 
 
 msgctxt "Operator"
 msgid "Add New Layer"
 msgstr "Lapisan"
+
+
+msgid "Only Active"
+msgstr "Hanya Aktif"
 
 
 msgctxt "Operator"
@@ -11402,10 +13092,6 @@ msgid "Add F-Curve Modifier"
 msgstr "Tambah Pengubah Kurva-F"
 
 
-msgid "Only Active"
-msgstr "Hanya Aktif"
-
-
 msgctxt "Operator"
 msgid "Copy F-Modifiers"
 msgstr "Modus Sunting"
@@ -11491,18 +13177,48 @@ msgstr "Gambar"
 
 
 msgctxt "Operator"
+msgid "Render Region"
+msgstr "Render Wilayah"
+
+
+msgctxt "Operator"
 msgid "Replace Image"
-msgstr "Warna"
+msgstr "Gantikan Gambar"
+
+
+msgctxt "Operator"
+msgid "Resize Image"
+msgstr "Ubah Ukuran Gambar"
+
+
+msgid "Resize the image"
+msgstr "Ubah ukuran gambar"
 
 
 msgctxt "Operator"
 msgid "Sample Color"
-msgstr "Warna"
+msgstr "Sampel Warna"
 
 
 msgctxt "Operator"
 msgid "Sample Line"
 msgstr "Gerakan"
+
+
+msgid "X End"
+msgstr "Akhir X"
+
+
+msgid "X Start"
+msgstr "Awal X"
+
+
+msgid "Y End"
+msgstr "Akhir Y"
+
+
+msgid "Y Start"
+msgstr "Awal Y"
 
 
 msgctxt "Operator"
@@ -11533,6 +13249,14 @@ msgid "Unpack Image"
 msgstr "Gambar Latar"
 
 
+msgid "Use Local File"
+msgstr "Gunakan Dokumen Lokal"
+
+
+msgid "Use Original File"
+msgstr "Gunakan Dokumen Asli"
+
+
 msgid "View the entire image"
 msgstr "Hapus"
 
@@ -11553,6 +13277,75 @@ msgstr "Perbesar"
 
 msgid "Scale FPS"
 msgstr "Skala FPS"
+
+
+msgid "Scale the framerate from the BVH to the current scenes, otherwise each BVH frame maps directly to a Blender frame"
+msgstr "Skalakan framerate dari BVH ke adegan sekarang, jika tidak, setiap peta frame BVH secara langsung ke frame Blender"
+
+
+msgctxt "Operator"
+msgid "Import SVG"
+msgstr "Impor SVG"
+
+
+msgid "Load a SVG file"
+msgstr "Memuat dokumen SVG"
+
+
+msgid "Facing Positive X"
+msgstr "Menghadapi X Positif"
+
+
+msgid "Facing Positive Y"
+msgstr "Menghadapi Y Positif"
+
+
+msgid "Z+ (Up)"
+msgstr "Z+ (Ke Atas)"
+
+
+msgid "Facing Positive Z"
+msgstr "Menghadapi Z Positif"
+
+
+msgid "Facing Negative X"
+msgstr "Menghadapi X Negatif"
+
+
+msgid "Facing Negative Y"
+msgstr "Menghadapi Y Negatif"
+
+
+msgid "Z- (Down)"
+msgstr "Z- (Ke Bawah)"
+
+
+msgid "Facing Negative Z"
+msgstr "Menghadapi Z Negatif"
+
+
+msgid "Face Camera"
+msgstr "Hadapi Kamera"
+
+
+msgid "Facing Camera"
+msgstr "Menghadapi Kamera"
+
+
+msgid "Facing the Camera's dominant axis"
+msgstr "Menghadapi sumbu dominan Kamera"
+
+
+msgid "Track Camera"
+msgstr "Lacak Kamera"
+
+
+msgid "Always face the camera"
+msgstr "Selalu hadapi kamera"
+
+
+msgid "Definition"
+msgstr "Definisi"
 
 
 msgid "Overwrite Material"
@@ -11833,6 +13626,10 @@ msgid "Use Existing Faces"
 msgstr "Partikel"
 
 
+msgid "Compare UVs"
+msgstr "Bandingkan UV"
+
+
 msgctxt "Operator"
 msgid "Clear Skin Data"
 msgstr "Kamera"
@@ -12049,6 +13846,10 @@ msgid "By Material"
 msgstr "Oleh Material"
 
 
+msgid "Fill Region"
+msgstr "Isi Wilayah"
+
+
 msgctxt "Operator"
 msgid "Sort Mesh Elements"
 msgstr "Hapus Titik"
@@ -12189,44 +13990,75 @@ msgstr "Modus Sunting"
 
 
 msgid "Node Type"
-msgstr "Gambar"
+msgstr "Tipe Node"
 
 
 msgid "Node type"
-msgstr "Tekstur"
+msgstr "Tipe node"
+
+
+msgctxt "Operator"
+msgid "Add Node Collection"
+msgstr "Tambah Koleksi Node"
+
+
+msgid "Add an collection info node to the current node editor"
+msgstr "Tambah node info koleksi ke editor node sekarang"
 
 
 msgctxt "Operator"
 msgid "Add File Node"
-msgstr "Tambah Baru"
+msgstr "Tambah Node Dokumen"
+
+
+msgid "Add a file node to the current node editor"
+msgstr "Tambah node dokumen ke editor node sekarang"
+
+
+msgctxt "Operator"
+msgid "Add Node Group"
+msgstr "Tambah Kelompok Node"
+
+
+msgid "Add an existing node group to the current node editor"
+msgstr "Tambah kelompok node yang ada ke editor node sekarang"
+
+
+msgctxt "Operator"
+msgid "Add Mask Node"
+msgstr "Tambah Node Masker"
+
+
+msgid "Add a mask node to the current node editor"
+msgstr "Tambah node masker ke editor node sekarang"
 
 
 msgctxt "Operator"
 msgid "Add Node"
-msgstr "Tambah Baru"
+msgstr "Tambah Node"
 
 
 msgid "Add a node to the active tree"
-msgstr "Adegan"
+msgstr "Tambah node ke pohon aktif"
 
 
 msgctxt "Operator"
-msgid "Add Reroute"
-msgstr "Warna Standar"
+msgid "Add Node Object"
+msgstr "Tambah Objek Node"
+
+
+msgid "Add an object info node to the current node editor"
+msgstr "Tambah node info objek ke editor node sekarang"
 
 
 msgctxt "Operator"
 msgid "Search and Add Node"
-msgstr "Modus Sunting"
+msgstr "Cari dan Tambah Node"
 
 
 msgctxt "Operator"
-msgid "Attach Nodes"
-msgstr "Tambah Baru"
-
-
-msgid "Attach active node to a frame"
-msgstr "Data Objek"
+msgid "Add Node Texture"
+msgstr "Tambah Tekstur Node"
 
 
 msgctxt "Operator"
@@ -12260,22 +14092,31 @@ msgid "Detach and Move"
 msgstr "Modus Sunting"
 
 
-msgid "Attach Nodes"
-msgstr "Tambah Baru"
+msgctxt "Operator"
+msgid "Find Node"
+msgstr "Cari Node"
 
 
 msgctxt "Operator"
 msgid "Edit Group"
-msgstr "Grup"
+msgstr "Edit Grup"
 
 
-msgid "Separate selected nodes from the node group"
-msgstr "Hapus Titik"
+msgid "Edit node group"
+msgstr "Edit kelompok node"
+
+
+msgid "Exit"
+msgstr "Keluar"
 
 
 msgctxt "Operator"
-msgid "Ungroup"
-msgstr "Grup"
+msgid "Make Group"
+msgstr "Buat Kelompok"
+
+
+msgid "Make group from selected nodes"
+msgstr "Buat kelompok dari node terseleksi"
 
 
 msgctxt "Operator"
@@ -12284,8 +14125,16 @@ msgstr "Sembunyikan"
 
 
 msgctxt "Operator"
-msgid "Add Node Color Preset"
-msgstr "Kamera"
+msgid "New Node Tree"
+msgstr "Pohon Node Baru"
+
+
+msgid "Create a new node tree"
+msgstr "Buat pohon node baru"
+
+
+msgid "Tree Type"
+msgstr "Tipe Pohon"
 
 
 msgid "Copy color to all selected nodes"
@@ -12299,26 +14148,21 @@ msgstr "Induk"
 
 msgctxt "Operator"
 msgid "Resize Node"
-msgstr "Tekstur"
+msgstr "Ubah Ukuran Node"
 
 
 msgid "Resize a node"
-msgstr "Tekstur"
-
-
-msgctxt "Operator"
-msgid "Link Viewer"
-msgstr "Tampilan 3D"
+msgstr "Ubah ukuran node"
 
 
 msgctxt "Operator"
 msgid "Select Linked From"
-msgstr "Seleksi"
+msgstr "Seleksi Terhubung Dari"
 
 
 msgctxt "Operator"
 msgid "Select Linked To"
-msgstr "Seleksi"
+msgstr "Seleksi Terhubung Ke"
 
 
 msgctxt "Operator"
@@ -12333,12 +14177,64 @@ msgstr "Tambah Objek"
 
 msgctxt "Operator"
 msgid "Align Objects"
-msgstr "Sunting Objek"
+msgstr "Menyejajarkan Objek"
+
+
+msgid "Align objects"
+msgstr "Menyejajarkan objek"
+
+
+msgid "Align to axis"
+msgstr "Menyejajarkan ke sumbu"
+
+
+msgid "Align Mode"
+msgstr "Mode Menyejajarkan"
+
+
+msgid "Side of object to use for alignment"
+msgstr "Sisi objek digunakan untuk penyejajaran"
+
+
+msgid "Negative Sides"
+msgstr "Sisi Negatif"
+
+
+msgid "Centers"
+msgstr "Pusat"
+
+
+msgid "Positive Sides"
+msgstr "Sisi Positif"
+
+
+msgid "Relative To"
+msgstr "Relatif Ke"
+
+
+msgid "Reference location to align to"
+msgstr "Lokasi referensi menyejajarkan ke"
+
+
+msgid "Scene Origin"
+msgstr "Adegan Asal"
+
+
+msgid "Use the scene origin as the position for the selected objects to align to"
+msgstr "Gunakan adegan asal sebagai posisi untuk objek terseleksi menyejajarkan ke"
 
 
 msgctxt "Operator"
 msgid "Add Armature"
-msgstr "Tambah Gambar"
+msgstr "Tambah Armatur"
+
+
+msgid "Add an armature object to the scene"
+msgstr "Tambah objek armatur ke adegan"
+
+
+msgid "Combined"
+msgstr "Terkombinasi"
 
 
 msgid "Split baked maps per material, using material name in output file (external only)"
@@ -12347,17 +14243,52 @@ msgstr "Pisah map yang terbakar per material, menggunakan nama material di dokum
 
 msgctxt "Operator"
 msgid "Add Camera"
-msgstr "Kamera"
+msgstr "Tambah Kamera"
+
+
+msgid "Add a camera object to the scene"
+msgstr "Tambah objek kamera ke adegan"
+
+
+msgctxt "Operator"
+msgid "Add to Collection"
+msgstr "Tambah ke Koleksi"
+
+
+msgid "Add an object to a new collection"
+msgstr "Tambah objek ke koleksi baru"
+
+
+msgctxt "Operator"
+msgid "Add Collection Instance"
+msgstr "Tambah Instansi Koleksi"
+
+
+msgid "Add a collection instance"
+msgstr "Tambah instansi koleksi"
+
+
+msgid "Collection name to add"
+msgstr "Nama koleksi ditambahkan"
+
+
+msgctxt "Operator"
+msgid "Link to Collection"
+msgstr "Hubungkan ke Koleksi"
+
+
+msgid "Add an object to an existing collection"
+msgstr "Tambah objek ke koleksi yang ada"
+
+
+msgctxt "Operator"
+msgid "Remove Collection"
+msgstr "Hapus Koleksi"
 
 
 msgctxt "Operator"
 msgid "Add Constraint"
-msgstr "Konsol Python"
-
-
-msgctxt "Operator"
-msgid "Clear Object Constraints"
-msgstr "Data Objek"
+msgstr "Tambah Pembatas"
 
 
 msgid "Grease Pencil from Curve or Mesh objects"
@@ -12508,18 +14439,33 @@ msgstr "Modus Pahat"
 
 
 msgctxt "Operator"
-msgid "Reset Hook"
-msgstr "Setel Ulang"
+msgid "Add Light"
+msgstr "Tambah Cahaya"
 
 
-msgctxt "Operator"
-msgid "Select Hook"
-msgstr "Seleksi"
+msgid "Add a light object to the scene"
+msgstr "Tambah objek cahaya ke adegan"
 
 
 msgctxt "Operator"
 msgid "Clear Location"
 msgstr "Kosongkan Lokasi"
+
+
+msgid "Clear the object's location"
+msgstr "Kosongkan lokasi objek"
+
+
+msgid "Clear Delta"
+msgstr "Hapus Delta"
+
+
+msgid "Link Collections"
+msgstr "Hubungkan Koleksi"
+
+
+msgid "Link Fonts to Text"
+msgstr "Hubungkan Font ke Teks"
 
 
 msgid "Copy Modifiers"
@@ -12689,11 +14635,15 @@ msgstr "Modus Pahat"
 
 
 msgid "Keep Transform"
-msgstr "Orientasi Transformasi"
+msgstr "Tetapkan Transformasi"
 
 
-msgid "Apply transformation before parenting"
-msgstr "Orientasi Transformasi"
+msgid "Bone Relative"
+msgstr "Tulang Relatif"
+
+
+msgid "Add a particle system"
+msgstr "Tambah sistem partikel"
 
 
 msgctxt "Operator"
@@ -12751,8 +14701,38 @@ msgstr "Seleksi"
 
 
 msgctxt "Operator"
+msgid "Add Effect"
+msgstr "Tambah Efek"
+
+
+msgctxt "ID"
+msgid "Blur"
+msgstr "Blur"
+
+
+msgctxt "ID"
+msgid "Colorize"
+msgstr "Warnai"
+
+
+msgctxt "ID"
+msgid "Flip"
+msgstr "Balik"
+
+
+msgctxt "ID"
+msgid "Pixelate"
+msgstr "Pixelate"
+
+
+msgctxt "ID"
+msgid "Shadow"
+msgstr "Bayangan"
+
+
+msgctxt "Operator"
 msgid "Add Shape Key"
-msgstr "Tambah Gambar"
+msgstr "Tambah Kunci Bentuk"
 
 
 msgctxt "Operator"
@@ -12782,32 +14762,26 @@ msgid "Set selected vertices as not loose"
 msgstr "Warna Standar"
 
 
-msgid "Make skin radii of selected vertices equal on each axis"
-msgstr "Warna Standar"
-
-
-msgid "Mark selected vertices as roots"
-msgstr "Warna Standar"
-
-
 msgctxt "Operator"
 msgid "Add Speaker"
-msgstr "Tambah Gambar"
+msgstr "Tambah Pengeras Suara"
+
+
+msgid "Add a speaker object to the scene"
+msgstr "Tambah objek pengeras suara ke adegan"
 
 
 msgctxt "Operator"
 msgid "Add Text"
-msgstr "Tambah Baru"
+msgstr "Tambah Teks"
 
 
-msgctxt "Operator"
-msgid "Clear Track"
-msgstr "Hapus"
+msgid "Add a text object to the scene"
+msgstr "Tambah objek teks ke adegan"
 
 
-msgctxt "Operator"
-msgid "Make Track"
-msgstr "Hapus"
+msgid "All Transforms"
+msgstr "Semua Transformasi"
 
 
 msgctxt "Operator"
@@ -12905,7 +14879,20 @@ msgstr "Induk"
 
 msgctxt "Operator"
 msgid "Set Active Group"
-msgstr "Warna Standar"
+msgstr "Set Kelompok Aktif"
+
+
+msgid "Set as active vertex group"
+msgstr "Set sebagai kelompok vertex aktif"
+
+
+msgctxt "Operator"
+msgid "Add Volume"
+msgstr "Tambah Volume"
+
+
+msgid "Add a volume object to the scene"
+msgstr "Tambah objek volume ke adegan"
 
 
 msgid "Animation Operation"
@@ -12939,6 +14926,99 @@ msgstr "Nonaktifkan Koleksi"
 
 
 msgctxt "Operator"
+msgid "Duplicate Collection"
+msgstr "Duplikasi Koleksi"
+
+
+msgctxt "Operator"
+msgid "Enable Collection"
+msgstr "Aktifkan Koleksi"
+
+
+msgid "Render the collection"
+msgstr "Render koleksi"
+
+
+msgctxt "Operator"
+msgid "Delete Hierarchy"
+msgstr "Hapus Hirarki"
+
+
+msgid "Delete selected collection hierarchies"
+msgstr "Hapus hirarki koleksi yang terseleksi"
+
+
+msgctxt "Operator"
+msgid "Link Collection"
+msgstr "Hubungkan Koleksi"
+
+
+msgctxt "Operator"
+msgid "New Collection"
+msgstr "Koleksi Baru"
+
+
+msgid "Add a new collection inside selected collection"
+msgstr "Tambah koleksi baru di dalam koleksi terseleksi"
+
+
+msgctxt "Operator"
+msgid "Select Objects"
+msgstr "Pilih Objek"
+
+
+msgctxt "Operator"
+msgid "Show Collection"
+msgstr "Tampilkan Koleksi"
+
+
+msgctxt "Operator"
+msgid "Show Inside Collection"
+msgstr "Tampilkan Koleks di Dalam"
+
+
+msgid "Constraint Operation"
+msgstr "Operasi Pembatas"
+
+
+msgid "Data Operation"
+msgstr "Operasi Data"
+
+
+msgid "ID Data Operation"
+msgstr "Operasi Data ID"
+
+
+msgid "Make Local"
+msgstr "Buat Lokal"
+
+
+msgid "Paste"
+msgstr "Tempel"
+
+
+msgid "Rename"
+msgstr "Ganti Nama"
+
+
+msgid "New ID"
+msgstr "ID Baru"
+
+
+msgid "Old ID"
+msgstr "ID Lama"
+
+
+msgctxt "Operator"
+msgid "Rename"
+msgstr "Ganti Nama"
+
+
+msgid "Use Active"
+msgstr "Gunakan Aktif"
+
+
+msgctxt "Operator"
 msgid "Drop Material on Object"
 msgstr "Menjatuhkan Material di Objek"
 
@@ -12950,6 +15030,10 @@ msgstr "Menggeserkan material ke objek di Outliner"
 msgctxt "Operator"
 msgid "Drop Object to Scene"
 msgstr "Data Objek"
+
+
+msgid "Scene Operation"
+msgstr "Operasi Adegan"
 
 
 msgctxt "Operator"
@@ -12996,8 +15080,24 @@ msgid "Hide/Show"
 msgstr "Sembunyikan/Tampilkan"
 
 
+msgid "Hide/show some vertices"
+msgstr "Sembunyikan/tampilkan beberapa sudut"
+
+
+msgid "Hide vertices"
+msgstr "Sembunyikan sudut"
+
+
 msgid "Show"
 msgstr "Tampilkan"
+
+
+msgid "Show vertices"
+msgstr "Tampilkan sudut"
+
+
+msgid "Which vertices to hide or show"
+msgstr "Sudut untuk ditampilkan atau diperlihatkan"
 
 
 msgctxt "Operator"
@@ -13056,17 +15156,16 @@ msgstr "Nilai Terbalik"
 
 
 msgid "Invert the mask"
-msgstr "Saluran"
-
-
-msgctxt "Operator"
-msgid "Mask Flood Fill"
-msgstr "Tekstur"
+msgstr "Balikkan masker"
 
 
 msgctxt "Operator"
 msgid "Project Image"
-msgstr "Objek"
+msgstr "Gambar Proyek"
+
+
+msgid "Add to Palette"
+msgstr "Tambah ke Palet"
 
 
 msgctxt "Operator"
@@ -13112,6 +15211,14 @@ msgstr "Modus Pahat"
 msgctxt "Operator"
 msgid "Set Weight"
 msgstr "Orientasi Transformasi"
+
+
+msgid "Palette"
+msgstr "Palet"
+
+
+msgid "Name of the Palette"
+msgstr "Nama Palet"
 
 
 msgctxt "Operator"
@@ -13830,9 +15937,29 @@ msgid "Path to the matching po file"
 msgstr "Tidak dapat membuka dokumen"
 
 
+msgid "Operator Name"
+msgstr "Nama Operator"
+
+
 msgctxt "Operator"
 msgid "Edit Translation Update Mo"
 msgstr "Orientasi Transformasi"
+
+
+msgid "Invert Selection"
+msgstr "Balikkan Seleksi"
+
+
+msgid "Select All"
+msgstr "Pilih Semua"
+
+
+msgid "Check Branches"
+msgstr "Cek Cabang"
+
+
+msgid "Check po files in branches"
+msgstr "Cek dokumen po di cabang"
 
 
 msgctxt "Operator"
@@ -13855,8 +15982,8 @@ msgid "Lightmap Pack"
 msgstr "Kamera"
 
 
-msgid "Clear Seams"
-msgstr "Hapus"
+msgid "Share Texture Space"
+msgstr "Bagi Spasi Tekstur"
 
 
 msgctxt "Operator"
@@ -13911,6 +16038,10 @@ msgid "Smart UV Project"
 msgstr "Sunting Objek"
 
 
+msgid "Area Weight"
+msgstr "Beban Daerah"
+
+
 msgctxt "Operator"
 msgid "Snap Cursor"
 msgstr "Jepret Kursor"
@@ -13939,6 +16070,10 @@ msgid "Reset View"
 msgstr "Tampilan 3D"
 
 
+msgid "Page"
+msgstr "Halaman"
+
+
 msgctxt "Operator"
 msgid "Smooth View 2D"
 msgstr "Tampilan 3D"
@@ -13947,6 +16082,11 @@ msgstr "Tampilan 3D"
 msgctxt "Operator"
 msgid "Zoom 2D View"
 msgstr "Tampilan 3D"
+
+
+msgctxt "Operator"
+msgid "Add Background Image"
+msgstr "Tambah Gambar Background"
 
 
 msgctxt "Operator"
@@ -13961,6 +16101,20 @@ msgstr "Tampilkan Gambar Latar pada tampilan atas"
 msgctxt "Operator"
 msgid "Select Menu"
 msgstr "Seleksi"
+
+
+msgctxt "Operator"
+msgid "Copy Objects"
+msgstr "Salin Objek"
+
+
+msgctxt "Operator"
+msgid "Set 3D Cursor"
+msgstr "Set Kursor 3D"
+
+
+msgid "Surface Project"
+msgstr "Proyek Permukaan"
 
 
 msgctxt "Operator"
@@ -14144,6 +16298,22 @@ msgid "Pan"
 msgstr "Pan"
 
 
+msgid "Pan Left"
+msgstr "Pan ke Kiri"
+
+
+msgid "Pan Right"
+msgstr "Pan ke Kanan"
+
+
+msgid "Pan Up"
+msgstr "Pan ke Atas"
+
+
+msgid "Pan Down"
+msgstr "Pan ke Bawah"
+
+
 msgid "Export normals"
 msgstr "Ekspor normal"
 
@@ -14210,7 +16380,7 @@ msgstr "Bagian Ekspor"
 
 
 msgid "Only for User Interface organization"
-msgstr "Hanya untuk organisasi Interface Pengguna"
+msgstr "Hanya untuk organisasi Antarmuka Pengguna"
 
 
 msgid "Data export section"
@@ -14291,8 +16461,12 @@ msgid "Toggle enum"
 msgstr "Kamera"
 
 
+msgid "Pause"
+msgstr "Pause"
+
+
 msgid "Play"
-msgstr "Putar"
+msgstr "Main"
 
 
 msgid "Random Order"
@@ -14310,8 +16484,34 @@ msgstr "Material"
 
 
 msgctxt "Operator"
+msgid "Export to PDF"
+msgstr "Ekspor ke PDF"
+
+
+msgid "Export grease pencil to PDF"
+msgstr "Ekspor pensil grease ke PDF"
+
+
+msgctxt "Operator"
+msgid "Open"
+msgstr "Buka"
+
+
+msgid "Load user interface setup in the .blend file"
+msgstr "Muat setup antarmuka pengguna di dokumen .blend"
+
+
+msgctxt "Operator"
 msgid "Operator Preset"
 msgstr "Kamera"
+
+
+msgid "Data-Block Type"
+msgstr "Tipe Data-Blok"
+
+
+msgid "All Types"
+msgstr "Semua Tipe"
 
 
 msgctxt "Operator"
@@ -14328,6 +16528,10 @@ msgid "Property Name"
 msgstr "Nama Properti"
 
 
+msgid "Subtype"
+msgstr "Subtipe"
+
+
 msgctxt "Operator"
 msgid "Remove Property"
 msgstr "Induk"
@@ -14336,6 +16540,10 @@ msgstr "Induk"
 msgctxt "Operator"
 msgid "Quit Blender"
 msgstr "Situs Blender"
+
+
+msgid "Image ID"
+msgstr "ID Gambar"
 
 
 msgid "Use Secondary"
@@ -14347,9 +16555,17 @@ msgid "Load Factory Settings"
 msgstr "Partikel"
 
 
+msgid "Load user interface setup from the .blend file"
+msgstr "Muat setup antarmuka pengguna dari dokumen .blend"
+
+
 msgctxt "Operator"
 msgid "Recover Auto Save"
 msgstr "Penyimpanan Otomatis"
+
+
+msgid "Save Copy"
+msgstr "Simpan Salinan"
 
 
 msgctxt "Operator"
@@ -14360,6 +16576,11 @@ msgstr "Data Animasi"
 msgctxt "Operator"
 msgid "Save Blender File"
 msgstr "Situs Blender"
+
+
+msgctxt "Operator"
+msgid "Save Preferences"
+msgstr "Simpan Preferensi"
 
 
 msgctxt "Operator"
@@ -14598,7 +16819,7 @@ msgstr "Style Teks"
 
 
 msgid "User Interface"
-msgstr "Interface Pengguna"
+msgstr "Antarmuka Pengguna"
 
 
 msgid "Gradient Colors"
@@ -14661,6 +16882,10 @@ msgid "Auto IK"
 msgstr "Otomatis"
 
 
+msgid "Active section of the preferences shown in the user interface"
+msgstr "Bagian aktif preferensi ditapilkan di antarmuka pengguna"
+
+
 msgid "Duplicate Metaball"
 msgstr "Duplikasi Metabola"
 
@@ -14681,6 +16906,10 @@ msgid "Image Editor"
 msgstr "Penyunting Gambar"
 
 
+msgid "Load user interface setup when loading .blend files"
+msgstr "Muat setup antarmuka pengguna saat memuat dokumen .blend"
+
+
 msgid "NDOF View Rotation"
 msgstr "Gerakan"
 
@@ -14691,6 +16920,22 @@ msgstr "Lanjutkan"
 
 msgid "Ambient Color"
 msgstr "Warna Standar"
+
+
+msgid "UI Scale"
+msgstr "Skala UI"
+
+
+msgid "Keep User Interface"
+msgstr "Tetapkan Antarmuka Pengguna"
+
+
+msgid "Images are rendered without changing the user interface"
+msgstr "Gambar dirender tanpa mengubah antarmuka pengguna"
+
+
+msgid "Method for making user interface text render sharp"
+msgstr "Metode untuk membuat render teks antarmuka pengguna lancip"
 
 
 msgid "Panorama Type"
@@ -14857,6 +17102,10 @@ msgid "Movie Format"
 msgstr "Format Film"
 
 
+msgid "Automatic pixel size, depends on the user interface scale"
+msgstr "Ukuran pixel otomatis, tergantung skala antarmuka pengguna"
+
+
 msgid "1x"
 msgstr "1x"
 
@@ -14961,6 +17210,18 @@ msgid "32 px"
 msgstr "32 px"
 
 
+msgid "Background Separation"
+msgstr "Separasi Latar Belakang"
+
+
+msgid "Motion steps"
+msgstr "Langkah gerakan"
+
+
+msgid "Render Samples"
+msgstr "Sampel Render"
+
+
 msgid "2 px"
 msgstr "2 px"
 
@@ -14989,6 +17250,14 @@ msgid "File Suffix"
 msgstr "Suffix Dokumen"
 
 
+msgid "Blend Opacity"
+msgstr "Opasitas Pencampuran"
+
+
+msgid "Speed Factor"
+msgstr "Faktor Kecepatan"
+
+
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Tipe"
@@ -14997,6 +17266,11 @@ msgstr "Tipe"
 msgctxt "Sequence"
 msgid "Image"
 msgstr "Gambar"
+
+
+msgctxt "Sequence"
+msgid "Meta"
+msgstr "Meta"
 
 
 msgctxt "Sequence"
@@ -15025,6 +17299,11 @@ msgstr "Suara"
 
 
 msgctxt "Sequence"
+msgid "Cross"
+msgstr "Silang"
+
+
+msgctxt "Sequence"
 msgid "Add"
 msgstr "Tambah"
 
@@ -15032,6 +17311,16 @@ msgstr "Tambah"
 msgctxt "Sequence"
 msgid "Subtract"
 msgstr "Kurang"
+
+
+msgctxt "Sequence"
+msgid "Alpha Over"
+msgstr "Alpha di Atas"
+
+
+msgctxt "Sequence"
+msgid "Alpha Under"
+msgstr "Alpha di Bawah"
 
 
 msgctxt "Sequence"
@@ -15049,6 +17338,16 @@ msgid "Speed"
 msgstr "Kecepatan"
 
 
+msgctxt "Sequence"
+msgid "Text"
+msgstr "Teks"
+
+
+msgctxt "Sequence"
+msgid "Color Mix"
+msgstr "Campuran Warna"
+
+
 msgid "Use Linear Modifiers"
 msgstr "Modus Pahat"
 
@@ -15057,8 +17356,20 @@ msgid "Multiply Colors"
 msgstr "Warna Standar"
 
 
-msgid "Add Sequence"
-msgstr "Orientasi Transformasi"
+msgid "Input 1"
+msgstr "Masukan 1"
+
+
+msgid "First input for the effect strip"
+msgstr "Input pertama untuk strip efek"
+
+
+msgid "Input 2"
+msgstr "Masukan 2"
+
+
+msgid "Second input for the effect strip"
+msgstr "Input kedua untuk strip efek"
 
 
 msgid "Animation End Offset"
@@ -15085,20 +17396,36 @@ msgid "Gamma Cross Sequence"
 msgstr "Orientasi Transformasi"
 
 
-msgid "Multiply Sequence"
-msgstr "Orientasi Transformasi"
+msgid "Blur Distance"
+msgstr "Jarak Blur"
 
 
-msgid "Over Drop Sequence"
-msgstr "Orientasi Transformasi"
+msgid "Frame Interpolation"
+msgstr "Interpolasi Frame"
 
 
-msgid "Subtract Sequence"
-msgstr "Orientasi Transformasi"
+msgid "Box Color"
+msgstr "Warna Box"
 
 
-msgid "Transform Sequence"
-msgstr "Orientasi Transformasi"
+msgid "Text color"
+msgstr "Warna teks"
+
+
+msgid "Size of the text"
+msgstr "Ukuran teks"
+
+
+msgid "Location of the text"
+msgstr "Lokasi teks"
+
+
+msgid "Edge angle"
+msgstr "Ujung sudut"
+
+
+msgid "Blur Width"
+msgstr "Lebar Blur"
 
 
 msgid "Out"
@@ -15124,24 +17451,21 @@ msgid "Double"
 msgstr "Ganda"
 
 
-msgid "Mask Sequence"
-msgstr "Orientasi Transformasi"
+msgctxt "Sequence"
+msgid "Clock"
+msgstr "Jam"
 
 
-msgid "MovieClip Sequence"
-msgstr "Orientasi Transformasi"
+msgid "Show Cache"
+msgstr "Tampilkan Cache"
 
 
-msgid "Undistort Clip"
-msgstr "Penyunting Logika"
+msgid "Composite Images"
+msgstr "Gabungkan Gambar"
 
 
-msgid "Use Grease Pencil"
-msgstr "Gunakan Pensil Grease"
-
-
-msgid "Overlay Offset"
-msgstr "Kamera"
+msgid "Final Images"
+msgstr "Gambar Final"
 
 
 msgid "Raw Images"
@@ -15158,6 +17482,10 @@ msgstr "Modus Pahat"
 
 msgid "Bright"
 msgstr "Kanan"
+
+
+msgid "Set effect expansion in the user interface"
+msgstr "Set ekspansi efek di antarmuka pengguna"
 
 
 msgid "Use as Depth Of Field"
@@ -15284,6 +17612,10 @@ msgid "Strand / Particle"
 msgstr "Partikel"
 
 
+msgid "User interface styling and color settings"
+msgstr "Pengaturan styling dan warna antarmuka pengguna"
+
+
 msgid "Clip Editor"
 msgstr "Penyunting Grafik"
 
@@ -15380,6 +17712,14 @@ msgid "Theme Space Settings"
 msgstr "Partikel"
 
 
+msgid "Theme User Interface"
+msgstr "Antarmuka Pengguna Tema"
+
+
+msgid "Theme settings for user interface elements"
+msgstr "Pengaturan tema untuk elemen antarmuka pengguna"
+
+
 msgid "Menu Shadow Strength"
 msgstr "Partikel"
 
@@ -15454,6 +17794,78 @@ msgstr "Partikel"
 
 msgid "Use Unified Weight"
 msgstr "Partikel"
+
+
+msgid "The unit system to use for user interface controls"
+msgstr "Sistem unit digunakan untuk kontrol antarmuka pengguna"
+
+
+msgid "Metric"
+msgstr "Metrik"
+
+
+msgid "Radians"
+msgstr "Radian"
+
+
+msgid "Temperature Unit"
+msgstr "Unit Temperatur"
+
+
+msgid "Unit that will be used to display temperature values"
+msgstr "Unit yang akan digunakan untuk menampilkan nilai temperatur"
+
+
+msgid "Time Unit"
+msgstr "Unit Waktu"
+
+
+msgid "Unit that will be used to display time values"
+msgstr "Unit yang akan digunakan untuk menampilkan nilai waktu"
+
+
+msgid "Separate Units"
+msgstr "Unit Terpisah"
+
+
+msgid "Display units in pairs (e.g. 1m 0cm)"
+msgstr "Tampilkan unit berpasangan (e.g 1m 0cm)"
+
+
+msgid "Settings to define a reusable library for Asset Browsers to use"
+msgstr "Pengaturan mendefinisikan perpusakaan yang dapat didaur ulang untuk Browser Aset digunakan"
+
+
+msgid "Solid Light"
+msgstr "Cahaya Padat"
+
+
+msgid "Light used for Studio lighting in solid shading mode"
+msgstr "Cahaya digunakan untuk pencahayaan studio di mode bayangan padat"
+
+
+msgid "Direction that the light is shining"
+msgstr "Arah yang cahaya bersinar"
+
+
+msgid "Index number of the vertex group"
+msgstr "Indeks jumlah kelompok vertex"
+
+
+msgid "Collection of vertex groups"
+msgstr "Koleksi kelompok vertex"
+
+
+msgid "Active Vertex Group"
+msgstr "Kelompok Vertex Aktif"
+
+
+msgid "Active Vertex Group Index"
+msgstr "Indeks Kelompok Vertex Aktif"
+
+
+msgid "Active index in vertex group array"
+msgstr "Indeks aktif di larik kelompok vertex"
 
 
 msgid "Object details, including empty wire, cameras and other visual guides"
@@ -15829,8 +18241,23 @@ msgstr "Editing Layar"
 
 
 msgctxt "WindowManager"
+msgid "Region Context Menu"
+msgstr "Menu Konteks Wilayah"
+
+
+msgctxt "WindowManager"
 msgid "View2D"
 msgstr "View2D"
+
+
+msgctxt "WindowManager"
+msgid "View2D Buttons List"
+msgstr "Daftar Tombol View2D"
+
+
+msgctxt "WindowManager"
+msgid "User Interface"
+msgstr "Antarmuka Pengguna"
 
 
 msgctxt "WindowManager"
@@ -16938,6 +19365,10 @@ msgstr "Temperatur"
 
 msgid "Paths:"
 msgstr "Jalur:"
+
+
+msgid "Array All Items"
+msgstr "Larik Semua Item"
 
 
 msgid "Calculate"
@@ -18450,6 +20881,10 @@ msgid "Apply"
 msgstr "Setujui"
 
 
+msgid "Int"
+msgstr "Informasi"
+
+
 msgid "Cannot bake non-'image sequence' formats"
 msgstr "Orientasi Transformasi"
 
@@ -18664,6 +21099,10 @@ msgstr "Tidak ada frame aktif untuk dihapus"
 
 msgid "No active frame(s) to delete"
 msgstr "Tidak ada frame-frame aktif untuk dihapus"
+
+
+msgid "Nothing selected"
+msgstr "Tidak ada yang terseleksi"
 
 
 msgid "Active layer is locked or hidden"
@@ -18997,14 +21436,6 @@ msgid "Only"
 msgstr "Hanya"
 
 
-msgid "Renderable Objects"
-msgstr "Objek yang Dapat Dirender"
-
-
-msgid "Visible Objects"
-msgstr "Objek yang Terlihat"
-
-
 msgid "Object Options"
 msgstr "Opsi Objek"
 
@@ -19160,10 +21591,6 @@ msgstr "Tidak ada tepi yang terseleksi"
 
 msgid "Invalid selection order"
 msgstr "Urutan seleksi yang tidak valid"
-
-
-msgid "Nothing selected"
-msgstr "Tidak ada yang terseleksi"
 
 
 msgid "No edges selected"
@@ -19414,6 +21841,10 @@ msgid "Failed to open window!"
 msgstr "Gagal untuk membuka window!"
 
 
+msgid "Maximize Area"
+msgstr "Maksimalkan Area"
+
+
 msgid "Flip to Bottom"
 msgstr "Balik ke Bawah"
 
@@ -19424,14 +21855,6 @@ msgstr "Balik ke Atas"
 
 msgid "Show Header"
 msgstr "Tampilkan Header"
-
-
-msgid "Tile Area"
-msgstr "Modus Pahat"
-
-
-msgid "Maximize Area"
-msgstr "Maksimalkan Area"
 
 
 msgid "Show Footer"
@@ -19572,66 +21995,6 @@ msgstr "Nilai: %s"
 
 msgid "No valid action to add"
 msgstr "Orientasi Transformasi"
-
-
-msgid "Sta"
-msgstr "Sta"
-
-
-msgid "Label Size"
-msgstr "Ukuran Label"
-
-
-msgid "Center:"
-msgstr "Pusat:"
-
-
-msgid "Bokeh Type:"
-msgstr "Tipe Bokeh:"
-
-
-msgid "Speed:"
-msgstr "Kecepatan:"
-
-
-msgid "Inner Edge:"
-msgstr "Tipe di Dalam:"
-
-
-msgid "Buffer Edge:"
-msgstr "Tepi Buffer:"
-
-
-msgid "Add Input"
-msgstr "Adegan"
-
-
-msgid "Master"
-msgstr "Master"
-
-
-msgid "Highlights"
-msgstr "Penyunting Logika"
-
-
-msgid "Midtones"
-msgstr "Penyunting Logika"
-
-
-msgid "Cannot ungroup"
-msgstr "Warna Standar"
-
-
-msgid "Not inside node group"
-msgstr "Warna Standar"
-
-
-msgid "Cannot separate nodes"
-msgstr "Induk"
-
-
-msgid "Add node to input"
-msgstr "Adegan"
 
 
 msgid "Operation requires an active keying set"
@@ -19853,6 +22216,14 @@ msgstr "Rantai"
 
 msgid "Filter Source"
 msgstr "Filter Sumber"
+
+
+msgid "Array length mismatch (expected %d, got %d)"
+msgstr "Ketidakcocokan panjang larik (ekspektasi %d, dapat %d)"
+
+
+msgid "Array length mismatch (got %d, expected more)"
+msgstr "Ketidakcocokan panjang larik (dapat %d, ekspektasi lebih)"
 
 
 msgid "Keying set path could not be removed"

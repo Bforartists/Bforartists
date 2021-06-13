@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -241,10 +241,6 @@ msgid "Point"
 msgstr "Puntu"
 
 
-msgid "Curve"
-msgstr "Kurba"
-
-
 msgid "+X"
 msgstr "+X"
 
@@ -315,6 +311,10 @@ msgstr "Trazua"
 
 msgid "Normal"
 msgstr "Normala"
+
+
+msgid "Curve"
+msgstr "Kurba"
 
 
 msgid "Look"
@@ -633,6 +633,10 @@ msgid "Y Axis"
 msgstr "Y Ardatza"
 
 
+msgid "Z Axis"
+msgstr "Z Ardatza"
+
+
 msgid "Original"
 msgstr "Jatorrizkoa"
 
@@ -651,10 +655,6 @@ msgstr "Y ardatza"
 
 msgid "Z axis"
 msgstr "Z ardatza"
-
-
-msgid "Z Axis"
-msgstr "Z Ardatza"
 
 
 msgctxt "Operator"
@@ -941,11 +941,6 @@ msgid "Export MDD"
 msgstr "Esportatu MDD"
 
 
-msgctxt "Operator"
-msgid "Automatically Pack Into .blend"
-msgstr "Automatikoki paketatu .blend-era"
-
-
 msgid "Top of the list"
 msgstr "Lista-hasiera"
 
@@ -1030,20 +1025,6 @@ msgstr "Hurrengo karpetara mugitu"
 
 
 msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "Paketatu guztia .blend-era"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Paketatu Blender liburutegiak"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Paketatu erabilitako Blender liburutegi guztiak .blen oraingo fitxategira"
-
-
-msgctxt "Operator"
 msgid "Parent File"
 msgstr "Erro Fitxategia"
 
@@ -1096,11 +1077,6 @@ msgid "Next"
 msgstr "Hurrengoa"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "Guztia fitxategietara despaketatu"
-
-
 msgid "How to unpack"
 msgstr "Nola despaketatu"
 
@@ -1148,15 +1124,6 @@ msgstr "Jatorrizko kokapenean erabili fitxategia (Sortu beharrezkoa denean)"
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "Jatorrizko kokapenean idatzi fitxategia (berridatzi existitzen den fitxategia)"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Despaketatu Blender liburutegiak"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "Despaketatu erabilitako Blender liburutegi guztiak .blend fitxategi honetatik"
 
 
 msgid "Lower"

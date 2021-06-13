@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -361,10 +361,6 @@ msgstr "किनारा"
 
 msgid "Face"
 msgstr "फलक"
-
-
-msgid "Curve"
-msgstr "वक्र"
 
 
 msgid "Image Format"
@@ -825,6 +821,10 @@ msgstr "आंतरिक घर्षण"
 
 msgid "Quality"
 msgstr "गुणवत्ता"
+
+
+msgid "Curve"
+msgstr "वक्र"
 
 
 msgid "Gamma"
@@ -2284,6 +2284,10 @@ msgstr "उच्च"
 
 msgid "Low"
 msgstr "कम"
+
+
+msgid "Tiled"
+msgstr "खण्ड की गईं"
 
 
 msgid "Use boundaries for viewer nodes and composite backdrop"
@@ -3876,10 +3880,6 @@ msgid "Create a new image"
 msgstr "एक नई छवि बनाएँ"
 
 
-msgid "Tiled"
-msgstr "खण्ड की गईं"
-
-
 msgid "X End"
 msgstr "X समाप्त"
 
@@ -4198,6 +4198,10 @@ msgstr "युगल हटाएँ"
 
 msgid "Next Keyframe"
 msgstr "अगले अनुबोधक चिन्ह"
+
+
+msgid "Percentage"
+msgstr "प्रतिशत"
 
 
 msgctxt "Operator"
@@ -4895,10 +4899,6 @@ msgstr "१६ x"
 
 msgid "Manual"
 msgstr "नियम पुस्तिका"
-
-
-msgid "Percentage"
-msgstr "प्रतिशत"
 
 
 msgid "New Window"
@@ -6315,10 +6315,6 @@ msgid "Could not open directory '%s'"
 msgstr "निर्देशिका  नहीं खोल सका '%s'"
 
 
-msgid "blend_data"
-msgstr "blend_सामग्री"
-
-
 msgid "Not enough free memory"
 msgstr "मुक्त स्मृति पर्याप्त नहीं है"
 
@@ -7021,22 +7017,6 @@ msgstr "असमर्थित श्रव्य स्वरूप"
 
 msgid "(Key) "
 msgstr "(कुंजी) "
-
-
-msgid "Speed:"
-msgstr "गति:"
-
-
-msgid "Path:"
-msgstr "पथ:"
-
-
-msgid "Format:"
-msgstr "स्वरूप:"
-
-
-msgid "Master"
-msgstr "प्रधान"
 
 
 msgctxt "Action"
