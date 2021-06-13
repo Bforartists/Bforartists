@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -894,8 +894,8 @@ msgid "Face"
 msgstr "Faccia"
 
 
-msgid "Curve"
-msgstr "Curva"
+msgid "Spline"
+msgstr "Spline"
 
 
 msgid "Bake Data"
@@ -3684,6 +3684,10 @@ msgstr "Spazio colore in cui opera il sequencer"
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "Impostazioni gestione colore da usare per mostrare le immagini a schermo"
+
+
+msgid "Curve"
+msgstr "Curva"
 
 
 msgid "Color curve mapping applied before display transform"
@@ -11140,10 +11144,6 @@ msgid "Bevel Depth"
 msgstr "Profondità Smusso"
 
 
-msgid "Spline"
-msgstr "Spline"
-
-
 msgid "Round"
 msgstr "Arrotonda"
 
@@ -13072,6 +13072,10 @@ msgstr "Basso"
 
 msgid "Low quality"
 msgstr "Bassa qualità"
+
+
+msgid "Tiled"
+msgstr "Tassellato"
 
 
 msgid "Render Quality"
@@ -24037,6 +24041,10 @@ msgid "Dot Product"
 msgstr "Prodotto Scalare"
 
 
+msgid "Z Axis"
+msgstr "Asse Z"
+
+
 msgid "Original"
 msgstr "Originale"
 
@@ -24618,10 +24626,6 @@ msgid "Vector Math"
 msgstr "Matematica Vettori"
 
 
-msgid "Z Axis"
-msgstr "Asse Z"
-
-
 msgid "Vector Transform"
 msgstr "Trasformazione Vettore"
 
@@ -24708,10 +24712,6 @@ msgstr "Modello Connettore"
 
 msgid "Name of the socket"
 msgstr "Nome del connettore"
-
-
-msgid "Int"
-msgstr "Int"
 
 
 msgid "From node"
@@ -28894,11 +28894,6 @@ msgid "Start frame for baking"
 msgstr "Fotogramma iniziale per il precalcolo"
 
 
-msgctxt "Operator"
-msgid "Automatically Pack Into .blend"
-msgstr "Incorpora Automaticamente nel File .blend"
-
-
 msgid "Automatically pack all external files into the .blend file"
 msgstr "Incorpora automaticamente tutti i file esterni nel file .blend"
 
@@ -28995,14 +28990,6 @@ msgid "Execute selected file"
 msgstr "Esegue il file selezionato"
 
 
-msgid "Need Active"
-msgstr "Necessita Attivo"
-
-
-msgid "Only execute if there's an active selected file in the file list"
-msgstr "Esegue solo se c'è un file selezionato attivo nella lista dei file."
-
-
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "Incrementa il numero nel nome del file"
@@ -29056,18 +29043,8 @@ msgid "Highlight selected file(s)"
 msgstr "Evidenzia il(i) file selezionato(i)"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "Rendi Tutti Percorsi Assoluti"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "Rende assoluti tutti i percorsi a file esterni"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Rendi Tutti Percorsi Relativi"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -29081,24 +29058,6 @@ msgstr "Cartella Successiva"
 
 msgid "Move to next folder"
 msgstr "Va alla cartella successiva"
-
-
-msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "Incorpora Tutto Nel .blend"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "Incorpora tutti i file esterni nel file .blend"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Incorpora Librerie Blender"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Incorpora tutte le librerie Blender esterne nel file .blend"
 
 
 msgctxt "Operator"
@@ -29193,11 +29152,6 @@ msgid "Smooth scroll to make editable file visible"
 msgstr "Scorrimento regolare per rendere visibile il file modificabile"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "Spacchetta Tutto in Files"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr "Spacchetta tutti i files incorporati in questo file .blend in file esterni"
 
@@ -29249,15 +29203,6 @@ msgstr "Usa il file nella posizione originale (crea quando necessario)"
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "Scrivi il file nella posizione originale (sovrascrive l'esistente)"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Spacchetta Librerie Blender"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "Spacchetta tutte le librerie Blender usate da questo file .blend"
 
 
 msgctxt "Operator"
@@ -29751,6 +29696,10 @@ msgid "Make a copy of the active Grease Pencil layer"
 msgstr "Crea una copia del livello Matita attivo"
 
 
+msgid "Only Active"
+msgstr "Solo Attivo"
+
+
 msgctxt "Operator"
 msgid "Isolate Layer"
 msgstr "Isola Livello"
@@ -30234,10 +30183,6 @@ msgid "Add F-Modifier to the active/selected F-Curves"
 msgstr "Aggiunge un Modificatore-F alle Curve-F attive/selezionate"
 
 
-msgid "Only Active"
-msgstr "Solo Attivo"
-
-
 msgid "Only add F-Modifier to active F-Curve"
 msgstr "Aggiunge solo F-Modifier alla Curva-F attiva"
 
@@ -30480,10 +30425,6 @@ msgstr "Altezza dell'immagine"
 
 msgid "Image data-block name"
 msgstr "Nome blocco dati Immagine"
-
-
-msgid "Tiled"
-msgstr "Tassellato"
 
 
 msgid "Create an image with left and right views"
@@ -37243,6 +37184,10 @@ msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Numero del fotogramma del keyframe immediatamente dopo al fotogramma corrente."
 
 
+msgid "Percentage"
+msgstr "Percentuale"
+
+
 msgid "Previous Keyframe"
 msgstr "Fotogramma Chiave Precedente"
 
@@ -37688,10 +37633,6 @@ msgid "Target Path"
 msgstr "Percorso del target"
 
 
-msgid "User Prefs"
-msgstr "Preferenze dell'utente"
-
-
 msgctxt "Operator"
 msgid "Refresh"
 msgstr "Aggiorna"
@@ -38089,10 +38030,6 @@ msgstr "Rimuovi Vincolo Corpo Rigido dall'Oggetto"
 msgctxt "Operator"
 msgid "Calculate Mass"
 msgstr "Calcola Massa"
-
-
-msgid "Custom density value (kg/m^3) to use instead of material preset"
-msgstr "Peso specifico personalizzato (kg/mc) da usare al posto della preimpostazione"
 
 
 msgid "Material Preset"
@@ -39096,26 +39033,14 @@ msgid "Make Meta Strip"
 msgstr "Crea MetaSpezzone"
 
 
-msgid "Group selected strips into a metastrip"
-msgstr "Raggruppa in un metaspezzone gli spezzoni selezionati"
-
-
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "Spacchetta MetaSpezzone"
 
 
-msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "Riporta nel sequencer i contenuti di un metaspezzone"
-
-
 msgctxt "Operator"
 msgid "Toggle Meta Strip"
 msgstr "Alterna MetaSpezzone"
-
-
-msgid "Toggle a metastrip (to edit enclosed strips)"
-msgstr "Cambia un metaspezzone (per editare gli spezzoni racchiusi)"
 
 
 msgctxt "Operator"
@@ -40811,10 +40736,6 @@ msgstr "Compatta tutte le facce dell'UV all'interno dei suoi confini"
 
 msgid "New Image"
 msgstr "Nuova Immagine"
-
-
-msgid "Assign new images for every mesh (only one if shared tex space enabled)"
-msgstr "Assegna una nuova immagine per ogni mesh (solo una se è abilitata la condivisione dello spazio texture)"
 
 
 msgid "Pack Quality"
@@ -45818,10 +45739,6 @@ msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Un quadrato che mostra Tonalità/Valore, con cursore Saturazione"
 
 
-msgid "Percentage"
-msgstr "Percentuale"
-
-
 msgid "New Window"
 msgstr "Nuova Finestra"
 
@@ -48863,10 +48780,6 @@ msgid "Movie Sequence"
 msgstr "Sequenza Filmata"
 
 
-msgid "MPEG Preseek"
-msgstr "Prericerca MPEG"
-
-
 msgid "Stream Index"
 msgstr "Indice Stream"
 
@@ -48881,10 +48794,6 @@ msgstr "Sequenza Scena"
 
 msgid "Camera Override"
 msgstr "Sovrascrivi Camera"
-
-
-msgid "Use Grease Pencil"
-msgstr "Usa Matita"
 
 
 msgid "Sound Sequence"
@@ -49061,10 +48970,6 @@ msgstr "Crea un proxy al 75% della risoluzione"
 
 msgid "Location of custom proxy file"
 msgstr "Posizione del file proxy personalizzato"
-
-
-msgid "JPEG Quality of proxies to build"
-msgstr "Qualità JPEG del proxies da creare"
 
 
 msgid "Use images in the order as they are recorded"
@@ -55594,10 +55499,6 @@ msgid "Original frame range: %d-%d (%d)"
 msgstr "Intervallo fotogrammi originale: %d-%d (%d)"
 
 
-msgid "Build JPEG Quality"
-msgstr "Costruisce Qualità JPEG"
-
-
 msgctxt "Operator"
 msgid "Scene"
 msgstr "Scena"
@@ -57110,10 +57011,6 @@ msgid "Set Roll"
 msgstr "Imposta Inclinazione"
 
 
-msgid "No layer to copy"
-msgstr "Nessuna livello da copiare"
-
-
 msgctxt "Operator"
 msgid "Hide Active Layer"
 msgstr "Nascondi Livello Attivo"
@@ -57347,16 +57244,16 @@ msgid "Const"
 msgstr "Cost"
 
 
-msgid "blend_data"
-msgstr "blend_data"
-
-
 msgid "UVMap"
 msgstr "Mappa UV"
 
 
 msgid "Col"
 msgstr "Col"
+
+
+msgid "Int"
+msgstr "Int"
 
 
 msgid "PreviewCol"
@@ -58078,6 +57975,10 @@ msgstr "Nessun fotogramma da cancellare"
 
 msgid "No active frame(s) to delete"
 msgstr "Nessun fotogramma da cancellare"
+
+
+msgid "Nothing selected"
+msgstr "Nessuna selezione"
 
 
 msgid "No active area"
@@ -58823,10 +58724,6 @@ msgid "Mouse path too short"
 msgstr "Percorso mouse troppo corto"
 
 
-msgid "Nothing selected"
-msgstr "Nessuna selezione"
-
-
 msgid "Selection not supported in object mode"
 msgstr "Selezione non supportata in modalità oggetto"
 
@@ -59477,20 +59374,16 @@ msgid "Failed to open window!"
 msgstr "Impossibile aprire la finestra!"
 
 
+msgid "Maximize Area"
+msgstr "Massimizza Area"
+
+
 msgid "Flip to Bottom"
 msgstr "Sposta sotto la vista"
 
 
 msgid "Flip to Top"
 msgstr "Sposta sopra la vista"
-
-
-msgid "Tile Area"
-msgstr "De-massimizza Area"
-
-
-msgid "Maximize Area"
-msgstr "Massimizza Area"
 
 
 msgid "No more keyframes to jump to in this direction"
@@ -59959,168 +59852,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Il modificatore non può essere aggiunto a (%s : %s) (vedi console per dettagli)"
 
 
-msgid "Sta"
-msgstr "Inizio"
-
-
-msgid "Label Size"
-msgstr "Dimensione Etichetta"
-
-
-msgid "Frame: %d"
-msgstr "Fotogramma: %d"
-
-
-msgid "Squash"
-msgstr "Schiacciamento"
-
-
-msgid "Center:"
-msgstr "Centro:"
-
-
-msgid "Bokeh Type:"
-msgstr "Tipo Bokeh:"
-
-
-msgid "Speed:"
-msgstr "Velocità:"
-
-
-msgid "Inner Edge:"
-msgstr "Spigolo Interno:"
-
-
-msgid "Buffer Edge:"
-msgstr "Spigolo Buffer:"
-
-
-msgid "Color Space:"
-msgstr "Spazio Colore:"
-
-
-msgid "Despill Channel:"
-msgstr "Sopprimi Canale:"
-
-
-msgid "Limiting Channel:"
-msgstr "Limita Canale:"
-
-
-msgid "Key Channel:"
-msgstr "Usa Canale:"
-
-
-msgid "Path:"
-msgstr "Percorso:"
-
-
-msgid "Base Path:"
-msgstr "Percorso Base:"
-
-
-msgid "Add Input"
-msgstr "Aggiungi Input"
-
-
-msgid "File Subpath:"
-msgstr "Subpercorso File:"
-
-
-msgid "Format:"
-msgstr "Formato:"
-
-
-msgid "Master"
-msgstr "Master"
-
-
-msgid "Highlights"
-msgstr "Alte Luci"
-
-
-msgid "Midtones"
-msgstr "Mezzitoni"
-
-
-msgid "Undefined Socket Type"
-msgstr "Tipo Connettore Indefinito"
-
-
-msgid "NodeTree"
-msgstr "Albero Nodi"
-
-
-msgid "Could not add an image node"
-msgstr "Impossibile aggiungere un nodo immagine"
-
-
-msgid "Could not add a mask node"
-msgstr "Impossibile aggiungere un nodo maschera"
-
-
-msgid "Mask '%s' not found"
-msgstr "Maschera '%s' non trovata"
-
-
-msgid "Node tree type %s undefined"
-msgstr "Il tipo di albero nodi %s è indefinito"
-
-
 msgid "Sockets"
 msgstr "Connettori"
-
-
-msgid "Clipboard is empty"
-msgstr "Gli appunti sono vuoti"
-
-
-msgid "Clipboard nodes are an incompatible type"
-msgstr "I nodi negli appunti sono di un tipo incompatibile"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "Impossibile aggiungere in nodo %s nell'albero nodi %s"
-
-
-msgid "Cannot ungroup"
-msgstr "Impossibile deraggruppare"
-
-
-msgid "Not inside node group"
-msgstr "Non nel gruppo nodi"
-
-
-msgid "Cannot separate nodes"
-msgstr "Impossibile separare le ossa"
-
-
-msgid "Can not add node '%s' in a group"
-msgstr "Impossibile aggiungere il nodo '%s' in un gruppo"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "LMB: trascina link nodo, RMB: annulla"
-
-
-msgid "Disconnect"
-msgstr "Disconnetti"
-
-
-msgid "Dependency Loop"
-msgstr "Dipendenza Circolare"
-
-
-msgid "Add node to input"
-msgstr "Aggiunge un nodo all'ingresso"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Cancella i nodi connessi all'ingresso"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "Disconnetti i nodi connessi all'ingresso"
 
 
 msgid "More than one collection is selected"

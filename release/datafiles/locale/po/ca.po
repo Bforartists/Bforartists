@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -364,10 +364,6 @@ msgstr "Operació booleana"
 
 msgid "Domain"
 msgstr "Mostrar propietats de les arestes"
-
-
-msgid "Curve"
-msgstr "Corba"
 
 
 msgid "Bake Data"
@@ -1168,6 +1164,10 @@ msgstr "Començar a renderitzar una seqüència"
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "Texte"
+
+
+msgid "Curve"
+msgstr "Corba"
 
 
 msgid "Use Curves"
@@ -5294,6 +5294,10 @@ msgstr "Eines"
 
 msgid "Low quality"
 msgstr "Eines"
+
+
+msgid "Tiled"
+msgstr "Arxiu"
 
 
 msgid "Render Quality"
@@ -10080,6 +10084,10 @@ msgid "Equal"
 msgstr "Igual"
 
 
+msgid "Z Axis"
+msgstr "Ampliar"
+
+
 msgid "Original"
 msgstr "Esborrar Origen"
 
@@ -10356,10 +10364,6 @@ msgid "Vector Math"
 msgstr "Tangents lineals"
 
 
-msgid "Z Axis"
-msgstr "Ampliar"
-
-
 msgid "Texture Node"
 msgstr "Texte"
 
@@ -10374,10 +10378,6 @@ msgstr "Corba"
 
 msgid "Value to Normal"
 msgstr "Calcular Normals"
-
-
-msgid "Int"
-msgstr "Afegir Tira"
 
 
 msgid "From node"
@@ -12754,22 +12754,8 @@ msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Duplicar"
-
-
-msgctxt "Operator"
 msgid "Next Folder"
 msgstr "Deseleccionar Enllaçats"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Fixar Límits"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
@@ -13338,10 +13324,6 @@ msgstr "Esborrar Rotació"
 
 msgid "Image height"
 msgstr "Aspecte d'imatge"
-
-
-msgid "Tiled"
-msgstr "Arxiu"
 
 
 msgid "Image width"
@@ -17218,10 +17200,6 @@ msgid "Target Path"
 msgstr "Camí"
 
 
-msgid "User Prefs"
-msgstr "Superfície"
-
-
 msgctxt "Operator"
 msgid "Copy Previous Settings"
 msgstr "Eines"
@@ -17790,10 +17768,6 @@ msgstr "Començar a renderitzar una seqüència"
 msgctxt "Operator"
 msgid "Make Meta Strip"
 msgstr "Afegir Tira"
-
-
-msgid "Group selected strips into a metastrip"
-msgstr "Seleccionar connectats"
 
 
 msgctxt "Operator"
@@ -25227,6 +25201,10 @@ msgid "No AnimData to set action on"
 msgstr "Seleccionar connectats"
 
 
+msgid "Int"
+msgstr "Afegir Tira"
+
+
 msgid "Cannot bake non-'image sequence' formats"
 msgstr "Començar a renderitzar una seqüència"
 
@@ -25449,6 +25427,10 @@ msgstr "Començar Joc"
 
 msgid "No active frame to delete"
 msgstr "Amagar Seleccionats"
+
+
+msgid "Nothing selected"
+msgstr "Deseleccionar Enllaçats"
 
 
 msgctxt "Operator"
@@ -25721,10 +25703,6 @@ msgid "Selected faces must be triangles or quads"
 msgstr "Amagar Seleccionats"
 
 
-msgid "Nothing selected"
-msgstr "Deseleccionar Enllaçats"
-
-
 msgid "Selection not supported in object mode"
 msgstr "Esborrar"
 
@@ -25905,20 +25883,16 @@ msgid "Blender Render"
 msgstr "Render"
 
 
+msgid "Maximize Area"
+msgstr "Corba NURBS"
+
+
 msgid "Flip to Bottom"
 msgstr "Arxiu"
 
 
 msgid "Flip to Top"
 msgstr "Arxiu"
-
-
-msgid "Tile Area"
-msgstr "Arxiu"
-
-
-msgid "Maximize Area"
-msgstr "Corba NURBS"
 
 
 msgid "No active mesh object"
@@ -26086,110 +26060,6 @@ msgstr "Començar a renderitzar una seqüència"
 
 
 msgid "No valid action to add"
-msgstr "Duplicar"
-
-
-msgid "Sta"
-msgstr "Començar Joc"
-
-
-msgid "Label Size"
-msgstr "Duplicar"
-
-
-msgid "Center:"
-msgstr "Centre"
-
-
-msgid "Bokeh Type:"
-msgstr "Arxiu"
-
-
-msgid "Speed:"
-msgstr "Seleccionar fila"
-
-
-msgid "Inner Edge:"
-msgstr "Mode d'Edició"
-
-
-msgid "Buffer Edge:"
-msgstr "Esborrar Rotació"
-
-
-msgid "Color Space:"
-msgstr "Desparentar"
-
-
-msgid "Despill Channel:"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Limiting Channel:"
-msgstr "Finestra de Render"
-
-
-msgid "Key Channel:"
-msgstr "Finestra de Render"
-
-
-msgid "Path:"
-msgstr "Camí"
-
-
-msgid "Base Path:"
-msgstr "Arxiu"
-
-
-msgid "Add Input"
-msgstr "Texte"
-
-
-msgid "Format:"
-msgstr "Calcular Normals"
-
-
-msgid "Master"
-msgstr "Esborrar tot"
-
-
-msgid "Highlights"
-msgstr "Partir"
-
-
-msgid "Midtones"
-msgstr "Seleccionar fila"
-
-
-msgid "NodeTree"
-msgstr "Image Displist"
-
-
-msgid "Cannot ungroup"
-msgstr "Afegir Tira"
-
-
-msgid "Not inside node group"
-msgstr "Seleccionar fila"
-
-
-msgid "Cannot separate nodes"
-msgstr "Separar"
-
-
-msgid "Disconnect"
-msgstr "Deseleccionar Enllaçats"
-
-
-msgid "Dependency Loop"
-msgstr "Seleccionar connectats"
-
-
-msgid "Add node to input"
-msgstr "Afegir Tira"
-
-
-msgid "Remove nodes connected to the input"
 msgstr "Duplicar"
 
 

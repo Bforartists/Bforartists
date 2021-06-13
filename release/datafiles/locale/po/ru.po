@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -998,8 +998,8 @@ msgid "Face"
 msgstr "Грань"
 
 
-msgid "Curve"
-msgstr "Кривая"
+msgid "Spline"
+msgstr "Сплайн"
 
 
 msgid "Bake Data"
@@ -4812,6 +4812,10 @@ msgstr "Цветовое пространство, в котором работ�
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "Настройки управления цветом для показа изображений на экране"
+
+
+msgid "Curve"
+msgstr "Кривая"
 
 
 msgid "Color curve mapping applied before display transform"
@@ -13320,10 +13324,6 @@ msgid "Material Index"
 msgstr "Индекс материала"
 
 
-msgid "Index of material used in this stroke"
-msgstr "Индекс материала, используемого для штриха"
-
-
 msgid "Stroke Points"
 msgstr "Точки штриха"
 
@@ -14634,10 +14634,6 @@ msgstr "Переопределение библиотеки"
 
 msgid "Library override data"
 msgstr "Данные переопределения библиотеки"
-
-
-msgid "Preview image and icon of this data-block (None if not supported for this type of data)"
-msgstr "Изображение предпросмотра и значок этого датаблока (None, если не поддерживается для этого типа данных)"
 
 
 msgid "Tag"
@@ -16397,10 +16393,6 @@ msgid "End Mapping Type"
 msgstr "Тип сопоставления конца"
 
 
-msgid "Spline"
-msgstr "Сплайн"
-
-
 msgid "Start Mapping Type"
 msgstr "Тип сопоставления начала"
 
@@ -17619,10 +17611,6 @@ msgstr "Относительно экрана"
 
 msgid "Set stroke thickness relative to the screen space"
 msgstr "Установить толщину линии относительно размеров кадра"
-
-
-msgid "Lock automatically all layers except active one to avoid accidental changes"
-msgstr "Блокировать все слои автоматически, чтобы избежать случайных изменений"
 
 
 msgid "Use Custom Ghost Colors"
@@ -19585,6 +19573,10 @@ msgstr "Низко"
 
 msgid "Low quality"
 msgstr "Низкое качество"
+
+
+msgid "Tiled"
+msgstr "Черепица"
 
 
 msgid "Render Quality"
@@ -27349,10 +27341,6 @@ msgid "Generate Weights"
 msgstr "Генерировать веса"
 
 
-msgid "Copy Layer to Object"
-msgstr "Копировать слой к объекту"
-
-
 msgid "Hooks"
 msgstr "Крюки"
 
@@ -34858,6 +34846,10 @@ msgid "Round A to the largest integer multiple of B less than or equal A"
 msgstr "Округлить A до наибольшего значения множителя B, меньшего или равного A"
 
 
+msgid "Z Axis"
+msgstr "Ось Z"
+
+
 msgid "Original"
 msgstr "Оригинал"
 
@@ -35763,10 +35755,6 @@ msgid "Vector Math"
 msgstr "Векторная математика"
 
 
-msgid "Z Axis"
-msgstr "Ось Z"
-
-
 msgid "Vector Transform"
 msgstr "Преобразовать вектор"
 
@@ -35889,10 +35877,6 @@ msgstr "Имя сокета"
 
 msgid "Data type of the socket"
 msgstr "Тип данных сокета"
-
-
-msgid "Int"
-msgstr "Целое число"
 
 
 msgid "From node"
@@ -41511,11 +41495,6 @@ msgid "Write the rest state at the first frame"
 msgstr "Записать состояние покоя на первом кадре"
 
 
-msgctxt "Operator"
-msgid "Automatically Pack Into .blend"
-msgstr "Автоматически упаковать в .blend"
-
-
 msgid "Automatically pack all external files into the .blend file"
 msgstr "Автоматически упаковать все внешние файлы в файл .blend"
 
@@ -41616,14 +41595,6 @@ msgid "Execute selected file"
 msgstr "Запустить выбранный файл"
 
 
-msgid "Need Active"
-msgstr "Необходима активация"
-
-
-msgid "Only execute if there's an active selected file in the file list"
-msgstr "Исполнять только в том случае, если имеется активный выбранный файл в списке файлов"
-
-
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "Увеличить счётчик в имени файла"
@@ -41677,18 +41648,8 @@ msgid "Highlight selected file(s)"
 msgstr "Подсветить выбранные файлы"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "Сделать все пути абсолютными"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "Преобразовать все пути в внешним файлам в абсолютные"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Сделать все пути относительными"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -41702,24 +41663,6 @@ msgstr "Следующая папка"
 
 msgid "Move to next folder"
 msgstr "Перейти в следующую папку"
-
-
-msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "Упаковать всё в .blend"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "Упаковать все используемые внешние файлы в файл .blend"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Упаковать библиотеки Blender"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Упаковать все использованные файлы библиотек в текущий файл .blend"
 
 
 msgctxt "Operator"
@@ -41840,11 +41783,6 @@ msgid "Change sorting to use column under cursor"
 msgstr "Использовать этот столбец для сортировки"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "Распаковать всё в файлы"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr "Распаковать все файлы, упакованные в файл .blend, во внешние файлы"
 
@@ -41904,15 +41842,6 @@ msgstr "Использовать файл из исходного места (с
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "Записать файл в исходное место (перезаписать существующий файл)"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Распаковать библиотеки Blender"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "Распаковать все использованные файлы библиотек из этого файла .blend"
 
 
 msgctxt "Operator"
@@ -42839,12 +42768,8 @@ msgid "Duplicate Layer to New Object"
 msgstr "Дублировать слой в новый объект"
 
 
-msgid "Make a copy of the active Grease Pencil layer to new object"
-msgstr "Создать копию активного слоя Grease Pencil в новом объекте"
-
-
-msgid "Name of the destination object"
-msgstr "Имя целевого объекта"
+msgid "Only Active"
+msgstr "Только к активной"
 
 
 msgctxt "Operator"
@@ -43727,10 +43652,6 @@ msgid "Add F-Modifier to the active/selected F-Curves"
 msgstr "Добавить модификатор в активные/выбранные F-кривые"
 
 
-msgid "Only Active"
-msgstr "Только к активной"
-
-
 msgid "Only add F-Modifier to active F-Curve"
 msgstr "Добавить F-модификатор только к активной F-кривой"
 
@@ -44046,10 +43967,6 @@ msgstr "Высота изображения"
 
 msgid "Image data-block name"
 msgstr "Название датаблока изображения"
-
-
-msgid "Tiled"
-msgstr "Черепица"
 
 
 msgid "Create an image with left and right views"
@@ -53345,16 +53262,20 @@ msgid "Custom properties"
 msgstr "Особые свойства"
 
 
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Весовой коэффициент для определения предпочтительного ключевого кадра"
-
-
 msgid "Next Keyframe"
 msgstr "Следующий ключевой кадр"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Номер кадра ближайшего ключевого кадра после текущего кадра"
+
+
+msgid "Percentage"
+msgstr "Процент"
+
+
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Весовой коэффициент для определения предпочтительного ключевого кадра"
 
 
 msgid "Previous Keyframe"
@@ -53848,10 +53769,6 @@ msgstr "Удалить существующие аддоны с одинаков
 
 msgid "Target Path"
 msgstr "Целевой путь"
-
-
-msgid "User Prefs"
-msgstr "Пользовательские настройки"
 
 
 msgctxt "Operator"
@@ -54385,10 +54302,6 @@ msgstr "Рассчитать массу"
 
 msgid "Automatically calculate mass values for Rigid Body Objects based on volume"
 msgstr "Автоматически рассчитать значения масс для твердотельных объектов на основе объёма"
-
-
-msgid "Custom density value (kg/m^3) to use instead of material preset"
-msgstr "Особое значение плотности (кг/м³), используемое вместо плотности предустановки материала"
 
 
 msgid "Material Preset"
@@ -55983,26 +55896,14 @@ msgid "Make Meta Strip"
 msgstr "Создать метадорожку"
 
 
-msgid "Group selected strips into a metastrip"
-msgstr "Сгруппировать выделенные дорожки в метадорожку"
-
-
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "Расформировать метадорожку"
 
 
-msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "Вынести содержимое метадорожки обратно в видеоредактор"
-
-
 msgctxt "Operator"
 msgid "Toggle Meta Strip"
 msgstr "Редактировать метадорожку"
-
-
-msgid "Toggle a metastrip (to edit enclosed strips)"
-msgstr "Войти в метадорожку (для редактирования вложенных дорожек)"
 
 
 msgctxt "Operator"
@@ -58230,10 +58131,6 @@ msgstr "Упаковать все UV граней в границы UV"
 
 msgid "New Image"
 msgstr "Создать изображение"
-
-
-msgid "Assign new images for every mesh (only one if shared tex space enabled)"
-msgstr "Назначить новые изображения для каждого меша (или только одно, если используется общее текстурное пространство)"
 
 
 msgid "Pack Quality"
@@ -65768,10 +65665,6 @@ msgid "Display factors as values between 0 and 1"
 msgstr "Отображать коэффициенты в виде значений от 0 до 1"
 
 
-msgid "Percentage"
-msgstr "Процент"
-
-
 msgid "Display factors as percentages"
 msgstr "Отображать коэффициенты в виде процентов"
 
@@ -71115,14 +71008,6 @@ msgid "Sequence strip to load a video"
 msgstr "Дорожка видеоредактора, загружающая видео"
 
 
-msgid "MPEG Preseek"
-msgstr "Предзагрузка MPEG"
-
-
-msgid "For MPEG movies, preseek this many frames"
-msgstr "Количество предзагружаемых кадров для видео в формате MPEG"
-
-
 msgid "Stream Index"
 msgstr "Индекс потока"
 
@@ -71165,14 +71050,6 @@ msgstr "Использовать 3D-камеру сцены в качестве 
 
 msgid "Use the Scene's Sequencer timeline as input"
 msgstr "Использовать временную шкалу секвенсора сцены в качестве входа"
-
-
-msgid "Use Grease Pencil"
-msgstr "Использовать Grease Pencil"
-
-
-msgid "Show Grease Pencil strokes in OpenGL previews"
-msgstr "Отображать штрихи Grease Pencil в предпросмотре OpenGL"
 
 
 msgid "Sound Sequence"
@@ -71573,10 +71450,6 @@ msgstr "Построение прокси с разрешением в 75%"
 
 msgid "Location of custom proxy file"
 msgstr "Место хранения особого прокси-файла"
-
-
-msgid "JPEG Quality of proxies to build"
-msgstr "Качество JPEG для создаваемых прокси"
 
 
 msgid "Method for reading the inputs timecode"
@@ -82437,10 +82310,6 @@ msgid "Tracker"
 msgstr "Трэкер"
 
 
-msgid "Build JPEG Quality"
-msgstr "Качество JPEG"
-
-
 msgid "Fractional Preview Zoom"
 msgstr "Выбор масштаба предпросмотра"
 
@@ -84465,10 +84334,6 @@ msgid "With Automatic Weights"
 msgstr "С автоматическими весами"
 
 
-msgid "No layer to copy"
-msgstr "Нет слоя для копирования"
-
-
 msgctxt "Operator"
 msgid "Paste by Layer"
 msgstr "Вставить по слоям"
@@ -84577,10 +84442,6 @@ msgstr "Удалить грани"
 msgctxt "Operator"
 msgid "Clear Freestyle Face"
 msgstr "Очистить грань Freestyle"
-
-
-msgid "No destination object"
-msgstr "Нет объекта-получателя"
 
 
 msgid "Specular Lighting"
@@ -84824,16 +84685,16 @@ msgid "Const"
 msgstr "Ограничение"
 
 
-msgid "blend_data"
-msgstr "blend_data"
-
-
 msgid "UVMap"
 msgstr "UVКарта"
 
 
 msgid "Col"
 msgstr "Цвет"
+
+
+msgid "Int"
+msgstr "Целое число"
 
 
 msgid "PreviewCol"
@@ -86327,6 +86188,10 @@ msgid "Cannot separate an object with one layer only"
 msgstr "Невозможно отделить объект только с одним слоем"
 
 
+msgid "Nothing selected"
+msgstr "Ничего не выбрано"
+
+
 msgid "No active area"
 msgstr "Нет активной области"
 
@@ -87401,10 +87266,6 @@ msgstr "Нет выделеных рёбер, с которыми нужно п�
 
 msgid "Mouse path too short"
 msgstr "Слишком короткий путь курсора"
-
-
-msgid "Nothing selected"
-msgstr "Ничего не выбрано"
 
 
 msgid "Selection not supported in object mode"
@@ -88565,6 +88426,10 @@ msgid "Swap Areas"
 msgstr "Поменять местами области"
 
 
+msgid "Maximize Area"
+msgstr "Развернуть на всё окно"
+
+
 msgid "Flip to Bottom"
 msgstr "Отображать панель снизу"
 
@@ -88579,14 +88444,6 @@ msgstr "Отображать заголовок"
 
 msgid "Show Tool Settings"
 msgstr "Отображать настройки инструмента"
-
-
-msgid "Tile Area"
-msgstr "Вернуться в плиточный режим"
-
-
-msgid "Maximize Area"
-msgstr "Развернуть на всё окно"
 
 
 msgid "Show Footer"
@@ -89615,196 +89472,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Модификатор не может быть добавлен в (%s : %s) (см. консоль для дополнительной информации)"
 
 
-msgid "Sta"
-msgstr "Нач."
-
-
-msgid "Label Size"
-msgstr "Размер метки"
-
-
-msgid "Frame: %d"
-msgstr "Кадр: %d"
-
-
-msgid "Squash"
-msgstr "Сплющенность"
-
-
-msgid "Center:"
-msgstr "Центр:"
-
-
-msgid "Bokeh Type:"
-msgstr "Тип боке:"
-
-
-msgid "Speed:"
-msgstr "Скорость:"
-
-
-msgid "Inner Edge:"
-msgstr "Внутренний край:"
-
-
-msgid "Buffer Edge:"
-msgstr "Буферный край:"
-
-
-msgid "Color Space:"
-msgstr "Модель цвета:"
-
-
-msgid "Despill Channel:"
-msgstr "Канал деспила:"
-
-
-msgid "Limiting Channel:"
-msgstr "Ограничивающий канал:"
-
-
-msgid "Key Channel:"
-msgstr "Канал ключа:"
-
-
-msgid "Path:"
-msgstr "Путь:"
-
-
-msgid "Base Path:"
-msgstr "Базовый путь:"
-
-
-msgid "Add Input"
-msgstr "Добавить вход"
-
-
-msgid "File Subpath:"
-msgstr "Подпуть к файлу:"
-
-
-msgid "Format:"
-msgstr "Формат:"
-
-
-msgid "Master"
-msgstr "Глобально"
-
-
-msgid "Highlights"
-msgstr "Светлые тона"
-
-
-msgid "Midtones"
-msgstr "Средние тона"
-
-
-msgid "Matte Objects:"
-msgstr "Объекты маски:"
-
-
-msgid "Add Crypto Layer"
-msgstr "Добавить слой Crypto"
-
-
-msgid "Remove Crypto Layer"
-msgstr "Удалить слой Crypto"
-
-
-msgid "Disabled, built without OpenImageDenoise"
-msgstr "Отключено, сборка без поддержки OpenImageDenoise"
-
-
-msgid "Disabled, CPU with SSE4.1 is required"
-msgstr "Отключено, необходим процессор с SSE4.1"
-
-
-msgid "Undefined Socket Type"
-msgstr "Неизвестный тип сокета"
-
-
-msgid "NodeTree"
-msgstr "Нодовая система"
-
-
-msgid "Could not add an image node"
-msgstr "Ошибка добавления ноды изображения"
-
-
-msgid "Could not add a mask node"
-msgstr "Ошибка добавления ноды маски"
-
-
-msgid "Mask '%s' not found"
-msgstr "Маска «%s» не найдена"
-
-
-msgid "Node tree type %s undefined"
-msgstr "Нодовая система с типом %s не определено"
-
-
 msgid "Sockets"
 msgstr "Сокеты"
-
-
-msgid "Clipboard is empty"
-msgstr "Буфер обмена пуст"
-
-
-msgid "Clipboard nodes are an incompatible type"
-msgstr "Ноды в буфере обмена несовместимы по типу"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "Некоторые нодовые связи не могут быть восстановлены и останутся пустыми"
-
-
-msgid "Text not used by any node, no update done"
-msgstr "Текст не используется ни в одной ноде, обновление не выполнено"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "Невозможно добавить ноду %s в нодовую систему %s"
-
-
-msgid "Cannot ungroup"
-msgstr "Невозможно разгруппировать"
-
-
-msgid "Not inside node group"
-msgstr "Не находится внутри нодовой группы"
-
-
-msgid "Cannot separate nodes"
-msgstr "Невозможно разделить ноды"
-
-
-msgid "Can not add node '%s' in a group"
-msgstr "Невозможно добавить ноду «%s» в группу"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "ЛКМ: перетащить связь ноды, ПКМ: отменить"
-
-
-msgid "Disconnect"
-msgstr "Отсоединить"
-
-
-msgid "Dependency Loop"
-msgstr "Петля среди нод"
-
-
-msgid "Add node to input"
-msgstr "Добавить ноду на ввод"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Удалить ноды, связанные с вводом"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "Отсоединить ноды, связанные с выводом"
 
 
 msgid "More than one collection is selected"
