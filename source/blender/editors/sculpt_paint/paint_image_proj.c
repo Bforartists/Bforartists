@@ -300,7 +300,7 @@ typedef struct ProjPaintState {
   /** Calculated from screenMin & screenMax. */
   float screen_width;
   float screen_height;
-  /** from the carea or from the projection render. */
+  /** From the area or from the projection render. */
   int winx, winy;
 
   /* options for projection painting */
@@ -5571,7 +5571,7 @@ static bool project_paint_op(void *state, const float lastpos[2], const float po
   }
 
   if (ps->thread_tot > 1) {
-    task_pool = BLI_task_pool_create_suspended(NULL, TASK_PRIORITY_HIGH);
+    task_pool = BLI_task_pool_create_suspended(NULL, TASK_PRIORITY_HIGH, TASK_ISOLATION_ON);
   }
 
   image_pool = BKE_image_pool_new();

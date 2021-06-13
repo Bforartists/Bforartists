@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -980,8 +980,8 @@ msgid "Face"
 msgstr "面"
 
 
-msgid "Curve"
-msgstr "曲線"
+msgid "Spline"
+msgstr "樣條"
 
 
 msgid "Bake Data"
@@ -3702,6 +3702,10 @@ msgstr "序段編輯器要處理的色彩空間"
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "顯示器上表現影像所用的色彩管理設定"
+
+
+msgid "Curve"
+msgstr "曲線"
 
 
 msgid "Color curve mapping applied before display transform"
@@ -11577,10 +11581,6 @@ msgid "End Mapping Type"
 msgstr "結束映射類型"
 
 
-msgid "Spline"
-msgstr "樣條"
-
-
 msgid "Start Mapping Type"
 msgstr "開始映射類型"
 
@@ -13785,6 +13785,10 @@ msgstr "低"
 
 msgid "Low quality"
 msgstr "低品質"
+
+
+msgid "Tiled"
+msgstr "鋪排"
 
 
 msgid "Render Quality"
@@ -24526,6 +24530,10 @@ msgid "Dot Product"
 msgstr "內積"
 
 
+msgid "Z Axis"
+msgstr "Z 軸"
+
+
 msgid "Original"
 msgstr "原始"
 
@@ -25127,10 +25135,6 @@ msgid "Vector Math"
 msgstr "向量數學"
 
 
-msgid "Z Axis"
-msgstr "Z 軸"
-
-
 msgid "Vector Transform"
 msgstr "向量轉換"
 
@@ -25233,10 +25237,6 @@ msgstr "接口的名稱"
 
 msgid "Data type of the socket"
 msgstr "接口的資料類型"
-
-
-msgid "Int"
-msgstr "整數"
 
 
 msgid "From node"
@@ -29565,11 +29565,6 @@ msgid "Start frame for baking"
 msgstr "烘焙的起始幀"
 
 
-msgctxt "Operator"
-msgid "Automatically Pack Into .blend"
-msgstr "自動包進 .blend 檔"
-
-
 msgid "Automatically pack all external files into the .blend file"
 msgstr "自動將所有的外部檔案包進 .blend 檔中"
 
@@ -29646,14 +29641,6 @@ msgid "Execute selected file"
 msgstr "執行所選檔案"
 
 
-msgid "Need Active"
-msgstr "需要作用中"
-
-
-msgid "Only execute if there's an active selected file in the file list"
-msgstr "僅在檔案清單中有作用中的選取檔案時執行"
-
-
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "在檔名中遞增編號"
@@ -29702,18 +29689,8 @@ msgid "Highlight selected file(s)"
 msgstr "標明所選的檔案"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "全部使用絕對路徑"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "讓所有外部檔案的路徑為絕對路徑"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "全部使用相對路徑"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -29727,24 +29704,6 @@ msgstr "下個資料夾"
 
 msgid "Move to next folder"
 msgstr "移動到下個資料夾"
-
-
-msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "全部包進 .blend"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "將所有使用的外部檔案打包至 .blend 中"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "打包 Bldender 庫"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "將所有使用的 Blender 庫檔案打包至目前的 .blend 中"
 
 
 msgctxt "Operator"
@@ -29849,11 +29808,6 @@ msgid "Sort from Column"
 msgstr "根據欄目排序"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "解包取出全部檔案"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr "解包以取出所有包在此 .blend 中的外部檔案"
 
@@ -29913,15 +29867,6 @@ msgstr "使用原始位置中的檔案 (當必要時建立)"
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "將檔案寫入原始位置 (覆寫既有檔案)"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "拆解 Blender 藏庫的包"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "從這個 .blend 檔拆解所有使用的 Blender 庫檔案包"
 
 
 msgctxt "Operator"
@@ -30476,6 +30421,10 @@ msgid "Add New Layer"
 msgstr "添加新層"
 
 
+msgid "Only Active"
+msgstr "僅作用項"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "移除遮罩分層"
@@ -30625,10 +30574,6 @@ msgstr "非連續性尤拉過濾器"
 msgctxt "Operator"
 msgid "Add F-Curve Modifier"
 msgstr "添加 F 修改器"
-
-
-msgid "Only Active"
-msgstr "僅作用項"
 
 
 msgid "Only add F-Modifier to active F-Curve"
@@ -30861,10 +30806,6 @@ msgstr "以 UV 映射測試用格線填入影像"
 
 msgid "Image height"
 msgstr "影像高度"
-
-
-msgid "Tiled"
-msgstr "鋪排"
 
 
 msgid "Image width"
@@ -37185,6 +37126,10 @@ msgid "Frame number of keyframe immediately after the current frame"
 msgstr "與目前框幀緊鄰的後一個鍵幀幀號"
 
 
+msgid "Percentage"
+msgstr "百分比"
+
+
 msgid "Previous Keyframe"
 msgstr "上一鍵幀"
 
@@ -37624,10 +37569,6 @@ msgstr "移除具有相同 ID 的既有附加元件"
 
 msgid "Target Path"
 msgstr "目標路徑"
-
-
-msgid "User Prefs"
-msgstr "使用者偏好設定"
 
 
 msgctxt "Operator"
@@ -38139,10 +38080,6 @@ msgstr "計算質量"
 
 msgid "Automatically calculate mass values for Rigid Body Objects based on volume"
 msgstr "根據體積為剛體物體自動計算其質量值"
-
-
-msgid "Custom density value (kg/m^3) to use instead of material preset"
-msgstr "要使用的自訂密度值 (kg/m^3)，而不是使用材質預置值"
 
 
 msgid "Material Preset"
@@ -39313,26 +39250,14 @@ msgid "Make Meta Strip"
 msgstr "建立後設片段"
 
 
-msgid "Group selected strips into a metastrip"
-msgstr "將所選的不同片段合併群組為後設片段"
-
-
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "解除後設片段"
 
 
-msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "將後設片段的內容分解放回至序段編輯器中"
-
-
 msgctxt "Operator"
 msgid "Toggle Meta Strip"
 msgstr "切換後設片段"
-
-
-msgid "Toggle a metastrip (to edit enclosed strips)"
-msgstr "切換後設片段 (以編輯封裝的片段)"
 
 
 msgctxt "Operator"
@@ -41043,10 +40968,6 @@ msgstr "將每面 UV 打包成 UV 邊界"
 
 msgid "New Image"
 msgstr "新增影像"
-
-
-msgid "Assign new images for every mesh (only one if shared tex space enabled)"
-msgstr "為每個網格對齊新影像 (如果共享的紋理空間啟用的話僅有一個)"
 
 
 msgid "Pack Quality"
@@ -45779,10 +45700,6 @@ msgid "Display factors as values between 0 and 1"
 msgstr "係數以 0 至 1 之間的值顯示"
 
 
-msgid "Percentage"
-msgstr "百分比"
-
-
 msgid "Display factors as percentages"
 msgstr "係數以百分比顯示"
 
@@ -48599,14 +48516,6 @@ msgid "Sequence strip to load a video"
 msgstr "載入視訊用的視訊片段"
 
 
-msgid "MPEG Preseek"
-msgstr "MPEG 預搜尋"
-
-
-msgid "For MPEG movies, preseek this many frames"
-msgstr "對於 MPEG 影片，預先搜尋這麼多幀"
-
-
 msgid "Stream Index"
 msgstr "串流索引"
 
@@ -48845,10 +48754,6 @@ msgstr "建置 75% 代理解析度"
 
 msgid "Location of custom proxy file"
 msgstr "自訂代理檔案的位置"
-
-
-msgid "JPEG Quality of proxies to build"
-msgstr "要建置的代理其 JPEG 品質"
 
 
 msgid "Use images in the order as they are recorded"
@@ -56303,8 +56208,8 @@ msgid "Scene Collection"
 msgstr "場景選集"
 
 
-msgid "blend_data"
-msgstr "blend_data"
+msgid "Int"
+msgstr "整數"
 
 
 msgid "Recast"
@@ -57129,6 +57034,10 @@ msgid "No active frame to delete"
 msgstr "無作用中框幀可刪除"
 
 
+msgid "Nothing selected"
+msgstr "未有選取"
+
+
 msgid "No active area"
 msgstr "無作用中區域"
 
@@ -57806,10 +57715,6 @@ msgid "Mouse path too short"
 msgstr "滑鼠路徑過短"
 
 
-msgid "Nothing selected"
-msgstr "未有選取"
-
-
 msgid "Selection not supported in object mode"
 msgstr "物體模式中未支援選取"
 
@@ -58451,20 +58356,16 @@ msgid "Blender Render"
 msgstr "Blender 算繪"
 
 
+msgid "Maximize Area"
+msgstr "最大化區域"
+
+
 msgid "Flip to Bottom"
 msgstr "翻轉至底部"
 
 
 msgid "Flip to Top"
 msgstr "翻轉至頂部"
-
-
-msgid "Tile Area"
-msgstr "鋪排區域"
-
-
-msgid "Maximize Area"
-msgstr "最大化區域"
 
 
 msgid "Blender Preferences"
@@ -59008,176 +58909,8 @@ msgid "No valid action to add"
 msgstr "無有效的動作可添加"
 
 
-msgid "Sta"
-msgstr "Sta"
-
-
-msgid "Label Size"
-msgstr "標籤大小"
-
-
-msgid "Frame: %d"
-msgstr "框幀：%d"
-
-
-msgid "Squash"
-msgstr "塞擠"
-
-
-msgid "Center:"
-msgstr "中心："
-
-
-msgid "Bokeh Type:"
-msgstr "散景類型："
-
-
-msgid "Speed:"
-msgstr "速度："
-
-
-msgid "Inner Edge:"
-msgstr "內邊線："
-
-
-msgid "Buffer Edge:"
-msgstr "緩衝邊線："
-
-
-msgid "Color Space:"
-msgstr "色彩空間："
-
-
-msgid "Despill Channel:"
-msgstr "溢灑通道："
-
-
-msgid "Limiting Channel:"
-msgstr "限制通道："
-
-
-msgid "Key Channel:"
-msgstr "鍵通道："
-
-
-msgid "Path:"
-msgstr "路徑："
-
-
-msgid "Base Path:"
-msgstr "基礎路徑："
-
-
-msgid "Add Input"
-msgstr "添加輸入"
-
-
-msgid "File Subpath:"
-msgstr "檔案子路徑："
-
-
-msgid "Format:"
-msgstr "格式："
-
-
-msgid "Master"
-msgstr "主"
-
-
-msgid "Highlights"
-msgstr "高亮區塊"
-
-
-msgid "Midtones"
-msgstr "中間色調"
-
-
-msgid "Undefined Socket Type"
-msgstr "未定義的接口類型"
-
-
-msgid "NodeTree"
-msgstr "節點樹"
-
-
-msgid "Could not add an image node"
-msgstr "無法添加影像節點"
-
-
-msgid "Could not add a mask node"
-msgstr "無法加入遮罩節點"
-
-
-msgid "Mask '%s' not found"
-msgstr "找不到「%s」遮罩"
-
-
-msgid "Node tree type %s undefined"
-msgstr "節點樹類型 %s 尚未定義"
-
-
 msgid "Sockets"
 msgstr "接口"
-
-
-msgid "Clipboard is empty"
-msgstr "剪貼簿為空白"
-
-
-msgid "Clipboard nodes are an incompatible type"
-msgstr "剪貼簿節點是不相容的類型"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "有些節點參照無法還原，將會留白"
-
-
-msgid "Text not used by any node, no update done"
-msgstr "文字無法被任何節點使用，無更新"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "無法將 %s 節點加入 %s 節點樹"
-
-
-msgid "Cannot ungroup"
-msgstr "無法取消群組"
-
-
-msgid "Not inside node group"
-msgstr "不在節點群組內"
-
-
-msgid "Cannot separate nodes"
-msgstr "無法分離節點"
-
-
-msgid "Can not add node '%s' in a group"
-msgstr "無法在群組中添加「%s」節點"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "左鼠鍵：拖曳節點連結，右鼠鍵：取消"
-
-
-msgid "Disconnect"
-msgstr "斷開連接"
-
-
-msgid "Dependency Loop"
-msgstr "依賴迴圈"
-
-
-msgid "Add node to input"
-msgstr "添加節點到輸入"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "移除連接至該輸入的節點"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "斷開連接至該輸入的節點"
 
 
 msgid "Can't edit library linked object(s)"

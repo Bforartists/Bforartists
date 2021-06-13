@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -168,10 +168,6 @@ msgstr "Rand"
 
 msgid "Face"
 msgstr "Vlak"
-
-
-msgid "Curve"
-msgstr "Kromme"
 
 
 msgid "+X"
@@ -344,6 +340,10 @@ msgstr "Midden"
 
 msgid "Linear"
 msgstr "Lineair"
+
+
+msgid "Curve"
+msgstr "Kromme"
 
 
 msgid "Constant"
@@ -1424,6 +1424,10 @@ msgid "Y Axis"
 msgstr "Y As"
 
 
+msgid "Z Axis"
+msgstr "Z As"
+
+
 msgid "Layer Weight"
 msgstr "Invloed van Laag"
 
@@ -1438,10 +1442,6 @@ msgstr "Y as"
 
 msgid "Z axis"
 msgstr "Z as"
-
-
-msgid "Z Axis"
-msgstr "Z As"
 
 
 msgid "Node Socket"
@@ -2230,16 +2230,6 @@ msgstr "Vind Missende Bestanden"
 msgctxt "Operator"
 msgid "Highlight File"
 msgstr "Markeer Bestand"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "Maak Alle Paden Absoluut"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Maak Alle Paden Relatief"
 
 
 msgctxt "Operator"
@@ -5428,6 +5418,10 @@ msgid "Surface"
 msgstr "Oppervlak"
 
 
+msgid "Nothing selected"
+msgstr "Niets geselecteerd"
+
+
 msgctxt "Operator"
 msgid "Replace Keyframes"
 msgstr "Vervang Sleutelframes"
@@ -5605,10 +5599,6 @@ msgstr "Bol"
 msgctxt "Mesh"
 msgid "Icosphere"
 msgstr "Icosphere"
-
-
-msgid "Nothing selected"
-msgstr "Niets geselecteerd"
 
 
 msgid "No edges selected"
