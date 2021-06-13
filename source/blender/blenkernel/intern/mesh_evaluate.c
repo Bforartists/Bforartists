@@ -1715,7 +1715,8 @@ void BKE_mesh_normals_loop_split(const MVert *mverts,
     loop_split_generator(NULL, &common_data);
   }
   else {
-    TaskPool *task_pool = BLI_task_pool_create(&common_data, TASK_PRIORITY_HIGH);
+    TaskPool *task_pool = BLI_task_pool_create(
+        &common_data, TASK_PRIORITY_HIGH, TASK_ISOLATION_ON);
 
     loop_split_generator(task_pool, &common_data);
 
@@ -2351,7 +2352,7 @@ float BKE_mesh_calc_poly_uv_area(const MPoly *mpoly, const MLoopUV *uv_array)
   }
 
   /* finally calculate the area */
-  area = area_poly_v2((const float(*)[2])vertexcos, (unsigned int)mpoly->totloop);
+  area = area_poly_v2(vertexcos, (uint)mpoly->totloop);
 
   return area;
 }
@@ -2566,7 +2567,7 @@ bool BKE_mesh_center_median_from_polys(const Mesh *me, float r_cent[3])
   const MLoop *mloop = me->mloop;
   const MVert *mvert = me->mvert;
   zero_v3(r_cent);
-  for (mpoly = me->mpoly; i--; mpoly++) {
+  for (; i--; mpoly++) {
     int loopend = mpoly->loopstart + mpoly->totloop;
     for (int j = mpoly->loopstart; j < loopend; j++) {
       add_v3_v3(r_cent, mvert[mloop[j].v].co);

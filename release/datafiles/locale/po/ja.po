@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -1145,12 +1145,8 @@ msgid "Attribute on mesh face corner"
 msgstr "メッシュの面コーナーの属性"
 
 
-msgid "Curve"
-msgstr "カーブ"
-
-
-msgid "Attribute on hair curve"
-msgstr "ヘアーカーブ上の属性"
+msgid "Spline"
+msgstr "スプライン"
 
 
 msgid "Name of the Attribute"
@@ -5284,6 +5280,10 @@ msgstr "シーケンサーが演算する色空間"
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "画像をディスプレイで表示するのに使用される色管理設定"
+
+
+msgid "Curve"
+msgstr "カーブ"
 
 
 msgid "Color curve mapping applied before display transform"
@@ -15233,10 +15233,6 @@ msgid "Material Index"
 msgstr "マテリアルインデックス"
 
 
-msgid "Index of material used in this stroke"
-msgstr "このストロークで使用中のマテリアルのインデックス"
-
-
 msgid "Stroke Points"
 msgstr "ストロークポイント"
 
@@ -17278,10 +17274,6 @@ msgstr "ライブラリオーバーライド"
 
 msgid "Library override data"
 msgstr "ライブラリオーバーライドデータ"
-
-
-msgid "Preview image and icon of this data-block (None if not supported for this type of data)"
-msgstr "このデータブロックのプレビュー画像とアイコン（このデータタイプが未対応の場合は None）"
 
 
 msgid "Tag"
@@ -19787,10 +19779,6 @@ msgid "Map the geometry factor to the length of a segment and to the number of s
 msgstr "形状の係数をセグメントの長さとセグメントの分割数にマッピングします"
 
 
-msgid "Spline"
-msgstr "スプライン"
-
-
 msgid "Map the geometry factor to the length of a spline"
 msgstr "形状の係数をスプラインの長さにマッピングします"
 
@@ -21158,10 +21146,6 @@ msgstr ""
 
 msgid "Auto-Lock Layers"
 msgstr "レイヤーを自動ロック"
-
-
-msgid "Lock automatically all layers except active one to avoid accidental changes"
-msgstr "不意に変更してしまうことがないよう、アクティブ以外の全レイヤーを自動的にロックします"
 
 
 msgid "Curve Editing"
@@ -23318,6 +23302,10 @@ msgstr "低"
 
 msgid "Low quality"
 msgstr "低品質"
+
+
+msgid "Tiled"
+msgstr "タイル状"
 
 
 msgid "Render Quality"
@@ -31851,10 +31839,6 @@ msgid "Generate Weights"
 msgstr "ウェイトを生成"
 
 
-msgid "Copy Layer to Object"
-msgstr "レイヤーからオブジェクトにコピー"
-
-
 msgid "Hooks"
 msgstr "フック"
 
@@ -35091,6 +35075,10 @@ msgid "Keep Corners, Junctions, Concave"
 msgstr "コーナー、接点、凹面を維持"
 
 
+msgid "UVs are smoothed, corners on discontinuous boundary, junctions of 3 or more regions and darts and concave corners are kept sharp"
+msgstr "UV がスムージングされ、不連続な境界のコーナーと、3つ以上の領域の接点、ダーツと凹面のコーナーがシャープなまま維持されます"
+
+
 msgid "Keep Boundaries"
 msgstr "境界を維持"
 
@@ -35100,7 +35088,7 @@ msgstr "UV がスムージングされ、境界がシャープなまま維持さ
 
 
 msgid "UVs and boundaries are smoothed"
-msgstr "UV と境界をスムージングします"
+msgstr "UV と境界がスムージングされます"
 
 
 msgid "Nodes Modifier"
@@ -41164,10 +41152,6 @@ msgid "Attribute Sample Texture"
 msgstr "属性テクスチャ取得"
 
 
-msgid "Texture to sample values from"
-msgstr "値を取得するテクスチャ"
-
-
 msgid "Attribute Separate XYZ"
 msgstr "属性XYZ分離"
 
@@ -41292,6 +41276,46 @@ msgid "Entry-wise tan(A)"
 msgstr "成分ごとの tan(A)"
 
 
+msgid "Input Type Angle"
+msgstr "入力タイプ（角度）"
+
+
+msgid "Input Type Axis"
+msgstr "入力タイプ（軸）"
+
+
+msgid "Input Type Rotation"
+msgstr "入力タイプ（回転）"
+
+
+msgid "Type of rotation"
+msgstr "回転タイプ"
+
+
+msgid "Rotate a point using axis angle"
+msgstr "軸の角度を使用し、ポイントを回転します"
+
+
+msgid "Rotate a point using X axis"
+msgstr "X 軸を使用しポイントを回転します"
+
+
+msgid "Rotate a point using Y axis"
+msgstr "Y 軸を使用しポイントを回転します"
+
+
+msgid "Z Axis"
+msgstr "Z軸"
+
+
+msgid "Rotate a point using Z axis"
+msgstr "Z 軸を使用しポイントを回転します"
+
+
+msgid "Rotate a point using XYZ order"
+msgstr "XYZ の順にポイントを回転します"
+
+
 msgid "Collection Info"
 msgstr "コレクション情報"
 
@@ -41318,6 +41342,10 @@ msgstr "ジオメトリカスタムグループ"
 
 msgid "Custom Geometry Group Node for Python nodes"
 msgstr "Python ノード用のカスタムジオメトリグループノード"
+
+
+msgid "Delete Geometry"
+msgstr "形状を削除"
 
 
 msgid "Is Viewport"
@@ -41458,18 +41486,6 @@ msgstr "ボクセルの辺の長さを指定します"
 
 msgid "Point Rotate"
 msgstr "ポイント回転"
-
-
-msgid "Input Type Angle"
-msgstr "入力タイプ（角度）"
-
-
-msgid "Input Type Axis"
-msgstr "入力タイプ（軸）"
-
-
-msgid "Input Type Rotation"
-msgstr "入力タイプ（回転）"
 
 
 msgid "Base orientation of the points"
@@ -42615,34 +42631,6 @@ msgid "Invert angle"
 msgstr "角度を反転"
 
 
-msgid "Type of rotation"
-msgstr "回転タイプ"
-
-
-msgid "Rotate a point using axis angle"
-msgstr "軸の角度を使用し、ポイントを回転します"
-
-
-msgid "Rotate a point using X axis"
-msgstr "X 軸を使用しポイントを回転します"
-
-
-msgid "Rotate a point using Y axis"
-msgstr "Y 軸を使用しポイントを回転します"
-
-
-msgid "Z Axis"
-msgstr "Z軸"
-
-
-msgid "Rotate a point using Z axis"
-msgstr "Z 軸を使用しポイントを回転します"
-
-
-msgid "Rotate a point using XYZ order"
-msgstr "XYZ の順にポイントを回転します"
-
-
 msgid "Vector Transform"
 msgstr "ベクトル変換"
 
@@ -42765,10 +42753,6 @@ msgstr "ソケットの名前"
 
 msgid "Data type of the socket"
 msgstr "ソケットのデータタイプ"
-
-
-msgid "Int"
-msgstr "Int"
 
 
 msgid "Link is muted and can be ignored"
@@ -48925,6 +48909,14 @@ msgid "Export loose points as glTF points, using the material from the first mat
 msgstr "分離したポイントを最初のマテリアルスロットのマテリアルを使用し、glTF point としてエクスポートします"
 
 
+msgid "Renderable Objects"
+msgstr "レンダリング可能なオブジェクト"
+
+
+msgid "Visible Objects"
+msgstr "可視オブジェクト"
+
+
 msgid "Remember Export Settings"
 msgstr "エクスポート設定を維持"
 
@@ -49128,11 +49120,6 @@ msgid "Write the rest state at the first frame"
 msgstr "最初のフレームに静止状態を書き込みます"
 
 
-msgctxt "Operator"
-msgid "Automatically Pack Into .blend"
-msgstr ".blendファイルに自動パック"
-
-
 msgid "Automatically pack all external files into the .blend file"
 msgstr "全外部ファイルを .blend ファイルに自動的にパックします"
 
@@ -49233,14 +49220,6 @@ msgid "Execute selected file"
 msgstr "選択したファイルを実行します"
 
 
-msgid "Need Active"
-msgstr "要アクティブ"
-
-
-msgid "Only execute if there's an active selected file in the file list"
-msgstr "ファイルリストにアクティブ選択ファイルがある場合のみ実行されます"
-
-
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "ファイル名の番号を増減"
@@ -49294,18 +49273,8 @@ msgid "Highlight selected file(s)"
 msgstr "選択したファイルをハイライトします"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "全てを絶対パスに"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "外部ファイルの全てのパスを絶対パスにします"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "全てを相対パスに"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -49319,24 +49288,6 @@ msgstr "次のフォルダー"
 
 msgid "Move to next folder"
 msgstr "次のフォルダーに移動します"
-
-
-msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "すべて.blendにパック"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "すべての外部ファイルを.blendファイルにパックします"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Blenderライブラリをパック"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "すべてのBlenderライブラリファイルを現在の.blendファイルにパックします"
 
 
 msgctxt "Operator"
@@ -49470,11 +49421,6 @@ msgid "Change sorting to use column under cursor"
 msgstr "カーソル下のカラムを使用してソートを変更します"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "ファイルにすべてパック解除"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr ".blend ファイルにパックされたすべてのファイルを、外部ファイルに展開します"
 
@@ -49538,15 +49484,6 @@ msgstr "オリジナルの場所(必要なら作成)のファイルを使用"
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "オリジナルの場所に保存(ファイルがある時は上書き)"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Blenderライブラリのパック解除"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "この.blendファイルで使用されているBlenderライブラリをすべてパック解除します"
 
 
 msgid "Scroll the selected files into view"
@@ -50130,31 +50067,6 @@ msgid "Add new Annotation data-block"
 msgstr "新規アノテーションデータブロックを追加します"
 
 
-msgctxt "Operator"
-msgid "Bake Mesh Animation to Grease Pencil"
-msgstr "メッシュアニメをグリースペンシルにベイク"
-
-
-msgid "Bake mesh animation to grease pencil strokes"
-msgstr "メッシュアニメーションをグリースペンシルストロークにベイクします"
-
-
-msgid "Threshold Angle"
-msgstr "角度のしきい値"
-
-
-msgid "Threshold to determine ends of the strokes"
-msgstr "ストローク終端を決めるしきい値"
-
-
-msgid "Export Faces"
-msgstr "面をエクスポート"
-
-
-msgid "Export faces as filled strokes"
-msgstr "フィルストロークとして面をエクスポートします"
-
-
 msgid "The end frame of animation"
 msgstr "アニメーションの終了フレーム"
 
@@ -50169,14 +50081,6 @@ msgstr "ターゲットフレーム"
 
 msgid "Destination frame"
 msgstr "対象のフレーム"
-
-
-msgid "Stroke Offset"
-msgstr "ストロークオフセット"
-
-
-msgid "Offset strokes from fill"
-msgstr "ストロークのフィルからのオフセット"
 
 
 msgid "Only Selected Keyframes"
@@ -50219,16 +50123,49 @@ msgid "Reproject the strokes using the orientation of 3D cursor"
 msgstr "3Dカーソルの方向を使用し、ストロークを再投影します"
 
 
+msgid "Step between generated frames"
+msgstr "生成するフレーム間のステップ"
+
+
+msgctxt "Operator"
+msgid "Bake Mesh Animation to Grease Pencil"
+msgstr "メッシュアニメをグリースペンシルにベイク"
+
+
+msgid "Bake mesh animation to grease pencil strokes"
+msgstr "メッシュアニメーションをグリースペンシルストロークにベイクします"
+
+
+msgid "Threshold Angle"
+msgstr "角度のしきい値"
+
+
+msgid "Threshold to determine ends of the strokes"
+msgstr "ストローク終端を決めるしきい値"
+
+
+msgid "Export Faces"
+msgstr "面をエクスポート"
+
+
+msgid "Export faces as filled strokes"
+msgstr "フィルストロークとして面をエクスポートします"
+
+
+msgid "Stroke Offset"
+msgstr "ストロークオフセット"
+
+
+msgid "Offset strokes from fill"
+msgstr "ストロークのフィルからのオフセット"
+
+
 msgid "Only Seam Edges"
 msgstr "シーム辺のみ"
 
 
 msgid "Convert only seam edges"
 msgstr "シーム辺のみ変換します"
-
-
-msgid "Step between generated frames"
-msgstr "生成するフレーム間のステップ"
 
 
 msgid "Target grease pencil"
@@ -50918,12 +50855,8 @@ msgid "Duplicate Layer to New Object"
 msgstr "レイヤーを新規オブジェクトにコピー"
 
 
-msgid "Make a copy of the active Grease Pencil layer to new object"
-msgstr "アクティブグリースペンシルレイヤーを新しいオブジェクトにコピーします"
-
-
-msgid "Name of the destination object"
-msgstr "対象オブジェクトの名前"
+msgid "Only Active"
+msgstr "アクティブのみ"
 
 
 msgctxt "Operator"
@@ -52275,10 +52208,6 @@ msgid "Add F-Modifier to the active/selected F-Curves"
 msgstr "Fモディファイアーをアクティブ・選択中のFカーブに追加します"
 
 
-msgid "Only Active"
-msgstr "アクティブのみ"
-
-
 msgid "Only add F-Modifier to active F-Curve"
 msgstr "アクティブFカーブにのみFモディファイアーを追加します"
 
@@ -52681,10 +52610,6 @@ msgstr "画像の高さ"
 
 msgid "Image data-block name"
 msgstr "画像データブロック名"
-
-
-msgid "Tiled"
-msgstr "タイル状"
 
 
 msgid "Create a tiled image"
@@ -63576,16 +63501,20 @@ msgid "Custom properties"
 msgstr "カスタムプロパティ"
 
 
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "どのキーフレームをより大事にするかを決める重み付け係数"
-
-
 msgid "Next Keyframe"
 msgstr "次のキーフレーム"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "現在のフレームの直後のキーフレーム番号"
+
+
+msgid "Percentage"
+msgstr "割合"
+
+
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "どのキーフレームをより大事にするかを決める重み付け係数"
 
 
 msgid "Previous Keyframe"
@@ -64089,10 +64018,6 @@ msgstr "同じIDを持つ既存のアドオンを削除します"
 
 msgid "Target Path"
 msgstr "ターゲットパス"
-
-
-msgid "User Prefs"
-msgstr "ユーザー設定"
 
 
 msgctxt "Operator"
@@ -64723,10 +64648,6 @@ msgstr "質量を計算"
 
 msgid "Automatically calculate mass values for Rigid Body Objects based on volume"
 msgstr "体積を元に、自動的にリジッドボディオブジェクト用の質量値を計算します"
-
-
-msgid "Custom density value (kg/m^3) to use instead of material preset"
-msgstr "カスタムの密度値(kg/m^3)を材質のプリセットの代わりに使用します"
 
 
 msgid "Material Preset"
@@ -66038,10 +65959,6 @@ msgid "Shrinks the Face Sets boundary by one face based on mesh topology"
 msgstr "面セットの境界をメッシュのトポロジーを元に、面一つ分縮小します"
 
 
-msgid "Delete Geometry"
-msgstr "形状を削除"
-
-
 msgid "Deletes the faces that are assigned to the Face Set"
 msgstr "面セットに割り当てられている面を削除します"
 
@@ -67160,6 +67077,10 @@ msgid "Keep image at its original size"
 msgstr "画像の元のサイズを維持します"
 
 
+msgid "Set appropriate view transform based on media colorspace"
+msgstr "メディアの色空間を元に適切なビューの色変換を設定します"
+
+
 msgctxt "Operator"
 msgid "Separate Images"
 msgstr "画像を分離"
@@ -67196,26 +67117,14 @@ msgid "Make Meta Strip"
 msgstr "メタストリップを作成"
 
 
-msgid "Group selected strips into a metastrip"
-msgstr "選択中のストリップをメタストリップにまとめます"
-
-
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "メタストリップ解除"
 
 
-msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "メタストリップの内容をシーケンサーに戻します"
-
-
 msgctxt "Operator"
 msgid "Toggle Meta Strip"
 msgstr "メタストリップを切替え"
-
-
-msgid "Toggle a metastrip (to edit enclosed strips)"
-msgstr "メタストリップをトグル(内部ストリップの編集)"
 
 
 msgctxt "Operator"
@@ -69719,10 +69628,6 @@ msgstr "UV 境界内に各面の UV を詰め込みます"
 
 msgid "New Image"
 msgstr "新規画像"
-
-
-msgid "Assign new images for every mesh (only one if shared tex space enabled)"
-msgstr "各メッシュに新規画像を割り当てます（「テクスチャ空間を共有」有効時は一つだけ）"
 
 
 msgid "Pack Quality"
@@ -77741,12 +77646,6 @@ msgid "Python Scripts Directory"
 msgstr "Pythonスクリプトディレクトリ"
 
 
-msgid "Alternate script path, matching the default layout with subdirectories: startup, add-ons and modules (requires restart)"
-msgstr ""
-"サブディレクトリ（startup、add-ons、modules）がデフォルト\n"
-"レイアウトの構造と一致する、代替のスクリプトパス（要再起動）"
-
-
 msgid "Hide Dot Files/Data-Blocks"
 msgstr "ドットファイル/データブロックを隠す"
 
@@ -78845,10 +78744,6 @@ msgstr "係数を表示する方法"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "係数を「0」から「1」までの値として表示します"
-
-
-msgid "Percentage"
-msgstr "割合"
 
 
 msgid "Display factors as percentages"
@@ -84753,14 +84648,6 @@ msgid "Sequence strip to load a video"
 msgstr "ビデオを読み込むシーケンスストリップ"
 
 
-msgid "MPEG Preseek"
-msgstr "MPEGプレシーク"
-
-
-msgid "For MPEG movies, preseek this many frames"
-msgstr "MPEG動画用、多数のフレームをプレシークします"
-
-
 msgid "Stream Index"
 msgstr "ストリームインデックス"
 
@@ -84803,14 +84690,6 @@ msgstr "シーンの3Dカメラを入力として使用します"
 
 msgid "Use the Scene's Sequencer timeline as input"
 msgstr "シーンのシーケンサータイムラインを入力として使用します"
-
-
-msgid "Use Grease Pencil"
-msgstr "グリースペンシルを使用"
-
-
-msgid "Show Grease Pencil strokes in OpenGL previews"
-msgstr "グリースペンシルのストロークを OpenGL プレビューに表示します"
 
 
 msgid "Sound Sequence"
@@ -85237,10 +85116,6 @@ msgstr "解像度75％でプロキシを構築"
 
 msgid "Location of custom proxy file"
 msgstr "カスタムプロキシファイルの位置"
-
-
-msgid "JPEG Quality of proxies to build"
-msgstr "プロキシ用に生成するJPEG品質"
 
 
 msgid "Method for reading the inputs timecode"
@@ -96511,10 +96386,6 @@ msgid "Invert"
 msgstr "反転"
 
 
-msgid "Transparency Masks:"
-msgstr "透過マスク:"
-
-
 msgctxt "Operator"
 msgid "Lock Unselected"
 msgstr "非選択をロック"
@@ -96526,13 +96397,13 @@ msgstr "未使用をロック"
 
 
 msgctxt "Operator"
-msgid "Merge Similar"
-msgstr "類似をマージ"
+msgid "Convert Materials to Vertex Color"
+msgstr "マテリアルを頂点カラーに変換"
 
 
 msgctxt "Operator"
-msgid "Convert Materials to Vertex Color"
-msgstr "マテリアルを頂点カラーに変換"
+msgid "Merge Similar"
+msgstr "類似をマージ"
 
 
 msgid "Flip Colors"
@@ -99075,10 +98946,6 @@ msgid "Resolutions"
 msgstr "解像度"
 
 
-msgid "Build JPEG Quality"
-msgstr "構築するJPEGの品質"
-
-
 msgid "Fractional Preview Zoom"
 msgstr "フラクタルプレビューズーム"
 
@@ -101616,10 +101483,6 @@ msgid "With Automatic Weights"
 msgstr "   自動のウェイトで"
 
 
-msgid "No layer to copy"
-msgstr "コピーするレイヤーなし"
-
-
 msgctxt "Operator"
 msgid "Paste by Layer"
 msgstr "同レイヤーに貼り付け"
@@ -101756,10 +101619,6 @@ msgstr "面を削除"
 msgctxt "Operator"
 msgid "Clear Freestyle Face"
 msgstr "Freestyle面をクリア"
-
-
-msgid "No destination object"
-msgstr "対象オブジェクトなし"
 
 
 msgid "Specular Lighting"
@@ -102100,16 +101959,16 @@ msgid "Const"
 msgstr "コンストレイント"
 
 
-msgid "blend_data"
-msgstr "blend_data"
-
-
 msgid "UVMap"
 msgstr "UVマップ"
 
 
 msgid "Col"
 msgstr "色"
+
+
+msgid "Int"
+msgstr "Int"
 
 
 msgid "PreviewCol"
@@ -103759,6 +103618,10 @@ msgid "Cannot separate an object with one layer only"
 msgstr "レイヤー一つのみのオブジェクトは分離できません"
 
 
+msgid "Nothing selected"
+msgstr "何も選択していません"
+
+
 msgid "No active area"
 msgstr "アクティブエリアがありません"
 
@@ -104813,14 +104676,6 @@ msgid "Only"
 msgstr "限定"
 
 
-msgid "Renderable Objects"
-msgstr "レンダリング可能なオブジェクト"
-
-
-msgid "Visible Objects"
-msgstr "可視オブジェクト"
-
-
 msgid "Object Options"
 msgstr "オブジェクトオプション"
 
@@ -105128,10 +104983,6 @@ msgstr "実行する辺が選択されていません"
 
 msgid "Mouse path too short"
 msgstr "マウスの経路が短すぎます"
-
-
-msgid "Nothing selected"
-msgstr "何も選択していません"
 
 
 msgid "Selection not supported in object mode"
@@ -106596,6 +106447,10 @@ msgid "Swap Areas"
 msgstr "エリア交換"
 
 
+msgid "Maximize Area"
+msgstr "最大化"
+
+
 msgid "Flip to Bottom"
 msgstr "下に移動"
 
@@ -106610,14 +106465,6 @@ msgstr "ヘッダーを表示"
 
 msgid "Show Tool Settings"
 msgstr "ツール設定を表示"
-
-
-msgid "Tile Area"
-msgstr "タイル化"
-
-
-msgid "Maximize Area"
-msgstr "最大化"
 
 
 msgid "Show Footer"
@@ -107149,6 +106996,22 @@ msgstr "いくつかのデータの再構築に失敗しました（詳細はコ
 
 msgid "Average re-projection error: %.2f px"
 msgstr "再投影誤差の平均：%.2f ピクセル"
+
+
+msgid "Track the selected markers backward for the entire clip"
+msgstr "クリップ全体で選択中のマーカーを後方にトラックします"
+
+
+msgid "Track the selected markers backward by one frame"
+msgstr "単一フレームで選択中のマーカーを後方にトラックします"
+
+
+msgid "Track the selected markers forward for the entire clip"
+msgstr "クリップ全体で選択中のマーカーを前方にトラックします"
+
+
+msgid "Track the selected markers forward by one frame"
+msgstr "単一フレームで選択中のマーカーを前方にトラックします"
 
 
 msgid "File path"
@@ -107798,252 +107661,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "モディファイアーが(%s : %s)に追加できませんでした（コンソールに詳細）"
 
 
-msgid "Sta"
-msgstr "開始"
-
-
-msgid "Label Size"
-msgstr "ラベルサイズ"
-
-
-msgid "Frame: %d"
-msgstr "フレーム:%d"
-
-
-msgid "Squash"
-msgstr "別のレンガ"
-
-
-msgid "Center:"
-msgstr "中心:"
-
-
-msgid "Bokeh Type:"
-msgstr "ボケタイプ"
-
-
-msgid "Speed:"
-msgstr "速度:"
-
-
-msgid "Inner Edge:"
-msgstr "内部境界:"
-
-
-msgid "Buffer Edge:"
-msgstr "外部境界:"
-
-
-msgid "Color Space:"
-msgstr "色空間:"
-
-
-msgid "Despill Channel:"
-msgstr "スピル除去チャンネル:"
-
-
-msgid "Limiting Channel:"
-msgstr "制限チャンネル:"
-
-
-msgid "Key Channel:"
-msgstr "キーチャンネルを使用:"
-
-
-msgid "Path:"
-msgstr "パス:"
-
-
-msgid "Base Path:"
-msgstr "基本パス:"
-
-
-msgid "Add Input"
-msgstr "入力に追加"
-
-
-msgid "File Subpath:"
-msgstr "ファイルサブパス"
-
-
-msgid "Format:"
-msgstr "形式:"
-
-
-msgid "Master"
-msgstr "マスター"
-
-
-msgid "Highlights"
-msgstr "ハイライト"
-
-
-msgid "Midtones"
-msgstr "中間色"
-
-
-msgid "Matte Objects:"
-msgstr "マットオブジェクト:"
-
-
-msgid "Add Crypto Layer"
-msgstr "Cryptoレイヤーを追加"
-
-
-msgid "Remove Crypto Layer"
-msgstr "Cryptoレイヤーを削除"
-
-
-msgid "Matte ID:"
-msgstr "マットID:"
-
-
-msgid "Disabled, built without OpenImageDenoise"
-msgstr "無効、OpenImageDenoise なしでビルドされています"
-
-
-msgid "Disabled, CPU with SSE4.1 is required"
-msgstr "無効、SSE4.1対応の CPU が必要です"
-
-
-msgid "Undefined Socket Type"
-msgstr "未定義ソケットタイプ"
-
-
-msgid "NodeTree"
-msgstr "ノードツリー"
-
-
-msgid "Could not add node group"
-msgstr "ノードグループを追加できませんでした"
-
-
-msgid "Could not add node object"
-msgstr "ノードオブジェクトを追加できませんでした"
-
-
-msgid "Could not find node object socket"
-msgstr "ノードオブジェクトのソケットが見つかりません"
-
-
-msgid "Could not add texture node"
-msgstr "テクスチャノードを追加できませんでした"
-
-
-msgid "Could not add node collection"
-msgstr "ノードコレクションを追加できませんでした"
-
-
-msgid "Could not find node collection socket"
-msgstr "ノードコレクションのソケットが見つかりません"
-
-
-msgid "Could not add an image node"
-msgstr "画像ノードを追加できませんでした"
-
-
-msgid "Could not add a mask node"
-msgstr "マスクノードを追加できませんでした"
-
-
-msgid ""
-"Can not add node group '%s' to '%s':\n"
-"  %s"
-msgstr ""
-"ノードグループ「%s」を「%s」に追加できません:\n"
-"  %s"
-
-
-msgid "Can not add node group '%s' to '%s'"
-msgstr "ノードグループ「%s」を「%s」に追加できません"
-
-
-msgid "Mask '%s' not found"
-msgstr "マスク「%s」がありません"
-
-
-msgid "Node tree type %s undefined"
-msgstr "ノードツリータイプ %s が未定義です"
-
-
 msgid "Sockets"
 msgstr "ソケット"
-
-
-msgid "Clipboard is empty"
-msgstr "クリップボードが空です"
-
-
-msgid "Clipboard nodes are an incompatible type"
-msgstr "クリップボードのノードのタイプに互換性がありません"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "いくつかのノードの参照がリストアできませんでした。空のまま残ります"
-
-
-msgid "Text not used by any node, no update done"
-msgstr "どのノードからも使用されないテキストです。更新しません"
-
-
-msgid ""
-"Cannot add node %s into node tree %s:\n"
-"  %s"
-msgstr ""
-"ノード %s をノードツリー %s に追加できません:\n"
-"  %s"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "ノード %s をノードツリー %s に追加できません"
-
-
-msgid "Cannot ungroup"
-msgstr "グループ解除できません"
-
-
-msgid "Not inside node group"
-msgstr "ノードグループ内ではありません"
-
-
-msgid "Cannot separate nodes"
-msgstr "ノードを分離できません"
-
-
-msgid ""
-"Can not add node '%s' in a group:\n"
-"  %s"
-msgstr ""
-"ノード「%s」をグループ内に追加できません:\n"
-"  %s"
-
-
-msgid "Can not add node '%s' in a group"
-msgstr "ノード「%s」をグループ内に追加できません"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "LMB: ノードのリンクをドラッグ、RMB: キャンセル"
-
-
-msgid "Disconnect"
-msgstr "リンク解除"
-
-
-msgid "Dependency Loop"
-msgstr "循環依存"
-
-
-msgid "Add node to input"
-msgstr "ノードを入力に追加"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "入力につながっているノードを削除"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "入力に接続されているノードをリンク解除"
 
 
 msgid "More than one collection is selected"

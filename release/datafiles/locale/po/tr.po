@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -344,10 +344,6 @@ msgstr "Kenar"
 
 msgid "Face"
 msgstr "Yüzey Alanı"
-
-
-msgid "Curve"
-msgstr "Eğri"
 
 
 msgid "Bake Data"
@@ -1144,6 +1140,10 @@ msgstr "Ekran Rengi:"
 
 msgid "Color Space"
 msgstr "Ekran Rengi:"
+
+
+msgid "Curve"
+msgstr "Eğri"
 
 
 msgid "Gamma"
@@ -9171,6 +9171,10 @@ msgid "Dot Product"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
 
+msgid "Z Axis"
+msgstr "Z Eks"
+
+
 msgid "Original"
 msgstr "Orijinali Koru"
 
@@ -9405,10 +9409,6 @@ msgstr "Doku Boyama"
 
 msgid "Vector Math"
 msgstr "Vektör Tutamak"
-
-
-msgid "Z Axis"
-msgstr "Z Eks"
 
 
 msgid "Texture Node"
@@ -11612,10 +11612,6 @@ msgid "Execute selected file"
 msgstr "Yeni dosya oluştur"
 
 
-msgid "Need Active"
-msgstr "Aktif Kamera"
-
-
 msgctxt "Operator"
 msgid "Find Missing Files"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
@@ -11641,11 +11637,6 @@ msgstr "Sonraki Kare"
 
 msgid "Move to next folder"
 msgstr "Sonraki anahtara git"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Blender Dosyasını Kaydet"
 
 
 msgctxt "Operator"
@@ -11710,11 +11701,6 @@ msgstr "Kütüphaneye Ekle"
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Arkaplan Resmi"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Yeni dosya oluştur"
 
 
 msgctxt "Operator"
@@ -12017,6 +12003,10 @@ msgid "Add New Layer"
 msgstr "Yeni bir değiştirici ekle"
 
 
+msgid "Only Active"
+msgstr "Aktif Kamera"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Katman Sil"
@@ -12112,10 +12102,6 @@ msgstr "Dosya Uzantılarını Filtrele"
 msgctxt "Operator"
 msgid "Add F-Curve Modifier"
 msgstr "Fark Değiştirici Ekle"
-
-
-msgid "Only Active"
-msgstr "Aktif Kamera"
 
 
 msgctxt "Operator"
@@ -15576,10 +15562,6 @@ msgstr "Seçili İşaretler arasında"
 
 msgid "Target Path"
 msgstr "Dosya yolu"
-
-
-msgid "User Prefs"
-msgstr "Kullanıcı Toplulukları"
 
 
 msgctxt "Operator"
@@ -23474,6 +23456,10 @@ msgid "No active frame to delete"
 msgstr "Aktif Kamerayı Seçilene Hizala"
 
 
+msgid "Nothing selected"
+msgstr "Hiçbirşey seçilmedi"
+
+
 msgctxt "Operator"
 msgid "Change Shortcut"
 msgstr "Kemik Katmanlarınını Değiştir..."
@@ -23901,10 +23887,6 @@ msgid "Mouse path too short"
 msgstr "Karikatürize gölgelendirici kullan"
 
 
-msgid "Nothing selected"
-msgstr "Hiçbirşey seçilmedi"
-
-
 msgid "Selection not supported in object mode"
 msgstr "Aynı Tip Nesneler"
 
@@ -24097,20 +24079,16 @@ msgid "Blender Render"
 msgstr "Blender Sunumu"
 
 
+msgid "Maximize Area"
+msgstr "Yüzey Alanı"
+
+
 msgid "Flip to Bottom"
 msgstr "Dosya adı"
 
 
 msgid "Flip to Top"
 msgstr "Kütüphaneye Ekle"
-
-
-msgid "Tile Area"
-msgstr "Pencereyi Küçült"
-
-
-msgid "Maximize Area"
-msgstr "Yüzey Alanı"
 
 
 msgid "No more keyframes to jump to in this direction"
@@ -24263,110 +24241,6 @@ msgstr "Otomatik Kayıt"
 
 msgid "No valid action to add"
 msgstr "Gruba ekle"
-
-
-msgid "Sta"
-msgstr "Başlat"
-
-
-msgid "Label Size"
-msgstr "Yazıtipi boyutu:"
-
-
-msgid "Squash"
-msgstr "Yansıma miktarı"
-
-
-msgid "Center:"
-msgstr "Merkez"
-
-
-msgid "Bokeh Type:"
-msgstr "Kesme Biçimi "
-
-
-msgid "Speed:"
-msgstr "Hız Kontrol"
-
-
-msgid "Inner Edge:"
-msgstr "Kenar Seçme Modu:"
-
-
-msgid "Buffer Edge:"
-msgstr "Kenar Seçme Modu:"
-
-
-msgid "Color Space:"
-msgstr "Ekran Rengi:"
-
-
-msgid "Despill Channel:"
-msgstr "Kanal Sıralaması"
-
-
-msgid "Limiting Channel:"
-msgstr "Kanal Sıralaması"
-
-
-msgid "Key Channel:"
-msgstr "Kanal Sıralaması"
-
-
-msgid "Path:"
-msgstr "Yol:"
-
-
-msgid "Base Path:"
-msgstr "Dosya yolu"
-
-
-msgid "Add Input"
-msgstr "Giriş"
-
-
-msgid "Format:"
-msgstr "Biçim:"
-
-
-msgid "Master"
-msgstr "Yapıştır"
-
-
-msgid "Highlights"
-msgstr "Tam Doğrultu"
-
-
-msgid "Midtones"
-msgstr "Bitiş Zamanı"
-
-
-msgid "Cannot ungroup"
-msgstr "Yeni Gurup"
-
-
-msgid "Not inside node group"
-msgstr "Yeni bir nokta grubu oluşturur"
-
-
-msgid "Cannot separate nodes"
-msgstr "Kontur Metodu:"
-
-
-msgid "Disconnect"
-msgstr "Kemik Kısıtlamaları"
-
-
-msgid "Dependency Loop"
-msgstr "Kenar Doğrultusunca Seç"
-
-
-msgid "Add node to input"
-msgstr "Gruba ekle"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Aktif Grubu Sil"
 
 
 msgid "Operation requires an active keying set"

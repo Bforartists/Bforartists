@@ -147,7 +147,17 @@ static const EnumPropertyItem property_subtype_number_items[] = {
     {PROP_PERCENTAGE, "PERCENTAGE", 0, "Percentage", ""},
     {PROP_FACTOR, "FACTOR", 0, "Factor", ""},
     {PROP_ANGLE, "ANGLE", 0, "Angle", ""},
-    {PROP_TIME, "TIME", 0, "Time", ""},
+    {PROP_TIME,
+     "TIME",
+     0,
+     "Time (Scene Relative)",
+     "Time specified in frames, converted to seconds based on scene frame rate"},
+    {PROP_TIME_ABSOLUTE,
+     "TIME_ABSOLUTE",
+     0,
+     "Time (Absolute)",
+     "Time specified in seconds, independent of the scene"},
+    {PROP_TIME_ABSOLUTE, "TIME_ABSOLUTE", 0, "Time Absolute", ""},
     {PROP_DISTANCE, "DISTANCE", 0, "Distance", ""},
     {PROP_DISTANCE_CAMERA, "DISTANCE_CAMERA", 0, "Camera Distance", ""},
     {PROP_POWER, "POWER", 0, "Power", ""},
@@ -2464,7 +2474,7 @@ static PyObject *BPy_BoolProperty(PyObject *self, PyObject *args, PyObject *kw)
         "set",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#|ssO&O!O!O!sOOO:BoolProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#|$ssO&O!O!O!sOOO:BoolProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -2583,7 +2593,7 @@ static PyObject *BPy_BoolVectorProperty(PyObject *self, PyObject *args, PyObject
         "set",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#|ssOO!O!O!siOOO:BoolVectorProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#|$ssOO!O!O!siOOO:BoolVectorProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -2728,7 +2738,7 @@ static PyObject *BPy_IntProperty(PyObject *self, PyObject *args, PyObject *kw)
         "set",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#|ssiiiiiiO!O!O!sOOO:IntProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#|$ssiiiiiiO!O!O!sOOO:IntProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -2865,7 +2875,7 @@ static PyObject *BPy_IntVectorProperty(PyObject *self, PyObject *args, PyObject 
         "set",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#|ssOiiiiiO!O!O!siOOO:IntVectorProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#|$ssOiiiiiO!O!O!siOOO:IntVectorProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -3005,7 +3015,7 @@ static PyObject *BPy_FloatProperty(PyObject *self, PyObject *args, PyObject *kw)
         "soft_max", "step",   "precision",   "options", "override", "tags", "subtype",
         "unit",     "update", "get",         "set",     NULL,
     };
-    static _PyArg_Parser _parser = {"s#|ssffffffiO!O!O!ssOOO:FloatProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#|$ssffffffiO!O!O!ssOOO:FloatProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -3138,7 +3148,7 @@ static PyObject *BPy_FloatVectorProperty(PyObject *self, PyObject *args, PyObjec
         "soft_max", "step", "precision",   "options", "override", "tags", "subtype",
         "unit",     "size", "update",      "get",     "set",      NULL,
     };
-    static _PyArg_Parser _parser = {"s#|ssOfffffiO!O!O!ssiOOO:FloatVectorProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#|$ssOfffffiO!O!O!ssiOOO:FloatVectorProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -3287,7 +3297,7 @@ static PyObject *BPy_StringProperty(PyObject *self, PyObject *args, PyObject *kw
         "set",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#|sssiO!O!O!sOOO:StringProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#|$sssiO!O!O!sOOO:StringProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -3445,7 +3455,7 @@ static PyObject *BPy_EnumProperty(PyObject *self, PyObject *args, PyObject *kw)
         "set",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#O|ssOO!O!O!OOO:EnumProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#O|$ssOO!O!O!OOO:EnumProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -3628,7 +3638,7 @@ PyObject *BPy_PointerProperty(PyObject *self, PyObject *args, PyObject *kw)
         "update",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#O|ssO!O!O!OO:PointerProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#O|$ssO!O!O!OO:PointerProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,
@@ -3731,7 +3741,7 @@ PyObject *BPy_CollectionProperty(PyObject *self, PyObject *args, PyObject *kw)
         "tags",
         NULL,
     };
-    static _PyArg_Parser _parser = {"s#O|ssO!O!O!:CollectionProperty", _keywords, 0};
+    static _PyArg_Parser _parser = {"s#O|$ssO!O!O!:CollectionProperty", _keywords, 0};
     if (!_PyArg_ParseTupleAndKeywordsFast(args,
                                           kw,
                                           &_parser,

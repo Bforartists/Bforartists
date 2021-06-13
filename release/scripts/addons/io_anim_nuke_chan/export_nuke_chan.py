@@ -22,7 +22,7 @@
 It takes the currently active object and writes it's transformation data
 into a text file with .chan extension."""
 
-from mathutils import Matrix
+from mathutils import Matrix, Euler
 from math import radians, degrees
 
 
