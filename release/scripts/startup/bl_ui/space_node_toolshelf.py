@@ -3659,6 +3659,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Bounding Box       ", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
+            
+            props = col.operator("node.add_node", text=" Convex Hull        ", icon = "CONVEXHULL")
+            props.use_transform = True
+            props.type = "GeometryNodeConvexHull"
 
             props = col.operator("node.add_node", text=" Delete Geometry ", icon = "DELETE")
             props.use_transform = True
@@ -3684,6 +3688,10 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
+            
+            props = flow.operator("node.add_node", text = "", icon = "CONVEXHULL")
+            props.use_transform = True
+            props.type = "GeometryNodeConvexHull"
 
             props = flow.operator("node.add_node", text = "", icon = "DELETE")
             props.use_transform = True
@@ -3841,6 +3849,10 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Material Replace      ", icon = "MATERIAL_REPLACE")
             props.use_transform = True
             props.type = "GeometryNodeMaterialReplace"
+            
+            props = col.operator("node.add_node", text=" Select by Material     ", icon = "SELECT_BY_MATERIAL")
+            props.use_transform = True
+            props.type = "GeometryNodeSelectByMaterial"
 
         #### Icon Buttons
 
@@ -3857,6 +3869,10 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MATERIAL_REPLACE")
             props.use_transform = True
             props.type = "GeometryNodeMaterialReplace"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SELECT_BY_MATERIAL")
+            props.use_transform = True
+            props.type = "GeometryNodeSelectByMaterial"
 
 
 #add mesh panel

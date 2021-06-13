@@ -573,7 +573,7 @@ propagate_marker
 propagate_next
 propagate_previous
 propagate_selected
-#~ DEF_ICON_BLANK(592)
+select_by_material
 #~ DEF_ICON_BLANK(593)
 #~ DEF_ICON_BLANK(594)
 #~ DEF_ICON_BLANK(595)

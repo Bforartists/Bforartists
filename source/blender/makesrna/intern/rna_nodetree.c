@@ -12499,6 +12499,13 @@ static int node_type_to_icon(int type)
       icon = ICON_MATERIAL_REPLACE;
       break;
 
+    case GEO_NODE_CONVEX_HULL:
+      icon = ICON_CONVEXHULL;
+      break;
+    case GEO_NODE_SELECT_BY_MATERIAL:
+      icon = ICON_SELECT_BY_MATERIAL;
+      break;
+
       /*primitives*/
     case GEO_NODE_MESH_PRIMITIVE_CUBE:
       icon = ICON_MESH_CUBE;
