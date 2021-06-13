@@ -1362,6 +1362,7 @@ static int area_dupli_invoke(bContext *C, wmOperator *op, const wmEvent *event)
                                     area->winx,
                                     area->winy,
                                     SPACE_EMPTY,
+                                    false,
                                     true,
                                     false,
                                     WIN_ALIGN_ABSOLUTE);
@@ -4792,9 +4793,16 @@ static void screen_animation_region_tag_redraw(ScrArea *area,
   /* No need to do a full redraw as the current frame indicator is only updated.
    * We do need to redraw when this area is in full screen as no other areas
    * will be tagged for redrawing. */
-  if ((region->regiontype == RGN_TYPE_WINDOW) &&
-      (ELEM(area->spacetype, SPACE_GRAPH, SPACE_NLA, SPACE_ACTION)) && !area->full) {
-    return;
+  if (region->regiontype == RGN_TYPE_WINDOW && !area->full) {
+    if (ELEM(area->spacetype, SPACE_GRAPH, SPACE_NLA, SPACE_ACTION)) {
+      return;
+    }
+
+    if (area->spacetype == SPACE_SEQ) {
+      if (!ED_space_sequencer_has_visible_animation_on_strip(scene)) {
+        return;
+      }
+    }
   }
   ED_region_tag_redraw(region);
 }
@@ -5294,6 +5302,7 @@ static int userpref_show_exec(bContext *C, wmOperator *op)
                      sizey,
                      SPACE_USERPREF,
                      false,
+                     false,
                      true,
                      WIN_ALIGN_LOCATION_CENTER) != NULL) {
     /* The header only contains the editor switcher and looks empty.
@@ -5359,6 +5368,7 @@ static int drivers_editor_show_exec(bContext *C, wmOperator *op)
                      sizex,
                      sizey,
                      SPACE_GRAPH,
+                     false,
                      false,
                      true,
                      WIN_ALIGN_LOCATION_CENTER) != NULL) {
@@ -5427,6 +5437,7 @@ static int info_log_show_exec(bContext *C, wmOperator *op)
                      sizex,
                      sizey,
                      SPACE_INFO,
+                     false,
                      false,
                      true,
                      WIN_ALIGN_LOCATION_CENTER) != NULL) {

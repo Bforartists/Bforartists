@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-04-29 10:20+0200\n"
+"PO-Revision-Date: 2021-05-10 15:59+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -1143,12 +1143,8 @@ msgid "Attribute on mesh face corner"
 msgstr "Atribút pre roh plôšky povrchovej siete"
 
 
-msgid "Curve"
-msgstr "Krivka"
-
-
-msgid "Attribute on hair curve"
-msgstr "Atribút pre krivku vlasu"
+msgid "Spline"
+msgstr "Drážka"
 
 
 msgid "Name of the Attribute"
@@ -1344,7 +1340,7 @@ msgstr "Zapečie normály v priestore objektu"
 
 
 msgid "Tangent"
-msgstr "Tangens"
+msgstr "Dotyčnica"
 
 
 msgid "Bake the normals in tangent space"
@@ -2776,7 +2772,7 @@ msgstr "Kosť v bloku údajov armatúry"
 
 
 msgid "In X"
-msgstr "Z X"
+msgstr "Dnu X"
 
 
 msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
@@ -2784,47 +2780,47 @@ msgstr "Posuv manipulátora v osi X pre začiatok krivky kosti, upravuje zakrive
 
 
 msgid "In Y"
-msgstr "Z Y"
+msgstr "Dnu Y"
 
 
 msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "Posuv manipulátora v osi Y pre začiatok krivky B-kosti, upravuje zakrivenie"
+msgstr "Posuv manipulátora v osi Y pre začiatok krivky Ohnutej kosti, upravuje zakrivenie"
 
 
 msgid "Out X"
-msgstr "Po X"
+msgstr "Von X"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Posuv manipulátora v osi X pre koniec krivky ohybu kosti, upravuje zakrivenie"
+msgstr "Posuv manipulátora v osi X pre koniec krivky ohnutia kosti, upravuje zakrivenie"
 
 
 msgid "Out Y"
-msgstr "Po Y"
+msgstr "Von Y"
 
 
 msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Posuv manipulátora v osi Y pre koniec krivky ohybu kosti, upravuje zakrivenie"
+msgstr "Posuv manipulátora v osi Y pre koniec krivky ohnutia kosti, upravuje zakrivenie"
 
 
 msgid "B-Bone End Handle"
-msgstr "Koniec manipulátora ohybu kosti"
+msgstr "Koniec manipulátora ohnutia kosti"
 
 
 msgid "Bone that serves as the end handle for the B-Bone curve"
-msgstr "Kosť slúžiaca ako koncový manipulátor pre krivku ohybu kosti"
+msgstr "Kosť slúžiaca ako koncový manipulátor pre krivku ohnutia kosti"
 
 
 msgid "B-Bone Start Handle"
-msgstr "Začiatok manipulátora ohybu kosti"
+msgstr "Začiatok manipulátora ohnutia kosti"
 
 
 msgid "Bone that serves as the start handle for the B-Bone curve"
-msgstr "Kosť slúžiaca ako začiatočný manipulátor pre krivku ohybu kosti"
+msgstr "Kosť slúžiaca ako začiatočný manipulátor pre krivku ohnutia kosti"
 
 
 msgid "Ease In"
-msgstr "Zmiernenie vzniku"
+msgstr "Zmierniť Dnu"
 
 
 msgid "Length of first Bezier Handle (for B-Bones only)"
@@ -2840,11 +2836,11 @@ msgstr "Dĺžka druhého manipulátora bézierovej krivky (iba pre ohyb kosti)"
 
 
 msgid "B-Bone End Handle Type"
-msgstr "Typ konca manipulátora ohybu kosti"
+msgstr "Typ konca manipulátora ohnutia kosti"
 
 
 msgid "Selects how the end handle of the B-Bone is computed"
-msgstr "Vyberie spôsob výpočtu konca manipulátora ohybu kosti"
+msgstr "Vyberie spôsob výpočtu konca manipulátora ohnutia kosti"
 
 
 msgid "Automatic"
@@ -2876,83 +2872,83 @@ msgstr "Použije orientáciu určenej kosti na výpočet manipulátora, ignoruje
 
 
 msgid "B-Bone Start Handle Type"
-msgstr "Typ začiatku manipulátora ohybu kosti"
+msgstr "Typ začiatku manipulátora ohnutia kosti"
 
 
 msgid "Selects how the start handle of the B-Bone is computed"
-msgstr "Vyberie spôsob výpočtu začiatku manipulátora ohybu kosti"
+msgstr "Vyberie spôsob výpočtu začiatku manipulátora ohnutia kosti"
 
 
 msgid "Roll In"
-msgstr "Zakrútiť"
+msgstr "Prevaľovať Dnu"
 
 
 msgid "Roll offset for the start of the B-Bone, adjusts twist"
-msgstr "Posuv zakrútenia začiatku ohybu kosti, upravuje skrútenie"
+msgstr "Posuv prevalenia začiatku ohnutia kosti, upravuje skrútenie"
 
 
 msgid "Roll Out"
-msgstr "Vykrútiť"
+msgstr "Prevaľovať Von"
 
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
-msgstr "Posuv vykrútenia konca ohybu kosti, upravuje skrútenie"
+msgstr "Posuv prevalenia konca ohnutia kosti, upravuje skrútenie"
 
 
 msgid "Scale In X"
-msgstr "Zmena veľkosti do X"
+msgstr "Mierka Dnu X"
 
 
 msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Faktor zmeny veľkosti osi X pre začiatok ohybu kosti, upravuje hrúbku (pre efekt zúženia)"
+msgstr "Faktor zmeny veľkosti osi X pre začiatok ohnutia kosti, upravuje hrúbku (pre efekt zúženia)"
 
 
 msgid "Scale In Y"
-msgstr "Zmena veľkosti do Y"
+msgstr "Mierka Dnu Y"
 
 
 msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Faktor zmeny veľkosti osi Y pre začiatok ohybu kosti, upravuje hrúbku (pre efekt zúženia)"
+msgstr "Faktor zmeny veľkosti osi Y pre začiatok ohnutia kosti, upravuje hrúbku (pre efekt zúženia)"
 
 
 msgid "Scale Out X"
-msgstr "Zmena veľkosti od X"
+msgstr "Mierka Von X"
 
 
 msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Faktor zmeny veľkosti osiX pre koniec ohybu kosti, upravuje hrúbku (pre efekt zúženia)"
+msgstr "Faktor zmeny veľkosti osi X pre koniec ohnutia kosti, upravuje hrúbku (pre efekt zúženia)"
 
 
 msgid "Scale Out Y"
-msgstr "Zmena veľkosti od Y"
+msgstr "Mierka Von Y"
 
 
 msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Faktor zmeny veľkosti osi Y pre koniec ohybu kosti, upravuje hrúbku (pre efekt zúženia)"
+msgstr "Faktor zmeny veľkosti osi Y pre koniec ohnutia kosti, upravuje hrúbku (pre efekt zúženia)"
 
 
 msgid "B-Bone Segments"
-msgstr "Segmenty ohybu kostí"
+msgstr "Segmenty ohnutia kostí"
 
 
 msgid "Number of subdivisions of bone (for B-Bones only)"
-msgstr "Počet delení kostí (iba pre ohyb kosti)"
+msgstr "Počet delení kostí (iba pre ohnutie kosti)"
 
 
 msgid "B-Bone Display X Width"
-msgstr "Zobrazí X šírku ohybu kosti"
+msgstr "Zobrazí X šírku ohnutia kosti"
 
 
 msgid "B-Bone X size"
-msgstr "X veľkosť ohybu kosti"
+msgstr "X veľkosť ohnutia kosti"
 
 
 msgid "B-Bone Display Z Width"
-msgstr "Zobrazí Z šírku ohybu kosti"
+msgstr "Zobrazí Z šírku ohnutia kosti"
 
 
 msgid "B-Bone Z size"
-msgstr "Z veľkosť ohybu kosti"
+msgstr "Z veľkosť ohnutia kosti"
 
 
 msgid "Children"
@@ -3164,7 +3160,7 @@ msgstr "Povolí kosti geometriu deformácie"
 
 
 msgid "Inherit End Roll"
-msgstr "Zdediť koniec zakrútenia"
+msgstr "Zdediť koniec prevalenia"
 
 
 msgid "Add Roll Out of the Start Handle bone to the Roll In value"
@@ -3192,7 +3188,7 @@ msgstr "Zastarané: Kosť dedí mierku z pôvodnej kosti"
 
 
 msgid "Local Location"
-msgstr "Poloha umiestnenia"
+msgstr "Lokálna poloha"
 
 
 msgid "Bone location is set in local space"
@@ -5239,6 +5235,10 @@ msgid "Color management settings used for displaying images on the display"
 msgstr "Nastavenia správy farieb používané na zobrazovanie obrázkov v zobrazení"
 
 
+msgid "Curve"
+msgstr "Krivka"
+
+
 msgid "Color curve mapping applied before display transform"
 msgstr "Priradenie farebnej krivky použité pred transformáciou zobrazenia"
 
@@ -5440,7 +5440,7 @@ msgstr "Zásadná"
 
 
 msgid "B-Spline"
-msgstr "B-drážka"
+msgstr "Drážka ohnutia"
 
 
 msgid "Constant"
@@ -5525,7 +5525,7 @@ msgstr "Chyba"
 
 
 msgid "Constraint modifying the transformation of objects and bones"
-msgstr "Obmedzenie zmeny transformácie objektov a kostí"
+msgstr "Vynútenie zmeny transformácie objektov a kostí"
 
 
 msgid "Constraint is the one being edited"
@@ -5561,11 +5561,11 @@ msgstr "Lokálne náhrady"
 
 
 msgid "Constraint was added in this proxy instance (i.e. did not belong to source Armature)"
-msgstr "Obmedzenie bolo pridané v tejto inštancii náhrady (t. j. nepatrí k zdroju armatúry)"
+msgstr "Vynútenie bolo pridané v tejto inštancii náhrady (t. j. nepatrí k zdroju armatúry)"
 
 
 msgid "Constraint has valid settings and can be evaluated"
-msgstr "Obmedzenie má platné nastavenia a môže byť vyhodnotené"
+msgstr "Vynútenie má platné nastavenia a môže byť vyhodnotené"
 
 
 msgid "Disable"
@@ -5593,7 +5593,7 @@ msgstr "Priestor sveta"
 
 
 msgid "The constraint is applied relative to the world coordinate system"
-msgstr "Obmedzenie je použité vzhľadom na systém súradníc sveta"
+msgstr "Vynútenie je použité vzhľadom na systém súradníc sveta"
 
 
 msgid "Custom Space"
@@ -5601,7 +5601,7 @@ msgstr "Vlastný priestor"
 
 
 msgid "The constraint is applied in local space of a custom object/bone/vertex group"
-msgstr "Obmedzenie sa aplikuje v lokálnom priestore vlastnej skupiny objektov/kostí/vrcholov"
+msgstr "Vynútenie sa aplikuje v lokálnom priestore vlastnej skupiny objektov/kostí/vrcholov"
 
 
 msgid "Pose Space"
@@ -5609,7 +5609,7 @@ msgstr "Priestor pózy"
 
 
 msgid "The constraint is applied in Pose Space, the object transformation is ignored"
-msgstr "Obmedzenie použité v priestore pózy, transformácia objektu je ignorovaná"
+msgstr "Vynútenie použité v priestore pózy, transformácia objektu je ignorovaná"
 
 
 msgid "Local With Parent"
@@ -5617,7 +5617,7 @@ msgstr "Lokálne s rodičom"
 
 
 msgid "The constraint is applied relative to the rest pose local coordinate system of the bone, thus including the parent-induced transformation"
-msgstr "Obmedzenie sa aplikuje relatívne na pózu pokoja lokálneho súradnicového systému kosti a teda vrátane rodičom vyvolanej transformácie"
+msgstr "Vynútenie sa aplikuje relatívne na pokojovú pózu lokálneho súradnicového systému kosti a teda vrátane rodičom vyvolanej transformácie"
 
 
 msgid "Local Space"
@@ -5625,7 +5625,7 @@ msgstr "Lokálny priestor"
 
 
 msgid "The constraint is applied relative to the local coordinate system of the object"
-msgstr "Obmedzenie je použité vzhľadom na lokálny systém súradníc objektu"
+msgstr "Vynútenie je použité vzhľadom na lokálny systém súradníc objektu"
 
 
 msgid "Constraint's panel is expanded in UI"
@@ -5677,7 +5677,7 @@ msgstr "Riešiteľ kamery"
 
 
 msgid "Follow Track"
-msgstr "Sledovanie stopy"
+msgstr "Sledovať trasu"
 
 
 msgid "Object Solver"
@@ -5749,7 +5749,7 @@ msgstr "Obmedzí zmenu mierky pozdĺž každej osi daného rozsahu"
 
 
 msgid "Maintain Volume"
-msgstr "Udržiavať objem"
+msgstr "Zachovať Objem"
 
 
 msgid "Compensate for scaling one axis by applying suitable scaling to the other two axes"
@@ -5773,7 +5773,7 @@ msgstr "Vyhľadá transformačnú maticu z externého súboru"
 
 
 msgid "Clamp To"
-msgstr "Zaraziť na"
+msgstr "Zarážka na"
 
 
 msgid "Restrict movements to lie along a curve by remapping location along curve's longest axis"
@@ -5781,7 +5781,7 @@ msgstr "Obmedzí pohyby tak, aby ležali pozdĺž krivky s tým, že sa zmení p
 
 
 msgid "Damped Track"
-msgstr "Útlm stopy"
+msgstr "Stlmená trasa"
 
 
 msgid "Point towards a target by performing the smallest rotation necessary"
@@ -5797,7 +5797,7 @@ msgstr "Ovládanie reťaze kostí určením cieľového koncového bodu (len kos
 
 
 msgid "Locked Track"
-msgstr "Zamknúť stopu"
+msgstr "Zamknutá trasa"
 
 
 msgid "Rotate around the specified ('locked') axis to point towards a target"
@@ -5805,7 +5805,7 @@ msgstr "Rotuje okolo určenej ('zamknutej') osi nasmerovanej na cieľ"
 
 
 msgid "Spline IK"
-msgstr "IK drážka"
+msgstr "Drážka inverznej kinematiky"
 
 
 msgid "Align chain of bones along a curve (Bones only)"
@@ -5821,11 +5821,11 @@ msgstr "Rozťahuje pozdĺž osi Y smerom na cieľ"
 
 
 msgid "Track To"
-msgstr "Stopovať na"
+msgstr "Trasa na"
 
 
 msgid "Legacy tracking constraint prone to twisting artifacts"
-msgstr "Zdedené vynútenie smerovania náchylné na otáčanie artefaktov"
+msgstr "Zdedené vynútenie trasovania náchylné na otáčanie artefaktov"
 
 
 msgid "Use transform property of target to look up pose for owner from an Action"
@@ -5869,7 +5869,7 @@ msgstr "Zmení otočný bod pre transformáciu (vozík)"
 
 
 msgid "Shrinkwrap"
-msgstr "Zmrštenie obalu"
+msgstr "Zmrštiť obal"
 
 
 msgid "Restrict movements to surface of target mesh"
@@ -5877,7 +5877,7 @@ msgstr "Obmedzí pohyby podľa povrchu cieľovej povrchovej siete"
 
 
 msgid "Action Constraint"
-msgstr "Obmedzenie akcie"
+msgstr "Vynútenie Akcia"
 
 
 msgid "Map an action to the transform axes of a bone"
@@ -5885,7 +5885,7 @@ msgstr "Priradí akciu k osi transformácie kosti"
 
 
 msgid "The constraining action"
-msgstr "Obmedzenie akcií"
+msgstr "Vynútenie akcií"
 
 
 msgid "Evaluation Time"
@@ -5933,7 +5933,7 @@ msgstr "Pred originálom"
 
 
 msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "Použije akčné kanály pred pôvodnou transformáciou, ako keby sa použili na imaginárneho rodiča pomocou zarovnania dedičnej mierky"
+msgstr "Použije akčné kanály pred pôvodnou transformáciou, ako keby sa použili na imaginárneho rodiča so zarovnanou zdedenou mierkou"
 
 
 msgid "After Original"
@@ -6017,7 +6017,7 @@ msgstr "Interpoluje medzi snímkami Akcia štart a koniec použitím posuvníka 
 
 
 msgid "Armature Constraint"
-msgstr "Obmedzenie armatúry"
+msgstr "Vynútenie Armatúra"
 
 
 msgid "Applies transformations done by the Armature modifier"
@@ -6045,7 +6045,7 @@ msgstr "Použiť aktuálnu polohu"
 
 
 msgid "Use the current bone location for envelopes and choosing B-Bone segments instead of rest position"
-msgstr "Použije aktuálnu polohu kosti pre plášte a výber segmentu ohybu kosti namiesto pokojovej polohy"
+msgstr "Použije aktuálnu polohu kosti pre plášte a výber segmentu ohnutie kosti namiesto pokojovej polohy"
 
 
 msgid "Preserve Volume"
@@ -6057,7 +6057,7 @@ msgstr "Interpolácia deformácie rotácie so štvoricami"
 
 
 msgid "Camera Solver Constraint"
-msgstr "Obmedzenie riešiteľa kamery"
+msgstr "Vynútenie Riešiteľ kamery"
 
 
 msgid "Lock motion to the reconstructed camera movement"
@@ -6065,7 +6065,7 @@ msgstr "Uzamkne pohyb rekonštruovaného pohybu kamery"
 
 
 msgid "Movie Clip to get tracking data from"
-msgstr "Filmový klip na získanie údajov snímania stôp"
+msgstr "Filmový klip na získanie údajov sledovania"
 
 
 msgid "Active Clip"
@@ -6181,7 +6181,7 @@ msgstr "Obmedzí umiestnenie objektu na najbližší bod pozdĺž cieľovej cest
 
 
 msgid "Main Axis"
-msgstr "Hlavné osi"
+msgstr "Hlavná os"
 
 
 msgid "Main axis of movement"
@@ -6253,11 +6253,11 @@ msgstr "Invertuje polohu Z"
 
 
 msgid "Follow B-Bone"
-msgstr "Dodržiavať ohyb kosti"
+msgstr "Dodržiavať ohnutie kosti"
 
 
 msgid "Follow shape of B-Bone segments when calculating Head/Tail position"
-msgstr "Dodržiava tvar ohybu segmentov kosti pri výpočte polohy hlavy/chvosta"
+msgstr "Dodržiava tvar segmentov ohnutia kosti pri výpočte polohy hlavy/chvosta"
 
 
 msgid "Add original location into copied location"
@@ -6489,7 +6489,7 @@ msgstr "Použije kopírovanú transformáciu za originálom, ako by bol vynúten
 
 
 msgid "Damped Track Constraint"
-msgstr "Útlm vynútenia stopy"
+msgstr "Vynútenie Stlmená stopa"
 
 
 msgid "Point toward target by taking the shortest rotation path"
@@ -6497,7 +6497,7 @@ msgstr "Nasmeruje na cieľ najkratšou cestou rotácie"
 
 
 msgid "Track Axis"
-msgstr "Os stopy"
+msgstr "Os trasy"
 
 
 msgid "Axis that points to the target object"
@@ -6505,7 +6505,7 @@ msgstr "Os smerujúca na cieľový objekt"
 
 
 msgid "Floor Constraint"
-msgstr "Obmedzenie povrchu zeme"
+msgstr "Vynútenie Podlaha"
 
 
 msgid "Use the target object for location limitation"
@@ -6533,7 +6533,7 @@ msgstr "Použije cieľovú rotáciu na určenie povrchu zeme"
 
 
 msgid "Follow Path Constraint"
-msgstr "Obmedzenie sledovania cesty"
+msgstr "Vynútenie Sledovať cestu"
 
 
 msgid "Lock motion to the target path"
@@ -6597,11 +6597,11 @@ msgstr "Objekt zostane zamknutý v samostatnom bode niekde vedľa dĺžky krivky
 
 
 msgid "Follow Track Constraint"
-msgstr "Obmedzenie sledovania stopy"
+msgstr "Vynútenie Sledovať trasu"
 
 
 msgid "Lock motion to the target motion track"
-msgstr "Uzamkne pohyb na cieľovej stope pohybu"
+msgstr "Uzamkne pohyb na cieľovej trase pohybu"
 
 
 msgid "Camera"
@@ -6625,15 +6625,15 @@ msgstr "Ako sa zábery prispôsobia snímke kamery"
 
 
 msgid "Movie tracking object to follow (if empty, camera object is used)"
-msgstr "Objekt snímania stopy filmu pre sledovanie (ak je prázdne, objekt kamery sa používa)"
+msgstr "Objekt sledovania filmu pre sledovanie (ak je prázdne, je použitý objekt kamery)"
 
 
 msgid "Track"
-msgstr "Snímanie stôp"
+msgstr "Stopa"
 
 
 msgid "Movie tracking track to follow"
-msgstr "Snímanie stôp filmu pre sledovanie"
+msgstr "Sníma stopy filmu pre sledovanie"
 
 
 msgid "3D Position"
@@ -6653,7 +6653,7 @@ msgstr "Rodič na neskreslenú polohu 2D stopy"
 
 
 msgid "Kinematic Constraint"
-msgstr "Obmedzenie kinematiky"
+msgstr "Vynútenie kinematiky"
 
 
 msgid "Chain Length"
@@ -6677,7 +6677,7 @@ msgstr "Kopírovať pózu"
 
 
 msgid "Maximum number of solving iterations"
-msgstr "Maximálny počet riešení opakovania"
+msgstr "Maximálny počet opakovaní riešenia"
 
 
 msgid "Limit Mode"
@@ -6717,7 +6717,7 @@ msgstr "Zamknúť X polohu"
 
 
 msgid "Constraint position along X axis"
-msgstr "Obmedzenie polohy pozdĺž osi X"
+msgstr "Vynútenie polohy pozdĺž osi X"
 
 
 msgid "Lock Y Pos"
@@ -6725,7 +6725,7 @@ msgstr "Zamknúť Y polohu"
 
 
 msgid "Constraint position along Y axis"
-msgstr "Obmedzenie polohy pozdĺž osi Y"
+msgstr "Vynútenie polohy pozdĺž osi Y"
 
 
 msgid "Lock Z Pos"
@@ -6733,7 +6733,7 @@ msgstr "Zamknúť Z polohu"
 
 
 msgid "Constraint position along Z axis"
-msgstr "Obmedzenie polohy pozdĺž osi Z"
+msgstr "Vynútenie polohy pozdĺž osi Z"
 
 
 msgid "Lock X Rotation"
@@ -6741,7 +6741,7 @@ msgstr "Zamknúť X rotáciu"
 
 
 msgid "Constraint rotation along X axis"
-msgstr "Obmedzenie rotácie pozdĺž osi X"
+msgstr "Vynútenie rotácie pozdĺž osi X"
 
 
 msgid "Lock Y Rotation"
@@ -6749,7 +6749,7 @@ msgstr "Zamknúť Y rotáciu"
 
 
 msgid "Constraint rotation along Y axis"
-msgstr "Obmedzenie rotácie pozdĺž osi Y"
+msgstr "Vynútenie rotácie pozdĺž osi Y"
 
 
 msgid "Lock Z Rotation"
@@ -6757,7 +6757,7 @@ msgstr "Zamknúť Z rotáciu"
 
 
 msgid "Constraint rotation along Z axis"
-msgstr "Obmedzenie rotácie pozdĺž osi Z"
+msgstr "Vynútenie rotácie pozdĺž osi Z"
 
 
 msgid "Orientation Weight"
@@ -6793,7 +6793,7 @@ msgstr "Vzťah osi"
 
 
 msgid "Constraint axis Lock options relative to Bone or Target reference"
-msgstr "Obmedzenie možnosti uzamknutia osi vzhľadom na vzťah kosti alebo cieľa"
+msgstr "Vynútenie možnosti uzamknutia osi vzhľadom na vzťah kosti alebo cieľa"
 
 
 msgid "Bone"
@@ -6825,7 +6825,7 @@ msgstr "Pre strom inverznej kinematiky: Váha ovládania polohy tohto cieľa"
 
 
 msgid "Limit Distance Constraint"
-msgstr "Obmedzenie limitu vzdialenosti"
+msgstr "Vynútenie Limit vzdialenosti"
 
 
 msgid "Limit the distance from target object"
@@ -6841,7 +6841,7 @@ msgstr "Transformácie sú priamo ovplyvnené týmto vynútením"
 
 
 msgid "Limit Location Constraint"
-msgstr "Obmedzenie limitu polohy"
+msgstr "Vynútenie Limit polohy"
 
 
 msgid "Limit the location of the constrained object"
@@ -6925,7 +6925,7 @@ msgstr "Transformačné nástroje sú ovplyvnené aj týmto vynútením"
 
 
 msgid "Limit Rotation Constraint"
-msgstr "Obmedzenie limitu rotácie"
+msgstr "Vynútenie Limit rotácie"
 
 
 msgid "Limit the rotation of the constrained object"
@@ -6945,7 +6945,7 @@ msgstr "Limit Z"
 
 
 msgid "Limit Size Constraint"
-msgstr "Obmedzenie limitu veľkosti"
+msgstr "Vynútenie Limit veľkosti"
 
 
 msgid "Limit the scaling of the constrained object"
@@ -6953,7 +6953,7 @@ msgstr "Limit mierky vynúteného objektu"
 
 
 msgid "Locked Track Constraint"
-msgstr "Obmedzenie uzamknutia stopy"
+msgstr "Vynútenie Zamknúť stopu"
 
 
 msgid "Point toward the target along the track axis, while locking the other axis"
@@ -6961,15 +6961,15 @@ msgstr "Nasmerovanie na cieľ pozdĺž osi stopy, pri uzamknutí ďalšej osi"
 
 
 msgid "Locked Axis"
-msgstr "Zamknuté osi"
+msgstr "Zamknutá os"
 
 
 msgid "Maintain Volume Constraint"
-msgstr "Obmedzenie udržania objemu"
+msgstr "Vynútenie Zachovať objem"
 
 
 msgid "Maintain a constant volume along a single scaling axis"
-msgstr "Udržiava konštantný objem pozdĺž samotnej osi mierky"
+msgstr "Zachová konštantný objem pozdĺž samotnej osi zmeny mierky"
 
 
 msgid "Free Axis"
@@ -6977,7 +6977,7 @@ msgstr "Voľné osi"
 
 
 msgid "The free scaling axis of the object"
-msgstr "Voľná mierka osi objektu"
+msgstr "Voľná os zmeny mierky objektu"
 
 
 msgid "The way the constraint treats original non-free axis scaling"
@@ -7013,7 +7013,7 @@ msgstr "Objem kosti v kľude"
 
 
 msgid "Object Solver Constraint"
-msgstr "Obmedzenie Riešiteľa objektu"
+msgstr "Vynútenie Riešiteľ objektu"
 
 
 msgid "Lock motion to the reconstructed object movement"
@@ -7025,7 +7025,7 @@ msgstr "Snímanie stôp videa objektu na sledovanie"
 
 
 msgid "Pivot Constraint"
-msgstr "Obmedzenie otočného bodu"
+msgstr "Vynútenie Otočný bod"
 
 
 msgid "Rotate around a different point"
@@ -7145,7 +7145,7 @@ msgstr "Použije ciele uvedené v paneli vynútenia"
 
 
 msgid "Shrinkwrap Constraint"
-msgstr "Vynútenie Zmrštenie obalu"
+msgstr "Vynútenie Zmrštiť obal"
 
 
 msgid "Create constraint-based shrinkwrap relationship"
@@ -7313,7 +7313,7 @@ msgstr "Bod je vynútený na povrchu cieľového objektu, s posunom vzdialenosti
 
 
 msgid "Spline IK Constraint"
-msgstr "Obmedzenie IK drážky"
+msgstr "Vynútenie Drážka inverznej kinematiky"
 
 
 msgid "Align 'n' bones along a curve"
@@ -7401,7 +7401,7 @@ msgstr "Priemerný polomer koncových bodov použitý na vyladenie X a Z zmeny v
 
 
 msgid "Even Divisions"
-msgstr "Rovnaké diely"
+msgstr "Rovnomerné rozdelenie"
 
 
 msgid "Ignore the relative lengths of the bones when fitting to the curve"
@@ -7433,11 +7433,11 @@ msgstr "Pôvodná kosť"
 
 
 msgid "Use the original scaling of the bones"
-msgstr "Použije pôvodnú zmenu veľkost kostí"
+msgstr "Použije pôvodnú mierku kostí"
 
 
 msgid "Inverse Scale"
-msgstr "Inverzná zmena veľkosti"
+msgstr "Inverzná mierka"
 
 
 msgid "Scale of the X and Z axes is the inverse of the Y-Scale"
@@ -7477,7 +7477,7 @@ msgstr "Použije pôvodnú mierku Y kosti"
 
 
 msgid "Stretch To Constraint"
-msgstr "Obmedzenie roztiahnutia"
+msgstr "Vynútenie Roztiahnuť na"
 
 
 msgid "Stretch to meet the target object"
@@ -7529,7 +7529,7 @@ msgstr "Zachová objem objektu po roztiahnutí"
 
 
 msgid "Track To Constraint"
-msgstr "Vynútenie Stopovať na"
+msgstr "Vynútenie Stopa na"
 
 
 msgid "Aim the constrained object toward the target"
@@ -7545,7 +7545,7 @@ msgstr "Ciele osi Z, nie osi Z sveta, vynútenie smerom nahor"
 
 
 msgid "Transform Cache Constraint"
-msgstr "Obmedzenie zásobníka transformácie"
+msgstr "Vynútenie Zásobník transformácie"
 
 
 msgid "Look up transformation from an external file"
@@ -7561,7 +7561,7 @@ msgstr "Cesta k objektu v archíve Alembic použitého na vyhľadanie matrice tr
 
 
 msgid "Transformation Constraint"
-msgstr "Obmedzenie transformácie"
+msgstr "Vynútenie Transformácia"
 
 
 msgid "Map transformations of the target to the object"
@@ -7665,7 +7665,7 @@ msgstr "Rozloží rotáciu otáčania tak, aby smerovala na os Z a potom ju oto�
 
 
 msgid "Map From"
-msgstr "Mapovať z"
+msgstr "Priradiť z"
 
 
 msgid "The transformation type to use from the target"
@@ -7673,11 +7673,11 @@ msgstr "Typ transformácie použitej pre cieľ"
 
 
 msgid "Location"
-msgstr "Pozícia"
+msgstr "Poloha"
 
 
 msgid "Map To"
-msgstr "Namapovanie"
+msgstr "Priradiť na"
 
 
 msgid "The transformation type to affect of the constrained object"
@@ -7685,7 +7685,7 @@ msgstr "Typ transformácie na ovplyvnenie vynúteného objektu"
 
 
 msgid "Map To X From"
-msgstr "Mapovať z X"
+msgstr "Priradiť z X na"
 
 
 msgid "The source axis constrained object's X axis uses"
@@ -7693,7 +7693,7 @@ msgstr "Zdrojová os použitá vynúteným objektom osi X"
 
 
 msgid "Map To Y From"
-msgstr "Mapovať z Y"
+msgstr "Priradiť z Y na"
 
 
 msgid "The source axis constrained object's Y axis uses"
@@ -7701,7 +7701,7 @@ msgstr "Zdrojová os použitá vynúteným objektom osi Y"
 
 
 msgid "Map To Z From"
-msgstr "Mapovať z Z"
+msgstr "Priradiť zo Z na"
 
 
 msgid "The source axis constrained object's Z axis uses"
@@ -7817,7 +7817,7 @@ msgstr "Extrapolácia rozsahu"
 
 
 msgid "Constraint Target"
-msgstr "Obmedzenie cieľa"
+msgstr "Vynútiť cieľ"
 
 
 msgid "Target object for multi-target constraints"
@@ -7849,7 +7849,7 @@ msgstr "Zmiešavanie váhy tejto kosti"
 
 
 msgid "Curve in a curve mapping"
-msgstr "Krivka v mapovaní krivky"
+msgstr "Krivka v priradení krivky"
 
 
 msgid "Points"
@@ -7889,11 +7889,11 @@ msgstr "Stav výberu bodu krivky"
 
 
 msgid "Curve Map Point"
-msgstr "Namapovaný bod krivky"
+msgstr "Priradený bod krivky"
 
 
 msgid "Collection of Curve Map Points"
-msgstr "Kolekcia namapovaných bodov krivky"
+msgstr "Kolekcia priradených bodov krivky"
 
 
 msgid "Curve mapping to map color, vector and scalar values to other values using a user defined curve"
@@ -9388,19 +9388,19 @@ msgstr "Znásobí prienik hĺbky štetca (odsun, vlny) strmosťou spádu alfa"
 
 
 msgid "Max Velocity"
-msgstr "Maximálna strmosť"
+msgstr "Maximálna rýchlosť"
 
 
 msgid "Velocity considered as maximum influence (Blender units per frame)"
-msgstr "Strmosť považovaná ako maximálny vplyv (jednotky Blendera na snímku)"
+msgstr "Rýchlosť považovaná ako maximálny vplyv (jednotky Blendera na snímku)"
 
 
 msgid "Velocity Color Ramp"
-msgstr "Strmosť spádu farby"
+msgstr "Rýcholsť spádu farby"
 
 
 msgid "Color ramp used to define brush velocity effect"
-msgstr "Farebný spád používaný na definovanie efektu strmosti štetca"
+msgstr "Farebný spád používaný na definovanie efektu rýchlosti štetca"
 
 
 msgid "Clamp Waves"
@@ -9884,7 +9884,7 @@ msgstr "Úprava kosti rodiča (v rovnakej armatúre)"
 
 
 msgid "Roll"
-msgstr "Vykrútiť"
+msgstr "Prevaľovať"
 
 
 msgid "Bone rotation around head-tail axis"
@@ -13722,11 +13722,11 @@ msgstr "Použitie UV vrstvy pre súradnice textúry"
 
 
 msgid "Z-offset of texture mapping"
-msgstr "Z posuv mapovania textúry"
+msgstr "Z posuv priradenia textúry"
 
 
 msgid "Size of texture mapping"
-msgstr "Veľkosť mapovania textúry"
+msgstr "Veľkosť priradenia textúry"
 
 
 msgid "Absolute Density"
@@ -14806,7 +14806,7 @@ msgstr "Použije kurzor ako referenčný bod"
 
 
 msgid "Custom"
-msgstr "Vlastná"
+msgstr "Vlastný"
 
 
 msgid "Use custom reference point"
@@ -15047,10 +15047,6 @@ msgstr "Hrúbka ťahu (v pixeloch)"
 
 msgid "Material Index"
 msgstr "Index materiálu"
-
-
-msgid "Index of material used in this stroke"
-msgstr "Index materiálu použitého v tomto ťahu"
 
 
 msgid "Stroke Points"
@@ -16806,7 +16802,7 @@ msgstr "Synchronizácia koncovej snímky a presun na začiatok animácie pre zac
 
 
 msgid "Tint Modifier"
-msgstr "Modifikátor Vyfarbiť."
+msgstr "Modifikátor Vyfarbiť"
 
 
 msgid "Tint modifier"
@@ -17093,10 +17089,6 @@ msgid "Library override data"
 msgstr "Údaje prepisu knižnice"
 
 
-msgid "Preview image and icon of this data-block (None if not supported for this type of data)"
-msgstr "Ukážka obrázka a ikony tohto bloku údajov (žiadna, ak nie je podporovaný tento typ údajov)"
-
-
 msgid "Tag"
 msgstr "Príznak"
 
@@ -17195,7 +17187,7 @@ msgstr "Zobrazí kosti ako osemstenný útvar (predvolené)"
 
 
 msgid "Stick"
-msgstr "Priľahlé"
+msgstr "Tyčka"
 
 
 msgid "Display bones as simple 2D lines with dots"
@@ -17203,11 +17195,11 @@ msgstr "Zobrazí kosti ako jednoduché 2D čiary s bodkami"
 
 
 msgid "B-Bone"
-msgstr "Box kosti"
+msgstr "Ohnutá kosť"
 
 
 msgid "Display bones as boxes, showing subdivision and B-Splines"
-msgstr "Zobrazí kosti ako polia, ukazuje rozdelenie a B-drážky"
+msgstr "Zobrazí kosti ako hranoly, ukazuje rozdelenie a Drážky ohnutia"
 
 
 msgid "Envelope"
@@ -17223,7 +17215,7 @@ msgstr "Drôt"
 
 
 msgid "Display bones as thin wires, showing subdivision and B-Splines"
-msgstr "Zobrazí kosti ako tenké drôty, ukazujúce rozdelenie a B-drážky"
+msgstr "Zobrazí kosti ako tenké drôty, ukazujúce rozdelenie a Drážky ohnutia"
 
 
 msgid "Edit Bones"
@@ -17307,7 +17299,7 @@ msgstr "Zobrazí názvy kosti"
 
 
 msgid "X-Axis Mirror"
-msgstr "Zrkadlenie osi X"
+msgstr "Zrkadlo osi X"
 
 
 msgid "Apply changes to matching bone on opposite side of X-Axis"
@@ -19562,10 +19554,6 @@ msgid "Map the geometry factor to the length of a segment and to the number of s
 msgstr "Priradí faktor geometrie na dĺžku segmentu a na počet ďalších rozdelení segmentu"
 
 
-msgid "Spline"
-msgstr "Drážka"
-
-
 msgid "Map the geometry factor to the length of a spline"
 msgstr "Priradí faktor geometrie na dĺžku drážky"
 
@@ -19787,7 +19775,7 @@ msgstr "Metóda zakrútenia"
 
 
 msgid "The type of tilt calculation for 3D Curves"
-msgstr "Typ výpočtu naklonenia pre 3D krivky"
+msgstr "Typ výpočtu prevalenia pre 3D krivky"
 
 
 msgid "Z-Up"
@@ -19867,7 +19855,7 @@ msgstr "Vytvorí potomkom cestu krivky pre rotáciu pozdĺž cesty"
 
 
 msgid "Option for paths and curve-deform: apply the curve radius with path following it and deforming"
-msgstr "Voľba pre cesty a krivky deformácie: Použije polomer krivky na nasnímanie cesty a deformácie"
+msgstr "Voľba pre cesty a krivky deformácie: Použije polomer krivky na nasledovanie cesty a deformácie"
 
 
 msgid "Option for curve-deform: make deformed child to stretch along entire path"
@@ -20926,10 +20914,6 @@ msgid "Auto-Lock Layers"
 msgstr "Automaticky zamknúť vrstvy"
 
 
-msgid "Lock automatically all layers except active one to avoid accidental changes"
-msgstr "Automaticky uzamkne všetky vrstvy okrem aktívnej, aby sa predišlo náhodným zmenám"
-
-
 msgid "Curve Editing"
 msgstr "Úprava krivky"
 
@@ -21243,11 +21227,11 @@ msgstr "Mriežka UV"
 
 
 msgid "Generated grid to test UV mappings"
-msgstr "Vygenerovaná mriežka na test UV mapovania"
+msgstr "Vygenerovaná mriežka na test UV priradenia"
 
 
 msgid "Generated improved UV grid to test UV mappings"
-msgstr "Vygenerovaná vylepšená UV mriežka pre test UV mapovania"
+msgstr "Vygenerovaná vylepšená UV mriežka pre test UV priradenia"
 
 
 msgid "Generated Width"
@@ -21523,7 +21507,7 @@ msgstr "Catmull-Rom"
 
 
 msgid "BSpline"
-msgstr "B-drážka"
+msgstr "Drážka ohnutia"
 
 
 msgid "Interpolation Type V"
@@ -22357,7 +22341,7 @@ msgstr "Režim tieňovania"
 
 
 msgid "Shadow mapping method"
-msgstr "Metóda mapovania tieňovania"
+msgstr "Metóda priradenia tieňovania"
 
 
 msgid "Material will cast no shadow"
@@ -23072,6 +23056,10 @@ msgid "Low quality"
 msgstr "Nízka kvalita"
 
 
+msgid "Tiled"
+msgstr "Dlaždicovito"
+
+
 msgid "Render Quality"
 msgstr "Kvalita prekreslenia"
 
@@ -23697,11 +23685,11 @@ msgstr "Nastavenia pre simuláciu pevného telesa"
 
 
 msgid "Rigid Body Constraint"
-msgstr "Obmedzenie pevného telesa"
+msgstr "Vynútenie Pevné teleso"
 
 
 msgid "Constraint constraining rigid bodies"
-msgstr "Obmedzenie obmedzovania pevného telesa"
+msgstr "Vynútenie vynucovania pevného telesa"
 
 
 msgid "Axis-Angle Rotation"
@@ -23725,31 +23713,31 @@ msgstr "Štvorica (WXYZ)"
 
 
 msgid "No Gimbal Lock"
-msgstr "Bez uzamknutia Gimbalu (kardanového závesu)"
+msgstr "Bez uzamknutia Manipulátora polohy"
 
 
 msgid "XYZ Rotation Order - prone to Gimbal Lock (default)"
-msgstr "Poradie rotácie XYZ - náchylné k zamknutiu Gimbalu (predvolené)"
+msgstr "Poradie rotácie XYZ - náchylné k zamknutiu Manipulátora polohy (predvolené)"
 
 
 msgid "XZY Rotation Order - prone to Gimbal Lock"
-msgstr "Poradie rotácie XZY - náchylné k zamknutiu Gimbalu"
+msgstr "Poradie rotácie XZY - náchylné k zamknutiu Manipulátora polohy"
 
 
 msgid "YXZ Rotation Order - prone to Gimbal Lock"
-msgstr "Poradie rotácie YXZ - náchylné k zamknutiu Gimbalu"
+msgstr "Poradie rotácie YXZ - náchylné k zamknutiu Manipulátora polohy"
 
 
 msgid "YZX Rotation Order - prone to Gimbal Lock"
-msgstr "Poradie rotácie YZX - náchylné k zamknutiu Gimbalu"
+msgstr "Poradie rotácie YZX - náchylné k zamknutiu Manipulátora polohy"
 
 
 msgid "ZXY Rotation Order - prone to Gimbal Lock"
-msgstr "Poradie rotácie ZXY - náchylné k zamknutiu Gimbalu"
+msgstr "Poradie rotácie ZXY - náchylné k zamknutiu Manipulátora polohy"
 
 
 msgid "ZYX Rotation Order - prone to Gimbal Lock"
-msgstr "Poradie rotácie ZYX - náchylné k zamknutiu Gimbalu"
+msgstr "Poradie rotácie ZYX - náchylné k zamknutiu Manipulátora polohy"
 
 
 msgid "Axis Angle"
@@ -24960,7 +24948,7 @@ msgstr "Použije globálne súradníc objektu pre duplicitu"
 
 
 msgid "Interpolate hair using B-Splines"
-msgstr "Interpolujte vlasy použitím B-drážky"
+msgstr "Interpolujte vlasy použitím Drážky ohnutia"
 
 
 msgid "Use Modifier Stack"
@@ -25268,7 +25256,7 @@ msgstr "Finálna aktuálna snímka"
 
 
 msgid "Current frame with subframe and time remapping applied"
-msgstr "Aktuálna snímka s medzisnímkou a premapovaním času"
+msgstr "Aktuálna snímka s medzisnímkou a znovu priradením času"
 
 
 msgid "Final frame of the playback/rendering range"
@@ -27202,7 +27190,7 @@ msgstr "Základný typ pre parametre riešiteľa inverznej kinematiky"
 
 
 msgid "IK Solver"
-msgstr "IK riešiteľ"
+msgstr "Riešiteľ inverznej kinematiky"
 
 
 msgid "IK solver for which these parameters are defined"
@@ -29356,11 +29344,11 @@ msgstr "Dostupné"
 
 
 msgid "Insert a keyframe for each of the BBone shape properties"
-msgstr "Vloží kľúčovú snímku pre každú z vlastností tvaru ohybu kosti"
+msgstr "Vloží kľúčovú snímku pre každú z vlastností tvaru ohnutia kosti"
 
 
 msgid "BBone Shape"
-msgstr "Tvar ohybu kosti"
+msgstr "Tvar ohnutia kosti"
 
 
 msgid "Insert keyframes for additional location offset"
@@ -29752,7 +29740,7 @@ msgstr "Faktor vplyvu, ktorým modifikátor zmení vlastnosť"
 
 
 msgid "Invert the fade-out direction of the linear mapping"
-msgstr "Invertuje smer vytrácania lineárneho mapovania"
+msgstr "Invertuje smer vytrácania lineárneho priradenia"
 
 
 msgid "Select the mapping type"
@@ -29820,7 +29808,7 @@ msgstr "Alfa priehľadnosť na základe radiálneho zakrivenia 3D povrchovej sie
 
 
 msgid "Max Curvature"
-msgstr "Max zakrivenie"
+msgstr "Zakrivenie Max"
 
 
 msgid "Maximum Curvature"
@@ -29828,7 +29816,7 @@ msgstr "Maximálne zakrivenie"
 
 
 msgid "Min Curvature"
-msgstr "Min zakrivenie"
+msgstr "Zakrivenie Min"
 
 
 msgid "Minimum Curvature"
@@ -29840,7 +29828,7 @@ msgstr "Zmena priehľadnosti alfa na základe vzdialenosti od kamery"
 
 
 msgid "Range Max"
-msgstr "Max rozsah"
+msgstr "Rozsah Max"
 
 
 msgid "Upper bound of the input range the mapping is applied"
@@ -29848,7 +29836,7 @@ msgstr "Horná hranica vstupného rozsahu na použitie priradenia"
 
 
 msgid "Range Min"
-msgstr "Min rozsah"
+msgstr "Rozsah Min"
 
 
 msgid "Lower bound of the input range the mapping is applied"
@@ -31063,7 +31051,7 @@ msgstr "Kontextová ponuka"
 
 
 msgid "Tracking"
-msgstr "Snímanie stôp"
+msgstr "Sledovanie"
 
 
 msgid "Fractional Zoom"
@@ -31549,10 +31537,6 @@ msgid "Generate Weights"
 msgstr "Generovať váhy"
 
 
-msgid "Copy Layer to Object"
-msgstr "Kopírovať vrstvu do objektu"
-
-
 msgid "Hooks"
 msgstr "Háky"
 
@@ -31618,7 +31602,7 @@ msgstr "Kontextová ponuka pózy"
 
 
 msgid "Propagate"
-msgstr "Rozširovanie"
+msgstr "Rozšíriť"
 
 
 msgid "In-Betweens"
@@ -31626,11 +31610,11 @@ msgstr "Sprostredkovatelia"
 
 
 msgid "Clear Transform"
-msgstr "Zrušiť transformáciu"
+msgstr "Zmazať transformáciu"
 
 
 msgid "Proportional Editing Falloff"
-msgstr "Proporcionálna editácia dopadu"
+msgstr "Dopad proporcionálnej editácie"
 
 
 msgid "Random Mask"
@@ -34378,11 +34362,11 @@ msgstr "Vplyv deformácie"
 
 
 msgid "Frame Start"
-msgstr "Snímka Štart"
+msgstr "Snímka Začiatok"
 
 
 msgid "Add this to the start frame"
-msgstr "Pridá do počiatočnej snímky"
+msgstr "Pridá do začiatočnej snímky"
 
 
 msgid "Play Mode"
@@ -35443,11 +35427,11 @@ msgstr "Roztiahne V súradnice medzi 0-1, keď sú prítomné UV súradnice"
 
 
 msgid "Shrinkwrap Modifier"
-msgstr "Modifikátor Zmrštenie obalu"
+msgstr "Modifikátor Zmrštiť obal"
 
 
 msgid "Shrink wrapping modifier to shrink wrap and object to a target"
-msgstr "Modifikátor Zmrštenie obalu zmrští objekt obalu na cieľ"
+msgstr "Modifikátor Zmrštiť obal zmrští objekt obalu na cieľ"
 
 
 msgid "Auxiliary Target"
@@ -36158,11 +36142,11 @@ msgstr "Prevráti vplyv masky skupiny vrcholov"
 
 
 msgid "Mapping Curve"
-msgstr "Krivka mapovania"
+msgstr "Krivka priradenia"
 
 
 msgid "Custom mapping curve"
-msgstr "Vlastná krivka mapovania"
+msgstr "Vlastná krivka priradenia"
 
 
 msgid "Global influence of current modifications on vgroup"
@@ -36458,7 +36442,7 @@ msgstr "Výdatnosť posunutia"
 
 
 msgid "Texture Mapping Mode"
-msgstr "Režim mapovania textúr"
+msgstr "Režim priradenia textúr"
 
 
 msgid "Object to use for texture mapping"
@@ -36998,7 +36982,7 @@ msgstr "Náhľad prekreslenia použitím neskreslenej náhrady"
 
 
 msgid "Movie tracking reconstructed camera data"
-msgstr "Snímanie stôp filmu rekonštruovaných údajov kamery"
+msgstr "Sledovanie filmu rekonštruovaných údajov kamery"
 
 
 msgid "Match-moving reconstructed camera data from tracker"
@@ -37014,11 +36998,11 @@ msgstr "Číslo označenia snímky je na kľúčové snímkovanie"
 
 
 msgid "Movie tracking data"
-msgstr "Údaje snímania stôp filmu"
+msgstr "Údaje sledovania filmu"
 
 
 msgid "Match-moving data for tracking"
-msgstr "Prispôsobenie pohybu na snímanie stôp"
+msgstr "Prispôsobenie pohybu na sledovanie"
 
 
 msgid "Active Object Index"
@@ -37030,7 +37014,7 @@ msgstr "Index aktívneho objektu"
 
 
 msgid "Collection of objects in this tracking data object"
-msgstr "Kolekcia objektov v týchto údajov snímania stôp objektu"
+msgstr "Kolekcia objektov v týchto údajov sledovania objektu"
 
 
 msgid "Plane Tracks"
@@ -37038,7 +37022,7 @@ msgstr "Rovina stôp"
 
 
 msgid "Collection of plane tracks in this tracking data object"
-msgstr "Kolekcia stôp roviny v týchto údajoch snímania stôp objektu"
+msgstr "Kolekcia stôp roviny v týchto údajoch sledovania objektu"
 
 
 msgid "Tracks"
@@ -37046,15 +37030,15 @@ msgstr "Stopy"
 
 
 msgid "Collection of tracks in this tracking data object"
-msgstr "Kolekcia stôp v týchto údajoch snímania stôp objektu"
+msgstr "Kolekcia stôp v týchto údajoch sledovania objektu"
 
 
 msgid "Movie tracking camera data"
-msgstr "Údaje kamery snímania stôp filmu"
+msgstr "Údaje kamery sledovania filmu"
 
 
 msgid "Match-moving camera data for tracking"
-msgstr "Prispôsobenie pohybu údajov kamery na snímanie stôp"
+msgstr "Prispôsobenie pohybu údajov kamery na sledovanie"
 
 
 msgid "K1"
@@ -37226,7 +37210,7 @@ msgstr "Použitie milimetrov pre jednotky ohniskovej vzdialenosti"
 
 
 msgid "Movie Tracking Dopesheet"
-msgstr "Expozičný hárok snímania filmu"
+msgstr "Expozičný hárok sledovania filmu"
 
 
 msgid "Match-moving dopesheet data"
@@ -37258,7 +37242,7 @@ msgstr "Najdlhšie"
 
 
 msgid "Sort channels by longest tracked segment"
-msgstr "Zoradí kanály podľa najdlhších segmentov snímania"
+msgstr "Zoradí kanály podľa najdlhších segmentov sledovania"
 
 
 msgid "Total"
@@ -37266,7 +37250,7 @@ msgstr "Celkovo"
 
 
 msgid "Sort channels by overall amount of tracked segments"
-msgstr "Zoradí kanály podľa celkového množstva segmentov snímania"
+msgstr "Zoradí kanály podľa celkového množstva segmentov sledovania"
 
 
 msgid "Sort channels by average reprojection error of tracks after solve"
@@ -37282,11 +37266,11 @@ msgstr "Prevráti poradie zoradenia kanálov expozičného hárku"
 
 
 msgid "Movie tracking marker data"
-msgstr "Údaje o značke snímania stôp filmu"
+msgstr "Údaje o značke sledovania filmu"
 
 
 msgid "Match-moving marker data for tracking"
-msgstr "Údaje značky prispôsobenia pohybu pre snímanie stôp"
+msgstr "Údaje značky prispôsobenia pohybu pre sledovanie"
 
 
 msgid "Marker position at frame in normalized coordinates"
@@ -37338,23 +37322,23 @@ msgstr "Ľavý dolný roh oblasti vyhľadávania v normalizovaných súradniciac
 
 
 msgid "Movie Tracking Markers"
-msgstr "Značky snímania filmu"
+msgstr "Značky sledovania filmu"
 
 
 msgid "Collection of markers for movie tracking track"
-msgstr "Kolekcia značiek pre stopu snímania filmu"
+msgstr "Kolekcia značiek pre stopu sledovania filmu"
 
 
 msgid "Movie tracking object data"
-msgstr "Údaje objektu snímania filmu"
+msgstr "Údaje objektu sledovania filmu"
 
 
 msgid "Match-moving object tracking and reconstruction data"
-msgstr "Prispôsobenie pohybu snímanie objektov a rekonštrukcie dát"
+msgstr "Prispôsobenie pohybu sledovanie objektov a rekonštrukcie údajov"
 
 
 msgid "Object is used for camera tracking"
-msgstr "Objekt sa používa na snímanie kamery"
+msgstr "Objekt sa používa na sledovanie kamery"
 
 
 msgid "Keyframe A"
@@ -37382,7 +37366,7 @@ msgstr "Zmena veľkosti riešeného objektu v priestore kamery"
 
 
 msgid "Collection of tracking plane tracks"
-msgstr "Kolekcia snímania stôp roviny"
+msgstr "Kolekcia sledovania stôp roviny"
 
 
 msgid "Active Track"
@@ -37398,7 +37382,7 @@ msgstr "Filmové stopy"
 
 
 msgid "Collection of movie tracking tracks"
-msgstr "Kolekcia trás snímania filmu"
+msgstr "Kolekcia trás sledovania filmu"
 
 
 msgid "Movie Objects"
@@ -37406,7 +37390,7 @@ msgstr "Objekt filmu"
 
 
 msgid "Collection of movie tracking objects"
-msgstr "Kolekcia objektov snímania filmu"
+msgstr "Kolekcia objektov sledovania filmu"
 
 
 msgid "Active object in this tracking data object"
@@ -37414,11 +37398,11 @@ msgstr "Aktívny objekt na tomto snímaní údajov objektu"
 
 
 msgid "Movie Tracking Plane Marker Data"
-msgstr "Údaje značky roviny snímania filmu"
+msgstr "Údaje značky roviny sledovania filmu"
 
 
 msgid "Match-moving plane marker data for tracking"
-msgstr "Prispôsobenie pohybu údajov značky roviny pre snímanie"
+msgstr "Prispôsobenie pohybu údajov značky roviny pre sledovanie"
 
 
 msgid "Corners"
@@ -37430,19 +37414,19 @@ msgstr "Pole súradníc predstavujúcich rohy obdĺžnika UI v snímke normalizo
 
 
 msgid "Movie Tracking Plane Markers"
-msgstr "Značky roviny snímania filmov"
+msgstr "Značky roviny sledovania filmov"
 
 
 msgid "Collection of markers for movie tracking plane track"
-msgstr "Kolekcia značiek pre snímanie filmu roviny stopy"
+msgstr "Kolekcia značiek pre sledovanie filmu roviny stopy"
 
 
 msgid "Movie tracking plane track data"
-msgstr "Údaje roviny stopy snímania filmu"
+msgstr "Údaje roviny stopy sledovania filmu"
 
 
 msgid "Match-moving plane track data for tracking"
-msgstr "Údaje prispôsobenie pohybu roviny stopy pre snímanie"
+msgstr "Údaje prispôsobenie pohybu roviny stopy pre sledovanie"
 
 
 msgid "Image displayed in the track during editing in clip editor"
@@ -37486,7 +37470,7 @@ msgstr "Film rovinnej stopy"
 
 
 msgid "Collection of movie tracking plane tracks"
-msgstr "Kolekcia snímania filmov stopy roviny"
+msgstr "Kolekcia sledovania filmov stopy roviny"
 
 
 msgid "Active Plane Track"
@@ -37506,7 +37490,7 @@ msgstr "Kolekcia vyriešených kamier"
 
 
 msgid "Movie tracking reconstruction data"
-msgstr "Údaje rekonštrukcie snímania filmu"
+msgstr "Údaje rekonštrukcie sledovania filmu"
 
 
 msgid "Match-moving reconstruction data from tracker"
@@ -37518,11 +37502,11 @@ msgstr "Rekonštruované"
 
 
 msgid "Is tracking data contains valid reconstruction information"
-msgstr "Sú údaje snímania obsahujúce platné informácie o rekonštrukcii"
+msgstr "Sú údaje sledovania obsahujúce platné informácie o rekonštrukcii"
 
 
 msgid "Movie tracking settings"
-msgstr "Nastavenia snímania filmu"
+msgstr "Nastavenia sledovania filmu"
 
 
 msgid "Match moving settings"
@@ -37574,7 +37558,7 @@ msgstr "Korelácia"
 
 
 msgid "Default minimum value of correlation between matched pattern and reference that is still treated as successful tracking"
-msgstr "Predvolená minimálna hodnota korelácie zhodou medzi vzorkou a odporúčaním, ktorá sa stále považuje za úspešné snímanie"
+msgstr "Predvolená minimálna hodnota korelácie zhodou medzi vzorkou a odporúčaním, ktorá sa stále považuje za úspešné sledovanie"
 
 
 msgid "Frames Limit"
@@ -37582,11 +37566,11 @@ msgstr "Limit snímok"
 
 
 msgid "Every tracking cycle, this number of frames are tracked"
-msgstr "Každý cyklus snímania, tento počet snímok je zosnímaný"
+msgstr "Každý cyklus sledovania, tento počet snímok je zosnímaný"
 
 
 msgid "Default distance from image boundary at which marker stops tracking"
-msgstr "Predvolená vzdialenosť okrajov obrázka, pri ktorej značka zastaví snímanie"
+msgstr "Predvolená vzdialenosť okrajov obrázka, pri ktorej značka zastaví sledovanie"
 
 
 msgid "Motion Model"
@@ -37594,7 +37578,7 @@ msgstr "Model pohybu"
 
 
 msgid "Default motion model to use for tracking"
-msgstr "Predvolený model pohybu, ktorý sa má použiť na snímanie"
+msgstr "Predvolený model pohybu, ktorý sa má použiť na sledovanie"
 
 
 msgid "Search for markers that are perspectively deformed (homography) between frames"
@@ -37702,7 +37686,7 @@ msgstr "Spresní tangenciálne koeficienty modelu skreslenia počas riešenia ka
 
 
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
-msgstr "Limit rýchlosti snímania na vytvorenie zjednodušenia vizuálnej spätnej väzby (neovplyvní to kvalitu snímania)"
+msgstr "Limit rýchlosti sledovania na vytvorenie zjednodušenia vizuálnej spätnej väzby (neovplyvní to kvalitu sledovania)"
 
 
 msgid "Fastest"
@@ -37742,7 +37726,7 @@ msgstr "Použiť modrý kanál"
 
 
 msgid "Use blue channel from footage for tracking"
-msgstr "Použije modrý kanál záberu pre snímanie"
+msgstr "Použije modrý kanál záberu pre sledovanie"
 
 
 msgid "Prepass"
@@ -37758,7 +37742,7 @@ msgstr "Použiť zelený kanál"
 
 
 msgid "Use green channel from footage for tracking"
-msgstr "Použije zelený kanál záberu pre snímanie"
+msgstr "Použije zelený kanál záberu pre sledovanie"
 
 
 msgid "Use a grease pencil data-block as a mask to use only specified areas of pattern when tracking"
@@ -37778,7 +37762,7 @@ msgstr "Použiť červený kanál"
 
 
 msgid "Use red channel from footage for tracking"
-msgstr "Použije červený kanál záberu pre snímanie"
+msgstr "Použije červený kanál záberu pre sledovanie"
 
 
 msgid "Keyframe Selection"
@@ -37794,11 +37778,11 @@ msgstr "Pohyb statívu"
 
 
 msgid "Use special solver to track a stable camera position, such as a tripod"
-msgstr "Použije špeciálneho riešiteľa stopy na snímanie stabilnej polohy kamery, ako je napríklad statív"
+msgstr "Použije špeciálneho riešiteľa stopy stabilnej polohy kamery, ako je napríklad statív"
 
 
 msgid "Movie tracking stabilization data"
-msgstr "Údaje o stabilizácii snímania filmov"
+msgstr "Údaje o stabilizácii sledovania filmov"
 
 
 msgid "2D stabilization based on tracking markers"
@@ -37966,11 +37950,11 @@ msgstr "Kompenzuje všetky zmeny veľkosti vzhľadom na stred rotácie"
 
 
 msgid "Movie tracking track data"
-msgstr "Údaje stopy snímania filmu"
+msgstr "Údaje stopy sledovania filmu"
 
 
 msgid "Match-moving track data for tracking"
-msgstr "Údaje o pohybe stôp na snímanie"
+msgstr "Údaje o pohybe stôp na sledovanie"
 
 
 msgid "Average error of re-projection"
@@ -37990,7 +37974,7 @@ msgstr "Farba stopy v programe Editor filmového klipu a 3D záberu po vyriešen
 
 
 msgid "Minimal value of correlation between matched pattern and reference that is still treated as successful tracking"
-msgstr "Minimálna hodnota korelácie medzi prispôsobenou vzorkou a referenciou, ktorá sa stále považuje za úspešnú snímanie"
+msgstr "Minimálna hodnota korelácie medzi prispôsobenou vzorkou a referenciou, ktorá sa stále považuje za úspešné sledovanie"
 
 
 msgid "Grease pencil data for this track"
@@ -38066,7 +38050,7 @@ msgstr "Použije vlastnú farbu namiesto preddefinovanej"
 
 
 msgid "Display what the tracking algorithm sees in the preview"
-msgstr "V náhľade zobrazí algoritmus snímania"
+msgstr "V náhľade zobrazí algoritmus sledovania"
 
 
 msgid "Normalize light intensities while tracking. Slower"
@@ -39743,7 +39727,7 @@ msgstr "Kľúčovanie obrazovky"
 
 
 msgid "Tracking Object"
-msgstr "Snímanie stôp objektu"
+msgstr "Sledovanie objektu"
 
 
 msgid "Lens Distortion"
@@ -40826,10 +40810,6 @@ msgid "Attribute Sample Texture"
 msgstr "Atribút Snímka textúry"
 
 
-msgid "Texture to sample values from"
-msgstr "Textúra na snímanie hodnôt z"
-
-
 msgid "Attribute Separate XYZ"
 msgstr "Atribút Oddeliť XYZ"
 
@@ -40958,6 +40938,46 @@ msgid "Entry-wise tan(A)"
 msgstr "Vstupný tangens(A)"
 
 
+msgid "Input Type Angle"
+msgstr "Uhol typu vstupu"
+
+
+msgid "Input Type Axis"
+msgstr "Os typu vstupu"
+
+
+msgid "Input Type Rotation"
+msgstr "Rotácia typu vstupu"
+
+
+msgid "Type of rotation"
+msgstr "Typ rotácie"
+
+
+msgid "Rotate a point using axis angle"
+msgstr "Otáča bod použitím uhla osi"
+
+
+msgid "Rotate a point using X axis"
+msgstr "Otáča bod použitím osi X"
+
+
+msgid "Rotate a point using Y axis"
+msgstr "Otáča bod použitím osi Y"
+
+
+msgid "Z Axis"
+msgstr "Os Z"
+
+
+msgid "Rotate a point using Z axis"
+msgstr "Otáča bod použitím osi Z"
+
+
+msgid "Rotate a point using XYZ order"
+msgstr "Otáča bod použitím poradia XYZ"
+
+
 msgid "Collection Info"
 msgstr "Info Kolekcie"
 
@@ -40984,6 +41004,10 @@ msgstr "Geometria vlastnej skupiny"
 
 msgid "Custom Geometry Group Node for Python nodes"
 msgstr "Uzol geometrie vlastnej skupiny pre uzly Python"
+
+
+msgid "Delete Geometry"
+msgstr "Odstrániť geometriu"
 
 
 msgid "Is Viewport"
@@ -41126,18 +41150,6 @@ msgid "Point Rotate"
 msgstr "Otáčať bodom"
 
 
-msgid "Input Type Angle"
-msgstr "Uhol typu vstupu"
-
-
-msgid "Input Type Axis"
-msgstr "Os typu vstupu"
-
-
-msgid "Input Type Rotation"
-msgstr "Rotácia typu vstupu"
-
-
 msgid "Base orientation of the points"
 msgstr "Základná orientácia bodov"
 
@@ -41220,7 +41232,7 @@ msgstr "Len posúdenie vlastného objektu pri výpočtoch AO"
 
 
 msgid "Number of rays to trace per shader evaluation"
-msgstr "Počet lúčov pre snímanie na vyhodnotenie shadera"
+msgstr "Počet lúčov pre trasu na vyhodnotenie shadera"
 
 
 msgid "Attribute Name"
@@ -41472,7 +41484,7 @@ msgstr "Transformácia bodu"
 
 
 msgid "Transform a texture by inverse mapping the texture coordinate"
-msgstr "Transformuje textúru podľa inverzného mapovania štruktúry textúry"
+msgstr "Transformuje textúru podľa inverzného priradenia štruktúry textúry"
 
 
 msgid "Transform a direction vector. Location is ignored"
@@ -41500,15 +41512,15 @@ msgstr "Priestor dotyčnice"
 
 
 msgid "Tangent space normal mapping"
-msgstr "Priestor dotyčnice mapovania normálu"
+msgstr "Priestor dotyčnice priradenia normálu"
 
 
 msgid "Object space normal mapping"
-msgstr "Priestor objektu mapovania normálov"
+msgstr "Priestor objektu priradenia normálov"
 
 
 msgid "World space normal mapping"
-msgstr "Priestor oblasti mapovania normálov"
+msgstr "Priestor oblasti priradenia normálov"
 
 
 msgid "Blender Object Space"
@@ -41516,7 +41528,7 @@ msgstr "Priestor objektu Blendera"
 
 
 msgid "Object space normal mapping, compatible with Blender render baking"
-msgstr "Priestor objektu mapovania normálov, kompatibilné so zapekaním Blender"
+msgstr "Priestor objektu priradenia normálov, kompatibilné so zapekaním Blender"
 
 
 msgid "Blender World Space"
@@ -41524,7 +41536,7 @@ msgstr "Priestor oblasti Blendera"
 
 
 msgid "World space normal mapping, compatible with Blender render baking"
-msgstr "Priestor oblasti mapovania normálov, kompatibilný so zapekaním Blender"
+msgstr "Priestor oblasti priradenia normálov, kompatibilný so zapečením Blender"
 
 
 msgid "UV Map for tangent space maps"
@@ -41716,7 +41728,7 @@ msgstr "Frekvencia vtlačenia"
 
 
 msgid "Texture coordinate mapping settings"
-msgstr "Nastavenie mapovania súradníc textúry"
+msgstr "Nastavenie priradenia súradníc textúry"
 
 
 msgid "Checker Texture"
@@ -41892,7 +41904,7 @@ msgstr "Vek častice"
 
 
 msgid "Lifetime mapped as 0.0 to 1.0 intensity"
-msgstr "Životnosť je mapovaná ako intenzita 0,0 až 1,0"
+msgstr "Životnosť je priradená ako intenzita 0,0 až 1,0"
 
 
 msgid "Particle Speed"
@@ -41900,7 +41912,7 @@ msgstr "Pohyb častice"
 
 
 msgid "Particle speed (absolute magnitude of velocity) mapped as 0.0 to 1.0 intensity"
-msgstr "Rýchlosť častíc (absolútna magnitúda rýchlosti) mapovaná ako intenzita 0,0 až 1,0"
+msgstr "Rýchlosť častíc (absolútna magnitúda rýchlosti) priradená ako intenzita 0,0 až 1,0"
 
 
 msgid "Particle Velocity"
@@ -41908,7 +41920,7 @@ msgstr "Rýchlosť častice"
 
 
 msgid "XYZ velocity mapped to RGB colors"
-msgstr "Rýchlosť XYZ mapovaná k farbám RGB"
+msgstr "Rýchlosť XYZ priradená k farbám RGB"
 
 
 msgid "Particle System to render as points"
@@ -42252,15 +42264,15 @@ msgstr "Vektorový posun"
 
 
 msgid "Tangent space vector displacement mapping"
-msgstr "Vektor priestoru dotyčnice mapovania premiestnenia"
+msgstr "Vektor priestoru dotyčnice priradenia premiestnenia"
 
 
 msgid "Object space vector displacement mapping"
-msgstr "Vektor priestoru objektu mapovania premiestnenia"
+msgstr "Vektor priestoru objektu priradenia premiestnenia"
 
 
 msgid "World space vector displacement mapping"
-msgstr "Vektor priestoru oblasti mapovania premiestnenia"
+msgstr "Vektor priestoru oblasti priradenia premiestnenia"
 
 
 msgid "Vector Math"
@@ -42273,34 +42285,6 @@ msgstr "Vektor otáčania"
 
 msgid "Invert angle"
 msgstr "Invertovať uhol"
-
-
-msgid "Type of rotation"
-msgstr "Typ rotácie"
-
-
-msgid "Rotate a point using axis angle"
-msgstr "Otáča bod použitím uhla osi"
-
-
-msgid "Rotate a point using X axis"
-msgstr "Otáča bod použitím osi X"
-
-
-msgid "Rotate a point using Y axis"
-msgstr "Otáča bod použitím osi Y"
-
-
-msgid "Z Axis"
-msgstr "Os Z"
-
-
-msgid "Rotate a point using Z axis"
-msgstr "Otáča bod použitím osi Z"
-
-
-msgid "Rotate a point using XYZ order"
-msgstr "Otáča bod použitím poradia XYZ"
 
 
 msgid "Vector Transform"
@@ -42425,10 +42409,6 @@ msgstr "Názov zásuvky"
 
 msgid "Data type of the socket"
 msgstr "Typ údajov zásuvky"
-
-
-msgid "Int"
-msgstr "Celé číslo"
 
 
 msgid "Link is muted and can be ignored"
@@ -42848,7 +42828,7 @@ msgstr "Aktívne vynútenie"
 
 
 msgid "Active Object constraint"
-msgstr "Obmedzenie aktívneho objektu"
+msgstr "Vynútenie aktívneho objektu"
 
 
 msgid "Object cast shadows in the 3D viewport"
@@ -43727,7 +43707,7 @@ msgstr "Prepne úpravu vybratých kanálov"
 
 
 msgid "Enable"
-msgstr "Povolená"
+msgstr "Povoliť"
 
 
 msgctxt "Operator"
@@ -44280,7 +44260,7 @@ msgstr "Názov novovytvorenej kosti"
 
 msgctxt "Operator"
 msgid "Recalculate Roll"
-msgstr "Prepočítať naklonenie"
+msgstr "Prepočítať prevalenie"
 
 
 msgid "Automatically fix alignment of select bones' axes"
@@ -44538,11 +44518,11 @@ msgstr "Odhalí všetky kosti skryté v režime úprav"
 
 msgctxt "Operator"
 msgid "Clear Roll"
-msgstr "Zmazať naklonenie"
+msgstr "Zmazať prevalenie"
 
 
 msgid "Clear roll for selected bones"
-msgstr "Zmaže naklonenie vybraných kostí"
+msgstr "Zmaže prevalenie vybraných kostí"
 
 
 msgctxt "Operator"
@@ -44967,7 +44947,7 @@ msgstr "Použiť opakovanie"
 
 
 msgid "Use repeat mapping values"
-msgstr "Použije opakovanie hodnôt mapovania"
+msgstr "Použije opakovanie hodnôt priradenia"
 
 
 msgid "Use Scale"
@@ -45267,12 +45247,12 @@ msgstr "Vytvorí mrak vrcholov použitím súradníc rekonštruovaných stôp"
 
 
 msgid "Add or remove a Tracking Camera Intrinsics Preset"
-msgstr "Pridá alebo odstráni vnútorné predvoľby kamery snímania"
+msgstr "Pridá alebo odstráni vnútorné predvoľby kamery sledovania"
 
 
 msgctxt "Operator"
 msgid "Clean Tracks"
-msgstr "Zmazať snímanie"
+msgstr "Zmazať stopy"
 
 
 msgid "Clean tracks with high error values or few frames"
@@ -45343,7 +45323,7 @@ msgstr "Vymaže aktívnu stopu iba namiesto všetkých vybraných stôp"
 
 msgctxt "Operator"
 msgid "Constraint to F-Curve"
-msgstr "Obmedzenie na F-krivke"
+msgstr "Vynútenie na F-krivke"
 
 
 msgid "Create F-Curves for object which will copy object's movement caused by this constraint"
@@ -45458,7 +45438,7 @@ msgstr "Značky umiestni iba mimo oblastí ohraničených nástrojom Poznámka"
 
 
 msgid "Threshold level to consider feature good enough for tracking"
-msgstr "Úroveň prahu na posúdenie funkcie dosť dobré pre snímanie"
+msgstr "Úroveň prahu na posúdenie funkcie dosť dobré pre sledovanie"
 
 
 msgctxt "Operator"
@@ -45492,7 +45472,7 @@ msgstr "Vybrať kanál"
 
 
 msgid "Select movie tracking channel"
-msgstr "Výber kanála snímania filmov"
+msgstr "Výber kanála sledovania filmov"
 
 
 msgid "Extend selection rather than clearing the existing selection"
@@ -45701,7 +45681,7 @@ msgstr "Režim nastavenia interakcie klipu"
 
 
 msgid "Show tracking and solving tools"
-msgstr "Ukáže nástroje snímania stôp a riešení"
+msgstr "Ukáže nástroje sledovania a riešení"
 
 
 msgid "Show mask editing tools"
@@ -45779,7 +45759,7 @@ msgstr "Znovu načíta klip"
 
 
 msgid "Select tracking markers"
-msgstr "Výber značiek snímania"
+msgstr "Výber značiek sledovania"
 
 
 msgid "Mouse location in normalized coordinates, 0.0 to 1.0 is within the image bounds"
@@ -45995,7 +45975,7 @@ msgstr "Nastaví aktuálny filmový klip ako pozadie kamery v 3D zábere (funguj
 
 msgctxt "Operator"
 msgid "Setup Tracking Scene"
-msgstr "Nastavenia snímania scény"
+msgstr "Nastavenia sledovania scény"
 
 
 msgid "Prepare scene for compositing 3D objects into this footage"
@@ -46044,7 +46024,7 @@ msgstr "Pridá vybrané stopy do stabilizácie 2D zmeny polohy"
 
 msgctxt "Operator"
 msgid "Remove Stabilization Track"
-msgstr "Odstrániť stabilizáciu snímania"
+msgstr "Odstrániť stabilizáciu stopy"
 
 
 msgid "Remove selected track from translation stabilization"
@@ -46089,11 +46069,11 @@ msgstr "Vyberie stopy použité na stabilizáciu zmeny polohy"
 
 msgctxt "Operator"
 msgid "Add Track Color Preset"
-msgstr "Pridať predvoľbu farby snímania"
+msgstr "Pridať predvoľbu stopy farby"
 
 
 msgid "Add or remove a Clip Track Color Preset"
-msgstr "Pridá alebo odstráni predvoľby farby stopy klipu"
+msgstr "Pridá alebo odstráni predvoľby stopu farby klipu"
 
 
 msgctxt "Operator"
@@ -46128,7 +46108,7 @@ msgstr "Nastavenia stopy ako pôvodné"
 
 
 msgid "Copy tracking settings from active track to default settings"
-msgstr "Kopíruje nastavenia snímania z aktívnej stopy do predvolených nastavení"
+msgstr "Kopíruje nastavenia sledovania z aktívnej stopy do predvolených nastavení"
 
 
 msgctxt "Operator"
@@ -46137,7 +46117,7 @@ msgstr "Nastavenia kopírovania stopy"
 
 
 msgid "Copy tracking settings from active track to selected tracks"
-msgstr "Kopíruje nastavenia snímania z aktívnej stopy do vybraných stôp"
+msgstr "Kopíruje nastavenia sledovania z aktívnej stopy do vybraných stôp"
 
 
 msgctxt "Operator"
@@ -46151,29 +46131,29 @@ msgstr "Vytvorí prázdny objekt, ktorý vznikne kopírovaním pohybu aktívnej 
 
 msgctxt "Operator"
 msgid "Add Tracking Object"
-msgstr "Pridať objekt snímania"
+msgstr "Pridať objekt sledovania"
 
 
 msgid "Add new object for tracking"
-msgstr "Pridá nový objekt pre snímanie"
+msgstr "Pridá nový objekt pre sledovanie"
 
 
 msgctxt "Operator"
 msgid "Remove Tracking Object"
-msgstr "Odstrániť objekt snímania"
+msgstr "Odstrániť objekt sledovania"
 
 
 msgid "Remove object for tracking"
-msgstr "Odstráni objekt pre snímanie"
+msgstr "Odstráni objekt pre sledovanie"
 
 
 msgctxt "Operator"
 msgid "Add Tracking Settings Preset"
-msgstr "Pridať nastavenia predvoľby snímania"
+msgstr "Pridať nastavenia predvoľby sledovania"
 
 
 msgid "Add or remove a motion tracking settings preset"
-msgstr "Pridá alebo odstráni nastavenie predvolieb snímania pohybu"
+msgstr "Pridá alebo odstráni nastavenie predvolieb sledovania pohybu"
 
 
 msgid "View whole image with markers"
@@ -46263,7 +46243,7 @@ msgstr "Oddiali pohľad"
 
 
 msgid "Cursor location in normalized (0.0 to 1.0) coordinates"
-msgstr "Pozícia kurzora v normalizovaných súradniciach (0,0 - 1,0)"
+msgstr "Poloha kurzora v normalizovaných súradniciach (0,0 - 1,0)"
 
 
 msgctxt "Operator"
@@ -48146,7 +48126,7 @@ msgstr "Užívateľské vlastnosti"
 
 
 msgid "Export custom properties"
-msgstr "Exportuje vlastné vlastnosti"
+msgstr "Exportuje užívateľské vlastnosti"
 
 
 msgid "Loose Edges"
@@ -48319,7 +48299,7 @@ msgstr "Kvantizácia bitov pre hodnoty súradníc textúr (0 = bez kvantizácie)
 
 
 msgid "Export custom properties as glTF extras"
-msgstr "Exportuje vlastné vlastnosti ako príslušenstvo glTF (GL Transmission Format)"
+msgstr "Exportuje užívateľské vlastnosti ako príslušenstvo glTF (GL Transmission Format)"
 
 
 msgid "Always Sample Animations"
@@ -48443,11 +48423,11 @@ msgstr "Exportuje normály vrcholov s povrchovými sieťami"
 
 
 msgid "Skinning"
-msgstr "Opláštenie"
+msgstr "Vytvorenie pokožky"
 
 
 msgid "Export skinning (armature) data"
-msgstr "Exportuje údaje opláštenia (armatúry)"
+msgstr "Exportuje údaje vytvorenia pokožky (armatúry)"
 
 
 msgid "Tangents"
@@ -48508,6 +48488,14 @@ msgstr "Voľné body"
 
 msgid "Export loose points as glTF points, using the material from the first material slot"
 msgstr "Exportujte voľné body ako body glTF použitím materiálu z prvej zásuvky materiálu"
+
+
+msgid "Renderable Objects"
+msgstr "Iba objekty vytvoriteľného prekreslenia"
+
+
+msgid "Visible Objects"
+msgstr "Viditeľné objekty"
 
 
 msgid "Remember Export Settings"
@@ -48713,11 +48701,6 @@ msgid "Write the rest state at the first frame"
 msgstr "Zapíše stav pokoja po prvej snímke"
 
 
-msgctxt "Operator"
-msgid "Automatically Pack Into .blend"
-msgstr "Automaticky zbaliť do .blend"
-
-
 msgid "Automatically pack all external files into the .blend file"
 msgstr "Automaticky zbalí všetky externé súbory do súboru .blend"
 
@@ -48818,14 +48801,6 @@ msgid "Execute selected file"
 msgstr "Spustí vybraný súbor"
 
 
-msgid "Need Active"
-msgstr "Potrebovať aktívny"
-
-
-msgid "Only execute if there's an active selected file in the file list"
-msgstr "Spustí iba v prípade, že je v zozname súborov vybraný aktívny súbor"
-
-
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "Číslo prírastku v názve súboru"
@@ -48879,18 +48854,8 @@ msgid "Highlight selected file(s)"
 msgstr "Zvýrazní vybrané súbory"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "Vytvoriť všetky cesty absolútne"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "Vytvorí všetky cesty k externým súborom absolútne"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Vytvoriť všetky cesty relatívne"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -48904,24 +48869,6 @@ msgstr "Ďalší priečinok"
 
 msgid "Move to next folder"
 msgstr "Presun na ďalší priečinok"
-
-
-msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "Zbaliť všetko do .blend"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "Zbalí všetky používané externé súbory do .blend súboru"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Zbaliť knižnicu Blendera"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Zbalí všetky použité súbory knižnice Blender do súčasného .blend súboru"
 
 
 msgctxt "Operator"
@@ -49055,11 +49002,6 @@ msgid "Change sorting to use column under cursor"
 msgstr "Zoradí zmeny na stĺpec pod kurzorom"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "Rozbaliť všetko na súbory"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr "Rozbalí všetky súbory zabalené v tomto .blend súbore na jednotlivé externé súbory"
 
@@ -49123,15 +49065,6 @@ msgstr "Použije súbor v pôvodnom umiestnení (v prípade potreby ho vytvorí)
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "Zapíše súbory do pôvodného umiestnenia (prepíše existujúce súbory)"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Rozbaliť knižnicu Blendera"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "Rozbalí všetky použité súbory knižnice Blender z tohto .blend súboru"
 
 
 msgid "Scroll the selected files into view"
@@ -49713,31 +49646,6 @@ msgid "Add new Annotation data-block"
 msgstr "Pridá nový blok údajov poznámky"
 
 
-msgctxt "Operator"
-msgid "Bake Mesh Animation to Grease Pencil"
-msgstr "Zapiecť animáciu povrchovej siete do pastelky"
-
-
-msgid "Bake mesh animation to grease pencil strokes"
-msgstr "Zapečie animáciu povrchovej siete do ťahov pastelky"
-
-
-msgid "Threshold Angle"
-msgstr "Prahový uhol"
-
-
-msgid "Threshold to determine ends of the strokes"
-msgstr "Prah na určenie konca ťahov"
-
-
-msgid "Export Faces"
-msgstr "Export plôšok"
-
-
-msgid "Export faces as filled strokes"
-msgstr "Exportuje plôšky ako vyplnené ťahy"
-
-
 msgid "The end frame of animation"
 msgstr "Koncová snímka animácie"
 
@@ -49752,14 +49660,6 @@ msgstr "Cieľová snímka"
 
 msgid "Destination frame"
 msgstr "Cieľová snímka"
-
-
-msgid "Stroke Offset"
-msgstr "Posuv ťahu"
-
-
-msgid "Offset strokes from fill"
-msgstr "Posuv ťahov podľa výplne"
 
 
 msgid "Only Selected Keyframes"
@@ -49802,16 +49702,49 @@ msgid "Reproject the strokes using the orientation of 3D cursor"
 msgstr "Opätovné premietnutie ťahov použitím orientácie 3D kurzora"
 
 
+msgid "Step between generated frames"
+msgstr "Krok medzi generovanými snímkami"
+
+
+msgctxt "Operator"
+msgid "Bake Mesh Animation to Grease Pencil"
+msgstr "Zapiecť animáciu povrchovej siete do pastelky"
+
+
+msgid "Bake mesh animation to grease pencil strokes"
+msgstr "Zapečie animáciu povrchovej siete do ťahov pastelky"
+
+
+msgid "Threshold Angle"
+msgstr "Prahový uhol"
+
+
+msgid "Threshold to determine ends of the strokes"
+msgstr "Prah na určenie konca ťahov"
+
+
+msgid "Export Faces"
+msgstr "Export plôšok"
+
+
+msgid "Export faces as filled strokes"
+msgstr "Exportuje plôšky ako vyplnené ťahy"
+
+
+msgid "Stroke Offset"
+msgstr "Posuv ťahu"
+
+
+msgid "Offset strokes from fill"
+msgstr "Posuv ťahov podľa výplne"
+
+
 msgid "Only Seam Edges"
 msgstr "Len hrany švu"
 
 
 msgid "Convert only seam edges"
 msgstr "Konvertuje len hrany švu"
-
-
-msgid "Step between generated frames"
-msgstr "Krok medzi generovanými snímkami"
 
 
 msgid "Target grease pencil"
@@ -50497,12 +50430,8 @@ msgid "Duplicate Layer to New Object"
 msgstr "Vytvoriť kópiu vrstvy pre nový objekt"
 
 
-msgid "Make a copy of the active Grease Pencil layer to new object"
-msgstr "Vytvorí kópiu aktívnej vrstvy pastelky pre nový objekt"
-
-
-msgid "Name of the destination object"
-msgstr "Názov cieľového objektu"
+msgid "Only Active"
+msgstr "Len aktívne"
 
 
 msgctxt "Operator"
@@ -51846,10 +51775,6 @@ msgid "Add F-Modifier to the active/selected F-Curves"
 msgstr "Pridá modifikátor funkcie na aktívne/vybrané F-krivky"
 
 
-msgid "Only Active"
-msgstr "Len aktívne"
-
-
 msgid "Only add F-Modifier to active F-Curve"
 msgstr "Pridá iba modifikátor funkcie na aktívnu F-krivku"
 
@@ -52252,10 +52177,6 @@ msgstr "Výška obrázka"
 
 msgid "Image data-block name"
 msgstr "Názov bloku údajov obrázka"
-
-
-msgid "Tiled"
-msgstr "Dlaždicovito"
 
 
 msgid "Create a tiled image"
@@ -53009,7 +52930,7 @@ msgstr "Importuje vlastné normály, ak sú k dispozícii (inak Blender ich bude
 
 
 msgid "Import user properties as custom properties"
-msgstr "Importuje užívateľské vlastnosti ako vlastné vlastnosti"
+msgstr "Importuje užívateľské vlastnosti ako užívateľské vlastnosti"
 
 
 msgid "Import Enums As Strings"
@@ -53098,7 +53019,7 @@ msgstr "Odhadnúť originálnu väzbu pózy"
 
 
 msgid "Try to guess the original bind pose for skinned meshes from the inverse bind matrices. When off, use default/rest pose as bind pose"
-msgstr "Pokúsi sa odhadnúť pôvodnú väzbu pózy pre opláštenú povrchovú sieť z inverzných matríc väzby. Ak je vypnutá, použije ako väzbu pózy predvolenú/pokojovú pózu"
+msgstr "Pokúsi sa odhadnúť pôvodnú väzbu pózy pre vytvorenie pokožky povrchovej siete z inverzných matríc väzby. Ak je vypnutá, použije ako väzbu pózy predvolenú/pokojovú pózu"
 
 
 msgid "Pack Images"
@@ -53296,7 +53217,7 @@ msgstr "Os W (Z)"
 
 msgctxt "Operator"
 msgid "Make Regular"
-msgstr "Robiť pravidelné"
+msgstr "Vytvoriť pravidelnú"
 
 
 msgid "Set UVW control points a uniform distance apart"
@@ -58177,7 +58098,7 @@ msgstr "Zruší prepojenie kolekcie všetkých objektov"
 
 msgctxt "Operator"
 msgid "Add Constraint"
-msgstr "Pridať väzbu"
+msgstr "Pridať vynútenie"
 
 
 msgid "Add a constraint to the active object"
@@ -58195,11 +58116,11 @@ msgstr "Pridá vynútenie na aktívny objekt, s cieľom (ak je to vhodné) nasta
 
 msgctxt "Operator"
 msgid "Clear Object Constraints"
-msgstr "Vymazať vynútenia objektu"
+msgstr "Zmazať vynútenia objektu"
 
 
 msgid "Clear all the constraints for the active object only"
-msgstr "Vymaže všetky vynútenia iba pre aktívny objekt"
+msgstr "Zmaže všetky vynútenia iba pre aktívny objekt"
 
 
 msgctxt "Operator"
@@ -59584,7 +59505,7 @@ msgstr "Deformácia krivky"
 
 
 msgid "Path Constraint"
-msgstr "Obmedziť cestu"
+msgstr "Vynútiť cestu"
 
 
 msgid "Lattice Deform"
@@ -60456,15 +60377,15 @@ msgstr "Pridá textový objekt do scény"
 
 msgctxt "Operator"
 msgid "Clear Track"
-msgstr "Zmazať stopovanie"
+msgstr "Zmazať stopu"
 
 
 msgid "Clear tracking constraint or flag from object"
-msgstr "Zmaže vynútenie stopovania alebo príznak objektu"
+msgstr "Zmaže vynútenie Sledovanie alebo príznak objektu"
 
 
 msgid "Clear Track"
-msgstr "Odstrániť stopovanie"
+msgstr "Odstrániť stopu"
 
 
 msgid "Clear and Keep Transformation (Clear Track)"
@@ -60473,19 +60394,19 @@ msgstr "Zmazať a zachovať transformáciu (zmazať stopu)"
 
 msgctxt "Operator"
 msgid "Make Track"
-msgstr "Vytvoriť stopovanie"
+msgstr "Vytvoriť stopu"
 
 
 msgid "Make the object track another object, using various methods/constraints"
-msgstr "Vytvorí stopovanie objektu iným objektom, použitím rôznych metód/vynútení"
+msgstr "Vytvorí stopu objektu iným objektom, použitím rôznych metód/vynútení"
 
 
 msgid "Track to Constraint"
-msgstr "Vynútenie Stopovať na"
+msgstr "Vynútenie Stopa na"
 
 
 msgid "Lock Track Constraint"
-msgstr "Zamknúť vynútenie stopy"
+msgstr "Vynútenie Zamknúť stopu"
 
 
 msgctxt "Operator"
@@ -61433,7 +61354,7 @@ msgstr "Vytvoriť lokálne"
 
 
 msgid "Remap Users"
-msgstr "Premapovať užívateľov"
+msgstr "Znovu priradiť užívateľov"
 
 
 msgid "Make all users of selected data-blocks to use instead current (clicked) one"
@@ -62994,11 +62915,11 @@ msgstr "Odstráni knižnicu pózy z aktívneho objektu"
 
 msgctxt "Operator"
 msgid "Apply Pose as Rest Pose"
-msgstr "Použiť pózu ako pózu pokoja"
+msgstr "Použiť pózu ako pokojovú pózu"
 
 
 msgid "Apply the current pose as the new rest pose"
-msgstr "Použije aktuálnu pózu ako novú pózu pokoja"
+msgstr "Použije aktuálnu pózu ako novú pokojovú pózu"
 
 
 msgid "Selected Only"
@@ -63011,11 +62932,11 @@ msgstr "Použije iba vybrané kosti (s množením potomkov)"
 
 msgctxt "Operator"
 msgid "Pose Breakdowner"
-msgstr "Zrútenie pózy"
+msgstr "Rozkladač pózy"
 
 
 msgid "Create a suitable breakdown pose on the current frame"
-msgstr "Vytvorí vhodné zrútenie pózy na aktuálnej snímke"
+msgstr "Vytvorí primeraný rozklad pózy na aktuálnej snímke"
 
 
 msgid "Axis Lock"
@@ -63075,11 +62996,7 @@ msgstr "Vlastnosti ohýbania tvaru kostí"
 
 
 msgid "Custom properties"
-msgstr "Vlastné vlastnosti"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Faktor váhy, pre ktorý kľúčová snímka je viacej zvýhodnená"
+msgstr "Užívateľské vlastnosti"
 
 
 msgid "Next Keyframe"
@@ -63088,6 +63005,14 @@ msgstr "Ďalší kľúč"
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Číslo snímky kľúčovej snímky hneď po aktuálnej snímke"
+
+
+msgid "Percentage"
+msgstr "Percentuálne"
+
+
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Faktor váhy, pre ktorý kľúčová snímka je viacej zvýhodnená"
 
 
 msgid "Previous Keyframe"
@@ -63254,11 +63179,11 @@ msgstr "Znovu nastaví umiestnenie vybraných kostí na ich predvolené hodnoty"
 
 msgctxt "Operator"
 msgid "Paste Pose"
-msgstr "Vložiť pózu"
+msgstr "Prilepiť pózu"
 
 
 msgid "Paste the stored pose on to the current pose"
-msgstr "Vložte uloženú pózu na aktuálnu pózu"
+msgstr "Prilepí uloženú pózu na aktuálnu pózu"
 
 
 msgid "Flipped on X-Axis"
@@ -63322,7 +63247,7 @@ msgstr "Prepočíta cesty pre kosti, ktoré ich už majú"
 
 msgctxt "Operator"
 msgid "Propagate Pose"
-msgstr "Nakopírovať pózu"
+msgstr "Rozšíriť pózu"
 
 
 msgid "Copy selected aspects of the current pose to subsequent poses already keyframed"
@@ -63330,7 +63255,7 @@ msgstr "Kopíruje vybrané aspekty aktuálnej pózy na následné pózy označen
 
 
 msgid "Frame to stop propagating frames to (for 'Before Frame' mode)"
-msgstr "Snímka na zastavenie rozmnožovacej snímky (pre režim \"pred snímkou\")"
+msgstr "Snímka na zastavenie rozšírenia snímky (pre režim \"Pred snímku\")"
 
 
 msgid "Terminate Mode"
@@ -63338,7 +63263,7 @@ msgstr "Režim ukončenia"
 
 
 msgid "Method used to determine when to stop propagating pose to keyframes"
-msgstr "Metóda používaná na určenie, kedy sa má zastaviť množenie pózy na kľúčové snímky"
+msgstr "Metóda používaná na určenie, kedy sa má zastaviť rozšírenie pózy na kľúčové snímky"
 
 
 msgid "While Held"
@@ -63346,15 +63271,15 @@ msgstr "Počas držania"
 
 
 msgid "Propagate pose to all keyframes after current frame that don't change (Default behavior)"
-msgstr "Nakopíruje pózy pre všetky kľúčové snímky po aktuálnej snímke, ktoré sa nemenia (predvolené správanie)"
+msgstr "Rozšíri pózu na všetky kľúčové snímky po aktuálnej snímke, ktoré sa nemenia (predvolené správanie)"
 
 
 msgid "To Next Keyframe"
-msgstr "Do ďalšej kľúčovej snímky"
+msgstr "Na ďalšiu kľúčovú snímku"
 
 
 msgid "Propagate pose to first keyframe following the current frame only"
-msgstr "Nakopíruje pózu len do prvej kľúčovej snímky po aktuálnej snímke"
+msgstr "Rozšíri pózu len na prvú kľúčovú snímku po aktuálnej snímke"
 
 
 msgid "To Last Keyframe"
@@ -63362,49 +63287,49 @@ msgstr "Na poslednú kľúčovú snímku"
 
 
 msgid "Propagate pose to the last keyframe only (i.e. making action cyclic)"
-msgstr "Nakopíruje pózu len na poslednú kľúčový snímku (t. j. vytvorí cyklickú akciu)"
+msgstr "Rozšíri pózu len na poslednú kľúčovú snímku (t. j. vytvorí cyklickú akciu)"
 
 
 msgid "Before Frame"
-msgstr "Pred snímkou"
+msgstr "Pred snímku"
 
 
 msgid "Propagate pose to all keyframes between current frame and 'Frame' property"
-msgstr "Nakopíruje pózu pre všetky kľúčové snímky medzi aktuálnou snímkou a 'snímkou' vlastnosti"
+msgstr "Rozšíri pózu na všetky kľúčové snímky medzi aktuálnou snímkou a vlastnosťou 'snímky'"
 
 
 msgid "Before Last Keyframe"
-msgstr "Pred poslednou kľúčovou snímkou"
+msgstr "Pred poslednú kľúčovú snímku"
 
 
 msgid "Propagate pose to all keyframes from current frame until no more are found"
-msgstr "Nakopíruje pózu pre všetky kľúčové snímky z aktuálnej snímky, kým sa nenájde žiadna ďalšia"
+msgstr "Rozšíri pózu na všetky kľúčové snímky z aktuálnej snímky, kým sa nenájde žiadna ďalšia"
 
 
 msgid "Propagate pose to all selected keyframes"
-msgstr "Nakopíruje pózu pre všetky vybrané kľúčové snímky"
+msgstr "Rozšíri pózu na všetky vybrané kľúčové snímky"
 
 
 msgid "Propagate pose to all keyframes occurring on frames with Scene Markers after the current frame"
-msgstr "Nakopíruje pózu pre všetky kľúčové snímky vyskytujúce sa na snímkach so Značkami scény po aktuálnej snímke"
+msgstr "Rozšíri pózu na všetky kľúčové snímky vyskytujúce sa na snímkach so Značkami scény po aktuálnej snímke"
 
 
 msgctxt "Operator"
 msgid "Push Pose from Breakdown"
-msgstr "Predsunúť pózu pre rozklad"
+msgstr "Stlačiť pózu z rozkladu"
 
 
 msgid "Exaggerate the current pose in regards to the breakdown pose"
-msgstr "Nadsadí súčasnú pózu v súvislosti s rozkladom póz"
+msgstr "Nadsadí súčasnú pózu v vzhľadom na rozklad pózy"
 
 
 msgctxt "Operator"
 msgid "Push Pose from Rest Pose"
-msgstr "Predsunúť pózu pre pózu pokoja"
+msgstr "Stlačiť pózu z pokojovej pózy"
 
 
 msgid "Push the current pose further away from the rest pose"
-msgstr "Potlačí aktuálnu pózu ďalej od pokojovej pózy"
+msgstr "Stlačí aktuálnu pózu ďalej od pokojovej pózy"
 
 
 msgctxt "Operator"
@@ -63418,16 +63343,16 @@ msgstr "Preklopí štvoricu hodnôt na dosiahnutie požadovanej rotácie, pri za
 
 msgctxt "Operator"
 msgid "Relax Pose to Breakdown"
-msgstr "Pokojová póza na rozklad"
+msgstr "Uvoľniť pózu pre rozklad"
 
 
 msgid "Make the current pose more similar to its breakdown pose"
-msgstr "Vytvorí súčasnú pózu najviac podobnú svojej póze rozkladu"
+msgstr "Vytvorí súčasnú pózu najviac podobnú jej rozkladu pózy"
 
 
 msgctxt "Operator"
 msgid "Relax Pose to Rest Pose"
-msgstr "Póza uvoľnenia na pózu pokoja"
+msgstr "Uvoľniť pózu pre pokojovú pózu"
 
 
 msgid "Make the current pose more similar to the rest pose"
@@ -63589,10 +63514,6 @@ msgstr "Odstráni existujúce doplnky s rovnakým ID (identifikátorom)"
 
 msgid "Target Path"
 msgstr "Cieľová cesta"
-
-
-msgid "User Prefs"
-msgstr "Užívateľské predvoľby"
 
 
 msgctxt "Operator"
@@ -64173,7 +64094,7 @@ msgstr "Napojí objekty ako reťaze na základe vzdialenosti, počnúc aktívnym
 
 
 msgid "Constraint pivot location"
-msgstr "Obmedzenie polohy otočného bodu"
+msgstr "Vynútenie polohy otočného bodu"
 
 
 msgid "Pivot location is between the constrained rigid bodies"
@@ -64217,10 +64138,6 @@ msgstr "Vypočítať hmotnosť"
 
 msgid "Automatically calculate mass values for Rigid Body Objects based on volume"
 msgstr "Automaticky vypočíta hodnoty hmotnosti pre objekty pevného telesa na základe objemu"
-
-
-msgid "Custom density value (kg/m^3) to use instead of material preset"
-msgstr "Vlastná hodnota hustoty (kg/m^3) na použitie namiesto predvoľby materiálu"
 
 
 msgid "Material Preset"
@@ -65534,10 +65451,6 @@ msgid "Shrinks the Face Sets boundary by one face based on mesh topology"
 msgstr "Zmrští sa hranica sústavy plôšok o jednu plôšku na základe topológie povrchovej siete"
 
 
-msgid "Delete Geometry"
-msgstr "Odstrániť geometriu"
-
-
 msgid "Deletes the faces that are assigned to the Face Set"
 msgstr "Odstráni plôšky, ktoré sú priradené k sústave plôšok"
 
@@ -66642,6 +66555,10 @@ msgid "Keep image at its original size"
 msgstr "Zachová pôvodnú veľkosť obrázka"
 
 
+msgid "Set appropriate view transform based on media colorspace"
+msgstr "Nastaví vhodnú transformáciu zobrazenia na základe farebného priestoru média"
+
+
 msgctxt "Operator"
 msgid "Separate Images"
 msgstr "Oddeliť obrázky"
@@ -66678,26 +66595,14 @@ msgid "Make Meta Strip"
 msgstr "Vytvoriť meta pás"
 
 
-msgid "Group selected strips into a metastrip"
-msgstr "Zoskupí vybrané pásy do meta pásu"
-
-
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "Bez meta pásu"
 
 
-msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "Predá obsah meta pásu späť do radiča"
-
-
 msgctxt "Operator"
 msgid "Toggle Meta Strip"
 msgstr "Prepnúť meta pás"
-
-
-msgid "Toggle a metastrip (to edit enclosed strips)"
-msgstr "Prepne meta pás (na úpravu uzatvorených pásov)"
 
 
 msgctxt "Operator"
@@ -67940,11 +67845,11 @@ msgstr "Zruší prepojenie bloku údajov aktívneho textu"
 
 msgctxt "Operator"
 msgid "Scale B-Bone"
-msgstr "Mierka ohybu kosti"
+msgstr "Mierka ohnutia kosti"
 
 
 msgid "Scale selected bendy bones display size"
-msgstr "Mierka veľkosti zobrazenia ohybu kostí"
+msgstr "Mierka veľkosti zobrazenia ohnutia kostí"
 
 
 msgid "Constraint Axis"
@@ -69201,10 +69106,6 @@ msgid "New Image"
 msgstr "Nový obrázok"
 
 
-msgid "Assign new images for every mesh (only one if shared tex space enabled)"
-msgstr "Priradí nové obrázky pre každú povrchovú sieť (iba raz, ak je povolený zdieľaný priestor textúry)"
-
-
 msgid "Pack Quality"
 msgstr "Kvalita zbalenia"
 
@@ -69795,11 +69696,11 @@ msgstr "Index obrázka pozadia na odstránenie"
 
 msgctxt "Operator"
 msgid "Select Menu"
-msgstr "Vybrať ponuku"
+msgstr "Ponuka Vybrať"
 
 
 msgid "Menu bone selection"
-msgstr "Výber ponuky kostí"
+msgstr "Ponuka výberu kostí"
 
 
 msgctxt "Operator"
@@ -70733,11 +70634,11 @@ msgstr "Koncová snímka exportu, použije predvolenú hodnotu na získanie konc
 
 
 msgid "Export Custom Properties"
-msgstr "Exportovať vlastné vlastnosti"
+msgstr "Exportovať užívateľské vlastnosti"
 
 
 msgid "Export custom properties to Alembic .userProperties"
-msgstr "Exportuje vlastné vlastnosti do súboru Alembic .userProperties"
+msgstr "Exportuje užívateľské vlastnosti do súboru Alembic .userProperties"
 
 
 msgid "Export Hair"
@@ -73544,11 +73445,11 @@ msgstr "Navigácia aktív"
 
 
 msgid "Chain Scaling"
-msgstr "Reťazová mierka"
+msgstr "Zmena mierky reťaze"
 
 
 msgid "Fitting"
-msgstr "Príruba"
+msgstr "Montáž"
 
 
 msgid "Bone Constraints"
@@ -73556,7 +73457,7 @@ msgstr "Vynútenia kostí"
 
 
 msgid "Bendy Bones"
-msgstr "Ohyb kostí"
+msgstr "Ohnuté kosti"
 
 
 msgid "Viewport Display"
@@ -73576,7 +73477,7 @@ msgstr "Aktívny bod"
 
 
 msgid "Predefined tracking camera intrinsics"
-msgstr "Preddefinované snímanie vnútornej kamery"
+msgstr "Preddefinované sledovanie vnútornej kamery"
 
 
 msgid "Clip Display"
@@ -73651,11 +73552,11 @@ msgstr "Predvoľby farby"
 
 
 msgid "Tracking Settings"
-msgstr "Nastavenia snímania"
+msgstr "Nastavenia sledovania"
 
 
 msgid "Tracking Settings Extras"
-msgstr "Extra nastavenia snímania"
+msgstr "Extra nastavenia sledovania"
 
 
 msgid "Lens"
@@ -73663,15 +73564,15 @@ msgstr "Objektív"
 
 
 msgid "Tracking Settings Extra"
-msgstr "Nastavenia snímania"
+msgstr "Nastavenia sledovania"
 
 
 msgid "Predefined tracking settings"
-msgstr "Preddefinované nastavenia snímania"
+msgstr "Preddefinované nastavenia sledovania"
 
 
 msgid "Tracking Presets"
-msgstr "Predvoľby snímania"
+msgstr "Predvoľby sledovania"
 
 
 msgid "Cloth Presets"
@@ -74417,7 +74318,7 @@ msgstr "FFMPEG predvoľby"
 
 
 msgid "Time Remapping"
-msgstr "Premapovanie času"
+msgstr "Znovu priradenie času"
 
 
 msgid "Views"
@@ -74842,7 +74743,7 @@ msgstr "Miera"
 
 
 msgid "Motion Tracking"
-msgstr "Snímanie stôp pohybu"
+msgstr "Sledovanie pohybu"
 
 
 msgid "Texture Paint Context Menu"
@@ -74894,12 +74795,12 @@ msgstr "Rozkladač"
 
 msgctxt "Operator"
 msgid "Push"
-msgstr "Tlačiť"
+msgstr "Stlačiť"
 
 
 msgctxt "Operator"
 msgid "Roll"
-msgstr "Nakloniť"
+msgstr "Prevaľovať"
 
 
 msgctxt "Operator"
@@ -76220,7 +76121,7 @@ msgstr "Individuálne pózy kostí pre armatúry"
 
 
 msgid "IK Param"
-msgstr "IK parameter"
+msgstr "Parameter IK"
 
 
 msgid "Parameters for IK solver"
@@ -76228,11 +76129,11 @@ msgstr "Parametre riešiteľa inverznej kinematiky (IK)"
 
 
 msgid "Selection of IK solver for IK chain"
-msgstr "Výber riešiteľa IK pre IK reťaz"
+msgstr "Výber riešiteľa IK pre reťaz IK"
 
 
 msgid "Auto IK"
-msgstr "Auto IK"
+msgstr "Automatická IK"
 
 
 msgid "Add temporary IK constraints while grabbing bones in Pose Mode"
@@ -76272,7 +76173,7 @@ msgstr "Potomok tejto pózy kosti"
 
 
 msgid "Constraints that act on this pose channel"
-msgstr "Obmedzenie pôsobiace na tomto kanály pózy"
+msgstr "Vynútenie pôsobiace na tomto kanály pózy"
 
 
 msgid "Custom Object"
@@ -76452,11 +76353,11 @@ msgstr "Umiestnenie chvosta kanála kosti"
 
 
 msgid "Scale to Bone Length"
-msgstr "Zmeniť dĺžku kosti"
+msgstr "Mierka pre dĺžku kosti"
 
 
 msgid "Scale the custom object by the bone length"
-msgstr "Zmení veľkosť vlastného objektu podľa dĺžky kostí"
+msgstr "Mierka vlastného objektu podľa dĺžky kostí"
 
 
 msgid "IK X Limit"
@@ -76464,7 +76365,7 @@ msgstr "Limit X IK"
 
 
 msgid "Limit movement around the X axis"
-msgstr "Obmedzenie pohybu okolo osi X"
+msgstr "Limit pohybu okolo osi X"
 
 
 msgid "IK Y Limit"
@@ -76472,7 +76373,7 @@ msgstr "Limit Y IK"
 
 
 msgid "Limit movement around the Y axis"
-msgstr "Obmedzenie pohybu okolo osi Y"
+msgstr "Limit pohybu okolo osi Y"
 
 
 msgid "IK Z Limit"
@@ -76480,7 +76381,7 @@ msgstr "Limit Z IK"
 
 
 msgid "Limit movement around the Z axis"
-msgstr "Obmedzenie pohybu okolo osi Z"
+msgstr "Limit pohybu okolo osi Z"
 
 
 msgid "IK Linear Control"
@@ -76508,7 +76409,7 @@ msgstr "Kolekcia vynútení póz kostí"
 
 
 msgid "Active PoseChannel constraint"
-msgstr "Obmedzenie aktívneho kanálu pózy"
+msgstr "Vynútenie aktívneho kanálu pózy"
 
 
 msgid "Global preferences"
@@ -77149,10 +77050,6 @@ msgstr "Počet starých verzií, ktoré sa majú zachovať v aktuálnom adresár
 
 msgid "Python Scripts Directory"
 msgstr "Priečinok skriptov Python"
-
-
-msgid "Alternate script path, matching the default layout with subdirectories: startup, add-ons and modules (requires restart)"
-msgstr "Alternatívna cesta k skriptu zodpovedajúca predvolenému rozloženiu s podpriečinkami: spustenie, doplnky a moduly (vyžaduje reštart)"
 
 
 msgid "Hide Dot Files/Data-Blocks"
@@ -78227,10 +78124,6 @@ msgid "Display factors as values between 0 and 1"
 msgstr "Zobraziť faktory ako hodnoty medzi 0 a 1"
 
 
-msgid "Percentage"
-msgstr "Percentuálne"
-
-
 msgid "Display factors as percentages"
 msgstr "Zobraziť faktory ako percentá"
 
@@ -79040,7 +78933,7 @@ msgstr "Zmena miesta a náraz"
 
 
 msgid "Combination of true displacement and bump mapping for finer detail"
-msgstr "Kombinácia mapovania skutočného premiestnenia a nárazu pre jemnejší detail"
+msgstr "Kombinácia priradenia skutočného premiestnenia a nárazu pre jemnejší detail"
 
 
 msgid "Homogeneous Volume"
@@ -81892,7 +81785,7 @@ msgstr "Aktívny index v poli zobrazenia prekreslenia"
 
 
 msgid "Constraint influencing Objects inside Rigid Body Simulation"
-msgstr "Obmedzenie ovplyvňujúce objekty vnútri Simulácie pevného telesa"
+msgstr "Vynútenie ovplyvňujúce objekty vnútri Simulácie pevného telesa"
 
 
 msgid "Breaking Threshold"
@@ -82188,7 +82081,7 @@ msgstr "Rozbitné"
 
 
 msgid "Constraint can be broken if it receives an impulse above the threshold"
-msgstr "Obmedzenie môže byť rozbité, ak dostane impulz nad prahom"
+msgstr "Vynútenie môže byť rozbité, ak dostane impulz nad prahom"
 
 
 msgid "X Angle"
@@ -83726,7 +83619,7 @@ msgstr "Násobiteľ jasu"
 
 
 msgid "Brightness limit of intensity"
-msgstr "Obmedzenie intenzity jasu"
+msgstr "Limit intenzity jasu"
 
 
 msgid "Accuracy of the blur effect"
@@ -84066,14 +83959,6 @@ msgid "Sequence strip to load a video"
 msgstr "Sekvenčný pás na načítanie videa"
 
 
-msgid "MPEG Preseek"
-msgstr "Predhľadať MPEG"
-
-
-msgid "For MPEG movies, preseek this many frames"
-msgstr "Pre MPEG filmy, predom vyhľadá mnoho snímok"
-
-
 msgid "Stream Index"
 msgstr "Index prúdenia"
 
@@ -84116,14 +84001,6 @@ msgstr "Použije 3D kameru scény ako vstup"
 
 msgid "Use the Scene's Sequencer timeline as input"
 msgstr "Použije časovú os radiča scény ako vstup"
-
-
-msgid "Use Grease Pencil"
-msgstr "Použiť pastelku"
-
-
-msgid "Show Grease Pencil strokes in OpenGL previews"
-msgstr "Ukáže ťahy pastelky v náhľadoch OpenGL"
 
 
 msgid "Sound Sequence"
@@ -84548,10 +84425,6 @@ msgstr "Vytvoriť 75% rozlíšenie náhrady"
 
 msgid "Location of custom proxy file"
 msgstr "Umiestnenie vlastného súboru náhrady"
-
-
-msgid "JPEG Quality of proxies to build"
-msgstr "JPEG kvalita náhrady na vytvorenie"
 
 
 msgid "Method for reading the inputs timecode"
@@ -85329,7 +85202,7 @@ msgstr "Ukáže blok údajov poznámky patriaceho do filmového klipu"
 
 msgctxt "MovieClip"
 msgid "Track"
-msgstr "Snímanie stôp"
+msgstr "Stopa"
 
 
 msgid "Show annotation data-block which belongs to active track"
@@ -85349,7 +85222,7 @@ msgstr "Zamknúť na časový kurzor"
 
 
 msgid "Lock curves view to time cursor during playback and tracking"
-msgstr "Zamkne krivky zobrazenia časového kurzora počas prehrávania a snímania"
+msgstr "Zamkne krivky zobrazenia časového kurzora počas prehrávania a sledovania"
 
 
 msgid "Mask displayed and edited in this space"
@@ -85672,7 +85545,7 @@ msgstr "Expozičný hárok"
 
 
 msgid "Dopesheet view for tracking data"
-msgstr "Ukáže expozičný hárok údajov snímania"
+msgstr "Ukáže expozičný hárok údajov sledovania"
 
 
 msgid "Space Console"
@@ -86140,7 +86013,7 @@ msgstr "Z zásobník"
 
 
 msgid "Display Z-buffer associated with image (mapped from camera clip start to end)"
-msgstr "Zobrazí Z zásobník spojený s obrázkom (mapovaný od začiatku záberu kamery do konca)"
+msgstr "Zobrazí Z zásobník spojený s obrázkom (priradený od začiatku záberu kamery do konca)"
 
 
 msgid "Grease pencil data for this space"
@@ -92618,7 +92491,7 @@ msgstr "Záber VR blízko vzdialenosti strihu"
 
 
 msgid "Positional Tracking"
-msgstr "Trasovanie polohy"
+msgstr "Sledovanie polohy"
 
 
 msgid "Allow VR headsets to affect the location in virtual space, in addition to the rotation"
@@ -92725,7 +92598,7 @@ msgstr "Konzola:"
 
 msgctxt "Operator"
 msgid "Constraint:"
-msgstr "Obmedzenie:"
+msgstr "Vynútenie:"
 
 
 msgctxt "Operator"
@@ -93921,6 +93794,10 @@ msgid "Curve Subdivisions"
 msgstr "Rozdelenia krivky"
 
 
+msgid "AO Factor"
+msgstr "Faktor AO"
+
+
 msgid "AO Distance"
 msgstr "Vzdialenosť AO"
 
@@ -94422,7 +94299,7 @@ msgstr "Nie sú vybrané žiadne použiteľné stopy"
 
 
 msgid "Motion Tracking constraint to be converted not found"
-msgstr "Obmedzenie sledovania pohybu na konvertovanie, sa nenašlo"
+msgstr "Vynútenie Sledovanie pohybu na konvertovanie, sa nenašlo"
 
 
 msgid "Movie clip to use tracking data from isn't set"
@@ -94976,7 +94853,7 @@ msgstr "Oblasť zarážky"
 
 
 msgid "Volume Min"
-msgstr "Minimálny objem"
+msgstr "Objem Min"
 
 
 msgid "Min/Max"
@@ -95005,15 +94882,15 @@ msgstr "Z min"
 
 
 msgid "X Source Axis"
-msgstr "Os X zdroja"
+msgstr "Zdrojová os X"
 
 
 msgid "Y Source Axis"
-msgstr "Os zdroja Y"
+msgstr "Zdrojová os Y"
 
 
 msgid "Z Source Axis"
-msgstr "Os zdroja Z"
+msgstr "Zdrojová os Z"
 
 
 msgid "Align to Normal"
@@ -95029,7 +94906,7 @@ msgstr "Neboli pridané žiadne cieľové kosti"
 
 
 msgid "Weight Position"
-msgstr "Pozícia váhy"
+msgstr "Váha pozície"
 
 
 msgid "Layers:"
@@ -95078,11 +94955,11 @@ msgstr "Veľkosť zobrazenia X"
 
 
 msgid "Curve In X"
-msgstr "Krivka do X"
+msgstr "Krivka Dnu X"
 
 
 msgid "Curve Out X"
-msgstr "Krivka od X"
+msgstr "Krivka Von X"
 
 
 msgid "Start Handle"
@@ -95122,7 +94999,7 @@ msgstr "Prepísať transformáciu"
 
 
 msgid "Control Rotation"
-msgstr "Rotácia ovládania"
+msgstr "Ovládanie rotácie"
 
 
 msgid "Focus on Object"
@@ -95785,10 +95662,6 @@ msgid "Invert"
 msgstr "Invertovať"
 
 
-msgid "Transparency Masks:"
-msgstr "Transparentné masky:"
-
-
 msgctxt "Operator"
 msgid "Lock Unselected"
 msgstr "Zamknúť nevybrané"
@@ -95800,13 +95673,13 @@ msgstr "Zamknúť nepoužité"
 
 
 msgctxt "Operator"
-msgid "Merge Similar"
-msgstr "Zlúčiť podobné"
+msgid "Convert Materials to Vertex Color"
+msgstr "Konvertovať materiály podľa farby vrcholov"
 
 
 msgctxt "Operator"
-msgid "Convert Materials to Vertex Color"
-msgstr "Konvertovať materiály podľa farby vrcholov"
+msgid "Merge Similar"
+msgstr "Zlúčiť podobné"
 
 
 msgid "Flip Colors"
@@ -95818,7 +95691,7 @@ msgstr "Obrázok klipu"
 
 
 msgid "Tracking Axis"
-msgstr "Osi snímania"
+msgstr "Osi sledovania"
 
 
 msgid "Override Crease"
@@ -96961,7 +96834,7 @@ msgstr "Použiť predvolené nastavenia"
 
 msgctxt "Operator"
 msgid "Location"
-msgstr "Pozícia"
+msgstr "Poloha"
 
 
 msgctxt "Operator"
@@ -98349,10 +98222,6 @@ msgid "Resolutions"
 msgstr "Rozlíšenia"
 
 
-msgid "Build JPEG Quality"
-msgstr "Vytvoriť JPEG kvalitu"
-
-
 msgid "Fractional Preview Zoom"
 msgstr "Frakčné zväčšenie náhľadu"
 
@@ -99407,7 +99276,7 @@ msgstr "Vybrať vzorku..."
 
 msgctxt "Operator"
 msgid "Constraint Target"
-msgstr "Obmedzenie cieľa"
+msgstr "Vynútiť cieľ"
 
 
 msgctxt "Operator"
@@ -100438,12 +100307,12 @@ msgstr "Prekresliť animáciu záberu"
 
 msgctxt "Operator"
 msgid "Roll Left"
-msgstr "Nakloniť doľava"
+msgstr "Prevaľovať doľava"
 
 
 msgctxt "Operator"
 msgid "Roll Right"
-msgstr "Nakloniť doprava"
+msgstr "Prevaľovať doprava"
 
 
 msgctxt "Operator"
@@ -100568,27 +100437,27 @@ msgstr "Preniesť váhy"
 
 msgctxt "Operator"
 msgid "Paste Pose Flipped"
-msgstr "Prilepiť prevrátenú pózu"
+msgstr "Prilepiť preklopenú pózu"
 
 
 msgctxt "Operator"
 msgid "To Next Keyframe"
-msgstr "Do ďalšej kľúčovej snímky"
+msgstr "Na ďalšiu kľúčovú snímku"
 
 
 msgctxt "Operator"
 msgid "To Last Keyframe (Make Cyclic)"
-msgstr "Do predošlej kľúčovej snímky (vytvoriť cyklicky)"
+msgstr "Na predošlú kľúčovú snímku (vytvoriť cyklicky)"
 
 
 msgctxt "Operator"
 msgid "On Selected Keyframes"
-msgstr "Na vybraných kľúčových snímkach"
+msgstr "Na vybrané kľúčové snímky"
 
 
 msgctxt "Operator"
 msgid "On Selected Markers"
-msgstr "Na vybraných značkách"
+msgstr "Na vybrané značky"
 
 
 msgctxt "Operator"
@@ -100608,7 +100477,7 @@ msgstr "Automatický názov Hore/Dole"
 
 msgctxt "Operator"
 msgid "Apply Selected as Rest Pose"
-msgstr "Použiť vybrané ako pózu pokoja"
+msgstr "Použiť vybrané ako pokojovú pózu"
 
 
 msgctxt "Operator"
@@ -100877,7 +100746,7 @@ msgstr "Prepnúť kapitálky"
 
 msgctxt "Operator"
 msgid "Set Roll"
-msgstr "Nastaviť naklonenie"
+msgstr "Nastaviť prevalenie"
 
 
 msgctxt "Operator"
@@ -100888,10 +100757,6 @@ msgstr "S prázdnymi skupinami"
 msgctxt "Operator"
 msgid "With Automatic Weights"
 msgstr "S automatickou váhou"
-
-
-msgid "No layer to copy"
-msgstr "Žiadna vrstva na kopírovanie"
 
 
 msgctxt "Operator"
@@ -101032,10 +100897,6 @@ msgid "Clear Freestyle Face"
 msgstr "Vymazať plôšky voľným štýlom"
 
 
-msgid "No destination object"
-msgstr "Žiadny cieľový objekt"
-
-
 msgid "Specular Lighting"
 msgstr "Zrkadlové osvetlenie"
 
@@ -101060,7 +100921,7 @@ msgstr "Zrušte nevybrané"
 
 msgctxt "Operator"
 msgid "Scale BBone"
-msgstr "Mierka ohybu kosti"
+msgstr "Mierka ohnutia kosti"
 
 
 msgctxt "Operator"
@@ -101374,16 +101235,16 @@ msgid "Const"
 msgstr "Konšt"
 
 
-msgid "blend_data"
-msgstr "blend_udaje"
-
-
 msgid "UVMap"
 msgstr "UVmapa"
 
 
 msgid "Col"
 msgstr "Far"
+
+
+msgid "Int"
+msgstr "Celé číslo"
 
 
 msgid "PreviewCol"
@@ -101439,7 +101300,7 @@ msgstr "Zdrojové a cieľové povrchové siete nemajú rovnaké množstvo vrchol
 
 
 msgid "Source mesh doesn't have any edges, None of the 'Edge' mappings can be used in this case"
-msgstr "Zdrojová povrchová sieť nemá žiadne hrany. Žiadna 'hrana' z mapovania v tomto prípade nemôže byť použitá"
+msgstr "Zdrojová povrchová sieť nemá žiadne hrany. Žiadna 'hrana' z priradenia v tomto prípade nemôže byť použitá"
 
 
 msgid "Source mesh doesn't have any faces, None of the 'Face' mappings can be used in this case"
@@ -101778,7 +101639,7 @@ msgstr "Na rekonštrukciu je potrebných aspoň 8 bežných stôp na oboch kľú
 
 
 msgid "Blender is compiled without motion tracking library"
-msgstr "Blender je kompilovaný bez knižnice snímania pohybu"
+msgstr "Blender je kompilovaný bez knižnice sledovania pohybu"
 
 
 msgid "Original Mode"
@@ -102158,7 +102019,7 @@ msgstr "Podieľajú sa kanály na výsledku (prepína stlmenie kanálov)"
 
 
 msgid "Display action without any time remapping (when unpinned)"
-msgstr "Zobrazí akciu bez premapovania času (pri pripnutí)"
+msgstr "Zobrazí akciu bez znovu priradenia času (pri pripnutí)"
 
 
 msgid "<invalid>"
@@ -102642,11 +102503,11 @@ msgstr "Iba mierka U/R/[M]/K/V (M na zmazanie) | %s"
 
 
 msgid "G/R/S/[B]/C - Bendy Bone properties only (B to clear) | %s"
-msgstr "Iba vlastnosti ohybu kosti U/R/M/[K]/V (K na zmazanie) | %s"
+msgstr "Iba vlastnosti ohnutia kosti U/R/M/[K]/V (K na zmazanie) | %s"
 
 
 msgid "G/R/S/B/[C] - Custom Properties only (C to clear) | %s"
-msgstr "Iba vlastné vlastnosti U/R/M/K/]V (V na zmazanie) | %s"
+msgstr "Iba užívateľské vlastnosti U/R/M/K/]V (V na zmazanie) | %s"
 
 
 msgid "G/R/S/B/C - Limit to Transform/Property Set"
@@ -102654,11 +102515,11 @@ msgstr "Limit transformácie/nastavenie vlastností G/R/M/K/V"
 
 
 msgid "No keyframes to slide between"
-msgstr "Žiadne kľúčové snímky na vsunutie"
+msgstr "Žiadne kľúčové snímky na posunutie"
 
 
 msgid "No keyframed poses to propagate to"
-msgstr "Žiadne kľúčové snímkovanie póz na rozmnoženie"
+msgstr "Žiadne kľúčové snímky póz na rozšírenie"
 
 
 msgid "Cannot apply pose to lib-linked armature"
@@ -102670,15 +102531,15 @@ msgstr "Akcie na tejto armatúry budú zničené podľa tejto novej pokojovej p�
 
 
 msgid "No pose to copy"
-msgstr "Žiadna pózy na kopírovanie"
+msgstr "Žiadna póza na kopírovanie"
 
 
 msgid "Copied pose to buffer"
-msgstr "Kopírované pózy do zásobníka"
+msgstr "Kopírovaná póza do zásobníka"
 
 
 msgid "Copy buffer is empty"
-msgstr "Kópia zásobníka je prázdna"
+msgstr "Zásobník kopírovania je prázdny"
 
 
 msgid "Copy buffer is not from pose mode"
@@ -103027,6 +102888,10 @@ msgstr "Žiadna aktívna snímka(y) na odstránenie"
 
 msgid "Cannot separate an object with one layer only"
 msgstr "Nemožno oddeliť objekt iba s jednou vrstvou"
+
+
+msgid "Nothing selected"
+msgstr "Nič vybraté"
 
 
 msgid "No active area"
@@ -104081,14 +103946,6 @@ msgid "Only"
 msgstr "Len"
 
 
-msgid "Renderable Objects"
-msgstr "Iba objekty vytvoriteľného prekreslenia"
-
-
-msgid "Visible Objects"
-msgstr "Viditeľné objekty"
-
-
 msgid "Object Options"
 msgstr "Možnosti objektu"
 
@@ -104396,10 +104253,6 @@ msgstr "Nie sú vybraté žiadne hrany na túto operáciu"
 
 msgid "Mouse path too short"
 msgstr "Cesta myši je príliš krátka"
-
-
-msgid "Nothing selected"
-msgstr "Nič vybraté"
 
 
 msgid "Selection not supported in object mode"
@@ -104877,11 +104730,11 @@ msgstr "Nepodarilo sa nájsť údaje o vynútení pre inverzné nastavenie potom
 
 
 msgid "Child Of constraint not found"
-msgstr "Vynútenie potomka sa nenašlo"
+msgstr "Vynútenie Potomok od sa nenašlo"
 
 
 msgid "Follow Path constraint not found"
-msgstr "Obmedzenie sledovania cesty sa nenašlo"
+msgstr "Vynútenie Sledovať cestu sa nenašlo"
 
 
 msgid "Path is already animated"
@@ -105181,7 +105034,7 @@ msgstr "OK?"
 
 
 msgid "Set Parent To"
-msgstr "Nastaviť na rodiča"
+msgstr "Nastaviť rodiča na"
 
 
 msgid "Object (Keep Transform)"
@@ -105864,6 +105717,10 @@ msgid "Swap Areas"
 msgstr "Vymeniť oblasti"
 
 
+msgid "Maximize Area"
+msgstr "Maximalizovať oblasť"
+
+
 msgid "Flip to Bottom"
 msgstr "Prepnúť na spodok"
 
@@ -105878,14 +105735,6 @@ msgstr "Zobraziť hlavičku"
 
 msgid "Show Tool Settings"
 msgstr "Zobraziť nastavenia nástrojov"
-
-
-msgid "Tile Area"
-msgstr "Oblasť dlaždíc"
-
-
-msgid "Maximize Area"
-msgstr "Maximalizovať oblasť"
 
 
 msgid "Show Footer"
@@ -106378,7 +106227,7 @@ msgstr "Žiadna aktívna stopa na pripojenie"
 
 
 msgid "Object used for camera tracking cannot be deleted"
-msgstr "Objekt použitý na snímanie kamery sa nedá odstrániť"
+msgstr "Objekt použitý na sledovanie kamery sa nedá odstrániť"
 
 
 msgid "Feature detection requires valid clip frame"
@@ -106415,6 +106264,22 @@ msgstr "Niektoré údaje sa nepodarilo znova vytvoriť (podrobnosti nájdete na 
 
 msgid "Average re-projection error: %.2f px"
 msgstr "Priemerná chyba opätovného premietnutia: %.2f px"
+
+
+msgid "Track the selected markers backward for the entire clip"
+msgstr "Sledovanie vybraných značiek dozadu pre celý klip"
+
+
+msgid "Track the selected markers backward by one frame"
+msgstr "Sledovanie vybraných značiek o jednu snímku dozadu"
+
+
+msgid "Track the selected markers forward for the entire clip"
+msgstr "Sledovanie vybraných značiek dopredu pre celý klip"
+
+
+msgid "Track the selected markers forward by one frame"
+msgstr "Sledovanie vybraných značiek dopredu o jednu snímku"
 
 
 msgid "File path"
@@ -107062,252 +106927,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Modifikátor nemožno pridať do (%s : %s) (podrobnosti nájdete na konzole)"
 
 
-msgid "Sta"
-msgstr "Zač"
-
-
-msgid "Label Size"
-msgstr "Veľkosť menovky"
-
-
-msgid "Frame: %d"
-msgstr "Snímka: %d"
-
-
-msgid "Squash"
-msgstr "Vtlačiť"
-
-
-msgid "Center:"
-msgstr "Stred:"
-
-
-msgid "Bokeh Type:"
-msgstr "Typ Bokeh:"
-
-
-msgid "Speed:"
-msgstr "Rýchlosť:"
-
-
-msgid "Inner Edge:"
-msgstr "Vnútorná hrana:"
-
-
-msgid "Buffer Edge:"
-msgstr "Zásobník hrany:"
-
-
-msgid "Color Space:"
-msgstr "Farebný priestor:"
-
-
-msgid "Despill Channel:"
-msgstr "Kanál rozliatia:"
-
-
-msgid "Limiting Channel:"
-msgstr "Kanál limitovania:"
-
-
-msgid "Key Channel:"
-msgstr "Kanál kľúča:"
-
-
-msgid "Path:"
-msgstr "Cesta:"
-
-
-msgid "Base Path:"
-msgstr "Základná cesta:"
-
-
-msgid "Add Input"
-msgstr "Pridať vstup"
-
-
-msgid "File Subpath:"
-msgstr "Podcesta súboru:"
-
-
-msgid "Format:"
-msgstr "Formát:"
-
-
-msgid "Master"
-msgstr "Hlavné"
-
-
-msgid "Highlights"
-msgstr "Zvýraznenie"
-
-
-msgid "Midtones"
-msgstr "Stredné tóny"
-
-
-msgid "Matte Objects:"
-msgstr "Matovacie objekty:"
-
-
-msgid "Add Crypto Layer"
-msgstr "Pridať vrstvu šifrovania"
-
-
-msgid "Remove Crypto Layer"
-msgstr "Odstrániť vrstvu šifrovania"
-
-
-msgid "Matte ID:"
-msgstr "ID matovania:"
-
-
-msgid "Disabled, built without OpenImageDenoise"
-msgstr "Zakázané, vytvorené bez OpenImageDenoise"
-
-
-msgid "Disabled, CPU with SSE4.1 is required"
-msgstr "Zakázané, je potrebný procesor s SSE4.1"
-
-
-msgid "Undefined Socket Type"
-msgstr "Nedefinovaný typ zásuvky"
-
-
-msgid "NodeTree"
-msgstr "UzolStromu"
-
-
-msgid "Could not add node group"
-msgstr "Skupinu uzlov sa nepodarilo pridať"
-
-
-msgid "Could not add node object"
-msgstr "Nepodarilo sa pridať objekt uzla"
-
-
-msgid "Could not find node object socket"
-msgstr "Nepodarilo sa nájsť zásuvku objektu uzla"
-
-
-msgid "Could not add texture node"
-msgstr "Nepodarilo sa pridať uzol textúry"
-
-
-msgid "Could not add node collection"
-msgstr "Nepodarilo sa pridať kolekciu uzlov"
-
-
-msgid "Could not find node collection socket"
-msgstr "Nepodarilo sa nájsť zásuvku kolekcie uzlov"
-
-
-msgid "Could not add an image node"
-msgstr "Nemožno pridať uzol obrázka"
-
-
-msgid "Could not add a mask node"
-msgstr "Nemožno pridať uzol masky"
-
-
-msgid ""
-"Can not add node group '%s' to '%s':\n"
-"  %s"
-msgstr ""
-"Nemožno pridať skupinu uzlov '%s' do skupiny '%s':\n"
-"  %s"
-
-
-msgid "Can not add node group '%s' to '%s'"
-msgstr "Nemožno pridať skupinu uzlov '%s' do skupiny '%s'"
-
-
-msgid "Mask '%s' not found"
-msgstr "Maska '%s' sa nenašla"
-
-
-msgid "Node tree type %s undefined"
-msgstr "Nedefinovaný typ uzla stromu %s"
-
-
 msgid "Sockets"
 msgstr "Zásuvky"
-
-
-msgid "Clipboard is empty"
-msgstr "Schránka je prázdna"
-
-
-msgid "Clipboard nodes are an incompatible type"
-msgstr "Uzly schránky sú nekompatibilného typu"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "Niektoré referencie uzlov nemohli byť obnovené, zostanú prázdne"
-
-
-msgid "Text not used by any node, no update done"
-msgstr "Text nepoužíva žiadny uzol, nevykonaná žiadna aktualizácia"
-
-
-msgid ""
-"Cannot add node %s into node tree %s:\n"
-"  %s"
-msgstr ""
-"Nemožno pridať uzol %s do stromu uzlov %s:\n"
-"  %s"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "Nemožno pridať uzol %s do uzla stromu %s"
-
-
-msgid "Cannot ungroup"
-msgstr "Nemožno oddeliť"
-
-
-msgid "Not inside node group"
-msgstr "Nie vnútri uzla skupiny"
-
-
-msgid "Cannot separate nodes"
-msgstr "Nemožno oddeliť uzly"
-
-
-msgid ""
-"Can not add node '%s' in a group:\n"
-"  %s"
-msgstr ""
-"Nemožno pridať uzol '%s' do skupiny:\n"
-"  %s"
-
-
-msgid "Can not add node '%s' in a group"
-msgstr "Uzol '%s' sa nedá pridať do skupiny"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "ĽTM: pretiahnuť spojenie uzla, PTM: zrušenie"
-
-
-msgid "Disconnect"
-msgstr "Odpojiť"
-
-
-msgid "Dependency Loop"
-msgstr "Závislosť slučky"
-
-
-msgid "Add node to input"
-msgstr "Pridať uzol do vstupu"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Odstrániť uzly pripojené k vstupu"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "Rozpojiť uzly pripojené k vstupu"
 
 
 msgid "More than one collection is selected"
@@ -109462,7 +109083,7 @@ msgstr "Skupina vrcholov '%s' nebola nájdená v objekte '%s'"
 
 
 msgid "Constraint '%s' not found in object '%s'"
-msgstr "Obmedzenie '%s' sa v objekte '%s' nenašlo"
+msgstr "Vynútenie '%s' sa v objekte '%s' nenašlo"
 
 
 msgid "Could not move constraint from index '%d' to '%d'"
@@ -109595,15 +109216,15 @@ msgstr "Skupina kosti '%s' sa v tomto objekte nenašla"
 
 
 msgid "Constraint '%s' not found in pose bone '%s'"
-msgstr "Obmedzenie '%s' sa v póze kosti '%s' nenašlo"
+msgstr "Vynútenie '%s' sa v póze kosti '%s' nenašlo"
 
 
 msgid "Bone '%s' is not a B-Bone!"
-msgstr "Kosť '%s' nie je B-kosť!"
+msgstr "Kosť '%s' nie je Ohnutá kosť!"
 
 
 msgid "Bone '%s' has out of date B-Bone segment data!"
-msgstr "Kosť '%s' má zastaralé údaje segmentu B-kosti!"
+msgstr "Kosť '%s' má zastaralé údaje segmentu Ohnutej kosti!"
 
 
 msgid "Invalid index %d for B-Bone segments of '%s'!"
@@ -109707,7 +109328,7 @@ msgstr "Zvuk nie je zbalený"
 
 
 msgid "MovieTracking '%s' cannot be removed"
-msgstr "Snímanie stôp filmu '%s' nemôže byť odstránené"
+msgstr "Sledovanie filmu '%s' nemôže byť odstránené"
 
 
 msgid "Region not found in space type"

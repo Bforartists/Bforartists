@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -1050,12 +1050,8 @@ msgid "Face"
 msgstr "Face"
 
 
-msgid "Curve"
+msgid "Spline"
 msgstr "Courbe"
-
-
-msgid "Attribute on hair curve"
-msgstr "Attribut sur courbe de cheveu"
 
 
 msgid "Name of the Attribute"
@@ -4948,6 +4944,10 @@ msgstr "Espace de couleur dans lequel le séquenceur opère"
 
 msgid "Color management settings used for displaying images on the display"
 msgstr "Réglages de gestion de couleur utilisé pour l’affichage des images à l’écran"
+
+
+msgid "Curve"
+msgstr "Courbe"
 
 
 msgid "Color curve mapping applied before display transform"
@@ -14166,10 +14166,6 @@ msgid "Material Index"
 msgstr "Indice de matériau"
 
 
-msgid "Index of material used in this stroke"
-msgstr "Indice du matériau utilisé dans ce trait"
-
-
 msgid "Stroke Points"
 msgstr "Points de trait"
 
@@ -15684,10 +15680,6 @@ msgstr "Library Override"
 
 msgid "Library override data"
 msgstr "Données de library override"
-
-
-msgid "Preview image and icon of this data-block (None if not supported for this type of data)"
-msgstr "Image et icône de prévisualisation de ce bloc de données (None si non-supporté par ce type de données)"
 
 
 msgid "Tag"
@@ -17247,10 +17239,6 @@ msgid "End Mapping Type"
 msgstr "Type de placage à la fin"
 
 
-msgid "Spline"
-msgstr "Courbe"
-
-
 msgid "Start Mapping Type"
 msgstr "Type de placage au début"
 
@@ -18465,10 +18453,6 @@ msgstr "Espace écran"
 
 msgid "Set stroke thickness relative to the screen space"
 msgstr "Définir l’épaisseur du trait en espace écran"
-
-
-msgid "Lock automatically all layers except active one to avoid accidental changes"
-msgstr "Verrouiller automatiquement tous les calques sauf celui actif, pour éviter des modifications accidentelles"
 
 
 msgid "Use Custom Ghost Colors"
@@ -20379,6 +20363,10 @@ msgstr "Basse"
 
 msgid "Low quality"
 msgstr "Basse qualité"
+
+
+msgid "Tiled"
+msgstr "En damier"
 
 
 msgid "Render Quality"
@@ -34567,6 +34555,10 @@ msgid "Dot Product"
 msgstr "Produit scalaire"
 
 
+msgid "Z Axis"
+msgstr "Axe Z"
+
+
 msgid "Original"
 msgstr "Originelle"
 
@@ -35344,10 +35336,6 @@ msgid "Vector Math"
 msgstr "Math vectorielles"
 
 
-msgid "Z Axis"
-msgstr "Axe Z"
-
-
 msgid "Vector Transform"
 msgstr "Transformation vectorielle"
 
@@ -35462,10 +35450,6 @@ msgstr "Nom de la prise"
 
 msgid "Data type of the socket"
 msgstr "Type de données de la prise"
-
-
-msgid "Int"
-msgstr "Entier"
 
 
 msgid "From node"
@@ -40570,11 +40554,6 @@ msgid "Write the rest state at the first frame"
 msgstr "Écrire l’état de repos à la première frame"
 
 
-msgctxt "Operator"
-msgid "Automatically Pack Into .blend"
-msgstr "Empaqueter automatiquement dans le .blend"
-
-
 msgid "Automatically pack all external files into the .blend file"
 msgstr "Empaqueter automatiquement les fichiers externes dans le fichier .blend"
 
@@ -40671,14 +40650,6 @@ msgid "Execute selected file"
 msgstr "Exécuter le fichier sélectionné"
 
 
-msgid "Need Active"
-msgstr "Actif nécessaire"
-
-
-msgid "Only execute if there's an active selected file in the file list"
-msgstr "N’exécuter que s’il y a un fichier sélectionné actif dans la liste des fichiers"
-
-
 msgctxt "Operator"
 msgid "Increment Number in Filename"
 msgstr "Incrémenter nombre dans nom de fichier"
@@ -40732,18 +40703,8 @@ msgid "Highlight selected file(s)"
 msgstr "Surligner les fichiers sélectionnés"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "Rendre tous les chemins absolus"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "Rendre tous les chemins vers les fichiers externes absolus"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Rendre tous les chemins relatifs"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -40757,24 +40718,6 @@ msgstr "Dossier suivant"
 
 msgid "Move to next folder"
 msgstr "Allez au dossier suivant"
-
-
-msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "Tout empaqueter dans le .blend"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "Empaqueter tous les fichiers externes utilisés dans le .blend"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Empaqueter bibliothèques Blender"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Empaqueter tous les fichiers de bibliothèque Blender utilisés dans le .blend courant"
 
 
 msgctxt "Operator"
@@ -40886,11 +40829,6 @@ msgid "Smooth scroll to make editable file visible"
 msgstr "Adoucir le défilement pour rendre le fichier éditable visible"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "Dépaqueter tous dans des fichiers"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr "Dépaqueter tous les fichiers empaquetés dans ce .blend vers des fichiers externes"
 
@@ -40950,15 +40888,6 @@ msgstr "Utiliser le fichier à l’emplacement original (le créer si nécessair
 
 msgid "Write file to original location (overwrite existing file)"
 msgstr "Écrire le fichier à l’emplacement original (écraser le fichier existant)"
-
-
-msgctxt "Operator"
-msgid "Unpack Blender Libraries"
-msgstr "Dépaqueter bibliothèques Blender"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "Dépaqueter tous les fichiers de bibliothèque Blender utilisés de ce .blend"
 
 
 msgctxt "Operator"
@@ -41676,8 +41605,8 @@ msgid "Make a copy of the active Grease Pencil layer"
 msgstr "Faire une copie du calque de crayon gras actif"
 
 
-msgid "Make a copy of the active Grease Pencil layer to new object"
-msgstr "Faire une copie du calque de crayon gras actif dans un nouvel objet"
+msgid "Only Active"
+msgstr "Active seulement"
 
 
 msgctxt "Operator"
@@ -42414,10 +42343,6 @@ msgid "Add F-Modifier to the active/selected F-Curves"
 msgstr "Ajouter un F-modificateur aux F-courbes active/sélectionnées"
 
 
-msgid "Only Active"
-msgstr "Active seulement"
-
-
 msgid "Only add F-Modifier to active F-Curve"
 msgstr "N’ajouter un F-modificateur qu’à la F-courbe active"
 
@@ -42725,10 +42650,6 @@ msgstr "Hauteur de l’image"
 
 msgid "Image data-block name"
 msgstr "Nom du bloc de données image"
-
-
-msgid "Tiled"
-msgstr "En damier"
 
 
 msgid "Create an image with left and right views"
@@ -50747,16 +50668,20 @@ msgid "Custom properties"
 msgstr "Propriétés personnalisées"
 
 
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Facteur pondéré pour choisir quelles frame est la plus favorisée"
-
-
 msgid "Next Keyframe"
 msgstr "Image clé suivante"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Numéro de frame de l’image clé précédant immédiatement la frame courante"
+
+
+msgid "Percentage"
+msgstr "Pourcentage"
+
+
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Facteur pondéré pour choisir quelles frame est la plus favorisée"
 
 
 msgid "Previous Keyframe"
@@ -51217,10 +51142,6 @@ msgstr "Enlever add-ons existants ayant le même ID"
 
 msgid "Target Path"
 msgstr "Chemin de la cible"
-
-
-msgid "User Prefs"
-msgstr "Préférences utilisateur"
 
 
 msgctxt "Operator"
@@ -51715,10 +51636,6 @@ msgstr "Calculer masse"
 
 msgid "Automatically calculate mass values for Rigid Body Objects based on volume"
 msgstr "Calculer automatiquement les valeurs de masse des objets de corps rigides en fonction des volumes"
-
-
-msgid "Custom density value (kg/m^3) to use instead of material preset"
-msgstr "Valeur de densité personnalisée (en kg/m³) à utiliser à la place du pré-réglage du matériau"
 
 
 msgid "Material Preset"
@@ -52916,26 +52833,14 @@ msgid "Make Meta Strip"
 msgstr "Créer méta-bande"
 
 
-msgid "Group selected strips into a metastrip"
-msgstr "Grouper les bandes sélectionnées en une méta-bande"
-
-
 msgctxt "Operator"
 msgid "UnMeta Strip"
 msgstr "Défaire méta-bande"
 
 
-msgid "Put the contents of a metastrip back in the sequencer"
-msgstr "Remettre le contenu d’une méta-bande dans le séquenceur"
-
-
 msgctxt "Operator"
 msgid "Toggle Meta Strip"
 msgstr "(Dés)activer méta-bande"
-
-
-msgid "Toggle a metastrip (to edit enclosed strips)"
-msgstr "(Dés)active une méta-bande (pour éditer les bandes incluses)"
 
 
 msgctxt "Operator"
@@ -54988,10 +54893,6 @@ msgstr "Empaqueter toutes les faces UV à l’intérieur des limites UV"
 
 msgid "New Image"
 msgstr "Nouvelle image"
-
-
-msgid "Assign new images for every mesh (only one if shared tex space enabled)"
-msgstr "Assigner de nouvelles images pour chaque mesh (une seule si l’espace de texture partagé est activé)"
 
 
 msgid "Pack Quality"
@@ -61501,10 +61402,6 @@ msgid "Display factors as values between 0 and 1"
 msgstr "Afficher les facteurs sous la forme de valeurs entre 0 et 1"
 
 
-msgid "Percentage"
-msgstr "Pourcentage"
-
-
 msgid "Display factors as percentages"
 msgstr "Afficher les facteurs en pourcentage"
 
@@ -65612,14 +65509,6 @@ msgid "Sequence strip to load a video"
 msgstr "Bande séquence pour charger une vidéo"
 
 
-msgid "MPEG Preseek"
-msgstr "Préchargement MPEG"
-
-
-msgid "For MPEG movies, preseek this many frames"
-msgstr "Pour les vidéos MPEG, pré-charger ce nombre de frames"
-
-
 msgid "Stream Index"
 msgstr "Indice de flux"
 
@@ -65650,14 +65539,6 @@ msgstr "Remplacer caméra"
 
 msgid "Override the scenes active camera"
 msgstr "Remplacer la caméra active de la scène"
-
-
-msgid "Use Grease Pencil"
-msgstr "Utiliser crayon gras"
-
-
-msgid "Show Grease Pencil strokes in OpenGL previews"
-msgstr "Afficher les traits de crayon gras dans les prévisualisations OpenGL"
 
 
 msgid "Sound Sequence"
@@ -65994,10 +65875,6 @@ msgstr "Créer un proxy à 75% de résolution"
 
 msgid "Location of custom proxy file"
 msgstr "Emplacement du fichier de proxy personnalisé"
-
-
-msgid "JPEG Quality of proxies to build"
-msgstr "Qualité Jpeg des proxies à créer"
 
 
 msgid "Method for reading the inputs timecode"
@@ -73673,10 +73550,6 @@ msgid "Tracker"
 msgstr "Traqueur"
 
 
-msgid "Build JPEG Quality"
-msgstr "Qualité création JPEG"
-
-
 msgctxt "Operator"
 msgid "Scene"
 msgstr "Scène"
@@ -75112,16 +74985,16 @@ msgid "Const"
 msgstr "Cont"
 
 
-msgid "blend_data"
-msgstr "blend_data"
-
-
 msgid "UVMap"
 msgstr "CarteUV"
 
 
 msgid "Col"
 msgstr "Coul"
+
+
+msgid "Int"
+msgstr "Entier"
 
 
 msgid "PreviewCol"
@@ -76283,6 +76156,10 @@ msgid "No active frame(s) to delete"
 msgstr "Aucune frame active à supprimer"
 
 
+msgid "Nothing selected"
+msgstr "Rien de sélectionné"
+
+
 msgid "No active area"
 msgstr "Pas de zone active"
 
@@ -77106,10 +76983,6 @@ msgstr "Aucune arête n’est sélectionnée, sur laquelle opérer"
 
 msgid "Mouse path too short"
 msgstr "Chemin de souris trop court"
-
-
-msgid "Nothing selected"
-msgstr "Rien de sélectionné"
 
 
 msgid "Selection not supported in object mode"
@@ -78066,6 +77939,10 @@ msgid "Failed to open window!"
 msgstr "Impossible d’ouvrir une fenêtre !"
 
 
+msgid "Maximize Area"
+msgstr "Agrandir fenêtre"
+
+
 msgid "Flip to Bottom"
 msgstr "Basculer en bas"
 
@@ -78080,14 +77957,6 @@ msgstr "Afficher l'en-tête"
 
 msgid "Show Tool Settings"
 msgstr "Afficher les paramètres de l'outil"
-
-
-msgid "Tile Area"
-msgstr "Réduire fenêtre"
-
-
-msgid "Maximize Area"
-msgstr "Agrandir fenêtre"
 
 
 msgid "Blender Preferences"
@@ -78935,180 +78804,8 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Le modificateur n’a pu être ajouté à (%s : %s) (voyez la console pour les détails)"
 
 
-msgid "Sta"
-msgstr "Déb"
-
-
-msgid "Label Size"
-msgstr "Taille du titre"
-
-
-msgid "Frame: %d"
-msgstr "Frame : %d"
-
-
-msgid "Squash"
-msgstr "Écrasement"
-
-
-msgid "Center:"
-msgstr "Centre :"
-
-
-msgid "Bokeh Type:"
-msgstr "Type de bokeh :"
-
-
-msgid "Speed:"
-msgstr "Vitesse :"
-
-
-msgid "Inner Edge:"
-msgstr "Bord interne :"
-
-
-msgid "Buffer Edge:"
-msgstr "Tampon des bords :"
-
-
-msgid "Color Space:"
-msgstr "Espace de couleur :"
-
-
-msgid "Despill Channel:"
-msgstr "Canal de dé-dispersion :"
-
-
-msgid "Limiting Channel:"
-msgstr "Canal de limitation :"
-
-
-msgid "Key Channel:"
-msgstr "Canal clé :"
-
-
-msgid "Path:"
-msgstr "Chemin :"
-
-
-msgid "Base Path:"
-msgstr "Chemin de base :"
-
-
-msgid "Add Input"
-msgstr "Ajouter entrée"
-
-
-msgid "File Subpath:"
-msgstr "Sous-chemin de fichier :"
-
-
-msgid "Format:"
-msgstr "Format :"
-
-
-msgid "Master"
-msgstr "Maître"
-
-
-msgid "Highlights"
-msgstr "Hautes lumières"
-
-
-msgid "Midtones"
-msgstr "Tons moyens"
-
-
-msgid "Matte Objects:"
-msgstr "Objets cache :"
-
-
-msgid "Undefined Socket Type"
-msgstr "Type de prise indéfini"
-
-
-msgid "NodeTree"
-msgstr "Arborescence de nœuds"
-
-
-msgid "Could not add an image node"
-msgstr "Impossible d’ajouter un nœud image"
-
-
-msgid "Could not add a mask node"
-msgstr "Impossible d’ajouter un nœud de masque"
-
-
-msgid "Mask '%s' not found"
-msgstr "Masque “%s” introuvable"
-
-
-msgid "Node tree type %s undefined"
-msgstr "Type d’arborescence de nœuds %s non-défini"
-
-
 msgid "Sockets"
 msgstr "Prises"
-
-
-msgid "Clipboard is empty"
-msgstr "Le presse-papier est vide"
-
-
-msgid "Clipboard nodes are an incompatible type"
-msgstr "Les nœuds dans le presse-papier sont d’un type incompatible"
-
-
-msgid "Some nodes references could not be restored, will be left empty"
-msgstr "Certaines références de nœuds n’ont pu être restaurées, seront laissées vides"
-
-
-msgid "Text not used by any node, no update done"
-msgstr "Texte utilisé par aucun nœud, pas de mise à jour effectuée"
-
-
-msgid "Cannot add node %s into node tree %s"
-msgstr "Impossible d’ajouter le nœud %s à l’arborescence de nœuds %s"
-
-
-msgid "Cannot ungroup"
-msgstr "Impossible de dégrouper"
-
-
-msgid "Not inside node group"
-msgstr "Pas dans un groupe de nœuds"
-
-
-msgid "Cannot separate nodes"
-msgstr "Impossible de séparer les nœuds"
-
-
-msgid "Can not add node '%s' in a group"
-msgstr "Impossible d’ajouter le nœud “%s” dans un groupe"
-
-
-msgid "LMB: drag node link, RMB: cancel"
-msgstr "LMB : déplacer lien de nœud, RMB : annuler"
-
-
-msgid "Disconnect"
-msgstr "Déconnecter"
-
-
-msgid "Dependency Loop"
-msgstr "Boucle de dépendance"
-
-
-msgid "Add node to input"
-msgstr "Ajouter un nœud à l’entrée"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Enlever les nœuds connectés à l’entrée"
-
-
-msgid "Disconnect nodes connected to the input"
-msgstr "Déconnecter les nœuds connectés à l’entrée"
 
 
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"

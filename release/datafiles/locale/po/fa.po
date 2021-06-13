@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -406,10 +406,6 @@ msgstr "ﺮﯿﺴﻣ ﻉﻮﻧ"
 
 msgid "Vector"
 msgstr "ﺭﺍﺩﺮﺑ"
-
-
-msgid "Curve"
-msgstr "ﯽﻨﺤﻨﻣ"
 
 
 msgid "Image Format"
@@ -1026,6 +1022,10 @@ msgstr "ﮓﻧﺭ ﯼﺎﻀﻓ"
 
 msgid "Color Space"
 msgstr "ﮓﻧﺭ ﯼﺎﻀﻓ"
+
+
+msgid "Curve"
+msgstr "ﯽﻨﺤﻨﻣ"
 
 
 msgid "Gamma"
@@ -5933,6 +5933,10 @@ msgid "Expand from 9 places"
 msgstr "ﺝﻭﺮﺧ ﯼﺍﺮﺑ ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
 
 
+msgid "Z Axis"
+msgstr "Z ﺭﻮﺤﻣ"
+
+
 msgid "Original"
 msgstr "ﯽﻠﺻﺍ"
 
@@ -6121,10 +6125,6 @@ msgid "Vector Math"
 msgstr "ﯽﻄﺧ"
 
 
-msgid "Z Axis"
-msgstr "Z ﺭﻮﺤﻣ"
-
-
 msgid "Texture Node"
 msgstr "ﺖﻓﺎﺑ ﻩﺮﮔ"
 
@@ -6135,10 +6135,6 @@ msgstr "ﯽﻨﺤﻨﻣ ﻥﺎﻣﺯ"
 
 msgid "Value to Normal"
 msgstr "ﯼﺩﺎﻋ ﺖﻟﺎﺣ ﻪﺑ ﺭﺍﺪﻘﻣ"
-
-
-msgid "Int"
-msgstr "ﯽﻠﺧﺍﺩ"
 
 
 msgid "Output File Slot"
@@ -7473,11 +7469,6 @@ msgstr "ﻩﺮﮔ ﯼﺎﻫ ﻪﻨﯾﺰﮔ ﭻﯾﻮﺳ"
 msgctxt "Operator"
 msgid "Next Folder"
 msgstr "ﻦﺘﻣ ﮓﻧﺭ"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "ﺭﺪﻨﻠﺑ ﻞﯾﺎﻓ ﺶﯾﺎﻤﻧ"
 
 
 msgctxt "Operator"
@@ -13837,6 +13828,10 @@ msgid "No AnimData to set action on"
 msgstr "ﺩﻮﺷ ﺍﺮﺟﺍ ﻥﺁ ﺮﺑ ﺭﺍﺩﺮﮐ ﻪﮐ ﯽﻨﺸﯿﻤﯿﻧﺍ ﻪٔﯾﻻ﻿"
 
 
+msgid "Int"
+msgstr "ﯽﻠﺧﺍﺩ"
+
+
 msgid "Cannot bake non-'image sequence' formats"
 msgstr "ﺮﯾﻮﺼﺗ ﺲﻧﺎﮑﺳ"
 
@@ -14023,6 +14018,10 @@ msgstr "ﯽﻨﻏﻭﺭ ﺩﺍﺪﻣ ﯽﮔﺪﻨﮐﺍﺮﭘ"
 
 msgid "No active frame to delete"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﺎﻤﻧ ﻥﺎﮑﻣ"
+
+
+msgid "Nothing selected"
+msgstr "ﻩﺪﺸﻧ ﺏﺎﺨﺘﻧﺍ ﺰﯿﭼ ﭻﯿﻫ"
 
 
 msgctxt "Operator"
@@ -14436,10 +14435,6 @@ msgid "Cannot rip selected faces"
 msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ءﺎﯿﺷﺍ ﺮﯿﺜﮑﺗ"
 
 
-msgid "Nothing selected"
-msgstr "ﻩﺪﺸﻧ ﺏﺎﺨﺘﻧﺍ ﺰﯿﭼ ﭻﯿﻫ"
-
-
 msgid "Cannot add vertices in edit mode"
 msgstr "ﻩﺮﮔ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
@@ -14604,20 +14599,16 @@ msgid "Blender Render"
 msgstr "ﺭﺪﻨﻠﺑ ﺭﺪﻧﺭ"
 
 
+msgid "Maximize Area"
+msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
+
+
 msgid "Flip to Bottom"
 msgstr "ﻦﯿﯾﺎﭘ"
 
 
 msgid "Flip to Top"
 msgstr "ﮓﻧﺭ ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
-msgid "Tile Area"
-msgstr "ﯼﺭﺎﺠﺣ ﺖﻟﺎﺣ"
-
-
-msgid "Maximize Area"
-msgstr "ﺢﻄﺳ ﯼﺎﯾﺍﻭﺯ"
 
 
 msgid "No active mesh object"
@@ -14798,90 +14789,6 @@ msgstr "ﺩﺮﮑﻧ ﺮﯿﯿﻐﺗ ﯽﺴﮑﻋ ﭻﯿﻫ"
 
 msgid "No valid action to add"
 msgstr "ﻥﺩﺮﮐ‌ﮏﻨﯿﻟ ﯼﺍﺮﺑ ﺭﺍﺩﺮﮐ ﺶﻨﯾﺰﮔ"
-
-
-msgid "Sta"
-msgstr "ﻉﻭﺮﺷ"
-
-
-msgid "Label Size"
-msgstr "ﺎﻫ‌ﺖﻧﻮﻓ:"
-
-
-msgid "Center:"
-msgstr "ﺖﻧﺮﺘﻨﯾﺍ:"
-
-
-msgid "Bokeh Type:"
-msgstr "ﺮﯿﺴﻣ ﻉﻮﻧ"
-
-
-msgid "Speed:"
-msgstr "ﺖﻋﺮﺳ"
-
-
-msgid "Inner Edge:"
-msgstr "ﯽﻠﺒﻗ ﺖﻟﺎﺣ"
-
-
-msgid "Buffer Edge:"
-msgstr "ﯽﻠﺒﻗ ﺖﻟﺎﺣ"
-
-
-msgid "Despill Channel:"
-msgstr "ﯽﺑﺁ ﻝﺎﻧﺎﮐ"
-
-
-msgid "Limiting Channel:"
-msgstr "ﺎﻫ‌ﻝﺎﻧﺎﮐ"
-
-
-msgid "Key Channel:"
-msgstr "ﻝﺎﻧﺎﮐ ﺯﺍ ﻩﺩﺎﻔﺘﺳﺍ"
-
-
-msgid "Base Path:"
-msgstr "ﻞﯾﺎﻓ ﺮﯿﺴﻣ"
-
-
-msgid "Add Input"
-msgstr "ﯼﺩﻭﺭﻭ"
-
-
-msgid "Master"
-msgstr "ﻥﺪﻧﺎﺒﺴﭼ"
-
-
-msgid "Highlights"
-msgstr "ﺖﺳﺍﺭ ﺖﻔﯿﺷ ﺪﯿﻠﮐ"
-
-
-msgid "Midtones"
-msgstr "ﯼﺮﺑﺯ ﻥﺎﯾﺎﭘ"
-
-
-msgid "NodeTree"
-msgstr "ﻩﺮﮔ ﺖﺧﺭﺩ"
-
-
-msgid "Cannot ungroup"
-msgstr "ﺱﺃﺭ ﯽﻌﻤﺟ ﯼﺎﻫ ﻩﻭﺮﮔ"
-
-
-msgid "Not inside node group"
-msgstr "ﻝﺎﻌﻓ ﻩﻭﺮﮔ ﻢﯿﻈﻨﺗ"
-
-
-msgid "Cannot separate nodes"
-msgstr "ﺍﺪﺟ"
-
-
-msgid "Dependency Loop"
-msgstr "ﯽﮕﺘﺴﺑﺍﻭ ﻂﺑﺍﻭﺭ"
-
-
-msgid "Add node to input"
-msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
 msgid "Operation requires an active keying set"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.93.0 Beta (b'3c7b80ae2ca6')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -511,7 +511,7 @@ msgid "Face"
 msgstr "Stranica"
 
 
-msgid "Curve"
+msgid "Spline"
 msgstr "Kriva"
 
 
@@ -1861,6 +1861,10 @@ msgstr "Prostor boja ulaza"
 
 msgid "Color Space"
 msgstr "Prostor boja"
+
+
+msgid "Curve"
+msgstr "Kriva"
 
 
 msgid "Exposure"
@@ -5850,10 +5854,6 @@ msgid "Bevel Depth"
 msgstr "Dubina iskošavanje"
 
 
-msgid "Spline"
-msgstr "Kriva"
-
-
 msgid "Round"
 msgstr "Zakrivreno"
 
@@ -6948,6 +6948,10 @@ msgstr "Nizak"
 
 msgid "Low quality"
 msgstr "Nizak kvalitet"
+
+
+msgid "Tiled"
+msgstr "Popločano"
 
 
 msgid "Render Quality"
@@ -11854,6 +11858,10 @@ msgid "Equal"
 msgstr "Jednako"
 
 
+msgid "Z Axis"
+msgstr "Z osa"
+
+
 msgid "Original"
 msgstr "Original"
 
@@ -12128,10 +12136,6 @@ msgstr "Donja polovina teksture je za vrhove poteza"
 
 msgid "UV coordinates to be used for mapping"
 msgstr "UV koordinate za mapiranje"
-
-
-msgid "Z Axis"
-msgstr "Z osa"
 
 
 msgid "Vector Transform"
@@ -14596,18 +14600,8 @@ msgid "Highlight selected file(s)"
 msgstr "Označava izabrane datoteke"
 
 
-msgctxt "Operator"
-msgid "Make All Paths Absolute"
-msgstr "Pretvori sve putanje u apsolutne"
-
-
 msgid "Make all paths to external files absolute"
 msgstr "Standardna akcija za srednji taster miša"
-
-
-msgctxt "Operator"
-msgid "Make All Paths Relative"
-msgstr "Pretvori sve putanje u relativne"
 
 
 msgid "Make all paths to external files relative to current .blend"
@@ -14621,24 +14615,6 @@ msgstr "Sledeći direktorijum"
 
 msgid "Move to next folder"
 msgstr "Premesti na sledeći direktorijum"
-
-
-msgctxt "Operator"
-msgid "Pack All Into .blend"
-msgstr "Zapakuj sve u .blend"
-
-
-msgid "Pack all used external files into the .blend"
-msgstr "Zapakuj sve spoljne datoteke u .blend datoteci"
-
-
-msgctxt "Operator"
-msgid "Pack Blender Libraries"
-msgstr "Zapaku Blender biblioteke"
-
-
-msgid "Pack all used Blender library files into the current .blend"
-msgstr "Zapakuj sve korišćene datoteke Blender bibliteke u tekućoj .blend datoteci"
 
 
 msgctxt "Operator"
@@ -14717,11 +14693,6 @@ msgid "Smooth Scroll"
 msgstr "Glatko klizanje"
 
 
-msgctxt "Operator"
-msgid "Unpack All Into Files"
-msgstr "Raspakuj sve u datoteke"
-
-
 msgid "Unpack all files packed into this .blend to external ones"
 msgstr "Raspakuj sve datoteke zapakovane u ovoj .blend datoteci kao spoljne datoteke"
 
@@ -14737,10 +14708,6 @@ msgstr "Ukloni paket"
 msgctxt "Operator"
 msgid "Unpack Item"
 msgstr "Raspakuj sliku"
-
-
-msgid "Unpack all used Blender library files from this .blend file"
-msgstr "Raspakuj sve korišćene datoteke Blender biblioteke iz ove .blend datoteke"
 
 
 msgid "Case"
@@ -15072,6 +15039,10 @@ msgid "Make a copy of the active Grease Pencil layer"
 msgstr "Duplira aktivni sloj skice"
 
 
+msgid "Only Active"
+msgstr "Samo aktivne"
+
+
 msgctxt "Operator"
 msgid "Remove Mask Layer"
 msgstr "Ukloni masku sloja"
@@ -15261,10 +15232,6 @@ msgid "Add F-Curve Modifier"
 msgstr "Dodaj modifikator F-krive"
 
 
-msgid "Only Active"
-msgstr "Samo aktivne"
-
-
 msgid "Include Handles"
 msgstr "Uključi ručke"
 
@@ -15325,10 +15292,6 @@ msgstr "Tekuća boja ispune"
 
 msgid "Image height"
 msgstr "Visina sliku"
-
-
-msgid "Tiled"
-msgstr "Popločano"
 
 
 msgid "Image width"
@@ -18453,6 +18416,10 @@ msgid "Next Keyframe"
 msgstr "Sledeći ključni kadar"
 
 
+msgid "Percentage"
+msgstr "Procenat"
+
+
 msgid "Previous Keyframe"
 msgstr "Prethodni ključni kadar"
 
@@ -18682,10 +18649,6 @@ msgstr "Samo vidljive/izabrane kosti"
 
 msgid "Target Path"
 msgstr "Ciljna putanja"
-
-
-msgid "User Prefs"
-msgstr "Korisnička podešavanja"
 
 
 msgctxt "Operator"
@@ -19385,10 +19348,6 @@ msgstr "Dodaje traku sa videom u sekvencer"
 msgctxt "Operator"
 msgid "Make Meta Strip"
 msgstr "Napravi metatraku"
-
-
-msgid "Group selected strips into a metastrip"
-msgstr "Grupiši izabrane trake u metatrake"
 
 
 msgctxt "Operator"
@@ -22525,10 +22484,6 @@ msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Kvadratni izbor vrednosti nijanse i klizačem zasićenosti bojom"
 
 
-msgid "Percentage"
-msgstr "Procenat"
-
-
 msgid "New Window"
 msgstr "U novom prozoru"
 
@@ -23539,14 +23494,6 @@ msgstr "Sekvenca scene"
 
 msgid "Override the scenes active camera"
 msgstr "Veličina teksta"
-
-
-msgid "Use Grease Pencil"
-msgstr "Koristi skiciranje"
-
-
-msgid "Show Grease Pencil strokes in OpenGL previews"
-msgstr "Prikazi skiciranje u OpenGL pregledu"
 
 
 msgid "Sound Sequence"
@@ -27383,6 +27330,10 @@ msgid "No active frame to delete"
 msgstr "Modifikator vrednosti F-krive"
 
 
+msgid "Nothing selected"
+msgstr "Ništa nije izabrano"
+
+
 msgctxt "Operator"
 msgid "Change Shortcut"
 msgstr "Promeni prečicu"
@@ -27827,10 +27778,6 @@ msgstr "Morate biti u režimu izbora temena"
 
 msgid "Mouse path too short"
 msgstr "Putanja miša je previše kratka"
-
-
-msgid "Nothing selected"
-msgstr "Ništa nije izabrano"
 
 
 msgid "Removed: %d vertices, %d edges, %d faces"
@@ -28303,104 +28250,8 @@ msgid "No valid action to add"
 msgstr "Zamena ulaznog efekta"
 
 
-msgid "Sta"
-msgstr "Zvezda"
-
-
-msgid "Label Size"
-msgstr "Veličina oznake"
-
-
-msgid "Frame: %d"
-msgstr "Kadar: %d"
-
-
-msgid "Squash"
-msgstr "Kašasto"
-
-
-msgid "Center:"
-msgstr "Središte:"
-
-
-msgid "Speed:"
-msgstr "Brzina:"
-
-
-msgid "Inner Edge:"
-msgstr "Unutrašnja ivica:"
-
-
-msgid "Limiting Channel:"
-msgstr "NLA kanali"
-
-
-msgid "Key Channel:"
-msgstr "Koristi kanal:"
-
-
-msgid "Path:"
-msgstr "Putanja:"
-
-
-msgid "Base Path:"
-msgstr "Putanja do skladišta"
-
-
-msgid "Add Input"
-msgstr "Ulaz"
-
-
-msgid "Format:"
-msgstr "Format:"
-
-
-msgid "Master"
-msgstr "Nalepi"
-
-
-msgid "Highlights"
-msgstr "Istakni liniju"
-
-
-msgid "Midtones"
-msgstr "Kraj reda"
-
-
-msgid "Undefined Socket Type"
-msgstr "Nepoznata vrsta utičnice"
-
-
-msgid "NodeTree"
-msgstr "Drvo čvorova"
-
-
-msgid "Mask '%s' not found"
-msgstr "Maskia '%s' nije pronađena"
-
-
 msgid "Sockets"
 msgstr "Utičnice"
-
-
-msgid "Cannot ungroup"
-msgstr "Ne mogu da razgrušišem"
-
-
-msgid "Cannot separate nodes"
-msgstr "Ne mogu da razdvojim lvorove"
-
-
-msgid "Disconnect"
-msgstr "Raskači"
-
-
-msgid "Add node to input"
-msgstr "Dodaj čvor na ulaz"
-
-
-msgid "Remove nodes connected to the input"
-msgstr "Ukloni čvoer povezan na ulaz"
 
 
 msgctxt "Action"

@@ -40,6 +40,8 @@ typedef struct GPUIndexBufBuilder {
   uint max_allowed_index;
   uint max_index_len;
   uint index_len;
+  uint index_min;
+  uint index_max;
   GPUPrimType prim_type;
   uint32_t *data;
 } GPUIndexBufBuilder;
@@ -50,6 +52,13 @@ void GPU_indexbuf_init_ex(GPUIndexBufBuilder *, GPUPrimType, uint index_len, uin
 /* supports only GPU_PRIM_POINTS, GPU_PRIM_LINES and GPU_PRIM_TRIS. */
 void GPU_indexbuf_init(GPUIndexBufBuilder *, GPUPrimType, uint prim_len, uint vertex_len);
 GPUIndexBuf *GPU_indexbuf_build_on_device(uint index_len);
+
+/*
+ * Thread safe.
+ *
+ * Function inspired by the reduction directives of multithread work APIs..
+ */
+void GPU_indexbuf_join(GPUIndexBufBuilder *builder, const GPUIndexBufBuilder *parent_builder);
 
 void GPU_indexbuf_add_generic_vert(GPUIndexBufBuilder *, uint v);
 void GPU_indexbuf_add_primitive_restart(GPUIndexBufBuilder *);
