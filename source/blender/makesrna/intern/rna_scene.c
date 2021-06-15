@@ -6937,7 +6937,7 @@ static void rna_def_scene_eevee(BlenderRNA *brna)
   };
 
   static const EnumPropertyItem eevee_volumetric_tile_size_items[] = {
-      {2, "1", 0, "1 px", ""},
+      {1, "1", 0, "1 px", ""}, /*bfa - added one pixel*/
       {2, "2", 0, "2 px", ""},
       {4, "4", 0, "4 px", ""},
       {8, "8", 0, "8 px", ""},
