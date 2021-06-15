@@ -1236,7 +1236,6 @@ class TOOLBAR_MT_image(Menu):
             row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
             sub = row.row()
             sub.active = (mode == 'EDIT')
-            sub.operator("uv.clear_seam", text="", icon ="CLEAR_SEAM")
             sub.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
             #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
 
