@@ -2673,12 +2673,19 @@ class NODE_PT_tools_active(ToolSelectPanelHelper, Panel):
     }
 # ------------------------------------------------- 3d view -------------------------------------------------------
 
+
 class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_label = "Tools"
     bl_category = "Tools"
-    bl_options = {'HIDE_BG'}
+    bl_options = {'HIDE_HEADER'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == False
 
     # Satisfy the 'ToolSelectPanelHelper' API.
     keymap_prefix = "3D View Tool:"
@@ -3039,6 +3046,379 @@ class VIEW3D_PT_tools_active(ToolSelectPanelHelper, Panel):
     }
 
 
+class VIEW3D_PT_tools_active_hide_bg(ToolSelectPanelHelper, Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_label = "Tools"
+    bl_category = "Tools"
+    bl_options = {'HIDE_BG'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    # Satisfy the 'ToolSelectPanelHelper' API.
+    keymap_prefix = "3D View Tool:"
+
+    # Default group to use as a fallback.
+    tool_fallback_id = "builtin.select"
+
+    @classmethod
+    def tools_from_context(cls, context, mode=None):
+        if mode is None:
+            mode = context.mode
+        for tools in (cls._tools[None], cls._tools.get(mode, ())):
+            for item in tools:
+                if not (type(item) is ToolDef) and callable(item):
+                    yield from item(context)
+                else:
+                    yield item
+
+    @classmethod
+    def tools_all(cls):
+        yield from cls._tools.items()
+
+    # for reuse
+    _tools_transform = (
+        _defs_transform.translate,
+        _defs_transform.rotate,
+        (
+            _defs_transform.scale,
+            _defs_transform.scale_cage,
+        ),
+        _defs_transform.transform,
+    )
+    # select tools group
+    _tools_select = (
+        (
+            _defs_view3d_select.select,
+            _defs_view3d_select.box,
+            _defs_view3d_select.circle,
+            _defs_view3d_select.lasso,
+        ),
+    )
+
+    _tools_annotate = (
+        (
+            _defs_annotate.scribble,
+            _defs_annotate.line,
+            _defs_annotate.poly,
+            _defs_annotate.eraser,
+        ),
+    )
+
+    _tools_gpencil_select = (
+        (
+            _defs_gpencil_edit.select,
+            _defs_gpencil_edit.box_select,
+            _defs_gpencil_edit.circle_select,
+            _defs_gpencil_edit.lasso_select,
+        ),
+    )
+
+    _tools_view3d_add = (
+        _defs_view3d_add.cube_add,
+        _defs_view3d_add.cone_add,
+        _defs_view3d_add.cylinder_add,
+        _defs_view3d_add.uv_sphere_add,
+        _defs_view3d_add.ico_sphere_add,
+    )
+
+    _tools_default = (
+        *_tools_select,
+        _defs_view3d_generic.cursor,
+        None,
+        *_tools_transform,
+        None,
+        *_tools_annotate,
+        _defs_view3d_generic.ruler,
+    )
+
+    _tools = {
+        None: [
+            # Don't use this! because of paint modes.
+            # _defs_view3d_generic.cursor,
+            # End group.
+        ],
+        'OBJECT': [
+            *_tools_default,
+            None,
+            _tools_view3d_add,
+        ],
+        'POSE': [
+            *_tools_default,
+            None,
+            (
+                _defs_pose.breakdown,
+                _defs_pose.push,
+                _defs_pose.relax,
+            ),
+        ],
+        'EDIT_ARMATURE': [
+            *_tools_default,
+            None,
+            _defs_edit_armature.roll,
+            (
+                _defs_edit_armature.bone_size,
+                _defs_edit_armature.bone_envelope,
+            ),
+            None,
+            (
+                _defs_edit_armature.extrude,
+                _defs_edit_armature.extrude_cursor,
+            ),
+            _defs_transform.shear,
+        ],
+        'EDIT_MESH': [
+            *_tools_default,
+
+            None,
+            _tools_view3d_add,
+            None,
+            (
+                _defs_edit_mesh.extrude,
+                _defs_edit_mesh.extrude_manifold,
+                _defs_edit_mesh.extrude_normals,
+                _defs_edit_mesh.extrude_individual,
+                _defs_edit_mesh.extrude_cursor,
+            ),
+            _defs_edit_mesh.inset,
+            _defs_edit_mesh.bevel,
+            (
+                _defs_edit_mesh.loopcut_slide,
+                _defs_edit_mesh.offset_edge_loops_slide,
+            ),
+            (
+                _defs_edit_mesh.knife,
+                _defs_edit_mesh.bisect,
+            ),
+            _defs_edit_mesh.poly_build,
+            (
+                _defs_edit_mesh.spin,
+                _defs_edit_mesh.spin_duplicate,
+            ),
+            (
+                _defs_edit_mesh.vertex_smooth,
+                _defs_edit_mesh.vertex_randomize,
+            ),
+            (
+                _defs_edit_mesh.edge_slide,
+                _defs_edit_mesh.vert_slide,
+            ),
+            (
+                _defs_edit_mesh.shrink_fatten,
+                _defs_edit_mesh.push_pull,
+            ),
+            (
+                _defs_transform.shear,
+                _defs_edit_mesh.tosphere,
+            ),
+            (
+                _defs_edit_mesh.rip_region,
+                _defs_edit_mesh.rip_edge,
+            ),
+        ],
+        'EDIT_CURVE': [
+            *_tools_default,
+            None,
+            _defs_edit_curve.draw,
+            (
+                _defs_edit_curve.extrude,
+                _defs_edit_curve.extrude_cursor,
+            ),
+            None,
+            _defs_edit_curve.curve_radius,
+            _defs_edit_curve.tilt,
+            None,
+            _defs_transform.shear,
+            _defs_edit_curve.curve_vertex_randomize,
+        ],
+        'EDIT_SURFACE': [
+            *_tools_default,
+            None,
+            _defs_transform.shear,
+        ],
+        'EDIT_METABALL': [
+            *_tools_default,
+            None,
+            _defs_transform.shear,
+        ],
+        'EDIT_LATTICE': [
+            *_tools_default,
+            None,
+            _defs_transform.shear,
+        ],
+        'EDIT_TEXT': [
+            _defs_view3d_select.select,
+            _defs_view3d_generic.cursor,
+            None,
+            *_tools_annotate,
+            _defs_view3d_generic.ruler,
+        ],
+        'PARTICLE': [
+            *_tools_select,
+            _defs_view3d_generic.cursor,
+            None,
+            _defs_particle.generate_from_brushes,
+        ],
+       'SCULPT': [
+            _defs_sculpt.generate_from_brushes,
+            None,
+            (
+                _defs_sculpt.mask_border,
+                _defs_sculpt.mask_lasso,
+                 _defs_sculpt.mask_line,
+            ),
+            _defs_sculpt.hide_border,
+            (
+                _defs_sculpt.face_set_box,
+                _defs_sculpt.face_set_lasso,
+            ),
+            (
+                _defs_sculpt.trim_box,
+                _defs_sculpt.trim_lasso,
+            ),
+            _defs_sculpt.project_line,
+            None,
+            _defs_sculpt.mesh_filter,
+            _defs_sculpt.cloth_filter,
+            lambda context: (
+                (_defs_sculpt.color_filter,)
+                if context is None or (
+                        context.preferences.view.show_developer_ui and
+                        context.preferences.experimental.use_sculpt_vertex_colors)
+                else ()
+            ),
+            #None, #bfa - too big gap
+            lambda context: (
+                (_defs_sculpt.mask_by_color,)
+                if context is None or (
+                        context.preferences.view.show_developer_ui and
+                        context.preferences.experimental.use_sculpt_vertex_colors)
+                else ()
+            ),
+            #None, #bfa - too big gap
+            _defs_sculpt.face_set_edit,
+            None,
+            _defs_transform.translate,
+            _defs_transform.rotate,
+            _defs_transform.scale,
+            _defs_transform.transform,
+            None,
+            *_tools_annotate,
+        ],
+        'PAINT_TEXTURE': [
+            _defs_texture_paint.generate_from_brushes,
+            None,
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_select
+                if _defs_texture_paint.poll_select_mask(context)
+                else ()
+            ),
+            *_tools_annotate,
+        ],
+        'PAINT_VERTEX': [
+            _defs_vertex_paint.generate_from_brushes,
+            None,
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_select
+                if _defs_vertex_paint.poll_select_mask(context)
+                else ()
+            ),
+            *_tools_annotate,
+        ],
+        'PAINT_WEIGHT': [
+            _defs_weight_paint.generate_from_brushes,
+            _defs_weight_paint.gradient,
+            None,
+            (
+                _defs_weight_paint.sample_weight,
+                _defs_weight_paint.sample_weight_group,
+            ),
+            None,
+            lambda context: (
+                (_defs_view3d_generic.cursor,)
+                if context is None or context.pose_object
+                else ()
+            ),
+            #None, #bfa - too big gap
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_select
+                if _defs_weight_paint.poll_select_mask(context)
+                else ()
+            ),
+            *_tools_annotate,
+        ],
+        'PAINT_GPENCIL': [
+            _defs_view3d_generic.cursor,
+            None,
+            _defs_gpencil_paint.generate_from_brushes,
+            _defs_gpencil_paint.cutter,
+            None,
+            _defs_gpencil_paint.eyedropper,
+            None,
+            _defs_gpencil_paint.line,
+            _defs_gpencil_paint.polyline,
+            _defs_gpencil_paint.arc,
+            _defs_gpencil_paint.curve,
+            _defs_gpencil_paint.box,
+            _defs_gpencil_paint.circle,
+            None,
+            _defs_gpencil_paint.interpolate,
+            None,
+            *_tools_annotate,
+        ],
+        'EDIT_GPENCIL': [
+            *_tools_gpencil_select,
+            _defs_view3d_generic.cursor,
+            None,
+            *_tools_transform,
+            None,
+            _defs_gpencil_edit.extrude,
+            _defs_gpencil_edit.radius,
+            _defs_gpencil_edit.bend,
+            (
+                _defs_gpencil_edit.shear,
+                _defs_gpencil_edit.tosphere,
+            ),
+            _defs_gpencil_edit.transform_fill,
+            None,
+            _defs_gpencil_edit.interpolate,
+            None,
+            *_tools_annotate,
+        ],
+        'SCULPT_GPENCIL': [
+            _defs_gpencil_sculpt.generate_from_brushes,
+            None,
+            *_tools_annotate,
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_gpencil_select
+                if _defs_gpencil_sculpt.poll_select_mask(context)
+                else ()
+            ),
+        ],
+        'WEIGHT_GPENCIL': [
+            _defs_gpencil_weight.generate_from_brushes,
+            None,
+            *_tools_annotate,
+        ],
+        'VERTEX_GPENCIL': [
+            _defs_gpencil_vertex.generate_from_brushes,
+            None,
+            *_tools_annotate,
+            None,
+            lambda context: (
+                VIEW3D_PT_tools_active._tools_gpencil_select
+                if _defs_gpencil_vertex.poll_select_mask(context)
+                else ()
+            ),
+        ],
+    }
+
+
+
 class SEQUENCER_PT_tools_active(ToolSelectPanelHelper, Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -3107,6 +3487,7 @@ classes = (
     IMAGE_PT_tools_active,
     NODE_PT_tools_active,
     VIEW3D_PT_tools_active,
+    VIEW3D_PT_tools_active_hide_bg,
     SEQUENCER_PT_tools_active,
 )
 
