@@ -12211,6 +12211,9 @@ static int node_type_to_icon(int type)
       icon = ICON_VIEW_SWITCHACTIVECAM;
       break;
     /* Filter */
+    case CMP_NODE_ANTIALIASING:
+      icon = ICON_ANTIALIASED;
+      break;
     case CMP_NODE_BILATERALBLUR:
       icon = ICON_NODE_BILATERAL_BLUR;
       break;
