@@ -1863,6 +1863,10 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
+            
+            props = col.operator("node.add_node", text=" Bilateral Blur    ", icon = "ANTIALIASED")
+            props.use_transform = True
+            props.type = "CompositorNodeAntiAliasing"
 
             props = col.operator("node.add_node", text=" Bilateral Blur    ", icon = "NODE_BILATERAL_BLUR")
             props.use_transform = True
@@ -1875,13 +1879,13 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Bokeh Blur       ", icon = "NODE_BOKEH_BLUR")
             props.use_transform = True
             props.type = "CompositorNodeBokehBlur"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Directional Blur ", icon = "NODE_DIRECITONALBLUR")
             props.use_transform = True
             props.type = "CompositorNodeDBlur"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Vector Blur       ", icon = "NODE_VECTOR_BLUR")
             props.use_transform = True
@@ -1894,13 +1898,13 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Despeckle         ", icon = "NODE_DESPECKLE")
             props.use_transform = True
             props.type = "CompositorNodeDespeckle"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Dilate / Erode    ", icon = "NODE_ERODE")
             props.use_transform = True
             props.type = "CompositorNodeDilateErode"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Filter                ", icon = "FILTER")
             props.use_transform = True
@@ -1910,19 +1914,16 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeGlare"
 
-            row = col.row(align=True)
-            col.scale_y = 1.5
-
             props = col.operator("node.add_node", text=" Inpaint              ", icon = "NODE_IMPAINT")
             props.use_transform = True
             props.type = "CompositorNodeInpaint"
+            
+            col = layout.column(align=True)
+            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Pixelate            ", icon = "NODE_PIXELATED")
             props.use_transform = True
             props.type = "CompositorNodePixelate"
-
-            col = layout.column(align=True)
-            col.scale_y = 1.5
 
             props = col.operator("node.add_node", text=" Sunbeams        ", icon = "NODE_SUNBEAMS")
             props.use_transform = True
@@ -1939,6 +1940,10 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+            
+            props = flow.operator("node.add_node", text = "", icon = "ANTIALIASED")
+            props.use_transform = True
+            props.type = "CompositorNodeAntiAliasing"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_BILATERAL_BLUR")
             props.use_transform = True
