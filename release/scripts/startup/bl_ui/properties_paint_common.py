@@ -17,7 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
-from bpy.types import Menu
+from bpy.types import (
+    Menu,
+    Panel,
+)
 
 
 class UnifiedPaintPanel:
@@ -1307,18 +1310,28 @@ def brush_basic_gpencil_paint_settings(layout, context, brush, *, compact=False)
         row.prop(gp_settings, "use_pressure", text="", icon='STYLUS_PRESSURE')
 
         if gp_settings.use_pressure and not compact:
-            col = layout.column()
-            col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True,
-                                       use_negative_slope=True)
+            row = layout.row()
+            row.separator()
+            row.popover(panel="VIEW3D_PT_gpencil_brush_settings_radius", text="Radius Pressure Curve")
+
+#        if gp_settings.use_pressure and not compact:
+#            col = layout.column()
+#            col.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True,
+#                                       use_negative_slope=True)
 
         row = layout.row(align=True)
         row.prop(gp_settings, "pen_strength", slider=True)
         row.prop(gp_settings, "use_strength_pressure", text="", icon='STYLUS_PRESSURE')
 
         if gp_settings.use_strength_pressure and not compact:
-            col = layout.column()
-            col.template_curve_mapping(gp_settings, "curve_strength", brush=True,
-                                       use_negative_slope=True)
+            row = layout.row()
+            row.separator()
+            row.popover(panel="VIEW3D_PT_gpencil_brush_settings_strength", text="Strength Pressure Curve")
+
+#        if gp_settings.use_strength_pressure and not compact:
+#            col = layout.column()
+#            col.template_curve_mapping(gp_settings, "curve_strength", brush=True,
+#                                       use_negative_slope=True)
 
         if brush.gpencil_tool == 'TINT':
             row = layout.row(align=True)
@@ -1414,8 +1427,48 @@ def brush_basic_gpencil_vertex_settings(layout, _context, brush, *, compact=Fals
         row.prop(gp_settings, "vertex_mode", text="Mode")
 
 
+class VIEW3D_PT_gpencil_brush_settings_radius(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_label = "Radius"
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        tool_settings = context.scene.tool_settings
+        gpencil_paint = tool_settings.gpencil_paint
+        brush = gpencil_paint.brush
+        gp_settings = brush.gpencil_settings
+
+        layout.template_curve_mapping(gp_settings, "curve_sensitivity", brush=True, use_negative_slope=True)
+
+
+class VIEW3D_PT_gpencil_brush_settings_strength(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_label = "Strength"
+    bl_region_type = 'HEADER'
+    bl_ui_units_x = 10
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        tool_settings = context.scene.tool_settings
+        gpencil_paint = tool_settings.gpencil_paint
+        brush = gpencil_paint.brush
+        gp_settings = brush.gpencil_settings
+
+        layout.template_curve_mapping(gp_settings, "curve_strength", brush=True, use_negative_slope=True)
+
+
 classes = (
     VIEW3D_MT_tools_projectpaint_clone,
+    VIEW3D_PT_gpencil_brush_settings_radius,
+    VIEW3D_PT_gpencil_brush_settings_strength,
 )
 
 if __name__ == "__main__":  # only for live edit.
