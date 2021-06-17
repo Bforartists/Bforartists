@@ -777,7 +777,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
                 row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
                 row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
-                
+
             if addon_prefs.primitives_gpencil_lineart:
 
                 row = layout.row(align=True)
@@ -916,7 +916,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.gpencil_add", text="", icon='EMPTY_AXIS').type= 'EMPTY'
                     row.operator("object.gpencil_add", text="", icon='STROKE').type= 'STROKE'
                     row.operator("object.gpencil_add", text="", icon='MONKEY').type= 'MONKEY'
-                    
+
                 if addon_prefs.primitives_gpencil_lineart:
 
                     row = layout.row(align=True)
@@ -1731,12 +1731,26 @@ class TOOLBAR_MT_edit(Menu):
                 if mode == 'OBJECT':
 
                     row = layout.row(align=True)
-                    # TO DO - Useful tooltips
-                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
-                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
-                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
 
-                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYMOVEDELTA")
+                    myvar.mode = 'LOC'
+                    myvar.arg = 'Apply Location to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYROTATEDELTA")
+                    myvar.mode = 'ROT'
+                    myvar.arg = 'Apply Rotation to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYSCALEDELTA")
+                    myvar.mode = 'SCALE'
+                    myvar.arg = 'Apply Scale to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                    myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
+                    myvar.mode = 'ALL'
+                    myvar.arg = 'Apply all Transforms to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+
+
+
                     row.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
 
             if addon_prefs.edit_objectclear:
