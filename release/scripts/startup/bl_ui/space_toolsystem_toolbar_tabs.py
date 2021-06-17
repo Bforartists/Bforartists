@@ -733,20 +733,13 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            props = col.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
-            props.location, props.rotation, props.scale = True, False, False
 
-            props = col.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
-            props.location, props.rotation, props.scale = False, True, False
-
-            props = col.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
-            props.location, props.rotation, props.scale = False, False, True
-
-            props = col.operator("object.transform_apply", text="All Transforms", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
-            props.location, props.rotation, props.scale = True, True, True
-
-            props = col.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
-            props.location, props.rotation, props.scale = False, True, True
+            #bfa - separated tooltips. classes are in space_toolbar.py
+            col.operator("view3d.tb_apply_location", text="Location", icon = "APPLYMOVE")
+            col.operator("view3d.tb_apply_rotate", text="Rotation", icon = "APPLYROTATE")
+            col.operator("view3d.tb_apply_scale", text="Scale", icon = "APPLYSCALE")
+            col.operator("view3d.tb_apply_all", text="All Transforms", icon = "APPLYALL")
+            col.operator("view3d.tb_apply_rotscale", text="Rotation & Scale", icon = "APPLY_ROTSCALE")
 
             col.separator(factor = 0.5)
 
@@ -763,21 +756,13 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
-                props.location, props.rotation, props.scale = True, False, False
-
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
-                props.location, props.rotation, props.scale = False, True, False
-
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
-                props.location, props.rotation, props.scale = False, False, True
+                row.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE")
+                row.operator("view3d.tb_apply_rotate", text="", icon = "APPLYROTATE")
+                row.operator("view3d.tb_apply_scale", text="", icon = "APPLYSCALE")
 
                 row = col.row(align=True)
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
-                props.location, props.rotation, props.scale = True, True, True
-
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
-                props.location, props.rotation, props.scale = False, True, True
+                row.operator("view3d.tb_apply_all", text="", icon = "APPLYALL")
+                row.operator("view3d.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                 row = col.row(align=True)
                 row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
@@ -786,22 +771,15 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
-                props.location, props.rotation, props.scale = True, False, False
-
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
-                props.location, props.rotation, props.scale = False, True, False
+                row.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE")
+                row.operator("view3d.tb_apply_rotate", text="", icon = "APPLYROTATE")
 
                 row = col.row(align=True)
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
-                props.location, props.rotation, props.scale = False, False, True
-
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
-                props.location, props.rotation, props.scale = True, True, True
+                row.operator("view3d.tb_apply_scale", text="", icon = "APPLYSCALE")
+                row.operator("view3d.tb_apply_all", text="", icon = "APPLYALL")
 
                 row = col.row(align=True)
-                props = row.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
-                props.location, props.rotation, props.scale = False, True, True
+                row.operator("view3d.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                 row = col.row(align=True)
                 row.operator("object.visual_transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
@@ -809,20 +787,11 @@ class VIEW3D_PT_objecttab_apply(toolshelf_calculate, Panel):
 
             elif column_count == 1:
 
-                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE")
-                props.location, props.rotation, props.scale = True, False, False
-
-                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
-                props.location, props.rotation, props.scale = False, True, False
-
-                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
-                props.location, props.rotation, props.scale = False, False, True
-
-                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
-                props.location, props.rotation, props.scale = True, True, True
-
-                props = col.operator("object.transform_apply", text="", text_ctxt=i18n_contexts.default, icon = "APPLY_ROTSCALE")
-                props.location, props.rotation, props.scale = False, True, True
+                col.operator("view3d.tb_apply_location", text="", icon = "APPLYMOVE")
+                col.operator("view3d.tb_apply_rotate", text="", icon = "APPLYROTATE")
+                col.operator("view3d.tb_apply_scale", text="", icon = "APPLYSCALE")
+                col.operator("view3d.tb_apply_all", text="", icon = "APPLYALL")
+                col.operator("view3d.tb_apply_rotscale", text="", icon = "APPLY_ROTSCALE")
 
                 col.separator(factor = 0.5)
 
