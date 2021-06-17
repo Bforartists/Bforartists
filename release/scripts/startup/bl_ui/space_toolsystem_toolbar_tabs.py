@@ -2299,6 +2299,42 @@ class VIEW3D_PT_uvtab_uv(toolshelf_calculate, Panel):
                 col.operator("uv.reset", text = "", icon = "RESET")
 
 
+# Workaround to separate the tooltips
+class MASK_MT_flood_fill_invert(bpy.types.Operator):
+    """Inverts the mask"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mask.flood_fill_invert"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Invert Mask"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.paint.mask_flood_fill(mode = 'INVERT')
+        return {'FINISHED'}
+
+
+# Workaround to separate the tooltips
+class MASK_MT_flood_fill_fill(bpy.types.Operator):
+    """Fills the mask"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mask.flood_fill_fill"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Fill Mask"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.paint.mask_flood_fill(mode = 'VALUE', value = 1)
+        return {'FINISHED'}
+
+
+# Workaround to separate the tooltips
+class MASK_MT_flood_fill_clear(bpy.types.Operator):
+    """Clears the mask"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mask.flood_fill_clear"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Clear Mask"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.paint.mask_flood_fill(mode = 'VALUE', value = 0)
+        return {'FINISHED'}
+
+
 class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
     bl_label = "Mask"
     bl_space_type = 'VIEW_3D'
@@ -2325,16 +2361,9 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
             col = layout.column(align=True)
             col.scale_y = 2
 
-            props = col.operator("paint.mask_flood_fill", text="Invert Mask", icon = "INVERT_MASK")
-            props.mode = 'INVERT'
-
-            props = col.operator("paint.mask_flood_fill", text="Fill Mask", icon = "FILL_MASK")
-            props.mode = 'VALUE'
-            props.value = 1
-
-            props = col.operator("paint.mask_flood_fill", text="Clear Mask", icon = "CLEAR_MASK")
-            props.mode = 'VALUE'
-            props.value = 0
+            col.operator("mask.flood_fill_invert", text="Invert Mask", icon = "INVERT_MASK")
+            col.operator("mask.flood_fill_fill", text="Fill Mask", icon = "FILL_MASK")
+            col.operator("mask.flood_fill_clear", text="Clear Mask", icon = "CLEAR_MASK")
 
             col.separator(factor = 0.5)
 
@@ -2402,16 +2431,9 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                props = row.operator("paint.mask_flood_fill", text="", icon = "INVERT_MASK")
-                props.mode = 'INVERT'
-
-                props = row.operator("paint.mask_flood_fill", text="", icon = "FILL_MASK")
-                props.mode = 'VALUE'
-                props.value = 1
-
-                props = row.operator("paint.mask_flood_fill", text="", icon = "CLEAR_MASK")
-                props.mode = 'VALUE'
-                props.value = 0
+                row.operator("mask.flood_fill_invert", text="", icon = "INVERT_MASK")
+                row.operator("mask.flood_fill_fill", text="", icon = "FILL_MASK")
+                row.operator("mask.flood_fill_clear", text="", icon = "CLEAR_MASK")
 
                 row = col.row(align=True)
                 props = row.operator("sculpt.mask_filter", text='', icon = "PARTICLEBRUSH_SMOOTH")
@@ -2467,17 +2489,11 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
             elif column_count == 2:
 
                 row = col.row(align=True)
-                props = row.operator("paint.mask_flood_fill", text="", icon = "INVERT_MASK")
-                props.mode = 'INVERT'
-
-                props = row.operator("paint.mask_flood_fill", text="", icon = "FILL_MASK")
-                props.mode = 'VALUE'
-                props.value = 1
-
+                row.operator("mask.flood_fill_invert", text="", icon = "INVERT_MASK")
+                row.operator("mask.flood_fill_fill", text="", icon = "FILL_MASK")
+                
                 row = col.row(align=True)
-                props = row.operator("paint.mask_flood_fill", text="", icon = "CLEAR_MASK")
-                props.mode = 'VALUE'
-                props.value = 0
+                row.operator("mask.flood_fill_clear", text="", icon = "CLEAR_MASK")
 
                 props = row.operator("sculpt.mask_filter", text='', icon = "PARTICLEBRUSH_SMOOTH")
                 props.filter_type = 'SMOOTH'
@@ -2537,16 +2553,9 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 col = layout.column(align=True)
                 col.scale_y = 2
 
-                props = col.operator("paint.mask_flood_fill", text="", icon = "INVERT_MASK")
-                props.mode = 'INVERT'
-
-                props = col.operator("paint.mask_flood_fill", text="", icon = "FILL_MASK")
-                props.mode = 'VALUE'
-                props.value = 1
-
-                props = col.operator("paint.mask_flood_fill", text="", icon = "CLEAR_MASK")
-                props.mode = 'VALUE'
-                props.value = 0
+                col.operator("mask.flood_fill_invert", text="", icon = "INVERT_MASK")
+                col.operator("mask.flood_fill_fill", text="", icon = "FILL_MASK")
+                col.operator("mask.flood_fill_clear", text="", icon = "CLEAR_MASK")
 
                 col.separator(factor = 0.5)
 
@@ -5423,6 +5432,11 @@ classes = (
     VIEW3D_PT_gp_posetab_propagate,
     VIEW3D_PT_gp_posetab_poselibrary,
     VIEW3D_PT_gp_posetab_motionpaths,
+
+    # bfa - separated tooltips
+    MASK_MT_flood_fill_invert,
+    MASK_MT_flood_fill_fill,
+    MASK_MT_flood_fill_clear,
 
 )
 
