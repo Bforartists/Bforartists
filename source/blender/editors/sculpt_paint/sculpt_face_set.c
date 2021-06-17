@@ -1482,4 +1482,12 @@ void SCULPT_OT_face_sets_edit(struct wmOperatorType *ot)
                              true,
                              "Modify Hidden",
                              "Apply the edit operation to hidden Face Sets");
+
+  /* properties */
+  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_edit_types array */
+  ot->prop = RNA_def_enum(ot->srna,
+                          "mode", prop_sculpt_face_sets_edit_types,
+                          0,
+                          "Mode",
+                          "Method to create Face Sets");
 }
