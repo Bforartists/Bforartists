@@ -444,8 +444,6 @@ void SCULPT_OT_face_sets_create(wmOperatorType *ot)
                           0,
                           "Mode",
                           "Method to create Face Sets");
-
-
 }
 
 typedef enum eSculptFaceSetsInitMode {
