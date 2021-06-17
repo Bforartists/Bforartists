@@ -314,6 +314,14 @@ void SCULPT_OT_mask_filter(struct wmOperatorType *ot)
       false,
       "Auto Iteration Count",
       "Use a automatic number of iterations based on the number of vertices of the sculpt");
+
+  /* properties */
+  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_init_types array */
+  ot->prop = RNA_def_enum(ot->srna,
+                          "filter_type", prop_mask_filter_types,
+                          0,
+                          "Filter",
+                          "Filter that is going to be applied to the mask");
 }
 
 static float neighbor_dirty_mask(SculptSession *ss, PBVHVertexIter *vd)
