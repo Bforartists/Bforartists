@@ -850,16 +850,30 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
 
         column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
 
+        # bfa - the desctription in myvar.arg comes from release\scripts\startup\bl_operators\object.py
+        # defined in class TransformsToDeltas(Operator): by a string property
+
         #text buttons
         if column_count == 4:
 
             col = layout.column(align=True)
             col.scale_y = 2
 
-            col.operator("object.transforms_to_deltas", text="Location to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
-            col.operator("object.transforms_to_deltas", text="Rotation to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
-            col.operator("object.transforms_to_deltas", text="Scale to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
-            col.operator("object.transforms_to_deltas", text="All Transforms to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+            myvar = col.operator("object.transforms_to_deltas", text="Location to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA")
+            myvar.mode = 'LOC'
+            myvar.arg = 'Apply Location to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+            myvar = col.operator("object.transforms_to_deltas", text="Rotation to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA")
+            myvar.mode = 'ROT'
+            myvar.arg = 'Apply Rotation to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+            myvar = col.operator("object.transforms_to_deltas", text="Scale to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA")
+            myvar.mode = 'SCALE'
+            myvar.arg = 'Apply Scale to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+            myvar = col.operator("object.transforms_to_deltas", text="All Transforms to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA")
+            myvar.mode = 'ALL'
+            myvar.arg = 'Apply all Transforms to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
             col.separator(factor = 0.5)
 
@@ -875,38 +889,70 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
             if column_count == 3:
 
                 row = col.row(align=True)
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
+                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYMOVEDELTA")
+                myvar.mode = 'LOC'
+                myvar.arg = 'Apply Location to Deltas\nConvert normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYROTATEDELTA")
+                myvar.mode = 'ROT'
+                myvar.arg = 'Apply Rotation to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                myvar = row.operator("object.transforms_to_deltas", text="All Transforms to Deltas", icon = "APPLYALLDELTA")
+                myvar.mode = 'SCALE'
+                myvar.arg = 'Apply Scale to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                 row = col.row(align=True)
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+                myvar = row.operator("object.transforms_to_deltas", text="All Transforms to Deltas", icon = "APPLYALLDELTA")
+                myvar.mode = 'ALL'
+                myvar.arg = 'Apply All Transforms to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
                 row.operator("object.anim_transforms_to_deltas", text="", icon = "APPLYANIDELTA")
 
 
             elif column_count == 2:
 
                 row = col.row(align=True)
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYMOVEDELTA")
+                myvar.mode = 'LOC'
+                myvar.arg = 'Apply Location to Deltas\nConvert normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYROTATEDELTA")
+                myvar.mode = 'ROT'
+                myvar.arg = 'Apply Rotation to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                 row = col.row(align=True)
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
-                row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
+                myvar.mode = 'SCALE'
+                myvar.arg = 'Apply Scale to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
+                myvar.mode = 'ALL'
+                myvar.arg = 'Apply all Transforms to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                 row = col.row(align=True)
-                row.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
+                row.operator("object.anim_transforms_to_deltas", text="", icon = "APPLYANIDELTA")
 
             elif column_count == 1:
 
-                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
-                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
-                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
-                col.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+                myvar = col.operator("object.transforms_to_deltas", text="", icon = "APPLYMOVEDELTA")
+                myvar.mode = 'LOC'
+                myvar.arg = 'Apply Location to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                myvar = col.operator("object.transforms_to_deltas", text="", icon = "APPLYROTATEDELTA")
+                myvar.mode = 'ROT'
+                myvar.arg = 'Apply Rotation to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                myvar = col.operator("object.transforms_to_deltas", text="", icon = "APPLYSCALEDELTA")
+                myvar.mode = 'SCALE'
+                myvar.arg = 'Apply Scale to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
+
+                myvar = col.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
+                myvar.mode = 'ALL'
+                myvar.arg = 'Apply all Transforms to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                 col.separator(factor = 0.5)
 
-                col.operator("object.anim_transforms_to_deltas", text="", icon = "APPLYANIDELTA")
+                col.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
 
 
 class VIEW3D_PT_objecttab_snap(toolshelf_calculate, Panel):
