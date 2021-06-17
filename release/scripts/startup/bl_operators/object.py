@@ -716,6 +716,16 @@ class TransformsToDeltas(Operator):
         default=True,
     )
 
+    # bfa - description for the delta transforms
+    arg: bpy.props.StringProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        #return "arg is: " + properties.arg
+        return properties.arg
+
+    # bfa - description end
+
     @classmethod
     def poll(cls, context):
         obs = context.selected_editable_objects
