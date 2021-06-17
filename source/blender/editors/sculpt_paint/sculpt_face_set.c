@@ -796,6 +796,15 @@ void SCULPT_OT_face_sets_init(wmOperatorType *ot)
       "Minimum value to consider a certain attribute a boundary when creating the Face Sets",
       0.0f,
       1.0f);
+
+  /* properties */
+  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_init_types array */
+  ot->prop = RNA_def_enum(ot->srna,
+                          "mode",
+                          prop_sculpt_face_sets_init_types,
+                          0,
+                          "Mode",
+                          "Method to initialize Face Sets");
 }
 
 typedef enum eSculptFaceGroupVisibilityModes {
