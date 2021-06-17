@@ -192,4 +192,12 @@ void SCULPT_OT_mask_init(wmOperatorType *ot)
                SCULPT_MASK_INIT_RANDOM_PER_VERTEX,
                "Mode",
                "");
+  /* properties */
+  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_init_types array */
+  ot->prop = RNA_def_enum(ot->srna,
+                          "mode",
+                          prop_sculpt_mask_init_mode_types,
+                          0,
+                          "Mode",
+                          "Create a new mask");
 }
