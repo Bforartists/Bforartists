@@ -1014,6 +1014,15 @@ void SCULPT_OT_face_sets_change_visibility(wmOperatorType *ot)
                SCULPT_FACE_SET_VISIBILITY_TOGGLE,
                "Mode",
                "");
+
+  /* properties */
+  /*bfa - get the mode and its tooltip from the prop_sculpt_face_sets_change_visibility_types array */
+  ot->prop = RNA_def_enum(ot->srna,
+                          "mode",
+                          prop_sculpt_face_sets_change_visibility_types,
+                          0,
+                          "Mode",
+                          "Method to change the visibility");
 }
 
 static int sculpt_face_sets_randomize_colors_exec(bContext *C, wmOperator *UNUSED(op))
