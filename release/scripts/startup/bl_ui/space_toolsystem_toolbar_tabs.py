@@ -440,6 +440,42 @@ class VIEW3D_PT_objecttab_set_origin(toolshelf_calculate, Panel):
                 col.operator("object.origin_set", text = "", icon ='ORIGIN_TO_VOLUME').type='ORIGIN_CENTER_OF_VOLUME'
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_mirror_global_x(bpy.types.Operator):
+    """Mirror global around X axis"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mirror.global_x"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Mirror Global X"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.transform.mirror(orient_type='GLOBAL', constraint_axis=(True, False, False))
+        return {'FINISHED'}
+
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_mirror_global_y(bpy.types.Operator):
+    """Mirror global around X axis"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mirror.global_y"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Mirror Global X"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.transform.mirror(orient_type='GLOBAL', constraint_axis=(False, True, False))
+        return {'FINISHED'}
+
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_mirror_global_z(bpy.types.Operator):
+    """Mirror global around Z axis"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mirror.global_z"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Mirror Global Z"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.transform.mirror(orient_type='GLOBAL', constraint_axis=(False, False, True))
+        return {'FINISHED'}
+
+
 class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
     bl_label = "Mirror"
     bl_space_type = 'VIEW_3D'
@@ -468,15 +504,9 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
             col.operator("transform.mirror", text="Interactive Mirror", icon='TRANSFORM_MIRROR')
 
             col.operator_context = 'EXEC_REGION_WIN'
-            props = col.operator("transform.mirror", text="X Global", icon = "MIRROR_X")
-            props.constraint_axis = (True, False, False)
-            props.orient_type = 'GLOBAL'
-            props = col.operator("transform.mirror", text="Y Global", icon = "MIRROR_Y")
-            props.constraint_axis = (False, True, False)
-            props.orient_type = 'GLOBAL'
-            props = col.operator("transform.mirror", text="Z Global", icon = "MIRROR_Z")
-            props.constraint_axis = (False, False, True)
-            props.orient_type = 'GLOBAL'
+            col.operator("mirror.global_x", text="X Global", icon='MIRROR_X')
+            col.operator("mirror.global_y", text="Y Global", icon='MIRROR_Y')
+            col.operator("mirror.global_z", text="Z Global", icon='MIRROR_Z')
 
             if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
                 col.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
@@ -494,16 +524,11 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
                 row.operator("transform.mirror", text="", icon='TRANSFORM_MIRROR')
 
                 row.operator_context = 'EXEC_REGION_WIN'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
-                props.constraint_axis = (True, False, False)
-                props.orient_type = 'GLOBAL'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
-                props.constraint_axis = (False, True, False)
-                props.orient_type = 'GLOBAL'
+                row.operator("mirror.global_x", text="", icon='MIRROR_X')
+                row.operator("mirror.global_y", text="", icon='MIRROR_Y')
+
                 row = col.row(align=True)
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
-                props.constraint_axis = (False, False, True)
-                props.orient_type = 'GLOBAL'
+                row.operator("mirror.global_z", text="", icon='MIRROR_Z')
 
                 if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
                     row.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
@@ -514,16 +539,11 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
                 row.operator("transform.mirror", text="", icon='TRANSFORM_MIRROR')
 
                 row.operator_context = 'EXEC_REGION_WIN'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
-                props.constraint_axis = (True, False, False)
+                row.operator("mirror.global_x", text="", icon='MIRROR_X')
+
                 row = col.row(align=True)
-                props.orient_type = 'GLOBAL'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
-                props.constraint_axis = (False, True, False)
-                props.orient_type = 'GLOBAL'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
-                props.constraint_axis = (False, False, True)
-                props.orient_type = 'GLOBAL'
+                row.operator("mirror.global_y", text="", icon='MIRROR_Y')
+                row.operator("mirror.global_z", text="", icon='MIRROR_Z')
 
                 if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
                     row = col.row(align=True)
@@ -534,18 +554,48 @@ class VIEW3D_PT_objecttab_mirror(toolshelf_calculate, Panel):
                 col.operator("transform.mirror", text="", icon='TRANSFORM_MIRROR')
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                props = col.operator("transform.mirror", text="", icon = "MIRROR_X")
-                props.constraint_axis = (True, False, False)
-                props.orient_type = 'GLOBAL'
-                props = col.operator("transform.mirror", text="", icon = "MIRROR_Y")
-                props.constraint_axis = (False, True, False)
-                props.orient_type = 'GLOBAL'
-                props = col.operator("transform.mirror", text="", icon = "MIRROR_Z")
-                props.constraint_axis = (False, False, True)
-                props.orient_type = 'GLOBAL'
+                col.operator("mirror.global_x", text="", icon='MIRROR_X')
+                col.operator("mirror.global_y", text="", icon='MIRROR_Y')
+                col.operator("mirror.global_z", text="", icon='MIRROR_Z')
 
                 if _context.edit_object and _context.edit_object.type in {'MESH', 'SURFACE'}:
                     col.operator("object.vertex_group_mirror", text="", icon = "MIRROR_VERTEXGROUP")
+
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_mirror_local_x(bpy.types.Operator):
+    """Mirror local around X axis"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mirror.local_x"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Mirror Local X"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.transform.mirror(orient_type='LOCAL', constraint_axis=(True, False, False))
+        return {'FINISHED'}
+
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_mirror_local_y(bpy.types.Operator):
+    """Mirror local around X axis"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mirror.local_y"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Mirror Local X"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.transform.mirror(orient_type='LOCAL', constraint_axis=(False, True, False))
+        return {'FINISHED'}
+
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_mirror_local_z(bpy.types.Operator):
+    """Mirror local around Z axis"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mirror.local_z"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Mirror Local Z"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.transform.mirror(orient_type='LOCAL', constraint_axis=(False, False, True))
+        return {'FINISHED'}
 
 
 class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
@@ -574,15 +624,9 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator_context = 'EXEC_REGION_WIN'
-            props = col.operator("transform.mirror", text="X Global", icon = "MIRROR_X")
-            props.constraint_axis = (True, False, False)
-            props.orient_type = 'LOCAL'
-            props = col.operator("transform.mirror", text="Y Global", icon = "MIRROR_Y")
-            props.constraint_axis = (False, True, False)
-            props.orient_type = 'LOCAL'
-            props = col.operator("transform.mirror", text="Z Global", icon = "MIRROR_Z")
-            props.constraint_axis = (False, False, True)
-            props.orient_type = 'LOCAL'
+            col.operator("mirror.local_x", text="X Local", icon='MIRROR_X')
+            col.operator("mirror.local_y", text="Y Local", icon='MIRROR_Y')
+            col.operator("mirror.local_z", text="Z Local", icon='MIRROR_Z')
 
         # icon buttons
         else:
@@ -595,44 +639,25 @@ class VIEW3D_PT_objecttab_mirror_local(toolshelf_calculate, Panel):
 
                 row = col.row(align=True)
                 row.operator_context = 'EXEC_REGION_WIN'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
-                props.constraint_axis = (True, False, False)
-                props.orient_type = 'LOCAL'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
-                props.constraint_axis = (False, True, False)
-                props.orient_type = 'LOCAL'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
-                props.constraint_axis = (False, False, True)
-                props.orient_type = 'LOCAL'
-
+                row.operator("mirror.local_x", text="", icon='MIRROR_X')
+                row.operator("mirror.local_y", text="", icon='MIRROR_Y')
+                row.operator("mirror.local_z", text="", icon='MIRROR_Z')
 
             elif column_count == 2:
                 row = col.row(align=True)
                 row.operator_context = 'EXEC_REGION_WIN'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_X")
-                props.constraint_axis = (True, False, False)
-                props.orient_type = 'LOCAL'
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Y")
-                props.constraint_axis = (False, True, False)
-                props.orient_type = 'LOCAL'
+                row.operator("mirror.local_x", text="", icon='MIRROR_X')
+                row.operator("mirror.local_y", text="", icon='MIRROR_Y')
+
                 row = col.row(align=True)
-                props = row.operator("transform.mirror", text="", icon = "MIRROR_Z")
-                props.constraint_axis = (False, False, True)
-                props.orient_type = 'LOCAL'
+                row.operator("mirror.local_z", text="", icon='MIRROR_Z')
 
             elif column_count == 1:
 
-
                 col.operator_context = 'EXEC_REGION_WIN'
-                props = col.operator("transform.mirror", text="", icon = "MIRROR_X")
-                props.constraint_axis = (True, False, False)
-                props.orient_type = 'LOCAL'
-                props = col.operator("transform.mirror", text="", icon = "MIRROR_Y")
-                props.constraint_axis = (False, True, False)
-                props.orient_type = 'LOCAL'
-                props = col.operator("transform.mirror", text="", icon = "MIRROR_Z")
-                props.constraint_axis = (False, False, True)
-                props.orient_type = 'LOCAL'
+                col.operator("mirror.local_x", text="", icon='MIRROR_X')
+                col.operator("mirror.local_y", text="", icon='MIRROR_Y')
+                col.operator("mirror.local_z", text="", icon='MIRROR_Z')
 
 
 class VIEW3D_PT_objecttab_clear(toolshelf_calculate, Panel):
@@ -2491,7 +2516,7 @@ class VIEW3D_PT_masktab_mask(toolshelf_calculate, Panel):
                 row = col.row(align=True)
                 row.operator("mask.flood_fill_invert", text="", icon = "INVERT_MASK")
                 row.operator("mask.flood_fill_fill", text="", icon = "FILL_MASK")
-                
+
                 row = col.row(align=True)
                 row.operator("mask.flood_fill_clear", text="", icon = "CLEAR_MASK")
 
@@ -5437,6 +5462,12 @@ classes = (
     MASK_MT_flood_fill_invert,
     MASK_MT_flood_fill_fill,
     MASK_MT_flood_fill_clear,
+    VIEW3D_MT_object_mirror_global_x,
+    VIEW3D_MT_object_mirror_global_y,
+    VIEW3D_MT_object_mirror_global_z,
+    VIEW3D_MT_object_mirror_local_x,
+    VIEW3D_MT_object_mirror_local_y,
+    VIEW3D_MT_object_mirror_local_z,
 
 )
 
