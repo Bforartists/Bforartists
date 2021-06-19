@@ -3868,8 +3868,8 @@ class VIEW3D_MT_pose_slide(Menu):
 
         layout.operator("pose.push_rest", icon = 'PUSH_POSE')
         layout.operator("pose.relax_rest", icon = 'RELAX_POSE')
-        layout.operator("pose.push", icon = 'PUSH_POSE')
-        layout.operator("pose.relax", icon = 'RELAX_POSE')
+        layout.operator("pose.push", icon = 'POSE_FROM_BREAKDOWN')
+        layout.operator("pose.relax", icon = 'POSE_RELAX_TO_BREAKDOWN')
         layout.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE')
 
 
