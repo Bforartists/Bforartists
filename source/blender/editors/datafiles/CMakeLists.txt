@@ -574,8 +574,8 @@ propagate_next
 propagate_previous
 propagate_selected
 select_by_material
-#~ DEF_ICON_BLANK(593)
-#~ DEF_ICON_BLANK(594)
+pose_from_breakdown
+pose_relax_to_breakdown
 #~ DEF_ICON_BLANK(595)
 
 # ------------------------- row 9 --------------------------*/
