@@ -3342,8 +3342,6 @@ static bNodeSocket *make_socket_interface(bNodeTree *ntree,
                                           const char *name)
 {
   bNodeSocketType *stype = nodeSocketTypeFind(idname);
-  int own_index = ntree->cur_index++;
-
   if (stype == nullptr) {
     return nullptr;
   }
@@ -3355,7 +3353,7 @@ static bNodeSocket *make_socket_interface(bNodeTree *ntree,
   sock->type = SOCK_CUSTOM; /* int type undefined by default */
 
   /* assign new unique index */
-  own_index = ntree->cur_index++;
+  const int own_index = ntree->cur_index++;
   /* use the own_index as socket identifier */
   if (in_out == SOCK_IN) {
     BLI_snprintf(sock->identifier, MAX_NAME, "Input_%d", own_index);
@@ -5057,7 +5055,10 @@ static void registerGeometryNodes()
   register_node_type_geo_convex_hull();
   register_node_type_geo_curve_length();
   register_node_type_geo_curve_to_mesh();
+  register_node_type_geo_curve_to_points();
   register_node_type_geo_curve_resample();
+  register_node_type_geo_curve_reverse();
+  register_node_type_geo_curve_subdivide();
   register_node_type_geo_delete_geometry();
   register_node_type_geo_edge_split();
   register_node_type_geo_input_material();
@@ -5082,8 +5083,10 @@ static void registerGeometryNodes()
   register_node_type_geo_point_separate();
   register_node_type_geo_point_translate();
   register_node_type_geo_points_to_volume();
+  register_node_type_geo_raycast();
   register_node_type_geo_sample_texture();
   register_node_type_geo_select_by_material();
+  register_node_type_geo_separate_components();
   register_node_type_geo_subdivide();
   register_node_type_geo_subdivision_surface();
   register_node_type_geo_switch();

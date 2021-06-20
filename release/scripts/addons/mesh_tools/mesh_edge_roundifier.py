@@ -1213,7 +1213,7 @@ class EdgeRoundifier(Operator):
             verticesForDeletion.append(vi)
 
         bmesh.ops.delete(bm, geom=verticesForDeletion, context = 'VERTS')
-        bmesh.update_edit_mesh(mesh, True)
+        bmesh.update_edit_mesh(mesh, loop_triangles=True)
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.mode_set(mode='EDIT')
 

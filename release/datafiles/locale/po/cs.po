@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7372,6 +7372,14 @@ msgid "Asset Library"
 msgstr "Knihovna Grafických položek"
 
 
+msgid "Link"
+msgstr "Připojit"
+
+
+msgid "Append"
+msgstr "Připojit"
+
+
 msgid "2D vector"
 msgstr "2D vektor"
 
@@ -9632,15 +9640,7 @@ msgid "Texture Space Location"
 msgstr "Prostor textury"
 
 
-msgid "Texture space location"
-msgstr "Prostor textury"
-
-
 msgid "Texture Space Size"
-msgstr "Prostor textury"
-
-
-msgid "Texture space size"
 msgstr "Prostor textury"
 
 
@@ -10656,6 +10656,14 @@ msgstr "Prostor textury"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Odstranit označené Objekt(y)"
+
+
+msgid "Texture space location"
+msgstr "Prostor textury"
+
+
+msgid "Texture space size"
+msgstr "Prostor textury"
 
 
 msgid "Texture Mesh"
@@ -14583,10 +14591,6 @@ msgstr "Činitel"
 
 msgid "Material slot in an object"
 msgstr "Přivlastnit"
-
-
-msgid "Link"
-msgstr "Připojit"
 
 
 msgid "Link material to object or the object's data"
@@ -29209,10 +29213,6 @@ msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Vložit zrcadlenou pózu z bufferu"
 
 
-msgid "Percentage"
-msgstr "Procento"
-
-
 msgid "Previous Keyframe"
 msgstr "Předchozí klíč"
 
@@ -30794,10 +30794,6 @@ msgstr "Zarovnat NLA proužky"
 msgctxt "Operator"
 msgid "Add Strip Modifier"
 msgstr "Přidat modifikátor"
-
-
-msgid "Append"
-msgstr "Připojit"
 
 
 msgctxt "Operator"
@@ -36205,6 +36201,10 @@ msgstr "Typ zobrazení faktoru"
 
 msgid "How factor values are displayed"
 msgstr "Jak se zobrazují faktorové hodnoty"
+
+
+msgid "Percentage"
+msgstr "Procento"
 
 
 msgid "Maximized Area"
@@ -47770,10 +47770,6 @@ msgstr "Není implementováno"
 
 msgid "Object not found"
 msgstr "Objekt nebyl nalezen"
-
-
-msgid "Object could not be duplicated"
-msgstr "Objekt nelze duplikovat"
 
 
 msgid "Deleted %u object(s)"

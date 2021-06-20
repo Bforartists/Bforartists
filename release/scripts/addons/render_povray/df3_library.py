@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-################################################################################
+# -----------------------------------------------------------------------------
 #
 # Creation functions
 #     __init__(x=1, y=1, z=1) : default constructor
@@ -42,13 +42,12 @@
 #     exportDF3():
 #     importDF3():
 #
-################################################################################
+# -----------------------------------------------------------------------------
 
 import struct
 import os
 import stat
 import array
-import sys
 
 # -+-+-+- Start df3 Class -+-+-+-
 
@@ -78,7 +77,7 @@ class df3:
             self.voxel[i] = indf3.voxel[i]
         return self
 
-    #### Info Functions
+    # --- Info Functions
 
     def sizeX(self):
         return self.maxX
@@ -90,13 +89,12 @@ class df3:
         return self.maxZ
 
     def size(self):
-        tmp = []
-        tmp.append(self.sizeX())
+        tmp = [self.sizeX()]
         tmp.append(self.sizeY())
         tmp.append(self.sizeZ())
         return tmp
 
-    #### Voxel Access Functions
+    # --- Voxel Access Functions
 
     def get(self, x, y, z):
         return self.voxel[self.__voxa__(x, y, z)]
@@ -124,7 +122,7 @@ class df3:
 
         self.voxel[self.__voxa__(x, y, z)] = val
 
-    #### Scalar Functions
+    # --- Scalar Functions
 
     def mult(self, val):
         for i in range(self.sizeX() * self.sizeY() * self.sizeZ()):
@@ -156,7 +154,7 @@ class df3:
 
         return tmp
 
-    #### Vector Functions
+    # --- Vector Functions
 
     def compare(self, indf3):
         if self.__samesize__(indf3) == 0:
@@ -221,7 +219,7 @@ class df3:
 
         return self
 
-    #### Import/Export Functions
+    # --- Import/Export Functions
 
     def exportDF3(self, file, depth=8, rescale=1):
         x = self.sizeX()
@@ -230,7 +228,9 @@ class df3:
 
         try:
             f = open(file, 'wb')
-        except:
+        except BaseException as e:
+            print(e.__doc__)
+            print('An exception occurred: {}'.format(e))
             print("Could not open " + file + " for write")
             return
 
@@ -253,7 +253,9 @@ class df3:
             f = open(file, 'rb')
             size = os.stat(file)[stat.ST_SIZE]
 
-        except:
+        except BaseException as e:
+            print(e.__doc__)
+            print('An exception occurred: {}'.format(e))
             print("Could not open " + file + " for read")
             return []
 
@@ -272,19 +274,17 @@ class df3:
         elif size == 4 * x * y * z:
             format = 32
 
-        if format == 32:
-            for i in range(x * y * z):
+        for i in range(x * y * z):
+            if format == 32:
                 self.voxel[i] = float(struct.unpack(self.__struct4byte__, f.read(4))[0])
-        elif format == 16:
-            for i in range(x * y * z):
+            elif format == 16:
                 self.voxel[i] = float(struct.unpack(self.__struct2byte__, f.read(2))[0])
-        elif format == 8:
-            for i in range(x * y * z):
+            elif format == 8:
                 self.voxel[i] = float(struct.unpack(self.__struct1byte__, f.read(1))[0])
 
         return self
 
-    #### Local classes not intended for user use
+    # --- Local classes not intended for user use
 
     def __rip__(self, minX, maxX, minY, maxY, minZ, maxZ):
         sizeX = maxX - minX + 1
@@ -366,32 +366,32 @@ class df3:
 
 
 # -=-=-=- End df3 Class -=-=-=-
-##########DEFAULT EXAMPLES
+# --------DEFAULT EXAMPLES
 # if __name__ == '__main__':
 # localX = 80
 # localY = 90
 # localZ = 100
-## Generate an output
+# -- Generate an output
 # temp = df3(localX, localY, localZ)
 
 # for i in range(localX):
-# for j in range(localY):
-# for k in range(localZ):
-# if (i >= (localX/2)):
-# temp.set(i, j, k, 1.0)
+#   for j in range(localY):
+#       for k in range(localZ):
+#           if (i >= (localX/2)):
+#               temp.set(i, j, k, 1.0)
 
 # temp.exportDF3('temp.df3', 16)
-###############################################################################
-## Import
+# -----------------------------------------------------------------------------
+# -- Import
 # temp2 = df3().importDF3('temp.df3')
 # temp2.mult(1/temp2.max())
 
-## Compare
+# -- Compare
 # print(temp2.size())
 
 # if (temp.compare(temp2) == 0): print("DF3's Do Not Match")
 
-###############################################################################
+# -----------------------------------------------------------------------------
 # ChangeLog
 # ---------
 # 08/09/05: 0.20 released
@@ -400,4 +400,4 @@ class df3:
 #    + Convert from 3-d list structure to Array class for data storage
 #    + Add element access, scalar, and vector functions
 # 07/13/05: 0.10 released
-###############################################################################
+# -----------------------------------------------------------------------------

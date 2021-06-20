@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -8677,6 +8677,14 @@ msgid "Library Browser"
 msgstr "Browser Libreria"
 
 
+msgid "Link"
+msgstr "Collegamento"
+
+
+msgid "Append"
+msgstr "Incorpora"
+
+
 msgid "Domain Settings"
 msgstr "Impostazioni Dominio"
 
@@ -11244,16 +11252,8 @@ msgid "Texture Space Location"
 msgstr "Posizione Spazio Texture"
 
 
-msgid "Texture space location"
-msgstr "Posizione dello spazio texture"
-
-
 msgid "Texture Space Size"
 msgstr "Dimensione Spazio Texture"
-
-
-msgid "Texture space size"
-msgstr "Dimensione dello spazio texture"
 
 
 msgid "Twist Method"
@@ -12756,6 +12756,14 @@ msgstr "Spazio Texture Mesh"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Deriva le coordinate della texture da un altro oggetto"
+
+
+msgid "Texture space location"
+msgstr "Posizione dello spazio texture"
+
+
+msgid "Texture space size"
+msgstr "Dimensione dello spazio texture"
 
 
 msgid "Texture Mesh"
@@ -18329,10 +18337,6 @@ msgstr "Fattore Miscela"
 
 msgid "Material slot in an object"
 msgstr "Slot del materiale in un oggetto"
-
-
-msgid "Link"
-msgstr "Collegamento"
 
 
 msgid "Link material to object or the object's data"
@@ -24047,6 +24051,10 @@ msgstr "Asse Z"
 
 msgid "Original"
 msgstr "Originale"
+
+
+msgid "Convex Hull"
+msgstr "Guscio Convesso"
 
 
 msgid "Fill Type"
@@ -34084,10 +34092,6 @@ msgid "Add named object"
 msgstr "Aggiunge un oggetto con nome"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Duplica l'oggetto ma non i dati dell'oggetto, collegandoli hai dati originali"
-
-
 msgid "Object name to add"
 msgstr "Nome dell'oggetto da aggiungere"
 
@@ -34368,6 +34372,10 @@ msgstr "Duplica Oggetti"
 
 msgid "Duplicate selected objects"
 msgstr "Duplica gli oggetti selezionati"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Duplica l'oggetto ma non i dati dell'oggetto, collegandoli hai dati originali"
 
 
 msgid "Duplicate selected objects and move them"
@@ -37184,10 +37192,6 @@ msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Numero del fotogramma del keyframe immediatamente dopo al fotogramma corrente."
 
 
-msgid "Percentage"
-msgstr "Percentuale"
-
-
 msgid "Previous Keyframe"
 msgstr "Fotogramma Chiave Precedente"
 
@@ -38112,10 +38116,6 @@ msgstr "Cambia le forme di collisione per gli Oggetti Corpo Rigido selezionati"
 
 msgid "Rigid Body Shape"
 msgstr "Forma Corpo Rigido"
-
-
-msgid "Convex Hull"
-msgstr "Guscio Convesso"
 
 
 msgctxt "Operator"
@@ -39326,10 +39326,6 @@ msgstr "Mappa Toni"
 msgctxt "Operator"
 msgid "Copy to Selected Strips"
 msgstr "Copia agli Spezzoni Selezionati"
-
-
-msgid "Append"
-msgstr "Incorpora"
 
 
 msgctxt "Operator"
@@ -45737,6 +45733,10 @@ msgstr "Quadrato  (HV + S)"
 
 msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Un quadrato che mostra Tonalità/Valore, con cursore Saturazione"
+
+
+msgid "Percentage"
+msgstr "Percentuale"
 
 
 msgid "New Window"
@@ -58830,10 +58830,6 @@ msgid "Object not found"
 msgstr "Oggetto non trovato"
 
 
-msgid "Object could not be duplicated"
-msgstr "L'oggetto non può essere duplicato"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Questi dati non possono essere riuniti in modalità modifica"
 
@@ -61325,14 +61321,6 @@ msgid "Transmission Depth"
 msgstr "Profondità Trasmissione"
 
 
-msgid "Color1"
-msgstr "Colore 1"
-
-
-msgid "Color2"
-msgstr "Colore 2"
-
-
 msgid "Color Fac"
 msgstr "Fattore Colore"
 
@@ -61347,6 +61335,14 @@ msgstr "Sfumatura Texture"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Colore 1"
+
+
+msgid "Color2"
+msgstr "Colore 2"
 
 
 msgid "Mortar"

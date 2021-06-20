@@ -136,7 +136,7 @@ brush_icons = {}
 
 def create_icons():
     global brush_icons
-    icons_directory = bpy.utils.system_resource('DATAFILES', "icons")
+    icons_directory = bpy.utils.system_resource('DATAFILES', path="icons")
     brushes = ["crease", "blob", "smooth", "draw", "clay", "clay_strips", "inflate", "grab",
         "nudge", "thumb", "snake_hook", "rotate", "flatten", "scrape", "fill", "pinch",
         "layer", "mask"]

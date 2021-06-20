@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -8798,6 +8798,14 @@ msgid "Library Browser"
 msgstr "藏庫瀏覽器"
 
 
+msgid "Link"
+msgstr "連結"
+
+
+msgid "Append"
+msgstr "追加"
+
+
 msgid "Domain Settings"
 msgstr "領域設定"
 
@@ -11689,15 +11697,7 @@ msgid "Texture Space Location"
 msgstr "紋理空間位置"
 
 
-msgid "Texture space location"
-msgstr "紋理空間位置"
-
-
 msgid "Texture Space Size"
-msgstr "紋理空間大小"
-
-
-msgid "Texture space size"
 msgstr "紋理空間大小"
 
 
@@ -13393,6 +13393,14 @@ msgstr "紋理空間網格"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "從另一個網格衍生紋理座標"
+
+
+msgid "Texture space location"
+msgstr "紋理空間位置"
+
+
+msgid "Texture space size"
+msgstr "紋理空間大小"
 
 
 msgid "Texture Mesh"
@@ -18375,10 +18383,6 @@ msgstr "紋理縮放係數"
 
 msgid "Material slot in an object"
 msgstr "物體中的材質槽"
-
-
-msgid "Link"
-msgstr "連結"
 
 
 msgid "Link material to object or the object's data"
@@ -24536,6 +24540,10 @@ msgstr "Z 軸"
 
 msgid "Original"
 msgstr "原始"
+
+
+msgid "Convex Hull"
+msgstr "凸殼"
 
 
 msgid "Fill Type"
@@ -34356,10 +34364,6 @@ msgid "Add named object"
 msgstr "添加已命名的物體"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "製作物體複本但不包括資料，而是連結至原始資料"
-
-
 msgid "Object name to add"
 msgstr "要添加的物體名稱"
 
@@ -34564,6 +34568,10 @@ msgstr "製作物體複本"
 
 msgid "Duplicate selected objects"
 msgstr "為所選物體製作複本"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "製作物體複本但不包括資料，而是連結至原始資料"
 
 
 msgid "Duplicate selected objects and move them"
@@ -37126,10 +37134,6 @@ msgid "Frame number of keyframe immediately after the current frame"
 msgstr "與目前框幀緊鄰的後一個鍵幀幀號"
 
 
-msgid "Percentage"
-msgstr "百分比"
-
-
 msgid "Previous Keyframe"
 msgstr "上一鍵幀"
 
@@ -38166,10 +38170,6 @@ msgstr "剛體外形"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "類方塊外形 (例如立方)，也包含平面 (例如地面)"
-
-
-msgid "Convex Hull"
-msgstr "凸殼"
 
 
 msgctxt "Operator"
@@ -39506,10 +39506,6 @@ msgstr "添加片段修改器"
 
 msgid "Add a modifier to the strip"
 msgstr "添加修改器到片段"
-
-
-msgid "Append"
-msgstr "追加"
 
 
 msgctxt "Operator"
@@ -45698,6 +45694,10 @@ msgstr "係數值的顯示方式"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "係數以 0 至 1 之間的值顯示"
+
+
+msgid "Percentage"
+msgstr "百分比"
 
 
 msgid "Display factors as percentages"
@@ -57860,10 +57860,6 @@ msgid "Object not found"
 msgstr "找不到物體"
 
 
-msgid "Object could not be duplicated"
-msgstr "無法製作物體複本"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "此資料尚未支援在編輯模式下結合"
 
@@ -60554,14 +60550,6 @@ msgid "Transmission Depth"
 msgstr "穿透深度"
 
 
-msgid "Color1"
-msgstr "色彩1"
-
-
-msgid "Color2"
-msgstr "色彩2"
-
-
 msgid "Color Fac"
 msgstr "色彩係數"
 
@@ -60576,6 +60564,14 @@ msgstr "紋理模糊"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "色彩1"
+
+
+msgid "Color2"
+msgstr "色彩2"
 
 
 msgid "Mortar"

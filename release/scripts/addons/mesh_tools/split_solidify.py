@@ -101,7 +101,7 @@ def solidify_split(self, list_0):
         k.select = False
     bpy.ops.mesh.normals_make_consistent(inside=False)
 
-    bmesh.update_edit_mesh(self.me, True)
+    bmesh.update_edit_mesh(self.me, loop_triangles=True)
 
 
 class MESH_OT_split_solidify(Operator):

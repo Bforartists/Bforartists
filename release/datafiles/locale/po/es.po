@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12188,6 +12188,14 @@ msgid "Asset Library"
 msgstr "Biblioteca de recursos"
 
 
+msgid "Link"
+msgstr "Vincular"
+
+
+msgid "Append"
+msgstr "Anexar"
+
+
 msgid "Float2 Attribute Value"
 msgstr "Valor de atributo decimal 2D"
 
@@ -19757,16 +19765,8 @@ msgid "Texture Space Location"
 msgstr "Posición"
 
 
-msgid "Texture space location"
-msgstr "Posición del espacio de texturizado"
-
-
 msgid "Texture Space Size"
 msgstr "Tamaño"
-
-
-msgid "Texture space size"
-msgstr "Tamaño del espacio de texturizado"
 
 
 msgid "Twist Method"
@@ -22549,6 +22549,14 @@ msgstr "Malla para espacio texturizado"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Deriva las coordenadas de texturizado desde otra malla"
+
+
+msgid "Texture space location"
+msgstr "Posición del espacio de texturizado"
+
+
+msgid "Texture space size"
+msgstr "Tamaño del espacio de texturizado"
 
 
 msgid "Texture Mesh"
@@ -30973,10 +30981,6 @@ msgstr "Material de arte lineal"
 
 msgid "Material slot in an object"
 msgstr "Contenedor de material de un objeto"
-
-
-msgid "Link"
-msgstr "Vincular"
 
 
 msgid "Link material to object or the object's data"
@@ -40995,6 +40999,10 @@ msgstr "Producir la geometría relativa al desplazamiento de la colección"
 
 msgid "Bring the input collection geometry into the modified object, maintaining the relative position between the objects in the scene"
 msgstr "Trae la geometría de la colección de entrada al objeto modificado, manteniendo la posición relativa entre los objetos en la escena"
+
+
+msgid "Convex Hull"
+msgstr "Envolvente convexa"
 
 
 msgid "Geometry Custom Group"
@@ -57871,10 +57879,6 @@ msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Coordenada Y (en espacio de pantalla) en donde ubicar el nuevo objeto"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Duplicar el objeto pero no sus datos, vinculándolo a los datos originales"
-
-
 msgid "Object name to add"
 msgstr "Nombre del objeto a agregar"
 
@@ -58338,6 +58342,10 @@ msgstr "Duplicar"
 
 msgid "Duplicate selected objects"
 msgstr "Duplica los objetos seleccionados"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Duplicar el objeto pero no sus datos, vinculándolo a los datos originales"
 
 
 msgid "Duplicate selected objects and move them"
@@ -62998,20 +63006,16 @@ msgid "Custom properties"
 msgstr "Propiedades personalizadas"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Factor de influencia para definir cuál fotograma clave tendrá más predominancia"
+
+
 msgid "Next Keyframe"
 msgstr "F. clave siguiente"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Número de fotograma del fotograma clave inmediatamente posterior al fotograma actual"
-
-
-msgid "Percentage"
-msgstr "Porcentaje"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Factor de influencia para definir cuál fotograma clave tendrá más predominancia"
 
 
 msgid "Previous Keyframe"
@@ -64223,10 +64227,6 @@ msgstr "Forma del cuerpo rígido"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "Forma tipo caja (p.ej: cubo), incluyendo planos (p.ej: para el suelo)"
-
-
-msgid "Convex Hull"
-msgstr "Envolvente convexa"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -67056,10 +67056,6 @@ msgstr "Copia los modificadores del clip activo a los clips seleccionados"
 
 msgid "Replace modifiers in destination"
 msgstr "Reemplazar los modificadores es el destino"
-
-
-msgid "Append"
-msgstr "Anexar"
 
 
 msgid "Append active modifiers to selected strips"
@@ -78125,6 +78121,10 @@ msgstr "Cómo se muestran los valores de factores"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Mostrar factores como valores entre 0 y 1"
+
+
+msgid "Percentage"
+msgstr "Porcentaje"
 
 
 msgid "Display factors as percentages"
@@ -104508,10 +104508,6 @@ msgid "Object not found"
 msgstr "Objeto no encontrado"
 
 
-msgid "Object could not be duplicated"
-msgstr "No fue posible duplicar el objeto"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Estos datos no soportan unión en modo edición"
 
@@ -110069,14 +110065,6 @@ msgid "Transmission Depth"
 msgstr "Profundidad de transmisión"
 
 
-msgid "Color1"
-msgstr "Color 1"
-
-
-msgid "Color2"
-msgstr "Color 2"
-
-
 msgid "Color Fac"
 msgstr "Fact de color"
 
@@ -110091,6 +110079,14 @@ msgstr "Desenfoque de textura"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Color 1"
+
+
+msgid "Color2"
+msgstr "Color 2"
 
 
 msgid "Mortar"

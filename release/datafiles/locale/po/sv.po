@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4003,6 +4003,10 @@ msgid "Show text files"
 msgstr "Flytta Till Lager"
 
 
+msgid "Link"
+msgstr "Länka"
+
+
 msgid "Domain Settings"
 msgstr "Verktyg"
 
@@ -5323,15 +5327,7 @@ msgid "Texture Space Location"
 msgstr "Text"
 
 
-msgid "Texture space location"
-msgstr "Text"
-
-
 msgid "Texture Space Size"
-msgstr "Text"
-
-
-msgid "Texture space size"
 msgstr "Text"
 
 
@@ -5997,6 +5993,14 @@ msgstr "Text"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Markera Länkad"
+
+
+msgid "Texture space location"
+msgstr "Text"
+
+
+msgid "Texture space size"
+msgstr "Text"
 
 
 msgid "Texture Mesh"
@@ -8439,10 +8443,6 @@ msgstr "Faktor"
 
 msgid "Material slot in an object"
 msgstr "Spara som"
-
-
-msgid "Link"
-msgstr "Länka"
 
 
 msgid "Link material to object or the object's data"
@@ -11585,6 +11585,10 @@ msgstr "Zooma In"
 
 msgid "Original"
 msgstr "Rensa Ursprung"
+
+
+msgid "Convex Hull"
+msgstr "Konvext hölje"
 
 
 msgid "Fill Type"
@@ -20107,10 +20111,6 @@ msgstr "Rendera"
 
 msgid "Rigid Body Shape"
 msgstr "Rigid kropp"
-
-
-msgid "Convex Hull"
-msgstr "Konvext hölje"
 
 
 msgctxt "Operator"
