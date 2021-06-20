@@ -72,7 +72,9 @@ def locate_docpath():
     return ""
 
 
-################################################################################
+# ---------------------------------------------------------------- #
+
+
 class TextButtonsPanel:
     """Use this class to define buttons from the side tab of
     text window."""
@@ -89,13 +91,13 @@ class TextButtonsPanel:
         return text and (rd.engine in cls.COMPAT_ENGINES)
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Text Povray Settings
-###############################################################################
+# ---------------------------------------------------------------- #
 
 
 class TEXT_OT_POV_insert(Operator):
-    """Use this class to create blender text editor operator to insert pov snippets like other pov IDEs"""
+    """Create blender text editor operator to insert pov snippets like other pov IDEs"""
 
     bl_idname = "text.povray_insert"
     bl_label = "Insert"
@@ -125,7 +127,7 @@ def validinsert(ext):
 
 
 class TEXT_MT_POV_insert(Menu):
-    """Use this class to create a menu launcher in text editor for the TEXT_OT_POV_insert operator ."""
+    """Create a menu launcher in text editor for the TEXT_OT_POV_insert operator ."""
 
     bl_label = "Insert"
     bl_idname = "TEXT_MT_POV_insert"
@@ -197,7 +199,7 @@ class TEXT_PT_POV_custom_code(TextButtonsPanel, Panel):
                 layout.label(text="replacement fields")
 
 
-###############################################
+# ---------------------------------------------------------------- #
 # Text editor templates from header menu
 
 
@@ -220,8 +222,10 @@ def menu_func_templates(self, context):
     self.layout.menu("TEXT_MT_POV_templates")
 
 
-###############################################
+# ---------------------------------------------------------------- #
 # POV Import menu
+
+
 class VIEW_MT_POV_import(Menu):
     """Use this class for the import menu."""
 
@@ -251,7 +255,6 @@ classes = (
 
 
 def register():
-
     for cls in classes:
         register_class(cls)
 
@@ -260,7 +263,6 @@ def register():
 
 
 def unregister():
-
     bpy.types.TEXT_MT_templates.remove(menu_func_templates)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
 

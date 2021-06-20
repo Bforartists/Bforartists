@@ -155,7 +155,7 @@ class POVRAY_OT_lathe_add(Operator):
 
 
 def pov_superellipsoid_define(context, op, ob):
-    """Create the proxy mesh of a POV superellipsoid using the pov_superellipsoid_define() function."""
+    """Create the proxy mesh of a POV superellipsoid using pov_superellipsoid_define()."""
 
     if op:
         mesh = None
@@ -276,7 +276,7 @@ def pov_superellipsoid_define(context, op, ob):
 
 
 class POVRAY_OT_superellipsoid_add(Operator):
-    """Add the representation of POV superellipsoid using the pov_superellipsoid_define() function."""
+    """Add the representation of POV superellipsoid using the pov_superellipsoid_define()."""
 
     bl_idname = "pov.addsuperellipsoid"
     bl_label = "Add SuperEllipsoid"
@@ -435,7 +435,7 @@ def supertoroid(R, r, u, v, n1, n2):
 
 
 def pov_supertorus_define(context, op, ob):
-    """Pick POV supertorus properties either from operator (object creation/import) or data updating """
+    """Get POV supertorus properties from operator (object creation/import) or data update."""
     if op:
         mesh = None
         st_R = op.st_R
@@ -572,7 +572,7 @@ class POVRAY_OT_supertorus_update(Operator):
         return {'FINISHED'}
 
 
-#########################################################################################################
+# -----------------------------------------------------------------------------
 class POVRAY_OT_loft_add(Operator):
     """Create the representation of POV loft using Blender curves."""
 
@@ -780,7 +780,7 @@ def pov_cylinder_define(context, op, ob, radius, loc, loc_cap):
     bpy.ops.mesh.delete(type='VERT')
     bpy.ops.mesh.primitive_cylinder_add(
         radius=radius, depth=depth, location=loc, rotation=roteuler, end_fill_type='NGON'
-    )  #'NOTHING'
+    )  # 'NOTHING'
     bpy.ops.transform.translate(value=trans)
 
     bpy.ops.mesh.hide(unselected=False)
@@ -873,7 +873,7 @@ class POVRAY_OT_cylinder_update(Operator):
         return {'FINISHED'}
 
 
-################################SPHERE##########################################
+# ----------------------------------- SPHERE---------------------------------- #
 def pov_sphere_define(context, op, ob, loc):
     """create the representation of POV sphere using a Blender icosphere.
 
@@ -960,8 +960,8 @@ class POVRAY_OT_sphere_add(Operator):
         return {'FINISHED'}
 
     # def execute(self,context):
-    ## layers = 20*[False]
-    ## layers[0] = True
+    #  layers = 20*[False]
+    #  layers[0] = True
 
     # bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=ob.pov.sphere_radius)
     # ob = context.object
@@ -1001,7 +1001,7 @@ class POVRAY_OT_sphere_update(Operator):
         return {'FINISHED'}
 
 
-####################################CONE#######################################
+# ----------------------------------- CONE ---------------------------------- #
 def pov_cone_define(context, op, ob):
     """Add the representation of POV cone using pov_define_mesh() function.
 
@@ -1144,7 +1144,7 @@ class POVRAY_OT_cone_update(Operator):
         return {'FINISHED'}
 
 
-########################################ISOSURFACES##################################
+# ----------------------------------- ISOSURFACES ----------------------------------- #
 
 
 class POVRAY_OT_isosurface_box_add(Operator):
@@ -1350,7 +1350,7 @@ class POVRAY_OT_height_field_add(bpy.types.Operator, ImportHelper):
         ob.name = ob.data.name = '%s' % im_name
         ob.data.materials.append(mat)
         bpy.ops.object.mode_set(mode="EDIT")
-        # bpy.ops.mesh.noise(factor=1) # TODO replace by a displace modifier as noise deprecated in 2.8
+        # bpy.ops.mesh.noise(factor=1) # TODO replace by displace modifier, noise deprecated in 2.8
         bpy.ops.object.mode_set(mode="OBJECT")
 
         # needs a loop to select by index?
@@ -1368,7 +1368,7 @@ class POVRAY_OT_height_field_add(bpy.types.Operator, ImportHelper):
         return {'FINISHED'}
 
 
-############################TORUS############################################
+# ----------------------------------- TORUS ----------------------------------- #
 def pov_torus_define(context, op, ob):
     """Add the representation of POV torus using just a Blender torus.
 
@@ -1477,7 +1477,7 @@ class POVRAY_OT_torus_update(Operator):
         return {'FINISHED'}
 
 
-###################################################################################
+# -----------------------------------------------------------------------------
 
 
 class POVRAY_OT_prism_add(Operator):
@@ -1526,7 +1526,7 @@ class POVRAY_OT_prism_add(Operator):
         return {'FINISHED'}
 
 
-##############################PARAMETRIC######################################
+# ----------------------------------- PARAMETRIC ----------------------------------- #
 def pov_parametric_define(context, op, ob):
     """Add the representation of POV parametric surfaces by math surface from add mesh extra objects addon.
 
@@ -1670,7 +1670,7 @@ class POVRAY_OT_parametric_update(Operator):
         return {'FINISHED'}
 
 
-#######################################################################
+# -----------------------------------------------------------------------------
 
 
 class POVRAY_OT_shape_polygon_to_circle_add(Operator):
@@ -1769,5 +1769,5 @@ def register():
 
 
 def unregister():
-    for cls in classes:
+    for cls in reversed(classes):
         unregister_class(cls)

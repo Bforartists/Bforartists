@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -8514,10 +8514,6 @@ msgid "Object not found"
 msgstr "Obiekt nie odnaleziony"
 
 
-msgid "Object could not be duplicated"
-msgstr "Obiekt nie mógł być zduplikowany"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Te dane nie obsługują łączenia w trybie edycji"
 
@@ -11522,14 +11518,6 @@ msgid "Transparent Depth"
 msgstr "Głębia przezroczystości"
 
 
-msgid "Color1"
-msgstr "Kolor1"
-
-
-msgid "Color2"
-msgstr "Kolor2"
-
-
 msgid "Color Fac"
 msgstr "Współczynnik koloru"
 
@@ -11544,6 +11532,14 @@ msgstr "Rozmycie tekstury"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Kolor1"
+
+
+msgid "Color2"
+msgstr "Kolor2"
 
 
 msgid "Mortar"

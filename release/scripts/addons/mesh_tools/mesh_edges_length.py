@@ -310,7 +310,7 @@ class LengthSet(Operator):
                             '\n edge.verts[1].co' + str(verts[1]) +
                             '\n vector' + str(vector) + '\n v1 > v0:' + str((verts[1] >= verts[0]))
                             )
-            bmesh.update_edit_mesh(obj.data, True)
+            bmesh.update_edit_mesh(obj.data, loop_triangles=True)
 
         return {'FINISHED'}
 

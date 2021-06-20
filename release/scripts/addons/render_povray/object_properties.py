@@ -32,9 +32,9 @@ from bpy.props import (
 )
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Object POV properties.
-###############################################################################
+# ---------------------------------------------------------------- #
 
 
 class RenderPovSettingsObject(PropertyGroup):
@@ -84,7 +84,7 @@ class RenderPovSettingsObject(PropertyGroup):
         default=1.00,
     )
 
-    ##################################CustomPOV Code############################
+    # ----------------------------------- CustomPOV Code ----------------------------------- #
     # Only DUMMIES below for now:
     replacement_text: StringProperty(
         name="Declared name:",
@@ -93,7 +93,7 @@ class RenderPovSettingsObject(PropertyGroup):
         default="",
     )
 
-    #############POV specific object properties.############################
+    # -------- POV specific object properties. -------- #
     object_as: StringProperty(maxlen=1024)
 
     imported_loc: FloatVectorProperty(
@@ -200,9 +200,9 @@ class RenderPovSettingsObject(PropertyGroup):
 
     max_trace: IntProperty(name="Max Trace", min=1, max=100, default=1)
 
-    ###########Cylinder
+    # -------- Cylinder
     def prop_update_cylinder(self, context):
-        """Update POV cylinder primitive parameters not only at creation but anytime they are changed in UI."""
+        """Update POV cylinder primitive parameters at creation and anytime they change in UI."""
         if bpy.ops.pov.cylinder_update.poll():
             bpy.ops.pov.cylinder_update()
 
@@ -213,7 +213,7 @@ class RenderPovSettingsObject(PropertyGroup):
     cylinder_location_cap: FloatVectorProperty(
         name="Cylinder Cap Location",
         subtype="TRANSLATION",
-        description="The position of the 'other' end of the cylinder (relative to object location)",
+        description="Position of the 'other' end of the cylinder (relative to object location)",
         default=(0.0, 0.0, 2.0),
         update=prop_update_cylinder,
     )
@@ -226,10 +226,10 @@ class RenderPovSettingsObject(PropertyGroup):
         name="Imported Pov location", precision=6, default=(0.0, 0.0, 2.0)
     )
 
-    ###########Sphere
+    # -------- Sphere
     def prop_update_sphere(self, context):
 
-        """Update POV sphere primitive parameters not only at creation but anytime they are changed in UI."""
+        """Update POV sphere primitive parameters at creation and anytime they change in UI."""
 
         bpy.ops.pov.sphere_update()
 
@@ -237,10 +237,10 @@ class RenderPovSettingsObject(PropertyGroup):
         name="Sphere radius", min=0.00, max=10.0, default=0.5, update=prop_update_sphere
     )
 
-    ###########Cone
+    # -------- Cone
     def prop_update_cone(self, context):
 
-        """Update POV cone primitive parameters not only at creation but anytime they are changed in UI."""
+        """Update POV cone primitive parameters at creation and anytime they change in UI."""
 
         bpy.ops.pov.cone_update()
 
@@ -284,10 +284,10 @@ class RenderPovSettingsObject(PropertyGroup):
 
     cone_cap_z: FloatProperty()
 
-    ###########Parametric
+    # -------- Parametric
     def prop_update_parametric(self, context):
 
-        """Update POV parametric surface primitive parameters not only at creation but anytime they are changed in UI."""
+        """Update POV parametric surface primitive settings at creation and on any UI change."""
 
         bpy.ops.pov.parametric_update()
 
@@ -311,11 +311,11 @@ class RenderPovSettingsObject(PropertyGroup):
         maxlen=1024, default="sin(v)*(1+cos(u))*sin(v/8)", update=prop_update_parametric
     )
 
-    ###########Torus
+    # -------- Torus
 
     def prop_update_torus(self, context):
 
-        """Update POV torus primitive parameters not only at creation but anytime they are changed in UI."""
+        """Update POV torus primitive parameters at creation and anytime they change in UI."""
 
         bpy.ops.pov.torus_update()
 
@@ -355,7 +355,7 @@ class RenderPovSettingsObject(PropertyGroup):
         update=prop_update_torus,
     )
 
-    ###########Rainbow
+    # -------- Rainbow
     arc_angle: FloatProperty(
         name="Arc angle",
         description="The angle of the raynbow arc in degrees",
@@ -372,7 +372,7 @@ class RenderPovSettingsObject(PropertyGroup):
         max=360,
     )
 
-    ###########HeightFields
+    # -------- HeightFields
 
     quality: IntProperty(name="Quality", description="", default=100, min=1, max=100)
 
@@ -390,10 +390,10 @@ class RenderPovSettingsObject(PropertyGroup):
 
     hf_hierarchy: BoolProperty(name="Hierarchy", description="Height field hierarchy", default=True)
 
-    ##############Superellipsoid
+    # -------- Superellipsoid
     def prop_update_superellipsoid(self, context):
 
-        """Update POV superellipsoid primitive parameters not only at creation but anytime they are changed in UI."""
+        """Update POV superellipsoid primitive settings at creation and on any UI change."""
 
         bpy.ops.pov.superellipsoid_update()
 
@@ -445,7 +445,7 @@ class RenderPovSettingsObject(PropertyGroup):
         update=prop_update_superellipsoid,
     )
 
-    #############Used for loft but also Superellipsoid, etc.
+    # -------- Used for loft but also Superellipsoid, etc.
     curveshape: EnumProperty(
         name="Povray Shape Type",
         items=(
@@ -460,10 +460,10 @@ class RenderPovSettingsObject(PropertyGroup):
         default="sphere_sweep",
     )
 
-    #############Supertorus
+    # -------- Supertorus
     def prop_update_supertorus(self, context):
 
-        """Update POV supertorus primitive parameters not only at creation but anytime they are changed in UI."""
+        """Update POV supertorus primitive parameters not only at creation and on any UI change."""
 
         bpy.ops.pov.supertorus_update()
 
@@ -581,7 +581,7 @@ class RenderPovSettingsObject(PropertyGroup):
         name="", description="", default=False, options={"HIDDEN"}, update=prop_update_supertorus
     )
 
-    ########################Loft
+    # -------- Loft
     loft_n: IntProperty(
         name="Segments", description="Vertical segments", default=16, min=3, max=720
     )
@@ -610,17 +610,17 @@ class RenderPovSettingsObject(PropertyGroup):
         max=10.0,
     )
 
-    ###################Prism
+    # -------- Prism
     prism_n: IntProperty(name="Sides", description="Number of sides", default=5, min=3, max=720)
 
     prism_r: FloatProperty(name="Radius", description="Radius", default=1.0)
 
-    ##################Isosurface
+    # -------- Isosurface
     iso_function_text: StringProperty(
         name="Function Text", maxlen=1024
     )  # ,update=iso_props_update_callback)
 
-    ##################PolygonToCircle
+    # -------- PolygonToCircle
     polytocircle_resolution: IntProperty(
         name="Resolution", description="", default=3, min=0, max=256
     )
@@ -631,9 +631,9 @@ class RenderPovSettingsObject(PropertyGroup):
 
     polytocircle_circleR: FloatProperty(name="Circle Radius", description="", default=1.0)
 
-    ###############################################################################
+    # ---------------------------------------------------------------- #
     # Modifiers POV properties.
-    ###############################################################################
+    # ---------------------------------------------------------------- #
     # class RenderPovSettingsModifier(PropertyGroup):
     boolean_mod: EnumProperty(
         name="Operation",
@@ -646,7 +646,7 @@ class RenderPovSettingsObject(PropertyGroup):
         default="BMESH",
     )
 
-    #################Avogadro
+    # -------- Avogadro
     # filename_ext = ".png"
 
     # filter_glob = StringProperty(

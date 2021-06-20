@@ -231,9 +231,7 @@ class MaterialSetManager():
     def get_filename(self, object_type):
 
         target_path = os.path.join("presets", "archipack_materials")
-        target_path = bpy.utils.user_resource('SCRIPTS',
-                                                target_path,
-                                                create=True)
+        target_path = bpy.utils.user_resource('SCRIPTS', path=target_path, create=True)
         return os.path.join(target_path, object_type) + '.txt'
 
     def cleanup(self):

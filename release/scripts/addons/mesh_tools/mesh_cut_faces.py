@@ -23,7 +23,7 @@ def bmesh_release(bm, object):
     mesh = object.data
     bm.select_flush_mode()
     if object.mode == 'EDIT':
-        bmesh.update_edit_mesh(mesh, True)
+        bmesh.update_edit_mesh(mesh, loop_triangles=True)
     else:
         bm.to_mesh(mesh)
         bm.free()

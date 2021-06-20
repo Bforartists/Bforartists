@@ -28,7 +28,7 @@ except Exception:
 #    global dxfColors
 #    if dxfColors is None:
 #        from dxfColorMap import color_map
-#        dxfColors = [(tuple(color),idx) for idx, color in color_map.iteritems()]
+#        dxfColors = [(tuple(color),idx) for idx, color in color_map.items()]
 #        dxfColors.sort()
 #    entry = (tuple(rgbcolor), -1)
 #    dxfColors.append(entry)

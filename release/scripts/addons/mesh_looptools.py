@@ -23,7 +23,7 @@
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch, Vladimir Spivak (cwolf3d)",
-    "version": (4, 7, 6),
+    "version": (4, 7, 7),
     "blender": (2, 80, 0),
     "location": "View3D > Sidebar > Edit Tab / Edit Mode Context Menu",
     "warning": "",
@@ -3419,22 +3419,18 @@ class Bridge(Operator):
             # create vertices
             if vertices:
                 bridge_create_vertices(bm, vertices)
+            # delete internal faces
+            if self.remove_faces and old_selected_faces:
+                bridge_remove_internal_faces(bm, old_selected_faces)
             # create faces
             if faces:
                 new_faces = bridge_create_faces(object, bm, faces, self.twist)
-                old_selected_faces = [
-                    i for i, face in enumerate(bm.faces) if face.index in old_selected_faces
-                    ]  # updating list
                 bridge_select_new_faces(new_faces, smooth)
             # edge-data could have changed, can't use cache next run
             if faces and not vertices:
                 cache_delete("Bridge")
-            # delete internal faces
-            if self.remove_faces and old_selected_faces:
-                bridge_remove_internal_faces(bm, old_selected_faces)
             # make sure normals are facing outside
-            bmesh.update_edit_mesh(object.data, loop_triangles=False,
-                destructive=True)
+            bmesh.update_edit_mesh(object.data, loop_triangles=False, destructive=True)
             bpy.ops.mesh.normals_make_consistent()
 
         # cleaning up

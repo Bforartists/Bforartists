@@ -45,8 +45,8 @@ from bl_ui import properties_data_mesh
 properties_data_mesh.DATA_PT_custom_props_mesh.COMPAT_ENGINES.add('POVRAY_RENDER')
 properties_data_mesh.DATA_PT_context_mesh.COMPAT_ENGINES.add('POVRAY_RENDER')
 
-## make some native panels contextual to some object variable
-## by recreating custom panels inheriting their properties
+# make some native panels contextual to some object variable
+# by recreating custom panels inheriting their properties
 
 
 from .scripting_gui import VIEW_MT_POV_import
@@ -59,7 +59,7 @@ class ModifierButtonsPanel:
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "modifier"
-    # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     @classmethod
     def poll(cls, context):
@@ -75,7 +75,7 @@ class ObjectButtonsPanel:
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "object"
-    # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
 
     @classmethod
     def poll(cls, context):
@@ -107,7 +107,7 @@ class PovDataButtonsPanel(properties_data_mesh.MeshButtonsPanel):
 
     @classmethod
     def poll(cls, context):
-        engine = context.scene.render.engine
+        # engine = context.scene.render.engine # XXX Unused
         obj = context.object
         # We use our parent class poll func too, avoids to re-define too much things...
         return (
@@ -185,17 +185,16 @@ class MODIFIERS_PT_POV_modifiers(ModifierButtonsPanel, Panel):
         # Find Boolean Modifiers for displaying CSG option
         onceCSG = 0
         for mod in ob.modifiers:
-            if onceCSG == 0:
-                if mod:
-                    if mod.type == 'BOOLEAN':
-                        col.prop(ob.pov, "boolean_mod")
-                        onceCSG = 1
+            if onceCSG == 0 and mod:
+                if mod.type == 'BOOLEAN':
+                    col.prop(ob.pov, "boolean_mod")
+                    onceCSG = 1
 
-                    if ob.pov.boolean_mod == "POV":
-                        split = layout.split()
-                        col = layout.column()
-                        # Inside Vector for CSG
-                        col.prop(ob.pov, "inside_vector")
+                if ob.pov.boolean_mod == "POV":
+                    # split = layout.split() # better ?
+                    col = layout.column()
+                    # Inside Vector for CSG
+                    col.prop(ob.pov, "inside_vector")
 
 
 class OBJECT_PT_POV_obj_parameters(ObjectButtonsPanel, Panel):
@@ -256,6 +255,7 @@ class OBJECT_PT_POV_obj_sphere(PovDataButtonsPanel, Panel):
     bl_label = "POV Sphere"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -295,6 +295,7 @@ class OBJECT_PT_POV_obj_cylinder(PovDataButtonsPanel, Panel):
     bl_label = "POV Cylinder"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -311,14 +312,18 @@ class OBJECT_PT_POV_obj_cylinder(PovDataButtonsPanel, Panel):
         if obj.pov.object_as == 'CYLINDER':
             if not obj.pov.unlock_parameters:
                 col.prop(
-                    obj.pov, "unlock_parameters", text="Exported parameters below", icon='LOCKED'
+                    obj.pov, "unlock_parameters",
+                    text="Exported parameters below",
+                    icon='LOCKED'
                 )
                 col.label(text="Cylinder radius: " + str(obj.pov.cylinder_radius))
                 col.label(text="Cylinder cap location: " + str(obj.pov.cylinder_location_cap))
 
             else:
                 col.prop(
-                    obj.pov, "unlock_parameters", text="Edit exported parameters", icon='UNLOCKED'
+                    obj.pov, "unlock_parameters",
+                    text="Edit exported parameters",
+                    icon='UNLOCKED'
                 )
                 col.label(text="3D view proxy may get out of synch")
                 col.active = obj.pov.unlock_parameters
@@ -336,6 +341,7 @@ class OBJECT_PT_POV_obj_cone(PovDataButtonsPanel, Panel):
     bl_label = "POV Cone"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -380,6 +386,7 @@ class OBJECT_PT_POV_obj_superellipsoid(PovDataButtonsPanel, Panel):
     bl_label = "POV Superquadric ellipsoid"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -426,6 +433,7 @@ class OBJECT_PT_POV_obj_torus(PovDataButtonsPanel, Panel):
     bl_label = "POV Torus"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -470,6 +478,7 @@ class OBJECT_PT_POV_obj_supertorus(PovDataButtonsPanel, Panel):
     bl_label = "POV SuperTorus"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -528,6 +537,7 @@ class OBJECT_PT_POV_obj_parametric(PovDataButtonsPanel, Panel):
     bl_label = "POV Parametric surface"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -588,9 +598,9 @@ class OBJECT_PT_povray_replacement_text(ObjectButtonsPanel, Panel):
         col.prop(obj.pov, "replacement_text", text="")
 
 
-###############################################################################
-# Add Povray Objects
-###############################################################################
+# ---------------------------------------------------------------- #
+# Add POV objects
+# ---------------------------------------------------------------- #
 def check_add_mesh_extra_objects():
     """Test if Add mesh extra objects addon is activated
 
@@ -707,8 +717,6 @@ classes = (
 
 
 def register():
-    # from bpy.utils import register_class
-
     for cls in classes:
         register_class(cls)
 
@@ -721,7 +729,6 @@ def register():
 
 def unregister():
     # addon_utils.disable("add_mesh_extra_objects", default_set=False)
-
     bpy.types.VIEW3D_MT_add.remove(menu_func_add)
 
     for cls in reversed(classes):

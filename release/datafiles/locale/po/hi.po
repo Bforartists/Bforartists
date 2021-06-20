@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1481,6 +1481,10 @@ msgid "Filter Text"
 msgstr "निस्पादक पाठ"
 
 
+msgid "Link"
+msgstr "संयुक्त"
+
+
 msgid "End"
 msgstr "समाप्त"
 
@@ -2829,10 +2833,6 @@ msgstr "संरेखण"
 
 msgid "Flip"
 msgstr "पलटें"
-
-
-msgid "Link"
-msgstr "संयुक्त"
 
 
 msgctxt "MovieClip"
@@ -4200,10 +4200,6 @@ msgid "Next Keyframe"
 msgstr "अगले अनुबोधक चिन्ह"
 
 
-msgid "Percentage"
-msgstr "प्रतिशत"
-
-
 msgctxt "Operator"
 msgid "Copy Pose"
 msgstr "मुद्रा की प्रतिलिपि बनाएँ"
@@ -4899,6 +4895,10 @@ msgstr "१६ x"
 
 msgid "Manual"
 msgstr "नियम पुस्तिका"
+
+
+msgid "Percentage"
+msgstr "प्रतिशत"
 
 
 msgid "New Window"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11626,6 +11626,14 @@ msgid "Sort items descending, from highest value to lowest"
 msgstr "Trier les éléments de façon descendante, de la plus forte valeur à la plus faible"
 
 
+msgid "Link"
+msgstr "Lier"
+
+
+msgid "Append"
+msgstr "Ajouter"
+
+
 msgid "3D vector"
 msgstr "Vecteur 3D"
 
@@ -17355,15 +17363,7 @@ msgid "Texture Space Location"
 msgstr "Position de l’espace texture"
 
 
-msgid "Texture space location"
-msgstr "Position de l’espace texture"
-
-
 msgid "Texture Space Size"
-msgstr "Taille de l’espace texture"
-
-
-msgid "Texture space size"
 msgstr "Taille de l’espace texture"
 
 
@@ -19935,6 +19935,14 @@ msgstr "Mesh d’espace de texture"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Dériver les coordonnées de texture d’un autre mesh"
+
+
+msgid "Texture space location"
+msgstr "Position de l’espace texture"
+
+
+msgid "Texture space size"
+msgstr "Taille de l’espace texture"
 
 
 msgid "Texture Mesh"
@@ -27197,10 +27205,6 @@ msgstr "Style de trait"
 
 msgid "Material slot in an object"
 msgstr "Emplacement de matériau dans un objet"
-
-
-msgid "Link"
-msgstr "Lier"
 
 
 msgid "Link material to object or the object's data"
@@ -34561,6 +34565,10 @@ msgstr "Axe Z"
 
 msgid "Original"
 msgstr "Originelle"
+
+
+msgid "Convex Hull"
+msgstr "Coque convexe"
 
 
 msgid "Fill Type"
@@ -47030,10 +47038,6 @@ msgid "Add named object"
 msgstr "Ajouter un objet nommé"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Dupliquer l’objet, mais pas les données objet, lier aux données originales"
-
-
 msgid "Object name to add"
 msgstr "Nom de l’objet à ajouter"
 
@@ -47369,6 +47373,10 @@ msgstr "Dupliquer objets"
 
 msgid "Duplicate selected objects"
 msgstr "Dupliquer les objets sélectionnés"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Dupliquer l’objet, mais pas les données objet, lier aux données originales"
 
 
 msgid "Duplicate selected objects and move them"
@@ -50668,20 +50676,16 @@ msgid "Custom properties"
 msgstr "Propriétés personnalisées"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Facteur pondéré pour choisir quelles frame est la plus favorisée"
+
+
 msgid "Next Keyframe"
 msgstr "Image clé suivante"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Numéro de frame de l’image clé précédant immédiatement la frame courante"
-
-
-msgid "Percentage"
-msgstr "Pourcentage"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Facteur pondéré pour choisir quelles frame est la plus favorisée"
 
 
 msgid "Previous Keyframe"
@@ -51722,10 +51726,6 @@ msgstr "Forme de corps rigide"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "Formes cubiques, y compris les plans (c-à-d les “sols” plans)"
-
-
-msgid "Convex Hull"
-msgstr "Coque convexe"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -53150,10 +53150,6 @@ msgstr "Copier les modificateurs de la bande active vers toutes les bandes séle
 
 msgid "Replace modifiers in destination"
 msgstr "Remplacer les modificateurs dans la destination"
-
-
-msgid "Append"
-msgstr "Ajouter"
 
 
 msgid "Append active modifiers to selected strips"
@@ -61400,6 +61396,10 @@ msgstr "Définit la manière dont les valeurs des facteurs sont affichées"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Afficher les facteurs sous la forme de valeurs entre 0 et 1"
+
+
+msgid "Percentage"
+msgstr "Pourcentage"
 
 
 msgid "Display factors as percentages"
@@ -77119,10 +77119,6 @@ msgid "Object not found"
 msgstr "Objet introuvable"
 
 
-msgid "Object could not be duplicated"
-msgstr "Impossible de dupliquer l’objet"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Ces données ne supportent pas la jonction en mode édition"
 
@@ -81161,14 +81157,6 @@ msgid "Transmission Depth"
 msgstr "Profondeur de transmission"
 
 
-msgid "Color1"
-msgstr "Couleur 1"
-
-
-msgid "Color2"
-msgstr "Couleur 2"
-
-
 msgid "Color Fac"
 msgstr "Fac. couleur"
 
@@ -81183,6 +81171,14 @@ msgstr "Flou de texture"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Couleur 1"
+
+
+msgid "Color2"
+msgstr "Couleur 2"
 
 
 msgid "Mortar"
