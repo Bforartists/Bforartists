@@ -98,7 +98,7 @@ class BmeshEdit():
             private, end bmesh editing of active object
         """
         bm.normal_update()
-        bmesh.update_edit_mesh(o.data, True)
+        bmesh.update_edit_mesh(o.data, loop_triangles=True)
         bpy.ops.object.mode_set(mode='OBJECT')
         bm.free()
 

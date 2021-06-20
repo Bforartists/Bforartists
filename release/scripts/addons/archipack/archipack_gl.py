@@ -259,7 +259,7 @@ class Gl():
             return self.get_render_location(context, coord)
         region = context.region
         rv3d = context.region_data
-        loc = view3d_utils.location_3d_to_region_2d(region, rv3d, coord, self.pos_2d)
+        loc = view3d_utils.location_3d_to_region_2d(region, rv3d, coord, default=self.pos_2d)
         return Vector(loc)
 
     def get_render_location(self, context, coord):

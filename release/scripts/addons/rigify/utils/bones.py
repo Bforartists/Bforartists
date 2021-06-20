@@ -159,8 +159,8 @@ def copy_bone(obj, bone_name, assign_name='', *, parent=False, inherit_scale=Fal
             for name in ['bbone_segments',
                          'bbone_easein', 'bbone_easeout',
                          'bbone_rollin', 'bbone_rollout',
-                         'bbone_curveinx', 'bbone_curveiny', 'bbone_curveoutx', 'bbone_curveouty',
-                         'bbone_scaleinx', 'bbone_scaleiny', 'bbone_scaleoutx', 'bbone_scaleouty']:
+                         'bbone_curveinx', 'bbone_curveinz', 'bbone_curveoutx', 'bbone_curveoutz',
+                         'bbone_scalein', 'bbone_scaleout']:
                 setattr(edit_bone_2, name, getattr(edit_bone_1, name))
 
         # Resize the bone after copy if requested

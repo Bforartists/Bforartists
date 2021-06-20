@@ -38,14 +38,11 @@ from .shading_properties import check_material
 
 def simple_material(mat):
     """Test if a material uses nodes"""
-    if (mat is not None) and (not mat.use_nodes):
-        return True
-    return False
+    return (mat is not None) and (not mat.use_nodes)
 
 
 class MaterialButtonsPanel:
-    """Use this class to define buttons from the material tab of
-    properties window."""
+    """Use this class to define buttons from the material tab of properties window."""
 
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -163,8 +160,9 @@ class MATERIAL_PT_POV_activate_node(MaterialButtonsPanel, Panel):
         return (
             mat
             and mat.pov.type == "SURFACE"
-            and (engine in cls.COMPAT_ENGINES)
-            and not (mat.pov.material_use_nodes or mat.use_nodes)
+            and engine in cls.COMPAT_ENGINES
+            and not mat.pov.material_use_nodes
+            and not mat.use_nodes
         )
 
     def draw(self, context):
@@ -196,50 +194,31 @@ class MATERIAL_PT_POV_active_node(MaterialButtonsPanel, Panel):
         )
 
     def draw(self, context):
-        layout = self.layout
         mat = context.material
         node_tree = mat.node_tree
-        if node_tree:
+        if node_tree and mat.use_nodes:
+            layout = self.layout
             node = node_tree.nodes.active
-            if mat.use_nodes:
-                if node:
-                    layout.prop(mat.pov, "material_active_node")
-                    if node.bl_idname == "PovrayMaterialNode":
-                        layout.context_pointer_set("node", node)
-                        if hasattr(node, "draw_buttons_ext"):
-                            node.draw_buttons_ext(context, layout)
-                        elif hasattr(node, "draw_buttons"):
-                            node.draw_buttons(context, layout)
-                        value_inputs = [
-                            socket
-                            for socket in node.inputs
-                            if socket.enabled and not socket.is_linked
-                        ]
-                        if value_inputs:
-                            layout.separator()
-                            layout.label(text="Inputs:")
-                            for socket in value_inputs:
-                                row = layout.row()
-                                socket.draw(context, row, node, socket.name)
-                    else:
-                        layout.context_pointer_set("node", node)
-                        if hasattr(node, "draw_buttons_ext"):
-                            node.draw_buttons_ext(context, layout)
-                        elif hasattr(node, "draw_buttons"):
-                            node.draw_buttons(context, layout)
-                        value_inputs = [
-                            socket
-                            for socket in node.inputs
-                            if socket.enabled and not socket.is_linked
-                        ]
-                        if value_inputs:
-                            layout.separator()
-                            layout.label(text="Inputs:")
-                            for socket in value_inputs:
-                                row = layout.row()
-                                socket.draw(context, row, node, socket.name)
-                else:
-                    layout.label(text="No active nodes!")
+            if node:
+                layout.prop(mat.pov, "material_active_node")
+                layout.context_pointer_set("node", node)
+                if hasattr(node, "draw_buttons_ext"):
+                    node.draw_buttons_ext(context, layout)
+                elif hasattr(node, "draw_buttons"):
+                    node.draw_buttons(context, layout)
+                value_inputs = [
+                    socket
+                    for socket in node.inputs
+                    if socket.enabled and not socket.is_linked
+                ]
+                if value_inputs:
+                    layout.separator()
+                    layout.label(text="Inputs:")
+                    for socket in value_inputs:
+                        row = layout.row()
+                        socket.draw(context, row, node, socket.name)
+            else:
+                layout.label(text="No active nodes!")
 
 
 class MATERIAL_PT_POV_specular(MaterialButtonsPanel, Panel):
@@ -452,8 +431,9 @@ class MATERIAL_PT_POV_reflection(MaterialButtonsPanel, Panel):
         return (
             mat
             and mat.pov.type == "SURFACE"
-            and (engine in cls.COMPAT_ENGINES)
-            and not (mat.pov.material_use_nodes or mat.use_nodes)
+            and engine in cls.COMPAT_ENGINES
+            and not mat.pov.material_use_nodes
+            and not mat.use_nodes
         )
 
     def draw(self, context):
@@ -491,7 +471,9 @@ class MATERIAL_PT_POV_interior(MaterialButtonsPanel, Panel):
     def poll(cls, context):
         engine = context.scene.render.engine
         mat=context.material
-        return mat and mat.pov.type == "SURFACE" and (engine in cls.COMPAT_ENGINES) and not (mat.pov.material_use_nodes or mat.use_nodes)
+        return mat and mat.pov.type == "SURFACE"
+                    and (engine in cls.COMPAT_ENGINES)
+                    and not (mat.pov.material_use_nodes or mat.use_nodes)
 
 
     def draw_header(self, context):
@@ -513,8 +495,9 @@ class MATERIAL_PT_POV_fade_color(MaterialButtonsPanel, Panel):
         return (
             mat
             and mat.pov.type == "SURFACE"
-            and (engine in cls.COMPAT_ENGINES)
-            and not (mat.pov.material_use_nodes or mat.use_nodes)
+            and engine in cls.COMPAT_ENGINES
+            and not mat.pov.material_use_nodes
+            and not mat.use_nodes
         )
 
     def draw_header(self, context):
@@ -523,10 +506,10 @@ class MATERIAL_PT_POV_fade_color(MaterialButtonsPanel, Panel):
         self.layout.prop(mat.pov, "interior_fade_color", text="")
 
     def draw(self, context):
-        layout = self.layout
         mat = context.material
-        # layout.active = mat.pov.interior_fade_color
         if mat.pov.interior_fade_color != (0.0, 0.0, 0.0):
+            layout = self.layout
+            # layout.active = mat.pov.interior_fade_color
             layout.label(text="Raytrace transparency")
             layout.label(text="depth max Limit needs")
             layout.label(text="to be non zero to fade")
@@ -545,8 +528,9 @@ class MATERIAL_PT_POV_caustics(MaterialButtonsPanel, Panel):
         return (
             mat
             and mat.pov.type == "SURFACE"
-            and (engine in cls.COMPAT_ENGINES)
-            and not (mat.pov.material_use_nodes or mat.use_nodes)
+            and engine in cls.COMPAT_ENGINES
+            and not mat.pov.material_use_nodes
+            and not mat.use_nodes
         )
 
     def draw_header(self, context):
@@ -661,7 +645,7 @@ classes = (
     MATERIAL_PT_POV_mirror,
     MATERIAL_PT_POV_transp,
     MATERIAL_PT_POV_reflection,
-    ## MATERIAL_PT_POV_interior,
+    # MATERIAL_PT_POV_interior,
     MATERIAL_PT_POV_fade_color,
     MATERIAL_PT_POV_caustics,
     MATERIAL_PT_POV_replacement_text,
@@ -669,12 +653,10 @@ classes = (
 
 
 def register():
-
     for cls in classes:
         register_class(cls)
 
 
 def unregister():
-
     for cls in reversed(classes):
         unregister_class(cls)

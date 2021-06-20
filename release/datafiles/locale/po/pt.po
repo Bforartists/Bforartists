@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -9118,6 +9118,14 @@ msgid "Whether we may browse blender files' content or not"
 msgstr "Permite definir se será possível ou não a navegação nos conteúdos dos ficheiros Blender."
 
 
+msgid "Link"
+msgstr "Vincular"
+
+
+msgid "Append"
+msgstr "Anexar"
+
+
 msgid "Domain Settings"
 msgstr "Definições de domínio"
 
@@ -12369,16 +12377,8 @@ msgid "Texture Space Location"
 msgstr "Localização do espaço de textura"
 
 
-msgid "Texture space location"
-msgstr "A localização do espaço de textura."
-
-
 msgid "Texture Space Size"
 msgstr "Tamanho do espaço de textura"
-
-
-msgid "Texture space size"
-msgstr "O tamanho do espaço de textura."
 
 
 msgid "Twist Method"
@@ -14191,6 +14191,14 @@ msgstr "Espaço de textura de malha"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Deriva as coordenadas de textura a partir de outra malha."
+
+
+msgid "Texture space location"
+msgstr "A localização do espaço de textura."
+
+
+msgid "Texture space size"
+msgstr "O tamanho do espaço de textura."
 
 
 msgid "Texture Mesh"
@@ -20941,10 +20949,6 @@ msgstr "Fator de mistura"
 
 msgid "Material slot in an object"
 msgstr "Compartimentos de material dentro de um objeto."
-
-
-msgid "Link"
-msgstr "Vincular"
 
 
 msgid "Link material to object or the object's data"
@@ -27956,6 +27960,10 @@ msgstr "Eixo Z"
 
 msgid "Original"
 msgstr "Original"
+
+
+msgid "Convex Hull"
+msgstr "Casco convexo"
 
 
 msgid "Fill Type"
@@ -39414,10 +39422,6 @@ msgid "Add named object"
 msgstr "Permite a adição de um objeto nomeado."
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Duplica os objetos mas não os dados do objeto, vinculando-os aos dados originais."
-
-
 msgid "Object name to add"
 msgstr "Nome do objeto a adicionar."
 
@@ -39710,6 +39714,10 @@ msgstr "Duplicar objetos"
 
 msgid "Duplicate selected objects"
 msgstr "Duplica os objetos selecionados."
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Duplica os objetos mas não os dados do objeto, vinculando-os aos dados originais."
 
 
 msgid "Duplicate selected objects and move them"
@@ -42641,20 +42649,16 @@ msgid "Custom properties"
 msgstr "Propriedades personalizadas"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Fator de pesos de influência para nos quais os fotogramas-chave são mais favorecidos."
+
+
 msgid "Next Keyframe"
 msgstr "Próximo fotograma chave"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Número do fotograma de fotograma chave imediatamente após o fotograma atual."
-
-
-msgid "Percentage"
-msgstr "Porcentagem"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Fator de pesos de influência para nos quais os fotogramas-chave são mais favorecidos."
 
 
 msgid "Previous Keyframe"
@@ -43648,10 +43652,6 @@ msgstr "Formato de corpo rígido"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "Formatos como caixas (ex: cubos), incluindo planos (ex: planos de pisos ou bases)."
-
-
-msgid "Convex Hull"
-msgstr "Casco convexo"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -45005,10 +45005,6 @@ msgstr "Copia os modificadores da faixa ativa para todas as faixas selecionadas.
 
 msgid "Replace modifiers in destination"
 msgstr "Substitui os modificadores na destinação."
-
-
-msgid "Append"
-msgstr "Anexar"
 
 
 msgid "Append active modifiers to selected strips"
@@ -51913,6 +51909,10 @@ msgstr "Quadrado (MV + S)"
 
 msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Um quadrado mostrando matiz e valor, com um deslizador de saturação."
+
+
+msgid "Percentage"
+msgstr "Porcentagem"
 
 
 msgid "New Window"
@@ -66448,10 +66448,6 @@ msgid "Object not found"
 msgstr "Objeto não encontrado."
 
 
-msgid "Object could not be duplicated"
-msgstr "Objeto não pode ser duplicado."
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Estes dados não suportam a junção dentro do modo de edição."
 
@@ -69966,14 +69962,6 @@ msgid "Transmission Depth"
 msgstr "Profundidade de transmissão "
 
 
-msgid "Color1"
-msgstr "Cor 1"
-
-
-msgid "Color2"
-msgstr "Cor 2"
-
-
 msgid "Color Fac"
 msgstr "Fator para cor"
 
@@ -69988,6 +69976,14 @@ msgstr "Desfocar textura"
 
 msgid "BSSRDF"
 msgstr "Função de distribuição de reflectância bidirecional na superfície."
+
+
+msgid "Color1"
+msgstr "Cor 1"
+
+
+msgid "Color2"
+msgstr "Cor 2"
 
 
 msgid "Mortar"

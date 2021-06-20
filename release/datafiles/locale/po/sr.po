@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4401,6 +4401,10 @@ msgid "Show image files"
 msgstr "Прикажи датотеке слика"
 
 
+msgid "Link"
+msgstr "Веза"
+
+
 msgid "Additional"
 msgstr "Додатно"
 
@@ -5902,15 +5906,7 @@ msgid "Texture Space Location"
 msgstr "Локација простора текстуре"
 
 
-msgid "Texture space location"
-msgstr "Локација простора текстуре"
-
-
 msgid "Texture Space Size"
-msgstr "Величина простора текстуре"
-
-
-msgid "Texture space size"
 msgstr "Величина простора текстуре"
 
 
@@ -6704,6 +6700,14 @@ msgstr "Сва темена коже"
 
 msgid "Texture Space Mesh"
 msgstr "Текстурни простор меша"
+
+
+msgid "Texture space location"
+msgstr "Локација простора текстуре"
+
+
+msgid "Texture space size"
+msgstr "Величина простора текстуре"
 
 
 msgid "Texture Mesh"
@@ -9263,10 +9267,6 @@ msgstr "Фактор мешања"
 
 msgid "Material slot in an object"
 msgstr "Слот материјала у објекту"
-
-
-msgid "Link"
-msgstr "Веза"
 
 
 msgid "Material slot name"
@@ -17096,10 +17096,6 @@ msgid "Add named object"
 msgstr "Додаје овај објекат"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Удвостручи објекат, али не и податке о објекту повезане са изворним подацима"
-
-
 msgid "Object name to add"
 msgstr "Назив објекта за додавање"
 
@@ -17223,6 +17219,10 @@ msgstr "Удвостручи објекте"
 
 msgid "Duplicate selected objects"
 msgstr "Удвостручи изабране објекте"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Удвостручи објекат, али не и податке о објекту повезане са изворним подацима"
 
 
 msgid "Duplicate selected objects and move them"
@@ -18414,10 +18414,6 @@ msgstr "Поставља тренутну позу као почетну"
 
 msgid "Next Keyframe"
 msgstr "Следећи кључни кадар"
-
-
-msgid "Percentage"
-msgstr "Проценат"
 
 
 msgid "Previous Keyframe"
@@ -22482,6 +22478,10 @@ msgstr "Квадратни (HV + S)"
 
 msgid "A square showing Hue/Value, with Saturation slider"
 msgstr "Квадратни избор вредности нијансе и клизачем засићености бојом"
+
+
+msgid "Percentage"
+msgstr "Проценат"
 
 
 msgid "New Window"
@@ -27802,10 +27802,6 @@ msgid "Object not found"
 msgstr "Објекат није пронађен"
 
 
-msgid "Object could not be duplicated"
-msgstr "Објекат није могуће дуплирати"
-
-
 msgid "To Active Bone"
 msgstr "На активну кост"
 
@@ -28786,14 +28782,6 @@ msgid "Transparent Depth"
 msgstr "Дубина провидности"
 
 
-msgid "Color1"
-msgstr "Боја1"
-
-
-msgid "Color2"
-msgstr "Боја2"
-
-
 msgid "Color Fac"
 msgstr "Фактор боје"
 
@@ -28808,6 +28796,14 @@ msgstr "Замућење текстуре"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Боја1"
+
+
+msgid "Color2"
+msgstr "Боја2"
 
 
 msgid "Mortar"

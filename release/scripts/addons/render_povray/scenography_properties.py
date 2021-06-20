@@ -29,18 +29,17 @@ from bpy.props import (
     FloatProperty,
     EnumProperty,
     PointerProperty,
-    CollectionProperty,
 )
 
 from .shading_properties import (
-    active_texture_name_from_uilist,
-    active_texture_name_from_search,
     brush_texture_update,
 )
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Camera POV properties.
-###############################################################################
+# ---------------------------------------------------------------- #
+
+
 class RenderPovSettingsCamera(PropertyGroup):
 
     """Declare camera properties controllable in UI and translated to POV."""
@@ -138,7 +137,7 @@ class RenderPovSettingsCamera(PropertyGroup):
 
     scale: FloatProperty(name="Scale", min=0.0, default=1.0)
 
-    ##################################CustomPOV Code############################
+    # ----------------------------------- CustomPOV Code ----------------------------------- #
     # Only DUMMIES below for now:
     replacement_text: StringProperty(
         name="Texts in blend file",
@@ -148,9 +147,9 @@ class RenderPovSettingsCamera(PropertyGroup):
     )
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Light POV properties.
-###############################################################################
+# ---------------------------------------------------------------- #
 class RenderPovSettingsLight(PropertyGroup):
 
     """Declare light properties controllable in UI and translated to POV."""
@@ -251,9 +250,9 @@ class RenderPovSettingsLight(PropertyGroup):
     )
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # World POV properties.
-###############################################################################
+# ---------------------------------------------------------------- #
 class RenderPovSettingsWorld(PropertyGroup):
 
     """Declare world properties controllable in UI and translated to POV."""
@@ -352,20 +351,6 @@ class RenderPovSettingsWorld(PropertyGroup):
         name="Index for texture_slots", default=0, update=brush_texture_update
     )
 
-
-"""
-# class WORLD_TEXTURE_SLOTS_UL_layerlist(bpy.types.UIList):
-#    texture_slots:
-
-class WorldTextureSlots(bpy.props.PropertyGroup):
-    index = bpy.prop.PropertyInt(name='index')
-    # foo  = random prop
-
-bpy.types.World.texture_slots = bpy.props.CollectionProperty(type=PropertyGroup)
-
-for i in range(18):  # length of world texture slots
-    world.texture_slots.add()
-"""
 
 classes = (
     RenderPovSettingsCamera,

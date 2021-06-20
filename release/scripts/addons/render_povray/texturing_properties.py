@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+
 """Declare texturing properties controllable in UI."""
 
 import bpy
@@ -35,9 +36,11 @@ from bpy.props import (
 
 from .shading_properties import active_texture_name_from_uilist, active_texture_name_from_search
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Texture slots (Material context) exported as POV texture properties.
-###############################################################################
+# ---------------------------------------------------------------- #
+
+
 class MaterialTextureSlot(PropertyGroup):
     """Declare material texture slot level properties for UI and translated to POV."""
 
@@ -381,7 +384,7 @@ class MaterialTextureSlot(PropertyGroup):
         default=0.0,
     )
 
-    #######################################
+    # ---------------------------------------------------------------- #
 
     blend_factor: FloatProperty(
         name="Blend",
@@ -461,9 +464,9 @@ class MaterialTextureSlot(PropertyGroup):
     )
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Texture slots (World context) exported as POV texture properties.
-###############################################################################
+# ---------------------------------------------------------------- #
 class WorldTextureSlot(PropertyGroup):
     """Declare world texture slot level properties for UI and translated to POV."""
 
@@ -583,9 +586,9 @@ class WorldTextureSlot(PropertyGroup):
     )
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Space properties from  removed former Blender Internal
-###############################################################################
+# ---------------------------------------------------------------- #
 
 # added below at superclass level so as to be available in World, Material,
 # and Light, for texture slots use
@@ -614,9 +617,9 @@ bpy.types.ID.texture_context = EnumProperty(
 # )
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Texture POV properties.
-###############################################################################
+# ---------------------------------------------------------------- #
 
 
 class RenderPovSettingsTexture(PropertyGroup):
@@ -682,7 +685,7 @@ class RenderPovSettingsTexture(PropertyGroup):
         default=1.00,
     )
 
-    ##################################CustomPOV Code############################
+    # ----------------------------------- CustomPOV Code ----------------------------------- #
     # commented out below if we wanted custom pov code in texture only, inside exported material:
     # replacement_text = StringProperty(
     #        name="Declared name:",
@@ -953,8 +956,7 @@ class RenderPovSettingsTexture(PropertyGroup):
 
     pave_form: IntProperty(name="Pavement form", description="", min=0, max=4, default=0)
 
-    #########FUNCTIONS#############################################################################
-    #########FUNCTIONS#############################################################################
+    # -------- FUNCTIONS# ---------------------------------------------------------------- #
 
     func_list: EnumProperty(
         name="Functions",
@@ -1090,7 +1092,7 @@ class RenderPovSettingsTexture(PropertyGroup):
 
     func_P9: FloatProperty(name="P9", description="", min=0.0, max=25.0, default=1.0)
 
-    #########################################
+    # ----------------------------------- #
     tex_rot_x: FloatProperty(name="Rotate X", description="", min=-180.0, max=180.0, default=0.0)
 
     tex_rot_y: FloatProperty(name="Rotate Y", description="", min=-180.0, max=180.0, default=0.0)
@@ -1116,7 +1118,11 @@ class RenderPovSettingsTexture(PropertyGroup):
     tex_scale_z: FloatProperty(name="Scale Z", description="", min=0.0, max=10000.0, default=1.0)
 
 
-classes = (MaterialTextureSlot, WorldTextureSlot, RenderPovSettingsTexture)
+classes = (
+    MaterialTextureSlot,
+    WorldTextureSlot,
+    RenderPovSettingsTexture,
+)
 
 
 def register():

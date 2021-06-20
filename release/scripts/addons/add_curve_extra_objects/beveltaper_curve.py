@@ -424,10 +424,11 @@ def menu_funcs(self, context):
 
     layout = self.layout
 
-    if bpy.context.view_layer.objects.active.type == "CURVE":
-        layout.operator("curve.bevelcurve")
-        layout.operator("curve.tapercurve")
-        layout.separator()
+    if context.view_layer.objects.active:
+        if context.view_layer.objects.active.type == "CURVE":
+            layout.operator("curve.bevelcurve")
+            layout.operator("curve.tapercurve")
+            layout.separator()
 
 # Register
 classes = [

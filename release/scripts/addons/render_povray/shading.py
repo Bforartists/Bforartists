@@ -23,10 +23,11 @@
 import bpy
 
 
-def write_object_material(material, ob, tab_write):
+def write_object_material_interior(material, ob, tab_write):
     """Translate some object level material from Blender UI (VS data level)
 
     to POV interior{} syntax and write it to exported file.
+    This is called in object_mesh_topology.export_meshes
     """
     # DH - modified some variables to be function local, avoiding RNA write
     # this should be checked to see if it is functionally correct
@@ -107,23 +108,28 @@ def write_object_material(material, ob, tab_write):
 
 
 def write_material(
-    using_uberpov, DEF_MAT_NAME, tab_write, safety, comments, unique_name, material_names, material
+    using_uberpov,
+    DEF_MAT_NAME,
+    tab_write,
+    safety,
+    comments,
+    unique_name,
+    material_names_dictionary,
+    material
 ):
-    """Translate Blender material POV texture{} block and write to exported file."""
+    """Translate Blender material to POV texture{} block and write in exported file."""
     # Assumes only called once on each material
     if material:
         name_orig = material.name
-        name = material_names[name_orig] = unique_name(
-            bpy.path.clean_name(name_orig), material_names
+        name = material_names_dictionary[name_orig] = unique_name(
+            bpy.path.clean_name(name_orig), material_names_dictionary
         )
-    else:
-        name = name_orig = DEF_MAT_NAME
-
-    if material:
         # If saturation(.s) is not zero, then color is not grey, and has a tint
         colored_specular_found = (material.pov.specular_color.s > 0.0) and (
             material.pov.diffuse_shader != "MINNAERT"
         )
+    else:
+        name = name_orig = DEF_MAT_NAME
 
     ##################
     # Several versions of the finish: ref_level_bound conditions are variations for specular/Mirror
@@ -185,7 +191,7 @@ def write_material(
             # add a small value because 0.0 is invalid.
             roughness += 1.0 / 511.0
 
-            ################################Diffuse Shader######################################
+            # ------------------------------ Diffuse Shader ------------------------------ #
             # Not used for Full spec (ref_level_bound=3) of the shader.
             if material.pov.diffuse_shader == "OREN_NAYAR" and ref_level_bound != 3:
                 # Blender roughness is what is generally called oren nayar Sigma,
@@ -209,7 +215,7 @@ def write_material(
                 tab_write("brilliance 1\n")
 
             if ref_level_bound == 2:
-                ###########################Specular Shader######################################
+                # ------------------------------ Specular Shader ------------------------------ #
                 # No difference between phong and cook torrence in blender HaHa!
                 if (
                     material.pov.specular_shader == "COOKTORR"
@@ -247,7 +253,7 @@ def write_material(
                     # specular for some values.
                     tab_write("brilliance %.4g\n" % (1.8 - material.pov.specular_slope * 1.8))
 
-            ####################################################################################
+            # -------------------------------------------------------------------------------- #
             elif ref_level_bound == 1:
                 if (
                     material.pov.specular_shader == "COOKTORR"
@@ -472,7 +478,7 @@ def export_pattern(texture):
     # pov noise_generator 3 means perlin noise
     if tex.type not in {"NONE", "IMAGE"} and pat.tex_pattern_type == "emulator":
         text_strg += "pigment {\n"
-        ####################### EMULATE BLENDER VORONOI TEXTURE ####################
+        # ------------------------- EMULATE BLENDER VORONOI TEXTURE ------------------------- #
         if tex.type == "VORONOI":
             text_strg += "crackle\n"
             text_strg += "    offset %.4g\n" % tex.nabla
@@ -504,7 +510,7 @@ def export_pattern(texture):
                 text_strg += "[1 color rgbt<1,1,1,0>]\n"
                 text_strg += "}\n"
 
-        ####################### EMULATE BLENDER CLOUDS TEXTURE ####################
+        # ------------------------- EMULATE BLENDER CLOUDS TEXTURE ------------------------- #
         if tex.type == "CLOUDS":
             if tex.noise_type == "SOFT_NOISE":
                 text_strg += "wrinkles\n"
@@ -519,7 +525,7 @@ def export_pattern(texture):
                 text_strg += "[1 color rgbt<1,1,1,0>]\n"
                 text_strg += "}\n"
 
-        ####################### EMULATE BLENDER WOOD TEXTURE ####################
+        # ------------------------- EMULATE BLENDER WOOD TEXTURE ------------------------- #
         if tex.type == "WOOD":
             if tex.wood_type == "RINGS":
                 text_strg += "wood\n"
@@ -552,7 +558,7 @@ def export_pattern(texture):
                 text_strg += "[1 color rgbt<1,1,1,0>]\n"
                 text_strg += "}\n"
 
-        ####################### EMULATE BLENDER STUCCI TEXTURE ####################
+        # ------------------------- EMULATE BLENDER STUCCI TEXTURE ------------------------- #
         if tex.type == "STUCCI":
             text_strg += "bozo\n"
             text_strg += "scale 0.25\n"
@@ -574,7 +580,7 @@ def export_pattern(texture):
                     text_strg += "[1 color rgbt<1,1,1,0>]\n"
                     text_strg += "}\n"
 
-        ####################### EMULATE BLENDER MAGIC TEXTURE ####################
+        # ------------------------- EMULATE BLENDER MAGIC TEXTURE ------------------------- #
         if tex.type == "MAGIC":
             text_strg += "leopard\n"
             if tex.use_color_ramp:
@@ -589,7 +595,7 @@ def export_pattern(texture):
                 text_strg += "}\n"
             text_strg += "scale 0.1\n"
 
-        ####################### EMULATE BLENDER MARBLE TEXTURE ####################
+        # ------------------------- EMULATE BLENDER MARBLE TEXTURE ------------------------- #
         if tex.type == "MARBLE":
             text_strg += "marble\n"
             text_strg += "turbulence 0.5\n"
@@ -622,7 +628,7 @@ def export_pattern(texture):
             if tex.noise_basis_2 == "SAW":
                 text_strg += "ramp_wave\n"
 
-        ####################### EMULATE BLENDER BLEND TEXTURE ####################
+        # ------------------------- EMULATE BLENDER BLEND TEXTURE ------------------------- #
         if tex.type == "BLEND":
             if tex.progression == "RADIAL":
                 text_strg += "radial\n"
@@ -665,7 +671,7 @@ def export_pattern(texture):
             if tex.progression == "EASING":
                 text_strg += "    poly_wave 1.5\n"
 
-        ####################### EMULATE BLENDER MUSGRAVE TEXTURE ####################
+        # ------------------------- EMULATE BLENDER MUSGRAVE TEXTURE ------------------------- #
         # if tex.type == 'MUSGRAVE':
         # text_strg+="function{ f_ridged_mf( x, y, 0, 1, 2, 9, -0.5, 3,3 )*0.5}\n"
         # text_strg+="color_map {\n"
@@ -683,7 +689,7 @@ def export_pattern(texture):
                     "color_map {[0.5 color rgbf<0,0,0,1>][1 color rgbt<1,1,1,0>]}ramp_wave \n"
                 )
 
-        ####################### EMULATE BLENDER DISTORTED NOISE TEXTURE ####################
+        # ------------------------- EMULATE BLENDER DISTORTED NOISE TEXTURE ------------------------- #
         if tex.type == "DISTORTED_NOISE":
             text_strg += "average\n"
             text_strg += "  pigment_map {\n"
@@ -747,7 +753,7 @@ def export_pattern(texture):
                 text_strg += "]\n"
             text_strg += "  }\n"
 
-        ####################### EMULATE BLENDER NOISE TEXTURE ####################
+        # ------------------------- EMULATE BLENDER NOISE TEXTURE ------------------------- #
         if tex.type == "NOISE":
             text_strg += "cells\n"
             text_strg += "turbulence 3\n"
@@ -760,7 +766,7 @@ def export_pattern(texture):
                 text_strg += "[1 color rgb<1,1,1,>]\n"
                 text_strg += "}\n"
 
-        ####################### IGNORE OTHER BLENDER TEXTURE ####################
+        # ------------------------- IGNORE OTHER BLENDER TEXTURE ------------------------- #
         else:  # non translated textures
             pass
         text_strg += "}\n\n"
@@ -839,7 +845,7 @@ def export_pattern(texture):
                 num_pattern,
                 pat.pave_form,
             )
-        ################ functions ##########################################################
+        # ------------------------- functions ------------------------- #
         if pat.tex_pattern_type == "function":
             text_strg += "{ %s" % pat.func_list
             text_strg += "(x"
@@ -973,7 +979,7 @@ def export_pattern(texture):
                 text_strg += ",%.4g" % pat.func_P8
                 text_strg += ",%.4g" % pat.func_P9
             text_strg += ")}\n"
-        ############## end functions ###############################################################
+        # ------------------------- end functions ------------------------- #
         if pat.tex_pattern_type not in {"checker", "hexagon", "square", "triangular", "brick"}:
             text_strg += "color_map {\n"
         num_color = 0
@@ -1041,7 +1047,7 @@ def string_strip_hyphen(name):
     return name.replace("-", "")
 
 
-# WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 def write_nodes(scene, pov_mat_name, ntree, file):
     """Translate Blender node trees to pov and write them to file."""
     # such function local inlined import are official guidelines
@@ -1490,7 +1496,7 @@ def write_nodes(scene, pov_mat_name, ntree, file):
                                         link.to_node == node
                                         and link.from_node.bl_idname == "ShaderPatternNode"
                                     ):
-                                        ########### advanced ###############################################
+                                        # ------------ advanced ------------------------- #
                                         lfn = link.from_node
                                         pattern = lfn.pattern
                                         if pattern == "agate":

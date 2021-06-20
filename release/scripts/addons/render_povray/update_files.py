@@ -55,105 +55,119 @@ def update2_0_0_9():
     # Mapping old names -> old default values
     # XXX We could also store the new name, but as it is just the same without leading pov_ ...
     # Get default values of pov scene props.
-    old_sce_props = {}
-    for k in [
-        "pov_tempfiles_enable",
-        "pov_deletefiles_enable",
-        "pov_scene_name",
-        "pov_scene_path",
-        "pov_renderimage_path",
-        "pov_list_lf_enable",
-        "pov_radio_enable",
-        "pov_radio_display_advanced",
-        "pov_media_enable",
-        "pov_media_samples",
-        "pov_media_color",
-        "pov_baking_enable",
-        "pov_indentation_character",
-        "pov_indentation_spaces",
-        "pov_comments_enable",
-        "pov_command_line_switches",
-        "pov_antialias_enable",
-        "pov_antialias_method",
-        "pov_antialias_depth",
-        "pov_antialias_threshold",
-        "pov_jitter_enable",
-        "pov_jitter_amount",
-        "pov_antialias_gamma",
-        "pov_max_trace_level",
-        "pov_photon_spacing",
-        "pov_photon_max_trace_level",
-        "pov_photon_adc_bailout",
-        "pov_photon_gather_min",
-        "pov_photon_gather_max",
-        "pov_radio_adc_bailout",
-        "pov_radio_always_sample",
-        "pov_radio_brightness",
-        "pov_radio_count",
-        "pov_radio_error_bound",
-        "pov_radio_gray_threshold",
-        "pov_radio_low_error_factor",
-        "pov_radio_media",
-        "pov_radio_minimum_reuse",
-        "pov_radio_nearest_count",
-        "pov_radio_normal",
-        "pov_radio_recursion_limit",
-        "pov_radio_pretrace_start",
-        "pov_radio_pretrace_end",
-    ]:
-        old_sce_props[k] = getattr(bpy.types.Scene, k)[1].get('default', None)
+    old_sce_props = {
+        k: getattr(bpy.types.Scene, k)[1].get('default', None)
+        for k in [
+            "pov_tempfiles_enable",
+            "pov_deletefiles_enable",
+            "pov_scene_name",
+            "pov_scene_path",
+            "pov_renderimage_path",
+            "pov_list_lf_enable",
+            "pov_radio_enable",
+            "pov_radio_display_advanced",
+            "pov_media_enable",
+            "pov_media_samples",
+            "pov_media_color",
+            "pov_baking_enable",
+            "pov_indentation_character",
+            "pov_indentation_spaces",
+            "pov_comments_enable",
+            "pov_command_line_switches",
+            "pov_antialias_enable",
+            "pov_antialias_method",
+            "pov_antialias_depth",
+            "pov_antialias_threshold",
+            "pov_jitter_enable",
+            "pov_jitter_amount",
+            "pov_antialias_gamma",
+            "pov_max_trace_level",
+            "pov_photon_spacing",
+            "pov_photon_max_trace_level",
+            "pov_photon_adc_bailout",
+            "pov_photon_gather_min",
+            "pov_photon_gather_max",
+            "pov_radio_adc_bailout",
+            "pov_radio_always_sample",
+            "pov_radio_brightness",
+            "pov_radio_count",
+            "pov_radio_error_bound",
+            "pov_radio_gray_threshold",
+            "pov_radio_low_error_factor",
+            "pov_radio_media",
+            "pov_radio_minimum_reuse",
+            "pov_radio_nearest_count",
+            "pov_radio_normal",
+            "pov_radio_recursion_limit",
+            "pov_radio_pretrace_start",
+            "pov_radio_pretrace_end",
+        ]
+    }
 
     # Get default values of pov material props.
-    old_mat_props = {}
-    for k in [
-        "pov_irid_enable",
-        "pov_mirror_use_IOR",
-        "pov_mirror_metallic",
-        "pov_conserve_energy",
-        "pov_irid_amount",
-        "pov_irid_thickness",
-        "pov_irid_turbulence",
-        "pov_interior_fade_color",
-        "pov_caustics_enable",
-        "pov_fake_caustics",
-        "pov_fake_caustics_power",
-        "pov_photons_refraction",
-        "pov_photons_dispersion",
-        "pov_photons_reflection",
-        "pov_refraction_type",
-        "pov_replacement_text",
-    ]:
-        old_mat_props[k] = getattr(bpy.types.Material, k)[1].get('default', None)
+    old_mat_props = {
+        k: getattr(bpy.types.Material, k)[1].get('default', None)
+        for k in [
+            "pov_irid_enable",
+            "pov_mirror_use_IOR",
+            "pov_mirror_metallic",
+            "pov_conserve_energy",
+            "pov_irid_amount",
+            "pov_irid_thickness",
+            "pov_irid_turbulence",
+            "pov_interior_fade_color",
+            "pov_caustics_enable",
+            "pov_fake_caustics",
+            "pov_fake_caustics_power",
+            "pov_photons_refraction",
+            "pov_photons_dispersion",
+            "pov_photons_reflection",
+            "pov_refraction_type",
+            "pov_replacement_text",
+        ]
+    }
 
     # Get default values of pov texture props.
-    old_tex_props = {}
-    for k in ["pov_tex_gamma_enable", "pov_tex_gamma_value", "pov_replacement_text"]:
-        old_tex_props[k] = getattr(bpy.types.Texture, k)[1].get('default', None)
+    old_tex_props = {
+        k: getattr(bpy.types.Texture, k)[1].get('default', None)
+        for k in [
+            "pov_tex_gamma_enable",
+            "pov_tex_gamma_value",
+            "pov_replacement_text",
+        ]
+    }
 
     # Get default values of pov object props.
-    old_obj_props = {}
-    for k in ["pov_importance_value", "pov_collect_photons", "pov_replacement_text"]:
-        old_obj_props[k] = getattr(bpy.types.Object, k)[1].get('default', None)
+    old_obj_props = {
+        k: getattr(bpy.types.Object, k)[1].get('default', None)
+        for k in [
+            "pov_importance_value",
+            "pov_collect_photons",
+            "pov_replacement_text",
+        ]
+    }
 
     # Get default values of pov camera props.
-    old_cam_props = {}
-    for k in [
-        "pov_dof_enable",
-        "pov_dof_aperture",
-        "pov_dof_samples_min",
-        "pov_dof_samples_max",
-        "pov_dof_variance",
-        "pov_dof_confidence",
-        "pov_replacement_text",
-    ]:
-        old_cam_props[k] = getattr(bpy.types.Camera, k)[1].get('default', None)
+    old_cam_props = {
+        k: getattr(bpy.types.Camera, k)[1].get('default', None)
+        for k in [
+            "pov_dof_enable",
+            "pov_dof_aperture",
+            "pov_dof_samples_min",
+            "pov_dof_samples_max",
+            "pov_dof_variance",
+            "pov_dof_confidence",
+            "pov_replacement_text",
+        ]
+    }
 
     # Get default values of pov text props.
-    old_txt_props = {}
-    for k in ["pov_custom_code"]:
-        old_txt_props[k] = getattr(bpy.types.Text, k)[1].get('default', None)
+    old_txt_props = {
+        k: getattr(bpy.types.Text, k)[1].get('default', None)
+        for k in ["pov_custom_code"]
+    }
 
-    ################################################################################################
+    # -----------------------------------------------------------------------------
     # Now, update !
     # For each old pov property of each scene, if its value is not equal to the default one,
     # copy it to relevant new prop...
@@ -215,7 +229,7 @@ def register():
     Obj = bpy.types.Object
     Cam = bpy.types.Camera
     Text = bpy.types.Text
-    ###########################SCENE##################################
+    # -------------------------------------- SCENE --------------------------------------#
 
     # File Options
     Scene.pov_tempfiles_enable = BoolProperty(
@@ -549,7 +563,7 @@ def register():
         precision=3,
     )
 
-    #############################MATERIAL######################################
+    # -------------------------------------- MATERIAL -------------------------------------- #
 
     Mat.pov_irid_enable = BoolProperty(
         name="Enable Iridescence",
@@ -668,7 +682,7 @@ def register():
         description="use fake caustics (fast) or true photons for refractive Caustics",
         default="1",
     )
-    ##################################CustomPOV Code############################
+    # -------------------------------------- CustomPOV Code -------------------------------------- #
     Mat.pov_replacement_text = StringProperty(
         name="Declared name:",
         description="Type the declared name in custom POV code or an external .inc it points at. texture {} expected",
@@ -693,7 +707,7 @@ def register():
         description="Type the declared name in custom POV code or an external .inc it points at. camera {} expected",
         default="",
     )
-    ##############################TEXTURE######################################
+    # -------------------------------------- TEXTURE -------------------------------------- #
 
     # Custom texture gamma
     Tex.pov_tex_gamma_enable = BoolProperty(
@@ -712,7 +726,7 @@ def register():
         default=1.00,
     )
 
-    #################################OBJECT####################################
+    # -------------------------------------- OBJECT -------------------------------------- #
 
     # Importance sampling
     Obj.pov_importance_value = FloatProperty(
@@ -730,7 +744,7 @@ def register():
         default=True,
     )
 
-    ##################################CAMERA###################################
+    # -------------------------------------- CAMERA -------------------------------------- #
 
     # DOF Toggle
     Cam.pov_dof_enable = BoolProperty(
@@ -780,7 +794,7 @@ def register():
         default=0.90,
     )
 
-    ###################################TEXT####################################
+    # -------------------------------------- TEXT -------------------------------------- #
 
     Text.pov_custom_code = BoolProperty(
         name="Custom Code",

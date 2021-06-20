@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -12283,6 +12283,14 @@ msgid "Asset Library"
 msgstr "アセットライブラリ"
 
 
+msgid "Link"
+msgstr "リンク"
+
+
+msgid "Append"
+msgstr "アペンド"
+
+
 msgid "Float2 Attribute Value"
 msgstr "Float2属性値"
 
@@ -19985,15 +19993,7 @@ msgid "Texture Space Location"
 msgstr "テクスチャ空間の位置"
 
 
-msgid "Texture space location"
-msgstr "テクスチャ空間の位置"
-
-
 msgid "Texture Space Size"
-msgstr "テクスチャ空間のサイズ"
-
-
-msgid "Texture space size"
 msgstr "テクスチャ空間のサイズ"
 
 
@@ -22794,6 +22794,14 @@ msgstr "テクスチャ空間メッシュ"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "他のメッシュからテクスチャ座標を抽出します"
+
+
+msgid "Texture space location"
+msgstr "テクスチャ空間の位置"
+
+
+msgid "Texture space size"
+msgstr "テクスチャ空間のサイズ"
 
 
 msgid "Texture Mesh"
@@ -31276,10 +31284,6 @@ msgstr "ラインアートマテリアル"
 
 msgid "Material slot in an object"
 msgstr "オブジェクトのマテリアルスロット"
-
-
-msgid "Link"
-msgstr "リンク"
 
 
 msgid "Link material to object or the object's data"
@@ -41334,6 +41338,10 @@ msgstr "コレクションのオフセットに対してジオメトリを出力
 
 msgid "Bring the input collection geometry into the modified object, maintaining the relative position between the objects in the scene"
 msgstr "入力コレクションのジオメトリを変形するオブジェクトに渡し、シーン内での各オブジェクトの相対的な位置を維持します"
+
+
+msgid "Convex Hull"
+msgstr "凸包"
 
 
 msgid "Geometry Custom Group"
@@ -58332,10 +58340,6 @@ msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "新規オブジェクトを配置する Y 座標（スクリーン空間）"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "オブジェクトを複製しますが、オブジェクトデータは複製せずデータへのリンクのみ行います"
-
-
 msgid "Object name to add"
 msgstr "追加するオブジェクト名"
 
@@ -58805,6 +58809,10 @@ msgstr "オブジェクトを複製"
 
 msgid "Duplicate selected objects"
 msgstr "選択したオブジェクトを複製します"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "オブジェクトを複製しますが、オブジェクトデータは複製せずデータへのリンクのみ行います"
 
 
 msgid "Duplicate selected objects and move them"
@@ -63501,20 +63509,16 @@ msgid "Custom properties"
 msgstr "カスタムプロパティ"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "どのキーフレームをより大事にするかを決める重み付け係数"
+
+
 msgid "Next Keyframe"
 msgstr "次のキーフレーム"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "現在のフレームの直後のキーフレーム番号"
-
-
-msgid "Percentage"
-msgstr "割合"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "どのキーフレームをより大事にするかを決める重み付け係数"
 
 
 msgid "Previous Keyframe"
@@ -64734,10 +64738,6 @@ msgstr "リジッドボディ形状"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "立方体などの箱のような形状。地面などの平面も含みます"
-
-
-msgid "Convex Hull"
-msgstr "凸包"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -67579,10 +67579,6 @@ msgstr "アクティブストリップのモディファイアーを、選択中
 
 msgid "Replace modifiers in destination"
 msgstr "対象のモディファイアーを置き換えます"
-
-
-msgid "Append"
-msgstr "アペンド"
 
 
 msgid "Append active modifiers to selected strips"
@@ -78744,6 +78740,10 @@ msgstr "係数を表示する方法"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "係数を「0」から「1」までの値として表示します"
+
+
+msgid "Percentage"
+msgstr "割合"
 
 
 msgid "Display factors as percentages"
@@ -105231,10 +105231,6 @@ msgid "Object not found"
 msgstr "オブジェクトがありません"
 
 
-msgid "Object could not be duplicated"
-msgstr "オブジェクトを複製できませんでした"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "このデータは編集モードでの統合に対応していません"
 
@@ -110798,14 +110794,6 @@ msgid "Transmission Depth"
 msgstr "伝播の深度"
 
 
-msgid "Color1"
-msgstr "色1"
-
-
-msgid "Color2"
-msgstr "色2"
-
-
 msgid "Color Fac"
 msgstr "色係数"
 
@@ -110820,6 +110808,14 @@ msgstr "テクスチャぼかし"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "色1"
+
+
+msgid "Color2"
+msgstr "色2"
 
 
 msgid "Mortar"

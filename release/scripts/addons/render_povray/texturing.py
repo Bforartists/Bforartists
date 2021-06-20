@@ -59,7 +59,6 @@ def write_texture_influence(
     else:
         pov_filter = 0.0
 
-    ##############SF
     texture_dif = ""
     texture_spec = ""
     texture_norm = ""
@@ -166,7 +165,7 @@ def write_texture_influence(
                         # was the above used? --MR
                         t_alpha = t
 
-    ####################################################################################
+    # -----------------------------------------------------------------------------
 
     tab_write("\n")
     # THIS AREA NEEDS TO LEAVE THE TEXTURE OPEN UNTIL ALL MAPS ARE WRITTEN DOWN.
@@ -174,11 +173,11 @@ def write_texture_influence(
     current_material_name = string_strip_hyphen(material_names_dictionary[mater.name])
     local_material_names.append(current_material_name)
     tab_write("\n#declare MAT_%s = \ntexture{\n" % current_material_name)
-    ################################################################################
+    # -----------------------------------------------------------------------------
 
     if mater.pov.replacement_text != "":
         tab_write("%s\n" % mater.pov.replacement_text)
-    #################################################################################
+    # -----------------------------------------------------------------------------
     # XXX TODO: replace by new POV MINNAERT rather than aoi
     if mater.pov.diffuse_shader == "MINNAERT":
         tab_write("\n")
@@ -221,14 +220,13 @@ def write_texture_influence(
             mapping_spec = img_map_transforms(t_spec)
             if texture_spec and texture_spec.startswith("PAT_"):
                 tab_write("function{f%s(x,y,z).grey}\n" % texture_spec)
-                tab_write("%s\n" % mapping_spec)
             else:
 
                 tab_write(
                     'uv_mapping image_map{%s "%s" %s}\n'
                     % (image_format(texture_spec), texture_spec, img_map(t_spec))
                 )
-                tab_write("%s\n" % mapping_spec)
+            tab_write("%s\n" % mapping_spec)
             tab_write("}\n")
             tab_write("texture_map {\n")
             tab_write("[0 \n")
@@ -269,14 +267,6 @@ def write_texture_influence(
                     "pigment {rgbft<%.3g, %.3g, %.3g, %.3g, %.3g>}\n"
                     % (col[0], col[1], col[2], pov_filter, trans)
                 )
-
-            if texture_spec != "":
-                # ref_level_bound 1 is no specular
-                tab_write("finish {%s}\n" % (safety(material_finish, ref_level_bound=1)))
-
-            else:
-                # ref_level_bound 2 is translated spec
-                tab_write("finish {%s}\n" % (safety(material_finish, ref_level_bound=2)))
 
         else:
             mapping_dif = img_map_transforms(t_dif)
@@ -333,25 +323,25 @@ def write_texture_influence(
                         )
                     )
 
-            if texture_spec != "":
-                # ref_level_bound 1 is no specular
-                tab_write("finish {%s}\n" % (safety(material_finish, ref_level_bound=1)))
+                    # scale 1 rotate y*0
+                    # imageMap = ("{image_map {%s \"%s\" %s }\n" % \
+                    #            (image_format(textures),textures,img_map(t_dif)))
+                    # tab_write("uv_mapping pigment %s} %s finish {%s}\n" % \
+                    #         (imageMap,mapping,safety(material_finish)))
+                    # tab_write("pigment {uv_mapping image_map {%s \"%s\" %s}%s} " \
+                    #         "finish {%s}\n" % \
+                    #         (image_format(texture_dif), texture_dif, img_map(t_dif),
+                    #          mapping_dif, safety(material_finish)))
+        if texture_spec != "":
+            # ref_level_bound 1 is no specular
+            tab_write("finish {%s}\n" % (safety(material_finish, ref_level_bound=1)))
 
-            else:
-                # ref_level_bound 2 is translated specular
-                tab_write("finish {%s}\n" % (safety(material_finish, ref_level_bound=2)))
+        else:
+            # ref_level_bound 2 is translated spec
+            tab_write("finish {%s}\n" % (safety(material_finish, ref_level_bound=2)))
 
-            ## scale 1 rotate y*0
-            # imageMap = ("{image_map {%s \"%s\" %s }\n" % \
-            #            (image_format(textures),textures,img_map(t_dif)))
-            # tab_write("uv_mapping pigment %s} %s finish {%s}\n" % \
-            #         (imageMap,mapping,safety(material_finish)))
-            # tab_write("pigment {uv_mapping image_map {%s \"%s\" %s}%s} " \
-            #         "finish {%s}\n" % \
-            #         (image_format(texture_dif), texture_dif, img_map(t_dif),
-            #          mapping_dif, safety(material_finish)))
         if texture_norm != "":
-            ## scale 1 rotate y*0
+            # scale 1 rotate y*0
 
             mapping_normal = img_map_transforms(t_nor)
 
@@ -362,7 +352,8 @@ def write_texture_influence(
                 )
             else:
                 tab_write("normal {\n")
-                # XXX TODO: fix and propagate the micro normals reflection blur below to non textured materials
+                # XXX TODO: fix and propagate the micro normals reflection blur below
+                #  to non textured materials
                 if (
                     mater.pov_raytrace_mirror.use
                     and mater.pov_raytrace_mirror.gloss_factor < 1.0
@@ -464,10 +455,10 @@ def write_texture_influence(
                     tab_write("]}}\n")
                 else:
                     tab_write("]}\n")
-        if texture_spec != "":
-            tab_write("]\n")
-            ##################Second index for mapping specular max value###############
-            tab_write("[1 \n")
+    if texture_spec != "":
+        tab_write("]\n")
+        # -------- Second index for mapping specular max value -------- #
+        tab_write("[1 \n")
 
     if texture_dif == "" and mater.pov.replacement_text == "":
         if texture_alpha != "":
@@ -673,7 +664,7 @@ def write_texture_influence(
             # ref_level_bound 2 is translated specular
             tab_write("finish {%s}\n" % (safety(material_finish, ref_level_bound=2)))
 
-        ## scale 1 rotate y*0
+        # scale 1 rotate y*0
         # imageMap = ("{image_map {%s \"%s\" %s }" % \
         #            (image_format(textures), textures,img_map(t_dif)))
         # tab_write("\n\t\t\tuv_mapping pigment %s} %s finish {%s}" % \
@@ -693,7 +684,8 @@ def write_texture_influence(
             )
         else:
             tab_write("normal {\n")
-            # XXX TODO: fix and propagate the micro normals reflection blur below to non textured materials
+            # XXX TODO: fix and propagate the micro normals reflection blur below
+            #  to non textured materials
             if (
                 mater.pov_raytrace_mirror.use
                 and mater.pov_raytrace_mirror.gloss_factor < 1.0
