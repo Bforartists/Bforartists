@@ -170,6 +170,6 @@ class TCAutoVTX(bpy.types.Operator):
 
         bm.verts.index_update()
         bm.edges.index_update()
-        bmesh.update_edit_mesh(me, True)
+        bmesh.update_edit_mesh(me, loop_triangles=True)
 
         return {'FINISHED'}

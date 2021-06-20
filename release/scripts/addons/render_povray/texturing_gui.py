@@ -83,13 +83,14 @@ class TEXTURE_MT_POV_specials(Menu):
 
 
 class WORLD_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
-    """Use this class to show pov texture slots list."""  # XXX Not used yet
+    """Use this class to show pov texture slots list."""
 
     index: bpy.props.IntProperty(name='index')
     # should active_propname be index or..?
+
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
-        world = context.scene.world  # .pov
-        active_data = world.pov
+        # world = context.scene.world  # .pov  # NOT USED
+        # active_data = world.pov # NOT USED
         # tex = context.texture #may be needed later?
 
         # We could write some code to decide which icon to use here...
@@ -120,6 +121,7 @@ class MATERIAL_TEXTURE_SLOTS_UL_POV_layerlist(UIList):
     #    texture_slots:
     index: bpy.props.IntProperty(name='index')
     # foo  = random prop
+
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
         # ob = data
         slot = item
@@ -149,6 +151,7 @@ class TEXTURE_PT_context(TextureButtonsPanel, Panel):
     COMPAT_ENGINES = {'POVRAY_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     # register but not unregistered because
     # the modified parts concern only POVRAY_RENDER
+
     @classmethod
     def poll(cls, context):
         return (
@@ -247,14 +250,16 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
             if mat.pov_texture_slots:
                 index = mat.pov.active_texture_index
                 slot = mat.pov_texture_slots[index]
-                povtex = slot.texture  # slot.name
-                tex = bpy.data.textures[povtex]
-                col.prop(tex, 'use_fake_user', text='')
-                # layout.label(text='Linked Texture data browser:')
-                # propname = slot.texture_search
-                # if slot.texture was a pointer to texture data rather than just a name string:
-                # layout.template_ID(povtex, "texture", new="texture.new")
-
+                try:
+                    povtex = slot.texture  # slot.name
+                    tex = bpy.data.textures[povtex]
+                    col.prop(tex, 'use_fake_user', text='')
+                    # layout.label(text='Linked Texture data browser:')
+                    # propname = slot.texture_search
+                    # if slot.texture was a pointer to texture data rather than just a name string:
+                    # layout.template_ID(povtex, "texture", new="texture.new")
+                except KeyError:
+                    tex = None
                 layout.prop_search(
                     slot, 'texture_search', bpy.data, 'textures', text='', icon='TEXTURE'
                 )
@@ -308,7 +313,7 @@ class TEXTURE_PT_POV_context_texture(TextureButtonsPanel, Panel):
                 tex = bpy.data.textures[povtex]
                 col.prop(tex, 'use_fake_user', text='')
                 # layout.label(text='Linked Texture data browser:')
-                propname = slot.texture_search
+                # propname = slot.texture_search # NOT USED
                 # if slot.texture was a pointer to texture data rather than just a name string:
                 # layout.template_ID(povtex, "texture", new="texture.new")
 
@@ -614,10 +619,9 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
 
     def draw(self, context):
         # mat = bpy.context.active_object.active_material # Unused
-        layout = self.layout
         tex = context.texture
-        align = True
         if tex is not None and tex.pov.tex_pattern_type != 'emulator':
+            layout = self.layout
             if tex.pov.tex_pattern_type == 'agate':
                 layout.prop(tex.pov, "modifier_turbulence", text="Agate Turbulence")
             if tex.pov.tex_pattern_type in {'spiral1', 'spiral2'}:
@@ -626,6 +630,7 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
                 layout.prop(tex.pov, "modifier_numbers", text="Pattern number")
             if tex.pov.tex_pattern_type == 'magnet':
                 layout.prop(tex.pov, "magnet_style", text="Magnet style")
+            align = True
             if tex.pov.tex_pattern_type == 'quilted':
                 row = layout.row(align=align)
                 row.prop(tex.pov, "modifier_control0", text="Control0")
@@ -825,7 +830,7 @@ class TEXTURE_PT_POV_parameters(TextureButtonsPanel, Panel):
                     row = layout.row(align=align)
                     row.prop(tex.pov, "func_P8", text="P8")
                     row.prop(tex.pov, "func_P9", text="P9")
-            ###################################################End Patterns############################
+            # ------------------------- End Patterns ------------------------- #
 
             layout.prop(tex.pov, "warp_types", text="Warp types")  # warp
             if tex.pov.warp_types == "TOROIDAL":
@@ -987,6 +992,7 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     # bl_context = 'texture'
+
     @classmethod
     def poll(cls, context):
         idblock = pov_context_tex_datablock(context)
@@ -1015,8 +1021,11 @@ class TEXTURE_PT_POV_influence(TextureSlotPanel, Panel):
         texslot = idblock.pov_texture_slots[
             idblock.pov.active_texture_index
         ]  # bpy.data.textures[mat.active_texture_index]
-        # below tex is unused
-        tex = bpy.data.textures[idblock.pov_texture_slots[idblock.pov.active_texture_index].texture]
+        # below tex unused yet ...maybe for particles?
+        try:
+            tex = bpy.data.textures[idblock.pov_texture_slots[idblock.pov.active_texture_index].texture]  # NOT USED
+        except KeyError:
+            tex = None  # NOT USED
 
         def factor_but(layout, toggle, factor, name):
             row = layout.row(align=True)
@@ -1224,6 +1233,7 @@ class TEXTURE_PT_POV_tex_gamma(TextureButtonsPanel, Panel):
 classes = (
     WORLD_TEXTURE_SLOTS_UL_POV_layerlist,
     TEXTURE_MT_POV_specials,
+    # TEXTURE_PT_context # todo: solve UI design for painting
     TEXTURE_PT_POV_context_texture,
     TEXTURE_PT_colors,
     TEXTURE_PT_POV_type,
@@ -1239,13 +1249,11 @@ classes = (
 
 
 def register():
-
     for cls in classes:
         register_class(cls)
 
 
 def unregister():
-
     for cls in reversed(classes):
-        if cls != TEXTURE_PT_context:
-            unregister_class(cls)
+        # if cls != TEXTURE_PT_context:
+        unregister_class(cls)

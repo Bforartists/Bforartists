@@ -94,7 +94,7 @@ scripting_gui.py :
     Display properties from scripting_properties.py for user to add his custom POV code
 
 scripting.py :
-    Insert POV native scene description elements to exported POV file
+    Insert POV native scene description elements into blender scene or to exported POV file
 
 df3_library.py
     Render smoke to *.df3 files
@@ -214,20 +214,26 @@ else:
         scripting_properties,
         render,
         object_primitives,  # for import and export of POV specific primitives
-        update_files,
     )
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Auto update.
-###############################################################################
+# ---------------------------------------------------------------- #
+
+
 class POV_OT_update_addon(bpy.types.Operator):
     """Update this addon to the latest version."""
 
     bl_idname = "pov.update_addon"
     bl_label = "Update POV addon"
 
-    def execute(self, context):
-        import os, tempfile, shutil, urllib.request, urllib.error, zipfile
+    def execute(self, context):  # sourcery no-metrics
+        import os
+        import tempfile
+        import shutil
+        import urllib.request
+        import urllib.error
+        import zipfile
 
         def recursive_overwrite(src, dest, ignore=None):
             if os.path.isdir(src):
@@ -250,7 +256,8 @@ class POV_OT_update_addon(bpy.types.Operator):
         with tempfile.TemporaryDirectory() as temp_dir_path:
             temp_zip_path = os.path.join(temp_dir_path, 'master.zip')
 
-            # Download zip archive of latest addons master branch commit (So we also get presets)
+            # Download zip archive of latest addons master branch commit
+            # More work needed so we also get files from the shared addons presets /pov folder
             # switch this URL back to the BF hosted one as soon as gitweb snapshot gets fixed
             url = 'https://github.com/blender/blender-addons/archive/refs/heads/master.zip'
             try:
@@ -303,7 +310,8 @@ class POV_OT_update_addon(bpy.types.Operator):
 
             # TODO: Create backup
 
-            # Delete old POV addon files (only directories and *.py files, the user might have other stuff in there!)
+            # Delete old POV addon files
+            # (only directories and *.py files, user might have other stuff in there!)
             print('Deleting old POV addon files')
             # remove __init__.py
             os.remove(os.path.join(render_povray_dir, '__init__.py'))
@@ -328,9 +336,9 @@ class POV_OT_update_addon(bpy.types.Operator):
         return {'FINISHED'}
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Povray Preferences.
-###############################################################################
+# ---------------------------------------------------------------- #
 
 
 class PovrayPreferences(bpy.types.AddonPreferences):
@@ -397,7 +405,10 @@ class PovrayPreferences(bpy.types.AddonPreferences):
         layout.operator("pov.update_addon", icon='FILE_REFRESH')
 
 
-classes = (POV_OT_update_addon, PovrayPreferences)
+classes = (
+    POV_OT_update_addon,
+    PovrayPreferences,
+)
 
 
 def register():
@@ -410,19 +421,15 @@ def register():
     texturing_properties.register()
     object_properties.register()
     scripting_properties.register()
-    scenography.register()
     render.register()
     base_ui.register()
-    scripting.register()
     object_primitives.register()
 
 
 def unregister():
     object_primitives.unregister()
-    scripting.unregister()
     base_ui.unregister()
     render.unregister()
-    scenography.unregister()
     scripting_properties.unregister()
     object_properties.unregister()
     texturing_properties.unregister()
@@ -437,6 +444,6 @@ def unregister():
 if __name__ == "__main__":
     register()
 
-# ------------8<---------[ BREAKPOINT ]--------------8<-----------#  Move this snippet around
-# __import__('code').interact(local=dict(globals(), **locals())) # < and uncomment this line
-# ----------------------------------------------------------------#  to inspect from Terminal
+# ------------8<---------[ BREAKPOINT ]--------------8<----------- #  Move this snippet around
+# __import__('code').interact(local=dict(globals(), **locals()))   # < and uncomment this line
+# ---------------------------------------------------------------- #  to inspect from Terminal

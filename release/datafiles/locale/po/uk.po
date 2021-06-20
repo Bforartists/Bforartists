@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -12136,6 +12136,14 @@ msgid "Asset Library"
 msgstr "Бібліотека Активів"
 
 
+msgid "Link"
+msgstr "Зв'язок"
+
+
+msgid "Append"
+msgstr "Прилучення"
+
+
 msgid "Float2 Attribute Value"
 msgstr "Дійсночислове2 Значення Атрибута"
 
@@ -19349,15 +19357,7 @@ msgid "Texture Space Location"
 msgstr "Розташування текстурного простору"
 
 
-msgid "Texture space location"
-msgstr "Розташування текстурного простору"
-
-
 msgid "Texture Space Size"
-msgstr "Розмір текстурного простору"
-
-
-msgid "Texture space size"
 msgstr "Розмір текстурного простору"
 
 
@@ -22105,6 +22105,14 @@ msgstr "Сіть Простору Текстур"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Отримати координати текстур з іншої сіті"
+
+
+msgid "Texture space location"
+msgstr "Розташування текстурного простору"
+
+
+msgid "Texture space size"
+msgstr "Розмір текстурного простору"
 
 
 msgid "Texture Mesh"
@@ -30425,10 +30433,6 @@ msgstr "Вимкнути трафарет та перекриття самопе
 
 msgid "Material slot in an object"
 msgstr "Гніздо матеріалу об'єкта"
-
-
-msgid "Link"
-msgstr "Зв'язок"
 
 
 msgid "Link material to object or the object's data"
@@ -40263,6 +40267,10 @@ msgstr "Вивід геометрії відносно зсуву колекці
 
 msgid "Bring the input collection geometry into the modified object, maintaining the relative position between the objects in the scene"
 msgstr "Внести геометрію колекції уводу в модифікований об'єкт, підтримуючи відносну позицію між об'єктами в сцені"
+
+
+msgid "Convex Hull"
+msgstr "Опукла оболонка"
 
 
 msgid "Delete Geometry"
@@ -56863,10 +56871,6 @@ msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Y-координата (простір екрану) для поміщення під нею нового об'єкта"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Дублювати об'єкт, але не дані об'єкта, пов'язавши з оригінальними даними"
-
-
 msgid "Object name to add"
 msgstr "Назва об'єкта для додання"
 
@@ -57322,6 +57326,10 @@ msgstr "Дублювати об'єкти"
 
 msgid "Duplicate selected objects"
 msgstr "Дублювати вибрані об'єкти"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Дублювати об'єкт, але не дані об'єкта, пов'язавши з оригінальними даними"
 
 
 msgid "Duplicate selected objects and move them"
@@ -61869,20 +61877,16 @@ msgid "Custom properties"
 msgstr "Власні властивості"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Ваговий фактор, для якого більш привілейований ключкадр"
+
+
 msgid "Next Keyframe"
 msgstr "Наступний ключкадр"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Номер ключового кадру відразу після поточного кадру"
-
-
-msgid "Percentage"
-msgstr "Відсоток"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Ваговий фактор, для якого більш привілейований ключкадр"
 
 
 msgid "Previous Keyframe"
@@ -63094,10 +63098,6 @@ msgstr "Форма твердого тіла"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "Коробчасті форми (тобто паралелепіпеди), включно з площинами (наприклад, поверхнею землі)"
-
-
-msgid "Convex Hull"
-msgstr "Опукла оболонка"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -65805,10 +65805,6 @@ msgstr "Скопіювати модифікатори активної смуж�
 
 msgid "Replace modifiers in destination"
 msgstr "Замінити модифікатори для призначення"
-
-
-msgid "Append"
-msgstr "Прилучення"
 
 
 msgid "Append active modifiers to selected strips"
@@ -76671,6 +76667,10 @@ msgstr "Як значення фактора показуються"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Показувати фактори як значення між 0 та 1"
+
+
+msgid "Percentage"
+msgstr "Відсоток"
 
 
 msgid "Display factors as percentages"
@@ -102609,10 +102609,6 @@ msgid "Object not found"
 msgstr "Об'єкта не знайдено"
 
 
-msgid "Object could not be duplicated"
-msgstr "Об'єкт неможливо продублювати"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Ці дані не підтримують сполучення у режимі редагування"
 
@@ -108023,14 +108019,6 @@ msgid "Transmission Depth"
 msgstr "Глибина пропускання"
 
 
-msgid "Color1"
-msgstr "Колір1"
-
-
-msgid "Color2"
-msgstr "Колір2"
-
-
 msgid "Color Fac"
 msgstr "Коефіцієнт кольору"
 
@@ -108045,6 +108033,14 @@ msgstr "Розмив текстури"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Колір1"
+
+
+msgid "Color2"
+msgstr "Колір2"
 
 
 msgid "Mortar"

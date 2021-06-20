@@ -94,7 +94,7 @@ class BlenderIdProfile(metaclass=_BIPMeta):
 def register():
     global profiles_path, profiles_file
 
-    profiles_path = bpy.utils.user_resource('CONFIG', 'blender_id', create=True)
+    profiles_path = bpy.utils.user_resource('CONFIG', path='blender_id', create=True)
     profiles_file = os.path.join(profiles_path, 'profiles.json')
 
 

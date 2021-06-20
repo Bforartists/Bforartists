@@ -35,8 +35,7 @@ for member in dir(properties_data_camera):
         subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
 del properties_data_camera
 
-# ##################################
-# # Use only a subset of the world panels
+# -------- Use only a subset of the world panels
 # from bl_ui import properties_world
 
 # # TORECREATE##DEPRECATED#properties_world.WORLD_PT_preview.COMPAT_ENGINES.add('POVRAY_RENDER')
@@ -44,7 +43,7 @@ del properties_data_camera
 # # TORECREATE##DEPRECATED#properties_world.WORLD_PT_world.COMPAT_ENGINES.add('POVRAY_RENDER')
 # del properties_world
 
-##################################
+# -------- #
 # Physics Main wrapping every class 'as is'
 from bl_ui import properties_physics_common
 
@@ -158,9 +157,9 @@ class WorldButtonsPanel:
         return wld and (rd.engine in cls.COMPAT_ENGINES)
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Camera Settings
-###############################################################################
+# ---------------------------------------------------------------- #
 class CAMERA_PT_POV_cam_dof(CameraDataButtonsPanel, Panel):
     """Use this class for camera depth of field focal blur buttons."""
 
@@ -236,9 +235,9 @@ class CAMERA_PT_POV_replacement_text(CameraDataButtonsPanel, Panel):
         col.prop(cam.pov, "replacement_text", text="")
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # World background and sky sphere Settings
-###############################################################################
+# ---------------------------------------------------------------- #
 
 
 class WORLD_PT_POV_world(WorldButtonsPanel, Panel):
@@ -386,11 +385,11 @@ class RENDER_PT_POV_media(WorldButtonsPanel, Panel):
             col.prop(scene.pov, "media_eccentricity", text="Eccentricity")
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Lights settings
-###############################################################################
+# ---------------------------------------------------------------- #
 
-################################################################################
+# ----------------------------------------------------------------
 # from bl_ui import properties_data_light
 # for member in dir(properties_data_light):
 # subclass = getattr(properties_data_light, member)
@@ -401,16 +400,18 @@ class RENDER_PT_POV_media(WorldButtonsPanel, Panel):
 # print('An exception occurred: {}'.format(e))
 # pass
 # del properties_data_light
-#########################LIGHTS################################
+# -------- LIGHTS -------- #
 
 from bl_ui import properties_data_light
 
-# # These panels are kept
+# -------- These panels are kept
 # properties_data_light.DATA_PT_custom_props_light.COMPAT_ENGINES.add('POVRAY_RENDER')
 # properties_data_light.DATA_PT_context_light.COMPAT_ENGINES.add('POVRAY_RENDER')
 
-## make some native panels contextual to some object variable
-## by recreating custom panels inheriting their properties
+# make some native panels contextual to some object variable
+# by recreating custom panels inheriting their properties
+
+
 class PovLightButtonsPanel(properties_data_light.DataButtonsPanel):
     """Use this class to define buttons from the light data tab of
     properties window."""
@@ -682,6 +683,7 @@ class OBJECT_PT_POV_rainbow(PovLightButtonsPanel, Panel):
     bl_label = "POV-Ray Rainbow"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
     # bl_options = {'HIDE_HEADER'}
+
     @classmethod
     def poll(cls, context):
         engine = context.scene.render.engine
@@ -750,12 +752,10 @@ def register():
 
     for cls in classes:
         register_class(cls)
-    bpy.types.LIGHT_PT_POV_light.prepend(light_panel_func)
+    LIGHT_PT_POV_light.prepend(light_panel_func)
 
 
 def unregister():
-
-    bpy.types.LIGHT_PT_POV_light.remove(light_panel_func)
+    LIGHT_PT_POV_light.remove(light_panel_func)
     for cls in reversed(classes):
         unregister_class(cls)
-

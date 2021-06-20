@@ -23,14 +23,17 @@
 with world, sky, atmospheric effects such as rainbows or smoke """
 
 import bpy
-from bpy.utils import register_class, unregister_class
+
 import os
 from imghdr import what  # imghdr is a python lib to identify image file types
 from math import atan, pi, sqrt, degrees
 from . import df3_library  # for smoke rendering
 from .object_primitives import write_object_modifiers
 
-##############find image texture # used for export_world
+
+# -------- find image texture # used for export_world -------- #
+
+
 def image_format(imgF):
     """Identify input image filetypes to transmit to POV."""
     # First use the below explicit extensions to identify image file prospects
@@ -68,8 +71,8 @@ def img_map(ts):
     elif ts.mapping == 'TUBE':
         image_map = "map_type 2 "
 
-    ## map_type 3 and 4 in development (?) (ENV in pov 3.8)
-    ## for POV-Ray, currently they just seem to default back to Flat (type 0)
+    # map_type 3 and 4 in development (?) (ENV in pov 3.8)
+    # for POV-Ray, currently they just seem to default back to Flat (type 0)
     # elif ts.mapping=="?":
     #    image_map = " map_type 3 "
     # elif ts.mapping=="?":
@@ -133,7 +136,7 @@ def img_map_bg(wts):
     tex = bpy.data.textures[wts.texture]
     image_mapBG = ""
     # texture_coords refers to the mapping of world textures:
-    if wts.texture_coords == 'VIEW' or wts.texture_coords == 'GLOBAL':
+    if wts.texture_coords in ['VIEW', 'GLOBAL']:
         image_mapBG = " map_type 0 "
     elif wts.texture_coords == 'ANGMAP':
         image_mapBG = " map_type 1 "
@@ -192,7 +195,7 @@ def export_camera(scene, global_matrix, render, tab_write):
 
     else:
         if camera.data.type == 'ORTHO':
-            # todo: track when SensorHeightRatio was added to see if needed (not used)
+            # XXX todo: track when SensorHeightRatio was added to see if needed (not used)
             sensor_height_ratio = (
                 render.resolution_x * camera.data.ortho_scale / render.resolution_y
             )
@@ -392,16 +395,16 @@ def export_world(world, scene, global_matrix, tab_write):
     """write world as POV backgrounbd and sky_sphere to exported file """
     render = scene.pov
     camera = scene.camera
-    matrix = global_matrix @ camera.matrix_world  # view dependant for later use
+    # matrix = global_matrix @ camera.matrix_world  # view dependant for later use NOT USED
     if not world:
         return
-    #############Maurice####################################
+
     # These lines added to get sky gradient (visible with PNG output)
     if world:
         # For simple flat background:
         if not world.pov.use_sky_blend:
-            # Non fully transparent background could premultiply alpha and avoid anti-aliasing
-            # display issue:
+            # Non fully transparent background could premultiply alpha and avoid
+            # anti-aliasing display issue:
             if render.alpha_mode == 'TRANSPARENT':
                 tab_write(
                     "background {rgbt<%.3g, %.3g, %.3g, 0.75>}\n" % (world.pov.horizon_color[:])
@@ -526,7 +529,7 @@ def export_world(world, scene, global_matrix, tab_write):
         # scene.pov.radio_enable = world.pov.light_settings.use_indirect_light
         # and other such translations but maybe this would not be allowed either?
 
-    ###############################################################
+    # -----------------------------------------------------------------------------
 
     mist = world.mist_settings
 
@@ -570,9 +573,10 @@ def export_world(world, scene, global_matrix, tab_write):
         tab_write("}\n")
 
 
-####################################################################################################
+# -----------------------------------------------------------------------------
 def export_rainbows(rainbows, file, scene, global_matrix, write_matrix, tab_write):
     """write all POV rainbows primitives to exported file """
+    pov_mat_name = "Default_texture"
     for ob in rainbows:
         povdataname = ob.data.name  # enough? XXX not used nor matrix fn?
         angle = degrees(ob.data.spot_size / 2.5)  # radians in blender (2
@@ -631,7 +635,6 @@ def export_rainbows(rainbows, file, scene, global_matrix, write_matrix, tab_writ
         tab_write("[1.000  color srgbt<1.0, 0.2, 0.2, 1.0>]\n")
         tab_write("}\n")
 
-        pov_mat_name = "Default_texture"
         # tab_write("texture {%s}\n"%pov_mat_name)
         write_object_modifiers(scene, ob, file)
         # tab_write("rotate x*90\n")
@@ -652,20 +655,17 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
     # Search smoke domain target for smoke modifiers
     for mod in smoke_obj.modifiers:
         if mod.type == 'FLUID':
-            if mod.fluid_type == 'FLOW':
-                if mod.flow_settings.flow_type == 'BOTH':
-                    flowtype = 2
-                else:
-                    if mod.flow_settings.smoke_flow_type == 'SMOKE':
-                        flowtype = 0
-                    else:
-                        if mod.flow_settings.smoke_flow_type == 'FIRE':
-                            flowtype = 1
-
             if mod.fluid_type == 'DOMAIN':
                 domain = smoke_obj
                 smoke_modifier = mod
 
+            elif mod.fluid_type == 'FLOW':
+                if mod.flow_settings.flow_type == 'BOTH':
+                    flowtype = 2
+                elif mod.flow_settings.flow_type == 'FIRE':
+                    flowtype = 1
+                elif mod.flow_settings.flow_type == 'SMOKE':
+                    flowtype = 0
     eps = 0.000001  # XXX not used currently. restore from corner case ... zero div?
     if domain is not None:
         mod_set = smoke_modifier.domain_settings
@@ -673,7 +673,7 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
         for v in mod_set.density_grid:
             channeldata.append(v.real)
             print(v.real)
-        ## Usage en voxel texture:
+        # -------- Usage in voxel texture:
         # channeldata = []
         # if channel == 'density':
         # for v in mod_set.density_grid:
@@ -695,7 +695,7 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
             big_res[2] = big_res[2] * (mod_set.noise_scale + 1)
         # else:
         # p = []
-        ##gather smoke domain settings
+        # -------- gather smoke domain settings
         # BBox = domain.bound_box
         # p.append([BBox[0][0], BBox[0][1], BBox[0][2]])
         # p.append([BBox[6][0], BBox[6][1], BBox[6][2]])
@@ -710,7 +710,7 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
         # fire = ret[4]
 
         # if res_x * res_y * res_z > 0:
-        ##new cache format
+        # -------- new cache format
         # big_res = []
         # big_res.append(res_x)
         # big_res.append(res_y)
@@ -771,15 +771,17 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
             for y in range(sim_sizeY):
                 for z in range(sim_sizeZ):
                     mydf3.set(x, y, z, channeldata[((z * sim_sizeY + y) * sim_sizeX + x)])
-
-        mydf3.exportDF3(smoke_path)
+        try:
+            mydf3.exportDF3(smoke_path)
+        except ZeroDivisionError:
+            print("Show smoke simulation in 3D view before export")
         print('Binary smoke.df3 file written in preview directory')
         if comments:
             file.write("\n//--Smoke--\n\n")
 
         # Note: We start with a default unit cube.
-        #       This is mandatory to read correctly df3 data - otherwise we could just directly use bbox
-        #       coordinates from the start, and avoid scale/translate operations at the end...
+        #       This is mandatory to read correctly df3 data - otherwise we could just directly use
+        #       bbox coordinates from the start, and avoid scale/translate operations at the end...
         file.write("box{<0,0,0>, <1,1,1>\n")
         file.write("    pigment{ rgbt 1 }\n")
         file.write("    hollow\n")
@@ -832,16 +834,3 @@ def export_smoke(file, smoke_obj_name, smoke_path, comments, global_matrix, writ
         # file.write("               frequency 0\n")
         # file.write("   }\n")
         # file.write("}\n")
-
-
-classes = ()
-
-
-def register():
-    for cls in classes:
-        register_class(cls)
-
-
-def unregister():
-    for cls in classes:
-        unregister_class(cls)

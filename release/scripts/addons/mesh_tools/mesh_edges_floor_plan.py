@@ -283,7 +283,7 @@ class MESH_OT_edges_floor_plan(Operator):
                 if edge.is_boundary:
                     edge.select = True
 
-            bm = bmesh.update_edit_mesh(ob.data, 1, 1)
+            bm = bmesh.update_edit_mesh(ob.data, loop_triangles=True, destructive=True)
 
             bpy.ops.object.mode_set(mode='OBJECT')
             self.solidify_mod(context, ob, wid, offset, self.only_rim)
@@ -366,7 +366,7 @@ class MESH_OT_edges_floor_plan(Operator):
             if edge.is_boundary:
                 edge.select = True
 
-        bm = bmesh.update_edit_mesh(ob.data, 1, 1)
+        bm = bmesh.update_edit_mesh(ob.data, loop_triangles=True, destructive=True)
 
         context.tool_settings.mesh_select_mode = store_selection_mode
 

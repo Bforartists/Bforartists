@@ -17,7 +17,9 @@
 # #**** END GPL LICENSE BLOCK #****
 
 # <pep8 compliant>
+
 """Wirte the POV file using this file's functions and some from other modules then render it."""
+
 import bpy
 import subprocess
 import os
@@ -45,7 +47,7 @@ from . import object_curve_topology  # for curves based geometry
 
 from .scenography import image_format, img_map, img_map_transforms, path_image
 
-from .shading import write_object_material
+from .shading import write_object_material_interior
 from .object_primitives import write_object_modifiers
 
 
@@ -79,7 +81,7 @@ def safety(name, ref_level_bound):
     # prefix = "shader"
     # except BaseException as e:
     # print(e.__doc__)
-    # print('An exXXXception occurred: {}'.format(e))
+    # print('An exception occurred: {}'.format(e))
     # prefix = "" # rewritten below...
     prefix = "shader_"
     name = string_strip_hyphen(name)
@@ -93,8 +95,8 @@ def safety(name, ref_level_bound):
         return prefix + name + "1"  # used for 1 of specular map
 
 
-##############end safety string name material
-##############################EndSF###########################
+# -------- end safety string name material
+
 
 csg_list = []
 
@@ -120,7 +122,7 @@ unpacked_images = []
 user_dir = bpy.utils.resource_path('USER')
 preview_dir = os.path.join(user_dir, "preview")
 
-## Make sure Preview directory exists and is empty
+# Make sure Preview directory exists and is empty
 smoke_path = os.path.join(preview_dir, "smoke.df3")
 
 '''
@@ -306,7 +308,7 @@ def write_pov(filename, scene=None, info_callback=None):
     material_names_dictionary = {}
     DEF_MAT_NAME = ""  # or "Default"?
 
-    #################################################################
+    # -----------------------------------------------------------------------------
 
     def export_meta(metas):
         """write all POV blob primitives and Blender Metas to exported file """
@@ -319,7 +321,7 @@ def write_pov(filename, scene=None, info_callback=None):
         meta_elems = {}
         for ob in metas:
             prefix = ob.name.split(".")[0]
-            if not prefix in meta_group:
+            if prefix not in meta_group:
                 meta_group[prefix] = ob  # .data.threshold
             elems = [
                 (elem, ob)
@@ -335,7 +337,9 @@ def write_pov(filename, scene=None, info_callback=None):
             if len(elems) == 0:
                 tab_write("\n//dummy sphere to represent empty meta location\n")
                 tab_write(
-                    "sphere {<%.6g, %.6g, %.6g>,0 pigment{rgbt 1} no_image no_reflection no_radiosity photons{pass_through collect off} hollow}\n\n"
+                    "sphere {<%.6g, %.6g, %.6g>,0 pigment{rgbt 1} "
+                    "no_image no_reflection no_radiosity "
+                    "photons{pass_through collect off} hollow}\n\n"
                     % (ob.location.x, ob.location.y, ob.location.z)
                 )  # ob.name > povdataname)
             # other metaballs
@@ -504,13 +508,15 @@ def write_pov(filename, scene=None, info_callback=None):
                             )
                             tab_write("finish{%s} " % safety(material_finish, ref_level_bound=2))
                         else:
+                            material_finish = DEF_MAT_NAME
+                            trans = 0.0
                             tab_write(
-                                "pigment{srgb 1} finish{%s} "
-                                % (safety(DEF_MAT_NAME, ref_level_bound=2))
+                                "pigment{srgbt<1,1,1,%.3g} finish{%s} "
+                                % (trans, safety(material_finish, ref_level_bound=2))
                             )
 
-                            write_object_material(material, mob, tab_write)
-                            # write_object_material(material, elems[1])
+                            write_object_material_interior(material, mob, tab_write)
+                            # write_object_material_interior(material, elems[1])
                             tab_write("radiosity{importance %3g}\n" % mob.pov.importance_value)
                             tab_write("}\n\n")  # End of Metaball block
 
@@ -577,7 +583,7 @@ def write_pov(filename, scene=None, info_callback=None):
                     # Write the finish last.
                     tab_write("finish {%s}\n" % (safety(DEF_MAT_NAME, ref_level_bound=2)))
 
-                write_object_material(material, elems[1])
+                write_object_material_interior(material, elems[1])
 
                 write_matrix(global_matrix @ ob.matrix_world)
                 # Importance for radiosity sampling added here
@@ -732,12 +738,12 @@ def write_pov(filename, scene=None, info_callback=None):
     for ob in bpy.data.objects:
         if ob.type == 'MESH':
             for mod in ob.modifiers:
-                if mod.type == 'BOOLEAN':
-                    if mod.object not in csg_list:
+                if mod.type == 'BOOLEAN' and mod.object not in csg_list:
                         csg_list.append(mod.object)
     if csg_list != []:
         csg = False
         sel = no_renderable_objects()
+        #export non rendered boolean objects operands
         object_mesh_topology.export_meshes(
             preview_dir,
             file,
@@ -748,7 +754,7 @@ def write_pov(filename, scene=None, info_callback=None):
             safety,
             write_object_modifiers,
             material_names_dictionary,
-            write_object_material,
+            write_object_material_interior,
             scenography.exported_lights_count,
             unpacked_images,
             image_format,
@@ -797,7 +803,7 @@ def write_pov(filename, scene=None, info_callback=None):
             continue  # don't export as pov curves objects with modifiers, but as mesh
         # Implicit else-if (as not skipped by previous "continue")
         if c.type == 'CURVE' and (c.pov.curveshape in {'lathe', 'sphere_sweep', 'loft', 'birail'}):
-            object_curve_topology.export_curves(c, string_strip_hyphen, global_matrix, tab_write)
+            object_curve_topology.export_curves(file, c, string_strip_hyphen, global_matrix, tab_write)
 
     if comments:
         file.write("\n//--Material Definitions--\n\n")
@@ -875,7 +881,7 @@ def write_pov(filename, scene=None, info_callback=None):
         safety,
         write_object_modifiers,
         material_names_dictionary,
-        write_object_material,
+        write_object_material_interior,
         scenography.exported_lights_count,
         unpacked_images,
         image_format,
@@ -1021,16 +1027,6 @@ class PovrayRender(bpy.types.RenderEngine):
 
             # Then try 64bits POV
             pov_binary = os.path.join(win_home, "bin", "pvengine64.exe")
-            if os.path.exists(pov_binary):
-                return pov_binary
-
-            # Then try 32bits UberPOV
-            pov_binary = os.path.join(win_home, "bin", "uberpov32.exe")
-            if os.path.exists(pov_binary):
-                return pov_binary
-
-            # Then try 32bits POV
-            pov_binary = os.path.join(win_home, "bin", "pvengine.exe")
             if os.path.exists(pov_binary):
                 return pov_binary
 
@@ -1331,14 +1327,14 @@ class PovrayRender(bpy.types.RenderEngine):
                 self._cleanup()
         else:
 
-            ##WIP output format
-            ##        if r.image_settings.file_format == 'OPENEXR':
-            ##            fformat = 'EXR'
-            ##            render.image_settings.color_mode = 'RGBA'
-            ##        else:
-            ##            fformat = 'TGA'
-            ##            r.image_settings.file_format = 'TARGA'
-            ##            r.image_settings.color_mode = 'RGBA'
+            # WIP output format
+            #         if r.image_settings.file_format == 'OPENEXR':
+            #             fformat = 'EXR'
+            #             render.image_settings.color_mode = 'RGBA'
+            #         else:
+            #             fformat = 'TGA'
+            #             r.image_settings.file_format = 'TARGA'
+            #             r.image_settings.color_mode = 'RGBA'
 
             blend_scene_name = bpy.data.filepath.split(os.path.sep)[-1].split(".")[0]
             pov_scene_name = ""
@@ -1424,13 +1420,8 @@ class PovrayRender(bpy.types.RenderEngine):
                 pov_path = os.path.join(pov_path, pov_scene_name)
                 pov_path = os.path.realpath(pov_path)
 
-                # for now this has to be the same like the pov output. Bug in POV-Ray RC3.
-                # image_render_path = image_render_path + "\\" + pov_scene_name
-                image_render_path = pov_path  # Bugfix for POV-Ray RC3 bug
-                # image_render_path = os.path.realpath(image_render_path)  # Bugfix for POV-Ray RC3 bug
-
-                # print("Export path: %s" % pov_path)
-                # print("Render Image path: %s" % image_render_path)
+                image_render_path = pov_path
+                # print("Render Image path: " + image_render_path)
 
             # start export
             self.update_stats("", "POV-Ray 3.7: Exporting data from Blender")
@@ -1594,22 +1585,28 @@ class PovrayRender(bpy.types.RenderEngine):
                         scr = win.screen
                         for area in scr.areas:
                             if area.type == 'CONSOLE':
+                                # pass # XXX temp override
                                 # context override
                                 # ctx = {'window': win, 'screen': scr, 'area':area}#bpy.context.copy()
-                                ctx = {}
-                                ctx['area'] = area
-                                ctx['region'] = area.regions[-1]
-                                ctx['space_data'] = area.spaces.active
-                                ctx['screen'] = scr  # C.screen
-                                ctx['window'] = win
+                                try:
+                                    ctx = {}
+                                    ctx['area'] = area
+                                    ctx['region'] = area.regions[-1]
+                                    ctx['space_data'] = area.spaces.active
+                                    ctx['screen'] = scr  # C.screen
+                                    ctx['window'] = win
 
-                                # bpy.ops.console.banner(ctx, text = "Hello world")
-                                bpy.ops.console.clear_line(ctx)
-                                stdmsg = msg.split('\n')  # XXX todo , test and see
-                                for i in stdmsg:
-                                    # Crashes if no Terminal displayed on Windows
-                                    bpy.ops.console.scrollback_append(ctx, text=i, type='INFO')
-                                    # bpy.ops.console.insert(ctx, text=(i + "\n"))
+                                    # bpy.ops.console.banner(ctx, text = "Hello world")
+                                    bpy.ops.console.clear_line(ctx)
+                                    stdmsg = msg.split('\n')  # XXX todo , test and see segfault crash?
+                                    for i in stdmsg:
+                                        # Crashes if no Terminal displayed on Windows
+                                        bpy.ops.console.scrollback_append(ctx, text=i, type='INFO')
+                                        # bpy.ops.console.insert(ctx, text=(i + "\n"))
+                                except BaseException as e:
+                                    print(e.__doc__)
+                                    print('An exception occurred: {}'.format(e))
+                                    pass
 
             self.update_stats("", "")
 
@@ -1679,9 +1676,9 @@ class PovrayRender(bpy.types.RenderEngine):
                 os.system("echo %s | espeak &" % (finished_render_message))
 
 
-##################################################################################
-#################################Operators########################################
-##################################################################################
+# --------------------------------------------------------------------------------- #
+# ----------------------------------- Operators ----------------------------------- #
+# --------------------------------------------------------------------------------- #
 class RenderPovTexturePreview(Operator):
     """Export only files necessary to texture preview and render image"""
 
@@ -1692,14 +1689,14 @@ class RenderPovTexturePreview(Operator):
         tex = bpy.context.object.active_material.active_texture  # context.texture
         tex_prev_name = string_strip_hyphen(bpy.path.clean_name(tex.name)) + "_prev"
 
-        ## Make sure Preview directory exists and is empty
+        # Make sure Preview directory exists and is empty
         if not os.path.isdir(preview_dir):
             os.mkdir(preview_dir)
 
         ini_prev_file = os.path.join(preview_dir, "Preview.ini")
         input_prev_file = os.path.join(preview_dir, "Preview.pov")
         output_prev_file = os.path.join(preview_dir, tex_prev_name)
-        ##################### ini ##########################################
+        # ---------------------------------- ini ---------------------------------- #
         file_ini = open("%s" % ini_prev_file, "w")
         file_ini.write('Version=3.8\n')
         file_ini.write('Input_File_Name="%s"\n' % input_prev_file)
@@ -1715,7 +1712,7 @@ class RenderPovTexturePreview(Operator):
         file_ini.write('Antialias_Depth=3\n')
         file_ini.write('-d\n')
         file_ini.close()
-        ##################### pov ##########################################
+        # ---------------------------------- pov ---------------------------------- #
         file_pov = open("%s" % input_prev_file, "w")
         pat_name = "PAT_" + string_strip_hyphen(bpy.path.clean_name(tex.name))
         file_pov.write("#declare %s = \n" % pat_name)
@@ -1748,7 +1745,7 @@ class RenderPovTexturePreview(Operator):
         file_pov.write("    translate <0.000000, 0.000000, 0.000000>\n")
         file_pov.write("}\n")
         file_pov.close()
-        ##################### end write ##########################################
+        # ------------------------------- end write ------------------------------- #
 
         pov_binary = PovrayRender._locate_binary()
 
@@ -1807,14 +1804,20 @@ class RunPovTextRender(Operator):
         return {'FINISHED'}
 
 
-classes = (PovrayRender, RenderPovTexturePreview, RunPovTextRender)
+classes = (
+    PovrayRender,
+    RenderPovTexturePreview,
+    RunPovTextRender,
+)
 
 
 def register():
     for cls in classes:
         register_class(cls)
+    scripting.register()
 
 
 def unregister():
+    scripting.unregister()
     for cls in reversed(classes):
         unregister_class(cls)

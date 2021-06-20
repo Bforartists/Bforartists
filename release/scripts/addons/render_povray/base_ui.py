@@ -51,12 +51,13 @@ from . import (
     texturing_gui,
     shading_nodes,  # for POV specific nodes
     scripting_gui,
+    update_files,
 )
 
 
-############# POV-Centric WORKSPACE #############
+# ------------ POV-Centric WORKSPACE ------------ #
 @persistent
-def povCentricWorkspace(dummy):
+def pov_centric_moray_like_workspace(dummy):
     """Set up a POV centric Workspace if addon was activated and saved as default renderer.
 
     This would bring a ’_RestrictData’ error because UI needs to be fully loaded before
@@ -121,8 +122,8 @@ def povCentricWorkspace(dummy):
                                 override['area'] = area
                                 override['region'] = region
 
-                                area_x = area.x + (area.width / 2)
-                                area_y = area.y + area.height
+                                # area_x = area.x + (area.width / 2)
+                                # area_y = area.y + area.height
                                 bpy.ops.screen.space_type_set_or_cycle(override, space_type='INFO')
                                 try:
                                     if area == pov_workspace[6] and bpy.ops.screen.area_move.poll(
@@ -219,7 +220,7 @@ def povCentricWorkspace(dummy):
             "\nThe factory 'Scripting' workspace is needed before POV centric "
             "\nworkspace may activate when POV is set as your default renderer"
         )
-    ####################################UTF-8###################################
+    # -----------------------------------UTF-8---------------------------------- #
     # Check and fix all strings in current .blend file to be valid UTF-8 Unicode
     # sometimes needed for old, 2.4x / 2.6x area files
     bpy.ops.wm.blend_strings_utf8_validate()
@@ -237,10 +238,8 @@ def check_material(mat):
 
 
 def simple_material(mat):
-    """Test if a material uses nodes."""
-    if (mat is not None) and (not mat.use_nodes):
-        return True
-    return False
+    """Test if a material is nodeless."""
+    return (mat is not None) and (not mat.use_nodes)
 
 
 def pov_context_tex_datablock(context):
@@ -282,6 +281,7 @@ def pov_context_tex_datablock(context):
 
 
 def register():
+    update_files.register()
     render_gui.register()
     scenography_gui.register()
     object_gui.register()
@@ -290,13 +290,13 @@ def register():
     shading_nodes.register()
     scripting_gui.register()
 
-    if not povCentricWorkspace in bpy.app.handlers.load_post:
-        bpy.app.handlers.load_post.append(povCentricWorkspace)
+    if pov_centric_moray_like_workspace not in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.append(pov_centric_moray_like_workspace)
 
 
 def unregister():
-    if povCentricWorkspace in bpy.app.handlers.load_post:
-        bpy.app.handlers.load_post.remove(povCentricWorkspace)
+    if pov_centric_moray_like_workspace in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.remove(pov_centric_moray_like_workspace)
 
     scripting_gui.unregister()
     shading_nodes.unregister()
@@ -305,3 +305,4 @@ def unregister():
     object_gui.unregister()
     scenography_gui.unregister()
     render_gui.unregister()
+    update_files.unregister()
