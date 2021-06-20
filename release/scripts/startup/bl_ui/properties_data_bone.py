@@ -178,7 +178,11 @@ class BONE_PT_curved(BoneButtonsPanel, Panel):
         col = topcol.column(align=True)
         col.prop(bbone, "bbone_easein", text="Ease In")
         col.prop(bbone, "bbone_easeout", text="Out")
-        col.prop(bone, "use_scale_easing")
+        
+        row = col.row()
+        row.use_property_split = False
+        row.prop(bone, "use_scale_easing")
+        row.prop_decorator(bone, "use_scale_easing")
 
         col = topcol.column(align=True)
         col.prop(bone, "bbone_handle_type_start", text="Start Handle")
