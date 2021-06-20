@@ -22,12 +22,10 @@
 
 meshes or curve based shapes."""
 
-####################
-## Faster mesh export
-import numpy as np
-
-####################
-import random  # used for hair
+# --------
+# -- Faster mesh export ...one day
+# import numpy as np
+# --------
 import bpy
 from . import texturing  # for how textures influence shaders
 from .scenography import export_smoke
@@ -70,7 +68,7 @@ def export_meshes(
     safety,
     write_object_modifiers,
     material_names_dictionary,
-    write_object_material,
+    write_object_material_interior,
     exported_lights_count,
     unpacked_images,
     image_format,
@@ -89,61 +87,62 @@ def export_meshes(
     info_callback,
 ):
     """write all meshes as POV mesh2{} syntax to exported file """
-    # some numpy functions to speed up mesh export NOT IN USE YET
+    # # some numpy functions to speed up mesh export NOT IN USE YET
+    # # Current 2.93 beta numpy linking has troubles so definitions commented off for now
 
-    # TODO: also write a numpy function to read matrices at object level?
-    # feed below with mesh object.data, but only after doing data.calc_loop_triangles()
-    def read_verts_co(self, mesh):
-        #'float64' would be a slower 64-bit floating-point number numpy datatype
-        # using 'float32' vert coordinates for now until any issue is reported
-        mverts_co = np.zeros((len(mesh.vertices) * 3), dtype=np.float32)
-        mesh.vertices.foreach_get("co", mverts_co)
-        return np.reshape(mverts_co, (len(mesh.vertices), 3))
+    # # TODO: also write a numpy function to read matrices at object level?
+    # # feed below with mesh object.data, but only after doing data.calc_loop_triangles()
+    # def read_verts_co(self, mesh):
+        # #'float64' would be a slower 64-bit floating-point number numpy datatype
+        # # using 'float32' vert coordinates for now until any issue is reported
+        # mverts_co = np.zeros((len(mesh.vertices) * 3), dtype=np.float32)
+        # mesh.vertices.foreach_get("co", mverts_co)
+        # return np.reshape(mverts_co, (len(mesh.vertices), 3))
 
-    def read_verts_idx(self, mesh):
-        mverts_idx = np.zeros((len(mesh.vertices)), dtype=np.int64)
-        mesh.vertices.foreach_get("index", mverts_idx)
-        return np.reshape(mverts_idx, (len(mesh.vertices), 1))
+    # def read_verts_idx(self, mesh):
+        # mverts_idx = np.zeros((len(mesh.vertices)), dtype=np.int64)
+        # mesh.vertices.foreach_get("index", mverts_idx)
+        # return np.reshape(mverts_idx, (len(mesh.vertices), 1))
 
-    def read_verts_norms(self, mesh):
-        #'float64' would be a slower 64-bit floating-point number numpy datatype
-        # using less accurate 'float16' normals for now until any issue is reported
-        mverts_no = np.zeros((len(mesh.vertices) * 3), dtype=np.float16)
-        mesh.vertices.foreach_get("normal", mverts_no)
-        return np.reshape(mverts_no, (len(mesh.vertices), 3))
+    # def read_verts_norms(self, mesh):
+        # #'float64' would be a slower 64-bit floating-point number numpy datatype
+        # # using less accurate 'float16' normals for now until any issue is reported
+        # mverts_no = np.zeros((len(mesh.vertices) * 3), dtype=np.float16)
+        # mesh.vertices.foreach_get("normal", mverts_no)
+        # return np.reshape(mverts_no, (len(mesh.vertices), 3))
 
-    def read_faces_idx(self, mesh):
-        mfaces_idx = np.zeros((len(mesh.loop_triangles)), dtype=np.int64)
-        mesh.loop_triangles.foreach_get("index", mfaces_idx)
-        return np.reshape(mfaces_idx, (len(mesh.loop_triangles), 1))
+    # def read_faces_idx(self, mesh):
+        # mfaces_idx = np.zeros((len(mesh.loop_triangles)), dtype=np.int64)
+        # mesh.loop_triangles.foreach_get("index", mfaces_idx)
+        # return np.reshape(mfaces_idx, (len(mesh.loop_triangles), 1))
 
-    def read_faces_verts_indices(self, mesh):
-        mfaces_verts_idx = np.zeros((len(mesh.loop_triangles) * 3), dtype=np.int64)
-        mesh.loop_triangles.foreach_get("vertices", mfaces_verts_idx)
-        return np.reshape(mfaces_verts_idx, (len(mesh.loop_triangles), 3))
+    # def read_faces_verts_indices(self, mesh):
+        # mfaces_verts_idx = np.zeros((len(mesh.loop_triangles) * 3), dtype=np.int64)
+        # mesh.loop_triangles.foreach_get("vertices", mfaces_verts_idx)
+        # return np.reshape(mfaces_verts_idx, (len(mesh.loop_triangles), 3))
 
-    # Why is below different from vertex indices?
-    def read_faces_verts_loops(self, mesh):
-        mfaces_verts_loops = np.zeros((len(mesh.loop_triangles) * 3), dtype=np.int64)
-        mesh.loop_triangles.foreach_get("loops", mfaces_verts_loops)
-        return np.reshape(mfaces_verts_loops, (len(mesh.loop_triangles), 3))
+    # # Why is below different from vertex indices?
+    # def read_faces_verts_loops(self, mesh):
+        # mfaces_verts_loops = np.zeros((len(mesh.loop_triangles) * 3), dtype=np.int64)
+        # mesh.loop_triangles.foreach_get("loops", mfaces_verts_loops)
+        # return np.reshape(mfaces_verts_loops, (len(mesh.loop_triangles), 3))
 
-    def read_faces_norms(self, mesh):
-        #'float64' would be a slower 64-bit floating-point number numpy datatype
-        # using less accurate 'float16' normals for now until any issue is reported
-        mfaces_no = np.zeros((len(mesh.loop_triangles) * 3), dtype=np.float16)
-        mesh.loop_triangles.foreach_get("normal", mfaces_no)
-        return np.reshape(mfaces_no, (len(mesh.loop_triangles), 3))
+    # def read_faces_norms(self, mesh):
+        # #'float64' would be a slower 64-bit floating-point number numpy datatype
+        # # using less accurate 'float16' normals for now until any issue is reported
+        # mfaces_no = np.zeros((len(mesh.loop_triangles) * 3), dtype=np.float16)
+        # mesh.loop_triangles.foreach_get("normal", mfaces_no)
+        # return np.reshape(mfaces_no, (len(mesh.loop_triangles), 3))
 
-    def read_faces_smooth(self, mesh):
-        mfaces_smth = np.zeros((len(mesh.loop_triangles) * 1), dtype=np.bool)
-        mesh.loop_triangles.foreach_get("use_smooth", mfaces_smth)
-        return np.reshape(mfaces_smth, (len(mesh.loop_triangles), 1))
+    # def read_faces_smooth(self, mesh):
+        # mfaces_smth = np.zeros((len(mesh.loop_triangles) * 1), dtype=np.bool)
+        # mesh.loop_triangles.foreach_get("use_smooth", mfaces_smth)
+        # return np.reshape(mfaces_smth, (len(mesh.loop_triangles), 1))
 
-    def read_faces_material_indices(self, mesh):
-        mfaces_mats_idx = np.zeros((len(mesh.loop_triangles)), dtype=np.int16)
-        mesh.loop_triangles.foreach_get("material_index", mfaces_mats_idx)
-        return np.reshape(mfaces_mats_idx, (len(mesh.loop_triangles), 1))
+    # def read_faces_material_indices(self, mesh):
+        # mfaces_mats_idx = np.zeros((len(mesh.loop_triangles)), dtype=np.int16)
+        # mesh.loop_triangles.foreach_get("material_index", mfaces_mats_idx)
+        # return np.reshape(mfaces_mats_idx, (len(mesh.loop_triangles), 1))
 
     #        obmatslist = []
     #        def hasUniqueMaterial():
@@ -166,7 +165,8 @@ def export_meshes(
     #                        return True
     #            return False
     # For objects using local material(s) only!
-    # This is a mapping between a tuple (dataname, material_names_dictionary, ...), and the POV dataname.
+    # This is a mapping between a tuple (dataname, material_names_dictionary, ...),
+    # and the POV dataname.
     # As only objects using:
     #     * The same data.
     #     * EXACTLY the same materials, in EXACTLY the same sockets.
@@ -222,11 +222,10 @@ def export_meshes(
         data_ref[dataname] = [(name, matrix_as_pov_string(matrix))]
         return dataname
 
-    # XXX TODO : Too many nested blocks in this object loop, split hair (+particles?) to their function in own file,
     ob_num = 0
+    depsgraph = bpy.context.evaluated_depsgraph_get()
     for ob in sel:
         # Using depsgraph
-        depsgraph = bpy.context.evaluated_depsgraph_get()
         ob = bpy.data.objects[ob.name].evaluated_get(depsgraph)
 
         # subtract original from the count of their instances as were not counted before 2.8
@@ -237,7 +236,7 @@ def export_meshes(
             #     for object we won't export here!
             if ob.type in {
                 'LIGHT',
-                'CAMERA',  #'EMPTY', #empties can bear dupligroups
+                'CAMERA',  # 'EMPTY', #empties can bear dupligroups
                 'META',
                 'ARMATURE',
                 'LATTICE',
@@ -277,32 +276,34 @@ def export_meshes(
                                 and mod.show_render
                                 and (p_sys.name == mod.particle_system.name)
                             ):
-                                export_hair(file, ob, p_sys, global_matrix, write_matrix)
+                                export_hair(file, ob, mod, p_sys, global_matrix, write_matrix)
                                 if not render_emitter:
                                     continue  # don't render mesh, skip to next object.
 
-                #############################################
+                # ------------------------------------------------
                 # Generating a name for object just like materials to be able to use it
                 # (baking for now or anything else).
                 # XXX I don't understand that if we are here, sel if a non-empty iterable,
                 #     so this condition is always True, IMO -- mont29
-                if ob.data:
-                    name_orig = "OB" + ob.name
-                    dataname_orig = "DATA" + ob.data.name
-                elif ob.is_instancer:
+                # EMPTY type objects treated  a little further below -- MR
+
+                # modified elif to if below as non EMPTY objects can also be instancers
+                if ob.is_instancer:
                     if ob.instance_type == 'COLLECTION':
                         name_orig = "OB" + ob.name
                         dataname_orig = "DATA" + ob.instance_collection.name
                     else:
                         # hoping only dupligroups have several source datablocks
                         # ob_dupli_list_create(scene) #deprecated in 2.8
-                        depsgraph = bpy.context.evaluated_depsgraph_get()
                         for eachduplicate in depsgraph.object_instances:
                             # Real dupli instance filtered because
                             # original included in list since 2.8
                             if eachduplicate.is_instance:
                                 dataname_orig = "DATA" + eachduplicate.object.name
                         # ob.dupli_list_clear() #just don't store any reference to instance since 2.8
+                elif ob.data: # not an EMPTY type object
+                    name_orig = "OB" + ob.name
+                    dataname_orig = "DATA" + ob.data.name
                 elif ob.type == 'EMPTY':
                     name_orig = "OB" + ob.name
                     dataname_orig = "DATA" + ob.name
@@ -311,18 +312,16 @@ def export_meshes(
                     dataname_orig = DEF_OBJ_NAME
                 name = string_strip_hyphen(bpy.path.clean_name(name_orig))
                 dataname = string_strip_hyphen(bpy.path.clean_name(dataname_orig))
-                ##            for slot in ob.material_slots:
-                ##                if slot.material is not None and slot.link == 'OBJECT':
-                ##                    obmaterial = slot.material
+                #            for slot in ob.material_slots:
+                #                if slot.material is not None and slot.link == 'OBJECT':
+                #                    obmaterial = slot.material
 
-                #############################################
+                # ------------------------------------------------
 
                 if info_callback:
                     info_callback("Object %2.d of %2.d (%s)" % (ob_num, len(sel), ob.name))
 
-                # if ob.type != 'MESH':
-                #    continue
-                # me = ob.data
+                me = ob.data
 
                 matrix = global_matrix @ ob.matrix_world
                 povdataname = store(scene, ob, name, dataname, matrix)
@@ -332,7 +331,7 @@ def export_meshes(
 
                 print("Writing Down First Occurrence of " + name)
 
-                ############################################Povray Primitives
+                # ------------ Povray Primitives ------------ #
                 # special export_curves() function takes care of writing
                 # lathe, sphere_sweep, birail, and loft except with modifiers
                 # converted to mesh
@@ -341,7 +340,7 @@ def export_meshes(
                         ob.pov.curveshape in {'lathe', 'sphere_sweep', 'loft'}
                     ):
                         continue  # Don't render proxy mesh, skip to next object
-
+                # pov_mat_name = "Default_texture" # Not used...remove?
                 if ob.pov.object_as == 'ISOSURFACE':
                     tab_write("#declare %s = isosurface{ \n" % povdataname)
                     tab_write("function{ \n")
@@ -379,12 +378,11 @@ def export_meshes(
                     else:
                         if ob.pov.max_trace > 1:
                             tab_write("max_trace %.6g\n" % ob.pov.max_trace)
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -397,12 +395,11 @@ def export_meshes(
                         "#declare %s = superellipsoid{ <%.4f,%.4f>\n"
                         % (povdataname, ob.pov.se_n2, ob.pov.se_n1)
                     )
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -417,7 +414,7 @@ def export_meshes(
                     cross = ob.pov.st_cross
                     accuracy = ob.pov.st_accuracy
                     gradient = ob.pov.st_max_gradient
-                    ############Inline Supertorus macro
+                    # --- Inline Supertorus macro
                     file.write(
                         "#macro Supertorus(RMj, RMn, MajorControl, MinorControl, Accuracy, MaxGradient)\n"
                     )
@@ -439,17 +436,16 @@ def export_meshes(
                     file.write("      accuracy Accuracy\n")
                     file.write("   }\n")
                     file.write("#end\n")
-                    ############
+                    # ---
                     tab_write(
                         "#declare %s = object{ Supertorus( %.4g,%.4g,%.4g,%.4g,%.4g,%.4g)\n"
                         % (povdataname, rad_maj, rad_min, ring, cross, accuracy, gradient)
                     )
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -460,12 +456,11 @@ def export_meshes(
 
                 if ob.pov.object_as == 'PLANE':
                     tab_write("#declare %s = plane{ <0,0,1>,1\n" % povdataname)
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -476,12 +471,11 @@ def export_meshes(
 
                 if ob.pov.object_as == 'BOX':
                     tab_write("#declare %s = box { -1,1\n" % povdataname)
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -499,12 +493,11 @@ def export_meshes(
                         "#declare %s = cone { <0,0,%.4f>,%.4f,<0,0,%.4f>,%.4f\n"
                         % (povdataname, bz, br, cz, cr)
                     )
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -522,12 +515,11 @@ def export_meshes(
                         "#declare %s = cylinder { <0,0,0>,<%6f,%6f,%6f>,%6f\n"
                         % (povdataname, x2, y2, z2, r)
                     )
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -551,12 +543,11 @@ def export_meshes(
                         data += ' water_level %.4f' % ob.pov.hf_water
                     # hierarchy = ob.pov.hf_hierarchy
                     tab_write('#declare %s = height_field { %s\n' % (povdataname, data))
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -572,12 +563,11 @@ def export_meshes(
                     tab_write(
                         "#declare %s = sphere { 0,%6f\n" % (povdataname, ob.pov.sphere_radius)
                     )
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -591,12 +581,11 @@ def export_meshes(
                         "#declare %s = torus { %.4f,%.4f\n"
                         % (povdataname, ob.pov.torus_major_radius, ob.pov.torus_minor_radius)
                     )
-                    pov_mat_name = "Default_texture"
                     if ob.active_material:
                         # pov_mat_name = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
-                            write_object_material(material, ob, tab_write)
+                            write_object_material_interior(material, ob, tab_write)
                         except IndexError:
                             print(me)
                     # tab_write("texture {%s}\n"%pov_mat_name)
@@ -726,10 +715,8 @@ def export_meshes(
                     tab_write("}\n")
                     continue  # Don't render proxy mesh, skip to next object
 
-                ## In remaining cases; keep at end so no "elif" is needed,
-                #       (as not skipped by any previous "continue")
-                #           and for originals not their instances,
-                #               attempt to export mesh:
+                # Implicit else-if (as not skipped by previous "continue") Keep this last.
+                # For originals, but not their instances, attempt to export mesh:
                 if not ob.is_instancer:
                     # except duplis which should be instances groups for now but all duplis later
                     if ob.type == 'EMPTY':
@@ -743,8 +730,7 @@ def export_meshes(
                         )
                         continue  # Don't render empty object but this is later addition, watch it.
 
-                    depsgraph = bpy.context.evaluated_depsgraph_get()
-                    ob_eval = ob.evaluated_get(depsgraph)
+                    ob_eval = ob # not sure this is needed in case to_mesh_clear could damage ob ?
                     try:
                         me = ob_eval.to_mesh()
 
@@ -761,10 +747,10 @@ def export_meshes(
                         me.calc_loop_triangles()
                         me_materials = me.materials
                         me_faces = me.loop_triangles[:]
-                        ## numpytest
+                        # --- numpytest
                         # me_looptris = me.loops
 
-                        ## otypes = ['int32'] is a 32-bit signed integer number numpy datatype
+                        # Below otypes = ['int32'] is a 32-bit signed integer number numpy datatype
                         # get_v_index = np.vectorize(lambda l: l.vertex_index, otypes = ['int32'], cache = True)
                         # faces_verts_idx = get_v_index(me_looptris)
 
@@ -853,7 +839,7 @@ def export_meshes(
                         uniqueUVs = {}
                         # n = 0
                         for f in me_faces:  # me.faces in 2.7
-                            uvs = [uv_layer[l].uv[:] for l in f.loops]
+                            uvs = [uv_layer[loop_index].uv[:] for loop_index in f.loops]
 
                             for uv in uvs:
                                 uniqueUVs[uv[:]] = [-1]
@@ -903,7 +889,7 @@ def export_meshes(
                                 material
                             ):  # and material.use_vertex_color_paint: #Always use vertex color when there is some for now
 
-                                cols = [vcol_layer[l].color[:] for l in f.loops]
+                                cols = [vcol_layer[loop_index].color[:] for loop_index in f.loops]
 
                                 for col in cols:
                                     key = (
@@ -964,7 +950,7 @@ def export_meshes(
                             material_index = f.material_index
 
                             if vcol_layer:
-                                cols = [vcol_layer[l].color[:] for l in f.loops]
+                                cols = [vcol_layer[loop_index].color[:] for loop_index in f.loops]
 
                             if (
                                 not me_materials or me_materials[material_index] is None
@@ -1071,7 +1057,7 @@ def export_meshes(
                             tab_write("%d" % (len(me_faces)))  # faces count
                             tab_str = tab * tab_level
                             for f in me_faces:
-                                uvs = [uv_layer[l].uv[:] for l in f.loops]
+                                uvs = [uv_layer[loop_index].uv[:] for loop_index in f.loops]
 
                                 if linebreaksinlists:
                                     file.write(",\n")
@@ -1118,7 +1104,7 @@ def export_meshes(
                         if me.materials:
                             try:
                                 material = me.materials[0]  # dodgy
-                                write_object_material(material, ob, tab_write)
+                                write_object_material_interior(material, ob, tab_write)
                             except IndexError:
                                 print(me)
 
@@ -1142,7 +1128,7 @@ def export_meshes(
                         for i, material in enumerate(me_materials):
 
                             if (
-                                material and material.pov.material_use_nodes == False
+                                material and material.pov.material_use_nodes is False
                             ):  # WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 # Multiply diffuse with SSS Color
                                 if material.pov_subsurface_scattering.use:
@@ -1171,15 +1157,12 @@ def export_meshes(
                                     vertCols[key] = [-1]
 
                                 idx = 0
-                                local_material_names = []
+                                local_material_names = [] #XXX track and revert
+                                material_finish = None
                                 for col, index in vertCols.items():
                                     # if me_materials:
                                     mater = me_materials[col[3]]
-                                    if me_materials is None:  # XXX working?
-                                        material_finish = DEF_MAT_NAME  # not working properly,
-                                        trans = 0.0
-
-                                    else:
+                                    if me_materials is not None:
                                         texturing.write_texture_influence(
                                             using_uberpov,
                                             mater,
@@ -1198,7 +1181,7 @@ def export_meshes(
                                             preview_dir,
                                             unpacked_images,
                                         )
-                                    ###################################################################
+                                    # ------------------------------------------------
                                     index[0] = idx
                                     idx += 1
 
@@ -1223,7 +1206,7 @@ def export_meshes(
                         if (
                             material
                             and ob.active_material is not None
-                            and material.pov.material_use_nodes == False
+                            and not material.pov.material_use_nodes
                         ):
                             if material.pov.replacement_text != "":
                                 file.write("\n")
@@ -1257,7 +1240,7 @@ def export_meshes(
                             material_index = f.material_index
 
                             if vcol_layer:
-                                cols = [vcol_layer[l].color[:] for l in f.loops]
+                                cols = [vcol_layer[loop_index].color[:] for loop_index in f.loops]
 
                             if (
                                 not me_materials or me_materials[material_index] is None
@@ -1366,7 +1349,7 @@ def export_meshes(
                             tab_write("%d" % (len(me_faces)))  # faces count
                             tab_str = tab * tab_level
                             for f in me_faces:
-                                uvs = [uv_layer[l].uv[:] for l in f.loops]
+                                uvs = [uv_layer[loop_index].uv[:] for loop_index in f.loops]
 
                                 if linebreaksinlists:
                                     file.write(",\n")
@@ -1413,7 +1396,7 @@ def export_meshes(
                         if me.materials:
                             try:
                                 material = me.materials[0]  # dodgy
-                                write_object_material(material, ob, tab_write)
+                                write_object_material_interior(material, ob, tab_write)
                             except IndexError:
                                 print(me)
 
@@ -1438,7 +1421,6 @@ def export_meshes(
             if ob.is_instancer:
                 tab_write("\n//--DupliObjects in %s--\n\n" % ob.name)
                 # ob.dupli_list_create(scene) #deprecated in 2.8
-                depsgraph = bpy.context.evaluated_depsgraph_get()
                 dup = ""
                 if ob.is_modified(scene, 'RENDER'):
                     # modified object always unique so using object name rather than data name
@@ -1456,7 +1438,7 @@ def export_meshes(
                         _dupname = eachduplicate.object.name
                         _dupobj = bpy.data.objects[_dupname]
                         # BEGIN introspection for troubleshooting purposes
-                        if not "name" in dir(_dupobj.data):
+                        if "name" not in dir(_dupobj.data):
                             if _dupname not in _dupnames_seen:
                                 print(
                                     "WARNING: bpy.data.objects[%s].data (of type %s) has no 'name' attribute"

@@ -65,7 +65,7 @@ def generate_bmesh_repr(p1, v1, axis, num_verts):
         idx2 = (i + 1) % num_verts
         bm.edges.new([v_refs[idx1], v_refs[idx2]])
 
-    bmesh.update_edit_mesh(me, True)
+    bmesh.update_edit_mesh(me, loop_triangles=True)
 
 
 def generate_3PT(pts, obj, nv, mode=1):

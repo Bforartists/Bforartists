@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -11524,6 +11524,14 @@ msgid "Sort items descending, from highest value to lowest"
 msgstr "Сортировать элементы по убыванию"
 
 
+msgid "Link"
+msgstr "Связать"
+
+
+msgid "Append"
+msgstr "Добавить"
+
+
 msgid "Domain Settings"
 msgstr "Настройки домена"
 
@@ -16509,16 +16517,8 @@ msgid "Texture Space Location"
 msgstr "Положение текстурного простр."
 
 
-msgid "Texture space location"
-msgstr "Положение текстурного пространства"
-
-
 msgid "Texture Space Size"
 msgstr "Размер текстурного простр."
-
-
-msgid "Texture space size"
-msgstr "Размер текстурного пространства"
 
 
 msgid "Twist Method"
@@ -19113,6 +19113,14 @@ msgstr "Текстурное пространство меша"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Получать текстурные координаты из другого меша"
+
+
+msgid "Texture space location"
+msgstr "Положение текстурного пространства"
+
+
+msgid "Texture space size"
+msgstr "Размер текстурного пространства"
 
 
 msgid "Texture Mesh"
@@ -26834,10 +26842,6 @@ msgstr "Отключить трафарет и перекрытие самопе
 
 msgid "Material slot in an object"
 msgstr "Слот материала в объекте"
-
-
-msgid "Link"
-msgstr "Связать"
 
 
 msgid "Link material to object or the object's data"
@@ -34852,6 +34856,10 @@ msgstr "Ось Z"
 
 msgid "Original"
 msgstr "Оригинал"
+
+
+msgid "Convex Hull"
+msgstr "Выпуклая оболочка"
 
 
 msgid "Fill Type"
@@ -49056,10 +49064,6 @@ msgid "Add named object"
 msgstr "Добавить именованный объект"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Дублировать объект, но не данные объекта, создав ссылку на исходные данные"
-
-
 msgid "Object name to add"
 msgstr "Имя добавляемого объекта"
 
@@ -49441,6 +49445,10 @@ msgstr "Дублировать"
 
 msgid "Duplicate selected objects"
 msgstr "Дублировать выделенные объекты"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Дублировать объект, но не данные объекта, создав ссылку на исходные данные"
 
 
 msgid "Duplicate selected objects and move them"
@@ -53262,20 +53270,16 @@ msgid "Custom properties"
 msgstr "Особые свойства"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Весовой коэффициент для определения предпочтительного ключевого кадра"
+
+
 msgid "Next Keyframe"
 msgstr "Следующий ключевой кадр"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Номер кадра ближайшего ключевого кадра после текущего кадра"
-
-
-msgid "Percentage"
-msgstr "Процент"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Весовой коэффициент для определения предпочтительного ключевого кадра"
 
 
 msgid "Previous Keyframe"
@@ -54388,10 +54392,6 @@ msgstr "Форма твёрдого тела"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "Меш с формой прямоугольного параллелепипеда; также работает и для плоскостей (например, для плоскости земли)"
-
-
-msgid "Convex Hull"
-msgstr "Выпуклая оболочка"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -56242,10 +56242,6 @@ msgstr "Скопировать модификаторы с активной до
 
 msgid "Replace modifiers in destination"
 msgstr "Заменить модификаторы"
-
-
-msgid "Append"
-msgstr "Добавить"
 
 
 msgid "Append active modifiers to selected strips"
@@ -65663,6 +65659,10 @@ msgstr "Способ отображения коэффициентов"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Отображать коэффициенты в виде значений от 0 до 1"
+
+
+msgid "Percentage"
+msgstr "Процент"
 
 
 msgid "Display factors as percentages"
@@ -87470,10 +87470,6 @@ msgid "Object not found"
 msgstr "Объект не найден"
 
 
-msgid "Object could not be duplicated"
-msgstr "Объект не может быть продублирован"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Данные этого типа не поддерживают объединение в режиме редактирования"
 
@@ -92097,14 +92093,6 @@ msgid "Transmission Depth"
 msgstr "Глубина светопропускаемости"
 
 
-msgid "Color1"
-msgstr "Цвет1"
-
-
-msgid "Color2"
-msgstr "Цвет2"
-
-
 msgid "Color Fac"
 msgstr "Коэфф. цвета"
 
@@ -92119,6 +92107,14 @@ msgstr "Размытие текстуры"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Цвет1"
+
+
+msgid "Color2"
+msgstr "Цвет2"
 
 
 msgid "Mortar"

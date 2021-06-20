@@ -34,9 +34,9 @@ import nodeitems_utils
 from nodeitems_utils import NodeCategory, NodeItem
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Pov Nodes init
-###############################################################################
+# ---------------------------------------------------------------- #
 
 
 class PovraySocketUniversal(NodeSocket):
@@ -550,9 +550,9 @@ node_categories = [
     PovraySceneNodeCategory("ISOSURFACE", "Isosurface", items=[NodeItem("IsoPropsNode")]),
     PovraySceneNodeCategory("FOG", "Fog", items=[NodeItem("PovrayFogNode")]),
 ]
-############### end nodes init
-############### nodes ui
-##############Nodes
+# -------- end nodes init
+# -------- nodes ui
+# -------- Nodes
 
 # def find_node_input(node, name):
 # for input in node.inputs:
@@ -604,7 +604,7 @@ def menu_func_nodes(self, context):
                 self.layout.prop(tex.pov, "texture_use_nodes")
 
 
-############### object
+# -------- object
 
 
 class ObjectNodeTree(bpy.types.NodeTree):
@@ -633,7 +633,7 @@ class ObjectNodeTree(bpy.types.NodeTree):
         self.refresh = True
 
 
-################### output #############################################################################################
+# -------- output # ---------------------------------------------------------------- #
 
 
 class PovrayOutputNode(Node, ObjectNodeTree):
@@ -661,7 +661,7 @@ class PovrayOutputNode(Node, ObjectNodeTree):
         return "Output"
 
 
-################### material ###########################################################################################
+# -------- material # ---------------------------------------------------------------- #
 class PovrayTextureNode(Node, ObjectNodeTree):
     '''Texture'''
 
@@ -867,7 +867,7 @@ class PovraySubsurfaceNode(Node, ObjectNodeTree):
         return "Subsurface"
 
 
-#####################################################################################################
+# ---------------------------------------------------------------- #
 
 
 class PovrayMappingNode(Node, ObjectNodeTree):
@@ -1612,7 +1612,7 @@ class PovraySlopeNode(Node, TextureNodeTree):
         return "Slope Map"
 
 
-######################################## Texture nodes ###############################
+# -------- Texture nodes # ---------------------------------------------------------------- #
 class TextureOutputNode(Node, TextureNodeTree):
     '''Output'''
 
@@ -1634,9 +1634,9 @@ class TextureOutputNode(Node, TextureNodeTree):
         return "Color Map"
 
 
-##################################################################################
-#################################Operators########################################
-##################################################################################
+# ------------------------------------------------------------------------------ #
+# --------------------------------- Operators ---------------------------------- #
+# ------------------------------------------------------------------------------ #
 
 
 class NODE_OT_iso_add(Operator):
@@ -1995,7 +1995,6 @@ classes = (
 
 
 def register():
-    # from bpy.utils import register_class
     bpy.types.NODE_HT_header.append(menu_func_nodes)
     nodeitems_utils.register_node_categories("POVRAYNODES", node_categories)
     for cls in classes:
@@ -2003,8 +2002,6 @@ def register():
 
 
 def unregister():
-    # from bpy.utils import unregister_class
-
     for cls in reversed(classes):
         unregister_class(cls)
     nodeitems_utils.unregister_node_categories("POVRAYNODES")

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -7697,6 +7697,10 @@ msgid "Show text files"
 msgstr "ﺔﻴﺼﻨﻟﺍ ﺕﺎﻔﻠﻤﻟﺍ ﺮﻬﻇﺃ"
 
 
+msgid "Link"
+msgstr "ﻂﺑﺭﺍ"
+
+
 msgid "Additional"
 msgstr "ﻲﻌﻤﺟ"
 
@@ -10307,15 +10311,7 @@ msgid "Texture Space Location"
 msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻊﻗﻮﻣ"
 
 
-msgid "Texture space location"
-msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻊﻗﻮﻣ"
-
-
 msgid "Texture Space Size"
-msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻢﺠﺣ"
-
-
-msgid "Texture space size"
 msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻢﺠﺣ"
 
 
@@ -11977,6 +11973,14 @@ msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻢﺴﺠﻣ"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "ﺮﺧﺍ ﻢﺴﺠﻣ ﻦﻣ ﺞﻴﺴﻨﻟﺍ ﺕﺎﻴﺛﺍﺪﺣﺍ ﺪﻟﻭ"
+
+
+msgid "Texture space location"
+msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻊﻗﻮﻣ"
+
+
+msgid "Texture space size"
+msgstr "ﺞﻴﺴﻨﻟﺍ ﻝﺎﺠﻣ ﻢﺠﺣ"
 
 
 msgid "Texture Mesh"
@@ -17125,10 +17129,6 @@ msgid "Material slot in an object"
 msgstr "ﻦﺋﺎﻛ ﻲﻓ ﺔﻣﺎﺧ ﺔﺤﺘﻓ"
 
 
-msgid "Link"
-msgstr "ﻂﺑﺭﺍ"
-
-
 msgid "Link material to object or the object's data"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺕﺎﻧﺎﻴﺑ ﻭﺍ ﻦﺋﺎﻜﻟﺎﺑ ﺔﻣﺎﺨﻟﺍ ﻂﺑﺭﺍ"
 
@@ -21057,6 +21057,10 @@ msgstr "Z ﺭﻮﺤﻣ"
 
 msgid "Original"
 msgstr "ﻲﻠﺻﺃ"
+
+
+msgid "Convex Hull"
+msgstr "ﺏﺪﺤﻣ ﻑﻼ﻿ﻏ"
 
 
 msgid "Fill Type"
@@ -28533,10 +28537,6 @@ msgstr "ﺕﺍﺮﻤﻣ"
 
 msgid "Rigid Body Shape"
 msgstr "ﻞﻋﺎﻔﺘﻣ ﻢﺴﺟ"
-
-
-msgid "Convex Hull"
-msgstr "ﺏﺪﺤﻣ ﻑﻼ﻿ﻏ"
 
 
 msgctxt "Operator"
@@ -40653,10 +40653,6 @@ msgid "Object not found"
 msgstr "ﺩﻮﺟﻮﻣ ﺮﻴﻏ ﻦﺋﺎﻜﻟﺍ"
 
 
-msgid "Object could not be duplicated"
-msgstr "ﻩﺭﺍﺮﻜﺗ ﻦﻜﻤﻳ ﻻ﻿ ﻦﺋﺎﻜﻟﺍ"
-
-
 msgid "To Active Bone"
 msgstr "ﺔﻟﺎﻌّﻔﻟﺍ ﺔﻤﻈﻌﻠﻟ"
 
@@ -41822,14 +41818,6 @@ msgid "Transparent Depth"
 msgstr "ﻑﺎﻔّﺷ ﻖﻤﻋ"
 
 
-msgid "Color1"
-msgstr "1 ﻥﻮﻠﻟﺍ"
-
-
-msgid "Color2"
-msgstr "2 ﻥﻮﻠﻟﺍ"
-
-
 msgid "Color Fac"
 msgstr "ﻥﻮﻠﻟﺍ ﻞﻣﺎﻌﻣ"
 
@@ -41844,6 +41832,14 @@ msgstr "ﺞﻴﺴﻨﻟﺍ ﺔﻴﺑﺎﺒﺿ"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "1 ﻥﻮﻠﻟﺍ"
+
+
+msgid "Color2"
+msgstr "2 ﻥﻮﻠﻟﺍ"
 
 
 msgid "Mortar"

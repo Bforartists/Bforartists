@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -11017,6 +11017,14 @@ msgid "Sort items descending, from highest value to lowest"
 msgstr "가장 높은 값에서 가장 낮은 값으로 내림차순으로 항목 정렬"
 
 
+msgid "Link"
+msgstr "연결"
+
+
+msgid "Append"
+msgstr "덧붙이기"
+
+
 msgid "Domain Settings"
 msgstr "도메인 설정"
 
@@ -16410,16 +16418,8 @@ msgid "Texture Space Location"
 msgstr "텍스처 공간 위치"
 
 
-msgid "Texture space location"
-msgstr "텍스처 공간 위치"
-
-
 msgid "Texture Space Size"
 msgstr "텍스처 공간 크기"
-
-
-msgid "Texture space size"
-msgstr "텍스처 공간의 크기"
 
 
 msgid "Twist Method"
@@ -19026,6 +19026,14 @@ msgstr "텍스처 공간 메쉬"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "다른 메쉬의 텍스처 좌표를 도출"
+
+
+msgid "Texture space location"
+msgstr "텍스처 공간 위치"
+
+
+msgid "Texture space size"
+msgstr "텍스처 공간의 크기"
 
 
 msgid "Texture Mesh"
@@ -26754,10 +26762,6 @@ msgstr "알파 매테리얼과 함께 스텐실 비활성화 및 자체 겹침"
 
 msgid "Material slot in an object"
 msgstr "오브젝트에 매테리얼 슬롯"
-
-
-msgid "Link"
-msgstr "연결"
 
 
 msgid "Link material to object or the object's data"
@@ -35116,6 +35120,10 @@ msgstr "Z 축"
 
 msgid "Original"
 msgstr "원본"
+
+
+msgid "Convex Hull"
+msgstr "볼록 선체"
 
 
 msgid "Fill Type"
@@ -49479,10 +49487,6 @@ msgid "Add named object"
 msgstr "명명된 오브젝트를 추가"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "오브젝트 가 복제되었지만 오브젝트 데이터가 아니라 원본 데이터에 연결"
-
-
 msgid "Object name to add"
 msgstr "추가하는 오브젝트 이름"
 
@@ -49859,6 +49863,10 @@ msgstr "오브젝트를 복제"
 
 msgid "Duplicate selected objects"
 msgstr "선택된 오브젝트를 복제"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "오브젝트 가 복제되었지만 오브젝트 데이터가 아니라 원본 데이터에 연결"
 
 
 msgid "Duplicate selected objects and move them"
@@ -53683,20 +53691,16 @@ msgid "Custom properties"
 msgstr "커스텀 속성"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "키 프레임이 선호에 대한 가중치 펙터"
+
+
 msgid "Next Keyframe"
 msgstr "다음 키 프레임"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "현재 프레임 바로 뒤의 키 프레임의 프레임 번호"
-
-
-msgid "Percentage"
-msgstr "백분율"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "키 프레임이 선호에 대한 가중치 펙터"
 
 
 msgid "Previous Keyframe"
@@ -54813,10 +54817,6 @@ msgstr "리지드 바디 셰이프"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "박스 모양 (즉, 큐브), 평면을 포함하여 (즉, 접지면)"
-
-
-msgid "Convex Hull"
-msgstr "볼록 선체"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -56674,10 +56674,6 @@ msgstr "활성 스트립의 모디파이어를 선택한 모든 스트립에 복
 
 msgid "Replace modifiers in destination"
 msgstr "목적지에서 모디파이어를 교체"
-
-
-msgid "Append"
-msgstr "덧붙이기"
 
 
 msgid "Append active modifiers to selected strips"
@@ -66144,6 +66140,10 @@ msgstr "팩터 값을 표시하는 방법"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "0과 1 사이의 값으로 팩터를 표시"
+
+
+msgid "Percentage"
+msgstr "백분율"
 
 
 msgid "Display factors as percentages"
@@ -87818,10 +87818,6 @@ msgid "Object not found"
 msgstr "오브젝트를 찾을 수 없습니다"
 
 
-msgid "Object could not be duplicated"
-msgstr "오브젝트를 복제 할 수 없음"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "이 데이터는 에디트 모드에서 합치기를 지원하지 않습니다"
 
@@ -92333,14 +92329,6 @@ msgid "Transmission Depth"
 msgstr "전달 깊이"
 
 
-msgid "Color1"
-msgstr "컬러1"
-
-
-msgid "Color2"
-msgstr "컬러2"
-
-
 msgid "Color Fac"
 msgstr "컬러 팩터"
 
@@ -92355,6 +92343,14 @@ msgstr "텍스처 블러"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "컬러1"
+
+
+msgid "Color2"
+msgstr "컬러2"
 
 
 msgid "Mortar"

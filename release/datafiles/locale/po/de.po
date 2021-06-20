@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -10064,6 +10064,14 @@ msgid "Asset Library"
 msgstr "Bestand-Bibliothek"
 
 
+msgid "Link"
+msgstr "Verknüpfen"
+
+
+msgid "Append"
+msgstr "Anfügen"
+
+
 msgid "Float2 Attribute Value"
 msgstr "Float2 Eigenschaftswert"
 
@@ -13576,15 +13584,7 @@ msgid "Texture Space Location"
 msgstr "Texturraum-Position"
 
 
-msgid "Texture space location"
-msgstr "Texturraum"
-
-
 msgid "Texture Space Size"
-msgstr "Texturraum"
-
-
-msgid "Texture space size"
 msgstr "Texturraum"
 
 
@@ -15144,6 +15144,14 @@ msgstr "Texturraum"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Ableitung von Textur Koordinaten einer anderen Masche"
+
+
+msgid "Texture space location"
+msgstr "Texturraum"
+
+
+msgid "Texture space size"
+msgstr "Texturraum"
 
 
 msgid "Texture Mesh"
@@ -19822,10 +19830,6 @@ msgstr "Selbstüberlagerung"
 
 msgid "Material slot in an object"
 msgstr "Materialsteckplatz in einem Objekt"
-
-
-msgid "Link"
-msgstr "Verknüpfen"
 
 
 msgid "Link material to object or the object's data"
@@ -25379,6 +25383,10 @@ msgstr "Sammlungsinfo"
 
 msgid "Original"
 msgstr "Original"
+
+
+msgid "Convex Hull"
+msgstr "Konvexe Hülse"
 
 
 msgid "Delete Geometry"
@@ -34276,10 +34284,6 @@ msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Y-Koordinate (Bildschirmraum), um das neue Objekt unter"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Objekt duplizieren, aber Objektdaten mit den Originaldaten verknüpfen"
-
-
 msgid "Object name to add"
 msgstr "Hinzuzufügender Objektname"
 
@@ -34475,6 +34479,10 @@ msgstr "Objekte duplizieren"
 
 msgid "Duplicate selected objects"
 msgstr "Ausgewählte Objekte duplizieren"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Objekt duplizieren, aber Objektdaten mit den Originaldaten verknüpfen"
 
 
 msgid "Duplicate selected objects and move them"
@@ -36588,10 +36596,6 @@ msgid "Next Keyframe"
 msgstr "Nächstes Schlüsselbild"
 
 
-msgid "Percentage"
-msgstr "Prozentsatz"
-
-
 msgid "Previous Keyframe"
 msgstr "Vorheriges Schlüsselbild"
 
@@ -37283,10 +37287,6 @@ msgstr "Rigid Body entfernen"
 
 msgid "Remove Rigid Body settings from Object"
 msgstr "Entfernt Rigid Body Einstellungen vom Objekt"
-
-
-msgid "Convex Hull"
-msgstr "Konvexe Hülse"
 
 
 msgctxt "Operator"
@@ -38328,10 +38328,6 @@ msgstr "Modifikator zum Streifen hinzufügen"
 msgctxt "Operator"
 msgid "Copy to Selected Strips"
 msgstr "Kopieren zu ausgewählte Streifen"
-
-
-msgid "Append"
-msgstr "Anfügen"
 
 
 msgctxt "Operator"
@@ -44443,6 +44439,10 @@ msgstr "Ein Quadrat, das Farbe und Helligkeit anzeigt, mit Sättigungsregler"
 
 msgid "Factor Display Type"
 msgstr "Faktor Anzeigetyp"
+
+
+msgid "Percentage"
+msgstr "Prozentsatz"
 
 
 msgid "Maximized Area"
@@ -60391,10 +60391,6 @@ msgid "Object not found"
 msgstr "Objekt nicht gefunden"
 
 
-msgid "Object could not be duplicated"
-msgstr "Objekt kann nicht dupliziert werden"
-
-
 msgid "Cannot edit external library data"
 msgstr "Externe Bibliotheksdaten können nicht bearbeiten werden"
 
@@ -62898,14 +62894,6 @@ msgid "Transmission Depth"
 msgstr "Transmissionstiefe"
 
 
-msgid "Color1"
-msgstr "Farbe1"
-
-
-msgid "Color2"
-msgstr "Farbe2"
-
-
 msgid "Color Fac"
 msgstr "Farbfaktor"
 
@@ -62920,6 +62908,14 @@ msgstr "Textur weichzeichnen"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Farbe1"
+
+
+msgid "Color2"
+msgstr "Farbe2"
 
 
 msgid "Mortar"

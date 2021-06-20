@@ -147,7 +147,7 @@ def add_gem(r1, r2, seg, h1, h2):
         faces.append([j + 4, i + 3, i + 4, i + 5])     # Crown quads
         faces.append([j + 4, i + 5, j + 5])            # Middle crown -> crown
 
-    faces_flat = createFaces([vert_flat], edgeloop_flat, closed=True)
+    faces_flat = createFaces([vert_flat], edgeloop_flat, closed=True, flipped=True)
     faces.extend(faces_flat)
 
     return verts, faces

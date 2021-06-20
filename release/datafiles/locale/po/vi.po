@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -12188,6 +12188,14 @@ msgid "Asset Library"
 msgstr "Thư Viện Tích Sản"
 
 
+msgid "Link"
+msgstr "Liên Kết"
+
+
+msgid "Append"
+msgstr "Kèm"
+
+
 msgid "Float2 Attribute Value"
 msgstr "Giá Trị Đặc Điểm 2 Số Dấu Phẫy Động"
 
@@ -19757,16 +19765,8 @@ msgid "Texture Space Location"
 msgstr "Vị Trí Không Gian Họa Tiết"
 
 
-msgid "Texture space location"
-msgstr "Vị trí không gian họa tiết"
-
-
 msgid "Texture Space Size"
 msgstr "Kích Cỡ Không Gian Họa Tiết"
-
-
-msgid "Texture space size"
-msgstr "Kích cỡ không gian họa tiết"
 
 
 msgid "Twist Method"
@@ -22549,6 +22549,14 @@ msgstr "Lưới Không Gian Họa Tiết"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Tính tọa độ họa tiết từ mạng lưới khác"
+
+
+msgid "Texture space location"
+msgstr "Vị trí không gian họa tiết"
+
+
+msgid "Texture space size"
+msgstr "Kích cỡ không gian họa tiết"
 
 
 msgid "Texture Mesh"
@@ -30973,10 +30981,6 @@ msgstr "Vật Liệu Nghệ Thuật Đường Nét"
 
 msgid "Material slot in an object"
 msgstr "Khe vật liệu trong một vật thể"
-
-
-msgid "Link"
-msgstr "Liên Kết"
 
 
 msgid "Link material to object or the object's data"
@@ -40995,6 +40999,10 @@ msgstr "Xuất hình dạng tương đối với dịch của sưu tập"
 
 msgid "Bring the input collection geometry into the modified object, maintaining the relative position between the objects in the scene"
 msgstr "Đem hình dạng của sưu tập ngõ vào vật thể được sửa đổi, giữ nguyên vị trí tương đối giữa hai vật thể trong cảnh"
+
+
+msgid "Convex Hull"
+msgstr "Vỏ Lồi"
 
 
 msgid "Geometry Custom Group"
@@ -57871,10 +57879,6 @@ msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "Tọa độ Y (không gian màn) để đặt vị trí của vật thể"
 
 
-msgid "Duplicate object but not object data, linking to the original data"
-msgstr "Sao chép vật thể nhưng không chép dữ liệu, liên kết với dữ liệu ban đầu"
-
-
 msgid "Object name to add"
 msgstr "Tên cho vật thể thêm"
 
@@ -58338,6 +58342,10 @@ msgstr "Bản Sao Vật Thể"
 
 msgid "Duplicate selected objects"
 msgstr "Bản sao các vật thể chọn"
+
+
+msgid "Duplicate object but not object data, linking to the original data"
+msgstr "Sao chép vật thể nhưng không chép dữ liệu, liên kết với dữ liệu ban đầu"
 
 
 msgid "Duplicate selected objects and move them"
@@ -62998,20 +63006,16 @@ msgid "Custom properties"
 msgstr "Đặc tính tự tạo"
 
 
+msgid "Weighting factor for which keyframe is favored more"
+msgstr "Quyền lượng cho hổ trợ bức mẫu nào hơn"
+
+
 msgid "Next Keyframe"
 msgstr "Bức Tiếp"
 
 
 msgid "Frame number of keyframe immediately after the current frame"
 msgstr "Số lượng bức lập tức sau bức hiện tại"
-
-
-msgid "Percentage"
-msgstr "Phần Trăm"
-
-
-msgid "Weighting factor for which keyframe is favored more"
-msgstr "Quyền lượng cho hổ trợ bức mẫu nào hơn"
 
 
 msgid "Previous Keyframe"
@@ -64223,10 +64227,6 @@ msgstr "Dạng Thân Rắn"
 
 msgid "Box-like shapes (i.e. cubes), including planes (i.e. ground planes)"
 msgstr "Dạng như hộp (ví dụ lập phương), gồm mặt phẳng (ví dụ mặt phẳng sàn)"
-
-
-msgid "Convex Hull"
-msgstr "Vỏ Lồi"
 
 
 msgid "A mesh-like surface encompassing (i.e. shrinkwrap over) all vertices (best results with fewer vertices)"
@@ -67056,10 +67056,6 @@ msgstr "Chép lại cụ sửa đổi của đoạn hoạt động đến hết 
 
 msgid "Replace modifiers in destination"
 msgstr "Thay thế cho cụ sửa đổi trong đích"
-
-
-msgid "Append"
-msgstr "Kèm"
 
 
 msgid "Append active modifiers to selected strips"
@@ -78121,6 +78117,10 @@ msgstr "Phương pháp cho hiển thị hệ số"
 
 msgid "Display factors as values between 0 and 1"
 msgstr "Hiển thị hệ số bằng giá trị giữa 0 và 1"
+
+
+msgid "Percentage"
+msgstr "Phần Trăm"
 
 
 msgid "Display factors as percentages"
@@ -104504,10 +104504,6 @@ msgid "Object not found"
 msgstr "Không tìm được vật thể"
 
 
-msgid "Object could not be duplicated"
-msgstr "Không sao chép được vật thể"
-
-
 msgid "This data does not support joining in edit mode"
 msgstr "Đữ liệu này không hỗ trợ kết nối lại trong chế độ biên tập"
 
@@ -110043,14 +110039,6 @@ msgid "Transmission Depth"
 msgstr "Độ Sâu Truyền"
 
 
-msgid "Color1"
-msgstr "Màu 1"
-
-
-msgid "Color2"
-msgstr "Màu 2"
-
-
 msgid "Color Fac"
 msgstr "Hệ Số Màu"
 
@@ -110065,6 +110053,14 @@ msgstr "Mờ Họa Tiết"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "Màu 1"
+
+
+msgid "Color2"
+msgstr "Màu 2"
 
 
 msgid "Mortar"

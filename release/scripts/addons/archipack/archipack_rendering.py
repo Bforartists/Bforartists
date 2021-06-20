@@ -99,9 +99,7 @@ class ARCHIPACK_OT_render_thumbs(Operator):
                 not f.startswith('.')])
 
         target_path = path.join("presets", category)
-        presets_path = bpy.utils.user_resource('SCRIPTS',
-                                              target_path,
-                                              create=True)
+        presets_path = bpy.utils.user_resource('SCRIPTS', path=target_path, create=True)
         # files from factory not found in user doesn't require a recompute
         skipfiles = []
         for f in file_list:
@@ -130,7 +128,7 @@ class ARCHIPACK_OT_render_thumbs(Operator):
         skipfiles = self.copy_to_user_path(category)
 
         # load user def presets
-        preset_paths = bpy.utils.script_paths("presets")
+        preset_paths = bpy.utils.script_paths(subdir="presets")
         for preset in preset_paths:
             presets_path = path.join(preset, category)
             if path.exists(presets_path):

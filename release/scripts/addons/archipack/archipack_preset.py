@@ -34,8 +34,8 @@ from .archipack_gl import (
     ThumbHandle, Screen, GlRect,
     GlPolyline, GlPolygon, GlText, GlHandle
 )
-preset_paths = bpy.utils.script_paths("presets")
-addons_paths = bpy.utils.script_paths("addons")
+preset_paths = bpy.utils.script_paths(subdir="presets")
+addons_paths = bpy.utils.script_paths(subdir="addons")
 
 
 class CruxHandle(GlHandle):
@@ -570,9 +570,7 @@ class ArchipackPreset(AddPresetBase):
 
             filename = self.as_filename(name)
             target_path = os.path.join("presets", self.preset_subdir)
-            target_path = bpy.utils.user_resource('SCRIPTS',
-                                                  target_path,
-                                                  create=True)
+            target_path = bpy.utils.user_resource('SCRIPTS', path=target_path, create=True)
 
             preset = os.path.join(target_path, filename) + ".py"
             cls = self.preset_subdir[10:]

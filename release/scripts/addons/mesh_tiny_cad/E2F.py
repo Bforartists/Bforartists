@@ -79,7 +79,7 @@ def extend_vertex(self):
 
         vertex_reference = v1_ref if (A_len < B_len) else v2_ref
         bm.edges.new([vertex_reference, new_vertex])
-        bmesh.update_edit_mesh(me, True)
+        bmesh.update_edit_mesh(me, loop_triangles=True)
 
     else:
         failure_message_on_plane(self)

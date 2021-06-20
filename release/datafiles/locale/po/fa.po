@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2310,6 +2310,10 @@ msgid "Fonts"
 msgstr "ﺎﻫ ﺖﻧﻮﻓ:"
 
 
+msgid "Link"
+msgstr "ﺪﻧﻮﯿﭘ"
+
+
 msgid "Additional"
 msgstr "ﻞﮑﺷ ﺮﯿﯿﻐﺗ ﺖﻬﺟ"
 
@@ -2926,15 +2930,7 @@ msgid "Texture Space Location"
 msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 
-msgid "Texture space location"
-msgstr "ﺱﻭﺎﻣ ﻥﺎﮑﻣ"
-
-
 msgid "Texture Space Size"
-msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
-
-
-msgid "Texture space size"
 msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 
@@ -3163,6 +3159,14 @@ msgstr "ﺱﻮﺋﺭ ﻂﻘﻓ"
 
 
 msgid "Texture Space Mesh"
+msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
+
+
+msgid "Texture space location"
+msgstr "ﺱﻭﺎﻣ ﻥﺎﮑﻣ"
+
+
+msgid "Texture space size"
 msgstr "ﺖﻓﺎﺑ ﯼﺎﻀﻓ ﺖﮐﺮﺣ"
 
 
@@ -4317,10 +4321,6 @@ msgstr "ﻩﺪﻨﻨﮐ ﺩﻭﺪﺤﻣ ﻦﯾﺍ ﻥﺯﻭ"
 
 msgid "Flip"
 msgstr "ﯼﺯﺎﺳ ﻪﻨﯾﺮﻗ"
-
-
-msgid "Link"
-msgstr "ﺪﻧﻮﯿﭘ"
 
 
 msgctxt "MovieClip"

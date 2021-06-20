@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-05-31 17:54+0700\n"
+"PO-Revision-Date: 2021-06-14 16:25+0700\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
 "Language: id\n"
@@ -917,6 +917,10 @@ msgid "Float"
 msgstr "Float"
 
 
+msgid "Floating-point value"
+msgstr "Nilai floating-point"
+
+
 msgid "Integer"
 msgstr "Integer"
 
@@ -927,6 +931,14 @@ msgstr "Integer 32-bit"
 
 msgid "Vector"
 msgstr "Vector"
+
+
+msgid "3D vector with floating-point values"
+msgstr "Vector 3D dengan nilai floating-point"
+
+
+msgid "RGBA color with floating-point precisions"
+msgstr "Warna RGBA dengan nilai floating-point"
 
 
 msgid "Byte Color"
@@ -954,7 +966,11 @@ msgstr "True/benar atau false/salah"
 
 
 msgid "2D Vector"
-msgstr "Vector 2D"
+msgstr "Vektor 2D"
+
+
+msgid "2D vector with floating-point values"
+msgstr "Vektor 2D dengan nilai floating-point"
 
 
 msgid "Domain"
@@ -1009,12 +1025,32 @@ msgid "Float2 Attribute"
 msgstr "Atribut Float2"
 
 
+msgid "2D vector geometry attribute, with floating-point precision"
+msgstr "Atribut geometri vektor 2D, dengan persisi floating-point"
+
+
 msgid "Float Attribute"
 msgstr "Atribut Float"
 
 
+msgid "Geometry attribute with floating-point values"
+msgstr "Atribut geometri dengan nilai titik-floating"
+
+
 msgid "Float Color Attribute"
 msgstr "Atribut Warna Float"
+
+
+msgid "Color geometry attribute, with floating-point precision"
+msgstr "Atribut geometri warna, dengan persisi titik-floating"
+
+
+msgid "Float Vector Attribute"
+msgstr "Atribut Vektor Float"
+
+
+msgid "Vector geometry attribute, with floating-point precision"
+msgstr "Atribut geometri vektor, dengan presisi titik-floating"
 
 
 msgid "Int Attribute"
@@ -2645,10 +2681,6 @@ msgid "None (Legacy)"
 msgstr "Tidak Ada (Legacy)"
 
 
-msgid "Ignore parent scaling without compensating for parent shear. Replicates the effect of disabling the original Inherit Scale checkbox"
-msgstr "Mengabaikan penskalaan induk tanpa kompensasi untuk "
-
-
 msgid "Layers"
 msgstr "Layer"
 
@@ -3541,6 +3573,10 @@ msgid "Ratio"
 msgstr "Rasio"
 
 
+msgid "Rotation of blades in aperture"
+msgstr "Rotasi pedang di bukaan"
+
+
 msgid "Focus Distance"
 msgstr "Jarak Fokus"
 
@@ -3549,12 +3585,28 @@ msgid "Distance to the focus point for depth of field"
 msgstr "Jarak ke titik fokus untuk kedalaman lapangan"
 
 
+msgid "Focus Object"
+msgstr "Objek Fokus"
+
+
 msgid "Use this object to define the depth of field focal point"
 msgstr "Gunakan objek ini untuk mendefinsikan titik fokal kedalaman lapangan"
 
 
 msgid "Use Depth of Field"
 msgstr "Gunakan Kedalaman Lapangan"
+
+
+msgid "Stereo"
+msgstr "Stereo"
+
+
+msgid "Parallel"
+msgstr "Paralel"
+
+
+msgid "Parallel cameras with no convergence"
+msgstr "Kamera paralel dengan tidak ada konvergensi"
 
 
 msgid "Left"
@@ -3729,6 +3781,10 @@ msgid "Pressure"
 msgstr "Tekanan"
 
 
+msgid "Use Custom Volume"
+msgstr "Gunakan Volume Kustom"
+
+
 msgid "Vertex Group for pinning of vertices"
 msgstr "Kelompok Vertex saat pin sudut"
 
@@ -3855,6 +3911,14 @@ msgstr "Pengaturan tabrakan untuk objek di simulasi fisika"
 
 msgid "Absorption"
 msgstr "Absorbsi"
+
+
+msgid "Damping"
+msgstr "Damping"
+
+
+msgid "Amount of damping during collision"
+msgstr "Jumlah damping saat tabrakan"
 
 
 msgid "Friction Factor"
@@ -6693,6 +6757,10 @@ msgid "Library Browser"
 msgstr "Browser Perpustakaan"
 
 
+msgid "Floating-point value in geometry attribute"
+msgstr "Nilai floating-point di atribut geometri"
+
+
 msgid "Additional"
 msgstr "Orientasi Transformasi"
 
@@ -7577,12 +7645,20 @@ msgid "Count"
 msgstr "Hitung"
 
 
+msgid "Number of items"
+msgstr "Jumlah item"
+
+
 msgid "Object Offset"
 msgstr "Data Objek"
 
 
 msgid "Use the location and rotation of another object to determine the distance and rotational change between arrayed items"
 msgstr "Gunakan lokasi dan rotasi objek lain mendeterminasi jarak dan perubahan rotasional antara item larik"
+
+
+msgid "Random Rotation"
+msgstr "Rotasi Acak"
 
 
 msgid "Relative Offset"
@@ -7601,8 +7677,24 @@ msgid "Color Saturation"
 msgstr "Saturasi Warna"
 
 
+msgid "Custom Curve"
+msgstr "Kurva Kustom"
+
+
 msgid "Color Value"
 msgstr "Nilai Warna"
+
+
+msgid "Hook Modifier"
+msgstr "Pengubah Kait"
+
+
+msgid "Hook Center"
+msgstr "Pusat Kait"
+
+
+msgid "If not zero, the distance from the hook where influence ends"
+msgstr "Jika tidak nol, jarak dari kait dimana pengaruh berakhir"
 
 
 msgctxt "Curve"
@@ -7643,6 +7735,18 @@ msgstr "Linier"
 msgctxt "Curve"
 msgid "Constant"
 msgstr "Konstan"
+
+
+msgid "Matrix"
+msgstr "Matriks"
+
+
+msgid "Parent Object for hook, also recalculates and clears offset"
+msgstr "Objek Induk untuk kait, juga rekalkulasi dan bersihkan offset"
+
+
+msgid "Relative force of the hook"
+msgstr "Gaya relatif kait"
 
 
 msgid "Source Collection"
@@ -7812,6 +7916,10 @@ msgstr "Gambar"
 
 msgid "Clone Offset"
 msgstr "Kamera"
+
+
+msgid "Snake Hook"
+msgstr "Kait Ular"
 
 
 msgid "Simulation Limit"
@@ -8090,10 +8198,6 @@ msgid "Taper Object"
 msgstr "Sunting Objek"
 
 
-msgid "Texture space size"
-msgstr "Tekstur"
-
-
 msgid "Twist Method"
 msgstr "Metode Pelintir"
 
@@ -8370,8 +8474,16 @@ msgid "Dirty"
 msgstr "Kotor"
 
 
+msgid "True if this image is stored in floating-point buffer"
+msgstr "Benar jika gambar ini disimpan di buffer floating-point"
+
+
 msgid "Pixels"
 msgstr "Pixel"
+
+
+msgid "Image pixels in floating-point values"
+msgstr "Pixel gambar di nilai floating-point"
 
 
 msgid "Movie"
@@ -8388,6 +8500,10 @@ msgstr "Gambar yang dihasilkan"
 
 msgid "Viewer"
 msgstr "Tampilan 3D"
+
+
+msgid "Generate floating-point buffer"
+msgstr "Hasilkan buffer floating-point"
 
 
 msgid "View as Render"
@@ -8476,6 +8592,10 @@ msgstr "Partikel"
 
 
 msgid "Texture Space Mesh"
+msgstr "Tekstur"
+
+
+msgid "Texture space size"
 msgstr "Tekstur"
 
 
@@ -9023,6 +9143,10 @@ msgid "Image Size"
 msgstr "Ukuran Gambar"
 
 
+msgid "Items"
+msgstr "Item"
+
+
 msgid "Children expanded in the user interface"
 msgstr "Anak diekspansi di antarmuka pengguna"
 
@@ -9047,32 +9171,76 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 
+msgid "ID of the item"
+msgstr "ID Item"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Left Mouse"
+msgstr "Mouse Kiri"
+
+
 msgid "LMB"
 msgstr "LMB"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Middle Mouse"
+msgstr "Mouse Tengah"
 
 
 msgid "MMB"
 msgstr "MMB"
 
 
+msgctxt "UI_Events_KeyMaps"
+msgid "Right Mouse"
+msgstr "Mouse Kanan"
+
+
 msgid "RMB"
 msgstr "RMB"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Button4 Mouse"
+msgstr "Mouse Tombol4"
 
 
 msgid "MB4"
 msgstr "MB4"
 
 
+msgctxt "UI_Events_KeyMaps"
+msgid "Button5 Mouse"
+msgstr "Mouse Tombol5"
+
+
 msgid "MB5"
 msgstr "MB5"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Button6 Mouse"
+msgstr "Mouse Tombol6"
 
 
 msgid "MB6"
 msgstr "MB6"
 
 
+msgctxt "UI_Events_KeyMaps"
+msgid "Button7 Mouse"
+msgstr "Mouse Tombol7"
+
+
 msgid "MB7"
 msgstr "MB7"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Pen"
+msgstr "Pulpen"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -9090,12 +9258,84 @@ msgstr "MsMov"
 
 
 msgctxt "UI_Events_KeyMaps"
+msgid "Wheel Up"
+msgstr "Roda Atas"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Wheel Down"
+msgstr "Roda Bawah"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Wheel In"
+msgstr "Roda Dalam"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Wheel Out"
+msgstr "Roda Keluar"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Left Ctrl"
+msgstr "Ctrl Kiri"
+
+
+msgid "CtrlL"
+msgstr "CtrlL"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Left Alt"
+msgstr "Kiri Alt"
+
+
+msgid "AltL"
+msgstr "AltL"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Application"
+msgstr "Aplikasi"
+
+
+msgid "App"
+msgstr "App"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Delete"
+msgstr "Hapus"
+
+
+msgid "Del"
+msgstr "Del"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Left Arrow"
+msgstr "Panah Kiri"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Down Arrow"
+msgstr "Panah Bawah"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Right Arrow"
+msgstr "Panah Kanan"
+
+
+msgctxt "UI_Events_KeyMaps"
+msgid "Up Arrow"
+msgstr "Panah Atas"
+
+
+msgctxt "UI_Events_KeyMaps"
 msgid "Timer"
 msgstr "Pengatur Waktu"
-
-
-msgid "Tmr"
-msgstr "PengWak"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -9103,17 +9343,9 @@ msgid "Timer 0"
 msgstr "Pengatur Waktu 0"
 
 
-msgid "Tmr0"
-msgstr "PengWak0"
-
-
 msgctxt "UI_Events_KeyMaps"
 msgid "Timer 1"
 msgstr "Pengatur Waktu 1"
-
-
-msgid "Tmr1"
-msgstr "PengWak1"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -9121,17 +9353,9 @@ msgid "Timer 2"
 msgstr "Pengatur Waktu 2"
 
 
-msgid "Tmr2"
-msgstr "PengWak2"
-
-
 msgctxt "UI_Events_KeyMaps"
 msgid "Timer Jobs"
 msgstr "Kerja Pengatur Waktu"
-
-
-msgid "TmrJob"
-msgstr "KerjaPengWak"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -9139,26 +9363,14 @@ msgid "Timer Autosave"
 msgstr "Penyimpanan Otomatis Pengatur Waktu"
 
 
-msgid "TmrSave"
-msgstr "SimpanPengWak"
-
-
 msgctxt "UI_Events_KeyMaps"
 msgid "Timer Report"
 msgstr "Laporan Pengatur Waktu"
 
 
-msgid "TmrReport"
-msgstr "LaporanPengWak"
-
-
 msgctxt "UI_Events_KeyMaps"
 msgid "Timer Region"
 msgstr "Wilayah Pengatur Waktu"
-
-
-msgid "TmrReg"
-msgstr "WilPengWak"
 
 
 msgctxt "UI_Events_KeyMaps"
@@ -9545,12 +9757,52 @@ msgid "Rotation angle"
 msgstr "Sudut rotasi"
 
 
+msgid "Stroke Center"
+msgstr "Pusat Garis Luar"
+
+
+msgid "Stroke Start"
+msgstr "Awal Garis Luar"
+
+
 msgid "Stroke End"
-msgstr "Usapan Akhir"
+msgstr "Akhir Garis Luar"
+
+
+msgid "Absolute 2D Point"
+msgstr "Titik 2D Absolut"
+
+
+msgid "Pivot X"
+msgstr "Poros X"
+
+
+msgid "2D X coordinate of the absolute pivot"
+msgstr "Koordinat X 2D poros absolut"
+
+
+msgid "Pivot Y"
+msgstr "Poros Y"
+
+
+msgid "2D Y coordinate of the absolute pivot"
+msgstr "Koordinat Y 2D poros absolut"
+
+
+msgid "Scaling factor that is applied along the X axis"
+msgstr "Menskalakan faktor yang diterapkan sepanjang sumbu X"
+
+
+msgid "Scaling factor that is applied along the Y axis"
+msgstr "Menskalakan faktor yang diterapkan sepanjang sumbu Y"
+
+
+msgid "Random Backbone"
+msgstr "Tulang Belakang Acak"
 
 
 msgid "Random Center"
-msgstr "Acak Tengah"
+msgstr "Pusat Acak"
 
 
 msgid "Randomness of the center"
@@ -10123,8 +10375,20 @@ msgid "Polygon"
 msgstr "Poligon"
 
 
+msgid "Floating-point paint mask value"
+msgstr "Nilai masker cat floating-point"
+
+
 msgid "Polygon Normal"
 msgstr "Poligon Normal"
+
+
+msgid "User defined floating-point number value in a float properties layer"
+msgstr "Nilai angka floating-point yang didefinisikan pengguna di layer properti float"
+
+
+msgid "User defined layer of floating-point number values"
+msgstr "Layer nilai angka floating-point yang didefinisikan pengguna"
 
 
 msgid "Skin Vertex"
@@ -10245,6 +10509,10 @@ msgstr "Modus Pahat"
 
 msgid "Integrate"
 msgstr "Integrasi"
+
+
+msgid "Frame Start"
+msgstr "Frame Mulai"
 
 
 msgid "Resolution Mode"
@@ -10705,6 +10973,14 @@ msgid "Search Size"
 msgstr "Ukuran Pencarian"
 
 
+msgid "Distance between two bundles used for scene scaling"
+msgstr "Jarak antar dua bundel digunakan untuk penskalaan adegan"
+
+
+msgid "Distance between two bundles used for object scaling"
+msgstr "Jarak antar dua bundel digunakan untuk penskalaan objek"
+
+
 msgid "Fastest"
 msgstr "Tercepat"
 
@@ -10757,6 +11033,10 @@ msgid "Maximal Scale"
 msgstr "Maksimal Skala"
 
 
+msgid "Limit the amount of automatic scaling"
+msgstr "Batasi jumlah penskalaan otomatis"
+
+
 msgid "Expected Position"
 msgstr "Posisi Ekspektasi"
 
@@ -10793,6 +11073,10 @@ msgid "Blending"
 msgstr "Pencampuran"
 
 
+msgid "Scaling factor for action"
+msgstr "Menskalakan faktor untuk aksi"
+
+
 msgid "Static Type"
 msgstr "Jenis Statik"
 
@@ -10803,6 +11087,10 @@ msgstr "Tampilkan Opsi"
 
 msgid "Show Texture"
 msgstr "Tampilkan Tekstur"
+
+
+msgid "Custom Group"
+msgstr "Kelompok Kustom"
 
 
 msgid "Bilateral Blur"
@@ -10819,6 +11107,10 @@ msgstr "Sigma Spasi"
 
 msgid "Aspect Correction"
 msgstr "Aspek Koreksi"
+
+
+msgid "Filter Type"
+msgstr "Tipe Filter"
 
 
 msgid "Extend bounds of the input image to fully fit blurred image"
@@ -12459,14 +12751,30 @@ msgid "Plane to be used for orientation"
 msgstr "Orientasi Transformasi"
 
 
+msgid "Set floor plane"
+msgstr "Set bidang lantai"
+
+
+msgid "Wall"
+msgstr "Dinding"
+
+
+msgid "Set wall plane"
+msgstr "Set bidang dinding"
+
+
 msgctxt "Operator"
 msgid "Set Scale"
 msgstr "Set Skala"
 
 
+msgid "Set scale of scene by scaling camera (or its parent if present)"
+msgstr "Set skala adegan dengan menskalakan kamera (atau induk jika hadir)"
+
+
 msgctxt "Operator"
 msgid "Set Scene Frames"
-msgstr "Atur Frame Adegan"
+msgstr "Set Frame Adegan"
 
 
 msgctxt "Operator"
@@ -12757,8 +13065,76 @@ msgid "Undo Message"
 msgstr "Pesan"
 
 
+msgid "All Actions"
+msgstr "Semua Aksi"
+
+
+msgid "Active scene to file"
+msgstr "Adegan aktif ke dokumen"
+
+
+msgid "Each scene as a file"
+msgstr "Setiap adegan sebagai dokumen"
+
+
+msgid "Scene Collections"
+msgstr "Koleksi Adegan"
+
+
+msgid "Active Scene Collections"
+msgstr "Koleksi Adegan Aktif"
+
+
 msgid "Lamp"
 msgstr "Lampu"
+
+
+msgid "Other"
+msgstr "Lain"
+
+
+msgid "Path Mode"
+msgstr "Mode Jalur"
+
+
+msgid "-X Axis"
+msgstr "Axis -X"
+
+
+msgid "-Y Axis"
+msgstr "Axis -Y"
+
+
+msgid "-Z Axis"
+msgstr "Axis -Z"
+
+
+msgid "Active Collection"
+msgstr "Koleksi Aktif"
+
+
+msgid "Custom Properties"
+msgstr "Properti Kustom"
+
+
+msgid "Export custom properties"
+msgstr "Ekspor properti kustom"
+
+
+msgid "Use Metadata"
+msgstr "Gunakan Metadata"
+
+
+msgid "Use Space Transform"
+msgstr "Gunakan Transformasi Spasi"
+
+
+msgid "Export cameras"
+msgstr "Ekspor kamera"
+
+
+msgid "Use Current Frame"
+msgstr "Gunakan Frame Sekarang"
 
 
 msgid "Renderable Objects"
@@ -17022,20 +17398,44 @@ msgid "Start Resolution"
 msgstr "Gerakan"
 
 
+msgid "No Limit"
+msgstr "Tidak Ada Batas"
+
+
+msgid "No texture size limit"
+msgstr "Tidak ada batas ukuran tekstur"
+
+
 msgid "Right to Left"
-msgstr "Kanan"
+msgstr "Kanan ke Kiri"
+
+
+msgid "Render from right to left"
+msgstr "Render dari kanan ke kiri"
 
 
 msgid "Left to Right"
-msgstr "Orientasi Transformasi"
+msgstr "Kiri ke Kanan"
+
+
+msgid "Render from left to right"
+msgstr "Render dari kiri ke kanan"
 
 
 msgid "Top to Bottom"
-msgstr "Bawah"
+msgstr "Atas ke Bawah"
+
+
+msgid "Render from top to bottom"
+msgstr "Render dari atas ke bawah"
 
 
 msgid "Bottom to Top"
-msgstr "Bawah"
+msgstr "Bawah ke Atas"
+
+
+msgid "Render from bottom to top"
+msgstr "Render dari bawah ke atas"
 
 
 msgid "Transmission Samples"
@@ -17051,23 +17451,103 @@ msgstr "Warna"
 
 
 msgid "Map Resolution"
-msgstr "Gerakan"
+msgstr "Resolusi Peta"
 
 
 msgid "Distance between volume shader samples when rendering the volume (lower values give more accurate and detailed results, but also increased render time)"
 msgstr "Jarak diantara sampel volume shader saat render volume (mengecilkan nilai memberi hasil lebih akurat dan lengkap, tetapi menambahkan waktu render)"
 
 
+msgid "Language Name"
+msgstr "Nama Bahasa"
+
+
+msgid "Numeric ID"
+msgstr "ID Numerik"
+
+
+msgid "Numeric ID (read only!)"
+msgstr "ID Numerik (baca saja!)"
+
+
 msgid "Hide Names"
 msgstr "Sembunyikan Nama"
+
+
+msgid "Use Normal Rotation"
+msgstr "Gunakan Rotasi Normal"
+
+
+msgid "Tablet pressure"
+msgstr "Tekanan tablet"
 
 
 msgid "Brush Size"
 msgstr "Ukuran Kuas"
 
 
+msgid "Brush size in screen space"
+msgstr "Ukuran kuas di spasi layar"
+
+
+msgid "Tilt X"
+msgstr "Miringkan X"
+
+
+msgid "Tilt Y"
+msgstr "Miringkan Y"
+
+
+msgid "Corners are sharp"
+msgstr "Pojok tajam"
+
+
+msgid "Corners are smoothed"
+msgstr "Pojok dihaluskan"
+
+
+msgid "Corners are beveled"
+msgstr "Pojok dibevel"
+
+
+msgid "Export a single frame"
+msgstr "Ekspor di frame tunggal"
+
+
+msgid "Export an animation"
+msgstr "Ekspor animasi"
+
+
+msgid "SVG Export"
+msgstr "SVG Ekspor"
+
+
+msgid "Format type to export to"
+msgstr "Tipe format ke ekspor ke"
+
+
+msgid "Export Directory"
+msgstr "Ekspor Direktori"
+
+
+msgid "Apply Scale"
+msgstr "Terapkan Skala"
+
+
+msgid "Apply scene scale setting on export"
+msgstr "Terapkan pengaturan skala adegan di ekspor"
+
+
+msgid "Data Layers"
+msgstr "Layer Data"
+
+
 msgid "Copy Textures"
 msgstr "Salin Tekstur"
+
+
+msgid "Copy textures on export to the output path"
+msgstr "Salin tekstur di ekspor ke jalur keluaran"
 
 
 msgid "Selected UV Element"
@@ -17139,7 +17619,23 @@ msgstr "Wilayah Render"
 
 
 msgid "Persistent Data"
-msgstr "Induk"
+msgstr "Data Tetap"
+
+
+msgid "Cache Result"
+msgstr "Hasil Cache"
+
+
+msgid "Use Simplify"
+msgstr "Gunakan Penyederhanaan"
+
+
+msgid "Enable simplification of scene for quicker preview renders"
+msgstr "Akfitkan penyederhanaan adegan untuk render preview lebih cepat"
+
+
+msgid "Render Single Layer"
+msgstr "Render Layer Tunggal"
 
 
 msgid "Render Slot"

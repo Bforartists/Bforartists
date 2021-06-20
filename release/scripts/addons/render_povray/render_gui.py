@@ -20,6 +20,7 @@
 
 """User interface for rendering parameters"""
 
+
 import bpy
 from sys import platform  # really import here, as in render.py?
 
@@ -27,7 +28,6 @@ from sys import platform  # really import here, as in render.py?
 # from os.path import isfile
 from bl_operators.presets import AddPresetBase
 from bpy.utils import register_class, unregister_class
-from bpy.props import EnumProperty
 from bpy.types import Operator, Menu, Panel
 
 
@@ -44,10 +44,12 @@ from bl_ui import properties_freestyle
 
 for member in dir(properties_freestyle):
     subclass = getattr(properties_freestyle, member)
-    if hasattr(subclass, "COMPAT_ENGINES"):
-        if not (subclass.bl_space_type == 'PROPERTIES' and subclass.bl_context == "render"):
-            subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
-            # subclass.bl_parent_id = "RENDER_PT_POV_filter"
+    if hasattr(subclass, "COMPAT_ENGINES") and (
+        subclass.bl_space_type != 'PROPERTIES'
+        or subclass.bl_context != "render"
+    ):
+        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+        # subclass.bl_parent_id = "RENDER_PT_POV_filter"
 del properties_freestyle
 
 from bl_ui import properties_view_layer
@@ -75,9 +77,7 @@ def check_render_freestyle_svg():
     This addon is currently used to generate the SVG lines file
     when Freestyle is enabled alongside POV
     """
-    if "render_freestyle_svg" in bpy.context.preferences.addons.keys():
-        return True
-    return False
+    return "render_freestyle_svg" in bpy.context.preferences.addons.keys()
 
 
 class RenderButtonsPanel:
@@ -258,6 +258,27 @@ class RENDER_PT_POV_antialias(RenderButtonsPanel, Panel):
         else:
             self.layout.prop(scene.pov, "antialias_enable", text="", icon='ALIASED')
 
+    def uberpov_only_qmc_til_pov38release(self, layout):
+            col = layout.column()
+            col.alignment = 'CENTER'
+            col.label(text="Stochastic Anti Aliasing is")
+            col.label(text="Only Available with UberPOV")
+            col.label(text="Feature Set in User Preferences.")
+            col.label(text="Using Type 2 (recursive) instead")
+
+    def no_qmc_fallbacks(self, row, scene, layout):
+        row.prop(scene.pov, "jitter_enable", text="Jitter")
+
+        split = layout.split()
+        col = split.column()
+        col.prop(scene.pov, "antialias_depth", text="AA Depth")
+        sub = split.column()
+        sub.prop(scene.pov, "jitter_amount", text="Jitter Amount")
+        sub.enabled = bool(scene.pov.jitter_enable)
+        row = layout.row()
+        row.prop(scene.pov, "antialias_threshold", text="AA Threshold")
+        row.prop(scene.pov, "antialias_gamma", text="AA Gamma")
+
     def draw(self, context):
         prefs = bpy.context.preferences.addons[__package__].preferences
         layout = self.layout
@@ -269,37 +290,13 @@ class RENDER_PT_POV_antialias(RenderButtonsPanel, Panel):
         row.prop(scene.pov, "antialias_method", text="")
 
         if prefs.branch_feature_set_povray != 'uberpov' and scene.pov.antialias_method == '2':
-            col = layout.column()
-            col.alignment = 'CENTER'
-            col.label(text="Stochastic Anti Aliasing is")
-            col.label(text="Only Available with UberPOV")
-            col.label(text="Feature Set in User Preferences.")
-            col.label(text="Using Type 2 (recursive) instead")
+            self.uberpov_only_qmc_til_pov38release(layout)
         else:
-            row.prop(scene.pov, "jitter_enable", text="Jitter")
-
-            split = layout.split()
-            col = split.column()
-            col.prop(scene.pov, "antialias_depth", text="AA Depth")
-            sub = split.column()
-            sub.prop(scene.pov, "jitter_amount", text="Jitter Amount")
-            if scene.pov.jitter_enable:
-                sub.enabled = True
-            else:
-                sub.enabled = False
-
+            self.no_qmc_fallbacks(row, scene, layout)
+        if prefs.branch_feature_set_povray == 'uberpov':
             row = layout.row()
-            row.prop(scene.pov, "antialias_threshold", text="AA Threshold")
-            row.prop(scene.pov, "antialias_gamma", text="AA Gamma")
-
-            if prefs.branch_feature_set_povray == 'uberpov':
-                row = layout.row()
-                row.prop(scene.pov, "antialias_confidence", text="AA Confidence")
-                if scene.pov.antialias_method == '2':
-                    row.enabled = True
-                else:
-                    row.enabled = False
-
+            row.prop(scene.pov, "antialias_confidence", text="AA Confidence")
+            row.enabled = scene.pov.antialias_method == '2'
 
 class RENDER_PT_POV_radiosity(RenderButtonsPanel, Panel):
     """Use this class to define pov radiosity buttons."""
@@ -414,20 +411,20 @@ def rad_panel_func(self, context):
     ).remove_active = True
 
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Freestyle
-###############################################################################
+# ---------------------------------------------------------------- #
 # import addon_utils
 # addon_utils.paths()[0]
 # addon_utils.modules()
 # mod.bl_info['name'] == 'Freestyle SVG Exporter':
-bpy.utils.script_paths("addons")
-# render_freestyle_svg = os.path.join(bpy.utils.script_paths("addons"), "render_freestyle_svg.py")
+bpy.utils.script_paths(subdir="addons")
+# render_freestyle_svg = os.path.join(bpy.utils.script_paths(subdir="addons"), "render_freestyle_svg.py")
 
 render_freestyle_svg = bpy.context.preferences.addons.get('render_freestyle_svg')
 # mpath=addon_utils.paths()[0].render_freestyle_svg
 # import mpath
-# from mpath import render_freestyle_svg #= addon_utils.modules(['Freestyle SVG Exporter'])
+# from mpath import render_freestyle_svg #= addon_utils.modules(module_cache=['Freestyle SVG Exporter'])
 # from scripts\\addons import render_freestyle_svg
 if check_render_freestyle_svg():
     '''
@@ -537,10 +534,10 @@ classes = (
 def register():
     for cls in classes:
         register_class(cls)
-    bpy.types.RENDER_PT_POV_radiosity.prepend(rad_panel_func)
+    RENDER_PT_POV_radiosity.prepend(rad_panel_func)
 
 
 def unregister():
-    bpy.types.RENDER_PT_POV_radiosity.remove(rad_panel_func)
+    RENDER_PT_POV_radiosity.remove(rad_panel_func)
     for cls in reversed(classes):
         unregister_class(cls)

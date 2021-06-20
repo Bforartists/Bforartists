@@ -127,7 +127,7 @@ def brush_texture_update(self, context):
 class RenderPovSettingsMaterial(PropertyGroup):
     """Declare material level properties controllable in UI and translated to POV."""
 
-    ######################Begin Old Blender Internal Props#########################
+    # --------------------------- Begin Old Blender Internal Props --------------------------- #
     # former Space properties from  removed Blender Internal
     use_limited_texture_context: BoolProperty(
         name="",
@@ -854,7 +854,7 @@ class RenderPovSettingsMaterial(PropertyGroup):
         default="1",
     )
 
-    ##################################CustomPOV Code############################
+    # ------------------------------ CustomPOV Code ------------------------------ #
     replacement_text: StringProperty(
         name="Declared name:",
         description="Type the variable name as declared either directly inlined "
@@ -936,12 +936,9 @@ class RenderPovSettingsMaterial(PropertyGroup):
                 return node
 
     def node_enum_callback(self, context):
-        items = []
         mat = context.material
         nodes = mat.node_tree.nodes
-        for node in nodes:
-            items.append(("%s" % node.name, "%s" % node.name, ""))
-        return items
+        return [("%s" % node.name, "%s" % node.name, "") for node in nodes]
 
     def pigment_normal_callback(self, context):
         render = context.scene.pov.render  # XXX comment out > remove?
@@ -2252,7 +2249,7 @@ class MaterialStrandSettings(PropertyGroup):
     """
 
 
-#######################End Old Blender Internal Props##########################
+# ------------------------------ End Old Blender Internal Props ------------------------------ #
 
 
 classes = (

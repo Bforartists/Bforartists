@@ -401,7 +401,7 @@ def deactivate_custom_properties(obj, *, reset=True):
         for key, value in obj.items():
             valtype = type(value)
             if valtype in {int, float}:
-                info = rna_idprop_ui_prop_get(obj, key, False) or {}
+                info = rna_idprop_ui_prop_get(obj, key, create=False) or {}
                 obj[key] = valtype(info.get("default", 0))
 
 
@@ -435,7 +435,7 @@ def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=
                 dest[new_key] = value
 
                 if info:
-                    info2 = rna_idprop_ui_prop_get(dest, new_key, True)
+                    info2 = rna_idprop_ui_prop_get(dest, new_key, create=True)
                     for ki, vi in info.items():
                         info2[ki] = vi
 

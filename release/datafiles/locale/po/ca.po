@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3420,6 +3420,10 @@ msgid "Show text files"
 msgstr "Moure a Capa"
 
 
+msgid "Link"
+msgstr "Enllaç"
+
+
 msgid "Domain Settings"
 msgstr "Eines"
 
@@ -4568,15 +4572,7 @@ msgid "Texture Space Location"
 msgstr "Texte"
 
 
-msgid "Texture space location"
-msgstr "Texte"
-
-
 msgid "Texture Space Size"
-msgstr "Texte"
-
-
-msgid "Texture space size"
 msgstr "Texte"
 
 
@@ -5114,6 +5110,14 @@ msgstr "Texte"
 
 msgid "Derive texture coordinates from another mesh"
 msgstr "Seleccionar connectats"
+
+
+msgid "Texture space location"
+msgstr "Texte"
+
+
+msgid "Texture space size"
+msgstr "Texte"
 
 
 msgid "Texture Mesh"
@@ -7216,10 +7220,6 @@ msgstr "Reduir"
 
 msgid "Material slot in an object"
 msgstr "Guardar com"
-
-
-msgid "Link"
-msgstr "Enllaç"
 
 
 msgid "Link material to object or the object's data"
