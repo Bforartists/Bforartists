@@ -501,10 +501,13 @@ geometry_node_categories = [
         NodeItem("ShaderNodeCombineRGB"),
     ]),
     GeometryNodeCategory("GEO_CURVE", "Curve", items=[
+        NodeItem("GeometryNodeCurveSubdivide"),
         NodeItem("GeometryNodeCurveToMesh"),
         NodeItem("GeometryNodeCurveResample"),
         NodeItem("GeometryNodeMeshToCurve"),
+        NodeItem("GeometryNodeCurveToPoints"),
         NodeItem("GeometryNodeCurveLength"),
+        NodeItem("GeometryNodeCurveReverse"),
     ]),
     GeometryNodeCategory("GEO_GEOMETRY", "Geometry", items=[
         NodeItem("GeometryNodeBoundBox"),
@@ -512,6 +515,8 @@ geometry_node_categories = [
         NodeItem("GeometryNodeDeleteGeometry"),
         NodeItem("GeometryNodeTransform"),
         NodeItem("GeometryNodeJoinGeometry"),
+        NodeItem("GeometryNodeSeparateComponents"),
+        NodeItem("GeometryNodeRaycast"),
     ]),
     GeometryNodeCategory("GEO_INPUT", "Input", items=[
         NodeItem("GeometryNodeObjectInfo"),
