@@ -25,9 +25,10 @@ load, create or edit"""
 import bpy
 from bpy.props import StringProperty, BoolProperty, CollectionProperty
 from bpy_extras.io_utils import ImportHelper
+from bpy.utils import register_class, unregister_class
 
 from mathutils import Vector
-from math import pi
+from math import pi, sqrt
 
 
 def export_custom_code(file):
@@ -44,7 +45,7 @@ def export_custom_code(file):
             file.write("\n")
 
 
-#############################IMPORT
+# ----------------------------------- IMPORT
 
 
 class ImportPOV(bpy.types.Operator, ImportHelper):
@@ -75,8 +76,8 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
         verts = []
         faces = []
         materials = []
-        blend_mats = []  ##############
-        pov_mats = []  ##############
+        blend_mats = []  # XXX
+        pov_mats = []  # XXX
         colors = []
         mat_names = []
         lenverts = None
@@ -91,32 +92,28 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
         cylinder_search = False
         sphere_search = False
         cone_search = False
-        tex_search = False  ##################
+        tex_search = False  # XXX
         cache = []
         matrixes = {}
         write_matrix = False
         index = None
         value = None
-        # file_pov = bpy.path.abspath(self.filepath) #was used for single files
+        # file_pov = bpy.path.abspath(self.filepath) # was used for single files
 
         def mat_search(cache):
             r = g = b = 0.5
             f = t = 0
             color = None
-
             for item, value in enumerate(cache):
-
-                if value == 'texture':
-                    pass
-
+                # if value == 'texture': # add more later
                 if value == 'pigment':
-
+                    # Todo: create function for all color models.
+                    # instead of current pass statements
+                    # distinguish srgb from rgb into blend option
                     if cache[item + 2] in {'rgb', 'srgb'}:
                         pass
-
                     elif cache[item + 2] in {'rgbf', 'srgbf'}:
                         pass
-
                     elif cache[item + 2] in {'rgbt', 'srgbt'}:
                         try:
                             r, g, b, t = (
@@ -197,8 +194,8 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                 S = S.replace(";", " ; ")
                 S = S.split()
                 # lenS = len(S) # Not used... why written?
-                for i, word in enumerate(S):
-                    ##################Primitives Import##################
+                for word in enumerate(S):
+                    # -------- Primitives Import -------- #
                     if word == 'cone':
                         cone_search = True
                         name_search = False
@@ -340,7 +337,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                             mat_search(cache)
                             cache = []
                             sphere_search = False
-                    ##################End Primitives Import##################
+                    # -------- End Primitives Import -------- #
                     if word == '#declare':
                         name_search = True
                     if name_search:
@@ -374,16 +371,16 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                             cache = []
                     # if word == 'face_indices':
                     # faces_search = True
-                    if word == 'texture_list':  ########
-                        tex_search = True  #######
-                    if tex_search:  #########
+                    if word == 'texture_list':  # XXX
+                        tex_search = True  # XXX
+                    if tex_search:  # XXX
                         if (
                             word not in {'texture_list', 'texture', '{', '}', 'face_indices'}
                             and not word.isdigit()
-                        ):  ##############
-                            pov_mats.append(word)  #################
+                        ):  # XXX
+                            pov_mats.append(word)  # XXX
                     if word == 'face_indices':
-                        tex_search = False  ################
+                        tex_search = False  # XXX
                         faces_search = True
                     if faces_search:
                         cache.append(word)
@@ -423,34 +420,34 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                             # mesh = pov_define_mesh(None, verts, [], faces, name, hide_geometry=False)
                             # ob = object_utils.object_data_add(context, mesh, operator=None)
 
-                            me = bpy.data.meshes.new(name)  ########
-                            ob = bpy.data.objects.new(name, me)  ##########
-                            bpy.context.collection.objects.link(ob)  #########
-                            me.from_pydata(verts, [], faces)  ############
+                            me = bpy.data.meshes.new(name)  # XXX
+                            ob = bpy.data.objects.new(name, me)  # XXX
+                            bpy.context.collection.objects.link(ob)  # XXX
+                            me.from_pydata(verts, [], faces)  # XXX
 
-                            for mat in bpy.data.materials:  ##############
-                                blend_mats.append(mat.name)  #############
-                            for m_name in pov_mats:  #####################
-                                if m_name not in blend_mats:  ###########
-                                    povMat = bpy.data.materials.new(m_name)  #################
+                            for mat in bpy.data.materials:  # XXX
+                                blend_mats.append(mat.name)  # XXX
+                            for m_name in pov_mats:  # XXX
+                                if m_name not in blend_mats:  # XXX
+                                    bpy.data.materials.new(m_name)  # XXX
                                     mat_search(cache)
                                 ob.data.materials.append(
                                     bpy.data.materials[m_name]
-                                )  ###################
-                            if materials:  ##################
-                                for l, val in enumerate(materials):  ####################
-                                    try:  ###################
+                                )  # XXX
+                            if materials:  # XXX
+                                for idx, val in enumerate(materials):  # XXX
+                                    try:  # XXX
                                         ob.data.polygons[
-                                            l
-                                        ].material_index = val  ####################
-                                    except TypeError:  ###################
-                                        ob.data.polygons[l].material_index = int(
+                                            idx
+                                        ].material_index = val  # XXX
+                                    except TypeError:  # XXX
+                                        ob.data.polygons[idx].material_index = int(
                                             val[0]
-                                        )  ##################
+                                        )  # XXX
 
-                            blend_mats = []  #########################
-                            pov_mats = []  #########################
-                            materials = []  #########################
+                            blend_mats = []  # XXX
+                            pov_mats = []  # XXX
+                            materials = []  # XXX
                             cache = []
                             name_search = True
                             if name in matrixes and not self.import_at_cur:
@@ -510,7 +507,7 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
                     # if color == colors[m]:
                     # ob.data.materials.append(bpy.data.materials[mat_names[m]])
 
-        ##To keep Avogadro Camera angle:
+        # To keep Avogadro Camera angle:
         # for obj in bpy.context.view_layer.objects:
         # if obj.type == "CAMERA":
         # track = obj.constraints.new(type = "TRACK_TO")
@@ -521,9 +518,16 @@ class ImportPOV(bpy.types.Operator, ImportHelper):
         return {'FINISHED'}
 
 
+classes = (
+    ImportPOV,
+)
+
+
 def register():
-    bpy.utils.register_class(ImportPOV)
+    for cls in classes:
+        register_class(cls)
 
 
 def unregister():
-    bpy.utils.unregister_class(ImportPOV)
+    for cls in reversed(classes):
+        unregister_class(cls)

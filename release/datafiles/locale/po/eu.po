@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -397,6 +397,10 @@ msgid "Display Mode"
 msgstr "Bistaraketa Modua"
 
 
+msgid "Link"
+msgstr "Estekatu"
+
+
 msgid "Time"
 msgstr "Denbora"
 
@@ -554,10 +558,6 @@ msgstr "Angelu Maximoa"
 
 msgid "Min Angle"
 msgstr "Angelu Minimoa"
-
-
-msgid "Link"
-msgstr "Estekatu"
 
 
 msgid "Show/Hide"
@@ -2346,14 +2346,6 @@ msgid "Transmission Depth"
 msgstr "Trasmisio-sakonera"
 
 
-msgid "Color1"
-msgstr "1 Kolorea"
-
-
-msgid "Color2"
-msgstr "2 Kolorea"
-
-
 msgid "Color Fac"
 msgstr "Kolore Faktorea"
 
@@ -2368,6 +2360,14 @@ msgstr "Testura Lausotua"
 
 msgid "BSSRDF"
 msgstr "BSSRDF"
+
+
+msgid "Color1"
+msgstr "1 Kolorea"
+
+
+msgid "Color2"
+msgstr "2 Kolorea"
 
 
 msgid "Mortar"

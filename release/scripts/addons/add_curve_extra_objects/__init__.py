@@ -80,8 +80,7 @@ def convert_old_presets(data_path, msg_data_path, old_preset_subdir,
         import os
 
         target_path = os.path.join("presets", old_preset_subdir)
-        target_path = bpy.utils.user_resource('SCRIPTS',
-                                              target_path)
+        target_path = bpy.utils.user_resource('SCRIPTS', path=target_path)
 
         # created an anytype op to run against preset
         op = type('', (), {})()
@@ -93,9 +92,7 @@ def convert_old_presets(data_path, msg_data_path, old_preset_subdir,
             return None
 
         new_target_path = os.path.join("presets", new_preset_subdir)
-        new_target_path = bpy.utils.user_resource('SCRIPTS',
-                                              new_target_path,
-                                              create=True)
+        new_target_path = bpy.utils.user_resource('SCRIPTS', path=new_target_path, create=True)
         for f in files:
             file = open(os.path.join(target_path, f))
             for line in file:

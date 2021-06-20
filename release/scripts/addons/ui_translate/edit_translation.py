@@ -73,14 +73,17 @@ class UI_OT_i18n_edittranslation_update_mo(Operator):
 
     def execute(self, context):
         if self.clean_mo:
-            root = bpy.utils.user_resource('DATAFILES', settings.settings.MO_PATH_ROOT_RELATIVE)
+            root = bpy.utils.user_resource('DATAFILES', path=settings.settings.MO_PATH_ROOT_RELATIVE)
             if root:
                 shutil.rmtree(root)
         elif not (self.lang and self.po_file):
             return {'CANCELLED'}
         else:
-            mo_dir = bpy.utils.user_resource('DATAFILES', settings.settings.MO_PATH_TEMPLATE_RELATIVE.format(self.lang),
-                                             create=True)
+            mo_dir = bpy.utils.user_resource(
+                'DATAFILES',
+                path=settings.settings.MO_PATH_TEMPLATE_RELATIVE.format(self.lang),
+                create=True,
+            )
             mo_file = os.path.join(mo_dir, settings.settings.MO_FILE_NAME)
             _get_messages(self.lang, self.po_file).write(kind='MO', dest=mo_file)
 

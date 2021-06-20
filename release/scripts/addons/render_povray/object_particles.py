@@ -20,9 +20,30 @@
 """Get some Blender particle objects translated to POV."""
 
 import bpy
+import random
 
 
-def export_hair(file, ob, p_sys, global_matrix, write_matrix):
+def pixel_relative_guess(ob):
+    """Convert some object x dimension to a rough pixel relative order of magnitude"""
+    from bpy_extras import object_utils
+    scene = bpy.context.scene
+    cam = scene.camera
+    render = scene.render
+    # Get rendered image resolution
+    output_x_res = render.resolution_x
+    focal_length = cam.data.lens
+    # Get object bounding box size
+    object_location = ob.location
+    object_dimension_x = ob.dimensions[0]
+    world_to_camera = object_utils.world_to_camera_view(scene, cam, object_location)
+
+    apparent_size = (object_dimension_x * focal_length) / world_to_camera[2]
+    sensor_width = cam.data.sensor_width
+    pixel_pitch_x = sensor_width / output_x_res
+    return apparent_size / pixel_pitch_x
+
+
+def export_hair(file, ob, mod, p_sys, global_matrix, write_matrix):
     """Get Blender path particles (hair strands) objects translated to POV sphere_sweep unions."""
     # tstart = time.time()
     textured_hair = 0
@@ -33,18 +54,30 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
             povtex = th.texture  # slot.name
             tex = bpy.data.textures[povtex]
 
-            if th and th.use:
-                if (tex.type == 'IMAGE' and tex.image) or tex.type != 'IMAGE':
-                    if th.use_map_color_diffuse:
-                        textured_hair = 1
+            if (
+                th
+                and th.use
+                and (
+                    (tex.type == 'IMAGE' and tex.image) or tex.type != 'IMAGE'
+                )
+                and th.use_map_color_diffuse
+            ):
+                textured_hair = 1
         if pmaterial.strand.use_blender_units:
             strand_start = pmaterial.strand.root_size
             strand_end = pmaterial.strand.tip_size
-            strand_shape = pmaterial.strand.shape
-        else:  # Blender unit conversion
-            strand_start = pmaterial.strand.root_size / 200.0
-            strand_end = pmaterial.strand.tip_size / 200.0
-            strand_shape = pmaterial.strand.shape
+        else:
+            try:
+                # inexact pixel size, just to make radius relative to screen and object size.
+                pixel_fac = pixel_relative_guess(ob)
+            except ZeroDivisionError:
+                # Fallback to hardwired constant value
+                pixel_fac = 4500
+                print("no pixel size found for stand radius, falling back to  %i" % pixel_fac)
+
+            strand_start = pmaterial.strand.root_size / pixel_fac
+            strand_end = pmaterial.strand.tip_size / pixel_fac
+        strand_shape = pmaterial.strand.shape
     else:
         pmaterial = "default"  # No material assigned in blender, use default one
         strand_start = 0.01
@@ -63,7 +96,7 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
     total_number_of_strands = p_sys.settings.count + p_sys.settings.rendered_child_count
     # hairCounter = 0
     file.write('#declare HairArray = array[%i] {\n' % total_number_of_strands)
-    for pindex in range(0, total_number_of_strands):
+    for pindex in range(total_number_of_strands):
 
         # if particle.is_exist and particle.is_visible:
         # hairCounter += 1
@@ -119,7 +152,7 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
                     else:
                         # only overwrite variable for each competing texture for now
                         init_color = tex.evaluate((init_coord[0], init_coord[1], init_coord[2]))
-        for step in range(0, steps):
+        for step in range(steps):
             coord = ob.matrix_world.inverted() @ (p_sys.co_hair(ob, particle_no=pindex, step=step))
             # for controlPoint in particle.hair_keys:
             if p_sys.settings.clump_factor != 0:
@@ -127,9 +160,16 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
             elif step == 0:
                 hair_strand_diameter = strand_start
             else:
-                hair_strand_diameter += (strand_end - strand_start) / (
+                if strand_shape != 0.0:
+                    if strand_shape < 0.0:
+                        fac = pow(step, (1.0 + strand_shape))
+                    else:
+                        fac = pow(step, (1.0 / (1.0 - strand_shape)))
+                else:
+                    fac = step
+                hair_strand_diameter += fac * (strand_end - strand_start) / (
                     p_sys.settings.display_step + 1
-                )  # XXX +1 or not? # XXX use strand_shape in formula
+                )  # XXX +1 or -1 or nothing ?
             if step == 0 and p_sys.settings.use_hair_bspline:
                 # Write three times the first point to compensate pov Bezier handling
                 file.write(
@@ -162,9 +202,7 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
 
             # All coordinates except the last need a following comma.
 
-            if step != steps - 1:
-                file.write(',\n')
-            else:
+            if step == steps - 1:
                 if textured_hair:
                     # Write pigment and alpha (between Pov and Blender,
                     # alpha 0 and 1 are reversed)
@@ -175,6 +213,8 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
                 # End the sphere_sweep declaration for this hair
                 file.write('}\n')
 
+            else:
+                file.write(',\n')
         # All but the final sphere_sweep (each array element) needs a terminating comma.
         if pindex != total_number_of_strands:
             file.write(',\n')
@@ -212,10 +252,10 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
     file.write('  #local I = 0;\n')
     file.write('  #while (I < %i)\n' % total_number_of_strands)
     file.write('    object {HairArray[I]')
-    if not textured_hair:
-        file.write(' texture{HairTexture}\n')
-    else:
+    if textured_hair:
         file.write('\n')
+    else:
+        file.write(' texture{HairTexture}\n')
     # Translucency of the hair:
     file.write('        hollow\n')
     file.write('        double_illuminate\n')
@@ -243,8 +283,8 @@ def export_hair(file, ob, p_sys, global_matrix, write_matrix):
     write_matrix(global_matrix @ ob.matrix_world)
 
     file.write('}')
-    print('Totals hairstrands written: %i' % total_number_of_strands)
-    print('Number of tufts (particle systems)', len(ob.particle_systems))
+    print("Totals hairstrands written: %i" % total_number_of_strands)
+    print("Number of tufts (particle systems)", len(ob.particle_systems))
 
     # Set back the displayed number of particles to preview count
     # p_sys.set_resolution(scene, ob, 'PREVIEW') #DEPRECATED

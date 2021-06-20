@@ -177,7 +177,7 @@ class UnfoldError(ValueError):
                 elem.select = False
             for elem in chain(*elems.values()):
                 elem.select_set(True)
-            bmesh.update_edit_mesh(bpy.context.object.data, False, False)
+            bmesh.update_edit_mesh(bpy.context.object.data, loop_triangles=False, destructive=False)
 
 
 class Unfolder:
@@ -2269,7 +2269,7 @@ class SelectIsland(bpy.types.Operator):
                 edge.select = any(face.select for face in edge.link_faces)
             for vert in verts:
                 vert.select = any(edge.select for edge in vert.link_edges)
-        bmesh.update_edit_mesh(me, False, False)
+        bmesh.update_edit_mesh(me, loop_triangles=False, destructive=False)
         return {'FINISHED'}
 
 

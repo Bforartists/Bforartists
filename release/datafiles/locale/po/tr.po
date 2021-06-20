@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'7bf9d2c58094')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3216,6 +3216,10 @@ msgid "Show text files"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
 
 
+msgid "Link"
+msgstr "Ölçeği Kilitle"
+
+
 msgid "Domain Settings"
 msgstr "Kemik Ayarları"
 
@@ -4312,15 +4316,7 @@ msgid "Texture Space Location"
 msgstr "Doku Alanını Taşı"
 
 
-msgid "Texture space location"
-msgstr "Doku Alanını Taşı"
-
-
 msgid "Texture Space Size"
-msgstr "Doku Alanını Taşı"
-
-
-msgid "Texture space size"
 msgstr "Doku Alanını Taşı"
 
 
@@ -4853,6 +4849,14 @@ msgstr "Noktaları Göster/Gizle"
 
 
 msgid "Texture Space Mesh"
+msgstr "Doku Alanını Taşı"
+
+
+msgid "Texture space location"
+msgstr "Doku Alanını Taşı"
+
+
+msgid "Texture space size"
 msgstr "Doku Alanını Taşı"
 
 
@@ -6655,10 +6659,6 @@ msgstr "Harekete bağlı bulanıklık derecesi"
 
 msgid "Material slot in an object"
 msgstr "Nesne, simülasyonda akışkan olarak temsil edilir"
-
-
-msgid "Link"
-msgstr "Ölçeği Kilitle"
 
 
 msgid "Link material to object or the object's data"

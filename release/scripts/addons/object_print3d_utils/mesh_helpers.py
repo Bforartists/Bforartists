@@ -76,7 +76,7 @@ def bmesh_to_object(obj, bm):
     me = obj.data
 
     if obj.mode == 'EDIT':
-        bmesh.update_edit_mesh(me, True)
+        bmesh.update_edit_mesh(me, loop_triangles=True)
     else:
         bm.to_mesh(me)
         me.update()

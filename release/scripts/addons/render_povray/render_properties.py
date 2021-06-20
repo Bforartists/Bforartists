@@ -32,9 +32,9 @@ from bpy.props import (
     PointerProperty,
 )
 
-###############################################################################
+# ---------------------------------------------------------------- #
 # Scene POV properties.
-###############################################################################
+# ---------------------------------------------------------------- #
 class RenderPovSettingsScene(PropertyGroup):
 
     """Declare scene level properties controllable in UI and translated to POV"""
@@ -445,7 +445,7 @@ class RenderPovSettingsScene(PropertyGroup):
         default=2,
     )
 
-    ########################### PHOTONS #######################################
+    # -------- PHOTONS -------- #
     photon_enable: BoolProperty(name="Photons", description="Enable global photons", default=False)
 
     photon_enable_count: BoolProperty(
@@ -519,7 +519,7 @@ class RenderPovSettingsScene(PropertyGroup):
 
     photon_map_file: StringProperty(name="File", description="", maxlen=1024, subtype="FILE_PATH")
 
-    #########RADIOSITY########
+    # -------- RADIOSITY -------- #
     radio_adc_bailout: FloatProperty(
         name="ADC Bailout",
         description="The adc_bailout for radiosity rays. Use "
@@ -672,7 +672,9 @@ class RenderPovSettingsScene(PropertyGroup):
     )
 
 
-classes = (RenderPovSettingsScene,)
+classes = (
+    RenderPovSettingsScene,
+)
 
 
 def register():
