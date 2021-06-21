@@ -12576,6 +12576,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_POINTS_TO_VOLUME:
       icon = ICON_POINT_TO_VOLUME;
       break;
+    case GEO_NODE_RAYCAST:
+      icon = ICON_RAYCAST;
+      break;
+    case GEO_NODE_SEPARATE_COMPONENTS:
+      icon = ICON_SEPARATE;
+      break;
     case GEO_NODE_COLLECTION_INFO:
       icon = ICON_COLLECTION_INFO;
       break;
@@ -12666,8 +12672,17 @@ static int node_type_to_icon(int type)
     case GEO_NODE_MESH_TO_CURVE:
       icon = ICON_OUTLINER_OB_CURVE;
       break;
+    case GEO_NODE_CURVE_SUBDIVIDE:
+      icon = ICON_SUBDIVIDE_EDGES;
+      break;
     case GEO_NODE_CURVE_RESAMPLE:
       icon = ICON_CURVE_RESAMPLE;
+      break;
+    case GEO_NODE_CURVE_REVERSE:
+      icon = ICON_SWITCH_DIRECTION;
+      break;
+    case GEO_NODE_CURVE_TO_POINTS:
+      icon = ICON_POINTCLOUD_DATA;
       break;
   }
   return icon;

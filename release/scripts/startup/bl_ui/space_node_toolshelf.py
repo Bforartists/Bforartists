@@ -3589,15 +3589,27 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Curve Length            ", icon = "PARTICLEBRUSH_LENGTH")
+            props = col.operator("node.add_node", text=" Curve Length              ", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
+            
+            props = col.operator("node.add_node", text=" Curve Reverse            ", icon = "SWITCH_DIRECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveReverse"
+            
+            props = col.operator("node.add_node", text=" Curve Subdivide         ", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSubdivide"
 
-            props = col.operator("node.add_node", text=" Curve to Mesh          ", icon = "OUTLINER_OB_MESH")
+            props = col.operator("node.add_node", text=" Curve to Mesh            ", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
+            
+            props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveToPoints"
 
-            props = col.operator("node.add_node", text=" Mesh to Curve          ", icon = "OUTLINER_OB_CURVE")
+            props = col.operator("node.add_node", text=" Mesh to Curve            ", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeMeshToCurve"
 
@@ -3617,10 +3629,22 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SWITCH_DIRECTION")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveReverse"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSubdivide"
 
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
+            
+            props = flow.operator("node.add_node", text="", icon = "POINTCLOUD_DATA")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveToPoints"
 
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
@@ -3673,9 +3697,17 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeDeleteGeometry"
 
-            props = col.operator("node.add_node", text=" Join                      ", icon = "JOIN")
+            props = col.operator("node.add_node", text=" Join Geometry     ", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
+            
+            props = col.operator("node.add_node", text=" Raycast                ", icon = "RAYCAST")
+            props.use_transform = True
+            props.type = "GeometryNodeRaycast"
+            
+            props = col.operator("node.add_node", text=" Separate Components", icon = "SEPARATE")
+            props.use_transform = True
+            props.type = "GeometryNodeSeparateComponents"
 
             props = col.operator("node.add_node", text=" Transform             ", icon = "NODE_TRANSFORM")
             props.use_transform = True
@@ -3705,6 +3737,14 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
+            
+            props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
+            props.use_transform = True
+            props.type = "GeometryNodeRaycast"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
+            props.use_transform = True
+            props.type = "GeometryNodeSeparateComponents"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
             props.use_transform = True

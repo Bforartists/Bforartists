@@ -576,7 +576,7 @@ propagate_selected
 select_by_material
 pose_from_breakdown
 pose_relax_to_breakdown
-#~ DEF_ICON_BLANK(595)
+raycast
 
 # ------------------------- row 9 --------------------------*/
 
