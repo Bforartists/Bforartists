@@ -4886,9 +4886,9 @@ class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("armature.autoside_names", text="Auto-Name Left/Right", icon = "STRING").type = 'XAXIS'
-            col.operator("armature.autoside_names", text="Auto-Name Front/Back", icon = "STRING").type = 'YAXIS'
-            col.operator("armature.autoside_names", text="Auto-Name Top/Bottom", icon = "STRING").type = 'ZAXIS'
+            col.operator("armature.autoside_names", text="Auto-Name Left/Right", icon = "RENAME_X").type = 'XAXIS'
+            col.operator("armature.autoside_names", text="Auto-Name Front/Back", icon = "RENAME_Y").type = 'YAXIS'
+            col.operator("armature.autoside_names", text="Auto-Name Top/Bottom", icon = "RENAME_Z").type = 'ZAXIS'
             col.operator("armature.flip_names", icon = "FLIP")
 
         # icon buttons
@@ -4903,9 +4903,9 @@ class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
                 col.operator_context = 'EXEC_REGION_WIN'
 
                 row = col.row(align=True)
-                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'XAXIS'
-                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'YAXIS'
-                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'ZAXIS'
+                row.operator("armature.autoside_names", text="", icon = "RENAME_X").type = 'XAXIS'
+                row.operator("armature.autoside_names", text="", icon = "RENAME_Y").type = 'YAXIS'
+                row.operator("armature.autoside_names", text="", icon = "RENAME_Z").type = 'ZAXIS'
 
                 row = col.row(align=True)
                 row.operator("armature.flip_names", text="", icon = "FLIP")
@@ -4915,19 +4915,19 @@ class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
                 col.operator_context = 'EXEC_REGION_WIN'
 
                 row = col.row(align=True)
-                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'XAXIS'
-                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'YAXIS'
+                row.operator("armature.autoside_names", text="", icon = "RENAME_X").type = 'XAXIS'
+                row.operator("armature.autoside_names", text="", icon = "RENAME_Y").type = 'YAXIS'
 
                 row = col.row(align=True)
-                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'ZAXIS'
+                row.operator("armature.autoside_names", text="", icon = "RENAME_Z").type = 'ZAXIS'
                 row.operator("armature.flip_names", text="", icon = "FLIP")
 
             elif column_count == 1:
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("armature.autoside_names", text="", icon = "STRING").type = 'XAXIS'
-                col.operator("armature.autoside_names", text="", icon = "STRING").type = 'YAXIS'
-                col.operator("armature.autoside_names", text="", icon = "STRING").type = 'ZAXIS'
+                col.operator("armature.autoside_names", text="", icon = "RENAME_X").type = 'XAXIS'
+                col.operator("armature.autoside_names", text="", icon = "RENAME_Y").type = 'YAXIS'
+                col.operator("armature.autoside_names", text="", icon = "RENAME_Z").type = 'ZAXIS'
                 col.operator("armature.flip_names", text="", icon = "FLIP")
 
 
@@ -5600,8 +5600,8 @@ class VIEW3D_PT_gp_posetab_names(toolshelf_calculate, Panel):
             col.scale_y = 2
 
             col.operator_context = 'EXEC_REGION_WIN'
-            col.operator("pose.autoside_names", text="Auto-Name Left/Right", icon = "STRING").axis = 'XAXIS'
-            col.operator("pose.autoside_names", text="Auto-Name Front/Back", icon = "STRING").axis = 'YAXIS'
+            col.operator("pose.autoside_names", text="Auto-Name Left/Right", icon = "RENAME_X").axis = 'XAXIS'
+            col.operator("pose.autoside_names", text="Auto-Name Front/Back", icon = "RENAME_Y").axis = 'YAXIS'
             col.operator("pose.autoside_names", text="Auto-Name Top/Bottom", icon = "STRING").axis = 'ZAXIS'
             col.operator("pose.flip_names", icon = "FLIP")
 
@@ -5617,9 +5617,9 @@ class VIEW3D_PT_gp_posetab_names(toolshelf_calculate, Panel):
                 col.operator_context = 'EXEC_REGION_WIN'
 
                 row = col.row(align=True)
-                row.operator("pose.autoside_names", text="", icon = "STRING").axis = 'XAXIS'
-                row.operator("pose.autoside_names", text="", icon = "STRING").axis = 'YAXIS'
-                row.operator("pose.autoside_names", text="", icon = "STRING").axis = 'ZAXIS'
+                row.operator("pose.autoside_names", text="", icon = "RENAME_X").axis = 'XAXIS'
+                row.operator("pose.autoside_names", text="", icon = "RENAME_Y").axis = 'YAXIS'
+                row.operator("pose.autoside_names", text="", icon = "RENAME_Z").axis = 'ZAXIS'
 
                 row = col.row(align=True)
                 row.operator("pose.flip_names", text="", icon = "FLIP")
@@ -5629,19 +5629,19 @@ class VIEW3D_PT_gp_posetab_names(toolshelf_calculate, Panel):
                 col.operator_context = 'EXEC_REGION_WIN'
 
                 row = col.row(align=True)
-                row.operator("pose.autoside_names", text="", icon = "STRING").axis = 'XAXIS'
-                row.operator("pose.autoside_names", text="", icon = "STRING").axis = 'YAXIS'
+                row.operator("pose.autoside_names", text="", icon = "RENAME_X").axis = 'XAXIS'
+                row.operator("pose.autoside_names", text="", icon = "RENAME_Y").axis = 'YAXIS'
 
                 row = col.row(align=True)
-                row.operator("pose.autoside_names", text="", icon = "STRING").axis = 'ZAXIS'
+                row.operator("pose.autoside_names", text="", icon = "RENAME_Z").axis = 'ZAXIS'
                 row.operator("pose.flip_names", text="", icon = "FLIP")
 
             elif column_count == 1:
 
                 col.operator_context = 'EXEC_REGION_WIN'
-                col.operator("pose.autoside_names", text="", icon = "STRING").axis = 'XAXIS'
-                col.operator("pose.autoside_names", text="", icon = "STRING").axis = 'YAXIS'
-                col.operator("pose.autoside_names", text="", icon = "STRING").axis = 'ZAXIS'
+                col.operator("pose.autoside_names", text="", icon = "RENAME_X").axis = 'XAXIS'
+                col.operator("pose.autoside_names", text="", icon = "RENAME_Y").axis = 'YAXIS'
+                col.operator("pose.autoside_names", text="", icon = "RENAME_Z").axis = 'ZAXIS'
                 col.operator("pose.flip_names", text="", icon = "FLIP")
 
 
