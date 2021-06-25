@@ -4859,6 +4859,79 @@ class VIEW3D_PT_gp_armaturetab_recalcboneroll(toolshelf_calculate, Panel):
                 col.operator("armature.calculate_roll", text= "", icon = "CURSOR").type = 'CURSOR'
 
 
+class VIEW3D_PT_gp_armaturetab_names(toolshelf_calculate, Panel):
+    bl_label = "Names"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_context = "armature_edit"
+    bl_category = "Armature"
+    bl_options = {'HIDE_BG', 'DEFAULT_CLOSED'}
+
+    # just show when the toolshelf tabs toggle in the view menu is on.
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        overlay = view.overlay
+        return overlay.show_toolshelf_tabs == True
+
+    def draw(self, _context):
+        layout = self.layout
+
+        column_count = self.ts_width(layout, _context.region, scale_y= 1.75)
+
+        #text buttons
+        if column_count == 4:
+
+            col = layout.column(align=True)
+            col.scale_y = 2
+
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("armature.autoside_names", text="Auto-Name Left/Right", icon = "STRING").type = 'XAXIS'
+            col.operator("armature.autoside_names", text="Auto-Name Front/Back", icon = "STRING").type = 'YAXIS'
+            col.operator("armature.autoside_names", text="Auto-Name Top/Bottom", icon = "STRING").type = 'ZAXIS'
+            col.operator("armature.flip_names", icon = "FLIP")
+
+        # icon buttons
+        else:
+
+            col = layout.column(align=True)
+            col.scale_x = 2
+            col.scale_y = 2
+
+            if column_count == 3:
+
+                col.operator_context = 'EXEC_REGION_WIN'
+
+                row = col.row(align=True)
+                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'XAXIS'
+                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'YAXIS'
+                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'ZAXIS'
+
+                row = col.row(align=True)
+                row.operator("armature.flip_names", text="", icon = "FLIP")
+
+            elif column_count == 2:
+
+                col.operator_context = 'EXEC_REGION_WIN'
+
+                row = col.row(align=True)
+                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'XAXIS'
+                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'YAXIS'
+
+                row = col.row(align=True)
+                row.operator("armature.autoside_names", text="", icon = "STRING").type = 'ZAXIS'
+                row.operator("armature.flip_names", text="", icon = "FLIP")
+
+            elif column_count == 1:
+
+                col.operator_context = 'EXEC_REGION_WIN'
+                col.operator("armature.autoside_names", text="", icon = "STRING").type = 'XAXIS'
+                col.operator("armature.autoside_names", text="", icon = "STRING").type = 'YAXIS'
+                col.operator("armature.autoside_names", text="", icon = "STRING").type = 'ZAXIS'
+                col.operator("armature.flip_names", text="", icon = "FLIP")
+
+
+
 class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
     bl_label = "Pose"
     bl_space_type = 'VIEW_3D'
@@ -5641,6 +5714,7 @@ classes = (
     # armature edit mode
     VIEW3D_PT_gp_armaturetab_armature,
     VIEW3D_PT_gp_armaturetab_recalcboneroll,
+    VIEW3D_PT_gp_armaturetab_names,
 
     #armature pose mode
     VIEW3D_PT_gp_posetab_pose,
