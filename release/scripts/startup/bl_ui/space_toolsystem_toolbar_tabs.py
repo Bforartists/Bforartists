@@ -4964,7 +4964,7 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
 
             col.operator_context = 'INVOKE_AREA'
             col.operator("armature.armature_layers", text="Change Armature Layers", icon = "LAYER")
-            col.operator("pose.bone_layers", text="Change Bone Layers", icon = "LAYER")
+            col.operator("pose.bone_layers", text="Change Bone Layers", icon = "BONE_LAYER")
 
         # icon buttons
         else:
@@ -4979,14 +4979,14 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
                 row.operator("pose.quaternions_flip", text="", icon = "FLIP")
                 row.operator_context = 'INVOKE_AREA'
                 row.operator("armature.armature_layers", text="", icon = "LAYER")
-                row.operator("pose.bone_layers", text="", icon = "LAYER")
+                row.operator("pose.bone_layers", text="", icon = "BONE_LAYER")
 
             elif column_count == 2:
 
                 row = col.row(align=True)
                 row.operator("pose.quaternions_flip", text="", icon = "FLIP")
                 row.operator_context = 'INVOKE_AREA'
-                row.operator("armature.armature_layers", text="", icon = "LAYER")
+                row.operator("armature.armature_layers", text="", icon = "BONE_LAYER")
 
                 row = col.row(align=True)
                 row.operator("pose.bone_layers", text="", icon = "LAYER")
@@ -4999,7 +4999,7 @@ class VIEW3D_PT_gp_posetab_pose(toolshelf_calculate, Panel):
 
                 col.operator_context = 'INVOKE_AREA'
                 col.operator("armature.armature_layers", text="", icon = "LAYER")
-                col.operator("pose.bone_layers", text="", icon = "LAYER")
+                col.operator("pose.bone_layers", text="", icon = "BONE_LAYER")
 
 
 class VIEW3D_PT_gp_posetab_cleartransform(toolshelf_calculate, Panel):
