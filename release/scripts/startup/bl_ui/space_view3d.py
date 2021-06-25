@@ -3969,9 +3969,9 @@ class VIEW3D_MT_pose_names(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("pose.autoside_names", text="Auto-Name Left/Right", icon = "STRING").axis = 'XAXIS'
-        layout.operator("pose.autoside_names", text="Auto-Name Front/Back", icon = "STRING").axis = 'YAXIS'
-        layout.operator("pose.autoside_names", text="Auto-Name Top/Bottom", icon = "STRING").axis = 'ZAXIS'
+        layout.operator("pose.autoside_names", text="Auto-Name Left/Right", icon = "RENAME_X").axis = 'XAXIS'
+        layout.operator("pose.autoside_names", text="Auto-Name Front/Back", icon = "RENAME_Y").axis = 'YAXIS'
+        layout.operator("pose.autoside_names", text="Auto-Name Top/Bottom", icon = "RENAME_Z").axis = 'ZAXIS'
         layout.operator("pose.flip_names", icon = "FLIP")
 
 
@@ -5446,9 +5446,9 @@ class VIEW3D_MT_edit_armature_names(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("armature.autoside_names", text="Auto-Name Left/Right", icon = "STRING").type = 'XAXIS'
-        layout.operator("armature.autoside_names", text="Auto-Name Front/Back", icon = "STRING").type = 'YAXIS'
-        layout.operator("armature.autoside_names", text="Auto-Name Top/Bottom", icon = "STRING").type = 'ZAXIS'
+        layout.operator("armature.autoside_names", text="Auto-Name Left/Right", icon = "RENAME_X").type = 'XAXIS'
+        layout.operator("armature.autoside_names", text="Auto-Name Front/Back", icon = "RENAME_Y").type = 'YAXIS'
+        layout.operator("armature.autoside_names", text="Auto-Name Top/Bottom", icon = "RENAME_Z").type = 'ZAXIS'
         layout.operator("armature.flip_names", text="Flip Names", icon = "FLIP")
 
 
