@@ -635,9 +635,9 @@ orientation_view
 orphan_data
 outliner
 
-#~ DEF_ICON_BLANK(654)
-#~ DEF_ICON_BLANK(655)
-#~ DEF_ICON_BLANK(656)
+rename_x
+rename_y
+rename_z
 #~ DEF_ICON_BLANK(657)
 #~ DEF_ICON_BLANK(658)
 #~ DEF_ICON_BLANK(659)
