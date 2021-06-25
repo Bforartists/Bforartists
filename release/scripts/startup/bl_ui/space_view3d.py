@@ -3832,7 +3832,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.operator_context = 'INVOKE_AREA'
         layout.operator("armature.armature_layers", text="Change Armature Layers", icon = "LAYER")
-        layout.operator("pose.bone_layers", text="Change Bone Layers", icon = "LAYER")
+        layout.operator("pose.bone_layers", text="Change Bone Layers", icon = "BONE_LAYER")
 
         layout.separator()
 
@@ -4878,6 +4878,7 @@ class VIEW3D_MT_edit_mesh_show_hide(Menu):
         layout.operator("mesh.reveal", text="Show Hidden", icon = "HIDE_OFF")
         layout.operator("mesh.hide", text="Hide Selected", icon = "HIDE_ON").unselected = False
         layout.operator("mesh.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
+
 
 class VIEW3D_MT_edit_gpencil_delete(Menu):
     bl_label = "Delete"
