@@ -53,6 +53,17 @@ For those who are willing and interested to help with the manual, we have a Gith
 
 https://github.com/Bforartists/Manual
 
+In case that you want to compile Bforartists by yourself, the advice is the same as for Blender. Here’s a short tutorial that shows the whole process under Linux Ubuntu 17 www.bforartists.de/data/tuts/Building_with_Ubuntu17.pdf
+And here a youtube video that shows how to compile Bforartists 2 on Ubuntu 20: www.youtube.com/watch?v=sUhM2YSw1gQ
+
+Here’s the Blender advice for Linux, which goes a bit more into detail: wiki.blender.org/wiki/Building_Blender/Linux
+Here’s the advice for Mac: wiki.blender.org/index.php/Dev:Doc/Building_Blender/Mac
+For Windows have a look here: www.bforartists.de/data/tuts/Building_Bforartists_with_Cmake_and…
+
+You might want to compile an older Bforartists version where the newest precompiled libs do not work. Here you can find the precompiled libs for all previous Blender versions:
+
+svn.blender.org/svnroot/bf-blender/tags/
+
 Have fun :)
 
 The Bforartists team
