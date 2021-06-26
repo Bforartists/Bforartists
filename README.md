@@ -62,7 +62,7 @@ For Windows have a look here: www.bforartists.de/data/tuts/Building_Bforartists_
 
 You might want to compile an older Bforartists version where the newest precompiled libs do not work. Here you can find the precompiled libs for all previous Blender versions:
 
-svn.blender.org/svnroot/bf-blender/tags/
+https://svn.blender.org/svnroot/bf-blender/tags/
 
 Have fun :)
 
