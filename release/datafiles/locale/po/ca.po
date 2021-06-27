@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15173,6 +15173,10 @@ msgid "Link Nodes"
 msgstr "Duplicar"
 
 
+msgid "Delay"
+msgstr "Retard"
+
+
 msgid "Detach"
 msgstr "Guardar com"
 
@@ -17404,10 +17408,6 @@ msgstr "Finestra de Render"
 
 msgid "Make internal"
 msgstr "Crear Meta"
-
-
-msgid "Delay"
-msgstr "Retard"
 
 
 msgctxt "Operator"
