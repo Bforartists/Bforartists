@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -2778,28 +2778,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "Dịch của tay cầm trục X cho điềm đầu của đường cong Xương-B, để chỉnh độ cuộn"
 
 
-msgid "In Y"
-msgstr "Y Vào"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "Dịch của tay cầm trục Y cho điềm đầu của đường cong Xương-B, để chỉnh độ cuộn"
-
-
 msgid "Out X"
 msgstr "X Ra"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "Dịch của tay cầm trục X cho điềm cuối của đường cong Xương-B, để chỉnh độ cuộn"
-
-
-msgid "Out Y"
-msgstr "Y Ra"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Dịch của tay cầm trục Y cho điềm cuối của đường cong Xương-B, để chỉnh độ cuộn"
 
 
 msgid "B-Bone End Handle"
@@ -2892,38 +2876,6 @@ msgstr "Lăn Ra"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Dịch lăn cho cuối của Xương-B, để chỉnh xoắn"
-
-
-msgid "Scale In X"
-msgstr "Phóng Vào X"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Hệ số phóng to cho đầu của Xương-B, để chỉnh bề dày (cho hiệu ứng nến)"
-
-
-msgid "Scale In Y"
-msgstr "Phóng Vào Y"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Hệ số phóng to Y cho đầu của Xương-B, để chỉnh bề dày (cho hiệu ứng nến)"
-
-
-msgid "Scale Out X"
-msgstr "Phóng Ra X"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Hệ số phóng to cho đuôi của Xương-B, để chỉnh độ dày (cho hiệu ứng nến)"
-
-
-msgid "Scale Out Y"
-msgstr "Phóng Ra Y"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Hệ số phóng to Y cho duôi của Xương-B, để chỉnh bề dày (cho hiệu ứng nến)"
 
 
 msgid "B-Bone Segments"
@@ -41005,6 +40957,10 @@ msgid "Convex Hull"
 msgstr "Vỏ Lồi"
 
 
+msgid "Evaluated"
+msgstr "Được Tính Toán"
+
+
 msgid "Geometry Custom Group"
 msgstr "Nhóm Tùy Chọn Hình Dạng"
 
@@ -57470,6 +57426,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Dùng con chuột để chế tạo một liên kết giữa hai giao điểm"
 
 
+msgid "Delay"
+msgstr "Trì Hoãn"
+
+
 msgid "Detach"
 msgstr "Gở"
 
@@ -57492,6 +57452,10 @@ msgstr "Đã Có Liên Kết Được Chọn"
 
 msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
 msgstr "Thao tác đã có một liên kết đã đặt. Chỉ được dùng cho ổ cắm đa ngõ vào, khi liên kết được chọn một thời sau"
+
+
+msgid "Outside Padding"
+msgstr "Lót Ngoài"
 
 
 msgctxt "Operator"
@@ -64527,10 +64491,6 @@ msgid "Bake the active view layer lighting"
 msgstr "Nướng ánh sáng của lớp màn chiếu hoạt động"
 
 
-msgid "Delay"
-msgstr "Trì Hoãn"
-
-
 msgid "Delay in millisecond before baking starts"
 msgstr "Trì hoãn bằng 1/1000 giây"
 
@@ -69560,14 +69520,6 @@ msgstr "Dời Cạnh Màn"
 
 msgid "Pan the view when the mouse is held at an edge"
 msgstr "Dời màn khi chuột được giữ tại một cạnh"
-
-
-msgid "Outside Padding"
-msgstr "Lót Ngoài"
-
-
-msgid "Padding around the region in UI units within which panning is activated (0 to disable boundary)"
-msgstr "Khoảng cách lót quanh khu vực bằng đơn vị giao diện được kích động sự dời (đặt = 0 để tắt)"
 
 
 msgid "Delta X"
@@ -86920,10 +86872,6 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "Loại màn chiếu của bộ trình tự (bộ trình tự, dự khán hay cả hai)"
 
 
-msgid "Sequencer/Preview"
-msgstr "Bộ Trình Tự/Dự Khán"
-
-
 msgid "Waveform Display"
 msgstr "Hiển Thị Dạng Sóng"
 
@@ -86972,6 +86920,10 @@ msgid "Attribute domain to display"
 msgstr "Phạm vi đặc điểm để hiển thị"
 
 
+msgid "Columns"
+msgstr "Cột"
+
+
 msgid "Context Path"
 msgstr "Đường Dẫn Bối Cảnh"
 
@@ -87018,10 +86970,6 @@ msgstr "Đường dẫn được đóng đinh"
 
 msgid "Object Evaluation State"
 msgstr "Tráng Thái Tính Toán Vật Thể"
-
-
-msgid "Evaluated"
-msgstr "Được Tính Toán"
 
 
 msgid "Use data from fully or partially evaluated object"
@@ -97239,10 +97187,6 @@ msgid "New Folder"
 msgstr "Hồ Sơ Mới"
 
 
-msgid "Columns"
-msgstr "Cột"
-
-
 msgid ".blend Files"
 msgstr "Các Tệp .blend"
 
@@ -104768,10 +104712,6 @@ msgid "Removed constraint: %s"
 msgstr "Đã xóa ràng buộc: %s"
 
 
-msgid "Context missing active object"
-msgstr "Bối cảnh đang thiếu vật thể hoạt động"
-
-
 msgid "Cannot edit library data"
 msgstr "Không thể biên tập dữ liệu thư viện"
 
@@ -105186,10 +105126,6 @@ msgstr "Hiệu ứng '%s' không có trong vật thể '%s'"
 
 msgid "Removed effect: %s"
 msgstr "Đã xóa hiệu ứng: %s"
-
-
-msgid "Cannot edit shaderfxs coming from library override"
-msgstr "Không thể biên tập hiệu ứng bộ tô sắc đến từ đồ thay thế thư viện"
 
 
 msgid "Objects have no data to transform"
@@ -105794,6 +105730,10 @@ msgstr "định có một vùng màn 3D"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "Định có vùng thời biểu/hoạt hình được hoạt động"
+
+
+msgid "Context missing active object"
+msgstr "Bối cảnh đang thiếu vật thể hoạt động"
 
 
 msgid "expected a view3d region & editmesh"

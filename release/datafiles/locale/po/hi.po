@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -4094,6 +4094,10 @@ msgid "Hide"
 msgstr "छिपाएँ"
 
 
+msgid "Delay"
+msgstr "देरी"
+
+
 msgid "Set the boundaries for viewer operations"
 msgstr "दर्शक संचालन के लिए सीमाएँ सेट करें"
 
@@ -4265,10 +4269,6 @@ msgstr "कठोर-पदार्थ हटाएँ"
 msgctxt "Operator"
 msgid "Delete Scene"
 msgstr "दृश्य मिटाएँ"
-
-
-msgid "Delay"
-msgstr "देरी"
 
 
 msgid "Sync"

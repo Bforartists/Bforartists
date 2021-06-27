@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -2791,28 +2791,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "Bボーンのカーブ始点の X 軸ハンドルのオフセット。曲率の調整用"
 
 
-msgid "In Y"
-msgstr "インY"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "Bボーンのカーブ始点の Y 軸ハンドルのオフセット。曲率の調整用"
-
-
 msgid "Out X"
 msgstr "アウトX"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "Bボーンのカーブ終点の X 軸ハンドルのオフセット。曲率の調整用"
-
-
-msgid "Out Y"
-msgstr "アウトY"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Bボーンのカーブ終点の Y 軸ハンドルのオフセット。曲率の調整用"
 
 
 msgid "B-Bone End Handle"
@@ -2905,38 +2889,6 @@ msgstr "ロールアウト"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Bボーン終端のロールのオフセット。ねじれの調整用"
-
-
-msgid "Scale In X"
-msgstr "スケールインX"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B ボーン始点の X 軸のスケール係数。幅の調整（テーパリングエフェクト）用"
-
-
-msgid "Scale In Y"
-msgstr "スケールインY"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B ボーン始点の Y 軸のスケール係数。幅の調整（テーパリングエフェクト）用"
-
-
-msgid "Scale Out X"
-msgstr "スケールアウトX"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B ボーン終点の X 軸のスケール係数。幅の調整（テーパリングエフェクト）用"
-
-
-msgid "Scale Out Y"
-msgstr "スケールアウトY"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B ボーン終点の Y 軸のスケール係数。幅の調整（テーパリングエフェクト）用"
 
 
 msgid "B-Bone Segments"
@@ -41344,6 +41296,10 @@ msgid "Convex Hull"
 msgstr "凸包"
 
 
+msgid "Evaluated"
+msgstr "評価済"
+
+
 msgid "Geometry Custom Group"
 msgstr "ジオメトリカスタムグループ"
 
@@ -57931,6 +57887,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "2つのノード間にリンクを作成するのにマウスを使用します"
 
 
+msgid "Delay"
+msgstr "ディレイ"
+
+
 msgid "Detach"
 msgstr "分離"
 
@@ -57953,6 +57913,10 @@ msgstr "リンク選択の有無"
 
 msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
 msgstr "オペレーションにリンクの配置があります。複数の入力ソケットで、後にリンクが選択される場合にのみ使用されます"
+
+
+msgid "Outside Padding"
+msgstr "外側のパディング"
 
 
 msgctxt "Operator"
@@ -65040,10 +65004,6 @@ msgid "Bake the active view layer lighting"
 msgstr "アクティブビューレイヤーのライティングをベイクします"
 
 
-msgid "Delay"
-msgstr "ディレイ"
-
-
 msgid "Delay in millisecond before baking starts"
 msgstr "ベイキング開始前の遅れ（ms）"
 
@@ -70087,14 +70047,6 @@ msgstr "ビューエッジパン"
 
 msgid "Pan the view when the mouse is held at an edge"
 msgstr "マウスを端でドラッグ中、ビューを平行移動します"
-
-
-msgid "Outside Padding"
-msgstr "外側のパディング"
-
-
-msgid "Padding around the region in UI units within which panning is activated (0 to disable boundary)"
-msgstr "パンが有効化された UI ユニット内の領域の周辺のパディング（0で境界が無効）"
 
 
 msgid "Delta X"
@@ -87614,10 +87566,6 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "シーケンサービューのタイプ(シーケンサー、プレビュー、両方)"
 
 
-msgid "Sequencer/Preview"
-msgstr "シーケンサー/プレビュー"
-
-
 msgid "Waveform Display"
 msgstr "波形の表示方法"
 
@@ -87666,6 +87614,10 @@ msgid "Attribute domain to display"
 msgstr "表示する属性ドメイン"
 
 
+msgid "Columns"
+msgstr "列"
+
+
 msgid "Context Path"
 msgstr "コンテクストパス"
 
@@ -87712,10 +87664,6 @@ msgstr "コンテクストパスは固定中です"
 
 msgid "Object Evaluation State"
 msgstr "オブジェクトの評価状態"
-
-
-msgid "Evaluated"
-msgstr "評価済"
 
 
 msgid "Use data from fully or partially evaluated object"
@@ -97960,10 +97908,6 @@ msgid "New Folder"
 msgstr "新規フォルダー"
 
 
-msgid "Columns"
-msgstr "列"
-
-
 msgid ".blend Files"
 msgstr ".blendファイル"
 
@@ -105495,10 +105439,6 @@ msgid "Removed constraint: %s"
 msgstr "コンストレイント「%s」を削除しました"
 
 
-msgid "Context missing active object"
-msgstr "コンテクストにアクティブオブジェクトがありません"
-
-
 msgid "Cannot edit library data"
 msgstr "ライブラリデータは編集できません"
 
@@ -105913,10 +105853,6 @@ msgstr "エフェクト「%s」がオブジェクト「%s」にありません"
 
 msgid "Removed effect: %s"
 msgstr "エフェクト「%s」を削除しました"
-
-
-msgid "Cannot edit shaderfxs coming from library override"
-msgstr "ライブラリオーバーライドのシェーダーFXは編集できません"
 
 
 msgid "Objects have no data to transform"
@@ -106521,6 +106457,10 @@ msgstr "3Dビュー領域用です"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "タイムライン/アニメーション領域がアクティブでないといけません"
+
+
+msgid "Context missing active object"
+msgstr "コンテクストにアクティブオブジェクトがありません"
 
 
 msgid "expected a view3d region & editmesh"
