@@ -859,11 +859,13 @@ class CYCLES_RENDER_PT_filter(CyclesButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(view_layer, "use_volumes", text="Volumes")
-
-        col = layout.column(heading="Use")
-        sub = col.row()
-        sub.prop(view_layer, "use_motion_blur", text="Motion Blur")
-        sub.active = rd.use_motion_blur
+        
+        col = layout.column(align = True)
+        col.label(text = "Use")
+        row = col.row()
+        row.separator()
+        row.prop(view_layer, "use_motion_blur", text="Motion Blur")
+        row.active = rd.use_motion_blur
 
 
 class CYCLES_RENDER_PT_override(CyclesButtonsPanel, Panel):
