@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2586,28 +2586,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "Décalage initial en X de la poignée pour la courbe du B-os, ajuste la courbure"
 
 
-msgid "In Y"
-msgstr "Entrée Y"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "Décalage initial en Y de la poignée pour la courbe du B-os, ajuste la courbure"
-
-
 msgid "Out X"
 msgstr "Sortie X"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "Décalage final en X de la poignée pour la courbe du B-os, ajuste la courbure"
-
-
-msgid "Out Y"
-msgstr "Sortie Y"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Décalage final en Y de la poignée pour la courbe du B-os, ajuste la courbure"
 
 
 msgid "B-Bone End Handle"
@@ -2700,38 +2684,6 @@ msgstr "Roulis en sortie"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Décalage en sortie du roulis du B-os, ajuste la torsion"
-
-
-msgid "Scale In X"
-msgstr "Taille entrée X"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Facteur d’échelle sur l’axe X en entrée du B-os, ajuste l’épaisseur (pour des effets de “profilage”)"
-
-
-msgid "Scale In Y"
-msgstr "Taille entrée Y"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Facteur d’échelle sur l’axe Y en entrée du B-os, ajuste l’épaisseur (pour des effets de “profilage”)"
-
-
-msgid "Scale Out X"
-msgstr "Taille sortie X"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Facteur d’échelle sur l’axe X en sortie du B-os, ajuste l’épaisseur (pour des effets de “profilage”)"
-
-
-msgid "Scale Out Y"
-msgstr "Taille sortie Y"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Facteur d’échelle sur l’axe Y en sortie du B-os, ajuste l’épaisseur (pour des effets de “profilage”)"
 
 
 msgid "B-Bone Segments"
@@ -46696,6 +46648,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Utiliser la souris pour créer un lien entre deux nœuds"
 
 
+msgid "Delay"
+msgstr "Délai"
+
+
 msgid "Detach"
 msgstr "Détacher"
 
@@ -51999,10 +51955,6 @@ msgstr "Ajouter pré-réglage de brosse de crayon gras"
 msgctxt "Operator"
 msgid "Bake Light Cache"
 msgstr "Pré-calculer cache de lumière"
-
-
-msgid "Delay"
-msgstr "Délai"
 
 
 msgid "Dirty Only"
@@ -77315,10 +77267,6 @@ msgid "Bone already has an IK constraint"
 msgstr "L’os a déjà une contrainte IK"
 
 
-msgid "Context missing active object"
-msgstr "Le contexte n’a pas d’objet actif"
-
-
 msgid "Cannot edit library data"
 msgstr "Impossible d’éditer les données de bibliothèque"
 
@@ -77989,6 +77937,10 @@ msgstr "région view3d attendue"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "zone timeline/animation active attendue"
+
+
+msgid "Context missing active object"
+msgstr "Le contexte n’a pas d’objet actif"
 
 
 msgid "expected a view3d region & editmesh"

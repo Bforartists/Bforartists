@@ -159,7 +159,7 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
     """
     Base class for all rigs.
 
-    The main weak areas in the legacy Rigify rig class structure
+    The main weak areas in the legacy (pre-2.76b) Rigify rig class structure
     was that there were no provisions for intelligent interactions
     between rigs, and all processing was done via one generate
     method, necessitating frequent expensive mode switches.
