@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -8686,10 +8686,6 @@ msgid "Bone already has an IK constraint"
 msgstr "Kość posiada już ogranicznik IK"
 
 
-msgid "Context missing active object"
-msgstr "W kontekście brakuje aktywnego obiektu"
-
-
 msgid "Cannot edit library data"
 msgstr "Nie można edytować danych biblioteki"
 
@@ -9300,6 +9296,10 @@ msgstr "Spodziewany region view3d"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "Spodziewane: obszar oś czasu/animacja jest aktywny"
+
+
+msgid "Context missing active object"
+msgstr "W kontekście brakuje aktywnego obiektu"
 
 
 msgid "expected a view3d region & editmesh"

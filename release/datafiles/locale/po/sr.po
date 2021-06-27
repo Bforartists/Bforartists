@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -16983,6 +16983,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Користи угао између две кости"
 
 
+msgid "Delay"
+msgstr "Кашњење"
+
+
 msgid "Detach"
 msgstr "Раздвој"
 
@@ -18895,10 +18899,6 @@ msgstr "Премести слободоручни модул"
 msgctxt "Operator"
 msgid "Remove Freestyle Module"
 msgstr "Уклони слободоручни модул"
-
-
-msgid "Delay"
-msgstr "Кашњење"
 
 
 msgctxt "Operator"

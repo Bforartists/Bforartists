@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2766,28 +2766,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "Der X-Achsen-Griffversatz für den Beginn der B-Bone-Kurve passt die Krümmung an"
 
 
-msgid "In Y"
-msgstr "Rein Y"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "Der Y-Achsen-Griffversatz für den Beginn der B-Bone-Kurve passt die Krümmung an"
-
-
 msgid "Out X"
 msgstr "Raus X"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "Der X-Achsen-Griffversatz für das Ende der B-Bone-Kurve passt die Krümmung an"
-
-
-msgid "Out Y"
-msgstr "Raus Y"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Der Y-Achsen-Griffversatz für das Ende der B-Bone-Kurve passt die Krümmung an"
 
 
 msgid "B-Bone End Handle"
@@ -2880,38 +2864,6 @@ msgstr "Rausrollen"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Rollversatz für das Ende des B-Bones, passt die Verdrehung an"
-
-
-msgid "Scale In X"
-msgstr "X Reinskalieren"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "X-Achsen-Skalierungsfaktor für den Start des B-Bones, passt die Dicke an (für Verjüngungseffekte)"
-
-
-msgid "Scale In Y"
-msgstr "Y Reinskalieren"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Y-Achsen-Skalierungsfaktor für den Start des B-Bones, passt die Dicke an (für Verjüngungseffekte)"
-
-
-msgid "Scale Out X"
-msgstr "X Rausskalieren"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "X-Achsen-Skalierungsfaktor für das Ende des B-Bones, passt die Dicke an (für Verjüngungseffekte)"
-
-
-msgid "Scale Out Y"
-msgstr "Y Rausskalieren"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Y-Achsen-Skalierungsfaktor für das Ende des B-Bones, passt die Dicke an (für Verjüngungseffekte)"
 
 
 msgid "B-Bone Segments"
@@ -33982,6 +33934,10 @@ msgid "Link Nodes"
 msgstr "Knoten verknüpfen"
 
 
+msgid "Delay"
+msgstr "Verzögerung"
+
+
 msgid "Detach"
 msgstr "Lösen"
 
@@ -37359,10 +37315,6 @@ msgstr "Stilmodul in die Modulliste hinzufügen"
 msgctxt "Operator"
 msgid "Add Grease Pencil Brush Preset"
 msgstr "Wachsstiftpinsel Voreinstellung hinzufügen"
-
-
-msgid "Delay"
-msgstr "Verzögerung"
 
 
 msgid "All Light Probes"
@@ -49069,6 +49021,10 @@ msgid "Attribute Domain"
 msgstr "Attributdomäne"
 
 
+msgid "Columns"
+msgstr "Spalte"
+
+
 msgid "Find Text"
 msgstr "Text finden"
 
@@ -55399,10 +55355,6 @@ msgstr "Gehe zum Elternteil"
 msgctxt "Operator"
 msgid "New Folder"
 msgstr "Neuer Ordner"
-
-
-msgid "Columns"
-msgstr "Spalte"
 
 
 msgid ".blend Files"
