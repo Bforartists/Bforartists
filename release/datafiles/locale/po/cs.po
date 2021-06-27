@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2212,10 +2212,6 @@ msgstr "Objem"
 
 msgid "In X"
 msgstr "V ose X"
-
-
-msgid "In Y"
-msgstr "V ose Y"
 
 
 msgid "Automatic"
@@ -26474,6 +26470,10 @@ msgid "Link Nodes"
 msgstr "Uzly"
 
 
+msgid "Delay"
+msgstr "Odstranit"
+
+
 msgid "Detach"
 msgstr "Vytvořit propojení"
 
@@ -29896,10 +29896,6 @@ msgstr "Bake Mezipaměť Osvětlení"
 
 msgid "Bake the active view layer lighting"
 msgstr "Bake aktivní zobrazovací vrstvu osvětlení"
-
-
-msgid "Delay"
-msgstr "Odstranit"
 
 
 msgctxt "Operator"
@@ -39748,6 +39744,10 @@ msgid "View Type"
 msgstr "Zobrazit Typ"
 
 
+msgid "Columns"
+msgstr "Sloupce"
+
+
 msgid "Geometry Component"
 msgstr "Geometrický Komponent"
 
@@ -43894,10 +43894,6 @@ msgstr "Dopředu"
 msgctxt "Operator"
 msgid "New Folder"
 msgstr "Nová složka"
-
-
-msgid "Columns"
-msgstr "Sloupce"
 
 
 msgid ".blend Files"

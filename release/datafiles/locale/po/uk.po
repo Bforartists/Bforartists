@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -2758,28 +2758,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr " X-вісь зсуву держака для початку кривої Б-кістки, наладнує кривину"
 
 
-msgid "In Y"
-msgstr "Y вводу"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "Y-вісь зсуву держака для початку кривої Б-кістки, наладнує кривину"
-
-
 msgid "Out X"
 msgstr "X виводу"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "X-вісь зсуву держака для кінця кривої Б-кістки, наладнує кривину"
-
-
-msgid "Out Y"
-msgstr "Y виводу"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Y-вісь зсуву держака для кінця кривої Б-кістки, наладнує кривину"
 
 
 msgid "B-Bone End Handle"
@@ -2872,38 +2856,6 @@ msgstr "Прокручення Виводу"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Зсув прокручення для кінця Б-кістки, наладнує скручення"
-
-
-msgid "Scale In X"
-msgstr "Масштаб Уводу X"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Фактор масштабу по осі X для початку Г-Кістки, наладнує товщину (для ефектів звужування)"
-
-
-msgid "Scale In Y"
-msgstr "Масштаб Уводу Y"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Фактор масштабу по осі Y для початку Г-Кістки, наладнує товщину (для ефектів звужування)"
-
-
-msgid "Scale Out X"
-msgstr "Масштаб Виводу X"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Фактор масштабу по осі X для кінця Г-Кістки, наладнує товщину (для ефектів звужування)"
-
-
-msgid "Scale Out Y"
-msgstr "Масштаб Виводу Y"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Фактор масштабу по осі Y для кінця Г-Кістки, наладнує товщину (для ефектів звужування)"
 
 
 msgid "B-Bone Segments"
@@ -56471,6 +56423,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Використовуйте мишу для створення зв'язку між двома вузлами"
 
 
+msgid "Delay"
+msgstr "Затримка"
+
+
 msgid "Detach"
 msgstr "Від'єднати"
 
@@ -56493,6 +56449,10 @@ msgstr "Має Пов'язання Підібране"
 
 msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
 msgstr "Операція має поміщене пов'язання. Використовується лише для мульти-увідних роз'ємів, де це пов'язання підбирається пізніше"
+
+
+msgid "Outside Padding"
+msgstr "Заповнювання Зовні"
 
 
 msgctxt "Operator"
@@ -63398,10 +63358,6 @@ msgid "Bake the active view layer lighting"
 msgstr "Запекти освітлювання активного шару огляду"
 
 
-msgid "Delay"
-msgstr "Затримка"
-
-
 msgid "Delay in millisecond before baking starts"
 msgstr "Затримка у мілісекундах, перш ніж запікання почнеться"
 
@@ -68300,14 +68256,6 @@ msgstr "Панорама на Краю Огляду"
 
 msgid "Pan the view when the mouse is held at an edge"
 msgstr "Панорамувати огляд, коли миша утримується на краю"
-
-
-msgid "Outside Padding"
-msgstr "Заповнювання Зовні"
-
-
-msgid "Padding around the region in UI units within which panning is activated (0 to disable boundary)"
-msgstr "Заповнювання навколо регіону в одиницях інтерфейсу користувача, в межах якого панорамування активується (0 для вимикання рубежу)"
 
 
 msgid "Delta X"
@@ -85390,10 +85338,6 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "Тип вигляду Відеорядника (відеорядник, передогляд або обидва)"
 
 
-msgid "Sequencer/Preview"
-msgstr "Секвенсер/Передогляд"
-
-
 msgid "Waveform Display"
 msgstr "Показ Хвилеформи"
 
@@ -85408,6 +85352,10 @@ msgstr "Увімкнути форму хвилі"
 
 msgid "Use Strip Option"
 msgstr "Вжити опцію смужки"
+
+
+msgid "Columns"
+msgstr "Стовпці"
 
 
 msgid "Space Text Editor"
@@ -95474,10 +95422,6 @@ msgid "New Folder"
 msgstr "Нова Тека"
 
 
-msgid "Columns"
-msgstr "Стовпці"
-
-
 msgid ".blend Files"
 msgstr "Файли .blend"
 
@@ -102873,10 +102817,6 @@ msgid "Removed constraint: %s"
 msgstr "Вилучений примус: %s"
 
 
-msgid "Context missing active object"
-msgstr "Немає активного об'єкта у контексті"
-
-
 msgid "Cannot edit library data"
 msgstr "Неможливо редагувати дані з бібліотеки"
 
@@ -103287,10 +103227,6 @@ msgstr "Ефект '%s' не в об'єкті '%s'"
 
 msgid "Removed effect: %s"
 msgstr "Вилучений ефект: %s"
-
-
-msgid "Cannot edit shaderfxs coming from library override"
-msgstr "Неможливо редагувати ефекти шейдерів, що походять від заміщення бібліотеки"
 
 
 msgid "Objects have no data to transform"
@@ -103895,6 +103831,10 @@ msgstr "потрібна область 3D-вигляду"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "потрібна активна область шкали часу/анімації"
+
+
+msgid "Context missing active object"
+msgstr "Немає активного об'єкта у контексті"
 
 
 msgid "expected a view3d region & editmesh"

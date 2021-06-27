@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -2269,28 +2269,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "O deslocamento do manipulo da haste em X para o início da curva do osso-b, ajustando a curvatura."
 
 
-msgid "In Y"
-msgstr "Interno em Y"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "O deslocamento do manipulo da haste em Y para o início da curva do osso-b, ajustando a curvatura."
-
-
 msgid "Out X"
 msgstr "Externo em X"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "O deslocamento do manipulo da haste em X para o final da curva do osso-b, ajustando a curvatura."
-
-
-msgid "Out Y"
-msgstr "Externo em Y"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "O deslocamento do manipulo da haste em Y para o final da curva do osso-b, ajustando a curvatura."
 
 
 msgid "B-Bone End Handle"
@@ -39094,6 +39078,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Permite usar o rato para criar uma conexão entre dois nós."
 
 
+msgid "Delay"
+msgstr "Atraso"
+
+
 msgid "Detach"
 msgstr "Desvincular"
 
@@ -43915,10 +43903,6 @@ msgstr "Adicionar um modificador de espessura de linha"
 
 msgid "Add a line thickness modifier to the line style associated with the active lineset"
 msgstr "Adiciona um modificador de espessura de linha para o estilo de linha associado com um conjunto de linha ativa."
-
-
-msgid "Delay"
-msgstr "Atraso"
 
 
 msgctxt "Operator"
@@ -66644,10 +66628,6 @@ msgid "Bone already has an IK constraint"
 msgstr "Osso já possui uma restrição de cinemática inversa."
 
 
-msgid "Context missing active object"
-msgstr "O contexto não possui um objeto ativo."
-
-
 msgid "Cannot edit library data"
 msgstr "Não é possível editar os dados da biblioteca."
 
@@ -67294,6 +67274,10 @@ msgstr "Uma região de janela de visualização 3D era esperada."
 
 msgid "expected a timeline/animation area to be active"
 msgstr "Uma área de animação ou linha do tempo ativa era esperada."
+
+
+msgid "Context missing active object"
+msgstr "O contexto não possui um objeto ativo."
 
 
 msgid "expected a view3d region & editmesh"
