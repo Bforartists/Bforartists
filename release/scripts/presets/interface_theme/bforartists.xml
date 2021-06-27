@@ -1350,6 +1350,15 @@
             </panelcolors>
           </ThemeSpaceGeneric>
         </space>
+        <space_list>
+          <ThemeSpaceListGeneric
+            list="#424242"
+            list_title="#c3c3c3"
+            list_text="#c3c3c3"
+            list_text_hi="#00ffff"
+            >
+          </ThemeSpaceListGeneric>
+        </space_list>
       </ThemeSpreadsheet>
     </spreadsheet>
     <bone_color_sets>
