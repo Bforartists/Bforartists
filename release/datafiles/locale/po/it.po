@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -2274,16 +2274,8 @@ msgid "In X"
 msgstr "X Iniziale"
 
 
-msgid "In Y"
-msgstr "Y Iniziale"
-
-
 msgid "Out X"
 msgstr "X Finale"
-
-
-msgid "Out Y"
-msgstr "Y Finale"
 
 
 msgid "B-Bone End Handle"
@@ -2344,14 +2336,6 @@ msgstr "Rollio Finale"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Scostamento Rollio per la fine dell'Osso-B, regola la torsione"
-
-
-msgid "Scale In X"
-msgstr "Scala In X"
-
-
-msgid "Scale In Y"
-msgstr "Scala In Y"
 
 
 msgid "B-Bone Segments"
@@ -33815,6 +33799,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Usa il mouse per creare una connessione fra due nodi"
 
 
+msgid "Delay"
+msgstr "Ritardo"
+
+
 msgid "Detach"
 msgstr "Scollega"
 
@@ -38295,10 +38283,6 @@ msgstr "Cancella Materiale Tratto Freestyle"
 msgctxt "Operator"
 msgid "Add Line Thickness Modifier"
 msgstr "Aggiungi Modificatore Spessore Linea"
-
-
-msgid "Delay"
-msgstr "Ritardo"
 
 
 msgctxt "Operator"

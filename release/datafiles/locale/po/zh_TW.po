@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -2402,10 +2402,6 @@ msgstr "體積"
 
 msgid "Bone in an Armature data-block"
 msgstr "骨架資料塊內的骨骼"
-
-
-msgid "Out Y"
-msgstr "出 Y"
 
 
 msgid "Ease In"
@@ -34040,6 +34036,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "使用滑鼠來建立兩個節點之間的連結"
 
 
+msgid "Delay"
+msgstr "延遲"
+
+
 msgid "Detach"
 msgstr "斷開"
 
@@ -38401,10 +38401,6 @@ msgstr "添加線條厚度修改器"
 
 msgid "Add a line thickness modifier to the line style associated with the active lineset"
 msgstr "將線條厚度修改器添加至與作用中線條集關連的線條樣式中"
-
-
-msgid "Delay"
-msgstr "延遲"
 
 
 msgctxt "Operator"

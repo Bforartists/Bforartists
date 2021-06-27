@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Camera Overscan",
     "author": "John Roper, Barnstorm VFX, Luca Scheller",
-    "version": (1, 2, 1),
+    "version": (1, 2, 2),
     "blender": (2, 80, 0),
     "location": "Render Settings > Camera Overscan",
     "description": "Render Overscan",
@@ -121,23 +121,24 @@ def RO_Update(self, context):
 def RO_Menu(self, context):
     scene = context.scene
     overscan = scene.camera_overscan
-    layout = self.layout
-    row = layout.row()
     active_cam = getattr(scene, "camera", None)
+    layout = self.layout
 
     if active_cam and active_cam.type == 'CAMERA':
-        row.prop(overscan, 'RO_Activate', text="Use Overscan")
-        row_enable = row.row(align=True)
-        if not overscan.RO_Activate:
-            row_enable.enabled = False
-        row_enable.prop(overscan, 'RO_Custom_Res_X', text="X")
-        row_enable.prop(overscan, 'RO_Custom_Res_Y', text="Y")
-        row = layout.row()
-        if not overscan.RO_Activate:
-            row.enabled = False
-        row.operator("scene.co_duplicate_camera", icon="RENDER_STILL")
+        col = layout.column(align=True)
+        col.prop(overscan, "RO_Activate", text="Use Overscan")
+
+        sub = col.column(align=True)
+        sub.active = overscan.RO_Activate
+        sub.prop(overscan, "RO_Custom_Res_X", text="Overscan X")
+        sub.prop(overscan, "RO_Custom_Res_Y", text="Y")
+
+        col = layout.column(align=True)
+        col.active = overscan.RO_Activate
+        col.operator("scene.co_duplicate_camera", icon="RENDER_STILL")
     else:
-        row.label(text="No active Camera type in the Scene", icon='INFO')
+        col = layout.column()
+        col.label(text="No active Camera type in the Scene", icon='INFO')
 
 
 class camera_overscan_props(PropertyGroup):
@@ -150,14 +151,16 @@ class camera_overscan_props(PropertyGroup):
                         )
     RO_Custom_Res_X: IntProperty(
                         default=0,
-                        min=0,
+                        min=4,
                         max=65536,
+                        subtype='PIXEL',
                         update=RO_Update
                         )
     RO_Custom_Res_Y: IntProperty(
                         default=0,
-                        min=0,
+                        min=4,
                         max=65536,
+                        subtype='PIXEL',
                         update=RO_Update
                         )
     RO_Safe_Res_X: FloatProperty()

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -2423,28 +2423,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "B-본의 커브의 시작에 대한 X축 오프셋 핸들, 곡률을 조정"
 
 
-msgid "In Y"
-msgstr "In Y"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "B-본의 커브의 시작에 대한 Y축 오프셋 핸들, 곡률을 조정"
-
-
 msgid "Out X"
 msgstr "Out X"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "B-본의 커브의 종료에 대한 X축 오프셋 핸들, 곡률을 조정"
-
-
-msgid "Out Y"
-msgstr "Out Y"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "B-본의 커브의 종료에 대한 Y축 오프셋 핸들, 곡률을 조정"
 
 
 msgid "B-Bone End Handle"
@@ -2537,38 +2521,6 @@ msgstr "롤 Out"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "B-본의 종료에 대한 롤 오프셋, 비틀기를 조정"
-
-
-msgid "Scale In X"
-msgstr "축적 In X"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B-본의 시작에 대한 X 축 축적 팩터, 두께 조정 (테이퍼링 효과용)"
-
-
-msgid "Scale In Y"
-msgstr "축적 In Y"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B-본의 시작에 대한 Y축 축적 팩터, 두께 조정 (테이퍼링 효과용)"
-
-
-msgid "Scale Out X"
-msgstr "축적 Out X"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B-본의 종료에 대한 X축 축적 팩터, 두께 조정 (테이퍼링 효과용)"
-
-
-msgid "Scale Out Y"
-msgstr "축적 Out Y"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "B-본의 종료에 대한 Y축 축적 팩터, 두께 조정 (테이퍼링 효과용)"
 
 
 msgid "B-Bone Segments"
@@ -49145,6 +49097,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "두 노드 사이에 연결을 생성하기 위해 마우스를 사용"
 
 
+msgid "Delay"
+msgstr "지연"
+
+
 msgid "Detach"
 msgstr "분리"
 
@@ -55107,10 +55063,6 @@ msgstr "라이트 캐시를 베이크"
 
 msgid "Bake the active view layer lighting"
 msgstr "활성 뷰레이어 라이트닝을 베이크"
-
-
-msgid "Delay"
-msgstr "지연"
 
 
 msgid "Delay in millisecond before baking starts"
@@ -74081,10 +74033,6 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "시퀀서 뷰의 유형 (시퀀서, 미리보기 또는 둘 다)"
 
 
-msgid "Sequencer/Preview"
-msgstr "시퀀서/미리보기"
-
-
 msgid "Waveforms Off"
 msgstr "파형 Off"
 
@@ -88046,10 +87994,6 @@ msgid "Bone already has an IK constraint"
 msgstr "본은 이미 IK 제약이 있습니다"
 
 
-msgid "Context missing active object"
-msgstr "컨텍스트에 활성 오브젝트 누락되었습니다"
-
-
 msgid "Cannot edit library data"
 msgstr "라이브러리 데이터를 편집할 수 없습니다"
 
@@ -88324,10 +88268,6 @@ msgstr "객체 '%s'에 이펙트를 추가 할 수 없습니다"
 
 msgid "Effect '%s' not in object '%s'"
 msgstr "이펙트 '%s'는 오브젝트'%s'에 없습니다"
-
-
-msgid "Cannot edit shaderfxs coming from library override"
-msgstr "라이브러리 재정의에서 오는 shaderfx를 편집 할 수 없습니다"
 
 
 msgid "Objects have no data to transform"
@@ -88880,6 +88820,10 @@ msgstr "뷰3D 지역이 예상됨"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "타임 라인/애니메이션 영역이 활성화 될 것으로 예상됨"
+
+
+msgid "Context missing active object"
+msgstr "컨텍스트에 활성 오브젝트 누락되었습니다"
 
 
 msgid "expected a view3d region & editmesh"

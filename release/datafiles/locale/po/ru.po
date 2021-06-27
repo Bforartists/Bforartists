@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -2518,28 +2518,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "Смещение рукоятки по оси X для настройки кривизны начала B-кости"
 
 
-msgid "In Y"
-msgstr "Y-начало"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "Смещение рукоятки по оси Y для настройки кривизны начала B-кости"
-
-
 msgid "Out X"
 msgstr "X-конец"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "Смещение рукоятки по оси X для настройки кривизны конца B-кости"
-
-
-msgid "Out Y"
-msgstr "Y-конец"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "Смещение рукоятки по оси Y для настройки кривизны конца B-кости"
 
 
 msgid "B-Bone End Handle"
@@ -2632,38 +2616,6 @@ msgstr "Крен конец"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Смещение крена для настройки крена конца B-кости"
-
-
-msgid "Scale In X"
-msgstr "Масштаб начала X"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Коэффициент масштаба по оси X начала B-кости, регулирует толщину (для эффектов сужения)"
-
-
-msgid "Scale In Y"
-msgstr "Масштаб начала Y"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Коэффициент масштаба по оси Y начала B-кости, регулирует толщину (для эффектов сужения)"
-
-
-msgid "Scale Out X"
-msgstr "Масштаб конца X"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Коэффициент масштаба по оси X конца B-кости, регулирует толщину (для эффектов сужения)"
-
-
-msgid "Scale Out Y"
-msgstr "Масштаб конца Y"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "Коэффициент масштаба по оси Y конца B-кости, регулирует толщину (для эффектов сужения)"
 
 
 msgid "B-Bone Segments"
@@ -48722,6 +48674,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "Создать связь между двумя нодами с помощью мыши"
 
 
+msgid "Delay"
+msgstr "Задержка"
+
+
 msgid "Detach"
 msgstr "Отсоединить"
 
@@ -54682,10 +54638,6 @@ msgstr "Запечь кэш освещения"
 
 msgid "Bake the active view layer lighting"
 msgstr "Запечь освещение в активном слое визуализации"
-
-
-msgid "Delay"
-msgstr "Задержка"
 
 
 msgid "Delay in millisecond before baking starts"
@@ -73680,10 +73632,6 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "Тип вида видеоредактора (видеоредактор, предпросмотр или оба типа вместе)"
 
 
-msgid "Sequencer/Preview"
-msgstr "Редактор/предпросмотр"
-
-
 msgid "Waveforms Off"
 msgstr "Выключить формы волн"
 
@@ -87698,10 +87646,6 @@ msgid "Bone already has an IK constraint"
 msgstr "Кость уже использует ограничитель инверсной кинематики"
 
 
-msgid "Context missing active object"
-msgstr "Нет активного объекта в контексте"
-
-
 msgid "Cannot edit library data"
 msgstr "Невозможно изменить данные библиотеки"
 
@@ -87976,10 +87920,6 @@ msgstr "Эффект не может быть добавлен на объект
 
 msgid "Effect '%s' not in object '%s'"
 msgstr "Эффект «%s» не на объекте «%s»"
-
-
-msgid "Cannot edit shaderfxs coming from library override"
-msgstr "Невозможно редактировать шейдерные эффекты из библиотечного переопределения"
 
 
 msgid "Objects have no data to transform"
@@ -88500,6 +88440,10 @@ msgstr "Необходим регион 3D-вида"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "Необходима активная область с временной шкалой или анимацией"
+
+
+msgid "Context missing active object"
+msgstr "Нет активного объекта в контексте"
 
 
 msgid "expected a view3d region & editmesh"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-06-14 16:25+0700\n"
@@ -2509,16 +2509,8 @@ msgid "In X"
 msgstr "Dalam X"
 
 
-msgid "In Y"
-msgstr "Dalam Y"
-
-
 msgid "Out X"
 msgstr "Luar X"
-
-
-msgid "Out Y"
-msgstr "Luar Y"
 
 
 msgid "B-Bone End Handle"
@@ -2587,22 +2579,6 @@ msgstr "Guling ke Luar"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "Guling offset untuk akhir B-Tulang, menyesuaikan pelintir"
-
-
-msgid "Scale In X"
-msgstr "Skala ke Dalam X"
-
-
-msgid "Scale In Y"
-msgstr "Skala ke Dalam Y"
-
-
-msgid "Scale Out X"
-msgstr "Skala ke Luar X"
-
-
-msgid "Scale Out Y"
-msgstr "Skala ke Luar Y"
 
 
 msgid "B-Bone Segments"
@@ -18084,6 +18060,10 @@ msgid "Current"
 msgstr "Setelah Ini"
 
 
+msgid "Columns"
+msgstr "Kolum"
+
+
 msgid "Show 3D Marker Names"
 msgstr "Nama"
 
@@ -20240,10 +20220,6 @@ msgstr "Ke Induk"
 msgctxt "Operator"
 msgid "New Folder"
 msgstr "Folder Baru"
-
-
-msgid "Columns"
-msgstr "Kolum"
 
 
 msgid ".blend Files"

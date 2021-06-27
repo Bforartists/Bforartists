@@ -635,7 +635,7 @@ class VIEW3D_PT_tools_rigify_dev(bpy.types.Panel):
     bl_label = "Rigify Dev Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Rigify'
+    bl_category = "Rigify"
 
     @classmethod
     def poll(cls, context):
@@ -664,7 +664,7 @@ class VIEW3D_PT_rigify_animation_tools(bpy.types.Panel):
     bl_context = "posemode"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = 'Rigify'
+    bl_category = "Rigify"
 
     @classmethod
     def poll(cls, context):
@@ -810,24 +810,6 @@ class UpgradeMetarigTypes(bpy.types.Operator):
             if type(obj.data) == bpy.types.Armature:
                 upgradeMetarigTypes(obj)
         return {'FINISHED'}
-
-
-class SwitchToLegacy(bpy.types.Operator):
-    """Switch to Legacy mode"""
-
-    bl_idname = "pose.rigify_switch_to_legacy"
-    bl_label = "Legacy Mode will disable Rigify new features"
-    bl_description = 'Switches Rigify to Legacy Mode'
-    bl_options = {'UNDO', 'INTERNAL'}
-
-    def invoke(self, context, event):
-        return context.window_manager.invoke_confirm(self, event)
-
-    def execute(self, context):
-        bpy.context.preferences.addons['rigify'].preferences.legacy_mode = True
-        return {'FINISHED'}
-
-
 class Sample(bpy.types.Operator):
     """Create a sample metarig to be modified before generating the final rig"""
 
@@ -1394,7 +1376,6 @@ classes = (
     LayerInit,
     Generate,
     UpgradeMetarigTypes,
-    SwitchToLegacy,
     Sample,
     VIEW3D_MT_rigify,
     EncodeMetarig,

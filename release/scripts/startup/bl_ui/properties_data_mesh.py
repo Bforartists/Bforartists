@@ -543,7 +543,6 @@ class DATA_PT_remesh(MeshButtonsPanel, Panel):
             col.prop(mesh, "remesh_voxel_adaptivity")
             col.use_property_split = False
             col.prop(mesh, "use_remesh_fix_poles")
-            col.prop(mesh, "use_remesh_smooth_normals")
 
             col.label(text = "Preserve")
             row.use_property_split = False

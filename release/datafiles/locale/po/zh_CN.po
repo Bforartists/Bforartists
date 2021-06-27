@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'748475b9431c')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -2785,28 +2785,12 @@ msgid "X-axis handle offset for start of the B-Bone's curve, adjusts curvature"
 msgstr "柔性骨骼曲线的起始点的X轴控制柄偏移量，矫正曲度"
 
 
-msgid "In Y"
-msgstr "Y轴向首端"
-
-
-msgid "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature"
-msgstr "柔性骨骼曲线的起始点的Y轴控制柄偏移量，矫正曲度"
-
-
 msgid "Out X"
 msgstr "X轴向尾端"
 
 
 msgid "X-axis handle offset for end of the B-Bone's curve, adjusts curvature"
 msgstr "柔性骨骼曲线的终点的X轴控制柄偏移量，矫正曲度"
-
-
-msgid "Out Y"
-msgstr "Y轴向尾端"
-
-
-msgid "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature"
-msgstr "柔性骨骼曲线的终点的Y轴控制柄偏移量，矫正曲度"
 
 
 msgid "B-Bone End Handle"
@@ -2899,38 +2883,6 @@ msgstr "滚出"
 
 msgid "Roll offset for the end of the B-Bone, adjusts twist"
 msgstr "柔性骨骼结束位置的扭转偏移，矫正扭曲"
-
-
-msgid "Scale In X"
-msgstr "X向首端缩放"
-
-
-msgid "X-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "柔性骨骼首端X轴缩放系数，矫正粗细(用于锥化效果)"
-
-
-msgid "Scale In Y"
-msgstr "Y向首端缩放"
-
-
-msgid "Y-axis scale factor for start of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "柔性骨骼首端Y轴缩放系数，矫正粗细(用于锥化效果)"
-
-
-msgid "Scale Out X"
-msgstr "X向尾端缩放"
-
-
-msgid "X-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "柔性骨骼末端X轴缩放系数，矫正粗细(用于锥化效果)"
-
-
-msgid "Scale Out Y"
-msgstr "Y向尾端缩放"
-
-
-msgid "Y-axis scale factor for end of the B-Bone, adjusts thickness (for tapering effects)"
-msgstr "柔性骨骼末端Y轴缩放系数，矫正粗细(用于锥化效果)"
 
 
 msgid "B-Bone Segments"
@@ -12223,12 +12175,28 @@ msgid "Asset Library"
 msgstr "资产库"
 
 
+msgid "Import Type"
+msgstr "导入类型"
+
+
+msgid "Determine how the asset will be imported"
+msgstr "确定如何导入资产"
+
+
 msgid "Link"
 msgstr "关联"
 
 
+msgid "Import the assets as linked data-block"
+msgstr "导入资产为关联数据块"
+
+
 msgid "Append"
 msgstr "追加"
+
+
+msgid "Import the assets as copied data-block, with no link to the original asset data-block"
+msgstr "导入资产为复制的数据块，不与原始资产数据块关联"
 
 
 msgid "Float2 Attribute Value"
@@ -41232,6 +41200,10 @@ msgid "Curve to Mesh"
 msgstr "曲线 -> 网格"
 
 
+msgid "Evaluated"
+msgstr "已解算"
+
+
 msgid "Geometry Custom Group"
 msgstr "几何自定义群组"
 
@@ -41418,6 +41390,10 @@ msgstr "绕轴旋转一个角度"
 
 msgid "Rotate around the X, Y, and Z axes"
 msgstr "围绕 X、Y和Z轴旋转"
+
+
+msgid "Select by Material"
+msgstr "按材质选择"
 
 
 msgctxt "NodeTree"
@@ -52299,6 +52275,18 @@ msgid "Are handles tested individually against the selection criteria"
 msgstr "是否与甄选标准作单独的测试"
 
 
+msgid "Select Curves"
+msgstr "选择曲线"
+
+
+msgid "Allow selecting all the keyframes of a curve by selecting the calculated fcurve"
+msgstr "允许通过选择计算过的函数曲线来选择曲线的所有关键帧"
+
+
+msgid "Allow selecting all the keyframes of a curve by selecting the curve itself"
+msgstr "允许通过选择曲线本身来选择曲线的所有关键帧"
+
+
 msgctxt "Operator"
 msgid "Smooth Keys"
 msgstr "平滑关键帧"
@@ -57861,6 +57849,10 @@ msgid "Use the mouse to create a link between two nodes"
 msgstr "使用鼠标在两节点间创建一个链接"
 
 
+msgid "Delay"
+msgstr "延迟"
+
+
 msgid "Detach"
 msgstr "分离"
 
@@ -57883,6 +57875,10 @@ msgstr "已选取连线"
 
 msgid "The operation has placed a link. Only used for multi-input sockets, where the link is picked later"
 msgstr "操作已放置一条连线。仅用于稍后选择连线的多输入接口"
+
+
+msgid "Outside Padding"
+msgstr "外边距"
 
 
 msgctxt "Operator"
@@ -58268,6 +58264,14 @@ msgstr "落点 Y"
 
 msgid "Y-coordinate (screen space) to place the new object under"
 msgstr "新物体放置的Y向坐标(屏幕空间)"
+
+
+msgid "Create a duplicate of the object. If not set, only ensures the object is linked into the active view layer, positions and selects/activates it (deselecting others)"
+msgstr "创建物体的副本。如果不设置，仅确保物体关联到活动视图层、位置并选择/激活它(取消选择其他物体)"
+
+
+msgid "Duplicate object but not object data, linking to the original data (ignored if 'duplicate' is false)"
+msgstr "复制物体但不包括数据, 而是关联到原始数据(如果'副本'为假，则忽略)"
 
 
 msgid "Object name to add"
@@ -60834,6 +60838,14 @@ msgstr "使用吸管"
 
 msgid "Pick the object to switch to using an eyedropper"
 msgstr "选择要切换到使用吸管的物体"
+
+
+msgid "Flash On Transfer"
+msgstr "切换时闪烁"
+
+
+msgid "Flash the target object when transfering the mode"
+msgstr "目标物体切换模式时闪烁"
 
 
 msgctxt "Operator"
@@ -64932,10 +64944,6 @@ msgstr "烘焙光照缓存"
 
 msgid "Bake the active view layer lighting"
 msgstr "烘焙活动视图层光照"
-
-
-msgid "Delay"
-msgstr "延迟"
 
 
 msgid "Delay in millisecond before baking starts"
@@ -70000,14 +70008,6 @@ msgstr "视图边平移"
 
 msgid "Pan the view when the mouse is held at an edge"
 msgstr "当鼠标位于边缘时平移视图"
-
-
-msgid "Outside Padding"
-msgstr "外边距"
-
-
-msgid "Padding around the region in UI units within which panning is activated (0 to disable boundary)"
-msgstr "区域四周的边距，在其中平移为激活状态，以UI单位计量(0为禁用边界)"
 
 
 msgid "Delta X"
@@ -87422,10 +87422,6 @@ msgid "Type of the Sequencer view (sequencer, preview or both)"
 msgstr "序列的视图类型(序列,预览或两者同时)"
 
 
-msgid "Sequencer/Preview"
-msgstr "序列编辑器/预览"
-
-
 msgid "Waveform Display"
 msgstr "波形图显示"
 
@@ -87472,6 +87468,10 @@ msgstr "属性域"
 
 msgid "Attribute domain to display"
 msgstr "要显示的属性域"
+
+
+msgid "Columns"
+msgstr "栏"
 
 
 msgid "Context Path"
@@ -87524,10 +87524,6 @@ msgstr "上下文路径已钉固"
 
 msgid "Object Evaluation State"
 msgstr "物体解算状态"
-
-
-msgid "Evaluated"
-msgstr "已解算"
 
 
 msgid "Use data from fully or partially evaluated object"
@@ -97768,10 +97764,6 @@ msgid "New Folder"
 msgstr "新建文件夹"
 
 
-msgid "Columns"
-msgstr "栏"
-
-
 msgid ".blend Files"
 msgstr ".blend 文件"
 
@@ -103073,6 +103065,10 @@ msgid "[E] - Disable overshoot"
 msgstr "[E] - 禁用过冲"
 
 
+msgid "[E] - Enable overshoot"
+msgstr "[E] - 启用过冲"
+
+
 msgid "[Shift] - Precision active"
 msgstr "[Shift] - 启用精度"
 
@@ -105344,10 +105340,6 @@ msgid "Removed constraint: %s"
 msgstr "已删除约束: %s"
 
 
-msgid "Context missing active object"
-msgstr "上下文缺失活动物体"
-
-
 msgid "Cannot edit library data"
 msgstr "无法编辑库数据"
 
@@ -105762,10 +105754,6 @@ msgstr "效果 '%s' 未作用于物体 '%s'"
 
 msgid "Removed effect: %s"
 msgstr "已移除效果: %s"
-
-
-msgid "Cannot edit shaderfxs coming from library override"
-msgstr "无法编辑来自库覆写的 shaderfx"
 
 
 msgid "Objects have no data to transform"
@@ -106378,6 +106366,10 @@ msgstr "期望一个 3D 视图区"
 
 msgid "expected a timeline/animation area to be active"
 msgstr "需要一个活动的时间线 / 动画区域"
+
+
+msgid "Context missing active object"
+msgstr "上下文缺失活动物体"
 
 
 msgid "expected a view3d region & editmesh"

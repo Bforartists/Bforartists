@@ -387,15 +387,11 @@ class SEQUENCER_MT_view(Menu):
 
             layout.operator_context = 'INVOKE_DEFAULT'
 
-        if is_sequencer_view:
-            layout.separator()
+        layout.separator()
 
-            layout.operator_context = 'INVOKE_DEFAULT'
-
-            layout.separator()
-
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("sequencer.refresh_all", icon='FILE_REFRESH', text="Refresh All")
+        layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
 
