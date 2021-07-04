@@ -20,7 +20,7 @@
  * Interactive walk navigation modal operator
  * (similar to walking around in a first person game).
  *
- * \note Similar logic to `view3d_fly.c` changes here may apply there too.
+ * \note Similar logic to `view3d_navigate_fly.c` changes here may apply there too.
  */
 
 /* defines VIEW3D_OT_navigate - walk modal operator */
@@ -234,7 +234,7 @@ typedef struct WalkInfo {
   wmNDOFMotionData *ndof;
 #endif
 
-  /* walk state state */
+  /* Walk state. */
   /** The base speed without run/slow down modifications. */
   float base_speed;
   /** The speed the view is moving per redraw. */
@@ -694,7 +694,7 @@ static void walkEvent(bContext *C, WalkInfo *walk, const wmEvent *event)
         walk->is_cursor_first = false;
       }
       else {
-        /* note, its possible the system isn't giving us the warp event
+        /* NOTE: its possible the system isn't giving us the warp event
          * ideally we shouldn't have to worry about this, see: T45361 */
         wmWindow *win = CTX_wm_window(C);
         WM_cursor_warp(win,
@@ -989,9 +989,6 @@ static int walkApply(bContext *C, WalkInfo *walk, bool is_confirm)
 #define WALK_MOVE_SPEED base_speed
 #define WALK_BOOST_FACTOR ((void)0, walk->speed_factor)
 
-  /* walk mode - Ctrl+Shift+F
-   * a walk loop where the user can move move the view as if they are in a walk game
-   */
   RegionView3D *rv3d = walk->rv3d;
   ARegion *region = walk->region;
 

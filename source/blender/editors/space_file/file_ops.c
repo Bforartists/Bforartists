@@ -1023,7 +1023,7 @@ void FILE_OT_view_selected(wmOperatorType *ot)
 
 /* Note we could get rid of this one, but it's used by some addon so...
  * Does not hurt keeping it around for now. */
-/* TODO disallow bookmark editing in assets mode? */
+/* TODO: disallow bookmark editing in assets mode? */
 static int bookmark_select_exec(bContext *C, wmOperator *op)
 {
   Main *bmain = CTX_data_main(C);
@@ -1882,7 +1882,7 @@ static int file_refresh_exec(bContext *C, wmOperator *UNUSED(unused))
   SpaceFile *sfile = CTX_wm_space_file(C);
   struct FSMenu *fsmenu = ED_fsmenu_get();
 
-  ED_fileselect_clear(wm, CTX_data_scene(C), sfile);
+  ED_fileselect_clear(wm, sfile);
 
   /* refresh system directory menu */
   fsmenu_refresh_system_category(fsmenu);
@@ -2093,7 +2093,7 @@ static int file_smoothscroll_invoke(bContext *C, wmOperator *UNUSED(op), const w
       sfile->layout, (int)region->v2d.cur.xmin, (int)-region->v2d.cur.ymax);
   const int last_visible_item = first_visible_item + numfiles_layout + 1;
 
-  /* Note: the special case for vertical layout is because filename is at the bottom of items then,
+  /* NOTE: the special case for vertical layout is because filename is at the bottom of items then,
    * so we artificially move current row back one step, to ensure we show bottom of
    * active item rather than its top (important in case visible height is low). */
   const int middle_offset = max_ii(
@@ -2360,7 +2360,7 @@ static int file_directory_new_exec(bContext *C, wmOperator *op)
   sfile->scroll_offset = 0;
 
   /* reload dir to make sure we're seeing what's in the directory */
-  ED_fileselect_clear(wm, CTX_data_scene(C), sfile);
+  ED_fileselect_clear(wm, sfile);
 
   if (do_diropen) {
     BLI_strncpy(params->dir, path, sizeof(params->dir));
@@ -2400,7 +2400,7 @@ void FILE_OT_directory_new(struct wmOperatorType *ot)
 /** \name Refresh File List Operator
  * \{ */
 
-/* TODO This should go to BLI_path_utils. */
+/* TODO: This should go to BLI_path_utils. */
 static void file_expand_directory(bContext *C)
 {
   Main *bmain = CTX_data_main(C);
@@ -2441,7 +2441,7 @@ static void file_expand_directory(bContext *C)
   }
 }
 
-/* TODO check we still need this, it's annoying to have OS-specific code here... :/ */
+/* TODO: check we still need this, it's annoying to have OS-specific code here... :/. */
 #if defined(WIN32)
 static bool can_create_dir(const char *dir)
 {
@@ -2611,7 +2611,7 @@ static int file_hidedot_exec(bContext *C, wmOperator *UNUSED(unused))
 
   if (params) {
     params->flag ^= FILE_HIDE_DOT;
-    ED_fileselect_clear(wm, CTX_data_scene(C), sfile);
+    ED_fileselect_clear(wm, sfile);
     WM_event_add_notifier(C, NC_SPACE | ND_SPACE_FILE_LIST, NULL);
   }
 
@@ -2908,7 +2908,7 @@ static int file_delete_exec(bContext *C, wmOperator *op)
     }
   }
 
-  ED_fileselect_clear(wm, CTX_data_scene(C), sfile);
+  ED_fileselect_clear(wm, sfile);
   WM_event_add_notifier(C, NC_SPACE | ND_SPACE_FILE_LIST, NULL);
 
   return OPERATOR_FINISHED;

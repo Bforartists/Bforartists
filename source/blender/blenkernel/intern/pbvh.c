@@ -1053,7 +1053,7 @@ static void pbvh_update_normals_accum_task_cb(void *__restrict userdata,
         const int v = vtri[j];
 
         if (pbvh->verts[v].flag & ME_VERT_PBVH_UPDATE) {
-          /* Note: This avoids `lock, add_v3_v3, unlock`
+          /* NOTE: This avoids `lock, add_v3_v3, unlock`
            * and is five to ten times quicker than a spin-lock.
            * Not exact equivalent though, since atomicity is only ensured for one component
            * of the vector at a time, but here it shall not make any sensible difference. */
@@ -2985,7 +2985,7 @@ void pbvh_vertex_iter_init(PBVH *pbvh, PBVHNode *node, PBVHVertexIter *vi, int m
   }
 }
 
-bool pbvh_has_mask(PBVH *pbvh)
+bool pbvh_has_mask(const PBVH *pbvh)
 {
   switch (pbvh->type) {
     case PBVH_GRIDS:
