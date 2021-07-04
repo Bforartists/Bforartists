@@ -689,22 +689,24 @@ typedef enum PrimitiveType {
   PRIMITIVE_MOTION_CURVE_THICK = (1 << 3),
   PRIMITIVE_CURVE_RIBBON = (1 << 4),
   PRIMITIVE_MOTION_CURVE_RIBBON = (1 << 5),
+  PRIMITIVE_VOLUME = (1 << 6),
   /* Lamp primitive is not included below on purpose,
    * since it is no real traceable primitive.
    */
-  PRIMITIVE_LAMP = (1 << 6),
+  PRIMITIVE_LAMP = (1 << 7),
 
   PRIMITIVE_ALL_TRIANGLE = (PRIMITIVE_TRIANGLE | PRIMITIVE_MOTION_TRIANGLE),
   PRIMITIVE_ALL_CURVE = (PRIMITIVE_CURVE_THICK | PRIMITIVE_MOTION_CURVE_THICK |
                          PRIMITIVE_CURVE_RIBBON | PRIMITIVE_MOTION_CURVE_RIBBON),
+  PRIMITIVE_ALL_VOLUME = (PRIMITIVE_VOLUME),
   PRIMITIVE_ALL_MOTION = (PRIMITIVE_MOTION_TRIANGLE | PRIMITIVE_MOTION_CURVE_THICK |
                           PRIMITIVE_MOTION_CURVE_RIBBON),
-  PRIMITIVE_ALL = (PRIMITIVE_ALL_TRIANGLE | PRIMITIVE_ALL_CURVE),
+  PRIMITIVE_ALL = (PRIMITIVE_ALL_TRIANGLE | PRIMITIVE_ALL_CURVE | PRIMITIVE_ALL_VOLUME),
 
   /* Total number of different traceable primitives.
    * NOTE: This is an actual value, not a bitflag.
    */
-  PRIMITIVE_NUM_TOTAL = 6,
+  PRIMITIVE_NUM_TOTAL = 7,
 } PrimitiveType;
 
 #define PRIMITIVE_PACK_SEGMENT(type, segment) ((segment << PRIMITIVE_NUM_TOTAL) | (type))
@@ -1479,7 +1481,8 @@ typedef struct KernelObject {
   float cryptomatte_object;
   float cryptomatte_asset;
 
-  float shadow_terminator_offset;
+  float shadow_terminator_shading_offset;
+  float shadow_terminator_geometry_offset;
   float pad1, pad2, pad3;
 } KernelObject;
 static_assert_align(KernelObject, 16);

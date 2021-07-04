@@ -827,13 +827,12 @@ wmWindow *WM_window_open(bContext *C,
     win = wm_window_new(bmain, wm, toplevel ? NULL : win_prev, dialog);
     win->posx = rect.xmin;
     win->posy = rect.ymin;
+    win->sizex = BLI_rcti_size_x(&rect);
+    win->sizey = BLI_rcti_size_y(&rect);
     *win->stereo3d_format = *win_prev->stereo3d_format;
   }
 
   bScreen *screen = WM_window_get_active_screen(win);
-
-  win->sizex = BLI_rcti_size_x(&rect);
-  win->sizey = BLI_rcti_size_y(&rect);
 
   if (WM_window_get_active_workspace(win) == NULL) {
     WorkSpace *workspace = WM_window_get_active_workspace(win_prev);
@@ -1137,14 +1136,12 @@ static int ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_ptr
       return 1;
     }
     if (!ghostwin) {
-      /* XXX - should be checked, why are we getting an event here, and */
-      /* what is it? */
+      /* XXX: should be checked, why are we getting an event here, and what is it? */
       puts("<!> event has no window");
       return 1;
     }
     if (!GHOST_ValidWindow(g_system, ghostwin)) {
-      /* XXX - should be checked, why are we getting an event here, and */
-      /* what is it? */
+      /* XXX: should be checked, why are we getting an event here, and what is it? */
       puts("<!> event has invalid window");
       return 1;
     }

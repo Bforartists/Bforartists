@@ -120,7 +120,7 @@ static void action_copy_data(Main *UNUSED(bmain), ID *id_dst, const ID *id_src, 
   for (fcurve_src = action_src->curves.first; fcurve_src; fcurve_src = fcurve_src->next) {
     /* Duplicate F-Curve. */
 
-    /* XXX TODO pass subdata flag?
+    /* XXX TODO: pass subdata flag?
      * But surprisingly does not seem to be doing any ID refcounting... */
     fcurve_dst = BKE_fcurve_copy(fcurve_src);
 
@@ -486,8 +486,7 @@ void action_groups_add_channel(bAction *act, bActionGroup *agrp, FCurve *fcurve)
 
     /* If grp is NULL, that means we fell through, and this F-Curve should be added as the new
      * first since group is (effectively) the first group. Thus, the existing first F-Curve becomes
-     * the second in the chain, etc. etc.
-     */
+     * the second in the chain, etc. */
     if (grp == NULL) {
       BLI_insertlinkbefore(&act->curves, act->curves.first, fcurve);
     }

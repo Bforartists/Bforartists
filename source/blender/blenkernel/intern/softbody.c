@@ -1907,7 +1907,7 @@ static void sb_spring_force(
 #endif
   }
   else {
-    /* TODO make this debug option */
+    /* TODO: make this debug option. */
     CLOG_WARN(&LOG, "bodypoint <bpi> is not attached to spring  <*bs>");
     return;
   }
@@ -3205,7 +3205,7 @@ void sbObjectToSoftbody(Object *ob)
   free_softbody_intern(ob->soft);
 }
 
-static bool object_has_edges(Object *ob)
+static bool object_has_edges(const Object *ob)
 {
   if (ob->type == OB_MESH) {
     return ((Mesh *)ob->data)->totedge;

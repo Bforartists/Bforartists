@@ -340,7 +340,7 @@ typedef struct bNode {
 #define NODE_TRANSFORM (1 << 13)
 /* node is active texture */
 
-/* note: take care with this flag since its possible it gets
+/* NOTE: take care with this flag since its possible it gets
  * `stuck` inside/outside the active group - which makes buttons
  * window texture not update, we try to avoid it by clearing the
  * flag when toggling group editing - Campbell */
@@ -1357,6 +1357,16 @@ typedef struct NodeSwitch {
   uint8_t input_type;
 } NodeSwitch;
 
+typedef struct NodeGeometryCurvePrimitiveBezierSegment {
+  /* GeometryNodeCurvePrimitiveBezierSegmentMode. */
+  uint8_t mode;
+} NodeGeometryCurvePrimitiveBezierSegment;
+
+typedef struct NodeGeometryCurvePrimitiveCircle {
+  /* GeometryNodeCurvePrimitiveMode. */
+  uint8_t mode;
+} NodeGeometryCurvePrimitiveCircle;
+
 typedef struct NodeGeometryCurveResample {
   /* GeometryNodeCurveSampleMode. */
   uint8_t mode;
@@ -1790,6 +1800,11 @@ typedef enum GeometryNodeBooleanOperation {
   GEO_NODE_BOOLEAN_DIFFERENCE = 2,
 } GeometryNodeBooleanOperation;
 
+typedef enum GeometryNodeCurvePrimitiveCircleMode {
+  GEO_NODE_CURVE_PRIMITIVE_CIRCLE_TYPE_POINTS = 0,
+  GEO_NODE_CURVE_PRIMITIVE_CIRCLE_TYPE_RADIUS = 1
+} GeometryNodeCurvePrimitiveCircleMode;
+
 typedef enum GeometryNodeTriangulateNGons {
   GEO_NODE_TRIANGULATE_NGON_BEAUTY = 0,
   GEO_NODE_TRIANGULATE_NGON_EARCLIP = 1,
@@ -1888,6 +1903,11 @@ typedef enum GeometryNodeMeshLineCountMode {
   GEO_NODE_MESH_LINE_COUNT_TOTAL = 0,
   GEO_NODE_MESH_LINE_COUNT_RESOLUTION = 1,
 } GeometryNodeMeshLineCountMode;
+
+typedef enum GeometryNodeCurvePrimitiveBezierSegmentMode {
+  GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT_POSITION = 0,
+  GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT_OFFSET = 1,
+} GeometryNodeCurvePrimitiveBezierSegmentMode;
 
 typedef enum GeometryNodeCurveSampleMode {
   GEO_NODE_CURVE_SAMPLE_COUNT = 0,

@@ -555,7 +555,7 @@ static void uilist_filter_items(uiList *ui_list,
            RNA_parameter_dynamic_length_get(&list, parm),
            "filter_flags",
            len);
-    /* Note: we cannot return here, we would let flt_data in inconsistent state... see T38356. */
+    /* NOTE: we cannot return here, we would let flt_data in inconsistent state... see T38356. */
     filter_flags = NULL;
   }
   else {
@@ -571,7 +571,7 @@ static void uilist_filter_items(uiList *ui_list,
            RNA_parameter_dynamic_length_get(&list, parm),
            "filter_neworder",
            len);
-    /* Note: we cannot return here, we would let flt_data in inconsistent state... see T38356. */
+    /* NOTE: we cannot return here, we would let flt_data in inconsistent state... see T38356. */
     filter_neworder = NULL;
   }
   else {
@@ -1233,7 +1233,7 @@ static void rna_def_ui_layout(BlenderRNA *brna)
       {UI_EMBOSS_PULLDOWN, "PULLDOWN_MENU", 0, "Pulldown Menu", "Draw pulldown menu style"},
       {UI_EMBOSS_RADIAL, "RADIAL_MENU", 0, "Radial Menu", "Draw radial menu style"},
       {UI_EMBOSS_NONE_OR_STATUS,
-       "UI_EMBOSS_NONE_OR_STATUS",
+       "NONE_OR_STATUS",
        0,
        "None or Status",
        "Draw with no emboss unless the button has a coloring status like an animation state"},

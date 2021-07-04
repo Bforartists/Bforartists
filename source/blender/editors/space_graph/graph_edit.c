@@ -1483,7 +1483,7 @@ static void setipo_graph_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* Loop through setting BezTriple interpolation
-   * Note: we do not supply KeyframeEditData to the looper yet.
+   * NOTE: we do not supply KeyframeEditData to the looper yet.
    * Currently that's not necessary here.
    */
   for (ale = anim_data.first; ale; ale = ale->next) {
@@ -1561,7 +1561,7 @@ static void seteasing_graph_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* Loop through setting BezTriple easing.
-   * Note: we do not supply KeyframeEditData to the looper yet.
+   * NOTE: we do not supply KeyframeEditData to the looper yet.
    * Currently that's not necessary here.
    */
   for (ale = anim_data.first; ale; ale = ale->next) {
@@ -1639,7 +1639,7 @@ static void sethandles_graph_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* Loop through setting flags for handles.
-   * Note: we do not supply KeyframeEditData to the looper yet.
+   * NOTE: we do not supply KeyframeEditData to the looper yet.
    * Currently that's not necessary here.
    */
   for (ale = anim_data.first; ale; ale = ale->next) {

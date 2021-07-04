@@ -125,9 +125,9 @@ ScrArea *area_split(const wmWindow *win,
     return NULL;
   }
 
-  /* note regarding (fac > 0.5f) checks below.
+  /* NOTE(campbell): regarding (fac > 0.5f) checks below.
    * normally it shouldn't matter which is used since the copy should match the original
-   * however with viewport rendering and python console this isn't the case. - campbell */
+   * however with viewport rendering and python console this isn't the case. */
 
   if (dir_axis == SCREEN_AXIS_H) {
     /* new vertices */
@@ -1564,6 +1564,14 @@ ScrArea *ED_screen_state_toggle(bContext *C, wmWindow *win, ScrArea *area, const
   BLI_assert(CTX_wm_screen(C) == screen);
   BLI_assert(CTX_wm_area(C) == NULL); /* May have been freed. */
 
+  /* Setting the area is only needed for Python scripts that call
+   * operators in succession before returning to the main event loop.
+   * Without this, scripts can't run any operators that require
+   * an area after toggling full-screen for example (see: T89526).
+   * NOTE: an old comment stated this was "bad code",
+   * however it doesn't cause problems so leave as-is. */
+  CTX_wm_area_set(C, screen->areabase.first);
+
   return screen->areabase.first;
 }
 
@@ -1675,7 +1683,7 @@ void ED_screen_animation_timer(bContext *C, int redraws, int sync, int enable)
 
     sad->region = CTX_wm_region(C);
     /* If start-frame is larger than current frame, we put current-frame on start-frame.
-     * note: first frame then is not drawn! (ton) */
+     * NOTE(ton): first frame then is not drawn! */
     if (PRVRANGEON) {
       if (scene->r.psfra > scene->r.cfra) {
         sad->sfra = scene->r.cfra;
