@@ -1037,7 +1037,7 @@ static mpq2 project_3d_to_2d(const mpq3 &p3d, int proj_axis)
  * So the sign of E is the same as the sign of E_exact if
  *    |E| > supremum(E) * index(E) * DBL_EPSILON
  *
- * Note: a possible speedup would be to have a simple function
+ * NOTE: a possible speedup would be to have a simple function
  * that calculates the error bound if one knows that all values
  * are less than some global maximum - most of the function would
  * be calculated ahead of time. The global max could be passed
@@ -1386,7 +1386,7 @@ static ITT_value intersect_tri_tri(const IMesh &tm, int t1, int t2)
   int sr1 = filter_plane_side(d_r1, d_r2, d_n2, abs_d_r1, abs_d_r2, abs_d_n2);
   if ((sp1 > 0 && sq1 > 0 && sr1 > 0) || (sp1 < 0 && sq1 < 0 && sr1 < 0)) {
 #  ifdef PERFDEBUG
-    incperfcount(2); /* Tri tri intersects decided by filter plane tests. */
+    incperfcount(2); /* Triangle-triangle intersects decided by filter plane tests. */
 #  endif
     if (dbg_level > 0) {
       std::cout << "no intersection, all t1's verts above or below t2\n";
@@ -1404,7 +1404,7 @@ static ITT_value intersect_tri_tri(const IMesh &tm, int t1, int t2)
   int sr2 = filter_plane_side(d_r2, d_r1, d_n1, abs_d_r2, abs_d_r1, abs_d_n1);
   if ((sp2 > 0 && sq2 > 0 && sr2 > 0) || (sp2 < 0 && sq2 < 0 && sr2 < 0)) {
 #  ifdef PERFDEBUG
-    incperfcount(2); /* Tri tri intersects decided by filter plane tests. */
+    incperfcount(2); /* Triangle-triangle intersects decided by filter plane tests. */
 #  endif
     if (dbg_level > 0) {
       std::cout << "no intersection, all t2's verts above or below t1\n";
@@ -1446,7 +1446,7 @@ static ITT_value intersect_tri_tri(const IMesh &tm, int t1, int t2)
       std::cout << "no intersection, all t1's verts above or below t2 (exact)\n";
     }
 #  ifdef PERFDEBUG
-    incperfcount(3); /* Tri tri intersects decided by exact plane tests. */
+    incperfcount(3); /* Triangle-triangle intersects decided by exact plane tests. */
 #  endif
     return ITT_value(INONE);
   }
@@ -1478,7 +1478,7 @@ static ITT_value intersect_tri_tri(const IMesh &tm, int t1, int t2)
       std::cout << "no intersection, all t2's verts above or below t1 (exact)\n";
     }
 #  ifdef PERFDEBUG
-    incperfcount(3); /* Tri tri intersects decided by exact plane tests. */
+    incperfcount(3); /* Triangle-triangle intersects decided by exact plane tests. */
 #  endif
     return ITT_value(INONE);
   }

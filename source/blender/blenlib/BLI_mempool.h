@@ -48,7 +48,7 @@ void BLI_mempool_free(BLI_mempool *pool, void *addr) ATTR_NONNULL(1, 2);
 void BLI_mempool_clear_ex(BLI_mempool *pool, const int totelem_reserve) ATTR_NONNULL(1);
 void BLI_mempool_clear(BLI_mempool *pool) ATTR_NONNULL(1);
 void BLI_mempool_destroy(BLI_mempool *pool) ATTR_NONNULL(1);
-int BLI_mempool_len(BLI_mempool *pool) ATTR_NONNULL(1);
+int BLI_mempool_len(const BLI_mempool *pool) ATTR_NONNULL(1);
 void *BLI_mempool_findelem(BLI_mempool *pool, unsigned int index) ATTR_WARN_UNUSED_RESULT
     ATTR_NONNULL(1);
 
@@ -65,7 +65,10 @@ void *BLI_mempool_as_arrayN(BLI_mempool *pool,
 void BLI_mempool_set_memory_debug(void);
 #endif
 
-/** iteration stuff.  note: this may easy to produce bugs with */
+/**
+ * Iteration stuff.
+ * NOTE: this may easy to produce bugs with.
+ */
 /* private structure */
 typedef struct BLI_mempool_iter {
   BLI_mempool *pool;

@@ -280,7 +280,7 @@ struct FunctionRNA {
   CallFunc call;
 
   /* parameter for the return value
-   * note: this is only the C return value, rna functions can have multiple return values */
+   * NOTE: this is only the C return value, rna functions can have multiple return values. */
   PropertyRNA *c_ret;
 };
 
@@ -320,7 +320,7 @@ struct PropertyRNA {
   PropArrayLengthGetFunc getlength;
   /* dimension of array */
   unsigned int arraydimension;
-  /* array lengths lengths for all dimensions (when arraydimension > 0) */
+  /* Array lengths for all dimensions (when `arraydimension > 0`). */
   unsigned int arraylength[RNA_MAX_ARRAY_DIMENSION];
   unsigned int totarraylength;
 

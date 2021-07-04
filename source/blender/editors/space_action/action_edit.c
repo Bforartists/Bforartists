@@ -580,7 +580,7 @@ static int actkeys_copy_exec(bContext *C, wmOperator *op)
     }
   }
   else if (ac.datatype == ANIMCONT_MASK) {
-    /* FIXME... */
+    /* FIXME: support this case. */
     BKE_report(op->reports, RPT_ERROR, "Keyframe pasting is not available for mask mode");
     return OPERATOR_CANCELLED;
   }
@@ -633,7 +633,7 @@ static int actkeys_paste_exec(bContext *C, wmOperator *op)
     }
   }
   else if (ac.datatype == ANIMCONT_MASK) {
-    /* FIXME... */
+    /* FIXME: support this case. */
     BKE_report(op->reports,
                RPT_ERROR,
                "Keyframe pasting is not available for grease pencil or mask mode");
@@ -1472,7 +1472,7 @@ static void sethandles_action_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* Loop through setting flags for handles
-   * Note: we do not supply KeyframeEditData to the looper yet.
+   * NOTE: we do not supply KeyframeEditData to the looper yet.
    * Currently that's not necessary here.
    */
   for (ale = anim_data.first; ale; ale = ale->next) {
@@ -1555,7 +1555,7 @@ static void setkeytype_action_keys(bAnimContext *ac, short mode)
   ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 
   /* Loop through setting BezTriple interpolation
-   * Note: we do not supply KeyframeEditData to the looper yet.
+   * NOTE: we do not supply KeyframeEditData to the looper yet.
    * Currently that's not necessary here.
    */
   for (ale = anim_data.first; ale; ale = ale->next) {

@@ -1357,9 +1357,9 @@ void NODE_OT_duplicate(wmOperatorType *ot)
       ot->srna, "keep_inputs", false, "Keep Inputs", "Keep the input links to duplicated nodes");
 }
 
-bool ED_node_select_check(ListBase *lb)
+bool ED_node_select_check(const ListBase *lb)
 {
-  LISTBASE_FOREACH (bNode *, node, lb) {
+  LISTBASE_FOREACH (const bNode *, node, lb) {
     if (node->flag & NODE_SELECT) {
       return true;
     }
@@ -2313,7 +2313,7 @@ static int ntree_socket_add_exec(bContext *C, wmOperator *op)
     // nodeSocketCopyValue(sock, &ntree_ptr, active_sock, &ntree_ptr);
   }
   else {
-    /* XXX TODO define default socket type for a tree! */
+    /* XXX TODO: define default socket type for a tree! */
     sock = ntreeAddSocketInterface(ntree, in_out, "NodeSocketFloat", default_name);
   }
 

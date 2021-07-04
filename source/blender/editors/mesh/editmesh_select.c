@@ -436,7 +436,7 @@ struct NearestEdgeUserData {
   struct NearestEdgeUserData_Hit hit_cycle;
 };
 
-/* note; uses v3d, so needs active 3d window */
+/* NOTE: uses v3d, so needs active 3d window. */
 static void find_nearest_edge__doClosest(
     void *userData, BMEdge *eed, const float screen_co_a[2], const float screen_co_b[2], int index)
 {
@@ -966,7 +966,7 @@ static bool unified_findnearest(ViewContext *vc,
     }
   }
 
-  /* return only one of 3 pointers, for frontbuffer redraws */
+  /* Return only one of 3 pointers, for front-buffer redraws. */
   if (hit.v.ele) {
     hit.f.ele = NULL;
     hit.e.ele = NULL;
@@ -3469,7 +3469,7 @@ static void edbm_select_linked_pick_ex(BMEditMesh *em, BMElem *ele, bool sel, in
     select_linked_delimit_begin(bm, delimit);
   }
 
-  /* Note: logic closely matches 'edbm_select_linked_exec', keep in sync */
+  /* NOTE: logic closely matches #edbm_select_linked_exec, keep in sync. */
 
   if (ele->head.htype == BM_VERT) {
     BMVert *eve = (BMVert *)ele;
@@ -4675,7 +4675,7 @@ static int edbm_select_random_exec(bContext *C, wmOperator *op)
         }
       }
 
-      BLI_array_randomize(elem_map, sizeof(*elem_map), elem_map_len, seed);
+      BLI_array_randomize(elem_map, sizeof(*elem_map), elem_map_len, seed_iter);
       const int count_select = elem_map_len * randfac;
       for (int i = 0; i < count_select; i++) {
         BM_vert_select_set(em->bm, elem_map[i], select);
@@ -4691,7 +4691,7 @@ static int edbm_select_random_exec(bContext *C, wmOperator *op)
           elem_map[elem_map_len++] = eed;
         }
       }
-      BLI_array_randomize(elem_map, sizeof(*elem_map), elem_map_len, seed);
+      BLI_array_randomize(elem_map, sizeof(*elem_map), elem_map_len, seed_iter);
       const int count_select = elem_map_len * randfac;
       for (int i = 0; i < count_select; i++) {
         BM_edge_select_set(em->bm, elem_map[i], select);
@@ -4707,7 +4707,7 @@ static int edbm_select_random_exec(bContext *C, wmOperator *op)
           elem_map[elem_map_len++] = efa;
         }
       }
-      BLI_array_randomize(elem_map, sizeof(*elem_map), elem_map_len, seed);
+      BLI_array_randomize(elem_map, sizeof(*elem_map), elem_map_len, seed_iter);
       const int count_select = elem_map_len * randfac;
       for (int i = 0; i < count_select; i++) {
         BM_face_select_set(em->bm, elem_map[i], select);

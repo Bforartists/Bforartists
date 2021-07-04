@@ -510,8 +510,11 @@ FCurve *BKE_fcurve_find_by_rna_context_ui(bContext *C,
  * with optional argument for precision required.
  * Returns the index to insert at (data already at that index will be offset if replace is 0)
  */
-static int BKE_fcurve_bezt_binarysearch_index_ex(
-    BezTriple array[], float frame, int arraylen, float threshold, bool *r_replace)
+static int BKE_fcurve_bezt_binarysearch_index_ex(const BezTriple array[],
+                                                 const float frame,
+                                                 const int arraylen,
+                                                 const float threshold,
+                                                 bool *r_replace)
 {
   int start = 0, end = arraylen;
   int loopbreaker = 0, maxloop = arraylen * 2;
@@ -597,9 +600,9 @@ static int BKE_fcurve_bezt_binarysearch_index_ex(
 /* Binary search algorithm for finding where to insert BezTriple. (for use by insert_bezt_fcurve)
  * Returns the index to insert at (data already at that index will be offset if replace is 0)
  */
-int BKE_fcurve_bezt_binarysearch_index(BezTriple array[],
-                                       float frame,
-                                       int arraylen,
+int BKE_fcurve_bezt_binarysearch_index(const BezTriple array[],
+                                       const float frame,
+                                       const int arraylen,
                                        bool *r_replace)
 {
   /* This is just a wrapper which uses the default threshold. */
@@ -2144,7 +2147,7 @@ static float fcurve_eval_samples(FCurve *fcu, FPoint *fpts, float evaltime)
  * \{ */
 
 /* Evaluate and return the value of the given F-Curve at the specified frame ("evaltime")
- * Note: this is also used for drivers.
+ * NOTE: this is also used for drivers.
  */
 static float evaluate_fcurve_ex(FCurve *fcu, float evaltime, float cvalue)
 {
@@ -2191,9 +2194,9 @@ float evaluate_fcurve(FCurve *fcu, float evaltime)
 
 float evaluate_fcurve_only_curve(FCurve *fcu, float evaltime)
 {
-  /* Can be used to evaluate the (keyframed) fcurve only.
-   * Also works for driver-fcurves when the driver itself is not relevant.
-   * E.g. when inserting a keyframe in a driver fcurve. */
+  /* Can be used to evaluate the (key-framed) f-curve only.
+   * Also works for driver-f-curves when the driver itself is not relevant.
+   * E.g. when inserting a keyframe in a driver f-curve. */
   return evaluate_fcurve_ex(fcu, evaltime, 0.0);
 }
 

@@ -384,26 +384,28 @@ static void rna_uiItemsEnumO(uiLayout *layout,
   uiItemsFullEnumO(layout, opname, propname, NULL, uiLayoutGetOperatorContext(layout), flag);
 }
 
-static void rna_uiItemMenuEnumO(uiLayout *layout,
-                                bContext *C,
-                                const char *opname,
-                                const char *propname,
-                                const char *name,
-                                const char *text_ctxt,
-                                bool translate,
-                                int icon)
+static PointerRNA rna_uiItemMenuEnumO(uiLayout *layout,
+                                      bContext *C,
+                                      const char *opname,
+                                      const char *propname,
+                                      const char *name,
+                                      const char *text_ctxt,
+                                      bool translate,
+                                      int icon)
 {
   wmOperatorType *ot = WM_operatortype_find(opname, 0); /* print error next */
 
   if (!ot || !ot->srna) {
     RNA_warning("%s '%s'", ot ? "unknown operator" : "operator missing srna", opname);
-    return;
+    return PointerRNA_NULL;
   }
 
   /* Get translated name (label). */
   name = rna_translate_ui_text(name, text_ctxt, ot->srna, NULL, translate);
 
-  uiItemMenuEnumO_ptr(layout, C, ot, propname, name, icon);
+  PointerRNA opptr;
+  uiItemMenuEnumFullO_ptr(layout, C, ot, propname, name, icon, &opptr);
+  return opptr;
 }
 
 static void rna_uiItemL(uiLayout *layout,
@@ -912,7 +914,12 @@ void RNA_api_ui_layout(StructRNA *srna)
   RNA_def_boolean(func, "event", false, "", "Use button to input key events");
   RNA_def_boolean(
       func, "full_event", false, "", "Use button to input full events including modifiers");
-  RNA_def_boolean(func, "emboss", true, "", "Draw the button itself, not just the icon/text");
+  RNA_def_boolean(func,
+                  "emboss",
+                  true,
+                  "",
+                  "Draw the button itself, not just the icon/text. When false, corresponds to the "
+                  "'NONE_OR_STATUS' layout emboss type");
   RNA_def_int(func,
               "index",
               /* RNA_NO_INDEX == -1 */
@@ -1023,6 +1030,10 @@ void RNA_api_ui_layout(StructRNA *srna)
   parm = RNA_def_string(func, "property", NULL, 0, "", "Identifier of property in operator");
   RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
   api_ui_item_common(func);
+  parm = RNA_def_pointer(
+      func, "properties", "OperatorProperties", "", "Operator properties to fill in");
+  RNA_def_parameter_flags(parm, 0, PARM_REQUIRED | PARM_RNAPTR);
+  RNA_def_function_return(func, parm);
 
   /* useful in C but not in python */
 #  if 0

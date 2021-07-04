@@ -1610,7 +1610,7 @@ void VIEW3D_OT_interactive_add(struct wmOperatorType *ot)
   ot->cancel = view3d_interactive_add_cancel;
   ot->poll = view3d_interactive_add_poll;
 
-  /* Note, let the operator we call handle undo and registering itself. */
+  /* NOTE: let the operator we call handle undo and registering itself. */
   /* flags */
   ot->flag = 0;
 
@@ -1957,7 +1957,7 @@ struct PlacementCursor {
 
   /**
    * Enable this while the modal operator is running,
-   * so the preview-plane doesn't show at the same time time as add-object preview shape
+   * so the preview-plane doesn't show at the same time as add-object preview shape
    * since it's distracting & not helpful.
    */
   bool do_draw;

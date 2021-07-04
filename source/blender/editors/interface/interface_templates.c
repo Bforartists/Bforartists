@@ -674,7 +674,7 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
           if (BKE_lib_id_make_local(bmain, id, false, 0)) {
             BKE_main_id_newptr_and_tag_clear(bmain);
 
-            /* reassign to get get proper updates/notifiers */
+            /* Reassign to get proper updates/notifiers. */
             idptr = RNA_property_pointer_get(&template_ui->ptr, template_ui->prop);
             undo_push_label = "Make Local";
           }
@@ -687,8 +687,8 @@ static void template_id_cb(bContext *C, void *arg_litem, void *arg_event)
       break;
     case UI_ID_OVERRIDE:
       if (id && ID_IS_OVERRIDE_LIBRARY(id)) {
-        BKE_lib_override_library_free(&id->override_library, true);
-        /* reassign to get get proper updates/notifiers */
+        BKE_lib_override_library_make_local(id);
+        /* Reassign to get proper updates/notifiers. */
         idptr = RNA_property_pointer_get(&template_ui->ptr, template_ui->prop);
         RNA_property_pointer_set(&template_ui->ptr, template_ui->prop, idptr, NULL);
         RNA_property_update(C, &template_ui->ptr, template_ui->prop);
@@ -877,7 +877,7 @@ static uiBut *template_id_def_new_but(uiBlock *block,
                             BLT_I18NCONTEXT_ID_POINTCLOUD,
                             BLT_I18NCONTEXT_ID_VOLUME,
                             BLT_I18NCONTEXT_ID_SIMULATION, );
-  /* Note: BLT_I18N_MSGID_MULTI_CTXT takes a maximum number of parameters,
+  /* NOTE: BLT_I18N_MSGID_MULTI_CTXT takes a maximum number of parameters,
    * check the definition to see if a new call must be added when the limit
    * is exceeded. */
 
@@ -5821,7 +5821,7 @@ static void uilist_filter_items_default(struct uiList *ui_list,
 
     if (order_by_name) {
       int new_idx;
-      /* note: order_idx equals either to ui_list->items_len if no filtering done,
+      /* NOTE: order_idx equals either to ui_list->items_len if no filtering done,
        *       or to ui_list->items_shown if filter is enabled,
        *       or to (ui_list->items_len - ui_list->items_shown) if filtered items are excluded.
        *       This way, we only sort items we actually intend to draw!
@@ -6221,7 +6221,7 @@ void uiTemplateList(uiLayout *layout,
                                0,
                                TIP_("Double click to rename"));
           if ((dyntip_data = uilist_item_use_dynamic_tooltip(itemptr, item_dyntip_propname))) {
-            UI_but_func_tooltip_set(but, uilist_item_tooltip_func, dyntip_data);
+            UI_but_func_tooltip_set(but, uilist_item_tooltip_func, dyntip_data, MEM_freeN);
           }
 
           sub = uiLayoutRow(overlap, false);
@@ -6778,7 +6778,7 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
                                                                             NULL);
 
       but_progress->progress = progress;
-      UI_but_func_tooltip_set(&but_progress->but, progress_tooltip_func, tip_arg);
+      UI_but_func_tooltip_set(&but_progress->but, progress_tooltip_func, tip_arg, MEM_freeN);
     }
 
     if (!wm->is_interface_locked) {
