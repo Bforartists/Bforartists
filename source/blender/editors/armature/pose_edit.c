@@ -569,7 +569,7 @@ static int pose_flip_names_exec(bContext *C, wmOperator *op)
     /* since we renamed stuff... */
     DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
-    /* note, notifier might evolve */
+    /* NOTE: notifier might evolve. */
     WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
   }
   FOREACH_OBJECT_IN_MODE_END;
@@ -620,7 +620,7 @@ static int pose_autoside_names_exec(bContext *C, wmOperator *op)
       /* since we renamed stuff... */
       DEG_id_tag_update(&ob->id, ID_RECALC_GEOMETRY);
 
-      /* note, notifier might evolve */
+      /* NOTE: notifier might evolve. */
       WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
       ob_prev = ob;
     }
@@ -762,7 +762,7 @@ static int pose_armature_layers_showall_exec(bContext *C, wmOperator *op)
 
   RNA_boolean_set_array(&ptr, "layers", layers);
 
-  /* note, notifier might evolve */
+  /* NOTE: notifier might evolve. */
   WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
   DEG_id_tag_update(&arm->id, ID_RECALC_COPY_ON_WRITE);
 
@@ -835,7 +835,7 @@ static int armature_layers_exec(bContext *C, wmOperator *op)
   RNA_id_pointer_create((ID *)arm, &ptr);
   RNA_boolean_set_array(&ptr, "layers", layers);
 
-  /* note, notifier might evolve */
+  /* NOTE: notifier might evolve. */
   WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
   DEG_id_tag_update(&arm->id, ID_RECALC_COPY_ON_WRITE);
 
@@ -921,7 +921,7 @@ static int pose_bone_layers_exec(bContext *C, wmOperator *op)
     RNA_boolean_set_array(&ptr, "layers", layers);
 
     if (prev_ob != ob) {
-      /* Note, notifier might evolve. */
+      /* NOTE: notifier might evolve. */
       WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
       DEG_id_tag_update((ID *)ob->data, ID_RECALC_COPY_ON_WRITE);
       prev_ob = ob;
@@ -1000,7 +1000,7 @@ static int armature_bone_layers_exec(bContext *C, wmOperator *op)
 
   ED_armature_edit_refresh_layer_used(ob->data);
 
-  /* note, notifier might evolve */
+  /* NOTE: notifier might evolve. */
   WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
 
   return OPERATOR_FINISHED;

@@ -140,7 +140,7 @@ static void undosys_id_ref_store(void *UNUSED(user_data), UndoRefID *id_ref)
 
 static void undosys_id_ref_resolve(void *user_data, UndoRefID *id_ref)
 {
-  /* Note: we could optimize this,
+  /* NOTE: we could optimize this,
    * for now it's not too bad since it only runs when we access undo! */
   Main *bmain = user_data;
   ListBase *lb = which_libbase(bmain, GS(id_ref->name));
@@ -368,10 +368,10 @@ void BKE_undosys_stack_init_from_context(UndoStack *ustack, bContext *C)
 }
 
 /* name optional */
-bool BKE_undosys_stack_has_undo(UndoStack *ustack, const char *name)
+bool BKE_undosys_stack_has_undo(const UndoStack *ustack, const char *name)
 {
   if (name) {
-    UndoStep *us = BLI_rfindstring(&ustack->steps, name, offsetof(UndoStep, name));
+    const UndoStep *us = BLI_rfindstring(&ustack->steps, name, offsetof(UndoStep, name));
     return us && us->prev;
   }
 

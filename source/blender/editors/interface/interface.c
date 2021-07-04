@@ -476,7 +476,7 @@ void ui_block_bounds_calc(uiBlock *block)
 
 static void ui_block_bounds_calc_centered(wmWindow *window, uiBlock *block)
 {
-  /* note: this is used for the splash where window bounds event has not been
+  /* NOTE: this is used for the splash where window bounds event has not been
    * updated by ghost, get the window bounds from ghost directly */
 
   const int xmax = WM_window_pixels_x(window);
@@ -811,7 +811,8 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
 
   /* Move tooltip from new to old. */
   SWAP(uiButToolTipFunc, oldbut->tip_func, but->tip_func);
-  SWAP(void *, oldbut->tip_argN, but->tip_argN);
+  SWAP(void *, oldbut->tip_arg, but->tip_arg);
+  SWAP(uiFreeArgFunc, oldbut->tip_arg_free, but->tip_arg_free);
 
   oldbut->flag = (oldbut->flag & ~flag_copy) | (but->flag & flag_copy);
   oldbut->drawflag = (oldbut->drawflag & ~drawflag_copy) | (but->drawflag & drawflag_copy);
@@ -822,7 +823,7 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
   if (oldbut->type == UI_BTYPE_SEARCH_MENU) {
     uiButSearch *search_oldbut = (uiButSearch *)oldbut, *search_but = (uiButSearch *)but;
 
-    SWAP(uiButSearchArgFreeFn, search_oldbut->arg_free_fn, search_but->arg_free_fn);
+    SWAP(uiFreeArgFunc, search_oldbut->arg_free_fn, search_but->arg_free_fn);
     SWAP(void *, search_oldbut->arg, search_but->arg);
   }
 
@@ -861,7 +862,7 @@ static void ui_but_update_old_active_from_new(uiBut *oldbut, uiBut *but)
     SWAP(void *, but->dragpoin, oldbut->dragpoin);
   }
 
-  /* note: if layout hasn't been applied yet, it uses old button pointers... */
+  /* NOTE: if layout hasn't been applied yet, it uses old button pointers... */
 }
 
 /**
@@ -1944,8 +1945,8 @@ void ui_fontscale(short *points, float aspect)
   if (aspect < 0.9f || aspect > 1.1f) {
     float pointsf = *points;
 
-    /* for some reason scaling fonts goes too fast compared to widget size */
-    /* XXX not true anymore? (ton) */
+    /* For some reason scaling fonts goes too fast compared to widget size. */
+    /* XXX(ton): not true anymore? */
     // aspect = sqrt(aspect);
     pointsf /= aspect;
 
@@ -2108,7 +2109,8 @@ int ui_but_is_pushed_ex(uiBut *but, double *value)
   if (but->pushed_state_func) {
     return but->pushed_state_func(but, but->pushed_state_arg);
   }
-  else if (but->bit) {
+
+  if (but->bit) {
     const bool state = !ELEM(
         but->type, UI_BTYPE_TOGGLE_N, UI_BTYPE_ICON_TOGGLE_N, UI_BTYPE_CHECKBOX_N);
     int lvalue;
@@ -3221,7 +3223,7 @@ void ui_but_range_set_hard(uiBut *but)
   }
 }
 
-/* note: this could be split up into functions which handle arrays and not */
+/* NOTE: this could be split up into functions which handle arrays and not. */
 void ui_but_range_set_soft(uiBut *but)
 {
   /* Ideally we would not limit this, but practically it's more than
@@ -3357,8 +3359,8 @@ static void ui_but_free(const bContext *C, uiBut *but)
     MEM_freeN(but->func_argN);
   }
 
-  if (but->tip_argN) {
-    MEM_freeN(but->tip_argN);
+  if (but->tip_arg_free) {
+    but->tip_arg_free(but->tip_arg);
   }
 
   if (but->hold_argN) {
@@ -4245,7 +4247,7 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
     uiItemS(layout);
   }
 
-  /* note, item_array[...] is reversed on access */
+  /* NOTE: `item_array[...]` is reversed on access. */
 
   /* create items */
   uiLayout *split = uiLayoutSplit(layout, 0.0f, false);
@@ -4548,7 +4550,7 @@ static uiBut *ui_def_but_rna(uiBlock *block,
     else if (proptype == PROP_STRING) {
       min = 0;
       max = RNA_property_string_maxlength(prop);
-      /* note, 'max' may be zero (code for dynamically resized array) */
+      /* NOTE: 'max' may be zero (code for dynamically resized array). */
     }
   }
 
@@ -6333,13 +6335,14 @@ void UI_but_func_menu_step_set(uiBut *but, uiMenuStepFunc func)
   but->menu_step_func = func;
 }
 
-void UI_but_func_tooltip_set(uiBut *but, uiButToolTipFunc func, void *argN)
+void UI_but_func_tooltip_set(uiBut *but, uiButToolTipFunc func, void *arg, uiFreeArgFunc free_arg)
 {
   but->tip_func = func;
-  if (but->tip_argN) {
-    MEM_freeN(but->tip_argN);
+  if (but->tip_arg_free) {
+    but->tip_arg_free(but->tip_arg);
   }
-  but->tip_argN = argN;
+  but->tip_arg = arg;
+  but->tip_arg_free = free_arg;
 }
 
 void UI_but_func_pushed_state_set(uiBut *but, uiButPushedStateFunc func, const void *arg)
@@ -6629,7 +6632,7 @@ void UI_but_func_search_set(uiBut *but,
                             uiButSearchUpdateFn search_update_fn,
                             void *arg,
                             const bool free_arg,
-                            uiButSearchArgFreeFn search_arg_free_fn,
+                            uiFreeArgFunc search_arg_free_fn,
                             uiButHandleFunc search_exec_fn,
                             void *active)
 {
@@ -6754,7 +6757,7 @@ static void operator_enum_search_update_fn(const struct bContext *C,
 
     for (int i = 0; i < filtered_amount; i++) {
       const EnumPropertyItem *item = filtered_items[i];
-      /* note: need to give the index rather than the
+      /* NOTE: need to give the index rather than the
        * identifier because the enum can be freed */
       if (!UI_search_item_add(
               items, item->name, POINTER_FROM_INT(item->value), item->icon, 0, 0)) {
@@ -6964,7 +6967,7 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
     }
     else if (type == BUT_GET_TIP) {
       if (but->tip_func) {
-        tmp = but->tip_func(C, but->tip_argN, but->tip);
+        tmp = but->tip_func(C, but->tip_arg, but->tip);
       }
       else if (but->tip && but->tip[0]) {
         tmp = BLI_strdup(but->tip);

@@ -355,7 +355,7 @@ static void outliner_base_or_object_pointer_create(
   }
 }
 
-/* Note: Collection is only valid when we want to change the collection data, otherwise we get it
+/* NOTE: Collection is only valid when we want to change the collection data, otherwise we get it
  * from layer collection. Layer collection is valid whenever we are looking at a view layer. */
 static void outliner_collection_set_flag_recursive(Scene *scene,
                                                    ViewLayer *view_layer,
@@ -374,7 +374,7 @@ static void outliner_collection_set_flag_recursive(Scene *scene,
 
   /* Set the same flag for the nested objects as well. */
   if (base_or_object_prop) {
-    /* Note: We can't use BKE_collection_object_cache_get()
+    /* NOTE: We can't use BKE_collection_object_cache_get()
      * otherwise we would not take collection exclusion into account. */
     LISTBASE_FOREACH (CollectionObject *, cob, &layer_collection->collection->gobject) {
 
@@ -414,7 +414,7 @@ static void outliner_collection_set_flag_recursive(Scene *scene,
  * A collection is isolated if all its parents and children are "visible".
  * All the other collections must be "invisible".
  *
- * Note: We could/should boost performance by iterating over the tree twice.
+ * NOTE: We could/should boost performance by iterating over the tree twice.
  * First tagging all the children/parent collections, then getting their values and comparing.
  * To run BKE_collection_has_collection() so many times is silly and slow.
  */
@@ -1090,7 +1090,8 @@ static void outliner_draw_restrictbuts(uiBlock *block,
     RestrictPropertiesActive props_active = props_active_parent;
 
     if (te->ys + 2 * UI_UNIT_Y >= region->v2d.cur.ymin && te->ys <= region->v2d.cur.ymax) {
-      if (tselem->type == TSE_R_LAYER && (space_outliner->outlinevis == SO_SCENES)) {
+      if (tselem->type == TSE_R_LAYER &&
+          ELEM(space_outliner->outlinevis, SO_SCENES, SO_VIEW_LAYER)) {
         if (space_outliner->show_restrict_flags & SO_RESTRICT_RENDER) {
           /* View layer render toggle. */
           ViewLayer *layer = te->directdata;
@@ -2354,6 +2355,9 @@ TreeElementIcon tree_element_get_icon(TreeStoreElem *tselem, TreeElement *te)
               break;
             case eGpencilModifierType_Texture:
               data.icon = ICON_TEXTURE;
+              break;
+            case eGpencilModifierType_Weight:
+              data.icon = ICON_MOD_VERTEX_WEIGHT;
               break;
 
               /* Default */
