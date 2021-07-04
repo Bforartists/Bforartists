@@ -584,7 +584,7 @@ static const SocketPropertyType *get_socket_property_type(const bNodeSocket &bso
       return &collection_type;
     }
     case SOCK_TEXTURE: {
-      static const SocketPropertyType collection_type = {
+      static const SocketPropertyType texture_type = {
           [](const bNodeSocket &socket, const char *name) {
             bNodeSocketValueTexture *value = (bNodeSocketValueTexture *)socket.default_value;
             IDPropertyTemplate idprop = {0};
@@ -602,10 +602,10 @@ static const SocketPropertyType *get_socket_property_type(const bNodeSocket &bso
             *(Tex **)r_value = texture;
           },
       };
-      return &collection_type;
+      return &texture_type;
     }
     case SOCK_MATERIAL: {
-      static const SocketPropertyType collection_type = {
+      static const SocketPropertyType material_type = {
           [](const bNodeSocket &socket, const char *name) {
             bNodeSocketValueMaterial *value = (bNodeSocketValueMaterial *)socket.default_value;
             IDPropertyTemplate idprop = {0};
@@ -623,7 +623,7 @@ static const SocketPropertyType *get_socket_property_type(const bNodeSocket &bso
             *(Material **)r_value = material;
           },
       };
-      return &collection_type;
+      return &material_type;
     }
     default: {
       return nullptr;
@@ -714,7 +714,7 @@ static void initialize_group_input(NodesModifierData &nmd,
 {
   const SocketPropertyType *property_type = get_socket_property_type(socket);
   if (property_type == nullptr) {
-    cpp_type.copy_to_uninitialized(cpp_type.default_value(), r_value);
+    cpp_type.copy_construct(cpp_type.default_value(), r_value);
     return;
   }
   if (nmd.settings.properties == nullptr) {

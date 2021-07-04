@@ -442,6 +442,15 @@ ListBase *BKE_curve_editNurbs_get(Curve *cu)
   return NULL;
 }
 
+const ListBase *BKE_curve_editNurbs_get_for_read(const Curve *cu)
+{
+  if (cu->editnurb) {
+    return &cu->editnurb->nurbs;
+  }
+
+  return NULL;
+}
+
 short BKE_curve_type_get(const Curve *cu)
 {
   int type = cu->type;
@@ -2049,7 +2058,7 @@ static void calc_bevel_sin_cos(
 
 static void tilt_bezpart(const BezTriple *prevbezt,
                          const BezTriple *bezt,
-                         Nurb *nu,
+                         const Nurb *nu,
                          float *tilt_array,
                          float *radius_array,
                          float *weight_array,
@@ -2114,8 +2123,8 @@ static void tilt_bezpart(const BezTriple *prevbezt,
     if (radius_array) {
       if (nu->radius_interp == KEY_CU_EASE) {
         /* Support 2.47 ease interp
-         * Note! - this only takes the 2 points into account,
-         * giving much more localized results to changes in radius, sometimes you want that */
+         * NOTE: this only takes the 2 points into account,
+         * giving much more localized results to changes in radius, sometimes you want that. */
         *radius_array = prevbezt->radius + (bezt->radius - prevbezt->radius) *
                                                (3.0f * fac * fac - 2.0f * fac * fac * fac);
       }
@@ -2481,7 +2490,7 @@ static void make_bevel_list_3D_tangent(BevList *bl)
 
     cross_v3_v3v3(cross_tmp, bevp1->tan, bevp1->dir);
     normalize_v3(cross_tmp);
-    tri_to_quat(bevp1->quat, zero, cross_tmp, bevp1->tan); /* XXX - could be faster */
+    tri_to_quat(bevp1->quat, zero, cross_tmp, bevp1->tan); /* XXX: could be faster. */
 
     /* bevp0 = bevp1; */ /* UNUSED */
     bevp1 = bevp2;
@@ -2550,8 +2559,8 @@ static void make_bevel_list_segment_2D(BevList *bl)
 
 static void make_bevel_list_2D(BevList *bl)
 {
-  /* note: bevp->dir and bevp->quat are not needed for beveling but are
-   * used when making a path from a 2D curve, therefore they need to be set - Campbell */
+  /* NOTE(campbell): `bevp->dir` and `bevp->quat` are not needed for beveling but are
+   * used when making a path from a 2D curve, therefore they need to be set. */
 
   BevPoint *bevp0, *bevp1, *bevp2;
   int nr;
@@ -2611,7 +2620,7 @@ static void make_bevel_list_2D(BevList *bl)
   }
 }
 
-static void bevlist_firstlast_direction_calc_from_bpoint(Nurb *nu, BevList *bl)
+static void bevlist_firstlast_direction_calc_from_bpoint(const Nurb *nu, BevList *bl)
 {
   if (nu->pntsu > 1) {
     BPoint *first_bp = nu->bp, *last_bp = nu->bp + (nu->pntsu - 1);
@@ -2646,7 +2655,7 @@ void BKE_curve_bevelList_free(ListBase *bev)
   BLI_listbase_clear(bev);
 }
 
-void BKE_curve_bevelList_make(Object *ob, ListBase *nurbs, bool for_render)
+void BKE_curve_bevelList_make(Object *ob, const ListBase *nurbs, const bool for_render)
 {
   /*
    * - convert all curves to polys, with indication of resol and flags for double-vertices
@@ -2691,7 +2700,7 @@ void BKE_curve_bevelList_make(Object *ob, ListBase *nurbs, bool for_render)
     is_editmode = 1;
   }
 
-  LISTBASE_FOREACH (Nurb *, nu, nurbs) {
+  LISTBASE_FOREACH (const Nurb *, nu, nurbs) {
     if (nu->hide && is_editmode) {
       continue;
     }
@@ -3649,7 +3658,7 @@ static bool tridiagonal_solve_with_limits(float *a,
  * is affected by all other points of the curve segment, in practice the influence
  * decreases exponentially with distance.
  *
- * Note: this algorithm assumes that the handle horizontal size is always 1/3 of the
+ * NOTE: this algorithm assumes that the handle horizontal size is always 1/3 of the
  * of the interval to the next point. This rule ensures linear interpolation of time.
  *
  * ^ height (co 1)
@@ -5078,6 +5087,15 @@ ListBase *BKE_curve_nurbs_get(Curve *cu)
   return &cu->nurb;
 }
 
+const ListBase *BKE_curve_nurbs_get_for_read(const Curve *cu)
+{
+  if (cu->editnurb) {
+    return BKE_curve_editNurbs_get_for_read(cu);
+  }
+
+  return &cu->nurb;
+}
+
 void BKE_curve_nurb_active_set(Curve *cu, const Nurb *nu)
 {
   if (nu == NULL) {
@@ -5135,7 +5153,7 @@ void BKE_curve_nurb_vert_active_set(Curve *cu, const Nurb *nu, const void *vert)
   }
 }
 
-/* Get points to active active nurb and active vert for curve */
+/* Get points to the active nurb and active vert for curve. */
 bool BKE_curve_nurb_vert_active_get(Curve *cu, Nurb **r_nu, void **r_vert)
 {
   Nurb *nu = NULL;

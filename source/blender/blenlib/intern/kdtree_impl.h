@@ -132,7 +132,7 @@ void BLI_kdtree_nd_(insert)(KDTree *tree, int index, const float co[KD_DIMS])
   BLI_assert(tree->nodes_len <= tree->nodes_len_capacity);
 #endif
 
-  /* note, array isn't calloc'd,
+  /* NOTE: array isn't calloc'd,
    * need to initialize all struct members */
 
   node->left = node->right = KD_NODE_UNSET;
@@ -967,7 +967,7 @@ static int kdtree_node_cmp_deduplicate(const void *n0_p, const void *n1_p)
 }
 
 /**
- * Remove exact duplicates (run before before balancing).
+ * Remove exact duplicates (run before balancing).
  *
  * Keep the first element added when duplicates are found.
  */

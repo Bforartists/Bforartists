@@ -829,7 +829,7 @@ static void mesh_calc_modifier_final_normals(const Mesh *mesh_input,
   }
 
   if (do_loop_normals) {
-    /* Compute loop normals (note: will compute poly and vert normals as well, if needed!) */
+    /* Compute loop normals (NOTE: will compute poly and vert normals as well, if needed!). */
     BKE_mesh_calc_normals_split(mesh_final);
     BKE_mesh_tessface_clear(mesh_final);
   }
@@ -973,7 +973,7 @@ static Mesh *modifier_modify_mesh_and_geometry_set(ModifierData *md,
 static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
                                 Scene *scene,
                                 Object *ob,
-                                int useDeform,
+                                const bool use_deform,
                                 const bool need_mapping,
                                 const CustomData_MeshMasks *dataMask,
                                 const int index,
@@ -1068,15 +1068,11 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
   BKE_modifiers_clear_errors(ob);
 
   /* Apply all leading deform modifiers. */
-  if (useDeform) {
+  if (use_deform) {
     for (; md; md = md->next, md_datamask = md_datamask->next) {
       const ModifierTypeInfo *mti = BKE_modifier_get_info((ModifierType)md->type);
 
       if (!BKE_modifier_is_enabled(scene, md, required_mode)) {
-        continue;
-      }
-
-      if (useDeform < 0 && mti->dependsOnTime && mti->dependsOnTime(md)) {
         continue;
       }
 
@@ -1128,7 +1124,7 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
       continue;
     }
 
-    if (mti->type == eModifierTypeType_OnlyDeform && !useDeform) {
+    if (mti->type == eModifierTypeType_OnlyDeform && !use_deform) {
       continue;
     }
 
@@ -1170,10 +1166,6 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
     }
 
     if (need_mapping && !BKE_modifier_supports_mapping(md)) {
-      continue;
-    }
-
-    if (useDeform < 0 && mti->dependsOnTime && mti->dependsOnTime(md)) {
       continue;
     }
 
@@ -1412,7 +1404,7 @@ static void mesh_calc_modifiers(struct Depsgraph *depsgraph,
    * we need to apply these back onto the Mesh. If we have no
    * Mesh then we need to build one. */
   if (mesh_final == nullptr) {
-    /* Note: this check on cdmask is a bit dodgy, it handles the issue at stake here (see T68211),
+    /* NOTE: this check on cdmask is a bit dodgy, it handles the issue at stake here (see T68211),
      * but other cases might require similar handling?
      * Could be a good idea to define a proper CustomData_MeshMask for that then. */
     if (deformed_verts == nullptr && allow_shared_mesh &&
@@ -1937,7 +1929,7 @@ static void mesh_build_data(struct Depsgraph *depsgraph,
   mesh_calc_modifiers(depsgraph,
                       scene,
                       ob,
-                      1,
+                      true,
                       need_mapping,
                       dataMask,
                       -1,
@@ -2162,7 +2154,7 @@ Mesh *mesh_create_eval_final(Depsgraph *depsgraph,
   Mesh *final;
 
   mesh_calc_modifiers(
-      depsgraph, scene, ob, 1, false, dataMask, -1, false, false, nullptr, &final, nullptr);
+      depsgraph, scene, ob, true, false, dataMask, -1, false, false, nullptr, &final, nullptr);
 
   return final;
 }
@@ -2176,7 +2168,7 @@ Mesh *mesh_create_eval_final_index_render(Depsgraph *depsgraph,
   Mesh *final;
 
   mesh_calc_modifiers(
-      depsgraph, scene, ob, 1, false, dataMask, index, false, false, nullptr, &final, nullptr);
+      depsgraph, scene, ob, true, false, dataMask, index, false, false, nullptr, &final, nullptr);
 
   return final;
 }
@@ -2189,7 +2181,7 @@ Mesh *mesh_create_eval_no_deform(Depsgraph *depsgraph,
   Mesh *final;
 
   mesh_calc_modifiers(
-      depsgraph, scene, ob, 0, false, dataMask, -1, false, false, nullptr, &final, nullptr);
+      depsgraph, scene, ob, false, false, dataMask, -1, false, false, nullptr, &final, nullptr);
 
   return final;
 }
@@ -2202,7 +2194,7 @@ Mesh *mesh_create_eval_no_deform_render(Depsgraph *depsgraph,
   Mesh *final;
 
   mesh_calc_modifiers(
-      depsgraph, scene, ob, 0, false, dataMask, -1, false, false, nullptr, &final, nullptr);
+      depsgraph, scene, ob, false, false, dataMask, -1, false, false, nullptr, &final, nullptr);
 
   return final;
 }
@@ -2426,7 +2418,7 @@ static void dm_debug_info_layers(DynStr *dynstr,
 
   for (type = 0; type < CD_NUMTYPES; type++) {
     if (CustomData_has_layer(cd, type)) {
-      /* note: doesn't account for multiple layers */
+      /* NOTE: doesn't account for multiple layers. */
       const char *name = CustomData_layertype_name(type);
       const int size = CustomData_sizeof(type);
       const void *pt = getElemDataArray(dm, type);
