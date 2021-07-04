@@ -1012,8 +1012,8 @@ void GHOST_SystemWin32::processWintabEvent(GHOST_WindowWin32 *window)
 void GHOST_SystemWin32::processPointerEvent(
     UINT type, GHOST_WindowWin32 *window, WPARAM wParam, LPARAM lParam, bool &eventHandled)
 {
-  /* Pointer events might fire when changing windows for a device which is set to use Wintab, even
-   * when when Wintab is left enabled but set to the bottom of Wintab overlap order. */
+  /* Pointer events might fire when changing windows for a device which is set to use Wintab,
+   * even when Wintab is left enabled but set to the bottom of Wintab overlap order. */
   if (!window->usingTabletAPI(GHOST_kTabletWinPointer)) {
     return;
   }
@@ -1197,8 +1197,8 @@ GHOST_EventKey *GHOST_SystemWin32::processKeyEvent(GHOST_WindowWin32 *window, RA
     // Don't call ToUnicodeEx on dead keys as it clears the buffer and so won't allow diacritical
     // composition.
     else if (MapVirtualKeyW(vk, 2) != 0) {
-      // todo: ToUnicodeEx can respond with up to 4 utf16 chars (only 2 here).
-      // Could be up to 24 utf8 bytes.
+      /* TODO: #ToUnicodeEx can respond with up to 4 utf16 chars (only 2 here).
+       * Could be up to 24 utf8 bytes. */
       if ((r = ToUnicodeEx(
                vk, raw.data.keyboard.MakeCode, state, utf16, 2, 0, system->m_keylayout))) {
         if ((r > 0 && r < 3)) {
@@ -1634,7 +1634,7 @@ LRESULT WINAPI GHOST_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
           }
 
           /* Reset pointer pen info if pen device has left tracking range. */
-          if (pointerInfo.pointerType == PT_PEN && !IS_POINTER_INRANGE_WPARAM(wParam)) {
+          if (pointerInfo.pointerType == PT_PEN) {
             window->resetPointerPenInfo();
             eventHandled = true;
           }

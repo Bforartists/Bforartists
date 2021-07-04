@@ -178,7 +178,7 @@ static PyObject *py_imbuf_copy(Py_ImBuf *self)
   if (UNLIKELY(ibuf_copy == NULL)) {
     PyErr_SetString(PyExc_MemoryError,
                     "ImBuf.copy(): "
-                    "failed to allocate memory memory");
+                    "failed to allocate memory");
     return NULL;
   }
   return Py_ImBuf_CreatePyObject(ibuf_copy);
@@ -443,7 +443,7 @@ static PyObject *M_imbuf_new(PyObject *UNUSED(self), PyObject *args, PyObject *k
     return NULL;
   }
 
-  /* TODO, make options */
+  /* TODO: make options. */
   const uchar planes = 4;
   const uint flags = IB_rect;
 

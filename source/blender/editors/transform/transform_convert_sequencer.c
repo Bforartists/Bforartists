@@ -63,9 +63,6 @@ typedef struct TransDataSeq {
  */
 typedef struct TransSeq {
   TransDataSeq *tdseq;
-  int min;
-  int max;
-  bool snap_left;
   int selection_channel_range_min;
   int selection_channel_range_max;
 } TransSeq;
@@ -252,42 +249,6 @@ static int SeqToTransData_build(
   return tot;
 }
 
-static void SeqTransDataBounds(TransInfo *t, ListBase *seqbase, TransSeq *ts)
-{
-  Sequence *seq;
-  int count, flag;
-  int max = INT32_MIN, min = INT32_MAX;
-
-  for (seq = seqbase->first; seq; seq = seq->next) {
-
-    /* just to get the flag since there are corner cases where this isn't totally obvious */
-    SeqTransInfo(t, seq, &count, &flag);
-
-    /* use 'flag' which is derived from seq->flag but modified for special cases */
-    if (flag & SELECT) {
-      if (flag & (SEQ_LEFTSEL | SEQ_RIGHTSEL)) {
-        if (flag & SEQ_LEFTSEL) {
-          min = min_ii(seq->startdisp, min);
-          max = max_ii(seq->startdisp, max);
-        }
-        if (flag & SEQ_RIGHTSEL) {
-          min = min_ii(seq->enddisp, min);
-          max = max_ii(seq->enddisp, max);
-        }
-      }
-      else {
-        min = min_ii(seq->startdisp, min);
-        max = max_ii(seq->enddisp, max);
-      }
-    }
-  }
-
-  if (ts) {
-    ts->max = max;
-    ts->min = min;
-  }
-}
-
 static void free_transform_custom_data(TransCustomData *custom_data)
 {
   if ((custom_data->data != NULL) && custom_data->use_free) {
@@ -320,7 +281,7 @@ static bool seq_transform_check_overlap(SeqCollection *transformed_strips)
 
 static SeqCollection *extract_standalone_strips(SeqCollection *transformed_strips)
 {
-  SeqCollection *collection = SEQ_collection_create();
+  SeqCollection *collection = SEQ_collection_create(__func__);
   Sequence *seq;
   SEQ_ITERATOR_FOREACH (seq, transformed_strips) {
     if ((seq->type & SEQ_TYPE_EFFECT) == 0 || seq->seq1 == NULL) {
@@ -341,7 +302,7 @@ static SeqCollection *query_right_side_strips(ListBase *seqbase, SeqCollection *
     }
   }
 
-  SeqCollection *collection = SEQ_collection_create();
+  SeqCollection *collection = SEQ_collection_create(__func__);
   LISTBASE_FOREACH (Sequence *, seq, seqbase) {
     if ((seq->flag & SELECT) == 0 && seq->startdisp >= minframe) {
       SEQ_collection_append_strip(seq, collection);
@@ -446,7 +407,7 @@ static void seq_transform_handle_overlap(TransInfo *t, SeqCollection *transforme
 
 static SeqCollection *seq_transform_collection_from_transdata(TransDataContainer *tc)
 {
-  SeqCollection *collection = SEQ_collection_create();
+  SeqCollection *collection = SEQ_collection_create(__func__);
   TransData *td = tc->data;
   for (int a = 0; a < tc->data_len; a++, td++) {
     Sequence *seq = ((TransDataSeq *)td->extra)->seq;
@@ -467,6 +428,7 @@ static void freeSeqData(TransInfo *t, TransDataContainer *tc, TransCustomData *c
 
   if (t->state == TRANS_CANCEL) {
     seq_transform_cancel(t, transformed_strips);
+    SEQ_collection_free(transformed_strips);
     free_transform_custom_data(custom_data);
     return;
   }
@@ -544,15 +506,6 @@ void createTransSeqData(TransInfo *t)
 
   /* loop 2: build transdata array */
   SeqToTransData_build(t, ed->seqbasep, td, td2d, tdsq);
-  SeqTransDataBounds(t, ed->seqbasep, ts);
-
-  if (t->flag & T_MODAL) {
-    /* set the snap mode based on how close the mouse is at the end/start points */
-    int xmouse = (int)UI_view2d_region_to_view_x((View2D *)t->view, t->mouse.imval[0]);
-    if (abs(xmouse - ts->max) > abs(xmouse - ts->min)) {
-      ts->snap_left = true;
-    }
-  }
 
   ts->selection_channel_range_min = MAXSEQ + 1;
   LISTBASE_FOREACH (Sequence *, seq, SEQ_active_seqbase_get(ed)) {
@@ -719,25 +672,19 @@ void special_aftertrans_update__sequencer(bContext *UNUSED(C), TransInfo *t)
   }
 }
 
-void transform_convert_sequencer_channel_clamp(TransInfo *t)
+void transform_convert_sequencer_channel_clamp(TransInfo *t, float r_val[2])
 {
   const TransSeq *ts = (TransSeq *)TRANS_DATA_CONTAINER_FIRST_SINGLE(t)->custom.type.data;
-  const int channel_offset = round_fl_to_int(t->values[1]);
+  const int channel_offset = round_fl_to_int(r_val[1]);
   const int min_channel_after_transform = ts->selection_channel_range_min + channel_offset;
   const int max_channel_after_transform = ts->selection_channel_range_max + channel_offset;
 
   if (max_channel_after_transform > MAXSEQ) {
-    t->values[1] -= max_channel_after_transform - MAXSEQ;
+    r_val[1] -= max_channel_after_transform - MAXSEQ;
   }
   if (min_channel_after_transform < 1) {
-    t->values[1] -= min_channel_after_transform - 1;
+    r_val[1] -= min_channel_after_transform - 1;
   }
-}
-
-int transform_convert_sequencer_get_snap_bound(TransInfo *t)
-{
-  TransSeq *ts = TRANS_DATA_CONTAINER_FIRST_SINGLE(t)->custom.type.data;
-  return ts->snap_left ? ts->min : ts->max;
 }
 
 /** \} */

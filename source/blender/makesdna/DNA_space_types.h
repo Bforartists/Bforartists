@@ -338,8 +338,9 @@ typedef enum eSpaceOutliner_Filter {
   SO_FILTER_OB_STATE_SELECTED = (1 << 15), /* Not set via DNA. */
   SO_FILTER_OB_STATE_ACTIVE = (1 << 16),   /* Not set via DNA. */
   SO_FILTER_NO_COLLECTION = (1 << 17),
+  SO_FILTER_NO_VIEW_LAYERS = (1 << 18),
 
-  SO_FILTER_ID_TYPE = (1 << 18),
+  SO_FILTER_ID_TYPE = (1 << 19),
 } eSpaceOutliner_Filter;
 
 #define SO_FILTER_OB_TYPE \
@@ -352,7 +353,7 @@ typedef enum eSpaceOutliner_Filter {
 
 #define SO_FILTER_ANY \
   (SO_FILTER_NO_OB_CONTENT | SO_FILTER_NO_CHILDREN | SO_FILTER_OB_TYPE | SO_FILTER_OB_STATE | \
-   SO_FILTER_NO_COLLECTION | SO_FILTER_NO_LIB_OVERRIDE)
+   SO_FILTER_NO_COLLECTION | SO_FILTER_NO_VIEW_LAYERS | SO_FILTER_NO_LIB_OVERRIDE)
 
 /* SpaceOutliner.filter_state */
 typedef enum eSpaceOutliner_StateFilter {
@@ -986,7 +987,7 @@ typedef enum eFileSel_Params_Flag {
 } eFileSel_Params_Flag;
 
 /* sfile->params->rename_flag */
-/* Note: short flag. Defined as bitflags, but currently only used as exclusive status markers... */
+/* NOTE: short flag. Defined as bitflags, but currently only used as exclusive status markers... */
 typedef enum eFileSel_Params_RenameFlag {
   /** Used when we only have the name of the entry we want to rename,
    * but not yet access to its matching file entry. */
@@ -1042,82 +1043,25 @@ typedef enum eDirEntry_SelectFlag {
 
 /* ***** Related to file browser, but never saved in DNA, only here to help with RNA. ***** */
 
-/**
- * About Unique identifier.
- *
- * Stored in a CustomProps once imported.
- * Each engine is free to use it as it likes - it will be the only thing passed to it by blender to
- * identify asset/variant/version (concatenating the three into a single 48 bytes one).
- * Assumed to be 128bits, handled as four integers due to lack of real bytes proptype in RNA :|.
- */
-#define ASSET_UUID_LENGTH 16
-
-/* Used to communicate with asset engines outside of 'import' context. */
-#
-#
-typedef struct AssetUUID {
-  int uuid_asset[4];
-  int uuid_variant[4];
-  int uuid_revision[4];
-} AssetUUID;
-
-#
-#
-typedef struct AssetUUIDList {
-  AssetUUID *uuids;
-  int nbr_uuids;
-  char _pad[4];
-} AssetUUIDList;
-
-/* Container for a revision, only relevant in asset context. */
-#
-#
-typedef struct FileDirEntryRevision {
-  struct FileDirEntryRevision *next, *prev;
-
-  char *comment;
-  void *_pad;
-
-  int uuid[4];
-
-  uint64_t size;
-  int64_t time;
-  /* Temp caching of UI-generated strings... */
-  char size_str[16];
-  char datetime_str[16 + 8];
-} FileDirEntryRevision;
-
-/* Container for a variant, only relevant in asset context.
- * In case there are no variants, a single one shall exist, with NULL name/description. */
-#
-#
-typedef struct FileDirEntryVariant {
-  struct FileDirEntryVariant *next, *prev;
-
-  int uuid[4];
-  char *name;
-  char *description;
-
-  ListBase revisions;
-  int nbr_revisions;
-  int act_revision;
-} FileDirEntryVariant;
-
-/* Container for mere direntry, with additional asset-related data. */
 #
 #
 typedef struct FileDirEntry {
   struct FileDirEntry *next, *prev;
 
-  int uuid[4];
+  uint32_t uid; /* FileUID */
   /* Name needs freeing if FILE_ENTRY_NAME_FREE is set. Otherwise this is a direct pointer to a
    * name buffer. */
   char *name;
   char *description;
 
-  /* Either point to active variant/revision if available, or own entry
-   * (in mere filebrowser case). */
-  FileDirEntryRevision *entry;
+  uint64_t size;
+  int64_t time;
+
+  struct {
+    /* Temp caching of UI-generated strings. */
+    char size_str[16];
+    char datetime_str[16 + 8];
+  } draw_data;
 
   /** #eFileSel_File_Types. */
   int typeflag;
@@ -1140,32 +1084,16 @@ typedef struct FileDirEntry {
   /* The icon_id for the preview image. */
   int preview_icon_id;
 
-  /* Tags are for info only, most of filtering is done in asset engine. */
-  char **tags;
-  int nbr_tags;
-
-  short status;
   short flags;
   /* eFileAttributes defined in BLI_fileops.h */
   int attributes;
-
-  ListBase variants;
-  int nbr_variants;
-  int act_variant;
 } FileDirEntry;
 
 /**
- * Array of direntries.
+ * Array of directory entries.
  *
- * This struct is used in various, different contexts.
- *
- * In Filebrowser UI, it stores the total number of available entries, the number of visible
- * (filtered) entries, and a subset of those in 'entries' ListBase, from idx_start (included)
- * to idx_end (excluded).
- *
- * In AssetEngine context (i.e. outside of 'browsing' context), entries contain all needed data,
- * there is no filtering, so nbr_entries_filtered, entry_idx_start and entry_idx_end
- * should all be set to -1.
+ * Stores the total number of available entries, the number of visible (filtered) entries, and a
+ * subset of those in 'entries' ListBase, from idx_start (included) to idx_end (excluded).
  */
 #
 #
@@ -1178,14 +1106,6 @@ typedef struct FileDirEntryArr {
   /** FILE_MAX. */
   char root[1024];
 } FileDirEntryArr;
-
-#if 0 /* UNUSED */
-/* FileDirEntry.status */
-enum {
-  ASSET_STATUS_LOCAL = 1 << 0,  /* If active uuid is available locally/immediately. */
-  ASSET_STATUS_LATEST = 1 << 1, /* If active uuid is latest available version. */
-};
-#endif
 
 /* FileDirEntry.flags */
 enum {
