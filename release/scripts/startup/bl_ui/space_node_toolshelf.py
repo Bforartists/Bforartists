@@ -1863,7 +1863,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
 
             col = layout.column(align=True)
             col.scale_y = 1.5
-            
+
             props = col.operator("node.add_node", text=" Bilateral Blur    ", icon = "ANTIALIASED")
             props.use_transform = True
             props.type = "CompositorNodeAntiAliasing"
@@ -1879,7 +1879,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Bokeh Blur       ", icon = "NODE_BOKEH_BLUR")
             props.use_transform = True
             props.type = "CompositorNodeBokehBlur"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -1898,7 +1898,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Despeckle         ", icon = "NODE_DESPECKLE")
             props.use_transform = True
             props.type = "CompositorNodeDespeckle"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -1917,7 +1917,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Inpaint              ", icon = "NODE_IMPAINT")
             props.use_transform = True
             props.type = "CompositorNodeInpaint"
-            
+
             col = layout.column(align=True)
             col.scale_y = 1.5
 
@@ -1940,7 +1940,7 @@ class NODES_PT_Modify_filter(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
-            
+
             props = flow.operator("node.add_node", text = "", icon = "ANTIALIASED")
             props.use_transform = True
             props.type = "CompositorNodeAntiAliasing"
@@ -3592,11 +3592,11 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Curve Length              ", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
-            
+
             props = col.operator("node.add_node", text=" Curve Reverse            ", icon = "SWITCH_DIRECTION")
             props.use_transform = True
             props.type = "GeometryNodeCurveReverse"
-            
+
             props = col.operator("node.add_node", text=" Curve Subdivide         ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeCurveSubdivide"
@@ -3604,7 +3604,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Curve to Mesh            ", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
-            
+
             props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
@@ -3629,11 +3629,11 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SWITCH_DIRECTION")
             props.use_transform = True
             props.type = "GeometryNodeCurveReverse"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeCurveSubdivide"
@@ -3641,7 +3641,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_MESH")
             props.use_transform = True
             props.type = "GeometryNodeCurveToMesh"
-            
+
             props = flow.operator("node.add_node", text="", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
@@ -3653,6 +3653,86 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
+
+
+#add Curves Primitives panel
+class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Curve Primitives"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Bezier Segment     ", icon = "CURVE_BEZCURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveBezierSegment"
+
+            props = col.operator("node.add_node", text=" Circle                     ", icon = "CURVE_BEZCIRCLE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveCircle"
+
+            props = col.operator("node.add_node", text=" Curve Spiral           ", icon = "CURVE_SPIRAL")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSpiral"
+
+            props = col.operator("node.add_node", text=" Quadratic Bezier    ", icon = "CURVE_NCURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveQuadraticBezier"
+
+            props = col.operator("node.add_node", text=" Star                         ", icon = "CURVE_STAR")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveStar"
+
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_BEZCURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveBezierSegment"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_BEZCIRCLE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveCircle"
+
+            props = flow.operator("node.add_node", text="", icon = "CURVE_SPIRAL")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSpiral"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_NCURVE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveQuadraticBezier"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_STAR")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveStar"
 
 
 #add geometry panel
@@ -3688,7 +3768,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Bounding Box       ", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
-            
+
             props = col.operator("node.add_node", text=" Convex Hull        ", icon = "CONVEXHULL")
             props.use_transform = True
             props.type = "GeometryNodeConvexHull"
@@ -3700,11 +3780,11 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Join Geometry     ", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
-            
+
             props = col.operator("node.add_node", text=" Raycast                ", icon = "RAYCAST")
             props.use_transform = True
             props.type = "GeometryNodeRaycast"
-            
+
             props = col.operator("node.add_node", text=" Separate Components", icon = "SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodeSeparateComponents"
@@ -3725,7 +3805,7 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "PIVOT_BOUNDBOX")
             props.use_transform = True
             props.type = "GeometryNodeBoundBox"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "CONVEXHULL")
             props.use_transform = True
             props.type = "GeometryNodeConvexHull"
@@ -3737,11 +3817,11 @@ class NODES_PT_geom_add_geometry(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "JOIN")
             props.use_transform = True
             props.type = "GeometryNodeJoinGeometry"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "RAYCAST")
             props.use_transform = True
             props.type = "GeometryNodeRaycast"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SEPARATE")
             props.use_transform = True
             props.type = "GeometryNodeSeparateComponents"
@@ -3894,7 +3974,7 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Material Replace      ", icon = "MATERIAL_REPLACE")
             props.use_transform = True
             props.type = "GeometryNodeMaterialReplace"
-            
+
             props = col.operator("node.add_node", text=" Select by Material     ", icon = "SELECT_BY_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeSelectByMaterial"
@@ -3914,7 +3994,7 @@ class NODES_PT_geom_add_material(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MATERIAL_REPLACE")
             props.use_transform = True
             props.type = "GeometryNodeMaterialReplace"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SELECT_BY_MATERIAL")
             props.use_transform = True
             props.type = "GeometryNodeSelectByMaterial"
@@ -4516,6 +4596,7 @@ classes = (
     NODES_PT_geom_add_attribute,
     NODES_PT_geom_add_color,
     NODES_PT_geom_add_curve,
+    NODES_PT_geom_add_curve_primitives,
     NODES_PT_geom_add_geometry,
     NODES_PT_geom_add_input,
     NODES_PT_geom_add_material,

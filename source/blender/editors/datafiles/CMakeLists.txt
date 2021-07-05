@@ -638,8 +638,8 @@ outliner
 rename_x
 rename_y
 rename_z
-#~ DEF_ICON_BLANK(657)
-#~ DEF_ICON_BLANK(658)
+curve_spiral
+curve_star
 #~ DEF_ICON_BLANK(659)
 #~ DEF_ICON_BLANK(660)
 #~ DEF_ICON_BLANK(661)
