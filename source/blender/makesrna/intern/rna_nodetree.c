@@ -12716,6 +12716,22 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_LENGTH:
       icon = ICON_PARTICLEBRUSH_LENGTH;
       break;
+      /*curve primitives*/
+    case GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT:
+      icon = ICON_CURVE_BEZCURVE;
+      break;
+    case GEO_NODE_CURVE_PRIMITIVE_CIRCLE:
+      icon = ICON_CURVE_BEZCIRCLE;
+      break;
+    case GEO_NODE_CURVE_PRIMITIVE_QUADRATIC_BEZIER:
+      icon = ICON_CURVE_NCURVE;
+      break;
+    case GEO_NODE_CURVE_PRIMITIVE_STAR:
+      icon = ICON_CURVE_STAR;
+      break;
+    case GEO_NODE_CURVE_PRIMITIVE_SPIRAL:
+      icon = ICON_CURVE_SPIRAL;
+      break;
     case GEO_NODE_CURVE_TO_MESH:
       icon = ICON_OUTLINER_OB_MESH;
       break;
