@@ -161,7 +161,6 @@ class SEQUENCER_HT_header(Header):
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
             sub.popover(panel="SEQUENCER_PT_snapping")
-            layout.separator_spacer()
 
         row = layout.row(align=True)
         row.prop(st, "show_strip_overlay", text="", icon='OVERLAY')
@@ -2337,16 +2336,26 @@ class SEQUENCER_PT_snapping(Panel):
         sequencer_tool_settings = tool_settings.sequencer_tool_settings
 
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
-        col = layout.column(heading="Snap to", align=True)
-        col.prop(sequencer_tool_settings, "snap_to_current_frame" )
-        col.prop(sequencer_tool_settings, "snap_to_hold_offset")
+        col = layout.column(align = True)
+        col.label(text = "Snap to")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_to_current_frame" )
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_to_hold_offset")
 
-        col = layout.column(heading="Ignore", align=True)
-        col.prop(sequencer_tool_settings, "snap_ignore_muted", text="Muted Strips")
-        col.prop(sequencer_tool_settings, "snap_ignore_sound",text="Sound Strips")
+        col = layout.column(align = True)
+        col.label(text = "Ignore")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_ignore_muted", text="Muted Strips")
+        row = col.row()
+        row.separator()
+        row.prop(sequencer_tool_settings, "snap_ignore_sound",text="Sound Strips")
 
 
 class SEQUENCER_PT_marker_options(Panel):
