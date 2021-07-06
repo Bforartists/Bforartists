@@ -86,12 +86,28 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
         row = layout.row()
         row.prop(collection, "lineart_usage")
 
-        layout.prop(collection, "lineart_use_intersection_mask")
+        split = layout.split()
+        col = split.column()
+        col.use_property_split = False
+        col.prop(collection, "lineart_use_intersection_mask")
+        col = split.column()
+        if collection.lineart_use_intersection_mask:
+            col.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
-        row = layout.row(align=True, heading="Masks")
-        row.active = collection.lineart_use_intersection_mask
-        for i in range(0,8):
-            row.prop(collection, "lineart_intersection_mask", index=i, text=str(i), toggle=True)
+        if collection.lineart_use_intersection_mask:
+            split = layout.split(factor = 0.2)
+            split.use_property_split = False
+            col = split.column()
+            row = col.row()
+            row.separator()
+            row.label(text = "Masks")
+
+            col = split.column()
+            row = col.row(align = True)
+            for i in range(0,8):
+                row.prop(collection, "lineart_intersection_mask", index=i, text=str(i), toggle=True)
 
 
 classes = (
