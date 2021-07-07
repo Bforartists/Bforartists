@@ -160,7 +160,7 @@ class SEQUENCER_HT_header(Header):
             row = layout.row(align=True)
             row.prop(tool_settings, "use_snap_sequencer", text="")
             sub = row.row(align=True)
-            sub.popover(panel="SEQUENCER_PT_snapping")
+            sub.popover(panel="SEQUENCER_PT_snapping", text = "")
 
         row = layout.row(align=True)
         row.prop(st, "show_strip_overlay", text="", icon='OVERLAY')
@@ -2329,7 +2329,7 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
 class SEQUENCER_PT_snapping(Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'HEADER'
-    bl_label = ""
+    bl_label = "Snapping"
 
     def draw(self, context):
         tool_settings = context.tool_settings
