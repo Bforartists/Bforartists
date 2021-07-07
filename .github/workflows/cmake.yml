@@ -11,7 +11,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
-    
+
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -19,7 +19,7 @@ jobs:
         os: [windows-latest, macos-latest, ubuntu-20.04]
 
     steps:
-      
+
       - name : Setup Environment Variables
         shell: python
         run: |
@@ -28,20 +28,21 @@ jobs:
           main_dir = path.join(os.getcwd(),'..')
           main_dir = path.abspath(main_dir)
           print("::stop-commands::'::set-env name=_MAIN_DIR::{}'".format(main_dir))
-    
+
       - name: Cache build environment
         uses: actions/cache@v2
         env:
           cache-name: ${{ github.ref }}-${{ runner.os }}
+          path: ${{ env._MAIN_DIR }}
         with:
           path: ${{ env._MAIN_DIR }}
           key: build-cache-${{ env.cache-name }}
-            
+
       - uses: actions/checkout@v2
-      
+
       - name: Build.py
         run: python build.py
-          
+
       - name: Upload Build
         uses: actions/upload-artifact@v2
         with:
