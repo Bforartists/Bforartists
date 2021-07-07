@@ -33,7 +33,6 @@ jobs:
         uses: actions/cache@v2
         env:
           cache-name: ${{ github.ref }}-${{ runner.os }}
-          path: ${{ env._MAIN_DIR }}
         with:
           path: ${{ env._MAIN_DIR }}
           key: build-cache-${{ env.cache-name }}
