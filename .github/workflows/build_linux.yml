@@ -13,15 +13,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: test change dir to make
+      run: cd ~/Bforartists/Bforartists
+
     - name: make libs dir
-      run: ~/home/runner/work/Bforartists/lib
+      run: mkdir ~/Bforartists/lib
     - name: change dir to lib
-      run: cd ~/home/runner/work/Bforartists/lib
+      run: cd ~/Bforartists/lib
     - name: checkout
       run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
     - name: change dir to make
-      run: cd ~/home/runner/work/Bforartists/Bforartists
+      run: cd ~/Bforartists/Bforartists
     - name: make update
       run: make udpate
     - name: make
