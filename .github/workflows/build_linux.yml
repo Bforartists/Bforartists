@@ -11,27 +11,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      # You can use PyPy versions in python-version.
-      # For example, pypy2 and pypy3
-      matrix:
-        python-version: [2.7]
-
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      # You can test your matrix by printing the current Python version
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
 
-    #steps:
-      #- uses: actions/checkout@v2
-
-      #- name: current directory
-      #  run: pwd
+      - name: current directory
+        run: pwd
 
       - name: make libs dir
         run: mkdir /home/runner/work/Bforartists/libs
