@@ -14,15 +14,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: current directory
-        run: pwd
-
       - name: make libs dir
         run: mkdir /home/runner/work/Bforartists/libs
       - name: change dir to lib
         run: cd /home/runner/work/Bforartists/libs
       - name: checkout
         run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+      # list dir of libs
+      - name: current directory
+        run: pwd
 
       - name: change dir to make
         run: cd /home/runner/work/Bforartists/Bforartists
