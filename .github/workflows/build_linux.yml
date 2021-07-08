@@ -20,6 +20,8 @@ jobs:
         run: cd /home/runner/work/Bforartists/libs
       - name: current directory
         run: pwd
+      - name: what's in directory
+        run: dir
       # - name: checkout
       #   run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
       # - name: current directory
