@@ -17,22 +17,22 @@ jobs:
     - name: current directory
       run: pwd
 
-    # - name: make libs dir
-    #   run: mkdir ~/Bforartists/lib
-    # - name: change dir to lib
-    #   run: cd ~/Bforartists/lib
-    # - name: checkout
-    #   run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+    - name: make libs dir
+      run: mkdir /home/runner/work/Bforartists/libs
+    - name: change dir to lib
+      run: cd /home/runner/work/Bforartists/libs
+    - name: checkout
+      run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
-    # - name: change dir to make
-    #   run: cd ~/Bforartists/Bforartists
-    # - name: make update
-    #   run: make udpate
-    # - name: make
-    #   run: make
+    - name: change dir to make
+      run: cd /home/runner/work/Bforartists/Bforartists
+    - name: make update
+      run: make udpate
+    - name: make
+      run: make
 
-    # - name: Upload Build
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: Bforartists-Release-${{ runner.os }}
-    #     path: ${{ env._MAIN_DIR }}/build_linux/bin/
+    - name: Upload Build
+      uses: actions/upload-artifact@v2
+      with:
+        name: Bforartists-Release-${{ runner.os }}
+        path: ${{ env._MAIN_DIR }}/build_linux/bin/
