@@ -16,17 +16,23 @@ jobs:
 
     - name: add repo
       run: mkdir ~/bforartists
+    - name: change dir
       run: cd ~/bforartists
+    - name: clone repo
       run: git clone https://github.com/Bforartists/Bforartists
 
-    - name: configure libs
+    - name: make libs dir
       run: mkdir ~/bforartists/lib
+    - name: change dir to lib
       run: cd ~/bforartists/lib
+    - name: checkout
       run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
-    - name: make
+    - name: change dir to make
       run: cd ~/bforartists/bforartists
+    - name: make update
       run: make udpate
+    - name: make
       run: make
 
     - name: Upload Build
