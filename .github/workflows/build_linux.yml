@@ -15,7 +15,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: test change dir to make
-      run: cd ~/Bforartists/Bforartists
+      run: cd ~/Bforartists/
+
+    - name: list content
+      run: dir
 
     - name: make libs dir
       run: mkdir ~/Bforartists/lib
