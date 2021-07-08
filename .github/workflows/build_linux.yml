@@ -11,28 +11,44 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      # You can use PyPy versions in python-version.
+      # For example, pypy2 and pypy3
+      matrix:
+        python-version: [2.7, 3.6, 3.7, 3.8, 3.9]
+
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      # You can test your matrix by printing the current Python version
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
 
-    - name: current directory
-      run: pwd
+    #steps:
+      #- uses: actions/checkout@v2
 
-    - name: make libs dir
-      run: mkdir /home/runner/work/Bforartists/libs
-    - name: change dir to lib
-      run: cd /home/runner/work/Bforartists/libs
-    - name: checkout
-      run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
+      #- name: current directory
+      #  run: pwd
 
-    - name: change dir to make
-      run: cd /home/runner/work/Bforartists/Bforartists
-    #- name: make update
-    #  run: make udpate
-    - name: make
-      run: make
+      - name: make libs dir
+        run: mkdir /home/runner/work/Bforartists/libs
+      - name: change dir to lib
+        run: cd /home/runner/work/Bforartists/libs
+      - name: checkout
+        run: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
 
-    - name: Upload Build
-      uses: actions/upload-artifact@v2
-      with:
-        name: Bforartists-Release-${{ runner.os }}
-        path: ${{ env._MAIN_DIR }}/build_linux/bin/
+      - name: change dir to make
+        run: cd /home/runner/work/Bforartists/Bforartists
+      #- name: make update
+      #  run: make udpate
+      - name: make
+        run: make
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v2
+        with:
+          name: Bforartists-Release-${{ runner.os }}
+          path: ${{ env._MAIN_DIR }}/build_linux/bin/
