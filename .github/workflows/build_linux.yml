@@ -26,8 +26,8 @@ jobs:
 
     - name: change dir to make
       run: cd /home/runner/work/Bforartists/Bforartists
-    - name: make update
-      run: make udpate
+    #- name: make update
+    #  run: make udpate
     - name: make
       run: make
 
