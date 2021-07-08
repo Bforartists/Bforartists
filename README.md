@@ -1,5 +1,7 @@
 # Bforartists
 
+![Build Status](https://github.com/Bforartists/Bforartists/workflows/build_linux)
+
 Bforartists is a fork of the popular 3D software Blender, with the goal to improve the graphical UI, and to increase the usability.
 
 The project page, the binary downloads and further information can be found at the project page: https://www.bforartists.de/
