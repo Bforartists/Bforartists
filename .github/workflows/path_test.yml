@@ -1,0 +1,22 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: make libs dir
+        run: mkdir /home/runner/work/Bforartists/libs
+        working-directory: /home/runner/work/Bforartists/libs
+      - name: current directory
+        run: pwd
+        working-directory: /home/runner/work/Bforartists/libs
+
+
