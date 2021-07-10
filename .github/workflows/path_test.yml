@@ -18,5 +18,7 @@ jobs:
         run: mkdir ~/libs
       - name: current directory
         run: pwd
+      - name: list dir
+        run: dir
 
 
