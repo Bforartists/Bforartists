@@ -12,13 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: current directory
-        run: pwd
+
       - name: make libs dir
-        run: mkdir ~/libs
-      - name: current directory
-        run: pwd
-      - name: list dir
-        run: dir
+        run: |
+           mkdir /home/runner/work/Bforartists/libs
+           cd /home/runner/work/Bforartists/libs
+           pwd
 
 
