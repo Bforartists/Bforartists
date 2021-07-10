@@ -15,7 +15,7 @@ jobs:
     - name: configure
       run: |
         sudo apt update
-        sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev      
+        sudo apt install build-essential git subversion cmake libx11-dev libxxf86vm-dev libxcursor-dev libxi-dev libxrandr-dev libxinerama-dev libglew-dev
     - name: make
       run: |
         mkdir ~/bforartistsrepo
@@ -24,9 +24,9 @@ jobs:
         mkdir ~/bforartistsrepo/lib
         cd ~/bforartistsrepo/lib
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/linux_centos7_x86_64
-        cd ~/blender-git/bforartistsrepo/Bforartists
+        cd ~/bforartistsrepo/bforartistsrepo/Bforartists
         make
-        
+
     - name: Upload Build
       uses: actions/upload-artifact@v2
       with:
