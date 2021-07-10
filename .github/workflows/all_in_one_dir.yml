@@ -31,5 +31,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: ${{ env._MAIN_DIR }}/bforartistsrepo/build_linux/bin/
+        path: home/runner/bforartistsrepo/build_linux/bin/
+        #path: ${{ env._MAIN_DIR }}/bforartistsrepo/build_linux/bin/
 
