@@ -15,10 +15,8 @@ jobs:
       - name: current directory
         run: pwd
       - name: make libs dir
-        run: mkdir /home/runner/work/Bforartists/libs
-        working-directory: /home/runner/work/Bforartists/libs
+        run: mkdir ~/libs
       - name: current directory
         run: pwd
-        working-directory: /home/runner/work/Bforartists/libs
 
 
