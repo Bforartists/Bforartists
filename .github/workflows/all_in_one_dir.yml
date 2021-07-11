@@ -1,8 +1,10 @@
 name: Ubuntu
 
 on:
-  push:
-    branches: [ master ]
+  #push:
+    #branches: [ master ]
+  schedule:
+    - cron: 0 0 * * 1
   pull_request:
     branches: [ master ]
 
@@ -32,5 +34,4 @@ jobs:
       with:
         name: Bforartists-Release-${{ runner.os }}
         path: /home/runner/bforartistsrepo/build_linux/bin/
-        #path: ${{ env._MAIN_DIR }}/bforartistsrepo/build_linux/bin/
 
