@@ -4038,7 +4038,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeEdgeSplit"
 
-            props = col.operator("node.add_node", text=" Subdivide                ", icon = "SUBDIVIDE_EDGES")
+            props = col.operator("node.add_node", text=" Mesh Subdivide        ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
             props.type = "GeometryNodeSubdivide"
 
@@ -4109,7 +4109,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Circle                       ", icon = "MESH_CIRCLE")
+            props = col.operator("node.add_node", text=" Mesh Circle            ", icon = "MESH_CIRCLE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCircle"
 
@@ -4132,11 +4132,11 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeMeshIcoSphere"
 
-            props = col.operator("node.add_node", text=" Line                        ", icon = "MESH_LINE")
+            props = col.operator("node.add_node", text=" Mesh Line                 ", icon = "MESH_LINE")
             props.use_transform = True
             props.type = "GeometryNodeMeshLine"
 
-            props = col.operator("node.add_node", text=" Grid                      ", icon = "MESH_GRID")
+            props = col.operator("node.add_node", text=" Grid                         ", icon = "MESH_GRID")
             props.use_transform = True
             props.type = "GeometryNodeMeshGrid"
 
