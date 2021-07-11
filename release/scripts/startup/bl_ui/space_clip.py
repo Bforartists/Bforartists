@@ -72,8 +72,9 @@ class CLIP_PT_marker_display(Panel):
         col.prop(view, "show_marker_pattern", text="Pattern")
         col.prop(view, "show_marker_search", text="Search")
 
-        col.active = view.show_track_path
         col.prop(view, "show_track_path", text="Path")
+        col = col.column()
+        col.active = view.show_track_path
         col.prop(view, "path_length", text="Length")
 
         col = row.column()
@@ -191,7 +192,7 @@ class CLIP_HT_header(Header):
                 row.prop(sc, "pivot_point", text="", icon_only=True)
                 row = layout.row(align=True)
                 icon = 'LOCKED' if sc.lock_selection else 'UNLOCKED'
-                row.prop(sc, "lock_selection", icon=icon, text="")
+                row.operator("clip.lock_selection_toggle", icon=icon, text="", depress=sc.lock_selection)
                 row.popover(panel='CLIP_PT_display')
 
             elif sc.view == 'GRAPH':
@@ -253,7 +254,7 @@ class CLIP_HT_header(Header):
             row.popover(panel='CLIP_PT_mask_display')
             row = layout.row(align=True)
             icon = 'LOCKED' if sc.lock_selection else 'UNLOCKED'
-            row.prop(sc, "lock_selection", icon=icon, text="")
+            row.operator("clip.lock_selection_toggle", icon=icon, text="", depress=sc.lock_selection)
             row.popover(panel='CLIP_PT_display')
 
     def draw(self, context):
@@ -1582,8 +1583,8 @@ class CLIP_MT_track(Menu):
         layout.separator()
 
         layout.operator("clip.solve_camera",
-                     text="Solve Camera Motion" if tracking_object.is_camera
-                     else "Solve Object Motion", icon='OUTLINER_OB_CAMERA')
+                     text=("Solve Camera Motion" if tracking_object.is_camera
+                     else "Solve Object Motion"), icon='OUTLINER_OB_CAMERA')
 
         layout.separator()
 

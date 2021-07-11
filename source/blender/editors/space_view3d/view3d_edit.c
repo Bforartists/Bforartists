@@ -394,9 +394,9 @@ enum eViewOpsFlag {
   /** When enabled, use the depth under the cursor for navigation. */
   VIEWOPS_FLAG_DEPTH_NAVIGATE = (1 << 1),
   /**
-   * When enabled run #ED_view3d_persp_ensure this may switch out of
-   * camera view when orbiting or switch from ortho to perspective when auto-persp is enabled.
-   * Some operations don't require this (view zoom/pan or ndof where subtle rotation is common
+   * When enabled run #ED_view3d_persp_ensure this may switch out of camera view
+   * when orbiting or switch from orthographic to perspective when auto-perspective is enabled.
+   * Some operations don't require this (view zoom/pan or NDOF where subtle rotation is common
    * so we don't want it to trigger auto-perspective). */
   VIEWOPS_FLAG_PERSP_ENSURE = (1 << 2),
   /** When set, ignore any options that depend on initial cursor location. */
@@ -815,7 +815,6 @@ static void viewrotate_apply(ViewOpsData *vod, const int event_xy[2])
     viewrotate_apply_dyn_ofs(vod, vod->curr.viewquat);
   }
   else {
-    /* New turntable view code by John Aughey */
     float quat_local_x[4], quat_global_z[4];
     float m[3][3];
     float m_inv[3][3];
@@ -1203,7 +1202,7 @@ static void view3d_ndof_orbit(const struct wmNDOFMotionData *ndof,
   if (U.ndof_flag & NDOF_TURNTABLE) {
     float rot[3];
 
-    /* turntable view code by John Aughey, adapted for 3D mouse by [mce] */
+    /* Turntable view code adapted for 3D mouse use. */
     float angle, quat[4];
     float xvec[3] = {1, 0, 0};
 

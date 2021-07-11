@@ -89,6 +89,11 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
         name = "Use Hud",
         description = "Display angle lines and angle value as text on viewport",
         default = False)
+    
+    canvas_use_view_center: BoolProperty(
+        name = "Rotate From View Center In Camera",
+        description = "Rotate from view center in camera view, Else rotate from camera center",
+        default = True)
 
     ## Canvas rotate
     canvas_use_shortcut: BoolProperty(
@@ -197,6 +202,7 @@ class GreasePencilAddonPrefs(bpy.types.AddonPreferences):
             else:
                 box.label(text="No hotkey has been set automatically. Following operators needs to be set manually:", icon="ERROR")
                 box.label(text="view3d.rotate_canvas")
+            box.prop(self, 'canvas_use_view_center')
             box.prop(self, 'canvas_use_hud')
 
             ## SCRUB TIMELINE

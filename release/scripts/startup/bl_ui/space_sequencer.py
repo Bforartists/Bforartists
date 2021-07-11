@@ -1421,14 +1421,13 @@ class SEQUENCER_PT_source(SequencerButtonsPanel, Panel):
                 split.label(text="%dx%d" % size, translate=False)
             else:
                 split.label(text="None")
-            #FPS
+            # FPS
             if elem.orig_fps:
                 split = col.split(factor=0.5, align=False)
                 split.alignment = 'RIGHT'
                 split.label(text="FPS")
                 split.alignment = 'LEFT'
                 split.label(text="%.2f" % elem.orig_fps, translate=False)
-
 
 
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
@@ -1889,7 +1888,7 @@ class SEQUENCER_PT_cache_settings(SequencerButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         show_developer_ui = context.preferences.view.show_developer_ui
-        return cls.has_sequencer(context) and  context.scene.sequence_editor and show_developer_ui
+        return cls.has_sequencer(context) and context.scene.sequence_editor and show_developer_ui
 
     def draw(self, context):
         layout = self.layout
@@ -2343,7 +2342,7 @@ class SEQUENCER_PT_snapping(Panel):
         col.label(text = "Snap to")
         row = col.row()
         row.separator()
-        row.prop(sequencer_tool_settings, "snap_to_current_frame" )
+        row.prop(sequencer_tool_settings, "snap_to_current_frame")
         row = col.row()
         row.separator()
         row.prop(sequencer_tool_settings, "snap_to_hold_offset")
@@ -2356,6 +2355,9 @@ class SEQUENCER_PT_snapping(Panel):
         row = col.row()
         row.separator()
         row.prop(sequencer_tool_settings, "snap_ignore_sound",text="Sound Strips")
+
+        col = layout.column()
+        col.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips")
 
 
 class SEQUENCER_PT_marker_options(Panel):

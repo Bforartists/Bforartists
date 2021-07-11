@@ -80,6 +80,12 @@ def get_rigs(base_dir, base_path, *, path=[], feature_set=feature_set_list.DEFAU
 rigs = {}
 implementation_rigs = {}
 
+def get_rig_class(name):
+    try:
+        return rigs[name]["module"].Rig
+    except (KeyError, AttributeError):
+        return None
+
 def get_internal_rigs():
     global rigs, implementation_rigs
 

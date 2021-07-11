@@ -731,7 +731,6 @@ class FastMetadata(bpy.types.Operator):
             active_asset = utils.get_active_asset_by_type(asset_type = self.asset_type)
             asset_data = active_asset.get('asset_data')
 
-        print('can edit asset?', can_edit_asset(asset_data=asset_data))
         if not can_edit_asset(asset_data=asset_data):
             return {'CANCELLED'}
         self.asset_id = asset_data['id']
