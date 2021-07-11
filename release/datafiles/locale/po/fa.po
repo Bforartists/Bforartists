@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2586,6 +2586,10 @@ msgid "Smooth Modifier"
 msgstr "ﺮﮕﺣﻼ﻿ﺻﺍ ﻥﺩﺮﮐ‌ﻪﻓﺎﺿﺍ"
 
 
+msgid "Space"
+msgstr "ﺎﻀﻓ"
+
+
 msgid "Red"
 msgstr "ﺰﻣﺮﻗ"
 
@@ -2752,10 +2756,6 @@ msgstr "ﺍﺪﺻ"
 
 msgid "Stroke Method"
 msgstr "ﻥﺪﯿﺸﮐ ﺵﻭﺭ:"
-
-
-msgid "Space"
-msgstr "ﺎﻀﻓ"
 
 
 msgid "Texture Sample Bias"
@@ -13886,18 +13886,6 @@ msgstr "‬.\"‪%s‬\", ‪%s‪ :ﺖﺴﯿﻧ ﻥﺪﻧﺍﻮﺧ ﻞﺑﺎﻗ
 
 msgid "Could not connect vertices"
 msgstr "ﺢﻄﺳ ﺭﺩ ﺱﻮﺋﺭ ﺭﺍﺪﻘﻣ"
-
-
-msgid "Invalid selection"
-msgstr "ﻩﺪﺷ ﺏﺎﺨﺘﻧﺍ ﻪﺑ ﻞﻔﻗ"
-
-
-msgid "Internal mesh error"
-msgstr "ﯽﻠﻣﺎﻌﺗ ﻪﻨﯾﺁ"
-
-
-msgid "Could not create merged face"
-msgstr "1 ﻪﺘﺳﺩ ﻉﻮﻧ"
 
 
 msgid "Cannot re-link markers into the same scene"

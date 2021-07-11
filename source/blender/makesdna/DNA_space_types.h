@@ -448,7 +448,7 @@ typedef struct SpaceGraph {
   /** Mode for the Graph editor (eGraphEdit_Mode). */
   short mode;
   /**
-   * Time-transform autosnapping settings for Graph editor
+   * Time-transform auto-snapping settings for Graph editor
    * (eAnimEdit_AutoSnap in DNA_action_types.h).
    */
   short autosnap;
@@ -727,6 +727,12 @@ typedef struct FileSelectParams {
 
   char renamefile[256];
   short rename_flag;
+  char _pad[4];
+  /** An ID that was just renamed. Used to identify a renamed asset file over re-reads, similar to
+   * `renamefile` but for local IDs (takes precedence). Don't keep this stored across handlers!
+   * Would break on undo. */
+  const ID *rename_id;
+  void *_pad3;
 
   /** List of filetypes to filter (FILE_MAXFILE). */
   char filter_glob[256];
@@ -734,7 +740,6 @@ typedef struct FileSelectParams {
   /** Text items name must match to be shown. */
   char filter_search[64];
   /** Same as filter, but for ID types (aka library groups). */
-  int _pad0;
   uint64_t filter_id;
 
   /** Active file used for keyboard navigation. */
@@ -1940,6 +1945,7 @@ typedef enum eSpreadsheetFilterOperation {
 typedef enum eSpaceSpreadsheet_ObjectEvalState {
   SPREADSHEET_OBJECT_EVAL_STATE_EVALUATED = 0,
   SPREADSHEET_OBJECT_EVAL_STATE_ORIGINAL = 1,
+  SPREADSHEET_OBJECT_EVAL_STATE_VIEWER_NODE = 2,
 } eSpaceSpreadsheet_Context;
 
 typedef enum eSpaceSpreadsheet_ContextType {

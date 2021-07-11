@@ -174,7 +174,7 @@ def check_printable(props, obs):
         for item in info:
             passed = item[0].endswith(' 0')
             if not passed:
-                print(item[0])
+                # print(item[0])
                 printable = False
 
         props.printable_3d = printable

@@ -22,10 +22,11 @@ from blenderkit import ui, utils, paths, tasks_queue, bkit_oauth
 import requests
 import bpy
 import logging
+
 bk_logger = logging.getLogger('rerequests')
 
 
-def rerequest(method, url, **kwargs):
+def rerequest(method, url, recursion=0, **kwargs):
     # first get any additional args from kwargs
     immediate = False
     if kwargs.get('immediate'):
@@ -34,10 +35,11 @@ def rerequest(method, url, **kwargs):
     # first normal attempt
     try:
         response = requests.request(method, url, **kwargs)
-    except:
-        return rerequest(method, url, **kwargs)
+    except Exception as e:
+        print(e)
+        return None
 
-    bk_logger.debug(url+ str( kwargs))
+    bk_logger.debug(url + str(kwargs))
     bk_logger.debug(response.status_code)
 
     if response.status_code == 401:
@@ -53,7 +55,7 @@ def rerequest(method, url, **kwargs):
             if user_preferences.api_key != '':
                 if user_preferences.enable_oauth and user_preferences.api_key_refresh != '':
                     tasks_queue.add_task((ui.add_report, (
-                    'refreshing token. If this fails, please login in BlenderKit Login panel.', 10)))
+                        'refreshing token. If this fails, please login in BlenderKit Login panel.', 10)))
                     refresh_url = paths.get_bkit_url()
                     auth_token, refresh_token, oauth_response = bkit_oauth.refresh_token(
                         user_preferences.api_key_refresh, refresh_url)
@@ -80,7 +82,7 @@ def rerequest(method, url, **kwargs):
                         tasks_queue.add_task((ui.add_report, (
                             'Refreshing token failed.Please login manually.', 10)))
                         # tasks_queue.add_task((bkit_oauth.write_tokens, ('', '', '')))
-                        tasks_queue.add_task((bpy.ops.wm.blenderkit_login,( 'INVOKE_DEFAULT',)),fake_context = True)
+                        tasks_queue.add_task((bpy.ops.wm.blenderkit_login, ('INVOKE_DEFAULT',)), fake_context=True)
     return response
 
 

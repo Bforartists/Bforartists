@@ -27,7 +27,7 @@ BLENDERKIT_API = "/api/v1/"
 BLENDERKIT_REPORT_URL = "usage_report/"
 BLENDERKIT_USER_ASSETS = "/my-assets"
 BLENDERKIT_PLANS = "/plans/pricing/"
-BLENDERKIT_MANUAL = "https://youtu.be/1hVgcQhIAo8"
+BLENDERKIT_MANUAL = "https://youtu.be/pSay3yaBWV0"
 BLENDERKIT_MODEL_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/upload/"
 BLENDERKIT_MATERIAL_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uploading-material/"
 BLENDERKIT_BRUSH_UPLOAD_INSTRUCTIONS_URL = "https://www.blenderkit.com/docs/uploading-brush/"
@@ -83,6 +83,8 @@ def get_oauth_landing_url():
 def get_author_gallery_url(author_id):
     return f'{get_bkit_url()}/asset-gallery?query=author_id:{author_id}'
 
+def get_asset_gallery_url(asset_id):
+    return f'{get_bkit_url()}/asset-gallery-detail/{asset_id}/'
 
 def default_global_dict():
     from os.path import expanduser

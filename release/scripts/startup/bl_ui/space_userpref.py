@@ -1456,7 +1456,6 @@ class USERPREF_PT_file_paths_asset_libraries(FilePathsPanel, Panel):
         row.separator()
         row.label(text="Path")
 
-
         for i, library in enumerate(paths.asset_libraries):
             name_col.prop(library, "name", text="")
             row = path_col.row()

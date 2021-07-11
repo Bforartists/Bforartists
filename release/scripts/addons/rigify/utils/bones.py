@@ -21,7 +21,6 @@
 import bpy
 import math
 from mathutils import Vector, Matrix, Color
-from rna_prop_ui import rna_idprop_ui_prop_get
 
 from .errors import MetarigError
 from .naming import get_name, make_derived_name, is_control_bone

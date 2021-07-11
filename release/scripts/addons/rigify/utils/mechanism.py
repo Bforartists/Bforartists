@@ -429,7 +429,7 @@ def copy_custom_properties(src, dest, *, prefix='', dest_prefix='', link_driver=
         if key.startswith(prefix) and key not in exclude:
             new_key = dest_prefix + key[len(prefix):]
 
-            info = rna_idprop_ui_prop_get(src, key, False)
+            info = rna_idprop_ui_prop_get(src, key, create=False)
 
             if src != dest or new_key != key:
                 dest[new_key] = value

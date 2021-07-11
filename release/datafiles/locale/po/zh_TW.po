@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -10042,6 +10042,10 @@ msgid "Mirror"
 msgstr "鏡像"
 
 
+msgid "Vertex Weight"
+msgstr "頂點權重"
+
+
 msgid "Hook"
 msgstr "鉤"
 
@@ -10252,8 +10256,8 @@ msgid "Source Object"
 msgstr "來源物體"
 
 
-msgid "Mask"
-msgstr "遮罩"
+msgid "Boundaries"
+msgstr "邊界"
 
 
 msgid "Mirror Modifier"
@@ -10336,6 +10340,14 @@ msgid "Factor for tinting"
 msgstr "著色的係數"
 
 
+msgid "Space"
+msgstr "空格"
+
+
+msgid "Blend"
+msgstr "混合"
+
+
 msgid "Vertex Group Element"
 msgstr "頂點群組元素"
 
@@ -10346,10 +10358,6 @@ msgstr "頂點群組中一個頂點的權重值"
 
 msgid "Group Index"
 msgstr "群組索引"
-
-
-msgid "Vertex Weight"
-msgstr "頂點權重"
 
 
 msgid "Grid Subdivisions"
@@ -10789,6 +10797,10 @@ msgid "Soften"
 msgstr "柔化"
 
 
+msgid "Mask"
+msgstr "遮罩"
+
+
 msgid "Jitter the position of the brush while painting"
 msgstr "繪製時抖動筆刷的位置"
 
@@ -11043,10 +11055,6 @@ msgstr "拖曳點"
 
 msgid "Allows a single dot to be carefully positioned"
 msgstr "允許仔細放置單一點"
-
-
-msgid "Space"
-msgstr "空格"
 
 
 msgid "Limit brush application to the distance specified by spacing"
@@ -12775,10 +12783,6 @@ msgstr "影像的算繪槽"
 
 msgid "X/Y pixels per meter"
 msgstr "每公尺 X/Y 像素數"
-
-
-msgid "Width and height in pixels, zero when image data cant be loaded"
-msgstr "寬度與高度，單位為像素，當影像資料無法載入時為零"
 
 
 msgid "Where the image comes from"
@@ -15710,10 +15714,6 @@ msgstr "係數紅"
 
 msgid "Node tree for node-based textures"
 msgstr "基於節點的紋理之節點樹"
-
-
-msgid "Blend"
-msgstr "混合"
 
 
 msgid "Procedural - create a ramp texture"
@@ -18678,10 +18678,6 @@ msgid "Special Characters"
 msgstr "特殊字元"
 
 
-msgid "Edge Data"
-msgstr "邊線資料"
-
-
 msgid "Face Data"
 msgstr "面資料"
 
@@ -19772,6 +19768,10 @@ msgstr "最近面"
 
 msgid "Ray Radius"
 msgstr "光線半徑"
+
+
+msgid "Edge Data"
+msgstr "邊線資料"
 
 
 msgid "Enable edge data transfer"
@@ -33013,10 +33013,6 @@ msgstr "選取更多與初始選取內容相連接的頂點、邊線或面"
 
 msgid "Select all non-manifold vertices or edges"
 msgstr "選取所有非流形頂點或邊線"
-
-
-msgid "Boundaries"
-msgstr "邊界"
 
 
 msgid "Boundary edges"
@@ -55920,16 +55916,6 @@ msgstr "貼上 X 軸向翻轉的姿勢"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "清除銳利"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "清除 Freestyle 邊線"
-
-
-msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "順時針旋轉邊線"
 
@@ -55937,6 +55923,11 @@ msgstr "順時針旋轉邊線"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "逆時針旋轉邊線"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "清除銳利"
 
 
 msgctxt "Operator"
@@ -56061,6 +56052,11 @@ msgstr "X 光"
 msgctxt "Operator"
 msgid "Assign to Group"
 msgstr "指派至群組"
+
+
+msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "清除 Freestyle 邊線"
 
 
 msgctxt "Operator"
@@ -56502,22 +56498,6 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "無法開啟檔案「%s」以寫入：%s"
 
 
-msgid "Could not connect vertices"
-msgstr "無法連接頂點"
-
-
-msgid "Could not dissolve faces"
-msgstr "無法消融面"
-
-
-msgid "Invalid selection"
-msgstr "無效選項"
-
-
-msgid "Internal mesh error"
-msgstr "內部網格錯誤"
-
-
 msgid "Zero normal given"
 msgstr "給定零法線"
 
@@ -56534,12 +56514,8 @@ msgid "Selected loops must have equal edge counts"
 msgstr "選取的線圈其邊線數必須相等"
 
 
-msgid "Could not find boundary of dissolve region"
-msgstr "找不到消融區塊的邊界"
-
-
-msgid "Could not create merged face"
-msgstr "無法建立合併的面"
+msgid "Could not connect vertices"
+msgstr "無法連接頂點"
 
 
 msgid "Closed loops unsupported"
