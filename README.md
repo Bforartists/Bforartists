@@ -14,7 +14,7 @@ Why choose Bforartists, and not Blender? Because our UI  is streamlined, cleaner
 
 The main Differences between Bforartists 2 and Blender 2.8x are:
 
-- A own keymap, which is reduced to just the necessary hotkeys and a navigation that can be purely done by mouse.
+- An own keymap, which is reduced to just the necessary hotkeys and a navigation that can be purely done by mouse.
 - Cleaned up User Interface. Lots of not necessary double, triple or even more equal menu entries removed.
 - Extended User Interface. Lots of formerly hotkey only tools have a menu entry now.
 - Rearranged User Interface. Some things are better accessible now, some are not so much in the way anymore.
@@ -31,9 +31,8 @@ A detailed list of the changes can be found in the release notes: www.bforartist
 
 But the code is just half of the show. Another important bit are the non code things.
 
-- The target audience for Bforartists are hobbyists and indie developers. Blender tries to target professionals. But most of them don’t care for various reasons.
-- We have a improved manual. The Blender manual is in big parts unsearchable, has an odd structure, and still now relies heavily at the Blender keymap to name just a few flaws. This makes it nearly  unusable for users. And that’s why we rewrite it, piece by piece.
-- We are not not bound to the Blender bubble. Bforartists has its own eco system.
+- The target audience for Bforartists are hobbyists and indie developers. Blender tries to target professionals. That’s a completely different audience and development target.
+- We have a better manual. The Blender manual is unsearchable in big parts, has an odd structure, and still relies heavily on the Blender keymap to name just a few flaws. This makes it nearly unusable for users. And that’s why we have rewritten it. With the tools in mind, not the hotkeys. Without odd opinions like Angle based is better than LSCM to unwrap. Without general CG Tutorials for a tool, and forgetting to describe how the tool really works and what it does. And a structure that follows the editors and the menus.
 
 Here you can find some examples of the vital differences between Blender and Bforartists: https://www.bforartists.de/the-differences-to-blender/
 
@@ -44,10 +43,6 @@ This youtube video describes the differences by showing them.
 Here's a Youtube playlist with some quickstart videos:
 
 https://www.youtube.com/watch?v=sZlqqMAGgMs&list=PLB0iqEbIPQTZArhZspyYSJOS_00jURpUB
-
-This list is currently incomplete, we are in the process to update the documentation to Bforartists 2. So here you can still find the quickstart videos for the older version:
-
-https://youtu.be/Gm7aCzI4xws?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5O
 
 For those who are willing and interested to help with the manual, we have a Github repository for it too. You can find it here: 
 
@@ -67,6 +62,33 @@ https://svn.blender.org/svnroot/bf-blender/tags/
 Have fun :)
 
 The Bforartists team
+
+What our users says:
+
+”Just want to share some feedback on this version of Blender. So awesome. I finally feel ungimped. Whoever people who made this, you are truly magnificent people. I finally started using it today, and felt let I was using stuff I already knew from Unity and Unreal. It’s a massive relief on the brain not to have to keep translating from one system to the next. I know these software seem like a dime a dozen, but this one serves a very great purpose for people who have accustomed to certain patterns and then having extreme difficulty transferring momentarily to another. You are the greatest.” – Ronin
+
+”superior version of blender” – Keiko Furukawa
+
+”Great work with much enthusiasm!” – Tihomir Dovramadjiev Phd
+
+”la interface es mucho mejor para animar gracias por eso” – Hardy Iglesias Garcia (the interface is much better to animate in, thanks for that)
+
+”If Blender setups give you nightmares, try this.” – George Perkins
+
+”Better than blender. Easy to learn and user friendly” – Emīls Geršinskis-Ješinskis
+
+”5 stars” – Josh Morris
+
+”Great! Keep up the good work!” – Runar Nyegaarden
+
+THANK YOU! I had no idea this existed till yesterday. It’s EXACTLY what I wished for...Blender functionality without the frustratingly convoluted interface. I have stuff to do! I have no problem understanding how the tools work, but Blender gets in my way, and it pisses me off! Geeks step aside...it’s the artists turn to take the controls. Bforartists. Thanks 🙏🍷🎩🎩🎩🎩🎩 - Youtube comment
+
+I’ve been using BforArtists a few months now and absolutely love it. Excellent, excellent job guys! - Youtube comment
+
+This deserves far more attention than it is getting - Youtube comment
+
+
+
 
 
 
