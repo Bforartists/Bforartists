@@ -48,6 +48,7 @@ import copy
 import json
 import math
 import unicodedata
+import urllib
 import queue
 import logging
 
@@ -80,7 +81,7 @@ reports_queue = queue.Queue()
 rtips = ['Click or drag model or material in scene to link/append ',
          "Please rate responsively and plentifully. This helps us distribute rewards to the authors.",
          "Click on brushes to link them into scene.",
-         "All materials and brushes are free.",
+         "All materials are free.",
          "Storage for public assets is unlimited.",
          "Locked models are available if you subscribe to Full plan.",
          "Login to upload your own models, materials or brushes.",
@@ -246,7 +247,7 @@ def parse_result(r):
         durl, tname, small_tname = '', '', ''
 
         if r['assetType'] == 'hdr':
-            tname = paths.extract_filename_from_url(r['thumbnailMiddleUrlNonsquared'])
+            tname = paths.extract_filename_from_url(r['thumbnailLargeUrlNonsquared'])
         else:
             tname = paths.extract_filename_from_url(r['thumbnailMiddleUrl'])
         small_tname = paths.extract_filename_from_url(r['thumbnailSmallUrl'])
@@ -349,10 +350,10 @@ def parse_result(r):
 
 
 # @bpy.app.handlers.persistent
-def timer_update():
+def search_timer():
     # this makes a first search after opening blender. showing latest assets.
     # utils.p('timer search')
-
+    # utils.p('start search timer')
     global first_time
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if first_time and not bpy.app.background:  # first time
@@ -367,6 +368,8 @@ def timer_update():
             utils.get_largest_area()
             ui.update_ui_size(ui.active_area_pointer, ui.active_region_pointer)
             ui.add_report(text='BlenderKit Tip: ' + random.choice(rtips), timeout=12, color=colors.GREEN)
+        # utils.p('end search timer')
+
         return 3.0
 
     # if preferences.first_run:
@@ -377,10 +380,14 @@ def timer_update():
 
     global search_threads
     if len(search_threads) == 0:
+        # utils.p('end search timer')
+
         return 1.0
     # don't do anything while dragging - this could switch asset during drag, and make results list length different,
     # causing a lot of throuble.
     if bpy.context.scene.blenderkitUI.dragging:
+        # utils.p('end search timer')
+
         return 0.5
     for thread in search_threads:
         # TODO this doesn't check all processes when one gets removed,
@@ -415,6 +422,8 @@ def timer_update():
 
             while not reports_queue.empty():
                 props.report = str(reports_queue.get())
+                # utils.p('end search timer')
+
                 return .2
 
             rdata = thread[0].result
@@ -422,7 +431,10 @@ def timer_update():
 
             ok, error = check_errors(rdata)
             if ok:
-                bpy.ops.object.run_assetbar_fix_context()
+                ui_props = bpy.context.scene.blenderkitUI
+
+                if not ui_props.assetbar_on:
+                    bpy.ops.object.run_assetbar_fix_context()
 
 
 
@@ -432,14 +444,14 @@ def timer_update():
                         result_field.append(asset_data)
 
                 # Get ratings from BlenderKit server
+                user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+                api_key = user_preferences.api_key
+                headers = utils.get_headers(api_key)
                 if utils.profile_is_validator():
-                    user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
-                    api_key = user_preferences.api_key
-                    headers = utils.get_headers(api_key)
                     for r in rdata['results']:
                         if ratings_utils.get_rating_local(asset_data['id']) is None:
-                            thread = threading.Thread(target=ratings_utils.get_rating, args=([r['id'], headers]), daemon=True)
-                            thread.start()
+                            rating_thread = threading.Thread(target=ratings_utils.get_rating, args=([r['id'], headers]), daemon=True)
+                            rating_thread.start()
 
                 wm[search_name] = result_field
                 wm['search results'] = result_field
@@ -447,7 +459,6 @@ def timer_update():
                 wm['search results orig'] = wm[search_name + ' orig']
 
                 load_previews()
-                ui_props = bpy.context.scene.blenderkitUI
                 if len(result_field) < ui_props.scrolloffset or not (thread[0].params.get('get_next')):
                     # jump back
                     ui_props.scrolloffset = 0
@@ -457,7 +468,7 @@ def timer_update():
                 if len(wm['search results']) == 0:
                     tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
                 # undo push
-                bpy.ops.wm.undo_push_context(message='Get BlenderKit search')
+                # bpy.ops.wm.undo_push_context(message='Get BlenderKit search')
 
             else:
                 bk_logger.error(error)
@@ -466,6 +477,7 @@ def timer_update():
 
             # print('finished search thread')
             mt('preview loading finished')
+    # utils.p('end search timer')
 
     return .3
 
@@ -642,6 +654,7 @@ class ThumbDownloader(threading.Thread):
 
     def run(self):
         # print('thumb downloader', self.url)
+        # utils.p('start thumbdownloader thread')
         r = None
         try:
             r = requests.get(self.url, stream=False)
@@ -655,6 +668,8 @@ class ThumbDownloader(threading.Thread):
             # with open(path, 'wb') as f:
             #     for chunk in r.iter_content(1048576*4):
             #         f.write(chunk)
+        # utils.p('end thumbdownloader thread')
+
 
 
 def write_gravatar(a_id, gravatar_path):
@@ -670,7 +685,37 @@ def write_gravatar(a_id, gravatar_path):
 
 
 def fetch_gravatar(adata):
+    '''
+    Gets avatars from blenderkit server
+    Parameters
+    ----------
+    adata - author data from elastic search result
+
+    '''
     # utils.p('fetch gravatar')
+
+    #fetch new avatars if available already
+    if adata.get('avatar128') is not None:
+        avatar_path = paths.get_temp_dir(subdir='bkit_g/') + adata['id']+ '.jpg'
+        if os.path.exists(avatar_path):
+            tasks_queue.add_task((write_gravatar, (adata['id'], avatar_path)))
+            return;
+
+        url= paths.get_bkit_url() + adata['avatar128']
+        r = rerequests.get(url, stream=False)
+        # print(r.body)
+        if r.status_code == 200:
+            # print(url)
+            # print(r.headers['content-disposition'])
+            with open(avatar_path, 'wb') as f:
+                f.write(r.content)
+            tasks_queue.add_task((write_gravatar, (adata['id'], avatar_path)))
+        elif r.status_code == '404':
+            adata['avatar128'] = None
+            utils.p('avatar for author not available.')
+        return
+
+    #older gravatar code
     if adata.get('gravatarHash') is not None:
         gravatar_path = paths.get_temp_dir(subdir='bkit_g/') + adata['gravatarHash'] + '.jpg'
 
@@ -800,7 +845,8 @@ def query_to_url(query={}, params={}):
             order.append('-score,_score')
         else:
             order.append('_score')
-    requeststring += '+order:' + ','.join(order)
+    if requeststring.find('+order:')==-1:
+        requeststring += '+order:' + ','.join(order)
 
     requeststring += '&addon_version=%s' % params['addon_version']
     if params.get('scene_uuid') is not None:
@@ -843,6 +889,8 @@ class Searcher(threading.Thread):
         params = self.params
 
         t = time.time()
+        # utils.p('start search thread')
+
         mt('search thread started')
         # tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
         # json_filepath = os.path.join(tempdir, '%s_searchresult.json' % query['asset_type'])
@@ -856,6 +904,8 @@ class Searcher(threading.Thread):
         except requests.exceptions.RequestException as e:
             bk_logger.error(e)
             reports_queue.put(str(e))
+            # utils.p('end search thread')
+
             return
 
         mt('search response is back ')
@@ -875,10 +925,14 @@ class Searcher(threading.Thread):
             # it means it's a server error that has a clear message.
             # That's why it gets processed in the update timer, where it can be passed in messages to user.
             self.result = rdata
+            # utils.p('end search thread')
+
             return
         # print('number of results: ', len(rdata.get('results', [])))
         if self.stopped():
             utils.p('stopping search : ' + str(query))
+            # utils.p('end search thread')
+
             return
 
         mt('search finished')
@@ -896,7 +950,7 @@ class Searcher(threading.Thread):
             thumb_small_filepaths.append(imgpath)
 
             if d["assetType"] == 'hdr':
-                larege_thumb_url = d['thumbnailMiddleUrlNonsquared']
+                larege_thumb_url = d['thumbnailLargeUrlNonsquared']
 
             else:
                 larege_thumb_url = d['thumbnailMiddleUrl']
@@ -945,10 +999,12 @@ class Searcher(threading.Thread):
         for k in thumb_full_download_threads.keys():
             if k not in thumb_full_filepaths:
                 killthreads_full.append(k)  # do actual killing here?
-        # TODO do the killing/ stopping here! remember threads might have finished inbetween!
+        # TODO do the killing/ stopping here. remember threads might have finished inbetween.
 
         if self.stopped():
             utils.p('stopping search : ' + str(query))
+            # utils.p('end search thread')
+
             return
 
         # this loop handles downloading of small thumbnails
@@ -973,6 +1029,8 @@ class Searcher(threading.Thread):
                                 i += 1
         if self.stopped():
             utils.p('stopping search : ' + str(query))
+            # utils.p('end search thread')
+
             return
         idx = 0
         while len(thumb_sml_download_threads) > 0:
@@ -984,6 +1042,8 @@ class Searcher(threading.Thread):
                     i += 1
 
         if self.stopped():
+            # utils.p('end search thread')
+
             utils.p('stopping search : ' + str(query))
             return
 
@@ -995,6 +1055,7 @@ class Searcher(threading.Thread):
                 #                           daemon=True)
                 thread.start()
                 thumb_full_download_threads[imgpath] = thread
+        # utils.p('end search thread')
         mt('thumbnails finished')
 
 
@@ -1002,7 +1063,9 @@ def build_query_common(query, props):
     '''add shared parameters to query'''
     query_common = {}
     if props.search_keywords != '':
-        query_common["query"] = props.search_keywords
+        # keywords = urllib.parse.urlencode(props.search_keywords)
+        keywords = props.search_keywords.replace('&','%26')
+        query_common["query"] = keywords
 
     if props.search_verification_status != 'ALL' and utils.profile_is_validator():
         query_common['verification_status'] = props.search_verification_status.lower()
@@ -1215,7 +1278,7 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
     requeststring += '&page_size=' + str(page_size)
     bk_logger.debug(requeststring)
     response = rerequests.get(requeststring, headers=headers)  # , params = rparameters)
-    # print(r.json())
+    # print(response.json())
     search_results = response.json()
 
     results = []
@@ -1504,7 +1567,7 @@ def register_search():
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if user_preferences.use_timers:
-        bpy.app.timers.register(timer_update)
+        bpy.app.timers.register(search_timer)
 
     categories.load_categories()
 
@@ -1515,5 +1578,5 @@ def unregister_search():
     for c in classes:
         bpy.utils.unregister_class(c)
 
-    if bpy.app.timers.is_registered(timer_update):
-        bpy.app.timers.unregister(timer_update)
+    if bpy.app.timers.is_registered(search_timer):
+        bpy.app.timers.unregister(search_timer)

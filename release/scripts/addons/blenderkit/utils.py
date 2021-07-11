@@ -38,6 +38,10 @@ IDLE_PRIORITY_CLASS = 0x00000040
 NORMAL_PRIORITY_CLASS = 0x00000020
 REALTIME_PRIORITY_CLASS = 0x00000100
 
+supported_material_click = ('MESH', 'CURVE', 'META', 'FONT', 'SURFACE', 'VOLUME', 'GPENCIL')
+# supported_material_drag = ('MESH', 'CURVE', 'META', 'FONT', 'SURFACE', 'VOLUME', 'GPENCIL')
+supported_material_drag = ('MESH')
+
 
 def experimental_enabled():
     preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -337,9 +341,14 @@ def get_hidden_texture(name, force_reload=False):
     return t
 
 
-def img_to_preview(img):
-    img.preview.image_size = (img.size[0], img.size[1])
-    img.preview.image_pixels_float = img.pixels[:]
+def img_to_preview(img, copy_original = False):
+    if bpy.app.version[0]>=3:
+        img.preview_ensure()
+    if not copy_original:
+        return;
+    if img.preview.image_size != img.size:
+        img.preview.image_size = (img.size[0], img.size[1])
+        img.preview.image_pixels_float = img.pixels[:]
     # img.preview.icon_size = (img.size[0], img.size[1])
     # img.preview.icon_pixels_float = img.pixels[:]
 
@@ -852,19 +861,37 @@ def get_fake_context(context, area_type='VIEW_3D'):
         # print(w,a,r)
     return C_dict
 
+# def is_url(text):
 
-def label_multiline(layout, text='', icon='NONE', width=-1):
-    ''' draw a ui label, but try to split it in multiple lines.'''
+
+def label_multiline(layout, text='', icon='NONE', width=-1, max_lines = 10):
+    '''
+     draw a ui label, but try to split it in multiple lines.
+
+    Parameters
+    ----------
+    layout
+    text
+    icon
+    width width to split by in character count
+    max_lines maximum lines to draw
+
+    Returns
+    -------
+    True if max_lines was overstepped
+    '''
     if text.strip() == '':
         return
+    text = text.replace('\r\n','\n')
     lines = text.split('\n')
     if width > 0:
         threshold = int(width / 5.5)
     else:
         threshold = 35
-    maxlines = 8
     li = 0
     for l in lines:
+        # if is_url(l):
+        li+=1
         while len(l) > threshold:
             i = l.rfind(' ', 0, threshold)
             if i < 1:
@@ -874,12 +901,15 @@ def label_multiline(layout, text='', icon='NONE', width=-1):
             icon = 'NONE'
             l = l[i:].lstrip()
             li += 1
-            if li > maxlines:
+            if li > max_lines:
                 break;
-        if li > maxlines:
+        if li > max_lines:
             break;
         layout.label(text=l, icon=icon)
         icon = 'NONE'
+    if li>max_lines:
+        return True
+
 
 
 def trace():

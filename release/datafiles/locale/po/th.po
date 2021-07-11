@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -1287,10 +1287,6 @@ msgid "Matrix"
 msgstr "เมทริกซ์"
 
 
-msgid "Mask"
-msgstr "หน้ากาก"
-
-
 msgid "Step"
 msgstr "ขั้นตอน"
 
@@ -1369,6 +1365,10 @@ msgstr "จัตุรัสผกผัน"
 
 msgid "Repeat"
 msgstr "ทำซ้ำ"
+
+
+msgid "Mask"
+msgstr "หน้ากาก"
 
 
 msgid "Mask Texture"
@@ -2172,10 +2172,6 @@ msgid "Names"
 msgstr "ชื่อ"
 
 
-msgid "Edge Data"
-msgstr "ข้อมูลขอบ"
-
-
 msgid "Face Data"
 msgstr "ข้อมูลด้าน"
 
@@ -2302,6 +2298,10 @@ msgstr "ร้อยละ"
 
 msgid "Ray Radius"
 msgstr "รัศมีรังสี"
+
+
+msgid "Edge Data"
+msgstr "ข้อมูลขอบ"
 
 
 msgid "Vertex Data"

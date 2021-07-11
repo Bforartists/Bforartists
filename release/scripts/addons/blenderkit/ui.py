@@ -371,12 +371,16 @@ def draw_tooltip_with_author(asset_data, x, y):
 
     img = get_large_thumbnail_image(asset_data)
     gimg = None
-    atip = ''
+    author_text = ''
+
     if bpy.context.window_manager.get('bkit authors') is not None:
         a = bpy.context.window_manager['bkit authors'].get(asset_data['author']['id'])
         if a is not None and a != '':
             if a.get('gravatarImg') is not None:
                 gimg = utils.get_hidden_image(a['gravatarImg'], a['gravatarHash'])
+
+            if len(a['firstName'])>0 or len(a['lastName'])>0:
+                author_text = f"by {a['firstName']} {a['lastName']}"
 
     aname = asset_data['displayName']
     aname = aname[0].upper() + aname[1:]
@@ -388,12 +392,9 @@ def draw_tooltip_with_author(asset_data, x, y):
     rcount = 0
     quality = '-'
     if rc:
-        rcount = min(rc['quality'], rc['workingHours'])
+        rcount = min(rc.get('quality',0), rc.get('workingHours',0))
     if rcount > show_rating_threshold:
         quality = round(asset_data['ratingsAverage'].get('quality'))
-    author_text = ''
-    if len(a['firstName'])>0 or len(a['lastName'])>0:
-        author_text = f"by {a['firstName']} {a['lastName']}"
 
     draw_tooltip(x, y, name=aname, author=author_text, quality=quality, img=img,
                  gravatar=gimg)
@@ -482,12 +483,14 @@ def draw_callback_2d_progress(self, context):
 
                 loc = view3d_utils.location_3d_to_region_2d(bpy.context.region, bpy.context.space_data.region_3d,
                                                             d['location'])
+                # print('drawing downloader')
                 if loc is not None:
                     if asset_data['assetType'] == 'model':
                         # models now draw with star trek mode, no need to draw percent for the image.
                         draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img, text=tcom.report)
                     else:
                         draw_downloader(loc[0], loc[1], percent=tcom.progress, img=img, text=tcom.report)
+                # utils.p('end drawing downlaoders  downloader')
         else:
             draw_progress(x, y - index * 30, text='downloading %s' % asset_data['name'],
                           percent=tcom.progress)
@@ -767,9 +770,8 @@ def deep_ray_cast(depsgraph, ray_origin, vec):
     empty_set = False, Vector((0, 0, 0)), Vector((0, 0, 1)), None, None, None
     if not object:
         return empty_set
-
     try_object = object
-
+    print(object.type)
     while try_object and (try_object.display_type == 'BOUNDS' or object_in_particle_collection(try_object)):
         ray_origin = snapped_location + vec.normalized() * 0.0003
         try_has_hit, try_snapped_location, try_snapped_normal, try_face_index, try_object, try_matrix = bpy.context.scene.ray_cast(
@@ -1191,8 +1193,8 @@ class AssetBarOperator(bpy.types.Operator):
 
         # timers testing - seems timers might be causing crashes. testing it this way now.
         if not user_preferences.use_timers:
-            search.timer_update()
-            download.timer_update()
+            search.search_timer()
+            download.download_timer()
             tasks_queue.queue_worker()
             bg_blender.bg_update()
 
@@ -1450,7 +1452,7 @@ class AssetBarOperator(bpy.types.Operator):
                     if not asset_data.get('canDownload'):
                         message = "Let's support asset creators and Open source."
                         link_text = 'Unlock the asset.'
-                        url = paths.get_bkit_url() + '/get-blenderkit/' + asset_data['id'] + '/?from_addon'
+                        url = paths.get_bkit_url() + '/get-blenderkit/' + asset_data['id'] + '/?from_addon=True'
                         bpy.ops.wm.blenderkit_url_dialog('INVOKE_REGION_WIN', url=url, message=message,
                                                          link_text=link_text)
                         return {'RUNNING_MODAL'}
@@ -1535,7 +1537,7 @@ class AssetBarOperator(bpy.types.Operator):
                         else:
                             # first, test if object can have material applied.
                             # TODO add other types here if droppable.
-                            if object is not None and not object.is_library_indirect and object.type == 'MESH':
+                            if object is not None and not object.is_library_indirect and object.type in utils.supported_material_drag:
                                 target_object = object.name
                                 # create final mesh to extract correct material slot
                                 depsgraph = bpy.context.evaluated_depsgraph_get()
@@ -1549,7 +1551,11 @@ class AssetBarOperator(bpy.types.Operator):
                                                          message="Please select the model,"
                                                                  "go to the 'Selected Model' panel "
                                                                  "in BlenderKit and hit 'Bring to Scene' first.")
-
+                                print(object.type)
+                                if object.type not in utils.supported_material_drag:
+                                    ui_panels.ui_message(title='Unsupported object type',
+                                                         message="Only meshes are supported for material drag-drop.\n "
+                                                                 "Use click interaction for other object types.")
                                 self.report({'WARNING'}, "Invalid or library object as input:")
                                 target_object = ''
                                 target_slot = ''
@@ -1561,12 +1567,17 @@ class AssetBarOperator(bpy.types.Operator):
                     if ui_props.asset_type in ('MATERIAL',
                                                'MODEL'):  # this was meant for particles, commenting for now or ui_props.asset_type == 'MODEL':
                         ao = bpy.context.active_object
-                        if ao != None and not ao.is_library_indirect:
+                        supported_material_click = ('MESH', 'CURVE', 'META', 'FONT', 'SURFACE', 'VOLUME', 'GPENCIL')
+                        if ao != None and not ao.is_library_indirect and ao.type in supported_material_click:
                             target_object = bpy.context.active_object.name
                             target_slot = bpy.context.active_object.active_material_index
                             # change snapped location for placing material downloader.
                             ui_props.snapped_location = bpy.context.active_object.location
                         else:
+                            if ao != None and ui_props.asset_type == 'MATERIAL' and ao.type not in supported_material_click:
+                                ui_panels.ui_message(title='Unsupported object type',
+                                                     message="Can't assign material to this object type."
+                                                             "Please select another object.")
                             target_object = ''
                             target_slot = ''
                 # FIRST START SEARCH
@@ -1623,6 +1634,14 @@ class AssetBarOperator(bpy.types.Operator):
                                                           asset_index=asset_search_index,
                                                           # replace_resolution=True,
                                                           invoke_resolution=True,
+                                                          max_resolution=asset_data.get('max_resolution', 0)
+                                                          )
+                    elif ui_props.asset_type == 'SCENE':
+                        bpy.ops.scene.blenderkit_download('INVOKE_DEFAULT',
+                                                          asset_index=asset_search_index,
+                                                          # replace_resolution=True,
+                                                          invoke_resolution=False,
+                                                          invoke_scene_settings=True,
                                                           max_resolution=asset_data.get('max_resolution', 0)
                                                           )
                     else:

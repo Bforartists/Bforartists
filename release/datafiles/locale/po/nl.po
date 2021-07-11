@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -646,16 +646,16 @@ msgid "Constant"
 msgstr "Constant"
 
 
-msgid "Mask"
-msgstr "Mask"
-
-
 msgid "Mirror Modifier"
 msgstr "Spiegel Aanpasser"
 
 
 msgid "Step"
 msgstr "Stap"
+
+
+msgid "Space"
+msgstr "Ruimte"
 
 
 msgid "Active Layer"
@@ -686,12 +686,12 @@ msgid "Inverse Square"
 msgstr "Inverse Wortel"
 
 
+msgid "Mask"
+msgstr "Mask"
+
+
 msgid "Rotate"
 msgstr "Roteer"
-
-
-msgid "Space"
-msgstr "Ruimte"
 
 
 msgid "Texture Slot"
@@ -1164,10 +1164,6 @@ msgid "Help"
 msgstr "Help"
 
 
-msgid "Edge Data"
-msgstr "Rand Gegevens"
-
-
 msgid "Normals"
 msgstr "Normalen"
 
@@ -1246,6 +1242,10 @@ msgstr "Eigen Normalen"
 
 msgid "All Layers"
 msgstr "Alle Lagen"
+
+
+msgid "Edge Data"
+msgstr "Rand Gegevens"
 
 
 msgid "Custom Normal"

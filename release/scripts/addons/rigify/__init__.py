@@ -64,6 +64,7 @@ initial_load_order = [
     'rig_ui_template',
     'generate',
     'rot_mode',
+    'operators',
     'ui',
 ]
 
@@ -449,6 +450,7 @@ def register():
     ui.register()
     feature_set_list.register()
     metarig_menu.register()
+    operators.register()
 
     # Classes.
     for cls in classes:
@@ -597,6 +599,7 @@ def unregister():
     clear_rigify_parameters()
 
     # Sub-modules.
+    operators.unregister()
     metarig_menu.unregister()
     ui.unregister()
     feature_set_list.unregister()

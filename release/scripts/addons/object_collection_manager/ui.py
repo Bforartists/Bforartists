@@ -165,7 +165,7 @@ class CollectionManager(Operator):
         prop = c_icon.operator("view3d.set_active_collection",
                                               text='', icon='GROUP', depress=highlight)
         prop.is_master_collection = True
-        prop.collection_name = 'Master Collection'
+        prop.collection_name = 'Scene Collection'
 
         master_collection_row.separator()
 
@@ -226,7 +226,7 @@ class CollectionManager(Operator):
                                    depress=some_selected,
                                    )
         prop.is_master_collection = True
-        prop.collection_name = 'Master Collection'
+        prop.collection_name = 'Scene Collection'
 
 
         # global rtos
@@ -278,7 +278,7 @@ class CollectionManager(Operator):
         prop = row_setcol.operator("view3d.set_collection", text="",
                                    icon=icon, emboss=False)
         prop.is_master_collection = True
-        prop.collection_name = 'Master Collection'
+        prop.collection_name = 'Scene Collection'
 
         # add vertical separator line
         separator = row_setcol.row()

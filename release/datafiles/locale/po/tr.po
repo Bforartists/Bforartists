@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3636,6 +3636,10 @@ msgid "Mirror"
 msgstr "Yansıtma"
 
 
+msgid "Vertex Weight"
+msgstr "Ağırlık Ortalaması:"
+
+
 msgid "Hook"
 msgstr "Kanca Ekle"
 
@@ -3708,10 +3712,6 @@ msgid "Strength of modifier effect"
 msgstr "Fark Değiştirici Ekle"
 
 
-msgid "Mask"
-msgstr "Maske"
-
-
 msgid "Mirror Modifier"
 msgstr "Değiştirici Ekle"
 
@@ -3740,16 +3740,16 @@ msgid "Frame Offset"
 msgstr "Kare Sil"
 
 
+msgid "Space"
+msgstr "Boşluk"
+
+
 msgid "Vertex Group Element"
 msgstr "Yeni bir nokta grubu oluşturur"
 
 
 msgid "Group Index"
 msgstr "Yeni Gurup"
-
-
-msgid "Vertex Weight"
-msgstr "Ağırlık Ortalaması:"
 
 
 msgid "Grid Subdivisions"
@@ -3948,6 +3948,10 @@ msgid "Soften"
 msgstr "Yumuşat"
 
 
+msgid "Mask"
+msgstr "Maske"
+
+
 msgid "Mask Tool"
 msgstr "Boolean Araçları"
 
@@ -4026,10 +4030,6 @@ msgstr "Kontur Metodu:"
 
 msgid "Drag Dot"
 msgstr "Noktalı dosyaları gizle (Linuxta, Nokta ile başlayan dosyalar gizli dosyalardır)"
-
-
-msgid "Space"
-msgstr "Boşluk"
 
 
 msgid "Texture Overlay Alpha"
@@ -23127,11 +23127,6 @@ msgstr "Arabellek rengini yapıştır"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "Keskinliği Temizle"
-
-
-msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "Kenarı SY Döndür"
 
@@ -23139,6 +23134,11 @@ msgstr "Kenarı SY Döndür"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "Kenarı SYT Döndür"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "Keskinliği Temizle"
 
 
 msgctxt "Operator"
@@ -23298,22 +23298,6 @@ msgstr "Dosya kaydı olanaksız"
 
 msgid "Could not connect vertices"
 msgstr "Bağlantılı başka nokta(lar) seçmelisiniz "
-
-
-msgid "Could not dissolve faces"
-msgstr "Ön Görünümde Olmalısınız (NumPad1)"
-
-
-msgid "Invalid selection"
-msgstr "Seçim Çevresi"
-
-
-msgid "Internal mesh error"
-msgstr "Etkileşimli Aynala"
-
-
-msgid "Could not create merged face"
-msgstr "Yeni dosya oluştur"
 
 
 msgid "Scene not found"

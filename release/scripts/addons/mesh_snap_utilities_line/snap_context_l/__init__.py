@@ -381,7 +381,6 @@ class SnapContext():
         self._dist_px = int(dist_px)
         self._dist_px_sq = self._dist_px ** 2
         self.threshold = 2 * self._dist_px + 1
-        self._snap_buffer = None
 
     def set_snap_mode(self, snap_to_vert, snap_to_edge, snap_to_face):
         snap_mode = 0

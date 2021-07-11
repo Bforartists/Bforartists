@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6144,12 +6144,12 @@ msgid "Lattice"
 msgstr "Kratownica"
 
 
-msgid "Mask"
-msgstr "Maska"
-
-
 msgid "Fixed"
 msgstr "Stałe"
+
+
+msgid "Blend"
+msgstr "Mieszanie"
 
 
 msgid "Library"
@@ -6166,6 +6166,10 @@ msgstr "Obwiednia"
 
 msgid "Local"
 msgstr "Lokalnie"
+
+
+msgid "Mask"
+msgstr "Maska"
 
 
 msgid "Brush"
@@ -6263,10 +6267,6 @@ msgstr "Wysokość"
 
 msgid "Sound"
 msgstr "Dźwięk"
-
-
-msgid "Blend"
-msgstr "Mieszanie"
 
 
 msgid "Filter"
@@ -7095,22 +7095,6 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Nie można otworzyć pliku %s do zapisu: %s"
 
 
-msgid "Could not connect vertices"
-msgstr "Nie można było połączyć wierzchołków"
-
-
-msgid "Could not dissolve faces"
-msgstr "Nie można było rozpuścić ścian"
-
-
-msgid "Invalid selection"
-msgstr "Niepoprawne zaznaczenie"
-
-
-msgid "Internal mesh error"
-msgstr "Wewnętrzny błąd siatki"
-
-
 msgid "Zero normal given"
 msgstr "Dana zerowa normalna"
 
@@ -7127,12 +7111,8 @@ msgid "Selected loops must have equal edge counts"
 msgstr "Zaznaczone pętle muszą posiadać równą liczbę krawędzi"
 
 
-msgid "Could not find boundary of dissolve region"
-msgstr "Nie udało się odnaleźć ograniczenia regionu rozposzczania"
-
-
-msgid "Could not create merged face"
-msgstr "Nie można było utworzyć scalonej ściany"
+msgid "Could not connect vertices"
+msgstr "Nie można było połączyć wierzchołków"
 
 
 msgid "Closed loops unsupported"
@@ -10259,6 +10239,14 @@ msgid "Depth too large"
 msgstr "Za duża głębia"
 
 
+msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
+msgstr "Zaznaczanie wierzchołków - Shift-klik dla trybów mieszanych, Ctrl-klik zawęża wybór"
+
+
+msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
+msgstr "Zaznaczanie ścian - Shift-klik dla trybów mieszanych, Ctrl-klik rozszerza wybór"
+
+
 msgid "Cannot fly a camera from an external library"
 msgstr "Nie można oblatywać (fly) kamery z biblioteki zawnętrznej"
 
@@ -10271,18 +10259,6 @@ msgid "Cannot fly an object with constraints"
 msgstr "Nie można oblatywać (fly) obiektu z ogranicznikami"
 
 
-msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
-msgstr "Zaznaczanie wierzchołków - Shift-klik dla trybów mieszanych, Ctrl-klik zawęża wybór"
-
-
-msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "Zaznaczanie ścian - Shift-klik dla trybów mieszanych, Ctrl-klik rozszerza wybór"
-
-
-msgid "No active camera"
-msgstr "Brak aktywnej kamery"
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "Nie można nawigować kamerą z biblioteki zewnętrznej"
 
@@ -10293,6 +10269,10 @@ msgstr "Nie można nawigować gdy przesunięcie widoku jest zablokowane"
 
 msgid "Cannot navigate an object with constraints"
 msgstr "Nie można nawigować obiektem z ogranicznikami"
+
+
+msgid "No active camera"
+msgstr "Brak aktywnej kamery"
 
 
 msgid "Auto Keying On"
