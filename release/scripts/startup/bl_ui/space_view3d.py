@@ -3067,7 +3067,7 @@ class VIEW3D_MT_make_single_user(Menu):
         props.animation = True
         props.object = props.obdata = props.material = props.obdata_animation = False
 
-        props = layout.operator("object.make_single_user", text="Object Data Animation")
+        props = layout.operator("object.make_single_user", text="Object Data Animation", icon='MAKE_SINGLE_USER')
         props.obdata_animation = props.obdata = True
         props.object = props.material = props.animation = False
 
