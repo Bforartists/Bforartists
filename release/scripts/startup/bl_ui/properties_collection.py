@@ -106,7 +106,7 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
 
             col = split.column()
             row = col.row(align = True)
-            for i in range(0,8):
+            for i in range(8):
                 row.prop(collection, "lineart_intersection_mask", index=i, text=str(i), toggle=True)
 
 

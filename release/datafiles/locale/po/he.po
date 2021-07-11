@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
@@ -227,8 +227,8 @@ msgid "Mirror"
 msgstr "הארמ"
 
 
-msgid "Mask"
-msgstr "הכסמ"
+msgid "Space"
+msgstr "חוור"
 
 
 msgid "Red"
@@ -243,8 +243,8 @@ msgid "Blue"
 msgstr "לוחכ"
 
 
-msgid "Space"
-msgstr "חוור"
+msgid "Mask"
+msgstr "הכסמ"
 
 
 msgid "Up"
@@ -684,10 +684,6 @@ msgstr "הכסמ"
 msgctxt "Operator"
 msgid "Apply"
 msgstr "לחה"
-
-
-msgid "Invalid selection"
-msgstr "תופקתשה"
 
 
 msgid "No joints selected"

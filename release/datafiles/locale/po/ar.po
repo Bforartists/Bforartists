@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -8789,6 +8789,10 @@ msgid "Mirror"
 msgstr "ﻞﺛﺎﻣ"
 
 
+msgid "Vertex Weight"
+msgstr "ﺔﻄﻘﻧ ﻥﺯﻭ"
+
+
 msgid "Hook"
 msgstr "ﻑﺎﻄﺨﻟﺍ"
 
@@ -8947,8 +8951,8 @@ msgid "Source Object"
 msgstr "ﺭﺪﺼﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ"
 
 
-msgid "Mask"
-msgstr "ءﺎﻄﻏ"
+msgid "Boundaries"
+msgstr "ﺩﻭﺪﺤﻟﺍ"
 
 
 msgid "Mirror Modifier"
@@ -8995,6 +8999,14 @@ msgid "Frame Offset"
 msgstr "ﺭﺎﻃﻻ﻿ﺍ ﺔﺣﺍﺯﺇ"
 
 
+msgid "Space"
+msgstr "ءﺎﻀﻓ"
+
+
+msgid "Blend"
+msgstr "ﻂﻠﺧﺇ"
+
+
 msgid "Vertex Group Element"
 msgstr "ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺮﺼﻨﻋ"
 
@@ -9005,10 +9017,6 @@ msgstr "ﻂﻘﻧ ﺔﻋﻮﻤﺠﻣ ﻲﻓ ﺔﻄﻘﻨﻟ ﻥﺯﻮﻟﺍ ﺔ�
 
 msgid "Group Index"
 msgstr "ﺔﻋﻮﻤﺠﻣ ﺮﺷﺆﻣ"
-
-
-msgid "Vertex Weight"
-msgstr "ﺔﻄﻘﻧ ﻥﺯﻭ"
 
 
 msgid "Active Layer"
@@ -9427,6 +9435,10 @@ msgid "Soften"
 msgstr "ﻒﻄّﻟ"
 
 
+msgid "Mask"
+msgstr "ءﺎﻄﻏ"
+
+
 msgid "Jitter the position of the brush while painting"
 msgstr "ﻢﺳﺮﻟﺍ ﺪﻨﻋ ﺓﺎﺷﺮﻔﻠﻟ ﻲﺋﺍﻮﺸﻋ ﻊﻗﻮﻣ"
 
@@ -9665,10 +9677,6 @@ msgstr "ﺮﺠﻟﺍ ﺔﻄﻘﻧ"
 
 msgid "Allows a single dot to be carefully positioned"
 msgstr "ﺔﻗﺪﺑ ﺓﺪﺣﺍﻮﻟﺍ ﺔﺨﻄﻠﻟﺍ ﻊﺿﻮﺗ ﻥﺄﺑ ﺢﻤﺳﺍ"
-
-
-msgid "Space"
-msgstr "ءﺎﻀﻓ"
 
 
 msgid "Limit brush application to the distance specified by spacing"
@@ -11397,10 +11405,6 @@ msgstr "ﺓﺭﻮﺼﻠﻟ ﺮﻴﻴﺼﺘﻟﺍ ﺕﺎﺤﺘﻓ"
 
 msgid "X/Y pixels per meter"
 msgstr "X/Y ﺮﺘﻣ ﻞﻜﻟ ﺕﻼ﻿ﺴﻜﺑ"
-
-
-msgid "Width and height in pixels, zero when image data cant be loaded"
-msgstr "ﺓﺭﻮﺼﻟﺍ ﻞﻴﻤﺤﺗ ﺔﻴﻧﺎﻜﻣﺍ ﻡﺪﻋ ﺪﻨﻋ ﺮﻔﺻ ,ﻂﻘﻨﻟﺎﺑ ﻝﻮﻄﻟﺍ ﻭ ﺽﺮﻌﻟﺍ"
 
 
 msgid "Where the image comes from"
@@ -14307,10 +14311,6 @@ msgstr "ﺮﻤﺣﻻ﻿ﺍ ﻞﻣﺎﻌﻤﻟﺍ"
 
 msgid "Node tree for node-based textures"
 msgstr "ﺪﻘﻌﻟﺍ ﻰﻠﻋ ﻢﺋﺎﻘﻟﺍ ﺞﻴﺴﻨﻠﻟ ﺪﻘﻌﻟﺍ ﺓﺮﺠﺷ"
-
-
-msgid "Blend"
-msgstr "ﻂﻠﺧﺇ"
 
 
 msgid "Procedural - create a ramp texture"
@@ -25776,10 +25776,6 @@ msgstr "ﺔﻓﺎﺤﻟﺍ ﺭﺎﻴﺘﺣﺍ ﻂﻤﻧ"
 
 msgid "Face selection mode"
 msgstr "ﻪﺟﻮﻟﺍ ﺭﺎﻴﺘﺧﺍ ﻊﺿﻭ"
-
-
-msgid "Boundaries"
-msgstr "ﺩﻭﺪﺤﻟﺍ"
 
 
 msgid "Multiple Faces"
@@ -39458,11 +39454,6 @@ msgstr "Xﻝﺍ ﺔﺳﻮﻜﻌﻤﻟﺍ ﺔﻔﻗﻮﻟﺍ ﻖﺼﻟ"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "ﺩﺎﺤﻟﺍ ﺢﺴﻣ"
-
-
-msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "ﻦﻴﻤﻴﻟﺍ ﻰﻟﺇ ﺔﻓﺎﺤﻟﺍ ﺭﻭّﺩ"
 
@@ -39470,6 +39461,11 @@ msgstr "ﻦﻴﻤﻴﻟﺍ ﻰﻟﺇ ﺔﻓﺎﺤﻟﺍ ﺭﻭّﺩ"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "ﺭﺎﺴﻴﻟﺍ ﻰﻟﺇ ﺔﻓﺎﺤﻟﺍ ﺭﻭّﺩ"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "ﺩﺎﺤﻟﺍ ﺢﺴﻣ"
 
 
 msgctxt "Operator"
@@ -39805,18 +39801,6 @@ msgstr ".%s‬\", ‪%s‬‪\" :ﻒﻠﻤﻟﺍ ﺓءﺍﺮﻗ ﻦﻜﻤﻳ ﻻ
 
 msgid "Could not connect vertices"
 msgstr "ﺔﻠﺼﺘﻤﻟﺍ UV ـﻟﺍ ﻂﻘﻧ ﻦﻣ ﻞﺴﻠﺴﺗ ﺮﺘﺧﺇ"
-
-
-msgid "Invalid selection"
-msgstr "ﺭﺎﻴﺘﺧﻻ﻿ﺍ ﻲﻔﺧﺇ"
-
-
-msgid "Internal mesh error"
-msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺁﺮﻣ"
-
-
-msgid "Could not create merged face"
-msgstr "ﺓﺪﻳﺪﺟ ﺪﻘﻋ ﺓﺮﺠﺷ ﺊﺸﻧﺍ"
 
 
 msgid "<invalid>"
@@ -41358,16 +41342,16 @@ msgid "Cannot fly an object with constraints"
 msgstr "ﻦﺋﺎﻜﻟﺍ ﺩﻮﻴﻗ ﻝﺯﺍ"
 
 
-msgid "No active camera"
-msgstr "ﺔﻟﺎﻌّﻓ ﺍﺮﻴﻣﺎﻛ ﺪﺟﻮﻳ ﻻ﻿"
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "ﺔﻴﺟﺭﺎﺧ ﺔﺒﺘﻜﻣ ﻦﻣ ﺍﺮﻴﻣﺎﻜﻟﺍ ﺢﻔّﺼﺗ ﻦﻜﻤﻳ ﻻ﻿"
 
 
 msgid "Cannot navigate an object with constraints"
 msgstr "ﺩﻮﻴﻘﺑ ﻦﺋﺎﻜﻟﺍ ﺢﻔّﺼﺗ ﻦﻜﻤﻳ ﻻ﻿"
+
+
+msgid "No active camera"
+msgstr "ﺔﻟﺎﻌّﻓ ﺍﺮﻴﻣﺎﻛ ﺪﺟﻮﻳ ﻻ﻿"
 
 
 msgid "Auto Keying On"

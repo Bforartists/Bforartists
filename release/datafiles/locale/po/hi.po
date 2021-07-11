@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1690,10 +1690,6 @@ msgid "Sharp"
 msgstr "पैना"
 
 
-msgid "Mask"
-msgstr "आवरण"
-
-
 msgid "Step"
 msgstr "कदम"
 
@@ -1704,6 +1700,14 @@ msgstr "निर्धारित"
 
 msgid "Merge"
 msgstr "विलय करें"
+
+
+msgid "Space"
+msgstr "रिक्त स्थान"
+
+
+msgid "Blend"
+msgstr "मिश्रण"
 
 
 msgid "Grid Scale"
@@ -1826,6 +1830,10 @@ msgid "Soften"
 msgstr "मॄदु"
 
 
+msgid "Mask"
+msgstr "आवरण"
+
+
 msgid "Brush"
 msgstr "तूलिका"
 
@@ -1888,10 +1896,6 @@ msgstr "कपड़ा"
 
 msgid "Dots"
 msgstr "बिन्दु्"
-
-
-msgid "Space"
-msgstr "रिक्त स्थान"
 
 
 msgid "Use Vertex"
@@ -2545,10 +2549,6 @@ msgstr "लाइनों"
 
 msgid "Register"
 msgstr "पंजीकृत करें"
-
-
-msgid "Blend"
-msgstr "मिश्रण"
 
 
 msgid "Magic"
@@ -6470,14 +6470,6 @@ msgstr "लेखन के लिए संचिका %s नहीं खो�
 
 msgid "Could not connect vertices"
 msgstr "शिरोबिन्दु से कनेक्ट नहीं कर सकता"
-
-
-msgid "Invalid selection"
-msgstr "अमान्य चयन"
-
-
-msgid "Internal mesh error"
-msgstr "आंतरिक जाल त्रुटि"
 
 
 msgid "Basic"

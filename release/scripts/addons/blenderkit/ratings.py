@@ -57,6 +57,7 @@ def upload_review_thread(url, reviews, headers):
     #     print('reviews upload failed: %s' % str(e))
 
 
+
 def upload_rating(asset):
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     api_key = user_preferences.api_key

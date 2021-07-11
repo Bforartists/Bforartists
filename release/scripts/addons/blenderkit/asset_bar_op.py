@@ -633,7 +633,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
                 properties_width = r.width
         tooltip_x = min(widget.x_screen + widget.width,
                         bpy.context.region.width - self.tooltip_panel.width - properties_width)
-        print(widget.x_screen + widget.width, bpy.context.region.width - self.tooltip_panel.width)
+        # print(widget.x_screen + widget.width, bpy.context.region.width - self.tooltip_panel.width)
 
 
 def register():

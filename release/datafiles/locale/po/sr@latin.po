@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -5150,10 +5150,6 @@ msgid "Lattice object to deform with"
 msgstr "Objekat kaveza za deformisanje"
 
 
-msgid "Mask"
-msgstr "Maska"
-
-
 msgid "Step"
 msgstr "Korak"
 
@@ -5188,6 +5184,14 @@ msgstr "Veličina talasa"
 
 msgid "Reverse"
 msgstr "Obrnuto"
+
+
+msgid "Space"
+msgstr "Prostor"
+
+
+msgid "Blend"
+msgstr "Mešanje"
 
 
 msgid "Group Index"
@@ -5430,6 +5434,10 @@ msgid "Soften"
 msgstr "Umekšanje"
 
 
+msgid "Mask"
+msgstr "Maska"
+
+
 msgid "Brush"
 msgstr "Četkica"
 
@@ -5568,10 +5576,6 @@ msgstr "Pomeranje tufne"
 
 msgid "Allows a single dot to be carefully positioned"
 msgstr "Omogući precizno pozicioniranje svake tufne"
-
-
-msgid "Space"
-msgstr "Prostor"
 
 
 msgid "Texture Overlay Alpha"
@@ -8034,10 +8038,6 @@ msgstr "Faktor zelene"
 
 msgid "Factor Red"
 msgstr "Faktor crvene"
-
-
-msgid "Blend"
-msgstr "Mešanje"
 
 
 msgid "Clouds"
@@ -26984,11 +26984,6 @@ msgstr "Ubaci pozu izvrnutu po X osi"
 
 
 msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Očisti slobodoručne ivice"
-
-
-msgctxt "Operator"
 msgid "Recalculate Outside"
 msgstr "Preračunaj ka spolja"
 
@@ -27030,6 +27025,11 @@ msgstr "X-zrak"
 msgctxt "Operator"
 msgid "Assign to Group"
 msgstr "Pridruži novoj grupi"
+
+
+msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Očisti slobodoručne ivice"
 
 
 msgctxt "Operator"
@@ -27186,10 +27186,6 @@ msgstr "Ne mogu da otvorim datoteku %s za upis: %s"
 
 msgid "Could not connect vertices"
 msgstr "Ne mogu da spojim temena"
-
-
-msgid "Could not create merged face"
-msgstr "Ne mogu da napravim spojenu stranicu"
 
 
 msgid "Basic"
@@ -28375,12 +28371,12 @@ msgid "Cannot fly an object with constraints"
 msgstr "Ograničenja objekta"
 
 
-msgid "No active camera"
-msgstr "Bez aktivne kamere"
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "Ne možete da upravljate kamerom iz spoljne zbirke"
+
+
+msgid "No active camera"
+msgstr "Bez aktivne kamere"
 
 
 msgid "along X"

@@ -58,6 +58,8 @@ def add_task(task, wait = 0, only_last = False, fake_context = False, fake_conte
 
 
 def queue_worker():
+    # utils.p('start queue worker timer')
+
     #bk_logger.debug('timer queue worker')
     time_step = 2.0
     q = get_queue()
@@ -110,6 +112,8 @@ def queue_worker():
         # print('queue while 2')
     for task in back_to_queue:
         q.put(task)
+    # utils.p('end queue worker timer')
+
     return 2.0
 
 

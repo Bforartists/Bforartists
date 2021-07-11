@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -8130,6 +8130,10 @@ msgid "Subdivide"
 msgstr "Rozdělit"
 
 
+msgid "Vertex Weight"
+msgstr "Nastavit váhu"
+
+
 msgid "Hook"
 msgstr "Hák"
 
@@ -8324,10 +8328,6 @@ msgid "Strength of modifier effect"
 msgstr "Velikost štětce"
 
 
-msgid "Mask"
-msgstr "Maska"
-
-
 msgid "Mirror Modifier"
 msgstr "Kopírovat modifikátor"
 
@@ -8396,6 +8396,14 @@ msgid "Factor for tinting"
 msgstr "Faktor pro tónování"
 
 
+msgid "Space"
+msgstr "Rozestup"
+
+
+msgid "Blend"
+msgstr "Přechod"
+
+
 msgid "Vertex Group Element"
 msgstr "Skupina vertexů"
 
@@ -8406,10 +8414,6 @@ msgstr "Vytvořit novou skupinu vertexů"
 
 msgid "Group Index"
 msgstr "Název skupiny vertexů"
-
-
-msgid "Vertex Weight"
-msgstr "Nastavit váhu"
 
 
 msgid "Grid and Canvas Settings"
@@ -8800,6 +8804,10 @@ msgid "Soften"
 msgstr "Zjemnit"
 
 
+msgid "Mask"
+msgstr "Maska"
+
+
 msgid "Jitter the position of the brush while painting"
 msgstr "Počáteční pozice pro osu Y"
 
@@ -8986,10 +8994,6 @@ msgstr "Tečkování"
 
 msgid "Drag Dot"
 msgstr "Přesun"
-
-
-msgid "Space"
-msgstr "Rozestup"
 
 
 msgid "Anchored"
@@ -10730,10 +10734,6 @@ msgid "Fix Poles"
 msgstr "Opravit Póly"
 
 
-msgid "Smooth Normals"
-msgstr "Vyhladit Normály"
-
-
 msgid "UV loop layer to be used as cloning source"
 msgstr "Velikost prostor textury"
 
@@ -12309,10 +12309,6 @@ msgstr "Činitel"
 
 msgid "Factor Red"
 msgstr "Činitel"
-
-
-msgid "Blend"
-msgstr "Přechod"
 
 
 msgid "Clouds"
@@ -14859,10 +14855,6 @@ msgid "Special Characters"
 msgstr "Speciální Znaky"
 
 
-msgid "Edge Data"
-msgstr "Data Hran"
-
-
 msgid "Face Data"
 msgstr "Data Ploch"
 
@@ -15545,6 +15537,10 @@ msgstr "Vrstvy"
 
 msgid "Max Distance"
 msgstr "Maximální Vzdálenost"
+
+
+msgid "Edge Data"
+msgstr "Data Hran"
 
 
 msgid "Decimate Modifier"
@@ -27590,6 +27586,10 @@ msgstr "Vytvořit proxy objekt"
 
 msgid "Edge Length"
 msgstr "Délky hran"
+
+
+msgid "Smooth Normals"
+msgstr "Vyhladit Normály"
 
 
 msgctxt "Operator"
@@ -44286,6 +44286,11 @@ msgstr "Přebudovat"
 
 
 msgctxt "Operator"
+msgid "Refresh All"
+msgstr "Obnovit Vše"
+
+
+msgctxt "Operator"
 msgid "Grouped"
 msgstr "Seskupené"
 
@@ -44344,11 +44349,6 @@ msgstr "Přiblížit"
 msgctxt "Operator"
 msgid "Fit Preview in Window"
 msgstr "Přizpůsobit Náhled v Okně"
-
-
-msgctxt "Operator"
-msgid "Refresh All"
-msgstr "Obnovit Vše"
 
 
 msgctxt "Operator"
@@ -45649,13 +45649,13 @@ msgstr "Nová Hrana/Plocha z Vrcholů"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp from Vertices"
-msgstr "Vymazat Ostré z Vrcholů"
+msgid "Extrude Edges"
+msgstr "Vysunout hrany"
 
 
 msgctxt "Operator"
-msgid "Extrude Edges"
-msgstr "Vysunout hrany"
+msgid "Clear Sharp from Vertices"
+msgstr "Vymazat Ostré z Vrcholů"
 
 
 msgctxt "Operator"
@@ -45958,11 +45958,6 @@ msgstr "Zkosit vrcholy"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "Vymazat ostré"
-
-
-msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "Zkosit hrany"
 
@@ -45975,6 +45970,11 @@ msgstr "Rotovat hranu CW"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "Rotovat hranu CCW"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "Vymazat ostré"
 
 
 msgctxt "Operator"
@@ -46421,18 +46421,6 @@ msgstr "Problém s přeměnou materiálu Eevee. Chyba v konzole"
 
 msgid "Cannot open file %s for writing: %s"
 msgstr "Nelze otevřít soubor %s pro psaní %s"
-
-
-msgid "Could not dissolve faces"
-msgstr "Nelze rozpustit plochy"
-
-
-msgid "Invalid selection"
-msgstr "Neplatný výběr"
-
-
-msgid "Could not create merged face"
-msgstr "Nelze vytvořit sloučenou plochu"
 
 
 msgid "Closed loops unsupported"
@@ -48737,10 +48725,6 @@ msgid "Depth too large"
 msgstr "Hloubka moc velká"
 
 
-msgid "Cannot fly an object with constraints"
-msgstr "Vyčistit vazby objektu"
-
-
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
 msgstr "Výběr vrcholů – Se stisknutou klávesou Shift pro více režimů, stisknutí klávesy Ctrl rozbalí výběr"
 
@@ -48751,6 +48735,10 @@ msgstr "Výběr hrany - Shift-Click pro více režimů, stisknutí klávesy Ctrl
 
 msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
 msgstr "Výběr plochy – Se stisknutou klávesou Shift pro více režimů, stisknutí klávesy Ctrl rozbalí výběr"
+
+
+msgid "Cannot fly an object with constraints"
+msgstr "Vyčistit vazby objektu"
 
 
 msgid "No active element found!"
