@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -9745,6 +9745,10 @@ msgid "Mirror"
 msgstr "Specchia"
 
 
+msgid "Vertex Weight"
+msgstr "Peso del Vertice"
+
+
 msgid "Hook"
 msgstr "Gancio"
 
@@ -9963,8 +9967,8 @@ msgid "Source Object"
 msgstr "Oggetto Sorgente"
 
 
-msgid "Mask"
-msgstr "Maschera"
+msgid "Boundaries"
+msgstr "Bordi"
 
 
 msgid "Mirror Modifier"
@@ -10031,6 +10035,14 @@ msgid "Frame Offset"
 msgstr "Scostamento Fotogramma"
 
 
+msgid "Space"
+msgstr "Spazio"
+
+
+msgid "Blend"
+msgstr "Mescola"
+
+
 msgid "Vertex Group Element"
 msgstr "Elemento del Gruppo di Vertici"
 
@@ -10041,10 +10053,6 @@ msgstr "Valore del peso di un vertice in un gruppo di vertici"
 
 msgid "Group Index"
 msgstr "Indice del Gruppo"
-
-
-msgid "Vertex Weight"
-msgstr "Peso del Vertice"
 
 
 msgid "Grid Subdivisions"
@@ -10476,6 +10484,10 @@ msgid "Soften"
 msgstr "Ammorbidisci"
 
 
+msgid "Mask"
+msgstr "Maschera"
+
+
 msgid "Jitter the position of the brush while painting"
 msgstr "Rende tremolante la posizione del pennello mentre si dipinge"
 
@@ -10650,10 +10662,6 @@ msgstr "Trascina Punto"
 
 msgid "Allows a single dot to be carefully positioned"
 msgstr "Consente un punto singolo per essere posizionato con cura"
-
-
-msgid "Space"
-msgstr "Spazio"
 
 
 msgid "Limit brush application to the distance specified by spacing"
@@ -12058,10 +12066,6 @@ msgstr "Slot Render"
 
 msgid "X/Y pixels per meter"
 msgstr "Pixel X/Y per metro"
-
-
-msgid "Width and height in pixels, zero when image data cant be loaded"
-msgstr "Larghezza e altezza in pixels, zero quando i dati dell'immagine non possono essere caricati"
 
 
 msgid "Where the image comes from"
@@ -14937,10 +14941,6 @@ msgstr "Fattore Verde"
 
 msgid "Factor Red"
 msgstr "Fattore Rosso"
-
-
-msgid "Blend"
-msgstr "Mescola"
 
 
 msgid "Procedural - create a ramp texture"
@@ -18621,10 +18621,6 @@ msgid "Text Context Menu"
 msgstr "Menu Contesto Testo"
 
 
-msgid "Edge Data"
-msgstr "Dati Spigolo"
-
-
 msgid "Face Data"
 msgstr "Dati Faccia"
 
@@ -19995,6 +19991,10 @@ msgstr "Raggio del Raggio (vettore)"
 
 msgid "'Width' of rays (especially useful when raycasting against vertices or edges)"
 msgstr "'Larghezza' dei raggi (especially useful when raycasting against vertices or edges)"
+
+
+msgid "Edge Data"
+msgstr "Dati Spigolo"
 
 
 msgid "Enable edge data transfer"
@@ -32785,10 +32785,6 @@ msgstr "Seleziona l'elemento successivo (seguendo l'ordine di selezione)"
 
 msgid "Select all non-manifold vertices or edges"
 msgstr "Seleziona tutti i vertici o spigoli non-manifold"
-
-
-msgid "Boundaries"
-msgstr "Bordi"
 
 
 msgid "Boundary edges"
@@ -56811,16 +56807,6 @@ msgstr "Smussa Vertici"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "Smarca come Netto"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Smarca Spigolo come Freestyle"
-
-
-msgctxt "Operator"
 msgid "Bevel Edges"
 msgstr "Smussa Spigoli"
 
@@ -56833,6 +56819,11 @@ msgstr "Ruota Spigolo in Senso Orario"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "Ruota Spigolo in Senso Antiorario"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "Smarca come Netto"
 
 
 msgctxt "Operator"
@@ -57057,6 +57048,11 @@ msgstr "Elimina Spigoli"
 msgctxt "Operator"
 msgid "Delete Faces"
 msgstr "Elimina Facce"
+
+
+msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Smarca Spigolo come Freestyle"
 
 
 msgctxt "Operator"
@@ -57553,28 +57549,12 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Impossibile aprire il file %s per scrivere: %s"
 
 
-msgid "Could not connect vertices"
-msgstr "Impossibile connettere i vertici"
-
-
-msgid "Could not dissolve faces"
-msgstr "Impossibile dissolvere le facce"
-
-
-msgid "Invalid selection"
-msgstr "Selezione non valida"
-
-
-msgid "Internal mesh error"
-msgstr "Errore interno mesh"
-
-
 msgid "Select at least two edge loops"
 msgstr "Seleziona almeno due anelli di spigoli"
 
 
-msgid "Could not create merged face"
-msgstr "Impossibile creare la faccia unita"
+msgid "Could not connect vertices"
+msgstr "Impossibile connettere i vertici"
 
 
 msgid "Closed loops unsupported"

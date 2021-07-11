@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions
+from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions, ui_panels
 
 import threading
 import time
@@ -62,7 +62,7 @@ def check_missing():
     for l in missing:
         asset_data = l['asset_data']
 
-        downloaded = check_existing(asset_data, resolution=asset_data['resolution'])
+        downloaded = check_existing(asset_data, resolution=asset_data.get('resolution'))
         if downloaded:
             try:
                 l.reload()
@@ -315,11 +315,10 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
         sprops = s.blenderkit_scene
 
         scene = append_link.append_scene(file_names[0], link=sprops.append_link == 'LINK', fake_user=False)
-        print('scene appended')
+        # print('scene appended')
         if scene is not None:
             props = scene.blenderkit
             asset_main = scene
-            print(sprops.switch_after_append)
             if sprops.switch_after_append:
                 bpy.context.window_manager.windows[0].scene = scene
 
@@ -563,7 +562,7 @@ def replace_resolution_appended(file_paths, asset_data, resolution):
 
 
 # @bpy.app.handlers.persistent
-def timer_update():
+def download_timer():
     # TODO might get moved to handle all blenderkit stuff, not to slow down.
     '''
     check for running and finished downloads.
@@ -571,10 +570,14 @@ def timer_update():
     Finished downloads are processed and linked/appended to scene.
      '''
     global download_threads
+    # utils.p('start download timer')
+
     # bk_logger.debug('timer download')
 
     if len(download_threads) == 0:
-        return 2.0
+        # utils.p('end download timer')
+
+        return 2
     s = bpy.context.scene
     for threaddata in download_threads:
         t = threaddata[0]
@@ -589,13 +592,14 @@ def timer_update():
             if sr is not None:
                 for r in sr:
                     if asset_data['id'] == r['id']:
-                        r['downloaded'] = tcom.progress
-
+                        r['downloaded'] = 0.5#tcom.progress
         if not t.is_alive():
             if tcom.error:
                 sprops = utils.get_search_props()
                 sprops.report = tcom.report
                 download_threads.remove(threaddata)
+                # utils.p('end download timer')
+
                 return
             file_paths = paths.get_download_filepaths(asset_data, tcom.passargs['resolution'])
 
@@ -661,6 +665,8 @@ def timer_update():
                                 sres['downloaded'] = 100
 
                 bk_logger.debug('finished download thread')
+    # utils.p('end download timer')
+
     return .5
 
 
@@ -753,6 +759,7 @@ class Downloader(threading.Thread):
     # def main_download_thread(asset_data, tcom, scene_id, api_key):
     def run(self):
         '''try to download file from blenderkit'''
+        # utils.p('start downloader thread')
         asset_data = self.asset_data
         tcom = self.tcom
         scene_id = self.scene_id
@@ -832,6 +839,8 @@ class Downloader(threading.Thread):
         tcom.report = f'Unpacking files'
         self.asset_data['resolution'] = self.resolution
         resolutions.send_to_bg(self.asset_data, file_name, command='unpack')
+        # utils.p('end downloader thread')
+
 
 
 class ThreadCom:  # object passed to threads to read background process stdout info
@@ -1026,7 +1035,6 @@ def asset_in_scene(asset_data):
     au = scene.get('assets used', {})
 
     id = asset_data['assetBaseId']
-    print(id)
     if id in au.keys():
         ad = au[id]
         if ad.get('files'):
@@ -1226,7 +1234,7 @@ def show_enum_values(obj, prop_name):
 class BlenderkitDownloadOperator(bpy.types.Operator):
     """Download and link asset to scene. Only link if asset already available locally"""
     bl_idname = "scene.blenderkit_download"
-    bl_label = "BlenderKit Asset Download"
+    bl_label = "Download"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     # asset_type: EnumProperty(
@@ -1258,6 +1266,8 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
 
     invoke_resolution: BoolProperty(name='Replace resolution popup',
                                     description='pop up to ask which resolution to download', default=False)
+    invoke_scene_settings: BoolProperty(name='Scene import settings popup',
+                                    description='pop up scene import settings', default=False)
 
     resolution: EnumProperty(
         items=available_resolutions_callback,
@@ -1376,7 +1386,10 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, 'resolution', expand=True, icon_only=False)
+        if self.invoke_resolution:
+            layout.prop(self, 'resolution', expand=True, icon_only=False)
+        if self.invoke_scene_settings:
+            ui_panels.draw_scene_import_settings(self, context)
 
     def invoke(self, context, event):
         # if self.close_window:
@@ -1399,6 +1412,8 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
                 self.resolution = 'ORIGINAL'
             return wm.invoke_props_dialog(self)
 
+        if self.invoke_scene_settings:
+            return wm.invoke_props_dialog(self)
         # if self.close_window:
         #     time.sleep(0.1)
         #     context.area.tag_redraw()
@@ -1416,7 +1431,7 @@ def register_download():
     bpy.app.handlers.save_pre.append(scene_save)
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if user_preferences.use_timers:
-        bpy.app.timers.register(timer_update)
+        bpy.app.timers.register(download_timer)
 
 
 def unregister_download():
@@ -1424,5 +1439,5 @@ def unregister_download():
     bpy.utils.unregister_class(BlenderkitKillDownloadOperator)
     bpy.app.handlers.load_post.remove(scene_load)
     bpy.app.handlers.save_pre.remove(scene_save)
-    if bpy.app.timers.is_registered(timer_update):
-        bpy.app.timers.unregister(timer_update)
+    if bpy.app.timers.is_registered(download_timer):
+        bpy.app.timers.unregister(download_timer)

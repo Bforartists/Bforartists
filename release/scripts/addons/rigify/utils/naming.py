@@ -162,6 +162,9 @@ class SideZ(enum.IntEnum):
         return combine_name(parts, side_z=new_side)
 
 
+NameSides = collections.namedtuple('NameSides', ['base', 'side', 'side_z'])
+
+
 def get_name_side(name):
     return Side.from_parts(split_name(name))
 
@@ -173,7 +176,7 @@ def get_name_side_z(name):
 def get_name_base_and_sides(name):
     parts = split_name(name)
     base = combine_name(parts, side='', side_z='')
-    return base, Side.from_parts(parts),  SideZ.from_parts(parts)
+    return NameSides(base, Side.from_parts(parts),  SideZ.from_parts(parts))
 
 
 def change_name_side(name, side=None, *, side_z=None):

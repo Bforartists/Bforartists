@@ -36,6 +36,7 @@ from bpy.props import (
 
 import bpy
 import os
+import random
 import logging
 
 bk_logger = logging.getLogger('blenderkit')
@@ -887,6 +888,15 @@ class VIEW3D_PT_blenderkit_categories(Panel):
     def draw(self, context):
         draw_panel_categories(self, context)
 
+def draw_scene_import_settings(self, context):
+    s = context.scene
+    props = s.blenderkit_scene
+    layout = self.layout
+    layout.prop(props, 'switch_after_append')
+    # layout.label(text='Import method:')
+    row = layout.row()
+    row.prop(props, 'append_link', expand=True, icon_only=False)
+
 
 class VIEW3D_PT_blenderkit_import_settings(Panel):
     bl_category = "BlenderKit"
@@ -931,11 +941,8 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
 
             row.prop(props, 'append_method', expand=True, icon_only=False)
         if ui_props.asset_type == 'SCENE':
-            props = s.blenderkit_scene
-            layout.prop(props, 'switch_after_append')
-            layout.label(text='Import method:')
-            row = layout.row()
-            row.prop(props, 'append_link', expand=True, icon_only=False)
+            draw_scene_import_settings(self,context)
+
         if ui_props.asset_type == 'HDR':
             props = s.blenderkit_HDR
 
@@ -1113,13 +1120,19 @@ class BlenderKitWelcomeOperator(bpy.types.Operator):
         if self.step == 0:
             user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
-            message = "BlenderKit connects from Blender to an online, " \
-                      "community built shared library of models, " \
-                      "materials, and brushes. " \
-                      "Use addon preferences to set up where files will be saved in the Global directory setting."
+            # message = "BlenderKit connects from Blender to an online, " \
+            #           "community built shared library of models, " \
+            #           "materials, and brushes. " \
+            #           "Use addon preferences to set up where files will be saved in the Global directory setting."
+            #
+            # utils.label_multiline(layout, text=message, width=300)
 
-            utils.label_multiline(layout, text=message, width=300)
-            utils.label_multiline(layout, text="\n Let's start by searching for some cool materials?", width=300)
+            layout.template_icon(icon_value=self.img.preview.icon_id, scale=18)
+
+            # utils.label_multiline(layout, text="\n Let's start by searching for some cool materials?", width=300)
+            op = layout.operator("wm.url_open", text='Watch Video Tutorial', icon='QUESTION')
+            op.url = paths.BLENDERKIT_MANUAL
+
         else:
             message = "Operator Tutorial called with invalid step"
 
@@ -1131,14 +1144,36 @@ class BlenderKitWelcomeOperator(bpy.types.Operator):
             # bpy.context.window_manager.windows[0].screen.areas[5].spaces[0].show_region_ui = False
             print('running search no')
             ui_props = bpy.context.scene.blenderkitUI
-            ui_props.asset_type = 'MATERIAL'
-            bpy.context.scene.blenderkit_mat.search_keywords = 'ice'
+            random_searches = [
+                ('MATERIAL','ice'),
+                ('MODEL','car'),
+                ('MODEL','vase'),
+                ('MODEL','grass'),
+                ('MODEL','plant'),
+                ('MODEL','man'),
+                ('MATERIAL','metal'),
+                ('MATERIAL','wood'),
+                ('MATERIAL','floor'),
+                ('MATERIAL','bricks'),
+            ]
+            random_search = random.choice(random_searches)
+            ui_props.asset_type = random_search[0]
+
+            bpy.context.scene.blenderkit_mat.search_keywords = ''#random_search[1]
+            bpy.context.scene.blenderkit_mat.search_keywords = '+is_free:true+score_gte:1000+order:-created'#random_search[1]
             # search.search()
         return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = bpy.context.window_manager
-        return wm.invoke_props_dialog(self)
+        img = utils.get_thumbnail('intro.jpg')
+        utils.img_to_preview(img, copy_original = True)
+        self.img = img
+        w, a, r = utils.get_largest_area(area_type='VIEW_3D')
+        if a is not None:
+            a.spaces.active.show_region_ui = True
+
+        return wm.invoke_props_dialog(self, width = 500)
 
 
 def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
@@ -1362,8 +1397,8 @@ def numeric_to_str(s):
     return s
 
 
-def push_op_left(layout):
-    for a in range(0, 5):
+def push_op_left(layout, strength =5):
+    for a in range(0, strength):
         layout.label(text='')
 
 
@@ -1451,7 +1486,13 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             box.scale_y = 0.4
             box.label(text='Description')
             box.separator()
-            utils.label_multiline(box, self.asset_data['description'], width=width)
+            link_more = utils.label_multiline(box, self.asset_data['description'], width=width, max_lines = 10)
+            if link_more:
+                row = box.row()
+                row.scale_y = 2
+                op = row.operator('wm.blenderkit_url', text='See full description', icon='URL')
+                op.url = paths.get_asset_gallery_url(self.asset_data['assetBaseId'])
+                op.tooltip = 'Read full description on website'
             box.separator()
 
     def draw_properties(self, layout, width=250):
@@ -1468,6 +1509,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         box.scale_y = 0.4
         box.label(text='Properties')
         box.separator()
+
         if self.asset_data.get('license') == 'cc_zero':
             t = 'CC Zero          '
             icon = pcoll['cc0']
@@ -1778,9 +1820,44 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         # top draggabe bar with name of the asset
         top_row = layout.row()
         top_drag_bar = top_row.box()
+        bcats  = bpy.context.window_manager['bkit_categories']
+
+        cat_path = categories.get_category_path(bcats,
+                                                self.asset_data['category'])[1:]
+
+
+        cat_path_names = categories.get_category_name_path(bcats,
+                                        self.asset_data['category'])[1:]
+
         aname = asset_data['displayName']
         aname = aname[0].upper() + aname[1:]
-        top_drag_bar.label(text=aname)
+
+        if 1:
+            name_row = top_drag_bar.row()
+            # name_row = name_row.split(factor=0.5)
+            # name_row = name_row.column()
+            # name_row = name_row.row()
+            for i, c in enumerate(cat_path):
+                cat_name = cat_path_names[i]
+                op = name_row.operator('view3d.blenderkit_asset_bar', text=cat_name + ' >', emboss=True)
+                op.do_search = True
+                op.keep_running = True
+                op.tooltip = f"Browse {cat_name} category"
+                op.category = c
+                # name_row.label(text='>')
+
+            name_row.label(text=aname)
+            push_op_left(name_row, strength = 3)
+        # for i,c in enumerate(cat_path_names):
+        #     cat_path_names[i] = c.capitalize()
+        # cat_path_names_string = ' > '.join(cat_path_names)
+        # # box.label(text=cat_path)
+        #
+        #
+        #
+        #
+        # # name_row.label(text='                                           ')
+        # top_drag_bar.label(text=f'{cat_path_names_string} > {aname}')
 
         # left side
         row = layout.row(align=True)
@@ -1811,6 +1888,8 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         sr = bpy.context.window_manager['search results']
         asset_data = sr[ui_props.active_index]
         self.img = ui.get_large_thumbnail_image(asset_data)
+        utils.img_to_preview(self.img, copy_original = True)
+
         self.asset_type = asset_data['assetType']
         self.asset_id = asset_data['id']
         # self.tex = utils.get_hidden_texture(self.img)

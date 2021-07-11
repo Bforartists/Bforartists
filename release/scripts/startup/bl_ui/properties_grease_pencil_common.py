@@ -852,6 +852,7 @@ class GreasePencilLayerRelationsPanel:
             row.separator()
             row.prop(gpl, "use_viewlayer_masks")
 
+
 class GreasePencilLayerDisplayPanel:
 
     def draw(self, context):

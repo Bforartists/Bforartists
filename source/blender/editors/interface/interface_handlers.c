@@ -3268,7 +3268,7 @@ static bool ui_textedit_copypaste(uiBut *but, uiHandleButtonData *data, const in
 }
 
 #ifdef WITH_INPUT_IME
-/* enable ime, and set up uibut ime data */
+/* Enable IME, and setup #uiBut IME data. */
 static void ui_textedit_ime_begin(wmWindow *win, uiBut *UNUSED(but))
 {
   /* XXX Is this really needed? */
@@ -3284,7 +3284,7 @@ static void ui_textedit_ime_begin(wmWindow *win, uiBut *UNUSED(but))
   wm_window_IME_begin(win, x, y, 0, 0, true);
 }
 
-/* disable ime, and clear uibut ime data */
+/* Disable IME, and clear #uiBut IME data. */
 static void ui_textedit_ime_end(wmWindow *win, uiBut *UNUSED(but))
 {
   wm_window_IME_end(win);
@@ -4677,7 +4677,7 @@ static int ui_do_but_EXIT(bContext *C, uiBut *but, uiHandleButtonData *data, con
 {
   if (data->state == BUTTON_STATE_HIGHLIGHT) {
 
-    /* first handle click on icondrag type button */
+    /* First handle click on icon-drag type button. */
     if ((event->type == LEFTMOUSE) && (event->val == KM_PRESS) && but->dragpoin) {
       if (ui_but_contains_point_px_icon(but, data->region, event)) {
 
@@ -4700,7 +4700,7 @@ static int ui_do_but_EXIT(bContext *C, uiBut *but, uiHandleButtonData *data, con
 
     if (ELEM(event->type, LEFTMOUSE, EVT_PADENTER, EVT_RETKEY) && event->val == KM_PRESS) {
       int ret = WM_UI_HANDLER_BREAK;
-      /* XXX (a bit ugly) Special case handling for filebrowser drag button */
+      /* XXX: (a bit ugly) Special case handling for file-browser drag button. */
       if (but->dragpoin && but->imb && ui_but_contains_point_px_icon(but, data->region, event)) {
         ret = WM_UI_HANDLER_CONTINUE;
       }
@@ -5836,7 +5836,7 @@ static int ui_do_but_BLOCK(bContext *C, uiBut *but, uiHandleButtonData *data, co
 {
   if (data->state == BUTTON_STATE_HIGHLIGHT) {
 
-    /* first handle click on icondrag type button */
+    /* First handle click on icon-drag type button. */
     if (event->type == LEFTMOUSE && but->dragpoin && event->val == KM_PRESS) {
       if (ui_but_contains_point_px_icon(but, data->region, event)) {
         button_activate_state(C, but, BUTTON_STATE_WAIT_DRAG);
@@ -6021,7 +6021,7 @@ static int ui_do_but_COLOR(bContext *C, uiBut *but, uiHandleButtonData *data, co
   uiButColor *color_but = (uiButColor *)but;
 
   if (data->state == BUTTON_STATE_HIGHLIGHT) {
-    /* first handle click on icondrag type button */
+    /* First handle click on icon-drag type button. */
     if (event->type == LEFTMOUSE && but->dragpoin && event->val == KM_PRESS) {
       ui_palette_set_active(color_but);
       if (ui_but_contains_point_px_icon(but, data->region, event)) {
@@ -6951,8 +6951,8 @@ static bool ui_numedit_but_CURVE(uiBlock *block,
   CurveMapPoint *cmp = cuma->curve;
   bool changed = false;
 
-  /* evtx evty and drag coords are absolute mousecoords,
-   * prevents errors when editing when layout changes */
+  /* evtx evty and drag coords are absolute mouse-coords,
+   * prevents errors when editing when layout changes. */
   int mx = evtx;
   int my = evty;
   ui_window_to_block(data->region, block, &mx, &my);
@@ -7219,8 +7219,8 @@ static bool ui_numedit_but_CURVEPROFILE(uiBlock *block,
   CurveProfilePoint *pts = profile->path;
   bool changed = false;
 
-  /* evtx evty and drag coords are absolute mousecoords,
-   * prevents errors when editing when layout changes */
+  /* evtx evty and drag coords are absolute mouse-coords,
+   * prevents errors when editing when layout changes. */
   int mx = evtx;
   int my = evty;
   ui_window_to_block(data->region, block, &mx, &my);
@@ -9174,7 +9174,7 @@ static int ui_handle_button_event(bContext *C, const wmEvent *event, uiBut *but)
        *
        * This is needed to make sure if a button was active,
        * it stays active while the mouse is over it.
-       * This avoids adding mousemoves, see: T33466. */
+       * This avoids adding mouse-moves, see: T33466. */
       if (ELEM(state_orig, BUTTON_STATE_INIT, BUTTON_STATE_HIGHLIGHT, BUTTON_STATE_WAIT_DRAG)) {
         if (ui_but_find_mouse_over(region, event) == but) {
           button_activate_init(C, region, but, BUTTON_ACTIVATE_OVER);

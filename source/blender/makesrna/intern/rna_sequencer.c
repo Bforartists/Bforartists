@@ -28,6 +28,7 @@
 #include "DNA_sequence_types.h"
 #include "DNA_vfont_types.h"
 
+#include "BLI_iterator.h"
 #include "BLI_math.h"
 
 #include "BLT_translation.h"
@@ -105,17 +106,6 @@ typedef struct SequenceSearchData {
   void *data;
   SequenceModifierData *smd;
 } SequenceSearchData;
-
-/* build a temp reference to the parent */
-static void meta_tmp_ref(Sequence *seq_par, Sequence *seq)
-{
-  for (; seq; seq = seq->next) {
-    seq->tmp = seq_par;
-    if (seq->type == SEQ_TYPE_META) {
-      meta_tmp_ref(seq, seq->seqbase.first);
-    }
-  }
-}
 
 static void rna_SequenceElement_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
@@ -207,46 +197,41 @@ static void rna_SequenceEditor_sequences_all_begin(CollectionPropertyIterator *i
 {
   Scene *scene = (Scene *)ptr->owner_id;
   Editing *ed = SEQ_editing_get(scene, false);
+  SeqCollection *all_strips = SEQ_query_all_strips_recursive(&ed->seqbase);
 
-  meta_tmp_ref(NULL, ed->seqbase.first);
+  BLI_Iterator *bli_iter = MEM_callocN(sizeof(BLI_Iterator), __func__);
+  bli_iter->data = MEM_callocN(sizeof(SeqIterator), __func__);
+  iter->internal.custom = bli_iter;
 
-  rna_iterator_listbase_begin(iter, &ed->seqbase, NULL);
-}
+  if (!SEQ_iterator_ensure(all_strips, bli_iter->data, (Sequence **)&bli_iter->current)) {
+    SEQ_collection_free(all_strips);
+  }
 
-static void rna_SequenceEditor_update_cache(Main *UNUSED(bmain),
-                                            Scene *scene,
-                                            PointerRNA *UNUSED(ptr))
-{
-  Editing *ed = scene->ed;
-
-  SEQ_relations_free_imbuf(scene, &ed->seqbase, false);
-  SEQ_cache_cleanup(scene);
+  iter->valid = bli_iter->current != NULL;
 }
 
 static void rna_SequenceEditor_sequences_all_next(CollectionPropertyIterator *iter)
 {
-  ListBaseIterator *internal = &iter->internal.listbase;
-  Sequence *seq = (Sequence *)internal->link;
+  BLI_Iterator *bli_iter = iter->internal.custom;
+  bli_iter->current = SEQ_iterator_yield(bli_iter->data);
+  iter->valid = bli_iter->current != NULL;
+}
 
-  if (seq->seqbase.first) {
-    internal->link = (Link *)seq->seqbase.first;
-  }
-  else if (seq->next) {
-    internal->link = (Link *)seq->next;
-  }
-  else {
-    internal->link = NULL;
+static PointerRNA rna_SequenceEditor_sequences_all_get(CollectionPropertyIterator *iter)
+{
+  Sequence *seq = ((BLI_Iterator *)iter->internal.custom)->current;
+  return rna_pointer_inherit_refine(&iter->parent, &RNA_Sequence, seq);
+}
 
-    do {
-      seq = seq->tmp; /* XXX: seq's don't reference their parents! */
-      if (seq && seq->next) {
-        internal->link = (Link *)seq->next;
-        break;
-      }
-    } while (seq);
+static void rna_SequenceEditor_sequences_all_end(CollectionPropertyIterator *iter)
+{
+  BLI_Iterator *bli_iter = iter->internal.custom;
+  SeqIterator *seq_iter = bli_iter->data;
+  if (seq_iter->collection != NULL) {
+    SEQ_collection_free(seq_iter->collection);
   }
-
-  iter->valid = (internal->link != NULL);
+  MEM_freeN(seq_iter);
+  MEM_freeN(bli_iter);
 }
 
 static int rna_SequenceEditor_sequences_all_lookup_string(PointerRNA *ptr,
@@ -262,6 +247,16 @@ static int rna_SequenceEditor_sequences_all_lookup_string(PointerRNA *ptr,
     return true;
   }
   return false;
+}
+
+static void rna_SequenceEditor_update_cache(Main *UNUSED(bmain),
+                                            Scene *scene,
+                                            PointerRNA *UNUSED(ptr))
+{
+  Editing *ed = scene->ed;
+
+  SEQ_relations_free_imbuf(scene, &ed->seqbase, false);
+  SEQ_cache_cleanup(scene);
 }
 
 /* internal use */
@@ -2013,8 +2008,8 @@ static void rna_def_editor(BlenderRNA *brna)
   RNA_def_property_collection_funcs(prop,
                                     "rna_SequenceEditor_sequences_all_begin",
                                     "rna_SequenceEditor_sequences_all_next",
-                                    NULL,
-                                    NULL,
+                                    "rna_SequenceEditor_sequences_all_end",
+                                    "rna_SequenceEditor_sequences_all_get",
                                     NULL,
                                     NULL,
                                     "rna_SequenceEditor_sequences_all_lookup_string",

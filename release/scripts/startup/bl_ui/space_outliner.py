@@ -555,7 +555,6 @@ class OUTLINER_PT_filter(Panel):
                 row.label(icon='LIBRARY_DATA_OVERRIDE')
                 row.prop(space, "use_filter_lib_override_system", text="System Overrides")
 
-
 classes = (
     OUTLINER_OT_switch_editors_to_properties,
     OUTLINER_OT_switch_editors_to_outliner,

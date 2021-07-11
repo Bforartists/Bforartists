@@ -2135,7 +2135,7 @@ static void rna_SpaceDopeSheetEditor_action_update(bContext *C, PointerRNA *ptr)
   switch (saction->mode) {
     case SACTCONT_ACTION:
       /* TODO: context selector could help decide this with more control? */
-      adt = BKE_animdata_add_id(&obact->id);
+      adt = BKE_animdata_ensure_id(&obact->id);
       id = &obact->id;
       break;
     case SACTCONT_SHAPEKEY: {
@@ -2143,7 +2143,7 @@ static void rna_SpaceDopeSheetEditor_action_update(bContext *C, PointerRNA *ptr)
       if (key == NULL) {
         return;
       }
-      adt = BKE_animdata_add_id(&key->id);
+      adt = BKE_animdata_ensure_id(&key->id);
       id = &key->id;
       break;
     }
@@ -2165,7 +2165,7 @@ static void rna_SpaceDopeSheetEditor_action_update(bContext *C, PointerRNA *ptr)
     return;
   }
 
-  /* Exit editmode first - we cannot change actions while in tweakmode. */
+  /* Exit editmode first - we cannot change actions while in tweak-mode. */
   BKE_nla_tweakmode_exit(adt);
 
   /* To prevent data loss (i.e. if users flip between actions using the Browse menu),
@@ -3206,11 +3206,9 @@ static void rna_spreadsheet_context_update(Main *UNUSED(bmain),
   }
 }
 
-static void rna_spreadsheet_set_geometry_node_context(SpaceSpreadsheet *sspreadsheet,
-                                                      SpaceNode *snode,
-                                                      bNode *node)
+static void rna_SpaceSpreadsheet_context_path_guess(SpaceSpreadsheet *sspreadsheet, bContext *C)
 {
-  ED_spreadsheet_set_geometry_node_context(sspreadsheet, snode, node);
+  ED_spreadsheet_context_path_guess(C, sspreadsheet);
   ED_spreadsheet_context_path_update_tag(sspreadsheet);
   WM_main_add_notifier(NC_SPACE | ND_SPACE_SPREADSHEET, NULL);
 }
@@ -7704,13 +7702,16 @@ static void rna_def_space_spreadsheet_context_path(BlenderRNA *brna, PropertyRNA
 
   func = RNA_def_function(srna, "clear", "rna_SpaceSpreadsheet_context_path_clear");
   RNA_def_function_ui_description(func, "Clear entire context path");
+
+  func = RNA_def_function(srna, "guess", "rna_SpaceSpreadsheet_context_path_guess");
+  RNA_def_function_ui_description(func, "Guess the context path from the current context");
+  RNA_def_function_flag(func, FUNC_USE_CONTEXT);
 }
 
 static void rna_def_space_spreadsheet(BlenderRNA *brna)
 {
-  PropertyRNA *prop, *parm;
+  PropertyRNA *prop;
   StructRNA *srna;
-  FunctionRNA *func;
 
   static const EnumPropertyItem geometry_component_type_items[] = {
       {GEO_COMPONENT_TYPE_MESH,
@@ -7747,6 +7748,11 @@ static void rna_def_space_spreadsheet(BlenderRNA *brna)
        ICON_NONE,
        "Original",
        "Use data from original object without any modifiers applied"},
+      {SPREADSHEET_OBJECT_EVAL_STATE_VIEWER_NODE,
+       "VIEWER_NODE",
+       ICON_NONE,
+       "Viewer Node",
+       "Use intermediate data from viewer node"},
       {0, NULL, 0, NULL, NULL},
   };
 
@@ -7822,16 +7828,6 @@ static void rna_def_space_spreadsheet(BlenderRNA *brna)
   RNA_def_property_struct_type(prop, "SpreadsheetRowFilter");
   RNA_def_property_ui_text(prop, "Row Filters", "Filters to remove rows from the displayed data");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_SPREADSHEET, NULL);
-
-  func = RNA_def_function(
-      srna, "set_geometry_node_context", "rna_spreadsheet_set_geometry_node_context");
-  RNA_def_function_ui_description(
-      func, "Update context_path to point to a specific node in a node editor");
-  parm = RNA_def_pointer(
-      func, "node_editor", "SpaceNodeEditor", "", "Editor to take the context from");
-  RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-  parm = RNA_def_pointer(func, "node", "Node", "", "");
-  RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 }
 
 void RNA_def_space(BlenderRNA *brna)

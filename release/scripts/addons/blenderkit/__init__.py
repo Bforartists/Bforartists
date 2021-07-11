@@ -141,8 +141,6 @@ from bpy.types import (
 
 @persistent
 def scene_load(context):
-    print('loading in background')
-    print(bpy.context.window_manager)
     if not bpy.app.background:
         search.load_previews()
     ui_props = bpy.context.scene.blenderkitUI
@@ -155,10 +153,10 @@ def scene_load(context):
 @bpy.app.handlers.persistent
 def check_timers_timer():
     ''' checks if all timers are registered regularly. Prevents possible bugs from stopping the addon.'''
-    if not bpy.app.timers.is_registered(search.timer_update):
-        bpy.app.timers.register(search.timer_update)
-    if not bpy.app.timers.is_registered(download.timer_update):
-        bpy.app.timers.register(download.timer_update)
+    if not bpy.app.timers.is_registered(search.search_timer):
+        bpy.app.timers.register(search.search_timer)
+    if not bpy.app.timers.is_registered(download.download_timer):
+        bpy.app.timers.register(download.download_timer)
     if not (bpy.app.timers.is_registered(tasks_queue.queue_worker)):
         bpy.app.timers.register(tasks_queue.queue_worker)
     if not bpy.app.timers.is_registered(bg_blender.bg_update):
@@ -1542,7 +1540,7 @@ class BlenderKitSceneSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
     )
     switch_after_append: BoolProperty(
         name='Switch to scene after download',
-        default=False
+        default=True
     )
 
 
@@ -1714,6 +1712,13 @@ class BlenderKitAddonPreferences(AddonPreferences):
         update=utils.save_prefs
     )
 
+    # single_timer: BoolProperty(
+    #     name="Use timers",
+    #     description="Use timers for BlenderKit. Usefull for debugging since timers seem to be unstable",
+    #     default=True,
+    #     update=utils.save_prefs
+    # )
+
     experimental_features: BoolProperty(
         name="Enable experimental features",
         description="Enable all experimental features of BlenderKit. Use at your own risk.",
@@ -1773,6 +1778,15 @@ class BlenderKitAddonPreferences(AddonPreferences):
             layout.prop(self, "categories_fix")
 
 
+# # @bpy.app.handlers.persistent
+# def blenderkit_timer():
+#
+#
+# if not user_preferences.use_timers:
+#     search.search_timer()
+#     download.download_timer()
+#     tasks_queue.queue_worker()
+#     bg_blender.bg_update()
 # registration
 classes = (
 
@@ -1798,6 +1812,7 @@ classes = (
 
     BlenderKitRatingProps,
 )
+
 
 
 def register():
@@ -1874,6 +1889,8 @@ def register():
             if a.type == 'PREFERENCES':
                 tasks_queue.add_task((bpy.ops.wm.blenderkit_welcome, ('INVOKE_DEFAULT',)), fake_context=True,
                                      fake_context_area='PREFERENCES')
+                #save preferences after manually enabling the addon
+                tasks_queue.add_task((bpy.ops.wm.save_userpref, ()), fake_context=False,)
 
 
 def unregister():
