@@ -1710,6 +1710,11 @@ class NWPreviewNode(Operator, NWBase):
     bl_description = "Connect active node to Emission Shader for shadeless previews, or to the geometry node tree's output"
     bl_options = {'REGISTER', 'UNDO'}
 
+    # If false, the operator is not executed if the current node group happens to be a geometry nodes group.
+    # This is needed because geometry nodes has its own viewer node that uses the same shortcut as in the compositor.
+    # Geometry Nodes support can be removed here once the viewer node is supported in the viewport.
+    run_in_geometry_nodes: BoolProperty(default=True)
+
     def __init__(self):
         self.shader_output_type = ""
         self.shader_output_ident = ""
@@ -1864,6 +1869,10 @@ class NWPreviewNode(Operator, NWBase):
 
     def invoke(self, context, event):
         space = context.space_data
+        # Ignore operator when running in wrong context.
+        if self.run_in_geometry_nodes != (space.tree_type == "GeometryNodeTree"):
+            return {'PASS_THROUGH'}
+
         shader_type = space.shader_type
         self.init_shader_variables(space, shader_type)
         shader_types = [x[1] for x in shaders_shader_nodes_props]
@@ -5206,7 +5215,8 @@ kmi_defs = (
     # Swap Outputs
     (NWSwapLinks.bl_idname, 'S', 'PRESS', False, False, True, None, "Swap Outputs"),
     # Preview Node
-    (NWPreviewNode.bl_idname, 'LEFTMOUSE', 'PRESS', True, True, False, None, "Preview node output"),
+    (NWPreviewNode.bl_idname, 'LEFTMOUSE', 'PRESS', True, True, False, (('run_in_geometry_nodes', False),), "Preview node output"),
+    (NWPreviewNode.bl_idname, 'LEFTMOUSE', 'PRESS', False, True, True, (('run_in_geometry_nodes', True),), "Preview node output"),
     # Reload Images
     (NWReloadImages.bl_idname, 'R', 'PRESS', False, False, True, None, "Reload images"),
     # Lazy Mix

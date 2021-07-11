@@ -108,11 +108,14 @@ def bg_update():
     '''monitoring of background process'''
     text = ''
     #utils.p('timer search')
+    # utils.p('start bg_blender timer bg_update')
 
     s = bpy.context.scene
 
     global bg_processes
     if len(bg_processes) == 0:
+        # utils.p('end bg_blender timer bg_update')
+
         return 2
     #cleanup dead processes first
     remove_processes = []
@@ -156,7 +159,11 @@ def bg_update():
     # if len(bg_processes) == 0:
     #     bpy.app.timers.unregister(bg_update)
     if len(bg_processes) > 0:
+        # utils.p('end bg_blender timer bg_update')
+
         return .3
+    # utils.p('end bg_blender timer bg_update')
+
     return 1.
 
 

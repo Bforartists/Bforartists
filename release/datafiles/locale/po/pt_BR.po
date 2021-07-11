@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -10598,6 +10598,10 @@ msgid "Mirror"
 msgstr "Espelhar"
 
 
+msgid "Vertex Weight"
+msgstr "Peso de vértices"
+
+
 msgid "Hook"
 msgstr "Gancho"
 
@@ -10824,8 +10828,8 @@ msgid "Source Object"
 msgstr "Objeto fonte"
 
 
-msgid "Mask"
-msgstr "Máscara"
+msgid "Boundaries"
+msgstr "Margens"
 
 
 msgid "Mirror Modifier"
@@ -10888,6 +10892,14 @@ msgid "Frame Offset"
 msgstr "Deslocamento de quadro"
 
 
+msgid "Space"
+msgstr "Espaço"
+
+
+msgid "Blend"
+msgstr "Mesclar"
+
+
 msgid "Vertex Group Element"
 msgstr "Elemento do grupo de vértices"
 
@@ -10898,10 +10910,6 @@ msgstr "Valor dos pesos de influência de um vértice dentro de um grupo de vér
 
 msgid "Group Index"
 msgstr "Índice de grupo"
-
-
-msgid "Vertex Weight"
-msgstr "Peso de vértices"
 
 
 msgid "Grid Subdivisions"
@@ -11449,6 +11457,10 @@ msgid "Soften"
 msgstr "Atenuar"
 
 
+msgid "Mask"
+msgstr "Máscara"
+
+
 msgid "Jitter the position of the brush while painting"
 msgstr "Quantidade de tremulação na posição do pincel durante a pintura."
 
@@ -11699,10 +11711,6 @@ msgstr "Arrastar pontos"
 
 msgid "Allows a single dot to be carefully positioned"
 msgstr "Permite que um único ponto seja cuidadosamente posicionado."
-
-
-msgid "Space"
-msgstr "Espaço"
 
 
 msgid "Limit brush application to the distance specified by spacing"
@@ -13587,10 +13595,6 @@ msgstr "Compartimentos de renderização da imagem."
 
 msgid "X/Y pixels per meter"
 msgstr "Pixeis por metro em X e Y."
-
-
-msgid "Width and height in pixels, zero when image data cant be loaded"
-msgstr "Altura e largura em pixeis, zero quando os dados da imagem não podem ser carregados."
 
 
 msgid "Where the image comes from"
@@ -16689,10 +16693,6 @@ msgstr "Fator de vermelho"
 
 msgid "Node tree for node-based textures"
 msgstr "Árvore de nó para texturas com base em nós."
-
-
-msgid "Blend"
-msgstr "Mesclar"
 
 
 msgid "Procedural - create a ramp texture"
@@ -21286,10 +21286,6 @@ msgid "Special Characters"
 msgstr "Caracteres especiais"
 
 
-msgid "Edge Data"
-msgstr "Dados das arestas"
-
-
 msgid "Face Data"
 msgstr "Dados das faces"
 
@@ -22852,6 +22848,10 @@ msgstr "Raio (largura) para os raios"
 
 msgid "'Width' of rays (especially useful when raycasting against vertices or edges)"
 msgstr "A \"largura\" dos raios (especialmente útil quando a projeção de raios ocorre contra os vértices ou arestas)."
+
+
+msgid "Edge Data"
+msgstr "Dados das arestas"
 
 
 msgid "Enable edge data transfer"
@@ -38199,10 +38199,6 @@ msgstr "Seleciona os próximos elementos (usando a ordem de seleção)."
 
 msgid "Select all non-manifold vertices or edges"
 msgstr "Seleciona todos os vértices ou arestas não contíguos."
-
-
-msgid "Boundaries"
-msgstr "Margens"
 
 
 msgid "Boundary edges"
@@ -64614,16 +64610,6 @@ msgstr "Colar pose invertida em X"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "Limpar marcações de ressaltos"
-
-
-msgctxt "Operator"
-msgid "Clear Freestyle Edge"
-msgstr "Limpar marcações de arestas Freestyle"
-
-
-msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "Rotacionar aresta no sentido horário"
 
@@ -64631,6 +64617,11 @@ msgstr "Rotacionar aresta no sentido horário"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "Rotacionar aresta no sentido anti-horário"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "Limpar marcações de ressaltos"
 
 
 msgctxt "Operator"
@@ -64755,6 +64746,11 @@ msgstr "Raio-X"
 msgctxt "Operator"
 msgid "Assign to Group"
 msgstr "Atribuir a um grupo"
+
+
+msgctxt "Operator"
+msgid "Clear Freestyle Edge"
+msgstr "Limpar marcações de arestas Freestyle"
 
 
 msgctxt "Operator"
@@ -65386,22 +65382,6 @@ msgid "Cannot open file %s for writing: %s"
 msgstr "Não foi possível abrir o arquivo %s para escrita: %s"
 
 
-msgid "Could not connect vertices"
-msgstr "Não é possível conectar vértices."
-
-
-msgid "Could not dissolve faces"
-msgstr "Não é possível dissolver faces."
-
-
-msgid "Invalid selection"
-msgstr "Seleção invalida."
-
-
-msgid "Internal mesh error"
-msgstr "Erro interno de malha ."
-
-
 msgid "Zero normal given"
 msgstr "Nenhuma normal fornecida."
 
@@ -65418,12 +65398,8 @@ msgid "Selected loops must have equal edge counts"
 msgstr "Anéis selecionados devem possuir contagem de arestas igual."
 
 
-msgid "Could not find boundary of dissolve region"
-msgstr "Não é possível encontrar as extremidades da região de dissolução."
-
-
-msgid "Could not create merged face"
-msgstr "Não é possível criar arestas ou faces fundidas nos elementos selecionados."
+msgid "Could not connect vertices"
+msgstr "Não é possível conectar vértices."
 
 
 msgid "Closed loops unsupported"
@@ -69053,6 +69029,14 @@ msgid "Depth too large"
 msgstr "Profundidade muito grande."
 
 
+msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
+msgstr "Seleção de vértices - Shift + clique para múltiplos modos, Ctrl + clique contrai a seleção."
+
+
+msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
+msgstr "Seleção de faces - Shift + clique para múltiplos modos, Ctrl + clique expande a seleção."
+
+
 msgid "Cannot fly a camera from an external library"
 msgstr "Não é possível fazer voo de câmera a partir de uma biblioteca externa."
 
@@ -69065,22 +69049,6 @@ msgid "Cannot fly an object with constraints"
 msgstr "Não é possível fazer voo de um objeto com restrições."
 
 
-msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
-msgstr "Seleção de vértices - Shift + clique para múltiplos modos, Ctrl + clique contrai a seleção."
-
-
-msgid "Face select - Shift-Click for multiple modes, Ctrl-Click expands selection"
-msgstr "Seleção de faces - Shift + clique para múltiplos modos, Ctrl + clique expande a seleção."
-
-
-msgid "No active element found!"
-msgstr "Nenhum elemento ativo encontrado !"
-
-
-msgid "No active camera"
-msgstr "Nenhuma câmera ativa."
-
-
 msgid "Cannot navigate a camera from an external library"
 msgstr "Não é possível navegar com a câmera vinculada a partir de uma biblioteca externa."
 
@@ -69091,6 +69059,14 @@ msgstr "Não é possível navegar quando o deslocamento de visão está bloquead
 
 msgid "Cannot navigate an object with constraints"
 msgstr "Não é possível navegar usando um objeto com restrições."
+
+
+msgid "No active element found!"
+msgstr "Nenhum elemento ativo encontrado !"
+
+
+msgid "No active camera"
+msgstr "Nenhuma câmera ativa."
 
 
 msgid "Auto Keying On"

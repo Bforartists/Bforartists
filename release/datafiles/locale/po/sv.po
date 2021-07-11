@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4491,6 +4491,10 @@ msgid "Mirror"
 msgstr "Spegel"
 
 
+msgid "Vertex Weight"
+msgstr "Höger"
+
+
 msgid "Lattice"
 msgstr "Lattice"
 
@@ -4639,6 +4643,14 @@ msgid "Frame Offset"
 msgstr "Rutförskjutning"
 
 
+msgid "Space"
+msgstr "Markera Rad"
+
+
+msgid "Blend"
+msgstr "Blanda"
+
+
 msgid "Vertex Group Element"
 msgstr "Vektor Måla"
 
@@ -4649,10 +4661,6 @@ msgstr "Viktningsvärde för en verte i en vertexgrupp"
 
 msgid "Group Index"
 msgstr "Gruppinstans"
-
-
-msgid "Vertex Weight"
-msgstr "Höger"
 
 
 msgid "Grid Subdivisions"
@@ -4965,10 +4973,6 @@ msgstr "Radera"
 
 msgid "Stroke Method"
 msgstr "Packa Data"
-
-
-msgid "Space"
-msgstr "Markera Rad"
 
 
 msgid "Texture Overlay Alpha"
@@ -7419,10 +7423,6 @@ msgstr "Markera Rad"
 
 msgid "Factor Red"
 msgstr "Zooma Ut"
-
-
-msgid "Blend"
-msgstr "Blanda"
 
 
 msgid "Distorted Noise"
@@ -28847,11 +28847,6 @@ msgstr "Klistra in pose speglad i X-led"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "Rensa Förälder"
-
-
-msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "Rensa Rotation"
 
@@ -28859,6 +28854,11 @@ msgstr "Rensa Rotation"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "Rensa Rotation"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "Rensa Förälder"
 
 
 msgctxt "Operator"
@@ -29000,22 +29000,6 @@ msgstr "Webbaddress som skall öppnas"
 
 msgid "Could not connect vertices"
 msgstr "Markera Länkad"
-
-
-msgid "Could not dissolve faces"
-msgstr "Göm Markerad"
-
-
-msgid "Invalid selection"
-msgstr "Markera Länkad"
-
-
-msgid "Internal mesh error"
-msgstr "Markera Rad"
-
-
-msgid "Could not create merged face"
-msgstr "Bild Displist"
 
 
 msgid "Basic"

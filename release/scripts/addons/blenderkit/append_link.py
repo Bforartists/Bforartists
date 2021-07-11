@@ -67,7 +67,6 @@ def append_material(file_name, matname=None, link=False, fake_user=True):
     # we have to find the new material , due to possible name changes
     mat = None
     for m in bpy.data.materials:
-        print(m.name)
         if m not in mats_before:
             mat = m
             break;

@@ -153,15 +153,58 @@ def map_apply(func, *inputs):
 
 
 #=============================================
-# Misc
+# Lazy references
 #=============================================
 
 
 def force_lazy(value):
+    """If the argument is callable, invokes it without arguments. Otherwise returns the argument as is."""
     if callable(value):
         return value()
     else:
         return value
+
+
+class LazyRef:
+    """Hashable lazy reference. When called, evaluates (foo, 'a', 'b'...) as foo('a','b')
+    if foo is callable. Otherwise the remaining arguments are used as attribute names or
+    keys, like foo.a.b or foo.a[b] etc."""
+
+    def __init__(self, first, *args):
+        self.first = first
+        self.args = tuple(args)
+        self.first_hashable = first.__hash__ is not None
+
+    def __repr__(self):
+        return 'LazyRef{}'.format(tuple(self.first, *self.args))
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, LazyRef) and
+            (self.first == other.first if self.first_hashable else self.first is other.first) and
+            self.args == other.args
+        )
+
+    def __hash__(self):
+        return (hash(self.first) if self.first_hashable else hash(id(self.first))) ^ hash(self.args)
+
+    def __call__(self):
+        first = self.first
+        if callable(first):
+            return first(*self.args)
+
+        for item in self.args:
+            if isinstance(first, (dict, list)):
+                first = first[item]
+            else:
+                first = getattr(first, item)
+
+        return first
+
+
+#=============================================
+# Misc
+#=============================================
 
 
 def copy_attributes(a, b):

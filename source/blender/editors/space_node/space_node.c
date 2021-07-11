@@ -651,6 +651,10 @@ static void node_main_region_init(wmWindowManager *wm, ARegion *region)
   lb = WM_dropboxmap_find("Node Editor", SPACE_NODE, RGN_TYPE_WINDOW);
 
   WM_event_add_dropbox_handler(&region->handlers, lb);
+
+  /* The backdrop image gizmo needs to change together with the view. So always refresh gizmos on
+   * region size changes. */
+  WM_gizmomap_tag_refresh(region->gizmo_map);
 }
 
 static void node_main_region_draw(const bContext *C, ARegion *region)
@@ -1093,8 +1097,6 @@ void ED_spacetype_node(void)
   art->init = node_buttons_region_init;
   art->draw = node_buttons_region_draw;
   BLI_addhead(&st->regiontypes, art);
-
-  node_buttons_register(art);
 
   /* regions: toolbar */
   art = MEM_callocN(sizeof(ARegionType), "spacetype view3d tools region");

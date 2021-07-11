@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'b2510b9e20a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3832,6 +3832,10 @@ msgid "Mirror"
 msgstr "Seleccionar fila"
 
 
+msgid "Vertex Weight"
+msgstr "Dreta"
+
+
 msgid "Lattice"
 msgstr "Lattice"
 
@@ -3976,6 +3980,10 @@ msgid "Frame Offset"
 msgstr "Joc"
 
 
+msgid "Space"
+msgstr "Seleccionar fila"
+
+
 msgid "Vertex Group Element"
 msgstr "Pintura Vectorial"
 
@@ -3986,10 +3994,6 @@ msgstr "Afegir Tira"
 
 msgid "Group Index"
 msgstr "Seleccionar fila"
-
-
-msgid "Vertex Weight"
-msgstr "Dreta"
 
 
 msgid "Grid Scale"
@@ -4262,10 +4266,6 @@ msgstr "Esborrar"
 
 msgid "Stroke Method"
 msgstr "Comprimir Dades"
-
-
-msgid "Space"
-msgstr "Seleccionar fila"
 
 
 msgid "Texture Overlay Alpha"
@@ -25107,11 +25107,6 @@ msgstr "Esborrar tot"
 
 
 msgctxt "Operator"
-msgid "Clear Sharp"
-msgstr "Desparentar"
-
-
-msgctxt "Operator"
 msgid "Rotate Edge CW"
 msgstr "Esborrar Rotació"
 
@@ -25119,6 +25114,11 @@ msgstr "Esborrar Rotació"
 msgctxt "Operator"
 msgid "Rotate Edge CCW"
 msgstr "Esborrar Rotació"
+
+
+msgctxt "Operator"
+msgid "Clear Sharp"
+msgstr "Desparentar"
 
 
 msgctxt "Operator"
@@ -25247,22 +25247,6 @@ msgstr "Seleccionar amb límit"
 
 msgid "Could not connect vertices"
 msgstr "Image Displist"
-
-
-msgid "Could not dissolve faces"
-msgstr "Amagar Seleccionats"
-
-
-msgid "Invalid selection"
-msgstr "Seleccionar connectats"
-
-
-msgid "Internal mesh error"
-msgstr "Seleccionar fila"
-
-
-msgid "Could not create merged face"
-msgstr "Esborrar Rotació"
 
 
 msgid "Basic"

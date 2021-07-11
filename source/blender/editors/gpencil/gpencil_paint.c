@@ -1579,7 +1579,7 @@ static void gpencil_stroke_eraser_dostroke(tGPsdata *p,
           ((!ELEM(V2D_IS_CLIPPED, pc2[0], pc2[1])) && BLI_rcti_isect_pt(rect, pc2[0], pc2[1]))) {
         /* Check if point segment of stroke had anything to do with
          * eraser region  (either within stroke painted, or on its lines)
-         * - this assumes that linewidth is irrelevant
+         * - this assumes that line-width is irrelevant.
          */
         if (gpencil_stroke_inside_circle(mval, radius, pc0[0], pc0[1], pc2[0], pc2[1])) {
 
@@ -3602,18 +3602,15 @@ static int gpencil_draw_modal(bContext *C, wmOperator *op, const wmEvent *event)
   /* default exit state - pass through to support MMB view nav, etc. */
   int estate = OPERATOR_PASS_THROUGH;
 
-  /* if (event->type == NDOF_MOTION)
-   *    return OPERATOR_PASS_THROUGH;
-   * -------------------------------
-   * [mce] Not quite what I was looking
-   * for, but a good start! GP continues to
-   * draw on the screen while the 3D mouse
-   * moves the viewpoint. Problem is that
-   * the stroke is converted to 3D only after
-   * it is finished. This approach should work
-   * better in tools that immediately apply
-   * in 3D space.
-   */
+  /* NOTE(mike erwin): Not quite what I was looking for, but a good start!
+   * grease-pencil continues to draw on the screen while the 3D mouse moves the viewpoint.
+   * Problem is that the stroke is converted to 3D only after it is finished.
+   * This approach should work better in tools that immediately apply in 3D space. */
+#if 0
+  if (event->type == NDOF_MOTION) {
+    return OPERATOR_PASS_THROUGH;
+  }
+#endif
 
   if (p->status == GP_STATUS_IDLING) {
     ARegion *region = CTX_wm_region(C);
