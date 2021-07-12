@@ -4056,7 +4056,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
 
             props = col.operator("node.add_node", text=" Mesh Subdivide        ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivide"
+            props.type = "GeometryNodeMeshSubdivide"
 
             props = col.operator("node.add_node", text=" Subdivision Surface ", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
@@ -4084,7 +4084,7 @@ class NODES_PT_geom_add_mesh(bpy.types.Panel):
 
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
-            props.type = "GeometryNodeSubdivide"
+            props.type = "GeometryNodeMeshSubdivide"
 
             props = flow.operator("node.add_node", text = "", icon = "SUBDIVIDE_EDGES")
             props.use_transform = True
