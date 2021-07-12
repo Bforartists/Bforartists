@@ -3589,6 +3589,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Curve Endpoints         ", icon = "CURVE_STARTEND")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveEndpoints"
+
             props = col.operator("node.add_node", text=" Curve Length              ", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
             props.type = "GeometryNodeCurveLength"
@@ -3625,6 +3629,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
             flow.scale_x = 1.5
             flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_STARTEND")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveEndpoints"
 
             props = flow.operator("node.add_node", text = "", icon = "PARTICLEBRUSH_LENGTH")
             props.use_transform = True
@@ -3693,6 +3701,10 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurvePrimitiveCircle"
 
+            props = col.operator("node.add_node", text=" Curve Line             ", icon = "CURVE_LINE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveLine"
+
             props = col.operator("node.add_node", text=" Curve Spiral           ", icon = "CURVE_SPIRAL")
             props.use_transform = True
             props.type = "GeometryNodeCurveSpiral"
@@ -3721,6 +3733,10 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_BEZCIRCLE")
             props.use_transform = True
             props.type = "GeometryNodeCurvePrimitiveCircle"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_LINE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveLine"
 
             props = flow.operator("node.add_node", text="", icon = "CURVE_SPIRAL")
             props.use_transform = True
@@ -4120,7 +4136,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Cylinder                   ", icon = "MESH_CYLINDER")
             props.use_transform = True
             props.type = "GeometryNodeMeshCylinder"
-            
+
             props = col.operator("node.add_node", text=" Grid                         ", icon = "MESH_GRID")
             props.use_transform = True
             props.type = "GeometryNodeMeshGrid"
@@ -4131,7 +4147,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Ico Sphere               ", icon = "MESH_ICOSPHERE")
             props.use_transform = True
             props.type = "GeometryNodeMeshIcoSphere"
-            
+
             props = col.operator("node.add_node", text=" Mesh Circle            ", icon = "MESH_CIRCLE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCircle"
@@ -4164,7 +4180,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_CYLINDER")
             props.use_transform = True
             props.type = "GeometryNodeMeshCylinder"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "MESH_GRID")
             props.use_transform = True
             props.type = "GeometryNodeMeshGrid"
@@ -4172,7 +4188,7 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_ICOSPHERE")
             props.use_transform = True
             props.type = "GeometryNodeMeshIcoSphere"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "MESH_CIRCLE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCircle"
@@ -4381,12 +4397,16 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props.use_transform = True
             props.type = "FunctionNodeFloatCompare"
 
-            props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
+            props = col.operator("node.add_node", text=" Float to Integer   ", icon = "FLOAT_TO_INT")
             props.use_transform = True
-            props.type = "ShaderNodeMapRange"
+            props.type = "FunctionNodeFloatToInt"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_MAP_RANGE")
+            props.use_transform = True
+            props.type = "ShaderNodeMapRange"
 
             props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
             props.use_transform = True
@@ -4415,6 +4435,10 @@ class NODES_PT_geom_add_utilities(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "FLOAT_COMPARE")
             props.use_transform = True
             props.type = "FunctionNodeFloatCompare"
+
+            props = flow.operator("node.add_node", text="", icon = "FLOAT_TO_INT")
+            props.use_transform = True
+            props.type = "FunctionNodeFloatToInt"
 
             props = flow.operator("node.add_node", text="", icon = "NODE_MAP_RANGE")
             props.use_transform = True
@@ -4500,6 +4524,53 @@ class NODES_PT_geom_add_vector(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeVectorRotate"
 
+
+#add vector panel
+class NODES_PT_geom_add_output(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Output"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Add"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data.tree_type == 'GeometryNodeTree') # Just in geometry node editor
+
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        preferences = context.preferences
+        addon_prefs = preferences.addons["bforartists_toolbar_settings"].preferences
+
+        scene = context.scene
+
+        #### Text Buttons
+
+        if not addon_prefs.Node_text_or_icon:
+
+            col = layout.column(align=True)
+            col.scale_y = 1.5
+
+            props = col.operator("node.add_node", text=" Viewer   ", icon = "NODE_VIEWER")
+            props.use_transform = True
+            props.type = "GeometryNodeViewer"
+
+
+        #### Icon Buttons
+
+        else:
+
+            flow = layout.grid_flow(row_major=True, columns=0, even_columns=True, even_rows=True, align=True)
+            flow.scale_x = 1.5
+            flow.scale_y = 1.5
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_VIEWER")
+            props.use_transform = True
+            props.type = "GeometryNodeViewer"
 
 
 # from nodeitems_builtin, not directly importable
@@ -4606,6 +4677,7 @@ classes = (
     NODES_PT_geom_add_volume,
     NODES_PT_geom_add_utilities,
     NODES_PT_geom_add_vector,
+    NODES_PT_geom_add_output,
     NODES_PT_Input_node_group,
 )
 
