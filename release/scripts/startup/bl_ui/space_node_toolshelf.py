@@ -4109,10 +4109,6 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
-            props = col.operator("node.add_node", text=" Mesh Circle            ", icon = "MESH_CIRCLE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshCircle"
-
             props = col.operator("node.add_node", text=" Cone                       ", icon = "MESH_CONE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCone"
@@ -4124,6 +4120,10 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Cylinder                   ", icon = "MESH_CYLINDER")
             props.use_transform = True
             props.type = "GeometryNodeMeshCylinder"
+            
+            props = col.operator("node.add_node", text=" Grid                         ", icon = "MESH_GRID")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshGrid"
 
             col = layout.column(align=True)
             col.scale_y = 1.5
@@ -4131,14 +4131,14 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Ico Sphere               ", icon = "MESH_ICOSPHERE")
             props.use_transform = True
             props.type = "GeometryNodeMeshIcoSphere"
+            
+            props = col.operator("node.add_node", text=" Mesh Circle            ", icon = "MESH_CIRCLE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCircle"
 
             props = col.operator("node.add_node", text=" Mesh Line                 ", icon = "MESH_LINE")
             props.use_transform = True
             props.type = "GeometryNodeMeshLine"
-
-            props = col.operator("node.add_node", text=" Grid                         ", icon = "MESH_GRID")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshGrid"
 
             props = col.operator("node.add_node", text=" UV Sphere                ", icon = "MESH_UVSPHERE")
             props.use_transform = True
@@ -4153,10 +4153,6 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             flow.scale_x = 1.5
             flow.scale_y = 1.5
 
-            props = flow.operator("node.add_node", text = "", icon = "MESH_CIRCLE")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshCircle"
-
             props = flow.operator("node.add_node", text = "", icon = "MESH_CONE")
             props.use_transform = True
             props.type = "GeometryNodeMeshCone"
@@ -4168,18 +4164,22 @@ class NODES_PT_geom_add_mesh_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "MESH_CYLINDER")
             props.use_transform = True
             props.type = "GeometryNodeMeshCylinder"
+            
+            props = flow.operator("node.add_node", text = "", icon = "MESH_GRID")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshGrid"
 
             props = flow.operator("node.add_node", text = "", icon = "MESH_ICOSPHERE")
             props.use_transform = True
             props.type = "GeometryNodeMeshIcoSphere"
+            
+            props = flow.operator("node.add_node", text = "", icon = "MESH_CIRCLE")
+            props.use_transform = True
+            props.type = "GeometryNodeMeshCircle"
 
             props = flow.operator("node.add_node", text = "", icon = "MESH_LINE")
             props.use_transform = True
             props.type = "GeometryNodeMeshLine"
-
-            props = flow.operator("node.add_node", text = "", icon = "MESH_GRID")
-            props.use_transform = True
-            props.type = "GeometryNodeMeshGrid"
 
             props = flow.operator("node.add_node", text = "", icon = "MESH_UVSPHERE")
             props.use_transform = True
