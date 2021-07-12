@@ -640,9 +640,9 @@ rename_y
 rename_z
 curve_spiral
 curve_star
-#~ DEF_ICON_BLANK(659)
-#~ DEF_ICON_BLANK(660)
-#~ DEF_ICON_BLANK(661)
+curve_startend
+curve_line
+float_to_int
 #~ DEF_ICON_BLANK(662)
 #~ DEF_ICON_BLANK(663)
 

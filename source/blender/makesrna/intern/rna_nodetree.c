@@ -12587,6 +12587,9 @@ static int node_type_to_icon(int type)
     case FN_NODE_FLOAT_COMPARE:
       icon = ICON_FLOAT_COMPARE;
       break;
+    case FN_NODE_FLOAT_TO_INT:
+      icon = ICON_FLOAT_TO_INT;
+      break;
     case FN_NODE_RANDOM_FLOAT:
       icon = ICON_RANDOM_FLOAT;
       break;
@@ -12595,6 +12598,9 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_TRIANGULATE:
       icon = ICON_MOD_TRIANGULATE;
+      break;
+    case GEO_NODE_VIEWER:
+      icon = ICON_NODE_VIEWER;
       break;
     case GEO_NODE_EDGE_SPLIT:
       icon = ICON_SPLITEDGE;
@@ -12787,6 +12793,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_PRIMITIVE_BEZIER_SEGMENT:
       icon = ICON_CURVE_BEZCURVE;
       break;
+    case GEO_NODE_CURVE_PRIMITIVE_LINE:
+      icon = ICON_CURVE_LINE;
+      break;
     case GEO_NODE_CURVE_PRIMITIVE_CIRCLE:
       icon = ICON_CURVE_BEZCIRCLE;
       break;
@@ -12819,6 +12828,9 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_CURVE_TO_POINTS:
       icon = ICON_POINTCLOUD_DATA;
+      break;
+    case GEO_NODE_CURVE_ENDPOINTS:
+      icon = ICON_CURVE_STARTEND;
       break;
   }
   return icon;
