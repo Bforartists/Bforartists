@@ -3689,7 +3689,7 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurvePrimitiveBezierSegment"
 
-            props = col.operator("node.add_node", text=" Circle                     ", icon = "CURVE_BEZCIRCLE")
+            props = col.operator("node.add_node", text=" Curve Circle           ", icon = "CURVE_BEZCIRCLE")
             props.use_transform = True
             props.type = "GeometryNodeCurvePrimitiveCircle"
 
