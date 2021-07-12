@@ -71,19 +71,25 @@ class CLIP_PT_marker_display(Panel):
         col = row.column()
         col.prop(view, "show_marker_pattern", text="Pattern")
         col.prop(view, "show_marker_search", text="Search")
-
-        col.prop(view, "show_track_path", text="Path")
-        col = col.column()
-        col.active = view.show_track_path
-        col.prop(view, "path_length", text="Length")
+        col.prop(view, "show_disabled", text="Show Disabled")
 
         col = row.column()
-        col.prop(view, "show_disabled", text="Show Disabled")
         col.prop(view, "show_names", text="Info")
 
         if view.mode != 'MASK':
             col.prop(view, "show_bundles", text="3D Markers")
         col.prop(view, "show_tiny_markers", text="Display Thin")
+
+        split = layout.split(factor=.4)
+        split.use_property_split=False
+        split.prop(view, "show_track_path", text="Path")
+        split.alignment = 'LEFT'
+        if view.show_track_path:
+            split.use_property_split = False
+            split.prop(view, "path_length", text="Length")
+        else:
+            split.label(icon='DISCLOSURE_TRI_RIGHT')
+
 
 
 class CLIP_PT_clip_display(Panel):
