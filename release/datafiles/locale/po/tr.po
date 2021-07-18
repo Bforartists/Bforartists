@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -19217,10 +19217,6 @@ msgid "Transparent Max Bounces"
 msgstr "Şeffaflık kullan"
 
 
-msgid "Maximum number of transparent bounces"
-msgstr "En fazla dahili konsol satır sayısı"
-
-
 msgid "Progressive Refine"
 msgstr "İlerleme"
 
@@ -21827,10 +21823,6 @@ msgstr "Kırpma Kullan"
 
 msgid "Mesh Light"
 msgstr "Doğrusal Bozulma"
-
-
-msgid "Transparency"
-msgstr "Saydamlık"
 
 
 msgctxt "Operator"
@@ -24618,6 +24610,10 @@ msgstr "Yaklaş/Uzaklaş"
 
 msgid "View Distance"
 msgstr "Falloff Mesafesi"
+
+
+msgid "Transparency"
+msgstr "Saydamlık"
 
 
 msgid "True Normal"

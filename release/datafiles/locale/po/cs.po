@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -32576,6 +32576,10 @@ msgid "Apply Subdivision Surface"
 msgstr "Použít Dělení Povrchu"
 
 
+msgid "Use Settings for"
+msgstr "Použít nastavení pro"
+
+
 msgid "Export Custom Properties"
 msgstr "Exportovat Uživatelské Vlastnosti"
 
@@ -32602,10 +32606,6 @@ msgstr "Exportovat nevlasové částicové systémy"
 
 msgid "Export normals"
 msgstr "Exportovat normály"
-
-
-msgid "Renderable Objects Only"
-msgstr "Pouze Vykreslovatelné Objekty"
 
 
 msgid "Selected Objects Only"
@@ -33327,10 +33327,6 @@ msgstr "Exportovat USD"
 
 msgid "Export current scene in a USD archive"
 msgstr "Exportovat aktuální scénu v USD archivu"
-
-
-msgid "Use Settings for"
-msgstr "Použít nastavení pro"
 
 
 msgid "UV Maps"
@@ -42256,10 +42252,6 @@ msgid "Start Sample"
 msgstr "Počátek Vzorkování"
 
 
-msgid "Transparency"
-msgstr "Průhlednost"
-
-
 msgid "Direct Light"
 msgstr "Přímé světlo"
 
@@ -46483,16 +46475,12 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Krok Snímku"
 
 
-msgid "No active Keying Set"
-msgstr "Nastavit aktivní klíčovací sestavu"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Krok Snímku"
 
 
-msgid "Active Keying Set '%s' not found"
-msgstr "Aktivní Klíčová Sestava '%s' nebyla nalezena"
+msgid "No active Keying Set"
+msgstr "Nastavit aktivní klíčovací sestavu"
 
 
 msgid "Cannot remove built in keying set"
@@ -49250,6 +49238,10 @@ msgstr "Pohled & Ovládání"
 
 msgid "View Z Depth"
 msgstr "Editační metody"
+
+
+msgid "Transparency"
+msgstr "Průhlednost"
 
 
 msgid "True Normal"

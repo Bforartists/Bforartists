@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -23909,10 +23909,6 @@ msgid "Mesh Light"
 msgstr "Dreta"
 
 
-msgid "Transparency"
-msgstr "Seleccionar connectats"
-
-
 msgid "Tiles X"
 msgstr "Arxiu"
 
@@ -25285,12 +25281,12 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Esborrar"
 
 
-msgid "No active Keying Set"
-msgstr "Canviar Str"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Esborrar"
+
+
+msgid "No active Keying Set"
+msgstr "Canviar Str"
 
 
 msgid "Cannot remove built in keying set"
@@ -26426,6 +26422,10 @@ msgstr "Comprimir Dades"
 
 msgid "View Distance"
 msgstr "Mostrar propietats de les arestes"
+
+
+msgid "Transparency"
+msgstr "Seleccionar connectats"
 
 
 msgid "True Normal"

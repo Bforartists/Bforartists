@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -33640,10 +33640,6 @@ msgid "Transparent Max Bounces"
 msgstr "ﺔﻓﺎﻔﺷ ﺕﺍﺩﺍﺪﺗﺭﺇ ﺮﺜﻛﺍ"
 
 
-msgid "Maximum number of transparent bounces"
-msgstr "ﺔﻓﺎﻔﺸﻟﺍ ﺕﺍﺩﺍﺪﺗﺭﻺ﻿ﻟ ﺩﺪﻋ ﺮﺜﻛﺍ"
-
-
 msgid "Use Animated Seed"
 msgstr "ﺔﻛﺮﺤﺘﻣ ﺓﺭﺬﺑ ﻡﺪﺨﺘﺳﺇ"
 
@@ -37588,10 +37584,6 @@ msgid "Subsurface"
 msgstr "ﻲﺤﻄﺳ-ﺖﺤﺗ"
 
 
-msgid "Transparency"
-msgstr "ﺔﻴﻓﺎﻔﺷ"
-
-
 msgid "Tiles X"
 msgstr "X ﺕﺎﻨﺒﻟ"
 
@@ -39843,12 +39835,12 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "ﺎﻌﻣ ﻞﺠﺴﺗ ﻲﺘﻟﺍ ﺕﺍﺩﺍﺪﻋﻻ﻿ﺍ ﻑﺮﻌﺘﻟ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺍﺭﺎﺴﻣ"
 
 
-msgid "No active Keying Set"
-msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "ﺎﻌﻣ ﻞﺠﺴﺗ ﻲﺘﻟﺍ ﺕﺍﺩﺍﺪﻋﻻ﻿ﺍ ﻑﺮﻌﺘﻟ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺕﺍﺭﺎﺴﻣ"
+
+
+msgid "No active Keying Set"
+msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﺢﻴﺗﺎﻔﻤﻟﺍ ﺔﻋﻮﻤﺠﻣ"
 
 
 msgid "Cannot remove built in keying set"
@@ -41732,6 +41724,10 @@ msgstr "ﺏﺎﺒﻀﻟﺍ ﻖﻤﻋ ﺮﻬﻇﺍ"
 
 msgid "View Distance"
 msgstr "ﺪﻌﺒﻟﺍ ﺮﻬﻇﺍ"
+
+
+msgid "Transparency"
+msgstr "ﺔﻴﻓﺎﻔﺷ"
 
 
 msgid "True Normal"

@@ -91,6 +91,36 @@ def upgradeMetarigTypes(metarig, revert=False):
 # Misc
 #=============================================
 
+
+def rig_is_child(rig, parent, *, strict=False):
+    """
+    Checks if the rig is a child of the parent.
+    Unless strict is True, returns true if the rig and parent are the same.
+    """
+    if parent is None:
+        return True
+
+    if rig and strict:
+        rig = rig.rigify_parent
+
+    while rig:
+        if rig is parent:
+            return True
+
+        rig = rig.rigify_parent
+
+    return False
+
+
+def get_parent_rigs(rig):
+    """Returns a list containing the rig and all of its parents."""
+    result = []
+    while rig:
+        result.append(rig)
+        rig = rig.rigify_parent
+    return result
+
+
 def get_resource(resource_name):
     """ Fetches a rig module by name, and returns it.
     """
