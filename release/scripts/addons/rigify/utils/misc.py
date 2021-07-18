@@ -22,7 +22,7 @@ import bpy
 import math
 import collections
 
-from itertools import tee, chain, islice, repeat
+from itertools import tee, chain, islice, repeat, permutations
 from mathutils import Vector, Matrix, Color
 from rna_prop_ui import rna_idprop_value_to_python
 
@@ -30,6 +30,28 @@ from rna_prop_ui import rna_idprop_value_to_python
 #=============================================
 # Math
 #=============================================
+
+
+axis_vectors = {
+    'x': (1,0,0),
+    'y': (0,1,0),
+    'z': (0,0,1),
+    '-x': (-1,0,0),
+    '-y': (0,-1,0),
+    '-z': (0,0,-1),
+}
+
+
+# Matrices that reshuffle axis order and/or invert them
+shuffle_matrix = {
+    sx+x+sy+y+sz+z: Matrix((
+        axis_vectors[sx+x], axis_vectors[sy+y], axis_vectors[sz+z]
+        )).transposed().freeze()
+    for x, y, z in permutations(['x', 'y', 'z'])
+    for sx in ('', '-')
+    for sy in ('', '-')
+    for sz in ('', '-')
+}
 
 
 def angle_on_plane(plane, vec1, vec2):

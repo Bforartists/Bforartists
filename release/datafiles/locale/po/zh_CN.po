@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -4069,6 +4069,10 @@ msgid "UV Random"
 msgstr "UV随机"
 
 
+msgid "Random factor for auto-generated UV rotation"
+msgstr "用于自动创建的UV旋转的随机系数"
+
+
 msgid "Vertex Color Factor"
 msgstr "顶点颜色系数"
 
@@ -5206,7 +5210,7 @@ msgstr "布料碰撞作用于碰撞器法线 (提升穿透恢复)"
 
 
 msgid "Override Normals"
-msgstr "覆盖法线"
+msgstr "重写法线"
 
 
 msgid "Cloth collision impulses act in the direction of the collider normals (more reliable in some cases)"
@@ -5724,6 +5728,14 @@ msgstr "只在局部坐标空间中估算位置目标, 当父移动添加时"
 
 msgid "The transformation of the target is evaluated relative to its local coordinate system"
 msgstr "只在局部坐标空间中进行计算"
+
+
+msgid "Local Space (Owner Orientation)"
+msgstr "局部空间(所有者方位)"
+
+
+msgid "The transformation of the target bone is evaluated relative to its local coordinate system, followed by a correction for the difference in target and owner rest pose orientations. When applied as local transform to the owner produces the same global motion as the target if the parents are still in rest pose"
+msgstr "相对于其局部坐标系进行评估目标骨骼的变换，然后对目标和所有者静置姿势方位的差异进行校正。当对所有者应用为本地变换时，如果父级仍处于静置状态，则生成与目标相同的全局运动"
 
 
 msgid "Camera Solver"
@@ -6532,6 +6544,62 @@ msgstr "指定复制变换和现有变换的组合方式"
 
 msgid "Replace the original transformation with copied"
 msgstr "使用复制替换原始变换"
+
+
+msgid "Before Original (Full)"
+msgstr "初始前(完整)"
+
+
+msgid "Apply copied transformation before original, using simple matrix multiplication as if the constraint target is a parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "在原始之前应用被复制转换，使用简单的矩阵乘法，就好像约束目标为完全继承缩放模式中的父级一样。将旋转和非均匀缩放组合时将创建切变"
+
+
+msgid "Before Original (Aligned)"
+msgstr "初始前(对齐)"
+
+
+msgid "Apply copied transformation before original, as if the constraint target is a parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "在原始之前应用被复制变换，就好像约束目标为对齐继承缩放模式中的父级一样。这有效地使用完整的位置以及旋转和缩放的拆分通道"
+
+
+msgid "Before Original (Split Channels)"
+msgstr "初始前(拆分通道)"
+
+
+msgid "Apply copied transformation before original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
+msgstr "在原始之前应用被复制变换，分开处理位置、旋转和缩放，类似于三个复制约束的序列"
+
+
+msgid "After Original (Full)"
+msgstr "初始后(完整)"
+
+
+msgid "Apply copied transformation after original, using simple matrix multiplication as if the constraint target is a child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "在原始后应用被复制变换，使用简单的矩阵乘法，就好像约束目标为完全继承缩放模式下的子级一样。将旋转和不均匀缩放组合时创建切变"
+
+
+msgid "After Original (Aligned)"
+msgstr "初始后(对齐)"
+
+
+msgid "Apply copied transformation after original, as if the constraint target is a child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "在原始之后应用被复制变换，就好像约束目标为对齐继承缩放模式中的子级一样。这有效地使用完整的位置以及旋转和缩放的拆分通道"
+
+
+msgid "After Original (Split Channels)"
+msgstr "初始后(拆分通道)"
+
+
+msgid "Apply copied transformation after original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
+msgstr "在原始之后应用被复制变换，分开处理位置、旋转和缩放，类似于三个复制约束的序列"
+
+
+msgid "Remove Target Shear"
+msgstr "删除目标切变"
+
+
+msgid "Remove shear from the target transformation before combining"
+msgstr "合并前从目标变换中移除切变"
 
 
 msgid "Damped Track Constraint"
@@ -10257,6 +10325,10 @@ msgid "Muted"
 msgstr "屏蔽"
 
 
+msgid "Disable F-Curve evaluation"
+msgstr "禁用函数曲线解算"
+
+
 msgid "Sampled Points"
 msgstr "采样点"
 
@@ -13608,7 +13680,7 @@ msgstr "将上一帧的速度与当前帧中的新速度进行比较，并保留
 
 
 msgid "Override"
-msgstr "覆盖"
+msgstr "重写"
 
 
 msgid "Always write new guide velocities for every frame (each frame only contains current velocities from guiding objects)"
@@ -15637,6 +15709,10 @@ msgid "Vertex Weight"
 msgstr "顶点权重"
 
 
+msgid "Generate Vertex Weights"
+msgstr "生成顶点权重"
+
+
 msgid "Deform stroke points using armature object"
 msgstr "使用骨架物体变形笔画的点"
 
@@ -16367,8 +16443,24 @@ msgid "Allow edges in the same location (i.e. from edge split) to show properly.
 msgstr "允许在同一位置(即拆分边)中的边正确显示。可能运行速度较慢"
 
 
+msgid "Filter Face Marks"
+msgstr "过滤面标记"
+
+
+msgid "Filter feature lines using freestyle face marks"
+msgstr "使用freestyle面标记过滤特征线"
+
+
 msgid "Boundaries"
 msgstr "边界"
+
+
+msgid "Filter feature lines based on face mark boundaries"
+msgstr "基于面标记边界过滤特征线"
+
+
+msgid "Invert face mark filtering"
+msgstr "反转面标记过滤"
 
 
 msgid "All Lines"
@@ -16387,6 +16479,14 @@ msgid "Treat intersection and contour lines as if they were the same type so the
 msgstr "将交集和轮廓线视作相同的类型，以使两者可以链接在一起"
 
 
+msgid "Use Geometry Space"
+msgstr "使用几何空间"
+
+
+msgid "Use geometry distance for chaining instead of image space"
+msgstr "对链式而非图像空间使用几何距离"
+
+
 msgid "Use Intersection"
 msgstr "使用交集"
 
@@ -16395,12 +16495,68 @@ msgid "Generate strokes from intersections"
 msgstr "从交集生成笔画"
 
 
+msgid "Mask bits to match from Collection Line Art settings"
+msgstr "从线条画集合设置匹配的遮罩位"
+
+
+msgid "Match Intersection"
+msgstr "匹配交叉"
+
+
+msgid "Require matching all intersection masks instead of just one"
+msgstr "需要匹配所有交叉遮罩，而非仅仅一个"
+
+
+msgid "Use Loose"
+msgstr "使用松散"
+
+
+msgid "Generate strokes from loose edges"
+msgstr "从松散边生成笔画"
+
+
+msgid "Loose As Contour"
+msgstr "松散作为轮廓"
+
+
+msgid "Loose edges will have contour type"
+msgstr "松散边将有轮廓类型"
+
+
+msgid "Chain Loose Edges"
+msgstr "链接松散边"
+
+
+msgid "Allow loose edges to be chained together"
+msgstr "允许松散边被链接在一起"
+
+
 msgid "Use Material"
 msgstr "使用材质"
 
 
 msgid "Generate strokes from borders between materials"
 msgstr "从材质之间的边界生成笔画"
+
+
+msgid "Use Material Mask"
+msgstr "使用材质遮罩"
+
+
+msgid "Use material masks to filter out occluded strokes"
+msgstr "使用材质遮罩过滤掉被遮挡的笔画"
+
+
+msgid "Mask bits to match from Material Line Art settings"
+msgstr "从线条画材质设置匹配的遮罩位"
+
+
+msgid "Match Masks"
+msgstr "匹配遮罩"
+
+
+msgid "Require matching all material masks instead of just one"
+msgstr "需要匹配所有材质遮罩，而非仅仅一个"
 
 
 msgid "Use Occlusion Range"
@@ -16425,6 +16581,14 @@ msgstr "匹配输出"
 
 msgid "Match output vertex group based on name"
 msgstr "基于名称匹配输出顶点组"
+
+
+msgid "Overlapping Edge Types"
+msgstr "重叠边缘类型"
+
+
+msgid "Allow an edge to have multiple overlapping types. This will create a separate stroke for each overlapping type"
+msgstr "允许边缘具有多个重叠类型。这将为每个重叠类型创建一个单独的笔画"
 
 
 msgid "Remove Doubles"
@@ -16613,6 +16777,14 @@ msgstr "替换笔画不透明度"
 
 msgid "Use a custom curve to define opacity effect along the strokes"
 msgstr "使用自定义曲线沿笔画定义不透明度效果"
+
+
+msgid "Weighted"
+msgstr "权重"
+
+
+msgid "Use weight to modulate effect"
+msgstr "使用权重调节效果"
 
 
 msgid "Simplify Modifier"
@@ -16955,6 +17127,42 @@ msgid "Use a custom curve to define vertex color effect along the strokes"
 msgstr "使用自定义曲线沿笔画定义顶点颜色效果"
 
 
+msgid "Weight Modifier"
+msgstr "权重修改器"
+
+
+msgid "Calculate Vertex Weight dynamically"
+msgstr "动态计算顶点权重"
+
+
+msgid "Distance End"
+msgstr "距离结束"
+
+
+msgid "End value for distance calculation"
+msgstr "距离计算的终点值"
+
+
+msgid "Distance Start"
+msgstr "距离开始"
+
+
+msgid "Start value for distance calculation"
+msgstr "距离计算的起点值"
+
+
+msgid "Minimum value for vertex weight"
+msgstr "顶点重量的最小值"
+
+
+msgid "Calculate weights depending on the distance to the target object"
+msgstr "根据与目标物体的距离计算权重"
+
+
+msgid "Calculate weights depending on the stroke orientation"
+msgstr "根据笔画方向计算权重"
+
+
 msgid "Object used as distance reference"
 msgstr "用作距离参考的物体"
 
@@ -16963,8 +17171,24 @@ msgid "Space"
 msgstr "间隔"
 
 
+msgid "Coordinates space"
+msgstr "坐标空间"
+
+
+msgid "Output Vertex group"
+msgstr "输出顶点组"
+
+
 msgid "Blend"
 msgstr "混合"
+
+
+msgid "Blend results with existing weights in output weight group"
+msgstr "将结果与输出权重组中的现有权重混合"
+
+
+msgid "Invert weight values"
+msgstr "反转权重值"
 
 
 msgid "Vertex Group Element"
@@ -17204,11 +17428,11 @@ msgstr ".blend 文件(主数据库) 中生成计算结果的实际数据块"
 
 
 msgid "Library Override"
-msgstr "库覆写"
+msgstr "库重写"
 
 
 msgid "Library override data"
-msgstr "静态覆盖数据"
+msgstr "静态重写数据"
 
 
 msgid "Preview image and icon of this data-block (always None if not supported for this type of data)"
@@ -18601,7 +18825,7 @@ msgstr "平滑时保留原始形状的程度"
 
 
 msgid "Texture Overlay Alpha"
-msgstr "纹理覆盖Alpha"
+msgstr "纹理叠加Alpha"
 
 
 msgid "Texture Sample Bias"
@@ -18741,7 +18965,7 @@ msgstr "视图中显示游标"
 
 
 msgid "Override Overlay"
-msgstr "覆盖叠加层"
+msgstr "重写叠加层"
 
 
 msgid "Don't show overlay during a stroke"
@@ -19161,7 +19385,7 @@ msgstr "Alembic存档中对象的路径"
 
 
 msgid "Override Frame"
-msgstr "覆盖帧"
+msgstr "重写帧"
 
 
 msgid "Whether to use a custom frame for looking up data in the cache file, instead of using the current scene frame"
@@ -19592,6 +19816,10 @@ msgid "Offset from the origin to use when instancing"
 msgstr "实例化时相对于原点的偏移量"
 
 
+msgid "Intersection generated by this collection will have this mask value"
+msgstr "此集合生成的交叉将具有此遮罩值"
+
+
 msgid "Usage"
 msgstr "用法"
 
@@ -19638,6 +19866,14 @@ msgstr "无交叉"
 
 msgid "Include this collection but do not generate intersection lines"
 msgstr "包含此集合，但不生成交叉线"
+
+
+msgid "Use Intersection Masks"
+msgstr "使用交叉遮罩"
+
+
+msgid "Use custom intersection mask for faces in this collection"
+msgstr "在此集合中使用自定义交叉遮罩进行遮蔽"
 
 
 msgid "Objects that are directly in this collection"
@@ -21442,6 +21678,10 @@ msgstr "图像渲染槽"
 
 msgid "X/Y pixels per meter"
 msgstr "每米的X 向/Y 向像素"
+
+
+msgid "Width and height in pixels, zero when image data can't be loaded"
+msgstr "像素的宽和高, 当无法加载图像数据时, 值为零"
 
 
 msgid "Where the image comes from"
@@ -25341,10 +25581,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "活动相机, 用于渲染场景"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "场景中物体和其他集合的主集合"
-
-
 msgid "3D Cursor"
 msgstr "3D 游标"
 
@@ -27176,7 +27412,7 @@ msgstr "ID 材质"
 
 
 msgid "ID Library Override"
-msgstr "ID 库覆写"
+msgstr "ID 库重写"
 
 
 msgid "Struct gathering all data needed by overridden linked IDs"
@@ -27184,7 +27420,7 @@ msgstr "结构收集覆写的关联的 ID 所需的全部数据"
 
 
 msgid "List of overridden properties"
-msgstr "被覆盖属性列表"
+msgstr "被重写属性列表"
 
 
 msgid "Reference ID"
@@ -27204,11 +27440,11 @@ msgstr "覆写属性集合"
 
 
 msgid "ID Library Override Property"
-msgstr "ID 库覆写属性"
+msgstr "ID 库重写属性"
 
 
 msgid "Description of an overridden property"
-msgstr "被覆盖属性描述"
+msgstr "被重写属性描述"
 
 
 msgid "Operations"
@@ -27228,11 +27464,11 @@ msgstr "RNA 路径"
 
 
 msgid "ID Library Override Property Operation"
-msgstr "ID 库覆写属性操作"
+msgstr "ID 库重写属性操作"
 
 
 msgid "Description of an override operation over an overridden property"
-msgstr "覆写属性的覆盖操作的描述"
+msgstr "覆写属性的重写操作的描述"
 
 
 msgid "Optional flags (NOT USED)"
@@ -27248,7 +27484,7 @@ msgstr "对于模板，阻止用户删除预定义的操作 (未使用)"
 
 
 msgid "Prevents the user from modifying that override operation (NOT USED)"
-msgstr "防止用户修改该覆盖操作(未使用)"
+msgstr "防止用户修改该重写操作(未使用)"
 
 
 msgid "Operation"
@@ -27268,7 +27504,7 @@ msgstr "不执行任何操作，阻止添加实际覆写(未使用)"
 
 
 msgid "Replace value of reference by overriding one"
-msgstr "通过覆盖引用值来替换引用值"
+msgstr "通过重写引用值来替换引用值"
 
 
 msgid "Differential"
@@ -31122,6 +31358,22 @@ msgid "Material Line Art"
 msgstr "材质线条画"
 
 
+msgid "Effectiveness"
+msgstr "效果"
+
+
+msgid "Faces with this material will behave as if it has set number of layers in occlusion"
+msgstr "带有此材质的面将表现得好像它已设置遮挡层数"
+
+
+msgid "Custom Occlusion Effectiveness"
+msgstr "自定义遮挡效果"
+
+
+msgid "Use custom occlusion effectiveness for this material"
+msgstr "对此材质使用自定义遮挡效果"
+
+
 msgid "Material slot in an object"
 msgstr "物体上的材质槽"
 
@@ -31386,6 +31638,10 @@ msgstr "属性"
 
 msgid "Mesh"
 msgstr "网格"
+
+
+msgid "Curve Primitives"
+msgstr "曲线基本体"
 
 
 msgid "Mesh Primitives"
@@ -33236,7 +33492,7 @@ msgstr "钳制重叠"
 
 
 msgid "Clamp the width to avoid overlap"
-msgstr "钳制宽度以避免覆盖"
+msgstr "钳制宽度以避免重叠"
 
 
 msgid "Vertex group name"
@@ -40420,10 +40676,6 @@ msgid "Off: first socket, On: second socket"
 msgstr "关闭: 第一个接口, 开启:  第二个接口"
 
 
-msgid "View Switch"
-msgstr "视图切换"
-
-
 msgid "Node Output"
 msgstr "节点输出"
 
@@ -41180,6 +41432,38 @@ msgid "Curve Length"
 msgstr "曲线长度"
 
 
+msgid "Bezier Segment"
+msgstr "贝塞尔线段"
+
+
+msgid "Method used to determine control handles"
+msgstr "用于确定控制柄的方法"
+
+
+msgid "The start and end handles are fixed positions"
+msgstr "开始和结束控制柄为固定位置"
+
+
+msgid "The start and end handles are offsets from the spline's control points"
+msgstr "开始和结束控制柄为样条线的控制点偏移量"
+
+
+msgid "Method used to determine radius and placement"
+msgstr "用于确定半径和位置的方法"
+
+
+msgid "Define the radius and location with three points"
+msgstr "用三个点定义半径和位置"
+
+
+msgid "Define the radius with a float"
+msgstr "用浮点数定义半径"
+
+
+msgid "Quadratic Bezier"
+msgstr "二次型贝塞尔"
+
+
 msgid "Resample Curve"
 msgstr "曲线重采样"
 
@@ -41198,6 +41482,14 @@ msgstr "通过将每根样条线拆分为具有指定长度的线段来计算采
 
 msgid "Curve Reverse"
 msgstr "曲线反转"
+
+
+msgid "Curve Spiral"
+msgstr "曲线螺旋"
+
+
+msgid "Star"
+msgstr "星形"
 
 
 msgid "Curve Subdivide"
@@ -42151,6 +42443,10 @@ msgstr "使用标量值 W 作为输入"
 
 msgid "Use the 2D vector (x, y) as input. The z component is ignored"
 msgstr "使用二维矢量 (x， y) 作为输入。忽略z向分量"
+
+
+msgid "Use the 3D vector (x, y, z) as input"
+msgstr "使用三维矢量(x、y、z)作为输入"
 
 
 msgid "Use the 4D vector (x, y, z, w) as input"
@@ -48662,6 +48958,14 @@ msgstr "JPEG格式 (.jpg)"
 
 msgid "Save images as JPEGs. (Images that need alpha are saved as PNGs though.) Be aware of a possible loss in quality"
 msgstr "将图像另存为 JPEG。(需要alpha 的图像保存为 PNG。)注意可能带来的品质损失"
+
+
+msgid "Keep original"
+msgstr "保留原有"
+
+
+msgid "Keep original textures files if possible. WARNING: if you use more than one texture, where pbr standard requires only one, only one texture will be used.This can lead to unexpected results"
+msgstr "如果可能，保留原始纹理文件。警告：如果您使用多个纹理，而pbr 标准只需要一个纹理，则仅使用一个纹理。这可能导致意外的结果"
 
 
 msgid "Punctual Lights"
@@ -58500,7 +58804,7 @@ msgstr "使用输出文件中的材料名称，拆分每个材质中烘焙的贴
 
 
 msgid "UV layer to override active"
-msgstr "覆盖活动层的UV 层"
+msgstr "重写活动层的UV 层"
 
 
 msgid "Horizontal dimension of the baking map (external only)"
@@ -58645,11 +58949,11 @@ msgstr "网格 -> 点云"
 
 msgctxt "Operator"
 msgid "Convert Proxy to Override"
-msgstr "转换代理为覆盖"
+msgstr "转换代理为重写"
 
 
 msgid "Convert a proxy to a local library override"
-msgstr "将代理转换为本地库覆写"
+msgstr "将代理转换为本地库重写"
 
 
 msgctxt "Operator"
@@ -59547,7 +59851,7 @@ msgstr "选定的物体,数据和材质"
 
 msgctxt "Operator"
 msgid "Make Library Override"
-msgstr "库覆写"
+msgstr "创建库重写"
 
 
 msgid "Make a local override of this library linked data-block"
@@ -59555,11 +59859,11 @@ msgstr "将库关联的数据块覆写为本地数据块"
 
 
 msgid "Override Collection"
-msgstr "覆盖集合"
+msgstr "重写集合"
 
 
 msgid "Name of directly linked collection containing the selected object, to make an override from"
-msgstr "包含选中物体的直接关联的集合名称，将被覆盖的目标"
+msgstr "包含选中物体的直接关联的集合名称，将被重写的目标"
 
 
 msgid "Make linked data local to each object"
@@ -59568,10 +59872,6 @@ msgstr "使各物体的关联数据单一化"
 
 msgid "Object Animation"
 msgstr "物体动画"
-
-
-msgid "Make animation data local to each object"
-msgstr "将动画数据本地化至各物体"
 
 
 msgid "Make materials local to each data-block"
@@ -61868,7 +62168,7 @@ msgstr "使已选中的数据块的所有用户使用当前(点击的)数据块"
 
 
 msgid "Make Library Override"
-msgstr "创建库覆写"
+msgstr "创建库重写"
 
 
 msgid "Make a local override of this linked data-block"
@@ -61876,47 +62176,47 @@ msgstr "添加一个此关联数据块的本地覆写"
 
 
 msgid "Make Library Override Hierarchy"
-msgstr "创建库覆写层级"
+msgstr "创建库重写层级"
 
 
 msgid "Make a local override of this linked data-block, and its hierarchy of dependencies"
-msgstr "为该被关联数据块及其依赖项层级创建本地覆盖"
+msgstr "为该被关联数据块及其依赖项层级创建本地重写"
 
 
 msgid "Convert Proxy to Override"
-msgstr "转换代理为覆盖"
+msgstr "转换代理为重写"
 
 
 msgid "Convert a Proxy object to a full library override, including all its dependencies"
-msgstr "将代理对象转换为完整库覆写，包括所有其依赖项"
+msgstr "将代理对象转换为完整库重写，包括所有其依赖项"
 
 
 msgid "Reset Library Override"
-msgstr "重置库覆写"
+msgstr "重置库重写"
 
 
 msgid "Reset this local override to its linked values"
-msgstr "重置此本地覆盖为其关联数值"
+msgstr "重置此本地重写为其关联数值"
 
 
 msgid "Reset Library Override Hierarchy"
-msgstr "重置库覆写层级"
+msgstr "重置库重写层级"
 
 
 msgid "Reset this local override to its linked values, as well as its hierarchy of dependencies"
-msgstr "重置该本地覆盖及其依赖层级为关联数值"
+msgstr "重置该本地重写及其依赖层级为关联数值"
 
 
 msgid "Resync Library Override Hierarchy"
-msgstr "重新同步库覆写层级"
+msgstr "重新同步库重写层级"
 
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies"
-msgstr "重建来自其关联参考的本地覆盖及其依赖层级为关联数值"
+msgstr "重建来自其关联参考的本地重写及其依赖层级为关联数值"
 
 
 msgid "Resync Library Override Hierarchy Enforce"
-msgstr "强制重新同步库覆写层级"
+msgstr "强制重新同步库重写层级"
 
 
 msgid "Rebuild this local override from its linked reference, as well as its hierarchy of dependencies, enforcing that hierarchy to match the linked data (i.e. ignoring exiting overrides on data-blocks pointer properties)"
@@ -61924,11 +62224,11 @@ msgstr "从其关联引用以及依赖关系的层次结构中重建此本地覆
 
 
 msgid "Delete Library Override Hierarchy"
-msgstr "删除库覆写层级"
+msgstr "删除库重写层级"
 
 
 msgid "Delete this local override (including its hierarchy of override dependencies) and relink its usages to the linked data-blocks"
-msgstr "删除此本地覆盖(包括其覆盖依赖项的层次结构），并将其用法重新关联到被关联的数据块"
+msgstr "删除此本地重写(包括其重写依赖项的层次结构），并将其用法重新关联到被关联的数据块"
 
 
 msgid "Paste"
@@ -67189,6 +67489,10 @@ msgid "Paste strips from clipboard"
 msgstr "粘贴剪贴板中的片段"
 
 
+msgid "Keep strip offset relative to the current frame when pasting"
+msgstr "粘贴时，保持相对于当前帧的片段偏移"
+
+
 msgctxt "Operator"
 msgid "Reassign Inputs"
 msgstr "重新指定输入项"
@@ -67339,7 +67643,7 @@ msgstr "重叠"
 
 
 msgid "Overlapping time"
-msgstr "覆盖时间"
+msgstr "重叠时间"
 
 
 msgid "Same Channel"
@@ -67942,6 +68246,23 @@ msgstr "添加筛选器以从显示的数据中移除行"
 
 
 msgctxt "Operator"
+msgid "Change Visible Data Source"
+msgstr "更改可见数据源"
+
+
+msgid "Change visible data source in the spreadsheet"
+msgstr "更改电子表格中的可见数据源"
+
+
+msgid "Attribute Domain Type"
+msgstr "属性域类型"
+
+
+msgid "Component Type"
+msgstr "组件类型"
+
+
+msgctxt "Operator"
 msgid "Remove Row Filter"
 msgstr "移除行过滤"
 
@@ -68411,7 +68732,7 @@ msgstr "基于3D游标和鼠标弯曲选中的对象"
 
 
 msgid "Center Override"
-msgstr "中心覆盖"
+msgstr "中心重写"
 
 
 msgid "Force using this center value (when set)"
@@ -69241,7 +69562,7 @@ msgstr "反选"
 
 
 msgid "Inverse selection (overrides 'Select All' when True)"
-msgstr "反转选区(为真时，覆盖‘全选’)"
+msgstr "反转选区(为真时，重写‘全选’)"
 
 
 msgid "Select All"
@@ -69293,11 +69614,11 @@ msgstr "切换到目标物体或骨骼"
 
 msgctxt "Operator"
 msgid "Remove Override"
-msgstr "删除覆盖"
+msgstr "删除重写"
 
 
 msgid "Remove an override operation"
-msgstr "删除覆盖操作"
+msgstr "删除重写操作"
 
 
 msgid "Reset to default values all elements of the array"
@@ -69306,15 +69627,15 @@ msgstr "将阵列中的所有元素恢复到默认值"
 
 msgctxt "Operator"
 msgid "Define Override Type"
-msgstr "定义覆盖类型"
+msgstr "定义重写类型"
 
 
 msgid "Create an override operation, or set the type of an existing one"
-msgstr "创建覆盖操作, 或设置现有操作的类型"
+msgstr "创建重写操作, 或设置现有操作的类型"
 
 
 msgid "Type of override operation"
-msgstr "覆盖操作的类型"
+msgstr "重写操作的类型"
 
 
 msgid "NoOp"
@@ -69322,7 +69643,7 @@ msgstr "无操作"
 
 
 msgid "'No-Operation', place holder preventing automatic override to ever affect the property"
-msgstr "'无操作'，占位符阻止自动覆盖会影响属性"
+msgstr "'无操作'，占位符阻止自动重写会影响属性"
 
 
 msgid "Completely replace value from linked data by local one"
@@ -70419,7 +70740,7 @@ msgstr "自动定轴"
 
 
 msgid "Select the closest axis when placing objects (surface overrides)"
-msgstr "放置物体时选择最近的轴(表面覆盖)"
+msgstr "放置物体时选择最近的轴(表面重写)"
 
 
 msgid "The initial depth used when placing the cursor"
@@ -71166,6 +71487,22 @@ msgid "End frame of the export, use the default value to take the end frame of t
 msgstr "导出的结束帧,使用默认值从当前场景获取结束帧"
 
 
+msgid "Use Settings for"
+msgstr "设置用于"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "确定物体可见性、修改器设置和其他具有不同设置的视图和渲染区域"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "对物体可见性、修改器设置等使用渲染设置"
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "对物体可见性、修改器设置等使用视图设置"
+
+
 msgid "Export Custom Properties"
 msgstr "导出自定义属性"
 
@@ -71228,14 +71565,6 @@ msgstr "拼排UV孤岛"
 
 msgid "Export UVs with packed island"
 msgstr "输出拼排孤岛后的UV"
-
-
-msgid "Renderable Objects Only"
-msgstr "仅可渲染物体"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "仅输出大纲视图中标记为可渲染的物体"
 
 
 msgid "Selected Objects Only"
@@ -72013,7 +72342,7 @@ msgstr "切换上下文"
 
 
 msgid "Optionally override the context with a module"
-msgstr "随意使用一个模块覆盖上下文"
+msgstr "随意使用一个模块重写上下文"
 
 
 msgctxt "Operator"
@@ -72570,11 +72899,11 @@ msgstr "属性的默认值. 对 NLA 混合非常重要"
 
 
 msgid "Is Library Overridable"
-msgstr "库是否可覆盖"
+msgstr "库是否可重写"
 
 
 msgid "Allow the property to be overridden when the data-block is linked"
-msgstr "允许在关联数据块时覆盖属性"
+msgstr "允许在关联数据块时重写属性"
 
 
 msgid "Maximum value of the property"
@@ -72661,11 +72990,11 @@ msgstr "由径向控制的属性的次级路径"
 
 
 msgid "Fill Color Override Path"
-msgstr "填充色覆盖路径"
+msgstr "填充色重写路径"
 
 
 msgid "Fill Color Override Test"
-msgstr "填充色覆盖设置"
+msgstr "填充色重写设置"
 
 
 msgid "Fill Color Path"
@@ -72817,7 +73146,7 @@ msgstr "时间限制"
 
 
 msgid "Seconds to run the test for (override iterations)"
-msgstr "运行测试的秒数 (覆盖迭代)"
+msgstr "运行测试的秒数 (重写迭代)"
 
 
 msgid "Draw Region"
@@ -73189,22 +73518,6 @@ msgid "Export current scene in a USD archive"
 msgstr "将当前场景导出为USD档"
 
 
-msgid "Use Settings for"
-msgstr "设置用于"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "确定物体可见性、修改器设置和其他具有不同设置的视图和渲染区域"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "对物体可见性、修改器设置等使用渲染设置"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "对物体可见性、修改器设置等使用视图设置"
-
-
 msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
 msgstr "勾选后，将导出整个渲染帧范围。取消勾选，仅导出当前帧"
 
@@ -73462,7 +73775,7 @@ msgstr "对称羽化"
 
 
 msgid "Reduce the strength of the brush where it overlaps symmetrical daubs"
-msgstr "在覆盖对称涂画处减小笔刷力度"
+msgstr "在重叠对称涂画处减小笔刷力度"
 
 
 msgid "Symmetry X"
@@ -74128,6 +74441,10 @@ msgid "Beam Shape"
 msgstr "光束形状"
 
 
+msgid "Shadow Terminator"
+msgstr "阴影分界线"
+
+
 msgid "Ray Visibility"
 msgstr "射线可见性"
 
@@ -74353,7 +74670,7 @@ msgstr "活动工具"
 
 
 msgid "Overlays"
-msgstr "覆盖内容"
+msgstr "叠加"
 
 
 msgid "UV Editing"
@@ -74751,7 +75068,7 @@ msgstr "表面响应"
 
 
 msgid "Override Iterations"
-msgstr "覆盖迭代"
+msgstr "重写迭代"
 
 
 msgid "Dynamics"
@@ -77414,7 +77731,7 @@ msgstr "覆写自动重新同步"
 
 
 msgid "Enable library overrides automatic resync detection and process on file load. Disable when dealing with older .blend files that need manual Resync (Enforce) handling"
-msgstr "启用文件加载时库覆写自动重新同步检测和的处理。处理需要手动重新同步(强制)处理的旧.blend文件时禁用"
+msgstr "启用文件加载时库重写自动重新同步检测和的处理。处理需要手动重新同步(强制)处理的旧.blend文件时禁用"
 
 
 msgid "Asset Browser"
@@ -77462,7 +77779,7 @@ msgstr "覆写模板"
 
 
 msgid "Enable library override template in the python API"
-msgstr "启用python API 中的库覆写模板"
+msgstr "启用python API 中的库重写模板"
 
 
 msgid "Sculpt Mode Tilt Support"
@@ -78434,7 +78751,7 @@ msgstr "磁盘缓存目录"
 
 
 msgid "Override default directory"
-msgstr "覆盖默认目录"
+msgstr "重写默认目录"
 
 
 msgid "Disk Cache Limit"
@@ -79603,8 +79920,20 @@ msgid "Control accuracy of motion blur, more steps gives more memory usage (actu
 msgstr "运动模糊的控制精度, 给与更多步数使用更多内存 (真实步数是 2^(步数 - 1))"
 
 
+msgid "Shadow Terminator Geometry Offset"
+msgstr "阴影分界线几何偏移"
+
+
+msgid "Offset rays from the surface to reduce shadow terminator artifact on low poly geometry. Only affects triangles at grazing angles to light"
+msgstr "从表面偏移光线，以减少低面几何体的阴影分界瑕疵。只影响到灯光的掠射角上三角面"
+
+
+msgid "Shadow Terminator Shading Offset"
+msgstr "阴影分界线着色偏移"
+
+
 msgid "Push the shadow terminator towards the light to hide artifacts on low poly geometry"
-msgstr "将阴影分界线推向灯光一侧，以隐藏低多边形几何体上的阴影瑕疵"
+msgstr "将阴影分界线推向灯光一侧，以隐藏低面几何体上的"
 
 
 msgid "Use Adaptive Subdivision"
@@ -80607,10 +80936,6 @@ msgid "Transparent Max Bounces"
 msgstr "透明反弹次数上限"
 
 
-msgid "Maximum number of transparent bounces"
-msgstr "透明反弹的最大次数"
-
-
 msgid "Use Adaptive Sampling"
 msgstr "使用自适应采样"
 
@@ -81447,6 +81772,10 @@ msgid "Render Halos in this Layer (on top of Solid)"
 msgstr "在当前层中渲染光晕(位于实体的顶部)"
 
 
+msgid "Render motion blur in this Layer, if enabled in the scene"
+msgstr "如果在场景中启用，则在此图层中渲染运动模糊"
+
+
 msgid "Deliver Ambient Occlusion pass"
 msgstr "传递AO通道"
 
@@ -82156,7 +82485,7 @@ msgstr "将渲染(合成)结果导入至序列编辑器, 需事先开启序列�
 
 
 msgid "Override Scene Settings"
-msgstr "覆盖场景设置"
+msgstr "重写场景设置"
 
 
 msgid "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
@@ -83820,11 +84149,11 @@ msgstr "禁用片段会导致输出不可见"
 
 
 msgid "Override Cache Settings"
-msgstr "覆盖缓存设置"
+msgstr "重写缓存设置"
 
 
 msgid "Override global cache settings"
-msgstr "覆盖全局缓存设置"
+msgstr "重写全局缓存设置"
 
 
 msgid "Left Handle Selected"
@@ -84567,7 +84896,7 @@ msgstr "替换相机"
 
 
 msgid "Override the scenes active camera"
-msgstr "覆盖场景中激活的相机"
+msgstr "重写场景中激活的相机"
 
 
 msgid "Input type to use for the Scene strip"
@@ -84799,11 +85128,11 @@ msgstr "显示缓存过的raw图像"
 
 
 msgid "Show Overlay"
-msgstr "显示覆盖"
+msgstr "显示叠加"
 
 
 msgid "Partial overlay on top of the sequencer with a frame offset"
-msgstr "在序列上使用带帧偏移的部分覆盖"
+msgstr "在序列上使用带帧偏移的部分叠加"
 
 
 msgid "Cache Final"
@@ -84823,7 +85152,7 @@ msgstr "缓存预处理图像，已内存消耗为代价换取更快的效果调
 
 
 msgid "Overlay Lock"
-msgstr "覆盖锁定"
+msgstr "叠加锁定"
 
 
 msgid "Prefetch Frames"
@@ -85088,6 +85417,42 @@ msgstr "沿 Y 轴缩放"
 
 msgid "Sequencer Tool Settings"
 msgstr "序列编辑器工具设置"
+
+
+msgid "Snapping Distance"
+msgstr "吸附距离"
+
+
+msgid "Maximum distance for snapping in pixels"
+msgstr "最大吸附距离，单位为像素"
+
+
+msgid "Ignore Muted Strips"
+msgstr "忽略被屏蔽的片段"
+
+
+msgid "Don't snap to hidden strips"
+msgstr "不要吸附隐藏的片段"
+
+
+msgid "Ignore Sound Strips"
+msgstr "忽略声音片段"
+
+
+msgid "Don't snap to sound strips"
+msgstr "不吸附到声音片段"
+
+
+msgid "Snap to current frame"
+msgstr "吸附到当前帧"
+
+
+msgid "Hold Offset"
+msgstr "保持偏移"
+
+
+msgid "Snap to strip hold offsets"
+msgstr "吸附到片段保持偏移"
 
 
 msgid "Collection of Sequences"
@@ -87000,11 +87365,11 @@ msgstr "展示blender的底层数据和属性"
 
 
 msgid "Library Overrides"
-msgstr "库覆写"
+msgstr "库重写"
 
 
 msgid "Display data-blocks with library overrides and list their overridden properties"
-msgstr "显示带有库覆写的数据块，并列出其覆写属性"
+msgstr "显示带有库重写的数据块，并列出其覆写属性"
 
 
 msgid "Orphan Data"
@@ -87109,7 +87474,7 @@ msgstr "仅显示一种类型的数据块"
 
 
 msgid "Show Library Overrides"
-msgstr "显示库覆写"
+msgstr "显示库重写"
 
 
 msgid "For libraries with overrides created, show the overridden values"
@@ -87186,6 +87551,14 @@ msgstr "显示其它物体"
 
 msgid "Show curves, lattices, light probes, fonts, ..."
 msgstr "显示曲线，晶格，光照探头，字体, ..."
+
+
+msgid "Show All View Layers"
+msgstr "显示全部视图层"
+
+
+msgid "Show all the view layers"
+msgstr "显示全部视图层"
 
 
 msgid "Sort Alphabetically"
@@ -87638,6 +88011,14 @@ msgstr "使用来自已完全或部分解算的数据"
 
 msgid "Use data from original object without any modifiers applied"
 msgstr "使用来自原始物体的数据，无需应用任何修改器"
+
+
+msgid "Viewer Node"
+msgstr "查看器节点"
+
+
+msgid "Use intermediate data from viewer node"
+msgstr "使用来自查看器节点的中间数据"
 
 
 msgid "Row Filters"
@@ -90713,7 +91094,7 @@ msgstr "覆写"
 
 
 msgid "Overridden Selected"
-msgstr "被覆盖的选中项"
+msgstr "被重写的选中项"
 
 
 msgid "Marker for noting points in the timeline"
@@ -91283,6 +91664,10 @@ msgstr "投影至自身"
 
 msgid "Snap onto itself (Edit Mode Only)"
 msgstr "吸附至本身(仅编辑模式)"
+
+
+msgid "Snap to strip edges or current frame"
+msgstr "吸附到片段边缘或当前帧"
 
 
 msgid "Use Snap for Translation"
@@ -92690,11 +93075,11 @@ msgstr "此视图层的集合层次结构的根级，其\"集合\"指针属性�
 
 
 msgid "Material Override"
-msgstr "材质覆盖"
+msgstr "材质重写"
 
 
 msgid "Material to override all other materials in this view layer"
-msgstr "此视图图层中的所有材质使用此材质覆盖"
+msgstr "此视图图层中的所有材质使用此材质重写"
 
 
 msgid "All the objects in this layer"
@@ -92718,7 +93103,7 @@ msgstr "每个像素可包含多少独有物体的特征"
 
 
 msgid "Override number of render samples for this view layer, 0 will use the scene setting"
-msgstr "覆盖此视图图层的渲染采样值，0 将使用场景设置"
+msgstr "重写此视图图层的渲染采样值，0 将使用场景设置"
 
 
 msgid "Enable or disable rendering of this View Layer"
@@ -94337,10 +94722,6 @@ msgid "Step Rate Render"
 msgstr "步进速率渲染"
 
 
-msgid "Transparency"
-msgstr "透明"
-
-
 msgid "Direct Light"
 msgstr "直接光"
 
@@ -94407,6 +94788,14 @@ msgstr "特性强度"
 
 msgid "Pipeline"
 msgstr "管线"
+
+
+msgid "Geometry Offset"
+msgstr "几何偏移"
+
+
+msgid "Shading Offset"
+msgstr "着色偏移"
 
 
 msgid "Show In"
@@ -95339,7 +95728,7 @@ msgstr "不支持直接执行"
 
 
 msgid "Cannot edit properties from override data"
-msgstr "无法从覆盖数据编辑属性"
+msgstr "无法从重写数据编辑属性"
 
 
 msgid "Data path not set"
@@ -95347,11 +95736,11 @@ msgstr "未设置数据路径"
 
 
 msgid "Cannot add properties to override data"
-msgstr "无法向覆盖数据添加属性"
+msgstr "无法向重写数据添加属性"
 
 
 msgid "Cannot remove properties from override data"
-msgstr "无法从覆盖数据中删除属性"
+msgstr "无法从重写数据中删除属性"
 
 
 msgid "Tool %r not found for space %r"
@@ -95686,7 +96075,7 @@ msgstr "头部半径"
 
 
 msgid "Override Transform"
-msgstr "覆盖变换"
+msgstr "重写变换"
 
 
 msgid "Control Rotation"
@@ -95938,6 +96327,14 @@ msgstr "顶点倒角权重"
 
 msgid "Edge Bevel Weight"
 msgstr "倒角边权重"
+
+
+msgid "%s ▶ %s"
+msgstr "%s ▶ %s"
+
+
+msgid "Name Collisions: {}, "
+msgstr "名称冲突: {}, "
 
 
 msgctxt "Operator"
@@ -96363,6 +96760,10 @@ msgid "Invert"
 msgstr "反转"
 
 
+msgid "Custom Occlusion"
+msgstr "自定义遮挡"
+
+
 msgctxt "Operator"
 msgid "Lock Unselected"
 msgstr "未选中项"
@@ -96401,7 +96802,7 @@ msgstr "跟踪轴"
 
 
 msgid "Override Crease"
-msgstr "覆盖折痕"
+msgstr "重写折痕"
 
 
 msgid "All Edges"
@@ -97281,7 +97682,7 @@ msgstr "温度"
 
 
 msgid "General Override"
-msgstr "常规覆盖"
+msgstr "常规重写"
 
 
 msgid "Paths:"
@@ -97293,7 +97694,7 @@ msgstr "多普勒速度"
 
 
 msgid "Active Set Override"
-msgstr "激活覆盖设置"
+msgstr "激活重写设置"
 
 
 msgid "Target ID-Block"
@@ -98488,6 +98889,10 @@ msgid "Paste Data-Blocks"
 msgstr "粘贴数据块"
 
 
+msgid "All View Layers"
+msgstr "全部视图层"
+
+
 msgid "Object Contents"
 msgstr "物体内容"
 
@@ -98699,6 +99104,10 @@ msgstr "存储"
 msgctxt "Operator"
 msgid "Set Overlay Region"
 msgstr "设置重叠区域"
+
+
+msgid "Muted Strips"
+msgstr "被屏蔽片段"
 
 
 msgctxt "Operator"
@@ -99011,6 +99420,10 @@ msgstr "此片段下需要两个或更多的通道"
 
 msgid "No active context"
 msgstr "无活动上下文"
+
+
+msgid "No active viewer node."
+msgstr "无活动查看器节点。"
 
 
 msgid "<no object>"
@@ -99823,7 +100236,7 @@ msgstr ":"
 
 
 msgid "Upgrade to 2.8x required"
-msgstr "需升级至2.8x版本插件"
+msgstr "插件需升级至2.8x版本"
 
 
 msgid "Description:"
@@ -100196,7 +100609,7 @@ msgstr "生成代理..."
 
 msgctxt "Operator"
 msgid "Make Library Override..."
-msgstr "使库覆写..."
+msgstr "创建库重写..."
 
 
 msgctxt "Operator"
@@ -102156,11 +102569,11 @@ msgstr "在数据块 %s 的重新同步过程中，删除了 %d 个过时的覆�
 
 
 msgid "Data corruption: data-block '%s' is using itself as library override reference"
-msgstr "数据损坏: 数据块 '%s' 正在将自身用作库覆写引用"
+msgstr "数据损坏: 数据块 '%s' 正在将自身用作库重写引用"
 
 
 msgid "Data corruption: data-block '%s' is using another local data-block ('%s') as library override reference"
-msgstr "数据损坏: 数据块 '%s' 正在使用另一个本地数据块 ('%s') 作为库覆写引用"
+msgstr "数据损坏: 数据块 '%s' 正在使用另一个本地数据块 ('%s') 作为库重写引用"
 
 
 msgid "MaskLayer"
@@ -102884,10 +103297,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "插入关键帧的帧位置"
 
 
-msgid "No active Keying Set"
-msgstr "无激活的插帧集"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "插入关键帧的帧位置"
 
@@ -102898,6 +103307,10 @@ msgstr "此属性不能插入动画因为它无法正确更新"
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "解析属性的路径失败, 请尝试使用插帧集手动指定"
+
+
+msgid "No active Keying Set"
+msgstr "无激活的插帧集"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -102946,10 +103359,6 @@ msgstr "插帧集 '%s' - 成功添加了 %d 个关键帧"
 
 msgid "Successfully added %d keyframes for keying set '%s'"
 msgstr "已成功将 %d 个关键帧添加到插帧集 '%s' 中"
-
-
-msgid "Active Keying Set '%s' not found"
-msgstr "未找到活动插帧集 '%s'"
 
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
@@ -103089,7 +103498,7 @@ msgstr "撤消隐藏只能通过\"显示选择\"来完成"
 
 
 msgid "Cannot edit bone groups for proxies or library overrides"
-msgstr "无法编辑代理或库覆写的骨骼组"
+msgstr "无法编辑代理或库重写的骨骼组"
 
 
 msgid "Add New"
@@ -103939,12 +104348,12 @@ msgstr "将单项添加到插帧集"
 
 msgctxt "Operator"
 msgid "Remove Overrides"
-msgstr "移除覆盖"
+msgstr "移除重写"
 
 
 msgctxt "Operator"
 msgid "Remove Single Override"
-msgstr "覆盖单个覆盖"
+msgstr "移除单个重写"
 
 
 msgctxt "Operator"
@@ -104030,7 +104439,7 @@ msgstr "无法计算出一条有效路径"
 
 
 msgid "Failed to create the override operation"
-msgstr "无法创建覆盖操作"
+msgstr "无法创建重写操作"
 
 
 msgid "File '%s' cannot be opened"
@@ -104276,11 +104685,11 @@ msgstr "间接的库数据块, 无法更改"
 
 
 msgid "Direct linked library data-block, click to make local, Shift + Click to create a library override"
-msgstr "直接关联的库数据块，单击变成本地，Shift+单击覆盖创建一个库"
+msgstr "直接关联的库数据块，单击转为本地项，Shift+单击创建库重写"
 
 
 msgid "Library override of linked data-block, click to make fully local"
-msgstr "关联数据块的库覆写，单击以使完全本地化"
+msgstr "关联数据块的库重写，单击以使完全本地化"
 
 
 msgid "Display number of users of this data (click to make a single-user copy)"
@@ -105504,7 +105913,7 @@ msgstr "无法编辑库数据"
 
 
 msgid "Cannot edit constraints coming from linked data in a library override"
-msgstr "无法编辑来自库覆写中关联数据的约束"
+msgstr "无法编辑来自库重写中关联数据的约束"
 
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
@@ -105596,7 +106005,7 @@ msgstr "目标物体 '%s' 不是蜡笔物体"
 
 
 msgid "Cannot edit modifiers coming from linked data in a library override"
-msgstr "无法编辑来自库覆写中关联数据的修改器"
+msgstr "无法编辑来自库重写中关联数据的修改器"
 
 
 msgid "No supported objects were selected"
@@ -105824,7 +106233,7 @@ msgstr "将孤立库对象添加到当前场景以避免丢失"
 
 
 msgid "Can only make library override for a referenced object or collection"
-msgstr "只能为引用的对象或集合进行库覆写"
+msgstr "只能为被引用的物体或集合创建库重写"
 
 
 msgid "Incorrect context for running object data unlink"
@@ -105836,19 +106245,19 @@ msgstr "无法断开该物体数据的关联"
 
 
 msgid "Collection '%s' (instantiated by the active object) is not overridable"
-msgstr "集合 ‘%s’ (由活动物体实例化) 不可覆盖"
+msgstr "集合 ‘%s’ (由活动物体实例化) 不可重写"
 
 
 msgid "Active object '%s' is not overridable"
-msgstr "活动物体 '%s' 不可覆盖"
+msgstr "活动物体 '%s' 不可重写"
 
 
 msgid "Could not find an overridable collection containing object '%s'"
-msgstr "找不到包含物体 '%s' 的可覆盖集合"
+msgstr "找不到包含物体 '%s' 的可重写集合"
 
 
 msgid "Could not create a library override from proxy '%s' (might use already local data?)"
-msgstr "无法从代理 '%s' 创建库覆写(可能已使用本地数据?)"
+msgstr "无法从代理 '%s' 创建库重写(可能已使用本地数据?)"
 
 
 msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
@@ -105916,7 +106325,7 @@ msgstr "已移除效果: %s"
 
 
 msgid "Cannot edit shaderfxs in a library override"
-msgstr "无法编辑自库覆写中的shaderfx"
+msgstr "无法编辑自库重写中的shaderfx"
 
 
 msgid "Object type is not supported"
@@ -105924,7 +106333,7 @@ msgstr "物体类型不受支持"
 
 
 msgid "Cannot edit shaderfxs coming from linked data in a library override"
-msgstr "无法编辑来自库覆写中关联数据的shadefx"
+msgstr "无法编辑来自库重写中关联数据的shadefx"
 
 
 msgid "Objects have no data to transform"
@@ -105957,6 +106366,14 @@ msgstr "无法对曲线应用形态键: 物体 \"%s\", %s \"%s\", 中止"
 
 msgid "Font's can only have scale applied: \"%s\""
 msgstr "只能对字体应用缩放: \"%s\""
+
+
+msgid "Can't apply to a GP data-block where all layers are parented: Object \"%s\", %s \"%s\", aborting"
+msgstr "无法应用于所有图层都为父级的GP数据块: 物体 \"%s\", %s \"%s\", 中止"
+
+
+msgid "Can't apply to GP data-block with no layers: Object \"%s\", %s \"%s\", aborting"
+msgstr "无法应用于没有图层的 GP 数据块: 物体 \"%s\", %s \"%s\", 中止"
 
 
 msgid "Area Lights can only have scale applied: \"%s\""
@@ -106100,7 +106517,7 @@ msgstr "流体: 无法使用默认缓存目录 '%s', 请手动指定一个有效
 
 
 msgid "Library override data-blocks only support Disk Cache storage"
-msgstr "库覆写数据块仅支持磁盘缓存存储"
+msgstr "库重写数据块仅支持磁盘缓存存储"
 
 
 msgid "Linked data-blocks do not allow editing caches"
@@ -106108,7 +106525,7 @@ msgstr "关联的数据块不允许编辑缓存"
 
 
 msgid "Linked or library override data-blocks do not allow adding or removing caches"
-msgstr "关联或库覆写数据块不允许添加或删除缓存"
+msgstr "关联或库重写数据块不允许添加或删除缓存"
 
 
 msgid "No Rigid Body World to add Rigid Body Constraint to"
@@ -106552,7 +106969,7 @@ msgstr "没有物体，或不完全在姿态模式"
 
 
 msgid "Object is a local library override"
-msgstr "物体是一个本地库覆写"
+msgstr "物体是一个本地库重写"
 
 
 msgid "expected a view3d region & editcurve"
@@ -107693,16 +108110,12 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "修改器无法被添加至 (%s : %s)(请参考控制台的打印信息)"
 
 
-msgid "Sockets"
-msgstr "插口"
-
-
 msgid "More than one collection is selected"
 msgstr "有多个集合被选中"
 
 
 msgid "Can't add a new collection to linked/override scene"
-msgstr "无法添加新的集合来关联/覆盖场景"
+msgstr "无法添加新的集合来关联/重写场景"
 
 
 msgid "No active collection"
@@ -107718,7 +108131,7 @@ msgstr "无法找到一个有效的父级集合来进行复制，此操作将不
 
 
 msgid "Cannot add a collection to a linked/override collection/scene"
-msgstr "无法向关联/覆盖的集合/场景添加一个集合"
+msgstr "无法向关联/重写的集合/场景添加一个集合"
 
 
 msgid "Can't add a color tag to a linked collection"
@@ -108047,7 +108460,7 @@ msgstr "混合所选项"
 
 
 msgid "Could not create library override from data-block '%s'"
-msgstr "无法从数据块 '%s'创建库覆写"
+msgstr "无法从数据块 '%s'创建库重写"
 
 
 msgid "Strip None"
@@ -109175,12 +109588,24 @@ msgid "Overlapping Edges As Contour"
 msgstr "重叠边作为轮廓"
 
 
+msgid "Material Mask"
+msgstr "材质遮罩"
+
+
 msgid "Match All Masks"
 msgstr "匹配全部遮罩"
 
 
+msgid "Face Mark Filtering"
+msgstr "面标记过滤"
+
+
 msgid "Chain"
 msgstr "链"
+
+
+msgid "Geometry Threshold"
+msgstr "几何阈值"
 
 
 msgid "Filter Source"
@@ -109268,7 +109693,7 @@ msgstr "无法从外链的数据块编辑此属性"
 
 
 msgid "Can't edit this property from an override data-block"
-msgstr "无法从覆盖数据块编辑此属性"
+msgstr "无法从重写数据块编辑此属性"
 
 
 msgid "Only boolean, int float and enum properties supported"
@@ -110740,6 +111165,10 @@ msgid "Emissive Color"
 msgstr "自发光颜色"
 
 
+msgid "Transparency"
+msgstr "透明"
+
+
 msgid "Clear Coat"
 msgstr "清漆"
 
@@ -111228,6 +111657,18 @@ msgstr "未设置上下文窗口"
 
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
 msgstr "引擎 '%s' 对场景 '%s' (可能需要安装或启用一个插件) 不可用"
+
+
+msgid "Library %s needs overrides resync."
+msgstr "库 %s 需要重新同步覆写。"
+
+
+msgid "%d libraries and %d linked data-blocks are missing, please check the Info and Outliner editors for details"
+msgstr "%d 库和 %d 已关联数据块丢失，详情请查看信息和大纲编辑器"
+
+
+msgid "%d libraries have overrides needing resync (auto resynced in %.0fm%.2fs),  please check the Info editor for details"
+msgstr "%d 库有覆写需要重新同步(自动重新同步在 %.0fm%.2fs)，详情请查看信息编辑器"
 
 
 msgid "Cannot read file '%s': %s"

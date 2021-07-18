@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -16583,10 +16583,6 @@ msgstr "Hintergrund legt Szene fest"
 
 msgid "Active camera, used for rendering the scene"
 msgstr "Aktive Kamera, die zum Rendern der Szene verwendet wird"
-
-
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "Szenenmastersammlung, die Objekte und andere Sammlungen in der Szene enthält"
 
 
 msgid "3D Cursor"
@@ -39975,6 +39971,10 @@ msgid "Apply Subdivision Surface"
 msgstr "Unterteilungsoberfläche anwenden"
 
 
+msgid "Use Settings for"
+msgstr "Verwenden von Einstellungen für"
+
+
 msgid "Export Custom Properties"
 msgstr "Benutzerdefinierter Eigenschaften exportieren"
 
@@ -40849,10 +40849,6 @@ msgstr "Website"
 msgctxt "Operator"
 msgid "Export USD"
 msgstr "USD exportieren"
-
-
-msgid "Use Settings for"
-msgstr "Verwenden von Einstellungen für"
 
 
 msgid "UV Maps"
@@ -45311,10 +45307,6 @@ msgstr "Anzahl der durchgängigen Aufprallabtastwerte, die für jeden Antialiasi
 
 msgid "Transparent Max Bounces"
 msgstr "Transparenz"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Maximale Anzahl der transparenten Begrenzung"
 
 
 msgid "Layer Samples"
@@ -52607,10 +52599,6 @@ msgid "Start Sample"
 msgstr "Startbeispiel"
 
 
-msgid "Transparency"
-msgstr "Transparenz"
-
-
 msgid "Direct Light"
 msgstr "Direkte Beleuchtung"
 
@@ -58908,12 +58896,12 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Schlüsselbildsatz konnte keine Schlüsselbilder einfügen"
 
 
-msgid "No active Keying Set"
-msgstr "Kein aktiver Schlüsselbildsatz"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Schlüsselbildsatz konnte kein Schlüsselbild entfernen"
+
+
+msgid "No active Keying Set"
+msgstr "Kein aktiver Schlüsselbildsatz"
 
 
 msgid "Keying set '%s' - successfully added %d keyframes"
@@ -62720,6 +62708,10 @@ msgstr "Ansicht Entfernung"
 
 msgid "Emissive Color"
 msgstr "Emitterfarbe"
+
+
+msgid "Transparency"
+msgstr "Transparenz"
 
 
 msgid "Clear Coat"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -7259,16 +7259,16 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Zestaw Kluczowania nie zdołał wstawić żadnych klatek kluczowych"
 
 
-msgid "No active Keying Set"
-msgstr "Brak aktywnego Zestawu Kluczowania"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Zestaw Kluczowania nie zdołał usunąć żadnych klatek kluczowych"
 
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "Ustanowienie ścieżki do właściwości nie powiodło się, spróbuj ręcznie ustanowić ścieżkę używając Zestawu Kluczowania"
+
+
+msgid "No active Keying Set"
+msgstr "Brak aktywnego Zestawu Kluczowania"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -9920,10 +9920,6 @@ msgstr "Nie można zamienić '%s' i '%s' ponieważ jeden lub oba nie będą paso
 
 msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Modyfikator nie mógł być dodany to (%s : %s) (szczegóły w konsoli)"
-
-
-msgid "Sockets"
-msgstr "Złącza"
 
 
 msgctxt "Action"

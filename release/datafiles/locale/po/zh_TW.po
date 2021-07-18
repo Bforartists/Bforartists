@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -34869,10 +34869,6 @@ msgid "Object Animation"
 msgstr "物體動畫"
 
 
-msgid "Make animation data local to each object"
-msgstr "讓動畫資料對各個物體區域化"
-
-
 msgid "Make single user object data"
 msgstr "建立單使用者物體資料"
 
@@ -46436,10 +46432,6 @@ msgid "Transparent Max Bounces"
 msgstr "透明最大反彈數"
 
 
-msgid "Maximum number of transparent bounces"
-msgstr "透明反彈的最大次數"
-
-
 msgid "Layer Samples"
 msgstr "層樣本數"
 
@@ -53654,10 +53646,6 @@ msgid "Subsurface"
 msgstr "次表面"
 
 
-msgid "Transparency"
-msgstr "透明"
-
-
 msgid "Tiles X"
 msgstr "鋪排 X"
 
@@ -56642,16 +56630,16 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "鍵處理集無法插入任何鍵幀"
 
 
-msgid "No active Keying Set"
-msgstr "無作用中鍵處理集"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "鍵處理集無法移除任何鍵幀"
 
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "無法解析路徑為屬性，試著改用鍵處理集來手動指定此項"
+
+
+msgid "No active Keying Set"
+msgstr "無作用中鍵處理集"
 
 
 msgid "F-Curve with path '%s[%d]' cannot be keyframed, ensure that it is not locked or sampled, and try removing F-Modifiers"
@@ -58877,10 +58865,6 @@ msgid "No valid action to add"
 msgstr "無有效的動作可添加"
 
 
-msgid "Sockets"
-msgstr "接口"
-
-
 msgid "Can't edit library linked object(s)"
 msgstr "無法編輯藏庫連結的物體"
 
@@ -60436,6 +60420,10 @@ msgstr "檢視 Z 深度"
 
 msgid "View Distance"
 msgstr "檢視距離"
+
+
+msgid "Transparency"
+msgstr "透明"
 
 
 msgid "True Normal"

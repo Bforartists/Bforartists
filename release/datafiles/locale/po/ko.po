@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -21291,10 +21291,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "활성 카메라, 씬을 렌더링하는 데 사용"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "씬에 있는 오브젝트 및 다른 콜렉션의 씬 마스터 콜렉션"
-
-
 msgid "3D Cursor"
 msgstr "3D 커서"
 
@@ -34748,10 +34744,6 @@ msgstr "전환"
 
 msgid "Off: first socket, On: second socket"
 msgstr "Off: 첫 번째 소켓, On: 두 번째 소켓"
-
-
-msgid "View Switch"
-msgstr "뷰 전환"
 
 
 msgid "Node Output"
@@ -50325,10 +50317,6 @@ msgid "Object Animation"
 msgstr "오브젝트 애니메이션"
 
 
-msgid "Make animation data local to each object"
-msgstr "애니메이션 데이터를 각 오브젝트에 대해 로컬로 만들기"
-
-
 msgid "Make materials local to each data-block"
 msgstr "각 데이터 블록에 매테리얼 로컬을 확인"
 
@@ -59687,14 +59675,6 @@ msgid "Export UVs with packed island"
 msgstr "포장된 아일랜드와 함께 UV를 내보내기"
 
 
-msgid "Renderable Objects Only"
-msgstr "렌더가능한 오브젝트 만"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "아웃 라이너에서 렌더링 가능으로 마크된 오브젝트 만을 내보내기"
-
-
 msgid "Selected Objects Only"
 msgstr "선택된 오브젝트 만"
 
@@ -67768,10 +67748,6 @@ msgstr "각 AA 샘플에 대해 렌더하는 전달 산란 샘플의 수"
 
 msgid "Transparent Max Bounces"
 msgstr "투명 최대 바운스"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "투명 바운스의 최대 횟수"
 
 
 msgid "Use Animated Seed"
@@ -79374,10 +79350,6 @@ msgid "Offscreen Scale"
 msgstr "오프스크린 축적"
 
 
-msgid "Transparency"
-msgstr "투명도"
-
-
 msgid "Direct Light"
 msgstr "직접 라이트"
 
@@ -85808,10 +85780,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "모든 키 프레임을 삽입에 실패한 키잉 설정"
 
 
-msgid "No active Keying Set"
-msgstr "활성 키잉 설정되지 않음"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "모든 키 프레임을 제거하는 데 실패한 키잉 설정"
 
@@ -85822,6 +85790,10 @@ msgstr "이 속성은 올바르게 업데이트 되지 않으므로 애니메이
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "속성 경로를 확인하지 못함, 대신 키잉 설정을 사용하여 수동으로 지정하십시오"
+
+
+msgid "No active Keying Set"
+msgstr "활성 키잉 설정되지 않음"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -85866,10 +85838,6 @@ msgstr "잠긴 F-커브 '%s'에서 모든 키 프레임을 지우지 않음, %s 
 
 msgid "Keying set '%s' - successfully added %d keyframes"
 msgstr "키잉 설정 '%s' - 성공적으로 추가된 %d 개의 키 프레임"
-
-
-msgid "Active Keying Set '%s' not found"
-msgstr "활성 키잉 설정 '%s'을(를) 찾을 수 없습니다"
 
 
 msgid "Not deleting keyframe for locked F-Curve '%s', object '%s'"
@@ -89700,10 +89668,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "모디파이어를 (%s : %s)에 추가할 수 없습니다 (자세한 내용은 콘솔 참조)"
 
 
-msgid "Sockets"
-msgstr "소켓"
-
-
 msgid "More than one collection is selected"
 msgstr "둘 이상의 컬렉션이 선택되었습니다"
 
@@ -92115,6 +92079,10 @@ msgstr "뷰 거리"
 
 msgid "Emissive Color"
 msgstr "방출형 컬러"
+
+
+msgid "Transparency"
+msgstr "투명도"
 
 
 msgid "Clear Coat"
