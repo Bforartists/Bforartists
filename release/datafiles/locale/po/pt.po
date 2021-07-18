@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -27702,10 +27702,6 @@ msgid "Off: first socket, On: second socket"
 msgstr "Desligado: primeiro conector, Ligado: segundo conector."
 
 
-msgid "View Switch"
-msgstr "Alternar visualização"
-
-
 msgid "Node Output"
 msgstr "Nós de saída"
 
@@ -40006,10 +40002,6 @@ msgid "Object Animation"
 msgstr "Animação de objeto"
 
 
-msgid "Make animation data local to each object"
-msgstr "Faz com que os dados da animação sejam locais para cada objeto."
-
-
 msgid "Make materials local to each data-block"
 msgstr "Faz com que os materiais sejam locais para cada bloco de dados."
 
@@ -47547,14 +47539,6 @@ msgid "Export UVs with packed island"
 msgstr "Exporta as UVs com as ilhas empacotadas."
 
 
-msgid "Renderable Objects Only"
-msgstr "Somente os objetos renderizáveis"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "Exporta somente os objetos marcados como renderizáveis dentro do organizador."
-
-
 msgid "Selected Objects Only"
 msgstr "Somente os objetos selecionados"
 
@@ -53181,10 +53165,6 @@ msgstr "Número de amostras de rebatimento de transmissão para renderizar para 
 
 msgid "Transparent Max Bounces"
 msgstr "Máximo de rebatimentos para transparência"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Número máximo de rebatimentos para transparência."
 
 
 msgid "Use Animated Seed"
@@ -61492,10 +61472,6 @@ msgid "Subsurface"
 msgstr "Sub-superfície"
 
 
-msgid "Transparency"
-msgstr "Transparência"
-
-
 msgid "Tiles X"
 msgstr "Ladrilhos em X"
 
@@ -65027,16 +65003,16 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Conjunto de inserção de chaves falhou ao inserir quaisquer fotogramas chave."
 
 
-msgid "No active Keying Set"
-msgstr "Sem conjunto de inserção de chaves ativo"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Conjunto de inserção de chaves falhou ao remover quaisquer fotogramas chave."
 
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "Falha ao resolver o caminho para a propriedade, tente ao invés disso, especificar manualmente usando um conjunto de inserção de chaves."
+
+
+msgid "No active Keying Set"
+msgstr "Sem conjunto de inserção de chaves ativo"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -68053,10 +68029,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "O modificador não pôde ser adicionado para (%s : %s) (veja a linha de comando para detalhes)."
 
 
-msgid "Sockets"
-msgstr "Conectores"
-
-
 msgid "Number of users of this data-block"
 msgstr "Número de utilizadores deste bloco de dados."
 
@@ -69836,6 +69808,10 @@ msgstr "Profundidade Z da visualização"
 
 msgid "View Distance"
 msgstr "Distância de visualização"
+
+
+msgid "Transparency"
+msgstr "Transparência"
 
 
 msgid "True Normal"

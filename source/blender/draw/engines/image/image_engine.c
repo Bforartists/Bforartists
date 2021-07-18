@@ -117,7 +117,7 @@ static void space_image_gpu_texture_get(Image *image,
     const int sima_flag = sima->flag & ED_space_image_get_display_channel_mask(ibuf);
     if (sima_flag & SI_SHOW_ZBUF && (ibuf->zbuf || ibuf->zbuf_float || (ibuf->channels == 1))) {
       if (ibuf->zbuf) {
-        BLI_assert(!"Integer based depth buffers not supported");
+        BLI_assert_msg(0, "Integer based depth buffers not supported");
       }
       else if (ibuf->zbuf_float) {
         *r_gpu_texture = GPU_texture_create_2d(
@@ -230,7 +230,7 @@ static void image_cache_image(IMAGE_Data *vedata, Image *image, ImageUser *iuser
         copy_v4_fl4(shuffle, 1.0f, 0.0f, 0.0f, 0.0f);
       }
       else if ((sima_flag & SI_SHOW_G) != 0) {
-        draw_flags |=  IMAGE_DRAW_FLAG_SHUFFLING;
+        draw_flags |= IMAGE_DRAW_FLAG_SHUFFLING;
         if (IMB_alpha_affects_rgb(ibuf)) {
           draw_flags |= IMAGE_DRAW_FLAG_APPLY_ALPHA;
         }

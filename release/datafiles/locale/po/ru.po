@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -21386,10 +21386,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Активная камера, используемая при рендеринге сцены"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "Мастер-коллекция сцены, содержащая объекты и другие коллекции сцены"
-
-
 msgid "3D Cursor"
 msgstr "3D-курсор"
 
@@ -34504,10 +34500,6 @@ msgstr "Переключить"
 
 msgid "Off: first socket, On: second socket"
 msgstr "Откл: первый вход, Вкл: второй вход"
-
-
-msgid "View Switch"
-msgstr "Переключатель вида"
 
 
 msgid "Node Output"
@@ -49907,10 +49899,6 @@ msgid "Object Animation"
 msgstr "Анимация объекта"
 
 
-msgid "Make animation data local to each object"
-msgstr "Локализовать данные анимации для всех объектов"
-
-
 msgid "Make materials local to each data-block"
 msgstr "Сделать материалы локальными для каждого датаблока"
 
@@ -59194,6 +59182,10 @@ msgid "End frame of the export, use the default value to take the end frame of t
 msgstr "Конечный кадр экспорта; используйте значение по умолчанию, чтобы взять конечный кадр текущей сцены"
 
 
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Определяет видимость объектов, настройки модификаторов и других областей, где есть разные настройки для области просмотра и рендеринга"
+
+
 msgid "Export Hair"
 msgstr "Экспортировать волосы"
 
@@ -59244,14 +59236,6 @@ msgstr "Упаковать UV-острова"
 
 msgid "Export UVs with packed island"
 msgstr "Экспортировать UV-развёртки с упакованными островами"
-
-
-msgid "Renderable Objects Only"
-msgstr "Только видимые на рендере объекты"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "Экспортировать только объекты, отмеченные как видивые на рендере в структуре проекта"
 
 
 msgid "Selected Objects Only"
@@ -60857,10 +60841,6 @@ msgstr "Опциональный идентификатор"
 
 msgid "Site"
 msgstr "Сайт"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "Определяет видимость объектов, настройки модификаторов и других областей, где есть разные настройки для области просмотра и рендеринга"
 
 
 msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
@@ -67319,10 +67299,6 @@ msgstr "Количество сэмплов отскоков прозрачно�
 
 msgid "Transparent Max Bounces"
 msgstr "Макс. прозрачных отскоков"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Максимальное количество прозрачных отскоков"
 
 
 msgid "Use Animated Seed"
@@ -78949,10 +78925,6 @@ msgid "Step Rate Render"
 msgstr "Доля шага в рендере"
 
 
-msgid "Transparency"
-msgstr "Прозрачность"
-
-
 msgid "Direct Light"
 msgstr "Прямые лучи"
 
@@ -85412,10 +85384,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Ошибка вставки ключевых кадров в ключевой набор"
 
 
-msgid "No active Keying Set"
-msgstr "Нет активного ключевого набора"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Ошибка удаления ключевых кадров из ключевого набора"
 
@@ -85426,6 +85394,10 @@ msgstr "Это свойство не может быть анимировано,
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "Не удалось разрешить путь к свойству, попробуйте задать его вручную, используя ключевой набор"
+
+
+msgid "No active Keying Set"
+msgstr "Нет активного ключевого набора"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -85474,10 +85446,6 @@ msgstr "Ключевой набор «%s» — успешно добавлено
 
 msgid "Successfully added %d keyframes for keying set '%s'"
 msgstr "Успешно добавлено %d ключевых кадров для ключевого набора «%s»"
-
-
-msgid "Active Keying Set '%s' not found"
-msgstr "Активный набор ключей «%s» ‎не найден"
 
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
@@ -89356,10 +89324,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Модификатор не может быть добавлен в (%s : %s) (см. консоль для дополнительной информации)"
 
 
-msgid "Sockets"
-msgstr "Сокеты"
-
-
 msgid "More than one collection is selected"
 msgstr "Выделено больше одной коллекции"
 
@@ -91879,6 +91843,10 @@ msgstr "Расстояние вида"
 
 msgid "Emissive Color"
 msgstr "Цвет свечения"
+
+
+msgid "Transparency"
+msgstr "Прозрачность"
 
 
 msgid "Clear Coat"

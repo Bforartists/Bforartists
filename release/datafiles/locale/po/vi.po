@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -25338,10 +25338,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Máy quay phim hoạt động được dùng cho kết xuất cảnh"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "Sưu tập chủ cảnh được sở hữu vật thể và các sưu tập khác trong cảnh"
-
-
 msgid "3D Cursor"
 msgstr "Con Trỏ 3D"
 
@@ -40415,10 +40411,6 @@ msgstr "Công Tắt"
 
 msgid "Off: first socket, On: second socket"
 msgstr "Tắt: ổ cắm thứ nhất, Bật: ổ cắm thứ nhị"
-
-
-msgid "View Switch"
-msgstr "Hiện Công Tắt"
 
 
 msgid "Node Output"
@@ -59567,10 +59559,6 @@ msgid "Object Animation"
 msgstr "Hoạt Hình Vật Thể"
 
 
-msgid "Make animation data local to each object"
-msgstr "Đổi dữ liệu hoạt hình thành địa phương cho mỗi vật thể"
-
-
 msgid "Make materials local to each data-block"
 msgstr "Làm vật liệu thành địa phương cho mỗi cục dữ liệu"
 
@@ -71163,6 +71151,22 @@ msgid "End frame of the export, use the default value to take the end frame of t
 msgstr "Bức cuối để xuất, dùng giá trị mặc định để dùng bức cuối của cảnh hiện tại"
 
 
+msgid "Use Settings for"
+msgstr "Dùng cài đặt cho"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Xác định sự hiển thị của vật thể, cài đặt của cụ sửa đổi, và các lĩnh vực khác có những cài đặt khác cho màn chiếu và kết xuất"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "Dùng cài đặt cho sự hiển thị của vật thể, cài đặt cụ sửa đổi, v.v."
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "Dùng cài đặt Màn Chiếu cho sự hiển thị của vật thể, cụ sửa đổi, v.v."
+
+
 msgid "Export Custom Properties"
 msgstr "Xuất Đặc Tính Tùy Chọn"
 
@@ -71225,14 +71229,6 @@ msgstr "Gói Đảo UV"
 
 msgid "Export UVs with packed island"
 msgstr "Xuất UV với đảo gói"
-
-
-msgid "Renderable Objects Only"
-msgstr "Chỉ Vật Thể Có Thể Kết Xuất"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "Xuất chỉ vật thể được đăng ký cho kết xuất trong mục lục"
 
 
 msgid "Selected Objects Only"
@@ -73184,22 +73180,6 @@ msgstr "Xuất USD"
 
 msgid "Export current scene in a USD archive"
 msgstr "Xuất cảnh hiện tại vào một kho USD"
-
-
-msgid "Use Settings for"
-msgstr "Dùng cài đặt cho"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "Xác định sự hiển thị của vật thể, cài đặt của cụ sửa đổi, và các lĩnh vực khác có những cài đặt khác cho màn chiếu và kết xuất"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "Dùng cài đặt cho sự hiển thị của vật thể, cài đặt cụ sửa đổi, v.v."
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "Dùng cài đặt Màn Chiếu cho sự hiển thị của vật thể, cụ sửa đổi, v.v."
 
 
 msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
@@ -80600,10 +80580,6 @@ msgstr "Kết xuất số lượng mẫu vật nhồi truyền cho mỗi mẫu v
 
 msgid "Transparent Max Bounces"
 msgstr "Nhồi Trong Suốt Tối Đa"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Số lượng nhồi trong suốt tối đa"
 
 
 msgid "Use Adaptive Sampling"
@@ -94332,10 +94308,6 @@ msgid "Step Rate Render"
 msgstr "Kết Xuất Bước Tốc Độ"
 
 
-msgid "Transparency"
-msgstr "Trong Suốt"
-
-
 msgid "Direct Light"
 msgstr "Ánh Sáng Trực Tiếp"
 
@@ -102879,10 +102851,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Tập bức mẫu chèn bức mẫu không thành cộng"
 
 
-msgid "No active Keying Set"
-msgstr "Không có Tập Bức Mẫu hoạt động"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Tập bức mẫu không xóa được bức mẫu nào"
 
@@ -102893,6 +102861,10 @@ msgstr "Không thể làm hoạt hình với đặc tính này vì không thể 
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "Tìm đường dẫn đến đặc tính bị thất bại, bằng tay thử xác định Tập Bức Mẫu này thay thế"
+
+
+msgid "No active Keying Set"
+msgstr "Không có Tập Bức Mẫu hoạt động"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -102941,10 +102913,6 @@ msgstr "Tập bức mẫu '%s' - kèm thêm %d bức mẫu đã thành cộng"
 
 msgid "Successfully added %d keyframes for keying set '%s'"
 msgstr "Thành công kèm thêm %d bức mẫu cho tập bức mẫu '%s'"
-
-
-msgid "Active Keying Set '%s' not found"
-msgstr "Không tìm được Tập Bức Mẫu hoạt động '%s'"
 
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
@@ -107688,10 +107656,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Không thể thêm cụ sửa đổi cho (%s : %s) (xem chi tiết trong diện điều khiển)"
 
 
-msgid "Sockets"
-msgstr "Ổ Cắm"
-
-
 msgid "More than one collection is selected"
 msgstr "Được chọn hơn một sưu tập"
 
@@ -110711,6 +110675,10 @@ msgstr "Tấm Nhìn"
 
 msgid "Emissive Color"
 msgstr "Màu Phát Xạ"
+
+
+msgid "Transparency"
+msgstr "Trong Suốt"
 
 
 msgid "Clear Coat"

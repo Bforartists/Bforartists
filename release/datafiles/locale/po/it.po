@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -23873,10 +23873,6 @@ msgid "Off: first socket, On: second socket"
 msgstr "Off: primo connettore, On: secondo connettore"
 
 
-msgid "View Switch"
-msgstr "Scambia Viste"
-
-
 msgid "Node Output"
 msgstr "Uscita Nodo"
 
@@ -34651,10 +34647,6 @@ msgid "Object Animation"
 msgstr "Animazione Oggetto"
 
 
-msgid "Make animation data local to each object"
-msgstr "Rende i dati dell'animazione locali a ogni oggetto"
-
-
 msgid "Make materials local to each data-block"
 msgstr "Rendi i materiali locali a ogni blocco dati"
 
@@ -41666,14 +41658,6 @@ msgid "Pack UV Islands"
 msgstr "Compatta Isole UV"
 
 
-msgid "Renderable Objects Only"
-msgstr "Solo Oggetti Renderizzabili"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "Esporta solo gli oggetti marcati renderizzabili nella Struttura"
-
-
 msgid "Selected Objects Only"
 msgstr "Solo Oggetti Selezionati"
 
@@ -46805,10 +46789,6 @@ msgstr "Numero di campioni di rimbalzi trasmissione da renderizzare per ogni cam
 
 msgid "Transparent Max Bounces"
 msgstr "Max Rimbalzi Trasparenza"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Numero massimo di rimbalzi trasparenti"
 
 
 msgid "Use Animated Seed"
@@ -53484,10 +53464,6 @@ msgid "Subsurface"
 msgstr "SubSuperficie"
 
 
-msgid "Transparency"
-msgstr "Trasparenza"
-
-
 msgid "Direct Light"
 msgstr "Illuminazione Diretta"
 
@@ -59812,10 +59788,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Il modificatore non può essere aggiunto a (%s : %s) (vedi console per dettagli)"
 
 
-msgid "Sockets"
-msgstr "Connettori"
-
-
 msgid "More than one collection is selected"
 msgstr "Più di una raccolta è selezionata"
 
@@ -61207,6 +61179,10 @@ msgstr "Profondità Z Vista"
 
 msgid "View Distance"
 msgstr "Distanza Vista"
+
+
+msgid "Transparency"
+msgstr "Trasparenza"
 
 
 msgid "True Normal"

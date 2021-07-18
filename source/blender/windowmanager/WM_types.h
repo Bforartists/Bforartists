@@ -440,6 +440,13 @@ typedef struct wmNotifier {
 #define ND_SPACE_SPREADSHEET (22 << 16)
 #define ND_SPACE_TOOLBAR (23 << 16)  // bfa - toolbar editor
 
+/* NC_ASSET */
+/* Denotes that the AssetList is done reading some previews. NOT that the preview generation of
+ * assets is done. */
+#define ND_ASSET_LIST (1 << 16)
+#define ND_ASSET_LIST_PREVIEW (2 << 16)
+#define ND_ASSET_LIST_READING (3 << 16)
+
 /* subtype, 256 entries too */
 #define NOTE_SUBTYPE 0x0000FF00
 

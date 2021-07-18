@@ -8,6 +8,7 @@ import json
 from .errors import MetarigError
 from .naming import strip_prefix, make_derived_name
 from .mechanism import MechanismUtilityMixin
+from .rig import rig_is_child
 from .misc import map_list, map_apply, force_lazy
 
 from ..base_rig import *
@@ -15,19 +16,6 @@ from ..base_generate import GeneratorPlugin
 
 from collections import defaultdict
 from itertools import count, repeat, chain
-
-
-def _rig_is_child(rig, parent):
-    if parent is None:
-        return True
-
-    while rig:
-        if rig is parent:
-            return True
-
-        rig = rig.rigify_parent
-
-    return False
 
 
 class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
@@ -71,8 +59,8 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
         assert not self.frozen
         assert isinstance(bone, str) or callable(bone)
-        assert callable(bone) or _rig_is_child(rig, self.generator.bone_owners[bone])
-        assert _rig_is_child(rig, inject_into)
+        assert callable(bone) or rig_is_child(rig, self.generator.bone_owners[bone])
+        assert rig_is_child(rig, inject_into)
 
         real_rig = rig
 
@@ -182,7 +170,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
     def assign_child_options(self, child, options):
         if 'context_rig' in options:
-            assert _rig_is_child(child['rig'], options['context_rig'])
+            assert rig_is_child(child['rig'], options['context_rig'])
 
         for name, value in options.items():
             if name not in self.child_option_table:
@@ -216,7 +204,7 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
 
                 # Exclude injected parents
                 if parent['real_rig'] is not parent_rig:
-                    if _rig_is_child(parent_rig, child_rig):
+                    if rig_is_child(parent_rig, child_rig):
                         continue
 
                 if parent['rig'] is child_rig:
@@ -224,11 +212,11 @@ class SwitchParentBuilder(GeneratorPlugin, MechanismUtilityMixin):
                         continue
                 elif parent['is_global'] and not child['ignore_global']:
                     # Can't use parents from own children, even if global (cycle risk)
-                    if _rig_is_child(parent_rig, child_rig):
+                    if rig_is_child(parent_rig, child_rig):
                         continue
                 else:
                     # Required to be a child of the parent's rig
-                    if not _rig_is_child(child_rig, parent_rig):
+                    if not rig_is_child(child_rig, parent_rig):
                         continue
 
                 parent['used'] = True

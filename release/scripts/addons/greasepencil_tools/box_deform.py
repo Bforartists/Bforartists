@@ -31,6 +31,31 @@ def region_to_location(viewcoords, depthcoords):
     from bpy_extras import view3d_utils
     return view3d_utils.region_2d_to_location_3d(bpy.context.region, bpy.context.space_data.region_3d, viewcoords, depthcoords)
 
+def store_cage(self, vg_name):
+    import time
+    unique_id = time.strftime(r'%y%m%d%H%M%S') # ex: 20210711111117
+    # name = f'gp_lattice_{unique_id}'
+    name = f'{self.gp_obj.name}_lat{unique_id}'
+    vg = self.gp_obj.vertex_groups.get(vg_name)
+    if vg:
+        vg.name = name
+    for o in self.other_gp:
+        vg = o.vertex_groups.get(vg_name)
+        if vg:
+            vg.name = name
+
+    self.cage.name = name
+    self.cage.data.name = name
+    mod = self.gp_obj.grease_pencil_modifiers.get('tmp_lattice')
+    if mod:
+        mod.name = name #f'Lattice_{unique_id}'
+        mod.vertex_group = name
+    for o in self.other_gp:
+        mod = o.grease_pencil_modifiers.get('tmp_lattice')
+        if mod:
+            mod.name = name
+            mod.vertex_group = name
+
 def assign_vg(obj, vg_name, delete=False):
     ## create vertex group
     vg = obj.vertex_groups.get(vg_name)
@@ -50,6 +75,10 @@ def view_cage(obj):
 
     gp = obj.data
     gpl = gp.layers
+
+    from_obj = bpy.context.mode == 'OBJECT'
+    all_gps = [o for o in bpy.context.selected_objects if o.type == 'GPENCIL']
+    other_gp = [o for o in all_gps if o is not obj]
 
     coords = []
     initial_mode = bpy.context.mode
@@ -73,13 +102,14 @@ def view_cage(obj):
                             # get real location
                             coords.append(obj.matrix_world @ p.co)
 
-    elif bpy.context.mode == 'OBJECT':#object mode -> all points
-        for l in gpl:# if l.hide:continue# only visible ? (might break things)
-            if not len(l.frames):
-                continue#skip frameless layer
-            for s in l.active_frame.strokes:
-                for p in s.points:
-                    coords.append(obj.matrix_world @ p.co)
+    elif bpy.context.mode == 'OBJECT': # object mode -> all points of all selected gp objects
+        for gpo in all_gps:
+            for l in gpo.data.layers:# if l.hide:continue# only visible ? (might break things)
+                if not len(l.frames):
+                    continue # skip frameless layer
+                for s in l.active_frame.strokes:
+                    for p in s.points:
+                        coords.append(gpo.matrix_world @ p.co)
 
     elif bpy.context.mode == 'PAINT_GPENCIL':
         # get last stroke points coordinated
@@ -189,7 +219,7 @@ def view_cage(obj):
     ## Master (root) collection
     bpy.context.scene.collection.objects.link(cage)
 
-    # spawn cage and align it to view (Again ! align something to a vector !!! argg)
+    # spawn cage and align it to view
 
     r3d = bpy.context.space_data.region_3d
     viewmat = r3d.view_matrix
@@ -205,17 +235,28 @@ def view_cage(obj):
     lattice.points_v = 2
     lattice.points_w = 1
 
-    lattice.interpolation_type_u = lattice_interp#'KEY_LINEAR'-'KEY_BSPLINE'
-    lattice.interpolation_type_v = lattice_interp#'KEY_LINEAR'-'KEY_BSPLINE'
-    lattice.interpolation_type_w = lattice_interp#'KEY_LINEAR'-'KEY_BSPLINE'
+    lattice.interpolation_type_u = lattice_interp #'KEY_LINEAR'-'KEY_BSPLINE'
+    lattice.interpolation_type_v = lattice_interp
+    lattice.interpolation_type_w = lattice_interp
 
     mod = obj.grease_pencil_modifiers.new('tmp_lattice', 'GP_LATTICE')
+    if from_obj:
+        mods = []
+        for o in other_gp:
+            mods.append( o.grease_pencil_modifiers.new('tmp_lattice', 'GP_LATTICE') )
 
     # move to top if modifiers exists
     for _ in range(len(obj.grease_pencil_modifiers)):
         bpy.ops.object.gpencil_modifier_move_up(modifier='tmp_lattice')
+    if from_obj:
+        for o in other_gp:
+            for _ in range(len(o.grease_pencil_modifiers)):
+                bpy.ops.object.gpencil_modifier_move_up({'object':o}, modifier='tmp_lattice')
 
     mod.object = cage
+    if from_obj:
+        for m in mods:
+            m.object = cage
 
     if initial_mode == 'PAINT_GPENCIL':
         mod.layer = gpl.active.info
@@ -225,29 +266,32 @@ def view_cage(obj):
     if bpy.context.mode == 'EDIT_GPENCIL':
         mod.vertex_group = vg.name
 
-    #Go in object mode if not already
+    # Go in object mode if not already
     if bpy.context.mode != 'OBJECT':
         bpy.ops.object.mode_set(mode='OBJECT')
 
     # Store name of deformed object in case of 'revive modal'
     cage.vertex_groups.new(name=obj.name)
+    if from_obj:
+        for o in other_gp:
+            cage.vertex_groups.new(name=o.name)
 
     ## select and make cage active
     # cage.select_set(True)
     bpy.context.view_layer.objects.active = cage
-    obj.select_set(False)#deselect GP object
-    bpy.ops.object.mode_set(mode='EDIT')# go in lattice edit mode
-    bpy.ops.lattice.select_all(action='SELECT')# select all points
+    obj.select_set(False) # deselect GP object
+    bpy.ops.object.mode_set(mode='EDIT') # go in lattice edit mode
+    bpy.ops.lattice.select_all(action='SELECT') # select all points
 
     if prefs.use_clic_drag:
         ## Eventually change tool mode to tweak for direct point editing (reset after before leaving)
-        bpy.ops.wm.tool_set_by_id(name="builtin.select")# Tweaktoolcode
+        bpy.ops.wm.tool_set_by_id(name="builtin.select") # Tweaktoolcode
     return cage
 
 
 def back_to_obj(obj, gp_mode, org_lattice_toolset, context):
-    if context.mode == 'EDIT_LATTICE' and org_lattice_toolset:# Tweaktoolcode - restore the active tool used by lattice edit..
-        bpy.ops.wm.tool_set_by_id(name = org_lattice_toolset)# Tweaktoolcode
+    if context.mode == 'EDIT_LATTICE' and org_lattice_toolset: # Tweaktoolcode - restore the active tool used by lattice edit..
+        bpy.ops.wm.tool_set_by_id(name = org_lattice_toolset) # Tweaktoolcode
 
     # gp object active and selected
     bpy.ops.object.mode_set(mode='OBJECT')
@@ -260,7 +304,7 @@ def delete_cage(cage):
     bpy.data.objects.remove(cage)
     bpy.data.lattices.remove(lattice)
 
-def apply_cage(gp_obj, cage):
+def apply_cage(gp_obj):
     mod = gp_obj.grease_pencil_modifiers.get('tmp_lattice')
     multi_user = None
     if mod:
@@ -270,7 +314,8 @@ def apply_cage(gp_obj, cage):
             other_user = [o for o in bpy.data.objects if o is not gp_obj and o.data is old]
             gp_obj.data = gp_obj.data.copy()
 
-        bpy.ops.object.gpencil_modifier_apply(apply_as='DATA', modifier=mod.name)
+        # bpy.ops.object.gpencil_modifier_apply(apply_as='DATA', modifier=mod.name)
+        bpy.ops.object.gpencil_modifier_apply({'object': gp_obj}, apply_as='DATA', modifier=mod.name)
 
         if multi_user:
             for o in other_user: # relink
@@ -281,17 +326,22 @@ def apply_cage(gp_obj, cage):
     else:
         print('tmp_lattice modifier not found to apply...')
 
-    delete_cage(cage)
-
-def cancel_cage(gp_obj, cage):
+def cancel_cage(self):
     #remove modifier
-    mod = gp_obj.grease_pencil_modifiers.get('tmp_lattice')
+    mod = self.gp_obj.grease_pencil_modifiers.get('tmp_lattice')
     if mod:
-        gp_obj.grease_pencil_modifiers.remove(mod)
+        self.gp_obj.grease_pencil_modifiers.remove(mod)
     else:
-        print('tmp_lattice modifier not found to remove...')
+        print(f'tmp_lattice modifier not found to remove on {self.gp_obj.name}')
+    
+    for ob in self.other_gp:
+        mod = ob.grease_pencil_modifiers.get('tmp_lattice')
+        if mod:
+            ob.grease_pencil_modifiers.remove(mod)
+        else:
+            print(f'tmp_lattice modifier not found to remove on {ob.name}')
 
-    delete_cage(cage)
+    delete_cage(self.cage)
 
 
 class GP_OT_latticeGpDeform(bpy.types.Operator):
@@ -413,8 +463,16 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
                 context.window_manager.boxdeform_running = False
                 self.restore_prefs(context)
                 back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
-                apply_cage(self.gp_obj, self.cage)#must be in object mode
-                assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
+                if event.shift:
+                    # Let the cage as is with a unique ID
+                    store_cage(self, 'lattice_cage_deform_group')
+                else:
+                    apply_cage(self.gp_obj) # must be in object mode
+                    assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
+                    for o in self.other_gp:
+                        apply_cage(o)
+                        assign_vg(o, 'lattice_cage_deform_group', delete=True)
+                    delete_cage(self.cage)
 
                 # back to original mode
                 if self.gp_mode != 'OBJECT':
@@ -448,7 +506,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
         context.window_manager.boxdeform_running = False
         self.restore_prefs(context)
         back_to_obj(self.gp_obj, self.gp_mode, self.org_lattice_toolset, context)
-        cancel_cage(self.gp_obj, self.cage)
+        cancel_cage(self)
         assign_vg(self.gp_obj, 'lattice_cage_deform_group', delete=True)
         context.area.header_text_set(None)
         if self.gp_mode != 'OBJECT':
@@ -523,16 +581,23 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             ## silent return
             return {'CANCELLED'}
 
-        #paint need VG workaround. object need good shortcut
         if context.mode not in ('EDIT_GPENCIL', 'OBJECT', 'PAINT_GPENCIL'):
-            # self.report({'WARNING'}, "Works only in following GPencil modes: edit")# ERROR
+            # self.report({'WARNING'}, "Works only in following GPencil modes: object / edit/ paint")# ERROR
             ## silent return
             return {'CANCELLED'}
 
+            
         # bpy.ops.ed.undo_push(message="Box deform step")#don't work as expected (+ might be obsolete)
         # https://developer.blender.org/D6147 <- undo forget
 
         self.gp_obj = context.object
+
+        self.from_object = context.mode == 'OBJECT'
+        self.all_gps = self.other_gp = []
+        if self.from_object:
+            self.all_gps = [o for o in bpy.context.selected_objects if o.type == 'GPENCIL']
+            self.other_gp = [o for o in self.all_gps if o is not self.gp_obj]
+
         # Clean potential failed previous job (delete tmp lattice)
         mod = self.gp_obj.grease_pencil_modifiers.get('tmp_lattice')
         if mod:
@@ -549,7 +614,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
                 self.report({'ERROR'}, "Grease pencil object already has a lattice modifier (multi-lattices are enabled in blender 2.93+)")
                 return {'CANCELLED'}
 
-        self.gp_mode = context.mode#store mode for restore
+        self.gp_mode = context.mode # store mode for restore
 
         # All good, create lattice and start modal
 
