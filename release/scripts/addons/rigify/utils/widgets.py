@@ -24,6 +24,7 @@ import inspect
 import functools
 
 from mathutils import Matrix, Vector, Euler
+from itertools import count
 
 from .errors import MetarigError
 from .collections import ensure_widget_collection
@@ -210,6 +211,113 @@ def widget_generator(generate_func=None, *, register=None, subsurf=0):
     return wrapper
 
 
+def generate_lines_geometry(geom, points, *, matrix=None, closed_loop=False):
+    """
+    Generates a polyline using given points, optionally closing the loop.
+    """
+    assert len(points) >= 2
+
+    base = len(geom.verts)
+
+    for i, raw_point in enumerate(points):
+        point = Vector(raw_point).to_3d()
+
+        if matrix:
+            point = matrix @ point
+
+        geom.verts.append(point)
+
+        if i > 0:
+            geom.edges.append((base + i - 1, base + i))
+
+    if closed_loop:
+        geom.edges.append((len(geom.verts) - 1, base))
+
+
+def generate_circle_geometry(geom, center, radius, *, matrix=None, angle_range=None,
+                             steps=24, radius_x=None, depth_x=0):
+    """
+    Generates a circle, adding vertices and edges to the lists.
+    center, radius: parameters of the circle
+    matrix: transformation matrix (by default the circle is in the XY plane)
+    angle_range: pair of angles to generate an arc of the circle
+    steps: number of edges to cover the whole circle (reduced for arcs)
+    """
+    assert steps >= 3
+
+    start = 0
+    delta = math.pi * 2 / steps
+
+    if angle_range:
+        start, end = angle_range
+        if start == end:
+            steps = 1
+        else:
+            steps = max(3, math.ceil(abs(end - start) / delta) + 1)
+            delta = (end - start) / (steps - 1)
+
+    if radius_x is None:
+        radius_x = radius
+
+    center = Vector(center).to_3d()  # allow 2d center
+    points = []
+
+    for i in range(steps):
+        angle = start + delta * i
+        x = math.cos(angle)
+        y = math.sin(angle)
+        points.append(center + Vector((x * radius_x, y * radius, x * x * depth_x)))
+
+    generate_lines_geometry(geom, points, matrix=matrix, closed_loop=not angle_range)
+
+
+def generate_circle_hull_geometry(geom, points, radius, gap, *, matrix=None, steps=24):
+    """
+    Given a list of 2D points forming a convex hull, generate a contour around
+    it, with each point being circumscribed with a circle arc of given radius,
+    and keeping the given distance gap from the lines connecting the circles.
+    """
+    assert radius >= gap
+
+    if len(points) <= 1:
+        if points:
+            generate_circle_geometry(
+                geom, points[0], radius,
+                matrix=matrix, steps=steps
+            )
+        return
+
+    base = len(geom.verts)
+    points_ex = [points[-1], *points, points[0]]
+    agap = math.asin(gap / radius)
+
+    for i, pprev, pcur, pnext in zip(count(0), points_ex[0:], points_ex[1:], points_ex[2:]):
+        vprev = pprev - pcur
+        vnext = pnext - pcur
+
+        # Compute bearings to adjacent points
+        aprev = math.atan2(vprev.y, vprev.x)
+        anext = math.atan2(vnext.y, vnext.x)
+        if anext <= aprev:
+            anext += math.pi * 2
+
+        # Adjust gap for circles that are too close
+        aprev += max(agap, math.acos(min(1, vprev.length/radius/2)))
+        anext -= max(agap, math.acos(min(1, vnext.length/radius/2)))
+
+        if anext > aprev:
+            if len(geom.verts) > base:
+                geom.edges.append((len(geom.verts)-1, len(geom.verts)))
+
+            generate_circle_geometry(
+                geom, pcur, radius, angle_range=(aprev, anext),
+                matrix=matrix, steps=steps
+            )
+
+    if len(geom.verts) > base:
+        geom.edges.append((len(geom.verts)-1, base))
+
+
 def create_circle_polygon(number_verts, axis, radius=1.0, head_tail=0.0):
     """ Creates a basic circle around of an axis selected.
         number_verts: number of vertices of the polygon
@@ -244,6 +352,10 @@ def create_circle_polygon(number_verts, axis, radius=1.0, head_tail=0.0):
 
     return verts, edges
 
+
+#=============================================
+# Widget transformation
+#=============================================
 
 def adjust_widget_axis(obj, axis='y', offset=0.0):
     mesh = obj.data

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -25479,10 +25479,6 @@ msgid "Subsurface"
 msgstr "Izdeljena površ"
 
 
-msgid "Transparency"
-msgstr "Providnost"
-
-
 msgid "Tiles X"
 msgstr "Delova X"
 
@@ -28242,10 +28238,6 @@ msgid "No valid action to add"
 msgstr "Zamena ulaznog efekta"
 
 
-msgid "Sockets"
-msgstr "Utičnice"
-
-
 msgctxt "Action"
 msgid "Group"
 msgstr "Grupa"
@@ -28728,6 +28720,10 @@ msgstr "Z dubina pogleda"
 
 msgid "View Distance"
 msgstr "Udaljenost pogleda"
+
+
+msgid "Transparency"
+msgstr "Providnost"
 
 
 msgid "True Normal"

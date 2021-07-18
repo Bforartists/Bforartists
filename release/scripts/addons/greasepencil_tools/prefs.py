@@ -230,6 +230,7 @@ class GPT_MT_box_deform_doc(bpy.types.Menu):
         col.separator()
         col.label(text="Shortcuts:", icon='HAND')
         col.label(text="Spacebar / Enter : Confirm")
+        col.label(text="Shift + Spacebar / Enter : Confirm and let the lattice in place")
         col.label(text="Delete / Backspace / Tab(twice) / Ctrl+T : Cancel")
         col.label(text="M : Toggle between Linear and Spline mode at any moment")
         col.label(text="1-9 top row number : Subdivide the box")

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -27426,10 +27426,6 @@ msgid "Mesh Light"
 msgstr "Ljus"
 
 
-msgid "Transparency"
-msgstr "Genomskinlighet"
-
-
 msgid "Tiles X"
 msgstr "Arkiv"
 
@@ -29038,12 +29034,12 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Radera"
 
 
-msgid "No active Keying Set"
-msgstr "Byta Stripp"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Radera"
+
+
+msgid "No active Keying Set"
+msgstr "Byta Stripp"
 
 
 msgid "Cannot remove built in keying set"
@@ -30268,6 +30264,10 @@ msgstr "Packa Data"
 
 msgid "View Distance"
 msgstr "Visa inställningar för kant"
+
+
+msgid "Transparency"
+msgstr "Genomskinlighet"
 
 
 msgid "True Normal"

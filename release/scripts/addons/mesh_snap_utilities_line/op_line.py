@@ -414,9 +414,12 @@ class SnapUtilitiesLine(SnapUtilities, bpy.types.Operator):
             context.window_manager.modal_handler_add(self)
 
             if not self.wait_for_input:
-                mat_inv = self.obj.matrix_world.inverted_safe()
-                point = mat_inv @ self.location
-                self.list_verts_co = make_line(self, self.geom, point)
+                if not self.snapwidgets:
+                    self.modal(context, event)
+                else:
+                    mat_inv = self.obj.matrix_world.inverted_safe()
+                    point = mat_inv @ self.location
+                    self.list_verts_co = make_line(self, self.geom, point)
 
             self._handle = bpy.types.SpaceView3D.draw_handler_add(self.draw_callback_px, (), 'WINDOW', 'POST_VIEW')
 

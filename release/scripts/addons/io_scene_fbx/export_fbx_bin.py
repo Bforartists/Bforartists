@@ -3214,7 +3214,7 @@ def save(operator, context,
             for scene in scenes:
                 if not scene.objects:
                     continue
-                #                                      Needed to avoid having tens of 'Master Collection' entries.
+                # Needed to avoid having tens of 'Scene Collection' entries.
                 todo_collections = [(scene.collection, "_".join((scene.name, scene.collection.name)))]
                 while todo_collections:
                     coll, coll_name = todo_collections.pop()

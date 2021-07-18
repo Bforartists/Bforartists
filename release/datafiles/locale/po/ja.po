@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -25544,10 +25544,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "シーンのレンダリングに使用するアクティブカメラ"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "シーン内のオブジェクトや他のコレクションのある、シーンマスターコレクション"
-
-
 msgid "3D Cursor"
 msgstr "3Dカーソル"
 
@@ -40694,10 +40690,6 @@ msgstr "スイッチ"
 
 msgid "Off: first socket, On: second socket"
 msgstr "オフ：第一ソケット、オン：第二ソケット"
-
-
-msgid "View Switch"
-msgstr "ビュースイッチ"
 
 
 msgid "Node Output"
@@ -59850,10 +59842,6 @@ msgid "Object Animation"
 msgstr "オブジェクトアニメーション"
 
 
-msgid "Make animation data local to each object"
-msgstr "オブジェクト毎にアニメーションデータをローカル化します"
-
-
 msgid "Make materials local to each data-block"
 msgstr "データブロック毎にマテリアルをローカル化します"
 
@@ -71449,6 +71437,24 @@ msgid "End frame of the export, use the default value to take the end frame of t
 msgstr "エクスポートの最終フレーム。現在のシーンの最終フレームを採るにはデフォルト値を使用してください"
 
 
+msgid "Use Settings for"
+msgstr "使用する設定"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr ""
+"オブジェクトの可視性やモディファイアー設定などの\n"
+"ビューポートとレンダリング用のどちらの設定を使用するか"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "レンダー用設定をオブジェクトの可視性やモディファイアー設定などに使用します"
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "ビューポート用設定をオブジェクトの可視性やモディファイアー設定などに使用します"
+
+
 msgid "Export Custom Properties"
 msgstr "カスタムプロパティをエクスポート"
 
@@ -71507,14 +71513,6 @@ msgstr "UVアイランドを梱包"
 
 msgid "Export UVs with packed island"
 msgstr "アイランドを梱包してUVをエクスポートします"
-
-
-msgid "Renderable Objects Only"
-msgstr "レンダリングオブジェクトのみ"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "アウトライナーでレンダリング可能なオブジェクトのみエクスポートします"
 
 
 msgid "Selected Objects Only"
@@ -73488,24 +73486,6 @@ msgstr "USDをエクスポート"
 
 msgid "Export current scene in a USD archive"
 msgstr "現在のシーンを USD アーカイブでエクスポートします"
-
-
-msgid "Use Settings for"
-msgstr "使用する設定"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr ""
-"オブジェクトの可視性やモディファイアー設定などの\n"
-"ビューポートとレンダリング用のどちらの設定を使用するか"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "レンダー用設定をオブジェクトの可視性やモディファイアー設定などに使用します"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "ビューポート用設定をオブジェクトの可視性やモディファイアー設定などに使用します"
 
 
 msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
@@ -80980,10 +80960,6 @@ msgstr "レンダリング時の各AAサンプルの伝播バウンスサンプ�
 
 msgid "Transparent Max Bounces"
 msgstr "透過最大バウンス数"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "透過バウンスの最大数"
 
 
 msgid "Use Adaptive Sampling"
@@ -94636,10 +94612,6 @@ msgid "Step Rate Render"
 msgstr "ステップ率：レンダー"
 
 
-msgid "Transparency"
-msgstr "透過"
-
-
 msgid "Direct Light"
 msgstr "間接照明"
 
@@ -103148,10 +103120,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "キーイングセットがすべてのキーフレーム挿入に失敗"
 
 
-msgid "No active Keying Set"
-msgstr "アクティブキーイングセットがありません"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "キーイングセットがどのキーフレームの削除も失敗しました"
 
@@ -103162,6 +103130,10 @@ msgstr "このプロパティは正しく更新されないため、アニメー
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "プロパティへのパスの解決に失敗、代わりにキーイングセットを使用して指定してみてください"
+
+
+msgid "No active Keying Set"
+msgstr "アクティブキーイングセットがありません"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -103210,10 +103182,6 @@ msgstr "キーイングセット「%s」― %d個のキーフレームの追加�
 
 msgid "Successfully added %d keyframes for keying set '%s'"
 msgstr "%d個のキーフレームをキーイングセット「%s」へ追加しました"
-
-
-msgid "Active Keying Set '%s' not found"
-msgstr "アクティブキーイングセット「%s」が見つかりません"
 
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
@@ -107887,10 +107855,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "モディファイアーが(%s : %s)に追加できませんでした（コンソールに詳細）"
 
 
-msgid "Sockets"
-msgstr "ソケット"
-
-
 msgid "More than one collection is selected"
 msgstr "二つ以上のコレクションが選択されています"
 
@@ -110922,6 +110886,10 @@ msgstr "ビューの距離"
 
 msgid "Emissive Color"
 msgstr "放射カラー"
+
+
+msgid "Transparency"
+msgstr "透過"
 
 
 msgid "Clear Coat"

@@ -1271,7 +1271,7 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
 
     resolution: EnumProperty(
         items=available_resolutions_callback,
-        default=0,
+        default=512,
         description='Replace resolution'
     )
 

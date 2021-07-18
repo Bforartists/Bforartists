@@ -38,6 +38,8 @@ import bpy
 import os
 import random
 import logging
+import platform
+import ctypes
 
 bk_logger = logging.getLogger('blenderkit')
 
@@ -1730,54 +1732,62 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         box_thumbnail.scale_y = .4
         box_thumbnail.template_icon(icon_value=self.img.preview.icon_id, scale=width * .12)
 
-        # row = box_thumbnail.row()
-        # row.scale_y = 3
+
         # op = row.operator('view3d.asset_drag_drop', text='Drag & Drop from here', depress=True)
+        # From here on, only ratings are drawn, which won't be displayed for private assets from now on.
+
+        if not self.asset_data['isPrivate']:
+            row = box_thumbnail.row()
+            row.alignment = 'EXPAND'
+
+            # display_ratings = can_display_ratings(self.asset_data)
+            rc = self.asset_data.get('ratingsCount')
+            show_rating_threshold = 0
+            show_rating_prompt_threshold = 5
+
+            if rc:
+                rcount = min(rc['quality'], rc['workingHours'])
+            else:
+                rcount = 0
+            if rcount >= show_rating_threshold or upload.can_edit_asset(asset_data=self.asset_data):
+                s = numeric_to_str(self.asset_data['score'])
+                q = numeric_to_str(self.asset_data['ratingsAverage'].get('quality'))
+                c = numeric_to_str(self.asset_data['ratingsAverage'].get('workingHours'))
+            else:
+                s = '-'
+                q = '-'
+                c = '-'
+
+            pcoll = icons.icon_collections["main"]
+
+            row.emboss = 'NONE'
+            op = row.operator('wm.blenderkit_tooltip', text=str(s), icon_value=pcoll['trophy'].icon_id)
+            op.tooltip = 'Asset score calculated from averaged user ratings. \n\n' \
+                         'Score = quality × complexity × 10*\n\n *Happiness multiplier'
+            row.label(text='   ')
+
+            tooltip_extension = f'.\n\nRatings results are shown for assets with more than {show_rating_threshold} ratings'
+            op = row.operator('wm.blenderkit_tooltip', text=str(q), icon='SOLO_ON')
+            op.tooltip = f"Quality, average from {rc['quality']} ratings" \
+                         f"{tooltip_extension if rcount <= show_rating_threshold else ''}"
+            row.label(text='   ')
+
+            op = row.operator('wm.blenderkit_tooltip', text=str(c), icon_value=pcoll['dumbbell'].icon_id)
+            op.tooltip = f"Complexity, average from {rc['workingHours']} ratings" \
+                         f"{tooltip_extension if rcount <= show_rating_threshold else ''}"
+
+            if rcount <= show_rating_prompt_threshold:
+                box_thumbnail.alert = True
+                box_thumbnail.label(text=f"")
+                box_thumbnail.label(text=f"This asset has only {rcount} rating{'' if rcount == 1 else 's'}, please rate.")
+                # box_thumbnail.label(text=f"Please rate this asset.")
 
         row = box_thumbnail.row()
-        row.alignment = 'EXPAND'
+        row.alert = False
 
-        # display_ratings = can_display_ratings(self.asset_data)
-        rc = self.asset_data.get('ratingsCount')
-        show_rating_threshold = 0
-        show_rating_prompt_threshold = 5
-
-        if rc:
-            rcount = min(rc['quality'], rc['workingHours'])
-        else:
-            rcount = 0
-        if rcount >= show_rating_threshold or upload.can_edit_asset(asset_data=self.asset_data):
-            s = numeric_to_str(self.asset_data['score'])
-            q = numeric_to_str(self.asset_data['ratingsAverage'].get('quality'))
-            c = numeric_to_str(self.asset_data['ratingsAverage'].get('workingHours'))
-        else:
-            s = '-'
-            q = '-'
-            c = '-'
-
-        pcoll = icons.icon_collections["main"]
-
-        row.emboss = 'NONE'
-        op = row.operator('wm.blenderkit_tooltip', text=str(s), icon_value=pcoll['trophy'].icon_id)
-        op.tooltip = 'Asset score calculated from averaged user ratings. \n\n' \
-                     'Score = quality × complexity × 10*\n\n *Happiness multiplier'
-        row.label(text='   ')
-
-        tooltip_extension = f'.\n\nRatings results are shown for assets with more than {show_rating_threshold} ratings'
-        op = row.operator('wm.blenderkit_tooltip', text=str(q), icon='SOLO_ON')
-        op.tooltip = f"Quality, average from {rc['quality']} ratings" \
-                     f"{tooltip_extension if rcount <= show_rating_threshold else ''}"
-        row.label(text='   ')
-
-        op = row.operator('wm.blenderkit_tooltip', text=str(c), icon_value=pcoll['dumbbell'].icon_id)
-        op.tooltip = f"Complexity, average from {rc['workingHours']} ratings" \
-                     f"{tooltip_extension if rcount <= show_rating_threshold else ''}"
-
-        if rcount <= show_rating_prompt_threshold:
-            box_thumbnail.alert = True
-            box_thumbnail.label(text=f"")
-            box_thumbnail.label(text=f"This asset has only {rcount} rating{'' if rcount == 1 else 's'}, please rate.")
-            # box_thumbnail.label(text=f"Please rate this asset.")
+        row.scale_y = 3
+        ui_props = bpy.context.scene.blenderkitUI
+        row.prop(ui_props, 'drag_init_button', icon='MOUSE_LMB_DRAG', text='Click / Drag from here', emboss=True)
 
     def draw_menu_desc_author(self, context, layout, width=330):
         box = layout.column()
@@ -1809,6 +1819,11 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         #
         # # self.draw_description(box, width=int(width))
         # self.draw_properties(box, width=int(width))
+
+        # define enum flags
+
+
+
 
     def draw(self, context):
         ui_props = context.scene.blenderkitUI
@@ -1848,6 +1863,8 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
 
             name_row.label(text=aname)
             push_op_left(name_row, strength = 3)
+            op = name_row.operator('view3d.close_popup_button', text='', icon = 'CANCEL')
+
         # for i,c in enumerate(cat_path_names):
         #     cat_path_names[i] = c.capitalize()
         # cat_path_names_string = ' > '.join(cat_path_names)
@@ -1897,7 +1914,8 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
 
         authors = bpy.context.window_manager['bkit authors']
         a = authors.get(asset_data['author']['id'])
-        if a.get('gravatarImg') is not None:
+
+        if a is not None and a.get('gravatarImg') is not None:
             self.gimg = utils.get_hidden_image(a['gravatarImg'], a['gravatarHash'])
 
         bl_label = asset_data['name']
@@ -1951,6 +1969,38 @@ class SetCategoryOperator(bpy.types.Operator):
         bpy.context.window_manager['active_category'][self.asset_type] = acat
         return {'FINISHED'}
 
+class ClosePopupButton(bpy.types.Operator):
+    """Visit subcategory"""
+    bl_idname = "view3d.close_popup_button"
+    bl_label = "BlenderKit close popup"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def win_close(self):
+        VK_ESCAPE = 0x1B
+        ctypes.windll.user32.keybd_event(VK_ESCAPE)
+        print('hit escape')
+        return True
+
+    def mouse_trick(self,context,x,y):
+        # import time
+        context.area.tag_redraw()
+        w = context.window
+        w.cursor_warp(w.x+15,w.y+w.height-15);
+        # time.sleep(.12)
+        w.cursor_warp(x,y);
+        context.area.tag_redraw()
+
+
+    def invoke(self, context, event):
+        if platform.system() == 'Windows':
+            self.win_close()
+        else:
+            self.mouse_trick(context,event.mouse_x, event.mouse_y)
+        return {'FINISHED'}
 
 class UrlPopupDialog(bpy.types.Operator):
     """Generate Cycles thumbnail for model assets"""
@@ -1994,12 +2044,10 @@ class UrlPopupDialog(bpy.types.Operator):
         op.url = self.url
 
     def execute(self, context):
-        # start_thumbnailer(self, context)
         return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
-
         return wm.invoke_props_dialog(self, width=300)
 
 
@@ -2153,6 +2201,11 @@ def header_search_draw(self, context):
         layout.prop(ui_props, "asset_type", expand=True, icon_only=True, text='', icon='URL')
         layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
         draw_assetbar_show_hide(layout, props)
+        layout.popover(panel="VIEW3D_PT_blenderkit_categories", text="", icon = 'OUTLINER')
+        if ui_props.asset_type=='MODEL':
+            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_model_search", text="", icon = 'FILTER')
+        elif ui_props.asset_type=='MATERIAL':
+            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_material_search", text="", icon = 'FILTER')
 
 
 def ui_message(title, message):
@@ -2185,6 +2238,7 @@ classes = (
     OBJECT_MT_blenderkit_login_menu,
     AssetPopupCard,
     UrlPopupDialog,
+    ClosePopupButton,
     BlenderKitWelcomeOperator,
 )
 
