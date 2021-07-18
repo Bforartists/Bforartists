@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -22168,10 +22168,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Caméra active, utilisée pour rendre la scène"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "Collection de scène maître qui contient tous les objets et autre collections dans la scène"
-
-
 msgid "3D Cursor"
 msgstr "Curseur 3D"
 
@@ -34253,10 +34249,6 @@ msgstr "Alterner"
 
 msgid "Off: first socket, On: second socket"
 msgstr "Off : première prise, On : deuxième prise"
-
-
-msgid "View Switch"
-msgstr "Alterner vues"
 
 
 msgid "Node Output"
@@ -47714,10 +47706,6 @@ msgid "Object Animation"
 msgstr "Animation de l’objet"
 
 
-msgid "Make animation data local to each object"
-msgstr "Rendre les données d’animation locales à chaque objet"
-
-
 msgid "Make materials local to each data-block"
 msgstr "Rendre les matériaux locaux à chaque bloc de données"
 
@@ -55866,14 +55854,6 @@ msgid "Export UVs with packed island"
 msgstr "Exporter les UVs avec les îles empaquetées"
 
 
-msgid "Renderable Objects Only"
-msgstr "Objets actifs au rendu uniquement"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "N’exporter que les objets marqués comme actifs au rendu dans l’outliner"
-
-
 msgid "Selected Objects Only"
 msgstr "Objets sélectionnés uniquement"
 
@@ -62804,10 +62784,6 @@ msgstr "Nombre d’échantillons de rebonds de transmission à rendre pour chaqu
 
 msgid "Transparent Max Bounces"
 msgstr "Rebonds max de transparence"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Nombre maximum de rebonds de transparence"
 
 
 msgid "Use Animated Seed"
@@ -71386,10 +71362,6 @@ msgid "Offscreen Scale"
 msgstr "Échelle hors-écran"
 
 
-msgid "Transparency"
-msgstr "Transparence"
-
-
 msgid "Roughness Threshold"
 msgstr "Seuil de rugosité"
 
@@ -75600,10 +75572,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "L’ensemble de clés n’a pu insérer aucune image clé"
 
 
-msgid "No active Keying Set"
-msgstr "Pas d’ensemble de clés actif"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "L’ensemble de clés n’a pu enlever aucune image clé"
 
@@ -75614,6 +75582,10 @@ msgstr "Cette propriété ne peut être animée, car elle ne serait pas mise à 
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "La résolution du chemin vers la propriété a échoué, essayez de spécifier cela manuellement à l’aide d’un ensemble d’images clé à la place"
+
+
+msgid "No active Keying Set"
+msgstr "Pas d’ensemble de clés actif"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -78708,10 +78680,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Le modificateur n’a pu être ajouté à (%s : %s) (voyez la console pour les détails)"
 
 
-msgid "Sockets"
-msgstr "Prises"
-
-
 msgid "Cannot delete linked collection '%s', it is used by other linked scenes/collections"
 msgstr "Impossible de supprimer la collection liée “%s”, elle est utilisée par d’autres scènes/collections liées"
 
@@ -80963,6 +80931,10 @@ msgstr "Distance vue"
 
 msgid "Emissive Color"
 msgstr "Couleur d’émission"
+
+
+msgid "Transparency"
+msgstr "Transparence"
 
 
 msgid "Clear Coat"

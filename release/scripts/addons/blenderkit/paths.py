@@ -96,9 +96,19 @@ def get_categories_filepath():
     tempdir = get_temp_dir()
     return os.path.join(tempdir, 'categories.json')
 
-
+dirs_exist_dict = {}#cache these results since this is used very often
 def get_temp_dir(subdir=None):
+
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
+    #first try cached results
+    if subdir is not None:
+        d = dirs_exist_dict.get(subdir)
+        if d is not None:
+            return d
+    else:
+        d = dirs_exist_dict.get('top')
+        if d is not None:
+            return d
 
     # tempdir = user_preferences.temp_dir
     tempdir = os.path.join(tempfile.gettempdir(), 'bkit_temp')
@@ -107,10 +117,14 @@ def get_temp_dir(subdir=None):
     try:
         if not os.path.exists(tempdir):
             os.makedirs(tempdir)
+        dirs_exist_dict['top'] = tempdir
+
         if subdir is not None:
             tempdir = os.path.join(tempdir, subdir)
             if not os.path.exists(tempdir):
                 os.makedirs(tempdir)
+            dirs_exist_dict[subdir] = tempdir
+
         cleanup_old_folders()
     except:
         tasks_queue.add_task((ui.add_report, ('Cache directory not found. Resetting Cache folder path.',)))
@@ -379,9 +393,10 @@ def get_addon_file(subpath=''):
     # fpath = os.path.join(p, subpath)
     return os.path.join(script_path, subpath)
 
+script_path = os.path.dirname(os.path.realpath(__file__))
 
 def get_addon_thumbnail_path(name):
-    script_path = os.path.dirname(os.path.realpath(__file__))
+    global script_path
     # fpath = os.path.join(p, subpath)
     ext = name.split('.')[-1]
     next = ''

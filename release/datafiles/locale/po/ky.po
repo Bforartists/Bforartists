@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -3247,10 +3247,6 @@ msgid "AO"
 msgstr "AO"
 
 
-msgid "Transparency"
-msgstr "Тунуктук"
-
-
 msgctxt "Operator"
 msgid "Volume"
 msgstr "Көлөм"
@@ -4023,6 +4019,10 @@ msgstr "BSDF"
 
 msgid "Sigma"
 msgstr "Сигма"
+
+
+msgid "Transparency"
+msgstr "Тунуктук"
 
 
 msgid "BSSRDF"

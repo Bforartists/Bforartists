@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -25262,10 +25262,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Cámara activa, usada para procesar la escena"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "Colección principal de la escena, a la cual pertenecen los objetos y otras colecciones de la escena"
-
-
 msgid "3D Cursor"
 msgstr "Cursor 3D"
 
@@ -40339,10 +40335,6 @@ msgstr "Cambiar"
 
 msgid "Off: first socket, On: second socket"
 msgstr "Desactivado: primer conector. Activado: segundo conector"
-
-
-msgid "View Switch"
-msgstr "Alternar vista"
 
 
 msgid "Node Output"
@@ -59394,10 +59386,6 @@ msgid "Object Animation"
 msgstr "Animación del objeto"
 
 
-msgid "Make animation data local to each object"
-msgstr "Hace que los datos de animación sean locales con respecto a cada objeto"
-
-
 msgid "Make materials local to each data-block"
 msgstr "Hace que los materiales sean locales con respecto a cada bloque de datos"
 
@@ -70972,6 +70960,22 @@ msgid "End frame of the export, use the default value to take the end frame of t
 msgstr "Fotograma final de la exportación, usar el valor predefinido para tomar el fotograma final de la escena actual"
 
 
+msgid "Use Settings for"
+msgstr "Usar opciones de"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Determina la visibilidad de los objetos, opciones de modificadores y otras áreas donde existan diferentes para visualización en la vista 3D y el procesamiento"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "Usar opciones de procesamiento para visibilidad de objetos, opciones de modificadores, etc"
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "Usar opciones de visualización para visibilidad de objetos, opciones de modificadores, etc"
+
+
 msgid "Export Custom Properties"
 msgstr "Exportar propiedades personalizadas"
 
@@ -71034,14 +71038,6 @@ msgstr "Empacar islas UV"
 
 msgid "Export UVs with packed island"
 msgstr "Exporta las UV con sus islas empacadas"
-
-
-msgid "Renderable Objects Only"
-msgstr "Sólo objetos visibles durante el procesamiento"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "Exporta sólo los objetos marcados como procesables en el listado"
 
 
 msgid "Selected Objects Only"
@@ -72993,22 +72989,6 @@ msgstr "Exportar USD"
 
 msgid "Export current scene in a USD archive"
 msgstr "Exportar la escena actual a una archivo de Universal Scene Description"
-
-
-msgid "Use Settings for"
-msgstr "Usar opciones de"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "Determina la visibilidad de los objetos, opciones de modificadores y otras áreas donde existan diferentes para visualización en la vista 3D y el procesamiento"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "Usar opciones de procesamiento para visibilidad de objetos, opciones de modificadores, etc"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "Usar opciones de visualización para visibilidad de objetos, opciones de modificadores, etc"
 
 
 msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
@@ -80409,10 +80389,6 @@ msgstr "Transmisión, cantidad de muestras por cada muestra de suavizado de bord
 
 msgid "Transparent Max Bounces"
 msgstr "Rebotes de transparencia máx"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Cantidad máxima de rebotes de transparencia"
 
 
 msgid "Use Adaptive Sampling"
@@ -94061,10 +94037,6 @@ msgid "Step Rate Render"
 msgstr "Tamaño intervalos  Procesar"
 
 
-msgid "Transparency"
-msgstr "Transparencia"
-
-
 msgid "Direct Light"
 msgstr "Iluminación directa"
 
@@ -102599,10 +102571,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Falla al insertar fotogramas en el conjunto de claves"
 
 
-msgid "No active Keying Set"
-msgstr "Ningún conjunto de claves activo"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Falla al eliminar fotogramas del conjunto de claves"
 
@@ -102613,6 +102581,10 @@ msgstr "Esta propiedad no puede ser animada ya que no podrá ser actualizada cor
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "Falla al resolver la ruta a la propiedad, intentar especificar manualmente esto usando un conjunto de claves"
+
+
+msgid "No active Keying Set"
+msgstr "Ningún conjunto de claves activo"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -102661,10 +102633,6 @@ msgstr "Conjunto de claves '%s' - se han agregado %d fotogramas clave de forma e
 
 msgid "Successfully added %d keyframes for keying set '%s'"
 msgstr "%d fotogramas clave agregados exitosamente al conjunto de claves '%s'"
-
-
-msgid "Active Keying Set '%s' not found"
-msgstr "No se encontró el conjunto de claves activo '%s'"
 
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
@@ -107368,10 +107336,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "No fue posible agregar el modificador a (%s : %s) (ver la consola por más detalles)"
 
 
-msgid "Sockets"
-msgstr "Conectores"
-
-
 msgid "More than one collection is selected"
 msgstr "Hay más de una colección seleccionada"
 
@@ -110409,6 +110373,10 @@ msgstr "Distancia"
 
 msgid "Emissive Color"
 msgstr "Color de emisión"
+
+
+msgid "Transparency"
+msgstr "Transparencia"
 
 
 msgid "Clear Coat"

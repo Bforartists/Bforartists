@@ -243,7 +243,7 @@ class BaseRig(GenerateCallbackHost, RaiseErrorMixin, BoneUtilityMixin, Mechanism
         :param params:
         :return:
         """
-        layout.label(text="No options")
+        pass
 
     @classmethod
     def on_parameter_update(cls, context, pose_bone, params, param_name):

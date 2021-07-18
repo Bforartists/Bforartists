@@ -619,16 +619,24 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
             else:
                 if hasattr(rig.Rig, 'parameters_ui'):
                     rig = rig.Rig
+
                 try:
-                    rig.parameters_ui
+                    param_cb = rig.parameters_ui
+
+                    # Ignore the known empty base method
+                    if getattr(param_cb, '__func__', None) == base_rig.BaseRig.parameters_ui.__func__:
+                        param_cb = None
                 except AttributeError:
+                    param_cb = None
+
+                if param_cb is None:
                     col = layout.column()
                     col.label(text="No options")
                 else:
                     col = layout.column()
                     col.label(text="Options:")
                     box = layout.box()
-                    rig.parameters_ui(box, bone.rigify_parameters)
+                    param_cb(box, bone.rigify_parameters)
 
 
 class VIEW3D_PT_tools_rigify_dev(bpy.types.Panel):
