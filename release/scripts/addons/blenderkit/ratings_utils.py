@@ -96,19 +96,19 @@ def get_rating(asset_id, headers):
     url = paths.get_api_url() + 'assets/' + asset_id + '/rating/'
     params = {}
     r = rerequests.get(url, params=params, verify=True, headers=headers)
-    print(r.text)
-    rj = r.json()
-    ratings = {}
-    # store ratings - send them to task queue
-    for r in rj['results']:
-        ratings[r['ratingType']] = r['score']
-        tasks_queue.add_task((store_rating_local,(asset_id, r['ratingType'], r['score'])))
-        # store_rating_local(asset_id, type = r['ratingType'], value = r['score'])
+    if r.status_code == 200:
+        rj = r.json()
+        ratings = {}
+        # store ratings - send them to task queue
+        for r in rj['results']:
+            ratings[r['ratingType']] = r['score']
+            tasks_queue.add_task((store_rating_local,(asset_id, r['ratingType'], r['score'])))
+            # store_rating_local(asset_id, type = r['ratingType'], value = r['score'])
 
-    if len(rj['results'])==0:
-        # store empty ratings too, so that server isn't checked repeatedly
-        tasks_queue.add_task((store_rating_local_empty,(asset_id,)))
-    return ratings
+        if len(rj['results'])==0:
+            # store empty ratings too, so that server isn't checked repeatedly
+            tasks_queue.add_task((store_rating_local_empty,(asset_id,)))
+        # return ratings
 
 
 def get_rating_local(asset_id):

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'bb971bead9a8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -24614,10 +24614,6 @@ msgid "Active camera, used for rendering the scene"
 msgstr "Активна камера, що використовується для рендерингу сцени"
 
 
-msgid "Scene master collection that objects and other collections in the scene"
-msgstr "Головна колекція сцени, що містить об'єкти та інші колекції у сцені"
-
-
 msgid "3D Cursor"
 msgstr "3D-курсор"
 
@@ -39519,10 +39515,6 @@ msgstr "Перемикач"
 
 msgid "Off: first socket, On: second socket"
 msgstr "Вимкнено: перший роз'єм; увімкнено: другий роз'єм"
-
-
-msgid "View Switch"
-msgstr "Перемикач виглядів"
 
 
 msgid "Node Output"
@@ -57939,10 +57931,6 @@ msgid "Object Animation"
 msgstr "Анімація об'єкта"
 
 
-msgid "Make animation data local to each object"
-msgstr "Зробити дані анімації локальними для кожного об'єкта"
-
-
 msgid "Make materials local to each data-block"
 msgstr "Зробити матеріали локальними для кожного блока даних"
 
@@ -69280,6 +69268,22 @@ msgid "End frame of the export, use the default value to take the end frame of t
 msgstr "Кінцевий кадр для експорту; скористайтесь типовим, щоб використати останній кадр поточної сцени"
 
 
+msgid "Use Settings for"
+msgstr "Вжити Устави для"
+
+
+msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
+msgstr "Визначає видимість об'єктів, устави модифікатора та інші області, де є різні устави для оглядвікна та рендерингу"
+
+
+msgid "Use Render settings for object visibility, modifier settings, etc"
+msgstr "Вжити устави рендера Render для видимості об'єкта, устав модифікатора тощо"
+
+
+msgid "Use Viewport settings for object visibility, modifier settings, etc"
+msgstr "Вжити устави оглядвікна Viewport для видимості об'єкта, устав модифікаторів тощо"
+
+
 msgid "Export Custom Properties"
 msgstr "Експорт власних властивостей"
 
@@ -69338,14 +69342,6 @@ msgstr "Упакувати UV-острови"
 
 msgid "Export UVs with packed island"
 msgstr "Експортувати UV-ти з упакованим островом"
-
-
-msgid "Renderable Objects Only"
-msgstr "Лише Рендероздатні Об'єкти"
-
-
-msgid "Export only objects marked renderable in the outliner"
-msgstr "Експортувати лише об'єкти, що позначені у Структураторі як рендероздатні"
 
 
 msgid "Selected Objects Only"
@@ -71207,22 +71203,6 @@ msgstr "Експорт USD"
 
 msgid "Export current scene in a USD archive"
 msgstr "Експорт поточної сцени в архів USD"
-
-
-msgid "Use Settings for"
-msgstr "Вжити Устави для"
-
-
-msgid "Determines visibility of objects, modifier settings, and other areas where there are different settings for viewport and rendering"
-msgstr "Визначає видимість об'єктів, устави модифікатора та інші області, де є різні устави для оглядвікна та рендерингу"
-
-
-msgid "Use Render settings for object visibility, modifier settings, etc"
-msgstr "Вжити устави рендера Render для видимості об'єкта, устав модифікатора тощо"
-
-
-msgid "Use Viewport settings for object visibility, modifier settings, etc"
-msgstr "Вжити устави оглядвікна Viewport для видимості об'єкта, устав модифікаторів тощо"
 
 
 msgid "When checked, the render frame range is exported. When false, only the current frame is exported"
@@ -78487,10 +78467,6 @@ msgstr "Кількість вибірок відскоків пропускан�
 
 msgid "Transparent Max Bounces"
 msgstr "Макс. прозорих відбиттів"
-
-
-msgid "Maximum number of transparent bounces"
-msgstr "Найбільша кількість прозорих відбиттів"
 
 
 msgid "Use Adaptive Sampling"
@@ -91821,10 +91797,6 @@ msgid "Step Rate Render"
 msgstr "Частота Кроків Рендер"
 
 
-msgid "Transparency"
-msgstr "Прозорість"
-
-
 msgid "Direct Light"
 msgstr "Пряме Освітлення"
 
@@ -100199,10 +100171,6 @@ msgid "Keying set failed to insert any keyframes"
 msgstr "Помилка вставляння ключових кадрів до набору ключів"
 
 
-msgid "No active Keying Set"
-msgstr "Немає активного набору ключів"
-
-
 msgid "Keying set failed to remove any keyframes"
 msgstr "Помилка вилучення ключових кадрів з набору ключів"
 
@@ -100213,6 +100181,10 @@ msgstr "Ця властивість не може бути анімована, �
 
 msgid "Failed to resolve path to property, try manually specifying this using a Keying Set instead"
 msgstr "Помилка переобчислення шляху у властивість; спробуйте задати вручну, скориставшись набором ключів"
+
+
+msgid "No active Keying Set"
+msgstr "Немає активного набору ключів"
 
 
 msgid "Could not update flags for this fcurve, as RNA path is invalid for the given ID (ID = %s, path = %s)"
@@ -100261,10 +100233,6 @@ msgstr "Набір ключів '%s' - успішно додано %d ключо
 
 msgid "Successfully added %d keyframes for keying set '%s'"
 msgstr "Успішно додано %d ключових кадрів для набору ключів '%s'"
-
-
-msgid "Active Keying Set '%s' not found"
-msgstr "Активний набір ключування '%s' не знайдено"
 
 
 msgid "Successfully removed %d keyframes for keying set '%s'"
@@ -104863,10 +104831,6 @@ msgid "Modifier could not be added to (%s : %s) (see console for details)"
 msgstr "Неможливо додати модифікатор до (%s : %s) (див. подробиці в консолі)"
 
 
-msgid "Sockets"
-msgstr "Роз'єми"
-
-
 msgid "More than one collection is selected"
 msgstr "Більше, ніж одну колекцію вибрано"
 
@@ -107785,6 +107749,10 @@ msgstr "Відстань зору"
 
 msgid "Emissive Color"
 msgstr "Емісійний Колір"
+
+
+msgid "Transparency"
+msgstr "Прозорість"
 
 
 msgid "Clear Coat"

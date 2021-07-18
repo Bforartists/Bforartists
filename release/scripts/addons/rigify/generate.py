@@ -23,6 +23,7 @@ import re
 import time
 from rna_prop_ui import rna_idprop_ui_prop_get
 
+from .utils.errors import MetarigError
 from .utils.bones import new_bone
 from .utils.layers import ORG_LAYER, MCH_LAYER, DEF_LAYER, ROOT_LAYER
 from .utils.naming import ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_original_name
@@ -222,6 +223,14 @@ class Generator(base_generate.BaseGenerator):
         for i in range(0, len(original_bones)):
             bone = obj.pose.bones[original_bones[i]]
 
+            # Preserve the root bone as is if present
+            if bone.name == ROOT_NAME:
+                if bone.parent:
+                    raise MetarigError('Root bone must have no parent')
+                if get_rigify_type(bone) not in ('', 'basic.raw_copy'):
+                    raise MetarigError('Root bone must have no rig, or use basic.raw_copy')
+                continue
+
             # This rig type is special in that it preserves the name of the bone.
             if get_rigify_type(bone) != 'basic.raw_copy':
                 bone.name = make_original_name(original_bones[i])
@@ -234,17 +243,22 @@ class Generator(base_generate.BaseGenerator):
         obj = self.obj
         metarig = self.metarig
 
-        #----------------------------------
-        # Create the root bone.
-        root_bone = new_bone(obj, ROOT_NAME)
-        spread = get_xy_spread(metarig.data.bones) or metarig.data.bones[0].length
-        spread = float('%.3g' % spread)
-        scale = spread/0.589
-        obj.data.edit_bones[root_bone].head = (0, 0, 0)
-        obj.data.edit_bones[root_bone].tail = (0, scale, 0)
-        obj.data.edit_bones[root_bone].roll = 0
+        if ROOT_NAME in obj.data.bones:
+            # Use the existing root bone
+            root_bone = ROOT_NAME
+        else:
+            # Create the root bone.
+            root_bone = new_bone(obj, ROOT_NAME)
+            spread = get_xy_spread(metarig.data.bones) or metarig.data.bones[0].length
+            spread = float('%.3g' % spread)
+            scale = spread/0.589
+            obj.data.edit_bones[root_bone].head = (0, 0, 0)
+            obj.data.edit_bones[root_bone].tail = (0, scale, 0)
+            obj.data.edit_bones[root_bone].roll = 0
+
         self.root_bone = root_bone
         self.bone_owners[root_bone] = None
+        self.noparent_bones.add(root_bone)
 
 
     def __parent_bones_to_root(self):
@@ -477,9 +491,10 @@ class Generator(base_generate.BaseGenerator):
         #------------------------------------------
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        create_root_widget(obj, "root")
-
         self.invoke_generate_widgets()
+
+        # Generate the default root widget last in case it's rigged with raw_copy
+        create_root_widget(obj, self.root_bone)
 
         t.tick("Generate widgets: ")
 

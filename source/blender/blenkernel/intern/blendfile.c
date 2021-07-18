@@ -623,6 +623,7 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
         "io_scene_obj",
         "io_scene_x3d",
         "cycles",
+        "pose_library",
         "materials_library_vx",
         "minilightlib",
         "bforartists_toolbar_settings",

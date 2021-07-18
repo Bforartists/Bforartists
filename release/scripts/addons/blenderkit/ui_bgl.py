@@ -22,15 +22,14 @@ import bpy, blf
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-
 def draw_rect(x, y, width, height, color):
     xmax = x + width
     ymax = y + height
-    points = [[x, y],  # [x, y]
-              [x, ymax],  # [x, y]
-              [xmax, ymax],  # [x, y]
-              [xmax, y],  # [x, y]
-              ]
+    points = ((x, y),  # (x, y)
+              (x, ymax),  # (x, y)
+              (xmax, ymax),  # (x, y)
+              (xmax, y),  # (x, y)
+              )
     indices = ((0, 1, 2), (2, 3, 0))
 
     shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
@@ -74,30 +73,45 @@ def draw_rect_3d(coords, color):
     shader.uniform_float("color", color)
     batch.draw(shader)
 
-
-def draw_image(x, y, width, height, image, transparency, crop=(0, 0, 1, 1)):
+cached_images = {}
+def draw_image(x, y, width, height, image, transparency, crop=(0, 0, 1, 1), batch = None):
     # draw_rect(x,y, width, height, (.5,0,0,.5))
     if not image:
         return;
+    ci = cached_images.get(image.filepath)
+    if ci is not None:
+        if ci['x'] == x and ci['y'] ==y:
+            batch = ci['batch']
+            image_shader = ci['image_shader']
+    if not batch:
 
-    coords = [
-        (x, y), (x + width, y),
-        (x, y + height), (x + width, y + height)]
+        coords = [
+            (x, y), (x + width, y),
+            (x, y + height), (x + width, y + height)]
 
-    uvs = [(crop[0], crop[1]),
-           (crop[2], crop[1]),
-           (crop[0], crop[3]),
-           (crop[2], crop[3]),
-           ]
+        uvs = [(crop[0], crop[1]),
+               (crop[2], crop[1]),
+               (crop[0], crop[3]),
+               (crop[2], crop[3]),
+               ]
 
-    indices = [(0, 1, 2), (2, 1, 3)]
+        indices = [(0, 1, 2), (2, 1, 3)]
 
-    shader = gpu.shader.from_builtin('2D_IMAGE')
-    batch = batch_for_shader(shader, 'TRIS',
-                             {"pos": coords,
-                              "texCoord": uvs},
-                             indices=indices)
+        image_shader = shader = gpu.shader.from_builtin('2D_IMAGE')
+        batch = batch_for_shader(image_shader, 'TRIS',
+                                 {"pos": coords,
+                                  "texCoord": uvs},
+                                 indices=indices)
 
+
+        # tell shader to use the image that is bound to image unit 0
+        image_shader.uniform_int("image", 0)
+        cached_images[image.filepath] = {
+            'x': x,
+            'y': y,
+            'batch': batch,
+            'image_shader': image_shader
+        }
     # send image to gpu if it isn't there already
     if image.gl_load():
         raise Exception()
@@ -112,12 +126,12 @@ def draw_image(x, y, width, height, image, transparency, crop=(0, 0, 1, 1)):
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture_id)
 
-    shader.bind()
-    # tell shader to use the image that is bound to image unit 0
-    shader.uniform_int("image", 0)
-    batch.draw(shader)
+    image_shader.bind()
 
-    bgl.glDisable(bgl.GL_TEXTURE_2D)
+    batch.draw(image_shader)
+
+    # bgl.glDisable(bgl.GL_TEXTURE_2D)
+    return batch
 
 
 def draw_text(text, x, y, size, color=(1, 1, 1, 0.5), ralign = False):
