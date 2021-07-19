@@ -3713,7 +3713,11 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveQuadraticBezier"
 
-            props = col.operator("node.add_node", text=" Star                         ", icon = "CURVE_STAR")
+            props = col.operator("node.add_node", text=" Quadrilateral         ", icon = "CURVE_QUADRILATERAL")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveQuadrilateral"
+
+            props = col.operator("node.add_node", text=" Star                       ", icon = "CURVE_STAR")
             props.use_transform = True
             props.type = "GeometryNodeCurveStar"
 
@@ -3745,6 +3749,10 @@ class NODES_PT_geom_add_curve_primitives(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_NCURVE")
             props.use_transform = True
             props.type = "GeometryNodeCurveQuadraticBezier"
+
+            props = flow.operator("node.add_node", text = "", icon = "CURVE_QUADRILATERAL")
+            props.use_transform = True
+            props.type = "GeometryNodeCurvePrimitiveQuadrilateral"
 
             props = flow.operator("node.add_node", text = "", icon = "CURVE_STAR")
             props.use_transform = True

@@ -12823,6 +12823,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_PRIMITIVE_QUADRATIC_BEZIER:
       icon = ICON_CURVE_NCURVE;
       break;
+    case GEO_NODE_CURVE_PRIMITIVE_QUADRILATERAL:
+      icon = ICON_CURVE_QUADRILATERAL;
+      break;
     case GEO_NODE_CURVE_PRIMITIVE_STAR:
       icon = ICON_CURVE_STAR;
       break;
