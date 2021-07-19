@@ -643,7 +643,7 @@ curve_star
 curve_startend
 curve_line
 float_to_int
-#~ DEF_ICON_BLANK(662)
+curve_quadrilateral
 #~ DEF_ICON_BLANK(663)
 
 # ------------------------- row 10 --------------------------*/
