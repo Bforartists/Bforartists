@@ -33,5 +33,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: /home/runner/bforartistsrepo/build_darwin/bin/
+        path: /Users/runner/bforartistsrepo/build_darwin/bin/
 
