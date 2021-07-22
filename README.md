@@ -1,6 +1,7 @@
 # Bforartists
 
 [![Ubuntu](https://github.com/Bforartists/Bforartists/actions/workflows/all_in_one_dir.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/all_in_one_dir.yml)
+[![Mac](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml)
 
 Bforartists is a fork of the popular 3D software Blender, with the goal to improve the graphical UI, and to increase the usability.
 
