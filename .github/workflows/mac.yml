@@ -23,6 +23,9 @@ jobs:
         mkdir ~/bforartistsrepo
         cd ~/bforartistsrepo
         git clone https://github.com/Bforartists/Bforartists
+        mkdir ~/bforartistsrepo/lib
+        cd ~/bforartistsrepo/lib
+        svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin/
         cd ~/bforartistsrepo/Bforartists
         make
 
