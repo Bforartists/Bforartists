@@ -24,9 +24,8 @@ jobs:
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
         dir
         cd ~\bforartistsrepo\Bforartists
-        #cmd //c make.bat
+        cmd //c make.bat
         dir
-        make.bat
         cd ~\bforartistsrepo
         dir
 
