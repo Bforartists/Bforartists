@@ -13,7 +13,7 @@ jobs:
 
     runs-on: windows-latest
 
-    # steps:
+    steps:
     # - name: configure
     #   run:
     #     brew install cmake svn
