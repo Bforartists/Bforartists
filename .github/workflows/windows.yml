@@ -27,7 +27,7 @@ jobs:
         cd ~/bforartistsrepo/lib
         svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
         cd ~/bforartistsrepo/Bforartists
-        make
+        cmd //c make.bat
 
     - name: Upload Build
       uses: actions/upload-artifact@v2
