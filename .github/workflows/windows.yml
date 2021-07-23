@@ -1,0 +1,37 @@
+name: Windows
+
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    - cron: 0 0 * * 1
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    # steps:
+    # - name: configure
+    #   run:
+    #     brew install cmake svn
+
+    - name: make
+      run: |
+        mkdir ~/bforartistsrepo
+        cd ~/bforartistsrepo
+        git clone https://github.com/Bforartists/Bforartists
+        mkdir ~/bforartistsrepo/lib
+        cd ~/bforartistsrepo/lib
+        svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
+        cd ~/bforartistsrepo/Bforartists
+        make
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v2
+      with:
+        name: Bforartists-Release-${{ runner.os }}
+        path: /Users/runner/bforartistsrepo/build_darwin/bin/
+
