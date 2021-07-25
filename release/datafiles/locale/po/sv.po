@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3931,6 +3931,54 @@ msgid "Save"
 msgstr "Spara som"
 
 
+msgid "Font"
+msgstr "Typsnitt"
+
+
+msgid "Light"
+msgstr "Ljus"
+
+
+msgid "Lattice"
+msgstr "Lattice"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
+msgid "Node Tree"
+msgstr "Bild Displist"
+
+
+msgid "Paint Curve"
+msgstr "Rotera"
+
+
+msgid "Simulation"
+msgstr "Simulering:"
+
+
+msgid "Sound"
+msgstr "Ljud"
+
+
+msgid "Text"
+msgstr "Text"
+
+
+msgid "Window Manager"
+msgstr "Duplicera"
+
+
+msgid "World"
+msgstr "Värld"
+
+
 msgid "Fonts"
 msgstr "Typsnitt"
 
@@ -4495,10 +4543,6 @@ msgid "Vertex Weight"
 msgstr "Höger"
 
 
-msgid "Lattice"
-msgstr "Lattice"
-
-
 msgid "Time Offset"
 msgstr "Tidsförskjutning:"
 
@@ -4889,10 +4933,6 @@ msgstr "Verktyg"
 
 msgid "Normal Weight"
 msgstr "Bild Aspekt"
-
-
-msgid "Paint Curve"
-msgstr "Rotera"
 
 
 msgid "Plane Offset"
@@ -5419,10 +5459,6 @@ msgid "Text on Curve"
 msgstr "Text på kurva"
 
 
-msgid "Font"
-msgstr "Typsnitt"
-
-
 msgid "Font Bold"
 msgstr "Markera Länkad"
 
@@ -5513,10 +5549,6 @@ msgstr "Min"
 
 msgid "Max"
 msgstr "Max"
-
-
-msgid "Node Tree"
-msgstr "Bild Displist"
 
 
 msgid "Use Nodes"
@@ -7267,10 +7299,6 @@ msgid "View Settings"
 msgstr "Verktyg"
 
 
-msgid "World"
-msgstr "Värld"
-
-
 msgid "World used for rendering the scene"
 msgstr "Sökväg att skriva till"
 
@@ -7355,10 +7383,6 @@ msgstr "Starta Spel"
 msgctxt "Sound"
 msgid "Pitch"
 msgstr "Starta Spel"
-
-
-msgid "Sound"
-msgstr "Ljud"
 
 
 msgid "How loud the sound is"
@@ -7913,10 +7937,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "Markera Länkad"
 
 
-msgid "Window Manager"
-msgstr "Duplicera"
-
-
 msgid "Search"
 msgstr "Sök"
 
@@ -8007,10 +8027,6 @@ msgstr "Rensa Ursprung"
 
 msgid "Animation"
 msgstr "Animering"
-
-
-msgid "Simulation"
-msgstr "Simulering:"
 
 
 msgid "Reiteration"
@@ -8535,10 +8551,6 @@ msgid "Attribute"
 msgstr "Attribut:"
 
 
-msgid "Mesh"
-msgstr "Mesh"
-
-
 msgid "Node"
 msgstr "Nod"
 
@@ -8581,10 +8593,6 @@ msgstr "Mallar"
 
 msgid "Python"
 msgstr "Python-konsol"
-
-
-msgid "Text"
-msgstr "Text"
 
 
 msgid "System"
@@ -8653,14 +8661,6 @@ msgstr "Normaler"
 
 msgid "Mesh Select Mode"
 msgstr "Markera Rad"
-
-
-msgid "Metaball"
-msgstr "Metaball"
-
-
-msgid "Light"
-msgstr "Ljus"
 
 
 msgid "Make Single User"
@@ -18718,11 +18718,6 @@ msgstr "Markera Rad"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Vektor Måla"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Vektor Måla"
 
@@ -19489,6 +19484,10 @@ msgid "PoseLib Browse Poses"
 msgstr "Packa Data"
 
 
+msgid "Pose Name"
+msgstr "Filnamn"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Pose-bibliotek"
@@ -19505,10 +19504,6 @@ msgstr "Markera Rad"
 
 msgid "Frame to store pose on"
 msgstr "Radera"
-
-
-msgid "Pose Name"
-msgstr "Filnamn"
 
 
 msgid "Name of newly added Pose"

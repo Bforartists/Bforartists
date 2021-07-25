@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -1425,6 +1425,50 @@ msgid "Save"
 msgstr "सहेजें"
 
 
+msgid "Brush"
+msgstr "तूलिका"
+
+
+msgid "Font"
+msgstr "मुद्र"
+
+
+msgid "Key"
+msgstr "कुंजी"
+
+
+msgid "Light"
+msgstr "प्रकाश"
+
+
+msgid "Mask"
+msgstr "आवरण"
+
+
+msgid "Mesh"
+msgstr "जाल"
+
+
+msgid "Sound"
+msgstr "ध्वनि"
+
+
+msgid "Text"
+msgstr "पाठ"
+
+
+msgid "Hair"
+msgstr "बाल"
+
+
+msgid "Window Manager"
+msgstr "खिडकी प्रबंधक"
+
+
+msgid "World"
+msgstr "जगत"
+
+
 msgid "Fonts"
 msgstr "मुद्र्"
 
@@ -1830,14 +1874,6 @@ msgid "Soften"
 msgstr "मॄदु"
 
 
-msgid "Mask"
-msgstr "आवरण"
-
-
-msgid "Brush"
-msgstr "तूलिका"
-
-
 msgid "Mask Tool"
 msgstr "आवरण यंत्र"
 
@@ -2004,10 +2040,6 @@ msgstr "स्वरूप संपादन"
 
 msgid "Text on Curve"
 msgstr "वक्र पर पाठ"
-
-
-msgid "Font"
-msgstr "मुद्र"
 
 
 msgid "Font Bold"
@@ -2200,10 +2232,6 @@ msgstr "पदार्थ का व्याप्त रंग"
 
 msgid "Cube"
 msgstr "घन"
-
-
-msgid "Hair"
-msgstr "बाल"
 
 
 msgid "Edges"
@@ -2490,10 +2518,6 @@ msgid "View Settings"
 msgstr "दृश्य विन्यास"
 
 
-msgid "World"
-msgstr "जगत"
-
-
 msgid "Areas"
 msgstr "क्षेत्रों"
 
@@ -2525,10 +2549,6 @@ msgstr "मौन"
 
 msgid "Mute the speaker"
 msgstr "स्पीकर म्यूट करें"
-
-
-msgid "Sound"
-msgstr "ध्वनि"
 
 
 msgid "Current Line"
@@ -2621,10 +2641,6 @@ msgstr "मोड"
 
 msgid "Rings"
 msgstr "छल्ले"
-
-
-msgid "Window Manager"
-msgstr "खिडकी प्रबंधक"
 
 
 msgid "Category"
@@ -2852,10 +2868,6 @@ msgid "Channel"
 msgstr "सरणि"
 
 
-msgid "Key"
-msgstr "कुंजी"
-
-
 msgid "Snap"
 msgstr "स्नैप"
 
@@ -2889,10 +2901,6 @@ msgid "Matte"
 msgstr "मैट"
 
 
-msgid "Mesh"
-msgstr "जाल"
-
-
 msgid "Node"
 msgstr "ग्रन्थि"
 
@@ -2915,10 +2923,6 @@ msgstr "आदर्श"
 
 msgid "Python"
 msgstr "पाइथन"
-
-
-msgid "Text"
-msgstr "पाठ"
 
 
 msgid "File"
@@ -2967,10 +2971,6 @@ msgstr "हड्डी पंजी"
 
 msgid "Hooks"
 msgstr "खूँटी"
-
-
-msgid "Light"
-msgstr "प्रकाश"
 
 
 msgid "Make Single User"

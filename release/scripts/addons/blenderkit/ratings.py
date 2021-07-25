@@ -268,7 +268,7 @@ def rating_menu_draw(self, context):
     layout = self.layout
 
     ui_props = context.scene.blenderkitUI
-    sr = bpy.context.window_manager['search results orig']
+    sr = bpy.context.window_manager['search results']
 
     asset_search_index = ui_props.active_index
     if asset_search_index > -1:

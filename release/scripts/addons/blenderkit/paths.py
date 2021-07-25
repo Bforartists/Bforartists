@@ -97,6 +97,8 @@ def get_categories_filepath():
     return os.path.join(tempdir, 'categories.json')
 
 dirs_exist_dict = {}#cache these results since this is used very often
+# this causes the function to fail if user deletes the directory while blender is running,
+# but comes back when blender is restarted.
 def get_temp_dir(subdir=None):
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11062,6 +11062,98 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Si ce chemin est enregistré dans les signets, ou généré par l’OS"
 
 
+msgid "Brush"
+msgstr "Brosse"
+
+
+msgid "Font"
+msgstr "Police"
+
+
+msgid "Collection"
+msgstr "Collection"
+
+
+msgid "Key"
+msgstr "Clé"
+
+
+msgid "Light"
+msgstr "Lampe"
+
+
+msgid "Library"
+msgstr "Bibliothèque"
+
+
+msgid "Line Style"
+msgstr "Style de ligne"
+
+
+msgid "Lattice"
+msgstr "Lattice"
+
+
+msgid "Mask"
+msgstr "Masquer"
+
+
+msgid "Metaball"
+msgstr "Métaballe"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
+msgid "Node Tree"
+msgstr "Arborescence de nœuds"
+
+
+msgid "Paint Curve"
+msgstr "Courbe de peinture"
+
+
+msgid "Palette"
+msgstr "Palette"
+
+
+msgid "Particle"
+msgstr "Particules"
+
+
+msgid "Light Probe"
+msgstr "Sonde lumière"
+
+
+msgid "Simulation"
+msgstr "Simulation"
+
+
+msgid "Sound"
+msgstr "Son"
+
+
+msgid "Speaker"
+msgstr "Haut-parleur"
+
+
+msgid "Text"
+msgstr "Texte"
+
+
+msgid "Hair"
+msgstr "Cheveux"
+
+
+msgid "Window Manager"
+msgstr "Gestionnaire de fenêtre"
+
+
+msgid "World"
+msgstr "Monde"
+
+
 msgid "Icon ID"
 msgstr "ID d’icône"
 
@@ -12958,10 +13050,6 @@ msgid "Line set for associating lines and style parameters"
 msgstr "Ensemble de lignes pour associer des lignes à des paramètres de style"
 
 
-msgid "Collection"
-msgstr "Collection"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "Une collection d’objets à parti de laquelle les arêtes-traits sont sélectionnées"
 
@@ -13140,10 +13228,6 @@ msgstr "Sélectionner les arêtes fonctionnelles satisfaisant aux conditions de 
 
 msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "Sélectionner les arêtes fonctionnelles ne satisfaisant pas aux conditions de marque de face données"
-
-
-msgid "Line Style"
-msgstr "Style de ligne"
 
 
 msgid "Line style settings"
@@ -14576,10 +14660,6 @@ msgid "Deform stroke points using objects"
 msgstr "Déformer les points de trait en utilisant des objets"
 
 
-msgid "Lattice"
-msgstr "Lattice"
-
-
 msgid "Deform strokes using lattice"
 msgstr "Déformer les traits en utilisant un lattice"
 
@@ -15598,10 +15678,6 @@ msgid "Is this ID block linked indirectly"
 msgstr "Ce bloc ID est-il lié indirectement"
 
 
-msgid "Library"
-msgstr "Bibliothèque"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "Fichier bibliothèque d’où le bloc de données est lié"
 
@@ -16163,20 +16239,12 @@ msgid "Soften"
 msgstr "Adoucir"
 
 
-msgid "Mask"
-msgstr "Masquer"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Bruiter la position de la brosse durant la peinture"
 
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "Bruiter la position de la brosse durant la peinture (en pixels)"
-
-
-msgid "Brush"
-msgstr "Brosse"
 
 
 msgid "Mask Stencil Dimensions"
@@ -16217,10 +16285,6 @@ msgstr "Poids de la normale"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "À quel point saisir tirera les vertices hors de la surface durant un saisissement"
-
-
-msgid "Paint Curve"
-msgstr "Courbe de peinture"
 
 
 msgid "Plane Offset"
@@ -17527,10 +17591,6 @@ msgid "Curve deforming text object"
 msgstr "Courbe déformant l’objet texte"
 
 
-msgid "Font"
-msgstr "Police"
-
-
 msgid "Font Bold"
 msgstr "Police grasse"
 
@@ -17897,10 +17957,6 @@ msgstr "Longueur 2D curviligne minimale pour la sélection des chaînes"
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "Si vrai, les chaînes d’arêtes “fonctionnelles” sont divisées aux limites des matériaux"
-
-
-msgid "Node Tree"
-msgstr "Arborescence de nœuds"
 
 
 msgid "Node tree for node-based shaders"
@@ -19647,10 +19703,6 @@ msgstr "Plan XY plat"
 
 msgid "Cube"
 msgstr "Cube"
-
-
-msgid "Hair"
-msgstr "Cheveux"
 
 
 msgid "Hair strands"
@@ -21612,10 +21664,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "Laisser l’objet donner à la particule une vélocité initiale"
 
 
-msgid "Particle"
-msgstr "Particules"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "Laisser la particule cible donner à la particule une vélocité initiale"
 
@@ -22412,10 +22460,6 @@ msgid "Color management settings applied on image before saving"
 msgstr "Réglages de gestion de couleur appliqués à l’image avant enregistrement"
 
 
-msgid "World"
-msgstr "Monde"
-
-
 msgid "World used for rendering the scene"
 msgstr "Monde utilisé pour rendre la scène"
 
@@ -22560,10 +22604,6 @@ msgstr "Hauteur"
 
 msgid "Playback pitch of the sound"
 msgstr "Hauteur du son à la lecture"
-
-
-msgid "Sound"
-msgstr "Son"
 
 
 msgid "Sound data-block used by this speaker"
@@ -23610,10 +23650,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "Décaler le numéro de la frame à utiliser dans l’animation"
 
 
-msgid "Window Manager"
-msgstr "Gestionnaire de fenêtre"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "Bloc de données fenêtre définissant les fenêtres ouvertes et d’autre données utilisateur d’interface"
 
@@ -23820,10 +23856,6 @@ msgstr "Animation"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "Solveur sans état calculant la pose d’après l’action actuelle et les contraintes non-IK"
-
-
-msgid "Simulation"
-msgstr "Simulation"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -27217,10 +27249,6 @@ msgid "Channel"
 msgstr "Canal"
 
 
-msgid "Key"
-msgstr "Clé"
-
-
 msgid "Snap"
 msgstr "Aimanter"
 
@@ -27302,10 +27330,6 @@ msgid "Attribute"
 msgstr "Attribut"
 
 
-msgid "Mesh"
-msgstr "Mesh"
-
-
 msgid "Node"
 msgstr "Nœud"
 
@@ -27378,10 +27402,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Texte"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -27424,6 +27444,10 @@ msgstr "Récupérer"
 
 msgid "Help"
 msgstr "Aide"
+
+
+msgid "List Item"
+msgstr "Élément de liste"
 
 
 msgid "Presets"
@@ -27518,10 +27542,6 @@ msgid "Select Similar"
 msgstr "Sélectionner similaires"
 
 
-msgid "Metaball"
-msgstr "Métaballe"
-
-
 msgid "Generate Weights"
 msgstr "Générer poids"
 
@@ -27532,14 +27552,6 @@ msgstr "Crochets"
 
 msgid "Add Image"
 msgstr "Ajouter image"
-
-
-msgid "Light"
-msgstr "Lampe"
-
-
-msgid "Light Probe"
-msgstr "Sonde lumière"
 
 
 msgid "Make Single User"
@@ -48770,15 +48782,6 @@ msgstr "Faire une copie du groupe de vertices actif"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Copier groupes de vertices vers liés"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "Remplacer les groupes de vertices de tous les utilisateurs des même données de géométrie par les groupes de vertices de l’objet actif"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Copier groupes de vertices vers sélectionnés"
 
@@ -50074,10 +50077,6 @@ msgid "Remove active color from palette"
 msgstr "Supprimer la couleur active de la palette"
 
 
-msgid "Palette"
-msgstr "Palette"
-
-
 msgid "Name of the Palette"
 msgstr "Nom de la palette"
 
@@ -50424,6 +50423,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Parcourir interactivement les poses, en vue 3D"
 
 
+msgid "Pose Name"
+msgstr "Nom de la pose"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Nouvelle bibliothèque de poses"
@@ -50444,10 +50447,6 @@ msgstr "Ajouter la pose courante à la bibliothèque de poses active"
 
 msgid "Frame to store pose on"
 msgstr "Frame à laquelle stocker la pose"
-
-
-msgid "Pose Name"
-msgstr "Nom de la pose"
 
 
 msgid "Name of newly added Pose"
@@ -58591,10 +58590,6 @@ msgstr "Ombré"
 
 msgid "Styles"
 msgstr "Styles"
-
-
-msgid "List Item"
-msgstr "Élément de liste"
 
 
 msgid "Menu"
@@ -67729,10 +67724,6 @@ msgid "Show reconstructed camera path"
 msgstr "Afficher le chemin reconstitué de la caméra"
 
 
-msgid "Speaker"
-msgstr "Haut-parleur"
-
-
 msgid "Show Reconstruction"
 msgstr "Afficher reconstitution"
 
@@ -76438,14 +76429,6 @@ msgid "Reset Black/White point and curves"
 msgstr "Réinitialiser points blanc/noir et courbes"
 
 
-msgid "Double click to rename"
-msgstr "Double-cliquer pour renommer"
-
-
-msgid "Hide filtering options"
-msgstr "Cacher les options de filtrage"
-
-
 msgid "Stop this job"
 msgstr "Arrêter cette tâche"
 
@@ -77473,10 +77456,6 @@ msgstr "Le groupe de vertices est verrouillé"
 
 msgid "%d vertex weights limited"
 msgstr "%d poids de vertex limités"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Copier groupes de vertices vers sélection : %d effectués, %d ont échoué (les données d’objet doivent avoir des indices correspondants)"
 
 
 msgid "Vertex select needs to be enabled in weight paint mode"

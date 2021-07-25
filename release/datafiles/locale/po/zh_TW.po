@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -8610,6 +8610,94 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "此路徑是否儲存於書籤、或是從作業系統生成"
 
 
+msgid "Brush"
+msgstr "筆刷"
+
+
+msgid "Font"
+msgstr "字型"
+
+
+msgid "Key"
+msgstr "鍵"
+
+
+msgid "Light"
+msgstr "光照"
+
+
+msgid "Library"
+msgstr "藏庫"
+
+
+msgid "Line Style"
+msgstr "線條樣式"
+
+
+msgid "Lattice"
+msgstr "晶格"
+
+
+msgid "Mask"
+msgstr "遮罩"
+
+
+msgid "Metaball"
+msgstr "變幻球"
+
+
+msgid "Mesh"
+msgstr "網格"
+
+
+msgid "Node Tree"
+msgstr "節點樹"
+
+
+msgid "Paint Curve"
+msgstr "繪製曲線"
+
+
+msgid "Palette"
+msgstr "色版"
+
+
+msgid "Particle"
+msgstr "粒子"
+
+
+msgid "Simulation"
+msgstr "模擬"
+
+
+msgid "Sound"
+msgstr "聲音"
+
+
+msgid "Speaker"
+msgstr "喇叭"
+
+
+msgid "Text"
+msgstr "文字"
+
+
+msgid "Hair"
+msgstr "毛髮"
+
+
+msgid "Window Manager"
+msgstr "視窗管理器"
+
+
+msgid "World"
+msgstr "世界"
+
+
+msgid "Workspace"
+msgstr "工作空間"
+
+
 msgid "Icon ID"
 msgstr "圖示 ID"
 
@@ -9394,10 +9482,6 @@ msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "選取不滿足面標記給定條件的特徵邊線"
 
 
-msgid "Line Style"
-msgstr "線條樣式"
-
-
 msgid "Line style settings"
 msgstr "線條樣式設定"
 
@@ -10050,10 +10134,6 @@ msgid "Hook"
 msgstr "鉤"
 
 
-msgid "Lattice"
-msgstr "晶格"
-
-
 msgid "Time Offset"
 msgstr "時間偏移"
 
@@ -10414,10 +10494,6 @@ msgstr "為間接"
 
 msgid "Is this ID block linked indirectly"
 msgstr "此 ID 塊是否間接連結"
-
-
-msgid "Library"
-msgstr "藏庫"
 
 
 msgid "Library file the data-block is linked from"
@@ -10797,20 +10873,12 @@ msgid "Soften"
 msgstr "柔化"
 
 
-msgid "Mask"
-msgstr "遮罩"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "繪製時抖動筆刷的位置"
 
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "繪製時抖動筆刷的位置，單位為像素"
-
-
-msgid "Brush"
-msgstr "筆刷"
 
 
 msgid "Mask Stencil Dimensions"
@@ -10851,10 +10919,6 @@ msgstr "法線權重"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "抓取會將頂點拉出表面的抓取量"
-
-
-msgid "Paint Curve"
-msgstr "繪製曲線"
 
 
 msgid "Plane Offset"
@@ -11865,10 +11929,6 @@ msgid "Curve deforming text object"
 msgstr "曲線變形文字物體"
 
 
-msgid "Font"
-msgstr "字型"
-
-
 msgid "Font Bold"
 msgstr "字型粗體"
 
@@ -12203,10 +12263,6 @@ msgstr "鏈接的選取其最小曲線構成 2D 長度"
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "若為真，特徵邊線的鏈接會在材質邊界處被分割"
-
-
-msgid "Node Tree"
-msgstr "節點樹"
 
 
 msgid "Node tree for node-based shaders"
@@ -13265,10 +13321,6 @@ msgstr "扁平 XY 平面"
 
 msgid "Cube"
 msgstr "立方"
-
-
-msgid "Hair"
-msgstr "毛髮"
 
 
 msgid "Hair strands"
@@ -14790,10 +14842,6 @@ msgid "Object Aligned"
 msgstr "物體對齊"
 
 
-msgid "Particle"
-msgstr "粒子"
-
-
 msgid "The size of the particles"
 msgstr "粒子的大小"
 
@@ -15474,10 +15522,6 @@ msgid "Color management settings applied on image before saving"
 msgstr "在影像儲存之前要套用的色彩管理設定"
 
 
-msgid "World"
-msgstr "世界"
-
-
 msgid "World used for rendering the scene"
 msgstr "用於算繪場景的世界"
 
@@ -15598,10 +15642,6 @@ msgstr "音高"
 
 msgid "Playback pitch of the sound"
 msgstr "回播聲音的音調"
-
-
-msgid "Sound"
-msgstr "聲音"
 
 
 msgid "How loud the sound is"
@@ -16628,10 +16668,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "在動畫中要使用的偏移幀數"
 
 
-msgid "Window Manager"
-msgstr "視窗管理器"
-
-
 msgid "Category"
 msgstr "類別"
 
@@ -16714,10 +16750,6 @@ msgstr "XR 作業階段狀態"
 
 msgid "Runtime state information about the VR session"
 msgstr "VR 作業階段的執行時期狀態資訊"
-
-
-msgid "Workspace"
-msgstr "工作空間"
 
 
 msgid "Workspace data-block, defining the working environment for the user"
@@ -16822,10 +16854,6 @@ msgstr "動畫"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "無狀態性解算器會從目前動作與非 IK 約束計開始算姿勢"
-
-
-msgid "Simulation"
-msgstr "模擬"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -18439,10 +18467,6 @@ msgid "Channel"
 msgstr "通道"
 
 
-msgid "Key"
-msgstr "鍵"
-
-
 msgid "Snap"
 msgstr "吸附"
 
@@ -18527,10 +18551,6 @@ msgid "Attribute"
 msgstr "特性"
 
 
-msgid "Mesh"
-msgstr "網格"
-
-
 msgid "Node"
 msgstr "節點"
 
@@ -18588,10 +18608,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "文字"
-
-
 msgid "System"
 msgstr "系統"
 
@@ -18631,6 +18647,10 @@ msgstr "復原"
 
 msgid "Help"
 msgstr "幫助"
+
+
+msgid "List Item"
+msgstr "清單項目"
 
 
 msgid "Presets"
@@ -18698,16 +18718,8 @@ msgid "Select Similar"
 msgstr "選取相似者"
 
 
-msgid "Metaball"
-msgstr "變幻球"
-
-
 msgid "Hooks"
 msgstr "鉤"
-
-
-msgid "Light"
-msgstr "光照"
 
 
 msgid "Make Single User"
@@ -35744,11 +35756,6 @@ msgstr "製作作用中頂點群組的副本"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "複製頂點群組至已連結"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "將頂點群組複製至已選取"
 
@@ -36683,10 +36690,6 @@ msgid "Remove active color from palette"
 msgstr "從色版中移除作用中色彩"
 
 
-msgid "Palette"
-msgstr "色版"
-
-
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "添加新色版"
@@ -36970,6 +36973,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "以互動方式在 3D 視圖中瀏覽姿勢"
 
 
+msgid "Pose Name"
+msgstr "姿勢名稱"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "新增姿勢庫"
@@ -36990,10 +36997,6 @@ msgstr "添加目前的姿勢至作用中姿勢庫"
 
 msgid "Frame to store pose on"
 msgstr "要儲存姿勢於何框幀"
-
-
-msgid "Pose Name"
-msgstr "姿勢名稱"
 
 
 msgid "Name of newly added Pose"
@@ -43606,10 +43609,6 @@ msgstr "光影"
 
 msgid "Styles"
 msgstr "樣式"
-
-
-msgid "List Item"
-msgstr "清單項目"
 
 
 msgid "Menu"
@@ -50480,10 +50479,6 @@ msgid "Show reconstructed camera path"
 msgstr "顯示重建的攝影機路徑"
 
 
-msgid "Speaker"
-msgstr "喇叭"
-
-
 msgid "Show Reconstruction"
 msgstr "顯示重建"
 
@@ -57327,14 +57322,6 @@ msgstr "刪除點"
 
 msgid "Reset Black/White point and curves"
 msgstr "重設黑/白點及曲線"
-
-
-msgid "Double click to rename"
-msgstr "連按兩下滑鼠按鍵重新命名"
-
-
-msgid "Hide filtering options"
-msgstr "隱藏過濾用選項"
 
 
 msgid "Stop this job"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -10960,6 +10960,102 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Сохранён ли путь в закладки или сгенерирован операционной системой"
 
 
+msgid "Brush"
+msgstr "Кисть"
+
+
+msgid "Font"
+msgstr "Шрифт"
+
+
+msgid "Collection"
+msgstr "Коллекция"
+
+
+msgid "Key"
+msgstr "Ключ"
+
+
+msgid "Light"
+msgstr "Свет"
+
+
+msgid "Library"
+msgstr "Библиотека"
+
+
+msgid "Line Style"
+msgstr "Стиль линий"
+
+
+msgid "Lattice"
+msgstr "Решётка"
+
+
+msgid "Mask"
+msgstr "Маска"
+
+
+msgid "Metaball"
+msgstr "Метасфера"
+
+
+msgid "Mesh"
+msgstr "Меш"
+
+
+msgid "Node Tree"
+msgstr "Нодовое дерево"
+
+
+msgid "Paint Curve"
+msgstr "Кривая силы штриха"
+
+
+msgid "Palette"
+msgstr "Палитра"
+
+
+msgid "Particle"
+msgstr "Частица"
+
+
+msgid "Light Probe"
+msgstr "Зонд освещения"
+
+
+msgid "Simulation"
+msgstr "Симуляция"
+
+
+msgid "Sound"
+msgstr "Звук"
+
+
+msgid "Speaker"
+msgstr "Источник звука"
+
+
+msgid "Text"
+msgstr "Текст"
+
+
+msgid "Hair"
+msgstr "Волосы"
+
+
+msgid "Window Manager"
+msgstr "Менеджер окон"
+
+
+msgid "World"
+msgstr "Мир"
+
+
+msgid "Workspace"
+msgstr "Рабочее пространство"
+
+
 msgid "Icon ID"
 msgstr "Идентификатор значка"
 
@@ -12188,10 +12284,6 @@ msgid "Line set for associating lines and style parameters"
 msgstr "Набор линий для связи линий и параметров стиля"
 
 
-msgid "Collection"
-msgstr "Коллекция"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "Коллекция объектов, на основе которой выбираются места для штрихов"
 
@@ -12370,10 +12462,6 @@ msgstr "Отбирать рёбра, удовлетворяющие заданн
 
 msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "Отбирать те места, которые НЕ соответствуют заданным условиям"
-
-
-msgid "Line Style"
-msgstr "Стиль линий"
 
 
 msgid "Line style settings"
@@ -13674,10 +13762,6 @@ msgid "Deform stroke points using objects"
 msgstr "Деформировать штрихи с помощью объектов"
 
 
-msgid "Lattice"
-msgstr "Решётка"
-
-
 msgid "Deform strokes using lattice"
 msgstr "Деформировать штрихи с помощью решётки"
 
@@ -14552,10 +14636,6 @@ msgid "Is this ID block linked indirectly"
 msgstr "Связан ли этот блок не напрямую"
 
 
-msgid "Library"
-msgstr "Библиотека"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "Библиотечный файл, на который ссылается датаблок"
 
@@ -15241,20 +15321,12 @@ msgid "Soften"
 msgstr "Смягчение"
 
 
-msgid "Mask"
-msgstr "Маска"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Колебание положения кисти при рисовании"
 
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "Отклонять положение кисти случайным образом при рисовании"
-
-
-msgid "Brush"
-msgstr "Кисть"
 
 
 msgid "Mask Stencil Dimensions"
@@ -15299,10 +15371,6 @@ msgstr "Базовый вес"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "Величина вытягивания вершин из поверхности при захвате"
-
-
-msgid "Paint Curve"
-msgstr "Кривая силы штриха"
 
 
 msgid "Plane Offset"
@@ -16681,10 +16749,6 @@ msgid "Curve deforming text object"
 msgstr "Кривая, деформирующая тектовой объект"
 
 
-msgid "Font"
-msgstr "Шрифт"
-
-
 msgid "Font Bold"
 msgstr "Жирный шрифт"
 
@@ -17051,10 +17115,6 @@ msgstr "Минимальная криволинейная 2D-длина для �
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "Разделять линии штрихов на границах материалов"
-
-
-msgid "Node Tree"
-msgstr "Нодовое дерево"
 
 
 msgid "Node tree for node-based shaders"
@@ -18813,10 +18873,6 @@ msgstr "Плоскость XY"
 
 msgid "Cube"
 msgstr "Куб"
-
-
-msgid "Hair"
-msgstr "Волосы"
 
 
 msgid "Hair strands"
@@ -20826,10 +20882,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "Позволить объекту задавать начальную скорость частиц"
 
 
-msgid "Particle"
-msgstr "Частица"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "Целевая частица придаёт начальную скорость для других частиц"
 
@@ -21642,10 +21694,6 @@ msgid "Color management settings applied on image before saving"
 msgstr "Настройки управления цветом, применяемые перед сохранением изображения"
 
 
-msgid "World"
-msgstr "Мир"
-
-
 msgid "World used for rendering the scene"
 msgstr "Окружающая среда, используемая при рендеринге сцены"
 
@@ -21790,10 +21838,6 @@ msgstr "Высота"
 
 msgid "Playback pitch of the sound"
 msgstr "Высота воспроизведения звука"
-
-
-msgid "Sound"
-msgstr "Звук"
 
 
 msgid "Sound data-block used by this speaker"
@@ -22868,10 +22912,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "Отступ номера кадра в анимации"
 
 
-msgid "Window Manager"
-msgstr "Менеджер окон"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "Датаблок оконного менеджера, определяющий открытые окна и другие данные пользовательского интерфейса"
 
@@ -22958,10 +22998,6 @@ msgstr "Окна"
 
 msgid "Open windows"
 msgstr "Открытые окна"
-
-
-msgid "Workspace"
-msgstr "Рабочее пространство"
 
 
 msgid "Workspace data-block, defining the working environment for the user"
@@ -23230,10 +23266,6 @@ msgstr "Анимация"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "Решатель без сохранения состояний для расчёта позы, начиная с текущего действия и с учётом ограничителей, не относящихся к ИК"
-
-
-msgid "Simulation"
-msgstr "Симуляция"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -26870,10 +26902,6 @@ msgid "Dope Sheet Context Menu"
 msgstr "Контекстное меню экспозиционного листа"
 
 
-msgid "Key"
-msgstr "Ключ"
-
-
 msgid "Snap"
 msgstr "Привязка"
 
@@ -26998,10 +27026,6 @@ msgid "Attribute"
 msgstr "Атрибут"
 
 
-msgid "Mesh"
-msgstr "Меш"
-
-
 msgid "Node Context Menu"
 msgstr "Контекстное меню нодов"
 
@@ -27087,10 +27111,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Текст"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -27142,6 +27162,10 @@ msgstr "Восстановить"
 
 msgid "Help"
 msgstr "Справка"
+
+
+msgid "List Item"
+msgstr "Элемент списка"
 
 
 msgid "Presets"
@@ -27253,10 +27277,6 @@ msgid "Select Similar"
 msgstr "Выделить схожие"
 
 
-msgid "Metaball"
-msgstr "Метасфера"
-
-
 msgid "Metaball Context Menu"
 msgstr "Контекстное меню метасфер"
 
@@ -27271,14 +27291,6 @@ msgstr "Крюки"
 
 msgid "Add Image"
 msgstr "Добавить изображение"
-
-
-msgid "Light"
-msgstr "Свет"
-
-
-msgid "Light Probe"
-msgstr "Зонд освещения"
 
 
 msgid "Make Single User"
@@ -51153,15 +51165,6 @@ msgstr "Создать копию активной группы вершин"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Копировать группы вершин к связанным"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "Заменить группы вершин всех пользователей данных геометрии группами вершин активного объекта"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Копировать группу вершин к выделенным"
 
@@ -52668,10 +52671,6 @@ msgid "Remove active color from palette"
 msgstr "Удалить активный цвет из палитры"
 
 
-msgid "Palette"
-msgstr "Палитра"
-
-
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "Добавить новую палитру"
@@ -53010,6 +53009,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Интерактивный просмотр поз в 3D-виде"
 
 
+msgid "Pose Name"
+msgstr "Имя позы"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Создать библиотеку поз"
@@ -53030,10 +53033,6 @@ msgstr "Добавить текущую позу в библиотеку поз"
 
 msgid "Frame to store pose on"
 msgstr "Кадр для хранения позы"
-
-
-msgid "Pose Name"
-msgstr "Имя позы"
 
 
 msgid "Name of newly added Pose"
@@ -62547,10 +62546,6 @@ msgstr "С затенением"
 
 msgid "Styles"
 msgstr "Стили"
-
-
-msgid "List Item"
-msgstr "Элемент списка"
 
 
 msgid "Menu"
@@ -73922,10 +73917,6 @@ msgstr "Манипулятор инструмента"
 
 msgid "Active tool gizmo"
 msgstr "Манипулятор активного инструмента"
-
-
-msgid "Speaker"
-msgstr "Источник звука"
 
 
 msgid "Show Reconstruction"
@@ -86626,14 +86617,6 @@ msgid "Reset Black/White point and curves"
 msgstr "Сбросить чёрную/белую точки и кривые"
 
 
-msgid "Double click to rename"
-msgstr "Нажмите дважды для переименования"
-
-
-msgid "Hide filtering options"
-msgstr "Скрыть параметры фильтрации"
-
-
 msgid "Stop this job"
 msgstr "Остановить эту работу"
 
@@ -87916,10 +87899,6 @@ msgstr "Группа вершин заблокирована"
 
 msgid "%d vertex weights limited"
 msgstr "Веса ограничены для %d шт. вершин"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Копирование групп вершин на выделение: %d выполнено, %d ошибок (данные объектов должны совпадать по индексам)"
 
 
 msgid "Vertex select needs to be enabled in weight paint mode"

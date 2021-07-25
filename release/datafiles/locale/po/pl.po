@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -6088,6 +6088,70 @@ msgid "Save"
 msgstr "Zapisz"
 
 
+msgid "Brush"
+msgstr "Pędzel"
+
+
+msgid "Font"
+msgstr "Czcionka"
+
+
+msgid "Key"
+msgstr "Klucz"
+
+
+msgid "Library"
+msgstr "Biblioteka"
+
+
+msgid "Line Style"
+msgstr "Styl linii"
+
+
+msgid "Lattice"
+msgstr "Kratownica"
+
+
+msgid "Mask"
+msgstr "Maska"
+
+
+msgid "Mesh"
+msgstr "Siatka"
+
+
+msgid "Paint Curve"
+msgstr "Krzywa graficzna"
+
+
+msgid "Palette"
+msgstr "Paleta"
+
+
+msgid "Particle"
+msgstr "Cząstka"
+
+
+msgid "Sound"
+msgstr "Dźwięk"
+
+
+msgid "Speaker"
+msgstr "Głośnik"
+
+
+msgid "Text"
+msgstr "Tekst"
+
+
+msgid "Window Manager"
+msgstr "Zarządca okien"
+
+
+msgid "World"
+msgstr "Świat"
+
+
 msgid "Time"
 msgstr "Czas"
 
@@ -6106,10 +6170,6 @@ msgstr "Góra"
 
 msgid "Mapping"
 msgstr "Mapowanie"
-
-
-msgid "Line Style"
-msgstr "Styl linii"
 
 
 msgid "Visibility"
@@ -6140,20 +6200,12 @@ msgid "Window"
 msgstr "Okno"
 
 
-msgid "Lattice"
-msgstr "Kratownica"
-
-
 msgid "Fixed"
 msgstr "Stałe"
 
 
 msgid "Blend"
 msgstr "Mieszanie"
-
-
-msgid "Library"
-msgstr "Biblioteka"
 
 
 msgid "Groups"
@@ -6166,18 +6218,6 @@ msgstr "Obwiednia"
 
 msgid "Local"
 msgstr "Lokalnie"
-
-
-msgid "Mask"
-msgstr "Maska"
-
-
-msgid "Brush"
-msgstr "Pędzel"
-
-
-msgid "Paint Curve"
-msgstr "Krzywa graficzna"
 
 
 msgid "Rotate"
@@ -6198,10 +6238,6 @@ msgstr "Początek przycinania"
 
 msgid "Dimensions"
 msgstr "Wymiary"
-
-
-msgid "Font"
-msgstr "Czcionka"
 
 
 msgid "X Offset"
@@ -6248,14 +6284,6 @@ msgid "Mass"
 msgstr "Masa"
 
 
-msgid "Particle"
-msgstr "Cząstka"
-
-
-msgid "World"
-msgstr "Świat"
-
-
 msgid "Reference Distance"
 msgstr "Odległość odniesienia"
 
@@ -6265,16 +6293,8 @@ msgid "Pitch"
 msgstr "Wysokość"
 
 
-msgid "Sound"
-msgstr "Dźwięk"
-
-
 msgid "Filter"
 msgstr "Filtr"
-
-
-msgid "Window Manager"
-msgstr "Zarządca okien"
 
 
 msgid "Operation"
@@ -6309,10 +6329,6 @@ msgid "ID Type"
 msgstr "Typ ID"
 
 
-msgid "Key"
-msgstr "Klucz"
-
-
 msgid "Edit"
 msgstr "Edytuj"
 
@@ -6321,16 +6337,8 @@ msgid "Distort"
 msgstr "Zniekształć"
 
 
-msgid "Mesh"
-msgstr "Siatka"
-
-
 msgid "Python"
 msgstr "Python"
-
-
-msgid "Text"
-msgstr "Tekst"
 
 
 msgid "File"
@@ -6519,10 +6527,6 @@ msgid "Child"
 msgstr "Potomek"
 
 
-msgid "Palette"
-msgstr "Paleta"
-
-
 msgid "Hinge"
 msgstr "Zawias"
 
@@ -6623,10 +6627,6 @@ msgstr "Sepia"
 
 msgid "Timeline and playback controls"
 msgstr "Oś czasu oraz kontrolki odtwarzania"
-
-
-msgid "Speaker"
-msgstr "Głośnik"
 
 
 msgid "3D"
@@ -7969,14 +7969,6 @@ msgid "Reset Black/White point and curves"
 msgstr "Resetuj punkt bieli/czerni i krzywe"
 
 
-msgid "Double click to rename"
-msgstr "Podwójne kliknięcie by zmienić nazwę"
-
-
-msgid "Hide filtering options"
-msgstr "Ukryj opcje filtrowania"
-
-
 msgid "Stop this job"
 msgstr "Przerzij to zadanie"
 
@@ -8916,10 +8908,6 @@ msgstr "Grupa wierzchołków jest zablokowana"
 
 msgid "%d vertex weights limited"
 msgstr "Ograniczono %d wag wierzchołków"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Kopiuj grupę wierzchołków do zaznaczonych: wykonano %d, nie powiodło się %d (Dane obiektu muszą posiadać pasujące indeksy)"
 
 
 msgid "Vertex select needs to be enabled in weight paint mode"

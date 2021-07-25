@@ -60,7 +60,7 @@ class VIEW3D_PT_pose_library(Panel):
             activate_op_props, drag_op_props = layout.template_asset_view(
                 "pose_assets",
                 workspace,
-                "active_asset_library",
+                "asset_library",
                 wm,
                 "pose_assets",
                 workspace,
@@ -167,6 +167,7 @@ class DOPESHEET_PT_asset_panel(Panel):
     bl_space_type = "DOPESHEET_EDITOR"
     bl_region_type = "UI"
     bl_label = "Create Pose Asset"
+    bl_category = "Pose Library"
 
     @classmethod
     def poll(cls, context: Context) -> bool:
