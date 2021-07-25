@@ -1148,9 +1148,8 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
                 col.prop(strip, "speed_frame_number", text=" ")
 
             row = layout.row(align=True)
-            row.enabled = strip.speed_control != "STRETCH"
-            row = layout.row(align=True, heading="Interpolation")
-            row.prop(strip, "use_frame_interpolate", text="")
+            row.use_property_split = False
+            row.prop(strip, "use_frame_interpolate", text="Interpolation")
 
         elif strip_type == 'TRANSFORM':
             col = layout.column()
