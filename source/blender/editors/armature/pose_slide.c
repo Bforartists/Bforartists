@@ -1050,12 +1050,8 @@ static int pose_slide_invoke_common(bContext *C, wmOperator *op, const wmEvent *
   WM_event_add_modal_handler(C, op);
 
   /* Save current bone visibility. */
-  /* bfa - we don't hide the bones for in-between*/
-  /*
   View3D *v3d = pso->area->spacedata.first;
   pso->overlay_flag = v3d->overlay.flag;
-  v3d->overlay.flag |= V3D_OVERLAY_HIDE_BONES;
-  */
 
   return OPERATOR_RUNNING_MODAL;
 }
