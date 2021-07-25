@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -11528,6 +11528,106 @@ msgid "Asset data, valid if the file represents an asset"
 msgstr "Дані активу, дійсні, якщо файл представляє актив"
 
 
+msgid "Brush"
+msgstr "Пензель"
+
+
+msgid "Font"
+msgstr "Шрифт"
+
+
+msgid "Collection"
+msgstr "Колекція"
+
+
+msgid "Key"
+msgstr "Ключ"
+
+
+msgid "Light"
+msgstr "Слабко"
+
+
+msgid "Library"
+msgstr "Бібліотека"
+
+
+msgid "Line Style"
+msgstr "Стиль Лінії"
+
+
+msgid "Lattice"
+msgstr "Ґратка"
+
+
+msgid "Mask"
+msgstr "Маска"
+
+
+msgid "Metaball"
+msgstr "Метакуля"
+
+
+msgid "Mesh"
+msgstr "Сіть"
+
+
+msgid "Node Tree"
+msgstr "Дерево вузлів"
+
+
+msgid "Paint Curve"
+msgstr "Крива мазка пензля"
+
+
+msgid "Palette"
+msgstr "Палітра"
+
+
+msgid "Particle"
+msgstr "Частинка"
+
+
+msgid "Light Probe"
+msgstr "Проба Освітлення"
+
+
+msgid "Simulation"
+msgstr "Симуляція"
+
+
+msgid "Sound"
+msgstr "Звук"
+
+
+msgid "Speaker"
+msgstr "Гучномовець"
+
+
+msgid "Text"
+msgstr "Текст"
+
+
+msgid "Hair"
+msgstr "Волосся"
+
+
+msgid "Point Cloud"
+msgstr "Хмара Точок"
+
+
+msgid "Window Manager"
+msgstr "Віконний менеджер"
+
+
+msgid "World"
+msgstr "Світ"
+
+
+msgid "Workspace"
+msgstr "Робпростір"
+
+
 msgid "Icon ID"
 msgstr "ID іконки"
 
@@ -13696,10 +13796,6 @@ msgid "Line set for associating lines and style parameters"
 msgstr "Набір ліній для зв'язування параметрів ліній та стилю"
 
 
-msgid "Collection"
-msgstr "Колекція"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "Колекція об'єктів, що базується на тому, які вирізнені ребра виділено"
 
@@ -13878,10 +13974,6 @@ msgstr "Вибрати вирізнені ребра, що задовольня�
 
 msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "Вибрати вирізнені ребра, що не задовольняють умовам міток даних граней"
-
-
-msgid "Line Style"
-msgstr "Стиль Лінії"
 
 
 msgid "Line style settings"
@@ -15418,10 +15510,6 @@ msgid "Deform stroke points using objects"
 msgstr "Деформує точки штриха, використовуючи об'єкти"
 
 
-msgid "Lattice"
-msgstr "Ґратка"
-
-
 msgid "Deform strokes using lattice"
 msgstr "Деформує штрихи, використовуючи решітку"
 
@@ -16668,10 +16756,6 @@ msgid "Is this ID block linked indirectly"
 msgstr "Чи пов'язаний цей блок непрямо"
 
 
-msgid "Library"
-msgstr "Бібліотека"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "Бібліотечний файл з якого пов'язаний блок даних"
 
@@ -17581,10 +17665,6 @@ msgid "Soften"
 msgstr "М'якшення"
 
 
-msgid "Mask"
-msgstr "Маска"
-
-
 msgid "Invert Pressure for Density"
 msgstr "Інвертувати Натиск для Щільності"
 
@@ -17653,10 +17733,6 @@ msgid "Jittering happens in screen space, in pixels"
 msgstr "Тремтіння відбувається у просторі екрана, у пікселях"
 
 
-msgid "Brush"
-msgstr "Пензель"
-
-
 msgid "Jittering happens relative to the brush size"
 msgstr "Тремтіння відбувається відносно розміру пензля"
 
@@ -17711,10 +17787,6 @@ msgstr "Вагомість Нормалі"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "Величина виштовхування захоплених вершин з поверхні при захопленні"
-
-
-msgid "Paint Curve"
-msgstr "Крива мазка пензля"
 
 
 msgid "Active paint curve"
@@ -19529,10 +19601,6 @@ msgid "Curve deforming text object"
 msgstr "Текстовий об'єкт, що деформується за кривою"
 
 
-msgid "Font"
-msgstr "Шрифт"
-
-
 msgid "Font Bold"
 msgstr "Жирний шрифт"
 
@@ -19899,10 +19967,6 @@ msgstr "Найменша довжина вздовж кривої для виб�
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "Якщо Так, то ланцюжки вирізнених ребер діляться на межі матеріалів"
-
-
-msgid "Node Tree"
-msgstr "Дерево вузлів"
 
 
 msgid "Node tree for node-based shaders"
@@ -21797,10 +21861,6 @@ msgstr "Площина XY"
 
 msgid "Cube"
 msgstr "Куб"
-
-
-msgid "Hair"
-msgstr "Волосся"
 
 
 msgid "Hair strands"
@@ -23966,10 +24026,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "Хай об'єкт надає частинкам стартової скорості"
 
 
-msgid "Particle"
-msgstr "Частинка"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "Хай цільова частинка надає частинкам стартової скорості"
 
@@ -24510,10 +24566,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Відносна кількість віртуальних предків"
 
 
-msgid "Point Cloud"
-msgstr "Хмара Точок"
-
-
 msgid "Point cloud data-block"
 msgstr "Блок даних хмари точок"
 
@@ -24914,10 +24966,6 @@ msgid "Selected Landmark"
 msgstr "Вибрана Віха"
 
 
-msgid "World"
-msgstr "Світ"
-
-
 msgid "World used for rendering the scene"
 msgstr "Світ, що використовується для рендерингу сцени"
 
@@ -25090,10 +25138,6 @@ msgstr "Висота"
 
 msgid "Playback pitch of the sound"
 msgstr "Висота відтворення звуку"
-
-
-msgid "Sound"
-msgstr "Звук"
 
 
 msgid "Sound data-block used by this speaker"
@@ -26244,10 +26288,6 @@ msgid "Repeat the frames, reversing the playback direction every other cycle"
 msgstr "Повторити кадри, розвертаючи напрямок програвання кожен цикл"
 
 
-msgid "Window Manager"
-msgstr "Віконний менеджер"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "Блок даних віконного менеджера, що визначає відкриті вікна та інші дані інтерфейсу користувача"
 
@@ -26350,10 +26390,6 @@ msgstr "Стан Сесії XR"
 
 msgid "Runtime state information about the VR session"
 msgstr "Інформація про стан обробляння щодо сесії ВР"
-
-
-msgid "Workspace"
-msgstr "Робпростір"
 
 
 msgid "Workspace data-block, defining the working environment for the user"
@@ -26642,10 +26678,6 @@ msgstr "Анімація"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "Обчислювач без збереження стану обчислює позу, починаючи з поточної дії та з урахуванням не-IK примусів"
-
-
-msgid "Simulation"
-msgstr "Симуляція"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -30469,10 +30501,6 @@ msgid "Dope Sheet Context Menu"
 msgstr "Контекстне меню Аркуша експозицій"
 
 
-msgid "Key"
-msgstr "Ключ"
-
-
 msgid "Snap"
 msgstr "Підхоп"
 
@@ -30617,10 +30645,6 @@ msgid "Attribute"
 msgstr "Атрибут"
 
 
-msgid "Mesh"
-msgstr "Сіть"
-
-
 msgid "Utilities"
 msgstr "Утиліти"
 
@@ -30722,10 +30746,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Текст"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -30777,6 +30797,10 @@ msgstr "Відновлення"
 
 msgid "Help"
 msgstr "Довідка"
+
+
+msgid "List Item"
+msgstr "Елемент Списку"
 
 
 msgid "Presets"
@@ -30892,10 +30916,6 @@ msgid "Select Similar"
 msgstr "Вибрати подібні"
 
 
-msgid "Metaball"
-msgstr "Метакуля"
-
-
 msgid "Metaball Context Menu"
 msgstr "Контекстне Меню Метакуль"
 
@@ -30918,14 +30938,6 @@ msgstr "Додати Зображення"
 
 msgid "Landmark Controls"
 msgstr "Керувальники Віх"
-
-
-msgid "Light"
-msgstr "Слабко"
-
-
-msgid "Light Probe"
-msgstr "Проба Освітлення"
 
 
 msgid "Link/Transfer Data"
@@ -59388,15 +59400,6 @@ msgstr "Зробити копію активної групи вершин"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Скопіювати групи вершин у Пов'язане"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "Замінити групи вершин для усіх носіїв однакових даних геометрії відповідно групами вершин активного об'єкта"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Скопіювати групу вершин до вибраного"
 
@@ -61201,10 +61204,6 @@ msgid "Join Palette Swatches"
 msgstr "Сполучити взірці палітри"
 
 
-msgid "Palette"
-msgstr "Палітра"
-
-
 msgid "Name of the Palette"
 msgstr "Назва палітри"
 
@@ -61621,6 +61620,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Інтерактивно переглядати пози у 3D-вікні"
 
 
+msgid "Pose Name"
+msgstr "Назва пози"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Нова бібліотека поз"
@@ -61641,10 +61644,6 @@ msgstr "Додати поточну позу до активної бібліо�
 
 msgid "Frame to store pose on"
 msgstr "Кадр для зберігання пози"
-
-
-msgid "Pose Name"
-msgstr "Назва пози"
 
 
 msgid "Name of newly added Pose"
@@ -73137,10 +73136,6 @@ msgstr "Стилі"
 
 msgid "Transparent Checkerboard"
 msgstr "Шахівниця прозорості"
-
-
-msgid "List Item"
-msgstr "Елемент Списку"
 
 
 msgid "Menu"
@@ -85644,10 +85639,6 @@ msgstr "Гізмо Засобу"
 
 msgid "Active tool gizmo"
 msgstr "Гізмо активного засобу"
-
-
-msgid "Speaker"
-msgstr "Гучномовець"
 
 
 msgid "Show Reconstruction"
@@ -101593,14 +101584,6 @@ msgid "Toggle Profile Clipping"
 msgstr "Перемкнути Відсікання Профілю"
 
 
-msgid "Double click to rename"
-msgstr "Двічі клацніть, щоб перейменувати"
-
-
-msgid "Hide filtering options"
-msgstr "Приховати параметри фільтрування"
-
-
 msgid "Stop this job"
 msgstr "Зупинити це завдання"
 
@@ -103207,10 +103190,6 @@ msgstr "Група вершин заблокована"
 
 msgid "%d vertex weights limited"
 msgstr "Вагомості обмежено для %d вершин"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Копіювання груп вершин до вибраного: %d виконано, %d невдало (дані об'єктів повинні мати узгоджені індекси)"
 
 
 msgid "No active editable object"
@@ -106885,10 +106864,6 @@ msgstr "Неможливо перемістити примус з індексу
 
 msgid "Modifier \"%s\" is not in the object's modifier list"
 msgstr "Модифікатор \"%s\" не є в списку модифікаторів об'єкта"
-
-
-msgid "VertexGroups.new(): is not supported for '%s' objects"
-msgstr "VertexGroups.new(): не підтримується для '%s' об'єктів"
 
 
 msgid "DeformGroup '%s' not in object '%s'"

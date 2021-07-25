@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11751,6 +11751,106 @@ msgid "Asset data, valid if the file represents an asset"
 msgstr "资产数据，如果文件表示资产，则有效"
 
 
+msgid "Brush"
+msgstr "笔刷"
+
+
+msgid "Font"
+msgstr "字体"
+
+
+msgid "Collection"
+msgstr "集合"
+
+
+msgid "Key"
+msgstr "关键帧"
+
+
+msgid "Light"
+msgstr "灯光"
+
+
+msgid "Library"
+msgstr "库"
+
+
+msgid "Line Style"
+msgstr "线条样式"
+
+
+msgid "Lattice"
+msgstr "晶格"
+
+
+msgid "Mask"
+msgstr "遮罩"
+
+
+msgid "Metaball"
+msgstr "融球"
+
+
+msgid "Mesh"
+msgstr "网格"
+
+
+msgid "Node Tree"
+msgstr "节点树"
+
+
+msgid "Paint Curve"
+msgstr "绘画曲线"
+
+
+msgid "Palette"
+msgstr "调色板"
+
+
+msgid "Particle"
+msgstr "粒子"
+
+
+msgid "Light Probe"
+msgstr "光照探头"
+
+
+msgid "Simulation"
+msgstr "模拟"
+
+
+msgid "Sound"
+msgstr "声音"
+
+
+msgid "Speaker"
+msgstr "扬声器"
+
+
+msgid "Text"
+msgstr "文本"
+
+
+msgid "Hair"
+msgstr "毛发"
+
+
+msgid "Point Cloud"
+msgstr "点云"
+
+
+msgid "Window Manager"
+msgstr "窗口管理器"
+
+
+msgid "World"
+msgstr "世界环境"
+
+
+msgid "Workspace"
+msgstr "工作区"
+
+
 msgid "Icon ID"
 msgstr "图标ID"
 
@@ -13947,10 +14047,6 @@ msgid "Line set for associating lines and style parameters"
 msgstr "用于关联线条与样式参数的线条集"
 
 
-msgid "Collection"
-msgstr "集合"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "一个基于所选特征边线的物体集合"
 
@@ -14129,10 +14225,6 @@ msgstr "选择不满足指定边线类型的特征边"
 
 msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "选择不满足指定边线类型的特征边"
-
-
-msgid "Line Style"
-msgstr "线条样式"
 
 
 msgid "Line style settings"
@@ -15723,10 +15815,6 @@ msgstr "钩挂"
 
 msgid "Deform stroke points using objects"
 msgstr "使用物体变形笔画点"
-
-
-msgid "Lattice"
-msgstr "晶格"
 
 
 msgid "Deform strokes using lattice"
@@ -17399,10 +17487,6 @@ msgid "Is this ID block linked indirectly"
 msgstr "此 ID 块是否为间接关联"
 
 
-msgid "Library"
-msgstr "库"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "数据块关联自的库文件"
 
@@ -18324,10 +18408,6 @@ msgid "Soften"
 msgstr "柔化"
 
 
-msgid "Mask"
-msgstr "遮罩"
-
-
 msgid "Invert Pressure for Density"
 msgstr "反转压力对密度的作用"
 
@@ -18396,10 +18476,6 @@ msgid "Jittering happens in screen space, in pixels"
 msgstr "屏幕空间中抖动, 单位为像素"
 
 
-msgid "Brush"
-msgstr "笔刷"
-
-
 msgid "Jittering happens relative to the brush size"
 msgstr "相对笔刷大小发生抖动"
 
@@ -18454,10 +18530,6 @@ msgstr "法线权重"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "在拖拽过程中  可将顶点拉出表面的拖拽力"
-
-
-msgid "Paint Curve"
-msgstr "绘画曲线"
 
 
 msgid "Active paint curve"
@@ -20352,10 +20424,6 @@ msgid "Curve deforming text object"
 msgstr "曲线变形式文本物体"
 
 
-msgid "Font"
-msgstr "字体"
-
-
 msgid "Font Bold"
 msgstr "粗体"
 
@@ -20722,10 +20790,6 @@ msgstr "执行链形选择的最小曲线2D长度值"
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "如果为真, 则特征边"
-
-
-msgid "Node Tree"
-msgstr "节点树"
 
 
 msgid "Node tree for node-based shaders"
@@ -22664,10 +22728,6 @@ msgstr "XY 平面"
 
 msgid "Cube"
 msgstr "立方体"
-
-
-msgid "Hair"
-msgstr "毛发"
 
 
 msgid "Hair strands"
@@ -24917,10 +24977,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "让物体赋予粒子一个初始速度"
 
 
-msgid "Particle"
-msgstr "粒子"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "让目标粒子赋予粒子一个初始速度"
 
@@ -25477,10 +25533,6 @@ msgid "Relative amount of virtual parents"
 msgstr "虚拟父级的相对量"
 
 
-msgid "Point Cloud"
-msgstr "点云"
-
-
 msgid "Point cloud data-block"
 msgstr "点云数据块"
 
@@ -25579,6 +25631,10 @@ msgstr "背景设置场景"
 
 msgid "Active camera, used for rendering the scene"
 msgstr "活动相机, 用于渲染场景"
+
+
+msgid "Scene root collection that owns all the objects and other collections instantiated in the scene"
+msgstr "拥有场景中物体和其他集合的场景根集合"
 
 
 msgid "3D Cursor"
@@ -25881,10 +25937,6 @@ msgid "Selected Landmark"
 msgstr "已选中地标"
 
 
-msgid "World"
-msgstr "世界环境"
-
-
 msgid "World used for rendering the scene"
 msgstr "用于渲染场景的世界环境"
 
@@ -26057,10 +26109,6 @@ msgstr "音调"
 
 msgid "Playback pitch of the sound"
 msgstr "回放音调"
-
-
-msgid "Sound"
-msgstr "声音"
 
 
 msgid "Sound data-block used by this speaker"
@@ -27211,10 +27259,6 @@ msgid "Repeat the frames, reversing the playback direction every other cycle"
 msgstr "重复帧，每隔一个周期反转播放方向"
 
 
-msgid "Window Manager"
-msgstr "窗口管理器"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "窗口管理器数据块, 定义了打开的窗口以及其他的用户界面数据"
 
@@ -27317,10 +27361,6 @@ msgstr "XR会话状态"
 
 msgid "Runtime state information about the VR session"
 msgstr "有关VR会话的运行时状态信息"
-
-
-msgid "Workspace"
-msgstr "工作区"
 
 
 msgid "Workspace data-block, defining the working environment for the user"
@@ -27625,10 +27665,6 @@ msgstr "动画"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "无状态的解算器, 计算始于当前动作的姿态, 以及非 IK 型约束"
-
-
-msgid "Simulation"
-msgstr "模拟"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -31488,10 +31524,6 @@ msgid "Dope Sheet Context Menu"
 msgstr "动画摄影表上下文菜单"
 
 
-msgid "Key"
-msgstr "关键帧"
-
-
 msgid "Snap"
 msgstr "吸附"
 
@@ -31636,10 +31668,6 @@ msgid "Attribute"
 msgstr "属性"
 
 
-msgid "Mesh"
-msgstr "网格"
-
-
 msgid "Curve Primitives"
 msgstr "曲线基本体"
 
@@ -31749,10 +31777,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "文本"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -31804,6 +31828,10 @@ msgstr "恢复"
 
 msgid "Help"
 msgstr "帮助"
+
+
+msgid "List Item"
+msgstr "列表条目"
 
 
 msgid "Presets"
@@ -31919,10 +31947,6 @@ msgid "Select Similar"
 msgstr "选择相似"
 
 
-msgid "Metaball"
-msgstr "融球"
-
-
 msgid "Metaball Context Menu"
 msgstr "融球上下文菜单"
 
@@ -31945,14 +31969,6 @@ msgstr "添加图像"
 
 msgid "Landmark Controls"
 msgstr "地标控件"
-
-
-msgid "Light"
-msgstr "灯光"
-
-
-msgid "Light Probe"
-msgstr "光照探头"
 
 
 msgid "Link/Transfer Data"
@@ -40676,6 +40692,10 @@ msgid "Off: first socket, On: second socket"
 msgstr "关闭: 第一个接口, 开启:  第二个接口"
 
 
+msgid "Switch View"
+msgstr "切换视图"
+
+
 msgid "Node Output"
 msgstr "节点输出"
 
@@ -40978,6 +40998,38 @@ msgstr "不等于"
 
 msgid "True when both inputs are not approximately equal"
 msgstr "当两个输入不近似相等时为真"
+
+
+msgid "Float to Integer"
+msgstr "小数(浮点型)转整数"
+
+
+msgid "Rounding Mode"
+msgstr "舍入模式"
+
+
+msgid "Method used to convert the float to an integer"
+msgstr "用于将浮点数转换为整数的方法"
+
+
+msgid "Round the float up or down to the nearest integer"
+msgstr "将浮点向上或向下四舍五入到最接近的整数"
+
+
+msgid "Round the float down to the next smallest integer"
+msgstr "将浮点数四舍五入到下一个最小的整数"
+
+
+msgid "Ceiling"
+msgstr "向上取整"
+
+
+msgid "Round the float up to the next largest integer"
+msgstr "将浮点数四舍五入到下一个最大的整数"
+
+
+msgid "Round the float to the closest integer in the direction of zero (floor if positive; ceiling if negative)"
+msgstr "将浮点数四舍五入到离零方向最近的整数(如果为正，则向下取整; 如果为负，则向上取整)"
 
 
 msgid "Random Float"
@@ -41428,6 +41480,10 @@ msgid "Convex Hull"
 msgstr "凸壳"
 
 
+msgid "Curve Endpoints"
+msgstr "曲线端点"
+
+
 msgid "Curve Length"
 msgstr "曲线长度"
 
@@ -41448,6 +41504,10 @@ msgid "The start and end handles are offsets from the spline's control points"
 msgstr "开始和结束控制柄为样条线的控制点偏移量"
 
 
+msgid "Curve Circle"
+msgstr "曲线圆环"
+
+
 msgid "Method used to determine radius and placement"
 msgstr "用于确定半径和位置的方法"
 
@@ -41458,6 +41518,18 @@ msgstr "用三个点定义半径和位置"
 
 msgid "Define the radius with a float"
 msgstr "用浮点数定义半径"
+
+
+msgid "Curve Line"
+msgstr "曲线直线"
+
+
+msgid "Define the start and end points of the line"
+msgstr "定义直线的开始和结束点"
+
+
+msgid "Define a line with a start point, direction and length"
+msgstr "定义一条带有起点、方向和长度的直线"
 
 
 msgid "Quadratic Bezier"
@@ -41556,6 +41628,10 @@ msgid "Material Replace"
 msgstr "材质替换"
 
 
+msgid "Mesh Circle"
+msgstr "网格圆"
+
+
 msgid "Fill Type"
 msgstr "填充类型"
 
@@ -41566,6 +41642,10 @@ msgstr "多边形"
 
 msgid "Ico Sphere"
 msgstr "棱角球"
+
+
+msgid "Mesh Line"
+msgstr "网格直线"
 
 
 msgid "Count Mode"
@@ -41590,6 +41670,10 @@ msgstr "端点"
 
 msgid "Specify the line's start and end points"
 msgstr "指定直线的开始点和结束点"
+
+
+msgid "Mesh Subdivide"
+msgstr "网格细分"
 
 
 msgid "Mesh to Curve"
@@ -43067,6 +43151,14 @@ msgstr "节点接口"
 
 msgid "Input or output socket of a node"
 msgstr "一个节点的输入或输出接口"
+
+
+msgid "Type Label"
+msgstr "类型标签"
+
+
+msgid "Label to display for the socket type in the UI"
+msgstr "用于显示UI中接口类型的标签"
 
 
 msgid "Tooltip"
@@ -58582,6 +58674,15 @@ msgstr "接口类型"
 
 
 msgctxt "Operator"
+msgid "Change Node Tree Interface Socket Type"
+msgstr "更改节点树界面接口类型"
+
+
+msgid "Change the type of a socket of the current node tree"
+msgstr "更改当前节点树的接口类型"
+
+
+msgctxt "Operator"
 msgid "Move Node Tree Socket"
 msgstr "移动节点树的接口"
 
@@ -59874,12 +59975,24 @@ msgid "Object Animation"
 msgstr "物体动画"
 
 
+msgid "Make object animation data local to each object"
+msgstr "将物体动画数据本地化至各物体"
+
+
 msgid "Make materials local to each data-block"
 msgstr "将材质本地化至各数据块"
 
 
 msgid "Make single user object data"
 msgstr "建立单用户物体数据"
+
+
+msgid "Object Data Animation"
+msgstr "物体数据动画"
+
+
+msgid "Make object data (mesh, curve etc.) animation data local to each object"
+msgstr "将物体数据(网格、曲线等)动画数据本地化到各物体"
 
 
 msgid "Make single user objects"
@@ -61353,15 +61466,6 @@ msgstr "复制顶点组"
 
 msgid "Make a copy of the active vertex group"
 msgstr "为当前活动顶点组合创建一个副本"
-
-
-msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "复制顶点组至关联对象"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "将使用相同几何数据的所有用户的顶点组替换为活动物体的顶点组"
 
 
 msgctxt "Operator"
@@ -63209,10 +63313,6 @@ msgid "Join Palette Swatches"
 msgstr "合并调色板色板"
 
 
-msgid "Palette"
-msgstr "调色板"
-
-
 msgid "Name of the Palette"
 msgstr "调色板名称"
 
@@ -63629,6 +63729,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "以交互方式在 3D 视图中浏览姿态"
 
 
+msgid "Pose Name"
+msgstr "姿态名称"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "新姿态库"
@@ -63649,10 +63753,6 @@ msgstr "添加当前姿态到活动姿态库"
 
 msgid "Frame to store pose on"
 msgstr "要存储的姿态所在帧"
-
-
-msgid "Pose Name"
-msgstr "姿态名称"
 
 
 msgid "Name of newly added Pose"
@@ -75476,10 +75576,6 @@ msgid "Transparent Checkerboard"
 msgstr "透明棋盘格"
 
 
-msgid "List Item"
-msgstr "列表条目"
-
-
 msgid "Menu"
 msgstr "菜单"
 
@@ -78323,7 +78419,7 @@ msgstr "模拟 3 键鼠标"
 
 
 msgid "Emulate Middle Mouse with Alt+Left Mouse"
-msgstr "使用Alt+鼠标左键模拟鼠标中键"
+msgstr "使用Alt+鼠标左键模拟鼠标中键(如果你使用左键选择的话,那么选择循环边将切换成 \"双击\" 环选,而且选择并排边不能用了!!!! 这里推荐用右键选择)"
 
 
 msgid "Default to Advanced Numeric Input"
@@ -80934,6 +81030,10 @@ msgstr "各像素的渲染采样次数"
 
 msgid "Transparent Max Bounces"
 msgstr "透明反弹次数上限"
+
+
+msgid "Maximum number of transparent bounces. This is independent of maximum number of other bounces "
+msgstr "透明反弹的最大次数。该设置独立于其他反弹的最大次数"
 
 
 msgid "Use Adaptive Sampling"
@@ -85455,6 +85555,14 @@ msgid "Snap to strip hold offsets"
 msgstr "吸附到片段保持偏移"
 
 
+msgid "Snap Current Frame to Strips"
+msgstr "吸附当前帧至片段"
+
+
+msgid "Snap current frame to strip start or end"
+msgstr "吸附当前帧至片段开头或结尾"
+
+
 msgid "Collection of Sequences"
 msgstr "序列集合"
 
@@ -88387,10 +88495,6 @@ msgstr "Gizmo工具"
 
 msgid "Active tool gizmo"
 msgstr "激活Gizmo工具"
-
-
-msgid "Speaker"
-msgstr "扬声器"
 
 
 msgid "Show Reconstruction"
@@ -96333,10 +96437,6 @@ msgid "%s ▶ %s"
 msgstr "%s ▶ %s"
 
 
-msgid "Name Collisions: {}, "
-msgstr "名称冲突: {}, "
-
-
 msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "名称排序"
@@ -100722,6 +100822,11 @@ msgstr "物体动画"
 
 
 msgctxt "Operator"
+msgid "Object Data Animation"
+msgstr "物体数据动画"
+
+
+msgctxt "Operator"
 msgid "Copy UV Maps"
 msgstr "复制UV贴图"
 
@@ -103006,7 +103111,7 @@ msgstr "无法连接顶点"
 
 
 msgid "Select two edge loops or a single closed edge loop from which two edge loops can be calculated"
-msgstr "选择两个循环边或可以从中计算出两个循环边的单个闭合循环边"
+msgstr "选择两个循环边或可以从中计算出两个循环边的单个闭合循环边 (解决方法:可能是点数量为奇数，试着改为偶数点)"
 
 
 msgid "Closed loops unsupported"
@@ -103486,7 +103591,7 @@ msgstr "链中不可选择的骨骼"
 
 
 msgid "Bone Heat Weighting: failed to find solution for one or more bones"
-msgstr "骨骼热度加权: 为一条或更多骨骼解算时出错"
+msgstr "骨骼热权重: 为一个或多个骨骼解算时出错(请检查模型重叠点与缩放,或是缩放模型到一个合适的大小并再次尝试)"
 
 
 msgid "Cannot pose libdata"
@@ -104760,14 +104865,6 @@ msgid "Toggle Profile Clipping"
 msgstr "切换轮廓钳制"
 
 
-msgid "Double click to rename"
-msgstr "双击以重命名"
-
-
-msgid "Hide filtering options"
-msgstr "隐藏过滤选项"
-
-
 msgid "Stop this job"
 msgstr "停止当前工作"
 
@@ -105961,7 +106058,7 @@ msgstr "无法将修改器移到队列末尾之外"
 
 
 msgid "Modifier is disabled, skipping apply"
-msgstr "修改器关闭，略过应用"
+msgstr "修改器关闭，略过应用(请常试关闭渲染属性里面的简化,并再次应用)"
 
 
 msgid "Cannot apply modifier for this object type"
@@ -106061,11 +106158,11 @@ msgstr "在此物体上应用形变修改器为一个新形变"
 
 
 msgid "Modifier is disabled or returned error, skipping apply"
-msgstr "修改器关闭或返回错误，略过应用"
+msgstr "修改器关闭或返回错误，略过应用(请常试关闭渲染属性里面的简化,并再次应用)"
 
 
 msgid "Modifier cannot be applied to a mesh with shape keys"
-msgstr "该修改器无法应用到带有形态键的网格上"
+msgstr "该修改器无法应用到带有形态键的网格上(解决方法 如想应用该修改器需先删除形态键才能应用)"
 
 
 msgid "Multires modifier returned error, skipping apply"
@@ -106418,10 +106515,6 @@ msgstr "锁定的顶点组"
 
 msgid "%d vertex weights limited"
 msgstr "%d 顶点权重受限"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "将顶点组复制到所选的警告, 完成 %d, 失败 %d (物体数据编号需匹配)"
 
 
 msgid "No active editable object"
@@ -108940,7 +109033,7 @@ msgstr "深度值过大"
 
 
 msgid "X-Ray not available in current mode"
-msgstr "在此模式下透视不可用"
+msgstr "此模式下透视不可用(请切换到实体或线框着色模式)"
 
 
 msgid "Gizmos hidden in this view"
@@ -110297,10 +110390,6 @@ msgid "Modifier \"%s\" is not in the object's modifier list"
 msgstr "修改 \"%s\" 不在物体的修改器列表中"
 
 
-msgid "VertexGroups.new(): is not supported for '%s' objects"
-msgstr "VertexGroups.new(): 不支持 '%s' 物体"
-
-
 msgid "DeformGroup '%s' not in object '%s'"
 msgstr "形变组 '%s' 未存在于物体 '%s' 中"
 
@@ -111454,7 +111543,7 @@ msgstr "场景中没有节点树"
 
 
 msgid "No render output node in scene"
-msgstr "场景中没有渲染输出节点"
+msgstr "场景中没有渲染输出节点(解决方法:1.取消勾选合成器的使用节点 2.在合成器里添加一个输出节点)"
 
 
 msgid "Full sample AA not supported without 3D rendering"
@@ -111462,7 +111551,7 @@ msgstr "完整采样抗锯齿不支持非 3D 渲染"
 
 
 msgid "All render layers are disabled"
-msgstr "所有渲染层被禁用"
+msgstr "所有渲染层被禁用(解决方法 视图层属性 » 视图层 » 勾选用于渲染或渲染单个层)"
 
 
 msgid "No frames rendered, skipped to not overwrite"

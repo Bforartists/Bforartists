@@ -332,6 +332,7 @@ class VIEW3D_PT_vr_session(Panel):
         layout.separator()
 
         layout.prop(session_settings, "use_positional_tracking")
+        layout.prop(session_settings, "use_absolute_tracking")
 
 
 class VIEW3D_PT_vr_info(bpy.types.Panel):

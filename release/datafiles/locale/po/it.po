@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -8401,6 +8401,94 @@ msgid "Save"
 msgstr "Salva"
 
 
+msgid "Brush"
+msgstr "Pennello"
+
+
+msgid "Font"
+msgstr "Carattere"
+
+
+msgid "Collection"
+msgstr "Raccolta"
+
+
+msgid "Key"
+msgstr "Chiave"
+
+
+msgid "Light"
+msgstr "Luce"
+
+
+msgid "Library"
+msgstr "Libreria"
+
+
+msgid "Line Style"
+msgstr "Stile Linea"
+
+
+msgid "Lattice"
+msgstr "Lattice"
+
+
+msgid "Mask"
+msgstr "Maschera"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Mesh"
+msgstr "Mesh"
+
+
+msgid "Node Tree"
+msgstr "Albero Nodi"
+
+
+msgid "Paint Curve"
+msgstr "Dipingi Curva"
+
+
+msgid "Palette"
+msgstr "Tavolozza"
+
+
+msgid "Particle"
+msgstr "Particella"
+
+
+msgid "Simulation"
+msgstr "Simulazione"
+
+
+msgid "Sound"
+msgstr "Suono"
+
+
+msgid "Speaker"
+msgstr "Altoparlante"
+
+
+msgid "Text"
+msgstr "Testo"
+
+
+msgid "Hair"
+msgstr "Capelli"
+
+
+msgid "Window Manager"
+msgstr "Gestore Finestra"
+
+
+msgid "World"
+msgstr "Mondo"
+
+
 msgid "Icon ID"
 msgstr "ID Icona"
 
@@ -9121,10 +9209,6 @@ msgid "Freestyle Line Set"
 msgstr "Gruppi Linee Freestyle"
 
 
-msgid "Collection"
-msgstr "Raccolta"
-
-
 msgid "Inclusive"
 msgstr "Inclusivo"
 
@@ -9187,10 +9271,6 @@ msgstr "Entrambe le Facce"
 
 msgid "Face Mark Negation"
 msgstr "Negazione Marcatura Faccia"
-
-
-msgid "Line Style"
-msgstr "Stile Linea"
 
 
 msgid "Line style settings"
@@ -9753,10 +9833,6 @@ msgid "Hook"
 msgstr "Gancio"
 
 
-msgid "Lattice"
-msgstr "Lattice"
-
-
 msgid "Time Offset"
 msgstr "Scostamento Tempo"
 
@@ -10123,10 +10199,6 @@ msgid "Is Indirect"
 msgstr "È Indiretto"
 
 
-msgid "Library"
-msgstr "Libreria"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "File di libreria a cui il blocco-dati è collegato"
 
@@ -10484,16 +10556,8 @@ msgid "Soften"
 msgstr "Ammorbidisci"
 
 
-msgid "Mask"
-msgstr "Maschera"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Rende tremolante la posizione del pennello mentre si dipinge"
-
-
-msgid "Brush"
-msgstr "Pennello"
 
 
 msgid "Mask Texture"
@@ -10510,10 +10574,6 @@ msgstr "Strumenti Maschera"
 
 msgid "Normal Weight"
 msgstr "Peso Normale"
-
-
-msgid "Paint Curve"
-msgstr "Dipingi Curva"
 
 
 msgid "Plane Offset"
@@ -11412,10 +11472,6 @@ msgid "Curve deforming text object"
 msgstr "Curva che deforma l'oggetto testo"
 
 
-msgid "Font"
-msgstr "Carattere"
-
-
 msgid "Font Bold"
 msgstr "Grassetto"
 
@@ -11654,10 +11710,6 @@ msgstr "Max Lunghezza 2D"
 
 msgid "Min 2D Length"
 msgstr "Min Lunghezza 2D"
-
-
-msgid "Node Tree"
-msgstr "Albero Nodi"
 
 
 msgid "Node tree for node-based shaders"
@@ -12620,10 +12672,6 @@ msgstr "Piano XY"
 
 msgid "Cube"
 msgstr "Cubo"
-
-
-msgid "Hair"
-msgstr "Capelli"
 
 
 msgid "Hair strands"
@@ -14089,10 +14137,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "Lascia che l'oggetto dia una velocità iniziale alla particella"
 
 
-msgid "Particle"
-msgstr "Particella"
-
-
 msgid "The size of the particles"
 msgstr "Dimensione delle particelle"
 
@@ -14709,10 +14753,6 @@ msgid "View Settings"
 msgstr "Impostazioni Vista"
 
 
-msgid "World"
-msgstr "Mondo"
-
-
 msgid "World used for rendering the scene"
 msgstr "Mondo usato per renderizzare la scena"
 
@@ -14837,10 +14877,6 @@ msgstr "Timbro"
 
 msgid "Playback pitch of the sound"
 msgstr "Timbro di riproduzione del suono"
-
-
-msgid "Sound"
-msgstr "Suono"
 
 
 msgid "Sound data-block used by this speaker"
@@ -15843,10 +15879,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "Numero di fotogrammi di compensazione da usare nell'animazione"
 
 
-msgid "Window Manager"
-msgstr "Gestore Finestra"
-
-
 msgid "Category"
 msgstr "Categoria"
 
@@ -16005,10 +16037,6 @@ msgstr "Massimo numero di iterazioni per la convergenza in caso di reiterazione"
 
 msgid "Animation"
 msgstr "Animazione"
-
-
-msgid "Simulation"
-msgstr "Simulazione"
 
 
 msgid "Reiteration"
@@ -18384,10 +18412,6 @@ msgid "Channel"
 msgstr "Canale"
 
 
-msgid "Key"
-msgstr "Chiave"
-
-
 msgid "Snap"
 msgstr "Snap"
 
@@ -18457,10 +18481,6 @@ msgid "Attribute"
 msgstr "Attributo"
 
 
-msgid "Mesh"
-msgstr "Mesh"
-
-
 msgid "Node"
 msgstr "Nodo"
 
@@ -18521,10 +18541,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Testo"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -18571,6 +18587,10 @@ msgstr "Recupera"
 
 msgid "Help"
 msgstr "Aiuto"
+
+
+msgid "List Item"
+msgstr "Lista Elementi"
 
 
 msgid "Presets"
@@ -18649,20 +18669,12 @@ msgid "Select Similar"
 msgstr "Seleziona Simili"
 
 
-msgid "Metaball"
-msgstr "Metaball"
-
-
 msgid "Hooks"
 msgstr "Ganci"
 
 
 msgid "Add Image"
 msgstr "Aggiungi Immagine"
-
-
-msgid "Light"
-msgstr "Luce"
 
 
 msgid "Make Single User"
@@ -35589,11 +35601,6 @@ msgstr "Crea una copia del gruppo vertici attivo"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Copia Gruppi Vertici a Collegati"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Copia Gruppo Vertici a Selezionato"
 
@@ -36719,10 +36726,6 @@ msgid "Remove active color from palette"
 msgstr "Rimuove un colore dalla tavolozza attiva"
 
 
-msgid "Palette"
-msgstr "Tavolozza"
-
-
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "Aggiungi Nuova Tavolozza"
@@ -36992,6 +36995,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Sfoglia interattivamente le pose nella vista 3D"
 
 
+msgid "Pose Name"
+msgstr "Nome Posa"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Nuova Libreria Posa"
@@ -37012,10 +37019,6 @@ msgstr "Agg. la posa corrente alla Libreria Posa attiva"
 
 msgid "Frame to store pose on"
 msgstr "Fotogramma nel quale mettere la posa"
-
-
-msgid "Pose Name"
-msgstr "Nome Posa"
 
 
 msgid "Name of newly added Pose"
@@ -43591,10 +43594,6 @@ msgstr "Ombreggiato"
 
 msgid "Styles"
 msgstr "Stili"
-
-
-msgid "List Item"
-msgstr "Lista Elementi"
 
 
 msgid "Menu"
@@ -50422,10 +50421,6 @@ msgstr "Mostra il percorso camera ricostruito"
 
 msgid "Show Camera Focus Distance"
 msgstr "Mostra Distanza Focale Camera"
-
-
-msgid "Speaker"
-msgstr "Altoparlante"
 
 
 msgid "Show Reconstruction"
@@ -58281,14 +58276,6 @@ msgid "Reset Black/White point and curves"
 msgstr "Resetta i punti di Bianco/Nero e le curve"
 
 
-msgid "Double click to rename"
-msgstr "Doppio click per rinominare"
-
-
-msgid "Hide filtering options"
-msgstr "Nascondi opzioni di filtro"
-
-
 msgid "Stop this job"
 msgstr "Ferma questo lavoro"
 
@@ -59060,10 +59047,6 @@ msgstr "Il gruppo vertici è bloccato"
 
 msgid "%d vertex weights limited"
 msgstr "%d pesi vertice limitati"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Copia gruppi vertice al selezionato: %d fatti, %d falliti (i dati oggetto devono avere indici corrispondenti)"
 
 
 msgid "No frames to bake"

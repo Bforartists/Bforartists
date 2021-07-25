@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -3348,6 +3348,42 @@ msgid "Save"
 msgstr "Guardar"
 
 
+msgid "Light"
+msgstr "Dreta"
+
+
+msgid "Lattice"
+msgstr "Lattice"
+
+
+msgid "Metaball"
+msgstr "MetaBall"
+
+
+msgid "Mesh"
+msgstr "Malla"
+
+
+msgid "Node Tree"
+msgstr "Image Displist"
+
+
+msgid "Paint Curve"
+msgstr "Rotar"
+
+
+msgid "Simulation"
+msgstr "Finestra de Render"
+
+
+msgid "Text"
+msgstr "Texte"
+
+
+msgid "Window Manager"
+msgstr "Duplicar"
+
+
 msgid "Fonts"
 msgstr "Duplicar"
 
@@ -3836,10 +3872,6 @@ msgid "Vertex Weight"
 msgstr "Dreta"
 
 
-msgid "Lattice"
-msgstr "Lattice"
-
-
 msgid "Time Offset"
 msgstr "Joc"
 
@@ -4190,10 +4222,6 @@ msgstr "Eines"
 
 msgid "Normal Weight"
 msgstr "Dreta"
-
-
-msgid "Paint Curve"
-msgstr "Rotar"
 
 
 msgid "Plane Offset"
@@ -4714,10 +4742,6 @@ msgstr "Canviar Str"
 
 msgid "Index of active texture slot"
 msgstr "Seleccionar connectats"
-
-
-msgid "Node Tree"
-msgstr "Image Displist"
 
 
 msgid "Use Nodes"
@@ -6734,10 +6758,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "Seleccionar connectats"
 
 
-msgid "Window Manager"
-msgstr "Duplicar"
-
-
 msgid "Search within the selected filter"
 msgstr "Amagar Seleccionats"
 
@@ -6807,10 +6827,6 @@ msgstr "Esborrar Origen"
 
 
 msgid "Animation"
-msgstr "Finestra de Render"
-
-
-msgid "Simulation"
 msgstr "Finestra de Render"
 
 
@@ -7304,10 +7320,6 @@ msgid "Matte"
 msgstr "Esborrar Rotació"
 
 
-msgid "Mesh"
-msgstr "Malla"
-
-
 msgid "Node"
 msgstr "Image Displist"
 
@@ -7338,10 +7350,6 @@ msgstr "Texte"
 
 msgid "Templates"
 msgstr "Moure a Capa"
-
-
-msgid "Text"
-msgstr "Texte"
 
 
 msgid "System"
@@ -7382,14 +7390,6 @@ msgstr "Calcular Normals"
 
 msgid "Mesh Select Mode"
 msgstr "Seleccionar fila"
-
-
-msgid "Metaball"
-msgstr "MetaBall"
-
-
-msgid "Light"
-msgstr "Dreta"
 
 
 msgid "Quick Effects"
@@ -16201,11 +16201,6 @@ msgstr "Pintura Vectorial"
 
 msgid "Make a copy of the active vertex group"
 msgstr "Seleccionar fila"
-
-
-msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Pintura Vectorial"
 
 
 msgctxt "Operator"

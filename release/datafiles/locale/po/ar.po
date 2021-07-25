@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -7485,6 +7485,90 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "ﻡﺎﻈﻨﻟﺍ ﻦﻣ ﺓﺪﻟﻮﺘﻤﻟﺍ ﻭﺍ ﻦﻳﻭﺎﻨﻌﻟﺍ ﻲﻓ ﻅﻮﻔﺤﻣ ﺭﺎﺴﻤﻟﺍ ﺍﺬﻫ ﻥﺎﻛ ﺎﻣ ﺍﺫﺍ"
 
 
+msgid "Brush"
+msgstr "ﺓﺎﺷﺮﻓ"
+
+
+msgid "Font"
+msgstr "ﻂﺨﻟﺍ"
+
+
+msgid "Key"
+msgstr "ﺡﺎﺘﻔﻣ"
+
+
+msgid "Light"
+msgstr "ءﻮﺿ"
+
+
+msgid "Library"
+msgstr "ﺔﺒﺘﻜﻣ"
+
+
+msgid "Line Style"
+msgstr "ﻂﺨﻟﺍ ﻂﻤﻧ"
+
+
+msgid "Lattice"
+msgstr "ﺔﻜﺒﺷ"
+
+
+msgid "Mask"
+msgstr "ءﺎﻄﻏ"
+
+
+msgid "Metaball"
+msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
+
+
+msgid "Mesh"
+msgstr "ﻢﺴﺠﻣ"
+
+
+msgid "Node Tree"
+msgstr "ﺓﺪﻘﻌﻟﺍ ﺓﺮﺠﺷ"
+
+
+msgid "Paint Curve"
+msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﻢﺳﺭﺍ"
+
+
+msgid "Palette"
+msgstr "ﻥﺍﻮﻟﻻ﻿ﺍ ﺡﻮﻟ"
+
+
+msgid "Particle"
+msgstr "ءﻱﺰﺟ"
+
+
+msgid "Simulation"
+msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ"
+
+
+msgid "Sound"
+msgstr "ﺕﻮﺻ"
+
+
+msgid "Speaker"
+msgstr "ﺕﻮﺻ ﺮﺒﻜﻣ"
+
+
+msgid "Text"
+msgstr "ﺺﻧ"
+
+
+msgid "Hair"
+msgstr "ﺮﻌﺷ"
+
+
+msgid "Window Manager"
+msgstr "ﺬﻓﺍﻮﻧ ﺮﻳﺪﻣ"
+
+
+msgid "World"
+msgstr "ﻢﻟﺎﻌﻟﺍ"
+
+
 msgid "Animations"
 msgstr "ﺕﺎﻜﻳﺮﺤﺘﻟﺍ"
 
@@ -8189,10 +8273,6 @@ msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "ﻩﺎﻄﻌﻤﻟﺍ ﻪﺟﻮﻟﺍ ﺔﻣﻼ﻿ﻋ ﻁﻭﺮﺸﻟ ﺔﻴﻓﺍﻭ ﺮﻴﻐﻟﺍ ﺔﻴﺴﻴﺋﺮﻟﺍ ﻑﺍﻮﺤﻟﺍ ﺮﺘﺧﺍ"
 
 
-msgid "Line Style"
-msgstr "ﻂﺨﻟﺍ ﻂﻤﻧ"
-
-
 msgid "Line style settings"
 msgstr "ﻂﺨﻟﺍ ﻂﻤﻧ ﺕﺍﺩﺍﺪﻋﺇ"
 
@@ -8797,10 +8877,6 @@ msgid "Hook"
 msgstr "ﻑﺎﻄﺨﻟﺍ"
 
 
-msgid "Lattice"
-msgstr "ﺔﻜﺒﺷ"
-
-
 msgid "Time Offset"
 msgstr "ﺖﻗﻮﻟﺍ ﺔﺣﺍﺯﺍ"
 
@@ -9061,10 +9137,6 @@ msgstr "ﺮﺷﺎﺒﻣ ﺮﻴﻏ ﻮﻫ"
 
 msgid "Is this ID block linked indirectly"
 msgstr "ﻁﺎﺒﺗﺭﻻ﻿ﺍ ﺓﺮﺷﺎﺒﻣ ﺮﻴﻏ ﻩﺬﻫ ﻑﺮّﻌﻤﻟﺍ ﺔﻠﺘﻛ ﻞﻫ"
-
-
-msgid "Library"
-msgstr "ﺔﺒﺘﻜﻣ"
 
 
 msgid "Unique data-block ID name"
@@ -9435,20 +9507,12 @@ msgid "Soften"
 msgstr "ﻒﻄّﻟ"
 
 
-msgid "Mask"
-msgstr "ءﺎﻄﻏ"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "ﻢﺳﺮﻟﺍ ﺪﻨﻋ ﺓﺎﺷﺮﻔﻠﻟ ﻲﺋﺍﻮﺸﻋ ﻊﻗﻮﻣ"
 
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "ﻢﺳﺮﻟﺍ ﺪﻨﻋ ﺓﺎﺷﺮﻔﻠﻟ ﻂﻘﻨﻟﺍ ﺐﺴﺤﺑ ﻲﺋﺍﻮﺸﻋ ﻊﻗﻮﻣ"
-
-
-msgid "Brush"
-msgstr "ﺓﺎﺷﺮﻓ"
 
 
 msgid "Mask Stencil Dimensions"
@@ -9485,10 +9549,6 @@ msgstr "ﻢﻇﺎﻨﻟﺍ ﻉﺎﻔﺗﺭﺍ"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "ﺔﺒﺤﺴﻟﺍ ﻝﻼ﻿ﺧ ﺢﻄﺴﻟﺍ ﻦﻣ ﻂﻘﻨﻠﻟ ﺐﺤﺴﻟﺍ ﺔﻴﻤﻛ ﻢﻛ"
-
-
-msgid "Paint Curve"
-msgstr "ﻰﻨﺤﻨﻤﻟﺍ ﻢﺳﺭﺍ"
 
 
 msgid "Plane Offset"
@@ -10483,10 +10543,6 @@ msgid "Curve deforming text object"
 msgstr "ﺺﻨﻟﺍ ﻦﺋﺎﻜﻟ ﻉﻮّﻄﻤﻟﺍ ﻰﻨﺤﻨﻤﻟﺍ"
 
 
-msgid "Font"
-msgstr "ﻂﺨﻟﺍ"
-
-
 msgid "Font Bold"
 msgstr "ﻚﻴﻤﺳ ﻂﺧ"
 
@@ -10821,10 +10877,6 @@ msgstr "ﺕﺎﻌﺑﺎﺘﺘﻟﺍ ﺭﺎﻴﺘﺧﻹ﻿ ﻲﻄﺨﻟﺍ ﻰﻨ
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "ﺔﻣﺎﺨﻟﺍ ﺩﻭﺪﺣ ﺪﻨﻋ ﺔﻴﺴﻴﺋﺮﻟﺍ ﻑﺍﻮﺤﻟﺍ ﻂﻘﻓ ﻞﺼﻔﺗ ,ﺢﻴﺤﺻ ﺍﺫﺍ"
-
-
-msgid "Node Tree"
-msgstr "ﺓﺪﻘﻌﻟﺍ ﺓﺮﺠﺷ"
 
 
 msgid "Node tree for node-based shaders"
@@ -11857,10 +11909,6 @@ msgstr "ﻂﻴﺴﺑ XY ﺢﻄﺴﻣ"
 
 msgid "Cube"
 msgstr "ﺐﻌﻜﻣ"
-
-
-msgid "Hair"
-msgstr "ﺮﻌﺷ"
 
 
 msgid "Hair strands"
@@ -13371,10 +13419,6 @@ msgid "Object Aligned"
 msgstr "ﻯﺫﺎﺤﻣ ﻦﺋﺎﻜﻟﺍ"
 
 
-msgid "Particle"
-msgstr "ءﻱﺰﺟ"
-
-
 msgid "The size of the particles"
 msgstr "ﺕﺎﺌﻳﺰﺠﻟﺍ ﻢﺠﺣ"
 
@@ -14071,10 +14115,6 @@ msgid "Color management settings applied on image before saving"
 msgstr "ﻆﻔﺤﻟﺍ ﻞﺒﻗ ﺓﺭﻮﺼﻟﺍ ﻰﻠﻋ ﺔﻘﺒﻄﻤﻟﺍ ﻥﻮﻠﻟﺍ ﺓﺭﺍﺩﺇ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
-msgid "World"
-msgstr "ﻢﻟﺎﻌﻟﺍ"
-
-
 msgid "World used for rendering the scene"
 msgstr "ﺪﻬﺸﻤﻟﺍ ﺮﻴﻴﺼﺘﻟ ﻡﺪﺨﺘﺴﻤﻟﺍ ﻢﻟﺎﻌﻟﺍ"
 
@@ -14195,10 +14235,6 @@ msgstr "ﺓﺮﺒﻨﻟﺍ"
 
 msgid "Playback pitch of the sound"
 msgstr "ﺕﻮﺼﻠﻟ ﺽﺮﻌﻟﺍ ﺔﻤﻐﻧ"
-
-
-msgid "Sound"
-msgstr "ﺕﻮﺻ"
 
 
 msgid "How loud the sound is"
@@ -15225,10 +15261,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "ﺔﻛﺮﺤﻟﺍ ﻲﻓ  ﻡﺍﺪﺨﺘﺳﻺ﻿ﻟ ﺭﺎﻃﻻ﻿ﺍ ﻢﻗﺭ ﺡﺯﺍ"
 
 
-msgid "Window Manager"
-msgstr "ﺬﻓﺍﻮﻧ ﺮﻳﺪﻣ"
-
-
 msgid "Category"
 msgstr "ﺔﺌﻔﻟﺍ"
 
@@ -15383,10 +15415,6 @@ msgstr "ﺔﻛﺮﺣ"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "non-ik ﺩﻮﻴﻗ ﻭ ﻲﻟﺎﺤﻟﺍ ﺙﺪﺤﻟﺍ ﻦﻣ ﺔﻳﺍﺪﺑ ﺔﻔﻗﻮﻟﺍ ﺐﺴﺤﻳ ﻱﺬﻟﺍ ﻭ ﺔﻟﺎﺤﻟﺍ ﻡﺪﻌﻣ ﺞﻟﺎﻌﻣ"
-
-
-msgid "Simulation"
-msgstr "ﺓﺎﻛﺎﺤﻤﻟﺍ"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -17166,10 +17194,6 @@ msgid "Channel"
 msgstr "ﺓﺎﻨﻗ"
 
 
-msgid "Key"
-msgstr "ﺡﺎﺘﻔﻣ"
-
-
 msgid "Snap"
 msgstr "ﻱﺫﺎﺣ"
 
@@ -17235,10 +17259,6 @@ msgid "Attribute"
 msgstr "ﺔﻤﺳ"
 
 
-msgid "Mesh"
-msgstr "ﻢﺴﺠﻣ"
-
-
 msgid "Node"
 msgstr "ﺓﺪﻘﻋ"
 
@@ -17281,10 +17301,6 @@ msgstr "ﺔﺣﻮﺘﻔﻤﻟﺍ ﻞﻴﻠﻈﺘﻟﺍ ﺔﻐﻟ"
 
 msgid "Python"
 msgstr "ﻥﻮﺜﻳﺎﺑ"
-
-
-msgid "Text"
-msgstr "ﺺﻧ"
 
 
 msgid "System"
@@ -17355,16 +17371,8 @@ msgid "Select Similar"
 msgstr "ﻞﺛﺎﻤﻤﻟﺍ ﺮﺘﺧﺇ"
 
 
-msgid "Metaball"
-msgstr "ﺔﻠﻋﺎﻔﺘﻣ ﺓﺮﻛ"
-
-
 msgid "Hooks"
 msgstr "ﺕﺎﻓﺎﻄﺧ"
-
-
-msgid "Light"
-msgstr "ءﻮﺿ"
 
 
 msgid "Make Single User"
@@ -27319,11 +27327,6 @@ msgstr "ﺔﻟﺎﻌﻔﻟﺍ ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺦﺴﻧﺍ"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "ﺔﻄﺒﺗﺮﻤﻠﻟ ﻂﻘﻨﻟﺍ ﺕﺎﻋﻮﻤﺠﻣ ﺦﺴﻧﺍ"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "ﺓﺭﺎﺘﺨﻤﻠﻟ ﻂﻘﻨﻟﺍ ﺔﻋﻮﻤﺠﻣ ﺦﺴﻧﺍ"
 
@@ -27890,10 +27893,6 @@ msgstr "ﻥﺯﻮﻟﺍ ﻢﺳﺭ ﺕﺎﻨﻴﻋ ﺔﻋﻮﻤﺠﻣ "
 msgctxt "Operator"
 msgid "Set Weight"
 msgstr "ﻥﺯﻮﻟﺍ ﺩﺪّﺣ"
-
-
-msgid "Palette"
-msgstr "ﻥﺍﻮﻟﻻ﻿ﺍ ﺡﻮﻟ"
 
 
 msgctxt "Operator"
@@ -35698,10 +35697,6 @@ msgstr "ﺎﻫﺅﺎﻨﺑ ﺩﺎﻌﻤﻟﺍ ﺕﺍﺭﺎﺴﻤﻟﺍ ﺕﺎﻨ
 
 msgid "Show reconstructed camera path"
 msgstr "ﻩﺅﺎﻨﺑ ﺩﺎﻌﻤﻟﺍ ﺍﺮﻴﻣﺎﻜﻟﺍ ﺭﺎﺴﻣ ﺮﻬﻇﺇ"
-
-
-msgid "Speaker"
-msgstr "ﺕﻮﺻ ﺮﺒﻜﻣ"
 
 
 msgid "Show Reconstruction"
