@@ -39,7 +39,9 @@ NORMAL_PRIORITY_CLASS = 0x00000020
 REALTIME_PRIORITY_CLASS = 0x00000100
 
 supported_material_click = ('MESH', 'CURVE', 'META', 'FONT', 'SURFACE', 'VOLUME', 'GPENCIL')
-supported_material_drag = ('MESH', 'CURVE', 'META', 'FONT','SURFACE', 'VOLUME', 'GPENCIL')
+supported_material_drag = ('MESH', 'CURVE', 'META', 'FONT', 'SURFACE', 'VOLUME', 'GPENCIL')
+
+
 # supported_material_drag = ('MESH')
 
 
@@ -185,8 +187,8 @@ def get_search_props():
     return props
 
 
-def get_active_asset_by_type(asset_type = 'model'):
-    asset_type =asset_type.lower()
+def get_active_asset_by_type(asset_type='model'):
+    asset_type = asset_type.lower()
     if asset_type == 'model':
         if bpy.context.view_layer.objects.active is not None:
             ob = get_active_model()
@@ -205,6 +207,7 @@ def get_active_asset_by_type(asset_type = 'model'):
         if b is not None:
             return b
     return None
+
 
 def get_active_asset():
     scene = bpy.context.scene
@@ -341,8 +344,8 @@ def get_hidden_texture(name, force_reload=False):
     return t
 
 
-def img_to_preview(img, copy_original = False):
-    if bpy.app.version[0]>=3:
+def img_to_preview(img, copy_original=False):
+    if bpy.app.version[0] >= 3:
         img.preview_ensure()
     if not copy_original:
         return;
@@ -351,6 +354,7 @@ def img_to_preview(img, copy_original = False):
         img.preview.image_pixels_float = img.pixels[:]
     # img.preview.icon_size = (img.size[0], img.size[1])
     # img.preview.icon_pixels_float = img.pixels[:]
+
 
 def get_hidden_image(tpath, bdata_name, force_reload=False, colorspace='sRGB'):
     if bdata_name[0] == '.':
@@ -709,11 +713,13 @@ def name_update(props):
         # Here we actually rename assets datablocks, but don't do that with HDR's and possibly with others
         asset.name = fname
 
+
 def fmt_length(prop):
     prop = str(round(prop, 2))
     return prop
 
-def get_param(asset_data, parameter_name, default = None):
+
+def get_param(asset_data, parameter_name, default=None):
     if not asset_data.get('parameters'):
         # this can appear in older version files.
         return default
@@ -793,6 +799,7 @@ def profile_is_validator():
         return True
     return False
 
+
 def user_is_owner(asset_data=None):
     '''Checks if the current logged in user is owner of the asset'''
     profile = bpy.context.window_manager.get('bkit profile')
@@ -801,6 +808,15 @@ def user_is_owner(asset_data=None):
     if int(asset_data['author']['id']) == int(profile['user']['id']):
         return True
     return False
+
+
+def asset_from_newer_blender_version(asset_data):
+    bver = bpy.app.version
+    aver = asset_data['sourceAppVersion'].split('.')
+    print(aver,bver)
+    bver_f = bver[0] + bver[1] * .01 + bver[2] * .0001
+    aver_f = int(aver[0]) + int(aver[1]) * .01 + int(aver[2]) * .0001
+    return aver_f>bver_f
 
 def guard_from_crash():
     '''
@@ -861,10 +877,11 @@ def get_fake_context(context, area_type='VIEW_3D'):
         # print(w,a,r)
     return C_dict
 
+
 # def is_url(text):
 
 
-def label_multiline(layout, text='', icon='NONE', width=-1, max_lines = 10):
+def label_multiline(layout, text='', icon='NONE', width=-1, max_lines=10):
     '''
      draw a ui label, but try to split it in multiple lines.
 
@@ -882,7 +899,7 @@ def label_multiline(layout, text='', icon='NONE', width=-1, max_lines = 10):
     '''
     if text.strip() == '':
         return
-    text = text.replace('\r\n','\n')
+    text = text.replace('\r\n', '\n')
     lines = text.split('\n')
     if width > 0:
         threshold = int(width / 5.5)
@@ -891,7 +908,7 @@ def label_multiline(layout, text='', icon='NONE', width=-1, max_lines = 10):
     li = 0
     for l in lines:
         # if is_url(l):
-        li+=1
+        li += 1
         while len(l) > threshold:
             i = l.rfind(' ', 0, threshold)
             if i < 1:
@@ -907,9 +924,8 @@ def label_multiline(layout, text='', icon='NONE', width=-1, max_lines = 10):
             break;
         layout.label(text=l, icon=icon)
         icon = 'NONE'
-    if li>max_lines:
+    if li > max_lines:
         return True
-
 
 
 def trace():

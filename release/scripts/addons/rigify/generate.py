@@ -29,6 +29,7 @@ from .utils.layers import ORG_LAYER, MCH_LAYER, DEF_LAYER, ROOT_LAYER
 from .utils.naming import ORG_PREFIX, MCH_PREFIX, DEF_PREFIX, ROOT_NAME, make_original_name
 from .utils.widgets import WGT_PREFIX
 from .utils.widgets_special import create_root_widget
+from .utils.mechanism import refresh_all_drivers
 from .utils.misc import gamma_correct, select_object
 from .utils.collections import ensure_widget_collection, list_layer_collections, filter_layer_collections_by_object
 from .utils.rig import get_rigify_type
@@ -539,6 +540,9 @@ class Generator(base_generate.BaseGenerator):
                 mat = child.matrix_world.copy()
                 child.parent_bone = sub_parent
                 child.matrix_world = mat
+
+        # Clear any transient errors in drivers
+        refresh_all_drivers()
 
         #----------------------------------
         # Restore active collection

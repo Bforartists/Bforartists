@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-07-12 15:51+0700\n"
@@ -7319,6 +7319,62 @@ msgid "Save"
 msgstr "Simpan"
 
 
+msgid "Brush"
+msgstr "Kuas"
+
+
+msgid "Font"
+msgstr "Font"
+
+
+msgid "Collection"
+msgstr "Koleksi"
+
+
+msgid "Key"
+msgstr "Kunci"
+
+
+msgid "Light"
+msgstr "Cahaya"
+
+
+msgid "Library"
+msgstr "Perpustakaan"
+
+
+msgid "Line Style"
+msgstr "Gaya Garis"
+
+
+msgid "Node Tree"
+msgstr "Pohon Node"
+
+
+msgid "Paint Curve"
+msgstr "Kurva Cat"
+
+
+msgid "Palette"
+msgstr "Palet"
+
+
+msgid "Simulation"
+msgstr "Simulasi"
+
+
+msgid "Sound"
+msgstr "Suara"
+
+
+msgid "Text"
+msgstr "Teks"
+
+
+msgid "Workspace"
+msgstr "Spasi kerja"
+
+
 msgid "Icon ID"
 msgstr "Ikon ID"
 
@@ -8123,10 +8179,6 @@ msgid "Amount of random velocity"
 msgstr "Jumlah kecepatan acak"
 
 
-msgid "Collection"
-msgstr "Koleksi"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "Koleksi objek berdasasrkan dengan tepi fitur yang terseleksi"
 
@@ -8209,10 +8261,6 @@ msgstr "Satu Wajah"
 
 msgid "Both Faces"
 msgstr "Kedua Wajah"
-
-
-msgid "Line Style"
-msgstr "Gaya Garis"
 
 
 msgid "Line style settings"
@@ -9051,10 +9099,6 @@ msgid "Is Indirect"
 msgstr "Orientasi Transformasi"
 
 
-msgid "Library"
-msgstr "Perpustakaan"
-
-
 msgid "Full Name"
 msgstr "Nama Penuh"
 
@@ -9260,10 +9304,6 @@ msgid "Image Paint Tool"
 msgstr "Penyunting Gambar"
 
 
-msgid "Brush"
-msgstr "Kuas"
-
-
 msgid "Mask Texture"
 msgstr "Masker Tekstur"
 
@@ -9278,10 +9318,6 @@ msgstr "Grup"
 
 msgid "Normal Radius"
 msgstr "Radius Biasa"
-
-
-msgid "Paint Curve"
-msgstr "Kurva Cat"
 
 
 msgid "Active paint curve"
@@ -9532,10 +9568,6 @@ msgid "Text on Curve"
 msgstr "Tekstur"
 
 
-msgid "Font"
-msgstr "Font"
-
-
 msgid "Font Bold"
 msgstr "Font Bold"
 
@@ -9666,10 +9698,6 @@ msgstr "Panjang 2D Maks"
 
 msgid "Min 2D Length"
 msgstr "Panjang 2D Min"
-
-
-msgid "Node Tree"
-msgstr "Pohon Node"
 
 
 msgid "Panel"
@@ -10336,10 +10364,6 @@ msgid "Attenuation"
 msgstr "Atenuasi"
 
 
-msgid "Sound"
-msgstr "Suara"
-
-
 msgid "Filename of the text file"
 msgstr "Tidak dapat membuka dokumen"
 
@@ -10552,10 +10576,6 @@ msgid "XR Session State"
 msgstr "Keadaan Sesi XR"
 
 
-msgid "Workspace"
-msgstr "Spasi kerja"
-
-
 msgid "Workspace data-block, defining the working environment for the user"
 msgstr "Data-blok spasi kerja, mendefinisikan lingkungan kerja untuk pengguna"
 
@@ -10618,10 +10638,6 @@ msgstr "Umpan balik"
 
 msgid "Animation"
 msgstr "Animasi"
-
-
-msgid "Simulation"
-msgstr "Simulasi"
 
 
 msgid "Reiteration"
@@ -11763,10 +11779,6 @@ msgid "Channel"
 msgstr "Saluran"
 
 
-msgid "Key"
-msgstr "Kunci"
-
-
 msgid "Snap"
 msgstr "Jepret"
 
@@ -11936,10 +11948,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Teks"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -11980,6 +11988,10 @@ msgid "Help"
 msgstr "Bantuan"
 
 
+msgid "List Item"
+msgstr "Daftar Item"
+
+
 msgid "Presets"
 msgstr "Preset"
 
@@ -12018,10 +12030,6 @@ msgstr "Kait"
 
 msgid "Add Image"
 msgstr "Tambah Gambar"
-
-
-msgid "Light"
-msgstr "Cahaya"
 
 
 msgid "Apply"
@@ -17534,11 +17542,6 @@ msgstr "Warna Standar"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Warna Standar"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Warna Standar"
 
@@ -17941,10 +17944,6 @@ msgstr "Modus Pahat"
 msgctxt "Operator"
 msgid "Set Weight"
 msgstr "Orientasi Transformasi"
-
-
-msgid "Palette"
-msgstr "Palet"
 
 
 msgid "Name of the Palette"
@@ -20027,10 +20026,6 @@ msgstr "Koleksi Warna"
 
 msgid "Icon Colors"
 msgstr "Warna Icon"
-
-
-msgid "List Item"
-msgstr "Daftar Item"
 
 
 msgid "Menu"
@@ -22966,10 +22961,6 @@ msgstr "Ukuran Panah"
 
 msgid "%s ▶ %s"
 msgstr "%s ▶ %s"
-
-
-msgid "Name Collisions: {}, "
-msgstr "Nama tabrakan: {}, "
 
 
 msgctxt "Operator"

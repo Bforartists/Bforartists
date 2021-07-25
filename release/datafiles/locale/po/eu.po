@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -389,6 +389,22 @@ msgid "Save"
 msgstr "Gorde"
 
 
+msgid "Sound"
+msgstr "Soinua"
+
+
+msgid "Speaker"
+msgstr "Bozgorailua"
+
+
+msgid "Text"
+msgstr "Testua"
+
+
+msgid "World"
+msgstr "Mundua"
+
+
 msgid "Environment"
 msgstr "Ingurunea"
 
@@ -483,14 +499,6 @@ msgid "Angular Velocity"
 msgstr "Abiadura-angeluarra"
 
 
-msgid "World"
-msgstr "Mundua"
-
-
-msgid "Sound"
-msgstr "Soinua"
-
-
 msgid "Image Texture"
 msgstr "Irudiaren ehundura"
 
@@ -574,10 +582,6 @@ msgstr "Aurpegiak erakutsi/ezkutatu"
 
 msgid "Edit"
 msgstr "Editatu"
-
-
-msgid "Text"
-msgstr "Testua"
 
 
 msgid "File"
@@ -1797,10 +1801,6 @@ msgstr "Blender Fitxategia"
 
 msgid "Sort Alphabetically"
 msgstr "Alfabetikoki Ordenatu"
-
-
-msgid "Speaker"
-msgstr "Bozgorailua"
 
 
 msgid "3D"

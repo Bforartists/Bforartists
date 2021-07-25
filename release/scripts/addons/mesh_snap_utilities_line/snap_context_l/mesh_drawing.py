@@ -349,9 +349,13 @@ class GPU_Indices_Mesh():
 
             far_ += depth_offset
             near += depth_offset
-            fn = (far_ - near)
-            winmat[2][2] = -(far_ + near) / fn
-            winmat[2][3] = (-2 * far_ * near) / fn
+            range = (far_ - near)
+            if is_persp:
+                winmat[2][2] = -(far_ + near) / range
+                winmat[2][3] = (-2 * far_ * near) / range
+            else:
+                winmat[2][3] = -(far_ + near) / range
+
             gpu.matrix.load_projection_matrix(winmat)
 
         if self.draw_edges:

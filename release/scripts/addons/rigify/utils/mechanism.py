@@ -21,6 +21,8 @@
 import bpy
 import re
 
+from bpy.types import bpy_prop_collection, Material
+
 from rna_prop_ui import rna_idprop_ui_create, rna_idprop_ui_prop_get
 from rna_prop_ui import rna_idprop_quote_path as quote_property
 
@@ -516,6 +518,38 @@ def copy_custom_properties_with_ui(rig, src, dest_bone, *, ui_controls=None, **o
             panel.custom_prop(dest_bone, new_key, text=name, slider=slider)
 
     return mapping
+
+
+#=============================================
+# Driver management
+#=============================================
+
+def refresh_drivers(obj):
+    """Cause all drivers belonging to the object to be re-evaluated, clearing any errors."""
+
+    # Refresh object's own drivers if any
+    anim_data = getattr(obj, 'animation_data', None)
+
+    if anim_data:
+        for fcu in anim_data.drivers:
+            # Make a fake change to the driver
+            fcu.driver.type = fcu.driver.type
+
+    # Material node trees aren't in any lists
+    if isinstance(obj, Material):
+        refresh_drivers(obj.node_tree)
+
+
+def refresh_all_drivers():
+    """Cause all drivers in the file to be re-evaluated, clearing any errors."""
+
+    # Iterate over all datablocks in the file
+    for attr in dir(bpy.data):
+        coll = getattr(bpy.data, attr, None)
+
+        if isinstance(coll, bpy_prop_collection):
+            for item in coll:
+                refresh_drivers(item)
 
 
 #=============================================

@@ -19,7 +19,7 @@
 bl_info = {
     "name": "BlenderKit Online Asset Library",
     "author": "Vilem Duha, Petr Dlouhy",
-    "version": (2, 93, 0),
+    "version": (3, 0, 0),
     "blender": (2, 93, 0),
     "location": "View3D > Properties > BlenderKit",
     "description": "Online BlenderKit library (materials, models, brushes and more). Connects to the internet.",
@@ -141,8 +141,6 @@ from bpy.types import (
 
 @persistent
 def scene_load(context):
-    if not bpy.app.background:
-        search.load_previews()
     ui_props = bpy.context.scene.blenderkitUI
     ui_props.assetbar_on = False
     ui_props.turn_off = False
@@ -461,8 +459,8 @@ class BlenderKitCommonSearchProps(object):
                               default=False)
     own_only: BoolProperty(name="My Assets Only", description="Search only for your assets",
                            default=False, update=search.search_update)
-    search_advanced: BoolProperty(name="Advanced Search Options", description="use advanced search properties",
-                                  default=False, update=search.search_update)
+    use_filters: BoolProperty(name="Filters are on", description="some filters are used",
+                                  default=False)
 
     search_error: BoolProperty(name="Search Error", description="last search had an error", default=False)
     report: StringProperty(
@@ -571,6 +569,10 @@ class BlenderKitCommonSearchProps(object):
 
     unrated_only: BoolProperty(name="Unrated only", description="Show only unrated models",
                                default=False, update=search.search_update)
+    quality_limit: IntProperty(name="Quality limit",
+                               description = 'Only show assets with a higher quality',
+                               default=0, min=0, max=10, update=search.search_update)
+
 
 
 def name_update(self, context):

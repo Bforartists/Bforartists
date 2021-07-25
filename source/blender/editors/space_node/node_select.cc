@@ -1217,7 +1217,7 @@ static void node_find_create_label(const bNode *node, char *str, int maxlen)
   }
 }
 
-/* generic  search invoke */
+/* Generic search invoke. */
 static void node_find_update_fn(const struct bContext *C,
                                 void *UNUSED(arg),
                                 const char *str,

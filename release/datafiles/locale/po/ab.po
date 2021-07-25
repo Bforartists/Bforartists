@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "\"POT-Creation-Date: 2019-02-25 20:41:30\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -173,6 +173,34 @@ msgid "Cone"
 msgstr "Аконус"
 
 
+msgid "Light"
+msgstr "Алашара"
+
+
+msgid "Library"
+msgstr "Ашәҟәыԥхьарҭа"
+
+
+msgid "Lattice"
+msgstr "Аҭыџьеихац"
+
+
+msgid "Metaball"
+msgstr "Метампыл"
+
+
+msgid "Mesh"
+msgstr "Аҿарҧага"
+
+
+msgid "Speaker"
+msgstr "Абжьы Ахыҵхырҭа"
+
+
+msgid "Text"
+msgstr "Аҳәоу"
+
+
 msgid "End"
 msgstr "Алгара"
 
@@ -187,14 +215,6 @@ msgstr "Аԥенџьыр"
 
 msgid "Edit Mode"
 msgstr "Аиҭакра Аиҿкаашьа"
-
-
-msgid "Lattice"
-msgstr "Аҭыџьеихац"
-
-
-msgid "Library"
-msgstr "Ашәҟәыԥхьарҭа"
 
 
 msgid "Local"
@@ -264,28 +284,12 @@ msgid "Edit"
 msgstr "Аиҭакра"
 
 
-msgid "Mesh"
-msgstr "Аҿарҧага"
-
-
-msgid "Text"
-msgstr "Аҳәоу"
-
-
 msgid "File"
 msgstr "Ашәҟәы"
 
 
 msgid "Help"
 msgstr "Аилыркаа"
-
-
-msgid "Metaball"
-msgstr "Метампыл"
-
-
-msgid "Light"
-msgstr "Алашара"
 
 
 msgid "Intersect"
@@ -399,10 +403,6 @@ msgstr "Аҳәоу"
 msgctxt "MovieClip"
 msgid "View"
 msgstr "Аԥшра"
-
-
-msgid "Speaker"
-msgstr "Абжьы Ахыҵхырҭа"
 
 
 msgctxt "WindowManager"
