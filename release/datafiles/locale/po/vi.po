@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -11676,6 +11676,106 @@ msgid "Asset data, valid if the file represents an asset"
 msgstr "Dữ liệu tích sản, hợp lệ nếu tệp là một tích sản"
 
 
+msgid "Brush"
+msgstr "Bút"
+
+
+msgid "Font"
+msgstr "Phông"
+
+
+msgid "Collection"
+msgstr "Sưu Tập"
+
+
+msgid "Key"
+msgstr "Bức Mẫu"
+
+
+msgid "Light"
+msgstr "Nhẹ"
+
+
+msgid "Library"
+msgstr "Thư Viện"
+
+
+msgid "Line Style"
+msgstr "Phong Cách Đường"
+
+
+msgid "Lattice"
+msgstr "Lưới Rào"
+
+
+msgid "Mask"
+msgstr "Mặt Nạ"
+
+
+msgid "Metaball"
+msgstr "Siêu Cầu"
+
+
+msgid "Mesh"
+msgstr "Mạng Lưới"
+
+
+msgid "Node Tree"
+msgstr "Cây Giao Điểm"
+
+
+msgid "Paint Curve"
+msgstr "Đường Cong Nước Sơn"
+
+
+msgid "Palette"
+msgstr "Bảng Màu"
+
+
+msgid "Particle"
+msgstr "Hạt"
+
+
+msgid "Light Probe"
+msgstr "Quang Kế"
+
+
+msgid "Simulation"
+msgstr "Mô phỏng"
+
+
+msgid "Sound"
+msgstr "Âm Thanh"
+
+
+msgid "Speaker"
+msgstr "Loa"
+
+
+msgid "Text"
+msgstr "Văn Bản"
+
+
+msgid "Hair"
+msgstr "Tóc"
+
+
+msgid "Point Cloud"
+msgstr "Điểm Mây"
+
+
+msgid "Window Manager"
+msgstr "Bộ Quản Lý Cửa Sổ"
+
+
+msgid "World"
+msgstr "Thế Giới"
+
+
+msgid "Workspace"
+msgstr "Công Trường"
+
+
 msgid "Icon ID"
 msgstr "Số Biểu Tượng"
 
@@ -13872,10 +13972,6 @@ msgid "Line set for associating lines and style parameters"
 msgstr "Tập đường cho liên kết tham số đường và phong cách"
 
 
-msgid "Collection"
-msgstr "Sưu Tập"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "Một sưu tập vật thể cơ sở cạnh đặc trưng nào được chọn"
 
@@ -14054,10 +14150,6 @@ msgstr "Chọn đặc trưng phủ hộp với điều kiện ký hiệu mặt"
 
 msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "Chọn đặc trưng không phủ hộp với điều kiện ký hiệu mặt"
-
-
-msgid "Line Style"
-msgstr "Phong Cách Đường"
 
 
 msgid "Line style settings"
@@ -15646,10 +15738,6 @@ msgid "Deform stroke points using objects"
 msgstr "Méo hóa điểm nét bằng sử dụng vật thể"
 
 
-msgid "Lattice"
-msgstr "Lưới Rào"
-
-
 msgid "Deform strokes using lattice"
 msgstr "Méo hóa điểm nét bằng dùng lưới rào"
 
@@ -17172,10 +17260,6 @@ msgid "Is this ID block linked indirectly"
 msgstr "Cục ID này được liên kết gián tiếp"
 
 
-msgid "Library"
-msgstr "Thư Viện"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "Tệp thư viện được nối với cục dữ liệu nào"
 
@@ -18097,10 +18181,6 @@ msgid "Soften"
 msgstr "Mềm Hóa"
 
 
-msgid "Mask"
-msgstr "Mặt Nạ"
-
-
 msgid "Invert Pressure for Density"
 msgstr "Đảo Nghịch Áp Suất Cho Tỉ Trọng"
 
@@ -18169,10 +18249,6 @@ msgid "Jittering happens in screen space, in pixels"
 msgstr "Hốt hoảng được xảy ra trong không gian màn (đơn vị điểm ảnh)"
 
 
-msgid "Brush"
-msgstr "Bút"
-
-
 msgid "Jittering happens relative to the brush size"
 msgstr "Hốt hoảng được xảy ra tương đối với kích thước bút"
 
@@ -18227,10 +18303,6 @@ msgstr "Quyền Lượng Bình Thường"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "Mức cầm sẽ kéo đỉnh ra khỏi bề mật khi cầm"
-
-
-msgid "Paint Curve"
-msgstr "Đường Cong Nước Sơn"
 
 
 msgid "Active paint curve"
@@ -20113,10 +20185,6 @@ msgid "Curve deforming text object"
 msgstr "Đường cong đang méo hóa vật thể văn bản"
 
 
-msgid "Font"
-msgstr "Phông"
-
-
 msgid "Font Bold"
 msgstr "Phông Đậm"
 
@@ -20483,10 +20551,6 @@ msgstr "Bề dài cong 2 cực tiểu cho lực chọn chuỗi"
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "Nếu đúng, chuỗi của cạnh đặc trưng được chẻ tại ranh giới vật liệu"
-
-
-msgid "Node Tree"
-msgstr "Cây Giao Điểm"
 
 
 msgid "Node tree for node-based shaders"
@@ -22421,10 +22485,6 @@ msgstr "Mặt phẳng XY bằng phẳng"
 
 msgid "Cube"
 msgstr "Lập Phương"
-
-
-msgid "Hair"
-msgstr "Tóc"
 
 
 msgid "Hair strands"
@@ -24674,10 +24734,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "Cho vật thể được đặt tốc độ bắt đầu của hạt"
 
 
-msgid "Particle"
-msgstr "Hạt"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "Cho hạt mục tiêu được đặt tốc độ bắt đầu của hạt"
 
@@ -25234,10 +25290,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Số lượng tương đối của phụ huynh ảo"
 
 
-msgid "Point Cloud"
-msgstr "Điểm Mây"
-
-
 msgid "Point cloud data-block"
 msgstr "Cục dữ liệu điểm mây"
 
@@ -25638,10 +25690,6 @@ msgid "Selected Landmark"
 msgstr "Mốc Bờ Được Chọn"
 
 
-msgid "World"
-msgstr "Thế Giới"
-
-
 msgid "World used for rendering the scene"
 msgstr "Thế giới để kết xuất cảnh"
 
@@ -25814,10 +25862,6 @@ msgstr "Tần Số"
 
 msgid "Playback pitch of the sound"
 msgstr "Tần số khi hát lại âm thanh"
-
-
-msgid "Sound"
-msgstr "Âm Thanh"
 
 
 msgid "Sound data-block used by this speaker"
@@ -26968,10 +27012,6 @@ msgid "Repeat the frames, reversing the playback direction every other cycle"
 msgstr "Lập lại các bức, trở ngược thứ tự bức mỗi chu trình lẻ"
 
 
-msgid "Window Manager"
-msgstr "Bộ Quản Lý Cửa Sổ"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "Cục dữ liệu quản lý cửa sổ thì giữ cửa sổ mở và dữ liệu giao diện khác"
 
@@ -27074,10 +27114,6 @@ msgstr "Trạng Thái Phiên Chạy XR"
 
 msgid "Runtime state information about the VR session"
 msgstr "Thông tin trạng thái của thời gian chạy của phiên chạy VR"
-
-
-msgid "Workspace"
-msgstr "Công Trường"
 
 
 msgid "Workspace data-block, defining the working environment for the user"
@@ -27382,10 +27418,6 @@ msgstr "Hoạt Hình"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "Bộ giải nghiệm không trạng thái thì đang tính dạng đứng bắt đầu từ hành động hiện tại và ràng buộc vô IK"
-
-
-msgid "Simulation"
-msgstr "Mô phỏng"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -31229,10 +31261,6 @@ msgid "Dope Sheet Context Menu"
 msgstr "Danh Bạ Bối Cảnh Hoạt Hình"
 
 
-msgid "Key"
-msgstr "Bức Mẫu"
-
-
 msgid "Snap"
 msgstr "Hút Dính"
 
@@ -31377,10 +31405,6 @@ msgid "Attribute"
 msgstr "Đặc Điểm"
 
 
-msgid "Mesh"
-msgstr "Mạng Lưới"
-
-
 msgid "Mesh Primitives"
 msgstr "Mạng Lưới Cơ Bản"
 
@@ -31486,10 +31510,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Văn Bản"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -31541,6 +31561,10 @@ msgstr "Hồi Phục"
 
 msgid "Help"
 msgstr "Giúp"
+
+
+msgid "List Item"
+msgstr "Mặt Hàng Danh Sách"
 
 
 msgid "Presets"
@@ -31656,10 +31680,6 @@ msgid "Select Similar"
 msgstr "Chọn Giống"
 
 
-msgid "Metaball"
-msgstr "Siêu Cầu"
-
-
 msgid "Metaball Context Menu"
 msgstr "Danh Bạ Bối Cảnh Siêu Cầu"
 
@@ -31682,14 +31702,6 @@ msgstr "Thêm Ảnh"
 
 msgid "Landmark Controls"
 msgstr "Điều Khiển Mốc Bờ"
-
-
-msgid "Light"
-msgstr "Nhẹ"
-
-
-msgid "Light Probe"
-msgstr "Quang Kế"
 
 
 msgid "Link/Transfer Data"
@@ -61041,15 +61053,6 @@ msgstr "Chép lại nhóm đỉnh hoạt động"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Chép Nhóm Đỉnh Đến Được Liên Kết"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "Thay thế cho các nhóm đỉnh cho hết người dùng của cùng dữ liệu hình dạng bằng các nhóm đỉnh của vật thể hoạt động"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Chép Nhóm Đỉnh Đến Được Chọn"
 
@@ -62894,10 +62897,6 @@ msgid "Join Palette Swatches"
 msgstr "Góp Bảng Màu"
 
 
-msgid "Palette"
-msgstr "Bảng Màu"
-
-
 msgid "Name of the Palette"
 msgstr "Tên của Bảng Màu"
 
@@ -63314,6 +63313,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Xem dạng đứng kiểu tương tác trong Màn 3D"
 
 
+msgid "Pose Name"
+msgstr "Tên Dạng Đứng"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Thư Viện Dạng Đứng Mới"
@@ -63334,10 +63337,6 @@ msgstr "Thêm Dạng Đứng hiện tại vào Thư Viện Dạng Đứng hoạt
 
 msgid "Frame to store pose on"
 msgstr "Bức cho chứa dạng đứng"
-
-
-msgid "Pose Name"
-msgstr "Tên Dạng Đứng"
 
 
 msgid "Name of newly added Pose"
@@ -75134,10 +75133,6 @@ msgstr "Phong Cách"
 
 msgid "Transparent Checkerboard"
 msgstr "Ca Rô Trong Suốt"
-
-
-msgid "List Item"
-msgstr "Mặt Hàng Danh Sách"
 
 
 msgid "Menu"
@@ -87977,10 +87972,6 @@ msgstr "Đô Đạc Dụng Cụ"
 
 msgid "Active tool gizmo"
 msgstr "Đồ đạc dụng cụ hoạt động"
-
-
-msgid "Speaker"
-msgstr "Loa"
 
 
 msgid "Show Reconstruction"
@@ -104314,14 +104305,6 @@ msgid "Toggle Profile Clipping"
 msgstr "Bặt/Tắt Cắt Trình Bày"
 
 
-msgid "Double click to rename"
-msgstr "Bấm hai lần cho đổi tên"
-
-
-msgid "Hide filtering options"
-msgstr "Ẩn tùy chọn lọc"
-
-
 msgid "Stop this job"
 msgstr "Nghỉ công việc này"
 
@@ -105964,10 +105947,6 @@ msgstr "Nhóm đỉnh bị khóa"
 
 msgid "%d vertex weights limited"
 msgstr "Được hạn chế %d quyền lượng đỉnh"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Chép nhóm đỉnh đến được chọn: %d xong, %d thất bại (dữ liệu vật thể phải có chỉ số đỉnh giống)"
 
 
 msgid "No active editable object"
@@ -109807,10 +109786,6 @@ msgstr "Không di chuyển được ràng buộc từ chỉ số '%d' đến '%d
 
 msgid "Modifier \"%s\" is not in the object's modifier list"
 msgstr "Cụ sửa đổi \"%s\" không ở trong danh sách cụ sửa đổi của vật thể"
-
-
-msgid "VertexGroups.new(): is not supported for '%s' objects"
-msgstr "Không hỗ trợ NhómĐỉnh.mới() cho vặt thể '%s'"
 
 
 msgid "DeformGroup '%s' not in object '%s'"

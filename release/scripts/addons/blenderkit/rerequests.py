@@ -26,6 +26,13 @@ import logging
 bk_logger = logging.getLogger('rerequests')
 
 
+class FakeResponse():
+    def __init__(self, text='', status_code = 400):
+        self.text = text
+        self.status_code = status_code
+    def json(self):
+        return {}
+
 def rerequest(method, url, recursion=0, **kwargs):
     # first get any additional args from kwargs
     immediate = False
@@ -37,7 +44,9 @@ def rerequest(method, url, recursion=0, **kwargs):
         response = requests.request(method, url, **kwargs)
     except Exception as e:
         print(e)
-        return None
+        tasks_queue.add_task((ui.add_report, (
+            'Connection error.', 10)))
+        return FakeResponse()
 
     bk_logger.debug(url + str(kwargs))
     bk_logger.debug(response.status_code)

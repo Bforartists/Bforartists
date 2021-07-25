@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11604,6 +11604,106 @@ msgid "Asset data, valid if the file represents an asset"
 msgstr "Datos del recurso, válido si el archivo representa un recurso"
 
 
+msgid "Brush"
+msgstr "Pincel"
+
+
+msgid "Font"
+msgstr "Tipografía"
+
+
+msgid "Collection"
+msgstr "Colección"
+
+
+msgid "Key"
+msgstr "Clave"
+
+
+msgid "Light"
+msgstr "Luz"
+
+
+msgid "Library"
+msgstr "Biblioteca"
+
+
+msgid "Line Style"
+msgstr "Estilo de línea"
+
+
+msgid "Lattice"
+msgstr "Jaula"
+
+
+msgid "Mask"
+msgstr "Máscara"
+
+
+msgid "Metaball"
+msgstr "Metabola"
+
+
+msgid "Mesh"
+msgstr "Malla"
+
+
+msgid "Node Tree"
+msgstr "Árbol de nodos"
+
+
+msgid "Paint Curve"
+msgstr "Curva"
+
+
+msgid "Palette"
+msgstr "Paleta"
+
+
+msgid "Particle"
+msgstr "Partícula"
+
+
+msgid "Light Probe"
+msgstr "Sonda de luz"
+
+
+msgid "Simulation"
+msgstr "Simulación"
+
+
+msgid "Sound"
+msgstr "Sonido"
+
+
+msgid "Speaker"
+msgstr "Altavoz"
+
+
+msgid "Text"
+msgstr "Texto"
+
+
+msgid "Hair"
+msgstr "Pelo"
+
+
+msgid "Point Cloud"
+msgstr "Nube de puntos"
+
+
+msgid "Window Manager"
+msgstr "Administrador de ventanas"
+
+
+msgid "World"
+msgstr "Entorno"
+
+
+msgid "Workspace"
+msgstr "Espacio de trabajo"
+
+
 msgid "Icon ID"
 msgstr "ID de ícono"
 
@@ -13800,10 +13900,6 @@ msgid "Line set for associating lines and style parameters"
 msgstr "Conjunto de líneas para asociar parámetros de líneas y estilos"
 
 
-msgid "Collection"
-msgstr "Colección"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "Una colección de objetos basada en qué bordes de rasgos se encuentran seleccionados"
 
@@ -13982,10 +14078,6 @@ msgstr "Seleccionar rasgos que satisfagan las condiciones indicadas de marcado d
 
 msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "Seleccionar rasgos que no satisfagan las condiciones indicadas de marcado de caras"
-
-
-msgid "Line Style"
-msgstr "Estilo de línea"
 
 
 msgid "Line style settings"
@@ -15574,10 +15666,6 @@ msgid "Deform stroke points using objects"
 msgstr "Deforma puntos del trazo usando objetos"
 
 
-msgid "Lattice"
-msgstr "Jaula"
-
-
 msgid "Deform strokes using lattice"
 msgstr "Deforma trazos usando una jaula"
 
@@ -17096,10 +17184,6 @@ msgid "Is this ID block linked indirectly"
 msgstr "Si este bloque de ID está vinculado de forma indirecta"
 
 
-msgid "Library"
-msgstr "Biblioteca"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "Archivo de biblioteca desde donde está referenciado el bloque de datos"
 
@@ -18021,10 +18105,6 @@ msgid "Soften"
 msgstr "Suavizar"
 
 
-msgid "Mask"
-msgstr "Máscara"
-
-
 msgid "Invert Pressure for Density"
 msgstr "Invertir presión para Densidad"
 
@@ -18093,10 +18173,6 @@ msgid "Jittering happens in screen space, in pixels"
 msgstr "La alteración sucederá en espacio de la pantalla, expresada en píxeles"
 
 
-msgid "Brush"
-msgstr "Pincel"
-
-
 msgid "Jittering happens relative to the brush size"
 msgstr "La alteración sucederá relativa al tamaño del pincel"
 
@@ -18151,10 +18227,6 @@ msgstr "Influencia normal"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "Qué tanto se tirarán los vértices hacia fuera de la superficie al ser arrastrados"
-
-
-msgid "Paint Curve"
-msgstr "Curva"
 
 
 msgid "Active paint curve"
@@ -20037,10 +20109,6 @@ msgid "Curve deforming text object"
 msgstr "Curva para deformar el objeto de texto"
 
 
-msgid "Font"
-msgstr "Tipografía"
-
-
 msgid "Font Bold"
 msgstr "Tipografía negrita"
 
@@ -20407,10 +20475,6 @@ msgstr "Longitud curvilínea 2D mínima para la selección de cadenas"
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "Si está activo, las cadenas de rasgos se dividirán en los límites de los materiales"
-
-
-msgid "Node Tree"
-msgstr "Árbol de nodos"
 
 
 msgid "Node tree for node-based shaders"
@@ -22345,10 +22409,6 @@ msgstr "Plano XY"
 
 msgid "Cube"
 msgstr "Cubo"
-
-
-msgid "Hair"
-msgstr "Pelo"
 
 
 msgid "Hair strands"
@@ -24598,10 +24658,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "Hace que la velocidad del objeto emisor determine la velocidad inicial de las partículas"
 
 
-msgid "Particle"
-msgstr "Partícula"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "Hace que las partículas objetivo determinen la velocidad inicial de las partículas"
 
@@ -25158,10 +25214,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Cantidad relativa de principales virtuales"
 
 
-msgid "Point Cloud"
-msgstr "Nube de puntos"
-
-
 msgid "Point cloud data-block"
 msgstr "Bloque de datos de nube de puntos"
 
@@ -25562,10 +25614,6 @@ msgid "Selected Landmark"
 msgstr "Punto de referencia seleccionado"
 
 
-msgid "World"
-msgstr "Entorno"
-
-
 msgid "World used for rendering the scene"
 msgstr "Entorno usado para procesar la escena"
 
@@ -25738,10 +25786,6 @@ msgstr "Tono"
 
 msgid "Playback pitch of the sound"
 msgstr "Tono del sonido durante la reproducción"
-
-
-msgid "Sound"
-msgstr "Sonido"
 
 
 msgid "Sound data-block used by this speaker"
@@ -26892,10 +26936,6 @@ msgid "Repeat the frames, reversing the playback direction every other cycle"
 msgstr "Repite los fotogramas, invirtiendo su sentido de reproducción de forma alternada"
 
 
-msgid "Window Manager"
-msgstr "Administrador de ventanas"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "Bloque de datos del administrador de ventanas, que define las ventanas abiertas y otros datos de la interfaz de usuario"
 
@@ -26998,10 +27038,6 @@ msgstr "Estado sesión XR"
 
 msgid "Runtime state information about the VR session"
 msgstr "Información de estado en tiempo real sobre la sesión de RV"
-
-
-msgid "Workspace"
-msgstr "Espacio de trabajo"
 
 
 msgid "Workspace data-block, defining the working environment for the user"
@@ -27306,10 +27342,6 @@ msgstr "Animación"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "Método de resolución que define la pose partiendo de la acción actual y de otras restricciones, excepto las de cinemática inversa"
-
-
-msgid "Simulation"
-msgstr "Simulación"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -31153,10 +31185,6 @@ msgid "Dope Sheet Context Menu"
 msgstr "Planilla de tiempos - menú contextual"
 
 
-msgid "Key"
-msgstr "Clave"
-
-
 msgid "Snap"
 msgstr "Adherir"
 
@@ -31301,10 +31329,6 @@ msgid "Attribute"
 msgstr "Atributo"
 
 
-msgid "Mesh"
-msgstr "Malla"
-
-
 msgid "Mesh Primitives"
 msgstr "Primitivas"
 
@@ -31410,10 +31434,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Texto"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -31465,6 +31485,10 @@ msgstr "Recuperar"
 
 msgid "Help"
 msgstr "Ayuda"
+
+
+msgid "List Item"
+msgstr "Elemento de lista"
 
 
 msgid "Presets"
@@ -31580,10 +31604,6 @@ msgid "Select Similar"
 msgstr "Seleccionar similar"
 
 
-msgid "Metaball"
-msgstr "Metabola"
-
-
 msgid "Metaball Context Menu"
 msgstr "Metabola - menú contextual"
 
@@ -31606,14 +31626,6 @@ msgstr "Agregar imagen"
 
 msgid "Landmark Controls"
 msgstr "Controles de puntos de referencia"
-
-
-msgid "Light"
-msgstr "Luz"
-
-
-msgid "Light Probe"
-msgstr "Sonda de luz"
 
 
 msgid "Link/Transfer Data"
@@ -60868,15 +60880,6 @@ msgstr "Hace una copia del grupo de vértices activo"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Copiar grupos de vértices a vinculados"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "Reemplaza los grupos de vértices de todos los objetos que usan estos datos geométricos por los grupos del objeto activo"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Copiar grupos de vértices a seleccionados"
 
@@ -62721,10 +62724,6 @@ msgid "Join Palette Swatches"
 msgstr "Unir miniaturas de paleta"
 
 
-msgid "Palette"
-msgstr "Paleta"
-
-
 msgid "Name of the Palette"
 msgstr "Nombre de la paleta"
 
@@ -63141,6 +63140,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Explorar interactivamente poses en la vista 3D"
 
 
+msgid "Pose Name"
+msgstr "Nombre de pose"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Nueva biblioteca de poses"
@@ -63161,10 +63164,6 @@ msgstr "Agrega la pose actual a la biblioteca de poses activa"
 
 msgid "Frame to store pose on"
 msgstr "Fotograma en el cual almacenar la pose"
-
-
-msgid "Pose Name"
-msgstr "Nombre de pose"
 
 
 msgid "Name of newly added Pose"
@@ -74939,10 +74938,6 @@ msgstr "Estilos"
 
 msgid "Transparent Checkerboard"
 msgstr "Damero transparente"
-
-
-msgid "List Item"
-msgstr "Elemento de lista"
 
 
 msgid "Menu"
@@ -87766,10 +87761,6 @@ msgstr "Manipulador de herramienta"
 
 msgid "Active tool gizmo"
 msgstr "Manipulador de la herramienta activa"
-
-
-msgid "Speaker"
-msgstr "Altavoz"
 
 
 msgid "Show Reconstruction"
@@ -104034,14 +104025,6 @@ msgid "Toggle Profile Clipping"
 msgstr "Alternar limitación del perfil"
 
 
-msgid "Double click to rename"
-msgstr "Hacer doble clic para renombrar"
-
-
-msgid "Hide filtering options"
-msgstr "Oculta las opciones de filtrado"
-
-
 msgid "Stop this job"
 msgstr "Detener este trabajo"
 
@@ -105672,10 +105655,6 @@ msgstr "Grupo de vértices bloqueado"
 
 msgid "%d vertex weights limited"
 msgstr "%d influencias de vértices limitadas"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Copiar grupos de vértices a seleccionado: %d hechos, %d fallaron (los datos del objeto deben tener s coincidentes)"
 
 
 msgid "No active editable object"
@@ -109505,10 +109484,6 @@ msgstr "No fue posible mover la restricción desde el  '%d' al '%d'"
 
 msgid "Modifier \"%s\" is not in the object's modifier list"
 msgstr "El modificador \"%s\" no se encuentra en la lista de modificadores del objeto"
-
-
-msgid "VertexGroups.new(): is not supported for '%s' objects"
-msgstr "VertexGroups.new(): no es soportada para objetos de tipo '%s'"
 
 
 msgid "DeformGroup '%s' not in object '%s'"

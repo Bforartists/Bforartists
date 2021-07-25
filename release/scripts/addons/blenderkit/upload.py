@@ -63,6 +63,7 @@ def get_app_version():
     return '%i.%i.%i' % (ver[0], ver[1], ver[2])
 
 
+
 def add_version(data):
     app_version = get_app_version()
     addon_version = version_checker.get_addon_version()
@@ -1274,16 +1275,11 @@ class AssetDebugPrint(Operator):
             return {'CANCELLED'};
         # update status in search results for validator's clarity
         sr = bpy.context.window_manager['search results']
-        sro = bpy.context.window_manager['search results orig']['results']
 
         result = None
         for r in sr:
             if r['id'] == self.asset_id:
                 result = r.to_dict()
-        if not result:
-            for r in sro:
-                if r['id'] == self.asset_id:
-                    result = r.to_dict()
         if not result:
             ad = bpy.context.active_object.get('asset_data')
             if ad:
@@ -1329,12 +1325,8 @@ class AssetVerificationStatusChange(Operator):
             return {'CANCELLED'};
         # update status in search results for validator's clarity
         sr = bpy.context.window_manager['search results']
-        sro = bpy.context.window_manager['search results orig']['results']
 
         for r in sr:
-            if r['id'] == self.asset_id:
-                r['verificationStatus'] = self.state
-        for r in sro:
             if r['id'] == self.asset_id:
                 r['verificationStatus'] = self.state
 
@@ -1353,7 +1345,6 @@ class AssetVerificationStatusChange(Operator):
 
 def register_upload():
     bpy.utils.register_class(UploadOperator)
-    # bpy.utils.register_class(FastMetadataMenu)
     bpy.utils.register_class(FastMetadata)
     bpy.utils.register_class(AssetDebugPrint)
     bpy.utils.register_class(AssetVerificationStatusChange)
@@ -1361,7 +1352,6 @@ def register_upload():
 
 def unregister_upload():
     bpy.utils.unregister_class(UploadOperator)
-    # bpy.utils.unregister_class(FastMetadataMenu)
     bpy.utils.unregister_class(FastMetadata)
     bpy.utils.unregister_class(AssetDebugPrint)
     bpy.utils.unregister_class(AssetVerificationStatusChange)

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -4285,6 +4285,74 @@ msgid "Save"
 msgstr "Сачувај"
 
 
+msgid "Brush"
+msgstr "Четкица"
+
+
+msgid "Font"
+msgstr "Фонт"
+
+
+msgid "Key"
+msgstr "Кључ"
+
+
+msgid "Light"
+msgstr "Светлост"
+
+
+msgid "Library"
+msgstr "Збирка"
+
+
+msgid "Lattice"
+msgstr "Кавез"
+
+
+msgid "Mask"
+msgstr "Маска"
+
+
+msgid "Metaball"
+msgstr "Мета лопта"
+
+
+msgid "Mesh"
+msgstr "Меш"
+
+
+msgid "Node Tree"
+msgstr "Дрво чворова"
+
+
+msgid "Particle"
+msgstr "Честица"
+
+
+msgid "Simulation"
+msgstr "Симулација"
+
+
+msgid "Sound"
+msgstr "Звук"
+
+
+msgid "Speaker"
+msgstr "Звучник"
+
+
+msgid "Hair"
+msgstr "Коса"
+
+
+msgid "Window Manager"
+msgstr "Управљач прозорима"
+
+
+msgid "World"
+msgstr "Свет"
+
+
 msgid "Environment"
 msgstr "Окружење"
 
@@ -5017,10 +5085,6 @@ msgid "Hook"
 msgstr "Удица"
 
 
-msgid "Lattice"
-msgstr "Кавез"
-
-
 msgid "Time Offset"
 msgstr "Временски помак"
 
@@ -5226,10 +5290,6 @@ msgid "Is Indirect"
 msgstr "Индиректно"
 
 
-msgid "Library"
-msgstr "Збирка"
-
-
 msgid "Tag"
 msgstr "Ознака"
 
@@ -5432,14 +5492,6 @@ msgstr "Алатке бојења слике"
 
 msgid "Soften"
 msgstr "Умекшање"
-
-
-msgid "Mask"
-msgstr "Маска"
-
-
-msgid "Brush"
-msgstr "Четкица"
 
 
 msgid "Mask Texture"
@@ -5994,10 +6046,6 @@ msgid "Text on Curve"
 msgstr "Текст на кривој"
 
 
-msgid "Font"
-msgstr "Фонт"
-
-
 msgid "Font Bold"
 msgstr "Подебљана слова"
 
@@ -6136,10 +6184,6 @@ msgstr "Последњи"
 
 msgid "Max 2D Length"
 msgstr "Макс. 2D дужина"
-
-
-msgid "Node Tree"
-msgstr "Дрво чворова"
 
 
 msgid "Panel"
@@ -6640,10 +6684,6 @@ msgstr "Равна XY плоча"
 
 msgid "Cube"
 msgstr "Коцка"
-
-
-msgid "Hair"
-msgstr "Коса"
 
 
 msgid "Hair strands"
@@ -7526,10 +7566,6 @@ msgid "Dummy"
 msgstr "Лутка"
 
 
-msgid "Particle"
-msgstr "Честица"
-
-
 msgid "Path End"
 msgstr "Крај путање"
 
@@ -7886,10 +7922,6 @@ msgid "View Settings"
 msgstr "Подешавање погледа"
 
 
-msgid "World"
-msgstr "Свет"
-
-
 msgid "Areas"
 msgstr "Простор"
 
@@ -7962,10 +7994,6 @@ msgstr "Утишава звучник"
 msgctxt "Sound"
 msgid "Pitch"
 msgstr "Висина тона"
-
-
-msgid "Sound"
-msgstr "Звук"
 
 
 msgid "Maximum Volume"
@@ -8496,10 +8524,6 @@ msgid "Vector Font"
 msgstr "Векторски фонт"
 
 
-msgid "Window Manager"
-msgstr "Управљач прозорима"
-
-
 msgid "Category"
 msgstr "Категорије"
 
@@ -8574,10 +8598,6 @@ msgstr "iTaSC"
 
 msgid "Animation"
 msgstr "Анимација"
-
-
-msgid "Simulation"
-msgstr "Симулација"
 
 
 msgid "Max Step"
@@ -9310,10 +9330,6 @@ msgid "Channel"
 msgstr "Канал"
 
 
-msgid "Key"
-msgstr "Кључ"
-
-
 msgid "Snap"
 msgstr "Лепљење"
 
@@ -9365,10 +9381,6 @@ msgstr "Мат"
 
 msgid "Attribute"
 msgstr "Атрибут"
-
-
-msgid "Mesh"
-msgstr "Меш"
 
 
 msgid "Node"
@@ -9487,16 +9499,8 @@ msgid "Mesh Select Mode"
 msgstr "Мод избора мреже"
 
 
-msgid "Metaball"
-msgstr "Мета лопта"
-
-
 msgid "Hooks"
 msgstr "Удице"
-
-
-msgid "Light"
-msgstr "Светлост"
 
 
 msgid "Apply"
@@ -18354,6 +18358,10 @@ msgid "Apply Pose Library Pose"
 msgstr "Примени позу из збирке"
 
 
+msgid "Pose Name"
+msgstr "Назив позе"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Нова збирка поза"
@@ -18370,10 +18378,6 @@ msgstr "Додај текућу позу у активну збирку поза
 
 msgid "Frame to store pose on"
 msgstr "Кадар накоме се чува поза"
-
-
-msgid "Pose Name"
-msgstr "Назив позе"
 
 
 msgid "Name of newly added Pose"
@@ -24162,10 +24166,6 @@ msgid "Show reconstructed camera path"
 msgstr "Прикажи реконструисану путању камере"
 
 
-msgid "Speaker"
-msgstr "Звучник"
-
-
 msgid "3D"
 msgstr "3D"
 
@@ -27503,10 +27503,6 @@ msgstr "Избриши тачке"
 
 msgid "Reset Black/White point and curves"
 msgstr "Ресетуј црну и белу тачку и криве"
-
-
-msgid "Double click to rename"
-msgstr "Дупли клик за преименовање"
 
 
 msgid "Stop this job"

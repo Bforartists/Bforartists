@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -504,6 +504,34 @@ msgid "Save"
 msgstr "Opslaan"
 
 
+msgid "Key"
+msgstr "Sleutel"
+
+
+msgid "Line Style"
+msgstr "Stijl voor Lijnen"
+
+
+msgid "Mask"
+msgstr "Mask"
+
+
+msgid "Node Tree"
+msgstr "Node Boom"
+
+
+msgid "Sound"
+msgstr "Geluid"
+
+
+msgid "Text"
+msgstr "Tekst"
+
+
+msgid "World"
+msgstr "Wereld"
+
+
 msgid "Animations"
 msgstr "Animaties"
 
@@ -546,10 +574,6 @@ msgstr "Exclusief"
 
 msgid "Crease"
 msgstr "Vouw"
-
-
-msgid "Line Style"
-msgstr "Stijl voor Lijnen"
 
 
 msgid "Visibility"
@@ -686,10 +710,6 @@ msgid "Inverse Square"
 msgstr "Inverse Wortel"
 
 
-msgid "Mask"
-msgstr "Mask"
-
-
 msgid "Rotate"
 msgstr "Roteer"
 
@@ -772,10 +792,6 @@ msgstr "Min"
 
 msgid "Max"
 msgstr "Max"
-
-
-msgid "Node Tree"
-msgstr "Node Boom"
 
 
 msgid "Use Nodes"
@@ -874,10 +890,6 @@ msgid "Rigid Body World"
 msgstr "Star Lichaam Wereld"
 
 
-msgid "World"
-msgstr "Wereld"
-
-
 msgid "Screen data-block, defining the layout of areas in a window"
 msgstr "Scherm gegevens-blok, definieert de indeling van de gebieden in een scherm"
 
@@ -885,10 +897,6 @@ msgstr "Scherm gegevens-blok, definieert de indeling van de gebieden in een sche
 msgctxt "Sound"
 msgid "Mute"
 msgstr "Zet Uit"
-
-
-msgid "Sound"
-msgstr "Geluid"
 
 
 msgid "Area"
@@ -1119,10 +1127,6 @@ msgid "Console"
 msgstr "Console"
 
 
-msgid "Key"
-msgstr "Sleutel"
-
-
 msgid "Select Linked"
 msgstr "Selecteer Aaneengesloten"
 
@@ -1146,10 +1150,6 @@ msgstr "Indeling"
 
 msgid "Navigation"
 msgstr "Navigatie"
-
-
-msgid "Text"
-msgstr "Tekst"
 
 
 msgid "File"

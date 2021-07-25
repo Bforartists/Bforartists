@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -2306,6 +2306,62 @@ msgid "Save"
 msgstr "ﻩﺮﯿﺧﺫ"
 
 
+msgid "Brush"
+msgstr "ﻮﻣ ﻢﻠﻗ"
+
+
+msgid "Font"
+msgstr "ﺖﻧﻮﻓ"
+
+
+msgid "Key"
+msgstr "ﺪﯿﻠﮐ"
+
+
+msgid "Library"
+msgstr "ﻪﻧﺎﺨﺑﺎﺘﮐ"
+
+
+msgid "Lattice"
+msgstr "ﻪﮑﺒﺷ"
+
+
+msgid "Mesh"
+msgstr "ﺶﻣ"
+
+
+msgid "Paint Curve"
+msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
+
+
+msgid "Particle"
+msgstr "ﻩﺭﺫ"
+
+
+msgid "Simulation"
+msgstr "ﯼﺯﺎﺳ ﻪﯿﺒﺷ"
+
+
+msgid "Sound"
+msgstr "ﺍﺪﺻ"
+
+
+msgid "Speaker"
+msgstr "ﻮﮔﺪﻨﻠﺑ"
+
+
+msgid "Text"
+msgstr "ﻦﺘﻣ"
+
+
+msgid "Window Manager"
+msgstr "ﻩﺮﺠﻨﭘ ﺖﯾﺮﯾﺪﻣ"
+
+
+msgid "World"
+msgstr "ﻥﺎﻬﺟ"
+
+
 msgid "Fonts"
 msgstr "ﺎﻫ ﺖﻧﻮﻓ:"
 
@@ -2518,10 +2574,6 @@ msgid "Mirror"
 msgstr "ﻪﻨﯾﺁ"
 
 
-msgid "Lattice"
-msgstr "ﻪﮑﺒﺷ"
-
-
 msgid "Time Offset"
 msgstr "X ﺖﺴﻓﺍ"
 
@@ -2608,10 +2660,6 @@ msgstr "ﻩﺩﺮﺘﺴﮔ ﺶﯾﺎﻤﻧ"
 
 msgid "Is Indirect"
 msgstr "ﺕﻭﺎﻔﺗ"
-
-
-msgid "Library"
-msgstr "ﻪﻧﺎﺨﺑﺎﺘﮐ"
 
 
 msgid "Frame Range"
@@ -2702,20 +2750,12 @@ msgid "Image Paint Tool"
 msgstr "ﺮﯾﻮﺼﺗ ﺮﮕﺸﯾﺍﺮﯾﻭ"
 
 
-msgid "Brush"
-msgstr "ﻮﻣ ﻢﻠﻗ"
-
-
 msgid "Mask Tool"
 msgstr "ﺎﺘﻣ ﯼﺎﻫﺭﺍﺰﺑﺍ"
 
 
 msgid "Normal Weight"
 msgstr "ﻪﻘﻄﻨﻣ ﻉﺎﻔﺗﺭﺍ"
-
-
-msgid "Paint Curve"
-msgstr "ﮓﻧﺭ ﯽﻨﺤﻨﻣ"
 
 
 msgid "Plane Offset"
@@ -2972,10 +3012,6 @@ msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
 msgid "Text on Curve"
 msgstr "ﯽﻨﺤﻨﻣ ﯼﻭﺭ ﺮﺑ ﻦﺘﻣ"
-
-
-msgid "Font"
-msgstr "ﺖﻧﻮﻓ"
 
 
 msgid "X Offset"
@@ -3550,10 +3586,6 @@ msgid "Object Aligned"
 msgstr "ءﺎﯿﺷﺍ ﯼﺎﻫ‌ﺖﯾﺩﻭﺪﺤﻣ"
 
 
-msgid "Particle"
-msgstr "ﻩﺭﺫ"
-
-
 msgid "Path End"
 msgstr "X ﻥﺎﯾﺎﭘ"
 
@@ -3774,10 +3806,6 @@ msgid "View Settings"
 msgstr "ﺕﺎﻤﯿﻈﻨﺗ ﺶﯾﺎﻤﻧ"
 
 
-msgid "World"
-msgstr "ﻥﺎﻬﺟ"
-
-
 msgid "Areas"
 msgstr "ﺎﻫ‌ﻦﯿﭼ"
 
@@ -3837,10 +3865,6 @@ msgstr "DOF ﻪﻠﺻﺎﻓ"
 msgctxt "Sound"
 msgid "Pitch"
 msgstr "ﻢﯾﺮﻓ ﻥﺩﺯ ﻪﯿﺨﺑ"
-
-
-msgid "Sound"
-msgstr "ﺍﺪﺻ"
 
 
 msgid "Maximum Volume"
@@ -4071,10 +4095,6 @@ msgid "Vector Font"
 msgstr "ﯽﻄﺧ"
 
 
-msgid "Window Manager"
-msgstr "ﻩﺮﺠﻨﭘ ﺖﯾﺮﯾﺪﻣ"
-
-
 msgid "Category"
 msgstr "ﺎﻫ ﻪﺘﺳﺩ"
 
@@ -4133,10 +4153,6 @@ msgstr "ﺖﺳﺍ‌ﻩﺪﺷ ﻒﯾﺮﻌﺗ ﻥﺁ ﺮﺑ ﺖﯾﺩﻭﺪﺤ�
 
 msgid "Animation"
 msgstr "ﻦﺸﯿﻤﯿﻧﺍ"
-
-
-msgid "Simulation"
-msgstr "ﯼﺯﺎﺳ ﻪﯿﺒﺷ"
 
 
 msgid "Reiteration"
@@ -4340,10 +4356,6 @@ msgid "Tracking"
 msgstr "ﯽﺑﺎﯾﺩﺭ"
 
 
-msgid "Key"
-msgstr "ﺪﯿﻠﮐ"
-
-
 msgid "Select Linked"
 msgstr "ﻪﻘﻠﺣ ﺏﺎﺨﺘﻧﺍ"
 
@@ -4373,20 +4385,12 @@ msgid "Matte"
 msgstr ":UV ﯼﺭﺍﺩﺮﺑ ﻪﺸﻘﻧ"
 
 
-msgid "Mesh"
-msgstr "ﺶﻣ"
-
-
 msgid "Node Color Specials"
 msgstr "ﮓﻧﺭ ﺖﺸﻧ"
 
 
 msgid "Python"
 msgstr "ﻥﻮﺘﯾﺎﭘ"
-
-
-msgid "Text"
-msgstr "ﻦﺘﻣ"
 
 
 msgid "System"
@@ -9597,11 +9601,6 @@ msgstr "ﻝﺎﻌﻓ ﻩﻭﺮﮔ ﻢﯿﻈﻨﺗ"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
 
@@ -12384,10 +12383,6 @@ msgstr "ﯽﻠﻌﻓ ﻢﯾﺮﻓ ﻑﺍﺮﻃﺍ ﺭﺩ"
 
 msgid "Show 3D Marker Names"
 msgstr "3D ﺮﮕﻧﺎﺸﻧ ﻡﺎﻧ ﺶﯾﺎﻤﻧ"
-
-
-msgid "Speaker"
-msgstr "ﻮﮔﺪﻨﻠﺑ"
 
 
 msgid "3D"

@@ -36,14 +36,13 @@ bl_info = {
 from typing import List, Tuple
 
 _need_reload = "operators" in locals()
-from . import gui, keymaps, macros, operators, conversion
+from . import gui, keymaps, operators, conversion
 
 if _need_reload:
     import importlib
 
     gui = importlib.reload(gui)
     keymaps = importlib.reload(keymaps)
-    macros = importlib.reload(macros)
     operators = importlib.reload(operators)
     conversion = importlib.reload(conversion)
 
@@ -60,7 +59,6 @@ def register() -> None:
     bpy.types.WindowManager.poselib_previous_action = bpy.props.PointerProperty(type=bpy.types.Action)
 
     operators.register()
-    macros.register()
     keymaps.register()
     gui.register()
 
@@ -68,7 +66,6 @@ def register() -> None:
 def unregister() -> None:
     gui.unregister()
     keymaps.unregister()
-    macros.unregister()
     operators.unregister()
 
     try:
