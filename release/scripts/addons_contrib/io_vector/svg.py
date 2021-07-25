@@ -56,7 +56,7 @@ def ParseSVGString(s):
     return _SVGDomToArg(dom)
 
 
-class _SState(object):
+class _SState:
     """Holds state that affects the conversion.
     """
 
@@ -146,8 +146,8 @@ def _ProcessPolygon(node, art, gs):
     if node.hasAttribute('points'):
         coords = _ParseCoordPairList(node.getAttribute('points'))
         n = len(coords)
-        if n > 0:
-            c = [gs.ctm.Apply(coords[i]) for i in range(n)]
+        if coords:
+            c = [gs.ctm.Apply(coord) for coord in coords]
             sp = geom.Subpath()
             sp.segments = [('L', c[i], c[i % n]) for i in range(n)]
             sp.closed = True
@@ -172,7 +172,6 @@ def _ProcessPath(node, art, gs):
         return
     s = node.getAttribute('d')
     i = 0
-    n = len(s)
     path = geom.Path()
     _SetPathAttributes(path, node, gs)
     initpt = (0.0, 0.0)

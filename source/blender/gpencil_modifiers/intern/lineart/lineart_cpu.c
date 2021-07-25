@@ -1803,10 +1803,7 @@ static void lineart_geometry_object_load(LineartObjectInfo *obi, LineartRenderBu
     tri->material_mask_bits |= ((mat && (mat->lineart.flags & LRT_MATERIAL_MASK_ENABLED)) ?
                                     mat->lineart.material_mask_bits :
                                     0);
-    tri->mat_occlusion |= ((mat &&
-                            (mat->lineart.flags & LRT_MATERIAL_CUSTOM_OCCLUSION_EFFECTIVENESS)) ?
-                               mat->lineart.mat_occlusion :
-                               1);
+    tri->mat_occlusion |= (mat ? mat->lineart.mat_occlusion : 1);
 
     tri->intersection_mask = obi->override_intersection_mask;
 
@@ -2125,7 +2122,7 @@ static void lineart_main_load_geometries(
 
     Object *use_ob = DEG_get_evaluated_object(depsgraph, ob);
     /* Prepare the matrix used for transforming this specific object (instance). This has to be
-     * done before mesh boundbox check because the function needs that.  */
+     * done before mesh boundbox check because the function needs that. */
     mul_m4db_m4db_m4fl_uniq(obi->model_view_proj, rb->view_projection, ob->obmat);
     mul_m4db_m4db_m4fl_uniq(obi->model_view, rb->view, ob->obmat);
 
@@ -2156,7 +2153,7 @@ static void lineart_main_load_geometries(
       obi->free_use_mesh = true;
     }
 
-    /* Make normal matrix.  */
+    /* Make normal matrix. */
     float imat[4][4];
     invert_m4_m4(imat, ob->obmat);
     transpose_m4(imat);

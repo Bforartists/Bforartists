@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -3112,6 +3112,66 @@ msgid "Save"
 msgstr "Kaydet"
 
 
+msgid "Font"
+msgstr "Yazıtipi"
+
+
+msgid "Key"
+msgstr "Anahtar"
+
+
+msgid "Library"
+msgstr "Kütüphane"
+
+
+msgid "Lattice"
+msgstr "Kafes"
+
+
+msgid "Mask"
+msgstr "Maske"
+
+
+msgid "Metaball"
+msgstr "Metaball'u buna Çevir"
+
+
+msgid "Mesh"
+msgstr "Örüntü"
+
+
+msgid "Node Tree"
+msgstr "Düğüm Editörü"
+
+
+msgid "Paint Curve"
+msgstr "Eğri Önayarı"
+
+
+msgid "Particle"
+msgstr "Parçacık"
+
+
+msgid "Simulation"
+msgstr "Akışkan Simülasyonu"
+
+
+msgid "Sound"
+msgstr "Ses"
+
+
+msgid "Text"
+msgstr "Metin"
+
+
+msgid "Window Manager"
+msgstr "Pencere Yöneticisi"
+
+
+msgid "World"
+msgstr "Dünya"
+
+
 msgid "Environment"
 msgstr "Çevre"
 
@@ -3644,10 +3704,6 @@ msgid "Hook"
 msgstr "Kanca Ekle"
 
 
-msgid "Lattice"
-msgstr "Kafes"
-
-
 msgid "Time Offset"
 msgstr "Bitiş Zamanı"
 
@@ -3786,10 +3842,6 @@ msgstr "Çoklu Resim dosyaları"
 
 msgid "Is Indirect"
 msgstr "Dolaylı"
-
-
-msgid "Library"
-msgstr "Kütüphane"
 
 
 msgid "Fake User"
@@ -3948,20 +4000,12 @@ msgid "Soften"
 msgstr "Yumuşat"
 
 
-msgid "Mask"
-msgstr "Maske"
-
-
 msgid "Mask Tool"
 msgstr "Boolean Araçları"
 
 
 msgid "Normal Weight"
 msgstr "Ağırlık Ortalaması:"
-
-
-msgid "Paint Curve"
-msgstr "Eğri Önayarı"
 
 
 msgid "Plane Offset"
@@ -4388,10 +4432,6 @@ msgid "Text on Curve"
 msgstr "Eğriyi buna Çevir"
 
 
-msgid "Font"
-msgstr "Yazıtipi"
-
-
 msgid "Font Bold"
 msgstr "Kalın Yap"
 
@@ -4466,10 +4506,6 @@ msgstr "Asg"
 
 msgid "Max"
 msgstr "Azm"
-
-
-msgid "Node Tree"
-msgstr "Düğüm Editörü"
 
 
 msgid "Use Nodes"
@@ -5464,10 +5500,6 @@ msgid "Object Aligned"
 msgstr "Nesne Kısıtlamaları"
 
 
-msgid "Particle"
-msgstr "Parçacık"
-
-
 msgid "The size of the particles"
 msgstr "Ekstrüzyon Boyutu"
 
@@ -5776,10 +5808,6 @@ msgid "View Settings"
 msgstr "Kemik Ayarları"
 
 
-msgid "World"
-msgstr "Dünya"
-
-
 msgid "Areas"
 msgstr "Alanları Birleştir"
 
@@ -5831,10 +5859,6 @@ msgstr "Yönü Çevir"
 
 msgid "Playback pitch of the sound"
 msgstr "Ses blok butonları"
-
-
-msgid "Sound"
-msgstr "Ses"
 
 
 msgid "Current Character"
@@ -6153,10 +6177,6 @@ msgid "Vector Font"
 msgstr "Yazıtipi boyutu:"
 
 
-msgid "Window Manager"
-msgstr "Pencere Yöneticisi"
-
-
 msgid "Search"
 msgstr "Ara"
 
@@ -6215,10 +6235,6 @@ msgstr "Mesh (Orijinali Sil)"
 
 msgid "Animation"
 msgstr "Animasyon"
-
-
-msgid "Simulation"
-msgstr "Akışkan Simülasyonu"
 
 
 msgid "Settings for image formats"
@@ -6702,10 +6718,6 @@ msgid "Channel"
 msgstr "Kanal Sıralaması"
 
 
-msgid "Key"
-msgstr "Anahtar"
-
-
 msgid "Snap"
 msgstr "Yakala"
 
@@ -6759,10 +6771,6 @@ msgid "Layout"
 msgstr "Mizanpaj"
 
 
-msgid "Mesh"
-msgstr "Örüntü"
-
-
 msgid "Node"
 msgstr "Düğüm"
 
@@ -6805,10 +6813,6 @@ msgstr "Arabirim Dil'i seçin"
 
 msgid "Python"
 msgstr "Python"
-
-
-msgid "Text"
-msgstr "Metin"
 
 
 msgid "System"
@@ -6857,10 +6861,6 @@ msgstr "Normaller"
 
 msgid "Mesh Select Mode"
 msgstr "Kenar Seçme Modu:"
-
-
-msgid "Metaball"
-msgstr "Metaball'u buna Çevir"
 
 
 msgid "Hooks"
@@ -15316,6 +15316,10 @@ msgid "PoseLib Browse Poses"
 msgstr "Eylem bağlarına gözat"
 
 
+msgid "Pose Name"
+msgstr "Dosya adı"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Kütüphaneye Ekle"
@@ -15324,10 +15328,6 @@ msgstr "Kütüphaneye Ekle"
 msgctxt "Operator"
 msgid "PoseLib Add Pose"
 msgstr "Kütüphaneye Ekle"
-
-
-msgid "Pose Name"
-msgstr "Dosya adı"
 
 
 msgctxt "Operator"

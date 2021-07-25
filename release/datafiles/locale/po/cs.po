@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -7092,6 +7092,98 @@ msgid "Save"
 msgstr "Uložit"
 
 
+msgid "Brush"
+msgstr "Štětec"
+
+
+msgid "Font"
+msgstr "Písmo"
+
+
+msgid "Collection"
+msgstr "Kolekce"
+
+
+msgid "Key"
+msgstr "Klíč"
+
+
+msgid "Light"
+msgstr "Světlo"
+
+
+msgid "Library"
+msgstr "Knihovna"
+
+
+msgid "Lattice"
+msgstr "Mříž"
+
+
+msgid "Mask"
+msgstr "Maska"
+
+
+msgid "Metaball"
+msgstr "Meta objekt"
+
+
+msgid "Mesh"
+msgstr "Síť"
+
+
+msgid "Node Tree"
+msgstr "Uzel"
+
+
+msgid "Paint Curve"
+msgstr "Kreslit křivku"
+
+
+msgid "Palette"
+msgstr "Paleta"
+
+
+msgid "Particle"
+msgstr "Částice"
+
+
+msgid "Simulation"
+msgstr "Simulace"
+
+
+msgid "Sound"
+msgstr "Zvuk"
+
+
+msgid "Speaker"
+msgstr "Reproduktor"
+
+
+msgid "Text"
+msgstr "Text"
+
+
+msgid "Hair"
+msgstr "Vlasy"
+
+
+msgid "Point Cloud"
+msgstr "Bodový Mrak"
+
+
+msgid "Window Manager"
+msgstr "Správce oken"
+
+
+msgid "World"
+msgstr "Okolí"
+
+
+msgid "Workspace"
+msgstr "Pracovní prostor"
+
+
 msgid "Icon ID"
 msgstr "ID Ikony"
 
@@ -7832,10 +7924,6 @@ msgid "Volume Emission"
 msgstr "Vypouštění Objemu"
 
 
-msgid "Collection"
-msgstr "Kolekce"
-
-
 msgid "Border"
 msgstr "Okraj"
 
@@ -8136,10 +8224,6 @@ msgstr "Nastavit váhu"
 
 msgid "Hook"
 msgstr "Hák"
-
-
-msgid "Lattice"
-msgstr "Mříž"
 
 
 msgid "Time Offset"
@@ -8476,10 +8560,6 @@ msgid "Is Indirect"
 msgstr "Je nepřímý"
 
 
-msgid "Library"
-msgstr "Knihovna"
-
-
 msgid "Original ID"
 msgstr "Původní ID"
 
@@ -8804,10 +8884,6 @@ msgid "Soften"
 msgstr "Zjemnit"
 
 
-msgid "Mask"
-msgstr "Maska"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Počáteční pozice pro osu Y"
 
@@ -8816,20 +8892,12 @@ msgid "Jitter Unit"
 msgstr "Jednotka chvění"
 
 
-msgid "Brush"
-msgstr "Štětec"
-
-
 msgid "Mask Tool"
 msgstr "Nástroje"
 
 
 msgid "Normal Weight"
 msgstr "Nastavit váhu"
-
-
-msgid "Paint Curve"
-msgstr "Kreslit křivku"
 
 
 msgid "Plane Offset"
@@ -9740,10 +9808,6 @@ msgid "Curve deforming text object"
 msgstr "Křivka deformující textový objekt"
 
 
-msgid "Font"
-msgstr "Písmo"
-
-
 msgid "Font Bold"
 msgstr "Označit okraje"
 
@@ -9854,10 +9918,6 @@ msgstr "Min"
 
 msgid "Max"
 msgstr "Max"
-
-
-msgid "Node Tree"
-msgstr "Uzel"
 
 
 msgid "Base Color"
@@ -10552,10 +10612,6 @@ msgstr "Plocha"
 
 msgid "Cube"
 msgstr "Krychle"
-
-
-msgid "Hair"
-msgstr "Vlasy"
 
 
 msgid "Hair strands"
@@ -11661,10 +11717,6 @@ msgid "Object Velocity"
 msgstr "Rychlost Objektu"
 
 
-msgid "Particle"
-msgstr "Částice"
-
-
 msgid "The size of the particles"
 msgstr "Velikost štětce"
 
@@ -11929,10 +11981,6 @@ msgid "Relative amount of virtual parents"
 msgstr "Normální rodičovská vazba"
 
 
-msgid "Point Cloud"
-msgstr "Bodový Mrak"
-
-
 msgid "Active Movie Clip"
 msgstr "Akce"
 
@@ -12145,10 +12193,6 @@ msgid "View Settings"
 msgstr "Nastavení renderování"
 
 
-msgid "World"
-msgstr "Okolí"
-
-
 msgid "World used for rendering the scene"
 msgstr "Typ filtru"
 
@@ -12237,10 +12281,6 @@ msgstr "Jméno aktuálního klíče pro tvar"
 msgctxt "Sound"
 msgid "Pitch"
 msgstr "Seškrcení"
-
-
-msgid "Sound"
-msgstr "Zvuk"
 
 
 msgid "How loud the sound is"
@@ -12819,10 +12859,6 @@ msgid "Sequence playback mode"
 msgstr "Režim přehrávání sekvencí"
 
 
-msgid "Window Manager"
-msgstr "Správce oken"
-
-
 msgid "Category"
 msgstr "Category"
 
@@ -12893,10 +12929,6 @@ msgstr "Okna"
 
 msgid "Open windows"
 msgstr "Otevřít okna"
-
-
-msgid "Workspace"
-msgstr "Pracovní prostor"
 
 
 msgid "Switch to this object mode when activating the workspace"
@@ -13013,10 +13045,6 @@ msgstr "Zpětná vazba"
 
 msgid "Animation"
 msgstr "Animace"
-
-
-msgid "Simulation"
-msgstr "Simulace"
 
 
 msgid "Reiteration"
@@ -14642,10 +14670,6 @@ msgid "Channel"
 msgstr "Kanál"
 
 
-msgid "Key"
-msgstr "Klíč"
-
-
 msgid "Snap"
 msgstr "Přichytit"
 
@@ -14730,10 +14754,6 @@ msgid "Attribute"
 msgstr "Atribut"
 
 
-msgid "Mesh"
-msgstr "Síť"
-
-
 msgid "Utilities"
 msgstr "Nástroje"
 
@@ -14785,10 +14805,6 @@ msgstr "Šablony"
 
 msgid "Python"
 msgstr "Python"
-
-
-msgid "Text"
-msgstr "Text"
 
 
 msgid "System"
@@ -14867,16 +14883,8 @@ msgid "Mesh Select Mode"
 msgstr "Síťový mód výběru"
 
 
-msgid "Metaball"
-msgstr "Meta objekt"
-
-
 msgid "Hooks"
 msgstr "Háky"
-
-
-msgid "Light"
-msgstr "Světlo"
 
 
 msgid "Make Single User"
@@ -28016,11 +28024,6 @@ msgstr "Odstranit skupinu vertexů"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Není vybrána žádní skupina vertexů"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Není vybrána žádní skupina vertexů"
 
@@ -28865,10 +28868,6 @@ msgid "Extract all colors used in Image and create a Palette"
 msgstr "Extrahovat všechny barvy použité v obrázku a vytvořit z nich paletu"
 
 
-msgid "Palette"
-msgstr "Paleta"
-
-
 msgid "Name of the Palette"
 msgstr "Název palety"
 
@@ -29118,6 +29117,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Interaktivně stahuje vertexy k sobě v dané oblasti"
 
 
+msgid "Pose Name"
+msgstr "Póza"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Není knihovnou"
@@ -29138,10 +29141,6 @@ msgstr "Přidat vazbu aktivní kosti"
 
 msgid "Frame to store pose on"
 msgstr "Krok Snímku"
-
-
-msgid "Pose Name"
-msgstr "Póza"
 
 
 msgctxt "Operator"
@@ -39888,10 +39887,6 @@ msgid "Show gizmos of all types"
 msgstr "Zobrazit gizma všech typů"
 
 
-msgid "Speaker"
-msgstr "Reproduktor"
-
-
 msgid "Show Reconstruction"
 msgstr "Jemnost dělení"
 
@@ -47097,14 +47092,6 @@ msgstr "Vymazat body"
 
 msgid "Reverse Path"
 msgstr "Obrátit cestu"
-
-
-msgid "Double click to rename"
-msgstr "Dvojitým kliknutím přejmenovat"
-
-
-msgid "Hide filtering options"
-msgstr "Skrytí možností filtrování"
 
 
 msgid "Stop this job"

@@ -819,6 +819,7 @@ class VIEW3D_PT_blenderkit_advanced_model_search(Panel):
 
         # AGE
         layout.prop(props, "search_condition", text='Condition')  # , text ='condition of object new/old e.t.c.')
+        layout.prop(props, "quality_limit", slider=True)  # , text ='condition of object new/old e.t.c.')
 
         # layout.prop(props, "search_procedural", expand=True)
         # ADULT
@@ -867,7 +868,7 @@ class VIEW3D_PT_blenderkit_advanced_material_search(Panel):
             row = layout.row(align=True)
             row.prop(props, "search_file_size_min", text='Min')
             row.prop(props, "search_file_size_max", text='Max')
-
+        layout.prop(props, "quality_limit", slider=True)
 
 class VIEW3D_PT_blenderkit_categories(Panel):
     bl_category = "BlenderKit"
@@ -1206,6 +1207,7 @@ def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
             op.author_id = author_id
 
     op = layout.operator('view3d.blenderkit_search', text='Search Similar')
+    op.esc = True
     op.tooltip = 'Search for similar assets in the library'
     # build search string from description and tags:
     op.keywords = asset_data['name']
@@ -1399,7 +1401,7 @@ def numeric_to_str(s):
     return s
 
 
-def push_op_left(layout, strength =5):
+def push_op_left(layout, strength =3):
     for a in range(0, strength):
         layout.label(text='')
 
@@ -1416,7 +1418,7 @@ def label_or_url(layout, text='', tooltip='', url='', icon_value=None, icon=None
             op = layout.operator('wm.blenderkit_url', text=text)
         op.url = url
         op.tooltip = tooltip
-        push_op_left(layout)
+        push_op_left(layout, strength = 5)
 
         return
     if tooltip != '':
@@ -1427,8 +1429,9 @@ def label_or_url(layout, text='', tooltip='', url='', icon_value=None, icon=None
         else:
             op = layout.operator('wm.blenderkit_tooltip', text=text)
         op.tooltip = tooltip
+
         # these are here to move the text to left, since operators can only center text by default
-        push_op_left(layout)
+        push_op_left(layout, strength = 3)
         return
     if icon:
         layout.label(text=text, icon=icon)
@@ -1664,6 +1667,16 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             date = self.asset_data['created'][:10]
             date = f"{date[8:10]}. {date[5:7]}. {date[:4]}"
             self.draw_property(box, 'Created', date)
+        if utils.asset_from_newer_blender_version(self.asset_data):
+            # row = box.row()
+            box.alert=True
+            self.draw_property(box,
+                               'Blender version',
+                               self.asset_data['sourceAppVersion'],
+                               # icon='ERROR',
+                               tooltip='Asset is from a newer Blender version and might work incorrectly in your scene',
+                               )
+            box.alert = False
         box.separator()
 
     def draw_author_area(self, context, layout, width=330):
@@ -1721,6 +1734,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             op.url = url
 
             op = button_row.operator('view3d.blenderkit_search', text="Find Assets By Author")
+            op.esc = True
             op.keywords = ''
             op.author_id = self.asset_data['author']['id']
 
@@ -1854,7 +1868,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             # name_row = name_row.row()
             for i, c in enumerate(cat_path):
                 cat_name = cat_path_names[i]
-                op = name_row.operator('view3d.blenderkit_asset_bar', text=cat_name + ' >', emboss=True)
+                op = name_row.operator('view3d.blenderkit_asset_bar', text=cat_name + '     >', emboss=False)
                 op.do_search = True
                 op.keep_running = True
                 op.tooltip = f"Browse {cat_name} category"
@@ -2202,10 +2216,19 @@ def header_search_draw(self, context):
         layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
         draw_assetbar_show_hide(layout, props)
         layout.popover(panel="VIEW3D_PT_blenderkit_categories", text="", icon = 'OUTLINER')
+
+        pcoll = icons.icon_collections["main"]
+
+        if props.use_filters:
+            icon_id = pcoll['filter_active'].icon_id
+        else:
+            icon_id = pcoll['filter'].icon_id
+
         if ui_props.asset_type=='MODEL':
-            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_model_search", text="", icon = 'FILTER')
+            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_model_search", text="", icon_value = icon_id)
+
         elif ui_props.asset_type=='MATERIAL':
-            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_material_search", text="", icon = 'FILTER')
+            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_material_search", text="", icon_value = icon_id)
 
 
 def ui_message(title, message):
