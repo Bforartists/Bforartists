@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -783,6 +783,54 @@ msgid "Save"
 msgstr "Сактоо"
 
 
+msgid "Brush"
+msgstr "Чачы"
+
+
+msgid "Font"
+msgstr "Арип"
+
+
+msgid "Key"
+msgstr "Ачкыч"
+
+
+msgid "Mask"
+msgstr "Маска"
+
+
+msgid "Mesh"
+msgstr "Политор"
+
+
+msgid "Particle"
+msgstr "Бөлүкчө"
+
+
+msgid "Sound"
+msgstr "Үн"
+
+
+msgid "Speaker"
+msgstr "Үн булагы"
+
+
+msgid "Text"
+msgstr "Текст"
+
+
+msgid "Hair"
+msgstr "Чач"
+
+
+msgid "Window Manager"
+msgstr "Терезе менеджери"
+
+
+msgid "World"
+msgstr "Дүйнө"
+
+
 msgid "Fonts"
 msgstr "Ариптер"
 
@@ -916,14 +964,6 @@ msgid "Users"
 msgstr "Колдонуучулар"
 
 
-msgid "Mask"
-msgstr "Маска"
-
-
-msgid "Brush"
-msgstr "Чачы"
-
-
 msgid "Mask Tool"
 msgstr "Маска аспабы"
 
@@ -994,10 +1034,6 @@ msgstr "Жартысы"
 
 msgid "Text Curve"
 msgstr "Текст ийриси"
-
-
-msgid "Font"
-msgstr "Арип"
 
 
 msgid "Font Size"
@@ -1092,10 +1128,6 @@ msgid "Opaque"
 msgstr "Күңүрттүк"
 
 
-msgid "Hair"
-msgstr "Чач"
-
-
 msgid "Update"
 msgstr "Жаңылоо"
 
@@ -1176,10 +1208,6 @@ msgid "Mass"
 msgstr "Масса"
 
 
-msgid "Particle"
-msgstr "Бөлүкчө"
-
-
 msgid "Halo"
 msgstr "Гало"
 
@@ -1208,17 +1236,9 @@ msgid "View Settings"
 msgstr "Көрсөтүү ырастоолору"
 
 
-msgid "World"
-msgstr "Дүйнө"
-
-
 msgctxt "Sound"
 msgid "Pitch"
 msgstr "Бийиктик"
-
-
-msgid "Sound"
-msgstr "Үн"
 
 
 msgid "Clouds"
@@ -1299,10 +1319,6 @@ msgstr "sqrt(x*x+y*y+z*z)"
 
 msgid "(x*x+y*y+z*z)"
 msgstr "(x*x+y*y+z*z)"
-
-
-msgid "Window Manager"
-msgstr "Терезе менеджери"
 
 
 msgid "Category"
@@ -1418,10 +1434,6 @@ msgid "Channel"
 msgstr "Канал"
 
 
-msgid "Key"
-msgstr "Ачкыч"
-
-
 msgid "UV"
 msgstr "UV"
 
@@ -1439,20 +1451,12 @@ msgid "Edit"
 msgstr "Оңдоо"
 
 
-msgid "Mesh"
-msgstr "Политор"
-
-
 msgid "Node"
 msgstr "Түйүн"
 
 
 msgid "Cache"
 msgstr "Кэш"
-
-
-msgid "Text"
-msgstr "Текст"
 
 
 msgid "System"
@@ -3056,10 +3060,6 @@ msgstr "Z-буфер"
 
 msgid "UV Editor"
 msgstr "UV-редактор"
-
-
-msgid "Speaker"
-msgstr "Үн булагы"
 
 
 msgid "3D"

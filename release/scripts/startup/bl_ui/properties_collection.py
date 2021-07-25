@@ -89,7 +89,7 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
         split = layout.split()
         col = split.column()
         col.use_property_split = False
-        col.prop(collection, "lineart_use_intersection_mask")
+        col.prop(collection, "lineart_use_intersection_mask", text="Collection Mask")
         col = split.column()
         if collection.lineart_use_intersection_mask:
             col.label(icon='DISCLOSURE_TRI_DOWN')
@@ -107,7 +107,7 @@ class COLLECTION_PT_lineart_collection(CollectionButtonsPanel, Panel):
             col = split.column()
             row = col.row(align = True)
             for i in range(8):
-                row.prop(collection, "lineart_intersection_mask", index=i, text=str(i), toggle=True)
+                row.prop(collection, "lineart_intersection_mask", index=i, text="", toggle=True)
 
 
 classes = (

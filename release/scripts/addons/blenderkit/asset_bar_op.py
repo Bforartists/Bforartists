@@ -559,8 +559,15 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
     def search_more(self):
         sro = bpy.context.window_manager.get('search results orig')
-        if sro is not None and sro.get('next') is not None:
-            blenderkit.search.search(get_next=True)
+        if sro is None:
+            return;
+        if sro.get('next') is None:
+            return
+        search_props = utils.get_search_props()
+        if search_props.is_searching:
+            return
+
+        blenderkit.search.search(get_next=True)
 
     def update_images(self):
         sr = bpy.context.window_manager.get('search results')
@@ -598,7 +605,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
         self.scroll_offset = min(self.scroll_offset, len(sr) - (self.wcount * self.hcount))
         self.scroll_offset = max(self.scroll_offset, 0)
         self.update_images()
-        if len(sr) - self.scroll_offset < (self.wcount * self.hcount) + 10:
+        if len(sr) - self.scroll_offset < (self.wcount * self.hcount) + 15:
             self.search_more()
 
     def search_by_author(self, asset_index):

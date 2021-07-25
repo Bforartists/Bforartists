@@ -52,6 +52,7 @@ import urllib
 import queue
 import logging
 
+
 bk_logger = logging.getLogger('blenderkit')
 
 search_start_time = 0
@@ -70,6 +71,8 @@ def check_errors(rdata):
             return False, 'Use login panel to connect your profile.'
         else:
             return False, rdata.get('detail')
+    if rdata.get('statusCode') is None and rdata.get('results') is None:
+        return False, 'Connection error'
     return True, ''
 
 
@@ -287,19 +290,8 @@ def parse_result(r):
         # so blender's data is same as on server.
         asset_data = {'thumbnail': tname,
                       'thumbnail_small': small_tname,
-                      # 'thumbnails':allthumbs,
-                      # 'download_url': durl, #made obsolete since files are stored in orig form.
-                      # 'id': r['id'],
-                      # 'asset_base_id': r['assetBaseId'],#this should stay ONLY for compatibility with older scenes
-                      # 'name': r['name'],
-                      # 'asset_type': r['assetType'], #this should stay ONLY for compatibility with older scenes
                       'tooltip': tooltip,
-                      # 'tags': r['tags'],
-                      # 'can_download': r.get('canDownload', True),#this should stay ONLY for compatibility with older scenes
-                      # 'verification_status': r['verificationStatus'],#this should stay ONLY for compatibility with older scenes
-                      # 'author_id': r['author']['id'],#this should stay ONLY for compatibility with older scenes
-                      # 'author': r['author']['firstName'] + ' ' + r['author']['lastName']
-                      # 'description': r['description'],
+
                       }
         asset_data['downloaded'] = 0
 
@@ -351,6 +343,7 @@ def parse_result(r):
 
 # @bpy.app.handlers.persistent
 def search_timer():
+
     # this makes a first search after opening blender. showing latest assets.
     # utils.p('timer search')
     # utils.p('start search timer')
@@ -381,7 +374,8 @@ def search_timer():
     global search_threads
     if len(search_threads) == 0:
         # utils.p('end search timer')
-
+        props = utils.get_search_props()
+        props.is_searching = False
         return 1.0
     # don't do anything while dragging - this could switch asset during drag, and make results list length different,
     # causing a lot of throuble.
@@ -389,34 +383,29 @@ def search_timer():
         # utils.p('end search timer')
 
         return 0.5
+
     for thread in search_threads:
         # TODO this doesn't check all processes when one gets removed,
         # but most of the time only one is running anyway
         if not thread[0].is_alive():
+
             search_threads.remove(thread)  #
             icons_dir = thread[1]
             scene = bpy.context.scene
             # these 2 lines should update the previews enum and set the first result as active.
             wm = bpy.context.window_manager
             asset_type = thread[2]
-            if asset_type == 'model':
-                props = scene.blenderkit_models
-                # json_filepath = os.path.join(icons_dir, 'model_searchresult.json')
-            if asset_type == 'scene':
-                props = scene.blenderkit_scene
-                # json_filepath = os.path.join(icons_dir, 'scene_searchresult.json')
-            if asset_type == 'hdr':
-                props = scene.blenderkit_HDR
-                # json_filepath = os.path.join(icons_dir, 'scene_searchresult.json')
-            if asset_type == 'material':
-                props = scene.blenderkit_mat
-                # json_filepath = os.path.join(icons_dir, 'material_searchresult.json')
-            if asset_type == 'brush':
-                props = scene.blenderkit_brush
-                # json_filepath = os.path.join(icons_dir, 'brush_searchresult.json')
+
+            props = utils.get_search_props()
             search_name = f'bkit {asset_type} search'
 
-            wm[search_name] = []
+            if not thread[0].params.get('get_next'):
+                # wm[search_name] = []
+                result_field = []
+            else:
+                result_field = []
+                for r in wm[search_name]:
+                    result_field.append(r.to_dict())
 
             global reports_queue
 
@@ -427,21 +416,19 @@ def search_timer():
                 return .2
 
             rdata = thread[0].result
-            result_field = []
+
+
 
             ok, error = check_errors(rdata)
             if ok:
                 ui_props = bpy.context.scene.blenderkitUI
 
-                if not ui_props.assetbar_on:
-                    bpy.ops.object.run_assetbar_fix_context()
-
-
-
-                for r in rdata['results']:
+                orig_len = len(result_field)
+                for ri, r in enumerate(rdata['results']):
                     asset_data = parse_result(r)
                     if asset_data != None:
                         result_field.append(asset_data)
+                        load_preview(asset_data,ri + orig_len)
 
                 # Get ratings from BlenderKit server
                 user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
@@ -455,31 +442,73 @@ def search_timer():
 
                 wm[search_name] = result_field
                 wm['search results'] = result_field
-                wm[search_name + ' orig'] = copy.deepcopy(rdata)
-                wm['search results orig'] = wm[search_name + ' orig']
 
-                load_previews()
+                #rdata=['results']=[]
+                wm[search_name + ' orig'] = rdata
+                wm['search results orig'] = rdata
+
+                # load_previews()
                 if len(result_field) < ui_props.scrolloffset or not (thread[0].params.get('get_next')):
                     # jump back
                     ui_props.scrolloffset = 0
-                props.is_searching = False
                 props.search_error = False
                 props.report = 'Found %i results. ' % (wm['search results orig']['count'])
                 if len(wm['search results']) == 0:
                     tasks_queue.add_task((ui.add_report, ('No matching results found.',)))
                 # undo push
                 # bpy.ops.wm.undo_push_context(message='Get BlenderKit search')
+                #show asset bar automatically, but only on first page - others are loaded also when asset bar is hidden.
+                if not ui_props.assetbar_on and not thread[0].params.get('get_next'):
+                    bpy.ops.object.run_assetbar_fix_context()
 
             else:
                 bk_logger.error(error)
                 props.report = error
                 props.search_error = True
 
+            props.is_searching = False
             # print('finished search thread')
             mt('preview loading finished')
     # utils.p('end search timer')
 
     return .3
+
+def load_preview(asset, index):
+    scene = bpy.context.scene
+    # FIRST START SEARCH
+    props = scene.blenderkitUI
+    directory = paths.get_temp_dir('%s_search' % props.asset_type.lower())
+    s = bpy.context.scene
+    results = bpy.context.window_manager.get('search results')
+
+
+    tpath = os.path.join(directory, asset['thumbnail_small'])
+    if not asset['thumbnail_small']:
+        tpath = paths.get_addon_thumbnail_path('thumbnail_not_available.jpg')
+
+    iname = utils.previmg_name(index)
+
+    # if os.path.exists(tpath):  # sometimes we are unlucky...
+    img = bpy.data.images.get(iname)
+
+    if img is None:
+        if not os.path.exists(tpath):
+            return
+        img = bpy.data.images.load(tpath)
+        img.name = iname
+    elif img.filepath != tpath:
+        if not os.path.exists(tpath):
+            return
+        # had to add this check for autopacking files...
+        if img.packed_file is not None:
+            img.unpack(method='USE_ORIGINAL')
+        img.filepath = tpath
+        img.reload()
+    if asset['assetType'] == 'hdr':
+        # to display hdr thumbnails correctly, we use non-color, otherwise looks shifted
+        image_utils.set_colorspace(img, 'Non-Color')
+    else:
+        image_utils.set_colorspace(img, 'sRGB')
 
 
 def load_previews():
@@ -491,39 +520,10 @@ def load_previews():
     results = bpy.context.window_manager.get('search results')
     #
     if results is not None:
-        inames = []
-        tpaths = []
-
         i = 0
         for r in results:
-            tpath = os.path.join(directory, r['thumbnail_small'])
-            if not r['thumbnail_small']:
-                tpath = paths.get_addon_thumbnail_path('thumbnail_not_available.jpg')
-
-            if not os.path.exists(tpath):
-                continue
-            iname = utils.previmg_name(i)
-
-            # if os.path.exists(tpath):  # sometimes we are unlucky...
-            img = bpy.data.images.get(iname)
-
-            if img is None:
-                img = bpy.data.images.load(tpath)
-                img.name = iname
-            elif img.filepath != tpath:
-                # had to add this check for autopacking files...
-                if img.packed_file is not None:
-                    img.unpack(method='USE_ORIGINAL')
-                img.filepath = tpath
-                img.reload()
-            if r['assetType'] == 'hdr':
-                # to display hdr thumbnails correctly, we use non-color, otherwise looks shifted
-                image_utils.set_colorspace(img, 'Non-Color')
-            else:
-                image_utils.set_colorspace(img, 'sRGB')
-
+            load_preview(r,i)
             i += 1
-    # print('previews loaded')
 
 
 #  line splitting for longer texts...
@@ -848,6 +848,7 @@ def query_to_url(query={}, params={}):
     if requeststring.find('+order:')==-1:
         requeststring += '+order:' + ','.join(order)
 
+    requeststring += '&page_size=' + str(params['page_size'])
     requeststring += '&addon_version=%s' % params['addon_version']
     if params.get('scene_uuid') is not None:
         requeststring += '&scene_uuid=%s' % params['scene_uuid']
@@ -865,12 +866,12 @@ def parse_html_formated_error(text):
 class Searcher(threading.Thread):
     query = None
 
-    def __init__(self, query, params, orig_result, tempdir='', headers=None, urlquery=''):
+    def __init__(self, query, params, tempdir='', headers=None, urlquery=''):
         super(Searcher, self).__init__()
         self.query = query
         self.params = params
         self._stop_event = threading.Event()
-        self.result = orig_result
+        self.result = {}
         self.tempdir = tempdir
         self.headers = headers
         self.urlquery = urlquery
@@ -912,9 +913,10 @@ class Searcher(threading.Thread):
         try:
             rdata = r.json()
         except Exception as e:
-            error_description = parse_html_formated_error(r.text)
-            reports_queue.put(error_description)
-            tasks_queue.add_task((ui.add_report, (error_description, 10, colors.RED)))
+            if hasattr(r,'text'):
+                error_description = parse_html_formated_error(r.text)
+                reports_queue.put(error_description)
+                tasks_queue.add_task((ui.add_report, (error_description, 10, colors.RED)))
 
             bk_logger.error(e)
             return
@@ -984,8 +986,7 @@ class Searcher(threading.Thread):
 
         # we save here because a missing thumbnail check is in the previous loop
         # we can also prepend previous results. These have downloaded thumbnails already...
-        if params['get_next']:
-            rdata['results'][0:0] = self.result['results']
+
         self.result = rdata
         # with open(json_filepath, 'w', encoding = 'utf-8') as outfile:
         #     json.dump(rdata, outfile, ensure_ascii=False, indent=4)
@@ -1038,7 +1039,10 @@ class Searcher(threading.Thread):
             for tk, thread in threads_copy.items():
                 if not thread.is_alive():
                     thread.join()
-                    del (thumb_sml_download_threads[tk])
+                    try:
+                        del (thumb_sml_download_threads[tk])
+                    except Exception as e:
+                        print(e)
                     i += 1
 
         if self.stopped():
@@ -1077,6 +1081,9 @@ def build_query_common(query, props):
         query_common["files_size_gte"] = props.search_file_size_min * 1024 * 1024
         query_common["files_size_lte"] = props.search_file_size_max * 1024 * 1024
 
+    if props.quality_limit > 0:
+        query["quality_gte"] = props.quality_limit
+
     query.update(query_common)
 
 
@@ -1099,9 +1106,9 @@ def build_query_model():
     # if props.free_only:
     #     query["is_free"] = True
 
-    # if props.search_advanced:
     if props.search_condition != 'UNSPECIFIED':
         query["condition"] = props.search_condition
+
     if props.search_design_year:
         query["designYear_gte"] = props.search_design_year_min
         query["designYear_lte"] = props.search_design_year_max
@@ -1227,7 +1234,7 @@ def mt(text):
     utils.p(text, alltime, since_last)
 
 
-def add_search_process(query, params, orig_result):
+def add_search_process(query, params):
     global search_threads
 
     while (len(search_threads) > 0):
@@ -1238,12 +1245,12 @@ def add_search_process(query, params, orig_result):
     tempdir = paths.get_temp_dir('%s_search' % query['asset_type'])
     headers = utils.get_headers(params['api_key'])
 
-    if params['get_next']:
-        urlquery = orig_result['next']
-    if not params['get_next']:
+    if params.get('get_next'):
+        urlquery = params['next']
+    else:
         urlquery = query_to_url(query, params)
 
-    thread = Searcher(query, params, orig_result, tempdir=tempdir, headers=headers, urlquery=urlquery)
+    thread = Searcher(query, params, tempdir=tempdir, headers=headers, urlquery=urlquery)
     thread.start()
 
     search_threads.append([thread, tempdir, query['asset_type'], {}])  # 4th field is for results
@@ -1305,35 +1312,33 @@ def get_search_simple(parameters, filepath=None, page_size=100, max_results=1000
 def search(category='', get_next=False, author_id=''):
     ''' initialize searching'''
     global search_start_time
+    # print(category,get_next,author_id)
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     search_start_time = time.time()
     # mt('start')
     scene = bpy.context.scene
     ui_props = scene.blenderkitUI
 
+    props = utils.get_search_props()
     if ui_props.asset_type == 'MODEL':
         if not hasattr(scene, 'blenderkit'):
             return;
-        props = scene.blenderkit_models
         query = build_query_model()
 
     if ui_props.asset_type == 'SCENE':
         if not hasattr(scene, 'blenderkit_scene'):
             return;
-        props = scene.blenderkit_scene
         query = build_query_scene()
 
     if ui_props.asset_type == 'HDR':
         if not hasattr(scene, 'blenderkit_HDR'):
             return;
-        props = scene.blenderkit_HDR
         query = build_query_HDR()
 
     if ui_props.asset_type == 'MATERIAL':
         if not hasattr(scene, 'blenderkit_mat'):
             return;
 
-        props = scene.blenderkit_mat
         query = build_query_material()
 
     if ui_props.asset_type == 'TEXTURE':
@@ -1345,7 +1350,6 @@ def search(category='', get_next=False, author_id=''):
     if ui_props.asset_type == 'BRUSH':
         if not hasattr(scene, 'blenderkit_brush'):
             return;
-        props = scene.blenderkit_brush
         query = build_query_brush()
 
     # crop long searches
@@ -1357,8 +1361,11 @@ def search(category='', get_next=False, author_id=''):
             idx = query['query'].find(' ', 142)
             query['query'] = query['query'][:idx]
 
-    # it's possible get_net was requested more than once.
+    # it's possible get_next was requested more than once.
+    # print(category,props.is_searching, get_next)
+    # print(query)
     if props.is_searching and get_next == True:
+        # print('return because of get next and searching is happening')
         return;
 
     if category != '':
@@ -1379,27 +1386,49 @@ def search(category='', get_next=False, author_id=''):
     # utils.p('searching')
     props.is_searching = True
 
+    page_size = min(30, ui_props.wcount * user_preferences.max_assetbar_rows)
+
     params = {
         'scene_uuid': bpy.context.scene.get('uuid', None),
         'addon_version': version_checker.get_addon_version(),
         'api_key': user_preferences.api_key,
         'get_next': get_next,
-        'free_first': props.free_only
+        'free_first': props.free_only,
+        'page_size': page_size,
     }
 
-    orig_results = bpy.context.window_manager.get(f'bkit {ui_props.asset_type.lower()} search orig', {})
-    if orig_results != {}:
-        # ensure it's a copy in dict for what we are passing to thread:
-        orig_results = orig_results.to_dict()
-    add_search_process(query, params, orig_results)
+    orig_results = bpy.context.window_manager.get(f'bkit {ui_props.asset_type.lower()} search orig')
+    if orig_results is not None and get_next:
+        params['next'] = orig_results['next']
+    add_search_process(query, params)
     tasks_queue.add_task((ui.add_report, ('BlenderKit searching....', 2)))
 
     props.report = 'BlenderKit searching....'
+
+def update_filters():
+    sprops = utils.get_search_props()
+    ui_props = bpy.context.scene.blenderkitUI
+    fcommon = sprops.own_only or \
+        sprops.search_texture_resolution or\
+        sprops.search_file_size or \
+        sprops.search_procedural != 'BOTH' or \
+        sprops.free_only or \
+        sprops.quality_limit>0
+
+    if ui_props.asset_type =='MODEL':
+        sprops.use_filters = fcommon or \
+                             sprops.search_style != 'ANY' or \
+            sprops.search_condition != 'UNSPECIFIED' or \
+            sprops.search_design_year or \
+            sprops.search_polycount 
+    elif ui_props.asset_type == 'MATERIAL':
+        sprops.use_filters = fcommon
 
 
 def search_update(self, context):
     utils.p('search updater')
     # if self.search_keywords != '':
+    update_filters()
     ui_props = bpy.context.scene.blenderkitUI
     if ui_props.down_up != 'SEARCH':
         ui_props.down_up = 'SEARCH'
@@ -1435,6 +1464,7 @@ def search_update(self, context):
         # return here since writing into search keywords triggers this update function once more.
         return
 
+    print('search update search')
     search()
 
 
@@ -1450,6 +1480,12 @@ class SearchOperator(Operator):
     bl_label = "BlenderKit asset search"
     bl_description = "Search online for assets"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    esc: BoolProperty(name="Escape window",
+                      description="Escape window right after start",
+                      default=False,
+                      options={'SKIP_SAVE'}
+                      )
 
     own: BoolProperty(name="own assets only",
                       description="Find all own assets",
@@ -1499,6 +1535,8 @@ class SearchOperator(Operator):
 
     def execute(self, context):
         # TODO ; this should all get transferred to properties of the search operator, so sprops don't have to be fetched here at all.
+        if self.esc:
+            bpy.ops.view3d.close_popup_button('INVOKE_DEFAULT')
         sprops = utils.get_search_props()
         if self.author_id != '':
             sprops.search_keywords = ''
@@ -1567,6 +1605,7 @@ def register_search():
 
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
     if user_preferences.use_timers:
+
         bpy.app.timers.register(search_timer)
 
     categories.load_categories()
@@ -1580,3 +1619,5 @@ def unregister_search():
 
     if bpy.app.timers.is_registered(search_timer):
         bpy.app.timers.unregister(search_timer)
+
+

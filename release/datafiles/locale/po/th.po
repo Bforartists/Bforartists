@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -1104,6 +1104,58 @@ msgid "Save"
 msgstr "บันทึก"
 
 
+msgid "Font"
+msgstr "ฟอนต์"
+
+
+msgid "Light"
+msgstr "แสง"
+
+
+msgid "Line Style"
+msgstr "สไตล์เส้น"
+
+
+msgid "Mask"
+msgstr "หน้ากาก"
+
+
+msgid "Metaball"
+msgstr "เมตาบอล"
+
+
+msgid "Mesh"
+msgstr "เมช"
+
+
+msgid "Palette"
+msgstr "จานสี"
+
+
+msgid "Particle"
+msgstr "อนุภาค"
+
+
+msgid "Sound"
+msgstr "เสียง"
+
+
+msgid "Speaker"
+msgstr "ลำโพง"
+
+
+msgid "Text"
+msgstr "ช้อความ"
+
+
+msgid "World"
+msgstr "โลก"
+
+
+msgid "Workspace"
+msgstr "พื้นที่ใช้งาน"
+
+
 msgid "Miscellaneous"
 msgstr "เบ็ดเตล็ด"
 
@@ -1182,10 +1234,6 @@ msgstr "ไฟ"
 
 msgid "Border"
 msgstr "เส้นขอบ"
-
-
-msgid "Line Style"
-msgstr "สไตล์เส้น"
 
 
 msgid "Use"
@@ -1367,10 +1415,6 @@ msgid "Repeat"
 msgstr "ทำซ้ำ"
 
 
-msgid "Mask"
-msgstr "หน้ากาก"
-
-
 msgid "Mask Texture"
 msgstr "พื้นผิวหน้ากาก"
 
@@ -1437,10 +1481,6 @@ msgstr "ความละเอียด U"
 
 msgid "Resolution V"
 msgstr "ความละเอียด V"
-
-
-msgid "Font"
-msgstr "ฟอนต์"
 
 
 msgid "Font Bold"
@@ -1804,10 +1844,6 @@ msgid "Display"
 msgstr "แสดง"
 
 
-msgid "Particle"
-msgstr "อนุภาค"
-
-
 msgid "Path Start"
 msgstr "เส้นทางเริ้่มต้น"
 
@@ -1848,16 +1884,8 @@ msgid "Sync Mode"
 msgstr "โหมดซิงค์"
 
 
-msgid "World"
-msgstr "โลก"
-
-
 msgid "Animation Editors"
 msgstr "ตัวแก้ไขแอนิเมชัน"
-
-
-msgid "Sound"
-msgstr "เสียง"
 
 
 msgid "Memory"
@@ -1922,10 +1950,6 @@ msgstr "แหวน"
 
 msgid "Search"
 msgstr "ค้นหา"
-
-
-msgid "Workspace"
-msgstr "พื้นที่ใช้งาน"
 
 
 msgid "Animation"
@@ -2100,20 +2124,12 @@ msgid "Layout"
 msgstr "เค้าโครง"
 
 
-msgid "Mesh"
-msgstr "เมช"
-
-
 msgid "Node"
 msgstr "โนด"
 
 
 msgid "Navigation"
 msgstr "การนำทาง"
-
-
-msgid "Text"
-msgstr "ช้อความ"
 
 
 msgid "Blender"
@@ -2180,20 +2196,12 @@ msgid "Normals"
 msgstr "แนวฉาก"
 
 
-msgid "Metaball"
-msgstr "เมตาบอล"
-
-
 msgid "Hooks"
 msgstr "ตะขอ"
 
 
 msgid "Add Image"
 msgstr "เพิ่มภาพ"
-
-
-msgid "Light"
-msgstr "แสง"
 
 
 msgid "Apply"
@@ -3152,10 +3160,6 @@ msgid "Show"
 msgstr "แสดง"
 
 
-msgid "Palette"
-msgstr "จานสี"
-
-
 msgctxt "Operator"
 msgid "Mirror"
 msgstr "กระจกสะท้อน"
@@ -3913,10 +3917,6 @@ msgstr "ขอบเขตสามมิติ"
 
 msgid "Show Empty Image"
 msgstr "แสดงภาพว่างเปล่า"
-
-
-msgid "Speaker"
-msgstr "ลำโพง"
 
 
 msgid "3D"

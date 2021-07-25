@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -8850,6 +8850,90 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "Permite definir se este caminho será salvo através da marcação de favoritos, ou gerado a partir do sistema operacional."
 
 
+msgid "Brush"
+msgstr "Pincel"
+
+
+msgid "Font"
+msgstr "Fonte"
+
+
+msgid "Key"
+msgstr "Chave"
+
+
+msgid "Light"
+msgstr "Leve"
+
+
+msgid "Library"
+msgstr "Biblioteca"
+
+
+msgid "Line Style"
+msgstr "Estilo de linha"
+
+
+msgid "Lattice"
+msgstr "Treliça"
+
+
+msgid "Mask"
+msgstr "Máscara"
+
+
+msgid "Metaball"
+msgstr "Esfera-meta"
+
+
+msgid "Mesh"
+msgstr "Malha"
+
+
+msgid "Node Tree"
+msgstr "Árvore de nós"
+
+
+msgid "Paint Curve"
+msgstr "Curva de pintura"
+
+
+msgid "Palette"
+msgstr "Paleta"
+
+
+msgid "Particle"
+msgstr "Partículas"
+
+
+msgid "Simulation"
+msgstr "Simulação"
+
+
+msgid "Sound"
+msgstr "Som"
+
+
+msgid "Speaker"
+msgstr "Alto-falante"
+
+
+msgid "Text"
+msgstr "Texto"
+
+
+msgid "Hair"
+msgstr "Cabelo"
+
+
+msgid "Window Manager"
+msgstr "Gerenciador de janelas"
+
+
+msgid "World"
+msgstr "Ambiente"
+
+
 msgid "Icon ID"
 msgstr "Identificador de ícone"
 
@@ -9822,10 +9906,6 @@ msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "Seleciona as arestas de funcionalidade que não satisfazem as condições de marcações de faces fornecidas."
 
 
-msgid "Line Style"
-msgstr "Estilo de linha"
-
-
 msgid "Line style settings"
 msgstr "Configurações de estilo de linha."
 
@@ -10606,10 +10686,6 @@ msgid "Hook"
 msgstr "Gancho"
 
 
-msgid "Lattice"
-msgstr "Treliça"
-
-
 msgid "Time Offset"
 msgstr "Deslocamento de tempo"
 
@@ -10994,10 +11070,6 @@ msgstr "Vínculo indireto"
 
 msgid "Is this ID block linked indirectly"
 msgstr "Este identificador de bloco está vinculado indiretamente."
-
-
-msgid "Library"
-msgstr "Biblioteca"
 
 
 msgid "Library file the data-block is linked from"
@@ -11457,20 +11529,12 @@ msgid "Soften"
 msgstr "Atenuar"
 
 
-msgid "Mask"
-msgstr "Máscara"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Quantidade de tremulação na posição do pincel durante a pintura."
 
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "Quantidade de tremulação na posição do pincel em pixeis durante a pintura."
-
-
-msgid "Brush"
-msgstr "Pincel"
 
 
 msgid "Mask Stencil Dimensions"
@@ -11507,10 +11571,6 @@ msgstr "Influência das normais"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "Define quanto a operação de agarrar irá puxar os vértices da superfície (pelas suas normais) enquanto os segura."
-
-
-msgid "Paint Curve"
-msgstr "Curva de pintura"
 
 
 msgid "Plane Offset"
@@ -12633,10 +12693,6 @@ msgid "Curve deforming text object"
 msgstr "Curva deformando o objeto de texto"
 
 
-msgid "Font"
-msgstr "Fonte"
-
-
 msgid "Font Bold"
 msgstr "Fonte em negrito"
 
@@ -12971,10 +13027,6 @@ msgstr "Comprimento curvilíneo 2D mínimo para a seleção de encadeamentos."
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "Caso verdadeiro, encadeamentos de arestas de funcionalidade são divididas nas margens do material."
-
-
-msgid "Node Tree"
-msgstr "Árvore de nós"
 
 
 msgid "Node tree for node-based shaders"
@@ -14107,10 +14159,6 @@ msgstr "Um plano X e Y liso ou achatado."
 
 msgid "Cube"
 msgstr "Cubo"
-
-
-msgid "Hair"
-msgstr "Cabelo"
 
 
 msgid "Hair strands"
@@ -15673,10 +15721,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "Permite que o objeto forneça às partículas uma velocidade inicial."
 
 
-msgid "Particle"
-msgstr "Partículas"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "Permite que as partículas alvo forneçam às partículas uma velocidade inicial."
 
@@ -16429,10 +16473,6 @@ msgid "Color management settings applied on image before saving"
 msgstr "Configurações de gerenciamento de cores aplicadas na imagem antes de salvar."
 
 
-msgid "World"
-msgstr "Ambiente"
-
-
 msgid "World used for rendering the scene"
 msgstr "Ambiente usado para renderização da cena "
 
@@ -16569,10 +16609,6 @@ msgstr "Compasso"
 
 msgid "Playback pitch of the sound"
 msgstr "Valor de compasso para a reprodução dos sons."
-
-
-msgid "Sound"
-msgstr "Som"
 
 
 msgid "Sound data-block used by this speaker"
@@ -17611,10 +17647,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "Desloca o número do quadro para usar dentro da animação."
 
 
-msgid "Window Manager"
-msgstr "Gerenciador de janelas"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "Blocos de dados de gerenciador de janelas definindo janelas abertas e outros dados da interface de usuário."
 
@@ -17785,10 +17817,6 @@ msgstr "Animação"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "Solucionador sem estado computando a pose que inicia a partir da ação atual e restrições que não são de cinemática inversa."
-
-
-msgid "Simulation"
-msgstr "Simulação"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -21077,10 +21105,6 @@ msgid "Channel"
 msgstr "Canal"
 
 
-msgid "Key"
-msgstr "Chave"
-
-
 msgid "Snap"
 msgstr "Atrair"
 
@@ -21150,10 +21174,6 @@ msgid "Attribute"
 msgstr "Atributo"
 
 
-msgid "Mesh"
-msgstr "Malha"
-
-
 msgid "Node"
 msgstr "Nós"
 
@@ -21212,10 +21232,6 @@ msgstr "Linguagem de sombreamento aberto"
 
 msgid "Python"
 msgstr "Python"
-
-
-msgid "Text"
-msgstr "Texto"
 
 
 msgid "System"
@@ -21314,16 +21330,8 @@ msgid "Select Similar"
 msgstr "Selecionar por similaridades"
 
 
-msgid "Metaball"
-msgstr "Esfera-meta"
-
-
 msgid "Hooks"
 msgstr "Ganchos"
-
-
-msgid "Light"
-msgstr "Leve"
 
 
 msgid "Make Single User"
@@ -41221,15 +41229,6 @@ msgstr "Cria uma cópia do grupo de vértices ativo."
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Copiar os grupos de vértices para o conectado"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "Substitui os grupos de vértices de todos os usuários dos mesmos dados de geometria pelos grupos de vértices do objeto ativo."
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Copiar o grupo de vértices para o selecionado"
 
@@ -42403,10 +42402,6 @@ msgid "Remove active color from palette"
 msgstr "Remove a cor ativa da patela."
 
 
-msgid "Palette"
-msgstr "Paleta"
-
-
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "Adicionar uma nova paleta"
@@ -42728,6 +42723,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "Permite a navegação interativa das poses na janela de visualização 3D."
 
 
+msgid "Pose Name"
+msgstr "Nome da pose"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "Nova biblioteca de poses"
@@ -42748,10 +42747,6 @@ msgstr "Adiciona a pose atual à biblioteca de poses ativa."
 
 msgid "Frame to store pose on"
 msgstr "Quadro no qual guardar a pose."
-
-
-msgid "Pose Name"
-msgstr "Nome da pose"
 
 
 msgid "Name of newly added Pose"
@@ -58389,10 +58384,6 @@ msgid "Show reconstructed camera path"
 msgstr "Mostra o caminho reconstruído da câmera."
 
 
-msgid "Speaker"
-msgstr "Alto-falante"
-
-
 msgid "Show Reconstruction"
 msgstr "Mostrar reconstrução"
 
@@ -66398,14 +66389,6 @@ msgid "Reset Black/White point and curves"
 msgstr "Redefine os pontos pretos e brancos e as suas respectivas curvas."
 
 
-msgid "Double click to rename"
-msgstr "Duplo clique para renomear."
-
-
-msgid "Hide filtering options"
-msgstr "Oculta as opções de filtragem."
-
-
 msgid "Stop this job"
 msgstr "Interrompe esta tarefa."
 
@@ -67425,10 +67408,6 @@ msgstr "Grupo de vértices está bloqueado."
 
 msgid "%d vertex weights limited"
 msgstr "%d vértices com limitação de pesos de influência."
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "Copiar grupos de vértices para selecionado: %d feitos, %d falharam (dados do objeto devem possuir índices que combinem)."
 
 
 msgid "Vertex select needs to be enabled in weight paint mode"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -9556,6 +9556,94 @@ msgid "Save"
 msgstr "Speichern"
 
 
+msgid "Brush"
+msgstr "Pinsel"
+
+
+msgid "Font"
+msgstr "Schrift"
+
+
+msgid "Collection"
+msgstr "Sammlung"
+
+
+msgid "Key"
+msgstr "Schlüsselbild"
+
+
+msgid "Light"
+msgstr "Licht"
+
+
+msgid "Library"
+msgstr "Bibliothek"
+
+
+msgid "Line Style"
+msgstr "Linienstil"
+
+
+msgid "Lattice"
+msgstr "Gitter"
+
+
+msgid "Mask"
+msgstr "Maske"
+
+
+msgid "Metaball"
+msgstr "Metaball"
+
+
+msgid "Mesh"
+msgstr "Masche"
+
+
+msgid "Node Tree"
+msgstr "Knotenbaum"
+
+
+msgid "Paint Curve"
+msgstr "Mal-Kurve"
+
+
+msgid "Particle"
+msgstr "Partikel"
+
+
+msgid "Light Probe"
+msgstr "Lichtsonde"
+
+
+msgid "Simulation"
+msgstr "Simulation"
+
+
+msgid "Sound"
+msgstr "Sound"
+
+
+msgid "Speaker"
+msgstr "Lautsprecher"
+
+
+msgid "Text"
+msgstr "Text"
+
+
+msgid "Hair"
+msgstr "Haar"
+
+
+msgid "Window Manager"
+msgstr "Fensterverwaltung"
+
+
+msgid "World"
+msgstr "Welt"
+
+
 msgid "Animations"
 msgstr "Animationen"
 
@@ -10712,10 +10800,6 @@ msgid "Amount of random velocity"
 msgstr "Verlauf rückgängig machen"
 
 
-msgid "Collection"
-msgstr "Sammlung"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "Eine Sammlung von Objekten, auf deren Grundlage welche Feature-Kanten ausgewählt werden"
 
@@ -10850,10 +10934,6 @@ msgstr "Beide Flächen"
 
 msgid "Select a feature edge if both of its adjacent faces are marked"
 msgstr "Wählt eine Funktionskante aus, wenn beide angrenzenden Flächen markiert sind"
-
-
-msgid "Line Style"
-msgstr "Linienstil"
 
 
 msgid "Line Set Name"
@@ -11541,10 +11621,6 @@ msgid "Hook"
 msgstr "Haken"
 
 
-msgid "Lattice"
-msgstr "Gitter"
-
-
 msgid "Add noise to strokes"
 msgstr "Hinzufügen von Rauschen zu Strichen"
 
@@ -12191,10 +12267,6 @@ msgid "Is Indirect"
 msgstr "Ist Indirekt"
 
 
-msgid "Library"
-msgstr "Bibliothek"
-
-
 msgid "Unique data-block ID name"
 msgstr "Eindeutiger Datenblock-ID-Name"
 
@@ -12744,20 +12816,12 @@ msgid "Soften"
 msgstr "Weichzeichnen"
 
 
-msgid "Mask"
-msgstr "Maske"
-
-
 msgid "Jitter the position of the brush while painting"
 msgstr "Flimmern der Pinselposition während des Malens"
 
 
 msgid "Jitter the position of the brush in pixels while painting"
 msgstr "Flimmern der Pinselposition während des Malens"
-
-
-msgid "Brush"
-msgstr "Pinsel"
 
 
 msgid "Mask Texture"
@@ -12786,10 +12850,6 @@ msgstr "Normalengewichtung"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "Mit wie viel \"Verschieben\" werden Punkt-Punkte während des Verschiebens aus der Oberfläche gezogen"
-
-
-msgid "Paint Curve"
-msgstr "Mal-Kurve"
 
 
 msgid "Active paint curve"
@@ -13644,10 +13704,6 @@ msgid "Text on Curve"
 msgstr "Text auf Kurve"
 
 
-msgid "Font"
-msgstr "Schrift"
-
-
 msgid "Font Bold"
 msgstr "Schrift Fett"
 
@@ -13922,10 +13978,6 @@ msgstr "Minimale Krümmung der 2D Länge für die Auswahl von Ketten"
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "Wenn aktiv, Ketten von besonderen Kanten trennen sich an Materialgrenzen"
-
-
-msgid "Node Tree"
-msgstr "Knotenbaum"
 
 
 msgid "Node tree for node-based shaders"
@@ -14960,10 +15012,6 @@ msgstr "Fläche"
 
 msgid "Cube"
 msgstr "Würfel"
-
-
-msgid "Hair"
-msgstr "Haar"
 
 
 msgid "Hair strands"
@@ -16221,10 +16269,6 @@ msgid "Object Aligned"
 msgstr "Objekt ausgerichtet"
 
 
-msgid "Particle"
-msgstr "Partikel"
-
-
 msgid "Path End"
 msgstr "Pfadende"
 
@@ -16797,10 +16841,6 @@ msgid "Selected Landmark"
 msgstr "Ausgewählter Orientierungspunkt"
 
 
-msgid "World"
-msgstr "Welt"
-
-
 msgid "Screen data-block, defining the layout of areas in a window"
 msgstr "Bildschirmdatenblock, definiert die Ebenen von Bereichen in einem Fenster"
 
@@ -16889,10 +16929,6 @@ msgstr "Lautsprecher stumm schalten"
 msgctxt "Sound"
 msgid "Pitch"
 msgstr "Tonhöhe"
-
-
-msgid "Sound"
-msgstr "Sound"
 
 
 msgid "Sound data-block used by this speaker"
@@ -17539,10 +17575,6 @@ msgid "Sequence Mode"
 msgstr "Sequenzmodus"
 
 
-msgid "Window Manager"
-msgstr "Fensterverwaltung"
-
-
 msgid "Category"
 msgstr "Kategorie"
 
@@ -17697,10 +17729,6 @@ msgstr "Epsilon"
 
 msgid "Animation"
 msgstr "Animation"
-
-
-msgid "Simulation"
-msgstr "Simulation"
 
 
 msgid "Reiteration"
@@ -19858,10 +19886,6 @@ msgid "Channel"
 msgstr "Kanal"
 
 
-msgid "Key"
-msgstr "Schlüsselbild"
-
-
 msgid "Snap"
 msgstr "Einrasten"
 
@@ -19972,10 +19996,6 @@ msgid "Attribute"
 msgstr "Eigenschaft"
 
 
-msgid "Mesh"
-msgstr "Masche"
-
-
 msgid "Node"
 msgstr "Knoten"
 
@@ -20048,10 +20068,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "Text"
-
-
 msgid "Blender"
 msgstr "Blender"
 
@@ -20098,6 +20114,10 @@ msgstr "Wiederherstellen"
 
 msgid "Help"
 msgstr "Hilfe"
+
+
+msgid "List Item"
+msgstr "Listeneintrag"
 
 
 msgid "Presets"
@@ -20184,10 +20204,6 @@ msgid "Select Similar"
 msgstr "Ähnliche auswählen"
 
 
-msgid "Metaball"
-msgstr "Metaball"
-
-
 msgid "Metaball Context Menu"
 msgstr "Metaball Kontextmenü"
 
@@ -20202,14 +20218,6 @@ msgstr "Haken"
 
 msgid "Add Image"
 msgstr "Bild hinzufügen"
-
-
-msgid "Light"
-msgstr "Licht"
-
-
-msgid "Light Probe"
-msgstr "Lichtsonde"
 
 
 msgid "Make Single User"
@@ -35456,11 +35464,6 @@ msgstr "Kopie der aktiven Knotengruppe erstellen"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "Knotengruppen zu den Verknüpften kopieren"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "Knotengruppe zur Auswahl kopieren"
 
@@ -42023,10 +42026,6 @@ msgstr "Schattiert"
 
 msgid "Styles"
 msgstr "Stile"
-
-
-msgid "List Item"
-msgstr "Listeneintrag"
 
 
 msgid "Menu"
@@ -49143,10 +49142,6 @@ msgstr "Objektskalierung anzeigen"
 
 msgid "Show Object Location"
 msgstr "Objektposition anzeigen"
-
-
-msgid "Speaker"
-msgstr "Lautsprecher"
 
 
 msgid "Show Reconstruction"
@@ -59632,10 +59627,6 @@ msgstr "Punkte löschen"
 
 msgid "Reset Black/White point and curves"
 msgstr "Schwarz-/Weißpunkte und Kuven zurücksetzen"
-
-
-msgid "Double click to rename"
-msgstr "Doppelklick zum umbenennen"
 
 
 msgid "Stop this job"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'280dac323cc8')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -10625,6 +10625,102 @@ msgid "Whether this path is saved in bookmarks, or generated from OS"
 msgstr "이 경로는 북마크에서 저장되는지 여부, 또는 OS로부터 생성되는지"
 
 
+msgid "Brush"
+msgstr "브러시"
+
+
+msgid "Font"
+msgstr "폰트"
+
+
+msgid "Collection"
+msgstr "컬렉션"
+
+
+msgid "Key"
+msgstr "키"
+
+
+msgid "Light"
+msgstr "라이트"
+
+
+msgid "Library"
+msgstr "라이브러리"
+
+
+msgid "Line Style"
+msgstr "라인 스타일"
+
+
+msgid "Lattice"
+msgstr "래티스"
+
+
+msgid "Mask"
+msgstr "마스크"
+
+
+msgid "Metaball"
+msgstr "메타볼"
+
+
+msgid "Mesh"
+msgstr "메쉬"
+
+
+msgid "Node Tree"
+msgstr "노드 트리"
+
+
+msgid "Paint Curve"
+msgstr "페인트 커브"
+
+
+msgid "Palette"
+msgstr "팔레트"
+
+
+msgid "Particle"
+msgstr "파티클"
+
+
+msgid "Light Probe"
+msgstr "라이트 프로브"
+
+
+msgid "Simulation"
+msgstr "시뮬레이션"
+
+
+msgid "Sound"
+msgstr "사운드"
+
+
+msgid "Speaker"
+msgstr "스피커"
+
+
+msgid "Text"
+msgstr "텍스트"
+
+
+msgid "Hair"
+msgstr "해어"
+
+
+msgid "Window Manager"
+msgstr "창 관리자"
+
+
+msgid "World"
+msgstr "월드"
+
+
+msgid "Workspace"
+msgstr "작업공간"
+
+
 msgid "Icon ID"
 msgstr "아이콘 ID"
 
@@ -12025,10 +12121,6 @@ msgid "Line set for associating lines and style parameters"
 msgstr "관련 라인과 스타일의 매개 변수에 대한 라인 설정"
 
 
-msgid "Collection"
-msgstr "컬렉션"
-
-
 msgid "A collection of objects based on which feature edges are selected"
 msgstr "선택된 어떤 특성 에지를 기반으로 오브젝트의 컬랙션"
 
@@ -12207,10 +12299,6 @@ msgstr "주어진 페이스 마크 조건을 만족하는 특성 에지를 선�
 
 msgid "Select feature edges not satisfying the given face mark conditions"
 msgstr "주어진 페이스 마크 조건을 만족하지 않는 특성 에지를 선택"
-
-
-msgid "Line Style"
-msgstr "라인 스타일"
 
 
 msgid "Line style settings"
@@ -13515,10 +13603,6 @@ msgid "Deform stroke points using objects"
 msgstr "오브젝트를 사용하여 스트로크 포인트을 변형"
 
 
-msgid "Lattice"
-msgstr "래티스"
-
-
 msgid "Deform strokes using lattice"
 msgstr "레티스를 사용하여 스트로크를 변형"
 
@@ -14417,10 +14501,6 @@ msgid "Is this ID block linked indirectly"
 msgstr "이 ID 블록은 간접적으로 연결되어 있음"
 
 
-msgid "Library"
-msgstr "라이브러리"
-
-
 msgid "Library file the data-block is linked from"
 msgstr "데이터 블록이 다음에서 연결된 라이브러리 파일"
 
@@ -15130,10 +15210,6 @@ msgid "Soften"
 msgstr "부드럽게"
 
 
-msgid "Mask"
-msgstr "마스크"
-
-
 msgid "Invert to Scrape or Fill"
 msgstr "스크랩 또는 채우기로 반전"
 
@@ -15156,10 +15232,6 @@ msgstr "지터 유닛"
 
 msgid "Jitter in screen space or relative to brush size"
 msgstr "화면 공간의 지터 또는 브러시 크기와 관련"
-
-
-msgid "Brush"
-msgstr "브러시"
 
 
 msgid "Mask Stencil Dimensions"
@@ -15212,10 +15284,6 @@ msgstr "노멀 웨이트"
 
 msgid "How much grab will pull vertexes out of surface during a grab"
 msgstr "잡는 동안 표면의 버텍스를 얼마나 많이 잡아 당길 것인지"
-
-
-msgid "Paint Curve"
-msgstr "페인트 커브"
 
 
 msgid "Plane Offset"
@@ -16582,10 +16650,6 @@ msgid "Curve deforming text object"
 msgstr "커브 변형 텍스트 오브젝트"
 
 
-msgid "Font"
-msgstr "폰트"
-
-
 msgid "Font Bold"
 msgstr "폰트 굵게"
 
@@ -16952,10 +17016,6 @@ msgstr "체인의 선택에 대한 최소 커브의 2D 길이"
 
 msgid "If true, chains of feature edges are split at material boundaries"
 msgstr "True일 경우, 특색 에지들의 체인은 매테리얼 경계에서 분할"
-
-
-msgid "Node Tree"
-msgstr "노드 트리"
 
 
 msgid "Node tree for node-based shaders"
@@ -18726,10 +18786,6 @@ msgstr "플랫 XY 평면"
 
 msgid "Cube"
 msgstr "큐브"
-
-
-msgid "Hair"
-msgstr "해어"
 
 
 msgid "Hair strands"
@@ -20731,10 +20787,6 @@ msgid "Let the object give the particle a starting velocity"
 msgstr "오브젝트가 파티클에게 시작 속도를 부여합니다"
 
 
-msgid "Particle"
-msgstr "파티클"
-
-
 msgid "Let the target particle give the particle a starting velocity"
 msgstr "대상 파티클이 파티클에게 시작 속도를 부여합니다"
 
@@ -21547,10 +21599,6 @@ msgid "Color management settings applied on image before saving"
 msgstr "이미지를 저장하기 전에 적용된 이미지에 컬러 매니지먼트 설정"
 
 
-msgid "World"
-msgstr "월드"
-
-
 msgid "World used for rendering the scene"
 msgstr "월드 씬을 렌더링에 사용"
 
@@ -21695,10 +21743,6 @@ msgstr "피치"
 
 msgid "Playback pitch of the sound"
 msgstr "사운드의 재생 피치"
-
-
-msgid "Sound"
-msgstr "사운드"
 
 
 msgid "Sound data-block used by this speaker"
@@ -22773,10 +22817,6 @@ msgid "Offset the number of the frame to use in the animation"
 msgstr "에니메이션에서 사용하는 프레임의 번호를 오프셋"
 
 
-msgid "Window Manager"
-msgstr "창 관리자"
-
-
 msgid "Window manager data-block defining open windows and other user interface data"
 msgstr "다른 사용자 인터페이스의 데이터와 창 열기를 정의하는 창 관리자 데이터 블록"
 
@@ -22859,10 +22899,6 @@ msgstr "창"
 
 msgid "Open windows"
 msgstr "창을 열기"
-
-
-msgid "Workspace"
-msgstr "작업공간"
 
 
 msgid "Workspace data-block, defining the working environment for the user"
@@ -23131,10 +23167,6 @@ msgstr "애니메이션"
 
 msgid "Stateless solver computing pose starting from current action and non-IK constraints"
 msgstr "현재 액션 및 비 IK 제약 조건에서 시작하는 무 상태 솔버 컴퓨팅 포즈"
-
-
-msgid "Simulation"
-msgstr "시뮬레이션"
 
 
 msgid "State-full solver running in real-time context and ignoring actions and non-IK constraints"
@@ -26790,10 +26822,6 @@ msgid "Dope Sheet Context Menu"
 msgstr "도프시트 컨텍스트 메뉴"
 
 
-msgid "Key"
-msgstr "키"
-
-
 msgid "Snap"
 msgstr "스냅"
 
@@ -26918,10 +26946,6 @@ msgid "Attribute"
 msgstr "속성"
 
 
-msgid "Mesh"
-msgstr "메쉬"
-
-
 msgid "Node Context Menu"
 msgstr "노드 컨텍스트 메뉴"
 
@@ -27007,10 +27031,6 @@ msgid "Python"
 msgstr "Python"
 
 
-msgid "Text"
-msgstr "텍스트"
-
-
 msgid "Blender"
 msgstr "블렌더"
 
@@ -27062,6 +27082,10 @@ msgstr "복구"
 
 msgid "Help"
 msgstr "도움말"
+
+
+msgid "List Item"
+msgstr "목록 항목"
 
 
 msgid "Presets"
@@ -27177,10 +27201,6 @@ msgid "Select Similar"
 msgstr "유사한 선택"
 
 
-msgid "Metaball"
-msgstr "메타볼"
-
-
 msgid "Metaball Context Menu"
 msgstr "메타볼 컨텍스트 메뉴"
 
@@ -27195,14 +27215,6 @@ msgstr "후크"
 
 msgid "Add Image"
 msgstr "이미지를 추가"
-
-
-msgid "Light"
-msgstr "라이트"
-
-
-msgid "Light Probe"
-msgstr "라이트 프로브"
 
 
 msgid "Make Single User"
@@ -51574,15 +51586,6 @@ msgstr "활성 버텍스 그룹의 복사본을 만듭니다"
 
 
 msgctxt "Operator"
-msgid "Copy Vertex Groups to Linked"
-msgstr "연결되는 버텍스 그룹을 복사"
-
-
-msgid "Replace vertex groups of all users of the same geometry data by vertex groups of active object"
-msgstr "동일한 지오메트리 데이터의 모든 사용자의 버텍스 그룹을 활성 오브젝트의 버텍스 그룹으로 대체합니다"
-
-
-msgctxt "Operator"
 msgid "Copy Vertex Group to Selected"
 msgstr "선택된 버텍스 그룹을 복사"
 
@@ -53089,10 +53092,6 @@ msgid "Remove active color from palette"
 msgstr "팔레트에서 활성 컬러를 제거"
 
 
-msgid "Palette"
-msgstr "팔레트"
-
-
 msgctxt "Operator"
 msgid "Add New Palette"
 msgstr "새로운 팔레트를 추가"
@@ -53431,6 +53430,10 @@ msgid "Interactively browse poses in 3D-View"
 msgstr "3D 뷰에서 포즈를 상호적인 찾아보기"
 
 
+msgid "Pose Name"
+msgstr "포즈 이름"
+
+
 msgctxt "Operator"
 msgid "New Pose Library"
 msgstr "새로운 포즈 라이브러리"
@@ -53451,10 +53454,6 @@ msgstr "활성 포즈 라이브러리에 현제 포즈를 추가"
 
 msgid "Frame to store pose on"
 msgstr "다음에 포즈를 저장하는 프레임"
-
-
-msgid "Pose Name"
-msgstr "포즈 이름"
 
 
 msgid "Name of newly added Pose"
@@ -63024,10 +63023,6 @@ msgstr "셰이드"
 
 msgid "Styles"
 msgstr "스타일"
-
-
-msgid "List Item"
-msgstr "목록 항목"
 
 
 msgid "Menu"
@@ -74323,10 +74318,6 @@ msgstr "도구 기즈모"
 
 msgid "Active tool gizmo"
 msgstr "활성 도구 기즈모"
-
-
-msgid "Speaker"
-msgstr "스피커"
 
 
 msgid "Show Reconstruction"
@@ -87014,14 +87005,6 @@ msgid "Toggle Profile Clipping"
 msgstr "프로필 클리핑을 토글"
 
 
-msgid "Double click to rename"
-msgstr "이름을 변경하려면 더블 클릭하십시오"
-
-
-msgid "Hide filtering options"
-msgstr "필터링 옵션을 숨기기"
-
-
 msgid "Stop this job"
 msgstr "이 직업을 중지"
 
@@ -88264,10 +88247,6 @@ msgstr "버텍스 그룹이 잠김"
 
 msgid "%d vertex weights limited"
 msgstr "%d 버텍스 웨이트 제한됨"
-
-
-msgid "Copy vertex groups to selected: %d done, %d failed (object data must have matching indices)"
-msgstr "버텍스 그룹을 선택 항목으로 복사: %d 작업 완료, %d 작업 실패 (오브젝트 데이터에 일치하는 인덱스가 있어야 함)"
 
 
 msgid "Vertex select needs to be enabled in weight paint mode"
