@@ -5,6 +5,7 @@
  * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -12905,6 +12906,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_TO_MESH:
       icon = ICON_OUTLINER_OB_MESH;
       break;
+    case GEO_NODE_CURVE_TRIM:
+      icon = ICON_CURVE_TRIM;
+      break;
     case GEO_NODE_DELETE_GEOMETRY:
       icon = ICON_DELETE;
       break;
@@ -12916,6 +12920,9 @@ static int node_type_to_icon(int type)
       break;
     case GEO_NODE_CURVE_RESAMPLE:
       icon = ICON_CURVE_RESAMPLE;
+      break;
+    case GEO_NODE_CURVE_SET_HANDLES:
+      icon = ICON_HANDLE_AUTO;
       break;
     case GEO_NODE_CURVE_REVERSE:
       icon = ICON_SWITCH_DIRECTION;
