@@ -1448,6 +1448,7 @@ class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
     bl_label = "Ray Visibility"
     bl_parent_id = "CYCLES_OBJECT_PT_visibility"
     bl_context = "object"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1463,11 +1464,15 @@ class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
         ob = context.object
         cob = ob.cycles
         visibility = ob.cycles_visibility
+        
+        split = layout.split()
 
-        col = layout.column(align = True)
+        col = split.column(align = True)
         col.prop(visibility, "camera")
         col.prop(visibility, "diffuse")
         col.prop(visibility, "glossy")
+        
+        col = split.column(align = True)
         col.prop(visibility, "transmission")
         col.prop(visibility, "scatter")
 
@@ -1480,6 +1485,7 @@ class CYCLES_OBJECT_PT_visibility_culling(CyclesButtonsPanel, Panel):
     bl_label = "Culling"
     bl_parent_id = "CYCLES_OBJECT_PT_visibility"
     bl_context = "object"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1495,12 +1501,14 @@ class CYCLES_OBJECT_PT_visibility_culling(CyclesButtonsPanel, Panel):
         cscene = scene.cycles
         ob = context.object
         cob = ob.cycles
+        
+        split = layout.split()
 
-        row = layout.row()
+        row = split.row()
         row.active = scene.render.use_simplify and cscene.use_camera_cull
         row.prop(cob, "use_camera_cull")
 
-        row = layout.row()
+        row = split.row()
         row.active = scene.render.use_simplify and cscene.use_distance_cull
         row.prop(cob, "use_distance_cull")
 
