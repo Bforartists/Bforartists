@@ -3612,12 +3612,20 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Curve to Points          ", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
+            
+            props = col.operator("node.add_node", text=" Curve Trim              ", icon = "CURVE_TRIM")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveTrim"
 
             props = col.operator("node.add_node", text=" Mesh to Curve            ", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
             props.type = "GeometryNodeMeshToCurve"
 
             props = col.operator("node.add_node", text=" Resample Curve        ", icon = "CURVE_RESAMPLE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveResample"
+            
+            props = col.operator("node.add_node", text=" Set Handle Types       ", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
 
@@ -3653,6 +3661,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text="", icon = "POINTCLOUD_DATA")
             props.use_transform = True
             props.type = "GeometryNodeCurveToPoints"
+            
+            props = flow.operator("node.add_node", text="", icon = "CURVE_TRIM")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveTrim"
 
             props = flow.operator("node.add_node", text = "", icon = "OUTLINER_OB_CURVE")
             props.use_transform = True
@@ -3661,6 +3673,10 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "CURVE_RESAMPLE")
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
+            
+            props = flow.operator("node.add_node", text = "", icon = "HANDLE_AUTO")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSetHandles"
 
 
 #add Curves Primitives panel
