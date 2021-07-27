@@ -1413,21 +1413,35 @@ class CYCLES_OBJECT_PT_visibility(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         ob = context.object
 
         layout.prop(ob, "hide_select", text="Selectable", invert_checkbox=True, toggle=False)
 
-        col = layout.column(heading="Show In")
-        col.prop(ob, "hide_viewport", text="Viewports", invert_checkbox=True, toggle=False)
-        col.prop(ob, "hide_render", text="Renders", invert_checkbox=True, toggle=False)
+        col = layout.column(align =True)
+        col.label (text = "Show In")
+        row = col.row()
+        row.separator()
+        row.prop(ob, "hide_viewport", text="Viewports", invert_checkbox=True, toggle=False)
+        row.prop_decorator(ob, "hide_viewport")
+        row = col.row()
+        row.separator()
+        row.prop(ob, "hide_render", text="Renders", invert_checkbox=True, toggle=False)
+        row.prop_decorator(ob, "hide_render")
 
         if has_geometry_visibility(ob):
             cob = ob.cycles
-            col = layout.column(heading="Mask")
-            col.prop(cob, "is_shadow_catcher")
-            col.prop(cob, "is_holdout")
+            col = layout.column(align = True)
+            col.label (text = "Mask")
+            row = col.row()
+            row.separator()
+            row.prop(cob, "is_shadow_catcher")
+            row.prop_decorator(cob, "is_shadow_catcher")
+            row = col.row()
+            row.separator()
+            row.prop(cob, "is_holdout")
+            row.prop_decorator(cob, "is_holdout")
 
 
 class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
@@ -1442,7 +1456,7 @@ class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
@@ -1450,7 +1464,7 @@ class CYCLES_OBJECT_PT_visibility_ray_visibility(CyclesButtonsPanel, Panel):
         cob = ob.cycles
         visibility = ob.cycles_visibility
 
-        col = layout.column()
+        col = layout.column(align = True)
         col.prop(visibility, "camera")
         col.prop(visibility, "diffuse")
         col.prop(visibility, "glossy")
@@ -1474,7 +1488,7 @@ class CYCLES_OBJECT_PT_visibility_culling(CyclesButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         layout.use_property_decorate = False
 
         scene = context.scene
