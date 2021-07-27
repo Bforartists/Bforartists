@@ -308,20 +308,33 @@ class MATERIAL_PT_lineart(MaterialButtonsPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
 
         mat = context.material
         lineart = mat.lineart
 
-        layout.prop(lineart, "use_material_mask", text="Material Mask")
+        row = layout.row()
+        split = row.split(factor = 0.5)
+        row = split.row()
+        row.prop(lineart, "use_material_mask", text="Material Mask")
+        row = split.row()
+        if lineart.use_material_mask:
+            row.label(icon='DISCLOSURE_TRI_DOWN')
+        else:
+            row.label(icon='DISCLOSURE_TRI_RIGHT')
+        row = split.row()
+        row.alignment = 'RIGHT'
+        row.prop_decorator(lineart, "use_material_mask")
+
+        layout.use_property_split = True
 
         col = layout.column(align=True)
-        col.active = lineart.use_material_mask
-        row = col.row(align=True, heading="Masks")
-        for i in range(8):
-            row.prop(lineart, "use_material_mask_bits", text=" ", index=i, toggle=True)
-            if i == 3:
-                row = col.row(align=True)
+        if lineart.use_material_mask:
+            row = col.row(align=True, heading="      Masks")
+            for i in range(8):
+                row.prop(lineart, "use_material_mask_bits", text=" ", index=i, toggle=True)
+                if i == 3:
+                    row = col.row(align=True)
 
         row = layout.row(align=True, heading="Custom Occlusion")
         row.prop(lineart, "mat_occlusion", text="Levels")
