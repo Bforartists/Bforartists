@@ -644,7 +644,7 @@ curve_startend
 curve_line
 float_to_int
 curve_quadrilateral
-#~ DEF_ICON_BLANK(663)
+curve_trim
 
 # ------------------------- row 10 --------------------------*/
 
