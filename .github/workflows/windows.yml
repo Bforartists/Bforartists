@@ -1,12 +1,12 @@
 name: Windows
 
-on:
-  push:
-    branches: [ master ]
-  schedule:
-    - cron: 0 0 * * 1
-  pull_request:
-    branches: [ master ]
+# on:
+#   push:
+#     branches: [ master ]
+#   schedule:
+#     - cron: 0 0 * * 1
+#   pull_request:
+#     branches: [ master ]
 
 jobs:
   build:
