@@ -1121,7 +1121,7 @@ void MESH_OT_bevel(wmOperatorType *ot)
               1,
               SEGMENTS_HARD_MAX,
               "Segments",
-              "Segments for curved edge",
+              "Segments for curved edge determines how many segments the bevel geometry will have\nFirst adjust the number of edges, then perform the Bevel operation",
               1,
               100);
 
