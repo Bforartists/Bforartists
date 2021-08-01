@@ -215,13 +215,6 @@ class OUTLINER_MT_context_menu(Menu):
     def draw_common_operators(layout):
         layout.menu_contents("OUTLINER_MT_asset")
 
-        layout.separator()
-
-        layout.menu("OUTLINER_MT_context_menu_view")
-
-        layout.separator()
-
-        layout.menu("INFO_MT_area")
 
     def draw(self, context):
         space = context.space_data
