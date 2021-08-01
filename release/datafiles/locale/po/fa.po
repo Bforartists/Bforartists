@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -12173,10 +12173,6 @@ msgid "Over Drop Sequence"
 msgstr "ﺮﯾﻮﺼﺗ ﺲﻧﺎﮑﺳ"
 
 
-msgid "Multiply Speed"
-msgstr "ﺮﯿﺜﮑﺗ ﺖﻋﺮﺳ"
-
-
 msgid "Subtract Sequence"
 msgstr "ﺲﻧﺎﮑﺳ ﯽﺑﺎﯾﺩﺭ"
 
@@ -15004,11 +15000,6 @@ msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
 
 msgid "Bad vertex index in list"
 msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "ﻞﯾﺪﺒﺗ"
 
 
 msgid "Convertor"

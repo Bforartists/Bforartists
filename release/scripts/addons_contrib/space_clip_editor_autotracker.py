@@ -83,7 +83,11 @@ class GlDrawOnScreen():
         bgl.glDisable(bgl.GL_BLEND)
         bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
 
-    def _start_line(self, colour, width=2, style=bgl.GL_LINE_STIPPLE):
+    def _start_line(self, colour, width=2, style=None):
+        if style is None:
+            # NOTE: this is no longer supported in Blender3.0.
+            # style = bgl.GL_LINE_STIPPLE
+            style = bgl.GL_LINE
         bgl.glPushAttrib(bgl.GL_ENABLE_BIT)
         bgl.glLineStipple(1, 0x9999)
         bgl.glEnable(style)

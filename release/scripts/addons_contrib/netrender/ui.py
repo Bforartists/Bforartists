@@ -357,7 +357,7 @@ class RENDER_PT_network_jobs(NeedValidAddress, NetRenderButtonsPanel, bpy.types.
             layout.label(text="Done: %04i" % job.results[netrender.model.FRAME_DONE])
             layout.label(text="Error: %04i" % job.results[netrender.model.FRAME_ERROR])
 
-import bl_ui.properties_render as properties_render
+import bl_ui.properties_output as properties_output
 class RENDER_PT_network_output(NeedValidAddress, NetRenderButtonsPanel, bpy.types.Panel):
     bl_label = "Output"
     COMPAT_ENGINES = {'NET_RENDER'}
@@ -367,7 +367,7 @@ class RENDER_PT_network_output(NeedValidAddress, NetRenderButtonsPanel, bpy.type
         netsettings = context.scene.network_render
         return super().poll(context) and netsettings.mode == "RENDER_CLIENT"
 
-    draw = properties_render.RENDER_PT_output.draw
+    draw = properties_output.RENDER_PT_output.draw
 
 
 class NetRenderSlave(bpy.types.PropertyGroup):

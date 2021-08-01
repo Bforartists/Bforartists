@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -10589,10 +10589,6 @@ msgstr "Trackball: %s %s %s"
 
 msgid "Trackball: %.2f %.2f %s"
 msgstr "Trackball: %.2f %.2f %s"
-
-
-msgid "AutoIK-Len: %d"
-msgstr "AutoIK-Len: %d"
 
 
 msgid "Use 'Time_Translate' transform mode instead of 'Translation' mode for translating keyframes in Dope Sheet Editor"

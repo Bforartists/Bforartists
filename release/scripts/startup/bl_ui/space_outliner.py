@@ -213,6 +213,10 @@ class OUTLINER_MT_context_menu(Menu):
 
     @staticmethod
     def draw_common_operators(layout):
+        layout.menu_contents("OUTLINER_MT_asset")
+
+        layout.separator()
+
         layout.menu("OUTLINER_MT_context_menu_view")
 
         layout.separator()
@@ -389,6 +393,22 @@ class OUTLINER_MT_object(Menu):
         layout.separator()
 
         OUTLINER_MT_context_menu.draw_common_operators(layout)
+
+
+class OUTLINER_MT_asset(Menu):
+    bl_label = "Assets"
+
+    @classmethod
+    def poll(cls, context):
+        return context.preferences.experimental.use_asset_browser
+
+    def draw(self, context):
+        layout = self.layout
+
+        space = context.space_data
+
+        layout.operator("asset.mark")
+        layout.operator("asset.clear")
 
 
 class OUTLINER_PT_filter(Panel):
@@ -568,6 +588,7 @@ classes = (
     OUTLINER_MT_collection_new,
     OUTLINER_MT_collection_visibility,
     OUTLINER_MT_object,
+    OUTLINER_MT_asset,
     OUTLINER_MT_context_menu,
     OUTLINER_MT_context_menu_view,
     OUTLINER_PT_filter,

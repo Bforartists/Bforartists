@@ -11,8 +11,7 @@ import os
 import glob
 
 class AutomatOperatorFromTexture(bpy.types.Operator):
-
-    """This operator generates automatic materials from textures in Cycles."""
+    """This operator generates automatic materials from textures in Cycles"""
 
     # Metadata of the operator
 
@@ -26,7 +25,10 @@ class AutomatOperatorFromTexture(bpy.types.Operator):
     filename: bpy.props.StringProperty()
     directory: bpy.props.StringProperty(subtype="FILE_PATH")
 
-    make_seamless: bpy.props.BoolProperty(name="Make Seamless", description="Make tileable (removes visible borders of the image).")
+    make_seamless: bpy.props.BoolProperty(
+        name="Make Seamless",
+        description="Make tileable (removes visible borders of the image)",
+    )
 
     def execute(self, context):
 

@@ -134,14 +134,20 @@ def draw_image(x, y, width, height, image, transparency, crop=(0, 0, 1, 1), batc
     return batch
 
 
-def draw_text(text, x, y, size, color=(1, 1, 1, 0.5), ralign = False):
+def draw_text(text, x, y, size, color=(1, 1, 1, 0.5), halign = 'LEFT', valign = 'TOP'):
     font_id = 1
     # bgl.glColor4f(*color)
     blf.color(font_id, color[0], color[1], color[2], color[3])
     blf.size(font_id, size, 72)
-    if ralign:
+    if halign != 'LEFT':
         width,height = blf.dimensions(font_id, text)
-        x-=width
+        if halign == 'RIGHT':
+            x-=width
+        elif halign == 'CENTER':
+            x-=width//2
+        if valign=='CENTER':
+            y-=height//2
+        #bottom could be here but there's no reason for it
     blf.position(font_id, x, y, 0)
 
     blf.draw(font_id, text)

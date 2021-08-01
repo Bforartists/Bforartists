@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -15570,10 +15570,6 @@ msgid "Input properties of an Gizmo"
 msgstr "Propiedades de entrada de un manipulador"
 
 
-msgid "Modifier affecting the grease pencil object"
-msgstr "Modificador que afecta al objeto de lápiz de cera"
-
-
 msgid "Modifier name"
 msgstr "Nombre del modificador"
 
@@ -16276,22 +16272,6 @@ msgid "The strength value for the generate strokes"
 msgstr "Intensidad de la opacidad de los trazos generados"
 
 
-msgid "Source Collection"
-msgstr "Colección de origen"
-
-
-msgid "Source collection that this modifier uses data from"
-msgstr "Colección de origen del cual este modificador usa datos"
-
-
-msgid "Source Object"
-msgstr "Objeto de origen"
-
-
-msgid "Source object that this modifier uses data from"
-msgstr "Objeto de origen del cual este modificador usa datos"
-
-
 msgid "Source Type"
 msgstr "Tipo"
 
@@ -16316,16 +16296,8 @@ msgid "Angle in screen space below which a stroke is split in two"
 msgstr "Ángulo en espacio de pantalla por debajo del cual un trazo será dividido en dos"
 
 
-msgid "Target Layer"
-msgstr "Capa objetivo"
-
-
 msgid "Grease Pencil layer assigned to the generated strokes"
 msgstr "Capa de lápiz de cera asignada a los trazos generados"
-
-
-msgid "Target Material"
-msgstr "Material objetivo"
 
 
 msgid "Grease Pencil material assigned to the generated strokes"
@@ -33830,6 +33802,10 @@ msgstr "Sustraer el valor de origen al del destino, usando el umbral indicado co
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "Multiplicar el valor de origen por el del destino, usando el umbral indicado como factor de mezcla"
+
+
+msgid "Source Object"
+msgstr "Objeto de origen"
 
 
 msgid "Object to transfer data from"
@@ -83610,14 +83586,6 @@ msgid "Right Handle Selected"
 msgstr "Asa derecha seleccionada"
 
 
-msgid "Speed Factor"
-msgstr "Factor de velocidad"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Multiplica la velocidad actual de la secuencia por este número o remapea el fotograma actual a este fotograma"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Tipo"
@@ -84020,20 +83988,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Clip de la secuencia para controlar la velocidad de otros clips"
 
 
-msgid "Multiply Speed"
-msgstr "Multiplicador de velocidad"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "Multiplicar la velocidad resultante luego del factor de velocidad"
-
-
-msgid "Use as Speed"
-msgstr "Usar como velocidad"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Interpretar el valor como velocidad en vez de como un número de fotograma"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "Multiplica la velocidad actual de la secuencia por este número o remapea el fotograma actual a este fotograma"
 
 
 msgid "Frame Interpolation"
@@ -84042,14 +83998,6 @@ msgstr "Interpolación de fotogramas"
 
 msgid "Do crossfade blending between current and next frame"
 msgstr "Realiza un fundido cruzado entre el fotograma actual y el siguiente"
-
-
-msgid "Scale to Length"
-msgstr "Escalar a longitud"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Escala los valores de 0.0 a 1.0 a la longitud de la secuencia destino"
 
 
 msgid "Subtract Sequence"
@@ -86378,7 +86326,7 @@ msgid "Display image with RGB colors"
 msgstr "Muestra la imagen con colores RVA"
 
 
-msgid "Display  alpha transparency channel"
+msgid "Display alpha transparency channel"
 msgstr "Muestra el canal alfa de transparencia"
 
 
@@ -86604,10 +86552,6 @@ msgstr "Datos del espacio del editor de nodos"
 
 msgid "Channels of the image to draw"
 msgstr "Canales de la imagen a ser mostrados"
-
-
-msgid "Display alpha transparency channel"
-msgstr "Muestra el canal alfa de transparencia"
 
 
 msgid "Backdrop Offset"
@@ -92660,10 +92604,6 @@ msgid "Volume object render settings"
 msgstr "Opciones de procesamiento de objetos volumétricos"
 
 
-msgid "Specify volume density and step size  in object or world space"
-msgstr "Permite especificar la densidad y el tamaño de intervalo del volumen, en espacio del objeto o global"
-
-
 msgid "Keep volume opacity and detail the same regardless of object scale"
 msgstr "Mantiene la opacidad y el detalle del volumen sin cambios, independientemente de la escala del objeto"
 
@@ -92730,6 +92670,10 @@ msgstr "Velocidad al transitar"
 
 msgid "Base speed for walking and flying"
 msgstr "Velocidad de base al transitar o volar"
+
+
+msgid "Speed Factor"
+msgstr "Factor de velocidad"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -98591,6 +98535,10 @@ msgid "Hold Split"
 msgstr "Dividir y congelar"
 
 
+msgid "Default Fade"
+msgstr "Fundido predefinido"
+
+
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Rango de fot. original: %d-%d (%d)"
 
@@ -98640,8 +98588,8 @@ msgid "Clear Fade"
 msgstr "Eliminar fundido"
 
 
-msgid "Default Fade"
-msgstr "Fundido predefinido"
+msgid "Effect Fader"
+msgstr "Efecto desvanecimiento"
 
 
 msgid "%dx%d"
@@ -98668,20 +98616,12 @@ msgid "Add Transition"
 msgstr "Agregar transición"
 
 
-msgid "Effect Fader"
-msgstr "Efecto desvanecimiento"
-
-
 msgid "Unpack"
 msgstr "Desempacar"
 
 
 msgid "Pack"
 msgstr "Empacar"
-
-
-msgid "Stretch to Input Strip Length"
-msgstr "Estirar a longitud del clip de entrada"
 
 
 msgid "Source Channel"
@@ -102892,30 +102832,6 @@ msgstr "G/R/S/B/[C] - sólo Propiedades Personalizadas (C para restablecer) | %s
 
 msgid "G/R/S/B/C - Limit to Transform/Property Set"
 msgstr "G/R/S/B/C - Limitar a Transformación/Grupo de Propiedades"
-
-
-msgid "[E] - Disable overshoot"
-msgstr "[E] - Deshabilitar extensión"
-
-
-msgid "[E] - Enable overshoot"
-msgstr "[E] - Habilitar extensión"
-
-
-msgid "[Shift] - Precision active"
-msgstr "[Mayúsculas] - Modo preciso activo"
-
-
-msgid "Shift - Hold for precision"
-msgstr "Mayúsculas - Mantener para modo preciso"
-
-
-msgid "[Ctrl] - Increments active"
-msgstr "[Ctrl] - Modo incremental activo"
-
-
-msgid "Ctrl - Hold for 10% increments"
-msgstr "Ctrl - Mantener para incrementos del 10%"
 
 
 msgid "[H] - Toggle bone visibility"
@@ -108576,10 +108492,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Rot. esférica: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "Long-CI auto: %d"
-
-
 msgid "right"
 msgstr "derecha"
 
@@ -108671,6 +108583,30 @@ msgstr "Comprobando la sanidad del archivo .blend actual *DESPUÉS* de deshacer"
 
 msgid "Undo disabled at startup"
 msgstr "Deshacer deshabilitado al inicio"
+
+
+msgid "[E] - Disable overshoot"
+msgstr "[E] - Deshabilitar extensión"
+
+
+msgid "[E] - Enable overshoot"
+msgstr "[E] - Habilitar extensión"
+
+
+msgid "[Shift] - Precision active"
+msgstr "[Mayúsculas] - Modo preciso activo"
+
+
+msgid "Shift - Hold for precision"
+msgstr "Mayúsculas - Mantener para modo preciso"
+
+
+msgid "[Ctrl] - Increments active"
+msgstr "[Ctrl] - Modo incremental activo"
+
+
+msgid "Ctrl - Hold for 10% increments"
+msgstr "Ctrl - Mantener para incrementos del 10%"
 
 
 msgid "Unpack File"
@@ -108787,10 +108723,6 @@ msgstr "Límites de materiales"
 
 msgid "Overlapping Edges As Contour"
 msgstr "Bordes superpuestos como contornos"
-
-
-msgid "Match All Masks"
-msgstr "Hacer coincidir todas las máscaras"
 
 
 msgid "Chain"
@@ -110005,11 +109937,6 @@ msgstr "Crear sobre trayectoria"
 
 msgid "Settings are in the particle tab"
 msgstr "Opciones dentro de la solapa Partículas"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Convertir"
 
 
 msgid "Built without Remesh modifier"

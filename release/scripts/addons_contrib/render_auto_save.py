@@ -216,7 +216,7 @@ def register():
         description='Also save .blend (copy) file into: //auto_save/')
     bpy.types.Scene.auto_save_format = EnumProperty(
         name='Auto Save File Format',
-        description='File Format for the auto saves.',
+        description='File Format for the auto saves',
         items=[
             ('SCENE', 'scene format', 'Format set in output panel'),
             ('PNG', 'png', 'Save as png'),

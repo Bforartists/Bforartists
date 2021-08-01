@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -23224,10 +23224,6 @@ msgid "Blend Opacity"
 msgstr "Провидност прелаза"
 
 
-msgid "Speed Factor"
-msgstr "Фактор брзине"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Врста"
@@ -23418,10 +23414,6 @@ msgstr "Умножена секвенца"
 
 msgid "SpeedControl Sequence"
 msgstr "Контрола брзине секвенце"
-
-
-msgid "Multiply Speed"
-msgstr "Убрзање"
 
 
 msgid "Bilinear interpolation"
@@ -25228,6 +25220,10 @@ msgstr "Брзина шетње"
 
 msgid "Base speed for walking and flying"
 msgstr "Основна брзина шетње или летења"
+
+
+msgid "Speed Factor"
+msgstr "Фактор брзине"
 
 
 msgid "World Mist"
@@ -28571,11 +28567,6 @@ msgstr "Покривеност"
 
 msgid "Create Along Paths"
 msgstr "Направи дуж путања"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Претвори"
 
 
 msgid "Rim"
