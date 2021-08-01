@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -10039,10 +10039,6 @@ msgid "Strength of modifier effect"
 msgstr "Forza dell'effetto del modificatore"
 
 
-msgid "Source Object"
-msgstr "Oggetto Sorgente"
-
-
 msgid "Boundaries"
 msgstr "Bordi"
 
@@ -19963,6 +19959,10 @@ msgstr "Sottrae il valore della sorgente a quello di destinazione, usando la sog
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "Moltiplica il valore della sorgente a quello di destinazione, usando la soglia data come fattore"
+
+
+msgid "Source Object"
+msgstr "Oggetto Sorgente"
 
 
 msgid "Object to transfer data from"
@@ -48342,14 +48342,6 @@ msgid "Right Handle Selected"
 msgstr "Maniglia Destra Selezionata"
 
 
-msgid "Speed Factor"
-msgstr "Fattore di Velocità"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Moltiplica la velocità corrente della sequenza con questo numero o rimappa il fotogramma corrente a questo fotogramma"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Tipo"
@@ -48595,12 +48587,8 @@ msgid "Multiply Sequence"
 msgstr "Moltiplica Sequenza"
 
 
-msgid "Multiply Speed"
-msgstr "Moltiplica Velocità"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Interpreta il valore come velocità anziché come numero di fotogramma"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "Moltiplica la velocità corrente della sequenza con questo numero o rimappa il fotogramma corrente a questo fotogramma"
 
 
 msgid "Subtract Sequence"
@@ -52691,6 +52679,10 @@ msgid "Walk Speed"
 msgstr "Velocità Camminata"
 
 
+msgid "Speed Factor"
+msgstr "Fattore di Velocità"
+
+
 msgid "Widget"
 msgstr "Widget"
 
@@ -55460,12 +55452,12 @@ msgid "Clip"
 msgstr "Filmato"
 
 
-msgid "Add Transition"
-msgstr "Aggiungi Transizione"
-
-
 msgid "Effect Fader"
 msgstr "Dissolvenza Effetto"
+
+
+msgid "Add Transition"
+msgstr "Aggiungi Transizione"
 
 
 msgid "Unpack"
@@ -60552,10 +60544,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Trackball: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "AutoIK-Lung: %d"
-
-
 msgid "right"
 msgstr "destra"
 
@@ -60921,11 +60909,6 @@ msgstr "Copertura"
 
 msgid "Create Along Paths"
 msgstr "Crea Lungo Percorsi"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Converti"
 
 
 msgid "Built without Remesh modifier"

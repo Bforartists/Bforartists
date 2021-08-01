@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -38146,10 +38146,6 @@ msgid "Right Handle Selected"
 msgstr "Mód Úchopu"
 
 
-msgid "Speed Factor"
-msgstr "Faktor Rychlosti"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Typ"
@@ -38399,14 +38395,6 @@ msgstr "Zobrazit kontrolery"
 
 msgid "Sequence strip to control the speed of other strips"
 msgstr "Přidat vazbu aktivní kosti"
-
-
-msgid "Multiply Speed"
-msgstr "Multivrstva"
-
-
-msgid "Use as Speed"
-msgstr "Použít jako Rychlost"
 
 
 msgid "Subtract Sequence"
@@ -41641,6 +41629,10 @@ msgstr "Zobrazit výšku"
 
 msgid "Walk Speed"
 msgstr "Rychlost chůze"
+
+
+msgid "Speed Factor"
+msgstr "Faktor Rychlosti"
 
 
 msgid "Use Ambient Occlusion"
@@ -49076,11 +49068,6 @@ msgstr "Vytvořit Instance"
 
 msgid "Create Along Paths"
 msgstr "Odstranit Rodiče"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Převést"
 
 
 msgid "Rim"

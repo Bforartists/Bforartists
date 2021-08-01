@@ -175,7 +175,7 @@ typedef struct Mesh {
   struct Mesh *texcomesh;
 
   /* When the object is available, the preferred access method is: BKE_editmesh_from_object(ob) */
-  /** Not saved in file!. */
+  /** Not saved in file. */
   struct BMEditMesh *edit_mesh;
 
   struct CustomData vdata, edata, fdata;
@@ -281,9 +281,9 @@ enum {
 /* We can't have both flags enabled at once,
  * flags defined in DNA_scene_types.h */
 #define ME_EDIT_PAINT_SEL_MODE(_me) \
-  (((_me)->editflag & ME_EDIT_PAINT_FACE_SEL) ? \
-       SCE_SELECT_FACE : \
-       ((_me)->editflag & ME_EDIT_PAINT_VERT_SEL) ? SCE_SELECT_VERTEX : 0)
+  (((_me)->editflag & ME_EDIT_PAINT_FACE_SEL) ? SCE_SELECT_FACE : \
+   ((_me)->editflag & ME_EDIT_PAINT_VERT_SEL) ? SCE_SELECT_VERTEX : \
+                                                0)
 
 /* me->flag */
 enum {

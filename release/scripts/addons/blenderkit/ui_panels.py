@@ -198,7 +198,8 @@ def draw_panel_hdr_upload(self, context):
 
 def draw_panel_hdr_search(self, context):
     s = context.scene
-    props = s.blenderkit_HDR
+    wm = context.window_manager
+    props = wm.blenderkit_HDR
 
     layout = self.layout
     row = layout.row()
@@ -211,7 +212,7 @@ def draw_panel_hdr_search(self, context):
 
 def draw_thumbnail_upload_panel(layout, props):
     update = False
-    tex = autothumb.get_texture_ui(props.thumbnail, '.upload_preview')
+    tex = autothumb.get_texture_ui(props.thumbnail, 'upload_preview')
     if not tex or not tex.image:
         return
     box = layout.box()
@@ -346,9 +347,9 @@ def draw_assetbar_show_hide(layout, props):
 
 
 def draw_panel_model_search(self, context):
-    s = context.scene
+    wm = bpy.context.window_manager
+    props = wm.blenderkit_models
 
-    props = s.blenderkit_models
     layout = self.layout
 
     row = layout.row()
@@ -377,8 +378,8 @@ def draw_panel_model_search(self, context):
 
 
 def draw_panel_scene_search(self, context):
-    s = context.scene
-    props = s.blenderkit_scene
+    wm = bpy.context.window_manager
+    props = wm.blenderkit_scene
     layout = self.layout
     # layout.label(text = "common search properties:")
     row = layout.row()
@@ -677,7 +678,7 @@ def draw_panel_material_upload(self, context):
 
 
 def draw_panel_material_search(self, context):
-    wm = context.scene
+    wm = context.window_manager
     props = wm.blenderkit_mat
 
     layout = self.layout
@@ -713,8 +714,8 @@ def draw_panel_brush_upload(self, context):
 
 
 def draw_panel_brush_search(self, context):
-    s = context.scene
-    props = s.blenderkit_brush
+    wm = context.window_manager
+    props = wm.blenderkit_brush
 
     layout = self.layout
     row = layout.row()
@@ -773,9 +774,9 @@ class VIEW3D_PT_blenderkit_advanced_model_search(Panel):
         return ui_props.down_up == 'SEARCH' and ui_props.asset_type == 'MODEL'
 
     def draw(self, context):
-        s = context.scene
+        wm = bpy.context.window_manager
 
-        props = s.blenderkit_models
+        props = wm.blenderkit_models
         layout = self.layout
         layout.separator()
 
@@ -842,9 +843,8 @@ class VIEW3D_PT_blenderkit_advanced_material_search(Panel):
         return ui_props.down_up == 'SEARCH' and ui_props.asset_type == 'MATERIAL'
 
     def draw(self, context):
-        s = context.scene
-
-        props = s.blenderkit_mat
+        wm = context.window_manager
+        props = wm.blenderkit_mat
         layout = self.layout
         layout.separator()
 
@@ -892,8 +892,8 @@ class VIEW3D_PT_blenderkit_categories(Panel):
         draw_panel_categories(self, context)
 
 def draw_scene_import_settings(self, context):
-    s = context.scene
-    props = s.blenderkit_scene
+    wm = bpy.context.window_manager
+    props = wm.blenderkit_scene
     layout = self.layout
     layout.prop(props, 'switch_after_append')
     # layout.label(text='Import method:')
@@ -920,11 +920,12 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
         layout = self.layout
 
         s = context.scene
+        wm = bpy.context.window_manager
         ui_props = s.blenderkitUI
 
         if ui_props.asset_type == 'MODEL':
             # noinspection PyCallByClass
-            props = s.blenderkit_models
+            props = wm.blenderkit_models
             layout.prop(props, 'randomize_rotation')
             if props.randomize_rotation:
                 layout.prop(props, 'randomize_rotation_amount')
@@ -937,7 +938,7 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
             row.prop(props, 'append_method', expand=True, icon_only=False)
 
         if ui_props.asset_type == 'MATERIAL':
-            props = s.blenderkit_mat
+            props = wm.blenderkit_mat
             layout.prop(props, 'automap')
             layout.label(text='Import method:')
             row = layout.row()
@@ -947,7 +948,7 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
             draw_scene_import_settings(self,context)
 
         if ui_props.asset_type == 'HDR':
-            props = s.blenderkit_HDR
+            props = wm.blenderkit_HDR
 
         if ui_props.asset_type in ['MATERIAL', 'MODEL', 'HDR']:
             layout.prop(props, 'resolution')
@@ -1162,8 +1163,8 @@ class BlenderKitWelcomeOperator(bpy.types.Operator):
             random_search = random.choice(random_searches)
             ui_props.asset_type = random_search[0]
 
-            bpy.context.scene.blenderkit_mat.search_keywords = ''#random_search[1]
-            bpy.context.scene.blenderkit_mat.search_keywords = '+is_free:true+score_gte:1000+order:-created'#random_search[1]
+            bpy.context.window_manager.blenderkit_mat.search_keywords = ''#random_search[1]
+            bpy.context.window_manager.blenderkit_mat.search_keywords = '+is_free:true+score_gte:1000+order:-created'#random_search[1]
             # search.search()
         return {'FINISHED'}
 
@@ -1395,7 +1396,10 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
 
 def numeric_to_str(s):
     if s:
-        s = str(round(s))
+        if s<1:
+            s = str(round(s,1))
+        else:
+            s = str(round(s))
     else:
         s = '-'
     return s
@@ -1502,10 +1506,11 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
 
     def draw_properties(self, layout, width=250):
 
-        if type(self.asset_data['parameters']) == list:
-            mparams = utils.params_to_dict(self.asset_data['parameters'])
-        else:
-            mparams = self.asset_data['parameters']
+        # if type(self.asset_data['parameters']) == list:
+        #     mparams = utils.params_to_dict(self.asset_data['parameters'])
+        # else:
+        #     mparams = self.asset_data['parameters']
+        mparams = self.asset_data['dictParameters']
 
         pcoll = icons.icon_collections["main"]
 
@@ -2197,17 +2202,18 @@ def header_search_draw(self, context):
     if preferences.search_in_header:
         layout = self.layout
         s = bpy.context.scene
+        wm = bpy.context.window_manager
         ui_props = s.blenderkitUI
         if ui_props.asset_type == 'MODEL':
-            props = s.blenderkit_models
+            props = wm.blenderkit_models
         if ui_props.asset_type == 'MATERIAL':
-            props = s.blenderkit_mat
+            props = wm.blenderkit_mat
         if ui_props.asset_type == 'BRUSH':
-            props = s.blenderkit_brush
+            props = wm.blenderkit_brush
         if ui_props.asset_type == 'HDR':
-            props = s.blenderkit_HDR
+            props = wm.blenderkit_HDR
         if ui_props.asset_type == 'SCENE':
-            props = s.blenderkit_scene
+            props = wm.blenderkit_scene
 
         # the center snap menu is in edit and object mode if tool settings are off.
         if context.space_data.show_region_tool_header == True or context.mode[:4] not in ('EDIT', 'OBJE'):

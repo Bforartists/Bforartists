@@ -305,14 +305,14 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
     # how to do particle  drop:
     # link the group we are interested in( there are more groups in File!!!! , have to get the correct one!)
     s = bpy.context.scene
-
+    wm = bpy.context.window_manager
     user_preferences = bpy.context.preferences.addons['blenderkit'].preferences
 
     if user_preferences.api_key == '':
         user_preferences.asset_counter += 1
 
     if asset_data['assetType'] == 'scene':
-        sprops = s.blenderkit_scene
+        sprops = wm.blenderkit_scene
 
         scene = append_link.append_scene(file_names[0], link=sprops.append_link == 'LINK', fake_user=False)
         # print('scene appended')
@@ -330,7 +330,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
 
     if asset_data['assetType'] == 'model':
         downloaders = kwargs.get('downloaders')
-        sprops = s.blenderkit_models
+        sprops = wm.blenderkit_models
         # TODO this is here because combinations of linking objects or appending groups are rather not-usefull
         if sprops.append_method == 'LINK_COLLECTION':
             sprops.append_link = 'LINK'
@@ -468,7 +468,7 @@ def append_asset(asset_data, **kwargs):  # downloaders=[], location=None,
 
     elif asset_data['assetType'] == 'material':
         inscene = False
-        sprops = s.blenderkit_mat
+        sprops = wm.blenderkit_mat
 
         for m in bpy.data.materials:
             if m.blenderkit.id == asset_data['id']:

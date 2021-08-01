@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -979,6 +979,14 @@ msgstr "活动编辑骨骼"
 
 msgid "Armatures active edit bone"
 msgstr "骨架活动编辑骨骼"
+
+
+msgid "Asset Library Reference"
+msgstr "资产库引用"
+
+
+msgid "Identifier to refere to the asset library"
+msgstr "指向资产库的标识符"
 
 
 msgid "Asset Data"
@@ -6695,11 +6703,11 @@ msgstr "物体将跟随曲线的走向与倾斜趋势"
 
 
 msgid "Curve Radius"
-msgstr "曲率半径"
+msgstr "曲线半径"
 
 
 msgid "Object is scaled by the curve radius"
-msgstr "通过曲率半径缩放物体"
+msgstr "通过曲线半径缩放物体"
 
 
 msgid "Fixed Position"
@@ -11751,6 +11759,14 @@ msgid "Asset data, valid if the file represents an asset"
 msgstr "资产数据，如果文件表示资产，则有效"
 
 
+msgid "Data-block Type"
+msgstr "数据块类型"
+
+
+msgid "The type of the data-block, if the file represents one ('NONE' otherwise)"
+msgstr "数据块的类型，如果该文件表示一个(否则为\"NONE\")"
+
+
 msgid "Brush"
 msgstr "笔刷"
 
@@ -11849,6 +11865,10 @@ msgstr "世界环境"
 
 msgid "Workspace"
 msgstr "工作区"
+
+
+msgid "The local data-block this file represents; only valid if that is a data-block in this file"
+msgstr "该文件所表示的本地数据块；只有当这是此文件中的数据块时才有效"
 
 
 msgid "Icon ID"
@@ -15717,10 +15737,6 @@ msgid "Input properties of an Gizmo"
 msgstr "Gizmo输入属性"
 
 
-msgid "Modifier affecting the grease pencil object"
-msgstr "修改器影响蜡笔物体"
-
-
 msgid "Modifier name"
 msgstr "修改器名称"
 
@@ -16427,22 +16443,6 @@ msgid "The strength value for the generate strokes"
 msgstr "生成笔画的强度值"
 
 
-msgid "Source Collection"
-msgstr "源集合"
-
-
-msgid "Source collection that this modifier uses data from"
-msgstr "该修改器使用的数据来源的集合"
-
-
-msgid "Source Object"
-msgstr "源物体"
-
-
-msgid "Source object that this modifier uses data from"
-msgstr "该修改器使用的数据来源的物体"
-
-
 msgid "Source Type"
 msgstr "源类型"
 
@@ -16467,16 +16467,8 @@ msgid "Angle in screen space below which a stroke is split in two"
 msgstr "在屏幕空间中的角度，低于该值的笔画会被一分为二"
 
 
-msgid "Target Layer"
-msgstr "目标层"
-
-
 msgid "Grease Pencil layer assigned to the generated strokes"
 msgstr "指定给生成笔画的蜡笔层"
-
-
-msgid "Target Material"
-msgstr "目标材质"
 
 
 msgid "Grease Pencil material assigned to the generated strokes"
@@ -20081,7 +20073,7 @@ msgstr "钳制曲线的 Z 轴"
 
 
 msgid "Allow editing on the Z axis of this curve, also allows tilt and curve radius to be used"
-msgstr "允许在当前曲线的Z 轴方向上进行编辑, 同时允许使用斜倾及曲率半径"
+msgstr "允许在当前曲线的Z 轴方向上进行编辑, 同时允许使用倾斜及曲线半径"
 
 
 msgid "Parametric position along the length of the curve that Objects 'following' it should be at (position is evaluated by dividing by the 'Path Length' value)"
@@ -20285,7 +20277,7 @@ msgstr "使曲线路径的子物体沿路径旋转"
 
 
 msgid "Option for paths and curve-deform: apply the curve radius with path following it and deforming"
-msgstr "路径及曲线形变的选项:  将曲率半径应用到跟随它并进行形变的路径上"
+msgstr "路径及曲线形变的选项: 将曲线半径应用到跟随它并进行形变的路径上"
 
 
 msgid "Option for curve-deform: make deformed child to stretch along entire path"
@@ -27335,6 +27327,10 @@ msgid "Operator registry"
 msgstr "操作项注册"
 
 
+msgid "Flip Pose"
+msgstr "翻转姿态"
+
+
 msgid "Preset Name"
 msgstr "预设名称"
 
@@ -27365,6 +27361,18 @@ msgstr "有关VR会话的运行时状态信息"
 
 msgid "Workspace data-block, defining the working environment for the user"
 msgstr "工作区数据块，为用户定义工作环境"
+
+
+msgid "Active Pose Asset"
+msgstr "活动姿态资产"
+
+
+msgid "Per workspace index of the active pose asset"
+msgstr "活动姿态资产的各个工作空间编号"
+
+
+msgid "Active asset library to show in the UI, not used by the Asset Browser (which has its own active asset library)"
+msgstr "在UI中显示的活动资产库，资产浏览器未使用(该浏览器有自己的活动资产库)"
 
 
 msgid "Switch to this object mode when activating the workspace"
@@ -31402,14 +31410,6 @@ msgid "Faces with this material will behave as if it has set number of layers in
 msgstr "带有此材质的面将表现得好像它已设置遮挡层数"
 
 
-msgid "Custom Occlusion Effectiveness"
-msgstr "自定义遮挡效果"
-
-
-msgid "Use custom occlusion effectiveness for this material"
-msgstr "对此材质使用自定义遮挡效果"
-
-
 msgid "Material slot in an object"
 msgstr "物体上的材质槽"
 
@@ -31828,6 +31828,20 @@ msgstr "恢复"
 
 msgid "Help"
 msgstr "帮助"
+
+
+msgid ""
+"\n"
+"    UI List item context menu definition. Scripts can append/prepend this to\n"
+"    add own operators to the context menu. They must check context though, so\n"
+"    their items only draw in a valid context and for the correct UI list.\n"
+"    "
+msgstr ""
+"\n"
+"UI列表项目上下文菜单定义。脚本可以附加/预置此内容\n"
+"    以将自己的操作添加到上下文菜单中。脚本必须确认上下文，所以\n"
+"    其条目只在有效的上下文中绘制，并为正确的UI列表。\n"
+"    "
 
 
 msgid "List Item"
@@ -34175,6 +34189,10 @@ msgid "Multiply source value to destination one, using given threshold as factor
 msgstr "用给定的阈值作为系数，将源值与目标物体的值相乘"
 
 
+msgid "Source Object"
+msgstr "源物体"
+
+
 msgid "Object to transfer data from"
 msgstr "要传递的数据的所属物体"
 
@@ -36302,6 +36320,14 @@ msgstr "无论几何体是否已被绑定到目标网格上"
 
 msgid "Strength of modifier deformations"
 msgstr "修改器变形的强度"
+
+
+msgid "Sparse Bind"
+msgstr "稀疏绑定"
+
+
+msgid "Only record binding data for vertices matching the vertex group at the time of bind"
+msgstr "仅记录绑定时与顶点组匹配的顶点的绑定数据"
 
 
 msgid "Surface Modifier"
@@ -41532,6 +41558,42 @@ msgid "Define a line with a start point, direction and length"
 msgstr "定义一条带有起点、方向和长度的直线"
 
 
+msgid "Quadrilateral"
+msgstr "四边形"
+
+
+msgid "Create a rectangle"
+msgstr "创建矩形"
+
+
+msgid "Parallelogram"
+msgstr "平行四边形"
+
+
+msgid "Create a parallelogram"
+msgstr "创建平行四边形"
+
+
+msgid "Trapezoid"
+msgstr "梯形"
+
+
+msgid "Create a trapezoid"
+msgstr "创建梯形"
+
+
+msgid "Kite"
+msgstr "风筝"
+
+
+msgid "Create a Kite / Dart"
+msgstr "创建风筝/飞镖形状的四边形"
+
+
+msgid "Create a quadrilateral from four points"
+msgstr "从四点创建四边形"
+
+
 msgid "Quadratic Bezier"
 msgstr "二次型贝塞尔"
 
@@ -41598,6 +41660,22 @@ msgstr "通过均匀分布指定数量的点对每根样条线进行采样"
 
 msgid "Sample each spline by splitting it into segments with the specified length"
 msgstr "通过将每根样条线拆分为具有指定长度的线段进行采样"
+
+
+msgid "Curve Trim"
+msgstr "曲线修剪"
+
+
+msgid "How to find endpoint positions for the trimmed spline"
+msgstr "如何找到修剪后的样条线的端点位置"
+
+
+msgid "Find the endpoint positions using a factor of each spline's length"
+msgstr "使用每个样条线长度的系数查找端点位置"
+
+
+msgid "Find the endpoint positions using a length from the start of each spline"
+msgstr "使用到每个样条线的起点的长度查找终点位置"
 
 
 msgid "Geometry Custom Group"
@@ -45391,6 +45469,15 @@ msgstr "+X 到 -X"
 
 
 msgctxt "Operator"
+msgid "Assign Action"
+msgstr "指定动作"
+
+
+msgid "Set this pose Action as active Action on the active Object"
+msgstr "将此姿态动作设置为活动物体上的活动动作"
+
+
+msgctxt "Operator"
 msgid "Clear Asset"
 msgstr "清理资产"
 
@@ -45400,12 +45487,30 @@ msgstr "删除所有资产元数据，将选定的资产数据块重新转换为
 
 
 msgctxt "Operator"
+msgid "Refresh Asset List"
+msgstr "刷新资产列表"
+
+
+msgid "Trigger a reread of the assets"
+msgstr "触发重新读取资产"
+
+
+msgctxt "Operator"
 msgid "Mark Asset"
 msgstr "标记资产"
 
 
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
 msgstr "借助可自定义的元数据(如预览、描述和标记)，通过资产浏览器更轻松地重用选定的数据块"
+
+
+msgctxt "Operator"
+msgid "Open Blend File"
+msgstr "打开Blender文件"
+
+
+msgid "Open the blend file that contains the active asset"
+msgstr "打开包含活动资产的Blender文件"
 
 
 msgctxt "Operator"
@@ -47772,7 +47877,7 @@ msgstr "创建一个路径曲线"
 
 msgctxt "Operator"
 msgid "Set Curve Radius"
-msgstr "设置曲率半径"
+msgstr "设置曲线半径"
 
 
 msgid "Set per-point radius which is used for bevel tapering"
@@ -47930,7 +48035,7 @@ msgstr "展平所选点的角度"
 
 msgctxt "Operator"
 msgid "Smooth Curve Radius"
-msgstr "平滑曲率半径"
+msgstr "平滑曲线半径"
 
 
 msgid "Interpolate radii of selected points"
@@ -63720,6 +63825,31 @@ msgid "Index of the pose to apply (-2 for no change to pose, -1 for poselib acti
 msgstr "要应用的姿态编号(-2则不改变姿态, -1则使用poselib中活动姿态)"
 
 
+msgid "Apply the given Pose Action to the rig"
+msgstr "将给定的姿态动作应用到绑定中"
+
+
+msgid "Amount that the pose is applied on top of the existing poses"
+msgstr "在现有姿态之上应用姿态的程度"
+
+
+msgid "Apply Flipped"
+msgstr "应用翻转"
+
+
+msgid "When enabled, applies the pose flipped over the X-axis"
+msgstr "启用后，应用沿X轴翻转后的姿态"
+
+
+msgctxt "Operator"
+msgid "Blend Pose Library Pose"
+msgstr "混合姿态库姿态"
+
+
+msgid "Blend the given Pose Action to the rig"
+msgstr "将给定的姿态动作混合到绑定中"
+
+
 msgctxt "Operator"
 msgid "PoseLib Browse Poses"
 msgstr "姿态库中浏览姿态"
@@ -63727,6 +63857,37 @@ msgstr "姿态库中浏览姿态"
 
 msgid "Interactively browse poses in 3D-View"
 msgstr "以交互方式在 3D 视图中浏览姿态"
+
+
+msgctxt "Operator"
+msgid "Convert Old-Style Pose Library"
+msgstr "转换旧式姿态库"
+
+
+msgid "Create a pose asset for each pose marker in the current action"
+msgstr "为当前动作中的每个姿态标记创建姿态资产"
+
+
+msgctxt "Operator"
+msgid "Copy Pose As Asset"
+msgstr "复制姿态作为资产"
+
+
+msgid "Create a new pose asset on the clipboard, to be pasted into an Asset Browser"
+msgstr "在剪贴板上创建新的姿态资产，以供粘贴到资产浏览器中"
+
+
+msgctxt "Operator"
+msgid "Create Pose Asset"
+msgstr "创建姿态资产"
+
+
+msgid "Create a new Action that contains the pose of the selected bones, and mark it as Asset"
+msgstr "创建包含所选骨骼姿态的新动作，并将其标记为资产"
+
+
+msgid "Activate New Action"
+msgstr "激活新动作"
 
 
 msgid "Pose Name"
@@ -63740,6 +63901,15 @@ msgstr "新姿态库"
 
 msgid "Add New Pose Library to active Object"
 msgstr "将新的姿态库添加到活动物体"
+
+
+msgctxt "Operator"
+msgid "Paste As New Asset"
+msgstr "粘贴为新资产"
+
+
+msgid "Paste the Asset that was previously copied using Copy As Asset"
+msgstr "粘贴之前使用复制为资产操作复制的资产"
 
 
 msgctxt "Operator"
@@ -63757,6 +63927,15 @@ msgstr "要存储的姿态所在帧"
 
 msgid "Name of newly added Pose"
 msgstr "新增姿态的名称"
+
+
+msgctxt "Operator"
+msgid "Select Bones"
+msgstr "选择骨骼"
+
+
+msgid "Select those bones that are used in this pose"
+msgstr "选择此姿态中使用的骨骼"
 
 
 msgctxt "Operator"
@@ -63808,6 +63987,15 @@ msgstr "为姿态名称"
 
 msgid "The pose to rename"
 msgstr "重命名姿态"
+
+
+msgctxt "Operator"
+msgid "Restore Previous Action"
+msgstr "恢复上一步动作"
+
+
+msgid "Switch back to the previous Action, after creating a pose asset"
+msgstr "创建姿态资产后，切换回前一步操作"
 
 
 msgctxt "Operator"
@@ -69713,6 +69901,15 @@ msgstr "切换到目标物体或骨骼"
 
 
 msgctxt "Operator"
+msgid "List Filter"
+msgstr "列表过滤器"
+
+
+msgid "Start entering filter text for the list in focus"
+msgstr "开始向焦点列表输入筛选文本"
+
+
+msgctxt "Operator"
 msgid "Remove Override"
 msgstr "删除重写"
 
@@ -74725,6 +74922,10 @@ msgid "OpenVDB File"
 msgstr "OpenVDB文件"
 
 
+msgid "Create Pose Asset"
+msgstr "创建姿态资产"
+
+
 msgid "Filters"
 msgstr "过滤器"
 
@@ -79672,6 +79873,22 @@ msgid "Group of ID properties"
 msgstr "ID 组的属性"
 
 
+msgid "Asset Handle"
+msgstr "资产句柄"
+
+
+msgid "Reference to some asset"
+msgstr "指向某些资产"
+
+
+msgid "File Entry"
+msgstr "文件条目"
+
+
+msgid "The local data-block this asset represents; only valid if that is a data-block in this file"
+msgstr "此资产所代表的本地数据块；只有当这是此文件中的数据块时，才有效"
+
+
 msgid "Upper Case"
 msgstr "大写"
 
@@ -84264,14 +84481,6 @@ msgid "Right Handle Selected"
 msgstr "选择右控制柄"
 
 
-msgid "Speed Factor"
-msgstr "速度系数"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "将当前序列的速度与此值相乘, 或将当前帧重新映射至此帧"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "类型"
@@ -84674,20 +84883,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "用于控制其他片段速度的序列片段"
 
 
-msgid "Multiply Speed"
-msgstr "叠加速度"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "将应用了速度系数之后的生成速度相乘"
-
-
-msgid "Use as Speed"
-msgstr "用作速度"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "将此值解释为速度值, 而不是帧数值"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "将当前序列的速度与此值相乘, 或将当前帧重新映射至此帧"
 
 
 msgid "Frame Interpolation"
@@ -84696,14 +84893,6 @@ msgstr "帧插值"
 
 msgid "Do crossfade blending between current and next frame"
 msgstr "在当前帧和下一帧之间进行交叉淡入淡出混合"
-
-
-msgid "Scale to Length"
-msgstr "缩放到长度"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "用于确定序列长度的缩放比, 值区间为 0.0 - 1.0"
 
 
 msgid "Subtract Sequence"
@@ -87076,7 +87265,7 @@ msgid "Display image with RGB colors"
 msgstr "标准 RGB 色彩显示图像"
 
 
-msgid "Display  alpha transparency channel"
+msgid "Display alpha transparency channel"
 msgstr "显示Alpha 透明通道"
 
 
@@ -87302,10 +87491,6 @@ msgstr "节点编辑器的空间数据"
 
 msgid "Channels of the image to draw"
 msgstr "图像的绘制通道"
-
-
-msgid "Display alpha transparency channel"
-msgstr "显示Alpha 透明通道"
 
 
 msgid "Backdrop Offset"
@@ -88786,7 +88971,7 @@ msgstr "该曲线的材质槽编号"
 
 
 msgid "Order U"
-msgstr "次序 U"
+msgstr "阶数 U"
 
 
 msgid "NURBS order in the U direction (for splines and surfaces, higher values let points influence a greater area)"
@@ -88794,7 +88979,7 @@ msgstr "NURBS 曲线的 U 向阶值 (用于样条线和曲面, 使用较高的�
 
 
 msgid "Order V"
-msgstr "V 向阶值"
+msgstr "阶数 V"
 
 
 msgid "NURBS order in the V direction (for surfaces only, higher values let points influence a greater area)"
@@ -92022,6 +92207,14 @@ msgid "Use the grid-based layout"
 msgstr "使用基于栅格的布局"
 
 
+msgid "List Name"
+msgstr "列表名称"
+
+
+msgid "Identifier of the list, if any was passed to the \"list_id\" parameter of \"template_list()\""
+msgstr "列表标识符，如果有传递到\"template_list()\"的\"list_id\"参数"
+
+
 msgid "Invert filtering (show hidden items, and vice versa)"
 msgstr "反转过滤器(显示隐藏的项目,反之亦然)"
 
@@ -93458,10 +93651,6 @@ msgid "Volume object render settings"
 msgstr "体积物体渲染设置"
 
 
-msgid "Specify volume density and step size  in object or world space"
-msgstr "指定物体或世界空间中体积的步长大小和密度"
-
-
 msgid "Keep volume opacity and detail the same regardless of object scale"
 msgstr "无视物体的缩放，保持体积的透明度和细节程度不变"
 
@@ -93528,6 +93717,10 @@ msgstr "步行速度"
 
 msgid "Base speed for walking and flying"
 msgstr "行走或飞行的基本速度"
+
+
+msgid "Speed Factor"
+msgstr "速度系数"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -95236,6 +95429,78 @@ msgid "Select objects to scatter and a target object"
 msgstr "选择要散列的物体和目标物体"
 
 
+msgctxt "Operator"
+msgid "Apply Pose"
+msgstr "应用姿态"
+
+
+msgctxt "Operator"
+msgid "Blend Pose"
+msgstr "混合姿态"
+
+
+msgctxt "Operator"
+msgid "Select Pose Bones"
+msgstr "选择姿态骨骼"
+
+
+msgctxt "Operator"
+msgid "Deselect Pose Bones"
+msgstr "删除姿态骨骼"
+
+
+msgid "Activate & Edit"
+msgstr "激活&编辑"
+
+
+msgid "Action %s marked Fake User to prevent loss"
+msgstr "动作 %s 已标记伪用户已防止丢失"
+
+
+msgid "Pose Asset copied, use Paste As New Asset in any Asset Browser to paste"
+msgstr "已复制姿态资产，在任意资产浏览器中使用粘贴为新资产操作粘贴"
+
+
+msgid "Pasted %d assets"
+msgstr "已粘贴 %d 资产"
+
+
+msgid " bones from "
+msgstr " 骨骼来自 "
+
+
+msgid "Converted %d poses to pose assets"
+msgstr "已转换 %d 姿态为姿态资产"
+
+
+msgid "No keyframes were found for this pose"
+msgstr "没有发现此姿态的关键帧"
+
+
+msgid "No animation data found to create asset from"
+msgstr "未发现创建资产的动画数据"
+
+
+msgid "Whaaaat who is using our brand new asset?"
+msgstr "谁在使用我们全新的资产？"
+
+
+msgid "Did not find any assets on clipboard"
+msgstr "在剪贴板上未找到任何资产"
+
+
+msgid "Selected asset  could not be located inside the asset library"
+msgstr "选定的资产无法在资产库内定位"
+
+
+msgid "Selected asset  is not an Action"
+msgstr "选定的资产不是动作"
+
+
+msgid "Unable to convert to pose assets"
+msgstr "无法转换为姿态资产"
+
+
 msgid "Demo Mode:"
 msgstr "演示模式:"
 
@@ -95452,6 +95717,18 @@ msgstr "找不到使用着色器节点树的材质或光 - %s"
 
 msgid "Could not find scene using Compositor Node Tree - %s"
 msgstr "找不到使用合成器节点树的场景 - %s"
+
+
+msgid "This asset is stored in the current blend file"
+msgstr "此资产已存储在当前blend文件中"
+
+
+msgid "Unable to find any running process"
+msgstr "找不到任何运行中的进程"
+
+
+msgid "Blender subprocess exited with error code %d"
+msgstr "Blender子进程退出错误代码 %d"
 
 
 msgid "Selection pair not found"
@@ -96437,6 +96714,10 @@ msgid "%s ▶ %s"
 msgstr "%s ▶ %s"
 
 
+msgid "Name collisions: {}, "
+msgstr "名称冲突: {}, "
+
+
 msgctxt "Operator"
 msgid "Sort by Name"
 msgstr "名称排序"
@@ -96858,6 +97139,10 @@ msgstr "无"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "反转"
+
+
+msgid "Material Mask"
+msgstr "材质遮罩"
 
 
 msgid "Custom Occlusion"
@@ -98497,6 +98782,14 @@ msgid "No asset selected"
 msgstr "未选择任何资产"
 
 
+msgid "Source: Current File"
+msgstr "源: 当前文件"
+
+
+msgid "Source:"
+msgstr "源:"
+
+
 msgctxt "Operator"
 msgid "Toggle Dope Sheet"
 msgstr "切换动画摄影表"
@@ -99413,6 +99706,10 @@ msgid "Hold Split"
 msgstr "硬剪切"
 
 
+msgid "Default Fade"
+msgstr "默认过渡"
+
+
 msgid "Original frame range: %d-%d (%d)"
 msgstr "原始帧范围: %d-%d (%d)"
 
@@ -99462,8 +99759,8 @@ msgid "Clear Fade"
 msgstr "清除淡化"
 
 
-msgid "Default Fade"
-msgstr "默认过渡"
+msgid "Effect Fader"
+msgstr "效果渐变"
 
 
 msgid "%dx%d"
@@ -99490,20 +99787,12 @@ msgid "Add Transition"
 msgstr "添加过渡"
 
 
-msgid "Effect Fader"
-msgstr "效果渐变"
-
-
 msgid "Unpack"
 msgstr "解包"
 
 
 msgid "Pack"
 msgstr "打包"
-
-
-msgid "Stretch to Input Strip Length"
-msgstr "拉伸至导入片段的长度"
 
 
 msgid "Source Channel"
@@ -103670,6 +103959,26 @@ msgid "Invalid pose specified %d"
 msgstr "指定的姿势无效 %d"
 
 
+msgid "PoseLib blending: \"%s\" at %3.0f%%"
+msgstr "姿态库混合中: \"%s\" 在 %3.0f%%"
+
+
+msgid "Tab: show original pose; Horizontal mouse movement: change blend percentage"
+msgstr "Tab: 显示原始姿态，水平鼠标移动：更改混合百分比"
+
+
+msgid "PoseLib showing original pose"
+msgstr "展示原始姿态的姿态库"
+
+
+msgid "Tab: show blended pose"
+msgstr "Tab: 显示混合姿态"
+
+
+msgid "Internal pose library error, cancelling operator"
+msgstr "内部姿态库错误，取消操作"
+
+
 msgid "No active Keying Set to use"
 msgstr "无激活的帧集"
 
@@ -103732,30 +104041,6 @@ msgstr "G/R/S/B/[C] - 仅自定义的属性 (C 清除) | %s"
 
 msgid "G/R/S/B/C - Limit to Transform/Property Set"
 msgstr "G/R/S/B/C - 限制转换/属性设置"
-
-
-msgid "[E] - Disable overshoot"
-msgstr "[E] - 禁用过冲"
-
-
-msgid "[E] - Enable overshoot"
-msgstr "[E] - 启用过冲"
-
-
-msgid "[Shift] - Precision active"
-msgstr "[Shift] - 启用精度"
-
-
-msgid "Shift - Hold for precision"
-msgstr "Shift - 长按控制精度"
-
-
-msgid "[Ctrl] - Increments active"
-msgstr "[Ctrl] - 启用增量"
-
-
-msgid "Ctrl - Hold for 10% increments"
-msgstr "Ctrl - 长按启用10%增量"
 
 
 msgid "[H] - Toggle bone visibility"
@@ -105612,7 +105897,7 @@ msgstr "活动的物体不是一个被选中的网格物体"
 
 
 msgid "No mesh data to join"
-msgstr "没有可供接合的网格数据"
+msgstr "没有可供接合的网格数据(请检查要合并的物体是否都是网格，比如有一个物体是曲线。此功能仅能合并网格物体)"
 
 
 msgid "Selected meshes must have equal numbers of vertices"
@@ -106515,6 +106800,10 @@ msgstr "锁定的顶点组"
 
 msgid "%d vertex weights limited"
 msgstr "%d 顶点权重受限"
+
+
+msgid "Copy vertex groups to selected: %d done, %d failed (object data must support vertex groups and have matching indices)"
+msgstr "将顶点组复制到所选: 已完成 %d, 失败 %d (物体数据需支持顶点组且有匹配的编号)"
 
 
 msgid "No active editable object"
@@ -109464,10 +109753,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "轨迹球: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "自动 IK 长度: %d"
-
-
 msgid "right"
 msgstr "右"
 
@@ -109559,6 +109844,30 @@ msgstr "检查当前 .blend 文件的完整性撤消步骤 *之后*"
 
 msgid "Undo disabled at startup"
 msgstr "取消启动时禁用"
+
+
+msgid "[E] - Disable overshoot"
+msgstr "[E] - 禁用过冲"
+
+
+msgid "[E] - Enable overshoot"
+msgstr "[E] - 启用过冲"
+
+
+msgid "[Shift] - Precision active"
+msgstr "[Shift] - 启用精度"
+
+
+msgid "Shift - Hold for precision"
+msgstr "Shift - 长按控制精度"
+
+
+msgid "[Ctrl] - Increments active"
+msgstr "[Ctrl] - 启用增量"
+
+
+msgid "Ctrl - Hold for 10% increments"
+msgstr "Ctrl - 长按启用10%增量"
 
 
 msgid "Unpack File"
@@ -109679,14 +109988,6 @@ msgstr "已缓存角度"
 
 msgid "Overlapping Edges As Contour"
 msgstr "重叠边作为轮廓"
-
-
-msgid "Material Mask"
-msgstr "材质遮罩"
-
-
-msgid "Match All Masks"
-msgstr "匹配全部遮罩"
 
 
 msgid "Face Mark Filtering"
@@ -110390,6 +110691,10 @@ msgid "Modifier \"%s\" is not in the object's modifier list"
 msgstr "修改 \"%s\" 不在物体的修改器列表中"
 
 
+msgid "%s is not supported for '%s' objects"
+msgstr "%s 不受 '%s' 物体支持"
+
+
 msgid "DeformGroup '%s' not in object '%s'"
 msgstr "形变组 '%s' 未存在于物体 '%s' 中"
 
@@ -110909,11 +111214,6 @@ msgstr "沿路径创建"
 
 msgid "Settings are in the particle tab"
 msgstr "设置位于粒子选项卡"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "转换"
 
 
 msgid "Built without Remesh modifier"
