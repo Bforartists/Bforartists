@@ -407,8 +407,8 @@ class OUTLINER_MT_asset(Menu):
 
         space = context.space_data
 
-        layout.operator("asset.mark")
-        layout.operator("asset.clear")
+        layout.operator("asset.mark", icon = "ASSIGN")
+        layout.operator("asset.clear", icon = "CLEAR")
 
 
 class OUTLINER_PT_filter(Panel):
