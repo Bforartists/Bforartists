@@ -518,7 +518,7 @@ class BlenderKitAssetBarOperator(BL_UI_OT_draw_operator):
 
             self.active_index = widget.search_index
             self.draw_tooltip = True
-            self.tooltip = asset_data['tooltip']
+            # self.tooltip = asset_data['tooltip']
             ui_props = scene.blenderkitUI
             ui_props.active_index = widget.search_index +self.scroll_offset
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -10332,10 +10332,6 @@ msgid "Strength of modifier effect"
 msgstr "修改器效果的強度"
 
 
-msgid "Source Object"
-msgstr "來源物體"
-
-
 msgid "Boundaries"
 msgstr "邊界"
 
@@ -19764,6 +19760,10 @@ msgstr "高於閾值"
 
 msgid "Below Threshold"
 msgstr "低於閾值"
+
+
+msgid "Source Object"
+msgstr "來源物體"
 
 
 msgid "Object to transfer data from"
@@ -48003,14 +48003,6 @@ msgid "Right Handle Selected"
 msgstr "選取右控制桿"
 
 
-msgid "Speed Factor"
-msgstr "速度係數"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "序段的目前速度與此數字相乘或將目前框幀重新映射至此框幀"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "類型"
@@ -48355,20 +48347,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "控制其他片段速度的序段片段"
 
 
-msgid "Multiply Speed"
-msgstr "相乘速度"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "在速度因子之後乘以結果速度"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "將值直譯為速度而不是幀數"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "縮放值從 0.0 至 1.0 至目標序段長度"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "序段的目前速度與此數字相乘或將目前框幀重新映射至此框幀"
 
 
 msgid "Subtract Sequence"
@@ -52934,6 +52914,10 @@ msgstr "行走速度"
 
 msgid "Base speed for walking and flying"
 msgstr "步行與飛行的基礎速度"
+
+
+msgid "Speed Factor"
+msgstr "速度係數"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -59569,10 +59553,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "追蹤球：%.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "AutoIK-Len：%d"
-
-
 msgid "right"
 msgstr "右"
 
@@ -60214,11 +60194,6 @@ msgstr "收斂"
 
 msgid "Create Along Paths"
 msgstr "沿路徑建立"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "轉換"
 
 
 msgid "Rim"

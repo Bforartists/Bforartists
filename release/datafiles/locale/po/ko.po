@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -13515,10 +13515,6 @@ msgid "Input properties of an Gizmo"
 msgstr "기즈모의 입력 속성"
 
 
-msgid "Modifier affecting the grease pencil object"
-msgstr "그리스 펜슬 오브젝트에 영향을 주는 모디파이어"
-
-
 msgid "Modifier name"
 msgstr "모디파이어 이름"
 
@@ -14059,10 +14055,6 @@ msgstr "함께 변형하는 래티스 오브젝트"
 
 msgid "Strength of modifier effect"
 msgstr "모디파이어 이펙트의 강도"
-
-
-msgid "Source Object"
-msgstr "소스 오브젝트"
 
 
 msgid "Boundaries"
@@ -29115,6 +29107,10 @@ msgstr "목적지 하나로 소스 값을 빼기, 다른 팩터로 주어진 임
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "목적지 하나로 소스 값을 곱하기, 다른 팩터로 주어진 임계 값을 사용하여"
+
+
+msgid "Source Object"
+msgstr "소스 오브젝트"
 
 
 msgid "Object to transfer data from"
@@ -70645,14 +70641,6 @@ msgid "Right Handle Selected"
 msgstr "오른쪽 핸들 선택됨"
 
 
-msgid "Speed Factor"
-msgstr "속력 팩터"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "시퀀스의 현재 속력에 이 숫자를 곱하거나 현재 프레임을 이 프레임으로 다시 맵"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "유형"
@@ -71043,28 +71031,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "다른 스트립의 속력를 컨트롤하는 시퀀스 스트립"
 
 
-msgid "Multiply Speed"
-msgstr "속력를 곱하기"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "속력 팩터 이후 속력 결과를 곱하기"
-
-
-msgid "Use as Speed"
-msgstr "속력로 사용"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "프레임 번호의 대신에 속력으로 값을 해석"
-
-
-msgid "Scale to Length"
-msgstr "길이에 축적"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "대상 시퀀스 길이로 1.0에 0.0에서 축적 값"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "시퀀스의 현재 속력에 이 숫자를 곱하거나 현재 프레임을 이 프레임으로 다시 맵"
 
 
 msgid "Subtract Sequence"
@@ -73200,7 +73168,7 @@ msgid "Display image with RGB colors"
 msgstr "RGB 컬러와 함께 이미지를 표시"
 
 
-msgid "Display  alpha transparency channel"
+msgid "Display alpha transparency channel"
 msgstr "알파 투명도 채널을 표시"
 
 
@@ -73422,10 +73390,6 @@ msgstr "노드 에디터 공간 정보"
 
 msgid "Channels of the image to draw"
 msgstr "그릴 이미지의 채널"
-
-
-msgid "Display alpha transparency channel"
-msgstr "알파 투명도 채널을 표시"
 
 
 msgid "Backdrop Offset"
@@ -78285,6 +78249,10 @@ msgid "Base speed for walking and flying"
 msgstr "걷기 및 비행하기에 대한 베이스 속력"
 
 
+msgid "Speed Factor"
+msgstr "속력 팩터"
+
+
 msgid "Multiplication factor when using the fast or slow modifiers"
 msgstr "빠른 또는 느린 모디파이어를 사용할 때 곱셈 팩터"
 
@@ -82738,6 +82706,10 @@ msgid "Clear Fade"
 msgstr "페이드를 제거"
 
 
+msgid "Effect Fader"
+msgstr "이펙트 페더"
+
+
 msgid "%dx%d"
 msgstr "%dx%d"
 
@@ -82752,10 +82724,6 @@ msgstr "별도의 색상 채널을 표시"
 
 msgid "Add Transition"
 msgstr "전환을 추가"
-
-
-msgid "Effect Fader"
-msgstr "이펙트 페더"
 
 
 msgid "Unpack"
@@ -90732,10 +90700,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "트랙볼: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "자동IK-Len: %d"
-
-
 msgid "right"
 msgstr "오른쪽"
 
@@ -91789,11 +91753,6 @@ msgstr "적용 범위"
 
 msgid "Create Along Paths"
 msgstr "경로를 따라 생성"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "변환"
 
 
 msgid "Built without Remesh modifier"

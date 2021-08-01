@@ -83,10 +83,7 @@ def SVGParseCoord(coord, size):
 
     if unit == '%':
         return float(size) / 100.0 * val
-    else:
-        return val * units[unit]
-
-    return val
+    return val * units[unit]
 
 
 def SVGRectFromNode(node, context):

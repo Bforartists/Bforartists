@@ -259,7 +259,7 @@ GHOST_IWindow *GHOST_SystemWin32::createWindow(const char *title,
 }
 
 /**
- * Create a new offscreen context.
+ * Create a new off-screen context.
  * Never explicitly delete the window, use #disposeContext() instead.
  * \return The new context (or 0 if creation failed).
  */
@@ -363,7 +363,7 @@ GHOST_TSuccess GHOST_SystemWin32::disposeContext(GHOST_IContext *context)
 }
 
 /**
- * Create a new offscreen DirectX 11 context.
+ * Create a new off-screen DirectX 11 context.
  * Never explicitly delete the window, use #disposeContext() instead.
  * \return The new context (or 0 if creation failed).
  */
@@ -2111,10 +2111,9 @@ GHOST_TSuccess GHOST_SystemWin32::showMessageBox(const char *title,
   config.cbSize = sizeof(config);
   config.hInstance = 0;
   config.dwCommonButtons = 0;
-  config.pszMainIcon = (dialog_options & GHOST_DialogError ?
-                            TD_ERROR_ICON :
-                            dialog_options & GHOST_DialogWarning ? TD_WARNING_ICON :
-                                                                   TD_INFORMATION_ICON);
+  config.pszMainIcon = (dialog_options & GHOST_DialogError   ? TD_ERROR_ICON :
+                        dialog_options & GHOST_DialogWarning ? TD_WARNING_ICON :
+                                                               TD_INFORMATION_ICON);
   config.pszWindowTitle = L"Blender";
   config.pszMainInstruction = title_16;
   config.pszContent = message_16;

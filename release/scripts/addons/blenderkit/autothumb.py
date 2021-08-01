@@ -330,7 +330,7 @@ class GenerateThumbnailOperator(bpy.types.Operator):
 class ReGenerateThumbnailOperator(bpy.types.Operator):
     """
         Generate default thumbnail with Cycles renderer and upload it.
-        Works also for assets from search results, without being downloaded before.
+        Works also for assets from search results, without being downloaded before
     """
     bl_idname = "object.blenderkit_regenerate_thumbnail"
     bl_label = "BlenderKit Thumbnail Re-generate"
@@ -440,7 +440,7 @@ class ReGenerateThumbnailOperator(bpy.types.Operator):
 
 
 class GenerateMaterialThumbnailOperator(bpy.types.Operator):
-    """Generate default thumbnail with Cycles renderer."""
+    """Generate default thumbnail with Cycles renderer"""
     bl_idname = "object.blenderkit_generate_material_thumbnail"
     bl_label = "BlenderKit Material Thumbnail Generator"
     bl_options = {'REGISTER', 'INTERNAL'}

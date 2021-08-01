@@ -645,7 +645,7 @@ class FastMetadata(bpy.types.Operator):
             ('PUBLIC', 'Public', '"Your asset will go into the validation process automatically')
         ),
         description="If not marked private, your asset will go into the validation process automatically\n"
-                    "Private assets are limited by quota.",
+                    "Private assets are limited by quota",
         default="PUBLIC",
     )
 
@@ -1245,10 +1245,10 @@ class UploadOperator(Operator):
             ui_panels.draw_not_logged_in(self, message='To upload assets you need to login/signup.')
             return {'CANCELLED'}
 
-        if props.is_private == 'PUBLIC':
-            return context.window_manager.invoke_props_dialog(self)
-        else:
-            return self.execute(context)
+        # if props.is_private == 'PUBLIC':
+        return context.window_manager.invoke_props_dialog(self)
+        # else:
+        #     return self.execute(context)
 
 
 class AssetDebugPrint(Operator):

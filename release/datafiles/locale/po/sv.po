@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -25025,10 +25025,6 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Starta rendering av sekvens"
 
 
-msgid "Multiply Speed"
-msgstr "Multiplicera"
-
-
 msgid "Subtract Sequence"
 msgstr "Starta rendering av sekvens"
 
@@ -30134,11 +30130,6 @@ msgstr "Redigera egenskapens värde"
 
 msgid "Create Along Paths"
 msgstr "Skapa längs med banor"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Konvertera:"
 
 
 msgid "Rim"

@@ -152,38 +152,61 @@ def get_selected_replace_adepts():
     return parents
 
 
+def exclude_collection(name, state=True):
+    '''
+    Set the exclude state of collection
+    Parameters
+    ----------
+    name - name of collection
+    state - default True.
+
+    Returns
+    -------
+    None
+    '''
+    vl = bpy.context.view_layer.layer_collection
+    cc = [vl]
+    found = False
+    while len(cc) > 0 and not found:
+        c = cc.pop()
+        if c.name == name:
+            c.exclude = state
+            found = True
+        cc.extend(c.children)
+
 def get_search_props():
     scene = bpy.context.scene
+    wm = bpy.context.window_manager
     if scene is None:
         return;
     uiprops = scene.blenderkitUI
     props = None
     if uiprops.asset_type == 'MODEL':
-        if not hasattr(scene, 'blenderkit_models'):
+        if not hasattr(wm, 'blenderkit_models'):
             return;
-        props = scene.blenderkit_models
+        props = wm.blenderkit_models
     if uiprops.asset_type == 'SCENE':
-        if not hasattr(scene, 'blenderkit_scene'):
+        if not hasattr(wm, 'blenderkit_scene'):
             return;
-        props = scene.blenderkit_scene
+        props = wm.blenderkit_scene
     if uiprops.asset_type == 'HDR':
-        if not hasattr(scene, 'blenderkit_HDR'):
+        if not hasattr(wm, 'blenderkit_HDR'):
             return;
-        props = scene.blenderkit_HDR
+        props = wm.blenderkit_HDR
     if uiprops.asset_type == 'MATERIAL':
-        if not hasattr(scene, 'blenderkit_mat'):
+        if not hasattr(wm, 'blenderkit_mat'):
             return;
-        props = scene.blenderkit_mat
+        props = wm.blenderkit_mat
 
     if uiprops.asset_type == 'TEXTURE':
-        if not hasattr(scene, 'blenderkit_tex'):
+        if not hasattr(wm, 'blenderkit_tex'):
             return;
         # props = scene.blenderkit_tex
 
     if uiprops.asset_type == 'BRUSH':
-        if not hasattr(scene, 'blenderkit_brush'):
+        if not hasattr(wm, 'blenderkit_brush'):
             return;
-        props = scene.blenderkit_brush
+        props = wm.blenderkit_brush
     return props
 
 
@@ -630,8 +653,8 @@ def scale_uvs(ob, scale=1.0, pivot=Vector((.5, .5))):
 
 # map uv cubic and switch of auto tex space and set it to 1,1,1
 def automap(target_object=None, target_slot=None, tex_size=1, bg_exception=False, just_scale=False):
-    s = bpy.context.scene
-    mat_props = s.blenderkit_mat
+    wm = bpy.context.window_manager
+    mat_props = wm.blenderkit_mat
     if mat_props.automap:
         tob = bpy.data.objects[target_object]
         # only automap mesh models
@@ -720,14 +743,16 @@ def fmt_length(prop):
 
 
 def get_param(asset_data, parameter_name, default=None):
-    if not asset_data.get('parameters'):
+    if not asset_data.get('dictParameters'):
         # this can appear in older version files.
         return default
 
-    for p in asset_data['parameters']:
-        if p.get('parameterType') == parameter_name:
-            return p['value']
-    return default
+    return asset_data['dictParameters'].get(parameter_name, default)
+
+    # for p in asset_data['parameters']:
+    #     if p.get('parameterType') == parameter_name:
+    #         return p['value']
+    # return default
 
 
 def params_to_dict(params):
@@ -813,7 +838,7 @@ def user_is_owner(asset_data=None):
 def asset_from_newer_blender_version(asset_data):
     bver = bpy.app.version
     aver = asset_data['sourceAppVersion'].split('.')
-    print(aver,bver)
+    # print(aver,bver)
     bver_f = bver[0] + bver[1] * .01 + bver[2] * .0001
     aver_f = int(aver[0]) + int(aver[1]) * .01 + int(aver[2]) * .0001
     return aver_f>bver_f
