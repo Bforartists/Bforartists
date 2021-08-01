@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -10870,10 +10870,6 @@ msgstr "Objeto jaula, com o qual deformar."
 
 msgid "Strength of modifier effect"
 msgstr "Força do efeito do modificador."
-
-
-msgid "Source Object"
-msgstr "Objeto fonte"
 
 
 msgid "Boundaries"
@@ -22708,6 +22704,10 @@ msgstr "Subtrai os valores da fonte dos presentes na destinação, usando um det
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "Multiplica os valores da fonte com os da destinação, usando um determinado ajuste como fator."
+
+
+msgid "Source Object"
+msgstr "Objeto fonte"
 
 
 msgid "Object to transfer data from"
@@ -55126,14 +55126,6 @@ msgid "Right Handle Selected"
 msgstr "Manípulo direito selecionado"
 
 
-msgid "Speed Factor"
-msgstr "Fator de velocidade"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Multiplica a velocidade atual da sequência com este número ou remapear o fotograma atual para este fotograma."
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Tipo"
@@ -55495,20 +55487,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Faixa de sequência para controlar a velocidade de outras faixas."
 
 
-msgid "Multiply Speed"
-msgstr "Multiplicar velocidade"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "Multiplica a velocidade resultante após o fator de velocidade."
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Interpreta o valor como velocidade ao invés de um número de fotograma."
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Escalona os valores de 0.0 para 1.0 para o comprimento de sequência do alvo."
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "Multiplica a velocidade atual da sequência com este número ou remapear o fotograma atual para este fotograma."
 
 
 msgid "Subtract Sequence"
@@ -60625,6 +60605,10 @@ msgstr "Velocidade da caminhada"
 
 msgid "Base speed for walking and flying"
 msgstr "Velocidade base para caminhada e voo."
+
+
+msgid "Speed Factor"
+msgstr "Fator de velocidade"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -68785,10 +68769,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Bola de tração: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "Comprimento de cinemática inversa automática: %d"
-
-
 msgid "right"
 msgstr "direita"
 
@@ -69570,11 +69550,6 @@ msgstr "Cobertura"
 
 msgid "Create Along Paths"
 msgstr "Criar ao longo dos caminhos"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Converter"
 
 
 msgid "Built without Remesh modifier"

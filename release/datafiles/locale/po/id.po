@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-07-12 15:51+0700\n"
@@ -8907,20 +8907,8 @@ msgid "Relative force of the hook"
 msgstr "Gaya relatif kait"
 
 
-msgid "Source Collection"
-msgstr "Koleksi Sumber"
-
-
-msgid "Source Object"
-msgstr "Objek Sumber"
-
-
 msgid "Source Type"
 msgstr "Tipe Sumber"
-
-
-msgid "Target Layer"
-msgstr "Layer Target"
 
 
 msgid "Use Intersection"
@@ -12270,6 +12258,10 @@ msgstr "Tulang Pose yang Terseleksi"
 
 msgid "Max Distance"
 msgstr "Jarak Maks"
+
+
+msgid "Source Object"
+msgstr "Objek Sumber"
 
 
 msgid "Use edge collapsing"
@@ -20608,10 +20600,6 @@ msgid "Blend Opacity"
 msgstr "Opasitas Pencampuran"
 
 
-msgid "Speed Factor"
-msgstr "Faktor Kecepatan"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Tipe"
@@ -21496,6 +21484,10 @@ msgstr "Render Volume"
 
 msgid "Jump Height"
 msgstr "Tinggi Lompatan"
+
+
+msgid "Speed Factor"
+msgstr "Faktor Kecepatan"
 
 
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"

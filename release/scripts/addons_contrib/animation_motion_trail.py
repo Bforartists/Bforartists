@@ -1610,6 +1610,7 @@ class MotionTrailOperator(bpy.types.Operator):
 
 
 class MotionTrailPanel(bpy.types.Panel):
+    bl_idname = "VIEW3D_PT_motion_trail"
     bl_category = "Animation"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'

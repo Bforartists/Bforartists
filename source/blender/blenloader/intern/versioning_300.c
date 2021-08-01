@@ -583,11 +583,6 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
                     sizeof(scene->master_collection->id.name) - 2);
       }
     }
-    LISTBASE_FOREACH (Material *, mat, &bmain->materials) {
-      if (!(mat->lineart.flags & LRT_MATERIAL_CUSTOM_OCCLUSION_EFFECTIVENESS)) {
-        mat->lineart.mat_occlusion = 1;
-      }
-    }
   }
 
   if (!MAIN_VERSION_ATLEAST(bmain, 300, 9)) {
@@ -616,6 +611,11 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
       if (tool_settings->snap_uv_mode & (1 << 4)) {
         tool_settings->snap_uv_mode |= (1 << 6); /* SCE_SNAP_MODE_INCREMENT */
         tool_settings->snap_uv_mode &= ~(1 << 4);
+      }
+    }
+    LISTBASE_FOREACH (Material *, mat, &bmain->materials) {
+      if (!(mat->lineart.flags & LRT_MATERIAL_CUSTOM_OCCLUSION_EFFECTIVENESS)) {
+        mat->lineart.mat_occlusion = 1;
       }
     }
   }
@@ -659,6 +659,32 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
               }
               BKE_asset_library_reference_init_default(&sfile->asset_params->asset_library);
             }
+          }
+        }
+      }
+    }
+
+    /* Set default 2D annotation placement. */
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      ToolSettings *ts = scene->toolsettings;
+      ts->gpencil_v2d_align = GP_PROJECT_VIEWSPACE | GP_PROJECT_CURSOR;
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 14)) {
+    LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
+      ToolSettings *tool_settings = scene->toolsettings;
+      tool_settings->snap_flag &= ~SCE_SNAP_SEQ;
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 15)) {
+    LISTBASE_FOREACH (bScreen *, screen, &bmain->screens) {
+      LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
+        LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
+          if (sl->spacetype == SPACE_SEQ) {
+            SpaceSeq *sseq = (SpaceSeq *)sl;
+            sseq->flag |= SEQ_SHOW_GRID;
           }
         }
       }

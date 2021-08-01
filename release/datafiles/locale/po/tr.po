@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -19801,10 +19801,6 @@ msgid "SpeedControl Sequence"
 msgstr "Animasyonu işle"
 
 
-msgid "Multiply Speed"
-msgstr "Hız Kontrol"
-
-
 msgid "Subtract Sequence"
 msgstr "Yolu sil..."
 
@@ -24505,11 +24501,6 @@ msgstr "ID Özellik Gezgini"
 
 msgid "Create Along Paths"
 msgstr "Yeni dosya oluştur"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Çevir"
 
 
 msgid "Outer"

@@ -382,7 +382,7 @@ class BlenderKitUIProps(PropertyGroup):
     drag_init: BoolProperty(name="Drag Initialisation", default=False)
     drag_init_button: BoolProperty(name="Drag Initialisation from button",
                                    default=False,
-                                   description="Click or drag into scene for download.",
+                                   description="Click or drag into scene for download",
                                    update = run_drag_drop_update)
     drag_length: IntProperty(name="Drag length", default=0)
     draw_drag_image: BoolProperty(name="Draw Drag Image", default=False)
@@ -697,9 +697,9 @@ class BlenderKitCommonUploadProps(object):
         name="Thumbnail Style",
         items=(
             ('FULL', 'Full', "Your asset will be only available for subscribers"),
-            ('FREE', 'Free', "You consent you want to release this asset as free for everyone.")
+            ('FREE', 'Free', "You consent you want to release this asset as free for everyone")
         ),
-        description="Assets can be in Free or in Full plan. Also free assets generate credits.",
+        description="Assets can be in Free or in Full plan. Also free assets generate credits",
         default="FULL",
     )
 
@@ -871,7 +871,7 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
             ('FREE', 'Free', "You consent you want to release this asset as free for everyone.")
         ),
         description="Assets can be in Free or in Full plan. Also free assets generate credits. \n"
-                    "All BlenderKit materials are free.",
+                    "All BlenderKit materials are free",
         default="FREE",
         update=update_free
     )
@@ -886,7 +886,7 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
     texture_resolution_max: IntProperty(name="Texture Resolution Max", description="texture resolution maximum",
                                         default=0)
 
-    texture_size_meters: FloatProperty(name="Texture Size in Meters", description="Size of texture in real world units.",
+    texture_size_meters: FloatProperty(name="Texture Size in Meters", description="Size of texture in real world units",
                                        default=1.0, min=0)
 
     thumbnail_scale: FloatProperty(name="Thumbnail Object Size",
@@ -932,9 +932,9 @@ class BlenderKitMaterialUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
 
     thumbnail: StringProperty(
         name="Thumbnail",
-        description="Thumbnail path - 512x512 .jpg image, rendered with cycles. \n"
+        description="Thumbnail path - 512x512 .jpg image, rendered with cycles.\n"
                     "Only standard BlenderKit previews will be accepted.\n"
-                    "Only exception are special effects like fire or similar.",
+                    "Only exception are special effects like fire or similar",
         subtype='FILE_PATH',
         default="",
         update=autothumb.update_upload_material_preview)
@@ -1704,7 +1704,7 @@ class BlenderKitAddonPreferences(AddonPreferences):
     max_assetbar_rows: IntProperty(name="Max Assetbar Rows",
                                    description="max rows of assetbar in the 3D view",
                                    default=1,
-                                   min=0,
+                                   min=1,
                                    max=20)
 
     thumb_size: IntProperty(name="Assetbar thumbnail Size", default=96, min=-1, max=256)
@@ -1739,14 +1739,14 @@ class BlenderKitAddonPreferences(AddonPreferences):
 
     experimental_features: BoolProperty(
         name="Enable experimental features",
-        description="Enable all experimental features of BlenderKit. Use at your own risk.",
+        description="Enable all experimental features of BlenderKit. Use at your own risk",
         default=False,
         update=utils.save_prefs
     )
 
     categories_fix: BoolProperty(
         name="Enable category fixing mode",
-        description="Enable category fixing mode.",
+        description="Enable category fixing mode",
         default=False,
         update=utils.save_prefs
     )
@@ -1841,7 +1841,7 @@ def register():
         type=BlenderKitUIProps)
 
     # MODELS
-    bpy.types.Scene.blenderkit_models = PointerProperty(
+    bpy.types.WindowManager.blenderkit_models = PointerProperty(
         type=BlenderKitModelSearchProps)
     bpy.types.Object.blenderkit = PointerProperty(  # for uploads, not now...
         type=BlenderKitModelUploadProps)
@@ -1849,7 +1849,7 @@ def register():
         type=BlenderKitRatingProps)
 
     # SCENES
-    bpy.types.Scene.blenderkit_scene = PointerProperty(
+    bpy.types.WindowManager.blenderkit_scene = PointerProperty(
         type=BlenderKitSceneSearchProps)
     bpy.types.Scene.blenderkit = PointerProperty(  # for uploads, not now...
         type=BlenderKitSceneUploadProps)
@@ -1857,7 +1857,7 @@ def register():
         type=BlenderKitRatingProps)
 
     # HDRs
-    bpy.types.Scene.blenderkit_HDR = PointerProperty(
+    bpy.types.WindowManager.blenderkit_HDR = PointerProperty(
         type=BlenderKitHDRSearchProps)
     bpy.types.Image.blenderkit = PointerProperty(  # for uploads, not now...
         type=BlenderKitHDRUploadProps)
@@ -1865,7 +1865,7 @@ def register():
         type=BlenderKitRatingProps)
 
     # MATERIALS
-    bpy.types.Scene.blenderkit_mat = PointerProperty(
+    bpy.types.WindowManager.blenderkit_mat = PointerProperty(
         type=BlenderKitMaterialSearchProps)
     bpy.types.Material.blenderkit = PointerProperty(  # for uploads, not now...
         type=BlenderKitMaterialUploadProps)
@@ -1873,7 +1873,7 @@ def register():
         type=BlenderKitRatingProps)
 
     # BRUSHES
-    bpy.types.Scene.blenderkit_brush = PointerProperty(
+    bpy.types.WindowManager.blenderkit_brush = PointerProperty(
         type=BlenderKitBrushSearchProps)
     bpy.types.Brush.blenderkit = PointerProperty(  # for uploads, not now...
         type=BlenderKitBrushUploadProps)
@@ -1930,11 +1930,11 @@ def unregister():
     tasks_queue.unregister()
     asset_bar_op.unregister()
 
-    del bpy.types.Scene.blenderkit_models
-    del bpy.types.Scene.blenderkit_scene
-    del bpy.types.Scene.blenderkit_HDR
-    del bpy.types.Scene.blenderkit_brush
-    del bpy.types.Scene.blenderkit_mat
+    del bpy.types.WindowManager.blenderkit_models
+    del bpy.types.WindowManager.blenderkit_scene
+    del bpy.types.WindowManager.blenderkit_HDR
+    del bpy.types.WindowManager.blenderkit_brush
+    del bpy.types.WindowManager.blenderkit_mat
 
     del bpy.types.Scene.blenderkit
     del bpy.types.Object.blenderkit

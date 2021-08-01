@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11895,20 +11895,12 @@ msgid "Crease Threshold"
 msgstr "Faltenschwelle"
 
 
-msgid "Source Object"
-msgstr "Quellobjekt"
-
-
 msgid "Source Type"
 msgstr "Quellentyp"
 
 
 msgid "Angle Splitting"
 msgstr "Winkelspaltung"
-
-
-msgid "Target Layer"
-msgstr "Zielebene"
 
 
 msgid "Use Contour"
@@ -21154,6 +21146,10 @@ msgstr "Unter dem Schwellenwert"
 
 msgid "Only replace destination elements where data is below given threshold (exact behavior depends on data type)"
 msgstr "Ersetzen Sie nur Zielelemente, bei denen die Daten unter dem angegebenen Schwellenwert liegen (das genaue Verhalten hängt vom Datentyp ab)"
+
+
+msgid "Source Object"
+msgstr "Quellobjekt"
 
 
 msgid "Object to transfer data from"
@@ -47124,10 +47120,6 @@ msgid "Right Handle Selected"
 msgstr "Rechter Griff selektiert"
 
 
-msgid "Speed Factor"
-msgstr "Geschwindigkeitsfaktor"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Typ"
@@ -47361,18 +47353,6 @@ msgstr "Sequenz multiplizieren"
 
 msgid "Over Drop Sequence"
 msgstr "Sequenz überziehen"
-
-
-msgid "Multiply Speed"
-msgstr "Geschwindigkeit multiplizieren"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Den Wert als Geschwindigkeit statt als Einzelbildnummer interpretieren"
-
-
-msgid "Scale to Length"
-msgstr "Skaliere zu länge"
 
 
 msgid "Subtract Sequence"
@@ -48495,8 +48475,8 @@ msgid "Display image with RGB colors"
 msgstr "Bild mit RGB-Farben anzeigen"
 
 
-msgid "Display  alpha transparency channel"
-msgstr "Alpha-Transparenz-Kanal anzeigen"
+msgid "Display alpha transparency channel"
+msgstr "Alpha-Transparenzkanal anzeigen"
 
 
 msgid "Z-Buffer"
@@ -48597,10 +48577,6 @@ msgstr "Lokalen-Marker anzeigen"
 
 msgid "Channels of the image to draw"
 msgstr "Anzuzeigende Kanäle des Bildes"
-
-
-msgid "Display alpha transparency channel"
-msgstr "Alpha-Transparenzkanal anzeigen"
 
 
 msgid "Backdrop zoom factor"
@@ -51571,6 +51547,10 @@ msgstr "Laufgeschwindigkeit"
 
 msgid "Base speed for walking and flying"
 msgstr "Basisgeschwindigkeit für gehen und fliegen"
+
+
+msgid "Speed Factor"
+msgstr "Geschwindigkeitsfaktor"
 
 
 msgid "Has Data-Block"
@@ -62405,11 +62385,6 @@ msgstr "Koordinatenraum"
 
 msgid "Settings are in the particle tab"
 msgstr "Einstellungen sind im Partikle Tab"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Konvertieren"
 
 
 msgid "Axis Object"

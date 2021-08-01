@@ -390,8 +390,8 @@ GHOST_IWindow *GHOST_SystemX11::createWindow(const char *title,
 }
 
 /**
- * Create a new offscreen context.
- * Never explicitly delete the context, use disposeContext() instead.
+ * Create a new off-screen context.
+ * Never explicitly delete the context, use #disposeContext() instead.
  * \return The new context (or 0 if creation failed).
  */
 GHOST_IContext *GHOST_SystemX11::createOffscreenContext(GHOST_GLSettings glSettings)
@@ -1189,9 +1189,9 @@ void GHOST_SystemX11::processEvent(XEvent *xe)
         else {
           printf("Bad keycode lookup. Keysym 0x%x Status: %s\n",
                  (unsigned int)key_sym,
-                 (status == XLookupNone ?
-                      "XLookupNone" :
-                      status == XLookupKeySym ? "XLookupKeySym" : "Unknown status"));
+                 (status == XLookupNone   ? "XLookupNone" :
+                  status == XLookupKeySym ? "XLookupKeySym" :
+                                            "Unknown status"));
 
           printf("'%.*s' %p %p\n", len, utf8_buf, xic, m_xim);
         }
