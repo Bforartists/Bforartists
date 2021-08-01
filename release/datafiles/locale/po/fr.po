@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -14572,10 +14572,6 @@ msgid "Input properties of an Gizmo"
 msgstr "Propriétés d'entrée d’un gizmo"
 
 
-msgid "Modifier affecting the grease pencil object"
-msgstr "Modificateur affectant l’objet crayon gras"
-
-
 msgid "Modifier name"
 msgstr "Nom du modificateur"
 
@@ -15144,10 +15140,6 @@ msgstr "Objet lattice à utiliser pour la déformation"
 
 msgid "Strength of modifier effect"
 msgstr "Force de l’effet du modificateur"
-
-
-msgid "Source Object"
-msgstr "Objet source"
 
 
 msgid "Boundaries"
@@ -29132,6 +29124,10 @@ msgstr "Soustraire la valeur source de celle de destination, en utilisant le seu
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "Multiplier la valeur source avec celle de destination, en utilisant le seuil donné comme facteur"
+
+
+msgid "Source Object"
+msgstr "Objet source"
 
 
 msgid "Object to transfer data from"
@@ -64801,14 +64797,6 @@ msgid "Right Handle Selected"
 msgstr "Poignée droite sélectionnée"
 
 
-msgid "Speed Factor"
-msgstr "Facteur vitesse"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Multiplier la vitesse courante de la séquence par ce nombre, et refaire correspondre la frame courante à cette frame"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Type"
@@ -65179,20 +65167,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Bande séquence pour contrôler la vitesse d’autres bandes"
 
 
-msgid "Multiply Speed"
-msgstr "Multiplier vitesse"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "Multiplier la vitesse résultante après le facteur de vitesse"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Interpréter la valeur comme la vitesse, au lieu d’un numéro de frame"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Redimensionner les valeurs de 0.0 à 1.0 à la longueur de la séquence"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "Multiplier la vitesse courante de la séquence par ce nombre, et refaire correspondre la frame courante à cette frame"
 
 
 msgid "Subtract Sequence"
@@ -70502,6 +70478,10 @@ msgstr "Vitesse de marche"
 
 msgid "Base speed for walking and flying"
 msgstr "Vitesse de base pour la marche et le vol"
+
+
+msgid "Speed Factor"
+msgstr "Facteur vitesse"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -79624,10 +79604,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Trackball : %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "Long. IK auto : %d"
-
-
 msgid "right"
 msgstr "droite"
 
@@ -80629,11 +80605,6 @@ msgstr "Créer Instances"
 
 msgid "Create Along Paths"
 msgstr "Créer le long de chemins"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Convertir"
 
 
 msgid "Built without Remesh modifier"

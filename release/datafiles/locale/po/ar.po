@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -9021,10 +9021,6 @@ msgstr "ﺔﻜﺒﺸﻟﺍ ﺮﻴﻐﻣ"
 
 msgid "Strength of modifier effect"
 msgstr "ﺮﻴﻐﻤﻟﺍ ﺮﻴﺛﺎﺗ ﺓﺪﺷ"
-
-
-msgid "Source Object"
-msgstr "ﺭﺪﺼﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ"
 
 
 msgid "Boundaries"
@@ -18105,6 +18101,10 @@ msgstr "ﺔﺒﺘﻌﻟﺍ ﻕﻮﻓ"
 
 msgid "Below Threshold"
 msgstr "ﺔﺒﺘﻌﻟﺍ ﺖﺤﺗ"
+
+
+msgid "Source Object"
+msgstr "ﺭﺪﺼﻤﻟﺍ ﻦﺋﺎﻜﻟﺍ"
 
 
 msgid "Object to transfer data from"
@@ -34723,10 +34723,6 @@ msgid "Modifiers affecting this strip"
 msgstr "ﻂﻳﺮﺸﻟﺍ ﺍﺬﻬﺑ ﺓﺮﺛﺆﻤﻟﺍ ﺕﺍﺮﻴﻐﻤﻟﺍ"
 
 
-msgid "Speed Factor"
-msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "ﻉﻮﻨﻟﺍ"
@@ -34966,14 +34962,6 @@ msgstr "ﻕﻮﻓ ﺖﻠﻓﺍ ﻞﺴﻠﺴﺗ"
 
 msgid "Sequence strip to control the speed of other strips"
 msgstr "ﻯﺮﺧﻻ﻿ﺍ ﺔﻃﺮﺷﻻ﻿ﺍ ﺔﻋﺮﺴﺑ ﻢﻜﺤﺘﻤﻟﺍ ﻞﺴﻠﺴﺘﻟﺍ ﻂﻳﺮﺷ"
-
-
-msgid "Multiply Speed"
-msgstr "ﻒﻋﺎﻀﺘﻟﺍ ﺔﻋﺮﺳ"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ ﺪﻌﺑ ﺔﺠﺗﺎﻨﻟﺍ ﺔﻋﺮﺴﻟﺍ ﻒﻋﺎﺿ"
 
 
 msgid "Subtract Sequence"
@@ -37157,6 +37145,10 @@ msgstr "ﺓﺭﺄﻔﻟﺍ ﺲﻜﻋﺍ"
 
 msgid "View Height"
 msgstr "ﺮﻈﻨﻤﻟﺍ ﻉﺎﻔﺗﺭﺇ"
+
+
+msgid "Speed Factor"
+msgstr "ﺔﻋﺮﺴﻟﺍ ﻞﻣﺎﻌﻣ"
 
 
 msgid "Lighting for a World data-block"
@@ -41570,11 +41562,6 @@ msgstr "ﺔﻴﻄﻐﺘﻟﺍ"
 
 msgid "Create Along Paths"
 msgstr "ﺕﺍﺭﺎﺴﻤﻟﺍ ﻝﻮﻃ ﻰﻠﻋ ﺊﺸﻧﺃ"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "ﻝﻮّﺣ"
 
 
 msgid "Rim"

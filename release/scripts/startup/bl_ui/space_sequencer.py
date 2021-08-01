@@ -227,6 +227,7 @@ class SEQUENCER_PT_sequencer_overlay(Panel):
 
         layout.prop(st, "show_strip_offset", text="Offsets")
         layout.prop(st, "show_fcurves", text="F-Curves")
+        layout.prop(st, "show_grid", text="Grid")
 
         layout.separator()
 
@@ -2349,8 +2350,8 @@ class SEQUENCER_PT_snapping(Panel):
         row.separator()
         row.prop(sequencer_tool_settings, "snap_ignore_sound",text="Sound Strips")
 
-        col = layout.column()
-        col.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips")
+        col = layout.column(heading="Current Frame", align=True)
+        col.prop(sequencer_tool_settings, "use_snap_current_frame_to_strips", text="Snap to Strips")
 
 
 class SEQUENCER_PT_marker_options(Panel):

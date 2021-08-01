@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -13682,10 +13682,6 @@ msgid "Input properties of an Gizmo"
 msgstr "Входные свойства манипулятора"
 
 
-msgid "Modifier affecting the grease pencil object"
-msgstr "Модификатор, влияющий на объект Grease Pencil"
-
-
 msgid "Modifier name"
 msgstr "Имя модификатора"
 
@@ -14218,10 +14214,6 @@ msgstr "Объект решётки, с помощью которой осуще
 
 msgid "Strength of modifier effect"
 msgstr "Интенсивность эффекта модификатора"
-
-
-msgid "Source Object"
-msgstr "Объект-источник"
 
 
 msgid "Boundaries"
@@ -29031,6 +29023,10 @@ msgstr "Вычесть значения источника у получател
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "Перемножить значения источника и получателя, используя порог в качестве коэффициента"
+
+
+msgid "Source Object"
+msgstr "Объект-источник"
 
 
 msgid "Object to transfer data from"
@@ -70248,14 +70244,6 @@ msgid "Right Handle Selected"
 msgstr "Правая рукоятка выделена"
 
 
-msgid "Speed Factor"
-msgstr "Множитель скорости"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Умножить текущую скорость последовательности на это число или переразметить текущий кадр на этот кадр"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Тип"
@@ -70646,28 +70634,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Дорожка видеоредактора, управляющая скоростью других дорожек"
 
 
-msgid "Multiply Speed"
-msgstr "Умножить скорость"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "Умножить результирующую скорость после коэффициента скорости"
-
-
-msgid "Use as Speed"
-msgstr "Использовать как скорость"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Интерпретировать значение как скорость, а не как номер кадра"
-
-
-msgid "Scale to Length"
-msgstr "Масштабировать к длине"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Масштабировать значения от 0.0 до 1.0 в длину целевой последовательности"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "Умножить текущую скорость последовательности на это число или переразметить текущий кадр на этот кадр"
 
 
 msgid "Subtract Sequence"
@@ -72799,7 +72767,7 @@ msgid "Display image with RGB colors"
 msgstr "Показывать изображение в цветах RGB"
 
 
-msgid "Display  alpha transparency channel"
+msgid "Display alpha transparency channel"
 msgstr "Отображать альфа-канал (прозрачность)"
 
 
@@ -73021,10 +72989,6 @@ msgstr "Данные пространства редактора нодов"
 
 msgid "Channels of the image to draw"
 msgstr "Отображаемые каналы изображения"
-
-
-msgid "Display alpha transparency channel"
-msgstr "Отображать альфа-канал (прозрачность)"
 
 
 msgid "Backdrop Offset"
@@ -77836,6 +77800,10 @@ msgid "Base speed for walking and flying"
 msgstr "Базовая скорость ходьбы и полёта"
 
 
+msgid "Speed Factor"
+msgstr "Множитель скорости"
+
+
 msgid "Multiplication factor when using the fast or slow modifiers"
 msgstr "Коэффициент умножения при использовании быстрых или медленных модификаторов"
 
@@ -82222,6 +82190,10 @@ msgid "Clear Fade"
 msgstr "Очистить затухание"
 
 
+msgid "Effect Fader"
+msgstr "Регулятор эффекта"
+
+
 msgid "%dx%d"
 msgstr "%d×%d"
 
@@ -82236,10 +82208,6 @@ msgstr "Показать отдельные цветовые каналы"
 
 msgid "Add Transition"
 msgstr "Добавить переход"
-
-
-msgid "Effect Fader"
-msgstr "Регулятор эффекта"
 
 
 msgid "Unpack"
@@ -90396,10 +90364,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Трекбол: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "Длина автоИК: %d"
-
-
 msgid "right"
 msgstr "право"
 
@@ -91497,11 +91461,6 @@ msgstr "Создать вдоль пути"
 
 msgid "Settings are in the particle tab"
 msgstr "Настройки находятся во вкладке частиц"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Преобразовать"
 
 
 msgid "Built without Remesh modifier"

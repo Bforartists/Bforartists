@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -15422,10 +15422,6 @@ msgid "Input properties of an Gizmo"
 msgstr "Увідні властивості гізмо"
 
 
-msgid "Modifier affecting the grease pencil object"
-msgstr "Модифікатор задіює об'єкт нарисного олівця"
-
-
 msgid "Modifier name"
 msgstr "Назва модифікатора"
 
@@ -16018,10 +16014,6 @@ msgstr "Об'єкт-ґратка, яким деформувати"
 
 msgid "Strength of modifier effect"
 msgstr "Сила ефекту модифікатора"
-
-
-msgid "Source Object"
-msgstr "Об'єкт-джерело"
 
 
 msgid "Boundaries"
@@ -33122,6 +33114,10 @@ msgstr "Відняти джерельні значення від цільови
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "Перемножити джерельні значення з цільовими, помноживши на значення порогу"
+
+
+msgid "Source Object"
+msgstr "Об'єкт-джерело"
 
 
 msgid "Object to transfer data from"
@@ -81668,14 +81664,6 @@ msgid "Right Handle Selected"
 msgstr "Вибрана права ручка"
 
 
-msgid "Speed Factor"
-msgstr "Коефіцієнт швидкості"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Помножити поточну швидкість послідовності на це число або перерозмітити поточний кадр на цей кадр"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Тип"
@@ -82078,20 +82066,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Смужка послідовності для керування швидкістю інших смужок"
 
 
-msgid "Multiply Speed"
-msgstr "Помножити швидкість"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "Помножити кінцеву швидкість на коефіцієнт швидкості"
-
-
-msgid "Use as Speed"
-msgstr "Вжити як Швидкість"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Інтерпретувати значення, як швидкість, а не номер кадру"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "Помножити поточну швидкість послідовності на це число або перерозмітити поточний кадр на цей кадр"
 
 
 msgid "Frame Interpolation"
@@ -82100,14 +82076,6 @@ msgstr "Інтерполяція Кадру"
 
 msgid "Do crossfade blending between current and next frame"
 msgstr "Зробити змішування перетікання між поточним та наступним кадром"
-
-
-msgid "Scale to Length"
-msgstr "Масштаб за Тривалістю"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Перевести значення з 0.0 - 1.0 до довжини цільової послідовності"
 
 
 msgid "Subtract Sequence"
@@ -84400,8 +84368,8 @@ msgid "Display image with RGB colors"
 msgstr "Показати зображення в кольорах RGB"
 
 
-msgid "Display  alpha transparency channel"
-msgstr "Показати канал альфа-прозорості"
+msgid "Display alpha transparency channel"
+msgstr "Показувати канал альфа прозорості"
 
 
 msgid "Z-Buffer"
@@ -84626,10 +84594,6 @@ msgstr "Простір даних редактора вузлів"
 
 msgid "Channels of the image to draw"
 msgstr "Канали зображення для малювання"
-
-
-msgid "Display alpha transparency channel"
-msgstr "Показувати канал альфа прозорості"
 
 
 msgid "Backdrop Offset"
@@ -90430,10 +90394,6 @@ msgid "Volume object render settings"
 msgstr "Устави рендерення об'єкта об'єму"
 
 
-msgid "Specify volume density and step size  in object or world space"
-msgstr "Вказати щільність об'єму та розмір кроку у просторі об'єкта або світу"
-
-
 msgid "Keep volume opacity and detail the same regardless of object scale"
 msgstr "Утримувати безпрозорість та детальність об'єму тими самими, не залежно від масштабу об'єкта"
 
@@ -90500,6 +90460,10 @@ msgstr "Швидкість руху"
 
 msgid "Base speed for walking and flying"
 msgstr "Базова швидкість руху і польоту"
+
+
+msgid "Speed Factor"
+msgstr "Коефіцієнт швидкості"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -96303,6 +96267,10 @@ msgid "Hold Split"
 msgstr "Тримати Розділ"
 
 
+msgid "Default Fade"
+msgstr "Стандартне Зникання"
+
+
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Оригінальний діапазон кадрів: %d-%d (%d)"
 
@@ -96352,8 +96320,8 @@ msgid "Clear Fade"
 msgstr "Зчистити Зникання"
 
 
-msgid "Default Fade"
-msgstr "Стандартне Зникання"
+msgid "Effect Fader"
+msgstr "Зникач Ефекту"
 
 
 msgid "%dx%d"
@@ -96376,20 +96344,12 @@ msgid "Add Transition"
 msgstr "Додати Перехід"
 
 
-msgid "Effect Fader"
-msgstr "Зникач Ефекту"
-
-
 msgid "Unpack"
 msgstr "Розпакувати"
 
 
 msgid "Pack"
 msgstr "Упакування"
-
-
-msgid "Stretch to Input Strip Length"
-msgstr "Розтяг до Довжини Увідної Смужки"
 
 
 msgid "Source Channel"
@@ -106036,10 +105996,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Трекбол: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "Довжина авто-ІК: %d"
-
-
 msgid "right"
 msgstr "справа"
 
@@ -107385,11 +107341,6 @@ msgstr "Створити вздовж шляхів"
 
 msgid "Settings are in the particle tab"
 msgstr "Устави знаходяться у вкладці частинок"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Перетворити"
 
 
 msgid "Built without Remesh modifier"

@@ -262,29 +262,29 @@ class FractureCellProperties(PropertyGroup):
             )
     collection_name: StringProperty(
             name="Name",
-            description="Collection name.",
+            description="Collection name",
             default="Fracture",
             )
     original_hide: BoolProperty(
             name="Hide Original",
-            description="Hide original object after cell fracture.",
+            description="Hide original object after cell fracture",
             default=True,
             )
     cell_relocate : BoolProperty(
             name="Move Beside Original",
-            description="Move cells beside the original object.",
+            description="Move cells beside the original object",
             default=False,
             )
     # -------------------------------------------------------------------------
     # Custom Property Options
     use_mass: BoolProperty(
         name="Mass",
-        description="Append mass data on custom properties of cell objects.",
+        description="Append mass data on custom properties of cell objects",
         default=False,
         )
     mass_name: StringProperty(
         name="Property Name",
-        description="Name for custome properties.",
+        description="Name for custome properties",
         default="mass",
         )
     mass_mode: EnumProperty(
