@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1723,10 +1723,6 @@ msgid "Continue"
 msgstr "Jarraitu"
 
 
-msgid "Speed Factor"
-msgstr "Azelerazio-faktorea"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Mota"
@@ -1809,6 +1805,10 @@ msgstr "3D"
 
 msgid "3D View"
 msgstr "3D Bista"
+
+
+msgid "Speed Factor"
+msgstr "Azelerazio-faktorea"
 
 
 msgctxt "WindowManager"

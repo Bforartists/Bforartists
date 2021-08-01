@@ -307,7 +307,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
 
         #iAudioSensib=0    #sensibilidade volume do audio 0 a 5. Quanto maior, mais sensibilidade
         audio_sense: IntProperty(name="Audio Sens",
-            description="Audio Sensibility.",
+            description="Audio Sensibility",
             min=1,
             max=6,
             step=1,
@@ -316,7 +316,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
         #iFramesPorSeg=15  #Frames por segundo para key frame
         #fps= (bpy.types.Scene) bpy.context.object.render.fps
         frames_per_second: IntProperty(name="#Frames/s",
-            description="Frames you want per second. Better match your set up in Blender scene.",
+            description="Frames you want per second. Better match your set up in Blender scene",
             min=1,
             max=120,
             step=1,
@@ -341,7 +341,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
 
         #iMaxValue=255
         action_max_value: IntProperty(name="Clip Max",
-            description="Set the max value (clip higher values).",
+            description="Set the max value (clip higher values)",
             min=1,
             max=255,
             step=1,
@@ -357,7 +357,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
 
         #iStartFrame=0#
         frames_initial: IntProperty(name="Frame Ini",
-            description="Where to start to put the computed values.",
+            description="Where to start to put the computed values",
             min=0,
             max=999999999,
             step=1,
@@ -439,7 +439,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
 
         #  INVERTIDO!!!  bNaoValorIgual=True    # nao deixa repetir valores     INVERTIDO!!!
         action_valor_igual: BoolProperty(name="Hard Transition",
-            description="Default. Movements like a beat.",
+            description="Default. Movements like a beat",
             default=1)
 
         action_auto_audio_sense: BoolProperty(name="Auto Audio Sensitivity",
@@ -447,35 +447,35 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
             default=1)
 
         use_just_beat:BoolProperty(name="Only Use The Beat",
-            description="Try to use only the beat to extract movement.",
+            description="Try to use only the beat to extract movement",
             default=0)
 
         remove_beat:BoolProperty(name="Remove The Beat",
-            description="Try to remove the beat to extract movement.",
+            description="Try to remove the beat to extract movement",
             default=0)
 
         beat_more_sensible:BoolProperty(name="More Sensible",
-            description="Try To be more sensible about the beat.",
+            description="Try To be more sensible about the beat",
             default=0)
 
         beat_less_sensible:BoolProperty(name="Less Sensible",
-            description="Try to be less sensible about the beat.",
+            description="Try to be less sensible about the beat",
             default=0)
 
         check_smartrender_loc_rot_sc:BoolProperty(name="Loc Rot Scale",
-            description="Find changes in Location, Rotation and Scale Frame by Frame.",
+            description="Find changes in Location, Rotation and Scale Frame by Frame",
             default=1)
 
         check_smartrender_material_basic:BoolProperty(name="Basic Material",
-            description="Find changes in basic material settings Frame by Frame.",
+            description="Find changes in basic material settings Frame by Frame",
             default=1)
 
         check_smartrender_material_transparence:BoolProperty(name="Material Transparence",
-            description="Find changes in material transparence settings Frame by Frame.",
+            description="Find changes in material transparence settings Frame by Frame",
             default=0)
 
         check_smartrender_material_mirror:BoolProperty(name="Material Mirror",
-            description="Find changes in material mirror settings Frame by Frame.",
+            description="Find changes in material mirror settings Frame by Frame",
             default=0)
 
         timer_reset_func:BoolProperty(name="Reset Counters",
@@ -488,7 +488,7 @@ class ImpSoundtoAnim(bpy.types.PropertyGroup):
 
         #  Optimization
         optimization_destructive: IntProperty(name="Optimization",
-            description="Hi value = Hi optimization -> Hi loss of information.",
+            description="Hi value = Hi optimization -> Hi loss of information",
             min=0,
             max=254,
             step=10,
@@ -1529,7 +1529,11 @@ def register():
     bpy.types.TOPBAR_MT_file_import.append(WavFileImport)
     #bpy.types.VIEW3D_MT_mesh_add.append(WavFileImport)
     #bpy.types.Object.ant_landscape = PointerProperty(type=AntLandscapePropertiesGroup, name="ANT_Landscape", description="Landscape properties")
-    bpy.types.Object.imp_sound_to_anim = PointerProperty(type=ImpSoundtoAnim, name="imp_sound_to_anim", description="Extract movement from sound file. See the tool shelf.")
+    bpy.types.Object.imp_sound_to_anim = PointerProperty(
+        type=ImpSoundtoAnim,
+        name="imp_sound_to_anim",
+        description="Extract movement from sound file. See the tool shelf",
+    )
 
 
 def unregister():

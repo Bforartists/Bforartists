@@ -21,7 +21,7 @@ from bpy.types import (
 class FRACTURE_OT_Cell(Operator):
     bl_idname = "object.add_fracture_cell"
     bl_label = "Fracture Cell"
-    bl_description = "Make fractured cells from selected object."
+    bl_description = "Make fractured cells from selected object"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod

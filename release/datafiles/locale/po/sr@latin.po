@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -23224,10 +23224,6 @@ msgid "Blend Opacity"
 msgstr "Providnost prelaza"
 
 
-msgid "Speed Factor"
-msgstr "Faktor brzine"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Vrsta"
@@ -23418,10 +23414,6 @@ msgstr "Umnožena sekvenca"
 
 msgid "SpeedControl Sequence"
 msgstr "Kontrola brzine sekvence"
-
-
-msgid "Multiply Speed"
-msgstr "Ubrzanje"
 
 
 msgid "Bilinear interpolation"
@@ -25228,6 +25220,10 @@ msgstr "Brzina šetnje"
 
 msgid "Base speed for walking and flying"
 msgstr "Osnovna brzina šetnje ili letenja"
+
+
+msgid "Speed Factor"
+msgstr "Faktor brzine"
 
 
 msgid "World Mist"
@@ -28571,11 +28567,6 @@ msgstr "Pokrivenost"
 
 msgid "Create Along Paths"
 msgstr "Napravi duž putanja"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Pretvori"
 
 
 msgid "Rim"

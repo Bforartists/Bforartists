@@ -302,17 +302,26 @@ def append_objects(file_name, obnames=[], location=(0, 0, 0), link=False, **kwar
         bpy.ops.object.select_all(action='DESELECT')
 
         path = file_name + "\\Collection\\"
-        object_name = kwargs.get('name')
+        collection_name = kwargs.get('name')
         fc = utils.get_fake_context(bpy.context, area_type='VIEW_3D')
-        bpy.ops.wm.append(fc, filename=object_name, directory=path)
+        bpy.ops.wm.append(fc, filename=collection_name, directory=path)
 
         return_obs = []
+        to_hidden_collection = []
+        collection = None
         for ob in bpy.context.scene.objects:
             if ob.select_get():
                 return_obs.append(ob)
                 if not ob.parent:
                     main_object = ob
                     ob.location = location
+                # check for object that should be hidden
+                if ob.users_collection[0].name == collection_name:
+                    collection = ob.users_collection[0]
+                else:
+                    to_hidden_collection.append(ob)
+
+
 
         if kwargs.get('rotation'):
             main_object.rotation_euler = kwargs['rotation']
@@ -320,6 +329,16 @@ def append_objects(file_name, obnames=[], location=(0, 0, 0), link=False, **kwar
         if kwargs.get('parent') is not None:
             main_object.parent = bpy.data.objects[kwargs['parent']]
             main_object.matrix_world.translation = location
+
+        #move objects that should be hidden to a sub collection
+        if len(to_hidden_collection)>0 and collection is not None:
+            hidden_collection_name = collection_name+'_hidden'
+            h_col = bpy.data.collections.new(name = hidden_collection_name)
+            collection.children.link(h_col)
+            for ob in to_hidden_collection:
+                ob.users_collection[0].objects.unlink(ob)
+                h_col.objects.link(ob)
+            utils.exclude_collection(hidden_collection_name)
 
         bpy.ops.object.select_all(action='DESELECT')
         utils.selection_set(sel)

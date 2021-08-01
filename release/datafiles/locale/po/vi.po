@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'07a77816a180')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -15642,10 +15642,6 @@ msgid "Input properties of an Gizmo"
 msgstr "Đặc tính ngõ vào của một Đồ Đạc"
 
 
-msgid "Modifier affecting the grease pencil object"
-msgstr "Cụ sửa đổi đang ảnh hướng vật thể bút sáp"
-
-
 msgid "Modifier name"
 msgstr "Tên cụ sửa đổi"
 
@@ -16348,22 +16344,6 @@ msgid "The strength value for the generate strokes"
 msgstr "Giá trị sức cho các nét được chế tạo"
 
 
-msgid "Source Collection"
-msgstr "Sưu Tập Nguồn"
-
-
-msgid "Source collection that this modifier uses data from"
-msgstr "Cụ sửa đổi này dùng dữ liệu từ sưu tập nguồn nào"
-
-
-msgid "Source Object"
-msgstr "Vật Thể Nguồn"
-
-
-msgid "Source object that this modifier uses data from"
-msgstr "Cụ sửa đổi này dùng dữ liệu từ vật thể nguồn nào"
-
-
 msgid "Source Type"
 msgstr "Loại Nguồn"
 
@@ -16388,16 +16368,8 @@ msgid "Angle in screen space below which a stroke is split in two"
 msgstr "Góc trong không gian màn cho chẻ một nét thành hai nét"
 
 
-msgid "Target Layer"
-msgstr "Lớp Mục Tiêu"
-
-
 msgid "Grease Pencil layer assigned to the generated strokes"
 msgstr "Lớp Bút Sáp được chỉ định đến các nét được chế tạo"
-
-
-msgid "Target Material"
-msgstr "Vật Liệu Mục Tiêu"
 
 
 msgid "Grease Pencil material assigned to the generated strokes"
@@ -33906,6 +33878,10 @@ msgstr "Trừ giá trị nguồn từ giá trị đích, dùng ngưỡng đượ
 
 msgid "Multiply source value to destination one, using given threshold as factor"
 msgstr "Nhân giá trị nguồn với giá trị đích, dùng ngưỡng được xác định làm hệ số"
+
+
+msgid "Source Object"
+msgstr "Vật Thể Nguồn"
 
 
 msgid "Object to transfer data from"
@@ -83801,14 +83777,6 @@ msgid "Right Handle Selected"
 msgstr "Tay Cầm Phải Được Chọn"
 
 
-msgid "Speed Factor"
-msgstr "Hệ Số Tốc Độ"
-
-
-msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
-msgstr "Nhân tốc độ hiện tại của đoạn với số này hay ánh xạ lại bức hiện tại đến bức này"
-
-
 msgctxt "Sequence"
 msgid "Type"
 msgstr "Loại"
@@ -84211,20 +84179,8 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Đoạn trình tự cho điều khiển tốc độ của đoạn khác"
 
 
-msgid "Multiply Speed"
-msgstr "Nhân Tốc Độ"
-
-
-msgid "Multiply the resulting speed after the speed factor"
-msgstr "Nhân tốc độ kết qủa sau hệ số tốc độ"
-
-
-msgid "Use as Speed"
-msgstr "Dùng như Tốc Độ"
-
-
-msgid "Interpret the value as speed instead of a frame number"
-msgstr "Dịch giá trị là tốc độ thay là số bức"
+msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
+msgstr "Nhân tốc độ hiện tại của đoạn với số này hay ánh xạ lại bức hiện tại đến bức này"
 
 
 msgid "Frame Interpolation"
@@ -84233,14 +84189,6 @@ msgstr "Suy Nội Bức"
 
 msgid "Do crossfade blending between current and next frame"
 msgstr "Phai giữa bức hiện tại và bức kế"
-
-
-msgid "Scale to Length"
-msgstr "Phóng to đến Bề Dài"
-
-
-msgid "Scale values from 0.0 to 1.0 to target sequence length"
-msgstr "Phóng to giá trị từ 0.0 tới 1.0 đến bề dài của trình tự mục tiêu"
 
 
 msgid "Subtract Sequence"
@@ -86569,7 +86517,7 @@ msgid "Display image with RGB colors"
 msgstr "Hiển thị ảnh bằng màu RGB"
 
 
-msgid "Display  alpha transparency channel"
+msgid "Display alpha transparency channel"
 msgstr "Hiển thị kênh độ đục"
 
 
@@ -86795,10 +86743,6 @@ msgstr "Dữ liệu không gian của bộ biên tập giao điểm"
 
 msgid "Channels of the image to draw"
 msgstr "Các kênh của ảnh để vẽ"
-
-
-msgid "Display alpha transparency channel"
-msgstr "Hiển thị kênh độ đục"
 
 
 msgid "Backdrop Offset"
@@ -92931,10 +92875,6 @@ msgid "Volume object render settings"
 msgstr "Cài đặt kết xuất cho vật thể thể tích"
 
 
-msgid "Specify volume density and step size  in object or world space"
-msgstr "Chỉ định tỉ trọng thể tích và kích thước bước trong không gian vật thể hay thế giới"
-
-
 msgid "Keep volume opacity and detail the same regardless of object scale"
 msgstr "Giữ nguyên độ đục thể tích và chi tiết không quan tâm phóng to của vật thể"
 
@@ -93001,6 +92941,10 @@ msgstr "Tốc Độ Đi Bộ"
 
 msgid "Base speed for walking and flying"
 msgstr "Tốc độ cơ sở cho đi bộ và bay"
+
+
+msgid "Speed Factor"
+msgstr "Hệ Số Tốc Độ"
 
 
 msgid "Multiplication factor when using the fast or slow modifiers"
@@ -98862,6 +98806,10 @@ msgid "Hold Split"
 msgstr "Giữ Chẻ"
 
 
+msgid "Default Fade"
+msgstr "Phai Mặc Định"
+
+
 msgid "Original frame range: %d-%d (%d)"
 msgstr "Phạm vi bức ban đầu: %d-%d (%d)"
 
@@ -98911,8 +98859,8 @@ msgid "Clear Fade"
 msgstr "Xóa Phai"
 
 
-msgid "Default Fade"
-msgstr "Phai Mặc Định"
+msgid "Effect Fader"
+msgstr "Bộ Phai Hiệu Ứng"
 
 
 msgid "%dx%d"
@@ -98939,20 +98887,12 @@ msgid "Add Transition"
 msgstr "Thêm Tiến Triển"
 
 
-msgid "Effect Fader"
-msgstr "Bộ Phai Hiệu Ứng"
-
-
 msgid "Unpack"
 msgstr "Gở Gói"
 
 
 msgid "Pack"
 msgstr "Gói Lại"
-
-
-msgid "Stretch to Input Strip Length"
-msgstr "Kéo dài đến Bề Dài của Đoạn Ngõ Vào"
 
 
 msgid "Source Channel"
@@ -103172,30 +103112,6 @@ msgstr "G/R/S/B/[C] - Chỉ Đặc Tính Tự Tạo (C để xóa) | %s"
 
 msgid "G/R/S/B/C - Limit to Transform/Property Set"
 msgstr "G/R/S/B/C - Hạn chế đến Đặt Biến Hóa/Đặc Tính"
-
-
-msgid "[E] - Disable overshoot"
-msgstr "[E] - Tắt Huốt Đi"
-
-
-msgid "[E] - Enable overshoot"
-msgstr "[E] - Bật Huốt Đi"
-
-
-msgid "[Shift] - Precision active"
-msgstr "[Shift] - Độ chính xác hoạt động"
-
-
-msgid "Shift - Hold for precision"
-msgstr "Shift - Bấm cho độ chính xác"
-
-
-msgid "[Ctrl] - Increments active"
-msgstr "[Ctrl] - Các bươc hoạt động"
-
-
-msgid "Ctrl - Hold for 10% increments"
-msgstr "Ctrl - Bấm cho bước 10%"
 
 
 msgid "[H] - Toggle bone visibility"
@@ -108874,10 +108790,6 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Trái Banh Điều Khiển: %.2f %.2f %s"
 
 
-msgid "AutoIK-Len: %d"
-msgstr "IK Tự Động-Độ Dài: %d"
-
-
 msgid "right"
 msgstr "phải"
 
@@ -108969,6 +108881,30 @@ msgstr "Đang kiểm ta sự hợp lệ của tệp .blend *SAU* hủy bước"
 
 msgid "Undo disabled at startup"
 msgstr "Hủy bước được tắt khi khởi động"
+
+
+msgid "[E] - Disable overshoot"
+msgstr "[E] - Tắt Huốt Đi"
+
+
+msgid "[E] - Enable overshoot"
+msgstr "[E] - Bật Huốt Đi"
+
+
+msgid "[Shift] - Precision active"
+msgstr "[Shift] - Độ chính xác hoạt động"
+
+
+msgid "Shift - Hold for precision"
+msgstr "Shift - Bấm cho độ chính xác"
+
+
+msgid "[Ctrl] - Increments active"
+msgstr "[Ctrl] - Các bươc hoạt động"
+
+
+msgid "Ctrl - Hold for 10% increments"
+msgstr "Ctrl - Bấm cho bước 10%"
 
 
 msgid "Unpack File"
@@ -109089,10 +109025,6 @@ msgstr "Được Chứa Góc"
 
 msgid "Overlapping Edges As Contour"
 msgstr "Cạnh lấn lên nhau là đường Đồng Mức"
-
-
-msgid "Match All Masks"
-msgstr "Tìm Giống Hết Mặt Nạ"
 
 
 msgid "Chain"
@@ -110307,11 +110239,6 @@ msgstr "Chế Tạo Theo Đường Đi"
 
 msgid "Settings are in the particle tab"
 msgstr "Cài đặt ở trong nhãn hạt"
-
-
-msgctxt "Operator"
-msgid "Convert"
-msgstr "Biến Đổi"
 
 
 msgid "Built without Remesh modifier"
