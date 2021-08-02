@@ -31,9 +31,9 @@ class PROPERTIES_HT_header(Header):
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
-        # bfa - The tabs to switch between the four animation editors. The classes are in the space_outliner.py
+        # bfa - The tab to switch to outliner
         row = layout.row(align=True)
-        row.operator("wm.switch_editor_to_outliner", text="", icon='OOPS')
+        row.operator("screen.space_type_set_or_cycle", text="", icon='OOPS').space_type = 'OUTLINER'
 
         layout.separator_spacer()
 

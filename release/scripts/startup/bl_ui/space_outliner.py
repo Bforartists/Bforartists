@@ -21,33 +21,6 @@ import bpy
 from bpy.types import Header, Menu, Panel
 
 
-################################ Switch between the editors ##########################################
-
-# Editor types:
-# ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR',
-# 'CLIP_EDITOR', 'TEXT_EDITOR', 'NODE_EDITOR', 'PROPERTIES', 'OUTLINER', 'USER_PREFERENCES', 'INFO', 'FILE_BROWSE)
-
-class OUTLINER_OT_switch_editors_to_properties(bpy.types.Operator):
-    """Switch to Properties editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_properties"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to Properties Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.wm.context_set_enum(data_path="area.type", value="PROPERTIES")
-        return {'FINISHED'}
-
-class OUTLINER_OT_switch_editors_to_outliner(bpy.types.Operator):
-    """Switch to Outliner Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_to_outliner"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to Outliner Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.wm.context_set_enum(data_path="area.type", value="OUTLINER")
-        return {'FINISHED'}
-
-
 class OUTLINER_HT_header(Header):
     bl_space_type = 'OUTLINER'
 
@@ -65,8 +38,12 @@ class OUTLINER_HT_header(Header):
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
+        # bfa - The tab to switch to properties
+        # Editor types:
+        # ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR',
+        # 'CLIP_EDITOR', 'TEXT_EDITOR', 'NODE_EDITOR', 'PROPERTIES', 'OUTLINER', 'USER_PREFERENCES', 'INFO', 'FILE_BROWSE)
         row = layout.row(align=True)
-        row.operator("wm.switch_editor_to_properties", text="", icon='BUTS')
+        row.operator("screen.space_type_set_or_cycle", text="", icon='BUTS').space_type = 'PROPERTIES'
 
         layout.prop(space, "display_mode", icon_only=True)
 
@@ -569,8 +546,6 @@ class OUTLINER_PT_filter(Panel):
                 row.prop(space, "use_filter_lib_override_system", text="System Overrides")
 
 classes = (
-    OUTLINER_OT_switch_editors_to_properties,
-    OUTLINER_OT_switch_editors_to_outliner,
     OUTLINER_HT_header,
     OUTLINER_MT_object_collection,
     ALL_MT_editormenu,
