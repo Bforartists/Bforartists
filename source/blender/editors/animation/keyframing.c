@@ -2417,10 +2417,98 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/* Returns whether keyframes were added or not */
+static bool insert_key_selected_pose_bones(Main *bmain,
+                                           bContext *C,
+                                           ReportList *reports,
+                                           ToolSettings *ts,
+                                           const AnimationEvalContext anim_eval_context,
+                                           int index,
+                                           eInsertKeyFlags flag,
+                                           PropertyRNA *prop)
+{
+  bPoseChannel *pchan = NULL;
+  ListBase selected_bones;
+  char *group = NULL;
+  char *path = NULL;
+  bool changed = false;
+
+  CTX_data_selected_pose_bones(C, &selected_bones);
+  if (!selected_bones.first) {
+    return false;
+  }
+
+  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_bones) {
+    pchan = (bPoseChannel *)link->ptr.data;
+    if (!pchan) {
+      continue;
+    }
+    group = pchan->name;
+    path = RNA_path_from_ID_to_property(&link->ptr, prop);
+    if (path) {
+      changed |= (insert_keyframe(bmain,
+                                  reports,
+                                  link->ptr.owner_id,
+                                  NULL,
+                                  group,
+                                  path,
+                                  index,
+                                  &anim_eval_context,
+                                  ts->keyframe_type,
+                                  NULL,
+                                  flag) != 0);
+      MEM_freeN(path);
+    }
+  }
+
+  BLI_freelistN(&selected_bones);
+  return changed;
+}
+
+/* Returns whether keyframes were added or not */
+static bool insert_key_selected_objects(Main *bmain,
+                                        bContext *C,
+                                        ReportList *reports,
+                                        ToolSettings *ts,
+                                        const AnimationEvalContext anim_eval_context,
+                                        int index,
+                                        eInsertKeyFlags flag,
+                                        const char *group,
+                                        char *prop_path)
+{
+  ListBase selected_objects;
+  bool changed = false;
+
+  CTX_data_selected_objects(C, &selected_objects);
+  if (!selected_objects.first) {
+    return false;
+  }
+  if (selected_objects.first) {
+    LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_objects) {
+      changed |= (insert_keyframe(bmain,
+                                  reports,
+                                  link->ptr.data,
+                                  NULL,
+                                  group,
+                                  prop_path,
+                                  index,
+                                  &anim_eval_context,
+                                  ts->keyframe_type,
+                                  NULL,
+                                  flag) != 0);
+    }
+    BLI_freelistN(&selected_objects);
+  }
+  return changed;
+}
+
 /* Insert Key Button Operator ------------------------ */
 
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
+  wmWindow *win = CTX_wm_window(C);
+  bool alt_held = (win->eventstate->alt != 0);
+
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ToolSettings *ts = scene->toolsettings;
@@ -2489,6 +2577,11 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         const char *identifier = RNA_property_identifier(prop);
         const char *group = NULL;
 
+        if (all) {
+          /* -1 indicates operating on the entire array (or the property itself otherwise) */
+          index = -1;
+        }
+
         /* Special exception for keyframing transforms:
          * Set "group" for this manually, instead of having them appearing at the bottom
          * (ungrouped) part of the channels list.
@@ -2499,6 +2592,10 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         if (ptr.type == &RNA_PoseBone) {
           bPoseChannel *pchan = ptr.data;
           group = pchan->name;
+          if (alt_held) {
+            changed |= insert_key_selected_pose_bones(
+                bmain, C, op->reports, ts, anim_eval_context, index, flag, prop);
+          }
         }
         else if ((ptr.type == &RNA_Object) &&
                  (strstr(identifier, "location") || strstr(identifier, "rotation") ||
@@ -2507,24 +2604,23 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
            * keyingsets_utils.py :: get_transform_generators_base_info()
            */
           group = "Object Transforms";
+          if (alt_held) {
+            changed |= insert_key_selected_objects(
+                bmain, C, op->reports, ts, anim_eval_context, index, flag, group, path);
+          }
         }
 
-        if (all) {
-          /* -1 indicates operating on the entire array (or the property itself otherwise) */
-          index = -1;
-        }
-
-        changed = (insert_keyframe(bmain,
-                                   op->reports,
-                                   ptr.owner_id,
-                                   NULL,
-                                   group,
-                                   path,
-                                   index,
-                                   &anim_eval_context,
-                                   ts->keyframe_type,
-                                   NULL,
-                                   flag) != 0);
+        changed |= (insert_keyframe(bmain,
+                                    op->reports,
+                                    ptr.owner_id,
+                                    NULL,
+                                    group,
+                                    path,
+                                    index,
+                                    &anim_eval_context,
+                                    ts->keyframe_type,
+                                    NULL,
+                                    flag) != 0);
 
         MEM_freeN(path);
       }
