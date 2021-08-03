@@ -1,0 +1,37 @@
+name: Windows
+
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    - cron: 0 0 * * 1
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: make
+      run: |
+        mkdir ~\bforartistsrepo
+        cd ~\bforartistsrepo
+        git clone https://github.com/Bforartists/Bforartists
+        mkdir ~\bforartistsrepo\lib
+        cd ~\bforartistsrepo\lib
+        svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc15/
+        dir
+        cd ~\bforartistsrepo\Bforartists
+        cmd //c make.bat
+        dir
+        cd ~\bforartistsrepo
+        dir
+
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v2
+      with:
+        name: Bforartists-Release-${{ runner.os }}
+        path: \Users\runneradmin\bforartistsrepo\bfa_build_windows_x64_vc16_Release\bin\
