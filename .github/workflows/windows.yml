@@ -34,4 +34,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Bforartists-Release-${{ runner.os }}
-        path: \Users\runneradmin\bforartistsrepo\bfa_build_windows_x64_vc16_Release\bin\
+        path: C:/Users/runneradmin/bforartistsrepo/bfa_build_windows_Release_x64_vc16_Release/bin
