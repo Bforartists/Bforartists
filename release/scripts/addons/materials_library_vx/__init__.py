@@ -499,7 +499,7 @@ if mat:
             return "WARNING", "Select a material"
 
     def get_material(self, name, link=False):
-        with bpy.data.libraries.load(self.current_library.path, link, False) as (data_from, data_to):
+        with bpy.data.libraries.load(self.current_library.path, link=link, relative=False) as (data_from, data_to):
             data_to.materials = [name]
         if link:
             print(name + " linked.")
