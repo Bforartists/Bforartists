@@ -2,7 +2,7 @@
 
 Note that the nightlies produced by Github Actions are without Cuda and Optix!
 
-[![Ubuntu](https://github.com/Bforartists/Bforartists/actions/workflows/all_in_one_dir.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/linux.yml)
+[![Ubuntu](https://github.com/Bforartists/Bforartists/blob/master/.github/workflows/linux.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/linux.yml)
 [![Mac](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/mac.yml)
 [![Windows](https://github.com/Bforartists/Bforartists/actions/workflows/windows.yml/badge.svg)](https://github.com/Bforartists/Bforartists/actions/workflows/windows.yml)
 
