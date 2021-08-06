@@ -2417,10 +2417,120 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/* bfa - Apply animation to all selected through UI animate property */
+/**
+ * \return Whether keyframes were added or not.
+ * caller should update animation data afterwards.
+ */
+static bool insert_key_selected_pose_bones(Main *bmain,
+                                           bContext *C,
+                                           ReportList *reports,
+                                           ToolSettings *ts,
+                                           const AnimationEvalContext anim_eval_context,
+                                           int index,
+                                           eInsertKeyFlags flag,
+                                           PropertyRNA *prop,
+                                           bPoseChannel *pchan_to_exclude)
+{
+  bPoseChannel *pchan = NULL;
+  ListBase selected_bones;
+  char *group = NULL;
+  char *path = NULL;
+  bool changed = false;
+
+  CTX_data_selected_pose_bones(C, &selected_bones);
+  if (selected_bones.first == NULL) {
+    return false;
+  }
+
+  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_bones) {
+    pchan = (bPoseChannel *)link->ptr.data;
+    if (pchan_to_exclude != NULL) {
+      if (pchan == pchan_to_exclude) {
+        continue;
+      }
+    }
+    group = pchan->name;
+    path = RNA_path_from_ID_to_property(&link->ptr, prop);
+    if (path) {
+      changed |= (insert_keyframe(bmain,
+                                  reports,
+                                  link->ptr.owner_id,
+                                  NULL,
+                                  group,
+                                  path,
+                                  index,
+                                  &anim_eval_context,
+                                  ts->keyframe_type,
+                                  NULL,
+                                  flag) != 0);
+      MEM_freeN(path);
+    }
+  }
+
+  BLI_freelistN(&selected_bones);
+  return changed;
+}
+
+/* bfa - Apply animation to all selected through UI animate property */
+/**
+ * \return Whether keyframes were added or not.
+ */
+static bool insert_key_selected_objects(Main *bmain,
+                                        bContext *C,
+                                        ReportList *reports,
+                                        ToolSettings *ts,
+                                        const AnimationEvalContext anim_eval_context,
+                                        int index,
+                                        eInsertKeyFlags flag,
+                                        const char *group,
+                                        char *prop_path,
+                                        Object *object_to_exclude)
+{
+  ListBase selected_objects;
+  Object *object = NULL;
+  bool changed = false;
+
+  CTX_data_selected_objects(C, &selected_objects);
+  if (selected_objects.first == NULL) {
+    return false;
+  }
+
+  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_objects) {
+    object = (Object *)link->ptr.data;
+    if (object_to_exclude != NULL) {
+      if (object == object_to_exclude) {
+        continue;
+      }
+    }
+    if (insert_keyframe(bmain,
+                        reports,
+                        link->ptr.data,
+                        NULL,
+                        group,
+                        prop_path,
+                        index,
+                        &anim_eval_context,
+                        ts->keyframe_type,
+                        NULL,
+                        flag) != 0) {
+      DEG_id_tag_update(link->ptr.owner_id, ID_RECALC_ANIMATION_NO_FLUSH);
+      changed = true;
+    }
+  }
+  BLI_freelistN(&selected_objects);
+
+  return changed;
+}
+
 /* Insert Key Button Operator ------------------------ */
 
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
+  /* bfa - Apply animation to all selected through UI animate property */
+  wmWindow *win = CTX_wm_window(C);
+  bool alt_held = (win->eventstate->alt != 0);
+
   Main *bmain = CTX_data_main(C);
   Scene *scene = CTX_data_scene(C);
   ToolSettings *ts = scene->toolsettings;
@@ -2489,6 +2599,11 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         const char *identifier = RNA_property_identifier(prop);
         const char *group = NULL;
 
+        if (all) {
+          /* -1 indicates operating on the entire array (or the property itself otherwise) */
+          index = -1;
+        }
+
         /* Special exception for keyframing transforms:
          * Set "group" for this manually, instead of having them appearing at the bottom
          * (ungrouped) part of the channels list.
@@ -2499,6 +2614,11 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         if (ptr.type == &RNA_PoseBone) {
           bPoseChannel *pchan = ptr.data;
           group = pchan->name;
+          /* bfa - Apply animation to all selected through UI animate property */
+          if (alt_held) {
+            changed |= insert_key_selected_pose_bones(
+                bmain, C, op->reports, ts, anim_eval_context, index, flag, prop, pchan);
+          }
         }
         else if ((ptr.type == &RNA_Object) &&
                  (strstr(identifier, "location") || strstr(identifier, "rotation") ||
@@ -2507,24 +2627,36 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
            * keyingsets_utils.py :: get_transform_generators_base_info()
            */
           group = "Object Transforms";
+          /* bfa - Apply animation to all selected through UI animate property */
+          if (alt_held) {
+            changed |= insert_key_selected_objects(bmain,
+                                                   C,
+                                                   op->reports,
+                                                   ts,
+                                                   anim_eval_context,
+                                                   index,
+                                                   flag,
+                                                   group,
+                                                   path,
+                                                   (Object *)ptr.data);
+          }
         }
 
-        if (all) {
-          /* -1 indicates operating on the entire array (or the property itself otherwise) */
-          index = -1;
-        }
-
-        changed = (insert_keyframe(bmain,
-                                   op->reports,
-                                   ptr.owner_id,
-                                   NULL,
-                                   group,
-                                   path,
-                                   index,
-                                   &anim_eval_context,
-                                   ts->keyframe_type,
-                                   NULL,
-                                   flag) != 0);
+        /* bfa - NOTE: this has to be called anyways for UI button's object
+         * as it is possible to show property for non selected object,
+         * to make sure delete/insert_frame is not called twice on same object/bone,
+         * exclude ptr.data from selected objects/bones. */
+        changed |= (insert_keyframe(bmain,
+                                    op->reports,
+                                    ptr.owner_id,
+                                    NULL,
+                                    group,
+                                    path,
+                                    index,
+                                    &anim_eval_context,
+                                    ts->keyframe_type,
+                                    NULL,
+                                    flag) != 0);
 
         MEM_freeN(path);
       }
@@ -2589,13 +2721,112 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "all", 1, "All", "Insert a keyframe for all element of the array");
 }
 
+/* bfa - Apply animation to all selected through UI animate property */
+/**
+ * \return Whether keyframes were deleted or not.
+ */
+static bool delete_key_selected_pose_bones(Main *bmain,
+                                           bContext *C,
+                                           ReportList *reports,
+                                           int index,
+                                           PropertyRNA *prop,
+                                           float cfra,
+                                           bPoseChannel *pchan_to_exclude)
+{
+  bPoseChannel *pchan = NULL;
+  ListBase selected_bones;
+  AnimData *adt = NULL;
+  char *path = NULL;
+  bool changed = false;
+
+  CTX_data_selected_pose_bones(C, &selected_bones);
+  if (selected_bones.first == NULL) {
+    return false;
+  }
+
+  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_bones) {
+    pchan = (bPoseChannel *)link->ptr.data;
+    if (pchan == pchan_to_exclude) {
+      continue;
+    }
+    /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting error */
+    adt = BKE_animdata_from_id(link->ptr.owner_id);
+    if (adt == NULL) {
+      continue;
+    }
+    if (adt->action == NULL) {
+      continue;
+    }
+    /* -- */
+    path = RNA_path_from_ID_to_property(&link->ptr, prop);
+    if (path) {
+      changed |= (delete_keyframe(bmain, reports, link->ptr.owner_id, NULL, path, index, cfra) !=
+                  0);
+      MEM_freeN(path);
+    }
+  }
+
+  BLI_freelistN(&selected_bones);
+  return changed;
+}
+
+/* bfa - Apply animation to all selected through UI animate property */
+/**
+ * \return Whether keyframes were deleted or not.
+ */
+static bool delete_key_selected_objects(Main *bmain,
+                                        bContext *C,
+                                        ReportList *reports,
+                                        int index,
+                                        char *prop_path,
+                                        float cfra,
+                                        Object *object_to_exclude)
+{
+  ListBase selected_objects;
+  Object *object = NULL;
+  AnimData *adt = NULL;
+  bool changed = false;
+
+  CTX_data_selected_objects(C, &selected_objects);
+  if (selected_objects.first == NULL) {
+    return false;
+  }
+
+  LISTBASE_FOREACH (CollectionPointerLink *, link, &selected_objects) {
+    object = (Object *)link->ptr.data;
+    if (object == object_to_exclude) {
+      continue;
+    }
+    adt = BKE_animdata_from_id(link->ptr.owner_id);
+    /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting error.
+     */
+    if (adt == NULL) {
+      continue;
+    }
+    if (adt->action == NULL) {
+      continue;
+    }
+    /* -- */
+    changed |= (delete_keyframe(
+                    bmain, reports, link->ptr.owner_id, NULL, prop_path, index, cfra) != 0);
+  }
+  BLI_freelistN(&selected_objects);
+
+  return changed;
+}
+
 /* Delete Key Button Operator ------------------------ */
 
 static int delete_key_button_exec(bContext *C, wmOperator *op)
 {
+  /* bfa - Apply animation to all selected through UI animate property */
+  wmWindow *win = CTX_wm_window(C);
+  bool alt_held = (win->eventstate->alt != 0);
+
   Scene *scene = CTX_data_scene(C);
   PointerRNA ptr = {NULL};
   PropertyRNA *prop = NULL;
+  AnimData *adt = NULL;
   Main *bmain = CTX_data_main(C);
   char *path;
   float cfra = (float)CFRA; /* XXX for now, don't bother about all the yucky offset crap */
@@ -2657,7 +2888,31 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
           index = -1;
         }
 
-        changed = delete_keyframe(bmain, op->reports, ptr.owner_id, NULL, path, index, cfra) != 0;
+        /* bfa - Apply animation to all selected through UI animate property */
+        if (alt_held) {
+          if (ptr.type == &RNA_PoseBone) {
+            changed |= delete_key_selected_pose_bones(
+                bmain, C, op->reports, index, prop, cfra, (bPoseChannel *)ptr.data);
+          }
+          else if (ptr.type == &RNA_Object) {
+            changed |= delete_key_selected_objects(
+                bmain, C, op->reports, index, path, cfra, (Object *)ptr.data);
+          }
+        }
+        /* bfa - Apply animation to all selected through UI animate property */
+        /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting
+         * error. */
+        adt = BKE_animdata_from_id(ptr.owner_id);
+        if (adt != NULL) {
+          if (adt->action != NULL) {
+            /* bfa - NOTE: this has to be called anyways for UI button's object
+             * as it is possible to show property for non selected object,
+             * to make sure delete/insert_frame is not called twice on same object/bone,
+             * exclude ptr.data from selected objects/bones. */
+            changed |= delete_keyframe(
+                           bmain, op->reports, ptr.owner_id, NULL, path, index, cfra) != 0;
+          }
+        }
         MEM_freeN(path);
       }
       else if (G.debug & G_DEBUG) {
