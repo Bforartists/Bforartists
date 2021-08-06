@@ -2417,6 +2417,7 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/* bfa - Apply animation to all selected through UI animate property */
 /**
  * \return Whether keyframes were added or not.
  * caller should update animation data afterwards.
@@ -2471,6 +2472,7 @@ static bool insert_key_selected_pose_bones(Main *bmain,
   return changed;
 }
 
+/* bfa - Apply animation to all selected through UI animate property */
 /**
  * \return Whether keyframes were added or not.
  */
@@ -2525,6 +2527,7 @@ static bool insert_key_selected_objects(Main *bmain,
 
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
+  /* bfa - Apply animation to all selected through UI animate property */
   wmWindow *win = CTX_wm_window(C);
   bool alt_held = (win->eventstate->alt != 0);
 
@@ -2611,6 +2614,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
         if (ptr.type == &RNA_PoseBone) {
           bPoseChannel *pchan = ptr.data;
           group = pchan->name;
+          /* bfa - Apply animation to all selected through UI animate property */
           if (alt_held) {
             changed |= insert_key_selected_pose_bones(
                 bmain, C, op->reports, ts, anim_eval_context, index, flag, prop, pchan);
@@ -2623,6 +2627,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
            * keyingsets_utils.py :: get_transform_generators_base_info()
            */
           group = "Object Transforms";
+          /* bfa - Apply animation to all selected through UI animate property */
           if (alt_held) {
             changed |= insert_key_selected_objects(bmain,
                                                    C,
@@ -2716,6 +2721,7 @@ void ANIM_OT_keyframe_insert_button(wmOperatorType *ot)
   RNA_def_boolean(ot->srna, "all", 1, "All", "Insert a keyframe for all element of the array");
 }
 
+/* bfa - Apply animation to all selected through UI animate property */
 /**
  * \return Whether keyframes were deleted or not.
  */
@@ -2764,6 +2770,7 @@ static bool delete_key_selected_pose_bones(Main *bmain,
   return changed;
 }
 
+/* bfa - Apply animation to all selected through UI animate property */
 /**
  * \return Whether keyframes were deleted or not.
  */
@@ -2812,6 +2819,7 @@ static bool delete_key_selected_objects(Main *bmain,
 
 static int delete_key_button_exec(bContext *C, wmOperator *op)
 {
+  /* bfa - Apply animation to all selected through UI animate property */
   wmWindow *win = CTX_wm_window(C);
   bool alt_held = (win->eventstate->alt != 0);
 
@@ -2880,6 +2888,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
           index = -1;
         }
 
+        /* bfa - Apply animation to all selected through UI animate property */
         if (alt_held) {
           if (ptr.type == &RNA_PoseBone) {
             changed |= delete_key_selected_pose_bones(
@@ -2890,6 +2899,7 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
                 bmain, C, op->reports, index, path, cfra, (Object *)ptr.data);
           }
         }
+        /* bfa - Apply animation to all selected through UI animate property */
         /* bfa - NOTE: this makes sure there is animation data available, to prevent reporting
          * error. */
         adt = BKE_animdata_from_id(ptr.owner_id);
