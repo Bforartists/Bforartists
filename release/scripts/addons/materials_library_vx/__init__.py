@@ -533,7 +533,7 @@ if mat:
             return "INFO", "Please select an object"
 
         if dummy == context.object and not preview:
-            if (len(objects)==1 and dummy.select):
+            if (len(objects)==1 and dummy.select_get()):
                 return "ERROR", "Apply is disabled for the Material Preview Object"
             try:
                 last = context.scene.objects[self.last_selected]
