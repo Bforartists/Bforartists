@@ -21,7 +21,7 @@ from bpy.app.handlers import persistent
 
 
 @persistent
-def load_handler(_):
+def load_handler(dummy):
     import bpy
     # Apply subdivision modifier on startup
     bpy.ops.object.mode_set(mode='OBJECT')
