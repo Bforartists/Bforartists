@@ -23,7 +23,7 @@ from bpy.app.handlers import persistent
 
 
 @persistent
-def load_handler(_):
+def load_handler(dummy):
     import bpy
 
     # 2D Animation
@@ -31,16 +31,14 @@ def load_handler(_):
     if screen:
         for area in screen.areas:
             # Set Tool settings as default in properties panel.
-            # bfa - we don't have tools in the properties editor
-            # if area.type == 'PROPERTIES':
-            #     for space in area.spaces:
-            #         if space.type != 'PROPERTIES':
-            #             continue
-            #         space.context = 'TOOL'
+            if area.type == 'PROPERTIES':
+                for space in area.spaces:
+                    if space.type != 'PROPERTIES':
+                        continue
+                    space.context = 'TOOL'
 
             # Open sidebar in Dopesheet.
-            #elif area.type == 'DOPESHEET_EDITOR': # bfa - no if means no elif.
-            if area.type == 'DOPESHEET_EDITOR':
+            elif area.type == 'DOPESHEET_EDITOR':
                 for space in area.spaces:
                     if space.type != 'DOPESHEET_EDITOR':
                         continue
@@ -60,7 +58,6 @@ def load_handler(_):
     # Grease pencil object
     scene = bpy.data.scenes[0]
     if scene:
-        scene.tool_settings.use_keyframe_insert_auto = True
         for ob in scene.objects:
             if ob.type == 'GPENCIL':
                 gpd = ob.data
