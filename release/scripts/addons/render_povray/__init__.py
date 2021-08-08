@@ -222,7 +222,7 @@ else:
 
 
 class POV_OT_update_addon(bpy.types.Operator):
-    """Update this addon to the latest version."""
+    """Update this add-on to the latest version"""
 
     bl_idname = "pov.update_addon"
     bl_label = "Update POV addon"

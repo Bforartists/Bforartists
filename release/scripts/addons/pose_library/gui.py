@@ -60,7 +60,7 @@ class VIEW3D_PT_pose_library(Panel):
             activate_op_props, drag_op_props = layout.template_asset_view(
                 "pose_assets",
                 workspace,
-                "asset_library",
+                "asset_library_ref",
                 wm,
                 "pose_assets",
                 workspace,
@@ -85,8 +85,8 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
         return True
 
     def is_pose_library_asset_browser() -> bool:
-        asset_library = getattr(context, "asset_library", None)
-        if not asset_library:
+        asset_library_ref = getattr(context, "asset_library_ref", None)
+        if not asset_library_ref:
             return False
         asset = getattr(context, "asset_file_handle", None)
         if not asset:
@@ -115,7 +115,8 @@ def pose_library_list_item_context_menu(self: UIList, context: Context) -> None:
     props.select = False
 
     layout.separator()
-    layout.operator("asset.open_containing_blend_file")
+    if is_pose_asset_view():
+        layout.operator("asset.open_containing_blend_file")
 
 
 class ASSETBROWSER_PT_pose_library_usage(asset_utils.AssetBrowserSpecificCategoryPanel, Panel):
@@ -208,7 +209,7 @@ def register() -> None:
     WindowManager.pose_assets = bpy.props.CollectionProperty(type=AssetHandle)
 
     bpy.types.UI_MT_list_item_context_menu.prepend(pose_library_list_item_context_menu)
-    bpy.types.FILEBROWSER_MT_context_menu.prepend(pose_library_list_item_context_menu)
+    bpy.types.ASSETBROWSER_MT_context_menu.prepend(pose_library_list_item_context_menu)
 
 
 def unregister() -> None:
@@ -218,4 +219,4 @@ def unregister() -> None:
     del WindowManager.pose_assets
 
     bpy.types.UI_MT_list_item_context_menu.remove(pose_library_list_item_context_menu)
-    bpy.types.FILEBROWSER_MT_context_menu.remove(pose_library_list_item_context_menu)
+    bpy.types.ASSETBROWSER_MT_context_menu.remove(pose_library_list_item_context_menu)

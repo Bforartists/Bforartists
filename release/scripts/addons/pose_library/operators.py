@@ -285,7 +285,7 @@ class PoseAssetUser:
         if not (
             context.object
             and context.object.mode == "POSE"  # This condition may not be desired.
-            and context.asset_library
+            and context.asset_library_ref
             and context.asset_file_handle
         ):
             return False
@@ -302,14 +302,14 @@ class PoseAssetUser:
         pass
 
     def _load_and_use_pose(self, context: Context) -> Set[str]:
-        asset_library = context.asset_library
+        asset_library_ref = context.asset_library_ref
         asset = context.asset_file_handle
-        asset_lib_path = bpy.types.AssetHandle.get_full_library_path(asset, asset_library)
+        asset_lib_path = bpy.types.AssetHandle.get_full_library_path(asset, asset_library_ref)
 
         if not asset_lib_path:
             self.report(  # type: ignore
                 {"ERROR"},
-                # TODO: Add some way to get the library name from the library reference (just asset_library.name?).
+                # TODO: Add some way to get the library name from the library reference (just asset_library_ref.name?).
                 f"Selected asset {asset.name} could not be located inside the asset library",
             )
             return {"CANCELLED"}

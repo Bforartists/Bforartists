@@ -465,6 +465,7 @@ def makeinit(txtlist, namelist, groupname, addondir):
     fileobj.close()
 
 
+@bpy.app.handlers.persistent
 def setname(dummy):
 
     scn = bpy.context.scene
