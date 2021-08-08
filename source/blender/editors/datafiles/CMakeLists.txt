@@ -703,9 +703,9 @@ pivot_active
 pivot_boundbox
 pivot_cursor
 
-#~ DEF_ICON_BLANK(722)
-#~ DEF_ICON_BLANK(723)
-#~ DEF_ICON_BLANK(724)
+gp_caps_flat
+gp_caps_round
+fixed_size
 #~ DEF_ICON_BLANK(725)
 #~ DEF_ICON_BLANK(726)
 #~ DEF_ICON_BLANK(727)

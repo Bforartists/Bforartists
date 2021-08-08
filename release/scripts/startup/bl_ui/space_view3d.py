@@ -7254,9 +7254,14 @@ class VIEW3D_PT_overlay_edit_mesh_normals(Panel):
         sub = split.row(align=True)
         if overlay.show_vertex_normals or overlay.show_face_normals or overlay.show_split_normals:
             sub.use_property_split = True
-            sub.prop(overlay, "normals_length", text="")
+            if overlay.use_normals_constant_screen_size:
+                sub.prop(overlay, "normals_constant_screen_size", text="Size")
+            else:
+                sub.prop(overlay, "normals_length", text="Size")
         else:
             sub.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        row.prop(overlay, "use_normals_constant_screen_size", text="", icon='FIXED_SIZE')
 
 
 class VIEW3D_PT_overlay_edit_mesh_freestyle(Panel):

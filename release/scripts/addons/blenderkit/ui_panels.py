@@ -870,6 +870,7 @@ class VIEW3D_PT_blenderkit_advanced_material_search(Panel):
             row.prop(props, "search_file_size_max", text='Max')
         layout.prop(props, "quality_limit", slider=True)
 
+
 class VIEW3D_PT_blenderkit_categories(Panel):
     bl_category = "BlenderKit"
     bl_idname = "VIEW3D_PT_blenderkit_categories"
@@ -890,6 +891,7 @@ class VIEW3D_PT_blenderkit_categories(Panel):
 
     def draw(self, context):
         draw_panel_categories(self, context)
+
 
 def draw_scene_import_settings(self, context):
     wm = bpy.context.window_manager
@@ -945,7 +947,7 @@ class VIEW3D_PT_blenderkit_import_settings(Panel):
 
             row.prop(props, 'append_method', expand=True, icon_only=False)
         if ui_props.asset_type == 'SCENE':
-            draw_scene_import_settings(self,context)
+            draw_scene_import_settings(self, context)
 
         if ui_props.asset_type == 'HDR':
             props = wm.blenderkit_HDR
@@ -1149,35 +1151,35 @@ class BlenderKitWelcomeOperator(bpy.types.Operator):
             print('running search no')
             ui_props = bpy.context.scene.blenderkitUI
             random_searches = [
-                ('MATERIAL','ice'),
-                ('MODEL','car'),
-                ('MODEL','vase'),
-                ('MODEL','grass'),
-                ('MODEL','plant'),
-                ('MODEL','man'),
-                ('MATERIAL','metal'),
-                ('MATERIAL','wood'),
-                ('MATERIAL','floor'),
-                ('MATERIAL','bricks'),
+                ('MATERIAL', 'ice'),
+                ('MODEL', 'car'),
+                ('MODEL', 'vase'),
+                ('MODEL', 'grass'),
+                ('MODEL', 'plant'),
+                ('MODEL', 'man'),
+                ('MATERIAL', 'metal'),
+                ('MATERIAL', 'wood'),
+                ('MATERIAL', 'floor'),
+                ('MATERIAL', 'bricks'),
             ]
             random_search = random.choice(random_searches)
             ui_props.asset_type = random_search[0]
 
-            bpy.context.window_manager.blenderkit_mat.search_keywords = ''#random_search[1]
-            bpy.context.window_manager.blenderkit_mat.search_keywords = '+is_free:true+score_gte:1000+order:-created'#random_search[1]
+            bpy.context.window_manager.blenderkit_mat.search_keywords = ''  # random_search[1]
+            bpy.context.window_manager.blenderkit_mat.search_keywords = '+is_free:true+score_gte:1000+order:-created'  # random_search[1]
             # search.search()
         return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = bpy.context.window_manager
         img = utils.get_thumbnail('intro.jpg')
-        utils.img_to_preview(img, copy_original = True)
+        utils.img_to_preview(img, copy_original=True)
         self.img = img
         w, a, r = utils.get_largest_area(area_type='VIEW_3D')
         if a is not None:
             a.spaces.active.show_region_ui = True
 
-        return wm.invoke_props_dialog(self, width = 500)
+        return wm.invoke_props_dialog(self, width=500)
 
 
 def draw_asset_context_menu(layout, context, asset_data, from_panel=False):
@@ -1396,8 +1398,8 @@ class OBJECT_MT_blenderkit_asset_menu(bpy.types.Menu):
 
 def numeric_to_str(s):
     if s:
-        if s<1:
-            s = str(round(s,1))
+        if s < 1:
+            s = str(round(s, 1))
         else:
             s = str(round(s))
     else:
@@ -1405,14 +1407,32 @@ def numeric_to_str(s):
     return s
 
 
-def push_op_left(layout, strength =3):
+def push_op_left(layout, strength=3):
     for a in range(0, strength):
         layout.label(text='')
 
 
-def label_or_url(layout, text='', tooltip='', url='', icon_value=None, icon=None):
+def label_or_url_or_operator(layout, text='', tooltip='', url='', operator=None, operator_kwargs={}, icon_value=None,
+                             icon=None):
     '''automatically switch between different layout options for linking or tooltips'''
     layout.emboss = 'NONE'
+
+    if operator is not None:
+        if icon:
+            op = layout.operator(operator, text=text, icon=icon)
+        elif icon_value:
+            op = layout.operator(operator, text=text, icon_value=icon_value)
+        else:
+            op = layout.operator(operator, text=text)
+        for kwarg in operator_kwargs.keys():
+            if type(operator_kwargs[kwarg]) == str:
+                quoatation = "'"
+            else:
+                quoatation = ""
+            exec(f"op.{kwarg} = {quoatation}{operator_kwargs[kwarg]}{quoatation}")
+        push_op_left(layout, strength=2)
+
+        return
     if url != '':
         if icon:
             op = layout.operator('wm.blenderkit_url', text=text, icon=icon)
@@ -1422,7 +1442,7 @@ def label_or_url(layout, text='', tooltip='', url='', icon_value=None, icon=None
             op = layout.operator('wm.blenderkit_url', text=text)
         op.url = url
         op.tooltip = tooltip
-        push_op_left(layout, strength = 5)
+        push_op_left(layout, strength=5)
 
         return
     if tooltip != '':
@@ -1435,7 +1455,7 @@ def label_or_url(layout, text='', tooltip='', url='', icon_value=None, icon=None
         op.tooltip = tooltip
 
         # these are here to move the text to left, since operators can only center text by default
-        push_op_left(layout, strength = 3)
+        push_op_left(layout, strength=3)
         return
     if icon:
         layout.label(text=text, icon=icon)
@@ -1460,7 +1480,8 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         # layout = layout.column()
         draw_asset_context_menu(layout, context, self.asset_data, from_panel=False)
 
-    def draw_property(self, layout, left, right, icon=None, icon_value=None, url='', tooltip=''):
+    def draw_property(self, layout, left, right, icon=None, icon_value=None, url='', tooltip='', operator=None,
+                      operator_kwargs={}):
         right = str(right)
         row = layout.row()
         split = row.split(factor=0.35)
@@ -1471,7 +1492,8 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         # split for questionmark:
         if url != '':
             split = split.split(factor=0.6)
-        label_or_url(split, text=right, tooltip=tooltip, url=url, icon_value=icon_value, icon=icon)
+        label_or_url_or_operator(split, text=right, tooltip=tooltip, url=url, operator=operator,
+                                 operator_kwargs=operator_kwargs, icon_value=icon_value, icon=icon)
         # additional questionmark icon where it's important?
         if url != '':
             split = split.split()
@@ -1479,7 +1501,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             op.url = url
             op.tooltip = tooltip
 
-    def draw_asset_parameter(self, layout, key='', pretext=''):
+    def draw_asset_parameter(self, layout, key='', pretext='', do_search=False):
         parameter = utils.get_param(self.asset_data, key)
         if parameter == None:
             return
@@ -1487,7 +1509,15 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             parameter = f"{parameter:,d}"
         elif type(parameter) == float:
             parameter = f"{parameter:,.1f}"
-        self.draw_property(layout, pretext, parameter)
+        if do_search:
+            kwargs = {
+                'esc': True,
+                'keywords': f'+{key}:{parameter}',
+                'tooltip': f'search by {parameter}',
+            }
+            self.draw_property(layout, pretext, parameter, operator='view3d.blenderkit_search', operator_kwargs=kwargs)
+        else:
+            self.draw_property(layout, pretext, parameter)
 
     def draw_description(self, layout, width=250):
         if len(self.asset_data['description']) > 0:
@@ -1495,7 +1525,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             box.scale_y = 0.4
             box.label(text='Description')
             box.separator()
-            link_more = utils.label_multiline(box, self.asset_data['description'], width=width, max_lines = 10)
+            link_more = utils.label_multiline(box, self.asset_data['description'], width=width, max_lines=10)
             if link_more:
                 row = box.row()
                 row.scale_y = 2
@@ -1588,9 +1618,10 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
                 resolutions = resolutions.replace('_', '.')
                 self.draw_property(box, 'Generated', resolutions)
 
-        self.draw_asset_parameter(box, key='designer', pretext='Designer')
-        self.draw_asset_parameter(box, key='manufacturer', pretext='Manufacturer')  # TODO make them clickable!
-        self.draw_asset_parameter(box, key='designCollection', pretext='Collection')
+        self.draw_asset_parameter(box, key='designer', pretext='Designer', do_search=True)
+        self.draw_asset_parameter(box, key='manufacturer', pretext='Manufacturer',
+                                  do_search=True)
+        self.draw_asset_parameter(box, key='designCollection', pretext='Collection', do_search=True)
         self.draw_asset_parameter(box, key='designVariant', pretext='Variant')
         self.draw_asset_parameter(box, key='designYear', pretext='Design year')
 
@@ -1674,7 +1705,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             self.draw_property(box, 'Created', date)
         if utils.asset_from_newer_blender_version(self.asset_data):
             # row = box.row()
-            box.alert=True
+            box.alert = True
             self.draw_property(box,
                                'Blender version',
                                self.asset_data['sourceAppVersion'],
@@ -1751,7 +1782,6 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         box_thumbnail.scale_y = .4
         box_thumbnail.template_icon(icon_value=self.img.preview.icon_id, scale=width * .12)
 
-
         # op = row.operator('view3d.asset_drag_drop', text='Drag & Drop from here', depress=True)
         # From here on, only ratings are drawn, which won't be displayed for private assets from now on.
 
@@ -1798,7 +1828,8 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             if rcount <= show_rating_prompt_threshold:
                 box_thumbnail.alert = True
                 box_thumbnail.label(text=f"")
-                box_thumbnail.label(text=f"This asset has only {rcount} rating{'' if rcount == 1 else 's'}, please rate.")
+                box_thumbnail.label(
+                    text=f"This asset has only {rcount} rating{'' if rcount == 1 else 's'}, please rate.")
                 # box_thumbnail.label(text=f"Please rate this asset.")
 
         row = box_thumbnail.row()
@@ -1841,29 +1872,17 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
 
         # define enum flags
 
-
-
-
-    def draw(self, context):
-        ui_props = context.scene.blenderkitUI
-
-        sr = bpy.context.window_manager['search results']
-        asset_data = sr[ui_props.active_index]
-        self.asset_data = asset_data
-        layout = self.layout
-        # top draggabe bar with name of the asset
-        top_row = layout.row()
-        top_drag_bar = top_row.box()
-        bcats  = bpy.context.window_manager['bkit_categories']
+    def draw_titlebar(self, context, layout):
+        top_drag_bar = layout.box()
+        bcats = bpy.context.window_manager['bkit_categories']
 
         cat_path = categories.get_category_path(bcats,
                                                 self.asset_data['category'])[1:]
 
-
         cat_path_names = categories.get_category_name_path(bcats,
-                                        self.asset_data['category'])[1:]
+                                                           self.asset_data['category'])[1:]
 
-        aname = asset_data['displayName']
+        aname = self.asset_data['displayName']
         aname = aname[0].upper() + aname[1:]
 
         if 1:
@@ -1873,7 +1892,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
             # name_row = name_row.row()
             for i, c in enumerate(cat_path):
                 cat_name = cat_path_names[i]
-                op = name_row.operator('view3d.blenderkit_asset_bar', text=cat_name + '     >', emboss=False)
+                op = name_row.operator('view3d.blenderkit_asset_bar', text=cat_name + '     >', emboss=True)
                 op.do_search = True
                 op.keep_running = True
                 op.tooltip = f"Browse {cat_name} category"
@@ -1881,23 +1900,16 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
                 # name_row.label(text='>')
 
             name_row.label(text=aname)
-            push_op_left(name_row, strength = 3)
-            op = name_row.operator('view3d.close_popup_button', text='', icon = 'CANCEL')
+            push_op_left(name_row, strength=3)
+            op = name_row.operator('view3d.close_popup_button', text='', icon='CANCEL')
 
-        # for i,c in enumerate(cat_path_names):
-        #     cat_path_names[i] = c.capitalize()
-        # cat_path_names_string = ' > '.join(cat_path_names)
-        # # box.label(text=cat_path)
-        #
-        #
-        #
-        #
-        # # name_row.label(text='                                           ')
-        # top_drag_bar.label(text=f'{cat_path_names_string} > {aname}')
-
+    def draw(self, context):
+        layout = self.layout
+        # top draggable bar with name of the asset
+        top_row = layout.row()
+        self.draw_titlebar(context, top_row)
         # left side
         row = layout.row(align=True)
-
         split_ratio = 0.45
         split_left = row.split(factor=split_ratio)
         left_column = split_left.column()
@@ -1907,7 +1919,7 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         split_right = split_left.split()
         self.draw_menu_desc_author(context, split_right, width=int(self.width * (1 - split_ratio)))
 
-        if not utils.user_is_owner(asset_data=asset_data):
+        if not utils.user_is_owner(asset_data=self.asset_data):
             # Draw ratings, but not for owners of assets - doesn't make sense.
             ratings_box = layout.box()
             ratings.draw_ratings_menu(self, context, ratings_box)
@@ -1923,8 +1935,10 @@ class AssetPopupCard(bpy.types.Operator, ratings_utils.RatingsProperties):
         ui_props.draw_tooltip = False
         sr = bpy.context.window_manager['search results']
         asset_data = sr[ui_props.active_index]
+        self.asset_data = asset_data
+
         self.img = ui.get_large_thumbnail_image(asset_data)
-        utils.img_to_preview(self.img, copy_original = True)
+        utils.img_to_preview(self.img, copy_original=True)
 
         self.asset_type = asset_data['assetType']
         self.asset_id = asset_data['id']
@@ -1988,6 +2002,7 @@ class SetCategoryOperator(bpy.types.Operator):
         bpy.context.window_manager['active_category'][self.asset_type] = acat
         return {'FINISHED'}
 
+
 class ClosePopupButton(bpy.types.Operator):
     """Visit subcategory"""
     bl_idname = "view3d.close_popup_button"
@@ -2004,22 +2019,22 @@ class ClosePopupButton(bpy.types.Operator):
         print('hit escape')
         return True
 
-    def mouse_trick(self,context,x,y):
+    def mouse_trick(self, context, x, y):
         # import time
         context.area.tag_redraw()
         w = context.window
-        w.cursor_warp(w.x+15,w.y+w.height-15);
+        w.cursor_warp(w.x + 15, w.y + w.height - 15);
         # time.sleep(.12)
-        w.cursor_warp(x,y);
+        w.cursor_warp(x, y);
         context.area.tag_redraw()
-
 
     def invoke(self, context, event):
         if platform.system() == 'Windows':
             self.win_close()
         else:
-            self.mouse_trick(context,event.mouse_x, event.mouse_y)
+            self.mouse_trick(context, event.mouse_x, event.mouse_y)
         return {'FINISHED'}
+
 
 class UrlPopupDialog(bpy.types.Operator):
     """Generate Cycles thumbnail for model assets"""
@@ -2221,7 +2236,7 @@ def header_search_draw(self, context):
         layout.prop(ui_props, "asset_type", expand=True, icon_only=True, text='', icon='URL')
         layout.prop(props, "search_keywords", text="", icon='VIEWZOOM')
         draw_assetbar_show_hide(layout, props)
-        layout.popover(panel="VIEW3D_PT_blenderkit_categories", text="", icon = 'OUTLINER')
+        layout.popover(panel="VIEW3D_PT_blenderkit_categories", text="", icon='OUTLINER')
 
         pcoll = icons.icon_collections["main"]
 
@@ -2230,11 +2245,11 @@ def header_search_draw(self, context):
         else:
             icon_id = pcoll['filter'].icon_id
 
-        if ui_props.asset_type=='MODEL':
-            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_model_search", text="", icon_value = icon_id)
+        if ui_props.asset_type == 'MODEL':
+            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_model_search", text="", icon_value=icon_id)
 
-        elif ui_props.asset_type=='MATERIAL':
-            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_material_search", text="", icon_value = icon_id)
+        elif ui_props.asset_type == 'MATERIAL':
+            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_material_search", text="", icon_value=icon_id)
 
 
 def ui_message(title, message):

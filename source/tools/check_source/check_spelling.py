@@ -406,8 +406,17 @@ def spell_check_file(
             if w_lower in dict_custom or w_lower in dict_ignore:
                 continue
 
-            if not dict_spelling.check(w):
+            is_good_spelling = dict_spelling.check(w)
+            if not is_good_spelling:
+                if "-" in w:
+                    is_good_spelling = True
+                    for w_sub in w.split("-"):
+                        if w_sub:
+                            if not dict_spelling.check(w_sub):
+                                is_good_spelling = False
+                                break
 
+            if not is_good_spelling:
                 # Ignore literals that show up in code,
                 # gets rid of a lot of noise from comments that reference variables.
                 if w in code_words:

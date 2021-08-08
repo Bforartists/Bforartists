@@ -1024,7 +1024,9 @@ void SEQUENCER_OT_select_linked_pick(wmOperatorType *ot)
   ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
   /* Properties. */
-  RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the selection");
+  PropertyRNA *prop;
+  prop = RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the selection");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 /** \} */
@@ -1256,7 +1258,9 @@ void SEQUENCER_OT_select_side_of_frame(wmOperatorType *ot)
   ot->flag = OPTYPE_UNDO;
 
   /* Properties. */
-  RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the selection");
+  PropertyRNA *prop;
+  prop = RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the selection");
+  RNA_def_property_flag(prop, PROP_SKIP_SAVE);
   ot->prop = RNA_def_enum(ot->srna, "side", sequencer_select_left_right_types, 0, "Side", "");
 }
 
