@@ -494,6 +494,7 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
         row = col.row()
         row.separator()
         row.prop(ob, "is_holdout")
+        row.prop_decorator(ob, "is_holdout")
 
 
 class OBJECT_PT_custom_props(ObjectButtonsPanel, PropertyPanel, Panel):
