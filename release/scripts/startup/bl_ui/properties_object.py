@@ -489,7 +489,6 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
             row.prop(ob, "use_grease_pencil_lights", toggle=False)
             row.prop_decorator(ob, "use_grease_pencil_lights")
 
-        layout.separator()
         col = layout.column()
         col.label(text = "Mask")
         row = col.row()
