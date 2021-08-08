@@ -1398,7 +1398,8 @@ static void view3d_panel_vgroup(const bContext *C, Panel *panel)
                               "");
           but_ptr = UI_but_operator_ptr_get(but);
           RNA_int_set(but_ptr, "weight_group", i);
-          UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);
+          /* bfa - middle align text */
+          /*UI_but_drawflag_enable(but, UI_BUT_TEXT_RIGHT);*/
           if (BKE_object_defgroup_active_index_get(ob) != i + 1) {
             UI_but_flag_enable(but, UI_BUT_INACTIVE);
           }
