@@ -262,6 +262,9 @@ class RENDER_PT_stamp(RenderOutputButtonsPanel, Panel):
         row.separator()
         row.prop(rd, "use_stamp_filename", text="Filename")
 
+        if rd.use_sequencer:
+            col.prop(rd, "use_stamp_sequencer_strip", text="Strip Name")
+
 
 class RENDER_PT_stamp_note(RenderOutputButtonsPanel, Panel):
     bl_label = "Note"
