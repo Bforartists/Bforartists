@@ -448,7 +448,7 @@ def search_timer():
                 headers = utils.get_headers(api_key)
                 if utils.profile_is_validator():
                     for r in rdata['results']:
-                        if ratings_utils.get_rating_local(asset_data['id']) is None:
+                        if ratings_utils.get_rating_local(r['id']) is None:
                             rating_thread = threading.Thread(target=ratings_utils.get_rating, args=([r['id'], headers]),
                                                              daemon=True)
                             rating_thread.start()
@@ -1491,7 +1491,8 @@ class SearchOperator(Operator):
 
     own: BoolProperty(name="own assets only",
                       description="Find all own assets",
-                      default=False)
+                      default=False,
+                      options={'SKIP_SAVE'})
 
     category: StringProperty(
         name="category",
