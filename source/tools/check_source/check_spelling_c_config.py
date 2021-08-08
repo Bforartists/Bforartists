@@ -45,7 +45,7 @@ dict_custom = {
     "accessor",
     "adjoint", "adjugate",
     "alignable",
-    "allocator",
+    "allocator", "allocators",
     "atomicity",
     "boolean",
     "breaked",
@@ -53,9 +53,12 @@ dict_custom = {
     "canonicalized",
     "catadioptric",
     "checksums",
+    "comparator,", "comparators,",
     "confusticate", "confusticated",
+    "constructability",
     "coplanarity",
     "criterium",
+    "crosstalk",
     "customizable",
     "decorrelated",
     "decrement",
@@ -63,10 +66,12 @@ dict_custom = {
     "deduplication",
     "dereference", "dereferenced",
     "desaturate",
+    "designator",
     "destructors",
     "dialogs",
     "discoverability",
     "discretization",
+    "durations",
     "eachother",
     "editability",
     "equiangular",
@@ -85,6 +90,7 @@ dict_custom = {
     "monospaced",
     "mutators",
     "natively",
+    "optionals",
     "orthogonalize",
     "overridable",
     "paddings",
@@ -113,12 +119,14 @@ dict_custom = {
     "renderable",
     "renormalize",
     "reparametization",
+    "retiming",
     "sidedness",
     "skippable",
     "stitchable",
     "subclass", "subclasses", "subclassing",
-    "subdirectory",
+    "subdirectory", "subdirectories",
     "tertiarily",
+    "triangulator",
     "unassign",
     "unbuffered",
     "unclamped",
@@ -136,6 +144,7 @@ dict_custom = {
     "vectorial",
     "virtualized",
     "volumetrics",
+    "vortices",
     "zoomable",
 
     # python types
@@ -280,6 +289,7 @@ dict_custom = {
     "editmode",
     "eekadoodle",
     "fcurve",
+    "look-dev",
     "mathutils",
     "obdata",
 
@@ -370,4 +380,14 @@ dict_ignore = {
     "campbell",
     "jahka",
     "mikkelsen", "morten",
+
+    # Company names.
+    "Logitech",
+    "Wacom",
+
+    # Project Names.
+    "Wayland",
+
+    # clang-tidy (for convenience).
+    "bugprone-suspicious-enum-usage",
 }

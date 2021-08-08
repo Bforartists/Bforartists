@@ -603,6 +603,9 @@ MP3LAME_DEV=""
 OPENJPEG_USE=false
 OPENJPEG_DEV=""
 
+# Whether to use system GLEW or not (OpenSubDiv needs recent glew to work).
+NO_SYSTEM_GLEW=false
+
 # Switch to english language, else some things (like check_package_DEB()) won't work!
 LANG_BACK=$LANG
 LANG=""
@@ -1444,9 +1447,7 @@ compile_Python() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "Python--$PYTHON_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -1462,6 +1463,9 @@ compile_Python() {
     INFO "If you want to force rebuild of this lib, use the --force-python option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "python-$PYTHON_VERSION_SHORT"
 
   # Extra step: install required modules with pip.
@@ -1555,9 +1559,7 @@ compile_Boost() {
          --prefix=$_inst --disable-icu boost.locale.icu=off install
     ./b2 --clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "Boost-$BOOST_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -1571,7 +1573,9 @@ compile_Boost() {
     INFO "If you want to force rebuild of this lib, use the --force-boost option."
   fi
 
-  # Just always run it, much simpler this way!
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "boost"
 }
 
@@ -1684,9 +1688,7 @@ compile_TBB() {
 
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "TBB-$TBB_VERSION$TBB_VERSION_UPDATE failed to compile, exiting"
       exit 1
     fi
@@ -1700,6 +1702,9 @@ compile_TBB() {
     INFO "If you want to force rebuild of this lib, use the --force-tbb option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "tbb"
 }
 
@@ -1819,9 +1824,7 @@ compile_OCIO() {
 
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenColorIO-$OCIO_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -1835,6 +1838,9 @@ compile_OCIO() {
     INFO "If you want to force rebuild of this lib, use the --force-ocio option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "ocio"
 }
 
@@ -1950,9 +1956,7 @@ compile_OPENEXR() {
 
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenEXR-$OPENEXR_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -1968,7 +1972,9 @@ compile_OPENEXR() {
 
   _with_built_openexr=true
 
-  # Just always run it, much simpler this way!
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "openexr"
 }
 
@@ -2109,9 +2115,7 @@ compile_OIIO() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenImageIO-$OIIO_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -2125,7 +2129,9 @@ compile_OIIO() {
     INFO "If you want to force rebuild of this lib, use the --force-oiio option."
   fi
 
-  # Just always run it, much simpler this way!
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "oiio"
 }
 
@@ -2234,9 +2240,7 @@ compile_LLVM() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "LLVM-$LLVM_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -2248,6 +2252,10 @@ compile_LLVM() {
   else
     INFO "Own LLVM-$LLVM_VERSION (CLANG included) is up to date, nothing to do!"
     INFO "If you want to force rebuild of this lib, use the --force-llvm option."
+  fi
+
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
   fi
 }
 
@@ -2387,9 +2395,7 @@ compile_OSL() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenShadingLanguage-$OSL_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -2403,6 +2409,9 @@ compile_OSL() {
     INFO "If you want to force rebuild of this lib, use the --force-osl option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "osl"
 }
 
@@ -2503,9 +2512,7 @@ compile_OSD() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenSubdiv-$OSD_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -2519,6 +2526,9 @@ compile_OSD() {
     INFO "If you want to force rebuild of this lib, use the --force-osd option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "osd"
 }
 
@@ -2608,9 +2618,7 @@ compile_BLOSC() {
 
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "Blosc-$OPENVDB_BLOSC_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -2623,6 +2631,9 @@ compile_BLOSC() {
 
   magic_compile_set blosc-$OPENVDB_BLOSC_VERSION $blosc_magic
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "blosc"
 }
 
@@ -2713,9 +2724,7 @@ install_NanoVDB() {
     #~ mkdir -p $_inst
     #~ cp -r $_src/include $_inst/include
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "NanoVDB-v$OPENVDB_VERSION failed to install, exiting"
       exit 1
     fi
@@ -2726,6 +2735,10 @@ install_NanoVDB() {
     INFO "Done compiling NanoVDB-v$OPENVDB_VERSION!"
   else
     INFO "Own NanoVDB-v$OPENVDB_VERSION is up to date, nothing to do!"
+  fi
+
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
   fi
 }
 
@@ -2846,9 +2859,7 @@ compile_OPENVDB() {
     make -j$THREADS install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenVDB-$OPENVDB_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -2862,6 +2873,9 @@ compile_OPENVDB() {
     INFO "If you want to force rebuild of this lib, use the --force-openvdb option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "openvdb"
 
   if [ "$WITH_NANOVDB" = true ]; then
@@ -2959,9 +2973,7 @@ compile_ALEMBIC() {
     make -j$THREADS install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "Alembic-$ALEMBIC_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -2975,6 +2987,9 @@ compile_ALEMBIC() {
     INFO "If you want to force rebuild of this lib, use the --force-alembic option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "alembic"
 }
 
@@ -3059,9 +3074,7 @@ compile_USD() {
     make -j$THREADS install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "USD-$USD_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -3075,6 +3088,9 @@ compile_USD() {
     INFO "If you want to force rebuild of this lib, use the --force-usd option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "usd"
 }
 
@@ -3168,9 +3184,7 @@ compile_OpenCOLLADA() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenCOLLADA-$OPENCOLLADA_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -3182,6 +3196,10 @@ compile_OpenCOLLADA() {
   else
     INFO "Own OpenCOLLADA-$OPENCOLLADA_VERSION is up to date, nothing to do!"
     INFO "If you want to force rebuild of this lib, use the --force-opencollada option."
+  fi
+
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
   fi
 }
 
@@ -3283,9 +3301,7 @@ compile_Embree() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "Embree-$EMBREE_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -3297,6 +3313,10 @@ compile_Embree() {
   else
     INFO "Own Embree-$EMBREE_VERSION is up to date, nothing to do!"
     INFO "If you want to force rebuild of this lib, use the --force-embree option."
+  fi
+
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
   fi
 }
 
@@ -3360,9 +3380,7 @@ install_ISPC() {
     mkdir -p $_inst
     cp -r $_src/bin $_inst/bin
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "ISPC-v$ISPC_VERSION failed to install, exiting"
       exit 1
     fi
@@ -3373,6 +3391,10 @@ install_ISPC() {
     INFO "Done compiling ISPC-v$ISPC_VERSION!"
   else
     INFO "Own ISPC-v$ISPC_VERSION is up to date, nothing to do!"
+  fi
+
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
   fi
 
   _ispc_path_bin=$_inst/bin
@@ -3474,9 +3496,7 @@ compile_OIDN() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "OpenImageDenoise-$OIDN_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -3490,6 +3510,9 @@ compile_OIDN() {
     INFO "If you want to force rebuild of this lib, use the --force-oidn option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "oidn"
 }
 
@@ -3606,9 +3629,7 @@ compile_FFmpeg() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "FFmpeg-$FFMPEG_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -3620,6 +3641,10 @@ compile_FFmpeg() {
   else
     INFO "Own ffmpeg-$FFMPEG_VERSION is up to date, nothing to do!"
     INFO "If you want to force rebuild of this lib, use the --force-ffmpeg option."
+  fi
+
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
   fi
 }
 
@@ -3719,9 +3744,7 @@ compile_XR_OpenXR_SDK() {
     make -j$THREADS && make install
     make clean
 
-    if [ -d $_inst ]; then
-      _create_inst_shortcut
-    else
+    if [ ! -d $_inst ]; then
       ERROR "XR-OpenXR-SDK-$XR_OPENXR_VERSION failed to compile, exiting"
       exit 1
     fi
@@ -3735,6 +3758,9 @@ compile_XR_OpenXR_SDK() {
     INFO "If you want to force rebuild of this lib, use the --force-xr-openxr option."
   fi
 
+  if [ -d $_inst ]; then
+    _create_inst_shortcut
+  fi
   run_ldconfig "xr-openxr-sdk"
 }
 
@@ -3982,9 +4008,13 @@ install_DEB() {
     version_ge $_glew "1.7.0"
     if [ $? -eq 1 ]; then
       WARNING "OpenSubdiv disabled because GLEW-$_glew is not enough"
+      WARNING "Blender will not use system GLEW library"
       OSD_SKIP=true
+      NO_SYSTEM_GLEW=true
     else
       WARNING "OpenSubdiv will compile with GLEW-$_glew but with limited capability"
+      WARNING "Blender will not use system GLEW library"
+      NO_SYSTEM_GLEW=true
     fi
   fi
 
@@ -5953,6 +5983,12 @@ print_info() {
       PRINT "  $_1"
       _buildargs="$_buildargs $_1"
     fi
+  fi
+
+  if [ "$NO_SYSTEM_GLEW" = true ]; then
+    _1="-D WITH_SYSTEM_GLEW=OFF"
+    PRINT "  $_1"
+    _buildargs="$_buildargs $_1"
   fi
 
   if [ "$FFMPEG_SKIP" = false ]; then

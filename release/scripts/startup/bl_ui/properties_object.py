@@ -489,6 +489,10 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
             row.prop(ob, "use_grease_pencil_lights", toggle=False)
             row.prop_decorator(ob, "use_grease_pencil_lights")
 
+        layout.separator()
+        col = layout.column(heading="Mask")
+        col.prop(ob, "is_holdout")
+
 
 class OBJECT_PT_custom_props(ObjectButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
