@@ -490,8 +490,11 @@ class OBJECT_PT_visibility(ObjectButtonsPanel, Panel):
             row.prop_decorator(ob, "use_grease_pencil_lights")
 
         layout.separator()
-        col = layout.column(heading="Mask")
-        col.prop(ob, "is_holdout")
+        col = layout.column()
+        col.label(text = "Mask")
+        row = col.row()
+        row.separator()
+        row.prop(ob, "is_holdout")
 
 
 class OBJECT_PT_custom_props(ObjectButtonsPanel, PropertyPanel, Panel):
