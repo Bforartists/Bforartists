@@ -601,8 +601,10 @@ class CYCLES_RENDER_PT_motion_blur(CyclesButtonsPanel, Panel):
         col.separator()
         col.prop(cscene, "rolling_shutter_type", text="Rolling Shutter")
         sub = col.column()
-        sub.active = cscene.rolling_shutter_type != 'NONE'
-        sub.prop(cscene, "rolling_shutter_duration")
+        if cscene.rolling_shutter_type != 'NONE':
+            row = sub.row()
+            row.separator()
+            row.prop(cscene, "rolling_shutter_duration", text = "Duration")
 
 
 class CYCLES_RENDER_PT_motion_blur_curve(CyclesButtonsPanel, Panel):
@@ -1336,7 +1338,7 @@ class CYCLES_OBJECT_PT_motion_blur(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(cob, "motion_steps", text="Steps")
-        if ob.type != 'CAMERA':       
+        if ob.type != 'CAMERA':
             row = col.row()
             row.use_property_split = False
             row.prop(cob, "use_deform_motion", text="Deformation")
