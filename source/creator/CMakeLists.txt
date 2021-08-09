@@ -350,7 +350,7 @@ elseif(APPLE)
   else()
     set(TARGETDIR_VER Bforartists.app/Contents/Resources/${BLENDER_VERSION})
     # Dylibs folder for Blender executable. @executable_path is an rpath.
-    set(MAC_BLENDER_TARGET_DYLIBS_DIR "$<TARGET_FILE_DIR:blender>")
+    set(MAC_BLENDER_TARGET_DYLIBS_DIR "$<TARGET_FILE_DIR:bforartists>")
   endif()
   # Skip relinking on cpack / install
   set_target_properties(bforartists PROPERTIES BUILD_WITH_INSTALL_RPATH true)
