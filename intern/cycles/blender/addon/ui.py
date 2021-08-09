@@ -1336,8 +1336,11 @@ class CYCLES_OBJECT_PT_motion_blur(CyclesButtonsPanel, Panel):
 
         col = layout.column()
         col.prop(cob, "motion_steps", text="Steps")
-        if ob.type != 'CAMERA':
-            col.prop(cob, "use_deform_motion", text="Deformation")
+        if ob.type != 'CAMERA':       
+            row = col.row()
+            row.use_property_split = False
+            row.prop(cob, "use_deform_motion", text="Deformation")
+            row.prop_decorator(cob, "use_deform_motion")
 
 
 def has_geometry_visibility(ob):
