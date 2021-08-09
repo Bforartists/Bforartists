@@ -1263,7 +1263,7 @@ class CyclesObjectSettings(bpy.types.PropertyGroup):
 
     ao_distance: FloatProperty(
         name="AO Distance",
-        description="AO distance used for approximate global illumination (0 means use world setting)",
+        description="AO distance used for approximate global illumination (0 means use world setting)\nFast GI Approximation needs to be active\nIt is in the render settings in the Light Paths panel",
         min=0.0,
         default=0.0,
         subtype='DISTANCE',
