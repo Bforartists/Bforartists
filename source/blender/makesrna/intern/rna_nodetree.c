@@ -12959,6 +12959,12 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_SET_HANDLES:
       icon = ICON_HANDLE_AUTO;
       break;
+    case GEO_NODE_CURVE_SELECT_HANDLES:
+      icon = ICON_SELECT_HANDLETYPE;
+      break;
+    case GEO_NODE_CURVE_SPLINE_TYPE:
+      icon = ICON_SPLINE_TYPE;
+      break;
     case GEO_NODE_CURVE_REVERSE:
       icon = ICON_SWITCH_DIRECTION;
       break;

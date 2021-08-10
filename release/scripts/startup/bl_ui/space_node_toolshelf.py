@@ -3625,9 +3625,18 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
 
+            props = col.operator("node.add_node", text=" Select by Handle Type ", icon = "SELECT_HANDLETYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSelectHandles"
+            
             props = col.operator("node.add_node", text=" Set Handle Types       ", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
+
+            props = col.operator("node.add_node", text=" Set Spline Type       ", icon = "SPLINE_TYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSplineType"
+
 
 
         #### Icon Buttons
@@ -3674,9 +3683,17 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
 
+            props = flow.operator("node.add_node", text = "", icon = "SELECT_HANDLETYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSelectHandles"
+            
             props = flow.operator("node.add_node", text = "", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveSetHandles"
+            
+            props = flow.operator("node.add_node", text = "", icon = "SPLINE_TYPE")
+            props.use_transform = True
+            props.type = "GeometryNodeCurveSplineType"
 
 
 #add Curves Primitives panel
