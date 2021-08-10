@@ -706,7 +706,7 @@ pivot_cursor
 gp_caps_flat
 gp_caps_round
 fixed_size
-#~ DEF_ICON_BLANK(725)
+load_usd
 #~ DEF_ICON_BLANK(726)
 #~ DEF_ICON_BLANK(727)
 #~ DEF_ICON_BLANK(728)
