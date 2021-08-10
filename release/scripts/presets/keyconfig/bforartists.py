@@ -1772,7 +1772,8 @@ keyconfig_data = \
  ("File Browser Main",
   {"space_type": 'FILE_BROWSER', "region_type": 'WINDOW'},
   {"items":
-   [("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+   [("poselib.apply_pose_asset_for_keymap", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
+    ("file.execute", {"type": 'LEFTMOUSE', "value": 'DOUBLE_CLICK'}, None),
     ("file.select",
      {"type": 'LEFTMOUSE', "value": 'CLICK'},
      {"properties":
