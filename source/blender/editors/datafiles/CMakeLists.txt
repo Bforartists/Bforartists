@@ -707,9 +707,8 @@ gp_caps_flat
 gp_caps_round
 fixed_size
 load_usd
-#~ DEF_ICON_BLANK(726)
-#~ DEF_ICON_BLANK(727)
-#~ DEF_ICON_BLANK(728)
+select_handletype
+spline_type
 #~ DEF_ICON_BLANK(729)
 #~ DEF_ICON_BLANK(730)
 #~ DEF_ICON_BLANK(731)
