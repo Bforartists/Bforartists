@@ -1996,6 +1996,7 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.operator("gpencil.select_linked", text="Linked", icon = "LINKED")
         layout.operator("gpencil.select_alternate", icon = "ALTERNATED")
+        layout.operator("gpencil.select_random", icon = "RANDOMIZE")
         layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
 
         if context.mode == 'VERTEX_GPENCIL':

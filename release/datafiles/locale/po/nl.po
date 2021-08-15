@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
@@ -76,10 +76,6 @@ msgstr "Uitgebreid"
 
 msgid "Message"
 msgstr "Bericht"
-
-
-msgid "Path"
-msgstr "Pad"
 
 
 msgid "Animation Data"
@@ -286,6 +282,14 @@ msgid "Vertex Color"
 msgstr "Kleur van Punt"
 
 
+msgid "Round"
+msgstr "Rond"
+
+
+msgid "Flat"
+msgstr "Vlak"
+
+
 msgid "Dissolve"
 msgstr "Oplossen"
 
@@ -300,6 +304,10 @@ msgstr "Glad"
 
 msgid "Draw"
 msgstr "Potlood"
+
+
+msgid "Path"
+msgstr "Pad"
 
 
 msgid "Back"
@@ -604,10 +612,6 @@ msgid "Grid"
 msgstr "Rooster"
 
 
-msgid "Flat"
-msgstr "Vlak"
-
-
 msgid "Window"
 msgstr "Scherm"
 
@@ -736,10 +740,6 @@ msgstr "Orthografisch"
 
 msgid "Panoramic"
 msgstr "Panoramisch"
-
-
-msgid "Round"
-msgstr "Rond"
 
 
 msgid "Dimensions"

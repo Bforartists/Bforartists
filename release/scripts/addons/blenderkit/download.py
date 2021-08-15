@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
-from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions, ui_panels
+from blenderkit import paths, append_link, utils, ui, colors, tasks_queue, rerequests, resolutions, ui_panels, search
 
 import threading
 import time
@@ -693,7 +693,11 @@ def delete_unfinished_file(file_name):
 
 def download_asset_file(asset_data, resolution='blend', api_key = ''):
     # this is a simple non-threaded way to download files for background resolution genenration tool
-    file_name = paths.get_download_filepaths(asset_data, resolution)[0]  # prefer global dir if possible.
+    file_names = paths.get_download_filepaths(asset_data, resolution)  # prefer global dir if possible.
+    if len(file_names) == 0:
+        return None
+
+    file_name = file_names[0]
 
     if check_existing(asset_data, resolution=resolution):
         # this sends the thread for processing, where another check should occur, since the file might be corrupted.
@@ -704,6 +708,7 @@ def download_asset_file(asset_data, resolution='blend', api_key = ''):
 
     with open(file_name, "wb") as f:
         print("Downloading %s" % file_name)
+        headers = utils.get_headers(api_key)
         res_file_info, resolution = paths.get_res_file(asset_data, resolution)
         response = requests.get(res_file_info['url'], stream=True)
         total_length = response.headers.get('Content-Length')
@@ -1308,12 +1313,23 @@ class BlenderkitDownloadOperator(bpy.types.Operator):
             # or from the scene.
             asset_base_id = self.asset_base_id
 
-        au = s.get('assets used')
-        if au == None:
-            s['assets used'] = {}
-        if asset_base_id in s.get('assets used'):
-            # already used assets have already download link and especially file link.
-            asset_data = s['assets used'][asset_base_id].to_dict()
+            au = s.get('assets used')
+            if au == None:
+                s['assets used'] = {}
+            if asset_base_id in s.get('assets used'):
+                # already used assets have already download link and especially file link.
+                asset_data = s['assets used'][asset_base_id].to_dict()
+            else:
+                #when not in scene nor in search results, we need to get it from the server
+                params = {
+                    'asset_base_id': self.asset_base_id
+                }
+                preferences = bpy.context.preferences.addons['blenderkit'].preferences
+
+                results = search.get_search_simple(params,  page_size=1, max_results=1,
+                             api_key=preferences.api_key)
+                asset_data = search.parse_result(results[0])
+
         return asset_data
 
     def execute(self, context):

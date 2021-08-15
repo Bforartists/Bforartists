@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -221,10 +221,6 @@ msgstr "संदेश (कुछ अनुमति प्राप्त अ�
 
 msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
 msgstr "एक json उन सेटिंग्स भंडारण संचिका का नाम (दुर्भाग्य से, ब्लेंडर की व्यवस्था यहां काम नहीं करता है)"
-
-
-msgid "Path"
-msgstr "पथ"
 
 
 msgid "Animation Data"
@@ -627,6 +623,14 @@ msgid "Vertex Color"
 msgstr "शिरोबिन्दु रंग"
 
 
+msgid "Round"
+msgstr "दौर"
+
+
+msgid "Flat"
+msgstr "समतल"
+
+
 msgid "Direction"
 msgstr "दिशा"
 
@@ -685,6 +689,10 @@ msgstr "पुनरूक्तियाँ"
 
 msgid "Hue"
 msgstr "छटा"
+
+
+msgid "Path"
+msgstr "पथ"
 
 
 msgid "Background Image"
@@ -1653,10 +1661,6 @@ msgid "2D Image"
 msgstr "द्वि-आयाम छवि"
 
 
-msgid "Flat"
-msgstr "समतल"
-
-
 msgid "Coordinates"
 msgstr "निर्देशांक"
 
@@ -1984,10 +1988,6 @@ msgstr "परिप्रेक्ष्य"
 
 msgid "Panoramic"
 msgstr "नयनाभिराम"
-
-
-msgid "Round"
-msgstr "दौर"
 
 
 msgid "Bevel Resolution"
@@ -4953,16 +4953,8 @@ msgid "Path to the pot template file"
 msgstr "पॉट टेम्पलेट संचिका के लिए पथ"
 
 
-msgid "All Z"
-msgstr "सभी z"
-
-
 msgid "Sky"
 msgstr "आकाश"
-
-
-msgid "Zmask"
-msgstr "Zआवरण"
 
 
 msgid "Bias"

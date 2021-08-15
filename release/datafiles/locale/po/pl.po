@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -1844,6 +1844,10 @@ msgstr "Aktywny"
 
 msgid "Material"
 msgstr "Materiał"
+
+
+msgid "Flat"
+msgstr "Płaskie"
 
 
 msgid "Direction"
@@ -6192,10 +6196,6 @@ msgid "Layer"
 msgstr "Warstwa"
 
 
-msgid "Flat"
-msgstr "Płaskie"
-
-
 msgid "Window"
 msgstr "Okno"
 
@@ -8350,10 +8350,6 @@ msgstr "Zaznaczone pary krawędzi lub ścian dla pętli krawędzi wokół który
 
 msgid "Could not find any selected edges that can be rotated"
 msgstr "Nie odnaleziono zaznaczonych krawędzi możliwych do obrócenia"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Zaznaczone ściany muszą być trójkątami lub czworokątami"
 
 
 msgid "No edges are selected to operate on"
