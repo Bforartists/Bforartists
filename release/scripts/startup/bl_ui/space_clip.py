@@ -1190,6 +1190,31 @@ class CLIP_PT_stabilization(CLIP_PT_reconstruction_panel, Panel):
         layout.prop(stab, "filter_type")
 
 
+class CLIP_PT_2d_cursor(Panel):
+    bl_space_type = 'CLIP_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "View"
+    bl_label = "2D Cursor"
+
+    @classmethod
+    def poll(cls, context):
+        sc = context.space_data
+
+        if CLIP_PT_clip_view_panel.poll(context):
+            return sc.pivot_point == 'CURSOR' or sc.mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        sc = context.space_data
+
+        layout.use_property_split = True
+        layout.use_property_decorate = False
+
+        col = layout.column()
+        col.prop(sc, "cursor_location", text="Location")
+
+
 class CLIP_PT_proxy(CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
@@ -1269,12 +1294,6 @@ class CLIP_PT_mask_layers(MASK_PT_layers, Panel):
     bl_category = "Mask"
 
 
-class CLIP_PT_mask_display(MASK_PT_display, Panel):
-    bl_space_type = 'CLIP_EDITOR'
-    bl_region_type = 'HEADER'
-    bl_category = "Mask"
-
-
 class CLIP_PT_active_mask_spline(MASK_PT_spline, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
@@ -1298,6 +1317,11 @@ class CLIP_PT_mask(MASK_PT_mask, Panel):
 #     bl_region_type = 'TOOLS'
 #     bl_category = "Mask"
 
+
+
+class CLIP_PT_mask_display(MASK_PT_display, Panel):
+    bl_space_type = 'CLIP_EDITOR'
+    bl_region_type = 'HEADER'
 
 # --- end mask ---
 
@@ -1349,7 +1373,7 @@ class CLIP_PT_tools_scenesetup(Panel):
 class CLIP_PT_annotation(AnnotationDataPanel, CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
-    bl_category = "Annotation"
+    bl_category = "View"
     bl_options = set()
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -2007,6 +2031,7 @@ classes = (
     CLIP_PT_proxy,
     CLIP_PT_footage,
     CLIP_PT_stabilization,
+    CLIP_PT_2d_cursor,
     CLIP_PT_mask,
     CLIP_PT_mask_layers,
     CLIP_PT_mask_display,

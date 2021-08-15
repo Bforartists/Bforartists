@@ -511,6 +511,7 @@ static void v3d_editvertex_buts(uiLayout *layout, View3D *v3d, Object *ob, float
     const int butw = 200;
     const int buth = 20 * UI_DPI_FAC;
     const int but_margin = 2;
+    const char *c;
 
     memcpy(&tfp->ve_median, &median_basis, sizeof(tfp->ve_median));
 
@@ -1548,7 +1549,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       sub = uiLayoutColumn(row, true);
       uiLayoutSetPropDecorate(sub, false);
 
-      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
+      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE_OR_STATUS);
       draw4L = true; /* bfa - show 4L button if quaternion */
 
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
@@ -1580,7 +1581,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       sub = uiLayoutColumn(row, true);
       uiLayoutSetPropDecorate(sub, false);
 
-      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE);
+      uiLayoutSetEmboss(sub, UI_EMBOSS_NONE_OR_STATUS);
       draw4L = true; /* bfa - show 4L button if axis-angle */
 
       if (RNA_boolean_get(ptr, "lock_rotations_4d")) {
@@ -1609,7 +1610,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
       row = uiLayoutRow(col, true);
       uiItemR(row, ptr, "rotation_euler", 0, IFACE_("Rotation"), ICON_NONE);
       uiLayoutSetPropDecorate(row, false);
-      uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+      uiLayoutSetEmboss(row, UI_EMBOSS_NONE_OR_STATUS);
       uiItemR(row,
               ptr,
               "lock_rotation",
@@ -1649,7 +1650,7 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
   row = uiLayoutRow(col, true);
   uiItemR(row, ptr, "scale", 0, IFACE_("Scale"), ICON_NONE); /* bfa - row.prop(ob, "scale") */
   uiLayoutSetPropDecorate(row, false);
-  uiLayoutSetEmboss(row, UI_EMBOSS_NONE);
+  uiLayoutSetEmboss(row, UI_EMBOSS_NONE_OR_STATUS);
   uiItemR(
       row, ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
   uiLayoutSetEmboss(row, UI_EMBOSS_UNDEFINED);

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -159,10 +159,6 @@ msgstr "Markera Rad"
 
 msgid "Persistent Data Path"
 msgstr "Markera Rad"
-
-
-msgid "Path"
-msgstr "Bana"
 
 
 msgid "Animation Data"
@@ -981,6 +977,10 @@ msgid "Vertex Color"
 msgstr "Vertexfärger"
 
 
+msgid "Round"
+msgstr "Ljud"
+
+
 msgid "Direction"
 msgstr "Riktning"
 
@@ -1083,6 +1083,10 @@ msgstr "Integrering:"
 
 msgid "Saturation"
 msgstr "Mättnad"
+
+
+msgid "Path"
+msgstr "Bana"
 
 
 msgid "Background Image"
@@ -4167,14 +4171,6 @@ msgid "Time"
 msgstr "Tid"
 
 
-msgid "Noise Method"
-msgstr "Packa Data"
-
-
-msgid "Wavelet"
-msgstr "Rensa Rotation"
-
-
 msgid "Compression"
 msgstr "Kompression"
 
@@ -5295,10 +5291,6 @@ msgid "Bevel Depth"
 msgstr "Färgdjup"
 
 
-msgid "Round"
-msgstr "Ljud"
-
-
 msgid "Bevel Object"
 msgstr "Avfasera objekt:"
 
@@ -6297,14 +6289,6 @@ msgstr "Starta Spel"
 
 msgid "Settings for using the object as a collider in physics simulation"
 msgstr "Starta rendering av sekvens"
-
-
-msgid "Cycles Visibility Settings"
-msgstr "Verktyg"
-
-
-msgid "Cycles visibility settings"
-msgstr "Partikelsystem"
 
 
 msgid "Data"
@@ -7991,6 +7975,14 @@ msgstr "Verktyg"
 
 msgid "Cycles world settings"
 msgstr "Verktyg"
+
+
+msgid "Cycles Visibility Settings"
+msgstr "Verktyg"
+
+
+msgid "Cycles visibility settings"
+msgstr "Partikelsystem"
 
 
 msgid "Lighting"
@@ -29426,10 +29418,6 @@ msgstr "Göm Markerad"
 
 msgid "Does not work in face selection mode"
 msgstr "Markera Länkad"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Konvertera markerade trianglar till fyrhörningar"
 
 
 msgid "Mouse path too short"

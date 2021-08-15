@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
@@ -307,6 +307,10 @@ msgstr "Материал"
 
 msgid "Vertex Color"
 msgstr "Чоку түсү"
+
+
+msgid "Flat"
+msgstr "Жалпак"
 
 
 msgid "Normal"
@@ -893,10 +897,6 @@ msgstr "Аралаштыруу режими"
 
 msgid "Layer"
 msgstr "Кат"
-
-
-msgid "Flat"
-msgstr "Жалпак"
 
 
 msgid "Window"

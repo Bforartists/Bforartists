@@ -219,7 +219,7 @@ class FILEBROWSER_PT_filter(FileBrowserPanel, Panel):
 
                 sub = row.column(align=True)
 
-                if context.preferences.experimental.use_asset_browser:
+                if context.preferences.experimental.use_extended_asset_browser:
                     sub.prop(params, "use_filter_asset_only")
 
                 filter_id = params.filter_id
@@ -670,6 +670,10 @@ class ASSETBROWSER_PT_navigation_bar(asset_utils.AssetBrowserPanel, Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Asset Category"
     bl_options = {'HIDE_HEADER'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.preferences.experimental.use_extended_asset_browser
 
     def draw(self, context):
         layout = self.layout
