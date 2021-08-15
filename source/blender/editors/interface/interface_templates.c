@@ -2646,10 +2646,13 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
   uiLayoutSetUnitsX(layout, 4.0f);
 
   /* Apply. */
+/*bfa - we have the apply button in the header*/
+/*
   uiItemO(layout,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Apply"),
           ICON_CHECKMARK,
           "CONSTRAINT_OT_apply");
+*/
 
   /* Duplicate. */
   uiItemO(layout,
@@ -2776,6 +2779,9 @@ static void draw_constraint_header(uiLayout *layout, Object *ob, bConstraint *co
   else {
     /* Enabled eye icon. */
     uiItemR(row, &ptr, "enabled", 0, "", ICON_NONE);
+
+  /* Apply. */
+  uiItemO(row, "", ICON_CHECKMARK, "CONSTRAINT_OT_apply"); /*bfa - apply*/
 
     /* Extra operators menu. */
     uiItemMenuF(row, "", ICON_DOWNARROW_HLT, constraint_ops_extra_draw, con);
