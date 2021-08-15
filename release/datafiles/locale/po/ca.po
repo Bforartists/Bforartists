@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -156,10 +156,6 @@ msgstr "Seleccionar fila"
 
 msgid "Persistent Data Path"
 msgstr "Seleccionar fila"
-
-
-msgid "Path"
-msgstr "Camí"
 
 
 msgid "Animation Data"
@@ -888,6 +884,10 @@ msgstr "Esborrar"
 
 msgid "Saturation"
 msgstr "Esborrar Rotació"
+
+
+msgid "Path"
+msgstr "Camí"
 
 
 msgid "Background Image"
@@ -3544,14 +3544,6 @@ msgid "Time"
 msgstr "Reduir"
 
 
-msgid "Noise Method"
-msgstr "Comprimir Dades"
-
-
-msgid "Wavelet"
-msgstr "Esborrar Rotació"
-
-
 msgid "Delete"
 msgstr "Esborrar"
 
@@ -5392,14 +5384,6 @@ msgid "Settings for using the object as a collider in physics simulation"
 msgstr "Començar a renderitzar una seqüència"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Eines"
-
-
-msgid "Cycles visibility settings"
-msgstr "Eines"
-
-
 msgid "Data"
 msgstr "Comprimir Dades"
 
@@ -6799,6 +6783,14 @@ msgstr "Eines"
 
 
 msgid "Cycles world settings"
+msgstr "Eines"
+
+
+msgid "Cycles Visibility Settings"
+msgstr "Eines"
+
+
+msgid "Cycles visibility settings"
 msgstr "Eines"
 
 
@@ -25668,10 +25660,6 @@ msgstr "Amagar Seleccionats"
 
 msgid "Does not work in face selection mode"
 msgstr "Seleccionar connectats"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Amagar Seleccionats"
 
 
 msgid "Selection not supported in object mode"

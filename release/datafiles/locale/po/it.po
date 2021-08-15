@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -324,30 +324,6 @@ msgstr "Add-ons Utente"
 
 msgid "Collection of add-ons"
 msgstr "Raccolta di add-ons"
-
-
-msgid "Object Path"
-msgstr "Percorso Oggetto"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Percorso di un oggetto nell'archivio Alembic"
-
-
-msgid "Path"
-msgstr "Percorso"
-
-
-msgid "Object path"
-msgstr "Percorso oggetto"
-
-
-msgid "Object Paths"
-msgstr "Percorsi Oggetto"
-
-
-msgid "Collection of object paths"
-msgstr "Raccolta di percorsi oggetto"
 
 
 msgid "Animation Data"
@@ -2686,6 +2662,14 @@ msgid "Vertex Color"
 msgstr "Colore Vertice"
 
 
+msgid "Round"
+msgstr "Arrotonda"
+
+
+msgid "Flat"
+msgstr "Piano"
+
+
 msgid "Curve Jitter"
 msgstr "Curva Tremolio"
 
@@ -2920,6 +2904,30 @@ msgstr "Usa Forza Pressione"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Usa la sensibilità di pressione della tavoletta per l'intensità del colore"
+
+
+msgid "Object Path"
+msgstr "Percorso Oggetto"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Percorso di un oggetto nell'archivio Alembic"
+
+
+msgid "Path"
+msgstr "Percorso"
+
+
+msgid "Object path"
+msgstr "Percorso oggetto"
+
+
+msgid "Object Paths"
+msgstr "Percorsi Oggetto"
+
+
+msgid "Collection of object paths"
+msgstr "Raccolta di percorsi oggetto"
 
 
 msgid "Background Image"
@@ -8929,14 +8937,6 @@ msgid "Time"
 msgstr "Tempo"
 
 
-msgid "Noise Method"
-msgstr "Metodo Rumore"
-
-
-msgid "Wavelet"
-msgstr "Increspatura"
-
-
 msgid "Compression"
 msgstr "Compressione"
 
@@ -9663,10 +9663,6 @@ msgstr "Il tratto è nello spazio 2D (ma con una speciale scalatura 'immagine')"
 
 msgid "End Cap"
 msgstr "Elemento di Fine"
-
-
-msgid "Flat"
-msgstr "Piano"
 
 
 msgid "Thickness of stroke (in pixels)"
@@ -11198,10 +11194,6 @@ msgstr "Disabilita selezione nella vista"
 
 msgid "Bevel Depth"
 msgstr "Profondità Smusso"
-
-
-msgid "Round"
-msgstr "Arrotonda"
 
 
 msgid "Profile"
@@ -13230,14 +13222,6 @@ msgid "Cycles object settings"
 msgstr "Impostazioni oggetto Cycles"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Impostazioni Visibilità Cycles"
-
-
-msgid "Cycles visibility settings"
-msgstr "Impostazioni visibilità Cycles"
-
-
 msgid "Data"
 msgstr "Dati"
 
@@ -13380,6 +13364,14 @@ msgstr "Impostazioni per usare l'oggetto come campo in una simulazione fisica"
 
 msgid "Faces"
 msgstr "Facce"
+
+
+msgid "Holdout"
+msgstr "Trafora"
+
+
+msgid "Shadow Catcher"
+msgstr "Cattura Ombre"
 
 
 msgid "Location of the object"
@@ -15959,6 +15951,14 @@ msgid "Cycles world settings"
 msgstr "Impostazioni mondo Cycles"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Impostazioni Visibilità Cycles"
+
+
+msgid "Cycles visibility settings"
+msgstr "Impostazioni visibilità Cycles"
+
+
 msgid "Lighting"
 msgstr "Illuminazione"
 
@@ -17788,10 +17788,6 @@ msgstr "Nascondi nella Vista"
 
 msgid "Temporarily hide in viewport"
 msgstr "Nascondi temporaneamente nella vista"
-
-
-msgid "Holdout"
-msgstr "Trafora"
 
 
 msgid "Indirect Only"
@@ -46114,14 +46110,6 @@ msgid "Dicing Scale"
 msgstr "Scala Quadrettatura"
 
 
-msgid "Shadow Catcher"
-msgstr "Cattura Ombre"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Renderizza solo le ombre su questo oggetto, per comporre i render in un filmato originale"
-
-
 msgid "Motion Steps"
 msgstr "Passi Movimento"
 
@@ -47106,26 +47094,6 @@ msgid "Window Matrix"
 msgstr "Matrice Finestra"
 
 
-msgid "Zmask Negate"
-msgstr "Maschera Z Inversa"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Per le maschere Z, renderizza solo quello che si trova dietro a valori Z solidi, invece che davanti"
-
-
-msgid "All Z"
-msgstr "Tutti Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Inserisce i valori Z per le facce solide in un livello invisibile, per il mascheramento"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "Renderizza materiali Alone in questo Livello (davanti a facce solide)"
-
-
 msgid "Deliver full combined RGBA buffer"
 msgstr "Produce la combinazione totale di RGBA e buffer"
 
@@ -47244,14 +47212,6 @@ msgstr "Fibra"
 
 msgid "Render Strands in this Layer"
 msgstr "Renderizza le Fibre in questo Livello"
-
-
-msgid "Zmask"
-msgstr "Maschera Z"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "Renderizza solo quello che si trova davanti a valori Z solidi"
 
 
 msgid "Render Passes"
@@ -51919,20 +51879,12 @@ msgid "Driven Selected"
 msgstr "Guidato Selezionato"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "Giacitura Tratto (Editor Immagini)"
+msgid "Stroke Placement (2D View)"
+msgstr "Giacitura Tratto (Vista 2D)"
 
 
 msgid "Stick stroke to surfaces"
 msgstr "Attacca il tratto alle superfici"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Giacitura Tratto (Anteprima Sequencer)"
-
-
-msgid "Stroke Placement (2D View)"
-msgstr "Giacitura Tratto (Vista 2D)"
 
 
 msgid "Auto-Keying Mode"
@@ -58633,10 +58585,6 @@ msgstr "L'oggetto non ha pesi/gruppi vertici"
 
 msgid "Invalid selection order"
 msgstr "Ordine di selezione non valido"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Le facce selezionate devono essere triangoli o quadrilateri"
 
 
 msgid "Mouse path too short"

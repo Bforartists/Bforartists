@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -349,30 +349,6 @@ msgstr "유저 애드온"
 
 msgid "Collection of add-ons"
 msgstr "애드온의 컬렉션"
-
-
-msgid "Object Path"
-msgstr "오브젝트 경로"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Alembic 아카이브 내부에 있는 오브젝트의 경로"
-
-
-msgid "Path"
-msgstr "경로"
-
-
-msgid "Object path"
-msgstr "오브젝트 경로"
-
-
-msgid "Object Paths"
-msgstr "오브젝트 경로"
-
-
-msgid "Collection of object paths"
-msgstr "오브젝트 경로의 컬렉션"
 
 
 msgid "Animation Data"
@@ -2995,6 +2971,14 @@ msgid "Vertex Color"
 msgstr "버텍스 컬러"
 
 
+msgid "Round"
+msgstr "둥근"
+
+
+msgid "Flat"
+msgstr "플랫"
+
+
 msgid "Curve Jitter"
 msgstr "커브 지터"
 
@@ -3437,6 +3421,30 @@ msgstr "UV 랜덤"
 
 msgid "Mode Type"
 msgstr "모드 유형"
+
+
+msgid "Object Path"
+msgstr "오브젝트 경로"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Alembic 아카이브 내부에 있는 오브젝트의 경로"
+
+
+msgid "Path"
+msgstr "경로"
+
+
+msgid "Object path"
+msgstr "오브젝트 경로"
+
+
+msgid "Object Paths"
+msgstr "오브젝트 경로"
+
+
+msgid "Collection of object paths"
+msgstr "오브젝트 경로의 컬렉션"
 
 
 msgid "Background Image"
@@ -5224,30 +5232,6 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "기존 변환과 작업 채널을 결합하는 방법을 지정합니다"
 
 
-msgid "Before Original"
-msgstr "원본 이전에"
-
-
-msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "정렬된 상속 축적을 사용하는 가상의 부모에 적용되는 것처럼 원래 변환 이전에 액션 채널을 적용합니다"
-
-
-msgid "After Original"
-msgstr "원본 이후에"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
-msgstr "정렬된 상속 축적을 사용하는 가상의 자식에 적용되는 것처럼 원래 변환 이후에 동작 채널을 적용합니다"
-
-
-msgid "After Original (Full Scale)"
-msgstr "원본 이후 (전체 축적)"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
-msgstr "전체 상속 축적을 사용하는 가상의 자식에 적용되는 것처럼 원래 변형 이후에 액션 채널을 적용합니다. 이 모드는 전단을 만들 수 있으며 이전 버전과의 호환성을 위해서만 제공됩니다"
-
-
 msgid "Target object"
 msgstr "대상 오브젝트"
 
@@ -5660,8 +5644,16 @@ msgid "Add euler component values together"
 msgstr "오일러 성분 값을 함께 추가"
 
 
+msgid "Before Original"
+msgstr "원본 이전에"
+
+
 msgid "Apply copied rotation before original, as if the constraint target is a parent"
 msgstr "제약 대상이 부모인 것처럼 원본 이전에 복사된 회전을 적용합니다"
+
+
+msgid "After Original"
+msgstr "원본 이후에"
 
 
 msgid "Apply copied rotation after original, as if the constraint target is a child"
@@ -11433,14 +11425,6 @@ msgid "Animation time of noise"
 msgstr "노이즈의 애니메이션 시간"
 
 
-msgid "Noise Method"
-msgstr "노이즈 메서드"
-
-
-msgid "Wavelet"
-msgstr "웨이블릿"
-
-
 msgid "Compression"
 msgstr "압축"
 
@@ -13165,10 +13149,6 @@ msgid "Rounded"
 msgstr "둥근"
 
 
-msgid "Flat"
-msgstr "플랫"
-
-
 msgid "Amount of gradient along section of stroke"
 msgstr "스트로크의 단면을 따라 기울기의 측정"
 
@@ -14055,6 +14035,10 @@ msgstr "함께 변형하는 래티스 오브젝트"
 
 msgid "Strength of modifier effect"
 msgstr "모디파이어 이펙트의 강도"
+
+
+msgid "Overscan"
+msgstr "오버스캔"
 
 
 msgid "Boundaries"
@@ -16304,10 +16288,6 @@ msgstr "종료 맵핑 유형"
 
 msgid "Start Mapping Type"
 msgstr "시작 매핑 유형"
-
-
-msgid "Round"
-msgstr "둥근"
 
 
 msgid "Profile"
@@ -19592,14 +19572,6 @@ msgid "Cycles object settings"
 msgstr "Cycles 오브젝트 설정"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Cycles 가시성 설정"
-
-
-msgid "Cycles visibility settings"
-msgstr "Cycles 가시성 설정"
-
-
 msgid "Data"
 msgstr "데이터"
 
@@ -19846,6 +19818,18 @@ msgstr "설정으로부터 베이스"
 
 msgid "Object comes from a background set"
 msgstr "오브젝트는 배경 설정에서 옵니다"
+
+
+msgid "Holdout"
+msgstr "홀드아웃"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "홀드 아웃이나 매트로 오브젝트 렌더링, 알파가 0 인 이미지에 구멍을 만들고, 실제 푸티 지 또는 다른 렌더링으로 컴포지팅시 채웁니다"
+
+
+msgid "Shadow Catcher"
+msgstr "섀도우 캐처"
 
 
 msgid "Location of the object"
@@ -22949,6 +22933,14 @@ msgid "Cycles world settings"
 msgstr "Cycles 월드 설정"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Cycles 가시성 설정"
+
+
+msgid "Cycles visibility settings"
+msgstr "Cycles 가시성 설정"
+
+
 msgid "Lighting"
 msgstr "라이트닝"
 
@@ -25405,10 +25397,6 @@ msgstr "뷰포트에서 숨기기"
 
 msgid "Temporarily hide in viewport"
 msgstr "뷰포트에서 일시적으로 숨기기"
-
-
-msgid "Holdout"
-msgstr "홀드아웃"
 
 
 msgid "Mask out objects in collection from view layer"
@@ -66829,18 +66817,6 @@ msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
 msgstr "씬 분할 비율에 대한 승수 (섭디비젼 패널에 있음)"
 
 
-msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
-msgstr "홀드 아웃이나 매트로 오브젝트 렌더링, 알파가 0 인 이미지에 구멍을 만들고, 실제 푸티 지 또는 다른 렌더링으로 컴포지팅시 채웁니다"
-
-
-msgid "Shadow Catcher"
-msgstr "섀도우 캐처"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "이 오브젝트에 섀도우 만 렌더링하여 렌더링을 실제 푸티지로 컴포지팅합니다"
-
-
 msgid "Motion Steps"
 msgstr "모션 단계"
 
@@ -66979,38 +66955,6 @@ msgstr "전달 간접"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "간접 전송 라이트닝을 디노이즈"
-
-
-msgid "Debug BVH Intersections"
-msgstr "디버그 BVH 교차"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "디버그 BVH 교차를 저장"
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "디버그 BVH 횡단 인스턴스"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "디버그 BVH 황단 인스턴스 패스를 저장"
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "디버그 BVH 횡단 노드"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "디버그 BVH 횡단 노드 패스를 저장"
-
-
-msgid "Debug Ray Bounces"
-msgstr "디버그 광선 바운스"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "디버그 광선 바운스 패스를 저장"
 
 
 msgid "Debug Render Time"
@@ -68449,32 +68393,12 @@ msgid "Current window matrix"
 msgstr "현재 창 매트릭스"
 
 
-msgid "Zmask Negate"
-msgstr "Z마스크 부정"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Zmask의 경우, 솔리드 z 값 뒤에 있는 것만 렌더합니다"
-
-
 msgid "View layer name"
 msgstr "뷰 레이어 이름"
 
 
-msgid "All Z"
-msgstr "모든 Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "보이지 않는 레이어에 솔리드 페이스들에 대한 Z 값에서 채우기, 마스킹을 위해"
-
-
 msgid "Render Ambient Occlusion in this Layer"
 msgstr "이 레이어의 주변 폐색을 렌더"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "이 레이어에서 헤일로를 렌더(솔리드 위에)"
 
 
 msgid "Deliver Ambient Occlusion pass"
@@ -68599,14 +68523,6 @@ msgstr "가닥"
 
 msgid "Render Strands in this Layer"
 msgstr "이 레이어에서 가닥을 렌더"
-
-
-msgid "Zmask"
-msgstr "Z마스크"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "단색 Z 값 앞에 있는 것을 렌더링"
 
 
 msgid "Render Passes"
@@ -70367,10 +70283,6 @@ msgstr "밝은 바운스를 시뮬레이트하는 근사는 더 밝은 오브젝
 
 msgid "Enable motion blur effect (only in camera view)"
 msgstr "모션 블러 이펙트를 사용 (카메라뷰에서 만)"
-
-
-msgid "Overscan"
-msgstr "오버스캔"
 
 
 msgid "Internally render past the image border to avoid screen-space effects disappearing"
@@ -76500,22 +76412,6 @@ msgid "Time Step"
 msgstr "타임 단계"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "스트로크 배치 (이미지 에디터)"
-
-
-msgid "Draw stroke at 3D cursor location"
-msgstr "3D 커서 위치에서 스트로크를 그리기"
-
-
-msgid "Stick stroke to surfaces"
-msgstr "표면에 스트로크를 붙이기"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "스트로크 배치 (시퀀서 미리보기)"
-
-
 msgid "Stroke Placement (2D View)"
 msgstr "스트로크 배치 (2D 뷰)"
 
@@ -76526,6 +76422,14 @@ msgstr "주석 스트로크 배치 (3D 뷰)"
 
 msgid "How annotation strokes are orientated in 3D space"
 msgstr "3D 공간에서 주석 스트로크의 방향을 지정"
+
+
+msgid "Draw stroke at 3D cursor location"
+msgstr "3D 커서 위치에서 스트로크를 그리기"
+
+
+msgid "Stick stroke to surfaces"
+msgstr "표면에 스트로크를 붙이기"
 
 
 msgid "Annotation Stroke Thickness"
@@ -87437,10 +87341,6 @@ msgstr "회전할 수 있는 선택된 에지를 찾을 수 없습니다"
 
 msgid "No selected vertex"
 msgstr "선택한 버텍스가 없음"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "선택된 페이스는 삼각형 또는 쿼드이어야 함"
 
 
 msgid "Active mesh does not have shape keys"

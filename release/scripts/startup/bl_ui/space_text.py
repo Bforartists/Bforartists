@@ -60,7 +60,6 @@ class TEXT_HT_header(Header):
                 row.operator("text.run_script", text="", icon='PLAY')
 
                 row = layout.row()
-                row.active = text_name.endswith(".py")
                 row.prop(text, "use_module")
 
         layout.separator_spacer()

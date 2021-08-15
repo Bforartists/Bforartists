@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -358,30 +358,6 @@ msgstr "使用者附加元件"
 
 msgid "Collection of add-ons"
 msgstr "附加元件的集合"
-
-
-msgid "Object Path"
-msgstr "物體路徑"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Alembic 封存檔內的物體路徑"
-
-
-msgid "Path"
-msgstr "路徑"
-
-
-msgid "Object path"
-msgstr "物體路徑"
-
-
-msgid "Object Paths"
-msgstr "物體路徑"
-
-
-msgid "Collection of object paths"
-msgstr "物體路徑的集合"
 
 
 msgid "Animation Data"
@@ -2776,6 +2752,14 @@ msgid "Vertex Color"
 msgstr "頂點色彩"
 
 
+msgid "Round"
+msgstr "圓"
+
+
+msgid "Flat"
+msgstr "扁平"
+
+
 msgid "Direction"
 msgstr "方向"
 
@@ -2934,6 +2918,30 @@ msgstr "頂點色彩係數"
 
 msgid "Factor used to mix vertex color to get final color"
 msgstr "這個係數用於混合頂點色彩以獲得最終色彩"
+
+
+msgid "Object Path"
+msgstr "物體路徑"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Alembic 封存檔內的物體路徑"
+
+
+msgid "Path"
+msgstr "路徑"
+
+
+msgid "Object path"
+msgstr "物體路徑"
+
+
+msgid "Object Paths"
+msgstr "物體路徑"
+
+
+msgid "Collection of object paths"
+msgstr "物體路徑的集合"
 
 
 msgid "Background Image"
@@ -9062,14 +9070,6 @@ msgid "Time"
 msgstr "時間"
 
 
-msgid "Noise Method"
-msgstr "噪訊方法"
-
-
-msgid "Wavelet"
-msgstr "波"
-
-
 msgid "Compression"
 msgstr "壓縮"
 
@@ -9992,10 +9992,6 @@ msgstr "筆觸位於 2D 空間 (但含有特殊「影像」縮放)"
 
 msgid "End Cap"
 msgstr "終末蓋帽"
-
-
-msgid "Flat"
-msgstr "扁平"
 
 
 msgid "Material Index"
@@ -11655,10 +11651,6 @@ msgstr "結束映射類型"
 
 msgid "Start Mapping Type"
 msgstr "開始映射類型"
-
-
-msgid "Round"
-msgstr "圓"
 
 
 msgid "Profile"
@@ -13959,14 +13951,6 @@ msgid "Cycles object settings"
 msgstr "Cycles 物體設定"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Cycles 可見性設定"
-
-
-msgid "Cycles visibility settings"
-msgstr "Cycles 可見性設定"
-
-
 msgid "Data"
 msgstr "資料"
 
@@ -14081,6 +14065,10 @@ msgstr "物體模擬中將物體作為場域的設定"
 
 msgid "Faces"
 msgstr "面"
+
+
+msgid "Holdout"
+msgstr "堅持"
 
 
 msgid "Location of the object"
@@ -16772,6 +16760,14 @@ msgid "Cycles world settings"
 msgstr "Cycles 世界設定"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Cycles 可見性設定"
+
+
+msgid "Cycles visibility settings"
+msgstr "Cycles 可見性設定"
+
+
 msgid "Lighting"
 msgstr "光照"
 
@@ -17622,10 +17618,6 @@ msgstr "此點為何頂點群組成員之其權重"
 
 msgid "Point selected"
 msgstr "選取的點"
-
-
-msgid "Holdout"
-msgstr "堅持"
 
 
 msgid "Active Object"
@@ -46767,26 +46759,6 @@ msgid "Rotation in quaternions (keep normalized)"
 msgstr "四元數旋轉 (保持歸一化)"
 
 
-msgid "Zmask Negate"
-msgstr "Z 遮罩負向"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "對於 Z 遮罩，僅算繪實體 Z 值之後的物體，而不是之前"
-
-
-msgid "All Z"
-msgstr "全部 Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "為了實現遮罩，將不可見層上的實體面填入 Z 值"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "在此層中算繪光暈 (在實體之上)"
-
-
 msgid "Deliver full combined RGBA buffer"
 msgstr "傳遞完整合成的 RGBA 緩衝"
 
@@ -46905,14 +46877,6 @@ msgstr "線股"
 
 msgid "Render Strands in this Layer"
 msgstr "在此層中算繪線股"
-
-
-msgid "Zmask"
-msgstr "Z 遮罩"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "僅算繪位於實體 Z 值之前的物體"
 
 
 msgid "Result of rendering, including all layers and passes"

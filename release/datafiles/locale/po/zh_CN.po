@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -383,30 +383,6 @@ msgstr "用户插件"
 
 msgid "Collection of add-ons"
 msgstr "插件集合"
-
-
-msgid "Object Path"
-msgstr "物体路径"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Alembic存档中物体的路径"
-
-
-msgid "Path"
-msgstr "路径"
-
-
-msgid "Object path"
-msgstr "物体路径"
-
-
-msgid "Object Paths"
-msgstr "物体路径"
-
-
-msgid "Collection of object paths"
-msgstr "物体路径集合"
 
 
 msgid "Animation Data"
@@ -983,10 +959,6 @@ msgstr "骨架活动编辑骨骼"
 
 msgid "Asset Library Reference"
 msgstr "资产库引用"
-
-
-msgid "Identifier to refere to the asset library"
-msgstr "指向资产库的标识符"
 
 
 msgid "Asset Data"
@@ -3473,6 +3445,14 @@ msgid "Use always Vertex Color mode"
 msgstr "始终使用顶点色模式"
 
 
+msgid "Round"
+msgstr "圆(四舍五入)"
+
+
+msgid "Flat"
+msgstr "平展"
+
+
 msgid "Curve Jitter"
 msgstr "曲线抖动"
 
@@ -4123,6 +4103,30 @@ msgstr "几何属性中的颜色值"
 
 msgid "RGBA color in scene linear color space"
 msgstr "场景线性色彩空间中的 RGBA 颜色"
+
+
+msgid "Object Path"
+msgstr "物体路径"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Alembic存档中物体的路径"
+
+
+msgid "Path"
+msgstr "路径"
+
+
+msgid "Object path"
+msgstr "物体路径"
+
+
+msgid "Object Paths"
+msgstr "物体路径"
+
+
+msgid "Collection of object paths"
+msgstr "物体路径集合"
 
 
 msgid "Background Image"
@@ -6002,28 +6006,28 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "指定现有变换和动作通道的组合方式"
 
 
-msgid "Before Original"
-msgstr "初始前"
+msgid "Before Original (Full)"
+msgstr "初始前(完整)"
 
 
-msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "在初始转换之前应用动作通道，就像应用于具有对齐继承缩放的假想父级一样"
+msgid "Before Original (Aligned)"
+msgstr "初始前(对齐)"
 
 
-msgid "After Original"
-msgstr "初始后"
+msgid "Before Original (Split Channels)"
+msgstr "初始前(拆分通道)"
 
 
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
-msgstr "在初始转换之后应用动作通道，就像应用于具有对齐继承缩放的假想子级一样"
+msgid "After Original (Full)"
+msgstr "初始后(完整)"
 
 
-msgid "After Original (Full Scale)"
-msgstr "初始后(全比例)"
+msgid "After Original (Aligned)"
+msgstr "初始后(对齐)"
 
 
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
-msgstr "在初始转换后应用动作通道，就像应用于具有完全继承缩放的假想子级一样。此模式可以创建剪切，并且仅提供向后兼容性"
+msgid "After Original (Split Channels)"
+msgstr "初始后(拆分通道)"
 
 
 msgid "Target object"
@@ -6458,8 +6462,16 @@ msgid "Add euler component values together"
 msgstr "一起添加欧拉分量值"
 
 
+msgid "Before Original"
+msgstr "初始前"
+
+
 msgid "Apply copied rotation before original, as if the constraint target is a parent"
 msgstr "在初始旋转前应用复制旋转，仿佛目标物体为原物体的父级"
+
+
+msgid "After Original"
+msgstr "初始后"
 
 
 msgid "Apply copied rotation after original, as if the constraint target is a child"
@@ -6554,48 +6566,24 @@ msgid "Replace the original transformation with copied"
 msgstr "使用复制替换原始变换"
 
 
-msgid "Before Original (Full)"
-msgstr "初始前(完整)"
-
-
 msgid "Apply copied transformation before original, using simple matrix multiplication as if the constraint target is a parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
 msgstr "在原始之前应用被复制转换，使用简单的矩阵乘法，就好像约束目标为完全继承缩放模式中的父级一样。将旋转和非均匀缩放组合时将创建切变"
-
-
-msgid "Before Original (Aligned)"
-msgstr "初始前(对齐)"
 
 
 msgid "Apply copied transformation before original, as if the constraint target is a parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
 msgstr "在原始之前应用被复制变换，就好像约束目标为对齐继承缩放模式中的父级一样。这有效地使用完整的位置以及旋转和缩放的拆分通道"
 
 
-msgid "Before Original (Split Channels)"
-msgstr "初始前(拆分通道)"
-
-
 msgid "Apply copied transformation before original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
 msgstr "在原始之前应用被复制变换，分开处理位置、旋转和缩放，类似于三个复制约束的序列"
-
-
-msgid "After Original (Full)"
-msgstr "初始后(完整)"
 
 
 msgid "Apply copied transformation after original, using simple matrix multiplication as if the constraint target is a child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
 msgstr "在原始后应用被复制变换，使用简单的矩阵乘法，就好像约束目标为完全继承缩放模式下的子级一样。将旋转和不均匀缩放组合时创建切变"
 
 
-msgid "After Original (Aligned)"
-msgstr "初始后(对齐)"
-
-
 msgid "Apply copied transformation after original, as if the constraint target is a child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
 msgstr "在原始之后应用被复制变换，就好像约束目标为对齐继承缩放模式中的子级一样。这有效地使用完整的位置以及旋转和缩放的拆分通道"
-
-
-msgid "After Original (Split Channels)"
-msgstr "初始后(拆分通道)"
 
 
 msgid "Apply copied transformation after original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
@@ -13071,18 +13059,6 @@ msgid "Animation time of noise"
 msgstr "噪波的动画时间"
 
 
-msgid "Noise Method"
-msgstr "噪波方法"
-
-
-msgid "Noise method which is used during the high-res simulation"
-msgstr "创建高精度烟雾时使用的噪波方法"
-
-
-msgid "Wavelet"
-msgstr "波浪"
-
-
 msgid "Compression"
 msgstr "压缩"
 
@@ -14983,10 +14959,6 @@ msgid "Use Masks in Render"
 msgstr "在渲染中使用遮罩"
 
 
-msgid "Include the mask layers when rendering the viewlayer"
-msgstr "渲染视图层时包括遮罩层"
-
-
 msgid "Vertex Paint Opacity"
 msgstr "顶点绘制不透明度"
 
@@ -15273,10 +15245,6 @@ msgstr "笔画末端风格"
 
 msgid "Rounded"
 msgstr "圆形"
-
-
-msgid "Flat"
-msgstr "平展"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -15735,6 +15703,10 @@ msgstr "Gizmo属性"
 
 msgid "Input properties of an Gizmo"
 msgstr "Gizmo输入属性"
+
+
+msgid "Modifier affecting the Grease Pencil object"
+msgstr "修改器影响蜡笔物体"
 
 
 msgid "Modifier name"
@@ -16441,6 +16413,18 @@ msgstr "生成的笔画的最小遮挡数量"
 
 msgid "The strength value for the generate strokes"
 msgstr "生成笔画的强度值"
+
+
+msgid "Overscan"
+msgstr "过扫描"
+
+
+msgid "Generate strokes from the objects in this collection"
+msgstr "从该集合中的物体生成笔画"
+
+
+msgid "Generate strokes from this object"
+msgstr "从该物体生成笔画"
 
 
 msgid "Source Type"
@@ -20006,10 +19990,6 @@ msgstr "倒角模式"
 
 msgid "Determine how to build the curve's bevel geometry"
 msgstr "确定如何构建曲线的倒角几何体"
-
-
-msgid "Round"
-msgstr "圆(四舍五入)"
 
 
 msgid "Use circle for the section of the curve's bevel geometry"
@@ -23626,14 +23606,6 @@ msgid "Cycles object settings"
 msgstr "Cycles 物体设置"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Cycles 可见性设置"
-
-
-msgid "Cycles visibility settings"
-msgstr "Cycles 可见性设置"
-
-
 msgid "Data"
 msgstr "数据"
 
@@ -23892,6 +23864,18 @@ msgstr "来自集的基础"
 
 msgid "Object comes from a background set"
 msgstr "来自背景集的物体"
+
+
+msgid "Holdout"
+msgstr "阻隔"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "渲染物体作为阻隔或遮罩，在图像中创建alpha值为零的部分，在合成中用真实镜头或其他渲染来填充"
+
+
+msgid "Shadow Catcher"
+msgstr "阴影捕捉"
 
 
 msgid "Line art settings for the object"
@@ -27431,6 +27415,14 @@ msgid "Cycles world settings"
 msgstr "Cycles 世界设置"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Cycles 可见性设置"
+
+
+msgid "Cycles visibility settings"
+msgstr "Cycles 可见性设置"
+
+
 msgid "Lighting"
 msgstr "光照"
 
@@ -30069,10 +30061,6 @@ msgid "Temporarily hide in viewport"
 msgstr "暂时在视图层隐藏"
 
 
-msgid "Holdout"
-msgstr "阻隔"
-
-
 msgid "Mask out objects in collection from view layer"
 msgstr "在视图层屏蔽集合中的物体"
 
@@ -31690,6 +31678,10 @@ msgstr "节点"
 
 msgid "Node Color Specials"
 msgstr "指定节点颜色"
+
+
+msgid "Assets"
+msgstr "资产"
 
 
 msgid "Outliner Context Menu"
@@ -37157,6 +37149,14 @@ msgid "Weld modifier"
 msgstr "焊接修改器"
 
 
+msgid "Only Loose Edges"
+msgstr "仅松散边"
+
+
+msgid "Collapse edges without faces, cloth sewing edges"
+msgstr "塌陷没有在面上的边, 布料缝合边"
+
+
 msgid "Mode defines the merge rule"
 msgstr "定义合并规则的模式"
 
@@ -41618,6 +41618,30 @@ msgid "Curve Reverse"
 msgstr "曲线反转"
 
 
+msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
+msgstr "控制柄可以移动到任何位置，并且不会影响点的另一个控制柄"
+
+
+msgid "The location is automatically calculated to be smooth"
+msgstr "自动计算位置为平滑"
+
+
+msgid "The location is calculated to point to the next/previous control point"
+msgstr "位置经计算后指向下一个/前一个控制点"
+
+
+msgid "The location is constrained to point in the opposite direction as the other handle"
+msgstr "限制位置指向与另一个控制柄相反的方向"
+
+
+msgid "Set Handle Type"
+msgstr "设置控制柄类型"
+
+
+msgid "Whether to update left and right handles"
+msgstr "是否更新左右手柄"
+
+
 msgid "Curve Spiral"
 msgstr "曲线螺旋"
 
@@ -45495,11 +45519,6 @@ msgid "Trigger a reread of the assets"
 msgstr "触发重新读取资产"
 
 
-msgctxt "Operator"
-msgid "Mark Asset"
-msgstr "标记资产"
-
-
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
 msgstr "借助可自定义的元数据(如预览、描述和标记)，通过资产浏览器更轻松地重用选定的数据块"
 
@@ -49161,10 +49180,6 @@ msgid "Keep original"
 msgstr "保留原有"
 
 
-msgid "Keep original textures files if possible. WARNING: if you use more than one texture, where pbr standard requires only one, only one texture will be used.This can lead to unexpected results"
-msgstr "如果可能，保留原始纹理文件。警告：如果您使用多个纹理，而pbr 标准只需要一个纹理，则仅使用一个纹理。这可能导致意外的结果"
-
-
 msgid "Punctual Lights"
 msgstr "精确灯光"
 
@@ -49514,15 +49529,6 @@ msgstr "静止帧"
 
 msgid "Write the rest state at the first frame"
 msgstr "在第一帧写入静止状态"
-
-
-msgctxt "Operator"
-msgid "Register File Association"
-msgstr "注册文件关联"
-
-
-msgid "Use this installation for .blend files and to display thumbnails"
-msgstr "使用此次安装关联.blend 文件并显示缩略图"
 
 
 msgctxt "Operator"
@@ -61446,10 +61452,6 @@ msgid "Flash On Transfer"
 msgstr "切换时闪烁"
 
 
-msgid "Flash the target object when transfering the mode"
-msgstr "目标物体切换模式时闪烁"
-
-
 msgctxt "Operator"
 msgid "Apply Object Transform"
 msgstr "应用物体变换"
@@ -62354,14 +62356,6 @@ msgstr "ID 数据操作"
 
 msgid "Unlink"
 msgstr "取消关联"
-
-
-msgid "Mark Asset"
-msgstr "标记资产"
-
-
-msgid "Clear Asset"
-msgstr "清理资产"
 
 
 msgid "Make Local"
@@ -64661,6 +64655,15 @@ msgstr "删除资产库"
 
 msgid "Remove a path to a .blend file, so the Asset Browser will not attempt to show it anymore"
 msgstr "删除指向一个 .blend 文件的路径，以便资产浏览器不再尝试显示它"
+
+
+msgctxt "Operator"
+msgid "Register File Association"
+msgstr "注册文件关联"
+
+
+msgid "Use this installation for .blend files and to display thumbnails"
+msgstr "使用此次安装关联.blend 文件并显示缩略图"
 
 
 msgctxt "Operator"
@@ -67652,10 +67655,6 @@ msgstr "保持图像的原始大小"
 
 msgid "Set View Transform"
 msgstr "设置视图变换"
-
-
-msgid "Set appropriate view transform based on media colorspace"
-msgstr "根据媒体色彩空间设置适当的视图变换"
 
 
 msgctxt "Operator"
@@ -74738,6 +74737,10 @@ msgid "Beam Shape"
 msgstr "光束形状"
 
 
+msgid "Fast GI Approximation"
+msgstr "快速GI近似"
+
+
 msgid "Shadow Terminator"
 msgstr "阴影分界线"
 
@@ -74784,10 +74787,6 @@ msgstr "焦散"
 
 msgid "Clamping"
 msgstr "钳制"
-
-
-msgid "Fast GI Approximation"
-msgstr "快速GI近似"
 
 
 msgid "Max Bounces"
@@ -78231,10 +78230,6 @@ msgid "Python Scripts Directory"
 msgstr "Python 脚本路经"
 
 
-msgid "Alternate script path, matching the default layout with subdirectories: startup, addons, modules, and presets (requires restart)"
-msgstr "备用脚本路径，匹配默认布局与子路径：启动、插件、模块和预设(需要重新启动)"
-
-
 msgid "Hide Dot Files/Data-Blocks"
 msgstr "隐藏点文件/数据块"
 
@@ -79885,6 +79880,10 @@ msgid "File Entry"
 msgstr "文件条目"
 
 
+msgid "TEMPORARY, DO NOT USE - File data used to refer to the asset"
+msgstr "临时， 不要使用 - 用于指向资产的文件数据"
+
+
 msgid "The local data-block this asset represents; only valid if that is a data-block in this file"
 msgstr "此资产所代表的本地数据块；只有当这是此文件中的数据块时，才有效"
 
@@ -80205,24 +80204,16 @@ msgid "Scale the distance between volume shader samples when rendering the volum
 msgstr "渲染体积材质时，体积着色器采样间的距离。数值越小，精度越高，细节越多，但是会增加渲染时间。"
 
 
+msgid "AO Distance"
+msgstr "AO距离"
+
+
 msgid "Dicing Scale"
 msgstr "分块比例"
 
 
 msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
 msgstr "场景切开率的乘数 (位于细分面板)"
-
-
-msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
-msgstr "渲染物体作为阻隔或遮罩，在图像中创建alpha值为零的部分，在合成中用真实镜头或其他渲染来填充"
-
-
-msgid "Shadow Catcher"
-msgstr "阴影捕捉"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "仅渲染此物体的影子，用于和素材合成渲染"
 
 
 msgid "Motion Steps"
@@ -80411,38 +80402,6 @@ msgstr "间接透射"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "间接透射光降噪"
-
-
-msgid "Debug BVH Intersections"
-msgstr "调试BVH交错"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "存储调试BVH交错"
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "调试BVH遍历实例"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "存储调试BVH遍历实例"
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "调试BVH遍历切点"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "存储调试BVH遍历切点"
-
-
-msgid "Debug Ray Bounces"
-msgstr "调试光线反弹"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "存储调试光线弹跳通道"
 
 
 msgid "Debug Render Time"
@@ -81817,10 +81776,6 @@ msgid "Data Layers"
 msgstr "数据层"
 
 
-msgid "Export normals, UVs, vertex colors and materials for formats that support it significantly increasing filesize"
-msgstr "为受支持的格式导出法向、UV、顶点颜色和材质，会显著增加文件大小"
-
-
 msgid "Copy Textures"
 msgstr "复制纹理"
 
@@ -82057,36 +82012,12 @@ msgid "Current window matrix"
 msgstr "当前窗口矩阵"
 
 
-msgid "Zmask Negate"
-msgstr "反向 Z 遮罩"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "对于Z遮罩, 仅渲染固定Z值之后而不是之前的物体"
-
-
 msgid "View layer name"
 msgstr "视图层名称"
 
 
-msgid "All Z"
-msgstr "所有 Z 通道"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "为了实现遮罩, 将不同层上的实体面均填充为 Z 值"
-
-
 msgid "Render Ambient Occlusion in this Layer"
 msgstr "在当前层中渲染AO"
-
-
-msgid "Render edge-enhance in this layer (only works for solid faces)"
-msgstr "在当前层中渲染强化边(仅适用于实体面)"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "在当前层中渲染光晕(位于实体的顶部)"
 
 
 msgid "Render motion blur in this Layer, if enabled in the scene"
@@ -82223,22 +82154,6 @@ msgstr "在当前层中渲染发股"
 
 msgid "Render volumes in this Layer"
 msgstr "渲染该层中的体积"
-
-
-msgid "Zmask"
-msgstr "Z 遮罩层"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "仅渲染位于固定 Z 值前的物体"
-
-
-msgid "Z-Transparent"
-msgstr "Z 透明"
-
-
-msgid "Render Z-transparent faces in this layer (on top of Solid and Halos)"
-msgstr "在当前层中渲染Z透视(位于实体和光晕的顶部)"
 
 
 msgid "Render Passes"
@@ -84177,10 +84092,6 @@ msgid "Enable motion blur effect (only in camera view)"
 msgstr "启用运动模糊效果(仅在摄像机视图中)"
 
 
-msgid "Overscan"
-msgstr "过扫描"
-
-
 msgid "Internally render past the image border to avoid screen-space effects disappearing"
 msgstr "内部渲染过程中将计算超过图像边界的内容，以避免屏幕空间效果的缺失"
 
@@ -84883,8 +84794,44 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "用于控制其他片段速度的序列片段"
 
 
+msgid "Speed Control"
+msgstr "速度控制"
+
+
+msgid "Speed control method"
+msgstr "速度控制方法"
+
+
+msgid "Adjust input playback speed, so its duration fits strip length"
+msgstr "调整输入播放速度，使其持续时间匹配片段长度"
+
+
+msgid "Multiply with the speed factor"
+msgstr "乘以速度系数"
+
+
+msgid "Frame number of the input strip"
+msgstr "输入片段的帧数"
+
+
+msgid "Percentage of the input strip length"
+msgstr "输入片段长度的百分比"
+
+
+msgid "Multiply Factor"
+msgstr "乘数因子"
+
+
 msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
 msgstr "将当前序列的速度与此值相乘, 或将当前帧重新映射至此帧"
+
+
+msgid "Frame number of input strip"
+msgstr "输入片段的帧数"
+
+
+msgid "Percentage of input strip length"
+msgstr "输入片段长度的百分比"
 
 
 msgid "Frame Interpolation"
@@ -91414,28 +91361,12 @@ msgid "Time Step"
 msgstr "时间步长"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "笔画放置:"
-
-
-msgid "Draw stroke at 3D cursor location"
-msgstr "在 3D 游标位置绘制笔画"
+msgid "Stroke Placement (2D View)"
+msgstr "笔画放置(2D视图)"
 
 
 msgid "Stick stroke to the view"
 msgstr "将笔画粘在视图上"
-
-
-msgid "Stick stroke to surfaces"
-msgstr "将线条贴附到物体表面"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "笔画放置(序列编辑器预览)"
-
-
-msgid "Stroke Placement (2D View)"
-msgstr "笔画放置(2D视图)"
 
 
 msgid "Annotation Stroke Placement (3D View)"
@@ -91444,6 +91375,14 @@ msgstr "标注笔画放置 (3D 视图)"
 
 msgid "How annotation strokes are orientated in 3D space"
 msgstr "指定标注笔画在三维空间如何定位"
+
+
+msgid "Draw stroke at 3D cursor location"
+msgstr "在 3D 游标位置绘制笔画"
+
+
+msgid "Stick stroke to surfaces"
+msgstr "将线条贴附到物体表面"
 
 
 msgid "Annotation Stroke Thickness"
@@ -93651,6 +93590,10 @@ msgid "Volume object render settings"
 msgstr "体积物体渲染设置"
 
 
+msgid "Specify volume density and step size in object or world space"
+msgstr "指定物体或世界空间中的体积密度和步长大小"
+
+
 msgid "Keep volume opacity and detail the same regardless of object scale"
 msgstr "无视物体的缩放，保持体积的透明度和细节程度不变"
 
@@ -93857,6 +93800,14 @@ msgstr "远裁距离的VR视口"
 
 msgid "VR viewport near clipping distance"
 msgstr "近裁距离的VR视口"
+
+
+msgid "Absolute Tracking"
+msgstr "绝对跟踪"
+
+
+msgid "Use unadjusted location/rotation as defined by the XR runtime"
+msgstr "使用XR运行时定义的未经调整的位置/旋转"
 
 
 msgid "Positional Tracking"
@@ -95171,10 +95122,6 @@ msgid "AO Factor"
 msgstr "AO 系数"
 
 
-msgid "AO Distance"
-msgstr "AO距离"
-
-
 msgid "Incompatible output node"
 msgstr "不兼容的输出节点"
 
@@ -95481,10 +95428,6 @@ msgid "No animation data found to create asset from"
 msgstr "未发现创建资产的动画数据"
 
 
-msgid "Whaaaat who is using our brand new asset?"
-msgstr "谁在使用我们全新的资产？"
-
-
 msgid "Did not find any assets on clipboard"
 msgstr "在剪贴板上未找到任何资产"
 
@@ -95725,10 +95668,6 @@ msgstr "此资产已存储在当前blend文件中"
 
 msgid "Unable to find any running process"
 msgstr "找不到任何运行中的进程"
-
-
-msgid "Blender subprocess exited with error code %d"
-msgstr "Blender子进程退出错误代码 %d"
 
 
 msgid "Selection pair not found"
@@ -96292,6 +96231,10 @@ msgstr "更新路径"
 msgctxt "Operator"
 msgid "Calculate..."
 msgstr "计算..."
+
+
+msgid "Collection Mask"
+msgstr "集合遮罩"
 
 
 msgctxt "Operator"
@@ -99503,6 +99446,10 @@ msgid "Muted Strips"
 msgstr "被屏蔽片段"
 
 
+msgid "Snap to Strips"
+msgstr "吸附到片段"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "设置预览范围为片段"
@@ -99809,10 +99756,6 @@ msgstr "此片段下需要两个或更多的通道"
 
 msgid "No active context"
 msgstr "无活动上下文"
-
-
-msgid "No active viewer node."
-msgstr "无活动查看器节点。"
 
 
 msgid "<no object>"
@@ -103126,10 +103069,6 @@ msgid "%s, not exact since frame %i"
 msgstr "%s, 未精确匹配, 自第 %i 帧起"
 
 
-msgid "Assets"
-msgstr "资产"
-
-
 msgid "Warning"
 msgstr "警告"
 
@@ -103973,10 +103912,6 @@ msgstr "展示原始姿态的姿态库"
 
 msgid "Tab: show blended pose"
 msgstr "Tab: 显示混合姿态"
-
-
-msgid "Internal pose library error, cancelling operator"
-msgstr "内部姿态库错误，取消操作"
 
 
 msgid "No active Keying Set to use"
@@ -105764,10 +105699,6 @@ msgid "No selected vertex"
 msgstr "无选中顶点"
 
 
-msgid "Selected faces must be triangles or quads"
-msgstr "将相邻三角面合并为四角面"
-
-
 msgid "Active mesh does not have shape keys"
 msgstr "活动网格没有形态键"
 
@@ -106642,34 +106573,6 @@ msgid "Could not create a library override from proxy '%s' (might use already lo
 msgstr "无法从代理 '%s' 创建库重写(可能已使用本地数据?)"
 
 
-msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "移动鼠标以更改体素大小。LBM：确认大小，ESC/RMB：取消"
-
-
-msgid "Voxel remesher cannot run with a voxel size of 0.0"
-msgstr "不能对大小为 0.0 的体素使用体素网格重构"
-
-
-msgid "Voxel remesher failed to create mesh"
-msgstr "体素网格重构创建网格失败"
-
-
-msgid "The remesher cannot worked on linked or override data"
-msgstr "网格重构器无法作用于已关联或覆写数据"
-
-
-msgid "The remesher cannot run from edit mode"
-msgstr "不能从编辑模式运行网格重构"
-
-
-msgid "The remesher cannot run with dyntopo activated"
-msgstr "不能在激活动态拓扑时运行网格重构"
-
-
-msgid "The remesher cannot run with a Multires modifier in the modifier stack"
-msgstr "网格重构不能与多级精度修改器同时使用"
-
-
 msgid "Select Collection"
 msgstr "选择集合"
 
@@ -107338,10 +107241,6 @@ msgid "Cannot edit library linked object"
 msgstr "无法编辑与库关联的物体"
 
 
-msgid "Cannot edit hidden obect"
-msgstr "无法编辑隐藏物体"
-
-
 msgid "expected a view3d region & editmesh"
 msgstr "期望一个 3D 视图区域和编辑网格"
 
@@ -107865,18 +107764,6 @@ msgstr "未指定父级目录"
 
 msgid "Could not create new folder name"
 msgstr "无法新建文件夹名称"
-
-
-msgid "File association registered"
-msgstr "文件关联已注册"
-
-
-msgid "Unable to register file association"
-msgstr "无法注册文件关联"
-
-
-msgid "Operator Not supported"
-msgstr "不受支持的操作"
 
 
 msgid "'%s' given path is OS-invalid, creating '%s' path instead"
@@ -109053,6 +108940,14 @@ msgid "Open Recent"
 msgstr "打开近期文件"
 
 
+msgid "File association registered"
+msgstr "文件关联已注册"
+
+
+msgid "Unable to register file association"
+msgstr "无法注册文件关联"
+
+
 msgid "Create object instance from object-data"
 msgstr "从对象数据创建对象实例"
 
@@ -109753,6 +109648,10 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "轨迹球: %.2f %.2f %s"
 
 
+msgid "Auto IK Length: %d"
+msgstr "自动 IK 长度: %d"
+
+
 msgid "right"
 msgstr "右"
 
@@ -109852,6 +109751,10 @@ msgstr "[E] - 禁用过冲"
 
 msgid "[E] - Enable overshoot"
 msgstr "[E] - 启用过冲"
+
+
+msgid "Overshoot disabled"
+msgstr "已禁用过冲"
 
 
 msgid "[Shift] - Precision active"
@@ -109990,12 +109893,20 @@ msgid "Overlapping Edges As Contour"
 msgstr "重叠边作为轮廓"
 
 
+msgid "Collection Masks"
+msgstr "遮罩集合"
+
+
 msgid "Face Mark Filtering"
 msgstr "面标记过滤"
 
 
 msgid "Chain"
 msgstr "链"
+
+
+msgid "Geometry Space"
+msgstr "几何空间"
 
 
 msgid "Geometry Threshold"
@@ -111216,6 +111127,11 @@ msgid "Settings are in the particle tab"
 msgstr "设置位于粒子选项卡"
 
 
+msgctxt "Operator"
+msgid "Convert to Mesh"
+msgstr "转换为网格"
+
+
 msgid "Built without Remesh modifier"
 msgstr "不使用洋面修改器进行构建"
 
@@ -111988,10 +111904,6 @@ msgid "Don't Save"
 msgstr "不保存"
 
 
-msgid "untitled.blend"
-msgstr "untitled.blend"
-
-
 msgid "unable to open the file"
 msgstr "无法打开文件"
 
@@ -112046,14 +111958,6 @@ msgstr "未设置上下文窗口"
 
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
 msgstr "引擎 '%s' 对场景 '%s' (可能需要安装或启用一个插件) 不可用"
-
-
-msgid "Library %s needs overrides resync."
-msgstr "库 %s 需要重新同步覆写。"
-
-
-msgid "%d libraries and %d linked data-blocks are missing, please check the Info and Outliner editors for details"
-msgstr "%d 库和 %d 已关联数据块丢失，详情请查看信息和大纲编辑器"
 
 
 msgid "%d libraries have overrides needing resync (auto resynced in %.0fm%.2fs),  please check the Info editor for details"

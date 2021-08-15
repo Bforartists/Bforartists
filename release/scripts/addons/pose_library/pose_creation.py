@@ -305,7 +305,7 @@ def create_pose_asset(
 ) -> Optional[Action]:
     """Create a single-frame Action containing only the pose of the given bones.
 
-    DOES mark as asset, DOES NOT add asset metadata.
+    DOES mark as asset, DOES NOT configure asset metadata.
     """
 
     creator = PoseActionCreator(params)
@@ -313,7 +313,7 @@ def create_pose_asset(
     if pose_action is None:
         return None
 
-    functions.asset_mark(context, pose_action)
+    pose_action.asset_mark()
     return pose_action
 
 

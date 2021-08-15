@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -376,30 +376,6 @@ msgstr "Uživatelské doplňky"
 
 msgid "Collection of add-ons"
 msgstr "Kolekce doplňků"
-
-
-msgid "Object Path"
-msgstr "Cesta k objektu"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Cesta objektu uvnitř alembického archivu"
-
-
-msgid "Path"
-msgstr "Cesta"
-
-
-msgid "Object path"
-msgstr "Cesta k objektu"
-
-
-msgid "Object Paths"
-msgstr "Cesty k objektům"
-
-
-msgid "Collection of object paths"
-msgstr "Kolekce cest objektů"
 
 
 msgid "Animation Data"
@@ -2526,6 +2502,14 @@ msgid "Vertex Color"
 msgstr "Vertex barva"
 
 
+msgid "Round"
+msgstr "Zaoblené"
+
+
+msgid "Flat"
+msgstr "Ploché"
+
+
 msgid "Curve Jitter"
 msgstr "Chvění křivky"
 
@@ -2908,6 +2892,30 @@ msgstr "Použít Sílu Tlaku"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Použít tlak tabletu pro sílu bravy"
+
+
+msgid "Object Path"
+msgstr "Cesta k objektu"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Cesta objektu uvnitř alembického archivu"
+
+
+msgid "Path"
+msgstr "Cesta"
+
+
+msgid "Object path"
+msgstr "Cesta k objektu"
+
+
+msgid "Object Paths"
+msgstr "Cesty k objektům"
+
+
+msgid "Collection of object paths"
+msgstr "Kolekce cest objektů"
 
 
 msgid "Background Image"
@@ -4147,14 +4155,6 @@ msgid "Mix Mode"
 msgstr "Mixážní režim"
 
 
-msgid "Before Original"
-msgstr "Před Původním"
-
-
-msgid "After Original"
-msgstr "Po Původním"
-
-
 msgid "Target object"
 msgstr "Cílový objekt"
 
@@ -4477,6 +4477,14 @@ msgstr "Určete, jak se zkopírované a existující rotace kombinují"
 
 msgid "Replace the original rotation with copied"
 msgstr "Nahrazení původního otočení zkopírovanými"
+
+
+msgid "Before Original"
+msgstr "Před Původním"
+
+
+msgid "After Original"
+msgstr "Po Původním"
 
 
 msgid "Copy Scale Constraint"
@@ -7688,14 +7696,6 @@ msgid "Time"
 msgstr "Čas"
 
 
-msgid "Noise Method"
-msgstr "Metoda Šumu"
-
-
-msgid "Wavelet"
-msgstr "Vlnka"
-
-
 msgid "Compression"
 msgstr "Komprese"
 
@@ -8094,10 +8094,6 @@ msgstr "Přidat obrázek"
 
 msgid "End Cap"
 msgstr "Poslední frame"
-
-
-msgid "Flat"
-msgstr "Ploché"
 
 
 msgid "Material Index"
@@ -9628,10 +9624,6 @@ msgid "Bevel Depth"
 msgstr "Autovyhlazení"
 
 
-msgid "Round"
-msgstr "Zaoblené"
-
-
 msgid "Profile"
 msgstr "Profil"
 
@@ -11058,14 +11050,6 @@ msgid "Constraints affecting the transformation of the object"
 msgstr "Automaticky vkládat klíče objektu a Action Ipo křivky"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Vlastnosti zaoblení"
-
-
-msgid "Cycles visibility settings"
-msgstr "Částicové systémy"
-
-
 msgid "Data"
 msgstr "Data"
 
@@ -11172,6 +11156,10 @@ msgstr "První frame animace"
 
 msgid "Faces"
 msgstr "Plochy"
+
+
+msgid "Holdout"
+msgstr "Vydržet"
 
 
 msgid "Location of the object"
@@ -12963,6 +12951,14 @@ msgid "Cycles world settings"
 msgstr "Cycles nastavení světu"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Vlastnosti zaoblení"
+
+
+msgid "Cycles visibility settings"
+msgstr "Částicové systémy"
+
+
 msgid "Lighting"
 msgstr "Osvětlení"
 
@@ -14206,10 +14202,6 @@ msgstr "Vyloučit ze zobrazovací vrstvy"
 
 msgid "Hide in Viewport"
 msgstr "Schovat ve 3D zobrazení"
-
-
-msgid "Holdout"
-msgstr "Vydržet"
 
 
 msgid "Mask out objects in collection from view layer"
@@ -20490,11 +20482,6 @@ msgstr "Obrátit směr"
 msgctxt "Operator"
 msgid "Symmetrize"
 msgstr "Symetrie"
-
-
-msgctxt "Operator"
-msgid "Mark Asset"
-msgstr "Označit Asset"
 
 
 msgctxt "Operator"
@@ -28379,10 +28366,6 @@ msgstr "Odstranit Data-Blok"
 
 msgid "Unlink"
 msgstr "Odpojit"
-
-
-msgid "Mark Asset"
-msgstr "Označit Asset"
 
 
 msgid "Make Local"
@@ -37154,16 +37137,8 @@ msgid "Rotation in quaternions (keep normalized)"
 msgstr "Rotace"
 
 
-msgid "Zmask Negate"
-msgstr "Negativní"
-
-
 msgid "View layer name"
 msgstr "Název zobrazovací vrstvy"
-
-
-msgid "All Z"
-msgstr "Vše Z"
 
 
 msgid "Render Ambient Occlusion in this Layer"
@@ -37236,10 +37211,6 @@ msgstr "Vlákna"
 
 msgid "Render Strands in this Layer"
 msgstr "Přerenderovat tuto vrstvu"
-
-
-msgid "Z-Transparent"
-msgstr "Z-Průhlednost"
 
 
 msgid "Bake normals"
@@ -47526,10 +47497,6 @@ msgstr "Nebyly vybrány žádné hrany, které lze otočit"
 
 msgid "No selected vertex"
 msgstr "Žádný vybraný vrchol"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Vybrané plochy musí být trojúhelníky nebo čtyřhrany"
 
 
 msgid "Mouse path too short"

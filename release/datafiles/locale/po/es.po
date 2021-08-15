@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -380,30 +380,6 @@ msgstr "Complementos del usuario"
 
 msgid "Collection of add-ons"
 msgstr "Colección de complementos"
-
-
-msgid "Object Path"
-msgstr "Ruta del objeto"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Ruta de un objeto dentro del archivo Alembic"
-
-
-msgid "Path"
-msgstr "Ruta"
-
-
-msgid "Object path"
-msgstr "Ruta del objeto"
-
-
-msgid "Object Paths"
-msgstr "Rutas de objetos"
-
-
-msgid "Collection of object paths"
-msgstr "Colección de rutas de objetos"
 
 
 msgid "Animation Data"
@@ -3390,6 +3366,14 @@ msgid "Use always Vertex Color mode"
 msgstr "Siempre usar el modo de color de vértices"
 
 
+msgid "Round"
+msgstr "Redondear"
+
+
+msgid "Flat"
+msgstr "Plano"
+
+
 msgid "Curve Jitter"
 msgstr "Curva de alteración"
 
@@ -4036,6 +4020,30 @@ msgstr "Valor de color del atributo de una geometría"
 
 msgid "RGBA color in scene linear color space"
 msgstr "Color RVAα en espacio de color lineal de la escena"
+
+
+msgid "Object Path"
+msgstr "Ruta del objeto"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Ruta de un objeto dentro del archivo Alembic"
+
+
+msgid "Path"
+msgstr "Ruta"
+
+
+msgid "Object path"
+msgstr "Ruta del objeto"
+
+
+msgid "Object Paths"
+msgstr "Rutas de objetos"
+
+
+msgid "Collection of object paths"
+msgstr "Colección de rutas de objetos"
 
 
 msgid "Background Image"
@@ -5907,30 +5915,6 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "Permite especificar cómo serán combinadas las transformaciones y los canales de la acción"
 
 
-msgid "Before Original"
-msgstr "Antes de la original"
-
-
-msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "Aplica los canales de la acción antes de las transformaciones originales, como si hubieran sido aplicados a un objeto superior imaginario usando la opción Heredar escala: Alineada"
-
-
-msgid "After Original"
-msgstr "Después de la original"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
-msgstr "Aplica los canales de la acción después de las transformaciones originales, como si hubieran sido aplicados a un objeto subordinado imaginario usando la opción Heredar escala: Alineada"
-
-
-msgid "After Original (Full Scale)"
-msgstr "Después de la original (escala completa)"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
-msgstr "Aplica los canales de la acción después de las transformaciones originales, como si hubieran sido aplicados a un objeto subordinado imaginario usando la opción Heredar escala: Completa. Es posible que este modo produzca inclinaciones y se proporciona sólo a efectos de lograr una retro compatibilidad"
-
-
 msgid "Target object"
 msgstr "Objetivo"
 
@@ -6363,8 +6347,16 @@ msgid "Add euler component values together"
 msgstr "Adicionar los valores de los componentes Euler entre sí"
 
 
+msgid "Before Original"
+msgstr "Antes de la original"
+
+
 msgid "Apply copied rotation before original, as if the constraint target is a parent"
 msgstr "Aplica la rotación copiada antes que la original, como si el objetivo de la restricción fuera el superior"
+
+
+msgid "After Original"
+msgstr "Después de la original"
 
 
 msgid "Apply copied rotation after original, as if the constraint target is a child"
@@ -12904,18 +12896,6 @@ msgid "Animation time of noise"
 msgstr "Tiempo de animación del ruido"
 
 
-msgid "Noise Method"
-msgstr "Método del ruido"
-
-
-msgid "Noise method which is used during the high-res simulation"
-msgstr "Método del ruido que será usado para crear la simulación de alta resolución"
-
-
-msgid "Wavelet"
-msgstr "Óndula"
-
-
 msgid "Compression"
 msgstr "Compresión"
 
@@ -14816,10 +14796,6 @@ msgid "Use Masks in Render"
 msgstr "Usar máscaras al procesar"
 
 
-msgid "Include the mask layers when rendering the viewlayer"
-msgstr "Incluir las capas de máscaras al procesar la capa de visualización"
-
-
 msgid "Vertex Paint Opacity"
 msgstr "Opacidad pintura de vértices"
 
@@ -15106,10 +15082,6 @@ msgstr "Estilo de extremo al final del trazo"
 
 msgid "Rounded"
 msgstr "Redondeado"
-
-
-msgid "Flat"
-msgstr "Plano"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -16270,6 +16242,10 @@ msgstr "Cantidad mínima de oclusiones para los trazos generados"
 
 msgid "The strength value for the generate strokes"
 msgstr "Intensidad de la opacidad de los trazos generados"
+
+
+msgid "Overscan"
+msgstr "Sobrebarrido"
 
 
 msgid "Source Type"
@@ -19671,10 +19647,6 @@ msgstr "Modo del bisel"
 
 msgid "Determine how to build the curve's bevel geometry"
 msgstr "Determina cómo se construirá la geometría del bisel de la curva"
-
-
-msgid "Round"
-msgstr "Redondear"
 
 
 msgid "Use circle for the section of the curve's bevel geometry"
@@ -23287,14 +23259,6 @@ msgid "Cycles object settings"
 msgstr "Opciones de objeto de Cycles"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Cycles - Opciones de visibilidad"
-
-
-msgid "Cycles visibility settings"
-msgstr "Opciones de visibilidad de Cycles"
-
-
 msgid "Data"
 msgstr "Datos"
 
@@ -23553,6 +23517,18 @@ msgstr "Base desde un conjunto"
 
 msgid "Object comes from a background set"
 msgstr "El objeto proviene de un conjunto de fondo"
+
+
+msgid "Holdout"
+msgstr "Hueco"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "Procesar objetos como huecos, creando un hueco (con valor cero) en el alfa de la imagen, útil para rellenarlo durante la composición con video real u otra imagen procesada"
+
+
+msgid "Shadow Catcher"
+msgstr "Captor de sombras"
 
 
 msgid "Line art settings for the object"
@@ -27072,6 +27048,14 @@ msgid "Cycles world settings"
 msgstr "Opciones de entorno de Cycles"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Cycles - Opciones de visibilidad"
+
+
+msgid "Cycles visibility settings"
+msgstr "Opciones de visibilidad de Cycles"
+
+
 msgid "Lighting"
 msgstr "Iluminación"
 
@@ -29710,10 +29694,6 @@ msgid "Temporarily hide in viewport"
 msgstr "Ocultar temporalmente en las vistas"
 
 
-msgid "Holdout"
-msgstr "Hueco"
-
-
 msgid "Mask out objects in collection from view layer"
 msgstr "Enmascarar objetos en esta colección fuera de la capa de visualización"
 
@@ -31319,6 +31299,10 @@ msgstr "Nodo"
 
 msgid "Node Color Specials"
 msgstr "Especiales de color del nodo"
+
+
+msgid "Assets"
+msgstr "Recursos"
 
 
 msgid "Outliner Context Menu"
@@ -44850,11 +44834,6 @@ msgstr "Eliminar como recurso"
 
 msgid "Delete all asset metadata and turn the selected asset data-blocks back into normal data-blocks"
 msgstr "Borra todos los metadatos del recurso y vuelve a hacer que los bloques de datos del recurso seleccionado sean normales"
-
-
-msgctxt "Operator"
-msgid "Mark Asset"
-msgstr "Marcar como recurso"
 
 
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
@@ -60728,10 +60707,6 @@ msgid "Flash On Transfer"
 msgstr "Destacar al transferir"
 
 
-msgid "Flash the target object when transfering the mode"
-msgstr "Destacar el objeto destino al transferir el modo"
-
-
 msgctxt "Operator"
 msgid "Apply Object Transform"
 msgstr "Aplicar transformación del objeto"
@@ -61636,14 +61611,6 @@ msgstr "Operación de datos de ID"
 
 msgid "Unlink"
 msgstr "Desvincular"
-
-
-msgid "Mark Asset"
-msgstr "Marcar como recurso"
-
-
-msgid "Clear Asset"
-msgstr "Eliminar recurso"
 
 
 msgid "Make Local"
@@ -66851,10 +66818,6 @@ msgstr "Mantiene la imagen en su tamaño original"
 
 msgid "Set View Transform"
 msgstr "Definir transformación de visualización"
-
-
-msgid "Set appropriate view transform based on media colorspace"
-msgstr "Define la transformación de visualización apropiada, basándose en el espacio de color del medio"
 
 
 msgctxt "Operator"
@@ -73889,6 +73852,10 @@ msgid "Beam Shape"
 msgstr "Forma del haz"
 
 
+msgid "Fast GI Approximation"
+msgstr "Aceleración de iluminación global"
+
+
 msgid "Ray Visibility"
 msgstr "Visibilidad a los rayos"
 
@@ -73931,10 +73898,6 @@ msgstr "Cáusticas"
 
 msgid "Clamping"
 msgstr "Limitación"
-
-
-msgid "Fast GI Approximation"
-msgstr "Aceleración de iluminación global"
 
 
 msgid "Max Bounces"
@@ -77370,10 +77333,6 @@ msgid "Python Scripts Directory"
 msgstr "Directorio de scripts Python"
 
 
-msgid "Alternate script path, matching the default layout with subdirectories: startup, addons, modules, and presets (requires restart)"
-msgstr "Ruta alternativa para scripts, debe coincidir con la estructura predefinida de subdirectorios: startup, addons, modules y presets (requiere reiniciar)"
-
-
 msgid "Hide Dot Files/Data-Blocks"
 msgstr "Ocultar archivos y bloques de datos con punto"
 
@@ -79330,24 +79289,16 @@ msgid "Scale the distance between volume shader samples when rendering the volum
 msgstr "Escala la distancia entre muestras de sombreado volumétrico al procesar el volumen (valores menores producen resultados más precisos y detallados, pero también aumentan el tiempo de proceso)"
 
 
+msgid "AO Distance"
+msgstr "Distancia de OA"
+
+
 msgid "Dicing Scale"
 msgstr "Escala de subdivisión"
 
 
 msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
 msgstr "Multiplicador para tasa de subdivisión (ubicado en el panel de Subdivisión)"
-
-
-msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
-msgstr "Procesar objetos como huecos, creando un hueco (con valor cero) en el alfa de la imagen, útil para rellenarlo durante la composición con video real u otra imagen procesada"
-
-
-msgid "Shadow Catcher"
-msgstr "Captor de sombras"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Permite procesar sólo las sombras sobre este objeto, útil para componer imágenes 3D sobre filmaciones reales"
 
 
 msgid "Motion Steps"
@@ -79524,38 +79475,6 @@ msgstr "Transmisión indirecta"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "Reducir ruidos en la iluminación transmitida indirecta"
-
-
-msgid "Debug BVH Intersections"
-msgstr "Depurar intersecciones de BVH"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "Almacenar depuración intersecciones de BVH"
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "Depurar instancias atravesadas de BVH"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "Almacenar depuración instancias atravesadas de BVH"
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "Depurar nodos atravesados de BVH"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "Almacenar depuración nodos atravesados de BVH"
-
-
-msgid "Debug Ray Bounces"
-msgstr "Depurar rebotes de rayos"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "Almacenar depuración rebotes de rayos"
 
 
 msgid "Debug Render Time"
@@ -80926,10 +80845,6 @@ msgid "Data Layers"
 msgstr "Capas de datos"
 
 
-msgid "Export normals, UVs, vertex colors and materials for formats that support it significantly increasing filesize"
-msgstr "Exporta las normales, UV, colores de vértices y materiales para los formatos que los soporten, aumentando significativamente el tamaño de archivo"
-
-
 msgid "Copy Textures"
 msgstr "Copiar texturas"
 
@@ -81166,36 +81081,12 @@ msgid "Current window matrix"
 msgstr "Matriz de ventana actual"
 
 
-msgid "Zmask Negate"
-msgstr "Invertir máscara Z"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Sólo procesar lo que está detrás de los valores sólidos de Z, al crear la máscara Z"
-
-
 msgid "View layer name"
 msgstr "Nombre de la capa de visualización"
 
 
-msgid "All Z"
-msgstr "Z de todo"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Incluir los valores Z de las caras sólidas, presentes en capas invisibles, al crear la máscara Z"
-
-
 msgid "Render Ambient Occlusion in this Layer"
 msgstr "Procesar oclusión ambiental en esta capa"
-
-
-msgid "Render edge-enhance in this layer (only works for solid faces)"
-msgstr "Procesar mejoramiento de bordes en esta capa (sólo funciona con caras sólidas)"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "Procesar los halos presentes en esta capa (por sobre las caras sólidas)"
 
 
 msgid "Deliver Ambient Occlusion pass"
@@ -81328,22 +81219,6 @@ msgstr "Procesar hebras en esta capa"
 
 msgid "Render volumes in this Layer"
 msgstr "Procesar volúmenes en esta capa"
-
-
-msgid "Zmask"
-msgstr "Máscara Z"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "Sólo procesar lo que está por delante de los valores sólidos de Z"
-
-
-msgid "Z-Transparent"
-msgstr "Transparencia Z"
-
-
-msgid "Render Z-transparent faces in this layer (on top of Solid and Halos)"
-msgstr "Procesar las caras con transparencia Z de esta capa (por encima de las caras sólidas y los halos)"
 
 
 msgid "Render Passes"
@@ -83280,10 +83155,6 @@ msgstr "Una aproximación para simular rebotes de luz produciendo menos oclusió
 
 msgid "Enable motion blur effect (only in camera view)"
 msgstr "Habilita el efecto de desenfoque por movimiento (sólo en la vista de cámara)"
-
-
-msgid "Overscan"
-msgstr "Sobrebarrido"
 
 
 msgid "Internally render past the image border to avoid screen-space effects disappearing"
@@ -90379,28 +90250,12 @@ msgid "Time Step"
 msgstr "Intervalo de tiempo"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "Ubicación del trazo (editor de imágenes)"
-
-
-msgid "Draw stroke at 3D cursor location"
-msgstr "Dibujar el trazo en el cursor 3D"
+msgid "Stroke Placement (2D View)"
+msgstr "Ubicación de trazos (vista 2D)"
 
 
 msgid "Stick stroke to the view"
 msgstr "Adherir el trazo a la vista"
-
-
-msgid "Stick stroke to surfaces"
-msgstr "Adherir el trazo a superficies"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Ubicación de trazos (previsualización editor de video)"
-
-
-msgid "Stroke Placement (2D View)"
-msgstr "Ubicación de trazos (vista 2D)"
 
 
 msgid "Annotation Stroke Placement (3D View)"
@@ -90409,6 +90264,14 @@ msgstr "Ubicación de trazos de anotación (vista 3D)"
 
 msgid "How annotation strokes are orientated in 3D space"
 msgstr "Cómo se deben orientar los trazos de anotación en el espacio 3D"
+
+
+msgid "Draw stroke at 3D cursor location"
+msgstr "Dibujar el trazo en el cursor 3D"
+
+
+msgid "Stick stroke to surfaces"
+msgstr "Adherir el trazo a superficies"
 
 
 msgid "Annotation Stroke Thickness"
@@ -94114,10 +93977,6 @@ msgstr "Subdivisiones de curvas"
 
 msgid "AO Factor"
 msgstr "Factor de OA"
-
-
-msgid "AO Distance"
-msgstr "Distancia de OA"
 
 
 msgid "Incompatible output node"
@@ -101937,10 +101796,6 @@ msgid "%s, not exact since frame %i"
 msgstr "%s, no exacto desde el fotograma %i"
 
 
-msgid "Assets"
-msgstr "Recursos"
-
-
 msgid "Warning"
 msgstr "Advertencias"
 
@@ -104555,10 +104410,6 @@ msgid "No selected vertex"
 msgstr "No hay nigún vértice seleccionado"
 
 
-msgid "Selected faces must be triangles or quads"
-msgstr "Las caras seleccionadas deben ser triángulos o cuadriláteros"
-
-
 msgid "Active mesh does not have shape keys"
 msgstr "La malla activa no contiene Formas clave"
 
@@ -105431,34 +105282,6 @@ msgstr "No fue posible encontrar una colección redefinible que contuviera al ob
 
 msgid "Could not create a library override from proxy '%s' (might use already local data?)"
 msgstr "No fue posible crear una redefinición de biblioteca a partir del reemplazo '%s' (¿quizás use datos que ya son locales?)"
-
-
-msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "Mover el ratón para cambiar el tamaño de los vóxeles. clic Izq: confirmar tamaño, Esc/clic Der: cancelar"
-
-
-msgid "Voxel remesher cannot run with a voxel size of 0.0"
-msgstr "Rehacer malla en modo Vóxeles no puede ser aplicado con un Tamaño de vóxeles de 0.0"
-
-
-msgid "Voxel remesher failed to create mesh"
-msgstr "Rehacer malla falló al crear la nueva malla"
-
-
-msgid "The remesher cannot worked on linked or override data"
-msgstr "La reconstrucción de malla no puede funcionar sobre datos vinculados o redefinidos"
-
-
-msgid "The remesher cannot run from edit mode"
-msgstr "Rehacer malla no puede ser aplicado en modo Edición"
-
-
-msgid "The remesher cannot run with dyntopo activated"
-msgstr "Rehacer malla no puede ser aplicado con la topología dinámica activada"
-
-
-msgid "The remesher cannot run with a Multires modifier in the modifier stack"
-msgstr "Rehacer malla no puede ser aplicado con un modificador Multi-resolución en la lista de modificadores"
 
 
 msgid "Select Collection"
@@ -110713,10 +110536,6 @@ msgstr "Permitir ejecución"
 
 msgid "Don't Save"
 msgstr "No guardar"
-
-
-msgid "untitled.blend"
-msgstr "sin_nombre.blend"
 
 
 msgid "unable to open the file"

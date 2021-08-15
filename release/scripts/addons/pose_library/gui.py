@@ -41,7 +41,12 @@ class VIEW3D_PT_pose_library(Panel):
 
     @classmethod
     def poll(cls, context: Context) -> bool:
-        return context.preferences.experimental.use_asset_browser
+        exp_prefs =  context.preferences.experimental
+        try:
+            return exp_prefs.use_asset_browser
+        except AttributeError:
+            # The 'use_asset_browser' experimental option was removed from Blender.
+            return True
 
     def draw(self, context: Context) -> None:
         layout = self.layout
@@ -172,7 +177,12 @@ class DOPESHEET_PT_asset_panel(Panel):
 
     @classmethod
     def poll(cls, context: Context) -> bool:
-        return context.preferences.experimental.use_asset_browser
+        exp_prefs =  context.preferences.experimental
+        try:
+            return exp_prefs.use_asset_browser
+        except AttributeError:
+            # The 'use_asset_browser' experimental option was removed from Blender.
+            return True
 
     def draw(self, context: Context) -> None:
         layout = self.layout

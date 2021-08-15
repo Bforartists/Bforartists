@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-07-12 15:51+0700\n"
+"PO-Revision-Date: 2021-08-01 15:12+0700\n"
 "Last-Translator: Adriel Tristanputra <ultimexport@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
 "Language: id\n"
@@ -347,30 +347,6 @@ msgstr "Tambahan Pengguna"
 
 msgid "Collection of add-ons"
 msgstr "Koleksi Tambahan"
-
-
-msgid "Object Path"
-msgstr "Jalur Objek"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Jalur suatu objek dalam suatu arsip Alembic"
-
-
-msgid "Path"
-msgstr "Jalur"
-
-
-msgid "Object path"
-msgstr "Jalur Objek"
-
-
-msgid "Object Paths"
-msgstr "Jalur-jalur Objek"
-
-
-msgid "Collection of object paths"
-msgstr "Koleksi jalur objek"
 
 
 msgid "Animation Data"
@@ -3125,6 +3101,10 @@ msgid "Use always Vertex Color mode"
 msgstr "Selalu gunakan mode Warna Vertex"
 
 
+msgid "Flat"
+msgstr "Datar"
+
+
 msgid "Curve Jitter"
 msgstr "Jitter Kurva"
 
@@ -3607,6 +3587,30 @@ msgstr "Stroke dan Isi"
 
 msgid "Byte Color Attribute Value"
 msgstr "Nilai Atribut Warna Byte"
+
+
+msgid "Object Path"
+msgstr "Jalur Objek"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Jalur suatu objek dalam suatu arsip Alembic"
+
+
+msgid "Path"
+msgstr "Jalur"
+
+
+msgid "Object path"
+msgstr "Jalur Objek"
+
+
+msgid "Object Paths"
+msgstr "Jalur-jalur Objek"
+
+
+msgid "Collection of object paths"
+msgstr "Koleksi jalur objek"
 
 
 msgid "Background Image"
@@ -4670,16 +4674,20 @@ msgid "Mix Mode"
 msgstr "Mode Campur"
 
 
-msgid "Before Original"
-msgstr "Sebelum yang Asli"
+msgid "Before Original (Full)"
+msgstr "Sebelum yang Asli (Penuh)"
 
 
-msgid "After Original"
-msgstr "Setelah yang Asli"
+msgid "Before Original (Aligned)"
+msgstr "Sebelum yang Asli (Sejajar)"
 
 
-msgid "After Original (Full Scale)"
-msgstr "Setelah yang Asli (Skala Penuh)"
+msgid "After Original (Full)"
+msgstr "Setelah yang Asli (Penuh)"
+
+
+msgid "After Original (Aligned)"
+msgstr "Setelah yang Asli (Sejajar)"
 
 
 msgid "Target object"
@@ -5014,6 +5022,14 @@ msgid "Add euler component values together"
 msgstr "Tambahkan nilai komponen euler bersama-sama"
 
 
+msgid "Before Original"
+msgstr "Sebelum yang Asli"
+
+
+msgid "After Original"
+msgstr "Setelah yang Asli"
+
+
 msgid "Offset (Legacy)"
 msgstr "Offset (Legacy)"
 
@@ -5060,22 +5076,6 @@ msgstr "Salin skala Y target"
 
 msgid "Copy the target's Z scale"
 msgstr "Salin skala Z target"
-
-
-msgid "Before Original (Full)"
-msgstr "Sebelum yang Asli (Penuh)"
-
-
-msgid "Before Original (Aligned)"
-msgstr "Sebelum yang Asli (Sejajar)"
-
-
-msgid "After Original (Full)"
-msgstr "Setelah yang Asli (Penuh)"
-
-
-msgid "After Original (Aligned)"
-msgstr "Setelah yang Asli (Sejajar)"
 
 
 msgid "Track Axis"
@@ -8683,10 +8683,6 @@ msgid "Rounded"
 msgstr "Bulat"
 
 
-msgid "Flat"
-msgstr "Datar"
-
-
 msgid "Has Curve Data"
 msgstr "Punya Data Kurva"
 
@@ -10085,6 +10081,10 @@ msgid "Faces"
 msgstr "Wajah"
 
 
+msgid "Holdout"
+msgstr "Tahan"
+
+
 msgid "Material Slots"
 msgstr "Material"
 
@@ -11388,10 +11388,6 @@ msgstr "Indeks Jalur Aktif"
 
 msgid "Point selected"
 msgstr "Hapus"
-
-
-msgid "Holdout"
-msgstr "Tahan"
 
 
 msgid "Modifier Name"
@@ -13298,16 +13294,84 @@ msgid "Scaling factor for action"
 msgstr "Menskalakan faktor untuk aksi"
 
 
+msgid "NLA Strips"
+msgstr "Strip NLA"
+
+
+msgid "Type of NLA Strip"
+msgstr "Tipe Strip NLA"
+
+
+msgid "Action Clip"
+msgstr "Klip Aksi"
+
+
+msgid "NLA Strip references some Action"
+msgstr "Strip NLA mereferensi beberapa Aksi"
+
+
+msgid "Meta"
+msgstr "Meta"
+
+
+msgid "Sound Clip"
+msgstr "Klip Suara"
+
+
+msgid "Animated Influence"
+msgstr "Pengaruh Teranimasi"
+
+
+msgid "Animated Strip Time"
+msgstr "Waktu Strip Teranimasi"
+
+
+msgid "Solo"
+msgstr "Sendiri"
+
+
+msgid "Node in a node tree"
+msgstr "Node di pohon node"
+
+
+msgid "The node icon"
+msgstr "Ikon node"
+
+
+msgid "The node label"
+msgstr "Label node"
+
+
 msgid "Static Type"
 msgstr "Jenis Statik"
+
+
+msgid "Custom Node"
+msgstr "Node Kustom"
+
+
+msgid "Height of the node"
+msgstr "Tinggi node"
 
 
 msgid "Show Options"
 msgstr "Tampilkan Opsi"
 
 
+msgid "Show Preview"
+msgstr "Tampilkan Preview"
+
+
 msgid "Show Texture"
 msgstr "Tampilkan Tekstur"
+
+
+msgid "Use custom color for the node"
+msgstr "Gunakan warna kustom untuk node"
+
+
+msgid "Width of the node"
+msgstr "Lebar node"
 
 
 msgid "Custom Group"
@@ -13366,6 +13430,14 @@ msgid "Bokeh Image"
 msgstr "Gambar Bokeh"
 
 
+msgid "Box Mask"
+msgstr "Masker Kotak"
+
+
+msgid "Height of the box"
+msgstr "Tinggi kotak"
+
+
 msgid "Mask Type"
 msgstr "Tipe Masker"
 
@@ -13406,12 +13478,36 @@ msgid "Algorithm"
 msgstr "Algoritma"
 
 
+msgid "Algorithm to use to limit channel"
+msgstr "Algoritma menggunakan batas saluran"
+
+
 msgid "Single"
 msgstr "Tunggal"
 
 
+msgid "Limit by single channel"
+msgstr "Batasi oleh saluran tunggal"
+
+
+msgid "Limit by maximum of other channels"
+msgstr "Batasi oleh maksimum saluran lain"
+
+
+msgid "Values lower than this setting are 100% keyed"
+msgstr "Nilai lebih rendah dari pengaturan ini dikuncikan 100%"
+
+
+msgid "Chroma Key"
+msgstr "Kunci Chroma"
+
+
 msgid "Acceptance"
 msgstr "Penerimaan"
+
+
+msgid "Tolerance for a color to be considered a keying color"
+msgstr "Toleransi untuk warna untuk dipertimbangkan warna penguncian"
 
 
 msgid "Color Balance"
@@ -13420,6 +13516,18 @@ msgstr "Keseimbangan Warna"
 
 msgid "Correction Formula"
 msgstr "Rumus Koreksi"
+
+
+msgid "Correction for highlights"
+msgstr "Koreksi untuk highlight"
+
+
+msgid "Correction for midtones"
+msgstr "Koreksi untuk nada tengah"
+
+
+msgid "Correction for shadows"
+msgstr "Koreksi untuk bayangan"
 
 
 msgid "Basis"
@@ -13438,8 +13546,76 @@ msgid "Green channel active"
 msgstr "Saluran hijau aktif"
 
 
+msgid "Highlights Contrast"
+msgstr "Kontras Highlight"
+
+
+msgid "Highlights contrast"
+msgstr "Kontras highlight"
+
+
+msgid "Highlights Gain"
+msgstr "Perolehan Highlight"
+
+
+msgid "Highlights gain"
+msgstr "Perolehan highlight"
+
+
+msgid "Highlights Gamma"
+msgstr "Gamma Highlight"
+
+
+msgid "Highlights gamma"
+msgstr "Gamma highlight"
+
+
+msgid "Highlights Lift"
+msgstr "Angkat Highlight"
+
+
+msgid "Highlights lift"
+msgstr "Angkat highlight"
+
+
+msgid "Highlights Saturation"
+msgstr "Saturasi Highlight"
+
+
+msgid "Highlights saturation"
+msgstr "Saturasi Highlight"
+
+
 msgid "Master Contrast"
-msgstr "Master Kontras"
+msgstr "Kontras Master"
+
+
+msgid "Master contrast"
+msgstr "Kontras master"
+
+
+msgid "Master Gain"
+msgstr "Perolehan Master"
+
+
+msgid "Master gain"
+msgstr "Perolehan master"
+
+
+msgid "Master Gamma"
+msgstr "Gamma Master"
+
+
+msgid "Master gamma"
+msgstr "Gamma master"
+
+
+msgid "Master Lift"
+msgstr "Angkat Master"
+
+
+msgid "Master lift"
+msgstr "Angkat master"
 
 
 msgid "Master Saturation"
@@ -13450,84 +13626,172 @@ msgid "Master saturation"
 msgstr "Master saturasi"
 
 
+msgid "Midtones Contrast"
+msgstr "Kontras Nada Tengah"
+
+
+msgid "Midtones contrast"
+msgstr "Kontras nada tengah"
+
+
 msgid "Midtones End"
-msgstr "Penyunting Logika"
+msgstr "Berakhir Nada Tengah"
 
 
 msgid "End of midtones"
-msgstr "Modus Sunting"
+msgstr "Akhir nada tengah"
 
 
 msgid "Midtones Gain"
-msgstr "Penyunting Logika"
+msgstr "Perolehan Nada Tengah"
+
+
+msgid "Midtones gain"
+msgstr "Perolehan nada tengah"
 
 
 msgid "Midtones Gamma"
-msgstr "Penyunting Logika"
+msgstr "Gamma Nada Tengah"
+
+
+msgid "Midtones gamma"
+msgstr "Gamma nada tengah"
 
 
 msgid "Midtones Lift"
-msgstr "Penyunting Logika"
+msgstr "Angkat Nada Tengah"
+
+
+msgid "Midtones lift"
+msgstr "Angkat nada tengah"
 
 
 msgid "Midtones Saturation"
-msgstr "Penyunting Logika"
+msgstr "Saturasi Nada Tengah"
 
 
 msgid "Midtones saturation"
-msgstr "Penyunting Logika"
+msgstr "Saturasi nada tengah"
 
 
 msgid "Midtones Start"
-msgstr "Penyunting Logika"
+msgstr "Mulai Nada Tengah"
+
+
+msgid "Start of midtones"
+msgstr "Awal nada tengah"
 
 
 msgid "Red channel active"
-msgstr "Saluran"
+msgstr "Aktif saluran merah"
 
 
 msgid "Shadows Contrast"
-msgstr "Warna"
+msgstr "Kontras Bayangan"
 
 
 msgid "Shadows contrast"
-msgstr "Warna"
+msgstr "Kontras bayangan"
 
 
 msgid "Shadows Gain"
-msgstr "Tekstur"
+msgstr "Perolehan Bayangan"
 
 
 msgid "Shadows gain"
-msgstr "Tekstur"
+msgstr "Perolehan bayangan"
 
 
 msgid "Shadows Gamma"
-msgstr "Tekstur"
+msgstr "Gamma Bayangan"
+
+
+msgid "Shadows gamma"
+msgstr "Gamma bayangan"
 
 
 msgid "Shadows Lift"
-msgstr "Warna"
+msgstr "Angkat Bayangan"
 
 
 msgid "Shadows lift"
-msgstr "Warna"
+msgstr "Angkat bayangan"
 
 
 msgid "Shadows Saturation"
-msgstr "Acak"
+msgstr "Saturasi Bayangan"
 
 
 msgid "Shadows saturation"
-msgstr "Acak"
+msgstr "Saturasi bayangan"
 
 
 msgid "Color Key"
-msgstr "Warna"
+msgstr "Kunci Warna"
 
 
-msgid "Color Spill"
-msgstr "Warna"
+msgid "H"
+msgstr "H"
+
+
+msgid "Hue tolerance for colors to be considered a keying color"
+msgstr "Toleransi hue untuk warna untuk dipertimbangkan warna penguncian"
+
+
+msgid "S"
+msgstr "S"
+
+
+msgid "Saturation tolerance for the color"
+msgstr "Toleransi saturasi untuk warna"
+
+
+msgid "Value tolerance for the color"
+msgstr "Toleransi nilai untuk warna"
+
+
+msgid "Limit by red"
+msgstr "Batasi oleh merah"
+
+
+msgid "Limit by green"
+msgstr "Batasi oleh hijau"
+
+
+msgid "Limit by blue"
+msgstr "Batasi oleh biru"
+
+
+msgid "Simple limit algorithm"
+msgstr "Algoritma batas sederhana"
+
+
+msgid "Average limit algorithm"
+msgstr "Algoritma batas rata-rata"
+
+
+msgid "Scale limit by value"
+msgstr "Skalakan batas oleh nilai"
+
+
+msgid "R"
+msgstr "R"
+
+
+msgid "Combine HSVA"
+msgstr "Gabungkan HSVA"
+
+
+msgid "Combine RGBA"
+msgstr "Gabungkan RGBA"
+
+
+msgid "Combine YCbCrA"
+msgstr "Gabungkan YCbCrA"
+
+
+msgid "Jpeg"
+msgstr "Jpeg"
 
 
 msgid "Use Object layer"
@@ -14015,8 +14279,28 @@ msgid "Render Layers"
 msgstr "Render Layer"
 
 
+msgid "Coordinate space to scale relative to"
+msgstr "Koordinasikan pasi ke skala relatif ke"
+
+
+msgid "Separate HSVA"
+msgstr "Pisahkan HSVA"
+
+
+msgid "Separate RGBA"
+msgstr "Pisahkan RGBA"
+
+
 msgid "Separate YCbCrA"
-msgstr "Induk"
+msgstr "Pisahkan YCbCrA"
+
+
+msgid "Separate YUVA"
+msgstr "Pisahkan YUVA"
+
+
+msgid "Set Alpha"
+msgstr "Set Alpha"
 
 
 msgid "Apply Mask"
@@ -18228,12 +18512,26 @@ msgstr "Hapus Titik"
 
 msgctxt "Operator"
 msgid "Frame Offset"
-msgstr "Kamera"
+msgstr "Offset Frame"
+
+
+msgctxt "Operator"
+msgid "Show Info Log"
+msgstr "Tampilkan Log Info"
 
 
 msgctxt "Operator"
 msgid "Jump to Keyframe"
-msgstr "Tekstur"
+msgstr "Lompat ke Keyframe"
+
+
+msgctxt "Operator"
+msgid "New Screen"
+msgstr "Layar Baru"
+
+
+msgid "Add a new screen"
+msgstr "Tambah layar baru"
 
 
 msgctxt "Operator"
@@ -18261,9 +18559,30 @@ msgid "Set Screen"
 msgstr "Adegan"
 
 
+msgid "Full Screen"
+msgstr "Layar Penuh"
+
+
 msgctxt "Operator"
 msgid "Show Preferences"
-msgstr "Tampilkan Pengaturan"
+msgstr "Tampilkan Preferensi"
+
+
+msgid "Menu ID Name"
+msgstr "Nama ID Menu"
+
+
+msgid "ID name of the menu this was called from"
+msgstr "Nama ID menu ini dipanggil dari"
+
+
+msgctxt "Operator"
+msgid "Run Python File"
+msgstr "Jalankan Dokumen Python"
+
+
+msgid "Run Python file"
+msgstr "Jalankan dokumen Python"
 
 
 msgctxt "Operator"
@@ -18271,8 +18590,96 @@ msgid "Sculpt"
 msgstr "Modus Pahat"
 
 
+msgid "Ignore Background Click"
+msgstr "Abaikan Klik Latar Belakang"
+
+
+msgctxt "Operator"
+msgid "Filter Cloth"
+msgstr "Saring Kain"
+
+
+msgid "Force Axis"
+msgstr "Paksakan Sumbu"
+
+
+msgid "Use Collisions"
+msgstr "Gunakan Tabrakan"
+
+
+msgctxt "Operator"
+msgid "Filter Color"
+msgstr "Saring Warna"
+
+
+msgid "Fill with a specific color"
+msgstr "Isi dengan warna spesifik"
+
+
+msgid "Change hue"
+msgstr "Ganti hue"
+
+
+msgid "Change saturation"
+msgstr "Ganti saturasi"
+
+
+msgid "Change value"
+msgstr "Ganti nilai"
+
+
+msgid "Change brightness"
+msgstr "Ganti keterangan"
+
+
+msgid "Change contrast"
+msgstr "Ganti Kontras"
+
+
+msgid "Smooth colors"
+msgstr "Haluskan warna"
+
+
+msgid "Change red channel"
+msgstr "Ganti saluran merah"
+
+
+msgid "Change green channel"
+msgstr "Ganti saluran hijau"
+
+
+msgid "Change blue channel"
+msgstr "Ganti saluran biru"
+
+
+msgctxt "Operator"
+msgid "Dirty Mask"
+msgstr "Masker Kotor"
+
+
+msgid "Data Target"
+msgstr "Target Data"
+
+
+msgid "Keep Previous Mask"
+msgstr "Tetapkan Masker Sebelumnya"
+
+
+msgid "Mask Speed"
+msgstr "Kecepatan Masker"
+
+
 msgid "Use Cursor"
 msgstr "Gunakan Kursor"
+
+
+msgid "Use Normals"
+msgstr "Gunakan Normal"
+
+
+msgctxt "Operator"
+msgid "Mask Filter"
+msgstr "Filter Masker"
 
 
 msgid "Increase Contrast"
@@ -18283,6 +18690,18 @@ msgid "Decrease Contrast"
 msgstr "Kurangi Kontras"
 
 
+msgid "Smooth mesh"
+msgstr "Haluskan Mesh"
+
+
+msgid "Scale mesh"
+msgstr "Skalakan mesh"
+
+
+msgid "Detail Mode"
+msgstr "Mode Detail"
+
+
 msgctxt "Operator"
 msgid "Sculpt Mode"
 msgstr "Modus Pahat"
@@ -18291,6 +18710,10 @@ msgstr "Modus Pahat"
 msgctxt "Operator"
 msgid "Set Persistent Base"
 msgstr "Induk"
+
+
+msgid "Active Vertex"
+msgstr "Vertex Aktif"
 
 
 msgctxt "Operator"
@@ -18308,6 +18731,11 @@ msgstr "B -> C"
 
 msgid "A -> C"
 msgstr "A -> C"
+
+
+msgctxt "Operator"
+msgid "Change Effect Type"
+msgstr "Ganti Tipe Efek"
 
 
 msgctxt "Operator"

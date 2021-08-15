@@ -52,7 +52,7 @@ class OBJECT_PT_transform(ObjectButtonsPanel, Panel):
 
     def draw(self, context):
         draw4L = False
-        
+
         layout = self.layout
         layout.use_property_split = True
 
@@ -203,7 +203,7 @@ class OBJECT_PT_collections(ObjectButtonsPanel, Panel):
             row.operator("object.collection_link", text="Link to existing Collection")
             row.operator("object.collection_add", text="", icon='ADD')
         else:
-            row.operator("object.collection_add", text="Add to New Collection")    
+            row.operator("object.collection_add", text="Add to New Collection")
 
         obj_name = obj.name
         for collection in bpy.data.collections:
@@ -237,6 +237,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         obj = context.object
         obj_type = obj.type
         is_geometry = (obj_type in {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'VOLUME', 'HAIR', 'POINTCLOUD'})
+        has_bounds = (is_geometry or obj_type in {'LATTICE', 'ARMATURE'})
         is_wire = (obj_type in {'CAMERA', 'EMPTY'})
         is_empty_image = (obj_type == 'EMPTY' and obj.empty_display_type == 'IMAGE')
         is_dupli = (obj.instance_type != 'NONE')
@@ -298,21 +299,27 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         if is_geometry or is_dupli or is_empty_image or is_gpencil:
             # Only useful with object having faces/materials...
             col.prop(obj, "color")
-           
-        split = layout.split(factor = 0.35)
-        col = split.column()
-        col.use_property_split = False
-        col.prop(obj, "show_bounds", text="Bounds")
-        col = split.column()
-        if obj.show_bounds or (obj.display_type == 'BOUNDS'):
-            col.prop(obj, "display_bounds_type", text="")
-        else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT')
+
+        if has_bounds:
+            split = layout.split(factor = 0.35)
+            col = split.column()
+            col.use_property_split = False
+            col.prop(obj, "show_bounds", text="Bounds")
+            col = split.column()
+            if obj.show_bounds or (obj.display_type == 'BOUNDS'):
+                col.prop(obj, "display_bounds_type", text="")
+            else:
+                col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class OBJECT_PT_instancing(ObjectButtonsPanel, Panel):
     bl_label = "Instancing"
     bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        ob = context.object
+        return (ob.type in {'MESH', 'EMPTY', 'POINTCLOUD'})
 
     def draw(self, context):
         layout = self.layout
@@ -392,7 +399,7 @@ class OBJECT_PT_lineart(ObjectButtonsPanel, Panel):
         layout.use_property_split = True
 
         layout.prop(lineart, "usage")
-        
+
         split = layout.split(factor = 0.37)
         col = split.column()
         col.use_property_split = False
@@ -401,7 +408,7 @@ class OBJECT_PT_lineart(ObjectButtonsPanel, Panel):
         if lineart.use_crease_override:
             col.prop(lineart, "crease_threshold", slider=True, text="")
         else:
-            col.label(icon='DISCLOSURE_TRI_RIGHT') 
+            col.label(icon='DISCLOSURE_TRI_RIGHT')
 
 
 class OBJECT_PT_motion_paths(MotionPathButtonsPanel, Panel):

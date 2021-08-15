@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-04-23 22:41+0300\n"
@@ -261,10 +261,6 @@ msgstr "ﺮﻤﺘﺴﻣ"
 
 msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
 msgstr "(ﺎﻨﻫ ﻞﻤﻌﻳ ﻻ﻿ ﺭﺪﻨﻠﺑ ﻡﺎﻈﻧ ,ﻆﺤﻟﺍ ءﺆﺴﻟ) ﺕﺍﺩﺍﺪﻋﻹ﻿ﺍ ﻩﺬﻬﻟ ﻥﺰّﺨﻤﻟﺍ ﺖﺑﺮﻜﺳ ﺎﻓﺎﺠﻟﺍ ﻒﻠﻣ ﻢﺳﺍ"
-
-
-msgid "Path"
-msgstr "ﺭﺎﺴﻤﻟﺍ"
 
 
 msgid "Animation Data"
@@ -2027,6 +2023,14 @@ msgid "Vertex Color"
 msgstr "ﺔﻄﻘﻨﻟﺍ ﻥﻮﻟ"
 
 
+msgid "Round"
+msgstr "ﺭﻭّﺪﻣ"
+
+
+msgid "Flat"
+msgstr "ﺢﻄّﺴﻣ"
+
+
 msgid "Direction"
 msgstr "ﻩﺎﺠﺗﺇ"
 
@@ -2141,6 +2145,10 @@ msgstr "ﻥﻮﻠﻟﺍ"
 
 msgid "Saturation"
 msgstr "ﺰﻛﺮﻣ"
+
+
+msgid "Path"
+msgstr "ﺭﺎﺴﻤﻟﺍ"
 
 
 msgid "Background Image"
@@ -8749,10 +8757,6 @@ msgid "End Cap"
 msgstr "ﺔﻳﺎﻬﻨﻟﺍ ﺓﺮﻴﻜﺴﺗ"
 
 
-msgid "Flat"
-msgstr "ﺢﻄّﺴﻣ"
-
-
 msgid "Material Index"
 msgstr "ﺔﻣﺎﺧ ﺮﺷﺆﻣ"
 
@@ -10265,10 +10269,6 @@ msgstr "ﺭﻮﺤﺘﻟﺍ ﺔﻳﺎﻬﻧ ﻉﻮﻧ"
 
 msgid "Start Mapping Type"
 msgstr "ﺭﻮﺤﺘﻟﺍ ﺔﻳﺍﺪﺑ ﻉﻮﻧ"
-
-
-msgid "Round"
-msgstr "ﺭﻭّﺪﻣ"
 
 
 msgid "Bevel Object"
@@ -12531,14 +12531,6 @@ msgid "Cycles object settings"
 msgstr "ﺰﻠﻜﻳﺎﺴﻟ ﻦﺋﺎﻜﻟﺍ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "ﺰﻠﻜﻳﺎﺳ ﺭﻮﻬﻇ ﺕﺍﺩﺍﺪﻋﺍ"
-
-
-msgid "Cycles visibility settings"
-msgstr "ﺰﻠﻜﻳﺎﺳ ﺭﻮﻬﻇ ﺕﺍﺩﺍﺪﻋﺍ"
-
-
 msgid "Data"
 msgstr "ﺕﺎﻧﺎﻴﺒﻟﺍ"
 
@@ -12653,6 +12645,10 @@ msgstr "ﺔﻴﺋﺎﻳﺰﻴﻔﻟﺍ ﺓﺎﻛﺎﺤﻤﻟﺍ ﻲﻓ ﻞﻘﺤ
 
 msgid "Faces"
 msgstr "ﻪﺟﻭﺃ"
+
+
+msgid "Holdout"
+msgstr "ءﺎﻘﺑﺇ"
 
 
 msgid "Location of the object"
@@ -15333,6 +15329,14 @@ msgid "Cycles world settings"
 msgstr "ﺰﻠﻜﻳﺎﺳ ﻢﻟﺎﻋ ﺕﺍﺩﺍﺪﻋﺇ"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "ﺰﻠﻜﻳﺎﺳ ﺭﻮﻬﻇ ﺕﺍﺩﺍﺪﻋﺍ"
+
+
+msgid "Cycles visibility settings"
+msgstr "ﺰﻠﻜﻳﺎﺳ ﺭﻮﻬﻇ ﺕﺍﺩﺍﺪﻋﺍ"
+
+
 msgid "Lighting"
 msgstr "ﺓءﺎﺿﻹ﻿ﺍ"
 
@@ -16734,10 +16738,6 @@ msgstr "ﺔﻄﻘﻧ ﻩﺬﻫ ﺎﻬﻌﺒﺘﺗ ﻲﺘﻟﺍ ﻁﺎﻘﻨﻟ�
 
 msgid "Point selected"
 msgstr "ﺓﺭﺎﺘﺨﻣ ﺔﻄﻘﻨﻟﺍ"
-
-
-msgid "Holdout"
-msgstr "ءﺎﻘﺑﺇ"
 
 
 msgid "Active Object"
@@ -33875,26 +33875,6 @@ msgid "Window Matrix"
 msgstr "ﺓﺬﻓﺎﻨﻟﺍ ﺔﻓﻮﻔﺼﻣ"
 
 
-msgid "Zmask Negate"
-msgstr "ﻱﺩﻮﻤﻌﻟﺍ ءﺎﻔﺧﻹ﻿ﺍ ﻞﻫﺎﺠﺗ"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "ﻡﺎﻣﻷ﻿ﺍ ﻝﺪﺑ ﺔﺒﻠﺼﻟﺍ ﺔﻳﺩﻮﻤﻌﻟﺍ ﻢﻴﻘﻟﺍ ﻒﻠﺧ ﻮﻫ ﺎﻣ ﻂﻘﻓ ﺮﻴّﺻ ،ﻱﺩﻮﻤﻌﻟﺍ ءﺎﻔﺧﻺ﻿ﻟ"
-
-
-msgid "All Z"
-msgstr "ﻲﺟﻮﻤﻋ ﻞﻛ"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "ءﺎﻔﺧﻺ﻿ﻟ ،ﺔﻴﻔﺨﻤﻟﺍ ﺕﺎﻘﺒﻄﻟﺍ ﻲﻓ ﺔﺒﻠﺼﻟﺍ ﻪﺟﻭﻸ﻿ﻟ Y ﺭﻮﺤﻤﻟﺍ ﻢﻴﻗ ﻸ﻿ﻣ"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "(ﺐﻠﺼﻟﺍ ﻕﻮﻓ) ﺔﻘﺒﻄﻟﺍ ﻩﺬﻫ ﻲﻓ ﺕﻻ﻿ﺎﻬﻟﺍ ﺓﺮﻴّﺼﺗ"
-
-
 msgid "Deliver full combined RGBA buffer"
 msgstr "ﻊﻤﺠﻣ ﻭ ﻞﻣﺎﻛ ﺔﻴﻓﺎﻔﺷ ﻭ ﻥﺍﻮﻟﺃ ﻥﺍﺰﺧ ﻊﻳﺯﻮﺗ"
 
@@ -34005,14 +33985,6 @@ msgstr "ﺔﻠﺼﺨﻟﺍ"
 
 msgid "Render Strands in this Layer"
 msgstr "ﺔﻘﺒﻄﻟﺍ ﻩﺬﻫ ﻲﻓ ﺕﻼ﻿ﺼﺨﻟﺍ ﺮﻴﻴﺼﺗ"
-
-
-msgid "Zmask"
-msgstr "ﻱﺩﻮﻤﻋ ءﺎﻔﺧﺇ"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "ﺔﺒﻠﺼﻟﺍ ﺔﻳﺩﻮﻤﻌﻟﺍ ﻢﻴﻘﻟﺍ ﻡﺎﻣﺃ ﻮﻫ ﺎﻣ ﻂﻘﻓ ﺮﻴّﺻ"
 
 
 msgid "Result of rendering, including all layers and passes"
