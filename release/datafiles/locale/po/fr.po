@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -356,30 +356,6 @@ msgstr "Add-ons utilisateurs"
 
 msgid "Collection of add-ons"
 msgstr "Collection d’add-ons"
-
-
-msgid "Object Path"
-msgstr "Chemin objet"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Chemin d’un objet au sein d’une archive Alembic"
-
-
-msgid "Path"
-msgstr "Chemin"
-
-
-msgid "Object path"
-msgstr "Chemin d’objet"
-
-
-msgid "Object Paths"
-msgstr "Chemins d’objet"
-
-
-msgid "Collection of object paths"
-msgstr "Collection de chemins d’objet"
 
 
 msgid "Animation Data"
@@ -3178,6 +3154,14 @@ msgid "Use always Vertex Color mode"
 msgstr "Toujours utiliser le mode Couleur de Vertex"
 
 
+msgid "Round"
+msgstr "Arrondir"
+
+
+msgid "Flat"
+msgstr "Plat"
+
+
 msgid "Curve Jitter"
 msgstr "Courbe d’agitation"
 
@@ -3756,6 +3740,30 @@ msgstr "Trait et remplissage"
 
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "La couleur de vertex affecte le trait et le remplissage"
+
+
+msgid "Object Path"
+msgstr "Chemin objet"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Chemin d’un objet au sein d’une archive Alembic"
+
+
+msgid "Path"
+msgstr "Chemin"
+
+
+msgid "Object path"
+msgstr "Chemin d’objet"
+
+
+msgid "Object Paths"
+msgstr "Chemins d’objet"
+
+
+msgid "Collection of object paths"
+msgstr "Collection de chemins d’objet"
 
 
 msgid "Background Image"
@@ -5559,30 +5567,6 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "Comment les transformations existantes et les canaux d’action sont combinés"
 
 
-msgid "Before Original"
-msgstr "Avant original"
-
-
-msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "Appliquer les canaux d’action avant la transformation originale, comme si appliqués à un parent imaginaire avec Taille alignée héritée"
-
-
-msgid "After Original"
-msgstr "Après original"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
-msgstr "Appliquer les canaux d’action après la transformation originale, comme si appliqués à un enfant imaginaire avec Taille alignée héritée"
-
-
-msgid "After Original (Full Scale)"
-msgstr "Après original (taille totale)"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
-msgstr "Appliquer les canaux d’action avant la transformation originale, comme si appliqués à un parent imaginaire avec Taille totale héritée. Ce mode peut créer des cisaillements et n’est proposé que pour la rétrocompatibilité"
-
-
 msgid "Target object"
 msgstr "Objet cible"
 
@@ -6007,8 +5991,16 @@ msgid "Add euler component values together"
 msgstr "Ajouter les composantes Euler les unes aux autres"
 
 
+msgid "Before Original"
+msgstr "Avant original"
+
+
 msgid "Apply copied rotation before original, as if the constraint target is a parent"
 msgstr "Appliquer la rotation copiée avant l’originale, comme si la cible de la contrainte était un parent"
+
+
+msgid "After Original"
+msgstr "Après original"
 
 
 msgid "Apply copied rotation after original, as if the constraint target is a child"
@@ -12162,18 +12154,6 @@ msgid "Animation time of noise"
 msgstr "Temps de l’animation du bruit"
 
 
-msgid "Noise Method"
-msgstr "Méthode de bruit"
-
-
-msgid "Noise method which is used during the high-res simulation"
-msgstr "Méthode de bruit utilisée pour la simulation haute résolution"
-
-
-msgid "Wavelet"
-msgstr "Vaguelette"
-
-
 msgid "Compression"
 msgstr "Compression"
 
@@ -14170,10 +14150,6 @@ msgid "Rounded"
 msgstr "Arrondie"
 
 
-msgid "Flat"
-msgstr "Plat"
-
-
 msgid "Amount of gradient along section of stroke"
 msgstr "Quantité de dégradé le long de la section du trait"
 
@@ -15140,6 +15116,10 @@ msgstr "Objet lattice à utiliser pour la déformation"
 
 msgid "Strength of modifier effect"
 msgstr "Force de l’effet du modificateur"
+
+
+msgid "Overscan"
+msgstr "Sur-balayage"
 
 
 msgid "Boundaries"
@@ -17249,10 +17229,6 @@ msgstr "Type de placage à la fin"
 
 msgid "Start Mapping Type"
 msgstr "Type de placage au début"
-
-
-msgid "Round"
-msgstr "Arrondir"
 
 
 msgid "Profile"
@@ -20477,14 +20453,6 @@ msgid "Cycles object settings"
 msgstr "Les réglages d’objet pour Cycles"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Réglages de visibilité Cycles"
-
-
-msgid "Cycles visibility settings"
-msgstr "Réglages de visibilité pour Cycles"
-
-
 msgid "Data"
 msgstr "Données"
 
@@ -20731,6 +20699,18 @@ msgstr "Base depuis ensemble"
 
 msgid "Object comes from a background set"
 msgstr "L’objet vient d’un ensemble d’arrière-plan"
+
+
+msgid "Holdout"
+msgstr "Obstacle principal"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "Rendre les objets comme cache, qui créent un trou dans l’image avec un alpha nul, à remplir en compositing avec des vidéos ou un autre rendu"
+
+
+msgid "Shadow Catcher"
+msgstr "Attrapeur d’ombres"
 
 
 msgid "Location of the object"
@@ -23750,6 +23730,14 @@ msgid "Cycles world settings"
 msgstr "Réglages du monde pour Cycles"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Réglages de visibilité Cycles"
+
+
+msgid "Cycles visibility settings"
+msgstr "Réglages de visibilité pour Cycles"
+
+
 msgid "Lighting"
 msgstr "Éclairage"
 
@@ -25972,10 +25960,6 @@ msgstr "Exclure du calque de vue"
 
 msgid "Hide in Viewport"
 msgstr "Cacher dans la vue"
-
-
-msgid "Holdout"
-msgstr "Obstacle principal"
 
 
 msgid "Indirect Only"
@@ -61897,18 +61881,6 @@ msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
 msgstr "Multiplicateur pour le taux de découpage en dés (dans le panneau Subdivision)"
 
 
-msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
-msgstr "Rendre les objets comme cache, qui créent un trou dans l’image avec un alpha nul, à remplir en compositing avec des vidéos ou un autre rendu"
-
-
-msgid "Shadow Catcher"
-msgstr "Attrapeur d’ombres"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Ne rendre que les ombres sur cet objet, pour compositer des rendus dans des prises de vue réelles"
-
-
 msgid "Motion Steps"
 msgstr "Étapes de mouvement"
 
@@ -62031,38 +62003,6 @@ msgstr "Transmission indirecte"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "Débruiter l’éclairage en transmission indirect"
-
-
-msgid "Debug BVH Intersections"
-msgstr "Déboguer intersections BVH"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "Stocker le débogage des intersections BVH traversées"
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "Déboguer instances BVH traversées"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "Stocker la passe de débogage des instances BVH traversées"
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "Déboguer nœuds BVH traversés"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "Stocker la passe de débogage des nœuds BVH traversés"
-
-
-msgid "Debug Ray Bounces"
-msgstr "Déboguer rebonds raytracés"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "Stocker la passe de débogage des rebonds raytracés"
 
 
 msgid "Debug Render Time"
@@ -63217,26 +63157,6 @@ msgid "Current window matrix"
 msgstr "Matrice de fenêtre courante"
 
 
-msgid "Zmask Negate"
-msgstr "Inverser Z-masque"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Pour Z-masquer, ne rendre que ce qui est derrière les valeurs solides de Z, au lieu de devant"
-
-
-msgid "All Z"
-msgstr "Tous les Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Remplir les valeurs de Z pour les faces solides des calques invisibles, pour le masquage"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "Rendre les halos dans ce calque (par dessus les solides)"
-
-
 msgid "Deliver full combined RGBA buffer"
 msgstr "Délivrer un tampon RGBA totalement combiné"
 
@@ -63355,14 +63275,6 @@ msgstr "Fibre"
 
 msgid "Render Strands in this Layer"
 msgstr "Rendre les fibres dans ce calque"
-
-
-msgid "Zmask"
-msgstr "Z-masquer"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "Ne rendre que ce qui est devant les valeurs solides de Z"
 
 
 msgid "Render Passes"
@@ -64623,10 +64535,6 @@ msgstr "Facteur de mélange de l’occlusion ambiante"
 
 msgid "High brightness pixels generate a glowing effect"
 msgstr "Les pixels fortement lumineux génèrent un effet luminescent"
-
-
-msgid "Overscan"
-msgstr "Sur-balayage"
 
 
 msgid "Scene Objects"
@@ -69580,20 +69488,12 @@ msgid "Time Step"
 msgstr "Étape de temps"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "Placement de trait (éditeur d’image)"
+msgid "Stroke Placement (2D View)"
+msgstr "Placement de trait (vue 2D)"
 
 
 msgid "Stick stroke to surfaces"
 msgstr "Coller les traits aux surfaces"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Placement de trait (prévisualisation du séquenceur)"
-
-
-msgid "Stroke Placement (2D View)"
-msgstr "Placement de trait (vue 2D)"
 
 
 msgid "Auto-Keying Mode"
@@ -76814,10 +76714,6 @@ msgstr "Sélectionnez des arêtes ou paires de faces autour desquelles les boucl
 
 msgid "Could not find any selected edges that can be rotated"
 msgstr "Impossible de trouver un arête sélectionnée qui puisse être tournée"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Les faces sélectionnées doivent être des triangles ou des quadrangles"
 
 
 msgid "No edges are selected to operate on"

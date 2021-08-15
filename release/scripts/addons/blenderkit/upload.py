@@ -63,7 +63,6 @@ def get_app_version():
     return '%i.%i.%i' % (ver[0], ver[1], ver[2])
 
 
-
 def add_version(data):
     app_version = get_app_version()
     addon_version = version_checker.get_addon_version()
@@ -444,6 +443,9 @@ def get_upload_data(caller=None, context=None, asset_type=None):
             return None, None
 
         props = image.blenderkit
+
+        image_utils.analyze_image_is_true_hdr(image)
+
         # props.name = brush.name
         base, ext = os.path.splitext(image.filepath)
         thumb_path = base + '.jpg'
@@ -460,8 +462,8 @@ def get_upload_data(caller=None, context=None, asset_type=None):
         # mat analytics happen here, since they don't take up any time...
 
         upload_params = {
-            "textureResolutionMax": props.texture_resolution_max
-
+            "textureResolutionMax": props.texture_resolution_max,
+            "trueHDR": props.true_hdr
         }
 
         upload_data = {
@@ -660,10 +662,7 @@ class FastMetadata(bpy.types.Operator):
         update=update_free_full
     )
 
-
     ####################
-
-
 
     @classmethod
     def poll(cls, context):
@@ -729,7 +728,7 @@ class FastMetadata(bpy.types.Operator):
             asset_data = dict(sr[ui_props.active_index])
         else:
 
-            active_asset = utils.get_active_asset_by_type(asset_type = self.asset_type)
+            active_asset = utils.get_active_asset_by_type(asset_type=self.asset_type)
             asset_data = active_asset.get('asset_data')
 
         if not can_edit_asset(asset_data=asset_data):
@@ -1081,6 +1080,9 @@ def start_upload(self, context, asset_type, reupload, upload_set):
     if 'THUMBNAIL' in upload_set:
         if asset_type == 'HDR':
             image_utils.generate_hdr_thumbnail()
+            # get upload data because the image utils function sets true_hdr
+            export_data, upload_data = get_upload_data(caller=self, context=context, asset_type=asset_type)
+
         elif not os.path.exists(export_data["thumbnail_path"]):
             props.upload_state = 'Thumbnail not found'
             props.uploading = False
@@ -1214,9 +1216,12 @@ class UploadOperator(Operator):
             layout.prop(self, 'thumbnail')
 
         if props.asset_base_id != '' and not self.reupload:
-            layout.label(text="Really upload as new? ")
-            layout.label(text="Do this only when you create a new asset from an old one.")
-            layout.label(text="For updates of thumbnail or model use reupload.")
+            utils.label_multiline(layout, text="Really upload as new?\n"
+                                               "Do this only when you create\n"
+                                               "a new asset from an old one.\n"
+                                               "For updates of thumbnail or model use reupload.\n",
+                                  width=400, icon='ERROR')
+
 
         if props.is_private == 'PUBLIC':
             if self.asset_type == 'MODEL':
@@ -1229,6 +1234,22 @@ class UploadOperator(Operator):
                                                    '-   Check if it has all textures and renders as expected\n'
                                                    '-   Check if it has correct size in world units (for models)'
                                       , width=400)
+            elif self.asset_type == 'HDR':
+                if not props.true_hdr:
+                    utils.label_multiline(layout, text="This image isn't HDR,\n"
+                                                       "It has a low dynamic range.\n"
+                                                       "BlenderKit library accepts 360 degree images\n"
+                                                       "however the default filter setting for search\n"
+                                                       "is to show only true HDR images\n"
+                                          , icon='ERROR', width=400)
+
+                utils.label_multiline(layout, text='You marked the asset as public.\n'
+                                                   'This means it will be validated by our team.\n\n'
+                                                   'Please test your upload after it finishes:\n'
+                                                   '-   Open a new file\n'
+                                                   '-   Find the asset and download it\n'
+                                                   '-   Check if it works as expected\n'
+                                      , width=400)
             else:
                 utils.label_multiline(layout, text='You marked the asset as public.\n'
                                                    'This means it will be validated by our team.\n\n'
@@ -1239,11 +1260,16 @@ class UploadOperator(Operator):
                                       , width=400)
 
     def invoke(self, context, event):
-        props = utils.get_upload_props()
 
         if not utils.user_logged_in():
             ui_panels.draw_not_logged_in(self, message='To upload assets you need to login/signup.')
             return {'CANCELLED'}
+
+        if self.asset_type == 'HDR':
+            props = utils.get_upload_props()
+            # getting upload data for images ensures true_hdr check so users can be informed about their handling
+            # simple 360 photos or renders with LDR are hidden by default..
+            export_data, upload_data = get_upload_data(asset_type='HDR')
 
         # if props.is_private == 'PUBLIC':
         return context.window_manager.invoke_props_dialog(self)

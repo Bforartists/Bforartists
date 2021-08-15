@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-07-22 08:54+0200\n"
+"PO-Revision-Date: 2021-07-29 09:46+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
-"X-Poedit-Bookmarks: -1,-1,12162,-1,-1,-1,-1,-1,-1,-1"
+"X-Poedit-Bookmarks: -1,18287,12162,-1,-1,-1,-1,-1,-1,-1"
 
 
 msgid "Shader AOV"
@@ -382,30 +382,6 @@ msgstr "Doplnky užívateľov"
 
 msgid "Collection of add-ons"
 msgstr "Kolekcia doplnkov"
-
-
-msgid "Object Path"
-msgstr "Dráha objektu"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Dráha objektu vnútri archívu Alembic"
-
-
-msgid "Path"
-msgstr "Cesta"
-
-
-msgid "Object path"
-msgstr "Cesta objektu"
-
-
-msgid "Object Paths"
-msgstr "Cesty objektov"
-
-
-msgid "Collection of object paths"
-msgstr "Kolekcia ciest objektov"
 
 
 msgid "Animation Data"
@@ -982,10 +958,6 @@ msgstr "Úprava kosti aktívnej armatúry"
 
 msgid "Asset Library Reference"
 msgstr "Odkaz na knižnicu aktív"
-
-
-msgid "Identifier to refere to the asset library"
-msgstr "Identifikátor vzťahujúci sa na knižnicu aktív"
 
 
 msgid "Asset Data"
@@ -3472,6 +3444,14 @@ msgid "Use always Vertex Color mode"
 msgstr "Vždy používať režim farby vrcholov"
 
 
+msgid "Round"
+msgstr "Zaokrúhlená"
+
+
+msgid "Flat"
+msgstr "Plochý"
+
+
 msgid "Curve Jitter"
 msgstr "Krivka chvenia"
 
@@ -4124,6 +4104,30 @@ msgid "RGBA color in scene linear color space"
 msgstr "Farba RGBA v lineárnom farebnom priestore scény"
 
 
+msgid "Object Path"
+msgstr "Dráha objektu"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Dráha objektu vnútri archívu Alembic"
+
+
+msgid "Path"
+msgstr "Cesta"
+
+
+msgid "Object path"
+msgstr "Cesta objektu"
+
+
+msgid "Object Paths"
+msgstr "Cesty objektov"
+
+
+msgid "Collection of object paths"
+msgstr "Kolekcia ciest objektov"
+
+
 msgid "Background Image"
 msgstr "Obrázok pozadia"
 
@@ -4309,7 +4313,7 @@ msgstr "Lamely"
 
 
 msgid "Number of blades in aperture for polygonal bokeh (at least 3)"
-msgstr "Počet lamiel v clone pre polygónové rozostrenie (aspoň 3)"
+msgstr "Počet lamiel v clone pre polygónové rozostrenie okolia (aspoň 3)"
 
 
 msgid "F-Stop"
@@ -4325,7 +4329,7 @@ msgstr "Pomer"
 
 
 msgid "Distortion to simulate anamorphic lens bokeh"
-msgstr "Skreslenie simulácie anamorfných objektívov rozostrenia"
+msgstr "Skreslenie simulácie anamorfných objektívov rozostrenia okolia"
 
 
 msgid "Rotation of blades in aperture"
@@ -6001,28 +6005,28 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "Určuje, ako sú skombinované existujúce transformácie a akčné kanály"
 
 
-msgid "Before Original"
-msgstr "Pred originálom"
+msgid "Before Original (Full)"
+msgstr "Pred originálom (Plné)"
 
 
-msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "Použije akčné kanály pred pôvodnou transformáciou, ako keby sa použili na imaginárneho rodiča so zarovnanou zdedenou mierkou"
+msgid "Before Original (Aligned)"
+msgstr "Pred originálom (Zarovnané)"
 
 
-msgid "After Original"
-msgstr "Za originálom"
+msgid "Before Original (Split Channels)"
+msgstr "Pred originálom (Rozdelené kanály)"
 
 
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
-msgstr "Použije akčné kanály po pôvodnej transformácii, ako keby sa použili na imaginárneho potomka so zarovnanou zdedenou mierkou"
+msgid "After Original (Full)"
+msgstr "Za originálom (Plné)"
 
 
-msgid "After Original (Full Scale)"
-msgstr "Za originálom (plná mierka)"
+msgid "After Original (Aligned)"
+msgstr "Za originálom (Zarovnané)"
 
 
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
-msgstr "Použije akčné kanály po pôvodnej transformácii, ako keby sa použili na imaginárneho potomka s úplne zdedenou mierkou. Tento režim môže vytvárať štrih a slúži iba na spätnú kompatibilitu"
+msgid "After Original (Split Channels)"
+msgstr "Za originálom (Rozdelené kanály)"
 
 
 msgid "Target object"
@@ -6457,8 +6461,16 @@ msgid "Add euler component values together"
 msgstr "Sčíta hodnoty Eulerových súčastí"
 
 
+msgid "Before Original"
+msgstr "Pred originálom"
+
+
 msgid "Apply copied rotation before original, as if the constraint target is a parent"
 msgstr "Skopíruje rotáciu pred originál, akoby bol cieľom vynútenia rodič"
+
+
+msgid "After Original"
+msgstr "Za originálom"
 
 
 msgid "Apply copied rotation after original, as if the constraint target is a child"
@@ -6553,48 +6565,24 @@ msgid "Replace the original transformation with copied"
 msgstr "Nahradí pôvodnú transformáciu za skopírovanú"
 
 
-msgid "Before Original (Full)"
-msgstr "Pred originálom (Plné)"
-
-
 msgid "Apply copied transformation before original, using simple matrix multiplication as if the constraint target is a parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
 msgstr "Aplikuje skopírovanú transformáciu pred originálom použitím jednoduchého násobenia matríc, ako keby bol cieľ vynútenia rodičovským objektom v režime úplného dedenia mierky. Vytvorí strih pri kombinácii rotácie a nerovnomernej mierky"
-
-
-msgid "Before Original (Aligned)"
-msgstr "Pred originálom (Zarovnané)"
 
 
 msgid "Apply copied transformation before original, as if the constraint target is a parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
 msgstr "Aplikuje skopírovanú transformáciu pred originálom, ako keby cieľom vynútenia bol rodičovským objektom v režime zarovnaného dedenia mierky. Toto efektívne používa funkciu Plné pre umiestnenie a Rozdelené kanály pre rotáciu a mierku"
 
 
-msgid "Before Original (Split Channels)"
-msgstr "Pred originálom (Rozdelené kanály)"
-
-
 msgid "Apply copied transformation before original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
 msgstr "Aplikuje skopírovanú transformáciu pred originálom, pričom poloha, rotácia a mierka sa spracúvajú samostatne, podobne ako pri sekvencii troch vynútení Kopírovať"
-
-
-msgid "After Original (Full)"
-msgstr "Za originálom (Plné)"
 
 
 msgid "Apply copied transformation after original, using simple matrix multiplication as if the constraint target is a child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
 msgstr "Aplikuje skopírovanú transformáciu za originálom použitím jednoduchého násobenia matríc, ako keby cieľom vynútenia bol potomok v režime úplného dedenia mierky. Vytvorí strih pri kombinácii rotácie a nerovnomernej mierky"
 
 
-msgid "After Original (Aligned)"
-msgstr "Za originálom (Zarovnané)"
-
-
 msgid "Apply copied transformation after original, as if the constraint target is a child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
 msgstr "Aplikuje skopírovanú transformáciu za originálom, ako keby cieľom vynútenia bol potomok v režime zarovnaného dedenia mierky. Toto efektívne používa funkciu Plné pre polohu a Rozdelené kanály pre rotáciu a mierku"
-
-
-msgid "After Original (Split Channels)"
-msgstr "Za originálom (Rozdelené kanály)"
 
 
 msgid "Apply copied transformation after original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
@@ -10453,7 +10441,7 @@ msgstr "Použitý zvukový kodek FFMpeg"
 
 
 msgid "No Audio"
-msgstr "Žiadne audio"
+msgstr "Žiadny zvuk"
 
 
 msgid "Disables audio output, for video-only renders"
@@ -10666,7 +10654,7 @@ msgstr "Interval kľúčovej snímky"
 
 
 msgid "Distance between key frames, also known as GOP size; influences file size and seekability"
-msgstr "Vzdialenosť medzi kľúčovými snímkami, známa aj ako veľkosť GOP; ovplyvňuje veľkosť súboru a schopnosť vyhľadávania"
+msgstr "Vzdialenosť medzi kľúčovými snímkami, známa aj ako veľkosť Skupiny obrázkov, ovplyvňuje veľkosť súboru a schopnosť vyhľadávania"
 
 
 msgid "Max B-Frames"
@@ -13070,18 +13058,6 @@ msgid "Animation time of noise"
 msgstr "Čas animácie šumu"
 
 
-msgid "Noise Method"
-msgstr "Metóda šumu"
-
-
-msgid "Noise method which is used during the high-res simulation"
-msgstr "Metóda šumu, ktorá sa používa pri simulácii s vysokým rozlíšením"
-
-
-msgid "Wavelet"
-msgstr "Wavelet"
-
-
 msgid "Compression"
 msgstr "Kompresia"
 
@@ -14982,10 +14958,6 @@ msgid "Use Masks in Render"
 msgstr "Použiť maskovania pri prekreslení"
 
 
-msgid "Include the mask layers when rendering the viewlayer"
-msgstr "Zahrnie vrstvy maskovania pri prekresľovaní vrstvy zobrazenia"
-
-
 msgid "Vertex Paint Opacity"
 msgstr "Nepriehľadnosť maľby vrcholov"
 
@@ -15272,10 +15244,6 @@ msgstr "Ukončenie ťahu krajným štýlom hlavice"
 
 msgid "Rounded"
 msgstr "Zaoblený"
-
-
-msgid "Flat"
-msgstr "Plochý"
 
 
 msgid "Amount of gradient along section of stroke"
@@ -15734,6 +15702,10 @@ msgstr "Vlastnosti prvku manipulácie"
 
 msgid "Input properties of an Gizmo"
 msgstr "Vstupné vlastnosti manipulačných prvkov"
+
+
+msgid "Modifier affecting the Grease Pencil object"
+msgstr "Modifikátor ovplyvňujúci objekt Pastelky"
 
 
 msgid "Modifier name"
@@ -16440,6 +16412,18 @@ msgstr "Minimálny počet pohltení pre generované ťahy"
 
 msgid "The strength value for the generate strokes"
 msgstr "Hodnota sily pre generovanie ťahov"
+
+
+msgid "Overscan"
+msgstr "Presah snímania"
+
+
+msgid "Generate strokes from the objects in this collection"
+msgstr "Vygeneruje ťahy z objektov v tejto kolekcii"
+
+
+msgid "Generate strokes from this object"
+msgstr "Vygeneruje ťahy z tohto objektu"
 
 
 msgid "Source Type"
@@ -19372,7 +19356,7 @@ msgstr "Zachytiť UV"
 
 
 msgid "Relax"
-msgstr "Uvoľnenie"
+msgstr "Uvoľniť"
 
 
 msgid "Relax UVs"
@@ -20005,10 +19989,6 @@ msgstr "Režim skosenia"
 
 msgid "Determine how to build the curve's bevel geometry"
 msgstr "Zisťuje, ako zostaviť geometriu skosenia krivky"
-
-
-msgid "Round"
-msgstr "Zaokrúhlená"
 
 
 msgid "Use circle for the section of the curve's bevel geometry"
@@ -22606,7 +22586,7 @@ msgstr "Alfa hašé"
 
 
 msgid "Use noise to dither the binary visibility (works well with multi-samples)"
-msgstr "Použije šum na rozptýlenie viditeľnosti (dobre funguje s viacnásobnými snímkami)"
+msgstr "Použije šum na rozptyl farby viditeľnosti (dobre funguje s viacnásobnými snímkami)"
 
 
 msgid "Alpha Blend"
@@ -22766,7 +22746,7 @@ msgstr "Materiál bude vrhať tiene bez priehľadnosti"
 
 
 msgid "Use noise to dither the binary visibility and use filtering to reduce the noise"
-msgstr "Použije šum, aby sa zmenšil binárnu viditeľnosť a používa filtrovanie na zníženie šumu"
+msgstr "Použije šum na rozptyl farby binárnej viditeľnosti a používa filtrovanie na zníženie šumu"
 
 
 msgid "Show Backface"
@@ -23625,14 +23605,6 @@ msgid "Cycles object settings"
 msgstr "Nastavenia cyklov objektu"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Nastavenia cyklov viditeľnosti"
-
-
-msgid "Cycles visibility settings"
-msgstr "Nastavenia cyklov viditeľnosti"
-
-
 msgid "Data"
 msgstr "Údaje"
 
@@ -23891,6 +23863,18 @@ msgstr "Základ zo sústavy"
 
 msgid "Object comes from a background set"
 msgstr "Objekt pochádza zo sústavy pozadia"
+
+
+msgid "Holdout"
+msgstr "Zadržať"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "Prekreslí objekty ako spriehľadnené alebo matné, vytvára dieru v obraze s nulovou alfa, na vyplnenie kompozície reálnym záberom alebo iným prekreslením"
+
+
+msgid "Shadow Catcher"
+msgstr "Zachytávač tieňa"
 
 
 msgid "Line art settings for the object"
@@ -25865,7 +25849,7 @@ msgstr "Nastavenia úpravy jednotiek"
 
 
 msgid "Audio Muted"
-msgstr "Stlmiť audio"
+msgstr "Stlmiť zvuk"
 
 
 msgid "Play back of audio from Sequence Editor will be muted"
@@ -27428,6 +27412,14 @@ msgstr "Nastavenie cyklov sveta"
 
 msgid "Cycles world settings"
 msgstr "Nastavenie cyklov sveta"
+
+
+msgid "Cycles Visibility Settings"
+msgstr "Nastavenia cyklov viditeľnosti"
+
+
+msgid "Cycles visibility settings"
+msgstr "Nastavenia cyklov viditeľnosti"
 
 
 msgid "Lighting"
@@ -30068,10 +30060,6 @@ msgid "Temporarily hide in viewport"
 msgstr "Dočasne skryje v zábere"
 
 
-msgid "Holdout"
-msgstr "Zadržať"
-
-
 msgid "Mask out objects in collection from view layer"
 msgstr "Zamaskuje objekty v kolekcii pre vrstvu zobrazenia"
 
@@ -30085,7 +30073,7 @@ msgstr "Objekty v kolekcii iba nepriamo prispievajú (prostredníctvom tieňov a
 
 
 msgid "Whether this collection is visible for the view layer, take into account the collection parent"
-msgstr "Určuje viditeľnosť tejto kolekcie zobrazenej vrstvy, berúc do úvahy rodičovskú kolekciu"
+msgstr "Určuje viditeľnosť tejto kolekcie vrstvy zobrazenia, berúc do úvahy rodičovskú kolekciu"
 
 
 msgid "Name of this view layer (same as its collection one)"
@@ -31639,7 +31627,7 @@ msgstr "Kontextová ponuka NLA"
 
 
 msgid "Edit"
-msgstr "Upraviť"
+msgstr "Úprava"
 
 
 msgctxt "Operator"
@@ -31668,7 +31656,7 @@ msgstr "Atribút"
 
 
 msgid "Curve Primitives"
-msgstr "Prvotný tvar krivky."
+msgstr "Prvotný tvar krivky"
 
 
 msgid "Mesh Primitives"
@@ -31689,6 +31677,10 @@ msgstr "Uzol"
 
 msgid "Node Color Specials"
 msgstr "Špeciality farby uzla"
+
+
+msgid "Assets"
+msgstr "Aktíva"
 
 
 msgid "Outliner Context Menu"
@@ -37156,6 +37148,14 @@ msgid "Weld modifier"
 msgstr "Modifikátor zvarenia"
 
 
+msgid "Only Loose Edges"
+msgstr "Len voľné hrany"
+
+
+msgid "Collapse edges without faces, cloth sewing edges"
+msgstr "Zvinie hrany bez plôšok, hrany zošitia látky"
+
+
 msgid "Mode defines the merge rule"
 msgstr "Režim definuje pravidlo zlúčenia"
 
@@ -38945,7 +38945,7 @@ msgstr "Mitch"
 
 
 msgid "Bokeh"
-msgstr "Bokeh"
+msgstr "Rozostrenie okolia"
 
 
 msgid "Use circular filter (slower)"
@@ -38957,7 +38957,7 @@ msgstr "Rozšíriť okraje"
 
 
 msgid "Extend bounds of the input image to fully fit blurred image"
-msgstr "Rozšíri okraje vstupného obrazu, aby sa úplne vošiel rozmazaný obraz"
+msgstr "Rozšíri okraje vstupného obrazu, aby sa úplne vošiel rozostrený obraz"
 
 
 msgid "Apply filter on gamma corrected values"
@@ -38965,7 +38965,7 @@ msgstr "Použiť filter na hodnoty korigovanej gama"
 
 
 msgid "Use relative (percent) values to define blur radius"
-msgstr "Použije relatívne (percentuálne) hodnoty na definovanie dosahu rozmazania"
+msgstr "Použije relatívne (percentuálne) hodnoty na definovanie dosahu rozostrenia"
 
 
 msgid "Variable Size"
@@ -38977,7 +38977,7 @@ msgstr "Podporuje premenné rozostrenie na pixel pri použití obrazu pre veľko
 
 
 msgid "Bokeh Blur"
-msgstr "Rozmazanie rozostrenia"
+msgstr "Rozostrenie okolia"
 
 
 msgid "Max Blur"
@@ -38989,11 +38989,11 @@ msgstr "Limit rozostrenia, maximálny polomer CoC"
 
 
 msgid "Bokeh Image"
-msgstr "Obrázok rozostrenia"
+msgstr "Obrázok rozostrenia okolia"
 
 
 msgid "Angle of the bokeh"
-msgstr "Uhol rozostrenia"
+msgstr "Uhol rozostrenia okolia"
 
 
 msgid "Catadioptric"
@@ -39001,7 +39001,7 @@ msgstr "Katadioptria"
 
 
 msgid "Level of catadioptric of the bokeh"
-msgstr "Úroveň katadioptrie Bokehu"
+msgstr "Úroveň katadioptrie rozostrenia okolia"
 
 
 msgid "Flaps"
@@ -39017,7 +39017,7 @@ msgstr "Zaokrúhľovanie"
 
 
 msgid "Level of rounding of the bokeh"
-msgstr "Úroveň zaokrúhlenia rozostrenia"
+msgstr "Úroveň zaokrúhlenia rozostrenia okolia"
 
 
 msgid "Lens Shift"
@@ -39613,7 +39613,7 @@ msgstr "Pravdivé, ak tento obrázok má viacero zobrazení"
 
 
 msgid "Placeholder"
-msgstr "Zástupný"
+msgstr "Zástupný symbol"
 
 
 msgid "Cryptomatte Layer"
@@ -41615,6 +41615,30 @@ msgstr "Vypočíta počet snímok rozdelením každej drážky na segmenty so za
 
 msgid "Curve Reverse"
 msgstr "Reverzná krivka"
+
+
+msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
+msgstr "Manipulátor sa dá presunúť kamkoľvek a neovplyvňuje iný bod manipulátora"
+
+
+msgid "The location is automatically calculated to be smooth"
+msgstr "Poloha sa automaticky vypočíta tak, aby bola vyhladená"
+
+
+msgid "The location is calculated to point to the next/previous control point"
+msgstr "Poloha sa vypočíta tak, aby ukazovala na nasledujúci/predošlý riadiaci bod"
+
+
+msgid "The location is constrained to point in the opposite direction as the other handle"
+msgstr "Poloha je obmedzená tak, aby smerovalo opačným smerom ako druhý manipulátor"
+
+
+msgid "Set Handle Type"
+msgstr "Nastaviť typ manipulátora"
+
+
+msgid "Whether to update left and right handles"
+msgstr "Určuje, či sa majú aktualizovať ľavé a pravé manipulátory"
 
 
 msgid "Curve Spiral"
@@ -43691,7 +43715,7 @@ msgstr "Pravdivé, keď je vyvolané (aj keď je dostupné len spustenie spätn�
 
 
 msgid "True when run from the 'Adjust Last Operation' panel"
-msgstr "Pravdivé pri spustení z panelu 'Upraviť poslednú operáciu'"
+msgstr "Pravdivé pri spustení z panelu 'Úprava poslednej operácie'"
 
 
 msgid "Repeat Call"
@@ -45492,11 +45516,6 @@ msgstr "Obnoviť zoznam aktív"
 
 msgid "Trigger a reread of the assets"
 msgstr "Spustí opätovné načítanie aktív"
-
-
-msgctxt "Operator"
-msgid "Mark Asset"
-msgstr "Označiť aktíva"
 
 
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
@@ -48142,7 +48161,7 @@ msgstr "Znížiť šum animácie"
 
 
 msgid "Denoise rendered animation sequence using current scene and view layer settings. Requires denoising data passes and output to OpenEXR multilayer files"
-msgstr "Zníži šum prekreslením sekvencie animácie použitím aktuálnej scény a zobrazí nastavenia vrstvy. Vyžaduje prechodné údaje na zníženie šumu a výstup na OpenEXR viacvrstvových súborov"
+msgstr "Zníži šum prekreslením sekvencie animácie použitím nastavení aktuálnej scény a vrstvy zobrazenia. Vyžaduje prechodné údaje na zníženie šumu a výstup na OpenEXR viacvrstvových súborov"
 
 
 msgid "Input Filepath"
@@ -49160,10 +49179,6 @@ msgid "Keep original"
 msgstr "Zachovať originál"
 
 
-msgid "Keep original textures files if possible. WARNING: if you use more than one texture, where pbr standard requires only one, only one texture will be used.This can lead to unexpected results"
-msgstr "Ak je to možné, zachová pôvodné súbory textúr. VAROVANIE: ak použijete viac ako jednu textúru, pričom štandard pbr vyžaduje iba jednu, použije sa iba jedna textúra. To môže viesť k neočakávaným výsledkom"
-
-
 msgid "Punctual Lights"
 msgstr "Bodové svietidlá"
 
@@ -49513,15 +49528,6 @@ msgstr "Pokojová snímka"
 
 msgid "Write the rest state at the first frame"
 msgstr "Zapíše stav pokoja po prvej snímke"
-
-
-msgctxt "Operator"
-msgid "Register File Association"
-msgstr "Asociácia súborov registra"
-
-
-msgid "Use this installation for .blend files and to display thumbnails"
-msgstr "Túto inštaláciu použite pre súbory .blend a na zobrazenie miniatúr"
 
 
 msgctxt "Operator"
@@ -61445,10 +61451,6 @@ msgid "Flash On Transfer"
 msgstr "Blikať pri prenose"
 
 
-msgid "Flash the target object when transfering the mode"
-msgstr "V režime prenosu cieľový objekt bliká"
-
-
 msgctxt "Operator"
 msgid "Apply Object Transform"
 msgstr "Použiť transformáciu objektu"
@@ -62353,14 +62355,6 @@ msgstr "ID údajov operácie"
 
 msgid "Unlink"
 msgstr "Odpojiť"
-
-
-msgid "Mark Asset"
-msgstr "Označiť aktíva"
-
-
-msgid "Clear Asset"
-msgstr "Vymazať aktíva"
 
 
 msgid "Make Local"
@@ -64663,6 +64657,15 @@ msgstr "Odstráni cestu k súboru .blend, aby sa prehliadač aktív už nepokú�
 
 
 msgctxt "Operator"
+msgid "Register File Association"
+msgstr "Asociácia súborov registra"
+
+
+msgid "Use this installation for .blend files and to display thumbnails"
+msgstr "Túto inštaláciu použite pre súbory .blend a na zobrazenie miniatúr"
+
+
+msgctxt "Operator"
 msgid "Add Auto-Execution Path"
 msgstr "Pridať cestu automatického spustenia"
 
@@ -65614,7 +65617,7 @@ msgstr "Zapiecť zásobník svetla"
 
 
 msgid "Bake the active view layer lighting"
-msgstr "Zapečie vrstvu osvetlenia aktívneho pohľadu"
+msgstr "Zapečie osvetlenie aktívnej vrstvy zobrazenia"
 
 
 msgid "Delay in millisecond before baking starts"
@@ -67004,11 +67007,11 @@ msgstr "Náhodná poloha vrcholov"
 
 
 msgid "Relax mesh"
-msgstr "Pokojová povrchová sieť"
+msgstr "Uvoľniť povrchovú sieť"
 
 
 msgid "Relax Face Sets"
-msgstr "Nastavenia pokojových plôšok"
+msgstr "Uvoľniť sústavu plôšok"
 
 
 msgid "Smooth the edges of all the Face Sets"
@@ -67386,7 +67389,7 @@ msgstr "Zmeniť údaje/súbory"
 
 
 msgid "Use Placeholders"
-msgstr "Použiť zástupné"
+msgstr "Použiť zástupné symboly"
 
 
 msgid "Use placeholders for missing frames of the strip"
@@ -67651,10 +67654,6 @@ msgstr "Zachová pôvodnú veľkosť obrázka"
 
 msgid "Set View Transform"
 msgstr "Nastaví zobrazenie transformácie"
-
-
-msgid "Set appropriate view transform based on media colorspace"
-msgstr "Nastaví vhodnú transformáciu zobrazenia na základe farebného priestoru média"
 
 
 msgctxt "Operator"
@@ -68427,7 +68426,7 @@ msgstr "wav"
 
 
 msgid "Waveform Audio File Format"
-msgstr "Formát audio súboru tvarovej vlny"
+msgstr "Formát súboru zvukovej tvarovej vlny"
 
 
 msgid "Sample format"
@@ -74135,11 +74134,11 @@ msgstr "Obrázok použitý ako zdrojový klon"
 
 
 msgid "Dither"
-msgstr "Zrnenie"
+msgstr "Rozptyl farby"
 
 
 msgid "Amount of dithering when painting on byte images"
-msgstr "Množstvo zrnenia pri maľovaní na bajt obrázku"
+msgstr "Množstvo rozptylu farby pri maľovaní na bajt obrázku"
 
 
 msgid "Texture filtering type"
@@ -74737,6 +74736,10 @@ msgid "Beam Shape"
 msgstr "Tvar lúča"
 
 
+msgid "Fast GI Approximation"
+msgstr "Rýchla aproximácia Globálneho osvetlenia"
+
+
 msgid "Shadow Terminator"
 msgstr "Ukončenie tieňa"
 
@@ -74750,7 +74753,7 @@ msgstr "Predvoľby integrátora"
 
 
 msgid "Post Processing"
-msgstr "Dodatočné spracovanie"
+msgstr "Následné spracovanie"
 
 
 msgid "Sampling Presets"
@@ -74783,10 +74786,6 @@ msgstr "Vyžiarenia svetla"
 
 msgid "Clamping"
 msgstr "Pripnutie"
-
-
-msgid "Fast GI Approximation"
-msgstr "Rýchla aproximácia Globálneho osvetlenia"
 
 
 msgid "Max Bounces"
@@ -75170,7 +75169,7 @@ msgstr "Konzola zviditeľnenia matematiky"
 
 
 msgid "Backdrop"
-msgstr "Prepad"
+msgstr "Pozadie"
 
 
 msgid "Slot"
@@ -76327,7 +76326,7 @@ msgstr "Normálny dopad"
 
 
 msgid "Post-Processing"
-msgstr "Dodatočné spracovanie"
+msgstr "Následné spracovanie"
 
 
 msgid "Sculpt Strokes"
@@ -78230,10 +78229,6 @@ msgid "Python Scripts Directory"
 msgstr "Priečinok skriptov Python"
 
 
-msgid "Alternate script path, matching the default layout with subdirectories: startup, addons, modules, and presets (requires restart)"
-msgstr "Alternatívna cesta k skriptu zodpovedajúca predvolenému rozloženiu s podpriečinkami: spustenie, doplnky a moduly (vyžaduje reštart)"
-
-
 msgid "Hide Dot Files/Data-Blocks"
 msgstr "Skryť bodkové súbory/bloky údajov"
 
@@ -79882,6 +79877,10 @@ msgid "File Entry"
 msgstr "Zadávanie súborov"
 
 
+msgid "TEMPORARY, DO NOT USE - File data used to refer to the asset"
+msgstr "DOČASNÉ, NEPOUŽÍVAŤ - Údaje súboru používané pre odkazovanie na aktívum"
+
+
 msgid "The local data-block this asset represents; only valid if that is a data-block in this file"
 msgstr "Lokálny blok údajov, ktorý toto aktívum predstavuje; platí len vtedy, ak je to blok údajov v tomto súbore"
 
@@ -80202,24 +80201,16 @@ msgid "Scale the distance between volume shader samples when rendering the volum
 msgstr "Mierka vzdialenosti medzi snímkami tieňovača objemu pri prekreslení objemu (nižšie hodnoty poskytujú presnejšie a podrobnejšie výsledky, ale tiež zvyšujú čas prekreslenia)"
 
 
+msgid "AO Distance"
+msgstr "Vzdialenosť Pohltenia okolím"
+
+
 msgid "Dicing Scale"
 msgstr "Mierka delenia"
 
 
 msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
 msgstr "Násobič pre mieru delenia scény (nachádza sa na paneli Delenie)"
-
-
-msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
-msgstr "Prekreslí objekty ako spriehľadnené alebo matné, vytvára dieru v obraze s nulovou alfa, na vyplnenie kompozície reálnym záberom alebo iným prekreslením"
-
-
-msgid "Shadow Catcher"
-msgstr "Zachytávač tieňa"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Prekreslí len tiene tohto objektu, pre združované prekreslenie v reálnom zábere"
 
 
 msgid "Motion Steps"
@@ -80408,38 +80399,6 @@ msgstr "Nepriame vyslané"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "Zníži šum nepriamo vyslaného osvetlenia"
-
-
-msgid "Debug BVH Intersections"
-msgstr "Ladiť BVH križovanie"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "Uložiť ladenie BVH križovania"
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "Ladiť inštanciu BVH križovania"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "Uložiť ladenie prechodu inštancie BVH križovania"
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "Ladiť uzly BVH križovania"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "Uložiť prechody uzlov ladenia BVH križovania"
-
-
-msgid "Debug Ray Bounces"
-msgstr "Ladiť odrazy lúčov"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "Uložiť prechody ladenia odrazov lúčov"
 
 
 msgid "Debug Render Time"
@@ -80707,7 +80666,7 @@ msgstr "Odstraňovač šumu"
 
 
 msgid "Denoise the image with the selected denoiser. For denoising the image after rendering, denoising data render passes also adapt to the selected denoiser"
-msgstr "Obrázok odšumenia zvoleným odstraňovačom šumu. Na odšumenie obrázku počas prekreslenia, údaje odšumenia pri prekreslení prechodu sa prispôsobia aj vybranému odstraňovaču šumu"
+msgstr "Obrázok odšumenia zvoleným odstraňovačom šumu. Na odšumenie obrázku počas prekreslenia, údaje odšumenia pri prechodoch prekreslenia sa prispôsobia aj vybranému odstraňovaču šumu"
 
 
 msgid "Device"
@@ -81247,7 +81206,7 @@ msgstr "Maximum odrazov priehľadnosti"
 
 
 msgid "Maximum number of transparent bounces. This is independent of maximum number of other bounces "
-msgstr "Maximálny počet priehľadných odrazov. Toto je nezávislé od maximálneho počtu iných odrazov"
+msgstr "Maximálny počet priehľadných odrazov. Toto je nezávislé od maximálneho počtu iných odrazov "
 
 
 msgid "Use Adaptive Sampling"
@@ -81283,7 +81242,7 @@ msgstr "Vzorky vrstiev"
 
 
 msgid "How to use per view layer sample settings"
-msgstr "Ako sa používa nastavenie na zobrazenie snímky vrstvy"
+msgstr "Ako sa používa nastavenie snímky na vrstvu zobrazenia"
 
 
 msgid "Per render layer number of samples override scene samples"
@@ -81814,10 +81773,6 @@ msgid "Data Layers"
 msgstr "Vrstvy údajov"
 
 
-msgid "Export normals, UVs, vertex colors and materials for formats that support it significantly increasing filesize"
-msgstr "Exportuje normály, UV súradnice, farby vrcholov a materiálov do formátov, ktoré to podporujú, čím sa výrazne zvyšuje veľkosť súborov"
-
-
 msgid "Copy Textures"
 msgstr "Kopírovať textúry"
 
@@ -82054,36 +82009,12 @@ msgid "Current window matrix"
 msgstr "Matrica aktuálneho okna"
 
 
-msgid "Zmask Negate"
-msgstr "Záporná Z maskovanie"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Pre Z maskovanie, prekreslí len čo je za pevnými Z hodnotami namiesto predných"
-
-
 msgid "View layer name"
-msgstr "Zobrazí názov vrstvy"
-
-
-msgid "All Z"
-msgstr "Všetky Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Vyplní hodnoty Z pre plné plôšky v neviditeľných vrstvách, pre maskovanie"
+msgstr "Názov vrstvy zobrazenia"
 
 
 msgid "Render Ambient Occlusion in this Layer"
 msgstr "Prekreslí pohlcovanie okolím v tejto vrstve"
-
-
-msgid "Render edge-enhance in this layer (only works for solid faces)"
-msgstr "Prekreslí vylepšenie hrany v tejto vrstve (funguje len pre pevné plôšky)"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "Prekreslí Halo v tejto vrstve (na vrchu pevné)"
 
 
 msgid "Render motion blur in this Layer, if enabled in the scene"
@@ -82222,28 +82153,12 @@ msgid "Render volumes in this Layer"
 msgstr "Prekresliť objemy v tejto vrstve"
 
 
-msgid "Zmask"
-msgstr "Z maskovanie"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "Prekreslí iba to, čo je pred pevnými hodnotami Z"
-
-
-msgid "Z-Transparent"
-msgstr "Z-priehľadnosť"
-
-
-msgid "Render Z-transparent faces in this layer (on top of Solid and Halos)"
-msgstr "V tejto vrstve prekreslí Z transparentnosti plôšky (na vrchu Plný a Halos)"
-
-
 msgid "Render Passes"
-msgstr "Prekreslí prechody"
+msgstr "Prechody prekreslenia"
 
 
 msgid "Collection of render passes"
-msgstr "Kolekcia prekreslenia prechodov"
+msgstr "Kolekcia prechodov prekreslenia"
 
 
 msgid "Result of rendering, including all layers and passes"
@@ -82319,7 +82234,7 @@ msgstr "Intenzita rozptylu farby"
 
 
 msgid "Amount of dithering noise added to the rendered image to break up banding"
-msgstr "Množstvo šumu rozptylom farby pridaného do prevádzaného obrázku na ukončenie pruhovania"
+msgstr "Množstvo šumu rozptylom farby pridaného do prekresľovaného obrázku na ukončenie tvorby pásov"
 
 
 msgid "Engine"
@@ -82431,11 +82346,11 @@ msgstr "Jednotka hrúbky čiary je zmenšená podielom súčasného vertikálneh
 
 
 msgid "Metadata Input"
-msgstr "Zadávanie meta údajov"
+msgstr "Vstup meta údajov"
 
 
 msgid "Where to take the metadata from"
-msgstr "Určuje, odkiaľ sa vezmú meta údaje"
+msgstr "Určuje, odkiaľ sa meta údaje berú"
 
 
 msgid "Use metadata from the current scene"
@@ -82711,7 +82626,7 @@ msgstr "Prevádza oblasť prekreslenia definovanej užívateľom v rámci veľko
 
 
 msgid "Process the render result through the compositing pipeline, if compositing nodes are enabled"
-msgstr "Spracuje výsledné prekreslenie prostredníctvom potrubia združovania, ak sú zapnuté uzly združovania"
+msgstr "Spracuje výsledné prekreslenie prostredníctvom zreťazeného spracovania kompozície, ak sú zapnuté uzly kompozície"
 
 
 msgid "Crop to Render Region"
@@ -82771,7 +82686,7 @@ msgstr "Uchovávanie údajov prekreslenia pre rýchlejšie opakované prekresľo
 
 
 msgid "Placeholders"
-msgstr "Zástupné"
+msgstr "Zástupné symboly"
 
 
 msgid "Create empty placeholder files while rendering frames (similar to Unix 'touch')"
@@ -82795,7 +82710,7 @@ msgstr "Uloží dlaždice pre všetky vrstvy prekreslenia a uzly scény do súbo
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
-msgstr "Spracuje výsledné prekreslenie (a vytvorenie kompozície) cez video potrubie editora sekvencie, ak pásy radiča existujú"
+msgstr "Spracuje výsledné prekreslenie (a vytvorenie kompozície) cez zreťazené spracovanie videa editora sekvencie, ak pásy radiča existujú"
 
 
 msgid "Override Scene Settings"
@@ -83847,7 +83762,7 @@ msgstr "Množstvo odšumenia"
 
 
 msgid "Amount of flicker removal applied to bokeh highlights"
-msgstr "Množstvo odstránenia blikania použité na zvýraznenie rozostrenia"
+msgstr "Množstvo odstránenia blikania použité na zvýraznenie rozostrenia okolia"
 
 
 msgid "Max Size"
@@ -83855,7 +83770,7 @@ msgstr "Maximálna veľkosť"
 
 
 msgid "Max size of the bokeh shape for the depth of field (lower is faster)"
-msgstr "Maximálna veľkosť tvaru rozostrenia pre hĺbku ostrosti (nižšia je rýchlejšie)"
+msgstr "Maximálna veľkosť tvaru rozostrenia okolia pre hĺbku ostrosti (nižšia je rýchlejšie)"
 
 
 msgid "Neighbor Rejection"
@@ -83863,7 +83778,7 @@ msgstr "Odmietnutie susedov"
 
 
 msgid "Maximum brightness to consider when rejecting bokeh sprites based on neighborhood (lower is faster)"
-msgstr "Maximálny jas, ktorý sa má brať do úvahy vrátením rozostrenia duchov na základe susedstva (nižší je rýchlejší)"
+msgstr "Maximálny jas, ktorý sa má brať do úvahy vrátením duchov rozostrenia okolia na základe susedstva (nižší je rýchlejší)"
 
 
 msgid "Over-blur"
@@ -84172,10 +84087,6 @@ msgstr "Približné spracovanie simulácie odrazu svetla dáva nižšie pohlcova
 
 msgid "Enable motion blur effect (only in camera view)"
 msgstr "Povolí efekt rozmazania pohybom (iba v zábere kamery)"
-
-
-msgid "Overscan"
-msgstr "Presah snímania"
 
 
 msgid "Internally render past the image border to avoid screen-space effects disappearing"
@@ -84880,8 +84791,44 @@ msgid "Sequence strip to control the speed of other strips"
 msgstr "Sekvenčný pás pre kontrolu rýchlosti ostatných pásov"
 
 
+msgid "Speed Control"
+msgstr "Regulácia rýchlosti"
+
+
+msgid "Speed control method"
+msgstr "Metóda regulácie rýchlosti"
+
+
+msgid "Adjust input playback speed, so its duration fits strip length"
+msgstr "Upraví rýchlosť prehrávania vstupu tak, aby jeho trvanie zodpovedalo dĺžke pásu"
+
+
+msgid "Multiply with the speed factor"
+msgstr "Vynásobí faktorom rýchlosti"
+
+
+msgid "Frame number of the input strip"
+msgstr "Číslo snímky vstupného pásu"
+
+
+msgid "Percentage of the input strip length"
+msgstr "Percento dĺžky vstupného pásu"
+
+
+msgid "Multiply Factor"
+msgstr "Faktor násobenia"
+
+
 msgid "Multiply the current speed of the sequence with this number or remap current frame to this frame"
 msgstr "Vynásobí aktuálnu rýchlosť sekvencie týmto číslom alebo zmení priradenie aktuálnej snímky na túto snímku"
+
+
+msgid "Frame number of input strip"
+msgstr "Číslo snímky vstupného pásu"
+
+
+msgid "Percentage of input strip length"
+msgstr "Percento dĺžky vstupného pásu"
 
 
 msgid "Frame Interpolation"
@@ -86712,7 +86659,7 @@ msgstr "Ukáže červený kanál v snímke"
 
 
 msgid "Adjust Last Operation"
-msgstr "Upraviť poslednú operáciu"
+msgstr "Úprava poslednej operácie"
 
 
 msgid "Toolbar"
@@ -87627,11 +87574,11 @@ msgstr "Typ informácií na zobrazenie"
 
 
 msgid "Display scenes and their view layers, collections and objects"
-msgstr "Zobrazí scény a ich zobrazenie vrstiev, kolekcií a objektov"
+msgstr "Zobrazí scény a ich vrstvy zobrazenia, kolekcií a objektov"
 
 
 msgid "Display collections and objects in the view layer"
-msgstr "Zobrazí kolekcie a objekty v zobrazovanej vrstve"
+msgstr "Zobrazí kolekcie a objekty vo vrstve zobrazenia"
 
 
 msgid "Display data belonging to the Video Sequencer"
@@ -91411,28 +91358,12 @@ msgid "Time Step"
 msgstr "Časový krok"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "Umiestniť ťah (Editor obrázkov)"
-
-
-msgid "Draw stroke at 3D cursor location"
-msgstr "Kresliť ťah na polohe 3D kurzora"
+msgid "Stroke Placement (2D View)"
+msgstr "Umiestniť ťah (2D zobrazenie)"
 
 
 msgid "Stick stroke to the view"
 msgstr "Prilepiť ťah do zobrazenia"
-
-
-msgid "Stick stroke to surfaces"
-msgstr "Prilepiť ťah na povrchy"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Umiestniť ťah (náhľad radiča)"
-
-
-msgid "Stroke Placement (2D View)"
-msgstr "Umiestniť ťah (2D zobrazenie)"
 
 
 msgid "Annotation Stroke Placement (3D View)"
@@ -91441,6 +91372,14 @@ msgstr "Umiestniť ťah poznámky (3D zobrazenie)"
 
 msgid "How annotation strokes are orientated in 3D space"
 msgstr "Orientácia ťahov poznamky v 3D priestore"
+
+
+msgid "Draw stroke at 3D cursor location"
+msgstr "Kresliť ťah na polohe 3D kurzora"
+
+
+msgid "Stick stroke to surfaces"
+msgstr "Prilepiť ťah na povrchy"
 
 
 msgid "Annotation Stroke Thickness"
@@ -92013,23 +91952,23 @@ msgstr "Zachová UV a upraví režim výberu povrchovej siete podľa synchroniz�
 
 
 msgid "Relaxation Method"
-msgstr "Metóda relaxácie"
+msgstr "Metóda uvoľnenia"
 
 
 msgid "Algorithm used for UV relaxation"
-msgstr "Algoritmus použitý na UV relaxáciu"
+msgstr "Algoritmus použitý na uvoľnenie UV"
 
 
 msgid "Use Laplacian method for relaxation"
-msgstr "Použije Laplacianovu metódu na relaxáciu"
+msgstr "Na uvoľnenie použije Laplacianovu metódu"
 
 
 msgid "Use HC method for relaxation"
-msgstr "Použije HC metódy na relaxáciu"
+msgstr "Na uvoľnenie použije HC metódy"
 
 
 msgid "UV Sculpt"
-msgstr "UV sochárstvo"
+msgstr "UV sochárstva"
 
 
 msgid "Sculpt All Islands"
@@ -93325,7 +93264,7 @@ msgstr "Množstvo alfa na použitie"
 
 
 msgid "View layer"
-msgstr "Zobraziť vrstvu"
+msgstr "Vrstva zobrazenia"
 
 
 msgid "Active AOV"
@@ -93345,7 +93284,7 @@ msgstr "Kolekcia aktívnej vrstvy"
 
 
 msgid "Active layer collection in this view layer's hierarchy"
-msgstr "Kolekcia aktívnych vrstiev v hierarchii vrstviev zobrazenia"
+msgstr "Kolekcia aktívnych vrstiev v hierarchii vrstiev zobrazenia"
 
 
 msgid "Cycles ViewLayer Settings"
@@ -93361,7 +93300,7 @@ msgstr "Nastavenia Eevee"
 
 
 msgid "View layer settings for Eevee"
-msgstr "Zobrazí nastavenia vrstvy pre Eevee"
+msgstr "Nastavenia vrstvy zobrazenia pre Eevee"
 
 
 msgid "Root of collections hierarchy of this view layer,its 'collection' pointer property is the same as the scene's master collection"
@@ -93648,6 +93587,10 @@ msgid "Volume object render settings"
 msgstr "Nastavenia prekreslenia objektov objemu"
 
 
+msgid "Specify volume density and step size in object or world space"
+msgstr "Určí hustotu objemu a veľkosť kroku v priestore objektu alebo sveta"
+
+
 msgid "Keep volume opacity and detail the same regardless of object scale"
 msgstr "Zachová nepriehľadnosť objemu a rovnaké detaily bez ohľadu na mierku objektu"
 
@@ -93854,6 +93797,14 @@ msgstr "Záber VR ďaleko vzdialenosti strihu"
 
 msgid "VR viewport near clipping distance"
 msgstr "Záber VR blízko vzdialenosti strihu"
+
+
+msgid "Absolute Tracking"
+msgstr "Absolútne sledovanie"
+
+
+msgid "Use unadjusted location/rotation as defined by the XR runtime"
+msgstr "Použije neupravenú polohu/rotáciu podľa definície v čase behu XR"
 
 
 msgid "Positional Tracking"
@@ -95081,7 +95032,7 @@ msgstr "Pevnosť funkcie"
 
 
 msgid "Pipeline"
-msgstr "Potrubie"
+msgstr "Zreťazené spracovanie"
 
 
 msgid "Geometry Offset"
@@ -95166,10 +95117,6 @@ msgstr "Delenia krivky"
 
 msgid "AO Factor"
 msgstr "Faktor Pohltenia okolím"
-
-
-msgid "AO Distance"
-msgstr "Vzdialenosť Pohltenia okolím"
 
 
 msgid "Incompatible output node"
@@ -95478,10 +95425,6 @@ msgid "No animation data found to create asset from"
 msgstr "Nenašli sa žiadne údaje animácie, z ktorých by sa dalo vytvoriť aktívum"
 
 
-msgid "Whaaaat who is using our brand new asset?"
-msgstr "Ktosi používa naše úplne nové aktívum?"
-
-
 msgid "Did not find any assets on clipboard"
 msgstr "V schránke nenájdené žiadne aktíva"
 
@@ -95722,10 +95665,6 @@ msgstr "Toto aktívum je uložené v aktuálnom blend súbore"
 
 msgid "Unable to find any running process"
 msgstr "Nemožno nájsť žiadny spustený proces"
-
-
-msgid "Blender subprocess exited with error code %d"
-msgstr "Podproces Blenderu sa ukončil kódom chyby %d"
 
 
 msgid "Selection pair not found"
@@ -96287,6 +96226,10 @@ msgid "Calculate..."
 msgstr "Vypočítať..."
 
 
+msgid "Collection Mask"
+msgstr "Maska kolekcie"
+
+
 msgctxt "Operator"
 msgid "Add Object Constraint"
 msgstr "Pridať vynútenie objektu"
@@ -96307,7 +96250,7 @@ msgstr "Oblasť zarážky"
 
 
 msgid "Volume Min"
-msgstr "Objem Min"
+msgstr "Hlasitosť Minimum"
 
 
 msgid "Min/Max"
@@ -97196,7 +97139,7 @@ msgstr "Zobraziť vzor inštancie"
 
 
 msgid "Old"
-msgstr "Stará"
+msgstr "Staré"
 
 
 msgid "Date"
@@ -99496,6 +99439,10 @@ msgid "Muted Strips"
 msgstr "Stlmené pásy"
 
 
+msgid "Snap to Strips"
+msgstr "Prichytiť na pásy"
+
+
 msgctxt "Operator"
 msgid "Set Preview Range to Strips"
 msgstr "Nastaví rozsah náhľadu na pásy"
@@ -99802,10 +99749,6 @@ msgstr "Pod týmto pásom sú potrebné dva alebo viaceré kanály"
 
 msgid "No active context"
 msgstr "Žiadny aktívny kontext"
-
-
-msgid "No active viewer node."
-msgstr "Žiadny aktívny uzol prehliadača."
 
 
 msgid "<no object>"
@@ -103119,10 +103062,6 @@ msgid "%s, not exact since frame %i"
 msgstr "%s, nepresné od %i snímky"
 
 
-msgid "Assets"
-msgstr "Aktíva"
-
-
 msgid "Warning"
 msgstr "Upozornenie"
 
@@ -103968,10 +103907,6 @@ msgid "Tab: show blended pose"
 msgstr "Karta: zobraziť zmiešanú pózu"
 
 
-msgid "Internal pose library error, cancelling operator"
-msgstr "Interná chyba knižnice póz, zrušenie operátora"
-
-
 msgid "No active Keying Set to use"
 msgstr "Žiadna aktívna sústava kľúčovania na použitie"
 
@@ -103989,7 +103924,7 @@ msgstr "Postrčiť pózu"
 
 
 msgid "Relax Pose"
-msgstr "Pokojová póza"
+msgstr "Uvoľniť pózu"
 
 
 msgid "Sliding-Tool"
@@ -105757,10 +105692,6 @@ msgid "No selected vertex"
 msgstr "Žiadny vybraný vrchol"
 
 
-msgid "Selected faces must be triangles or quads"
-msgstr "Vybrané plôšky musia byť trojuholníky alebo štvoruholníky"
-
-
 msgid "Active mesh does not have shape keys"
 msgstr "Aktívna povrchová sieť nemá kľúčové tvary"
 
@@ -106635,34 +106566,6 @@ msgid "Could not create a library override from proxy '%s' (might use already lo
 msgstr "Nepodarilo sa vytvoriť prepis knižnice z náhrady „%s“ (môžete použiť už miestne údaje?)"
 
 
-msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "Posúvaním myši zmeníte veľkosť voxelu. ĽTM: potvrdiť veľkosť, ESC/PTM: zrušiť"
-
-
-msgid "Voxel remesher cannot run with a voxel size of 0.0"
-msgstr "Voxelové pretvorenie povrchovej siete nemôže bežať s veľkosťou voxelu 0,0"
-
-
-msgid "Voxel remesher failed to create mesh"
-msgstr "Voxelovému pretvoreniu povrchovej siete sa nepodarilo vytvoriť povrchovú sieť"
-
-
-msgid "The remesher cannot worked on linked or override data"
-msgstr "Pretvorenie povrchovej siete nemôže pracovať na prepojených alebo prepísaných údajoch"
-
-
-msgid "The remesher cannot run from edit mode"
-msgstr "Pretvorenie povrchovej siete nemožno spustiť v režime editácie"
-
-
-msgid "The remesher cannot run with dyntopo activated"
-msgstr "Pretvorenie povrchovej siete nemôže bežať s aktivovanou dynamickou topológiou"
-
-
-msgid "The remesher cannot run with a Multires modifier in the modifier stack"
-msgstr "Pretvorenie povrchovej siete nemôže bežať s modifikátorom Viacnásobný rozklad v zásobníku modifikátorov"
-
-
 msgid "Select Collection"
 msgstr "Vybrať kolekciu"
 
@@ -107331,10 +107234,6 @@ msgid "Cannot edit library linked object"
 msgstr "Nemožno upraviť prepojený objekt knižnice"
 
 
-msgid "Cannot edit hidden obect"
-msgstr "Nemožno upraviť skrytý objekt"
-
-
 msgid "expected a view3d region & editmesh"
 msgstr "očakávané 3D zobrazenie regiónu a upravovanej povrchovej siete"
 
@@ -107858,18 +107757,6 @@ msgstr "Nezadaný žiadny nadradený priečinok"
 
 msgid "Could not create new folder name"
 msgstr "Nepodarilo sa vytvoriť nový názov priečinka"
-
-
-msgid "File association registered"
-msgstr "Registrovaná asociácia súborov"
-
-
-msgid "Unable to register file association"
-msgstr "Nemožno zaregistrovať asociáciu súborov"
-
-
-msgid "Operator Not supported"
-msgstr "Operátor nie je podporovaný"
 
 
 msgid "'%s' given path is OS-invalid, creating '%s' path instead"
@@ -108642,7 +108529,7 @@ msgid ""
 msgstr ""
 "Maskovať objekty v kolekcii pre vrstvu zobrazenia\n"
 "* Ctrl na izoláciu kolekcie\n"
-"* Shift na nastavenie vnútra kolekcie"
+"* Shift na nastavenie vnútri kolekcie"
 
 
 msgid ""
@@ -109044,6 +108931,14 @@ msgstr "Žiadne nedávne súbory"
 
 msgid "Open Recent"
 msgstr "Nedávno otvorené"
+
+
+msgid "File association registered"
+msgstr "Registrovaná asociácia súborov"
+
+
+msgid "Unable to register file association"
+msgstr "Nemožno zaregistrovať asociáciu súborov"
 
 
 msgid "Create object instance from object-data"
@@ -109746,6 +109641,10 @@ msgid "Trackball: %.2f %.2f %s"
 msgstr "Otočná guľa: %.2f %.2f %s"
 
 
+msgid "Auto IK Length: %d"
+msgstr "Auto dĺžka IK: %d"
+
+
 msgid "right"
 msgstr "vpravo"
 
@@ -109845,6 +109744,10 @@ msgstr "[E] - Zakázať prekmitnutie"
 
 msgid "[E] - Enable overshoot"
 msgstr "[E] - Povoliť prekmitnutie"
+
+
+msgid "Overshoot disabled"
+msgstr "Vypnuté prekmitnutie"
 
 
 msgid "[Shift] - Precision active"
@@ -109983,12 +109886,20 @@ msgid "Overlapping Edges As Contour"
 msgstr "Prekrývanie okrajov ako obrysu"
 
 
+msgid "Collection Masks"
+msgstr "Masky kolekcie"
+
+
 msgid "Face Mark Filtering"
 msgstr "Filtrovanie značky plôšky"
 
 
 msgid "Chain"
 msgstr "Reťaz"
+
+
+msgid "Geometry Space"
+msgstr "Geometrický priestor"
 
 
 msgid "Geometry Threshold"
@@ -110785,7 +110696,7 @@ msgstr "uv_on_emitter () vyžaduje modifikátor z vyhodnoteného objektu"
 
 
 msgid "Mesh has no UV data"
-msgstr "Mesh nemá UV údaje"
+msgstr "Povrchová sieť nemá UV údaje"
 
 
 msgid "Object was not yet evaluated"
@@ -110842,7 +110753,7 @@ msgstr "Modul štýlu nemôže byť odstránený"
 
 
 msgid "View Layer '%s' not found in scene '%s'"
-msgstr "Zobrazená vrstva '%s' sa v scéne '%s' nenašla"
+msgstr "Vrstva zobrazenia '%s' sa v scéne '%s' nenašla"
 
 
 msgid "Render view '%s' could not be removed from scene '%s'"
@@ -110858,7 +110769,7 @@ msgstr "Sústava riadkov '%s' nemôže byť odstránená"
 
 
 msgid "Style module '%s' could not be removed"
-msgstr "Modul štýlu '%s' nemôže byť odstránená"
+msgstr "Modul štýlu '%s' nemôže byť odstránený"
 
 
 msgid "Sequence type does not support modifiers"
@@ -111207,6 +111118,11 @@ msgstr "Vytvárať pozdĺž ciest"
 
 msgid "Settings are in the particle tab"
 msgstr "Nastavenia sú na karte Častice"
+
+
+msgctxt "Operator"
+msgid "Convert to Mesh"
+msgstr "Konvertovať na povrchovú sieť"
 
 
 msgid "Built without Remesh modifier"
@@ -111966,7 +111882,7 @@ msgstr "Prilepiť názov"
 
 
 msgid "Blender File View"
-msgstr "Súbor pohľadu Blendera"
+msgstr "Súbor zobrazenia Blendera"
 
 
 msgid "Missing 'window' in context"
@@ -111983,10 +111899,6 @@ msgstr "Povoliť vykonanie"
 
 msgid "Don't Save"
 msgstr "Neuložiť"
-
-
-msgid "untitled.blend"
-msgstr "nepomenovaný.blend"
 
 
 msgid "unable to open the file"
@@ -112043,14 +111955,6 @@ msgstr "Kontextové okno nie je nastavené"
 
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
 msgstr "Mechanizmus '%s' nie je k dispozícii pre scénu '%s' (doplnok je potrebné nainštalovať alebo zapnúť)"
-
-
-msgid "Library %s needs overrides resync."
-msgstr "Knižnica %s potrebuje prepis opätovnej synchronizácie."
-
-
-msgid "%d libraries and %d linked data-blocks are missing, please check the Info and Outliner editors for details"
-msgstr "Chýbajú %d knižnice a %d prepojené bloky údajov, podrobnosti nájdete v editoroch Info a Líniový prehľad"
 
 
 msgid "%d libraries have overrides needing resync (auto resynced in %.0fm%.2fs),  please check the Info editor for details"

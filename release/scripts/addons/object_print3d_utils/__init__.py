@@ -83,7 +83,7 @@ class SceneProperties(PropertyGroup):
         name="Data Layers",
         description=(
             "Export normals, UVs, vertex colors and materials for formats that support it "
-            "significantly increasing filesize"
+            "significantly increasing file size"
         ),
     )
     export_path: StringProperty(
