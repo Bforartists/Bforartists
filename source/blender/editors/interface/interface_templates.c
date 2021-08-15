@@ -2659,7 +2659,7 @@ static void constraint_ops_extra_draw(bContext *C, uiLayout *layout, void *con_v
 
   uiItemO(layout,
           CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Copy to Selected"),
-          0,
+          ICON_COPYDOWN,
           "CONSTRAINT_OT_copy_to_selected");
 
   uiItemS(layout);
