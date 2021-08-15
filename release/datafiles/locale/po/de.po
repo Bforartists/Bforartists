@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -380,30 +380,6 @@ msgstr "Benutzer Add-on"
 
 msgid "Collection of add-ons"
 msgstr "Gruppe von Add-Ons"
-
-
-msgid "Object Path"
-msgstr "Objektpfad"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Pfad eines Objekts in einem Alembic-Archiv"
-
-
-msgid "Path"
-msgstr "Pfad"
-
-
-msgid "Object path"
-msgstr "Objektpfad"
-
-
-msgid "Object Paths"
-msgstr "Objektpfade"
-
-
-msgid "Collection of object paths"
-msgstr "Sammlung von Objektpfaden"
 
 
 msgid "Animation Data"
@@ -3374,6 +3350,14 @@ msgid "Use always Vertex Color mode"
 msgstr "Punktfarbmodus immer verwenden"
 
 
+msgid "Round"
+msgstr "Rund/Runden"
+
+
+msgid "Flat"
+msgstr "Flach"
+
+
 msgid "Curve Jitter"
 msgstr "Kurvenflackern"
 
@@ -4012,6 +3996,30 @@ msgstr "Farbwert im Geometrieattribut"
 
 msgid "RGBA color in scene linear color space"
 msgstr "RGBA-Farbe im linearen Farbraum der Szene"
+
+
+msgid "Object Path"
+msgstr "Objektpfad"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Pfad eines Objekts in einem Alembic-Archiv"
+
+
+msgid "Path"
+msgstr "Pfad"
+
+
+msgid "Object path"
+msgstr "Objektpfad"
+
+
+msgid "Object Paths"
+msgstr "Objektpfade"
+
+
+msgid "Collection of object paths"
+msgstr "Sammlung von Objektpfaden"
 
 
 msgid "Background Image"
@@ -5831,10 +5839,6 @@ msgid "Mix Mode"
 msgstr "Mischmodus"
 
 
-msgid "Before Original"
-msgstr "Vor dem Original"
-
-
 msgid "Target object"
 msgstr "Zielobjekt"
 
@@ -6173,6 +6177,10 @@ msgstr "Y Rotation invertieren"
 
 msgid "Invert the Z rotation"
 msgstr "Z-Rotation invertieren"
+
+
+msgid "Before Original"
+msgstr "Vor dem Original"
 
 
 msgid "Copy the target's X rotation"
@@ -11408,10 +11416,6 @@ msgid "Rounded"
 msgstr "Abgerundet"
 
 
-msgid "Flat"
-msgstr "Flach"
-
-
 msgid "Thickness of stroke (in pixels)"
 msgstr "Dicke des Striches (in Pixel)"
 
@@ -13512,10 +13516,6 @@ msgid "Bevel Mode"
 msgstr "Anfasmodus"
 
 
-msgid "Round"
-msgstr "Rund/Runden"
-
-
 msgid "Bevel Object"
 msgstr "Fasen Objekt"
 
@@ -15502,14 +15502,6 @@ msgid "Cycles object settings"
 msgstr "Zyklen Objekteinstellungen"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Cycles-Sichtbarkeitseinstellungen"
-
-
-msgid "Cycles visibility settings"
-msgstr "Partikelsystem-Einstellungen"
-
-
 msgid "Data"
 msgstr "Daten"
 
@@ -15672,6 +15664,14 @@ msgstr "Kind-Objekte auf allen Punkten instanzieren"
 
 msgid "Faces"
 msgstr "Flächen"
+
+
+msgid "Holdout"
+msgstr "Ausstanzen"
+
+
+msgid "Shadow Catcher"
+msgstr "Schattenfänger"
 
 
 msgid "Location of the object"
@@ -17667,6 +17667,14 @@ msgid "Cycles world settings"
 msgstr "Cycles Welteinstellungen"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Cycles-Sichtbarkeitseinstellungen"
+
+
+msgid "Cycles visibility settings"
+msgstr "Partikelsystem-Einstellungen"
+
+
 msgid "World lighting settings"
 msgstr "Weltbeleuchtung Einstellungen"
 
@@ -19223,10 +19231,6 @@ msgid "Hide in Viewport"
 msgstr "Ausblenden im Ansichtsfenster"
 
 
-msgid "Holdout"
-msgstr "Ausstanzen"
-
-
 msgid "Mask out objects in collection from view layer"
 msgstr "Ausblenden von Objekten in der Sammlung aus der Ansichtsebene"
 
@@ -19994,6 +19998,10 @@ msgstr "Knoten"
 
 msgid "Node Color Specials"
 msgstr "Knoten-Farb-Specials"
+
+
+msgid "Assets"
+msgstr "Anlagewerte"
 
 
 msgid "Outliner Context Menu"
@@ -44800,14 +44808,6 @@ msgid "Equiangular"
 msgstr "Equiangular"
 
 
-msgid "Shadow Catcher"
-msgstr "Schattenfänger"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Rendert nur Schatten auf diesem Objekt, um Renderings in echtes Filmmaterial umzuwandeln"
-
-
 msgid "Motion Steps"
 msgstr "Bewegungsschritte"
 
@@ -44842,18 +44842,6 @@ msgstr "Direkte Übertragung"
 
 msgid "Transmission Indirect"
 msgstr "Indirekte Übertragung"
-
-
-msgid "Debug BVH Intersections"
-msgstr "Debug BVH Überschneidungen"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "Lagere DebugBVH Überschneidungen"
-
-
-msgid "Debug Ray Bounces"
-msgstr "Debug Strahlenbounce"
 
 
 msgid "Debug Render Time"
@@ -45644,16 +45632,8 @@ msgid "Current window matrix"
 msgstr "Aktuelles Matrixfenster"
 
 
-msgid "Zmask Negate"
-msgstr "Zmask negieren"
-
-
 msgid "View layer name"
 msgstr "Ebenenname anzeigen"
-
-
-msgid "All Z"
-msgstr "Alle Z"
 
 
 msgid "Render Ambient Occlusion in this Layer"
@@ -45762,14 +45742,6 @@ msgstr "Fasern in dieser Ebene rendern"
 
 msgid "Render volumes in this Layer"
 msgstr "Volumen in dieser Ebene rendern"
-
-
-msgid "Zmask"
-msgstr "ZMaske"
-
-
-msgid "Z-Transparent"
-msgstr "Z-Transparent"
 
 
 msgid "Render Passes"
@@ -58614,10 +58586,6 @@ msgid "%s, cache is outdated!"
 msgstr "%s, Cache ist veraltet!"
 
 
-msgid "Assets"
-msgstr "Anlagewerte"
-
-
 msgid "Warning"
 msgstr "Warnung"
 
@@ -63014,10 +62982,6 @@ msgstr "Ausführung erlauben"
 
 msgid "Don't Save"
 msgstr "Nicht speichern"
-
-
-msgid "untitled.blend"
-msgstr "untitled.blend"
 
 
 msgid "unable to open the file"

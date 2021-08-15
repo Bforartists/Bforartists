@@ -976,16 +976,19 @@ class BlenderKitBrushSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
 class BlenderKitHDRUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
     texture_resolution_max: IntProperty(name="Texture Resolution Max", description="texture resolution maximum",
                                         default=0)
+    evs_cap: IntProperty(name="EV cap", description="EVs dynamic range",
+                                        default=0)
+    true_hdr: BoolProperty(name="Real HDR", description="Image has High dynamic range.",default=False)
 
 
 class BlenderKitBrushUploadProps(PropertyGroup, BlenderKitCommonUploadProps):
     mode: EnumProperty(
         name="Mode",
         items=(
-            ('IMAGE', 'Texture paint', "Texture brush"),
-            ('SCULPT', 'Sculpt', 'Sculpt brush'),
-            ('VERTEX', 'Vertex paint', 'Vertex paint brush'),
-            ('WEIGHT', 'Weight paint', 'Weight paint brush'),
+            ("IMAGE", "Texture paint", "Texture brush"),
+            ("SCULPT", "Sculpt", "Sculpt brush"),
+            ("VERTEX", "Vertex paint", "Vertex paint brush"),
+            ("WEIGHT", "Weight paint", "Weight paint brush"),
         ),
         description="Mode where the brush works",
         default="SCULPT",
@@ -1511,6 +1514,13 @@ class BlenderKitHDRSearchProps(PropertyGroup, BlenderKitCommonSearchProps):
         name="Search",
         description="Search for these keywords",
         default="",
+        update=search.search_update
+    )
+
+    true_hdr: BoolProperty(
+        name='Real HDRs only',
+        description='Search only for real HDRs, this means images that have a range higher than 0-1 in their pixels.',
+        default=True,
         update=search.search_update
     )
 

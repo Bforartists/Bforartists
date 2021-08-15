@@ -1893,7 +1893,7 @@ class NWPreviewNode(Operator, NWBase):
                 # Exit early
                 if not valid:
                     return {'FINISHED'}
-                
+
                 delete_sockets = []
 
                 # Scan through all nodes in tree including nodes inside of groups to find viewer sockets
@@ -1926,7 +1926,7 @@ class NWPreviewNode(Operator, NWBase):
                     if out_i is None:
                         return {'FINISHED'}
                     socket_type = 'GEOMETRY'
-                    # Find an input socket of the output of type geometry 
+                    # Find an input socket of the output of type geometry
                     geometryoutindex = None
                     for i,inp in enumerate(geometryoutput.inputs):
                         if inp.type == socket_type:
@@ -2430,13 +2430,13 @@ class NWMergeNodes(Operator, NWBase):
     # Check if the link connects to a node that is in selected_nodes
     # If not, then check recursively for each link in the nodes outputs.
     # If yes, return True. If the recursion stops without finding a node
-    # in selected_nodes, it returns False. The depth is used to prevent 
+    # in selected_nodes, it returns False. The depth is used to prevent
     # getting stuck in a loop because of an already present cycle.
     @staticmethod
     def link_creates_cycle(link, selected_nodes, depth=0)->bool:
         if depth > 255:
             # We're stuck in a cycle, but that cycle was already present,
-            # so we return False. 
+            # so we return False.
             # NOTE: The number 255 is arbitrary, but seems to work well.
             return False
         node = link.to_node
@@ -2451,7 +2451,7 @@ class NWMergeNodes(Operator, NWBase):
                         return True
         # None of the outputs found a node in selected_nodes, so there is no cycle.
         return False
-    
+
     # Merge the nodes in `nodes_list` with a node of type `node_name` that has a multi_input socket.
     # The parameters `socket_indices` gives the indices of the node sockets in the order that they should
     # be connected. The last one is assumed to be a multi input socket.
@@ -2597,7 +2597,7 @@ class NWMergeNodes(Operator, NWBase):
             # get maximum loc_x
             loc_x = nodes_list[0][1] + nodes_list[0][3] + 70
             nodes_list.sort(key=lambda k: k[2], reverse=True)
-            
+
             # Change the node type for math nodes in a geometry node tree.
             if tree_type == 'GEOMETRY':
                 if nodes_list is selected_math or nodes_list is selected_vector:
@@ -2709,7 +2709,7 @@ class NWMergeNodes(Operator, NWBase):
                 add.location = loc_x, loc_y
                 loc_y += offset_y
                 add.select = True
-            
+
             # This has already been handled separately
             if was_multi:
                 continue
@@ -2721,7 +2721,7 @@ class NWMergeNodes(Operator, NWBase):
             last_add = nodes[count_before]
             # Create list of invalid indexes.
             invalid_nodes = [nodes[n[0]] for n in (selected_mix + selected_math + selected_shader + selected_z + selected_geometry)]
-            
+
             # Special case:
             # Two nodes were selected and first selected has no output links, second selected has output links.
             # Then add links from last add to all links 'to_socket' of out links of second selected.
@@ -4385,7 +4385,7 @@ class NWConnectionListOutputs(Menu, NWBase):
         n1 = nodes[context.scene.NWLazySource]
         index=0
         for o in n1.outputs:
-            # Only show sockets that are exposed. 
+            # Only show sockets that are exposed.
             if o.enabled:
                 layout.operator(NWCallInputsMenu.bl_idname, text=o.name, icon="RADIOBUT_OFF").from_socket=index
             index+=1
@@ -4406,7 +4406,7 @@ class NWConnectionListInputs(Menu, NWBase):
             # Only show sockets that are exposed.
             # This prevents, for example, the scale value socket
             # of the vector math node being added to the list when
-            # the mode is not 'SCALE'. 
+            # the mode is not 'SCALE'.
             if i.enabled:
                 op = layout.operator(NWMakeLink.bl_idname, text=i.name, icon="FORWARD")
                 op.from_socket = context.scene.NWSourceSocket

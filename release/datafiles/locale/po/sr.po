@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -217,10 +217,6 @@ msgstr "Корени директоријум изворног кода Blender-
 
 msgid "Persistent Data Path"
 msgstr "Трајна путања до података"
-
-
-msgid "Path"
-msgstr "Путања"
 
 
 msgid "Action"
@@ -1287,6 +1283,14 @@ msgid "Vertex Color"
 msgstr "Боја темена"
 
 
+msgid "Round"
+msgstr "Закриврено"
+
+
+msgid "Flat"
+msgstr "Равно"
+
+
 msgid "Direction"
 msgstr "Смер"
 
@@ -1401,6 +1405,10 @@ msgstr "Итерације"
 
 msgid "Saturation"
 msgstr "Засићеност"
+
+
+msgid "Path"
+msgstr "Путања"
 
 
 msgid "Background Image"
@@ -4589,10 +4597,6 @@ msgid "Time"
 msgstr "Време"
 
 
-msgid "Wavelet"
-msgstr "Талас"
-
-
 msgid "Compression"
 msgstr "Компресија"
 
@@ -4991,10 +4995,6 @@ msgstr "Слободоручна крива као део скице"
 
 msgid "End Cap"
 msgstr "Последњи поклопац"
-
-
-msgid "Flat"
-msgstr "Равно"
 
 
 msgid "Material Index"
@@ -5912,10 +5912,6 @@ msgstr "Панорама"
 
 msgid "Bevel Depth"
 msgstr "Дубина искошавање"
-
-
-msgid "Round"
-msgstr "Закриврено"
 
 
 msgid "Profile"
@@ -7070,14 +7066,6 @@ msgid "Constraints affecting the transformation of the object"
 msgstr "Ограничење утиче на трансформацију објеката"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Подешавање приказа кругова"
-
-
-msgid "Cycles visibility settings"
-msgstr "Подешавање приказа кругова"
-
-
 msgid "Data"
 msgstr "Подаци"
 
@@ -7160,6 +7148,10 @@ msgstr "Подешавања коришћења објекта као поље �
 
 msgid "Faces"
 msgstr "Странице"
+
+
+msgid "Holdout"
+msgstr "Задржи"
 
 
 msgid "Location of the object"
@@ -8568,6 +8560,14 @@ msgid "Open windows"
 msgstr "Отвори слику"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Подешавање приказа кругова"
+
+
+msgid "Cycles visibility settings"
+msgstr "Подешавање приказа кругова"
+
+
 msgid "Lighting"
 msgstr "Осветљење"
 
@@ -8986,10 +8986,6 @@ msgstr "Деформисана локација"
 
 msgid "Point selected"
 msgstr "Избор тачака"
-
-
-msgid "Holdout"
-msgstr "Задржи"
 
 
 msgid "Active Object"
@@ -22856,18 +22852,6 @@ msgid "View Perspective"
 msgstr "Орто./перспектива"
 
 
-msgid "Zmask Negate"
-msgstr "Негатив"
-
-
-msgid "All Z"
-msgstr "Све Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Попуни Z вредности пуних страница у провидном слоју за маскирање"
-
-
 msgid "Sky"
 msgstr "Небо"
 
@@ -22878,10 +22862,6 @@ msgstr "Рендеруј небо у овом слоју"
 
 msgid "Strand"
 msgstr "Штрафта"
-
-
-msgid "Zmask"
-msgstr "Z маска"
 
 
 msgid "Bias"

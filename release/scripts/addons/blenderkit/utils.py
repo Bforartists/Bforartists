@@ -838,10 +838,11 @@ def user_is_owner(asset_data=None):
 def asset_from_newer_blender_version(asset_data):
     bver = bpy.app.version
     aver = asset_data['sourceAppVersion'].split('.')
-    # print(aver,bver)
+    #print(aver,bver)
     bver_f = bver[0] + bver[1] * .01 + bver[2] * .0001
-    aver_f = int(aver[0]) + int(aver[1]) * .01 + int(aver[2]) * .0001
-    return aver_f>bver_f
+    if len(aver)>=3:
+        aver_f = int(aver[0]) + int(aver[1]) * .01 + int(aver[2]) * .0001
+        return aver_f>bver_f
 
 def guard_from_crash():
     '''
