@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -335,30 +335,6 @@ msgstr "Complementos do utilizador"
 
 msgid "Collection of add-ons"
 msgstr "Coleção de complementos"
-
-
-msgid "Object Path"
-msgstr "Caminho de objetos"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Caminho de um objeto dentro de um ficheiro de cache do tipo Alembic."
-
-
-msgid "Path"
-msgstr "Caminho"
-
-
-msgid "Object path"
-msgstr "Os caminhos dos objetos nos ficheiros do tipo Alembic."
-
-
-msgid "Object Paths"
-msgstr "Caminhos dos objetos"
-
-
-msgid "Collection of object paths"
-msgstr "Coleção de caminhos de objetos."
 
 
 msgid "Animation Data"
@@ -2709,6 +2685,14 @@ msgid "Vertex Color"
 msgstr "Cor dos vértices"
 
 
+msgid "Round"
+msgstr "Arredondadas"
+
+
+msgid "Flat"
+msgstr "Achatar"
+
+
 msgid "Curve Jitter"
 msgstr "Curva de tremulação"
 
@@ -2931,6 +2915,30 @@ msgstr "Usar a força conforme a pressão"
 
 msgid "Use tablet pressure for color strength"
 msgstr "Usa a pressão da mesa de desenho para a aplicação de força nas cores."
+
+
+msgid "Object Path"
+msgstr "Caminho de objetos"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Caminho de um objeto dentro de um ficheiro de cache do tipo Alembic."
+
+
+msgid "Path"
+msgstr "Caminho"
+
+
+msgid "Object path"
+msgstr "Os caminhos dos objetos nos ficheiros do tipo Alembic."
+
+
+msgid "Object Paths"
+msgstr "Caminhos dos objetos"
+
+
+msgid "Collection of object paths"
+msgstr "Coleção de caminhos de objetos."
 
 
 msgid "Background Image"
@@ -9382,14 +9390,6 @@ msgid "Time"
 msgstr "Tempo"
 
 
-msgid "Noise Method"
-msgstr "Método de ruído"
-
-
-msgid "Wavelet"
-msgstr "Pequena ondulação"
-
-
 msgid "Compression"
 msgstr "Compressão"
 
@@ -10472,10 +10472,6 @@ msgstr "Os traços estão no espaço 2D (mas como uma escala de \"imagem\" espec
 
 msgid "End Cap"
 msgstr "Terminação final"
-
-
-msgid "Flat"
-msgstr "Achatar"
 
 
 msgid "Thickness of stroke (in pixels)"
@@ -12311,10 +12307,6 @@ msgstr "Tipo de mapeamento final"
 
 msgid "Start Mapping Type"
 msgstr "Tipo de mapeamento inicial"
-
-
-msgid "Round"
-msgstr "Arredondadas"
 
 
 msgid "Profile"
@@ -14753,14 +14745,6 @@ msgid "Cycles object settings"
 msgstr "As definições de objetos para o motor de renderização Cycles."
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Definições de visibilidade do Cycles"
-
-
-msgid "Cycles visibility settings"
-msgstr "As definições de visibilidade para o motor de renderização Cycles."
-
-
 msgid "Data"
 msgstr "Dados"
 
@@ -14875,6 +14859,14 @@ msgstr "Definições para o uso do objeto como um campo dentro da simulação f�
 
 msgid "Faces"
 msgstr "Faces"
+
+
+msgid "Holdout"
+msgstr "Repelir"
+
+
+msgid "Shadow Catcher"
+msgstr "Capturador de sombras"
 
 
 msgid "Location of the object"
@@ -17659,6 +17651,14 @@ msgid "Cycles world settings"
 msgstr "Definições de ambiente (mundo) para o renderizador Cycles."
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Definições de visibilidade do Cycles"
+
+
+msgid "Cycles visibility settings"
+msgstr "As definições de visibilidade para o motor de renderização Cycles."
+
+
 msgid "Lighting"
 msgstr "Iluminação"
 
@@ -19812,10 +19812,6 @@ msgstr "Pesos para os grupos de vértices aos quais este ponto é membro."
 
 msgid "Point selected"
 msgstr "Ponto selecionado"
-
-
-msgid "Holdout"
-msgstr "Repelir"
 
 
 msgid "Active Object"
@@ -52358,14 +52354,6 @@ msgid "Dicing Scale"
 msgstr "Escala de compartimentalização"
 
 
-msgid "Shadow Catcher"
-msgstr "Capturador de sombras"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Somente renderiza as sombras sobre este objeto, para a composição de renderizações em filmagens reais."
-
-
 msgid "Motion Steps"
 msgstr "Passos de movimento"
 
@@ -52484,38 +52472,6 @@ msgstr "Transmissão indireta"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "Reduz os ruídos da iluminação indireta de transmissão."
-
-
-msgid "Debug BVH Intersections"
-msgstr "Depurar as intersecções BVH"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "Armazena as depurações das intersecções BVH."
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "Depurar as instâncias BVH transversais"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "Armazena os passos de depuração das instâncias BVH trafegadas."
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "Depurar as instâncias BVH trafegadas"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "Armazena os passos de depuração dos nós BVH trafegados."
-
-
-msgid "Debug Ray Bounces"
-msgstr "Depurar rebatimentos dos raios"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "Armazena o passo de rebatimentos dos raios previamente depurado."
 
 
 msgid "Use Denoising"
@@ -53582,26 +53538,6 @@ msgid "Current window matrix"
 msgstr "Matriz de visualização atual"
 
 
-msgid "Zmask Negate"
-msgstr "Negar a máscara Z"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Para a máscara Z, renderiza o que está atrás dos valores z sólidos ao invés do que está na frente."
-
-
-msgid "All Z"
-msgstr "Todos os Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Preenche os valores Z para as faces sólidas dentro das camadas visíveis, para mascaramento."
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "Renderiza as halos nesta camada (por cima dos sólidos)."
-
-
 msgid "Deliver full combined RGBA buffer"
 msgstr "Fornece o contingenciamento combinado (RGBA) completo."
 
@@ -53720,14 +53656,6 @@ msgstr "Vertentes"
 
 msgid "Render Strands in this Layer"
 msgstr "Renderiza as vertentes nesta camada."
-
-
-msgid "Zmask"
-msgstr "Máscara Z"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "Caso marcado, renderiza somente que está na frente dos valores sólidos da máscara em Z. Caso ativo e em negação, somente os valores que estão atrás."
 
 
 msgid "Render Passes"
@@ -59743,20 +59671,12 @@ msgid "Time Step"
 msgstr "Passo de tempo"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "Posicionamento dos traços (Editor de imagens e UVs)"
+msgid "Stroke Placement (2D View)"
+msgstr "Posicionamento dos traços (Visão 2D)"
 
 
 msgid "Stick stroke to surfaces"
 msgstr "Mantém os traços atrelados às posições das superfícies."
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Posicionamento dos traços (Previsões no sequenciador)"
-
-
-msgid "Stroke Placement (2D View)"
-msgstr "Posicionamento dos traços (Visão 2D)"
 
 
 msgid "Auto-Keying Mode"
@@ -66203,10 +66123,6 @@ msgstr "Seleciona os pares de arestas ou faces para anéis de arestas, para os r
 
 msgid "Could not find any selected edges that can be rotated"
 msgstr "Não é possível encontrar quaisquer arestas selecionadas que possam ser rotacionadas."
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Faces selecionadas devem ser triângulos ou quadriláteros."
 
 
 msgid "No edges are selected to operate on"

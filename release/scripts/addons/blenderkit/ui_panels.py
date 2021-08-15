@@ -870,6 +870,31 @@ class VIEW3D_PT_blenderkit_advanced_material_search(Panel):
             row.prop(props, "search_file_size_max", text='Max')
         layout.prop(props, "quality_limit", slider=True)
 
+class VIEW3D_PT_blenderkit_advanced_HDR_search(Panel):
+    bl_category = "BlenderKit"
+    bl_idname = "VIEW3D_PT_blenderkit_advanced_HDR_search"
+    bl_parent_id = "VIEW3D_PT_blenderkit_unified"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Search filters"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        s = context.scene
+        ui_props = s.blenderkitUI
+        return ui_props.down_up == 'SEARCH' and ui_props.asset_type == 'HDR'
+
+    def draw(self, context):
+        wm = context.window_manager
+        props = wm.blenderkit_HDR
+        layout = self.layout
+        layout.separator()
+
+        layout.prop(props, "own_only")
+        layout.prop(props, "true_hdr")
+
+
 
 class VIEW3D_PT_blenderkit_categories(Panel):
     bl_category = "BlenderKit"
@@ -2016,7 +2041,6 @@ class ClosePopupButton(bpy.types.Operator):
     def win_close(self):
         VK_ESCAPE = 0x1B
         ctypes.windll.user32.keybd_event(VK_ESCAPE)
-        print('hit escape')
         return True
 
     def mouse_trick(self, context, x, y):
@@ -2250,6 +2274,8 @@ def header_search_draw(self, context):
 
         elif ui_props.asset_type == 'MATERIAL':
             layout.popover(panel="VIEW3D_PT_blenderkit_advanced_material_search", text="", icon_value=icon_id)
+        elif ui_props.asset_type == 'HDR':
+            layout.popover(panel="VIEW3D_PT_blenderkit_advanced_HDR_search", text="", icon_value=icon_id)
 
 
 def ui_message(title, message):
@@ -2271,6 +2297,7 @@ classes = (
     VIEW3D_PT_blenderkit_unified,
     VIEW3D_PT_blenderkit_advanced_model_search,
     VIEW3D_PT_blenderkit_advanced_material_search,
+    VIEW3D_PT_blenderkit_advanced_HDR_search,
     VIEW3D_PT_blenderkit_categories,
     VIEW3D_PT_blenderkit_import_settings,
     VIEW3D_PT_blenderkit_model_properties,

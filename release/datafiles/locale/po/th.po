@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -200,10 +200,6 @@ msgstr "ข้อความแสดงข้อผิดพลาด"
 
 msgid "Message"
 msgstr "ข้อความ"
-
-
-msgid "Path"
-msgstr "เส้นทาง"
 
 
 msgid "Action"
@@ -522,6 +518,14 @@ msgid "Vertex Color"
 msgstr "สีจุดยอด"
 
 
+msgid "Round"
+msgstr "มน"
+
+
+msgid "Flat"
+msgstr "ราบแบน"
+
+
 msgid "Normal"
 msgstr "แนวฉาก"
 
@@ -544,6 +548,10 @@ msgstr "ราบเรียบ"
 
 msgid "Randomize"
 msgstr "สุ่ม"
+
+
+msgid "Path"
+msgstr "เส้นทาง"
 
 
 msgid "Opacity"
@@ -1264,10 +1272,6 @@ msgid "Grid"
 msgstr "ตาราง"
 
 
-msgid "Flat"
-msgstr "ราบแบน"
-
-
 msgid "Line Width"
 msgstr "ความหนาเส้น"
 
@@ -1465,10 +1469,6 @@ msgstr "เลื่อน X"
 
 msgid "Shift Y"
 msgstr "เลื่อน Y"
-
-
-msgid "Round"
-msgstr "มน"
 
 
 msgid "Dimensions"

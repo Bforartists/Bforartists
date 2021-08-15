@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -380,30 +380,6 @@ msgstr "Додатки користувача"
 
 msgid "Collection of add-ons"
 msgstr "Колекція додатків"
-
-
-msgid "Object Path"
-msgstr "Шлях об'єкта"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Шлях до об'єкта в архіві Alembic"
-
-
-msgid "Path"
-msgstr "Шлях"
-
-
-msgid "Object path"
-msgstr "Шлях об'єкта"
-
-
-msgid "Object Paths"
-msgstr "Шляхи об'єктів"
-
-
-msgid "Collection of object paths"
-msgstr "Колекція шляхів об'єкта"
 
 
 msgid "Animation Data"
@@ -3362,6 +3338,14 @@ msgid "Use always Vertex Color mode"
 msgstr "Вжити завжди режим Кольору Вершин"
 
 
+msgid "Round"
+msgstr "Округлення"
+
+
+msgid "Flat"
+msgstr "Плоско"
+
+
 msgid "Curve Jitter"
 msgstr "Крива тремтіння"
 
@@ -3996,6 +3980,30 @@ msgstr "Значення кольору в атрибуті геометрії"
 
 msgid "RGBA color in scene linear color space"
 msgstr "RGBA колір у лінеарному просторі кольорів сцени"
+
+
+msgid "Object Path"
+msgstr "Шлях об'єкта"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Шлях до об'єкта в архіві Alembic"
+
+
+msgid "Path"
+msgstr "Шлях"
+
+
+msgid "Object path"
+msgstr "Шлях об'єкта"
+
+
+msgid "Object Paths"
+msgstr "Шляхи об'єктів"
+
+
+msgid "Collection of object paths"
+msgstr "Колекція шляхів об'єкта"
 
 
 msgid "Background Image"
@@ -5847,30 +5855,6 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "Визначити, як наявні трансформації та канали дій комбінуються"
 
 
-msgid "Before Original"
-msgstr "Перед Оригіналом"
-
-
-msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "Застосувати канали дій перед оригінальною трансформацією, ніби застосовується до уявного предка з Вирівняним Успадкованим Масштабом"
-
-
-msgid "After Original"
-msgstr "Після Оригіналу"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
-msgstr "Застосувати канали дій після оригінальної трансформації, ніби застосовується до уявного нащадка з Вирівняним Успадкованим Масштабом"
-
-
-msgid "After Original (Full Scale)"
-msgstr "Після Оригіналу (Повний Масштаб)"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
-msgstr "Застосувати канали дій після оригінальної трансформації, ніби застосовується до уявного нащадка з Повним Успадкованим Масштабом. Цей режим може створювати косування та надається лише для зворотної сумісності"
-
-
 msgid "Target object"
 msgstr "Цільовий об'єкт"
 
@@ -6303,8 +6287,16 @@ msgid "Add euler component values together"
 msgstr "Додати між собою значення компонентів ейлера"
 
 
+msgid "Before Original"
+msgstr "Перед Оригіналом"
+
+
 msgid "Apply copied rotation before original, as if the constraint target is a parent"
 msgstr "Застосувати копійоване обертання перед оригінальними, ніби ціль примусу є предком"
+
+
+msgid "After Original"
+msgstr "Після Оригіналу"
 
 
 msgid "Apply copied rotation after original, as if the constraint target is a child"
@@ -12800,18 +12792,6 @@ msgid "Animation time of noise"
 msgstr "Час анімації шуму"
 
 
-msgid "Noise Method"
-msgstr "Метод шуму"
-
-
-msgid "Noise method which is used during the high-res simulation"
-msgstr "Метод шуму, який використовується під час високо-роздільної симуляції"
-
-
-msgid "Wavelet"
-msgstr "Брижі"
-
-
 msgid "Compression"
 msgstr "Стиснення"
 
@@ -14984,10 +14964,6 @@ msgid "Rounded"
 msgstr "Округлено"
 
 
-msgid "Flat"
-msgstr "Плоско"
-
-
 msgid "Amount of gradient along section of stroke"
 msgstr "Величина градієнта уздовж секції штриха"
 
@@ -16014,6 +15990,10 @@ msgstr "Об'єкт-ґратка, яким деформувати"
 
 msgid "Strength of modifier effect"
 msgstr "Сила ефекту модифікатора"
+
+
+msgid "Overscan"
+msgstr "Понадпрогляд"
 
 
 msgid "Boundaries"
@@ -19207,10 +19187,6 @@ msgstr "Режим Скосу"
 
 msgid "Determine how to build the curve's bevel geometry"
 msgstr "Визначити як будувати геометрію скосу кривої"
-
-
-msgid "Round"
-msgstr "Округлення"
 
 
 msgid "Use circle for the section of the curve's bevel geometry"
@@ -22735,14 +22711,6 @@ msgid "Cycles object settings"
 msgstr "Параметри об'єкта для Cycles"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Параметри Cycles для видимості"
-
-
-msgid "Cycles visibility settings"
-msgstr "Параметри Cycles для видимості"
-
-
 msgid "Data"
 msgstr "Дані"
 
@@ -22993,6 +22961,18 @@ msgstr "База з Обстави"
 
 msgid "Object comes from a background set"
 msgstr "Об'єкт походить з задньопланової обстави"
+
+
+msgid "Holdout"
+msgstr "Притримання"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "Рендерити об'єкти як діру або мате, створюючи отвір у зображенні з нульовою альфа, для заповнення його при компонуванні реальним фільмоматеріалом або іншим рендером"
+
+
+msgid "Shadow Catcher"
+msgstr "Ловець тіней"
 
 
 msgid "Location of the object"
@@ -26444,6 +26424,14 @@ msgid "Cycles world settings"
 msgstr "Параметри Cycles для світу"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Параметри Cycles для видимості"
+
+
+msgid "Cycles visibility settings"
+msgstr "Параметри Cycles для видимості"
+
+
 msgid "Lighting"
 msgstr "Освітлення"
 
@@ -29058,10 +29046,6 @@ msgid "Temporarily hide in viewport"
 msgstr "Тимчасово сховати у вікні огляду"
 
 
-msgid "Holdout"
-msgstr "Притримання"
-
-
 msgid "Mask out objects in collection from view layer"
 msgstr "Відмаскувати об'єкти у колекції з шару огляду"
 
@@ -30651,6 +30635,10 @@ msgstr "Вузол"
 
 msgid "Node Color Specials"
 msgstr "Параметри кольору вузла"
+
+
+msgid "Assets"
+msgstr "Активи"
 
 
 msgid "Outliner Context Menu"
@@ -43802,11 +43790,6 @@ msgstr "Зчистити Актив"
 
 msgid "Delete all asset metadata and turn the selected asset data-blocks back into normal data-blocks"
 msgstr "Видалити всі метадані активу та перетворити вибрані блоки дані активу назад у звичайні блоки даних"
-
-
-msgctxt "Operator"
-msgid "Mark Asset"
-msgstr "Відмітити Актив"
 
 
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
@@ -60168,14 +60151,6 @@ msgstr "Операція Даних за Ідентифікатором"
 
 msgid "Unlink"
 msgstr "Відв'язування"
-
-
-msgid "Mark Asset"
-msgstr "Відмітити Актив"
-
-
-msgid "Clear Asset"
-msgstr "Зчистити Актив"
 
 
 msgid "Make Local"
@@ -77440,18 +77415,6 @@ msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
 msgstr "Множник для норми нарізання сцени (розміщено в панелі Підподілення)"
 
 
-msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
-msgstr "Рендерити об'єкти як діру або мате, створюючи отвір у зображенні з нульовою альфа, для заповнення його при компонуванні реальним фільмоматеріалом або іншим рендером"
-
-
-msgid "Shadow Catcher"
-msgstr "Ловець тіней"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Рендерити на цьому об'єкті тільки тіні, для компонування з реальним відеоматеріалом"
-
-
 msgid "Motion Steps"
 msgstr "Кроки руху"
 
@@ -77626,38 +77589,6 @@ msgstr "Пропускання непрямих"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "Знешумити побічне пропускуване освітлення"
-
-
-msgid "Debug BVH Intersections"
-msgstr "Зневадження Перетинів BVH"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "Збереження Зневадження Перетинів BVH"
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "Зневадження Простежених Примірників BVH"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "Збереження проходу Зневадження Простежених Примірників BVH"
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "Зневадження Простежених Вузлів BVH"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "Збереження проходу Зневадження Простежених Вузлів BVH"
-
-
-msgid "Debug Ray Bounces"
-msgstr "Зневадження Відскоків Променів"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "Збереження проходу Зневадження Відскоків Променів"
 
 
 msgid "Debug Render Time"
@@ -79252,36 +79183,12 @@ msgid "Current window matrix"
 msgstr "Поточна матриця вікна"
 
 
-msgid "Zmask Negate"
-msgstr "Негативна Z-маска"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Для Z маски, рендерити лише те, що розміщене за суцільними значеннями Z, а не перед"
-
-
 msgid "View layer name"
 msgstr "Назва шару огляду"
 
 
-msgid "All Z"
-msgstr "Всі Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Для маскування: заповнити значення Z для суцільних граней у невидимих шарах"
-
-
 msgid "Render Ambient Occlusion in this Layer"
 msgstr "Рендер Загороди Оточення у цьому Шарі"
-
-
-msgid "Render edge-enhance in this layer (only works for solid faces)"
-msgstr "Рендерити з покращенням ребер у цьому шарі (працює лише для суцільних граней)"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "Рендер Ореолів у цьому Шарі (поверх Суцільного)"
 
 
 msgid "Deliver Ambient Occlusion pass"
@@ -79414,22 +79321,6 @@ msgstr "Рендер Пасм у цьому Шарі"
 
 msgid "Render volumes in this Layer"
 msgstr "Рендер об'ємів на цьому Шарі"
-
-
-msgid "Zmask"
-msgstr "Z-маска"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "Рендерити лише те, що є перед суцільними значеннями z"
-
-
-msgid "Z-Transparent"
-msgstr "Z-Прозоре"
-
-
-msgid "Render Z-transparent faces in this layer (on top of Solid and Halos)"
-msgstr "Рендерити Z-прозорі грані у цьому шарі (поверх Суцільних та Ореолів)"
 
 
 msgid "Render Passes"
@@ -81358,10 +81249,6 @@ msgstr "Приблизність для симулювання відскокі�
 
 msgid "Enable motion blur effect (only in camera view)"
 msgstr "Увімкнути ефект розмиву рухом (лише в огляді камери)"
-
-
-msgid "Overscan"
-msgstr "Понадпрогляд"
 
 
 msgid "Internally render past the image border to avoid screen-space effects disappearing"
@@ -88233,28 +88120,12 @@ msgid "Time Step"
 msgstr "Крок часу"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "Розміщення Штриха (Редактор Зображень)"
-
-
-msgid "Draw stroke at 3D cursor location"
-msgstr "Рисувати штрих у локації 3D курсора"
+msgid "Stroke Placement (2D View)"
+msgstr "Розміщення Штриха (2D Огляд)"
 
 
 msgid "Stick stroke to the view"
 msgstr "Приклеїти штрих до огляду"
-
-
-msgid "Stick stroke to surfaces"
-msgstr "Приклеювати штрих до поверхонь"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Розміщення Штриха (Передогляд Секвенсера)"
-
-
-msgid "Stroke Placement (2D View)"
-msgstr "Розміщення Штриха (2D Огляд)"
 
 
 msgid "Annotation Stroke Placement (3D View)"
@@ -88263,6 +88134,14 @@ msgstr "Розміщення Штриха Анотації (3D Огляд)"
 
 msgid "How annotation strokes are orientated in 3D space"
 msgstr "Як штрихи анотації орієнтуються у 3D просторі"
+
+
+msgid "Draw stroke at 3D cursor location"
+msgstr "Рисувати штрих у локації 3D курсора"
+
+
+msgid "Stick stroke to surfaces"
+msgstr "Приклеювати штрих до поверхонь"
 
 
 msgid "Annotation Stroke Thickness"
@@ -99557,10 +99436,6 @@ msgid "%s, not exact since frame %i"
 msgstr "%s, неточно з %i кадру"
 
 
-msgid "Assets"
-msgstr "Активи"
-
-
 msgid "Warning"
 msgstr "Попередження"
 
@@ -102138,10 +102013,6 @@ msgid "No selected vertex"
 msgstr "Жодну вершину не вибрано"
 
 
-msgid "Selected faces must be triangles or quads"
-msgstr "Вибрані вершини мають бути трикутними або чотирикутними"
-
-
 msgid "Active mesh does not have shape keys"
 msgstr "Активна сіть не має ключів форм"
 
@@ -103010,34 +102881,6 @@ msgstr "Неможливо знайти колекцію, придатну дл�
 
 msgid "Could not create a library override from proxy '%s' (might use already local data?)"
 msgstr "Неможливо створити заміщення бібліотеки із замісника '%s' (може використовуються вже локальні дані?)"
-
-
-msgid "Move the mouse to change the voxel size. LMB: confirm size, ESC/RMB: cancel"
-msgstr "Перемістити мишу для для зміни розміру вокселя. ЛКМ: підтвердити розмір, ESC/ПКМ: касування"
-
-
-msgid "Voxel remesher cannot run with a voxel size of 0.0"
-msgstr "Неможливо запустити перебудовник вокселів з розміром вокселя 0.0"
-
-
-msgid "Voxel remesher failed to create mesh"
-msgstr "Перебудовник вокселів дав збій при створенні сіті"
-
-
-msgid "The remesher cannot worked on linked or override data"
-msgstr "Перебудовник не може працювати на пов'язаних або даних заміщення"
-
-
-msgid "The remesher cannot run from edit mode"
-msgstr "Перебудовник не може виконуватися з режиму редагування"
-
-
-msgid "The remesher cannot run with dyntopo activated"
-msgstr "Перебудовник не може виконуватися при активованій динамічній топології"
-
-
-msgid "The remesher cannot run with a Multires modifier in the modifier stack"
-msgstr "Перебудовник не може виконуватися при наявності модифікатора Багатороздільність у стеку модифікаторів"
 
 
 msgid "Select Collection"
@@ -108093,10 +107936,6 @@ msgstr "Дозвіл Виконання"
 
 msgid "Don't Save"
 msgstr "Не Зберігати"
-
-
-msgid "untitled.blend"
-msgstr "untitled.blend"
 
 
 msgid "unable to open the file"

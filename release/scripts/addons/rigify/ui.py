@@ -928,7 +928,7 @@ class VIEW3D_MT_rigify(bpy.types.Menu):
         layout = self.layout
 
         layout.operator(Generate.bl_idname, text="Generate")
-        
+
         if context.mode == 'EDIT_ARMATURE':
             layout.separator()
             layout.operator(Sample.bl_idname)

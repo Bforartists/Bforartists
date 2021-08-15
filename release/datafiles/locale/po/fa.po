@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -174,10 +174,6 @@ msgstr "ﯽﯾﺎﺠﺑﺎﺟ ﺪﺣﺍﻭ"
 
 msgid "Persistent Data Path"
 msgstr "ﻊﺒﻨﻣ"
-
-
-msgid "Path"
-msgstr "ﺮﯿﺴﻣ"
 
 
 msgid "Animation Data"
@@ -716,6 +712,10 @@ msgid "Vertex Color"
 msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
 
 
+msgid "Flat"
+msgstr "ﺖﺨﺗ"
+
+
 msgid "Direction"
 msgstr "ﺎﺘﺳﺍﺭ"
 
@@ -750,6 +750,10 @@ msgstr "ﮓﻧﺭ"
 
 msgid "Saturation"
 msgstr "ﻉﺎﺒﺷﺍ"
+
+
+msgid "Path"
+msgstr "ﺮﯿﺴﻣ"
 
 
 msgid "Background Image"
@@ -2546,10 +2550,6 @@ msgid "End Cap"
 msgstr "ﻢﯾﺮﻓ ﻥﺎﯾﺎﭘ"
 
 
-msgid "Flat"
-msgstr "ﺖﺨﺗ"
-
-
 msgid "Start Cap"
 msgstr "ﻢﯾﺮﻓ ﻉﻭﺮﺷ"
 
@@ -3314,14 +3314,6 @@ msgid "Active Shape Key Index"
 msgstr "ﻝﺎﻌﻓ ﯼﺎﻫ‌ﺪﯿﻠﮐ ﻪﻋﻮﻤﺠﻣ"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "ﺪﯾﺩ ﻥﺍﺪﯿﻣ ﺖﯿﻌﺿﻭ"
-
-
-msgid "Cycles visibility settings"
-msgstr "ﺪﯾﺩ ﻥﺍﺪﯿﻣ ﺖﯿﻌﺿﻭ"
-
-
 msgid "Object data"
 msgstr "ءﯽﺷ ‌ﻩﺩﺍﺩ"
 
@@ -3364,6 +3356,10 @@ msgstr "DOF ﻪﻠﺻﺎﻓ"
 
 msgid "Both"
 msgstr "ﻭﺩ ﺮﻫ"
+
+
+msgid "Holdout"
+msgstr "ﯼﺭﺍﺪﻫﺎﮕﻧ"
 
 
 msgid "Location of the object"
@@ -4139,6 +4135,14 @@ msgid "Cycles world settings"
 msgstr "ﻥﺍﺪﯿﻣ ﯼﻭﺮﯿﻧ ﺕﺎﻤﯿﻈﻨﺗ"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "ﺪﯾﺩ ﻥﺍﺪﯿﻣ ﺖﯿﻌﺿﻭ"
+
+
+msgid "Cycles visibility settings"
+msgstr "ﺪﯾﺩ ﻥﺍﺪﯿﻣ ﺖﯿﻌﺿﻭ"
+
+
 msgid "World lighting settings"
 msgstr "ﺯﺎﯿﭘ ﺖﺳﻮﭘ ﺕﺎﻤﯿﻈﻨﺗ"
 
@@ -4229,10 +4233,6 @@ msgstr "ﺪﯿﻠﮐ ﯼﺎﻫ‌ﻪﻋﻮﻤﺠﻣ"
 
 msgid "Point selected"
 msgstr "ﻩﺪﺸﻧ ﺏﺎﺨﺘﻧﺍ ﺰﯿﭼ ﭻﯿﻫ"
-
-
-msgid "Holdout"
-msgstr "ﯼﺭﺍﺪﻫﺎﮕﻧ"
 
 
 msgid "Max Angle"

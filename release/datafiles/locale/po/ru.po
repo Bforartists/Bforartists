@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -356,30 +356,6 @@ msgstr "Пользовательские аддоны"
 
 msgid "Collection of add-ons"
 msgstr "Коллекция аддонов"
-
-
-msgid "Object Path"
-msgstr "Путь объекта"
-
-
-msgid "Path of an object inside of an Alembic archive"
-msgstr "Путь к объекту в архиве Alembic"
-
-
-msgid "Path"
-msgstr "Путь"
-
-
-msgid "Object path"
-msgstr "Путь объекта"
-
-
-msgid "Object Paths"
-msgstr "Пути объектов"
-
-
-msgid "Collection of object paths"
-msgstr "Коллекция путей объектов"
 
 
 msgid "Animation Data"
@@ -3094,6 +3070,14 @@ msgid "Vertex Color"
 msgstr "Цвет вершины"
 
 
+msgid "Round"
+msgstr "Круг"
+
+
+msgid "Flat"
+msgstr "Плоский"
+
+
 msgid "Curve Jitter"
 msgstr "Кривая дрожания"
 
@@ -3616,6 +3600,30 @@ msgstr "Обвести и залить"
 
 msgid "Vertex Color affects to Stroke and Fill"
 msgstr "Цвета вершин влияют и на штрихи, и на заливку"
+
+
+msgid "Object Path"
+msgstr "Путь объекта"
+
+
+msgid "Path of an object inside of an Alembic archive"
+msgstr "Путь к объекту в архиве Alembic"
+
+
+msgid "Path"
+msgstr "Путь"
+
+
+msgid "Object path"
+msgstr "Путь объекта"
+
+
+msgid "Object Paths"
+msgstr "Пути объектов"
+
+
+msgid "Collection of object paths"
+msgstr "Коллекция путей объектов"
 
 
 msgid "Background Image"
@@ -5427,30 +5435,6 @@ msgid "Specify how existing transformations and the action channels are combined
 msgstr "Способ объединения существующих трансформаций с каналами действий"
 
 
-msgid "Before Original"
-msgstr "До оригинала"
-
-
-msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent with Aligned Inherit Scale"
-msgstr "Применить каналы действий перед исходными трансформациями, как если бы они были применены к родителю с включенным выравниванием наследованного масштаба"
-
-
-msgid "After Original"
-msgstr "После оригинала"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Aligned Inherit Scale"
-msgstr "Применить каналы действий после исходных трансформаций, как если бы они были применены к потомку с включённым выравниванием наследованного масштаба"
-
-
-msgid "After Original (Full Scale)"
-msgstr "После оригинала (полное масштабирование)"
-
-
-msgid "Apply the action channels after the original transformation, as if applied to an imaginary child with Full Inherit Scale. This mode can create shear and is provided only for backward compatibility"
-msgstr "Применить каналы действий после исходных трансформаций, как если бы они были применены к потомку с включённым полным наследованием масштаба. Этот режим может приводить к сдвигам и существует только для обратной совместимости"
-
-
 msgid "Target object"
 msgstr "Целевой объект"
 
@@ -5871,8 +5855,16 @@ msgid "Add euler component values together"
 msgstr "Добавить компоненты углов Эйлера к исходным"
 
 
+msgid "Before Original"
+msgstr "До оригинала"
+
+
 msgid "Apply copied rotation before original, as if the constraint target is a parent"
 msgstr "Применить скопированное вращение перед оригинальным, как если бы целью ограничителя был родитель"
+
+
+msgid "After Original"
+msgstr "После оригинала"
 
 
 msgid "Apply copied rotation after original, as if the constraint target is a child"
@@ -11912,14 +11904,6 @@ msgid "Time"
 msgstr "Время"
 
 
-msgid "Noise Method"
-msgstr "Метод шума"
-
-
-msgid "Wavelet"
-msgstr "Вейвлет"
-
-
 msgid "Compression"
 msgstr "Сжатие"
 
@@ -13332,10 +13316,6 @@ msgid "Rounded"
 msgstr "Круглый"
 
 
-msgid "Flat"
-msgstr "Плоский"
-
-
 msgid "Amount of gradient along section of stroke"
 msgstr "Количество градиента вдоль сечения штриха"
 
@@ -14214,6 +14194,10 @@ msgstr "Объект решётки, с помощью которой осуще
 
 msgid "Strength of modifier effect"
 msgstr "Интенсивность эффекта модификатора"
+
+
+msgid "Overscan"
+msgstr "Вылет за кадр"
 
 
 msgid "Boundaries"
@@ -16407,10 +16391,6 @@ msgstr "Тип сопоставления конца"
 
 msgid "Start Mapping Type"
 msgstr "Тип сопоставления начала"
-
-
-msgid "Round"
-msgstr "Круг"
 
 
 msgid "Profile"
@@ -19687,14 +19667,6 @@ msgid "Cycles object settings"
 msgstr "Параметры объекта Cycles"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Настройки видимости Cycles"
-
-
-msgid "Cycles visibility settings"
-msgstr "Настройки видимости Cycles"
-
-
 msgid "Data"
 msgstr "Данные"
 
@@ -19941,6 +19913,18 @@ msgstr "Создан от набора"
 
 msgid "Object comes from a background set"
 msgstr "Объект создан из фонового набора"
+
+
+msgid "Holdout"
+msgstr "Маска"
+
+
+msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
+msgstr "Рендерить объекты в виде маски; на месте объекта создаётся  полностью прозрачная область, которую потом можно заполнить из реального видеоматериала или другого рендера"
+
+
+msgid "Shadow Catcher"
+msgstr "Уловитель теней"
 
 
 msgid "Location of the object"
@@ -23048,6 +23032,14 @@ msgid "Cycles world settings"
 msgstr "Настройки окружающей среды для Cycles"
 
 
+msgid "Cycles Visibility Settings"
+msgstr "Настройки видимости Cycles"
+
+
+msgid "Cycles visibility settings"
+msgstr "Настройки видимости Cycles"
+
+
 msgid "Lighting"
 msgstr "Освещение"
 
@@ -25485,10 +25477,6 @@ msgstr "Скрыть во вьюпорте"
 
 msgid "Temporarily hide in viewport"
 msgstr "Временно скрыть во вьюпорте"
-
-
-msgid "Holdout"
-msgstr "Маска"
 
 
 msgid "Mask out objects in collection from view layer"
@@ -66364,18 +66352,6 @@ msgid "Multiplier for scene dicing rate (located in the Subdivision panel)"
 msgstr "Множитель для уровня дробления сцены (находится в панели подразделения)"
 
 
-msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
-msgstr "Рендерить объекты в виде маски; на месте объекта создаётся  полностью прозрачная область, которую потом можно заполнить из реального видеоматериала или другого рендера"
-
-
-msgid "Shadow Catcher"
-msgstr "Уловитель теней"
-
-
-msgid "Only render shadows on this object, for compositing renders into real footage"
-msgstr "Рендерить только тени на этом объекте (для совмещения с реальным видеоматериалом)"
-
-
 msgid "Motion Steps"
 msgstr "Шаги движения"
 
@@ -66514,38 +66490,6 @@ msgstr "Светопропускаемое отражённое"
 
 msgid "Denoise the indirect transmission lighting"
 msgstr "Убирать шум из прохода отражённых лучей светопропускаемости"
-
-
-msgid "Debug BVH Intersections"
-msgstr "Отладка BVH-пересечений"
-
-
-msgid "Store Debug BVH Intersections"
-msgstr "Сохранять BVH-пересечения для отладки"
-
-
-msgid "Debug BVH Traversed Instances"
-msgstr "Отладка пройденных экземпляров BVH"
-
-
-msgid "Store Debug BVH Traversed Instances pass"
-msgstr "Сохранять проходы пройденных экземпляров BVH для отладки"
-
-
-msgid "Debug BVH Traversed Nodes"
-msgstr "Отладка пройденных узлов BVH"
-
-
-msgid "Store Debug BVH Traversed Nodes pass"
-msgstr "Сохранять проход пройденных узлов BVH для отладки"
-
-
-msgid "Debug Ray Bounces"
-msgstr "Отладка отскоков лучей"
-
-
-msgid "Store Debug Ray Bounces pass"
-msgstr "Сохранять проход отскоков лучей для отладки"
 
 
 msgid "Debug Render Time"
@@ -67996,32 +67940,12 @@ msgid "Current window matrix"
 msgstr "Матрица текущего окна"
 
 
-msgid "Zmask Negate"
-msgstr "Инвертировать Z-маску"
-
-
-msgid "For Zmask, only render what is behind solid z values instead of in front"
-msgstr "Рендерить только для то, что находится за значениями Z-маски, а не перед ними"
-
-
 msgid "View layer name"
 msgstr "Имя слоя визуализации"
 
 
-msgid "All Z"
-msgstr "Все Z"
-
-
-msgid "Fill in Z values for solid faces in invisible layers, for masking"
-msgstr "Заполнить значения Z для маскировки сплошных поверхностей в скрытых слоях"
-
-
 msgid "Render Ambient Occlusion in this Layer"
 msgstr "Выполнять рендеринг Ambient Occlusion для этого слоя"
-
-
-msgid "Render Halos in this Layer (on top of Solid)"
-msgstr "Рендерить гало в этом слое (поверх сплошных граней)"
 
 
 msgid "Deliver Ambient Occlusion pass"
@@ -68146,14 +68070,6 @@ msgstr "Прядь"
 
 msgid "Render Strands in this Layer"
 msgstr "Рендерить волосы для этого слоя"
-
-
-msgid "Zmask"
-msgstr "Z-маска"
-
-
-msgid "Only render what's in front of the solid z values"
-msgstr "Рендерить только ближайшие сплошные грани по z-значениям"
 
 
 msgid "Render Passes"
@@ -69966,10 +69882,6 @@ msgstr "Упрощение для имитации отражений света
 
 msgid "Enable motion blur effect (only in camera view)"
 msgstr "Включить эффект размытия движения (только для вида из камеры)"
-
-
-msgid "Overscan"
-msgstr "Вылет за кадр"
 
 
 msgid "Internally render past the image border to avoid screen-space effects disappearing"
@@ -76079,22 +75991,6 @@ msgid "Time Step"
 msgstr "Временной шаг"
 
 
-msgid "Stroke Placement (Image Editor)"
-msgstr "Расположение штрихов (редактор изображений)"
-
-
-msgid "Draw stroke at 3D cursor location"
-msgstr "Рисовать штрихи в позиции 3D-курсора"
-
-
-msgid "Stick stroke to surfaces"
-msgstr "Наложить штрихи на поверхности"
-
-
-msgid "Stroke Placement (Sequencer Preview)"
-msgstr "Размещение штрихов (предпросмотр видеоредактора)"
-
-
 msgid "Stroke Placement (2D View)"
 msgstr "Расположение штрихов (2D-вид)"
 
@@ -76105,6 +76001,14 @@ msgstr "Расположение аннотаций (3D-вид)"
 
 msgid "How annotation strokes are orientated in 3D space"
 msgstr "Расположение штрихов аннотаций в 3D-пространстве"
+
+
+msgid "Draw stroke at 3D cursor location"
+msgstr "Рисовать штрихи в позиции 3D-курсора"
+
+
+msgid "Stick stroke to surfaces"
+msgstr "Наложить штрихи на поверхности"
 
 
 msgid "Annotation Stroke Thickness"
@@ -87069,10 +86973,6 @@ msgstr "Среди выделенных рёбер нет таких, котор
 
 msgid "No selected vertex"
 msgstr "Нет выделенной вершины"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Выделенные грани должны быть треугольниками или четырёхугольниками"
 
 
 msgid "Active mesh does not have shape keys"

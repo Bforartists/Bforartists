@@ -216,20 +216,25 @@ class POSELIB_OT_copy_as_asset(PoseAssetCreator, Operator):
 
         filepath = self.save_datablock(asset)
 
-        functions.asset_clear(context, asset)
-        if asset.users > 0:
-            self.report({"ERROR"}, "Whaaaat who is using our brand new asset?")
-            return {"FINISHED"}
-
-        bpy.data.actions.remove(asset)
-
         context.window_manager.clipboard = "%s%s" % (
             self.CLIPBOARD_ASSET_MARKER,
             filepath,
         )
-
         asset_browser.tag_redraw(context.screen)
         self.report({"INFO"}, "Pose Asset copied, use Paste As New Asset in any Asset Browser to paste")
+
+        # The asset has been saved to disk, so to clean up it has to loose its asset & fake user status.
+        asset.asset_clear()
+        asset.use_fake_user = False
+
+        # The asset can be removed from the main DB, as it was purely created to
+        # be stored to disk, and not to be used in this file.
+        if asset.users > 0:
+            # This should never happen, and indicates a bug in the code. Having a warning about it is nice,
+            # but it shouldn't stand in the way of actually cleaning up the meant-to-be-temporary datablock.
+            self.report({"WARNING"}, "Unexpected non-zero user count for the asset, please report this as a bug")
+
+        bpy.data.actions.remove(asset)
         return {"FINISHED"}
 
     def save_datablock(self, action: Action) -> Path:

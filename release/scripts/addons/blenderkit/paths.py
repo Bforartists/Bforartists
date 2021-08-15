@@ -310,7 +310,6 @@ def get_download_filepaths(asset_data, resolution='blend', can_return_others = F
     '''Get all possible paths of the asset and resolution. Usually global and local directory.'''
     dirs = get_download_dirs(asset_data['assetType'])
     res_file, resolution = get_res_file(asset_data, resolution, find_closest_with_url = can_return_others)
-
     name_slug = slugify(asset_data['name'])
     asset_folder_name = f"{name_slug}_{asset_data['id']}"
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'1b53fde9fc39')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -96,10 +96,6 @@ msgstr "Kök Bozulma"
 
 msgid "Persistent Data Path"
 msgstr "Kesit Sınırı Oluştur"
-
-
-msgid "Path"
-msgstr "Yol"
 
 
 msgid "Animation Data"
@@ -838,6 +834,10 @@ msgid "Vertex Color"
 msgstr "Nokta Rengi"
 
 
+msgid "Flat"
+msgstr "Bağlantılı Düz Yüzler"
+
+
 msgid "Direction"
 msgstr "Yönü Çevir"
 
@@ -912,6 +912,10 @@ msgstr "Hue"
 
 msgid "Saturation"
 msgstr "Doygunluk"
+
+
+msgid "Path"
+msgstr "Yol"
 
 
 msgid "Background Image"
@@ -3384,10 +3388,6 @@ msgid "Time"
 msgstr "Zaman"
 
 
-msgid "Noise Method"
-msgstr "Kontur Metodu:"
-
-
 msgid "Compression"
 msgstr "Dosya sıkıştırmayı etkinleştir"
 
@@ -3622,10 +3622,6 @@ msgstr "Resim Ekle"
 
 msgid "End Cap"
 msgstr "Bitiş Zamanı"
-
-
-msgid "Flat"
-msgstr "Bağlantılı Düz Yüzler"
 
 
 msgid "Material Index"
@@ -5108,14 +5104,6 @@ msgid "Constraints"
 msgstr "Kısıtlama"
 
 
-msgid "Cycles Visibility Settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
-msgid "Cycles visibility settings"
-msgstr "Fabrika Ayarlarını Yükle"
-
-
 msgid "Data"
 msgstr "Veri"
 
@@ -6210,6 +6198,14 @@ msgstr "Fabrika Ayarlarını Yükle"
 
 
 msgid "Cycles world settings"
+msgstr "Fabrika Ayarlarını Yükle"
+
+
+msgid "Cycles Visibility Settings"
+msgstr "Fabrika Ayarlarını Yükle"
+
+
+msgid "Cycles visibility settings"
 msgstr "Fabrika Ayarlarını Yükle"
 
 
@@ -19353,10 +19349,6 @@ msgid "View Rotation"
 msgstr "Çevirme Görünümü:"
 
 
-msgid "All Z"
-msgstr "Tüm Z"
-
-
 msgid "Deliver diffuse color pass"
 msgstr "Nesnenin genel rengi."
 
@@ -19375,10 +19367,6 @@ msgstr "Yeni bir UV doku katmanı Oluştur"
 
 msgid "Strand"
 msgstr "İplik"
-
-
-msgid "Zmask"
-msgstr "Zmaske"
 
 
 msgid "Bake normals"
@@ -23849,10 +23837,6 @@ msgstr "Seçili yüzeyleri gizler"
 
 msgid "Does not work in face selection mode"
 msgstr "Kamera Uçuş Modu"
-
-
-msgid "Selected faces must be triangles or quads"
-msgstr "Tüm nesnenin yada sadece seçtiğiniz yüzeylerin keskin kenarlarını yumuşatır"
 
 
 msgid "Mouse path too short"

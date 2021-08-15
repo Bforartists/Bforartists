@@ -21,34 +21,11 @@ Pose Library - functions.
 """
 
 from pathlib import Path
-from typing import Any, List, Set, cast, Iterable
+from typing import Any, List, Iterable
 
 Datablock = Any
 
 import bpy
-from bpy.types import (
-    Context,
-)
-
-
-def asset_mark(context: Context, datablock: Any) -> Set[str]:
-    asset_mark_ctx = {
-        **context.copy(),
-        "id": datablock,
-    }
-    return cast(Set[str], bpy.ops.asset.mark(asset_mark_ctx))
-
-
-def asset_clear(context: Context, datablock: Any) -> Set[str]:
-    asset_clear_ctx = {
-        **context.copy(),
-        "id": datablock,
-    }
-    result = bpy.ops.asset.clear(asset_clear_ctx)
-    assert isinstance(result, set)
-    if "FINISHED" in result:
-        datablock.use_fake_user = False
-    return result
 
 
 def load_assets_from(filepath: Path) -> List[Datablock]:
