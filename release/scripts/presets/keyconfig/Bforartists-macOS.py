@@ -1,4 +1,4 @@
-keyconfig_version = (3, 0, 3)
+keyconfig_version = (3, 0, 18)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -1763,6 +1763,20 @@ keyconfig_data = \
      {"type": 'NUMPAD_MINUS', "value": 'PRESS', "oskey": True, "repeat": True},
      {"properties":
       [("increment", -100),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'RIGHTMOUSE', "value": 'PRESS'},
+     {"properties":
+      [("name", 'ASSETBROWSER_MT_context_menu'),
+       ],
+      },
+     ),
+    ("wm.call_menu",
+     {"type": 'APP', "value": 'PRESS'},
+     {"properties":
+      [("name", 'ASSETBROWSER_MT_context_menu'),
        ],
       },
      ),
