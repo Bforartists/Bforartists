@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -21658,11 +21658,6 @@ msgid "Add Target"
 msgstr "Přidat Cíl"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Odstranit Rodiče Inverzně"
-
-
 msgid "Constraint"
 msgstr "Vazba"
 
@@ -21683,6 +21678,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "Upraví vazbu na aktivní kost"
 
 
+msgid "Report"
+msgstr "Exportovat"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Odstranit Rodiče Inverzně"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Vybrat méně"
@@ -21691,10 +21695,6 @@ msgstr "Vybrat méně"
 msgctxt "Operator"
 msgid "Delete Constraint"
 msgstr "Vymazat vazbu"
-
-
-msgid "Report"
-msgstr "Exportovat"
 
 
 msgctxt "Operator"
@@ -28332,10 +28332,6 @@ msgid "Outliner Data Operation"
 msgstr "Boolean operace"
 
 
-msgid "Unhide"
-msgstr "Odkrýt"
-
-
 msgctxt "Operator"
 msgid "Add Drivers for Selected"
 msgstr "Přidat Ovladače pro Označené"
@@ -33644,6 +33640,10 @@ msgid "Camera Presets"
 msgstr "Přednastavení kamery"
 
 
+msgid "2D Cursor"
+msgstr "2D Kursor"
+
+
 msgid "Active Point"
 msgstr "Aktivní bod"
 
@@ -34066,10 +34066,6 @@ msgstr "Dlaždicování"
 
 msgid "Texture Mask"
 msgstr "Maska textury"
-
-
-msgid "2D Cursor"
-msgstr "2D Kursor"
 
 
 msgid "Histogram"
@@ -38898,6 +38894,14 @@ msgid "Track"
 msgstr "Stopa"
 
 
+msgid "2D Cursor Location"
+msgstr "Původni pozice"
+
+
+msgid "2D cursor location for this view"
+msgstr "Kurzor -> výběr"
+
+
 msgid "Lock to Selection"
 msgstr "Vybrat cestu"
 
@@ -39263,14 +39267,6 @@ msgstr "Vyrovná úhly označených plošek"
 
 msgid "Space Image Editor"
 msgstr "UV/obrázkový editor"
-
-
-msgid "2D Cursor Location"
-msgstr "Původni pozice"
-
-
-msgid "2D cursor location for this view"
-msgstr "Kurzor -> výběr"
 
 
 msgid "Color and Alpha"

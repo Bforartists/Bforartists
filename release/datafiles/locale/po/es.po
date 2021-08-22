@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -25868,10 +25868,6 @@ msgid "Register"
 msgstr "Registrar"
 
 
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "Ejecutar este texto como un script durante la carga, el nombre del texto debe terminar con \".py\""
-
-
 msgid "Texture data-block used by materials, lights, worlds and brushes"
 msgstr "Bloque de datos de textura usado por materiales, luces, entornos y pinceles"
 
@@ -46720,15 +46716,6 @@ msgid "Add a target to the constraint"
 msgstr "Agrega un objetivo a la restricción"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Eliminar inversión"
-
-
-msgid "Clear inverse correction for Child Of constraint"
-msgstr "Elimina la inversión correctiva de la restricción Subordinar"
-
-
 msgid "Constraint"
 msgstr "Restricción"
 
@@ -46749,6 +46736,23 @@ msgid "Edit a constraint on the active bone"
 msgstr "Edita una restricción del hueso activo"
 
 
+msgid "Report"
+msgstr "Reportar"
+
+
+msgid "Create a notification after the operation"
+msgstr "Crear una notificación luego de la operación"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Eliminar inversión"
+
+
+msgid "Clear inverse correction for Child Of constraint"
+msgstr "Elimina la inversión correctiva de la restricción Subordinar"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Activar inversión"
@@ -46765,14 +46769,6 @@ msgstr "Borrar restricción"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Remueve la restricción de la lista de restricciones"
-
-
-msgid "Report"
-msgstr "Reportar"
-
-
-msgid "Create a notification after the operation"
-msgstr "Crear una notificación luego de la operación"
 
 
 msgctxt "Operator"
@@ -53327,10 +53323,6 @@ msgstr "Limitar tamaño"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Impone un tope a los límites por debajo de este valor (cero para deshabilitar)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "Divide la geometría, omite vértices no usados"
 
 
 msgid "Keep Vert Order"
@@ -61519,10 +61511,6 @@ msgstr "Listado - operación con datos"
 
 msgid "Data Operation"
 msgstr "Operación de datos"
-
-
-msgid "Unhide"
-msgstr "Mostrar"
 
 
 msgctxt "Operator"
@@ -73733,6 +73721,10 @@ msgid "Camera Presets"
 msgstr "Ajustes de cámara"
 
 
+msgid "2D Cursor"
+msgstr "Cursor 2D"
+
+
 msgid "Active Point"
 msgstr "Punto activo"
 
@@ -74234,10 +74226,6 @@ msgstr "Textura de máscara"
 
 msgid "UDIM Grid"
 msgstr "Cuadrícula UDIM"
-
-
-msgid "2D Cursor"
-msgstr "Cursor 2D"
 
 
 msgid "Histogram"
@@ -77131,14 +77119,6 @@ msgstr "Auto resincronizar redefiniciones"
 
 msgid "Enable library overrides automatic resync detection and process on file load. Disable when dealing with older .blend files that need manual Resync (Enforce) handling"
 msgstr "Habilita la detección automática de resincronización de redefiniciones de biblioteca al cargar el archivo. Deshabilitar cuando se utilicen archivos .blend antiguos a los que se necesite aplicar Resincronización forzosa"
-
-
-msgid "Asset Browser"
-msgstr "Explorador de recursos"
-
-
-msgid "Enable Asset Browser editor and operators to manage data-blocks as asset"
-msgstr "Habilita a que el editor y los operadores del Explorador de recursos administren bloques de datos como recursos"
 
 
 msgid "Cycles Debug"
@@ -85402,6 +85382,14 @@ msgid "Show annotation data-block which belongs to active track"
 msgstr "Muestra el bloque de datos de anotaciones perteneciente al rastro activo"
 
 
+msgid "2D Cursor Location"
+msgstr "Posición de cursor 2D"
+
+
+msgid "2D cursor location for this view"
+msgstr "Posición del cursor 2D para esta vista"
+
+
 msgid "Lock to Selection"
 msgstr "Fijar a selección"
 
@@ -86001,6 +85989,10 @@ msgid "Type of the File Editor view (regular file browsing or asset browsing)"
 msgstr "Tipo de vista del Explorador de archivos (exploración de archivos estándar o exploración de recursos)"
 
 
+msgid "Asset Browser"
+msgstr "Explorador de recursos"
+
+
 msgid "Filebrowser Parameter"
 msgstr "Parámetro de explorador de archivos"
 
@@ -86167,14 +86159,6 @@ msgstr "Espacio del editor imagen"
 
 msgid "Image and UV editor space data"
 msgstr "Datos del espacio del editor de imágenes y UV"
-
-
-msgid "2D Cursor Location"
-msgstr "Posición de cursor 2D"
-
-
-msgid "2D cursor location for this view"
-msgstr "Posición del cursor 2D para esta vista"
 
 
 msgid "Display Channels"
@@ -103632,6 +103616,14 @@ msgid "More..."
 msgstr "Más..."
 
 
+msgid "Move to First"
+msgstr "Mover al inicio"
+
+
+msgid "Move to Last"
+msgstr "Mover al final"
+
+
 msgid "Flip Color Ramp"
 msgstr "Invertir rampa de color"
 
@@ -108510,14 +108502,6 @@ msgstr "Freestyle: Procesamiento de trazos"
 
 msgid "Cannot open file: %s"
 msgstr "No es posible abrir el archivo: %s"
-
-
-msgid "Move to First"
-msgstr "Mover al inicio"
-
-
-msgid "Move to Last"
-msgstr "Mover al final"
 
 
 msgid "External library data"

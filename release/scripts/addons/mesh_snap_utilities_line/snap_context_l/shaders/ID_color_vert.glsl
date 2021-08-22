@@ -1,7 +1,7 @@
 uniform mat4 ModelViewProjectionMatrix;
 
 #ifdef USE_CLIP_PLANES
-uniform mat4 ModelViewMatrix;
+uniform mat4 ModelMatrix;
 uniform bool use_clip_planes;
 uniform vec4 clip_plane[4];
 out vec4 clip_distance;
@@ -13,7 +13,7 @@ void main()
 {
 #ifdef USE_CLIP_PLANES
 	if (use_clip_planes) {
-		vec4 g_pos = ModelViewMatrix * vec4(pos, 1.0);
+		vec4 g_pos = ModelMatrix * vec4(pos, 1.0);
 
 		for (int i = 0; i != 4; i++) {
 			clip_distance[i] = dot(clip_plane[i], g_pos);
