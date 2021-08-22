@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Manage UI translations",
     "author": "Bastien Montagne",
-    "version": (1, 3, 1),
+    "version": (1, 3, 2),
     "blender": (2, 92, 0),
     "location": "Main \"File\" menu, text editor, any UI control",
     "description": "Allows managing UI translations directly from Blender "

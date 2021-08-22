@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -27720,11 +27720,6 @@ msgid "Delete 4 spaces from line beginning"
 msgstr "Cancella 4 spazi ad inizio riga"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Pulisci Inverso"
-
-
 msgid "Constraint"
 msgstr "Vincolo"
 
@@ -27745,6 +27740,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "Modifica un vincolo dell'osso attivo"
 
 
+msgid "Report"
+msgstr "Rapporto"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Pulisci Inverso"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Imposta Inverso"
@@ -27757,10 +27761,6 @@ msgstr "Cancella Vincolo"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Rimuove il vincolo dalla lista dei vincoli"
-
-
-msgid "Report"
-msgstr "Rapporto"
 
 
 msgctxt "Operator"
@@ -30829,10 +30829,6 @@ msgstr "Blocca Dimensione"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Blocca i confini al di sotto di questo valore (zero per disabilitare)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "Divide la geometria, omette i vertici non usati"
 
 
 msgid "Keep Vert Order"
@@ -36009,10 +36005,6 @@ msgstr "Struttura - Operazione Dati"
 
 msgid "Data Operation"
 msgstr "Dati Operazione"
-
-
-msgid "Unhide"
-msgstr "Mostra"
 
 
 msgctxt "Operator"
@@ -42924,6 +42916,10 @@ msgid "Camera Presets"
 msgstr "Preimpostazioni Camera"
 
 
+msgid "2D Cursor"
+msgstr "Cursore 2D"
+
+
 msgid "Active Point"
 msgstr "Punto Attivo"
 
@@ -43221,10 +43217,6 @@ msgstr "Tassellatura"
 
 msgid "Texture Mask"
 msgstr "Maschera Texture"
-
-
-msgid "2D Cursor"
-msgstr "Cursore 2D"
 
 
 msgid "Histogram"
@@ -49188,6 +49180,14 @@ msgid "Track"
 msgstr "Traccia"
 
 
+msgid "2D Cursor Location"
+msgstr "Posizione Cursore 2D"
+
+
+msgid "2D cursor location for this view"
+msgstr "Posizione del cursore 2D per questa vista"
+
+
 msgid "Lock to Selection"
 msgstr "Blocca alla Selezione"
 
@@ -49721,14 +49721,6 @@ msgstr "Spazio Editor Immagini"
 
 msgid "Image and UV editor space data"
 msgstr "Spazio dati dell'editor immagini e UV"
-
-
-msgid "2D Cursor Location"
-msgstr "Posizione Cursore 2D"
-
-
-msgid "2D cursor location for this view"
-msgstr "Posizione del cursore 2D per questa vista"
 
 
 msgid "Color and Alpha"

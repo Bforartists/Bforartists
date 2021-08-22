@@ -1030,6 +1030,10 @@ def add_parameters(params):
 def parameters_ui(layout, params):
     """ Create the ui for the rig parameters."""
 
+    layout.label(text='This monolithic face rig is deprecated.', icon='INFO')
+    layout.operator("pose.rigify_upgrade_face")
+    layout.separator()
+
     ControlLayersOption.FACE_PRIMARY.parameters_ui(layout, params)
     ControlLayersOption.FACE_SECONDARY.parameters_ui(layout, params)
 

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -32179,11 +32179,6 @@ msgid "Delete 4 spaces from line beginning"
 msgstr "Apaga 4 espaços a partir do início da linha."
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Limpar inversamente"
-
-
 msgid "Constraint"
 msgstr "Restrição"
 
@@ -32204,6 +32199,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "Permite a edição de uma restrição no osso ativo."
 
 
+msgid "Report"
+msgstr "Relatório"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Limpar inversamente"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Definir inversamente"
@@ -32216,10 +32220,6 @@ msgstr "Apagar restrição"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Remove a restrição a partir da pilha de restrições."
-
-
-msgid "Report"
-msgstr "Relatório"
 
 
 msgctxt "Operator"
@@ -35778,10 +35778,6 @@ msgstr "Limitar tamanho"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Limita as margens abaixo deste valor (zero para desativar)."
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "Divide a geometria, omitindo os vértices não usados."
 
 
 msgid "Keep Vert Order"
@@ -41332,10 +41328,6 @@ msgstr "Operação de dados no organizador"
 
 msgid "Data Operation"
 msgstr "Operação de dados"
-
-
-msgid "Unhide"
-msgstr "Revelar"
 
 
 msgctxt "Operator"
@@ -49209,6 +49201,10 @@ msgid "Camera Presets"
 msgstr "Predefinições de câmara"
 
 
+msgid "2D Cursor"
+msgstr "Cursor 2D"
+
+
 msgid "Active Point"
 msgstr "Ponto ativo"
 
@@ -49457,10 +49453,6 @@ msgstr "Ladrilhamento"
 
 msgid "Texture Mask"
 msgstr "Máscara de textura"
-
-
-msgid "2D Cursor"
-msgstr "Cursor 2D"
 
 
 msgid "Histogram"
@@ -56396,6 +56388,14 @@ msgid "Track"
 msgstr "Trilha"
 
 
+msgid "2D Cursor Location"
+msgstr "Localização do cursor 2D"
+
+
+msgid "2D cursor location for this view"
+msgstr "A localização do cursor 2D para esta visualização."
+
+
 msgid "Lock to Selection"
 msgstr "Travar na seleção"
 
@@ -57061,14 +57061,6 @@ msgstr "Espaço do editor de imagens e UVs"
 
 msgid "Image and UV editor space data"
 msgstr "Espaço de dados do editor de imagens e UVs."
-
-
-msgid "2D Cursor Location"
-msgstr "Localização do cursor 2D"
-
-
-msgid "2D cursor location for this view"
-msgstr "A localização do cursor 2D para esta visualização."
 
 
 msgid "Color and Alpha"
