@@ -32,7 +32,7 @@ from ...utils.rig import get_parent_rigs
 
 from ...utils.node_merger import MainMergeNode, QueryMergeNode
 
-from .skin_parents import ControlBoneParentLayer, ControlBoneWeakParentLayer
+from .skin_parents import ControlBoneParentLayer, ControlBoneWeakParentLayer, ControlBoneParentMix
 from .skin_rigs import BaseSkinRig, BaseSkinChainRig
 
 
@@ -253,6 +253,8 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
 
         if isinstance(parent, ControlBoneParentLayer):
             parent.parent = self.intern_parent(node, parent.parent)
+        elif isinstance(parent, ControlBoneParentMix):
+            parent.parents = [self.intern_parent(node, p) for p in parent.parents]
 
         return parent
 
@@ -267,11 +269,9 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
         if parent not in requests:
             # If the actual reparent would be generated, weak parent will be needed.
             if self.has_weak_parent and not self.use_weak_parent:
-                if self.use_mix_parent or parent != self.node_parent:
+                if parent is not self.node_parent:
                     self.use_weak_parent = True
-
-                    for weak_parent in self.node_parent_list_weak:
-                        self.register_use_parent(weak_parent)
+                    self.register_use_parent(self.node_parent_weak)
 
             self.register_use_parent(parent)
             requests.append(parent)
@@ -308,24 +308,34 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
             self.matrix.translation = self.point
 
             # Create parents and decide if mix would be needed
-            parent_list = [node.build_parent(use=False) for node in mirror_sibling_list]
+            weak_parent_list = [node.build_parent(use=False) for node in mirror_sibling_list]
 
-            if all(parent == self.node_parent for parent in parent_list):
-                self.use_mix_parent = False
-                parent_list = [self.node_parent]
+            if all(parent == self.node_parent for parent in weak_parent_list):
+                weak_parent_list = [self.node_parent]
+                self.node_parent_weak = self.node_parent
             else:
-                self.use_mix_parent = True
+                self.node_parent_weak = ControlBoneParentMix(self.rig, self, weak_parent_list)
 
             # Prepare parenting without weak layers
+            parent_list = [ControlBoneWeakParentLayer.strip(p) for p in weak_parent_list]
+
             self.use_weak_parent = False
-            self.node_parent_list_weak = parent_list
-
-            self.node_parent_list = [ControlBoneWeakParentLayer.strip(p) for p in parent_list]
             self.has_weak_parent = any((p is not pw)
-                                       for p, pw in zip(self.node_parent_list, parent_list))
+                                       for p, pw in zip(weak_parent_list, parent_list))
 
-            for parent in self.node_parent_list:
-                self.register_use_parent(parent)
+            if not self.has_weak_parent:
+                self.node_parent = self.node_parent_weak
+            elif len(parent_list) > 1:
+                self.node_parent = ControlBoneParentMix(
+                    self.rig, self, parent_list, suffix='_mix_base')
+            else:
+                self.node_parent = parent_list[0]
+
+            # Mirror siblings share the mixed parent for reparent
+            self.register_use_parent(self.node_parent)
+
+            for node in mirror_sibling_list:
+                node.node_parent = self.node_parent
 
         # All nodes
         if self.node_needs_parent or self.node_needs_reparent:
@@ -392,16 +402,8 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
                 self.weak_parent_bone = self.make_bone(
                     make_derived_name(self._control_bone, 'mch', '_weak_parent'), 1/2)
 
-            # Make mix parent if needed
-            self.reparent_bones = {}
-
-            if self.use_mix_parent:
-                self.mix_parent_bone = self.make_bone(
-                    make_derived_name(self._control_bone, 'mch', '_mix_parent'), 1/2)
-            else:
-                self.reparent_bones[id(self.node_parent)] = self._control_bone
-
             # Make requested reparents
+            self.reparent_bones = {id(self.node_parent): self._control_bone}
             self.reparent_bones_fake = set(self.reparent_bones.values())
 
             for parent in self.reparent_requests:
@@ -421,21 +423,12 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
 
     def parent_bones(self):
         if self.is_master_node:
-            if self.use_mix_parent:
-                self.set_bone_parent(self._control_bone, self.mix_parent_bone,
-                                     inherit_scale='AVERAGE')
-                self.rig.generator.disable_auto_parent(self.mix_parent_bone)
-            else:
-                self.set_bone_parent(self._control_bone, self.node_parent_list[0].output_bone,
-                                     inherit_scale='AVERAGE')
+            self.set_bone_parent(
+                self._control_bone, self.node_parent.output_bone, inherit_scale='AVERAGE')
 
             if self.use_weak_parent:
-                if self.use_mix_parent:
-                    self.rig.generator.disable_auto_parent(self.weak_parent_bone)
-                else:
-                    parent = self.node_parent_list_weak[0]
-                    self.set_bone_parent(self.weak_parent_bone, parent.output_bone,
-                                         inherit_scale=parent.inherit_scale_mode)
+                self.set_bone_parent(
+                    self.weak_parent_bone, self.node_parent_weak.output_bone, inherit_scale='FULL')
 
             for parent in self.reparent_requests:
                 bone = self.reparent_bones[id(parent)]
@@ -454,12 +447,6 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
 
     def rig_bones(self):
         if self.is_master_node:
-            # Rig the mixed parent
-            if self.use_mix_parent:
-                targets = [parent.output_bone for parent in self.node_parent_list]
-                self.make_constraint(self.mix_parent_bone, 'ARMATURE',
-                                     targets=targets, use_deform_preserve_volume=True)
-
             # Invoke parent rig callbacks
             for rig in reversed(self.rig.get_all_parent_skin_rigs()):
                 rig.extend_control_node_rig(self)
@@ -472,11 +459,6 @@ class ControlBoneNode(MainMergeNode, BaseSkinNode):
 
                 self.make_constraint(reparent_source, 'COPY_TRANSFORMS',
                                      self.control_bone, space='LOCAL')
-
-                if self.use_mix_parent:
-                    targets = [parent.output_bone for parent in self.node_parent_list_weak]
-                    self.make_constraint(self.weak_parent_bone, 'ARMATURE',
-                                         targets=targets, use_deform_preserve_volume=True)
 
                 set_bone_widget_transform(self.obj, self.control_bone, reparent_source)
 

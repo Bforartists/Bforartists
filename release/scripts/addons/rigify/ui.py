@@ -85,6 +85,7 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
             show_warning = False
             show_update_metarig = False
             show_not_updatable = False
+            show_upgrade_face = False
 
             check_props = ['IK_follow', 'root/parent', 'FK_limb_follow', 'IK_Stretch']
 
@@ -92,6 +93,7 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
                 if bone.bone.layers[30] and (list(set(bone.keys()) & set(check_props))):
                     show_warning = True
                     break
+
             for b in obj.pose.bones:
                 if b.rigify_type in outdated_types.keys():
                     old_bone = b.name
@@ -102,25 +104,24 @@ class DATA_PT_rigify_buttons(bpy.types.Panel):
                         show_update_metarig = False
                         show_not_updatable = True
                         break
+                elif b.rigify_type == 'faces.super_face':
+                    show_upgrade_face = True
 
             if show_warning:
                 layout.label(text=WARNING, icon='ERROR')
 
+            enable_generate_and_advanced = not (show_not_updatable or show_update_metarig)
+
             if show_not_updatable:
                 layout.label(text="WARNING: This metarig contains deprecated rigify rig-types and cannot be upgraded automatically.", icon='ERROR')
                 layout.label(text="("+old_rig+" on bone "+old_bone+")")
-                layout.label(text="If you want to use it anyway try enabling the legacy mode before generating again.")
-
-                layout.operator("pose.rigify_switch_to_legacy", text="Switch to Legacy")
-
-            enable_generate_and_advanced = not (show_not_updatable or show_update_metarig)
-
-            if show_update_metarig:
-
+            elif show_update_metarig:
                 layout.label(text="This metarig contains old rig-types that can be automatically upgraded to benefit of rigify's new features.", icon='ERROR')
                 layout.label(text="("+old_rig+" on bone "+old_bone+")")
-                layout.label(text="To use it as-is you need to enable legacy mode.",)
                 layout.operator("pose.rigify_upgrade_types", text="Upgrade Metarig")
+            elif show_upgrade_face:
+                layout.label(text="This metarig uses the old face rig.", icon='INFO')
+                layout.operator("pose.rigify_upgrade_face")
 
             row = layout.row()
             # Rig type field

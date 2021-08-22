@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -22682,10 +22682,6 @@ msgid "Register"
 msgstr "Enregistrer"
 
 
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "Exécuter ce texte comme un script au chargement, le nom du texte doit finir par \".py\""
-
-
 msgid "Texture data-block used by materials, lights, worlds and brushes"
 msgstr "Bloc de données texture, utilisé par les matériaux, lumières, mondes et brosses"
 
@@ -38963,11 +38959,6 @@ msgid "Add Target"
 msgstr "Ajouter cible"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Effacer inverse"
-
-
 msgid "Constraint"
 msgstr "Contrainte"
 
@@ -38988,6 +38979,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "Éditer une contrainte de l’os actif"
 
 
+msgid "Report"
+msgstr "Rapport"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Effacer inverse"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Définir inverse"
@@ -39000,10 +39000,6 @@ msgstr "Supprimer contrainte"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Enlever la contrainte de la pile des contraintes"
-
-
-msgid "Report"
-msgstr "Rapport"
 
 
 msgctxt "Operator"
@@ -43121,10 +43117,6 @@ msgstr "Tronquer taille"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Limiter les limites en-deçà de cette valeur (zéro pour désactiver)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "Scinder la géométrie, omettre les vertices inutilisés"
 
 
 msgid "Keep Vert Order"
@@ -49200,10 +49192,6 @@ msgstr "Outliner opérations sur les données"
 
 msgid "Data Operation"
 msgstr "Opération sur les données"
-
-
-msgid "Unhide"
-msgstr "Révéler"
 
 
 msgctxt "Operator"
@@ -57698,6 +57686,10 @@ msgid "Camera Presets"
 msgstr "Pré-réglages de caméra"
 
 
+msgid "2D Cursor"
+msgstr "Curseur 2D"
+
+
 msgid "Active Point"
 msgstr "Point actif"
 
@@ -58105,10 +58097,6 @@ msgstr "Tuilage"
 
 msgid "Texture Mask"
 msgstr "Texture masque"
-
-
-msgid "2D Cursor"
-msgstr "Curseur 2D"
 
 
 msgid "Histogram"
@@ -66117,6 +66105,14 @@ msgid "Track"
 msgstr "Piste"
 
 
+msgid "2D Cursor Location"
+msgstr "Position du curseur 2D"
+
+
+msgid "2D cursor location for this view"
+msgstr "Position du curseur 2D pour cette vue"
+
+
 msgid "Lock to Selection"
 msgstr "Verrouiller à la sélection"
 
@@ -66794,14 +66790,6 @@ msgstr "Espace d’éditeur image"
 
 msgid "Image and UV editor space data"
 msgstr "Données de l’espace de l’éditeur d’image et d’UV"
-
-
-msgid "2D Cursor Location"
-msgstr "Position du curseur 2D"
-
-
-msgid "2D cursor location for this view"
-msgstr "Position du curseur 2D pour cette vue"
 
 
 msgid "Color and Alpha"

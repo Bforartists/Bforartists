@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -28414,11 +28414,6 @@ msgid "Add Target"
 msgstr "添加目標"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "清除反向"
-
-
 msgid "Constraint"
 msgstr "約束"
 
@@ -28439,6 +28434,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "編輯作用中骨骼的約束"
 
 
+msgid "Report"
+msgstr "報告"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "清除反向"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "設定反向"
@@ -28451,10 +28455,6 @@ msgstr "刪除約束"
 
 msgid "Remove constraint from constraint stack"
 msgstr "從約束堆疊中刪除約束"
-
-
-msgid "Report"
-msgstr "報告"
 
 
 msgctxt "Operator"
@@ -31128,10 +31128,6 @@ msgstr "緊固大小"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "邊界緊固至此值以下 (零為停用)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "切割幾何形狀，節省未使用的頂點"
 
 
 msgid "Keep Vert Order"
@@ -36067,10 +36063,6 @@ msgstr "大綱管理器資料操作"
 
 msgid "Data Operation"
 msgstr "資料操作"
-
-
-msgid "Unhide"
-msgstr "取消隱藏"
 
 
 msgctxt "Operator"
@@ -43006,6 +42998,10 @@ msgid "Camera Presets"
 msgstr "攝影機預置"
 
 
+msgid "2D Cursor"
+msgstr "2D 游標"
+
+
 msgid "Active Point"
 msgstr "作用中的點"
 
@@ -43297,10 +43293,6 @@ msgstr "鋪排"
 
 msgid "Texture Mask"
 msgstr "紋理遮罩"
-
-
-msgid "2D Cursor"
-msgstr "2D 游標"
 
 
 msgid "Histogram"
@@ -49100,6 +49092,14 @@ msgid "Track"
 msgstr "追蹤"
 
 
+msgid "2D Cursor Location"
+msgstr "2D 游標位置"
+
+
+msgid "2D cursor location for this view"
+msgstr "此視圖上的 2D 游標位置"
+
+
 msgid "Lock to Selection"
 msgstr "鎖定至選取項"
 
@@ -49705,14 +49705,6 @@ msgstr "空間影像編輯器"
 
 msgid "Image and UV editor space data"
 msgstr "影像與 UV 編輯器的空間資料"
-
-
-msgid "2D Cursor Location"
-msgstr "2D 游標位置"
-
-
-msgid "2D cursor location for this view"
-msgstr "此視圖上的 2D 游標位置"
 
 
 msgid "Color and Alpha"

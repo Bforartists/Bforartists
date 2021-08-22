@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -12083,11 +12083,6 @@ msgid "Select Word"
 msgstr "Seleccionar fila"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Seleccionar fila"
-
-
 msgid "Constraint"
 msgstr "Afegir Tira"
 
@@ -12098,6 +12093,11 @@ msgstr "Seleccionar connectats"
 
 msgid "Edit a constraint on the active bone"
 msgstr "Seleccionar connectats"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Seleccionar fila"
 
 
 msgctxt "Operator"
@@ -16392,10 +16392,6 @@ msgid "Data Operation"
 msgstr "Esborrar Rotació"
 
 
-msgid "Unhide"
-msgstr "Mostrar"
-
-
 msgctxt "Operator"
 msgid "Add Drivers for Selected"
 msgstr "Amagar Seleccionats"
@@ -19560,6 +19556,10 @@ msgid "Camera Presets"
 msgstr "Render"
 
 
+msgid "2D Cursor"
+msgstr "Seleccionar connectats"
+
+
 msgid "Active Point"
 msgstr "Moure a Capa"
 
@@ -19707,10 +19707,6 @@ msgstr "Partir"
 msgctxt "Operator"
 msgid "Scale"
 msgstr "Escalar"
-
-
-msgid "2D Cursor"
-msgstr "Seleccionar connectats"
 
 
 msgid "Waveform"
@@ -22008,6 +22004,14 @@ msgid "Clip editor space data"
 msgstr "Image Displist"
 
 
+msgid "2D Cursor Location"
+msgstr "Esborrar Posició"
+
+
+msgid "2D cursor location for this view"
+msgstr "Seleccionar connectats"
+
+
 msgid "Lock to Selection"
 msgstr "Seleccionar connectats"
 
@@ -22242,14 +22246,6 @@ msgstr "Seleccionar connectats"
 
 msgid "Space Image Editor"
 msgstr "Image Displist"
-
-
-msgid "2D Cursor Location"
-msgstr "Esborrar Posició"
-
-
-msgid "2D cursor location for this view"
-msgstr "Seleccionar connectats"
 
 
 msgid "Color and Alpha"

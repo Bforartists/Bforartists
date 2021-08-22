@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-09-07 22:32+0100\n"
@@ -13840,11 +13840,6 @@ msgid "Unindent"
 msgstr "Izvuci"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Očisti obrnuto"
-
-
 msgid "Constraint"
 msgstr "Ograničenje"
 
@@ -13865,6 +13860,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "Uredi ograničenja aktivne kosti"
 
 
+msgid "Report"
+msgstr "Izveštaj"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Očisti obrnuto"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Postavi obrnuto"
@@ -13873,10 +13877,6 @@ msgstr "Postavi obrnuto"
 msgctxt "Operator"
 msgid "Delete Constraint"
 msgstr "Izbriši ograničenje"
-
-
-msgid "Report"
-msgstr "Izveštaj"
 
 
 msgctxt "Operator"
@@ -17983,10 +17983,6 @@ msgid "Set Action"
 msgstr "Nova akcija"
 
 
-msgid "Unhide"
-msgstr "Otkrij"
-
-
 msgctxt "Operator"
 msgid "Expand/Collapse All"
 msgstr "Proširi/skupi sve"
@@ -21149,6 +21145,10 @@ msgid "Camera Presets"
 msgstr "Predefinisane kamere"
 
 
+msgid "2D Cursor"
+msgstr "2D kursor"
+
+
 msgid "Active Point"
 msgstr "Aktivna tačka"
 
@@ -21302,10 +21302,6 @@ msgstr "Crtaj"
 
 msgid "Texture Mask"
 msgstr "Maska teksture"
-
-
-msgid "2D Cursor"
-msgstr "2D kursor"
 
 
 msgid "Histogram"
@@ -23657,6 +23653,14 @@ msgid "Track"
 msgstr "Staza"
 
 
+msgid "2D Cursor Location"
+msgstr "Lokacija 2D kursora"
+
+
+msgid "2D cursor location for this view"
+msgstr "Lokacija 2D kursora u ovom pogledu"
+
+
 msgid "Dash"
 msgstr "Isprekidano"
 
@@ -23892,14 +23896,6 @@ msgstr "Automatski normalizuje krivu pri svakoj izmeni"
 
 msgid "Use Normalization"
 msgstr "Koristi normalizaciju"
-
-
-msgid "2D Cursor Location"
-msgstr "Lokacija 2D kursora"
-
-
-msgid "2D cursor location for this view"
-msgstr "Lokacija 2D kursora u ovom pogledu"
 
 
 msgid "Color and Alpha"
