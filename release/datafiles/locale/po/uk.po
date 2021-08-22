@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -25244,10 +25244,6 @@ msgid "Register"
 msgstr "Реєстрування"
 
 
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "Виконати цей текст як скрипт при завантаженні, ім'я тексту має закінчуватися на \".py\""
-
-
 msgid "Texture data-block used by materials, lights, worlds and brushes"
 msgstr "Блок даних текстури, використовуваний матеріалами, освітлювачами, світами та пензлями"
 
@@ -45676,15 +45672,6 @@ msgid "Add a target to the constraint"
 msgstr "Додати ціль для примусу"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Зчистити інверсію"
-
-
-msgid "Clear inverse correction for Child Of constraint"
-msgstr "Зчистити корекцію інверсії для примусу «Нащадок Від»"
-
-
 msgid "Constraint"
 msgstr "Примус"
 
@@ -45705,6 +45692,23 @@ msgid "Edit a constraint on the active bone"
 msgstr "Змінити примус активної кістки"
 
 
+msgid "Report"
+msgstr "Звіт"
+
+
+msgid "Create a notification after the operation"
+msgstr "Створити повідомлення після операції"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Зчистити інверсію"
+
+
+msgid "Clear inverse correction for Child Of constraint"
+msgstr "Зчистити корекцію інверсії для примусу «Нащадок Від»"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Встановити інверсію"
@@ -45721,14 +45725,6 @@ msgstr "Видалити примус"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Вилучити примус зі стосу примусів"
-
-
-msgid "Report"
-msgstr "Звіт"
-
-
-msgid "Create a notification after the operation"
-msgstr "Створити повідомлення після операції"
 
 
 msgctxt "Operator"
@@ -52033,10 +52029,6 @@ msgstr "Розмір відсікання"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Обмежити цим значенням (нуль - відключити)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "Поділити геометрію, опускаючи невикористані вершини"
 
 
 msgid "Keep Vert Order"
@@ -60059,10 +60051,6 @@ msgstr "Операція Даних у Структураторі"
 
 msgid "Data Operation"
 msgstr "Операція Даних"
-
-
-msgid "Unhide"
-msgstr "Знесховання"
 
 
 msgctxt "Operator"
@@ -71975,6 +71963,10 @@ msgid "Camera Presets"
 msgstr "Передустави Камери"
 
 
+msgid "2D Cursor"
+msgstr "2D-курсор"
+
+
 msgid "Active Point"
 msgstr "Активна Точка"
 
@@ -72464,10 +72456,6 @@ msgstr "Текстурна маска"
 
 msgid "UDIM Grid"
 msgstr "Сітка UDIM"
-
-
-msgid "2D Cursor"
-msgstr "2D-курсор"
 
 
 msgid "Histogram"
@@ -75333,14 +75321,6 @@ msgstr "Автоматично вставляти візуальні ключі 
 
 msgid "Experimental features"
 msgstr "Експериментальні функції"
-
-
-msgid "Asset Browser"
-msgstr "Браузер Активів"
-
-
-msgid "Enable Asset Browser editor and operators to manage data-blocks as asset"
-msgstr "Увімкнути редактор Браузера Активів та оператори для управління блоками даних як активом"
 
 
 msgid "Cycles Debug"
@@ -83468,6 +83448,14 @@ msgid "Show annotation data-block which belongs to active track"
 msgstr "Показувати блок даних анотації, який відноситься до активної стежки"
 
 
+msgid "2D Cursor Location"
+msgstr "Положення 2D-курсора"
+
+
+msgid "2D cursor location for this view"
+msgstr "Позиція 2D-курсора у цьому вигляді"
+
+
 msgid "Lock to Selection"
 msgstr "Зблокувати з вибраним"
 
@@ -84067,6 +84055,10 @@ msgid "Type of the File Editor view (regular file browsing or asset browsing)"
 msgstr "Тип огляду Редактора Файлів (звичайне проглядання файлів або проглядання активів)"
 
 
+msgid "Asset Browser"
+msgstr "Браузер Активів"
+
+
 msgid "Filebrowser Parameter"
 msgstr "Параметри оглядача файлів"
 
@@ -84229,14 +84221,6 @@ msgstr "Простір редактора зображень"
 
 msgid "Image and UV editor space data"
 msgstr "Дані простору редактора зображень та UV"
-
-
-msgid "2D Cursor Location"
-msgstr "Положення 2D-курсора"
-
-
-msgid "2D cursor location for this view"
-msgstr "Позиція 2D-курсора у цьому вигляді"
 
 
 msgid "Display Channels"
@@ -101255,6 +101239,14 @@ msgid "More..."
 msgstr "Більше..."
 
 
+msgid "Move to First"
+msgstr "Перемістити на Перше"
+
+
+msgid "Move to Last"
+msgstr "Перемістити на Останнє"
+
+
 msgid "Flip Color Ramp"
 msgstr "Перевернути Градієнт Кольорів"
 
@@ -106002,14 +105994,6 @@ msgstr "Freestyle: Рендеринг штриха"
 
 msgid "Cannot open file: %s"
 msgstr "Неможливо відкрити файл: %s"
-
-
-msgid "Move to First"
-msgstr "Перемістити на Перше"
-
-
-msgid "Move to Last"
-msgstr "Перемістити на Останнє"
 
 
 msgid "External library data"

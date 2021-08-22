@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -961,6 +961,10 @@ msgid "Asset Library Reference"
 msgstr "资产库引用"
 
 
+msgid "Identifier to refer to the asset library"
+msgstr "指向资产库的标识符"
+
+
 msgid "Asset Data"
 msgstr "资产数据"
 
@@ -1650,11 +1654,11 @@ msgstr "缓存文件数据块"
 
 
 msgid "Cameras"
-msgstr "相机"
+msgstr "摄像机"
 
 
 msgid "Camera data-blocks"
-msgstr "相机数据块"
+msgstr "摄像机数据块"
 
 
 msgid "Collections"
@@ -2002,11 +2006,11 @@ msgstr "缓存文件集合"
 
 
 msgid "Main Cameras"
-msgstr "主相机"
+msgstr "主摄像机"
 
 
 msgid "Collection of cameras"
-msgstr "相机集合"
+msgstr "摄像机集合"
 
 
 msgid "Main Collections"
@@ -3445,6 +3449,14 @@ msgid "Use always Vertex Color mode"
 msgstr "始终使用顶点色模式"
 
 
+msgid "Caps Type"
+msgstr "封盖类型"
+
+
+msgid "The shape of the start and end of the stroke"
+msgstr "笔画首末两端的形状"
+
+
 msgid "Round"
 msgstr "圆(四舍五入)"
 
@@ -4182,7 +4194,7 @@ msgstr "帧方法"
 
 
 msgid "How the image fits in the camera frame"
-msgstr "图像在相机框中的适配方式"
+msgstr "图像在摄像机框中的适配方式"
 
 
 msgid "Stretch"
@@ -4270,11 +4282,11 @@ msgstr "影片剪辑"
 
 
 msgid "Camera Clip"
-msgstr "相机剪辑"
+msgstr "摄像机剪辑"
 
 
 msgid "Use movie clip from active scene camera"
-msgstr "使用为活动的场景相机所设置的影片剪辑"
+msgstr "使用为活动的场景摄像机所设置的影片剪辑"
 
 
 msgid "Flip Horizontally"
@@ -4362,7 +4374,7 @@ msgstr "立体声"
 
 
 msgid "Stereoscopy settings for a Camera data-block"
-msgstr "用于相机数据块的立体视法设置"
+msgstr "用于摄像机数据块的立体视法设置"
 
 
 msgid "Convergence Plane Distance"
@@ -4370,7 +4382,7 @@ msgstr "融合平面距离"
 
 
 msgid "The converge point for the stereo cameras (often the distance between a projector and the projection screen)"
-msgstr "立体相机的融合点(通常是投影者和投影屏幕的距离)"
+msgstr "立体摄像机的融合点(通常是投影者和投影屏幕的距离)"
 
 
 msgid "Off-Axis"
@@ -4386,7 +4398,7 @@ msgstr "平行"
 
 
 msgid "Parallel cameras with no convergence"
-msgstr "无汇聚角的平行相机"
+msgstr "无汇聚角的平行摄像机"
 
 
 msgid "Toe-in"
@@ -4394,7 +4406,7 @@ msgstr "前束角"
 
 
 msgid "Rotated cameras, looking at the convergence distance"
-msgstr "旋转后的相机，朝向汇聚距离"
+msgstr "旋转后的摄像机，朝向汇聚距离"
 
 
 msgid "Interocular Distance"
@@ -4402,7 +4414,7 @@ msgstr "目间距"
 
 
 msgid "Set the distance between the eyes - the stereo plane distance / 30 should be fine"
-msgstr "设置两眼间距 - 相机焦距/30应是较理想的值"
+msgstr "设置两眼间距 - 摄像机焦距/30应是较理想的值"
 
 
 msgid "Pivot"
@@ -4450,7 +4462,7 @@ msgstr "球面立体"
 
 
 msgid "Render every pixel rotating the camera around the middle of the interocular distance"
-msgstr "渲染每个像素围绕双眼距离的中间旋转相机"
+msgstr "渲染每个像素围绕双眼距离的中间旋转摄像机"
 
 
 msgid "ChannelDriver Variables"
@@ -5751,7 +5763,7 @@ msgstr "相对于其局部坐标系进行评估目标骨骼的变换，然后对
 
 
 msgid "Camera Solver"
-msgstr "相机解算"
+msgstr "摄像机解算"
 
 
 msgid "Follow Track"
@@ -5859,7 +5871,7 @@ msgstr "通过将位置坐标沿曲线的最长轴向重新映射，将运动路
 
 
 msgid "Damped Track"
-msgstr "阻尼跟踪"
+msgstr "阻尼追踪"
 
 
 msgid "Point towards a target by performing the smallest rotation necessary"
@@ -5875,7 +5887,7 @@ msgstr "通过指定末端目标物体控制骨骼链(仅作用于骨骼)"
 
 
 msgid "Locked Track"
-msgstr "锁定跟踪"
+msgstr "锁定追踪"
 
 
 msgid "Rotate around the specified ('locked') axis to point towards a target"
@@ -5903,7 +5915,7 @@ msgstr "标准跟随"
 
 
 msgid "Legacy tracking constraint prone to twisting artifacts"
-msgstr "遗传跟踪约束可用于纠正形变痕迹"
+msgstr "遗传追踪约束可用于纠正形变痕迹"
 
 
 msgid "Use transform property of target to look up pose for owner from an Action"
@@ -6010,24 +6022,48 @@ msgid "Before Original (Full)"
 msgstr "初始前(完整)"
 
 
+msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "在初始变换之前应用动作通道，就好像在完整继承缩放模式下应用于假想的父级一样。将旋转和不均匀缩放组合时将创建切变"
+
+
 msgid "Before Original (Aligned)"
 msgstr "初始前(对齐)"
+
+
+msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "在初始变换之前应用动作通道，就好像应用于对齐继承缩放模式中的假想父级一样。这有效地使用完全的位置和拆分通道的旋转和缩放"
 
 
 msgid "Before Original (Split Channels)"
 msgstr "初始前(拆分通道)"
 
 
+msgid "Apply the action channels before the original transformation, handling location, rotation and scale separately"
+msgstr "在初始变换前应用动作通道，分开处理位置、旋转和缩放"
+
+
 msgid "After Original (Full)"
 msgstr "初始后(完整)"
+
+
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr "在初始变换后应用动作通道，就像应用于具有完整继承缩放的假想子级一样。将旋转和不均匀缩放组合时将创建切变"
 
 
 msgid "After Original (Aligned)"
 msgstr "初始后(对齐)"
 
 
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr "在初始变换后应用动作通道，就好像应用于处于对齐继承缩放模式的假想子级一样。这有效地使用完整的位置和拆分通道的旋转和缩放"
+
+
 msgid "After Original (Split Channels)"
 msgstr "初始后(拆分通道)"
+
+
+msgid "Apply the action channels after the original transformation, handling location, rotation and scale separately"
+msgstr "在初始变换后应用动作通道，分开处理位置、旋转和缩放"
 
 
 msgid "Target object"
@@ -6135,11 +6171,11 @@ msgstr "四元数形变旋转插值"
 
 
 msgid "Camera Solver Constraint"
-msgstr "相机解算约束"
+msgstr "摄像机解算约束"
 
 
 msgid "Lock motion to the reconstructed camera movement"
-msgstr "将运动信息锁定给重建后的相机运动"
+msgstr "将运动信息锁定给重建后的摄像机运动"
 
 
 msgid "Movie Clip to get tracking data from"
@@ -6599,7 +6635,7 @@ msgstr "合并前从目标变换中移除切变"
 
 
 msgid "Damped Track Constraint"
-msgstr "阻尼跟踪约束"
+msgstr "阻尼追踪约束"
 
 
 msgid "Point toward target by taking the shortest rotation path"
@@ -6707,7 +6743,7 @@ msgstr "物体将保持锁定至曲线长度中的某单一点上, 不论时间�
 
 
 msgid "Follow Track Constraint"
-msgstr "跟随跟踪约束"
+msgstr "跟随追踪约束"
 
 
 msgid "Lock motion to the target motion track"
@@ -6715,11 +6751,11 @@ msgstr "将运动锁定到目标运动轨迹上"
 
 
 msgid "Camera"
-msgstr "相机"
+msgstr "摄像机"
 
 
 msgid "Camera to which motion is parented (if empty active scene camera is used)"
-msgstr "运动的父级相机 (如果为空, 则使用活动场景相机)"
+msgstr "运动的父级摄像机 (如果为空, 则使用活动场景摄像机)"
 
 
 msgid "Depth Object"
@@ -6727,19 +6763,19 @@ msgstr "深度目标"
 
 
 msgid "Object used to define depth in camera space by projecting onto surface of this object"
-msgstr "用于定义相机空间景深的物体, 采用向其表面进行投射的方式"
+msgstr "用于定义摄像机空间景深的物体, 采用向其表面进行投射的方式"
 
 
 msgid "How the footage fits in the camera frame"
-msgstr "视频在相机中的匹配方式"
+msgstr "视频在摄像机中的匹配方式"
 
 
 msgid "Movie tracking object to follow (if empty, camera object is used)"
-msgstr "要跟随的影片追踪物体 (如果为空, 则使用相机物体)"
+msgstr "要跟随的影片追踪物体 (如果为空, 则使用摄像机物体)"
 
 
 msgid "Track"
-msgstr "跟踪"
+msgstr "追踪(轨迹)"
 
 
 msgid "Movie tracking track to follow"
@@ -7063,7 +7099,7 @@ msgstr "限定被约束物体的缩放"
 
 
 msgid "Locked Track Constraint"
-msgstr "锁定跟踪约束"
+msgstr "锁定追踪约束"
 
 
 msgid "Point toward the target along the track axis, while locking the other axis"
@@ -7623,7 +7659,7 @@ msgstr "摇摆"
 
 
 msgid "Use the smallest single axis rotation, similar to Damped Track"
-msgstr "使用最小的单轴旋转，类似于阻尼跟踪"
+msgstr "使用最小的单轴旋转，类似于阻尼追踪"
 
 
 msgid "Original Length"
@@ -8639,11 +8675,11 @@ msgstr "包括缓存文件相关动画数据的可视化"
 
 
 msgid "Display Camera"
-msgstr "显示相机"
+msgstr "显示摄像机"
 
 
 msgid "Include visualization of camera related animation data"
-msgstr "包含与动画数据相关的可视化相机"
+msgstr "包含与动画数据相关的可视化摄像机"
 
 
 msgid "Display Curve"
@@ -9028,7 +9064,7 @@ msgstr "笔刷"
 
 msgctxt "ID"
 msgid "Camera"
-msgstr "相机"
+msgstr "摄像机"
 
 
 msgctxt "ID"
@@ -11888,7 +11924,7 @@ msgstr "环境"
 
 
 msgid "Show worlds, lights, cameras and speakers"
-msgstr "显示世界，灯光，相机和扬声器"
+msgstr "显示世界，灯光，摄像机和扬声器"
 
 
 msgid "Show meshes, curves, lattice, armatures and metaballs data"
@@ -11944,7 +11980,7 @@ msgstr "显示缓存文件数据块"
 
 
 msgid "Show Camera data-blocks"
-msgstr "显示相机数据块"
+msgstr "显示摄像机数据块"
 
 
 msgid "Show Curve data-blocks"
@@ -13592,7 +13628,7 @@ msgstr "跟踪"
 
 
 msgid "Create tracer particle system"
-msgstr "创建跟踪粒子系统"
+msgstr "创建追踪粒子系统"
 
 
 msgid "Use Viscosity"
@@ -14957,6 +14993,10 @@ msgstr "在\"绘制\"模式下,仅显示当前帧中有关键帧的图层"
 
 msgid "Use Masks in Render"
 msgstr "在渲染中使用遮罩"
+
+
+msgid "Include the mask layers when rendering the view-layer"
+msgstr "渲染视图层时包括遮罩层"
 
 
 msgid "Vertex Paint Opacity"
@@ -16419,6 +16459,10 @@ msgid "Overscan"
 msgstr "过扫描"
 
 
+msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
+msgstr "防止笔画在图像边缘突然断开的边距"
+
+
 msgid "Generate strokes from the objects in this collection"
 msgstr "从该集合中的物体生成笔画"
 
@@ -17232,7 +17276,7 @@ msgstr "用作距离参考的物体"
 
 
 msgid "Space"
-msgstr "间隔"
+msgstr "间隔(空间)"
 
 
 msgid "Coordinates space"
@@ -19469,7 +19513,7 @@ msgstr "第二"
 
 
 msgid "Camera data-block for storing camera settings"
-msgstr "用于存储相机设置的相机数据块"
+msgstr "用于存储摄像机设置的摄像机数据块"
 
 
 msgid "Field of View"
@@ -19477,7 +19521,7 @@ msgstr "视野"
 
 
 msgid "Camera lens field of view"
-msgstr "相机镜头的视野范围"
+msgstr "摄像机镜头的视野范围"
 
 
 msgid "Horizontal FOV"
@@ -19485,7 +19529,7 @@ msgstr "水平视场"
 
 
 msgid "Camera lens horizontal field of view"
-msgstr "相机镜头的水平视野范围"
+msgstr "摄像机镜头的水平视野范围"
 
 
 msgid "Vertical FOV"
@@ -19493,7 +19537,7 @@ msgstr "垂直视场"
 
 
 msgid "Camera lens vertical field of view"
-msgstr "相机镜头的垂直视野范围"
+msgstr "摄像机镜头的垂直视野范围"
 
 
 msgid "List of background images"
@@ -19505,7 +19549,7 @@ msgstr "裁剪终点"
 
 
 msgid "Camera far clipping distance"
-msgstr "相机远裁距离"
+msgstr "摄像机远裁距离"
 
 
 msgid "Clip Start"
@@ -19513,19 +19557,19 @@ msgstr "裁剪起点"
 
 
 msgid "Camera near clipping distance"
-msgstr "相机近裁距离"
+msgstr "摄像机近裁距离"
 
 
 msgid "Cycles Camera Settings"
-msgstr "Cycles 相机设置"
+msgstr "Cycles 摄像机设置"
 
 
 msgid "Cycles camera settings"
-msgstr "Cycles 相机设置"
+msgstr "Cycles 摄像机设置"
 
 
 msgid "Apparent size of the Camera object in the 3D View"
-msgstr "相机物体在 3D 视图中的感官尺寸"
+msgstr "摄像机物体在 3D 视图中的感官尺寸"
 
 
 msgid "Depth Of Field"
@@ -19537,7 +19581,7 @@ msgstr "焦距"
 
 
 msgid "Perspective Camera lens value in millimeters"
-msgstr "透视相机镜头值,单位为毫米"
+msgstr "透视摄像机镜头值,单位为毫米"
 
 
 msgid "Lens Unit"
@@ -19565,7 +19609,7 @@ msgstr "正交比例"
 
 
 msgid "Orthographic Camera scale (similar to zoom)"
-msgstr "正交相机缩放(类似放大缩小)"
+msgstr "正交摄像机缩放(类似放大缩小)"
 
 
 msgid "Passepartout Alpha"
@@ -19573,7 +19617,7 @@ msgstr "外框 Alpha"
 
 
 msgid "Opacity (alpha) of the darkened overlay in Camera view"
-msgstr "相机视图中调暗叠加层的不透明度(或Alpha)"
+msgstr "摄像机视图中调暗叠加层的不透明度(或Alpha)"
 
 
 msgid "Sensor Fit"
@@ -19621,7 +19665,7 @@ msgstr "X 向移位"
 
 
 msgid "Camera horizontal shift"
-msgstr "相机水平移位"
+msgstr "摄像机水平移位"
 
 
 msgid "Shift Y"
@@ -19629,7 +19673,7 @@ msgstr "Y 向移位"
 
 
 msgid "Camera vertical shift"
-msgstr "相机垂直移位"
+msgstr "摄像机垂直移位"
 
 
 msgid "Display Background Images"
@@ -19641,7 +19685,7 @@ msgstr "在 3D 视图的物体后方显示参考图"
 
 
 msgid "Display center composition guide inside the camera view"
-msgstr "在相机视图中显示中心合成参照"
+msgstr "在摄像机视图中显示中心合成参照"
 
 
 msgid "Center Diagonal"
@@ -19649,7 +19693,7 @@ msgstr "对角中分"
 
 
 msgid "Display diagonal center composition guide inside the camera view"
-msgstr "在相机视图中显示对角中分合成参考线"
+msgstr "在摄像机视图中显示对角中分合成参考线"
 
 
 msgid "Golden Ratio"
@@ -19657,7 +19701,7 @@ msgstr "黄金比例"
 
 
 msgid "Display golden ratio composition guide inside the camera view"
-msgstr "在相机视图中显示黄金比例合成参考线"
+msgstr "在摄像机视图中显示黄金比例合成参考线"
 
 
 msgid "Golden Triangle A"
@@ -19665,7 +19709,7 @@ msgstr "黄金三角切A"
 
 
 msgid "Display golden triangle A composition guide inside the camera view"
-msgstr "在相机视图中显示黄金三角切A的合成参考线"
+msgstr "在摄像机视图中显示黄金三角切A的合成参考线"
 
 
 msgid "Golden Triangle B"
@@ -19673,7 +19717,7 @@ msgstr "黄金三角切B"
 
 
 msgid "Display golden triangle B composition guide inside the camera view"
-msgstr "在相机视图中显示黄金三角切B的合成参考线"
+msgstr "在摄像机视图中显示黄金三角切B的合成参考线"
 
 
 msgid "Harmonious Triangle A"
@@ -19681,7 +19725,7 @@ msgstr "均衡三角切A"
 
 
 msgid "Display harmony A composition guide inside the camera view"
-msgstr "在相机视图中显示均衡A的合成参考线"
+msgstr "在摄像机视图中显示均衡A的合成参考线"
 
 
 msgid "Harmonious Triangle B"
@@ -19689,7 +19733,7 @@ msgstr "均衡三角切B"
 
 
 msgid "Display harmony B composition guide inside the camera view"
-msgstr "在相机视图中显示均衡B的合成参考线"
+msgstr "在摄像机视图中显示均衡B的合成参考线"
 
 
 msgid "Thirds"
@@ -19697,7 +19741,7 @@ msgstr "九宫分割"
 
 
 msgid "Display rule of thirds composition guide inside the camera view"
-msgstr "在相机视图中显示九宫格参考线"
+msgstr "在摄像机视图中显示九宫格参考线"
 
 
 msgid "Show Limits"
@@ -19705,7 +19749,7 @@ msgstr "显示极限"
 
 
 msgid "Display the clipping range and focus point on the camera"
-msgstr "在相机中显示剪切范围及焦点"
+msgstr "在摄像机中显示剪切范围及焦点"
 
 
 msgid "Show Mist"
@@ -19713,7 +19757,7 @@ msgstr "显示迷雾"
 
 
 msgid "Display a line from the Camera to indicate the mist area"
-msgstr "显示从相机出发指向雾场区域的一条直线"
+msgstr "显示从摄像机出发指向雾场区域的一条直线"
 
 
 msgid "Show Name"
@@ -19721,7 +19765,7 @@ msgstr "显示名称"
 
 
 msgid "Show the active Camera's name in Camera view"
-msgstr "在相机视图中显示激活相机的名称"
+msgstr "在摄像机视图中显示激活摄像机的名称"
 
 
 msgid "Show Passepartout"
@@ -19729,7 +19773,7 @@ msgstr "显示外边框"
 
 
 msgid "Show a darkened overlay outside the image area in Camera view"
-msgstr "在相机视图图像的外部区域显示暗色叠加"
+msgstr "在摄像机视图图像的外部区域显示暗色叠加"
 
 
 msgid "Show Safe Areas"
@@ -19737,7 +19781,7 @@ msgstr "显示安全区"
 
 
 msgid "Show TV title safe and action safe areas in Camera view"
-msgstr "在相机视图中显示电视字幕安全区和动作安全区"
+msgstr "在摄像机视图中显示电视字幕安全区和动作安全区"
 
 
 msgid "Show Center-Cut Safe Areas"
@@ -19753,11 +19797,11 @@ msgstr "显示传感器尺寸"
 
 
 msgid "Show sensor size (film gate) in Camera view"
-msgstr "在相机视图中显示传感器尺寸(胶片门)"
+msgstr "在摄像机视图中显示传感器尺寸(胶片门)"
 
 
 msgid "Camera types"
-msgstr "相机类型"
+msgstr "摄像机类型"
 
 
 msgid "Perspective"
@@ -20817,11 +20861,11 @@ msgstr "选择排序键以确定链的堆叠顺序"
 
 
 msgid "Distance from Camera"
-msgstr "到相机的距离"
+msgstr "到摄像机的距离"
 
 
 msgid "Sort by distance from camera (closer lines lie on top of further lines)"
-msgstr "按与相机的距离排序(较近的线条位于进一步线的顶部)"
+msgstr "按与摄像机的距离排序(较近的线条位于进一步线的顶部)"
 
 
 msgid "2D Length"
@@ -23878,6 +23922,10 @@ msgid "Shadow Catcher"
 msgstr "阴影捕捉"
 
 
+msgid "Only render shadows and reflections on this object, for compositing renders into real footage. Objects with this setting are considered to already exist in the footage, objects without it are synthetic objects being composited into it"
+msgstr "仅在此物体上渲染阴影和反射，用于合成渲染成真实的素材。具有此设置的物体被认为已经存在于素材中，没有此设置的物体作为合成物体被合成到其中"
+
+
 msgid "Line art settings for the object"
 msgstr "物体的线条画设置"
 
@@ -24326,7 +24374,7 @@ msgstr "指向'上方'的轴 (当启用对齐至顶点法向选项时应用到�
 
 
 msgid "Camera Parent Lock"
-msgstr "相机父级锁定"
+msgstr "摄像机父级锁定"
 
 
 msgid "View Lock 3D viewport camera transformation affects the object's parent instead"
@@ -24391,6 +24439,54 @@ msgstr "顶点组"
 
 msgid "Vertex groups of the object"
 msgstr "物体的顶点组"
+
+
+msgid "Camera Visibility"
+msgstr "摄像机可见性"
+
+
+msgid "Object visibility to camera rays"
+msgstr "物体对于摄像机光线的可见性"
+
+
+msgid "Diffuse Visibility"
+msgstr "漫射可见性"
+
+
+msgid "Object visibility to diffuse rays"
+msgstr "物体对于漫反射光线的可见性"
+
+
+msgid "Glossy Visibility"
+msgstr "光泽可见性"
+
+
+msgid "Object visibility to glossy rays"
+msgstr "物体对于光泽反射光线的可见性"
+
+
+msgid "Shadow Visibility"
+msgstr "阴影可见性"
+
+
+msgid "Object visibility to shadow rays"
+msgstr "物体对于阴影光线的可见性"
+
+
+msgid "Transmission Visibility"
+msgstr "透射可见性"
+
+
+msgid "Object visibility to transmission rays"
+msgstr "物体对于透射光线的可见性"
+
+
+msgid "Volume Scatter Visibility"
+msgstr "体积散射可见性"
+
+
+msgid "Object visibility to volume scattering rays"
+msgstr "物体对于体积散射光线的可见性"
 
 
 msgid "Particle Settings"
@@ -25606,7 +25702,7 @@ msgstr "背景设置场景"
 
 
 msgid "Active camera, used for rendering the scene"
-msgstr "活动相机, 用于渲染场景"
+msgstr "活动摄像机, 用于渲染场景"
 
 
 msgid "Scene root collection that owns all the objects and other collections instantiated in the scene"
@@ -26217,10 +26313,6 @@ msgstr "所选内容最后一行文本的编号"
 
 msgid "Register"
 msgstr "注册"
-
-
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "将此文本注册为加载模块, 文本命名必须以 \".py\" 结尾"
 
 
 msgid "Texture data-block used by materials, lights, worlds and brushes"
@@ -27248,7 +27340,7 @@ msgstr "以目录筛选插件"
 
 
 msgid "Search"
-msgstr "查找"
+msgstr "搜索"
 
 
 msgid "Search within the selected filter"
@@ -30242,7 +30334,7 @@ msgstr "最小曲率"
 
 
 msgid "Change alpha transparency based on the distance from the camera"
-msgstr "根据与相机的距离更改Alpha透明度"
+msgstr "根据与摄像机的距离更改Alpha透明度"
 
 
 msgid "Range Max"
@@ -30370,7 +30462,7 @@ msgstr "基于 3D 网格表面的曲率改变线条颜色"
 
 
 msgid "Change line color based on the distance from the camera"
-msgstr "根据相机的距离更改线条颜色"
+msgstr "根据摄像机的距离更改线条颜色"
 
 
 msgid "Change line color based on the distance from an object"
@@ -30822,7 +30914,7 @@ msgstr "基于3D网格表面曲率的线宽"
 
 
 msgid "Change line thickness based on the distance from the camera"
-msgstr "根据与相机的距离更改线条粗细"
+msgstr "根据与摄像机的距离更改线条粗细"
 
 
 msgid "Change line thickness based on the distance from an object"
@@ -31414,6 +31506,10 @@ msgid "Material slot name"
 msgstr "材质槽名称"
 
 
+msgid "Assets Context Menu"
+msgstr "资产上下文菜单"
+
+
 msgctxt "MovieClip"
 msgid "CLIP_MT_clip"
 msgstr "CLIP_MT_clip"
@@ -31457,7 +31553,7 @@ msgstr "清理"
 
 
 msgid "Track Motion"
-msgstr "跟踪运动"
+msgstr "追踪运动"
 
 
 msgid "Refine"
@@ -31473,7 +31569,7 @@ msgstr "上下文菜单"
 
 
 msgid "Tracking"
-msgstr "跟踪"
+msgstr "追踪"
 
 
 msgid "Fractional Zoom"
@@ -36423,7 +36519,7 @@ msgstr "宽高比 X"
 
 
 msgid "Horizontal aspect ratio (only used for camera projectors)"
-msgstr "水平宽高比(仅用于相机投射源)"
+msgstr "水平宽高比(仅用于摄像机投射源)"
 
 
 msgid "Aspect Y"
@@ -36431,7 +36527,7 @@ msgstr "宽高比 Y"
 
 
 msgid "Vertical aspect ratio (only used for camera projectors)"
-msgstr "垂直宽高比(仅用于相机投射源)"
+msgstr "垂直宽高比(仅用于摄像机投射源)"
 
 
 msgid "Number of Projectors"
@@ -36447,11 +36543,11 @@ msgstr "投影源"
 
 
 msgid "Horizontal scale (only used for camera projectors)"
-msgstr "水平比例(仅用于相机投射源)"
+msgstr "水平比例(仅用于摄像机投射源)"
 
 
 msgid "Vertical scale (only used for camera projectors)"
-msgstr "垂直比例(仅用于相机投射源)"
+msgstr "垂直比例(仅用于摄像机投射源)"
 
 
 msgid "UVWarp Modifier"
@@ -37434,11 +37530,11 @@ msgstr "使用未失真的代理进行渲染预览"
 
 
 msgid "Movie tracking reconstructed camera data"
-msgstr "影片追踪的相机重建数据"
+msgstr "影片追踪的摄像机重建数据"
 
 
 msgid "Match-moving reconstructed camera data from tracker"
-msgstr "源自轨迹的相机运动匹配重建数据"
+msgstr "源自轨迹的摄像机运动匹配重建数据"
 
 
 msgid "Average error of reconstruction"
@@ -37486,11 +37582,11 @@ msgstr "此追踪数据物体的轨迹集合"
 
 
 msgid "Movie tracking camera data"
-msgstr "影片追踪的相机数据"
+msgstr "影片追踪的摄像机数据"
 
 
 msgid "Match-moving camera data for tracking"
-msgstr "用于追踪的相机运动匹配数据"
+msgstr "用于追踪的摄像机运动匹配数据"
 
 
 msgid "K1"
@@ -37546,7 +37642,7 @@ msgstr "畸变模型"
 
 
 msgid "Distortion model used for camera lenses"
-msgstr "用于相机镜头的畸变模型"
+msgstr "用于摄像机镜头的畸变模型"
 
 
 msgid "Polynomial"
@@ -37554,7 +37650,7 @@ msgstr "多项式"
 
 
 msgid "Radial distortion model which fits common cameras"
-msgstr "适合普通相机的径向变形模型"
+msgstr "适合普通摄像机的径向变形模型"
 
 
 msgid "Divisions"
@@ -37562,7 +37658,7 @@ msgstr "细分"
 
 
 msgid "Division distortion model which better represents wide-angle cameras"
-msgstr "更能代表广角相机的分部畸变模型"
+msgstr "更能代表广角摄像机的分部畸变模型"
 
 
 msgid "Nuke"
@@ -37590,7 +37686,7 @@ msgstr "二阶细分畸变的第二项系数"
 
 
 msgid "Camera's focal length"
-msgstr "相机焦距"
+msgstr "摄像机焦距"
 
 
 msgid "First coefficient of third order polynomial radial distortion"
@@ -37642,7 +37738,7 @@ msgstr "单位"
 
 
 msgid "Units used for camera focal length"
-msgstr "相机的焦距单位"
+msgstr "摄像机的焦距单位"
 
 
 msgid "px"
@@ -37694,7 +37790,7 @@ msgstr "最长"
 
 
 msgid "Sort channels by longest tracked segment"
-msgstr "根据最长跟踪部分排序通道"
+msgstr "根据最长追踪部分排序通道"
 
 
 msgid "Total"
@@ -37734,7 +37830,7 @@ msgstr "已插关键帧"
 
 
 msgid "Whether the position of the marker is keyframed or tracked"
-msgstr "标记的位置使用关键帧还是跟踪"
+msgstr "标记的位置使用关键帧还是追踪"
 
 
 msgid "Is marker muted for current frame"
@@ -37778,7 +37874,7 @@ msgstr "影片追踪标记"
 
 
 msgid "Collection of markers for movie tracking track"
-msgstr "用于影片跟踪路径的标记集合"
+msgstr "用于影片追踪路径的标记集合"
 
 
 msgid "Movie tracking object data"
@@ -37790,7 +37886,7 @@ msgstr "匹配运动的物体追踪及重建数据"
 
 
 msgid "Object is used for camera tracking"
-msgstr "用于相机追踪的物体"
+msgstr "用于摄像机追踪的物体"
 
 
 msgid "Keyframe A"
@@ -37814,7 +37910,7 @@ msgstr "物体的唯一名称"
 
 
 msgid "Scale of object solution in camera space"
-msgstr "相机空间中的物体解算缩放"
+msgstr "摄像机空间中的物体解算缩放"
 
 
 msgid "Collection of tracking plane tracks"
@@ -37826,7 +37922,7 @@ msgstr "活动轨道"
 
 
 msgid "Active track in this tracking data object"
-msgstr "该跟踪数据物体中的活动轨道"
+msgstr "该追踪数据物体中的活动轨道"
 
 
 msgid "Movie Tracks"
@@ -37834,7 +37930,7 @@ msgstr "影片轨迹"
 
 
 msgid "Collection of movie tracking tracks"
-msgstr "影片跟踪轨迹集合"
+msgstr "影片追踪轨迹集合"
 
 
 msgid "Movie Objects"
@@ -37866,15 +37962,15 @@ msgstr "代表UI矩形角的坐标数组,以框架标准化坐标表示UI矩形�
 
 
 msgid "Movie Tracking Plane Markers"
-msgstr "影片跟踪平面标记"
+msgstr "影片追踪平面标记"
 
 
 msgid "Collection of markers for movie tracking plane track"
-msgstr "用于影片跟踪平面轨迹的标记集合"
+msgstr "用于影片追踪平面轨迹的标记集合"
 
 
 msgid "Movie tracking plane track data"
-msgstr "影片跟踪平面轨迹数据"
+msgstr "影片追踪平面轨迹数据"
 
 
 msgid "Match-moving plane track data for tracking"
@@ -37922,27 +38018,27 @@ msgstr "影片平面轨迹"
 
 
 msgid "Collection of movie tracking plane tracks"
-msgstr "影片跟踪平面轨迹的集合"
+msgstr "影片追踪平面轨迹的集合"
 
 
 msgid "Active Plane Track"
-msgstr "活动平面跟踪"
+msgstr "活动平面追踪"
 
 
 msgid "Active plane track in this tracking data object"
-msgstr "该跟踪数据物体的活动平面轨迹"
+msgstr "该追踪数据物体的活动平面轨迹"
 
 
 msgid "Reconstructed Cameras"
-msgstr "已重建相机"
+msgstr "已重建摄像机"
 
 
 msgid "Collection of solved cameras"
-msgstr "已解算相机集合"
+msgstr "已解算摄像机集合"
 
 
 msgid "Movie tracking reconstruction data"
-msgstr "影片跟踪重建数据"
+msgstr "影片追踪重建数据"
 
 
 msgid "Match-moving reconstruction data from tracker"
@@ -37958,7 +38054,7 @@ msgstr "追踪数据包含有效的重建信息"
 
 
 msgid "Movie tracking settings"
-msgstr "影片跟踪设置"
+msgstr "影片追踪设置"
 
 
 msgid "Match moving settings"
@@ -37974,7 +38070,7 @@ msgstr "选择不良轨迹"
 
 
 msgid "Delete Track"
-msgstr "删除轨道"
+msgstr "删除轨迹"
 
 
 msgid "Delete unclean tracks"
@@ -38026,11 +38122,11 @@ msgstr "与标记停止追踪时的图像边界之间的默认距离"
 
 
 msgid "Motion Model"
-msgstr "运动模型"
+msgstr "运动模式"
 
 
 msgid "Default motion model to use for tracking"
-msgstr "用于跟踪的默认运动模型"
+msgstr "用于追踪的默认运动模式"
 
 
 msgid "Search for markers that are perspectively deformed (homography) between frames"
@@ -38110,7 +38206,7 @@ msgstr "改善焦距"
 
 
 msgid "Refine focal length during camera solving"
-msgstr "在执行相机解算时改进焦距"
+msgstr "在执行摄像机解算时改进焦距"
 
 
 msgid "Refine Principal Point"
@@ -38118,7 +38214,7 @@ msgstr "改善主点"
 
 
 msgid "Refine principal point during camera solving"
-msgstr "在执行相机解算时改进主点"
+msgstr "在执行摄像机解算时改进主点"
 
 
 msgid "Refine Radial"
@@ -38126,7 +38222,7 @@ msgstr "改善径向"
 
 
 msgid "Refine radial coefficients of distortion model during camera solving"
-msgstr "在执行相机解算时优化畸变模型的径向系数"
+msgstr "在执行摄像机解算时优化畸变模型的径向系数"
 
 
 msgid "Refine Tangential"
@@ -38134,7 +38230,7 @@ msgstr "改善切向"
 
 
 msgid "Refine tangential coefficients of distortion model during camera solving"
-msgstr "在执行相机解算时优化畸变模型的切向系数"
+msgstr "在执行摄像机解算时优化畸变模型的切向系数"
 
 
 msgid "Limit speed of tracking to make visual feedback easier (this does not affect the tracking quality)"
@@ -38222,7 +38318,7 @@ msgstr "关键帧选择"
 
 
 msgid "Automatically select keyframes when solving camera/object motion"
-msgstr "在解算相机/物体运动时自动选择关键帧"
+msgstr "在解算摄像机/物体运动时自动选择关键帧"
 
 
 msgid "Tripod Motion"
@@ -38230,7 +38326,7 @@ msgstr "三角架运动"
 
 
 msgid "Use special solver to track a stable camera position, such as a tripod"
-msgstr "使用特殊解算器追踪一个固定的相机位置, 如三脚架"
+msgstr "使用特殊解算器追踪一个固定的摄像机位置, 如三脚架"
 
 
 msgid "Movie tracking stabilization data"
@@ -38238,7 +38334,7 @@ msgstr "影片追踪稳像数据"
 
 
 msgid "2D stabilization based on tracking markers"
-msgstr "基于跟踪标记的二维稳定"
+msgstr "基于追踪标记的二维稳定"
 
 
 msgid "Active Rotation Track Index"
@@ -38430,7 +38526,7 @@ msgstr "匹配图块与参照图块之间的最小相关性, 该参照图块仍�
 
 
 msgid "Grease pencil data for this track"
-msgstr "当前跟踪的铅笔数据"
+msgstr "当前追踪的蜡笔数据"
 
 
 msgid "Has Bundle"
@@ -40591,7 +40687,7 @@ msgstr "像素化"
 
 
 msgid "Plane Track Deform"
-msgstr "平面跟踪形变"
+msgstr "平面追踪形变"
 
 
 msgid "Alpha Convert"
@@ -40779,7 +40875,7 @@ msgstr "Rh 单相"
 
 
 msgid "Track Position"
-msgstr "跟踪位置"
+msgstr "追踪位置"
 
 
 msgid "Frame to be used for relative position"
@@ -41618,6 +41714,10 @@ msgid "Curve Reverse"
 msgstr "曲线反转"
 
 
+msgid "Select by Handle Type"
+msgstr "按控制柄类型选择"
+
+
 msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
 msgstr "控制柄可以移动到任何位置，并且不会影响点的另一个控制柄"
 
@@ -41634,6 +41734,18 @@ msgid "The location is constrained to point in the opposite direction as the oth
 msgstr "限制位置指向与另一个控制柄相反的方向"
 
 
+msgid "Whether to check the type of left and right handles"
+msgstr "是否检查左右控制柄类型"
+
+
+msgid "Use the left handles"
+msgstr "使用左控制柄"
+
+
+msgid "Use the right handles"
+msgstr "使用右控制柄"
+
+
 msgid "Set Handle Type"
 msgstr "设置控制柄类型"
 
@@ -41644,6 +41756,22 @@ msgstr "是否更新左右手柄"
 
 msgid "Curve Spiral"
 msgstr "曲线螺旋"
+
+
+msgid "Set Spline Type"
+msgstr "设置样条线类型"
+
+
+msgid "Set the splines to Bezier"
+msgstr "设置样条线为贝塞尔"
+
+
+msgid "Set the splines to NURBS"
+msgstr "设置样条线为NURBS"
+
+
+msgid "Set the splines to Poly"
+msgstr "设置样条线为多段线"
 
 
 msgid "Star"
@@ -41992,7 +42120,7 @@ msgstr "计算环境光遮蔽(AO)时仅考虑自身物体"
 
 
 msgid "Number of rays to trace per shader evaluation"
-msgstr "每次着色器解释时要跟踪的光线数"
+msgstr "每次着色器解释时要追踪的光线数"
 
 
 msgid "Attribute Name"
@@ -42164,7 +42292,7 @@ msgstr "反转凹凸映射方向，将其推入表面而不是推出表面"
 
 
 msgid "Camera Data"
-msgstr "相机数据"
+msgstr "摄像机数据"
 
 
 msgid "Clamp Type"
@@ -42205,6 +42333,10 @@ msgstr "在物体空间中置换，受物体缩放影响"
 
 msgid "Displacement is in world space, not affected by object scale"
 msgstr "在世界空间中置换，不受物体缩放影响"
+
+
+msgid "Specular BSDF"
+msgstr "高光 BSDF"
 
 
 msgid "Emission"
@@ -45216,7 +45348,7 @@ msgstr "翻转(并纠正)所选骨骼名称的轴向后缀"
 
 
 msgid "Strip Numbers"
-msgstr "片段序号"
+msgstr "去掉数字编号"
 
 
 msgid ""
@@ -45517,6 +45649,11 @@ msgstr "刷新资产列表"
 
 msgid "Trigger a reread of the assets"
 msgstr "触发重新读取资产"
+
+
+msgctxt "Operator"
+msgid "Mark as Asset"
+msgstr "标记为资产"
 
 
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
@@ -45958,11 +46095,11 @@ msgstr "使用存档中的新数据更新对象路径列表"
 
 msgctxt "Operator"
 msgid "Add Camera Preset"
-msgstr "添加相机预设"
+msgstr "添加摄像机预设"
 
 
 msgid "Add or remove a Camera Preset"
-msgstr "添加或删除一个相机预设"
+msgstr "添加或删除一个摄像机预设"
 
 
 msgid "Name of the preset, used to make the path name"
@@ -46061,7 +46198,7 @@ msgstr "使用已重建轨迹的坐标创建顶点云"
 
 
 msgid "Add or remove a Tracking Camera Intrinsics Preset"
-msgstr "添加或移除一个追踪相机固有参数预设"
+msgstr "添加或移除一个追踪摄像机固有参数预设"
 
 
 msgctxt "Operator"
@@ -46252,7 +46389,7 @@ msgstr "仅在标注工具所圈区域的外侧放置标记"
 
 
 msgid "Threshold level to consider feature good enough for tracking"
-msgstr "阈值级别，以考虑特征是否足以用于跟踪"
+msgstr "阈值级别，以考虑特征是否足以用于追踪"
 
 
 msgctxt "Operator"
@@ -46534,7 +46671,7 @@ msgstr "预读取帧"
 
 
 msgid "Prefetch frames from disk for faster playback/tracking"
-msgstr "从磁盘预读取帧,以加快播放/跟踪速度"
+msgstr "从磁盘预读取帧,以加快播放/追踪速度"
 
 
 msgctxt "Operator"
@@ -46552,7 +46689,7 @@ msgstr "优化标记"
 
 
 msgid "Refine selected markers positions by running the tracker from track's reference to current frame"
-msgstr "通过对轨迹参考到当前帧运行跟踪器来优化选定标记的位置"
+msgstr "通过对轨迹参考到当前帧运行追踪器来优化选定标记的位置"
 
 
 msgid "Backwards"
@@ -46618,7 +46755,7 @@ msgstr "全选已估算的轨道"
 
 
 msgid "Tracked Tracks"
-msgstr "已跟踪轨道"
+msgstr "已追踪轨道"
 
 
 msgid "Select all tracked tracks"
@@ -46672,7 +46809,7 @@ msgstr "设置轴"
 
 
 msgid "Set direction of scene axis rotating camera (or its parent if present) and assume selected track lies on real axis, joining it with the origin"
-msgstr "设置场景轴, 旋转相机(或其父级, 如果存在), 并假定所选的轨迹位于原点的真实轴上"
+msgstr "设置场景轴, 旋转摄像机(或其父级, 如果存在), 并假定所选的轨迹位于原点的真实轴上"
 
 
 msgid "Axis to use to align bundle along"
@@ -46702,7 +46839,7 @@ msgstr "设置原点"
 
 
 msgid "Set active marker as origin by moving camera (or its parent if present) in 3D space"
-msgstr "使用活动标记, 作为运动相机(或其父级, 如果存在)在3D空间中的原点"
+msgstr "使用活动标记, 作为运动摄像机(或其父级, 如果存在)在3D空间中的原点"
 
 
 msgid "Use Median"
@@ -46719,7 +46856,7 @@ msgstr "设置平面"
 
 
 msgid "Set plane based on 3 selected bundles by moving camera (or its parent if present) in 3D space"
-msgstr "根据所选的3个点束, 设置运动相机(或其父级, 如果存在)在3D空间中的参照平面"
+msgstr "根据所选的3个点束, 设置运动摄像机(或其父级, 如果存在)在3D空间中的参照平面"
 
 
 msgid "Plane to be used for orientation"
@@ -46744,7 +46881,7 @@ msgstr "设置缩放"
 
 
 msgid "Set scale of scene by scaling camera (or its parent if present)"
-msgstr "通过缩放相机(或其父级, 如果存在), 设置场景的缩放"
+msgstr "通过缩放摄像机(或其父级, 如果存在), 设置场景的缩放"
 
 
 msgctxt "Operator"
@@ -46784,7 +46921,7 @@ msgstr "设为背景图"
 
 
 msgid "Set current movie clip as a camera background in 3D Viewport (works only when a 3D Viewport is visible)"
-msgstr "使用当前影片剪辑, 作为3D窗口中的相机背景图(仅当3D视口可见时有效)"
+msgstr "使用当前影片剪辑, 作为3D窗口中的摄像机背景图(仅当3D视口可见时有效)"
 
 
 msgctxt "Operator"
@@ -46820,11 +46957,11 @@ msgstr "滑动平面标记区域"
 
 msgctxt "Operator"
 msgid "Solve Camera"
-msgstr "解算相机"
+msgstr "解算摄像机"
 
 
 msgid "Solve camera motion from tracks"
-msgstr "根据轨迹信息对相机运动进行解算"
+msgstr "根据轨迹信息对摄像机运动进行解算"
 
 
 msgctxt "Operator"
@@ -46922,7 +47059,7 @@ msgstr "设为缺省的轨迹设置"
 
 
 msgid "Copy tracking settings from active track to default settings"
-msgstr "将跟踪设置从活动轨迹复制到默认设置中"
+msgstr "将追踪设置从活动轨迹复制到默认设置中"
 
 
 msgctxt "Operator"
@@ -46931,7 +47068,7 @@ msgstr "复制轨迹设置"
 
 
 msgid "Copy tracking settings from active track to selected tracks"
-msgstr "将跟踪设置从活动轨迹复制到选中轨迹中"
+msgstr "将追踪设置从活动轨迹复制到选中轨迹中"
 
 
 msgctxt "Operator"
@@ -47412,15 +47549,6 @@ msgid "Add a target to the constraint"
 msgstr "对约束添加目标"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "清除反向"
-
-
-msgid "Clear inverse correction for Child Of constraint"
-msgstr "为父子关系约束清除逆向修正"
-
-
 msgid "Constraint"
 msgstr "约束"
 
@@ -47441,6 +47569,23 @@ msgid "Edit a constraint on the active bone"
 msgstr "编辑激活骨骼的约束"
 
 
+msgid "Report"
+msgstr "报告"
+
+
+msgid "Create a notification after the operation"
+msgstr "操作后创建通知"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "清除反向"
+
+
+msgid "Clear inverse correction for Child Of constraint"
+msgstr "为父子关系约束清除逆向修正"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "设置反向"
@@ -47457,14 +47602,6 @@ msgstr "删除约束"
 
 msgid "Remove constraint from constraint stack"
 msgstr "从约束面板中删除约束控制器"
-
-
-msgid "Report"
-msgstr "报告"
-
-
-msgid "Create a notification after the operation"
-msgstr "操作后创建通知"
 
 
 msgctxt "Operator"
@@ -48360,11 +48497,11 @@ msgstr "撤销并重做上一个动作"
 
 msgctxt "Operator"
 msgid "Export Camera & Markers"
-msgstr "导出相机 & 标记"
+msgstr "导出摄像机 & 标记"
 
 
 msgid "Save a python script which re-creates cameras and markers elsewhere"
-msgstr "保存一个 python 脚本, 可将相机及标记重建到其他地方"
+msgstr "保存一个 python 脚本, 可将摄像机及标记重建到其他地方"
 
 
 msgid "Check Existing"
@@ -49017,7 +49154,7 @@ msgstr "应用修改器到网格物体(除骨架外) - 警告: 禁止导出形�
 
 
 msgid "Export cameras"
-msgstr "导出相机"
+msgstr "导出摄像机"
 
 
 msgid "Export vertex colors with meshes"
@@ -49178,6 +49315,10 @@ msgstr "将图像另存为 JPEG。(需要alpha 的图像保存为 PNG。)注意�
 
 msgid "Keep original"
 msgstr "保留原有"
+
+
+msgid "Keep original textures files if possible. WARNING: if you use more than one texture, where pbr standard requires only one, only one texture will be used. This can lead to unexpected results"
+msgstr "如果可能，保留原始纹理文件。警告：如果您使用多个纹理，而pbr标准只需要一个纹理，则仅使用一个纹理。这可能导致意外的结果"
 
 
 msgid "Punctual Lights"
@@ -51843,6 +51984,15 @@ msgstr "增长选择已选的蜡笔点"
 
 
 msgctxt "Operator"
+msgid "Random"
+msgstr "随机"
+
+
+msgid "Select random points for non selected strokes"
+msgstr "为非选定的笔画选择随机点"
+
+
+msgctxt "Operator"
 msgid "Select Vertex Color"
 msgstr "选择顶点颜色"
 
@@ -52402,7 +52552,7 @@ msgstr "从当前帧开始"
 
 
 msgid "Trace Image starting in current image frame"
-msgstr "从当前图像帧开始跟踪图像"
+msgstr "从当前图像帧开始追踪图像"
 
 
 msgctxt "Operator"
@@ -53577,23 +53727,23 @@ msgstr "面向Z轴负方向"
 
 
 msgid "Face Camera"
-msgstr "面向相机"
+msgstr "面向摄像机"
 
 
 msgid "Facing Camera"
-msgstr "面向相机"
+msgstr "面向摄像机"
 
 
 msgid "Facing the Camera's dominant axis"
-msgstr "面向相机的主导轴"
+msgstr "面向摄像机的主导轴"
 
 
 msgid "Track Camera"
-msgstr "轨道相机"
+msgstr "轨道摄像机"
 
 
 msgid "Always face the camera"
-msgstr "总是朝向相机"
+msgstr "总是朝向摄像机"
 
 
 msgid "Setup Corner Pin"
@@ -53617,7 +53767,7 @@ msgstr "每英寸或 Blender 单位的像素数"
 
 
 msgid "How large in the camera frame is the plane"
-msgstr "相机框架中的平面大小"
+msgstr "摄像机框架中的平面大小"
 
 
 msgid "Fill camera frame, spilling outside the frame"
@@ -53625,7 +53775,7 @@ msgstr "填充摄像机框，溢出框外"
 
 
 msgid "Fit entire image within the camera frame"
-msgstr "将整个图像适配至相机框中"
+msgstr "将整个图像适配至摄像机框中"
 
 
 msgid "Force Reload"
@@ -53721,7 +53871,7 @@ msgstr "无明暗"
 
 
 msgid "Only visible to camera and reflections"
-msgstr "仅对相机与反射可见"
+msgstr "仅对摄像机与反射可见"
 
 
 msgid "Emission Shader"
@@ -53741,11 +53891,11 @@ msgstr "使用绝对大小"
 
 
 msgid "Camera Relative"
-msgstr "相机相对"
+msgstr "摄像机相对"
 
 
 msgid "Scale to the camera frame"
-msgstr "缩放到相机框架"
+msgstr "缩放到摄像机框架"
 
 
 msgid "Dpi"
@@ -54025,10 +54175,6 @@ msgid "Clamp bounds under this value (zero to disable)"
 msgstr "钳制的下界(0为禁用)"
 
 
-msgid "Split geometry, omits unused verts"
-msgstr "拆分几何体, 删除未使用的顶点"
-
-
 msgid "Keep Vert Order"
 msgstr "保留顶点顺序"
 
@@ -54222,11 +54368,11 @@ msgstr "添加一个新的时间标记"
 
 msgctxt "Operator"
 msgid "Bind Camera to Markers"
-msgstr "将相机绑定到标记"
+msgstr "将摄像机绑定到标记"
 
 
 msgid "Bind the selected camera to a marker on the current frame"
-msgstr "绑定选中相机到当前帧上的某个标记"
+msgstr "绑定选中摄像机到当前帧上的某个标记"
 
 
 msgctxt "Operator"
@@ -54288,7 +54434,7 @@ msgstr "选择时间标记"
 
 
 msgid "Select the camera"
-msgstr "选择相机"
+msgstr "选择摄像机"
 
 
 msgctxt "Operator"
@@ -59025,11 +59171,11 @@ msgstr "烘焙贴图的横向尺寸(仅外部)"
 
 msgctxt "Operator"
 msgid "Add Camera"
-msgstr "添加相机"
+msgstr "添加摄像机"
 
 
 msgid "Add a camera object to the scene"
-msgstr "向场景中添加一个相机物体"
+msgstr "向场景中添加一个摄像机物体"
 
 
 msgctxt "Operator"
@@ -60930,11 +61076,11 @@ msgstr "选择所有同类型的可见物体"
 
 msgctxt "Operator"
 msgid "Select Camera"
-msgstr "选择相机"
+msgstr "选择摄像机"
 
 
 msgid "Select the active camera"
-msgstr "选择活动相机"
+msgstr "选择活动摄像机"
 
 
 msgid "Select all visible objects grouped by various properties"
@@ -61428,7 +61574,7 @@ msgstr "标准跟随约束"
 
 
 msgid "Lock Track Constraint"
-msgstr "锁定跟踪约束"
+msgstr "锁定追踪约束"
 
 
 msgctxt "Operator"
@@ -61450,6 +61596,10 @@ msgstr "选择要切换到使用吸管的物体"
 
 msgid "Flash On Transfer"
 msgstr "切换时闪烁"
+
+
+msgid "Flash the target object when transferring the mode"
+msgstr "目标物体切换模式时闪烁"
 
 
 msgctxt "Operator"
@@ -62264,10 +62414,6 @@ msgstr "大纲数据操作"
 
 msgid "Data Operation"
 msgstr "数据操作"
-
-
-msgid "Unhide"
-msgstr "取消隐藏"
 
 
 msgctxt "Operator"
@@ -63162,7 +63308,7 @@ msgstr "投射图像"
 
 
 msgid "Project an edited render from the active camera back onto the object"
-msgstr "从活动相机向物体表面投射一个经过编辑的渲染图"
+msgstr "从活动摄像机向物体表面投射一个经过编辑的渲染图"
 
 
 msgid "Use the mouse to sample a color in the image"
@@ -65058,7 +65204,7 @@ msgstr "使用3D视图"
 
 
 msgid "When inside a 3D viewport, use layers and camera of the viewport"
-msgstr "当在一个 3D 视口中, 使用视口的图层和相机"
+msgstr "当在一个 3D 视口中, 使用视口的图层和摄像机"
 
 
 msgctxt "Operator"
@@ -66036,7 +66182,7 @@ msgstr "切换四格视图"
 
 
 msgid "Split selected area into camera, front, right, and top views"
-msgstr "将当前视图区域拆分为相机视图、前视图、右视图及顶视图"
+msgstr "将当前视图区域拆分为摄像机视图、前视图、右视图及顶视图"
 
 
 msgctxt "Operator"
@@ -67657,6 +67803,10 @@ msgid "Set View Transform"
 msgstr "设置视图变换"
 
 
+msgid "Set appropriate view transform based on media color space"
+msgstr "根据媒体色彩空间设置适当的视图变换"
+
+
 msgctxt "Operator"
 msgid "Separate Images"
 msgstr "分离图像"
@@ -68119,11 +68269,11 @@ msgstr "从光标位置而非当前帧位置切割"
 
 msgctxt "Operator"
 msgid "Split Multicam"
-msgstr "切割多相机"
+msgstr "切割多摄像机"
 
 
 msgid "Split multicam strip and select camera"
-msgstr "剪切多镜头片段并选中相机"
+msgstr "剪切多镜头片段并选中摄像机"
 
 
 msgctxt "Operator"
@@ -70377,11 +70527,11 @@ msgstr "将网格的 UV 顶点投射到当前的 3D 视角"
 
 
 msgid "Camera Bounds"
-msgstr "相机边界"
+msgstr "摄像机边界"
 
 
 msgid "Map UVs to the camera region taking resolution and aspect into account"
-msgstr "将 UV 映射到顾及分辨率及的相机区域"
+msgstr "将 UV 映射到顾及分辨率及的摄像机区域"
 
 
 msgid "Use orthographic projection"
@@ -70815,11 +70965,11 @@ msgstr "Y 向缩放系数"
 
 msgctxt "Operator"
 msgid "New Camera from VR Landmark"
-msgstr "来自VR地标的新相机"
+msgstr "来自VR地标的新摄像机"
 
 
 msgid "Create a new Camera from the selected VR Landmark"
-msgstr "从选中的VR地标创建新相机"
+msgstr "从选中的VR地标创建新摄像机"
 
 
 msgctxt "Operator"
@@ -70855,29 +71005,29 @@ msgstr "选中骨骼的菜单"
 
 msgctxt "Operator"
 msgid "Align Camera to View"
-msgstr "对齐相机至视图"
+msgstr "对齐摄像机至视图"
 
 
 msgid "Set camera view to active view"
-msgstr "将相机视图设置为激活视图"
+msgstr "将摄像机视图设置为激活视图"
 
 
 msgctxt "Operator"
 msgid "Camera Fit Frame to Selected"
-msgstr "相机匹配帧 -> 所选"
+msgstr "摄像机匹配帧 -> 所选"
 
 
 msgid "Move the camera so selected objects are framed"
-msgstr "移动相机, 以便覆盖选中的物体"
+msgstr "移动摄像机, 以便覆盖选中的物体"
 
 
 msgctxt "Operator"
 msgid "Scene Camera to VR Landmark"
-msgstr "场景相机 -> VR地标"
+msgstr "场景摄像机 -> VR地标"
 
 
 msgid "Position the scene camera at the selected landmark"
-msgstr "将场景相机放置到所选地标"
+msgstr "将场景摄像机放置到所选地标"
 
 
 msgid "Clear the boundaries of the border render and disable border render"
@@ -71180,11 +71330,11 @@ msgstr "使用3D鼠标来平移视图"
 
 msgctxt "Operator"
 msgid "Set Active Object as Camera"
-msgstr "设置活动物体为相机"
+msgstr "设置活动物体为摄像机"
 
 
 msgid "Set the active object as the active camera for this view or scene"
-msgstr "设置活动物体为当前视图或场景的激活相机"
+msgstr "设置活动物体为当前视图或场景的激活摄像机"
 
 
 msgctxt "Operator"
@@ -71471,20 +71621,20 @@ msgstr "从后面查看"
 
 msgctxt "Operator"
 msgid "View Camera"
-msgstr "相机视图"
+msgstr "摄像机视图"
 
 
 msgid "Toggle the camera view"
-msgstr "切换相机视角"
+msgstr "切换摄像机视角"
 
 
 msgctxt "Operator"
 msgid "Frame Camera Bounds"
-msgstr "相机边界框"
+msgstr "摄像机边界框"
 
 
 msgid "Center the camera view, resizing the view to fit its bounds"
-msgstr "相机视图居中，调整视图大小以匹配其边界"
+msgstr "摄像机视图居中，调整视图大小以匹配其边界"
 
 
 msgctxt "Operator"
@@ -71695,11 +71845,11 @@ msgstr "向列表中添加新的VR地标并选中"
 
 msgctxt "Operator"
 msgid "Add VR Landmark from camera"
-msgstr "从相机添加VR地标"
+msgstr "从摄像机添加VR地标"
 
 
 msgid "Add a new VR landmark from the active camera object to the list and select it"
-msgstr "从活动相机向列表中添加新的VR地标并选中"
+msgstr "从活动摄像机向列表中添加新的VR地标并选中"
 
 
 msgctxt "Operator"
@@ -71739,11 +71889,11 @@ msgstr "缩放显示至框选下的最近一个物体"
 
 msgctxt "Operator"
 msgid "Zoom Camera 1:1"
-msgstr "1:1 缩放相机视图"
+msgstr "1:1 缩放摄像机视图"
 
 
 msgid "Match the camera to 1:1 to the render output"
-msgstr "设置相机渲染输出为1:1尺寸"
+msgstr "设置摄像机渲染输出为1:1尺寸"
 
 
 msgctxt "Operator"
@@ -72866,11 +73016,11 @@ msgstr "导出蜡笔到SVG"
 
 
 msgid "Clip Camera"
-msgstr "相机裁剪"
+msgstr "摄像机裁剪"
 
 
 msgid "Clip drawings to camera size when export in camera view"
-msgstr "在相机视图中导出时裁剪绘图到相机大小"
+msgstr "在摄像机视图中导出时裁剪绘图到摄像机大小"
 
 
 msgid "Import SVG into grease pencil"
@@ -73859,6 +74009,103 @@ msgstr "仅导出可见物体。被导出物体的不可见父级物体将导出
 
 
 msgctxt "Operator"
+msgid "Import USD"
+msgstr "导入USD"
+
+
+msgid "Import USD stage into current scene"
+msgstr "向当前场景导入USD舞台"
+
+
+msgid "Create Collection"
+msgstr "创建集合"
+
+
+msgid "Add all imported objects to a new collection"
+msgstr "将全部物体添加到新集合"
+
+
+msgid "Import guide geometry"
+msgstr "导入引导几何"
+
+
+msgid "Import Instance Proxies"
+msgstr "导入实例代理"
+
+
+msgid "Create unique Blender objects for USD instances"
+msgstr "为 USD 实例创建唯一的Blender对象"
+
+
+msgid "Import proxy geometry"
+msgstr "导入代理几何"
+
+
+msgid "Import final render geometry"
+msgstr "导入最终渲染几何"
+
+
+msgid "Import Subdivision Scheme"
+msgstr "导出细分方案"
+
+
+msgid "Create subdivision surface modifiers based on the USD SubdivisionScheme attribute"
+msgstr "基于 USD 细分方案属性创建表面细分修改器"
+
+
+msgid "Import USD Preview"
+msgstr "导入USD预览"
+
+
+msgid "Convert UsdPreviewSurface shaders to Principled BSDF shader networks"
+msgstr "将 UsdPreview 表面着色器转换为有原则的 BSDF 着色器网络"
+
+
+msgid "Visible Primitives Only"
+msgstr "仅可见基本体"
+
+
+msgid "Do not import invisible USD primitives. Only applies to primitives with a non-animated visibility attribute. Primitives with animated visibility will always be imported"
+msgstr "不要导入不可见的USD基本体。仅适用于具有非动画可见性属性的基本体。具有动画可见性的基本体将始终导入"
+
+
+msgid "Light Intensity Scale"
+msgstr "光强度比例"
+
+
+msgid "Scale for the intensity of imported lights"
+msgstr "导入的灯光强度比例"
+
+
+msgid "Path Mask"
+msgstr "路径遮罩"
+
+
+msgid "Import only the subset of the USD scene rooted at the given primitive"
+msgstr "仅导入植根于给定基本体的USD场景的子集"
+
+
+msgid "Read mesh vertex colors"
+msgstr "读取网格顶点颜色"
+
+
+msgid "Read mesh UV coordinates"
+msgstr "读取网格UV坐标"
+
+
+msgid "Update the scene's start and end frame to match those of the USD archive"
+msgstr "更新场景的开始和结束帧以匹配USD文档的内容"
+
+
+msgid "Set Material Blend"
+msgstr "设置材质混合"
+
+
+msgid "If the Import USD Preview option is enabled, the material blend method will automatically be set based on the shader's opacity and opacityThreshold inputs"
+msgstr "如果启用了导入 USD 预览选项，则材质混合方法将根据着色器的不透明度和不透明度阈值输入自动设置"
+
+
+msgctxt "Operator"
 msgid "Close Window"
 msgstr "关闭窗口"
 
@@ -74615,7 +74862,11 @@ msgstr "自定义形状"
 
 
 msgid "Camera Presets"
-msgstr "相机预设"
+msgstr "摄像机预设"
+
+
+msgid "2D Cursor"
+msgstr "2D 游标"
 
 
 msgid "Active Point"
@@ -74623,7 +74874,7 @@ msgstr "活动点"
 
 
 msgid "Predefined tracking camera intrinsics"
-msgstr "预定义的轨迹相机内部参数"
+msgstr "预定义的轨迹摄像机内部参数"
 
 
 msgid "Clip Display"
@@ -74698,7 +74949,7 @@ msgstr "颜色预设"
 
 
 msgid "Tracking Settings"
-msgstr "跟踪设置"
+msgstr "追踪设置"
 
 
 msgid "Tracking Settings Extras"
@@ -74714,11 +74965,11 @@ msgstr "附加追踪设置"
 
 
 msgid "Predefined tracking settings"
-msgstr "预定义的跟踪设置"
+msgstr "预定义的追踪设置"
 
 
 msgid "Tracking Presets"
-msgstr "跟踪预设"
+msgstr "追踪预设"
 
 
 msgid "Cloth Presets"
@@ -75127,10 +75378,6 @@ msgstr "纹理遮罩"
 
 msgid "UDIM Grid"
 msgstr "UDIM栅格"
-
-
-msgid "2D Cursor"
-msgstr "2D 游标"
 
 
 msgid "Histogram"
@@ -78030,14 +78277,6 @@ msgid "Enable library overrides automatic resync detection and process on file l
 msgstr "启用文件加载时库重写自动重新同步检测和的处理。处理需要手动重新同步(强制)处理的旧.blend文件时禁用"
 
 
-msgid "Asset Browser"
-msgstr "资产浏览器"
-
-
-msgid "Enable Asset Browser editor and operators to manage data-blocks as asset"
-msgstr "启用后使资产浏览器编辑器和操作将数据块作为资产管理"
-
-
 msgid "Cycles Debug"
 msgstr "Cycles调试"
 
@@ -78228,6 +78467,10 @@ msgstr "手动保存时设置当前目录下的临时保存文件个数"
 
 msgid "Python Scripts Directory"
 msgstr "Python 脚本路经"
+
+
+msgid "Alternate script path, matching the default layout with subdirectories: startup, add-ons, modules, and presets (requires restart)"
+msgstr "备用脚本路径，匹配默认布局与子路径：启动、插件、模块和预设(需要重新启动)"
 
 
 msgid "Hide Dot Files/Data-Blocks"
@@ -80017,7 +80260,7 @@ msgstr "用于计算的畸变方式"
 
 
 msgid "Render the scene with a spherical camera, also known as Lat Long panorama"
-msgstr "使用球面相机渲染场景, 即经纬度全景"
+msgstr "使用球面摄像机渲染场景, 即经纬度全景"
 
 
 msgid "Fisheye Equidistant"
@@ -80208,6 +80451,10 @@ msgid "AO Distance"
 msgstr "AO距离"
 
 
+msgid "AO distance used for approximate global illumination (0 means use world setting)"
+msgstr "用于近似全局照明的AO距离(0 表示使用世界设置)"
+
+
 msgid "Dicing Scale"
 msgstr "分块比例"
 
@@ -80249,11 +80496,11 @@ msgstr "使用自适应渲染时间细分"
 
 
 msgid "Use Camera Cull"
-msgstr "使用相机剔除"
+msgstr "使用摄像机剔除"
 
 
 msgid "Allow this object and its duplicators to be culled by camera space culling"
-msgstr "允许此物体与它的副本被相机空间筛选剔除"
+msgstr "允许此物体与它的副本被摄像机空间筛选剔除"
 
 
 msgid "Use Deformation Motion"
@@ -80269,7 +80516,7 @@ msgstr "使用距离剔除"
 
 
 msgid "Allow this object and its duplicators to be culled by distance from camera"
-msgstr "允许此物体与它的副本根据与相机间的距离被剔除"
+msgstr "允许此物体与它的副本根据与摄像机间的距离被剔除"
 
 
 msgid "Use Motion Blur"
@@ -80417,7 +80664,7 @@ msgstr "调试采样计数"
 
 
 msgid "Number of samples/camera rays per pixel"
-msgstr "每个像素的采样/相机射线数量"
+msgstr "每个像素的采样/摄像机射线数量"
 
 
 msgid "Use Denoising"
@@ -80505,11 +80752,11 @@ msgstr "在模糊反弹结束后, 为光泽着色器使用自适型模糊, 通�
 
 
 msgid "Camera Cull Margin"
-msgstr "相机剔除边距"
+msgstr "摄像机剔除边距"
 
 
 msgid "Margin for the camera space culling"
-msgstr "相机空间剔除的边距"
+msgstr "摄像机空间剔除的边距"
 
 
 msgid "Reflective Caustics"
@@ -80729,7 +80976,7 @@ msgstr "剔除距离"
 
 
 msgid "Cull objects which are further away from camera than this distance"
-msgstr "剔除远离相机超过此距离的物体"
+msgstr "剔除远离摄像机超过此距离的物体"
 
 
 msgid "Feature Set"
@@ -80969,7 +81216,7 @@ msgstr "分路路径追踪"
 
 
 msgid "Path tracing integrator that branches on the first bounce, giving more control over the number of light and material samples"
-msgstr "在第一次反弹时分支的路径跟踪积分器，可以更好地控制灯光和材料采样"
+msgstr "在第一次反弹时分支的路径追踪积分器，可以更好地控制灯光和材料采样"
 
 
 msgid "Path Tracing"
@@ -81233,7 +81480,7 @@ msgstr "允许基于摄像头的视锥体剔除物体"
 
 
 msgid "Allow objects to be culled based on the distance from camera"
-msgstr "允许基于与相机间的距离剔除物体"
+msgstr "允许基于与摄像机间的距离剔除物体"
 
 
 msgid "Approximate diffuse indirect light with background tinted ambient occlusion. This provides fast alternative to full global illumination, for interactive viewport rendering or final renders with reduced quality"
@@ -81401,7 +81648,7 @@ msgstr "显示雾场渲染通道"
 
 
 msgid "Object visibility for camera rays"
-msgstr "物体对于相机光线的可见性"
+msgstr "物体对于摄像机光线的可见性"
 
 
 msgid "Object visibility for diffuse reflection rays"
@@ -81776,6 +82023,10 @@ msgid "Data Layers"
 msgstr "数据层"
 
 
+msgid "Export normals, UVs, vertex colors and materials for formats that support it significantly increasing file size"
+msgstr "为受支持的格式导出法向、UV、顶点颜色和材质，会显著增加文件大小"
+
+
 msgid "Copy Textures"
 msgstr "复制纹理"
 
@@ -81809,19 +82060,19 @@ msgstr "VR地标"
 
 
 msgid "Scene Camera"
-msgstr "场景相机"
+msgstr "场景摄像机"
 
 
 msgid "Use scene's currently active camera to define the VR view base location and rotation"
-msgstr "使用场景当前活动相机定义VR视图基本位置和旋转"
+msgstr "使用场景当前活动摄像机定义VR视图基本位置和旋转"
 
 
 msgid "Custom Camera"
-msgstr "自定义相机"
+msgstr "自定义摄像机"
 
 
 msgid "Use an existing camera to define the VR view base location and rotation"
-msgstr "使用现有相机定义VR视图基本位置和旋转"
+msgstr "使用现有摄像机定义VR视图基本位置和旋转"
 
 
 msgid "Custom Pose"
@@ -81957,19 +82208,19 @@ msgstr "使用钳制平面"
 
 
 msgid "Camera Offset"
-msgstr "相机偏移"
+msgstr "摄像机偏移"
 
 
 msgid "View shift in camera view"
-msgstr "相机视图转换"
+msgstr "摄像机视图转换"
 
 
 msgid "Camera Zoom"
-msgstr "相机缩放"
+msgstr "摄像机缩放"
 
 
 msgid "Zoom factor in camera view"
-msgstr "相机视图缩放系数"
+msgstr "摄像机视图缩放系数"
 
 
 msgid "Distance to the view location"
@@ -82757,11 +83008,11 @@ msgstr "在渲染结果上显示标记信息"
 
 
 msgid "Stamp Camera"
-msgstr "标记相机"
+msgstr "标记摄像机"
 
 
 msgid "Include the name of the active camera in image metadata"
-msgstr "在图像元数据中包含活动相机的名称"
+msgstr "在图像元数据中包含活动摄像机的名称"
 
 
 msgid "Stamp Date"
@@ -82805,7 +83056,7 @@ msgstr "标记标签"
 
 
 msgid "Display stamp labels (\"Camera\" in front of camera name, etc.)"
-msgstr "显示图章标签(相机名称显示在相机前，等等)"
+msgstr "显示图章标签(摄像机名称显示在摄像机前，等等)"
 
 
 msgid "Stamp Lens"
@@ -82813,7 +83064,7 @@ msgstr "标记焦距"
 
 
 msgid "Include the active camera's lens in image metadata"
-msgstr "在图像元数据中包含活动相机的镜头"
+msgstr "在图像元数据中包含活动摄像机的镜头"
 
 
 msgid "Stamp Marker"
@@ -82849,7 +83100,7 @@ msgstr "标记场景"
 
 
 msgid "Include the name of the active scene in image/video metadata"
-msgstr "在图像元数据中包含活动相机的名称"
+msgstr "在图像元数据中包含活动摄像机的名称"
 
 
 msgid "Stamp Sequence Strip"
@@ -82873,7 +83124,7 @@ msgstr "设置立体模式"
 
 
 msgid "Single stereo camera system, adjust the stereo settings in the camera panel"
-msgstr "单立体声相机系统，调整相机面板中的立体声设置"
+msgstr "单立体声摄像机系统，调整摄像机面板中的立体声设置"
 
 
 msgid "Multi-View"
@@ -82881,7 +83132,7 @@ msgstr "多视图"
 
 
 msgid "Multi camera system, adjust the cameras individually"
-msgstr "多相机系统，单独的调节相机"
+msgstr "多摄像机系统，单独的调节摄像机"
 
 
 msgid "Render Slot"
@@ -84061,11 +84312,11 @@ msgstr "在接近对焦区域对所有像素进行采样，以消除噪波"
 
 
 msgid "Jitter Camera"
-msgstr "抖动相机"
+msgstr "抖动摄像机"
 
 
 msgid "Jitter camera position to create accurate blurring using render samples"
-msgstr "抖动相机位置，使用渲染采样创建精确模糊"
+msgstr "抖动摄像机位置，使用渲染采样创建精确模糊"
 
 
 msgid "Enable ambient occlusion to simulate medium scale indirect shadowing"
@@ -84161,7 +84412,7 @@ msgstr "指数型采样"
 
 
 msgid "Distribute more samples closer to the camera"
-msgstr "越靠近相机分布更多的采样"
+msgstr "越靠近摄像机分布更多的采样"
 
 
 msgid "Number of samples to compute volumetric effects"
@@ -84225,7 +84476,7 @@ msgstr "3D立体渲染和多视图渲染的渲染视点"
 
 
 msgid "Camera Suffix"
-msgstr "相机后缀"
+msgstr "摄像机后缀"
 
 
 msgid "Suffix to identify the cameras to use, and added to the render images for this view"
@@ -85128,11 +85379,11 @@ msgstr "序列所使用的场景"
 
 
 msgid "Camera Override"
-msgstr "替换相机"
+msgstr "替换摄像机"
 
 
 msgid "Override the scenes active camera"
-msgstr "重写场景中激活的相机"
+msgstr "重写场景中激活的摄像机"
 
 
 msgid "Input type to use for the Scene strip"
@@ -85140,7 +85391,7 @@ msgstr "使用场景片段的输入类型"
 
 
 msgid "Use the Scene's 3D camera as input"
-msgstr "使用场景的3D相机作为输入"
+msgstr "使用场景的3D摄像机作为输入"
 
 
 msgid "Use the Scene's Sequencer timeline as input"
@@ -85752,7 +86003,7 @@ msgstr "用作景深"
 
 
 msgid "Blur using camera depth of field"
-msgstr "使用相机景深进行模糊"
+msgstr "使用摄像机景深进行模糊"
 
 
 msgid "Colorize Effect"
@@ -86417,6 +86668,14 @@ msgid "Show annotation data-block which belongs to active track"
 msgstr "显示属于活动轨迹的蜡笔数据"
 
 
+msgid "2D Cursor Location"
+msgstr "2D 光标位置"
+
+
+msgid "2D cursor location for this view"
+msgstr "设置当前视图上的 2D 游标"
+
+
 msgid "Lock to Selection"
 msgstr "锁定到选中项"
 
@@ -86558,7 +86817,7 @@ msgstr "在镜头中显示 3D 标记的投影"
 
 
 msgid "Show Disabled"
-msgstr "显示关闭"
+msgstr "显示失效轨迹"
 
 
 msgid "Show disabled tracks from the footage"
@@ -86578,11 +86837,11 @@ msgstr "显示为帧"
 
 
 msgid "Show curve for per-frame average error (camera motion should be solved first)"
-msgstr "显示每帧的平均误差曲线 (须先行对相机运动进行解算)"
+msgstr "显示每帧的平均误差曲线 (须先行对摄像机运动进行解算)"
 
 
 msgid "Show Tracks Error"
-msgstr "显示跟踪错误"
+msgstr "显示追踪错误"
 
 
 msgid "Display the reprojection error curve for selected tracks"
@@ -87016,6 +87275,10 @@ msgid "Type of the File Editor view (regular file browsing or asset browsing)"
 msgstr "文件编辑器视图的类型(常规文件浏览或资产浏览)"
 
 
+msgid "Asset Browser"
+msgstr "资产浏览器"
+
+
 msgid "Filebrowser Parameter"
 msgstr "文件浏览器参数"
 
@@ -87184,14 +87447,6 @@ msgid "Image and UV editor space data"
 msgstr "图像和 UV 编辑器的空间数据"
 
 
-msgid "2D Cursor Location"
-msgstr "2D 光标位置"
-
-
-msgid "2D cursor location for this view"
-msgstr "设置当前视图上的 2D 游标"
-
-
 msgid "Display Channels"
 msgstr "显示通道"
 
@@ -87221,7 +87476,7 @@ msgstr "Z-缓冲"
 
 
 msgid "Display Z-buffer associated with image (mapped from camera clip start to end)"
-msgstr "显示与图像关联的Z缓冲(映射自相机的可视距离)"
+msgstr "显示与图像关联的Z缓冲(映射自摄像机的可视距离)"
 
 
 msgid "Grease pencil data for this space"
@@ -87746,11 +88001,11 @@ msgstr "显示骨架物体"
 
 
 msgid "Show Cameras"
-msgstr "显示相机"
+msgstr "显示摄像机"
 
 
 msgid "Show camera objects"
-msgstr "显示相机物体"
+msgstr "显示摄像机物体"
 
 
 msgid "Show Object Contents"
@@ -88053,6 +88308,10 @@ msgid "Display frames rather than seconds"
 msgstr "显示为帧数而非秒数"
 
 
+msgid "Show vertical grid lines"
+msgstr "显示垂直网格线"
+
+
 msgid "Show metadata of first visible strip"
 msgstr "显示第一个可见片段的元数据"
 
@@ -88066,7 +88325,7 @@ msgstr "使用斑马纹显示曝光过度的区域"
 
 
 msgid "Show TV title safe and action safe areas in preview"
-msgstr "在相机视图中显示电视字幕和动作安全区"
+msgstr "在摄像机视图中显示电视字幕和动作安全区"
 
 
 msgid "Separate Colors"
@@ -88422,7 +88681,7 @@ msgstr "3D 视图的空间数据"
 
 
 msgid "Active camera used in this view (when unlocked from the scene's active camera)"
-msgstr "当前场景中的活动相机 (可在场景面板中切换)"
+msgstr "当前场景中的活动摄像机 (可在场景面板中切换)"
 
 
 msgid "3D View far clipping distance"
@@ -88454,11 +88713,11 @@ msgstr "将 3D 视图中心锁定到骨骼位置"
 
 
 msgid "Lock Camera to View"
-msgstr "锁定相机到视图方位"
+msgstr "锁定摄像机到视图方位"
 
 
 msgid "Enable view navigation within the camera view"
-msgstr "在相机视图中启用导航模式"
+msgstr "在摄像机视图中启用导航模式"
 
 
 msgid "Lock to Cursor"
@@ -88494,7 +88753,7 @@ msgstr "3D 区域"
 
 
 msgid "3D region in this space, in case of quad view the camera region"
-msgstr "基于正交视图中相机视角的当前空间 3D 区域"
+msgstr "基于正交视图中摄像机视角的当前空间 3D 区域"
 
 
 msgid "Quad View Regions"
@@ -88518,11 +88777,11 @@ msgstr "显示重建后的轨迹物体名称"
 
 
 msgid "Show Camera Path"
-msgstr "显示相机路径"
+msgstr "显示摄像机路径"
 
 
 msgid "Show reconstructed camera path"
-msgstr "显示重建后的相机路径"
+msgstr "显示重建后的摄像机路径"
 
 
 msgid "Show Gizmo"
@@ -88534,19 +88793,19 @@ msgstr "显示所有类型Gizmo"
 
 
 msgid "Show Camera Focus Distance"
-msgstr "显示相机焦距"
+msgstr "显示摄像机焦距"
 
 
 msgid "Gizmo to adjust camera focus distance (depends on limits display)"
-msgstr "调节相机对焦距离的操纵杆(必须视图显示内的限制打开)"
+msgstr "调节摄像机对焦距离的操纵杆(必须视图显示内的限制打开)"
 
 
 msgid "Show Camera Lens"
-msgstr "显示相机镜头"
+msgstr "显示摄像机镜头"
 
 
 msgid "Gizmo to adjust camera focal length or orthographic scale"
-msgstr "用于调整相机焦距长度或正交缩放的Gizmo"
+msgstr "用于调整摄像机焦距长度或正交缩放的Gizmo"
 
 
 msgid "Context Gizmo"
@@ -88638,7 +88897,7 @@ msgstr "显示基于活动活影片剪辑的重建数据"
 
 
 msgid "Show the left and right cameras"
-msgstr "显示左右相机"
+msgstr "显示左右摄像机"
 
 
 msgid "Show the stereo 3D convergence plane"
@@ -88682,7 +88941,7 @@ msgstr "体积 Alpha"
 
 
 msgid "Opacity (alpha) of the cameras' frustum volume"
-msgstr "相机视锥体积的不透明度 (alpha)"
+msgstr "摄像机视锥体积的不透明度 (alpha)"
 
 
 msgid "Tracks Size"
@@ -88702,11 +88961,11 @@ msgstr "追踪点在视图中的显示样式"
 
 
 msgid "Use Local Camera"
-msgstr "使用局部相机"
+msgstr "使用局部摄像机"
 
 
 msgid "Use a local camera in this view, rather than scene's active camera"
-msgstr "在此视图中使用局部相机，而非场景活动相机"
+msgstr "在此视图中使用局部摄像机，而非场景活动摄像机"
 
 
 msgid "Local Collections"
@@ -88718,7 +88977,7 @@ msgstr "在此视口中显示一组不同的集合"
 
 
 msgid "Use a region within the frame size for rendered viewport (when not viewing through the camera)"
-msgstr "在框选尺寸内使用一个区域作为渲染视窗(当不通过相机观看时)"
+msgstr "在框选尺寸内使用一个区域作为渲染视窗(当不通过摄像机观看时)"
 
 
 msgid "Show Overlays"
@@ -91134,7 +91393,7 @@ msgstr "束实色"
 
 
 msgid "Camera Path"
-msgstr "相机路径"
+msgstr "摄像机路径"
 
 
 msgid "Clipping Border"
@@ -91338,7 +91597,7 @@ msgstr "时间轴上未指定的标记"
 
 
 msgid "Camera that becomes active on this frame"
-msgstr "在此帧上变为活动状态的相机"
+msgstr "在此帧上变为活动状态的摄像机"
 
 
 msgid "The frame on which the timeline marker appears"
@@ -91363,6 +91622,10 @@ msgstr "时间步长"
 
 msgid "Stroke Placement (2D View)"
 msgstr "笔画放置(2D视图)"
+
+
+msgid "Strick stroke to the image"
+msgstr "将笔画粘在图像上"
 
 
 msgid "Stick stroke to the view"
@@ -92514,6 +92777,14 @@ msgid "Number of subdivisions between grid lines"
 msgstr "栅格细分等级"
 
 
+msgid "Normal Screen Size"
+msgstr "法线屏幕尺寸"
+
+
+msgid "Screen size for normals in the 3D view"
+msgstr "在3D视图中法线显示的屏幕尺寸"
+
+
 msgid "Normal Size"
 msgstr "法线尺寸"
 
@@ -92651,7 +92922,7 @@ msgstr "其他项"
 
 
 msgid "Object details, including empty wire, cameras and other visual guides"
-msgstr "包括空物体线框，相机以及其他可见辅助物的物体细节"
+msgstr "包括空物体线框，摄像机以及其他可见辅助物的物体细节"
 
 
 msgid "Display Face Center"
@@ -92932,6 +93203,14 @@ msgstr "笔画材质名称"
 
 msgid "Show material name assigned to each stroke"
 msgstr "显示指定给每个笔画的材质名称"
+
+
+msgid "Constant Screen Size Normals"
+msgstr "恒定屏幕法线尺寸"
+
+
+msgid "Keep size of normals constant in relation to 3D view"
+msgstr "保持法线尺寸相对于3D视图不变"
 
 
 msgid "Vertex Opacity"
@@ -93247,7 +93526,7 @@ msgstr "固定HDR旋转，而非跟随摄像机"
 
 
 msgid "Make the lighting fixed and not follow the camera"
-msgstr "使光照固定并且不跟随相机"
+msgstr "使光照固定并且不跟随摄像机"
 
 
 msgid "Show Landmarks"
@@ -93255,7 +93534,7 @@ msgstr "显示地标"
 
 
 msgid "Show VR Camera"
-msgstr "显示VR相机"
+msgstr "显示VR摄像机"
 
 
 msgid "X-Ray Alpha"
@@ -93747,7 +94026,7 @@ msgstr "迷雾效果的最小强度效果"
 
 
 msgid "Starting distance of the mist, measured from the camera"
-msgstr "从相机位置计算迷雾的起始距离"
+msgstr "从摄像机位置计算迷雾的起始距离"
 
 
 msgid "Use Mist"
@@ -93756,6 +94035,302 @@ msgstr "使用雾场"
 
 msgid "Occlude objects with the environment color as they are further away"
 msgstr "较远的带环境色彩的闭塞属性物体"
+
+
+msgid "XR Action Map"
+msgstr "XR 活动映射"
+
+
+msgid "Items in the action map, mapping an XR event to an operator, pose, or haptic output"
+msgstr "动作映射中的项、将 XR 事件映射到操作、姿势或触觉输出"
+
+
+msgid "Name of the action map"
+msgstr "活动映射名称"
+
+
+msgid "Selected Item"
+msgstr "所选项"
+
+
+msgid "XR Action Map Binding"
+msgstr "XR 活动映射绑定"
+
+
+msgid "Binding in an XR action map item"
+msgstr "在XR活动映射项中的绑定"
+
+
+msgid "Axis 0 Region"
+msgstr "轴0区域"
+
+
+msgid "Action execution region for the first input axis"
+msgstr "第一个输入轴的动作执行区域"
+
+
+msgid "Use any axis region for operator execution"
+msgstr "使用任何轴区域执行操作"
+
+
+msgid "Use positive axis region only for operator execution"
+msgstr "仅使用正轴区域执行操作"
+
+
+msgid "Use negative axis region only for operator execution"
+msgstr "仅使用负轴区域执行操作"
+
+
+msgid "Axis 1 Region"
+msgstr "轴1区域"
+
+
+msgid "Action execution region for the second input axis"
+msgstr "第二个输入轴的动作执行区域"
+
+
+msgid "Component Path 0"
+msgstr "组件路径 0"
+
+
+msgid "OpenXR component path"
+msgstr "OpenXR组件路径"
+
+
+msgid "Component Path 1"
+msgstr "组件路径 1"
+
+
+msgid "Name of the action map binding"
+msgstr "动作映射绑定的名称"
+
+
+msgid "Pose Location Offset"
+msgstr "姿势位置偏移"
+
+
+msgid "Pose Rotation Offset"
+msgstr "姿势旋转偏移"
+
+
+msgid "OpenXR interaction profile path"
+msgstr "OpenXR交互配置文件路径"
+
+
+msgid "Input threshold for button/axis actions"
+msgstr "按钮/轴动作的输入阈值"
+
+
+msgid "XR Action Map Bindings"
+msgstr "XR 行动j映射绑定"
+
+
+msgid "Collection of XR action map bindings"
+msgstr "XR动作映射绑定集合"
+
+
+msgid "XR Action Map Item"
+msgstr "XR动作映射项"
+
+
+msgid "Bimanual"
+msgstr "双手"
+
+
+msgid "The action depends on the states/poses of both user paths"
+msgstr "该动作取决于两个用户路径的状态/姿势"
+
+
+msgid "Bindings"
+msgstr "绑定"
+
+
+msgid "Bindings for the action map item, mapping the action to an XR input"
+msgstr "动作映射项的绑定，将动作映射到 XR 输入"
+
+
+msgid "Haptic Amplitude"
+msgstr "触觉振幅"
+
+
+msgid "Intensity of the haptic vibration, ranging from 0.0 to 1.0"
+msgstr "触觉振动的强度，范围从0.0到1.0"
+
+
+msgid "Haptic Duration"
+msgstr "触觉持续时间"
+
+
+msgid "Haptic duration in seconds. 0.0 is the minimum supported duration"
+msgstr "触觉持续时间，单位秒。0.0是支持的最小持续时间"
+
+
+msgid "Haptic Frequency"
+msgstr "触觉频率"
+
+
+msgid "Frequency of the haptic vibration in hertz. 0.0 specifies the OpenXR runtime's default frequency"
+msgstr "触觉振动的频率，单位赫兹。0.0 为OpenXR 运行时的默认频率"
+
+
+msgid "Haptic Match User Paths"
+msgstr "触觉匹配用户路径"
+
+
+msgid "Apply haptics to the same user paths for the haptic action and this action"
+msgstr "将触觉应用于触觉动作和该动作的相同用户路径"
+
+
+msgid "Haptic mode"
+msgstr "触觉模式"
+
+
+msgid "Haptic application mode"
+msgstr "触觉应用模式"
+
+
+msgid "Apply haptics on button press"
+msgstr "在按下按钮时应用触觉"
+
+
+msgid "Apply haptics on button release"
+msgstr "在松开按钮时应用触觉"
+
+
+msgid "Press Release"
+msgstr "压感释放"
+
+
+msgid "Apply haptics on button press and release"
+msgstr "在按下按钮并且松开时应用触觉"
+
+
+msgid "Apply haptics repeatedly for the duration of the button press"
+msgstr "在按下按钮期间反复应用触觉"
+
+
+msgid "Haptic Name"
+msgstr "触觉名称"
+
+
+msgid "Name of the haptic action to apply when executing this action"
+msgstr "执行此动作时应用触觉动作的名称"
+
+
+msgid "Name of the action map item"
+msgstr "动作映射项的名称"
+
+
+msgid "Identifier of operator to call on action event"
+msgstr "操作的标识符，以调用动作事件"
+
+
+msgid "Operator Mode"
+msgstr "操作模式"
+
+
+msgid "Operator execution mode"
+msgstr "操作执行模式"
+
+
+msgid "Execute operator on button press (non-modal operators only)"
+msgstr "按下按钮执行操作(仅限非模态操作）"
+
+
+msgid "Execute operator on button release (non-modal operators only)"
+msgstr "在松开按钮执行操作(仅限非模态操作)"
+
+
+msgid "Modal"
+msgstr "模态"
+
+
+msgid "Use modal execution (modal operators only)"
+msgstr "使用模态(仅限模态操作)"
+
+
+msgid "Name of operator (translated) to call on action event"
+msgstr "调用动作事件的操作名称"
+
+
+msgid "Is Controller Aim"
+msgstr "是控制器目标"
+
+
+msgid "The action poses will be used for the VR controller aims"
+msgstr "动作姿势将用于VR控制器目标"
+
+
+msgid "Is Controller Grip"
+msgstr "是控制器握持键"
+
+
+msgid "The action poses will be used for the VR controller grips"
+msgstr "动作姿势将用于VR控制器握持键"
+
+
+msgid "Selected Binding"
+msgstr "选定的绑定"
+
+
+msgid "Currently selected binding"
+msgstr "当前选定的绑定"
+
+
+msgid "Action type"
+msgstr "动作类型"
+
+
+msgid "Float action, representing either a digital or analog button"
+msgstr "浮动动作，表示数字或模拟按钮"
+
+
+msgid "Vector2D"
+msgstr "二维矢量"
+
+
+msgid "2D float vector action, representing a thumbstick or trackpad"
+msgstr "二维浮点矢量动作，表示拇指棒或触控板"
+
+
+msgid "3D pose action, representing a controller's location and rotation"
+msgstr "3D姿势动作，表示控制器的位置和旋转"
+
+
+msgid "Vibration"
+msgstr "振动"
+
+
+msgid "Haptic vibration output action, to be applied with a duration, frequency, and amplitude"
+msgstr "触觉振动输出动作，与持续时间、频率和振幅一起应用"
+
+
+msgid "User Path 0"
+msgstr "用户路径 0"
+
+
+msgid "OpenXR user path"
+msgstr "OpenXR用户路径"
+
+
+msgid "User Path 1"
+msgstr "用户路径 1"
+
+
+msgid "XR Action Map Items"
+msgstr "XR动作映射项"
+
+
+msgid "Collection of XR action map items"
+msgstr "XR动作映射项集合"
+
+
+msgid "XR Action Maps"
+msgstr "XR动作映射"
+
+
+msgid "Collection of XR action maps"
+msgstr "XR动作映射集合"
 
 
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"
@@ -93783,7 +94358,7 @@ msgstr "定义VR视角的位置和旋转的出处, VR头戴设备的平移和旋
 
 
 msgid "Follow the active scene camera to define the VR view's base pose"
-msgstr "使用场景活动相机定义VR视图基础姿势"
+msgstr "使用场景活动摄像机定义VR视图基础姿势"
 
 
 msgid "Follow the transformation of an object to define the VR view's base pose"
@@ -93803,7 +94378,7 @@ msgstr "近裁距离的VR视口"
 
 
 msgid "Absolute Tracking"
-msgstr "绝对跟踪"
+msgstr "绝对追踪"
 
 
 msgid "Use unadjusted location/rotation as defined by the XR runtime"
@@ -93811,7 +94386,7 @@ msgstr "使用XR运行时定义的未经调整的位置/旋转"
 
 
 msgid "Positional Tracking"
-msgstr "位置跟踪"
+msgstr "位置追踪"
 
 
 msgid "Allow VR headsets to affect the location in virtual space, in addition to the rotation"
@@ -93820,6 +94395,14 @@ msgstr "允许VR头戴设备影响虚拟环境中的位置和旋转"
 
 msgid "Session State"
 msgstr "会话状态"
+
+
+msgid "Active Action Map"
+msgstr "活动动作"
+
+
+msgid "Selected Action Map"
+msgstr "选定的动作映射"
 
 
 msgid "Viewer Pose Location"
@@ -93893,7 +94476,7 @@ msgstr "缓存文件:"
 
 msgctxt "Operator"
 msgid "Camera:"
-msgstr "相机:"
+msgstr "摄像机:"
 
 
 msgctxt "Operator"
@@ -95095,7 +95678,7 @@ msgstr "体积分辨率"
 
 
 msgid "Camera Culling"
-msgstr "相机剔除"
+msgstr "摄像机剔除"
 
 
 msgid "Distance Culling"
@@ -95185,7 +95768,7 @@ msgstr "无效目标 %r (必须为骨架或者物体)"
 
 
 msgid "Cameras & Markers (.py)"
-msgstr "相机&标记(.py)"
+msgstr "摄像机&标记(.py)"
 
 
 msgid "Unable to parse XML, %s:%s for file %r"
@@ -95670,6 +96253,10 @@ msgid "Unable to find any running process"
 msgstr "找不到任何运行中的进程"
 
 
+msgid "Blender sub-process exited with error code %d"
+msgstr "Blender子进程退出错误代码 %d"
+
+
 msgid "Selection pair not found"
 msgstr "未找到成对选中项"
 
@@ -95695,15 +96282,15 @@ msgstr "未选择可用轨道"
 
 
 msgid "Motion Tracking constraint to be converted not found"
-msgstr "未找到要转换的运动跟踪约束"
+msgstr "未找到要转换的运动追踪约束"
 
 
 msgid "Movie clip to use tracking data from isn't set"
-msgstr "未设置要使用跟踪数据的影片剪辑"
+msgstr "未设置要使用追踪数据的影片剪辑"
 
 
 msgid "Motion Tracking object not found"
-msgstr "未找到运动跟踪物体"
+msgstr "未找到运动追踪物体"
 
 
 msgid "Some strings were fixed, don't forget to save the .blend file to keep those changes"
@@ -95771,7 +96358,7 @@ msgstr "节点没有属性 "
 
 
 msgid "No camera found"
-msgstr "未找到相机"
+msgstr "未找到摄像机"
 
 
 msgid "Other object is not a mesh"
@@ -97126,7 +97713,7 @@ msgstr "钳制图像"
 
 
 msgid "Tracking Axis"
-msgstr "跟踪轴"
+msgstr "追踪轴"
 
 
 msgid "Override Crease"
@@ -97167,6 +97754,10 @@ msgstr "保存"
 
 msgid "Max B-frames"
 msgstr "最大B帧"
+
+
+msgid "Strip Name"
+msgstr "片段名称"
 
 
 msgid "Buffer"
@@ -98178,7 +98769,7 @@ msgstr "切向畸变"
 
 msgctxt "Operator"
 msgid "Solve Camera Motion"
-msgstr "相机运动解算"
+msgstr "摄像机运动解算"
 
 
 msgctxt "Operator"
@@ -98669,6 +99260,10 @@ msgstr "转到上一级"
 msgctxt "Operator"
 msgid "New Folder"
 msgstr "新建文件夹"
+
+
+msgid "Asset Details"
+msgstr "资产详情"
 
 
 msgid ".blend Files"
@@ -99252,7 +99847,7 @@ msgstr "关联至场景"
 
 
 msgid "Restriction Toggles"
-msgstr "限制切换"
+msgstr "限制开关"
 
 
 msgid "Sync Selection"
@@ -99756,6 +100351,10 @@ msgstr "此片段下需要两个或更多的通道"
 
 msgid "No active context"
 msgstr "无活动上下文"
+
+
+msgid "No active viewer node"
+msgstr "无活动查看器节点"
 
 
 msgid "<no object>"
@@ -100661,12 +101260,12 @@ msgstr "切换局部视图"
 
 msgctxt "Operator"
 msgid "Active Camera"
-msgstr "活动相机"
+msgstr "活动摄像机"
 
 
 msgctxt "Operator"
 msgid "Camera"
-msgstr "相机"
+msgstr "摄像机"
 
 
 msgctxt "Operator"
@@ -100681,12 +101280,12 @@ msgstr "框选放大..."
 
 msgctxt "Operator"
 msgid "Align Active Camera to View"
-msgstr "活动相机对齐当前视角"
+msgstr "活动摄像机对齐当前视角"
 
 
 msgctxt "Operator"
 msgid "Align Active Camera to Selected"
-msgstr "活动相机对齐选中的物体"
+msgstr "活动摄像机对齐选中的物体"
 
 
 msgctxt "Operator"
@@ -100726,7 +101325,7 @@ msgstr "按类型全选"
 
 msgctxt "Operator"
 msgid "Select Active Camera"
-msgstr "选择活动相机"
+msgstr "选择活动摄像机"
 
 
 msgctxt "Operator"
@@ -101662,11 +102261,11 @@ msgstr "反转可见"
 
 
 msgid "Local Camera"
-msgstr "局部相机"
+msgstr "局部摄像机"
 
 
 msgid "Camera to View"
-msgstr "锁定相机到视图方位"
+msgstr "锁定摄像机到视图方位"
 
 
 msgid "Object Types Visibility"
@@ -102319,7 +102918,7 @@ msgstr "框显所选(四格视图)"
 
 msgctxt "Operator"
 msgid "Set Active Camera"
-msgstr "设置活动相机"
+msgstr "设置活动摄像机"
 
 
 msgctxt "Operator"
@@ -102411,7 +103010,7 @@ msgstr "调整焦距"
 
 msgctxt "Operator"
 msgid "Camera Lens Scale"
-msgstr "相机镜头比例"
+msgstr "摄像机镜头比例"
 
 
 msgctxt "Operator"
@@ -102567,7 +103166,7 @@ msgstr "应用"
 
 msgctxt "Operator"
 msgid "Apply Camera Image"
-msgstr "应用相机图像"
+msgstr "应用摄像机图像"
 
 
 msgid "Editing Type"
@@ -102661,6 +103260,14 @@ msgstr "属性是必需的，且无法删除"
 
 msgid "Library file, loading empty scene"
 msgstr "库文件,加载空场景"
+
+
+msgid "Preferences saved"
+msgstr "已保存偏好设置"
+
+
+msgid "Saving preferences failed"
+msgstr "保存偏好设置失败"
 
 
 msgid "Unable to create userpref path"
@@ -102901,8 +103508,16 @@ msgid "AOV"
 msgstr "AOV"
 
 
+msgid "Impossible to resync data-block %s and its dependencies, as its linked reference is missing"
+msgstr "不可能重新同步数据块 %s 及其依赖关系，因为它的关联引用缺失"
+
+
 msgid "During resync of data-block %s, %d obsolete overrides were deleted, that had local changes defined by user"
 msgstr "在数据块 %s 的重新同步过程中，删除了 %d 个过时的覆写，这些覆写由用户定义了本地修改"
+
+
+msgid "Scene '%s' was not resynced as it is the currently active one"
+msgstr "场景 '%s' 没有重新同步，因为它是当前活跃的场景"
 
 
 msgid "Data corruption: data-block '%s' is using itself as library override reference"
@@ -102951,6 +103566,22 @@ msgstr "[Action Stash]"
 
 msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender 2.80, removed instancing"
 msgstr "非空物体 '%s' 无法在 Blender 2.80 中再复制集合 '%s'，已移除实例"
+
+
+msgid "Proxy lost from  object %s lib %s"
+msgstr "从物体 %s 库 %s 丢失代理"
+
+
+msgid "Proxy lost from  object %s lib <NONE>"
+msgstr "从物体%s 库 <NONE> 中丢失代理"
+
+
+msgid "Can't find object data of %s lib %s"
+msgstr "找不到 %s 库 %s 的物体数据"
+
+
+msgid "Object %s lost data"
+msgstr "物体 %s 已丢失数据"
 
 
 msgid "Surf"
@@ -103410,6 +104041,10 @@ msgid "UV/Image"
 msgstr "UV/图像"
 
 
+msgid "Select ID Debug"
+msgstr "选择 ID 调试"
+
+
 msgid "Select ID"
 msgstr "选择ID"
 
@@ -103495,7 +104130,7 @@ msgstr "标记偏移 %s"
 
 
 msgid "Selecting the camera is only supported in object mode"
-msgstr "仅在物体模式下支持选择相机"
+msgstr "仅在物体模式下支持选择摄像机"
 
 
 msgid "Scene not found"
@@ -103511,7 +104146,7 @@ msgstr "目标场景已经锁定标记"
 
 
 msgid "Select a camera to bind to a marker on this frame"
-msgstr "在此帧上选择一个相机绑定到标记点"
+msgstr "在此帧上选择一个摄像机绑定到标记点"
 
 
 msgid "Start frame clamped to valid rendering range"
@@ -103912,6 +104547,10 @@ msgstr "展示原始姿态的姿态库"
 
 msgid "Tab: show blended pose"
 msgstr "Tab: 显示混合姿态"
+
+
+msgid "Internal pose library error, canceling operator"
+msgstr "内部姿态库错误，取消操作"
 
 
 msgid "No active Keying Set to use"
@@ -104643,7 +105282,7 @@ msgstr "清除单项关键帧"
 
 msgctxt "Operator"
 msgid "Delete Drivers"
-msgstr "删除驱动"
+msgstr "删除驱动器"
 
 
 msgctxt "Operator"
@@ -104653,7 +105292,7 @@ msgstr "删除驱动器"
 
 msgctxt "Operator"
 msgid "Delete Driver"
-msgstr "删除驱动"
+msgstr "删除驱动器"
 
 
 msgctxt "Operator"
@@ -104921,6 +105560,14 @@ msgid "More..."
 msgstr "更多..."
 
 
+msgid "Move to First"
+msgstr "移至首位"
+
+
+msgid "Move to Last"
+msgstr "移至末尾"
+
+
 msgid "Flip Color Ramp"
 msgstr "翻转颜色渐变"
 
@@ -105142,7 +105789,7 @@ msgstr "浏览要关联的灯光数据"
 
 
 msgid "Browse Camera Data to be linked"
-msgstr "浏览要关联的相机数据"
+msgstr "浏览要关联的摄像机数据"
 
 
 msgid "Browse World Settings to be linked"
@@ -105492,6 +106139,14 @@ msgstr "无法导出PDF"
 
 msgid "Unable to import SVG"
 msgstr "无法导入SVG"
+
+
+msgid "Data Types"
+msgstr "数据类型"
+
+
+msgid "Mesh Data"
+msgstr "网格数据"
 
 
 msgctxt "Mesh"
@@ -106493,6 +107148,10 @@ msgid "Object (Without Inverse)"
 msgstr "物体(无反向)"
 
 
+msgid "Drop %s on %s (slot %d)"
+msgstr "拖动 %s 到 %s (槽 %d)"
+
+
 msgid "Select either 1 or 3 vertices to parent to"
 msgstr "选择1个或者3个顶点作为父级顶点"
 
@@ -107058,7 +107717,7 @@ msgstr "无法在背景模式下使用 OpenGL 渲染 (无 OpenGL 环境)"
 
 
 msgid "Scene has no camera"
-msgstr "场景中没有相机"
+msgstr "场景中没有摄像机"
 
 
 msgid "Movie format unsupported"
@@ -107241,6 +107900,10 @@ msgid "Cannot edit library linked object"
 msgstr "无法编辑与库关联的物体"
 
 
+msgid "Cannot edit hidden object"
+msgstr "无法编辑隐藏物体"
+
+
 msgid "expected a view3d region & editmesh"
 msgstr "期望一个 3D 视图区域和编辑网格"
 
@@ -107331,7 +107994,7 @@ msgstr "图像工程数据无效"
 
 
 msgid "No active camera set"
-msgstr "没有设置激活的相机"
+msgstr "没有设置激活的摄像机"
 
 
 msgid "Could not get valid evaluated mesh"
@@ -107679,7 +108342,7 @@ msgstr "无可供接合的活动轨迹"
 
 
 msgid "Object used for camera tracking cannot be deleted"
-msgstr "不能删除用于相机追踪的物体"
+msgstr "不能删除用于摄像机追踪的物体"
 
 
 msgid "Feature detection requires valid clip frame"
@@ -107695,15 +108358,15 @@ msgstr "无可供应用定向的物体"
 
 
 msgid "Three tracks with bundles are needed to orient the floor"
-msgstr "需要三个跟踪点来定义地面"
+msgstr "需要三个追踪点来定义地面"
 
 
 msgid "Single track with bundle should be selected to define axis"
-msgstr "需要一个带控制的跟踪点来定义轴"
+msgstr "需要一个带控制的追踪点来定义轴"
 
 
 msgid "Two tracks with bundles should be selected to set scale"
-msgstr "需要两个带控制的跟踪点来定义缩放"
+msgstr "需要两个带控制的追踪点来定义缩放"
 
 
 msgid "Need at least 4 selected point tracks to create a plane"
@@ -107719,19 +108382,19 @@ msgstr "二次投射的平均误差: %.2f px"
 
 
 msgid "Track the selected markers backward for the entire clip"
-msgstr "向后跟踪整个剪辑的选定标记"
+msgstr "向后追踪整个剪辑的选定标记"
 
 
 msgid "Track the selected markers backward by one frame"
-msgstr "向后跟踪一帧选定的标记"
+msgstr "向后追踪一帧选定的标记"
 
 
 msgid "Track the selected markers forward for the entire clip"
-msgstr "为整个剪辑向前跟踪选定的标记"
+msgstr "为整个剪辑向前追踪选定的标记"
 
 
 msgid "Track the selected markers forward by one frame"
-msgstr "向前跟踪一帧选定的标记"
+msgstr "向前追踪一帧选定的标记"
 
 
 msgid "File path"
@@ -107943,7 +108606,7 @@ msgstr "函数修改器可以为那些生成曲线"
 
 
 msgid "Add a Driver Variable to keep track of an input used by the driver"
-msgstr "添加驱动程序变量以保持跟踪驱动程序使用的输入值"
+msgstr "添加驱动器变量以保持追踪驱动器使用的输入值"
 
 
 msgid "Invalid variable name, click here for details"
@@ -108728,6 +109391,10 @@ msgid "Mixed selection"
 msgstr "混合所选项"
 
 
+msgid "Could not create library override from data-block '%s', one of its parents is not overridable ('%s')"
+msgstr "无法从数据块 '%s' 创建库重写，其父级之一不可被覆盖 ('%s')"
+
+
 msgid "Could not create library override from data-block '%s'"
 msgstr "无法从数据块 '%s'创建库重写"
 
@@ -108742,6 +109409,78 @@ msgstr "(空)"
 
 msgid "Can't reload with running modal operators"
 msgstr "无法使用运行中模态操作重新加载"
+
+
+msgid "Add a crossfade transition to the sequencer"
+msgstr "向序列编辑器添加一个渐进变换"
+
+
+msgid "Add an add effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个特效片段"
+
+
+msgid "Add a subtract effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个相减特效片段"
+
+
+msgid "Add an alpha over effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个alpha上叠特效片段"
+
+
+msgid "Add an alpha under effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个alpha在下特效片段"
+
+
+msgid "Add a gamma cross transition to the sequencer"
+msgstr "向序列编辑器中添加一个gamma交互变换"
+
+
+msgid "Add a multiply effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个相乘特效片段"
+
+
+msgid "Add an alpha over drop effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个alpha向下覆盖特效片段"
+
+
+msgid "Add a wipe transition to the sequencer"
+msgstr "向序列编辑器中添加一个擦除变换"
+
+
+msgid "Add a glow effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个辉光特效片段"
+
+
+msgid "Add a transform effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个变形片段"
+
+
+msgid "Add a color strip to the sequencer"
+msgstr "向序列编辑器中添加一个颜色片段"
+
+
+msgid "Add a speed effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个速度片段"
+
+
+msgid "Add a multicam selector effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个多摄像机选择器特效片段"
+
+
+msgid "Add an adjustment layer effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个调整图层特效片段"
+
+
+msgid "Add a gaussian blur effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个高斯模糊特效片段"
+
+
+msgid "Add a text strip to the sequencer"
+msgstr "向序列编辑器中添加一个文本片段"
+
+
+msgid "Add a color mix effect strip to the sequencer"
+msgstr "向序列编辑器中添加一个颜色混合特效片段"
 
 
 msgid "Movie clip not found"
@@ -108946,6 +109685,10 @@ msgstr "文件关联已注册"
 
 msgid "Unable to register file association"
 msgstr "无法注册文件关联"
+
+
+msgid "Windows-only operator"
+msgstr "操作仅支持Windows"
 
 
 msgid "Create object instance from object-data"
@@ -109169,19 +109912,19 @@ msgstr "透视左视图"
 
 
 msgid "Camera Perspective"
-msgstr "相机透视"
+msgstr "摄像机透视"
 
 
 msgid "Camera Orthographic"
-msgstr "相机正交"
+msgstr "摄像机正交"
 
 
 msgid "Camera Panoramic"
-msgstr "相机全景"
+msgstr "摄像机全景"
 
 
 msgid "Object as Camera"
-msgstr "物体作为相机"
+msgstr "物体作为摄像机"
 
 
 msgid "User Orthographic"
@@ -109249,7 +109992,7 @@ msgstr "清除物体约束"
 
 
 msgid "Cannot navigate a camera from an external library"
-msgstr "无法使用外部库的相机开启飞行模式"
+msgstr "无法使用外部库的摄像机开启飞行模式"
 
 
 msgid "Cannot navigate when the view offset is locked"
@@ -109277,7 +110020,7 @@ msgstr "未找到活动元素!"
 
 
 msgid "No active camera"
-msgstr "无活动相机"
+msgstr "无活动摄像机"
 
 
 msgid "No more than 16 local views"
@@ -109853,14 +110596,6 @@ msgid "Cannot open file: %s"
 msgstr "无法打开文件: %s"
 
 
-msgid "Move to First"
-msgstr "移至首位"
-
-
-msgid "Move to Last"
-msgstr "移至末尾"
-
-
 msgid "External library data"
 msgstr "外部库数据"
 
@@ -109969,8 +110704,16 @@ msgid "No new override property created, property already exists"
 msgstr "未创建新的覆写属性，属性已存在"
 
 
+msgid "Override property cannot be removed"
+msgstr "无法删除重写属性"
+
+
 msgid "No new override operation created, operation already exists"
 msgstr "未创建新的覆写操作，操作已存在"
+
+
+msgid "Override operation cannot be removed"
+msgstr "无法删除重写操作"
 
 
 msgid "Index out of range"
@@ -109983,6 +110726,10 @@ msgstr "没有可供移除的材质"
 
 msgid "Registering id property class: '%s' is too long, maximum length is %d"
 msgstr "注册 ID 属性类: '%s' 太长, 最大的长度是 %d"
+
+
+msgid "ID '%s' isn't an override"
+msgstr "ID '%s' 不是重写"
 
 
 msgid "%s is not compatible with %s 'refresh' options"
@@ -111011,6 +111758,18 @@ msgid "Gizmo group '%s' not found!"
 msgstr "未找到Gizmo组 '%s'!"
 
 
+msgid "ActionMapBinding '%s' cannot be removed from '%s'"
+msgstr "动作映射绑定 '%s' 无法从 '%s' 中移除"
+
+
+msgid "ActionMapItem '%s' cannot be removed from '%s'"
+msgstr "动作映射项 '%s' 无法从 '%s' 中移除"
+
+
+msgid "ActionMap '%s' cannot be removed"
+msgstr "无法移除动作映射 '%s'"
+
+
 msgid "First and Last Copies"
 msgstr "第一个副本和最后副本"
 
@@ -111527,7 +112286,7 @@ msgstr "面朝向"
 
 
 msgid "Is Camera Ray"
-msgstr "是相机射线"
+msgstr "是摄像机射线"
 
 
 msgid "Is Shadow Ray"
@@ -111739,7 +112498,7 @@ msgstr "图像过小"
 
 
 msgid "Cannot render, no camera"
-msgstr "无法渲染, 没有相机"
+msgstr "无法渲染, 没有摄像机"
 
 
 msgid "No border area selected"
@@ -111779,7 +112538,7 @@ msgstr "写入错误：(%s)无法保存 '%s'"
 
 
 msgid "Camera \"%s\" is not a multi-view camera"
-msgstr "相机 \"%s\" 不是多视角相机"
+msgstr "摄像机 \"%s\" 不是多视角摄像机"
 
 
 msgid "No active view found in scene \"%s\""
@@ -111958,6 +112717,14 @@ msgstr "未设置上下文窗口"
 
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
 msgstr "引擎 '%s' 对场景 '%s' (可能需要安装或启用一个插件) 不可用"
+
+
+msgid "Library %s needs overrides resync"
+msgstr "库 %s 需要重新同步重写"
+
+
+msgid "%d libraries and %d linked data-blocks are missing (including %d ObjectData and %d Proxies), please check the Info and Outliner editors for details"
+msgstr "丢失 %d 库和 %d 关联数据块(包括 %d 物体数据和 %d 代理)，详情请查看信息和大纲编辑器"
 
 
 msgid "%d libraries have overrides needing resync (auto resynced in %.0fm%.2fs),  please check the Info editor for details"

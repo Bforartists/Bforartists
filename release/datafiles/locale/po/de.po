@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -28601,6 +28601,10 @@ msgid "Edit a constraint on the active object"
 msgstr "Eine Beschränkung des aktiven Objekts bearbeiten"
 
 
+msgid "Report"
+msgstr "Meldung"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Invertierung festlegen"
@@ -28609,10 +28613,6 @@ msgstr "Invertierung festlegen"
 msgctxt "Operator"
 msgid "Delete Constraint"
 msgstr "Beschränkung löschen"
-
-
-msgid "Report"
-msgstr "Meldung"
 
 
 msgctxt "Operator"
@@ -35793,10 +35793,6 @@ msgid "Data Operation"
 msgstr "Datenoperation"
 
 
-msgid "Unhide"
-msgstr "Einblenden"
-
-
 msgid "Delete selected objects and collections"
 msgstr "Ausgewählte Objekte und Sammlungen entfernen"
 
@@ -41191,6 +41187,10 @@ msgid "Camera Presets"
 msgstr "Kamera-Voreinstellungen"
 
 
+msgid "2D Cursor"
+msgstr "2D Cursor"
+
+
 msgid "Active Point"
 msgstr "Aktive Punkte"
 
@@ -41609,10 +41609,6 @@ msgstr "Texturmaske"
 
 msgid "UDIM Grid"
 msgstr "UDIM Raster"
-
-
-msgid "2D Cursor"
-msgstr "2D Cursor"
 
 
 msgid "Histogram"
@@ -59457,6 +59453,14 @@ msgid "More..."
 msgstr "Mehr..."
 
 
+msgid "Move to First"
+msgstr "Verschieben auf zuerst"
+
+
+msgid "Move to Last"
+msgstr "Verschieben auf zuletzt"
+
+
 msgid "Flip Color Ramp"
 msgstr "Farbverlauf umdrehen"
 
@@ -62019,14 +62023,6 @@ msgstr "UV Knoten"
 
 msgid "Cannot open file: %s"
 msgstr "Datei kann nicht geöffnet werden: %s"
-
-
-msgid "Move to First"
-msgstr "Verschieben auf zuerst"
-
-
-msgid "Move to Last"
-msgstr "Verschieben auf zuletzt"
 
 
 msgid "External library data"
