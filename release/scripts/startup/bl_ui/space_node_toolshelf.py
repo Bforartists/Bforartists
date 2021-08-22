@@ -3525,6 +3525,10 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeCombineRGB"
 
+            props = col.operator("node.add_node", text=" Mix RGB       ", icon = "NODE_MIXRGB")
+            props.use_transform = True
+            props.type = "ShaderNodeMixRGB"
+
             props = col.operator("node.add_node", text=" RGB Curves       ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
@@ -3549,6 +3553,10 @@ class NODES_PT_geom_add_color(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
             props.use_transform = True
             props.type = "ShaderNodeCombineRGB"
+
+            props = flow.operator("node.add_node", text = "", icon = "NODE_MIXRGB")
+            props.use_transform = True
+            props.type = "ShaderNodeMixRGB"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
             props.use_transform = True
@@ -3628,7 +3636,7 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Select by Handle Type ", icon = "SELECT_HANDLETYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveSelectHandles"
-            
+
             props = col.operator("node.add_node", text=" Set Handle Types       ", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveResample"
@@ -3686,11 +3694,11 @@ class NODES_PT_geom_add_curve(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "SELECT_HANDLETYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveSelectHandles"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "HANDLE_AUTO")
             props.use_transform = True
             props.type = "GeometryNodeCurveSetHandles"
-            
+
             props = flow.operator("node.add_node", text = "", icon = "SPLINE_TYPE")
             props.use_transform = True
             props.type = "GeometryNodeCurveSplineType"
