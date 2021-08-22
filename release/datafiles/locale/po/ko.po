@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -21853,10 +21853,6 @@ msgid "Register"
 msgstr "등록"
 
 
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "로딩시 이 텍스트를 스크립트로 실행, 텍스트 이름은 \".py\"로 끝나야합니다"
-
-
 msgid "Texture data-block used by materials, lights, worlds and brushes"
 msgstr "매트리얼, 라이트, 월드 및 브러쉬에서 사용하는 텍스처 데이터 블록"
 
@@ -39829,11 +39825,6 @@ msgid "Add a target to the constraint"
 msgstr "제약 조건에 대상을 추가합니다"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "반전을 지우기"
-
-
 msgid "Constraint"
 msgstr "제약"
 
@@ -39854,6 +39845,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "활성 본에 제약을 편집"
 
 
+msgid "Report"
+msgstr "보고서"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "반전을 지우기"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "반전을 설정"
@@ -39866,10 +39866,6 @@ msgstr "제약을 삭제"
 
 msgid "Remove constraint from constraint stack"
 msgstr "제약 스택에서 제약을 제거합니다"
-
-
-msgid "Report"
-msgstr "보고서"
 
 
 msgctxt "Operator"
@@ -45062,10 +45058,6 @@ msgstr "클램프 크기"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "이 값보다 아래 경계를 클램프 (사용 중지할 때 제로)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "지오메트리 분할되지 않은 버텍스은 생략"
 
 
 msgid "Keep Vert Order"
@@ -52154,10 +52146,6 @@ msgstr "아웃라이너 데이터 작업"
 
 msgid "Data Operation"
 msgstr "데이터 작업"
-
-
-msgid "Unhide"
-msgstr "숨기기를 해제"
 
 
 msgid "Delete child objects and collections"
@@ -61960,6 +61948,10 @@ msgid "Camera Presets"
 msgstr "카메라 프리셋"
 
 
+msgid "2D Cursor"
+msgstr "2D 커서"
+
+
 msgid "Active Point"
 msgstr "활성 포인트"
 
@@ -62421,10 +62413,6 @@ msgstr "텍스처 마스크"
 
 msgid "UDIM Grid"
 msgstr "UDIM 그리드"
-
-
-msgid "2D Cursor"
-msgstr "2D 커서"
 
 
 msgid "Histogram"
@@ -72313,6 +72301,14 @@ msgid "Show annotation data-block which belongs to active track"
 msgstr "활성 트랙에 속하는 주석 데이터 블록을 표시"
 
 
+msgid "2D Cursor Location"
+msgstr "2D 커서 위치"
+
+
+msgid "2D cursor location for this view"
+msgstr "이 뷰에 대한 2D 커서 위치"
+
+
 msgid "Lock to Selection"
 msgstr "선택에 잠금"
 
@@ -73054,14 +73050,6 @@ msgstr "공간 이미지 에디터"
 
 msgid "Image and UV editor space data"
 msgstr "이미지 및 UV 에디터 공간 데이터"
-
-
-msgid "2D Cursor Location"
-msgstr "2D 커서 위치"
-
-
-msgid "2D cursor location for this view"
-msgstr "이 뷰에 대한 2D 커서 위치"
 
 
 msgid "Display Channels"

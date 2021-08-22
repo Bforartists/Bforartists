@@ -159,11 +159,14 @@ class UI_PT_i18n_update_translations_settings(Panel):
         i18n_sett = context.window_manager.i18n_update_svn_settings
 
         if not i18n_sett.is_init and bpy.ops.ui.i18n_updatetranslation_svn_init_settings.poll():
-            bpy.ops.ui.i18n_updatetranslation_svn_init_settings()
+            # Cannot call the operator from here, this code might run while `pyrna_write_check()` returns False
+            # (which prevents any operator call from Python), during initalization of Blender.
+            UI_OT_i18n_updatetranslation_svn_init_settings.execute_static(context, settings.settings)
 
         if not i18n_sett.is_init:
             layout.label(text="Could not init languages data!")
             layout.label(text="Please edit the preferences of the UI Translate add-on")
+            layout.operator("ui.i18n_updatetranslation_svn_init_settings", text="Init Settings")
         else:
             split = layout.split(factor=0.75)
             split.template_list("UI_UL_i18n_languages", "", i18n_sett, "langs", i18n_sett, "active_lang", rows=8)
@@ -220,20 +223,20 @@ class UI_OT_i18n_updatetranslation_svn_init_settings(Operator):
     def poll(cls, context):
         return context.window_manager is not None
 
-    def execute(self, context):
-        if not hasattr(self, "settings"):
-            self.settings = settings.settings
+    @staticmethod
+    def execute_static(context, self_settings):
         i18n_sett = context.window_manager.i18n_update_svn_settings
 
         # First, create the list of languages from settings.
         i18n_sett.langs.clear()
-        root_br = self.settings.BRANCHES_DIR
-        root_tr_po = self.settings.TRUNK_PO_DIR
-        root_git_po = self.settings.GIT_I18N_PO_DIR
-        root_tr_mo = os.path.join(self.settings.TRUNK_DIR, self.settings.MO_PATH_TEMPLATE, self.settings.MO_FILE_NAME)
+        root_br = self_settings.BRANCHES_DIR
+        root_tr_po = self_settings.TRUNK_PO_DIR
+        root_git_po = self_settings.GIT_I18N_PO_DIR
+        root_tr_mo = os.path.join(self_settings.TRUNK_DIR, self_settings.MO_PATH_TEMPLATE, self_settings.MO_FILE_NAME)
         if not (os.path.isdir(root_br) and os.path.isdir(root_tr_po)):
-            return {'CANCELLED'}
-        for can_use, uid, num_id, name, isocode, po_path_branch in utils_i18n.list_po_dir(root_br, self.settings):
+            i18n_sett.is_init = False
+            return;
+        for can_use, uid, num_id, name, isocode, po_path_branch in utils_i18n.list_po_dir(root_br, self_settings):
             lng = i18n_sett.langs.add()
             lng.use = can_use
             lng.uid = uid
@@ -245,8 +248,17 @@ class UI_OT_i18n_updatetranslation_svn_init_settings(Operator):
                 lng.mo_path_trunk = root_tr_mo.format(isocode)
                 lng.po_path_git = os.path.join(root_git_po, isocode + ".po")
 
-        i18n_sett.pot_path = self.settings.FILE_NAME_POT
+        i18n_sett.pot_path = self_settings.FILE_NAME_POT
         i18n_sett.is_init = True
+
+    def execute(self, context):
+        if not hasattr(self, "settings"):
+            self.settings = settings.settings
+
+        self.execute_static(context, self.settings)
+
+        if context.window_manager.i18n_update_svn_settings.is_init is False:
+            return {'CANCELLED'}
         return {'FINISHED'}
 
 

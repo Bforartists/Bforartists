@@ -24,6 +24,7 @@ import importlib
 # Submodules to load during register
 submodules = (
     'copy_mirror_parameters',
+    'upgrade_face',
 )
 
 loaded_submodules = []

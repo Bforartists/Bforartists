@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -13947,11 +13947,6 @@ msgid "Select Word"
 msgstr "Markera Rad"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Markera Rad"
-
-
 msgid "Constraint"
 msgstr "Lägg till Stripp"
 
@@ -13972,6 +13967,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "Markera Länkad"
 
 
+msgid "Report"
+msgstr "Rapport"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Markera Rad"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Markera Rad"
@@ -13984,10 +13988,6 @@ msgstr "Lägg till Stripp"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Göm Markerad"
-
-
-msgid "Report"
-msgstr "Rapport"
 
 
 msgid "First frame of path animation"
@@ -22800,6 +22800,10 @@ msgid "Camera Presets"
 msgstr "Bildfrekvens-förinställningar"
 
 
+msgid "2D Cursor"
+msgstr "Markera Länkad"
+
+
 msgid "Active Point"
 msgstr "Flytta Till Lager"
 
@@ -22952,10 +22956,6 @@ msgstr "Skala"
 msgctxt "Operator"
 msgid "Draw"
 msgstr "Duplicera"
-
-
-msgid "2D Cursor"
-msgstr "Markera Länkad"
 
 
 msgid "Histogram"
@@ -25449,6 +25449,14 @@ msgid "Clip editor space data"
 msgstr "Bild Displist"
 
 
+msgid "2D Cursor Location"
+msgstr "Rensa Placering"
+
+
+msgid "2D cursor location for this view"
+msgstr "Markera Länkad"
+
+
 msgid "Lock to Selection"
 msgstr "Markera Länkad"
 
@@ -25695,14 +25703,6 @@ msgstr "Markera Länkad"
 
 msgid "Space Image Editor"
 msgstr "Redigerare för rumsbild"
-
-
-msgid "2D Cursor Location"
-msgstr "Rensa Placering"
-
-
-msgid "2D cursor location for this view"
-msgstr "Markera Länkad"
 
 
 msgid "Color and Alpha"

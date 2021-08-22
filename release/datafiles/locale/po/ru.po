@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -21948,10 +21948,6 @@ msgid "Register"
 msgstr "Зарегистрировать"
 
 
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "Запускать этот текст как скрипт при загрузке. Имя текста должно заканчиваться на «.py»"
-
-
 msgid "Texture data-block used by materials, lights, worlds and brushes"
 msgstr "Датаблок текстуры, используемый материалами, источниками освещения, мирами и кистями"
 
@@ -39566,11 +39562,6 @@ msgid "Add a target to the constraint"
 msgstr "Добавить цель в ограничитель"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Очистить инверсию"
-
-
 msgid "Constraint"
 msgstr "Ограничитель"
 
@@ -39591,6 +39582,15 @@ msgid "Edit a constraint on the active bone"
 msgstr "Изменить ограничитель активной кости"
 
 
+msgid "Report"
+msgstr "Отчёт"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Очистить инверсию"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Установить инверсию"
@@ -39603,10 +39603,6 @@ msgstr "Удалить ограничитель"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Удалить ограничитель из стека ограничителей"
-
-
-msgid "Report"
-msgstr "Отчёт"
 
 
 msgctxt "Operator"
@@ -44663,10 +44659,6 @@ msgstr "Ограничить размер"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Ограничить область этим значением (0 для отключения)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "Разделить геометрию, пропускать неиспользованные вершины"
 
 
 msgid "Keep Vert Order"
@@ -51733,10 +51725,6 @@ msgstr "Операция над данными структуры проекта
 
 msgid "Data Operation"
 msgstr "Операция над данными"
-
-
-msgid "Unhide"
-msgstr "Показать"
 
 
 msgid "Delete child objects and collections"
@@ -61505,6 +61493,10 @@ msgid "Camera Presets"
 msgstr "Предустановки камеры"
 
 
+msgid "2D Cursor"
+msgstr "2D-курсор"
+
+
 msgid "Active Point"
 msgstr "Активная точка"
 
@@ -61966,10 +61958,6 @@ msgstr "Повторение"
 
 msgid "Texture Mask"
 msgstr "Маска текстуры"
-
-
-msgid "2D Cursor"
-msgstr "2D-курсор"
 
 
 msgid "Histogram"
@@ -71920,6 +71908,14 @@ msgid "Show annotation data-block which belongs to active track"
 msgstr "Показывать заметки, которые принадлежат активному треку"
 
 
+msgid "2D Cursor Location"
+msgstr "Положение 2D-курсора"
+
+
+msgid "2D cursor location for this view"
+msgstr "Положение 2D-курсора для этого вида"
+
+
 msgid "Lock to Selection"
 msgstr "Фиксировать к выделению"
 
@@ -72653,14 +72649,6 @@ msgstr "Пространство редактора изображений"
 
 msgid "Image and UV editor space data"
 msgstr "Данные пространства редактора изображений и UV"
-
-
-msgid "2D Cursor Location"
-msgstr "Положение 2D-курсора"
-
-
-msgid "2D cursor location for this view"
-msgstr "Положение 2D-курсора для этого вида"
 
 
 msgid "Display Channels"

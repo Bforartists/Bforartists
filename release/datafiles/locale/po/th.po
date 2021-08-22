@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2019-12-08 17:40+0700\n"
@@ -1898,10 +1898,6 @@ msgstr "เส้น"
 
 msgid "Register"
 msgstr "ทะเบียน"
-
-
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "จดทะเบียนข้อความนี้ให้เป็นโมดูลตอนโหลด ชื่อข้อความจะต้องลงท้ายด้วย \".py\""
 
 
 msgid "Image or Movie"

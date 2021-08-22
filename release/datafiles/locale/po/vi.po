@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -26216,10 +26216,6 @@ msgid "Register"
 msgstr "Đăng Ký"
 
 
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr "Chạy văn bản này làm một văn thảo khi nhập vào, tên tập tin Văn Bản cần có đuôi \".py\""
-
-
 msgid "Texture data-block used by materials, lights, worlds and brushes"
 msgstr "Cục dữ liệu họa tiết thì vật liệu, bóng đèn, thế giới, và bút lông được dùng"
 
@@ -47409,15 +47405,6 @@ msgid "Add a target to the constraint"
 msgstr "Thêm một mục tiêu vào ràng buộc"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Xóa Nghịch"
-
-
-msgid "Clear inverse correction for Child Of constraint"
-msgstr "Xóa chỉnh sửa nghịch cho ràng buộc Con Cái Của"
-
-
 msgid "Constraint"
 msgstr "Ràng Buộc"
 
@@ -47438,6 +47425,23 @@ msgid "Edit a constraint on the active bone"
 msgstr "Biên tập một ràng buộc của xương hoạt động"
 
 
+msgid "Report"
+msgstr "Biên Bản"
+
+
+msgid "Create a notification after the operation"
+msgstr "Chế tạo một tin nhắn sau một thao tác"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Xóa Nghịch"
+
+
+msgid "Clear inverse correction for Child Of constraint"
+msgstr "Xóa chỉnh sửa nghịch cho ràng buộc Con Cái Của"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "Đặt Nghịch"
@@ -47454,14 +47458,6 @@ msgstr "Xóa Ràng Buộc"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Xóa ràng buộc từ xếp đống ràng buộc"
-
-
-msgid "Report"
-msgstr "Biên Bản"
-
-
-msgid "Create a notification after the operation"
-msgstr "Chế tạo một tin nhắn sau một thao tác"
 
 
 msgctxt "Operator"
@@ -54020,10 +54016,6 @@ msgstr "Kẹp Lại Kích Cỡ"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Kẹp lại dưới giá trị này (đặt = 0 để tắt)"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "Chẻ hình dạng, bỏ đỉnh không dùng"
 
 
 msgid "Keep Vert Order"
@@ -62261,10 +62253,6 @@ msgstr "Mục Lục - Thao Tác Dữ Liệu"
 
 msgid "Data Operation"
 msgstr "Thao Tác Dữ Liệu"
-
-
-msgid "Unhide"
-msgstr "Hiện"
 
 
 msgctxt "Operator"
@@ -74615,6 +74603,10 @@ msgid "Camera Presets"
 msgstr "Đặt Sẵn Máy Quay Phim"
 
 
+msgid "2D Cursor"
+msgstr "Con Trỏ 2D"
+
+
 msgid "Active Point"
 msgstr "Điểm Hoạt Động"
 
@@ -75124,10 +75116,6 @@ msgstr "Mặt Nạ Họa Tiết"
 
 msgid "UDIM Grid"
 msgstr "Đồ Thị UDIM"
-
-
-msgid "2D Cursor"
-msgstr "Con Trỏ 2D"
 
 
 msgid "Histogram"
@@ -78025,14 +78013,6 @@ msgstr "Thay Thế Cho Đồng Bộ Lại Tự Động"
 
 msgid "Enable library overrides automatic resync detection and process on file load. Disable when dealing with older .blend files that need manual Resync (Enforce) handling"
 msgstr "Bật đồ thay thế thư viện được tự động phát hiện đồng bộ lại và qúa trình khi nạp tập tin. Tắt khi xử lý tập tin .blend cũ hơn vì cần đồng bộ lại (Bắt Buộc) bằng tay."
-
-
-msgid "Asset Browser"
-msgstr "Bộ Trình Duyệt Tích Sản"
-
-
-msgid "Enable Asset Browser editor and operators to manage data-blocks as asset"
-msgstr "Bật bộ biên tập Trình Duyệt Tích Sản và các thao tác để quản lý các cục dữ liệu như tích sản"
 
 
 msgid "Cycles Debug"
@@ -86412,6 +86392,14 @@ msgid "Show annotation data-block which belongs to active track"
 msgstr "Hiện cục dữ liệu lời ghi chú của lằn hoạt động"
 
 
+msgid "2D Cursor Location"
+msgstr "Vị Trí Con Trỏ 2D"
+
+
+msgid "2D cursor location for this view"
+msgstr "Vị trí con tro 2D trong màn này"
+
+
 msgid "Lock to Selection"
 msgstr "Khóa Với Sự Lựa Chọn"
 
@@ -87011,6 +86999,10 @@ msgid "Type of the File Editor view (regular file browsing or asset browsing)"
 msgstr "Loại chiếu của Bộ Biên Tập Tập Tin (trình duyệt tập tin bình thường hay trình tích sản)"
 
 
+msgid "Asset Browser"
+msgstr "Bộ Trình Duyệt Tích Sản"
+
+
 msgid "Filebrowser Parameter"
 msgstr "Tham Số Trình Duyệt Tập Tin"
 
@@ -87177,14 +87169,6 @@ msgstr "Bộ Biên Tập Ảnh Không Gian"
 
 msgid "Image and UV editor space data"
 msgstr "Dữ liệu của bộ biên tập không gian và ảnh UV"
-
-
-msgid "2D Cursor Location"
-msgstr "Vị Trí Con Trỏ 2D"
-
-
-msgid "2D cursor location for this view"
-msgstr "Vị trí con tro 2D trong màn này"
 
 
 msgid "Display Channels"
@@ -104916,6 +104900,14 @@ msgid "More..."
 msgstr "Thêm..."
 
 
+msgid "Move to First"
+msgstr "Di chuyển đến Thứ Nhất"
+
+
+msgid "Move to Last"
+msgstr "Di Chuyển Đến Cuối"
+
+
 msgid "Flip Color Ramp"
 msgstr "Lật Dốc Màu"
 
@@ -109824,14 +109816,6 @@ msgstr "Phong Cách Tự Do: Kết xuất nét"
 
 msgid "Cannot open file: %s"
 msgstr "Không thể mở tập tin: %s"
-
-
-msgid "Move to First"
-msgstr "Di chuyển đến Thứ Nhất"
-
-
-msgid "Move to Last"
-msgstr "Di Chuyển Đến Cuối"
 
 
 msgid "External library data"
