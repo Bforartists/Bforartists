@@ -16,6 +16,8 @@ SOURCE_EXT = (
     ".py",
     # Text (also CMake)
     ".txt", ".cmake", ".rst",
+    # MS-Windows Scripts.
+    ".bat", ".cmd",
 )
 
 
@@ -47,26 +49,36 @@ def path_expand(paths, filename_check=None):
 
 
 def rstrip_file(filename):
+    reports = []
     with open(filename, "r", encoding="utf-8") as fh:
         data_src = fh.read()
 
+    # Strip trailing space.
     data_dst = []
     for l in data_src.rstrip().splitlines(True):
         data_dst.append(l.rstrip() + "\n")
 
     data_dst = "".join(data_dst)
+
+    # Remove BOM.
+    if data_dst and (data_dst[0] == '\ufeff'):
+        data_dst = data_dst[1:]
+
     len_strip = len(data_src) - len(data_dst)
     if len_strip != 0:
+        reports.append("STRIP=%d" % len_strip)
+
+    if len_strip:
         with open(filename, "w", encoding="utf-8") as fh:
             fh.write(data_dst)
-    return len_strip
+    return tuple(reports)
 
 
 def main():
     for f in path_expand(PATHS, is_source):
-        len_strip = rstrip_file(f)
-        if len_strip != 0:
-            print(f"Strip ({len_strip}): {f}")
+        report = rstrip_file(f)
+        if report:
+            print("Strip (%s): %s" % (', '.join(report), f))
 
 
 if __name__ == "__main__":

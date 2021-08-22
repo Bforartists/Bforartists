@@ -211,12 +211,13 @@ class GPU_Indices_Mesh():
         atexit.unregister(cls.end_opengl)
         atexit.register(cls.end_opengl)
 
-        cls.shader = gpu.types.GPUShader(load_shader("ID_color_vert.glsl"),
-                load_shader("ID_color_frag.glsl"),)
-        #cls.unif_use_clip_planes =
-        #cls.shader.uniform_from_name('use_clip_planes')
-        #cls.unif_clip_plane = cls.shader.uniform_from_name('clip_plane')
+        cls.shader = gpu.types.GPUShader(
+            load_shader("ID_color_vert.glsl"),
+            load_shader("ID_color_frag.glsl"),
+            defines="#define USE_CLIP_PLANES\n")
+
         cls.unif_offset = cls.shader.uniform_from_name('offset')
+        cls.use_clip_planes = False
 
 
     def __init__(self, depsgraph, obj, draw_tris, draw_edges, draw_verts):
@@ -332,8 +333,12 @@ class GPU_Indices_Mesh():
         gpu.matrix.push()
         gpu.matrix.push_projection()
         gpu.matrix.multiply_matrix(ob_mat)
+
+        self.shader.bind()
+        if GPU_Indices_Mesh.use_clip_planes:
+            self.shader.uniform_float("ModelMatrix", ob_mat)
+
         if self.draw_tris:
-            self.shader.bind()
             self.shader.uniform_int("offset", (index_offset,))
             self.batch_tris.draw(self.shader)
             index_offset += len(self.tri_verts)
@@ -359,7 +364,6 @@ class GPU_Indices_Mesh():
             gpu.matrix.load_projection_matrix(winmat)
 
         if self.draw_edges:
-            self.shader.bind()
             self.shader.uniform_int("offset", (index_offset,))
             #bgl.glLineWidth(3.0)
             self.batch_edges.draw(self.shader)
@@ -367,7 +371,6 @@ class GPU_Indices_Mesh():
             index_offset += len(self.edge_verts)
 
         if self.draw_verts:
-            self.shader.bind()
             self.shader.uniform_int("offset", (index_offset,))
             self.batch_lverts.draw(self.shader)
 
@@ -427,17 +430,17 @@ def gpu_Indices_restore_state():
 
 
 def gpu_Indices_use_clip_planes(rv3d, value):
-    pass #TODO
-    #if rv3d.use_clip_planes:
-        #planes = bgl.Buffer(bgl.GL_FLOAT, (6, 4), rv3d.clip_planes)
+    GPU_Indices_Mesh.init_opengl()
+    shader = GPU_Indices_Mesh.shader
+    shader.bind()
+    if value and rv3d.use_clip_planes:
+        GPU_Indices_Mesh.use_clip_planes = True
+        planes = gpu.types.Buffer('FLOAT', (6, 4), rv3d.clip_planes)
+        shader.uniform_vector_float(shader.uniform_from_name("clip_plane"), planes, 4, 4)
+    else:
+        GPU_Indices_Mesh.use_clip_planes = False
 
-        #_store_current_shader_state(PreviousGLState)
-        #GPU_Indices_Mesh.init_opengl()
-        #bgl.glUseProgram(GPU_Indices_Mesh.shader.program)
-        #bgl.glUniform1i(GPU_Indices_Mesh.unif_use_clip_planes, value)
+    shader.uniform_bool("use_clip_planes", (GPU_Indices_Mesh.use_clip_planes,))
 
-        #bgl.glUniform4fv(GPU_Indices_Mesh.unif_clip_plane, 4, planes)
-
-        #_restore_shader_state(PreviousGLState)
 def gpu_Indices_mesh_cache_clear():
     GPU_Indices_Mesh._Hash.clear()

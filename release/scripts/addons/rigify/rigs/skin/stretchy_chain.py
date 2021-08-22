@@ -394,7 +394,6 @@ class ControlBoneChainPropagate(ControlBoneWeakParentLayer):
     Parent mechanism generator that propagates chain twist/scale
     to the reparent system, if Propagate To Controls is used.
     """
-    inherit_scale_mode = 'FULL'
 
     def __eq__(self, other):
         return (

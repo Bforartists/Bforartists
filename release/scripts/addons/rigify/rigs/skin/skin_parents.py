@@ -145,6 +145,66 @@ class ControlBoneParentArmature(ControlBoneParentBase):
             self.make_constraint(self.output_bone, 'COPY_SCALE', self.copy_scale)
 
 
+class ControlBoneParentMix(ControlBoneParentBase):
+    """Combine multiple parent mechanisms using the Armature constraint."""
+
+    def __init__(self, rig, node, parents, *, suffix=None):
+        super().__init__(rig, node)
+
+        self.parents = []
+        self.parent_weights = []
+        self.suffix = suffix
+
+        self.add_parents(parents)
+
+    def add_parents(self, parents):
+        for item in parents:
+            if isinstance(item, tuple):
+                parent, weight = item
+            else:
+                parent, weight = item, 1
+
+            for i, cur in enumerate(self.parents):
+                if parent == cur:
+                    self.parent_weights[i] += weight
+                    break
+            else:
+                self.parents.append(parent)
+                self.parent_weights.append(weight)
+
+    def enable_component(self):
+        for parent in self.parents:
+            parent.enable_component()
+
+        super().enable_component()
+
+    def __eq__(self, other):
+        return (
+            isinstance(other, ControlBoneParentMix) and
+            self.parents == other.parents and
+            self.parent_weights == other.parent_weights
+        )
+
+    def generate_bones(self):
+        self.output_bone = self.node.make_bone(
+            make_derived_name(self.node.name, 'mch', self.suffix or '_mix'), 1/2, rig=self.rig)
+
+        self.rig.generator.disable_auto_parent(self.output_bone)
+
+    def parent_bones(self):
+        if len(self.parents) == 1:
+            self.set_bone_parent(self.output_bone, target)
+
+    def rig_bones(self):
+        if len(self.parents) > 1:
+            targets = [(p.output_bone, w) for p, w in zip(self.parents, self.parent_weights)]
+
+            self.make_constraint(
+                self.output_bone, 'ARMATURE', targets=targets,
+                use_deform_preserve_volume=True
+            )
+
+
 class ControlBoneParentLayer(ControlBoneParentBase):
     """Base class for parent generators that build on top of another mechanism."""
 
@@ -163,9 +223,6 @@ class ControlBoneWeakParentLayer(ControlBoneParentLayer):
     I.e. it doesn't affect the control for its owner rig, but only for other rigs
     that have controls merged into this one.
     """
-
-    # Inherit mode used to parent the pseudo-control to the output of this generator.
-    inherit_scale_mode = 'AVERAGE'
 
     @staticmethod
     def strip(parent):

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -10971,17 +10971,21 @@ msgid "Unindent"
 msgstr "Girintisiz"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "Ters Seçim"
-
-
 msgid "Constraint"
 msgstr "Konum Kısıtlamaları"
 
 
 msgid "The owner of this constraint"
 msgstr "İşi durdur"
+
+
+msgid "Report"
+msgstr "Raporla"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "Ters Seçim"
 
 
 msgctxt "Operator"
@@ -10996,10 +11000,6 @@ msgstr "Konum Kısıtlamaları"
 
 msgid "Remove constraint from constraint stack"
 msgstr "Tüm grupları sil"
-
-
-msgid "Report"
-msgstr "Raporla"
 
 
 msgid "First frame of path animation"
@@ -14877,10 +14877,6 @@ msgid "Data Operation"
 msgstr "Boolean İşlemi..."
 
 
-msgid "Unhide"
-msgstr "Gizle/Gizleme"
-
-
 msgctxt "Operator"
 msgid "Expand/Collapse All"
 msgstr "Tüm Katmanları Göster"
@@ -17784,6 +17780,10 @@ msgid "Camera Presets"
 msgstr "Aktif Kamera"
 
 
+msgid "2D Cursor"
+msgstr "3D İmleç "
+
+
 msgid "Active Point"
 msgstr "Aktif Kemik Yok"
 
@@ -17880,10 +17880,6 @@ msgstr "Ölçekle"
 msgctxt "Operator"
 msgid "Draw"
 msgstr "Çiz:"
-
-
-msgid "2D Cursor"
-msgstr "3D İmleç "
 
 
 msgid "Backdrop"
@@ -20153,6 +20149,10 @@ msgid "Space Clip Editor"
 msgstr "Ipo Eğri Editörü "
 
 
+msgid "2D Cursor Location"
+msgstr "Seçimi İmlece"
+
+
 msgid "Lock to Selection"
 msgstr "Seçimi İmlece"
 
@@ -20359,10 +20359,6 @@ msgstr "Anahtar Kareyi Göster"
 
 msgid "Space Image Editor"
 msgstr "UV/Resim Editörü "
-
-
-msgid "2D Cursor Location"
-msgstr "Seçimi İmlece"
 
 
 msgid "Color and Alpha"

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'e2a411570e55')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -957,6 +957,10 @@ msgstr "アーマチュアのアクティブな編集ボーン"
 
 msgid "Asset Library Reference"
 msgstr "アセットライブラリリファレンス"
+
+
+msgid "Identifier to refer to the asset library"
+msgstr "アセットライブラリ参照用の識別子"
 
 
 msgid "Asset Data"
@@ -3456,6 +3460,14 @@ msgstr "頂点カラー"
 
 msgid "Use always Vertex Color mode"
 msgstr "常に頂点カラーモードを使用します"
+
+
+msgid "Caps Type"
+msgstr "端のタイプ"
+
+
+msgid "The shape of the start and end of the stroke"
+msgstr "ストロークの開始と終了の形状"
 
 
 msgid "Round"
@@ -6055,20 +6067,53 @@ msgid "Before Original (Aligned)"
 msgstr "オリジナルの前（整列）"
 
 
+msgid "Apply the action channels before the original transformation, as if applied to an imaginary parent in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr ""
+"仮想の親に「整列」の「スケールを継承」モードを適用するかのように、\n"
+"オリジナルのトランスフォームの前にアクションチャンネルを適用します\n"
+"実際は「フル」を位置に「チャンネル分割」を回転とスケールに使用します"
+
+
 msgid "Before Original (Split Channels)"
 msgstr "オリジナルの前（チャンネル分割）"
+
+
+msgid "Apply the action channels before the original transformation, handling location, rotation and scale separately"
+msgstr ""
+"オリジナルのトランスフォームの前にアクションチャンネルを適用します\n"
+"位置、回転、スケールを別々に処理します"
 
 
 msgid "After Original (Full)"
 msgstr "オリジナルの後（フル）"
 
 
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child in Full Inherit Scale mode. Will create shear when combining rotation and non-uniform scale"
+msgstr ""
+"仮想の子に「フル」の「スケールを継承」モードを適用するかのように、\n"
+"オリジナルのトランスフォームの後にアクションチャンネルを適用します\n"
+"回転と非均一のスケールの組み合わせではせん断ができます"
+
+
 msgid "After Original (Aligned)"
 msgstr "オリジナルの後（整列）"
 
 
+msgid "Apply the action channels after the original transformation, as if applied to an imaginary child in Aligned Inherit Scale mode. This effectively uses Full for location and Split Channels for rotation and scale"
+msgstr ""
+"仮想の子に「整列」の「スケールを継承」モードを適用するかのように、\n"
+"オリジナルのトランスフォームの後にアクションチャンネルを適用します\n"
+"実際は「フル」を位置に「チャンネル分割」を回転とスケールに使用します"
+
+
 msgid "After Original (Split Channels)"
 msgstr "オリジナルの後（チャンネル分割）"
+
+
+msgid "Apply the action channels after the original transformation, handling location, rotation and scale separately"
+msgstr ""
+"オリジナルのトランスフォームの後にアクションチャンネルを適用します\n"
+"位置、回転、スケールを別々に処理します"
 
 
 msgid "Target object"
@@ -6616,13 +6661,6 @@ msgid "Replace the original transformation with copied"
 msgstr "オリジナルのトランスフォームをコピーで置き換えます"
 
 
-msgid "Apply copied transformation after original, handling location, rotation and scale separately, similar to a sequence of three Copy constraints"
-msgstr ""
-"トランスフォームのコピーの適用を、3つのコピーコンストレイント\n"
-"が連続するように、オリジナルの後で位置、回転、スケールを別々に\n"
-"処理して行います"
-
-
 msgid "Remove Target Shear"
 msgstr "ターゲットのせん断を除去"
 
@@ -6920,7 +6958,7 @@ msgstr "ポールの回転のオフセット"
 
 
 msgid "Pole Sub-Target"
-msgstr "ポール サブターゲット"
+msgstr "ポールサブターゲット"
 
 
 msgid "Pole Target"
@@ -15101,6 +15139,10 @@ msgid "Use Masks in Render"
 msgstr "レンダーでマスクを使用"
 
 
+msgid "Include the mask layers when rendering the view-layer"
+msgstr "ビューレイヤーのレンダリング時、マスクレイヤーも含めます"
+
+
 msgid "Vertex Paint Opacity"
 msgstr "頂点ペイントの不透明度"
 
@@ -16763,8 +16805,16 @@ msgid "Use material masks to filter out occluded strokes"
 msgstr "隠れたストロークを排除するためマテリアルマスクを使用します"
 
 
+msgid "Mask bits to match from Material Line Art settings"
+msgstr "マテリアルラインアート設定とマッチするマスクビット"
+
+
 msgid "Match Masks"
 msgstr "複数のマスクにマッチ"
+
+
+msgid "Require matching all material masks instead of just one"
+msgstr "一つだけでなく、全マテリアルマスクとのマッチを条件にします"
 
 
 msgid "Use Occlusion Range"
@@ -24621,6 +24671,54 @@ msgid "Vertex groups of the object"
 msgstr "オブジェクトの頂点グループ"
 
 
+msgid "Camera Visibility"
+msgstr "カメラの可視性"
+
+
+msgid "Object visibility to camera rays"
+msgstr "カメラレイに対するオブジェクトの可視性"
+
+
+msgid "Diffuse Visibility"
+msgstr "ディフューズの可視性"
+
+
+msgid "Object visibility to diffuse rays"
+msgstr "ディフューズ反射レイに対するオブジェクトの可視性"
+
+
+msgid "Glossy Visibility"
+msgstr "光沢の可視性"
+
+
+msgid "Object visibility to glossy rays"
+msgstr "光沢反射レイに対するオブジェクトの可視性"
+
+
+msgid "Shadow Visibility"
+msgstr "影の可視性"
+
+
+msgid "Object visibility to shadow rays"
+msgstr "シャドウレイに対するオブジェクトの可視性"
+
+
+msgid "Transmission Visibility"
+msgstr "伝播の可視性"
+
+
+msgid "Object visibility to transmission rays"
+msgstr "伝播レイに対するオブジェクトの可視性"
+
+
+msgid "Volume Scatter Visibility"
+msgstr "ボリューム散乱の可視性"
+
+
+msgid "Object visibility to volume scattering rays"
+msgstr "ボリューム散乱レイに対するオブジェクトの可視性"
+
+
 msgid "Particle Settings"
 msgstr "パーティクル設定"
 
@@ -26455,12 +26553,6 @@ msgstr "選択中の最後の TextLine のインデックス"
 
 msgid "Register"
 msgstr "登録"
-
-
-msgid "Run this text as a script on loading, Text name must end with \".py\""
-msgstr ""
-"このテキストを読み込み時にスクリプトとして実行します。\n"
-"テキスト名は「.py」で終わる必要があります"
 
 
 msgid "Texture data-block used by materials, lights, worlds and brushes"
@@ -28483,7 +28575,7 @@ msgstr "項目のID"
 
 
 msgid "Identifier of operator to call on input event"
-msgstr "入力イベントを呼び出す操作の識別子"
+msgstr "入力イベントを呼び出すオペレーターの識別子"
 
 
 msgid "Is this keymap item user defined (doesn't just replace a builtin item)"
@@ -29603,7 +29695,7 @@ msgstr "タイマー"
 
 
 msgid "Name of operator (translated) to call on input event"
-msgstr "入力イベントを呼び出す操作の(翻訳後の)名前"
+msgstr "入力イベントで呼び出すオペレーターの（翻訳後の）名前"
 
 
 msgid "OS Key"
@@ -29615,7 +29707,7 @@ msgstr "OS キーを押しながら"
 
 
 msgid "Properties to set when the operator is called"
-msgstr "操作が呼び出された時に設定されるプロパティ"
+msgstr "オペレーターが呼び出された時に設定されるプロパティ"
 
 
 msgid "Property Value"
@@ -31671,6 +31763,10 @@ msgstr "このマテリアルスロットで使用されるマテリアルデー
 
 msgid "Material slot name"
 msgstr "マテリアルスロット名"
+
+
+msgid "Assets Context Menu"
+msgstr "アセットコンテクストメニュー"
 
 
 msgctxt "MovieClip"
@@ -41814,7 +41910,11 @@ msgstr "コントロールハンドルを設定する方法"
 
 
 msgid "The start and end handles are fixed positions"
-msgstr "開始と終了ハンドルを固定の位置にします"
+msgstr "開始と終了ハンドルの位置を固定します"
+
+
+msgid "The start and end handles are offsets from the spline's control points"
+msgstr "開始と終了ハンドルの位置をスプラインの制御点からずらします"
 
 
 msgid "Curve Circle"
@@ -41905,6 +42005,10 @@ msgid "Curve Reverse"
 msgstr "カーブ反転"
 
 
+msgid "Select by Handle Type"
+msgstr "ハンドルタイプで選択"
+
+
 msgid "The handle can be moved anywhere, and doesn't influence the point's other handle"
 msgstr "ハンドルをどこにでも移動でき、そのポイントの他のハンドルに影響しません"
 
@@ -41921,6 +42025,18 @@ msgid "The location is constrained to point in the opposite direction as the oth
 msgstr "他のハンドルの逆方向に向くよう、位置が制限されます"
 
 
+msgid "Whether to check the type of left and right handles"
+msgstr "左右のハンドルタイプをチェックするかどうか"
+
+
+msgid "Use the left handles"
+msgstr "左のハンドルを使用します"
+
+
+msgid "Use the right handles"
+msgstr "右のハンドルを使用します"
+
+
 msgid "Set Handle Type"
 msgstr "ハンドルタイプ設定"
 
@@ -41931,6 +42047,18 @@ msgstr "左右のハンドルを更新するかどうか"
 
 msgid "Curve Spiral"
 msgstr "カーブスパイラル"
+
+
+msgid "Set Spline Type"
+msgstr "スプラインタイプを設定"
+
+
+msgid "Set the splines to Bezier"
+msgstr "スプラインをベジエに設定します"
+
+
+msgid "Set the splines to NURBS"
+msgstr "スプラインを NURBS にします"
 
 
 msgid "Star"
@@ -42500,6 +42628,10 @@ msgstr "ディスプレイスメントをオブジェクト空間で行います
 
 msgid "Displacement is in world space, not affected by object scale"
 msgstr "ディスプレイスメントをワールド空間で行います。オブジェクトのスケールの影響を受けません"
+
+
+msgid "Specular BSDF"
+msgstr "スペキュラーBSDF"
 
 
 msgid "Emission"
@@ -45826,6 +45958,11 @@ msgid "Trigger a reread of the assets"
 msgstr "アセットのリロードのトリガー"
 
 
+msgctxt "Operator"
+msgid "Mark as Asset"
+msgstr "アセットとしてマーク"
+
+
 msgid "Enable easier reuse of selected data-blocks through the Asset Browser, with the help of customizable metadata (like previews, descriptions and tags)"
 msgstr ""
 "カスタマイズ可能なメタデータ（プレビューや詳細、タグなど）により\n"
@@ -47731,15 +47868,6 @@ msgid "Add a target to the constraint"
 msgstr "コンストレイントにターゲットを追加します"
 
 
-msgctxt "Operator"
-msgid "Clear Inverse"
-msgstr "逆補正を解除"
-
-
-msgid "Clear inverse correction for Child Of constraint"
-msgstr "チャイルドコンストレイント用の逆補正を解除します"
-
-
 msgid "Constraint"
 msgstr "コンストレイント"
 
@@ -47760,6 +47888,23 @@ msgid "Edit a constraint on the active bone"
 msgstr "アクティブボーンのコンストレイントを編集します"
 
 
+msgid "Report"
+msgstr "レポート"
+
+
+msgid "Create a notification after the operation"
+msgstr "操作後に通知を生成します"
+
+
+msgctxt "Operator"
+msgid "Clear Inverse"
+msgstr "逆補正を解除"
+
+
+msgid "Clear inverse correction for Child Of constraint"
+msgstr "チャイルドコンストレイント用の逆補正を解除します"
+
+
 msgctxt "Operator"
 msgid "Set Inverse"
 msgstr "逆補正を設定"
@@ -47776,14 +47921,6 @@ msgstr "コンストレイントを削除"
 
 msgid "Remove constraint from constraint stack"
 msgstr "スタックからコンストレイントを削除します"
-
-
-msgid "Report"
-msgstr "レポート"
-
-
-msgid "Create a notification after the operation"
-msgstr "操作後に通知を生成します"
 
 
 msgctxt "Operator"
@@ -49540,6 +49677,13 @@ msgstr ""
 
 msgid "Keep original"
 msgstr "オリジナルを保持"
+
+
+msgid "Keep original textures files if possible. WARNING: if you use more than one texture, where pbr standard requires only one, only one texture will be used. This can lead to unexpected results"
+msgstr ""
+"可能であればオリジナルのテクスチャファイルを保持します\n"
+"注意：二つ以上のテクスチャ使用時、PBR スタンダードが一つのみ要求する場合は\n"
+"使用されるテクスチャは一つだけであり、不測の事態に陥る可能性があります"
 
 
 msgid "Punctual Lights"
@@ -52229,6 +52373,11 @@ msgstr "選択中のグリースペンシルポイントの選択を広げます
 
 
 msgctxt "Operator"
+msgid "Random"
+msgstr "ランダム"
+
+
+msgctxt "Operator"
 msgid "Select Vertex Color"
 msgstr "頂点カラーで選択"
 
@@ -54426,10 +54575,6 @@ msgstr "クランプサイズ"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "この値未満の境界をクランプします（0で無効）"
-
-
-msgid "Split geometry, omits unused verts"
-msgstr "形状を分割し、未使用の頂点を削除します"
 
 
 msgid "Keep Vert Order"
@@ -61889,6 +62034,10 @@ msgid "Flash On Transfer"
 msgstr "転送時にフラッシュ"
 
 
+msgid "Flash the target object when transferring the mode"
+msgstr "モード転送時にターゲットオブジェクトをフラッシュします"
+
+
 msgctxt "Operator"
 msgid "Apply Object Transform"
 msgstr "オブジェクトのトランスフォームを適用"
@@ -62707,10 +62856,6 @@ msgstr "アウトライナーデータ操作"
 
 msgid "Data Operation"
 msgstr "データ操作"
-
-
-msgid "Unhide"
-msgstr "再表示"
 
 
 msgctxt "Operator"
@@ -66898,7 +67043,7 @@ msgstr "アクティブ要素の拡張を反転します"
 
 
 msgid "Max Vertex Count for Geodesic Move Preview"
-msgstr "ジオデシック移動プレビューの最大頂点数"
+msgstr "測地線移動プレビューの最大頂点数"
 
 
 msgid "Data Target"
@@ -68127,7 +68272,11 @@ msgstr "画像の元のサイズを維持します"
 
 
 msgid "Set View Transform"
-msgstr "ビューの変換を設定"
+msgstr "ビューの色変換を設定"
+
+
+msgid "Set appropriate view transform based on media color space"
+msgstr "メディアの色空間を元に、適切なビューの色変換を設定します"
 
 
 msgctxt "Operator"
@@ -70003,7 +70152,7 @@ msgstr "そのコントロールの元のラベル"
 
 
 msgid "Original tip of the control"
-msgstr "そのコントロールの元のTip"
+msgstr "そのコントロールの元の Tip"
 
 
 msgid "Original label of the enum item of the control, if any"
@@ -70015,63 +70164,63 @@ msgstr "あればコントロールの列挙アイテムの元チップ"
 
 
 msgid "Original RNA-defined label of the control, if any"
-msgstr "あればコントロールの元RNA定義ラベル"
+msgstr "あればコントロールの元 RNA 定義ラベル"
 
 
 msgid "Original RNA-defined tip of the control, if any"
-msgstr "あればコントロールの元RNA定義チップ"
+msgstr "あればコントロールの元 RNA 定義チップ"
 
 
 msgid "Path to the matching po file"
-msgstr "適合するpoファイルへのパス"
+msgstr "適合する po ファイルへのパス"
 
 
 msgid "RNA context for label"
-msgstr "ラベルのRNAコンテクスト"
+msgstr "ラベルの RNA コンテクスト"
 
 
 msgid "Identifier of the RNA enum item, if any"
-msgstr "あればRNA列挙アイテムのID"
+msgstr "あれば RNA 列挙アイテムの ID"
 
 
 msgid "RNA-defined label of the control, if any"
-msgstr "あればそのコントロールのRNAで定義されたラベル"
+msgstr "あればそのコントロールの RNA で定義されたラベル"
 
 
 msgid "Flags about the RNA-defined label of the button"
-msgstr "ボタンのRNA定義ラベルについてのフラグ"
+msgstr "ボタンの RNA 定義ラベルについてのフラグ"
 
 
 msgid "Identifier of the RNA property, if any"
-msgstr "あればRNAプロパティの識別子"
+msgstr "あれば RNA プロパティの識別子"
 
 
 msgid "Identifier of the RNA struct, if any"
-msgstr "あればRNA構造体ID"
+msgstr "あれば RNA 構造体ID"
 
 
 msgid "RNA-defined tip of the control, if any"
-msgstr "あればこのコントロールのRNA定義のチップ"
+msgstr "あればこのコントロールの RNA 定義のチップ"
 
 
 msgid "Flags about the RNA-defined tip of the button"
-msgstr "RNAで定義されたボタンのTipについてのフラグ"
+msgstr "RNA で定義されたボタンの Tip についてのフラグ"
 
 
 msgid "Stats from opened po"
-msgstr "開いたpoの状態"
+msgstr "開いた po の状態"
 
 
 msgid "Try to rebuild mo file, and refresh Blender's UI"
-msgstr "moファイルのリビルドと、BlenderのUIの更新を試みます"
+msgstr "mo ファイルのリビルドと、Blender の UI の更新を試みます"
 
 
 msgid "Update po file, try to rebuild mo file, and refresh Blender's UI"
-msgstr "poファイルを更新し、mo ファイルのリビルドと、BlenderのUIのリフレッシュを試みます"
+msgstr "po ファイルを更新し、mo ファイルのリビルドと、Blender の UI のリフレッシュを試みます"
 
 
 msgid "Edit i18n in current language for the active button"
-msgstr "現在の言語でアクティブボタンの i18nを編集"
+msgstr "現在の言語でアクティブボタンの i18n を編集"
 
 
 msgctxt "Operator"
@@ -74384,6 +74533,95 @@ msgstr ""
 
 
 msgctxt "Operator"
+msgid "Import USD"
+msgstr "USDをインポート"
+
+
+msgid "Import USD stage into current scene"
+msgstr "USD ステージを現在のシーンにインポートします"
+
+
+msgid "Create Collection"
+msgstr "コレクションを作成"
+
+
+msgid "Add all imported objects to a new collection"
+msgstr "インポートした全オブジェクトを新規コレクションに追加します"
+
+
+msgid "Import guide geometry"
+msgstr "ガイド形状をインポート"
+
+
+msgid "Import Instance Proxies"
+msgstr "インスタンスプロキシをインポート"
+
+
+msgid "Create unique Blender objects for USD instances"
+msgstr "USDインスタンス毎に個別の Blender オブジェクトを作成します"
+
+
+msgid "Import proxy geometry"
+msgstr "プロキシ形状をインポートします"
+
+
+msgid "Import final render geometry"
+msgstr "最終レンダー形状をインポートします"
+
+
+msgid "Import Subdivision Scheme"
+msgstr "サブディビジョンスキームをインポート"
+
+
+msgid "Create subdivision surface modifiers based on the USD SubdivisionScheme attribute"
+msgstr "USD SubdivisionScheme 属性を元にサブディビジョンサーフェスモディファイアーを作成します"
+
+
+msgid "Import USD Preview"
+msgstr "USDプレビューをインポート"
+
+
+msgid "Convert UsdPreviewSurface shaders to Principled BSDF shader networks"
+msgstr "UsdPreviewSurface シェーダーをプリンシプル BSDF シェーダーネットワークに変換します"
+
+
+msgid "Visible Primitives Only"
+msgstr "可視プリミティブのみ"
+
+
+msgid "Light Intensity Scale"
+msgstr "光量のスケール"
+
+
+msgid "Scale for the intensity of imported lights"
+msgstr "インポートしたライトの強度のスケール"
+
+
+msgid "Path Mask"
+msgstr "パスマスク"
+
+
+msgid "Read mesh vertex colors"
+msgstr "メッシュ頂点カラーを読み込みます"
+
+
+msgid "Read mesh UV coordinates"
+msgstr "メッシュ UV 座標を読み込みます"
+
+
+msgid "Update the scene's start and end frame to match those of the USD archive"
+msgstr "シーンの開始・終了フレームを、USD アーカイブの物と一致するよう更新します"
+
+
+msgid "Set Material Blend"
+msgstr "マテリアルブレンドを設定"
+
+
+msgid "If the Import USD Preview option is enabled, the material blend method will automatically be set based on the shader's opacity and opacityThreshold inputs"
+msgstr "USD プレビューオプション有効時、マテリアルのブレンド方法がシェーダーの不透明度と opacityThreshold 入力を元に自動的に設定されます"
+
+
+msgctxt "Operator"
 msgid "Close Window"
 msgstr "ウィンドウを閉じる"
 
@@ -75151,6 +75389,10 @@ msgid "Camera Presets"
 msgstr "カメラのプリセット"
 
 
+msgid "2D Cursor"
+msgstr "2Dカーソル"
+
+
 msgid "Active Point"
 msgstr "アクティブポイント"
 
@@ -75660,10 +75902,6 @@ msgstr "テクスチャマスク"
 
 msgid "UDIM Grid"
 msgstr "UDIMグリッド"
-
-
-msgid "2D Cursor"
-msgstr "2Dカーソル"
 
 
 msgid "Histogram"
@@ -78571,16 +78809,6 @@ msgstr ""
 "手動による再同期（強制）処理が必要な古い .blend ファイルの場合は無効になります"
 
 
-msgid "Asset Browser"
-msgstr "アセットブラウザー"
-
-
-msgid "Enable Asset Browser editor and operators to manage data-blocks as asset"
-msgstr ""
-"データブロックをアセットとして管理する\n"
-"アセットブラウザーとオペレーターを有効にします"
-
-
 msgid "Cycles Debug"
 msgstr "Cyclesデバッグ"
 
@@ -80785,6 +81013,10 @@ msgid "AO Distance"
 msgstr "AOの距離"
 
 
+msgid "AO distance used for approximate global illumination (0 means use world setting)"
+msgstr "グローバルイルミネーションを近似する AO の距離（０でワールド設定を使用）"
+
+
 msgid "Dicing Scale"
 msgstr "ダイシングスケール"
 
@@ -82398,6 +82630,10 @@ msgstr "エクスポート時にシーンスケール設定を適用します"
 
 msgid "Data Layers"
 msgstr "データレイヤー"
+
+
+msgid "Export normals, UVs, vertex colors and materials for formats that support it significantly increasing file size"
+msgstr "法線、UV、頂点カラー、マテリアルを対応するフォーマットにエクスポートします。ファイルサイズが大幅に増大します"
 
 
 msgid "Copy Textures"
@@ -87057,6 +87293,14 @@ msgid "Show annotation data-block which belongs to active track"
 msgstr "アクティブトラックに属するアノテーションデータブロックを表示します"
 
 
+msgid "2D Cursor Location"
+msgstr "2Dカーソルの位置"
+
+
+msgid "2D cursor location for this view"
+msgstr "このビューでの2Dカーソルの位置"
+
+
 msgid "Lock to Selection"
 msgstr "選択物にロック"
 
@@ -87658,6 +87902,10 @@ msgstr ""
 "（通常のファイルブラウジングまたはアセットブラウジング）"
 
 
+msgid "Asset Browser"
+msgstr "アセットブラウザー"
+
+
 msgid "Filebrowser Parameter"
 msgstr "ファイルブラウザーのパラメータ"
 
@@ -87826,14 +88074,6 @@ msgstr "画像エディタースペース"
 
 msgid "Image and UV editor space data"
 msgstr "画像とUVエディタースペースデータ"
-
-
-msgid "2D Cursor Location"
-msgstr "2Dカーソルの位置"
-
-
-msgid "2D cursor location for this view"
-msgstr "このビューでの2Dカーソルの位置"
 
 
 msgid "Display Channels"
@@ -88701,6 +88941,10 @@ msgstr "フレームを表示"
 
 msgid "Display frames rather than seconds"
 msgstr "秒数ではなくフレーム数で表示します"
+
+
+msgid "Show vertical grid lines"
+msgstr "縦のグリッドラインを表示します"
 
 
 msgid "Show metadata of first visible strip"
@@ -93172,8 +93416,12 @@ msgid "Number of subdivisions between grid lines"
 msgstr "グリッド線の分割数"
 
 
+msgid "Screen size for normals in the 3D view"
+msgstr "3Dビューでの法線のスクリーンサイズ"
+
+
 msgid "Normal Size"
-msgstr "法線の大きさ"
+msgstr "法線のサイズ"
 
 
 msgid "Display size for normals in the 3D view"
@@ -93594,6 +93842,10 @@ msgstr "ストロークマテリアル名"
 
 msgid "Show material name assigned to each stroke"
 msgstr "各ストロークに割り当てられているマテリアル名を表示します"
+
+
+msgid "Keep size of normals constant in relation to 3D view"
+msgstr "3Dビューに対する法線のサイズを一定にします"
 
 
 msgid "Vertex Opacity"
@@ -94198,10 +94450,6 @@ msgid "Unsupported data type"
 msgstr "未対応のデータタイプ"
 
 
-msgid "Is Loaded"
-msgstr "ロード済か？"
-
-
 msgid "Grid tree is loaded in memory"
 msgstr "グリッドツリーがメモリ内に読み込み済か"
 
@@ -94431,6 +94679,258 @@ msgid "Occlude objects with the environment color as they are further away"
 msgstr "遠くに離れるにつれ、オブジェクトを背景色で隠します"
 
 
+msgid "XR Action Map"
+msgstr "XRアクションマップ"
+
+
+msgid "Name of the action map"
+msgstr "アクションマップの名前"
+
+
+msgid "XR Action Map Binding"
+msgstr "XRアクションマップバインド"
+
+
+msgid "Axis 0 Region"
+msgstr "軸０の領域"
+
+
+msgid "Action execution region for the first input axis"
+msgstr "最初の入力軸のアクション実行領域"
+
+
+msgid "Use any axis region for operator execution"
+msgstr "オペレーター実行にどの軸の領域も使用します"
+
+
+msgid "Use positive axis region only for operator execution"
+msgstr "オペレーター実行に正の軸の領域を使用します"
+
+
+msgid "Use negative axis region only for operator execution"
+msgstr "オペレーター実行に負の軸の領域を使用します"
+
+
+msgid "Axis 1 Region"
+msgstr "軸１の領域"
+
+
+msgid "Action execution region for the second input axis"
+msgstr "二つめの入力軸のアクション実行領域"
+
+
+msgid "Component Path 0"
+msgstr "コンポーネントパス０"
+
+
+msgid "OpenXR component path"
+msgstr "OpenXR コンポーネントパス"
+
+
+msgid "Component Path 1"
+msgstr "コンポーネントパス１"
+
+
+msgid "Name of the action map binding"
+msgstr "アクションマップバインド名"
+
+
+msgid "Pose Rotation Offset"
+msgstr "ポーズ回転オフセット"
+
+
+msgid "OpenXR interaction profile path"
+msgstr "OpenXR インタラクションプロファイルパス"
+
+
+msgid "Input threshold for button/axis actions"
+msgstr "ボタン・軸アクションの入力しきい値"
+
+
+msgid "XR Action Map Bindings"
+msgstr "XRアクションマップバインド"
+
+
+msgid "Collection of XR action map bindings"
+msgstr "XRアクションマップバインドの集合"
+
+
+msgid "XR Action Map Item"
+msgstr "XRアクションマップアイテム"
+
+
+msgid "The action depends on the states/poses of both user paths"
+msgstr "両ユーザーパスの状態・ポーズを元にしたアクション"
+
+
+msgid "Bindings"
+msgstr "バインド"
+
+
+msgid "Bindings for the action map item, mapping the action to an XR input"
+msgstr "アクションマップアイテムのバインド。XR 入力へアクションをマッピングします"
+
+
+msgid "Haptic Amplitude"
+msgstr "触覚の振幅"
+
+
+msgid "Intensity of the haptic vibration, ranging from 0.0 to 1.0"
+msgstr "触覚の振動の強さ（0.0-1.0)"
+
+
+msgid "Haptic duration in seconds. 0.0 is the minimum supported duration"
+msgstr "触覚の期間(秒数)。0.0で対応する最小期間"
+
+
+msgid "Haptic Frequency"
+msgstr "触覚の周波数"
+
+
+msgid "Frequency of the haptic vibration in hertz. 0.0 specifies the OpenXR runtime's default frequency"
+msgstr "触覚の振動の周波数(Hz)。0.0で OpenXR ランタイムのデフォルト周波数"
+
+
+msgid "Haptic mode"
+msgstr "触覚モード"
+
+
+msgid "Haptic application mode"
+msgstr "触覚アプリケーションモード"
+
+
+msgid "Apply haptics on button press"
+msgstr "ボタン押下に触覚を適用します"
+
+
+msgid "Apply haptics on button release"
+msgstr "ボタンリリースに触覚を適用します"
+
+
+msgid "Press Release"
+msgstr "押下とリリース"
+
+
+msgid "Apply haptics on button press and release"
+msgstr "ボタン押下とリリースに触覚を適用します"
+
+
+msgid "Apply haptics repeatedly for the duration of the button press"
+msgstr "ボタン押下期間中に繰り返し触覚を適用します"
+
+
+msgid "Haptic Name"
+msgstr "触覚の名前"
+
+
+msgid "Name of the haptic action to apply when executing this action"
+msgstr "このアクションの実行時に適用する触覚アクションの名前"
+
+
+msgid "Name of the action map item"
+msgstr "アクションマップアイテムの名前"
+
+
+msgid "Identifier of operator to call on action event"
+msgstr "アクションイベントで呼び出すオペレーターの識別子"
+
+
+msgid "Operator Mode"
+msgstr "オペレーターモード"
+
+
+msgid "Operator execution mode"
+msgstr "オペレーター実行モード"
+
+
+msgid "Execute operator on button press (non-modal operators only)"
+msgstr "ボタン押下時にオペレーターを実行します（非モーダルオペレーターのみ）"
+
+
+msgid "Execute operator on button release (non-modal operators only)"
+msgstr "ボタンリリース時にオペレーターを実行します（非モーダルオペレーターのみ）"
+
+
+msgid "Modal"
+msgstr "モーダル"
+
+
+msgid "Name of operator (translated) to call on action event"
+msgstr "アクションイベントで呼び出すオペレーターの（翻訳後の）名前"
+
+
+msgid "The action poses will be used for the VR controller aims"
+msgstr "VR エイムコントローラーで使用するアクションポーズ"
+
+
+msgid "Is Controller Grip"
+msgstr "コントローラーグリップ用"
+
+
+msgid "The action poses will be used for the VR controller grips"
+msgstr "VR コントローラーグリップで使用するアクションポーズ"
+
+
+msgid "Selected Binding"
+msgstr "選択中のバインド"
+
+
+msgid "Currently selected binding"
+msgstr "現在選択中のバインド"
+
+
+msgid "Action type"
+msgstr "アクションタイプ"
+
+
+msgid "Float action, representing either a digital or analog button"
+msgstr "Float アクション。ディジタルまたはアナログボタンのいずれかを表します"
+
+
+msgid "Vector2D"
+msgstr "ベクトル2D"
+
+
+msgid "2D float vector action, representing a thumbstick or trackpad"
+msgstr "2D Float ベクトルアクション。サムスティックまたはトラックパッドを表します"
+
+
+msgid "3D pose action, representing a controller's location and rotation"
+msgstr "3Dポーズアクション。コントローラーの位置と回転を表します"
+
+
+msgid "Vibration"
+msgstr "バイブレーション"
+
+
+msgid "Haptic vibration output action, to be applied with a duration, frequency, and amplitude"
+msgstr "触覚の振動の出力アクション。期間、周波数、振幅が適用されます"
+
+
+msgid "User Path 0"
+msgstr "ユーザーパス 0"
+
+
+msgid "OpenXR user path"
+msgstr "OpenXR ユーザーパス"
+
+
+msgid "User Path 1"
+msgstr "ユーザーパス 1"
+
+
+msgid "XR Action Map Items"
+msgstr "XRアクションマップアイテム"
+
+
+msgid "Collection of XR action map items"
+msgstr "XR アクションマップアイテムの集合"
+
+
+msgid "XR Action Maps"
+msgstr "XRアクションマップ"
+
+
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"
 msgstr "VR ヘッドセットの回転の差分を適用する、Z 軸を中心とした回転の角度"
 
@@ -94493,6 +94993,14 @@ msgstr "VR ヘッドセットがバーチャルスペースでの回転に加え
 
 msgid "Session State"
 msgstr "セッション状態"
+
+
+msgid "Active Action Map"
+msgstr "アクティブアクションマップ"
+
+
+msgid "Selected Action Map"
+msgstr "選択アクションマップ"
 
 
 msgid "Viewer Pose Location"
@@ -96347,6 +96855,10 @@ msgid "Unable to find any running process"
 msgstr "実行中のプロセスが見つかりません"
 
 
+msgid "Blender sub-process exited with error code %d"
+msgstr "Blender のサブプロセスがエラーコード %d で終了しました"
+
+
 msgid "Selection pair not found"
 msgstr "選択中のペアがありません"
 
@@ -97846,6 +98358,10 @@ msgid "Max B-frames"
 msgstr "最大Bフレーム数"
 
 
+msgid "Strip Name"
+msgstr "ストリップ名"
+
+
 msgid "Buffer"
 msgstr "バッファー"
 
@@ -98449,10 +98965,6 @@ msgstr "表面張力"
 
 msgid "Velocity Source"
 msgstr "速度のソース"
-
-
-msgid "Is Resumable"
-msgstr "リジューム可能"
 
 
 msgid "Format Volumes"
@@ -99346,6 +99858,10 @@ msgstr "親階層に移動"
 msgctxt "Operator"
 msgid "New Folder"
 msgstr "新規フォルダー"
+
+
+msgid "Asset Details"
+msgstr "アセットの詳細"
 
 
 msgid ".blend Files"
@@ -100433,6 +100949,10 @@ msgstr "このストリップの下に二つ以上のチャンネルが必要で
 
 msgid "No active context"
 msgstr "アクティブコンテクストがありません"
+
+
+msgid "No active viewer node"
+msgstr "アクティブビューアーノードがありません"
 
 
 msgid "<no object>"
@@ -103340,6 +103860,14 @@ msgid "Library file, loading empty scene"
 msgstr "ライブラリファイル、空シーンを読み込み"
 
 
+msgid "Preferences saved"
+msgstr "プリファレンスを保存しました"
+
+
+msgid "Saving preferences failed"
+msgstr "プリファレンスの保存に失敗しました"
+
+
 msgid "Unable to create userpref path"
 msgstr "userpref のパスが作成できません"
 
@@ -103578,6 +104106,18 @@ msgid "AOV"
 msgstr "AOV"
 
 
+msgid "Impossible to resync data-block %s and its dependencies, as its linked reference is missing"
+msgstr "データブロック「%s」とその依存の再同期ができません。リンクの参照元がありません"
+
+
+msgid "During resync of data-block %s, %d obsolete overrides were deleted, that had local changes defined by user"
+msgstr "データブロック「%s」の再同期中、ユーザーによるローカルの変更がある、%d 個の旧オーバーライドを削除しました"
+
+
+msgid "Scene '%s' was not resynced as it is the currently active one"
+msgstr "シーン「%s」が現在アクティブなため、再同期しませんでした。"
+
+
 msgid "Data corruption: data-block '%s' is using itself as library override reference"
 msgstr "データエラー：データブロック「%s」が自分自身をライブラリオーバーライドの参照に使用しています"
 
@@ -103626,6 +104166,18 @@ msgid "Non-Empty object '%s' cannot duplicate collection '%s' anymore in Blender
 msgstr ""
 "非エンプティオブジェクト「%s」は、もう Blender 2.80では\n"
 "インスタンス化が削除され、コレクション「%s」を複製できません"
+
+
+msgid "Proxy lost from  object %s lib %s"
+msgstr "プロキシがロスト：オブジェクト「%s」ライブラリ「%s」"
+
+
+msgid "Can't find object data of %s lib %s"
+msgstr "%s（ライブラリ「%s」）のオブジェクトデータがありません"
+
+
+msgid "Object %s lost data"
+msgstr "オブジェクト「%s」のデータがロスト"
 
 
 msgid "Surf"
@@ -104083,6 +104635,10 @@ msgstr "グリペンモード"
 
 msgid "UV/Image"
 msgstr "UV/画像"
+
+
+msgid "Select ID Debug"
+msgstr "選択ID（デバッグ）"
 
 
 msgid "Select ID"
@@ -104589,6 +105145,10 @@ msgstr "ポーズライブラリにオリジナルポーズを表示"
 
 msgid "Tab: show blended pose"
 msgstr "[Tab]:ブレンド後のポーズを表示"
+
+
+msgid "Internal pose library error, canceling operator"
+msgstr "内部ポーズライブラリエラー。処理をキャンセルします"
 
 
 msgid "No active Keying Set to use"
@@ -105598,6 +106158,14 @@ msgid "More..."
 msgstr "詳細..."
 
 
+msgid "Move to First"
+msgstr "最初に移動"
+
+
+msgid "Move to Last"
+msgstr "最後に移動"
+
+
 msgid "Flip Color Ramp"
 msgstr "カラーランプを反転"
 
@@ -106171,6 +106739,14 @@ msgstr "PDFへのエクスポートができません"
 
 msgid "Unable to import SVG"
 msgstr "SVGのインポートができません"
+
+
+msgid "Data Types"
+msgstr "データタイプ"
+
+
+msgid "Mesh Data"
+msgstr "メッシュデータ"
 
 
 msgctxt "Mesh"
@@ -107172,6 +107748,10 @@ msgid "Object (Without Inverse)"
 msgstr "オブジェクト(逆行列なし)"
 
 
+msgid "Drop %s on %s (slot %d)"
+msgstr "%s を %s からドロップ（スロット %d）"
+
+
 msgid "Select either 1 or 3 vertices to parent to"
 msgstr "ペアレントする頂点を1つまたは3つ選択してください"
 
@@ -107918,6 +108498,10 @@ msgstr "コンテクストにアクティブオブジェクトがありません
 
 msgid "Cannot edit library linked object"
 msgstr "ライブラリリンクオブジェクトは編集できません"
+
+
+msgid "Cannot edit hidden object"
+msgstr "非表示オブジェクトは編集できません"
 
 
 msgid "expected a view3d region & editmesh"
@@ -109427,6 +110011,78 @@ msgid "Can't reload with running modal operators"
 msgstr "実行中のモーダルオペレーターの所為でリロードできません"
 
 
+msgid "Add a crossfade transition to the sequencer"
+msgstr "シーケンサーにクロスフェードトランジションを追加します"
+
+
+msgid "Add an add effect strip to the sequencer"
+msgstr "追加（加算）エフェクトストリップをシーケンサーに追加します"
+
+
+msgid "Add a subtract effect strip to the sequencer"
+msgstr "シーケンサーに減算エフェクトストリップを追加します"
+
+
+msgid "Add an alpha over effect strip to the sequencer"
+msgstr "シーケンサーにアルファオーバーエフェクトストリップを追加します"
+
+
+msgid "Add an alpha under effect strip to the sequencer"
+msgstr "シーケンサーにアルファアンダーエフェクトストリップを追加します"
+
+
+msgid "Add a gamma cross transition to the sequencer"
+msgstr "シーケンサーにガンマクロストランジションを追加します"
+
+
+msgid "Add a multiply effect strip to the sequencer"
+msgstr "シーケンサーに乗算エフェクトストリップを追加します"
+
+
+msgid "Add an alpha over drop effect strip to the sequencer"
+msgstr "シーケンサーにアルファオーバードロップエフェクトストリップを追加します"
+
+
+msgid "Add a wipe transition to the sequencer"
+msgstr "シーケンサーにワイプトランジションを追加します"
+
+
+msgid "Add a glow effect strip to the sequencer"
+msgstr "シーケンサーにグローエフェクトストリップを追加します"
+
+
+msgid "Add a transform effect strip to the sequencer"
+msgstr "シーケンサーにトランスフォームエフェクトストリップを追加します"
+
+
+msgid "Add a color strip to the sequencer"
+msgstr "シーケンサーにカラーストリップを追加します"
+
+
+msgid "Add a speed effect strip to the sequencer"
+msgstr "シーケンサーにスピードエフェクトストリップを追加します"
+
+
+msgid "Add a multicam selector effect strip to the sequencer"
+msgstr "シーケンサーにマルチカムセレクタエフェクトストリップを追加します"
+
+
+msgid "Add an adjustment layer effect strip to the sequencer"
+msgstr "シーケンサーに調整レイヤーエフェクトストリップを追加します"
+
+
+msgid "Add a gaussian blur effect strip to the sequencer"
+msgstr "シーケンサーにガウシアンぼかしエフェクトストリップを追加します"
+
+
+msgid "Add a text strip to the sequencer"
+msgstr "シーケンサーにテキストストリップを追加します"
+
+
+msgid "Add a color mix effect strip to the sequencer"
+msgstr "シーケンサーにカラーミックスエフェクトストリップを追加します"
+
+
 msgid "Movie clip not found"
 msgstr "動画クリップがありません"
 
@@ -109629,6 +110285,10 @@ msgstr "ファイル関連付けを登録"
 
 msgid "Unable to register file association"
 msgstr "ファイルの関連付けができませんでした"
+
+
+msgid "Windows-only operator"
+msgstr "Windows限定オペレーター"
 
 
 msgid "Create object instance from object-data"
@@ -110536,14 +111196,6 @@ msgid "Cannot open file: %s"
 msgstr "ファイルが開けません: %s"
 
 
-msgid "Move to First"
-msgstr "最初に移動"
-
-
-msgid "Move to Last"
-msgstr "最後に移動"
-
-
 msgid "External library data"
 msgstr "外部ライブラリデータ"
 
@@ -110652,8 +111304,16 @@ msgid "No new override property created, property already exists"
 msgstr "既存のプロパティのため、新規オーバーライドプロパティが作成できません"
 
 
+msgid "Override property cannot be removed"
+msgstr "オーバーライドプロパティは削除できません"
+
+
 msgid "No new override operation created, operation already exists"
 msgstr "既存のオペレーションのため、新規オーバーライドオペレーションが作成できません"
+
+
+msgid "Override operation cannot be removed"
+msgstr "オーバーライドオペレーションは削除できません"
 
 
 msgid "Index out of range"
@@ -110666,6 +111326,10 @@ msgstr "削除するマテリアルがありません"
 
 msgid "Registering id property class: '%s' is too long, maximum length is %d"
 msgstr "IDプロパティクラス登録：「%s」が長すぎです（最大長：%d）"
+
+
+msgid "ID '%s' isn't an override"
+msgstr "ID「%s」はオーバーライドではありません"
 
 
 msgid "%s is not compatible with %s 'refresh' options"
@@ -111696,6 +112360,18 @@ msgid "Gizmo group '%s' not found!"
 msgstr "ギズモグループ「%s」が見つかりません"
 
 
+msgid "ActionMapBinding '%s' cannot be removed from '%s'"
+msgstr "アクションマップバインド「%s」が「%s」から削除できません"
+
+
+msgid "ActionMapItem '%s' cannot be removed from '%s'"
+msgstr "アクションマップアイテム「%s」が「%s」から削除できません"
+
+
+msgid "ActionMap '%s' cannot be removed"
+msgstr "アクションマップ「%s」が削除できません"
+
+
 msgid "First and Last Copies"
 msgstr "コピーの最初と最後"
 
@@ -112647,6 +113323,14 @@ msgstr "コンテクストウィンドウが未設定です"
 
 msgid "Engine '%s' not available for scene '%s' (an add-on may need to be installed or enabled)"
 msgstr "エンジン「%s」がシーン「%s」で利用できません（アドオンのインストールまたは有効化が必要）"
+
+
+msgid "Library %s needs overrides resync"
+msgstr "ライブラリ「%s」はオーバーライドの再同期が必要です"
+
+
+msgid "%d libraries and %d linked data-blocks are missing (including %d ObjectData and %d Proxies), please check the Info and Outliner editors for details"
+msgstr "%d 個のライブラリと %d 個のデータブロックがありません（%d 個のオブジェクトデータと %d 個のプロキシを含む）。情報エディターとアウトライナーをチェックしてください"
 
 
 msgid "%d libraries have overrides needing resync (auto resynced in %.0fm%.2fs),  please check the Info editor for details"
