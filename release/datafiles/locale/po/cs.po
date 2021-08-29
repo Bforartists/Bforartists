@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -40406,22 +40406,6 @@ msgid "Theme settings for Font"
 msgstr "Nastavení OpenEXR kodeku"
 
 
-msgid "Kerning Style"
-msgstr "Styl Kerningu"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Spustit renderovani"
-
-
-msgid "Unfitted"
-msgstr "Nevhodné"
-
-
-msgid "Fitted"
-msgstr "Vhodný"
-
-
 msgid "Shadow Size"
 msgstr "Velikost stínu"
 
@@ -46345,12 +46329,12 @@ msgid "Unable to read '%s': %s"
 msgstr "Nelze číst '%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "Nelze otevřít '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "Nerozpoznaný formát souboru '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "Nelze otevřít '%s': %s"
 
 
 msgid "Collection %d"

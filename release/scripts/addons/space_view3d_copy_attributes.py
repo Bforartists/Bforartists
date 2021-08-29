@@ -575,11 +575,7 @@ class CopySelectedObjectConstraints(Operator):
         for obj in selected:
             for index, flag in enumerate(self.selection):
                 if flag:
-                    old_constraint = active.constraints[index]
-                    new_constraint = obj.constraints.new(
-                        active.constraints[index].type
-                    )
-                    generic_copy(old_constraint, new_constraint)
+                    obj.constraints.copy(active.constraints[index])
         return{'FINISHED'}
 
 

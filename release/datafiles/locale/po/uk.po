@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -86824,30 +86824,6 @@ msgid "Theme settings for Font"
 msgstr "Параметри теми для шрифту"
 
 
-msgid "Kerning Style"
-msgstr "Стиль кернінгу"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Який стиль використати для кернінгу шрифту"
-
-
-msgid "Unfitted"
-msgstr "Без підгонки"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "Використовуйте відстані з масштабуванням, але без вміщення у сітку для кернінгу"
-
-
-msgid "Fitted"
-msgstr "Підігнано"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "Використати масштабовані та прив'язані до сітки відстані кернінгу"
-
-
 msgid "Font size in points"
 msgstr "Розмір шрифту в точках"
 
@@ -99252,10 +99228,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Не записано, зображення не має \"%s\" та \"%s\" виглядів"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
-msgstr "При зберіганні плиткового зображення, шлях '%s' повинен містити для UDIM тег 1001"
-
-
 msgid "Key %d"
 msgstr "Ключ %d"
 
@@ -99617,12 +99589,12 @@ msgid "Unable to read '%s': %s"
 msgstr "Неможливо прочитати '%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "Неможливо відкрити '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "Нерозпізнаваний формат файлу '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "Неможливо відкрити '%s': %s"
 
 
 msgid "GP_Palette"

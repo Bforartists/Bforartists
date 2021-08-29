@@ -336,6 +336,7 @@ class GPU_Indices_Mesh():
 
         self.shader.bind()
         if GPU_Indices_Mesh.use_clip_planes:
+            gpu.state.clip_distances_set(4)
             self.shader.uniform_float("ModelMatrix", ob_mat)
 
         if self.draw_tris:
@@ -373,6 +374,9 @@ class GPU_Indices_Mesh():
         if self.draw_verts:
             self.shader.uniform_int("offset", (index_offset,))
             self.batch_lverts.draw(self.shader)
+
+        if GPU_Indices_Mesh.use_clip_planes:
+            gpu.state.clip_distances_set(0)
 
         gpu.matrix.pop()
         gpu.matrix.pop_projection()
@@ -436,7 +440,7 @@ def gpu_Indices_use_clip_planes(rv3d, value):
     if value and rv3d.use_clip_planes:
         GPU_Indices_Mesh.use_clip_planes = True
         planes = gpu.types.Buffer('FLOAT', (6, 4), rv3d.clip_planes)
-        shader.uniform_vector_float(shader.uniform_from_name("clip_plane"), planes, 4, 4)
+        shader.uniform_vector_float(shader.uniform_from_name("WorldClipPlanes"), planes, 4, 4)
     else:
         GPU_Indices_Mesh.use_clip_planes = False
 
