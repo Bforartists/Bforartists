@@ -1105,7 +1105,7 @@ class TOOLBAR_MT_image_uv_rotate_clockwise(bpy.types.Operator):
             if area.type == 'IMAGE_EDITOR':
                 override = bpy.context.copy()
                 override['area'] = area
-                bpy.ops.transform.rotate(override, value = math.pi/-2 )
+                bpy.ops.transform.rotate(override, value = math.pi/2 )
         return {'FINISHED'}
 
 
@@ -1120,7 +1120,7 @@ class TOOLBAR_MT_image_uv_rotate_counterclockwise(bpy.types.Operator):
             if area.type == 'IMAGE_EDITOR':
                 override = bpy.context.copy()
                 override['area'] = area
-                bpy.ops.transform.rotate(override, value = math.pi/2 )
+                bpy.ops.transform.rotate(override, value = math.pi/-2 )
         return {'FINISHED'}
 
 
