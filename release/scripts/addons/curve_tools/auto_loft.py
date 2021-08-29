@@ -30,13 +30,10 @@ class OperatorAutoLoftCurves(Operator):
 
         context.collection.objects.link(loftobj)
         loftobj["autoloft"] = True
-        if loftobj.get('_RNA_UI') is None:
-            loftobj['_RNA_UI'] = {}
-        loftobj['_RNA_UI']["autoloft"] = {
-                           "name": "Auto Loft",
-                           "description": "Auto loft from %s to %s" % (curve0.name, curve1.name),
-                           "curve0": curve0.name,
-                           "curve1": curve1.name}
+        ui_data = loftobj.id_properties_ui("autoloft")
+        ui_data.update(description="Auto loft from %s to %s" % (curve0.name, curve1.name))
+        loftobj["autoloft_curve0"] = curve0.name
+        loftobj["autoloft_curve1"] = curve1.name
 
         return {'FINISHED'}
 
@@ -59,9 +56,8 @@ class AutoLoftModalOperator(Operator):
         #print("TIMER", lofters)
 
         for loftmesh in lofters:
-            rna = loftmesh['_RNA_UI']["autoloft"].to_dict()
-            curve0 = scene.objects.get(rna["curve0"])
-            curve1 = scene.objects.get(rna["curve1"])
+            curve0 = scene.objects.get(loftmesh['autoloft_curve0'])
+            curve1 = scene.objects.get(loftmesh['autoloft_curve1'])
             if curve0 and curve1:
                 ls = surfaces.LoftedSurface(curves.Curve(curve0), curves.Curve(curve1), loftmesh.name)
                 ls.bMesh.to_mesh(loftmesh.data)

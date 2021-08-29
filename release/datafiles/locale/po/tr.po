@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -21051,10 +21051,6 @@ msgstr "Yazıtipi boyutu:"
 
 msgid "Theme settings for Font"
 msgstr "Arabirim için yeni bir yazıtipi seçin"
-
-
-msgid "Fitted"
-msgstr "Sabit, Değişmez"
 
 
 msgid "Shadow Size"

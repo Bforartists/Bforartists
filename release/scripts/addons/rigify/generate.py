@@ -21,7 +21,6 @@
 import bpy
 import re
 import time
-from rna_prop_ui import rna_idprop_ui_prop_get
 
 from .utils.errors import MetarigError
 from .utils.bones import new_bone
@@ -415,7 +414,6 @@ class Generator(base_generate.BaseGenerator):
 
         #------------------------------------------
         # Put the rig_name in the armature custom properties
-        rna_idprop_ui_prop_get(obj.data, "rig_id", create=True)
         obj.data["rig_id"] = self.rig_id
 
         self.script = rig_ui_template.ScriptGenerator(self)

@@ -21,7 +21,6 @@ import bmesh
 from mathutils import Vector
 from mathutils.geometry import intersect_point_line
 
-from .drawing_utilities import SnapDrawn
 from .common_utilities import snap_utilities
 from .common_classes import (
     CharMap,
