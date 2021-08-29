@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -90052,30 +90052,6 @@ msgid "Theme settings for Font"
 msgstr "Cài đặt phong cách cho Phông"
 
 
-msgid "Kerning Style"
-msgstr "Phong Cự Ly"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Dùng phong cách nào cho cự ly phông"
-
-
-msgid "Unfitted"
-msgstr "Không Cự Ly"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "Dùng phóng to nhưng khoảng cách cự ly không vừa đồ thị"
-
-
-msgid "Fitted"
-msgstr "Vừa"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "Dùng phóng to và khoảng cách cự ly vừa đồ thị"
-
-
 msgid "Font size in points"
 msgstr "Kích cỡ phông bằng điểm"
 
@@ -102868,10 +102844,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Chưa được lưu, ảnh không có một màn \"%s\" và \"%s\""
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
-msgstr "Khi lưu một ảnh ô, đường '%s' phải chứa nhẵn UDIM 1001"
-
-
 msgid "Key %d"
 msgstr "Bức Mẫu %d"
 
@@ -103245,12 +103217,12 @@ msgid "Unable to read '%s': %s"
 msgstr "Không thể đọc được '%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "Không thể mở '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "Định dạng tập tin chưa biết đến '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "Không thể mở '%s': %s"
 
 
 msgid "GP_Palette"

@@ -2933,8 +2933,9 @@ static int ui_text_position_from_hidden(uiBut *but, int pos)
 {
   const char *butstr = (but->editstr) ? but->editstr : but->drawstr;
   const char *strpos = butstr;
+  const char *str_end = butstr + strlen(butstr);
   for (int i = 0; i < pos; i++) {
-    strpos = BLI_str_find_next_char_utf8(strpos, NULL);
+    strpos = BLI_str_find_next_char_utf8(strpos, str_end);
   }
 
   return (strpos - butstr);
@@ -3350,7 +3351,7 @@ static bool ui_textedit_copypaste(uiBut *but, uiHandleButtonData *data, const in
 
     if (pbuf) {
       if (UI_but_is_utf8(but)) {
-        buf_len -= BLI_utf8_invalid_strip(pbuf, (size_t)buf_len);
+        buf_len -= BLI_str_utf8_invalid_strip(pbuf, (size_t)buf_len);
       }
 
       ui_textedit_insert_buf(but, data, pbuf, buf_len);
@@ -3527,7 +3528,7 @@ static void ui_textedit_end(bContext *C, uiBut *but, uiHandleButtonData *data)
 
   if (but) {
     if (UI_but_is_utf8(but)) {
-      const int strip = BLI_utf8_invalid_strip(but->editstr, strlen(but->editstr));
+      const int strip = BLI_str_utf8_invalid_strip(but->editstr, strlen(but->editstr));
       /* not a file?, strip non utf-8 chars */
       if (strip) {
         /* won't happen often so isn't that annoying to keep it here for a while */

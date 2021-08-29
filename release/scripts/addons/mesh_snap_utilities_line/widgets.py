@@ -19,7 +19,6 @@ import bpy
 
 from .common_classes import SnapUtilities
 from .common_utilities import snap_utilities
-from .drawing_utilities import SnapDrawn
 
 
 #def mesh_runtime_batchcache_isdirty(me):

@@ -15,7 +15,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 import gpu
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 
 class SnapDrawn():
@@ -30,6 +30,7 @@ class SnapDrawn():
         'axis_x_color',
         'axis_y_color',
         'axis_z_color',
+        'rv3d',
         '_format_pos',
         '_format_pos_and_color',
         '_program_unif_col',
@@ -39,7 +40,7 @@ class SnapDrawn():
     def __init__(self, out_color, face_color,
                  edge_color, vert_color, center_color,
                  perpendicular_color, constrain_shift_color,
-                 axis_x_color, axis_y_color, axis_z_color):
+                 axis_x_color, axis_y_color, axis_z_color, rv3d):
 
         import gpu
 
@@ -55,6 +56,8 @@ class SnapDrawn():
         self.axis_y_color = axis_y_color
         self.axis_z_color = axis_z_color
 
+        self.rv3d = rv3d
+
         self._format_pos = gpu.types.GPUVertFormat()
         self._format_pos.attr_add(id="pos", comp_type='F32', len=3, fetch_mode='FLOAT')
 
@@ -62,18 +65,38 @@ class SnapDrawn():
         self._format_pos_and_color.attr_add(id="pos", comp_type='F32', len=3, fetch_mode='FLOAT')
         self._format_pos_and_color.attr_add(id="color", comp_type='F32', len=4, fetch_mode='FLOAT')
 
-        self._program_unif_col = gpu.shader.from_builtin("3D_UNIFORM_COLOR")
-        self._program_smooth_col = gpu.shader.from_builtin("3D_SMOOTH_COLOR")
-
         self._batch_point = None
 
+    def _gl_state_push(self, ob_mat=None):
+        clip_planes = gpu.types.Buffer('FLOAT', (6, 4), self.rv3d.clip_planes) if self.rv3d.use_clip_planes else None
 
-    def _gl_state_push(self):
+        config = 'CLIPPED' if clip_planes else 'DEFAULT'
+        self._program_unif_col = gpu.shader.from_builtin("3D_UNIFORM_COLOR", config=config)
+        self._program_smooth_col = gpu.shader.from_builtin("3D_SMOOTH_COLOR", config=config)
+
         gpu.state.program_point_size_set(False)
         gpu.state.blend_set('ALPHA')
+        gpu.matrix.push()
+        if ob_mat:
+            gpu.matrix.multiply_matrix(ob_mat)
+
+        if clip_planes:
+            gpu.state.clip_distances_set(4)
+            mat = ob_mat if ob_mat else Matrix.Identity(4)
+
+            self._program_unif_col.bind()
+            self._program_unif_col.uniform_float("ModelMatrix", mat)
+            self._program_unif_col.uniform_vector_float(self._program_unif_col.uniform_from_name("WorldClipPlanes"), clip_planes, 4, 4)
+
+            self._program_smooth_col.bind()
+            self._program_smooth_col.uniform_float("ModelMatrix", mat)
+            self._program_smooth_col.uniform_vector_float(self._program_smooth_col.uniform_from_name("WorldClipPlanes"), clip_planes, 4, 4)
 
     def _gl_state_restore(self):
         gpu.state.blend_set('NONE')
+        gpu.matrix.pop()
+        if self.rv3d.use_clip_planes:
+            gpu.state.clip_distances_set(0)
 
     def batch_line_strip_create(self, coords):
         from gpu.types import (
@@ -124,7 +147,6 @@ class SnapDrawn():
         import gpu
 
         self._gl_state_push()
-        gpu.matrix.push()
         self._program_unif_col.bind()
 
         if list_verts_co:
@@ -139,6 +161,7 @@ class SnapDrawn():
 
             self._program_unif_col.bind()
             self._program_unif_col.uniform_float("color", (1.0, 0.8, 0.0, 0.5))
+
             batch.draw(self._program_unif_col)
             gpu.matrix.pop_projection()
             del batch
@@ -153,6 +176,7 @@ class SnapDrawn():
 
                 self._program_unif_col.bind()
                 self._program_unif_col.uniform_float("color", (1.0, 1.0, 1.0, 0.5))
+
                 point_batch.draw(self._program_unif_col)
                 gpu.matrix.translate(-prevloc)
 
@@ -192,7 +216,6 @@ class SnapDrawn():
         gpu.state.line_width_set(1.0)
         gpu.state.depth_test_set('LESS_EQUAL')
 
-        gpu.matrix.pop()
         self._gl_state_restore()
 
     def draw_elem(self, snap_obj, bm, elem):
@@ -204,53 +227,48 @@ class SnapDrawn():
             BMFace,
         )
 
-        with gpu.matrix.push_pop():
-            self._gl_state_push()
-            gpu.state.depth_test_set('NONE')
+        self._gl_state_push(snap_obj.mat)
+        gpu.state.depth_test_set('NONE')
 
-            gpu.matrix.multiply_matrix(snap_obj.mat)
+        if isinstance(elem, BMVert):
+            if elem.link_edges:
+                import numpy as np
 
-            if isinstance(elem, BMVert):
-                if elem.link_edges:
-                    import numpy as np
+                color = self.vert_color
+                edges = np.empty((len(elem.link_edges), 2), [("pos", "f4", 3), ("color", "f4", 4)])
+                edges["pos"][:, 0] = elem.co
+                edges["pos"][:, 1] = [e.other_vert(elem).co for e in elem.link_edges]
+                edges["color"][:, 0] = color
+                edges["color"][:, 1] = (color[0], color[1], color[2], 0.0)
+                edges.shape = -1
 
-                    color = self.vert_color
-                    edges = np.empty((len(elem.link_edges), 2), [("pos", "f4", 3), ("color", "f4", 4)])
-                    edges["pos"][:, 0] = elem.co
-                    edges["pos"][:, 1] = [e.other_vert(elem).co for e in elem.link_edges]
-                    edges["color"][:, 0] = color
-                    edges["color"][:, 1] = (color[0], color[1], color[2], 0.0)
-                    edges.shape = -1
-
-                    self._program_smooth_col.bind()
-                    gpu.state.line_width_set(3.0)
-                    batch = self.batch_lines_smooth_color_create(edges["pos"], edges["color"])
-                    batch.draw(self._program_smooth_col)
-                    gpu.state.line_width_set(1.0)
-            else:
+                self._program_smooth_col.bind()
+                gpu.state.line_width_set(3.0)
+                batch = self.batch_lines_smooth_color_create(edges["pos"], edges["color"])
+                batch.draw(self._program_smooth_col)
+                gpu.state.line_width_set(1.0)
+        else:
+            if isinstance(elem, BMEdge):
                 self._program_unif_col.bind()
+                self._program_unif_col.uniform_float("color", self.edge_color)
 
-                if isinstance(elem, BMEdge):
+                gpu.state.line_width_set(3.0)
+                batch = self.batch_line_strip_create([v.co for v in elem.verts])
+                batch.draw(self._program_unif_col)
+                gpu.state.line_width_set(1.0)
+
+            elif isinstance(elem, BMFace):
+                if len(snap_obj.data) == 2:
+                    face_color = self.face_color[0], self.face_color[1], self.face_color[2], self.face_color[3] * 0.2
                     self._program_unif_col.bind()
-                    self._program_unif_col.uniform_float("color", self.edge_color)
+                    self._program_unif_col.uniform_float("color", face_color)
 
-                    gpu.state.line_width_set(3.0)
-                    batch = self.batch_line_strip_create([v.co for v in elem.verts])
+                    tris = snap_obj.data[1].get_loop_tri_co_by_bmface(bm, elem)
+                    tris.shape = (-1, 3)
+                    batch = self.batch_triangles_create(tris)
                     batch.draw(self._program_unif_col)
-                    gpu.state.line_width_set(1.0)
 
-                elif isinstance(elem, BMFace):
-                    if len(snap_obj.data) == 2:
-                        face_color = self.face_color[0], self.face_color[1], self.face_color[2], self.face_color[3] * 0.2
-                        self._program_unif_col.bind()
-                        self._program_unif_col.uniform_float("color", face_color)
-
-                        tris = snap_obj.data[1].get_loop_tri_co_by_bmface(bm, elem)
-                        tris.shape = (-1, 3)
-                        batch = self.batch_triangles_create(tris)
-                        batch.draw(self._program_unif_col)
-
-            # restore opengl defaults
-            gpu.state.depth_test_set('LESS_EQUAL')
+        # restore opengl defaults
+        gpu.state.depth_test_set('LESS_EQUAL')
 
         self._gl_state_restore()
