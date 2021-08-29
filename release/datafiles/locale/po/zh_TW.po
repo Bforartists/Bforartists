@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-08-12 00:50+0800\n"
@@ -51401,30 +51401,6 @@ msgstr "字型樣式"
 
 msgid "Theme settings for Font"
 msgstr "主題設定中的字型選項"
-
-
-msgid "Kerning Style"
-msgstr "字距微調樣式"
-
-
-msgid "Which style to use for font kerning"
-msgstr "字型其字距微調要使用的樣式"
-
-
-msgid "Unfitted"
-msgstr "不適應"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "使用縮放過但無法適應格線的字距微調距離"
-
-
-msgid "Fitted"
-msgstr "適應"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "使用縮放過且可適應格線的字距微調距離"
 
 
 msgid "Shadow Size"

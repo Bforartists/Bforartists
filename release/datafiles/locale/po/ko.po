@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -75440,30 +75440,6 @@ msgid "Theme settings for Font"
 msgstr "폰트에 대한 테마 설정"
 
 
-msgid "Kerning Style"
-msgstr "자간 스타일"
-
-
-msgid "Which style to use for font kerning"
-msgstr "글꼴 자간에 사용할 스타일"
-
-
-msgid "Unfitted"
-msgstr "맞춤 취소"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "축적이 조정되었지만 그리드가 맞춰지지 않은 커닝 거리 사용"
-
-
-msgid "Fitted"
-msgstr "맞춤"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "축척 및 격자 맞춰진 커닝 거리를 사용"
-
-
 msgid "Shadow Size"
 msgstr "섀도우 크기"
 
@@ -84986,10 +84962,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "작성하지 않음, 이미지에 \"%s\" 및 \"%s\" 뷰가 없습니다"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
-msgstr "타일된 이미지를 저장할 때 경로 '%s'에는 UDIM 태그 1001이 포함되어야합니다."
-
-
 msgid "Key %d"
 msgstr "키 %d"
 
@@ -85331,12 +85303,12 @@ msgid "Unable to read '%s': %s"
 msgstr "'%s'을 읽을 수 없음: %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "'%s' 을 열 수 없음: %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "인식 할 수없는 파일 형식 '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "'%s' 을 열 수 없음: %s"
 
 
 msgid "GP_Palette"

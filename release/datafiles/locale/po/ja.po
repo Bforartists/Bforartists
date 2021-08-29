@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -5655,6 +5655,10 @@ msgstr "オブジェクトやボーンのトランスフォームを修正する
 
 msgid "Constraint is the one being edited"
 msgstr "編集中のコンストレイント"
+
+
+msgid "Use the results of this constraint"
+msgstr "このコンストレイントの処理結果を使用します"
 
 
 msgid "Lin error"
@@ -16613,6 +16617,10 @@ msgid "Overscan"
 msgstr "オーバースキャン"
 
 
+msgid "A margin to prevent strokes from ending abruptly at the edge of the image"
+msgstr "画面端でストロークが突然切れるのを防ぐマージン"
+
+
 msgid "Generate strokes from the objects in this collection"
 msgstr "このコレクション内のオブジェクトからストロークを生成します"
 
@@ -24137,13 +24145,21 @@ msgstr "ホールドアウト"
 
 msgid "Render objects as a holdout or matte, creating a hole in the image with zero alpha, to fill out in compositing with real footage or another render"
 msgstr ""
-"実写映像または他のレンダリング画像を入れて合成するため\n"
-"オブジェクトをホールドアウトやマットとしてレンダリングし\n"
-"アルファ0で画像に穴を作成します"
+"実写映像または他のレンダリング画像を入れて合成するため、\n"
+"オブジェクトをホールドアウトやマットとして、アルファ０で\n"
+"画像に穴を開けてレンダリングします"
 
 
 msgid "Shadow Catcher"
 msgstr "シャドウキャッチャー"
+
+
+msgid "Only render shadows and reflections on this object, for compositing renders into real footage. Objects with this setting are considered to already exist in the footage, objects without it are synthetic objects being composited into it"
+msgstr ""
+"実写映像とレンダリング画像を合成するため\n"
+"このオブジェクト上に影と反射のみレンダリングします。\n"
+"この設定がONのオブジェクトは実写映像内に存在する物、\n"
+"設定がOFFのオブジェクトは合成する物とみなします"
 
 
 msgid "Line art settings for the object"
@@ -26553,6 +26569,10 @@ msgstr "選択中の最後の TextLine のインデックス"
 
 msgid "Register"
 msgstr "登録"
+
+
+msgid "Run this text as a Python script on loading"
+msgstr "ロード時にこのテキストを Python スクリプトとして実行します"
 
 
 msgid "Texture data-block used by materials, lights, worlds and brushes"
@@ -32490,6 +32510,10 @@ msgstr "サブディビジョンサーフェスモディファイアーのクリ
 
 msgid "Index of this edge"
 msgstr "この辺のインデックス"
+
+
+msgid "Loose"
+msgstr "ルーズ"
 
 
 msgid "Loose edge"
@@ -42058,7 +42082,11 @@ msgstr "スプラインをベジエに設定します"
 
 
 msgid "Set the splines to NURBS"
-msgstr "スプラインを NURBS にします"
+msgstr "スプラインを NURBS に設定します"
+
+
+msgid "Set the splines to Poly"
+msgstr "スプラインをポリに設定します"
 
 
 msgid "Star"
@@ -47868,6 +47896,15 @@ msgid "Add a target to the constraint"
 msgstr "コンストレイントにターゲットを追加します"
 
 
+msgctxt "Operator"
+msgid "Apply Constraint"
+msgstr "コンストレイントを適用"
+
+
+msgid "Apply constraint and remove from the stack"
+msgstr "コンストレイントを適用し、スタックから削除します"
+
+
 msgid "Constraint"
 msgstr "コンストレイント"
 
@@ -47912,6 +47949,24 @@ msgstr "逆補正を設定"
 
 msgid "Set inverse correction for Child Of constraint"
 msgstr "チャイルドコンストレイント用の逆補正を設定します"
+
+
+msgctxt "Operator"
+msgid "Duplicate Constraint"
+msgstr "コンストレイントを複製"
+
+
+msgid "Duplicate constraint at the same position in the stack"
+msgstr "スタック内の同じ場所にコンストレイントを複製します"
+
+
+msgctxt "Operator"
+msgid "Copy Constraint To Selected"
+msgstr "選択にコンストレイントをコピー"
+
+
+msgid "Copy constraint to other selected objects/bones"
+msgstr "他の選択オブジェクトやボーンにコンストレイントをコピーします"
 
 
 msgctxt "Operator"
@@ -50321,8 +50376,24 @@ msgid "Select everything beginning with the last selection"
 msgstr "最後の選択を起点としてすべて選択します"
 
 
+msgid "Only Activate if Selected"
+msgstr "選択時アクティブ化のみ"
+
+
+msgid "Do not change selection if the item under the cursor is already selected, only activate it"
+msgstr "カーソル下のアイテムがすでに選択中の場合、選択を変更せず、アクティブ化のみ行います"
+
+
 msgid "Open a directory when selecting it"
 msgstr "選択されたディレクトリを開きます"
+
+
+msgid "Pass Through"
+msgstr "パススルー"
+
+
+msgid "Even on successful execution, pass the event on so other operators can execute on it as well"
+msgstr "実行が成功していても、そのイベントを他の実行可能なオペレーターにも同様に渡します"
 
 
 msgctxt "Operator"
@@ -52375,6 +52446,10 @@ msgstr "選択中のグリースペンシルポイントの選択を広げます
 msgctxt "Operator"
 msgid "Random"
 msgstr "ランダム"
+
+
+msgid "Select random points for non selected strokes"
+msgstr "非選択ストロークのポイントをランダムに選択します"
 
 
 msgctxt "Operator"
@@ -54575,6 +54650,10 @@ msgstr "クランプサイズ"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "この値未満の境界をクランプします（0で無効）"
+
+
+msgid "Split geometry, omits vertices unused by edges or faces"
+msgstr "形状を分割し、辺や面に使用していない頂点を削除します"
 
 
 msgid "Keep Vert Order"
@@ -60121,7 +60200,7 @@ msgstr "モディファイアーを適用"
 
 
 msgid "Apply modifier and remove from the stack"
-msgstr "モディファイアーを適用しスタックから削除します"
+msgstr "モディファイアーを適用し、スタックから削除します"
 
 
 msgid "Apply As"
@@ -60154,7 +60233,7 @@ msgstr "モディファイアーをコピー"
 
 
 msgid "Duplicate modifier at the same position in the stack"
-msgstr "スタックの同じ場所にモディファイアーを複製します"
+msgstr "スタック内の同じ場所にモディファイアーを複製します"
 
 
 msgctxt "Operator"
@@ -74589,6 +74668,10 @@ msgid "Visible Primitives Only"
 msgstr "可視プリミティブのみ"
 
 
+msgid "Do not import invisible USD primitives. Only applies to primitives with a non-animated visibility attribute. Primitives with animated visibility will always be imported"
+msgstr "不可視の USD プリミティブをインポートしません。非アニメーションの可視属性のプリミティブにのみ適用します。アニメーションする可視プリミティブは常にインポートされます"
+
+
 msgid "Light Intensity Scale"
 msgstr "光量のスケール"
 
@@ -74599,6 +74682,10 @@ msgstr "インポートしたライトの強度のスケール"
 
 msgid "Path Mask"
 msgstr "パスマスク"
+
+
+msgid "Import only the subset of the USD scene rooted at the given primitive"
+msgstr "与えられたプリミティブをルートにした USD シーンのサブセットのみインポートします"
 
 
 msgid "Read mesh vertex colors"
@@ -78817,6 +78904,16 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "開発者向けの Cycles デバッグオプションを有効にします"
 
 
+msgid "Extended Asset Browser"
+msgstr "アセットブラウザーを展開"
+
+
+msgid "Enable Asset Browser editor and operators to manage regular data-blocks as assets, not just poses"
+msgstr ""
+"ポーズ以外に通常のデータブロックもアセットとして管理するために\n"
+"アセットブラウザーとオペレーターを有効にします"
+
+
 msgid "Full Frame Compositor"
 msgstr "フルフレームコンポジター"
 
@@ -79001,6 +79098,12 @@ msgstr "マニュアル保存時のバックアップのバージョン数"
 
 msgid "Python Scripts Directory"
 msgstr "Pythonスクリプトディレクトリ"
+
+
+msgid "Alternate script path, matching the default layout with subdirectories: startup, add-ons, modules, and presets (requires restart)"
+msgstr ""
+"サブディレクトリ（startup、add-ons、modules、presets）がデフォルト\n"
+"レイアウト構造と一致する、代替のスクリプトパス（要再起動）"
 
 
 msgid "Hide Dot Files/Data-Blocks"
@@ -90971,30 +91074,6 @@ msgid "Theme settings for Font"
 msgstr "フォント用のテーマ設定"
 
 
-msgid "Kerning Style"
-msgstr "カーニングスタイル"
-
-
-msgid "Which style to use for font kerning"
-msgstr "フォントカーニングにどのスタイルを使用するか"
-
-
-msgid "Unfitted"
-msgstr "フィットしない"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "スケーリングされているが、グリッドに合わないカーニング距離"
-
-
-msgid "Fitted"
-msgstr "フィット"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "スケーリングし、グリッドに合わせたカーニング距離を使用"
-
-
 msgid "Font size in points"
 msgstr "フォントサイズ（ポイント）"
 
@@ -92263,6 +92342,10 @@ msgid "Stroke Placement (2D View)"
 msgstr "ストロークの配置（2Dビュー）"
 
 
+msgid "Strick stroke to the image"
+msgstr "画像にストロークを貼り付けます"
+
+
 msgid "Stick stroke to the view"
 msgstr "ビューにストロークを貼り付けます"
 
@@ -93416,6 +93499,10 @@ msgid "Number of subdivisions between grid lines"
 msgstr "グリッド線の分割数"
 
 
+msgid "Normal Screen Size"
+msgstr "法線のスクリーンサイズ"
+
+
 msgid "Screen size for normals in the 3D view"
 msgstr "3Dビューでの法線のスクリーンサイズ"
 
@@ -93842,6 +93929,10 @@ msgstr "ストロークマテリアル名"
 
 msgid "Show material name assigned to each stroke"
 msgstr "各ストロークに割り当てられているマテリアル名を表示します"
+
+
+msgid "Constant Screen Size Normals"
+msgstr "法線のスクリーンサイズを固定"
 
 
 msgid "Keep size of normals constant in relation to 3D view"
@@ -94450,6 +94541,10 @@ msgid "Unsupported data type"
 msgstr "未対応のデータタイプ"
 
 
+msgid "Is Loaded"
+msgstr "ロード済かどうか"
+
+
 msgid "Grid tree is loaded in memory"
 msgstr "グリッドツリーがメモリ内に読み込み済か"
 
@@ -94687,8 +94782,16 @@ msgid "Name of the action map"
 msgstr "アクションマップの名前"
 
 
+msgid "Selected Item"
+msgstr "選択アイテム"
+
+
 msgid "XR Action Map Binding"
 msgstr "XRアクションマップバインド"
+
+
+msgid "Binding in an XR action map item"
+msgstr "XRアクションマップアイテム内にバインドします"
 
 
 msgid "Axis 0 Region"
@@ -94735,6 +94838,10 @@ msgid "Name of the action map binding"
 msgstr "アクションマップバインド名"
 
 
+msgid "Pose Location Offset"
+msgstr "ポーズ位置オフセット"
+
+
 msgid "Pose Rotation Offset"
 msgstr "ポーズ回転オフセット"
 
@@ -94777,6 +94884,10 @@ msgstr "触覚の振幅"
 
 msgid "Intensity of the haptic vibration, ranging from 0.0 to 1.0"
 msgstr "触覚の振動の強さ（0.0-1.0)"
+
+
+msgid "Haptic Duration"
+msgstr "触覚の期間"
 
 
 msgid "Haptic duration in seconds. 0.0 is the minimum supported duration"
@@ -94855,6 +94966,10 @@ msgid "Modal"
 msgstr "モーダル"
 
 
+msgid "Use modal execution (modal operators only)"
+msgstr "モーダルで実行します（モーダルオペレーターのみ）"
+
+
 msgid "Name of operator (translated) to call on action event"
 msgstr "アクションイベントで呼び出すオペレーターの（翻訳後の）名前"
 
@@ -94929,6 +95044,10 @@ msgstr "XR アクションマップアイテムの集合"
 
 msgid "XR Action Maps"
 msgstr "XRアクションマップ"
+
+
+msgid "Collection of XR action maps"
+msgstr "XR アクションマップの集合"
 
 
 msgid "Rotation angle around the Z-Axis to apply the rotation deltas from the VR headset to"
@@ -96609,6 +96728,10 @@ msgstr "このポーズにキーフレームがありません"
 
 msgid "No animation data found to create asset from"
 msgstr "アセットを作成するアニメーションデータがありません"
+
+
+msgid "Unexpected non-zero user count for the asset, please report this as a bug"
+msgstr "非０のユーザー数のある予想外のアセットがあります。バグとして報告してください"
 
 
 msgid "Did not find any assets on clipboard"
@@ -104094,10 +104217,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "書き込み失敗、画像に「%s」と「%s」ビューがありません"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
-msgstr "タイル画像保存時、パス「%s」に UDIM タグ 1001 が含まれていないといけません"
-
-
 msgid "Key %d"
 msgstr "キー %d"
 
@@ -104493,12 +104612,12 @@ msgid "Unable to read '%s': %s"
 msgstr "「%s」を読み込みできません：%s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "「%s」を開くことができません：%s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "未知のファイルフォーマット「%s」"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "「%s」を開くことができません：%s"
 
 
 msgid "GP_Palette"
@@ -107452,6 +107571,14 @@ msgid "Could not find constraint data for ObjectSolver Set Inverse"
 msgstr "オブジェクトソルバーの逆補正用のコンストレイントデータがありません"
 
 
+msgid "Applied constraint was not first, result may not be as expected"
+msgstr "適用したコンストレイントは一番上ではなかったため、望んだ結果ではないかもしれません"
+
+
+msgid "No constraints for copying"
+msgstr "コピーするコンストレイントがありません"
+
+
 msgid "No active bone with constraints for copying"
 msgstr "コピーするコンストレイント付きアクティブボーンがありません"
 
@@ -107476,12 +107603,32 @@ msgid "Removed constraint: %s"
 msgstr "コンストレイント「%s」を削除しました"
 
 
+msgid "Applied constraint: %s"
+msgstr "コンストレイント「%s」を適用しました"
+
+
+msgid "Copied constraint: %s"
+msgstr "コンストレイント「%s」をコピーしました"
+
+
 msgid "Cannot edit library data"
 msgstr "ライブラリデータは編集できません"
 
 
 msgid "Cannot edit constraints coming from linked data in a library override"
 msgstr "ライブラリオーバーライド内のリンクデータからのコンストレイントは編集できません"
+
+
+msgid "No other bones are selected"
+msgstr "他に選択中のボーンがありません"
+
+
+msgid "No selected object to copy from"
+msgstr "コピー元のオブジェクトが選択されていません"
+
+
+msgid "No other objects are selected"
+msgstr "他に選択中のオブジェクトがありません"
 
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
@@ -107545,7 +107692,7 @@ msgstr "モディファイアーは複数で共有するデータには適用で
 
 
 msgid "Applied modifier was not first, result may not be as expected"
-msgstr "適用されたモディファイアーは最初ではないため、望んだ結果ではないかもしれません"
+msgstr "適用したモディファイアーは一番上ではなかったため、望んだ結果ではないかもしれません"
 
 
 msgid "Modifiers cannot be added to object '%s'"
@@ -107748,8 +107895,12 @@ msgid "Object (Without Inverse)"
 msgstr "オブジェクト(逆行列なし)"
 
 
+msgid "Drop %s on %s (slot %d, replacing %s)"
+msgstr "%s を %s にドロップ（スロット %d、%s を置き換え）"
+
+
 msgid "Drop %s on %s (slot %d)"
-msgstr "%s を %s からドロップ（スロット %d）"
+msgstr "%s を %s にドロップ（スロット %d）"
 
 
 msgid "Select either 1 or 3 vertices to parent to"
@@ -109993,6 +110144,10 @@ msgstr "%d個のデータブロックを削除しました"
 
 msgid "Mixed selection"
 msgstr "選択が混ざっています"
+
+
+msgid "Could not create library override from data-block '%s', one of its parents is not overridable ('%s')"
+msgstr "データブロック「%s」のライブラリオーバーライドが作成できません。親がオーバーライド不可です（「%s」）"
 
 
 msgid "Could not create library override from data-block '%s'"

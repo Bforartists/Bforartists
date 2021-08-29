@@ -308,7 +308,7 @@ int txt_extended_ascii_as_utf8(char **str)
   int added = 0;
 
   while ((*str)[i]) {
-    if ((bad_char = BLI_utf8_invalid_byte(*str + i, length - i)) == -1) {
+    if ((bad_char = BLI_str_utf8_invalid_byte(*str + i, length - i)) == -1) {
       break;
     }
 
@@ -322,14 +322,15 @@ int txt_extended_ascii_as_utf8(char **str)
     i = 0;
 
     while ((*str)[i]) {
-      if ((bad_char = BLI_utf8_invalid_byte((*str) + i, length - i)) == -1) {
+      if ((bad_char = BLI_str_utf8_invalid_byte((*str) + i, length - i)) == -1) {
         memcpy(newstr + mi, (*str) + i, length - i + 1);
         break;
       }
 
       memcpy(newstr + mi, (*str) + i, bad_char);
 
-      BLI_str_utf8_from_unicode((*str)[i + bad_char], newstr + mi + bad_char);
+      const int mofs = mi + bad_char;
+      BLI_str_utf8_from_unicode((*str)[i + bad_char], newstr + mofs, (length + added) - mofs);
       i += bad_char + 1;
       mi += bad_char + 2;
     }
@@ -933,7 +934,7 @@ void txt_move_left(Text *text, const bool sel)
       (*charp) -= tabsize;
     }
     else {
-      const char *prev = BLI_str_prev_char_utf8((*linep)->line + *charp);
+      const char *prev = BLI_str_find_prev_char_utf8((*linep)->line + *charp, (*linep)->line);
       *charp = prev - (*linep)->line;
     }
   }
@@ -1660,7 +1661,7 @@ void txt_insert_buf(Text *text, const char *in_buffer)
 
   /* Read the first line (or as close as possible */
   while (buffer[i] && buffer[i] != '\n') {
-    txt_add_raw_char(text, BLI_str_utf8_as_unicode_step(buffer, &i));
+    txt_add_raw_char(text, BLI_str_utf8_as_unicode_step(buffer, len, &i));
   }
 
   if (buffer[i] == '\n') {
@@ -1682,7 +1683,7 @@ void txt_insert_buf(Text *text, const char *in_buffer)
       }
       else {
         for (j = i - l; j < i && j < len;) {
-          txt_add_raw_char(text, BLI_str_utf8_as_unicode_step(buffer, &j));
+          txt_add_raw_char(text, BLI_str_utf8_as_unicode_step(buffer, len, &j));
         }
         break;
       }
@@ -1888,8 +1889,9 @@ void txt_delete_char(Text *text)
     }
   }
   else { /* Just deleting a char */
-    size_t c_len = 0;
-    c = BLI_str_utf8_as_unicode_and_size(text->curl->line + text->curc, &c_len);
+    size_t c_len = text->curc;
+    c = BLI_str_utf8_as_unicode_step(text->curl->line, text->curl->len, &c_len);
+    c_len -= text->curc;
     UNUSED_VARS(c);
 
     memmove(text->curl->line + text->curc,
@@ -1937,9 +1939,12 @@ void txt_backspace_char(Text *text)
     txt_pop_sel(text);
   }
   else { /* Just backspacing a char */
-    size_t c_len = 0;
-    const char *prev = BLI_str_prev_char_utf8(text->curl->line + text->curc);
-    c = BLI_str_utf8_as_unicode_and_size(prev, &c_len);
+    const char *prev = BLI_str_find_prev_char_utf8(text->curl->line + text->curc,
+                                                   text->curl->line);
+    size_t c_len = prev - text->curl->line;
+    c = BLI_str_utf8_as_unicode_step(text->curl->line, text->curl->len, &c_len);
+    c_len -= prev - text->curl->line;
+
     UNUSED_VARS(c);
 
     /* source and destination overlap, don't use memcpy() */
@@ -2001,7 +2006,7 @@ static bool txt_add_char_intern(Text *text, unsigned int add, bool replace_tabs)
 
   txt_delete_sel(text);
 
-  add_len = BLI_str_utf8_from_unicode(add, ch);
+  add_len = BLI_str_utf8_from_unicode(add, ch, sizeof(ch));
 
   tmp = MEM_mallocN(text->curl->len + add_len + 1, "textline_string");
 
@@ -2053,9 +2058,11 @@ bool txt_replace_char(Text *text, unsigned int add)
     return txt_add_char(text, add);
   }
 
-  del = BLI_str_utf8_as_unicode_and_size(text->curl->line + text->curc, &del_size);
+  del_size = text->curc;
+  del = BLI_str_utf8_as_unicode_step(text->curl->line, text->curl->len, &del_size);
+  del_size -= text->curc;
   UNUSED_VARS(del);
-  add_size = BLI_str_utf8_from_unicode(add, ch);
+  add_size = BLI_str_utf8_from_unicode(add, ch, sizeof(ch));
 
   if (add_size > del_size) {
     char *tmp = MEM_mallocN(text->curl->len + add_size - del_size + 1, "textline_string");

@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -49684,30 +49684,6 @@ msgid "Font Style"
 msgstr "Schriftart-Stil"
 
 
-msgid "Kerning Style"
-msgstr "Unterschneidungsstil"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Welcher Stil für die Schriftunterschneidung (Kerning) verwendet wird"
-
-
-msgid "Unfitted"
-msgstr "Uneingepasst"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "Skalierten aber nicht rastereingepassten Unterschneidungsabstand verwenden"
-
-
-msgid "Fitted"
-msgstr "Flackern"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "Skalierten und rastereingepassten Unterschneidungsabstand verwenden"
-
-
 msgid "Shadow Size"
 msgstr "Schattengröße"
 
@@ -58723,12 +58699,12 @@ msgid "Unable to read '%s': %s"
 msgstr "Kann nicht gelesen werden '%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "Kann nicht geöffnet werden '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "Unbekanntes Dateiformat '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "Kann nicht geöffnet werden '%s': %s"
 
 
 msgid "GP_Palette"

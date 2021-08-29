@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -51165,22 +51165,6 @@ msgstr "Stile Font"
 
 msgid "Theme settings for Font"
 msgstr "Impostazioni del tema per i Font"
-
-
-msgid "Kerning Style"
-msgstr "Stile Crenatura"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Stile usato per la crenatura caratteri"
-
-
-msgid "Unfitted"
-msgstr "Non Adattato"
-
-
-msgid "Fitted"
-msgstr "Adattato"
 
 
 msgid "Shadow Size"

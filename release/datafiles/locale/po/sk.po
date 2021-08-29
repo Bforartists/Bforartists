@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
-"PO-Revision-Date: 2021-08-09 17:17+0200\n"
+"PO-Revision-Date: 2021-08-16 15:53+0200\n"
 "Last-Translator: Jozef Matta <jozef.m923@gmail.com>\n"
 "Language-Team: Jozef Matta\n"
 "Language: sk_SK\n"
@@ -757,7 +757,7 @@ msgstr "Editor nástrojov tieňovania a združovania založených na uzle"
 
 
 msgid "Video Sequencer"
-msgstr "Video radič"
+msgstr "Video radič sekvencií"
 
 
 msgid "Video editing tools"
@@ -5309,7 +5309,7 @@ msgstr "Farebný priestor"
 
 
 msgid "Color space that the sequencer operates in"
-msgstr "Farebný priestor, s ktorým radič pracuje"
+msgstr "Farebný priestor, s ktorým radič sekvencií pracuje"
 
 
 msgid "Color management settings used for displaying images on the display"
@@ -5361,11 +5361,11 @@ msgstr "Použije RGB krivky pre transformáciu predbežného zobrazenia"
 
 
 msgid "View Transform"
-msgstr "Transformácia pohľadu"
+msgstr "Transformácia zobrazenia"
 
 
 msgid "View used when converting image to a display space"
-msgstr "Pohľad použitý pri konverzii obrázka zobrazovaného priestoru"
+msgstr "Zobrazenie použité pri konverzii obrázka zobrazovaného priestoru"
 
 
 msgid "Do not perform any color transform on display, use old non-color managed technique for display"
@@ -5513,7 +5513,7 @@ msgstr "Nastavenie interpolácie medzi zarážkami farby"
 
 
 msgid "Ease"
-msgstr "Ľahká"
+msgstr "Mierna"
 
 
 msgid "Cardinal"
@@ -5611,6 +5611,10 @@ msgstr "Vynútenie zmeny transformácie objektov a kostí"
 
 msgid "Constraint is the one being edited"
 msgstr "Bude upravené jedno vynútenie"
+
+
+msgid "Use the results of this constraint"
+msgstr "Použije výsledky tohto vynútenia"
 
 
 msgid "Lin error"
@@ -8218,7 +8222,7 @@ msgstr "Rovina pre projekciu ťahu"
 
 
 msgid "Normal/View"
-msgstr "Kolmo/pohľad"
+msgstr "Normál/Zobrazenie"
 
 
 msgid "Display perpendicular to the surface"
@@ -8226,7 +8230,7 @@ msgstr "Zobrazí kolmo na povrch"
 
 
 msgid "Normal/Surface"
-msgstr "Kolmo/povrch"
+msgstr "Normál/Povrch"
 
 
 msgid "Display aligned to the surface"
@@ -8594,7 +8598,7 @@ msgstr "Bezpečné oblasti"
 
 
 msgid "Safe areas used in 3D view and the sequencer"
-msgstr "Bezpečné oblasti používané v 3D zobrazení a radič"
+msgstr "Bezpečné oblasti používané v 3D zobrazení a radič sekvencií"
 
 
 msgid "Action Safe Margins"
@@ -17439,7 +17443,7 @@ msgstr "Index týchto bodov"
 
 
 msgid "Statistical view of the levels of color in an image"
-msgstr "Štatistický pohľad na úrovne farieb v obraze"
+msgstr "Štatistické zobrazenie úrovne farieb v obrázku"
 
 
 msgid "Channels to display in the histogram"
@@ -18280,7 +18284,7 @@ msgstr "Premietaný"
 
 
 msgid "Apply brush influence in a 2D circle, projected from the view"
-msgstr "Aplikuje vplyv štetca v 2D kruhu premietanom z pohľadu"
+msgstr "Aplikuje vplyv štetca v 2D kruhu premietanom zo zobrazenia"
 
 
 msgid "Fill Threshold"
@@ -18664,7 +18668,7 @@ msgstr "Rovina oblasti"
 
 
 msgid "View Plane"
-msgstr "Rovina pohľadu"
+msgstr "Rovina zobrazenia"
 
 
 msgid "X Plane"
@@ -19764,7 +19768,7 @@ msgstr "Názov šou"
 
 
 msgid "Show the active Camera's name in Camera view"
-msgstr "Ukáže názov aktívnej kamery v pohľade kamery"
+msgstr "Ukáže názov aktívnej kamery v zobrazení kamery"
 
 
 msgid "Show Passepartout"
@@ -19772,7 +19776,7 @@ msgstr "Zobrazovať prekrytie mimo oblasť"
 
 
 msgid "Show a darkened overlay outside the image area in Camera view"
-msgstr "Ukáže tmavé prekrytie mimo oblasti obrázka v pohľade kamery"
+msgstr "Ukáže tmavé prekrytie mimo oblasti obrázka v zobrazení kamery"
 
 
 msgid "Show Safe Areas"
@@ -19780,7 +19784,7 @@ msgstr "Zobrazovať bezpečné oblasti"
 
 
 msgid "Show TV title safe and action safe areas in Camera view"
-msgstr "Ukáže bezpečné TV titulky a akčné bezpečné oblasti v pohľade kamery"
+msgstr "Ukáže bezpečné TV titulky a akčné bezpečné oblasti v zobrazení kamery"
 
 
 msgid "Show Center-Cut Safe Areas"
@@ -19796,7 +19800,7 @@ msgstr "Zobrazovať veľkosť snímača"
 
 
 msgid "Show sensor size (film gate) in Camera view"
-msgstr "Ukáže veľkosť snímača (filmová brána) v pohľade kamery"
+msgstr "Ukáže veľkosť snímača (filmová brána) v zobrazení kamery"
 
 
 msgid "Camera types"
@@ -20484,7 +20488,7 @@ msgstr "Ponechá pretečenie textu mimo textové pole"
 
 
 msgid "Scale to Fit"
-msgstr "Prispôsobenie mierky"
+msgstr "Prispôsobiť mierke"
 
 
 msgid "Scale down the text to fit inside the text boxes"
@@ -22326,7 +22330,7 @@ msgstr "Smerový kužeľ svetla"
 
 
 msgid "The energy this light would emit over its entire area if it wasn't limited by the spot angle"
-msgstr "Energia tohto svetla vyžarovaného po celej svojej oblasti, keby nebola limitovaná uhlom pohľadu"
+msgstr "Energia tohto svetla vyžarovaného po celej svojej oblasti, keby nebola limitovaná uhlom zobrazenia"
 
 
 msgid "Show Cone"
@@ -22334,7 +22338,7 @@ msgstr "Zobraziť kužeľ"
 
 
 msgid "Display transparent cone in 3D view to visualize which objects are contained in it"
-msgstr "Zobrazuje priehľadný kužeľ v 3D pohľade pre zviditeľnenie objektov v ňom obsiahnutých"
+msgstr "Zobrazuje priehľadný kužeľ v 3D zobrazení pre zviditeľnenie objektov v ňom obsiahnutých"
 
 
 msgid "Spot Blend"
@@ -22386,7 +22390,7 @@ msgstr "Exponenciálna distribúcia"
 
 
 msgid "Higher value increase resolution towards the viewpoint"
-msgstr "Vyššia hodnota zvyšuje rozlíšenie smerom k miestu pohľadu"
+msgstr "Vyššia hodnota zvyšuje rozlíšenie smerom k miestu záberu"
 
 
 msgid "Cascade Fade"
@@ -22402,7 +22406,7 @@ msgstr "Maximálna vzdialenosť kaskády"
 
 
 msgid "End distance of the cascaded shadow map (only in perspective view)"
-msgstr "Koncová vzdialenosť Mapy kaskádovitého tieňa (len v perspektívnom pohľade)"
+msgstr "Koncová vzdialenosť Mapy kaskádovitého tieňa (len v perspektívnom zobrazení)"
 
 
 msgid "Light Probe data-block for lighting capture objects"
@@ -22582,11 +22586,11 @@ msgstr "Index aktívnej vrstvy v zozname všetkých vrstiev masiek"
 
 
 msgid "Final frame of the mask (used for sequencer)"
-msgstr "Posledná snímka masky (používa sa pre radič)"
+msgstr "Posledná snímka masky (používa sa pre radič sekvencií)"
 
 
 msgid "First frame of the mask (used for sequencer)"
-msgstr "Prvá snímka masky (používa sa pre radič)"
+msgstr "Prvá snímka masky (používa sa pre radič sekvencií)"
 
 
 msgid "Collection of layers which defines this mask"
@@ -24262,7 +24266,7 @@ msgstr "Zobraziť iba zarovnané s osou"
 
 
 msgid "Only display the image when it is aligned with the view axis"
-msgstr "Obrázok zobrazí, len keď je zarovnaný s osou pohľadu"
+msgstr "Obrázok zobrazí, len keď je zarovnaný s osou zobrazenia"
 
 
 msgid "Display in Orthographic Mode"
@@ -25865,11 +25869,11 @@ msgstr "Editor sekvencie"
 
 
 msgid "Sequencer Color Space Settings"
-msgstr "Nastavenie farebného priestoru radiča"
+msgstr "Nastavenie farebného priestoru radiča sekvencií sekvencií"
 
 
 msgid "Settings of color space sequencer is working in"
-msgstr "Nastavenie radiča pracujúceho vo farebnom priestore"
+msgstr "Nastavenie radiča sekvencií pracujúceho vo farebnom priestore"
 
 
 msgid "Only Keyframes from Selected Channels"
@@ -26105,7 +26109,7 @@ msgstr "Súbor zvukovej nahrávky používaný týmto blokom údajov zvuku"
 
 
 msgid "Caching"
-msgstr "Kešovanie"
+msgstr "Ukladať do zásobníka"
 
 
 msgid "The sound file is decoded and loaded into RAM"
@@ -26312,6 +26316,10 @@ msgstr "Index posledného textu vo výbere"
 
 msgid "Register"
 msgstr "Registrovať"
+
+
+msgid "Run this text as a Python script on loading"
+msgstr "Pri načítaní spustí tento text ako skript Python"
 
 
 msgid "Texture data-block used by materials, lights, worlds and brushes"
@@ -31009,11 +31017,11 @@ msgstr "Metóda prelínania vrstiev masky"
 
 
 msgid "Merge Add"
-msgstr "Pripočítať zlúčenie"
+msgstr "Zlúčiť pripočítaním"
 
 
 msgid "Merge Subtract"
-msgstr "Odpočítať zlúčenie"
+msgstr "Zlúčiť odpočítaním"
 
 
 msgctxt "Curve"
@@ -31050,7 +31058,7 @@ msgstr "Lineárny dopad"
 
 
 msgid "Restrict View"
-msgstr "Obmedziť pohľad"
+msgstr "Obmedziť zobrazenie"
 
 
 msgid "Restrict visibility in the viewport"
@@ -31809,7 +31817,7 @@ msgstr "Zmena"
 
 
 msgid "Sequencer Context Menu"
-msgstr "Kontextová ponuka radiča"
+msgstr "Kontextová ponuka radiča sekvencií"
 
 
 msgid "Navigation"
@@ -32165,23 +32173,23 @@ msgstr "UV mapovanie"
 
 
 msgid "Align View"
-msgstr "Zarovnať pohľad"
+msgstr "Zarovnať zobrazenie"
 
 
 msgid "Align View to Active"
-msgstr "Zarovnať pohľad na aktívne"
+msgstr "Zarovnať zobrazenie na aktívne"
 
 
 msgid "Local View"
-msgstr "Lokálny pohľad"
+msgstr "Lokálne zobrazenie"
 
 
 msgid "View Regions"
-msgstr "Oblasti pohľadu"
+msgstr "Oblasti zobrazenia"
 
 
 msgid "Viewpoint"
-msgstr "Smer pohľadu"
+msgstr "Smer záberu"
 
 
 msgid "Operator Presets"
@@ -38353,7 +38361,7 @@ msgstr "Index aktívnej stopy v zozname stôp stabilizácie zmeny veľkosti"
 
 
 msgid "Anchor Frame"
-msgstr "Ukotvenie snímky"
+msgstr "Snímka ukotvenia"
 
 
 msgid "Reference point to anchor stabilization (other frames will be adjusted relative to this frame's position)"
@@ -38405,7 +38413,7 @@ msgstr "Vplyv stabilizačného algoritmu na rotáciu záberov"
 
 
 msgid "Scale Influence"
-msgstr "Mierka Vplyv"
+msgstr "Vplyv mierky"
 
 
 msgid "Influence of stabilization algorithm on footage scale"
@@ -38413,11 +38421,11 @@ msgstr "Vplyv stabilizačného algoritmu na mierku záberov"
 
 
 msgid "Rotation Tracks"
-msgstr "Dráhy rotácie"
+msgstr "Stopy rotácie"
 
 
 msgid "Collection of tracks used for 2D stabilization (translation)"
-msgstr "Kolekcia dráh používaných na 2D stabilizáciu (premieatnenie)"
+msgstr "Kolekcia stôp používaných na 2D stabilizáciu (premiestnenie)"
 
 
 msgid "Maximal Scale"
@@ -38429,11 +38437,11 @@ msgstr "Limit množstva automatickej mierky"
 
 
 msgid "Show Tracks"
-msgstr "Zobraziť dráhy"
+msgstr "Zobraziť stopy"
 
 
 msgid "Show UI list of tracks participating in stabilization"
-msgstr "Ukáže zoznam dráh UI zapojených do stabilizácie"
+msgstr "Ukáže zoznam stôp UI zapojených do stabilizácie"
 
 
 msgid "Expected Position"
@@ -38449,7 +38457,7 @@ msgstr "Očakávaná rotácia"
 
 
 msgid "Rotation present on original shot, will be compensated (e.g. for deliberate tilting)"
-msgstr "Otáčanie prítomné na pôvodnom zábere, bude kompenzované (napr. pre úmyselné naklonenie)"
+msgstr "Rotácia prítomná na pôvodnom zábere, bude kompenzovaná (napr. pre úmyselné naklonenie)"
 
 
 msgid "Expected Scale"
@@ -38457,11 +38465,11 @@ msgstr "Očakávaná mierka"
 
 
 msgid "Explicitly scale resulting frame to compensate zoom of original shot"
-msgstr "Explicitne mierka výslednej snímky kompenzuje zväčšenie pôvodnej snímky"
+msgstr "Explicitne zmení mierku výsledného záberu na kompenzáciu priblíženia pôvodného záberu"
 
 
 msgid "Translation Tracks"
-msgstr "Stopy zmeny polohy"
+msgstr "Stopy premiestnenia"
 
 
 msgid "Use 2D Stabilization"
@@ -38497,11 +38505,11 @@ msgstr "Kompenzuje všetky zmeny veľkosti vzhľadom na stred rotácie"
 
 
 msgid "Movie tracking track data"
-msgstr "Údaje snímania stopy filmu"
+msgstr "Údaje stopy snímania filmu"
 
 
 msgid "Match-moving track data for tracking"
-msgstr "Údaje o pohybe stôp na snímanie"
+msgstr "Údaje stopy o prispôsobení pohybu pre snímanie"
 
 
 msgid "Average error of re-projection"
@@ -44542,7 +44550,7 @@ msgstr "Prejsť na aktuálnu snímku"
 
 
 msgid "Move the view to the current frame"
-msgstr "Presunie pohľad na aktuálnu snímku"
+msgstr "Presunie zobrazenie na aktuálnu snímku"
 
 
 msgctxt "Operator"
@@ -46340,15 +46348,15 @@ msgstr "Odstráni vybrané stopy"
 
 msgctxt "Operator"
 msgid "Detect Features"
-msgstr "Zistiť charakteristické znaky"
+msgstr "Zistiť významné črty"
 
 
 msgid "Automatically detect features and place markers to track"
-msgstr "Automaticky zistí charakteristické znaky a umiestni značky na stopy"
+msgstr "Automaticky zistí významné črty a umiestni značky do stopy"
 
 
 msgid "Only features further than margin pixels from the image edges are considered"
-msgstr "Len charakteristické znaky považované za viac než okrajové pixely z okrajov obrazov"
+msgstr "Len významné črty považované za viac než okrajové pixely z okrajov obrazov"
 
 
 msgid "Minimal distance accepted between two features"
@@ -46657,7 +46665,7 @@ msgstr "Povoliť viacnásobné zobrazenie"
 
 msgctxt "Operator"
 msgid "Paste Tracks"
-msgstr "Prilepiť stopu"
+msgstr "Prilepiť stopy"
 
 
 msgid "Paste tracks from clipboard"
@@ -47120,7 +47128,7 @@ msgstr "Prispôsobí snímku na záber"
 
 msgctxt "Operator"
 msgid "Center View to Cursor"
-msgstr "Vycentrovať pohľad na kurzor"
+msgstr "Vycentrovať zobrazenie na kurzor"
 
 
 msgid "Center the view so that the cursor is in the middle of the view"
@@ -47133,16 +47141,16 @@ msgstr "NDOF posun/priblíženie"
 
 
 msgid "Use a 3D mouse device to pan/zoom the view"
-msgstr "Použije zariadenie 3D myši na posuv/priblíženie pohľadu"
+msgstr "Použije zariadenie 3D myši na posuv/priblíženie zobrazenia"
 
 
 msgctxt "Operator"
 msgid "Pan View"
-msgstr "Panoramatický pohľad"
+msgstr "Panoramatické zobrazenie"
 
 
 msgid "Pan the view"
-msgstr "Panoramatický pohľad"
+msgstr "Panoramatické zobrazenie"
 
 
 msgid "View all selected elements"
@@ -47176,7 +47184,7 @@ msgstr "Priblížiť"
 
 
 msgid "Zoom in the view"
-msgstr "Priblíži pohľad"
+msgstr "Priblíži zobrazenie"
 
 
 msgid "Cursor location in screen coordinates"
@@ -47189,7 +47197,7 @@ msgstr "Oddialiť"
 
 
 msgid "Zoom out the view"
-msgstr "Oddiali pohľad"
+msgstr "Oddiali zobrazenie"
 
 
 msgid "Cursor location in normalized (0.0 to 1.0) coordinates"
@@ -47548,6 +47556,15 @@ msgid "Add a target to the constraint"
 msgstr "Pridá cieľ do vynútenia"
 
 
+msgctxt "Operator"
+msgid "Apply Constraint"
+msgstr "Použiť vynútenie"
+
+
+msgid "Apply constraint and remove from the stack"
+msgstr "Použije vynútenie a odstráni ho zo zásobníka"
+
+
 msgid "Constraint"
 msgstr "Vynútenie"
 
@@ -47592,6 +47609,24 @@ msgstr "Nastaviť inverzné"
 
 msgid "Set inverse correction for Child Of constraint"
 msgstr "Nastaví inverznú korekciu pre vynútenie potomkov"
+
+
+msgctxt "Operator"
+msgid "Duplicate Constraint"
+msgstr "Vytvoriť kópiu vynútenia"
+
+
+msgid "Duplicate constraint at the same position in the stack"
+msgstr "Vytvorí kópiu vynútenie na rovnakej pozícii v zásobníku"
+
+
+msgctxt "Operator"
+msgid "Copy Constraint To Selected"
+msgstr "Kopírovať vynútenia na vybrané"
+
+
+msgid "Copy constraint to other selected objects/bones"
+msgstr "Skopíruje vynútenia na iné vybrané objekty/kosti"
 
 
 msgctxt "Operator"
@@ -47967,7 +48002,7 @@ msgstr "Zarovná nový objekt do sveta"
 
 
 msgid "Align the new object to the view"
-msgstr "Zarovná nový objekt do pohľadu"
+msgstr "Zarovná nový objekt do zobrazenia"
 
 
 msgid "Use the 3D cursor orientation for the new object"
@@ -48225,11 +48260,11 @@ msgstr "Vysúva vybraný riadok okrajov okolo otočného bodu a osi aktuálneho 
 
 
 msgid "Axis in global view space"
-msgstr "Os v priestore globálneho pohľadu"
+msgstr "Os v priestore globálneho zobrazenia"
 
 
 msgid "Center in global view space"
-msgstr "Vycentruje v priestore globálneho pohľadu"
+msgstr "Vycentruje v priestore globálneho zobrazenia"
 
 
 msgctxt "Operator"
@@ -49945,8 +49980,24 @@ msgid "Select everything beginning with the last selection"
 msgstr "Vyberie všetko, čo začína posledným výberom"
 
 
+msgid "Only Activate if Selected"
+msgstr "Aktivovať len ak je vybrané"
+
+
+msgid "Do not change selection if the item under the cursor is already selected, only activate it"
+msgstr "Výber sa nemení, ak je položka pod kurzorom už vybratá, iba sa aktivuje"
+
+
 msgid "Open a directory when selecting it"
 msgstr "Otvoriť priečinok pri jeho výbere"
+
+
+msgid "Pass Through"
+msgstr "Prechod cez"
+
+
+msgid "Even on successful execution, pass the event on so other operators can execute on it as well"
+msgstr "Aj pri úspešnom vykonaní odovzdá udalosť ďalej, aby ju mohli vykonať aj iné operátory"
 
 
 msgctxt "Operator"
@@ -50730,7 +50781,7 @@ msgstr "Opätovné premietnutie ťahov použitím X-Y roviny"
 
 
 msgid "Reproject the strokes to end up on the same plane, as if drawn from the current viewpoint using 'Cursor' Stroke Placement"
-msgstr "Opätovné premietnutie ťahov ukončená na rovnakej rovine, akoby nakreslená podľa aktuálneho miesta pohľadu použitím umiestnenia ťahu 'kurzora'"
+msgstr "Opätovné premietnutie ťahov ukončená na rovnakej rovine, akoby nakreslená podľa aktuálneho miesta zobrazenia použitím umiestnenia ťahu 'kurzora'"
 
 
 msgid "Reproject the strokes using the orientation of 3D cursor"
@@ -52928,7 +52979,7 @@ msgstr "Skryť krivky"
 
 
 msgid "Hide selected curves from Graph Editor view"
-msgstr "Skryje vybrané krivky z pohľadu Editora grafov"
+msgstr "Skryje vybrané krivky zo zobrazenia Editora grafov"
 
 
 msgid "Hide unselected rather than selected curves"
@@ -53291,7 +53342,7 @@ msgstr "Vytvorí dlaždicový obrázok"
 
 
 msgid "Create an image with left and right views"
-msgstr "Vytvorí obrázok s ľavými a pravými pohľadmi"
+msgstr "Vytvorí obrázok s ľavými a pravými zobrazeniami"
 
 
 msgid "Image width"
@@ -53577,7 +53628,7 @@ msgstr "Nastaví 2D kurzor umiestnením na stred zobrazenia"
 
 msgctxt "Operator"
 msgid "View Center"
-msgstr "Vycentrovať pohľad"
+msgstr "Vycentrovať zobrazenie"
 
 
 msgid "View all selected UVs"
@@ -53586,7 +53637,7 @@ msgstr "Zobrazí všetky vybrané UV"
 
 msgctxt "Operator"
 msgid "Zoom View"
-msgstr "Priblížiť pohľad"
+msgstr "Priblížiť zobrazenie"
 
 
 msgid "Zoom in/out the image"
@@ -54174,6 +54225,10 @@ msgid "Clamp bounds under this value (zero to disable)"
 msgstr "Zamedzí upnutiu pod túto hodnotu (nula vypnuté)"
 
 
+msgid "Split geometry, omits vertices unused by edges or faces"
+msgstr "Oddelí geometriu, vynechá vrcholy nepoužívané hranami alebo plôškami"
+
+
 msgid "Keep Vert Order"
 msgstr "Zachovať poradie vrcholov"
 
@@ -54550,20 +54605,20 @@ msgstr "Obnoví východiskovú váhu zmäkčenia"
 
 msgctxt "Operator"
 msgid "Clear Restrict View"
-msgstr "Zmazať zobrazenie vynútenia"
+msgstr "Zmazať obmedzené zobrazenie"
 
 
 msgid "Reveal the layer by setting the hide flag"
-msgstr "Odhalí vrstvu nastavením príznaku ukrytia"
+msgstr "Odhalí vrstvu nastavením príznaku skrytia"
 
 
 msgctxt "Operator"
 msgid "Set Restrict View"
-msgstr "Nastaviť zobrazenie vynútenia"
+msgstr "Nastaviť obmedzenie zobrazenia"
 
 
 msgid "Hide the layer by setting the hide flag"
-msgstr "Skryje vrstvu nastavením príznaku ukrytia"
+msgstr "Skryje vrstvu nastavením príznaku skrytia"
 
 
 msgctxt "Operator"
@@ -57917,11 +57972,11 @@ msgstr "Manipulátor kliknutí na výber kanálov NLA"
 
 msgctxt "Operator"
 msgid "Clear Scale"
-msgstr "Zrušiť mierku"
+msgstr "Zmazať mierku"
 
 
 msgid "Reset scaling of selected strips"
-msgstr "Obnoví východiskovú zmenu veľkosti vybraných pásov"
+msgstr "Obnoví východiskovú zmenu mierky vybraných pásov"
 
 
 msgid "Handle clicks to select NLA Strips"
@@ -60069,7 +60124,7 @@ msgstr "Pridá referenčný obrázok do pozadia za objektmi"
 
 
 msgid "Align to View"
-msgstr "Zarovnať do pohľadu"
+msgstr "Zarovnať do zobrazenia"
 
 
 msgctxt "Operator"
@@ -61036,19 +61091,19 @@ msgstr "Náhodné hodnoty mierky"
 
 msgctxt "Operator"
 msgid "Clear Rotation"
-msgstr "Zrušiť rotáciu"
+msgstr "Zmazať rotáciu"
 
 
 msgid "Clear the object's rotation"
-msgstr "Vymaže rotáciu objektov"
+msgstr "Zmaže rotáciu objektov"
 
 
 msgid "Clear delta rotation in addition to clearing the normal rotation transform"
-msgstr "Vymaže rotácie delty okrem vymazania transformácie normálnej rotácie"
+msgstr "Zmaže rotácie delty okrem vymazania transformácie normálnej rotácie"
 
 
 msgid "Clear the object's scale"
-msgstr "Vymaže mierky objektu"
+msgstr "Zmaže mierky objektu"
 
 
 msgid "Clear delta scale in addition to clearing the normal scale transform"
@@ -61238,7 +61293,7 @@ msgstr "Preklopí obrázok"
 
 msgctxt "ID"
 msgid "Glow"
-msgstr "Žiariť"
+msgstr "Žiara"
 
 
 msgid "Create a glow effect"
@@ -63259,7 +63314,7 @@ msgstr "Len predné plôšky"
 
 
 msgid "Affect only faces facing towards the view"
-msgstr "Ovplyvňuje iba plôšky otočené v smere pohľadu"
+msgstr "Ovplyvňuje iba plôšky otočené v smere zobrazenia"
 
 
 msgid "Limit to Segment"
@@ -65136,11 +65191,11 @@ msgstr "Prekreslí iba tie snímky, v ktorých vybrané objekty sú v animačný
 
 
 msgid "Sequencer"
-msgstr "Radič"
+msgstr "Radič sekvencií"
 
 
 msgid "Render using the sequencer's OpenGL display"
-msgstr "Prekresliť použitím zobrazenia radiča OpenGL"
+msgstr "Prekresliť použitím zobrazenia radiča sekvencií OpenGL"
 
 
 msgid "View Context"
@@ -66177,11 +66232,11 @@ msgstr "Prepína zarovnanie regiónu (vľavo/vpravo alebo hore/dole)"
 
 msgctxt "Operator"
 msgid "Toggle Quad View"
-msgstr "Prepnúť štvornásobný pohľad"
+msgstr "Prepnúť štvornásobné zobrazenie"
 
 
 msgid "Split selected area into camera, front, right, and top views"
-msgstr "Rozdelí vybranú oblasť na kameru, predný, pravý a horný pohľad"
+msgstr "Rozdelí vybranú oblasť na kameru, predné, pravé a horné zobrazenie"
 
 
 msgctxt "Operator"
@@ -66410,7 +66465,7 @@ msgstr "Použitím globálnej osi obmedzí silu a nastaví smer gravitácie"
 
 
 msgid "Use the view axis to limit the force and set the gravity direction"
-msgstr "Použitím osi pohľadu obmedzí silu a nastaví smer gravitácie"
+msgstr "Použitím osi zobrazenia obmedzí silu a nastaví smer gravitácie"
 
 
 msgid "Filter strength"
@@ -67105,7 +67160,7 @@ msgstr "Na limitovanie posunu použije globálnu os"
 
 
 msgid "Use the view axis to limit the displacement"
-msgstr "Na limitovanie posunu použije os pohľadu"
+msgstr "Na limitovanie posunu použije os zobrazenia"
 
 
 msgid "Curvature Smooth Iterations"
@@ -67253,7 +67308,7 @@ msgstr "Režim sochárstva"
 
 
 msgid "Toggle sculpt mode in 3D view"
-msgstr "Prepne režim sochárstva do 3D pohľadu"
+msgstr "Prepne režim sochárstva do 3D zobrazenia"
 
 
 msgctxt "Operator"
@@ -67365,7 +67420,7 @@ msgstr "Orientácia tvaru"
 
 
 msgid "Use the view to orientate the trimming shape"
-msgstr "Použije pohľad na orientáciu tvaru orezania"
+msgstr "Použije zobrazenie na orientáciu tvaru orezania"
 
 
 msgid "Use the surface normal to orientate the trimming shape"
@@ -67438,15 +67493,15 @@ msgstr "Zmeniť typ efektu"
 
 
 msgid "Sequencer effect type"
-msgstr "Radič typu efektu"
+msgstr "Typ efektu radiča sekvencií"
 
 
 msgid "Crossfade"
-msgstr "Prelínanie"
+msgstr "Krížové prelínanie"
 
 
 msgid "Crossfade effect strip type"
-msgstr "Typ pásu efektu Prelínanie"
+msgstr "Typ pásu efektu Krížové prelínanie"
 
 
 msgid "Add effect strip type"
@@ -67458,23 +67513,23 @@ msgstr "Odoberie typ pásu efektu"
 
 
 msgid "Alpha Over effect strip type"
-msgstr "Typ pásu efektu Alfa nad"
+msgstr "Typ pásu efektu Nad alfou"
 
 
 msgid "Alpha Under"
-msgstr "Pod alfa"
+msgstr "Pod alfou"
 
 
 msgid "Alpha Under effect strip type"
-msgstr "Typ pásu efektu Alfa pod"
+msgstr "Typ pásu efektu Pod alfou"
 
 
 msgid "Gamma Cross"
-msgstr "Krížový gama"
+msgstr "Gama krížové prelínanie"
 
 
 msgid "Gamma Cross effect strip type"
-msgstr "Typ pásu efektu Gama kríženie"
+msgstr "Typ pásu efektu Gama krížové prelínanie"
 
 
 msgid "Multiply effect strip type"
@@ -67482,19 +67537,19 @@ msgstr "Viacnásobný typ pásu efektu"
 
 
 msgid "Alpha Over Drop"
-msgstr "Cez pokles alfa"
+msgstr "Nad pokles alfa"
 
 
 msgid "Alpha Over Drop effect strip type"
-msgstr "Typ pásu efektu Alfa nad pokles"
+msgstr "Typ pásu efektu Nad pokles alfa"
 
 
 msgid "Wipe"
-msgstr "Stierať"
+msgstr "Snímať"
 
 
 msgid "Wipe effect strip type"
-msgstr "Typ pásu efektu Stierať"
+msgstr "Typ pásu efektu Snímať"
 
 
 msgid "Glow"
@@ -67502,7 +67557,7 @@ msgstr "Žiariť"
 
 
 msgid "Glow effect strip type"
-msgstr "Typ pásu efektu Prežiariť"
+msgstr "Typ pásu efektu Žiara"
 
 
 msgid "Transform effect strip type"
@@ -67514,7 +67569,7 @@ msgstr "Typ pásu efektu Farba"
 
 
 msgid "Multicam Selector"
-msgstr "Viackamerový radič"
+msgstr "Viackamerový volič"
 
 
 msgid "Adjustment Layer"
@@ -67526,7 +67581,7 @@ msgstr "Gaussove rozostrenie"
 
 
 msgid "Color Mix"
-msgstr "Zmes farieb"
+msgstr "Zmiešať farby"
 
 
 msgctxt "Operator"
@@ -67553,7 +67608,7 @@ msgstr "Skopíruje vybrané pásy do schránky"
 
 msgctxt "Operator"
 msgid "Crossfade Sounds"
-msgstr "Zvuky prelínania"
+msgstr "Zvuky krížového prelínania"
 
 
 msgid "Do cross-fading volume animation of two selected sound strips"
@@ -67575,7 +67630,7 @@ msgstr "Vymazať pásy"
 
 
 msgid "Erase selected strips from the sequencer"
-msgstr "Vymaže vybrané pásy z radiča"
+msgstr "Vymaže vybrané pásy z radiča sekvencií"
 
 
 msgid "Duplicate the selected strips"
@@ -67600,7 +67655,7 @@ msgstr "Pridať efekt pásu"
 
 
 msgid "Add an effect to the sequencer, most are applied on top of existing strips"
-msgstr "Pridať efekt na radič, väčšina z nich sa aplikuje na vrchole existujúcich pásov"
+msgstr "Pridať efekt na radič sekvencií, väčšina z nich sa aplikuje na vrchole existujúcich pásov"
 
 
 msgid "Channel to place this strip into"
@@ -67763,7 +67818,7 @@ msgstr "Pridať pás obrázku"
 
 
 msgid "Add an image or image sequence to the sequencer"
-msgstr "Pridá obrázok alebo sekvenciu obrázkov do radiča"
+msgstr "Pridá obrázok alebo sekvenciu obrázkov do radiča sekvencií"
 
 
 msgid "Scale fit method"
@@ -67834,7 +67889,7 @@ msgstr "Pridať pás masky"
 
 
 msgid "Add a mask strip to the sequencer"
-msgstr "Pridá pás masky do radiča"
+msgstr "Pridá pás masky do radiča sekvencií"
 
 
 msgctxt "Operator"
@@ -67852,7 +67907,7 @@ msgstr "Bez meta pásu"
 
 
 msgid "Put the contents of a meta-strip back in the sequencer"
-msgstr "Vloží obsah meta pása späť do radiča"
+msgstr "Vloží obsah meta pása späť do radiča sekvencií"
 
 
 msgctxt "Operator"
@@ -67870,7 +67925,7 @@ msgstr "Pridať filmový pás"
 
 
 msgid "Add a movie strip to the sequencer"
-msgstr "Pridá filmový pás do radiča"
+msgstr "Pridá filmový pás do radiča sekvencií"
 
 
 msgid "Load sound with the movie"
@@ -67891,7 +67946,7 @@ msgstr "Pridať pás filmového klipu"
 
 
 msgid "Add a movieclip strip to the sequencer"
-msgstr "Pridá pás filmového klipu do radiča"
+msgstr "Pridá pás filmového klipu do radiča sekvencií"
 
 
 msgctxt "Operator"
@@ -67944,11 +67999,11 @@ msgstr "Pretvorí všetky indexy vybraných náhrad a časových kódov použit�
 
 msgctxt "Operator"
 msgid "Refresh Sequencer"
-msgstr "Obnoviť radič"
+msgstr "Obnoviť radič sekvencií"
 
 
 msgid "Refresh the sequencer editor"
-msgstr "Obnoví editor radiča"
+msgstr "Obnoví editor radiča sekvencií"
 
 
 msgctxt "Operator"
@@ -67957,7 +68012,7 @@ msgstr "Znovu načítať pásy"
 
 
 msgid "Reload strips in the sequencer"
-msgstr "Znovu načíta pásy do radiča"
+msgstr "Znovu načíta pásy do radiča sekvencií"
 
 
 msgid "Adjust Length"
@@ -67974,7 +68029,7 @@ msgstr "Nastaviť veľkosť prekreslenia"
 
 
 msgid "Set render size and aspect from active sequence"
-msgstr "Nastaví veľkosti prekreslenia z pohľadu aktívnej sekvencie"
+msgstr "Nastaví veľkosti prekreslenia zo zobrazenia aktívnej sekvencie"
 
 
 msgid "Use mouse to sample color in current frame"
@@ -67987,7 +68042,7 @@ msgstr "Pridať pás scény"
 
 
 msgid "Add a strip to the sequencer using a blender scene as a source"
-msgstr "Pridá pás do radiča použitím scény Blendera ako zdroja"
+msgstr "Pridá pás do radiča sekvencií použitím scény Blendera ako zdroja"
 
 
 msgid "Select a strip (last selected becomes the \"active strip\")"
@@ -68219,7 +68274,7 @@ msgstr "Pridať zvukový pás"
 
 
 msgid "Add a sound strip to the sequencer"
-msgstr "Pridá zvukový pás do radiča"
+msgstr "Pridá zvukový pás do radiča sekvencií"
 
 
 msgid "Cache the sound in memory"
@@ -68345,12 +68400,12 @@ msgstr "Odstrániť modifikátor pásu"
 
 
 msgid "Remove a modifier from the strip"
-msgstr "Odstráni modifikátora z pásu"
+msgstr "Odstráni modifikátor z pásu"
 
 
 msgctxt "Operator"
 msgid "Clear Strip Transform"
-msgstr "Vymazať transformáciu pásov"
+msgstr "Zmazať transformáciu pásov"
 
 
 msgid "Reset image transformation to default value"
@@ -68395,7 +68450,7 @@ msgstr "Prispôsobí veľkosť obrázka náhľadu"
 
 
 msgid "Scale image so it fills preview completely"
-msgstr "Prispôsobí veľkosť obrázka úplnému vypneniu náhľadu"
+msgstr "Prispôsobí veľkosť obrázka úplnému vyplneniu náhľadu"
 
 
 msgid "Stretch image so it fills preview"
@@ -68417,11 +68472,11 @@ msgstr "Prehodiť stranu pásu"
 
 msgctxt "Operator"
 msgid "Sequencer Swap Data"
-msgstr "Prehodiť údaje radiča"
+msgstr "Prehodiť údaje radiča sekvencií"
 
 
 msgid "Swap 2 sequencer strips"
-msgstr "Prehodí 2 pásy radiča"
+msgstr "Prehodí 2 pásy radiča sekvencií"
 
 
 msgctxt "Operator"
@@ -68473,16 +68528,16 @@ msgstr "Nastaví okraje hraníc použitých pre zobrazenie posuvu"
 
 
 msgid "Zoom the sequencer on the selected strips"
-msgstr "Priblíženie radiča vybraných pásov"
+msgstr "Priblíženie radiča sekvencií na vybrané pásy"
 
 
 msgctxt "Operator"
 msgid "Sequencer View Zoom Ratio"
-msgstr "Pomer priblíženia zobrazenia radiča"
+msgstr "Pomer priblíženia zobrazenia radiča sekvencií"
 
 
 msgid "Change zoom ratio of sequencer preview"
-msgstr "Zmení pomer priblíženia náhľadu radiča"
+msgstr "Zmení pomer priblíženia náhľadu radiča sekvencií"
 
 
 msgctxt "Operator"
@@ -69413,7 +69468,7 @@ msgstr "Vychýli vybrané ovládané vrcholy podľa 3D krivky"
 
 msgctxt "Operator"
 msgid "To Sphere"
-msgstr "Zaguľatiť"
+msgstr "Do gule"
 
 
 msgid "Move selected items outward in a spherical shape around geometric center"
@@ -70518,7 +70573,7 @@ msgstr "Odstráni pripnutie výberu namiesto nastavenia"
 
 msgctxt "Operator"
 msgid "Project from View"
-msgstr "Premietnutie z pohľadu"
+msgstr "Premietnutie zo zobrazenia"
 
 
 msgid "Project the UV vertices of the mesh as seen in current 3D view"
@@ -70867,11 +70922,11 @@ msgstr "Zvarí dohromady vybrané UV vrcholy"
 
 msgctxt "Operator"
 msgid "View Edge Pan"
-msgstr "Posuv pohľadu hrany"
+msgstr "Posuv zobrazenia hrany"
 
 
 msgid "Pan the view when the mouse is held at an edge"
-msgstr "Posúva pohľadom, keď je myš držaná na hrane"
+msgstr "Posúva zobrazením, keď je myš držaná na hrane"
 
 
 msgid "Delta X"
@@ -70884,7 +70939,7 @@ msgstr "Delta Y"
 
 msgctxt "Operator"
 msgid "Reset View"
-msgstr "Obnoviť pohľad"
+msgstr "Obnoviť zobrazenie"
 
 
 msgid "Reset the view"
@@ -71004,11 +71059,11 @@ msgstr "Ponuka výberu kostí"
 
 msgctxt "Operator"
 msgid "Align Camera to View"
-msgstr "Zarovnať kameru do pohľadu"
+msgstr "Zarovnať kameru do zobrazenia"
 
 
 msgid "Set camera view to active view"
-msgstr "Nastaví záber kamery na aktívny pohľad"
+msgstr "Nastaví záber kamery na aktívné zobrazenie"
 
 
 msgctxt "Operator"
@@ -71099,7 +71154,7 @@ msgstr "Presunie kurzor 3D na vybraný bod VR"
 
 msgctxt "Operator"
 msgid "Dolly View"
-msgstr "Pridržanie pohľadu (dolly)"
+msgstr "Pridržanie zobrazenia (dolly)"
 
 
 msgid "Dolly in/out in the view"
@@ -71209,7 +71264,7 @@ msgstr "Zobrazenie kurzora"
 
 
 msgid "Start placement using a point projected onto the view plane at the 3D cursor position"
-msgstr "Umiestnenie začnite použitím bodu premietaného do roviny pohľadu v polohe 3D kurzora"
+msgstr "Umiestnenie začnite použitím bodu premietaného do roviny zobrazenia v polohe 3D kurzora"
 
 
 msgid "Use the surface normal (using the transform orientation as a fallback)"
@@ -71254,11 +71309,11 @@ msgstr "Použiť aktuálne nastavenie prichytenia"
 
 msgctxt "Operator"
 msgid "Local View"
-msgstr "Lokálny pohľad"
+msgstr "Lokálne zobrazenie"
 
 
 msgid "Toggle display of selected object(s) separately and centered in view"
-msgstr "Prepne samostatné zobrazenie vybraného objektu(ov) a vycentruje pohľad"
+msgstr "Prepne samostatné zobrazenie vybraného objektu(ov) a vycentruje zobrazenie"
 
 
 msgid "Frame Selected"
@@ -71266,20 +71321,20 @@ msgstr "Snímať vybrané"
 
 
 msgid "Move the view to frame the selected objects"
-msgstr "Presunie pohľad na snímky vybraných objektov"
+msgstr "Presunie zobrazenie na snímky vybraných objektov"
 
 
 msgctxt "Operator"
 msgid "Remove from Local View"
-msgstr "Odstrániť z lokálneho pohľadu"
+msgstr "Odstrániť z lokálneho zobrazenia"
 
 
 msgid "Move selected objects out of local view"
-msgstr "Odsunie vybrané objekty z lokálneho pohľadu"
+msgstr "Odsunie vybrané objekty z lokálneho zobrazenia"
 
 
 msgid "Move the view"
-msgstr "Presúva pohľad"
+msgstr "Presúva zobrazenie"
 
 
 msgctxt "Operator"
@@ -71595,36 +71650,36 @@ msgstr "Otáča vzhľadom k aktuálnej orientácii"
 
 
 msgid "View from the left"
-msgstr "Pohľad zľava"
+msgstr "Zobrazenie zľava"
 
 
 msgid "View from the right"
-msgstr "Pohľad sprava"
+msgstr "Zobrazenie sprava"
 
 
 msgid "View from the bottom"
-msgstr "Pohľad zdola"
+msgstr "Zobrazenie zdola"
 
 
 msgid "View from the top"
-msgstr "Pohľad zhora"
+msgstr "Zobrazenie zhora"
 
 
 msgid "View from the front"
-msgstr "Pohľad spredu"
+msgstr "Zobrazenie spredu"
 
 
 msgid "View from the back"
-msgstr "Pohľad zozadu"
+msgstr "Zobrazenie zozadu"
 
 
 msgctxt "Operator"
 msgid "View Camera"
-msgstr "Pohľad kamery"
+msgstr "Zobrazenie z kamery"
 
 
 msgid "Toggle the camera view"
-msgstr "Prepína na pohľad kamery"
+msgstr "Prepína na zobrazenie kamery"
 
 
 msgctxt "Operator"
@@ -71633,7 +71688,7 @@ msgstr "Hranice snímky kamery"
 
 
 msgid "Center the camera view, resizing the view to fit its bounds"
-msgstr "Vycentruje pohľad kamery a zmení jej veľkosť tak, aby zodpovedala jeho hraniciam"
+msgstr "Vycentruje zobrazenie kamery a zmení jej veľkosť tak, aby zodpovedala jeho hraniciam"
 
 
 msgctxt "Operator"
@@ -71674,11 +71729,11 @@ msgstr "Uzamkne zobrazenie aktívneho objektu/kosti"
 
 msgctxt "Operator"
 msgid "View Orbit"
-msgstr "Obiehať pohľadom"
+msgstr "Obiehať zobrazením"
 
 
 msgid "Orbit the view"
-msgstr "Obieha pohľadom"
+msgstr "Obieha zobrazením"
 
 
 msgid "Orbit"
@@ -71686,7 +71741,7 @@ msgstr "Obiehať"
 
 
 msgid "Direction of View Orbit"
-msgstr "Smer obiehania pohľadu"
+msgstr "Smer obiehania zobrazenia"
 
 
 msgid "Orbit Left"
@@ -71694,7 +71749,7 @@ msgstr "Obiehať vľavo"
 
 
 msgid "Orbit the view around to the left"
-msgstr "Obieha pohľadom doľava"
+msgstr "Obieha zobrazením doľava"
 
 
 msgid "Orbit Right"
@@ -71702,7 +71757,7 @@ msgstr "Obiehať vpravo"
 
 
 msgid "Orbit the view around to the right"
-msgstr "Obieha pohľadom doprava"
+msgstr "Obieha zobrazením doprava"
 
 
 msgid "Orbit Up"
@@ -71710,7 +71765,7 @@ msgstr "Obiehať nahor"
 
 
 msgid "Orbit the view up"
-msgstr "Obieha pohľadom nahor"
+msgstr "Obieha zobrazením nahor"
 
 
 msgid "Orbit Down"
@@ -71718,16 +71773,16 @@ msgstr "Obiehať nadol"
 
 
 msgid "Orbit the view down"
-msgstr "Obieha pohľadom nadol"
+msgstr "Obieha zobrazením nadol"
 
 
 msgctxt "Operator"
 msgid "Pan View Direction"
-msgstr "Posuv smeru pohľadu"
+msgstr "Posuv smeru zobrazenia"
 
 
 msgid "Pan the view in a given direction"
-msgstr "Posúva pohľadom v danom smere"
+msgstr "Posúva zobrazením v danom smere"
 
 
 msgid "Pan"
@@ -71735,7 +71790,7 @@ msgstr "Posúvať"
 
 
 msgid "Direction of View Pan"
-msgstr "Smer posunu pohľadu"
+msgstr "Smer posunu zobrazenia"
 
 
 msgid "Pan Left"
@@ -71743,7 +71798,7 @@ msgstr "Posunúť vľavo"
 
 
 msgid "Pan the view to the left"
-msgstr "Posúva pohľadom naľavo"
+msgstr "Posúva zobrazením naľavo"
 
 
 msgid "Pan Right"
@@ -71751,7 +71806,7 @@ msgstr "Posunúť vpravo"
 
 
 msgid "Pan the view to the right"
-msgstr "Posúva pohľadom napravo"
+msgstr "Posúva zobrazením napravo"
 
 
 msgid "Pan Up"
@@ -71759,7 +71814,7 @@ msgstr "Posunúť hore"
 
 
 msgid "Pan the view up"
-msgstr "Posúva pohľadom nahor"
+msgstr "Posúva zobrazením nahor"
 
 
 msgid "Pan Down"
@@ -71767,7 +71822,7 @@ msgstr "Posunúť dole"
 
 
 msgid "Pan the view down"
-msgstr "Posúva pohľadom nadol"
+msgstr "Posúva zobrazením nadol"
 
 
 msgctxt "Operator"
@@ -71781,11 +71836,11 @@ msgstr "Prepína aktuálne zobrazenie perspektívnej/ortografickej projekcie"
 
 msgctxt "Operator"
 msgid "View Roll"
-msgstr "Otáčať pohľadom"
+msgstr "Otáčať zobrazením"
 
 
 msgid "Roll the view"
-msgstr "Otáča pohľadom"
+msgstr "Otáča zobrazením"
 
 
 msgid "Roll Angle Source"
@@ -71801,7 +71856,7 @@ msgstr "Uhol otočenia"
 
 
 msgid "Roll the view using an angle value"
-msgstr "Otočí pohľadom použitím hodnoty uhla"
+msgstr "Otočí zobrazením použitím hodnoty uhla"
 
 
 msgid "Roll Left"
@@ -71821,7 +71876,7 @@ msgstr "Otáča okolo zobrazenia doprava"
 
 
 msgid "Move the view to the selection center"
-msgstr "Presunie pohľad na stred výberu"
+msgstr "Presunie zobrazenie na stred výberu"
 
 
 msgctxt "Operator"
@@ -71883,7 +71938,7 @@ msgstr "Približuje/oddiaľuje zobrazenie"
 
 
 msgid "Zoom in the view to the nearest object contained in the border"
-msgstr "Priblíži pohľad na najbližší ohraničený objekt"
+msgstr "Priblíži zobrazenie na najbližší ohraničený objekt"
 
 
 msgctxt "Operator"
@@ -73019,7 +73074,7 @@ msgstr "Orezať kameru"
 
 
 msgid "Clip drawings to camera size when export in camera view"
-msgstr "Orezanie vykreslenia na veľkosť kamery pri exporte v pohľade kamery"
+msgstr "Orezanie vykreslenia na veľkosť kamery pri exporte v zobrazení kamery"
 
 
 msgid "Import SVG into grease pencil"
@@ -73762,7 +73817,7 @@ msgstr "Anaglyf"
 
 
 msgid "Render views for left and right eyes as two differently filtered colors in a single image (anaglyph glasses are required)"
-msgstr "Prekreslí pohľady pre ľavé a pravé oči ako dve rôzne filtrované farby v jednom obrázku (vyžadujú sa anaglyfické okuliare)"
+msgstr "Prekreslí zobrazenia pre ľavé a pravé oči ako dve rôzne filtrované farby v jednom obrázku (vyžadujú sa anaglyfické okuliare)"
 
 
 msgid "Interlace"
@@ -73770,7 +73825,7 @@ msgstr "Prelínanie"
 
 
 msgid "Render views for left and right eyes interlaced in a single image (3D-ready monitor is required)"
-msgstr "Prekreslí pohľady pre ľavé a pravé oči prelínané v jedinom obrázku (vyžaduje sa 3D monitor)"
+msgstr "Prekreslí zobrazenia pre ľavé a pravé oči prelínané v jedinom obrázku (vyžaduje sa 3D monitor)"
 
 
 msgid "Time Sequential"
@@ -74893,7 +74948,7 @@ msgstr "Zobrazenie značky"
 
 
 msgid "Mask Settings"
-msgstr "Nastavenie masky"
+msgstr "Nastavenia masky"
 
 
 msgid "Mask Display"
@@ -75770,7 +75825,7 @@ msgstr "Nastavenia náhrady"
 
 
 msgid "Sequencer Overlays"
-msgstr "Radič prekrytia"
+msgstr "Prekrytia radiča sekvencií"
 
 
 msgid "Strip Cache"
@@ -76163,7 +76218,7 @@ msgstr "Analyzovať"
 
 
 msgid "Quad View"
-msgstr "Štvornásobný pohľad"
+msgstr "Štvornásobné zobrazenie"
 
 
 msgid "Shadow Settings"
@@ -76601,7 +76656,7 @@ msgstr "Orientácie transformácií"
 
 
 msgid "View Lock"
-msgstr "Zamknúť pohľad"
+msgstr "Zamknúť zobrazenie"
 
 
 msgid "VR"
@@ -77909,7 +77964,7 @@ msgstr "Verzia Blendera bola uložená v userpref.blend"
 
 
 msgid "View & Controls"
-msgstr "Pohľad a ovládanie"
+msgstr "Zobrazenie a ovládanie"
 
 
 msgid "Preferences related to viewing data"
@@ -78284,6 +78339,14 @@ msgid "Enable Cycles debugging options for developers"
 msgstr "Povolí vývojárom možnosť ladenia cyklov"
 
 
+msgid "Extended Asset Browser"
+msgstr "Rozšírený prehliadač aktív"
+
+
+msgid "Enable Asset Browser editor and operators to manage regular data-blocks as assets, not just poses"
+msgstr "Povolí editoru a operátorom prehliadača aktív spravovať bežné bloky údajov ako aktíva, nielen ako pózy"
+
+
 msgid "Full Frame Compositor"
 msgstr "Kompozítor Plná snímka"
 
@@ -78629,15 +78692,15 @@ msgstr "Počet pixelov predtým, než je kurzor považovaný za premiestnený (p
 
 
 msgid "View Navigation"
-msgstr "Zmena pohľadu"
+msgstr "Navigácia zobrazenia"
 
 
 msgid "Which method to use for viewport navigation"
-msgstr "Metóda použitá na zobrazenie navigácie"
+msgstr "Metóda použitá na navigáciu zobrazenia"
 
 
 msgid "Interactively walk or free navigate around the scene"
-msgstr "Interaktívna chôdza alebo voľné prechádzanie okolo scény"
+msgstr "Interaktívna chôdza alebo voľnú navigáciu okolo scény"
 
 
 msgid "Fly"
@@ -78645,7 +78708,7 @@ msgstr "Lietanie"
 
 
 msgid "Use fly dynamics to navigate the scene"
-msgstr "Použije dynamiku lietania pre prechádzanie scénou"
+msgstr "Použije dynamiku lietania pre navigáciu scénou"
 
 
 msgid "Deadzone"
@@ -78817,7 +78880,7 @@ msgstr "Auto perspektíva"
 
 
 msgid "Automatically switch between orthographic and perspective when changing from top/front/side views"
-msgstr "Automaticky prepína medzi pravouhlým a perspektínym zobrazením pri zmene horného/čelného/bočného pohľadu"
+msgstr "Automaticky prepína medzi pravouhlým a perspektívnym zobrazením pri zmene horného/čelného/bočného zobrazenia"
 
 
 msgid "Release Confirms"
@@ -78841,7 +78904,7 @@ msgstr "Zachytiť kontinuálne"
 
 
 msgid "Let the mouse wrap around the view boundaries so mouse movements are not limited by the screen size (used by transform, dragging of UI controls, etc.)"
-msgstr "Nechajte myš sa motať okolo hraníc pohľadu, aby pohyby myši neboli limitované veľkosťou obrazovky (používa sa pri transformácii, pretiahnutí ovládacích prvkov užívateľského rozhrania atď.)"
+msgstr "Nechajte myš sa motať okolo hraníc zobrazenia, aby pohyby myši neboli limitované veľkosťou obrazovky (používa sa pri transformácii, pretiahnutí ovládacích prvkov užívateľského rozhrania atď.)"
 
 
 msgid "Auto Depth"
@@ -79893,7 +79956,7 @@ msgstr "Zobraziť názov zobrazenia"
 
 
 msgid "Show the name of the view's direction in each 3D View"
-msgstr "Ukáže názov smeru pohľadu do 3D zobrazení"
+msgstr "Ukáže názov smeru zobrazenia do 3D zobrazení"
 
 
 msgid "Smooth View"
@@ -81473,7 +81536,7 @@ msgstr "Použite rôzne hodnoty rozosiatia (a tým aj vzory šumu) na rôznych s
 
 
 msgid "Allow objects to be culled based on the camera frustum"
-msgstr "Povolí vyradenie objektov na základe zrezaného pohľadu kamery"
+msgstr "Povolí vyradenie objektov na základe zrezaného zobrazenia kamery"
 
 
 msgid "Allow objects to be culled based on the distance from camera"
@@ -82077,7 +82140,7 @@ msgstr "Vlastná póza"
 
 
 msgid "Allow a manually defined position and rotation to be used as the VR view base pose"
-msgstr "Povolí manuálne definovanú polohu a rotáciu použiť ako základnú pózu pohľadu VR"
+msgstr "Povolí manuálne definovanú polohu a rotáciu použiť ako základnú pózu zobrazenia VR"
 
 
 msgid "ID Property"
@@ -82173,7 +82236,7 @@ msgstr "Je zarovnaná os"
 
 
 msgid "Is current view an orthographic side view"
-msgstr "Je aktuálne zobrazenie kolmý bočný pohľad"
+msgstr "Je aktuálne zobrazenie ortografické bočné zobrazenie"
 
 
 msgid "Is Perspective"
@@ -82181,7 +82244,7 @@ msgstr "Je perspektívne"
 
 
 msgid "Lock view rotation in side views"
-msgstr "Uzamknutie zobrazenia rotácie v bočných pohľadoch"
+msgstr "Uzamknutie zobrazenia rotácie v bočných zobrazeniach"
 
 
 msgid "Perspective Matrix"
@@ -82193,11 +82256,11 @@ msgstr "Súčasná matrica perspektívy (\"window_matrix * view_matrix\")"
 
 
 msgid "Sync view position between side views"
-msgstr "Synchronizácia polohy zobrazenia medzi bočnými pohľadmi"
+msgstr "Synchronizácia polohy zobrazenia medzi bočnými zobrazeniami"
 
 
 msgid "Clip objects based on what's visible in other side views"
-msgstr "Objekty pripne na základe viditeľnosti v iných bočných pohľadoch"
+msgstr "Objekty pripne na základe viditeľnosti v iných bočných zobrazeniach"
 
 
 msgid "Use Clip Planes"
@@ -82221,7 +82284,7 @@ msgstr "Faktor priblíženia v zábere kamery"
 
 
 msgid "Distance to the view location"
-msgstr "Vzdialenosť od miesta pohľadu"
+msgstr "Vzdialenosť od miesta zobrazenia"
 
 
 msgid "View Location"
@@ -82237,15 +82300,15 @@ msgstr "Zobraziť maticu"
 
 
 msgid "Current view matrix"
-msgstr "Matrica aktuálneho pohľadu"
+msgstr "Matrica aktuálneho zobrazenia"
 
 
 msgid "View Perspective"
-msgstr "Perspektívny pohľad"
+msgstr "Perspektívne zobrazenie"
 
 
 msgid "View Rotation"
-msgstr "Rotácia pohľadu"
+msgstr "Rotácia zobrazenia"
 
 
 msgid "Rotation in quaternions (keep normalized)"
@@ -82685,7 +82748,7 @@ msgstr "Počet zvislých pixelov vo prevádzaných obrázkoch"
 
 
 msgid "Sequencer Preview Shading"
-msgstr "Radič náhľadu tieňovania"
+msgstr "Náhľad tieňovania radiča sekvencií"
 
 
 msgid "Display method used in the sequencer view"
@@ -82961,7 +83024,7 @@ msgstr "Uloží dlaždice pre všetky vrstvy prekreslenia a uzly scény do súbo
 
 
 msgid "Process the render (and composited) result through the video sequence editor pipeline, if sequencer strips exist"
-msgstr "Spracuje výsledné prekreslenie (a vytvorenie kompozície) cez zreťazené spracovanie videa editora sekvencie, ak pásy radiča existujú"
+msgstr "Spracuje výsledné prekreslenie (a vytvorenie kompozície) cez zreťazené spracovanie videa editora sekvencie, ak pásy radiča sekvencií existujú"
 
 
 msgid "Override Scene Settings"
@@ -82969,7 +83032,7 @@ msgstr "Prepísať nastavenie scény"
 
 
 msgid "Use workbench render settings from the sequencer scene, instead of each individual scene used in the strip"
-msgstr "Použije nastavenia pracovnej plochy prekreslenia zo scény radiča, namiesto každej jednotlivej scény použitej v páse"
+msgstr "Použije nastavenia pracovnej plochy prekreslenia zo scény radiča sekvencií, namiesto každej jednotlivej scény použitej v páse"
 
 
 msgid "Use Simplify"
@@ -84469,7 +84532,7 @@ msgstr "Zobrazenie prekreslenia scény"
 
 
 msgid "Render viewpoint for 3D stereo and multiview rendering"
-msgstr "Prekreslí miesto pohľadu pre 3D stereo a viac pohľadové prekreslenie"
+msgstr "Prekreslí miesto zobrazenia pre 3D stereo a viac pohľadové prekreslenie"
 
 
 msgid "Camera Suffix"
@@ -84747,7 +84810,7 @@ msgstr "Rýchlosť"
 
 msgctxt "Sequence"
 msgid "Multicam Selector"
-msgstr "Viackamerový radič"
+msgstr "Viackamerový volič"
 
 
 msgctxt "Sequence"
@@ -84807,7 +84870,7 @@ msgstr "Použiť lineárne modifikátory"
 
 
 msgid "Calculate modifiers in linear space instead of sequencer's space"
-msgstr "Vypočíta modifikátory v lineárnom priestore namiesto priestoru radiča"
+msgstr "Vypočíta modifikátory v lineárnom priestore namiesto priestoru radiča sekvencií"
 
 
 msgid "Effect Sequence"
@@ -85392,7 +85455,7 @@ msgstr "Použije 3D kameru scény ako vstup"
 
 
 msgid "Use the Scene's Sequencer timeline as input"
-msgstr "Použije časovú os radiča scény ako vstup"
+msgstr "Použije časovú os radiča sekvencií scény ako vstup"
 
 
 msgid "Use Annotations"
@@ -85516,7 +85579,7 @@ msgstr "Aktívny pás"
 
 
 msgid "Sequencer's active strip"
-msgstr "Radič aktívneho pásu"
+msgstr "Aktívny pás radiča sekvencií"
 
 
 msgid "Meta Stack"
@@ -85616,7 +85679,7 @@ msgstr "Zobraziť prekrytie"
 
 
 msgid "Partial overlay on top of the sequencer with a frame offset"
-msgstr "Čiastočné prekrytie v hornej časti radiča s posunom snímky"
+msgstr "Čiastočné prekrytie v hornej časti radiča sekvencií s posunom snímky"
 
 
 msgid "Cache Final"
@@ -85712,7 +85775,7 @@ msgstr "Typ vstupných údajov používaných na masku"
 
 
 msgid "Use sequencer strip as mask input"
-msgstr "Použije pás radiča ako vstupnú masku"
+msgstr "Použije pás radiča sekvencií ako vstupnú masku"
 
 
 msgid "Use mask ID as mask input"
@@ -85900,7 +85963,7 @@ msgstr "Meniť veľkosť pozdĺž osi Y"
 
 
 msgid "Sequencer Tool Settings"
-msgstr "Nastavenia nástroja radiča"
+msgstr "Nastavenia nástroja radiča sekvencií"
 
 
 msgid "Snapping Distance"
@@ -86794,7 +86857,7 @@ msgstr "Zobraziť poznámky"
 
 
 msgid "Show annotations for this view"
-msgstr "Ukáže poznámky pre tento pohľad"
+msgstr "Ukáže poznámky pre toto zobrazenie"
 
 
 msgid "Show Blue Channel"
@@ -88226,7 +88289,7 @@ msgstr "Číslo kanála zobrazené v náhľade obrázka. 0 je výsledkom všetk�
 
 
 msgid "View mode to use for displaying sequencer output"
-msgstr "Režim zobrazenia použitého na zobrazenie výstupu radiča"
+msgstr "Režim zobrazenia použitého na zobrazenie výstupu radiča sekvencií"
 
 
 msgid "Luma Waveform"
@@ -88386,11 +88449,11 @@ msgstr "Typ zobrazenia"
 
 
 msgid "Type of the Sequencer view (sequencer, preview or both)"
-msgstr "Typ zobrazenia radiča (radič, náhľad alebo oboje)"
+msgstr "Typ zobrazenia radiča sekvencií (radič, náhľad alebo oboje)"
 
 
 msgid "Sequencer & Preview"
-msgstr "Radič a náhľad"
+msgstr "Radič sekvencií a náhľad"
 
 
 msgid "Waveform Display"
@@ -88686,7 +88749,7 @@ msgstr "3D zobrazenie ďaleko vzdialenosti strihu"
 
 
 msgid "3D View near clipping distance (perspective view only)"
-msgstr "3D zobrazenie blízko vzdialenosti strihu (iba perspektívny pohľad)"
+msgstr "3D zobrazenie blízko vzdialenosti strihu (iba perspektívne zobrazenie)"
 
 
 msgid "Visibility Icon"
@@ -88710,7 +88773,7 @@ msgstr "Stred 3D zobrazenia je uzamknutý k pozícii tejto kosti"
 
 
 msgid "Lock Camera to View"
-msgstr "Zamknúť kameru do pohľadu"
+msgstr "Zamknúť kameru do zobrazenia"
 
 
 msgid "Enable view navigation within the camera view"
@@ -89406,7 +89469,7 @@ msgstr "Vsunutá snímka"
 
 
 msgid "Combine both views in a squeezed image"
-msgstr "Skombinuje oba pohľady do vsunutého obrázku"
+msgstr "Skombinuje oba zobrazenia do vsunutého obrázku"
 
 
 msgid "String Attribute Value"
@@ -90327,30 +90390,6 @@ msgstr "Štýl písma"
 
 msgid "Theme settings for Font"
 msgstr "Nastavenie motívu písma"
-
-
-msgid "Kerning Style"
-msgstr "Štýl zhustenia"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Štýl použitý pri zhustení písmen"
-
-
-msgid "Unfitted"
-msgstr "Neprispôsobená"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "Použije zmenu veľkosti, ale neprispôsobí mriežku vzdialeností zhustenia písma"
-
-
-msgid "Fitted"
-msgstr "Prispôsobená"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "Použije zmenu veľkosti a prispôsobí mriežku vzdialenosti zhustenia písma"
 
 
 msgid "Font size in points"
@@ -92075,7 +92114,7 @@ msgstr "Proporcionálna editácia v editore F-kriviek"
 
 
 msgid "Projected from View"
-msgstr "Premietnutý z pohľadu"
+msgstr "Premietnuté zo zobrazenia"
 
 
 msgid "Proportional Editing using screen space locations"
@@ -92755,7 +92794,7 @@ msgstr "Čiary mriežky"
 
 
 msgid "Number of grid lines to display in perspective view"
-msgstr "Počet čiar mriežky na zobrazenie v perspektívnom pohľade"
+msgstr "Počet čiar mriežky na zobrazenie v perspektívnom zobrazení"
 
 
 msgid "Multiplier for the distance between 3D View grid lines"
@@ -93027,7 +93066,7 @@ msgstr "Zobraziť mriežku"
 
 
 msgid "Show grid in orthographic side view"
-msgstr "Ukáže mriežku v ortografickom (kolmo zhora) pohľade"
+msgstr "Ukáže mriežku v ortografickom (kolmo zhora) zobrazení"
 
 
 msgid "Outline Selected"
@@ -94355,7 +94394,7 @@ msgstr "Definuje, odkiaľ pochádza umiestnenie a rotácia zobrazenia VR, na kto
 
 
 msgid "Follow the active scene camera to define the VR view's base pose"
-msgstr "Postupuje podľa aktívnej scény kamery a definuje základnú pózu pohľadu VR"
+msgstr "Postupuje podľa aktívnej scény kamery a definuje základnú pózu zobrazenia VR"
 
 
 msgid "Follow the transformation of an object to define the VR view's base pose"
@@ -94753,7 +94792,7 @@ msgstr "Sochárstvo:"
 
 msgctxt "Operator"
 msgid "Sequencer:"
-msgstr "Radič:"
+msgstr "Radič sekvencií:"
 
 
 msgctxt "Operator"
@@ -95198,17 +95237,17 @@ msgstr "Všeobecný uzol"
 
 msgctxt "WindowManager"
 msgid "Sequencer"
-msgstr "Radič"
+msgstr "Radič sekvencií"
 
 
 msgctxt "WindowManager"
 msgid "SequencerCommon"
-msgstr "Bežný radič"
+msgstr "Bežný radič sekvencií"
 
 
 msgctxt "WindowManager"
 msgid "SequencerPreview"
-msgstr "Náhľad radiča"
+msgstr "Náhľad radiča sekvencií"
 
 
 msgctxt "WindowManager"
@@ -96008,6 +96047,10 @@ msgid "No animation data found to create asset from"
 msgstr "Nenašli sa žiadne údaje animácie, z ktorých by sa dalo vytvoriť aktívum"
 
 
+msgid "Unexpected non-zero user count for the asset, please report this as a bug"
+msgstr "Neočakávaný nenulový počet užívateľov pre aktívum, nahlási to ako chybu"
+
+
 msgid "Did not find any assets on clipboard"
 msgstr "V schránke nenájdené žiadne aktíva"
 
@@ -96133,6 +96176,11 @@ msgstr "Nepodarilo sa inicializovať údaje o jazykoch!"
 
 msgid "Please edit the preferences of the UI Translate add-on"
 msgstr "Upravte predvoľby doplnku na preklad užívateľského rozhrania"
+
+
+msgctxt "Operator"
+msgid "Init Settings"
+msgstr "Inicializačné nastavenia"
 
 
 msgctxt "Operator"
@@ -99873,7 +99921,7 @@ msgstr "Zdvih:"
 
 
 msgid "Gamma:"
-msgstr "Gamma:"
+msgstr "Gama:"
 
 
 msgid "Gain:"
@@ -99911,7 +99959,7 @@ msgstr "Animácia sekvencie prekreslenia"
 
 msgctxt "Operator"
 msgid "Toggle Sequencer/Preview"
-msgstr "Prepnúť radič/náhľad"
+msgstr "Prepnúť Radič sekvencií/Náhľad"
 
 
 msgctxt "Operator"
@@ -99979,7 +100027,7 @@ msgstr "Nedostupné položky"
 
 msgctxt "Operator"
 msgid "Sound Crossfade"
-msgstr "Zvuk prelínania"
+msgstr "Krížové prelínanie zvuku"
 
 
 msgctxt "Operator"
@@ -100143,7 +100191,7 @@ msgstr "Gama kríž"
 
 msgctxt "Operator"
 msgid "Wipe"
-msgstr "Zotrieť"
+msgstr "Snímať"
 
 
 msgctxt "Operator"
@@ -100163,12 +100211,12 @@ msgstr "Pokles"
 
 msgctxt "Operator"
 msgid "Alpha Over"
-msgstr "Nad alfa"
+msgstr "Nad alfou"
 
 
 msgctxt "Operator"
 msgid "Alpha Under"
-msgstr "Pod alfa"
+msgstr "Pod alfou"
 
 
 msgctxt "Operator"
@@ -100178,7 +100226,7 @@ msgstr "Zmiešať farby"
 
 msgctxt "Operator"
 msgid "Multicam Selector"
-msgstr "Viackamerový radič"
+msgstr "Viackamerový volič"
 
 
 msgctxt "Operator"
@@ -100198,7 +100246,7 @@ msgstr "Gaussove rozostrenie"
 
 msgctxt "Operator"
 msgid "Scale To Fit"
-msgstr "Prispôsobenie mierky"
+msgstr "Prispôsobiť mierke"
 
 
 msgctxt "Operator"
@@ -100208,12 +100256,12 @@ msgstr "Mierka na vyplnenie"
 
 msgctxt "Operator"
 msgid "Stretch To Fill"
-msgstr "Mierka na roztiahnutie"
+msgstr "Roztiahnuť na vyplnenie"
 
 
 msgctxt "Operator"
 msgid "Clear Position"
-msgstr "Vymazať pozíciu"
+msgstr "Zmazať pozíciu"
 
 
 msgctxt "Operator"
@@ -100258,7 +100306,7 @@ msgstr "Zastaviť posuv pásu"
 
 
 msgid "Tracker"
-msgstr "Stopár"
+msgstr "Snímač stôp"
 
 
 msgid "Resolutions"
@@ -101248,7 +101296,7 @@ msgstr "Prekresliť kľúčové snímky záberu"
 
 msgctxt "Operator"
 msgid "Toggle Local View"
-msgstr "Prepnúť lokálny pohľad"
+msgstr "Prepnúť lokálne zobrazenie"
 
 
 msgctxt "Operator"
@@ -101273,7 +101321,7 @@ msgstr "Priblížiť oblasť..."
 
 msgctxt "Operator"
 msgid "Align Active Camera to View"
-msgstr "Zarovnať aktívnu kameru do pohľadu"
+msgstr "Zarovnať aktívnu kameru do zobrazenia"
 
 
 msgctxt "Operator"
@@ -102237,7 +102285,7 @@ msgstr "Vytvoriť kópiu aktívnej kľúčovej snímky (aktívna vrstva)"
 
 msgctxt "Operator"
 msgid "View Selected"
-msgstr "Pohľad na vybrané"
+msgstr "Zobraziť vybrané"
 
 
 msgid "Show Gizmos"
@@ -102258,7 +102306,7 @@ msgstr "Lokálna kamera"
 
 
 msgid "Camera to View"
-msgstr "kameru do pohľadu"
+msgstr "kameru do zobrazenia"
 
 
 msgid "Object Types Visibility"
@@ -102359,7 +102407,7 @@ msgstr "Zarovnať na orientáciu transformácie"
 
 msgctxt "Operator"
 msgid "Project from View (Bounds)"
-msgstr "Premietnuť z pohľadu (po okraje)"
+msgstr "Premietnuť zo zobrazenia (okraje)"
 
 
 msgctxt "Operator"
@@ -103489,10 +103537,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "Nezapísané, obrázok nemá \"%s\" a \"%s\" zobrazenia"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
-msgstr "Pri ukladaní dlaždicového obrázka musí cesta '%s' obsahovať UDIM príznak 1001"
-
-
 msgid "Key %d"
 msgstr "Kľúč %d"
 
@@ -103890,12 +103934,12 @@ msgid "Unable to read '%s': %s"
 msgstr "Nemožno načítať '%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "Nemožno otvoriť '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "Nerozpoznaný formát súboru '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "Nemožno otvoriť '%s': %s"
 
 
 msgid "GP_Palette"
@@ -105606,7 +105650,7 @@ msgstr "Max Y:"
 
 
 msgid "Reset View"
-msgstr "Obnoviť pohľad"
+msgstr "Obnoviť zobrazenie"
 
 
 msgid "Extend Horizontal"
@@ -106845,6 +106889,14 @@ msgid "Could not find constraint data for ObjectSolver Set Inverse"
 msgstr "Nepodarilo sa nájsť údaje vynútenia pre nastavenie inverzie Riešiteľa objektu"
 
 
+msgid "Applied constraint was not first, result may not be as expected"
+msgstr "Aplikované vynútenie nebolo prvé, výsledok nemusí byť podľa očakávania"
+
+
+msgid "No constraints for copying"
+msgstr "Žiadne vynútenia na kopírovanie"
+
+
 msgid "No active bone with constraints for copying"
 msgstr "Žiadna aktívna kosť s vynúteniami kopírovania"
 
@@ -106869,12 +106921,32 @@ msgid "Removed constraint: %s"
 msgstr "Odstránené vynútenie: %s"
 
 
+msgid "Applied constraint: %s"
+msgstr "Použité vynútenie: %s"
+
+
+msgid "Copied constraint: %s"
+msgstr "Skopírované vynútenie: %s"
+
+
 msgid "Cannot edit library data"
 msgstr "Nemožno upravovať údaje knižnice"
 
 
 msgid "Cannot edit constraints coming from linked data in a library override"
 msgstr "V prepise knižnice nemožno upravovať vynútenia pochádzajúce z prepojených údajov"
+
+
+msgid "No other bones are selected"
+msgstr "Nie sú vybrané žiadne iné kosti"
+
+
+msgid "No selected object to copy from"
+msgstr "Nie je vybraný žiadny objekt na kopírovanie"
+
+
+msgid "No other objects are selected"
+msgstr "Nie sú vybrané žiadne iné objekty"
 
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
@@ -109409,75 +109481,75 @@ msgstr "Nemožno znova načítať použitím modálnych operátorov"
 
 
 msgid "Add a crossfade transition to the sequencer"
-msgstr "Pridá prechod krížového vytrácania do radiča"
+msgstr "Pridá prechod krížového vytrácania do radiča sekvencií"
 
 
 msgid "Add an add effect strip to the sequencer"
-msgstr "Pridá pás efektu Pripočítanie do radiča"
+msgstr "Pridá pás efektu Pripočítanie do radiča sekvencií"
 
 
 msgid "Add a subtract effect strip to the sequencer"
-msgstr "Pridá pás efekt Odpočítanie do radiča"
+msgstr "Pridá pás efekt Odpočítanie do radiča sekvencií"
 
 
 msgid "Add an alpha over effect strip to the sequencer"
-msgstr "Pridá pás efektu Nad alfou do radiča"
+msgstr "Pridá pás efektu Nad alfou do radiča sekvencií"
 
 
 msgid "Add an alpha under effect strip to the sequencer"
-msgstr "Pridá pás efektu Pod alfou do radiča"
+msgstr "Pridá pás efektu Pod alfou do radiča sekvencií"
 
 
 msgid "Add a gamma cross transition to the sequencer"
-msgstr "Pridá prechod Kríženia gama do radiča"
+msgstr "Pridá prechod Kríženia gama do radiča sekvencií"
 
 
 msgid "Add a multiply effect strip to the sequencer"
-msgstr "Pridá pás efektu Násobenie do radiča"
+msgstr "Pridá pás efektu Násobenie do radiča sekvencií"
 
 
 msgid "Add an alpha over drop effect strip to the sequencer"
-msgstr "Pridá pás efektu Kvapka nad alfou do radiča"
+msgstr "Pridá pás efektu Kvapka nad alfou do radiča sekvencií"
 
 
 msgid "Add a wipe transition to the sequencer"
-msgstr "Pridá prestup snímania do radiča"
+msgstr "Pridá prestup snímania do radiča sekvencií"
 
 
 msgid "Add a glow effect strip to the sequencer"
-msgstr "Pridanie pás efektu Žiara do radiča"
+msgstr "Pridanie pás efektu Žiara do radiča sekvencií"
 
 
 msgid "Add a transform effect strip to the sequencer"
-msgstr "Pridá pás efektu transformácie do radiča"
+msgstr "Pridá pás efektu transformácie do radiča sekvencií"
 
 
 msgid "Add a color strip to the sequencer"
-msgstr "Pridá pás farby do radiča"
+msgstr "Pridá pás farby do radiča sekvencií"
 
 
 msgid "Add a speed effect strip to the sequencer"
-msgstr "Pridá pás efektu rýchlosti do radiča"
+msgstr "Pridá pás efektu rýchlosti do radiča sekvencií"
 
 
 msgid "Add a multicam selector effect strip to the sequencer"
-msgstr "Pridá pás efektu viackamerového voliča do radiča"
+msgstr "Pridá pás efektu viackamerového voliča do radiča sekvencií"
 
 
 msgid "Add an adjustment layer effect strip to the sequencer"
-msgstr "Pridá pás efektu vrstvy úprav do radiča"
+msgstr "Pridá pás efektu vrstvy úprav do radiča sekvencií"
 
 
 msgid "Add a gaussian blur effect strip to the sequencer"
-msgstr "Pridá pás efektu gaussovho rozostrenia do radiča"
+msgstr "Pridá pás efektu gaussovho rozostrenia do radiča sekvencií"
 
 
 msgid "Add a text strip to the sequencer"
-msgstr "Pridá pás textu do radiča"
+msgstr "Pridá pás textu do radiča sekvencií"
 
 
 msgid "Add a color mix effect strip to the sequencer"
-msgstr "Pridá pás efektu zmiešania farieb do radiča"
+msgstr "Pridá pás efektu zmiešania farieb do radiča sekvencií"
 
 
 msgid "Movie clip not found"
@@ -109961,7 +110033,7 @@ msgstr "Röntgen je v aktuálnom režime nedostupný"
 
 
 msgid "Gizmos hidden in this view"
-msgstr "Skrytý manipulačný prvok v tomto pohľade"
+msgstr "Skrytý manipulačný prvok v tomto zobrazení"
 
 
 msgid "Vertex select - Shift-Click for multiple modes, Ctrl-Click contracts selection"
@@ -110021,7 +110093,7 @@ msgstr "Žiadna aktívna kamera"
 
 
 msgid "No more than 16 local views"
-msgstr "Nie viac ako 16 lokálnych pohľadov"
+msgstr "Nie viac ako 16 lokálnych zobrazení"
 
 
 msgid "No object selected"
@@ -112507,7 +112579,7 @@ msgstr "Nemožno uložiť zásobníky prekreslenia, skontrolujte predvolenú ces
 
 
 msgid "Border rendering is not supported by sequencer"
-msgstr "Radič nepodporuje ohraničené prekreslenie"
+msgstr "Radič sekvencií nepodporuje prekreslenie okrajov"
 
 
 msgid "No node tree in scene"

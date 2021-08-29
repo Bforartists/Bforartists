@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-09-08 21:24-0300\n"
@@ -58857,30 +58857,6 @@ msgstr "Estilo de fonte"
 
 msgid "Theme settings for Font"
 msgstr "Tema - Definições para fontes"
-
-
-msgid "Kerning Style"
-msgstr "Estilo de espaçamento de caracteres"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Qual o estilo a ser usado para o espaçamento de fontes."
-
-
-msgid "Unfitted"
-msgstr "Não encaixado"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "Usa as distâncias escalonadas mas não encaixadas na grelha para espaçamento seletivo de texto."
-
-
-msgid "Fitted"
-msgstr "Encaixado"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "Usa as distâncias de espaçamento de caracteres escalonadas e encaixadas na grelha."
 
 
 msgid "Shadow Size"

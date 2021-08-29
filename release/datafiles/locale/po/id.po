@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-01 15:12+0700\n"
@@ -25680,12 +25680,12 @@ msgid "Unable to read '%s': %s"
 msgstr "Tidak dapat membaca '%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "Tidak dapat membuka '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "Format dokumen tidak dikenal '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "Tidak dapat membuka '%s': %s"
 
 
 msgid "GP_Palette"
