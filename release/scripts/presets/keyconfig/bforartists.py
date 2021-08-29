@@ -1,4 +1,4 @@
-keyconfig_version = (3, 0, 18)
+keyconfig_version = (3, 0, 19)
 keyconfig_data = \
 [("3D View",
   {"space_type": 'VIEW_3D', "region_type": 'WINDOW'},
@@ -547,6 +547,7 @@ keyconfig_data = \
        ],
       },
      ),
+    ("view3d.toggle_xray", {"type": 'Z', "value": 'PRESS', "alt": True}, None),
     ],
    },
   ),
