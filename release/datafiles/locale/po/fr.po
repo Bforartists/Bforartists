@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -11,19 +11,35 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2"
+"X-Generator: Poedit 3.0"
+
+
+msgid "Shader AOV"
+msgstr "Shader AOV"
 
 
 msgid "Valid"
 msgstr "Valide"
 
 
+msgid "Is the name of the AOV conflicting"
+msgstr "Représente le nom de l'AOV en conflit"
+
+
 msgid "Name"
 msgstr "Nom"
 
 
+msgid "Name of the AOV"
+msgstr "Nom de l'AOV"
+
+
 msgid "Type"
 msgstr "Type"
+
+
+msgid "Data type of the AOV"
+msgstr "Type de données de l'AOV"
 
 
 msgid "Color"
@@ -32,6 +48,14 @@ msgstr "Couleur"
 
 msgid "Value"
 msgstr "Valeur"
+
+
+msgid "List of AOVs"
+msgstr "Liste des AOVs"
+
+
+msgid "Collection of AOVs"
+msgstr "Collection d'AOVs"
 
 
 msgid "Action F-Curves"
@@ -834,6 +858,14 @@ msgid "Browse for files and assets"
 msgstr "Naviguer vers des fichiers et éléments"
 
 
+msgid "Spreadsheet"
+msgstr "Tableur"
+
+
+msgid "Explore geometry data in a table"
+msgstr "Explorez les données géométriques dans un tableau"
+
+
 msgid "Preferences"
 msgstr "Préférences"
 
@@ -1026,6 +1058,14 @@ msgid "Face"
 msgstr "Face"
 
 
+msgid "Attribute on mesh faces"
+msgstr "Attribut sur les faces de mesh"
+
+
+msgid "Face Corner"
+msgstr "Coin de la face"
+
+
 msgid "Spline"
 msgstr "Courbe"
 
@@ -1042,6 +1082,10 @@ msgid "Color geometry attribute, with 8-bit precision"
 msgstr "Attribut de géométrie de couleur, entier 8 bit"
 
 
+msgid "Float2 Attribute"
+msgstr "Attribut Float2"
+
+
 msgid "Float Vector Attribute"
 msgstr "Attribut de vecteur flottant"
 
@@ -1052,6 +1096,10 @@ msgstr "Attribut Entier"
 
 msgid "Integer geometry attribute"
 msgstr "Attribut de géométrie entier"
+
+
+msgid "String Attribute"
+msgstr "Attribut Chaîne"
 
 
 msgid "String geometry attribute"
@@ -1248,6 +1296,10 @@ msgstr "Enregistrer la carte de pré-calcul dans un fichier externe"
 
 msgid "Target"
 msgstr "Cible"
+
+
+msgid "Image Textures"
+msgstr "Textures d'image"
 
 
 msgid "Vertex Colors"
@@ -2004,6 +2056,10 @@ msgstr "Écrans du Main"
 
 msgid "Collection of screens"
 msgstr "Collection d’écrans"
+
+
+msgid "Collection of simulations"
+msgstr "Collection de simulations"
 
 
 msgid "Main Sounds"
@@ -68672,30 +68728,6 @@ msgid "Theme settings for Font"
 msgstr "Réglages du thème pour les polices de caractères"
 
 
-msgid "Kerning Style"
-msgstr "Style de crénage"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Quel style utiliser pour le crénage (espacement entre lettres)"
-
-
-msgid "Unfitted"
-msgstr "Non-alignées"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "Utiliser des distances de crénage mises à l’échelle mais non-alignées sur la grille"
-
-
-msgid "Fitted"
-msgstr "Alignés"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "Utiliser des distances de crénage mises à l’échelles et alignées sur la grille"
-
-
 msgid "Shadow Size"
 msgstr "Taille de l’ombre"
 
@@ -70276,6 +70308,10 @@ msgid "Background Color"
 msgstr "Couleurs d’arrière-plan"
 
 
+msgid "Theme"
+msgstr "Thème"
+
+
 msgid "Viewport Shading"
 msgstr "Ombrage de vue"
 
@@ -71630,8 +71666,18 @@ msgstr "Barre d’espace"
 
 
 msgctxt "Operator"
+msgid "Load %d.%d Settings"
+msgstr "Récupérer les paramètres de %d.%d"
+
+
+msgctxt "Operator"
 msgid "Save New Settings"
 msgstr "Enregistrer les nouveaux paramètres"
+
+
+msgctxt "Operator"
+msgid "Next"
+msgstr "Suivant"
 
 
 msgid "Getting Started"
@@ -74251,6 +74297,21 @@ msgstr "Connecter chemin de vertices"
 
 
 msgctxt "Operator"
+msgid "Slide Vertices"
+msgstr "Glisser vertices"
+
+
+msgctxt "Operator"
+msgid "Smooth Vertices (Laplacian)"
+msgstr "Adoucir vertices (Laplacien)"
+
+
+msgctxt "Operator"
+msgid "Extrude Edges"
+msgstr "Extruder arêtes"
+
+
+msgctxt "Operator"
 msgid "Extrude Faces"
 msgstr "Extruder les faces"
 
@@ -74258,6 +74319,16 @@ msgstr "Extruder les faces"
 msgctxt "Operator"
 msgid "Rotate..."
 msgstr "Tourner…"
+
+
+msgctxt "Operator"
+msgid "Smooth Vectors"
+msgstr "Adoucir vecteurs"
+
+
+msgctxt "Operator"
+msgid "Smooth Faces"
+msgstr "Adoucir faces"
 
 
 msgctxt "Operator"
@@ -74276,8 +74347,21 @@ msgstr "Créer"
 
 
 msgctxt "Operator"
+msgid "Toggle Caps"
+msgstr "Inverser casse"
+
+
+msgctxt "Operator"
 msgid "View Selected"
 msgstr "Voir sélectionné(e)s"
+
+
+msgid "Origins"
+msgstr "Origines"
+
+
+msgid "Origins (All)"
+msgstr "Origines (Tout)"
 
 
 msgid "Creases"
@@ -74303,6 +74387,10 @@ msgstr "Marques d’arête"
 
 msgid "Zero Weights"
 msgstr "Poids nuls"
+
+
+msgid "Snap To"
+msgstr "Aimanter à"
 
 
 msgctxt "Operator"
@@ -74381,6 +74469,11 @@ msgstr "Géométrie visuelle vers mesh"
 
 
 msgctxt "Operator"
+msgid "Link Objects to Scene..."
+msgstr "Lier objets à scène..."
+
+
+msgctxt "Operator"
 msgid "Hook to Selected Object Bone"
 msgstr "Accrocher à l’os sélectionné"
 
@@ -74446,6 +74539,31 @@ msgstr "Recalculer à l’extérieur"
 msgctxt "Operator"
 msgid "Recalculate Inside"
 msgstr "Recalculer à l’intérieur"
+
+
+msgctxt "Operator"
+msgid "Copy Vectors"
+msgstr "Copier vecteurs"
+
+
+msgctxt "Operator"
+msgid "Paste Vectors"
+msgstr "Coller vecteurs"
+
+
+msgctxt "Operator"
+msgid "Reset Vectors"
+msgstr "Réinitialiser vecteurs"
+
+
+msgctxt "Operator"
+msgid "Smooth Edges"
+msgstr "Adoucir arêtes"
+
+
+msgctxt "Operator"
+msgid "Delete Point"
+msgstr "Supprimer point"
 
 
 msgctxt "Operator"
@@ -74563,8 +74681,34 @@ msgid "With Automatic Weights"
 msgstr "Avec poids automatiques"
 
 
+msgctxt "Operator"
+msgid "Normalize Thickness"
+msgstr "Normaliser épaisseur"
+
+
+msgctxt "Operator"
+msgid "Normalize Opacity"
+msgstr "Normaliser opacité"
+
+
 msgid "X-Ray"
 msgstr "Rayons X"
+
+
+msgid "Marker Names"
+msgstr "Noms des marqueurs"
+
+
+msgid "Developer"
+msgstr "Dévelopeur"
+
+
+msgid "Snap With"
+msgstr "Aimanter avec"
+
+
+msgid "Reference Point"
+msgstr "Point de référence"
 
 
 msgctxt "Operator"
@@ -74573,8 +74717,23 @@ msgstr "Assigner à groupe"
 
 
 msgctxt "Operator"
+msgid "Randomize Vertices"
+msgstr "Vertices aléatoires"
+
+
+msgctxt "Operator"
 msgid "Delete Vertices"
 msgstr "Supprimer vertices"
+
+
+msgctxt "Operator"
+msgid "Delete Edges"
+msgstr "Supprimer arêtes"
+
+
+msgctxt "Operator"
+msgid "Delete Faces"
+msgstr "Supprimer faces"
 
 
 msgctxt "Operator"
@@ -74585,6 +74744,14 @@ msgstr "Effacer arête Freestyle"
 msgctxt "Operator"
 msgid "Clear Freestyle Face"
 msgstr "Effacer face Freestyle"
+
+
+msgid "Custom Location"
+msgstr "Position personnalisée"
+
+
+msgid "Material Name"
+msgstr "Nom de matériau"
 
 
 msgctxt "Operator"
@@ -74696,6 +74863,14 @@ msgid "Library file, loading empty scene"
 msgstr "Fichier bibliothèque, chargement d’une scène vide"
 
 
+msgid "Preferences saved"
+msgstr "Préférences enregistrées"
+
+
+msgid "Saving preferences failed"
+msgstr "Echec de l'enregistrement des préférences"
+
+
 msgid "Unable to create userpref path"
 msgstr "Impossible de créer le chemin de préférences utilisateur"
 
@@ -74794,6 +74969,14 @@ msgstr "Boucle OS"
 
 msgid "PreviewLoopCol"
 msgstr "CoulBouclePrévis"
+
+
+msgid "Float3"
+msgstr "Float3"
+
+
+msgid "Float2"
+msgstr "Float2"
 
 
 msgid "Source and destination meshes do not have the same amount of vertices, 'Topology' mapping cannot be used in this case"
@@ -74912,6 +75095,10 @@ msgstr "Erreur d’écriture, l’image n’a pas les vues “%s” et “%s”"
 
 msgid "Key %d"
 msgstr "Clé %d"
+
+
+msgid "AOV"
+msgstr "AOV"
 
 
 msgid "MaskLayer"

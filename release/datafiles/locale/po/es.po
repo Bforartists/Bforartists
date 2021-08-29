@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -88946,30 +88946,6 @@ msgid "Theme settings for Font"
 msgstr "Opciones del tema para la tipografía"
 
 
-msgid "Kerning Style"
-msgstr "Estilo volado"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Qué estilo usar para el volado de la tipografía"
-
-
-msgid "Unfitted"
-msgstr "No ajustado"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "Usa distancias de separación redimensionadas pero no ajustadas a la cuadrícula"
-
-
-msgid "Fitted"
-msgstr "Ajustado"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "Usa distancias de volado escaladas y ajustadas a la cuadrícula"
-
-
 msgid "Font size in points"
 msgstr "Tamaño de la tipografía, en puntos"
 
@@ -101600,10 +101576,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "No se guardó, la imagen no contiene vistas \"%s\" y \"%s\""
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
-msgstr "Al guardar una imagen compuesta, la ruta '%s' deberá contener la etiqueta UDIM: 1001"
-
-
 msgid "Key %d"
 msgstr "Clave %d"
 
@@ -101977,12 +101949,12 @@ msgid "Unable to read '%s': %s"
 msgstr "No es posible leer '%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "No es posible abrir '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "Formato de archivo no reconocido '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "No es posible abrir '%s': %s"
 
 
 msgid "GP_Palette"

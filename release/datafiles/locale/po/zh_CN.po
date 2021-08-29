@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -6319,11 +6319,11 @@ msgstr "目标物体 (仅曲线)"
 
 
 msgid "Cyclic"
-msgstr "循环"
+msgstr "闭环"
 
 
 msgid "Treat curve as cyclic curve (no clamping to curve bounding box)"
-msgstr "将曲线视作循环曲线 (不钳制曲线的边界盒)"
+msgstr "将曲线视作闭环曲线 (不钳制曲线的边界盒)"
 
 
 msgid "Copy Location Constraint"
@@ -54516,7 +54516,7 @@ msgstr "将选中的样条曲线复制到剪贴板"
 
 
 msgid "Toggle cyclic for selected splines"
-msgstr "循环切换已选的曲线"
+msgstr "切换闭合已选的样条线"
 
 
 msgid "Delete selected control points or splines"
@@ -90332,30 +90332,6 @@ msgid "Theme settings for Font"
 msgstr "字体的主题设置"
 
 
-msgid "Kerning Style"
-msgstr "字距样式"
-
-
-msgid "Which style to use for font kerning"
-msgstr "为字体间距使用的样式"
-
-
-msgid "Unfitted"
-msgstr "不适配"
-
-
-msgid "Use scaled but un-grid-fitted kerning distances"
-msgstr "使用缩放而不适配栅格的字间距"
-
-
-msgid "Fitted"
-msgstr "适配"
-
-
-msgid "Use scaled and grid-fitted kerning distances"
-msgstr "使用缩放和栅格对齐来调整字体间隔"
-
-
 msgid "Font size in points"
 msgstr "字号，以点数表示"
 
@@ -103496,10 +103472,6 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "无法写入，图像没有 \"%s\" 和 \"%s\" 视图"
 
 
-msgid "When saving a tiled image, the path '%s' must contain the UDIM tag 1001"
-msgstr "保存分块图像时，路径 ‘%s’ 必须包含 UDIM 标记 1001"
-
-
 msgid "Key %d"
 msgstr "键 %d"
 
@@ -103897,12 +103869,12 @@ msgid "Unable to read '%s': %s"
 msgstr "无法读取'%s': %s"
 
 
-msgid "Unable to open '%s': %s"
-msgstr "无法打开 '%s': %s"
-
-
 msgid "Unrecognized file format '%s'"
 msgstr "无法识别的文件格式 '%s'"
+
+
+msgid "Unable to open '%s': %s"
+msgstr "无法打开 '%s': %s"
 
 
 msgid "GP_Palette"
