@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'fecec1644ce5')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -26531,18 +26531,6 @@ msgstr "Markera Länkad"
 
 msgid "Theme settings for Font"
 msgstr "Materialets volym-inställningar"
-
-
-msgid "Kerning Style"
-msgstr "Flytta Till Lager"
-
-
-msgid "Which style to use for font kerning"
-msgstr "Renderingsmotor"
-
-
-msgid "Fitted"
-msgstr "Mönster"
 
 
 msgid "Shadow Size"

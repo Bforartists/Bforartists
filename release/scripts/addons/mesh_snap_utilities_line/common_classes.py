@@ -471,6 +471,7 @@ class SnapUtilities:
 
             preferences = context.preferences.addons[__package__].preferences
             self.preferences = preferences
+
             #Init DrawCache
             self.draw_cache = SnapDrawn(
                 preferences.out_color,
@@ -482,7 +483,8 @@ class SnapUtilities:
                 preferences.constrain_shift_color,
                 tuple(context.preferences.themes[0].user_interface.axis_x) + (1.0,),
                 tuple(context.preferences.themes[0].user_interface.axis_y) + (1.0,),
-                tuple(context.preferences.themes[0].user_interface.axis_z) + (1.0,))
+                tuple(context.preferences.themes[0].user_interface.axis_z) + (1.0,),
+                self.sctx.rv3d)
 
         self.snap_vert = self.snap_edge = snap_edge_and_vert
 
