@@ -52,6 +52,7 @@ class TIME_HT_editor_buttons:
             row.scale_x = 1
         row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
         row.operator("screen.frame_jump", text="", icon='FF').end = True
+        row.operator("screen.animation_cancel", text = "", icon = 'LOOP_BACK').restore_frame = True
 
         row = layout.row()
         if scene.show_subframe:
