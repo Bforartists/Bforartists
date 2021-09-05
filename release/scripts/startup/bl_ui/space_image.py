@@ -1633,7 +1633,7 @@ class IMAGE_PT_udim_grid(Panel):
     def poll(cls, context):
         sima = context.space_data
 
-        return sima.show_uvedit and sima.image is None
+        return sima.show_uvedit
 
     def draw(self, context):
         layout = self.layout
