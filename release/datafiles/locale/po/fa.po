@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-10-31 17:00-0800\n"
@@ -15000,10 +15000,6 @@ msgstr "ﺱﺃﺭ ﯼﺎﻫ‌ﻩﻭﺮﮔ"
 
 msgid "Bad vertex index in list"
 msgstr "ﻪﻨﯿﻣﺯ ﺲﭘ ﺮﯾﻮﺼﺗ"
-
-
-msgid "Convertor"
-msgstr "ﻞﯾﺪﺒﺗ"
 
 
 msgid "Fac"

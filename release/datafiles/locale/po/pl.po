@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2017-08-26 11:13+0200\n"
@@ -10491,14 +10491,6 @@ msgid "Crease: %.3f %s"
 msgstr "Fałda: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Przesuń Sekwencję: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " lub Alt) Rozszerz by dopasować %s"
-
-
 msgid "(E)ven: %s, "
 msgstr "Równ(E): %s "
 
@@ -10786,10 +10778,6 @@ msgstr "Element nie odnaleziony w kolekcji elementów lub jest ostatni"
 
 msgid "Unable to remove curve point"
 msgstr "Punkt krzywej niemożliwy do usunięcia"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "Tablica CurveMap nie zainicjowana, wywołaj initialize() na posiadaczu (owner) CurveMapping dla CurveMap"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -11268,10 +11256,6 @@ msgstr "KeyMapItem '%s' nie może być usunięte z '%s'"
 
 msgid "KeyConfig '%s' cannot be removed"
 msgstr "KeyConfig '%s' niemożlwe do usunięcia"
-
-
-msgid "Convertor"
-msgstr "Konwertor"
 
 
 msgid "Fac"

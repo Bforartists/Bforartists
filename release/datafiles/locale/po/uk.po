@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-03-01 19:15+0000\n"
@@ -36218,10 +36218,6 @@ msgstr "JPEG якість зображень замісника"
 
 msgid "Timecode"
 msgstr "Часовий код"
-
-
-msgid "No TC in use"
-msgstr "Код часу не використовується"
 
 
 msgid "Record Run"
@@ -105691,14 +105687,6 @@ msgid "Crease: %.3f %s"
 msgstr "Складка: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Пересунути послідовність: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " або Alt) розширити до заповнення %s"
-
-
 msgid "Edge Slide: "
 msgstr "Ковзання ребра:"
 
@@ -106202,10 +106190,6 @@ msgstr "Неможливо вилучити точку кривої"
 
 msgid "CurveMapping does not own CurveMap"
 msgstr "CurveMapping не володіє CurveMap"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "Таблиця CurveMap не ініціалізована, викличте initialize() на CurveMapping-власнику CurveMap"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -107234,10 +107218,6 @@ msgstr "Замінити оригінал"
 
 msgid "Crease Edges"
 msgstr "Робити складки"
-
-
-msgid "Convertor"
-msgstr "Конвертор"
 
 
 msgid "Compositor"
