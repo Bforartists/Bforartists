@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -36950,10 +36950,6 @@ msgstr "Calidad de las imágenes JPEG de reemplazo"
 
 msgid "Timecode"
 msgstr "Código de tiempo"
-
-
-msgid "No TC in use"
-msgstr "Sin CT"
 
 
 msgid "Record Run"
@@ -108167,14 +108163,6 @@ msgid "Crease: %.3f %s"
 msgstr "Plegar: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Deslizar secuencia: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " o Alt) Expandir para ajustar %s"
-
-
 msgid "Edge Slide: "
 msgstr "Deslizar borde: "
 
@@ -108766,10 +108754,6 @@ msgstr "No es posible eliminar el punto de la curva"
 
 msgid "CurveMapping does not own CurveMap"
 msgstr "Mapeo de curvas no es el propietario de la curva de mapeo"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "Tabla de la curva de mapeo no inicializada, invocar la función initialize() en el propietario de la curva de mapeo"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -109814,10 +109798,6 @@ msgstr "Reemplazar original"
 
 msgid "Crease Edges"
 msgstr "Plegar bordes"
-
-
-msgid "Convertor"
-msgstr "Convertir"
 
 
 msgid "Compositor"

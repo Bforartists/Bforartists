@@ -1016,6 +1016,10 @@ class EnableAllQCDSlotsMenu(Menu):
     def draw(self, context):
         layout = self.layout
 
+        layout.operator("view3d.create_all_qcd_slots")
+
+        layout.separator()
+
         layout.operator("view3d.enable_all_qcd_slots")
         layout.operator("view3d.enable_all_qcd_slots_isolated")
 
@@ -1100,7 +1104,8 @@ def view3d_header_qcd_slots(self, context):
             prop.slot = str(x+1)
 
         else:
-            row.label(text="", icon='X')
+            prop = row.operator("view3d.unassigned_qcd_slot", text="", icon='X', emboss=False)
+            prop.slot = str(x+1)
 
 
         if idx%5==0:
