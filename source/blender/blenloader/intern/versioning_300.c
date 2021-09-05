@@ -126,7 +126,7 @@ static void version_idproperty_move_data_float(IDPropertyUIDataFloat *ui_data,
   }
   IDProperty *max = IDP_GetPropertyFromGroup(prop_ui_data, "max");
   if (max != NULL) {
-    ui_data->max = ui_data->soft_max = IDP_coerce_to_double_or_zero(min);
+    ui_data->max = ui_data->soft_max = IDP_coerce_to_double_or_zero(max);
   }
   IDProperty *soft_min = IDP_GetPropertyFromGroup(prop_ui_data, "soft_min");
   if (soft_min != NULL) {
@@ -276,13 +276,20 @@ static void do_versions_idproperty_ui_data(Main *bmain)
     }
   }
 
-  /* The UI data from exposed node modifier properties is just copied from the corresponding node
-   * group, but the copying only runs when necessary, so we still need to version UI data here. */
   LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
+    /* The UI data from exposed node modifier properties is just copied from the corresponding node
+     * group, but the copying only runs when necessary, so we still need to version data here. */
     LISTBASE_FOREACH (ModifierData *, md, &ob->modifiers) {
       if (md->type == eModifierType_Nodes) {
         NodesModifierData *nmd = (NodesModifierData *)md;
         version_idproperty_ui_data(nmd->settings.properties);
+      }
+    }
+
+    /* Object post bones. */
+    if (ob->type == OB_ARMATURE && ob->pose != NULL) {
+      LISTBASE_FOREACH (bPoseChannel *, pchan, &ob->pose->chanbase) {
+        version_idproperty_ui_data(pchan->prop);
       }
     }
   }
@@ -636,6 +643,20 @@ static void do_version_constraints_spline_ik_joint_bindings(ListBase *lb)
   }
 }
 
+static bNodeSocket *do_version_replace_float_size_with_vector(bNodeTree *ntree,
+                                                              bNode *node,
+                                                              bNodeSocket *socket)
+{
+  const bNodeSocketValueFloat *socket_value = (const bNodeSocketValueFloat *)socket->default_value;
+  const float old_value = socket_value->value;
+  nodeRemoveSocket(ntree, node, socket);
+  bNodeSocket *new_socket = nodeAddSocket(
+      ntree, node, SOCK_IN, nodeStaticSocketType(SOCK_VECTOR, PROP_TRANSLATION), "Size", "Size");
+  bNodeSocketValueVector *value_vector = (bNodeSocketValueVector *)new_socket->default_value;
+  copy_v3_fl(value_vector->value, old_value);
+  return new_socket;
+}
+
 /* NOLINTNEXTLINE: readability-function-size */
 void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
 {
@@ -965,7 +986,8 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
       }
     }
 
-    /* Fix SplineIK constraint's inconsistency between binding points array and its stored size. */
+    /* Fix SplineIK constraint's inconsistency between binding points array and its stored size.
+     */
     LISTBASE_FOREACH (Object *, ob, &bmain->objects) {
       /* NOTE: Objects should never have SplineIK constraint, so no need to apply this fix on
        * their constraints. */
@@ -1033,8 +1055,8 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     }
     FOREACH_NODETREE_END;
 
-    /* Disable Fade Inactive Overlay by default as it is redundant after introducing flash on mode
-     * transfer. */
+    /* Disable Fade Inactive Overlay by default as it is redundant after introducing flash on
+     * mode transfer. */
     for (bScreen *screen = bmain->screens.first; screen; screen = screen->id.next) {
       LISTBASE_FOREACH (ScrArea *, area, &screen->areabase) {
         LISTBASE_FOREACH (SpaceLink *, sl, &area->spacedata) {
@@ -1049,6 +1071,43 @@ void blo_do_versions_300(FileData *fd, Library *UNUSED(lib), Main *bmain)
     LISTBASE_FOREACH (Scene *, scene, &bmain->scenes) {
       SequencerToolSettings *sequencer_tool_settings = SEQ_tool_settings_ensure(scene);
       sequencer_tool_settings->overlap_mode = SEQ_OVERLAP_SHUFFLE;
+    }
+  }
+
+  if (!MAIN_VERSION_ATLEAST(bmain, 300, 20)) {
+    /* Use new vector Size socket in Cube Mesh Primitive node. */
+    LISTBASE_FOREACH (bNodeTree *, ntree, &bmain->nodetrees) {
+      if (ntree->type != NTREE_GEOMETRY) {
+        continue;
+      }
+
+      LISTBASE_FOREACH_MUTABLE (bNodeLink *, link, &ntree->links) {
+        if (link->tonode->type == GEO_NODE_MESH_PRIMITIVE_CUBE) {
+          bNode *node = link->tonode;
+          if (STREQ(link->tosock->identifier, "Size") && link->tosock->type == SOCK_FLOAT) {
+            bNode *link_fromnode = link->fromnode;
+            bNodeSocket *link_fromsock = link->fromsock;
+            bNodeSocket *socket = link->tosock;
+            BLI_assert(socket);
+
+            bNodeSocket *new_socket = do_version_replace_float_size_with_vector(
+                ntree, node, socket);
+            nodeAddLink(ntree, link_fromnode, link_fromsock, node, new_socket);
+          }
+        }
+      }
+
+      LISTBASE_FOREACH (bNode *, node, &ntree->nodes) {
+        if (node->type != GEO_NODE_MESH_PRIMITIVE_CUBE) {
+          continue;
+        }
+        LISTBASE_FOREACH (bNodeSocket *, socket, &node->inputs) {
+          if (STREQ(socket->identifier, "Size") && (socket->type == SOCK_FLOAT)) {
+            do_version_replace_float_size_with_vector(ntree, node, socket);
+            break;
+          }
+        }
+      }
     }
   }
 

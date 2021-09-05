@@ -30,18 +30,14 @@
 
 #include "node_geometry_util.hh"
 
-static bNodeSocketTemplate geo_node_curve_to_mesh_in[] = {
-    {SOCK_GEOMETRY, N_("Curve")},
-    {SOCK_GEOMETRY, N_("Profile Curve")},
-    {-1, ""},
-};
-
-static bNodeSocketTemplate geo_node_curve_to_mesh_out[] = {
-    {SOCK_GEOMETRY, N_("Mesh")},
-    {-1, ""},
-};
-
 namespace blender::nodes {
+
+static void geo_node_curve_to_mesh_declare(NodeDeclarationBuilder &b)
+{
+  b.add_input<decl::Geometry>("Curve");
+  b.add_input<decl::Geometry>("Profile Curve");
+  b.add_output<decl::Geometry>("Mesh");
+}
 
 static void vert_extrude_to_mesh_data(const Spline &spline,
                                       const float3 profile_vert,
@@ -168,16 +164,16 @@ static void spline_extrude_to_mesh_data(const Spline &spline,
 
       MLoop &loop_a = r_loops[ring_segment_loop_offset];
       loop_a.v = ring_vert_offset + i_profile;
-      loop_a.e = spline_edge_start + i_ring;
+      loop_a.e = ring_edge_start + i_profile;
       MLoop &loop_b = r_loops[ring_segment_loop_offset + 1];
-      loop_b.v = next_ring_vert_offset + i_profile;
-      loop_b.e = next_ring_edge_offset + i_profile;
+      loop_b.v = ring_vert_offset + i_next_profile;
+      loop_b.e = next_spline_edge_start + i_ring;
       MLoop &loop_c = r_loops[ring_segment_loop_offset + 2];
       loop_c.v = next_ring_vert_offset + i_next_profile;
-      loop_c.e = next_spline_edge_start + i_ring;
+      loop_c.e = next_ring_edge_offset + i_profile;
       MLoop &loop_d = r_loops[ring_segment_loop_offset + 3];
-      loop_d.v = ring_vert_offset + i_next_profile;
-      loop_d.e = ring_edge_start + i_profile;
+      loop_d.v = next_ring_vert_offset + i_profile;
+      loop_d.e = spline_edge_start + i_ring;
     }
   }
 
@@ -374,7 +370,7 @@ void register_node_type_geo_curve_to_mesh()
   static bNodeType ntype;
 
   geo_node_type_base(&ntype, GEO_NODE_CURVE_TO_MESH, "Curve to Mesh", NODE_CLASS_GEOMETRY, 0);
-  node_type_socket_templates(&ntype, geo_node_curve_to_mesh_in, geo_node_curve_to_mesh_out);
+  ntype.declare = blender::nodes::geo_node_curve_to_mesh_declare;
   ntype.geometry_node_execute = blender::nodes::geo_node_curve_to_mesh_exec;
   nodeRegisterType(&ntype);
 }
