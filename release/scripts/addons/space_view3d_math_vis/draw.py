@@ -39,7 +39,9 @@ else:
 
 COLOR_POINT = (1.0, 0.0, 1.0, 1)
 COLOR_LINE = (0.5, 0.5, 1, 1)
+COLOR_LINE_ACTIVE = (1.0, 1.0, 0.5, 1)
 COLOR_BOUNDING_BOX = (1.0, 1.0, 1.0, 1.0)
+COLOR_BOUNDING_BOX_ACTIVE = (1.0, 0.5, 0.0, 1.0)
 
 
 def tag_redraw_areas():
@@ -136,6 +138,8 @@ def draw_callback_px():
 
 def draw_callback_view():
     settings = bpy.context.window_manager.MathVisProp
+    prop_states = bpy.context.window_manager.MathVisStatePropList
+
     scale = settings.bbox_scale
     with_bounding_box = not settings.bbox_hide
 
@@ -145,31 +149,36 @@ def draw_callback_view():
         bgl.glDepthFunc(bgl.GL_LESS)
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
+    active_index = settings.index
+    active_key = prop_states[active_index].name if active_index >= 0 else None
 
     if data_vector:
         coords = [tuple(vec.to_3d()) for vec in data_vector.values()]
         draw_points(coords)
 
     if data_vector_array:
-        for line in data_vector_array.values():
+        for key, line in data_vector_array.items():
             coords = [tuple(vec.to_3d()) for vec in line]
-            draw_line(coords)
+            if key == active_key:
+                draw_line(coords,  COLOR_LINE_ACTIVE)
+            else:
+                draw_line(coords,  COLOR_LINE)
 
     if data_matrix:
-        draw_matrices(list(data_matrix.values()), scale, with_bounding_box)
+        draw_matrices(data_matrix, scale, with_bounding_box, active_key)
 
     if data_euler or data_quat:
         cursor = bpy.context.scene.cursor.location.copy()
         derived_matrices = []
-        for quat in data_quat.values():
+        for key, quat in data_quat.values():
             matrix = quat.to_matrix().to_4x4()
             matrix.translation = cursor
-            derived_matrices.append(matrix)
-        for eul in data_euler.values():
+            derived_matrices[key] = matrix
+        for key, eul in data_euler.values():
             matrix = eul.to_matrix().to_4x4()
             matrix.translation = cursor
-            derived_matrices.append(matrix)
-        draw_matrices(derived_matrices, scale, with_bounding_box)
+            derived_matrices[key] = matrix
+        draw_matrices(derived_matrices, scale, with_bounding_box, active_key)
 
 
 def draw_points(points):
@@ -179,10 +188,10 @@ def draw_points(points):
     batch.draw(single_color_shader)
 
 
-def draw_line(points):
+def draw_line(points, color):
     batch = batch_from_points(points, "LINE_STRIP")
     single_color_shader.bind()
-    single_color_shader.uniform_float("color", COLOR_LINE)
+    single_color_shader.uniform_float("color", color)
     batch.draw(single_color_shader)
 
 
@@ -190,7 +199,7 @@ def batch_from_points(points, type):
     return batch_for_shader(single_color_shader, type, {"pos": points})
 
 
-def draw_matrices(matrices, scale, with_bounding_box):
+def draw_matrices(matrices, scale, with_bounding_box, active_key):
     x_p = Vector((scale, 0.0, 0.0))
     x_n = Vector((-scale, 0.0, 0.0))
     y_p = Vector((0.0, scale, 0.0))
@@ -207,7 +216,9 @@ def draw_matrices(matrices, scale, with_bounding_box):
 
     coords = []
     colors = []
-    for matrix in matrices:
+    selected = []
+    active = []
+    for key, matrix in matrices.items():
         coords.append(matrix @ x_n)
         coords.append(matrix @ x_p)
         colors.extend((red_dark, red_light))
@@ -217,6 +228,10 @@ def draw_matrices(matrices, scale, with_bounding_box):
         coords.append(matrix @ z_n)
         coords.append(matrix @ z_p)
         colors.extend((blue_dark, blue_light))
+        if key == active_key:
+            active.append(matrix)
+        else:
+            selected.append(matrix)
 
     batch = batch_for_shader(smooth_color_shader, "LINES", {
         "pos": coords,
@@ -225,7 +240,10 @@ def draw_matrices(matrices, scale, with_bounding_box):
     batch.draw(smooth_color_shader)
 
     if with_bounding_box:
-        draw_bounding_boxes(matrices, scale, COLOR_BOUNDING_BOX)
+        if selected:
+            draw_bounding_boxes(selected, scale, COLOR_BOUNDING_BOX)
+        if active:
+            draw_bounding_boxes(active, scale, COLOR_BOUNDING_BOX_ACTIVE)
 
 
 def draw_bounding_boxes(matrices, scale, color):

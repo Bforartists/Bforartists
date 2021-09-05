@@ -1622,8 +1622,10 @@ def importMesh_ApplyColors(bpymesh, geom, ancestry):
         elif len(rgb) == len(bpymesh.loops):
             rgb = tuple(chain(*rgb))
         else:
-            printf("WARNING not applying vertex colors, non matching numbers of vertices or loops (%d vs %d/%d)"
-                   "" % (len(rgb), len(bpymesh.vertices), len(bpymesh.loops)))
+            print(
+                "WARNING not applying vertex colors, non matching numbers of vertices or loops (%d vs %d/%d)" %
+                (len(rgb), len(bpymesh.vertices), len(bpymesh.loops))
+            )
             return
 
         lcol_layer.data.foreach_set("color", rgb)
