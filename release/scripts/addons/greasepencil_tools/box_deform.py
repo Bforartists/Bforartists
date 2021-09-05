@@ -333,7 +333,7 @@ def cancel_cage(self):
         self.gp_obj.grease_pencil_modifiers.remove(mod)
     else:
         print(f'tmp_lattice modifier not found to remove on {self.gp_obj.name}')
-
+    
     for ob in self.other_gp:
         mod = ob.grease_pencil_modifiers.get('tmp_lattice')
         if mod:
@@ -458,7 +458,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             return {"RUNNING_MODAL"}
 
         # Valid
-        if event.type in {'RET', 'SPACE'}:
+        if event.type in {'RET', 'SPACE', 'NUMPAD_ENTER'}:
             if event.value == 'PRESS':
                 context.window_manager.boxdeform_running = False
                 self.restore_prefs(context)
@@ -586,7 +586,7 @@ valid:Spacebar/Enter, cancel:Del/Backspace/Tab/Ctrl+T"
             ## silent return
             return {'CANCELLED'}
 
-
+            
         # bpy.ops.ed.undo_push(message="Box deform step")#don't work as expected (+ might be obsolete)
         # https://developer.blender.org/D6147 <- undo forget
 

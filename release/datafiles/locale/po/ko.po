@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-04 05:04+0900\n"
@@ -31691,10 +31691,6 @@ msgstr "프록시 이미지의 JPEG 품질"
 
 msgid "Timecode"
 msgstr "타임코드"
-
-
-msgid "No TC in use"
-msgstr "사용중인 TC 없음"
 
 
 msgid "Record Run"
@@ -90452,14 +90448,6 @@ msgid "Crease: %.3f %s"
 msgstr "크리스: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "시퀀스 슬라이드: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " 또는 Alt) %s 을 맞추는 확장"
-
-
 msgid "Edge Slide: "
 msgstr "에지 슬라이드: "
 
@@ -90895,10 +90883,6 @@ msgstr "커브 포인트를 제거 할 수 없음"
 
 msgid "CurveMapping does not own CurveMap"
 msgstr "커브 매핑은 커브 맵을 소유하지 않습니다"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "커브 맵 테이블이 초기화되지 않았으면, 커브 맵의 커브 맵핑 소유자에서 초기화()를 호출하십시오"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -91637,10 +91621,6 @@ msgstr "원본을 교체"
 
 msgid "Crease Edges"
 msgstr "크리스 에지"
-
-
-msgid "Convertor"
-msgstr "컨버터"
 
 
 msgid "Compositor"

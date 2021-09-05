@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2015-03-03 16:21+0530\n"
@@ -7161,10 +7161,6 @@ msgstr "रिम"
 
 msgid "Outer"
 msgstr "बाहरी"
-
-
-msgid "Convertor"
-msgstr "परिवर्तक"
 
 
 msgid "Fac"
