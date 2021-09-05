@@ -13034,6 +13034,9 @@ static int node_type_to_icon(int type)
     case GEO_NODE_CURVE_ENDPOINTS:
       icon = ICON_CURVE_STARTEND;
       break;
+    case GEO_NODE_CURVE_FILL:
+      icon = ICON_CURVE_FILL;
+      break;
   }
   return icon;
 }
