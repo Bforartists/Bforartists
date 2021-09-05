@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-08-01 15:12+0700\n"
@@ -27133,10 +27133,6 @@ msgstr "Pengaruh Global:"
 
 msgid "Replace Original"
 msgstr "Gantikan yang Original"
-
-
-msgid "Convertor"
-msgstr "Konverter"
 
 
 msgid "Compositor"

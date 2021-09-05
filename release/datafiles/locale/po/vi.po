@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2021-01-17 14:04+0700\n"
@@ -37356,10 +37356,6 @@ msgstr "Chất lượng JPEG của ảnh đại lý"
 
 msgid "Timecode"
 msgstr "Mã Thời Gian"
-
-
-msgid "No TC in use"
-msgstr "Không sử dụng mã thời gian"
 
 
 msgid "Record Run"
@@ -109473,14 +109469,6 @@ msgid "Crease: %.3f %s"
 msgstr "Nhăn: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Trượt Trình Ảnh: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " hay Alt) Kéo dài cho đầy %s"
-
-
 msgid "Edge Slide: "
 msgstr "Trượt Cạnh: "
 
@@ -110100,10 +110088,6 @@ msgstr "Không thể xóa được điểm đường cong"
 
 msgid "CurveMapping does not own CurveMap"
 msgstr "BộBảnĐồĐườngCong không sở hữu BảnĐồĐườngCong"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "Bảng BảnĐồCong chưa được khởi động, dùng intialize() với chủ ÁnhXạCong của BảnĐồCong"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -111157,10 +111141,6 @@ msgstr "Thay Thế Nguồn Gốc"
 
 msgid "Crease Edges"
 msgstr "Nhăn Cạnh"
-
-
-msgid "Convertor"
-msgstr "Bộ Biến Đổi"
 
 
 msgid "Compositor"

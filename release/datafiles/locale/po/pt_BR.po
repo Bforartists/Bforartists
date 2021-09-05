@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: Ivan Paulos Tomé <ivan.paulos.tome@yandex.com>\n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-03-25 23:41-0300\n"
@@ -25099,10 +25099,6 @@ msgstr "Qualidade JPEG para imagens aproximadas."
 
 msgid "Timecode"
 msgstr "Código de tempo"
-
-
-msgid "No TC in use"
-msgstr "Sem código de tempo na utilização"
 
 
 msgid "Record Run"
@@ -69128,14 +69124,6 @@ msgid "Crease: %.3f %s"
 msgstr "Vincar: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Deslizando sequência: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " ou Alt) Expandir para ajustar %s"
-
-
 msgid "Edge Slide: "
 msgstr "Deslizar arestas:"
 
@@ -69491,10 +69479,6 @@ msgstr "Elemento não encontrado dentro da coleção de elementos ou último ele
 
 msgid "Unable to remove curve point"
 msgstr "Não é possível remover os pontos da curva."
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "Tabela de mapa de curva não inicializada, chame o inicializador no proprietário do mapeamento de curva do mapa de curva usando \"initialize()\"."
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -70045,10 +70029,6 @@ msgstr "Substituir original"
 
 msgid "Crease Edges"
 msgstr "Vincos das arestas"
-
-
-msgid "Convertor"
-msgstr "Conversor"
 
 
 msgid "Fac"

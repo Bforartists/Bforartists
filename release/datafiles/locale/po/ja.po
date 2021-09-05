@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2016-10-13 03:05+0900\n"
@@ -37762,10 +37762,6 @@ msgstr "プロキシ画像のJPEG 品質"
 
 msgid "Timecode"
 msgstr "タイムコード"
-
-
-msgid "No TC in use"
-msgstr "タイムコード未使用"
 
 
 msgid "Record Run"
@@ -111034,14 +111030,6 @@ msgid "Crease: %.3f %s"
 msgstr "クリース: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "シーケンススライド: %s%s、("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr "またはAlt)で押しのけて配置 %s"
-
-
 msgid "Edge Slide: "
 msgstr "辺をスライド: "
 
@@ -111673,10 +111661,6 @@ msgstr "カーブポイントを削除できません"
 
 msgid "CurveMapping does not own CurveMap"
 msgstr "CurveMappingが自身のCurveMapを未所有です"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "CurveMapテーブルが初期化されていません。CurveMapのカーブマッピングオーナーで initialize()してください"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -112744,10 +112728,6 @@ msgstr "オリジナルを置換"
 
 msgid "Crease Edges"
 msgstr "クリース辺"
-
-
-msgid "Convertor"
-msgstr "コンバーター"
 
 
 msgid "Compositor"

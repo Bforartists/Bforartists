@@ -59,6 +59,8 @@ qcd_classes = (
     qcd_operators.MoveToQCDSlot,
     qcd_operators.ViewQCDSlot,
     qcd_operators.ViewMoveQCDSlot,
+    qcd_operators.UnassignedQCDSlot,
+    qcd_operators.CreateAllQCDSlots,
     qcd_operators.RenumerateQCDSlots,
     ui.EnableAllQCDSlotsMenu,
     )

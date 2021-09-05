@@ -65,6 +65,17 @@ class Generator(base_generate.BaseGenerator):
         return rig_module.Rig
 
 
+    def __switch_to_usable_collection(self, obj, fallback=False):
+        collections = filter_layer_collections_by_object(self.usable_collections, obj)
+
+        if collections:
+            self.layer_collection = collections[0]
+        elif fallback:
+            self.layer_collection = self.view_layer.layer_collection
+
+        self.collection = self.layer_collection.collection
+
+
     def __create_rig_object(self):
         scene = self.scene
         id_store = self.id_store
@@ -79,11 +90,9 @@ class Generator(base_generate.BaseGenerator):
 
         obj = None
 
+        # Try existing object if overwriting
         if meta_data.rigify_generate_mode == 'overwrite':
             obj = meta_data.rigify_target_rig
-
-            if not obj and name in scene.objects:
-                obj = scene.objects[name]
 
             if obj:
                 self.rig_old_name = obj.name
@@ -91,26 +100,48 @@ class Generator(base_generate.BaseGenerator):
                 obj.name = name
                 obj.data.name = obj.name
 
-                rig_collections = filter_layer_collections_by_object(self.usable_collections, obj)
-                self.layer_collection = (rig_collections + [self.layer_collection])[0]
-                self.collection = self.layer_collection.collection
-
             elif name in bpy.data.objects:
                 obj = bpy.data.objects[name]
 
+        # Create a new object if not found
         if not obj:
             obj = bpy.data.objects.new(name, bpy.data.armatures.new(name))
             obj.display_type = 'WIRE'
+
+        # If the object is already added to the scene, switch to its collection
+        if obj.name in self.context.scene.collection.all_objects:
+            self.__switch_to_usable_collection(obj)
+        else:
+            # Otherwise, add to the selected collection or the metarig collection if unusable
+            if (self.layer_collection not in self.usable_collections
+                or self.layer_collection == self.view_layer.layer_collection):
+                self.__switch_to_usable_collection(self.metarig, True)
+
             self.collection.objects.link(obj)
 
-        elif obj.name not in self.collection.objects:  # rig exists but was deleted
-            self.collection.objects.link(obj)
-
+        # Configure and remember the object
         meta_data.rigify_target_rig = obj
         obj.data.pose_position = 'POSE'
 
         self.obj = obj
         return obj
+
+
+    def __unhide_rig_object(self, obj):
+        # Ensure the object is visible and selectable
+        obj.hide_set(False, view_layer=self.view_layer)
+        obj.hide_viewport = False
+
+        if not obj.visible_get(view_layer=self.view_layer):
+            raise Exception('Could not generate: Target rig is not visible')
+
+        obj.select_set(True, view_layer=self.view_layer)
+
+        if not obj.select_get(view_layer=self.view_layer):
+            raise Exception('Could not generate: Cannot select target rig')
+
+        if self.layer_collection not in self.usable_collections:
+            raise Exception('Could not generate: Could not find a usable collection.')
 
 
     def __create_widget_group(self):
@@ -373,16 +404,16 @@ class Generator(base_generate.BaseGenerator):
 
         self.usable_collections = list_layer_collections(view_layer.layer_collection, selectable=True)
 
-        if self.layer_collection not in self.usable_collections:
-            metarig_collections = filter_layer_collections_by_object(self.usable_collections, self.metarig)
-            self.layer_collection = (metarig_collections + [view_layer.layer_collection])[0]
-            self.collection = self.layer_collection.collection
-
         bpy.ops.object.mode_set(mode='OBJECT')
 
         #------------------------------------------
         # Create/find the rig object and set it up
         obj = self.__create_rig_object()
+
+        self.__unhide_rig_object(obj)
+
+        # Select the chosen working collection in case it changed
+        self.view_layer.active_layer_collection = self.layer_collection
 
         # Get rid of anim data in case the rig already existed
         print("Clear rig animation data.")

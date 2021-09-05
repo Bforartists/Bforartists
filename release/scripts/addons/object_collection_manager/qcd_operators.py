@@ -759,6 +759,70 @@ class ViewQCDSlot(Operator):
         return {'FINISHED'}
 
 
+class UnassignedQCDSlot(Operator):
+    bl_label = ""
+    bl_idname = "view3d.unassigned_qcd_slot"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    slot: StringProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        slot_string = f"Unassigned QCD Slot {properties.slot}:\n"
+
+        hotkey_string = (
+            "  * LMB - Create slot.\n"
+            "  * Shift+LMB - Create and isolate slot.\n"
+            "  * Ctrl+LMB - Create and move objects to slot.\n"
+            "  * Ctrl+Shift+LMB - Create and add objects to slot"
+            )
+
+        return f"{slot_string}{hotkey_string}"
+
+    def invoke(self, context, event):
+        modifiers = get_modifiers(event)
+
+        new_collection = bpy.data.collections.new(f"Collection {self.slot}")
+        context.scene.collection.children.link(new_collection)
+        internals.qcd_slots.add_slot(f"{self.slot}", new_collection.name)
+
+        # update tree view property
+        update_property_group(context)
+
+        if modifiers == {"shift"}:
+            bpy.ops.view3d.view_qcd_slot(slot=self.slot, toggle=False)
+
+        elif modifiers == {"ctrl"}:
+            bpy.ops.view3d.move_to_qcd_slot(slot=self.slot, toggle=False)
+
+        elif modifiers == {"ctrl", "shift"}:
+            bpy.ops.view3d.move_to_qcd_slot(slot=self.slot, toggle=True)
+
+        else:
+            pass
+
+        return {'FINISHED'}
+
+
+class CreateAllQCDSlots(Operator):
+    bl_label = "Create All QCD Slots"
+    bl_description = "Create any missing QCD slots so you have a full 20"
+    bl_idname = "view3d.create_all_qcd_slots"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for slot_number in range(1, 21):
+            if not internals.qcd_slots.get_name(f"{slot_number}"):
+                new_collection = bpy.data.collections.new(f"Collection {slot_number}")
+                context.scene.collection.children.link(new_collection)
+                internals.qcd_slots.add_slot(f"{slot_number}", new_collection.name)
+
+        # update tree view property
+        update_property_group(context)
+
+        return {'FINISHED'}
+
+
 class RenumerateQCDSlots(Operator):
     bl_label = "Renumber QCD Slots"
     bl_description = (

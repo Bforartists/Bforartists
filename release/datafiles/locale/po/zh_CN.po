@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -5612,6 +5612,10 @@ msgstr "约束物体和骨骼的形变修改"
 
 msgid "Constraint is the one being edited"
 msgstr "编辑中的约束"
+
+
+msgid "Use the results of this constraint"
+msgstr "使用此约束的结果"
 
 
 msgid "Lin error"
@@ -19484,12 +19488,36 @@ msgid "Whether to use a custom frame for looking up data in the cache file, inst
 msgstr "是否要使用自定义帧用于查找在缓存文件中的数据，而不是使用当前的场景帧"
 
 
+msgid "Prefetch Cache Size"
+msgstr "预读取缓存大小"
+
+
+msgid "Memory usage limit in megabytes for the Cycles Procedural cache, if the data does not fit within the limit, rendering is aborted"
+msgstr "Cycles程序化缓存的内存使用限制，单位MB。如果数据超出限制，将中止渲染"
+
+
 msgid "Value by which to enlarge or shrink the object with respect to the world's origin (only applicable through a Transform Cache constraint)"
 msgstr "相对于世界原点缩放物体的倍数值(仅适用于变换缓存约束)"
 
 
 msgid "Up"
 msgstr "向上"
+
+
+msgid "Use Prefetch"
+msgstr "使用预读取"
+
+
+msgid "When enabled, the Cycles Procedural will preload animation data for faster updates"
+msgstr "启用后，Cycles程序化将预加载动画数据以实现更快的更新"
+
+
+msgid "Use Render Engine Procedural"
+msgstr "使用渲染引擎程序化"
+
+
+msgid "Display boxes in the viewport as placeholders for the objects, Cycles will use a procedural to load the objects during viewport rendering in experimental mode, other render engines will also receive a placeholder and should take care of loading the Alembic data themselves if possible"
+msgstr "视图中的显示框作为物体的占位符，Cycles 将在实验模式下使用程序化加载视图渲染过程中的物体，其他渲染引擎也将接收占位符，并应尽可能自行加载 Alembic 数据"
 
 
 msgid "Velocity Attribute"
@@ -23503,7 +23531,7 @@ msgstr "设置如何执行合成"
 
 
 msgid "Tiled"
-msgstr "平铺"
+msgstr "拼贴"
 
 
 msgid "Compositing is tiled, having as priority to display first tiles as fast as possible"
@@ -26315,6 +26343,10 @@ msgid "Register"
 msgstr "注册"
 
 
+msgid "Run this text as a Python script on loading"
+msgstr "在加载时将此文本作为Python脚本运行"
+
+
 msgid "Texture data-block used by materials, lights, worlds and brushes"
 msgstr "供材质、灯光、世界及笔刷所使用纹理数据块"
 
@@ -28128,7 +28160,7 @@ msgstr "分块"
 
 
 msgid "Tile in tiled image"
-msgstr "平铺图像中的分块"
+msgstr "拼贴图像中的分块"
 
 
 msgid "Auto Refresh"
@@ -37459,10 +37491,6 @@ msgstr "代理图像的 JPEG 品质"
 
 msgid "Timecode"
 msgstr "时间码"
-
-
-msgid "No TC in use"
-msgstr "不使用时间码"
 
 
 msgid "Record Run"
@@ -47549,6 +47577,15 @@ msgid "Add a target to the constraint"
 msgstr "对约束添加目标"
 
 
+msgctxt "Operator"
+msgid "Apply Constraint"
+msgstr "应用约束"
+
+
+msgid "Apply constraint and remove from the stack"
+msgstr "应用约束并从队列中将其移除"
+
+
 msgid "Constraint"
 msgstr "约束"
 
@@ -47593,6 +47630,24 @@ msgstr "设置反向"
 
 msgid "Set inverse correction for Child Of constraint"
 msgstr "为父子关系约束设置逆向修正"
+
+
+msgctxt "Operator"
+msgid "Duplicate Constraint"
+msgstr "复制约束"
+
+
+msgid "Duplicate constraint at the same position in the stack"
+msgstr "在队列中的相同位置复制约束"
+
+
+msgctxt "Operator"
+msgid "Copy Constraint To Selected"
+msgstr "复制约束到所选"
+
+
+msgid "Copy constraint to other selected objects/bones"
+msgstr "将约束复制到其他选定的物体/骨骼"
 
 
 msgctxt "Operator"
@@ -49946,8 +50001,24 @@ msgid "Select everything beginning with the last selection"
 msgstr "选择全部紧接上一次的选择"
 
 
+msgid "Only Activate if Selected"
+msgstr "如选中则仅激活"
+
+
+msgid "Do not change selection if the item under the cursor is already selected, only activate it"
+msgstr "如果光标下方的对象已被选中，则不更改选中状态，仅激活它"
+
+
 msgid "Open a directory when selecting it"
 msgstr "选中目录时将其打开"
+
+
+msgid "Pass Through"
+msgstr "穿透"
+
+
+msgid "Even on successful execution, pass the event on so other operators can execute on it as well"
+msgstr "即使在成功执行时，也将传递事件，以便基于此执行其他操作"
 
 
 msgctxt "Operator"
@@ -53288,7 +53359,7 @@ msgstr "图像数据块名称"
 
 
 msgid "Create a tiled image"
-msgstr "创建平铺图像"
+msgstr "创建拼贴图像"
 
 
 msgid "Create an image with left and right views"
@@ -54173,6 +54244,10 @@ msgstr "钳制尺寸"
 
 msgid "Clamp bounds under this value (zero to disable)"
 msgstr "钳制的下界(0为禁用)"
+
+
+msgid "Split geometry, omits vertices unused by edges or faces"
+msgstr "拆分几何体，忽略未被边或面使用的顶点"
 
 
 msgid "Keep Vert Order"
@@ -72094,6 +72169,14 @@ msgid "Load an Alembic archive"
 msgstr "加载Alembic文档"
 
 
+msgid "Always Add Cache Reader"
+msgstr "始终添加缓存读取器"
+
+
+msgid "Add cache modifiers and constraints to imported objects even if they are not animated so that they can be updated when reloading the Alembic archive"
+msgstr "将缓存修改器和约束添加到导入对象中，即使它们不是动画，以便在重新加载 Alembic 文档时可以更新它们"
+
+
 msgid "Enable this to run the export in the background, disable to block Blender while exporting. This option is deprecated; EXECUTE this operator to run in the foreground, and INVOKE it to run as a background job"
 msgstr "启用该选项可以在后台运行导出，禁用该选项可以在导出时阻塞Blender。这个选项已弃用，执行(EXECUTE)这个操作符令导出操作在前台运行，调用(INVOKE)这个操作符令导出操作后台运行"
 
@@ -74266,7 +74349,7 @@ msgstr "为X轴拼贴偏移"
 
 
 msgid "Stride at which tiled strokes are copied"
-msgstr "复制的平铺画笔的步长"
+msgstr "复制的拼贴画笔的步长"
 
 
 msgid "Tile X"
@@ -78283,6 +78366,14 @@ msgstr "Cycles调试"
 
 msgid "Enable Cycles debugging options for developers"
 msgstr "为开发人员启用Cycles调试选项"
+
+
+msgid "Extended Asset Browser"
+msgstr "扩展资产浏览器"
+
+
+msgid "Enable Asset Browser editor and operators to manage regular data-blocks as assets, not just poses"
+msgstr "启用资产浏览器编辑器和操作将数据块作为资产管理，而非仅姿态"
 
 
 msgid "Full Frame Compositor"
@@ -95987,6 +96078,10 @@ msgid "No animation data found to create asset from"
 msgstr "未发现创建资产的动画数据"
 
 
+msgid "Unexpected non-zero user count for the asset, please report this as a bug"
+msgstr "意外的资产非零用户计数，请将此作为bug报错"
+
+
 msgid "Did not find any assets on clipboard"
 msgstr "在剪贴板上未找到任何资产"
 
@@ -96112,6 +96207,11 @@ msgstr "无法初始化语言数据!"
 
 msgid "Please edit the preferences of the UI Translate add-on"
 msgstr "请编辑用户界面翻译插件的偏好设置"
+
+
+msgctxt "Operator"
+msgid "Init Settings"
+msgstr "初始设置"
 
 
 msgctxt "Operator"
@@ -103472,6 +103572,10 @@ msgid "Did not write, the image doesn't have a \"%s\" and \"%s\" views"
 msgstr "无法写入，图像没有 \"%s\" 和 \"%s\" 视图"
 
 
+msgid "When saving a tiled image, the path '%s' must contain the UDIM tile number %d"
+msgstr "保存拼贴图像时， '%s' 路径必须包含 UDIM分块编号 %d"
+
+
 msgid "Key %d"
 msgstr "键 %d"
 
@@ -106824,6 +106928,14 @@ msgid "Could not find constraint data for ObjectSolver Set Inverse"
 msgstr "无法找到用于物体解算器设置反向的约束数据"
 
 
+msgid "Applied constraint was not first, result may not be as expected"
+msgstr "应用的约束不是第一个，可能导致非预期的结果"
+
+
+msgid "No constraints for copying"
+msgstr "无可供复制的约束"
+
+
 msgid "No active bone with constraints for copying"
 msgstr "无可供复制的带约束的活动骨骼"
 
@@ -106848,12 +106960,32 @@ msgid "Removed constraint: %s"
 msgstr "已删除约束: %s"
 
 
+msgid "Applied constraint: %s"
+msgstr "已应用约束: %s"
+
+
+msgid "Copied constraint: %s"
+msgstr "已复制约束: %s"
+
+
 msgid "Cannot edit library data"
 msgstr "无法编辑库数据"
 
 
 msgid "Cannot edit constraints coming from linked data in a library override"
 msgstr "无法编辑来自库重写中关联数据的约束"
+
+
+msgid "No other bones are selected"
+msgstr "无其他被选中骨骼"
+
+
+msgid "No selected object to copy from"
+msgstr "无选中物体作为复制源"
+
+
+msgid "No other objects are selected"
+msgstr "无其他被选中物体"
 
 
 msgid "Operator is frozen, changes to its settings won't take effect until you unfreeze it"
@@ -108798,6 +108930,10 @@ msgid "Invalid UDIM index range was specified"
 msgstr "指定的UDIM编号范围无效"
 
 
+msgid "No UDIM tiles were created"
+msgstr "未创建UDIM分块"
+
+
 msgid "Packed to memory image \"%s\""
 msgstr "打包到内存图像 \"%s\""
 
@@ -110251,14 +110387,6 @@ msgid "Crease: %.3f %s"
 msgstr "折痕: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "序列滑移: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " 或 Alt) 扩展匹配到 %s"
-
-
 msgid "Edge Slide: "
 msgstr "滑移边线: "
 
@@ -110890,10 +111018,6 @@ msgstr "粘贴材质设置与节点"
 
 msgid "CurveMapping does not own CurveMap"
 msgstr "曲线映射没有曲线映射表"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "曲线映射表未初始化, 在曲线映射表的拥有者上调用initialize()方法"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -111959,10 +112083,6 @@ msgstr "替换原物体"
 
 msgid "Crease Edges"
 msgstr "折痕边"
-
-
-msgid "Convertor"
-msgstr "转换器"
 
 
 msgid "Compositor"
