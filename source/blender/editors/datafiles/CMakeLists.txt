@@ -709,6 +709,7 @@ fixed_size
 load_usd
 select_handletype
 spline_type
+curve_fill
 #~ DEF_ICON_BLANK(729)
 #~ DEF_ICON_BLANK(730)
 #~ DEF_ICON_BLANK(731)
