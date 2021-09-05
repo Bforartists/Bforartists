@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2012-05-11 14:55+0200\n"
@@ -24485,10 +24485,6 @@ msgstr "Select Outer"
 
 msgid "Global Influence:"
 msgstr "Genel Eksen"
-
-
-msgid "Convertor"
-msgstr "Dönüştürücü"
 
 
 msgid "Fac"

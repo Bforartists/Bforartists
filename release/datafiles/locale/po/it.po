@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2020-01-06 17:05+0100\n"
@@ -22006,10 +22006,6 @@ msgstr "Qualità JPEG dell'immagine proxy"
 
 msgid "Timecode"
 msgstr "Timecode"
-
-
-msgid "No TC in use"
-msgstr "Nessun TC in uso"
 
 
 msgid "Record Run"
@@ -60368,14 +60364,6 @@ msgid "Crease: %.3f %s"
 msgstr "Piega: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Slittamento Sequenza: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " o Alt) Espande per adattare %s"
-
-
 msgid "Edge Slide: "
 msgstr "Scivola Spigolo: "
 
@@ -60857,10 +60845,6 @@ msgstr "Sostituisci Originale"
 
 msgid "Crease Edges"
 msgstr "Spigoli Piega"
-
-
-msgid "Convertor"
-msgstr "Converti"
 
 
 msgid "Fac"

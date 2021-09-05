@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: \n"
@@ -31524,10 +31524,6 @@ msgstr "Qualité Jpeg des images proxies"
 
 msgid "Timecode"
 msgstr "Timecode"
-
-
-msgid "No TC in use"
-msgstr "Pas de TC utilisé"
 
 
 msgid "Record Run"
@@ -79567,14 +79563,6 @@ msgid "Crease: %.3f %s"
 msgstr "Plis : %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Glisser séquence : %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " ou Alt) Étendre pour remplir %s"
-
-
 msgid "Edge Slide: "
 msgstr "Glisser arêtes : "
 
@@ -79998,10 +79986,6 @@ msgstr "Élément introuvable dans la collection d’éléments ou le dernier é
 
 msgid "Unable to remove curve point"
 msgstr "Impossible d’enlever le point de courbe"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "La table de conversion de la courbe n’est pas initialisée, appelez initialize() sur le CurveMapping propriétaire de la CurveMap"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -80720,10 +80704,6 @@ msgstr "Remplacer original"
 
 msgid "Crease Edges"
 msgstr "Plis d’arêtes"
-
-
-msgid "Convertor"
-msgstr "Convertisseur"
 
 
 msgid "Compositor"

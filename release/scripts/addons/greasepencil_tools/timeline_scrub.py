@@ -211,7 +211,7 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
             else:
                 self.init_index = 0
                 self.init_frame = self.new_frame = self.pos[0]
-
+                
             # del active_pos
             self.index_limit = len(self.pos) - 1
 
@@ -311,14 +311,14 @@ class GPTS_OT_time_scrub(bpy.types.Operator):
         shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')  # initiate shader
         self.batch_timeline = batch_for_shader(
             shader, 'LINES', {"pos": self.hud_lines})
-
+        
         if self.rolling_mode:
             current_id = self.pos.index(self.new_frame)
             # Add init_frame to "cancel" it in later UI code
             ui_key_pos = [i - current_id + self.init_frame for i, _f in enumerate(self.pos[:-2])]
         else:
             ui_key_pos = self.pos[:-2]
-
+        
 
         # keyframe display
         if self.keyframe_aspect == 'LINE':
@@ -555,6 +555,12 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
         description="Alternative Gap-less timeline. No time informations to quickly roll/flip over keys\nOverride normal and 'always snap' mode",
         default=False)
 
+    use: BoolProperty(
+        name="Enable",
+        description="Enable/Disable timeline scrub",
+        default=True,
+        update=auto_rebind)
+
     use_in_timeline_editor: BoolProperty(
         name="Shortcut in timeline editors",
         description="Add the same shortcut to scrub in timeline editor windows",
@@ -681,6 +687,9 @@ class GPTS_timeline_settings(bpy.types.PropertyGroup):
 def draw_ts_pref(prefs, layout):
     # - General settings
     layout.label(text='Timeline Scrub:')
+    layout.prop(prefs, 'use')
+    if not prefs.use:
+        return
     layout.prop(prefs, 'evaluate_gp_obj_key')
     layout.prop(prefs, 'pixel_step')
 
@@ -716,7 +725,7 @@ def draw_ts_pref(prefs, layout):
         snap_text = 'Disable keyframes snap: '
     else:
         snap_text = 'Keyframes snap: '
-
+    
     snap_text += 'Left Mouse' if prefs.keycode == 'RIGHTMOUSE' else 'Right Mouse'
     if not prefs.use_ctrl:
         snap_text += ' or Ctrl'
@@ -724,7 +733,7 @@ def draw_ts_pref(prefs, layout):
         snap_text += ' or Shift'
     if not prefs.use_alt:
         snap_text += ' or Alt'
-
+    
     if prefs.rolling_mode:
         snap_text = 'Gap-less mode (always snap)'
 
@@ -769,6 +778,9 @@ addon_keymaps = []
 
 def register_keymaps():
     prefs = get_addon_prefs().ts
+    if not prefs.use:
+        return
+
     addon = bpy.context.window_manager.keyconfigs.addon
     km = addon.keymaps.new(name="Grease Pencil",
                            space_type="EMPTY", region_type='WINDOW')

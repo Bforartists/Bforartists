@@ -1,7 +1,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 3.0.0 Alpha (b'0682af0d63a4')\n"
+"Project-Id-Version: Blender 3.0.0 Alpha (b'a71d2b260170')\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-01 00:00:00\n"
 "PO-Revision-Date: 2018-01-03 14:47+0000\n"
@@ -34435,10 +34435,6 @@ msgstr "Качество JPEG-изображений прокси"
 
 msgid "Timecode"
 msgstr "Таймкод"
-
-
-msgid "No TC in use"
-msgstr "Код времени не используется"
 
 
 msgid "Record Run"
@@ -93359,14 +93355,6 @@ msgid "Crease: %.3f %s"
 msgstr "Складка: %.3f %s"
 
 
-msgid "Sequence Slide: %s%s, ("
-msgstr "Сдвинуть последовательность: %s%s, ("
-
-
-msgid " or Alt) Expand to fit %s"
-msgstr " или Alt) Расширить до вмещения %s"
-
-
 msgid "Edge Slide: "
 msgstr "Сдвинуть ребро: "
 
@@ -93798,10 +93786,6 @@ msgstr "Элемент не найден в коллекции элементо�
 
 msgid "Unable to remove curve point"
 msgstr "Не удалось удалить точку кривой"
-
-
-msgid "CurveMap table not initialized, call initialize() on CurveMapping owner of the CurveMap"
-msgstr "Таблица CurveMap не инициализирована, вызовите initialize() на CurveMapping-владельце CurveMap"
 
 
 msgid "Unable to add element to colorband (limit %d)"
@@ -94653,10 +94637,6 @@ msgstr "Заменить оригинал"
 
 msgid "Crease Edges"
 msgstr "Складки ребер"
-
-
-msgid "Convertor"
-msgstr "Преобразователь"
 
 
 msgid "Compositor"
