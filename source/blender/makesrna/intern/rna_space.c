@@ -3295,7 +3295,7 @@ static void rna_def_space(BlenderRNA *brna)
   RNA_def_property_boolean_funcs(prop, "rna_Space_view2d_sync_get", "rna_Space_view2d_sync_set");
   RNA_def_property_ui_text(prop,
                            "Sync Visible Range",
-                           "Synchronize the visible timeline range with other time-based editors");
+                           "Synchronize the visible timeline range with other time-based editors\nEach editor to sync needs to have Sync Visible Range on");
   RNA_def_property_update(prop, NC_SPACE | ND_SPACE_TIME, "rna_Space_view2d_sync_update");
 
   rna_def_space_generic_show_region_toggles(srna, (1 << RGN_TYPE_HEADER));
