@@ -107,7 +107,6 @@ class MLL_PT_Minilightlib(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = "UI"
     bl_category = "Create"
-    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -118,6 +117,11 @@ class MLL_PT_Minilightlib(bpy.types.Panel):
         layout.operator("view3d.mll_read_asset", text="Append Asset") # Load asset
         layout.separator()
         layout.prop(context.scene, "path", text="") # Here you can change the path.
+
+        layout.separator()
+
+        layout.label(text = "Cycles only!")
+
 
 # ------------------------------ register unregister --------------------------------------------------------
 
