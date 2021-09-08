@@ -625,6 +625,7 @@ UserDef *BKE_blendfile_userdef_from_defaults(void)
         "cycles",
         "pose_library",
         "materials_library_vx",
+        "minilightlib",
         "bforartists_toolbar_settings",
         "createisocam",
         "edit_dimensions",
