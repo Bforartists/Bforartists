@@ -915,7 +915,7 @@ class VIEW3D_PT_objecttab_apply_delta(toolshelf_calculate, Panel):
                 myvar.arg = 'Apply Rotation to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
                 row = col.row(align=True)
-                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYALLDELTA")
+                myvar = row.operator("object.transforms_to_deltas", text="", icon = "APPLYSCALEDELTA")
                 myvar.mode = 'SCALE'
                 myvar.arg = 'Apply Scale to Deltas\nConverts normal object transforms to delta transforms\nAny existing delta transform will be included as well'
 
