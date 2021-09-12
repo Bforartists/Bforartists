@@ -1200,6 +1200,10 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
             col = layout.column(align=True)
             col.scale_y = 1.5
 
+            props = col.operator("node.add_node", text=" Posterize     ", icon = "POSTERIZE")
+            props.use_transform = True
+            props.type = "CompositorNodePosterize"
+            
             props = col.operator("node.add_node", text=" RGB Curves     ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "CompositorNodeCurveRGB"
@@ -1235,6 +1239,10 @@ class NODES_PT_Input_color_comp(bpy.types.Panel):
             props = flow.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")
             props.use_transform = True
             props.type = "CompositorNodeHueSat"
+            
+            props = flow.operator("node.add_node", text = "", icon = "POSTERIZE")
+            props.use_transform = True
+            props.type = "CompositorNodePosterize"
 
             props = flow.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
             props.use_transform = True
